@@ -1,165 +1,126 @@
-Received: from smtp-fw-9105.amazon.com (smtp-fw-9105.amazon.com [207.171.188.204])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FE526B968;
-	Thu, 22 May 2025 22:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D78E270EAC
+	for <linux-security-module@vger.kernel.org>; Thu, 22 May 2025 22:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747952361; cv=none; b=tZoYd4RmrdXL0Jax9G2a/T/asShwcTzh0o32+ewjJwCTMrIU4CVdPItaR0VPHBZ6oQhWbeCx+ykoArSd7dho82d3wTQcUVCf6T7fQBUYbGKi6nsDTmU7HtclXGgd3alde4aJ2sTTEhesl4LtC5Xfp2tu6PDopau19AYQgaGEi/0=
+	t=1747952771; cv=none; b=Pf/dSDi2n1iA16Ut38JXYtaBIRERswaxng3YpATNCw8XhdDbW3r+qCQPUXiS5vQ4zujTxBgNUXQ3oydniISn+RJ+HTkyL7EYvZ5AoNM8ZVqKCRhtFD4S1ec0k/wlsGJfB4p/CB6f/416Nafbplu7xyvnUBnY5+8w5J7IrGDZc+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747952361; c=relaxed/simple;
-	bh=9dxErB5pS2CXLkaOwc0EHf+ZBZ+Z0Mc51fJGO8IndLw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZHF9ti9uA8e8WQJg4EjlK+nnsgGRxR1CuKNkq2UHOyhAiS/6uRjQUZZHSQ38EYMxCVQ29zL0cAuDTRkZtXTmhuiJ8OEGpdRQgn/lfK4CnTRiWpjYVu8SBmF5MTj6MxRasm302gXXmL5FqI+CHXN45MyjdbuTQIbiDMDN9D0IqNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=Ts/6w6uG; arc=none smtp.client-ip=207.171.188.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1747952771; c=relaxed/simple;
+	bh=yXfmq+fsOH2ydhYAaJ/O8G8cyrnfKS0KGUVUMAH0MGk=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=fnKWeAaFLq80DpzOku++YFW3CvvlOyj8PURboDOpGuxRv88gbqsFhS2SrHcTinGSmU4oSwQ0uryyaKbQle4WlEFwCQSKvoWcRvBGbWvSCJZ6fw6nVrB2ZQHAs26a1gl+B81JjmyibQf2//4b818ywHg6BjrDaJqePsLT/OvtS3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PE8bp2bC; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="Ts/6w6uG"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PE8bp2bC"
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6f8ce89468cso55845106d6.3
+        for <linux-security-module@vger.kernel.org>; Thu, 22 May 2025 15:26:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1747952360; x=1779488360;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=4vV82EZnd8rNKHjUbikYWXs6eZjhALAVx/i3Z/Ci0cg=;
-  b=Ts/6w6uGvTSsU33W+++xBGxqqt41psgEPn8pWknViUsfchM7NpqpqxOb
-   TtgCF10r8EGVXD77e7F9mbB6LveGUn1TVotV8AfD/Zt4+OXj2cNIjlGMV
-   jjLZ09xSPblHi7bZUHgwdVvL6LMRWOCqiKjTPXlJo6Z7WwD1BnoADWXQ6
-   BxxlFAXzrFY3jt7E9Ps6+jpYlhoHxPmJII5Xk2TXsYG063S7fWYvFNb0b
-   fm3B8yjirubkBOzcLaRkwteR0semEoIaTzup1ule8bxD9eo0YyVMmLWyT
-   R66cdFBjOFTZV447bG4KkWDIzhG3M/pf+7Y/x1R2vQhLbkJU8JYrbkVzN
-   w==;
-X-IronPort-AV: E=Sophos;i="6.15,307,1739836800"; 
-   d="scan'208";a="22912941"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9105.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 22:19:11 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:34472]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.32.147:2525] with esmtp (Farcaster)
- id d0938ecf-7d11-4b40-8e3f-6c58e1e30ecc; Thu, 22 May 2025 22:19:10 +0000 (UTC)
-X-Farcaster-Flow-ID: d0938ecf-7d11-4b40-8e3f-6c58e1e30ecc
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Thu, 22 May 2025 22:19:09 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.187.170.42) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Thu, 22 May 2025 22:19:06 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: Paul Moore <paul@paul-moore.com>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>
-CC: Simon Horman <horms@kernel.org>, Huw Davies <huw@codeweavers.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Kuniyuki Iwashima
-	<kuni1840@gmail.com>, <netdev@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, syzkaller
-	<syzkaller@googlegroups.com>, John Cheung <john.cs.hey@gmail.com>
-Subject: [PATCH v1 net] calipso: Don't call calipso functions for AF_INET sk.
-Date: Thu, 22 May 2025 15:18:56 -0700
-Message-ID: <20250522221858.91240-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.49.0
+        d=paul-moore.com; s=google; t=1747952767; x=1748557567; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jmptf5RMBQqSn8lkxlWoyMCjmS+Mv7H8iKTTl/Kwouo=;
+        b=PE8bp2bC2u+7hVMWFXDxIhgHhKxulbXWcGxnUpIhrgzangQno0wz8wTj2SBpQlx+RH
+         HWbPzJONY/k5V5KhKxFzRg0mqcSuevNUob7nbBRkNe4zNv5ta0ZZRbKuMkupvRu1j4H/
+         L5g61hkwn3G2TrJtCWpQppB/pCl9f/CPqdvv0wvc5m0YvonN/44WK2eHjcRrBNO9b+Bz
+         rMI5Soc4po1JoBDybn3lJlA6EaENodtYQjDPfzlCn/d0jltsqZogc7KaymbExTqk6b2E
+         5S0ojIzkilaxs5NcdiEorb9gq51ZYUhzmmerYI6Csq70Rwqskc1RTDHHPC4a/b2ToWTE
+         +pXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747952767; x=1748557567;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Jmptf5RMBQqSn8lkxlWoyMCjmS+Mv7H8iKTTl/Kwouo=;
+        b=i+0MmCO76AGScafkcgLs+qTl3PeNNv6wNlcuXUJZy95fqAXumHhghb9nLQaP+hK+iv
+         AH0RmCHGfFVk5oPdICh5PDkUlH50y49WXvZYKO1OS2eMRy1fKjaB54tmvwDpwl5qG1JI
+         v9b+mYl3rJGUFPIw2PRx750ogUJljETBFg0LIvtX4xSMcrmTZVN0uKqATcywTv9wP2gA
+         p32pd3W4QTPizMpEi8wuRTDrcVulebipQ6xvC3mq0XhDe9OxghcmhEl4HMeQ2bktjGFW
+         bczo8bGSMAw0YDgiJ9h0uNYCvX/NT7TJKDIQWuE2/TIjmbBSp5Yr3HXp7VaNf3XwzUV+
+         On/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX7WCibvP8pBQzFgW7OjJKGeqJ1xLHV7jk3g8KGX5zC5rxWR+H6Vpx7wt2I7FOB+RboorkXpTB9K4wzjhc33BMRANXfIE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8vYCsaCRO06GeVjZ866AZj8lYvD7bD7zFHmFo8pmNkhe8Zh25
+	1tULIeDiH0VU8K14N/3uNMWkLd9Uldh8NsN1ACmElRIOJY63MlEgzYFPIBABA5qd2g==
+X-Gm-Gg: ASbGncvM9iWzuFP6dVubhn+HFRI7P4mJIW83/DfA0u2liqrMKrFfNw/nj/3yZ4iB7xY
+	g0Y3GHlZPEPuxbwpigPe9FocbFwyaUK3Be2+wCrE9y5+d0nHtxeCuSTpvZzh2u7iYTu/Cd+6RMW
+	Hqrb9DOnUWeU0qrZ7VPYkv/M+m3A2mV9u3iimShKshtJy0JFzz8IlpWjn238lqtmWog0HGOLi+U
+	LxvONzoEmk2Cxpk6WLLKWLErf/y89GVHXiwr/J9zFPFvF2IhVgcTc17p5pi+q8c2ikjobmnZNXY
+	NlJglBxzp0iyjJWofK0cr5gmyhJ6e8RzvpQ4h7262xUicQy4QkmLYbZc3t9nUAW4U8JXLgpvGSr
+	oTV+nhoOxU9f7fzHq5nt5
+X-Google-Smtp-Source: AGHT+IE2zN7SH+0SaGrs2tzepSFkLMKNXBgIbbn8M9DQcRbDJBs1dDzlx85ZuSxbIPErdUE31K4qXg==
+X-Received: by 2002:a05:6214:1947:b0:6f2:b094:430e with SMTP id 6a1803df08f44-6f8b0829131mr503375636d6.25.1747952766984;
+        Thu, 22 May 2025 15:26:06 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f8b0987259sm105076766d6.120.2025.05.22.15.26.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 15:26:06 -0700 (PDT)
+Date: Thu, 22 May 2025 18:26:05 -0400
+Message-ID: <0bb73a49ccbc93e90ea87c0dbb4097ae@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D044UWB004.ant.amazon.com (10.13.139.134) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250522_1740/pstg-lib:20250522_1730/pstg-pwork:20250522_1740
+From: Paul Moore <paul@paul-moore.com>
+To: Andrey Albershteyn <aalbersh@redhat.com>, Richard Henderson <richard.henderson@linaro.org>, 
+	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Amir Goldstein <amir73il@gmail.com>
+Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, selinux@vger.kernel.org, ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH v5 2/7] lsm: introduce new hooks for setting/getting inode  fsxattr
+References: <20250513-xattrat-syscall-v5-2-22bb9c6c767f@kernel.org>
+In-Reply-To: <20250513-xattrat-syscall-v5-2-22bb9c6c767f@kernel.org>
 
-syzkaller reported a null-ptr-deref in txopt_get(). [0]
+On May 13, 2025 Andrey Albershteyn <aalbersh@redhat.com> wrote:
+> 
+> Introduce new hooks for setting and getting filesystem extended
+> attributes on inode (FS_IOC_FSGETXATTR).
+> 
+> Cc: selinux@vger.kernel.org
+> Cc: Paul Moore <paul@paul-moore.com>
+> 
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> ---
+>  fs/file_attr.c                | 19 ++++++++++++++++---
+>  include/linux/lsm_hook_defs.h |  2 ++
+>  include/linux/security.h      | 16 ++++++++++++++++
+>  security/security.c           | 30 ++++++++++++++++++++++++++++++
+>  4 files changed, 64 insertions(+), 3 deletions(-)
 
-The offset 0x70 was of struct ipv6_txoptions in struct ipv6_pinfo,
-so struct ipv6_pinfo was NULL there.
+The only thing that gives me a slight pause is that on a set operation
+we are going to hit both the get and set LSM hooks, but since the code
+does call into the getter on a set operation this is arguably the right
+thing.
 
-However, this never happens for IPv6 sockets as inet_sk(sk)->pinet6
-is always set in inet6_create(), meaning the socket was not IPv6 one.
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-The root cause is missing validation in netlbl_conn_setattr().
-
-netlbl_conn_setattr() switches branches based on struct
-sockaddr.sa_family, which is passed from userspace.  However,
-netlbl_conn_setattr() does not check if the address family matches
-the socket.
-
-The syzkaller must have called connect() for an IPv6 address on
-an IPv4 socket.
-
-We have a proper validation in tcp_v[46]_connect(), but
-security_socket_connect() is called in the earlier stage.
-
-Let's copy the validation to netlbl_conn_setattr().
-
-[0]:
-Oops: general protection fault, probably for non-canonical address 0xdffffc000000000e: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000070-0x0000000000000077]
-CPU: 2 UID: 0 PID: 12928 Comm: syz.9.1677 Not tainted 6.12.0 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-RIP: 0010:txopt_get include/net/ipv6.h:390 [inline]
-RIP: 0010:
-Code: 02 00 00 49 8b ac 24 f8 02 00 00 e8 84 69 2a fd e8 ff 00 16 fd 48 8d 7d 70 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 53 02 00 00 48 8b 6d 70 48 85 ed 0f 84 ab 01 00
-RSP: 0018:ffff88811b8afc48 EFLAGS: 00010212
-RAX: dffffc0000000000 RBX: 1ffff11023715f8a RCX: ffffffff841ab00c
-RDX: 000000000000000e RSI: ffffc90007d9e000 RDI: 0000000000000070
-RBP: 0000000000000000 R08: ffffed1023715f9d R09: ffffed1023715f9e
-R10: ffffed1023715f9d R11: 0000000000000003 R12: ffff888123075f00
-R13: ffff88810245bd80 R14: ffff888113646780 R15: ffff888100578a80
-FS:  00007f9019bd7640(0000) GS:ffff8882d2d00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f901b927bac CR3: 0000000104788003 CR4: 0000000000770ef0
-PKRU: 80000000
-Call Trace:
- <TASK>
- calipso_sock_setattr+0x56/0x80 net/netlabel/netlabel_calipso.c:557
- netlbl_conn_setattr+0x10c/0x280 net/netlabel/netlabel_kapi.c:1177
- selinux_netlbl_socket_connect_helper+0xd3/0x1b0 security/selinux/netlabel.c:569
- selinux_netlbl_socket_connect_locked security/selinux/netlabel.c:597 [inline]
- selinux_netlbl_socket_connect+0xb6/0x100 security/selinux/netlabel.c:615
- selinux_socket_connect+0x5f/0x80 security/selinux/hooks.c:4931
- security_socket_connect+0x50/0xa0 security/security.c:4598
- __sys_connect_file+0xa4/0x190 net/socket.c:2067
- __sys_connect+0x12c/0x170 net/socket.c:2088
- __do_sys_connect net/socket.c:2098 [inline]
- __se_sys_connect net/socket.c:2095 [inline]
- __x64_sys_connect+0x73/0xb0 net/socket.c:2095
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xaa/0x1b0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f901b61a12d
-Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f9019bd6fa8 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 00007f901b925fa0 RCX: 00007f901b61a12d
-RDX: 000000000000001c RSI: 0000200000000140 RDI: 0000000000000003
-RBP: 00007f901b701505 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f901b5b62a0 R15: 00007f9019bb7000
- </TASK>
-Modules linked in:
-
-Fixes: ceba1832b1b2 ("calipso: Set the calipso socket label to match the secattr.")
-Reported-by: syzkaller <syzkaller@googlegroups.com>
-Reported-by: John Cheung <john.cs.hey@gmail.com>
-Closes: https://lore.kernel.org/netdev/CAP=Rh=M1LzunrcQB1fSGauMrJrhL6GGps5cPAKzHJXj6GQV+-g@mail.gmail.com/
-Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
----
- net/netlabel/netlabel_kapi.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index cd9160bbc919..6ea16138582c 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -1165,6 +1165,9 @@ int netlbl_conn_setattr(struct sock *sk,
- 		break;
- #if IS_ENABLED(CONFIG_IPV6)
- 	case AF_INET6:
-+		if (sk->sk_family != AF_INET6)
-+			return -EAFNOSUPPORT;
-+
- 		addr6 = (struct sockaddr_in6 *)addr;
- 		entry = netlbl_domhsh_getentry_af6(secattr->domain,
- 						   &addr6->sin6_addr);
--- 
-2.49.0
-
+--
+paul-moore.com
