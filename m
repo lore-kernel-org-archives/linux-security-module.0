@@ -1,117 +1,192 @@
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8B8272E78
-	for <linux-security-module@vger.kernel.org>; Thu, 22 May 2025 22:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F4426C38F
+	for <linux-security-module@vger.kernel.org>; Thu, 22 May 2025 22:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747952772; cv=none; b=ookyY/coR4YkvK4PL3G0XTiCbbeNIaWZB1ebXVv/0Kjg0YjFeRp8nBjfvOfM6SEvLOhNN8CLuNOv8cUKE5iKQxUxFX/aMCAHVEwkeXpLJlMDcJuFXw0SgzWVkMwrZqeaUsqJ4TqYYi0hhYWsogzGYfj/m5IFMrg7p1cG+C9hfDM=
+	t=1747953068; cv=none; b=U2HMUrKeZdhxSy9bmH/VmQiH5Vrkb/lScxX2pB99AePem2DBbQf+NwgMdQ2iFAvs/zi2JZecIP0wmiwV/H6on3mcAmUpSJIi4pLn/F7KdH4kSDp43Bld5uLSE2dcYdAcCBE8poKdjoZuDqqRLpyHCHFNf5gYwUP503iISS9mRlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747952772; c=relaxed/simple;
-	bh=ERIIFgKxrnPwjSVA6jXYtUfeYroUqJBM9v+L48OiIjw=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=P0+HMMYHOxHi01d/oyjqOdVCwJpj2HHe1RH83pH3L+fDJmv9ttCcV6KnJLWCluJ/drYoL94QkCmvrPRuhp6r5BPs9qMvhTfsnY5Yh0I/CwehFKXDTS2bNzIFXrs4VKAyW2JYmRoMrs7YNM7fDMAlRe5zatstPTe6YPojko3LXhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ToVMF8Pc; arc=none smtp.client-ip=209.85.222.174
+	s=arc-20240116; t=1747953068; c=relaxed/simple;
+	bh=T72RH0PgvGIje1HvylCqUGnYwWsbcjnsuq0TOzvURC0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Toda9y7XZKc3sys4k0cL2V+mjN6ZHHnRaxFIUEBQmIgDQH+fY9P8P4FnGNIMhzRguS9q218l2Eeho7ldStg7O+yrJov/TX7xogQ/j6kHL7KCVGLZPcDfGOoqEEPpuR9Wvo7YhQwcslqSz9DkjvsBkcIuaGy9BKuH1DqksK8Ra60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=A20egL9e; arc=none smtp.client-ip=209.85.128.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ToVMF8Pc"
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7c542ffec37so948107185a.2
-        for <linux-security-module@vger.kernel.org>; Thu, 22 May 2025 15:26:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="A20egL9e"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-70c7b8794faso85378327b3.1
+        for <linux-security-module@vger.kernel.org>; Thu, 22 May 2025 15:31:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1747952768; x=1748557568; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yW4BwrWRPMGZw+m/ri6EFRKCjP4k+SeXSk6ZWrWvJiA=;
-        b=ToVMF8PcVy37DRcyydOqAzRtU8MIfxnsQYcyTujtaPP+6rNuh10GiSxHl8BpEOL7Vl
-         xP549yj/DsBJfMi3qCROE0CjVVteyRyHylhdLw04oGcxRiQntTqkGaj0qxDt91en7Yaf
-         k+SmxoaFBB+G/5sErCk+bkQleUrTH6XQJe2p+LIipbvb4fbPmu1wnSD2q+VMoi0xxJsW
-         gaMrvrcaiHSnHiky9rJUvXODz2114Xg3/bkQmKiZIEtphocJflv5aC1cQ1XzMR2q+5M1
-         e5C3pB8Uc+2bJywG7HLAABdlrHUZ45rP3ykqZkmL5ezlodK/YayNjCLBFI5pn3kcMbPH
-         Giow==
+        d=paul-moore.com; s=google; t=1747953066; x=1748557866; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OgZvmGZtv0rsbC365JhSq58tSkXcAtCiGXIOyj1Wj+k=;
+        b=A20egL9evsOyvRnLNNmEMQD542nDr5Bh2uSqqc1iw9r65vPxFIaQ0WMROBg48j6fIT
+         A4gyP5+bFOakfeP5+s9WY+GybG6siedeEt26S6brX43ODUCA4//n20QzD8u3fBkheT/+
+         BcAl+PuKIIe69+SFfJHADrjgCkJrHBQBDUe5wkvzXxIzAqVydqPPKV8wyQXKJBTo5kE8
+         5X4bFDGqkPxPS//nh6Y7zlFB4wjM0aIvI9mjkQ2AQAdQmta4pHM2PlXvXX/5avKDWFQT
+         yXY/KJc3MowdiS5ftu6xH8l7t8VbeshAKNHf2FmSTYX+enKL2Bg9RMOOJf1py6RkigIH
+         jUrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747952768; x=1748557568;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yW4BwrWRPMGZw+m/ri6EFRKCjP4k+SeXSk6ZWrWvJiA=;
-        b=FuwmV3mefAv3rh/8llOR44SjwjDiPgKMs7g3afuiESHcSTloN9EUvg71LYN7YcnUsd
-         jhjjvdqXNIypV723TXZXbzYsXwZ3UdWHlzskeSTC0UMpVjzNBLOfBk4MrWO8d/YQ/r58
-         cGANigHSfbEpWwYCHBewiRgKp5jSwHUlbB0zCMNEF2YMHx/gyMAbQ21ZEHE26Iu1ATKo
-         NuXddYtC+YgouozlftAaOg2HPcP9I/4I2ky67rAteGRfMzImg3LrHaM3meFRGvEWkqMM
-         DbG6vuGD4FGcv1dF+7QK0bOBbuhyxJPiQUc8xdvZqxV1trVXB+YGsuSBd/o26N+8DNZN
-         HRJA==
-X-Forwarded-Encrypted: i=1; AJvYcCV27dCls7+uXUmWfcpBl5cEFBu7ljbffvRptVAMLPmIh0Vw3Wa+Ey58t0wkSbSrVw11SsUetnQMpY6aeu8qGE+zGhMi8mE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMoK3+exddGeRaqc/oYJHmUYJPS15e62qHN2wt8tuBM7/54uHl
-	hl9b8jRGCMr6jnQYCexqPMWRKeQILzqutksrucBn/n++nReyAus0QzZ7P6Eu+qeK5Q==
-X-Gm-Gg: ASbGncvddauwnDdOj3NS0OeKsdQKABmHtG8TuqkmIvEkR5P1ripkRyGzNr7WhFhi4Xa
-	3xr0iumD9flJpLMRZhHSR+mwphu1ZKID/NcsphXsrWugrj0ev0Gv4HaRnU+ci2I/j7NBP6G8000
-	rrIs/mLr1SPuA7Xmz7ymgPkZVvZkBt9O6eQr5Mu9tUv1a78++8MQYfC3hAqxd+gA81jP7Sx5Cir
-	m9xGgeFnkobkAomo8IzmKEYgGQljYxSZyhdEs07/uwWHfTPgjpPnUwovsMGzHLEkog87rBcXFpK
-	5nZEm5PwBGM7yu4w2EC/piQ36Elx/TJC86pm67J1G4mK4LSADL+tsvkuCljw1XYIeBsR7/GSZ53
-	QiLUVamHfE9IAlDhYp323
-X-Google-Smtp-Source: AGHT+IHmIlyqjG6e3vdHM+wi0UqPbDaDdVTY/IdBlClNAbyXhci/B2Ul0PB2ozu0sL7+1EWeTaPM2w==
-X-Received: by 2002:a05:620a:408e:b0:7ce:d352:668f with SMTP id af79cd13be357-7ced352670emr1334278485a.47.1747952768087;
-        Thu, 22 May 2025 15:26:08 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7cd468b69dfsm1089029585a.79.2025.05.22.15.26.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 15:26:07 -0700 (PDT)
-Date: Thu, 22 May 2025 18:26:07 -0400
-Message-ID: <8bf36078ef8f3e884a1d3d8415834680@paul-moore.com>
+        d=1e100.net; s=20230601; t=1747953066; x=1748557866;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OgZvmGZtv0rsbC365JhSq58tSkXcAtCiGXIOyj1Wj+k=;
+        b=QpL1iBRHjKO7bByK9OmsPawKBQ7nGxXZ387YyKA97g5kTPuzZpu8gcLydN2+fO2CX0
+         BuOriqOSta2M/OLvIJmVCZbVZq76DGCGg58cApb0R4ZMyw0BVDQ1zyd+3wceRzzhAHDd
+         KSAt6kGHVA8yH2FrwtcDdk4Dx0fgzambLqrSGAbnF4s6Yt1c71uAYXM/QfCehB9Xxwe9
+         QD/yc8hWTKeiewzjmhm1iKb/w0kmFyNhIxSpasTez756KbD/MzhzWcZsQ8K2NOuCS//R
+         FFk56Z7AXfJU5HoqH/IjKkDH+OqDo9xB1tZfyQppiKLLbF0rwIIIhQZ0MCfAh4XCgk0o
+         Exzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWacZdPJV9ax2Y8N8daRn9gMojcyi6rb1G0Ot30kCDpd0PU9g/LV1F0H0KbsjZvo7LpvZ/JoOKcvMLW4PLUTvdFmaCqm4E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZUdalr22hJnEn4BtCirdP5KQCNJ2JkysGW8bLFWULGAjDHgpE
+	kn4GQuPU5BasowLQ5yC65N1Ip3AEqulK0+yHgZMcc5Vv2eRqKdPvy5aqwScS1DQFgpQyenNsn1H
+	LN2mzjKKjgEwHQzavrpPus5GvAUy2PzI+ra1v88Rp
+X-Gm-Gg: ASbGncsTo6eecxcOmgN+1y+dNI496ds5xcVPnSn5DOm8D/NpHFr91fe4o/va+OsLDMn
+	mOeKliWz0VzgUHU9WhHcq8ec2nptIP3h6bFNVFJlAUPWsmiD+MFTaJ/gY00A16CzwzLK1qmO6rY
+	9BCyhSqMMNL+MhpU38kbeIrBL0cb+bqnIz
+X-Google-Smtp-Source: AGHT+IG6vHpp373rSBdjob18uDOgM9GJuMp3uYZE3WNXDPopC5CndYL6r+hAZB+No1NmpD9Wf5yuOG3uiJaa1p5XW5w=
+X-Received: by 2002:a05:690c:6183:b0:70e:18c0:dab6 with SMTP id
+ 00721157ae682-70e18c0dd3bmr15621387b3.23.1747953066054; Thu, 22 May 2025
+ 15:31:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250522_1740/pstg-lib:20250522_1730/pstg-pwork:20250522_1740
+MIME-Version: 1.0
+References: <20250522221858.91240-1-kuniyu@amazon.com>
+In-Reply-To: <20250522221858.91240-1-kuniyu@amazon.com>
 From: Paul Moore <paul@paul-moore.com>
-To: Andrey Albershteyn <aalbersh@redhat.com>, Richard Henderson <richard.henderson@linaro.org>, 
-	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Amir Goldstein <amir73il@gmail.com>
-Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, selinux@vger.kernel.org, ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v5 3/7] selinux: implement inode_file_[g|s]etattr hooks
-References: <20250513-xattrat-syscall-v5-3-22bb9c6c767f@kernel.org>
-In-Reply-To: <20250513-xattrat-syscall-v5-3-22bb9c6c767f@kernel.org>
+Date: Thu, 22 May 2025 18:30:55 -0400
+X-Gm-Features: AX0GCFv4uA9yw9lBOgE02-IL0rQvlgXxQBJbo-kWwsqHOXUwQCORZR62Y0FNRrQ
+Message-ID: <CAHC9VhTM14E7Mz_ToVEqpW0CQr0KEfpwZOnSzTSYdMxX55k4yQ@mail.gmail.com>
+Subject: Re: [PATCH v1 net] calipso: Don't call calipso functions for AF_INET sk.
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Huw Davies <huw@codeweavers.com>, Kuniyuki Iwashima <kuni1840@gmail.com>, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, syzkaller <syzkaller@googlegroups.com>, 
+	John Cheung <john.cs.hey@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On May 13, 2025 Andrey Albershteyn <aalbersh@redhat.com> wrote:
-> 
-> These hooks are called on inode extended attribute retrieval/change.
-> 
-> Cc: selinux@vger.kernel.org
-> Cc: Paul Moore <paul@paul-moore.com>
-> 
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+On Thu, May 22, 2025 at 6:19=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon.co=
+m> wrote:
+>
+> syzkaller reported a null-ptr-deref in txopt_get(). [0]
+>
+> The offset 0x70 was of struct ipv6_txoptions in struct ipv6_pinfo,
+> so struct ipv6_pinfo was NULL there.
+>
+> However, this never happens for IPv6 sockets as inet_sk(sk)->pinet6
+> is always set in inet6_create(), meaning the socket was not IPv6 one.
+>
+> The root cause is missing validation in netlbl_conn_setattr().
+>
+> netlbl_conn_setattr() switches branches based on struct
+> sockaddr.sa_family, which is passed from userspace.  However,
+> netlbl_conn_setattr() does not check if the address family matches
+> the socket.
+>
+> The syzkaller must have called connect() for an IPv6 address on
+> an IPv4 socket.
+>
+> We have a proper validation in tcp_v[46]_connect(), but
+> security_socket_connect() is called in the earlier stage.
+>
+> Let's copy the validation to netlbl_conn_setattr().
+>
+> [0]:
+> Oops: general protection fault, probably for non-canonical address 0xdfff=
+fc000000000e: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> KASAN: null-ptr-deref in range [0x0000000000000070-0x0000000000000077]
+> CPU: 2 UID: 0 PID: 12928 Comm: syz.9.1677 Not tainted 6.12.0 #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/0=
+1/2014
+> RIP: 0010:txopt_get include/net/ipv6.h:390 [inline]
+> RIP: 0010:
+> Code: 02 00 00 49 8b ac 24 f8 02 00 00 e8 84 69 2a fd e8 ff 00 16 fd 48 8=
+d 7d 70 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f=
+ 85 53 02 00 00 48 8b 6d 70 48 85 ed 0f 84 ab 01 00
+> RSP: 0018:ffff88811b8afc48 EFLAGS: 00010212
+> RAX: dffffc0000000000 RBX: 1ffff11023715f8a RCX: ffffffff841ab00c
+> RDX: 000000000000000e RSI: ffffc90007d9e000 RDI: 0000000000000070
+> RBP: 0000000000000000 R08: ffffed1023715f9d R09: ffffed1023715f9e
+> R10: ffffed1023715f9d R11: 0000000000000003 R12: ffff888123075f00
+> R13: ffff88810245bd80 R14: ffff888113646780 R15: ffff888100578a80
+> FS:  00007f9019bd7640(0000) GS:ffff8882d2d00000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f901b927bac CR3: 0000000104788003 CR4: 0000000000770ef0
+> PKRU: 80000000
+> Call Trace:
+>  <TASK>
+>  calipso_sock_setattr+0x56/0x80 net/netlabel/netlabel_calipso.c:557
+>  netlbl_conn_setattr+0x10c/0x280 net/netlabel/netlabel_kapi.c:1177
+>  selinux_netlbl_socket_connect_helper+0xd3/0x1b0 security/selinux/netlabe=
+l.c:569
+>  selinux_netlbl_socket_connect_locked security/selinux/netlabel.c:597 [in=
+line]
+>  selinux_netlbl_socket_connect+0xb6/0x100 security/selinux/netlabel.c:615
+>  selinux_socket_connect+0x5f/0x80 security/selinux/hooks.c:4931
+>  security_socket_connect+0x50/0xa0 security/security.c:4598
+>  __sys_connect_file+0xa4/0x190 net/socket.c:2067
+>  __sys_connect+0x12c/0x170 net/socket.c:2088
+>  __do_sys_connect net/socket.c:2098 [inline]
+>  __se_sys_connect net/socket.c:2095 [inline]
+>  __x64_sys_connect+0x73/0xb0 net/socket.c:2095
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xaa/0x1b0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f901b61a12d
+> Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f9019bd6fa8 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
+> RAX: ffffffffffffffda RBX: 00007f901b925fa0 RCX: 00007f901b61a12d
+> RDX: 000000000000001c RSI: 0000200000000140 RDI: 0000000000000003
+> RBP: 00007f901b701505 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007f901b5b62a0 R15: 00007f9019bb7000
+>  </TASK>
+> Modules linked in:
+>
+> Fixes: ceba1832b1b2 ("calipso: Set the calipso socket label to match the =
+secattr.")
+> Reported-by: syzkaller <syzkaller@googlegroups.com>
+> Reported-by: John Cheung <john.cs.hey@gmail.com>
+> Closes: https://lore.kernel.org/netdev/CAP=3DRh=3DM1LzunrcQB1fSGauMrJrhL6=
+GGps5cPAKzHJXj6GQV+-g@mail.gmail.com/
+> Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 > ---
->  security/selinux/hooks.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  net/netlabel/netlabel_kapi.c | 3 +++
+>  1 file changed, 3 insertions(+)
+
+Looks good to me, thanks for tracking this down and fixing it :)
 
 Acked-by: Paul Moore <paul@paul-moore.com>
 
---
+> diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+> index cd9160bbc919..6ea16138582c 100644
+> --- a/net/netlabel/netlabel_kapi.c
+> +++ b/net/netlabel/netlabel_kapi.c
+> @@ -1165,6 +1165,9 @@ int netlbl_conn_setattr(struct sock *sk,
+>                 break;
+>  #if IS_ENABLED(CONFIG_IPV6)
+>         case AF_INET6:
+> +               if (sk->sk_family !=3D AF_INET6)
+> +                       return -EAFNOSUPPORT;
+> +
+>                 addr6 =3D (struct sockaddr_in6 *)addr;
+>                 entry =3D netlbl_domhsh_getentry_af6(secattr->domain,
+>                                                    &addr6->sin6_addr);
+> --
+> 2.49.0
+
+--=20
 paul-moore.com
