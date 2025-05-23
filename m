@@ -1,118 +1,112 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D015221D87;
-	Fri, 23 May 2025 11:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C20295D8B
+	for <linux-security-module@vger.kernel.org>; Fri, 23 May 2025 14:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748000318; cv=none; b=X8AgxuNtFtyF2OlH0KV8sE0cGtgc8yf6D7EfYrB7EfCG54gBFlPniPvMhZ24zcfmzHfwXm0DwZeDzqNSaY7bpwDD3S7/V2Hf4I3KmfwVY6GANlXa8xPpZZDPlkt+Qv780/Fiu5lPiwqEm6Geufcbz6SNpHOGea4YyI0ptxHJfEY=
+	t=1748010911; cv=none; b=Wmf3F0JbLj6DAOL+BQ2EmA435VjBo3dknV/rGCUBRaMXHcIBdct+ZFvJby3pR74vJjmSC7D5/eRsavJ0+f7N+NkA0P/k+G5clLqVvSuP3Tzi1jNUfjhIgEwW3suNjKZRDI0nnC7jjcJF1il97H5p2siEuFTiLOdyV4sjQkvll5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748000318; c=relaxed/simple;
-	bh=C8l6K1eDGx1IOwbMAVrLHUZ6g+1rGq8hIcwKEz+RO24=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cTky9oAYj3P6DmO/Y6wGrg6S+mPoj61vbQb/wrGIKtgJJgysaCSwXkKh6yCScK/smtTxovnxbEma5qh7v+u9FK7HzDEDDDlWrF09gJ/9k7T1Nz1afHXIcPmAKTVjBSQAYWkvZH6y+0z+BODSLIGHnsuyYssg4e8MX6SSUSFZO8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draigBrady.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Okuq+63N; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draigBrady.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1748010911; c=relaxed/simple;
+	bh=rpziN1/05Zj11wUE9u4BbCxVKKTZOSPJiBdxOoe4oCQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uJmQ3TZitDTPbj9dNz5mFrysnJ1kC3VsdoHINnoXHWnZuvi2pKDk0T0DOx/G2cOdlaFfciJKUueJ3KhmGMq2kmWi1qCxeksMEUr96Zf9rWKLelLOnELzbKKKORKW6uJjJAk3UNSlQAjd09Pk7h+K3OU5pTGly3lj7jqbCkwbw/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b84De/zP; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Okuq+63N"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a36efcadb8so4839751f8f.0;
-        Fri, 23 May 2025 04:38:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b84De/zP"
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-231e76f6eafso66656405ad.0
+        for <linux-security-module@vger.kernel.org>; Fri, 23 May 2025 07:35:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748000314; x=1748605114; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nV44RYFzgQCSPTYPIbcTRtzMraX+Xrj0AC4YMAinlic=;
-        b=Okuq+63No6WnIwAyL2N9sRYPac1l0Pr3rNK3obDozHIJJdP12IePPtXPJAPYuMAr5x
-         Co6Acx9Qz//yK+TUbvd15B/aKPCWFw2KTds8eV1KMACVx5BWGxT4A8n++Rwa+Iz7k5r+
-         yqUNJKNlEZOKbrnwYH44wbc1fZjKxsBWbzONYAORtJlCyJ6IWN7m10duE1P9lDLKaKRz
-         DLfwgtvcMOugGrlxVsZdPdb+06UA7Ns8rg2iPzOnYuEK1X7/vbAUxxBGPJ4Cc9pHrSIW
-         nADLEMWGnUoAwyiN3oPsnIpVALua7dxa9rVt5j6vOJxA7tiPrJ5/Z/KNBjG5X5NDNOuH
-         BsAQ==
+        d=google.com; s=20230601; t=1748010909; x=1748615709; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OHIXFovAEYPRF7pj3DkvXM+Wh6ry7OAZQdb2dc5cgKo=;
+        b=b84De/zPy6OG7FPMct1S/l0RArSEw077OwRFF8QI1wCXcsIr22NtiTb84AWT63UXbP
+         RfM3rq17cVcnzqgWKhmBoF+fXJTWsZbY4F/p8C/xjl0ettvBg6kn/kgB9W5QVh2Yvi2Y
+         4Mf+ZzIJd2th0q3njefRUC3Dj3tZTzrFD0do/0h28Lgx9fGfwnW5b8SZ6IMBZurC3HOM
+         p9dzZj/9SpMFYBFzYmh/PlOz/oMQz0ZLLY3NlRWunqFyPr8lpy6o1b4lIbxcOhb2xIKd
+         BdsWUWUpRel+re7QfPTc+rW7RtdZgHK2xYATjZ0VzkEICtxIe8tLX8GxMjEOKKkXoQ6O
+         +4jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748000314; x=1748605114;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nV44RYFzgQCSPTYPIbcTRtzMraX+Xrj0AC4YMAinlic=;
-        b=fdrW5wDzPXTH3jduaM9aSWngNX7FWiqTTzsIlCq7QLRLyCOb+dEtU14Ac8pu9T+VRZ
-         0ktF5r59lwUD/I1PZHcOosWVrdXzgR/N2aksKEpoof+q67KnmaAALXQtWuzaMXyl56ro
-         9T7LSqCwmfX2Xb9f8X4ETaBF/TPw1+AF2+yJl7igCIp2G+BNijdK7xHlYNmp5tBeFlpg
-         0P4MrCasJavpeG8yiKrQGODD9wFoI8OKjiX+ZEFw23RCI7TSgl+CDTkLyuZT8z0sThmT
-         aBdZCsw6FrJlNzik88Cd3Ji3JxJJmpUBDv/xI5edrK0K87xZzCjH6MA477BeNu8N45Pj
-         Oy+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXYSe9mBMdDYP9V3sxRgE5IKV8hoSp7XpweXCtGyrrdPToJQdgHBwybaysrU9Ce5mHgeSNMAdjVfUuXkOQyxuHJxtOB7Go=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywnr1Bi4JQWKIK1s+hV1JlZItbhM27E0QEu1SbC1VUah2frTBwv
-	6bJnSb7sfjFYwzKsPE6C53hicyz9XzIIHNXflsnInkVkHQJadmPYHwKJd7WXTA==
-X-Gm-Gg: ASbGnctfSGX9zbsv6QksoIzaF9FHjZXvuX2QW1TAETTGjTgQHJw0lcTKPsnu4Dlfn4D
-	TBaTiF8i2gzU4GUUWsrr2BjB231v47BozVAw7DW9z/oU0D4qiHn7m8VwnTdE/jgw3SUZViy3ULV
-	C+y3mhpJcHuKhd1zKMSCeigdfVrIClDWVIZBeoRRM6pPDh5dOzzMqo2U6WS2e1aCEj2gm7gAK/C
-	ShQUm62w1GiVmDQfchegcn/RzCzU3GTw6MMtaX9ncj5ctpxpvCp9s01g6vZAbJs2eimnKheY7rH
-	6E3Ekq44TmOYXMsEKtLpxu0lxOcF0UQpZ7Ppp9iQEMNSGdfrNOiIlccd9MxrYwOUnIpvN9mOWBW
-	OegrrKkOkLWjsZbJfRdE9mdwOZQfR29AveDKKZIDmGw==
-X-Google-Smtp-Source: AGHT+IGSymWAI4/j9vDmQlzt/sPc9Dh/0VDwaExNYUv64bsna5U4XuMSwwnbvHdZIplpAKkpEPMSXw==
-X-Received: by 2002:a05:6000:400f:b0:39f:175b:a68d with SMTP id ffacd0b85a97d-3a35c808b3dmr26578121f8f.11.1748000314259;
-        Fri, 23 May 2025 04:38:34 -0700 (PDT)
-Received: from [192.168.1.31] (86-44-211-146-dynamic.agg2.lod.rsl-rtd.eircom.net. [86.44.211.146])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a4c002e937sm3816448f8f.29.2025.05.23.04.38.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 May 2025 04:38:33 -0700 (PDT)
-Sender: =?UTF-8?Q?P=C3=A1draig_Brady?= <pixelbeat@gmail.com>
-Message-ID: <c0a1f475-b973-40a8-a7cc-6947791af38a@draigBrady.com>
-Date: Fri, 23 May 2025 12:38:32 +0100
+        d=1e100.net; s=20230601; t=1748010909; x=1748615709;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OHIXFovAEYPRF7pj3DkvXM+Wh6ry7OAZQdb2dc5cgKo=;
+        b=uLWY39EaUDRSbkXpCQmAaEiTCpB0fr1Ib6K42nHPqcqaA4fHy2fisE3h2LUUAXN4Sw
+         5/uGlVDKikt9dSbwtg8aIEs9Af9A+WQl+10K0ANKAVtXKW8IgNh/wSa3MqUT5HlSLO5t
+         aasgjS9yfiaCAQ7R5pfNYfUXD1LoQvzUClUm8hSEE2MKmuVfeGwHXh4CU7ennaqsFK+d
+         J8+wRCrkn6gBNqKuZqIcKiQdS1WXPNV11/50QE4dNV5uVyPf1oNQoX80arjppOUjg6rY
+         qJVnRZGm4AIEAtuMOhWO/VBUr4whxhScDNhirhSBDmZrIRSuPOXY5EC1ublA2AXOJ0lS
+         Of0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXRqp8+sT0Lp7cRS0G2qd5v47alTFYY1JBp4NP6SHgjknERAw4h6++GDaRZ0lGegNm/lyN6ukPaF0g5JLuCbqO+sPObDfs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJMegT18gpMfp+FueD1UX9itPFJx8ohC54hb7bn7hwx1xdKRu1
+	MjsO8fQMiQJ2lthF91n0DN+GKsF9LNuKN8wuxnsP4UFi7YfF13pUR7LffVqjqNcE5EAo3MvbKE4
+	L4v+l8Q==
+X-Google-Smtp-Source: AGHT+IFz7sb0nLy8RLNRfKCeKqRGA0z4OYWQ9Q5+lv5cIKJ3DXiQQbAp7L//6YajGR6GltgQpVeH/+sDQGY=
+X-Received: from plka13.prod.google.com ([2002:a17:903:f8d:b0:231:def0:d268])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:41c7:b0:224:1221:1ab4
+ with SMTP id d9443c01a7336-231de317b43mr439457305ad.22.1748010908457; Fri, 23
+ May 2025 07:35:08 -0700 (PDT)
+Date: Fri, 23 May 2025 07:35:03 -0700
+In-Reply-To: <20250523043935.2009972-4-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: bug#77597: listxattr() should return ENOTSUP for sysfs / tmpfs
- entries, not 0
-From: =?UTF-8?Q?P=C3=A1draig_Brady?= <P@draigBrady.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-security-module@vger.kernel.org
-Cc: 77597@debbugs.gnu.org, Paul Eggert <eggert@CS.UCLA.EDU>,
- Rahul Sandhu <nvraxn@gmail.com>
-References: <D8Z6FP3UZG2G.I8H42ZV6DM08@gmail.com>
- <41067aa3-0e72-456f-b3f2-7bd713242457@cs.ucla.edu>
- <c7d16a13-79c9-4e81-996a-0f32bcff79cc@draigBrady.com>
- <2e24f40d-b475-4199-b53b-e4c266d0d314@cs.ucla.edu>
- <60b2252d-9295-4d03-921e-a596444da960@draigBrady.com>
- <64b14829-381d-4295-8878-f6b06906ef3c@draigBrady.com>
-Content-Language: en-US
-In-Reply-To: <64b14829-381d-4295-8878-f6b06906ef3c@draigBrady.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250523043251.it.550-kees@kernel.org> <20250523043935.2009972-4-kees@kernel.org>
+Message-ID: <aDCHl0RBMgNzGu6j@google.com>
+Subject: Re: [PATCH v2 04/14] x86: Handle KCOV __init vs inline mismatches
+From: Sean Christopherson <seanjc@google.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+	Hans de Goede <hdegoede@redhat.com>, 
+	"Ilpo =?utf-8?B?SsOkcnZpbmVu?=" <ilpo.jarvinen@linux.intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	Mike Rapoport <rppt@kernel.org>, Michal Wilczynski <michal.wilczynski@intel.com>, 
+	Juergen Gross <jgross@suse.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Roger Pau Monne <roger.pau@citrix.com>, 
+	David Woodhouse <dwmw@amazon.co.uk>, Usama Arif <usama.arif@bytedance.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>, 
+	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, 
+	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-mm@kvack.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+	Marco Elver <elver@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	sparclinux@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="us-ascii"
 
-On 23/04/2025 13:22, Pádraig Brady wrote:
-> Older coreutils was less efficient and always called getxattr("security.selinux"),
-> and thus shows the SELinux context as expected:
-> 
->     $ coreutils-9.3/src/ls -lZd /run/initramfs
->     drwxr-xr-x. 3 root root system_u:object_r:tmpfs_t:s0 60 Apr 19 14:52 /run/initramfs
->     $ coreutils-9.3/src/ls -lZd /sys/block
->     drwxr-xr-x. 2 root root system_u:object_r:sysfs_t:s0 0 Apr 23 12:54 /sys/block
-> 
-> However newer coreutils is more efficient, and does not call getxattr()
-> if listxattr() returns 0 indicating that there are no xattrs.
-> 
->     $ coreutils-9.7/src/ls -lZd /run/initramfs
->     drwxr-xr-x 3 root root ? 60 Apr 19 14:52 /run/initramfs
->     $ coreutils-9.7/src/ls -lZd /sys/block
->     drwxr-xr-x 2 root root ? 0 Apr 23 12:54 /sys/block
-> 
-> I also noticed the same issue with the exa utility for example.
-> For coreutils to maintain efficient processing and to fix the issue centrally,
-> it would be more correct for listxattr() to return ENOTSUP,
-> in which case ls will try the getxattr() call and operate as expected.
-> Otherwise I can't see a way for coreutils to be both efficient and always correct.
-> 
-> I'm currently testing on kernel 6.14.2-300.fc42.x86_64
+On Thu, May 22, 2025, Kees Cook wrote:
+> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> index 921c1c783bc1..72f13d643fca 100644
+> --- a/arch/x86/kernel/kvm.c
+> +++ b/arch/x86/kernel/kvm.c
+> @@ -420,7 +420,7 @@ static u64 kvm_steal_clock(int cpu)
+>  	return steal;
+>  }
+>  
+> -static inline void __set_percpu_decrypted(void *ptr, unsigned long size)
+> +static __always_inline void __set_percpu_decrypted(void *ptr, unsigned long size)
 
-FYI this should be addressed with:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8b0ba61d
+I'd rather drop the "inline" and explicitly mark this "__init".  There's value
+in documenting and enforcing that memory is marked decrypted/shared only during
+boot.
 
-cheers,
-Pádraig
+>  {
+>  	early_set_memory_decrypted((unsigned long) ptr, size);
+>  }
