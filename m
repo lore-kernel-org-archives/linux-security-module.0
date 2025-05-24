@@ -1,56 +1,56 @@
 Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025D02DCBF7
-	for <linux-security-module@vger.kernel.org>; Sat, 24 May 2025 17:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9676190678
+	for <linux-security-module@vger.kernel.org>; Sat, 24 May 2025 17:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748109426; cv=none; b=rPo1WS+Bll9AeCNcMtV1Mv5GXPWdojye80nFEgQs2NMzSbsm6CzmzE0kSxzkQvwMRrpxDAiZR/WNNe5fJVQaNs6S7GiBl++LOqrklDck2FLSRo30kGTYnhvlkZlJV6oVlfLx6sZzAbeqdTUaxMP/vI1sL9r7VQKXwBm/poZqtYE=
+	t=1748109427; cv=none; b=E+ZhQh1wLf9BEaccZd9E3v8LmaKJwgAZcqDxDnOkYzFIawnnQzUCuwmKwcqofrbF3HGXNifnGkn34hh+/e93ckImwS3iMW8nIp6BwEIfYstZcMgGBXyYbFmJzqjHxzUY+NNXgOz/TibHOHyvQo7gpNHkey4mozDIbJ1EhkjwHSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748109426; c=relaxed/simple;
-	bh=SY0+lWnkrLq5Dv040RZqXWCTsYFOK3lt9T4UWXihWe8=;
+	s=arc-20240116; t=1748109427; c=relaxed/simple;
+	bh=aijsr9W5gX6Rw90BG4K0F5fZdH5yroURqb90ZNGnt6k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pPJN2ok+3dvQnp8fSRVBOpJX9DK4I6BiH3edttsZf06b4NWXeRkCFAVhcKEmk80wwNJFL+6TU2So32NWDYOJFpP+yW7PHaeYzLslKYPELRy1gbxjcU80XkxDJLpxRqn89VLwGe9mtpxycGxRgmjXpvx7arrYDWgfdNiL3+02Fmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=PTZkliHc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=s/E6X0Dm; arc=none smtp.client-ip=202.12.124.146
+	 MIME-Version; b=SWgUPupRY3I0i4J+zTWu4czFnxsM9Dy5E/gNPtBxgYr9SVJ4LFVJrX1OiQIkuBsQmeKFypbIG5tG2HLfci+ToIf8bt+hrFuW6crd8m2olhJLExRe/1ly5aMP+5pGB6G/tnIVPlhDsHYFaTIORmBabEqeUfD+cg1prdVjs0aKrd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=pZwFn9VD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VYIYbf/h; arc=none smtp.client-ip=202.12.124.146
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="PTZkliHc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="s/E6X0Dm"
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.stl.internal (Postfix) with ESMTP id 514FE11400AE;
-	Sat, 24 May 2025 13:57:03 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="pZwFn9VD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VYIYbf/h"
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfout.stl.internal (Postfix) with ESMTP id 9EABE11400CE;
+	Sat, 24 May 2025 13:57:04 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Sat, 24 May 2025 13:57:03 -0400
+  by phl-compute-02.internal (MEProxy); Sat, 24 May 2025 13:57:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1748109423; x=
-	1748195823; bh=ML07XdKY+aLB/2QMS8MBj+hL+mnPvmSVHIUU4TK+J8s=; b=P
-	TZkliHcWVST2xVQE1xD75BcUJ5OW18AobNgdMTuuoMxDVomuDQ2nzw+Y7CupqXQO
-	w4fHymPaEDXJdillXqC2urOQyoFkTjBVVDcK6ioKyUlK0m90DlaMJzDNoGnq5PN3
-	JxCB54f3B3a1JJEX8MhD8djWHaqaxmiGwsdYDysCo+h7hrtVbjHfSSXmtfihixwh
-	b1KNgJN2AZpKUUaQ55xe7aj+TGt9/PRr9jL+Nidg3v9zFV794Zu5hTkZhToVrtt5
-	HVGYrlT3o2MagH2ft43bNNFD6PEpMAgf6RxvVYeVR5eLAG9M8mSULqKRz7PMEsSg
-	z3bv6DLvoDBWGV6HPqD2Q==
+	:reply-to:subject:subject:to:to; s=fm3; t=1748109424; x=
+	1748195824; bh=mvsZ8cMQZbsS5l6Q/dUv1LNUbssrof8xuWzZTyoFI0E=; b=p
+	ZwFn9VD075cmEKM2JQXwM8MKK6sSMcA87OQo+kxtdm3HHzt9HXCEmbqUo+aojvkw
+	2OccqGUOyj0HaGpI6gn+PiPFj8GosJBGQlyHPefv0kdBeJXoj25gStvZgyNHEYVM
+	F0Aovvr4D6OZkrnsuNvS/UzqBbiCBwZDO/gEfsbQSe7y2NUiYCFoTLfpNmbkifj3
+	I7fFwX/cv3xft+OB/vwhi7AIwhGBO+0PI+EE62TIk9XV1WybZRqYlZUCq0QQEf/5
+	WdIOIf/mmJB5ID6pxukVUmBEaRr3X2IFFk8Zz43ldOOm2DUkp/asyd9RpK+7jEwF
+	E2pFRG1C75BF4JHESUt0w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1748109423; x=1748195823; bh=M
-	L07XdKY+aLB/2QMS8MBj+hL+mnPvmSVHIUU4TK+J8s=; b=s/E6X0Dm/9q3AUtqr
-	dCETltm8hjc+jzAGl2qNLhhybJNp96RmdmiCSulSVD4zde0wXbDs2ILbEJG+/Vyh
-	oYDYlzoqu7QL/PqonGlEE9fDkAZvgdlr7SXgZOs/hTxRSgcnFmgn18X7uURhCr2J
-	iJsQ8DdH2YGJHMjws3Nf/6VBBIOWI8NbCsjzhp5Dy76etbv0uTK3d9YzKPOTYuWy
-	irHNyA/J/e90T5SLS7cgxA9rhHDDQVHKl8NBdpefwFp0m4iPXJcNPVVY+cgPf4gK
-	2xm5aZQgz0q4Wc/qtdinN5UDUuz0YsVmOSXV7mzBMP9zvc1+AjEhOf3J4Aafzi++
-	YKVew==
-X-ME-Sender: <xms:bggyaA-YTrUbIEQL4SIGh1EWZN_RVN3HRt0Fjd2_kRXP4hJBNufJGw>
-    <xme:bggyaItU3kZeaBWlqyeiNe9qE5VrGi-oF2oI5Nu0wiUUtmSVvDv6KkyE0aXRycMP-
-    K1WkIaEger7RM2T7HQ>
-X-ME-Received: <xmr:bggyaGA5I15iBN52I2z_kaed2KlOOhj-vxdeCxSBoSd4ncB46Ge1ykK66-Las_ASmB38ZncMaPkZ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdduvdefjeculddtuddrgeefvddrtd
+	:x-me-sender:x-sasl-enc; s=fm3; t=1748109424; x=1748195824; bh=m
+	vsZ8cMQZbsS5l6Q/dUv1LNUbssrof8xuWzZTyoFI0E=; b=VYIYbf/hDj9cQMYMP
+	njXtyg3JyrNo0Y3SPkVdViSF7uafkoVDwsRBo/pRUdUw9sRq6EhnlA6YW4JE5ZOr
+	ASOPJScDL58Xu9AftKEXQ5sTSa9NRjvgp8E32JcOOhN5+N0DHH5sNUUrGW6+EmLs
+	AmlXlzdceLwMnUTEtAnrNYHShaDHUjdsGPF0PbSrFo+fJUpUWBI0mrQKju5ns2M5
+	ucN8AWOX2pesI7gZERwiQrqwtdBqTgXbUg9QbOhDjNDmZpcwduijvrvkNGuxku0T
+	WBFooL4WrcEsqESgbTzFug6hPs14WMZsEkJuIk7iWTCU1eTn7gOgcKyIajYyWlTa
+	EP7fQ==
+X-ME-Sender: <xms:cAgyaO-W-Oj33Xb2Se0kiecD9ZLmyDDA4bpcyDQnYwX0xWq7BpyGpg>
+    <xme:cAgyaOsZvTeA9FVIXdz5XuXowQRyJ_T6jhAiSFZ6y-3-npWe44heXOBd2tG69SrlK
+    exJw5ukHKRSifwqX-8>
+X-ME-Received: <xmr:cAgyaECD0Ub2P15UGA38k5R1qvO5o01Wq_aBvsdg2ZzI0dW5v78eHE-Cnnl_V0MB8SWAQm_N3qy8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdduvdefkeculddtuddrgeefvddrtd
     dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
     fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
     dtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffo
@@ -62,22 +62,22 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdduvdefjeculddtuddrge
     hkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgt
     phhtthhopehmsehmrghofihtmhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvggtuh
     hrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:bggyaAca7yN3d7kH0IXye429gvGw_MbA2GY3U2p84WaKHt0-3zNNDA>
-    <xmx:bggyaFMj6GrCF8M5l_vG9I1XIvjoebQ9XVFsrjEAJhAt9EaU_cWj5w>
-    <xmx:bggyaKk4_h-arTAhg2g3Y3lHCA0n8KGyYaBOVXGKYzLXByJEcsTvKQ>
-    <xmx:bggyaHuHj0LfNE-7G0HJKekvOF1nCv3j24NjuXqjrJHvKlf24vBNJg>
-    <xmx:bwgyaFMD_IghwfzhiHFdS1-SAIqCEp5hNJ_Mtc2jUZtaA8g55qL5fQ_7>
+X-ME-Proxy: <xmx:cAgyaGfOAycVfqG5GiEmBqkdgNwfTLQ5P2O-TL1Cp-vcJ6-AAYZb-w>
+    <xmx:cAgyaDMwR906sQcKRkiIKFGaC_BmNLHhBoP4FXNIOXla1p8sCxjNIQ>
+    <xmx:cAgyaAn0h1YKwbBiONHjvrRgaVgsyBoWZA2PjJ-76SUW9QmVKOGJfA>
+    <xmx:cAgyaFuPDDZZr-AFjHu8P0WoaL3Wrw4-IyJJtl4QbeI5NLCjbMMq7Q>
+    <xmx:cAgyaDOXnalUKF0PgqhwaOZs1gbNPZjup92NrZe2Z291KLPydvivvcmJ>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 24 May 2025 13:57:01 -0400 (EDT)
+ 24 May 2025 13:57:03 -0400 (EDT)
 From: Tingmao Wang <m@maowtm.org>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
 Cc: Tingmao Wang <m@maowtm.org>,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH 2/3] selftests/landlock: Print a warning about directory permissions
-Date: Sat, 24 May 2025 18:56:33 +0100
-Message-ID: <9f5a3c41c1752e8770998f1e5b3e912b139fc13a.1748108582.git.m@maowtm.org>
+Subject: [PATCH 3/3] selftests/landlock: Clean up TMP_DIR and retry if dir already exists
+Date: Sat, 24 May 2025 18:56:34 +0100
+Message-ID: <e4347a4a1a78071e23d125ded9bd977ad62c4477.1748108582.git.m@maowtm.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1748108582.git.m@maowtm.org>
 References: <cover.1748108582.git.m@maowtm.org>
@@ -89,97 +89,98 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Because we drop capabilities (most importantly, CAP_DAC_OVERRIDE), if a
-user runs the selftests under a Linux source checked out by a non-root
-user, the test will fail even when ran under sudo, and will print a
-"Permission denied" error.  This creates a confusing situation if they
-does not realize that the test drops capabilities, and can mislead users
-to think there's something wrong with the test or landlock.
+This ensures that if for whatever reason FIXTURE_SETUP fails, the next
+test run will handle this gracefully.
 
-This patch produces output that looks like:
-
-  # #  RUN           layout0.ruleset_with_unknown_access ...
-  # # fs_test.c:240:ruleset_with_unknown_access:Expected 0 (0) == mkdir(path, 0700) (-1)
-  # # fs_test.c:244:ruleset_with_unknown_access:Failed to create directory "tmp": Permission denied
-  # # fs_test.c:230:ruleset_with_unknown_access:Hint: fs_tests requires permissions for uid 0 on test directory /home/mao/landlock-selftests/tools/testing/selftests/landlock and files under it (even when running as root).
-  # # fs_test.c:232:ruleset_with_unknown_access:      Try chmod a+rwX -R /home/mao/landlock-selftests/tools/testing/selftests/landlock
-  # # ruleset_with_unknown_access: Test terminated by assertion
-  # #          FAIL  layout0.ruleset_with_unknown_access
+I don't actually 100% like this approach - maybe we should consider
+enhancing the test framework to add a FIXTURE_TEARDOWN_ALWAYS, that will
+run even if FIXTURE_SETUP fails?
 
 Signed-off-by: Tingmao Wang <m@maowtm.org>
 ---
- tools/testing/selftests/landlock/fs_test.c | 35 +++++++++++++++++++---
- 1 file changed, 31 insertions(+), 4 deletions(-)
+ tools/testing/selftests/landlock/fs_test.c | 44 ++++++++++++++++++++--
+ 1 file changed, 41 insertions(+), 3 deletions(-)
 
 diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index e65e6cc80e22..21ed8afcc060 100644
+index 21ed8afcc060..e6891f59803a 100644
 --- a/tools/testing/selftests/landlock/fs_test.c
 +++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -216,14 +216,37 @@ static void mkdir_parents(struct __test_metadata *const _metadata,
- 	free(walker);
+@@ -233,12 +233,41 @@ maybe_warn_about_permission_on_cwd(struct __test_metadata *const _metadata,
+ 	}
  }
  
-+static void
-+maybe_warn_about_permission_on_cwd(struct __test_metadata *const _metadata,
-+				   int err)
++static int try_teardown_layout(struct __test_metadata *const _metadata)
 +{
-+	char abspath_buf[255];
++	struct stat stat_buf;
 +
-+	if (err == EACCES) {
-+		const char *realp = realpath(".", abspath_buf);
-+		if (realp == NULL) {
-+			realp = ".";
-+		}
-+		TH_LOG("Hint: fs_tests requires permissions for uid %u on test directory %s and files under it (even when running as root).",
-+		       getuid(), realp);
-+		TH_LOG("      Try chmod a+rwX -R %s", realp);
++	if (stat(TMP_DIR, &stat_buf) < 0) {
++		return -1;
 +	}
++
++	TH_LOG("Attempting to cleanup layout and retry...");
++
++	if (umount(TMP_DIR)) {
++		if (errno != EINVAL && errno != ENOENT) {
++			TH_LOG("Failed to unmount directory \"%s\": %s",
++			       TMP_DIR, strerror(errno));
++			return -1;
++		}
++	}
++	if (rmdir(TMP_DIR)) {
++		if (errno != ENOENT) {
++			TH_LOG("Failed to remove directory \"%s\": %s", TMP_DIR,
++			       strerror(errno));
++			return -1;
++		}
++	}
++	return 0;
 +}
 +
  static void create_directory(struct __test_metadata *const _metadata,
  			     const char *const path)
  {
++	bool retried = false;
++
++retry:
  	mkdir_parents(_metadata, path);
- 	ASSERT_EQ(0, mkdir(path, 0700))
- 	{
-+		int err = errno;
-+
+-	ASSERT_EQ(0, mkdir(path, 0700))
+-	{
++	if (mkdir(path, 0700)) {
+ 		int err = errno;
+ 
  		TH_LOG("Failed to create directory \"%s\": %s", path,
--		       strerror(errno));
-+		       strerror(err));
+@@ -246,7 +275,14 @@ static void create_directory(struct __test_metadata *const _metadata,
+ 
+ 		if (strcmp(path, TMP_DIR) == 0) {
+ 			maybe_warn_about_permission_on_cwd(_metadata, err);
++			if (!retried && errno == EEXIST &&
++			    !try_teardown_layout(_metadata)) {
++				retried = true;
++				goto retry;
++			}
+ 		}
 +
-+		if (strcmp(path, TMP_DIR) == 0) {
-+			maybe_warn_about_permission_on_cwd(_metadata, err);
-+		}
++		ASSERT_TRUE(false);
  	}
  }
  
-@@ -1985,18 +2008,22 @@ TEST_F_FORK(layout1, relative_chroot_chdir)
- static void copy_file(struct __test_metadata *const _metadata,
- 		      const char *const src_path, const char *const dst_path)
+@@ -320,13 +356,15 @@ static void prepare_layout_opt(struct __test_metadata *const _metadata,
  {
--	int dst_fd, src_fd;
-+	int dst_fd, src_fd, err;
- 	struct stat statbuf;
+ 	disable_caps(_metadata);
+ 	umask(0077);
++
++	/* create_directory may try umounting then rmdir if tmp already mounted */
++	set_cap(_metadata, CAP_SYS_ADMIN);
+ 	create_directory(_metadata, TMP_DIR);
  
- 	dst_fd = open(dst_path, O_WRONLY | O_TRUNC | O_CLOEXEC);
- 	ASSERT_LE(0, dst_fd)
+ 	/*
+ 	 * Do not pollute the rest of the system: creates a private mount point
+ 	 * for tests relying on pivot_root(2) and move_mount(2).
+ 	 */
+-	set_cap(_metadata, CAP_SYS_ADMIN);
+ 	ASSERT_EQ(0, unshare(CLONE_NEWNS | CLONE_NEWCGROUP))
  	{
--		TH_LOG("Failed to open \"%s\": %s", dst_path, strerror(errno));
-+		err = errno;
-+		TH_LOG("Failed to open \"%s\": %s", dst_path, strerror(err));
-+		maybe_warn_about_permission_on_cwd(_metadata, err);
- 	}
- 	src_fd = open(src_path, O_RDONLY | O_CLOEXEC);
- 	ASSERT_LE(0, src_fd)
- 	{
--		TH_LOG("Failed to open \"%s\": %s", src_path, strerror(errno));
-+		err = errno;
-+		TH_LOG("Failed to open \"%s\": %s", src_path, strerror(err));
-+		maybe_warn_about_permission_on_cwd(_metadata, err);
- 	}
- 	ASSERT_EQ(0, fstat(src_fd, &statbuf));
- 	ASSERT_EQ(statbuf.st_size,
+ 		TH_LOG("Failed to create new mount namespace: %s",
 -- 
 2.49.0
 
