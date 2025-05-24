@@ -1,194 +1,246 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D2635976
-	for <linux-security-module@vger.kernel.org>; Fri, 23 May 2025 20:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3374572623;
+	Sat, 24 May 2025 11:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748033008; cv=none; b=usWkcfAiKv7ygd7y+wMbl9M26Df7Ed74pBHAjPinWt8VzEExToQnZD38BVD/qwmoooqgcRNMopFj5LxiqfuJ+T3xoBcqbdhVlFJue9ly9D2H5Blz1XvodDUbGgV6KHlKdVwTO3mBWR/I3TRE3l2kvDoC8sbm8aQbOU4nkXgesW8=
+	t=1748085559; cv=none; b=do5q64Xhz7FQBfqwfbZAsxL9dcvxkEi6MHiEjFYdqaw0ME3JZREVKbfdZepKDca8pFKCZyij+Ujt8MfeQzhy4esDp6Xq5lZGobvjPgyZWEa/h9eIzBl2jdMpTGD7j/MH46pZ/X6lIuL+JXe+WsB25IPaQCiNAebdN36L+7xi22A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748033008; c=relaxed/simple;
-	bh=IQQ5Gml4d4nATh4PJxOs9VSscMda4Kz8hyfwAvAZ2aI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RYTwmfsJtKADCQD4evC1DrqIC+AypPh4hHIAkfEBx4ekm4yhcfuhISDvrwrcjT8Qxh18IeQwdxtH+fTj/iww9ZLqCeUnCT9a/04Nshn+3dv7+1K+tmSXLQKmnh7YGNoxGkBZNUhzMrzFyfUP8pqKfrqn6dtDvZE/MXnlXjzPeyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GZwfgOSd; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1748085559; c=relaxed/simple;
+	bh=ZeM+da8JfZ8lnROmjH/nTyqDodwA3mKLYrHfnIhGZ/A=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=Q4YcaqGR9AsAwxBwdBVoukCH5mRYPUwenYLG8c0JxOHsrJlZ0xNxaJAaMvTyB6GUW6U6Te7DZ+Hghi0pGC29GOB4Nd2DsQg+9GcRayO/6G/awFgaBzOHE2DIUZCKWQQnHwpM5KIC6UpHf9MfCd5e/Yzlu8VjDxr63m/c8xfH0xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gdr46dTK; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GZwfgOSd"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e7c5d470a8bso268161276.0
-        for <linux-security-module@vger.kernel.org>; Fri, 23 May 2025 13:43:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gdr46dTK"
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7398d65476eso522929b3a.1;
+        Sat, 24 May 2025 04:19:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1748033005; x=1748637805; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lgVK3bXgdFmMSLvGUClwgqIlvHhHuSibeAJvANyHISQ=;
-        b=GZwfgOSdqD8tmh82PDNNIDTcI5wROq5ovDDUf+NN19jMKq1NZ+sht9RpYaJ8CCc99J
-         wc2AEir5nXEpnBi5xuqHeIMUmvJE4eVO+z64VWnlRZslXr8A4iX8/NPYUyVxgHrR8Qty
-         aM195RH1g8rF2qJ+cspbHb9YT+BLGAFIxB9Idu0XCVU8Ub5ZPGphK/ck4YYUVflOyk4j
-         Y/S+B2H+n+/sAFPgKE3ErN6ZWWVgr4Mijl81qOFmCmvUvDzqzWU/XtZ7L17OVweiOhyB
-         +SQxZo0v4C6malTCJcOYRofMsIu4BJUekUzruDWdbi9iVs2lsMBdkQG9TMVM0zL4iCGJ
-         J8Eg==
+        d=gmail.com; s=20230601; t=1748085556; x=1748690356; darn=vger.kernel.org;
+        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rScpXVbASUqjAgnv8asCUXuGu69m7xK2h2FjiRqoUxs=;
+        b=gdr46dTKVWlw860DLDTO1i756MGbSuyzxbNPkHA/2h8xnd7JKuXaWItWmYeZWbV5US
+         s9unF/sjNDzC04R5svLT9o/wHXZp8rmmW0VzrBQooXqMd6WeoRwBFaFWBP8aqiuAV4aO
+         RXc1zCrMwF/rBheb2Iwsj0gObtgcusLi5yPsT6fwPnIKGIiuOnYD2GVx/SI/nDvefLz/
+         P4cppyTF7nuIDaRMzWREufuWdQrwirh++hYEDkwpaYJ90u9m8ZKRxaqRYQ8c1usjhveU
+         PKLROFJUpb5a18SKD7LfFqf7Uyiu+oytmZeH65bvZe371TTahuxKZmfTFME4niVnqy5e
+         PO1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748033005; x=1748637805;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lgVK3bXgdFmMSLvGUClwgqIlvHhHuSibeAJvANyHISQ=;
-        b=KT2MG/AO7xJwRBGx5tMCwIliZkVjLAgmUq8ls+euIEvk5y/eMDMixus3+rAcS1pbOa
-         lNA3xTUc6qbswFb02sRIB/k/LC+Q5stalNukA2KeohFmqm8O8xSzoTZMwrvyBQO/HX7v
-         lCYY+KytIwwA4CqpkRK/pdHjRHLjETlKiiWe/DUL/3PjgP55n9PuvF/8XiyZTB15394+
-         9svS5okFM6RQyi38yS1BmHnNL6l4hlbrNm8TpnFW8n3EQ90cnkmGx8+b0UjiLpdeM/jL
-         ga/DTxV5qb58B2FjSrcZhn4JO0MD3g4Gask32LmlGd9n6f/JYf1BVqfONNlwWckD1lER
-         HxIA==
-X-Gm-Message-State: AOJu0YwYCA3y3zfcMIb2/buyjbDX3EhDpDwrc8WDjNXc+1LDscSyQoJ6
-	R7++2/qnav/8BPbSGfwCpwre1LtjDedB3d860fv4WBud96HO1sMfEZYdw7y21dTup/1jPKlfNnc
-	rHapPq73srmEeEsrrQD5HcEs7tUcWfo5XSEkjl4J5DLkfUCY1VdrFCIrH
-X-Gm-Gg: ASbGncvmPTNL99NlkleSysIvTk0RSr5LySj8u0TjSw70gtwofCFeBK/Asx5kRWk6x39
-	z9hyEu7hnJNMIsNIAsMXluYFRokroMObOib1icYALT4zFB1Q56sbU6PgkDX2XanEEkkibXkH1Wp
-	gC7JxFC45SMiH6bpWInIzxdNIjT7+JILnG
-X-Google-Smtp-Source: AGHT+IHjTfUv1j9vvwb4oN3VJa3hUHu79iYXLPPnK/Ie/ruJV1dU94vpc/J7qIwRgdYkXUm9QsKRVKPPfT7vhONlLlo=
-X-Received: by 2002:a05:6902:188c:b0:e7d:5e41:a8ba with SMTP id
- 3f1490d57ef6-e7d91a2a204mr1086068276.34.1748033004966; Fri, 23 May 2025
- 13:43:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1748085556; x=1748690356;
+        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rScpXVbASUqjAgnv8asCUXuGu69m7xK2h2FjiRqoUxs=;
+        b=gg6RCfEZhv66eSk76Tn9KNvwPeAKpjE0pGXfw2jEqMhhOZthSDQ20bSQ1OQGmOr9Lx
+         PevUXG6dvuZTBopJ7hQH7zl6eT28nvJgjddxqtjKyHLle3aQrrodD8R43OFOgQS33npB
+         MHY2Q9ZaYRW/04C6zvX/SJ+scJKsuDR/XDVHmlL/ajgcYcTyv33/k9SPCAAXQPn1Cly1
+         FoDnjc9Gkg1MaRSWERn/I9Wwhb7aimWdqg6gVq55EwhheHBaMRzop1nU+7XtESx93Bic
+         KI4uSSmi+b5AQX7pE9MT0HUtFAiP7nVCRTKymTAGVt+72bZI2RF9FbGC1P5XyQXvi5UX
+         W6jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4S251QJksDeezNZ4QS0fQyMErKyH6Ou4WdVGl+ykREKHF21DHoXnhVqaDADgnQOXw26Ny1TJ6Y5k=@vger.kernel.org, AJvYcCURLShftmeP/rqSH1AC7Ry5qqVPN3xeogahYBkA/fhnA2SJDodYMnZmC6rTi/y2TLs6B8WtQwdUr89ZPdJkV6nF@vger.kernel.org, AJvYcCVRoP49L7pRR+RSHeMRwTF9rc2yE2CAt2+maTVDFHiWLL0E/nHUsL4dRF36qFyxcU9cSsKG8ojjiPt76A==@vger.kernel.org, AJvYcCVuX4/GG1Cb1E7aB5/SeDacK4KG2MPO0THJ1o0GrpyLllIwLsBL1j4TwW/TIRfccNahH0vdcr1Bda7vz1KVLJepLV0wN1lt@vger.kernel.org, AJvYcCW3JbQ0ua019PFi62EcZrSAaEUZ4KMieoAd41jTWaHtIvui9/CcfWr+p0b89+kh0dNJjYsNzHVR98XI9oi3@vger.kernel.org, AJvYcCWL5jk+RE0J+vv+44ofFXnTuedMrZdOchLguChFYxFAeSfMOFBuWN7jnxP44xQVqST25sKkuCmzScaRpcS/@vger.kernel.org, AJvYcCWW8MGXdw6Vym3TxzJFmNZN4DFssUYpXo4sGvgN3it2QbZ+1TjemgwVIFxN03bPA141z+6lPBDzm5l8EvSKCZ94@vger.kernel.org, AJvYcCXC0zF6ImNVIY9amNrNogiu5HlHiYIf/BHSReyst52nhoxjwvVzmOh12jwPTpE+qrfxzEq77nFEs8139Q==@vger.kernel.org, AJvYcCXdJSmb5F1X2ycyYLW1CkgIIOkD11wm7boNXqt4bAjtAhY2ItoifkWF0m1B7/MryFoKa2l0K30aGL99@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvGHP6xoVsY17CuTjP4lJNnzByERifjxZd8q+zDYbzmJ7setRT
+	jhFzOBMUqPg5wXJTlJ5arTmmK/uozAv/pE8h5b7sMYIcbuUzzoeg4m3z
+X-Gm-Gg: ASbGncv1TI5PFUHOw1ShfVWGEeQinHXEWEFG0JM2D+rfMxC79y8g3wr/6nBDzFGxXKt
+	7aCy0aSTRcW5T4Wyy+JzjOR82zlQlQrqMcEUnlzcsC/7BKn9SwGLxtjiExS4J83AVWq2RoaqZqT
+	Mm7kbmcC/geBowUYb3ZYMLWUQMQfr55E5tllaCOaCcaDYjRG39F8/ay5wsvj2iGWRuriXH6p1zY
+	+eef52OStW2/0QIyb2UTmotELeV2liVOmGc3vdCnKeAAaSo5W4nkFWbIq5Y5rqvuc92TR/nHQZz
+	nurnAubngyoL0uC5KfvOqzBrJUvLm2/XcZX8zGVndjqWc2lnA1mjqlo=
+X-Google-Smtp-Source: AGHT+IHzgyF4RMk4/VcB/ult2huesDrd3BktU05/6T5tjhGyNb1hL3EGlpy4BVyGxnMoNfwEQoYJDQ==
+X-Received: by 2002:a05:6a00:1903:b0:73e:2367:c914 with SMTP id d2e1a72fcca58-745fe068d61mr3795551b3a.7.1748085556260;
+        Sat, 24 May 2025 04:19:16 -0700 (PDT)
+Received: from dw-tp ([49.205.218.89])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a96dfacesm14024380b3a.5.2025.05.24.04.19.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 May 2025 04:19:15 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Kees Cook <kees@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Kees Cook <kees@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	linuxppc-dev@lists.ozlabs.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Christoph Hellwig <hch@lst.de>, Marco Elver <elver@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org, 
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v2 08/14] powerpc: Handle KCOV __init vs inline mismatches
+In-Reply-To: <20250523043935.2009972-8-kees@kernel.org>
+Date: Sat, 24 May 2025 16:13:02 +0530
+Message-ID: <87jz662ssp.fsf@gmail.com>
+References: <20250523043251.it.550-kees@kernel.org> <20250523043935.2009972-8-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhTiABmrJNkTYSfTQkjAS5u-GJdYxd+zJ8PcryScBtsXNA@mail.gmail.com>
-In-Reply-To: <CAHC9VhTiABmrJNkTYSfTQkjAS5u-GJdYxd+zJ8PcryScBtsXNA@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 23 May 2025 16:43:13 -0400
-X-Gm-Features: AX0GCFsAWh6Nidgy9JyMhVJ3HKjHmDOb3_BOmntvPEk7Qz68FRUothIeet7hE_Q
-Message-ID: <CAHC9VhSXNwG+3i2__aJoi7nV9tuh0KNO69O706mAkE-Xq+uVEQ@mail.gmail.com>
-Subject: Re: [RFC] LSM deprecation / removal policies
-To: linux-security-module@vger.kernel.org
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Fan Wu <wufan@linux.microsoft.com>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Micah Morton <mortonm@chromium.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, KP Singh <kpsingh@kernel.org>, 
-	Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, May 2, 2025 at 4:01=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
+Kees Cook <kees@kernel.org> writes:
+
+> When KCOV is enabled all functions get instrumented, unless
+> the __no_sanitize_coverage attribute is used. To prepare for
+> __no_sanitize_coverage being applied to __init functions, we have to
+> handle differences in how GCC's inline optimizations get resolved. For
+> s390 this requires forcing a couple functions to be inline with
+> __always_inline.
 >
-> Hello all,
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Cc: Naveen N Rao <naveen@kernel.org>
+> Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: <linuxppc-dev@lists.ozlabs.org>
+> ---
+>  arch/powerpc/mm/book3s64/hash_utils.c    | 2 +-
+>  arch/powerpc/mm/book3s64/radix_pgtable.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 >
-> We've worked in the past to document some of our policies and
-> guidelines, the result can be seen at the link below (also listed in
-> MAINTAINERS):
->
-> - https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
->
-> However, one of the areas that has been missing from this guidance,
-> are policies on deprecating and removing LSM hooks as well as LSMs
-> themselves ...
+> diff --git a/arch/powerpc/mm/book3s64/hash_utils.c b/arch/powerpc/mm/book3s64/hash_utils.c
+> index 5158aefe4873..93f1e1eb5ea6 100644
+> --- a/arch/powerpc/mm/book3s64/hash_utils.c
+> +++ b/arch/powerpc/mm/book3s64/hash_utils.c
+> @@ -409,7 +409,7 @@ static DEFINE_RAW_SPINLOCK(linear_map_kf_hash_lock);
+>  
+>  static phys_addr_t kfence_pool;
+>  
+> -static inline void hash_kfence_alloc_pool(void)
+> +static __always_inline void hash_kfence_alloc_pool(void)
+>  {
+>  	if (!kfence_early_init_enabled())
+>  		goto err;
+> diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/book3s64/radix_pgtable.c
+> index 9f764bc42b8c..3238e9ed46b5 100644
+> --- a/arch/powerpc/mm/book3s64/radix_pgtable.c
+> +++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
+> @@ -363,7 +363,7 @@ static int __meminit create_physical_mapping(unsigned long start,
+>  }
+>  
+>  #ifdef CONFIG_KFENCE
+> -static inline phys_addr_t alloc_kfence_pool(void)
+> +static __always_inline phys_addr_t alloc_kfence_pool(void)
+>  {
+>  	phys_addr_t kfence_pool;
+>  
 
-Here are some slight revisions to the earlier draft text based on
-feedback.  I'm also including a section on LSM hook modifications as
-suggested by Casey.  As usual, feedback is encouraged.
+I remember seeing a warning msg around .init.text section. Let me dig
+that...
 
-## Modifying LSM Hooks
+... Here it is: https://lore.kernel.org/oe-kbuild-all/202504190552.mnFGs5sj-lkp@intel.com/
 
-Changing the parameters, return value, or calling locations of an existing =
-LSM
-hook can impact individual in-kernel LSMs as well as ongoing development
-efforts that have not yet landed in the upstream Linux kernel.  Developers =
-that
-wish to change a LSM hook should work with existing in-kernel LSMs, related
-development efforts, and any associated subsystems to ensure that the
-individual LSMs are properly transitioned to the new hook.  Any existing ke=
-rnel
-selftests should also be updated as necessary to ensure they continue to
-work properly.
+I am not sure why it only complains for hash_debug_pagealloc_alloc_slots().
+I believe there should me more functions to mark with __init here.
+Anyways, here is the patch of what I had in mind.. I am not a compiler expert,
+so please let me know your thoughts on this.
 
-Due to the potential for cross LSM and cross subsystem conflicts when chang=
-ing
-LSM hooks, it is possible that patches which modify LSM hooks may be staged=
-, or
-delayed, for a period of time to allow for a more manageable transition.
+-ritesh
 
-## Removing LSM Hooks
 
-If a LSM hook is no longer used by any in-kernel LSMs, there is no ongoing =
-work
-in progress involving the hook, and no expectation of future work that will=
- use
-the hook, the LSM community may consider removal of the LSM hook.  The deci=
-sion
-to ultimately remove the LSM hook should balance ongoing maintenance and
-performance concerns with the social challenges of reintroducing the hook i=
-f
-it is needed at a later date.
+From 59d64dc0014ccb4ae13ed08ab596738628ee23b1 Mon Sep 17 00:00:00 2001
+Message-Id: <59d64dc0014ccb4ae13ed08ab596738628ee23b1.1748084756.git.ritesh.list@gmail.com>
+From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Date: Sat, 24 May 2025 16:14:08 +0530
+Subject: [RFC] powerpc/mm/book3s64: Move few kfence & debug_pagealloc
+ related calls to __init section
 
-In the case where a Linux kernel selftest has been created to verify the pr=
-oper
-behavior of a LSM hook, the presence of the selftest alone should not preve=
-nt
-removal of the LSM hook.
+Move few kfence and debug_pagealloc related functions in hash_utils.c
+and radix_pgtable.c to __init sections since these are only invoked once
+by an __init function during system initialization.
 
-## Removing LSMs
+i.e.
+- hash_debug_pagealloc_alloc_slots()
+- hash_kfence_alloc_pool()
+- hash_kfence_map_pool()
+  The above 3 functions only gets called by __init htab_initialize().
 
-If a LSM has not been actively maintained for a period of time such that it=
- is
-becoming a maintenance burden for other developers, or there are serious
-concerns about the LSM's ability to deliver on its stated purpose, the LSM
-community may consider deprecating and ultimately removing the LSM from the
-Linux kernel.  However, before considering deprecation, the LSM community
-should make every reasonable effort to find a suitable maintainer for the L=
-SM
-while also surveying the major Linux distributions to better understand the
-impact a deprecation would have on the downstream distro/user experience.  =
-If
-deprecation remains the only viable option, the following process should be
-used as a starting point for deprecating the LSM:
+- alloc_kfence_pool()
+- map_kfence_pool()
+  The above 2 functions only gets called by __init radix_init_pgtable()
 
-* The LSM's Kconfig description should indicate that the LSM is being
-deprecated and the LSM should not be built into the kernel by default.
+This should also help fix warning msgs like:
 
-* Entries in Documentation/API/obsolete should be created for any user visi=
-ble
-interfaces associated with the LSM.
+>> WARNING: modpost: vmlinux: section mismatch in reference:
+hash_debug_pagealloc_alloc_slots+0xb0 (section: .text) ->
+memblock_alloc_try_nid (section: .init.text)
 
-* When the LSM is enabled at boot or runtime, it should display a message o=
-n
-the console that it is now deprecated and will be removed at some point in =
-the
-future.  While the message should be displayed without delaying the boot at
-first, after one or two kernel releases it may be helpful to add a small,
-e.g. five second, delay after displaying the message to draw attention to t=
-he
-deprecation notice.  The delay can be increased in successive kernel releas=
-es
-until it reaches a level than any reasonable user wouldn't be able to ignor=
-e,
-e.g. 30 seconds.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202504190552.mnFGs5sj-lkp@intel.com/
+Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+---
+ arch/powerpc/mm/book3s64/hash_utils.c    | 6 +++---
+ arch/powerpc/mm/book3s64/radix_pgtable.c | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-* Finally, after an additional two to three kernel releases, after any
-deadlines listed in the Documentation/API/obsolete entries, and once the LS=
-M
-community is satisfied that all users running modern kernels have migrated =
-away
-from the LSM, the LSM can be removed from the Linux kernel and any entries =
-in
-Documentation/API/obsolete can be moved to Documentation/API/removed.
+diff --git a/arch/powerpc/mm/book3s64/hash_utils.c b/arch/powerpc/mm/book3s64/hash_utils.c
+index 5158aefe4873..4693c464fc5a 100644
+--- a/arch/powerpc/mm/book3s64/hash_utils.c
++++ b/arch/powerpc/mm/book3s64/hash_utils.c
+@@ -343,7 +343,7 @@ static inline bool hash_supports_debug_pagealloc(void)
+ static u8 *linear_map_hash_slots;
+ static unsigned long linear_map_hash_count;
+ static DEFINE_RAW_SPINLOCK(linear_map_hash_lock);
+-static void hash_debug_pagealloc_alloc_slots(void)
++static __init void hash_debug_pagealloc_alloc_slots(void)
+ {
+ 	if (!hash_supports_debug_pagealloc())
+ 		return;
+@@ -409,7 +409,7 @@ static DEFINE_RAW_SPINLOCK(linear_map_kf_hash_lock);
+ 
+ static phys_addr_t kfence_pool;
+ 
+-static inline void hash_kfence_alloc_pool(void)
++static __init void hash_kfence_alloc_pool(void)
+ {
+ 	if (!kfence_early_init_enabled())
+ 		goto err;
+@@ -445,7 +445,7 @@ static inline void hash_kfence_alloc_pool(void)
+ 	disable_kfence();
+ }
+ 
+-static inline void hash_kfence_map_pool(void)
++static __init void hash_kfence_map_pool(void)
+ {
+ 	unsigned long kfence_pool_start, kfence_pool_end;
+ 	unsigned long prot = pgprot_val(PAGE_KERNEL);
+diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/book3s64/radix_pgtable.c
+index 311e2112d782..ed226ee1569a 100644
+--- a/arch/powerpc/mm/book3s64/radix_pgtable.c
++++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
+@@ -363,7 +363,7 @@ static int __meminit create_physical_mapping(unsigned long start,
+ }
+ 
+ #ifdef CONFIG_KFENCE
+-static inline phys_addr_t alloc_kfence_pool(void)
++static __init phys_addr_t alloc_kfence_pool(void)
+ {
+ 	phys_addr_t kfence_pool;
+ 
+@@ -393,7 +393,7 @@ static inline phys_addr_t alloc_kfence_pool(void)
+ 	return 0;
+ }
+ 
+-static inline void map_kfence_pool(phys_addr_t kfence_pool)
++static __init void map_kfence_pool(phys_addr_t kfence_pool)
+ {
+ 	if (!kfence_pool)
+ 		return;
+-- 
+2.39.5
 
-It is important to note that the steps above are intended as basic guidance=
- for
-a generic LSM; it is likely that changes, including additional actions, wil=
-l be
-needed for individual LSMs based on their design, implementation, and
-downstream usage.  The LSM community should take the process above as input=
-,
-but ultimately the process should be tailored to the LSM being deprecated a=
-nd
-the associated environment.
-
---=20
-paul-moore.com
