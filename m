@@ -1,154 +1,183 @@
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653EF28EA
-	for <linux-security-module@vger.kernel.org>; Sun, 25 May 2025 14:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA4C19CC3D;
+	Sun, 25 May 2025 21:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748183035; cv=none; b=nR8o5dV2871QoBEGNm4VVcRsJvUtxDeE5T+f1MtigeKnayShwfWZVHqYcUpWPIMUuBHgst+lgNWuYuw7g+h4NnVFTBlu8TaG5eecdArZEd7PRF5dFG3PqLJxctTwjnqIcKJr45MW3Ag6+nSokqvaDBZWSSG6rd3n6a9eik58dls=
+	t=1748210015; cv=none; b=mSEPmm4Jjlnlo1Tqrphlq8aCTHWadcFVyjaKeQu+hV7EtLJS4KkUMQi/+DGphSacqnVcOPEuYWuMGnTXsuOs2qreM/JRz8eFq0GIisjqLq/Sw9OkJJ/ybdUzs5SQjEXC/LbkDo32/KBji46736+ERETKDqby/qE4F73LwsmWsSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748183035; c=relaxed/simple;
-	bh=sCM4sJDcfFwxEyDbavACZ6h2WRzqiGEWv+Vg4M7AMzI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I7FZ5JoeU12ncvlmXBe9sqPzeswhTn33Fhc9kFDiF3FVNUkTekTlRaEe+R6tv/CrCDBm0KV1Q/3OHTYrDuwyr8khEMc2J8yJwLUvfDJda2GEp8zpcO/6lXxia7hic7/6JT+w5S6UITSQKkrytDrE/z5Ne6n/tRLUbZ9qqhjS2hQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=f54g+w64; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dbQOd98n; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1748210015; c=relaxed/simple;
+	bh=y5rT2ewj429hL1YZNClBKAuoapp2CjjiHYqsoHYBDa8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ivfXgqeQQawE+Act3qu6cJPHXlg2C9Rr1WGWgN2cmDTcH+gUfTWq62Qp8eMh/+ZnjW7AXEjyT46xzM9pNAuFWqcxakVkLnSozkfH4KzYT5OBLjeHBpSkk+9kYid/0nB+RzdPGzEQq3Gr4+SkcwfTCUC29R/FajMtoLLjIhKMqyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ceT//yHx; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="f54g+w64";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dbQOd98n"
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 30AAF11400B8;
-	Sun, 25 May 2025 10:23:52 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Sun, 25 May 2025 10:23:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1748183032;
-	 x=1748269432; bh=j1bajeNtGYjYtNhsXeIGJRyw2w3gwjl1vZdvY3z9Ygg=; b=
-	f54g+w64kU9FwHtxlfZdixPaUlBTw38kMdgapSzr2MfCPBirjbzcCYabvJvmhW/A
-	fGK7ztQ8to+BSLHskzHmQSAhmYkNzDOrHQnvE2sx2z0WNkHVsTvNuik4AZyk/6l3
-	2g9fAnSu7bgLacSjUyQTmgV4vySOrCAOqsGPzvg3k6rihfc4tCZaqLmMVsjGJcrf
-	XxUnVt5P4rO6e4F2NaSXDo9BkAvtTxEtNfzgJYbqFCpL9VUXTKTTrp51Mzp1gRpm
-	MSzfcYs+UbmReQWLt8HiV4E4vbnRGzrVHezG06mw0D64Fpe+6p9VNGLXzAg2Aq3w
-	iKoOGkFgAqa6VZaKIikoww==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1748183032; x=
-	1748269432; bh=j1bajeNtGYjYtNhsXeIGJRyw2w3gwjl1vZdvY3z9Ygg=; b=d
-	bQOd98n70/VWe2EgXNoktcDSyzUECEGJArG8r7P7aMp0sohKgUUFFOHlV7N/Ih58
-	GecVVygQQX+z2qj0twFe4WgxZhYOD1cadCsJMLzdY26WNtwwetjTKvHI2IxflGt3
-	aWRAPcms95K/VeuIf1Kz47lCBQoJfS577XmgS3uAmyfC6ztOLjXaydWNAvJ8yehA
-	dbbaW1BkAuJesG05CeY9l4Hq5D57ZafiswW0xsqeJJgmkUYU1AXHczyXE/Kx2AIU
-	i704JKpbbbrZn/dKX8VTd6myrEGKDv+BfN6iFnDd33Pdl+Qi9MvvB1ywv4TpjIM/
-	qxU9vRS0vj7siUF5TNmMw==
-X-ME-Sender: <xms:9yczaCGiVq6jbRVe5KBJ4lkZ6QryEKwjYBa4eeUqcUuOMsz1TVTINA>
-    <xme:9yczaDXK7my1sucYkVa8XK5bg-PubC9WEjg4zc5B6JveWc_-DQ20at2sVxaRkpL7v
-    ynf83DT5bbuWR3l5sI>
-X-ME-Received: <xmr:9yczaMIOlEE0Me6QamioBIypTI_G_D42z5pI_KKHb-JzlKztrxYodGKYn3CidJ9rujOPjC6R4C59N0mKUa4j2mm8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddugeekgeculddtuddrgeefvddrtd
-    dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
-    fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
-    dtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfev
-    fhfhjggtgfesthejredttddvjeenucfhrhhomhepvfhinhhgmhgrohcuhggrnhhguceomh
-    esmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeefvdehleeutdfhlefgvedv
-    gfeklefgleekgedtvdehvdfgtdefieelhfdutefgudenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghr
-    tghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhitgesughigh
-    hikhhougdrnhgvthdprhgtphhtthhopehgnhhorggtkhesghhoohhglhgvrdgtohhmpdhr
-    tghpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:9yczaMEACA3i0JfG7t4Ekx5sZ_08JbCRvwSBr6cuM7sM4DaONkEelw>
-    <xmx:9yczaIV8RQm1vZMcktFpf0NwU1yrnHU5szl5CCCWPY7bBsxQTR4HQw>
-    <xmx:9yczaPMe-AGbTP1Up3-4zD21ih1UAdOoAxtfu60Vlv-lP65Z_4kvzA>
-    <xmx:9yczaP0QFXdgSNiYolTY8LmzDl6Omv6A4-ytAwrcqwd-dSOkaZXx4w>
-    <xmx:-CczaK349ZVHGX18SO5AzM0t-vk8zitJ2ZQIZsfgKnmey_CnQ3pK6e7F>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 25 May 2025 10:23:50 -0400 (EDT)
-Message-ID: <7750bee1-bbab-486a-8533-098f650591f2@maowtm.org>
-Date: Sun, 25 May 2025 15:23:46 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ceT//yHx"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748210014; x=1779746014;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=y5rT2ewj429hL1YZNClBKAuoapp2CjjiHYqsoHYBDa8=;
+  b=ceT//yHx7F0JqM4+bzORHTA3Hi0DK9vzfTD1ChrJRaNLXIhJqaQrPXuV
+   jeTpNhnEGDPaw8H78PwGHktNfpPl6dAdZnMrVh6xm1h0OeNOrtjXYgAQP
+   HYJvVZ8LewX/ce74CBC3V2xjHqrvNUpVDNL6sJy8F3rmaul/SA3qqMHai
+   2894vABY/4tUZ5uOvuNyUXGwk9+lY+VakC1LK4rQ/xwTjuuYThHsIEazu
+   MYeuZPolTV3eA+ejC3fihWhKEDYqtSrkTEPhz6SgE0HplDA2/xcMU0C6H
+   ve00bhfgJ3wnSFXHsbgX+rFdoGEUqCKzyEaz8CigT+qrPQKOHfw4ry55i
+   A==;
+X-CSE-ConnectionGUID: HQGD0TEPSUq8fOLusNMwCQ==
+X-CSE-MsgGUID: NdAAS2XBR6u4/DLqkNH5Dg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11444"; a="60435792"
+X-IronPort-AV: E=Sophos;i="6.15,314,1739865600"; 
+   d="scan'208";a="60435792"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2025 14:53:32 -0700
+X-CSE-ConnectionGUID: srkUUk2LSiS9AVRoLfAP+A==
+X-CSE-MsgGUID: abYToWTKQVe6L6ZrKUUaNQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,314,1739865600"; 
+   d="scan'208";a="141991367"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.99])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2025 14:53:16 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 26 May 2025 00:53:13 +0300 (EEST)
+To: Kees Cook <kees@kernel.org>
+cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, 
+    Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+    Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+    "H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+    Vitaly Kuznetsov <vkuznets@redhat.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+    Masami Hiramatsu <mhiramat@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
+    Mike Rapoport <rppt@kernel.org>, 
+    Michal Wilczynski <michal.wilczynski@intel.com>, 
+    Juergen Gross <jgross@suse.com>, 
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+    Roger Pau Monne <roger.pau@citrix.com>, 
+    David Woodhouse <dwmw@amazon.co.uk>, Usama Arif <usama.arif@bytedance.com>, 
+    "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+    Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>, 
+    kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, 
+    platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org, 
+    linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+    linux-mm@kvack.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+    Christoph Hellwig <hch@lst.de>, Marco Elver <elver@google.com>, 
+    Andrey Konovalov <andreyknvl@gmail.com>, 
+    Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+    Masahiro Yamada <masahiroy@kernel.org>, 
+    Nathan Chancellor <nathan@kernel.org>, 
+    Nicolas Schier <nicolas.schier@linux.dev>, 
+    Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+    Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+    LKML <linux-kernel@vger.kernel.org>, kasan-dev@googlegroups.com, 
+    linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+    kvmarm@lists.linux.dev, linux-riscv@lists.infradead.org, 
+    linux-s390@vger.kernel.org, linux-hardening@vger.kernel.org, 
+    linux-kbuild@vger.kernel.org, linux-security-module@vger.kernel.org, 
+    linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org, 
+    llvm@lists.linux.dev
+Subject: Re: [PATCH v2 04/14] x86: Handle KCOV __init vs inline mismatches
+In-Reply-To: <20250523043935.2009972-4-kees@kernel.org>
+Message-ID: <ba4f4fd0-1bcf-3d84-c08e-ba0dd040af16@linux.intel.com>
+References: <20250523043251.it.550-kees@kernel.org> <20250523043935.2009972-4-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] selftests/landlock: Print a warning about directory
- permissions
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org
-References: <cover.1748108582.git.m@maowtm.org>
- <9f5a3c41c1752e8770998f1e5b3e912b139fc13a.1748108582.git.m@maowtm.org>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <9f5a3c41c1752e8770998f1e5b3e912b139fc13a.1748108582.git.m@maowtm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; BOUNDARY="8323328-965883235-1748206555=:933"
+Content-ID: <8656ab6c-8f8d-81d1-5dfa-740e7f21544c@linux.intel.com>
 
-On 5/24/25 18:56, Tingmao Wang wrote:
-> Because we drop capabilities (most importantly, CAP_DAC_OVERRIDE), if a
-> user runs the selftests under a Linux source checked out by a non-root
-> user, the test will fail even when ran under sudo, and will print a
-> "Permission denied" error.  This creates a confusing situation if they
-> does not realize that the test drops capabilities, and can mislead users
-> to think there's something wrong with the test or landlock.
-> 
-> This patch produces output that looks like:
-> 
->    # #  RUN           layout0.ruleset_with_unknown_access ...
->    # # fs_test.c:240:ruleset_with_unknown_access:Expected 0 (0) == mkdir(path, 0700) (-1)
->    # # fs_test.c:244:ruleset_with_unknown_access:Failed to create directory "tmp": Permission denied
->    # # fs_test.c:230:ruleset_with_unknown_access:Hint: fs_tests requires permissions for uid 0 on test directory /home/mao/landlock-selftests/tools/testing/selftests/landlock and files under it (even when running as root).
->    # # fs_test.c:232:ruleset_with_unknown_access:      Try chmod a+rwX -R /home/mao/landlock-selftests/tools/testing/selftests/landlock
->    # # ruleset_with_unknown_access: Test terminated by assertion
->    # #          FAIL  layout0.ruleset_with_unknown_access
-> 
-> Signed-off-by: Tingmao Wang <m@maowtm.org>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-965883235-1748206555=:933
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <fa62886f-fdfb-f2a5-84db-475ce3a46169@linux.intel.com>
+
+On Thu, 22 May 2025, Kees Cook wrote:
+
+> When KCOV is enabled all functions get instrumented, unless the
+> __no_sanitize_coverage attribute is used. To prepare for
+> __no_sanitize_coverage being applied to __init functions, we have to
+> handle differences in how GCC's inline optimizations get resolved. For
+> x86 this means forcing several functions to be inline with
+> __always_inline.
+>=20
+> Signed-off-by: Kees Cook <kees@kernel.org>
 > ---
->   tools/testing/selftests/landlock/fs_test.c | 35 +++++++++++++++++++---
->   1 file changed, 31 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index e65e6cc80e22..21ed8afcc060 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -216,14 +216,37 @@ static void mkdir_parents(struct __test_metadata *const _metadata,
->   	free(walker);
->   }
->   
-> +static void
-> +maybe_warn_about_permission_on_cwd(struct __test_metadata *const _metadata,
-> +				   int err)
-> +{
-> +	char abspath_buf[255];
-> +
-> +	if (err == EACCES) {
-> +		const char *realp = realpath(".", abspath_buf);
-> +		if (realp == NULL) {
-> +			realp = ".";
-> +		}
-> +		TH_LOG("Hint: fs_tests requires permissions for uid %u on test directory %s and files under it (even when running as root).",
-> +		       getuid(), realp);
-> +		TH_LOG("      Try chmod a+rwX -R %s", realp);
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: <x86@kernel.org>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Cc: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: "Ilpo J=E4rvinen" <ilpo.jarvinen@linux.intel.com>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Len Brown <lenb@kernel.org>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: Mike Rapoport <rppt@kernel.org>
+> Cc: Michal Wilczynski <michal.wilczynski@intel.com>
+> Cc: Juergen Gross <jgross@suse.com>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Roger Pau Monne <roger.pau@citrix.com>
+> Cc: David Woodhouse <dwmw@amazon.co.uk>
+> Cc: Usama Arif <usama.arif@bytedance.com>
+> Cc: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+> Cc: Thomas Huth <thuth@redhat.com>
+> Cc: Brian Gerst <brgerst@gmail.com>
+> Cc: <kvm@vger.kernel.org>
+> Cc: <ibm-acpi-devel@lists.sourceforge.net>
+> Cc: <platform-driver-x86@vger.kernel.org>
+> Cc: <linux-acpi@vger.kernel.org>
+> Cc: <linux-trace-kernel@vger.kernel.org>
+> Cc: <linux-efi@vger.kernel.org>
+> Cc: <linux-mm@kvack.org>
+> ---
 
-Actually, just having rwx on the test directory itself is not enough. 
-For audit tests, in order to set the executable itself as AUDIT_EXE, we 
-pass in an absolute path (which is required), which then means that we 
-need path walk permission from root to the executable (otherwise 
-audit_alloc_mark -> kern_path_locked fails), so in fact if the user has 
-a setup where the home directory, containing the Linux source code, is 
-not world-readable (or owned by root), fs_test::audit_layout1 etc will 
-fail too...
+> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/=
+thinkpad_acpi.c
+> index e7350c9fa3aa..0518d5b1f4ec 100644
+> --- a/drivers/platform/x86/thinkpad_acpi.c
+> +++ b/drivers/platform/x86/thinkpad_acpi.c
+> @@ -559,12 +559,12 @@ static unsigned long __init tpacpi_check_quirks(
+>  =09return 0;
+>  }
+> =20
+> -static inline bool __pure __init tpacpi_is_lenovo(void)
+> +static __always_inline bool __pure tpacpi_is_lenovo(void)
+>  {
+>  =09return thinkpad_id.vendor =3D=3D PCI_VENDOR_ID_LENOVO;
+>  }
+> =20
+> -static inline bool __pure __init tpacpi_is_ibm(void)
+> +static __always_inline bool __pure tpacpi_is_ibm(void)
+>  {
+>  =09return thinkpad_id.vendor =3D=3D PCI_VENDOR_ID_IBM;
+>  }
 
-I wonder if we should in fact drop capabilities only after fixture 
-setup?  Alternatively we should have an appropriate message explaining 
-that the test dir needs to be walkable and writable by root without 
-CAP_DAC_OVERRIDE.
+Hi Kees,
 
+What's your plan on upstreaming route/timeline for this? I'd prefer to=20
+retain full control over this file as we were planning on some=20
+reorganization of files into lenovo/ subdir.
+
+
+--=20
+ i.
+--8323328-965883235-1748206555=:933--
