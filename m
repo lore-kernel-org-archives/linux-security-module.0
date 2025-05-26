@@ -1,55 +1,55 @@
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0D41420DD;
-	Mon, 26 May 2025 18:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E024120C48E;
+	Mon, 26 May 2025 18:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748284670; cv=none; b=M2bsNxKqAmDYs5gLOvio/ve+kM4pJ7KyRK9NSt2XSatfDJMtkvsht+HdJKyRnD6r1bFrBxDds8JP7gSEJNAKcrxigfAMyQSt9+qaHbDQx3DJRhsOZEH/3CHA7WQio3VFxacUpdpClhA4T9Z/Nf5fokN5R5SVpwYBzaRI5l2l7ko=
+	t=1748284678; cv=none; b=n3fsXNIB6Wxrnz2LrreMCFTB2/woHYgr36AkeipTP/xCMXahHiAolQ2dyf7eDG3bI1RMu+ewRx3ozhKfpYbk+9UtLX851lEOk+1kiAOcsks/M9l8lwo7jz1aAbQSfWQ0Wb7a2hvyekYoPtaHi6du4+lXLLZQx8ZUi0EElGPzK40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748284670; c=relaxed/simple;
-	bh=ojjx1UooVPleEs1fSqiRsCJTjbSFwj35Er+72Wo/aT4=;
+	s=arc-20240116; t=1748284678; c=relaxed/simple;
+	bh=4E9+IkJX9kqMF1AIYZ6urJI5zdn917yy/O9i6F8chxc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nc3uCeosGCeV+S1axuZigohcB3t7k9TY/R6nfh2QmblYQrQr9pndYr8keriD2JXF24G1yVT+5Jyt2pNzLBQAh0gLu5GKVWZivNN1c1vV/5VIZWxrLZ/2FnmZ83M1CDnWlFRMrpeZY4s5mnmb2aBiNMRxgrF9+qVt1uY9/qjUcoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=Vgytm2BH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ms6VXDzT; arc=none smtp.client-ip=202.12.124.144
+	 In-Reply-To:Content-Type; b=LsicLhU6z8PMPVGA3qr3Y7k30LRE9MrlrAO3ZLl6qAG7c2FT/ndTumhbeeRx8ijZMZqcQkZ6orYVdD3LlISlc1Sv3PJ9szuJtsLjQw+ZcoBcLfX32NsuEdQ+fEbSDW8BdsnUs1d0v7blbzYLdfUVTL8Ow0LkaL3DEwp40te6On8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=idUEjQoy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IPGCN4pw; arc=none smtp.client-ip=202.12.124.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="Vgytm2BH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ms6VXDzT"
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id 60BD811401A2;
-	Mon, 26 May 2025 14:37:46 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="idUEjQoy";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IPGCN4pw"
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id CC5FF25401B8;
+	Mon, 26 May 2025 14:37:54 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Mon, 26 May 2025 14:37:47 -0400
+  by phl-compute-05.internal (MEProxy); Mon, 26 May 2025 14:37:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1748284666;
-	 x=1748371066; bh=5cRdsNinjTvwrTkvkfKbsOZ8190VOUjMicymsFl66R8=; b=
-	Vgytm2BHWHmlWQfy53YKhY134bVVeI74ea1qN0ZTmBKVlGUDhkvCnt3Dw3WD0+vj
-	5YkwGY1e3dQs55UFpYVdGowwpIvIstIzaKuaISl7NRyevJXTtxTF3CXJJ/l8+59K
-	X7lyj4I35mNZqVXw+gRLiOyTcrENwBCAwxrbM8CMMt0gTMryG5M9yb6MGHTc/s1Z
-	q3IEbs9Buf6OusFYNc+WliwCQ8G+6+BSrpOmjTTj4aDyI9qDtCbWCvohp3kV9O9r
-	HpcN5tmGR1w9w9StsG1VXv6A1QQc2NsO1x7DHlF2rPnQKu+GjVGP9kx9XcuQDstY
-	ZWRgDWcqdVBmnGtMNMeYFA==
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1748284674;
+	 x=1748371074; bh=EQrWm3nt+fG59q1P3OT4c7WxMUW1rdjS2TWL/754fgA=; b=
+	idUEjQoy/iY5BV6Mz0Za5IV7qidwTIsnL0Jq+ZvF9tgKhxFRfCNAaclripbtlTEx
+	+4xYjy1zm2thrN2xSmdssTBuzlGYPi/4FbNNGenlOmCqaT6NcTdrTME9ZHjiuZjJ
+	he7uz4O4u4gDOV72OOlbtPIKfWQ8VrxSpzLMGWpWgvDDappUFaE2BLnz8Nazjxt9
+	BIDNuz7CrhgOlAeSblv9dKu29XTlBc3y5LP4cin960Ceg4dYiZwJWK3VnKh3vay9
+	h5GYyOEnDWu9/K1tf2e/FHTw8dLvj4VxR38ppJVjdy8JhURrUPHsTHkrBk/3RTvS
+	KJJi0C1hARCWabp3TSjCNA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1748284666; x=
-	1748371066; bh=5cRdsNinjTvwrTkvkfKbsOZ8190VOUjMicymsFl66R8=; b=m
-	s6VXDzTg+V8AABAP44thN0vA/8mAFM3DwkNevmDYQQLY0cSwa+zU3WqBETuvl57j
-	iP7KrvxT3c8lDmJoQXjTmDbL7ujUhaMvVNdVXuNG1lhg/VodQOCBtXwTHkt0aVaK
-	RebJ5uyjwHfYs5J/Tkx/vuuKdHKqPRAzqSPwZ4ljf0v+NNnsl7N2+xP9/30/675Z
-	fvOhPp2BTavqM2wHLJcaTVdGD5bHVOBa5OpDbkv37LyH3OylzNF66JxAUut7cTEY
-	eV4UXjzUFiTBvwbUdwzenwkzJ9PPhttVIXTxGyrKEE+m9ctv/Kr/J2ZORAAcOI6i
-	Jse2ZwDVGcOYYpyjEmf7Q==
-X-ME-Sender: <xms:-LQ0aCiIAApBi77lqo3UzTjjSxP-8CU4beARWBLoVSgQNqXwXDsniw>
-    <xme:-LQ0aDAFZDmjIAnOvd6w4SZgzLTaNZ9E9TWqiu3HVfaf9BUMPyW7YbF9V9imVhNf3
-    6FBinCk9hDiUsvKS1s>
-X-ME-Received: <xmr:-LQ0aKGt36seOLq-bpbG-wAKguoJGnieiyJJjf9tG2z0HqYzatM-dU4uWor5dEhAH2AVmYxQqTJQsuxZp60IRFfx>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1748284674; x=
+	1748371074; bh=EQrWm3nt+fG59q1P3OT4c7WxMUW1rdjS2TWL/754fgA=; b=I
+	PGCN4pwT2XLN1NhQ4oJJ+1Sg5sIeXgG6LbAm1qyHIfaUUbOHJrMSi2a0mST31FiE
+	F+cFTgXQHhzGZTN7kIZzlJoGSOmjLOBgU3/GUmFSA7QHLy/9CEXZSWDQyV7KzzCO
+	w4TapGhPquDaNQ7VIJU9CVx2EiLsXFQRw658mjllZnp1Z/V4OQpYtGt6LswNcKyQ
+	JHsjAxbkimEFM5W0tmLuJg8mc6b3PBcVLBf/R4jRZuG7EZpnZ8rS9ytxvxvdLnNu
+	wXII/c+N0mrDce6fVMsk2SORC8+CEqYkUeh4fATiwM0cxIij9PzY2l46CDkyPTMz
+	sT//Xgimn7V1tEzowO/MA==
+X-ME-Sender: <xms:ArU0aLzUy6TzW8aVmO2-whNf8NaBYZuwQczNkshCiyVwB6am1RqKag>
+    <xme:ArU0aDSYMLlF1x9TnIl-lTPULvT_jxbSV5HDxGq7OF3693Q4cokMFXemOTRCVBdKl
+    H1ws_cWSYb85iZZ5UE>
+X-ME-Received: <xmr:ArU0aFXev-HyZx-Bk7Q9ko3sS2tjUj2A8IYc5g1Sj1LpMgv5K_8y_t2XWX7JzZrI_9c8rwbzttO7BDY_tGpkUglm>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddukedvieculddtuddrgeefvddrtd
     dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
     fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
@@ -66,16 +66,16 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddukedvieculddtuddrge
     horhhgpdhrtghpthhtohepmhhhihhrrghmrghtsehkvghrnhgvlhdrohhrghdprhgtphht
     thhopehmrghthhhivghurdguvghsnhhohigvrhhssegvfhhfihgtihhoshdrtghomhdprh
     gtphhtthhopehmrghtthhhihgvuhessghufhhfvghtrdhrvg
-X-ME-Proxy: <xmx:-LQ0aLT_ihfAHX8-10CkSzezWVTIjtBgwzci4MnNBY9WFUAi3q-CMA>
-    <xmx:-LQ0aPxbHvYDW2cFjBcjCGuLzzo8Iz5mj4k9WLOpxZQfhzDQhSDbcg>
-    <xmx:-LQ0aJ4uyOYySZzajgC3vXH3kmIf0_lx-H7bMZs5xDTn0Ssecx3kMQ>
-    <xmx:-LQ0aMxeY40oN-ISdpbWfEl-s-wgWlShdg3hh7hfCP5w5kyqaJwODw>
-    <xmx:-rQ0aKGt8zwGsT68BBMdaLZiljcy1KowTXqxmGs7hWPPVer7UODlN77M>
+X-ME-Proxy: <xmx:ArU0aFh0sXHkvNnZmm1IcsH5GbDzG1vmixj_Eu27WBFyYqhKaJ4w-g>
+    <xmx:ArU0aNBdeaSzRvnGx-erwqVpNFrBZddPD0iZ8dpLXM8vGFvC8KZcOA>
+    <xmx:ArU0aOJtnG61tfKkSC31WaAzeblu7E7r-JnXsA1A0hznEDk6CNMrQw>
+    <xmx:ArU0aMBmSV4BPNLeVuVHCLr3S0aTak15ydMTZ2mdJmapywqTAy06sA>
+    <xmx:ArU0aMWrn2PzjpH19amg7ij3DmbJSbPz0kMISDq6042ls2tvedUGxCC_>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 26 May 2025 14:37:42 -0400 (EDT)
-Message-ID: <b6f1e330-6a9f-4359-a221-bec30d94fb20@maowtm.org>
-Date: Mon, 26 May 2025 19:37:41 +0100
+ 26 May 2025 14:37:52 -0400 (EDT)
+Message-ID: <d61717c2-df30-4cd2-a14e-e05ca9f69892@maowtm.org>
+Date: Mon, 26 May 2025 19:37:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 0/5] Landlock tracepoints
+Subject: Re: [RFC PATCH v1 4/5] landlock: Add landlock_add_rule_fs tracepoint
 To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
  =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
 Cc: Daniel Burgener <dburgener@linux.microsoft.com>,
@@ -96,122 +96,142 @@ Cc: Daniel Burgener <dburgener@linux.microsoft.com>,
  <enlightened@google.com>, Steven Rostedt <rostedt@goodmis.org>,
  linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org
 References: <20250523165741.693976-1-mic@digikod.net>
+ <20250523165741.693976-5-mic@digikod.net>
 Content-Language: en-US
 From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20250523165741.693976-1-mic@digikod.net>
+In-Reply-To: <20250523165741.693976-5-mic@digikod.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 On 5/23/25 17:57, Mickaël Salaün wrote:
-> Hi,
+> Add a tracepoint for Landlock path_beneath rule addition.  This is
+> useful to tie a Landlock object with a file for debug purpose.
 > 
-> This series adds two tracepoints to Landlock, one tied to rule addition,
-> and another to rule checking.  With these new tracepoints, we can see
-> all steps leading to an access decision.  They can be directly used with
-> /sys/kernel/tracing/events/landlock/* or attached by eBPF programs to
-> get a more complete view of Landlock internals.
+> Allocate the absolute path names when adding new rules.  This is OK
+> because landlock_add_rule(2) is not a performance critical code.
 > 
-> This new feature is useful to trouble shoot policy issues, and it should
-> also limit the need for custom debugging kernel code when developing new
-> Landlock features.
+> Here is an example of landlock_add_rule_fs traces:
+>    ruleset=0x000000007e3b1c4a key=inode:0xffff888004f59260 allowed=0xd dev=0:16 ino=306 path=/usr
+>    ruleset=0x000000007e3b1c4a key=inode:0xffff888004f59240 allowed=0xffff dev=0:16 ino=346 path=/root
 > 
-> Landlock already has audit support, which enables us to log denied
-> access requests.  Audit is useful to identify security issues or sandbox
-> misconfiguration.  However, it might not be enough to debug Landlock
-> policies.  The main differences with audit events is that traces are
-> disabled by default, can be very verbose, and can be filtered according
-> to process and Landlock properties (e.g. domain ID).
+> TODO: Use Landlock IDs instead of kernel addresses to identify Landlock
+> objects (e.g. inode).
+
+Do you mean like the u64 domain ID for audit, but for objects?  Since 
+there currently isn't a u64, non-pointer ID, I guess we would have to 
+create one for the object just for tracing?
+
+My understanding is that kernel pointers are not hidden from the root 
+user / someone who can read traces, so maybe just printing the pointer 
+is good enough?
+
 > 
-> As for audit, this tracing feature may expose sensitive information and
-> must then only be accessible to the system administrator.
-> 
-> This RFC only fully supports filesystem rules but the next series will
-> also support network rules.  Tests are also missing for now.
-> 
-> Regards,
-> 
-> Mickaël Salaün (5):
->    landlock: Rename landlock_id to landlock_rule_ref
->    landlock: Merge landlock_find_rule() into landlock_unmask_layers()
->    tracing: Add __print_untrusted_str()
->    landlock: Add landlock_add_rule_fs tracepoint
->    landlock: Add landlock_check_rule tracepoint
-> 
->   MAINTAINERS                                |   1 +
->   include/linux/trace_events.h               |   3 +
->   include/trace/events/landlock.h            | 124 ++++++++++++++
->   include/trace/stages/stage3_trace_output.h |   4 +
->   include/trace/stages/stage7_class_define.h |   1 +
->   kernel/trace/trace_output.c                |  40 +++++
->   security/landlock/Makefile                 |  11 +-
->   security/landlock/fs.c                     | 178 +++++++++++++--------
->   security/landlock/fs.h                     |   3 +
->   security/landlock/net.c                    |  18 +--
->   security/landlock/ruleset.c                |  65 ++++----
->   security/landlock/ruleset.h                |  15 +-
->   security/landlock/trace.c                  |  15 ++
->   13 files changed, 365 insertions(+), 113 deletions(-)
+> Cc: Günther Noack <gnoack@google.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Tingmao Wang <m@maowtm.org>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> ---
+>   MAINTAINERS                     |  1 +
+>   include/trace/events/landlock.h | 68 +++++++++++++++++++++++++++++++++
+>   security/landlock/Makefile      | 11 +++++-
+>   security/landlock/fs.c          | 22 +++++++++++
+>   security/landlock/fs.h          |  3 ++
+>   security/landlock/trace.c       | 14 +++++++
+>   6 files changed, 117 insertions(+), 2 deletions(-)
 >   create mode 100644 include/trace/events/landlock.h
 >   create mode 100644 security/landlock/trace.c
 > 
-> 
-> base-commit: a5806cd506af5a7c19bcd596e4708b5c464bfd21
+ > > [...]
+ > > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 73a20a501c3c..e5d673240882 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -36,6 +36,7 @@
+>   #include <linux/types.h>
+>   #include <linux/wait_bit.h>
+>   #include <linux/workqueue.h>
+> +#include <trace/events/landlock.h>
+>   #include <uapi/linux/fiemap.h>
+>   #include <uapi/linux/landlock.h>
+>   
+> @@ -345,6 +346,27 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+>   	mutex_lock(&ruleset->lock);
+>   	err = landlock_insert_rule(ruleset, ref, access_rights);
+>   	mutex_unlock(&ruleset->lock);
+> +
+> +	if (!err && trace_landlock_add_rule_fs_enabled()) {
+> +		const char *pathname;
+> +		/* Does not handle deleted files. */
+> +		char *buffer __free(__putname) = __getname();
+> +
+> +		if (buffer) {
+> +			const char *absolute_path =
+> +				d_absolute_path(path, buffer, PATH_MAX);
+> +			if (!IS_ERR_OR_NULL(absolute_path))
+> +				pathname = absolute_path;
+> +			else
+> +				pathname = "<too_long>";
 
-Tested-by: Tingmao Wang <m@maowtm.org>
+Not sure if it's necessary to go that far, but I think d_absolute_path 
+returns -ENAMETOOLONG in the too long case, and -EINVAL in the "not 
+possible to construct a path" case (I guess e.g. if it's an anonymous 
+file or detached mount).  We could add an else if branch to check which 
+case it is and use different strings.
 
-Here is an example output I got with `trace-cmd record -e landlock`:
+> +		} else {
+> +			/* Same format as audit_log_d_path(). */
+> +			pathname = "<no_memory>";
+> +		}
+> +		trace_landlock_add_rule_fs(ruleset, &ref, access_rights, path,
+> +					   pathname);
+> +	}
+> +
+>   	/*
+>   	 * No need to check for an error because landlock_insert_rule()
+>   	 * increments the refcount for the new object if needed.
+> diff --git a/security/landlock/fs.h b/security/landlock/fs.h
+> index bf9948941f2f..60be95ebfb0b 100644
+> --- a/security/landlock/fs.h
+> +++ b/security/landlock/fs.h
+> @@ -11,6 +11,7 @@
+>   #define _SECURITY_LANDLOCK_FS_H
+>   
+>   #include <linux/build_bug.h>
+> +#include <linux/cleanup.h>
+>   #include <linux/fs.h>
+>   #include <linux/init.h>
+>   #include <linux/rcupdate.h>
+> @@ -128,4 +129,6 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+>   			    const struct path *const path,
+>   			    access_mask_t access_hierarchy);
+>   
+> +DEFINE_FREE(__putname, char *, if (_T) __putname(_T))
 
-landlock-add-ru-776   [001] 75134.554776: landlock_add_rule_fs: [FAILED 
-TO PARSE] ruleset=0xffff88811a459200 ref_key=18446612686420679296 
-allowed=57343 dev=21 ino=53 pathname=/tmp/test
-landlock-add-ru-776   [001] 75134.555336: landlock_check_rule:  [FAILED 
-TO PARSE] domain_id=7838764077 access_request=4 ref_type=1 
-ref_key=18446612686420679296 layers=ARRAY[ff, df]
-I suggest adding some more events which I think shouldn't be too 
-difficult to implement and I can see them helping a lot with tracing / 
-debugging especially by BPF programs or someone new to landlock:
+Out of curiosity why not put this in include/linux/fs.h (seems to 
+compile for me when added there)?
 
-- landlock_restrict_self: Currently we trace out the ruleset pointer in 
-add rule, and the domain ID in check rule.  However there is no way for 
-someone just looking at this trace (or a BPF program for landlock) to 
-relate which rulesets are applied to which domains. I think a simple 
-event we could add that will help with this is, on 
-landlock_restrict_self, prints out the ruleset passed in as well as the 
-domain ID newly created.  Maybe also num_rules and num_layers on the new 
-ruleset since it's trivial to do so, and could be informative to someone 
-analyzing a Landlock thing.
+> +
+>   #endif /* _SECURITY_LANDLOCK_FS_H */
+> diff --git a/security/landlock/trace.c b/security/landlock/trace.c
+> new file mode 100644
+> index 000000000000..98874cda473b
+> --- /dev/null
+> +++ b/security/landlock/trace.c
+> @@ -0,0 +1,14 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Landlock - Tracepoints
+> + *
+> + * Copyright © 2025 Microsoft Corporation
+> + */
+> +
+> +#include <linux/path.h>
+> +
+> +#include "access.h"
+> +#include "ruleset.h"
+> +
+> +#define CREATE_TRACE_POINTS
+> +#include <trace/events/landlock.h>
 
-- landlock_check_fs: Distinct from landlock_check_rule, this will happen 
-once the outcome of the access check is determined (maybe at the end of 
-is_access_to_paths_allowed and collect_domain_accesses?). It would 
-include the pathname of the target file (only allocated if this event is 
-enabled of course), so something like:
-
-   landlock_check_fs: domain_id=7838764077 access_request=4 
-pathname=/tmp/test allowed=true
-   landlock_check_fs: domain_id=7838764077 access_request=4 
-pathname=/tmp/test2 allowed=false
-
-We already produces audit logs for denied requests so it is a little bit 
-duplicating that, but I think this trace event shouldn't be too costly 
-to include.  It has the benefit that
-
-1. If an access is denied because no rules matched, we don't get any 
-landlock_check_rule traces, and so there's no way for someone looking at 
-the trace log to find out landlock denied something.
-
-2. Having an event that represents an access check makes it possible for 
-BPF programs to find out about all landlock access checks (most 
-interestingly denied ones but we could expose the allowed ones too), and 
-potentially relate the various `landlock_check_rule` events to an access 
-check.
-
-Actually, maybe it's worth having a "landlock_check_fs_enter", emitted 
-at the beginning of is_access_to_paths_allowed and 
-collect_domain_accesses? This could be useful for performance 
-measurements, and also makes it more explicit which landlock_check_rule 
-resulted from which access check.  Maybe the pathname and domain_id 
-could be printed on the enter event, and the exit event would just have 
-the outcome?  (Just an idea, I feel less certain about this. 
-"Enter"/"exit" naming taken from sys_enter_*/sys_exit_* but start/end 
-also works)
