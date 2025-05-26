@@ -1,183 +1,228 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA4C19CC3D;
-	Sun, 25 May 2025 21:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0200727713
+	for <linux-security-module@vger.kernel.org>; Mon, 26 May 2025 17:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748210015; cv=none; b=mSEPmm4Jjlnlo1Tqrphlq8aCTHWadcFVyjaKeQu+hV7EtLJS4KkUMQi/+DGphSacqnVcOPEuYWuMGnTXsuOs2qreM/JRz8eFq0GIisjqLq/Sw9OkJJ/ybdUzs5SQjEXC/LbkDo32/KBji46736+ERETKDqby/qE4F73LwsmWsSs=
+	t=1748281584; cv=none; b=BJszxZmMbeJ/nw/U9LJueZHl7Iy7LVxX/FRrrwYTJMQ+LnuePXuJR4yH/yn+OvF92TprOs+4yexeXz8zSUV8HYG5WTyVJGYFkSXEXlUqFficaZmiGew3hHima2d0uCBVm2YLyaMvKpPdr1wog+DaGkWmruF6VpJdyGqe0anoRxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748210015; c=relaxed/simple;
-	bh=y5rT2ewj429hL1YZNClBKAuoapp2CjjiHYqsoHYBDa8=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ivfXgqeQQawE+Act3qu6cJPHXlg2C9Rr1WGWgN2cmDTcH+gUfTWq62Qp8eMh/+ZnjW7AXEjyT46xzM9pNAuFWqcxakVkLnSozkfH4KzYT5OBLjeHBpSkk+9kYid/0nB+RzdPGzEQq3Gr4+SkcwfTCUC29R/FajMtoLLjIhKMqyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ceT//yHx; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1748281584; c=relaxed/simple;
+	bh=+Vo4cjMbX5sLgdnKiDK+bF17vg0v3Mz9GcrahwIa1+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=al0UcWGqyxVvODfxOPdaJGaMf1nBW2y902cVN2OcdOk0s5xT80Qa61Lr+PhQ7P6iK+KmG/t8PDa9Tfq0btozZrQq2tMY2q3siOPsbNRX1a5buG6xFGSSQA9pIbSXyNKGtvdc3vy+AGEaB16VOGarpIn8GilVp5QN2MHVWspvwRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=v1kBC2eZ; arc=none smtp.client-ip=45.157.188.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ceT//yHx"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748210014; x=1779746014;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=y5rT2ewj429hL1YZNClBKAuoapp2CjjiHYqsoHYBDa8=;
-  b=ceT//yHx7F0JqM4+bzORHTA3Hi0DK9vzfTD1ChrJRaNLXIhJqaQrPXuV
-   jeTpNhnEGDPaw8H78PwGHktNfpPl6dAdZnMrVh6xm1h0OeNOrtjXYgAQP
-   HYJvVZ8LewX/ce74CBC3V2xjHqrvNUpVDNL6sJy8F3rmaul/SA3qqMHai
-   2894vABY/4tUZ5uOvuNyUXGwk9+lY+VakC1LK4rQ/xwTjuuYThHsIEazu
-   MYeuZPolTV3eA+ejC3fihWhKEDYqtSrkTEPhz6SgE0HplDA2/xcMU0C6H
-   ve00bhfgJ3wnSFXHsbgX+rFdoGEUqCKzyEaz8CigT+qrPQKOHfw4ry55i
-   A==;
-X-CSE-ConnectionGUID: HQGD0TEPSUq8fOLusNMwCQ==
-X-CSE-MsgGUID: NdAAS2XBR6u4/DLqkNH5Dg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11444"; a="60435792"
-X-IronPort-AV: E=Sophos;i="6.15,314,1739865600"; 
-   d="scan'208";a="60435792"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2025 14:53:32 -0700
-X-CSE-ConnectionGUID: srkUUk2LSiS9AVRoLfAP+A==
-X-CSE-MsgGUID: abYToWTKQVe6L6ZrKUUaNQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,314,1739865600"; 
-   d="scan'208";a="141991367"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.99])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2025 14:53:16 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 26 May 2025 00:53:13 +0300 (EEST)
-To: Kees Cook <kees@kernel.org>
-cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, 
-    Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-    Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-    "H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-    Vitaly Kuznetsov <vkuznets@redhat.com>, 
-    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
-    Hans de Goede <hdegoede@redhat.com>, 
-    "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-    Masami Hiramatsu <mhiramat@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
-    Mike Rapoport <rppt@kernel.org>, 
-    Michal Wilczynski <michal.wilczynski@intel.com>, 
-    Juergen Gross <jgross@suse.com>, 
-    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-    Roger Pau Monne <roger.pau@citrix.com>, 
-    David Woodhouse <dwmw@amazon.co.uk>, Usama Arif <usama.arif@bytedance.com>, 
-    "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
-    Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>, 
-    kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, 
-    platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org, 
-    linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
-    linux-mm@kvack.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-    Christoph Hellwig <hch@lst.de>, Marco Elver <elver@google.com>, 
-    Andrey Konovalov <andreyknvl@gmail.com>, 
-    Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-    Masahiro Yamada <masahiroy@kernel.org>, 
-    Nathan Chancellor <nathan@kernel.org>, 
-    Nicolas Schier <nicolas.schier@linux.dev>, 
-    Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-    Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-    LKML <linux-kernel@vger.kernel.org>, kasan-dev@googlegroups.com, 
-    linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-    kvmarm@lists.linux.dev, linux-riscv@lists.infradead.org, 
-    linux-s390@vger.kernel.org, linux-hardening@vger.kernel.org, 
-    linux-kbuild@vger.kernel.org, linux-security-module@vger.kernel.org, 
-    linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org, 
-    llvm@lists.linux.dev
-Subject: Re: [PATCH v2 04/14] x86: Handle KCOV __init vs inline mismatches
-In-Reply-To: <20250523043935.2009972-4-kees@kernel.org>
-Message-ID: <ba4f4fd0-1bcf-3d84-c08e-ba0dd040af16@linux.intel.com>
-References: <20250523043251.it.550-kees@kernel.org> <20250523043935.2009972-4-kees@kernel.org>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="v1kBC2eZ"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b5jqS21YSzxNR;
+	Mon, 26 May 2025 19:46:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1748281572;
+	bh=4Q9mO3aHOjbpSobzxHGdMXrInPPRvU2hbxIfHCQiKPw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=v1kBC2eZp9JObY622FJRNm9MA+A7rvt3j0ju9bgs9D5YuVt+M3nVOB6cdIgZH+CRQ
+	 2ihCCw/cljn0RVSSFQyLezVVzWlLhdw9XsnfUTzNjI45WCoKlDAK6BrluE4j4P0axG
+	 rWPiaWkxIHcVNFyQGlg0PZwe/EzgdnMH5oFltJFc=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b5jqR0Jsszkg9;
+	Mon, 26 May 2025 19:46:10 +0200 (CEST)
+Date: Mon, 26 May 2025 19:46:09 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Tingmao Wang <m@maowtm.org>, Daniel Burgener <dburgener@linux.microsoft.com>, 
+	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Kees Cook <kees@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Ryan Sullivan <rysulliv@redhat.com>, Shervin Oloumi <enlightened@google.com>, 
+	linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 3/5] tracing: Add __print_untrusted_str()
+Message-ID: <20250526.zaedahcoo2Th@digikod.net>
+References: <20250523165741.693976-1-mic@digikod.net>
+ <20250523165741.693976-4-mic@digikod.net>
+ <20250523142242.1be10abb@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-965883235-1748206555=:933"
-Content-ID: <8656ab6c-8f8d-81d1-5dfa-740e7f21544c@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250523142242.1be10abb@gandalf.local.home>
+X-Infomaniak-Routing: alpha
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, May 23, 2025 at 02:22:42PM -0400, Steven Rostedt wrote:
+> On Fri, 23 May 2025 18:57:39 +0200
+> Mickaël Salaün <mic@digikod.net> wrote:
+> 
+> > Add a new __print_untrusted_str() helper to safely print strings after escaping
+> > all special characters, including common separators (space, equal sign),
+> > quotes, and backslashes.  This transforms a string from an untrusted source
+> > (e.g. user space) to make it:
+> > - safe to parse,
+> > - easy to read (for simple strings),
+> > - easy to get back the original.
+> 
+> Hmm, so this can be an issue if this is printed out via seq_file()?
+> 
+> I'm curious to what exactly can be "unsafe" about a string being printed
+> via "%s"?
 
---8323328-965883235-1748206555=:933
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <fa62886f-fdfb-f2a5-84db-475ce3a46169@linux.intel.com>
+There is no issue for the kernel, only for users and user space. :)
 
-On Thu, 22 May 2025, Kees Cook wrote:
+> 
+> I'm not against this change, I just want to understand more about what the
+> issue is.
 
-> When KCOV is enabled all functions get instrumented, unless the
-> __no_sanitize_coverage attribute is used. To prepare for
-> __no_sanitize_coverage being applied to __init functions, we have to
-> handle differences in how GCC's inline optimizations get resolved. For
-> x86 this means forcing several functions to be inline with
-> __always_inline.
->=20
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: <x86@kernel.org>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Cc: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: "Ilpo J=E4rvinen" <ilpo.jarvinen@linux.intel.com>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Cc: Len Brown <lenb@kernel.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: Mike Rapoport <rppt@kernel.org>
-> Cc: Michal Wilczynski <michal.wilczynski@intel.com>
-> Cc: Juergen Gross <jgross@suse.com>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Roger Pau Monne <roger.pau@citrix.com>
-> Cc: David Woodhouse <dwmw@amazon.co.uk>
-> Cc: Usama Arif <usama.arif@bytedance.com>
-> Cc: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-> Cc: Thomas Huth <thuth@redhat.com>
-> Cc: Brian Gerst <brgerst@gmail.com>
-> Cc: <kvm@vger.kernel.org>
-> Cc: <ibm-acpi-devel@lists.sourceforge.net>
-> Cc: <platform-driver-x86@vger.kernel.org>
-> Cc: <linux-acpi@vger.kernel.org>
-> Cc: <linux-trace-kernel@vger.kernel.org>
-> Cc: <linux-efi@vger.kernel.org>
-> Cc: <linux-mm@kvack.org>
-> ---
+The issue is about a malicious process triggering a trace event with an
+arbitrary string.  If such string is printed to the root's terminal, it
+can print escape sequences and do nasty things.  For instance, the
+terminal can beep, the window's title can be updated, a path name can be
+"hidden" with specific colors, the screen can be completely cleared and
+rewritten to trick peoples, and other "original" terminal features can
+be triggered by custom escape sequences.
 
-> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/=
-thinkpad_acpi.c
-> index e7350c9fa3aa..0518d5b1f4ec 100644
-> --- a/drivers/platform/x86/thinkpad_acpi.c
-> +++ b/drivers/platform/x86/thinkpad_acpi.c
-> @@ -559,12 +559,12 @@ static unsigned long __init tpacpi_check_quirks(
->  =09return 0;
->  }
-> =20
-> -static inline bool __pure __init tpacpi_is_lenovo(void)
-> +static __always_inline bool __pure tpacpi_is_lenovo(void)
->  {
->  =09return thinkpad_id.vendor =3D=3D PCI_VENDOR_ID_LENOVO;
->  }
-> =20
-> -static inline bool __pure __init tpacpi_is_ibm(void)
-> +static __always_inline bool __pure tpacpi_is_ibm(void)
->  {
->  =09return thinkpad_id.vendor =3D=3D PCI_VENDOR_ID_IBM;
->  }
+This is definitely not something new but still relevant.  There are a
+lot of articles about this kind of issues:
+https://phrack.org/issues/25/5
+https://marc.info/?l=bugtraq&m=104612710031920
+https://www.cyberark.com/resources/threat-research-blog/dont-trust-this-title-abusing-terminal-emulators-with-ansi-escape-characters
+https://blog.trailofbits.com/2025/04/29/deceiving-users-with-ansi-terminal-codes-in-mcp/
 
-Hi Kees,
+In a less malicious environment, this helper would also be useful to
+just sanitize arbitrary text.  For instance, because '=' and ' ' are
+escaped, it's easy to write a key=value parser in shell (without bug),
+or to say it another way, it's more difficult for a parser to fail. ;)
 
-What's your plan on upstreaming route/timeline for this? I'd prefer to=20
-retain full control over this file as we were planning on some=20
-reorganization of files into lenovo/ subdir.
+Anyway, this sanitization should not be visible in most cases.
 
+> 
+> > 
+> > Cc: Günther Noack <gnoack@google.com>
+> > Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Cc: Tingmao Wang <m@maowtm.org>
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > ---
+> >  include/linux/trace_events.h               |  3 ++
+> >  include/trace/stages/stage3_trace_output.h |  4 +++
+> >  include/trace/stages/stage7_class_define.h |  1 +
+> >  kernel/trace/trace_output.c                | 40 ++++++++++++++++++++++
+> >  4 files changed, 48 insertions(+)
+> > 
+> > diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+> > index fa9cf4292dff..78f543bb7558 100644
+> > --- a/include/linux/trace_events.h
+> > +++ b/include/linux/trace_events.h
+> > @@ -54,6 +54,9 @@ trace_print_hex_dump_seq(struct trace_seq *p, const char *prefix_str,
+> >  			 int prefix_type, int rowsize, int groupsize,
+> >  			 const void *buf, size_t len, bool ascii);
+> >  
+> > +const char *trace_print_untrusted_str_seq(struct trace_seq *s, const char *str);
+> > +
+> > +
+> >  struct trace_iterator;
+> >  struct trace_event;
+> >  
+> > diff --git a/include/trace/stages/stage3_trace_output.h b/include/trace/stages/stage3_trace_output.h
+> > index 1e7b0bef95f5..36947ca2abcb 100644
+> > --- a/include/trace/stages/stage3_trace_output.h
+> > +++ b/include/trace/stages/stage3_trace_output.h
+> > @@ -133,6 +133,10 @@
+> >  	trace_print_hex_dump_seq(p, prefix_str, prefix_type,		\
+> >  				 rowsize, groupsize, buf, len, ascii)
+> >  
+> > +#undef __print_untrusted_str
+> > +#define __print_untrusted_str(str)							\
+> > +		trace_print_untrusted_str_seq(p, __get_str(str))
+> > +
+> >  #undef __print_ns_to_secs
+> >  #define __print_ns_to_secs(value)			\
+> >  	({						\
+> > diff --git a/include/trace/stages/stage7_class_define.h b/include/trace/stages/stage7_class_define.h
+> > index fcd564a590f4..bc10b69b755d 100644
+> > --- a/include/trace/stages/stage7_class_define.h
+> > +++ b/include/trace/stages/stage7_class_define.h
+> > @@ -24,6 +24,7 @@
+> >  #undef __print_array
+> >  #undef __print_dynamic_array
+> >  #undef __print_hex_dump
+> > +#undef __print_untrusted_string
+> >  #undef __get_buf
+> >  
+> >  /*
+> > diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+> > index b9ab06c99543..17d576941147 100644
+> > --- a/kernel/trace/trace_output.c
+> > +++ b/kernel/trace/trace_output.c
+> > @@ -16,6 +16,7 @@
+> >  #include <linux/btf.h>
+> >  #include <linux/bpf.h>
+> >  #include <linux/hashtable.h>
+> > +#include <linux/string_helpers.h>
+> >  
+> >  #include "trace_output.h"
+> >  #include "trace_btf.h"
+> > @@ -297,6 +298,45 @@ trace_print_hex_dump_seq(struct trace_seq *p, const char *prefix_str,
+> >  }
+> >  EXPORT_SYMBOL(trace_print_hex_dump_seq);
+> >  
+> > +/**
+> > + * trace_print_untrusted_str_seq - print a string after escaping characters
+> > + * @s: trace seq struct to write to
+> > + * @src: The string to print
+> > + *
+> > + * Prints a string to a trace seq after escaping all special characters,
+> > + * including common separators (space, equal sign), quotes, and backslashes.
+> > + * This transforms a string from an untrusted source (e.g. user space) to make
+> > + * it:
+> > + * - safe to parse,
+> > + * - easy to read (for simple strings),
+> > + * - easy to get back the original.
+> > + */
+> > +const char *trace_print_untrusted_str_seq(struct trace_seq *s,
+> > +                                          const char *src)
+> > +{
+> > +	int escaped_size;
+> > +	char *buf;
+> > +	size_t buf_size = seq_buf_get_buf(&s->seq, &buf);
+> > +	const char *ret = trace_seq_buffer_ptr(s);
+> > +
+> > +	if (!src || WARN_ON(buf_size == 0))
+> 
+> 		    WARN_ON_ONCE() please.
 
---=20
- i.
---8323328-965883235-1748206555=:933--
+I mimicked nearby code but WARN_ON_ONCE() is indeed better.
+
+Thanks.
+
+> 
+> -- Steve
+> 
+> > +		return NULL;
+> > +
+> > +	escaped_size = string_escape_mem(src, strlen(src), buf, buf_size,
+> > +		ESCAPE_SPACE | ESCAPE_SPECIAL | ESCAPE_NAP | ESCAPE_APPEND |
+> > +		ESCAPE_OCTAL, " ='\"\\");
+> > +	if (unlikely(escaped_size >= buf_size)) {
+> > +		/* We need some room for the final '\0'. */
+> > +		seq_buf_set_overflow(&s->seq);
+> > +		s->full = 1;
+> > +		return NULL;
+> > +	}
+> > +	seq_buf_commit(&s->seq, escaped_size);
+> > +	trace_seq_putc(s, 0);
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL(trace_print_untrusted_str_seq);
+> > +
+> >  int trace_raw_output_prep(struct trace_iterator *iter,
+> >  			  struct trace_event *trace_event)
+> >  {
+> 
+> 
