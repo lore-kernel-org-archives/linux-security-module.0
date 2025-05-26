@@ -1,55 +1,55 @@
 Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FCC1E834B;
-	Mon, 26 May 2025 18:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29ECA16EB7C;
+	Mon, 26 May 2025 18:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748284686; cv=none; b=R2vhB7+eFYpoc2k1yYBBOmiaisBoYdf1I0EQ7KRVEpiDKbVkSu5Za3MicgE7OTIvhKKSWJwBEUirQcraLPAWfErz9wwyfPZ2jY2FuRaKuGVwHL14JOVELWbOHGr7VJsZevhoF7zNMmhDxBTr+6IlfwyBJsSH7zr4pG8Cn/sM6lY=
+	t=1748284693; cv=none; b=TZ/HR29lKtXhLGUuDVNyNrs257mGrHv/A2fLEJzt4NtupBN+/JcY+PYozZoeR2scY4cna256Z1PVlteI9rq26GyzPvwe0EUku1IpACF/N1iGR16CdOlPrBijLTjuc5pUsT3Xc1Y6S91mWcarAgyhHzGTzFqmK4rLPCXeZGVRXyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748284686; c=relaxed/simple;
-	bh=VNAq2FAXqBcgIybb1kc5PDOUXgZ77UwzdAhjfkqMHdo=;
+	s=arc-20240116; t=1748284693; c=relaxed/simple;
+	bh=byxXvCc25/UBn5G3fsI02F/XIYUZoQFNeyxCX/4ywH0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eHkr07/72eZG9ambZA5Uc3Oo/uiFRdqRMTxOawYrcSKDuD+erbeG5VEu53OXaWXfuNXuTD9WY3AJGq12tNgiojMWUoeKhwQTLIhya61+nWc13TxxXqEVYuE6fh6zf8Y6DfmThw0J5oMWYvEaUPsGbohXOMJohyXRbvUT7PrGcDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=MGGW4T2z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UHnA1mSM; arc=none smtp.client-ip=202.12.124.159
+	 In-Reply-To:Content-Type; b=XS+pRJoxJi0nPDzqOqIbx0mtUKTsXrafqFEg1V5fQjEprpD6t0IRwX1DzVBrTtEKXiYEp0G3jzx2AlVjt3UHyC+MkpJXtDdHDX56IWS/ze+Fsf8FWSVQXltNorBolYjbDiL14+ZucLU8ujlXcRi4n8MJ+p0/m2IHHa3v4z7iILI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=JYydJO3O; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LxrtZRcJ; arc=none smtp.client-ip=202.12.124.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="MGGW4T2z";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UHnA1mSM"
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 4CE8825401BC;
-	Mon, 26 May 2025 14:38:03 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="JYydJO3O";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LxrtZRcJ"
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 62EC62540199;
+	Mon, 26 May 2025 14:38:10 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Mon, 26 May 2025 14:38:04 -0400
+  by phl-compute-08.internal (MEProxy); Mon, 26 May 2025 14:38:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1748284683;
-	 x=1748371083; bh=zt4Z97l7Qj2wnxf4XdSULDTeX+4SUZGhGdJ4L7aO5SQ=; b=
-	MGGW4T2z/FkOW4VY1a2f+1XF/StPX6SJ4NOf3/5xIBqZu1UTQkbOw8EY2eBGhgkY
-	JU+vGia9SLrtov8SEdoyfU5QPnkQzD8wSJNwfeKLItC5Ah0j1AwF0Jc8taRYopw3
-	iXtuia+DwlHpNZ1xOrNm1ZkJ1Of9i/KciumVo+NUgJUKeYxaFyRNl/uaui9tr/uN
-	Rif6Kek8HKNoZ8yRHSZNcTSb40cQbJNdrtQKTIQDu2fJBNbzMWco1HJyTv+qvipH
-	4sGtGqg/l7B1VKMB0pz9l0mnDwxDpimNwLT+3lKMVrbMjGQJAuR+7gT9dwHQYi39
-	D12BTiuUHuC1sbe0V6LI/Q==
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1748284690;
+	 x=1748371090; bh=Wg6ZzUU6RKA+p9AW93gylQZbXdxFA3WZB5RI4lcoWDw=; b=
+	JYydJO3OJurbBWlExvM/Y5lA7yqajBzk0n10N8TYUrNR5PgwN7+6V9bwx6MfA3NU
+	iPtpXbirH6pDttTl5zm9p/eeIre7YyeoWXUz1W/F220l9+UvXObMXmmdfmS/DQcN
+	PNAcXLBIhg7iv/v5Guw65o/L2QXY04ppbYs9DvLNZ77qYnOkr1WMgbjMLPUN2eJM
+	tJRqadi2DGQcf2uuKTgbbK4r06v6SuhwpGbJcxCtYMdqjGY0wg1XZ/0qD9W3YF8L
+	R85wqdRkxLUHusjtDGa6Zd1+9VdzNAzkTfBQV2qhfHkO422JnP0qZgMbx4ZKlE0q
+	nUJqDAmxuMdWUyE3YdSIQQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1748284683; x=
-	1748371083; bh=zt4Z97l7Qj2wnxf4XdSULDTeX+4SUZGhGdJ4L7aO5SQ=; b=U
-	HnA1mSMdmmfkVk5jwsy+zH2D+Qw7frsYqubvsGkv6KvHouRWJMMHDf9PUa3n4uZw
-	68Ow1h9bo8V47IpvG8QpaKbDIdejGOzLDjyrscl5KPZHZcGPCzU57NhVaZT21mfy
-	Qdzq10sUjLb5Net4ZT1R1cYK/bnu0+SzjJFyoebDIIXpdG1g7mYZQWJjzqXgI+91
-	ZKdoXG0FudTyHSUFvO2icqGcJTmotodbMSzPMstLYo6vCLtJdjxNofyHstaXLW6s
-	Zjt5Wg2gsqUVT4iqdBfRf/bm92Y6qvwRYgy7GQnVdw43SHpI4EBU+vMvwLvebbJC
-	xc9PA4XRZHA5yavjPtOlg==
-X-ME-Sender: <xms:CrU0aO2lest3cPsj4aBlCjv20ryhSStM8oJOCbuKIZdvnnyXxW_gEQ>
-    <xme:CrU0aBGwvZiw_2reRIsid_iLrIdEXirVRvraiH99KdJRgon1kYlo7L9EOr20TAs_o
-    VT3hi8Hb7rKQp--3RI>
-X-ME-Received: <xmr:CrU0aG6V_3m2_ZYJ4eyLhJ_pZkOgyxhOADTdJwi6HsX9wfI0XSviOqCu0xQLzd5ThfhBSwjvE5aHDZooyXcCq1Zg>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1748284690; x=
+	1748371090; bh=Wg6ZzUU6RKA+p9AW93gylQZbXdxFA3WZB5RI4lcoWDw=; b=L
+	xrtZRcJ9q8mgLmjGPVlezty8isoNCPv0nV56dkKCKAtR7ywYVAfn//wKbqCdQPK3
+	H4YAZ8xuq4RA15+EhZV2aTdDzrArUg+YQfrKIXRRnaKBEeu6Jetf09YmFKQ8K/QP
+	ijVG8H8tDuXcBt5jxDbFz+hiZq95nteVHAnTLC1OEglcYAmHoHRHpax3i4S0gj1i
+	KLORegnzOjv3Ce+Mms5S/Fr95DqqT46VAxT73ZE6WG12eB6awYHhFSwGTD+fAWyH
+	SZu89lpUTm1gocBFmGVytjv3TiKiS+q+q11ChpxQwHFbDTWNrn2U4JkDh5X0IKpG
+	dNjG4M+9Kd0A7fxbqRhDw==
+X-ME-Sender: <xms:EbU0aOvhgsu4PTAiuVTpbis8sr37suKqQPDTGcQWoNcDOOhgJQjzpQ>
+    <xme:EbU0aDdvTZTkA3C_uCnhGXMk6FVWgC9lVdvuMdODqeHXKirWCEDnPyRYiSTUtJpD2
+    171YwLt5ffcB-IxkKg>
+X-ME-Received: <xmr:EbU0aJwc-OZPo4kPPNgLPv6sVgf6E44S2oMfRObWvjRyeHepEFOo9N-DvczuGX2MbF4DgOJhWcPbgmUcNFsVRdoI>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddukedvieculddtuddrgeefvddrtd
     dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
     fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
@@ -66,16 +66,16 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddukedvieculddtuddrge
     horhhgpdhrtghpthhtohepmhhhihhrrghmrghtsehkvghrnhgvlhdrohhrghdprhgtphht
     thhopehmrghthhhivghurdguvghsnhhohigvrhhssegvfhhfihgtihhoshdrtghomhdprh
     gtphhtthhopehmrghtthhhihgvuhessghufhhfvghtrdhrvg
-X-ME-Proxy: <xmx:CrU0aP3fXvw_ENpWSdE_msKd3NAQwJyyY7KeyZs1co93ydm-Y3GYrg>
-    <xmx:CrU0aBFxItGdK01nTavtZb9P9DBvHWJANN31_cmw44wQJ6qrnqHTCw>
-    <xmx:CrU0aI8G0nfTrKOZcOmZSw5fzlfVVtI4yMDKdkFc21VfGRS6TCZk5A>
-    <xmx:CrU0aGnWwjaKpkoIUZLMslrtViX9Rh5TOiYfLhyaiQrm_wcbyHAYJw>
-    <xmx:CrU0aEp8-htf1hFPtrDFVAfwsc19WQwIv3eHXZRkWeVgxGUIuUoExSO9>
+X-ME-Proxy: <xmx:EbU0aJPCCy6_BIBp_yc2mRzolCGY2eYTyNN8sk6tWALG6EBSjHD-tQ>
+    <xmx:EbU0aO-umUH468zrDGsFOCvKbs_pBEOPmTCHt8iROleqFIhMw2qF6A>
+    <xmx:EbU0aBXS1Ai5Z6G5bewiLUgYD_nOqk4W_1z_V3t7dRwXN8nhR9nd_g>
+    <xmx:EbU0aHfiVUsymsp_mGFD1PpENpCgehyzYwRDs-KCFQykX1HCT9Ru0g>
+    <xmx:ErU0aCDpSPV9Q1ZF642ddKaZy-5nGj769AGwQ6ASUXWyxVm_V_DHPUQk>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 26 May 2025 14:38:00 -0400 (EDT)
-Message-ID: <112ec51d-523b-444b-ad7e-7b1b3d56507c@maowtm.org>
-Date: Mon, 26 May 2025 19:38:00 +0100
+ 26 May 2025 14:38:07 -0400 (EDT)
+Message-ID: <ec7198c7-bed9-4a04-9ff0-da90ce729897@maowtm.org>
+Date: Mon, 26 May 2025 19:38:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -83,8 +83,8 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 1/5] landlock: Rename landlock_id to
- landlock_rule_ref
+Subject: Re: [RFC PATCH v1 2/5] landlock: Merge landlock_find_rule() into
+ landlock_unmask_layers()
 To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
  =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
 Cc: Daniel Burgener <dburgener@linux.microsoft.com>,
@@ -97,31 +97,56 @@ Cc: Daniel Burgener <dburgener@linux.microsoft.com>,
  <enlightened@google.com>, Steven Rostedt <rostedt@goodmis.org>,
  linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org
 References: <20250523165741.693976-1-mic@digikod.net>
- <20250523165741.693976-2-mic@digikod.net>
+ <20250523165741.693976-3-mic@digikod.net>
 Content-Language: en-US
 From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20250523165741.693976-2-mic@digikod.net>
+In-Reply-To: <20250523165741.693976-3-mic@digikod.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 On 5/23/25 17:57, Mickaël Salaün wrote:
-> [RFC PATCH v1 1/5] landlock: Rename landlock_id to landlock_rule_ref
+> To be able to have useful traces, let's consolidate rule finding into
+> unmask checking.  landlock_unmask_layers() now gets a landlock_rule_ref
+> instead of a rule pointer.
 > 
-> This avoids confusion with the new Landlock IDs.
-
-A very very minor suggestion, but I think to someone new, 
-landlock_rule_ref would sound like a reference to a specific rule (like 
-a *struct landlock_rule), but really it represents the "name", or in 
-fact, target of a rule... Maybe we should call it "landlock_rule_target"?
-
-(Or maybe the confusion is resolved quickly when they look at the 
-definition so maybe it doesn't matter)
-
+> This enables us to not deal with Landlock rule pointers outside of
+> ruleset.c, to avoid two calls, and to get all required information
+> available to landlock_unmask_layers().
 > 
-> TODO: Split in several commits to ease potential backports according to
-> stable branches
+> We could make struct landlock_rule private because it is now only used
+> in the ruleset.c file.
 > 
 > Cc: Günther Noack <gnoack@google.com>
 > Signed-off-by: Mickaël Salaün <mic@digikod.net>
 > ---
-[...]
+>   security/landlock/fs.c      | 144 ++++++++++++++++++++++--------------
+>   security/landlock/net.c     |   6 +-
+>   security/landlock/ruleset.c |  12 ++-
+>   security/landlock/ruleset.h |   9 +--
+>   4 files changed, 100 insertions(+), 71 deletions(-)
+> 
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index f5087688190a..73a20a501c3c 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -356,30 +356,27 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+>   /* Access-control management */
+>   
+>   /*
+> - * The lifetime of the returned rule is tied to @domain.
+> - *
+> - * Returns NULL if no rule is found or if @dentry is negative.
+> + * Returns true if an object is tied to @dentry, and updates @ref accordingly.
+>    */
+> -static const struct landlock_rule *
+> -find_rule(const struct landlock_ruleset *const domain,
+> -	  const struct dentry *const dentry)
+> +static bool find_rule_ref(const struct dentry *const dentry,
+> +			  struct landlock_rule_ref *ref)
+
+I think a better name would be something like "get_rule_ref"? Since it's 
+not really _finding_ anything (like doing a search in a rbtree).
+
+(If you take the rename suggestion, then it would be "get_rule_target")
+
+> [...]
