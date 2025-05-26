@@ -1,228 +1,217 @@
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0200727713
-	for <linux-security-module@vger.kernel.org>; Mon, 26 May 2025 17:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0D41420DD;
+	Mon, 26 May 2025 18:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748281584; cv=none; b=BJszxZmMbeJ/nw/U9LJueZHl7Iy7LVxX/FRrrwYTJMQ+LnuePXuJR4yH/yn+OvF92TprOs+4yexeXz8zSUV8HYG5WTyVJGYFkSXEXlUqFficaZmiGew3hHima2d0uCBVm2YLyaMvKpPdr1wog+DaGkWmruF6VpJdyGqe0anoRxc=
+	t=1748284670; cv=none; b=M2bsNxKqAmDYs5gLOvio/ve+kM4pJ7KyRK9NSt2XSatfDJMtkvsht+HdJKyRnD6r1bFrBxDds8JP7gSEJNAKcrxigfAMyQSt9+qaHbDQx3DJRhsOZEH/3CHA7WQio3VFxacUpdpClhA4T9Z/Nf5fokN5R5SVpwYBzaRI5l2l7ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748281584; c=relaxed/simple;
-	bh=+Vo4cjMbX5sLgdnKiDK+bF17vg0v3Mz9GcrahwIa1+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=al0UcWGqyxVvODfxOPdaJGaMf1nBW2y902cVN2OcdOk0s5xT80Qa61Lr+PhQ7P6iK+KmG/t8PDa9Tfq0btozZrQq2tMY2q3siOPsbNRX1a5buG6xFGSSQA9pIbSXyNKGtvdc3vy+AGEaB16VOGarpIn8GilVp5QN2MHVWspvwRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=v1kBC2eZ; arc=none smtp.client-ip=45.157.188.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1748284670; c=relaxed/simple;
+	bh=ojjx1UooVPleEs1fSqiRsCJTjbSFwj35Er+72Wo/aT4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nc3uCeosGCeV+S1axuZigohcB3t7k9TY/R6nfh2QmblYQrQr9pndYr8keriD2JXF24G1yVT+5Jyt2pNzLBQAh0gLu5GKVWZivNN1c1vV/5VIZWxrLZ/2FnmZ83M1CDnWlFRMrpeZY4s5mnmb2aBiNMRxgrF9+qVt1uY9/qjUcoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=Vgytm2BH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ms6VXDzT; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="v1kBC2eZ"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b5jqS21YSzxNR;
-	Mon, 26 May 2025 19:46:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1748281572;
-	bh=4Q9mO3aHOjbpSobzxHGdMXrInPPRvU2hbxIfHCQiKPw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=v1kBC2eZp9JObY622FJRNm9MA+A7rvt3j0ju9bgs9D5YuVt+M3nVOB6cdIgZH+CRQ
-	 2ihCCw/cljn0RVSSFQyLezVVzWlLhdw9XsnfUTzNjI45WCoKlDAK6BrluE4j4P0axG
-	 rWPiaWkxIHcVNFyQGlg0PZwe/EzgdnMH5oFltJFc=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b5jqR0Jsszkg9;
-	Mon, 26 May 2025 19:46:10 +0200 (CEST)
-Date: Mon, 26 May 2025 19:46:09 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Tingmao Wang <m@maowtm.org>, Daniel Burgener <dburgener@linux.microsoft.com>, 
-	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Kees Cook <kees@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Ryan Sullivan <rysulliv@redhat.com>, Shervin Oloumi <enlightened@google.com>, 
-	linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 3/5] tracing: Add __print_untrusted_str()
-Message-ID: <20250526.zaedahcoo2Th@digikod.net>
-References: <20250523165741.693976-1-mic@digikod.net>
- <20250523165741.693976-4-mic@digikod.net>
- <20250523142242.1be10abb@gandalf.local.home>
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="Vgytm2BH";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ms6VXDzT"
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.stl.internal (Postfix) with ESMTP id 60BD811401A2;
+	Mon, 26 May 2025 14:37:46 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Mon, 26 May 2025 14:37:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1748284666;
+	 x=1748371066; bh=5cRdsNinjTvwrTkvkfKbsOZ8190VOUjMicymsFl66R8=; b=
+	Vgytm2BHWHmlWQfy53YKhY134bVVeI74ea1qN0ZTmBKVlGUDhkvCnt3Dw3WD0+vj
+	5YkwGY1e3dQs55UFpYVdGowwpIvIstIzaKuaISl7NRyevJXTtxTF3CXJJ/l8+59K
+	X7lyj4I35mNZqVXw+gRLiOyTcrENwBCAwxrbM8CMMt0gTMryG5M9yb6MGHTc/s1Z
+	q3IEbs9Buf6OusFYNc+WliwCQ8G+6+BSrpOmjTTj4aDyI9qDtCbWCvohp3kV9O9r
+	HpcN5tmGR1w9w9StsG1VXv6A1QQc2NsO1x7DHlF2rPnQKu+GjVGP9kx9XcuQDstY
+	ZWRgDWcqdVBmnGtMNMeYFA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1748284666; x=
+	1748371066; bh=5cRdsNinjTvwrTkvkfKbsOZ8190VOUjMicymsFl66R8=; b=m
+	s6VXDzTg+V8AABAP44thN0vA/8mAFM3DwkNevmDYQQLY0cSwa+zU3WqBETuvl57j
+	iP7KrvxT3c8lDmJoQXjTmDbL7ujUhaMvVNdVXuNG1lhg/VodQOCBtXwTHkt0aVaK
+	RebJ5uyjwHfYs5J/Tkx/vuuKdHKqPRAzqSPwZ4ljf0v+NNnsl7N2+xP9/30/675Z
+	fvOhPp2BTavqM2wHLJcaTVdGD5bHVOBa5OpDbkv37LyH3OylzNF66JxAUut7cTEY
+	eV4UXjzUFiTBvwbUdwzenwkzJ9PPhttVIXTxGyrKEE+m9ctv/Kr/J2ZORAAcOI6i
+	Jse2ZwDVGcOYYpyjEmf7Q==
+X-ME-Sender: <xms:-LQ0aCiIAApBi77lqo3UzTjjSxP-8CU4beARWBLoVSgQNqXwXDsniw>
+    <xme:-LQ0aDAFZDmjIAnOvd6w4SZgzLTaNZ9E9TWqiu3HVfaf9BUMPyW7YbF9V9imVhNf3
+    6FBinCk9hDiUsvKS1s>
+X-ME-Received: <xmr:-LQ0aKGt36seOLq-bpbG-wAKguoJGnieiyJJjf9tG2z0HqYzatM-dU4uWor5dEhAH2AVmYxQqTJQsuxZp60IRFfx>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddukedvieculddtuddrgeefvddrtd
+    dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
+    fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
+    dtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfev
+    fhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhinhhgmhgrohcuhggrnhhguceomh
+    esmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpedukeevhfegvedvveeihedv
+    vdeghfeglefgudegfeetvdekiefgledtheeggefhgfenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghr
+    tghpthhtohepudehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihgtseguih
+    hgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdp
+    rhgtphhtthhopegusghurhhgvghnvghrsehlihhnuhigrdhmihgtrhhoshhofhhtrdgtoh
+    hmpdhrtghpthhtohepjhgrnhhnhhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepjhgv
+    fhhfgihusehgohhoghhlvgdrtghomhdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepmhhhihhrrghmrghtsehkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehmrghthhhivghurdguvghsnhhohigvrhhssegvfhhfihgtihhoshdrtghomhdprh
+    gtphhtthhopehmrghtthhhihgvuhessghufhhfvghtrdhrvg
+X-ME-Proxy: <xmx:-LQ0aLT_ihfAHX8-10CkSzezWVTIjtBgwzci4MnNBY9WFUAi3q-CMA>
+    <xmx:-LQ0aPxbHvYDW2cFjBcjCGuLzzo8Iz5mj4k9WLOpxZQfhzDQhSDbcg>
+    <xmx:-LQ0aJ4uyOYySZzajgC3vXH3kmIf0_lx-H7bMZs5xDTn0Ssecx3kMQ>
+    <xmx:-LQ0aMxeY40oN-ISdpbWfEl-s-wgWlShdg3hh7hfCP5w5kyqaJwODw>
+    <xmx:-rQ0aKGt8zwGsT68BBMdaLZiljcy1KowTXqxmGs7hWPPVer7UODlN77M>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 26 May 2025 14:37:42 -0400 (EDT)
+Message-ID: <b6f1e330-6a9f-4359-a221-bec30d94fb20@maowtm.org>
+Date: Mon, 26 May 2025 19:37:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 0/5] Landlock tracepoints
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+Cc: Daniel Burgener <dburgener@linux.microsoft.com>,
+ Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>,
+ Kees Cook <kees@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Matthieu Buffet <matthieu@buffet.re>,
+ Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+ Ryan Sullivan <rysulliv@redhat.com>, Shervin Oloumi
+ <enlightened@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+ linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <20250523165741.693976-1-mic@digikod.net>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <20250523165741.693976-1-mic@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250523142242.1be10abb@gandalf.local.home>
-X-Infomaniak-Routing: alpha
 
-On Fri, May 23, 2025 at 02:22:42PM -0400, Steven Rostedt wrote:
-> On Fri, 23 May 2025 18:57:39 +0200
-> Mickaël Salaün <mic@digikod.net> wrote:
+On 5/23/25 17:57, Mickaël Salaün wrote:
+> Hi,
 > 
-> > Add a new __print_untrusted_str() helper to safely print strings after escaping
-> > all special characters, including common separators (space, equal sign),
-> > quotes, and backslashes.  This transforms a string from an untrusted source
-> > (e.g. user space) to make it:
-> > - safe to parse,
-> > - easy to read (for simple strings),
-> > - easy to get back the original.
+> This series adds two tracepoints to Landlock, one tied to rule addition,
+> and another to rule checking.  With these new tracepoints, we can see
+> all steps leading to an access decision.  They can be directly used with
+> /sys/kernel/tracing/events/landlock/* or attached by eBPF programs to
+> get a more complete view of Landlock internals.
 > 
-> Hmm, so this can be an issue if this is printed out via seq_file()?
+> This new feature is useful to trouble shoot policy issues, and it should
+> also limit the need for custom debugging kernel code when developing new
+> Landlock features.
 > 
-> I'm curious to what exactly can be "unsafe" about a string being printed
-> via "%s"?
-
-There is no issue for the kernel, only for users and user space. :)
-
+> Landlock already has audit support, which enables us to log denied
+> access requests.  Audit is useful to identify security issues or sandbox
+> misconfiguration.  However, it might not be enough to debug Landlock
+> policies.  The main differences with audit events is that traces are
+> disabled by default, can be very verbose, and can be filtered according
+> to process and Landlock properties (e.g. domain ID).
 > 
-> I'm not against this change, I just want to understand more about what the
-> issue is.
-
-The issue is about a malicious process triggering a trace event with an
-arbitrary string.  If such string is printed to the root's terminal, it
-can print escape sequences and do nasty things.  For instance, the
-terminal can beep, the window's title can be updated, a path name can be
-"hidden" with specific colors, the screen can be completely cleared and
-rewritten to trick peoples, and other "original" terminal features can
-be triggered by custom escape sequences.
-
-This is definitely not something new but still relevant.  There are a
-lot of articles about this kind of issues:
-https://phrack.org/issues/25/5
-https://marc.info/?l=bugtraq&m=104612710031920
-https://www.cyberark.com/resources/threat-research-blog/dont-trust-this-title-abusing-terminal-emulators-with-ansi-escape-characters
-https://blog.trailofbits.com/2025/04/29/deceiving-users-with-ansi-terminal-codes-in-mcp/
-
-In a less malicious environment, this helper would also be useful to
-just sanitize arbitrary text.  For instance, because '=' and ' ' are
-escaped, it's easy to write a key=value parser in shell (without bug),
-or to say it another way, it's more difficult for a parser to fail. ;)
-
-Anyway, this sanitization should not be visible in most cases.
-
+> As for audit, this tracing feature may expose sensitive information and
+> must then only be accessible to the system administrator.
 > 
-> > 
-> > Cc: Günther Noack <gnoack@google.com>
-> > Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Cc: Tingmao Wang <m@maowtm.org>
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > ---
-> >  include/linux/trace_events.h               |  3 ++
-> >  include/trace/stages/stage3_trace_output.h |  4 +++
-> >  include/trace/stages/stage7_class_define.h |  1 +
-> >  kernel/trace/trace_output.c                | 40 ++++++++++++++++++++++
-> >  4 files changed, 48 insertions(+)
-> > 
-> > diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-> > index fa9cf4292dff..78f543bb7558 100644
-> > --- a/include/linux/trace_events.h
-> > +++ b/include/linux/trace_events.h
-> > @@ -54,6 +54,9 @@ trace_print_hex_dump_seq(struct trace_seq *p, const char *prefix_str,
-> >  			 int prefix_type, int rowsize, int groupsize,
-> >  			 const void *buf, size_t len, bool ascii);
-> >  
-> > +const char *trace_print_untrusted_str_seq(struct trace_seq *s, const char *str);
-> > +
-> > +
-> >  struct trace_iterator;
-> >  struct trace_event;
-> >  
-> > diff --git a/include/trace/stages/stage3_trace_output.h b/include/trace/stages/stage3_trace_output.h
-> > index 1e7b0bef95f5..36947ca2abcb 100644
-> > --- a/include/trace/stages/stage3_trace_output.h
-> > +++ b/include/trace/stages/stage3_trace_output.h
-> > @@ -133,6 +133,10 @@
-> >  	trace_print_hex_dump_seq(p, prefix_str, prefix_type,		\
-> >  				 rowsize, groupsize, buf, len, ascii)
-> >  
-> > +#undef __print_untrusted_str
-> > +#define __print_untrusted_str(str)							\
-> > +		trace_print_untrusted_str_seq(p, __get_str(str))
-> > +
-> >  #undef __print_ns_to_secs
-> >  #define __print_ns_to_secs(value)			\
-> >  	({						\
-> > diff --git a/include/trace/stages/stage7_class_define.h b/include/trace/stages/stage7_class_define.h
-> > index fcd564a590f4..bc10b69b755d 100644
-> > --- a/include/trace/stages/stage7_class_define.h
-> > +++ b/include/trace/stages/stage7_class_define.h
-> > @@ -24,6 +24,7 @@
-> >  #undef __print_array
-> >  #undef __print_dynamic_array
-> >  #undef __print_hex_dump
-> > +#undef __print_untrusted_string
-> >  #undef __get_buf
-> >  
-> >  /*
-> > diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-> > index b9ab06c99543..17d576941147 100644
-> > --- a/kernel/trace/trace_output.c
-> > +++ b/kernel/trace/trace_output.c
-> > @@ -16,6 +16,7 @@
-> >  #include <linux/btf.h>
-> >  #include <linux/bpf.h>
-> >  #include <linux/hashtable.h>
-> > +#include <linux/string_helpers.h>
-> >  
-> >  #include "trace_output.h"
-> >  #include "trace_btf.h"
-> > @@ -297,6 +298,45 @@ trace_print_hex_dump_seq(struct trace_seq *p, const char *prefix_str,
-> >  }
-> >  EXPORT_SYMBOL(trace_print_hex_dump_seq);
-> >  
-> > +/**
-> > + * trace_print_untrusted_str_seq - print a string after escaping characters
-> > + * @s: trace seq struct to write to
-> > + * @src: The string to print
-> > + *
-> > + * Prints a string to a trace seq after escaping all special characters,
-> > + * including common separators (space, equal sign), quotes, and backslashes.
-> > + * This transforms a string from an untrusted source (e.g. user space) to make
-> > + * it:
-> > + * - safe to parse,
-> > + * - easy to read (for simple strings),
-> > + * - easy to get back the original.
-> > + */
-> > +const char *trace_print_untrusted_str_seq(struct trace_seq *s,
-> > +                                          const char *src)
-> > +{
-> > +	int escaped_size;
-> > +	char *buf;
-> > +	size_t buf_size = seq_buf_get_buf(&s->seq, &buf);
-> > +	const char *ret = trace_seq_buffer_ptr(s);
-> > +
-> > +	if (!src || WARN_ON(buf_size == 0))
+> This RFC only fully supports filesystem rules but the next series will
+> also support network rules.  Tests are also missing for now.
 > 
-> 		    WARN_ON_ONCE() please.
-
-I mimicked nearby code but WARN_ON_ONCE() is indeed better.
-
-Thanks.
-
+> Regards,
 > 
-> -- Steve
+> Mickaël Salaün (5):
+>    landlock: Rename landlock_id to landlock_rule_ref
+>    landlock: Merge landlock_find_rule() into landlock_unmask_layers()
+>    tracing: Add __print_untrusted_str()
+>    landlock: Add landlock_add_rule_fs tracepoint
+>    landlock: Add landlock_check_rule tracepoint
 > 
-> > +		return NULL;
-> > +
-> > +	escaped_size = string_escape_mem(src, strlen(src), buf, buf_size,
-> > +		ESCAPE_SPACE | ESCAPE_SPECIAL | ESCAPE_NAP | ESCAPE_APPEND |
-> > +		ESCAPE_OCTAL, " ='\"\\");
-> > +	if (unlikely(escaped_size >= buf_size)) {
-> > +		/* We need some room for the final '\0'. */
-> > +		seq_buf_set_overflow(&s->seq);
-> > +		s->full = 1;
-> > +		return NULL;
-> > +	}
-> > +	seq_buf_commit(&s->seq, escaped_size);
-> > +	trace_seq_putc(s, 0);
-> > +	return ret;
-> > +}
-> > +EXPORT_SYMBOL(trace_print_untrusted_str_seq);
-> > +
-> >  int trace_raw_output_prep(struct trace_iterator *iter,
-> >  			  struct trace_event *trace_event)
-> >  {
+>   MAINTAINERS                                |   1 +
+>   include/linux/trace_events.h               |   3 +
+>   include/trace/events/landlock.h            | 124 ++++++++++++++
+>   include/trace/stages/stage3_trace_output.h |   4 +
+>   include/trace/stages/stage7_class_define.h |   1 +
+>   kernel/trace/trace_output.c                |  40 +++++
+>   security/landlock/Makefile                 |  11 +-
+>   security/landlock/fs.c                     | 178 +++++++++++++--------
+>   security/landlock/fs.h                     |   3 +
+>   security/landlock/net.c                    |  18 +--
+>   security/landlock/ruleset.c                |  65 ++++----
+>   security/landlock/ruleset.h                |  15 +-
+>   security/landlock/trace.c                  |  15 ++
+>   13 files changed, 365 insertions(+), 113 deletions(-)
+>   create mode 100644 include/trace/events/landlock.h
+>   create mode 100644 security/landlock/trace.c
 > 
 > 
+> base-commit: a5806cd506af5a7c19bcd596e4708b5c464bfd21
+
+Tested-by: Tingmao Wang <m@maowtm.org>
+
+Here is an example output I got with `trace-cmd record -e landlock`:
+
+landlock-add-ru-776   [001] 75134.554776: landlock_add_rule_fs: [FAILED 
+TO PARSE] ruleset=0xffff88811a459200 ref_key=18446612686420679296 
+allowed=57343 dev=21 ino=53 pathname=/tmp/test
+landlock-add-ru-776   [001] 75134.555336: landlock_check_rule:  [FAILED 
+TO PARSE] domain_id=7838764077 access_request=4 ref_type=1 
+ref_key=18446612686420679296 layers=ARRAY[ff, df]
+I suggest adding some more events which I think shouldn't be too 
+difficult to implement and I can see them helping a lot with tracing / 
+debugging especially by BPF programs or someone new to landlock:
+
+- landlock_restrict_self: Currently we trace out the ruleset pointer in 
+add rule, and the domain ID in check rule.  However there is no way for 
+someone just looking at this trace (or a BPF program for landlock) to 
+relate which rulesets are applied to which domains. I think a simple 
+event we could add that will help with this is, on 
+landlock_restrict_self, prints out the ruleset passed in as well as the 
+domain ID newly created.  Maybe also num_rules and num_layers on the new 
+ruleset since it's trivial to do so, and could be informative to someone 
+analyzing a Landlock thing.
+
+- landlock_check_fs: Distinct from landlock_check_rule, this will happen 
+once the outcome of the access check is determined (maybe at the end of 
+is_access_to_paths_allowed and collect_domain_accesses?). It would 
+include the pathname of the target file (only allocated if this event is 
+enabled of course), so something like:
+
+   landlock_check_fs: domain_id=7838764077 access_request=4 
+pathname=/tmp/test allowed=true
+   landlock_check_fs: domain_id=7838764077 access_request=4 
+pathname=/tmp/test2 allowed=false
+
+We already produces audit logs for denied requests so it is a little bit 
+duplicating that, but I think this trace event shouldn't be too costly 
+to include.  It has the benefit that
+
+1. If an access is denied because no rules matched, we don't get any 
+landlock_check_rule traces, and so there's no way for someone looking at 
+the trace log to find out landlock denied something.
+
+2. Having an event that represents an access check makes it possible for 
+BPF programs to find out about all landlock access checks (most 
+interestingly denied ones but we could expose the allowed ones too), and 
+potentially relate the various `landlock_check_rule` events to an access 
+check.
+
+Actually, maybe it's worth having a "landlock_check_fs_enter", emitted 
+at the beginning of is_access_to_paths_allowed and 
+collect_domain_accesses? This could be useful for performance 
+measurements, and also makes it more explicit which landlock_check_rule 
+resulted from which access check.  Maybe the pathname and domain_id 
+could be printed on the enter event, and the exit event would just have 
+the outcome?  (Just an idea, I feel less certain about this. 
+"Enter"/"exit" naming taken from sys_enter_*/sys_exit_* but start/end 
+also works)
