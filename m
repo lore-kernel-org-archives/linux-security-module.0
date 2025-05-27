@@ -1,82 +1,116 @@
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A9F3C30
-	for <linux-security-module@vger.kernel.org>; Tue, 27 May 2025 11:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54221E4BE;
+	Tue, 27 May 2025 13:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748343634; cv=none; b=AbSV7dO1jyrhEsFqSVOP5FWSFMCxGL4P468cl90Sf3DA9b5MZKuf+oVUmlQoeIKpT7+xewxOtb3wb9uoRKHsSmXMvJudXWIO+uEXecarqOTxCiHolZRRuHCIBaZ5ge3OxfjRGKA9Q6yBK2R0/K+0btSGgOpAp783GSMt3kWheLA=
+	t=1748350875; cv=none; b=WkG8ozW4z+RGBRNWXlihqzZgR6W43FEKu/CB5e+8VdJkE3tiOBEYCpTJwePpQkco7SuDuXiW37DPd8Z8Pz6WId7zHdrX3AaOCoeK8dTKnzdsdS3azd5rHj76dKCcl0fleiA6OlUdoDlreSLrK+HWLcV6maIq1+fgadWQ8zHfviU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748343634; c=relaxed/simple;
-	bh=1ymit/SHBDSAciuBYn1YUSFveYAGSEEyUuvDQrliTv4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gEMOJc0OaWV0/2iEvr1i5fHDChcRM2L4q/rrmDmabh3ZuZejBjKiA0SR1dzsgSbhQZ9ashq+jg+h7Llhhnx3KHRXtIq+qPXtSPQGSbCM/HA/LJjRwPcMBVeoyuP1rfaxPnOYUifM1+1t7PLO6MxpppcDbKDLjsDJknXV7bqqyCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=A7M/qDtA; arc=none smtp.client-ip=84.16.66.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="A7M/qDtA"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b68mr3tHbzFNl;
-	Tue, 27 May 2025 13:00:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1748343628;
-	bh=nhEUzTuXRhlNN4MCC35fG/R3HnRRAbg8INxYzqSNfiw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A7M/qDtA4fSTCpuK3w06sZoKAYpWFClef0eQElNRUOPMTEDWLoayzZRPj7F5JpFnp
-	 NlgYR+ygwvl6kpnOIreLUOK/qYKgzVcvfA/rqxAT7fvT0Rhq5HIcR+NDov71plyQIR
-	 aSUiVe89xEo9BmMJCiFBUmMSZK4iteWfnOHiIvHY=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b68mr0k05zM3h;
-	Tue, 27 May 2025 13:00:28 +0200 (CEST)
-Date: Tue, 27 May 2025 13:00:27 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 08/10] landlock: Construct the inode hashtable in the
- new landlock_domain
-Message-ID: <20250527.paeShie1ofoo@digikod.net>
-References: <cover.1747836146.git.m@maowtm.org>
- <e0fcfb45accc387fb0c6a4deca2724fc531b7bd0.1747836146.git.m@maowtm.org>
+	s=arc-20240116; t=1748350875; c=relaxed/simple;
+	bh=e3RWz1HSsecBHl0HCS04IuuI1P7LdQRmuFIuAJ37OuU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qr7DgzeqYDmxtrfGtuTHliMPNNlL1oALlacG+6Q7YkzkLEGF5ILEDA6e4D1WqHuLD7ckdd4RpDi61AQ4B+xRH6PSml1O0TE26Tas0PX9zuOoHqdLgoaIlN2epJhPL/UBU49EHVePGWKE5+Irtlo1Nf+4us1ErH1OyK9YZzW6AkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4b6CLv6wFDzvX0T;
+	Tue, 27 May 2025 20:56:39 +0800 (CST)
+Received: from kwepemh500010.china.huawei.com (unknown [7.202.181.141])
+	by mail.maildlp.com (Postfix) with ESMTPS id 585DE180492;
+	Tue, 27 May 2025 21:01:04 +0800 (CST)
+Received: from huawei.com (10.67.175.67) by kwepemh500010.china.huawei.com
+ (7.202.181.141) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 27 May
+ 2025 21:01:03 +0800
+From: Zhao Yipeng <zhaoyipeng5@huawei.com>
+To: <zohar@linux.ibm.com>, <roberto.sassu@huawei.com>,
+	<dmitry.kasatkin@gmail.com>, <eric.snowberg@oracle.com>,
+	<paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
+	<janne.karhunen@gmail.com>
+CC: <morgan@kernel.org>, <lujialin4@huawei.com>,
+	<linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] ima: prevent concurrent list operations in ima_lsm_update_rules
+Date: Tue, 27 May 2025 20:51:03 +0800
+Message-ID: <20250527125103.751077-1-zhaoyipeng5@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e0fcfb45accc387fb0c6a4deca2724fc531b7bd0.1747836146.git.m@maowtm.org>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemh500010.china.huawei.com (7.202.181.141)
 
-On Wed, May 21, 2025 at 08:32:04PM +0100, Tingmao Wang wrote:
-> Since we can't get rid of the old landlock_merge_ruleset yet, we call our
-> new thing landlock_merge_ruleset2.
-> 
-> Signed-off-by: Tingmao Wang <m@maowtm.org>
-> ---
->  security/landlock/domain.c   |  87 +++++++++++++++++++++++++++++
->  security/landlock/domain.h   |   4 ++
->  security/landlock/hash.h     | 105 +++++++++++++++++++++++++++++++++++
->  security/landlock/ruleset.h  |   2 +-
->  security/landlock/syscalls.c |   9 +++
->  5 files changed, 206 insertions(+), 1 deletion(-)
+The current implementation of IMA policy list replacement via
+list_replace_rcu may trigger general protection faults under concurrent
+load policy operations. This occurs when a process replaces a node in
+ima_policy_rules list and sets old->prev = LIST_POISON2, while another
+parallel process still holds references to the old node. Subsequent list
+operations on the poisoned pointer result in kernel panic due to invalid
+memory access.
 
+To resolve this, introduce a mutex lock (ima_rules_mutex) in
+ima_lsm_update_rules() to protect. ima_update_policy() also use the
+ima_policy_rules. Introduce a mutex lock in it.
 
-> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> index 07823771b402..ac91d4a865b9 100644
-> --- a/security/landlock/ruleset.h
-> +++ b/security/landlock/ruleset.h
-> @@ -27,7 +27,7 @@ struct landlock_hierarchy;
->   */
->  struct landlock_layer {
->  	/**
-> -	 * @level: Position of this layer in the layer stack.
-> +	 * @level: Position of this layer in the layer stack. Starts from 1.
+Fixes: b16942455193 ("ima: use the lsm policy update notifier")
+Signed-off-by: Zhao Yipeng <zhaoyipeng5@huawei.com>
+---
+ security/integrity/ima/ima_policy.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Feel free to send a standalone patch with improved doc, I'll merge it
-directly.
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 128fab897930..d27e615e97d5 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -471,6 +471,8 @@ static bool ima_rule_contains_lsm_cond(struct ima_rule_entry *entry)
+ 	return false;
+ }
+ 
++static DEFINE_MUTEX(ima_rules_mutex);
++
+ /*
+  * The LSM policy can be reloaded, leaving the IMA LSM based rules referring
+  * to the old, stale LSM policy.  Update the IMA LSM based rules to reflect
+@@ -481,16 +483,19 @@ static void ima_lsm_update_rules(void)
+ 	struct ima_rule_entry *entry, *e;
+ 	int result;
+ 
++	mutex_lock(&ima_rules_mutex);
+ 	list_for_each_entry_safe(entry, e, &ima_policy_rules, list) {
+ 		if (!ima_rule_contains_lsm_cond(entry))
+ 			continue;
+ 
+ 		result = ima_lsm_update_rule(entry);
+ 		if (result) {
++			mutex_unlock(&ima_rules_mutex);
+ 			pr_err("lsm rule update error %d\n", result);
+ 			return;
+ 		}
+ 	}
++	mutex_unlock(&ima_rules_mutex);
+ }
+ 
+ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
+@@ -1038,9 +1043,12 @@ int ima_check_policy(void)
+  */
+ void ima_update_policy(void)
+ {
+-	struct list_head *policy = &ima_policy_rules;
++	struct list_head *policy;
+ 
++	mutex_lock(&ima_rules_mutex);
++	policy = &ima_policy_rules;
+ 	list_splice_tail_init_rcu(&ima_temp_rules, policy, synchronize_rcu);
++	mutex_unlock(&ima_rules_mutex);
+ 
+ 	if (ima_rules != (struct list_head __rcu *)policy) {
+ 		ima_policy_flag = 0;
+-- 
+2.34.1
 
->  	 */
->  	u16 level;
->  	/**
