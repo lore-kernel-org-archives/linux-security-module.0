@@ -1,152 +1,168 @@
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29ECA16EB7C;
-	Mon, 26 May 2025 18:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C3D13D8A3;
+	Tue, 27 May 2025 03:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748284693; cv=none; b=TZ/HR29lKtXhLGUuDVNyNrs257mGrHv/A2fLEJzt4NtupBN+/JcY+PYozZoeR2scY4cna256Z1PVlteI9rq26GyzPvwe0EUku1IpACF/N1iGR16CdOlPrBijLTjuc5pUsT3Xc1Y6S91mWcarAgyhHzGTzFqmK4rLPCXeZGVRXyE=
+	t=1748316656; cv=none; b=BkAoTSY7oPxTj22whIgesem09KbHz0sz4yKkAmbhHl+vaI4OG/EzqLtVUSyb+y4NO+ec6SpV0z82XFzUaGvOd/wlxrZMgXaZmkqfuFeYG6VZQRTY5I9DzIG39w07WI4x++9qivMurScmmviEzOydti47tAg6LnxynDc0J1+JW+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748284693; c=relaxed/simple;
-	bh=byxXvCc25/UBn5G3fsI02F/XIYUZoQFNeyxCX/4ywH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XS+pRJoxJi0nPDzqOqIbx0mtUKTsXrafqFEg1V5fQjEprpD6t0IRwX1DzVBrTtEKXiYEp0G3jzx2AlVjt3UHyC+MkpJXtDdHDX56IWS/ze+Fsf8FWSVQXltNorBolYjbDiL14+ZucLU8ujlXcRi4n8MJ+p0/m2IHHa3v4z7iILI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=JYydJO3O; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LxrtZRcJ; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1748316656; c=relaxed/simple;
+	bh=4+1dYOsA3kHiY8rIfLnjAgd8wOHuIeN0O4AklhVQ26M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tNgPsuz+bFx9p4F0t8inlF8y/5XUgtuJWyWiqw1UWQ9oGu6l6IO65YMF0CREu1OjL3Ep3yJ46a6AMQJRjElZoTmOoio1FfNbYDqdGQeYu3oRKjtivEtMl4AgB1ll4ehm2YLqpTirZM2ZqP1bkAXKVCAmB1Afo+54aksJr/hfP5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDpCasoc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="JYydJO3O";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LxrtZRcJ"
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 62EC62540199;
-	Mon, 26 May 2025 14:38:10 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Mon, 26 May 2025 14:38:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1748284690;
-	 x=1748371090; bh=Wg6ZzUU6RKA+p9AW93gylQZbXdxFA3WZB5RI4lcoWDw=; b=
-	JYydJO3OJurbBWlExvM/Y5lA7yqajBzk0n10N8TYUrNR5PgwN7+6V9bwx6MfA3NU
-	iPtpXbirH6pDttTl5zm9p/eeIre7YyeoWXUz1W/F220l9+UvXObMXmmdfmS/DQcN
-	PNAcXLBIhg7iv/v5Guw65o/L2QXY04ppbYs9DvLNZ77qYnOkr1WMgbjMLPUN2eJM
-	tJRqadi2DGQcf2uuKTgbbK4r06v6SuhwpGbJcxCtYMdqjGY0wg1XZ/0qD9W3YF8L
-	R85wqdRkxLUHusjtDGa6Zd1+9VdzNAzkTfBQV2qhfHkO422JnP0qZgMbx4ZKlE0q
-	nUJqDAmxuMdWUyE3YdSIQQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1748284690; x=
-	1748371090; bh=Wg6ZzUU6RKA+p9AW93gylQZbXdxFA3WZB5RI4lcoWDw=; b=L
-	xrtZRcJ9q8mgLmjGPVlezty8isoNCPv0nV56dkKCKAtR7ywYVAfn//wKbqCdQPK3
-	H4YAZ8xuq4RA15+EhZV2aTdDzrArUg+YQfrKIXRRnaKBEeu6Jetf09YmFKQ8K/QP
-	ijVG8H8tDuXcBt5jxDbFz+hiZq95nteVHAnTLC1OEglcYAmHoHRHpax3i4S0gj1i
-	KLORegnzOjv3Ce+Mms5S/Fr95DqqT46VAxT73ZE6WG12eB6awYHhFSwGTD+fAWyH
-	SZu89lpUTm1gocBFmGVytjv3TiKiS+q+q11ChpxQwHFbDTWNrn2U4JkDh5X0IKpG
-	dNjG4M+9Kd0A7fxbqRhDw==
-X-ME-Sender: <xms:EbU0aOvhgsu4PTAiuVTpbis8sr37suKqQPDTGcQWoNcDOOhgJQjzpQ>
-    <xme:EbU0aDdvTZTkA3C_uCnhGXMk6FVWgC9lVdvuMdODqeHXKirWCEDnPyRYiSTUtJpD2
-    171YwLt5ffcB-IxkKg>
-X-ME-Received: <xmr:EbU0aJwc-OZPo4kPPNgLPv6sVgf6E44S2oMfRObWvjRyeHepEFOo9N-DvczuGX2MbF4DgOJhWcPbgmUcNFsVRdoI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddukedvieculddtuddrgeefvddrtd
-    dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
-    fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
-    dtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfev
-    fhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhinhhgmhgrohcuhggrnhhguceomh
-    esmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpedukeevhfegvedvveeihedv
-    vdeghfeglefgudegfeetvdekiefgledtheeggefhgfenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghr
-    tghpthhtohepudehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihgtseguih
-    hgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdp
-    rhgtphhtthhopegusghurhhgvghnvghrsehlihhnuhigrdhmihgtrhhoshhofhhtrdgtoh
-    hmpdhrtghpthhtohepjhgrnhhnhhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepjhgv
-    fhhfgihusehgohhoghhlvgdrtghomhdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtohepmhhhihhrrghmrghtsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehmrghthhhivghurdguvghsnhhohigvrhhssegvfhhfihgtihhoshdrtghomhdprh
-    gtphhtthhopehmrghtthhhihgvuhessghufhhfvghtrdhrvg
-X-ME-Proxy: <xmx:EbU0aJPCCy6_BIBp_yc2mRzolCGY2eYTyNN8sk6tWALG6EBSjHD-tQ>
-    <xmx:EbU0aO-umUH468zrDGsFOCvKbs_pBEOPmTCHt8iROleqFIhMw2qF6A>
-    <xmx:EbU0aBXS1Ai5Z6G5bewiLUgYD_nOqk4W_1z_V3t7dRwXN8nhR9nd_g>
-    <xmx:EbU0aHfiVUsymsp_mGFD1PpENpCgehyzYwRDs-KCFQykX1HCT9Ru0g>
-    <xmx:ErU0aCDpSPV9Q1ZF642ddKaZy-5nGj769AGwQ6ASUXWyxVm_V_DHPUQk>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 26 May 2025 14:38:07 -0400 (EDT)
-Message-ID: <ec7198c7-bed9-4a04-9ff0-da90ce729897@maowtm.org>
-Date: Mon, 26 May 2025 19:38:07 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDpCasoc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D81B4C4CEED;
+	Tue, 27 May 2025 03:30:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748316655;
+	bh=4+1dYOsA3kHiY8rIfLnjAgd8wOHuIeN0O4AklhVQ26M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PDpCasocKfbRpFVO+Gva5E2erDIv83oOIdsyR75Vq2GGa56oNa5MOdQa5qay1G54y
+	 S3D805nuKzNhvN1MGkOcNzDYg75XhUCqp/yL2uAtapUbK1S3n1G1UqKFxjn4ntxa2t
+	 CxK7rnXc/L95iZlTUmMOfPm+tWQHp0eHX8ylQn1MLkMLwWEVbEIqOGdVT8vlbCWjXx
+	 1q7/F23sOsIArXHlRGvPt/BGFksZoRCqKz9JnzG/1PYvusJQ1vfQN1bIMcZcy537wE
+	 EtK8ERnZ0Vf1prle9VJ/upLUeNrvka0s29uYXbrEKAL1WDGe39ZbtoexMTV0Oi8rty
+	 ACZ9lz8fPa0vg==
+Date: Mon, 26 May 2025 20:30:52 -0700
+From: Kees Cook <kees@kernel.org>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	Hans de Goede <hdegoede@redhat.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+	Michal Wilczynski <michal.wilczynski@intel.com>,
+	Juergen Gross <jgross@suse.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Roger Pau Monne <roger.pau@citrix.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Usama Arif <usama.arif@bytedance.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
+	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
+	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-mm@kvack.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	LKML <linux-kernel@vger.kernel.org>, kasan-dev@googlegroups.com,
+	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v2 04/14] x86: Handle KCOV __init vs inline mismatches
+Message-ID: <202505262028.E5B7A7E8@keescook>
+References: <20250523043251.it.550-kees@kernel.org>
+ <20250523043935.2009972-4-kees@kernel.org>
+ <ba4f4fd0-1bcf-3d84-c08e-ba0dd040af16@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 2/5] landlock: Merge landlock_find_rule() into
- landlock_unmask_layers()
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-Cc: Daniel Burgener <dburgener@linux.microsoft.com>,
- Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>,
- Kees Cook <kees@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Matthieu Buffet <matthieu@buffet.re>,
- Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
- Ryan Sullivan <rysulliv@redhat.com>, Shervin Oloumi
- <enlightened@google.com>, Steven Rostedt <rostedt@goodmis.org>,
- linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <20250523165741.693976-1-mic@digikod.net>
- <20250523165741.693976-3-mic@digikod.net>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20250523165741.693976-3-mic@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ba4f4fd0-1bcf-3d84-c08e-ba0dd040af16@linux.intel.com>
 
-On 5/23/25 17:57, Mickaël Salaün wrote:
-> To be able to have useful traces, let's consolidate rule finding into
-> unmask checking.  landlock_unmask_layers() now gets a landlock_rule_ref
-> instead of a rule pointer.
+On Mon, May 26, 2025 at 12:53:13AM +0300, Ilpo J�rvinen wrote:
+> On Thu, 22 May 2025, Kees Cook wrote:
 > 
-> This enables us to not deal with Landlock rule pointers outside of
-> ruleset.c, to avoid two calls, and to get all required information
-> available to landlock_unmask_layers().
+> > When KCOV is enabled all functions get instrumented, unless the
+> > __no_sanitize_coverage attribute is used. To prepare for
+> > __no_sanitize_coverage being applied to __init functions, we have to
+> > handle differences in how GCC's inline optimizations get resolved. For
+> > x86 this means forcing several functions to be inline with
+> > __always_inline.
+> > 
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> > ---
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Borislav Petkov <bp@alien8.de>
+> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > Cc: <x86@kernel.org>
+> > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+> > Cc: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+> > Cc: Hans de Goede <hdegoede@redhat.com>
+> > Cc: "Ilpo J�rvinen" <ilpo.jarvinen@linux.intel.com>
+> > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> > Cc: Len Brown <lenb@kernel.org>
+> > Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> > Cc: Ard Biesheuvel <ardb@kernel.org>
+> > Cc: Mike Rapoport <rppt@kernel.org>
+> > Cc: Michal Wilczynski <michal.wilczynski@intel.com>
+> > Cc: Juergen Gross <jgross@suse.com>
+> > Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> > Cc: Roger Pau Monne <roger.pau@citrix.com>
+> > Cc: David Woodhouse <dwmw@amazon.co.uk>
+> > Cc: Usama Arif <usama.arif@bytedance.com>
+> > Cc: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+> > Cc: Thomas Huth <thuth@redhat.com>
+> > Cc: Brian Gerst <brgerst@gmail.com>
+> > Cc: <kvm@vger.kernel.org>
+> > Cc: <ibm-acpi-devel@lists.sourceforge.net>
+> > Cc: <platform-driver-x86@vger.kernel.org>
+> > Cc: <linux-acpi@vger.kernel.org>
+> > Cc: <linux-trace-kernel@vger.kernel.org>
+> > Cc: <linux-efi@vger.kernel.org>
+> > Cc: <linux-mm@kvack.org>
+> > ---
 > 
-> We could make struct landlock_rule private because it is now only used
-> in the ruleset.c file.
+> > diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+> > index e7350c9fa3aa..0518d5b1f4ec 100644
+> > --- a/drivers/platform/x86/thinkpad_acpi.c
+> > +++ b/drivers/platform/x86/thinkpad_acpi.c
+> > @@ -559,12 +559,12 @@ static unsigned long __init tpacpi_check_quirks(
+> >  	return 0;
+> >  }
+> >  
+> > -static inline bool __pure __init tpacpi_is_lenovo(void)
+> > +static __always_inline bool __pure tpacpi_is_lenovo(void)
+> >  {
+> >  	return thinkpad_id.vendor == PCI_VENDOR_ID_LENOVO;
+> >  }
+> >  
+> > -static inline bool __pure __init tpacpi_is_ibm(void)
+> > +static __always_inline bool __pure tpacpi_is_ibm(void)
+> >  {
+> >  	return thinkpad_id.vendor == PCI_VENDOR_ID_IBM;
+> >  }
 > 
-> Cc: Günther Noack <gnoack@google.com>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> ---
->   security/landlock/fs.c      | 144 ++++++++++++++++++++++--------------
->   security/landlock/net.c     |   6 +-
->   security/landlock/ruleset.c |  12 ++-
->   security/landlock/ruleset.h |   9 +--
->   4 files changed, 100 insertions(+), 71 deletions(-)
+> Hi Kees,
 > 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index f5087688190a..73a20a501c3c 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -356,30 +356,27 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
->   /* Access-control management */
->   
->   /*
-> - * The lifetime of the returned rule is tied to @domain.
-> - *
-> - * Returns NULL if no rule is found or if @dentry is negative.
-> + * Returns true if an object is tied to @dentry, and updates @ref accordingly.
->    */
-> -static const struct landlock_rule *
-> -find_rule(const struct landlock_ruleset *const domain,
-> -	  const struct dentry *const dentry)
-> +static bool find_rule_ref(const struct dentry *const dentry,
-> +			  struct landlock_rule_ref *ref)
+> What's your plan on upstreaming route/timeline for this? I'd prefer to 
+> retain full control over this file as we were planning on some 
+> reorganization of files into lenovo/ subdir.
 
-I think a better name would be something like "get_rule_ref"? Since it's 
-not really _finding_ anything (like doing a search in a rbtree).
+I'm not in a big rush. I'm hoping to have this all in place for v6.17,
+but the Clang feature won't be in a released compiler version until
+September. :) I can send this bit separately for your tree.
 
-(If you take the rename suggestion, then it would be "get_rule_target")
+Thanks for taking a look!
 
-> [...]
+-- 
+Kees Cook
