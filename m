@@ -1,168 +1,194 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C3D13D8A3;
-	Tue, 27 May 2025 03:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D911F2512EB
+	for <linux-security-module@vger.kernel.org>; Tue, 27 May 2025 10:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748316656; cv=none; b=BkAoTSY7oPxTj22whIgesem09KbHz0sz4yKkAmbhHl+vaI4OG/EzqLtVUSyb+y4NO+ec6SpV0z82XFzUaGvOd/wlxrZMgXaZmkqfuFeYG6VZQRTY5I9DzIG39w07WI4x++9qivMurScmmviEzOydti47tAg6LnxynDc0J1+JW+c=
+	t=1748343608; cv=none; b=GiEN+UMedXxlqZGEAxZf/CEcRMC+ADLNtYgZrNn/zhwVU41oXfp0nyZk3Qh/Uf3pePXbQH5WCqAkQogDfBWNzVMxgllTrjnF8K6jNxAolzFECS4Xzx5aBZEtCNmhjUhcgDHL+BTsPh/9BHu8AdcBVCBq0iZ02qndDjfbY55jZr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748316656; c=relaxed/simple;
-	bh=4+1dYOsA3kHiY8rIfLnjAgd8wOHuIeN0O4AklhVQ26M=;
+	s=arc-20240116; t=1748343608; c=relaxed/simple;
+	bh=br70lFw1NvJpc2iH3hOzDzWeiP7sArx3gNYzfTk4MXc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tNgPsuz+bFx9p4F0t8inlF8y/5XUgtuJWyWiqw1UWQ9oGu6l6IO65YMF0CREu1OjL3Ep3yJ46a6AMQJRjElZoTmOoio1FfNbYDqdGQeYu3oRKjtivEtMl4AgB1ll4ehm2YLqpTirZM2ZqP1bkAXKVCAmB1Afo+54aksJr/hfP5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDpCasoc; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=JaMQsvIccr3HMTdsaVN7WvnxpilJd1nqrztsfpT2yPP+EtjxIuaX6FZabTPLqv6X356nU7+Tixj2ppPc/6LqcgbyqBXLb2tKURvFy1+XtaxtR1rBMDYFVm71v/cw0GOGtkcwU1E7QpZYHbt1c1UlfIZMk/86IfGP1WMSopfz7EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FAQe76Y2; arc=none smtp.client-ip=185.125.25.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDpCasoc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D81B4C4CEED;
-	Tue, 27 May 2025 03:30:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748316655;
-	bh=4+1dYOsA3kHiY8rIfLnjAgd8wOHuIeN0O4AklhVQ26M=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FAQe76Y2"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b68mF42FlzC6B;
+	Tue, 27 May 2025 12:59:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1748343597;
+	bh=xQZNjdHea11fHa59gzAWE7b56s+40mEGmXqbap377cE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PDpCasocKfbRpFVO+Gva5E2erDIv83oOIdsyR75Vq2GGa56oNa5MOdQa5qay1G54y
-	 S3D805nuKzNhvN1MGkOcNzDYg75XhUCqp/yL2uAtapUbK1S3n1G1UqKFxjn4ntxa2t
-	 CxK7rnXc/L95iZlTUmMOfPm+tWQHp0eHX8ylQn1MLkMLwWEVbEIqOGdVT8vlbCWjXx
-	 1q7/F23sOsIArXHlRGvPt/BGFksZoRCqKz9JnzG/1PYvusJQ1vfQN1bIMcZcy537wE
-	 EtK8ERnZ0Vf1prle9VJ/upLUeNrvka0s29uYXbrEKAL1WDGe39ZbtoexMTV0Oi8rty
-	 ACZ9lz8fPa0vg==
-Date: Mon, 26 May 2025 20:30:52 -0700
-From: Kees Cook <kees@kernel.org>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Hans de Goede <hdegoede@redhat.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-	Michal Wilczynski <michal.wilczynski@intel.com>,
-	Juergen Gross <jgross@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Roger Pau Monne <roger.pau@citrix.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Usama Arif <usama.arif@bytedance.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-mm@kvack.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	LKML <linux-kernel@vger.kernel.org>, kasan-dev@googlegroups.com,
-	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v2 04/14] x86: Handle KCOV __init vs inline mismatches
-Message-ID: <202505262028.E5B7A7E8@keescook>
-References: <20250523043251.it.550-kees@kernel.org>
- <20250523043935.2009972-4-kees@kernel.org>
- <ba4f4fd0-1bcf-3d84-c08e-ba0dd040af16@linux.intel.com>
+	b=FAQe76Y29ue5xWTDm05GAaPWVJgUu6B02jZBU8HT/NUPgzL5HdW4H2R5IH4LtCkzk
+	 XIAY1TgAS7cWhiN4RJEzbJij+kzS0XFgu/ZIP4RPghUsBPTitZsIyjT/yJCEM3qBaW
+	 vYSXdfpMa5fJsb9Li+3+Q/yM428tUaeCo0yHuvxA=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4b68mD4RjPz1yn;
+	Tue, 27 May 2025 12:59:56 +0200 (CEST)
+Date: Tue, 27 May 2025 12:59:53 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Jann Horn <jannh@google.com>
+Subject: Re: landlock: Use hashtable for merged domains
+Message-ID: <20250527.oaquah5upohB@digikod.net>
+References: <cover.1747836146.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ba4f4fd0-1bcf-3d84-c08e-ba0dd040af16@linux.intel.com>
+In-Reply-To: <cover.1747836146.git.m@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On Mon, May 26, 2025 at 12:53:13AM +0300, Ilpo Järvinen wrote:
-> On Thu, 22 May 2025, Kees Cook wrote:
+On Wed, May 21, 2025 at 08:31:56PM +0100, Tingmao Wang wrote:
+> Hi MickaÃ«l,
 > 
-> > When KCOV is enabled all functions get instrumented, unless the
-> > __no_sanitize_coverage attribute is used. To prepare for
-> > __no_sanitize_coverage being applied to __init functions, we have to
-> > handle differences in how GCC's inline optimizations get resolved. For
-> > x86 this means forcing several functions to be inline with
-> > __always_inline.
-> > 
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: <x86@kernel.org>
-> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-> > Cc: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-> > Cc: Hans de Goede <hdegoede@redhat.com>
-> > Cc: "Ilpo Järvinen" <ilpo.jarvinen@linux.intel.com>
-> > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> > Cc: Len Brown <lenb@kernel.org>
-> > Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> > Cc: Ard Biesheuvel <ardb@kernel.org>
-> > Cc: Mike Rapoport <rppt@kernel.org>
-> > Cc: Michal Wilczynski <michal.wilczynski@intel.com>
-> > Cc: Juergen Gross <jgross@suse.com>
-> > Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> > Cc: Roger Pau Monne <roger.pau@citrix.com>
-> > Cc: David Woodhouse <dwmw@amazon.co.uk>
-> > Cc: Usama Arif <usama.arif@bytedance.com>
-> > Cc: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-> > Cc: Thomas Huth <thuth@redhat.com>
-> > Cc: Brian Gerst <brgerst@gmail.com>
-> > Cc: <kvm@vger.kernel.org>
-> > Cc: <ibm-acpi-devel@lists.sourceforge.net>
-> > Cc: <platform-driver-x86@vger.kernel.org>
-> > Cc: <linux-acpi@vger.kernel.org>
-> > Cc: <linux-trace-kernel@vger.kernel.org>
-> > Cc: <linux-efi@vger.kernel.org>
-> > Cc: <linux-mm@kvack.org>
-> > ---
+> This is a set of (incomplete) patches for the "domain hashtable" work.
+> While this is still a WIP, I'm sending it now as per our discussion.  You
+> can take a look and see if the approach needs correcting / if we want to
+> go ahead with using hashtable.
 > 
-> > diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-> > index e7350c9fa3aa..0518d5b1f4ec 100644
-> > --- a/drivers/platform/x86/thinkpad_acpi.c
-> > +++ b/drivers/platform/x86/thinkpad_acpi.c
-> > @@ -559,12 +559,12 @@ static unsigned long __init tpacpi_check_quirks(
-> >  	return 0;
-> >  }
-> >  
-> > -static inline bool __pure __init tpacpi_is_lenovo(void)
-> > +static __always_inline bool __pure tpacpi_is_lenovo(void)
-> >  {
-> >  	return thinkpad_id.vendor == PCI_VENDOR_ID_LENOVO;
-> >  }
-> >  
-> > -static inline bool __pure __init tpacpi_is_ibm(void)
-> > +static __always_inline bool __pure tpacpi_is_ibm(void)
-> >  {
-> >  	return thinkpad_id.vendor == PCI_VENDOR_ID_IBM;
-> >  }
+> Currently only implemented for fs access.
 > 
-> Hi Kees,
-> 
-> What's your plan on upstreaming route/timeline for this? I'd prefer to 
-> retain full control over this file as we were planning on some 
-> reorganization of files into lenovo/ subdir.
+> This set of changes is also available on the landlock-hashmap branch of
+> https://github.com/micromaomao/linux-dev.git
 
-I'm not in a big rush. I'm hoping to have this all in place for v6.17,
-but the Clang feature won't be in a released compiler version until
-September. :) I can send this bit separately for your tree.
+Thanks for these patches and the related benchmarks!
 
-Thanks for taking a look!
+> 
+> 
+> struct landlock_domain
+> ----------------------
+> 
+> One of the major thing I'm not sure about in this patch is the fact that
+> I've decided to create a standalone `struct landlock_domain`, instead of
+> re-using landlock_ruleset.  My original hope was that it might help make
+> the code a bit clearer - struct landlock_ruleset would just be for
+> unmerged rulesets (and it can use rbtree if we still wants to), and we can
+> use this new type for domains (and add new fields and locks to it that
+> wouldn't be on a ruleset, for the mutable domains / supervisor work).
+> 
+> I also wanted to split the logic of dealing with rules in a merged domain
+> (hence needing to copy multiple layers etc) out of create_rule and
+> insert_rule, and simply these functions (especially insert_rule) by
+> letting them just deal with unmerged rulesets (so only one layer) - the
+> logic for merged domains would be different anyway since it's no longer a
+> rbtree walk (but something like landlock_hash_upsert in patch 8 instead).
+> 
+> However, looking back at it, I'm not sure if creating this landlock_domain
+> was actually a good idea.  Going down this route eventually I will just
+> have to move all the domain-related logic from using ruleset to using
+> landlock_domain.  If we decide to use hashtable for unmerged rulesets too
+> (not done in this patch, and need more thoughts on how that would work),
+> then separating this out is even less value.
+> 
+> Regardless, the relevant code in this patch should still be easily
+> portable to just extend landlock_ruleset with hashtables, so I'm happy to
+> do that instead in the next version.
 
--- 
-Kees Cook
+I think a dedicated struct landlock_domain has value: clearer API,
+smaller domain's size, optimizations.  In the current implementation of
+the hash table, the domain's size increases in most cases because of the
+table's size.  We also still have scattered rules and at least two
+pointer dereferencing (if no hash collision): landlock_hashtable.hlist,
+and hlist_node.first.  This could be avoided with a compact flat
+structure, using a hash table or just an array with sorted keys.  See a
+new proposal in my reply to patch 2.
+
+> 
+> 
+> Hashtable implementation
+> ------------------------
+> 
+> Since I couldn't find a suitable existing wrapper for runtime-sized (but
+> fixed after creation) hashtables, this patch uses a newly hand-rolled
+> implementation.  It's not very complex so this might be fine, but there is
+> also rhashtable which would be especially suitable if we want to use hash
+> table for unmerged rulesets too.  See patch 2 message for details.
+> 
+> 
+> Testing
+> -------
+> 
+> selftests/landlock/fs_tests all passes under KASAN, lockdep etc.  Other
+> tests showed no obvious issues, but base and net fails due to missing
+> config (no MPTCP, no CONFIG_ASYMMETRIC_KEY_TYPE i.e. keyctl)
+> 
+> I ran benchmark with before/after using two workloads, on the same machine
+> and setup:
+> 
+>     1. run_microbench with different depth and number of extra rules using
+>     code in https://github.com/landlock-lsm/landlock-test-tools/pull/17
+> 
+>     2. A more "typical" workload I put together quickly, calling git status
+>     and the like repeatedly:
+>     https://github.com/torvalds/linux/commit/f1865ce970af97ac3b6f4edf580529b8cdc66371
+> 
+> On the "typical" workload, which has 2 layers and ~15 rules, we have:
+> 
+> Comparing:                    orig	  hashtable  (% change)
+>   landlock_overhead:
+>     (this is the % of time spent in landlock hook in the open syscall)
+>                         avg = 34      33         (-2.9%)
+>                      median = 34      33         (-2.9%)
+> 
+>   landlock_hook:        avg = 837     775        (-7.4%) (unit: ns)
+>                      median = 813     748        (-8.0%) (unit: ns)
+> 
+>   open_syscall:         avg = 2429    2324       (-4.3%) (unit: ns)
+>                      median = 2370    2265       (-4.4%) (unit: ns)
+> 
+> Using the microbench script, for an extreme case on a path beneath 28
+> directories and with 10000 rules:
+> 
+> Comparing:                    orig	  hashtable  (% change)
+>   landlock_overhead:    avg = 27      24         (-11.1%)
+>                      median = 29      25         (-13.8%)
+>   landlock_hook:        avg = 1913    1577       (-17.6%)
+>                      median = 1884    1544       (-18.0%)
+>   open_syscall:         avg = 6775    6259       (-7.6%)
+>                      median = 6666    6115       (-8.3%)
+> 
+> The full results can be found at
+> https://fileshare.maowtm.org/landlock/20250521/index.html
+> 
+> Closes: https://github.com/landlock-lsm/linux/issues/1
+> 
+> Tingmao Wang (10):
+>   landlock: Add some debug output
+>   landlock/hash: define (dynamic, non-resizable) hash table helpers
+>   landlock/hash: Use linear search for small tables
+>   landlock/ruleset: Rename and extract create_rule
+>   Add hlist_node member to struct landlock_rule
+>   landlock/domain: Define landlock_domain
+>   landlock: Add the new domain to landlock_cred_security
+>   landlock: Construct the inode hashtable in the new landlock_domain
+>   landlock/fs: Use the new hashtable-based domain to find inode rules
+>   landlock: Debug print inode hashtable in landlock_merge_ruleset2
+> 
+>  security/landlock/cred.c     |   8 +-
+>  security/landlock/cred.h     |   1 +
+>  security/landlock/domain.c   | 145 +++++++++++++++++
+>  security/landlock/domain.h   |  45 ++++++
+>  security/landlock/fs.c       | 107 +++++++++----
+>  security/landlock/fs.h       |   1 +
+>  security/landlock/hash.h     | 294 +++++++++++++++++++++++++++++++++++
+>  security/landlock/ruleset.c  |  80 +---------
+>  security/landlock/ruleset.h  |  99 +++++++++++-
+>  security/landlock/syscalls.c |  35 +++++
+>  10 files changed, 702 insertions(+), 113 deletions(-)
+>  create mode 100644 security/landlock/hash.h
+> 
+> 
+> base-commit: 3039ed432745f8fdf5cbb43fdc60b2e1aad624c1
+> --
+> 2.49.0
