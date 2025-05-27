@@ -1,238 +1,185 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDFC2AE99
-	for <linux-security-module@vger.kernel.org>; Tue, 27 May 2025 14:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BEC275861
+	for <linux-security-module@vger.kernel.org>; Tue, 27 May 2025 14:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748356040; cv=none; b=q3FsJmjBQmbRZtN3slnJQoHl6pXReYgIYbkyjAS7qcJ7txyCSQ9Vh8fEhqZH/CBZVe0fQFXzamHiRB+vvXPBXQOfPqKq403oxxEpGjhLRBzqQlNTkDtdnjBXHi4PpIeP8XkBstJ36JXykKQaX+XofMLwJrkgIaEVKT9c6kinBCc=
+	t=1748357586; cv=none; b=THRA2owFcfh8S3VtJsZbl8CJAg+5P+pt6jsrniBWnRdhxoV8D5wIyig1rKzSdBMBqIca0jzm2u/FjyB+vtISS0VPJ3tO8YKOqj0x40/Rln8FuOpQjaypGXk7tz1neASF6n09b/nMHCUklBbwrgaR7AJatGz64rSIdE2p/9OQXww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748356040; c=relaxed/simple;
-	bh=Xv/dRmh0m35JE7egUOEw1JFCjRd6AcJU6uN69FdDKXM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A9oTQpE7QQm46wNnt0x0r1WTpPTRU7ecjA4aMRurqksXlbadXoLC2rnL+sF1S9pRMV9GSWHa4tvHqsgO1C4QMinaHlOrm9oTXuYubTOpvurN+9wxn1kMA9YiQoW0elH12z2B0pyNQhMDjV9OrB1V8BZ6sKZkS7JzjPDgB0QftjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rhg8qCsA; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1748357586; c=relaxed/simple;
+	bh=9HAVGlFIX/JYEWRBeEZIvY9UFOX70BjYYPdGiZ/Y7cs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cb6VJcsMpExHLbLh8UcWDWGwdpSB4fof8L4S0o7tdxVNwCRyo5yfQEnTVl1EyvScQ84q+SRyrdx3NR6+HHbE3nNhj69RmZ0O9MNdpnTbU3CLJDIkdCqikcHf1Smw03I3WEK4JrC5FFOvTtTvawiRjnmSpI4L1W1SfRJxU+ptgbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=VNhsXuKm; arc=none smtp.client-ip=185.125.25.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rhg8qCsA"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6000791e832so21205a12.1
-        for <linux-security-module@vger.kernel.org>; Tue, 27 May 2025 07:27:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748356037; x=1748960837; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pHYrUZynmF1+LQe/MzD5OkoDbTa7T8UCiEl2TMfrPDY=;
-        b=rhg8qCsA/eBR5yyDY6VEMeHSUlqo4veFiEi3wVOQZZWujmrYx/sWHNnxAyG4aIed18
-         1rakhbDcaB/aU/xaftFSB+2jbhmQVKmPHyBHtGMMqqQyphxeRMQApAt9FN93e3fm6pc8
-         S1wCtcsKY5UjQyoPyRtZbL+ROvjQE8m8uCHiPmnBDUIe1pa0VYAgP82XQmNIIfIby/P9
-         UTd0xU7CPrl1UT552XYrbY4PGFxkvk05m/nZaSoFay+VOO4pPXH2RfA3qVO8d0dxytLn
-         jZ2h7TDaj0INEHnYOCiDy3rJKlOfEFlaziplGZsuymHXV2oOTu3hSqbsUh2vaJ/7G8K4
-         57VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748356037; x=1748960837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pHYrUZynmF1+LQe/MzD5OkoDbTa7T8UCiEl2TMfrPDY=;
-        b=cLoR/rSroB0fzsMYUctZSinyRk5747B/Gjo40pAnuNJ/xbnOiaIN3wIhNhdCpV1cxM
-         1P5VeS1+dqUGj25/2ys4k9H2wmKLAMYL3V03ZvNKIgDz8B0k0AS3F/fbXV1GEniMUuLI
-         Q0HKhzU1jPtqtyqSMwjBFoLQackJisqRfhF4h1qPO6an8zngF7KSMjcFHNhucrH3NInj
-         L8IBii8SupB0T2I0IgNXlHrbrb8ChVgZ5Mvbk07rwpkKZ+AEru8L4hqntAhkNpqIY21p
-         EljCyeIMcdK7bCeZMOvdJqCSeAubZNVAJRd56mQutg8oKkkfNrXKsQa2OVrZNsHM7mtX
-         Ra/w==
-X-Forwarded-Encrypted: i=1; AJvYcCW+ittW5Ql8fYbFAx+eZYPINGZAV8dx5sRBCoQSicoQzmdvNSaM9AyRDf+Wg3TVmFh87ChTStsSaxZCk9wixndb8RuiJNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZA8I6kmydklRQJ5tfK8r/fXR3/hvjaMwLfJzshVkY2UVWgPTi
-	eWQlGwmKRLGxI25mH9pC1B5scn9m7BedLTnYp3oy1x6GwPUXtvyGnTCnw5DNUVPPacprXKHaFDI
-	2IHH/30RnC5G/Jo16dViQWG6hqKKDU7DNRGHRpZIe
-X-Gm-Gg: ASbGncugbKf5Tlc19jY/kzRFa5Rh7Pk6lDyvVALUftPXUBfYcAf/v+n1mcTQzLrY0lU
-	VMDHP/PLtsh2N/VmuskubpNso2WC5VgdjWwJZ7rjL3+V8SNwySmfAdbzeE0XMey9f9HuLOqhXuR
-	aO3gHI3f/o6o/E1vFTVX09akBflMP+pBRWoqnYNqfbTRDBtbDYqhP5dsAPXVH6QpiW8jxzlto=
-X-Google-Smtp-Source: AGHT+IH3iurEiivqwpCv3LwpNAc4Cm+HyZ9vRYcSUb+hOOoZJ5uP01DiVo2wrGQiamywl+YIBIWvHAqsiUIGKo4wZLY=
-X-Received: by 2002:a05:6402:1a2e:b0:604:60a6:7852 with SMTP id
- 4fb4d7f45d1cf-60460a6795amr171058a12.5.1748356036937; Tue, 27 May 2025
- 07:27:16 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="VNhsXuKm"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b6Fx17432zjKJ;
+	Tue, 27 May 2025 16:52:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1748357573;
+	bh=hM2848gzLaiP+HIZKcDCPJQWC8M1cqobtz6hhFh/Bk8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VNhsXuKmuTNy/AlEYqi4co2V2VjRQaHzgPmisKO9pawPwzpQ8nUXK+Fx3rC9RE0vY
+	 rOFSfCBS8erODudOakMClXLFn5icdnXn7nWeGoRQrvAndhCecC3MEKwkePQW4j8FpL
+	 c2BQblMebQYQURrB6lcujLJWsXzmwpCY/we9MsnQ=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b6Fx02p1Rzm6F;
+	Tue, 27 May 2025 16:52:52 +0200 (CEST)
+Date: Tue, 27 May 2025 16:52:51 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Daniel Burgener <dburgener@linux.microsoft.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Kees Cook <kees@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Matthieu Buffet <matthieu@buffet.re>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Ryan Sullivan <rysulliv@redhat.com>, 
+	Shervin Oloumi <enlightened@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/5] Landlock tracepoints
+Message-ID: <20250527.Jo9reu7zaeco@digikod.net>
+References: <20250523165741.693976-1-mic@digikod.net>
+ <b6f1e330-6a9f-4359-a221-bec30d94fb20@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221184417.27954-2-gnoack3000@gmail.com> <20250221184417.27954-3-gnoack3000@gmail.com>
- <20250227.Aequah6Avieg@digikod.net> <20250228.b3794e33d5c0@gnoack.org>
- <20250304.aroh3Aifiiz9@digikod.net> <20250310.990b29c809af@gnoack.org>
-In-Reply-To: <20250310.990b29c809af@gnoack.org>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 27 May 2025 16:26:40 +0200
-X-Gm-Features: AX0GCFvpK-91ujELkNn_E3icY72n1WDjfluE1dOc7gEjoj7KJvFFFzWqMEN0thE
-Message-ID: <CAG48ez0pWg3OTABfCKRk5sWrURM-HdJhQMcWedEppc_z1rrVJw@mail.gmail.com>
-Subject: Re: [RFC 1/2] landlock: Multithreading support for landlock_restrict_self()
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	sergeh@kernel.org, David Howells <dhowells@redhat.com>, Kees Cook <keescook@chromium.org>, 
-	linux-security-module@vger.kernel.org, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, linux-kernel@vger.kernel.org, 
-	Peter Newman <peternewman@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b6f1e330-6a9f-4359-a221-bec30d94fb20@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On Mon, Mar 10, 2025 at 2:04=E2=80=AFPM G=C3=BCnther Noack <gnoack3000@gmai=
-l.com> wrote:
-> Hello Paul and Serge!
->
-> On Tue, Mar 04, 2025 at 09:25:51PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
-> > On Fri, Feb 28, 2025 at 06:33:55PM +0100, G=C3=BCnther Noack wrote:
-> > > Hello!
-> > >
-> > > Thanks for the review!
-> > >
-> > > I'm adding David Howells to this thread as well.  David, maybe you ca=
-n
-> > > help us and suggest a appropriate way to update the struct cred acros=
-s
-> > > multiple threads?
->
-> Paul and Serge, since you are volunteering to take ownership of
-> credentials, maybe you can advise on what is the best approach here?
->
-> To summarize the approaches that I have been discussing with Micka=C3=ABl=
-:
->
-> Approach 1: Use the creds API thread-by-thread (implemented here)
->
->   * Each task calls prepare_creds() and commit_creds() on its own, in
->     line with the way the API is designed to be used (from a single
->     task).
->   * Task work gets scheduled with a pseudo-signal and the task that
->     invoked the syscall is waiting for all of them to return.
->   * Task work can fail at the beginning due to prepare_creds(), in
->     which case all tasks have to abort_creds(). Additional
->     synchronization is needed for that.
->
->   Drawback: We need to grab the system-global task lock to prevent new
->   thread creation and also grab the per-process signal lock to prevent
->   races with other creds accesses, for the entire time as we wait for
->   each task to do the task work.
+On Mon, May 26, 2025 at 07:37:41PM +0100, Tingmao Wang wrote:
+> On 5/23/25 17:57, Mickaël Salaün wrote:
+> > Hi,
+> > 
+> > This series adds two tracepoints to Landlock, one tied to rule addition,
+> > and another to rule checking.  With these new tracepoints, we can see
+> > all steps leading to an access decision.  They can be directly used with
+> > /sys/kernel/tracing/events/landlock/* or attached by eBPF programs to
+> > get a more complete view of Landlock internals.
+> > 
+> > This new feature is useful to trouble shoot policy issues, and it should
+> > also limit the need for custom debugging kernel code when developing new
+> > Landlock features.
+> > 
+> > Landlock already has audit support, which enables us to log denied
+> > access requests.  Audit is useful to identify security issues or sandbox
+> > misconfiguration.  However, it might not be enough to debug Landlock
+> > policies.  The main differences with audit events is that traces are
+> > disabled by default, can be very verbose, and can be filtered according
+> > to process and Landlock properties (e.g. domain ID).
+> > 
+> > As for audit, this tracing feature may expose sensitive information and
+> > must then only be accessible to the system administrator.
+> > 
+> > This RFC only fully supports filesystem rules but the next series will
+> > also support network rules.  Tests are also missing for now.
+> > 
+> > Regards,
+> > 
+> > Mickaël Salaün (5):
+> >    landlock: Rename landlock_id to landlock_rule_ref
+> >    landlock: Merge landlock_find_rule() into landlock_unmask_layers()
+> >    tracing: Add __print_untrusted_str()
+> >    landlock: Add landlock_add_rule_fs tracepoint
+> >    landlock: Add landlock_check_rule tracepoint
+> > 
+> >   MAINTAINERS                                |   1 +
+> >   include/linux/trace_events.h               |   3 +
+> >   include/trace/events/landlock.h            | 124 ++++++++++++++
+> >   include/trace/stages/stage3_trace_output.h |   4 +
+> >   include/trace/stages/stage7_class_define.h |   1 +
+> >   kernel/trace/trace_output.c                |  40 +++++
+> >   security/landlock/Makefile                 |  11 +-
+> >   security/landlock/fs.c                     | 178 +++++++++++++--------
+> >   security/landlock/fs.h                     |   3 +
+> >   security/landlock/net.c                    |  18 +--
+> >   security/landlock/ruleset.c                |  65 ++++----
+> >   security/landlock/ruleset.h                |  15 +-
+> >   security/landlock/trace.c                  |  15 ++
+> >   13 files changed, 365 insertions(+), 113 deletions(-)
+> >   create mode 100644 include/trace/events/landlock.h
+> >   create mode 100644 security/landlock/trace.c
+> > 
+> > 
+> > base-commit: a5806cd506af5a7c19bcd596e4708b5c464bfd21
+> 
+> Tested-by: Tingmao Wang <m@maowtm.org>
+> 
+> Here is an example output I got with `trace-cmd record -e landlock`:
+> 
+> landlock-add-ru-776   [001] 75134.554776: landlock_add_rule_fs: [FAILED TO
+> PARSE] ruleset=0xffff88811a459200 ref_key=18446612686420679296 allowed=57343
+> dev=21 ino=53 pathname=/tmp/test
+> landlock-add-ru-776   [001] 75134.555336: landlock_check_rule:  [FAILED TO
+> PARSE] domain_id=7838764077 access_request=4 ref_type=1
+> ref_key=18446612686420679296 layers=ARRAY[ff, df]
+> I suggest adding some more events which I think shouldn't be too difficult
+> to implement and I can see them helping a lot with tracing / debugging
+> especially by BPF programs or someone new to landlock:
+> 
+> - landlock_restrict_self: Currently we trace out the ruleset pointer in add
+> rule, and the domain ID in check rule.  However there is no way for someone
+> just looking at this trace (or a BPF program for landlock) to relate which
+> rulesets are applied to which domains. I think a simple event we could add
+> that will help with this is, on landlock_restrict_self, prints out the
+> ruleset passed in as well as the domain ID newly created.  Maybe also
+> num_rules and num_layers on the new ruleset since it's trivial to do so, and
+> could be informative to someone analyzing a Landlock thing.
 
-The tasklist_lock and the siglock cant be used while we're waiting,
-they're not sleepable locks. Also, copy_process() currently copies
-creds to the new task with copy_creds() without holding any locks yet.
+Yep, that was my plan for v2. :)
 
-I think one way to implement this option without introducing new locks
-in core kernel code would be to have the thread initiating the
-credential change do this in three separate steps:
+I was also wondering about adding a tracepoint for ruleset creation.
+This one would print the ruleset's attributes as an array.
 
- - loop over the other threads under RCU (for searching for new
-threads to send task work to)
- - allocate state for threads (outside RCU, in sleepable context)
- - wait until all threads are in task work
+> 
+> - landlock_check_fs: Distinct from landlock_check_rule, this will happen
+> once the outcome of the access check is determined (maybe at the end of
+> is_access_to_paths_allowed and collect_domain_accesses?). It would include
+> the pathname of the target file (only allocated if this event is enabled of
+> course), so something like:
+> 
+>   landlock_check_fs: domain_id=7838764077 access_request=4
+> pathname=/tmp/test allowed=true
+>   landlock_check_fs: domain_id=7838764077 access_request=4
+> pathname=/tmp/test2 allowed=false
+> 
+> We already produces audit logs for denied requests so it is a little bit
+> duplicating that, but I think this trace event shouldn't be too costly to
+> include.  It has the benefit that
+> 
+> 1. If an access is denied because no rules matched, we don't get any
+> landlock_check_rule traces, and so there's no way for someone looking at the
+> trace log to find out landlock denied something.
 
+That would indeed be useful to see final access decisions.  It might be
+a bit tricky to generically handle all the allowed access but I'll try
+something.
 
-I guess that might look roughly like this, as a rough sketch:
+> 
+> 2. Having an event that represents an access check makes it possible for BPF
+> programs to find out about all landlock access checks (most interestingly
+> denied ones but we could expose the allowed ones too), and potentially
+> relate the various `landlock_check_rule` events to an access check.
+> 
+> Actually, maybe it's worth having a "landlock_check_fs_enter", emitted at
+> the beginning of is_access_to_paths_allowed and collect_domain_accesses?
+> This could be useful for performance measurements, and also makes it more
 
+Aren't kprobes/kretprobes enough for performance measurement?  They can
+also be used with current kernels.
 
-struct landlock_sync_state {
-  atomic_t num_threads_entered;
-  atomic_t num_threads_done;
-  bool abort;
-  wait_queue_head_t wq_for_initiator;
-  wait_queue_head_t wq_for_others;
-};
-struct landlock_tw_state {
-  struct task_struct *task;
-  struct callback_head work;
-  struct landlock_sync_state *shared;
-};
+> explicit which landlock_check_rule resulted from which access check.  Maybe
+> the pathname and domain_id could be printed on the enter event, and the exit
+> event would just have the outcome?  (Just an idea, I feel less certain about
+> this. "Enter"/"exit" naming taken from sys_enter_*/sys_exit_* but start/end
+> also works)
 
-size_t num_threads_signalled =3D 0;
-size_t num_threads_allocated =3D 0;
-size_t num_threads_to_allocate;
-struct landlock_tw_state **thread_works =3D NULL;
-struct landlock_sync_state state;
-bool all_threads_signalled =3D false;
-while (true) {
-  /* scan for threads we haven't sent task work to yet */
-  rcu_read_lock();
-  num_threads_to_allocate =3D 0;
-  for_each_thread(current, thread) {
-    /*
-     * this PF_EXITING check is a bit dodgy but not much worse than
-     * what seccomp already does
-    */
-    if (thread =3D=3D current || (READ_ONCE(thread->flags) & PF_EXITING))
-      continue;
-
-    for (int i=3D0; i<num_threads_signalled; i++) {
-      if (thread_works[i]->task =3D=3D thread)
-        goto next_thread;
-    }
-
-    all_threads_signalled =3D false;
-    if (num_threads_allocated > num_threads_signalled) {
-      struct landlock_tw_state *ltws =3D thread_works[num_threads_signalled=
-];
-
-      ltws->task =3D thread;
-      ltws->shared =3D &state;
-      if (task_work_add(thread, &ltws->work, TWA_SIGNAL) =3D=3D 0)
-        num_threads_signalled++;
-    } else {
-      num_threads_to_allocate++;
-    }
-
-next_thread:;
-  }
-  rcu_read_unlock();
-
-  if (all_threads_signalled)
-    break; /* success */
-
-  /*
-   * If we need state for more threads, allocate it now and immediately ret=
-ry.
-   * Normally we only need to go through this path once, more if we race wi=
-th
-   * clone().
-   */
-  if (num_threads_to_allocate) {
-    size_t new_count =3D num_threads_allocated + num_threads_to_allocate;
-    struct landlock_tw_state **reallocd =3D kvrealloc(thread_works,
-size_mul(sizeof(struct landlock_tw_state*), new_count), GFP_KERNEL);
-    if (!reallocd)
-      goto bailout;
-    thread_works =3D reallocd;
-    continue;
-  }
-
-  /* wait for all the threads we signalled */
-  if (wait_event_interruptible(&state.wq_for_initiator,
-          atomic_read(&state.num_threads_entered) =3D=3D num_threads_signal=
-led))
-    goto bailout;
-
-  /*
-   * Now loop at least once more to check that none of the threads called
-   * clone() in the meantime.
-   */
-  all_threads_signalled =3D true;
-}
-
-/* success */
-
-/* ... coordinate the cred prepare and commit across threads here ... */
-
-bailout:
-for (int i=3D0; i<num_threads_signalled; i++) {
-  if (task_work_cancel(thread_works[i].task, &thread_works[i].work))
-    atomic_inc(&state.num_threads_done);
-}
-WRITE_ONCE(state.abort, true);
-wake_up(&state.wq_for_others);
-wait_event(&state.wq_for_initiator,
-atomic_read(&state.num_threads_done) =3D=3D num_threads_signalled);
-
-
-This would be somewhat complex, but at least it would keep the
-complexity isolated in the code for updating creds across tasks, so I
-think this would be reasonable.
+This landlock_check_fs_enter event would only be called after the
+landlock_get_applicable_subject() check though.
