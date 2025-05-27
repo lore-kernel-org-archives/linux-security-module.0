@@ -1,42 +1,44 @@
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D911F2512EB
-	for <linux-security-module@vger.kernel.org>; Tue, 27 May 2025 10:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0106D3C30
+	for <linux-security-module@vger.kernel.org>; Tue, 27 May 2025 11:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748343608; cv=none; b=GiEN+UMedXxlqZGEAxZf/CEcRMC+ADLNtYgZrNn/zhwVU41oXfp0nyZk3Qh/Uf3pePXbQH5WCqAkQogDfBWNzVMxgllTrjnF8K6jNxAolzFECS4Xzx5aBZEtCNmhjUhcgDHL+BTsPh/9BHu8AdcBVCBq0iZ02qndDjfbY55jZr0=
+	t=1748343623; cv=none; b=HVzL5nSQbTWgg6l66Kf3jlaUSGjTz8Bs7hfseIUoTJV1G8lxwBRA6MCQRJT2PshxWcn1Kenh3EH6BcQWpDj/Ssbk2phDDDo4JObdEwC1EwekkOIMqwemkCYte5FIh5UrFunnMkUebbTwx4hA49tBNVor7gkf8IYU5vU1LAriiuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748343608; c=relaxed/simple;
-	bh=br70lFw1NvJpc2iH3hOzDzWeiP7sArx3gNYzfTk4MXc=;
+	s=arc-20240116; t=1748343623; c=relaxed/simple;
+	bh=B87AUeb60pBmOd2FsyN6Ov+P3qQZI+zsz39+PDXNpQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JaMQsvIccr3HMTdsaVN7WvnxpilJd1nqrztsfpT2yPP+EtjxIuaX6FZabTPLqv6X356nU7+Tixj2ppPc/6LqcgbyqBXLb2tKURvFy1+XtaxtR1rBMDYFVm71v/cw0GOGtkcwU1E7QpZYHbt1c1UlfIZMk/86IfGP1WMSopfz7EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FAQe76Y2; arc=none smtp.client-ip=185.125.25.8
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4Ya0vlnohMV2j/rdNiWL9tZ0S7bRsdzcys+txfEH1DOGQIF4EYtTML1O/5BaDhLHq+P03C3k7KTfS5RGcwUjNSYz6nsLWFw7EGce2DfN+dJcl1NIcaEmzDIfKXOF+ubRTfopt/T2NCmjAMfogdRUVX8uZJRUBIdA7dLDGW3cj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=QPxXdvLV; arc=none smtp.client-ip=84.16.66.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FAQe76Y2"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b68mF42FlzC6B;
-	Tue, 27 May 2025 12:59:57 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="QPxXdvLV"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b68mb6M4GzFF8;
+	Tue, 27 May 2025 13:00:15 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1748343597;
-	bh=xQZNjdHea11fHa59gzAWE7b56s+40mEGmXqbap377cE=;
+	s=20191114; t=1748343615;
+	bh=QtQEhIHVwl1yZd0kdSYIQAxlMC7PaVHOb/NWhVjc4Uo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FAQe76Y29ue5xWTDm05GAaPWVJgUu6B02jZBU8HT/NUPgzL5HdW4H2R5IH4LtCkzk
-	 XIAY1TgAS7cWhiN4RJEzbJij+kzS0XFgu/ZIP4RPghUsBPTitZsIyjT/yJCEM3qBaW
-	 vYSXdfpMa5fJsb9Li+3+Q/yM428tUaeCo0yHuvxA=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4b68mD4RjPz1yn;
-	Tue, 27 May 2025 12:59:56 +0200 (CEST)
-Date: Tue, 27 May 2025 12:59:53 +0200
+	b=QPxXdvLV4zVhY3UNg7MdcFnCEbUkSXpG8Ix3OlkoiUeORfqtJ3Dt0/djMTRK67xos
+	 WilQNgLU4Z8NioUDJ/V/IMB3oGP6g5wFnZKCeLmlP8synSIvh+VJdK1vDJV5uKfjfl
+	 xc3QYNtAHO+uHvh99D4F5ocRj0PoIkgwmzntWAOY=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b68mb1vJlz26S;
+	Tue, 27 May 2025 13:00:15 +0200 (CEST)
+Date: Tue, 27 May 2025 13:00:14 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: Tingmao Wang <m@maowtm.org>
 Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
 	linux-security-module@vger.kernel.org, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
 	Jann Horn <jannh@google.com>
-Subject: Re: landlock: Use hashtable for merged domains
-Message-ID: <20250527.oaquah5upohB@digikod.net>
+Subject: Re: [RFC PATCH 02/10] landlock/hash: define (dynamic, non-resizable)
+ hash table helpers
+Message-ID: <20250526.quec3Dohsheu@digikod.net>
 References: <cover.1747836146.git.m@maowtm.org>
+ <8b4d0d2f691e36507d5ad80ad4203c29ac6f216c.1747836146.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -46,149 +48,223 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1747836146.git.m@maowtm.org>
+In-Reply-To: <8b4d0d2f691e36507d5ad80ad4203c29ac6f216c.1747836146.git.m@maowtm.org>
 X-Infomaniak-Routing: alpha
 
-On Wed, May 21, 2025 at 08:31:56PM +0100, Tingmao Wang wrote:
-> Hi Mickaël,
+On Wed, May 21, 2025 at 08:31:58PM +0100, Tingmao Wang wrote:
+> While there is already include/linux/hash.h, it relies on the static size
+> of the array as the size of the hash table, and thus is inconvenient to
+> use for this case where we dynamically compute how many slots we need.
 > 
-> This is a set of (incomplete) patches for the "domain hashtable" work.
-> While this is still a WIP, I'm sending it now as per our discussion.  You
-> can take a look and see if the approach needs correcting / if we want to
-> go ahead with using hashtable.
+> There is also the relativistic hash tables in rhashtable.h which supports
+> dynamic resizes etc, but is more complicated and might be slower to access?
 > 
-> Currently only implemented for fs access.
-> 
-> This set of changes is also available on the landlock-hashmap branch of
-> https://github.com/micromaomao/linux-dev.git
+> However, on second thought, I'm wondering if we should just use hash
+> tables for both domain and a not-yet-merged ruleset anyway (which saves us
+> from having a union in landlock_rule).  If we do that then we should
+> indeed just use rhashtable.
 
-Thanks for these patches and the related benchmarks!
+Thinking more about it, the important properties are that we can have a
+lot of domains/tables (i.e. sandboxed processes) with a few
+entries/rules (e.g. ~30 rules seems reasonable for now).  We should then
+try to minimize the total amount of memory while still making access
+checks quick.  As you noted, the cost of hashing should also not be
+ignored.
+
+Instead of a hash table per domain, what about flat arrays with binary
+search?  Here is a proposal:
+
+struct landlock_domain_index {
+    union landlock_key key;
+    u32 shift; // value to add to this array's index to jump to the set
+               // of mapped landlock_layer
+    u32 num_layers;
+}; // 128-bit (or 96-bit) alligned
+
+// Theoretical landlock_domain
+struct landlock_domain {
+    struct landlock_hierarchy *hierarchy;
+    union {
+        // See landlock_ruleset's union
+    };
+    u32 num_fs; // number of FS indexes
+    u32 num_net; // number of net indexes
+    struct access_masks access_masks[];
+    struct landlock_domain_index fs_indexes[num_fs];
+    struct landlock_layer fs_layers[sum of FS rules' layers];
+    struct landlock_domain_index net_indexes[num_net];
+    struct landlock_layer net_layers[sum of net rules' layers];
+};
+
+// Real landlock_domain
+struct landlock_domain {
+    struct landlock_hierarchy *hierarchy;
+    union {
+        // See landlock_ruleset's union
+    };
+    u32 num_fs; // number of FS indexes
+    u32 num_net; // number of net indexes
+    u32 rules[]; // underlying typed arrays accessed via helpers
+};
+
+The landlock_domain is a contiguously allocated memory buffer containing
+variable-size arrays improving locality.  Another advantage is that we
+would not get any potential allocation errors once the buffer is
+allocated which should simplify domain creation.  Also, we avoid the
+union in landlock_rule (patch 5) and only use landlock_rule in
+landlock_ruleset.
+
+An alternative approach would be to use a hash table instead of the
+array (extending landlock_domain_index with a pointer/shift to the next
+collision) but still with this big buffer.  I'm not sure the perf impact
+would be noticable but it might be worse a try.
 
 > 
-> 
-> struct landlock_domain
-> ----------------------
-> 
-> One of the major thing I'm not sure about in this patch is the fact that
-> I've decided to create a standalone `struct landlock_domain`, instead of
-> re-using landlock_ruleset.  My original hope was that it might help make
-> the code a bit clearer - struct landlock_ruleset would just be for
-> unmerged rulesets (and it can use rbtree if we still wants to), and we can
-> use this new type for domains (and add new fields and locks to it that
-> wouldn't be on a ruleset, for the mutable domains / supervisor work).
-> 
-> I also wanted to split the logic of dealing with rules in a merged domain
-> (hence needing to copy multiple layers etc) out of create_rule and
-> insert_rule, and simply these functions (especially insert_rule) by
-> letting them just deal with unmerged rulesets (so only one layer) - the
-> logic for merged domains would be different anyway since it's no longer a
-> rbtree walk (but something like landlock_hash_upsert in patch 8 instead).
-> 
-> However, looking back at it, I'm not sure if creating this landlock_domain
-> was actually a good idea.  Going down this route eventually I will just
-> have to move all the domain-related logic from using ruleset to using
-> landlock_domain.  If we decide to use hashtable for unmerged rulesets too
-> (not done in this patch, and need more thoughts on how that would work),
-> then separating this out is even less value.
-> 
-> Regardless, the relevant code in this patch should still be easily
-> portable to just extend landlock_ruleset with hashtables, so I'm happy to
-> do that instead in the next version.
-
-I think a dedicated struct landlock_domain has value: clearer API,
-smaller domain's size, optimizations.  In the current implementation of
-the hash table, the domain's size increases in most cases because of the
-table's size.  We also still have scattered rules and at least two
-pointer dereferencing (if no hash collision): landlock_hashtable.hlist,
-and hlist_node.first.  This could be avoided with a compact flat
-structure, using a hash table or just an array with sorted keys.  See a
-new proposal in my reply to patch 2.
-
-> 
-> 
-> Hashtable implementation
-> ------------------------
-> 
-> Since I couldn't find a suitable existing wrapper for runtime-sized (but
-> fixed after creation) hashtables, this patch uses a newly hand-rolled
-> implementation.  It's not very complex so this might be fine, but there is
-> also rhashtable which would be especially suitable if we want to use hash
-> table for unmerged rulesets too.  See patch 2 message for details.
-> 
-> 
-> Testing
-> -------
-> 
-> selftests/landlock/fs_tests all passes under KASAN, lockdep etc.  Other
-> tests showed no obvious issues, but base and net fails due to missing
-> config (no MPTCP, no CONFIG_ASYMMETRIC_KEY_TYPE i.e. keyctl)
-> 
-> I ran benchmark with before/after using two workloads, on the same machine
-> and setup:
-> 
->     1. run_microbench with different depth and number of extra rules using
->     code in https://github.com/landlock-lsm/landlock-test-tools/pull/17
-> 
->     2. A more "typical" workload I put together quickly, calling git status
->     and the like repeatedly:
->     https://github.com/torvalds/linux/commit/f1865ce970af97ac3b6f4edf580529b8cdc66371
-> 
-> On the "typical" workload, which has 2 layers and ~15 rules, we have:
-> 
-> Comparing:                    orig	  hashtable  (% change)
->   landlock_overhead:
->     (this is the % of time spent in landlock hook in the open syscall)
->                         avg = 34      33         (-2.9%)
->                      median = 34      33         (-2.9%)
-> 
->   landlock_hook:        avg = 837     775        (-7.4%) (unit: ns)
->                      median = 813     748        (-8.0%) (unit: ns)
-> 
->   open_syscall:         avg = 2429    2324       (-4.3%) (unit: ns)
->                      median = 2370    2265       (-4.4%) (unit: ns)
-> 
-> Using the microbench script, for an extreme case on a path beneath 28
-> directories and with 10000 rules:
-> 
-> Comparing:                    orig	  hashtable  (% change)
->   landlock_overhead:    avg = 27      24         (-11.1%)
->                      median = 29      25         (-13.8%)
->   landlock_hook:        avg = 1913    1577       (-17.6%)
->                      median = 1884    1544       (-18.0%)
->   open_syscall:         avg = 6775    6259       (-7.6%)
->                      median = 6666    6115       (-8.3%)
-> 
-> The full results can be found at
-> https://fileshare.maowtm.org/landlock/20250521/index.html
-> 
-> Closes: https://github.com/landlock-lsm/linux/issues/1
-> 
-> Tingmao Wang (10):
->   landlock: Add some debug output
->   landlock/hash: define (dynamic, non-resizable) hash table helpers
->   landlock/hash: Use linear search for small tables
->   landlock/ruleset: Rename and extract create_rule
->   Add hlist_node member to struct landlock_rule
->   landlock/domain: Define landlock_domain
->   landlock: Add the new domain to landlock_cred_security
->   landlock: Construct the inode hashtable in the new landlock_domain
->   landlock/fs: Use the new hashtable-based domain to find inode rules
->   landlock: Debug print inode hashtable in landlock_merge_ruleset2
-> 
->  security/landlock/cred.c     |   8 +-
->  security/landlock/cred.h     |   1 +
->  security/landlock/domain.c   | 145 +++++++++++++++++
->  security/landlock/domain.h   |  45 ++++++
->  security/landlock/fs.c       | 107 +++++++++----
->  security/landlock/fs.h       |   1 +
->  security/landlock/hash.h     | 294 +++++++++++++++++++++++++++++++++++
->  security/landlock/ruleset.c  |  80 +---------
->  security/landlock/ruleset.h  |  99 +++++++++++-
->  security/landlock/syscalls.c |  35 +++++
->  10 files changed, 702 insertions(+), 113 deletions(-)
+> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> ---
+>  security/landlock/hash.h | 117 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 117 insertions(+)
 >  create mode 100644 security/landlock/hash.h
 > 
-> 
-> base-commit: 3039ed432745f8fdf5cbb43fdc60b2e1aad624c1
-> --
+> diff --git a/security/landlock/hash.h b/security/landlock/hash.h
+> new file mode 100644
+> index 000000000000..955c5756d4d9
+> --- /dev/null
+> +++ b/security/landlock/hash.h
+> @@ -0,0 +1,117 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Landlock - Domain hashtable mainpulation
+
+typo
+
+> + *
+> + * Copyright © 2025      Tingmao Wang <m@maowtm.org>
+> + */
+> +
+> +#ifndef _SECURITY_LANDLOCK_HASH_H
+> +#define _SECURITY_LANDLOCK_HASH_H
+> +
+> +#include <linux/slab.h>
+> +#include <linux/hash.h>
+> +
+> +#include "ruleset.h"
+> +
+> +struct landlock_hashtable {
+> +	struct hlist_head *hlist;
+
+A simple linked-list would be enough.
+
+> +
+> +	/**
+> +	 * @hash_bits: Number of bits in this hash index (i.e.  hlist has
+> +	 * 2^this many elements).
+> +	 */
+> +	int hash_bits;
+> +};
+> +
+> +#define landlock_hash_for_each(rule, ht, i)                \
+> +	for (i = 0; i < (1ULL << (ht)->hash_bits); i += 1) \
+> +		hlist_for_each_entry(rule, &(ht)->hlist[i], hlist)
+> +
+> +#define landlock_hash_for_each_safe(rule, tmp, ht, i)      \
+> +	for (i = 0; i < (1ULL << (ht)->hash_bits); i += 1) \
+> +		hlist_for_each_entry_safe(rule, tmp, &(ht)->hlist[i], hlist)
+> +
+> +static inline int landlock_hash_init(const size_t expected_num_entries,
+> +				     struct landlock_hashtable *out_ht)
+> +{
+> +	size_t table_sz = 1;
+
+Please use variables with full name when they are not too big:
+table_size in this case.
+
+> +	int hash_bits = 0;
+> +
+> +	if (likely(expected_num_entries > 0)) {
+> +		table_sz = roundup_pow_of_two(expected_num_entries);
+
+With roundup_pow_of_two() we'll get a few collisions but a big table.
+What would be the impact of using roundup_pow_of_two() instead to have a
+compact hash table (with more collisions)?
+
+> +		hash_bits = fls_long(table_sz - 1);
+> +	}
+> +
+> +	/*
+> +	 * We allocate a table even if expected_num_entries == 0 to avoid
+> +	 * unnecessary branching in lookup code
+> +	 */
+> +
+> +	out_ht->hash_bits = hash_bits;
+> +	out_ht->hlist = kcalloc(table_sz, sizeof(struct hlist_head),
+> +				GFP_KERNEL_ACCOUNT);
+> +	if (!out_ht->hlist) {
+> +		return -ENOMEM;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static inline void landlock_hash_free(struct landlock_hashtable *ht,
+> +				      const enum landlock_key_type key_type)
+> +{
+> +	struct landlock_rule *rule;
+> +	struct hlist_node *tmp;
+> +	size_t i;
+> +
+> +	if (key_type == LANDLOCK_KEY_INODE)
+> +		might_sleep();
+> +
+> +	if (!ht->hlist)
+> +		return;
+> +
+> +	landlock_hash_for_each_safe(rule, tmp, ht, i)
+> +	{
+> +		free_rule(rule, key_type);
+> +	}
+> +	kfree(ht->hlist);
+> +	ht->hlist = NULL;
+> +}
+> +
+> +static inline u32 landlock_hash_key(const union landlock_key key,
+> +				    const int hash_bits)
+> +{
+> +	return hash_ptr((void *)key.data, hash_bits);
+> +}
+> +
+> +static inline struct landlock_rule *
+> +landlock_hash_find(const struct landlock_hashtable *const ht,
+> +		   const union landlock_key key)
+> +{
+> +	struct hlist_head *head;
+> +	struct landlock_rule *rule;
+> +
+> +	head = &ht->hlist[landlock_hash_key(key, ht->hash_bits)];
+> +
+> +	hlist_for_each_entry(rule, head, hlist) {
+> +		if (rule->key.data == key.data)
+> +			return rule;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +/**
+> + * @landlock_hash_count - Return number of entries in the hashtable.
+> + */
+> +static inline size_t landlock_hash_count(const struct landlock_hashtable *ht)
+> +{
+> +	size_t num_entries = 0;
+> +	struct landlock_rule *rule;
+> +	size_t i;
+> +	landlock_hash_for_each(rule, ht, i)
+> +	{
+> +		num_entries += 1;
+> +	}
+> +	return num_entries;
+> +}
+> -- 
 > 2.49.0
+> 
+> 
