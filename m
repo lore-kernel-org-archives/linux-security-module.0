@@ -1,116 +1,238 @@
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54221E4BE;
-	Tue, 27 May 2025 13:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDFC2AE99
+	for <linux-security-module@vger.kernel.org>; Tue, 27 May 2025 14:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748350875; cv=none; b=WkG8ozW4z+RGBRNWXlihqzZgR6W43FEKu/CB5e+8VdJkE3tiOBEYCpTJwePpQkco7SuDuXiW37DPd8Z8Pz6WId7zHdrX3AaOCoeK8dTKnzdsdS3azd5rHj76dKCcl0fleiA6OlUdoDlreSLrK+HWLcV6maIq1+fgadWQ8zHfviU=
+	t=1748356040; cv=none; b=q3FsJmjBQmbRZtN3slnJQoHl6pXReYgIYbkyjAS7qcJ7txyCSQ9Vh8fEhqZH/CBZVe0fQFXzamHiRB+vvXPBXQOfPqKq403oxxEpGjhLRBzqQlNTkDtdnjBXHi4PpIeP8XkBstJ36JXykKQaX+XofMLwJrkgIaEVKT9c6kinBCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748350875; c=relaxed/simple;
-	bh=e3RWz1HSsecBHl0HCS04IuuI1P7LdQRmuFIuAJ37OuU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qr7DgzeqYDmxtrfGtuTHliMPNNlL1oALlacG+6Q7YkzkLEGF5ILEDA6e4D1WqHuLD7ckdd4RpDi61AQ4B+xRH6PSml1O0TE26Tas0PX9zuOoHqdLgoaIlN2epJhPL/UBU49EHVePGWKE5+Irtlo1Nf+4us1ErH1OyK9YZzW6AkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4b6CLv6wFDzvX0T;
-	Tue, 27 May 2025 20:56:39 +0800 (CST)
-Received: from kwepemh500010.china.huawei.com (unknown [7.202.181.141])
-	by mail.maildlp.com (Postfix) with ESMTPS id 585DE180492;
-	Tue, 27 May 2025 21:01:04 +0800 (CST)
-Received: from huawei.com (10.67.175.67) by kwepemh500010.china.huawei.com
- (7.202.181.141) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 27 May
- 2025 21:01:03 +0800
-From: Zhao Yipeng <zhaoyipeng5@huawei.com>
-To: <zohar@linux.ibm.com>, <roberto.sassu@huawei.com>,
-	<dmitry.kasatkin@gmail.com>, <eric.snowberg@oracle.com>,
-	<paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
-	<janne.karhunen@gmail.com>
-CC: <morgan@kernel.org>, <lujialin4@huawei.com>,
-	<linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] ima: prevent concurrent list operations in ima_lsm_update_rules
-Date: Tue, 27 May 2025 20:51:03 +0800
-Message-ID: <20250527125103.751077-1-zhaoyipeng5@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1748356040; c=relaxed/simple;
+	bh=Xv/dRmh0m35JE7egUOEw1JFCjRd6AcJU6uN69FdDKXM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A9oTQpE7QQm46wNnt0x0r1WTpPTRU7ecjA4aMRurqksXlbadXoLC2rnL+sF1S9pRMV9GSWHa4tvHqsgO1C4QMinaHlOrm9oTXuYubTOpvurN+9wxn1kMA9YiQoW0elH12z2B0pyNQhMDjV9OrB1V8BZ6sKZkS7JzjPDgB0QftjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rhg8qCsA; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rhg8qCsA"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6000791e832so21205a12.1
+        for <linux-security-module@vger.kernel.org>; Tue, 27 May 2025 07:27:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748356037; x=1748960837; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pHYrUZynmF1+LQe/MzD5OkoDbTa7T8UCiEl2TMfrPDY=;
+        b=rhg8qCsA/eBR5yyDY6VEMeHSUlqo4veFiEi3wVOQZZWujmrYx/sWHNnxAyG4aIed18
+         1rakhbDcaB/aU/xaftFSB+2jbhmQVKmPHyBHtGMMqqQyphxeRMQApAt9FN93e3fm6pc8
+         S1wCtcsKY5UjQyoPyRtZbL+ROvjQE8m8uCHiPmnBDUIe1pa0VYAgP82XQmNIIfIby/P9
+         UTd0xU7CPrl1UT552XYrbY4PGFxkvk05m/nZaSoFay+VOO4pPXH2RfA3qVO8d0dxytLn
+         jZ2h7TDaj0INEHnYOCiDy3rJKlOfEFlaziplGZsuymHXV2oOTu3hSqbsUh2vaJ/7G8K4
+         57VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748356037; x=1748960837;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pHYrUZynmF1+LQe/MzD5OkoDbTa7T8UCiEl2TMfrPDY=;
+        b=cLoR/rSroB0fzsMYUctZSinyRk5747B/Gjo40pAnuNJ/xbnOiaIN3wIhNhdCpV1cxM
+         1P5VeS1+dqUGj25/2ys4k9H2wmKLAMYL3V03ZvNKIgDz8B0k0AS3F/fbXV1GEniMUuLI
+         Q0HKhzU1jPtqtyqSMwjBFoLQackJisqRfhF4h1qPO6an8zngF7KSMjcFHNhucrH3NInj
+         L8IBii8SupB0T2I0IgNXlHrbrb8ChVgZ5Mvbk07rwpkKZ+AEru8L4hqntAhkNpqIY21p
+         EljCyeIMcdK7bCeZMOvdJqCSeAubZNVAJRd56mQutg8oKkkfNrXKsQa2OVrZNsHM7mtX
+         Ra/w==
+X-Forwarded-Encrypted: i=1; AJvYcCW+ittW5Ql8fYbFAx+eZYPINGZAV8dx5sRBCoQSicoQzmdvNSaM9AyRDf+Wg3TVmFh87ChTStsSaxZCk9wixndb8RuiJNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZA8I6kmydklRQJ5tfK8r/fXR3/hvjaMwLfJzshVkY2UVWgPTi
+	eWQlGwmKRLGxI25mH9pC1B5scn9m7BedLTnYp3oy1x6GwPUXtvyGnTCnw5DNUVPPacprXKHaFDI
+	2IHH/30RnC5G/Jo16dViQWG6hqKKDU7DNRGHRpZIe
+X-Gm-Gg: ASbGncugbKf5Tlc19jY/kzRFa5Rh7Pk6lDyvVALUftPXUBfYcAf/v+n1mcTQzLrY0lU
+	VMDHP/PLtsh2N/VmuskubpNso2WC5VgdjWwJZ7rjL3+V8SNwySmfAdbzeE0XMey9f9HuLOqhXuR
+	aO3gHI3f/o6o/E1vFTVX09akBflMP+pBRWoqnYNqfbTRDBtbDYqhP5dsAPXVH6QpiW8jxzlto=
+X-Google-Smtp-Source: AGHT+IH3iurEiivqwpCv3LwpNAc4Cm+HyZ9vRYcSUb+hOOoZJ5uP01DiVo2wrGQiamywl+YIBIWvHAqsiUIGKo4wZLY=
+X-Received: by 2002:a05:6402:1a2e:b0:604:60a6:7852 with SMTP id
+ 4fb4d7f45d1cf-60460a6795amr171058a12.5.1748356036937; Tue, 27 May 2025
+ 07:27:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemh500010.china.huawei.com (7.202.181.141)
+References: <20250221184417.27954-2-gnoack3000@gmail.com> <20250221184417.27954-3-gnoack3000@gmail.com>
+ <20250227.Aequah6Avieg@digikod.net> <20250228.b3794e33d5c0@gnoack.org>
+ <20250304.aroh3Aifiiz9@digikod.net> <20250310.990b29c809af@gnoack.org>
+In-Reply-To: <20250310.990b29c809af@gnoack.org>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 27 May 2025 16:26:40 +0200
+X-Gm-Features: AX0GCFvpK-91ujELkNn_E3icY72n1WDjfluE1dOc7gEjoj7KJvFFFzWqMEN0thE
+Message-ID: <CAG48ez0pWg3OTABfCKRk5sWrURM-HdJhQMcWedEppc_z1rrVJw@mail.gmail.com>
+Subject: Re: [RFC 1/2] landlock: Multithreading support for landlock_restrict_self()
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	sergeh@kernel.org, David Howells <dhowells@redhat.com>, Kees Cook <keescook@chromium.org>, 
+	linux-security-module@vger.kernel.org, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, linux-kernel@vger.kernel.org, 
+	Peter Newman <peternewman@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The current implementation of IMA policy list replacement via
-list_replace_rcu may trigger general protection faults under concurrent
-load policy operations. This occurs when a process replaces a node in
-ima_policy_rules list and sets old->prev = LIST_POISON2, while another
-parallel process still holds references to the old node. Subsequent list
-operations on the poisoned pointer result in kernel panic due to invalid
-memory access.
+On Mon, Mar 10, 2025 at 2:04=E2=80=AFPM G=C3=BCnther Noack <gnoack3000@gmai=
+l.com> wrote:
+> Hello Paul and Serge!
+>
+> On Tue, Mar 04, 2025 at 09:25:51PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> > On Fri, Feb 28, 2025 at 06:33:55PM +0100, G=C3=BCnther Noack wrote:
+> > > Hello!
+> > >
+> > > Thanks for the review!
+> > >
+> > > I'm adding David Howells to this thread as well.  David, maybe you ca=
+n
+> > > help us and suggest a appropriate way to update the struct cred acros=
+s
+> > > multiple threads?
+>
+> Paul and Serge, since you are volunteering to take ownership of
+> credentials, maybe you can advise on what is the best approach here?
+>
+> To summarize the approaches that I have been discussing with Micka=C3=ABl=
+:
+>
+> Approach 1: Use the creds API thread-by-thread (implemented here)
+>
+>   * Each task calls prepare_creds() and commit_creds() on its own, in
+>     line with the way the API is designed to be used (from a single
+>     task).
+>   * Task work gets scheduled with a pseudo-signal and the task that
+>     invoked the syscall is waiting for all of them to return.
+>   * Task work can fail at the beginning due to prepare_creds(), in
+>     which case all tasks have to abort_creds(). Additional
+>     synchronization is needed for that.
+>
+>   Drawback: We need to grab the system-global task lock to prevent new
+>   thread creation and also grab the per-process signal lock to prevent
+>   races with other creds accesses, for the entire time as we wait for
+>   each task to do the task work.
 
-To resolve this, introduce a mutex lock (ima_rules_mutex) in
-ima_lsm_update_rules() to protect. ima_update_policy() also use the
-ima_policy_rules. Introduce a mutex lock in it.
+The tasklist_lock and the siglock cant be used while we're waiting,
+they're not sleepable locks. Also, copy_process() currently copies
+creds to the new task with copy_creds() without holding any locks yet.
 
-Fixes: b16942455193 ("ima: use the lsm policy update notifier")
-Signed-off-by: Zhao Yipeng <zhaoyipeng5@huawei.com>
----
- security/integrity/ima/ima_policy.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+I think one way to implement this option without introducing new locks
+in core kernel code would be to have the thread initiating the
+credential change do this in three separate steps:
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 128fab897930..d27e615e97d5 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -471,6 +471,8 @@ static bool ima_rule_contains_lsm_cond(struct ima_rule_entry *entry)
- 	return false;
- }
- 
-+static DEFINE_MUTEX(ima_rules_mutex);
-+
- /*
-  * The LSM policy can be reloaded, leaving the IMA LSM based rules referring
-  * to the old, stale LSM policy.  Update the IMA LSM based rules to reflect
-@@ -481,16 +483,19 @@ static void ima_lsm_update_rules(void)
- 	struct ima_rule_entry *entry, *e;
- 	int result;
- 
-+	mutex_lock(&ima_rules_mutex);
- 	list_for_each_entry_safe(entry, e, &ima_policy_rules, list) {
- 		if (!ima_rule_contains_lsm_cond(entry))
- 			continue;
- 
- 		result = ima_lsm_update_rule(entry);
- 		if (result) {
-+			mutex_unlock(&ima_rules_mutex);
- 			pr_err("lsm rule update error %d\n", result);
- 			return;
- 		}
- 	}
-+	mutex_unlock(&ima_rules_mutex);
- }
- 
- int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
-@@ -1038,9 +1043,12 @@ int ima_check_policy(void)
-  */
- void ima_update_policy(void)
- {
--	struct list_head *policy = &ima_policy_rules;
-+	struct list_head *policy;
- 
-+	mutex_lock(&ima_rules_mutex);
-+	policy = &ima_policy_rules;
- 	list_splice_tail_init_rcu(&ima_temp_rules, policy, synchronize_rcu);
-+	mutex_unlock(&ima_rules_mutex);
- 
- 	if (ima_rules != (struct list_head __rcu *)policy) {
- 		ima_policy_flag = 0;
--- 
-2.34.1
+ - loop over the other threads under RCU (for searching for new
+threads to send task work to)
+ - allocate state for threads (outside RCU, in sleepable context)
+ - wait until all threads are in task work
 
+
+I guess that might look roughly like this, as a rough sketch:
+
+
+struct landlock_sync_state {
+  atomic_t num_threads_entered;
+  atomic_t num_threads_done;
+  bool abort;
+  wait_queue_head_t wq_for_initiator;
+  wait_queue_head_t wq_for_others;
+};
+struct landlock_tw_state {
+  struct task_struct *task;
+  struct callback_head work;
+  struct landlock_sync_state *shared;
+};
+
+size_t num_threads_signalled =3D 0;
+size_t num_threads_allocated =3D 0;
+size_t num_threads_to_allocate;
+struct landlock_tw_state **thread_works =3D NULL;
+struct landlock_sync_state state;
+bool all_threads_signalled =3D false;
+while (true) {
+  /* scan for threads we haven't sent task work to yet */
+  rcu_read_lock();
+  num_threads_to_allocate =3D 0;
+  for_each_thread(current, thread) {
+    /*
+     * this PF_EXITING check is a bit dodgy but not much worse than
+     * what seccomp already does
+    */
+    if (thread =3D=3D current || (READ_ONCE(thread->flags) & PF_EXITING))
+      continue;
+
+    for (int i=3D0; i<num_threads_signalled; i++) {
+      if (thread_works[i]->task =3D=3D thread)
+        goto next_thread;
+    }
+
+    all_threads_signalled =3D false;
+    if (num_threads_allocated > num_threads_signalled) {
+      struct landlock_tw_state *ltws =3D thread_works[num_threads_signalled=
+];
+
+      ltws->task =3D thread;
+      ltws->shared =3D &state;
+      if (task_work_add(thread, &ltws->work, TWA_SIGNAL) =3D=3D 0)
+        num_threads_signalled++;
+    } else {
+      num_threads_to_allocate++;
+    }
+
+next_thread:;
+  }
+  rcu_read_unlock();
+
+  if (all_threads_signalled)
+    break; /* success */
+
+  /*
+   * If we need state for more threads, allocate it now and immediately ret=
+ry.
+   * Normally we only need to go through this path once, more if we race wi=
+th
+   * clone().
+   */
+  if (num_threads_to_allocate) {
+    size_t new_count =3D num_threads_allocated + num_threads_to_allocate;
+    struct landlock_tw_state **reallocd =3D kvrealloc(thread_works,
+size_mul(sizeof(struct landlock_tw_state*), new_count), GFP_KERNEL);
+    if (!reallocd)
+      goto bailout;
+    thread_works =3D reallocd;
+    continue;
+  }
+
+  /* wait for all the threads we signalled */
+  if (wait_event_interruptible(&state.wq_for_initiator,
+          atomic_read(&state.num_threads_entered) =3D=3D num_threads_signal=
+led))
+    goto bailout;
+
+  /*
+   * Now loop at least once more to check that none of the threads called
+   * clone() in the meantime.
+   */
+  all_threads_signalled =3D true;
+}
+
+/* success */
+
+/* ... coordinate the cred prepare and commit across threads here ... */
+
+bailout:
+for (int i=3D0; i<num_threads_signalled; i++) {
+  if (task_work_cancel(thread_works[i].task, &thread_works[i].work))
+    atomic_inc(&state.num_threads_done);
+}
+WRITE_ONCE(state.abort, true);
+wake_up(&state.wq_for_others);
+wait_event(&state.wq_for_initiator,
+atomic_read(&state.num_threads_done) =3D=3D num_threads_signalled);
+
+
+This would be somewhat complex, but at least it would keep the
+complexity isolated in the code for updating creds across tasks, so I
+think this would be reasonable.
