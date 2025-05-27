@@ -1,225 +1,185 @@
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAC72741CD
-	for <linux-security-module@vger.kernel.org>; Tue, 27 May 2025 14:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825591990A7;
+	Tue, 27 May 2025 19:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748357637; cv=none; b=jhEeUoh+xgkxkq57Y5g9seDmBW6g9yZtaCn1VJnhf6j7imr09TJ9MwOv06SQCYvlEcG+xGAVJdVfoEobfi73JIMdkDpMcLWmMlT/zvaknD1kTWXKc4EAyl7JZ23ZjXIwXTig38e3iVQEXwauWID+KX5QQpPLxh9HVK57eA9tDc0=
+	t=1748372597; cv=none; b=fBd063U0q+9uKc8BIgHGYxb+S+cA1OmkoxGu62Ka9nSrm+uDmCCjb58XvFK3KXAkyn0Tqo5JRUa8lt1obrHL/SjT9dbkPyf9C8DGKtc5sSKvFfhsybaI03iWTdy2qh20b7By/yGRRkzvSvCrZzpPlRhKneVNBcyHBttDAH+qo4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748357637; c=relaxed/simple;
-	bh=y+kf6FZ78SNpdS0lJD/HvXjiqbntxH0UnTlA/8xV3E0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=luLesisb9j25kPWibkxuu+uWlcBuE2DrVS7hQ9krdoOfYG4WZ8WgkikL3mwXX3AuI67T+RVAPfRCrNRcQ+cUdo5KAAZjLf7Nbju9tD5alj90P/9AN256E4jDl4cwQNLWavz/160yTl+oC9x/AiY1TgOp1JCRSSAYcJxGSfJIefg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=X25roJ7i; arc=none smtp.client-ip=45.157.188.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1748372597; c=relaxed/simple;
+	bh=doMS0trNlP/kwdokYAMx2s7mxwnpc0nNhX83X3QDP4E=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=pjbOshe7qPalx/7c4Zq61dkXf+I9kUAmYSyErDWtTn8LYfMYGUPmMDd5zWYdTZ2/yZkPZY8NAa6n8P1rpImj5H4Ij0cMQQ9VOUbfRl3Y8f8dp6rHiHua7iBjQMa+s6W04/ALPg9PwzTm78qAJlcJ0+kZyeAv7jXTBTdM9NVmLZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=T7vJdhhU; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="X25roJ7i"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b6Fy756mGz6DY;
-	Tue, 27 May 2025 16:53:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1748357631;
-	bh=YQsWDTbk+8nCd4vOhNhHJZ7oUq8L9poJ2eC7UYVAl80=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X25roJ7i6WqfD5Z416w6vhXYapd2CWr2+5kYIY99EUrBGo370bwgCvoAmPE/4iD6k
-	 noOODrwW38WLfKENGUNSlz0nEd+NTahTEVBcAOohWOUrxKZ4DL3cRfnA7y23Y5NNJo
-	 hNKGXhCvKrEnOsCsPtc7v0xD962SVnD5z6HmVyg0=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b6Fy66Q2kz5qS;
-	Tue, 27 May 2025 16:53:50 +0200 (CEST)
-Date: Tue, 27 May 2025 16:53:50 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Daniel Burgener <dburgener@linux.microsoft.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Kees Cook <kees@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Matthieu Buffet <matthieu@buffet.re>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Ryan Sullivan <rysulliv@redhat.com>, 
-	Shervin Oloumi <enlightened@google.com>, linux-security-module@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 4/5] landlock: Add landlock_add_rule_fs tracepoint
-Message-ID: <20250527.tei5tuRohg6r@digikod.net>
-References: <20250523165741.693976-1-mic@digikod.net>
- <20250523165741.693976-5-mic@digikod.net>
- <d61717c2-df30-4cd2-a14e-e05ca9f69892@maowtm.org>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="T7vJdhhU"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54RGHNHx004950;
+	Tue, 27 May 2025 19:02:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Us8SyY
+	ruv+FTdPUtNEtd3t+r94/trKQpiChagfVzK9Y=; b=T7vJdhhUvXPR0mc9VYwrPI
+	b0/u45ypLmm30hLwQSa+fEa0GmlyeZtYo2zK2R4kk5Rdjs963LSpkxt7nVhK3bHw
+	4i708vj7HC5zCMapQ/MnFLj+g+as8Kx+Ctqn7W6G28LWhGq7eK0opFOGGbRbMxOs
+	dDowdTY7mO7RE7Ul5qLi12c2uCUyGCzqpd3ui1VRn11WSyYz+kXNrwgdjw7LnEUq
+	+HsCGr1CjRULRGJID8hAx29dXFlsdjmWtJ8h54UlHMl4HBxxcaN4G30+CN+l4isa
+	7+cGAF3KoxIg4ilH7iveKKSzl5YElE53l3GuskCSEO23dWXuJhbcb/Nag318p0HA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46wgsj0tbf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 May 2025 19:02:45 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54RJ2iXG025065;
+	Tue, 27 May 2025 19:02:44 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46wgsj0tbb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 May 2025 19:02:44 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54RHOl9r028925;
+	Tue, 27 May 2025 19:02:43 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46usepv0n8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 May 2025 19:02:43 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54RJ2g2D31261292
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 27 May 2025 19:02:42 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B11E058057;
+	Tue, 27 May 2025 19:02:42 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 05D5C5805D;
+	Tue, 27 May 2025 19:02:42 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.96.173])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 27 May 2025 19:02:41 +0000 (GMT)
+Message-ID: <f04a8c07d7da1df2cd5b74f04d253611bab9f1ad.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: prevent concurrent list operations in
+ ima_lsm_update_rules
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Zhao Yipeng <zhaoyipeng5@huawei.com>, roberto.sassu@huawei.com,
+        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        janne.karhunen@gmail.com
+Cc: morgan@kernel.org, lujialin4@huawei.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250527125103.751077-1-zhaoyipeng5@huawei.com>
+References: <20250527125103.751077-1-zhaoyipeng5@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 27 May 2025 15:02:41 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d61717c2-df30-4cd2-a14e-e05ca9f69892@maowtm.org>
-X-Infomaniak-Routing: alpha
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=IcmHWXqa c=1 sm=1 tr=0 ts=68360c55 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=i0EeH86SAAAA:8 a=RwKbe1zy0JAV_bTXriMA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDE1OSBTYWx0ZWRfX/6shcxoJEONO gYcVKbllMdMawPpJ3afG3OzQfw2liWwHHYVMY6GnEppEzyiiuIqEVIBvxN+9lO8x0z46RlR+W2U TUmIEGeF1lc6fdySL28lqfd9CSFvL/8iRLcals9RkBft7IxcahZvD8RntLNL/GQAG8WQgLFjKTh
+ RyzlbyFdBnW4XZxdmFEGsAB4X8tUH5T8du+a5XpBaCWWshpOxZchjXMz94UUK0Ji0uTzIZ1XtZz IaNh//hbenDd/vDBoBkJAdzvxb/5lFxc4KROkNEn/aWeNw0kN/Qj18G0U+UDKWRQtFtYkaAv8qE vVMiTyNeSv3E/dszGT3yST+pQzrRoxBvp0dLWiU8lydNiVUcYOXOofaXG29hvPAJfcEz9nCL776
+ 3DAnhngmQuF/NWjfMBIyFAjfuTIbyLnzHT5gbBPXK+n5xaHOcKBUu4cPhXBs4zoOQc6lerrN
+X-Proofpoint-ORIG-GUID: xI2bhaKHgDBJDtf61pJ-5YsBPSzD1fSV
+X-Proofpoint-GUID: k8z10pVxgJ3YBUWhTOvC1EEXI1_ELafR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-27_09,2025-05-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ priorityscore=1501 mlxscore=0 phishscore=0 clxscore=1011
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=996 adultscore=0
+ impostorscore=0 bulkscore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505160000 definitions=main-2505270159
 
-On Mon, May 26, 2025 at 07:37:52PM +0100, Tingmao Wang wrote:
-> On 5/23/25 17:57, Mickaël Salaün wrote:
-> > Add a tracepoint for Landlock path_beneath rule addition.  This is
-> > useful to tie a Landlock object with a file for debug purpose.
-> > 
-> > Allocate the absolute path names when adding new rules.  This is OK
-> > because landlock_add_rule(2) is not a performance critical code.
-> > 
-> > Here is an example of landlock_add_rule_fs traces:
-> >    ruleset=0x000000007e3b1c4a key=inode:0xffff888004f59260 allowed=0xd dev=0:16 ino=306 path=/usr
-> >    ruleset=0x000000007e3b1c4a key=inode:0xffff888004f59240 allowed=0xffff dev=0:16 ino=346 path=/root
-> > 
-> > TODO: Use Landlock IDs instead of kernel addresses to identify Landlock
-> > objects (e.g. inode).
-> 
-> Do you mean like the u64 domain ID for audit, but for objects?  Since there
-> currently isn't a u64, non-pointer ID, I guess we would have to create one
-> for the object just for tracing?
+On Tue, 2025-05-27 at 20:51 +0800, Zhao Yipeng wrote:
+> The current implementation of IMA policy list replacement via
+> list_replace_rcu may trigger general protection faults under concurrent
+> load policy operations. This occurs when a process replaces a node in
+> ima_policy_rules list and sets old->prev =3D LIST_POISON2, while another
+> parallel process still holds references to the old node. Subsequent list
+> operations on the poisoned pointer result in kernel panic due to invalid
+> memory access.
+>=20
+> To resolve this, introduce a mutex lock (ima_rules_mutex) in
+> ima_lsm_update_rules() to protect. ima_update_policy() also use the
+> ima_policy_rules. Introduce a mutex lock in it.
 
-Yes, this is the idea.  Landlock objects are scarce so it should not
-change much.  Another advantage of using a Landlock ID is that there is
-no risk for confusion (i.e. they are not recycled).  I'm not sure if
-it's worth it though.
+A new IMA policy may replace the existing builtin policy rules with a custo=
+m
+policy. In all other cases, the IMA policy rules may only be extended.  Wri=
+ting
+or extending the IMA policy rules requires taking the ima_write_mutex.
 
-> 
-> My understanding is that kernel pointers are not hidden from the root user /
-> someone who can read traces, so maybe just printing the pointer is good
-> enough?
+There's no need for a new mutex.
 
-In theory printed kernel pointers should be hashed, but I guess in
-practice and especially with eBPF, kernel addresses may not be really
-hidden.
+Mimi
 
-On the other hand, providing a pointer to an eBPF program enables us to
-inspect the related data structure.  However, such pointer cannot be
-dereferenced in TP_printk() because it is called after the tracepoint.
+>=20
+> Fixes: b16942455193 ("ima: use the lsm policy update notifier")
+> Signed-off-by: Zhao Yipeng <zhaoyipeng5@huawei.com>
+> ---
+> =C2=A0security/integrity/ima/ima_policy.c | 10 +++++++++-
+> =C2=A01 file changed, 9 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/security/integrity/ima/ima_policy.c
+> b/security/integrity/ima/ima_policy.c
+> index 128fab897930..d27e615e97d5 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -471,6 +471,8 @@ static bool ima_rule_contains_lsm_cond(struct
+> ima_rule_entry *entry)
+> =C2=A0	return false;
+> =C2=A0}
+> =C2=A0
+> +static DEFINE_MUTEX(ima_rules_mutex);
+> +
+> =C2=A0/*
+> =C2=A0 * The LSM policy can be reloaded, leaving the IMA LSM based rules =
+referring
+> =C2=A0 * to the old, stale LSM policy.=C2=A0 Update the IMA LSM based rul=
+es to reflect
+> @@ -481,16 +483,19 @@ static void ima_lsm_update_rules(void)
+> =C2=A0	struct ima_rule_entry *entry, *e;
+> =C2=A0	int result;
+> =C2=A0
+> +	mutex_lock(&ima_rules_mutex);
+> =C2=A0	list_for_each_entry_safe(entry, e, &ima_policy_rules, list) {
+> =C2=A0		if (!ima_rule_contains_lsm_cond(entry))
+> =C2=A0			continue;
+> =C2=A0
+> =C2=A0		result =3D ima_lsm_update_rule(entry);
+> =C2=A0		if (result) {
+> +			mutex_unlock(&ima_rules_mutex);
+> =C2=A0			pr_err("lsm rule update error %d\n", result);
+> =C2=A0			return;
+> =C2=A0		}
+> =C2=A0	}
+> +	mutex_unlock(&ima_rules_mutex);
+> =C2=A0}
+> =C2=A0
+> =C2=A0int ima_lsm_policy_change(struct notifier_block *nb, unsigned long =
+event,
+> @@ -1038,9 +1043,12 @@ int ima_check_policy(void)
+> =C2=A0 */
+> =C2=A0void ima_update_policy(void)
+> =C2=A0{
+> -	struct list_head *policy =3D &ima_policy_rules;
+> +	struct list_head *policy;
+> =C2=A0
+> +	mutex_lock(&ima_rules_mutex);
+> +	policy =3D &ima_policy_rules;
+> =C2=A0	list_splice_tail_init_rcu(&ima_temp_rules, policy, synchronize_rcu=
+);
+> +	mutex_unlock(&ima_rules_mutex);
+> =C2=A0
+> =C2=A0	if (ima_rules !=3D (struct list_head __rcu *)policy) {
+> =C2=A0		ima_policy_flag =3D 0;
 
-In fact, I guess we should probably provide kernel addresses (to the
-trace context), but I'm not sure if we should print IDs or just kernel
-addresses.  It might be handy to easily map a Landlock domain pointer to
-its ID in the audit log, but that would require to also copy IDs in the
-trace context...  It looks like this is how works sock tracepoints (e.g.
-skaddr, but I'm not sure if void * is only there to avoid dereferencing
-this pointer in TP_printk).
-
-My understanding is that with eBPF we can read a kernel address from the
-trace context without race condition wrt TP_print() which may be called
-when the address was already recycled (which could lead to misleading
-concurrent traces).
-
-Steven, is it correct? Any advice?
-
-> 
-> > 
-> > Cc: Günther Noack <gnoack@google.com>
-> > Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Cc: Tingmao Wang <m@maowtm.org>
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > ---
-> >   MAINTAINERS                     |  1 +
-> >   include/trace/events/landlock.h | 68 +++++++++++++++++++++++++++++++++
-> >   security/landlock/Makefile      | 11 +++++-
-> >   security/landlock/fs.c          | 22 +++++++++++
-> >   security/landlock/fs.h          |  3 ++
-> >   security/landlock/trace.c       | 14 +++++++
-> >   6 files changed, 117 insertions(+), 2 deletions(-)
-> >   create mode 100644 include/trace/events/landlock.h
-> >   create mode 100644 security/landlock/trace.c
-> > 
-> > > [...]
-> > > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> > index 73a20a501c3c..e5d673240882 100644
-> > --- a/security/landlock/fs.c
-> > +++ b/security/landlock/fs.c
-> > @@ -36,6 +36,7 @@
-> >   #include <linux/types.h>
-> >   #include <linux/wait_bit.h>
-> >   #include <linux/workqueue.h>
-> > +#include <trace/events/landlock.h>
-> >   #include <uapi/linux/fiemap.h>
-> >   #include <uapi/linux/landlock.h>
-> > @@ -345,6 +346,27 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
-> >   	mutex_lock(&ruleset->lock);
-> >   	err = landlock_insert_rule(ruleset, ref, access_rights);
-> >   	mutex_unlock(&ruleset->lock);
-> > +
-> > +	if (!err && trace_landlock_add_rule_fs_enabled()) {
-> > +		const char *pathname;
-> > +		/* Does not handle deleted files. */
-> > +		char *buffer __free(__putname) = __getname();
-> > +
-> > +		if (buffer) {
-> > +			const char *absolute_path =
-> > +				d_absolute_path(path, buffer, PATH_MAX);
-> > +			if (!IS_ERR_OR_NULL(absolute_path))
-> > +				pathname = absolute_path;
-> > +			else
-> > +				pathname = "<too_long>";
-> 
-> Not sure if it's necessary to go that far, but I think d_absolute_path
-> returns -ENAMETOOLONG in the too long case, and -EINVAL in the "not possible
-> to construct a path" case (I guess e.g. if it's an anonymous file or
-> detached mount).  We could add an else if branch to check which case it is
-> and use different strings.
-
-I mimicked the audit behavior but we can indeed add another case.
-
-> 
-> > +		} else {
-> > +			/* Same format as audit_log_d_path(). */
-> > +			pathname = "<no_memory>";
-> > +		}
-> > +		trace_landlock_add_rule_fs(ruleset, &ref, access_rights, path,
-> > +					   pathname);
-> > +	}
-> > +
-> >   	/*
-> >   	 * No need to check for an error because landlock_insert_rule()
-> >   	 * increments the refcount for the new object if needed.
-> > diff --git a/security/landlock/fs.h b/security/landlock/fs.h
-> > index bf9948941f2f..60be95ebfb0b 100644
-> > --- a/security/landlock/fs.h
-> > +++ b/security/landlock/fs.h
-> > @@ -11,6 +11,7 @@
-> >   #define _SECURITY_LANDLOCK_FS_H
-> >   #include <linux/build_bug.h>
-> > +#include <linux/cleanup.h>
-> >   #include <linux/fs.h>
-> >   #include <linux/init.h>
-> >   #include <linux/rcupdate.h>
-> > @@ -128,4 +129,6 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
-> >   			    const struct path *const path,
-> >   			    access_mask_t access_hierarchy);
-> > +DEFINE_FREE(__putname, char *, if (_T) __putname(_T))
-> 
-> Out of curiosity why not put this in include/linux/fs.h (seems to compile
-> for me when added there)?
-
-I moved it here for this RFC but the next patch series will put it in
-linux/fs.h
-
-> 
-> > +
-> >   #endif /* _SECURITY_LANDLOCK_FS_H */
-> > diff --git a/security/landlock/trace.c b/security/landlock/trace.c
-> > new file mode 100644
-> > index 000000000000..98874cda473b
-> > --- /dev/null
-> > +++ b/security/landlock/trace.c
-> > @@ -0,0 +1,14 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Landlock - Tracepoints
-> > + *
-> > + * Copyright © 2025 Microsoft Corporation
-> > + */
-> > +
-> > +#include <linux/path.h>
-> > +
-> > +#include "access.h"
-> > +#include "ruleset.h"
-> > +
-> > +#define CREATE_TRACE_POINTS
-> > +#include <trace/events/landlock.h>
-> 
-> 
