@@ -1,97 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC716136672;
-	Wed, 28 May 2025 01:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DBD13B5A9;
+	Wed, 28 May 2025 07:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748396493; cv=none; b=U4iEXwq6bVQeiLpyH6uEhwK89dqrh2Fo+vyETFxdqf5CYsjN9XEkfYMVRHTUh9bLQ0OmpeRtkXpJuLUpRS+ggARbs7buMkVrzhnjX4+Or/8xQ1T81+7UoLknGqioGcMKGFq3m4P2akYu+FSDhp3UBs/vK9NGg/v8AHeYUcxxhJQ=
+	t=1748416204; cv=none; b=Bdj5g0lXzKbjN1hD065WiCjtNYzP+QAI5DI+CV11K+n98crnzUjmL+/Td793cteKQXoDZb2e5eKJimkO+pZlePzHXjESTqzRVOno6IRsWRZA2x8rV5YfV6OxJIuTtl99FhhXgXzfAVbD6KITffi0tYKvCAM3p5KG/CiEdjdMprs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748396493; c=relaxed/simple;
-	bh=YlS9uENzu0Nhic8XVKYOHbZfuipcgIhwcq5qY2oaBhw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=lwtGeMShSASvStjj5H4ezC38NOCraVCBmsvkSEK4eKfgGeEb3X/iWN3B552TcOAABNBLd4sAWbKQtcfmwv40bYrjPBEfxP8d4uf3EybNKGeJ9K9GDLUX8UpC0YntKaY/QSI6gMlWKVt3o7JuMLZiCN6eWFnbYoLhGPO9vEr00sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ajff55LP; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748416204; c=relaxed/simple;
+	bh=b17czl604puTsFyxm927VcXZIwq3UoC5jpyPmjjyHG4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=h3u/o9sCMNB5KSPA2vbQSXOMZO6znO9n9KuQDyTQcU/HFg1LbzvEzmAdflRu0COZhIN2Sg4MAroN/u/APGLJMa4IRn2pCc7QdV2ok8aryjL32sFDA2E9TLAsM+a5tkl85YvOvwJdLtVfk/ThfIBRzxgDklONmxRAd84Y5B1PJFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BRwTugnT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ajff55LP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82D7C4CEE9;
-	Wed, 28 May 2025 01:41:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BRwTugnT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E86C4CEE7;
+	Wed, 28 May 2025 07:10:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748396493;
-	bh=YlS9uENzu0Nhic8XVKYOHbZfuipcgIhwcq5qY2oaBhw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Ajff55LP496GOO57ExvC4elis3Ij/HOMBGdXfdEEV07Rp9074q0XwLQJTsKdby9GR
-	 3rV+qc3PvhBJMCX7+FnWP29v7yQrI14k1uf+lHQbKmSqQpuEU4XIicfXWfLtJO1Tuh
-	 Wqkoag/zva7xO3pv6SKDmEYV3ngY048pRZZGJtRNJPE2ZOGa5mx7PVi9bV3IF3pzBF
-	 1tq0IaOiXfkUm2zAYXNObjCbzL/kD41kmhtD92MdVDFDtODHfYmL51XaraE2fSv8ZB
-	 I7M1y2VWAltgs6h8QG2UhpYXOJHTr0d4KOkuRlnEhGmOOOmfAvlXhVotufs6/eWXgv
-	 CsQaz4ExhVQeA==
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-70e3980757bso3751047b3.1;
-        Tue, 27 May 2025 18:41:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWfMzCLNkg79qQPtOkMwqEqWaoMP9bomuQKLGogaVD15JACkWg68LoYCd2RhtM2Udu4IKzoiw0pDmjnkpGb6xyDyCaENAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSLpyYza01jF/nnaJIaOSJkvwdv8UvthX7cL1jC6QkWN6lGU+9
-	5jwi18Ep56OKLptzBNUvWxMh7aoTx3gsRkW8lyCQDPVhMvGqOv4syUcdtCTvTUxa6ldifgTRCre
-	G6aJDCjmopKReSE9wAP1m5kP+mSaZMFQ=
-X-Google-Smtp-Source: AGHT+IG0AzwPVbHW/FoMkNfWC3X+QcIb36uFuCtMa8Os5JdW20itCToqIzsLkgZUVU4xQ+lAvP+Xry82c6qesiBgwFw=
-X-Received: by 2002:a05:690c:720a:b0:70e:61b:afed with SMTP id
- 00721157ae682-70e8332210fmr42914747b3.7.1748396493033; Tue, 27 May 2025
- 18:41:33 -0700 (PDT)
+	s=k20201202; t=1748416203;
+	bh=b17czl604puTsFyxm927VcXZIwq3UoC5jpyPmjjyHG4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=BRwTugnTHsKaqnkXFcHY7ys00DX1qO7uA7QlPp4aSae0qiu7s0p1FaDKZH/Rx95nc
+	 K7MUoEHAJp9zUibOYGfZWYRW/9VD7JubB9GlpRkH+gRdL0Q6Vnx/J4i7hYtHDqVCtw
+	 9hkJE2XKOkyW56WtjR0d/fOWsFTo2gLcSlkzRPkiAJGFKJYOO1a9YARkfCPuits0Hd
+	 gVaxrD2+zM30xc/2fzmBYmHn5M1k47M/cA5sgczHekIDPc4s4RuZ+YyurXdsVtsmwh
+	 sfcy2W/bhhf2YO8hRCEjgYydH9MVgC5B8ozqRjfMhGLPmiiT2kURce5JtU3ec/N+16
+	 tz6qP45x2xSww==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB04B39F1DE4;
+	Wed, 28 May 2025 07:10:38 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Fan Wu <wufan@kernel.org>
-Date: Tue, 27 May 2025 18:41:21 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkHcU8EGFjYp7fDV8tFqDE6VgQ_q4KQO+1Yy4SYYmveGWw@mail.gmail.com>
-X-Gm-Features: AX0GCFsW3H0Xe4ZaOSVl46ag2mnYGHRPiP0VbQPTYb_lzggwBNsRmkgIt6l-iRs
-Message-ID: <CAKtyLkHcU8EGFjYp7fDV8tFqDE6VgQ_q4KQO+1Yy4SYYmveGWw@mail.gmail.com>
-Subject: [GIT PULL] IPE update for 6.16
-To: torvalds@linux-foundation.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-security-module@vger.kernel.org, 
-	Jasjiv Singh <jasjivsingh@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v1 net] calipso: Don't call calipso functions for AF_INET sk.
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174841623776.1935682.16829373096139455739.git-patchwork-notify@kernel.org>
+Date: Wed, 28 May 2025 07:10:37 +0000
+References: <20250522221858.91240-1-kuniyu@amazon.com>
+In-Reply-To: <20250522221858.91240-1-kuniyu@amazon.com>
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: paul@paul-moore.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, huw@codeweavers.com,
+ kuni1840@gmail.com, netdev@vger.kernel.org,
+ linux-security-module@vger.kernel.org, syzkaller@googlegroups.com,
+ john.cs.hey@gmail.com
 
-Hi Linus,
+Hello:
 
-Please merge this PR for the IPE update for 6.16.
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-This PR contains a single commit from Jasjiv Singh. It adds an errno
-field to IPE policy load auditing to log failures with error details,
-not just successes. This improves the security audit trail and helps
-diagnose policy deployment issues.
+On Thu, 22 May 2025 15:18:56 -0700 you wrote:
+> syzkaller reported a null-ptr-deref in txopt_get(). [0]
+> 
+> The offset 0x70 was of struct ipv6_txoptions in struct ipv6_pinfo,
+> so struct ipv6_pinfo was NULL there.
+> 
+> However, this never happens for IPv6 sockets as inet_sk(sk)->pinet6
+> is always set in inet6_create(), meaning the socket was not IPv6 one.
+> 
+> [...]
 
-This commit has been tested for several weeks in linux-next without any issues.
+Here is the summary with links:
+  - [v1,net] calipso: Don't call calipso functions for AF_INET sk.
+    https://git.kernel.org/netdev/net/c/6e9f2df1c550
 
-Thanks,
-Fan
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
---
 
-The following changes since commit 0ff41df1cb268fc69e703a08a57ee14ae967d0ca:
-
-  Linux 6.15 (2025-05-25 16:09:23 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wufan/ipe.git
-tags/ipe-pr-20250527
-
-for you to fetch changes up to 1d887d6f810dbf908da9709393c95ae1a649d587:
-
-  ipe: add errno field to IPE policy load auditing (2025-05-27 18:08:51 -0700)
-
-----------------------------------------------------------------
-ipe/stable-6.16 PR 20250527
-
-----------------------------------------------------------------
-Jasjiv Singh (1):
-      ipe: add errno field to IPE policy load auditing
-
- Documentation/admin-guide/LSM/ipe.rst | 69
-++++++++++++++++++++++++++++++++++++++++++++++++++-------------------
- security/ipe/audit.c                  | 19 ++++++++++++++-----
- security/ipe/fs.c                     | 25 +++++++++++++++++--------
- security/ipe/policy.c                 | 17 +++++++++++------
- security/ipe/policy_fs.c              | 28 +++++++++++++++++++++-------
- 5 files changed, 113 insertions(+), 45 deletions(-)
