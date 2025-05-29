@@ -1,158 +1,117 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2669323E
-	for <linux-security-module@vger.kernel.org>; Thu, 29 May 2025 11:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AD6193062;
+	Thu, 29 May 2025 15:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748519901; cv=none; b=VO7u0XurbDzD74UzKiEhpygnF72xLZSznM7fYncQzgvfEzpDr8w/A+AZTnAuQMXEmVWiMoiizzpNP+H9mWCbhWUjzyebBUX3zrvFf4lSo3h/qum2vAJmMPjTkpLUyzEPV9Imlkgme/uvj+1gjh6gUgmmoHoqbWRKnY+KkJ8zoCw=
+	t=1748532772; cv=none; b=a1c4Kb6QC6CTAgdVooNq1dV74V4se7+bql22wF4MtlDoZCqeoxZJJxzJLr3xXq5LqWvDUjAKriqEV7U/zB1dO83c6H0eiReQa6qLsDPkIU9zEbp+2O/rKd4jz1ysIbnc8uFrBkQpg8AFOvJWVym/PSL91fsBYf05lhXWWntoE88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748519901; c=relaxed/simple;
-	bh=JoeMj1sgCg3+bjd+DCtURjgjQEBOvEMZ6ee7lPUm2DA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZK6PpHPJH9cQMqU8qicyuqn2IbpGcVQXYCYFhkAJzUx4i7smacBpce82HaWhqlP1mWQcmLXSSah+B9uhmeXpGv7SO0NledLEdTDGhpRW1Ho6C+1w4KrusHMgt1Z4To1OsDOS8Gh9CmYMFlG8iO4xGSmPkHi1kqPN1zMV3aSrvjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xnnrzbUB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=p2IQMEM6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RSN1Ryz1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QVgW4yDc; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1748532772; c=relaxed/simple;
+	bh=GzoA6uvTo4t9PdtiyY4JFANz807VCS4EaCaegKk/xqU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kaXWEQgW9D2cnEgX+FkwGjd/9GayLZ/bkVw5Fm+Bu8onwnPSuz+c7jof5plnmDMNhQo3MTYk4Tt8bcxaJQTBEoB/E59lmx6L6CwkIFlJgK5suqk24BwXk0d/MC2tKqtF4nmKFT7CmGHhLog6v4TtOIiR9mna1GGJdPRtQzm2pzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=dEK26zK9; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xnnrzbUB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="p2IQMEM6";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RSN1Ryz1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QVgW4yDc"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E458521D1C;
-	Thu, 29 May 2025 11:58:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748519892; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NHQv/Giezg5cPyruHZ9ILxYpRZTFVMY6zbeSiUuy0hY=;
-	b=xnnrzbUBYUVs2I8eKhk3l4iyRqDf2fQdKPYnrsUa1JnBo0m62z/53QtfmtGzl/C+NgjR/i
-	XdbvBvcvSMWNxV1HXkL/0bIcSiC1kQwVQcWy3EkN3gy2VFuZHo1bV7JLrq4410T56m/ytz
-	Y/ksOwk4n11yIoNhaiJGURB2cyvai0c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748519892;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NHQv/Giezg5cPyruHZ9ILxYpRZTFVMY6zbeSiUuy0hY=;
-	b=p2IQMEM6iV8zhwc6JrrMfyfzuP6Zu/o5LgX0Bywzkwh87O9YEUEqipZBAs6hWSkL/ZbY88
-	Gcmr+dkd1OEg+xBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748519891; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NHQv/Giezg5cPyruHZ9ILxYpRZTFVMY6zbeSiUuy0hY=;
-	b=RSN1Ryz1+Ab0N5ORp1gINlW1WQf9Ekr8y/NnyQ+TKb53bRkGk7NLeWYkQurQtpmaqWrAPz
-	itf2gagyAdBQRuhmP6vWIc8+daXKGIOX9Ecf9JA7Obov5dPEarONTsh0XtvwEsqOgMyc8Z
-	cvBa4HC/40MUmdr3vKCQni7ZQw3aPao=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748519891;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NHQv/Giezg5cPyruHZ9ILxYpRZTFVMY6zbeSiUuy0hY=;
-	b=QVgW4yDcAjXTMrE8AyITNuiFcSb7gDNa8Yng5w9muUr2lvLyap7HE6lubUhSH0kjbSwZzD
-	rgStXu9+q7/+d1Cw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D3B5013325;
-	Thu, 29 May 2025 11:58:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id FDmmM9NLOGjmHQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 29 May 2025 11:58:11 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 71B9FA09B5; Thu, 29 May 2025 13:58:07 +0200 (CEST)
-Date: Thu, 29 May 2025 13:58:07 +0200
-From: Jan Kara <jack@suse.cz>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, 
-	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org, 
-	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, 
-	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, 
-	gnoack@google.com
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-Message-ID: <yti2dilasy7b3tu6iin5pugkn6oevdswrwoy6gorudb7x2cqhh@nqb3gcyxg4by>
-References: <20250528222623.1373000-1-song@kernel.org>
- <20250528222623.1373000-4-song@kernel.org>
- <20250528223724.GE2023217@ZenIV>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="dEK26zK9"
+Received: from narnia (unknown [40.78.13.173])
+	by linux.microsoft.com (Postfix) with ESMTPSA id D0CB1207861D;
+	Thu, 29 May 2025 08:32:44 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D0CB1207861D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1748532768;
+	bh=CVcXX0izB84lzZgI4QE93xD+b9nu6pG8yG3Y1vkIp/4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=dEK26zK9pRZZcIxz/pLWp9R4tr/wue5TYXgnS4OULTipYZlZ42H7056RrD0GTzsMo
+	 dTGT1ZmDBvivP/d3g18JAE0PJUfTa+OGPUc32VHMH24qU5tyYKN9K4gvb+f9NZPz54
+	 huicmVqCVkiLyW+j3NBbRbIIDLzsSWGgWw7UtvqY=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Paul Moore <paul@paul-moore.com>, jarkko@kernel.org,
+ zeffron@riotgames.com, xiyou.wangcong@gmail.com, kysrinivasan@gmail.com,
+ code@tyhicks.com, linux-security-module@vger.kernel.org,
+ roberto.sassu@huawei.com, James.Bottomley@hansenpartnership.com, Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, John
+ Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
+ <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, David Howells <dhowells@redhat.com>, Ignat Korchagin
+ <ignat@cloudflare.com>, Quentin Monnet <qmo@kernel.org>, Jason Xing
+ <kerneljasonxing@gmail.com>, Willem de Bruijn <willemb@google.com>, Anton
+ Protopopov <aspsk@isovalent.com>, Jordan Rome <linux@jordanrome.com>,
+ Martin Kelly <martin.kelly@crowdstrike.com>, Alan Maguire
+ <alan.maguire@oracle.com>, Matteo Croce <teknoraver@meta.com>,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ keyrings@vger.kernel.org, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 1/3] bpf: Add bpf_check_signature
+In-Reply-To: <aDgy1Wqn7WIFNXvb@wunner.de>
+References: <20250528215037.2081066-1-bboscaccy@linux.microsoft.com>
+ <20250528215037.2081066-2-bboscaccy@linux.microsoft.com>
+ <aDgy1Wqn7WIFNXvb@wunner.de>
+Date: Thu, 29 May 2025 08:32:43 -0700
+Message-ID: <87msave8kk.fsf@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250528223724.GE2023217@ZenIV>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,meta.com,gmail.com,iogearbox.net,linux.dev,suse.cz,google.com,toxicpanda.com,digikod.net];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Content-Type: text/plain
 
-On Wed 28-05-25 23:37:24, Al Viro wrote:
-> On Wed, May 28, 2025 at 03:26:22PM -0700, Song Liu wrote:
-> > Introduce a path iterator, which reliably walk a struct path.
-> 
-> No, it does not.  If you have no external warranty that mount
-> *and* dentry trees are stable, it's not reliable at all.
+Lukas Wunner <lukas@wunner.de> writes:
 
-I agree that advertising this as "reliable walk" is misleading. It is
-realiable in the sense that it will not dereference freed memory, leak
-references etc. As you say it is also reliable in the sense that without
-external modifications to dentry & mount tree, it will crawl the path to
-root. But in presence of external modifications the only reliability it
-offers is "it will not crash". E.g. malicious parallel modifications can
-arbitrarily prolong the duration of the walk.
+> On Wed, May 28, 2025 at 02:49:03PM -0700, Blaise Boscaccy wrote:
+>> +	if (!attr->signature_maps_size) {
+>> +		sha256((u8 *)prog->insnsi, prog->len * sizeof(struct bpf_insn), (u8 *)&hash);
+>> +		err = verify_pkcs7_signature(hash, sizeof(hash), signature, attr->signature_size,
+>> +				     VERIFY_USE_SECONDARY_KEYRING,
+>> +				     VERIFYING_EBPF_SIGNATURE,
+>> +				     NULL, NULL);
+>
+> Has this ever been tested?
+>
+> It looks like it will always return -EINVAL because:
+>
+>   verify_pkcs7_signature()
+>     verify_pkcs7_message_sig()
+>       pkcs7_verify()
+>
+> ... pkcs7_verify() contains a switch statement which you're not
+> amending with a "case VERIFYING_EBPF_SIGNATURE" but which returns
+> -EINVAL in the "default" case.
+>
 
-> And I'm extremely suspicious regarding the validity of anything
-> that pokes around in mount trees.  There is a very good reason
-> struct mount is *not* visible in include/linux/*.h
+Looks like I missed a commit when sending this patchset. Thanks for
+finding that. 
 
-Well, but looking at the actual code I don't see anything problematic
-there. It does not export any new functionality from the VFS AFAICT. It
-just factors out some parent lookup details from Landlock into generic code
-and exposes it as a helper to fetch parent dentry. But overall any kernel
-module can do what's in the helper already today and exposing the
-functionality of looking up dentry parent to BPF as well seems OK to me.
+> Aside from that, you may want to consider introducing a new ".ebpf"
+> keyring to allow adding trusted keys specifically for eBPF verification
+> without having to rely on the system keyring.
+>
+> Constraining oneself to sha256 doesn't seem future-proof.
+>
 
-So I have only reservations against calling it "reliable walk". It should
-rather come with warnings like "The sequence of dentries may be rather
-surprising in presence of parallel directory or mount tree modifications
-and the iteration need not ever finish in face of parallel malicious
-directory tree manipulations."
+Definitely not a bad idea, curious, how would you envision that looking
+from an UAPI perspective? 
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Some minor style issues in the commit message caught my eye:
+>
+>> This introduces signature verification for eBPF programs inside of the
+>> bpf subsystem. Two signature validation schemes are included, one that
+>
+> Use imperative mood, avoid repetitive "This ...", e.g.
+> "Introduce signature verification of eBPF programs..."
+>
+>> The signature check is performed before the call to
+>> security_bpf_prog_load. This allows the LSM subsystem to be clued into
+>> the result of the signature check, whilst granting knowledge of the
+>> method and apparatus which was employed.
+>
+> "Perform the signature check before calling security_bpf_prog_load()
+> to allow..."
+>
+> Thanks,
+>
+> Lukas
