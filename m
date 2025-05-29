@@ -1,150 +1,91 @@
-Received: from mail-10624.protonmail.ch (mail-10624.protonmail.ch [79.135.106.24])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E0E22F778;
-	Thu, 29 May 2025 17:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0921A4E9D;
+	Thu, 29 May 2025 18:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748540731; cv=none; b=F1PAfV2DV1z8Kihe1w3Vb3krtwt5cuzNdO+XQKXTj1H42iX0wCSglhPpTzsHrzj3lHdITmYxHcURGl0uOw8lkb6TUUE2pNvvAEDBUxi0K+aNM7K7A3OpuNvV7FgUvk3s0aXZjJvT7/Sb1ZAdZGorEsaX+V7wgOfqIc1ty7b1LOM=
+	t=1748541664; cv=none; b=aeynzvSeeuFsNpZYxsCBDQCielu9+tfuiAuBJ4WdOgquHgKGtYMAQu8SELypMQZ3G+6nQj74rO2uT6I4ZvRSdkEBsGJffYRQXq8SVsVQoW1LrwTTi3RPk40LvYhrHSkR3qO85l70hM0yf/a6RVbqCrxZQwal80Oi0y4/3/eeiw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748540731; c=relaxed/simple;
-	bh=+xabQibrftJkVUwZN7dmngN81xgMxDTrpiypIR+Bleg=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WnzUxdaOvHjqD1YWOURTnvLmimfNmz0R24+Lz6rRKawaN21p/hff2mKfSjnyc0+6UEj+GQH7QubRhylCZCaB+q2JpR0nIgCH9BGlXdOAr/27TnL4f3MaT9+xbCehN0tOpa6esKl1x8fwJ9eci6a7tnucMlUrDBiTlapWdpXRSCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=welho.tech; spf=pass smtp.mailfrom=welho.tech; dkim=pass (2048-bit key) header.d=welho.tech header.i=@welho.tech header.b=Z5O74jSs; arc=none smtp.client-ip=79.135.106.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=welho.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=welho.tech
+	s=arc-20240116; t=1748541664; c=relaxed/simple;
+	bh=va8x2OuP/XP9tUIN6TYly8/+r3SiRgdq7ss21hcfXrs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aJcNmIi2TSqHzcETvQu0uusKMeCARVCt+wfj3Shlgrqi9YLNRhkBmdm1Jkl1mw4REfFu9LLJl8h/Wn+jkgUDVQtrB+vYW7a4mgovQCwIPM1izvUnD9X5r3n9IdXY7+9gbyMGJP576WS2wsDIVShz2kgMKYlW9jxcbr2PYh6I0nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kHLr0oyC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=welho.tech header.i=@welho.tech header.b="Z5O74jSs"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=welho.tech;
-	s=protonmail2; t=1748540719; x=1748799919;
-	bh=8gzq8wYrUWwUGXftu5OuGK0/Efmw6ikuz+/C0p0BuvQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=Z5O74jSs80lfy0YVkKk9CCLGp2po24Y4czyXtsLRWAsYgCK5EKCVejsv/qTmbmz5H
-	 LDgyjPbJhfzhf9PoJ21UGqtqGsk34kP1JVDK+jb0xicjHlc+tm5E604nntR/dageeg
-	 LpdbUfrOMrNaEQLhHfnZrACG/ERi+G/J5OQOUFsjb8eypgxN6mGqGUft6vz6f3LR33
-	 ojPLA6wfC8g2NnB+1/VZBj6M0AbYGFcFYmo4wGaspZppIsOU8DLyiPC7NBKU0sUxO3
-	 x6wRNzewkM01MWJYlvhrKYnUDvvmXRTOl13NHL4dzWNU0I5y3BLm5b0HeSR2OX1/al
-	 aa93IdNCv5NpA==
-Date: Thu, 29 May 2025 17:45:12 +0000
-To: Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Dennis Marttinen <twelho@welho.tech>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, Dennis Marttinen <twelho@welho.tech>
-Subject: [PATCH] fs/ceph: set superblock s_magic for IMA fsmagic matching: up to 60x speedup
-Message-ID: <20250529174453.293618-1-twelho@welho.tech>
-Feedback-ID: 63214926:user:proton
-X-Pm-Message-ID: 294c9fb9a57bf9a61f0c822a773aa432f7737b89
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kHLr0oyC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F29E0C4CEEA;
+	Thu, 29 May 2025 18:01:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748541664;
+	bh=va8x2OuP/XP9tUIN6TYly8/+r3SiRgdq7ss21hcfXrs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kHLr0oyCdmWcYpOoslfqCz/WOpR8Y+i+6tyIYoau+2WzBsjGtRLaXd6WTHxqVxVTz
+	 4tr88sVRL3sGzUw4s1gxpAfVZo5bzPA98zKpNf4sKDvMHwI5V2qFSsWaHcIIFkupQG
+	 GiKg88l9YKOEuj1Kh2YPP7VEjl+j/JprJJYPh7txuoN7gME6gD/3iRSJC4F04gubxM
+	 3RHu6OsweVVU0YEpzygqHd8O3j/QRNRSBDPmJjIZl7VVGul36kRoj5oS55oL9NTz36
+	 RMOd2cJzMDLYoU4Wp/i8QXd2doySkmu5OiixRlsgHguHS6qTpY6h7upRR8lSMPCClY
+	 7VGBpdsAgNyRA==
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6faacf5d5adso13760766d6.1;
+        Thu, 29 May 2025 11:01:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVbYGHUCggjTqUaiq2DRMuzQYKMCOcqQOC1BGsK063ZIzQcHI8iGNfaYcJkENG0Rv7BElXFh7LHN8GyAJidlw==@vger.kernel.org, AJvYcCWP+692HR4GnpDRKEQv5W/N39bHHIBkbpyDAwySPJlZ0m2q73/lA9Fb1JGH3Tn4WMsuLamPxxYzIE6Sed7l@vger.kernel.org, AJvYcCWjlNvF6k3UwCK3noFXcn3rb0soE8hJSAyXDkmFLuUJOmMJJmeEuaphSI+MyVwwz2yeMRI=@vger.kernel.org, AJvYcCXNY7Z74PrQ7KCf2T3AMxhH9ToYzGfn4ElDgI4mW/M+QavLMGnM9QudKHzQ2941+lJktH1/FOtFHBfObgcKFi0d1NUWbavA@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW8QkOyJJ0mQleDjKTuYOxvPsje5OQg7jg+QDx6mPqkHW0y8Fz
+	WLvZvnsQDjlZaJ8JrKirmotkcRI6idHrzbaJ5Lp9pKqvTLZLBc6YPxYTvwSMHcg7rkuv+K79nvR
+	Wrj/Y5feTZQni3CqHnrD8og+Z+jRfdww=
+X-Google-Smtp-Source: AGHT+IF6EPR6+2zjvOUnh/yy1Eu/+WwFCHyfFf4IxcU2aFuspgKBn8eKOejuW0eaU2iFowJOtDhNbKdKhRjaPf5sXBs=
+X-Received: by 2002:a05:6214:caa:b0:6fa:9baa:face with SMTP id
+ 6a1803df08f44-6facec0f7d9mr10351106d6.35.1748541663143; Thu, 29 May 2025
+ 11:01:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250528222623.1373000-1-song@kernel.org> <20250528222623.1373000-4-song@kernel.org>
+ <20250528223724.GE2023217@ZenIV> <yti2dilasy7b3tu6iin5pugkn6oevdswrwoy6gorudb7x2cqhh@nqb3gcyxg4by>
+ <CAPhsuW4tg+bXU41fhAaS0n74d_a_KCFGvy_vkQOj7v4VLie2wg@mail.gmail.com> <20250529173810.GJ2023217@ZenIV>
+In-Reply-To: <20250529173810.GJ2023217@ZenIV>
+From: Song Liu <song@kernel.org>
+Date: Thu, 29 May 2025 11:00:51 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
+X-Gm-Features: AX0GCFuJEvhwqFfh-JvOxs1IMEGRcEd6UR-5Og_2gqEBY0g9YyGGE9Vhi82CZU0
+Message-ID: <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org, 
+	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, 
+	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, 
+	gnoack@google.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The CephFS kernel driver forgets to set the filesystem magic signature in
-its superblock. As a result, IMA policy rules based on fsmagic matching do
-not apply as intended. This causes a major performance regression in Talos
-Linux [1] when mounting CephFS volumes, such as when deploying Rook Ceph
-[2]. Talos Linux ships a hardened kernel with the following IMA policy
-(irrelevant lines omitted):
+On Thu, May 29, 2025 at 10:38=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> =
+wrote:
+>
+> On Thu, May 29, 2025 at 09:53:21AM -0700, Song Liu wrote:
+>
+> > Current version of path iterator only supports walking towards the root=
+,
+> > with helper path_parent. But the path iterator API can be extended
+> > to cover other use cases.
+>
+> Clarify the last part, please - call me paranoid, but that sounds like
+> a beginning of something that really should be discussed upfront.
 
-# cat /sys/kernel/security/integrity/ima/policy
-[...]
-dont_measure fsmagic=3D0xc36400 # CEPH_SUPER_MAGIC
-[...]
-measure func=3DFILE_CHECK mask=3D^MAY_READ euid=3D0
-measure func=3DFILE_CHECK mask=3D^MAY_READ uid=3D0
-[...]
+We don't have any plan with future use cases yet. The only example
+I mentioned in the original version of the commit log is "walk the
+mount tree". IOW, it is similar to the current iterator, but skips non
+mount point iterations.
 
-Currently, IMA compares 0xc36400 =3D=3D 0x0 for CephFS files, resulting in =
-all
-files opened with O_RDONLY or O_RDWR getting measured with SHA512 on every
-open(2):
+Since we call it "path iterator", it might make sense to add ways to
+iterate the VFS tree in different patterns. For example, we may
+have an iterator that iterates all files within a directory. Again, we
+don't see urgent use cases other than the current "walk to root"
+iterator.
 
-# cat /data/cephfs/test-file
-# tail -1 /sys/kernel/security/integrity/ima/ascii_runtime_measurements
-10 69990c87e8af323d47e2d6ae4... ima-ng sha512:<hash> /data/cephfs/test-file
-
-Since O_WRONLY is rare, this results in an order of magnitude lower
-performance than expected for practically all file operations. Properly
-setting CEPH_SUPER_MAGIC in the CephFS superblock resolves the regression.
-
-Tests performed on a 3x replicated Ceph v19.3.0 cluster across three
-i5-7200U nodes each equipped with one Micron 7400 MAX M.2 disk (BlueStore)
-and Gigabit ethernet, on Talos Linux v1.10.2:
-
-FS-Mark 3.3
-Test: 500 Files, Empty
-Files/s > Higher Is Better
-6.12.27-talos . 16.6  |=3D=3D=3D=3D
-+twelho patch . 208.4 |=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-FS-Mark 3.3
-Test: 500 Files, 1KB Size
-Files/s > Higher Is Better
-6.12.27-talos . 15.6  |=3D=3D=3D=3D=3D=3D=3D
-+twelho patch . 118.6 |=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-FS-Mark 3.3
-Test: 500 Files, 32 Sub Dirs, 1MB Size
-Files/s > Higher Is Better
-6.12.27-talos . 12.7 |=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+twelho patch . 44.7 |=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-IO500 [3] 2fcd6d6 results (benchmarks within variance omitted):
-
-| IO500 benchmark   | 6.12.27-talos  | +twelho patch  | Speedup   |
-|-------------------|----------------|----------------|-----------|
-| mdtest-easy-write | 0.018524 kIOPS | 1.135027 kIOPS | 6027.33 % |
-| mdtest-hard-write | 0.018498 kIOPS | 0.973312 kIOPS | 5161.71 % |
-| ior-easy-read     | 0.064727 GiB/s | 0.155324 GiB/s | 139.97 %  |
-| mdtest-hard-read  | 0.018246 kIOPS | 0.780800 kIOPS | 4179.29 % |
-
-This applies outside of synthetic benchmarks as well, for example, the time
-to rsync a 55 MiB directory with ~12k of mostly small files drops from an
-unusable 10m5s to a reasonable 26s (23x the throughput).
-
-[1]: https://www.talos.dev/
-[2]: https://www.talos.dev/v1.10/kubernetes-guides/configuration/ceph-with-=
-rook/
-[3]: https://github.com/IO500/io500
-
-Signed-off-by: Dennis Marttinen <twelho@welho.tech>
----
-It took me a year to hunt this down: profiling distributed filesystems is
-non-trivial. Since the regression is associated with IMA use, I received a
-hint to CC the folks associated with IMA code. The patch targets the 6.12
-kernel series currently used by Talos Linux, but should apply on top of
-master as well. Please note that this is an independent contribution -
-I am not affiliated with any company or organization.
-
- fs/ceph/super.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 73f321b52895e..9549f97233a9e 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -1217,6 +1217,7 @@ static int ceph_set_super(struct super_block *s, stru=
-ct fs_context *fc)
- =09s->s_time_min =3D 0;
- =09s->s_time_max =3D U32_MAX;
- =09s->s_flags |=3D SB_NODIRATIME | SB_NOATIME;
-+=09s->s_magic =3D CEPH_SUPER_MAGIC;
-=20
- =09ceph_fscrypt_set_ops(s);
-=20
-
-base-commit: adc218676eef25575469234709c2d87185ca223a
---=20
-2.49.0
-
+Thanks,
+Song
