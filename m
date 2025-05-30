@@ -1,231 +1,215 @@
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F1219ABC2
-	for <linux-security-module@vger.kernel.org>; Fri, 30 May 2025 16:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE927080C
+	for <linux-security-module@vger.kernel.org>; Fri, 30 May 2025 16:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748622373; cv=none; b=mf8yW2fQxvlLMdagGvWrEW2TWSukoDkpSBUBpeImGuw8LOE06wmUVakXj9f/uqPdwNSRAJVYX+5A30HSE53SZ2Wc/muPRNPVzwMh6db3q5PpVG48NBTQbyxJMSzPyf1MN3jJ2+uLaCj3OqIz/13cJCUfPrLpWfP988VBL4kpVuk=
+	t=1748623339; cv=none; b=BjnzMDfWvC+D4EynFC5s9z2c3rjNQ+xOiPmH+kzPKv5etvEbH31oKqBm3+ZZ+KLK+4pkz5gvg7PI26lRdHfSOlr8aFlv8efSU/25yGfqlTI+ZjJPrNBt2qhkVPHS0AY8MOpPueh9o+TXhGgy0CQM5vquOTuxEPJKn8oK0XU8A8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748622373; c=relaxed/simple;
-	bh=1fng35ixqqBrckudTBy0Pyb56ilge4zWiZ7ZGbgtJDA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PxT2i7NkCPwCcVPOCnExefryIjLYiCCSKWw76lK78uFNao/DVhbKcm7JEasBMjIu8d9NOkbgayyJTv4/Dk+1ITw04lzdjOs9NUFW3s2QhcWuyVZLG/syUVswVvxfXmTi0TwfuNbFlLNOi97IeC8eRfjM66qoCmnFP4mgGpnOEn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=csTG5BqK; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1748623339; c=relaxed/simple;
+	bh=6IpXsTCAiLKJWps9H8u+WyFNAUSFFMG0gHMOiyUtGhA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=usyCXoLPjoyp2i0+Zc9hDnnRQBr+Bi7JlJ71nMNVlrjgzB1ZIlh0pJb8YNY+V97b78RyA0C9aAYCU626s114SQnNeeSDSu49F2cL3Thh2/vjoBJ75gGlWBRTxVsGpKIiZaXYXla7rp/p9eXczg50CpJkZMjNkVgs8wDbJKjNHpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sricLOfm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="csTG5BqK"
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-604e837c1deso1920364a12.1
-        for <linux-security-module@vger.kernel.org>; Fri, 30 May 2025 09:26:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748622370; x=1749227170; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yKpPdX/pBg9NsqtCdWDxQDQHdGt0GO0GXMX5bmb0CeY=;
-        b=csTG5BqKRjAl1pzPFE+JBX+POz0gIrhCtOOIaCmmykqOFd0l9jwkzNgtLL6JOkR6fP
-         uDHa7EF5pbJ42PsI/m7S8Jh7zb79BbGI+Bo3xaXWr2O3Iz796Q30tFpy8gCBpKhoPVSY
-         yXDuNzd1PgSE3hO5WNJHoiWNQLZuPIJVHOH+890y3wKReWKLtBz8mnMtdlZd7yQccIxN
-         4BABA3kI11YDFB3vz0S4LKwNkNyK5T5o0ekhzwIYNpkar/zbjuxwYkKKiW8aXuqhEFHD
-         4gvA3k7LaXdPbwLHRHl5YPaC9NnHQK8bxFEScmXZV7C+0VfH+PU7ZxHAqC5Lo+VKrIkY
-         rQFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748622370; x=1749227170;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yKpPdX/pBg9NsqtCdWDxQDQHdGt0GO0GXMX5bmb0CeY=;
-        b=UNn9zJu7odHWYRiYXw7XSOwiKaG/yvaCvfYMXi1LtSg33bZa9oHV+8HAZso4FkYVH1
-         uPADuruBrQMkebZuf+GBt/fEbjWKeyHb132I7WnyJHqCTv6Nx2ZKXFeD7ln9IBoL7LM5
-         0qNO23oaOlepUPDBtdnQ6TdiogFEMjnmVetfMvjhNE7EPkhGJPt4DfyXP9R3bNCwanYv
-         bjsofdZDtSymJEffT7RAqvmRgA5xpI9wYjOAmeeiMVT/Bb0l/WGtUovUHSn3xcYFSZnu
-         OY/gE9uGjFzHvNJljQYPnF+v3FkNqvVV8Y8daKmri5PLFIroiWHDuUuuOjSGerYyFZ4z
-         OEvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRF3Vs2hWREqCG0WqJw0hRIMYdFeRldBcF4s4/6WUOFxUvXYr/jNGp1H1QP9UN3N8LOzfbRrJhiMTC3nsNoWlME6wBfb4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzowrazmsYPiR5Ocg9lN+wQjsDGVCel1o7pJJeqe6QchuoCCssB
-	a35lJyg5SVMeGhUUUn4O2SdLHP2wDDw4pD0rkzyCBIvCkGGW75i8gEVkIFR7zerjlrw1ZgSOaKF
-	fk7RujQ==
-X-Google-Smtp-Source: AGHT+IEfnkM9EKGtG//Yqz/IdFCNfi7nAt9WRzaaVNSLbe+iFYneywKAv5HztF7mOdYQa3OchFjO8aBfOtw=
-X-Received: from edyb20.prod.google.com ([2002:aa7:df94:0:b0:601:b195:ed99])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:274a:b0:604:e99e:b78f
- with SMTP id 4fb4d7f45d1cf-6056df488b8mr3360734a12.16.1748622369847; Fri, 30
- May 2025 09:26:09 -0700 (PDT)
-Date: Fri, 30 May 2025 18:26:07 +0200
-In-Reply-To: <20250530.ozeuZufee5yu@digikod.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sricLOfm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE3CFC4CEFE
+	for <linux-security-module@vger.kernel.org>; Fri, 30 May 2025 16:42:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748623338;
+	bh=6IpXsTCAiLKJWps9H8u+WyFNAUSFFMG0gHMOiyUtGhA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sricLOfmwuEfIgfE9cKbvi3WJos64eXyTXq+TMfUOFgoS/DpM1uM/THL3NHZQ+xEG
+	 pPG/lNyEMoMDUNkSdLAYrNXA1FPmkoeTekx6KZ/8WyZFAwd+PGDfN0fQnJy91/RXrt
+	 HfJc4jIgkXf7lnywMZv3yza/TF/OsK4w58CM3Ao1Kf7DkJrfnk9jT84ECkr+B8VPu3
+	 dF/ACwHbgDm5iOUAV5tn7UaidcfGgjgwlv1sIjhewxNjvEXasb2iwfX0xd84n5C5bm
+	 Yjphb/uKgzZRrL5BnQl87Bb88/7kYJTRcSbE7iWntPONsksi1DDrAbkKIZADe8RYoY
+	 rY/bdBq2nNVBA==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-604e2a2f200so4138638a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 30 May 2025 09:42:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXoAQU0njwHuVku0CBd/F4MwRSd6BzxiEbpEtEtmA9N/FMw+wnSwr26tKBTWKFRlzvpHl8V3tXzqNneW1d8DQkGTEM+B8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKDJSCiqG8tl2AL1lazzubWGEp8vSOPONr2IcLRdVcKQmtyg+G
+	nLv9hTWpfaNmHLK2Y5/uCNpP0LkAaXzsS5XZ+WhQagqPID9f365U2iHPJjLJqJGSLpmn+aAP+4D
+	XAnDuulbG3v2rcCg2ZuUC1VSRLTyNPtFYsfROo/pW
+X-Google-Smtp-Source: AGHT+IF2FYqfEVWekW2bGIEEdeuqDw988e+H+6pMRWdod3exqVv2+/w3XumjYUA5HTJg6yynsg8WDmm2FjVwvBVk7yM=
+X-Received: by 2002:a05:6402:234d:b0:605:310a:7668 with SMTP id
+ 4fb4d7f45d1cf-6056e15e067mr3642169a12.22.1748623337297; Fri, 30 May 2025
+ 09:42:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250221184417.27954-3-gnoack3000@gmail.com> <20250227.Aequah6Avieg@digikod.net>
- <20250228.b3794e33d5c0@gnoack.org> <20250304.aroh3Aifiiz9@digikod.net>
- <20250310.990b29c809af@gnoack.org> <20250311.aefai7vo6huW@digikod.net>
- <20250518.be040c48937c@gnoack.org> <20250518.xeevoom3kieY@digikod.net>
- <aDmvpOMlaAZOXrji@google.com> <20250530.ozeuZufee5yu@digikod.net>
-Message-ID: <aDncH8D9FoyAIsTv@google.com>
-Subject: Re: [RFC 1/2] landlock: Multithreading support for landlock_restrict_self()
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Casey Schaufler <casey@schaufler-ca.com>
-Cc: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack3000@gmail.com>, Paul Moore <paul@paul-moore.com>, sergeh@kernel.org, 
-	David Howells <dhowells@redhat.com>, Kees Cook <keescook@chromium.org>, 
-	linux-security-module@vger.kernel.org, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Jann Horn <jannh@google.com>, 
-	linux-kernel@vger.kernel.org, Peter Newman <peternewman@google.com>, 
-	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
-	Jarkko Sakkinen <jarkko@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250528215037.2081066-1-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20250528215037.2081066-1-bboscaccy@linux.microsoft.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Fri, 30 May 2025 18:42:05 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ5oJASZ43B531gY8mESqAF3WYFKez-H5vKxnk8r48Ouxg@mail.gmail.com>
+X-Gm-Features: AX0GCFs-bIfXeMrte4iZc7juw786873JPtM7-P-E2EMKVgLQje7MKvpFUlnxFlU
+Message-ID: <CACYkzJ5oJASZ43B531gY8mESqAF3WYFKez-H5vKxnk8r48Ouxg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] BPF signature verification
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: Paul Moore <paul@paul-moore.com>, jarkko@kernel.org, zeffron@riotgames.com, 
+	xiyou.wangcong@gmail.com, kysrinivasan@gmail.com, code@tyhicks.com, 
+	linux-security-module@vger.kernel.org, roberto.sassu@huawei.com, 
+	James.Bottomley@hansenpartnership.com, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, David Howells <dhowells@redhat.com>, Lukas Wunner <lukas@wunner.de>, 
+	Ignat Korchagin <ignat@cloudflare.com>, Quentin Monnet <qmo@kernel.org>, 
+	Jason Xing <kerneljasonxing@gmail.com>, Willem de Bruijn <willemb@google.com>, 
+	Anton Protopopov <aspsk@isovalent.com>, Jordan Rome <linux@jordanrome.com>, 
+	Martin Kelly <martin.kelly@crowdstrike.com>, Alan Maguire <alan.maguire@oracle.com>, 
+	Matteo Croce <teknoraver@meta.com>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org, kys@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 30, 2025 at 05:11:34PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Fri, May 30, 2025 at 03:16:20PM +0200, G=C3=BCnther Noack wrote:
-> > On Sun, May 18, 2025 at 09:57:32PM +0200, Micka=C3=ABl Sala=C3=BCn wrot=
-e:
-> > > We should rename the flag to LANDLOCK_RESTRICT_SELF_PROCESS to make i=
-t
-> > > clear what it does.
-> > >=20
-> > > The remaining issues are still the potential memory allocation failur=
-es.
-> > > There are two things:
-> > >=20
-> > > 1. We should try as much as possible to limit useless credential
-> > >    duplications by not creating a new struct cred if parent credentia=
-ls
-> > >    are the same.
-> > >=20
-> > > 2. To avoid the libpsx inconsistency (because of ENOMEM or EPERM),
-> > >    landlock_restrict_self(2) should handle memory allocation and
-> > >    transition the process from a known state to another known state.
-> > >=20
-> > > What about this approach:
-> > > - "Freeze" all threads of the current process (not ideal but simple) =
-to
-> > >   make sure their credentials don't get updated.
-> > > - Create a new blank credential for the calling thread.
-> > > - Walk through all threads and create a new blank credential for all
-> > >   threads with a different cred than the caller.
-> > > - Inject a task work that will call cred_transfer() for all threads w=
-ith
-> > >   either the same new credential used by the caller (incrementing the
-> > >   refcount), or it will populate and use a blank one if it has differ=
-ent
-> > >   credentials than the caller.
-> > >=20
-> > > This may not efficiently deduplicate credentials for all threads but =
-it
-> > > is a simple deduplication approach that should be useful in most case=
-s.
-> > >=20
-> > > The difficult part is mainly in the "fleezing". It would be nice to
-> > > change the cred API to avoid that but I'm not sure how.
-> >=20
-> > I don't see an option how we could freeze the credentials of other thre=
-ads:
-> >=20
-> > To freeze a task's credentials, we would have to inhibit that commit_cr=
-eds()
-> > succeeds on that task, and I don't see how that would be done - we can =
-not
-> > prevent these tasks from calling commit_creds() [1], and when commit_cr=
-eds()
-> > gets called, it is guaranteed to work.
-> >=20
-> > So in my mind, we have to somehow deal with the possibility that a task=
- has a
-> > new and not-previously-seen struct creds, by the time that its task_wor=
-k gets
-> > called.  As a consequence, I think a call to prepare_creds() would then=
- be
-> > unavoidable in the task_work?
->=20
-> OK, we don't need to freeze all threads, just to block thread creation.
->=20
-> What about that:
-> 1. lock thread creation for this process
-> 2. call prepare_creds() for the calling thread (called new_cred)
-> 3. call cred_alloc_blank() for all other threads, store them in a list,
->    and exit if ENOMEM
-> 4. asynchronously walk through all threads, and for each:
->   a. if its creds are the same (i.e. same pointer) as the calling
->      thread's ones, then call get_cred(new_cred) and
->      commit_creds(new_cred).
->   b. otherwise, take a blank cred, call cred_transfer(), add the
->      Landlock domain, and commit_creds() with it.
-> 5. free all unused blank creds (most)
-> 6. call commit_creds(new_creds) and return
->=20
-> Pros:
-> - do not block threads
-> - minimize cred duplication
-> - atomic operation (from the point of view of the caller): all or
->   nothing (with an error)
-> - almost no change to existing cred API
->=20
-> Cons:
-> - block thread creation
-> - initially allocate one cred per thread (but free most of them after)
+On Wed, May 28, 2025 at 11:50=E2=80=AFPM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
+>
+> As suggested or mandated by KP Singh
+> https://lore.kernel.org/linux-security-module/CACYkzJ6VQUExfyt0=3D-FmXz46=
+GHJh3d=3DFXh5j4KfexcEFbHV-vg@mail.gmail.com/,
+> this patchset proposes and implements an alternative hash-chain
+> algorithm for signature verification of BPF programs.
+>
+>
+>
+> This design diverges in two key ways:
+>
+> 1. Signature Strategy
+>
+> Two different signature strategies are
+> implemented. One verifies only the signature of the loader program in
+> the kernel, as described in the link above. The other verifies the
+> program=E2=80=99s maps in-kernel via a hash chain.  The original design
+> required loader programs to be =E2=80=9Cself-aborting=E2=80=9D and embedd=
+ed the
+> terminal hash verification logic as metaprogramming code generation
+> routines inside libbpf. While this patchset supports that scheme, it
+> is considered undesirable in certain environments due to the potential
+> for supply-chain attack vectors and the lack of visibility for the LSM
 
-The proposal is growing on me.
+The loader program is signed by a trusted entity, If you trust the
+signature, then you trust it to do the signature verification. This is
+a fairly common pattern in security and a pattern that we will be
+using in other signed bpf use-cases which can choose to depend on
+signed loaders.
 
-One way to view transfer_creds() and have it nicely fit into the credential=
-s API
-would be to view prepare_creds() as a convenience wrapper around
-transfer_creds(), so that prepare_creds() is implemented as a function whic=
-h:
+If your build environment that signs the BPF program is compromised
+and can inject arbitrary code, then signing does not help.  Can you
+explain what a supply chain attack would look like here?
 
-  1) allocates a new struct cred (this may fail)
-  2) calls transfer_creds() with the new struct cred to populate
+> subsystem.  Additionally, it is impossible to verify the code
+> performing the signature verification, as it is uniquely regenerated
 
-We could then move the bulk of its existing prepare_creds() implementation =
-into
-the new transfer_creds(), and could also move the keyctl implementation to =
-use
-that.
+The LSM needs to ensure that it allows trusted LOADER programs i.e.
+with signatures and potentially trusted signed user-space binaries
+with unsigned or delegated signing (this will be needed for Cilium and
+bpftrace that dynamically generate BPF programs), that's a more
+important aspect of the LSM policy from a BPF perspective.
 
-A remaining problem is: The caveat and the underlying assumption is that
-transfer_creds() must never fail when it runs in the task work, if we want =
-to
-avoid the additional synchronization.  The existing cases in which the
-credentials preparation logic can return an error are:
+MAP_EXCLUSIVE is missing and is required which prevents maps from
+being accessed by other programs as explained in the proposal.
 
-* Allocation failure for struct cred  (we would get rid of this)
-* get_ucounts(new->ucounts) returns NULL  (not supposed to happen, AFAICT)
-* security_prepare_creds() fails.  Existing LSM implementations are:
-  * Tomoyo, SELinux, AppArmor, Landlock: always return 0
-  * SMACK: May return -ENOMEM on allocation failure
+Please hold off on further iterations, I am working on a series and
+will share these patches based on the design that was proposed.
+
+>
+> for every program.
+>
+>
+>
+> 2. Timing of Signature Check
+>
+> This patchset moves the signature check to a point before
+> security_bpf_prog_load is invoked, due to an unresolved discussion
+> here:
+
+This is fine and what I had in mind, signature verification does not
+need to happen in the verifier and the existing hooks are good enough.
+I did not reply to Paul's comment since this is a fairly trivial
+detail and would be obvious in the implementation that the verifier is
+not the right place to check the signature anyways as the instruction
+buffer is only stable pre-verification.
+
+> https://lore.kernel.org/linux-security-module/CAHC9VhTj3=3DZXgrYMNA+G64zs=
+OyZO+78uDs1g=3Dkh91=3DGR5KypYg@mail.gmail.com/
+> This change allows the LSM subsystem to be informed of the signature
+> verification result=E2=80=94if it occurred=E2=80=94and the method used, a=
+ll without
+> introducing a new hook. It improves visibility and auditability,
+> reducing the =E2=80=9Ctrust me, friend=E2=80=9D aspect of the original de=
+sign.
 
 
-So summing up, in my understanding, the prerequisites for this approach are=
- that:
-
-  1) get_ucounts() never returns NULL, and
-
-  2) SMACK does not bubble up allocation errors from the cred_prepare hook
-
-     Casey, Jarkko: do you think this is realistic for SMACK to change?
-
-and that
-
-  3) We can block new thread creation
-
-     Micka=C3=ABl, do you have a specific approach in mind for that?
-
-     As Jann pointed out in [1], the tasklist_lock and siglock are not slee=
-pable
-     and can't be used while waiting, which is why he proposed an approach =
-where
-     we retry in a loop until no new threads show up any more, while gettin=
-g the
-     existing threads stuck in the task_work as well (where they can't spaw=
-n new
-     threads).
-
-
-Thanks,
-
-=E2=80=94G=C3=BCnther
-
-[1] https://lore.kernel.org/all/CAG48ez0pWg3OTABfCKRk5sWrURM-HdJhQMcWedEppc=
-_z1rrVJw@mail.gmail.com/
+On Wed, May 28, 2025 at 11:50=E2=80=AFPM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
+>
+> As suggested or mandated by KP Singh
+> https://lore.kernel.org/linux-security-module/CACYkzJ6VQUExfyt0=3D-FmXz46=
+GHJh3d=3DFXh5j4KfexcEFbHV-vg@mail.gmail.com/,
+> this patchset proposes and implements an alternative hash-chain
+> algorithm for signature verification of BPF programs.
+>
+> This design diverges in two key ways:
+>
+> 1. Signature Strategy
+>
+> Two different signature strategies are
+> implemented. One verifies only the signature of the loader program in
+> the kernel, as described in the link above. The other verifies the
+> program=E2=80=99s maps in-kernel via a hash chain.  The original design
+> required loader programs to be =E2=80=9Cself-aborting=E2=80=9D and embedd=
+ed the
+> terminal hash verification logic as metaprogramming code generation
+> routines inside libbpf. While this patchset supports that scheme, it
+> is considered undesirable in certain environments due to the potential
+> for supply-chain attack vectors and the lack of visibility for the LSM
+> subsystem.  Additionally, it is impossible to verify the code
+> performing the signature verification, as it is uniquely regenerated
+> for every program.
+>
+> 2. Timing of Signature Check
+>
+> This patchset moves the signature check to a point before
+> security_bpf_prog_load is invoked, due to an unresolved discussion
+> here:
+> https://lore.kernel.org/linux-security-module/CAHC9VhTj3=3DZXgrYMNA+G64zs=
+OyZO+78uDs1g=3Dkh91=3DGR5KypYg@mail.gmail.com/
+> This change allows the LSM subsystem to be informed of the signature
+> verification result=E2=80=94if it occurred=E2=80=94and the method used, a=
+ll without
+> introducing a new hook. It improves visibility and auditability,
+> reducing the =E2=80=9Ctrust me, friend=E2=80=9D aspect of the original de=
+sign.
+>
+>
+> Blaise Boscaccy (3):
+>   bpf: Add bpf_check_signature
+>   bpf: Support light-skeleton signatures in autogenerated code
+>   bpftool: Allow signing of light-skeleton programs
+>
+>  include/linux/bpf.h            |   2 +
+>  include/linux/verification.h   |   1 +
+>  include/uapi/linux/bpf.h       |   4 +
+>  kernel/bpf/arraymap.c          |  11 +-
+>  kernel/bpf/syscall.c           | 123 +++++++++++++++++++-
+>  tools/bpf/bpftool/Makefile     |   4 +-
+>  tools/bpf/bpftool/common.c     | 204 +++++++++++++++++++++++++++++++++
+>  tools/bpf/bpftool/gen.c        |  66 ++++++++++-
+>  tools/bpf/bpftool/main.c       |  24 +++-
+>  tools/bpf/bpftool/main.h       |  23 ++++
+>  tools/include/uapi/linux/bpf.h |   4 +
+>  tools/lib/bpf/libbpf.h         |   4 +
+>  tools/lib/bpf/skel_internal.h  |  28 ++++-
+>  13 files changed, 491 insertions(+), 7 deletions(-)
+>
+> --
+> 2.48.1
+>
