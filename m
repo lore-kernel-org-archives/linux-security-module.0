@@ -1,155 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DEA2868B;
-	Fri, 30 May 2025 18:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24F720E330;
+	Fri, 30 May 2025 19:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748631335; cv=none; b=PR21g2510sTK8eiGHgl/7ZnvsBSgb7G4K4XLsTPPAIz2sIDbyELlVIRbwJf5O9ke68IToZv6R9aMOKWcYBp9LfRGBHgOhvah/0gfXcJLh+Jj3Vg0lG99IoHHYaK+WTnYJ1zn43nT+PzeAVqwbUgihtSjnwOxFyzgyKPvrn7Bq6E=
+	t=1748632153; cv=none; b=Bcun8bsyVA9arzpOv6l5ZU7i1lsx6WFJhWpLLiqmIsiWfkKDnxmH3c8k/JobB537294tB4vcACXvniM0EOitDUysVnwmlJeVZ7nYSd+uKOb2Xhv2/u1fnbPjhB/JLgUVQu3Z4714QH2YL5DkX2OseJrhmfrY80l5dJDkjLCwAGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748631335; c=relaxed/simple;
-	bh=kvv3x1lNNVSEY+68sceUtjgx2JI3k2NSjLn1DdT5yoA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DdoYHyNC3Ps88xLHrGID2vZk9nZLm1bqNx1IwxdPyAz8PeCwNtZRQ0c/TKmUbqUDFWEVeiESX+Vgm+4NAsMwS0SeTVzwU+N3SrcTR+z+FAdr0GJxM928TPqajAG62FV0TGWKe9qsTIfV8tsaYe0mTD6Gp2OcSvbCDwHsx3Af8BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyD9zVK7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748632153; c=relaxed/simple;
+	bh=qY31LCaiezMBi3IDX14BQxlF0vXCVmIFLsnpZNcAFUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tliVZzPS3X5aWWw594fmuONdakYpHMWqzLGXiT1qwoF2AUJXUtPQ1uBpWSR/+pzzhWZaRU6Zh4kSRYcJhJ4RiOItGaWI7Ony8qAcslvsc0KeKW/saAaAETYcAS1OGPwYcerinP1cfkUgzFSX+4Rooxu9dKa7A9q8HSv2NlBEMnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6psXGim; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyD9zVK7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75A8AC4CEF4;
-	Fri, 30 May 2025 18:55:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6psXGim"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58297C4CEE9;
+	Fri, 30 May 2025 19:09:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748631334;
-	bh=kvv3x1lNNVSEY+68sceUtjgx2JI3k2NSjLn1DdT5yoA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TyD9zVK7FHg00trE7I/Qq6mnMbFIljHvoETtHWh+S/dU5XFMEvP3kJIfa8mVOYqqE
-	 UWqiQe9Cx8Ii+Qw1cHgaQS9X7026NSWrwUTLchH1mU7Y33HOmx73PCl7fdGtrgyzJs
-	 q1a2sVMw5yZLuQjim0Efv/FzF8AfXbbnZrPHUHUQ+uCngLriAUZa7tsyPkoCWZL/39
-	 MtanZ9xe8fT1Qg4tBiwkVJz0Mz5EvaHdc0kPPUJDilULKJtu78Ev8ULMa45j2Yw6Y+
-	 q/REspEcICZg8PTwmJIxOrs6N4lVNtoi3knig4eWHBVoCFjn4lM5N6wzo7PyIeVN8U
-	 ZkzFJGSVgVTOA==
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4766631a6a4so26063611cf.2;
-        Fri, 30 May 2025 11:55:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUS5cV7AacNJwQHXXqpNTtiTwQAKlZ9BiUb6h6dPTSEBQakClMU9dWeoojvO1BDiG5qVzNZr1NFhaGqpUUo@vger.kernel.org, AJvYcCUrNPBasv82ACVhpLlqFpepPtzbMW1aBTYIgFT0FAUAUKBqUQ2zaktUaXvsKCcGD70QiTo=@vger.kernel.org, AJvYcCUsj7R5ZbR5R+p9DEW+xlOvYMaQ8mjhfVJgbfm8t8/62Y/+Iuh6RUTWMgU+AvizsTIrXaRUZ4cUJIxXZNnQpw==@vger.kernel.org, AJvYcCVj+3zLd+V4+dVm1aopgYuYT0XNAZaIwzyOFEt82yJB92vNMNygnv91XcyRtaj0KbW9wmKj+tyNGXJE17/RhmDCcH4Pdxi0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw76xn/1sdJYDwKzuD5xRTCZKJ3DB38LJi2RK8NllT/Rp9jiSe/
-	pClKnT0Xf5xzM+8NVBFuLlBikf8h62VHvPi6P+RrN1ayxv2ObALt7CLHLWCy6DSCF0LXPuTcaRm
-	QpZcnB4BvgoFwuzkr44aC88UzDv7F7Ss=
-X-Google-Smtp-Source: AGHT+IE92B2h8f//uqia8qbC4anK75ysiMFO/DZriOdDiGsrTgbvy+DMAG6ai12inpftbg+xMSCxr73ci5UUIzmmVBo=
-X-Received: by 2002:a05:622a:229f:b0:476:980c:10a9 with SMTP id
- d75a77b69052e-4a44005d830mr68789201cf.21.1748631333504; Fri, 30 May 2025
- 11:55:33 -0700 (PDT)
+	s=k20201202; t=1748632152;
+	bh=qY31LCaiezMBi3IDX14BQxlF0vXCVmIFLsnpZNcAFUQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k6psXGimYJySKWb+ryg947XO2qWUQMqN+Dw0OWn43efhp+7DnVUr1fryj0egd0Dnz
+	 lc1hCCSvwgiVdVn/wOT9f0a5wVpzmYwbQHKr5QENtKvwBxINw6dsFdOKDZIkGoGBZd
+	 IbR9kfuuudpeA9K5WTPVd2VLe9nGf62rx9jtgppFQHbX3++FPLb00B1ofTFxYo207M
+	 NzYaQCh0N7K6mFZuyCXXZJT/TaGgV664Z0FjiMo/s/j72TXF7MNgLtP8PKMH6XTQh1
+	 IuaTMPdVugCbClS9diLYbfPZtpahtyApyjTIT/UI//aqqA/hgwD5oMqRS5hdRQReUV
+	 ylOwgrCLxpLGg==
+Date: Fri, 30 May 2025 12:09:04 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	akpm@linux-foundation.org, arnd@arndb.de, broonie@kernel.org,
+	davidgow@google.com, diego.daniel.professional@gmail.com,
+	gnoack@google.com, gustavoars@kernel.org, jmorris@namei.org,
+	justinstitt@google.com, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux@treblig.org, llvm@lists.linux.dev, mcgrof@kernel.org,
+	mic@digikod.net, morbo@google.com, nick.desaulniers+lkml@gmail.com,
+	paul@paul-moore.com, pmladek@suse.com, rmoar@google.com,
+	serge@hallyn.com, tamird@gmail.com, wangyuli@uniontech.com
+Subject: Re: [PATCH 3/3] Revert "hardening: Disable GCC randstruct for
+ COMPILE_TEST"
+Message-ID: <20250530190904.GA1159814@ax162>
+References: <20250427013836.877214-3-kees@kernel.org>
+ <20250530000646.104457-1-thiago.bauermann@linaro.org>
+ <202505292153.14B0A688F8@keescook>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250529173810.GJ2023217@ZenIV> <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
- <20250529183536.GL2023217@ZenIV> <CAPhsuW7LFP0ddFg_oqkDyO9s7DZX89GFQBOnX=4n5mV=VCP5oA@mail.gmail.com>
- <20250529201551.GN2023217@ZenIV> <CAPhsuW5DP1x_wyzT1aYjpj3hxUs4uB8vdK9iEp=+i46QLotiOg@mail.gmail.com>
- <20250529214544.GO2023217@ZenIV> <CAPhsuW5oXZVEaMwNpSF74O7wZ_f2Qr_44pu9L4_=LBwdW5T9=w@mail.gmail.com>
- <20250529231018.GP2023217@ZenIV> <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
- <20250530.euz5beesaSha@digikod.net>
-In-Reply-To: <20250530.euz5beesaSha@digikod.net>
-From: Song Liu <song@kernel.org>
-Date: Fri, 30 May 2025 11:55:22 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW5U-nPk4MFdZSeBNds0qEHjQZrC=c5q+AGNpsKiveC2wA@mail.gmail.com>
-X-Gm-Features: AX0GCFspg5CtJJG-8uKPbI5Gb-Py8dbCVOZv9v2st4gS5y-i18U4FFZSxP8SBdk
-Message-ID: <CAPhsuW5U-nPk4MFdZSeBNds0qEHjQZrC=c5q+AGNpsKiveC2wA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com, 
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, brauner@kernel.org, kpsingh@kernel.org, 
-	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
-	jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com, 
-	Tingmao Wang <m@maowtm.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202505292153.14B0A688F8@keescook>
 
-On Fri, May 30, 2025 at 5:20=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
-[...]
-> >
-> > If we update path_parent in this patchset with choose_mountpoint(),
-> > and use it in Landlock, we will close this race condition, right?
->
-> choose_mountpoint() is currently private, but if we add a new filesystem
-> helper, I think the right approach would be to expose follow_dotdot(),
-> updating its arguments with public types.  This way the intermediates
-> mount points will not be exposed, RCU optimization will be leveraged,
-> and usage of this new helper will be simplified.
+On Thu, May 29, 2025 at 10:12:22PM -0700, Kees Cook wrote:
+> On Thu, May 29, 2025 at 09:06:46PM -0300, Thiago Jung Bauermann wrote:
+> > This commit was reported by our CI as breaking the allmodconfig build for
+> > the arm and arm64 architectures when using GCC 15. This is due to
+> > https://github.com/KSPP/linux/issues/367 :
+> > 
+> > 00:05:08 arch/arm64/kernel/kexec_image.c:132:14: internal compiler error: in comptypes_check_enum_int, at c/c-typeck.cc:1519
+> > 00:05:08   132 | const struct kexec_file_ops kexec_image_ops = {
+> > 00:05:08       |              ^~~~~~~~~~~~~~
+> 
+> I'm not able to reproduce this. Which specific version of GCC 15 and
+> on what distro are you seeing this?
 
-I think it is easier to add a helper similar to follow_dotdot(), but not wi=
-th
-nameidata. follow_dotdot() touches so many things in nameidata, so it
-is better to keep it as-is. I am having the following:
+It looks like this was also reported to Debian (I originally noticed it
+in the #gcc channel on OFTC a couple of weeks ago but forgot to mention
+it):
 
-/**
- * path_parent - Find the parent of path
- * @path: input and output path.
- * @root: root of the path walk, do not go beyond this root. If @root is
- *        zero'ed, walk all the way to real root.
- *
- * Given a path, find the parent path. Replace @path with the parent path.
- * If we were already at the real root or a disconnected root, @path is
- * not changed.
- *
- * Returns:
- *  true  - if @path is updated to its parent.
- *  false - if @path is already the root (real root or @root).
- */
-bool path_parent(struct path *path, const struct path *root)
-{
-        struct dentry *parent;
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1104745
 
-        if (path_equal(path, root))
-                return false;
+It looks like the difference might be whether GCC was built with
+additional checks or not based on the last couple of comments in that
+bug.
 
-        if (unlikely(path->dentry =3D=3D path->mnt->mnt_root)) {
-                struct path p;
-
-                if (!choose_mountpoint(real_mount(path->mnt), root, &p))
-                        return false;
-                path_put(path);
-                *path =3D p;
-                return true;
-        }
-
-        if (unlikely(IS_ROOT(path->dentry)))
-                return false;
-
-        parent =3D dget_parent(path->dentry);
-        if (unlikely(!path_connected(path->mnt, parent))) {
-                dput(parent);
-                return false;
-        }
-        dput(path->dentry);
-        path->dentry =3D parent;
-        return true;
-}
-EXPORT_SYMBOL_GPL(path_parent);
-
-And for Landlock, it is simply:
-
-                if (path_parent(&walker_path, &root))
-                        continue;
-
-                if (unlikely(IS_ROOT(walker_path.dentry))) {
-                        /*
-                         * Stops at disconnected or real root directories.
-                         * Only allows access to internal filesystems
-                         * (e.g. nsfs, which is reachable through
-                         * /proc/<pid>/ns/<namespace>).
-                         */
-                        if (walker_path.mnt->mnt_flags & MNT_INTERNAL) {
-                                allowed_parent1 =3D true;
-                                allowed_parent2 =3D true;
-                        }
-                        break;
-                }
-
-Does this look right?
-
-Thanks,
-Song
+Cheers,
+Nathan
