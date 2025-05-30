@@ -1,149 +1,167 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D0D2111
-	for <linux-security-module@vger.kernel.org>; Fri, 30 May 2025 00:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8841F2907;
+	Fri, 30 May 2025 00:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748563613; cv=none; b=EJJh+UNsYeE408IFLC9exmpViOe9qSuuti4Wg3U+hGpsIZJsJY8m7Rdi4h62tPXDHd3i/BFKixIAao7wojW1GPNojYMKe2u6wiGOVQTS63iw3DUUhdQP8cU+sa39opIXn9yGfCq18oxDzwQ7Ibb332iS2zddao8IkwSJXCvZ8AA=
+	t=1748565749; cv=none; b=RQG34tAbtTJKzdcIldK4+HtVBq7Q5TAWKLwon60qKSAcZqWW0O7XIKjPUjEzCFGHw6xslRJ7Ux9tjS29YezKtXR+tYAc0DJQuwXoXBY6671dmOxeKDJaxpGm1aEqEGEEn71HcY5pHtscu4GH66B9wGXBiwS4UvomguTa8quFwxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748563613; c=relaxed/simple;
-	bh=Qs3fKJz8kaIyTjSI+VH+mg1a+38N08rlUGlC+WiuByA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xree6lAnQzfPYcEldszVtfAtCwA+qLjuaID44jLlntL6TEuLCqk7URMWQmhLbG4r/s6McT8XXaT2q0v2WCt1vjNRXOUGx+DTRb68uhA3oVjeaGPKu+XeHR2/FndcGWPd9ckscRmK0IN4/UKgQuJAIdz9MiXYseD6QAoMIGcwFzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mEjykQEV; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1748565749; c=relaxed/simple;
+	bh=7bEkvTOnQCSK2sw2Na277q6zkrloQhkHZ3+iRT9SH4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I7XFfqOcwFfRZWBXxN0n5/g7nJ1N41evUU5bJguY/yduopH5NzUjMDhbUmzUwf3CAkQgBeG4L8hkkV3t/KLoKbHHaGoV4IMZaHWXgI95qpeFzuModGI9AnZXI1edk8cW2uZVgdmHZT9D8J/YgGsBP0ml7a2Y6kNDuGXZ24UUxOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GI/DRy1T; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mEjykQEV"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-74267c68c11so1254498b3a.0
-        for <linux-security-module@vger.kernel.org>; Thu, 29 May 2025 17:06:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748563609; x=1749168409; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JaOyXlzy8Vkp255k6mJVMg/BC/f2o1qDq99ujzTjjD8=;
-        b=mEjykQEV90aXFWctAZRHDq6f9YM6RJkzBAfK4xWDLKUMC3sG9TqBKj+1sgmNL6RRP+
-         L42s71MdFMIBnRarH8C3zJCvAkBE0OhyhSonHJTTd2N5IcO1FpqcmmKMTdb8bcqM5n23
-         2nq0ywTfIDUIj+hWOnX71J3O2V3/99rM83LTuMhTBW8qt1YV/8lv8CBngSvi8aR6wYso
-         vY8+s/5faXWeFBwTaHtVUY0Q4cTr9yLy6MYt63yfft7OfDRJMHdGNgE0EbmjmaE5/UKI
-         08m2aJWnSGnYZ0cdcukucAECA17zEbmPuN+d6tQTUWb4EBF+7VZWMJZmd279ct7l9sV6
-         LqPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748563609; x=1749168409;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JaOyXlzy8Vkp255k6mJVMg/BC/f2o1qDq99ujzTjjD8=;
-        b=LxASBiHYHxUflYuOx1r3GiFZi22xcnYm/cu5o9uJCMylTBw5QlMIxtQBmkhA3lIBxY
-         ti9GY0Mb3Ccuu5eCQo52IN+DdDmuC5M8cIIBMvBWtswIMGrt5aTt0o8pRBWyrn4D3FFk
-         32PllPe43mbnQklzx7XKtjgSEBrV/kT+OzvQijXuKvjvUK3pPDb5kdIxmajL+yoYspg1
-         HUplh+mtjkCq/oj2C6Y8EvcFPttxiO+rwnKS6GG+ccuKGm3tf0yIrsNA7kkW2B+6vmH0
-         +Wv7J/YfF/4w6XP/e/4muSL83PtTLc9NbkrjK4eDjNCnzs2rt8naFp81ISQ0QfblbiVz
-         2/sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+PgfTzMkREXW3jRo4lR9PuhuTSQuc/d/wY5AOwUhs616vxzGp8f5vsZnJX+DDyEeLgvksBil04VHx4EvchMSMN+8ss/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC4d0aJnCSMaYAyA834KNADny131LwcAcK0EDGf/uxgKvjqldK
-	GkcorwuLADxwkEFnJMlrj3LlzJALsAXpzlt24GC28h5zremEuko2ZkeufKz1D3YLCxgA87eWVJ1
-	HsCstmx0=
-X-Gm-Gg: ASbGncspfXqST481ueqHjR5m6QPWnlmEOditAar7ne7RHFv53IHX7LTO5/SuLlKyHhu
-	0X2sZbuR25us9Hp58i8ck7kZ3FxOz29QjhTlmqJUBNY+Oyw3S7HxSs68AInxrOafAUtxC4GJSQW
-	a/xHhWf6cNo+nlBm3l735ubLhhyLyjiG57jTBhM1wxR91C4kZt6HhF04XiVSQT7X6CgGJYBq9wa
-	PLR3mMgYVyNC5O7Yqw7nYVSj+C7Wg/XmFEo95Dx2W6uXzcZPZbLdOI5uoUz3z3IXRVEaVRxVJqT
-	yw6XE+8CeO718DlmchdvTlR7u/1lCor0BfYxIMB76DsW2NAzyqLsxfwYT08D2UdrJ6OMDA==
-X-Google-Smtp-Source: AGHT+IHYOsFk2zcF1gLH1VRU+irYg1/F2TFp50LC35CUJj4OwIZqUaVrXo0NvOsbYcPu1XpBkFVZUg==
-X-Received: by 2002:a05:6a00:189b:b0:736:8c0f:7758 with SMTP id d2e1a72fcca58-747c1a7f839mr253775b3a.10.1748563609262;
-        Thu, 29 May 2025 17:06:49 -0700 (PDT)
-Received: from localhost ([2804:14d:7e39:88d6:4b9a:64e:e01:2c33])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afe967easm1894641b3a.21.2025.05.29.17.06.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 May 2025 17:06:48 -0700 (PDT)
-From: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-To: kees@kernel.org
-Cc: akpm@linux-foundation.org,
-	arnd@arndb.de,
-	broonie@kernel.org,
-	davidgow@google.com,
-	diego.daniel.professional@gmail.com,
-	gnoack@google.com,
-	gustavoars@kernel.org,
-	jmorris@namei.org,
-	justinstitt@google.com,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux@treblig.org,
-	llvm@lists.linux.dev,
-	mcgrof@kernel.org,
-	mic@digikod.net,
-	morbo@google.com,
-	nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com,
-	paul@paul-moore.com,
-	pmladek@suse.com,
-	rmoar@google.com,
-	serge@hallyn.com,
-	tamird@gmail.com,
-	wangyuli@uniontech.com
-Subject: Re: [PATCH 3/3] Revert "hardening: Disable GCC randstruct for COMPILE_TEST"
-Date: Thu, 29 May 2025 21:06:46 -0300
-Message-ID: <20250530000646.104457-1-thiago.bauermann@linaro.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250427013836.877214-3-kees@kernel.org>
-References: <20250427013836.877214-3-kees@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GI/DRy1T"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB180C4AF09;
+	Fri, 30 May 2025 00:42:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748565749;
+	bh=7bEkvTOnQCSK2sw2Na277q6zkrloQhkHZ3+iRT9SH4A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GI/DRy1TUmCvGHwjRyvzfAQQ9MFa+h9Qei6mR2XNBpi2YOZnwSghcXI+oa95zFwI3
+	 TNe1MYRk5qIVX2dr9XDoA/T1MFltSgFDvYu7d53RiTVLN9T1E5oTShrKV3o7WqkBn3
+	 tpaEz9VYjuVfgk9r5nXFQMxpkbKA+sKe+Nvjl5EGKMlT9/bySFixL0SH8pHx5b4b15
+	 No76H0/t7fTQLk/ja6zXXOQkTSs7cZLAtHNc+k/1GkJO4oxd3Ki1B1slWiOX/rycMp
+	 z4WjhK6E6A81eNOBOBPDZd64UT+x32HLh+W9pMxRzdUl15UXJUGDbKbXuNArNQ8K22
+	 npCmnaNWSLZnQ==
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-476a720e806so13277411cf.0;
+        Thu, 29 May 2025 17:42:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUWFp4sOvERXOYlerA/l/gDMg6ehSp46oqsPmmizurDXPWHvg6uvPdGlSRa0SIyRQrZidw=@vger.kernel.org, AJvYcCUxk1ZLRdTG13ZmcWZgaNTeInhjqRWrH0yoo5XCgEHR3h9LT3C8hFpQDsJierDGhtmCdvOgLFpazuyBztF3@vger.kernel.org, AJvYcCVfPyjeFlL+sI/Rnjg/9+x0qMhKKYmjr/w6mYRs0NromghybUcPKIcLVjzNMof1bMzDbZU2ZIRYkdpWJE/+biw4ghCHYEl0@vger.kernel.org, AJvYcCW+rdiuov63382NWrc3r3e7Jp8ufcsog7R0YqzEpavdKTqFr31Z9BI6P5LSy0drLsYhvTrUqAG00UZ6QjcySA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+Lt9wvlgScQ2CWjsIjRaY4+MvaJa/KsJBWCtoDePtvjYjRHnc
+	ce1dkxxCHIbG1OX15MH+n3LVxdg99At2ANTjdwiecdAFXLfh39nKotEp0WqoRJuX2C6UZs19ubQ
+	I1LmNj5kjCPIV4E2YANu3JbvcMi6Kcrg=
+X-Google-Smtp-Source: AGHT+IGGGJvTIObZ60heIR5yqNHLAS2YoqnPZNzVO/6WrFAaaJsKljhGnZyGkTVQZnuSXcgLVahmSs4v22gHvONGMaY=
+X-Received: by 2002:a05:622a:1c14:b0:4a4:2f43:fb4e with SMTP id
+ d75a77b69052e-4a440010735mr31040801cf.3.1748565748062; Thu, 29 May 2025
+ 17:42:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <yti2dilasy7b3tu6iin5pugkn6oevdswrwoy6gorudb7x2cqhh@nqb3gcyxg4by>
+ <CAPhsuW4tg+bXU41fhAaS0n74d_a_KCFGvy_vkQOj7v4VLie2wg@mail.gmail.com>
+ <20250529173810.GJ2023217@ZenIV> <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
+ <20250529183536.GL2023217@ZenIV> <CAPhsuW7LFP0ddFg_oqkDyO9s7DZX89GFQBOnX=4n5mV=VCP5oA@mail.gmail.com>
+ <20250529201551.GN2023217@ZenIV> <CAPhsuW5DP1x_wyzT1aYjpj3hxUs4uB8vdK9iEp=+i46QLotiOg@mail.gmail.com>
+ <20250529214544.GO2023217@ZenIV> <CAPhsuW5oXZVEaMwNpSF74O7wZ_f2Qr_44pu9L4_=LBwdW5T9=w@mail.gmail.com>
+ <20250529231018.GP2023217@ZenIV>
+In-Reply-To: <20250529231018.GP2023217@ZenIV>
+From: Song Liu <song@kernel.org>
+Date: Thu, 29 May 2025 17:42:16 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
+X-Gm-Features: AX0GCFvdxMXrtmIn1lcuA6IWSFQd3Sx1TkLEWLyJGOYk7DtqDvgz8-KgHXA52OQ
+Message-ID: <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org, 
+	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, 
+	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, 
+	gnoack@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, May 29, 2025 at 4:10=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Thu, May 29, 2025 at 03:13:10PM -0700, Song Liu wrote:
+>
+> > Is it an issue if we only hold a reference to a MNT_LOCKED mount for
+> > short period of time? "Short period" means it may get interrupted, page
+> > faults, or wait for an IO (read xattr), but it won't hold a reference t=
+o the
+> > mount and sleep indefinitely.
+>
+> MNT_LOCKED mount itself is not a problem.  What shouldn't be done is
+> looking around in the mountpoint it covers.  It depends upon the things
+> you are going to do with that, but it's very easy to get an infoleak
+> that way.
+>
+> > > OTOH, there's a good cause for moving some of the flags, MNT_LOCKED
+> > > included, out of ->mnt_flags and into a separate field in struct moun=
+t.
+> > > However, that would conflict with any code using that to deal with
+> > > your iterator safely.
+> > >
+> > > What's more, AFAICS in case of a stack of mounts each covering the ro=
+ot
+> > > of parent mount, you stop in each of those.  The trouble is, umount(2=
+)
+> > > propagation logics assumes that intermediate mounts can be pulled out=
+ of
+> > > such stack without causing trouble.  For pathname resolution that is
+> > > true; it goes through the entire stack atomically wrt that stuff.
+> > > For your API that's not the case; somebody who has no idea about an
+> > > intermediate mount being there might get caught on it while it's gett=
+ing
+> > > pulled from the stack.
+> > >
+> > > What exactly do you need around the mountpoint crossing?
+> >
+> > I thought about skipping intermediate mounts (that are hidden by
+> > other mounts). AFAICT, not skipping them will not cause any issue.
+>
+> It can.  Suppose e.g. that /mnt gets propagation from another namespace,
+> but not the other way round and you mount something on /mnt.
+>
+> Later, in that another namespace, somebody mounts something on wherever
+> your /mnt gets propagation to.  A copy will be propagated _between_
+> your /mnt and whatever you've mounted on top of it; it will be entirely
+> invisible until you umount your /mnt.  At that point the propagated
+> copy will show up there, same as if it had appeared just after your
+> umount.  Prior to that it's entirely invisible.  If its original
+> counterpart in another namespace gets unmounted first, the copy will
+> be quietly pulled out.
 
-This commit was reported by our CI as breaking the allmodconfig build for
-the arm and arm64 architectures when using GCC 15. This is due to
-https://github.com/KSPP/linux/issues/367 :
+Thanks for sharing this information!
 
--00:05:08 *** WARNING *** there are active plugins, do not report this as a bug unless you can reproduce it without enabling any plugins.
-00:05:08 Event                            | Plugins
-00:05:08 PLUGIN_FINISH_TYPE               | randomize_layout_plugin
-00:05:08 PLUGIN_FINISH_DECL               | randomize_layout_plugin
-00:05:08 PLUGIN_ATTRIBUTES                | latent_entropy_plugin randomize_layout_plugin
-00:05:08 PLUGIN_START_UNIT                | latent_entropy_plugin stackleak_plugin
-00:05:08 PLUGIN_ALL_IPA_PASSES_START      | randomize_layout_plugin
-00:05:08 arch/arm64/kernel/kexec_image.c:132:14: internal compiler error: in comptypes_check_enum_int, at c/c-typeck.cc:1519
-00:05:08   132 | const struct kexec_file_ops kexec_image_ops = {
-00:05:08       |              ^~~~~~~~~~~~~~
-00:05:08 0x225bdff internal_error(char const*, ...)
-00:05:08 	../../../../../../gcc/gcc/diagnostic-global-context.cc:517
-00:05:08 0x7cb197 fancy_abort(char const*, int, char const*)
-00:05:08 	../../../../../../gcc/gcc/diagnostic.cc:1803
-00:05:08 0x81f0e7 comptypes_check_enum_int(tree_node*, tree_node*, bool*)
-00:05:08 	../../../../../../gcc/gcc/c/c-typeck.cc:1519
-00:05:08 0x81f0e7 comptypes_check_enum_int(tree_node*, tree_node*, bool*)
-00:05:08 	../../../../../../gcc/gcc/c/c-typeck.cc:1513
-00:05:08 0x7e3b83 diagnose_mismatched_decls
-00:05:08 	../../../../../../gcc/gcc/c/c-decl.cc:2170
-00:05:08 0x7e64f3 duplicate_decls
-00:05:08 	../../../../../../gcc/gcc/c/c-decl.cc:3169
-00:05:08 0x7ea1eb pushdecl(tree_node*)
-00:05:08 	../../../../../../gcc/gcc/c/c-decl.cc:3376
-00:05:08 0x803c03 start_decl(c_declarator*, c_declspecs*, bool, tree_node*, bool, unsigned long*)
-00:05:08 	../../../../../../gcc/gcc/c/c-decl.cc:5755
-00:05:08 0x864c67 c_parser_declaration_or_fndef
-00:05:08 	../../../../../../gcc/gcc/c/c-parser.cc:2851
-00:05:08 0x8a7b33 c_parser_external_declaration
-00:05:08 	../../../../../../gcc/gcc/c/c-parser.cc:2110
-00:05:08 0x8a8ba3 c_parser_translation_unit
-00:05:08 	../../../../../../gcc/gcc/c/c-parser.cc:1964
-00:05:08 0x8a8ba3 c_parse_file()
-00:05:08 	../../../../../../gcc/gcc/c/c-parser.cc:29839
-00:05:08 0x931eff c_common_parse_file()
-00:05:08 	../../../../../../gcc/gcc/c-family/c-opts.cc:1385
-00:05:08 Please submit a full bug report, with preprocessed source (by using -freport-bug).
-00:05:08 Please include the complete backtrace with any bug report.
-00:05:08 See <https://gcc.gnu.org/bugs/> for instructions.
-00:05:08 make[4]: *** [scripts/Makefile.build:203: arch/arm64/kernel/kexec_image.o] Error 1
+> Note that choose_mountpoint_rcu() callers (including choose_mountpoint())
+> will have mount_lock seqcount sampled before the traversal _and_ recheck
+> it after having reached the bottom of stack.  IOW, if you traverse ..
+> on the way to root, you won't get caught on the sucker being pulled out.
 
-The same error repeats for several other source files.
+In some of our internal discussions, we talked about using
+choose_mountpoint() instead of follow_up(). I didn't go that direction in t=
+his
+version because it requires holding "root". But if it makes more sense
+to use, choose_mountpoint(), we sure can hold "root".
+
+Alternatively, I think it is also OK to pass a zero'ed root to
+choose_mountpoint().
+
+> Your iterator, OTOH, would stop in that intermediate mount - and get
+> an unpleasant surprise when it comes back to do the next step (towards
+> /mnt on root filesystem, that is) and finds that path->mnt points
+> to something that is detached from everything - no way to get from
+> it any further.  That - despite the fact that location you've started
+> from is still mounted, still has the same pathname, etc. and nothing
+> had been disrupted for it.
+>
+> And yes, landlock has a narrow race in the matching place.  Needs to
+> be fixed.  At least it does ignore those as far as any decisions are
+> concerned...
+
+If we update path_parent in this patchset with choose_mountpoint(),
+and use it in Landlock, we will close this race condition, right?
+
+>
+> Note, BTW, that it might be better off by doing that similar to
+> d_path.c - without arseloads of dget_parent/dput et.al.; not sure
+> how feasible it is, but if everything in it can be done under
+> rcu_read_lock(), that's something to look into.
+
+I don't think we can do everything here inside rcu_read_lock().
+But d_path.c does have some code we can probably reuse or
+learn from. Also, we probably need two variations of iterators,
+one walk until absolute root, while the other walk until root of
+current->fs, just like d_path() vs. d_absolute_path(). Does this
+sound reasonable?
+
+Thanks,
+Song
