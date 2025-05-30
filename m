@@ -1,164 +1,149 @@
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321192550D8
-	for <linux-security-module@vger.kernel.org>; Thu, 29 May 2025 23:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D0D2111
+	for <linux-security-module@vger.kernel.org>; Fri, 30 May 2025 00:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748562573; cv=none; b=iF3Yuaw9fPXYKuBJQGtQTJNYYgplUgX7wrHuNDIF6vsp//vPt7hS5rhWtKRmrB+ZUo0c/CJuvsR+6CTwftzjvKofoJvKc8vAPJHOi3YYIHl8HV1hVDvaBmkCnHRJPj1Hr6Quj906N7UzPsDg1V9zgASWQdkRCv4oKry4EcUAees=
+	t=1748563613; cv=none; b=EJJh+UNsYeE408IFLC9exmpViOe9qSuuti4Wg3U+hGpsIZJsJY8m7Rdi4h62tPXDHd3i/BFKixIAao7wojW1GPNojYMKe2u6wiGOVQTS63iw3DUUhdQP8cU+sa39opIXn9yGfCq18oxDzwQ7Ibb332iS2zddao8IkwSJXCvZ8AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748562573; c=relaxed/simple;
-	bh=njDQ8Lhj+rbQY91bCgJ2J/LI6phcjK0rry9e5UVMEYo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SldgiCuV9e4xOuhWXlxTReXJeMynPihQqB3ucdMpMM78VLhQQGgC6QWPrFbjHFmPUJcUutHwt/WAm65fs9/z8mNWVFdASn4F393Y+552rBeN/I3J27z7l5jaIbVV3z+UYU1hw38AVP8hoqmsuvBstyGXUcdduKxYkMtYTeBNjlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Ma1HFYxb; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1748563613; c=relaxed/simple;
+	bh=Qs3fKJz8kaIyTjSI+VH+mg1a+38N08rlUGlC+WiuByA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Xree6lAnQzfPYcEldszVtfAtCwA+qLjuaID44jLlntL6TEuLCqk7URMWQmhLbG4r/s6McT8XXaT2q0v2WCt1vjNRXOUGx+DTRb68uhA3oVjeaGPKu+XeHR2/FndcGWPd9ckscRmK0IN4/UKgQuJAIdz9MiXYseD6QAoMIGcwFzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mEjykQEV; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Ma1HFYxb"
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e7d9d480e6cso1146348276.2
-        for <linux-security-module@vger.kernel.org>; Thu, 29 May 2025 16:49:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mEjykQEV"
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-74267c68c11so1254498b3a.0
+        for <linux-security-module@vger.kernel.org>; Thu, 29 May 2025 17:06:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1748562570; x=1749167370; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1748563609; x=1749168409; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IzrpMWMfPR3T2gCVNz/ykn1poKsGqIWx4fYMabbDEoU=;
-        b=Ma1HFYxbpQWiO5QgZg/176AE28nFmcx4LGBbFEj2ed6gW7KquDE8lkkFg5lYuS5nrp
-         ZnVR9EMCcTIn8swlEw8SwbYF+P5CIMZKly1ju8Ciuxn3F/YPKAeyrOKzYF3VzU8XbFts
-         xzFAGS5MLLhuTxE41HqMT34c+xEYvWg+D3Vo4Kl7kQRR5jQLjYCpDtTekHmJl6Sq9jH1
-         2eNjbNxi6fFmbourM8UwjWyiLUR5V1md3o6lM/AkUKkTxv8DiFoRnC0IAcAW48YBYtCh
-         gf9f84AH8h1OHq3Ao5j5Kedgi+GurI7XFxavKxOymPXg1zJA2bMm8RF625x2tb9mwA3e
-         DghA==
+        bh=JaOyXlzy8Vkp255k6mJVMg/BC/f2o1qDq99ujzTjjD8=;
+        b=mEjykQEV90aXFWctAZRHDq6f9YM6RJkzBAfK4xWDLKUMC3sG9TqBKj+1sgmNL6RRP+
+         L42s71MdFMIBnRarH8C3zJCvAkBE0OhyhSonHJTTd2N5IcO1FpqcmmKMTdb8bcqM5n23
+         2nq0ywTfIDUIj+hWOnX71J3O2V3/99rM83LTuMhTBW8qt1YV/8lv8CBngSvi8aR6wYso
+         vY8+s/5faXWeFBwTaHtVUY0Q4cTr9yLy6MYt63yfft7OfDRJMHdGNgE0EbmjmaE5/UKI
+         08m2aJWnSGnYZ0cdcukucAECA17zEbmPuN+d6tQTUWb4EBF+7VZWMJZmd279ct7l9sV6
+         LqPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748562570; x=1749167370;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1748563609; x=1749168409;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IzrpMWMfPR3T2gCVNz/ykn1poKsGqIWx4fYMabbDEoU=;
-        b=d4EvN6qb3gfpTKGBJpEYVxYGGxLqzpFVUlMJu2PSi7O5wUeSbCAtCIp4PdfjE2l1Dp
-         wlG0YBXo5pjri5rAcI6kztYklNSjigj2eXiKPZe/+RAaSuzX6zSakv3u8qoCQ72wJ2dK
-         OoE/Ewwhl+sOscIwGVvP+bhmSLVw5YqglHiyChJqSOHPDYScaCGQIuRAFxMy86WD6Q0s
-         xXEHH9meu4QLEDppATC11ToWYGdBqAeTT7pv+UAj7gMvPOd0Q7dF1kN2qzYOIXta9TGo
-         VOZBSayFm/8kvzVx0ajwajsPcxfVw++HvWyGiGoJdUr4SptG46sdkYRgK16g7RptOsm6
-         9FFA==
-X-Gm-Message-State: AOJu0YwxANxTugYGRNOuWAkM1LcCv8ueU0Vdigw2xlQ5IBcgZNemL16S
-	reFUHCyOJQEuI5qasEXWJovb3/x7DoGsccOxWFRbsqHphkwKesIODDnDAe/0f5TFuAbkjz+BNuX
-	RIfzbLVvhmQzxC+TqCkTVuGVAWei6fHlfc1ciWze/
-X-Gm-Gg: ASbGncuTgAvTvuqe4is+MP9kwov/al19IYRT+1pvIoXM3kAmsDyYicDhdwe8iCxUiRG
-	ud4jYEFYLZMbnpcDANIeTJBjeAFzfWdg57Nt6f/zmpl5zqiQcSb2evMcETgRs9nc4HAhq+CkqXJ
-	UmddtCCi+0PbsKeABzR668vWQ6CY+ReFfV
-X-Google-Smtp-Source: AGHT+IGhztxCAK3YTRu6P4h6gxYqvuSLD7WfoNzyStJqIFYGaHOmc7yQwpS7nzoIzkVnhQPYk9/qIXwf6pJLAlBDxC0=
-X-Received: by 2002:a05:6902:330b:b0:e7d:6a68:f572 with SMTP id
- 3f1490d57ef6-e7f81bb773dmr2259538276.10.1748562570009; Thu, 29 May 2025
- 16:49:30 -0700 (PDT)
+        bh=JaOyXlzy8Vkp255k6mJVMg/BC/f2o1qDq99ujzTjjD8=;
+        b=LxASBiHYHxUflYuOx1r3GiFZi22xcnYm/cu5o9uJCMylTBw5QlMIxtQBmkhA3lIBxY
+         ti9GY0Mb3Ccuu5eCQo52IN+DdDmuC5M8cIIBMvBWtswIMGrt5aTt0o8pRBWyrn4D3FFk
+         32PllPe43mbnQklzx7XKtjgSEBrV/kT+OzvQijXuKvjvUK3pPDb5kdIxmajL+yoYspg1
+         HUplh+mtjkCq/oj2C6Y8EvcFPttxiO+rwnKS6GG+ccuKGm3tf0yIrsNA7kkW2B+6vmH0
+         +Wv7J/YfF/4w6XP/e/4muSL83PtTLc9NbkrjK4eDjNCnzs2rt8naFp81ISQ0QfblbiVz
+         2/sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+PgfTzMkREXW3jRo4lR9PuhuTSQuc/d/wY5AOwUhs616vxzGp8f5vsZnJX+DDyEeLgvksBil04VHx4EvchMSMN+8ss/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC4d0aJnCSMaYAyA834KNADny131LwcAcK0EDGf/uxgKvjqldK
+	GkcorwuLADxwkEFnJMlrj3LlzJALsAXpzlt24GC28h5zremEuko2ZkeufKz1D3YLCxgA87eWVJ1
+	HsCstmx0=
+X-Gm-Gg: ASbGncspfXqST481ueqHjR5m6QPWnlmEOditAar7ne7RHFv53IHX7LTO5/SuLlKyHhu
+	0X2sZbuR25us9Hp58i8ck7kZ3FxOz29QjhTlmqJUBNY+Oyw3S7HxSs68AInxrOafAUtxC4GJSQW
+	a/xHhWf6cNo+nlBm3l735ubLhhyLyjiG57jTBhM1wxR91C4kZt6HhF04XiVSQT7X6CgGJYBq9wa
+	PLR3mMgYVyNC5O7Yqw7nYVSj+C7Wg/XmFEo95Dx2W6uXzcZPZbLdOI5uoUz3z3IXRVEaVRxVJqT
+	yw6XE+8CeO718DlmchdvTlR7u/1lCor0BfYxIMB76DsW2NAzyqLsxfwYT08D2UdrJ6OMDA==
+X-Google-Smtp-Source: AGHT+IHYOsFk2zcF1gLH1VRU+irYg1/F2TFp50LC35CUJj4OwIZqUaVrXo0NvOsbYcPu1XpBkFVZUg==
+X-Received: by 2002:a05:6a00:189b:b0:736:8c0f:7758 with SMTP id d2e1a72fcca58-747c1a7f839mr253775b3a.10.1748563609262;
+        Thu, 29 May 2025 17:06:49 -0700 (PDT)
+Received: from localhost ([2804:14d:7e39:88d6:4b9a:64e:e01:2c33])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afe967easm1894641b3a.21.2025.05.29.17.06.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 May 2025 17:06:48 -0700 (PDT)
+From: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+To: kees@kernel.org
+Cc: akpm@linux-foundation.org,
+	arnd@arndb.de,
+	broonie@kernel.org,
+	davidgow@google.com,
+	diego.daniel.professional@gmail.com,
+	gnoack@google.com,
+	gustavoars@kernel.org,
+	jmorris@namei.org,
+	justinstitt@google.com,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux@treblig.org,
+	llvm@lists.linux.dev,
+	mcgrof@kernel.org,
+	mic@digikod.net,
+	morbo@google.com,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	paul@paul-moore.com,
+	pmladek@suse.com,
+	rmoar@google.com,
+	serge@hallyn.com,
+	tamird@gmail.com,
+	wangyuli@uniontech.com
+Subject: Re: [PATCH 3/3] Revert "hardening: Disable GCC randstruct for COMPILE_TEST"
+Date: Thu, 29 May 2025 21:06:46 -0300
+Message-ID: <20250530000646.104457-1-thiago.bauermann@linaro.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250427013836.877214-3-kees@kernel.org>
+References: <20250427013836.877214-3-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250521140121.591482-1-git@nightmared.fr> <20250521140121.591482-10-git@nightmared.fr>
- <CAHC9VhR-80zxgo+q07Aw8HqK+qiPdnuXC0axONGac0e9JxXvmw@mail.gmail.com> <4939d8ab-3911-4759-b8d6-cb57ff9f9cda@nightmared.fr>
-In-Reply-To: <4939d8ab-3911-4759-b8d6-cb57ff9f9cda@nightmared.fr>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 29 May 2025 19:49:19 -0400
-X-Gm-Features: AX0GCFt-dubQ8zjyvLFIAb7yxjUrHx2vekSE7cPMRUm7dhYCysWfX-kgOpwdxLI
-Message-ID: <CAHC9VhT5JrhzGhRnJ4VNo6e941o-xdAG-FC-Q6wDbSZhgSUWOQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 9/9] Loadpol LSM: add a minimal documentation
-To: Simon Thoby <git@nightmared.fr>
-Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 22, 2025 at 5:23=E2=80=AFAM Simon Thoby <git@nightmared.fr> wro=
-te:
-> On 5/21/25 23:31, Paul Moore wrote:
-> > On Wed, May 21, 2025 at 10:03=E2=80=AFAM Simon THOBY <git@nightmared.fr=
-> wrote:
-> >>
-> >> Introduce a minimal documentation for Loadpol, presenting the policy
-> >> format and the two user interfaces: the securityfs policy file and the
-> >> sysctl.
-> >>
-> >> Signed-off-by: Simon THOBY <git@nightmared.fr>
-> >> ---
-> >>  Documentation/admin-guide/LSM/Loadpol.rst | 81 ++++++++++++++++++++++=
-+
-> >>  Documentation/admin-guide/LSM/index.rst   |  1 +
-> >>  2 files changed, 82 insertions(+)
-> >>  create mode 100644 Documentation/admin-guide/LSM/Loadpol.rst
-> >>
-> >> diff --git a/Documentation/admin-guide/LSM/Loadpol.rst b/Documentation=
-/admin-guide/LSM/Loadpol.rst
-> >> new file mode 100644
-> >> index 000000000000..0aa24a8d393c
-> >> --- /dev/null
-> >> +++ b/Documentation/admin-guide/LSM/Loadpol.rst
-> >> @@ -0,0 +1,81 @@
-> >> +.. SPDX-License-Identifier: GPL-2.0
-> >> +
-> >> +=3D=3D=3D=3D=3D=3D=3D
-> >> +Loadpol
-> >> +=3D=3D=3D=3D=3D=3D=3D
-> >> +
-> >> +Loadpol is a Linux Security Module that enforces a user-provided poli=
-cy
-> >> +when decided whether a dynamic module can be loaded or not.
-> >
-> > Considering the relatively small scope of Loadpol, I have to ask if
-> > you've considered augmenting other LSMs to meet your needs?  While
-> > LoadPin is different from what you are proposing here, it does
-> > similarly limit its scope to kernel module load operations, and given
-> > the current simplicity of LoadPin I imagine one could find a creative
-> > way to extend it to support what you are trying to do.
->
-> I indeed felt a bit ridiculous introducing a new LSM for a limited featur=
-e
-> like that!
+Hello,
 
-Please don't feel bad about it, often simply doing "something" is what
-makes things happen, even if that original "something" turns out not
-to be the final "thing" :)
+This commit was reported by our CI as breaking the allmodconfig build for
+the arm and arm64 architectures when using GCC 15. This is due to
+https://github.com/KSPP/linux/issues/367 :
 
-> What's more, I don't see it being extended much in the future - we could
-> always imagine things like signed policy updates, but other than that it'=
-s
-> probably "feature-complete", as the feature itself is fairly small.
-> The difficulty with LoadPin is that it rely relies on the notion of
-> filesystem (which is coupled with the origin of the kernel modules) to en=
-sure
-> that modules are valid. On a general-purpose distributions, the modules
-> would be stored on the same (non-integrity-verified) filesystem, so
-> segregating the modules by filesystem is not really possible there.
-> Extending LoadPin to provide the same features is probably possible, but =
-I
-> fear this would add complexity to loading by trying to make it do two
-> slightly different jobs at once.
+-00:05:08 *** WARNING *** there are active plugins, do not report this as a bug unless you can reproduce it without enabling any plugins.
+00:05:08 Event                            | Plugins
+00:05:08 PLUGIN_FINISH_TYPE               | randomize_layout_plugin
+00:05:08 PLUGIN_FINISH_DECL               | randomize_layout_plugin
+00:05:08 PLUGIN_ATTRIBUTES                | latent_entropy_plugin randomize_layout_plugin
+00:05:08 PLUGIN_START_UNIT                | latent_entropy_plugin stackleak_plugin
+00:05:08 PLUGIN_ALL_IPA_PASSES_START      | randomize_layout_plugin
+00:05:08 arch/arm64/kernel/kexec_image.c:132:14: internal compiler error: in comptypes_check_enum_int, at c/c-typeck.cc:1519
+00:05:08   132 | const struct kexec_file_ops kexec_image_ops = {
+00:05:08       |              ^~~~~~~~~~~~~~
+00:05:08 0x225bdff internal_error(char const*, ...)
+00:05:08 	../../../../../../gcc/gcc/diagnostic-global-context.cc:517
+00:05:08 0x7cb197 fancy_abort(char const*, int, char const*)
+00:05:08 	../../../../../../gcc/gcc/diagnostic.cc:1803
+00:05:08 0x81f0e7 comptypes_check_enum_int(tree_node*, tree_node*, bool*)
+00:05:08 	../../../../../../gcc/gcc/c/c-typeck.cc:1519
+00:05:08 0x81f0e7 comptypes_check_enum_int(tree_node*, tree_node*, bool*)
+00:05:08 	../../../../../../gcc/gcc/c/c-typeck.cc:1513
+00:05:08 0x7e3b83 diagnose_mismatched_decls
+00:05:08 	../../../../../../gcc/gcc/c/c-decl.cc:2170
+00:05:08 0x7e64f3 duplicate_decls
+00:05:08 	../../../../../../gcc/gcc/c/c-decl.cc:3169
+00:05:08 0x7ea1eb pushdecl(tree_node*)
+00:05:08 	../../../../../../gcc/gcc/c/c-decl.cc:3376
+00:05:08 0x803c03 start_decl(c_declarator*, c_declspecs*, bool, tree_node*, bool, unsigned long*)
+00:05:08 	../../../../../../gcc/gcc/c/c-decl.cc:5755
+00:05:08 0x864c67 c_parser_declaration_or_fndef
+00:05:08 	../../../../../../gcc/gcc/c/c-parser.cc:2851
+00:05:08 0x8a7b33 c_parser_external_declaration
+00:05:08 	../../../../../../gcc/gcc/c/c-parser.cc:2110
+00:05:08 0x8a8ba3 c_parser_translation_unit
+00:05:08 	../../../../../../gcc/gcc/c/c-parser.cc:1964
+00:05:08 0x8a8ba3 c_parse_file()
+00:05:08 	../../../../../../gcc/gcc/c/c-parser.cc:29839
+00:05:08 0x931eff c_common_parse_file()
+00:05:08 	../../../../../../gcc/gcc/c-family/c-opts.cc:1385
+00:05:08 Please submit a full bug report, with preprocessed source (by using -freport-bug).
+00:05:08 Please include the complete backtrace with any bug report.
+00:05:08 See <https://gcc.gnu.org/bugs/> for instructions.
+00:05:08 make[4]: *** [scripts/Makefile.build:203: arch/arm64/kernel/kexec_image.o] Error 1
 
-My thinking around possible augmentation of LoadPin is that both
-LoadPin and Loadpol share a similar, limited focus of controlling
-access to kernel module loading and Loadpol has support for a basic
-loadable policy, a policy that could likely be extended to support a
-LoadPin-esque construct that limit module loading based on filesystem
-pinning.  It probably makes more sense to think of adding LoadPin
-support to Loadpol, rather than augmenting LoadPin to support the
-Loadpol concepts, but for consistency with upstream we probably need
-to speak in terms of the latter.
-
-> CC-ing Kees Cook as he is the maintainer of the LoadPin module, he may ha=
-ve
-> opinions on what features may or may not fit inside LoadPin.
-
-Of course, the combination, or not, of LoadPin and Loadpol is really
-up to the two of you.
-
-> As for other LSMs, I don't really see one that tries to provide similar
-> features, but I someone is open to extending an existing LSM for that, I
-> would be happy to help.
-
-I think LoadPin is the obvious choice.
-
---=20
-paul-moore.com
+The same error repeats for several other source files.
