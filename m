@@ -1,170 +1,132 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B8A27815C
-	for <linux-security-module@vger.kernel.org>; Fri, 30 May 2025 21:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C3A2609D6;
+	Fri, 30 May 2025 22:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748640839; cv=none; b=jo7ZxSVuaNfaBH+la2PXQmvw6cV08TcFoHJNdlMAft1XO1EbbgfdgP3RzC+XaWYS6R2igNY1cr6n/SM7oWty5Qdmb/F3ZHDJb+/zaa/Os3sGRPHLo299FHz4rS/uTBkOUL9ZmiSU0rrcX7qiVxxTTSG9lrkQIoUffRNiZiUaRo4=
+	t=1748642647; cv=none; b=loFE63PcpvOAlAQl/hz7rllsNAijhOx3TYDRQHhJHcoBY6U9JUkbi4rpZwWyQKwEPx3sZwrPkUiyZRkenWoqmnHe081FG/e1QQgNiz5r1bN3i6kq52xyycdPAaNGB4dxBsobMwES/T2kaXv8Q+GhLBQG9ioLG8LWSQHw89wf2Tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748640839; c=relaxed/simple;
-	bh=Z7WKpPhKd7mJHiCTEIxzxMzKU0sXmJdsDj1mso24f1I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ecUjIt0WQb8pRqKDCJ1O8xhtHHSB2REa1+Z1HK1FPv/qLr1ITs8NI2U49NHeTha1aK63XUL4HAUGgSc5r/hyEvOAxV7B3/wf7tjzIBfngZeY1zl7KWwhrjZM3DQTp7/7JVYjb/T3P5+i6raJ/QEln5Fy6Qj2ETLeiEgThYgjZWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CUbH57Gh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748642647; c=relaxed/simple;
+	bh=s1w9Bcs78aaLHN+aqiNcLkh6Ysfh9KIjWttvW5o9N6s=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=YGpHp135JfR9w4spmBNpsjNmeS3eztcdTQUKivxjrv3fBY8JZX4RN6BUDOjS2NUgkb7EhcswngGvKdjNYlH9i/6hxOqrUFOACNV0OlKFJAZKQKuE4br+ynJ15hVPybHTdxnvHzl+Izz3f+Vt0ncQ91yc42PbCsVu8/zQfO7igkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CbVDkgFD; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CUbH57Gh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3E07C4CEEE
-	for <linux-security-module@vger.kernel.org>; Fri, 30 May 2025 21:33:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748640838;
-	bh=Z7WKpPhKd7mJHiCTEIxzxMzKU0sXmJdsDj1mso24f1I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CUbH57Gh6nzgUJ99+owCFgo+gaNNgOgAfcUbvVE8z8mDiqmD4V8Xji/gZ9uJIQmr2
-	 v9Xkfor5CB3DDSUWsJK6qR1e+UlVZcl9fakPDAt/uM+4FvGO1ehr2Cv5wske4IxADz
-	 YWfBe3AqmxuyQEhDeqf+I2QnVygHZzJrX0mdoXBHvRy1cRNLBKoUavC+mY9CKI91kB
-	 5BOHh6ckSxJGBJ83yB0Rv7W6brFIgDZKyZllhv0wpC8tp8ob1zYyAXcL9mKhbAz+yM
-	 7oKvvt7dGtt4AJiH+PMDEJOxoVufcg4cUJZoqa3jzECYccX4GZDpaFY0aI04Qxzqr/
-	 0bA7HUlCBmKaQ==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-601f278369bso4956802a12.1
-        for <linux-security-module@vger.kernel.org>; Fri, 30 May 2025 14:33:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV4b4gJ+oQJq2mSm/xTnY2i+sIqShbsZu+YZ+JxGvt821dwaoZmjlRlFIoa/OhLJ7kS64cIFi3p9v/dTCZpp2AT2eeg0y4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiUYSqrBvo6N9W3cnJwaUXzPQAB2Qk1v96LDyYa1nCmQ8eaD8I
-	aQsq8DH+vEeJgHka1a0pR4ovnfpvchwY655JkEMIkNH5oSF0HgfsZA0L2+VZbd2916QT20ZPs09
-	rBQY3DsGpwCJ6La1P+GeIxoPkbVQ7dqQQviMKIAyx
-X-Google-Smtp-Source: AGHT+IEoiomH2xYgGJVG4inLYZvCJ8oUWknh2ggGj5CaECJNv5qS5SBtahRajmodHYw6nzOSjeeinboUEh8+afB8z+A=
-X-Received: by 2002:a05:6402:35d4:b0:5f8:afab:9e14 with SMTP id
- 4fb4d7f45d1cf-6056f4ca160mr4396691a12.28.1748640837494; Fri, 30 May 2025
- 14:33:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CbVDkgFD"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54UKiE4R028695;
+	Fri, 30 May 2025 22:03:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=s1w9Bc
+	s78aaLHN+aqiNcLkh6Ysfh9KIjWttvW5o9N6s=; b=CbVDkgFDDSuoXdLMXGYUE8
+	7bi3J8N4VDrWu5oPSSZQbGtom31fJHStsuqiUHczXN1uWeUe9/jFIoXxFwSYikjv
+	8MPLdy3VLc09zPXOrWB0nCUguxwb33v0/4/JowIz5TF5wsaGCh3pjTj/VJ/NOVcf
+	GvqSD6ngbxlM/qRvdyaKOsaMGYYrBCMP9l0Lxzq0ukmfIJa8+EvzBo06sQygsf/G
+	pP58guRLATDOv7IFpXsNlorXy+pLEhjK7EY2SpbASUo1UO5RQN0zLrdN/OwxKRQ1
+	gVQurU/ung0lozyZU5LTQhL8tn78gkNSpyXM4Z+X+DPN2ZXBK7XsWKWscl8N1xxg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46x40gx0fw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 May 2025 22:03:39 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54UM2lRq025801;
+	Fri, 30 May 2025 22:03:38 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46x40gx0fu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 May 2025 22:03:38 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54UIlhcG026919;
+	Fri, 30 May 2025 22:03:37 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46uu53k3qh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 May 2025 22:03:37 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54UM3bYc30278346
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 May 2025 22:03:37 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 28D745805D;
+	Fri, 30 May 2025 22:03:37 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E8FEE58059;
+	Fri, 30 May 2025 22:03:35 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.157.60])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 30 May 2025 22:03:35 +0000 (GMT)
+Message-ID: <12d9ea5981f5a2c33a01798311543db2e9bd4ee3.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH 25/29] ima,evm: move initcalls to the LSM framework
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Cc: John Johansen <john.johansen@canonical.com>,
+        Roberto Sassu	
+ <roberto.sassu@huawei.com>, Fan Wu <wufan@kernel.org>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?=	 <mic@digikod.net>,
+        =?ISO-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+        Kees Cook
+ <kees@kernel.org>, Micah Morton <mortonm@chromium.org>,
+        Casey Schaufler	
+ <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20250409185019.238841-56-paul@paul-moore.com>
+References: <20250409185019.238841-31-paul@paul-moore.com>
+	 <20250409185019.238841-56-paul@paul-moore.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 30 May 2025 18:03:35 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528215037.2081066-1-bboscaccy@linux.microsoft.com>
- <CACYkzJ5oJASZ43B531gY8mESqAF3WYFKez-H5vKxnk8r48Ouxg@mail.gmail.com>
- <87iklhn6ed.fsf@microsoft.com> <CACYkzJ75JXUM_C2og+JNtBat5psrEzjsgcV+b74FwrNaDF68nA@mail.gmail.com>
-In-Reply-To: <CACYkzJ75JXUM_C2og+JNtBat5psrEzjsgcV+b74FwrNaDF68nA@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Fri, 30 May 2025 23:33:46 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ4NR3bvrggV=AyNPhPyyLWPL40vw5eAyXons_9wwKAFfQ@mail.gmail.com>
-X-Gm-Features: AX0GCFtGQtB3ipdEQ_SanW8CiF1ViasTmENp_pdWQyJewmO4rViHBE_RYsALLlE
-Message-ID: <CACYkzJ4NR3bvrggV=AyNPhPyyLWPL40vw5eAyXons_9wwKAFfQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] BPF signature verification
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: Paul Moore <paul@paul-moore.com>, jarkko@kernel.org, zeffron@riotgames.com, 
-	xiyou.wangcong@gmail.com, kysrinivasan@gmail.com, code@tyhicks.com, 
-	linux-security-module@vger.kernel.org, roberto.sassu@huawei.com, 
-	James.Bottomley@hansenpartnership.com, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, David Howells <dhowells@redhat.com>, Lukas Wunner <lukas@wunner.de>, 
-	Ignat Korchagin <ignat@cloudflare.com>, Quentin Monnet <qmo@kernel.org>, 
-	Jason Xing <kerneljasonxing@gmail.com>, Willem de Bruijn <willemb@google.com>, 
-	Anton Protopopov <aspsk@isovalent.com>, Jordan Rome <linux@jordanrome.com>, 
-	Martin Kelly <martin.kelly@crowdstrike.com>, Alan Maguire <alan.maguire@oracle.com>, 
-	Matteo Croce <teknoraver@meta.com>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org, kys@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: tsgP7vh6WhVDl0kunu51buKQurUhYF8J
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDE5NyBTYWx0ZWRfX1ky5U6F6i9Zf oyHktkmy6MHsWDe81dVLdUU+fMQYtRkc9g/rw5z0uHLpyGuQjLgixaY227oRQDzUvQRd9r2XA5S TCnmdSFX+MbCcGPV0giJkHsAOEapuzIYU6LWbHD2WmkgGm7nN+eirtbE7xl/svyREzUDIQGuT9G
+ TINGSd0Y13KdVohtU62QVVPim7MjybKA1zOY7tC/IM+DsMBsjbcuANyNvSktSNKV3WpdMpS2StX YcFwxkGpFegP8h8Z4Gt5g/juMCCof/aZ4okyTWo+EDIyeNpoRxnDfJxenUMRnR2Z+9nbyn5xjfc DQljZAv8M+JjDdINca238UkWd7NI/LCqA1TiycCIzmfBde2YNac7vtEP67IIntCYDiUkDApblqy
+ rvg87V8VHzbNdZHjgSVFeyOs3EjDhZdGd5rIRBtdLMrW//lMkzbsrEnJpCYb3C5biVH3gDTw
+X-Proofpoint-ORIG-GUID: Hx40OjmTH3wUWazzBIKhE12YMIqrWnAr
+X-Authority-Analysis: v=2.4 cv=UflRSLSN c=1 sm=1 tr=0 ts=683a2b3b cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=XALlg6NdOko_BaNf98IA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-30_10,2025-05-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1011 suspectscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ spamscore=0 impostorscore=0 phishscore=0 bulkscore=0 malwarescore=0
+ mlxlogscore=839 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505300197
 
-On Fri, May 30, 2025 at 11:32=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrot=
-e:
->
-> On Fri, May 30, 2025 at 11:19=E2=80=AFPM Blaise Boscaccy
-> <bboscaccy@linux.microsoft.com> wrote:
-> >
-> > KP Singh <kpsingh@kernel.org> writes:
-> >
->
-> [...]
->
-> > >
-> >
-> > And that isn't at odds with the kernel being able to do it nor is it
-> > with what I posted.
-> >
-> > > If your build environment that signs the BPF program is compromised
-> > > and can inject arbitrary code, then signing does not help.  Can you
-> > > explain what a supply chain attack would look like here?
-> > >
-> >
-> > Most people here can read C code. The number of people that can read
-> > ebpf assembly metaprogramming code is much smaller. Compromising clang
-> > is one thing, compromising libbpf is another. Your proposal increases
-> > the attack surface with no observable benefit. If I was going to leave =
-a
-> > hard-to-find backdoor into ring0, gen.c would be a fun place to explore
-> > doing it. Module and UEFI signature verification code doesn't live
-> > inside of GCC or Clang as set of meta-instructions that get emitted, an=
-d
-> > there are very good reasons for that.
-> >
-> > Further, since the signature verification code is unique for each and
-> > every program it needs to be verified/proved/tested for each and every
-> > program. Additionally, since all these checks are being forced outside
-> > of the kernel proper, with the insistence of keeping the LSM layer in
-> > the dark of the ultimate result, the only way to test that a program
-> > will fail if the map is corrupted is to physically corrupt each and
-> > every program and test that individually. That isn't "elegant" nor "use=
-r
-> > friendly" in any way, shape or form.
-> >
-> > >> subsystem.  Additionally, it is impossible to verify the code
-> > >> performing the signature verification, as it is uniquely regenerated
-> > >
-> > > The LSM needs to ensure that it allows trusted LOADER programs i.e.
-> > > with signatures and potentially trusted signed user-space binaries
-> > > with unsigned or delegated signing (this will be needed for Cilium an=
-d
-> > > bpftrace that dynamically generate BPF programs), that's a more
-> > > important aspect of the LSM policy from a BPF perspective.
-> > >
-> >
-> > I would like to be able to sign my programs please and have the kernel
-> > verify it was done correctly. Why are you insisting that I *don't* do
-> > that?  I'm yet to see any technical objection to doing that. Do you hav=
-e
-> > one that you'd like to share at this point?
->
-> The kernel allows a trusted loader that's signed with your private
-> key, that runs in the kernel context to delegate the verification.
-> This pattern of a trusted / delegated loader is going to be required
-> for many of the BPF use-cases that are out there (Cilium, bpftrace)
-> that dynamically generate eBPF programs.
->
-> The technical objection is that:
->
-> * It does not align with most BPF use-cases out there as most
-> use-cases need a trusted loader.
-> * Locks us into a UAPI, whereas a signed LOADER allows us to
-> incrementally build signing for all use-cases without compromising the
-> security properties.
->
-> BPF's philosophy is that of flexibility and not locking the users into
-> a rigid in-kernel implementation and UAPI.
->
-> - KP
->
-> >
-> > > MAP_EXCLUSIVE is missing and is required which prevents maps from
-> > > being accessed by other programs as explained in the proposal.
-> > >
-> > > Please hold off on further iterations, I am working on a series and
-> > > will share these patches based on the design that was proposed.
-> > >
-> >
-> > So the premise here seems to be that people should only be allowed to
-> > sign trusted loaders, and that trusted loaders must additionally be
-> > authored by you, correct?
-> >
-> > When can we expect to see your patchset posted?
+On Wed, 2025-04-09 at 14:50 -0400, Paul Moore wrote:
+> This patch converts IMA and EVM to use the LSM frameworks's initcall
+> mechanism.=C2=A0 There were two challenges to doing this conversion: the
+> first simply being the number of initcalls across IMA and EVM, and the
+> second was the number of resources shared between the two related,
+> yet independent LSMs.
 
-I will try to get this out by the end of next week.
+There are a number of the initcalls under integrity/platform/, which load a=
+rch
+specific keys onto the platform and machine keyrings, which shouldn't be
+included in this patch.
 
-- KP
+>=20
+> The first problem was resolved by the creation of two new functions,
+> integrity_device_init() and integrity_late_init(), with each focused on
+> calling all of the various IMA/EVM initcalls for a single initcall type.
+> The second problem was resolved by registering both of these new
+> functions as initcalls for each LSM and including code in each
+> registered initcall to ensure it only executes once.
 
-> >
+With the above change, there obviously will be a lot fewer initcalls, but i=
+t
+might still make sense to keep the common ima/evm function.
+
+Mimi
