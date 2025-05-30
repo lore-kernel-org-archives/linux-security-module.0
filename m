@@ -1,126 +1,177 @@
-Received: from mail.nightmared.fr (mail.nightmared.fr [51.158.148.24])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BA41B6CE4;
-	Fri, 30 May 2025 07:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.158.148.24
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B5617741
+	for <linux-security-module@vger.kernel.org>; Fri, 30 May 2025 12:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748588667; cv=none; b=hAHy5tm+Y2ck1SgwT6UQOahF5QgSlIqx15BnXOPt9CalENQwmy10XLPhcH7EC7EW08H6WiilN9rmAU3Vg+YwMhKXZE5kD7FCzEOTYdhq6CuFTOrXY3RywbqnmHO6VReO/Q/r2uLr58XgyCa+eLN32bkLOsyZS5lishr3uPZGAZI=
+	t=1748607654; cv=none; b=jKGiyogdq6Q92hiE2DSUtKW9GAA6yeGD4zzPoQymuwqDxwnV5RDqAHAJP/nWxLlcnKEi+HDj5S+M/Bv4ga07tk5TAasEqcYJs2vsrGQTCSyTbsQCfqSnMGZFZ919W28HzBQXjL3lGwx+IjmrfEMtO6Y0FbWUjUZU3wBqcphAzWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748588667; c=relaxed/simple;
-	bh=j35dvvKjo4tcgD/DKN08smRYTU9B0YKcUJzYlkwAGyI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MrA3tF0Sa22sBmN1vPd5j8eKS3IhPF2qLTAqr9jA23ilJNbyevUwGHrW9AxjEaX/F8/7smR9jEvDfCDyd4fQGSEpQI66P8m40mp0WqLDST+n84ZqsYDdpI5BH/tW59wpakL9U//lYY9RwuyLXGGjOshzu8fujrwHX8DwBRaqo+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nightmared.fr; spf=pass smtp.mailfrom=nightmared.fr; dkim=pass (2048-bit key) header.d=nightmared.fr header.i=@nightmared.fr header.b=BIItrHsI; arc=none smtp.client-ip=51.158.148.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nightmared.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nightmared.fr
+	s=arc-20240116; t=1748607654; c=relaxed/simple;
+	bh=usNAqfNU05yWDD1nnvMBPsO4jB44WecabSLtQa+JE+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ioRTDG8v1qKLZpNwBmK0g5r8EDTfVIEyO4gZf/ZG4kjuU7KuUESDg8BjY5IeIdXmj7fpjmN8NLiUB9bicXdRS8mKRJWmq7T6Of5G41vInPTj6usA65SRWPUHGBoYg3FRdrVZLBtYc2C2aTAHHJXi0bXDR5hTPdIKAvS6hFp+o/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Iixtc6xD; arc=none smtp.client-ip=83.166.143.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nightmared.fr header.i=@nightmared.fr header.b="BIItrHsI"
-Received: from [192.168.1.46] (88-123-72-235.subs.proxad.net [88.123.72.235])
-	by mail.nightmared.fr (Postfix) with ESMTPSA id 5021E1087394;
-	Fri, 30 May 2025 07:03:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nightmared.fr;
-	s=docker; t=1748588591;
-	bh=j35dvvKjo4tcgD/DKN08smRYTU9B0YKcUJzYlkwAGyI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=BIItrHsIqNBLfPoOSM/8b7YN8tgqE1IjOwTP1BQ0n6XwVrbD5q4TLeVoyhILN6R+y
-	 VumkObE8gMnoZ3FPxRyz6rIDF1rD1d3JjtvATDAYeXBYJjzSOCyPvADkMRihlCiy5y
-	 s1PSPny+mko04+iSb/mKIg+yP5FUDHskqVbz3SRq41KXMwb5/QhxjSlPYiP7Dv8yJt
-	 lUIgqO5dIBQt8VsgSMpw0NK5NtjeZ2DB4Xw2f4hVhUKjd8ERE/JkqgNIvd6EfLONu8
-	 U1s9SBdlphu4ozj8zKsUmsszHaI5t0zoYIqZC8UFyn79rAf8FrWKenyr8pIHzcpynV
-	 vV4a2e27fQ4FA==
-Message-ID: <2495c0bf-5a24-483b-835f-abf433687889@nightmared.fr>
-Date: Fri, 30 May 2025 09:03:10 +0200
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Iixtc6xD"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b82Q12q1xz8g8;
+	Fri, 30 May 2025 14:20:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1748607641;
+	bh=XnOAINnFb0Z0ZcHabmc3qHltopvQ1m/OtdV1pvd9//U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Iixtc6xDq8SMxPtPVz3eEfOFPJq6OSNq9mg0j6DPkcvi1r3iE8Ae4vp8qmodYpgAd
+	 HXk+DJ0PXp2s2uT0p/i1fexLNBhuGQ3aVgdkzut+dav0tI6ZVZNtYRVNlUE0Z/wEnU
+	 JtxL5Y7j3xXmCtz0YpVzCWEiXLWncOjsEQ2BghOM=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b82Q01gBszjtL;
+	Fri, 30 May 2025 14:20:40 +0200 (CEST)
+Date: Fri, 30 May 2025 14:20:39 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Song Liu <song@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, 
+	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org, 
+	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
+	jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com, 
+	Tingmao Wang <m@maowtm.org>
+Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
+Message-ID: <20250530.euz5beesaSha@digikod.net>
+References: <20250529173810.GJ2023217@ZenIV>
+ <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
+ <20250529183536.GL2023217@ZenIV>
+ <CAPhsuW7LFP0ddFg_oqkDyO9s7DZX89GFQBOnX=4n5mV=VCP5oA@mail.gmail.com>
+ <20250529201551.GN2023217@ZenIV>
+ <CAPhsuW5DP1x_wyzT1aYjpj3hxUs4uB8vdK9iEp=+i46QLotiOg@mail.gmail.com>
+ <20250529214544.GO2023217@ZenIV>
+ <CAPhsuW5oXZVEaMwNpSF74O7wZ_f2Qr_44pu9L4_=LBwdW5T9=w@mail.gmail.com>
+ <20250529231018.GP2023217@ZenIV>
+ <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 9/9] Loadpol LSM: add a minimal documentation
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
- linux-doc@vger.kernel.org, Kees Cook <kees@kernel.org>
-References: <20250521140121.591482-1-git@nightmared.fr>
- <20250521140121.591482-10-git@nightmared.fr>
- <CAHC9VhR-80zxgo+q07Aw8HqK+qiPdnuXC0axONGac0e9JxXvmw@mail.gmail.com>
- <4939d8ab-3911-4759-b8d6-cb57ff9f9cda@nightmared.fr>
- <CAHC9VhT5JrhzGhRnJ4VNo6e941o-xdAG-FC-Q6wDbSZhgSUWOQ@mail.gmail.com>
-Content-Language: en-US
-From: Simon Thoby <git@nightmared.fr>
-In-Reply-To: <CAHC9VhT5JrhzGhRnJ4VNo6e941o-xdAG-FC-Q6wDbSZhgSUWOQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
+On Thu, May 29, 2025 at 05:42:16PM -0700, Song Liu wrote:
+> On Thu, May 29, 2025 at 4:10 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Thu, May 29, 2025 at 03:13:10PM -0700, Song Liu wrote:
+> >
+> > > Is it an issue if we only hold a reference to a MNT_LOCKED mount for
+> > > short period of time? "Short period" means it may get interrupted, page
+> > > faults, or wait for an IO (read xattr), but it won't hold a reference to the
+> > > mount and sleep indefinitely.
+> >
+> > MNT_LOCKED mount itself is not a problem.  What shouldn't be done is
+> > looking around in the mountpoint it covers.  It depends upon the things
+> > you are going to do with that, but it's very easy to get an infoleak
+> > that way.
+> >
+> > > > OTOH, there's a good cause for moving some of the flags, MNT_LOCKED
+> > > > included, out of ->mnt_flags and into a separate field in struct mount.
+> > > > However, that would conflict with any code using that to deal with
+> > > > your iterator safely.
+> > > >
+> > > > What's more, AFAICS in case of a stack of mounts each covering the root
+> > > > of parent mount, you stop in each of those.  The trouble is, umount(2)
+> > > > propagation logics assumes that intermediate mounts can be pulled out of
+> > > > such stack without causing trouble.  For pathname resolution that is
+> > > > true; it goes through the entire stack atomically wrt that stuff.
+> > > > For your API that's not the case; somebody who has no idea about an
+> > > > intermediate mount being there might get caught on it while it's getting
+> > > > pulled from the stack.
+> > > >
+> > > > What exactly do you need around the mountpoint crossing?
+> > >
+> > > I thought about skipping intermediate mounts (that are hidden by
+> > > other mounts). AFAICT, not skipping them will not cause any issue.
+> >
+> > It can.  Suppose e.g. that /mnt gets propagation from another namespace,
+> > but not the other way round and you mount something on /mnt.
+> >
+> > Later, in that another namespace, somebody mounts something on wherever
+> > your /mnt gets propagation to.  A copy will be propagated _between_
+> > your /mnt and whatever you've mounted on top of it; it will be entirely
+> > invisible until you umount your /mnt.  At that point the propagated
+> > copy will show up there, same as if it had appeared just after your
+> > umount.  Prior to that it's entirely invisible.  If its original
+> > counterpart in another namespace gets unmounted first, the copy will
+> > be quietly pulled out.
+> 
+> Thanks for sharing this information!
+> 
+> > Note that choose_mountpoint_rcu() callers (including choose_mountpoint())
+> > will have mount_lock seqcount sampled before the traversal _and_ recheck
+> > it after having reached the bottom of stack.  IOW, if you traverse ..
+> > on the way to root, you won't get caught on the sucker being pulled out.
+> 
+> In some of our internal discussions, we talked about using
+> choose_mountpoint() instead of follow_up(). I didn't go that direction in this
+> version because it requires holding "root". But if it makes more sense
+> to use, choose_mountpoint(), we sure can hold "root".
+> 
+> Alternatively, I think it is also OK to pass a zero'ed root to
+> choose_mountpoint().
+> 
+> > Your iterator, OTOH, would stop in that intermediate mount - and get
+> > an unpleasant surprise when it comes back to do the next step (towards
+> > /mnt on root filesystem, that is) and finds that path->mnt points
+> > to something that is detached from everything - no way to get from
+> > it any further.  That - despite the fact that location you've started
+> > from is still mounted, still has the same pathname, etc. and nothing
+> > had been disrupted for it.
+> >
+> > And yes, landlock has a narrow race in the matching place.  Needs to
+> > be fixed.  At least it does ignore those as far as any decisions are
+> > concerned...
 
-On 5/30/25 01:49, Paul Moore wrote:
-> On Thu, May 22, 2025 at 5:23 AM Simon Thoby <git@nightmared.fr> wrote:
->> On 5/21/25 23:31, Paul Moore wrote:
->>> On Wed, May 21, 2025 at 10:03 AM Simon THOBY <git@nightmared.fr> wrote:
->>>>
->>>> Introduce a minimal documentation for Loadpol, presenting the policy
->>>> format and the two user interfaces: the securityfs policy file and the
->>>> sysctl.
->>>>
->>>> Signed-off-by: Simon THOBY <git@nightmared.fr>
->>>> ---
->>>>  Documentation/admin-guide/LSM/Loadpol.rst | 81 +++++++++++++++++++++++
->>>>  Documentation/admin-guide/LSM/index.rst   |  1 +
->>>>  2 files changed, 82 insertions(+)
->>>>  create mode 100644 Documentation/admin-guide/LSM/Loadpol.rst
->>>>
->>>> diff --git a/Documentation/admin-guide/LSM/Loadpol.rst b/Documentation/admin-guide/LSM/Loadpol.rst
->>>> new file mode 100644
->>>> index 000000000000..0aa24a8d393c
->>>> --- /dev/null
->>>> +++ b/Documentation/admin-guide/LSM/Loadpol.rst
->>>> @@ -0,0 +1,81 @@
->>>> +.. SPDX-License-Identifier: GPL-2.0
->>>> +
->>>> +=======
->>>> +Loadpol
->>>> +=======
->>>> +
->>>> +Loadpol is a Linux Security Module that enforces a user-provided policy
->>>> +when decided whether a dynamic module can be loaded or not.
->>>
->>> Considering the relatively small scope of Loadpol, I have to ask if
->>> you've considered augmenting other LSMs to meet your needs?  While
->>> LoadPin is different from what you are proposing here, it does
->>> similarly limit its scope to kernel module load operations, and given
->>> the current simplicity of LoadPin I imagine one could find a creative
->>> way to extend it to support what you are trying to do.
->>
->> I indeed felt a bit ridiculous introducing a new LSM for a limited feature
->> like that!
+Thanks for pointing this out.  In the case of Landlock, walking to a
+disconnected mount point (because of this umount race condition) would
+deny the requested access whereas it may be allowed otherwise.  This is
+not a security issue but still an issue because an event unrelated to
+the request (umount) can abort a path resolution, which should not be
+the case.
+
+Without access to mount_lock, what would be the best way to fix this
+Landlock issue while making it backportable?
+
 > 
-> Please don't feel bad about it, often simply doing "something" is what
-> makes things happen, even if that original "something" turns out not
-> to be the final "thing" :)
+> If we update path_parent in this patchset with choose_mountpoint(),
+> and use it in Landlock, we will close this race condition, right?
+
+choose_mountpoint() is currently private, but if we add a new filesystem
+helper, I think the right approach would be to expose follow_dotdot(),
+updating its arguments with public types.  This way the intermediates
+mount points will not be exposed, RCU optimization will be leveraged,
+and usage of this new helper will be simplified.
+
 > 
->> What's more, I don't see it being extended much in the future - we could
->> always imagine things like signed policy updates, but other than that it's
->> probably "feature-complete", as the feature itself is fairly small.
->> The difficulty with LoadPin is that it rely relies on the notion of
->> filesystem (which is coupled with the origin of the kernel modules) to ensure
->> that modules are valid. On a general-purpose distributions, the modules
->> would be stored on the same (non-integrity-verified) filesystem, so
->> segregating the modules by filesystem is not really possible there.
->> Extending LoadPin to provide the same features is probably possible, but I
->> fear this would add complexity to loading by trying to make it do two
->> slightly different jobs at once.
+> >
+> > Note, BTW, that it might be better off by doing that similar to
+> > d_path.c - without arseloads of dget_parent/dput et.al.; not sure
+> > how feasible it is, but if everything in it can be done under
+> > rcu_read_lock(), that's something to look into.
 > 
-> My thinking around possible augmentation of LoadPin is that both
-> LoadPin and Loadpol share a similar, limited focus of controlling
-> access to kernel module loading and Loadpol has support for a basic
-> loadable policy, a policy that could likely be extended to support a
-> LoadPin-esque construct that limit module loading based on filesystem
-> pinning.  It probably makes more sense to think of adding LoadPin
-> support to Loadpol, rather than augmenting LoadPin to support the
-> Loadpol concepts, but for consistency with upstream we probably need
-> to speak in terms of the latter.
+> I don't think we can do everything here inside rcu_read_lock().
+> But d_path.c does have some code we can probably reuse or
+> learn from. Also, we probably need two variations of iterators,
+> one walk until absolute root, while the other walk until root of
+> current->fs, just like d_path() vs. d_absolute_path(). Does this
+> sound reasonable?
+
+Passing the root to a public follow_dotdot() helper should do the job.
+
 > 
-Thanks for the reply, I now see what you meant. I will try to put something
-together (hopefully next week), starting with looking at how we can express
-the current LoadPin feature set as a loadable and user-extensible policy, and
-then add non-filesystem-related policy entries (like module name restrictions)
-to that policy.
+> Thanks,
+> Song
+> 
