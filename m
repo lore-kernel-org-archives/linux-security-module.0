@@ -1,41 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A3523D298;
-	Sat, 31 May 2025 15:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FEF23E344;
+	Sat, 31 May 2025 15:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748704108; cv=none; b=V4yw5lBn4JCX07QW2yTaQVEPiOgISmrZY4ucUttUSHx941LDfqxmPp4NprMgQT7tjrS4j7CfJYa5hLNJ4p4bE+MfHFXtQbHU2EnphI6ThLbGPz5d7xjyPEBOdR5w9BsbfcCdOpy5sC88D3iqtnooGeEK8Tdq/vpgjxlZa6NmOXw=
+	t=1748704110; cv=none; b=gip54EOz1wUJRhVcN+IfgkVMi+hXXsdf6C19IYdsPYLCGkDWpp3YJWVpYHV/t6ljr2uo7ywjNXGUtQVtrbCmsXrW7eSMLn/jqRRB3qPzASgisg62tCmg8N2ZzlSxve69fmdGFS+U/ptvFjyswVfp/2sdnayaSiiKontr3+ZJ7WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748704108; c=relaxed/simple;
-	bh=ziBZwwqyZQT5qEjnp8U1zRRFZPCFs+iLXjzMT4hxT2o=;
+	s=arc-20240116; t=1748704110; c=relaxed/simple;
+	bh=zeCNSk/4KTUwlgpHWG41sxNyfJ5kt9EedTqhnme5Y+Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bDtdnJoTHoCdtmQhUoOSaU3Mu96T6jIbbNvZT6x75TtvbLVjJ+RRyleJHXW52+3ZwxOUexUfmPrUAprFT2fkd3Vx/NxyNX5+dU0EmW6Mlim0JVPriLDMp8FDLD72bwfG7P0pSBxJ4apAn7nhTIvUjVxES4nfjhFwy7ScVVnji00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A20P97Hv; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=Z7KE3dHj7IflzhQgE8AU7wsulBv7x93+rhglD9dWDyJERT2BdKGISUOxK9pqV03PYO5rJh5x5/2FQwxDm5ezZhAQdmq22bgBfL+lVY1lqLMEbn7X5YXNfQd7w/8guqBC+40vFbnUDu3RKfAkIsnYQzNIIiuCNp3EDEUZn2GoEIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UvE0RzRT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A20P97Hv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4180C4CEE3;
-	Sat, 31 May 2025 15:08:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UvE0RzRT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 801B4C4CEEE;
+	Sat, 31 May 2025 15:08:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748704108;
-	bh=ziBZwwqyZQT5qEjnp8U1zRRFZPCFs+iLXjzMT4hxT2o=;
+	s=k20201202; t=1748704109;
+	bh=zeCNSk/4KTUwlgpHWG41sxNyfJ5kt9EedTqhnme5Y+Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=A20P97HvewqwS6oSqh1AcgsBzKx4B/EI0jILDNiaqyscvlIrQcdps2VY6+znKtluv
-	 TKFoHkxWKzewnqvyi+sLZlLWSHyORl4Jr6NZb4PJ35wL648PcSTrG3ceb7loopObab
-	 JuUAerlnQWiKPRbwvOmZsjCY8EkPZlQNomallrFT25c2EirMjthJLin6JxN7glvKWM
-	 9skXpJhz0J0/jbHFXI31e2cozi2yQNDhs+iO+vgK8hLyzBjzeWfnptVQPpn4U9abc8
-	 wMVdmmw2lvOnsVxaiHiBGVQXKFwn/3bacmSqHmzEvAEzWx1hu+AVAV5rqZMXT7sHur
-	 jw4mNJ21c+rsA==
+	b=UvE0RzRTvjbxPlvj54q6DyE3S+GwS52MAc5RYxdBBs/xN4n93hFk7J0e2dHMN23Ul
+	 Yu8IgHKfeeDZ0zb0syLXynyDId9My1VWCNivUStvkqDBtIHiONsnL2mTCwsZzqpADo
+	 A9F3iHP2wDsC2GJ5GfKOPPI1PWMon1bdHOs0lXdeeXpfJcFe4hbxcf5hMk4WOnNYZC
+	 BED9lvtLrL+L4oIPH7m63qpLrC0Uasaixb1wCEWATYHOg9Pwz9AOpJAJ/98IllsZPg
+	 0V83pzNvdhXaLrwmapAUv20/Ge6YicRJpgkFfTtMY9GmOZmx/8cR5Ul98f5+suGmXn
+	 XsRQ8lEb50OTQ==
 From: deller@kernel.org
 To: linux-kernel@vger.kernel.org,
 	apparmor@lists.ubuntu.com,
 	John Johansen <john.johansen@canonical.com>,
 	linux-security-module@vger.kernel.org
-Cc: Helge Deller <deller@gmx.de>,
-	stable@vger.kernel.org
-Subject: [PATCH 1/2] apparmor: Fix 8-byte alignment for initial dfa blob streams
-Date: Sat, 31 May 2025 17:08:21 +0200
-Message-ID: <20250531150822.135803-2-deller@kernel.org>
+Cc: Helge Deller <deller@gmx.de>
+Subject: [PATCH 2/2] apparmor: Fix unaligned memory accesses in KUnit test
+Date: Sat, 31 May 2025 17:08:22 +0200
+Message-ID: <20250531150822.135803-3-deller@kernel.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20250531150822.135803-1-deller@kernel.org>
 References: <20250531150822.135803-1-deller@kernel.org>
@@ -49,46 +48,51 @@ Content-Transfer-Encoding: 8bit
 
 From: Helge Deller <deller@gmx.de>
 
-The dfa blob stream for the aa_dfa_unpack() function is expected to be aligned
-on a 8 byte boundary.
+The testcase triggers some unneccessary unaligned memory accesses on the
+parisc architecture:
+  Kernel: unaligned access to 0x12f28e27 in policy_unpack_test_init+0x180/0x374 (iir 0x0cdc1280)
+  Kernel: unaligned access to 0x12f28e67 in policy_unpack_test_init+0x270/0x374 (iir 0x64dc00ce)
 
-The static nulldfa_src[] and stacksplitdfa_src[] arrays store the inital
-apparmor dfa blob streams, but since they are declared as an array-of-chars
-the compiler and linker will only ensure a "char" (1-byte) alignment.
-
-Add an __aligned(8) annotation to the arrays to tell the linker to always
-align them on a 8-byte boundary. This avoids runtime warnings at startup on
-alignment-sensitive platforms like parisc such as:
-
- Kernel: unaligned access to 0x7f2a584a in aa_dfa_unpack+0x124/0x788 (iir 0xca0109f)
- Kernel: unaligned access to 0x7f2a584e in aa_dfa_unpack+0x210/0x788 (iir 0xca8109c)
- Kernel: unaligned access to 0x7f2a586a in aa_dfa_unpack+0x278/0x788 (iir 0xcb01090)
+Use the existing helper functions put_unaligned_le32() and
+put_unaligned_le16() to avoid such warnings on architectures which
+prefer aligned memory accesses.
 
 Signed-off-by: Helge Deller <deller@gmx.de>
-Cc: stable@vger.kernel.org
 ---
- security/apparmor/lsm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ security/apparmor/policy_unpack_test.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 9b6c2f157f83..531bde29cccb 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -2149,12 +2149,12 @@ static int __init apparmor_nf_ip_init(void)
- __initcall(apparmor_nf_ip_init);
- #endif
+diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+index 5b2ba88ae9e2..cf18744dafe2 100644
+--- a/security/apparmor/policy_unpack_test.c
++++ b/security/apparmor/policy_unpack_test.c
+@@ -9,6 +9,8 @@
+ #include "include/policy.h"
+ #include "include/policy_unpack.h"
  
--static char nulldfa_src[] = {
-+static char nulldfa_src[] __aligned(8) = {
- 	#include "nulldfa.in"
- };
- static struct aa_dfa *nulldfa;
++#include <linux/unaligned.h>
++
+ #define TEST_STRING_NAME "TEST_STRING"
+ #define TEST_STRING_DATA "testing"
+ #define TEST_STRING_BUF_OFFSET \
+@@ -80,7 +82,7 @@ static struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
+ 	*(buf + 1) = strlen(TEST_U32_NAME) + 1;
+ 	strscpy(buf + 3, TEST_U32_NAME, e->end - (void *)(buf + 3));
+ 	*(buf + 3 + strlen(TEST_U32_NAME) + 1) = AA_U32;
+-	*((__le32 *)(buf + 3 + strlen(TEST_U32_NAME) + 2)) = cpu_to_le32(TEST_U32_DATA);
++	put_unaligned_le32(TEST_U32_DATA, buf + 3 + strlen(TEST_U32_NAME) + 2);
  
--static char stacksplitdfa_src[] = {
-+static char stacksplitdfa_src[] __aligned(8) = {
- 	#include "stacksplitdfa.in"
- };
- struct aa_dfa *stacksplitdfa;
+ 	buf = e->start + TEST_NAMED_U64_BUF_OFFSET;
+ 	*buf = AA_NAME;
+@@ -103,7 +105,7 @@ static struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
+ 	*(buf + 1) = strlen(TEST_ARRAY_NAME) + 1;
+ 	strscpy(buf + 3, TEST_ARRAY_NAME, e->end - (void *)(buf + 3));
+ 	*(buf + 3 + strlen(TEST_ARRAY_NAME) + 1) = AA_ARRAY;
+-	*((__le16 *)(buf + 3 + strlen(TEST_ARRAY_NAME) + 2)) = cpu_to_le16(TEST_ARRAY_SIZE);
++	put_unaligned_le16(TEST_ARRAY_SIZE, buf + 3 + strlen(TEST_ARRAY_NAME) + 2);
+ 
+ 	return e;
+ }
 -- 
 2.47.0
 
