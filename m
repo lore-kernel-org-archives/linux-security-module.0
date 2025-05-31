@@ -1,94 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15BAA2192F8
-	for <linux-security-module@vger.kernel.org>; Fri, 30 May 2025 23:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1DB2376EF
+	for <linux-security-module@vger.kernel.org>; Sat, 31 May 2025 08:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748647951; cv=none; b=lIZO8yRmSId850RCXdR06gAItPtSADvcNwvGGsj3ofC5hylV7O/rdTe+xVDfXGbMNeWo3/DRQ9YZMI2+xpLgx5fmThNL9Xvd/LqM3U4P+IEOn62wIgx98gV9S63R6ugPH5r18AlAZG0tIkpBrnpF45siRlDZRIiHV3To1xOwIVw=
+	t=1748680753; cv=none; b=ueIoo45TP7KgS5dLCHYIWMIWvwz69ePq2yZfwPu4cf+/j/wC+5PDJE8U0Glpi1R42CoFitu0QY7pGA/4Z/Q7BD8DT9+MQDjpSR4zRqXuRxmQvju3jMtaGHzBmeRJCtVEhQkTFo2iv4g6M8VCqgbYtCPKbYocDoDvQhNvmKqpm/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748647951; c=relaxed/simple;
-	bh=kggCqTMPG5sotUIYA3iRlmrG1UM6sH0EEjF6Bj7Gd/Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ae5oGh8eOkrLA35Xa3sEXNav4bRFpzOw1xhUzYlJ9LsLUridDqwDeYD077RhX3MLOpbB/nbuwzgYXozLu5YwDm8l4keqZdnDZzscrp/LaDkIPNmndyou1TeHTdJ/DfZVDMwTK6E3Da9i9qYvP8Jxym/DRCihxWBALKGYwCZgSsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MBJlGDdA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748680753; c=relaxed/simple;
+	bh=sYZi93/yPJO5ZF2q+Up42YMESADN6on5s2Xc31n4Fx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GzclOY3fc0keOvUFCNTiLGjYGXfbgy/im+fWm6qudtxadhXyC2loe1L2z46ceR2uhIPj+UJ/WmHC3wsdhfro+uEs7DLXuObBI5IpG7AI5vfc85ElTe2O443kDCE0gmubKDqcHeQgFxDyLvgwbWrLuUFg6B4n6pHLNW/v1Lph3c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=MHgeFy2R; arc=none smtp.client-ip=185.125.25.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBJlGDdA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99288C19422
-	for <linux-security-module@vger.kernel.org>; Fri, 30 May 2025 23:32:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748647950;
-	bh=kggCqTMPG5sotUIYA3iRlmrG1UM6sH0EEjF6Bj7Gd/Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MBJlGDdAy/YjAIoESj63/k2Kd+PzzEmI3LV/Tu+LxRHW+sOsSJZxlosyV/cjmOrCf
-	 MyrKHMVf+ZEVApBUQaFCuh0F97bYgEgLH6PrkIdhA6upA/TMLqW8OvdXZEDOf0R+ld
-	 P6ybXSaEnFLariJo6jqHFdxRgbBLmU/7pdZUYiUjG+BAqS9anvN1Kgmm7wQvlVYhKy
-	 iTl+Pv+L/XZCVmwdtFLch/puQk5Ecbv8uPRzopnkmaQ7MZYrDo2Vfyfl22H2BQrh9j
-	 qE3S5UggUGzGlY1Gs7aNY+rDik1UkriA2OAfsgEGUJpcqO+l61uYOf/EKwzxN0zVAe
-	 9g6sRVE+kZAvA==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6046ecc3e43so4014814a12.3
-        for <linux-security-module@vger.kernel.org>; Fri, 30 May 2025 16:32:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUdRgLdJlddczYOa6uT6hPt7yWGHNawROQPXeA1HYhSBWt3WgRUpz1V9mMQ/bCZF0l7UqsJCdVvyvCmnnUboMMZ6NeEVWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRGJ8mPUhEuAIdEsUu5rWHYIk+3sg4MzbAvlR95sbubQWEUtFt
-	UwwVdOcxI3Fi4O2h6DKV+hdrpsZez/KJgwTHfNlj5qo4DjuBPWVB7w+9OcbxuJWv4DTewHJYuFt
-	4BAQhW3n16scfZMpAh1Uu/lBL5a2OKWvCjIxXNW1k
-X-Google-Smtp-Source: AGHT+IGnT7gcHCA6T9nJz/Po1RVmey5EX60YKSUOFtgmIA3wDq2w5CiZNs8pkH3x66RYx+isVTtJ5wHdkcQjB7rhyEM=
-X-Received: by 2002:a05:6402:84e:b0:601:94ab:790c with SMTP id
- 4fb4d7f45d1cf-6056e14ca18mr4710890a12.18.1748647948800; Fri, 30 May 2025
- 16:32:28 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="MHgeFy2R"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b8YRt6G19zLCp;
+	Sat, 31 May 2025 10:39:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1748680746;
+	bh=y9YddgqwimNGVoqG1X5gr78LYtkCAqMi4STBWfmUjbE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MHgeFy2RsPFQaevV4qfTD4etw8+KjwqF5O9K9KIIRslX+FZuZZL3A9ukvGh6Sir6L
+	 qf7IXhkZ+lyJSXGs18geyFYGwx1uF7GnNXGjrRJu83/2+pIHjk2XWGJOjH1aXmou6h
+	 EwTkDw21Ciw/s8+snsFhgd/2UysyFgtH7Q+rFTRM=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4b8YRs69dkz43W;
+	Sat, 31 May 2025 10:39:05 +0200 (CEST)
+Date: Sat, 31 May 2025 10:39:02 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Song Liu <song@kernel.org>, Jan Kara <jack@suse.cz>, 
+	bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, 
+	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org, 
+	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
+	jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com, 
+	Tingmao Wang <m@maowtm.org>
+Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
+Message-ID: <20250531.nie3chiew9Nu@digikod.net>
+References: <20250529183536.GL2023217@ZenIV>
+ <CAPhsuW7LFP0ddFg_oqkDyO9s7DZX89GFQBOnX=4n5mV=VCP5oA@mail.gmail.com>
+ <20250529201551.GN2023217@ZenIV>
+ <CAPhsuW5DP1x_wyzT1aYjpj3hxUs4uB8vdK9iEp=+i46QLotiOg@mail.gmail.com>
+ <20250529214544.GO2023217@ZenIV>
+ <CAPhsuW5oXZVEaMwNpSF74O7wZ_f2Qr_44pu9L4_=LBwdW5T9=w@mail.gmail.com>
+ <20250529231018.GP2023217@ZenIV>
+ <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
+ <20250530.euz5beesaSha@digikod.net>
+ <20250530184348.GQ2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528215037.2081066-1-bboscaccy@linux.microsoft.com>
- <CACYkzJ5oJASZ43B531gY8mESqAF3WYFKez-H5vKxnk8r48Ouxg@mail.gmail.com>
- <87iklhn6ed.fsf@microsoft.com> <CACYkzJ75JXUM_C2og+JNtBat5psrEzjsgcV+b74FwrNaDF68nA@mail.gmail.com>
- <87ecw5n3tz.fsf@microsoft.com> <CACYkzJ4ondubPHDF8HL-sseVQo7AtJ2uo=twqhqLWaE3zJ=jEA@mail.gmail.com>
- <878qmdn39e.fsf@microsoft.com> <CACYkzJ6ChW6GeG8CJiUR6w-Nu3U2OYednXgCYJmp6N5FysLc2w@mail.gmail.com>
- <875xhhn0jo.fsf@microsoft.com>
-In-Reply-To: <875xhhn0jo.fsf@microsoft.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Sat, 31 May 2025 01:32:18 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ5gXf4MOdb4scid0TaQwpwewH5Zzn2W18XB1tFBoR2CQQ@mail.gmail.com>
-X-Gm-Features: AX0GCFv_7BJJSl838TozCcwnoaszDpfbe-yzu3mWadgSeXOyob3Yk8byF4z0Rt0
-Message-ID: <CACYkzJ5gXf4MOdb4scid0TaQwpwewH5Zzn2W18XB1tFBoR2CQQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] BPF signature verification
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: Paul Moore <paul@paul-moore.com>, jarkko@kernel.org, zeffron@riotgames.com, 
-	xiyou.wangcong@gmail.com, kysrinivasan@gmail.com, code@tyhicks.com, 
-	linux-security-module@vger.kernel.org, roberto.sassu@huawei.com, 
-	James.Bottomley@hansenpartnership.com, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, David Howells <dhowells@redhat.com>, Lukas Wunner <lukas@wunner.de>, 
-	Ignat Korchagin <ignat@cloudflare.com>, Quentin Monnet <qmo@kernel.org>, 
-	Jason Xing <kerneljasonxing@gmail.com>, Willem de Bruijn <willemb@google.com>, 
-	Anton Protopopov <aspsk@isovalent.com>, Jordan Rome <linux@jordanrome.com>, 
-	Martin Kelly <martin.kelly@crowdstrike.com>, Alan Maguire <alan.maguire@oracle.com>, 
-	Matteo Croce <teknoraver@meta.com>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org, kys@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250530184348.GQ2023217@ZenIV>
+X-Infomaniak-Routing: alpha
 
-> And I'm saying that they are, based on wanting visibility in the LSM
-> layer, passing that along to the end user, and wanting to be able to
-> show correctness, along with mitigating an entire vector of supply chain
-> attacks targeting gen.c.
+On Fri, May 30, 2025 at 07:43:48PM +0100, Al Viro wrote:
+> On Fri, May 30, 2025 at 02:20:39PM +0200, Mickaël Salaün wrote:
+> 
+> > Without access to mount_lock, what would be the best way to fix this
+> > Landlock issue while making it backportable?
+> > 
+> > > 
+> > > If we update path_parent in this patchset with choose_mountpoint(),
+> > > and use it in Landlock, we will close this race condition, right?
+> > 
+> > choose_mountpoint() is currently private, but if we add a new filesystem
+> > helper, I think the right approach would be to expose follow_dotdot(),
+> > updating its arguments with public types.  This way the intermediates
+> > mount points will not be exposed, RCU optimization will be leveraged,
+> > and usage of this new helper will be simplified.
+> 
+> IMO anything that involves struct nameidata should remain inside
+> fs/namei.c - something public might share helpers with it, but that's
+> it.  We had more than enough pain on changes in there, and I'm pretty
+> sure that we are not done yet; in the area around atomic_open, but not
+> only there.  Parts of that are still too subtle, IMO - it got a lot
+> better over the years, but I would really prefer to avoid the need
+> to bring more code into analysis for any further massage.
+> 
+> Are you sure that follow_dotdot() behaviour is what you really want?
+> 
+> Note that it's not quite how the pathname resolution works.  There we
+> have the result of follow_dotdot() fed to step_into(), and that changes
+> things.  Try this:
+> 
+> mkdir /tmp/foo
+> mkdir /tmp/foo/bar
+> cd /tmp/foo/bar
+> mount -t tmpfs none /tmp/foo
+> touch /tmp/foo/x
+> ls -Uldi . .. /tmp/foo ../.. /tmp ../x
+> 
+> and think about the results.  Traversing .. is basically "follow_up as much
+> as possible, then to parent, then follow_down as much as possible" and
+> the last part (../x) explains why we do it that way.
+> 
+> Which objects would you want to iterate through when dealing with the
+> current directory in the experiment above?  Simulation of pathwalk
+> would have the root of overmounting filesystem as the second object
+> visited; follow_dotdot() would yield the directory overmounted by
+> that instead.
+> 
+> I'm not saying that either behaviour is right for your case - just that
+> they are not identical and it's something that needs to be consciously
+> chosen.
 
-What supply chain attack?I asked this earlier, you never replied, what
-does a supply chain attack here really look like?
-
-
-- KP
-
->
-> So in summary, your objection to this is that you feel it's simply "not
-> needed", and those above risks/design problems aren't actually an issue?
->
-> > Let's have this discussion in the patch series, much easier to discuss
-> > with the code.
->
-> I think we've all been waiting for that. Yes, lets.
+Thanks, this helps. I didn't though about this semantic difference.  We
+don't want the handle_dots() semantic (which call follow_dotdot() and
+step_into()), only the (backward) pathwalk one which is equivalent to
+follow_dotdot().  I'll add Landlock tests for this specific scenario.
