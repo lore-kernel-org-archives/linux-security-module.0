@@ -1,176 +1,209 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F7325B1F6;
-	Sun,  1 Jun 2025 23:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266CF175BF
+	for <linux-security-module@vger.kernel.org>; Mon,  2 Jun 2025 06:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748820846; cv=none; b=jt+2EUdcnKGo46Wbm2KWfwsFQXkIb03/LFpYXa/VxKdIrq40ky03Ahyw4dM72cBL/o8W4PIVyKbpcItQ8vsrwglchOfRDL+yy8+/n4pGfC9OppYOh42zyeryQEkq5yNv+SFi3Mpm7wT+lvP1bqqgpd61EVMsbkHI2Rp3qv02SrU=
+	t=1748846720; cv=none; b=lv5bjoeGeb1OoVgHbLSdTomQLxexHfGHxWWYA5vspI/Gcq20/Np9rwhoxWAAZHC0PHqdzBeWPi1yR4NFB4YOUZrwEoj7E91boXGjrpe+ORQjzkqToxbofto+6LArUI+JLO5MFmLF9SNR+uqEwQuzjFpbP7aS5WA3Lp4bIzfAH/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748820846; c=relaxed/simple;
-	bh=rk0tabcEWUSi/dC9aSwcckp47FWChuCrYj4ecTRM91o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K6seyRqg5ysqXYdxQtUcMpbfQBhfJrDhLIVxN4fF/HKJzyg0tv9Xc3rNhfb9El+cZye6zMJZ9Gb4cNDm2+PZCCqq11IyvynTMpFZmb1bLbYB3avaUItYpYLG9y9RRNY2A+BBC9PAmSgunteSOAyG0HJx1r8fNgY85+ekgmckg78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MabEE4Ge; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748846720; c=relaxed/simple;
+	bh=n6RxvSLnAvAv8QJbkOZfP1xL7uhMGvfhdcxkVNtYaZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kXmt/4R/yBpvEqwDcfA2NRtSrH3PF3SjJpkrpc8YKaNJPogZJ1XoRHXhLsKWy8d3K3EfQyxorcl53U0aP1+wuprkf1YMYypXqsP4vUkWIxXwP+ya8su2tg6Aejc+CtQ9HywHltQn6AnCnLWwaOQhxelxk/CwevrR4FqXsMk5UoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=lw4T4YRs; arc=none smtp.client-ip=45.157.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MabEE4Ge"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69E59C4CEF4;
-	Sun,  1 Jun 2025 23:34:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748820846;
-	bh=rk0tabcEWUSi/dC9aSwcckp47FWChuCrYj4ecTRM91o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MabEE4GeCqRyYjuCSJaW2MyeZmOnZq7/KJkYHa3ShOkvedUnN/QbtopQvMUbkSFWX
-	 U9pNA2uwAddylgWXfHpxNECl2ajnIQ5/v7icrsi2MM37d9SHZpBFq82Jktd9Fc1h27
-	 UkIp1p1hQgjXkwVzri8xvSbhmiJVbLW30b1/6xQpDis81ZIzDg1NTeQs7Lmf98/OYn
-	 FLK37jCD9Mnk81LaaUQ727dlM6w35nz5D4gE8v3x5tRC9oN30+1IlVw8NGTf3ZnzJu
-	 mS0fzeGAYA+HROwhLZeptu85MRvVfftPE0QZBxg1Y/f3nplmnOYw4BS1zTTvdWXEu8
-	 aSepbpNk0zo8g==
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4a58b120bedso6582351cf.2;
-        Sun, 01 Jun 2025 16:34:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUuZygCQ5sWdoPCd9uDdnGuJnessFZcsy8RMALGVAY6pTfzTTjof63+ohaHnQ9NH6jCNYUBx9vEJc0z+593@vger.kernel.org, AJvYcCWg8fMxGCnFbCaeVMvEdO43J9/7bRhW57eDJNFjNOVEna5RwbUM3KLBpM4iwf43Ev+XRu83gqfIMpzlX+Ih0RrORTU1xN4M@vger.kernel.org, AJvYcCWu6B+8DyqsEmvp42Cev0ANdTyTWrELjljzi1HrPnTMAB6TSYLFPXrslnIYG3LgVkPIWr4=@vger.kernel.org, AJvYcCXpHofaKIiRqIg93oaA07lNJdCDx/NhefdPsZEwO8TPsXD8ebK7xraiATVNl4lbtVfRXrJu6eVfcxaNFIBpiw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM7IBHtDPyYcjHR7HinuZ/+8bGgC3gb1+1YSyzIbKxoYgoarXr
-	O/ff7qABy6VGZUAw4Yo82j+r0amtlEUsCoHH/pGaWFUSGXhOuPtzIVKeYc4fO+i6IhqIgWn1+L/
-	eIQS9K8ynLP0PK/oNybNbdju48AKxbSA=
-X-Google-Smtp-Source: AGHT+IHOvTvmxzCnGRB15ilIwIuBdUILgcIB1Uvm7hMB6a6v7w4pR7/ko4VNimzWKkM0RBFYUda6oz0YfDOzt8wtpMo=
-X-Received: by 2002:a05:622a:2289:b0:4a4:3d6e:57d4 with SMTP id
- d75a77b69052e-4a4aed5cd9emr102149661cf.46.1748820845563; Sun, 01 Jun 2025
- 16:34:05 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="lw4T4YRs"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b9kqS2BLMz5kb;
+	Mon,  2 Jun 2025 08:45:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1748846708;
+	bh=VH6zFQvhPJQBgfTo5ban3m0VUR+MA2qMksTosH15CmM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lw4T4YRserDBU+LpHTACnYqcNKHlNHD04fLGz++gFBYs3TqGQTqUFxOYz3ME0FMuO
+	 yBFo681TKjHHt3uYqagYONWfNgYebm/HwPfg8IOKJk9GEWqW7Hxpy904RFw4AgsI4k
+	 /XxIbCArW470QttbI0RBuvrFj/18eEQAlDDHKb64=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4b9kqQ5kGqzqdG;
+	Mon,  2 Jun 2025 08:45:06 +0200 (CEST)
+Date: Mon, 2 Jun 2025 08:45:06 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, Paul Moore <paul@paul-moore.com>, sergeh@kernel.org, 
+	David Howells <dhowells@redhat.com>, Kees Cook <keescook@chromium.org>, 
+	linux-security-module@vger.kernel.org, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org, 
+	Peter Newman <peternewman@google.com>, Andy Lutomirski <luto@amacapital.net>, 
+	Will Drewry <wad@chromium.org>, Jarkko Sakkinen <jarkko@kernel.org>
+Subject: Re: [RFC 1/2] landlock: Multithreading support for
+ landlock_restrict_self()
+Message-ID: <20250602.ko3thoc7ooL4@digikod.net>
+References: <20250227.Aequah6Avieg@digikod.net>
+ <20250228.b3794e33d5c0@gnoack.org>
+ <20250304.aroh3Aifiiz9@digikod.net>
+ <20250310.990b29c809af@gnoack.org>
+ <20250311.aefai7vo6huW@digikod.net>
+ <20250518.be040c48937c@gnoack.org>
+ <20250518.xeevoom3kieY@digikod.net>
+ <aDmvpOMlaAZOXrji@google.com>
+ <20250530.ozeuZufee5yu@digikod.net>
+ <aDncH8D9FoyAIsTv@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250529173810.GJ2023217@ZenIV> <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
- <20250529183536.GL2023217@ZenIV> <CAPhsuW7LFP0ddFg_oqkDyO9s7DZX89GFQBOnX=4n5mV=VCP5oA@mail.gmail.com>
- <20250529201551.GN2023217@ZenIV> <CAPhsuW5DP1x_wyzT1aYjpj3hxUs4uB8vdK9iEp=+i46QLotiOg@mail.gmail.com>
- <20250529214544.GO2023217@ZenIV> <CAPhsuW5oXZVEaMwNpSF74O7wZ_f2Qr_44pu9L4_=LBwdW5T9=w@mail.gmail.com>
- <20250529231018.GP2023217@ZenIV> <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
- <20250530.euz5beesaSha@digikod.net> <CAPhsuW5U-nPk4MFdZSeBNds0qEHjQZrC=c5q+AGNpsKiveC2wA@mail.gmail.com>
- <c2d0bae8-691f-4bb6-9c0e-64ab7cdaebd6@maowtm.org>
-In-Reply-To: <c2d0bae8-691f-4bb6-9c0e-64ab7cdaebd6@maowtm.org>
-From: Song Liu <song@kernel.org>
-Date: Sun, 1 Jun 2025 16:33:54 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW47C+FqtdHEE5YYKhjkaYLn-JbAPfo_q0fXf2FzTfiAog@mail.gmail.com>
-X-Gm-Features: AX0GCFvwUwAeA88LUr4ia35HRc3kUaSu9RbQ8RV0pI3vVH27tH9vknp9Dfv46Bk
-Message-ID: <CAPhsuW47C+FqtdHEE5YYKhjkaYLn-JbAPfo_q0fXf2FzTfiAog@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com, 
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, brauner@kernel.org, kpsingh@kernel.org, 
-	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
-	jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aDncH8D9FoyAIsTv@google.com>
+X-Infomaniak-Routing: alpha
 
-On Sat, May 31, 2025 at 7:05=E2=80=AFAM Tingmao Wang <m@maowtm.org> wrote:
->
-> On 5/30/25 19:55, Song Liu wrote:
-> > On Fri, May 30, 2025 at 5:20=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > [...]
-> >>>
-> >>> If we update path_parent in this patchset with choose_mountpoint(),
-> >>> and use it in Landlock, we will close this race condition, right?
-> >>
-> >> choose_mountpoint() is currently private, but if we add a new filesyst=
-em
-> >> helper, I think the right approach would be to expose follow_dotdot(),
-> >> updating its arguments with public types.  This way the intermediates
-> >> mount points will not be exposed, RCU optimization will be leveraged,
-> >> and usage of this new helper will be simplified.
-> >
-> > I think it is easier to add a helper similar to follow_dotdot(), but no=
-t with
-> > nameidata. follow_dotdot() touches so many things in nameidata, so it
-> > is better to keep it as-is. I am having the following:
-> >
-> > /**
-> >  * path_parent - Find the parent of path
-> >  * @path: input and output path.
-> >  * @root: root of the path walk, do not go beyond this root. If @root i=
-s
-> >  *        zero'ed, walk all the way to real root.
-> >  *
-> >  * Given a path, find the parent path. Replace @path with the parent pa=
-th.
-> >  * If we were already at the real root or a disconnected root, @path is
-> >  * not changed.
-> >  *
-> >  * Returns:
-> >  *  true  - if @path is updated to its parent.
-> >  *  false - if @path is already the root (real root or @root).
-> >  */
-> > bool path_parent(struct path *path, const struct path *root)
-> > {
-> >         struct dentry *parent;
-> >
-> >         if (path_equal(path, root))
-> >                 return false;
-> >
-> >         if (unlikely(path->dentry =3D=3D path->mnt->mnt_root)) {
-> >                 struct path p;
-> >
-> >                 if (!choose_mountpoint(real_mount(path->mnt), root, &p)=
-)
-> >                         return false;
-> >                 path_put(path);
-> >                 *path =3D p;
-> >                 return true;
-> >         }
-> >
-> >         if (unlikely(IS_ROOT(path->dentry)))
-> >                 return false;
-> >
-> >         parent =3D dget_parent(path->dentry);
-> >         if (unlikely(!path_connected(path->mnt, parent))) {
-> >                 dput(parent);
-> >                 return false;
-> >         }
-> >         dput(path->dentry);
-> >         path->dentry =3D parent;
-> >         return true;
-> > }
-> > EXPORT_SYMBOL_GPL(path_parent);
-> >
-> > And for Landlock, it is simply:
-> >
-> >                 if (path_parent(&walker_path, &root))
-> >                         continue;
-> >
-> >                 if (unlikely(IS_ROOT(walker_path.dentry))) {
-> >                         /*
-> >                          * Stops at disconnected or real root directori=
-es.
-> >                          * Only allows access to internal filesystems
-> >                          * (e.g. nsfs, which is reachable through
-> >                          * /proc/<pid>/ns/<namespace>).
-> >                          */
-> >                         if (walker_path.mnt->mnt_flags & MNT_INTERNAL) =
-{
-> >                                 allowed_parent1 =3D true;
-> >                                 allowed_parent2 =3D true;
-> >                         }
-> >                         break;
->
->
-> Hi, maybe I'm missing the complete picture of this code, but since
-> path_parent doesn't change walker_path if it returns false (e.g. if it's
-> disconnected, or choose_mountpoint fails), I think this `break;` should b=
-e
-> outside the
->
->     if (unlikely(IS_ROOT(walker_path.dentry)))
->
-> right? (Assuming this whole thing is under a `while (true)`) Otherwise we
-> might get stuck at the current path and get infinite loop?
+On Fri, May 30, 2025 at 06:26:07PM +0200, Günther Noack wrote:
+> On Fri, May 30, 2025 at 05:11:34PM +0200, Mickaël Salaün wrote:
+> > On Fri, May 30, 2025 at 03:16:20PM +0200, Günther Noack wrote:
+> > > On Sun, May 18, 2025 at 09:57:32PM +0200, Mickaël Salaün wrote:
+> > > > We should rename the flag to LANDLOCK_RESTRICT_SELF_PROCESS to make it
+> > > > clear what it does.
+> > > > 
+> > > > The remaining issues are still the potential memory allocation failures.
+> > > > There are two things:
+> > > > 
+> > > > 1. We should try as much as possible to limit useless credential
+> > > >    duplications by not creating a new struct cred if parent credentials
+> > > >    are the same.
+> > > > 
+> > > > 2. To avoid the libpsx inconsistency (because of ENOMEM or EPERM),
+> > > >    landlock_restrict_self(2) should handle memory allocation and
+> > > >    transition the process from a known state to another known state.
+> > > > 
+> > > > What about this approach:
+> > > > - "Freeze" all threads of the current process (not ideal but simple) to
+> > > >   make sure their credentials don't get updated.
+> > > > - Create a new blank credential for the calling thread.
+> > > > - Walk through all threads and create a new blank credential for all
+> > > >   threads with a different cred than the caller.
+> > > > - Inject a task work that will call cred_transfer() for all threads with
+> > > >   either the same new credential used by the caller (incrementing the
+> > > >   refcount), or it will populate and use a blank one if it has different
+> > > >   credentials than the caller.
+> > > > 
+> > > > This may not efficiently deduplicate credentials for all threads but it
+> > > > is a simple deduplication approach that should be useful in most cases.
+> > > > 
+> > > > The difficult part is mainly in the "fleezing". It would be nice to
+> > > > change the cred API to avoid that but I'm not sure how.
+> > > 
+> > > I don't see an option how we could freeze the credentials of other threads:
+> > > 
+> > > To freeze a task's credentials, we would have to inhibit that commit_creds()
+> > > succeeds on that task, and I don't see how that would be done - we can not
+> > > prevent these tasks from calling commit_creds() [1], and when commit_creds()
+> > > gets called, it is guaranteed to work.
+> > > 
+> > > So in my mind, we have to somehow deal with the possibility that a task has a
+> > > new and not-previously-seen struct creds, by the time that its task_work gets
+> > > called.  As a consequence, I think a call to prepare_creds() would then be
+> > > unavoidable in the task_work?
+> > 
+> > OK, we don't need to freeze all threads, just to block thread creation.
+> > 
+> > What about that:
+> > 1. lock thread creation for this process
+> > 2. call prepare_creds() for the calling thread (called new_cred)
+> > 3. call cred_alloc_blank() for all other threads, store them in a list,
+> >    and exit if ENOMEM
+> > 4. asynchronously walk through all threads, and for each:
+> >   a. if its creds are the same (i.e. same pointer) as the calling
+> >      thread's ones, then call get_cred(new_cred) and
+> >      commit_creds(new_cred).
+> >   b. otherwise, take a blank cred, call cred_transfer(), add the
+> >      Landlock domain, and commit_creds() with it.
+> > 5. free all unused blank creds (most)
+> > 6. call commit_creds(new_creds) and return
+> > 
+> > Pros:
+> > - do not block threads
+> > - minimize cred duplication
+> > - atomic operation (from the point of view of the caller): all or
+> >   nothing (with an error)
+> > - almost no change to existing cred API
+> > 
+> > Cons:
+> > - block thread creation
+> > - initially allocate one cred per thread (but free most of them after)
+> 
+> The proposal is growing on me.
+> 
+> One way to view transfer_creds() and have it nicely fit into the credentials API
+> would be to view prepare_creds() as a convenience wrapper around
+> transfer_creds(), so that prepare_creds() is implemented as a function which:
+> 
+>   1) allocates a new struct cred (this may fail)
+>   2) calls transfer_creds() with the new struct cred to populate
+> 
+> We could then move the bulk of its existing prepare_creds() implementation into
+> the new transfer_creds(), and could also move the keyctl implementation to use
+> that.
 
-Right, we need "break" outside the if condition.
+Yes
 
-Thanks,
-Song
+> 
+> A remaining problem is: The caveat and the underlying assumption is that
+> transfer_creds() must never fail when it runs in the task work, if we want to
+> avoid the additional synchronization.  The existing cases in which the
+> credentials preparation logic can return an error are:
+> 
+> * Allocation failure for struct cred  (we would get rid of this)
+> * get_ucounts(new->ucounts) returns NULL  (not supposed to happen, AFAICT)
+> * security_prepare_creds() fails.  Existing LSM implementations are:
+>   * Tomoyo, SELinux, AppArmor, Landlock: always return 0
+>   * SMACK: May return -ENOMEM on allocation failure
+> 
+> 
+> So summing up, in my understanding, the prerequisites for this approach are that:
+> 
+>   1) get_ucounts() never returns NULL, and
+> 
+>   2) SMACK does not bubble up allocation errors from the cred_prepare hook
+> 
+>      Casey, Jarkko: do you think this is realistic for SMACK to change?
+
+There is no issue using cred_alloc_blank() and then transfer_creds().
+The allocation is up front and transfer_creds() cannot failed.
+
+> 
+> and that
+> 
+>   3) We can block new thread creation
+> 
+>      Mickaël, do you have a specific approach in mind for that?
+
+I was thinking to do the same as seccomp: lock siglock and,
+check/synchronize credentials in a new LSM hook called just after
+copy_seccomp() (when siglock is locked).  However, as pointed out by
+Jann, that would not be enough because this new LSM hook would not be
+able to allocate new credentials, and the siglock locking happens after
+copy_creds().
+
+> 
+>      As Jann pointed out in [1], the tasklist_lock and siglock are not sleepable
+>      and can't be used while waiting, which is why he proposed an approach where
+>      we retry in a loop until no new threads show up any more, while getting the
+>      existing threads stuck in the task_work as well (where they can't spawn new
+>      threads).
+
+This looks good.  Too bad we need to block all threads.
+
+> 
+> 
+> Thanks,
+> 
+> —Günther
+> 
+> [1] https://lore.kernel.org/all/CAG48ez0pWg3OTABfCKRk5sWrURM-HdJhQMcWedEppc_z1rrVJw@mail.gmail.com/
+> 
