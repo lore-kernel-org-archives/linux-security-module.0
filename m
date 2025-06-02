@@ -1,131 +1,133 @@
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0242921C9EF
-	for <linux-security-module@vger.kernel.org>; Mon,  2 Jun 2025 13:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298102C3240
+	for <linux-security-module@vger.kernel.org>; Mon,  2 Jun 2025 13:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748870456; cv=none; b=mMMz3AvhSZHyfdcDSxpB9JcxhUOjJ6bq2MxSBmShi56UsgCM0B6AR2WJXzhiueEFN8Z47HqBO9tykeHzlD+RQemvbta8QBUgUeyjY3GfROC/tRaW+l2FsmhLxffsDvWX6cBzocl3BrxjQMyqemWIpXxpMbQ3N7iWAzy5u4lZ/Rw=
+	t=1748870755; cv=none; b=UNOiOaKG19K5HIvq17dewUxi65FQkaNLB3ACx3+GfOcHJK39e1SpFjjTezQIRdXB12vfNDR+/3hMBF4p77QcbQL59DBSquWASKYlQpx7UOouAlk6u0AWzQKNj8KVkrZ1Wcj3Sbw1EjWbEankk+CWvedTJ4uBsJo5//ND6YlZ9M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748870456; c=relaxed/simple;
-	bh=c3v/amorMK9IR9egja7l0QCz/Q6RS7uVgaK5imY4kDM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=f1lWehoaLXarDc6/B5bZDtsB9Wi6tOg42eXmK1VbEVuEKf0+q77XI9yrek3yLopFLjCi2A1S0Z7F2bU6AnyAxVxcI7W4ygmDHN7mk8DXffq8XwD/rNXM294fg+3jJ/+B9Qv73dfhVAjIle7OrHv6HDWWkEheYTwf9KRdidVRphY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=cvMGUKfn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=a7rpy7Gk; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1748870755; c=relaxed/simple;
+	bh=bfes8zZB5azdrucRkZ0R+StBkCNzaum0W5A5blaEZAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i9FVLWpy4ln9giJhAyZgwaNd4pGlqwI09Afm/0O/Kcul1hw3vmAiOp5XD1izHPM2AD+l6a3Ellu0QRRj1tMgGHdUy4c8n0Mvxz3ON6Ird1Nc3PMtt8PEszgKKO6kEg7yE9mzJQmNbXdSlnqebR+p5sYNnY1P7/8VFBZcYWMhTEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iVY3ZKlj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="cvMGUKfn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="a7rpy7Gk"
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfout.phl.internal (Postfix) with ESMTP id 052D31380361;
-	Mon,  2 Jun 2025 09:20:54 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Mon, 02 Jun 2025 09:20:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1748870454;
-	 x=1748956854; bh=7iTjot4IwFTvF1NuIm2qYHp03kO2jedFsdBZwaGZkJ0=; b=
-	cvMGUKfntgGH6V9C+l94wexZi7sndFFWeLBGLwRuYLBGf15Q+o9cWnsfN+P4bFvt
-	WhvtP+Ii476gwq0rm+hLbFFD8eAd0cY6oYiFHFnEsbP1lt4D3w+kwbPzBxqLjRO/
-	rbl30UclFQHA8ydcWu7v1VLpRe2Sf+vQyPfhcV/zTIhWbVQ0udze1tEvHEnnrSfM
-	75nH7NW5I4+n3zlL46vbjA/HfJ5VwCBTpRJlhyR/nRBNNJWyr169lrwQD7PVWFhH
-	FHDKFV5hrADu1b87ygT/H8XN4db3GdzpGT/cVsuzxmj5YfFr+09kHV2kopBIG1ae
-	/u4sDYNSD+0Fyop/gCoOyg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1748870454; x=
-	1748956854; bh=7iTjot4IwFTvF1NuIm2qYHp03kO2jedFsdBZwaGZkJ0=; b=a
-	7rpy7GkBHX+JFA5JDMBE0lvmF9g4Xd926FS9gNJew8ioBQDo2jXpVjXQBueSLNhn
-	gcHMU3X33735WeeC6c22g8FmKVdGK3+thecci1v/l2GSS5VjVO/HStSx75y10mX2
-	68ErkOiRq5pUQapt9KCJt/G21sTxYeQEqB//9NgWaF1Z0HuCyUric/JKd7Y6cY8a
-	zOzqF2zkI9+L0BusIRglmg4fO5XXg0UOGnRlRgDIhY42Z2YkzKlL3pXaPjHM7Vrj
-	BcEqGy0JUcjAvg1QYTEUQFMa2TYmMQaLtNg+nVxBIYp2fmLBvOhzpLLnwyADO61y
-	f3KqltssgM60xpNxG+pUw==
-X-ME-Sender: <xms:NaU9aB7eLKNWgxv5Zka1e6W2Hm5-s8c1iuCfWMSdG-eNdS_mpitdiw>
-    <xme:NaU9aO6iR9nBg06RIWiZrqaXquU0Etkn-2NRwvyI8bCObIe6pRQWvocu2qTb0abav
-    VcKW5WL3Ky6wSgTCN0>
-X-ME-Received: <xmr:NaU9aIeLqm6QtapFBuYB0dLo40nnr_Nwx97sK7FwhBL7Vsiq-8a6Z24rNZ6rBLa-8DyDQ-PtffhVxK0sY8j3oQHl>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefjeejkeculddtuddrgeefvddrtd
-    dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
-    fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
-    dtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffv
-    vehfjggtgfesthekredttddvjeenucfhrhhomhepvfhinhhgmhgrohcuhggrnhhguceomh
-    esmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpedvgeduuefgudejgfdtteff
-    udejjeelleeiudekueejudehtefghfegvdetveffueenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghr
-    tghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhitgesughigh
-    hikhhougdrnhgvthdprhgtphhtthhopehgnhhorggtkhesghhoohhglhgvrdgtohhmpdhr
-    tghpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:NaU9aKIeUE-PF31kC01HUwsGdUGharf7Fqfj7QeqSNER7l9C6qV3nA>
-    <xmx:NaU9aFJbPrZIQqsU_OSDpbev2Sc_dwH4EUuq4SphzQqmzYk_FgMbyA>
-    <xmx:NaU9aDwqF2tpGXdyuau60fPpuDMJlhYOcBCffdNPwlXm0t4PQdNZZw>
-    <xmx:NaU9aBJ1vNIm6osizIlX5-bX1sOIsY0tygpQtkE5vf1y5ho5J5-55Q>
-    <xmx:NaU9aOah7rwkAmtjxF8aqYClBgsFg_L_Agz33RA_STRnSzaX0GBWoK04>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 2 Jun 2025 09:20:51 -0400 (EDT)
-Message-ID: <9738035b-e990-4e3c-a490-987f20f80e17@maowtm.org>
-Date: Mon, 2 Jun 2025 14:20:50 +0100
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iVY3ZKlj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748870751;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=badVlBQqQnqQ+WuvslSW3Ky30eTx0uVb3Tc6t4qkrJM=;
+	b=iVY3ZKljngasX3Q32nAmSs3RN6Tn+z2mmNUiz7ZbLD41WZ6xYg0Nr2bQVGe3qOJd3cDnwx
+	s82k2xzCciNUPsgUy/UuQSLKtzFr7udp2dabVf6qFPOTjZS5nwlB0UUcLy5Av/3al3IOAV
+	7EdiFUU8ElHjcfHOl9nOnu1/WE4Pey0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-618-7h5M09zkPwSRZFablYj2gw-1; Mon,
+ 02 Jun 2025 09:25:50 -0400
+X-MC-Unique: 7h5M09zkPwSRZFablYj2gw-1
+X-Mimecast-MFC-AGG-ID: 7h5M09zkPwSRZFablYj2gw_1748870746
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C5F3E1800366;
+	Mon,  2 Jun 2025 13:25:45 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.44.34.87])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B353818003FD;
+	Mon,  2 Jun 2025 13:25:36 +0000 (UTC)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: linux-security-module@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-modules@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	David Howells <dhowells@redhat.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Peter Jones <pjones@redhat.com>,
+	Robert Holmes <robeholmes@gmail.com>,
+	Jeremy Cline <jcline@redhat.com>,
+	Coiby Xu <coxu@redhat.com>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Gerd Hoffmann <kraxel@redhat.com>
+Subject: [PATCH RFC 0/1] module: Optionally use .platform keyring for signatures verification
+Date: Mon,  2 Jun 2025 15:25:34 +0200
+Message-ID: <20250602132535.897944-1-vkuznets@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Tingmao Wang <m@maowtm.org>
-Subject: Re: [RFC PATCH 08/10] landlock: Construct the inode hashtable in the
- new landlock_domain
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- linux-security-module@vger.kernel.org
-References: <cover.1747836146.git.m@maowtm.org>
- <e0fcfb45accc387fb0c6a4deca2724fc531b7bd0.1747836146.git.m@maowtm.org>
- <20250527.paeShie1ofoo@digikod.net>
-Content-Language: en-US
-In-Reply-To: <20250527.paeShie1ofoo@digikod.net>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On 5/27/25 12:00, Mickaël Salaün wrote:
-> On Wed, May 21, 2025 at 08:32:04PM +0100, Tingmao Wang wrote:
->> Since we can't get rid of the old landlock_merge_ruleset yet, we call our
->> new thing landlock_merge_ruleset2.
->>
->> Signed-off-by: Tingmao Wang <m@maowtm.org>
->> ---
->>  security/landlock/domain.c   |  87 +++++++++++++++++++++++++++++
->>  security/landlock/domain.h   |   4 ++
->>  security/landlock/hash.h     | 105 +++++++++++++++++++++++++++++++++++
->>  security/landlock/ruleset.h  |   2 +-
->>  security/landlock/syscalls.c |   9 +++
->>  5 files changed, 206 insertions(+), 1 deletion(-)
-> 
-> 
->> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
->> index 07823771b402..ac91d4a865b9 100644
->> --- a/security/landlock/ruleset.h
->> +++ b/security/landlock/ruleset.h
->> @@ -27,7 +27,7 @@ struct landlock_hierarchy;
->>   */
->>  struct landlock_layer {
->>  	/**
->> -	 * @level: Position of this layer in the layer stack.
->> +	 * @level: Position of this layer in the layer stack. Starts from 1.
-> 
-> Feel free to send a standalone patch with improved doc, I'll merge it
-> directly.
+UEFI SecureBoot 'db' keys are currently not trusted for modules signatures
+verification. RedHat based downstream distros (RHEL, Fedora, ...) carry a
+patch changing that for many years (since 2019 at least). This RFC is an
+attempt to upstream it as the functionality seems to be generally useful.
 
-(I've done this and will remove this change from this series.)
+Previously, pre-boot keys (SecureBoot 'db', MOK) were not trusted within
+kernel at all. Things have changed since '.machine' keyring got introduced
+making MOK keys optionally trusted. Before that, there was a discussion to
+make .platform trusted by default:
+https://lore.kernel.org/lkml/1556116431-7129-1-git-send-email-robeholmes@gmail.com/
+which didn't go very far because the assumption was that this is only useful
+when the user has control over 'db'. I believe there's a fairly common
+use-case where this is true.
 
-> 
->>  	 */
->>  	u16 level;
->>  	/**
+The use-case: virtualized and cloud infrastructure generally provide an
+ability to customize SecureBoot variables, in particular, it is possible
+to bring your own SecureBoot 'db'. This may come handy when a user wants to
+load a third party kernel module (self built or provided by a third party
+vendor) while still using a distro provided kernel. Generally, distro
+provided kernels sign modules with an ephemeral key and discard the private
+part during the build. While MOK can sometimes be used to sign something
+out-of-tree, it is a tedious process requiring either a manual intervention
+with shim or a 'certmule' 
+(see https://blogs.oracle.com/linux/post/the-machine-keyring). In contrast,
+the beauty of using SecureBoot 'db' in this scenario is that for public
+clouds and virtualized infrastructure it is normally a property of the OS
+image (or the whole infrastructure/host) and not an individual instance;
+this means that all instances created from the same template will have 'db'
+keys in '.platform' by default.
+
+The suggested approach is not to change the default, but to introduce a
+Kconfig variable (CONFIG_MODULE_SIG_PLATFORM) doing the job. Note, the 
+kernel already trusts '.platform' for kexec (see commit 278311e417be 
+("kexec, KEYS: Make use of platform keyring for signature verify"))
+and dm-verity (see commit 6fce1f40e951 ("dm verity: add support for
+signature verification with platform keyring")) so maybe changing the
+default or introducing a generic '.plarform is fully trusted' option
+would actually be better.
+
+Vitaly Kuznetsov (1):
+  module: Make use of platform keyring for module signature verify
+
+ Documentation/admin-guide/module-signing.rst |  6 ++++++
+ kernel/module/Kconfig                        | 11 +++++++++++
+ kernel/module/signing.c                      |  9 ++++++++-
+ security/integrity/Kconfig                   |  2 +-
+ 4 files changed, 26 insertions(+), 2 deletions(-)
+
+-- 
+2.49.0
 
