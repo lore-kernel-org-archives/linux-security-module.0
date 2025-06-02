@@ -1,145 +1,211 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BF120E026;
-	Mon,  2 Jun 2025 15:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA7F223DED
+	for <linux-security-module@vger.kernel.org>; Mon,  2 Jun 2025 17:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748878822; cv=none; b=iCYy3cEHAXY0v9H/WemWOIOYFRNcB97+4GpqXOsKj1OGHAiZxLkEgQF1ont/s9FC4UYTZeL7zNxG1zggbqLRTAWLfXPwYJP7Wwzj//mEm5LDJDwgi4IJWhXM5kPelvk9W0Wcte4I1eKutiTcPvPD0f3yMpfkLKvlWOhpJwhnZKA=
+	t=1748885760; cv=none; b=ofrtFi8d581l42W6D/ePBrBzjdGg1KStVR0fuPbDq5UhGaaooAp1TvwK9WgD3ibaBb599UJUxek65HYhaBcIX2neGxF0vs8YPV/HHhQU+5InWEAxBC3zSYMJw+Wj8Y/fX+8iAm8KfT4I2fMH3xv7pvO6LHu1j+ZG5jAHMG8dQh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748878822; c=relaxed/simple;
-	bh=R9Y05yx+OBDd8zhRYutvh4ZOz89p/wmEiP+mhd2CITM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EU7ow+D82+6hZQQ1/j7DrmcDYDsttRIXQfdj8HQjMgPwsL4mqTfmt8/YLccClEKmBDJEbM1onxO+RVnjntoifuL161n1gE7pTXk+vJIJPa1i1S7rBz+IiRleb7PcffNWGx/fQbTzGEffVf9HF3LuygslbvOAThDxgFXOHtAM08U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ApJVqihv; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1748885760; c=relaxed/simple;
+	bh=VUhI7CSW76kd/2BwwKOpp8s7Bj4/P8quxGT6EYFmteI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mC3Q2+SW7t3T3YhagwCHdC0Z7OiNw3yyLmYLD6RXckERaDEB23P8pM1JPs1BDMKc/TnLvkQasd/gITZts9Fm+7Isml4c2e0v+eii7zWb5mo2aXNz9r3EnWE19xTf84W7iyrGB4BQfKPGYwK2M1XB8EWKrXD26LX/GE63rWFRi9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=M8OOQWx+; arc=none smtp.client-ip=185.125.25.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ApJVqihv"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-450cfb790f7so33589025e9.0;
-        Mon, 02 Jun 2025 08:40:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748878815; x=1749483615; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R9Y05yx+OBDd8zhRYutvh4ZOz89p/wmEiP+mhd2CITM=;
-        b=ApJVqihv/KOFu0lSmE3lUUiFFln46DU6VgXZ3hdBYn5DQ8xOuN9guJ1Q79sAj8YAIr
-         7pGEfXFlkVobw9AvjbYadwx3idjFKLYXC+m20mbXQh4/+H1pjqYXu4Od6RsjgfMctnpr
-         l+Ex5/s5lS59CQdUcF5pZEacqoKk/nIyl8DCTmy0ijtJk+3ohNS0zZCQ7fART2OcTAdw
-         xyr0BvWSGQVRiii8Bpy0kFfMhC5TE7ebaAFpLr2l4QzD7B1pdKxLo6rPGHGTBHyIEysv
-         En1JjJmUxKSNI5KPgEN72G3gAdftyZGGm2l9uKAaG/5bz9wT8UJqn1PVqDiJmKWXQdJF
-         3NAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748878815; x=1749483615;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R9Y05yx+OBDd8zhRYutvh4ZOz89p/wmEiP+mhd2CITM=;
-        b=fjqPWDwXY8VsWa+fuF5CG1YPLctPTomJEZ33kDTI5DUvKvVsr3/hQn2p1P7Is74lmJ
-         YWnygZceVoa12kA2KV9BBZGIjVRiBKZEILzuEZSPcQlV8AdRxfhrsKP1LZwYcncRDW5Y
-         rsLC6rszLGdlkVmdZDOMKizdpspInb9UMsAx/hHV0wWnDKpLakNB6NH4hVHJnNyHv1/v
-         +mhjKmVteIQ8GDRHJYIgQPs6tRUKNoxI5amEEsu8ga1WvR5z8oseTXCzjFJUcur1jKlr
-         WY9nAFaRy42KryltCyHL4wNM68OpBeoTw4B953t6hMeGCvg9iOBUGbIfEYTXi0Hzdxzz
-         RDHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEiApueDQJiH3Gk1I5iJ2r20281f9deK0PMH7e5lqAJVKKgkxy2IVLqV4Z/P3wflSmhpVYotUVgIWXvW3vXg==@vger.kernel.org, AJvYcCUU2q7y08Z8sm2siYidljW5m0f3K12scdXNjUOtYTwsXJTpVXkGe7g0QucjoTcz7eIOvyvEe91a3+Cv95jWuFA0bXSKnKgy@vger.kernel.org, AJvYcCUiBIx5xdrztXGJ1UiGSlosEo3p58rSQwe5RA7I285hhSiHEzY+fltQDIYczZke4gve+Xd6dt3hkWr5nBvY@vger.kernel.org, AJvYcCWlOrC67kasOckFY4fcHPDap9HrMa3jHqdXgWGTWrCOx3+8TgOmdDy6A/Xs+qfKnWxsCk8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7lmQ6LO/FLb3VffDTzy+rKh0Q/Ner0GBJtjiX5dGvvyabTLou
-	JSjDhiKGWtDwXd3X3GU688p3sctSTB0HUa/juhQ9Z8hCdl0aQPfM33clQEr+ZyJT3gXZNAMhbXI
-	IPD6FZ0QMI4pWQxr4iq7AwKLiVsgCWnY=
-X-Gm-Gg: ASbGncsxpgKzOHZYUEstBMigNjl7weKOjJiNG35EVsL/MoXM9d6v4+rTiATKl+gq3tS
-	vLkaABxaJ1ndML4bAdHnF5sP5i5dnzgGHZpCB7Bd7tUHfPaHl5V9fVsPMnlBgwJj2tdXiWRGM9Z
-	+TS5qvkFgM202PehHH/gxh5A1AM5qkdNHJ9MHmrJcF75t7+yr6
-X-Google-Smtp-Source: AGHT+IFai74334nUkxJO8w5i7tlfzv8GkZQi4oU8k6b4JJORHTZUz87sq7bnLWguHyTzue1p9YeSb9RxpKx7T9X2A3M=
-X-Received: by 2002:a05:6000:26ca:b0:3a4:f787:9b58 with SMTP id
- ffacd0b85a97d-3a4f7ab515fmr11139438f8f.58.1748878814719; Mon, 02 Jun 2025
- 08:40:14 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="M8OOQWx+"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bB1GF445mzsq2;
+	Mon,  2 Jun 2025 19:35:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1748885749;
+	bh=I1+g0eVqjmTqLKooXrJGQ9n+AkRh/ReUCRj2fzMRkns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M8OOQWx+BGV1YUVOeH25ve75KC7jFyye0iOoy0EdCVr6ZYaGDhtsX014OSqpfPhUm
+	 +3dbggZnfrD0emuVwQjB8/b2KnTe5Fle3MHkvDZTinGUDPcs8WLizrFvMv4EhSC1Fo
+	 YzC244GupgBAhzLZ6CBxPV9ycq9vUURFtNoKj8sU=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bB1GD2KT5zbdy;
+	Mon,  2 Jun 2025 19:35:48 +0200 (CEST)
+Date: Mon, 2 Jun 2025 19:35:47 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com, 
+	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, 
+	gnoack@google.com
+Subject: Re: [PATCH bpf-next 2/4] landlock: Use path_parent()
+Message-ID: <20250602.Oqu6piethung@digikod.net>
+References: <20250528222623.1373000-1-song@kernel.org>
+ <20250528222623.1373000-3-song@kernel.org>
+ <027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528222623.1373000-1-song@kernel.org> <20250528222623.1373000-4-song@kernel.org>
- <20250528223724.GE2023217@ZenIV> <yti2dilasy7b3tu6iin5pugkn6oevdswrwoy6gorudb7x2cqhh@nqb3gcyxg4by>
- <CAPhsuW4tg+bXU41fhAaS0n74d_a_KCFGvy_vkQOj7v4VLie2wg@mail.gmail.com>
- <20250529173810.GJ2023217@ZenIV> <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
- <20250602-lustig-erkennbar-7ef28fa97e20@brauner> <CAPhsuW7ogestn8Cc2jac2O0fnWcH_w=HuZQiSOx0umM4uT6Whg@mail.gmail.com>
-In-Reply-To: <CAPhsuW7ogestn8Cc2jac2O0fnWcH_w=HuZQiSOx0umM4uT6Whg@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 2 Jun 2025 08:40:03 -0700
-X-Gm-Features: AX0GCFvmqNkDHrRfZbAR59KGnpN2AAawPk43bzGmffyFYbsau48MyukEK4A30P8
-Message-ID: <CAADnVQ+_T2UTVQA9XXew26XR8zqhNpwX33Uy_pVW0_7s-bexLg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-To: Song Liu <song@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, repnop@google.com, 
-	Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On Mon, Jun 2, 2025 at 6:27=E2=80=AFAM Song Liu <song@kernel.org> wrote:
->
-> On Mon, Jun 2, 2025 at 2:27=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
-> >
-> > On Thu, May 29, 2025 at 11:00:51AM -0700, Song Liu wrote:
-> > > On Thu, May 29, 2025 at 10:38=E2=80=AFAM Al Viro <viro@zeniv.linux.or=
-g.uk> wrote:
-> > > >
-> > > > On Thu, May 29, 2025 at 09:53:21AM -0700, Song Liu wrote:
-> > > >
-> > > > > Current version of path iterator only supports walking towards th=
-e root,
-> > > > > with helper path_parent. But the path iterator API can be extende=
-d
-> > > > > to cover other use cases.
-> > > >
-> > > > Clarify the last part, please - call me paranoid, but that sounds l=
-ike
-> > > > a beginning of something that really should be discussed upfront.
-> > >
-> > > We don't have any plan with future use cases yet. The only example
-> > > I mentioned in the original version of the commit log is "walk the
-> > > mount tree". IOW, it is similar to the current iterator, but skips no=
-n
-> > > mount point iterations.
-> > >
-> > > Since we call it "path iterator", it might make sense to add ways to
-> > > iterate the VFS tree in different patterns. For example, we may
-> >
-> > No, we're not adding a swiss-army knife for consumption by out-of-tree
-> > code. I'm not opposed to adding a sane iterator for targeted use-cases
-> > with a clear scope and internal API behavior as I've said multiple time=
-s
-> > already on-list and in-person.
-> >
-> > I will not merge anything that will endup exploding into some fancy
-> > "walk subtrees in any order you want".
->
-> We are not proposing (and AFAICT never proposed) to have a
-> swiss-army knife that "walk subtrees in any order you want". Instead,
-> we are proposing a sane iterator that serves exactly one use case
-> now. I guess the concern is that it looks extensible. However, I made
-> the API like this so that it can be extended, with thorough reviews, to
-> cover another sane use case. If there is still concern with this. We
-> sure can make current code not extensible. In case there is a
-> different sane use case, we will introduce another iterator after
-> thorough reviews.
+On Sat, May 31, 2025 at 02:51:22PM +0100, Tingmao Wang wrote:
+> On 5/28/25 23:26, Song Liu wrote:
+> > Use path_parent() to walk a path up to its parent.
+> > 
+> > While path_parent() has an extra check with path_connected() than existing
+> > code, there is no functional changes intended for landlock.
+> > 
+> > Signed-off-by: Song Liu <song@kernel.org>
+> > ---
+> >  security/landlock/fs.c | 34 +++++++++++++++++-----------------
+> >  1 file changed, 17 insertions(+), 17 deletions(-)
+> > 
+> > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> > index 6fee7c20f64d..32a24758ad6e 100644
+> > --- a/security/landlock/fs.c
+> > +++ b/security/landlock/fs.c
+> > @@ -837,7 +837,6 @@ static bool is_access_to_paths_allowed(
+> >  	 * restriction.
+> >  	 */
+> >  	while (true) {
+> > -		struct dentry *parent_dentry;
+> >  		const struct landlock_rule *rule;
+> >  
+> >  		/*
+> > @@ -896,19 +895,17 @@ static bool is_access_to_paths_allowed(
+> >  		if (allowed_parent1 && allowed_parent2)
+> >  			break;
+> >  jump_up:
+> > -		if (walker_path.dentry == walker_path.mnt->mnt_root) {
+> > -			if (follow_up(&walker_path)) {
+> > -				/* Ignores hidden mount points. */
+> > -				goto jump_up;
+> > -			} else {
+> > -				/*
+> > -				 * Stops at the real root.  Denies access
+> > -				 * because not all layers have granted access.
+> > -				 */
+> > -				break;
+> > -			}
+> > -		}
+> > -		if (unlikely(IS_ROOT(walker_path.dentry))) {
+> > +		switch (path_parent(&walker_path)) {
+> > +		case PATH_PARENT_CHANGED_MOUNT:
+> > +			/* Ignores hidden mount points. */
+> > +			goto jump_up;
+> > +		case PATH_PARENT_REAL_ROOT:
+> > +			/*
+> > +			 * Stops at the real root.  Denies access
+> > +			 * because not all layers have granted access.
+> > +			 */
+> > +			goto walk_done;
+> > +		case PATH_PARENT_DISCONNECTED_ROOT:
+> >  			/*
+> >  			 * Stops at disconnected root directories.  Only allows
+> >  			 * access to internal filesystems (e.g. nsfs, which is
+> 
+> I was looking at the existing handling of disconnected root in Landlock
+> and I realized that the comment here confused me a bit:
+> 
+> /*
+>  * Stops at disconnected root directories.  Only allows
+>  * access to internal filesystems (e.g. nsfs, which is
+>  * reachable through /proc/<pid>/ns/<namespace>).
+>  */
+> 
+> In the original code, this was under a
+> 
+>     if (unlikely(IS_ROOT(walker_path.dentry)))
+> 
+> which means that it only stops walking if we found out we're disconnected
+> after reaching a filesystem boundary.  However if before we got to this
+> point, we have already collected enough rules to allow access, access
+> would be allowed, even if we're currently disconnected.  Demo:
+> 
+> / # cd /
+> / # cp /linux/samples/landlock/sandboxer .
+> / # mkdir a b
+> / # mkdir a/foo
+> / # echo baz > a/foo/bar
+> / # mount --bind a b
+> / # LL_FS_RO=/ LL_FS_RW=/ ./sandboxer bash
+> Executing the sandboxed command...
+> / # cd /b/foo
+> /b/foo # cat bar
+> baz
+> /b/foo # mv /a/foo /foo
+> /b/foo # cd ..     # <- We're now disconnected
+> bash: cd: ..: No such file or directory
+> /b/foo # cat bar
+> baz                # <- but landlock still lets us read the file
+> 
+> However, I think this patch will change this behavior due to the use of
+> path_connected
+> 
+> root@10a8fff999ce:/# mkdir a b
+> root@10a8fff999ce:/# mkdir a/foo
+> root@10a8fff999ce:/# echo baz > a/foo/bar
+> root@10a8fff999ce:/# mount --bind a b
+> root@10a8fff999ce:/# LL_FS_RO=/ LL_FS_RW=/ ./sandboxer bash
+> Executing the sandboxed command...
+> bash: cannot set terminal process group (191): Inappropriate ioctl for device
+> bash: no job control in this shell
+> root@10a8fff999ce:/# cd /b/foo
+> root@10a8fff999ce:/b/foo# cat bar
+> baz
+> root@10a8fff999ce:/b/foo# mv /a/foo /foo
+> root@10a8fff999ce:/b/foo# cd ..
+> bash: cd: ..: No such file or directory
+> root@10a8fff999ce:/b/foo# cat bar
+> cat: bar: Permission denied
 
-It's good that the iterator is extensible, but to achieve that
-there is no need to introduce "enum bpf_path_iter_mode"
-which implies some unknown walk patterns.
-Just add "u64 flags" to bpf_iter_path_new() and
-if (!flags) return -EINVAL;
-Then we'll have a way to extend that kfunc if really necessary.
-Deleting and introducing new kfuncs/iterators is not a big deal,
-but reserving 'flags' as an option for extension is almost
-always a good backup.
+This is a good test case, we should add a test for that.
+
+> 
+> I'm not sure if the original behavior was intentional, but since this
+> technically counts as a functional changes, just pointing this out.
+
+This is indeed an issue.
+
+> 
+> Also I'm slightly worried about the performance overhead of doing
+> path_connected for every hop in the iteration (but ultimately it's
+> Mickaël's call).
+
+Yes, we need to check with a benchmark.  We might want to keep the
+walker_path.dentry == walker_path.mnt->mnt_root check inlined.
+
+> At least for Landlock, I think if we want to block all
+> access to disconnected files, as long as we eventually realize we have
+> been disconnected (by doing the "if dentry == path.mnt" check once when we
+> reach root), and in that case deny access, we should be good.
+> 
+> 
+> > @@ -918,12 +915,15 @@ static bool is_access_to_paths_allowed(
+> >  				allowed_parent1 = true;
+> >  				allowed_parent2 = true;
+> >  			}
+> > +			goto walk_done;
+> > +		case PATH_PARENT_SAME_MOUNT:
+> >  			break;
+> > +		default:
+> > +			WARN_ON_ONCE(1);
+> > +			goto walk_done;
+> >  		}
+> > -		parent_dentry = dget_parent(walker_path.dentry);
+> > -		dput(walker_path.dentry);
+> > -		walker_path.dentry = parent_dentry;
+> >  	}
+> > +walk_done:
+> >  	path_put(&walker_path);
+> >  
+> >  	if (!allowed_parent1) {
+> 
+> 
