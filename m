@@ -1,197 +1,367 @@
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5062F189BB5;
-	Mon,  2 Jun 2025 18:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA9786344
+	for <linux-security-module@vger.kernel.org>; Mon,  2 Jun 2025 19:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748889305; cv=none; b=fXxVQq9RJuzPp3IfhQgl3ENKqdB0eYS+LnYQ1JVFrMh5xDvFCtHobr0wyg94AKQ3rmX0UaO7Tn+HJIyq29NqljoBfwiioGmc1pz+WFt862rOndiOtyp8PhDZBqYdg0aKJmO0AbEpk3RDzxSyDwwAlq0c3q4lmjFHbyDPhX6uaRg=
+	t=1748893820; cv=none; b=aHrDhbFlTgQiCB/q6bnDIYuy5ZURT+gRoZrGsEIa3OXO7gqhMAIYNYyudJq0iPV0ir9TNVMp5JYqKMD1PWakncnFNmJJA7vOxrzV51xLMVzaWFuRiI0FqmQsHGk9eO6nrAjKUf+rNDMW8+4PLiNKom8SE8FuJoD9qWK/Quso8DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748889305; c=relaxed/simple;
-	bh=iHlLB+RmFUnxHCi50zvVGUkC472y6iP0nCH5Al9LE14=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WudtD1fT/An6COUZDFzVfDnMwUVpJ0AagF32DD+hPmd+ood/dWWcpIH6E9iyJuCB/Nqcpk587692RPeH82KC0Ikwqv9C3ypSD1OiHqe+LZv9Xvp+uZWdNmfSrVw5ponZdDi1Qi4gpHde3m0TpF0VhFQ/S6mPcXgZ8/2G2OraSqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=weUB4Ryr; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+	s=arc-20240116; t=1748893820; c=relaxed/simple;
+	bh=LvjI3LlrJ7Zg8g/bvkhfT77RSUtEJJu91dKXfvWV9xw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vCwYCxzbGq9qJsiLAB8ct6MTLSnq/r88ST66cX2hBk3uTdrwjRnAasgAjwh0sYk8dPyTmw6RUMfkDFDS+29Tb8hSXyrKqXfAyo++aVCnDfrfMUoNMgoCgO1skp8QJkrCulywNFEXilCPxiwZsKiqzAHf2HlhnzkjcGiulKy8gn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Nwt2zGNH; arc=none smtp.client-ip=45.157.188.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="weUB4Ryr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1748889300;
-	bh=iHlLB+RmFUnxHCi50zvVGUkC472y6iP0nCH5Al9LE14=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=weUB4Ryr3sGuns0Rk7aUUZLyTNpMn9bsofd/bfDsjpPh/qukFAhK2F+dXCsw73+Qd
-	 vp7FP/v/fe5jqy/JjZEmMWGHcsfE9JaLINY9LW/LJEZ/1Tno/mOVAmyWYnO3PRDK0S
-	 cjcoBBMyDGTvG5dLQHddIS54301yAhLBnh+sZTw8=
-Received: from [IPv6:2601:5c4:4302:c21::a774] (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id BB70C1C032D;
-	Mon, 02 Jun 2025 14:34:59 -0400 (EDT)
-Message-ID: <948f5567fe4d9ae39aa2528965f123e42bf82b46.camel@HansenPartnership.com>
-Subject: Re: [PATCH RFC 1/1] module: Make use of platform keyring for module
- signature verify
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-modules@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>, David
- Woodhouse <dwmw2@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Luis
- Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami
- Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>,
- Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
- <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Peter Jones
- <pjones@redhat.com>, Robert Holmes <robeholmes@gmail.com>, Jeremy Cline
- <jcline@redhat.com>, Coiby Xu <coxu@redhat.com>, Gerd Hoffmann
- <kraxel@redhat.com>
-Date: Mon, 02 Jun 2025 14:34:58 -0400
-In-Reply-To: <20250602132535.897944-2-vkuznets@redhat.com>
-References: <20250602132535.897944-1-vkuznets@redhat.com>
-	 <20250602132535.897944-2-vkuznets@redhat.com>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Nwt2zGNH"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bB4FC26XWzqYJ;
+	Mon,  2 Jun 2025 21:50:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1748893807;
+	bh=5GQQN+NjntWY+myNEGiXiKp8coqtI5e0IA60BofR/68=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Nwt2zGNHhtgn3etlMdIHz2umrb9QdUHUcWahHtDvfyZP7HV3Swx/wOhfeFE2m0PDj
+	 xsvLKfGGKTBBv0mxW6ZOceHyCENeUM5oLGnxuf4ETovA4uj4Gu6bhxswkoJ1wW4r/e
+	 LMJDpET52PXMBA8jKEVD17OO9jRn1YBNkN6ZOfSw=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bB4FB38Y5zMJ5;
+	Mon,  2 Jun 2025 21:50:06 +0200 (CEST)
+Date: Mon, 2 Jun 2025 21:50:05 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Jann Horn <jannh@google.com>
+Subject: Re: [RFC PATCH 02/10] landlock/hash: define (dynamic, non-resizable)
+ hash table helpers
+Message-ID: <20250602.uBai6ge5maiw@digikod.net>
+References: <cover.1747836146.git.m@maowtm.org>
+ <8b4d0d2f691e36507d5ad80ad4203c29ac6f216c.1747836146.git.m@maowtm.org>
+ <20250526.quec3Dohsheu@digikod.net>
+ <97fdaef3-1fe4-4aa2-a116-11d3864f0ba8@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <97fdaef3-1fe4-4aa2-a116-11d3864f0ba8@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On Mon, 2025-06-02 at 15:25 +0200, Vitaly Kuznetsov wrote:
-> This patch complements commit 278311e417be ("kexec, KEYS: Make use of
-> platform keyring for signature verify") and commit 6fce1f40e951
-> ("dm verity: add support for signature verification with platform
-> keyring")
-> and allows for signing modules using keys from SecureBoot 'db'. This
-> may
-> come handy when the user has control over it, e.g. in a virtualized
-> or a
-> cloud environment.
->=20
-> Suggested-by: Robert Holmes <robeholmes@gmail.com>
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
-> =C2=A0Documentation/admin-guide/module-signing.rst |=C2=A0 6 ++++++
-> =C2=A0kernel/module/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 11 +++++++++++
-> =C2=A0kernel/module/signing.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 9 ++++++++-
-> =C2=A0security/integrity/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 2 +-
-> =C2=A04 files changed, 26 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Documentation/admin-guide/module-signing.rst
-> b/Documentation/admin-guide/module-signing.rst
-> index a8667a777490..44ed93e586b9 100644
-> --- a/Documentation/admin-guide/module-signing.rst
-> +++ b/Documentation/admin-guide/module-signing.rst
-> @@ -118,6 +118,12 @@ This has a number of options available:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 additional certificates which will be incl=
-uded in the system
-> keyring by
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default.
-> =C2=A0
-> + (5) :menuselection:`Use .platform keyring for verifying kernel
-> modules signatures`
-> +=C2=A0=C2=A0=C2=A0=C2=A0 (``CONFIG_MODULE_SIG_PLATFORM``)
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0 This option additionally allows modules to be s=
-igned with a key
-> present
-> +=C2=A0=C2=A0=C2=A0=C2=A0 in ``.platform`` keyring, e.g. a SecureBoot 'db=
-' key.
-> +
-> =C2=A0Note that enabling module signing adds a dependency on the OpenSSL
-> devel
-> =C2=A0packages to the kernel build processes for the tool that does the
-> signing.
-> =C2=A0
-> diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
-> index 39278737bb68..f1b85c14548a 100644
-> --- a/kernel/module/Kconfig
-> +++ b/kernel/module/Kconfig
-> @@ -340,6 +340,17 @@ config MODULE_SIG_HASH
-> =C2=A0	default "sha3-384" if MODULE_SIG_SHA3_384
-> =C2=A0	default "sha3-512" if MODULE_SIG_SHA3_512
-> =C2=A0
-> +config MODULE_SIG_PLATFORM
-> +	bool "Use .platform keyring for verifying kernel modules
-> signatures"
-> +	depends on INTEGRITY_PLATFORM_KEYRING
-> +	depends on MODULE_SIG
-> +	help
-> +	=C2=A0 When selected, keys from .platform keyring can be used for
-> verifying
-> +	=C2=A0 modules signatures. In particular, this allows to use UEFI
-> SecureBoot
-> +	=C2=A0 'db' for verification.
-> +
-> +	=C2=A0 If unsure, say N.
-> +
-> =C2=A0config MODULE_COMPRESS
-> =C2=A0	bool "Module compression"
-> =C2=A0	help
-> diff --git a/kernel/module/signing.c b/kernel/module/signing.c
-> index a2ff4242e623..3327e7243211 100644
-> --- a/kernel/module/signing.c
-> +++ b/kernel/module/signing.c
-> @@ -61,10 +61,17 @@ int mod_verify_sig(const void *mod, struct
-> load_info *info)
-> =C2=A0	modlen -=3D sig_len + sizeof(ms);
-> =C2=A0	info->len =3D modlen;
-> =C2=A0
-> -	return verify_pkcs7_signature(mod, modlen, mod + modlen,
-> sig_len,
-> +	ret =3D verify_pkcs7_signature(mod, modlen, mod + modlen,
-> sig_len,
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 VERIFY_USE_SECONDARY_KEYRING,
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 VERIFYING_MODULE_SIGNATURE,
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 NULL, NULL);
-> +	if (ret =3D=3D -ENOKEY &&
-> IS_ENABLED(CONFIG_MODULE_SIG_PLATFORM)) {
-> +		ret =3D verify_pkcs7_signature(mod, modlen, mod +
-> modlen, sig_len,
-> +				VERIFY_USE_PLATFORM_KEYRING,
-> +				VERIFYING_MODULE_SIGNATURE,
-> +				NULL, NULL);
-> +	}
-> +	return ret;
-> =C2=A0}
+On Mon, Jun 02, 2025 at 02:20:08PM +0100, Tingmao Wang wrote:
+> On 5/27/25 12:00, Mickaël Salaün wrote:
+> > On Wed, May 21, 2025 at 08:31:58PM +0100, Tingmao Wang wrote:
+> >> While there is already include/linux/hash.h, it relies on the static size
+> >> of the array as the size of the hash table, and thus is inconvenient to
+> >> use for this case where we dynamically compute how many slots we need.
+> >>
+> >> There is also the relativistic hash tables in rhashtable.h which supports
+> >> dynamic resizes etc, but is more complicated and might be slower to access?
+> >>
+> >> However, on second thought, I'm wondering if we should just use hash
+> >> tables for both domain and a not-yet-merged ruleset anyway (which saves us
+> >> from having a union in landlock_rule).  If we do that then we should
+> >> indeed just use rhashtable.
+> >
+> > Thinking more about it, the important properties are that we can have a
+> > lot of domains/tables (i.e. sandboxed processes) with a few
+> > entries/rules (e.g. ~30 rules seems reasonable for now).  We should then
+> > try to minimize the total amount of memory while still making access
+> > checks quick.  As you noted, the cost of hashing should also not be
+> > ignored.
+> >
+> > Instead of a hash table per domain, what about flat arrays with binary
+> > search?  Here is a proposal:
+> 
+> I think this makes sense in terms of reducing memory footprint.
+> 
+> My understanding of the Slab allocator is that objects are allocated in
+> power-of-two sized caches, so with a single-layer, 44 bytes landlock_rule,
+> we will still use 64 bytes.  Putting them in an array, especially with
+> your proposed structure, would reduce this.
+> 
+> I also checked how the allocations actually are distributed in the current
+> implementation.  Dumping the addresses of the landlock_rule objects
+> allocated and sorting them by the address, we see:
+> 
+> # env LL_FS_RO=/usr:/bin:/etc:/lib:/sys:/dev:/home/mao/.config:/home/mao/linux LL_FS_RW=/tmp:/proc:/dev/tty:/dev/null:/dev/zero \
+> > ./sandboxer bash
+> Executing the sandboxed command...
+> bash: /home/mao/.bashrc: Permission denied
+> mao@linux-devbox-vm:~$ cat /proc/dump_landlock_domain
+> Ruleset: ffff9268489451e0
+>   Inode tree:
+>     ffff92684e767100: inode 5374060 in fs ext4
+>     ffff92684e767380 (+640 (rule itself was 44 bytes)): inode 2883604 in fs ext4
+>     ffff92684e767440 (+192 (rule itself was 44 bytes)): inode 2883992 in fs ext4
+>     ffff92684e767580 (+320 (rule itself was 44 bytes)): inode 11 in fs devtmpfs
+>     ffff92684e767740 (+448 (rule itself was 44 bytes)): inode 5377989 in fs ext4
+>     ffff92684e767800 (+192 (rule itself was 44 bytes)): inode 1 in fs devtmpfs
+>     ffff92684e7678c0 (+192 (rule itself was 44 bytes)): inode 1 in fs tmpfs
+>     ffff92684e767980 (+192 (rule itself was 44 bytes)): inode 6 in fs devtmpfs
+>     ffff92684e767b40 (+448 (rule itself was 44 bytes)): inode 4 in fs devtmpfs
+>     ffff92684e767bc0 (+128 (rule itself was 44 bytes)): inode 2883585 in fs ext4
+>     ffff92684e767c40 (+128 (rule itself was 44 bytes)): inode 1 in fs sysfs
+>     ffff92684e767cc0 (+128 (rule itself was 44 bytes)): inode 6815745 in fs ext4
+>     ffff92684e767f80 (+704 (rule itself was 44 bytes)): inode 1 in fs proc
+> 
+> Note: source code for this at
+> https://github.com/micromaomao/linux-dev/commit/16c318fcbc64c23b87ca67836771f710d0d0ccf1
+> 
+> (this is a typical result out of several repeat runs)
+> (KASLR etc disabled, no_hash_pointers)
+> 
+> Because all landlock rules are copied at domain creation time, I
+> previously thought that they are likely to be allocated close together
+> (perhaps there will be some fragmentation due to a ruleset extending an
+> existing rule in the parent domain), but it looks like they are still
+> spreaded out a bit for some reason, and if the allocations are sparse
+> during domain creation time, this situation won't fix itself and could
+> slow down all access checks.  (Maybe on a single core system, with nothing
+> else touching the kmem cache when the domain is being merged, they would
+> be allocated together?)
+> 
+> I'm not sure about the performance of binary search vs rbtrees. I can see
+> that the improved locality should help, but going by my benchmark of the
+> hashtable domains, I'm not sure how much of a difference it make, and
+> whether it would be worth the added complexity.  I could try implementing
+> this flat array + binary search approach and run the existing benchmarks
+> on it tho (but as of writing this I haven't).
 
-I don't think this is the correct way to do it.  If, as you say, db is
-controlled by the end user and therefore has trusted contents, then I
-think you want to update certs/system_keyring.c to link the platform
-keyring into the secondary trusted one (like it does today for the
-machine keyring), so it can be used by *every* application that checks
-keyrings rather than just modules.
+Yes, I think binary search would be enough, taking into account the
+cache.
 
-Also, are you sure a config option is the right thing?  Presumably Red
-Hat wants to limit its number of kernels and the design of just linking
-the machine keyring (i.e. MoK) was for the use case where trust is
-being pivoted away from db by shim, so users don't want to trust the db
-keys they don't control.  If the same kernel gets used for both
-situations (trusted and untrusted db) you might want a runtime means to
-distinguish them.
+> 
+> >
+> > struct landlock_domain_index {
+> >     union landlock_key key;
+> >     u32 shift; // value to add to this array's index to jump to the set
+> >                // of mapped landlock_layer
+> 
+> Can you clarify the comment?  Is it the index into the layers array, or
+> are you suggesting adding the index of the current landlock_domain_index
+> with this shift value, and use that to index into the layers array?
 
-Regards,
+I was suggesting the later but thinking out loud this doesn't help much,
+we can just use an "u32 rule_index" (instead of the "shift") to jump to
+the layers array.
 
-James
+> 
+> While it's probably an unlikely situation, what if there are more than
+> 2^29 rules, each having 16 layers?  I think that would overflow this u32
+> even if it is an offset, and this is allowed as LANDLOCK_MAX_NUM_RULES is
+> currently defined as U32_MAX.
 
+Correct.  We can either use u64 or reduce the maximum number of rules.
+I think LANDLOCK_MAX_NUM_RULES set to U16_MAX would be much more than
+the worse practical case.  Even if one buggy policy tries to add one
+rule per network port, that will be OK.  We could even reasonably test
+this limit.  We'll need to backport this change but I'm OK with that.
+
+> 
+> (Unrelated to this patch, but I think once we have the supervise feature
+> in, I can see a (probably badly implemented) supervisor getting close to
+> this limit if the sandboxed application creates / delete and recreates
+> lots of temporary files under /tmp)
+> 
+> >     u32 num_layers;
+> > }; // 128-bit (or 96-bit) alligned
+> 
+> I guess this has to be 128 bits aligned if we have an u32 num_layers.
+> Because we allow 16 layers, if we make it an u16, it would actually need
+> to be the number of layers minus 1.  However maybe that is
+> overcomplicating it and we should just make this 128 bits aligned
+> (otherwise we have to deal with unaligned reads of the
+> landlock_key->object too).
+
+I was thinking about the size on a 32-bit architecture.
+
+> 
+> >
+> > // Theoretical landlock_domain
+> > struct landlock_domain {
+> >     struct landlock_hierarchy *hierarchy;
+> >     union {
+> >         // See landlock_ruleset's union
+> >     };
+> >     u32 num_fs; // number of FS indexes
+> >     u32 num_net; // number of net indexes
+> >     struct access_masks access_masks[];
+> >     struct landlock_domain_index fs_indexes[num_fs];
+> >     struct landlock_layer fs_layers[sum of FS rules' layers];
+> >     struct landlock_domain_index net_indexes[num_net];
+> >     struct landlock_layer net_layers[sum of net rules' layers];
+> > };
+> 
+> (Unrelated to this patch specifically, but I would probably like to use
+> this domain struct for the mutable part of a domain as well later.  In
+> that case the hierarchy pointer would be unused.)
+
+OK, you can create two types.
+
+> 
+> >
+> > // Real landlock_domain
+> > struct landlock_domain {
+> >     struct landlock_hierarchy *hierarchy;
+> >     union {
+> >         // See landlock_ruleset's union
+> >     };
+> >     u32 num_fs; // number of FS indexes
+> >     u32 num_net; // number of net indexes
+> >     u32 rules[]; // underlying typed arrays accessed via helpers
+> > };
+> >
+> > The landlock_domain is a contiguously allocated memory buffer containing
+> > variable-size arrays improving locality.  Another advantage is that we
+> > would not get any potential allocation errors once the buffer is
+> > allocated which should simplify domain creation.  Also, we avoid the
+> > union in landlock_rule (patch 5) and only use landlock_rule in
+> > landlock_ruleset.
+> 
+> I think doing this definitely has positives especially in terms of memory,
+> however I'm worried about the complexity here.  Since we will have to do
+> various index calculation and use it to access variable-sized arrays, I'm
+> somewhat afraid that any mistake could end up either leaking kernel
+> pointers, or at worst, memory corruption.
+
+Yes, packing this is a bit complex.  We could allocate a buffer and use
+pointers+lenght but I'm not sure it will be safer.  Any other
+suggestion?
+
+> 
+> We should probably have a len_rules, and check (WARN_ON_ONCE and if fails
+> returns -EINVAL) that any computed indices lies within range before
+> accessing it.
+
+Definitely.
+
+> 
+> >
+> > An alternative approach would be to use a hash table instead of the
+> > array (extending landlock_domain_index with a pointer/shift to the next
+> > collision) but still with this big buffer.  I'm not sure the perf impact
+> > would be noticable but it might be worse a try.
+> 
+> I can give that a try too and measure benchmarks.
+
+What worries me about hash tables is the size they can take.  With
+Landlock, we can have a lot of domains, and we should try to keep them
+as small as possible.  I don't think a small hash table with a lot of
+potential collisions would perform better than a binary search.  I
+suggest you ignore this hash table unless you want to compare
+performance (with a hash table + extra the same size as a flat array).
+
+> 
+> BTW, going by the direction this discussion is going, I assume we're on
+> board with a separate landlock_domain, and don't plan to change how
+> unmerged landlock_ruleset are stored (at least for now)?
+
+Yes, let's focus on the domain data structure.  The ruleset's rbtree
+works fine and is not a performance issue.
+
+> If so I can
+> probably start work on quiet rules, removing access bits / rules by
+> intersect, etc as discussed in
+> https://github.com/landlock-lsm/linux/issues/44#issuecomment-2876500918
+
+Yes please.
+
+> 
+> >
+> >>
+> >> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> >> ---
+> >>  security/landlock/hash.h | 117 +++++++++++++++++++++++++++++++++++++++
+> >>  1 file changed, 117 insertions(+)
+> >>  create mode 100644 security/landlock/hash.h
+> >>
+> >> diff --git a/security/landlock/hash.h b/security/landlock/hash.h
+> >> new file mode 100644
+> >> index 000000000000..955c5756d4d9
+> >> --- /dev/null
+> >> +++ b/security/landlock/hash.h
+> >> @@ -0,0 +1,117 @@
+> >> +/* SPDX-License-Identifier: GPL-2.0-only */
+> >> +/*
+> >> + * Landlock - Domain hashtable mainpulation
+> >
+> > typo
+> 
+> ack
+> 
+> >
+> >> + *
+> >> + * Copyright © 2025      Tingmao Wang <m@maowtm.org>
+> >> + */
+> >> +
+> >> +#ifndef _SECURITY_LANDLOCK_HASH_H
+> >> +#define _SECURITY_LANDLOCK_HASH_H
+> >> +
+> >> +#include <linux/slab.h>
+> >> +#include <linux/hash.h>
+> >> +
+> >> +#include "ruleset.h"
+> >> +
+> >> +struct landlock_hashtable {
+> >> +	struct hlist_head *hlist;
+> >
+> > A simple linked-list would be enough.
+> 
+> I'm not sure I understand what you meant by a "simple linked-list" - do
+> you mean like an array of `landlock_rule`s, each itself is part of a
+> linked list of all the rules that hashed to the same key?
+
+hlist_node has two pointers but we would only need one here.
+
+> 
+> Anyway, since we identified a flat array approach (whether we hash or
+> binary search), I'm gonna try that instead.
+
+Right
+
+> 
+> >
+> >> +
+> >> +	/**
+> >> +	 * @hash_bits: Number of bits in this hash index (i.e.  hlist has
+> >> +	 * 2^this many elements).
+> >> +	 */
+> >> +	int hash_bits;
+> >> +};
+> >> +
+> >> +#define landlock_hash_for_each(rule, ht, i)                \
+> >> +	for (i = 0; i < (1ULL << (ht)->hash_bits); i += 1) \
+> >> +		hlist_for_each_entry(rule, &(ht)->hlist[i], hlist)
+> >> +
+> >> +#define landlock_hash_for_each_safe(rule, tmp, ht, i)      \
+> >> +	for (i = 0; i < (1ULL << (ht)->hash_bits); i += 1) \
+> >> +		hlist_for_each_entry_safe(rule, tmp, &(ht)->hlist[i], hlist)
+> >> +
+> >> +static inline int landlock_hash_init(const size_t expected_num_entries,
+> >> +				     struct landlock_hashtable *out_ht)
+> >> +{
+> >> +	size_t table_sz = 1;
+> >
+> > Please use variables with full name when they are not too big:
+> > table_size in this case.
+> >
+> >> +	int hash_bits = 0;
+> >> +
+> >> +	if (likely(expected_num_entries > 0)) {
+> >> +		table_sz = roundup_pow_of_two(expected_num_entries);
+> >
+> > With roundup_pow_of_two() we'll get a few collisions but a big table.
+> > What would be the impact of using roundup_pow_of_two() instead to have a
+> > compact hash table (with more collisions)?
+> 
+> I assume you meant using rounddown_pow_of_two - I can give it a quick test
+> too with the flat array approach.
+
+Yes, I meant rounddown_pow_of_two, but I don't think it will outperform
+the (small) flat array.
