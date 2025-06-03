@@ -1,100 +1,115 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D584D819;
-	Tue,  3 Jun 2025 00:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8355120E32D;
+	Tue,  3 Jun 2025 06:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748909434; cv=none; b=RB2lIu4DJ2DqQBg7lz3FNhq/c2HBrFz7m1dNAYY1La9wD7d9/xb10ksxPCUmv8LiuQApXlyQPKS0bLS3H8ji0xgsggftXWw+Qp+qUjCa/dAvg2lNmjFQ67ijTXN2ZHmW/ol2InQu+em7oIjz/FWDjFipYE1qzq0LhrdnfVZ3oeE=
+	t=1748933972; cv=none; b=lz3GFBQAuxWTLuq3TRmfdhcuEFtAx2COUjS4L1k+9O2/51OS7/7H+/bAP6wwJ+XzTqxYcLm5Ra/LEYSZnWwOGOgGwgL1xp9fAt/6b70jCXzuwKtEzmfs72GezNjvzHl9PBtjzswD3eJcTrdGOWGW+fR9ZxkeFG9wyVj7Q/lkV/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748909434; c=relaxed/simple;
-	bh=uGA87I1mzavJRknA7wPlXknnnkn0qXVAM2+9h4xZdC0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ApZan4pT7+HuVuf4WfvnMjGGM37TW4QyUlh8MbFcd/sqvyAXxiZFMad+VSpMlnWIHetbF7WP2fLYdJsBpGucRCLMhyYKbGghJX5VGI3qqOo/B+C5DFftHI2qKlmWZLRcDyNUEKKgRmRAGw4U4Hy6riO6YTsbkT7gD8eq2IBsQl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rDIBmkBm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748933972; c=relaxed/simple;
+	bh=+akWN80P23osFI4jBQah02ZSssvWbJBzc1gByS55lTU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gnUz3x2B8/1CQWnHBAeXt5JD5R3iUmzfjWYjMCqes67rr83KXnM0P98i7lS1JTwc3vwn5FyfgyPi6IcFPj5vw7D50uOD0YKkzth0vOqkEMj8iGIU6kRWBzS23j0Y/tiVpElzQTGr5oFZ8jkodzGEfQ3ZtPW74Mo18G0kO580KPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pFHxf26k; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rDIBmkBm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37321C4CEF7;
-	Tue,  3 Jun 2025 00:10:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFHxf26k"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D75B9C4CEED;
+	Tue,  3 Jun 2025 06:59:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748909433;
-	bh=uGA87I1mzavJRknA7wPlXknnnkn0qXVAM2+9h4xZdC0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rDIBmkBml9LGAH+EERUP1TXhNPosTbFb5/Ogdf0dzbwyEbxWZg6P3QLXmnhroca6n
-	 5RjhB6MdDh9kBhshdEgPSo03fpN2cXr55y+WGbQJ3fFCA0VBJBQrL/+CVDMEvR1HkF
-	 EWp3Jt00jtrnYxHMhCLh8X69DQPwDj872kwlDiDhGteRfR8nXm3BN6fBomXQN1uO+6
-	 GMyKu3loDHvU8xbEgzA7B+IEy3Vy6YOVHWUiOzgNQ0Gqq8pC9zdEGr3AFFRP7wWQTC
-	 xyvbcZKRzXamMCicJ/thyjN+AZWFtmnIctaVhmDzXOt9y/RjEquQ/GciVL80SUxOyl
-	 VtfqGAUBxvurw==
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4a44b0ed780so37297141cf.3;
-        Mon, 02 Jun 2025 17:10:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV/McKiFQGcXaqQ9ArVAnKiuvSRp+jYvg6SqFf759kgCbOa7qgH5fVsmKyKFDRCaNg2cO0JpSRFfgN8xeJP3w==@vger.kernel.org, AJvYcCVr1EofXWiejC9tpZTvNYSn4dWIhFV0Xv/tcgTRn1K8Lmd1I2tCtbOkh4tsav3eVOhLpGDq+R2hvAmx0NRWuZcJzHs8ilUK@vger.kernel.org, AJvYcCWhBo2s33WSEpHWDnjYUj1QmRaRYoMSwiI+9oiJkF8ldN/U8YDhw7pNqGBuSPabnji1c3U=@vger.kernel.org, AJvYcCXABFE48RtUf7un9KhiM1JA0G0W1Rkda0zgdnfIQQ3mwkL9H865JtLJNSPVHQ792f5B20PXc3MIjoIgytX2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRfqDxGR5hRFYIn0+KooqDL3Evy9xJHDkvCuBQ6F38QwuBjSId
-	16LvpKNOpFK8WuErdwE8mDuUdo7lb9hGAW7erpROvg5fF8Mula+sFC/qrNKjkJN+FMh2cA/ILZF
-	5PUd365yiqTr0ULTITbXaW+J3u5m56Bc=
-X-Google-Smtp-Source: AGHT+IGLoWOMZqwgUhv/sbLHWl18RR1cYj5R8+PiGfLfXkdenx2MxtCZSCErWxDOzCQYqDhrdQ8b5fX+Q0Un1ay+z+s=
-X-Received: by 2002:a05:622a:2618:b0:4a3:d015:38b4 with SMTP id
- d75a77b69052e-4a443fa39b3mr247970341cf.34.1748909432291; Mon, 02 Jun 2025
- 17:10:32 -0700 (PDT)
+	s=k20201202; t=1748933971;
+	bh=+akWN80P23osFI4jBQah02ZSssvWbJBzc1gByS55lTU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pFHxf26kCaVBR5zXauIc3GJj/hBlYDGbkHkTjOVu7yMeLNAk9K9ixFnVYoE4rj2kc
+	 5F4+Gbdj+ckyuqxuow7YdDKiBhwAIg5t7IsDFJePC0+OlXeTatKouiwwA7AX3lmBij
+	 lUeHIan5uH2uDi+jWGfKJjayVitQAw8f9UpSjpfInSebzqu2dTZ//mcPZ7mTharpFt
+	 /qoFVG/NOkPlXqZa3rxzsO0Nps2c/PpdCAZdiH+C3WSfYvwGjwKB+1LE9HjbYxb257
+	 y5oWPfolYNsW0HJZSsWWTHsP+6XDWxCzgw0Cip3ig5MgbybQSEXCB1k8g7xdY5iLxD
+	 Fh3QOEatZwipQ==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: kernel-team@meta.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	kpsingh@kernel.org,
+	mattbobrowski@google.com,
+	amir73il@gmail.com,
+	repnop@google.com,
+	jlayton@kernel.org,
+	josef@toxicpanda.com,
+	mic@digikod.net,
+	gnoack@google.com,
+	m@maowtm.org,
+	Song Liu <song@kernel.org>
+Subject: [PATCH v2 bpf-next 0/4] bpf path iterator
+Date: Mon,  2 Jun 2025 23:59:16 -0700
+Message-ID: <20250603065920.3404510-1-song@kernel.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528222623.1373000-1-song@kernel.org> <20250528222623.1373000-3-song@kernel.org>
- <027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org> <CAPhsuW5BhAJ2md8EgVgKM4yiAgafnhxT9aj_a4HQkr=+=vug-g@mail.gmail.com>
-In-Reply-To: <CAPhsuW5BhAJ2md8EgVgKM4yiAgafnhxT9aj_a4HQkr=+=vug-g@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Mon, 2 Jun 2025 17:10:21 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW6W+HR8BOVTCbM+AVYCEzuoSR21RWUpaEE0xvOpv8Zbog@mail.gmail.com>
-X-Gm-Features: AX0GCFuQUdKGxM2HVyeibXvrobPM4KaUyLZSwqxHa7AxJ_JG5qW3H7aNcTpNlR8
-Message-ID: <CAPhsuW6W+HR8BOVTCbM+AVYCEzuoSR21RWUpaEE0xvOpv8Zbog@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 2/4] landlock: Use path_parent()
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com, 
-	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, 
-	josef@toxicpanda.com, gnoack@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 2, 2025 at 6:36=E2=80=AFAM Song Liu <song@kernel.org> wrote:
->
-> On Sat, May 31, 2025 at 6:51=E2=80=AFAM Tingmao Wang <m@maowtm.org> wrote=
-:
-> [...]
-> > I'm not sure if the original behavior was intentional, but since this
-> > technically counts as a functional changes, just pointing this out.
->
-> Thanks for pointing it out! I think it is possible to keep current
-> behavior. Or we can change the behavior and state that clearly
-> in the commit log. Micka=C3=ABl, WDYT?
->
-> >
-> > Also I'm slightly worried about the performance overhead of doing
-> > path_connected for every hop in the iteration (but ultimately it's
-> > Micka=C3=ABl's call).  At least for Landlock, I think if we want to blo=
-ck all
->
-> Maybe we need a flag to path_parent (or path_walk_parent) so
-> that we only check for path_connected when necessary.
+In security use cases, it is common to apply rules to VFS subtrees.
+However, filtering files in a subtree is not straightforward [1].
 
-More thoughts on path_connected(). I think it makes sense for
-path_parent (or path_walk_parent) to continue walking
-with path_connected() =3D=3D false. This is because for most security
-use cases, it makes sense for umounted bind mount to fall back
-to the permissions of the original mount OTOH, it also makes sense
-for follow_dotdot to reject this access at path lookup time. If the
-user of path_walk_parent decided to stop walking at disconnected
-path, another check can be added at the caller side.
+One solution to this problem is to start from a path and walk up the VFS
+tree (towards the root). Among in-tree LSMs, Landlock uses this solution.
 
-If there are no objections, I will remove the path_connected check
-from path_walk_parent().
+BPF LSM solutions, such like Tetragon [2], also use similar approaches.
+However, due to lack of proper helper/kfunc support, BPF LSM solutions
+usually do the path walk with probe read, which is racy.
 
-Thanks,
-Song
+This patchset introduce a reliable helper path_walk_parent, which walks
+path to its VFS parent. The helper is use in Landlock.
+
+A new BPF iterator, path iterator, is introduced to do the path walking.
+The BPF path iterator uses the new path_walk_parent help to walk the VFS
+tree.
+
+Changes v1 => v2:
+1. Rename path_parent => path_walk_parent.
+2. Remove path_connected check in path_walk_parent.
+3. Fix is_access_to_paths_allowed().
+4. Remove mode for path iterator, add a flag instead.
+
+v1: https://lore.kernel.org/bpf/20250528222623.1373000-1-song@kernel.org/
+
+
+[1] https://lpc.events/event/18/contributions/1940/
+[2] https://github.com/cilium/tetragon/
+
+Song Liu (4):
+  namei: Introduce new helper function path_walk_parent()
+  landlock: Use path_walk_parent()
+  bpf: Introduce path iterator
+  selftests/bpf: Add tests for bpf path iterator
+
+ fs/namei.c                                    |  52 +++++++
+ include/linux/namei.h                         |   2 +
+ kernel/bpf/Makefile                           |   1 +
+ kernel/bpf/helpers.c                          |   3 +
+ kernel/bpf/path_iter.c                        |  58 ++++++++
+ kernel/bpf/verifier.c                         |   5 +
+ security/landlock/fs.c                        |  31 ++--
+ .../testing/selftests/bpf/bpf_experimental.h  |   6 +
+ .../selftests/bpf/prog_tests/path_iter.c      |  12 ++
+ tools/testing/selftests/bpf/progs/path_iter.c | 134 ++++++++++++++++++
+ 10 files changed, 283 insertions(+), 21 deletions(-)
+ create mode 100644 kernel/bpf/path_iter.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/path_iter.c
+ create mode 100644 tools/testing/selftests/bpf/progs/path_iter.c
+
+--
+2.47.1
