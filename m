@@ -1,45 +1,48 @@
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5822F22
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Jun 2025 17:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD401DF748;
+	Wed,  4 Jun 2025 17:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749057339; cv=none; b=r21SLf2pms4HA65gUP2WWoCQnDI9UCkJiLMuSfVF5kUji7Ah4amMu0oyKG4mZHyHSNvVHSORm1nt0majL1c24VdaKV+gl515hD0q8i8zG8bhtd6+UWfBvFUbT/zk0HIf0bdeK88Dn4VgPSkgzyclkQYecvHQl8suWdwiP/0Jfkc=
+	t=1749057761; cv=none; b=HZqXYSH58feFkHvDlunyjznytakfwjwUC6lMLkRUW4qGG8HH4o+sp1ylbWmbBWYe9XzBwraYYAgkHrInCbxkKxe/mZv4Sa5PvYCPp5GYUknZSlLzhZNZmkYutxAXMbMRECV2xkYvfyDNZTF9eztaO1o0uc+c4Ahs98OoXM4dLYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749057339; c=relaxed/simple;
-	bh=cIQqfZXoKhydcbMbrv4+UkJcjH1YVXRvwaPw2/nCtrA=;
+	s=arc-20240116; t=1749057761; c=relaxed/simple;
+	bh=ZlRUFj0GYPcvTtwRaPSKjGOIbkYz5m5DUWyk7cUFG8E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nsaFWBAxSbnksbuZrnN3CRMUnSOftR++E18YHX8ayB7wY0mfcNbMmGKLvL8sdjADCtft8cosNj9/KMqBf7eTSIDRYosX2QMbsj//uFi7xbavHQEcV055w+VDW/LJ4YoYtvqTKrrtXsLMP/3NseMGEkeLtmEbcAZuRUZe9mCmuPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=kTwjp75w; arc=none smtp.client-ip=84.16.66.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=p8LUeuKXAJxILjC7Vks2QHHZcd9R0hnnmqda1iES9zh5tisF9CZ389H0te5t6o771iAa6Viy42t4MVqwGozc8eJHasJooTx2arwz2XhBatrT9ghinS+GxfFLblSzyC/yULEOPKH/AVjGE/cukIsYHzkFqM4y+gBrlZ+T8C9qdbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GqT+LeMT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="kTwjp75w"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bCDjr15M2zRcP;
-	Wed,  4 Jun 2025 19:15:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1749057328;
-	bh=ASS5FXs8+B7pWw838kkGFm99zbv7aCt+80g4N+1hjJw=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GqT+LeMT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9778AC4CEE4;
+	Wed,  4 Jun 2025 17:22:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749057760;
+	bh=ZlRUFj0GYPcvTtwRaPSKjGOIbkYz5m5DUWyk7cUFG8E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kTwjp75wMXeEnSafPGtu7mO15XFGX/XAGgrqxxyzLphpcMD2QbbetqNUUq9leykte
-	 GRdkCE8ANBkCpPtJ4Y30i68KzitEqmu0qfz3LvFJ4Lt95a1C3oXDvAugSeai/u2TGe
-	 A5uN7gePUaDpwCYeCoCMc9c80qJFb4unWPrRGu+0=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bCDjq36jkzkCp;
-	Wed,  4 Jun 2025 19:15:27 +0200 (CEST)
-Date: Wed, 4 Jun 2025 19:15:26 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>
-Cc: Song Liu <song@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jan Kara <jack@suse.cz>, 
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/3] landlock: walk parent dir without taking
- references
-Message-ID: <20250604.ciecheo7EeNg@digikod.net>
-References: <cover.1748997840.git.m@maowtm.org>
- <8cf726883f6dae564559e4aacdb2c09bf532fcc5.1748997840.git.m@maowtm.org>
+	b=GqT+LeMTP3xW02EwM0DOgoJfU9/RmQzI0SMO5dHiEivtGwh038BiwoJsc0gzcQ+yy
+	 CJy2cZ+gOg6LWh7e8kxQT0d/6WVjv9UcOH1A7bKTWIDAG3yPawGWRU6pXsthg7T7HG
+	 giUWeUFeatGVAodEFpPDRMsmgCc2Nil50jfRjBDSXPKle+GJH6uo53WFdImnXiV1z8
+	 qT9k0tN5Fpn47y39OdXAhYcc9SKzwkL5nuHSv8941JfVBURcHFu7r8ZqAtR6CeeeEr
+	 /Z31SpOEA99dPcPMmO+DWs+NlybiQspRTpctORr5R7xfnB59FK2LnmC4NrWqMBslkV
+	 Db/iGjvimN+NQ==
+Date: Wed, 4 Jun 2025 19:22:32 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, repnop@google.com, 
+	Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, m@maowtm.org
+Subject: Re: [PATCH v2 bpf-next 3/4] bpf: Introduce path iterator
+Message-ID: <20250604-mitnahm-dreharbeiten-a13527b04b78@brauner>
+References: <20250603065920.3404510-1-song@kernel.org>
+ <20250603065920.3404510-4-song@kernel.org>
+ <CAADnVQLjvJCFjTiWpsBmfbyH5i88oq7yxjvaf+Th7tQANouA_Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -48,156 +51,62 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <8cf726883f6dae564559e4aacdb2c09bf532fcc5.1748997840.git.m@maowtm.org>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQLjvJCFjTiWpsBmfbyH5i88oq7yxjvaf+Th7tQANouA_Q@mail.gmail.com>
 
-On Wed, Jun 04, 2025 at 01:45:43AM +0100, Tingmao Wang wrote:
-> This commit replaces dget_parent with a direct read of d_parent. By
-> holding rcu read lock we should be safe in terms of not reading freed
-> memory, but this is still problematic due to move+unlink, as will be shown
-> with the test in the next commit.
+On Tue, Jun 03, 2025 at 08:13:18AM -0700, Alexei Starovoitov wrote:
+> On Mon, Jun 2, 2025 at 11:59 PM Song Liu <song@kernel.org> wrote:
+> >
+> > Introduce a path iterator, which reliably walk a struct path toward
+> > the root. This path iterator is based on path_walk_parent. A fixed
+> > zero'ed root is passed to path_walk_parent(). Therefore, unless the
+> > user terminates it earlier, the iterator will terminate at the real
+> > root.
+> >
+> > Signed-off-by: Song Liu <song@kernel.org>
+> > ---
+> >  kernel/bpf/Makefile    |  1 +
+> >  kernel/bpf/helpers.c   |  3 +++
+> >  kernel/bpf/path_iter.c | 58 ++++++++++++++++++++++++++++++++++++++++++
+> >  kernel/bpf/verifier.c  |  5 ++++
+> >  4 files changed, 67 insertions(+)
+> >  create mode 100644 kernel/bpf/path_iter.c
+> >
+> > diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+> > index 3a335c50e6e3..454a650d934e 100644
+> > --- a/kernel/bpf/Makefile
+> > +++ b/kernel/bpf/Makefile
+> > @@ -56,6 +56,7 @@ obj-$(CONFIG_BPF_SYSCALL) += kmem_cache_iter.o
+> >  ifeq ($(CONFIG_DMA_SHARED_BUFFER),y)
+> >  obj-$(CONFIG_BPF_SYSCALL) += dmabuf_iter.o
+> >  endif
+> > +obj-$(CONFIG_BPF_SYSCALL) += path_iter.o
+> >
+> >  CFLAGS_REMOVE_percpu_freelist.o = $(CC_FLAGS_FTRACE)
+> >  CFLAGS_REMOVE_bpf_lru_list.o = $(CC_FLAGS_FTRACE)
+> > diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+> > index b71e428ad936..b190c78e40f6 100644
+> > --- a/kernel/bpf/helpers.c
+> > +++ b/kernel/bpf/helpers.c
+> > @@ -3397,6 +3397,9 @@ BTF_ID_FLAGS(func, bpf_iter_dmabuf_next, KF_ITER_NEXT | KF_RET_NULL | KF_SLEEPAB
+> >  BTF_ID_FLAGS(func, bpf_iter_dmabuf_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
+> >  #endif
+> >  BTF_ID_FLAGS(func, __bpf_trap)
+> > +BTF_ID_FLAGS(func, bpf_iter_path_new, KF_ITER_NEW | KF_SLEEPABLE)
+> > +BTF_ID_FLAGS(func, bpf_iter_path_next, KF_ITER_NEXT | KF_RET_NULL | KF_SLEEPABLE)
+> > +BTF_ID_FLAGS(func, bpf_iter_path_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
+> >  BTF_KFUNCS_END(common_btf_ids)
+> >
+> >  static const struct btf_kfunc_id_set common_kfunc_set = {
+> > diff --git a/kernel/bpf/path_iter.c b/kernel/bpf/path_iter.c
+> > new file mode 100644
+> > index 000000000000..0d972ec84beb
+> > --- /dev/null
+> > +++ b/kernel/bpf/path_iter.c
 > 
-> Note that follow_up is still used when walking up a mountpoint.
-> 
-> Signed-off-by: Tingmao Wang <m@maowtm.org>
-> ---
->  security/landlock/fs.c | 40 ++++++++++++++++++++++------------------
->  1 file changed, 22 insertions(+), 18 deletions(-)
-> 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 6fee7c20f64d..923737412cfa 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -361,7 +361,7 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
->   * Returns NULL if no rule is found or if @dentry is negative.
->   */
->  static const struct landlock_rule *
-> -find_rule(const struct landlock_ruleset *const domain,
-> +find_rule_rcu(const struct landlock_ruleset *const domain,
->  	  const struct dentry *const dentry)
->  {
->  	const struct landlock_rule *rule;
-> @@ -375,10 +375,10 @@ find_rule(const struct landlock_ruleset *const domain,
->  		return NULL;
->  
->  	inode = d_backing_inode(dentry);
-> -	rcu_read_lock();
-> +	if (unlikely(!inode))
-> +		return NULL;
->  	id.key.object = rcu_dereference(landlock_inode(inode)->object);
->  	rule = landlock_find_rule(domain, id);
-> -	rcu_read_unlock();
->  	return rule;
->  }
->  
-> @@ -809,9 +809,11 @@ static bool is_access_to_paths_allowed(
->  		is_dom_check = false;
->  	}
->  
-> +	rcu_read_lock();
-> +
->  	if (unlikely(dentry_child1)) {
->  		landlock_unmask_layers(
-> -			find_rule(domain, dentry_child1),
-> +			find_rule_rcu(domain, dentry_child1),
->  			landlock_init_layer_masks(
->  				domain, LANDLOCK_MASK_ACCESS_FS,
->  				&_layer_masks_child1, LANDLOCK_KEY_INODE),
-> @@ -821,7 +823,7 @@ static bool is_access_to_paths_allowed(
->  	}
->  	if (unlikely(dentry_child2)) {
->  		landlock_unmask_layers(
-> -			find_rule(domain, dentry_child2),
-> +			find_rule_rcu(domain, dentry_child2),
->  			landlock_init_layer_masks(
->  				domain, LANDLOCK_MASK_ACCESS_FS,
->  				&_layer_masks_child2, LANDLOCK_KEY_INODE),
-> @@ -831,7 +833,6 @@ static bool is_access_to_paths_allowed(
->  	}
->  
->  	walker_path = *path;
-> -	path_get(&walker_path);
->  	/*
->  	 * We need to walk through all the hierarchy to not miss any relevant
->  	 * restriction.
-> @@ -880,7 +881,7 @@ static bool is_access_to_paths_allowed(
->  				break;
->  		}
->  
-> -		rule = find_rule(domain, walker_path.dentry);
-> +		rule = find_rule_rcu(domain, walker_path.dentry);
->  		allowed_parent1 = allowed_parent1 ||
->  				  landlock_unmask_layers(
->  					  rule, access_masked_parent1,
-> @@ -897,10 +898,14 @@ static bool is_access_to_paths_allowed(
->  			break;
->  jump_up:
->  		if (walker_path.dentry == walker_path.mnt->mnt_root) {
-> +			/* follow_up gets the parent and puts the passed in path */
-> +			path_get(&walker_path);
->  			if (follow_up(&walker_path)) {
-> +				path_put(&walker_path);
+> I think Christian's preference was to keep
+> everything in fs/bpf_fs_kfuncs.c
 
-path_put() cannot be safely called in a RCU read-side critical section
-because it can free memory which can sleep, and also because it can wait
-for a lock.  However, we can call rcu_read_unlock() before and
-rcu_read_lock() after (if we hold a reference).
-
->  				/* Ignores hidden mount points. */
->  				goto jump_up;
->  			} else {
-> +				path_put(&walker_path);
->  				/*
->  				 * Stops at the real root.  Denies access
->  				 * because not all layers have granted access.
-> @@ -920,11 +925,11 @@ static bool is_access_to_paths_allowed(
->  			}
->  			break;
->  		}
-> -		parent_dentry = dget_parent(walker_path.dentry);
-> -		dput(walker_path.dentry);
-> +		parent_dentry = walker_path.dentry->d_parent;
->  		walker_path.dentry = parent_dentry;
->  	}
-> -	path_put(&walker_path);
-> +
-> +	rcu_read_unlock();
->  
->  	if (!allowed_parent1) {
->  		log_request_parent1->type = LANDLOCK_REQUEST_FS_ACCESS;
-> @@ -1045,12 +1050,11 @@ static bool collect_domain_accesses(
->  					       layer_masks_dom,
->  					       LANDLOCK_KEY_INODE);
->  
-> -	dget(dir);
-> -	while (true) {
-> -		struct dentry *parent_dentry;
-> +	rcu_read_lock();
->  
-> +	while (true) {
->  		/* Gets all layers allowing all domain accesses. */
-> -		if (landlock_unmask_layers(find_rule(domain, dir), access_dom,
-> +		if (landlock_unmask_layers(find_rule_rcu(domain, dir), access_dom,
->  					   layer_masks_dom,
->  					   ARRAY_SIZE(*layer_masks_dom))) {
->  			/*
-> @@ -1065,11 +1069,11 @@ static bool collect_domain_accesses(
->  		if (dir == mnt_root || WARN_ON_ONCE(IS_ROOT(dir)))
->  			break;
->  
-> -		parent_dentry = dget_parent(dir);
-> -		dput(dir);
-> -		dir = parent_dentry;
-> +		dir = dir->d_parent;
->  	}
-> -	dput(dir);
-> +
-> +	rcu_read_unlock();
-> +
->  	return ret;
->  }
->  
-> -- 
-> 2.49.0
-> 
-> 
+Yes. And since that also adds new fs helpers I want to take that through
+the VFS tree, please. I'll provide a stable branch as we do with all
+other subsystems.
