@@ -1,104 +1,102 @@
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F3328FFC2
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Jun 2025 13:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5861DE3DC;
+	Wed,  4 Jun 2025 16:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749044320; cv=none; b=HUnDnzuYojum5segOydKTdAAR2YHHijC6pfToxBW5pjP7kf2dmPNwR2hSkVn9aCcuVsa+Qkrt14XmwffJ4CnCVAVlBef1Pc89lQqm5ncYc6IydowfHzGsUAvM8+oViMrwrSpJHPuVKqSPCqBh0fC6AxOelRJGpzqDCDKN+UQ2Pg=
+	t=1749052801; cv=none; b=cBy+V9+8RJ2CYmtqljsb0zU/fuKS8bKo5rJd4cowWOkx6j7UoBiaDmep9+/VhPPOiA2n7TmVU5CHG8qnrPRLpJ+EiFx3U2MdWgnQcw0IFUtv34pvpTuzW8sfqlhUWDWlyjdRtdqiSl62gxuyeOM7ttMtu0H1MZ/UAM59rsB0DLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749044320; c=relaxed/simple;
-	bh=cGErVJ4bmTUQIicSnO7KQhivuRsnuHBrKz4OD/rUbh4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=uFcoIqsZi+KsUqJL+JCX8mPLXfnpTXO1DZ30R5xm8U3BGddgfNASNJWPFrPT2onw0ARr4kX+mfzQOR8OgSa7cQufTykQyUXIYuwWmoJ1jew7e97tCcOClTQz1GZBlpT/WInU76yngfFiYrpRN7bUV5MoJDu2c47GwXUmk9AN2QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ihgd5vuM; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com
+	s=arc-20240116; t=1749052801; c=relaxed/simple;
+	bh=bqf3JTaTlwq87CZNwJUGZ70q+VLsYUsOZiPWGW5E7GM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PTRJq/ixFA367cA2So1+7MtpVM+oieby9M4MWdsIYMzUWZ/D/dSS9IyU3rFXp5ByAzRg9/Zqyv81d4qNIJXeIUZm4WIHg3AO7uX4EOaqPePuRkGmJPgR/gk43HdphBZ19Cdjz9oPSaSFQ9uOuEtE/l6TgI2u/qXeLquNjA/Zmuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AqFWrL40; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ihgd5vuM"
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2356ce55d33so53789945ad.0
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Jun 2025 06:38:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqFWrL40"
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b26f5f47ba1so4422202a12.1;
+        Wed, 04 Jun 2025 09:00:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749044318; x=1749649118; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=POMSTg6GJrne9/5wXc7WtA5ZTG+gDotXCkvMvnEGUlg=;
-        b=ihgd5vuMVxI/gwPLRxKwKXSIcRXv4fA+gZ+5AiMEYXRfvI5vc789btaBl1t7mgpwaJ
-         YTBC0Q5nSyOqiaILmPW3TKuhakbSRJbih99hkQEgbyl4ykuEyMxNPTg7qI7JVvuJHy+g
-         63x5Oxcb4wt25pFLbfxO9pyUElc/yra88uf/sNyTry4PRmf3EnyDAyga2Cszx+PJfsph
-         0lr0Mk6Dz4xI1qPnDEyg7aiMpqk6BbOKz6iH6JiCEBO0NH7G3K2llzepSkYNpg7cf+p3
-         I+ksYlfodIeKM8Fu3j5tf4Me0POEQIC9XmGiUN589zyIigvqYVDt13jWaL0SDDLyZKwg
-         hcBg==
+        d=gmail.com; s=20230601; t=1749052799; x=1749657599; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dM1lCBJJXDO4DiBRlM6aBDf7G8E0w98nPK/tgohLyHU=;
+        b=AqFWrL40JV/6NNaO8AC64Rli/cRnDvfRZzaJcH+1ndiLLDps7eXZltvkultb7RmiyV
+         8+FtAWKRBnsPM0dHFy4iQVUgaw+Q7sFgPpgBI/XdwKlcPQcG0IlV4Nmw/PNct4nKSOpi
+         NzNPIlPpGyCRqmf0blp1pQw0PzdgZlXkKLQJNrBx/imvzhJD+khqwHRddeA2Ww4bqyjG
+         aeDJ7nKdDGiXvF1G6xPuFGwKotsUTsv2Sm2UjkHQKzjtysDYOSPfC1ss2fZ5sHy5wfZw
+         gavhfknJRfZc0cIofxKV+JXrh8grtC79ogqFigmvkJ75rDp8fKntCcSbm1zyG5MMh9qg
+         MhOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749044318; x=1749649118;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=POMSTg6GJrne9/5wXc7WtA5ZTG+gDotXCkvMvnEGUlg=;
-        b=o1lZ5OBeGTQHwWtFdZV8TmyJWm1qbaUqhtYKoJX1m3e9QXsjh47fiMQnxaHScdFJof
-         lXQLAGMfT2hF+kv5xL4dL1kVgpWmEfWaHEvi1gI4Aiz8jOy+fTFPf7Hng1br3jNiTzF8
-         mFX6RUmmj2Dw8uPrfB09QyPLqnNZowljFGLP9JBCsjjoF8W89PmPvr+sAsAe0xNyh5R0
-         wiqCCQvVvgEqMvk47K33K7ixezY65274LBUXFUnFJKzGy8mnG1yxO+f5MhvY9kUmJGkw
-         zpZiN6FbHSIJfD8hBdvLcL/G2eeZfC+jjfR8SKfDuyKCI0Ix5MKTA5bmsjcMgtIajAuk
-         p4bg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwZOAHxDPdlPikHJJ7/zig6twJAyGFqbvLIpTVSb+EyUeRH5OwDboa2vJceZITIjk6ZXOxIDDE/aApV6F71PvfL8RBxAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq3aKHj1KWPutwiOyRZ6nqcfoRoqG/Aplmi6H6YmAvUWztKNpA
-	j7PITREWr/tLQFS34r+ulNeyi5bFdVLmPRcJqRpE8+3Wx6jeh7o2XbbuGazlhGlkbwMT6Fk/qKk
-	pnWxBNXj1S2YkfQ==
-X-Google-Smtp-Source: AGHT+IF4vNgBqWuqwN249CIMQHd9G+lKks99KaKviFeWr4MDQkTIvS3MGZ7G7Qa3Isdk0xrtzD7k4gXdR3NpcA==
-X-Received: from qvbnh10.prod.google.com ([2002:a05:6214:390a:b0:6fa:a797:22e5])
- (user=edumazet job=prod-delivery.src-stubby-dispatcher) by
- 2002:a0c:eda9:0:b0:6fa:fdb5:4a9d with SMTP id 6a1803df08f44-6fafdb54b14mr7053036d6.44.1749044307524;
- Wed, 04 Jun 2025 06:38:27 -0700 (PDT)
-Date: Wed,  4 Jun 2025 13:38:26 +0000
+        d=1e100.net; s=20230601; t=1749052799; x=1749657599;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dM1lCBJJXDO4DiBRlM6aBDf7G8E0w98nPK/tgohLyHU=;
+        b=QIlUnP6KymozZj/9b5Kxd7kFV0XaWf6R7VM7YY2JOq3s9+AoyuCJMpyIj5OIK4VCsI
+         2zkUZYgE4IovTYajk6KON4dP6aBzryidP8biSoqm5iY+Gg8hekPUiJpqZ+qNV+rJQMBc
+         hmURfpdhtIHFmlMyD8Qhmxa0gegrUY+8Xu8u5qMhKHzBsQd1MzicpKxg1JlHQ/9xmJ07
+         BhAkuNMx5K+sqVgAUzHszeQjw4raN18lpqjah6T7nYw/2+0Ms1PsCPF+2Mla7FS9rP+G
+         OZn81A5c/zlqZKmDTZS3hpXHaUwRbRcJSBdPYur6LkDLWRp7ajLbh/X9/uUcikz6x4oP
+         dLiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKvSKb4z2O2PbimuEGDJbQduX0uMfYSxPb/ObwBjr1hd21sjmjbWDhRi8lpoB+D25w4qrmpTrc@vger.kernel.org, AJvYcCXWkvgNSmriW1RSZ7shGLrBjN4IJZzCrmBan7eHSzxyi0PAqNFoeGWwI66RLnHFLNpNylKfVb71511wf0hYkZt6dGq0c84=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4qlkARD4oDH/g8jHL7zxsXrBsb/AvuijVSHgSloQ6tjbzME6j
+	+FOxUjq1vGsA0QUaXYhHMC2CKR7jTM2hr12pUsPbEfcxOIEKN7mZD2Y=
+X-Gm-Gg: ASbGncuCCBWFrHURA9AGSBBmnr0xA1TJ2Wq9W1cPSt1IJ2riRGNyM7Wek2CVytpiOwN
+	LYtAO5duWV+0u9kO3wA9idigVema5eToACTHhuKfshTskqZs/A7BS54ACxhU3M57DGrAOwCXQhm
+	yID2DK9V+jyvXsw7fblp2gE1QD/wq9TMZhC9UHIcETOlbk5zaKHASr1RHYdOJ/OCselgsTmzkxm
+	oTIdCI1KSv/fs4nzNxcBqdD6wl6aIxULuK7rcVMfg/mTH/SqlyutL+CiF3An9c+HorynWDdkEc0
+	PyFOyXYxHZPlnW+nIzu8ghkBb1me
+X-Google-Smtp-Source: AGHT+IFlF+KS5R7xKjKcaBr8zU6NOf6aoIeRrfm4hUlAWuFFQitR6VwxqboaKUiCoWBpvgMdoBn5ig==
+X-Received: by 2002:a05:6a20:12c3:b0:1f5:7280:1cf2 with SMTP id adf61e73a8af0-21d22ab3d49mr4922513637.12.1749052799499;
+        Wed, 04 Jun 2025 08:59:59 -0700 (PDT)
+Received: from fedora.. ([2601:647:6700:3390::c8d1])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2eceb396f6sm7753648a12.42.2025.06.04.08.59.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jun 2025 08:59:58 -0700 (PDT)
+From: Kuniyuki Iwashima <kuni1840@gmail.com>
+To: edumazet@google.com
+Cc: davem@davemloft.net,
+	eric.dumazet@gmail.com,
+	horms@kernel.org,
+	kuba@kernel.org,
+	kuniyu@amazon.com,
+	linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	paul@paul-moore.com,
+	syzkaller@googlegroups.com
+Subject: Re: [PATCH net] calipso: unlock rcu before returning -EAFNOSUPPORT
+Date: Wed,  4 Jun 2025 08:59:42 -0700
+Message-ID: <20250604155957.45116-1-kuni1840@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250604133826.1667664-1-edumazet@google.com>
+References: <20250604133826.1667664-1-edumazet@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.rc0.604.gd4ff7b7c86-goog
-Message-ID: <20250604133826.1667664-1-edumazet@google.com>
-Subject: [PATCH net] calipso: unlock rcu before returning -EAFNOSUPPORT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+
 From: Eric Dumazet <edumazet@google.com>
-To: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, eric.dumazet@gmail.com, 
-	Eric Dumazet <edumazet@google.com>, syzbot <syzkaller@googlegroups.com>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Paul Moore <paul@paul-moore.com>, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Date: Wed,  4 Jun 2025 13:38:26 +0000
+> syzbot reported that a recent patch forgot to unlock rcu
+> in the error path.
+> 
+> Adopt the convention that netlbl_conn_setattr() is already using.
+> 
+> Fixes: 6e9f2df1c550 ("calipso: Don't call calipso functions for AF_INET sk.")
+> Reported-by: syzbot <syzkaller@googlegroups.com>
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
+> Acked-by: Paul Moore <paul@paul-moore.com>
+> Cc: linux-security-module@vger.kernel.org
 
-syzbot reported that a recent patch forgot to unlock rcu
-in the error path.
+Thanks for cathcing this!
 
-Adopt the convention that netlbl_conn_setattr() is already using.
-
-Fixes: 6e9f2df1c550 ("calipso: Don't call calipso functions for AF_INET sk.")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org
----
- net/netlabel/netlabel_kapi.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index 6ea16138582c0b6ad39608f2c08bdfde7493a13e..33b77084a4e5f34770f960d7c82e481d9889753a 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -1165,8 +1165,10 @@ int netlbl_conn_setattr(struct sock *sk,
- 		break;
- #if IS_ENABLED(CONFIG_IPV6)
- 	case AF_INET6:
--		if (sk->sk_family != AF_INET6)
--			return -EAFNOSUPPORT;
-+		if (sk->sk_family != AF_INET6) {
-+			ret_val = -EAFNOSUPPORT;
-+			goto conn_setattr_return;
-+		}
- 
- 		addr6 = (struct sockaddr_in6 *)addr;
- 		entry = netlbl_domhsh_getentry_af6(secattr->domain,
--- 
-2.50.0.rc0.604.gd4ff7b7c86-goog
-
+Reviewed-by Kuniyuki Iwashima <kuni1840@gmail.com>
