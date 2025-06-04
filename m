@@ -1,82 +1,81 @@
-Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3ABD25485A;
-	Wed,  4 Jun 2025 00:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BC013BC3F;
+	Wed,  4 Jun 2025 01:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748998691; cv=none; b=TXGQg+8++U+KpSRDNmei1mF/kvtOKL/x5R6eyt6TNeWsnz6BJbaaUEOB14vqLcXYcvWlFbGreQXLlNmHwqJLFuQfBrMg3z03LeuMukNifI0lmrQ/nwkuQJyGuHgPEAdl2e136l32wMjhGfJaM+6TV1wn5X1V8+x1bi+OMMezb/0=
+	t=1748999405; cv=none; b=JwAa+P/TbIGSCXZ6owAI6Czfe16Uv5gkRWEqOzX/Y7Gi0TH7LL+POZ5B4Si7W13em6rDojHlpGrWzGcLAv4SJLai6EQVrnjgR0blkI5TT6eTnfKGodFvaXpxtn2X/osfjjcuM4eqMigl9O9h4wwFS3N+c+ZJ50qefnHBEbfkjNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748998691; c=relaxed/simple;
-	bh=ZQ9CNQfRvQo+6IJVUxmeQ6+mpkIr0qUa3ibDfRE2WBU=;
+	s=arc-20240116; t=1748999405; c=relaxed/simple;
+	bh=Z9qpfh0pPo4BNHkZ5/TaFR4ap2xVr20tYHUyCc9D0c0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S0KRIkNGaKsl4gx9dBK6/43M4sKWOh1n6vywK4eonrj/JjzpGwd2o2JeaO6XmozNPgf92g9/eV01W9dCWJURPHinEUFikcRcd53iczc4cu+czRf6pQ9rGAJu1u01cGpbfNrTtSMp4iG1Xq1pHA5gmko7ItJWJ2ehVnHk3dllRaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=N7s3yaoR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WvWM/zjE; arc=none smtp.client-ip=202.12.124.142
+	 In-Reply-To:Content-Type; b=d40EQzUCUV/MIGJq+j1Fd55UT9ixKLdEt427GuOHEBHIl1hl/wNtEHDK5h09vwv+fvwCc8niEacL+o8E/cF2pEPxUpAmuG+5V7WG+EQsakMDasPrvjoiS1Kj44wVQjM44snm9hp2NWzxQ22IC8Zc310CQ7AI+c8WprGvtw8pDbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=A8AFYfWY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gINE5AWF; arc=none smtp.client-ip=202.12.124.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="N7s3yaoR";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WvWM/zjE"
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailflow.stl.internal (Postfix) with ESMTP id 038C91D40416;
-	Tue,  3 Jun 2025 20:58:07 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="A8AFYfWY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gINE5AWF"
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id ED609254017F;
+	Tue,  3 Jun 2025 21:10:01 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Tue, 03 Jun 2025 20:58:08 -0400
+  by phl-compute-06.internal (MEProxy); Tue, 03 Jun 2025 21:10:02 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1748998687;
-	 x=1749005887; bh=OhWKvrrfWc+QCsk08otnjEC9Xd+7wrAd0UMPz7P3EeM=; b=
-	N7s3yaoRhksUGYG2yK2lNlT+fD6hhqL7OGA6mlb4MN43VGVlMQoM2Y0Hh15iUnLI
-	OEZvnlfrDx2LYC/xoLh8xI2mTI+JInB+oO3bhPZt42r7qEvG+/Et8FeY6CI82g6J
-	KSv7vgR2pWfP9iu7exjJdonsq63YerEYGl87dNBF4qIhQfK37O3ZYMFJJHRxat+H
-	XPLEszet9rrJQZFwKNGJm7T9C/YOWhcxXOZ0SkK5uiISlSbBJWDXlJiAZWIiGOPh
-	SlcMtdXZkC9ImiGcWyu+r9oMjBFF1LYSVjNnOOpsNLtbtQuVIFIpXCFKh4zDKAuO
-	cRKcUYtQNtgv5m8mRdYaeg==
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1748999401;
+	 x=1749085801; bh=xUFb22FplTmZ613N3z4Gz55bVzhwDUP/BuAQmEDvrKo=; b=
+	A8AFYfWYprtG7yjZ+lmvt0Hu1vUvXb0dmzu8GqX1zMzcVLTEnPxBoCDEcaGQP+45
+	2UV4gepSLbRNA5Z9Z/OGWongvC2todiwe/0DqGfLDDxevWmRTpgXb1sz6HltzUM/
+	KcB8n8CJl1aYfur8OeqcnXLxCU+IimhQjRZmjyTHtioe2LOwSY+OuzKYu1UbShbE
+	UofRVwYazkQIAgAE98BJOaaGzQcYR32V/pbgXzTvQ9+xzML+vQH33r2hGT8CmzMI
+	Iu1LDNuC3rRbTpgcrU1D+LDQyo4Ux6ACtEx0Woq+/C+3d9/yfyhJXmBZXheJYGK/
+	BW50uNQX9+suH5Y68ZmWmg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1748998687; x=
-	1749005887; bh=OhWKvrrfWc+QCsk08otnjEC9Xd+7wrAd0UMPz7P3EeM=; b=W
-	vWM/zjEGau3zExyckS/V0haI6kWuFqiNmnXo/opBI0EvR3LHbE/s77jxlqsEQaDj
-	fIEM+vR6FWjlYL/5yPjhb55RokhOYem0RgbAGSycfhMUF2BfJIAuzz7vEm4xeZOL
-	TZV7AworKjyInCxxXEmt+T4l+rJ8lvqqsGdV480Q0c4KfYm+rggH89XCownHAtYv
-	w+KTmOdAeRUZ21LtU9zjhWWqMjjZq4uR5GBN5vCfR5DxzGJD75HGE/o4xZHEVHu5
-	PirKohysoYlga8MAxQ4uY4ocOMJ1RxYXs2FKu58uWa8xu5Dsn15bNaYi8y6ef2dB
-	MHa6XhIT/+mpzd+ndF9Fg==
-X-ME-Sender: <xms:H5o_aNwggxiRyCrmMFj4A6z7KJNqiIadaitXhsx9cA447r_b5s3SPA>
-    <xme:H5o_aNTBIJo1KIu-DAm-PyuMs_9r1JpbTCrNgSLgYCA6xX0VSSkuSKUaqLqQdLaN6
-    Dg4X3cwWYwCvDvY-XE>
-X-ME-Received: <xmr:H5o_aHVX54xDyW8lOQG4YR7AZ0FaDyy549m1-4d4Fq6TMagXs_fPnjkROilpTLhE7Cr0Dp6xWcWHfyPR3rwuxq10>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeeiucetufdoteggodetrfdotf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1748999401; x=
+	1749085801; bh=xUFb22FplTmZ613N3z4Gz55bVzhwDUP/BuAQmEDvrKo=; b=g
+	INE5AWFP1cykDBoT00u2jrLibygX6GMCBOd/7GFzCb8ZAWvVDFqomto2snD0Du7F
+	70ggs5afZRezLWh09o/u8lIPvW1iYf1bVGMwzsRp4D+rlylZSrvAh+50HbmuwSYP
+	132i6XHzrVd3aCyEpmstffZemfdz9GUDXWO69DjII3XdRxNOdUZl4/p6AOFwe2U4
+	aZuN3OhxODL3B1G5mh6vSH+NxUXw+0VqxQnqHoH0ur9uf1KpseYoO+22TY5ZOW1O
+	mg54YfWOs46akLnMuYLLcQUFIBluDApu7J/KR1WlLjacppBUQNvwwXtLCEiXToEE
+	2rEtnWVjbphR2Iuj8d9FQ==
+X-ME-Sender: <xms:6Zw_aFZXK1QykEznGnVE-apjaJmZ28LF8hOEns01cm2xuotDa_sCmA>
+    <xme:6Zw_aMaPKSY3YiZxJkrxYn9zZQgG_w04ki-z5rxCJv7YLS8pkq_g2ddOpC0DenKFs
+    E0iM4q-dzh_9Fecv7k>
+X-ME-Received: <xmr:6Zw_aH9zxsxVJERECwGUB4r_UdFUv47UJqR5SeEoHGigqP2mOX3B9qXDVziTwctyGTnimJ0ChD1rcPU8qpugHfCJ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeejucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
     necuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqne
-    cuggftrfgrthhtvghrnhepgeekffegffeuhfefiedtjeetueefleelfedugeekveffvddv
-    jedtvddviefhgfejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhr
-    ghdpnhgspghrtghpthhtohepvddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
-    hsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhl
-    ihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtph
-    htthhopegsphhfsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
-    gidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
-    hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
-    ihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepkhgvrhhnvghlqdhtvggrmhesmhgvthgrrdgtohhmpdhrtghpthht
-    oheprghnughrihhisehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:H5o_aPjG0jG7eDRCe2MFl2due67zNnb_FPaWdHIGPR8914QILxbJ_Q>
-    <xmx:H5o_aPBLZU5Y7e_Nzvim6qYoFnqNrsm80JbfJKUWguBcQ7gc58fwpQ>
-    <xmx:H5o_aIKRgQXSR6vqAPZzo-Ey7bK7WHcbtlcFC0KntQIAfMWX9vt2Ew>
-    <xmx:H5o_aOBRWxNy8dgozc2axM3RyM5JoZRzrakbSD-oI1iDx6ZaEJM-Pw>
-    <xmx:H5o_aICZLF4GkLxFnzo2YnGWeCefZB_1bDEdO16sx48yCDqrR-AAzxZk>
+    cuggftrfgrthhtvghrnhepfedvheeluedthfelgfevvdfgkeelgfelkeegtddvhedvgfdt
+    feeilefhudetgfdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeelpdhmohguvgep
+    shhmthhpohhuthdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpth
+    htohepshhonhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhi
+    vhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvg
+    drtghomhdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopegrlhgv
+    gigvihdrshhtrghrohhvohhithhovhesghhmrghilhdrtghomhdprhgtphhtthhopegsrh
+    gruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvggtuhhr
+    ihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:6Zw_aDqzOlwF7cAnIYKlLwUYswqfMjr6MfJ28i8pNfZ9x8gSuo_eVw>
+    <xmx:6Zw_aAowwMOkXuz2s-t9O9XsQAJX_MUCp18iabSy7vObgOLISQaY2Q>
+    <xmx:6Zw_aJQMHHqr1VhnyrRoVMqyA0XVJAmDLDMQZ9emXREoF3O9mBrzug>
+    <xmx:6Zw_aIrkS5TqpQ8r4_nfdYHu4RvYuA5ebeYxrhdtD7ZctXT2xniKYg>
+    <xmx:6Zw_aAMRptDHFYZLzGT25y0fBNlLo2NIBZzVHyqlNrg2FsC3_Pnd9xBe>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 3 Jun 2025 20:58:04 -0400 (EDT)
-Message-ID: <fab63d7c-89e2-4c30-a685-0d623a05546e@maowtm.org>
-Date: Wed, 4 Jun 2025 01:58:03 +0100
+ 3 Jun 2025 21:09:59 -0400 (EDT)
+Message-ID: <22dcdbc4-7237-4693-8bd6-c1404918b648@maowtm.org>
+Date: Wed, 4 Jun 2025 02:09:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -84,52 +83,252 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-To: Song Liu <song@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.cz>, bpf@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, kernel-team@meta.com,
- andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net,
- martin.lau@linux.dev, brauner@kernel.org, kpsingh@kernel.org,
- mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com,
- jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
-References: <yti2dilasy7b3tu6iin5pugkn6oevdswrwoy6gorudb7x2cqhh@nqb3gcyxg4by>
- <CAPhsuW4tg+bXU41fhAaS0n74d_a_KCFGvy_vkQOj7v4VLie2wg@mail.gmail.com>
- <20250529173810.GJ2023217@ZenIV>
- <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
- <20250529183536.GL2023217@ZenIV>
- <CAPhsuW7LFP0ddFg_oqkDyO9s7DZX89GFQBOnX=4n5mV=VCP5oA@mail.gmail.com>
- <20250529201551.GN2023217@ZenIV>
- <CAPhsuW5DP1x_wyzT1aYjpj3hxUs4uB8vdK9iEp=+i46QLotiOg@mail.gmail.com>
- <20250529214544.GO2023217@ZenIV>
- <CAPhsuW5oXZVEaMwNpSF74O7wZ_f2Qr_44pu9L4_=LBwdW5T9=w@mail.gmail.com>
- <20250529231018.GP2023217@ZenIV>
- <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/3] Restart pathwalk on rename seqcount change
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Song Liu <song@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Jan Kara <jack@suse.cz>, Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Christian Brauner <brauner@kernel.org>,
+ linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <cover.1748997840.git.m@maowtm.org>
+ <7452abd023a695a7cb87d0a30536e9afecae0e9a.1748997840.git.m@maowtm.org>
 Content-Language: en-US
 From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
+In-Reply-To: <7452abd023a695a7cb87d0a30536e9afecae0e9a.1748997840.git.m@maowtm.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 5/30/25 01:42, Song Liu wrote:
-> [...]
-> On Thu, May 29, 2025 at 4:10 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->>
->> Note, BTW, that it might be better off by doing that similar to
->> d_path.c - without arseloads of dget_parent/dput et.al.; not sure
->> how feasible it is, but if everything in it can be done under
->> rcu_read_lock(), that's something to look into.
+On 6/4/25 01:45, Tingmao Wang wrote:
+> This fixes the issue mentioned in the previous patch, by essentially
+> having two "modes" for the pathwalk code - in the pathwalk_ref == false
+> case we don't take references and just inspect `d_parent` (unless we have
+> to `follow_up`).  In the pathwalk_ref == true case, this is the same as
+> before.
 > 
-> I don't think we can do everything here inside rcu_read_lock().
-> But d_path.c does have some code we can probably reuse or
-> learn from.
+> When we detect any renames during a pathwalk_ref == false walk, we restart
+> with pathwalk_ref == true, re-initializing the layer masks.  I'm not sure
+> if this is completely correct in regards to is_dom_check - but seems to
+> work for now.  I can revisit this later.
+> 
+> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> ---
+>  security/landlock/fs.c | 109 ++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 98 insertions(+), 11 deletions(-)
+> 
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 923737412cfa..6dff5fb6b181 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -771,6 +771,9 @@ static bool is_access_to_paths_allowed(
+>  		_layer_masks_child2[LANDLOCK_NUM_ACCESS_FS];
+>  	layer_mask_t(*layer_masks_child1)[LANDLOCK_NUM_ACCESS_FS] = NULL,
+>  	(*layer_masks_child2)[LANDLOCK_NUM_ACCESS_FS] = NULL;
+> +	unsigned int rename_seqcount;
+> +	bool pathwalk_ref = false;
+> +	const struct landlock_rule *rule;
+>  
+>  	if (!access_request_parent1 && !access_request_parent2)
+>  		return true;
+> @@ -811,6 +814,7 @@ static bool is_access_to_paths_allowed(
+>  
+>  	rcu_read_lock();
+>  
+> +restart_pathwalk:
+>  	if (unlikely(dentry_child1)) {
+>  		landlock_unmask_layers(
+>  			find_rule_rcu(domain, dentry_child1),
+> @@ -833,13 +837,32 @@ static bool is_access_to_paths_allowed(
+>  	}
+>  
+>  	walker_path = *path;
+> +
+> +	/*
+> +	 * Attempt to do a pathwalk without taking dentry references first,
+> +	 * but if any rename happens while we are doing this, give up and do a
+> +	 * walk with dget_parent instead.  See comments in
+> +	 * collect_domain_accesses().
+> +	 */
+> +
+> +	if (!pathwalk_ref) {
+> +		rename_seqcount = read_seqbegin(&rename_lock);
+> +		if (rename_seqcount % 2 == 1) {
+> +			pathwalk_ref = true;
+> +			path_get(&walker_path);
+> +		}
+> +	} else {
+> +		path_get(&walker_path);
+> +	}
+> +
+> +	rule = find_rule_rcu(domain, walker_path.dentry);
+> +
+>  	/*
+>  	 * We need to walk through all the hierarchy to not miss any relevant
+>  	 * restriction.
+>  	 */
+>  	while (true) {
+>  		struct dentry *parent_dentry;
+> -		const struct landlock_rule *rule;
+>  
+>  		/*
+>  		 * If at least all accesses allowed on the destination are
+> @@ -881,7 +904,6 @@ static bool is_access_to_paths_allowed(
+>  				break;
+>  		}
+>  
+> -		rule = find_rule_rcu(domain, walker_path.dentry);
+>  		allowed_parent1 = allowed_parent1 ||
+>  				  landlock_unmask_layers(
+>  					  rule, access_masked_parent1,
+> @@ -899,13 +921,16 @@ static bool is_access_to_paths_allowed(
+>  jump_up:
+>  		if (walker_path.dentry == walker_path.mnt->mnt_root) {
+>  			/* follow_up gets the parent and puts the passed in path */
+> -			path_get(&walker_path);
+> +			if (!pathwalk_ref)
+> +				path_get(&walker_path);
+>  			if (follow_up(&walker_path)) {
+> -				path_put(&walker_path);
+> +				if (!pathwalk_ref)
+> +					path_put(&walker_path);
+>  				/* Ignores hidden mount points. */
+>  				goto jump_up;
+>  			} else {
+> -				path_put(&walker_path);
+> +				if (!pathwalk_ref)
+> +					path_put(&walker_path);
+>  				/*
+>  				 * Stops at the real root.  Denies access
+>  				 * because not all layers have granted access.
+> @@ -925,10 +950,27 @@ static bool is_access_to_paths_allowed(
+>  			}
+>  			break;
+>  		}
+> -		parent_dentry = walker_path.dentry->d_parent;
+> -		walker_path.dentry = parent_dentry;
+> +		if (!pathwalk_ref) {
+> +			parent_dentry = walker_path.dentry->d_parent;
+> +
+> +			rule = find_rule_rcu(domain, parent_dentry);
+> +			if (read_seqretry(&rename_lock, rename_seqcount)) {
+> +				pathwalk_ref = true;
+> +				goto restart_pathwalk;
+> +			} else {
+> +				walker_path.dentry = parent_dentry;
+> +			}
+> +		} else {
+> +			parent_dentry = dget_parent(walker_path.dentry);
+> +			dput(walker_path.dentry);
+> +			walker_path.dentry = parent_dentry;
+> +			rule = find_rule_rcu(domain, walker_path.dentry);
+> +		}
+>  	}
+>  
+> +	if (pathwalk_ref)
+> +		path_put(&walker_path);
+> +
+>  	rcu_read_unlock();
+>  
+>  	if (!allowed_parent1) {
+> @@ -1040,22 +1082,55 @@ static bool collect_domain_accesses(
+>  {
+>  	unsigned long access_dom;
+>  	bool ret = false;
+> +	bool pathwalk_ref = false;
+> +	unsigned int rename_seqcount;
+> +	const struct landlock_rule *rule;
+> +	struct dentry *parent_dentry;
+>  
+>  	if (WARN_ON_ONCE(!domain || !mnt_root || !dir || !layer_masks_dom))
+>  		return true;
+>  	if (is_nouser_or_private(dir))
+>  		return true;
+>  
+> +	rcu_read_lock();
+> +
+> +restart_pathwalk:
+>  	access_dom = landlock_init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
+>  					       layer_masks_dom,
+>  					       LANDLOCK_KEY_INODE);
+>  
+> -	rcu_read_lock();
+> +	/*
+> +	 * Attempt to do a pathwalk without taking dentry references first, but
+> +	 * if any rename happens while we are doing this, give up and do a walk
+> +	 * with dget_parent instead.  This prevents wrong denials in the
+> +	 * presence of a move followed by an immediate rmdir of the old parent,
+> +	 * where even when both the original and the new parent has allow
+> +	 * rules, we might still hit a negative dentry (the deleted old parent)
+> +	 * and being unable to find either rules.
+> +	 */
+> +
+> +	if (!pathwalk_ref) {
+> +		rename_seqcount = read_seqbegin(&rename_lock);
+> +		if (rename_seqcount % 2 == 1) {
+> +			pathwalk_ref = true;
+> +			dget(dir);
+> +		}
+> +	} else {
+> +		dget(dir);
+> +	}
+> +	rule = find_rule_rcu(domain, dir);
+> +	/*
+> +	 * We don't need to check rename_seqcount here because we haven't
+> +	 * followed any d_parent yet, and the d_inode of the path being
+> +	 * accessed can't change under us as we have ref on path.dentry.  But
+> +	 * once we start walking up the path, we need to check the seqcount to
+> +	 * make sure the rule we got isn't based on a wrong/changing/negative
+> +	 * dentry.
+> +	 */
+>  
+>  	while (true) {
+>  		/* Gets all layers allowing all domain accesses. */
+> -		if (landlock_unmask_layers(find_rule_rcu(domain, dir), access_dom,
+> -					   layer_masks_dom,
+> +		if (landlock_unmask_layers(rule, access_dom, layer_masks_dom,
+>  					   ARRAY_SIZE(*layer_masks_dom))) {
+>  			/*
+>  			 * Stops when all handled accesses are allowed by at
+> @@ -1069,9 +1144,21 @@ static bool collect_domain_accesses(
+>  		if (dir == mnt_root || WARN_ON_ONCE(IS_ROOT(dir)))
+>  			break;
+>  
+> -		dir = dir->d_parent;
+> +		if (!pathwalk_ref) {
+> +			parent_dentry = dir->d_parent;
+> +			rule = find_rule_rcu(domain, dir);
+> +			if (read_seqretry(&rename_lock, rename_seqcount)) {
+> +				pathwalk_ref = true;
+> +				goto restart_pathwalk;
+> +			} else {
+> +				dir = parent_dentry;
+> +			}
+> +		}
 
-Note that I've made an RFC patch for this as I've also been looking into
-this a bit earlier:
+Forgot else branch here
 
-https://lore.kernel.org/all/cover.1748997840.git.m@maowtm.org/
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 6dff5fb6b181..885121b1beef 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -1153,6 +1153,11 @@ static bool collect_domain_accesses(
+ 			} else {
+ 				dir = parent_dentry;
+ 			}
++		} else {
++			parent_dentry = dget_parent(dir);
++			dput(dir);
++			dir = parent_dentry;
++			rule = find_rule_rcu(domain, dir);
+ 		}
+ 	}
+ 
 
-I've CC'd some people here but not all, in the interest of not spamming
-like 20 people, but feedback from all is welcome.  Mine is also its own
-separate patch that shouldn't block Song's patch here, and I can rebase it
-on top of (v2 or a later version of) this series once this is merged.
+>  	}
+>  
+> +	if (pathwalk_ref)
+> +		dput(dir);
+> +
+>  	rcu_read_unlock();
+>  
+>  	return ret;
+
