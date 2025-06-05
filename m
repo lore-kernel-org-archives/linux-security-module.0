@@ -1,169 +1,145 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F6B20FAA4
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Jun 2025 09:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE0017B50F;
+	Thu,  5 Jun 2025 12:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749117512; cv=none; b=PF9eKGxXOazqX9caH0bT1CeS8XPwmclthZz1ZA4NAjVUb+4O2hLh4YdPV1PlbU9mBgFg272WrotahAEwQ1EjrWmCUbyF1JogoqtThkKbsUBHg2mFF2lKNtMETvG6UJNt+nkfH3h6Ubu1LNTbdhSREc6Ed8n5aeSOj1Ay1sablBs=
+	t=1749125161; cv=none; b=swspkK+gMRS+HlqyPgdwWr0NDUW8KaZlKs32qkCxGIdPwnVuiPxT3oM9adc1it6XlhMOos16hcR3cYjbIFcRiu4O7K76P47a5x3Hnpw6otq5A16wR9QnCXgLCTWn9DW7qOoldZMyQeD53p1N+8UbqJSAE6YfBvQy8BOsT2JpU/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749117512; c=relaxed/simple;
-	bh=f3/ls/OWcxL5t4jplgeZ5bA5j5q0Y7QNkYy3mBs/1UU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TQT19sIHfjsxrDSyWTPqZUgGBZILt6NzdRuPwRTPkK82nAOdVxHICaqahw+rGpmWqJA/S7S7MGnKH6dnzmSloaM8Q32DWTdnTWJWQRN0itynIPx6f4j1CTIt14SKsXY4sW4Bb34+ybu2sWQuIjWU67WdejjR+t9PEed70xdtxx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1749125161; c=relaxed/simple;
+	bh=W/K6WUde67pV1S2+vj6A5axx74vdbK/tbL7ISfn9qWM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=X3mVtv5rs/fZYbUXQbYMLOsYHTQi7FHCB04Yr2m4cCA0MLlZovxJJcxt+NDIe0QU+spQNvll2aZj4cYqmYYUROfuVdEpHDtHjZo4ytik7iz2G2F7FoByoQU7MibDG9R+bJraC3hWsBM/BCKzgG2PaE7JwMJs7FdCDYuQwPIgkAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=NoZDFlLz; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="NoZDFlLz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1749125157;
+	bh=W/K6WUde67pV1S2+vj6A5axx74vdbK/tbL7ISfn9qWM=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=NoZDFlLzxBpV1gj6rDUHTx4zUXoDiQD7rMVA/ke+qC43Q3lAYkaTG6jlA0rPRF3Nv
+	 Wfn84bPmtPkrElxCv0rMojlrnS14jSrtq6+Om/E9AMjogJzWCOnu5p2p2wQQncyoIH
+	 xX9+uRfrs4ughPPU5kZ9Umm8Gy8fOlrdrBDQNfYo=
+Received: from [IPv6:2601:5c4:4302:c21::a774] (unknown [IPv6:2601:5c4:4302:c21::a774])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C66EA5C0AC;
-	Thu,  5 Jun 2025 09:58:28 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5677B1373E;
-	Thu,  5 Jun 2025 09:58:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7co1EERqQWjUZAAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Thu, 05 Jun 2025 09:58:28 +0000
-Date: Thu, 5 Jun 2025 11:58:26 +0200
-From: Petr Vorel <pvorel@suse.cz>
-To: Andrea Cervesato <andrea.cervesato@suse.de>
-Cc: ltp@lists.linux.it, linux-security-module@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>, Kees Cook <keescook@chromium.org>
-Subject: Re: [LTP] [PATCH v2] lsm: fix overset attr test
-Message-ID: <20250605095826.GB1206250@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20250605-lsm_fix_attr_is_overset-v2-1-dd10ddb04238@suse.com>
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 11DAE1C016C;
+	Thu, 05 Jun 2025 08:05:57 -0400 (EDT)
+Message-ID: <bec46b16778d9292ab90b3e1c71be6c56c8a5a50.camel@HansenPartnership.com>
+Subject: Re: [PATCH RFC 1/1] module: Make use of platform keyring for module
+ signature verify
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Coiby Xu <coxu@redhat.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, 
+ linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
+ linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, keyrings@vger.kernel.org, David Howells
+ <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>, Jonathan
+ Corbet <corbet@lwn.net>, Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu
+ <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, Daniel
+ Gomez <da.gomez@samsung.com>, Mimi Zohar <zohar@linux.ibm.com>, Roberto
+ Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>,  Eric Snowberg <eric.snowberg@oracle.com>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,  "Serge
+ E. Hallyn" <serge@hallyn.com>, Peter Jones <pjones@redhat.com>, Robert
+ Holmes <robeholmes@gmail.com>, Jeremy Cline <jcline@redhat.com>, Gerd
+ Hoffmann <kraxel@redhat.com>
+Date: Thu, 05 Jun 2025 08:05:56 -0400
+In-Reply-To: <ibosm332sa2kz6vqrru5qsfk4tybsxepo4vascc3zsetmyckvv@pml7puc5jyl6>
+References: <20250602132535.897944-1-vkuznets@redhat.com>
+	 <20250602132535.897944-2-vkuznets@redhat.com>
+	 <948f5567fe4d9ae39aa2528965f123e42bf82b46.camel@HansenPartnership.com>
+	 <87r001yzob.fsf@redhat.com>
+	 <d34555e2b0c4746fc01d5295959a434befcf8b18.camel@HansenPartnership.com>
+	 <ibosm332sa2kz6vqrru5qsfk4tybsxepo4vascc3zsetmyckvv@pml7puc5jyl6>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250605-lsm_fix_attr_is_overset-v2-1-dd10ddb04238@suse.com>
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
-X-Rspamd-Queue-Id: C66EA5C0AC
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.00
 
-Hi Andrea,
+On Thu, 2025-06-05 at 16:34 +0800, Coiby Xu wrote:
+> On Tue, Jun 03, 2025 at 09:03:22AM -0400, James Bottomley wrote:
+> > On Tue, 2025-06-03 at 10:52 +0200, Vitaly Kuznetsov wrote:
+> > > James Bottomley <James.Bottomley@HansenPartnership.com> writes:
+> > [...]
+> > > > Also, are you sure a config option is the right thing?=C2=A0
+> > > > Presumably Red Hat wants to limit its number of kernels and the
+> > > > design of just linking the machine keyring (i.e. MoK) was for
+> > > > the use case where trust is being pivoted away from db by shim,
+> > > > so users don't want to trust the db keys they don't control.=C2=A0
+> > > > If the same kernel gets used for both situations (trusted and
+> > > > untrusted db) you might want a runtime means to distinguish
+> > > > them.
+> > >=20
+> > > I was not personally involved when RH put the patch downstream
+> > > (and wasn't very successful in getting the background story) but
+> > > it doesn't even have an additional Kconfig, e.g.:
+> > > https://gitlab.com/redhat/centos-stream/src/kernel/centos-stream-10/-=
+/commit/03d4694fa6511132989bac0da11fa677ea5d29f6
+> > > so apparently there's no desire to limit anything, basically,
+> > > .platform is always trusted on Fedora/RHEL systems (for a long
+> > > time already).
+> >=20
+> > It sounds like that's just distro politics:=C2=A0 RH wants to enable
+> > binary modules (by allowing them to be signed) but doesn't want to
+> > be seen to be signing them (so they can't be signed with the
+> > embedded RH key) so that gamers can have performant graphics
+> > drivers and the like.=C2=A0 Thus it mixes in the db keyring, which
+> > usually contains several Microsoft certificates and also one from
+> > the ODM manufacturer, so now it can send would be shippers of
+> > binary modules to those groups to get them signed. If you only have
+> > the built in and MoK keyrings, the only possible signers are either
+> > RH or the machine owner ... who isn't a single entity to deal
+> > with.=C2=A0 Personally I think this is a bit daft: Debian manages an ou=
+t
+> > of tree module infrastructure using DKMS and MoK signing, so I
+> > can't see why RH can't get it to work in the same way.
+>=20
+> It's interesting to find that although Debian's wiki page [1] only
+> mentions DKMS and MOK, it actually has the same downstream kernel
+> patch [2][3] as Fedora/RHEL to allow using db keys to verify kernel
+> modules.=20
+> [1] https://wiki.debian.org/SecureBoot
+> [2]
+> https://salsa.debian.org/kernel-team/linux/-/blob/debian/latest/debian/pa=
+tches/features/all/db-mok-keyring/KEYS-Make-use-of-platform-keyring-for-mod=
+ule-signature.patch?ref_type=3Dheads
+> [3]
+> https://sources.debian.org/patches/linux/6.12.30-1/features/all/db-mok-ke=
+yring/KEYS-Make-use-of-platform-keyring-for-module-signature.patch/
+>=20
 
-> LSM(s) usually handle their own internal errors in a different way,
-> so the right way to check if they return error, is to verify that the
-> common return value is -1. This is the max we can do, since errno might
-> vary according to the LSM implementation.
+Well if you read the attached bug reports:
 
-> At the same time, overset attr test is _not_ checking if attr is
-> overset, but rather checking if attr is out-of-bounds, considering OR
-> operator as a valid way to generate an invalid value with
-> LSM_ATTR_CURRENT. This is not correct, since any OR operation using
-> LSM_ATTR_CURRENT will generate a valid value for the LSM(s) code. So we
-> remove this test that doesn't make much sense at the moment and replace
-> it with an "invalid attr test" instead.
+https://bugs.debian.org/935945
+https://bugs.debian.org/1030200
 
-Thanks for the fix, LGTM.
+You can see that it's people trying to get an external module to work
+(actually zfs locally signed) by adding keys to MoK and it failed
+because of a configuration error (CONFIG_INTEGRITY_MACHINE_KEYRING
+wasn't set).  They added this patch as part of the thrashing around
+trying to fix the problem because they found it in Fedora.
 
-Fixes: ad4ab6ce4f ("Add lsm_set_self_attr01 test")
-Acked-by: Petr Vorel <pvorel@suse.cz>
+Regards,
 
-Kind regards,
-Petr
+James
 
-> Signed-off-by: Andrea Cervesato <andrea.cervesato@suse.com>
-> ---
-> This patch will fix all false positive errors, where LSM(s) might
-> be implemented in a different way. We just skip errno check.
-
-> This will also fix:
-> https://openqa.opensuse.org/tests/5087893#step/lsm_set_self_attr01/8
-> ---
-> Changes in v2:
-> - remove exp_errno from struct
-> - change attr overset test
-> - Link to v1: https://lore.kernel.org/r/20250604-lsm_fix_attr_is_overset-v1-1-46ff86423a14@suse.com
-> ---
->  testcases/kernel/syscalls/lsm/lsm_set_self_attr01.c | 16 +++++-----------
->  1 file changed, 5 insertions(+), 11 deletions(-)
-
-> diff --git a/testcases/kernel/syscalls/lsm/lsm_set_self_attr01.c b/testcases/kernel/syscalls/lsm/lsm_set_self_attr01.c
-> index caccdda7ecf2edaac1fa8e2dc2ccdd0aff020804..cde9c2e706ed607024dff362b7ff00cbcef1d6a5 100644
-> --- a/testcases/kernel/syscalls/lsm/lsm_set_self_attr01.c
-> +++ b/testcases/kernel/syscalls/lsm/lsm_set_self_attr01.c
-> @@ -23,28 +23,24 @@ static struct tcase {
->  	struct lsm_ctx **ctx;
->  	uint32_t *size;
->  	uint32_t flags;
-> -	int exp_errno;
->  	char *msg;
->  } tcases[] = {
->  	{
->  		.attr = LSM_ATTR_CURRENT,
->  		.ctx = &ctx_null,
->  		.size = &ctx_size,
-> -		.exp_errno = EFAULT,
->  		.msg = "ctx is NULL",
->  	},
->  	{
->  		.attr = LSM_ATTR_CURRENT,
->  		.ctx = &ctx,
->  		.size = &ctx_size_small,
-> -		.exp_errno = EINVAL,
->  		.msg = "size is too small",
->  	},
->  	{
->  		.attr = LSM_ATTR_CURRENT,
->  		.ctx = &ctx,
->  		.size = &ctx_size_big,
-> -		.exp_errno = E2BIG,
->  		.msg = "size is too big",
->  	},
->  	{
-> @@ -52,15 +48,13 @@ static struct tcase {
->  		.ctx = &ctx,
->  		.size = &ctx_size,
->  		.flags = 1,
-> -		.exp_errno = EINVAL,
->  		.msg = "flags must be zero",
->  	},
->  	{
-> -		.attr = LSM_ATTR_CURRENT | LSM_ATTR_EXEC,
-> +		.attr = -1000,
->  		.ctx = &ctx,
->  		.size = &ctx_size,
-> -		.exp_errno = EINVAL,
-> -		.msg = "attr is overset",
-> +		.msg = "attr is invalid",
->  	}
->  };
-
-> @@ -77,9 +71,9 @@ static void run(unsigned int n)
->  	ctx_size_small = 1;
->  	ctx_size_big = ctx_size + 1;
-
-> -	TST_EXP_FAIL(lsm_set_self_attr(tc->attr, *tc->ctx, *tc->size, tc->flags),
-> -	      tc->exp_errno,
-> -	      "%s", tc->msg);
-> +	TST_EXP_EXPR(lsm_set_self_attr(
-> +		tc->attr, *tc->ctx, *tc->size, tc->flags) == -1,
-> +		"%s", tc->msg);
->  }
