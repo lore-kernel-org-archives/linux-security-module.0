@@ -1,150 +1,102 @@
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0E31A239F;
-	Thu,  5 Jun 2025 15:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209A9272E60;
+	Thu,  5 Jun 2025 16:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749138579; cv=none; b=UR8QfPk83g+E6aDy58sKXNqQCOlLGdgjwI/GO3mDyCt/v4CpWiiYLKB9VQML0WicC24Aeq18Xb5Fr4Uh5ZoO8Tjx62Lr/qK0+9kwrPf3pSA5XklHZhbs3uAtVten7+s1S+mEEAM/fIGHknS8o8E2Hm8wZuoHgjanq7m+KC1iWhc=
+	t=1749142070; cv=none; b=qyEkCQ/uFJDZsmA2ZOgQwXiKdlLZZ5UaeMO/tV9WN7sJdzuvQ4badHxc+dNzSVmuuHI2hGuWb7SRvQi5/cRYjAxa5NWVWl7oTxVGvP7xP/8xMVdUSxWYoOySEeI5uXsosUeyvKoLlsZ5TYCboqptJzdpK9sgaASIydFZAop23fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749138579; c=relaxed/simple;
-	bh=LvFsdaxHPWfAtXNhvilM+GMJO+IHT2LgmSh63Oc2Iiw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CqlENt9CNfybiDpwfqwtsXtZpCSmIJF5ThBnLIrRvAfKw6ROegoG8Pe7ZgPWUoRsHnJVu+yYtA0mPqTxRYwjzD3NMAaM9hdE6gJzjM60N3z0dohKN0w1AshKokkVkjTREcODirA5Pnkgz/iQNsoVFm8RFGJPZSaZ/nEUMeQIQ/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=wEKIWEMW; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+	s=arc-20240116; t=1749142070; c=relaxed/simple;
+	bh=3w8JkMR+dyq082xGIErStybqJdnFiDxHZZEpuJDxc3Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t78ZdHSGvBxOJvjhuq1TFtxTehzF+kSEXd/YZJ9wK4ECc7lvdHv3RiguwS/y+euz5kUK0QRCtEclfoAA9ntwE5GJtUR7zoOM0ewGiBL7kkUPZtco+2mk2ugwtX+1ZX7ytORLeHG77pUSFyvCR68ECSAWZXVQUPoZ1xNAjqLZJqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iDHKrQ5t; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="wEKIWEMW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1749138575;
-	bh=LvFsdaxHPWfAtXNhvilM+GMJO+IHT2LgmSh63Oc2Iiw=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=wEKIWEMWMLix1gCeR7BCRqWrKZRYWqd4+SuuyYw69QhR4hDPkMuBmWt5ThebYuiLo
-	 GDcjvdZ2b6uEYk1lrxLwlpjFLjKLuH+PwZPh4IrF4SCtLWHrzBA2dGdDDZGO2p1yu+
-	 JUNLqPQLVqXmf/dMlerQzKX5Fcx63vsjm2/VsKyw=
-Received: from [IPv6:2601:5c4:4302:c21::a774] (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 048AD1C0315;
-	Thu, 05 Jun 2025 11:49:34 -0400 (EDT)
-Message-ID: <a9bb8b0cfd1af85443ff8ee615b3be0fc705ce02.camel@HansenPartnership.com>
-Subject: Re: [PATCH RFC 0/1] module: Optionally use .platform keyring for
- signatures verification
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>, Eric Snowberg
-	 <eric.snowberg@oracle.com>
-Cc: "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>, "linux-modules@vger.kernel.org"
- <linux-modules@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
- <linux-doc@vger.kernel.org>, "keyrings@vger.kernel.org"
- <keyrings@vger.kernel.org>, David Howells <dhowells@redhat.com>, David
- Woodhouse <dwmw2@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Luis
- Chamberlain <mcgrof@kernel.org>,  Petr Pavlu <petr.pavlu@suse.com>, Sami
- Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>,
- Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,  Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
- <serge@hallyn.com>,  Peter Jones <pjones@redhat.com>, Robert Holmes
- <robeholmes@gmail.com>, Jeremy Cline <jcline@redhat.com>,  Coiby Xu
- <coxu@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>
-Date: Thu, 05 Jun 2025 11:49:33 -0400
-In-Reply-To: <87tt4unw1w.fsf@redhat.com>
-References: <20250602132535.897944-1-vkuznets@redhat.com>
-	 <0FD18D05-6114-4A25-BD77-C32C1D706CC3@oracle.com>
-	 <f0b37bc55ed3c02569c74f0fbdb6afa8efd329e2.camel@HansenPartnership.com>
-	 <87zfemoc76.fsf@redhat.com>
-	 <e4e838d03b3619df5523d429e0cd8160a8aef9f8.camel@HansenPartnership.com>
-	 <87tt4unw1w.fsf@redhat.com>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDHKrQ5t"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93F4AC4CEF0;
+	Thu,  5 Jun 2025 16:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749142069;
+	bh=3w8JkMR+dyq082xGIErStybqJdnFiDxHZZEpuJDxc3Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=iDHKrQ5tePQjpI9sn8mjRk57YAtDPhlZJHvhfg6Iy0klF+8ltljpme/kPr9HYotO6
+	 f2kjL3muTlj2UikuaJw8/p4eztsNuYFFjX44gdIqlNiOmLH32Q4WmbGZFu9sAw2Pd9
+	 eIClFx2j337dEbMQbp1uJuNu2/Atsmu61vVysI0xRRZpUihquL35/iI0/yKf6FDzhC
+	 ecbP7VUy5Is+rFOxk1sucNSGQYZPVlDykshAAhtyd+AqsuQcVMnNL/uqvEqRCQPyEh
+	 JS0XdsnE4An0ESq+DhaC/rmHCWsX1xfXdmKyUbPkAZrsJ7KqnMWlXG3gz5c4AyNQuc
+	 jTEruXZlao9dQ==
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4a4312b4849so14307471cf.1;
+        Thu, 05 Jun 2025 09:47:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUxo6pW5LL7LpftHK9emUuVT4TrCeZfS4ZJNv4fa93TORM1SyZ8w4KQio6f6yZ6WyrzBnW9tL58tjeCtiy9@vger.kernel.org, AJvYcCW4qbRvc3eWD/qENrkU0xfTIZoy8bS4xwdnQd2mKGA7akYwA/Q6ZwiYcURkJjpzWnJtvTwYQtC5IOVv3WFs@vger.kernel.org, AJvYcCXkCajXHkwdPoj5udeiTJjNs06/u/uoMUXfEFUSYiGfcHD6SUeLmMJWOjgEJSp94lwFaZ+8Yf+LQsCNLyB4l7qBYyjduNdi@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTTuzSnr6lWhL4ZiL8W7bxMNOS+YcEKuNcAQ81mEt98QVgMnO2
+	KRq7IxRkYN5hauAQFy1kNH0Q/NALl9qzDOW+6J7FFbFMEcBdBDTcJ1Fku6Cpczci4igIJZ1OBsH
+	yfyeyLQiZU3BDWT9MYhW70ggJszta49I=
+X-Google-Smtp-Source: AGHT+IGiVWsRgna6YFtX3lIOZflyd/n65LzeA7u2H4Vn6CADHl7LjKAcdgMWsH2J9c3odTzb41X29luFgy3QJL3PEE0=
+X-Received: by 2002:a05:6214:248d:b0:6e8:fcde:58d5 with SMTP id
+ 6a1803df08f44-6fb08fca70cmr1701456d6.42.1749142067979; Thu, 05 Jun 2025
+ 09:47:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250603065920.3404510-1-song@kernel.org> <20250603065920.3404510-3-song@kernel.org>
+ <20250603.Av6paek5saes@digikod.net> <CAPhsuW6J_hDtXZm4MH_OAz=GCpRW0NMM1EXMrJ=nqsTdpf8vcg@mail.gmail.com>
+In-Reply-To: <CAPhsuW6J_hDtXZm4MH_OAz=GCpRW0NMM1EXMrJ=nqsTdpf8vcg@mail.gmail.com>
+From: Song Liu <song@kernel.org>
+Date: Thu, 5 Jun 2025 09:47:36 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW7MtxryseFsHF2xqBFS2UWammJatjf8UxBhytgn_nA4=g@mail.gmail.com>
+X-Gm-Features: AX0GCFuxvd5FPNUUEpcc72D9DOeW57RE3kAaur20E9lAgQ4Gi6GJ17dndQGcnv8
+Message-ID: <CAPhsuW7MtxryseFsHF2xqBFS2UWammJatjf8UxBhytgn_nA4=g@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 2/4] landlock: Use path_walk_parent()
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, 
+	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
+	jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com, m@maowtm.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-06-05 at 15:43 +0200, Vitaly Kuznetsov wrote:
-> James Bottomley <James.Bottomley@HansenPartnership.com> writes:
->=20
-> > On Thu, 2025-06-05 at 09:54 +0200, Vitaly Kuznetsov wrote:
-> > > One additional consideration is the fact that we already trust
-> > > 'db' for dm-verity (since 6fce1f40e951) and kexec (since
-> > > 278311e417be) and especially the later gives someone who is able
-> > > to control 'db' access to CPL0; a 'db'-signed module (IMO)
-> > > wouldn't change much.
-> >=20
-> > Well, the kexec case is because kexec has to verify the new kernel
-> > as shim would and shim would use the UEFI keys.=C2=A0 The dm-verity one
-> > was added for a cloud use case by pressuring the maintainers in
-> > spite of the objection to using the platform keyring (it went to
-> > dm-devel only so not many integrity people saw it):
-> >=20
-> > https://lore.kernel.org/all/20240617220037.594792-1-luca.boccassi@gmail=
-.com/
-> >=20
-> > The point here is I do think the cloud use case is legitimate, but
-> > it can't be supported simply by ignoring the bare metal security
-> > domain separation concerns of the integrity community.=C2=A0 The
-> > argument that distros have done it so it must be safe isn't really
-> > a winning one (especially as there's no clear explanation of why
-> > they did it).=C2=A0 So either you need a better argument or we need a
-> > way to support both sets of communities ... which is why I was
-> > wondering about a runtime differentiator.
->=20
-> So far, I got two 'runtime' ideas:
-> - Observe MokListTrustedRT and distrust .platform when it is
-> non-empty. This can, of course, be combine with a Kconfig for those,
-> who do not want it at all.
+On Wed, Jun 4, 2025 at 12:37=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+>
+> On Tue, Jun 3, 2025 at 6:46=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
+> >
+> > Landlock tests with hostfs fail:
+> >
+> > ok 126 layout3_fs.hostfs.tag_inode_file
+> > #  RUN           layout3_fs.hostfs.release_inodes ...
+> > # fs_test.c:5555:release_inodes:Expected EACCES (13) =3D=3D test_open(T=
+MP_DIR, O_RDONLY) (0)
+> >
+> > This specific test checks that an access to a (denied) mount point over
+> > an allowed directory is indeed denied.
 
-Well, not sure about that specific variable.  It seems to be set but
-not used by shim (however it is used in the kernel to decide whether to
-import the MoK list), so how would someone with a current distrusted db
-get it set?  But there's also MokIgnoreDB (which is actually a RT
-import of MokDBState) which is used to prevent importing the db certs
-into the platform keyring in the first place.
+I just realized this only fails on hostfs. AFAICT, hostfs is only used
+by um. Do we really need this to behave the same on um+hostfs?
 
-I think the reason this is so fragmented is because we didn't really
-co-ordinate with shim when all the variables and switches were added.=20
-Perhaps we should document all the variables and expectations before
-deciding on a mechanism?=20
+Thanks,
+Song
 
-The one thing we can guarantee is if the cloud use case is booting
-without shim (is it?) then none of the RT variables will get created,
-so checking any (or a set) of them would work.
-
-> and/or
-> - Sysctl toggle. Keep things as they are by default but make
-> .platform trusted (either for modules or for everything) when
-> switched 'on'. This can (optionally) by combined with a previous idea
-> and have e.g. an 'auto' state for the toggle which follows
-> MokListTrustedRT.
-
-I'm less keen on user specifiable runtime because the security policy
-of the system using a lockdown to make root less privileged than ring 0
-can't allow a malicious root to weaken it.  However, let's see if we
-can get a proposal that would mitigate that concern.
-
-Ideally, if we can get to something that works for everyone at runtime,
-we can remove the current Kconfig explosion which is definitely adding
-to the confusion (as shown in the Debian bug reports).
-
-Regards,
-
-James
-
+>
+> I am having trouble understanding the test. It appears to me
+> the newly mounted tmpfs on /tmp is allowed, but accesses to
+> / and thus mount point /tmp is denied? What would the walk in
+> is_access_to_paths_allowed look like?
+>
+> > It's not clear to me the origin of the issue, but it seems to be relate=
+d
+> > to choose_mountpoint().
+> >
+> > You can run these tests with `check-linux.sh build kselftest` from
+> > https://github.com/landlock-lsm/landlock-test-tools
+>
+> How should I debug this test? printk doesn't seem to work.
+>
+> Thanks,
+> Song
