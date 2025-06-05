@@ -1,102 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209A9272E60;
-	Thu,  5 Jun 2025 16:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6588B4400;
+	Thu,  5 Jun 2025 18:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749142070; cv=none; b=qyEkCQ/uFJDZsmA2ZOgQwXiKdlLZZ5UaeMO/tV9WN7sJdzuvQ4badHxc+dNzSVmuuHI2hGuWb7SRvQi5/cRYjAxa5NWVWl7oTxVGvP7xP/8xMVdUSxWYoOySEeI5uXsosUeyvKoLlsZ5TYCboqptJzdpK9sgaASIydFZAop23fI=
+	t=1749146973; cv=none; b=EL07srfrUb3xpiTgRviwT1d66VoRauf3Thjwha0TqgOGwjcjrWoPeLzRbH9wFhSD+Ko46Hzz2ZmsMCjDWkL+Ms2iJHyPeHeV+f3piSl7XGzfuPBPJvfv7i4hsTGrKXsWPUt36kuohMsP4ehoeus4ryQS9uiM2pmSumNaUPg5q2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749142070; c=relaxed/simple;
-	bh=3w8JkMR+dyq082xGIErStybqJdnFiDxHZZEpuJDxc3Y=;
+	s=arc-20240116; t=1749146973; c=relaxed/simple;
+	bh=hCpEyHqiBnpT85ZnAEXBHJnsThLhlMdygvzgkhGSFk8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t78ZdHSGvBxOJvjhuq1TFtxTehzF+kSEXd/YZJ9wK4ECc7lvdHv3RiguwS/y+euz5kUK0QRCtEclfoAA9ntwE5GJtUR7zoOM0ewGiBL7kkUPZtco+2mk2ugwtX+1ZX7ytORLeHG77pUSFyvCR68ECSAWZXVQUPoZ1xNAjqLZJqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iDHKrQ5t; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=aeMh+0gGSFUF/MbqyFxhA+zE4LY5yUhdVZG6NpW/vhHC34e0d4dfZb/bfP9ObavvPK4+FwI9jV3gKMHiNBpw2gIt0DCtIN65Mn/wkvEaEFt/wlK3aLQgOIGdbuSEkEHjapqG97NGWEccqF4/aB0iDq/N+eCj0xwML7yL9XJxTNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WtsPRP/G; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDHKrQ5t"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93F4AC4CEF0;
-	Thu,  5 Jun 2025 16:47:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749142069;
-	bh=3w8JkMR+dyq082xGIErStybqJdnFiDxHZZEpuJDxc3Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=iDHKrQ5tePQjpI9sn8mjRk57YAtDPhlZJHvhfg6Iy0klF+8ltljpme/kPr9HYotO6
-	 f2kjL3muTlj2UikuaJw8/p4eztsNuYFFjX44gdIqlNiOmLH32Q4WmbGZFu9sAw2Pd9
-	 eIClFx2j337dEbMQbp1uJuNu2/Atsmu61vVysI0xRRZpUihquL35/iI0/yKf6FDzhC
-	 ecbP7VUy5Is+rFOxk1sucNSGQYZPVlDykshAAhtyd+AqsuQcVMnNL/uqvEqRCQPyEh
-	 JS0XdsnE4An0ESq+DhaC/rmHCWsX1xfXdmKyUbPkAZrsJ7KqnMWlXG3gz5c4AyNQuc
-	 jTEruXZlao9dQ==
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4a4312b4849so14307471cf.1;
-        Thu, 05 Jun 2025 09:47:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUxo6pW5LL7LpftHK9emUuVT4TrCeZfS4ZJNv4fa93TORM1SyZ8w4KQio6f6yZ6WyrzBnW9tL58tjeCtiy9@vger.kernel.org, AJvYcCW4qbRvc3eWD/qENrkU0xfTIZoy8bS4xwdnQd2mKGA7akYwA/Q6ZwiYcURkJjpzWnJtvTwYQtC5IOVv3WFs@vger.kernel.org, AJvYcCXkCajXHkwdPoj5udeiTJjNs06/u/uoMUXfEFUSYiGfcHD6SUeLmMJWOjgEJSp94lwFaZ+8Yf+LQsCNLyB4l7qBYyjduNdi@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTTuzSnr6lWhL4ZiL8W7bxMNOS+YcEKuNcAQ81mEt98QVgMnO2
-	KRq7IxRkYN5hauAQFy1kNH0Q/NALl9qzDOW+6J7FFbFMEcBdBDTcJ1Fku6Cpczci4igIJZ1OBsH
-	yfyeyLQiZU3BDWT9MYhW70ggJszta49I=
-X-Google-Smtp-Source: AGHT+IGiVWsRgna6YFtX3lIOZflyd/n65LzeA7u2H4Vn6CADHl7LjKAcdgMWsH2J9c3odTzb41X29luFgy3QJL3PEE0=
-X-Received: by 2002:a05:6214:248d:b0:6e8:fcde:58d5 with SMTP id
- 6a1803df08f44-6fb08fca70cmr1701456d6.42.1749142067979; Thu, 05 Jun 2025
- 09:47:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WtsPRP/G"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-311ef4fb43dso1105688a91.3;
+        Thu, 05 Jun 2025 11:09:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749146969; x=1749751769; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8luWUuoNqYwTjrcszSVsilqxBIhH6lfcQzMovWFpql4=;
+        b=WtsPRP/GRKTTOUzfitkWz4r/zGvTK5a7mR1rBQFamekzeErRYpJGWepLDCkm7SgKDl
+         ETCS5EoSZkdvQYDzRhPexFEQn7KLNeMhV/gHCZPc5F7hUkM8kIS6JrBRppuFJUa8F7e7
+         9cTkjrW1Vxpb0Bj2WnVhiw6xSDOIPlhvEyujDk1dlQvLF61hLGCWl0iHr74/xFVPS0iK
+         ZKLv/n9O6X1kLNAR339eiicHq9qWvW+4sQck3qdGrrctIKqVi8GNxOlJOPcMz5GAYG19
+         lHE0Yk61GtUU7S/IRlxYfWf92Tkl5AKNL0Lg41SraiL1FJt6t40sD8HaYbhIBMiLlFkz
+         CB2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749146969; x=1749751769;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8luWUuoNqYwTjrcszSVsilqxBIhH6lfcQzMovWFpql4=;
+        b=ULsrSkWWAHITxsj9GMbS6dZPvyegiKLcx9elOEvXWDYxr7FUP/9qYuZP8g/tKxUWhD
+         8IMCOCFCnsiuU4jn2pPyZH04+dx7wGvyqKnB7mATfZJUl/iFlOq23v2Nl3HsP1JllPqQ
+         VcumTM/klDXEI5PxrjsEA40a6Zk2hjkZZ6BkUykx0kExE6R+MCL8aifV7Q1lc8FXhuFU
+         dr1hUZ7MWUtjeRgO95PoTxbMHsNVrDv3ixOxMd4YBGmz4VCzK8cYm7SwJnXTWhI/TOqA
+         ZGh5JUVCpVTWOZaWif5oRa3NmhvmwnhwN202Y/Olzq250kL73P8ITxA9yL/SCTjJOdsd
+         Yxrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDBkUv90W1901JtUbbTam+IiAsfq2F+qJoFVRckGA/V9CW9+56BLondgx/V1E8RfeKrh70n+182YLZ744NqyjfbUgjJqRR@vger.kernel.org, AJvYcCUTidintgYT2RSZ9xfrjcfLWYP7/Zokl981bcZLI5RgiZNdprWbw7lZe7a1qpkaIgn4FXNyztzm@vger.kernel.org, AJvYcCVCUuXHIQDloGo9T8sYQdLvKcSoT2kjNpWpVMwfvpLguvtb4P4EPZ5kA5OX2FgKWom+k7n8VOhCOFYu@vger.kernel.org, AJvYcCWSlOtFXKmnhI3XN6AG+OkbK+MioG3OVOViTWdAQRA2KGXfVCnX9c20KKIhp8iwZsqOuUDXYNCUm19Qo1IQ@vger.kernel.org, AJvYcCWikBPWjVI4ySsDV+wqdW2petOYuF5fMocmGl54WcGWD0kulX0FPzVxXSTEDJgsaEZCzNUQQmg4p/OcVbo0@vger.kernel.org, AJvYcCX0wOQcC3rMLgMZL4Z0746woHJf930s6StAbOrYsO9ATi+eFM8zlbPf/zXoHXU/tJaxc6uZ+deuHA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJhjyV52lblP9kpK9TrTQOvC8gnIqv4zIIn8XONDpC8vaoDB/H
+	gWgn/wtQ5jeeSktcp01lQxKdDK7BxmjjRPFYnMwZltK8kYfIQWblXOVZO+/pz++WKDvBOMc3bTR
+	r21l8uLpd3e2F24L73/Ex2HcRi2Ke5u4=
+X-Gm-Gg: ASbGncuWBm/+335WMR9/vk8ke1FsjJNzza4uwfopS7+Wry7TT40+1MkImyQb2CXgkGo
+	gYzT9EQmdssh6tXW8EMuVd+UheUnZj7/FkIdvou8u3CEhR8n7FBKI8qcEsON8hX4AtXusnCaH/y
+	Ej/8CraJcUtiXyRNi3Vlx2itVCK73Gf+cX
+X-Google-Smtp-Source: AGHT+IFip/lShvRWllilwhcL8Ol8PacwWwmFAaam0lqLm+JyQwZMflMxpqN8f8m/6W1ii3AUdmKnFhSBfa79vqtPCVA=
+X-Received: by 2002:a17:90b:2fc4:b0:311:ae39:3dad with SMTP id
+ 98e67ed59e1d1-31347696706mr809115a91.30.1749146969467; Thu, 05 Jun 2025
+ 11:09:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250603065920.3404510-1-song@kernel.org> <20250603065920.3404510-3-song@kernel.org>
- <20250603.Av6paek5saes@digikod.net> <CAPhsuW6J_hDtXZm4MH_OAz=GCpRW0NMM1EXMrJ=nqsTdpf8vcg@mail.gmail.com>
-In-Reply-To: <CAPhsuW6J_hDtXZm4MH_OAz=GCpRW0NMM1EXMrJ=nqsTdpf8vcg@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Thu, 5 Jun 2025 09:47:36 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW7MtxryseFsHF2xqBFS2UWammJatjf8UxBhytgn_nA4=g@mail.gmail.com>
-X-Gm-Features: AX0GCFuxvd5FPNUUEpcc72D9DOeW57RE3kAaur20E9lAgQ4Gi6GJ17dndQGcnv8
-Message-ID: <CAPhsuW7MtxryseFsHF2xqBFS2UWammJatjf8UxBhytgn_nA4=g@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 2/4] landlock: Use path_walk_parent()
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, 
-	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
-	jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com, m@maowtm.org
+References: <20250428195022.24587-2-stephen.smalley.work@gmail.com> <CAHC9VhQfrMe7EY3_bvW6PcLdaW7tPMgv6WZuePxd1RrbhyZv-g@mail.gmail.com>
+In-Reply-To: <CAHC9VhQfrMe7EY3_bvW6PcLdaW7tPMgv6WZuePxd1RrbhyZv-g@mail.gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Thu, 5 Jun 2025 14:09:17 -0400
+X-Gm-Features: AX0GCFvSHOanjqux2hTZnx--qeaWrQ1aQE-CbC_PtPMv61y7GT38kV1BQ65yzOA
+Message-ID: <CAEjxPJ5CSUEsXGT5e9KKXvdWpetm=v8iWc9jKvUMFub30w9KqA@mail.gmail.com>
+Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity()
+ interface
+To: Paul Moore <paul@paul-moore.com>
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Eric Dumazet <edumazet@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 4, 2025 at 12:37=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+On Tue, Apr 29, 2025 at 7:35=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
 >
-> On Tue, Jun 3, 2025 at 6:46=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
+> On Mon, Apr 28, 2025 at 4:15=E2=80=AFPM Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
 > >
-> > Landlock tests with hostfs fail:
+> > Update the security_inode_listsecurity() interface to allow
+> > use of the xattr_list_one() helper and update the hook
+> > implementations.
 > >
-> > ok 126 layout3_fs.hostfs.tag_inode_file
-> > #  RUN           layout3_fs.hostfs.release_inodes ...
-> > # fs_test.c:5555:release_inodes:Expected EACCES (13) =3D=3D test_open(T=
-MP_DIR, O_RDONLY) (0)
+> > Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.sma=
+lley.work@gmail.com/
 > >
-> > This specific test checks that an access to a (denied) mount point over
-> > an allowed directory is indeed denied.
+> > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > ---
+> > This patch is relative to the one linked above, which in theory is on
+> > vfs.fixes but doesn't appear to have been pushed when I looked.
+> >
+> >  fs/nfs/nfs4proc.c             | 10 ++++++----
+> >  fs/xattr.c                    | 19 +++++++------------
+> >  include/linux/lsm_hook_defs.h |  4 ++--
+> >  include/linux/security.h      |  5 +++--
+> >  net/socket.c                  | 17 +++++++----------
+> >  security/security.c           | 16 ++++++++--------
+> >  security/selinux/hooks.c      | 10 +++-------
+> >  security/smack/smack_lsm.c    | 13 ++++---------
+> >  8 files changed, 40 insertions(+), 54 deletions(-)
+>
+> Thanks Stephen.  Once we get ACKs from the NFS, netdev, and Smack
+> folks I can pull this into the LSM tree.
 
-I just realized this only fails on hostfs. AFAICT, hostfs is only used
-by um. Do we really need this to behave the same on um+hostfs?
+Note that this will need to have a conflict resolved with:
+https://lore.kernel.org/selinux/20250605164852.2016-1-stephen.smalley.work@=
+gmail.com/
 
-Thanks,
-Song
+Fortunately it should be straightforward - just delete the line added
+by that patch since this patch fixes the security_inode_listsecurity()
+hook interface to return 0 or -errno itself.
 
 >
-> I am having trouble understanding the test. It appears to me
-> the newly mounted tmpfs on /tmp is allowed, but accesses to
-> / and thus mount point /tmp is denied? What would the walk in
-> is_access_to_paths_allowed look like?
->
-> > It's not clear to me the origin of the issue, but it seems to be relate=
-d
-> > to choose_mountpoint().
-> >
-> > You can run these tests with `check-linux.sh build kselftest` from
-> > https://github.com/landlock-lsm/landlock-test-tools
->
-> How should I debug this test? printk doesn't seem to work.
->
-> Thanks,
-> Song
+> --
+> paul-moore.com
