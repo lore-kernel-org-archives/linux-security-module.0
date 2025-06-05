@@ -1,212 +1,169 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E111DE3DC;
-	Thu,  5 Jun 2025 05:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55B31FCFFB
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Jun 2025 07:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749102614; cv=none; b=iOTHemXFTBOaaCzKXLRZmdw3/0794Fvk0LKFPQI0c8T1P1psZGY9R+2gNVzrtKkQfYt8lgLxxHm4UgtpdCcnaR7NuAtVKtIvGWNjQtZnzl2vPG+zVnCsg3AcL8ZB0mpPuYAddKpAR/DwoXzbUO3/QZ1H3Gt3XPuZ/5qrW6MgaY4=
+	t=1749110085; cv=none; b=AfTOn6TcSGrO47FlCVsivFmIYklEWyHGKoFHCbexoknvDvIxHANbtV8P6Me2do1yZgk3A4Z/PYz9/Lr8nWGGsy8AgudUUuaupBaTM/8CcjXe7PhO952CH56ZOf4SRMItQCfm8gKWPyAY8itCHYtBsWI6VELAiMIU3uehrWpf8ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749102614; c=relaxed/simple;
-	bh=qs0L8RWOQrfH+BuAGm8VA2+QF4D9DsqgbCCykmbS7hM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rki0E11GooIXvc8dJpHGIz4QVBppwVrcVf71vtdnNHrdFpbjmrlm6OU7tIaCDmbKW788X34A8KizFDoSulxrEgop9JEt8w6EnwCminGDpzDyvAkmVQOYKTXfT4ECt9OVMjhC/5VrW2fvK6mq48PtLPZL8/fMhPl0toQpBg1n/9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PjGhekro; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749110085; c=relaxed/simple;
+	bh=NNFSE2fFzpiSASQWnZwDpNqWAbQXEhYo1W4bEKJ2yGQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AczHg3EANC9gHfciERxiWES5T2/+0Llk8foUFFyW/pGpwX8wkDqDD9FPZE4lX5RGxwGbL1Uq7+rbuOglFrUlNVQBBq937lUUOStLWdSN80k4O8wkAI+ft996OYi4JAoTic8qurpTGMkUYAxuRqd0ilJlR8eomO3UXXjigVGDbZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eTmuyObj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PjGhekro"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4845C4CEE7;
-	Thu,  5 Jun 2025 05:49:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749102613;
-	bh=qs0L8RWOQrfH+BuAGm8VA2+QF4D9DsqgbCCykmbS7hM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PjGhekro9i0u1SPcGCom4gAb48wNARMXn6A6gaDblDsaK7HYDJf/JD6QaWG46YBs6
-	 TCAPUsLofAma+mUXCkwb73LupFQtXJzt34OSmd8fIufYmJCjDqolgHV3SH+yI3jfR/
-	 rfPzn9UpcUjNklg9SPRqagfw4CpXPB+HkhG9+/MutkpU+GDNoNDUD8/THQScpcRrzc
-	 Q2kLuCyIGvZGf7ihWVGZYPtxALsBLwknrrnVz7RjvqGlsVanzWbK7euwEhqJQV0BR7
-	 fp+Tw4rT0h6FMLbUayWl5q2On0P85sraYAKGvGLSjoc6iiV68atTmA+L5Vnv4Htlnr
-	 TCKTY7u+facQw==
-Date: Thu, 5 Jun 2025 08:49:44 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Ackerley Tng <ackerleytng@google.com>,
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-fsdevel@vger.kernel.org, aik@amd.com, ajones@ventanamicro.com,
-	akpm@linux-foundation.org, amoorthy@google.com,
-	anthony.yznaga@oracle.com, anup@brainfault.org,
-	aou@eecs.berkeley.edu, bfoster@redhat.com,
-	binbin.wu@linux.intel.com, brauner@kernel.org,
-	catalin.marinas@arm.com, chao.p.peng@intel.com,
-	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
-	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
-	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
-	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca,
-	jgowans@amazon.com, jhubbard@nvidia.com, jroedel@suse.de,
-	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com,
-	keirf@google.com, kent.overstreet@linux.dev,
-	kirill.shutemov@intel.com, liam.merwick@oracle.com,
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name,
-	maz@kernel.org, mic@digikod.net, michael.roth@amd.com,
-	mpe@ellerman.id.au, muchun.song@linux.dev, nikunj@amd.com,
-	nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com,
-	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com,
-	pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com,
-	pvorel@suse.cz, qperret@google.com, quic_cvanscha@quicinc.com,
-	quic_eberman@quicinc.com, quic_mnalajal@quicinc.com,
-	quic_pderrin@quicinc.com, quic_pheragu@quicinc.com,
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com,
-	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com,
-	rientjes@google.com, roypat@amazon.co.uk, seanjc@google.com,
-	shuah@kernel.org, steven.price@arm.com, steven.sistare@oracle.com,
-	suzuki.poulose@arm.com, tabba@google.com, thomas.lendacky@amd.com,
-	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
-	willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
-	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
-Subject: Re: [PATCH 1/2] fs: Provide function that allocates a secure
- anonymous inode
-Message-ID: <aEEv-A1ot_t8ePgv@kernel.org>
-References: <cover.1748890962.git.ackerleytng@google.com>
- <c03fbe18c3ae90fb3fa7c71dc0ee164e6cc12103.1748890962.git.ackerleytng@google.com>
- <aD_8z4pd7JcFkAwX@kernel.org>
- <CAHC9VhQczhrVx4YEGbXbAS8FLi0jaV1RB0kb8e4rPsUOXYLqtA@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eTmuyObj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749110082;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EsWFMFas7O2Lvk4gjiHkVtt4n83KeM8DN/r9KQDAJpg=;
+	b=eTmuyObjGqtnf4LMmM7LVrGZ4VmjkRbQtx8QVLIpP7ybjVxg9nwaYg0WzqSg0Hwft/vQpq
+	N5VSwCNg+8yT6n/fyA1kORpSecyIOTWg92yuphpLplD7zyo//dV7ylwl4IqJrzP/Ie9zbk
+	r996gAyw3/xGQGJp1MUqpeZalZmdarc=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-459-E6Dd_3LdOciDa_HcjbibcA-1; Thu, 05 Jun 2025 03:54:41 -0400
+X-MC-Unique: E6Dd_3LdOciDa_HcjbibcA-1
+X-Mimecast-MFC-AGG-ID: E6Dd_3LdOciDa_HcjbibcA_1749110080
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-451d2037f1eso3779785e9.0
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Jun 2025 00:54:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749110080; x=1749714880;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EsWFMFas7O2Lvk4gjiHkVtt4n83KeM8DN/r9KQDAJpg=;
+        b=YJbLG5xmzabrGact+W2RuQ6fttITGmS/15rDtRqGOrME+YUodNBJShTUMG0jxB+c4Q
+         yC1hrwQvhgK6x6fdFxqIO3XngOfkPu9mxSY6r0Em3+rpkHWK5fTtGYeYk3cJq6rxA8Bq
+         MauCUZfRo6hkITxa4GhnhGO6mlMvh9Y/a4tWxUqgoYz+lIiBnWcuekb8HG9Be8CwZlBM
+         HpaXx19b+/tiA3Yi29rxRsOrHUrGUJnaQgzZ6mtml1NrsyrAtBQ1hKjCUDB21ujXQ6Q5
+         C882ufLFEFiVq1xtwR+MKVpQoQyMzkaGMMt3ZtsPGxfRfMTSMyJDMU5uwNoeWeuiSMC9
+         SNjQ==
+X-Gm-Message-State: AOJu0YxMNXQ+oObkaMcgso1CtF7p42r6PtPpMkAkEzLf4/b7M6s57DR/
+	6uMeg+eXXCrBdXMS+BySHs+kLB3KkdVqFkLNjxg+UynqsRbsL7E7Q6vOcS2hxVH+d5SW1CBL4dy
+	ssdH0TvymBA4Y/ksHIPUvcw3DyVpU9ANViS4TLQpdw7ikR/jDisj8oJmencH+Y8FsSbOJGaHc7K
+	599A==
+X-Gm-Gg: ASbGncugjmG4fKw9UNmxM0L6mhQ6VN6THWRNi9HL0Yvu/T2GB3HJjp6TFLRYnSQZbnE
+	ERsux3Pem5lSFFr13+PmYDL1w5rGe26FCcL/shUsU2BxvO/Yf1+Uuy8pwuaIx78pNo9XPQF+vLy
+	RoRu/Il6WbgyZJl1U71dpWYVoQ/1JZ5sFI9fssFiU/zOuzZqYD5nzbVJtldHSK/dhzAkpNPxR5M
+	UemNrk4kecVH7kOYUcVSuoQspQHHfXZ5gkx3fu7wr4owghOqFYfgNzRfoULoZ5C85YOOoUzOhtH
+	7nMQu0M=
+X-Received: by 2002:a05:600c:1382:b0:43d:300f:fa3d with SMTP id 5b1f17b1804b1-451f0a5fe0amr51092105e9.5.1749110080163;
+        Thu, 05 Jun 2025 00:54:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG1SRbImSlbGm32npkuOoSxiRgAXup0UEUY8LHi/iQ53+IYu08XHv+Q7OLZVb45/K6v+57Beg==
+X-Received: by 2002:a05:600c:1382:b0:43d:300f:fa3d with SMTP id 5b1f17b1804b1-451f0a5fe0amr51091785e9.5.1749110079698;
+        Thu, 05 Jun 2025 00:54:39 -0700 (PDT)
+Received: from fedora (g3.ign.cz. [91.219.240.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-451f97f85casm16199575e9.4.2025.06.05.00.54.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Jun 2025 00:54:38 -0700 (PDT)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Eric Snowberg
+ <eric.snowberg@oracle.com>
+Cc: "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, "linux-integrity@vger.kernel.org"
+ <linux-integrity@vger.kernel.org>, "linux-modules@vger.kernel.org"
+ <linux-modules@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
+ <linux-doc@vger.kernel.org>, "keyrings@vger.kernel.org"
+ <keyrings@vger.kernel.org>, David Howells <dhowells@redhat.com>, David
+ Woodhouse <dwmw2@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Luis
+ Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami
+ Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>,
+ Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
+ <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge
+ E. Hallyn" <serge@hallyn.com>, Peter Jones <pjones@redhat.com>, Robert
+ Holmes <robeholmes@gmail.com>, Jeremy Cline <jcline@redhat.com>, Coiby Xu
+ <coxu@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>
+Subject: Re: [PATCH RFC 0/1] module: Optionally use .platform keyring for
+ signatures verification
+In-Reply-To: <f0b37bc55ed3c02569c74f0fbdb6afa8efd329e2.camel@HansenPartnership.com>
+References: <20250602132535.897944-1-vkuznets@redhat.com>
+ <0FD18D05-6114-4A25-BD77-C32C1D706CC3@oracle.com>
+ <f0b37bc55ed3c02569c74f0fbdb6afa8efd329e2.camel@HansenPartnership.com>
+Date: Thu, 05 Jun 2025 09:54:37 +0200
+Message-ID: <87zfemoc76.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: jtC4CJBPtbdwulk3QxlYPUt5ZWYju_LyrI7ygWIrxQM_1749110080
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhQczhrVx4YEGbXbAS8FLi0jaV1RB0kb8e4rPsUOXYLqtA@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 04, 2025 at 05:13:35PM -0400, Paul Moore wrote:
-> On Wed, Jun 4, 2025 at 3:59 AM Mike Rapoport <rppt@kernel.org> wrote:
-> >
-> > (added Paul Moore for selinux bits)
-> 
-> Thanks Mike.
-> 
-> I'm adding the LSM and SELinux lists too since there are others that
-> will be interested as well.
-> 
-> > On Mon, Jun 02, 2025 at 12:17:54PM -0700, Ackerley Tng wrote:
-> > > The new function, alloc_anon_secure_inode(), returns an inode after
-> > > running checks in security_inode_init_security_anon().
-> > >
-> > > Also refactor secretmem's file creation process to use the new
-> > > function.
-> > >
-> > > Suggested-by: David Hildenbrand <david@redhat.com>
-> > > Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> > > ---
-> > >  fs/anon_inodes.c   | 22 ++++++++++++++++------
-> > >  include/linux/fs.h |  1 +
-> > >  mm/secretmem.c     |  9 +--------
-> > >  3 files changed, 18 insertions(+), 14 deletions(-)
-> > >
-> > > diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> > > index 583ac81669c2..4c3110378647 100644
-> > > --- a/fs/anon_inodes.c
-> > > +++ b/fs/anon_inodes.c
-> > > @@ -55,17 +55,20 @@ static struct file_system_type anon_inode_fs_type = {
-> > >       .kill_sb        = kill_anon_super,
-> > >  };
-> > >
-> > > -static struct inode *anon_inode_make_secure_inode(
-> > > -     const char *name,
-> > > -     const struct inode *context_inode)
-> > > +static struct inode *anon_inode_make_secure_inode(struct super_block *s,
-> > > +             const char *name, const struct inode *context_inode,
-> > > +             bool fs_internal)
-> > >  {
-> > >       struct inode *inode;
-> > >       int error;
-> > >
-> > > -     inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
-> > > +     inode = alloc_anon_inode(s);
-> > >       if (IS_ERR(inode))
-> > >               return inode;
-> > > -     inode->i_flags &= ~S_PRIVATE;
-> > > +
-> > > +     if (!fs_internal)
-> > > +             inode->i_flags &= ~S_PRIVATE;
-> > > +
-> > >       error = security_inode_init_security_anon(inode, &QSTR(name),
-> > >                                                 context_inode);
-> > >       if (error) {
-> > > @@ -75,6 +78,12 @@ static struct inode *anon_inode_make_secure_inode(
-> > >       return inode;
-> > >  }
-> > >
-> > > +struct inode *alloc_anon_secure_inode(struct super_block *s, const char *name)
-> > > +{
-> > > +     return anon_inode_make_secure_inode(s, name, NULL, true);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(alloc_anon_secure_inode);
-> > > +
-> > >  static struct file *__anon_inode_getfile(const char *name,
-> > >                                        const struct file_operations *fops,
-> > >                                        void *priv, int flags,
-> > > @@ -88,7 +97,8 @@ static struct file *__anon_inode_getfile(const char *name,
-> > >               return ERR_PTR(-ENOENT);
-> > >
-> > >       if (make_inode) {
-> > > -             inode = anon_inode_make_secure_inode(name, context_inode);
-> > > +             inode = anon_inode_make_secure_inode(anon_inode_mnt->mnt_sb,
-> > > +                                                  name, context_inode, false);
-> > >               if (IS_ERR(inode)) {
-> > >                       file = ERR_CAST(inode);
-> > >                       goto err;
-> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > > index 016b0fe1536e..0fded2e3c661 100644
-> > > --- a/include/linux/fs.h
-> > > +++ b/include/linux/fs.h
-> > > @@ -3550,6 +3550,7 @@ extern int simple_write_begin(struct file *file, struct address_space *mapping,
-> > >  extern const struct address_space_operations ram_aops;
-> > >  extern int always_delete_dentry(const struct dentry *);
-> > >  extern struct inode *alloc_anon_inode(struct super_block *);
-> > > +extern struct inode *alloc_anon_secure_inode(struct super_block *, const char *);
-> > >  extern int simple_nosetlease(struct file *, int, struct file_lease **, void **);
-> > >  extern const struct dentry_operations simple_dentry_operations;
-> > >
-> > > diff --git a/mm/secretmem.c b/mm/secretmem.c
-> > > index 1b0a214ee558..c0e459e58cb6 100644
-> > > --- a/mm/secretmem.c
-> > > +++ b/mm/secretmem.c
-> > > @@ -195,18 +195,11 @@ static struct file *secretmem_file_create(unsigned long flags)
-> > >       struct file *file;
-> > >       struct inode *inode;
-> > >       const char *anon_name = "[secretmem]";
-> > > -     int err;
-> > >
-> > > -     inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
-> > > +     inode = alloc_anon_secure_inode(secretmem_mnt->mnt_sb, anon_name);
-> > >       if (IS_ERR(inode))
-> > >               return ERR_CAST(inode);
-> >
-> > I don't think we should not hide secretmem and guest_memfd inodes from
-> > selinux, so clearing S_PRIVATE for them is not needed and you can just drop
-> > fs_internal parameter in anon_inode_make_secure_inode()
-> 
-> It's especially odd since I don't see any comments or descriptions
-> about why this is being done.  The secretmem change is concerning as
-> this is user accessible and marking the inode with S_PRIVATE will
-> bypass a number of LSM/SELinux access controls, possibly resulting in
-> a security regression (one would need to dig a bit deeper to see what
-> is possible with secretmem and which LSM/SELinux code paths would be
-> affected).
+James Bottomley <James.Bottomley@HansenPartnership.com> writes:
 
-secretmem always had S_PRIVATE set because alloc_anon_inode() clears it
-anyway and this patch does not change it.
-I'm just thinking that it makes sense to actually allow LSM/SELinux
-controls that S_PRIVATE bypasses for both secretmem and guest_memfd.
- 
--- 
-Sincerely yours,
-Mike.
+> On Wed, 2025-06-04 at 17:01 +0000, Eric Snowberg wrote:
+>> > On Jun 2, 2025, at 7:25=E2=80=AFAM, Vitaly Kuznetsov <vkuznets@redhat.=
+com>=20
+>> > The use-case: virtualized and cloud infrastructure generally
+>> > provide an ability to customize SecureBoot variables, in
+>> > particular, it is possible to bring your own SecureBoot 'db'. This
+>> > may come handy when a user wants to load a third party kernel
+>> > module (self built or provided by a third party vendor) while still
+>> > using a distro provided kernel. Generally, distro provided kernels
+>> > sign modules with an ephemeral key and discard the private part
+>> > during the build. While MOK can sometimes be used to sign something
+>> > out-of-tree, it is a tedious process requiring either a manual
+>> > intervention with shim or a 'certmule' (see
+>> > https://blogs.oracle.com/linux/post/the-machine-keyring). In
+>> > contrast, the beauty of using SecureBoot 'db' in this scenario is
+>> > that for public clouds and virtualized infrastructure it is
+>> > normally a property of the OS image (or the whole
+>> > infrastructure/host) and not an individual instance; this means
+>> > that all instances created from the same template will have 'db'
+>> > keys in '.platform' by default.
+>>=20
+>> Hasn=E2=80=99t this approach been rejected multiple times in the past?
+>
+> Well not rejected, just we always thought that people (like me) who
+> take control of their secure boot systems are a tiny minority who can
+> cope with being different.  I have to say the embedding of all the
+> variable manipulations in shim made it quite hard.  However you can use
+> the efitools KeyTool to get a graphical method for adding MoK keys even
+> in the absence of shim.
+>
+> The question is, is there a growing use case for db users beyond the
+> exceptions who own their own keys on their laptop, in which case we
+> should reconsider this.
+
+Yes, exactly; I may had missed some of the discussions but what I found
+gave me the impression that the idea was never implemented just because
+'db' was normally considered to be outside of user's control ("just a few
+evil certs from MS"). This may still be true for bare metal but over the
+last few years things have changed in a way that major cloud providers
+started moving towards offering UEFI booted instances by default (or, in
+some cases, UEFI-only instances). At least the three major hyperscalers
+(AWS, GCP, Azure) offer fairly straightforward ways to customize 'db'
+for SecureBoot; it is also possible to have a custom UEFI setup with
+KVM/QEMU+OVMF based infrastructures.=20
+
+'certwrapper' offers _a_ solution which is great. It may, however, not
+be very convenient to use when a user wants to re-use the same OS image
+(e.g. provided by the distro vendor) for various different use-cases as
+proper 'certwrapper' binary needs to be placed on the ESP (and thus
+we'll end up with a bunch of images instead of one). 'db' is different
+because it normally lives outside of the OS disk so it is possible to
+register the exact same OS image with different properties (e.g. with
+and without a custom cert which allows to load third party modules).
+
+One additional consideration is the fact that we already trust 'db' for
+dm-verity (since 6fce1f40e951) and kexec (since 278311e417be) and
+especially the later gives someone who is able to control 'db' access to
+CPL0; a 'db'-signed module (IMO) wouldn't change much.
+
+--=20
+Vitaly
+
