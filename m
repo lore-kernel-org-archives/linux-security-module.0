@@ -1,149 +1,169 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF1713AD05
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Jun 2025 08:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F6B20FAA4
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Jun 2025 09:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749112541; cv=none; b=Uteuj3kELOF6v0Lne+PQLrLGtyvbo0UoNJZkis28BIbylB3Trr4D9t6SUlBozY6N7Jz7I8jLpiEFMIIpp8eNvlO2yrUvLvgyiKwVUy3x0KEg/Wd1C99ZUiEDnLXGgldrHsxbceG4oGYPCUc1EMaCmuyCy461IXbU4HO7A0WJ5DE=
+	t=1749117512; cv=none; b=PF9eKGxXOazqX9caH0bT1CeS8XPwmclthZz1ZA4NAjVUb+4O2hLh4YdPV1PlbU9mBgFg272WrotahAEwQ1EjrWmCUbyF1JogoqtThkKbsUBHg2mFF2lKNtMETvG6UJNt+nkfH3h6Ubu1LNTbdhSREc6Ed8n5aeSOj1Ay1sablBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749112541; c=relaxed/simple;
-	bh=NRoDy9oPqPmwUYRp1IJc6lJX14zHgjomcJR0myjnx68=;
+	s=arc-20240116; t=1749117512; c=relaxed/simple;
+	bh=f3/ls/OWcxL5t4jplgeZ5bA5j5q0Y7QNkYy3mBs/1UU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=SgAuhcJpRvYEu4a+VJymGICxJyrpMThX0heoKgO+0WIpZWq53JXF0n6ligp9/ReAuDu+heHj9cUSjTTfMUAhkhdFyC5fYfVTIfIy0DfKaEf+5gO9QFCMA3zTt04Gt0uJQALJqoJu6j+7MTlywmbAmEXfIrnXMfzpAeJKRrZ2vuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gsFwcP+G; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gsFwcP+G"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749112538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J7OP291cCHEccCOVb5GqF2fJ19heqtSc19LUMzhHmhc=;
-	b=gsFwcP+Gwp92+gv8SnuYBZHDivx/wUHTATRQT+LjRybXG7b8Fzq+P21eW8byuYgNzXXsUU
-	kGYOP7/ELdZJewG5WCVawE4MV6AOcU8yXIT2e0nzoLpg3wxca0WFZH63pZ3v/idQavDxvj
-	OmGM6S82FNk6kDWUQDy6OXhZrZPJJDg=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-580-GNLBMt-NO72GhhltTCVNtw-1; Thu, 05 Jun 2025 04:35:37 -0400
-X-MC-Unique: GNLBMt-NO72GhhltTCVNtw-1
-X-Mimecast-MFC-AGG-ID: GNLBMt-NO72GhhltTCVNtw_1749112536
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7370e73f690so1091691b3a.3
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Jun 2025 01:35:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749112536; x=1749717336;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J7OP291cCHEccCOVb5GqF2fJ19heqtSc19LUMzhHmhc=;
-        b=euBVCW+7+kDK8BR3Hhcbj8f4bincZljPx2gZCGt8QuM4zua08vxll24IaisYQDySO6
-         pCy3jeBuB/qXC5R7gM+dwRsAKfYJMAprKiK6NAW/o1k/VIkrUs2wHzC8uHpDXB1og3H5
-         slnnj47Ogy1ZmVF9px8NxKZmsT3DEyYStYAqV9u4MI3kF/+M3x5TXkMwOeBPAz70HELn
-         N9VpFb0qGKragRqmlza+Tpm6YQ+ziOF2K/fFrB5w1Ri4S1JCgNkKNnYD5YVJ1z2JgfF7
-         Y15lHmN6zkUW0aIzBPVHXWkiw3psduy12v5Bk+oohJQAQVu+Mz8tyvRfoVQG6+UJ1hTW
-         UpWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXioJ0FSBol9+yfZ0Zn2O6DHYp9GapMn8UOJcfv0lGibIg2dA4s4tAy5+CUcBNzl9ftcMmaFDI+DGI2UDh+MnEcgeiILyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywyb0fFUIxUoQuQ4IoQtVHSMq2ZsKtiT/anUKeR3JaHi4nf0ft2
-	XIMdAAJdoWQ7NGwvD29pLhFeOL5qdmU4SoJgJ1owHlMRMQAMdl52li7ZxzHJaoJc/X6wSE5rTnS
-	c45omF4eEYm3/KX0VYjOrkAW6PSgDllnYZBfTaqz8EURLXDX2czW612NPa9OOfQmQXFkhDNzFTP
-	kWCA==
-X-Gm-Gg: ASbGnct3r2GIQXlsG6+99xHzdErT+rLc/rQhMHhHTigx6b5dW035qH0OAs258625/KF
-	8KzvC93no3UIJJ8K1fa9o4Sih3ZxQbscs6WlZ9Aqg2EB0l4DcVMEC9qVK+/7olxvTBWdvboF0OZ
-	Dm750H+YcZNtkTLvXkqkiScOVIwm0QKEtf9K8iFnh+DlcYT+O+LiFhQjM/fkezXFHMaTVLky3Er
-	/CjNiTWldmtjka4dr81TabQxzrNFD03h68ZURzuFTCH9EIO2c4G+vnjHfcP4xIsbmR97g+lfzyq
-	g0g=
-X-Received: by 2002:a05:6a00:23c6:b0:736:43d6:f008 with SMTP id d2e1a72fcca58-7480b2e0361mr8190452b3a.12.1749112536505;
-        Thu, 05 Jun 2025 01:35:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFrN0PqOUdKalMaeAG7aIgHJtiglVXWjEwD24TEHI4LYox9Gd70kryUZzyeMjHmJRalEgOnRg==
-X-Received: by 2002:a05:6a00:23c6:b0:736:43d6:f008 with SMTP id d2e1a72fcca58-7480b2e0361mr8190429b3a.12.1749112536110;
-        Thu, 05 Jun 2025 01:35:36 -0700 (PDT)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afeab75csm12734762b3a.52.2025.06.05.01.35.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 01:35:35 -0700 (PDT)
-Date: Thu, 5 Jun 2025 16:34:20 +0800
-From: Coiby Xu <coxu@redhat.com>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, keyrings@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Daniel Gomez <da.gomez@samsung.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Peter Jones <pjones@redhat.com>, Robert Holmes <robeholmes@gmail.com>, 
-	Jeremy Cline <jcline@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>
-Subject: Re: [PATCH RFC 1/1] module: Make use of platform keyring for module
- signature verify
-Message-ID: <ibosm332sa2kz6vqrru5qsfk4tybsxepo4vascc3zsetmyckvv@pml7puc5jyl6>
-References: <20250602132535.897944-1-vkuznets@redhat.com>
- <20250602132535.897944-2-vkuznets@redhat.com>
- <948f5567fe4d9ae39aa2528965f123e42bf82b46.camel@HansenPartnership.com>
- <87r001yzob.fsf@redhat.com>
- <d34555e2b0c4746fc01d5295959a434befcf8b18.camel@HansenPartnership.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TQT19sIHfjsxrDSyWTPqZUgGBZILt6NzdRuPwRTPkK82nAOdVxHICaqahw+rGpmWqJA/S7S7MGnKH6dnzmSloaM8Q32DWTdnTWJWQRN0itynIPx6f4j1CTIt14SKsXY4sW4Bb34+ybu2sWQuIjWU67WdejjR+t9PEed70xdtxx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C66EA5C0AC;
+	Thu,  5 Jun 2025 09:58:28 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5677B1373E;
+	Thu,  5 Jun 2025 09:58:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7co1EERqQWjUZAAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Thu, 05 Jun 2025 09:58:28 +0000
+Date: Thu, 5 Jun 2025 11:58:26 +0200
+From: Petr Vorel <pvorel@suse.cz>
+To: Andrea Cervesato <andrea.cervesato@suse.de>
+Cc: ltp@lists.linux.it, linux-security-module@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>, Kees Cook <keescook@chromium.org>
+Subject: Re: [LTP] [PATCH v2] lsm: fix overset attr test
+Message-ID: <20250605095826.GB1206250@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20250605-lsm_fix_attr_is_overset-v2-1-dd10ddb04238@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <d34555e2b0c4746fc01d5295959a434befcf8b18.camel@HansenPartnership.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 5XeBcYXSQMUhY9nIohtLc2H97ZJmy7SrYeUInzV6WCs_1749112536
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250605-lsm_fix_attr_is_overset-v2-1-dd10ddb04238@suse.com>
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
+X-Rspamd-Queue-Id: C66EA5C0AC
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.00
 
-On Tue, Jun 03, 2025 at 09:03:22AM -0400, James Bottomley wrote:
->On Tue, 2025-06-03 at 10:52 +0200, Vitaly Kuznetsov wrote:
->> James Bottomley <James.Bottomley@HansenPartnership.com> writes:
->[...]
->> > Also, are you sure a config option is the right thing?  Presumably
->> > Red Hat wants to limit its number of kernels and the design of just
->> > linking the machine keyring (i.e. MoK) was for the use case where
->> > trust is being pivoted away from db by shim, so users don't want to
->> > trust the db keys they don't control.  If the same kernel gets used
->> > for both situations (trusted and untrusted db) you might want a
->> > runtime means to distinguish them.
->>
->> I was not personally involved when RH put the patch downstream (and
->> wasn't very successful in getting the background story) but it
->> doesn't even have an additional Kconfig, e.g.:
->> https://gitlab.com/redhat/centos-stream/src/kernel/centos-stream-10/-/commit/03d4694fa6511132989bac0da11fa677ea5d29f6
->> so apparently there's no desire to limit anything, basically,
->> .platform is always trusted on Fedora/RHEL systems (for a long time
->> already).
->
->It sounds like that's just distro politics:  RH wants to enable binary
->modules (by allowing them to be signed) but doesn't want to be seen to
->be signing them (so they can't be signed with the embedded RH key) so
->that gamers can have performant graphics drivers and the like.  Thus it
->mixes in the db keyring, which usually contains several Microsoft
->certificates and also one from the ODM manufacturer, so now it can send
->would be shippers of binary modules to those groups to get them signed.
->If you only have the built in and MoK keyrings, the only possible
->signers are either RH or the machine owner ... who isn't a single
->entity to deal with.  Personally I think this is a bit daft: Debian
->manages an out of tree module infrastructure using DKMS and MoK
->signing, so I can't see why RH can't get it to work in the same way.
+Hi Andrea,
 
-It's interesting to find that although Debian's wiki page [1] only
-mentions DKMS and MOK, it actually has the same downstream kernel patch
-[2][3] as Fedora/RHEL to allow using db keys to verify kernel modules.
+> LSM(s) usually handle their own internal errors in a different way,
+> so the right way to check if they return error, is to verify that the
+> common return value is -1. This is the max we can do, since errno might
+> vary according to the LSM implementation.
 
-[1] https://wiki.debian.org/SecureBoot
-[2] https://salsa.debian.org/kernel-team/linux/-/blob/debian/latest/debian/patches/features/all/db-mok-keyring/KEYS-Make-use-of-platform-keyring-for-module-signature.patch?ref_type=heads
-[3] https://sources.debian.org/patches/linux/6.12.30-1/features/all/db-mok-keyring/KEYS-Make-use-of-platform-keyring-for-module-signature.patch/
+> At the same time, overset attr test is _not_ checking if attr is
+> overset, but rather checking if attr is out-of-bounds, considering OR
+> operator as a valid way to generate an invalid value with
+> LSM_ATTR_CURRENT. This is not correct, since any OR operation using
+> LSM_ATTR_CURRENT will generate a valid value for the LSM(s) code. So we
+> remove this test that doesn't make much sense at the moment and replace
+> it with an "invalid attr test" instead.
 
--- 
-Best regards,
-Coiby
+Thanks for the fix, LGTM.
 
+Fixes: ad4ab6ce4f ("Add lsm_set_self_attr01 test")
+Acked-by: Petr Vorel <pvorel@suse.cz>
+
+Kind regards,
+Petr
+
+> Signed-off-by: Andrea Cervesato <andrea.cervesato@suse.com>
+> ---
+> This patch will fix all false positive errors, where LSM(s) might
+> be implemented in a different way. We just skip errno check.
+
+> This will also fix:
+> https://openqa.opensuse.org/tests/5087893#step/lsm_set_self_attr01/8
+> ---
+> Changes in v2:
+> - remove exp_errno from struct
+> - change attr overset test
+> - Link to v1: https://lore.kernel.org/r/20250604-lsm_fix_attr_is_overset-v1-1-46ff86423a14@suse.com
+> ---
+>  testcases/kernel/syscalls/lsm/lsm_set_self_attr01.c | 16 +++++-----------
+>  1 file changed, 5 insertions(+), 11 deletions(-)
+
+> diff --git a/testcases/kernel/syscalls/lsm/lsm_set_self_attr01.c b/testcases/kernel/syscalls/lsm/lsm_set_self_attr01.c
+> index caccdda7ecf2edaac1fa8e2dc2ccdd0aff020804..cde9c2e706ed607024dff362b7ff00cbcef1d6a5 100644
+> --- a/testcases/kernel/syscalls/lsm/lsm_set_self_attr01.c
+> +++ b/testcases/kernel/syscalls/lsm/lsm_set_self_attr01.c
+> @@ -23,28 +23,24 @@ static struct tcase {
+>  	struct lsm_ctx **ctx;
+>  	uint32_t *size;
+>  	uint32_t flags;
+> -	int exp_errno;
+>  	char *msg;
+>  } tcases[] = {
+>  	{
+>  		.attr = LSM_ATTR_CURRENT,
+>  		.ctx = &ctx_null,
+>  		.size = &ctx_size,
+> -		.exp_errno = EFAULT,
+>  		.msg = "ctx is NULL",
+>  	},
+>  	{
+>  		.attr = LSM_ATTR_CURRENT,
+>  		.ctx = &ctx,
+>  		.size = &ctx_size_small,
+> -		.exp_errno = EINVAL,
+>  		.msg = "size is too small",
+>  	},
+>  	{
+>  		.attr = LSM_ATTR_CURRENT,
+>  		.ctx = &ctx,
+>  		.size = &ctx_size_big,
+> -		.exp_errno = E2BIG,
+>  		.msg = "size is too big",
+>  	},
+>  	{
+> @@ -52,15 +48,13 @@ static struct tcase {
+>  		.ctx = &ctx,
+>  		.size = &ctx_size,
+>  		.flags = 1,
+> -		.exp_errno = EINVAL,
+>  		.msg = "flags must be zero",
+>  	},
+>  	{
+> -		.attr = LSM_ATTR_CURRENT | LSM_ATTR_EXEC,
+> +		.attr = -1000,
+>  		.ctx = &ctx,
+>  		.size = &ctx_size,
+> -		.exp_errno = EINVAL,
+> -		.msg = "attr is overset",
+> +		.msg = "attr is invalid",
+>  	}
+>  };
+
+> @@ -77,9 +71,9 @@ static void run(unsigned int n)
+>  	ctx_size_small = 1;
+>  	ctx_size_big = ctx_size + 1;
+
+> -	TST_EXP_FAIL(lsm_set_self_attr(tc->attr, *tc->ctx, *tc->size, tc->flags),
+> -	      tc->exp_errno,
+> -	      "%s", tc->msg);
+> +	TST_EXP_EXPR(lsm_set_self_attr(
+> +		tc->attr, *tc->ctx, *tc->size, tc->flags) == -1,
+> +		"%s", tc->msg);
+>  }
