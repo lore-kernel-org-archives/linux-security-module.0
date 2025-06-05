@@ -1,258 +1,189 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F6B202F65
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Jun 2025 21:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327FE38FA3
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Jun 2025 00:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749071631; cv=none; b=TUeDugvpBf7d/WAyj0EyZFhCd50qh33YTA50PfhOwHB0pe6eT9tDV32JFmVemXzrlIKc11cI0qltfNVy+0p3moDHVsWz7zaoW7ekSJ0pSq12BmhXVHIiAfIoF8TiyRmhBaj2kqC85CzFbkpDefUgUktwV3kZ4ovVIHXJUv0Rskw=
+	t=1749082958; cv=none; b=fSY3dP0GQ7ZnUUrZxgjSFU6s9jguqbiZBbji+zWl52NmASYU6uCRj8Wo6MPSxkpVKNdlpgLRsowDi/iB/LDSNlatRuhtUoUqKjxJBN44cHiS5tyHNRzeHkC1h2lV8rod98arltvy6eUImnRTdSPkcJq48kOW8SjTa7kZ6c9EMJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749071631; c=relaxed/simple;
-	bh=sWOJA7v7Ov16Q2lLF9qoja13SWcCS3EU3H+3Y0lbZz8=;
+	s=arc-20240116; t=1749082958; c=relaxed/simple;
+	bh=EHGIjtXSnhVWuj8W3if9/kBeCWZOJPIXUzlkSSJrcv8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F6rBJMhd9goviYBt4TvTAf5wGPHQntztoXGr1/w+i0HomMc9dL2QyS5GGRKbmdMTue7uoehqrfEu4nLYXnJkIbdXDYvOFSAMCUKxvsjqWfcx6bSMVL1LVQK04/FUV3qXU+jhZmTXUfo9M4+rSbZTGzgIqGQP5APGzb3B29WgmSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=J48ZOjUs; arc=none smtp.client-ip=209.85.219.181
+	 To:Cc:Content-Type; b=uNIOWqzkpj/p011N75hjs5GTwVimT9bO94UKKGqL0dOyKuUx69DdC2PwKWLyXLmvrW1voZvKKs8tUimdY4KRK/BPQP7FCV7lSrtymuAnWFxVXIO1NmZKwrNzA8OIyyLJyoRI7Q0hrGVGZR3B2htsdV19BQvnWR4+2Zs2d/4Q7yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=angRW34m; arc=none smtp.client-ip=209.85.219.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="J48ZOjUs"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e8175f45e26so356883276.1
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Jun 2025 14:13:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="angRW34m"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e7d9d480e6cso348930276.2
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Jun 2025 17:22:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1749071627; x=1749676427; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1749082955; x=1749687755; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RFILvALIoE88+amXnoIecD1FsclDUOa9FdnGICXctS8=;
-        b=J48ZOjUs0gsj1gujKn+DBWQnSptDO5yRJ16jdvn4uPtU3S3UZPfZwMAVcfgXv+j/f/
-         ALk6LRWyNA+CakxXcVJx2dlmjB41IXZmSRtRRrIdt3oXwPdBWmiebEfcywF6GyZLUdyp
-         D2SmzhGHh/zSxeHGLDqdnLJCzGsLrPDfXfrF76pF5ZoyWFO2htuTzJqDCILONYKufjdS
-         eXY28de8CiPJiT8ola9UaGLNnJqtpY5M9y/qWPutXkIVXpBjW7s3jNnyc5tAsOw5zY0b
-         DN7NeSufe1nUM2cXLlW8koJwvxtNMGRKTJj8hash7GuvLSPcsAYEvd+3a0c8ApvrZegy
-         E7lA==
+        bh=XvU2lNKxDYw6fCnyd5ZPbHAvFewoQW9WJ+3ogFjIWtk=;
+        b=angRW34maqZe/QKfbCk3Do7iigii3Ko8VT9ZnKngh3DmBp1RdHjlMrzxNCpYx3btPo
+         Us9B1J81+WK6n793fiBskFHl6csFL3B2D+FU6qVCrWDSPmcfTBcIXKTUZtum69yjh+nY
+         Of3v7bbpU2xQTRIS2jmtZo5GKMOFhLS3sKkmJkIrn+tk6ug+TJGjKkR2hvNt3jqO2Wxp
+         9EI5nJeG6HJ83fRKt9vZWvuttM+6/TOz7fjIuTC+a649gHOXQSLjlSnLRyvoqr7XeCdF
+         7QTD5B7zL0/T+8/4ZTjTDMoYH7kScoFDxfMub74VFDkBmW11iox8P8tkCHYsaULR6KFm
+         ZgIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749071627; x=1749676427;
+        d=1e100.net; s=20230601; t=1749082955; x=1749687755;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RFILvALIoE88+amXnoIecD1FsclDUOa9FdnGICXctS8=;
-        b=B7J7ihex5gcq2j8KzAVMzqSzPvpdL6qB5Ym3xF7QQhGOxqqKkoiOedH/c2R22cjYn9
-         Ui7/neTNfnUWPv0//j/74m/C2Pc33AoGR6qrEkS6is7/5nlGKU9NP5OtRGVTqQskxVZV
-         lW1Of9sj+5Bm8JcoTZ6IafhM/Uh3Pn642PA5fA8e0/6y/yNGhkIFvkEV5bfrifaDbuBO
-         fPPORzBom6B73im4cEvnA+ESUx8Xcztz8oFNIzyvD4VdatViPmwFmLlVuLq1pSs3+TOq
-         FJGO+Je+ZWS/LIT9cDeE7Jhv5j7J+foAAzCnXnywLrvJH8Nrk/dbHCYoRZj9X+mlG9SQ
-         fEWw==
-X-Gm-Message-State: AOJu0Yy9MXYSTeSYW+jx10G5vRDSdd4Bwquqypz/Hj8j95lgu8uTBOOR
-	D0K+pMYZS6YYXEb/KtIUw9DPC8w5DyjGuk2QU/6kihYIwWJY67XOsS9K+3zjEBIPVNX592LTpsf
-	+0Pk6AtzkK2nPqBeMf6XSrdhRso/FpBKtoeuoyw4J
-X-Gm-Gg: ASbGnctBa55YgEx0Vu2YW95CceDlT5g9q13534Dh700Ao3727ZOOY1WlGpgjPibBSBs
-	DDFkfmzFw1X9MOR1kKYQiUqJUwJEqFWtOo6PuOZhh+rX31z5AKWXW/SC24pn93NSzLljkibzMYV
-	Op0CqZdO2E+Vvv1SfKRQPrsEDuSmLZpXhNf1CNJ2TJlcU=
-X-Google-Smtp-Source: AGHT+IEzd3OT8v9HoRUzTyFAkQerHkAukxjDsy8RjmPaJTovfL79YwQkPcrXXduheAqGSFN+2XKJ11JKw/rxJLleniI=
-X-Received: by 2002:a05:6902:100c:b0:e7f:7352:bb31 with SMTP id
- 3f1490d57ef6-e8179d82fc0mr6218584276.39.1749071626412; Wed, 04 Jun 2025
- 14:13:46 -0700 (PDT)
+        bh=XvU2lNKxDYw6fCnyd5ZPbHAvFewoQW9WJ+3ogFjIWtk=;
+        b=WOu1Ue2bFqNqC/TxdnrZdHdmyuiHt6OuGxKNPNsLJxXcqJDnkKZch/uKbGSlYSF8wz
+         HBrarTu8Wwwvd8fpiIPGfvQ+bMeN1v5LmR52cLBGBWRzca7Vh2rJCUCvuhTDYdPIbEVe
+         rEfIiKOgtFQWFZB0UJd4nQzTmZi7z6LGx/AzmNlpWTyYkrnE94fM0SAC3l+q83Lwi9F+
+         aV4WJPF9XAVL+0J99P3tESk/RtEnyovh/O7hjbDlUARXKkcCH9IUylbhen9Xb0/9ZWIH
+         HVpfh6388ba0B2wMCrBP4vn3dx9AQ6REEscCabmUBFl4ODX5Mmu/2jY9WB0Pk2j93boR
+         gzvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRjGa3PYn8aFDMcHzV2I12aVZ2S6kcITNCqgeHxkeIV4u93qC9ytn3joz7LQ30cVnbrk2WKe59YVgzb4KasIIUUKeOEsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyewf1waCkr0PsT9uPPHIiZtQbMf6pGtkSZkmKSK/DNSkcycfV/
+	9kQ+OBN0v/4n5iBaeUojJ4+iaPkYN0tYeCwmqD24KKivJMRcXkLconnwf4k/M2T9RO9qpUdN5x1
+	sMvy2sJCe+prs5Ym4z6KFZTQ75Z+3KbHQf3NTHWgN0E2HDLfW+5GL1A==
+X-Gm-Gg: ASbGncvAHYH2RYJxmdrje9KGJQy1jA4OlbbVsW5rRp/wRTacNJj1Dxnb7IWFIBDTl4W
+	DjkcQi0MFOiYG71dUQXVdqskwUNE3aQQcgFLto/kcA+SgaGwxp4kleO3vEKmMCg5AAqkMusD1gs
+	kDNpgsGNVyqCjUiMsNQ1+P+M99MXtsx7Mbe+D7vU4K1yI=
+X-Google-Smtp-Source: AGHT+IHyeD9vA1nF1N0CsN+xv6bObN3Il3RSVuQijJN0bEgczCU08xaJqqCrRvDKJkd53t1PwCS+M9kMdUmEej7JZRY=
+X-Received: by 2002:a05:6902:18d0:b0:e7d:c87a:6249 with SMTP id
+ 3f1490d57ef6-e8179dbababmr7022769276.36.1749082955136; Wed, 04 Jun 2025
+ 17:22:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1748890962.git.ackerleytng@google.com> <c03fbe18c3ae90fb3fa7c71dc0ee164e6cc12103.1748890962.git.ackerleytng@google.com>
- <aD_8z4pd7JcFkAwX@kernel.org>
-In-Reply-To: <aD_8z4pd7JcFkAwX@kernel.org>
+References: <SCYP152MB62612944AD5E282EE26871DDB063A@SCYP152MB6261.LAMP152.PROD.OUTLOOK.COM>
+In-Reply-To: <SCYP152MB62612944AD5E282EE26871DDB063A@SCYP152MB6261.LAMP152.PROD.OUTLOOK.COM>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 4 Jun 2025 17:13:35 -0400
-X-Gm-Features: AX0GCFtyTLCLuG24EDdI8wKdQSrU3K8jUJ6RM6t9O342c2DffUvgfnmfuwj20Jg
-Message-ID: <CAHC9VhQczhrVx4YEGbXbAS8FLi0jaV1RB0kb8e4rPsUOXYLqtA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs: Provide function that allocates a secure
- anonymous inode
-To: Mike Rapoport <rppt@kernel.org>, Ackerley Tng <ackerleytng@google.com>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
-	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
-	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
-	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
-	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
-	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
-	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
-	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, vannapurve@google.com, vbabka@suse.cz, 
-	viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com, 
-	will@kernel.org, willy@infradead.org, xiaoyao.li@intel.com, 
-	yan.y.zhao@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com, 
-	zhiquan1.li@intel.com
+Date: Wed, 4 Jun 2025 20:22:24 -0400
+X-Gm-Features: AX0GCFvU4j5x9GEYGbLXyBKZlD9q6nwLVRHA0q2PfeW81xhSUMGxDfooZeZ462o
+Message-ID: <CAHC9VhTcRP=7b3YAU+16twKX8jktDRAUyuzkn92O4ZVyPaTBxA@mail.gmail.com>
+Subject: Re: PATCH 2/3] security: add Lilium - Linux Integrity Lock-In User
+ Module - Documentation
+To: =?UTF-8?B?4oSw8J2Tg/Cdk4/ihLQg4oSx8J2TivCdk4DihK8=?= <milesonerd@outlook.com>
+Cc: "serge@hallyn.com" <serge@hallyn.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 4, 2025 at 3:59=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wrot=
-e:
+On Sat, May 31, 2025 at 9:07=E2=80=AFPM =E2=84=B0=F0=9D=93=83=F0=9D=93=8F=
+=E2=84=B4 =E2=84=B1=F0=9D=93=8A=F0=9D=93=80=E2=84=AF <milesonerd@outlook.co=
+m> wrote:
 >
-> (added Paul Moore for selinux bits)
-
-Thanks Mike.
-
-I'm adding the LSM and SELinux lists too since there are others that
-will be interested as well.
-
-> On Mon, Jun 02, 2025 at 12:17:54PM -0700, Ackerley Tng wrote:
-> > The new function, alloc_anon_secure_inode(), returns an inode after
-> > running checks in security_inode_init_security_anon().
-> >
-> > Also refactor secretmem's file creation process to use the new
-> > function.
-> >
-> > Suggested-by: David Hildenbrand <david@redhat.com>
-> > Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> > ---
-> >  fs/anon_inodes.c   | 22 ++++++++++++++++------
-> >  include/linux/fs.h |  1 +
-> >  mm/secretmem.c     |  9 +--------
-> >  3 files changed, 18 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> > index 583ac81669c2..4c3110378647 100644
-> > --- a/fs/anon_inodes.c
-> > +++ b/fs/anon_inodes.c
-> > @@ -55,17 +55,20 @@ static struct file_system_type anon_inode_fs_type =
-=3D {
-> >       .kill_sb        =3D kill_anon_super,
-> >  };
-> >
-> > -static struct inode *anon_inode_make_secure_inode(
-> > -     const char *name,
-> > -     const struct inode *context_inode)
-> > +static struct inode *anon_inode_make_secure_inode(struct super_block *=
-s,
-> > +             const char *name, const struct inode *context_inode,
-> > +             bool fs_internal)
-> >  {
-> >       struct inode *inode;
-> >       int error;
-> >
-> > -     inode =3D alloc_anon_inode(anon_inode_mnt->mnt_sb);
-> > +     inode =3D alloc_anon_inode(s);
-> >       if (IS_ERR(inode))
-> >               return inode;
-> > -     inode->i_flags &=3D ~S_PRIVATE;
-> > +
-> > +     if (!fs_internal)
-> > +             inode->i_flags &=3D ~S_PRIVATE;
-> > +
-> >       error =3D security_inode_init_security_anon(inode, &QSTR(name),
-> >                                                 context_inode);
-> >       if (error) {
-> > @@ -75,6 +78,12 @@ static struct inode *anon_inode_make_secure_inode(
-> >       return inode;
-> >  }
-> >
-> > +struct inode *alloc_anon_secure_inode(struct super_block *s, const cha=
-r *name)
-> > +{
-> > +     return anon_inode_make_secure_inode(s, name, NULL, true);
-> > +}
-> > +EXPORT_SYMBOL_GPL(alloc_anon_secure_inode);
-> > +
-> >  static struct file *__anon_inode_getfile(const char *name,
-> >                                        const struct file_operations *fo=
-ps,
-> >                                        void *priv, int flags,
-> > @@ -88,7 +97,8 @@ static struct file *__anon_inode_getfile(const char *=
-name,
-> >               return ERR_PTR(-ENOENT);
-> >
-> >       if (make_inode) {
-> > -             inode =3D anon_inode_make_secure_inode(name, context_inod=
-e);
-> > +             inode =3D anon_inode_make_secure_inode(anon_inode_mnt->mn=
-t_sb,
-> > +                                                  name, context_inode,=
- false);
-> >               if (IS_ERR(inode)) {
-> >                       file =3D ERR_CAST(inode);
-> >                       goto err;
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 016b0fe1536e..0fded2e3c661 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -3550,6 +3550,7 @@ extern int simple_write_begin(struct file *file, =
-struct address_space *mapping,
-> >  extern const struct address_space_operations ram_aops;
-> >  extern int always_delete_dentry(const struct dentry *);
-> >  extern struct inode *alloc_anon_inode(struct super_block *);
-> > +extern struct inode *alloc_anon_secure_inode(struct super_block *, con=
-st char *);
-> >  extern int simple_nosetlease(struct file *, int, struct file_lease **,=
- void **);
-> >  extern const struct dentry_operations simple_dentry_operations;
-> >
-> > diff --git a/mm/secretmem.c b/mm/secretmem.c
-> > index 1b0a214ee558..c0e459e58cb6 100644
-> > --- a/mm/secretmem.c
-> > +++ b/mm/secretmem.c
-> > @@ -195,18 +195,11 @@ static struct file *secretmem_file_create(unsigne=
-d long flags)
-> >       struct file *file;
-> >       struct inode *inode;
-> >       const char *anon_name =3D "[secretmem]";
-> > -     int err;
-> >
-> > -     inode =3D alloc_anon_inode(secretmem_mnt->mnt_sb);
-> > +     inode =3D alloc_anon_secure_inode(secretmem_mnt->mnt_sb, anon_nam=
-e);
-> >       if (IS_ERR(inode))
-> >               return ERR_CAST(inode);
+> From 23d323f793b888bb2ad0d2a7a1ca095d5d64d0b8 Mon Sep 17 00:00:00 2001
+> From: Enzo Fuke <milesonerd@outlook.com>
+> Date: Sun, 1 Jun 2025 00:11:36 +0000
+> Subject: [PATCH] Lilium Documentation
 >
-> I don't think we should not hide secretmem and guest_memfd inodes from
-> selinux, so clearing S_PRIVATE for them is not needed and you can just dr=
-op
-> fs_internal parameter in anon_inode_make_secure_inode()
+> ---
+>  Documentation/security/lilium.rst | 402 ++++++++++++++++++++++++++++++
+>  1 file changed, 402 insertions(+)
+>  create mode 100644 Documentation/security/lilium.rst
+>
+> diff --git a/Documentation/security/lilium.rst b/Documentation/security/l=
+ilium.rst
+> new file mode 100644
+> index 0000000..bd25ff6
+> --- /dev/null
+> +++ b/Documentation/security/lilium.rst
+> @@ -0,0 +1,402 @@
+> +.. SPDX-License-Identifier: GPL-2.0-only
+> +
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +Lilium (Linux Integrity Lock-In User Module)
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +:Author: Enzo Fuke
+> +:Date: May 2025
+> +:Version: 1.0
+> +
+> +Introduction
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Lilium (Linux Integrity Lock-In User Module) is a Linux Security Module =
+(LSM)
+> +designed to enhance system security by providing fine-grained control ov=
+er
+> +critical system operations. It implements a modular approach to security=
+,
+> +allowing administrators to selectively enable specific security mechanis=
+ms
+> +based on their requirements.
+> +
+> +The name "Lilium" is an acronym for "Linux Integrity Lock-In User Module=
+",
+> +reflecting its purpose of locking down various system operations to main=
+tain
+> +system integrity and security.
+> +
+> +Security Philosophy
+> +------------------
+> +
+> +Lilium follows the principle of "secure by default but configurable". Al=
+l
+> +security mechanisms are disabled by default to ensure compatibility with
+> +existing systems, but can be easily enabled individually through the sys=
+fs
+> +interface. This approach allows administrators to gradually implement se=
+curity
+> +measures without disrupting system functionality.
+> +
+> +The module is designed with the following principles in mind:
+> +
+> +1. **Modularity**: Each security mechanism can be enabled independently.
+> +2. **Contextual Logic**: Security decisions consider the context of oper=
+ations.
+> +3. **Least Privilege**: Restrictions follow the principle of least privi=
+lege.
+> +4. **Compatibility**: Works alongside other LSMs in the Linux security s=
+tack.
+> +
+> +Features
+> +=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Lilium provides the following security mechanisms, each addressing speci=
+fic
+> +security concerns:
+> +
+> +1. **ptrace restrictions**
+> +
+> +   Controls which processes can trace other processes using the ptrace s=
+ystem
+> +   call. This helps prevent unauthorized debugging and memory inspection=
+ of
+> +   running processes, which could be used to extract sensitive informati=
+on or
+> +   modify process behavior.
+> +
+> +   When enabled, only processes with CAP_SYS_PTRACE capability can attac=
+h to
+> +   other processes using ptrace, preventing unprivileged users from debu=
+gging
+> +   or inspecting other users' processes.
 
-It's especially odd since I don't see any comments or descriptions
-about why this is being done.  The secretmem change is concerning as
-this is user accessible and marking the inode with S_PRIVATE will
-bypass a number of LSM/SELinux access controls, possibly resulting in
-a security regression (one would need to dig a bit deeper to see what
-is possible with secretmem and which LSM/SELinux code paths would be
-affected).
+I agree with all of the other feedback you've received, but I'm also
+concerned that there isn't a common security concept tying all of
+these access controls together; they are all standalone controls that
+can be toggled on/off either at build or runtime.  While we don't
+necessarily require a full, formal security model for new LSMs, if you
+have some reasoning as to why this collection of capability-based
+access controls belong together in a LSM it would be good to share
+that.
 
-I'm less familiar with guest_memfd, but generally speaking if
-userspace can act on the inode/fd then we likely don't want the
-S_PRIVATE flag stripped from the anon_inode.
-
-Ackerley can you provide an explanation about why the change in
-S_PRIVATE was necessary?
-
-> > -     err =3D security_inode_init_security_anon(inode, &QSTR(anon_name)=
-, NULL);
-> > -     if (err) {
-> > -             file =3D ERR_PTR(err);
-> > -             goto err_free_inode;
-> > -     }
-> > -
-> >       file =3D alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
-> >                                O_RDWR, &secretmem_fops);
-> >       if (IS_ERR(file))
-> > --
-> > 2.49.0.1204.g71687c7c1d-goog
+Even with a better explanation, and some agreement that it is
+reasonable, it seems like these checks might be better suited as Yama
+enhancements rather than a new LSM.
 
 --=20
 paul-moore.com
