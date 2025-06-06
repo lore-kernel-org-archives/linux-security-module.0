@@ -1,117 +1,83 @@
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B3913D52F;
-	Fri,  6 Jun 2025 15:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F311C78F32;
+	Fri,  6 Jun 2025 17:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749223403; cv=none; b=Gi5s3haulA7o89LOrutaPLwppFfAiReh1OTWWSlwRL+9VkvkXKSKddYHE4mjhmbxnM8LVFdEMY7Cq7rtPm1tmMmLNSHejnUT1GgqizVadWyWBoURRqVaPTh65askGv5PsHkhdwBB936QFKqpcRgtdIgd2o++Qocxlws9d4KNQ0g=
+	t=1749229299; cv=none; b=Kr1XhJguiQ0BH3CGGw/sNrZnz63uG9dlD4YV7UErj7CQMBaG1/4pZhUn0gJFCjCOLnvhLshA55wY1jL4Ilabhy17XyxSOAZwlpeXbLBS/mk8KVhwpDRnw2SB6u7nmQzYMpkYoMyNqwHji8duihZ5k/aoNz++jXVpnNq9LQbMXAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749223403; c=relaxed/simple;
-	bh=YPQHOA5kSqFGUsoQ+jIhAIS36Z4dE20BlDV3jKC+PYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l/ViD0qPFS6J9B2wlLLoZb4RQ1c07LOiXmu0CHmXXbXkAMzNDMAOfEMed9ToWzLcpAgKTGJyqPOaq98ZjHify4imTfLUt/hjUihF6t3mKcNueLdn7jyEET/VcheiRVreHTolb67jsib8dcAFZc7zq+yWCCjMVsG8OeDZLiBURts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=K2tCnOwG; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+	s=arc-20240116; t=1749229299; c=relaxed/simple;
+	bh=zT4sKuFfw4xqA2QcApAwj6XA/t5bPgFmkMq4rQo7XSs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n5K1ow2rLtwKr4A7psDOO8i80ikNfGi+fdvUuE96FlQp4FMw1Rcc67qLwlRokELa6LY1noAlE/VZTTyU35yo+eXgaRCzm3bp4uPMyQcz2r+Uz7wlXVm3jZah3aLZUZFq6TOYy0efbA0804OV7aZ3et3GqJKtAPNvZ8Mxb4fW+xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gtsMTZx1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="K2tCnOwG"
-Message-ID: <3b461ee7-c3ee-484b-b945-ec6070355bfe@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1749223398;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EC5WXwIyePFbi5jc4rzYZSJpl/hestrYvtJLaOCfr/c=;
-	b=K2tCnOwGIIkIFg0EJpp+pfHV2hk6mQ1J5urKlln67Jp5fOG7BkINyAZLmeBP2rChxlDZei
-	7s3I6VKB79cpZhyt1jcb+fqAQ8v7Ctxk08/ZFVXH6AGy+EJZ6hOr4nFbz4eR9VxMNfp5Yn
-	IlUrn/sE5ZbRKNd7wiB96flFIQnU1lE=
-Date: Fri, 6 Jun 2025 18:24:16 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtsMTZx1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73409C4CEF3;
+	Fri,  6 Jun 2025 17:01:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749229298;
+	bh=zT4sKuFfw4xqA2QcApAwj6XA/t5bPgFmkMq4rQo7XSs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gtsMTZx1yWC/tSkVqaOgwFKGuQ98lnIMb532AjF6hx/O739rjGGGwIw44DbqR8Std
+	 AjacvuXrKDIQqXRtuK6/t1lR1i76dLmSgUYS4SLBFMHbUxGN5DKfG6WVw3ENVPt4Pn
+	 PUNJb/Q5ytdz5Uizj2kw0aZVxDemf0NyUKxuH2potcyyHefSMwaQN7VD6QyeK80ubn
+	 hNfIfA0/x9S+vzp5s/gysWImrg5i4mK9J6eApn6tAhvOJodIAv33StZLETCvJNBfez
+	 vQReMHkym5yqbnS9zpRezAhcACxvY3saQhzj6Fn0KMUmcotgAIZQcPX0cFhUVpCD1J
+	 KpdhohDVcALzg==
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c5f720c717so376558385a.0;
+        Fri, 06 Jun 2025 10:01:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU1Zr7RvGKtegjnFt3FOBQFdEZJlD8Vet4j1rQDSze7w+wY++nms/twdD3zTGGBDw+/ai1T8lZ95SPnmpCKvyLpWdY9uuT8@vger.kernel.org, AJvYcCWx1hJaOOZxAyUFo7SEJ6z1arP9iG/sd1vEg0f+36ZRvfWVCwA0GM9Ftr7G/de/SeAWXnFCik5vx1TrEnNc@vger.kernel.org, AJvYcCX38rwhCz0+rHH0EYqecoHQ92YL3GOM1i5DaeeQLpDat0PQku4Nlm0rwrM4RTcy6+3rS6PT3gzV6ECH1MIv@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr+SMWLuzZDtujfZlPGA0NUXHry1iFuy+YtsG7MxNsZkTGL6Jd
+	jPTZXnlZG8/wgnVPdZtH+YM92M7vDECZlVvZBBhgTaFmKlC0p24870u2RoTZ1/cEVvrMHKjHsRJ
+	UVG3HWx4yp4ZTvLFaq7cvdeF6zMx7wzk=
+X-Google-Smtp-Source: AGHT+IGUP8KmwWsyJVkbFL3ChhSRLJM0hfwN3udKweQ31QmMpDI2+5lcOPPfybMB/iI0kyV9jSgunDkpQrwkzvMsC6c=
+X-Received: by 2002:a05:6214:1d07:b0:6fa:a4b7:c664 with SMTP id
+ 6a1803df08f44-6fb09c63bd2mr51564626d6.22.1749229297515; Fri, 06 Jun 2025
+ 10:01:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] security,fs,nfs,net: update
- security_inode_listsecurity() interface
-Content-Language: en-US
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- netdev@vger.kernel.org, selinux@vger.kernel.org,
- Christian Brauner <brauner@kernel.org>,
- Casey Schaufler <casey@schaufler-ca.com>, Paul Moore <paul@paul-moore.com>
-References: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
- <49730b18-605f-4194-8f93-86f832f4b8f8@swemel.ru>
- <CAEjxPJ5KoTBB18_7+fWL+GWY4N5Vp2=Kn=9FJR2GewFRcMgzPQ@mail.gmail.com>
-From: Konstantin Andreev <andreev@swemel.ru>
-In-Reply-To: <CAEjxPJ5KoTBB18_7+fWL+GWY4N5Vp2=Kn=9FJR2GewFRcMgzPQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 06 Jun 2025 15:23:17.0475 (UTC) FILETIME=[EDA31B30:01DBD6F6]
+References: <20250603065920.3404510-1-song@kernel.org> <20250603065920.3404510-2-song@kernel.org>
+ <20250606144058.GW299672@ZenIV>
+In-Reply-To: <20250606144058.GW299672@ZenIV>
+From: Song Liu <song@kernel.org>
+Date: Fri, 6 Jun 2025 10:01:26 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW7UeycwNjmm1mH9q1ZhjKLC4Shc0hbZ_o7a5zD2bRMzQQ@mail.gmail.com>
+X-Gm-Features: AX0GCFucxmg5JO3P3a3C0kxsaNoBTalGKKNBxoM4YNJ9bu19AeAlrfXDOWhXvvs
+Message-ID: <CAPhsuW7UeycwNjmm1mH9q1ZhjKLC4Shc0hbZ_o7a5zD2bRMzQQ@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 1/4] namei: Introduce new helper function path_walk_parent()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org, jack@suse.cz, 
+	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, 
+	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, 
+	gnoack@google.com, m@maowtm.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Stephen Smalley, 06/06/2025 10:28 -0400:
-> On Fri, Jun 6, 2025 at 9:38 AM Konstantin Andreev <andreev@swemel.ru> wrote:
->> Stephen Smalley, 28/04/2025:
->>> Update the security_inode_listsecurity() interface to allow
->>> use of the xattr_list_one() helper and update the hook
->>> implementations.
->>>
->>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.smalley.work@gmail.com/
->>
->> Sorry for being late to the party.
->>
->> Your approach assumes that every fs-specific xattr lister
->> called like
->>
->> | vfs_listxattr() {
->> |    if (inode->i_op->listxattr)
->> |        error = inode->i_op->listxattr(dentry, list, size)
->> |   ...
->>
->> must call LSM to integrate LSM's xattr(s) into fs-specific list.
->> You did this for tmpfs:
->>
->> | simple_xattr_list() {
->> |   security_inode_listsecurity()
->> |   // iterate real xatts list
->>
->>
->> Well, but what about other filesystems in the linux kernel?
->> Should all of them also modify their xattr listers?
->>
->> To me, taking care of security xattrs is improper responsibility
->> for filesystem code.
->>
->> May it be better to merge LSM xattrs
->> and fs-backed xattrs at the vfs level (vfs_listxattr)?
-> 
-> This patch and the preceding one on which it depends were specifically
-> to address a regression in the handling of listxattr() for tmpfs/shmem
-> and similar filesystems.
-> Originally they had no xattr handler at the filesystem level and
-> vfs_listxattr() already has a fallback to ensure inclusion of the
-> security.* xattr for that case.
+On Fri, Jun 6, 2025 at 7:41=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
+>
+> On Mon, Jun 02, 2025 at 11:59:17PM -0700, Song Liu wrote:
+> > This helper walks an input path to its parent. Logic are added to handl=
+e
+> > walking across mount tree.
+> >
+> > This will be used by landlock, and BPF LSM.
+>
+> Unless I'm misreading that, it does *NOT* walk to parent - it treats
+> step into mountpoint as a separate step.  NAK in that form - it's
+> simply a wrong primitive.
 
-Understood
+I think this should be fixed by Micka=C3=ABl's comment. I will send v3 with
+it.
 
-> For filesystems like ext4 that have always (relative to first
-> introduction of security.* xattrs) provided handlers, they already
-> return the fs-backed xattr value and we don't need to ask the LSM for
-> it.
-
-They only return those security.* xattrs that were physically stored
-in the fs permanent storage.
-
-If LSM's xattrs are not stored they are not listed :(
-
-> That said, you may be correct that it would be better to introduce
-> some additional handling in vfs_listxattr() but I would recommend
-> doing that as a follow-up.
-
-Understood
-
---
-Konstantin Andreev
+Thanks,
+Song
