@@ -1,262 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B999B241136;
-	Fri,  6 Jun 2025 21:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F3020DD49
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Jun 2025 21:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749245452; cv=none; b=d8PsHORPLQtBF3S3Nslqb9FVQIQVHzosfki11DPx2QRn813u/jF6UA0PjAfPaLvjj7C5l7EQ23wUsn4nBhcw6Jj3qlEQdBXMoxEOGeD5l2qKAYe+uRcPFtWZLBWpVtvdlZwY9f9T6BiBWe+9mVbcmqv2/nWQKe0k77aR0HxsHCE=
+	t=1749246600; cv=none; b=pynyhAnTmfPJRSZR9z4DcmX8/lUlGeYZEZfx3FGx7SaUQ9e56tKg6gr9ELb2+U9HzhBxxO2JkfoR+9MfmZgHVlGKdo9PgLM50icY+XAuWV/zjxDey8I94Cx28lPZMfSE3GDFC72rcOHImCDvwkuzn0A0eX0015Y9Bmz+5z3NzIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749245452; c=relaxed/simple;
-	bh=vl/pVqr2RXH2Xn1E+8wtiXLeu/mTXlC3sdSyiyVMmIA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lv/FXN5cUDTeYSj4sBgdUgv8rY4f1lBn++oBAWS+XdAgtJT1xtmmJwQdJayWie2XHw0MgsVnKkvzcMhDnZNlETQgNmC9O0CztTMR3fMTUXkdCZ3H9+uHd4QMG88JNJiauMFMk2liIpdCvg/akHpNDzQzWmW4xYWX1Rky7ck04VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EEzWkcOy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749246600; c=relaxed/simple;
+	bh=+1Nw+TyZJ4TDFBc5uB8Kaff4ZPrVuFvYgy+0NOwMiQY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NE/Lj9yphWUYRawcdFCscSWCwnhgdpugIr6TKFu8oy4oZviGOG5jY/jrUg9M8zjaZ2v/tJHgyMy5D0dqZeqz0PS0hKkOA92nQ6fuAtEeEP9jjFJwS1H+fKYhfFYSVvDyvjjoip1s56YK4+KUr84fKKJgyh03P5/vKQJNH62tfZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eYuTB8Jv; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEzWkcOy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70B3CC4CEEF;
-	Fri,  6 Jun 2025 21:30:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749245452;
-	bh=vl/pVqr2RXH2Xn1E+8wtiXLeu/mTXlC3sdSyiyVMmIA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EEzWkcOyrqoaWqtG1eRTxvfwoQcINpoRi36EuVXRcKvYvhxhbTytJeZmTjE7Pg2rd
-	 DjYGM45FK5kDqJeFQXxdxMjw/AfNsxhPHmtd3RDnODTMSn6YovlMmS1Z3HLfZ8kpQ3
-	 Cv4IxEdLaFgrQAg3vCkm2Uo0n3oCLRE32G/48XIQMP/a9VhEK5LNUfAWKmJoPzpYDN
-	 znpJOwgECxmY4qlSGPndywZOl8qzk73sAp+Ynu0/y9koJ9ddF7QRYCSNobzrLZE16o
-	 ftLkNL2gB6pWxkzNaNYSDc4olFCIvOIfBGzBDgAnwyJEmREBTRfh10rWtxsfEUvBwe
-	 FMgFRgRmdKwsg==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	amir73il@gmail.com,
-	repnop@google.com,
-	jlayton@kernel.org,
-	josef@toxicpanda.com,
-	mic@digikod.net,
-	gnoack@google.com,
-	m@maowtm.org,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v3 bpf-next 5/5] selftests/bpf: Path walk test
-Date: Fri,  6 Jun 2025 14:30:15 -0700
-Message-ID: <20250606213015.255134-6-song@kernel.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250606213015.255134-1-song@kernel.org>
-References: <20250606213015.255134-1-song@kernel.org>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eYuTB8Jv"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ad51ef2424bso500845866b.0
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Jun 2025 14:49:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749246597; x=1749851397; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TAwnA42bcx8mfGt9sfzcC0fgUncFmk4wwB3OG1Jf+2c=;
+        b=eYuTB8JvgMSMyIFvH0ouxCQXE94sUnMyxf5f/cwwr3U9TZj63tAr1OxctA0tk+YrdJ
+         zD2s1AEG+ZzDJPUsvv14ydXpQMPuPXUA+IFGrUZ7TM/fsy61GuhigOSpAppWIT3JVjH0
+         EqrLkOuGwIBDm0J/Qpm8TMMSEpDtqX6qXMrEQKEZvINeReSg7sBvTod5LuNYycWwOGT3
+         znBhxD6EihhRogljbg546h9Khig+Lp/kziAayLBfyVBytXr2hTF7E1kyFaZFJF+sKVHd
+         1bJQ43FVxFCCnFiiMNoaMNe4NQ87PUwIZVRY8Ucvykb4AhQryke5TdTchtlnLMBAwJV2
+         SMjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749246597; x=1749851397;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TAwnA42bcx8mfGt9sfzcC0fgUncFmk4wwB3OG1Jf+2c=;
+        b=tJoSRJ/c/B/+U+iWTwGreqscfu3JpJOAVtSmlTsMao35eqyL8SzCCvXiCZOqzkkQtM
+         Wyddx7HqYK/2fKNuuCNrpv/f8rzdBUVVdBMP9Cu2Ud+paMkdC8VEk/+kaCBNuCk3amhs
+         vcTaN0MSM8F4yEA594eS+kW0s5H/b0/GAIsUNBAsh3+sdfMmdQav9HWCTAGkujOpCgOO
+         llk+KCuBv86ine2aE1Y/C0g7v9Q+mlCF2R0o1w+zSWYgrTeG52IW3qlaY074cdVEfKko
+         aanRcYZzBQYHIoeUHkzG3DlDQiZi7QQpjYbfsVDdLM75XgnU1UQ3+jCFLleQHSPiMs2M
+         JN6w==
+X-Gm-Message-State: AOJu0YyATIa0vdEpZCn9YCqjBrX2lpmI77FmYCvG2QhaORpDN7QfPCF/
+	tn0GKBJ9sqXfxj8r9DEC60lGHklQ6eHsYUqaFMPAPOQPj7NkBLZCNkbpKI0cLHQhceUeQBVCGhf
+	JKYnJVFVDIW+tU6Jifc3F4UBJOZITjXbWSnAnJ0d6SoAbnYTqZsTysDId
+X-Gm-Gg: ASbGncskmNYwEbnGs9Ciwi3uC+P97ZEsb/ADOVLbZwS/kaommyiUx0kUkB8YDQyborY
+	+jx/I3FU16sPy80jtEnwQcahwrFOiMWYi+yMJq99Hw1kCGmmEneGG+EbA4AVe2D+IUvJWO6RMYu
+	NmPkhKQGUAG6VqmVL0oRg3QQCKK4dOeHA9EBrhxVDAC3UJH2hM8eI4xRAq/eiTMIQpsy+aIlo=
+X-Google-Smtp-Source: AGHT+IGApFPqU4Wt1QOk/QXzfXzbMGccnrir6W/Cc1Dywxlmqei5pw1qHZ+dZyJYfRS6FFWh+eLtKgaCAZQutEgOXc8=
+X-Received: by 2002:a17:907:7247:b0:add:ee2c:730d with SMTP id
+ a640c23a62f3a-ade1aa06c7fmr450167466b.44.1749246596556; Fri, 06 Jun 2025
+ 14:49:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAA25o9TqH3LNWy8F2tXO7P6AdQk0x+boWiPhy+CKL=wDouKODw@mail.gmail.com>
+ <b1bf0aaf-0290-41a3-8bbc-a61c6c8b2e74@schaufler-ca.com> <CAA25o9T3AQJ-zNcb3VuhCwbKQGSFtSBbeN_BRYv0L8M-pQKugA@mail.gmail.com>
+ <e6058692-de6f-4206-89cb-af6bb70dd800@schaufler-ca.com>
+In-Reply-To: <e6058692-de6f-4206-89cb-af6bb70dd800@schaufler-ca.com>
+From: Luigi Semenzato <semenzato@google.com>
+Date: Fri, 6 Jun 2025 14:49:45 -0700
+X-Gm-Features: AX0GCFvMuAIZxVALKSMsMIzrAA_oU20VsGIE-XjGX5etOHA1_A3T8czaSQQEeAo
+Message-ID: <CAA25o9RZUGerfq4a7nLRVyuuGkJduH+apfM1ZKCq1XWD=zLBRQ@mail.gmail.com>
+Subject: Re: adding CAP_RESERVED_# bits
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add an end-to-end test with path_iter on security hook file_open.
+On Fri, Jun 6, 2025 at 1:42=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
+com> wrote:
+>
+> On 6/6/2025 1:11 PM, Luigi Semenzato wrote:
+> > On Fri, Jun 6, 2025 at 11:32=E2=80=AFAM Casey Schaufler <casey@schaufle=
+r-ca.com> wrote:
+> >> On 6/6/2025 10:57 AM, Luigi Semenzato wrote:
+> >>> Recently I inquired about the decision process for adding a CAP_DRM
+> >>> bit to capability.h (to become DRM master).  It occurred to me that
+> >>> the process for adding ANY bit would be fraught with controversies (t=
+o
+> >>> say the least).
+> >>>
+> >>> So I looked into maintaining a patch in our own kernel sources, but
+> >>> that was surprisingly messy due to the build-time dependencies of
+> >>> capability.h and the way we maintain and share sources internally for
+> >>> multiple kernel versions.  This would have been quite simple if there
+> >>> were a few reserved bits, such as CAP_RESERVED_0, ..,
+> >>> CAP_RESERVED_<N-1> with, say, N=3D3.
+> >>>
+> >>> Would this also be controversial?
+> >> Imagine that there was a CAP_RESERVED_0, and that Fedora used it
+> >> for DRM master control, Ubuntu used it for unsigned module loading,
+> >> an android used it to control making the battery explode. How could
+> >> you write applications so that their use of CAP_RESERVED_0 could be
+> >> considered safe?
+> >
+> > Sorry, I neglected to mention that I am thinking of embedded systems
+> > where the vendor provides both the OS and the executables, with no
+> > provision for installing additional executables.  ChromeOS is like that=
+.
+>
+> I have worked on embedded systems, and don't believe that the problem is
+> any less serious for them. One aspect of embedded system development is
+> that kernel versions don't change for years, and then take huge version
+> updates. That will often require updates to applications and libraries,
+> which have also evolved over time. We saw this with the introduction of
+> systemd, where the model for launching privileged services changed radica=
+lly.
+> Any assumptions about the use of "reserved" capabilities would be dangero=
+us
+> when the eventual upgrade occurs. Especially if the vendor of the embedde=
+d
+> system has a different set of developers than they did for the previous
+> release.
 
-A test file is created in folder /tmp/test_progs_path_iter/folder. On
-file_open, walk file->f_path up to its parent and grand parent, and test
-bpf_get_dentry_xattr and bpf_path_d_path on the folders.
+I agree with your assessment of danger, but then the choice is between
+maintaining a set of patches reliably, or not being able to do this at all
+(when all bits are exhausted).
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- .../selftests/bpf/prog_tests/path_iter.c      | 99 +++++++++++++++++++
- tools/testing/selftests/bpf/progs/path_walk.c | 59 +++++++++++
- 2 files changed, 158 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/progs/path_walk.c
+I can't say if in this case protecting developers from self-hanging
+trumps the convenience of the feature.  I would say no, because
+developers who maintain kernel patches for their product already
+have infinitely many self-hanging opportunities.  But it's subjective.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/path_iter.c b/tools/testing/selftests/bpf/prog_tests/path_iter.c
-index 3c99c24fbd96..b9772026fbf7 100644
---- a/tools/testing/selftests/bpf/prog_tests/path_iter.c
-+++ b/tools/testing/selftests/bpf/prog_tests/path_iter.c
-@@ -2,11 +2,110 @@
- /* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
- 
- #include <test_progs.h>
-+#include <fcntl.h>
- #include <bpf/libbpf.h>
- #include <bpf/btf.h>
-+#include <sys/stat.h>
-+#include <sys/xattr.h>
-+
- #include "path_iter.skel.h"
-+#include "path_walk.skel.h"
-+
-+static const char grand_parent_path[] = "/tmp/test_progs_path_iter";
-+static const char parent_path[] = "/tmp/test_progs_path_iter/folder";
-+static const char file_path[] = "/tmp/test_progs_path_iter/folder/file";
-+static const char xattr_name[] = "user.bpf.selftests";
-+static const char xattr_value[] = "selftest_path_iter";
-+
-+static void cleanup_files(void)
-+{
-+	remove(file_path);
-+	rmdir(parent_path);
-+	rmdir(grand_parent_path);
-+}
-+
-+static int setup_files_and_xattrs(void)
-+{
-+	int ret = -1;
-+
-+	/* create test folders */
-+	if (mkdir(grand_parent_path, 0755))
-+		goto error;
-+	if (mkdir(parent_path, 0755))
-+		goto error;
-+
-+	/* setxattr for test folders */
-+	ret = setxattr(grand_parent_path, xattr_name,
-+		       xattr_value, sizeof(xattr_value), 0);
-+	if (ret < 0) {
-+		/* return errno, so that we can handle EOPNOTSUPP in the caller */
-+		ret = errno;
-+		goto error;
-+	}
-+	ret = setxattr(parent_path, xattr_name,
-+		       xattr_value, sizeof(xattr_value), 0);
-+	if (ret < 0) {
-+		/* return errno, so that we can handle EOPNOTSUPP in the caller */
-+		ret = errno;
-+		goto error;
-+	}
-+
-+	return 0;
-+error:
-+	cleanup_files();
-+	return ret;
-+}
-+
-+static void test_path_walk(void)
-+{
-+	struct path_walk *skel = NULL;
-+	int file_fd;
-+	int err;
-+
-+	err = setup_files_and_xattrs();
-+	if (err == EOPNOTSUPP) {
-+		printf("%s:SKIP:local fs doesn't support xattr (%d)\n"
-+		       "To run this test, make sure /tmp filesystem supports xattr.\n",
-+		       __func__, errno);
-+		test__skip();
-+		return;
-+	}
-+
-+	if (!ASSERT_OK(err, "setup_file"))
-+		return;
-+
-+	skel = path_walk__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "path_walk__open_and_load"))
-+		goto cleanup;
-+
-+	skel->bss->monitored_pid = getpid();
-+	if (!ASSERT_OK(path_walk__attach(skel), "path_walk__attach"))
-+		goto cleanup;
-+
-+	file_fd = open(file_path, O_CREAT);
-+	if (!ASSERT_OK_FD(file_fd, "open_file"))
-+		goto cleanup;
-+	close(file_fd);
-+
-+	ASSERT_OK(strncmp(skel->bss->parent_xattr_buf, xattr_value, strlen(xattr_value)),
-+		  "parent_xattr");
-+	ASSERT_OK(strncmp(skel->bss->grand_parent_xattr_buf, xattr_value, strlen(xattr_value)),
-+		  "grand_parent_xattr");
-+
-+	ASSERT_OK(strncmp(skel->bss->parent_path_buf, parent_path, strlen(parent_path)),
-+		  "parent_d_path");
-+	ASSERT_OK(strncmp(skel->bss->grand_parent_path_buf, grand_parent_path,
-+			  strlen(grand_parent_path)),
-+		  "grand_parent_d_path");
-+
-+cleanup:
-+	path_walk__destroy(skel);
-+	cleanup_files();
-+}
- 
- void test_path_iter(void)
- {
- 	RUN_TESTS(path_iter);
-+	if (test__start_subtest("path_walk_example"))
-+		test_path_walk();
- }
-diff --git a/tools/testing/selftests/bpf/progs/path_walk.c b/tools/testing/selftests/bpf/progs/path_walk.c
-new file mode 100644
-index 000000000000..1e1ae82b47a2
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/path_walk.c
-@@ -0,0 +1,59 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-+
-+#include "vmlinux.h"
-+#include <errno.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_core_read.h>
-+#include "bpf_kfuncs.h"
-+#include "bpf_misc.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+__u32 monitored_pid;
-+
-+#define BUF_SIZE 1024
-+char parent_path_buf[BUF_SIZE] = {};
-+char parent_xattr_buf[BUF_SIZE] = {};
-+char grand_parent_path_buf[BUF_SIZE] = {};
-+char grand_parent_xattr_buf[BUF_SIZE] = {};
-+
-+static __always_inline void d_path_and_read_xattr(struct path *p, char *path, char *xattr)
-+{
-+	struct bpf_dynptr ptr;
-+	struct dentry *dentry;
-+
-+	if (!p)
-+		return;
-+	bpf_path_d_path(p, path, BUF_SIZE);
-+	bpf_dynptr_from_mem(xattr, BUF_SIZE, 0, &ptr);
-+	dentry = p->dentry;
-+	if (dentry)
-+		bpf_get_dentry_xattr(dentry, "user.bpf.selftests", &ptr);
-+}
-+
-+SEC("lsm.s/file_open")
-+int BPF_PROG(test_file_open, struct file *f)
-+{
-+	__u32 pid = bpf_get_current_pid_tgid() >> 32;
-+	struct bpf_iter_path path_it;
-+	struct path *p;
-+
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, 0);
-+
-+	/* Get d_path and xattr for the parent directory */
-+	p = bpf_iter_path_next(&path_it);
-+	d_path_and_read_xattr(p, parent_path_buf, parent_xattr_buf);
-+
-+	/* Get d_path and xattr for the grand parent directory */
-+	p = bpf_iter_path_next(&path_it);
-+	d_path_and_read_xattr(p, grand_parent_path_buf, grand_parent_xattr_buf);
-+
-+	bpf_iter_path_destroy(&path_it);
-+
-+	return 0;
-+}
--- 
-2.47.1
-
+> >
+> > I agree that major general-purpose distributions would not benefit
+> > from this.  So the question is whether it is worth sacrificing those
+> > bits for easier security setups on embedded systems (and being
+> > able to do it at all when eventually all bits are assigned).
+> >
+> >>> Thanks!
+> >>>
