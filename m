@@ -1,117 +1,117 @@
-Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF9728540E
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Jun 2025 10:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F992045AD
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Jun 2025 11:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749206801; cv=none; b=moICmLQGmVlTHU/HrJdNMhgN0ZgbTKRld0xhqGxfIfH/jz93061yC9oxR5VKZn6BLjvl7M8wdWoedpMJCbqdOcVd1D6LykmDYlTkn1vxle1NAy2xwUGiuHvSg1XDS41qN4FDPjKfNvG07rezSkLb2d2zgiH8jupmDSc50oNw5vo=
+	t=1749208105; cv=none; b=aiyhLjOMz++QlGQrDocxRHFNWZ5I/BxgCK+6oUECDMxkZGyvvzrYJ0NiGB6wXiFEssuFCclI5EHC1aAm0+e0st/Svr2SMogmsg+thvRHmNpYBJo24c3LnuKXsGH2jBvQCvO9YqAe5HEsbYiC5scxI0H3U8z3Z4iG/hQ03aynKYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749206801; c=relaxed/simple;
-	bh=EdISCY8+Nwj/6Ck2qwx1KqleTaHrkAdcHuOQ931eBqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BfNV517XKHV+LuVC122NmavhxJGAQ3SmvgAqdLix8kC173ziSGWTsUJIbeq6qO5HSLWSf/T7Ng5//bHSdPvZAaOAqjqIOBSVkA+SGT5JLE+/RoOgknEVWXQ/HNGCkZuX9z+jQ7ltdbR1L3fCN1g+DYZVd3Fkpd+zmSlCWAcEQp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=zqPERQUg; arc=none smtp.client-ip=45.157.188.14
+	s=arc-20240116; t=1749208105; c=relaxed/simple;
+	bh=CHP7ew/Et+ERAnaK25+q8VWiodq15pXg+mMICzBovxw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VzfCk+Q/0XA12aOaFJyqzIjYSHa3U/k7FO1YjusTdSk6KkF/8dVb9Hp3NkiY5R4D8NtryZjLYE9AohM9WC2EuUrara91sPlLiq7rrkgHveEwZPAAJJ8+7xWacmmFfKo5ZI4jf4iPjPPwuFVAu7RFXeiBgTpmK+Tagw45O0X5aMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=HPcX9IJv; arc=none smtp.client-ip=185.125.25.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="zqPERQUg"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HPcX9IJv"
 Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bDJ0747jqz5rT;
-	Fri,  6 Jun 2025 12:46:31 +0200 (CEST)
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bDJTG19vWz7Th;
+	Fri,  6 Jun 2025 13:08:18 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1749206791;
-	bh=hiQyTj6n+Gg20Nh1xHG8uksvLeu5UW/Ze/TPfn76o9k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=zqPERQUgAHkRj+EGCmB9c3YgKTMwsZbMGsK/qDMZwD9Lbj13miqcFlVMURYAAubK2
-	 i3B1WOlx1T6ZOUgtjJ7iZXjsqnEa4LKxII8BScUkuboPqOuMTLNxP2K6Xw7639aa52
-	 Jt8of9CfhDl4RPMREdx+2Zl5Z0PPL9Czm1Wrphfo=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bDJ062Hb4zhsp;
-	Fri,  6 Jun 2025 12:46:30 +0200 (CEST)
-Date: Fri, 6 Jun 2025 12:46:29 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com, 
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
-	jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com, m@maowtm.org
-Subject: Re: [PATCH v2 bpf-next 2/4] landlock: Use path_walk_parent()
-Message-ID: <20250606.zo5aekae6Da6@digikod.net>
-References: <20250603065920.3404510-1-song@kernel.org>
- <20250603065920.3404510-3-song@kernel.org>
- <20250603.Av6paek5saes@digikod.net>
- <CAPhsuW6J_hDtXZm4MH_OAz=GCpRW0NMM1EXMrJ=nqsTdpf8vcg@mail.gmail.com>
- <CAPhsuW7MtxryseFsHF2xqBFS2UWammJatjf8UxBhytgn_nA4=g@mail.gmail.com>
+	s=20191114; t=1749208098;
+	bh=Zvrk4HYUoozthbO1/0n4L3/NA+73B6AAfyt++Mv471c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HPcX9IJvIEjkGIMAijSxJIYitR9OgUidYDUXcHQDAN3uNijVjax8Bmm0/PIEM4moz
+	 5EfvYPc/mGNGs3FkGwcTpCzf8yL9/DuwRUH64sS3HoVxeJr0hm97HxrpqeAtqu0ve4
+	 nGtuuNaK0OHMgKONTQn3TTau2lmKCCD3gua97UoI=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bDJTF4mnpzp5L;
+	Fri,  6 Jun 2025 13:08:17 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Song Liu <song@kernel.org>,
+	Tingmao Wang <m@maowtm.org>
+Subject: [PATCH v1] selftests/landlock: Add test to check rule tied to covered mount point
+Date: Fri,  6 Jun 2025 13:08:09 +0200
+Message-ID: <20250606110811.211297-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPhsuW7MtxryseFsHF2xqBFS2UWammJatjf8UxBhytgn_nA4=g@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Thu, Jun 05, 2025 at 09:47:36AM -0700, Song Liu wrote:
-> On Wed, Jun 4, 2025 at 12:37 PM Song Liu <song@kernel.org> wrote:
-> >
-> > On Tue, Jun 3, 2025 at 6:46 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > >
-> > > Landlock tests with hostfs fail:
-> > >
-> > > ok 126 layout3_fs.hostfs.tag_inode_file
-> > > #  RUN           layout3_fs.hostfs.release_inodes ...
-> > > # fs_test.c:5555:release_inodes:Expected EACCES (13) == test_open(TMP_DIR, O_RDONLY) (0)
-> > >
-> > > This specific test checks that an access to a (denied) mount point over
-> > > an allowed directory is indeed denied.
-> 
-> I just realized this only fails on hostfs. AFAICT, hostfs is only used
-> by um. Do we really need this to behave the same on um+hostfs?
+This test checks that a rule on a directory used as a mount point does
+not grant access to the mount covering it.  It is a generalization of
+the bind mount case in layout3_fs.hostfs.release_inodes [1] that tests
+hidden mount points.
 
-Yes, this would be a regression, and in fact it is not related to hostfs
-and it would be a new security bug.
+Cc: Günther Noack <gnoack@google.com>
+Cc: Song Liu <song@kernel.org>
+Cc: Tingmao Wang <m@maowtm.org>
+Link: https://lore.kernel.org/r/20250606.zo5aekae6Da6@digikod.net [1]
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ tools/testing/selftests/landlock/fs_test.c | 40 ++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-The issue is that the path_walk_parent() doesn't return the parent
-dentry but the underlying mount point if any.  When choose_mountpoint()
-returns true, path_walk_parent() should continue to the following root
-check and potentiall the dget_parent() call.  We need to be careful with
-the path_put() though.
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index 73729382d40f..fa0f18ec62c4 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -1832,6 +1832,46 @@ TEST_F_FORK(layout1, release_inodes)
+ 	ASSERT_EQ(ENOENT, test_open(dir_s3d3, O_RDONLY));
+ }
+ 
++/*
++ * This test checks that a rule on a directory used as a mount point does not
++ * grant access to the mount covering it.  It is a generalization of the bind
++ * mount case in layout3_fs.hostfs.release_inodes that tests hidden mount points.
++ */
++TEST_F_FORK(layout1, covered_rule)
++{
++	const struct rule layer1[] = {
++		{
++			.path = dir_s3d2,
++			.access = LANDLOCK_ACCESS_FS_READ_DIR,
++		},
++		{},
++	};
++	int ruleset_fd;
++
++	/* Unmount to simplify FIXTURE_TEARDOWN. */
++	set_cap(_metadata, CAP_SYS_ADMIN);
++	ASSERT_EQ(0, umount(dir_s3d2));
++	clear_cap(_metadata, CAP_SYS_ADMIN);
++
++	/* Creates a ruleset with the future hidden directory. */
++	ruleset_fd =
++		create_ruleset(_metadata, LANDLOCK_ACCESS_FS_READ_DIR, layer1);
++	ASSERT_LE(0, ruleset_fd);
++
++	/* Covers with a new mount point. */
++	set_cap(_metadata, CAP_SYS_ADMIN);
++	ASSERT_EQ(0, mount_opt(&mnt_tmp, dir_s3d2));
++	clear_cap(_metadata, CAP_SYS_ADMIN);
++
++	ASSERT_EQ(0, test_open(dir_s3d2, O_RDONLY));
++
++	enforce_ruleset(_metadata, ruleset_fd);
++	ASSERT_EQ(0, close(ruleset_fd));
++
++	/* Checks that access to the new mount point is denied. */
++	ASSERT_EQ(EACCES, test_open(dir_s3d2, O_RDONLY));
++}
++
+ enum relative_access {
+ 	REL_OPEN,
+ 	REL_CHDIR,
+-- 
+2.49.0
 
-This issue was only spotted by this hostfs test because this one adds a
-rule which is tied to the inode of the mount which is in fact the same
-inode of the mount point because the mount is a bind mount.  I'll send a
-new test that check the same thing but with tmpfs (for convenience, but
-it would be the same for any filesystem).
-
-> 
-> Thanks,
-> Song
-> 
-> >
-> > I am having trouble understanding the test. It appears to me
-> > the newly mounted tmpfs on /tmp is allowed, but accesses to
-> > / and thus mount point /tmp is denied? What would the walk in
-> > is_access_to_paths_allowed look like?
-
-The test checks that a mount is not wrongly identified as the underlying
-mount point.
-
-> >
-> > > It's not clear to me the origin of the issue, but it seems to be related
-> > > to choose_mountpoint().
-> > >
-> > > You can run these tests with `check-linux.sh build kselftest` from
-> > > https://github.com/landlock-lsm/landlock-test-tools
-> >
-> > How should I debug this test? printk doesn't seem to work.
-
-The console log level is set to warn, so you can use pr_warn().
-
-> >
-> > Thanks,
-> > Song
