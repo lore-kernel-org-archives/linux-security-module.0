@@ -1,40 +1,49 @@
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1601B2853EB
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Jun 2025 10:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF9728540E
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Jun 2025 10:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749206587; cv=none; b=QgtCgwZJvEWZuam60Fnc4Gv7mG08mRUHhELEcdRPw+ra/4ZFtjxlJwzhHi4n+nVaQYjPJXFUSEwlCJu+1bIJNXOIWE7SsMwuLsAiJYjeM9DfUmpdIRHCjh3/B9+WhId44+XSvcoKatJLfhhucstSRb3XPPdxMxB7aRIjz7T2sTQ=
+	t=1749206801; cv=none; b=moICmLQGmVlTHU/HrJdNMhgN0ZgbTKRld0xhqGxfIfH/jz93061yC9oxR5VKZn6BLjvl7M8wdWoedpMJCbqdOcVd1D6LykmDYlTkn1vxle1NAy2xwUGiuHvSg1XDS41qN4FDPjKfNvG07rezSkLb2d2zgiH8jupmDSc50oNw5vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749206587; c=relaxed/simple;
-	bh=wrn+3rOWvM87KNI4ByTT9tgKVnOn0qTuL+U86xqfst8=;
+	s=arc-20240116; t=1749206801; c=relaxed/simple;
+	bh=EdISCY8+Nwj/6Ck2qwx1KqleTaHrkAdcHuOQ931eBqc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/uoqSMfu+LI7GLJZPa8tBDgRvBnOYF0t/Qz2N71PCub/x1fP7nTiUMDtiOIgerSLHuQwoiaOPxpN2c69ZOspQm7Hct73c2RZuERR2U/yQfCYzl7pDRhHVDynlm+/Y+cgdYBcf9vhxI1jkMug3IqdgiryEKqoG1vsN/yNArzyZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=islTGnV9; arc=none smtp.client-ip=185.125.25.11
+	 Content-Type:Content-Disposition:In-Reply-To; b=BfNV517XKHV+LuVC122NmavhxJGAQ3SmvgAqdLix8kC173ziSGWTsUJIbeq6qO5HSLWSf/T7Ng5//bHSdPvZAaOAqjqIOBSVkA+SGT5JLE+/RoOgknEVWXQ/HNGCkZuX9z+jQ7ltdbR1L3fCN1g+DYZVd3Fkpd+zmSlCWAcEQp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=zqPERQUg; arc=none smtp.client-ip=45.157.188.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="islTGnV9"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bDHvy3G4qz19Nb;
-	Fri,  6 Jun 2025 12:42:54 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="zqPERQUg"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bDJ0747jqz5rT;
+	Fri,  6 Jun 2025 12:46:31 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1749206574;
-	bh=oURZo3u/Ijfi30U+8q9mvGdgG1OWCl0bWYeWRioE/tM=;
+	s=20191114; t=1749206791;
+	bh=hiQyTj6n+Gg20Nh1xHG8uksvLeu5UW/Ze/TPfn76o9k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=islTGnV9JVc951WitJVrDbilZnMEcgKMy2K3pVi4ErWwirkCHCaSWK7d1Cr1XgwPe
-	 RdkjgIuC2b9ZXTHos1GMeABf4GXKVaKQXDFhoJudF/YH39AyDZby0KYRh3KNFjTCxc
-	 8cZjFthevoKqcJ8XRAjKN6/qbhBHHvqeRvCuvf0g=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bDHvx6Vp6zGRc;
-	Fri,  6 Jun 2025 12:42:53 +0200 (CEST)
-Date: Fri, 6 Jun 2025 12:42:53 +0200
+	b=zqPERQUgAHkRj+EGCmB9c3YgKTMwsZbMGsK/qDMZwD9Lbj13miqcFlVMURYAAubK2
+	 i3B1WOlx1T6ZOUgtjJ7iZXjsqnEa4LKxII8BScUkuboPqOuMTLNxP2K6Xw7639aa52
+	 Jt8of9CfhDl4RPMREdx+2Zl5Z0PPL9Czm1Wrphfo=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bDJ062Hb4zhsp;
+	Fri,  6 Jun 2025 12:46:30 +0200 (CEST)
+Date: Fri, 6 Jun 2025 12:46:29 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: Song Liu <song@kernel.org>
-Cc: linux-security-module@vger.kernel.org, gnoack@google.com
-Subject: Re: [PATCH] selftests/landlock: Fix build of audit_test
-Message-ID: <20250606.xooch5pieChi@digikod.net>
-References: <20250605214416.1885878-1-song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com, 
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
+	jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com, m@maowtm.org
+Subject: Re: [PATCH v2 bpf-next 2/4] landlock: Use path_walk_parent()
+Message-ID: <20250606.zo5aekae6Da6@digikod.net>
+References: <20250603065920.3404510-1-song@kernel.org>
+ <20250603065920.3404510-3-song@kernel.org>
+ <20250603.Av6paek5saes@digikod.net>
+ <CAPhsuW6J_hDtXZm4MH_OAz=GCpRW0NMM1EXMrJ=nqsTdpf8vcg@mail.gmail.com>
+ <CAPhsuW7MtxryseFsHF2xqBFS2UWammJatjf8UxBhytgn_nA4=g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -44,37 +53,65 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250605214416.1885878-1-song@kernel.org>
+In-Reply-To: <CAPhsuW7MtxryseFsHF2xqBFS2UWammJatjf8UxBhytgn_nA4=g@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Thu, Jun 05, 2025 at 02:44:16PM -0700, Song Liu wrote:
-> We are hitting build error on CentOS 9:
+On Thu, Jun 05, 2025 at 09:47:36AM -0700, Song Liu wrote:
+> On Wed, Jun 4, 2025 at 12:37 PM Song Liu <song@kernel.org> wrote:
+> >
+> > On Tue, Jun 3, 2025 at 6:46 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > >
+> > > Landlock tests with hostfs fail:
+> > >
+> > > ok 126 layout3_fs.hostfs.tag_inode_file
+> > > #  RUN           layout3_fs.hostfs.release_inodes ...
+> > > # fs_test.c:5555:release_inodes:Expected EACCES (13) == test_open(TMP_DIR, O_RDONLY) (0)
+> > >
+> > > This specific test checks that an access to a (denied) mount point over
+> > > an allowed directory is indeed denied.
 > 
-> audit_test.c:232:40: error: ‘O_CLOEXEC’ undeclared (...)
-> 
-> Fix this by including fcntl.h.
-> 
-> Signed-off-by: Song Liu <song@kernel.org>
+> I just realized this only fails on hostfs. AFAICT, hostfs is only used
+> by um. Do we really need this to behave the same on um+hostfs?
 
-Thanks, I'll merge it in my tree.
+Yes, this would be a regression, and in fact it is not related to hostfs
+and it would be a new security bug.
 
-> ---
->  tools/testing/selftests/landlock/audit_test.c | 1 +
->  1 file changed, 1 insertion(+)
+The issue is that the path_walk_parent() doesn't return the parent
+dentry but the underlying mount point if any.  When choose_mountpoint()
+returns true, path_walk_parent() should continue to the following root
+check and potentiall the dget_parent() call.  We need to be careful with
+the path_put() though.
+
+This issue was only spotted by this hostfs test because this one adds a
+rule which is tied to the inode of the mount which is in fact the same
+inode of the mount point because the mount is a bind mount.  I'll send a
+new test that check the same thing but with tmpfs (for convenience, but
+it would be the same for any filesystem).
+
 > 
-> diff --git a/tools/testing/selftests/landlock/audit_test.c b/tools/testing/selftests/landlock/audit_test.c
-> index cfc571afd0eb..46d02d49835a 100644
-> --- a/tools/testing/selftests/landlock/audit_test.c
-> +++ b/tools/testing/selftests/landlock/audit_test.c
-> @@ -7,6 +7,7 @@
->  
->  #define _GNU_SOURCE
->  #include <errno.h>
-> +#include <fcntl.h>
->  #include <limits.h>
->  #include <linux/landlock.h>
->  #include <pthread.h>
-> -- 
-> 2.47.1
+> Thanks,
+> Song
 > 
-> 
+> >
+> > I am having trouble understanding the test. It appears to me
+> > the newly mounted tmpfs on /tmp is allowed, but accesses to
+> > / and thus mount point /tmp is denied? What would the walk in
+> > is_access_to_paths_allowed look like?
+
+The test checks that a mount is not wrongly identified as the underlying
+mount point.
+
+> >
+> > > It's not clear to me the origin of the issue, but it seems to be related
+> > > to choose_mountpoint().
+> > >
+> > > You can run these tests with `check-linux.sh build kselftest` from
+> > > https://github.com/landlock-lsm/landlock-test-tools
+> >
+> > How should I debug this test? printk doesn't seem to work.
+
+The console log level is set to warn, so you can use pr_warn().
+
+> >
+> > Thanks,
+> > Song
