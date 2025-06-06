@@ -1,83 +1,80 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F311C78F32;
-	Fri,  6 Jun 2025 17:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E110289E2A
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Jun 2025 17:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749229299; cv=none; b=Kr1XhJguiQ0BH3CGGw/sNrZnz63uG9dlD4YV7UErj7CQMBaG1/4pZhUn0gJFCjCOLnvhLshA55wY1jL4Ilabhy17XyxSOAZwlpeXbLBS/mk8KVhwpDRnw2SB6u7nmQzYMpkYoMyNqwHji8duihZ5k/aoNz++jXVpnNq9LQbMXAo=
+	t=1749232680; cv=none; b=MYQjyb9TPHgxchAUF5Ek91mpFmXSTfS642j77vHzCZDsk0C17X8OqF0DXH4eY/186tacpB7BZiL71NHxgYTIgFmlas4CamxlkZgsbKWtb3ab4+DtB2IaA3AkkvLqIEzOQXMNb+PfpQCoN1GiiQ662lCu0ufbl9nrnCg0FkIY/x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749229299; c=relaxed/simple;
-	bh=zT4sKuFfw4xqA2QcApAwj6XA/t5bPgFmkMq4rQo7XSs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n5K1ow2rLtwKr4A7psDOO8i80ikNfGi+fdvUuE96FlQp4FMw1Rcc67qLwlRokELa6LY1noAlE/VZTTyU35yo+eXgaRCzm3bp4uPMyQcz2r+Uz7wlXVm3jZah3aLZUZFq6TOYy0efbA0804OV7aZ3et3GqJKtAPNvZ8Mxb4fW+xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gtsMTZx1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749232680; c=relaxed/simple;
+	bh=/tiGAY6fu7wdEem/KXRpNh5Pt/VNU4PJ7/htsCBz4dc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=jTCiuZ5sEja0NkrvEXKkJv8bMoE7yuuLY96mRTQ5tD45rW9XolU1oqD2wKtfX58EJ19P72OaaIwceXSPqMPYyaesORxBdw8zJXd3AQoFr+CWvKfCXBADNLhfGzmXYBPbs4bZVNG6fhJ5CglefSfnWOpcwI7kOo3B//8EKbaeOv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KLU6HFc3; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtsMTZx1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73409C4CEF3;
-	Fri,  6 Jun 2025 17:01:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749229298;
-	bh=zT4sKuFfw4xqA2QcApAwj6XA/t5bPgFmkMq4rQo7XSs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gtsMTZx1yWC/tSkVqaOgwFKGuQ98lnIMb532AjF6hx/O739rjGGGwIw44DbqR8Std
-	 AjacvuXrKDIQqXRtuK6/t1lR1i76dLmSgUYS4SLBFMHbUxGN5DKfG6WVw3ENVPt4Pn
-	 PUNJb/Q5ytdz5Uizj2kw0aZVxDemf0NyUKxuH2potcyyHefSMwaQN7VD6QyeK80ubn
-	 hNfIfA0/x9S+vzp5s/gysWImrg5i4mK9J6eApn6tAhvOJodIAv33StZLETCvJNBfez
-	 vQReMHkym5yqbnS9zpRezAhcACxvY3saQhzj6Fn0KMUmcotgAIZQcPX0cFhUVpCD1J
-	 KpdhohDVcALzg==
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c5f720c717so376558385a.0;
-        Fri, 06 Jun 2025 10:01:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU1Zr7RvGKtegjnFt3FOBQFdEZJlD8Vet4j1rQDSze7w+wY++nms/twdD3zTGGBDw+/ai1T8lZ95SPnmpCKvyLpWdY9uuT8@vger.kernel.org, AJvYcCWx1hJaOOZxAyUFo7SEJ6z1arP9iG/sd1vEg0f+36ZRvfWVCwA0GM9Ftr7G/de/SeAWXnFCik5vx1TrEnNc@vger.kernel.org, AJvYcCX38rwhCz0+rHH0EYqecoHQ92YL3GOM1i5DaeeQLpDat0PQku4Nlm0rwrM4RTcy6+3rS6PT3gzV6ECH1MIv@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr+SMWLuzZDtujfZlPGA0NUXHry1iFuy+YtsG7MxNsZkTGL6Jd
-	jPTZXnlZG8/wgnVPdZtH+YM92M7vDECZlVvZBBhgTaFmKlC0p24870u2RoTZ1/cEVvrMHKjHsRJ
-	UVG3HWx4yp4ZTvLFaq7cvdeF6zMx7wzk=
-X-Google-Smtp-Source: AGHT+IGUP8KmwWsyJVkbFL3ChhSRLJM0hfwN3udKweQ31QmMpDI2+5lcOPPfybMB/iI0kyV9jSgunDkpQrwkzvMsC6c=
-X-Received: by 2002:a05:6214:1d07:b0:6fa:a4b7:c664 with SMTP id
- 6a1803df08f44-6fb09c63bd2mr51564626d6.22.1749229297515; Fri, 06 Jun 2025
- 10:01:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KLU6HFc3"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-601f278369bso4688675a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Jun 2025 10:57:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749232677; x=1749837477; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iY0rx+rsGFhLOqPuTkJ4yj+5gQ+KGCTGR4LraOSflH8=;
+        b=KLU6HFc3+6t9HxAfaa4HaoCjrWjoObO12x11wO+yVHronn5R+tqHqWVdM18/fBIXGx
+         H9m8fVXAJR7Yx8WDSCfvLg0mk5dCPDr7CiU/u5XB3xr92mjuQKkxSPZyO9aIj1+VCOd4
+         SplpETCZwDusqVSXgblRhUzAVqXv8QW6XcFGyrS1Ot9/OTDhq8G5+aBOm5VOfDBbALEL
+         x71WVN7apdSlrUnXMyA8KiSS7ckT+ipdKC3gJ8qsrnnWPrKn6WxqKCsCvtkGE/ZoySp7
+         vMZUOHASZ35Y5acDwJH5P46g/rHjx2cRawZ7/t0VtZJjESJwJKvNwkcto6jF+bSjXfmp
+         YSiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749232677; x=1749837477;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iY0rx+rsGFhLOqPuTkJ4yj+5gQ+KGCTGR4LraOSflH8=;
+        b=cO6wqHgvZdOQRvc8lSg3PpTLXl36g6RoSZFPulUAtZHvKzh+mJbJZEH1VGyHGwf0bz
+         0UdhOhAiUgVnKvQ1rUaHp/gnC8N/3V/k1K03EwMcXPXjfXdTKdj0huVpiPdyKmaQc685
+         lOBQSzA79xRY8wJ30l1KJoeb86C20J2cb6BXXcRADo/2iLZu+Ty+YMcezYOeZzvajxJo
+         qRlbUdjCzVILTrztYCk50Gv7M9WMujzX2p3h72xYOPyfv8j0z0C4BHn3iXPaRyfwWpNy
+         1vEWPdYB5tio3WePf+twMREbJMyrKIC2xhtFYxO+jSAfIDByDXPVuoytgWMW3HF2D3XY
+         aUGA==
+X-Gm-Message-State: AOJu0YzzfVcWPz7hTmClUd1x+fb/wQX1zKecFdSUYAmF6Ft40Me4fLxW
+	C3XwO16Fg2HE9KVLIWQVBLPHPSHHUkrt+W1Ikz7bygUCuZpfT91BmtmmmI1U9FcElWe17dKr+xy
+	SAC4c41Do5R6pPtzUpu1cpDXUuL9coAdb2GVbGfawJZiCW2AnljoPkl+Q
+X-Gm-Gg: ASbGnctODXryFEAlFahrLmEWxu3lOBB3gjI2zps/8oOI3saVFL61nAf67WdfRzfxze7
+	N9jXa/M1geEnGBDJYlAfWsdldDEWiMqHrSW3NivfIHnH7whGOpe0iX9DYAKSrINdnLm8zxhI96R
+	DVWMuDbbskdXBZ7WsKKiRYTkQdvLkuqYTy56aDlrRkgtY=
+X-Google-Smtp-Source: AGHT+IE71Tr/UaUl8jIMjyxGK7J2EOHDxvH1ZD8EYJWB3KzPEeUZGeWn+M8kX/Nn1yukjbWsfOsQBBvKF1T52ITdsXM=
+X-Received: by 2002:a05:6402:b43:b0:607:7811:ed9d with SMTP id
+ 4fb4d7f45d1cf-6077811eda3mr2728538a12.15.1749232677134; Fri, 06 Jun 2025
+ 10:57:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250603065920.3404510-1-song@kernel.org> <20250603065920.3404510-2-song@kernel.org>
- <20250606144058.GW299672@ZenIV>
-In-Reply-To: <20250606144058.GW299672@ZenIV>
-From: Song Liu <song@kernel.org>
-Date: Fri, 6 Jun 2025 10:01:26 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW7UeycwNjmm1mH9q1ZhjKLC4Shc0hbZ_o7a5zD2bRMzQQ@mail.gmail.com>
-X-Gm-Features: AX0GCFucxmg5JO3P3a3C0kxsaNoBTalGKKNBxoM4YNJ9bu19AeAlrfXDOWhXvvs
-Message-ID: <CAPhsuW7UeycwNjmm1mH9q1ZhjKLC4Shc0hbZ_o7a5zD2bRMzQQ@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 1/4] namei: Introduce new helper function path_walk_parent()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org, jack@suse.cz, 
-	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, 
-	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, 
-	gnoack@google.com, m@maowtm.org
+From: Luigi Semenzato <semenzato@google.com>
+Date: Fri, 6 Jun 2025 10:57:45 -0700
+X-Gm-Features: AX0GCFsXA3MC7LeEtCiu-8tcQZyW3fJMsWmjFzphwIr2LZDuh1B456NdP3S55B8
+Message-ID: <CAA25o9TqH3LNWy8F2tXO7P6AdQk0x+boWiPhy+CKL=wDouKODw@mail.gmail.com>
+Subject: adding CAP_RESERVED_# bits
+To: linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 6, 2025 at 7:41=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
->
-> On Mon, Jun 02, 2025 at 11:59:17PM -0700, Song Liu wrote:
-> > This helper walks an input path to its parent. Logic are added to handl=
-e
-> > walking across mount tree.
-> >
-> > This will be used by landlock, and BPF LSM.
->
-> Unless I'm misreading that, it does *NOT* walk to parent - it treats
-> step into mountpoint as a separate step.  NAK in that form - it's
-> simply a wrong primitive.
+Recently I inquired about the decision process for adding a CAP_DRM
+bit to capability.h (to become DRM master).  It occurred to me that
+the process for adding ANY bit would be fraught with controversies (to
+say the least).
 
-I think this should be fixed by Micka=C3=ABl's comment. I will send v3 with
-it.
+So I looked into maintaining a patch in our own kernel sources, but
+that was surprisingly messy due to the build-time dependencies of
+capability.h and the way we maintain and share sources internally for
+multiple kernel versions.  This would have been quite simple if there
+were a few reserved bits, such as CAP_RESERVED_0, ..,
+CAP_RESERVED_<N-1> with, say, N=3.
 
-Thanks,
-Song
+Would this also be controversial?
+
+Thanks!
