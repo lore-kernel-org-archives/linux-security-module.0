@@ -1,96 +1,297 @@
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F054C2F3E
-	for <linux-security-module@vger.kernel.org>; Sat,  7 Jun 2025 02:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7939420B1F5;
+	Sat,  7 Jun 2025 09:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749262294; cv=none; b=GzLtYIAORpHGGfB8odJDRwjbMXHLtZehVon3NHX5NlO2nB5y1+BWCVk8clVHQzCnHsyv6UABxt6LXkCwcYHuuBoh3syd/W0MfE5IQVlCLhKllrOUCfwTdHCXyKZv/xlxSz6sb5HyCkPZPCO8aYkmuEaoQxpb0qs8Lts/J5Q9pHs=
+	t=1749287796; cv=none; b=K+hc/7jfH0xQNCz5viTmzFpM/4qc8ndhO1GmcAooudoSWUglY8bhjY+B1NgKyjOl42cpFDqubwbwC2It3yGVBvGrJ5orU+kGkIwcT8/bRm8QPpMqXsOk372wTc/pCwVmEF0mYwI1h+SfWpCjAPaRXx4XFt8iRKPDwCFjwhKn2/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749262294; c=relaxed/simple;
-	bh=8JobdySAj7NyQOrZMHha5tjOwyaZDtWYrb6Ptu+QoWI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NcgbPaH15RqcZnT0rKjTGF0MjWCaCU9izPMTbN/4lfjuvSShdEsxMgsGAaH1u0GdekcZIxMZvr4Mm+nDPmBKtbnkHN8Jl06tbb/MeGfch+conp5Iiys2X7ckOeL977rOS5bhz2aN+rxGRNzB6AmbmnFNf1LLIFHx7rjNocfEptU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Ctzw15s3; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1749287796; c=relaxed/simple;
+	bh=gWmUoikykXIx3fJ+gHUZhWY+dfFiy2UXjNHyIg+k0BI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q31KAuGnTuYS0Pk0khBOKTIrrl5R7zZgUs/T4Oq/tRV3GRULwDSHLGfoQ8bgGDDz941nvl5+/A50zp0J3qxyTVnSfJCLS/i4SHkDVJwkvrw7Ek5VtW2bSrGT+fEs7GetyaF6bAdtUGvO7bjKwCKYxMoSZJ8byrEjIK9TsXhEc4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f8OV1/iO; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Ctzw15s3"
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-70e78e04e48so21906857b3.1
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Jun 2025 19:11:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1749262292; x=1749867092; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ae9qjvvLktKsuEKe3HrkRH66a+y38Zr/irTKMRVsz5U=;
-        b=Ctzw15s3q1wFHa1y57JsyKGw/XlpjqhSRdqQ14QqocHXK5TTmmK8VB1bGZyfdQL506
-         qn231RCgHEv/42frOy5pbGP0BIwbUEG0IT3UQjErihJtISHcu1X266cwnqnoPusP04oE
-         S2G7mFSOmKtrXrIg+SL8jpcyPxC0HNyrX6MyjWbAjj5UIW6DjG0lemdXesTNu2Ha4A82
-         66UDa6pjuEcXz2NPxjYrjQXLeO0Ucz83Q6wPK4xFs3ntAet5BXC4xpiP3RA1M5uWnwO0
-         mW9nubElyc1qqXKRGPa7ln7/TW2C93QW8pT0J0We3kRb5zPVjgcWc9VGE8pPsCbX3XFx
-         6e3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749262292; x=1749867092;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ae9qjvvLktKsuEKe3HrkRH66a+y38Zr/irTKMRVsz5U=;
-        b=nazEe4FGEj+CfEWZlu5emePSYSOTgShwYTlnkt4grdj/ISqHtHryoKa2W+btoGaCVt
-         FsBPrOz4EulkkcfH/dhSeQZFElT68meCB8THo6lYR4ABNrwnDUMnKYNhSnwe/BHly/Wc
-         /Gtb91vvw45Bbkq1nurSKl29aool4ihn87im1rg8VdkiwTK8VQW7j5Jfjhz7dtunMfbQ
-         YCWyiQ51/XpE6lVlNtsZ8SWEnpj4IlfKmGsDJLgKA+u5gqouOLW7Uge50CALIiEhLt4F
-         ft7UfyS3ol6DbSFv+MbKRTKmmw42BAZjPuRfVredzcAuieqZr3tf6W5cVfbUTnizv8ih
-         hAgw==
-X-Gm-Message-State: AOJu0YwOsD3atlJfQ1XYnhWXxOjwUAariMSedQcH+o59AwRR9Tx6I6Vu
-	BnLeovV0VIZOHLP8e8iHH2fRMC++12CpOzK9LWyjR0M0SSvE0omAp+wkyEYbMeT0UUT4bXdZ6tO
-	1fVCMtIgk4y3Esgu5GAZxfMZG7ktNtcFRBYxhvYS7G8HWumKtQLA=
-X-Gm-Gg: ASbGncvzWXQb996xgX1HF0ZnzfVxRWPdKJJkWGbEENd39xOUCNp5RzHsHo7kRaS1Dz8
-	Sw2mEygoE+sKMr3bWisinF67++cHZBur/NJgIoVjfpAQZifb9HVSBT0ipEkGTZG3KLlJCARlxBW
-	AX1Le5zZTSekhohTqkFyf2h86j0gel9NQXio19Cl/E7IbQofSOgmmU1Q==
-X-Google-Smtp-Source: AGHT+IGsyY27uZ5/de9/D6FZoyXIrQb1N4wyx+aBXtXPTFLrj1NivqVs1lHYXJkNs1j54tWfwH0pOf10ih2LhkD1HB8=
-X-Received: by 2002:a05:690c:6d0b:b0:70d:ed5d:b4d2 with SMTP id
- 00721157ae682-710f76949femr88623127b3.16.1749262291905; Fri, 06 Jun 2025
- 19:11:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f8OV1/iO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749287793; x=1780823793;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gWmUoikykXIx3fJ+gHUZhWY+dfFiy2UXjNHyIg+k0BI=;
+  b=f8OV1/iOZCyj9H0+EGZmrTpYZ93um3oof8WZAhmsyMDHo4dpjUjQGFdK
+   12Us1Ob+jDt1H87fRB9iz3Z84AlGemBnqWHfHc491u4O7Nk/hidtRNn0q
+   lbL3uvXQ6abfaFqcYb3Jw80o3ov1zCcKNGt8k+xaqXUfDEXw+xMqo9BDM
+   x+BfvKUPAoIdoN1wQB+KqAn7IyFVlDfY8kj7RVl7x0Lb9Hl8XFXdJtYRz
+   Wm18XyNlHL6+E31yXq2hDc4pnIB1L8eWAz1MY5xB9M6tON1sz4YRpU/LU
+   zk22Yz0w0qvN6YtIuE1eoKRoXIn9fKBDymsDKlz6OHUUUCSeh2MfwVqpe
+   A==;
+X-CSE-ConnectionGUID: jfJEiBJfQUWrW9tVp1V+RA==
+X-CSE-MsgGUID: 1E7ElSbwS8GK9oTYoUWYSQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11456"; a="51292715"
+X-IronPort-AV: E=Sophos;i="6.16,217,1744095600"; 
+   d="scan'208";a="51292715"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2025 02:16:33 -0700
+X-CSE-ConnectionGUID: x+aD3VZ9T+unn96obeRHRw==
+X-CSE-MsgGUID: wMXBqMPNTIWojyztPRxQ/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,217,1744095600"; 
+   d="scan'208";a="176986310"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 07 Jun 2025 02:16:30 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uNpf9-0005aL-2j;
+	Sat, 07 Jun 2025 09:16:27 +0000
+Date: Sat, 7 Jun 2025 17:16:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: KP Singh <kpsingh@kernel.org>, bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, bboscaccy@linux.microsoft.com,
+	paul@paul-moore.com, kys@microsoft.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org,
+	KP Singh <kpsingh@kernel.org>
+Subject: Re: [PATCH 05/12] libbpf: Support exclusive map creation
+Message-ID: <202506071746.cWvht6xb-lkp@intel.com>
+References: <20250606232914.317094-6-kpsingh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAA25o9TqH3LNWy8F2tXO7P6AdQk0x+boWiPhy+CKL=wDouKODw@mail.gmail.com>
-In-Reply-To: <CAA25o9TqH3LNWy8F2tXO7P6AdQk0x+boWiPhy+CKL=wDouKODw@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 6 Jun 2025 22:11:21 -0400
-X-Gm-Features: AX0GCFsRn3wViYMT3jpH1x_9F41xbaD03H3XnTaLpxqbEI8YmSyu1utJ_4PO-ZE
-Message-ID: <CAHC9VhT-UKWRbmsuJfkWO6BK_Mon4KUMB8DU5py1gDBJgYwJDw@mail.gmail.com>
-Subject: Re: adding CAP_RESERVED_# bits
-To: Luigi Semenzato <semenzato@google.com>
-Cc: linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250606232914.317094-6-kpsingh@kernel.org>
 
-On Fri, Jun 6, 2025 at 1:58=E2=80=AFPM Luigi Semenzato <semenzato@google.co=
-m> wrote:
->
-> Recently I inquired about the decision process for adding a CAP_DRM
-> bit to capability.h (to become DRM master).  It occurred to me that
-> the process for adding ANY bit would be fraught with controversies (to
-> say the least).
->
-> So I looked into maintaining a patch in our own kernel sources, but
-> that was surprisingly messy due to the build-time dependencies of
-> capability.h and the way we maintain and share sources internally for
-> multiple kernel versions.  This would have been quite simple if there
-> were a few reserved bits, such as CAP_RESERVED_0, ..,
-> CAP_RESERVED_<N-1> with, say, N=3D3.
->
-> Would this also be controversial?
+Hi KP,
 
-Yes, and likely rejected too.  The upstream Linux kernel generally
-doesn't make any sacrifices to support out-of-tree kernel code, and
-giving up precious capability bitmap space would definitely be
-considered a sacrifice.
+kernel test robot noticed the following build errors:
 
---=20
-paul-moore.com
+[auto build test ERROR on bpf-next/net]
+[also build test ERROR on bpf-next/master bpf/master linus/master next-20250606]
+[cannot apply to v6.15]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/KP-Singh/bpf-Implement-an-internal-helper-for-SHA256-hashing/20250607-073052
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git net
+patch link:    https://lore.kernel.org/r/20250606232914.317094-6-kpsingh%40kernel.org
+patch subject: [PATCH 05/12] libbpf: Support exclusive map creation
+config: i386-buildonly-randconfig-003-20250607 (https://download.01.org/0day-ci/archive/20250607/202506071746.cWvht6xb-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250607/202506071746.cWvht6xb-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506071746.cWvht6xb-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from libbpf_errno.c:14:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from btf_relocate.c:31:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from libbpf_internal.h:43,
+                    from nlattr.c:14:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from relo_core.c:64:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from linker.c:24:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from libbpf_internal.h:43,
+                    from strset.c:9:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from bpf_prog_linfo.c:8:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from btf_dump.c:22:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from ringbuf.c:21:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from libbpf_internal.h:43,
+                    from elf.c:11:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from netlink.c:18:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from features.c:6:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from usdt.c:19:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from gen_loader.c:11:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from btf.c:22:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from libbpf_internal.h:43,
+                    from zip.c:16:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   In file included from libbpf_probes.c:18:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   cc1: all warnings being treated as errors
+   In file included from libbpf_internal.h:43,
+                    from btf_iter.c:13:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/libbpf_errno.o] Error 1 shuffle=3326748311
+   In file included from libbpf.c:53:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   cc1: all warnings being treated as errors
+   In file included from bpf.c:36:
+>> libbpf.h:1264:5: error: redundant redeclaration of 'bpf_map__make_exclusive' [-Werror=redundant-decls]
+    1264 | int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |     ^~~~~~~~~~~~~~~~~~~~~~~
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/nlattr.o] Error 1 shuffle=3326748311
+   libbpf.h:1262:16: note: previous declaration of 'bpf_map__make_exclusive' with type 'int(struct bpf_map *, struct bpf_program *)'
+    1262 | LIBBPF_API int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program *prog);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/strset.o] Error 1 shuffle=3326748311
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/btf_iter.o] Error 1 shuffle=3326748311
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/bpf_prog_linfo.o] Error 1 shuffle=3326748311
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/zip.o] Error 1 shuffle=3326748311
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/libbpf_probes.o] Error 1 shuffle=3326748311
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/elf.o] Error 1 shuffle=3326748311
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/btf_relocate.o] Error 1 shuffle=3326748311
+   cc1: all warnings being treated as errors
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/features.o] Error 1 shuffle=3326748311
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/ringbuf.o] Error 1 shuffle=3326748311
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/netlink.o] Error 1 shuffle=3326748311
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/usdt.o] Error 1 shuffle=3326748311
+   cc1: all warnings being treated as errors
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/gen_loader.o] Error 1 shuffle=3326748311
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/relo_core.o] Error 1 shuffle=3326748311
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/btf_dump.o] Error 1 shuffle=3326748311
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/bpf.o] Error 1 shuffle=3326748311
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/linker.o] Error 1 shuffle=3326748311
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/btf.o] Error 1 shuffle=3326748311
+   cc1: all warnings being treated as errors
+   make[6]: *** [tools/build/Makefile.build:85: tools/bpf/resolve_btfids/libbpf/staticobjs/libbpf.o] Error 1 shuffle=3326748311
+   make[6]: Target '__build' not remade because of errors.
+   make[5]: *** [Makefile:152: tools/bpf/resolve_btfids/libbpf/staticobjs/libbpf-in.o] Error 2 shuffle=3326748311
+   make[5]: Target 'tools/bpf/resolve_btfids/libbpf/libbpf.a' not remade because of errors.
+   make[4]: *** [Makefile:61: tools/bpf/resolve_btfids//libbpf/libbpf.a] Error 2 shuffle=3326748311
+   make[4]: Target 'all' not remade because of errors.
+   make[3]: *** [Makefile:76: bpf/resolve_btfids] Error 2 shuffle=3326748311
+   make[2]: *** [Makefile:1448: tools/bpf/resolve_btfids] Error 2 shuffle=3326748311
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:248: __sub-make] Error 2 shuffle=3326748311
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2 shuffle=3326748311
+   make: Target 'prepare' not remade because of errors.
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
