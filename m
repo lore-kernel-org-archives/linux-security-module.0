@@ -1,121 +1,459 @@
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+Received: from flow-a6-smtp.messagingengine.com (flow-a6-smtp.messagingengine.com [103.168.172.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141392110;
-	Sun,  8 Jun 2025 14:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2EF2629C;
+	Sun,  8 Jun 2025 17:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749391430; cv=none; b=HVgVcl+QGnYLnePKPQ1AoBQJbiw8mXeUJRXZ9rQ77TEm1Xo/MG8nsVUW9QHCmPeneLrOTar2lSO2ED0vTDet6RnHbjsqaGFEPt4BFTtsVZeEdPPc95DIUjkRhlApMHg4DrbHPqVBxYKjiWQuIjyDv4q8ceUZGXr+FW/MUbVYLFs=
+	t=1749404082; cv=none; b=taLVP/9525pmZuL1q1hE5VGAG0LoQQe7txsnsli1mNgeAQfOa7PnTSUEC6CW0XzRuAAz/06EvufCLgTgM3ClyfFibQFf8RFtTsY37BCipBU1L9TbBnPM57edZuswvqxB/ooMB4WdsUJBe49PYRbY6znvzHI0+iGH9hGLyBPaI/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749391430; c=relaxed/simple;
-	bh=2no9NSEei8+whhZ9gqsr0J+EWUIh1yW6CG78GkP9D7c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=luYcN1cG8OqawHQoynOn+ieC4q5hmQSz0abBUD3dEPZoR1Q9Rn6xkiupLDCQ8wQdJhZwmZjqAfpJ6L9MpP7I1+luz70/NTo9MEgEeacTKHkl7lETNBC5tCvndkhIyhSnRZnjqkRO7Q6cC1ekiIe0znIW/J+jkVQa8j12oFiPRHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=PiWNSEAr; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+	s=arc-20240116; t=1749404082; c=relaxed/simple;
+	bh=DIUct9YGb4Y5skAXED6b43APurmY3ChtQ8L7qHDXc9Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bmQ9lCrAENgOfPKuggoOmSkc8FbYqZO96OhhxBiw3YgadPGj7ywc8Ltxero1WSsgsqqzfCR1l7eRz83XH8ttuVk/gEcNG6wxIALLmmFQlXPjQNzYImAadZ6orOHARccK7eLGlRzTPbh5A6l17a/ncIsasy9IJY1A+JgemWD/ArM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=LUOGY1nR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JnGqEbds; arc=none smtp.client-ip=103.168.172.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="PiWNSEAr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1749391426;
-	bh=2no9NSEei8+whhZ9gqsr0J+EWUIh1yW6CG78GkP9D7c=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=PiWNSEArqB12UD0TQac/PvpizmGNHB04ZjTXWmb3SFoH2mO8Ida5g4OqZIS8X2mM6
-	 TDvrL8ykPZ2lFzGF48Z0P+cq0C0laeqSjhICDMmHoww6Dd6ZlBhztpoXxjHhhqBZr9
-	 tBxi1+w4W/LPpjpjoljV+eI5fMMMX9N4pnA9NSXk=
-Received: from [IPv6:2601:5c4:4302:c21::a774] (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 517541C0293;
-	Sun, 08 Jun 2025 10:03:46 -0400 (EDT)
-Message-ID: <b2a0c3d722c78de38ffa2664f71654a422d77121.camel@HansenPartnership.com>
-Subject: Re: [PATCH 11/12] bpftool: Add support for signing BPF programs
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: KP Singh <kpsingh@kernel.org>, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Cc: bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
- ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- keyrings@vger.kernel.org
-Date: Sun, 08 Jun 2025 10:03:45 -0400
-In-Reply-To: <20250606232914.317094-12-kpsingh@kernel.org>
-References: <20250606232914.317094-1-kpsingh@kernel.org>
-	 <20250606232914.317094-12-kpsingh@kernel.org>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="LUOGY1nR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JnGqEbds"
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailflow.phl.internal (Postfix) with ESMTP id 8F64B200318;
+	Sun,  8 Jun 2025 13:34:37 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Sun, 08 Jun 2025 13:34:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1749404077;
+	 x=1749411277; bh=n7/TrUOvDRY0ZOIfKQQgJ0Q1gzIYz2O38/YYq+zef4w=; b=
+	LUOGY1nRbA140UHOhanVwvmXgNY8NuSnSEdcPg9xhQOXVwDZtAifrf9OZU/NCgtT
+	YFLYNuOXxpu010YLR2eh8BvcoDaUlIgixlifQ3cyBCEEgl9Zw3oE7e0edwgYozCa
+	uacQ5EjBaL38ngfNxcbkzNBkr+ut/z3/AVxJS2prmSVb28QuVtsYU63SZHSMKuZj
+	wdnRGT4i2Qd/BxoQ1q+bNO9q7h3Al2+ABfRKFJqkgGYFmU4FnND3l2CjtfW3AImt
+	yL7qszpe8nacwigiq5b4eWIvbCEpO7rxBOek+ZFks7aBaySQm230WJ2nsp8T31D6
+	cGE+DdhmE53BfX1bdo07Sg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749404077; x=
+	1749411277; bh=n7/TrUOvDRY0ZOIfKQQgJ0Q1gzIYz2O38/YYq+zef4w=; b=J
+	nGqEbdstOq2AUtOx69uD9FWuChmdeCHowGpor92gYIDmae4fCz+DdfjA/yezlznc
+	PLecbSWSgN97kmCm2+iUL/kAqfXoXHa9TfBCPJpTDCiTYhPmCQKgcpx1bID8eB5A
+	/mzi6y4yiyYeq7KbAykNMp8lIOL4B9HLhUOhvcedcmlZER2p7Y0lmoZV/MyNlAUn
+	KVGY9XH84gkjGLcva1Q1IrtryrcESpJePp1G+ndsr0vRI2sx23ityjGkFKTdeRTH
+	MEoF6pRz+BJXvRsAcBpKdLLdh7Aft1x49TI5xG31RLO+glQ7GFFa/i4uLpLeqVzo
+	SFRz/CUlo+Wkfbq9dheFQ==
+X-ME-Sender: <xms:rMlFaFdVUG4PcqpsyfShuPJC-FzC5CiVLouYzkm6XNzeyIUN9J5SHw>
+    <xme:rMlFaDOcCovPTtQdqDXHgj9HRhRSNxxtbgEE-Jgb5vbqvdd66A2e9Gjif33Bm35B5
+    RkGYwXV3RM_m0WegU4>
+X-ME-Received: <xmr:rMlFaOirPuweXyoEJpozaGoBgjZL0G5Y-9CFlk3xdE_1S6DN6TUOPI7nM8SonCHyB5f6pwOsRHqrX0EFwqXILY6h3vuaIcJxo4y-kfteECC6EZ8m6AXH9mNaZZePdk5Y>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdekudeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffvvefufffkofgjfhggtgfgsehtkeertdertdej
+    necuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqne
+    cuggftrfgrthhtvghrnhepieeigeeghedtffeifffhkeeuffehhfevuefgvdekjeekhedv
+    tedtgfdvgefhudejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopedvfedpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepshhonhhgsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepvhhirhhoseiivghn
+    ihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehmsehmrghofihtmhdrohhrghdprhgtphhtthhopegr
+    mhhirhejfehilhesghhmrghilhdrtghomhdprhgtphhtthhopegrnhgurhhiiheskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepsghpfhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:rMlFaO8N5dMAQSw9A0-RgJeWtimawCVfGrQAEXqz9tW3TAMPleMuCg>
+    <xmx:rMlFaBtto1n0jByPBmGfG3tzS1C5GnsRVdd5XcKva4iBCOYX2T6Eng>
+    <xmx:rMlFaNFSZn5DyvP1ZO2icFg-l4w4ajAcZA2blFelCJ6fuUYQAXt5vA>
+    <xmx:rMlFaIOaQskG6vmsJdylzNJSSk1GxecrC0GQ4-i1CQyqcexmXxsjqw>
+    <xmx:rclFaIeMwEpgQXGTU0Rlq93Gn6pg7ITeor60eJM1vHxI7RcsJcHGnoUu>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 8 Jun 2025 13:34:31 -0400 (EDT)
+From: Tingmao Wang <m@maowtm.org>
+To: Song Liu <song@kernel.org>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Tingmao Wang <m@maowtm.org>,
+	amir73il@gmail.com,
+	andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	gnoack@google.com,
+	jack@suse.cz,
+	jlayton@kernel.org,
+	josef@toxicpanda.com,
+	kernel-team@meta.com,
+	kpsingh@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	martin.lau@linux.dev,
+	mattbobrowski@google.com,
+	repnop@google.com
+Subject: Re: [PATCH v3 bpf-next 0/5] bpf path iterator
+Date: Sun,  8 Jun 2025 18:32:55 +0100
+Message-ID: <dbc7ee0f1f483b7bc2ec9757672a38d99015e9ae.1749402769@maowtm.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250606213015.255134-1-song@kernel.org>
+References: <20250606213015.255134-1-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-[+keyrings]
-On Sat, 2025-06-07 at 01:29 +0200, KP Singh wrote:
-[...]
-> diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-> index f010295350be..e1dbbca91e34 100644
-> --- a/tools/bpf/bpftool/prog.c
-> +++ b/tools/bpf/bpftool/prog.c
-> @@ -23,6 +23,7 @@
-> =C2=A0#include <linux/err.h>
-> =C2=A0#include <linux/perf_event.h>
-> =C2=A0#include <linux/sizes.h>
-> +#include <linux/keyctl.h>
-> =C2=A0
-> =C2=A0#include <bpf/bpf.h>
-> =C2=A0#include <bpf/btf.h>
-> @@ -1875,6 +1876,8 @@ static int try_loader(struct gen_loader_opts
-> *gen)
-> =C2=A0{
-> =C2=A0	struct bpf_load_and_run_opts opts =3D {};
-> =C2=A0	struct bpf_loader_ctx *ctx;
-> +	char sig_buf[MAX_SIG_SIZE];
-> +	__u8 prog_sha[SHA256_DIGEST_LENGTH];
-> =C2=A0	int ctx_sz =3D sizeof(*ctx) + 64 * max(sizeof(struct
-> bpf_map_desc),
-> =C2=A0					=C2=A0=C2=A0=C2=A0=C2=A0 sizeof(struct
-> bpf_prog_desc));
-> =C2=A0	int log_buf_sz =3D (1u << 24) - 1;
-> @@ -1898,6 +1901,24 @@ static int try_loader(struct gen_loader_opts
-> *gen)
-> =C2=A0	opts.insns =3D gen->insns;
-> =C2=A0	opts.insns_sz =3D gen->insns_sz;
-> =C2=A0	fds_before =3D count_open_fds();
-> +
-> +	if (sign_progs) {
-> +		opts.excl_prog_hash =3D prog_sha;
-> +		opts.excl_prog_hash_sz =3D sizeof(prog_sha);
-> +		opts.signature =3D sig_buf;
-> +		opts.signature_sz =3D MAX_SIG_SIZE;
-> +		opts.keyring_id =3D KEY_SPEC_SESSION_KEYRING;
-> +
+On 6/6/25 22:30, Song Liu wrote:
+> In security use cases, it is common to apply rules to VFS subtrees.
+> However, filtering files in a subtree is not straightforward [1].
+>
+> One solution to this problem is to start from a path and walk up the VFS
+> tree (towards the root). Among in-tree LSMs, Landlock uses this solution.
+>
+> BPF LSM solutions, such like Tetragon [2], also use similar approaches.
+> However, due to lack of proper helper/kfunc support, BPF LSM solutions
+> usually do the path walk with probe read, which is racy.
+>
+> This patchset introduces a new helper path_walk_parent, which walks
+> path to its VFS parent. The helper is used in Landlock.
+>
+> A new BPF iterator, path iterator, is introduced to do the path walking.
+> The BPF path iterator uses the new path_walk_parent help to walk the VFS
+> tree.
 
-This looks wrong on a couple of levels.  Firstly, if you want system
-level integrity you can't search the session keyring because any
-process can join (subject to keyring permissions) and the owner, who is
-presumably the one inserting the bpf program, can add any key they
-like.
+Hi Song, Christian, Al and others,
 
-The other problem with this scheme is that the keyring_id itself has no
-checked integrity, which means that even if a script was marked as
-system keyring only anyone can binary edit the user space program to
-change it to their preferred keyring and it will still work.  If you
-want variable keyrings, they should surely be part of the validated
-policy.
+Previously I proposed in [1] to add ability to do a reference-less parent
+walk for Landlock.  However, as Christian pointed out and I do agree in
+hindsight, it is not a good idea to do things like this in non-VFS code.
 
-Regards,
+However, I still think this is valuable to consider given the performance
+improvement, and after some discussion with Mickaël, I would like to
+propose extending Song's helper to support such usage.  While I recognize
+that this patch series is already in its v3, and I do not want to delay it
+by too much, putting this proposal out now is still better than after this
+has merged, so that we may consider signature changes.
 
-James
+I've created a proof-of-concept and did some brief testing.  The
+performance improvement attained here is the same as in [1] (with a "git
+status" workload, median landlock overhead 35% -> 28%, median time in
+landlock decreases by 26.6%).
 
+If this idea is accepted, I'm happy to work on it further, split out this
+patch, update the comments and do more testing etc, potentially in
+collaboration with Song.
+
+An alternative to this is perhaps to add a new helper
+path_walk_parent_rcu, also living in namei.c, that will be used directly
+by Landlock.  I'm happy to do it either way, but with some experimentation
+I personally think that the code in this patch is still clean enough, and
+can avoid some duplication.
+
+Patch title: path_walk_parent: support reference-less walk
+
+A later commit will update the BPF path iterator to use this.
+
+Signed-off-by: Tingmao Wang <m@maowtm.org>
+---
+ fs/namei.c             | 107 ++++++++++++++++++++++++++++++++++++-----
+ include/linux/namei.h  |  19 +++++++-
+ security/landlock/fs.c |  49 +++++++++++++++++--
+ 3 files changed, 157 insertions(+), 18 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 732b8fd02451..351ebe957db8 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1424,6 +1424,30 @@ static bool choose_mountpoint(struct mount *m, const struct path *root,
+ 	return found;
+ }
+ 
++/**
++ * acquires rcu read lock if rcu == true.
++ */
++void path_walk_parent_start(struct parent_iterator *pit, const struct path *path,
++			   const struct path *root, bool ref_less)
++{
++	pit->path = *path;
++
++	pit->root.mnt = NULL;
++	pit->root.dentry = NULL;
++	if (root)
++		pit->root = *root;
++
++	pit->rcu = ref_less;
++	if (ref_less) {
++		pit->m_seq = read_seqbegin(&mount_lock);
++		pit->r_seq = read_seqbegin(&rename_lock);
++		pit->next_seq = read_seqcount_begin(&pit->path.dentry->d_seq);
++		rcu_read_lock();
++	} else {
++		path_get(&pit->path);
++	}
++}
++
+ /**
+  * path_walk_parent - Walk to the parent of path
+  * @path: input and output path.
+@@ -1446,35 +1470,92 @@ static bool choose_mountpoint(struct mount *m, const struct path *root,
+  *           // stop walking
+  *
+  * Returns:
+- *  true  - if @path is updated to its parent.
+- *  false - if @path is already the root (real root or @root).
++ *  PATH_WALK_PARENT_UPDATED      - if @path is updated to its parent.
++ *  PATH_WALK_PARENT_ALREADY_ROOT - if @path is already the root (real root or @root).
++ *  PATH_WALK_PARENT_RETRY        - reference-less path walk failed. Caller should restart with rcu == false.
+  */
+-bool path_walk_parent(struct path *path, const struct path *root)
++int path_walk_parent(struct parent_iterator *pit, struct path *next_parent)
+ {
+ 	struct dentry *parent;
++	struct path *path = &pit->path;
++	struct path *root = &pit->root;
++	unsigned mountpoint_d_seq;
+ 
+ 	if (path_equal(path, root))
+ 		return false;
+ 
+ 	if (unlikely(path->dentry == path->mnt->mnt_root)) {
+-		struct path p;
++		struct path upper_mountpoint;
+ 
+-		if (!choose_mountpoint(real_mount(path->mnt), root, &p))
+-			return false;
+-		path_put(path);
+-		*path = p;
++		if (pit->rcu) {
++			if (!choose_mountpoint_rcu(real_mount(path->mnt), root,
++						   &upper_mountpoint,
++						   &mountpoint_d_seq)) {
++				return PATH_WALK_PARENT_ALREADY_ROOT;
++			}
++			if (read_seqcount_retry(&path->dentry->d_seq,
++						pit->next_seq)) {
++				return PATH_WALK_PARENT_RETRY;
++			}
++			*path = upper_mountpoint;
++			pit->next_seq = mountpoint_d_seq;
++		} else {
++			if (!choose_mountpoint(real_mount(path->mnt), root,
++					       &upper_mountpoint))
++				return PATH_WALK_PARENT_ALREADY_ROOT;
++			path_put(path);
++			*path = upper_mountpoint;
++		}
+ 	}
+ 
+ 	if (unlikely(IS_ROOT(path->dentry)))
+-		return false;
++		return PATH_WALK_PARENT_ALREADY_ROOT;
+ 
+-	parent = dget_parent(path->dentry);
+-	dput(path->dentry);
+-	path->dentry = parent;
+-	return true;
++	if (pit->rcu) {
++		parent = READ_ONCE(path->dentry->d_parent);
++		if (read_seqcount_retry(&path->dentry->d_seq, pit->next_seq)) {
++			return PATH_WALK_PARENT_RETRY;
++		}
++		path->dentry = parent;
++		pit->next_seq = read_seqcount_begin(&parent->d_seq);
++	} else {
++		parent = dget_parent(path->dentry);
++		dput(path->dentry);
++		path->dentry = parent;
++	}
++
++	if (next_parent)
++		*next_parent = *path;
++
++	return PATH_WALK_PARENT_UPDATED;
+ }
+ EXPORT_SYMBOL_GPL(path_walk_parent);
+ 
++/**
++ * releases rcu read lock if rcu == true.
++ * Returns -EAGAIN if rcu path walk failed.
++ */
++int path_walk_parent_end(struct parent_iterator *pit)
++{
++	bool need_restart = false;
++
++	if (pit->rcu) {
++		rcu_read_unlock();
++		/* do we need these if we're checking d_seq throughout? */
++		if (read_seqretry(&mount_lock, pit->m_seq) ||
++		    read_seqretry(&rename_lock, pit->r_seq)) {
++			need_restart = true;
++		}
++	} else {
++		path_put(&pit->path);
++	}
++
++	if (need_restart)
++		return -EAGAIN;
++
++	return 0;
++}
++
+ /*
+  * Perform an automount
+  * - return -EISDIR to tell follow_managed() to stop and return the path we
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index 9d220b1e823c..e7fdfae12bd5 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -86,7 +86,24 @@ extern int follow_down_one(struct path *);
+ extern int follow_down(struct path *path, unsigned int flags);
+ extern int follow_up(struct path *);
+ 
+-bool path_walk_parent(struct path *path, const struct path *root);
++struct parent_iterator {
++	struct path path;
++	struct path root;
++	bool rcu;
++	/* expected seq of path->dentry */
++	unsigned next_seq;
++	unsigned m_seq, r_seq;
++};
++
++#define PATH_WALK_PARENT_UPDATED		0
++#define PATH_WALK_PARENT_ALREADY_ROOT	-1
++#define PATH_WALK_PARENT_RETRY			-2
++
++void path_walk_parent_start(struct parent_iterator *pit,
++			    const struct path *path, const struct path *root,
++			    bool ref_less);
++int path_walk_parent(struct parent_iterator *pit, struct path *next_parent);
++int path_walk_parent_end(struct parent_iterator *pit);
+ 
+ extern struct dentry *lock_rename(struct dentry *, struct dentry *);
+ extern struct dentry *lock_rename_child(struct dentry *, struct dentry *);
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 3adac544dc9e..522ac617d192 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -375,6 +375,9 @@ find_rule(const struct landlock_ruleset *const domain,
+ 		return NULL;
+ 
+ 	inode = d_backing_inode(dentry);
++	if (unlikely(!inode))
++		/* this can happen in reference-less path walk. Let outside retry. */
++		return NULL;
+ 	rcu_read_lock();
+ 	id.key.object = rcu_dereference(landlock_inode(inode)->object);
+ 	rule = landlock_find_rule(domain, id);
+@@ -767,10 +770,15 @@ static bool is_access_to_paths_allowed(
+ 	     child1_is_directory = true, child2_is_directory = true;
+ 	struct path walker_path;
+ 	access_mask_t access_masked_parent1, access_masked_parent2;
++	layer_mask_t _layer_mask_parent_1_init[LANDLOCK_NUM_ACCESS_FS],
++		_layer_mask_parent_2_init[LANDLOCK_NUM_ACCESS_FS];
+ 	layer_mask_t _layer_masks_child1[LANDLOCK_NUM_ACCESS_FS],
+ 		_layer_masks_child2[LANDLOCK_NUM_ACCESS_FS];
+ 	layer_mask_t(*layer_masks_child1)[LANDLOCK_NUM_ACCESS_FS] = NULL,
+ 	(*layer_masks_child2)[LANDLOCK_NUM_ACCESS_FS] = NULL;
++	struct parent_iterator iter;
++	bool restart_pathwalk = false;
++	int err;
+ 
+ 	if (!access_request_parent1 && !access_request_parent2)
+ 		return true;
+@@ -784,6 +792,15 @@ static bool is_access_to_paths_allowed(
+ 	if (WARN_ON_ONCE(!layer_masks_parent1))
+ 		return false;
+ 
++	memcpy(_layer_mask_parent_1_init, layer_masks_parent1,
++	       sizeof(*layer_masks_parent1));
++	if (unlikely(layer_masks_parent2)) {
++		memcpy(_layer_mask_parent_2_init, layer_masks_parent2,
++		       sizeof(*layer_masks_parent2));
++	}
++
++restart_pathwalk:
++
+ 	allowed_parent1 = is_layer_masks_allowed(layer_masks_parent1);
+ 
+ 	if (unlikely(layer_masks_parent2)) {
+@@ -830,15 +847,15 @@ static bool is_access_to_paths_allowed(
+ 		child2_is_directory = d_is_dir(dentry_child2);
+ 	}
+ 
++	path_walk_parent_start(&iter, path, NULL, !restart_pathwalk);
+ 	walker_path = *path;
+-	path_get(&walker_path);
++
+ 	/*
+ 	 * We need to walk through all the hierarchy to not miss any relevant
+ 	 * restriction.
+ 	 */
+ 	while (true) {
+ 		const struct landlock_rule *rule;
+-		struct path root = {};
+ 
+ 		/*
+ 		 * If at least all accesses allowed on the destination are
+@@ -896,8 +913,22 @@ static bool is_access_to_paths_allowed(
+ 		if (allowed_parent1 && allowed_parent2)
+ 			break;
+ 
+-		if (path_walk_parent(&walker_path, &root))
++		switch (path_walk_parent(&iter, &walker_path)) {
++		case PATH_WALK_PARENT_UPDATED:
+ 			continue;
++		case PATH_WALK_PARENT_RETRY:
++			path_walk_parent_end(&iter);
++			memcpy(layer_masks_parent1, _layer_mask_parent_1_init,
++			       sizeof(*layer_masks_parent1));
++			if (layer_masks_parent2)
++				memcpy(layer_masks_parent2,
++				       _layer_mask_parent_2_init,
++				       sizeof(*layer_masks_parent2));
++			restart_pathwalk = true;
++			goto restart_pathwalk;
++		case PATH_WALK_PARENT_ALREADY_ROOT:
++			break;
++		}
+ 
+ 		if (unlikely(IS_ROOT(walker_path.dentry))) {
+ 			/*
+@@ -913,7 +944,17 @@ static bool is_access_to_paths_allowed(
+ 		}
+ 		break;
+ 	}
+-	path_put(&walker_path);
++
++	err = path_walk_parent_end(&iter);
++	if (err == -EAGAIN) {
++		memcpy(layer_masks_parent1, _layer_mask_parent_1_init,
++		       sizeof(*layer_masks_parent1));
++		if (layer_masks_parent2)
++			memcpy(layer_masks_parent2, _layer_mask_parent_2_init,
++			       sizeof(*layer_masks_parent2));
++		restart_pathwalk = true;
++		goto restart_pathwalk;
++	}
+ 
+ 	if (!allowed_parent1) {
+ 		log_request_parent1->type = LANDLOCK_REQUEST_FS_ACCESS;
+
+base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
+prerequisite-patch-id: 3a08c744682d5b01f98d196b3d3320b862d189c8
+prerequisite-patch-id: 37586287398318c9896395b186f0809da1b0b81d
+prerequisite-patch-id: 990fee8b55dae8d26bcf05a953e37988dd83d563
+prerequisite-patch-id: 7f95cfaeaed0b5b30206b81691367fa520244526
+prerequisite-patch-id: e10506d21bc71ff99db81bf5ab46ddfec98d1fca
+prerequisite-patch-id: 8785acb37f7cf6fb62dcbdbf0a14338c04fe342f
+-- 
+2.49.0
