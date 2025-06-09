@@ -1,71 +1,71 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5A91D9A5F;
-	Mon,  9 Jun 2025 16:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01F2149C53;
+	Mon,  9 Jun 2025 17:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749488208; cv=none; b=Y/0anV92vUBbutze7cMYueTqFsqnF6aFKDrfg3/6GXCC+9ZBFiEcu4nqM+x8zX1eg5+izB4J/Kwxp186Ir1/vW49wFHYtoKnWWeixM4hdOUjcpP1kUqOJ0sLW1UtveIwPkNOpmw4cGkSzToVEM/UXJ8MifrFxQhCkF5nAuzqlZU=
+	t=1749491184; cv=none; b=Vj21eKjXhqN1oi62AMaBaBEz9dxpo43i8C68TA7zMO0CQ90Zm10Z8rn/I4N3/LRuxVzEM6e/5KDm8RdtsUdm/tJXrlDKketugwELWTNeiAbZ2p6f4/92pkaWl01mCodmjBLB9ipcrjTTkfgM6x7ghzEY74WlHqVcylGEDMy+OgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749488208; c=relaxed/simple;
-	bh=3LtbqBbkiGyBjHqwHJdySON8o+kwZIS1rnVLMn2Kko4=;
+	s=arc-20240116; t=1749491184; c=relaxed/simple;
+	bh=/GRxL/Shs5t5KAxppGgjU1LYWepOYAf4OzsGm4awp5o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tps4w4Ulbd0atMBTTCcAgVhXOPquQHSmlBKueoYzXdqGdWP45hONT4X0KpzEZ+9Tf4nEHD/kV6YVnwDQiV2jLzWI2vl11UVIo7Cn8JifB3yZmTKpgYnk8yaNjYmWHuNEpfdd7Lc7+P7l4J1zsMKvNJDf1uCInakmTPD0i2++YRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TkIYWu+E; arc=none smtp.client-ip=209.85.128.46
+	 To:Cc:Content-Type; b=uOPneLx51piVz1Ekmgl/CyVmV65gFY/y3TXRvFdPO/2XoNGEDyfcDcFC4mnxx0AH+IiKyfR6SycdkNMqzfpGwQuBY+p0r33BjCCWvUniKu4hF+f5e6KraKmKLvZXx+sVkEEnLJNCLyuW2BdsObxcuwMOCzu8Wng++EyhKJB19mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G/OaptsK; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TkIYWu+E"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-451d7b50815so39198465e9.2;
-        Mon, 09 Jun 2025 09:56:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/OaptsK"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a5123c1533so2547941f8f.2;
+        Mon, 09 Jun 2025 10:46:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749488205; x=1750093005; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749491181; x=1750095981; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hEKBn359O9mr33CG8MceiNQqpL/noItwoksjNv7iYis=;
-        b=TkIYWu+E7DadLdifNC3UM+KB8jSnAJdMMD42+hpMmFpnBLyRYbJqt4nN8TitR9/HyA
-         H9PYZZQoqq9rUk5Ew/lbPde8FjI8sRsW10ektruzFw7ODvrIEiJGcD8JJIpNowLttDKl
-         +fVdP3FvhSGTduolxLhKe9IfoX3eRyko9wNtau2+b/XOtBkLKLux0LROPq9wfvL6DMAc
-         LcH8zvwXslC12EKuFOi5g6cz8Q38VU8sf/UnYS8si5P0g1in4EC/jCBA7/vZ3K04CfCC
-         57mgjNAX0hO9C9gTA6Ua7HwdKEn2/GKQJ/RPP4SD94xK+7NKmGgjWG+twG/Sm+oYG045
-         avzg==
+        bh=i6OfLuzibQl1UKiS8t7iPVAzINkPcYfeArqcO9P3Gio=;
+        b=G/OaptsKg/I71hr42zUGg83RRDaRzqL+UNlS4njUqxtLS8pSD2nTdOSY6mcgbG/K5p
+         meM/hp5xpKNcsBtVrDcYmuzE2nxy9tH3Mh/hmgCoiA/7H+qJewQ6zXl2Z+3oyVUf/wTb
+         EXZwFv7XwoFGmOfvEcM9bngRgqTGJiQKOdr+SOFo16Jy1avRirjfK0BDEUM9YarNFt9r
+         laYATOiomIii5tJjfTJ8iUkh7O89/NkNzqO45RhM7bekeXbpbxgDzT3us0wFcjtJSXHm
+         4V8PHkq5+LNVRxqSHBr/sXh8dRJZGQKchE9GvG+6nzxqW+K4uWjbSRtcJVD5HVpxctYN
+         qhKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749488205; x=1750093005;
+        d=1e100.net; s=20230601; t=1749491181; x=1750095981;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hEKBn359O9mr33CG8MceiNQqpL/noItwoksjNv7iYis=;
-        b=a/Uw9EG4s/ErxQaOVM7XK0Ygug0kZgXJu+xpDHaowPIVOdYkExFEmOyYMmM6SW0yRD
-         MY/yClUWRz7uxA9v9MKBDFosaN5J2C8G6xbNJh58U/8LRSg4vwWjxmw2VMzQQbVocCxg
-         wCNU2LukZQ9M/SA/1s3gdmynVX/XKnyR1+mVZb5yQR+RRPC2AxB5h6NUWGjgyRHXpbmB
-         XHBcOvQMydVGjDq6TC+xLtP0IIE5wrctW2cWppEOBgggyb7Pjuyz6OTQVD+FmKeVWAVN
-         kbr2voiFtyDkOW4yA3zlKL+q2wmtL5HdGaSO7NeLd/tPiZ3e5ikVgtoGyDlmtEAeD9JG
-         hxcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQIwuxjUAQ8/yKHquwVaLumD9ndZdIv96FdQq7upz9lR8gASuJoBQQnLTNL+C9WR8V2y6JrP0xVCBXqpPbCHhZOi8qCi8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziUkvf5fIc2/Z4KtFdKU6WkZpt66HoIWqtTmOxPUEP4babjM+N
-	kY5fmO6h98DRy5XuG2nXlL5p53Ey1bWIkEm1ucJFUTCHO2B/XFoz/VjOrkJGakIV++RCkx/Kaux
-	6T+MVR9wqt5AtQ0NFtNWrdoW/48cnos4=
-X-Gm-Gg: ASbGncueTCwS+sYyeT7hKwUzLN62ZsjqZj/DcvBSX5fVpuIRMj//Zc2WiZdb7yPu6NC
-	EtYkIMo5wM7xYnkFJO4160AsJe+4n3c2TTAHnbDiXCHXQw/74M4hXdKqBmvBMlOQmwsL8Kpdxme
-	ott9L4Uvdarfn6PrPrQtLEhCWs2jJ52Ar6MKraCgjtIEj6SvB1SsDw8LBmuU0H2g==
-X-Google-Smtp-Source: AGHT+IE5tR2B9YXXzFTeLm3U8oQQ7rc1H7LS56rqUvYeJrYiaepW2wsqQoRzFYFvshVVyTamFVC25LhZyxq/w1aj/WE=
-X-Received: by 2002:a05:6000:40c7:b0:3a5:2653:734d with SMTP id
- ffacd0b85a97d-3a531cb8333mr11466966f8f.28.1749488204602; Mon, 09 Jun 2025
- 09:56:44 -0700 (PDT)
+        bh=i6OfLuzibQl1UKiS8t7iPVAzINkPcYfeArqcO9P3Gio=;
+        b=mnGwBvYOUGRnXkb4d2+58DBQV38VjpqjRAxr0lXPC8450JtlpIvMI2FzHj6DubxwFB
+         VAfoy+1wrfNHQdG3lyJEW62TVCBsjDgVTALmSOLsPytf23bz370tTkRAD3Hkm0hp+bom
+         2a9sKR+SbbF5QS8g3xK9axHAVNYRwlbau2Z/+5jpVNacYEWmZE3z/HCmrNdkDmSsst7h
+         hkXhCZO9gxUu1tYjmiAHp0qeotKCcucQTov2o6yvKg3/m4DaWiSHmGkqpDQr+N25LY+p
+         1Prpo6dpzznyxZ/s6Jf+kIQZObQps1QNwqzLmqajF8XdJ0uTMlYWqIXb51ROx4ysCqf5
+         yu7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXzwFd/7t+6oNRmluM1nb2zTdNJ7o1D/kxd1AbjneM1bYqK0kLZXhRr3W2a2r1WL4svwUEMN+rmrRRkHFAQczsIU8ae8UM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+1pvLQqiA+UQNdObxLobbF2n+s7Glg1tC6Rc6BAk0O2Y1tAS0
+	7U6a2xanGOqhGyZf9KRU+RybD5dAcBq84i5EmgdSt3rmwRTrzhP1OBqg0jMf025476MUcHwSlbP
+	NSz6/laSY8uNg0Rnj1EYaBjMFPq3b/o0=
+X-Gm-Gg: ASbGncsfsgKMqdn0L7StE/D6dzV2F6wx6PqNYElb6ujxcFstCS72PacArh00oSbwJIU
+	zO9frw7h4VdiAUazZnOjZrlJSK2omugQ/id+3mPpyEtEvFABo2oDwn9ZT/ABuwNntrI+yUA851x
+	9gFiiyRnHcWq1OD8G526+MHVA5GN/8sYcJo3jLdlNAD8cNgHMOJ0xJOphLT4QjLJCfsaO4sGM0
+X-Google-Smtp-Source: AGHT+IGWqY6NaSgntZldko9HfMvloeMJihIpe9i9lemNJqhiHMQHIHGe4ziTxqmMsOGmHZQOiRZh323OLBF10TyouIM=
+X-Received: by 2002:a05:6000:430a:b0:3a4:ddde:13e4 with SMTP id
+ ffacd0b85a97d-3a531cedc5cmr10715302f8f.58.1749491180958; Mon, 09 Jun 2025
+ 10:46:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-2-kpsingh@kernel.org>
-In-Reply-To: <20250606232914.317094-2-kpsingh@kernel.org>
+References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-3-kpsingh@kernel.org>
+In-Reply-To: <20250606232914.317094-3-kpsingh@kernel.org>
 From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 9 Jun 2025 09:56:33 -0700
-X-Gm-Features: AX0GCFtChgw-MK2fTqpAFYE-5cEEbvD3Vlnxk5O9ru09xt-jCLYTsZV1NWl8ieY
-Message-ID: <CAADnVQKnG6PORcQMJNw2zWd4u5xFMugm=KSG4P4bLPBmuJ==jw@mail.gmail.com>
-Subject: Re: [PATCH 01/12] bpf: Implement an internal helper for SHA256 hashing
+Date: Mon, 9 Jun 2025 10:46:09 -0700
+X-Gm-Features: AX0GCFtGRJQQ1FN9ypDYJaCGM3WQ3BIHNBuvlxyc22-Gzbc19YvJMzDbj_E7jrY
+Message-ID: <CAADnVQLJYuy3N0_kpk=UDvy8f08L=NSzjL5G0zimXsNjX_EMQQ@mail.gmail.com>
+Subject: Re: [PATCH 02/12] bpf: Update the bpf_prog_calc_tag to use SHA256
 To: KP Singh <kpsingh@kernel.org>
 Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
 	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
@@ -76,60 +76,72 @@ Content-Transfer-Encoding: quoted-printable
 
 On Fri, Jun 6, 2025 at 4:29=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote:
 >
-> This patch introduces bpf_sha256, an internal helper function
-> that wraps the standard kernel crypto API to compute SHA256 digests of
-> the program insns and map content
+> Exclusive maps restrict map access to specific programs using a hash.
+> The current hash used for this is SHA1, which is prone to collisions.
+> This patch uses SHA256, which  is more resilient against
+> collisions. This new hash is stored in bpf_prog and used by the verifier
+> to determine if a program can access a given exclusive map.
+>
+> The original 64-bit tags are kept, as they are used by users as a short,
+> possibly colliding program identifier for non-security purposes.
 >
 > Signed-off-by: KP Singh <kpsingh@kernel.org>
 > ---
->  include/linux/bpf.h |  1 +
->  kernel/bpf/core.c   | 39 +++++++++++++++++++++++++++++++++++++++
->  2 files changed, 40 insertions(+)
+>  include/linux/bpf.h    |  8 ++++++-
+>  include/linux/filter.h |  6 ------
+>  kernel/bpf/core.c      | 49 ++++++------------------------------------
+>  3 files changed, 14 insertions(+), 49 deletions(-)
 >
 > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index 5b25d278409b..d5ae43b36e68 100644
+> index d5ae43b36e68..77d62c74a4e7 100644
 > --- a/include/linux/bpf.h
 > +++ b/include/linux/bpf.h
-> @@ -2086,6 +2086,7 @@ static inline bool map_type_contains_progs(struct b=
-pf_map *map)
+> @@ -31,6 +31,7 @@
+>  #include <linux/memcontrol.h>
+>  #include <linux/cfi.h>
+>  #include <asm/rqspinlock.h>
+> +#include <crypto/sha2.h>
+>
+>  struct bpf_verifier_env;
+>  struct bpf_verifier_log;
+> @@ -1669,7 +1670,12 @@ struct bpf_prog {
+>         enum bpf_attach_type    expected_attach_type; /* For some prog ty=
+pes */
+>         u32                     len;            /* Number of filter block=
+s */
+>         u32                     jited_len;      /* Size of jited insns in=
+ bytes */
+> -       u8                      tag[BPF_TAG_SIZE];
+> +       union {
+> +               u8 digest[SHA256_DIGEST_SIZE];
+> +               struct {
+> +                       u8 tag[BPF_TAG_SIZE];
+> +               };
+> +       };
+
+Why extra anon struct ?
+union {
+  u8 digest[SHA256_DIGEST_SIZE];
+  u8 tag[BPF_TAG_SIZE];
+};
+should work ?
+
+>         struct bpf_prog_stats __percpu *stats;
+>         int __percpu            *active;
+>         unsigned int            (*bpf_func)(const void *ctx,
+> diff --git a/include/linux/filter.h b/include/linux/filter.h
+> index f5cf4d35d83e..3aa33e904a4e 100644
+> --- a/include/linux/filter.h
+> +++ b/include/linux/filter.h
+> @@ -997,12 +997,6 @@ static inline u32 bpf_prog_insn_size(const struct bp=
+f_prog *prog)
+>         return prog->len * sizeof(struct bpf_insn);
 >  }
 >
->  bool bpf_prog_map_compatible(struct bpf_map *map, const struct bpf_prog =
-*fp);
-> +int bpf_sha256(u8 *data, size_t data_size, u8 *output_digest);
->  int bpf_prog_calc_tag(struct bpf_prog *fp);
->
->  const struct bpf_func_proto *bpf_get_trace_printk_proto(void);
-> diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-> index a3e571688421..607d5322ef94 100644
-> --- a/kernel/bpf/core.c
-> +++ b/kernel/bpf/core.c
-> @@ -17,6 +17,7 @@
->   * Kris Katterjohn - Added many additional checks in bpf_check_classic()
->   */
->
-> +#include <crypto/hash.h>
->  #include <uapi/linux/btf.h>
->  #include <linux/filter.h>
->  #include <linux/skbuff.h>
-> @@ -287,6 +288,44 @@ void __bpf_prog_free(struct bpf_prog *fp)
->         vfree(fp);
->  }
->
-> +int bpf_sha256(u8 *data, size_t data_size, u8 *output_digest)
-> +{
-> +       struct crypto_shash *tfm;
-> +       struct shash_desc *shash_desc;
-> +       size_t desc_size;
-> +       int ret =3D 0;
-> +
-> +       tfm =3D crypto_alloc_shash("sha256", 0, 0);
+> -static inline u32 bpf_prog_tag_scratch_size(const struct bpf_prog *prog)
+> -{
+> -       return round_up(bpf_prog_insn_size(prog) +
+> -                       sizeof(__be64) + 1, SHA1_BLOCK_SIZE);
+> -}
 
-In kernel/bpf/Kconfig we use:
-config BPF
-        bool
-        select CRYPTO_LIB_SHA1
-
-I think it's fine to add "select CRYPTO_LIB_SHA256" in this patch,
-and remove CRYPTO_LIB_SHA1 line in patch 2,
-since the only user will be gone.
+Nice that we don't need this roundup anymore.
