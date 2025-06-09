@@ -1,167 +1,160 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7769B211297
-	for <linux-security-module@vger.kernel.org>; Mon,  9 Jun 2025 08:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62ED165F1A;
+	Mon,  9 Jun 2025 09:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749459489; cv=none; b=kmR3wVCqiApIOYPpHyFIMmC/2gQcZdJI67N2VWW8y/xBG0DPvRUW6i3UI9nQeH5WUkOrHpz/mKLqLWZwPt5jLKolN4O3yD3kOKTZG78xEmYv6N2S1n0T6t0AnkgiAyreqqjbp8XIfDRGxW6b0eW4v9AKlAaXp9YK8+26Xb93+hw=
+	t=1749461568; cv=none; b=RlKBQCSfXYdkihosmIQ+hk1NiS3Zt+zM85PIle+aEcfkMNvj+htYLG0gEOyzjjtz7/OC+H43YsuGcokEE53W+OXwzT6yWW8HENdSr0eM3wiE1Os6nJFopo14YQa9BpZGyEk5hLBFQVQ+/G+UgNKfHrXxLt5HWLGsiLyCNN4JsnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749459489; c=relaxed/simple;
-	bh=tObexuNu5puy0S/zrHD6bJ96PlTpeqIfPPG17mA0siE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=p0ew6CTgBAFZGdkmcxIlezwXH1PbDp/s7vciMtY9QRyEAo4D6oFo4eKXORfiA3csRVv/R0lyqutVdwMzJxGK3hPvs532n2oOez2QzrBg9dSNMBv7x5x5sR6SH101IuAEGfvAPImW9FzA06RS95+7OD1QO9x2Znd4Ih5Q2DVJAjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cKsRQe6d; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1749461568; c=relaxed/simple;
+	bh=kwrjQqsi+KQR1DGixXAcKKCvfe+g1x3sFeUhZbp3Qlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=URQxRgIvbjQ/5sDI0qm5JUREiukc7wKnzcdPvEB+aSGk3KmFJmYnczMb4I0pP84KP5+VkT63fwwjUdbgFTyARWTxJycr7f86aNKDiNwTKMqwDgThbn9GKh/MuKlL7xsqcR3t1EhEjDl0s4JZabWNEN0wNu7ZeUdBrLebYHHQgws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K4kEyCLT; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cKsRQe6d"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749459486;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EAX9gR6Ry+BCiLbmBNWFHsPfQj/lBkDp4XOdgquTNsY=;
-	b=cKsRQe6dUTDzZ/u7ywx5Hh+KHOVIw4dLuQUWZkZXaJkI7I4nggKjmF+i2W/Aq8TPbHAA/J
-	87Q25IWnG06oCMKbXQK3JqP0pNvUkIXXXjncduR8aXvUSaWLrzgsWHs/YRqj9THmOqha+C
-	4qua3RKkow0D6VoTV0sVEBT1ML61GRU=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-583-1xF6PWdlPMqjMprNfEaweg-1; Mon, 09 Jun 2025 04:58:04 -0400
-X-MC-Unique: 1xF6PWdlPMqjMprNfEaweg-1
-X-Mimecast-MFC-AGG-ID: 1xF6PWdlPMqjMprNfEaweg_1749459483
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a50816cc58so1228977f8f.3
-        for <linux-security-module@vger.kernel.org>; Mon, 09 Jun 2025 01:58:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749459483; x=1750064283;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EAX9gR6Ry+BCiLbmBNWFHsPfQj/lBkDp4XOdgquTNsY=;
-        b=pGcxvyLlOqXq5m7D5g0sPacPGiBAAQlsmZ6Ofw7FcjbrJJEgHjOYqF0BJTpfZYmdu1
-         +Qw45bTyyprh/zmWeBNz/KBA/F0R+BpDiwqEv064+JE29V6QIr6b8BwX+7a70QiPzdIl
-         8YxYfXlS/jlQwG8a9oWGkjwAnC2p8PfdW8fHVDzlHFUt5ueTMlD42U581qkjjLkRA0+N
-         zAZZ5ZCQ6ULy+HROp6KqoCnneNCbnPIjkIr/C1Shn6k8GeG6XhgwN5kxjRqUJBdQzHiW
-         oPQKFr/amKHvB0jpdH2ZqtC56aO2by7S048mJhG20qhDjTRp96VOILvXyquIUf6ZveHf
-         ngqg==
-X-Gm-Message-State: AOJu0Yxs/YJFwPsz2Q3gor34iYM3tOTnM+xN+arytDT2QsZiCei+uV27
-	p2y6Lj3kY8k5JcRxBh5J9bf9pLhTA18Pl2qF4m62BItlH8HcUbNIYRcWkgnhMdv3p11yr9YfXEq
-	b0ipae8HIel7iPf/VQA+dARiUNps6uuSCR5vl/ei9i+UMJmFkuLgwraDWc8n92/IKelsMb8nqwj
-	6v5g==
-X-Gm-Gg: ASbGncuc7Ntnlwc7yv1udl4yxHGtAWd83fNucRGdolaP/979xDavF0C/oM4d5vIvy6m
-	qmTA9WWPsmuBJ23bM3vTQb93zCZ5UTAYYXaWQV+wz9fk0mr9nRCDwMNwZzxkN6afz/ENJUc+Zfe
-	lG8PkkiwiBIhZMnePx8o/LRYYJUpkByPgIM/VIbTohnZX2+twbr9LCWg3sysR6ss/eL9Ap7szNJ
-	28yyGJHDpIeHAP9rYPL+DbfLRVeYgalsyTSEORMrvnn9HLW/XIBBXiscffPcUMqOk2ttl+DnRFf
-	Nnk8q8NRF7HbjPs+lA==
-X-Received: by 2002:a05:6000:420a:b0:3a4:fc37:70e4 with SMTP id ffacd0b85a97d-3a531cf5be1mr8000749f8f.58.1749459483403;
-        Mon, 09 Jun 2025 01:58:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGKstU+gvDYJRoCuhWj9Uy3B0R5FuTJdpuAKJpWIzyKGQze6gxwv3jbQl0SI7KqRYCXE0l/g==
-X-Received: by 2002:a05:6000:420a:b0:3a4:fc37:70e4 with SMTP id ffacd0b85a97d-3a531cf5be1mr8000722f8f.58.1749459483016;
-        Mon, 09 Jun 2025 01:58:03 -0700 (PDT)
-Received: from fedora (g3.ign.cz. [91.219.240.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5323be604sm8881091f8f.42.2025.06.09.01.58.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 01:58:02 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, Eric Snowberg
- <eric.snowberg@oracle.com>, Peter Jones <pjones@redhat.com>
-Cc: "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>, "linux-modules@vger.kernel.org"
- <linux-modules@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
- <linux-doc@vger.kernel.org>, "keyrings@vger.kernel.org"
- <keyrings@vger.kernel.org>, David Howells <dhowells@redhat.com>, David
- Woodhouse <dwmw2@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Luis
- Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami
- Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>,
- Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
- <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge
- E. Hallyn" <serge@hallyn.com>, Robert Holmes <robeholmes@gmail.com>,
- Jeremy Cline <jcline@redhat.com>, Coiby Xu <coxu@redhat.com>, Gerd
- Hoffmann <kraxel@redhat.com>
-Subject: Re: [PATCH RFC 0/1] module: Optionally use .platform keyring for
- signatures verification
-In-Reply-To: <a9bb8b0cfd1af85443ff8ee615b3be0fc705ce02.camel@HansenPartnership.com>
-References: <20250602132535.897944-1-vkuznets@redhat.com>
- <0FD18D05-6114-4A25-BD77-C32C1D706CC3@oracle.com>
- <f0b37bc55ed3c02569c74f0fbdb6afa8efd329e2.camel@HansenPartnership.com>
- <87zfemoc76.fsf@redhat.com>
- <e4e838d03b3619df5523d429e0cd8160a8aef9f8.camel@HansenPartnership.com>
- <87tt4unw1w.fsf@redhat.com>
- <a9bb8b0cfd1af85443ff8ee615b3be0fc705ce02.camel@HansenPartnership.com>
-Date: Mon, 09 Jun 2025 10:58:01 +0200
-Message-ID: <87ldq1nvfq.fsf@redhat.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K4kEyCLT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749461567; x=1780997567;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kwrjQqsi+KQR1DGixXAcKKCvfe+g1x3sFeUhZbp3Qlg=;
+  b=K4kEyCLTpGew/5ZHkkU214TAtGkjYQU0qZMES/j3dqd7wWF2G25pwZ7d
+   aFQeQn2wd8sDkySHibKWDUoVW1/N3Zmcn252b+39WhRmvXEidGE+LJCop
+   LHoG1xA6grp6zwgorg79URt64s1PhFblMcjoVf7NG5vKwKYc4alPTLenm
+   dRgJ1xhWW2UTbz1smex6fHu2kBgjAyDMsilch0V7C0OOEp4VkhxSDX5og
+   iXkeAFvJghSS5CaH3IBE79tZqmIvMdkid7UtZow5Kg09Rd5CYH197DOwr
+   NCC/9OWFSCrM8j+N+vns673vUCR98MI17RfG6mHN41ZB6U4WMaqUeSbx0
+   A==;
+X-CSE-ConnectionGUID: v5QYnaZhTO2sXm5Wd0g4NQ==
+X-CSE-MsgGUID: e209d9EURHOGn2LaJorqpw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11458"; a="50642361"
+X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; 
+   d="scan'208";a="50642361"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 02:32:46 -0700
+X-CSE-ConnectionGUID: 8Y/TJhGYSjWVSpISYKSo4A==
+X-CSE-MsgGUID: /+hp/DF6TFmrUAqMvEhgAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; 
+   d="scan'208";a="151278853"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 09 Jun 2025 02:32:43 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uOYrw-0006ub-2O;
+	Mon, 09 Jun 2025 09:32:40 +0000
+Date: Mon, 9 Jun 2025 17:31:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: KP Singh <kpsingh@kernel.org>, bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, bboscaccy@linux.microsoft.com,
+	paul@paul-moore.com, kys@microsoft.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org,
+	KP Singh <kpsingh@kernel.org>
+Subject: Re: [PATCH 01/12] bpf: Implement an internal helper for SHA256
+ hashing
+Message-ID: <202506091719.RN2qjs3P-lkp@intel.com>
+References: <20250606232914.317094-2-kpsingh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ewiOvSaMe5e7oDw4iBNZJghw541OwiY8_yGzr5eTkHM_1749459483
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250606232914.317094-2-kpsingh@kernel.org>
 
-James Bottomley <James.Bottomley@HansenPartnership.com> writes:
+Hi KP,
 
-> On Thu, 2025-06-05 at 15:43 +0200, Vitaly Kuznetsov wrote:
->> James Bottomley <James.Bottomley@HansenPartnership.com> writes:
->> 
->> > On Thu, 2025-06-05 at 09:54 +0200, Vitaly Kuznetsov wrote:
->> 
->> So far, I got two 'runtime' ideas:
->> - Observe MokListTrustedRT and distrust .platform when it is
->> non-empty. This can, of course, be combine with a Kconfig for those,
->> who do not want it at all.
->
-> Well, not sure about that specific variable.  It seems to be set but
-> not used by shim (however it is used in the kernel to decide whether to
-> import the MoK list), so how would someone with a current distrusted db
-> get it set?  But there's also MokIgnoreDB (which is actually a RT
-> import of MokDBState) which is used to prevent importing the db certs
-> into the platform keyring in the first place.
->
-> I think the reason this is so fragmented is because we didn't really
-> co-ordinate with shim when all the variables and switches were added. 
-> Perhaps we should document all the variables and expectations before
-> deciding on a mechanism? 
+kernel test robot noticed the following build errors:
 
-I was hoping Peter (pjones@) can help us here) Generally, I agree that
-as these variables originate in shim, we should describe them there and
-not try to give them some potentially undesired meaning in kernel.
+[auto build test ERROR on bpf-next/net]
+[also build test ERROR on bpf-next/master bpf/master linus/master v6.16-rc1 next-20250606]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->
-> The one thing we can guarantee is if the cloud use case is booting
-> without shim (is it?) then none of the RT variables will get created,
-> so checking any (or a set) of them would work.
+url:    https://github.com/intel-lab-lkp/linux/commits/KP-Singh/bpf-Implement-an-internal-helper-for-SHA256-hashing/20250607-073052
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git net
+patch link:    https://lore.kernel.org/r/20250606232914.317094-2-kpsingh%40kernel.org
+patch subject: [PATCH 01/12] bpf: Implement an internal helper for SHA256 hashing
+config: alpha-defconfig (https://download.01.org/0day-ci/archive/20250609/202506091719.RN2qjs3P-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250609/202506091719.RN2qjs3P-lkp@intel.com/reproduce)
 
-Personally, I always advocate for injecting shim in the boot chain at
-least when distro kernels are used: shim provides SBAT revocation
-mechanism which is likely going to be used when a new secureboot related
-vulnerability is discovered. SBAT was used for UKIs only but a mechanism
-for embedding it into the Linux kernel itself is coming (already merged
-for 'zboot' arches, pending for x86). If, however, someone is signing
-his own kernels and can use 'dbx' or even revoke the cert in case of a
-problem, then I guess shim can be avoided.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506091719.RN2qjs3P-lkp@intel.com/
 
->> and/or
->> - Sysctl toggle. Keep things as they are by default but make
->> .platform trusted (either for modules or for everything) when
->> switched 'on'. This can (optionally) by combined with a previous idea
->> and have e.g. an 'auto' state for the toggle which follows
->> MokListTrustedRT.
->
-> I'm less keen on user specifiable runtime because the security policy
-> of the system using a lockdown to make root less privileged than ring 0
-> can't allow a malicious root to weaken it.  However, let's see if we
-> can get a proposal that would mitigate that concern.
->
-> Ideally, if we can get to something that works for everyone at runtime,
-> we can remove the current Kconfig explosion which is definitely adding
-> to the confusion (as shown in the Debian bug reports).
+All errors (new ones prefixed by >>):
+
+   alpha-linux-ld: kernel/bpf/core.o: in function `bpf_sha256':
+>> kernel/bpf/core.c:298:(.text+0x502c): undefined reference to `crypto_alloc_shash'
+>> alpha-linux-ld: kernel/bpf/core.c:298:(.text+0x5058): undefined reference to `crypto_alloc_shash'
+>> alpha-linux-ld: kernel/bpf/core.c:311:(.text+0x50a4): undefined reference to `crypto_shash_init'
+   alpha-linux-ld: kernel/bpf/core.c:311:(.text+0x50b0): undefined reference to `crypto_shash_init'
+   alpha-linux-ld: kernel/bpf/core.o: in function `crypto_free_shash':
+>> include/crypto/hash.h:765:(.text+0x50e0): undefined reference to `crypto_destroy_tfm'
+>> alpha-linux-ld: include/crypto/hash.h:765:(.text+0x50e4): undefined reference to `crypto_destroy_tfm'
+   alpha-linux-ld: kernel/bpf/core.o: in function `crypto_shash_update':
+>> include/crypto/hash.h:992:(.text+0x5120): undefined reference to `crypto_shash_finup'
+>> alpha-linux-ld: include/crypto/hash.h:992:(.text+0x5124): undefined reference to `crypto_shash_finup'
+   alpha-linux-ld: kernel/bpf/core.o: in function `crypto_shash_final':
+   include/crypto/hash.h:1011:(.text+0x5138): undefined reference to `crypto_shash_finup'
+   alpha-linux-ld: include/crypto/hash.h:1011:(.text+0x5148): undefined reference to `crypto_shash_finup'
+   alpha-linux-ld: kernel/bpf/core.o: in function `crypto_free_shash':
+   include/crypto/hash.h:765:(.text+0x5158): undefined reference to `crypto_destroy_tfm'
+   alpha-linux-ld: include/crypto/hash.h:765:(.text+0x5164): undefined reference to `crypto_destroy_tfm'
+
+
+vim +298 kernel/bpf/core.c
+
+   290	
+   291	int bpf_sha256(u8 *data, size_t data_size, u8 *output_digest)
+   292	{
+   293		struct crypto_shash *tfm;
+   294		struct shash_desc *shash_desc;
+   295		size_t desc_size;
+   296		int ret = 0;
+   297	
+ > 298		tfm = crypto_alloc_shash("sha256", 0, 0);
+   299		if (IS_ERR(tfm))
+   300			return PTR_ERR(tfm);
+   301	
+   302	
+   303		desc_size = crypto_shash_descsize(tfm) + sizeof(*shash_desc);
+   304		shash_desc = kmalloc(desc_size, GFP_KERNEL);
+   305		if (!shash_desc) {
+   306			crypto_free_shash(tfm);
+   307			return -ENOMEM;
+   308		}
+   309	
+   310		shash_desc->tfm = tfm;
+ > 311		ret = crypto_shash_init(shash_desc);
+   312		if (ret)
+   313			goto out_free_desc;
+   314	
+   315		ret = crypto_shash_update(shash_desc, data, data_size);
+   316		if (ret)
+   317			goto out_free_desc;
+   318	
+   319		ret = crypto_shash_final(shash_desc, output_digest);
+   320		if (ret)
+   321			goto out_free_desc;
+   322	
+   323	out_free_desc:
+   324		kfree(shash_desc);
+   325		crypto_free_shash(tfm);
+   326		return ret;
+   327	}
+   328	
 
 -- 
-Vitaly
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
