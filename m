@@ -1,71 +1,71 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01F2149C53;
-	Mon,  9 Jun 2025 17:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C718F40;
+	Mon,  9 Jun 2025 20:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749491184; cv=none; b=Vj21eKjXhqN1oi62AMaBaBEz9dxpo43i8C68TA7zMO0CQ90Zm10Z8rn/I4N3/LRuxVzEM6e/5KDm8RdtsUdm/tJXrlDKketugwELWTNeiAbZ2p6f4/92pkaWl01mCodmjBLB9ipcrjTTkfgM6x7ghzEY74WlHqVcylGEDMy+OgQ=
+	t=1749502720; cv=none; b=TzVw/atNQM73Zm4ne9fguyl50Vl4Fu7OOUCDqlMTLJkDajvtg0dU8z84wQ5xTnWeWvKN6lI+t5xkHfNXlgg6yLuwpWqUfMWxD6P3sG8rZZKpOB/7T2a2aeBFoQGv8uEN1nSsr5xAso0maqTtubXd9bgu2M3pRAyuoOZ2eAwSHTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749491184; c=relaxed/simple;
-	bh=/GRxL/Shs5t5KAxppGgjU1LYWepOYAf4OzsGm4awp5o=;
+	s=arc-20240116; t=1749502720; c=relaxed/simple;
+	bh=a0g30dtCdd9GafX/Of0kUAy/pnjdIpXRUlCwH+40Gzw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uOPneLx51piVz1Ekmgl/CyVmV65gFY/y3TXRvFdPO/2XoNGEDyfcDcFC4mnxx0AH+IiKyfR6SycdkNMqzfpGwQuBY+p0r33BjCCWvUniKu4hF+f5e6KraKmKLvZXx+sVkEEnLJNCLyuW2BdsObxcuwMOCzu8Wng++EyhKJB19mA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G/OaptsK; arc=none smtp.client-ip=209.85.221.46
+	 To:Cc:Content-Type; b=k3J6mJSzChkWFMbmX7uo39h96c8YsDIz9VXMkeE2hXMEiEHhBZngQdiU3SWXTCvdMb5ehNt0F7Bx18QbzR24/MuUQg1pEdPm/xBw5Fop/zHHAwb2VAspM/E8QP5bF1cJU+yx7Ujsr4LnzFn9FZ3AXcbzuEbwqpkrOTazDyPkGCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U8d6wFdL; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/OaptsK"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a5123c1533so2547941f8f.2;
-        Mon, 09 Jun 2025 10:46:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U8d6wFdL"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so54848895e9.2;
+        Mon, 09 Jun 2025 13:58:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749491181; x=1750095981; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749502716; x=1750107516; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=i6OfLuzibQl1UKiS8t7iPVAzINkPcYfeArqcO9P3Gio=;
-        b=G/OaptsKg/I71hr42zUGg83RRDaRzqL+UNlS4njUqxtLS8pSD2nTdOSY6mcgbG/K5p
-         meM/hp5xpKNcsBtVrDcYmuzE2nxy9tH3Mh/hmgCoiA/7H+qJewQ6zXl2Z+3oyVUf/wTb
-         EXZwFv7XwoFGmOfvEcM9bngRgqTGJiQKOdr+SOFo16Jy1avRirjfK0BDEUM9YarNFt9r
-         laYATOiomIii5tJjfTJ8iUkh7O89/NkNzqO45RhM7bekeXbpbxgDzT3us0wFcjtJSXHm
-         4V8PHkq5+LNVRxqSHBr/sXh8dRJZGQKchE9GvG+6nzxqW+K4uWjbSRtcJVD5HVpxctYN
-         qhKQ==
+        bh=MIeS4g08HhZvlrSRMzzIUOMlFWtZ1oH7A962B1Bd1OY=;
+        b=U8d6wFdLNvI3fyD6JEvrB/qA0IxoxbKmTHfpeQjWKiYAnwmMNQen+B3WusWe5z4ndX
+         0L1sCaPzwva4dGNmzSWxytfwprKfIG7NjAGkEZGuBeoo2Mk0B6QWQr46/njODbiJO0ro
+         W4IxPR/i5PP+eX6a3kxbIwG4U9hMr0IcEcAD77qRSABZ71rGWdF6xTDKkbtYwqm6JlAh
+         G5bCHUw2QN7eaT92trEadGnKTqxhqtwCoHZQG2EfP3HRH/du8mjwe2Nqi8FM3YzRD4nT
+         EYxrI4jmf/Tf8Mj19AN/g799U4veEjZG+ghWNCYpmNzbhQO+9vxy9J111ZlERazqzRt/
+         PFHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749491181; x=1750095981;
+        d=1e100.net; s=20230601; t=1749502716; x=1750107516;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=i6OfLuzibQl1UKiS8t7iPVAzINkPcYfeArqcO9P3Gio=;
-        b=mnGwBvYOUGRnXkb4d2+58DBQV38VjpqjRAxr0lXPC8450JtlpIvMI2FzHj6DubxwFB
-         VAfoy+1wrfNHQdG3lyJEW62TVCBsjDgVTALmSOLsPytf23bz370tTkRAD3Hkm0hp+bom
-         2a9sKR+SbbF5QS8g3xK9axHAVNYRwlbau2Z/+5jpVNacYEWmZE3z/HCmrNdkDmSsst7h
-         hkXhCZO9gxUu1tYjmiAHp0qeotKCcucQTov2o6yvKg3/m4DaWiSHmGkqpDQr+N25LY+p
-         1Prpo6dpzznyxZ/s6Jf+kIQZObQps1QNwqzLmqajF8XdJ0uTMlYWqIXb51ROx4ysCqf5
-         yu7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXzwFd/7t+6oNRmluM1nb2zTdNJ7o1D/kxd1AbjneM1bYqK0kLZXhRr3W2a2r1WL4svwUEMN+rmrRRkHFAQczsIU8ae8UM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+1pvLQqiA+UQNdObxLobbF2n+s7Glg1tC6Rc6BAk0O2Y1tAS0
-	7U6a2xanGOqhGyZf9KRU+RybD5dAcBq84i5EmgdSt3rmwRTrzhP1OBqg0jMf025476MUcHwSlbP
-	NSz6/laSY8uNg0Rnj1EYaBjMFPq3b/o0=
-X-Gm-Gg: ASbGncsfsgKMqdn0L7StE/D6dzV2F6wx6PqNYElb6ujxcFstCS72PacArh00oSbwJIU
-	zO9frw7h4VdiAUazZnOjZrlJSK2omugQ/id+3mPpyEtEvFABo2oDwn9ZT/ABuwNntrI+yUA851x
-	9gFiiyRnHcWq1OD8G526+MHVA5GN/8sYcJo3jLdlNAD8cNgHMOJ0xJOphLT4QjLJCfsaO4sGM0
-X-Google-Smtp-Source: AGHT+IGWqY6NaSgntZldko9HfMvloeMJihIpe9i9lemNJqhiHMQHIHGe4ziTxqmMsOGmHZQOiRZh323OLBF10TyouIM=
-X-Received: by 2002:a05:6000:430a:b0:3a4:ddde:13e4 with SMTP id
- ffacd0b85a97d-3a531cedc5cmr10715302f8f.58.1749491180958; Mon, 09 Jun 2025
- 10:46:20 -0700 (PDT)
+        bh=MIeS4g08HhZvlrSRMzzIUOMlFWtZ1oH7A962B1Bd1OY=;
+        b=EUUOkgCpmXdiB5sZR+Km2S/SmpXPmNkm/Pk9d7InEdHI84ybZc+MtEOhx6/VwgjYs3
+         kGFXZ5qcE0PJKlFUv2EyxjfdhcxMrSSH8k/a3V/xqDhmwrkvKIkvyiYo2xBvA5HNzChG
+         jBryPuKrY7DA7OC/iSZwPo9J5f9D5gAhl8KPSFpaxNrlSB2xprhUAfl6WoT4AV9PYw3x
+         /bpoy7irHoVOGIYK/cXaUYz0oDn3r0nO3vo1/hCrGfGwSowVA7xNtCjgcnQkP48RINBK
+         5iKfO7LHWzPEODXDw920x+9R4q36eJP+8tVwqzPltKlXlIl7jMYa40eXEMIknZwNv2PR
+         E+QA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2SsEEJDUI12WyQEzAJhaTQ3FQTvjSSs9MvcUFJ40RWMh+v4wL/IuwDQw0jDB9w0Yf38UhUMsiB96+uTWO2nMrYh2XagQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHvyNZnxPUoVDtXyqLzx4mWuBeXxWwsKUqdheZtzrD7Dqj6lyu
+	vvNjhaeVJ8fOSEj/kOIcu7tQ/bsXb2/sfChAkl8pudQx4gHWBIeWXBVRyqTiky8eU55ttYnJHRA
+	E+V7KUf2lEhmStHH4QGLKwX9bPuHYwUDsCupJ
+X-Gm-Gg: ASbGncs29azLBYHi7tzlHssGxZml3hVf3nfTtKfNpBeSxys7rhjuNVCf1jUqGDUmGJU
+	QSPOtL60P7M17PvBDkujmDWi0dtHgVaKBOvF6kM/F7EuECW5hXuSM1O788GKH6hUEAaefQo0zQk
+	EqDscz4S+eJaRi2W30zT3PcbFtMiiRh+BACd3F4ac3dKv/N2irpPYBE+aTRefxeLyjY1JS0EQR
+X-Google-Smtp-Source: AGHT+IFR/A0rD2yVBG4/CVGM2LUwLRRxV/D0JL+V76Zcanv8gw4CaTI76f7Zoovxk6BpxDEgBGKSI/6lm8ALfEBiiZo=
+X-Received: by 2002:a05:6000:2088:b0:3a4:d64a:3df6 with SMTP id
+ ffacd0b85a97d-3a5319b1ab1mr10382047f8f.3.1749502716249; Mon, 09 Jun 2025
+ 13:58:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-3-kpsingh@kernel.org>
-In-Reply-To: <20250606232914.317094-3-kpsingh@kernel.org>
+References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-4-kpsingh@kernel.org>
+In-Reply-To: <20250606232914.317094-4-kpsingh@kernel.org>
 From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 9 Jun 2025 10:46:09 -0700
-X-Gm-Features: AX0GCFtGRJQQ1FN9ypDYJaCGM3WQ3BIHNBuvlxyc22-Gzbc19YvJMzDbj_E7jrY
-Message-ID: <CAADnVQLJYuy3N0_kpk=UDvy8f08L=NSzjL5G0zimXsNjX_EMQQ@mail.gmail.com>
-Subject: Re: [PATCH 02/12] bpf: Update the bpf_prog_calc_tag to use SHA256
+Date: Mon, 9 Jun 2025 13:58:25 -0700
+X-Gm-Features: AX0GCFt2lus7yZ49c_BTiKSdNEHrFJj-VJHxQx0puZz5RbgWY69x58X5JoDVOL4
+Message-ID: <CAADnVQLMff33qY+xY3Ztybbo38Wr9-bp_GPcoFna4EbtgTrWrg@mail.gmail.com>
+Subject: Re: [PATCH 03/12] bpf: Implement exclusive map creation
 To: KP Singh <kpsingh@kernel.org>
 Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
 	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
@@ -76,72 +76,285 @@ Content-Transfer-Encoding: quoted-printable
 
 On Fri, Jun 6, 2025 at 4:29=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote:
 >
-> Exclusive maps restrict map access to specific programs using a hash.
-> The current hash used for this is SHA1, which is prone to collisions.
-> This patch uses SHA256, which  is more resilient against
-> collisions. This new hash is stored in bpf_prog and used by the verifier
-> to determine if a program can access a given exclusive map.
+> Exclusive maps allow maps to only be accessed by a trusted loader
+> program with a matching hash. This allows the trusted loader program
+> to load the map and verify the integrity.
 >
-> The original 64-bit tags are kept, as they are used by users as a short,
-> possibly colliding program identifier for non-security purposes.
->
+> Both maps of maps (array, hash) cannot be exclusive and exclusive maps
+> cannot be added as inner maps. This is because one would need to
+> guarantee the exclusivity of the inner maps and would require
+> significant changes in the verifier.
+
+I was back and forth on it early, but after sleeping on it
+I think we should think of exclusive maps as a generic concept and
+not tied to trusted loader and prog signatures.
+So any map type should be allowed to be exclusive and this patch
+can handle it fine without adding more complexity.
+In map-in-map case the outer map can be created exclusive
+to a particular program, but inner maps don't have to be exclusive,
+and it's fine. The lskel loader won't be using map-in-map anyway,
+so no issues there.
+
 > Signed-off-by: KP Singh <kpsingh@kernel.org>
 > ---
->  include/linux/bpf.h    |  8 ++++++-
->  include/linux/filter.h |  6 ------
->  kernel/bpf/core.c      | 49 ++++++------------------------------------
->  3 files changed, 14 insertions(+), 49 deletions(-)
+>  include/linux/bpf.h            |  1 +
+>  include/uapi/linux/bpf.h       |  3 ++-
+>  kernel/bpf/arraymap.c          |  4 ++++
+>  kernel/bpf/hashtab.c           | 15 +++++++++------
+>  kernel/bpf/syscall.c           | 35 ++++++++++++++++++++++++++++++----
+>  kernel/bpf/verifier.c          |  7 +++++++
+>  tools/include/uapi/linux/bpf.h |  3 ++-
+>  7 files changed, 56 insertions(+), 12 deletions(-)
 >
 > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index d5ae43b36e68..77d62c74a4e7 100644
+> index 77d62c74a4e7..cb1bea99702a 100644
 > --- a/include/linux/bpf.h
 > +++ b/include/linux/bpf.h
-> @@ -31,6 +31,7 @@
->  #include <linux/memcontrol.h>
->  #include <linux/cfi.h>
->  #include <asm/rqspinlock.h>
-> +#include <crypto/sha2.h>
+> @@ -311,6 +311,7 @@ struct bpf_map {
+>         bool free_after_rcu_gp;
+>         atomic64_t sleepable_refcnt;
+>         s64 __percpu *elem_count;
+> +       char *excl_prog_sha;
+>  };
 >
->  struct bpf_verifier_env;
->  struct bpf_verifier_log;
-> @@ -1669,7 +1670,12 @@ struct bpf_prog {
->         enum bpf_attach_type    expected_attach_type; /* For some prog ty=
-pes */
->         u32                     len;            /* Number of filter block=
-s */
->         u32                     jited_len;      /* Size of jited insns in=
- bytes */
-> -       u8                      tag[BPF_TAG_SIZE];
-> +       union {
-> +               u8 digest[SHA256_DIGEST_SIZE];
-> +               struct {
-> +                       u8 tag[BPF_TAG_SIZE];
-> +               };
-> +       };
+>  static inline const char *btf_field_type_name(enum btf_field_type type)
+> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> index 16e95398c91c..6f2f4f3b3822 100644
+> --- a/include/uapi/linux/bpf.h
+> +++ b/include/uapi/linux/bpf.h
+> @@ -1504,6 +1504,8 @@ union bpf_attr {
+>                  * If provided, map_flags should have BPF_F_TOKEN_FD flag=
+ set.
+>                  */
+>                 __s32   map_token_fd;
+> +               __u32 excl_prog_hash_size;
+> +               __aligned_u64 excl_prog_hash;
+>         };
+>
+>         struct { /* anonymous struct used by BPF_MAP_*_ELEM and BPF_MAP_F=
+REEZE commands */
+> @@ -1841,7 +1843,6 @@ union bpf_attr {
+>                 __u32           flags;
+>                 __u32           bpffs_fd;
+>         } token_create;
+> -
+>  } __attribute__((aligned(8)));
+>
+>  /* The description below is an attempt at providing documentation to eBP=
+F
+> diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
+> index eb28c0f219ee..8719aa821b63 100644
+> --- a/kernel/bpf/arraymap.c
+> +++ b/kernel/bpf/arraymap.c
+> @@ -896,6 +896,10 @@ int bpf_fd_array_map_update_elem(struct bpf_map *map=
+, struct file *map_file,
+>         if (IS_ERR(new_ptr))
+>                 return PTR_ERR(new_ptr);
+>
+> +       if (map->map_type =3D=3D BPF_MAP_TYPE_ARRAY_OF_MAPS &&
+> +               ((struct bpf_map *)new_ptr)->excl_prog_sha)
+> +               return -EOPNOTSUPP;
+> +
 
-Why extra anon struct ?
-union {
-  u8 digest[SHA256_DIGEST_SIZE];
-  u8 tag[BPF_TAG_SIZE];
-};
-should work ?
+bpf_fd_array_map_update_elem() is called for prog_array too,
+so new_ptr can be a pointer to a bpf_prog.
+If we support all map types this check can be dropped.
 
->         struct bpf_prog_stats __percpu *stats;
->         int __percpu            *active;
->         unsigned int            (*bpf_func)(const void *ctx,
-> diff --git a/include/linux/filter.h b/include/linux/filter.h
-> index f5cf4d35d83e..3aa33e904a4e 100644
-> --- a/include/linux/filter.h
-> +++ b/include/linux/filter.h
-> @@ -997,12 +997,6 @@ static inline u32 bpf_prog_insn_size(const struct bp=
-f_prog *prog)
->         return prog->len * sizeof(struct bpf_insn);
+>         if (map->ops->map_poke_run) {
+>                 mutex_lock(&array->aux->poke_mutex);
+>                 old_ptr =3D xchg(array->ptrs + index, new_ptr);
+> diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
+> index 71f9931ac64c..2732b4a23c27 100644
+> --- a/kernel/bpf/hashtab.c
+> +++ b/kernel/bpf/hashtab.c
+> @@ -2537,22 +2537,25 @@ int bpf_fd_htab_map_lookup_elem(struct bpf_map *m=
+ap, void *key, u32 *value)
+>  int bpf_fd_htab_map_update_elem(struct bpf_map *map, struct file *map_fi=
+le,
+>                                 void *key, void *value, u64 map_flags)
+>  {
+> -       void *ptr;
+> +       struct bpf_map *inner_map;
+>         int ret;
+>
+> -       ptr =3D map->ops->map_fd_get_ptr(map, map_file, *(int *)value);
+> -       if (IS_ERR(ptr))
+> -               return PTR_ERR(ptr);
+> +       inner_map =3D map->ops->map_fd_get_ptr(map, map_file, *(int *)val=
+ue);
+> +       if (IS_ERR(inner_map))
+> +               return PTR_ERR(inner_map);
+> +
+> +       if (inner_map->excl_prog_sha)
+> +               return -EOPNOTSUPP;
+
+I would simply drop these checks too.
+
+>         /* The htab bucket lock is always held during update operations i=
+n fd
+>          * htab map, and the following rcu_read_lock() is only used to av=
+oid
+>          * the WARN_ON_ONCE in htab_map_update_elem_in_place().
+>          */
+>         rcu_read_lock();
+> -       ret =3D htab_map_update_elem_in_place(map, key, &ptr, map_flags, =
+false, false);
+> +       ret =3D htab_map_update_elem_in_place(map, key, &inner_map, map_f=
+lags, false, false);
+>         rcu_read_unlock();
+>         if (ret)
+> -               map->ops->map_fd_put_ptr(map, ptr, false);
+> +               map->ops->map_fd_put_ptr(map, inner_map, false);
+>
+>         return ret;
+>  }
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index 4b5f29168618..bef9edcfdb76 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -858,6 +858,7 @@ static void bpf_map_free(struct bpf_map *map)
+>          * the free of values or special fields allocated from bpf memory
+>          * allocator.
+>          */
+> +       kfree(map->excl_prog_sha);
+>         migrate_disable();
+>         map->ops->map_free(map);
+>         migrate_enable();
+> @@ -1335,9 +1336,9 @@ static bool bpf_net_capable(void)
+>         return capable(CAP_NET_ADMIN) || capable(CAP_SYS_ADMIN);
 >  }
 >
-> -static inline u32 bpf_prog_tag_scratch_size(const struct bpf_prog *prog)
-> -{
-> -       return round_up(bpf_prog_insn_size(prog) +
-> -                       sizeof(__be64) + 1, SHA1_BLOCK_SIZE);
-> -}
+> -#define BPF_MAP_CREATE_LAST_FIELD map_token_fd
+> +#define BPF_MAP_CREATE_LAST_FIELD excl_prog_hash
+>  /* called via syscall */
+> -static int map_create(union bpf_attr *attr, bool kernel)
+> +static int map_create(union bpf_attr *attr, bpfptr_t uattr)
+>  {
+>         const struct bpf_map_ops *ops;
+>         struct bpf_token *token =3D NULL;
+> @@ -1527,7 +1528,33 @@ static int map_create(union bpf_attr *attr, bool k=
+ernel)
+>                         attr->btf_vmlinux_value_type_id;
+>         }
+>
+> -       err =3D security_bpf_map_create(map, attr, token, kernel);
+> +       if (attr->excl_prog_hash) {
+> +               bpfptr_t uprog_hash =3D make_bpfptr(attr->excl_prog_hash,=
+ uattr.is_kernel);
+> +
+> +               if (map->inner_map_meta) {
+> +                       err =3D -EOPNOTSUPP;
+> +                       goto free_map;
+> +               }
 
-Nice that we don't need this roundup anymore.
+drop this one too.
+
+> +
+> +               map->excl_prog_sha =3D kzalloc(SHA256_DIGEST_SIZE, GFP_KE=
+RNEL);
+> +               if (!map->excl_prog_sha) {
+> +                       err =3D -EINVAL;
+
+ENOMEM
+
+> +                       goto free_map;
+> +               }
+> +
+> +               if (attr->excl_prog_hash_size < SHA256_DIGEST_SIZE) {
+
+The idea here is to allow extensibility with different sizes?
+Then use =3D=3D here.
+
+> +                       err =3D -EINVAL;
+> +                       goto free_map;
+> +               }
+> +
+> +               if (copy_from_bpfptr(map->excl_prog_sha, uprog_hash,
+> +                                    SHA256_DIGEST_SIZE)) {
+> +                       err =3D -EFAULT;
+> +                       goto free_map;
+> +               }
+> +       }
+
+in the 'else' part let's also check that excl_prog_hash_size !=3D 0
+while excl_prog_hash =3D=3D 0 is an invalid combination.
+
+> +
+> +       err =3D security_bpf_map_create(map, attr, token, uattr.is_kernel=
+);
+>         if (err)
+>                 goto free_map_sec;
+>
+> @@ -5815,7 +5842,7 @@ static int __sys_bpf(enum bpf_cmd cmd, bpfptr_t uat=
+tr, unsigned int size)
+>
+>         switch (cmd) {
+>         case BPF_MAP_CREATE:
+> -               err =3D map_create(&attr, uattr.is_kernel);
+> +               err =3D map_create(&attr, uattr);
+>                 break;
+>         case BPF_MAP_LOOKUP_ELEM:
+>                 err =3D map_lookup_elem(&attr);
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index d5807d2efc92..15fdd63bdcf9 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -19943,6 +19943,12 @@ static int check_map_prog_compatibility(struct b=
+pf_verifier_env *env,
+>  {
+>         enum bpf_prog_type prog_type =3D resolve_prog_type(prog);
+>
+> +       if (map->excl_prog_sha &&
+> +           memcmp(map->excl_prog_sha, prog->digest, SHA256_DIGEST_SIZE))=
+ {
+> +               verbose(env, "exclusive map access denied\n");
+
+May be make it a bit more precise:
+"program's digest doesn't match map's digest" ?
+
+> +               return -EACCES;
+> +       }
+> +
+>         if (btf_record_has_field(map->record, BPF_LIST_HEAD) ||
+>             btf_record_has_field(map->record, BPF_RB_ROOT)) {
+>                 if (is_tracing_prog_type(prog_type)) {
+> @@ -20051,6 +20057,7 @@ static int __add_used_map(struct bpf_verifier_env=
+ *env, struct bpf_map *map)
+>  {
+>         int i, err;
+>
+> +       /* check if the map is used already*/
+
+left over comment?
+
+>         /* check whether we recorded this map already */
+>         for (i =3D 0; i < env->used_map_cnt; i++)
+>                 if (env->used_maps[i] =3D=3D map)
+> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bp=
+f.h
+> index 16e95398c91c..6f2f4f3b3822 100644
+> --- a/tools/include/uapi/linux/bpf.h
+> +++ b/tools/include/uapi/linux/bpf.h
+> @@ -1504,6 +1504,8 @@ union bpf_attr {
+>                  * If provided, map_flags should have BPF_F_TOKEN_FD flag=
+ set.
+>                  */
+>                 __s32   map_token_fd;
+> +               __u32 excl_prog_hash_size;
+> +               __aligned_u64 excl_prog_hash;
+>         };
+>
+>         struct { /* anonymous struct used by BPF_MAP_*_ELEM and BPF_MAP_F=
+REEZE commands */
+> @@ -1841,7 +1843,6 @@ union bpf_attr {
+>                 __u32           flags;
+>                 __u32           bpffs_fd;
+>         } token_create;
+> -
+>  } __attribute__((aligned(8)));
+>
+>  /* The description below is an attempt at providing documentation to eBP=
+F
+> --
+> 2.43.0
+>
