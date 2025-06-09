@@ -1,114 +1,150 @@
-Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB43B1373;
-	Sun,  8 Jun 2025 18:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C641A7AE3;
+	Mon,  9 Jun 2025 06:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749408322; cv=none; b=HDn1YDT5S4xCrGa/vcTu9wPYGUtiP5Gmwb3fwJYl+K+f4YJq6dEDg6xBrNSK7sgX2p+MQU5Kyc+ei/IX/NG4/vY0qAzxklqhuyJr8bqIgo4FfiRNUMl19BBrB7BkrL0bDFp2qxIvH+m5KJz6W6H873u/Q2xx5vQNhLe2sgkpICQ=
+	t=1749450226; cv=none; b=bMbevv++F9K037wFwwG5xuj9moa3yRmJ/mNFVQzWPgMoWN2+9tuuKBEDCsHddXMg+BoqHJLoClpP1+6OWXfXuLKZsVkw3/fQJisvgMbIcYlmw+jpGsSUEQ8aNkgmuAFZyeFDE+1VNiDoNsOJb8R2Onr6+XBeBMGfXFDbzYzElCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749408322; c=relaxed/simple;
-	bh=jpY6WF/tyt8ZsPJiNzCryKKly+ppwn8MYx1ZpTHcCgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AesIm6umFBGxn+2gH1iw5/1poIuSiPY5cY20RS9klLAsFcOnFi32mnftAqjziVTe1sBF+cIzeTrXOSIDdt+g88NSiGgsmGa+BwTLuoZYAxN4m/FsONazfHQPkWf3rxTMOP0K0QN8Rhpw/I0Jv6n9eAGSYBDcEYyt6Ei4fkV3vYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=kMUkXmV8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SB20Qrrq; arc=none smtp.client-ip=103.168.172.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1749450226; c=relaxed/simple;
+	bh=XvsNeIKAvfYxeWu94vpzujuaP/jIFZurJxIpc+BHVpI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KvlrUc0a1+Cmj1vWXjQCjppfd4A6LDzLeu9Gtb1P6zKMFWnOlB4Qwwy+hN6c9bitqHQffQS8nJuJNR2R3fdl7ahmDm/UvIz9O48Q5QDS6kDzAHax4ZRSceRfMLa1xwHgYlJXKyEi3RcuU3sumpkvB1GaKOo7L9lPMk5erwxhb/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u06q4XRJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="kMUkXmV8";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SB20Qrrq"
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailflow.phl.internal (Postfix) with ESMTP id B0C602001E3;
-	Sun,  8 Jun 2025 14:45:17 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Sun, 08 Jun 2025 14:45:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1749408317;
-	 x=1749415517; bh=pyrxZyuzA0cB9TzK2o1GmFpNIisvskLmghcpCRapKuw=; b=
-	kMUkXmV8EzPikhkBJFVGnuS2wjWadeQwnEeO8kvDsxqi1B3KOiEmaCMg8Na/AyDY
-	O2WTnl0Jk2J/jEU+O+6wh0ZEaQAs/ozWfCMvy8q7QWlrbpIbG5XRgt79h5Q8ay2W
-	6SxSUbcv9H8UeMJeBC4ruQXNvgtx37voEedgebrNaIgyjD+xnik2rtywBsMqf4o6
-	qY26eFDPG8SMurYooUA73L3m8BPwAK3+oYwCU820KpHaaMls5gi4H1l3gTHgRgLu
-	ccHRt72DxBAyGdX+yBaV5lRfOKgmtJ1jg31NJBVGmF4n2HfH/C4etpp19GF3Sk6P
-	pNbKDCs/Yv26hg6/vl1s8w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749408317; x=
-	1749415517; bh=pyrxZyuzA0cB9TzK2o1GmFpNIisvskLmghcpCRapKuw=; b=S
-	B20Qrrql1HNlKE1ptu8rl23aoSFI6mz0aVxTbs4CVsBgaDV2SohoAV+10qivzr7e
-	r1O+psm6WbxtSCY1VNQYODT0sZwl20ZVKVlhAe904CgutowEqCPUayuu/0ghy06h
-	dwdCRAw1wS+7BKynxI96fQfosh0UZVV4ef8PBlZFuqSMyX2V11zOdbfCUNaafUOq
-	ZRbuyqSoQzB4E5NHVuzZu8oo0yAimfOITw8KwY+W4eslcF/pQhU5tTHdiZoEk5m8
-	atuzBHe8bnvBFLVrUoX3Ldhr+gGMmK+KdSvtiG7HVLe8RL7NvqPdlgK6sYTkH9hw
-	WjhmTD7d2mM2ty8LVvd/Q==
-X-ME-Sender: <xms:PNpFaHYshTA3LU5gNz43Nj_WBEJrsG8Iwd3h7mEg3mm6WYYNOzvQpA>
-    <xme:PNpFaGYOZOf4xu9iTv7sKvajyvvha3dPrAOkz7cj48MdK2tdJHDv2N_I6STGnCoZG
-    nkgpBnDkp2dLA-E_GQ>
-X-ME-Received: <xmr:PNpFaJ8d8htT03ZwUBUKVK6O6wK4_nm4XFMVxB1WnpY2XKYF9Berg4vzYRNx0ZaVNqVf7d5TCFRFY7ec3p2J-jfU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdekvdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqne
-    cuggftrfgrthhtvghrnhepfedvheeluedthfelgfevvdfgkeelgfelkeegtddvhedvgfdt
-    feeilefhudetgfdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopedvvddpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepshhonhhgsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepsghpfhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehv
-    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvtghurhhith
-    ihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghr
-    nhgvlhdqthgvrghmsehmvghtrgdrtghomhdprhgtphhtthhopegrnhgurhhiiheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtohepvgguugihiiekjeesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:PNpFaNriKuIzFK9kRzEYtsir3VqqWPxxbJAXix0gL3l9wlgw6H8p2Q>
-    <xmx:PNpFaCo3Tj1OngIRGlU5jI42t42-BKAHBV1mwdF2b1mFETNrCMGd6g>
-    <xmx:PNpFaDTVeydiphFBsN45HGYRHj8wYJDT_pSsmIzdor-LIQzeZtEOuw>
-    <xmx:PNpFaKoQ1CeYbxcFjmLZCflVjLepySL-h7GNqXzx4sba9V5LsoSllA>
-    <xmx:PdpFaJJUm4zDI-kB9H60bpmvYQeK62y7VYsXeJIBn_ZUolts2aQ6k6s6>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 8 Jun 2025 14:45:14 -0400 (EDT)
-Message-ID: <7e457120-6c9e-4318-9f92-e794223bfce6@maowtm.org>
-Date: Sun, 8 Jun 2025 19:45:12 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u06q4XRJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33EE4C4CEEB;
+	Mon,  9 Jun 2025 06:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749450224;
+	bh=XvsNeIKAvfYxeWu94vpzujuaP/jIFZurJxIpc+BHVpI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=u06q4XRJsHiDSTpvSWKH2Z/pNiXWEcSmbPCXaa439I67fDtvI1Lu+hOcNanh8d2Te
+	 Vapusw1KEUaelaQBwKBQnURlQrhBoXtAJvC1oq0JccikGONLOHZKco6sEGS++gUpj0
+	 FfCPVQyrXrLjSVbEVSuxXCP7XhKV0cNBUGa++/QY1Is6lMWrGnA/q8wulLJrBfdLmv
+	 t91KB0QxgT5gxAjvAY2smUWLcoRsD8TU75ZEnHlJjGsOD6pfM42IJWLe/LahNSc+3C
+	 fB6jQpKo7Z9aClERVeLDNXZuTk3e6sAYfSekwc6dyaQCoN9IjKn8q9cTubf4AgudXA
+	 p3UYxbFglHIXw==
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6f8b2682d61so54550356d6.0;
+        Sun, 08 Jun 2025 23:23:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVSrSavIDfN8TLsPFAaU5spdJHOknUK+WDl80p76J8THNW8WXgpQ0+s9Szuy393/0OcMNRttLdCUSyveqrRrA==@vger.kernel.org, AJvYcCWnCpMdRPiQNOZsvaLy0uFb/lnqYJEd4ReJG8kTvqdPQubZvdimJoRBJKqsfrKfknKJeV5fHf6MPqaWUec0mZkAnY4VFiKZ@vger.kernel.org, AJvYcCX7qCrI0zYJZoZhwvYTdVyQL/+F8raYyPgUldMQpk/25uV+sNnoIQHv/6eDDxL218uonLw=@vger.kernel.org, AJvYcCXKtn7z5WeRl+Uk+bBEaews8YGeNbPqX8sB3riWoFjNWG4Fr9sBkprwN0a1lRlxK1NlJukowUGOQr5k977u@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOZbaXzf4cm7e/kGDVSikTPTKA8+Qh4MY8Z/B+GuC5bhp4qmOW
+	tLfu3pzSuEGGXTRSaxrbkpOaQd0lKWbVsYRkrKu/y2VL8jtK5cFBIAK/5v5Z282aiYsshpYCNQs
+	waC14hOOIm9O1/RHg/gV3Xl7PHNDG1k4=
+X-Google-Smtp-Source: AGHT+IFZKIPiFOniWwO3JrSqHR8EFdDF+J9SLDjDaY4aBJDBvQcgJT8acvrljCKcpwaPOgLoEBVL6sspTmqVKcaeq4w=
+X-Received: by 2002:ad4:5c42:0:b0:6f8:c773:26e with SMTP id
+ 6a1803df08f44-6fb10b73db7mr130561536d6.18.1749450223383; Sun, 08 Jun 2025
+ 23:23:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 bpf-next 2/5] landlock: Use path_walk_parent()
-To: Song Liu <song@kernel.org>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk,
- brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org,
- mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com,
- jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com
-References: <20250606213015.255134-1-song@kernel.org>
- <20250606213015.255134-3-song@kernel.org>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20250606213015.255134-3-song@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250606213015.255134-1-song@kernel.org> <dbc7ee0f1f483b7bc2ec9757672a38d99015e9ae.1749402769@maowtm.org>
+In-Reply-To: <dbc7ee0f1f483b7bc2ec9757672a38d99015e9ae.1749402769@maowtm.org>
+From: Song Liu <song@kernel.org>
+Date: Sun, 8 Jun 2025 23:23:30 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW7n_+u-M7bnUwX4Go0D+jj7oZZVopE1Bj5S_nHM1+8PZg@mail.gmail.com>
+X-Gm-Features: AX0GCFst8MCLxlAk4KkSJ6q3kT2d11EjKvEwczcwJRDGZGVDyszvu-NNmnxwdA8
+Message-ID: <CAPhsuW7n_+u-M7bnUwX4Go0D+jj7oZZVopE1Bj5S_nHM1+8PZg@mail.gmail.com>
+Subject: Re: [PATCH v3 bpf-next 0/5] bpf path iterator
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, amir73il@gmail.com, 
+	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net, 
+	eddyz87@gmail.com, gnoack@google.com, jack@suse.cz, jlayton@kernel.org, 
+	josef@toxicpanda.com, kernel-team@meta.com, kpsingh@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, martin.lau@linux.dev, 
+	mattbobrowski@google.com, repnop@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/6/25 22:30, Song Liu wrote:
-> Use path_walk_parent() to walk a path up to its parent.
-> 
-> No functional changes intended.
-> 
-> Signed-off-by: Song Liu <song@kernel.org>
+On Sun, Jun 8, 2025 at 10:34=E2=80=AFAM Tingmao Wang <m@maowtm.org> wrote:
+[...]
+> Hi Song, Christian, Al and others,
+>
+> Previously I proposed in [1] to add ability to do a reference-less parent
+> walk for Landlock.  However, as Christian pointed out and I do agree in
+> hindsight, it is not a good idea to do things like this in non-VFS code.
+>
+> However, I still think this is valuable to consider given the performance
+> improvement, and after some discussion with Micka=C3=ABl, I would like to
+> propose extending Song's helper to support such usage.  While I recognize
+> that this patch series is already in its v3, and I do not want to delay i=
+t
+> by too much, putting this proposal out now is still better than after thi=
+s
+> has merged, so that we may consider signature changes.
+>
+> I've created a proof-of-concept and did some brief testing.  The
+> performance improvement attained here is the same as in [1] (with a "git
+> status" workload, median landlock overhead 35% -> 28%, median time in
+> landlock decreases by 26.6%).
+>
+> If this idea is accepted, I'm happy to work on it further, split out this
+> patch, update the comments and do more testing etc, potentially in
+> collaboration with Song.
+>
+> An alternative to this is perhaps to add a new helper
+> path_walk_parent_rcu, also living in namei.c, that will be used directly
+> by Landlock.  I'm happy to do it either way, but with some experimentatio=
+n
+> I personally think that the code in this patch is still clean enough, and
+> can avoid some duplication.
+>
+> Patch title: path_walk_parent: support reference-less walk
+>
+> A later commit will update the BPF path iterator to use this.
+>
+> Signed-off-by: Tingmao Wang <m@maowtm.org>
+[...]
+>
+> -bool path_walk_parent(struct path *path, const struct path *root);
+> +struct parent_iterator {
+> +       struct path path;
+> +       struct path root;
+> +       bool rcu;
+> +       /* expected seq of path->dentry */
+> +       unsigned next_seq;
+> +       unsigned m_seq, r_seq;
 
-There is also path walk code in collect_domain_accesses even though that
-one doesn't walk pass mount points.  Not sure if that one should be
-updated to use this helper as well, or maybe fine to keep using
-dget_parent.
+Most of parent_iterator is not really used by reference walk.
+So it is probably just separate the two APIs?
+
+Also, is it ok to make m_seq and r_seq available out of fs/?
+
+> +};
+> +
+> +#define PATH_WALK_PARENT_UPDATED               0
+> +#define PATH_WALK_PARENT_ALREADY_ROOT  -1
+> +#define PATH_WALK_PARENT_RETRY                 -2
+> +
+> +void path_walk_parent_start(struct parent_iterator *pit,
+> +                           const struct path *path, const struct path *r=
+oot,
+> +                           bool ref_less);
+> +int path_walk_parent(struct parent_iterator *pit, struct path *next_pare=
+nt);
+> +int path_walk_parent_end(struct parent_iterator *pit);
+
+I think it is better to make this rcu walk a separate set of APIs.
+IOW, we will have:
+
+int path_walk_parent(struct path *path, struct path *root);
+
+and
+
+void path_walk_parent_rcu_start(struct parent_iterator *pit,
+                           const struct path *path, const struct path *root=
+);
+int path_walk_parent_rcu_next(struct parent_iterator *pit, struct path
+*next_parent);
+int path_walk_parent_rcu_end(struct parent_iterator *pit);
+
+Thanks,
+Song
+
+[...]
