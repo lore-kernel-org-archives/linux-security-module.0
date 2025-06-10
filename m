@@ -1,235 +1,108 @@
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1322248AB;
-	Tue, 10 Jun 2025 23:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC8574C14
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 23:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749598490; cv=none; b=WKOq1khTUIZvIsch9BmHR7YNCfQIinhoAkA++VFUJg7plkRiyBRuzw/QQrVElED0ZGTxBBo02YrFe6ZQ2IF5SVLXWJ8gLGcGpQBn2Gglhx3/8v9oO+4nejCOBlReZ/91Y+tULf/KzATGvw4TvUfA+GnO9Ih2JJ4OKXlHb0HWgSY=
+	t=1749599981; cv=none; b=RRHR5vsvEa6TBVb5C64RSx/nQJNuI5UUskdlx7/BdycRqj1gAHddlMeBfee3rHCXeJI1tk3dywf4ViQyZiPjNeHVzba3HB+Bl+mm3BTmSkR0bvNSTcTwzijpsxKkMomarGMjVYVLut/RRdOBzrJd4fZEmYzcPgB8z34lNsAxmno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749598490; c=relaxed/simple;
-	bh=nAjYQX+TSMsZ9bA78ZfRAkX5IYz9wrbImSKD6ErItyQ=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=pBQyxuUh8kbj+uERSQL5RNuklCgRmT0aPUWPdqIF0xod3g8zwUJogulwtshYX41ceKEINOAn7LoRifPWDzjV0NFqhxfoP3EABle4B0eRZ/SkgyePXNMONe6aAbd64VmP+IVnoBFJD8k2T1qahZeGiyXQt7YvDe47vWvj+4floZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uP8UH-007smc-Po;
-	Tue, 10 Jun 2025 23:34:37 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1749599981; c=relaxed/simple;
+	bh=Je4CJQwLEMxzyvSqXnXflA8q5uNGWa/x2XoZS+jIlro=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=uUs6OGBIHTMaGJRSUQYhwed7ckTyQBV2EZLYCgr2bL+9LxfcIlWINb0tFwTRriaz83A1e1Bwb0trFx2NKAPaqdSEcLhJBJ4OaQGdiPo+2xVqs6ZRsgKzfgJuNsJ9AcwkvM0HjjW/t5kbOtp3HPdKQ6nSCorSfAtcbRudSQ0I6+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RXKuHeLq; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RXKuHeLq"
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7d20f79a00dso779618185a.0
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 16:59:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1749599977; x=1750204777; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v7XbTnvXmwSEu1E53OM74kRhz4BEvh+0MMYgo4LW+rk=;
+        b=RXKuHeLqAXrHmeY4ugstcuiL3UzkGw/IjNjadYmyq0hw/l3KV6dOxAFEWsT+ysC2Jl
+         e/aeJqg827Z21yZWFO/ciVffcfXLIzgCUw/08VeslPM+T2zBccLMcAVSP8XhHH/z69xg
+         swnvn5Z0V6bPGmp8MYyeg+zUUUIYxvE7E+hLbgW9wPYXXLMRqx3nQd3n0tKFdropv79A
+         6sBJtgyrFeuPm6TbvrzH74MsjMvzUO2tEUr6LyGyV/JD44oXMxPxzGum9drrHgms0GXf
+         tIDb6ANWb38f8LC5szm+Gm7mCzTxsNfEIFZu2a7t5ekhX2Hf0CxgJLyINpjtKwXl+UAB
+         giDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749599977; x=1750204777;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=v7XbTnvXmwSEu1E53OM74kRhz4BEvh+0MMYgo4LW+rk=;
+        b=WuOhVtr5gv4u/gB0vJB/CXlJXK/JorXPmPSOGDddrS4l1tVYCKC8oNdeX6QDLKYEIl
+         CfYHdI4Pbmxp4o61ZlyeNgcPgV1SlbkZuzORQTSknwgL4vAgra6v8l0/oeZHYk32GDl2
+         em3+JFBCU7vDnDZaVis6rjRSTX9N1xHLEX7WAIPdysaXO/hlY8R2Nm/h9kGFX2VKqQqU
+         f/KZu7/+Gn6aSAwGjEO8P+HiIkgEN/SAq6uB2aLfqpwvTCoV6BOVxYIh7T8IAlAyWkoI
+         7Ybckf100I1i9IEHZ3Owrl+46/CZUTfgX8v5KxtP3UBZx1xKa/pj6ipZvbmL45zopf9f
+         6Q0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUe+PYhBlbOEyrZi7HWmPfBjCQIW6KRhU1PLIf6xMZ6jHb0m+4+TT16kOwlq0vyfQMDIcDMPI73IpnzovhU5m5WfdBEcsA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBdVQWIGVmJrHQ74S0R2/i0JhqZoVx6FEJPgQWi2z38crWg43S
+	bc/IePU0kjNK4V4ImNXwqxT/3eZGmBMCl+fBSwzcqohK9DTRphoQcORAVqzQPvoylkfgkFJce5W
+	kcrA=
+X-Gm-Gg: ASbGnct/upcfjK94dOzqlv+33gLj677lyBW8q006VVjHpwX7gNUsoZCa+OLqBUC8vtp
+	GWFG3FwEuVR7WV2Wg4CeVZPJUyOTF3YWK3tCt4Sh4wFoZULZPbv43G3Mzvzdx/g3bwLK+V+vLxs
+	mNGSGxiwbXPHzPQNav1WSRFIWBKpoPwKUUVYkoZ5Ec86Cs3DmxgWBKu7eGiHVHUXuIi3ERrYjDI
+	qM4X/CaTUBlM+vqU9RSmPgVlTAb7q3lRPVfi8b89Q8aziUe1Yekx2jFnBf3B27pkA8rNIvDvJds
+	UErxCcFuUUy1uqaOIN4OhNBckSt2raVM3Zu4RdaNLN/YV6F0kjOra+dg+EOYTtIpuV7TylGx+r4
+	a4vnvlVkHtfhFYOWIIWKSv0sAh1UZ5Do=
+X-Google-Smtp-Source: AGHT+IEYvYq1zREnITQiTHWiFYu+Q7dqnjN3FAbmTP65Qo4UtNmfwZPUsk9OIL+y0WOtEfcnduwFPg==
+X-Received: by 2002:a05:620a:458b:b0:7d0:a25b:d04c with SMTP id af79cd13be357-7d3a9566e5dmr171097285a.9.1749599977500;
+        Tue, 10 Jun 2025 16:59:37 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6fb09b2a021sm73954656d6.83.2025.06.10.16.59.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 16:59:37 -0700 (PDT)
+Date: Tue, 10 Jun 2025 19:59:36 -0400
+Message-ID: <9d934c88d329a2e6076c344c90cf620a@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Song Liu" <song@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk,
- brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org,
- mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com,
- jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, gnoack@google.com,
- m@maowtm.org, "Song Liu" <song@kernel.org>
-Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function
- path_walk_parent()
-In-reply-to: <20250606213015.255134-2-song@kernel.org>
-References: <20250606213015.255134-1-song@kernel.org>,
- <20250606213015.255134-2-song@kernel.org>
-Date: Wed, 11 Jun 2025 09:34:36 +1000
-Message-id: <174959847640.608730.1496017556661353963@noble.neil.brown.name>
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250610_1956/pstg-lib:20250610_1817/pstg-pwork:20250610_1956
+From: Paul Moore <paul@paul-moore.com>
+To: Kalevi Kolttonen <kalevi@kolttonen.fi>, linux-security-module@vger.kernel.org
+Cc: Kalevi Kolttonen <kalevi@kolttonen.fi>
+Subject: Re: [PATCH] Trivial fix comment
+References: <20250515202340.4271-1-kalevi@kolttonen.fi>
+In-Reply-To: <20250515202340.4271-1-kalevi@kolttonen.fi>
 
-On Sat, 07 Jun 2025, Song Liu wrote:
-> This helper walks an input path to its parent. Logic are added to handle
-> walking across mount tree.
->=20
-> This will be used by landlock, and BPF LSM.
->=20
-> Signed-off-by: Song Liu <song@kernel.org>
+On May 15, 2025 Kalevi Kolttonen <kalevi@kolttonen.fi> wrote:
+> 
+> Signed-off-by: Kalevi Kolttonen <kalevi@kolttonen.fi>
 > ---
->  fs/namei.c            | 51 +++++++++++++++++++++++++++++++++++++++++++
->  include/linux/namei.h |  2 ++
->  2 files changed, 53 insertions(+)
->=20
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 4bb889fc980b..f02183e9c073 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1424,6 +1424,57 @@ static bool choose_mountpoint(struct mount *m, const=
- struct path *root,
->  	return found;
+>  security/security.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Merged into lsm/dev but I fixed the subject line and added a simple
+commit description.  Please take a look and apply these lessons to
+any future submissions.
+
+> diff --git a/security/security.c b/security/security.c
+> index 596d41818577..fc8405928cc7 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2181,7 +2181,7 @@ int security_inode_symlink(struct inode *dir, struct dentry *dentry,
 >  }
-> =20
-> +/**
-> + * path_walk_parent - Walk to the parent of path
-> + * @path: input and output path.
-> + * @root: root of the path walk, do not go beyond this root. If @root is
-> + *        zero'ed, walk all the way to real root.
-> + *
-> + * Given a path, find the parent path. Replace @path with the parent path.
-> + * If we were already at the real root or a disconnected root, @path is
-> + * not changed.
-> + *
-> + * The logic of path_walk_parent() is similar to follow_dotdot(), except
-> + * that path_walk_parent() will continue walking for !path_connected case.
-> + * This effectively means we are walking from disconnected bind mount to
-> + * the original mount. If this behavior is not desired, the caller can add
-> + * a check like:
-> + *
-> + *   if (path_walk_parent(&path) && !path_connected(path.mnt, path.dentry)
-> + *           // continue walking
-> + *   else
-> + *           // stop walking
-> + *
-> + * Returns:
-> + *  true  - if @path is updated to its parent.
-> + *  false - if @path is already the root (real root or @root).
-> + */
-> +bool path_walk_parent(struct path *path, const struct path *root)
-> +{
-> +	struct dentry *parent;
-> +
-> +	if (path_equal(path, root))
-> +		return false;
-> +
-> +	if (unlikely(path->dentry =3D=3D path->mnt->mnt_root)) {
-> +		struct path p;
-> +
-> +		if (!choose_mountpoint(real_mount(path->mnt), root, &p))
-> +			return false;
-> +		path_put(path);
-> +		*path =3D p;
-> +	}
-> +
-> +	if (unlikely(IS_ROOT(path->dentry)))
-> +		return false;
-> +
-> +	parent =3D dget_parent(path->dentry);
-> +	dput(path->dentry);
-> +	path->dentry =3D parent;
-> +	return true;
-> +}
-> +EXPORT_SYMBOL_GPL(path_walk_parent);
+>  
+>  /**
+> - * security_inode_mkdir() - Check if creation a new director is allowed
+> + * security_inode_mkdir() - Check if creating a new directory is allowed
+>   * @dir: parent directory
+>   * @dentry: new directory
+>   * @mode: new directory mode
+> -- 
+> 2.49.0
 
-The above looks a lot like follow_dotdot().  This is good because it
-means that it is likely correct.  But it is bad because it means there
-are two copies of essentially the same code - making maintenance harder.
-
-I think it would be good to split the part that you want out of
-follow_dotdot() and use that.  Something like the following.
-
-You might need a small wrapper in landlock which would, for example,
-pass LOOKUP_BENEATH and replace path->dentry with the parent on success.
-
-NeilBrown
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 4bb889fc980b..b81d07b4417b 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2048,36 +2048,65 @@ static struct dentry *follow_dotdot_rcu(struct nameid=
-ata *nd)
- 	return nd->path.dentry;
- }
-=20
--static struct dentry *follow_dotdot(struct nameidata *nd)
-+/**
-+ * path_walk_parent - Find the parent of the given struct path
-+ * @path  - The struct path to start from
-+ * @root  - A struct path which serves as a boundary not to be crosses
-+ * @flags - Some LOOKUP_ flags
-+ *
-+ * Find and return the dentry for the parent of the given path (mount/dentry=
-).
-+ * If the given path is the root of a mounted tree, it is first updated to
-+ * the mount point on which that tree is mounted.
-+ *
-+ * If %LOOKUP_NO_XDEV is given, then *after* the path is updated to a new mo=
-unt,
-+ * the error EXDEV is returned.
-+ * If no parent can be found, either because the tree is not mounted or beca=
-use
-+ * the @path matches the @root, then @path->dentry is returned unless @flags
-+ * contains %LOOKUP_BENEATH, in which case -EXDEV is returned.
-+ *
-+ * Returns: either an ERR_PTR() or the chosen parent which will have had the
-+ * refcount incremented.
-+ */
-+struct dentry *path_walk_parent(struct path *path, struct path *root, int fl=
-ags)
- {
- 	struct dentry *parent;
-=20
--	if (path_equal(&nd->path, &nd->root))
-+	if (path_equal(path, root))
- 		goto in_root;
--	if (unlikely(nd->path.dentry =3D=3D nd->path.mnt->mnt_root)) {
--		struct path path;
-+	if (unlikely(path->dentry =3D=3D path->mnt->mnt_root)) {
-+		struct path new_path;
-=20
--		if (!choose_mountpoint(real_mount(nd->path.mnt),
--				       &nd->root, &path))
-+		if (!choose_mountpoint(real_mount(path->mnt),
-+				       root, &new_path))
- 			goto in_root;
--		path_put(&nd->path);
--		nd->path =3D path;
--		nd->inode =3D path.dentry->d_inode;
--		if (unlikely(nd->flags & LOOKUP_NO_XDEV))
-+		path_put(path);
-+		*path =3D new_path;
-+		if (unlikely(flags & LOOKUP_NO_XDEV))
- 			return ERR_PTR(-EXDEV);
- 	}
- 	/* rare case of legitimate dget_parent()... */
--	parent =3D dget_parent(nd->path.dentry);
-+	parent =3D dget_parent(path->dentry);
-+	return parent;
-+
-+in_root:
-+	if (unlikely(flags & LOOKUP_BENEATH))
-+		return ERR_PTR(-EXDEV);
-+	return dget(path->dentry);
-+}
-+EXPORT_SYMBOL(path_walk_parent);
-+
-+static struct dentry *follow_dotdot(struct nameidata *nd)
-+{
-+	struct dentry *parent =3D path_walk_parent(&nd->path, &nd->root, nd->flags);
-+
-+	if (IS_ERR(parent))
-+		return parent;
- 	if (unlikely(!path_connected(nd->path.mnt, parent))) {
- 		dput(parent);
- 		return ERR_PTR(-ENOENT);
- 	}
-+	nd->inode =3D nd->path.dentry->d_inode;
- 	return parent;
--
--in_root:
--	if (unlikely(nd->flags & LOOKUP_BENEATH))
--		return ERR_PTR(-EXDEV);
--	return dget(nd->path.dentry);
- }
-=20
- static const char *handle_dots(struct nameidata *nd, int type)
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 5d085428e471..4cc15a58d900 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -80,6 +80,7 @@ struct dentry *lookup_one_unlocked(struct mnt_idmap *idmap,
- struct dentry *lookup_one_positive_unlocked(struct mnt_idmap *idmap,
- 					    struct qstr *name,
- 					    struct dentry *base);
-+struct dentry *path_walk_parent(struct path *path, struct path *root, int fl=
-ags);
-=20
- extern int follow_down_one(struct path *);
- extern int follow_down(struct path *path, unsigned int flags);
+--
+paul-moore.com
