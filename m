@@ -1,130 +1,146 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC3118FC84;
-	Tue, 10 Jun 2025 00:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C203027FD5D
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 08:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749516342; cv=none; b=h6f76A7ws5HTi9ns4MQ/IOsBGyHn3zHL+rYXxW2RRN8BKHlOtwcIerxd/3UmwV8iqGizGwxAt0VHNvxlUdqHADbaLTNvHS6+CI1kmyn8VdytzC9NqPn1/UDZVBXxR+OT1dZv2+bBBERZg6ET65676RHWHFeMJIjO9u9XzpJx2iM=
+	t=1749545439; cv=none; b=rCh+idcxDG4SqpcV+rXErSSO+KIuNKYQQwCItP97r9FjChUcVhbU8CTjnV1NzWjrTjYHdbTUc859Ac4pe3CzzJGfu3URt7DT1AxxpqBoondIHw9N4kgMOEhEdJ6HtPjWNCmVsQsXtmwyelFnBEmnImr5Wfn1+sAejBBj4MeNro8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749516342; c=relaxed/simple;
-	bh=Ori/KbuAQ4TV3cThealG1w6+EdbLKa/ruRtxvhkgFIY=;
+	s=arc-20240116; t=1749545439; c=relaxed/simple;
+	bh=Pdlo0r5TXrf3xrhsKn42sIVBAfwAWMvvvs2hVtLkZXg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Aba4HAsB47kXBqzVH5h1RD1F+KTfnwQ5NDa7MJt4t7cZRBizrfqrmmhfsptaVnCaGnKLVlaVXRcjLvR0IV5bE5TsJqqgClK2jkQM4qQDdOzxPDrHg7WA/HDwPaneM+6KhXilO1u40NxzCUOiHrNRj9Z5wzRjfCLp1M6V9Pcl5NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dLnIS+Lv; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=blIhkj1cL/XxHN26ab93cTQZ6iir51RFZ3n9Ouvm4RXlZkzuMOaSZ9M2r9LCN+zPpyzx8R3xWXakGJuS6EmBWEiOqcOzec57K9LCC+cW+/HPtDpsqIVhufjDS4S675yqgU0wbL/BqXux7e73W7PFKId4jljeYY/3FVKJcUjzRh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UO8Z0mTE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLnIS+Lv"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a54836cb7fso1100375f8f.2;
-        Mon, 09 Jun 2025 17:45:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749516339; x=1750121139; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S/nvCmvL9TnMGgsBBImgevjJBae5i0pFldeGSR1tm0E=;
-        b=dLnIS+LvuOk9ViQ3ZW3mZl12MhAGjEx3cBWeHPOL5fwjQ1F5FUjFOYW7vhbS7qD75E
-         1e4yrrgm/MA1/0MaFdPz07yuq47iulJt84pYgLqVqzlmdQbE3g9Tt8slgipm8L5+B8PB
-         td1gP97jIDyxzAHemPrFtD5r8Z1vvhlnVYSSKFIQ0JBH0P7NnFXdGHs7TYoFxv9y0bIH
-         5xRjUvGJXftI9A3WIuk/48X1wHFpWvTO4+Yxh+LhhIB71SRwfBdjbM7/6sX2KBStRHNF
-         XWSK5R5NiLN/WfSkN0Wg+QL85cscJoYKpbA3MheJ5Io8YoMcIui9Dvf3NnaWR3/UeUSl
-         fT6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749516339; x=1750121139;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S/nvCmvL9TnMGgsBBImgevjJBae5i0pFldeGSR1tm0E=;
-        b=WIIMiML+3t+nxnWiDWTsI2ucG7IBVQo3AgXPGOmJWVFC5U5iD9UZ94DPmW/Edrpe6m
-         clMAHx6bEzlgiVH7Yfla0mVW1zi/kxh07jWUZaAHCCg/VLNDYTwNFIBetlzIHja4zNQD
-         kgTH1TlR4Op8iO3YPAIVe/ww7SiwV9am/wnaXs02lFsItLHX2zlpWzf35eVwB0MDzA36
-         Adoc6bxOs2vWLU/D3wNzDa4+7l38/Q19ksrnMgagKqo8sOiFl3n+ibiScj9CxcLmb2L1
-         jpm4OuGLvi2+pq4moObP3UhWxER87jMtiiJOzLCa+FmYBxErRHhykDraC/qNkHoIeaXs
-         e7Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUwyiT7fyJXWZWoQON6mFwPiPuXDUfGwHAJV4hd/QqZFlxvoEF70hyJAs6WJpC9w8UPiel3dRA6yAy8AzcEq0LU9Ourbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNb24CLc0i6LuTh5LYU6u5SbQIE5ouoBhy44t5k5CLr85IyItQ
-	VxbZ98EQ9OcEniD8BxT/RigDhXkYa/ONlZ0zII4EpO/sEQjEClOB3t0xNUVBkemUTAlxusVyozV
-	Z4v3YWj33N3eVCAKcUsN3pDyhnnoZyZ4=
-X-Gm-Gg: ASbGncsiqWPMU00WyY4axFY9ynr6VmgUaAtPUTrrrnViP3ZW4ab94PRc65heRjfpHPN
-	GwJmODWtTPrGb1scqaKLK0Dh6Oc9RR1bZtQL2B+p6AZP9zopzzl5Nf8d8X9EcXyeA8R+1UIm5fH
-	PLdPAfkPHmSzW0lRflVZQyTrsSr1jPnHnDgikhhmraVsNhLhvMj06CrrwFgOKGUCG6iX4pAvEv
-X-Google-Smtp-Source: AGHT+IF2ws0FrcnMf32JfSTC7LGj9R/Fh7ZxxsVNs0jZPTiiRf8bCb68MykSBcwGYLgfBNob+mJWDPFx2/JKIPjEV4U=
-X-Received: by 2002:a5d:64ec:0:b0:3a4:dbac:2db6 with SMTP id
- ffacd0b85a97d-3a531cb89e6mr12172556f8f.49.1749516338557; Mon, 09 Jun 2025
- 17:45:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UO8Z0mTE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E312C4CEF4
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 08:50:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749545439;
+	bh=Pdlo0r5TXrf3xrhsKn42sIVBAfwAWMvvvs2hVtLkZXg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UO8Z0mTEPRC31T+fPtnoF9sxxtZSilkW4Z0SXLstzim8GaazVMqrvqVNuGFITc0ZR
+	 TynRngECerOIsZ0RhTb9SOxdjruOPiY29P/SDmA7FhdvUgtWZIz9hau+NRArVSP/5Q
+	 yr9Ue1ko6psiQZRGLAciXJcIcBkMB2A6XXwZhrymO//uzgF6159bcmuQF4zsajPybf
+	 miU1yxOhYRT55HYNWv8T+MFgzywE3uMRo59uOWLenCyFsg2OenmgkE9fU5SMv8Bqy5
+	 NzH4nQORW0P2GEUwopU5QdHzbYdurCmri49w7K5yqj6crXNMjBWa+2l4S5ZurJwsAD
+	 6leyCeniUR6oA==
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5fff52493e0so6619681a12.3
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 01:50:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWKiHAC8/gC/GqU6QM0aoMg7v3vvjC+/oS8BtBdPKSX4IVBmmO2fivjlWpB4sd1HsfUCEVph7DK7EsAneReMHFf2ikKqpA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqmAKjJDAyO3Pz5GzPQOvnM70grHMxeNl0FDyt1y/ThdryhWW4
+	njrerC0NLU+H47bvAAv2IexHfz74KcsF4X63/JxmNz26bnMwmbNq0++4deRL93bocdeBRC1QEIr
+	rhLnybJywb93RVboCSEeTPm8jQQoNe9ouBAyp5suy
+X-Google-Smtp-Source: AGHT+IEGZeJ0GDw260C12WchBTXu6t51Px5b+uaoqudQPZ6vvLjx+05Ekkt2bohg85ZWUfzSS1cQw+g89jN76M+wcCc=
+X-Received: by 2002:a05:6402:3494:b0:607:206f:a2e with SMTP id
+ 4fb4d7f45d1cf-6082dbed7c3mr1533544a12.32.1749545437888; Tue, 10 Jun 2025
+ 01:50:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-13-kpsingh@kernel.org>
-In-Reply-To: <20250606232914.317094-13-kpsingh@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 9 Jun 2025 17:45:27 -0700
-X-Gm-Features: AX0GCFtaCkx1n4RY_ghqGoBiTLzBBMUqEHRvoWT2T7yPn4PUCVKPTQ9iljpQ5wk
-Message-ID: <CAADnVQ+bBXJMt1fK-mVzfFyK=k8xDgZuLuQ8J-SAFug294ibqw@mail.gmail.com>
-Subject: Re: [PATCH 12/12] selftests/bpf: Enable signature verification for
- all lskel tests
-To: KP Singh <kpsingh@kernel.org>
-Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>
+References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-12-kpsingh@kernel.org>
+ <b2a0c3d722c78de38ffa2664f71654a422d77121.camel@HansenPartnership.com>
+In-Reply-To: <b2a0c3d722c78de38ffa2664f71654a422d77121.camel@HansenPartnership.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Tue, 10 Jun 2025 10:50:27 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ7Mh=VV0FDsfWZbWBcdC6qLdVp4RDbnoMM_Fb4LW7t4=Q@mail.gmail.com>
+X-Gm-Features: AX0GCFsJ1BDqwk_WfkHZFG18itTtVpcvyI1cHBtZQFW_a9QjmxoaHJD6FO4pw3c
+Message-ID: <CACYkzJ7Mh=VV0FDsfWZbWBcdC6qLdVp4RDbnoMM_Fb4LW7t4=Q@mail.gmail.com>
+Subject: Re: [PATCH 11/12] bpftool: Add support for signing BPF programs
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	keyrings@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 6, 2025 at 4:29=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote:
+On Sun, Jun 8, 2025 at 4:03=E2=80=AFPM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
 >
-> Convert the kernel's generated verification certificate into a C header
-> file using xxd.  Finally, update the main test runner to load this
-> certificate into the session keyring via the add_key() syscall before
-> executing any tests.
+> [+keyrings]
+> On Sat, 2025-06-07 at 01:29 +0200, KP Singh wrote:
+> [...]
+> > diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+> > index f010295350be..e1dbbca91e34 100644
+> > --- a/tools/bpf/bpftool/prog.c
+> > +++ b/tools/bpf/bpftool/prog.c
+> > @@ -23,6 +23,7 @@
+> >  #include <linux/err.h>
+> >  #include <linux/perf_event.h>
+> >  #include <linux/sizes.h>
+> > +#include <linux/keyctl.h>
+> >
+> >  #include <bpf/bpf.h>
+> >  #include <bpf/btf.h>
+> > @@ -1875,6 +1876,8 @@ static int try_loader(struct gen_loader_opts
+> > *gen)
+> >  {
+> >       struct bpf_load_and_run_opts opts =3D {};
+> >       struct bpf_loader_ctx *ctx;
+> > +     char sig_buf[MAX_SIG_SIZE];
+> > +     __u8 prog_sha[SHA256_DIGEST_LENGTH];
+> >       int ctx_sz =3D sizeof(*ctx) + 64 * max(sizeof(struct
+> > bpf_map_desc),
+> >                                            sizeof(struct
+> > bpf_prog_desc));
+> >       int log_buf_sz =3D (1u << 24) - 1;
+> > @@ -1898,6 +1901,24 @@ static int try_loader(struct gen_loader_opts
+> > *gen)
+> >       opts.insns =3D gen->insns;
+> >       opts.insns_sz =3D gen->insns_sz;
+> >       fds_before =3D count_open_fds();
+> > +
+> > +     if (sign_progs) {
+> > +             opts.excl_prog_hash =3D prog_sha;
+> > +             opts.excl_prog_hash_sz =3D sizeof(prog_sha);
+> > +             opts.signature =3D sig_buf;
+> > +             opts.signature_sz =3D MAX_SIG_SIZE;
+> > +             opts.keyring_id =3D KEY_SPEC_SESSION_KEYRING;
+> > +
 >
-> The kernel's module signing verification certificate is converted to a
-> headerfile and loaded as a session key and all light skeleton tests are
-> updated to be signed.
+> This looks wrong on a couple of levels.  Firstly, if you want system
+> level integrity you can't search the session keyring because any
+> process can join (subject to keyring permissions) and the owner, who is
+> presumably the one inserting the bpf program, can add any key they
+> like.
 >
-> Signed-off-by: KP Singh <kpsingh@kernel.org>
-> ---
->  tools/testing/selftests/bpf/.gitignore   |  1 +
->  tools/testing/selftests/bpf/Makefile     | 13 +++++++++++--
->  tools/testing/selftests/bpf/test_progs.c | 13 +++++++++++++
->  3 files changed, 25 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/selft=
-ests/bpf/.gitignore
-> index e2a2c46c008b..5ab96f8ab1c9 100644
-> --- a/tools/testing/selftests/bpf/.gitignore
-> +++ b/tools/testing/selftests/bpf/.gitignore
-> @@ -45,3 +45,4 @@ xdp_redirect_multi
->  xdp_synproxy
->  xdp_hw_metadata
->  xdp_features
-> +verification_cert.h
-> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftes=
-ts/bpf/Makefile
-> index cf5ed3bee573..778b54be7ef4 100644
-> --- a/tools/testing/selftests/bpf/Makefile
-> +++ b/tools/testing/selftests/bpf/Makefile
-> @@ -7,6 +7,7 @@ CXX ?=3D $(CROSS_COMPILE)g++
->
->  CURDIR :=3D $(abspath .)
->  TOOLSDIR :=3D $(abspath ../../..)
-> +CERTSDIR :=3D $(abspath ../../../../certs)
->  LIBDIR :=3D $(TOOLSDIR)/lib
->  BPFDIR :=3D $(LIBDIR)/bpf
->  TOOLSINCDIR :=3D $(TOOLSDIR)/include
-> @@ -534,7 +535,7 @@ HEADERS_FOR_BPF_OBJS :=3D $(wildcard $(BPFDIR)/*.bpf.=
-h)               \
->  # $1 - test runner base binary name (e.g., test_progs)
->  # $2 - test runner extra "flavor" (e.g., no_alu32, cpuv4, bpf_gcc, etc)
->  define DEFINE_TEST_RUNNER
-> -
-> +LSKEL_SIGN :=3D -S -k $(CERTSDIR)/signing_key.pem -i $(CERTSDIR)/signing=
-_key.x509
 
-Can we do a fallback for setups without CONFIG_MODULE_SIG ?
-Reuse setup() helper from verify_sig_setup.sh ?
-Doesn't have to be right away. It can be a follow up.
+Wanting system level integrity is a security policy question, so this
+is something that needs to be implemented at the security layer, the
+LSM can deny the keys / keyring IDs they don't trust.  Session
+keyrings are for sure useful for delegated signing of BPF programs
+when dynamically generated.
+
+> The other problem with this scheme is that the keyring_id itself has no
+> checked integrity, which means that even if a script was marked as
+
+If an attacker can modify a binary that has permissions to load BPF
+programs and update the keyring ID then we have other issues. So, this
+does not work in independence, signed BPF programs do not really make
+sense without trusted execution).
+
+> system keyring only anyone can binary edit the user space program to
+> change it to their preferred keyring and it will still work.  If you
+> want variable keyrings, they should surely be part of the validated
+> policy.
+
+The policy is what I expect to be implemented in the LSM layer. A
+variable keyring ID is a critical part of the UAPI to create different
+"rings of trust" e.g. LSM can enforce that network programs can be
+loaded with a derived key, and have a different keyring for
+unprivileged BPF programs.
+
+This patch implements the signing support, not the security policy for it.
+
+- KP
+
+>
+> Regards,
+>
+> James
+>
