@@ -1,190 +1,109 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7652686B3
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 22:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3552D5403;
+	Tue, 10 Jun 2025 23:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749594932; cv=none; b=eFS3WEuUQuOKrEBp+zs6w3gm+zqsCt7c9hMl7+Rj1gp2cTPgJcUK3dFwUDTq5QuzdBmXMDm0svbhi4X1u8eLqhdm0gscAUtsWfqsorszRXci0TZ7zI++mKfNkWaIMY8YBQ4jaaGOF1sJTYq4At+BIb7dpUnsa6FIQz+HOHuXsAs=
+	t=1749596901; cv=none; b=GXrJvOInJqXcegEKcPxNK/LqSASSrlLNFnvaTQnwTPaqrwCBtrfNlnNrIji945MxLmo52OI7olt7mjKPZaHcNO4eQx2ZYydZX2gZstblVdPGuz6ZBOZ7DSpm86r7qM74W4kz6IaD6s5O8Yfos6pSoDjixlDCk8SroX7SjUl6U+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749594932; c=relaxed/simple;
-	bh=zhgFQwk1GFMLOuRnapR4kecbgdYNBQvJrsBkPLPvflU=;
+	s=arc-20240116; t=1749596901; c=relaxed/simple;
+	bh=vOAAvEx4E+8UjppT46gHSojDmxrWyNLo9cdzD7FA+rc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tCEI8zIOwMZ1AIemqY5YeDWh42NjOBe1eZ//4RNk7O6e4rrut3xFfy/AOP7dcIIDC7sy/duarv0R9n9m7h0cmV8uNHMPN4Q01ctAXGGEgfzU6uA9wXA8aa0RmRccFNdSORiObwLCGBnRaqWpOqkeCGoHztSAPlCjYI554N9GM94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sznl3CkJ; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=tiUBMoxRdmiWlrbACaDuEKcdPN+KBhgseA3C1MzQsXMk+6yGCWMminrTzS784aid2+gZX3s9qBRfl0uzbbL1NW+Cs+bh0oHPKRoZUGLDme32AIARjMEPblUUE9BwLt3Ea6Znjl/MTltpJBZazJVB82XSOurnYy5BpZqQZmTIAbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VmmtZeb2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sznl3CkJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D895DC4CEEF
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 22:35:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmmtZeb2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F4E4C4CEF3;
+	Tue, 10 Jun 2025 23:08:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749594931;
-	bh=zhgFQwk1GFMLOuRnapR4kecbgdYNBQvJrsBkPLPvflU=;
+	s=k20201202; t=1749596900;
+	bh=vOAAvEx4E+8UjppT46gHSojDmxrWyNLo9cdzD7FA+rc=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Sznl3CkJZ1dIwunELRCZqN8DJmg7ahvHxbcCosaT9BvGr+SjaB7c61l4aO+CfgPY8
-	 Xygcg8s4Y0//iDnU/mhABvMNRE+ME1OKGdrB7Re+kjPjnAG+lpwpDCwEZEINLGMSua
-	 HGCBwjmINsZwIj9DyHwsieqiDHf2z6Hrj6NUaO18/J7povCBZWDH/azoEn58hTfLDW
-	 f+ibPnfeZjYXCBWgrDmFr7Jzl0ku91dYqiwqUs6mVD0Ro2MkSs4LFzIioaL1+WqBwu
-	 vGXtsEgMDe0OAApOyFW7NIgAoTq/UdpHfJWrgrclrSJhsEA2KN1S9rs4BETf6azO0K
-	 q3KjLuh4RBV7Q==
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60179d8e65fso6046074a12.0
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 15:35:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUoHiitB2In5Ba6VmOoaRUzaBRU38bxcnNwOb9q6MkO0KaBmhf5Gy42Qw4e788bngA+kKb+J0/YeEg4F583Ty6edawwkOk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpRxM9+e98f7A4rD3xE4aPv/+P2thkBkLV+/8h5SeP9fsWzQnE
-	MRzYpu5Yr4ugdVybj/KPGR2ZQ/PNAbqnBrqm2PTJtf/IhnUxno9vrWr8XIhDqrffk/kH1HqaxZn
-	llpVXM1jgx9AGb7FLb3/arfdrk5vaoKECAvpoab80
-X-Google-Smtp-Source: AGHT+IG0qvlGOKsN2bIglY2IYmdvTTXKsfP6l6rvTZGU4hJXJ8xMLM4zScrg1l4mXHegvH5no7mNTkVnpdCHssuYtkk=
-X-Received: by 2002:a05:6402:42c8:b0:608:42f9:a5cb with SMTP id
- 4fb4d7f45d1cf-6084683d8d9mr845177a12.10.1749594930421; Tue, 10 Jun 2025
- 15:35:30 -0700 (PDT)
+	b=VmmtZeb2utDRFMCLcnI+EFjIb/ePZ95my4a6Yj5o8dvzSu8CKzuCsIsjsyYKCSzP4
+	 C/yPlvqqAqgpMqdOxWr3yOw/WxE5b2nbVKtJ8kiMNQiV+u6HfOultf1pxoGJgvPunu
+	 E1nQ+y2fg/SZtPcq/v6IPFppzZa+oQhimwTGRgnHXxp3ddZjPrgtdPTI/Cg1wvyTFH
+	 EUO9u9o6HrdExqGY0WBoAHzJwEL+ponltPd49UHDAohzv7l0P1BDeGptO8LSag9eOV
+	 h1mNbgQTvX0fEUymrmrHmhFqHpGgUwiiCYhUq4+B1MLTe6puTI+PWOj9T7v5stQ1l0
+	 RK9s/BSzdEnjw==
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6facba680a1so64133896d6.3;
+        Tue, 10 Jun 2025 16:08:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVpK65AR5lENARFbWAXWK7hiOhF6o5swPnQ4U3J1EP8dbKX3OjlOA+Olp5fj4fuHqnRCi7G50hjTEC91BZKyQ==@vger.kernel.org, AJvYcCWV49yNcfMcMh1uB1g5r1tIn0aUmiTKX0ifofTQr1s6Hg4jQYUVrtEtlIQNx5YdFY9quuWCb3CRo/i9NCoUdRfZLoOYNQst@vger.kernel.org, AJvYcCXCH0yCfFA2EkQfhoLI41CoONXY3UdOglvB6OdIum+p80dSr3FvxHylvj2c1r0jEweWEQw=@vger.kernel.org, AJvYcCXSryMujoKhPsA+1XGUZlO7xJ9prgliFRnO76Vsyb/NKH5ugCw8N5bQ6LbW3XMeeykmzQN4fMQxzcIkz6yS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt04GyBK6gMse60zDorxJwKHm65144fmk0tX6g3nWklzedvnnG
+	4REJFlDAafXHlLXgOna+zauMGEnANS/vwdS4YbPDzigVZHH/bKpxO8EDcMBynAzM9wN29Ha/ZgY
+	+vYOUAkKQWnl8w4SDeh+r7i7laUqiWb0=
+X-Google-Smtp-Source: AGHT+IGQwb7bLPJ7uaxum7qOUIy/8C94KF54pMNu1cwD2A2emExMuBIuVS0BNScxi1yUGqW5hw93a0PxpKiAZS9jT/k=
+X-Received: by 2002:ad4:5d46:0:b0:6fa:bb09:43d0 with SMTP id
+ 6a1803df08f44-6fb2c3723bbmr22557596d6.32.1749596899582; Tue, 10 Jun 2025
+ 16:08:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-11-kpsingh@kernel.org>
- <87qzzrleuw.fsf@microsoft.com> <CACYkzJ6M7kA7Se4=AXWNVF1UyeHK3t+3Y_8Ap1L9pkUTbqys9Q@mail.gmail.com>
- <87o6uvlaxs.fsf@microsoft.com> <CACYkzJ74MJkwejki7kFNR4RWh+EnJ++0Vop8eRkSwY6pJepMEQ@mail.gmail.com>
- <8cf2c1cc15e0c5e4b87a91a2cb42e04f38ac1094.camel@HansenPartnership.com>
-In-Reply-To: <8cf2c1cc15e0c5e4b87a91a2cb42e04f38ac1094.camel@HansenPartnership.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Wed, 11 Jun 2025 00:35:19 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ6yNjFOTzC04uOuCmFn=+51_ie2tB9_x-u2xbcO=yobTw@mail.gmail.com>
-X-Gm-Features: AX0GCFvQT4-Dt9uvvG2HgnAZh8dl54TQK-uXw3uqe35VZQIYoEGbhRVyLPXc6hc
-Message-ID: <CACYkzJ6yNjFOTzC04uOuCmFn=+51_ie2tB9_x-u2xbcO=yobTw@mail.gmail.com>
-Subject: Re: [PATCH 10/12] libbpf: Embed and verify the metadata hash in the loader
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, kys@microsoft.com, 
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
+References: <20250606213015.255134-1-song@kernel.org> <20250606213015.255134-2-song@kernel.org>
+ <20250610.rox7aeGhi7zi@digikod.net> <CAPhsuW5G0Th+9dRSmxDjo5E7CxV1E9N8AiKjw3cKyEhOBVWJFw@mail.gmail.com>
+ <d7d755ea-5942-440b-8154-21198cb6a0f1@maowtm.org>
+In-Reply-To: <d7d755ea-5942-440b-8154-21198cb6a0f1@maowtm.org>
+From: Song Liu <song@kernel.org>
+Date: Tue, 10 Jun 2025 16:08:08 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW75h3efyXmCcYE_UEmZGXR5KMSEw8h-_vrZH82BYU=WVw@mail.gmail.com>
+X-Gm-Features: AX0GCFvLr6ZpvpJJmf_Db7fELs42Mf-Bt8O_6VwLs3YNEtG0tanEPc7gL84uHg8
+Message-ID: <CAPhsuW75h3efyXmCcYE_UEmZGXR5KMSEw8h-_vrZH82BYU=WVw@mail.gmail.com>
+Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function path_walk_parent()
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, 
+	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
+	jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 10, 2025 at 11:24=E2=80=AFPM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
+On Tue, Jun 10, 2025 at 3:26=E2=80=AFPM Tingmao Wang <m@maowtm.org> wrote:
+[..]
+> >
+> >                 if (!choose_mountpoint(real_mount(path->mnt), root, &p)=
+)
+> >                         return false;
+> >                 path_put(path);
+> >                 *path =3D p;
+> >                 ret =3D true;
+> >         }
+> >
+> >         if (unlikely(IS_ROOT(path->dentry)))
+> >                 return ret;
 >
-> On Tue, 2025-06-10 at 21:47 +0200, KP Singh wrote:
-> > It's been repeatedly mentioned that trusted loaders (whether kernel
-> > or BPF programs) are the only way because a large number of BPF
-> > use-cases dynamically generate BPF programs.
+> Returning true here would be the wrong semantic right?  This whole thing
+> is only possible when some mount shadows "/".  Say if you have a landlock
+> rule on the old "/", but then we mount a new "/" and chroot into it (via
+> "/.."), the landlock rule on the old "/" should not apply, but if we
+> change *path and return true here then this will "expose" that old "/" to
+> landlock.
+
+Could you please provide more specific information about this case?
+
+Thanks,
+Song
+
+> A quick suggestion although I haven't tested anything - maybe we should d=
+o
+> a special case check for IS_ROOT inside the
+>     if (unlikely(path->dentry =3D=3D path->mnt->mnt_root))
+> ? Before "path_put(path);", if IS_ROOT(p.dentry) then we just path_get(p)
+> and return false.
 >
-> You keep asserting this, but it isn't supported by patches already
-
-This is supported for sure. But it's not what the patches are
-providing a reference implementation for. The patches provide a stand
-alone reference implementation using in-kernel / BPF loaders but you
-can surely implement this (see below):
-
-> proposed.  Specifically, there already exists a patch set:
->
-> https://lore.kernel.org/all/20250528215037.2081066-1-bboscaccy@linux.micr=
-osoft.com/
-
-The patch-set takes a very narrow view by adding additional UAPI and
-ties us into an implementation. Whereas the current approach keeps the
-UAPI clean while still meeting all the use-cases and keeps the
-implementation flexible should it need to change. (no tie into the
-hash chain approach, if we are able to move to stable BPF instruction
-buffers in the future).
-
-Blaise's patches also do not handle the trusted user-space loader
-space and the "signature_maps" are not relevant to dynamic generation
-or simple BPF programs like networking, see below.
-
->
-> that supports both signed trusted loaders and exact hash chain
-> verification of loaders plus program maps.  The core kernel code that
-
-I have mentioned in various replies as to how the current design ends
-up working for dynamic loaders. Here's it once again:
-
-* The dynamic userspace loader is trusted, it's either compiled in
-with libbpf statically or libbpf is also a trusted library.
-* The BPF program is generated and all the relcoations are performed
-at runtime, after which the BPF instruction buffer becomes stable and
-can be signed which obviates the need for the loader program for
-programs that have runtime relocations. And ofcourse, some BPF
-programs don't have runtime relocations at all (e.g some networking
-programs).
-* The program is then signed with a derived credential at runtime and
-this signature is passed in attr.signature and this signature is
-verified by the kernel.
-
-> does it is only about 10 lines and looks to me like it could easily be
-> added to your current patch set.  This means BPF signing could support
-
-I still don't understand the actual reasons for you needing this to
-happen in the kernel.
-
-Here's a summary of the reasons that have been thrown around:
-
-Supply chain attacks
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-I got vague answers about supply chain attacks. If one cannot trust
-the build environment that builds the BPF programs, has signing keys,
-generates and signs the loader, or that builds libbpf / kernel, then I
-think one has other issues.
-
-PS: You can also contribute code into LLVM / clang to generate loader
-programs directly from a BPF object.
-
-The loader code is hard to understand
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-
-So is the BPF JIT that lives in the kernel, I am sure there are
-engineers who understand BPF assembly and JITs? Please remember the
-user who uses BPF is different from the user who implements singing
-for the BPF users, the latter (e.g. a distro, hyperscalar etc) needs
-to be advanced and aware of BPF internals.
-
-"having visibility" in the LSM code
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-
-To implement what specific security policy? There are security
-policies and controls that need to be defined that are required by BPF
-use-cases and one would expect the LSM experts to help here, none of
-them require in kernel verification, here they are:
-
-* LSM controls to reject programs that are not signed
-* LSM controls that establish trust on userspace binaries and libraries.
-* LSM policies that allow these components to either load programs
-signed at runtime using a derived credential.
-* LSM policies that allow certain signed BPF programs to be loaded
-without requiring elevated privileges i.e CAP_BPF.
-
-Auditing
-=3D=3D=3D=3D=3D=3D
-
-You can surely propose a follow up to my patches that adds audit
-logging to the loader, that calls the audit code from using a BPF
-kfunc, so this can be extended for auditing.
-
-At this point, I am happy to discuss the actual security policy work
-that is needed. For the discussion around the UAPI and in-kernel
-verification, I rest it in the hands of the BPF maintainers.
-
-
-- KP
-
-
-
-
-> signer being in the position of deciding what they want and no loss of
-> generality for either use case.
-> >  So whatever we build needs to work for everyone and not just your
-> > specific use-case or your affinity to an implementation.
->
-> The linked patch supports both your trusted loader use case and the
-> exact hash chain verification one the security people want.  Your
-> current patch only seems to support your use case, which seems a little
-> bit counter to the quote above.  However, it also seems that
-> reconciling both patch sets to give everyone what they want is easily
-> within reach so I think that's what we should all work towards.
->
-> Regards,
->
-> James
+> >
+> >         parent =3D dget_parent(path->dentry);
+> >         dput(path->dentry);
+> >         path->dentry =3D parent;
+> >         return true;
+> > }
+> >
+> > Thanks,
+> > Song
 >
