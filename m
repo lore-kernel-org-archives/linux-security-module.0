@@ -1,72 +1,72 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F55119A;
-	Tue, 10 Jun 2025 00:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC3118FC84;
+	Tue, 10 Jun 2025 00:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749514111; cv=none; b=AUl1FTqfe2CoRuNN41PKvaFIJiniLNOUOTz57HL5Nxp6oTsuajXy2yoBelwqHkc0hzpbhPzASkxtKm+yeCpt1bQ/fQW4dqMN1Ach7btaM20/DTOINFzxmGmTPxdp7aE1GFJy7d1k21roA5BUl+B2rIqdst+ADpedkyQKecwXucM=
+	t=1749516342; cv=none; b=h6f76A7ws5HTi9ns4MQ/IOsBGyHn3zHL+rYXxW2RRN8BKHlOtwcIerxd/3UmwV8iqGizGwxAt0VHNvxlUdqHADbaLTNvHS6+CI1kmyn8VdytzC9NqPn1/UDZVBXxR+OT1dZv2+bBBERZg6ET65676RHWHFeMJIjO9u9XzpJx2iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749514111; c=relaxed/simple;
-	bh=+ACPguMVRg7j/e9siu1EuaaDB7GbjiOhExZ/m/CAbM4=;
+	s=arc-20240116; t=1749516342; c=relaxed/simple;
+	bh=Ori/KbuAQ4TV3cThealG1w6+EdbLKa/ruRtxvhkgFIY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mu5p/uGcqvsXEKl5jtUyir8tauEZxjMtKdbZXIBGh1hoBz9g61AOKo2Lmi2gi2jTo9/beQm+/1qxhsqjGsRVifhcV6GWzB2/K0uxivPouAXPp/szlWAPydXTNgLsVksmSLR8QMbOjEyGLbIpcSoEXo0lB3H5xpaXi3Zp7FYtHYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OhQVEpQ7; arc=none smtp.client-ip=209.85.128.41
+	 To:Cc:Content-Type; b=Aba4HAsB47kXBqzVH5h1RD1F+KTfnwQ5NDa7MJt4t7cZRBizrfqrmmhfsptaVnCaGnKLVlaVXRcjLvR0IV5bE5TsJqqgClK2jkQM4qQDdOzxPDrHg7WA/HDwPaneM+6KhXilO1u40NxzCUOiHrNRj9Z5wzRjfCLp1M6V9Pcl5NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dLnIS+Lv; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhQVEpQ7"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45300c82c1cso7649035e9.3;
-        Mon, 09 Jun 2025 17:08:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLnIS+Lv"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a54836cb7fso1100375f8f.2;
+        Mon, 09 Jun 2025 17:45:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749514108; x=1750118908; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749516339; x=1750121139; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IrPZnQdd6HAj2vaCFNWsSqZlnmIrnZv9Ej6UTjhdApk=;
-        b=OhQVEpQ7dh+D4uNYCoIwWWuXhpipYFjEWW8c0AzN54xu/eyAafPmhcsDcX4UFqdP0P
-         JcI1sU2Z77HWeFbjt7EIMiV9GJmaMsSY78S6C8gzQeTeKLopVN1JsdgG13ogLNL6XACi
-         iX0riS0fOIlLNr2uOgLJQ0XiIlqKSuGP1jUuuw6fK9NU6OGPzAjJn9tGvmiCmuG8iDO2
-         n7knJNB39nfWZA/UXDbJvseipvoVM9L6HUdzXboLRtdJYBu7k5vvsvvJVES6SgJH7Pev
-         qT3W/qE/fu7Q6nHD25ucptOvzcF1op1ZVnYxYp+xBz/19oXnaQYMyitWQPdmn2ZB3Whh
-         wRhg==
+        bh=S/nvCmvL9TnMGgsBBImgevjJBae5i0pFldeGSR1tm0E=;
+        b=dLnIS+LvuOk9ViQ3ZW3mZl12MhAGjEx3cBWeHPOL5fwjQ1F5FUjFOYW7vhbS7qD75E
+         1e4yrrgm/MA1/0MaFdPz07yuq47iulJt84pYgLqVqzlmdQbE3g9Tt8slgipm8L5+B8PB
+         td1gP97jIDyxzAHemPrFtD5r8Z1vvhlnVYSSKFIQ0JBH0P7NnFXdGHs7TYoFxv9y0bIH
+         5xRjUvGJXftI9A3WIuk/48X1wHFpWvTO4+Yxh+LhhIB71SRwfBdjbM7/6sX2KBStRHNF
+         XWSK5R5NiLN/WfSkN0Wg+QL85cscJoYKpbA3MheJ5Io8YoMcIui9Dvf3NnaWR3/UeUSl
+         fT6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749514108; x=1750118908;
+        d=1e100.net; s=20230601; t=1749516339; x=1750121139;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IrPZnQdd6HAj2vaCFNWsSqZlnmIrnZv9Ej6UTjhdApk=;
-        b=Hzdyc0dWLU6pT/zCmTZB7U6lAVKrAAiUUc8ZcSCD5lBoWyWuWv8dYMf8Mc7IQfgIBC
-         KEEP5bnSUJ4ZA8xm4QkZQ3zwgh4caYYxoKh3CQJZ3VK0Fpd8yZ3B1QiQp+Bho7axe5Mv
-         vxymC5cI7+A/uSsWnrmDpW8Tkucwa10wVPsQUiou53n2wiJPROXpfkzzp81r5kkitk4F
-         YnOmEiJuCaJp52CBelMjCIb6wdBZyLrF53DSTLbMbKfnHE7MZzUapkIouo1NE8mK9O5P
-         5FAGZZxnSFeXY4LE3E95Ix+5g9ugT5EOzoJv1AIMv7OBglkw9W4mxl+9hBL9p97j2GDY
-         xQfw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ2MR5cZiwhEctcfANKlj4UQa8N0UeWj/gZSgW4LIZSaTpfHuNtW6g0lkYNkDlEE9DxKDiu8otnQZYbmXRZ49F26M3bEM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaKG/Krwt66pWjlK7YxPdD3b6aQUBArx8KECQkGT4cabjLCJO5
-	OR6AxZ52JpiUQjce57GLz9ivbTno5q73BI6eZa1FAoqLM0OiJgW+kyX799dMGZIHbUvgTXM/37w
-	e/zN72MkA8L4mog810XJ7FvKTjz365RqbIbhH
-X-Gm-Gg: ASbGncv+rQHr73zYvv2cfij8Y1ujEtk5vejFL3ZcbOZJovc2JvaEwsNyYgU+jvaQ1yq
-	kTzVQg+TQYI1G8Uh6xdcmtUVdj7l4003poAgM/yy3i2X+3frxeGFTyfeOUuutevB/CkSs6heY0B
-	CcsFOkc24ZbPuqaGqCbqLg0051GtHAjOoIi8x2f9X5RniAtGcR54X6w6F3ddUbGB/50vyiSekjY
-	6YsEXJTlkU=
-X-Google-Smtp-Source: AGHT+IEzKRIQzdq+9NHVQSYYe+q/4X2sBUI7aVZDFJ202XHQCYuJn2PGlePGw1424jX33/MylGT6ewDLkJjWMslMPV4=
-X-Received: by 2002:a05:600c:859b:b0:453:6ca:16a6 with SMTP id
- 5b1f17b1804b1-45306ca17f5mr69112985e9.10.1749514107402; Mon, 09 Jun 2025
- 17:08:27 -0700 (PDT)
+        bh=S/nvCmvL9TnMGgsBBImgevjJBae5i0pFldeGSR1tm0E=;
+        b=WIIMiML+3t+nxnWiDWTsI2ucG7IBVQo3AgXPGOmJWVFC5U5iD9UZ94DPmW/Edrpe6m
+         clMAHx6bEzlgiVH7Yfla0mVW1zi/kxh07jWUZaAHCCg/VLNDYTwNFIBetlzIHja4zNQD
+         kgTH1TlR4Op8iO3YPAIVe/ww7SiwV9am/wnaXs02lFsItLHX2zlpWzf35eVwB0MDzA36
+         Adoc6bxOs2vWLU/D3wNzDa4+7l38/Q19ksrnMgagKqo8sOiFl3n+ibiScj9CxcLmb2L1
+         jpm4OuGLvi2+pq4moObP3UhWxER87jMtiiJOzLCa+FmYBxErRHhykDraC/qNkHoIeaXs
+         e7Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUwyiT7fyJXWZWoQON6mFwPiPuXDUfGwHAJV4hd/QqZFlxvoEF70hyJAs6WJpC9w8UPiel3dRA6yAy8AzcEq0LU9Ourbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNb24CLc0i6LuTh5LYU6u5SbQIE5ouoBhy44t5k5CLr85IyItQ
+	VxbZ98EQ9OcEniD8BxT/RigDhXkYa/ONlZ0zII4EpO/sEQjEClOB3t0xNUVBkemUTAlxusVyozV
+	Z4v3YWj33N3eVCAKcUsN3pDyhnnoZyZ4=
+X-Gm-Gg: ASbGncsiqWPMU00WyY4axFY9ynr6VmgUaAtPUTrrrnViP3ZW4ab94PRc65heRjfpHPN
+	GwJmODWtTPrGb1scqaKLK0Dh6Oc9RR1bZtQL2B+p6AZP9zopzzl5Nf8d8X9EcXyeA8R+1UIm5fH
+	PLdPAfkPHmSzW0lRflVZQyTrsSr1jPnHnDgikhhmraVsNhLhvMj06CrrwFgOKGUCG6iX4pAvEv
+X-Google-Smtp-Source: AGHT+IF2ws0FrcnMf32JfSTC7LGj9R/Fh7ZxxsVNs0jZPTiiRf8bCb68MykSBcwGYLgfBNob+mJWDPFx2/JKIPjEV4U=
+X-Received: by 2002:a5d:64ec:0:b0:3a4:dbac:2db6 with SMTP id
+ ffacd0b85a97d-3a531cb89e6mr12172556f8f.49.1749516338557; Mon, 09 Jun 2025
+ 17:45:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-11-kpsingh@kernel.org>
-In-Reply-To: <20250606232914.317094-11-kpsingh@kernel.org>
+References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-13-kpsingh@kernel.org>
+In-Reply-To: <20250606232914.317094-13-kpsingh@kernel.org>
 From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 9 Jun 2025 17:08:16 -0700
-X-Gm-Features: AX0GCFub4qqHJfyHDYAIr8zgP_eavbyWzJXRqtowySyGGBDS9nkceBai9tOR1aU
-Message-ID: <CAADnVQL6jeigFqQqip4JmvCFrdsWGbOFrxREFuD+OOjjaz6JXg@mail.gmail.com>
-Subject: Re: [PATCH 10/12] libbpf: Embed and verify the metadata hash in the loader
+Date: Mon, 9 Jun 2025 17:45:27 -0700
+X-Gm-Features: AX0GCFtaCkx1n4RY_ghqGoBiTLzBBMUqEHRvoWT2T7yPn4PUCVKPTQ9iljpQ5wk
+Message-ID: <CAADnVQ+bBXJMt1fK-mVzfFyK=k8xDgZuLuQ8J-SAFug294ibqw@mail.gmail.com>
+Subject: Re: [PATCH 12/12] selftests/bpf: Enable signature verification for
+ all lskel tests
 To: KP Singh <kpsingh@kernel.org>
 Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
 	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
@@ -77,169 +77,54 @@ Content-Transfer-Encoding: quoted-printable
 
 On Fri, Jun 6, 2025 at 4:29=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote:
 >
-> To fulfill the BPF signing contract, represented as Sig(I_loader ||
-> H_meta), the generated trusted loader program must verify the integrity
-> of the metadata. This signature cryptographically binds the loader's
-> instructions (I_loader) to a hash of the metadata (H_meta).
+> Convert the kernel's generated verification certificate into a C header
+> file using xxd.  Finally, update the main test runner to load this
+> certificate into the session keyring via the add_key() syscall before
+> executing any tests.
 >
-> The verification process is embedded directly into the loader program.
-> Upon execution, the loader loads the runtime hash from struct bpf_map
-> i.e. BPF_PSEUDO_MAP_IDX and compares this runtime hash against an
-> expected hash value that has been hardcoded directly by
-> bpf_obj__gen_loader.
->
-> The load from bpf_map can be improved by calling
-> BPF_OBJ_GET_INFO_BY_FD from the kernel context after BPF_OBJ_GET_INFO_BY_=
-FD
-> has been updated for being called from the kernel context.
->
-> The following instructions are generated:
->
->     ld_imm64 r1, const_ptr_to_map // insn[0].src_reg =3D=3D BPF_PSEUDO_MA=
-P_IDX
->     r2 =3D *(u64 *)(r1 + 0);
->     ld_imm64 r3, sha256_of_map_part1 // constant precomputed by
-> bpftool (part of H_meta)
->     if r2 !=3D r3 goto out;
->
->     r2 =3D *(u64 *)(r1 + 8);
->     ld_imm64 r3, sha256_of_map_part2 // (part of H_meta)
->     if r2 !=3D r3 goto out;
->
->     r2 =3D *(u64 *)(r1 + 16);
->     ld_imm64 r3, sha256_of_map_part3 // (part of H_meta)
->     if r2 !=3D r3 goto out;
->
->     r2 =3D *(u64 *)(r1 + 24);
->     ld_imm64 r3, sha256_of_map_part4 // (part of H_meta)
->     if r2 !=3D r3 goto out;
->     ...
+> The kernel's module signing verification certificate is converted to a
+> headerfile and loaded as a session key and all light skeleton tests are
+> updated to be signed.
 >
 > Signed-off-by: KP Singh <kpsingh@kernel.org>
 > ---
->  tools/lib/bpf/bpf_gen_internal.h |  2 ++
->  tools/lib/bpf/gen_loader.c       | 52 ++++++++++++++++++++++++++++++++
->  tools/lib/bpf/libbpf.h           |  3 +-
->  3 files changed, 56 insertions(+), 1 deletion(-)
+>  tools/testing/selftests/bpf/.gitignore   |  1 +
+>  tools/testing/selftests/bpf/Makefile     | 13 +++++++++++--
+>  tools/testing/selftests/bpf/test_progs.c | 13 +++++++++++++
+>  3 files changed, 25 insertions(+), 2 deletions(-)
 >
-> diff --git a/tools/lib/bpf/bpf_gen_internal.h b/tools/lib/bpf/bpf_gen_int=
-ernal.h
-> index 6ff963a491d9..49af4260b8e6 100644
-> --- a/tools/lib/bpf/bpf_gen_internal.h
-> +++ b/tools/lib/bpf/bpf_gen_internal.h
-> @@ -4,6 +4,7 @@
->  #define __BPF_GEN_INTERNAL_H
+> diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/selft=
+ests/bpf/.gitignore
+> index e2a2c46c008b..5ab96f8ab1c9 100644
+> --- a/tools/testing/selftests/bpf/.gitignore
+> +++ b/tools/testing/selftests/bpf/.gitignore
+> @@ -45,3 +45,4 @@ xdp_redirect_multi
+>  xdp_synproxy
+>  xdp_hw_metadata
+>  xdp_features
+> +verification_cert.h
+> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftes=
+ts/bpf/Makefile
+> index cf5ed3bee573..778b54be7ef4 100644
+> --- a/tools/testing/selftests/bpf/Makefile
+> +++ b/tools/testing/selftests/bpf/Makefile
+> @@ -7,6 +7,7 @@ CXX ?=3D $(CROSS_COMPILE)g++
 >
->  #include "bpf.h"
-> +#include "libbpf_internal.h"
->
->  struct ksym_relo_desc {
->         const char *name;
-> @@ -50,6 +51,7 @@ struct bpf_gen {
->         __u32 nr_ksyms;
->         int fd_array;
->         int nr_fd_array;
-> +       int hash_insn_offset[SHA256_DWORD_SIZE];
->  };
->
->  void bpf_gen__init(struct bpf_gen *gen, int log_level, int nr_progs, int=
- nr_maps);
-> diff --git a/tools/lib/bpf/gen_loader.c b/tools/lib/bpf/gen_loader.c
-> index 113ae4abd345..3d672c09e948 100644
-> --- a/tools/lib/bpf/gen_loader.c
-> +++ b/tools/lib/bpf/gen_loader.c
-> @@ -110,6 +110,7 @@ static void emit2(struct bpf_gen *gen, struct bpf_ins=
-n insn1, struct bpf_insn in
->
->  static int add_data(struct bpf_gen *gen, const void *data, __u32 size);
->  static void emit_sys_close_blob(struct bpf_gen *gen, int blob_off);
-> +static void bpf_gen__signature_match(struct bpf_gen *gen);
->
->  void bpf_gen__init(struct bpf_gen *gen, int log_level, int nr_progs, int=
- nr_maps)
->  {
-> @@ -152,6 +153,8 @@ void bpf_gen__init(struct bpf_gen *gen, int log_level=
-, int nr_progs, int nr_maps
->         /* R7 contains the error code from sys_bpf. Copy it into R0 and e=
-xit. */
->         emit(gen, BPF_MOV64_REG(BPF_REG_0, BPF_REG_7));
->         emit(gen, BPF_EXIT_INSN());
-> +       if (gen->opts->gen_hash)
-> +               bpf_gen__signature_match(gen);
->  }
->
->  static int add_data(struct bpf_gen *gen, const void *data, __u32 size)
-> @@ -368,6 +371,25 @@ static void emit_sys_close_blob(struct bpf_gen *gen,=
- int blob_off)
->         __emit_sys_close(gen);
->  }
->
-> +static int compute_sha_udpate_offsets(struct bpf_gen *gen)
-> +{
-> +       __u64 sha[SHA256_DWORD_SIZE];
-> +       int i, err;
-> +
-> +       err =3D libbpf_sha256(gen->data_start, gen->data_cur - gen->data_=
-start, sha);
-> +       if (err < 0) {
-> +               pr_warn("sha256 computation of the metadata failed");
-> +               return err;
-> +       }
-> +       for (i =3D 0; i < SHA256_DWORD_SIZE; i++) {
-> +               struct bpf_insn *insn =3D
-> +                       (struct bpf_insn *)(gen->insn_start + gen->hash_i=
-nsn_offset[i]);
+>  CURDIR :=3D $(abspath .)
+>  TOOLSDIR :=3D $(abspath ../../..)
+> +CERTSDIR :=3D $(abspath ../../../../certs)
+>  LIBDIR :=3D $(TOOLSDIR)/lib
+>  BPFDIR :=3D $(LIBDIR)/bpf
+>  TOOLSINCDIR :=3D $(TOOLSDIR)/include
+> @@ -534,7 +535,7 @@ HEADERS_FOR_BPF_OBJS :=3D $(wildcard $(BPFDIR)/*.bpf.=
+h)               \
+>  # $1 - test runner base binary name (e.g., test_progs)
+>  # $2 - test runner extra "flavor" (e.g., no_alu32, cpuv4, bpf_gcc, etc)
+>  define DEFINE_TEST_RUNNER
+> -
+> +LSKEL_SIGN :=3D -S -k $(CERTSDIR)/signing_key.pem -i $(CERTSDIR)/signing=
+_key.x509
 
-Is there a reason to use offset instead of pointers?
-Instead of
-int hash_insn_offset[SHA256_DWORD_SIZE];
-it could be
-struct bpf_insn *hash_insn[SHA256_DWORD_SIZE];
-
-> +               insn[0].imm =3D (__u32)sha[i];
-> +               insn[1].imm =3D sha[i] >> 32;
-
-Then above will be gen->hash_insn[i][0].imm ?
-
-> +       }
-> +       return 0;
-> +}
-> +
->  int bpf_gen__finish(struct bpf_gen *gen, int nr_progs, int nr_maps)
->  {
->         int i;
-> @@ -394,6 +416,12 @@ int bpf_gen__finish(struct bpf_gen *gen, int nr_prog=
-s, int nr_maps)
->                               blob_fd_array_off(gen, i));
->         emit(gen, BPF_MOV64_IMM(BPF_REG_0, 0));
->         emit(gen, BPF_EXIT_INSN());
-> +       if (gen->opts->gen_hash) {
-> +               gen->error =3D compute_sha_udpate_offsets(gen);
-> +               if (gen->error)
-> +                       return gen->error;
-> +       }
-> +
->         pr_debug("gen: finish %s\n", errstr(gen->error));
->         if (!gen->error) {
->                 struct gen_loader_opts *opts =3D gen->opts;
-> @@ -557,6 +585,30 @@ void bpf_gen__map_create(struct bpf_gen *gen,
->                 emit_sys_close_stack(gen, stack_off(inner_map_fd));
->  }
->
-> +static void bpf_gen__signature_match(struct bpf_gen *gen)
-> +{
-> +       __s64 off =3D -(gen->insn_cur - gen->insn_start - gen->cleanup_la=
-bel) / 8 - 1;
-> +       int i;
-> +
-> +       for (i =3D 0; i < SHA256_DWORD_SIZE; i++) {
-> +               emit2(gen, BPF_LD_IMM64_RAW_FULL(BPF_REG_1, BPF_PSEUDO_MA=
-P_IDX,
-> +                                                0, 0, 0, 0));
-> +               emit(gen, BPF_LDX_MEM(BPF_DW, BPF_REG_2, BPF_REG_1, i * s=
-izeof(__u64)));
-> +               gen->hash_insn_offset[i] =3D gen->insn_cur - gen->insn_st=
-art;
-
-and this will be
-gen->hash_insn[i] =3D gen->insn_cur;
+Can we do a fallback for setups without CONFIG_MODULE_SIG ?
+Reuse setup() helper from verify_sig_setup.sh ?
+Doesn't have to be right away. It can be a follow up.
