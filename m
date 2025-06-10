@@ -1,201 +1,216 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE37C241670
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 16:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116A0244675
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 16:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749573689; cv=none; b=QErpC4A74pAuro6hbbPFqPG1bgU5dB+foM4jJSMy534A47wmVAlN89Y6tkvSSb6yF1P80vBMWtdtyGmHca9Z4sDZb0sL0MOgHxJQMCeSJL8GePghVz9omnF2GQtmBwuASCmaPkNCzDVykCNl4hXafu7/EG+nBcWlNUQO5pklSk0=
+	t=1749573747; cv=none; b=nnhXJMiTibc0xqnofE7o+LY1Hn0L316AT8qyiegYwQC52VYAqf2TEcMZ83IuPuiTNP7Eelvki8rRvedR52pIcKFcvWbaEEWS2HkXtUWAlk1WJmSaKrZ4U6Y5OMvwvcgjUEwNSJxt7BIVOQUIQYCpjLE2j0Tv9HayvAn1NI0DHK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749573689; c=relaxed/simple;
-	bh=Ndj7Cmt0Hfs1qIWmdZK1yj1YoJR5hCdlgudEcXuasHo=;
+	s=arc-20240116; t=1749573747; c=relaxed/simple;
+	bh=iUWEfepFxW5+wP1S6dLjzww/GMltVpjy2p3xoDW7Px8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ih8eIBKCXqPXWxrTC+Dn9gjXDvNZgu3L8CEf8/yeBwqzVU5gkT1tpmDDyS38bphd2Mp7zdfH2rdwot0R6Rz8824VyS7l5n+QnqPUTY3/A0KLjpx0I0bGwcllnvrCd6WhqXrFUS4Yt4SYaisZ9C08BcHtxsK4n9xqZNoRsuRi7e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i52dOCwc; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=K5JxJJtjj+4mJGyqghBv9/KL5dn21G+w2OYGEszf26PSjbDZiUAQrPx/yq9KOV+p2t9xdafGsUG9TyE98OhbfUnjaBiNW69JguoA7gHry8M5LkhaCZk6FxvX3fgmEl/bxpLtTxW9SHLkk5dc5e1PauS9LjFve2BzEpflILIN/FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jj1aDPDd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i52dOCwc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 976DFC4AF09
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 16:41:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jj1aDPDd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC580C4AF09
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 16:42:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749573688;
-	bh=Ndj7Cmt0Hfs1qIWmdZK1yj1YoJR5hCdlgudEcXuasHo=;
+	s=k20201202; t=1749573746;
+	bh=iUWEfepFxW5+wP1S6dLjzww/GMltVpjy2p3xoDW7Px8=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=i52dOCwcJpvJ/b0VBmhvIWYyYNtaKvu7LPn2eFnlUpLGTiZQNPRe6kWM6KTSYvaTe
-	 PE1AhUlB+osbIb8QDGmZnUVxtCMgN3ulKgJJpj094y7lQKio66eYv7/Yh9w7FwGXx+
-	 JNKODVTXu+Y7Td5eHnj3/hs/pVkMcN967XvoW9u9en93e7fC9ZnPuAovAvCwqkqRMA
-	 6prDb9VERZJTMAM4iBOiW0/0r7OZa04KFkZ4flHURS0RTQkJRQ33nYY1rjDyI1Umff
-	 Pui8gCimVRN/8ESUUqSMVPN6w/cFxG6wDQrlBwxvH4LkdCQhjiViQf5FW+gvpOoIBy
-	 R2QNvaozznZ/Q==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6071ac9dc3eso8587018a12.1
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 09:41:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVemudnKVfzH+HgyFTmx3gbmU9Oa8i+dyAWsTkK0HzZzXOHkugJZ3AQmKmUrzFMWObUuZ1vPvmJ9vgDLc1PVROEnKem19I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaMHKgbJ1P4rZ+kx4BF/t8J4Q3pcWliVtyGi4oDSA/vzfMxeNy
-	sym6xaTmqLpBchY54ywMnIABbCcVpGyQC+0pOLCFi9QkPkmSiKEJv37tRhf05AnTmsyYpfCXaF5
-	gI/DzZDsyEKDxTirzO6v1MClvQPRSdjqqUjxHlAYJ
-X-Google-Smtp-Source: AGHT+IFAf9dmAjYR/e9BsxpHhCv6SB/MCiE0hWKjf8SPA3vamNz5B67k0oQMencrquVP9O8KtceyLNozl9opiWVGCJo=
-X-Received: by 2002:a05:6402:34d6:b0:608:44cd:f91f with SMTP id
- 4fb4d7f45d1cf-60844cdf9a3mr94239a12.32.1749573687058; Tue, 10 Jun 2025
- 09:41:27 -0700 (PDT)
+	b=Jj1aDPDdPL5wTnYiOVqO7qQ8/LyJAD7a0fIuAECDTBvV89xIt/xOgukclzaIGzjSO
+	 oLnYIL8zJjIkvKrs/MaXZveNy+mqPiYOpKfAmpFYFYQDfOV9FtXIKiqORmNdI8v4AE
+	 5H9/Xwnoy7y8KakK9Lo6hUAYyLFq7f4+RdaGLX+HWOPrPugsD5wluVA7nh7Daqd0UD
+	 n+aJ/XKkNGn+cfsRQSA1RUAN8DjzXk6n1voqt+HzAQBrlpu1vRuIYiBi6Fzgk+8J1T
+	 i5ql46usSp6xfW/AG1iBulKnECNDmrjl0qsnNcfn90RQRc7BhQzYxIlB/zOPnAs3cB
+	 fXwBLnXNMgCWA==
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60780d74c85so6713759a12.2
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 09:42:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWMjbnAVL2mFJFo2sro0Rscg18h8KWPWQvroySpxkcDwZ+Q8hxpSRHltpKSlRmvWryGVXn9ZjYPcJoQEUYwPNCJKVyLf34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDqQ6a9pmEO+lq89QW+wbJ0nadQEe92iAx/VmV+qKxVWE2QlvW
+	sXYIJovzh49LFsAq23tp8EFRq8sZy+GwU23vM6vE1qR0yGlk0ki3goMCqJEaHiLW7YnMGGNQptf
+	Pwswt9wKjAhUywbpF/fTDA3tHKc/NhmZkMsoQRyY1
+X-Google-Smtp-Source: AGHT+IF7QSZQlLmKQg2Q9QejlfTK6KpGhHPVrA+LwfTIu1aqn1R5gZeJALWyLPvtOg16poRBKeRtAKnqf1n+xwsdgk4=
+X-Received: by 2002:a05:6402:35ca:b0:604:e602:77a5 with SMTP id
+ 4fb4d7f45d1cf-6082d59fd13mr2857239a12.15.1749573745257; Tue, 10 Jun 2025
+ 09:42:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-12-kpsingh@kernel.org>
- <b2a0c3d722c78de38ffa2664f71654a422d77121.camel@HansenPartnership.com>
- <CACYkzJ7Mh=VV0FDsfWZbWBcdC6qLdVp4RDbnoMM_Fb4LW7t4=Q@mail.gmail.com> <7d0bdd9f40d1e4e1c9ff5605e5e875b1b9f5654a.camel@HansenPartnership.com>
-In-Reply-To: <7d0bdd9f40d1e4e1c9ff5605e5e875b1b9f5654a.camel@HansenPartnership.com>
+References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-13-kpsingh@kernel.org>
+ <87tt4nlfek.fsf@microsoft.com>
+In-Reply-To: <87tt4nlfek.fsf@microsoft.com>
 From: KP Singh <kpsingh@kernel.org>
-Date: Tue, 10 Jun 2025 18:41:16 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ6k1cAVi_g9ryhMie4OXAVaO9baTc8SP=dtVE5XPVbJvA@mail.gmail.com>
-X-Gm-Features: AX0GCFtuNesKscYdp1Kq0RRXmysLkUGGNb5czU6UXuyDb-uIpAlaPxCxw_vaHBM
-Message-ID: <CACYkzJ6k1cAVi_g9ryhMie4OXAVaO9baTc8SP=dtVE5XPVbJvA@mail.gmail.com>
-Subject: Re: [PATCH 11/12] bpftool: Add support for signing BPF programs
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Date: Tue, 10 Jun 2025 18:42:14 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ7y1ztHKH0+-uw9FzMzkJb3a6bKCXET5Dd5F1UV6+i4_A@mail.gmail.com>
+X-Gm-Features: AX0GCFvi3cgmiI0nO_Xd7RGL0PTif_FtdHXMUKnH3pPettbEfGiDwfxnIpG_rCY
+Message-ID: <CACYkzJ7y1ztHKH0+-uw9FzMzkJb3a6bKCXET5Dd5F1UV6+i4_A@mail.gmail.com>
+Subject: Re: [PATCH 12/12] selftests/bpf: Enable signature verification for
+ all lskel tests
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	keyrings@vger.kernel.org
+	paul@paul-moore.com, kys@microsoft.com, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 10, 2025 at 5:56=E2=80=AFPM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
+On Tue, Jun 10, 2025 at 6:39=E2=80=AFPM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
 >
-> On Tue, 2025-06-10 at 10:50 +0200, KP Singh wrote:
-> > On Sun, Jun 8, 2025 at 4:03=E2=80=AFPM James Bottomley
-> > <James.Bottomley@hansenpartnership.com> wrote:
-> > >
-> > > [+keyrings]
-> > > On Sat, 2025-06-07 at 01:29 +0200, KP Singh wrote:
-> > > [...]
-> > > > diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-> > > > index f010295350be..e1dbbca91e34 100644
-> > > > --- a/tools/bpf/bpftool/prog.c
-> > > > +++ b/tools/bpf/bpftool/prog.c
-> > > > @@ -23,6 +23,7 @@
-> > > >  #include <linux/err.h>
-> > > >  #include <linux/perf_event.h>
-> > > >  #include <linux/sizes.h>
-> > > > +#include <linux/keyctl.h>
-> > > >
-> > > >  #include <bpf/bpf.h>
-> > > >  #include <bpf/btf.h>
-> > > > @@ -1875,6 +1876,8 @@ static int try_loader(struct
-> > > > gen_loader_opts
-> > > > *gen)
-> > > >  {
-> > > >       struct bpf_load_and_run_opts opts =3D {};
-> > > >       struct bpf_loader_ctx *ctx;
-> > > > +     char sig_buf[MAX_SIG_SIZE];
-> > > > +     __u8 prog_sha[SHA256_DIGEST_LENGTH];
-> > > >       int ctx_sz =3D sizeof(*ctx) + 64 * max(sizeof(struct
-> > > > bpf_map_desc),
-> > > >                                            sizeof(struct
-> > > > bpf_prog_desc));
-> > > >       int log_buf_sz =3D (1u << 24) - 1;
-> > > > @@ -1898,6 +1901,24 @@ static int try_loader(struct
-> > > > gen_loader_opts
-> > > > *gen)
-> > > >       opts.insns =3D gen->insns;
-> > > >       opts.insns_sz =3D gen->insns_sz;
-> > > >       fds_before =3D count_open_fds();
-> > > > +
-> > > > +     if (sign_progs) {
-> > > > +             opts.excl_prog_hash =3D prog_sha;
-> > > > +             opts.excl_prog_hash_sz =3D sizeof(prog_sha);
-> > > > +             opts.signature =3D sig_buf;
-> > > > +             opts.signature_sz =3D MAX_SIG_SIZE;
-> > > > +             opts.keyring_id =3D KEY_SPEC_SESSION_KEYRING;
-> > > > +
-> > >
-> > > This looks wrong on a couple of levels.  Firstly, if you want
-> > > system level integrity you can't search the session keyring because
-> > > any process can join (subject to keyring permissions) and the
-> > > owner, who is presumably the one inserting the bpf program, can add
-> > > any key they like.
-> > >
+> KP Singh <kpsingh@kernel.org> writes:
+>
+> > Convert the kernel's generated verification certificate into a C header
+> > file using xxd.  Finally, update the main test runner to load this
+> > certificate into the session keyring via the add_key() syscall before
+> > executing any tests.
 > >
-> > Wanting system level integrity is a security policy question, so this
-> > is something that needs to be implemented at the security layer, the
-> > LSM can deny the keys / keyring IDs they don't trust.  Session
-> > keyrings are for sure useful for delegated signing of BPF programs
-> > when dynamically generated.
->
-> The problem is you're hard coding it at light skeleton creation time.
-> Plus there doesn't seem to be any ability to use the system keyrings
-> anyway as the kernel code only looks up the user keyrings.  Since
-> actual key ids are volatile handles which change from boot to boot (so
-> can't be stored in anything durable) this can only be used for keyring
-> specifiers, so it would also make sense to check this is actually a
-> specifier (system keyring specifiers are positive and user specifiers
-> negative, so it's easy to check for the range).
->
-> > > The other problem with this scheme is that the keyring_id itself
-> > > has no checked integrity, which means that even if a script was
-> > > marked as
+> > The kernel's module signing verification certificate is converted to a
+> > headerfile and loaded as a session key and all light skeleton tests are
+> > updated to be signed.
 > >
-> > If an attacker can modify a binary that has permissions to load BPF
-> > programs and update the keyring ID then we have other issues.
->
-> It's a classic supply chain attack (someone modifies the light skeleton
-> between the creator and the consumer), even Google is claiming SLSA
-> guarantees, so you can't just wave it away as "other issues".
->
-> >  So, this does not work in independence, signed BPF programs do not
-> > really make sense without trusted execution).
->
-> The other patch set provided this ability using signed hash chains, so
-> absolutely there are signed bpf programmes that can work absent a
-> trusted user execution environment.  It may not be what you want for
-> your use case (which is why the other patch set allowed for both), but
-> there are lots of integrity use cases out there wanting precisely this.
->
-> > > system keyring only anyone can binary edit the user space program
-> > > to change it to their preferred keyring and it will still work.  If
-> > > you want variable keyrings, they should surely be part of the
-> > > validated policy.
+> > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > ---
+> >  tools/testing/selftests/bpf/.gitignore   |  1 +
+> >  tools/testing/selftests/bpf/Makefile     | 13 +++++++++++--
+> >  tools/testing/selftests/bpf/test_progs.c | 13 +++++++++++++
+> >  3 files changed, 25 insertions(+), 2 deletions(-)
 > >
-> > The policy is what I expect to be implemented in the LSM layer. A
-> > variable keyring ID is a critical part of the UAPI to create
-> > different "rings of trust" e.g. LSM can enforce that network programs
-> > can be loaded with a derived key, and have a different keyring for
-> > unprivileged BPF programs.
->
-> You can't really have it both ways: either the keyring is part of the
-> LSM supplied policy in which case it doesn't make much sense to have it
-> in the durable attributes (and the LSM would have to set it before the
-> signature is verified) or it's part of the durable attribute embedded
-> security information and should be integrity protected.
->
-> I suppose we could compromise and say it should not be part of the
-> light skeleton durable attributes but should be set (or supplied by
-> policy) at BPF_PROG_LOAD time.
-
-Sure, this is expected, I added a default value there but this can be remov=
-ed.
-
->
-> I should also note that when other systems use derived keys in
-> different keyrings, they usually have a specific named trusted keyring
-> (like _ima and .ima) which has policy enforced rules for adding keys.
-
-We can potentially add a bpf keyring but in general we don't want
-every binary on the machine to use this derived key, but the binary
-that's trusted to either load unsigned programs or use a derived key
-for which the session keyring is more apt.
-
-- KP
-
->
-> Regards,
->
-> James
->
->
-> > This patch implements the signing support, not the security policy
-> > for it.
+> > diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/sel=
+ftests/bpf/.gitignore
+> > index e2a2c46c008b..5ab96f8ab1c9 100644
+> > --- a/tools/testing/selftests/bpf/.gitignore
+> > +++ b/tools/testing/selftests/bpf/.gitignore
+> > @@ -45,3 +45,4 @@ xdp_redirect_multi
+> >  xdp_synproxy
+> >  xdp_hw_metadata
+> >  xdp_features
+> > +verification_cert.h
+> > diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selft=
+ests/bpf/Makefile
+> > index cf5ed3bee573..778b54be7ef4 100644
+> > --- a/tools/testing/selftests/bpf/Makefile
+> > +++ b/tools/testing/selftests/bpf/Makefile
+> > @@ -7,6 +7,7 @@ CXX ?=3D $(CROSS_COMPILE)g++
 > >
-> > - KP
+> >  CURDIR :=3D $(abspath .)
+> >  TOOLSDIR :=3D $(abspath ../../..)
+> > +CERTSDIR :=3D $(abspath ../../../../certs)
+> >  LIBDIR :=3D $(TOOLSDIR)/lib
+> >  BPFDIR :=3D $(LIBDIR)/bpf
+> >  TOOLSINCDIR :=3D $(TOOLSDIR)/include
+> > @@ -534,7 +535,7 @@ HEADERS_FOR_BPF_OBJS :=3D $(wildcard $(BPFDIR)/*.bp=
+f.h)             \
+> >  # $1 - test runner base binary name (e.g., test_progs)
+> >  # $2 - test runner extra "flavor" (e.g., no_alu32, cpuv4, bpf_gcc, etc=
+)
+> >  define DEFINE_TEST_RUNNER
+> > -
+> > +LSKEL_SIGN :=3D -S -k $(CERTSDIR)/signing_key.pem -i $(CERTSDIR)/signi=
+ng_key.x509
+> >  TRUNNER_OUTPUT :=3D $(OUTPUT)$(if $2,/)$2
+> >  TRUNNER_BINARY :=3D $1$(if $2,-)$2
+> >  TRUNNER_TEST_OBJS :=3D $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.test.o,   =
+ \
+> > @@ -601,7 +602,7 @@ $(TRUNNER_BPF_LSKELS): %.lskel.h: %.bpf.o $(BPFTOOL=
+) | $(TRUNNER_OUTPUT)
+> >       $(Q)$$(BPFTOOL) gen object $$(<:.o=3D.llinked2.o) $$(<:.o=3D.llin=
+ked1.o)
+> >       $(Q)$$(BPFTOOL) gen object $$(<:.o=3D.llinked3.o) $$(<:.o=3D.llin=
+ked2.o)
+> >       $(Q)diff $$(<:.o=3D.llinked2.o) $$(<:.o=3D.llinked3.o)
+> > -     $(Q)$$(BPFTOOL) gen skeleton -L $$(<:.o=3D.llinked3.o) name $$(no=
+tdir $$(<:.bpf.o=3D_lskel)) > $$@
+> > +     $(Q)$$(BPFTOOL) gen skeleton $(LSKEL_SIGN) $$(<:.o=3D.llinked3.o)=
+ name $$(notdir $$(<:.bpf.o=3D_lskel)) > $$@
+> >       $(Q)rm -f $$(<:.o=3D.llinked1.o) $$(<:.o=3D.llinked2.o) $$(<:.o=
+=3D.llinked3.o)
+> >
+> >  $(LINKED_BPF_OBJS): %: $(TRUNNER_OUTPUT)/%
+> > @@ -697,6 +698,13 @@ $(OUTPUT)/$(TRUNNER_BINARY): $(TRUNNER_TEST_OBJS) =
+                       \
+> >
+> >  endef
+> >
+> > +CERT_HEADER :=3D verification_cert.h
+> > +CERT_SOURCE :=3D $(CERTSDIR)/signing_key.x509
+> > +
+> > +$(CERT_HEADER): $(CERT_SOURCE)
+> > +     @echo "GEN-CERT-HEADER: $(CERT_HEADER) from $<"
+> > +     $(Q)xxd -i -n test_progs_verification_cert $< > $@
+> > +
+> >  # Define test_progs test runner.
+> >  TRUNNER_TESTS_DIR :=3D prog_tests
+> >  TRUNNER_BPF_PROGS_DIR :=3D progs
+> > @@ -716,6 +724,7 @@ TRUNNER_EXTRA_SOURCES :=3D test_progs.c            =
+ \
+> >                        disasm.c               \
+> >                        disasm_helpers.c       \
+> >                        json_writer.c          \
+> > +                      $(CERT_HEADER)         \
+> >                        flow_dissector_load.h  \
+> >                        ip_check_defrag_frags.h
+> >  TRUNNER_EXTRA_FILES :=3D $(OUTPUT)/urandom_read                       =
+         \
+> > diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/s=
+elftests/bpf/test_progs.c
+> > index 309d9d4a8ace..02a85dda30e6 100644
+> > --- a/tools/testing/selftests/bpf/test_progs.c
+> > +++ b/tools/testing/selftests/bpf/test_progs.c
+> > @@ -14,12 +14,14 @@
+> >  #include <netinet/in.h>
+> >  #include <sys/select.h>
+> >  #include <sys/socket.h>
+> > +#include <linux/keyctl.h>
+> >  #include <sys/un.h>
+> >  #include <bpf/btf.h>
+> >  #include <time.h>
+> >  #include "json_writer.h"
+> >
+> >  #include "network_helpers.h"
+> > +#include "verification_cert.h"
+> >
+> >  /* backtrace() and backtrace_symbols_fd() are glibc specific,
+> >   * use header file when glibc is available and provide stub
+> > @@ -1928,6 +1930,13 @@ static void free_test_states(void)
+> >       }
+> >  }
+> >
+> > +static __u32 register_session_key(const char *key_data, size_t key_dat=
+a_size)
+> > +{
+> > +     return syscall(__NR_add_key, "asymmetric", "libbpf_session_key",
+> > +                     (const void *)key_data, key_data_size,
+> > +                     KEY_SPEC_SESSION_KEYRING);
+> > +}
+> > +
+> >  int main(int argc, char **argv)
+> >  {
+> >       static const struct argp argp =3D {
+> > @@ -1961,6 +1970,10 @@ int main(int argc, char **argv)
+> >       /* Use libbpf 1.0 API mode */
+> >       libbpf_set_strict_mode(LIBBPF_STRICT_ALL);
+> >       libbpf_set_print(libbpf_print_fn);
+> > +     err =3D register_session_key((const char *)test_progs_verificatio=
+n_cert,
+> > +                                test_progs_verification_cert_len);
+> > +     if (err < 0)
+> > +             return err;
+> >
+> >       traffic_monitor_set_print(traffic_monitor_print_fn);
+> >
+> > --
+> > 2.43.0
 >
+>
+> There aren't any test cases showing the "trusted" loader doing any sort
+> of enforcement of blocking invalid programs or maps.
+
+Sure, we can add some more test cases.
+
+>
+> -blaise
