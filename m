@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5562824468A
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 19:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14C1264A9F
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 20:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749584884; cv=none; b=t+7KgIB5T6jj9ZCipBWfLsZYessaZiCqI0TQ+F4tRa4kuKhf0KT/uzQas3s5CQOXvbEm1eXaaHt5GBMDf4eXDUzuPfvYL59TSPvNEyO8vwr2yRI9D7ofOgyGR0KE6MPx7Q6avVcns7u+7SYfC5cmw6rXmWpoUjeCQReUVVr4qvQ=
+	t=1749589015; cv=none; b=gl2TUGzAMgvn23MKYpB3bNFQMCu9Kpou/Pzr4fpE11DrnY+W+/PwxLiFUaLQXO5+5huCE4AaTAbWc0Vez4TpoPu7ElhF1XTKWvt7RR51Y1OQUdjicJOLhUCDt2QYJo9ht5y5jdpdHq4lH9ZYi8uL+CliV0q7lSq9Smw7dBnnAYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749584884; c=relaxed/simple;
-	bh=yoDwG1BuVrg7AqnLEU/sETd5RaPN1ZHTvWgjj/l9WWQ=;
+	s=arc-20240116; t=1749589015; c=relaxed/simple;
+	bh=iENdhX/n9vNKjtwXSctt0rxtIBTyCZxfHPoTZlLnMnE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gc8RjvFtYnyre18545jCZn5XyAgTfIaKjrxkAuVhcFcLYlV4ZODotBUWNZ6JzREIFmF15ThlPXiegoMTcAYKDH+jaapokxi/9BAGttdRDV+C2pMT0y/3FryVDIQajB7ylZdI/si5rPrDXB3dXZbMG4hNzB6aWJaF004oM1xOxmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ScDk9yhQ; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=glEKJjkoOgGum23NwCgRK+JNOiOvinN7jQNTUfBcAqBaO3Sc6t+YTiUvMIOxE1JvlNthaGllzGZGAIq8hL2CnhAaHAD646980AoJ2hAFg0HpWR8QG44RiBSx3c/zM4UYKpXjTm5CskDwh9n9o6m7NqOAm4KkcQn6K+nIjyWuUFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xzj4WWsH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ScDk9yhQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF012C4CEF0
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 19:48:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xzj4WWsH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2ABDC4CEF6
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 20:56:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749584883;
-	bh=yoDwG1BuVrg7AqnLEU/sETd5RaPN1ZHTvWgjj/l9WWQ=;
+	s=k20201202; t=1749589014;
+	bh=iENdhX/n9vNKjtwXSctt0rxtIBTyCZxfHPoTZlLnMnE=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ScDk9yhQCJJrHnF9vRe6XgraH5dpPyHjQPfbhywYta77xAFt184qTA1B0R8kHf4Qu
-	 nkBMmj9SFf3jHKsncus7/NfyvwQ4LtNj3NZXfv/Hzaok8rm4mfWv4EQTqy2uq8f9n0
-	 fB7lqxvnnazucRWBc9ZYizN0ztdD9z+nHP9VHC0Yuqi6+fyKsmp728fXeYJU+PKDqe
-	 PuFrjBZomD+xXmC2lrpZLWY5moBaBAoqGtAn8gMaDZxv7Ebvt6Lk7B9xrhSXYPfGWH
-	 SmBQJTf/2cfewv9MQEKRaA9KyDy2knWXrY1fEPZO6gBqzYID++6zKYiox91s9bb5XU
-	 995S+3h4s9MNg==
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4a58d95ea53so2413071cf.0
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 12:48:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVY/RXNjwZYupmwDUYYPnsasNTp9AZ+se/d93O7svajStbk2Kxk/+DVSjPmaaoVjAiyZpV03cg22hPYvNXx4y0wnGVIEz0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR36WVNPZrM67bg3xiVv15c/t0mFXsR3PAEUEECi4Rcn7znCoD
-	4xs02zqDxKiVSE32nfw4yube41cfJ6+8hXhvJo0V9UZAtAH9xtz87NahqYqmIDpHYE2dW5uvoGC
-	nsOz7pXMN0FPtEDp62HUXwSGPm3z5vEvnAGXMP5nU
-X-Google-Smtp-Source: AGHT+IHTQXCsE+9DO8q0fqdViAfgnnCssKsS6CPhiGfveZ0vdGCA8irgznmMsSO3Xh/YBBC0wsaX2MzrRTusR6ZQpvk=
-X-Received: by 2002:a05:622a:5143:b0:4a6:f6e6:7696 with SMTP id
- d75a77b69052e-4a713ca4527mr10153551cf.26.1749584882983; Tue, 10 Jun 2025
- 12:48:02 -0700 (PDT)
+	b=Xzj4WWsHmTxqahXQycHAzHP8wFE/tadBlHu+gtxo/qHdjwVQJP88ewlXyQqMGVcLs
+	 jNM16MJUsdihb+8Bf5QuBX2RSiA1tT/jWboPLN9FryDeq+dzOXMaXmF4/J1Ny6ECYH
+	 wrAUJiP9JJpv3JpBO2LVbhEOhlbBiy+/TE1vQ/OnVvk07mfpnjWciT3qsecXcWRCJ5
+	 2ZysoCeiPuH8ey8vmvGAq2RpxwpbYzcECEuLyVq+baIiVWqSGjuqa354OXuzSk5E4l
+	 D+SQVAyY88SEZyOAwd6TRC4+XwbP00p6KzS/0xV457z4xpxcTBwzirGnmL99/XKLbU
+	 Aabdt9k4zU5Uw==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60794c43101so5958151a12.1
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 13:56:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXXt61R4ksEc7IN7N5XSG8rjhlpOy11ocW12FgDHVpG/DRj+JI0MbGrGTeHxA40Gakpa4n+2G+GKualJKyzKqVRAS9tL/Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrX9YOn0Fy7ptkom6DSjt10PXZbcOzxnbpp7n+wCWbwXSCsoG2
+	csXUcBiI4uYp2eVWPelz4ByZG1Kgn1KhgD8mR9c4Jc1YiYVnivBkX+oaWgOfAVpvI6B5TInauKJ
+	0vzxWsSgcnKrc31+0QJ4c3xfAXbhbO3tOUfilsciU
+X-Google-Smtp-Source: AGHT+IEIfEbfvM0jDQ0GMHtfaLw4xkPFFSb7r2n3N/Un60Nn3bDuCimTf+pBkr2utSBRYq+pVzne/WiC6Gn8eUaW3Ag=
+X-Received: by 2002:a05:6402:42c7:b0:607:2417:6ceb with SMTP id
+ 4fb4d7f45d1cf-60846d3240amr495946a12.34.1749589013128; Tue, 10 Jun 2025
+ 13:56:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -47,10 +47,10 @@ References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-
  <87o6uvlaxs.fsf@microsoft.com>
 In-Reply-To: <87o6uvlaxs.fsf@microsoft.com>
 From: KP Singh <kpsingh@kernel.org>
-Date: Tue, 10 Jun 2025 21:47:50 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ74MJkwejki7kFNR4RWh+EnJ++0Vop8eRkSwY6pJepMEQ@mail.gmail.com>
-X-Gm-Features: AX0GCFu6nivk5hjF7P3fcPiwxxwGtLOqd5Sw1a42cawYlnZTvT-OZKcEulInnpk
-Message-ID: <CACYkzJ74MJkwejki7kFNR4RWh+EnJ++0Vop8eRkSwY6pJepMEQ@mail.gmail.com>
+Date: Tue, 10 Jun 2025 22:56:42 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ69eo_mNrTDLNH3wqL1ukW-onfA577EipjuPBG6U8jdBQ@mail.gmail.com>
+X-Gm-Features: AX0GCFsyYTiUhCmh697oTAVUFev_onbi8OqFN_k6sIDoOMotXq-VgisXuAUSrxM
+Message-ID: <CACYkzJ69eo_mNrTDLNH3wqL1ukW-onfA577EipjuPBG6U8jdBQ@mail.gmail.com>
 Subject: Re: [PATCH 10/12] libbpf: Embed and verify the metadata hash in the loader
 To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
@@ -62,9 +62,57 @@ Content-Transfer-Encoding: quoted-printable
 On Tue, Jun 10, 2025 at 8:16=E2=80=AFPM Blaise Boscaccy
 <bboscaccy@linux.microsoft.com> wrote:
 >
+> KP Singh <kpsingh@kernel.org> writes:
+>
+> [...]
+>
+> >>
+> >> The above code gets generated per-program and exists out-of-tree in a
+> >> very unreadable format in it's final form. I have general objections t=
+o
+> >> being forced to "trust" out-of-tree code, when it's demostrably trivia=
+l
+> >
+> > This is not out of tree. It's very much within the kernel tree.
+>
+> No, it's not.
+>
+> Running something like
+>
+> bpftool gen skeleton -S -k <private_key> -i <identity_cert>
+> fentry_test.bpf.o
+>
+> will yield a header file fentery_test.h or whatever. That header file
+> contains a customized and one-off version of the templated code in this
+> patch. That header file and the resultant loader it gets compiled into
+> exists out-of-tree.
 
-[...]
+Please read the cover letter and the patches, the
+bpf_object__gen_loader generates the loader program that you sign,
+this is not in bpftool but in libbpf which is core to using BPF, but
+not your only option. Here are the many options that this gives to the
+various use-case the community has and these are also available to
+you:
 
+ * You can use bpftool
+ * You can choose to not use bpftool and avoid this generated header
+file and use libbpf i.e. bpf_object__gen_loader.
+ * You can choose to not bpf_object__gen_loader and use your loader
+program that has more logging around the check, calls audit (which we
+can expose via BPF kfuncs).
+ * You can choose to have a trusted user-space loader that can load
+unsigned BPF programs.
+ * You can choose to have a trusted loader that uses a derived
+credential to sign the BPF program after the instruction buffer is
+stable (then you don't need the loader meta program).
+
+You can also choose to continue arguing for your specific
+implementation without providing any constructive collaboration. But
+that won't help anyone.
+
+- KP
+
+>
 > >
 > >> to perform this check in-kernel, without impeding any of the other
 > >> stated use cases. There is no possible audit log nor LSM hook for thes=
@@ -97,18 +145,6 @@ an
 >
 > Yes, you are forcing us. Saying we are only allowed to use "trusted"
 > loaders, and that no one is allowed to have any in-kernel, in-tree code
-
-It's been repeatedly mentioned that trusted loaders (whether kernel or
-BPF programs) are the only way because a large number of BPF use-cases
-dynamically generate BPF programs. So whatever we build needs to work
-for everyone and not just your specific use-case or your affinity to
-an implementation.
-
-
-
-
-
-
 > that inspects user inputs or target programs directly is very
 > non-consentual on my end. This is a design mandate, being forced upon
 > other people, by you, with no concrete reasons, other than vague statemen=
