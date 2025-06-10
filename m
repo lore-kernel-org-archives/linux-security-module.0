@@ -1,216 +1,238 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116A0244675
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 16:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AF98BF8;
+	Tue, 10 Jun 2025 16:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749573747; cv=none; b=nnhXJMiTibc0xqnofE7o+LY1Hn0L316AT8qyiegYwQC52VYAqf2TEcMZ83IuPuiTNP7Eelvki8rRvedR52pIcKFcvWbaEEWS2HkXtUWAlk1WJmSaKrZ4U6Y5OMvwvcgjUEwNSJxt7BIVOQUIQYCpjLE2j0Tv9HayvAn1NI0DHK4=
+	t=1749574283; cv=none; b=NqjQLo0GW0DS/w/j51bEYFCu61c8HCoh7aXyBneF7EWNUlWUq7kyF1/Q8hsUfY/9fyPYEeGMhK4IaDa9AVdNkIIju+BVc5eDSxflV6N0zMIyvN6lEl8sxXZVg45GMsJq5JCmE9/ujwYjourWuCnAHTU10HpCJWSJSoQ18zEii64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749573747; c=relaxed/simple;
-	bh=iUWEfepFxW5+wP1S6dLjzww/GMltVpjy2p3xoDW7Px8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K5JxJJtjj+4mJGyqghBv9/KL5dn21G+w2OYGEszf26PSjbDZiUAQrPx/yq9KOV+p2t9xdafGsUG9TyE98OhbfUnjaBiNW69JguoA7gHry8M5LkhaCZk6FxvX3fgmEl/bxpLtTxW9SHLkk5dc5e1PauS9LjFve2BzEpflILIN/FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jj1aDPDd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749574283; c=relaxed/simple;
+	bh=Vnp2pGDBFC1FRRFjLh56HzSPYJIAcN4hN39e6nTO3i4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WVVo3KzLjmt/l1d3J9GfT4zgDtzWpkBjYmzmhBh7xlrZeHb2nU5rj5CCaJqTawIFwDU/YeHzX9zg2m9Qs9PY50xgI70lpLTFi2LjZzssQaodsLR8chYMPo5+5QAlpft9plxDZ+PG0gprwwgj5Bwmj6ZyA0bfmXGthCK4217Smn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=A5JFk4yG; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jj1aDPDd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC580C4AF09
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 16:42:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749573746;
-	bh=iUWEfepFxW5+wP1S6dLjzww/GMltVpjy2p3xoDW7Px8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Jj1aDPDdPL5wTnYiOVqO7qQ8/LyJAD7a0fIuAECDTBvV89xIt/xOgukclzaIGzjSO
-	 oLnYIL8zJjIkvKrs/MaXZveNy+mqPiYOpKfAmpFYFYQDfOV9FtXIKiqORmNdI8v4AE
-	 5H9/Xwnoy7y8KakK9Lo6hUAYyLFq7f4+RdaGLX+HWOPrPugsD5wluVA7nh7Daqd0UD
-	 n+aJ/XKkNGn+cfsRQSA1RUAN8DjzXk6n1voqt+HzAQBrlpu1vRuIYiBi6Fzgk+8J1T
-	 i5ql46usSp6xfW/AG1iBulKnECNDmrjl0qsnNcfn90RQRc7BhQzYxIlB/zOPnAs3cB
-	 fXwBLnXNMgCWA==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60780d74c85so6713759a12.2
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 09:42:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWMjbnAVL2mFJFo2sro0Rscg18h8KWPWQvroySpxkcDwZ+Q8hxpSRHltpKSlRmvWryGVXn9ZjYPcJoQEUYwPNCJKVyLf34=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDqQ6a9pmEO+lq89QW+wbJ0nadQEe92iAx/VmV+qKxVWE2QlvW
-	sXYIJovzh49LFsAq23tp8EFRq8sZy+GwU23vM6vE1qR0yGlk0ki3goMCqJEaHiLW7YnMGGNQptf
-	Pwswt9wKjAhUywbpF/fTDA3tHKc/NhmZkMsoQRyY1
-X-Google-Smtp-Source: AGHT+IF7QSZQlLmKQg2Q9QejlfTK6KpGhHPVrA+LwfTIu1aqn1R5gZeJALWyLPvtOg16poRBKeRtAKnqf1n+xwsdgk4=
-X-Received: by 2002:a05:6402:35ca:b0:604:e602:77a5 with SMTP id
- 4fb4d7f45d1cf-6082d59fd13mr2857239a12.15.1749573745257; Tue, 10 Jun 2025
- 09:42:25 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="A5JFk4yG"
+Received: from narnia (unknown [40.78.13.147])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 91EA82027DFC;
+	Tue, 10 Jun 2025 09:51:20 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 91EA82027DFC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1749574281;
+	bh=iVKMmCMXdyVuVJ1kvt9F0Q2gH7f1XhSnOnf/XpzVitw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=A5JFk4yGJS5XEuWBZTeYrfGmtBBXea+cmST9lD8/cf1L0D9DCjGgTmar/1Fm/6dzU
+	 VGvi4Tejr5AD58W3+8GRIoW8H3UdkdGPIrjPSJcodTnJ2h194vjC+xL50Dw7jMPJJ8
+	 pazSZmDxGbst9HlObyY/qAWlzG3D7RscbLKkBI6g=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: KP Singh <kpsingh@kernel.org>, bpf@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+Cc: paul@paul-moore.com, kys@microsoft.com, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org, KP Singh <kpsingh@kernel.org>
+Subject: Re: [PATCH 10/12] libbpf: Embed and verify the metadata hash in the
+ loader
+In-Reply-To: <20250606232914.317094-11-kpsingh@kernel.org>
+References: <20250606232914.317094-1-kpsingh@kernel.org>
+ <20250606232914.317094-11-kpsingh@kernel.org>
+Date: Tue, 10 Jun 2025 09:51:19 -0700
+Message-ID: <87qzzrleuw.fsf@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-13-kpsingh@kernel.org>
- <87tt4nlfek.fsf@microsoft.com>
-In-Reply-To: <87tt4nlfek.fsf@microsoft.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Tue, 10 Jun 2025 18:42:14 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ7y1ztHKH0+-uw9FzMzkJb3a6bKCXET5Dd5F1UV6+i4_A@mail.gmail.com>
-X-Gm-Features: AX0GCFvi3cgmiI0nO_Xd7RGL0PTif_FtdHXMUKnH3pPettbEfGiDwfxnIpG_rCY
-Message-ID: <CACYkzJ7y1ztHKH0+-uw9FzMzkJb3a6bKCXET5Dd5F1UV6+i4_A@mail.gmail.com>
-Subject: Re: [PATCH 12/12] selftests/bpf: Enable signature verification for
- all lskel tests
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	paul@paul-moore.com, kys@microsoft.com, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Jun 10, 2025 at 6:39=E2=80=AFPM Blaise Boscaccy
-<bboscaccy@linux.microsoft.com> wrote:
->
-> KP Singh <kpsingh@kernel.org> writes:
->
-> > Convert the kernel's generated verification certificate into a C header
-> > file using xxd.  Finally, update the main test runner to load this
-> > certificate into the session keyring via the add_key() syscall before
-> > executing any tests.
-> >
-> > The kernel's module signing verification certificate is converted to a
-> > headerfile and loaded as a session key and all light skeleton tests are
-> > updated to be signed.
-> >
-> > Signed-off-by: KP Singh <kpsingh@kernel.org>
-> > ---
-> >  tools/testing/selftests/bpf/.gitignore   |  1 +
-> >  tools/testing/selftests/bpf/Makefile     | 13 +++++++++++--
-> >  tools/testing/selftests/bpf/test_progs.c | 13 +++++++++++++
-> >  3 files changed, 25 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/sel=
-ftests/bpf/.gitignore
-> > index e2a2c46c008b..5ab96f8ab1c9 100644
-> > --- a/tools/testing/selftests/bpf/.gitignore
-> > +++ b/tools/testing/selftests/bpf/.gitignore
-> > @@ -45,3 +45,4 @@ xdp_redirect_multi
-> >  xdp_synproxy
-> >  xdp_hw_metadata
-> >  xdp_features
-> > +verification_cert.h
-> > diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selft=
-ests/bpf/Makefile
-> > index cf5ed3bee573..778b54be7ef4 100644
-> > --- a/tools/testing/selftests/bpf/Makefile
-> > +++ b/tools/testing/selftests/bpf/Makefile
-> > @@ -7,6 +7,7 @@ CXX ?=3D $(CROSS_COMPILE)g++
-> >
-> >  CURDIR :=3D $(abspath .)
-> >  TOOLSDIR :=3D $(abspath ../../..)
-> > +CERTSDIR :=3D $(abspath ../../../../certs)
-> >  LIBDIR :=3D $(TOOLSDIR)/lib
-> >  BPFDIR :=3D $(LIBDIR)/bpf
-> >  TOOLSINCDIR :=3D $(TOOLSDIR)/include
-> > @@ -534,7 +535,7 @@ HEADERS_FOR_BPF_OBJS :=3D $(wildcard $(BPFDIR)/*.bp=
-f.h)             \
-> >  # $1 - test runner base binary name (e.g., test_progs)
-> >  # $2 - test runner extra "flavor" (e.g., no_alu32, cpuv4, bpf_gcc, etc=
-)
-> >  define DEFINE_TEST_RUNNER
-> > -
-> > +LSKEL_SIGN :=3D -S -k $(CERTSDIR)/signing_key.pem -i $(CERTSDIR)/signi=
-ng_key.x509
-> >  TRUNNER_OUTPUT :=3D $(OUTPUT)$(if $2,/)$2
-> >  TRUNNER_BINARY :=3D $1$(if $2,-)$2
-> >  TRUNNER_TEST_OBJS :=3D $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.test.o,   =
- \
-> > @@ -601,7 +602,7 @@ $(TRUNNER_BPF_LSKELS): %.lskel.h: %.bpf.o $(BPFTOOL=
-) | $(TRUNNER_OUTPUT)
-> >       $(Q)$$(BPFTOOL) gen object $$(<:.o=3D.llinked2.o) $$(<:.o=3D.llin=
-ked1.o)
-> >       $(Q)$$(BPFTOOL) gen object $$(<:.o=3D.llinked3.o) $$(<:.o=3D.llin=
-ked2.o)
-> >       $(Q)diff $$(<:.o=3D.llinked2.o) $$(<:.o=3D.llinked3.o)
-> > -     $(Q)$$(BPFTOOL) gen skeleton -L $$(<:.o=3D.llinked3.o) name $$(no=
-tdir $$(<:.bpf.o=3D_lskel)) > $$@
-> > +     $(Q)$$(BPFTOOL) gen skeleton $(LSKEL_SIGN) $$(<:.o=3D.llinked3.o)=
- name $$(notdir $$(<:.bpf.o=3D_lskel)) > $$@
-> >       $(Q)rm -f $$(<:.o=3D.llinked1.o) $$(<:.o=3D.llinked2.o) $$(<:.o=
-=3D.llinked3.o)
-> >
-> >  $(LINKED_BPF_OBJS): %: $(TRUNNER_OUTPUT)/%
-> > @@ -697,6 +698,13 @@ $(OUTPUT)/$(TRUNNER_BINARY): $(TRUNNER_TEST_OBJS) =
-                       \
-> >
-> >  endef
-> >
-> > +CERT_HEADER :=3D verification_cert.h
-> > +CERT_SOURCE :=3D $(CERTSDIR)/signing_key.x509
-> > +
-> > +$(CERT_HEADER): $(CERT_SOURCE)
-> > +     @echo "GEN-CERT-HEADER: $(CERT_HEADER) from $<"
-> > +     $(Q)xxd -i -n test_progs_verification_cert $< > $@
-> > +
-> >  # Define test_progs test runner.
-> >  TRUNNER_TESTS_DIR :=3D prog_tests
-> >  TRUNNER_BPF_PROGS_DIR :=3D progs
-> > @@ -716,6 +724,7 @@ TRUNNER_EXTRA_SOURCES :=3D test_progs.c            =
- \
-> >                        disasm.c               \
-> >                        disasm_helpers.c       \
-> >                        json_writer.c          \
-> > +                      $(CERT_HEADER)         \
-> >                        flow_dissector_load.h  \
-> >                        ip_check_defrag_frags.h
-> >  TRUNNER_EXTRA_FILES :=3D $(OUTPUT)/urandom_read                       =
-         \
-> > diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/s=
-elftests/bpf/test_progs.c
-> > index 309d9d4a8ace..02a85dda30e6 100644
-> > --- a/tools/testing/selftests/bpf/test_progs.c
-> > +++ b/tools/testing/selftests/bpf/test_progs.c
-> > @@ -14,12 +14,14 @@
-> >  #include <netinet/in.h>
-> >  #include <sys/select.h>
-> >  #include <sys/socket.h>
-> > +#include <linux/keyctl.h>
-> >  #include <sys/un.h>
-> >  #include <bpf/btf.h>
-> >  #include <time.h>
-> >  #include "json_writer.h"
-> >
-> >  #include "network_helpers.h"
-> > +#include "verification_cert.h"
-> >
-> >  /* backtrace() and backtrace_symbols_fd() are glibc specific,
-> >   * use header file when glibc is available and provide stub
-> > @@ -1928,6 +1930,13 @@ static void free_test_states(void)
-> >       }
-> >  }
-> >
-> > +static __u32 register_session_key(const char *key_data, size_t key_dat=
-a_size)
-> > +{
-> > +     return syscall(__NR_add_key, "asymmetric", "libbpf_session_key",
-> > +                     (const void *)key_data, key_data_size,
-> > +                     KEY_SPEC_SESSION_KEYRING);
-> > +}
-> > +
-> >  int main(int argc, char **argv)
-> >  {
-> >       static const struct argp argp =3D {
-> > @@ -1961,6 +1970,10 @@ int main(int argc, char **argv)
-> >       /* Use libbpf 1.0 API mode */
-> >       libbpf_set_strict_mode(LIBBPF_STRICT_ALL);
-> >       libbpf_set_print(libbpf_print_fn);
-> > +     err =3D register_session_key((const char *)test_progs_verificatio=
-n_cert,
-> > +                                test_progs_verification_cert_len);
-> > +     if (err < 0)
-> > +             return err;
-> >
-> >       traffic_monitor_set_print(traffic_monitor_print_fn);
-> >
-> > --
-> > 2.43.0
->
->
-> There aren't any test cases showing the "trusted" loader doing any sort
-> of enforcement of blocking invalid programs or maps.
+KP Singh <kpsingh@kernel.org> writes:
 
-Sure, we can add some more test cases.
-
+> To fulfill the BPF signing contract, represented as Sig(I_loader ||
+> H_meta), the generated trusted loader program must verify the integrity
+> of the metadata. This signature cryptographically binds the loader's
+> instructions (I_loader) to a hash of the metadata (H_meta).
 >
-> -blaise
+> The verification process is embedded directly into the loader program.
+> Upon execution, the loader loads the runtime hash from struct bpf_map
+> i.e. BPF_PSEUDO_MAP_IDX and compares this runtime hash against an
+> expected hash value that has been hardcoded directly by
+> bpf_obj__gen_loader.
+>
+> The load from bpf_map can be improved by calling
+> BPF_OBJ_GET_INFO_BY_FD from the kernel context after BPF_OBJ_GET_INFO_BY_FD
+> has been updated for being called from the kernel context.
+>
+> The following instructions are generated:
+>
+>     ld_imm64 r1, const_ptr_to_map // insn[0].src_reg == BPF_PSEUDO_MAP_IDX
+>     r2 = *(u64 *)(r1 + 0);
+>     ld_imm64 r3, sha256_of_map_part1 // constant precomputed by
+> bpftool (part of H_meta)
+>     if r2 != r3 goto out;
+>
+>     r2 = *(u64 *)(r1 + 8);
+>     ld_imm64 r3, sha256_of_map_part2 // (part of H_meta)
+>     if r2 != r3 goto out;
+>
+>     r2 = *(u64 *)(r1 + 16);
+>     ld_imm64 r3, sha256_of_map_part3 // (part of H_meta)
+>     if r2 != r3 goto out;
+>
+>     r2 = *(u64 *)(r1 + 24);
+>     ld_imm64 r3, sha256_of_map_part4 // (part of H_meta)
+>     if r2 != r3 goto out;
+>     ...
+>
+> Signed-off-by: KP Singh <kpsingh@kernel.org>
+> ---
+>  tools/lib/bpf/bpf_gen_internal.h |  2 ++
+>  tools/lib/bpf/gen_loader.c       | 52 ++++++++++++++++++++++++++++++++
+>  tools/lib/bpf/libbpf.h           |  3 +-
+>  3 files changed, 56 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/lib/bpf/bpf_gen_internal.h b/tools/lib/bpf/bpf_gen_internal.h
+> index 6ff963a491d9..49af4260b8e6 100644
+> --- a/tools/lib/bpf/bpf_gen_internal.h
+> +++ b/tools/lib/bpf/bpf_gen_internal.h
+> @@ -4,6 +4,7 @@
+>  #define __BPF_GEN_INTERNAL_H
+>  
+>  #include "bpf.h"
+> +#include "libbpf_internal.h"
+>  
+>  struct ksym_relo_desc {
+>  	const char *name;
+> @@ -50,6 +51,7 @@ struct bpf_gen {
+>  	__u32 nr_ksyms;
+>  	int fd_array;
+>  	int nr_fd_array;
+> +	int hash_insn_offset[SHA256_DWORD_SIZE];
+>  };
+>  
+>  void bpf_gen__init(struct bpf_gen *gen, int log_level, int nr_progs, int nr_maps);
+> diff --git a/tools/lib/bpf/gen_loader.c b/tools/lib/bpf/gen_loader.c
+> index 113ae4abd345..3d672c09e948 100644
+> --- a/tools/lib/bpf/gen_loader.c
+> +++ b/tools/lib/bpf/gen_loader.c
+> @@ -110,6 +110,7 @@ static void emit2(struct bpf_gen *gen, struct bpf_insn insn1, struct bpf_insn in
+>  
+>  static int add_data(struct bpf_gen *gen, const void *data, __u32 size);
+>  static void emit_sys_close_blob(struct bpf_gen *gen, int blob_off);
+> +static void bpf_gen__signature_match(struct bpf_gen *gen);
+>  
+>  void bpf_gen__init(struct bpf_gen *gen, int log_level, int nr_progs, int nr_maps)
+>  {
+> @@ -152,6 +153,8 @@ void bpf_gen__init(struct bpf_gen *gen, int log_level, int nr_progs, int nr_maps
+>  	/* R7 contains the error code from sys_bpf. Copy it into R0 and exit. */
+>  	emit(gen, BPF_MOV64_REG(BPF_REG_0, BPF_REG_7));
+>  	emit(gen, BPF_EXIT_INSN());
+> +	if (gen->opts->gen_hash)
+> +		bpf_gen__signature_match(gen);
+>  }
+>  
+>  static int add_data(struct bpf_gen *gen, const void *data, __u32 size)
+> @@ -368,6 +371,25 @@ static void emit_sys_close_blob(struct bpf_gen *gen, int blob_off)
+>  	__emit_sys_close(gen);
+>  }
+>  
+> +static int compute_sha_udpate_offsets(struct bpf_gen *gen)
+> +{
+> +	__u64 sha[SHA256_DWORD_SIZE];
+> +	int i, err;
+> +
+> +	err = libbpf_sha256(gen->data_start, gen->data_cur - gen->data_start, sha);
+> +	if (err < 0) {
+> +		pr_warn("sha256 computation of the metadata failed");
+> +		return err;
+> +	}
+> +	for (i = 0; i < SHA256_DWORD_SIZE; i++) {
+> +		struct bpf_insn *insn =
+> +			(struct bpf_insn *)(gen->insn_start + gen->hash_insn_offset[i]);
+> +		insn[0].imm = (__u32)sha[i];
+> +		insn[1].imm = sha[i] >> 32;
+> +	}
+> +	return 0;
+> +}
+> +
+>  int bpf_gen__finish(struct bpf_gen *gen, int nr_progs, int nr_maps)
+>  {
+>  	int i;
+> @@ -394,6 +416,12 @@ int bpf_gen__finish(struct bpf_gen *gen, int nr_progs, int nr_maps)
+>  			      blob_fd_array_off(gen, i));
+>  	emit(gen, BPF_MOV64_IMM(BPF_REG_0, 0));
+>  	emit(gen, BPF_EXIT_INSN());
+> +	if (gen->opts->gen_hash) {
+> +		gen->error = compute_sha_udpate_offsets(gen);
+> +		if (gen->error)
+> +			return gen->error;
+> +	}
+> +
+>  	pr_debug("gen: finish %s\n", errstr(gen->error));
+>  	if (!gen->error) {
+>  		struct gen_loader_opts *opts = gen->opts;
+> @@ -557,6 +585,30 @@ void bpf_gen__map_create(struct bpf_gen *gen,
+>  		emit_sys_close_stack(gen, stack_off(inner_map_fd));
+>  }
+>  
+> +static void bpf_gen__signature_match(struct bpf_gen *gen)
+> +{
+> +	__s64 off = -(gen->insn_cur - gen->insn_start - gen->cleanup_label) / 8 - 1;
+> +	int i;
+> +
+> +	for (i = 0; i < SHA256_DWORD_SIZE; i++) {
+> +		emit2(gen, BPF_LD_IMM64_RAW_FULL(BPF_REG_1, BPF_PSEUDO_MAP_IDX,
+> +						 0, 0, 0, 0));
+> +		emit(gen, BPF_LDX_MEM(BPF_DW, BPF_REG_2, BPF_REG_1, i * sizeof(__u64)));
+> +		gen->hash_insn_offset[i] = gen->insn_cur - gen->insn_start;
+> +		emit2(gen,
+> +		      BPF_LD_IMM64_RAW_FULL(BPF_REG_3, 0, 0, 0, 0, 0));
+> +
+> +		if (is_simm16(off)) {
+> +			emit(gen, BPF_MOV64_IMM(BPF_REG_7, -EINVAL));
+> +			emit(gen,
+> +			     BPF_JMP_REG(BPF_JNE, BPF_REG_2, BPF_REG_3, off));
+> +		} else {
+> +			gen->error = -ERANGE;
+> +			emit(gen, BPF_JMP_IMM(BPF_JA, 0, 0, -1));
+> +		}
+> +	}
+> +}
+> +
+
+The above code gets generated per-program and exists out-of-tree in a
+very unreadable format in it's final form. I have general objections to
+being forced to "trust" out-of-tree code, when it's demostrably trivial
+to perform this check in-kernel, without impeding any of the other
+stated use cases. There is no possible audit log nor LSM hook for these
+operations. There is no way to know that this check was ever performed.
+
+Further, this check ends up happeing in an entirely different syscall,
+the LSM layer and the end user may both see invalid programs successfully
+being loaded into the kernel, that may fail mysteriously later.
+
+Also, this patch seems to rely on hacking into struct internals and
+magic binary layouts.
+
+-blaise
+
+>  void bpf_gen__record_attach_target(struct bpf_gen *gen, const char *attach_name,
+>  				   enum bpf_attach_type type)
+>  {
+> diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
+> index b6ee9870523a..084372fa54f4 100644
+> --- a/tools/lib/bpf/libbpf.h
+> +++ b/tools/lib/bpf/libbpf.h
+> @@ -1803,9 +1803,10 @@ struct gen_loader_opts {
+>  	const char *insns;
+>  	__u32 data_sz;
+>  	__u32 insns_sz;
+> +	bool gen_hash;
+>  };
+>  
+> -#define gen_loader_opts__last_field insns_sz
+> +#define gen_loader_opts__last_field gen_hash
+>  LIBBPF_API int bpf_object__gen_loader(struct bpf_object *obj,
+>  				      struct gen_loader_opts *opts);
+>  
+> -- 
+> 2.43.0
