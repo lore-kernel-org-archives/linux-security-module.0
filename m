@@ -1,118 +1,88 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C4D22D4E7;
-	Tue, 10 Jun 2025 11:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4EF291892
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 12:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749556723; cv=none; b=Bf1W1p/3qEmx12qxbS7zgJG1Xd4Tpxf42lD2OoP8NLaVreTc+b674pMM7caAmOa2MSOs5aKo30YiDBTzN47E93HJFMJWgGLLoYxvOW09ak/z3RB5iYqwXUVoId+b+tLs4grJ5pwOvV+cbL/J9J2vY/zVuiZ/TuuWtiF2Zg1Khao=
+	t=1749558413; cv=none; b=C+pyA/eUpZLQq4dxKmHQ3UsqxK5EhBoP425WA7szdcpqj6S6/TYNmsTom5ZRB5jp2Cct0t9horOPhC3Fm+MVD2LiLVrVd1a2puvZsuVVmXNToUVWGag7ZYnP29oHjFP3BilusxNwc6JRQgyKN1IatjXZW5o4SRcV5BAMNsuQFsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749556723; c=relaxed/simple;
-	bh=YbV5Vrcg9CJRBSxpYetisOiH07VFx+vcOnsIPf6+cXs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EqAWd99R7IuiFYI7jB0ZrKXWpFsWVMXfm5xnyH+bkDr6JBb2aguqdmTTpprtr0iafZABsSkdOK+xTaNKY/uUattLpyqIPm1tIRWxLGvvcXCIfb40TxgbOsyn+wDNlq7/qDq1IZ7neEqyeO78DrfQcpx8qTVpodfW/4AMcUm4A1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KWH1+0oE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749558413; c=relaxed/simple;
+	bh=JCy8CKcVn4/R8yM8udj+pd97xBlK9sRGA7kQ5k5UhAo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OWZ+qnpN0guXeyaarsJ5RaAPrX6SR2hHO7YNXBcA9zaIIockiS3P466uZrLYgIswF0mfS/PaKNVeFECqRkci7H5FTghbZfTRUHWTEXLIxywUlmB9S6ZorMmS78x5T+pF4Nv5lopcImuorSZhJ0AvwdV7UbMODSp9AXK7m45zKf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a6eGpyk+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWH1+0oE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CDEEC4CEF2;
-	Tue, 10 Jun 2025 11:58:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a6eGpyk+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12DCFC4CEF7
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 12:26:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749556722;
-	bh=YbV5Vrcg9CJRBSxpYetisOiH07VFx+vcOnsIPf6+cXs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=KWH1+0oEYdCAT7Ze1r1sT2ffXRBchJ92u/MfbO1o5CTWKk+ujzNN0fTBiq/ycWb1v
-	 7C41ZO0xxNzTI8RpxYrC0ojAcj632kLc5v0HHirpq0kulPzRhaWKUyq7PyoAZd5E+C
-	 8tuS1ydATFPpzNTHXoHdSAiX8Hlw4kKwJqiYUO96t4VPFQC+ALUBSk8yCj3DDebdLw
-	 xW7TT22LBHjHc7qve9dx8o/Y2BojreWNa92QSUrEHFjb6DYADA8JppgdoY7rzq1OdW
-	 j1AjW8Pd+YbahgjUaVI4GBI0chpQXBQF4r3I+cVrNx/TOz0xPCmbJEjSRppiCOE/+/
-	 aOEcTSCDYnsrw==
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 52B631AF6B10; Tue, 10 Jun 2025 13:58:29 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@kernel.org>
-To: KP Singh <kpsingh@kernel.org>
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
- bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com,
- ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
-Subject: Re: [PATCH 00/12] Signed BPF programs
-In-Reply-To: <CACYkzJ6SLvJNfGiQ7DegBGv2vryxtdHq8isme29ByrAeKwhwDA@mail.gmail.com>
-References: <20250606232914.317094-1-kpsingh@kernel.org>
- <87h60ppbqj.fsf@toke.dk>
- <CACYkzJ6_VXiWauPBMWOzX+QHedj4noYxfmt_usUzXCiifuEuLA@mail.gmail.com>
- <87cybcdj5k.fsf@toke.dk>
- <CACYkzJ6SLvJNfGiQ7DegBGv2vryxtdHq8isme29ByrAeKwhwDA@mail.gmail.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Tue, 10 Jun 2025 13:58:29 +0200
-Message-ID: <877c1jerkq.fsf@toke.dk>
+	s=k20201202; t=1749558413;
+	bh=JCy8CKcVn4/R8yM8udj+pd97xBlK9sRGA7kQ5k5UhAo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=a6eGpyk+06R9+yFk3qUqqFo47enQT12L35D14E7YEBcyBYFu7qKeQgr6TQ3cz73vP
+	 KYpA1ORlrw7MxgZnM2TLxbE0VAPgcGJX6VgoD2r2ENJiJ4+Bl8FO6CBX2oh8Kz1Obe
+	 2EeX3FmgPtUHCgP48i5UoZP9LVaIV9NMd6/YQHTz1kZQIQrN5PjZGEMDS/hKU4kbrn
+	 KnW0+fFcKyL0n4socl8IhkF+6+e5Qz3ldnCyVNy9ni+tNZNyEQj6juJOaCK1KMfC+Q
+	 n1f1fRXgIE0YfPftL9HzT/xrr19iHXWdKL6S/LPDwuuihjjNU7xCcuBTTqs8K1Wdps
+	 TceFvpy3cQ+JA==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-607b59b447bso5286483a12.1
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 05:26:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXcvPPWktBCp0H1M2nuEzp9EshgMzy2mltKR6qCT90FBdGHw0ayucPs4uxUP/GQ4GOzKdVB6XPFKaT/I5cBhgEhPvNH6DQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPayXvSlsuRKev5Z5HYqLI17wP4LO8NF1En2i3JVNHqEdBaD4g
+	CQKMlXY0f4ADn9A9D3TE67xHwEBJF/Yg5FYHmXYiypaoYnIqT5t5DShZsQCTrY7jPjboDho+YSf
+	UkovPHGl9jUvg9rvC1ZUvu8jrDYCCTuxlMFu7nwpH
+X-Google-Smtp-Source: AGHT+IG0Dgn8ULR27TC/537VfmISOF/iFFnRICf9RrkY7C4TfCEcDwQyM1o1UqRsRVoyyW8NGrk8UTfiA4bPlNo3CzE=
+X-Received: by 2002:a05:6402:280d:b0:606:c388:636d with SMTP id
+ 4fb4d7f45d1cf-60774a83cf8mr17012106a12.27.1749558411584; Tue, 10 Jun 2025
+ 05:26:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20250606232914.317094-1-kpsingh@kernel.org> <87h60ppbqj.fsf@toke.dk>
+ <CACYkzJ6_VXiWauPBMWOzX+QHedj4noYxfmt_usUzXCiifuEuLA@mail.gmail.com>
+ <87cybcdj5k.fsf@toke.dk> <CACYkzJ6SLvJNfGiQ7DegBGv2vryxtdHq8isme29ByrAeKwhwDA@mail.gmail.com>
+ <877c1jerkq.fsf@toke.dk>
+In-Reply-To: <877c1jerkq.fsf@toke.dk>
+From: KP Singh <kpsingh@kernel.org>
+Date: Tue, 10 Jun 2025 14:26:40 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ7mOk2CbFpKi_eg16a81AEeTZU1O6r6zOgwAjwSReYedA@mail.gmail.com>
+X-Gm-Features: AX0GCFtI5MFAeoWj6llQhRBZhvqYzZ9OL6FpBGO-f4y44UJH0k8ErkOpUkD5Ep0
+Message-ID: <CACYkzJ7mOk2CbFpKi_eg16a81AEeTZU1O6r6zOgwAjwSReYedA@mail.gmail.com>
+Subject: Re: [PATCH 00/12] Signed BPF programs
+To: =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@kernel.org>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-KP Singh <kpsingh@kernel.org> writes:
-
-> On Tue, Jun 10, 2025 at 11:45=E2=80=AFAM Toke H=C3=B8iland-J=C3=B8rgensen=
- <toke@kernel.org> wrote:
->>
->> KP Singh <kpsingh@kernel.org> writes:
->>
->> > On Mon, Jun 9, 2025 at 10:20=E2=80=AFAM Toke H=C3=B8iland-J=C3=B8rgens=
-en <toke@kernel.org> wrote:
->> >>
->> >>
->> >> > Given that many use-cases (e.g. Cilium) generate trusted BPF progra=
-ms,
->> >> > trusted loaders are an inevitability and a requirement for signing =
-support, a
->> >> > entrusting loader programs will be a fundamental requirement for an=
- security
->> >> > policy.
->> >>
->> >> So I've been following this discussion a bit on the sidelines, and ha=
-ve
->> >> a question related to this:
->> >>
->> >> From your description a loader would have embedded hashes for a concr=
-ete
->> >> BPF program, which doesn't really work for dynamically generated
->> >> programs. So how would a "trusted loader" work for dynamically genera=
-ted
->> >> programs?
->> >
->> > The trusted loader for dynamically generated programs would be the
->> > binary that loads the BPF program. So a security policy will need to
->> > allow certain trusted binaries (signed with a different key) to load
->> > unsigned BPF programs for cilium.
->>
->> OK, so this refers to a policy along the line of: "Only allow signed BPF
->> program except for this particular userspace binary that is allowed to
->> load anything"?
->>
->> > For a stronger policy, the generators can use a derived key and
->> > identity (e.g from the Kubernetes / machine / TLS certificate) and
->> > then sign their programs using this certificate. The LSM policy then
->> > allows verification with a trusted build key and for certain binaries,
->> > with the delegated credentials.
->>
->> And this means "add a separate trusted key on the kernel side that the
->> userspace binary signs things with before passing it to the kernel"?
->>
->> In which case, how does that tie into the original statement I quoted at
->> the top of this email? The "trusted loaders are an inevitability" bit? I
->> was assuming that the "trusted loaders" in that sentence referred to the
->> light-skeleton loader program, but from your reply I'm not thinking
 >
-> No trusted loaders are exactly what they mean, trusted blobs of code
-> that can load BPF programs, these can be loader programs in light
-> skeletons or trusted user-space binaries.
+> Right, but this patch series has no mechanism for establishing a
+> userspace loader binary as trusted (right?). The paragraph I quoted
+> makes it sound like these are related, and I was trying to figure out
+> what the relation was. But it sounds like the answer is that they are
+> not?
+>
 
-Right, but this patch series has no mechanism for establishing a
-userspace loader binary as trusted (right?). The paragraph I quoted
-makes it sound like these are related, and I was trying to figure out
-what the relation was. But it sounds like the answer is that they are
-not?
+The relation here is that no matter what we do, the kernel cannot be
+the only trusted blob on the system and this was aimed at answering
+questions people had earlier when I proposed the design. This patch
+does add signing support and this allows us to add the following
+policy, it does not directly add any user space support.
 
--Toke
+bprm_committed_creds (check signature of program, if verifies with a
+separate key) add a blob that allows:
+
+ * unsigned bpf programs
+ * signed with a derived key
+
+security_bpf:
+
+ * Check for the right attributes for signing.
+ * restrict which program types can be loaded.
+
+(additional key hooks for restricting which keys are allowed to verify
+programs).
