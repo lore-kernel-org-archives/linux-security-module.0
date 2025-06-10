@@ -1,146 +1,99 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C203027FD5D
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 08:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358FE28C019;
+	Tue, 10 Jun 2025 09:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749545439; cv=none; b=rCh+idcxDG4SqpcV+rXErSSO+KIuNKYQQwCItP97r9FjChUcVhbU8CTjnV1NzWjrTjYHdbTUc859Ac4pe3CzzJGfu3URt7DT1AxxpqBoondIHw9N4kgMOEhEdJ6HtPjWNCmVsQsXtmwyelFnBEmnImr5Wfn1+sAejBBj4MeNro8=
+	t=1749548758; cv=none; b=QQFGhhHh+dCJZDrblfvaKsiNP3l7IKeo/msW8yfNqTdSdYoyELMjyAJPrmR/Nn8/v8jOHFve4NhLd9oQxSLmZFKhdl14x13E1qhx5azfZjhHCMqVM4mohUYN2Wj/mIbk9OFgnErv7IS1gHnRvCRISCof8HiYpQ4/4K4/WF5OC88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749545439; c=relaxed/simple;
-	bh=Pdlo0r5TXrf3xrhsKn42sIVBAfwAWMvvvs2hVtLkZXg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=blIhkj1cL/XxHN26ab93cTQZ6iir51RFZ3n9Ouvm4RXlZkzuMOaSZ9M2r9LCN+zPpyzx8R3xWXakGJuS6EmBWEiOqcOzec57K9LCC+cW+/HPtDpsqIVhufjDS4S675yqgU0wbL/BqXux7e73W7PFKId4jljeYY/3FVKJcUjzRh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UO8Z0mTE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749548758; c=relaxed/simple;
+	bh=yFxZfITXax1je2USVN4oSCSjLG6ui9xD112gidlTpL0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cv5pBVwyBvs+rHgEQD6we/eRdRvRubJyUGon2cRoaApQoSSpyCjYNHIItJqgARjzRJsajIJr++q01YAgt65vVZ/ISYeJgWFwWqpUb1/0W2TTuoM214qKlnSAnUGiZFBumt1k7uIE00jMA1/OnH9FbJFh0+miVLpRLQ4qhbcsylg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfasKfMp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UO8Z0mTE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E312C4CEF4
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 08:50:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfasKfMp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79FEEC4CEED;
+	Tue, 10 Jun 2025 09:45:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749545439;
-	bh=Pdlo0r5TXrf3xrhsKn42sIVBAfwAWMvvvs2hVtLkZXg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UO8Z0mTEPRC31T+fPtnoF9sxxtZSilkW4Z0SXLstzim8GaazVMqrvqVNuGFITc0ZR
-	 TynRngECerOIsZ0RhTb9SOxdjruOPiY29P/SDmA7FhdvUgtWZIz9hau+NRArVSP/5Q
-	 yr9Ue1ko6psiQZRGLAciXJcIcBkMB2A6XXwZhrymO//uzgF6159bcmuQF4zsajPybf
-	 miU1yxOhYRT55HYNWv8T+MFgzywE3uMRo59uOWLenCyFsg2OenmgkE9fU5SMv8Bqy5
-	 NzH4nQORW0P2GEUwopU5QdHzbYdurCmri49w7K5yqj6crXNMjBWa+2l4S5ZurJwsAD
-	 6leyCeniUR6oA==
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5fff52493e0so6619681a12.3
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 01:50:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWKiHAC8/gC/GqU6QM0aoMg7v3vvjC+/oS8BtBdPKSX4IVBmmO2fivjlWpB4sd1HsfUCEVph7DK7EsAneReMHFf2ikKqpA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqmAKjJDAyO3Pz5GzPQOvnM70grHMxeNl0FDyt1y/ThdryhWW4
-	njrerC0NLU+H47bvAAv2IexHfz74KcsF4X63/JxmNz26bnMwmbNq0++4deRL93bocdeBRC1QEIr
-	rhLnybJywb93RVboCSEeTPm8jQQoNe9ouBAyp5suy
-X-Google-Smtp-Source: AGHT+IEGZeJ0GDw260C12WchBTXu6t51Px5b+uaoqudQPZ6vvLjx+05Ekkt2bohg85ZWUfzSS1cQw+g89jN76M+wcCc=
-X-Received: by 2002:a05:6402:3494:b0:607:206f:a2e with SMTP id
- 4fb4d7f45d1cf-6082dbed7c3mr1533544a12.32.1749545437888; Tue, 10 Jun 2025
- 01:50:37 -0700 (PDT)
+	s=k20201202; t=1749548757;
+	bh=yFxZfITXax1je2USVN4oSCSjLG6ui9xD112gidlTpL0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=QfasKfMpCWRaoYeaItc7dihlAQAXFhm3kelEN4vYeOvWmS7ehW3zOhqtCVhNclOA8
+	 iwH0Gx3lgRrQOEQzmJlky92mv/ZiINKUa+9wnIn02IZjzY88YNbwLTdzULHA/ojLZl
+	 uDJvVZm896yE+rJbD5YyZBn4p7zgiDFfd6YPZGvESjIKJv7Pq1CjG45IBVVZAfwnNA
+	 R8f96CHumssRGEfxYtTq5kvJREiy34oIycuNUkk0O4bO3gmik9Kh0DZpSDUZgKJos5
+	 4LwXZrHp/tz/amZ4qkF63zP+f0eR/YQQtFYYRPKzD0CaIMDcDsR+MP20VsAmJ9w2LR
+	 pH0cGLqiqUKRA==
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 062421AF6AF2; Tue, 10 Jun 2025 11:45:44 +0200 (CEST)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@kernel.org>
+To: KP Singh <kpsingh@kernel.org>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+ bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com,
+ ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
+Subject: Re: [PATCH 00/12] Signed BPF programs
+In-Reply-To: <CACYkzJ6_VXiWauPBMWOzX+QHedj4noYxfmt_usUzXCiifuEuLA@mail.gmail.com>
+References: <20250606232914.317094-1-kpsingh@kernel.org>
+ <87h60ppbqj.fsf@toke.dk>
+ <CACYkzJ6_VXiWauPBMWOzX+QHedj4noYxfmt_usUzXCiifuEuLA@mail.gmail.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Tue, 10 Jun 2025 11:45:43 +0200
+Message-ID: <87cybcdj5k.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-12-kpsingh@kernel.org>
- <b2a0c3d722c78de38ffa2664f71654a422d77121.camel@HansenPartnership.com>
-In-Reply-To: <b2a0c3d722c78de38ffa2664f71654a422d77121.camel@HansenPartnership.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Tue, 10 Jun 2025 10:50:27 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ7Mh=VV0FDsfWZbWBcdC6qLdVp4RDbnoMM_Fb4LW7t4=Q@mail.gmail.com>
-X-Gm-Features: AX0GCFsJ1BDqwk_WfkHZFG18itTtVpcvyI1cHBtZQFW_a9QjmxoaHJD6FO4pw3c
-Message-ID: <CACYkzJ7Mh=VV0FDsfWZbWBcdC6qLdVp4RDbnoMM_Fb4LW7t4=Q@mail.gmail.com>
-Subject: Re: [PATCH 11/12] bpftool: Add support for signing BPF programs
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	keyrings@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 8, 2025 at 4:03=E2=80=AFPM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
+KP Singh <kpsingh@kernel.org> writes:
+
+> On Mon, Jun 9, 2025 at 10:20=E2=80=AFAM Toke H=C3=B8iland-J=C3=B8rgensen =
+<toke@kernel.org> wrote:
+>>
+>>
+>> > Given that many use-cases (e.g. Cilium) generate trusted BPF programs,
+>> > trusted loaders are an inevitability and a requirement for signing sup=
+port, a
+>> > entrusting loader programs will be a fundamental requirement for an se=
+curity
+>> > policy.
+>>
+>> So I've been following this discussion a bit on the sidelines, and have
+>> a question related to this:
+>>
+>> From your description a loader would have embedded hashes for a concrete
+>> BPF program, which doesn't really work for dynamically generated
+>> programs. So how would a "trusted loader" work for dynamically generated
+>> programs?
 >
-> [+keyrings]
-> On Sat, 2025-06-07 at 01:29 +0200, KP Singh wrote:
-> [...]
-> > diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-> > index f010295350be..e1dbbca91e34 100644
-> > --- a/tools/bpf/bpftool/prog.c
-> > +++ b/tools/bpf/bpftool/prog.c
-> > @@ -23,6 +23,7 @@
-> >  #include <linux/err.h>
-> >  #include <linux/perf_event.h>
-> >  #include <linux/sizes.h>
-> > +#include <linux/keyctl.h>
-> >
-> >  #include <bpf/bpf.h>
-> >  #include <bpf/btf.h>
-> > @@ -1875,6 +1876,8 @@ static int try_loader(struct gen_loader_opts
-> > *gen)
-> >  {
-> >       struct bpf_load_and_run_opts opts =3D {};
-> >       struct bpf_loader_ctx *ctx;
-> > +     char sig_buf[MAX_SIG_SIZE];
-> > +     __u8 prog_sha[SHA256_DIGEST_LENGTH];
-> >       int ctx_sz =3D sizeof(*ctx) + 64 * max(sizeof(struct
-> > bpf_map_desc),
-> >                                            sizeof(struct
-> > bpf_prog_desc));
-> >       int log_buf_sz =3D (1u << 24) - 1;
-> > @@ -1898,6 +1901,24 @@ static int try_loader(struct gen_loader_opts
-> > *gen)
-> >       opts.insns =3D gen->insns;
-> >       opts.insns_sz =3D gen->insns_sz;
-> >       fds_before =3D count_open_fds();
-> > +
-> > +     if (sign_progs) {
-> > +             opts.excl_prog_hash =3D prog_sha;
-> > +             opts.excl_prog_hash_sz =3D sizeof(prog_sha);
-> > +             opts.signature =3D sig_buf;
-> > +             opts.signature_sz =3D MAX_SIG_SIZE;
-> > +             opts.keyring_id =3D KEY_SPEC_SESSION_KEYRING;
-> > +
->
-> This looks wrong on a couple of levels.  Firstly, if you want system
-> level integrity you can't search the session keyring because any
-> process can join (subject to keyring permissions) and the owner, who is
-> presumably the one inserting the bpf program, can add any key they
-> like.
->
+> The trusted loader for dynamically generated programs would be the
+> binary that loads the BPF program. So a security policy will need to
+> allow certain trusted binaries (signed with a different key) to load
+> unsigned BPF programs for cilium.
 
-Wanting system level integrity is a security policy question, so this
-is something that needs to be implemented at the security layer, the
-LSM can deny the keys / keyring IDs they don't trust.  Session
-keyrings are for sure useful for delegated signing of BPF programs
-when dynamically generated.
+OK, so this refers to a policy along the line of: "Only allow signed BPF
+program except for this particular userspace binary that is allowed to
+load anything"?
 
-> The other problem with this scheme is that the keyring_id itself has no
-> checked integrity, which means that even if a script was marked as
+> For a stronger policy, the generators can use a derived key and
+> identity (e.g from the Kubernetes / machine / TLS certificate) and
+> then sign their programs using this certificate. The LSM policy then
+> allows verification with a trusted build key and for certain binaries,
+> with the delegated credentials.
 
-If an attacker can modify a binary that has permissions to load BPF
-programs and update the keyring ID then we have other issues. So, this
-does not work in independence, signed BPF programs do not really make
-sense without trusted execution).
+And this means "add a separate trusted key on the kernel side that the
+userspace binary signs things with before passing it to the kernel"?
 
-> system keyring only anyone can binary edit the user space program to
-> change it to their preferred keyring and it will still work.  If you
-> want variable keyrings, they should surely be part of the validated
-> policy.
+In which case, how does that tie into the original statement I quoted at
+the top of this email? The "trusted loaders are an inevitability" bit? I
+was assuming that the "trusted loaders" in that sentence referred to the
+light-skeleton loader program, but from your reply I'm not thinking
+maybe it just means "some userspace binaries need to be exempt from any
+signing requirement"? Or am I missing something?
 
-The policy is what I expect to be implemented in the LSM layer. A
-variable keyring ID is a critical part of the UAPI to create different
-"rings of trust" e.g. LSM can enforce that network programs can be
-loaded with a derived key, and have a different keyring for
-unprivileged BPF programs.
-
-This patch implements the signing support, not the security policy for it.
-
-- KP
-
->
-> Regards,
->
-> James
->
+-Toke
