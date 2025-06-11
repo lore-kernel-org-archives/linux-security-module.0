@@ -1,123 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA4225BF17;
-	Wed, 11 Jun 2025 18:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED69A1922DC
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 18:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749665323; cv=none; b=XVnCd4IACe7jsSa375S6Lkz6nbuf7xLKOUyLhmlC9EdS3uHhpV8Gptydzm7jFt59m/hr4Z3n2vv5y8T+V/zqmvsR4ydCe1VRYfehZznnBkcmgDrGc5nIPuSgIfMOsjHVEVfuxtKWw9V8yytqPBiW9W9Ss/a36XSx/O7Cqpu8xYQ=
+	t=1749667527; cv=none; b=QZInJ7UMMp0PZ9FGVElH65HsKlzgHPE8d8l3GtXZiu5g8XhqGSAkngIxpNJ/ut7f0D/0LEfDPZNjUCipE6bWQ39Q77KZWlP4d9K87/auspdpF/gEhqT+NyNXI4nad9fIAJKLSWZiJls+ndHXzqp7NzKL0/G2SZT40AqWNLXKTII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749665323; c=relaxed/simple;
-	bh=vuuuUMNJTrbQEHqQfENAGTBD+eC4GhUdnYLcn0MH/mo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jrz72i+skQG2JEp6kuVLTxNsiSi9K8mu66Y6Lpuf7ndmGrzcSHfZj9nff0mqrnA0Hq9xqvPhIFWkJrhcKD6tDJZZdBHRTx78gZ43MYqll5DZY8jEkHoVa466vcCb+Bwc16aIwIEjeBVkZSBn2w15NHjRerUpcPctKsL8rdDyKOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDieeVu8; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749667527; c=relaxed/simple;
+	bh=aDUrDsc2gJpGpvTSC5QyIq7leA7jeiSS/kItt8u3E4k=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=C1BJIJu1FC0j0Tmujq/i+8eQYBxrMnWzlhylPkSWGx/ZyIb5zCyY2k9XSqLpss2e0nDjmU1B35GFtB7gM87pyc2qjMefoEt+yb+Kokov6r/kIpRSy5A/YNNWO9poQgz4JN9VzH+ZVv+7ICoV8w2P2Wc7WT7rV7Yaixu8ZTdKSYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TKVq6NpE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LDieeVu8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCF1EC4CEF7;
-	Wed, 11 Jun 2025 18:08:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749665322;
-	bh=vuuuUMNJTrbQEHqQfENAGTBD+eC4GhUdnYLcn0MH/mo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LDieeVu8mKI6wIBQ8ZdpWUZUldPV9W0BwMM4LUOtbgqvvI4d0dtyk/SmXmQcfSaIR
-	 d6TnwRoMNtpY2sAOYNUwrazXaCv4ekn4sW7LK2+1VGqEtvkHjYkxUCR9+bp0zDRSuU
-	 KJCUi9kSsfFeRWtJgtF7/hH5uGaY7geR8/vMde+87w1jt2vCfo6pr2TV2t0d8zflOb
-	 RAky1CQfM9+j8Y9RKDCDL8A4/T4Q0UsFlvFDxLELvdB7HQW8SYY8rme9CVEUNY9IE7
-	 WtHdIfp6Qaj7Em7YQKdBuzyInfzFSTbeUTEqoqxssqdiC3toNkz/jnhfTWxSTcyjOO
-	 5yfOuTdcgf7DQ==
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6fa980d05a8so1978976d6.2;
-        Wed, 11 Jun 2025 11:08:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVduRSp4ap98z1mjQzIgAUH30ijMd0isDFfMzn7a9TKBKHA1PatbbxBiI/AeQoFvOdhjLE/wUFOm5Bpja7y@vger.kernel.org, AJvYcCWDjEwDVtHqJfo82V2esdRXUAiOc0Fx/lwhFjYLSgd/lj7QH+QVyprMcNjWGb0V4zLy1Es=@vger.kernel.org, AJvYcCXfM5dEVawYAjsAge2Cvt9rFc3h4bRg56utcQvuYGP+f/T9d5AJ2AsOCdOFK0tJDEcswmaO/hbvLYugTlXd5g==@vger.kernel.org, AJvYcCXimap53u38UvBIzmLw1T92OwfGDLEuCYVs4ATk8wCDZHAJauz+5WviGluy+auC7+bQsoWb0/G+4w/Cj71eZfgvdYBnygAj@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPGOu7rxk50a6iSQJ/1Pd/tmIAFjiNud0CT7i6MsOCwki+uIzV
-	DrL8nZHwOoJq1/7J/vTH79zdLnoyuCSfj04nFnHTxwJhtVdz3/B+bfSJukeOv5d6J6D3zXF+OTm
-	tmD/VY5AJvQVcjPXCJPMxrPRzNOe31fY=
-X-Google-Smtp-Source: AGHT+IGzNRxckgFW6/9tgae8ZuBzm8ytC4tCv/ilGsBolC7Bp6fawNV0TjQIMFe+Fjv7DtylNA1bhEMA95ml5uL/rzw=
-X-Received: by 2002:a05:6214:e4d:b0:6fa:b1bb:8315 with SMTP id
- 6a1803df08f44-6fb2c31b52emr62514016d6.6.1749665321863; Wed, 11 Jun 2025
- 11:08:41 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TKVq6NpE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749667525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aDUrDsc2gJpGpvTSC5QyIq7leA7jeiSS/kItt8u3E4k=;
+	b=TKVq6NpEmmT3u7gwGEdbCT/hBAIHxYWJJ3c+uO159yL44q0cdGHUQVm7ePKuK7vdsh02Bc
+	2lT3Z6rYLdWtJAuL3t1IhZNlbLi4lysVqj/LcihMGcJrnaicmtEBJtAXzR3KG8pLqm1BDH
+	EGsv5y1Rr3G6MlUW6h2kcvfG4g8M/9E=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-695-FSxMpdz1MduW-tiucdZZ4g-1; Wed,
+ 11 Jun 2025 14:45:21 -0400
+X-MC-Unique: FSxMpdz1MduW-tiucdZZ4g-1
+X-Mimecast-MFC-AGG-ID: FSxMpdz1MduW-tiucdZZ4g_1749667520
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D81DA19560A2;
+	Wed, 11 Jun 2025 18:45:19 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.18])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E6B1419560AF;
+	Wed, 11 Jun 2025 18:45:16 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjY7b0gDcXiecsimfmOgs0q+aUp_ZxPHvMfdmAG_Ex_1Q@mail.gmail.com>
+References: <CAHk-=wjY7b0gDcXiecsimfmOgs0q+aUp_ZxPHvMfdmAG_Ex_1Q@mail.gmail.com> <301015.1748434697@warthog.procyon.org.uk> <CAHC9VhRn=EGu4+0fYup1bGdgkzWvZYpMPXKoARJf2N+4sy9g2w@mail.gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: dhowells@redhat.com, Paul Moore <paul@paul-moore.com>,
+    Herbert Xu <herbert@gondor.apana.org.au>,
+    Jarkko Sakkinen <jarkko@kernel.org>, keyrings@vger.kernel.org,
+    linux-security-module@vger.kernel.org, linux-crypto@vger.kernel.org,
+    linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KEYS: Invert FINAL_PUT bit
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606213015.255134-1-song@kernel.org> <20250606213015.255134-2-song@kernel.org>
- <174959847640.608730.1496017556661353963@noble.neil.brown.name>
- <CAPhsuW6oet8_LbL+6mVi7Lc4U_8i7O-PN5F1zOm5esV52sBu0A@mail.gmail.com>
- <20250611.Bee1Iohoh4We@digikod.net> <CAPhsuW6jZxRBEgz00KV4SasiMhBGyMHoP5dMktoyCOeMbJwmgg@mail.gmail.com>
- <e7115b18-84fc-4e8f-afdb-0d3d3e574497@maowtm.org>
-In-Reply-To: <e7115b18-84fc-4e8f-afdb-0d3d3e574497@maowtm.org>
-From: Song Liu <song@kernel.org>
-Date: Wed, 11 Jun 2025 11:08:30 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW4LfhtVCe8Kym4qM6s-7n5rRMY-bBkhwoWU7SPGQdk=bw@mail.gmail.com>
-X-Gm-Features: AX0GCFuvcvlocezfv1YysEsbb8GlPxqoc1TmFc95N3B5xJlTqTWXOvm7IcF3gM8
-Message-ID: <CAPhsuW4LfhtVCe8Kym4qM6s-7n5rRMY-bBkhwoWU7SPGQdk=bw@mail.gmail.com>
-Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function path_walk_parent()
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	NeilBrown <neil@brown.name>, Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com, 
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, 
-	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, 
-	gnoack@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <382105.1749667515.1@warthog.procyon.org.uk>
+Date: Wed, 11 Jun 2025 19:45:15 +0100
+Message-ID: <382106.1749667515@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Jun 11, 2025 at 10:50=E2=80=AFAM Tingmao Wang <m@maowtm.org> wrote:
-[...]
-> > I think we will need some callback mechanism for this. Something like:
-> >
-> > for_each_parents(starting_path, root, callback_fn, cb_data, bool try_rc=
-u) {
-> >    if (!try_rcu)
-> >       goto ref_walk;
-> >
-> >    __read_seqcount_begin();
-> >     /* rcu walk parents, from starting_path until root */
-> >    walk_rcu(starting_path, root, path) {
-> >     callback_fn(path, cb_data);
-> >   }
-> >   if (!read_seqcount_retry())
-> >     return xxx;  /* successful rcu walk */
-> >
-> > ref_walk:
-> >   /* ref walk parents, from starting_path until root */
-> >    walk(starting_path, root, path) {
-> >     callback_fn(path, cb_data);
-> >   }
-> >   return xxx;
-> > }
-> >
-> > Personally, I don't like this version very much, because the callback
-> > mechanism is not very flexible, and it is tricky to use it in BPF LSM.
->
-> Aside from the "exposing mount seqcounts" problem, what do you think abou=
-t
-> the parent_iterator approach I suggested earlier?  I feel that it is
-> better than such a callback - more flexible, and also fits in right with
-> the BPF API you already designed (i.e. with a callback you might then hav=
-e
-> to allow BPF to pass a callback?).  There are some specifics that I can
-> improve - Micka=C3=ABl suggested some in our discussion:
->
-> - Letting the caller take rcu_read_lock outside rather than doing it in
-> path_walk_parent_start
->
-> - Instead of always requiring a struct parent_iterator, allow passing in
-> NULL for the iterator to path_walk_parent to do a reference walk without
-> needing to call path_walk_parent_start - this way might be simpler and
-> path_walk_parent_start/end can just be for rcu case.
->
-> but what do you think about the overall shape of it?
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Personally, I don't have strong objections to this design. But VFS
-folks may have other concerns with it.
+> I guess I can still take it if people just say "do it".
 
-Thanks,
-Song
+Do you want a signed tag and git pull for it?
 
-[...]
+David
+
