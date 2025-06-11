@@ -1,100 +1,99 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E57D221294
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 21:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28EC246BB3
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 21:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749676900; cv=none; b=OG7w05BAqCF+t0jjamQ5LlZkAyU5pRjZIsYrs06MMUKL4Jvs+Ef+7bIW8415ng8h/B+p4N1f7loz6cTdMP2nYi1XAgUEe+kXtfX6PHWwRvlbXd7W5F2l+KIAs2KfBkHobga21fmfS+rhQqpq9dQ5VDL8Ig37RliSmhtfVyKSdiU=
+	t=1749678299; cv=none; b=eV0ENeKA5eKBfXg7ceIxP1wJAKoXh3raJJYSdPf593JrWsBkOO+zPC/7vlaSo52OCg3t3UGzn3Bc7e4fX6dnVgxSKo2NoYAAF2NAzQ477F+/kygneFmXqFNWOhgHMnWylB9mfqkTOrANNLephoQVfhBAuGG511zkh9kZYW1gcso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749676900; c=relaxed/simple;
-	bh=M6HxvA49p+fK8bp/m2l/SRceWAjSLs3kZZfYsnrgxUg=;
+	s=arc-20240116; t=1749678299; c=relaxed/simple;
+	bh=n8krQhktZ2+O8eYKDmiKPqrtCH3jMnXwJbh6O61FSdg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YAwW+Ekwj/tmRthL9RhImBc7FLfP8mHsyB3wR+K7t2mKRkq8riXmyPKrMkOGaymvY/CSi3eFx86pXWdsv/iEs79/tVEz91wxEgaoiC3RpCWqz1Q8xKxNoJPa09hbFxGgR+R2Ydp8OGSoOO34I3Onl4GkZ2x8m3d2uV0Esq04R20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZEw3xTYh; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	 To:Cc:Content-Type; b=R7XuYQXPsv1aOMjp0Qel7mfFAJ9FwDNFI41vkL2aSa2lJ215ZrObOG9y2PzA3gBRRwra3TIu+XW9mDwz+lk4nGehL0XDMrg21BatLbrntdp5z8qkOyf+PAiinLJe2mmYuWL+M5QEUhXG4x0XSwlytVRjoQ7agtMVhqfA1vOTLpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhhUVeIg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZEw3xTYh"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ade326e366dso44675966b.3
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 14:21:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1749676896; x=1750281696; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OgzdZm4+49mKePkx+kNZ7H8LSMYhd60zWxBKo/56OGU=;
-        b=ZEw3xTYhQtfK1GfVgl2KU6awL5GPzlwb6Ba6X1ue3Xuqs5H3MhGtQu7PW+ldn4ej3g
-         LJ+s32gQ6FVR9/MKdSFbjqCbu8Rvt+p+rxp90X9SORXwkZKKEwNdNiZST5oF8rBgOOim
-         xoMDwEUsiznoSYFtBKQBQYMAiIQ4lWfAsZiqQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749676896; x=1750281696;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OgzdZm4+49mKePkx+kNZ7H8LSMYhd60zWxBKo/56OGU=;
-        b=nBZ7YaMxkB+vOB3VhBctkPvtRik+zLh5sIQqsKzPVkpRgOBL3rYVRCLavPXrheAtrt
-         eYF4h6EMDgX0+FL+NCVpfkhBiEMVtPclVmLw0IR30drQcpVt5LzTpTfr8nCm7xGDXtOz
-         WZjF+mmbTZcvjCK7gC0DqvRgimwQt6ZH68Z/pvGhjnyOavidDvUl3g50ndsriB2s+Nzq
-         TPLnO79OsZTkCPvfLGaeMPC8LoJCuEvYSsV55tty+tjVgL5Tgv5lFtweM0OzhIj5XANo
-         Y1FLFh23QHVqrReKjU2dBgCEY9EaP5cwd8613HDCfTAa8HeA0lTZCHThwBK0hqZTeKtZ
-         n6FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaIomh7i0tFwDIpt92pST1Ln6jWUGLxqIEXENC69Twk/CMhuRbAVS8PIP4yHSb5QW0TEw3T/pxEeEDCfiQTNsPvxbv7eg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmJCn/ReOwF3T73M0I7fQd5sOu+ZiXa16UCeTfggCX84ahScq1
-	e6ZhDOm5BFOYxIfLT06QWf0Pn9mJCWqkgK/D5NxOm+81PEf9MZOFyqI9n4LIlktXiqsWcSKZaDe
-	h5CsazWA=
-X-Gm-Gg: ASbGncv5J7Z8vuHoOQaTBNQNaIybB0drCGSOAdxB16Hgeno9lNrXu39mlI3O+EZVWSx
-	Qv6TKVg9oHR1sO/1lg9SpTvkGV9s9tqHpsZub8cnJuts32hus+RpDTI/Au8TQF35AXSJCFDaEvd
-	V3suhhxCnhDkrPKr/xQZysDkSni8aWdLLoUDLJQVbnnZ8WZzKx+gnvq4clz0z779R+MGeBjag/t
-	5WApxBd7J1VGQooFWC+LX5fYfIOhMOUTl34VH0beixvJ1j91ryXdjX4TeeEyvay/H9qX4zPIf3K
-	B8EMd7K/x0CACkfPIrAcXWUGb0xb/LhmZUkTnZPSxpMbxB9lllc7LQB4BuKNekb+UGfg8w9CC9t
-	+HtQWo1zZKipMGJtMWPMr06aNEGtQsanjOl0W3W67KAzwLtA=
-X-Google-Smtp-Source: AGHT+IFBVVvP8qi//UKtd0md/cAwOpu+NBk1W7kreYWEs2npp+I49SF6oYNpXXHAcDOauZIg+1/PrQ==
-X-Received: by 2002:a17:907:a089:b0:ade:40cb:2515 with SMTP id a640c23a62f3a-adea945fd39mr61649066b.59.1749676896315;
-        Wed, 11 Jun 2025 14:21:36 -0700 (PDT)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adead4ce1c0sm13567066b.32.2025.06.11.14.21.34
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jun 2025 14:21:34 -0700 (PDT)
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so575025a12.3
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 14:21:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWKmoH9Fy8c6oGBkYveKuC6mKhUuelFDmP/RPJ+6ykMg+kmtzJ7HS6zTwn0yRSD5DSu/sd5Nqay5qOPloTLbMJAWseO4ss=@vger.kernel.org
-X-Received: by 2002:a05:6402:34c8:b0:601:6c34:5ed2 with SMTP id
- 4fb4d7f45d1cf-6086a8d8175mr280985a12.4.1749676894398; Wed, 11 Jun 2025
- 14:21:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhhUVeIg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 838DBC4CEEA
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 21:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749678298;
+	bh=n8krQhktZ2+O8eYKDmiKPqrtCH3jMnXwJbh6O61FSdg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FhhUVeIgAeBNH25fxz9oF0odfWBB9PCaUfnZ4Q0YUP1YP30jI0aSCxpKEN3pXZ/EL
+	 umQQMj9Sz4pmfPR+Ybo9RF3zIJZUew1g3geO7Ww+HifXG+TmVZIJQGLzuwB3L4oeJv
+	 DSQ8d/Mwuwj6r9yvffQlKz4+tyPP7FydgSzV5y20ZO6ZuwUwwX3P7zFdU8OOMhjfbz
+	 aolAgQ+VphU2suMW+Cq1r84uDzCt5O04fpZcL+hGMwPXoPQf/3aFQoYlTA9bEF4F7J
+	 CcvwLl+jMfas+iyElop0ijOWC77R4rliQaht5RcPb7zlHmVs8dPCD4YwMcPyx4AELX
+	 SRWEswMpxhSCw==
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-606c5c9438fso741785a12.2
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 14:44:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVsEqv+9qoBDP1w9MYLDUQhTTXBC8J68P61EcxLOovN+ZJJZB870SveAsTOQrpcL9uR3rDBVGTdz2EOCsSCh0/l3EwafCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3NwdH6F7f6zvKjrVQyZ9p2VY1BjHA1B9pni9UHL+hkLlkwrsJ
+	tMltvDkKVMQCvDFM9CQG0t9AcLZcBgTgt3RoRgIStg0PPyUocgaJoosbQSVKwwTVKZVGITYm2jp
+	ZkVnIYiFMqu7PsO0xDmLO9q+fu7hMO5mnDsqoCefL
+X-Google-Smtp-Source: AGHT+IHA+AUKel2ZtXicLgKbiI8vDiZy0J6C+3o8M8qgMlN0xZxNBSvqc+itN5oBMIgV5dEJMHIRBCLMglhHx1QFq+w=
+X-Received: by 2002:a05:6402:2805:b0:607:425c:3c23 with SMTP id
+ 4fb4d7f45d1cf-6086a671559mr350762a12.5.1749678297111; Wed, 11 Jun 2025
+ 14:44:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <301015.1748434697@warthog.procyon.org.uk> <CAHC9VhRn=EGu4+0fYup1bGdgkzWvZYpMPXKoARJf2N+4sy9g2w@mail.gmail.com>
- <CAHk-=wjY7b0gDcXiecsimfmOgs0q+aUp_ZxPHvMfdmAG_Ex_1Q@mail.gmail.com>
- <382106.1749667515@warthog.procyon.org.uk> <CAHk-=wgBt2=pnDVvH9qnKjxBgm87Q_th4SLzkv9YkcRAp7Bj2A@mail.gmail.com>
- <20250611203834.GR299672@ZenIV>
-In-Reply-To: <20250611203834.GR299672@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 11 Jun 2025 14:21:17 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgGMd31KshGecZJCupkGJQteupgk1SqswBsbHadMfpVhg@mail.gmail.com>
-X-Gm-Features: AX0GCFtJBJ0_GDTJQXbaSb0DbKUaXWaGBcUByl4A2_DrwE75v36idPEAZwBhho8
-Message-ID: <CAHk-=wgGMd31KshGecZJCupkGJQteupgk1SqswBsbHadMfpVhg@mail.gmail.com>
-Subject: Re: [PATCH] KEYS: Invert FINAL_PUT bit
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-4-kpsingh@kernel.org>
+ <CAADnVQLMff33qY+xY3Ztybbo38Wr9-bp_GPcoFna4EbtgTrWrg@mail.gmail.com>
+In-Reply-To: <CAADnVQLMff33qY+xY3Ztybbo38Wr9-bp_GPcoFna4EbtgTrWrg@mail.gmail.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Wed, 11 Jun 2025 23:44:46 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ4v+n_6-dVSt9mgkhJPEa3r1q7YW5Zrh0c-j+gos_UOxw@mail.gmail.com>
+X-Gm-Features: AX0GCFseZ-SQwR2SX_6Yxnqn9BtMZKCr0JRmpp5HerQz1Mp0lNk5-yqzWXsCimk
+Message-ID: <CACYkzJ4v+n_6-dVSt9mgkhJPEa3r1q7YW5Zrh0c-j+gos_UOxw@mail.gmail.com>
+Subject: Re: [PATCH 03/12] bpf: Implement exclusive map creation
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 11 Jun 2025 at 13:38, Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Mon, Jun 9, 2025 at 10:58=E2=80=AFPM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
 >
-> Speaking of the stuff fallen through the cracks - could you take another
-> look at https://lore.kernel.org/all/20250602041118.GA2675383@ZenIV/?
+> On Fri, Jun 6, 2025 at 4:29=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrot=
+e:
+> >
+> > Exclusive maps allow maps to only be accessed by a trusted loader
+> > program with a matching hash. This allows the trusted loader program
+> > to load the map and verify the integrity.
+> >
+> > Both maps of maps (array, hash) cannot be exclusive and exclusive maps
+> > cannot be added as inner maps. This is because one would need to
+> > guarantee the exclusivity of the inner maps and would require
+> > significant changes in the verifier.
+>
+> I was back and forth on it early, but after sleeping on it
+> I think we should think of exclusive maps as a generic concept and
+> not tied to trusted loader and prog signatures.
+> So any map type should be allowed to be exclusive and this patch
+> can handle it fine without adding more complexity.
+> In map-in-map case the outer map can be created exclusive
+> to a particular program, but inner maps don't have to be exclusive,
+> and it's fine. The lskel loader won't be using map-in-map anyway,
+> so no issues there.
 
-Also done.
+So the idea here is that if an outer map has exclusive access, only it
+can add inner maps. I think this is a valid combination as it would
+still retain exclusivity over the outer maps elements.
 
-Well, the script part is, it's still doing the test-build and I'll
-have to make a commit message etc.
+- KP
 
-              Linus
+>
+> > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > ---
+
+[...]
+
+> >
