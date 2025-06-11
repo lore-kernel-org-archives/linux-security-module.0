@@ -1,106 +1,75 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638511F0E39;
-	Wed, 11 Jun 2025 16:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35681DE2A4
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 16:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749659499; cv=none; b=LakKbJu9sqE64mpvVdSHD/QGc/75LotY9+Oy+aLEI43vO3ZTEouVI5VoKfi9P31xBeAnR94naBpneX62KzFIgX3BvzhDlooj5j15jS6T+qohS92iBfmj1nvhC9tJWgH2axxZUMDFGwpvH0bh0zNP1NV9atBxl3uXewASteJInCg=
+	t=1749660315; cv=none; b=FsC2wW7avhVqXWgee9ymVpiNN1CZ7ZKPR5UHdJ2vI/Yl+spOHBuDqLjtyc22c9oX7m38XoiRd+ZDHrJFfsr65NwvDeeRbwDaLJMbL+Zp5l2DMyhK4TcyRMMt+V7P2dn3D4+WMGw+T+TtV6icJc2kypBGB0Q8ZroVt8V2Wv3Iy7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749659499; c=relaxed/simple;
-	bh=wHBQRhTvoZjP5hYlhu6PAF/AqN1dtZGC7ByNEkL8uk8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CCTwOECmEgbXP1aNt+SPdCcpWC5gjPsyQgYUZRwfpJWqCoCbajbDaKh17OoUxl5R2FAP0PcIUVBO4igcJN/oH18ahuZK54eEIy6oxay9+QOCEOBoYh3BN4kg8Um7gjN+x60ZDYxip3TyIlcMJPMJrTYqEtebQ51N+2L8x2P1CK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJvLKc7I; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749660315; c=relaxed/simple;
+	bh=GpsmAPZBVSJJ+9ubBo2hDGtPMH3NzHnys3NejUG7amc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=ePwvJzZxxJVGE3V1WXqaqT18+fwf6kUZFgr13HO/N/+q9YPkzu6EDEaZDu8BAzQ//qz1vZAbHOB7INU+vJ14ydZtcUCY5QdYCoA49qinmTv3zftUeIDM4EJfQ9gAtR17J9Q3jZyZwi+B17fmyMZNvoXURE6PBE2WbGwwlVWMrRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=WeXA8I0r; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJvLKc7I"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE8CC4CEF5;
-	Wed, 11 Jun 2025 16:31:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749659498;
-	bh=wHBQRhTvoZjP5hYlhu6PAF/AqN1dtZGC7ByNEkL8uk8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JJvLKc7IROMKKelWLCQtsFKYQEuV5DVSTk4jtVvozIZtXoYprNJfLZu4kKj6ondQd
-	 L2wjcqMql+MQcTw5uE2TroXEQgwmpm2W9elvE3eC8RVNpD03r4L6/XV7+eXYKuTvxF
-	 kiuHceMjoaWRZ3R8IRAyVFftX4aprswSeURh3o7iqGxixiDE1im3RTbixraRi6n/tB
-	 z3MX7iW6bSlCkF9FbB/DaLNAgkyD6/G2Hg9HH3Ok5/bngxo/GjSU/BU+idijJft85B
-	 6SnneFTyWbUXvepgpz8urF41dLIOx1omo4cwgtPVQm242RKA8ji0VxLS8ie1msRpvR
-	 o7U55sl3HkXdw==
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6fb0eb0f0fbso85456d6.1;
-        Wed, 11 Jun 2025 09:31:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUm/Y5+XONlilsbAmRz6jP7G7SKNRdjgSa1ecbeZLR4Tkl5UPJxa95NPg7cMFu1iWHFhqhDlsBSolskUKDo@vger.kernel.org, AJvYcCV92Bi7IGFFZASZr+s5IYIQmDjAZPGTrTw3PJoRPbe2kZ1Vft/p0VEhy8PCWF8jVDpfTF6pRYgqhUrLJP3NnTz3Bf15HOZ3@vger.kernel.org, AJvYcCVUv/dcnkIWyylkkmGfvFkxt9/0KzD5rVwue5fvmjOdEVWJgCEtqljYwEdP9Edb/igcrv8=@vger.kernel.org, AJvYcCVW+4ppSmsGGRQxIQGUNqqJMJboTczuILWrkbpYj7UD9P+S4YVPco3qyXaqDXs0WD5x+dqy5viiNaKQ9X9+2A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQDFKZybw9e5Spxl364cF1ZG7pJo8EaJkrTHO4PkMisyIfVrjp
-	8dGpQF4tDfp5uTCeSSpt39vAZ2YM/4W/uhgzeZZnRaGnNuEvPKzDBsI7GH5HGZgjaKKeIiOByyb
-	syJGS0eH6rMoL4eIUi2pahpnGC3t8KC8=
-X-Google-Smtp-Source: AGHT+IHww/o74BxPrTUbg+/oYp3tE0Qny5VDLaUUtEl/gCVQ64aG0JYxPSDJ7sXz6hjpvQbWvubaQVRVtTW5qUDhHi8=
-X-Received: by 2002:a05:6214:500c:b0:6fa:fdf5:a604 with SMTP id
- 6a1803df08f44-6fb347f3af5mr938296d6.12.1749659497922; Wed, 11 Jun 2025
- 09:31:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="WeXA8I0r"
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e81ec95d944so1048891276.1
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 09:45:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1749660312; x=1750265112; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VjFLPJSCK7nqLjUFHebJGCzVS7403d3JF/BF7G+jz7k=;
+        b=WeXA8I0rJdCnKfArMTXJ/XnY9sMyl7dyuD3RJJzQEq8P5Ns/7c/erFgeDYHU0zu1Rx
+         goNLdT7BoW49m3a4Gz59SWIr80FeL058ysHXZmhg100ohMqjJe9/iCkIlE/DhNap+Cx9
+         cYyd1Gxg2TcTiXc4rf5iInBzrsEiYtkeuDGMz919WlUGkvjc66NscX802gw7FY8HmO/k
+         FMfet5ck0LzXAVWejyLdeWe0Cd2J0Ypase7AVnWlVL8txCUZ3wLvDtRv2bjIpieBq6v2
+         a9umDNJt82X+AhbhtUg2vd1cWHF2MfE5VA0rP2eERl1OLt/7P+uX+8fPIZvxVD28Y9cT
+         xACw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749660312; x=1750265112;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VjFLPJSCK7nqLjUFHebJGCzVS7403d3JF/BF7G+jz7k=;
+        b=OO6h1f4dlLX6qjhKOvFx4w7AYbt1M2hUT0DcM80H978zEA6eAKoMhRyPETaTrgKQnE
+         Bau574wPHRn1Rif8EV0ARxmiHkc1FcZNE3gNkuHwCTKc9a9MmPOI0uYLb+M8gXWs6ABY
+         CtYFnyNYGPXrRlj61Da2sSRDX46RBtyk06P2XWeQyWI7StBVjG9pMLYSYGXZ0pA4uLSB
+         RlXCfjGs8ISWM+T7q/BzAAs0HWVYnLXUxjK96KdB2vAu1mII7zHoEGFmYkRKSjXdao3k
+         5Qwj9MyN/Ex3zT4jcChmyITNj0wOTbPQNcB4OWT5SPmfaVRlvTQ2hqMYRx+GXr6pvuQv
+         aL2A==
+X-Gm-Message-State: AOJu0YwiegbDBacbEaKkppcoWyyaT0xf2plzF/wKEQd6UF+ecA0UO2ka
+	+t7XbxZ5CREA7j6I2G7Cst+1ogzjsVyH6rByjYvBT9hVqScEy0VtwJsfN12FDtsg6wacdK/Fw6u
+	3D35Ah3QqSZg3HhiHeQ7wVu0C714m+RPG5vTMJs5RDpH8hTkLxMM=
+X-Gm-Gg: ASbGncsZVeRsOicNzn12/HCbZXypluMBYqf+Qqxm2BMnzUJz7dwG6RpkHV+hQ+fU3Ct
+	1p9tNT+y+8yQmwkNUk+pG5adkMre42pI/mSxnIpcTVoLcmfIAQ3GJIzrP3cHeKp2JHyRNQ23lTS
+	IcQAUv/Lj0Zaop6L1ROPxUpNqjx0TrYqhX8wedXTis1mk=
+X-Google-Smtp-Source: AGHT+IFpVzU5xakUGIWEFzt3Vs31IfWYUQtu2lGuLXxdGa+vrXBOhii19UeY+k9qsztms/Ib9g7qayNwgfku7adO1V4=
+X-Received: by 2002:a05:6902:1145:b0:e81:cf4a:a1ef with SMTP id
+ 3f1490d57ef6-e820ba2af86mr154468276.10.1749660311765; Wed, 11 Jun 2025
+ 09:45:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606213015.255134-1-song@kernel.org> <20250606213015.255134-2-song@kernel.org>
- <174959847640.608730.1496017556661353963@noble.neil.brown.name>
- <CAPhsuW6oet8_LbL+6mVi7Lc4U_8i7O-PN5F1zOm5esV52sBu0A@mail.gmail.com> <20250611.Bee1Iohoh4We@digikod.net>
-In-Reply-To: <20250611.Bee1Iohoh4We@digikod.net>
-From: Song Liu <song@kernel.org>
-Date: Wed, 11 Jun 2025 09:31:26 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW6jZxRBEgz00KV4SasiMhBGyMHoP5dMktoyCOeMbJwmgg@mail.gmail.com>
-X-Gm-Features: AX0GCFsKHEibU3SwfO1PDkPH059MHGcDhjOXxl4R9bB8VLTrCd0m_aTAtlTdLGI
-Message-ID: <CAPhsuW6jZxRBEgz00KV4SasiMhBGyMHoP5dMktoyCOeMbJwmgg@mail.gmail.com>
-Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function path_walk_parent()
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: NeilBrown <neil@brown.name>, Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com, 
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, 
-	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, 
-	gnoack@google.com, m@maowtm.org
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 11 Jun 2025 12:45:00 -0400
+X-Gm-Features: AX0GCFsd637Kjp2pdqdIqT1H0upvh65nnom8p7jd4vEpZpByetyp6Zkn9cfa1z0
+Message-ID: <CAHC9VhS9P-fgWac_sJ_dq6_AQf76RGiqLAmOFnR_4NZ83KQogw@mail.gmail.com>
+Subject: ANN: LSM and SELinux trees to rebase to v6.16-rc2 next week
+To: linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 11, 2025 at 8:42=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
-[...]
-> > We can probably call this __path_walk_parent() and make it static.
-> >
-> > Then we can add an exported path_walk_parent() that calls
-> > __path_walk_parent() and adds extra logic.
-> >
-> > If this looks good to folks, I can draft v4 based on this idea.
->
-> This looks good but it would be better if we could also do a full path
-> walk within RCU when possible.
+Hi all,
 
-I think we will need some callback mechanism for this. Something like:
+In order to pickup an xattr fix, link below, in the LSM and SELinux
+trees, I'll be rebasing the lsm/dev and selinux/dev trees next week
+once v6.16-rc2 is released.  Currently each tree only has one trivial
+patch in their respective dev branches so the rebase is expected to be
+trivial.
 
-for_each_parents(starting_path, root, callback_fn, cb_data, bool try_rcu) {
-   if (!try_rcu)
-      goto ref_walk;
-
-   __read_seqcount_begin();
-    /* rcu walk parents, from starting_path until root */
-   walk_rcu(starting_path, root, path) {
-    callback_fn(path, cb_data);
-  }
-  if (!read_seqcount_retry())
-    return xxx;  /* successful rcu walk */
-
-ref_walk:
-  /* ref walk parents, from starting_path until root */
-   walk(starting_path, root, path) {
-    callback_fn(path, cb_data);
-  }
-  return xxx;
-}
-
-Personally, I don't like this version very much, because the callback
-mechanism is not very flexible, and it is tricky to use it in BPF LSM.
-
-Thanks,
-Song
+-- 
+paul-moore.com
