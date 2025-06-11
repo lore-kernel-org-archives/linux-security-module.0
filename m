@@ -1,98 +1,123 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AD32356D8
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 17:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA4225BF17;
+	Wed, 11 Jun 2025 18:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749664268; cv=none; b=U8N7uvK4ZvtcME8cCrUjlrk1OgE2Omjs28ZGhx0l6c+NjPXeWLB/C3Gb4/xse1lGLsqymIUjX4DIJ4l3PNZTD6rYwgyJXfuq+ytcduHCIq+k0pqmuJ91q52yJpr+J/YMwKy7iIBWAj88kawJ3jYLtB9FjtJQJm9J9Y5rc9CYdm8=
+	t=1749665323; cv=none; b=XVnCd4IACe7jsSa375S6Lkz6nbuf7xLKOUyLhmlC9EdS3uHhpV8Gptydzm7jFt59m/hr4Z3n2vv5y8T+V/zqmvsR4ydCe1VRYfehZznnBkcmgDrGc5nIPuSgIfMOsjHVEVfuxtKWw9V8yytqPBiW9W9Ss/a36XSx/O7Cqpu8xYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749664268; c=relaxed/simple;
-	bh=eGNFqynuBIFAxQfgXXE+O2+YXzwRJnVxUyYET5WrhRM=;
+	s=arc-20240116; t=1749665323; c=relaxed/simple;
+	bh=vuuuUMNJTrbQEHqQfENAGTBD+eC4GhUdnYLcn0MH/mo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tPPevGIhpwbVO/ev49hJ0JW9OEtb8Wq1ROHzpWXIzcUsI53qVcz5X4pwWenPdkoNNm3VqJ6C4k6NAgy0O15s8sUALXm9lXp+4Pc/AisBJPKQ2Um0Gc2of8OIIqk/ctlSRtPrmx4fxwiQqsbB70LCModZLdLcFsysCt9dXElSUyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RI0tmLNY; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	 To:Cc:Content-Type; b=jrz72i+skQG2JEp6kuVLTxNsiSi9K8mu66Y6Lpuf7ndmGrzcSHfZj9nff0mqrnA0Hq9xqvPhIFWkJrhcKD6tDJZZdBHRTx78gZ43MYqll5DZY8jEkHoVa466vcCb+Bwc16aIwIEjeBVkZSBn2w15NHjRerUpcPctKsL8rdDyKOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDieeVu8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RI0tmLNY"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-607873cc6c4so169230a12.1
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 10:51:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1749664265; x=1750269065; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sNMRIvDjI5OxxkQoJ1BipcgVGMNLMdRP7oKxRHfqUb4=;
-        b=RI0tmLNY5QEW5WNz0qYhzTduHbXV9A7XSCW+/T1xDaZ6lNU7X9SCDyLEhST7TaBc93
-         MBdGjX86j6RXXcx9PTiIpK8iMo2omJxdB92F3S09lzu5yMNukm6D9AMlFRyK0V3slTz4
-         kDPPlWnT2G+ZnNf68deFFKwujeMXh5uhZpsYM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749664265; x=1750269065;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sNMRIvDjI5OxxkQoJ1BipcgVGMNLMdRP7oKxRHfqUb4=;
-        b=AEBMbgA7RiUd2d+yF9LBgfSBXelu8iCqcZ8ZYO3cPykSKuIgS0z9M6mDKzIKD7vrcg
-         8H1QiV8z+JsbT2EkEwxkTyzq7NR3ifYNJDLlehvUoYs5G9RM6FPbSo3Y7ikqigjSlJ8f
-         6UZrasOnHGMwf6zw09+P7chPUfb6wqhE0lRNngGuQe8XBlIkjNzRrTVykC7ASzvj/DPi
-         ZRTM3gpddfxiopH51G8qQFLf1FbL4MFlu9CRTDpfHYbVLDc8IFAxdFVu1dQsSXF2Zw5Z
-         qGMV4QW+LWuN7afU/P0e3oYUSwCIpKH9QL60Brv79TjLHyQZsgkY8WVOj3gj3PxJAB8y
-         nDuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpW6ri/C2GndlFlVdvpmF0blNQSDoElZn9dkAFwrpxJYBIymMwzvUG/q5LdyLx3y4+9kI6FIjXDoS0sonLqA0fe+REiGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgz9DoCZIpeD+bEXY3h7IsuBA6qCOF+lOrBVAfkoMCL8rki1fD
-	LKenkqHfLRUvLR6aeY60DKHyg8jfNLQ1pBM4JIEuLa1kyEUADXEKRpb5vWYJgHnCRm+PdYVjmOI
-	KQ05udhQ=
-X-Gm-Gg: ASbGncvvuAoNuleWiYIFyDuLoY0LijvrBqCr8t5jgr5Hly/eaVX1wJuKg9zEQlnUAax
-	yYVedmq7MVItIJbXdSEXhupmn9FmtF62eiAcovNcuuqophZo9E5YmcTBa+3Q4aU2C/ZhxE1LSrW
-	byVX8IZTz3eHtAba9LzGrUVqEtexFDp3nIBoyVeY5W7Ff1re0qQbS6B09fD1lE5YGdggxD1RZAi
-	/8TKoKwg9sbw3UueLUqn6GyMeYsep4sK4OaA3J5oGVGF2PbOyfmmSwNEq4EOehGVC1SgVa/YwuM
-	FTF1+zNjPiJ622MthklecLKWhVDAliubGRagmEz0KVzsxCFpLl1VDOOkLXg5vR+XljsB5RWC3Aw
-	H2A7ntUSgE+Vj+K1LcRSVm8gbxjbAvqnJHBeNK/F9vx7jTd0=
-X-Google-Smtp-Source: AGHT+IH0SGe6guLObZSHjSTAsFNd6EeHYfBw9agz0AecvVn2QHE34ONgwtvKHSWfiTj2EPoxw+cQOA==
-X-Received: by 2002:a05:6402:26d6:b0:604:5eee:6984 with SMTP id 4fb4d7f45d1cf-6086660b242mr419453a12.7.1749664264654;
-        Wed, 11 Jun 2025 10:51:04 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6082d59fe90sm2792739a12.62.2025.06.11.10.51.03
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jun 2025 10:51:03 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-604f26055c6so2267448a12.1
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 10:51:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXVcyq2CWhm5F3i5YOgH2jyYC6mGLUwAInRvu0KIrh9RhjrZYyR6aF/BJiZQ8ZgnSHlmqsbc3knMeYDOPKe90UylC4cTDk=@vger.kernel.org
-X-Received: by 2002:a05:6402:430a:b0:602:a0:1f2c with SMTP id
- 4fb4d7f45d1cf-608666342e7mr349953a12.9.1749664263059; Wed, 11 Jun 2025
- 10:51:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LDieeVu8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCF1EC4CEF7;
+	Wed, 11 Jun 2025 18:08:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749665322;
+	bh=vuuuUMNJTrbQEHqQfENAGTBD+eC4GhUdnYLcn0MH/mo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LDieeVu8mKI6wIBQ8ZdpWUZUldPV9W0BwMM4LUOtbgqvvI4d0dtyk/SmXmQcfSaIR
+	 d6TnwRoMNtpY2sAOYNUwrazXaCv4ekn4sW7LK2+1VGqEtvkHjYkxUCR9+bp0zDRSuU
+	 KJCUi9kSsfFeRWtJgtF7/hH5uGaY7geR8/vMde+87w1jt2vCfo6pr2TV2t0d8zflOb
+	 RAky1CQfM9+j8Y9RKDCDL8A4/T4Q0UsFlvFDxLELvdB7HQW8SYY8rme9CVEUNY9IE7
+	 WtHdIfp6Qaj7Em7YQKdBuzyInfzFSTbeUTEqoqxssqdiC3toNkz/jnhfTWxSTcyjOO
+	 5yfOuTdcgf7DQ==
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6fa980d05a8so1978976d6.2;
+        Wed, 11 Jun 2025 11:08:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVduRSp4ap98z1mjQzIgAUH30ijMd0isDFfMzn7a9TKBKHA1PatbbxBiI/AeQoFvOdhjLE/wUFOm5Bpja7y@vger.kernel.org, AJvYcCWDjEwDVtHqJfo82V2esdRXUAiOc0Fx/lwhFjYLSgd/lj7QH+QVyprMcNjWGb0V4zLy1Es=@vger.kernel.org, AJvYcCXfM5dEVawYAjsAge2Cvt9rFc3h4bRg56utcQvuYGP+f/T9d5AJ2AsOCdOFK0tJDEcswmaO/hbvLYugTlXd5g==@vger.kernel.org, AJvYcCXimap53u38UvBIzmLw1T92OwfGDLEuCYVs4ATk8wCDZHAJauz+5WviGluy+auC7+bQsoWb0/G+4w/Cj71eZfgvdYBnygAj@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPGOu7rxk50a6iSQJ/1Pd/tmIAFjiNud0CT7i6MsOCwki+uIzV
+	DrL8nZHwOoJq1/7J/vTH79zdLnoyuCSfj04nFnHTxwJhtVdz3/B+bfSJukeOv5d6J6D3zXF+OTm
+	tmD/VY5AJvQVcjPXCJPMxrPRzNOe31fY=
+X-Google-Smtp-Source: AGHT+IGzNRxckgFW6/9tgae8ZuBzm8ytC4tCv/ilGsBolC7Bp6fawNV0TjQIMFe+Fjv7DtylNA1bhEMA95ml5uL/rzw=
+X-Received: by 2002:a05:6214:e4d:b0:6fa:b1bb:8315 with SMTP id
+ 6a1803df08f44-6fb2c31b52emr62514016d6.6.1749665321863; Wed, 11 Jun 2025
+ 11:08:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <301015.1748434697@warthog.procyon.org.uk> <CAHC9VhRn=EGu4+0fYup1bGdgkzWvZYpMPXKoARJf2N+4sy9g2w@mail.gmail.com>
-In-Reply-To: <CAHC9VhRn=EGu4+0fYup1bGdgkzWvZYpMPXKoARJf2N+4sy9g2w@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 11 Jun 2025 10:50:46 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjY7b0gDcXiecsimfmOgs0q+aUp_ZxPHvMfdmAG_Ex_1Q@mail.gmail.com>
-X-Gm-Features: AX0GCFvhYmOiGos_n7MIyKSpEE5Y2P1Gb8BenhLqBoBcFZYUdrTRYSzOg_XV1WU
-Message-ID: <CAHk-=wjY7b0gDcXiecsimfmOgs0q+aUp_ZxPHvMfdmAG_Ex_1Q@mail.gmail.com>
-Subject: Re: [PATCH] KEYS: Invert FINAL_PUT bit
-To: Paul Moore <paul@paul-moore.com>
-Cc: David Howells <dhowells@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, keyrings@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250606213015.255134-1-song@kernel.org> <20250606213015.255134-2-song@kernel.org>
+ <174959847640.608730.1496017556661353963@noble.neil.brown.name>
+ <CAPhsuW6oet8_LbL+6mVi7Lc4U_8i7O-PN5F1zOm5esV52sBu0A@mail.gmail.com>
+ <20250611.Bee1Iohoh4We@digikod.net> <CAPhsuW6jZxRBEgz00KV4SasiMhBGyMHoP5dMktoyCOeMbJwmgg@mail.gmail.com>
+ <e7115b18-84fc-4e8f-afdb-0d3d3e574497@maowtm.org>
+In-Reply-To: <e7115b18-84fc-4e8f-afdb-0d3d3e574497@maowtm.org>
+From: Song Liu <song@kernel.org>
+Date: Wed, 11 Jun 2025 11:08:30 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW4LfhtVCe8Kym4qM6s-7n5rRMY-bBkhwoWU7SPGQdk=bw@mail.gmail.com>
+X-Gm-Features: AX0GCFuvcvlocezfv1YysEsbb8GlPxqoc1TmFc95N3B5xJlTqTWXOvm7IcF3gM8
+Message-ID: <CAPhsuW4LfhtVCe8Kym4qM6s-7n5rRMY-bBkhwoWU7SPGQdk=bw@mail.gmail.com>
+Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function path_walk_parent()
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	NeilBrown <neil@brown.name>, Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com, 
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, 
+	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, 
+	gnoack@google.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 10 Jun 2025 at 17:23, Paul Moore <paul@paul-moore.com> wrote:
+On Wed, Jun 11, 2025 at 10:50=E2=80=AFAM Tingmao Wang <m@maowtm.org> wrote:
+[...]
+> > I think we will need some callback mechanism for this. Something like:
+> >
+> > for_each_parents(starting_path, root, callback_fn, cb_data, bool try_rc=
+u) {
+> >    if (!try_rcu)
+> >       goto ref_walk;
+> >
+> >    __read_seqcount_begin();
+> >     /* rcu walk parents, from starting_path until root */
+> >    walk_rcu(starting_path, root, path) {
+> >     callback_fn(path, cb_data);
+> >   }
+> >   if (!read_seqcount_retry())
+> >     return xxx;  /* successful rcu walk */
+> >
+> > ref_walk:
+> >   /* ref walk parents, from starting_path until root */
+> >    walk(starting_path, root, path) {
+> >     callback_fn(path, cb_data);
+> >   }
+> >   return xxx;
+> > }
+> >
+> > Personally, I don't like this version very much, because the callback
+> > mechanism is not very flexible, and it is tricky to use it in BPF LSM.
 >
-> It doesn't look like this has made its way to Linus.
+> Aside from the "exposing mount seqcounts" problem, what do you think abou=
+t
+> the parent_iterator approach I suggested earlier?  I feel that it is
+> better than such a callback - more flexible, and also fits in right with
+> the BPF API you already designed (i.e. with a callback you might then hav=
+e
+> to allow BPF to pass a callback?).  There are some specifics that I can
+> improve - Micka=C3=ABl suggested some in our discussion:
+>
+> - Letting the caller take rcu_read_lock outside rather than doing it in
+> path_walk_parent_start
+>
+> - Instead of always requiring a struct parent_iterator, allow passing in
+> NULL for the iterator to path_walk_parent to do a reference walk without
+> needing to call path_walk_parent_start - this way might be simpler and
+> path_walk_parent_start/end can just be for rcu case.
+>
+> but what do you think about the overall shape of it?
 
-Bah. It "made it" in the sense that sure, it's in my inbox.
+Personally, I don't have strong objections to this design. But VFS
+folks may have other concerns with it.
 
-But particularly during the the early merge window I end up heavily
-limiting my emails to pull requests. And then it ended up composted at
-the bottom of my endless pile of emails.
+Thanks,
+Song
 
-I guess I can still take it if people just say "do it".
-
-            Linus
+[...]
