@@ -1,181 +1,106 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF5E1DF75A
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 16:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638511F0E39;
+	Wed, 11 Jun 2025 16:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749657948; cv=none; b=Iux49WA+oPa+EsS1C1XIqXjmO75A3LrsfVp8HvEnZfK80TnI8QHe3Tn1j0Jc5Xx4KEcLHSiQMxkxnk+syJ3oaAbjOwsNMW1UBAFHmFQT+RrAFo4BrxQq4sjbJz8qEy8natkOrnzVzYsRs0LJRyB2J4cqao8GRZUJkFTWH/tUJSk=
+	t=1749659499; cv=none; b=LakKbJu9sqE64mpvVdSHD/QGc/75LotY9+Oy+aLEI43vO3ZTEouVI5VoKfi9P31xBeAnR94naBpneX62KzFIgX3BvzhDlooj5j15jS6T+qohS92iBfmj1nvhC9tJWgH2axxZUMDFGwpvH0bh0zNP1NV9atBxl3uXewASteJInCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749657948; c=relaxed/simple;
-	bh=Ey4t6TvnsBeIlDe5advtSy6jMvq6AuP+qG1plUpAXjc=;
+	s=arc-20240116; t=1749659499; c=relaxed/simple;
+	bh=wHBQRhTvoZjP5hYlhu6PAF/AqN1dtZGC7ByNEkL8uk8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NlQIvM5g1BYB6bIXPKt1cjJ9HPVdkJKjHAeUf1lC5EXaTH7H7/pxoXuSlnkKPReJ1ZzTcCpr/zKRACTVgESP0zaD9o2xd23/W2SWDqzfG8G9h0C2X5N6gNFtnRbzqcP/wnEMHUaphJUrocVPjaPdawMc6IKiV5wpo3LqsVaqpsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6qwPAEy; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=CCTwOECmEgbXP1aNt+SPdCcpWC5gjPsyQgYUZRwfpJWqCoCbajbDaKh17OoUxl5R2FAP0PcIUVBO4igcJN/oH18ahuZK54eEIy6oxay9+QOCEOBoYh3BN4kg8Um7gjN+x60ZDYxip3TyIlcMJPMJrTYqEtebQ51N+2L8x2P1CK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJvLKc7I; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6qwPAEy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED7EC4CEE3
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 16:05:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJvLKc7I"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE8CC4CEF5;
+	Wed, 11 Jun 2025 16:31:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749657948;
-	bh=Ey4t6TvnsBeIlDe5advtSy6jMvq6AuP+qG1plUpAXjc=;
+	s=k20201202; t=1749659498;
+	bh=wHBQRhTvoZjP5hYlhu6PAF/AqN1dtZGC7ByNEkL8uk8=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=T6qwPAEyMG+l9mvBw5vBWH47Ex+clI75SiARLap+ouypSPo/9GOBoJF2HDEdkmE7s
-	 o4lr0Wfuqbg5XC6necWIS0NiujDBN+CbRQLyJFemgHJPMH+O7hAw5elOeqz/W4AItQ
-	 fM2SHY7YnbbWapxsdtswSFo2BduNujIJmV0QxSJBhzeaT42aWkVZWY5uIrtxGX+o3h
-	 PyMdapGHItKYLUjUP55otXWVITO0H4Ui2R3cr9IIqQZH6OcE/qhf10ukTcY7HYJ6+O
-	 K5VcAOvIhx79cjpa45M8iJR0u9xh89WztZc+mAdmj3phVm337Y6b/m4ZyvxTWTU1VZ
-	 RlFnwXGDw4yHQ==
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-606ddbda275so135143a12.1
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 09:05:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUeM5f4yeivFdSOW5APzIT0seud2jGQQwUeOe/KBS5KIkprG1vNYDFTsk05VjfaJW7TzYIx4oDd2/w9NWrutTa/qcpBJis=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymaQwg0sNuKi4hQg5MX021EeqwLkHyihmvl53wMKlan3yjhF7N
-	ogOmYuGfw4IwURmZE+MNhPUkKJgEyAMZgWUbsDdBs3bjtaaJfg+0bpjGfLVv3qxj1rT1v6wO1zh
-	WcS49fSyfir8sJfl1l2koSt/f1Lh5njFgJ4DHz/pz
-X-Google-Smtp-Source: AGHT+IEQ/wC4UhOsTzaMby4ck/QlmCgIY9hcONwmdeT691icR7q3A6gztyHt0h9AUoiNOTo3zyqUAyEPqenihvrgA1c=
-X-Received: by 2002:a05:6402:268e:b0:602:a0:1f3a with SMTP id
- 4fb4d7f45d1cf-60846aeb534mr3256002a12.13.1749657946702; Wed, 11 Jun 2025
- 09:05:46 -0700 (PDT)
+	b=JJvLKc7IROMKKelWLCQtsFKYQEuV5DVSTk4jtVvozIZtXoYprNJfLZu4kKj6ondQd
+	 L2wjcqMql+MQcTw5uE2TroXEQgwmpm2W9elvE3eC8RVNpD03r4L6/XV7+eXYKuTvxF
+	 kiuHceMjoaWRZ3R8IRAyVFftX4aprswSeURh3o7iqGxixiDE1im3RTbixraRi6n/tB
+	 z3MX7iW6bSlCkF9FbB/DaLNAgkyD6/G2Hg9HH3Ok5/bngxo/GjSU/BU+idijJft85B
+	 6SnneFTyWbUXvepgpz8urF41dLIOx1omo4cwgtPVQm242RKA8ji0VxLS8ie1msRpvR
+	 o7U55sl3HkXdw==
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6fb0eb0f0fbso85456d6.1;
+        Wed, 11 Jun 2025 09:31:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUm/Y5+XONlilsbAmRz6jP7G7SKNRdjgSa1ecbeZLR4Tkl5UPJxa95NPg7cMFu1iWHFhqhDlsBSolskUKDo@vger.kernel.org, AJvYcCV92Bi7IGFFZASZr+s5IYIQmDjAZPGTrTw3PJoRPbe2kZ1Vft/p0VEhy8PCWF8jVDpfTF6pRYgqhUrLJP3NnTz3Bf15HOZ3@vger.kernel.org, AJvYcCVUv/dcnkIWyylkkmGfvFkxt9/0KzD5rVwue5fvmjOdEVWJgCEtqljYwEdP9Edb/igcrv8=@vger.kernel.org, AJvYcCVW+4ppSmsGGRQxIQGUNqqJMJboTczuILWrkbpYj7UD9P+S4YVPco3qyXaqDXs0WD5x+dqy5viiNaKQ9X9+2A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQDFKZybw9e5Spxl364cF1ZG7pJo8EaJkrTHO4PkMisyIfVrjp
+	8dGpQF4tDfp5uTCeSSpt39vAZ2YM/4W/uhgzeZZnRaGnNuEvPKzDBsI7GH5HGZgjaKKeIiOByyb
+	syJGS0eH6rMoL4eIUi2pahpnGC3t8KC8=
+X-Google-Smtp-Source: AGHT+IHww/o74BxPrTUbg+/oYp3tE0Qny5VDLaUUtEl/gCVQ64aG0JYxPSDJ7sXz6hjpvQbWvubaQVRVtTW5qUDhHi8=
+X-Received: by 2002:a05:6214:500c:b0:6fa:fdf5:a604 with SMTP id
+ 6a1803df08f44-6fb347f3af5mr938296d6.12.1749659497922; Wed, 11 Jun 2025
+ 09:31:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-8-kpsingh@kernel.org>
- <CAADnVQL7Roi1gmAWZFSx-T4YVLtHu2cDneKCkLdBvB2+y_S1Uw@mail.gmail.com>
- <CACYkzJ4_NL=U525D56mVcyfxX64BDrkP3FiFotNPQ8+EDKNRQQ@mail.gmail.com> <CAADnVQLmrbOFbJZAdx3auye8YVwVJvMM4qp0L_-mFyD4xDedUA@mail.gmail.com>
-In-Reply-To: <CAADnVQLmrbOFbJZAdx3auye8YVwVJvMM4qp0L_-mFyD4xDedUA@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Wed, 11 Jun 2025 18:05:36 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ6b0uiLMos3SOTz196GpFUjTH-qAk7sr_7DYafh+=1Rfg@mail.gmail.com>
-X-Gm-Features: AX0GCFvfoowa5QykVLNVEJgC8uTGu3RzBdJvX1Kqy6urMMXGWRnA_1GJEgRP0Ag
-Message-ID: <CACYkzJ6b0uiLMos3SOTz196GpFUjTH-qAk7sr_7DYafh+=1Rfg@mail.gmail.com>
-Subject: Re: [PATCH 07/12] bpf: Return hashes of maps in BPF_OBJ_GET_INFO_BY_FD
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>
+References: <20250606213015.255134-1-song@kernel.org> <20250606213015.255134-2-song@kernel.org>
+ <174959847640.608730.1496017556661353963@noble.neil.brown.name>
+ <CAPhsuW6oet8_LbL+6mVi7Lc4U_8i7O-PN5F1zOm5esV52sBu0A@mail.gmail.com> <20250611.Bee1Iohoh4We@digikod.net>
+In-Reply-To: <20250611.Bee1Iohoh4We@digikod.net>
+From: Song Liu <song@kernel.org>
+Date: Wed, 11 Jun 2025 09:31:26 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6jZxRBEgz00KV4SasiMhBGyMHoP5dMktoyCOeMbJwmgg@mail.gmail.com>
+X-Gm-Features: AX0GCFsKHEibU3SwfO1PDkPH059MHGcDhjOXxl4R9bB8VLTrCd0m_aTAtlTdLGI
+Message-ID: <CAPhsuW6jZxRBEgz00KV4SasiMhBGyMHoP5dMktoyCOeMbJwmgg@mail.gmail.com>
+Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function path_walk_parent()
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: NeilBrown <neil@brown.name>, Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com, 
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, 
+	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, 
+	gnoack@google.com, m@maowtm.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 11, 2025 at 5:04=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
+On Wed, Jun 11, 2025 at 8:42=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+[...]
+> > We can probably call this __path_walk_parent() and make it static.
+> >
+> > Then we can add an exported path_walk_parent() that calls
+> > __path_walk_parent() and adds extra logic.
+> >
+> > If this looks good to folks, I can draft v4 based on this idea.
 >
-> On Wed, Jun 11, 2025 at 7:27=E2=80=AFAM KP Singh <kpsingh@kernel.org> wro=
-te:
-> >
-> > On Mon, Jun 9, 2025 at 11:30=E2=80=AFPM Alexei Starovoitov
-> > <alexei.starovoitov@gmail.com> wrote:
-> > >
-> > > On Fri, Jun 6, 2025 at 4:29=E2=80=AFPM KP Singh <kpsingh@kernel.org> =
-wrote:
-> >
-> > [...]
-> >
-> > > >
-> > > > +       if (map->ops->map_get_hash && map->frozen && map->excl_prog=
-_sha) {
-> > > > +               err =3D map->ops->map_get_hash(map, SHA256_DIGEST_S=
-IZE, &map->sha);
-> > >
-> > > & in &map->sha looks suspicious. Should be just map->sha ?
-> >
-> > yep, fixed.
-> >
-> > >
-> > > > +               if (err !=3D 0)
-> > > > +                       return err;
-> > > > +       }
-> > > > +
-> > > > +       if (info.hash) {
-> > > > +               char __user *uhash =3D u64_to_user_ptr(info.hash);
-> > > > +
-> > > > +               if (!map->ops->map_get_hash)
-> > > > +                       return -EINVAL;
-> > > > +
-> > > > +               if (info.hash_size < SHA256_DIGEST_SIZE)
-> > >
-> > > Similar to prog let's =3D=3D here?
-> >
-> > Thanks, yeah agreed.
-> >
-> > >
-> > > > +                       return -EINVAL;
-> > > > +
-> > > > +               info.hash_size  =3D SHA256_DIGEST_SIZE;
-> > > > +
-> > > > +               if (map->excl_prog_sha && map->frozen) {
-> > > > +                       if (copy_to_user(uhash, map->sha, SHA256_DI=
-GEST_SIZE) !=3D
-> > > > +                           0)
-> > > > +                               return -EFAULT;
-> > >
-> > > I would drop above and keep below part only.
-> > >
-> > > > +               } else {
-> > > > +                       u8 sha[SHA256_DIGEST_SIZE];
-> > > > +
-> > > > +                       err =3D map->ops->map_get_hash(map, SHA256_=
-DIGEST_SIZE,
-> > > > +                                                    sha);
-> > >
-> > > Here the kernel can write into map->sha and then copy it to uhash.
-> > > I think the concern was to disallow 2nd map_get_hash on exclusive
-> > > and frozen map, right?
-> > > But I think that won't be an issue for signed lskel loader.
-> > > Since the map is frozen the user space cannot modify it.
-> > > Since the map is exclusive another bpf prog cannot modify it.
-> > > If user space calls map_get_hash 2nd time the sha will be
-> > > exactly the same until loader prog writes into the map.
-> > > So I see no harm generalizing this bit of code.
-> > > I don't have a particular use case in mind,
-> > > but it seems fine to allow user space to recompute sha
-> > > of exclusive and frozen map.
-> > > The loader will check the sha of its map as the very first operation,
-> > > so if user space did two map_get_hash() it just wasted cpu cycles.
-> > > If user space is calling map_get_hash() while loader prog
-> > > reads and writes into it the map->sha will change, but
-> > > it doesn't matter to the loader program anymore.
-> > >
-> > > Also I wouldn't special case the !info.hash case for exclusive maps.
-> > > It seems cleaner to waste few bytes on stack in
-> > > skel_obj_get_info_by_fd() later in patch 9.
-> > > Let it point to valid u8 sha[] on stack.
-> > > The skel won't use it, but this way we can kernel behavior
-> > > consistent.
-> > > if info.hash !=3D NULL -> compute sha, update map->sha, copy to user =
-space.
-> >
-> > Here's what I updated it to:
-> >
-> >     if (info.hash) {
-> >         char __user *uhash =3D u64_to_user_ptr(info.hash);
-> >
-> >         if (!map->ops->map_get_hash)
-> >             return -EINVAL;
-> >
-> >         if (info.hash_size !=3D SHA256_DIGEST_SIZE)
-> >             return -EINVAL;
-> >
-> >         if (!map->excl_prog_sha || !map->frozen)
-> >             return -EINVAL;
-> >
-> >          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> >          I think we still need this check as we want the program to
-> > have exclusive control over the map when the hash is being calculated
-> > right?
->
-> Why add such a restriction?
-> Whether it's frozen or exclusive or both it still races with map_get_hash=
-.
-> It's up to the user to make sure that the computed hash
-> will be meaningful.
+> This looks good but it would be better if we could also do a full path
+> walk within RCU when possible.
 
-Sure, yeah. I removed the check, they can use the hash in many ways,
-even if racy.
+I think we will need some callback mechanism for this. Something like:
 
-- KP
+for_each_parents(starting_path, root, callback_fn, cb_data, bool try_rcu) {
+   if (!try_rcu)
+      goto ref_walk;
 
-> I would allow for all maps.
+   __read_seqcount_begin();
+    /* rcu walk parents, from starting_path until root */
+   walk_rcu(starting_path, root, path) {
+    callback_fn(path, cb_data);
+  }
+  if (!read_seqcount_retry())
+    return xxx;  /* successful rcu walk */
+
+ref_walk:
+  /* ref walk parents, from starting_path until root */
+   walk(starting_path, root, path) {
+    callback_fn(path, cb_data);
+  }
+  return xxx;
+}
+
+Personally, I don't like this version very much, because the callback
+mechanism is not very flexible, and it is tricky to use it in BPF LSM.
+
+Thanks,
+Song
