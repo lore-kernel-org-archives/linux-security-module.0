@@ -1,176 +1,131 @@
-Received: from flow-a3-smtp.messagingengine.com (flow-a3-smtp.messagingengine.com [103.168.172.138])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4608479DA;
-	Wed, 11 Jun 2025 00:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1878B5695;
+	Wed, 11 Jun 2025 00:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749601437; cv=none; b=bhtltWMCd88NQ6YpTF7gnsQ7SA/ZDKJIfhnDoa/wwP0XfNPH9WUHCDobIbSMd7+qyrc84XJHGwjH9aqKUWoNpyiEn+/IvO0Kk0DFx0lvzhpyRDQYRHakoLPSqYIiqv7WZjYiQp/hxe1vIxux5Ne4tJ+ttdg6bLpDPnq+aRsHYRo=
+	t=1749603375; cv=none; b=j35bMFGyOAy7se/lXdbdoHUEtOs8NYNiSb4sc5anrLSll9FBN8PUD3qQu1L05L1SwpDkvVZtBL8OqtSQqO4ueHZwtUudlerTP3O2iSdObSJNsd2JthN5jiLXxjTxvvC6gsT79Oo2aHJVfszVYy3v2ugXTb5kJpzRQBs+BvPl204=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749601437; c=relaxed/simple;
-	bh=qgHubdTxv57bGTk1of/rJdqy+LmbhQpEv1QKoORclIA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LDPN/LFPk6ABd7M7l+g6ZbETPlv5cf8JKu+mBcVQc3LUvxHapspUlblqI3CuB42Vs3te81HPdVTBCCziSnFa29ZG2nEA/hm6JMda7wk1ISd0ZT9pj0FJEAj4gKepDNIEjuqPDoqANJDdNIUK4/uOt/rnD1ksgBg2sImzRXqrSfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=M72LdKSz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=j9ldIW/d; arc=none smtp.client-ip=103.168.172.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1749603375; c=relaxed/simple;
+	bh=yW2+s1S0dYwBFjAXmnAj4igW3DXypljO3osHyrjTWuo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pbhJYwScE1o4jB2AANuh96Fo6OxPh7zkCip4muhUNszep23bIUQXUlUrcZbRC8UKntNHrTw1UqS1gsORhIJf4UHiT9z+wU/66pdTbU1cuPoJarwQbAi2+ZF2Bf42bKmlpANESGikAMvyTedrw0luKljz6zfmPgZU8NkgMqUoElI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ix7qs+1O; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="M72LdKSz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="j9ldIW/d"
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailflow.phl.internal (Postfix) with ESMTP id 1A61220069B;
-	Tue, 10 Jun 2025 20:23:54 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Tue, 10 Jun 2025 20:23:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1749601434;
-	 x=1749608634; bh=pW98W2lJtLiwekAVVtO/Jv1f0oaMGloSBkI5n6j43Js=; b=
-	M72LdKSzFi6AhpmBdMfq0W92Tm4F+b23EOtvf0QijTWVEEzc0L3GHw7lBU/A5AI6
-	SEi0ySR9D4xPY/vwXiwC5EKE1rfMoNXuJdQ2QcGfot5UKBa0INCsAumLTyRKLcX5
-	9DMTKU6JNYQQ5Wv4u91A5D7ADSc+y4j0kJb47MZZ0qff2QZhX+HPZ2GTQlVZH5QX
-	cOG5PVcfwEvxIfUamVSscQRx85h2wmsYxg0G4PLSAEd/ebem334b01AJIX63yqi7
-	+qBw4bJYHhPF/FHH3EKTVNaAQwgRqdUzW+WKw+k3lJYiX+A6GesQDqZrpGVQAl82
-	q64MHqH8w+Gp3DZpxLSCmg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749601434; x=
-	1749608634; bh=pW98W2lJtLiwekAVVtO/Jv1f0oaMGloSBkI5n6j43Js=; b=j
-	9ldIW/dQiRlFRacP1GEB2LIcOnmifUwPDSlREdtYRAvBAPp/3IE8aaIXYgCnq/B3
-	1aOExY2rgxuymZlMsermw/8hopiuKsqIBRqx7iTydfSZUMTr0NnpeQWBeYEcgX/r
-	DMfsUtxfodWCGuup77mN3faaVYw4nQrxAejUEuSck371wkla1fH0Nss3R9iUQv27
-	1prglVnUFQ00M3RbWQVkKuEUav60ra90J2JH9heTkswJcNZPHNpAEtk2S9UHpT4S
-	LIqyhNgUcwHOHQfTMdkNkmW3Q5pcbBjxGQJusAqjMkd5CNIUjUPAox8HQRwPvT4c
-	Ha81AU2AeAJeKUL1vshQg==
-X-ME-Sender: <xms:mMxIaM-J3F-UveY-ExtQ-LI_cm_-T7vD1fIINkoxPcoFrKQDp8KdDg>
-    <xme:mMxIaEvDgMloit5gffJYIgsHdGK9MK6gzyBrmJX_KPt_OTPf1KBzOMaYtgHlw1Zyd
-    lr_PNJfD4XS2ZJbM64>
-X-ME-Received: <xmr:mMxIaCDhzIUhVoROK8Bgx_cE-tDllChgeYkk1rxXXc8Jq4Ly8V0lttf46cDL1_l5ssJv9NinuToeLFOSIErgcVjk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduudeghecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
-    jeenucfhrhhomhepvfhinhhgmhgrohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqe
-    enucggtffrrghtthgvrhhnpedukeevhfegvedvveeihedvvdeghfeglefgudegfeetvdek
-    iefgledtheeggefhgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghrtghpthhtohepvddvpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepmhhitgesughighhikhhougdrnhgvthdprhgtphhtthhopegsphhfsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvh
-    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhes
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrih
-    hthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgv
-    rhhnvghlqdhtvggrmhesmhgvthgrrdgtohhmpdhrtghpthhtoheprghnughrihhisehkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopegvugguhiiikeejsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:mcxIaMcG4phxurxcpgZhcwQnMUYOVP1L-m2qOXuRG_pDAYedkj53sQ>
-    <xmx:mcxIaBNxCzhiR5pOWCz2vzWj4oHDvvM0w5lEWlfOGiqC2VcdbndfTA>
-    <xmx:mcxIaGnT4FwAHpwEbgBatl1A3ISJHAwnimz_wBUWFK4R56p0b6zOCg>
-    <xmx:mcxIaDvrE-9NZcas-megW6Igl_E1VPR6QSAlGKQNKEts2hseFcIO5Q>
-    <xmx:msxIaLeTqSY8DMUIwV40taV0eTdtJIqtHiprr-cO9XnZdq990jByXRvn>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 10 Jun 2025 20:23:50 -0400 (EDT)
-Message-ID: <fd995e37-9369-4375-8718-8338e732860f@maowtm.org>
-Date: Wed, 11 Jun 2025 01:23:49 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ix7qs+1O"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AEB6C4CEF7;
+	Wed, 11 Jun 2025 00:56:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749603373;
+	bh=yW2+s1S0dYwBFjAXmnAj4igW3DXypljO3osHyrjTWuo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Ix7qs+1OOS03g3OgEyAqtA3tJ1Km6thWuMpTMlUAB4t3wtHZs1xKmfp4yAhk+kPXD
+	 u9cL2ZGQJmwYFaQgjA6n2vk9Bv2plghnHQEop9bltf4sJopPBhGfV7kKTCZasn53hO
+	 2AYpoTZsAwqVOg+OvKXDphjI0SGVu7CWFyIu2YlWbLxi4WAhuF/3l5d/Jwz7wCJR3x
+	 nR0RkqB7mIekEjtAFKb/YgjSzVnwk9/iuNFhIQH0cKuGkUFFUdK+iwmYZn3PQX3c4J
+	 wmhjVvKBqb0seaoFY/mD9B6DneC1383fkc48KhXl1UGdZBU7Z9vOXmj47Dz0lJ9g6Z
+	 bUuSzQBBQBf6w==
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6f8a87f0c0fso66824376d6.0;
+        Tue, 10 Jun 2025 17:56:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX/kX6uL4WK6/foPfomJNn7nDoRlg95354czakrcZ0wqm0uAMxgjJgqNq2N9c6zn28MY2TIOdt9MvAR/WIo@vger.kernel.org, AJvYcCX81Gk5VdtTdnrAjfNKlSBsLpQEE/CIaaQicfKhf/Hc5gfmk5umZ+gxQQuNoQyu2TaTXwy6cD8anFPa5o1YEQ==@vger.kernel.org, AJvYcCXB4etdv/Dg8BAf9r69SVd526/OmWqRDsxCJIFRmt31seehrIK+C8q2lfKvlHcvOMdhGD8gHqT1YtkcBxbVRfMLp0AYdUTe@vger.kernel.org, AJvYcCXYeGVn645RuHHGhb96oqWh9pRLyAdXnqX+f/2Wlj5uAekt2g3NVqB1xkLioIdmMaraKSo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbe5WWIKoezrujSp+/4xyxgfU9hGx7HAN203stASTv1fMmpqNv
+	u18AsS8FshYU8ODD354JurqT44hSC1/T+3LOmZhlkgQPpTsy51Lriu1+5dOlgRtsdV82MUqXErW
+	lbjtWez9cQqqziSRYa5Y/0bufUUnKVNY=
+X-Google-Smtp-Source: AGHT+IGSVeuJ+FOXkPbiyzb4l38dn5Y2lPF187pto/+/yD/Nj5qfj6UaX5J81ibPmEr9a8rn1ItvqlL0uinCvFk/UwU=
+X-Received: by 2002:a05:6214:e87:b0:6f4:cb2e:25cc with SMTP id
+ 6a1803df08f44-6fb2c375cbcmr25386766d6.32.1749603372419; Tue, 10 Jun 2025
+ 17:56:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function
- path_walk_parent()
-To: Song Liu <song@kernel.org>
-Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk,
- brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org,
- mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com,
- jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com
-References: <20250606213015.255134-1-song@kernel.org>
- <20250606213015.255134-2-song@kernel.org> <20250610.rox7aeGhi7zi@digikod.net>
- <CAPhsuW5G0Th+9dRSmxDjo5E7CxV1E9N8AiKjw3cKyEhOBVWJFw@mail.gmail.com>
- <d7d755ea-5942-440b-8154-21198cb6a0f1@maowtm.org>
- <CAPhsuW75h3efyXmCcYE_UEmZGXR5KMSEw8h-_vrZH82BYU=WVw@mail.gmail.com>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <CAPhsuW75h3efyXmCcYE_UEmZGXR5KMSEw8h-_vrZH82BYU=WVw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250606213015.255134-1-song@kernel.org> <20250606213015.255134-2-song@kernel.org>
+ <174959847640.608730.1496017556661353963@noble.neil.brown.name>
+In-Reply-To: <174959847640.608730.1496017556661353963@noble.neil.brown.name>
+From: Song Liu <song@kernel.org>
+Date: Tue, 10 Jun 2025 17:56:01 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6oet8_LbL+6mVi7Lc4U_8i7O-PN5F1zOm5esV52sBu0A@mail.gmail.com>
+X-Gm-Features: AX0GCFvEtC27CfJCDtYJnIsvh1XG7Q2O9NKGpEtUlKwZpyuicB1tN-YkqmLZmHU
+Message-ID: <CAPhsuW6oet8_LbL+6mVi7Lc4U_8i7O-PN5F1zOm5esV52sBu0A@mail.gmail.com>
+Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function path_walk_parent()
+To: NeilBrown <neil@brown.name>
+Cc: Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, kpsingh@kernel.org, mattbobrowski@google.com, 
+	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, 
+	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com, m@maowtm.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/11/25 00:08, Song Liu wrote:
-> On Tue, Jun 10, 2025 at 3:26 PM Tingmao Wang <m@maowtm.org> wrote:
-> [..]
->>>
->>>                 if (!choose_mountpoint(real_mount(path->mnt), root, &p))
->>>                         return false;
->>>                 path_put(path);
->>>                 *path = p;
->>>                 ret = true;
->>>         }
->>>
->>>         if (unlikely(IS_ROOT(path->dentry)))
->>>                 return ret;
->>
->> Returning true here would be the wrong semantic right?  This whole thing
->> is only possible when some mount shadows "/".  Say if you have a landlock
->> rule on the old "/", but then we mount a new "/" and chroot into it (via
->> "/.."), the landlock rule on the old "/" should not apply, but if we
->> change *path and return true here then this will "expose" that old "/" to
->> landlock.
-> 
-> Could you please provide more specific information about this case?
+Hi Neil,
 
-Apologies, it looks like I was mistaken in the above statement.
+Thanks for your suggestion! It does look like a good solution.
 
-I was thinking of something like
+On Tue, Jun 10, 2025 at 4:34=E2=80=AFPM NeilBrown <neil@brown.name> wrote:
 
-# mount --mkdir -t tmpfs none tmproot
-# cp busybox tmproot/ && chmod +x tmproot/busybox
-# mount --move tmproot /
-# env LL_FS_RW=/ LL_FS_RO=/.. ./sandboxer chroot /.. /busybox sh
-  # echo can write to root > /a
-  sh: can't create /a: Permission denied
-  ^^^^ this does not work, but I was mistakenly thinking it would
+> The above looks a lot like follow_dotdot().  This is good because it
+> means that it is likely correct.  But it is bad because it means there
+> are two copies of essentially the same code - making maintenance harder.
+>
+> I think it would be good to split the part that you want out of
+> follow_dotdot() and use that.  Something like the following.
+>
+> You might need a small wrapper in landlock which would, for example,
+> pass LOOKUP_BENEATH and replace path->dentry with the parent on success.
+>
+> NeilBrown
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 4bb889fc980b..b81d07b4417b 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2048,36 +2048,65 @@ static struct dentry *follow_dotdot_rcu(struct na=
+meidata *nd)
+>         return nd->path.dentry;
+>  }
+>
+> -static struct dentry *follow_dotdot(struct nameidata *nd)
+> +/**
+> + * path_walk_parent - Find the parent of the given struct path
+> + * @path  - The struct path to start from
+> + * @root  - A struct path which serves as a boundary not to be crosses
+> + * @flags - Some LOOKUP_ flags
+> + *
+> + * Find and return the dentry for the parent of the given path (mount/de=
+ntry).
+> + * If the given path is the root of a mounted tree, it is first updated =
+to
+> + * the mount point on which that tree is mounted.
+> + *
+> + * If %LOOKUP_NO_XDEV is given, then *after* the path is updated to a ne=
+w mount,
+> + * the error EXDEV is returned.
+> + * If no parent can be found, either because the tree is not mounted or =
+because
+> + * the @path matches the @root, then @path->dentry is returned unless @f=
+lags
+> + * contains %LOOKUP_BENEATH, in which case -EXDEV is returned.
+> + *
+> + * Returns: either an ERR_PTR() or the chosen parent which will have had=
+ the
+> + * refcount incremented.
+> + */
+> +struct dentry *path_walk_parent(struct path *path, struct path *root, in=
+t flags)
 
-I think because choose_mountpoint_rcu only returns true if
-    if (mountpoint != m->mnt.mnt_root)
-passes, this situation won't cause ret to be true in your code.
+We can probably call this __path_walk_parent() and make it static.
 
-But then I can't think of when
-      if (unlikely(IS_ROOT(path->dentry)))
-          return ret;
-would ever return true, unless somehow d_parent is corrupted?  Maybe I'm
-just missing something obvious here.
+Then we can add an exported path_walk_parent() that calls
+__path_walk_parent() and adds extra logic.
 
-Anyway, since there's a suggestion from Neil to refactor this, this might
-not be too important, so feel free to ignore for now.
+If this looks good to folks, I can draft v4 based on this idea.
 
-> 
-> Thanks,
-> Song
-> 
->> A quick suggestion although I haven't tested anything - maybe we should do
->> a special case check for IS_ROOT inside the
->>     if (unlikely(path->dentry == path->mnt->mnt_root))
->> ? Before "path_put(path);", if IS_ROOT(p.dentry) then we just path_get(p)
->> and return false.
->>
->>>
->>>         parent = dget_parent(path->dentry);
->>>         dput(path->dentry);
->>>         path->dentry = parent;
->>>         return true;
->>> }
->>>
->>> Thanks,
->>> Song
->>
+Thanks,
+Song
 
+[...]
