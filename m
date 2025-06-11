@@ -1,116 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E428E28851C
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 13:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B080728C855
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 14:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749649303; cv=none; b=IphcFmcQ1Xy1AHbLwuc3crM92fWHRKn1j/LHBxg2kyll0DWnIlcOBX2sUAns8w1yPyjN/IUAxy+uLzh0uvOyl5ji0TvhEGMHAflxfYZpJaWY2dMeBG+5Nq87OPpVkWuTjQFfnh78M5cQKCVxVopoT5cc+s9tJOBw4waL9b/FzSg=
+	t=1749651852; cv=none; b=lv67iamzrPEyQnfQWcqXa3dGQh+ARJLrsJrwzPqFTEZSvJynPAkaT8TQvgXV10qyo4YlqnHT+u+PsEJYl4q8djZpnZYdFcZOIX37WdKLYwPKWV0k1/n11IVo4dwtjEIioO8c4ZW9gB2H+MzYV6lN0xKKpoK9qhhh5DZFMFflSbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749649303; c=relaxed/simple;
-	bh=4tmp676+IQ949gs6/CrHDkVmXb8eSg5m8lRI4y1hgYU=;
+	s=arc-20240116; t=1749651852; c=relaxed/simple;
+	bh=+n2wxlhNO/5kmSj5JkekXPG3vsLUDhvGncEIlxfIMF4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xu08iYfglsqzQ4blwRrzfaBsvxcIsjxlAJ/11waSQG+YfzXQLHg6AwyUGe6loC2NX81zcQ+gzDNawom7IcZsucwVQ67ENceIvcVbkjiANgM8Zcq/Gk8lQS6SxCpQXHHqW9dbsTBjCcxYd0mTY1oVZh+A/enWlPF6r0uhU2FKZg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEQV99lG; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=mns9RFjF7kZXht0vH1f59n6puCrkWVJt7uHFEwfQrsDdr3Lf5gQ2rQnDkLMRCNwmA5/jPs8hB32G9UHwdfHZMAVfo1SpELHvOgdyVotxt/CSeRxL79ZOl0XPy3njVmSQIBYRCEWxO2W9H86ezcoLJjSGCog19FY2w4b4rBzOHpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=fboq00SM; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEQV99lG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 855A1C4CEF6
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 13:41:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749649302;
-	bh=4tmp676+IQ949gs6/CrHDkVmXb8eSg5m8lRI4y1hgYU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NEQV99lG2FAjSgOVKrFlK4KaUiHRv1Q+ymZh9IjtSqdf7X09GUJj9M6mKwL61PcYg
-	 qKOQFVOTY/8uLUIPU8fYtbE5n9lkfpWr/bXHupcioDTw6q9V0p5opJHQfCKx8fnmpG
-	 nFLO1ggDRU0vmDAGey8YLwf6G7HRSEG5wZj4thOkqXe9eJSszKSPwLF0Hql9Dg+edV
-	 wDqS9Obmg2GnQd0uGVYjn24yNu/4aF5pKNkOJZ6/qob/jjFQUvPh1gk8Y7BQeZd5lA
-	 a2GF+RVWsGpEcTYNignyPRV5j2m0ca2NcYm9w7PeASvtFvBRpf+06wlIiTY1b1xfsm
-	 gdAi83HYwHIjg==
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-60497d07279so13478040a12.3
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 06:41:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWztrPq6sqpMrtCzWAjBbKFpjkkB/UB/nvLyCAR8ZNtw1ZViOUJbSNMyexoHHDHuOZMW1SIsMB08Ohhb3ySTBdyni8TcQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoL1SWeKxOs5hCJ1DwGrkcMBjlMeeos+ppfVyd0pa1ZGu27w0H
-	HZGMSNgmjjwLG5HgcYFgai9xPDE67qHKfB8+qWlUTwJU9S6AqzqlUp81vca0W0f8L82tlz1F+ZT
-	kMNw3ma8ICRn2nH09NGyGEYihwSNKu3r0vcqLTDPV
-X-Google-Smtp-Source: AGHT+IGHC4d+/ja02Pdc6Uwk6I+BZyyFjpYdMueX68hcAmX9GCs+uYJpN1/hb62pYNuX1Ph3Ln8s8ahhhzXhfr915dw=
-X-Received: by 2002:aa7:d985:0:b0:608:50ab:7e38 with SMTP id
- 4fb4d7f45d1cf-60850abc0d2mr1700831a12.14.1749649301001; Wed, 11 Jun 2025
- 06:41:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="fboq00SM"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ad93ff9f714so1204530166b.2
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 07:24:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1749651848; x=1750256648; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+n2wxlhNO/5kmSj5JkekXPG3vsLUDhvGncEIlxfIMF4=;
+        b=fboq00SMjpBc/dzR+nnXMmZDLpc4cY4Uk/8wUG0553GWJsGrpqT8xialuROWYUOgT/
+         3Ys48/I2I6OUa8vHn18KMVkvpHqzfgzRFKuiPNkQaAgPWRzcRRjYXGrxzy/S5CQvAkxQ
+         rnhfRmIr5HobqnCprThFMaaKeQG2s6sC6OREEwhCgIfEKPcnjILByz+aJKy29yOVXG/n
+         31s/8/p34/yBuXNJf5ZSB/WUrEtj7ypG5E44PUuHGp85T5r9BhHloI4qjR7rLLwlUnn/
+         fgCh+bk/DWCTTJS/F1FiAKF7Wy9F+VgSopHi05EfRKRWxWWJglD3tlP8vieJ33cpfMI1
+         y9jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749651848; x=1750256648;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+n2wxlhNO/5kmSj5JkekXPG3vsLUDhvGncEIlxfIMF4=;
+        b=k36oaubzXoX6kp9gZzisk59r0F9AVc6NNNxiY0zkNU6+5FDlZrp+eNLGzNxuY3Ff1D
+         ueBHLCN3D9vRvUii4rmq/K9wkqsGUKtz+bRLcDV8ldAbcM5nB6Krkk77/a02vU/q4ic2
+         ppHrtqX/laF4ue2uuxv9c6WNsZZjTU0bsvRr2K0pLdZRvX7RzURGA5ksHWLQBu7WeJs6
+         zSixIHe/YohtlomXIiUwkzK2y0CGehVK4xK9ldZiKAenfBR5Tr/M4FxV8B14TtbFGmr5
+         XExt+thkx7s7eIlXsjNmnw7FOCWTS/Cbkai79pP+5fXTWN2RSxqLbtC5U80pL/HpHwh1
+         6wCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnwezbJMsJJ8FjS63/hLnCEimiXGLvsNxPbvm22jGpO6hjIbZ7i0ndwON/22FOhppcuNBXGnWnO8eZAc62Z4wsMPxjsrw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx62LxjNNWojyCZMhagOXoOXVsegREJu04YglAdMqqL3EJzRpHV
+	hsMoGtzqSP2BrVS/ynIHQ6NTJic1uNSGHrCs7dG7dpdzal+DVqLzKPt/JMwmK7+4EYc6LdLFcIX
+	32r9ZQcyfmwxpAxvQ1Vs1v4p8nr0iPMaSU/JUrmCDHQ==
+X-Gm-Gg: ASbGnctB7j8xTl17zwHN5D5iQn2/LtjagZACdbpFEKMdGG4OzSuOeL8XREyK2IxmS3c
+	s8EEnTTf0CedblEXOSrnIave4sfjQ+RDvsFL6epAQwOHFH0PFsRkNwCvyfjoc7H+D5Z2RSYWFpc
+	f/sYZKx7FTEAaarob/MNuSKl2c4vzdE2mmTyMTqM9AL8glWnx5eJwQjlZU87hDCn1rSQMDFDvA
+X-Google-Smtp-Source: AGHT+IHi3WuXVPV9hfbd1BQHgmHc2xgdYuuZf0M1hUFi8jc87uLtSAZ8i8Pv46mcKxcv8DLSc26FN718JaJ1toUbZkI=
+X-Received: by 2002:a17:907:c0c:b0:ad8:9466:3344 with SMTP id
+ a640c23a62f3a-ade8c8993d1mr286839666b.43.1749651847859; Wed, 11 Jun 2025
+ 07:24:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-11-kpsingh@kernel.org>
- <87qzzrleuw.fsf@microsoft.com> <CACYkzJ6M7kA7Se4=AXWNVF1UyeHK3t+3Y_8Ap1L9pkUTbqys9Q@mail.gmail.com>
- <87o6uvlaxs.fsf@microsoft.com> <CACYkzJ74MJkwejki7kFNR4RWh+EnJ++0Vop8eRkSwY6pJepMEQ@mail.gmail.com>
- <8cf2c1cc15e0c5e4b87a91a2cb42e04f38ac1094.camel@HansenPartnership.com>
- <CACYkzJ6yNjFOTzC04uOuCmFn=+51_ie2tB9_x-u2xbcO=yobTw@mail.gmail.com>
- <6f8e0d217d02dc8327a2a21e8787d3aec9693c2c.camel@HansenPartnership.com>
- <CACYkzJ4T5ZFuY5PDKp1VZmsdEyEYUbbajAbhqr+5FE6tqy195A@mail.gmail.com> <fa526e6ed52e2c5f72aeb24fa24f3731bac6f74d.camel@HansenPartnership.com>
-In-Reply-To: <fa526e6ed52e2c5f72aeb24fa24f3731bac6f74d.camel@HansenPartnership.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Wed, 11 Jun 2025 15:41:30 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ4JYDXEkYpN=XBn4bOmv6Fg7bSgV-YAKHfEL2NxJiMh0A@mail.gmail.com>
-X-Gm-Features: AX0GCFv86LhfY9bz8qjJjWyl5JM6Chhze6kRDIuvQLuHxjxt-POwDqAw8UiU5E8
-Message-ID: <CACYkzJ4JYDXEkYpN=XBn4bOmv6Fg7bSgV-YAKHfEL2NxJiMh0A@mail.gmail.com>
-Subject: Re: [PATCH 10/12] libbpf: Embed and verify the metadata hash in the loader
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, kys@microsoft.com, 
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
+References: <20250306082615.174777-1-max.kellermann@ionos.com>
+ <878qmxsuy8.fsf@email.froward.int.ebiederm.org> <202505151451.638C22B@keescook>
+ <87ecwopofp.fsf@email.froward.int.ebiederm.org> <CAG48ez1VpuTR9_cvLrJEMmjOxTCYpYFswXVPmN6fE3NcSmPPVA@mail.gmail.com>
+ <87wmagnnhq.fsf@email.froward.int.ebiederm.org> <202505201319.D57FDCB2A@keescook>
+ <87frgznd74.fsf_-_@email.froward.int.ebiederm.org> <CAG48ez0N_1CEKyMHdjnvwsxUkCenmzsLe7dkUL=a6OmU4tPa6Q@mail.gmail.com>
+ <87zff6gf17.fsf@email.froward.int.ebiederm.org> <CAG48ez1z97sCsx53W0O_dCCJL6tnf2pWuv=qaeszcYBfz_01sA@mail.gmail.com>
+ <CAHC9VhRPUXwqLvo4rbxL0++5zqHXfD8_tr-sirTJXdF_Aba_UQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhRPUXwqLvo4rbxL0++5zqHXfD8_tr-sirTJXdF_Aba_UQ@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Wed, 11 Jun 2025 16:23:56 +0200
+X-Gm-Features: AX0GCFt-lvgulZZy51v1nQGdrw4LjdO7BhuMTAtxvy7UyojcjPOL_75VvfjJ_Cc
+Message-ID: <CAKPOu+-S5C59X8zW=6keYAsHecketOBzMbb3XXDnLTc0X1nBhA@mail.gmail.com>
+Subject: Re: [PATCH v2] exec: Correct the permission check for unsafe exec
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jann Horn <jannh@google.com>, "Eric W. Biederman" <ebiederm@xmission.com>, 
+	Richard Guy Briggs <rgb@redhat.com>, "Serge E. Hallyn" <serge@hallyn.com>, Kees Cook <kees@kernel.org>, jmorris@namei.org, 
+	Andy Lutomirski <luto@kernel.org>, morgan@kernel.org, 
+	Christian Brauner <christian@brauner.io>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 11, 2025 at 3:18=E2=80=AFPM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> On Wed, 2025-06-11 at 14:33 +0200, KP Singh wrote:
-> > [...]
-> > I have read and understood the code, there is no technical
-> > misalignment.
-> >
-> > I am talking about a trusted user space loader. You seem to confuse
-> > the trusted BPF loader program as userspace, no this is not
-> > userspace, it runs in the kernel context.
->
-> So your criticism isn't that it doesn't cover your use case from the
-> signature point of view but that it didn't include a loader for it?
->
-> The linked patch was a sketch of how to verify signatures not a full
+On Wed, Jun 11, 2025 at 2:19=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> Aside from a tested-by verification from Max, it looks like everyone
+> is satisfied with the v2 patch, yes?
 
-It was a non functional sketch that did not address much of the
-feedback that was given, that's not how collaboration works.
+Sorry for the delay. I tested Eric's v2 patch and it solves my
+problem. His patch is nearly identical to mine, it's only a bit more
+intrusive by removing the weird __is_setXid functions that never made
+sense. I welcome that; I wasn't confident enough to do that and tried
+to make the least intrusive patch.
 
-> implementation.  The pieces like what the loader looks like and which
-> keyring gets used are implementation details which can be filled in
-> later by combining the patch series with review and discussion.  It's
-> not a requirement that one person codes everyone's use case before they
-> get theirs in, it's usually a collaborative effort ... I mean, why
+Eric, I'm glad you changed your mind and no longer consider my work
+"pure nonsense" and "pointless".
 
-Yeah, it's surely a collaborative effort, but the collaboration has
-been aggressive and tied to a specific implementation (at least from
-some folks). Rather than working with the feedback received it has
-been accusational of mandating and forcing. If the intent is to really
-collaborate, let's land this base implementation and discuss further.
-I am not willing to add additional stuff into this base
-implementation.
+But one problem remains: in the same email, you demanded evidence that
+userspace doesn't depend on the current behavior. However, in your
+patch description, you hand-waved that away by "I don't expect anyone
+to care". What happened to that?
 
-> would you want Microsoft coding up the loader?  If they don't have a
-> use case for it they don't have much incentive to test it thoroughly
-> whereas you do.
-
-It seems that your incentives are purely aligned with Microsoft and
-not that of the BPF community at large (this is also visible from the
-patches and the engagement). FWIW, There is no urgency for my employer
-to have signed BPF programs, yet I am working on this purely to help
-you and the community.
-
-- KP
-
->
-> Regards,
->
-> James
->
+Max
