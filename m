@@ -1,69 +1,185 @@
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EA0253F08;
-	Wed, 11 Jun 2025 09:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668382E610C;
+	Wed, 11 Jun 2025 11:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749633169; cv=none; b=s+/T2NYEZBCXhJYfTNjtOnfmdljFokJuf0BFGO9i9bRar4e4YvmwR7ow4JA9eYUv2s/B6l84TERyKSESxPOibHHdU/Ly8vcrjmqjsS2EQ/GUvz/tDnWeQXbp7GbaLD9VJpsT+VkXyxXCg7CuwMPEsnN/GG4y6hfbWo7HrdzC734=
+	t=1749641814; cv=none; b=ouqgIGUE24cuGqZuYsI0EXdd7/aq/eMItyhvQh190UPgZ05saviCmxtly0J41BpQGtvRs3pHFDJqpmAo1jY74+s88hYCIHzFpeqNSOw/8EWF2mL85gPaj22n9ylJ2yXdhxwUrQNjpoJUgA9i3rKNLpTD59iPPtfKx4qFtnkH4iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749633169; c=relaxed/simple;
-	bh=xlBoLeA27Ui6WGsh8ZmVHswrzc1rv4auLqQ9zzcn4tY=;
+	s=arc-20240116; t=1749641814; c=relaxed/simple;
+	bh=tXcGTOft1K2ZjeGPYHByKIvWsDYDZGjFIvK1fLYm37k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K34k0U5G5BoGEJXVWLNe8BrjVRwO6ZXwUZGFio5yO+dS3r0VOOSjj2afVCEhrqdQCMXKbydK2TOfV+TT5YdFE0eq1/gzt72F6BQmwZHusqaqyC/t7GaP4OoQ0oPRqYJwm4/zAyzFpfMZA4STd7MEcCJRDl5oS4UeU9e3RdvelMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=D8OgeHrj; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+	 Content-Type:Content-Disposition:In-Reply-To; b=q3F7rj884dA1xfKmSViJBavlNhwR1LBY99vail/LZjvd497SuyxHUS8T4Tc9BnpI7bJDBR1sAC+P6TJiSS370PuXPqN7RP2Kn1INPyhCh+JT7UefTxuVhrhXeiipgRHitKdUZwePyzWv4BL/hNpbzfW9SncOL0kYS9MlXhpcjlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAAMFrzm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="D8OgeHrj"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=99wMk3+pm8AzqEe+0Ig4DL/SSC/eQ1+ARzyWflo5WPY=; b=D8OgeHrjOh/CpRXMb3xgi6H05u
-	XYebrImz+ffpUjbQ4D2j1z9/J20hGh2JOZA794iKUNlrLB99zxP+9PvqzdrjviXEQVq5SIxa6HI3A
-	H9T9UKqEVMuD2t2+pQg6PqmXHZJSFK3LU6FgXLmCfdFBWtf5ISW3DdlB31M7fvVX/NexIUjcC/F+U
-	3pO5vU1TwUSzBsC208dXxpWM3KQ2ig1Er0ZP62T4zJcN3RkQbYWmTxX4Wc/cpt2cSgH3Wdh/ddyPN
-	R9BKPpT/6MYB0eDFn2DVxLZxHnOw8IkYdSP++PYYZil6TE4FLcXjJIKVPofWuyAGyKWImzyhVQSCP
-	UQRXjmRQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uPHVa-00CJ72-0D;
-	Wed, 11 Jun 2025 17:12:35 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 11 Jun 2025 17:12:34 +0800
-Date: Wed, 11 Jun 2025 17:12:34 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Paul Moore <paul@paul-moore.com>
-Cc: David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org,
-	Jarkko Sakkinen <jarkko@kernel.org>, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KEYS: Invert FINAL_PUT bit
-Message-ID: <aElIgixaHGuHEnb8@gondor.apana.org.au>
-References: <301015.1748434697@warthog.procyon.org.uk>
- <CAHC9VhRn=EGu4+0fYup1bGdgkzWvZYpMPXKoARJf2N+4sy9g2w@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAAMFrzm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C030C4CEEE;
+	Wed, 11 Jun 2025 11:36:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749641814;
+	bh=tXcGTOft1K2ZjeGPYHByKIvWsDYDZGjFIvK1fLYm37k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lAAMFrzmMdbLqG2eV/Tb9nLSFiQvkj1g2mFx+AIAfIxYA0Zp7tXVlhmqARSVJJcKB
+	 FQ5PpcPP3L902FMZUMnZmil5vyYdYnGR36yLK+KQyUPYIARY6DlQIdcglLqbSKuIcG
+	 CFAiPAWOUCJI95wE4KW4Z9CuOcBTyNGdR8wNCc/MMzWJ54RKRqohKQp/wgN25NtEmq
+	 uk2qx5mgjtPNQP/mYJ19Y8X0QiRk00+hznjp+XePCot1xO1LETEy6+8yBa9jp1sEws
+	 DcocQUbO3sob7L5Km0NsVhZZKSh9sHFFbMY3A4G6fGTvB39j5BPagQ/sYiOYoJKLM7
+	 BXiNOA3dk8efw==
+Date: Wed, 11 Jun 2025 13:36:46 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Tingmao Wang <m@maowtm.org>
+Cc: Song Liu <song@kernel.org>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, Al Viro <viro@zeniv.linux.org.uk>, amir73il@gmail.com, 
+	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net, 
+	eddyz87@gmail.com, gnoack@google.com, jack@suse.cz, jlayton@kernel.org, 
+	josef@toxicpanda.com, kernel-team@meta.com, kpsingh@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, martin.lau@linux.dev, mattbobrowski@google.com, 
+	repnop@google.com
+Subject: Re: [PATCH v3 bpf-next 0/5] bpf path iterator
+Message-ID: <20250611-bindung-pulver-6158a3053c87@brauner>
+References: <20250606213015.255134-1-song@kernel.org>
+ <dbc7ee0f1f483b7bc2ec9757672a38d99015e9ae.1749402769@maowtm.org>
+ <CAPhsuW7n_+u-M7bnUwX4Go0D+jj7oZZVopE1Bj5S_nHM1+8PZg@mail.gmail.com>
+ <97cdb6c5-0b46-4442-b19f-9980e33450c0@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhRn=EGu4+0fYup1bGdgkzWvZYpMPXKoARJf2N+4sy9g2w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <97cdb6c5-0b46-4442-b19f-9980e33450c0@maowtm.org>
 
-On Tue, Jun 10, 2025 at 08:22:59PM -0400, Paul Moore wrote:
->
-> It doesn't look like this has made its way to Linus.  David or Jarkko,
-> do one of you want to pick this up into a tree and send this to Linus
-> properly?
+On Mon, Jun 09, 2025 at 09:08:34AM +0100, Tingmao Wang wrote:
+> On 6/9/25 07:23, Song Liu wrote:
+> > On Sun, Jun 8, 2025 at 10:34 AM Tingmao Wang <m@maowtm.org> wrote:
+> > [...]
+> >> Hi Song, Christian, Al and others,
+> >>
+> >> Previously I proposed in [1] to add ability to do a reference-less parent
+> >> walk for Landlock.  However, as Christian pointed out and I do agree in
+> >> hindsight, it is not a good idea to do things like this in non-VFS code.
+> >>
+> >> However, I still think this is valuable to consider given the performance
+> >> improvement, and after some discussion with Mickaël, I would like to
+> >> propose extending Song's helper to support such usage.  While I recognize
+> >> that this patch series is already in its v3, and I do not want to delay it
+> >> by too much, putting this proposal out now is still better than after this
+> >> has merged, so that we may consider signature changes.
+> >>
+> >> I've created a proof-of-concept and did some brief testing.  The
+> >> performance improvement attained here is the same as in [1] (with a "git
+> >> status" workload, median landlock overhead 35% -> 28%, median time in
+> >> landlock decreases by 26.6%).
+> >>
+> >> If this idea is accepted, I'm happy to work on it further, split out this
+> >> patch, update the comments and do more testing etc, potentially in
+> >> collaboration with Song.
+> >>
+> >> An alternative to this is perhaps to add a new helper
+> >> path_walk_parent_rcu, also living in namei.c, that will be used directly
+> >> by Landlock.  I'm happy to do it either way, but with some experimentation
+> >> I personally think that the code in this patch is still clean enough, and
+> >> can avoid some duplication.
+> >>
+> >> Patch title: path_walk_parent: support reference-less walk
+> >>
+> >> A later commit will update the BPF path iterator to use this.
+> >>
+> >> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> > [...]
+> >>
+> >> -bool path_walk_parent(struct path *path, const struct path *root);
+> >> +struct parent_iterator {
+> >> +       struct path path;
+> >> +       struct path root;
+> >> +       bool rcu;
+> >> +       /* expected seq of path->dentry */
+> >> +       unsigned next_seq;
+> >> +       unsigned m_seq, r_seq;
+> > 
+> > Most of parent_iterator is not really used by reference walk.
+> > So it is probably just separate the two APIs?
+> 
+> I don't mind either way, but I feel like it might be nice to just have one
+> style of APIs (i.e. an iterator with start / end / next vs just one
+> function), even though this is not totally necessary for the ref-taking
+> walk.  After all, the BPF use case is iterator-based.  This also means
+> that the code at the user's side (mostly thinking of Landlock here) is
+> slightly simpler.
+> 
+> But I've not experimented with the other way.  I'm open to both, and I'm
+> happy to send a patch later for a separate API (in that case that would
+> not depend on this and I might just start a new series).
+> 
+> Would like to hear what VFS folks thinks of this first tho, and whether
+> there's any preference in one or two APIs.
 
-I can pick it up for the next merge window.
+I really dislike exposing the sequence number for mounts an for
+dentries. That's just nonsense and a non-VFS low-level consumer of this
+API has zero business caring about any of that. It's easy to
+misunderstand, it's easy to abuse so that's not a good way of doing
+this. It's the wrong API.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> 
+> > 
+> > Also, is it ok to make m_seq and r_seq available out of fs/?
+
+No, it's not.
+
+> 
+> The struct is not intended to be used directly by code outside.  Not sure
+
+That doesn't mean anything. It's simply the wrong API if it has to spill
+so much of its bowels.
+
+> what is the standard way to do this but we can make it private by e.g.
+> putting the seq values in another struct, if needed.  Alternatively I
+> think we can hide the entire struct behind an opaque pointer by doing the
+> allocation ourselves.
+> 
+> > 
+> >> +};
+> >> +
+> >> +#define PATH_WALK_PARENT_UPDATED               0
+> >> +#define PATH_WALK_PARENT_ALREADY_ROOT  -1
+> >> +#define PATH_WALK_PARENT_RETRY                 -2
+> >> +
+> >> +void path_walk_parent_start(struct parent_iterator *pit,
+> >> +                           const struct path *path, const struct path *root,
+> >> +                           bool ref_less);
+> >> +int path_walk_parent(struct parent_iterator *pit, struct path *next_parent);
+> >> +int path_walk_parent_end(struct parent_iterator *pit);
+> > 
+> > I think it is better to make this rcu walk a separate set of APIs.
+> > IOW, we will have:
+> > 
+> > int path_walk_parent(struct path *path, struct path *root);
+> > 
+> > and
+> > 
+> > void path_walk_parent_rcu_start(struct parent_iterator *pit,
+> >                            const struct path *path, const struct path *root);
+> > int path_walk_parent_rcu_next(struct parent_iterator *pit, struct path
+> > *next_parent);
+> > int path_walk_parent_rcu_end(struct parent_iterator *pit);
+> 
+> (replied above)
+
+Exposing two sets of different APIs for essentially the same things is
+not going to happen.
+
+The VFS doesn't expose a rcu variant and a non-rcu variant for itself so
+we are absolutely not going to do that for outside stuff.
+
+It always does the try RCU first, then try to continue the walk by
+falling back to REF walk (e.g., via try_to_unlazy()). If that doesn't
+work then let the caller know and require them to decide whether to
+abort or redo everything in ref-walk.
+
+There's zero need in that scheme for the caller to see any of the
+internals of the VFS and that's what you should aim for.
