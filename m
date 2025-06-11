@@ -1,162 +1,183 @@
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCBF4A32
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 00:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8467114F70
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 00:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749601149; cv=none; b=EoaRUbbdZoqlnpCu4yJscH5PJ2J/MKjnHBkzuox07XHyNbGbjuRanxUxw9G7yYn8u7gTlId2INSJmfpj3ekqcdc9aEDiAhOVAj6HcBRErUr1m4WS1Co57+qkZxSnwlO79FY9m7rsAdbyCXSwyjF6v6VLg3ZtTFyliz8FKjc4NYY=
+	t=1749601393; cv=none; b=o8SLxiyGC0z16GmX2zh5jaehIv4AfpM9AUVaERFN0fmtIqndGO7NRXPiYRQgh6fDacQOKs3ZulKvXGrPY9sbog9UK6pDCgDzl0/fsfMxFUxIr+mM3jVWx5LO4Ex8Jq4N+R7atgSPCQPysTyH9hzJz3nLbwgU1aZEPNvR3wgZqLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749601149; c=relaxed/simple;
-	bh=IORY47wQy4LdI/kDBVKUbdiso0NR611iMYIP8OEfsyk=;
+	s=arc-20240116; t=1749601393; c=relaxed/simple;
+	bh=V3aNCDfEzfxl/wtuWs/n53MDcr+guvxs8lJ6Ns350/k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NPws5L20Kz1MxdHPqmaXaxMJ0OsFKDy32Oh7Fs2Q0CRXjaGrpzXfWYtidanMpZilhjp6Og8ggzsxmyBBgtU7KMtSQVv+peR/CshGDKwPQogWIihOUTWOcg1gY0DOLDbUjxXInmq/fzNooGLQ3Di9Xqq59ww9FJ3mDDJP2ZGusMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=JTh8w6YA; arc=none smtp.client-ip=209.85.128.182
+	 To:Cc:Content-Type; b=dVdsT+tAV4K9TW+41F3GoFvFfIrHE8MmZOfUHYzv87umvzIxISx3nqN6uzyUs+NxXLYkvUiZJZvPOuKm+5SFxwbe8dDtgylP7D6I+4r8Fsq9MSRXrpYX88rAAg89zXRbA+WYbRWJs2sYi6MELgO1gysn3450zDxEHWb+DCa2WMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QQdEpC8t; arc=none smtp.client-ip=209.85.219.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="JTh8w6YA"
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-70e3e0415a7so4360587b3.0
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 17:19:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QQdEpC8t"
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e7db6aaef22so4560124276.0
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Jun 2025 17:23:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1749601147; x=1750205947; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1749601390; x=1750206190; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WVdd3dLz7ZIcTr4ufDvopuLf4wfm5imcfIZtINlNmT8=;
-        b=JTh8w6YA00XKao01rmwKXhwmpa/t4X9EF472nSVPbopTKbrpmpDwm14wDQJ6Z/8Wv4
-         tHtbeBFBGLTqyl4RLoqhUk2ixOJCcSlq0ACfbnFycyyDNUKGFc6b2jSU0EN6cQWFUxxd
-         xeGYNTjlqnkxhcxImxvg9GVuozJrE8A3bZrL+1PWgE8MF1ngTtpwdVz78PtYsBmtK+nI
-         cSvBdiZ3bQYZAorKwhh9W98I8yuGwehYbVOzsEd8jBF0egXMjuByAAg1+RhtQyy1UxjT
-         bA1OhtYHVtG+AVYu7YS2bQlS3k6k4ntCvMc7thOxk5sF9Nkl/dbONmcTDfDW1qzn8IGb
-         VeKA==
+        bh=mqyjEVOkyXwfMaGU1TDVpK5OMwZjvM7JjuGuGfqQfiw=;
+        b=QQdEpC8tvO2NYpn3COPmL+/PVmayKd1y/tEzRp0zD6fbiE8eEN/tMpdbmPxgl4EMO0
+         ScWtF+n9c/bZM6shIOECHLIXiu4uMksVUw4N2IjniUwitDomLVXsMEs0p9mBN/UZqxQg
+         9PHX0ZJhAdHoHjQL73gzqD5WWL/Dj3Ts/ki+xHpY6Ad+AY0jMdoH4HJLmlxtAuzFOPv9
+         90GBTd4WFbQMWM4bCKBKQ1RXY7p3jLNOcCJNxI1iT+If9x4AZuVqy4MJr6wuQXT4puvA
+         dZV7tUaAYEAQoe6iGv542LJH5RyAAWpsiUtdZikRLcn9Uf5NarsFa89Ah5Waf3KQDSUR
+         2JyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749601147; x=1750205947;
+        d=1e100.net; s=20230601; t=1749601390; x=1750206190;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WVdd3dLz7ZIcTr4ufDvopuLf4wfm5imcfIZtINlNmT8=;
-        b=AMsdwiH75eQIvoESLrcIeWnYnKjyeBBCb3tMGdnmlQDAIMzqQE7D83g5Mj61AHFtp0
-         SZa5MZfGq6ECjSUdxQfcKSnGcLTW2Rn0m2FY8lYpuklZpTqb08jsL0GFG6QeQHuWCyro
-         1hvCZNaIw2RQOLJOH1pYOaCcwVPiMrz2exlPcpS1dTV5pDNaVNRqYlYy78KN5SayJPWR
-         zQ4mrKGv2AFk1b/OJQAyLZdLk+rvsKucjlVvDBu6WkHMWJ2Xuvtq7Ug0Pi7jiPMyElWJ
-         NNmCRlCwIgYLerhhk3VWaJuKisy1mQt0v0aLVaHxuxhhW/vlWix4O2k5YF0eCqX2/73J
-         ZkAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4cyLFE61wx4ynl4fQt+u7Xc2iftOVnWGi/oVyDdQLVsa9dkhld9sRjv6iKYDNVEoUiRNOhvHNT9jCKDX9WP+ReSbJ0SM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHgWH/P9g0psouX9+KT/TtSSHV2gARgm2ZI5ExILoQuh85CXqG
-	hqySk4+HDWsa1/qEZpJFrs6vPAdkopl0ZcjboupqwUEogZailhwjeYrdUHXPjX8Ar8n6lWw/EdK
-	t3NQhW6We/i5+04mDNzToFv10qZkrH9wqDTVHS87D
-X-Gm-Gg: ASbGncviFPP6zKzeekVnj/COPPbSogy2KhY2bfK6PhbwNqPIWd1hXCXRB2elb3+7uwf
-	nS15J3n9WWlsyWHwHyexR5FbbamUtEjhwavNK38lplgnUDMiO9pIsm6kWz+eekPbzIEBuGfmapk
-	Ss8TKC7nL3VtuDVVHhVwslFo6+ysGULPOdvC8RPr3g4OA=
-X-Google-Smtp-Source: AGHT+IFhaywKvZhSqGMYCEnZVjdvyyEH3lPyXmudVciSPFI3Riyi/kqwflYAzvkhk/3jL5m6fRCinhNMSX8xauJ1HpU=
-X-Received: by 2002:a05:690c:dc3:b0:70e:25b2:8f42 with SMTP id
- 00721157ae682-71140b0ba00mr21319537b3.18.1749601146869; Tue, 10 Jun 2025
- 17:19:06 -0700 (PDT)
+        bh=mqyjEVOkyXwfMaGU1TDVpK5OMwZjvM7JjuGuGfqQfiw=;
+        b=GAFdOcw5PGZni2iP5nEV2ZpaThNJb218kDxN4Bwm7+fSnub7Oy4leZ4HmaRike/qOE
+         eNAQEWVLhcLIotjs7owcbxc3bd4RurvFGWUSXlNToFvLTlVdYyzMIAhbNikRS/RlHsVw
+         2EyAcPKaV1iU1Wtknjv9IYWRrlpcqA/8uRoSlob3tyohX2ARmzlSKXuvBLDNHUGKtYuc
+         gy4Jajw1CTehuCZF5CG+/5Aj7YTDNZG3LRjc2Ee061yU8cD84mndzlRDCJYydKMi4xIS
+         0u+jeA5RCBR/BY3GbtXXPnR4ov+ms2Q3cRkefpFZK/Iv9ys2uYNauZEl6WF/e+mx6woi
+         SEjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcgqxFauh63geW2xswYF71RYnRDFaX9GBc5IidB/UPLYXYon8yiBQ/aOK74cEmJHFCNsbREp8cZaM/PZlOKYs5mV9GFY4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEeKXpte2idg4+Ob0Fy9S34l5h0J4loQPn/YbGsmB3cs/85jZL
+	+r46eMBgP2NFSgpfSUaFi4rXOmpSsJocS35LQht6SHSLUz9XTdgE02KXPuLWEhgWn6/HLmzvu2K
+	9XRgx6JG5HaoSG22nmFX4S9i5MY1K0hUNUNYb62Ny
+X-Gm-Gg: ASbGncvMWgy3667pRmEkYgJcmlCYIhkmp1E+OWxT+wjeEPRb1dvMA4XgbO0bAPN4/M4
+	sKdAW1VcR6i956SoMl3OaenJdhzzxGXV1dLT0JLC3QMlCEmWD/0MYwnygNHdVetLRhM2SmC2dG2
+	OhCf4WF5QReUqn2vzkjFrTm3ON/jkAaNY2+QN7qDPNcA4=
+X-Google-Smtp-Source: AGHT+IE8M3LJ60ObL9WxE/FHdUjay5d0gjuX+l5wso77lgWCLyR1qO4waNRelGVeYQBTPS1XTsACv75zMxCstcB/c64=
+X-Received: by 2002:a05:690c:c92:b0:710:ead5:8a95 with SMTP id
+ 00721157ae682-71142415677mr13830317b3.14.1749601390477; Tue, 10 Jun 2025
+ 17:23:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306082615.174777-1-max.kellermann@ionos.com>
- <878qmxsuy8.fsf@email.froward.int.ebiederm.org> <202505151451.638C22B@keescook>
- <87ecwopofp.fsf@email.froward.int.ebiederm.org> <CAG48ez1VpuTR9_cvLrJEMmjOxTCYpYFswXVPmN6fE3NcSmPPVA@mail.gmail.com>
- <87wmagnnhq.fsf@email.froward.int.ebiederm.org> <202505201319.D57FDCB2A@keescook>
- <87frgznd74.fsf_-_@email.froward.int.ebiederm.org> <CAG48ez0N_1CEKyMHdjnvwsxUkCenmzsLe7dkUL=a6OmU4tPa6Q@mail.gmail.com>
- <87zff6gf17.fsf@email.froward.int.ebiederm.org> <CAG48ez1z97sCsx53W0O_dCCJL6tnf2pWuv=qaeszcYBfz_01sA@mail.gmail.com>
-In-Reply-To: <CAG48ez1z97sCsx53W0O_dCCJL6tnf2pWuv=qaeszcYBfz_01sA@mail.gmail.com>
+References: <301015.1748434697@warthog.procyon.org.uk>
+In-Reply-To: <301015.1748434697@warthog.procyon.org.uk>
 From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 10 Jun 2025 20:18:56 -0400
-X-Gm-Features: AX0GCFteIk2y01CS-cNcS4mA_PTKbDwTd2hyrP2HwjpuZ2_UI5DzEEK5JAgjzOw
-Message-ID: <CAHC9VhRPUXwqLvo4rbxL0++5zqHXfD8_tr-sirTJXdF_Aba_UQ@mail.gmail.com>
-Subject: Re: [PATCH v2] exec: Correct the permission check for unsafe exec
-To: Jann Horn <jannh@google.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, Richard Guy Briggs <rgb@redhat.com>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Kees Cook <kees@kernel.org>, 
-	Max Kellermann <max.kellermann@ionos.com>, jmorris@namei.org, 
-	Andy Lutomirski <luto@kernel.org>, morgan@kernel.org, 
-	Christian Brauner <christian@brauner.io>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Tue, 10 Jun 2025 20:22:59 -0400
+X-Gm-Features: AX0GCFuzTbBPakT7-fabDOVnCNVNEVKiLmeRI0FjA7IWgXlosDeLqvnendebUgs
+Message-ID: <CAHC9VhRn=EGu4+0fYup1bGdgkzWvZYpMPXKoARJf2N+4sy9g2w@mail.gmail.com>
+Subject: Re: [PATCH] KEYS: Invert FINAL_PUT bit
+To: David Howells <dhowells@redhat.com>
+Cc: torvalds@linux-foundation.org, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, keyrings@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 21, 2025 at 11:36=E2=80=AFAM Jann Horn <jannh@google.com> wrote=
-:
-> On Wed, May 21, 2025 at 5:27=E2=80=AFPM Eric W. Biederman <ebiederm@xmiss=
-ion.com> wrote:
-> > Jann Horn <jannh@google.com> writes:
-> >
-> > > On Wed, May 21, 2025 at 12:13=E2=80=AFAM Eric W. Biederman
-> > > <ebiederm@xmission.com> wrote:
-> >
-> > > Looks good to me overall, thanks for figuring out the history of this
-> > > not-particularly-easy-to-understand code and figuring out the right
-> > > fix.
-> > >
-> > > Reviewed-by: Jann Horn <jannh@google.com>
-> > >
-> > >> @@ -917,7 +911,7 @@ int cap_bprm_creds_from_file(struct linux_binprm=
- *bprm, const struct file *file)
-> > >>         /* Process setpcap binaries and capabilities for uid 0 */
-> > >>         const struct cred *old =3D current_cred();
-> > >>         struct cred *new =3D bprm->cred;
-> > >> -       bool effective =3D false, has_fcap =3D false, is_setid;
-> > >> +       bool effective =3D false, has_fcap =3D false, id_changed;
-> > >>         int ret;
-> > >>         kuid_t root_uid;
-> > >>
-> > >> @@ -941,9 +935,9 @@ int cap_bprm_creds_from_file(struct linux_binprm=
- *bprm, const struct file *file)
-> > >>          *
-> > >>          * In addition, if NO_NEW_PRIVS, then ensure we get no new p=
-rivs.
-> > >>          */
-> > >> -       is_setid =3D __is_setuid(new, old) || __is_setgid(new, old);
-> > >> +       id_changed =3D !uid_eq(new->euid, old->euid) || !in_group_p(=
-new->egid);
-> > >
-> > > Hm, so when we change from one EGID to another EGID which was already
-> > > in our groups list, we don't treat it as a privileged exec? Which is
-> > > okay because, while an unprivileged user would not just be allowed to
-> > > change their EGID to a GID from their groups list themselves through
-> > > __sys_setregid(), they would be allowed to create a new setgid binary
-> > > owned by a group from their groups list and then execute that?
-> > >
-> > > That's fine with me, though it seems a little weird to me. setgid exe=
-c
-> > > is changing our creds and yet we're not treating it as a "real" setgi=
-d
-> > > execution because the execution is only granting privileges that
-> > > userspace could have gotten anyway.
-> >
-> > More than could have gotten.  From permission checking point of view
-> > permission that the application already had.  In general group based
-> > permission checks just check in_group_p, which looks at cred->fsgid and
-> > the group.
-> >
-> > The logic is since the effective permissions of the running executable
-> > have not changed, there is nothing to special case.
-> >
-> > Arguably a setgid exec can drop what was egid, and if people have
-> > configured their permissions to deny people access based upon a group
-> > they are in that could change the result of the permission checks.  If
-> > changing egid winds up dropping a group from the list of the process's
-> > groups, the process could also have dropped that group with setresgid.
-> > So I don't think we need to be concerned about the combination of
-> > dropping egid and brpm->unsafe.
-> >
-> > If anyone sees a hole in that logic I am happy to change the check
-> > to !gid_eq(new->egid, old->egid), but I just can't see a way changing
-> > egid/fsgid to a group the process already has is a problem.
+On Wed, May 28, 2025 at 8:19=E2=80=AFAM David Howells <dhowells@redhat.com>=
+ wrote:
 >
-> I'm fine with leaving your patch as-is.
+> Hi Linus,
+>
+> Could you apply this, please?  There shouldn't be any functional change,
+> rather it's a switch to using combined bit-barrier ops and lesser barrier=
+s.
+> A better way to do this might be to provide set_bit_release(), but the en=
+d
+> result would be much the same.
+>
+> Thanks,
+> David
+> ---
+> From: Herbert Xu <herbert@gondor.apana.org.au>
+>
+> KEYS: Invert FINAL_PUT bit
+>
+> Invert the FINAL_PUT bit so that test_bit_acquire and clear_bit_unlock
+> can be used instead of smp_mb.
+>
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> cc: keyrings@vger.kernel.org
+> cc: linux-security-module@vger.kernel.org
+> cc: linux-crypto@vger.kernel.org
+> cc: linux-integrity@vger.kernel.org
+> ---
+>  include/linux/key.h |    2 +-
+>  security/keys/gc.c  |    4 ++--
+>  security/keys/key.c |    5 +++--
+>  3 files changed, 6 insertions(+), 5 deletions(-)
 
-Aside from a tested-by verification from Max, it looks like everyone
-is satisfied with the v2 patch, yes?
+It doesn't look like this has made its way to Linus.  David or Jarkko,
+do one of you want to pick this up into a tree and send this to Linus
+properly?
 
-Serge, I see you've reviewed this patch, can I assume that now you
-have a capabilities tree up and running you'll take this patch?
+> diff --git a/include/linux/key.h b/include/linux/key.h
+> index ba05de8579ec..81b8f05c6898 100644
+> --- a/include/linux/key.h
+> +++ b/include/linux/key.h
+> @@ -236,7 +236,7 @@ struct key {
+>  #define KEY_FLAG_ROOT_CAN_INVAL        7       /* set if key can be inva=
+lidated by root without permission */
+>  #define KEY_FLAG_KEEP          8       /* set if key should not be remov=
+ed */
+>  #define KEY_FLAG_UID_KEYRING   9       /* set if key is a user or user s=
+ession keyring */
+> -#define KEY_FLAG_FINAL_PUT     10      /* set if final put has happened =
+on key */
+> +#define KEY_FLAG_USER_ALIVE    10      /* set if final put has not happe=
+ned on key yet */
+>
+>         /* the key type and key description string
+>          * - the desc is used to match a key against search criteria
+> diff --git a/security/keys/gc.c b/security/keys/gc.c
+> index f27223ea4578..748e83818a76 100644
+> --- a/security/keys/gc.c
+> +++ b/security/keys/gc.c
+> @@ -218,8 +218,8 @@ static void key_garbage_collector(struct work_struct =
+*work)
+>                 key =3D rb_entry(cursor, struct key, serial_node);
+>                 cursor =3D rb_next(cursor);
+>
+> -               if (test_bit(KEY_FLAG_FINAL_PUT, &key->flags)) {
+> -                       smp_mb(); /* Clobber key->user after FINAL_PUT se=
+en. */
+> +               if (!test_bit_acquire(KEY_FLAG_USER_ALIVE, &key->flags)) =
+{
+> +                       /* Clobber key->user after final put seen. */
+>                         goto found_unreferenced_key;
+>                 }
+>
+> diff --git a/security/keys/key.c b/security/keys/key.c
+> index 7198cd2ac3a3..3bbdde778631 100644
+> --- a/security/keys/key.c
+> +++ b/security/keys/key.c
+> @@ -298,6 +298,7 @@ struct key *key_alloc(struct key_type *type, const ch=
+ar *desc,
+>         key->restrict_link =3D restrict_link;
+>         key->last_used_at =3D ktime_get_real_seconds();
+>
+> +       key->flags |=3D 1 << KEY_FLAG_USER_ALIVE;
+>         if (!(flags & KEY_ALLOC_NOT_IN_QUOTA))
+>                 key->flags |=3D 1 << KEY_FLAG_IN_QUOTA;
+>         if (flags & KEY_ALLOC_BUILT_IN)
+> @@ -658,8 +659,8 @@ void key_put(struct key *key)
+>                                 key->user->qnbytes -=3D key->quotalen;
+>                                 spin_unlock_irqrestore(&key->user->lock, =
+flags);
+>                         }
+> -                       smp_mb(); /* key->user before FINAL_PUT set. */
+> -                       set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
+> +                       /* Mark key as safe for GC after key->user done. =
+*/
+> +                       clear_bit_unlock(KEY_FLAG_USER_ALIVE, &key->flags=
+);
+>                         schedule_work(&key_gc_work);
+>                 }
+>         }
+>
+>
 
 --=20
 paul-moore.com
