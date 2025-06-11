@@ -1,89 +1,91 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852E220458A
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 16:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C972E610F;
+	Wed, 11 Jun 2025 16:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749660368; cv=none; b=rvN6Qr7iSbItDBi9V2C9DFB+xPvvOkNg49HsXjKvEiTB/8zX/3zh1rzwaT20CRJ8OcigiOQGymDw2Pq3ATqmGCNmCooF+ZVhmpYPXTpwKWnBRfTnHbNHnTmvFWH3KS/82Z17h7jj1SGN2bnORR3BkNo5tZEISh/UgkkXjeqIKQQ=
+	t=1749660463; cv=none; b=kHkshG5z1kAHnaSWAkXvJcrRzzT0WVd+6Dc3bwoYx9XzraQGC9bPIXQVSkmEJUjKHwj05SG+/wM1Kq/un201Ww2+5EAiLKw1m5mGkj/+toaoD4u75Bo8D6ooG/qBi2vfnEv7+XkWmpiysXQH6mAQ6wSzrjw2R+drNwPvUPCDUQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749660368; c=relaxed/simple;
-	bh=pkKDuG9F/PO5bN+P64pH0veJmNFk2QULxXE5Xm59Gdo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=ogt2bkzJx4TLA/as3LAhi0TGTZB7eXrPkssqMJ/8pwMAt94oTtG1SUrc56lV8b7RnpsR/BM2zKtFaL+tNH/u1cCxllEouKF1I4/Oyx1UlXeryh8/sM3xjToqc+V6//HlOpczZicB/7ynBTYx2S+khgxFeM7p44uavEHJbMfo6/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZxFMm41y; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1749660463; c=relaxed/simple;
+	bh=ATrbfAkxfXBN7T6ZyMKbNj8vLHFLN6YtT6rOvmO5aG8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RrlOFe3qJdKUVfgmtQVbwsWFYpe3Mn41+ykXpxokhRujue23A9NKQckQU7An9HHn2yLWC5vg6jYpi/vKN+dk1ljBOTox2ld8we3tzQDfFTdQO3LXWiFzD7D8ZvHGisgyenNTUwhXCIiV1vjerJ6QDJIoydq2/J5LfoOENdEFO4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qvlw2CSX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZxFMm41y"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-70f147b5a52so43388547b3.3
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 09:46:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1749660363; x=1750265163; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mdrGmLlMp+++NJB2hEUw9p0lUJTgbbNuI91dUhP6v5A=;
-        b=ZxFMm41yZo/q3JiTGh0wjF2QTMlXd2B6W/g4BwoJaz7qwlfR38Pk8K153z+dBQsawi
-         4pOFBfVrnnrtRLT+Y/UKVsT5J4hx6p1OQ7HT2h2eqd2p/75OYkn3s+4dIVrqzxXOfxih
-         BxU2zVAhkGQO9ZD+UYGjgfhbf8YBKvMJFBwexsC9LbjBVuMDc+xxn6UIloTIjZdcfpWc
-         gddCzvs1830xWRpi1WYywEVOe7fgsEgHBXgo8LEtpeHQGV3WY9qCSlrQHZzRt21aDsWf
-         OzZDpHM1+iP8iXgTXyaIOt2IXokyhRipSiJfG+vgwJ2MnokH0/HymFNUO/j8H/VODkZe
-         iElQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749660363; x=1750265163;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mdrGmLlMp+++NJB2hEUw9p0lUJTgbbNuI91dUhP6v5A=;
-        b=PGbWq+B8rJzk7tIC0gZx+EQ/1qTzJn63lhpBlFqDWIT20bub8sjKk1f2TrDEJnboRf
-         rfnN2d+n78CIl1qFipKAlyCk+MTleyeaXppJzduoaxD2gadE1FRuVvUg2t6yJ6cYoQdY
-         mcIAJc5b1EX2alxp95ZdNfsXwrq8NI5sRrQPeHvdGkOzEiyB1hqBvPH1OHfLge67dSql
-         TrMQYiE2MobjX3z/uqAwTeB/eZ1eptjOg2lPFqkL0QFP9+SxqczVM7bMzUoP0IzoctOM
-         csCX07Eo09bi6sACKFXT5vJHDEPlL4q2gNKovjhM2X/6a059vVa4wj8PXkWKXFJJ6WM2
-         ZX8g==
-X-Gm-Message-State: AOJu0YyYa35jnNQdw7hBNJ67JX0ES+ZrFaL1M5Yn1Dpfa15GnWbMyrNm
-	DCCUZSUEjTfY5bJ7iNQ6e5xF2QE3N3xN6qG2GJSkduXBNqA0YwXbRmZXXqwF+elipdqUkX0klOt
-	S7kJUZ7jAdkJZPPvEN7cxnT8vpsJG9L2VaZt1Ep7R8f7HrD5IPDeZAQ==
-X-Gm-Gg: ASbGncs/KjYXO6ylnH9K8fQmKmJ48DYwnmaYOzSy2qz2csK3NWFTqZHoRRCTsF9FCTi
-	4y1pfCLyPVQpOineAeJNmVaBrFP3Br9ybprRiuN2CmK+ypJn3ZwlfN4y5r5Y80cNlZmb4OSeQYD
-	PG8+tNn+kB025/X2D6qDirPuV3cs/y9zRPgMHLYMTy8iM=
-X-Google-Smtp-Source: AGHT+IGws3htnGlVgU/+WackH+riDIx4X4Dxb0tU4FsO2xWxOUo6VoUcfsGOrhSHZQpu9DbYXPbHdLoCiR2XufjouQw=
-X-Received: by 2002:a05:690c:d07:b0:702:52af:7168 with SMTP id
- 00721157ae682-7114ec4e044mr7273347b3.2.1749660363121; Wed, 11 Jun 2025
- 09:46:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qvlw2CSX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F724C4CEE3;
+	Wed, 11 Jun 2025 16:47:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749660461;
+	bh=ATrbfAkxfXBN7T6ZyMKbNj8vLHFLN6YtT6rOvmO5aG8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qvlw2CSX3aAkzEft0go9oT9ndvFJxfQGgKRPZP3YQ/RCO7I0zOIcQFgGoutcVkHuY
+	 JzyMlnw6WfR9KWtTb6FNboSdG0wLI1rXjuJPPw+lIVnq4XombBSoOhdvpzguvUp8j7
+	 29htLOaPHYUZaJ2K4ySGgQWZd1nu456+II1VORfcjBaJOFtMr0Vfgi38vg35KuEV61
+	 JOUbn/ePxyBY8BUgD8m2lJ/e4X0G4VaKpqnBDkDtCgMoWDYrY9/yjEWI61JUiAXqBR
+	 2zNNV8YF4Lv6fgjyxyinkmYx5Kvlsa0C29vAp6O2KeQMPAkaHp0CxKyGed+0CGa3FM
+	 gzfxEH5tg8Upw==
+Date: Wed, 11 Jun 2025 19:47:38 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org,
+	Herbert Xu <herbert@gondor.apana.org.au>, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KEYS: Invert FINAL_PUT bit
+Message-ID: <aEmzKhXJ_nc4que3@kernel.org>
+References: <301015.1748434697@warthog.procyon.org.uk>
+ <CAHC9VhRn=EGu4+0fYup1bGdgkzWvZYpMPXKoARJf2N+4sy9g2w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhS9P-fgWac_sJ_dq6_AQf76RGiqLAmOFnR_4NZ83KQogw@mail.gmail.com>
-In-Reply-To: <CAHC9VhS9P-fgWac_sJ_dq6_AQf76RGiqLAmOFnR_4NZ83KQogw@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 11 Jun 2025 12:45:52 -0400
-X-Gm-Features: AX0GCFto4vJQW4gjqUVGKEc-i0EmSC5qmILck03v-0mF7PLhHzpPBHr4oZKoFWo
-Message-ID: <CAHC9VhSae4Vhypwr+hkAvddQ5_DQ90-jaS+pWPqJwPjk_dzMZg@mail.gmail.com>
-Subject: Re: ANN: LSM and SELinux trees to rebase to v6.16-rc2 next week
-To: linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhRn=EGu4+0fYup1bGdgkzWvZYpMPXKoARJf2N+4sy9g2w@mail.gmail.com>
 
-On Wed, Jun 11, 2025 at 12:45=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
->
-> Hi all,
->
-> In order to pickup an xattr fix, link below, in the LSM and SELinux
-> trees, I'll be rebasing the lsm/dev and selinux/dev trees next week
-> once v6.16-rc2 is released.  Currently each tree only has one trivial
-> patch in their respective dev branches so the rebase is expected to be
-> trivial.
+On Tue, Jun 10, 2025 at 08:22:59PM -0400, Paul Moore wrote:
+> On Wed, May 28, 2025 at 8:19 AM David Howells <dhowells@redhat.com> wrote:
+> >
+> > Hi Linus,
+> >
+> > Could you apply this, please?  There shouldn't be any functional change,
+> > rather it's a switch to using combined bit-barrier ops and lesser barriers.
+> > A better way to do this might be to provide set_bit_release(), but the end
+> > result would be much the same.
+> >
+> > Thanks,
+> > David
+> > ---
+> > From: Herbert Xu <herbert@gondor.apana.org.au>
+> >
+> > KEYS: Invert FINAL_PUT bit
+> >
+> > Invert the FINAL_PUT bit so that test_bit_acquire and clear_bit_unlock
+> > can be used instead of smp_mb.
+> >
+> > Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > cc: keyrings@vger.kernel.org
+> > cc: linux-security-module@vger.kernel.org
+> > cc: linux-crypto@vger.kernel.org
+> > cc: linux-integrity@vger.kernel.org
+> > ---
+> >  include/linux/key.h |    2 +-
+> >  security/keys/gc.c  |    4 ++--
+> >  security/keys/key.c |    5 +++--
+> >  3 files changed, 6 insertions(+), 5 deletions(-)
+> 
+> It doesn't look like this has made its way to Linus.  David or Jarkko,
+> do one of you want to pick this up into a tree and send this to Linus
+> properly?
 
-... here is the link I forgot to include:
+I'm open for anything but need comment from David at first. It is up to
+him as he carries the torch ATM for this one :-)
 
-https://lore.kernel.org/selinux/20250605164852.2016-1-stephen.smalley.work@=
-gmail.com/
-
---=20
-paul-moore.com
+BR, Jarkko
