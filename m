@@ -1,57 +1,57 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C022BDC28
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 20:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F40E23C516
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 20:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749672561; cv=none; b=TCEOmZCJY8kqPlE8AyQ1hClFg+i7T/qn7NrJW6gq+tv5Eo5AVGmvNl9feDqk2a02pNfj9HXR3MXhc4oQtJu2psS9wP0Ldx6Km9mI/Xx39fI90bx+y1W/UUveaa6YusCz8qcwTonW2yGjraK7UZWisAvu29+Nkf2XG1z8hOGf284=
+	t=1749673639; cv=none; b=X/jqEMzuw61YweLLvND9t19FRjMridRlwY1bT0NTWul3ATROMINf14b3f5+qo9oKoDFlMROOzGLKdrIajM7O6pf5BvBWe/uf7saVEK+5D2EYhAbbzUdGmBFgDZ/K0B/FQm37Sw7Lo9+Z8YU7G4kqV4s+sYiq9tJ9gQ55Z05brf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749672561; c=relaxed/simple;
-	bh=ko4ZzWeLSpkRKKS4I/5acMnQrGGb5k4EuLn9YB1+rSQ=;
+	s=arc-20240116; t=1749673639; c=relaxed/simple;
+	bh=b462XvDCSfMevaIQxn3sYyGpMaL7uBHahet9/QOpJHw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ShMq895qkHCZhaFAETcPz/HB5RWNpQ6Pd9HPbGKdkovcyjFejg9Vg6g1oa1z4kswDjQNpsNdO0l+n4CVLyhB4mqLQTZqBh0MvpbNDsvC2IfH6TmbHbtdjboQQ+O7S+z/to/HEMNkwjOFpoLACW0JIn9EzeOmHbd13hZCxz3bofo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NeM11b8M; arc=none smtp.client-ip=209.85.219.176
+	 To:Cc:Content-Type; b=aaP+kexVDurR7jXozHEiVFDxNnX3gFXQC+eluLrqpMk6RPgZrJqVkZE0wdG8ta1zBi3ZWJK/rE8bYdS11ZyzEid2CcCHgy90By8LEj6G8c0Fl6AJu54HQien+23wvwRevPHMG+ydiObf46IsWFN8h88ikm2esSmw3kNhsn6AyUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eLn/4Us8; arc=none smtp.client-ip=209.85.128.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NeM11b8M"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e7311e66a8eso207113276.2
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 13:09:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eLn/4Us8"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-7111d02c777so1594477b3.3
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 13:27:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1749672557; x=1750277357; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1749673636; x=1750278436; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hXehlz0TcJ2MRYwkUu3vKGZPwVZpInL2Z8eZexHN4Fc=;
-        b=NeM11b8MriBTvKbKTWYzcshsyTcOwpztyfZIQAvfsLGp9QHQLUyJG1SDKNriYTtiBD
-         BezwHXpwW0Iy3zGIfNAw1BODTXnTcvF6ZXOlBuq4CmDEpVtxBT5DrN+xamM45vf4QDZ+
-         smmHJr2GPQYbmBGiAx/uImxTgU9fIRAtD5v0yoF1RFXAfjqHnY2UCFZM+APIAqLRzXiw
-         IlBJmD7qGewDM/1aG7IOST12DqfwD4VXK5wge4abO4nne1BDGJ5UhwZhfquM+uuN4ssp
-         5sImCcLPcDk78P/BMG/cslOaxy20YbGjr5U8Rf0iNU+u6Kje8LxHw+FJpW2YVJncfp8i
-         tmwA==
+        bh=A3H1uAtO+gZJCXVOFgln/U+eNFJCAoQXkaNwNc9tito=;
+        b=eLn/4Us8K6pgDk1K37yxhLgGDY/R4sI3hM6xguaNs6VXi9CZy6IS7RdfW8Tg0J3mR7
+         X0G3ijtJngWy5hdPSq7ARs94PS86Xq9Ix92Pm9X2Q1kVkIKaqHMwflTzpb1phnfi4md7
+         Iwbm7h1bhQuRtbAT1eLOdxYLM9GycF272IjYpnjx/98DK4pd9JARNUHp/7IjVLyrWzqH
+         iLpJf5YRVXU1pLb5J+uOW3q+S8Jb9MyypZ/554NCMz1coCtNEuVnxbjYTMUSyPR4EDxM
+         Dogv+t5JtOLT0nO+kLANyAsVQYAkarVnn2Z/PrBFlApv3tCQ5n4TgsX9hw3aWRSGgulb
+         8XLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749672557; x=1750277357;
+        d=1e100.net; s=20230601; t=1749673636; x=1750278436;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hXehlz0TcJ2MRYwkUu3vKGZPwVZpInL2Z8eZexHN4Fc=;
-        b=D+J+CWNoLB8MNaLLBZW5ghK8ZT0EcwKKcm6k//lsoggJtDxlif1vtFAR09QI+S3OEc
-         x5C1lQV9oh7iiRNldqVwCARKiWAy0Pmi2BJFuS4IyLcnWiB6lwCHA/nRG+yRXxK9pSWp
-         j/MrZtxnA/sxMh+H0LNPRtmJnViiKDSpHSu++BoA3NsQ7t0tqJ9hw0UgQQWH0aEiRXp+
-         z1RF7Q7+aUHp4tcScOYJhGVPyiyBolIU5RSa3CV88p2OO7bl/QThO51RG8pXuoKRXibN
-         Dx6WTM6W2dBZ6aIyfIeSi4VyMMn+cu4grGmral24XiyJML+2rOcCKaFy7puyc4atiZL1
-         Cn7A==
-X-Gm-Message-State: AOJu0YwZ3uipY2XbU6tRpyMhdzhiH2zBY0bXRvdTu0oVL5XOOzFOrEkG
-	A1Puxr2y+o04FMsDb+rMf/Yv+jNCnOLq0+NPqmFSYey4HG1FX1C0N4jKZ0LH5EIgXQ20pO6ML2V
-	+1JYU8GZ9fljGnrRoQMEAoly5lwjTbTtrwGPbfTQL
-X-Gm-Gg: ASbGnctolAWDhnp1vNh68IdrR0iGOUoY1FKi7OkCIBLqNO98Xhg323RW57dadpKqKmo
-	4JNrRoGg05uXaFrtx2toicyM66EUMHUz9P8pBEC3tXLaPGRUzdCe4p56fcJG+VW6K4sG63XybZ4
-	Sx8tsQzyuA3rArafuPBH+PvDxSiLCG3neORh+aypI9N2U=
-X-Google-Smtp-Source: AGHT+IFSTlmXkicDh/rc8hIjw4BeQctWC+TZser3y2hLKqOO14q5kDO9NAjyxUEt0yHzdF5W3ZUuUeKf6zr/7iF9vdU=
-X-Received: by 2002:a05:690c:b91:b0:709:176d:2b5 with SMTP id
- 00721157ae682-71150940190mr8454507b3.2.1749672557683; Wed, 11 Jun 2025
- 13:09:17 -0700 (PDT)
+        bh=A3H1uAtO+gZJCXVOFgln/U+eNFJCAoQXkaNwNc9tito=;
+        b=W1c8L8dCrGvgh2lJ7yUbS5Tn47oMaNyUxHiJbDDB4zxQWM5JP1NBUwXKh59PDpCxIx
+         1n8O3uAUXq1Lw7A2o+dNfowRI6dGdrYJd3LDNGPF/UHeEaPrXJDiNuYkGmapfqeMUseN
+         jTGqqwmuJKpzKWGBzodQibue73NaTxBGpWybnMLL7yI1dWo0pbAl1LYvjN9E2v2SSa6I
+         APw+RItRpfv6qWW2MVtpEZilQXoFjifk78g1hkWngDHzmSPzqXq+Q3PfO4+LmHjKA350
+         SG7yRSSCcrRcJBClitt8rhghT9TtKXf6bvNwT7HdckokdZ20Y41TQ26cgBuew5vZfWEj
+         WszA==
+X-Gm-Message-State: AOJu0YxAWymZXvlLwuUYOA89k4Wumh29oHKEf+o6hKv1Ub01HninBVhU
+	tEej8SMGoFU/6dtHC1742zi8wR9oDJuTxBMFSc54qeZzKEhiH4f3fGdbUz/Uu8en2udkqXHCi8v
+	waoyJC9Qyqc7UkOhjsiKQgIj1E7+a+wrsIXmg2InV
+X-Gm-Gg: ASbGncsCx6dXGAgKjKEDeoEtn/4Ux1TiqbgJDcWG++TQeyQfvNB83ocBo6TSPjqV6I3
+	q9tBsPmR/YHEPxLTQP6zEEvpWxwW11u7o7sfeB8jcKg/eQzpBzoVFVLu+eYdxrnDN+rZSICJ9rc
+	R2r5659K332slqwqYZm0qZZ49mr5qEQMSn7/Ch/EJTsXo=
+X-Google-Smtp-Source: AGHT+IEVVLEbhs1siAlIrgblMXiy7/1GYb0zZZID5dw2ruoClMFtAoDqtrQDzTOvm/A3WlpYxkgeMG1oUpdy8wiHzZ0=
+X-Received: by 2002:a05:6902:2408:b0:e81:e0b4:1bc2 with SMTP id
+ 3f1490d57ef6-e820c7d6b2dmr752984276.10.1749673636310; Wed, 11 Jun 2025
+ 13:27:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -59,16 +59,16 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250409185019.238841-31-paul@paul-moore.com> <20250409185019.238841-56-paul@paul-moore.com>
- <5cfa9bca-27e4-4012-b152-90eb8435f0e9@canonical.com>
-In-Reply-To: <5cfa9bca-27e4-4012-b152-90eb8435f0e9@canonical.com>
+ <12d9ea5981f5a2c33a01798311543db2e9bd4ee3.camel@linux.ibm.com>
+In-Reply-To: <12d9ea5981f5a2c33a01798311543db2e9bd4ee3.camel@linux.ibm.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 11 Jun 2025 16:09:06 -0400
-X-Gm-Features: AX0GCFtzUDgvy41at1X_Y7lAWngPflPf-xI1SA28m3Kk1-XzbssmHiHnTK-Hspk
-Message-ID: <CAHC9VhQbAzekDmDzWys66NL_bzZFe-PHYMbDs-fsmkRfczxa+Q@mail.gmail.com>
+Date: Wed, 11 Jun 2025 16:27:05 -0400
+X-Gm-Features: AX0GCFtB1BfHO9UnqaP7qiGZ525Kvp-h6Jc_bADxlaJPbPrl5km3UWt0_EFnhUw
+Message-ID: <CAHC9VhTfNQeu3gcWii7kUrGY+fVygXs6j4UhybodPqjuSzA-pQ@mail.gmail.com>
 Subject: Re: [RFC PATCH 25/29] ima,evm: move initcalls to the LSM framework
-To: John Johansen <john.johansen@canonical.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
 Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	selinux@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, 
+	selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
 	Roberto Sassu <roberto.sassu@huawei.com>, Fan Wu <wufan@kernel.org>, 
 	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
 	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
@@ -77,15 +77,28 @@ Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 14, 2025 at 9:06=E2=80=AFAM John Johansen
-<john.johansen@canonical.com> wrote:
-> On 4/9/25 11:50, Paul Moore wrote:
+On Fri, May 30, 2025 at 6:04=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+> On Wed, 2025-04-09 at 14:50 -0400, Paul Moore wrote:
 > > This patch converts IMA and EVM to use the LSM frameworks's initcall
 > > mechanism.  There were two challenges to doing this conversion: the
 > > first simply being the number of initcalls across IMA and EVM, and the
 > > second was the number of resources shared between the two related,
 > > yet independent LSMs.
-> >
+>
+> There are a number of the initcalls under integrity/platform/, which load=
+ arch
+> specific keys onto the platform and machine keyrings, which shouldn't be
+> included in this patch.
+
+I don't want to assume too much from your reply, but if the cert/key
+loading under integrity/platform shouldn't be subject to the LSM
+initcall rework, that implies that the integrity/platform cert/key
+loading is independent of IMA/EVM and should perhaps live somewhere
+else, e.g. security/keys?
+
+Or am I misunderstanding something?
+
 > > The first problem was resolved by the creation of two new functions,
 > > integrity_device_init() and integrity_late_init(), with each focused on
 > > calling all of the various IMA/EVM initcalls for a single initcall type=
@@ -93,67 +106,21 @@ On Wed, May 14, 2025 at 9:06=E2=80=AFAM John Johansen
 > > The second problem was resolved by registering both of these new
 > > functions as initcalls for each LSM and including code in each
 > > registered initcall to ensure it only executes once.
-> >
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > ---
-> >   security/integrity/Makefile                   |  2 +-
-> >   security/integrity/evm/evm_main.c             |  7 +-
-> >   security/integrity/iint.c                     |  4 +-
-> >   security/integrity/ima/ima_main.c             |  7 +-
-> >   security/integrity/ima/ima_mok.c              |  4 +-
-> >   security/integrity/initcalls.c                | 97 ++++++++++++++++++=
-+
-> >   security/integrity/initcalls.h                | 23 +++++
-> >   .../integrity/platform_certs/load_ipl_s390.c  |  4 +-
-> >   .../integrity/platform_certs/load_powerpc.c   |  4 +-
-> >   security/integrity/platform_certs/load_uefi.c |  4 +-
-> >   .../platform_certs/machine_keyring.c          |  4 +-
-> >   .../platform_certs/platform_keyring.c         | 14 ++-
-> >   12 files changed, 147 insertions(+), 27 deletions(-)
-> >   create mode 100644 security/integrity/initcalls.c
-> >   create mode 100644 security/integrity/initcalls.h
-
-...
-
-> > diff --git a/security/integrity/initcalls.c b/security/integrity/initca=
-lls.c
-> > new file mode 100644
-> > index 000000000000..de39754a1c2c
-> > --- /dev/null
-> > +++ b/security/integrity/initcalls.c
-> > @@ -0,0 +1,97 @@
-> > +// SPDX-License-Identifier: GPL-2.0+
-> > +/*
-> > + * Platform certificate / keyring initcalls
-> > + *
-> > + */
-> > +
-> > +#include <linux/init.h>
-> > +
-> > +#include "initcalls.h"
-> > +
-> > +/**
-> > + * integrity_device_init - device_initcalls for IMA/EVM
-> > + *
-> > + * This helper function wraps all of the device_initcalls for both IMA=
- and EVM.
-> > + * It can be called multiple times, e.g. once from IMA and once from E=
-VM,
-> > + * without problem as it maintains an internal static state variable w=
-hich
-> > + * ensures that any setup/initialization is only done once.
-> > + */
-> > +int __init integrity_device_init(void)
-> > +{
-> > +     int rc =3D 0, rc_tmp;
-> if none of the below config options are defined then rc_tmp is unused and=
- the build can kick out with
 >
-> ../security/integrity/initcalls.c:21:21: error: unused variable =E2=80=98=
-rc_tmp=E2=80=99 [-Werror=3Dunused-variable]
+> With the above change, there obviously will be a lot fewer initcalls, but=
+ it
+> might still make sense to keep the common ima/evm function.
 
-Thanks.  I fixed this by adding a __maybe_unused annotation as that
-seemed like the cleanest fix.
+I'm not sure I understand, what do you mean by "common ima/evm
+function"?  This patch doesn't remove any IMA/EVM functions, it adds
+the integrity_device_init() and integrity_late_init() functions to
+setup and populate some keyrings.
+
+It's also worth mentioning that the goal of this patchset is not
+necessarily to reduce initcalls, but rather to ensure that LSM
+initcalls are only executed when the LSM is enabled, and to provide a
+mechanism to notify kernel users when all of the LSMs have initialized
+themselves.
 
 --=20
 paul-moore.com
