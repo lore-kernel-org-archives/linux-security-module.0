@@ -1,124 +1,91 @@
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622EA1C84CE;
-	Wed, 11 Jun 2025 15:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202201EB5D0
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 15:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749656541; cv=none; b=cX7oLp+74NQPmxT75tjfNsqKXlfZpKt6PSzW2YEUpyNSpHgTi0vx7VbWz+U3yWJEOh0EW5q2XSxCSMS5TZrgkj3KfPj014yMjVyRRQrHQhb3vkKbCD4Tc++HnyPFHFNDzKY9yUmBNO/Av7JtDnCTtOBWZpfn5DgBc0XjuAh2sEM=
+	t=1749657263; cv=none; b=u5VKFIxbMZU7Nlpk/nE1iKbN5LVkNxhk8xdz4JGkyW2lAzlApD/Q4xg3lM/c+TNGc7Enjf97v1KIaMyvcsN8tRdQZ/aSQ41eqXGVSOy6bV426gToelZn33gy7WT9NRahSCj14BudAsvs6X02nw0pzgkSBCMSNZwJ/ud/LPPYeyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749656541; c=relaxed/simple;
-	bh=ioO3hNxPGeFPNa5Dj0Y1Ac/kXyZI+FCLfoSP26I/0zg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lt3Ps0rTZ0GEqJyw9v1OejDtdfoz4PNxgQQRj9RvfYZYwbfEdj0biMJc468ZawfZLKfjMShT6lJij5JdVNXyDTy15EfaCrHZeX8Z3Yw8s7AUc+bVnfqkaVBqf0ZWUqFExUDqt3ReHVufSZ3FxLK5C480Qf4BMW53CeURPD9iP4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ng74j9lQ; arc=none smtp.client-ip=185.125.25.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1749657263; c=relaxed/simple;
+	bh=MNJifaaW2DKC7Ep+EbGEsZeWuZtW79t5zkE61iueUzQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YovZbJjkwOESNqE8p/hnNBrIPyD0mar2+zOOJqW7OHgDruPXgFe+cKvXQ3fylIVOFKoqRK4fkWzT26SdEnJGogYvLtoRZ8uOClPXttvAb374BtE1CDkEavTBT9rrtzf/PcyagyxrIWognlxsNF/WX6/nVYgrhII+2z40+YzTPnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VoQZRUnc; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ng74j9lQ"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bHVK31fsszGrJ;
-	Wed, 11 Jun 2025 17:42:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1749656535;
-	bh=XuuN/g9Cip9+rlNBlmxCYRns/lSpStRWBT4apK7M81Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ng74j9lQSQ9YmZybW55MxcLniGl4bKLh+P247kFAkEcxTV/RePcLDF4e8WmJHTbj5
-	 0fcNVhi/shlKKd8ZYVh6So4amaJmxEORoQPHVIAnZI/PwQNw3/hOErnMJN/Ne0LlNN
-	 9cqArzbYSzfH8vpOsL6gLpJbnItZq8i+aKvWSlr8=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bHVK234ZSzlYN;
-	Wed, 11 Jun 2025 17:42:14 +0200 (CEST)
-Date: Wed, 11 Jun 2025 17:42:13 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Song Liu <song@kernel.org>
-Cc: NeilBrown <neil@brown.name>, Jan Kara <jack@suse.cz>, 
-	bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, 
-	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, kpsingh@kernel.org, mattbobrowski@google.com, 
-	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, 
-	gnoack@google.com, m@maowtm.org
-Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function
- path_walk_parent()
-Message-ID: <20250611.Bee1Iohoh4We@digikod.net>
-References: <20250606213015.255134-1-song@kernel.org>
- <20250606213015.255134-2-song@kernel.org>
- <174959847640.608730.1496017556661353963@noble.neil.brown.name>
- <CAPhsuW6oet8_LbL+6mVi7Lc4U_8i7O-PN5F1zOm5esV52sBu0A@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VoQZRUnc"
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-710e344bbf9so63278447b3.2
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 08:54:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1749657261; x=1750262061; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dBhZQu6BqagB3PC5bDYHjkHrfQ+2AWYQFfsjZus8X6I=;
+        b=VoQZRUncykxaGZ7NsMVcqtrTcp5nmfGaQziEJb32XqsWTZI6DGMxeVHR1blITt+Qqs
+         F4ZIMuJCaM4dIVkrt1JLT6ircWVM4EmwCb32sw80IEIvBznEZ+gNvVax6xGMEsXWgvEB
+         e5AHBdIrSwkRtkYcnPm514FFcCfdtbf3xCt0N4er71YLh31wmQS3O8FPjGaM5JI2c/nA
+         fIwMS2I5G6xhiEDD/vAZtQKVLzpB0v1l7d0cHEWOMvqaMKYd2Wp+f8F8pPZYKTdolany
+         NmSD6Pf7L8yUSJhryERsnSG/SXuFJ6HeKKqIgpj1Rt0a2/R9t/igWvnflEDMXU8BvDcW
+         BClw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749657261; x=1750262061;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dBhZQu6BqagB3PC5bDYHjkHrfQ+2AWYQFfsjZus8X6I=;
+        b=fyozdgh7clyg1jgsroAGXHMQaFa/wLCggOSzRrczQiwWBQUQADE8H4h9PKk2IrnafB
+         BGqWdVe4QlsDMLsz7bI0IhUr1rDlMQrq/ZdhPINz2l6d52fF8sfjOYMUAbyU7w1axzij
+         1OnOL3p01VUkcH8ql/y27tLl9RHM4hhbklyaED9QcK0HUAucnKRh7R8YCHac3BNfCamg
+         4CEZjiA/6w7cLySRM5Fx9E9hpHYdsw6g2hhuoOBw2/Td/m/7vN688Y29TWInhyUOfM5m
+         lntMv4C5Tm1w/KRc4fW36VbFlLpS1q+CAOUoygooIvwVyvrjKUtfm/MEXF1KNpgUHiAE
+         vIgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFsCQ9moW5dUQmxd57Nl4Qjc9Gr5QkVb/hp+8jA7ev+jmnQzSTZJ35SkJmkQE6LPEpl8U9VeZWYTBhMxEOpwJCf2XjdOQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzruAPbHYW7+seoI9gJXqmATWJwzjjSluPNQhGK/epW5xwb8je7
+	Ch8OMfDXFeUel54d7gdIyz+rUK7OZDr0WiB4yBU7abQYdsBhF3pv8wJl39eU/Y+pEfD2QyjAQBt
+	1f+0bOyg+u43o1/S9Wc2DvAUUbvpW2AUUCC1PbSC+
+X-Gm-Gg: ASbGnct0xsJTN6BsEug0C/Sy14JvYcoIEKb2SMOX4kMfWI238NYf8AAB7Q+F93bhxug
+	TL/HAQzIvavfRS2LJ6xk8SuhNQQgp/s9myMNmUtRm6yxOXbGCqLjJRL3VwazK5iAnMFZpEU5vsM
+	DV2WFrvCaCMSJPSwVmjrR/baPLGpPUdcI5WldTI8Z5Ylk=
+X-Google-Smtp-Source: AGHT+IEn+kC/BZ+RXwGYxRkP+XLD0tGlRkO0idFv9DQonG8a7gWIJr8vGNDUYR6rx6ZmmovcVVyDmS1thVUaW8UvqdA=
+X-Received: by 2002:a05:690c:f8c:b0:70e:7663:8bb4 with SMTP id
+ 00721157ae682-71140adb8bamr52684357b3.25.1749657261129; Wed, 11 Jun 2025
+ 08:54:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPhsuW6oet8_LbL+6mVi7Lc4U_8i7O-PN5F1zOm5esV52sBu0A@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+References: <301015.1748434697@warthog.procyon.org.uk> <CAHC9VhRn=EGu4+0fYup1bGdgkzWvZYpMPXKoARJf2N+4sy9g2w@mail.gmail.com>
+ <aElIgixaHGuHEnb8@gondor.apana.org.au>
+In-Reply-To: <aElIgixaHGuHEnb8@gondor.apana.org.au>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 11 Jun 2025 11:54:10 -0400
+X-Gm-Features: AX0GCFs9HQfkD829H3Li4br3UccO43H5X5WtKEy278IEIzt6bh6uwIsmTEf8mkI
+Message-ID: <CAHC9VhT9k9+DWh14HEnv6V1T3=hDJFY-fOcE-nexPFv0jdL04g@mail.gmail.com>
+Subject: Re: [PATCH] KEYS: Invert FINAL_PUT bit
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org, 
+	Jarkko Sakkinen <jarkko@kernel.org>, keyrings@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 10, 2025 at 05:56:01PM -0700, Song Liu wrote:
-> Hi Neil,
-> 
-> Thanks for your suggestion! It does look like a good solution.
-> 
-> On Tue, Jun 10, 2025 at 4:34 PM NeilBrown <neil@brown.name> wrote:
-> 
-> > The above looks a lot like follow_dotdot().  This is good because it
-> > means that it is likely correct.  But it is bad because it means there
-> > are two copies of essentially the same code - making maintenance harder.
+On Wed, Jun 11, 2025 at 5:12=E2=80=AFAM Herbert Xu <herbert@gondor.apana.or=
+g.au> wrote:
+> On Tue, Jun 10, 2025 at 08:22:59PM -0400, Paul Moore wrote:
 > >
-> > I think it would be good to split the part that you want out of
-> > follow_dotdot() and use that.  Something like the following.
-> >
-> > You might need a small wrapper in landlock which would, for example,
-> > pass LOOKUP_BENEATH and replace path->dentry with the parent on success.
-> >
-> > NeilBrown
-> >
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 4bb889fc980b..b81d07b4417b 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -2048,36 +2048,65 @@ static struct dentry *follow_dotdot_rcu(struct nameidata *nd)
-> >         return nd->path.dentry;
-> >  }
-> >
-> > -static struct dentry *follow_dotdot(struct nameidata *nd)
-> > +/**
-> > + * path_walk_parent - Find the parent of the given struct path
-> > + * @path  - The struct path to start from
-> > + * @root  - A struct path which serves as a boundary not to be crosses
-> > + * @flags - Some LOOKUP_ flags
-> > + *
-> > + * Find and return the dentry for the parent of the given path (mount/dentry).
-> > + * If the given path is the root of a mounted tree, it is first updated to
-> > + * the mount point on which that tree is mounted.
-> > + *
-> > + * If %LOOKUP_NO_XDEV is given, then *after* the path is updated to a new mount,
-> > + * the error EXDEV is returned.
-> > + * If no parent can be found, either because the tree is not mounted or because
-> > + * the @path matches the @root, then @path->dentry is returned unless @flags
-> > + * contains %LOOKUP_BENEATH, in which case -EXDEV is returned.
-> > + *
-> > + * Returns: either an ERR_PTR() or the chosen parent which will have had the
-> > + * refcount incremented.
-> > + */
-> > +struct dentry *path_walk_parent(struct path *path, struct path *root, int flags)
-> 
-> We can probably call this __path_walk_parent() and make it static.
-> 
-> Then we can add an exported path_walk_parent() that calls
-> __path_walk_parent() and adds extra logic.
-> 
-> If this looks good to folks, I can draft v4 based on this idea.
+> > It doesn't look like this has made its way to Linus.  David or Jarkko,
+> > do one of you want to pick this up into a tree and send this to Linus
+> > properly?
+>
+> I can pick it up for the next merge window.
 
-This looks good but it would be better if we could also do a full path
-walk within RCU when possible.
+Great, thanks Herbert.
 
-> 
-> Thanks,
-> Song
-> 
-> [...]
-> 
+--=20
+paul-moore.com
