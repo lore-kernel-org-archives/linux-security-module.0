@@ -1,201 +1,197 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2491ADFFB;
-	Wed, 11 Jun 2025 15:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CA01C6FF6
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Jun 2025 15:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749654284; cv=none; b=cnVgyfut4xTkrgZJd3qA7Fn6NoEoQB296vKbnJ9IumfYQXaRQ+wz+YW0GxlBtlxWkvSgCG8ovYoC1WNmTXCKqgY3/qW5Y6Kh5KSnohI5SFwZjZe7aHrqaUPBFJcwtF30hML1qG9cYhUjSrZZSO1bz/e9o79dGKI24SmqFG54MF0=
+	t=1749656353; cv=none; b=PjulHMTnTN2NahqECfQLwDTJKV0HTW4B6Vt6xppUxMDML/V/kSmx1NO/7AlN3GHW5FZA1CHW76hxKPHJh5wenitOgdHcLMd5akNIc8MTXPc9Zx0GyMfIp1ooenmuT3OcfiA+Q76RIMjmIfdgUShyZWLQ69fEULWmcsTqJzpMvhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749654284; c=relaxed/simple;
-	bh=wCdTYRWpCahjIsqcoraZdokvJ/dzGrBWyCkh+Nxso44=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eJs2D5ltnYWuRt2XyizAjUowmXUSwBHLQQFnIROaw89hOlzchjav5wVHa2kbaM2Ic0ohoqb5FLP6wKg8XU/UImAnxZmcDzwjhptVD86jEiGltY7noXCF0A5axPgpe1qp2O2sJ/9yhfBrorHxvOILATSwYGdogttnpESod+5Z1Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GUEtUsMY; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1749656353; c=relaxed/simple;
+	bh=Z0sKrBxfihPScDuniaiZHTw+yqzf95mga2fD3ZZfc90=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SQKTJkNgLqIjUZ95O+hyFU9jJMiedml3UkzlHnns1I1zq8Q4shxLpE/ZNrJPmq3rbbHIsvsCnKDzaKIwuj7eKJEdlAAXC2ZN/P2QVqsX6o6gKCjJux5fDYEzl07BQhvMzEuqpi3HpugVUfIU/DA7LL3q+zqBwidjIstUCBayCzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=vfLV4yUB; arc=none smtp.client-ip=84.16.66.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GUEtUsMY"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a53ee6fcd5so2517325f8f.1;
-        Wed, 11 Jun 2025 08:04:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749654281; x=1750259081; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nJVpdQmzOms9l4a11tO5AbxujAROVkXSwTeecd0Po/c=;
-        b=GUEtUsMYP0hrQYaFoEgHqHdAlz6HKb85K1BI4Q6DVcpvS1/M8H7DAGXsqbN8Y6AiTI
-         k9DHOemYwz9E4boklss1WPzAl4G9kTg8hcE4ZlbDpVqTsHBW17PpiG7emIFHfFHVJCbe
-         Wesvx5wMMLIr2VbjvwY/u9mLDh/Ezo3NbowRrEFWlTXTbiWsqfXcgfrpmyoySgqg6UvR
-         2DVqgIo+rOwIfZm0Q4awSyhCDFlRDYZkzCosVo088/44ZZhVxTHsYoqW6wM3kB0ZptlH
-         /e4qXpU6LyIcXa8iZdnSfM9WsXOkiLfGiF1Jdcg9eFX474tK/34EadfLvbfZBlMxiSK+
-         ZBKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749654281; x=1750259081;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nJVpdQmzOms9l4a11tO5AbxujAROVkXSwTeecd0Po/c=;
-        b=rop7ZOHYwOpefaOcVG06nuXJQOM/LzR+iYlRhF9yYDeHe17r9W7Obwg945BXChTxbz
-         HcPExPD3i9ZYcW9RKgapxYX6Xa0SzKLQUYfKJLfKcY/mLw/6K82fAWQyclzxaVtul6Qs
-         rgryAiXxfRMzp7+hpSy/hsiHt/6RDegjLSfoud+uGdwZpmqtngB+09Yeq61W/eiz6RGK
-         kd04R1olrT9IG20FINKxQtkDqzKSTqb6JTeFAWSKo7PiUF1DMKDW6CjMFIinslGSmNw2
-         4KyHHua07ScaMTIoxcthWHNkVMACjgauMoT9hdfbczlKteIQxbeZfqW1v0NPbah+IdRf
-         x6/A==
-X-Forwarded-Encrypted: i=1; AJvYcCX/7XVX4zv0iXU9qdIqd+8qali89lQIbUxSV+a5KdLyrL1QZnzpG6mzKm9V11XF8YKR/xFZ10Urh6LVZSrzapg6ublGxec=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxnm1sm1lZlpQLp90VBICQcLfCU30rrh5Ru7cNSfEs+ajDr97xU
-	VtI1HuGPOk4yMHy24raYa9c8sHep/PYCLi7936QDLBlf8/xJRzvKpGgbHQN6L2K5mQmU9UVJEL+
-	T4sJq4acgpYOV1kWGmA86hh+hxy/QCGWCJQ==
-X-Gm-Gg: ASbGnctIUjPS3N+n2gA87ONwRJP7ZAawvzklqjMBUu7U7Mxdjb+npLht4XFOotIXQdN
-	PMuZW5MwKDAxiH9CHJxdiMlDfx5KHUDjU4e3FPDYdZhActRDP1mGA7ujF0dYYQDEU9ZK7iFsFpO
-	I17PbGJwa7MlAYNNIVedFuaDN6U/hwB65PHAVbXPgaiCON8tR1ii4ewKVBe106L8S+rvWVFwh7
-X-Google-Smtp-Source: AGHT+IHBn5+0LGgyVrYZhgzWDo92zhGJRYc/dUG2SDjx5YVtS9COoMd6GZucqacIqskiySmaEz+0NC8uksN9F9aC3xk=
-X-Received: by 2002:a05:6000:2088:b0:3a5:276b:1ec0 with SMTP id
- ffacd0b85a97d-3a558afec9cmr2509421f8f.45.1749654279251; Wed, 11 Jun 2025
- 08:04:39 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="vfLV4yUB"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bHVFL4l42zCry;
+	Wed, 11 Jun 2025 17:39:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1749656342;
+	bh=tbYnPfL1kN2Ag3wnMq+882FR27P/mux6vrQe2oeb2ag=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vfLV4yUBHwPf4+pUjala63K88RN932+jPgEAZ00GlUIvAWhfOT/yComLM6A5bKPSA
+	 cmENBy5H+YbcpHlnllKrEKcOvfIo3aemt2J8CBjEpUpk6X9X6U+/W+sWui0WeX8cSS
+	 2ETQp8U5P2xD4yt35d3cD8WZvYthrTcSPuV1GXIs=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bHVFK4M0dzpjX;
+	Wed, 11 Jun 2025 17:39:01 +0200 (CEST)
+Date: Wed, 11 Jun 2025 17:39:00 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Tingmao Wang <m@maowtm.org>, Song Liu <song@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, amir73il@gmail.com, andrii@kernel.org, ast@kernel.org, 
+	bpf@vger.kernel.org, daniel@iogearbox.net, eddyz87@gmail.com, gnoack@google.com, 
+	jack@suse.cz, jlayton@kernel.org, josef@toxicpanda.com, kernel-team@meta.com, 
+	kpsingh@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, martin.lau@linux.dev, mattbobrowski@google.com, 
+	repnop@google.com
+Subject: Re: [PATCH v3 bpf-next 0/5] bpf path iterator
+Message-ID: <20250611.faich0Chohg3@digikod.net>
+References: <20250606213015.255134-1-song@kernel.org>
+ <dbc7ee0f1f483b7bc2ec9757672a38d99015e9ae.1749402769@maowtm.org>
+ <CAPhsuW7n_+u-M7bnUwX4Go0D+jj7oZZVopE1Bj5S_nHM1+8PZg@mail.gmail.com>
+ <97cdb6c5-0b46-4442-b19f-9980e33450c0@maowtm.org>
+ <20250611-bindung-pulver-6158a3053c87@brauner>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-8-kpsingh@kernel.org>
- <CAADnVQL7Roi1gmAWZFSx-T4YVLtHu2cDneKCkLdBvB2+y_S1Uw@mail.gmail.com> <CACYkzJ4_NL=U525D56mVcyfxX64BDrkP3FiFotNPQ8+EDKNRQQ@mail.gmail.com>
-In-Reply-To: <CACYkzJ4_NL=U525D56mVcyfxX64BDrkP3FiFotNPQ8+EDKNRQQ@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 11 Jun 2025 08:04:28 -0700
-X-Gm-Features: AX0GCFuYEml8R879TFDM6N1Ru6jvNrO8OhLliHxrGcakpporZz3qvpB220-HUPU
-Message-ID: <CAADnVQLmrbOFbJZAdx3auye8YVwVJvMM4qp0L_-mFyD4xDedUA@mail.gmail.com>
-Subject: Re: [PATCH 07/12] bpf: Return hashes of maps in BPF_OBJ_GET_INFO_BY_FD
-To: KP Singh <kpsingh@kernel.org>
-Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250611-bindung-pulver-6158a3053c87@brauner>
+X-Infomaniak-Routing: alpha
 
-On Wed, Jun 11, 2025 at 7:27=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrote=
-:
->
-> On Mon, Jun 9, 2025 at 11:30=E2=80=AFPM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Fri, Jun 6, 2025 at 4:29=E2=80=AFPM KP Singh <kpsingh@kernel.org> wr=
-ote:
->
-> [...]
->
-> > >
-> > > +       if (map->ops->map_get_hash && map->frozen && map->excl_prog_s=
-ha) {
-> > > +               err =3D map->ops->map_get_hash(map, SHA256_DIGEST_SIZ=
-E, &map->sha);
-> >
-> > & in &map->sha looks suspicious. Should be just map->sha ?
->
-> yep, fixed.
->
-> >
-> > > +               if (err !=3D 0)
-> > > +                       return err;
-> > > +       }
-> > > +
-> > > +       if (info.hash) {
-> > > +               char __user *uhash =3D u64_to_user_ptr(info.hash);
-> > > +
-> > > +               if (!map->ops->map_get_hash)
-> > > +                       return -EINVAL;
-> > > +
-> > > +               if (info.hash_size < SHA256_DIGEST_SIZE)
-> >
-> > Similar to prog let's =3D=3D here?
->
-> Thanks, yeah agreed.
->
-> >
-> > > +                       return -EINVAL;
-> > > +
-> > > +               info.hash_size  =3D SHA256_DIGEST_SIZE;
-> > > +
-> > > +               if (map->excl_prog_sha && map->frozen) {
-> > > +                       if (copy_to_user(uhash, map->sha, SHA256_DIGE=
-ST_SIZE) !=3D
-> > > +                           0)
-> > > +                               return -EFAULT;
-> >
-> > I would drop above and keep below part only.
-> >
-> > > +               } else {
-> > > +                       u8 sha[SHA256_DIGEST_SIZE];
-> > > +
-> > > +                       err =3D map->ops->map_get_hash(map, SHA256_DI=
-GEST_SIZE,
-> > > +                                                    sha);
-> >
-> > Here the kernel can write into map->sha and then copy it to uhash.
-> > I think the concern was to disallow 2nd map_get_hash on exclusive
-> > and frozen map, right?
-> > But I think that won't be an issue for signed lskel loader.
-> > Since the map is frozen the user space cannot modify it.
-> > Since the map is exclusive another bpf prog cannot modify it.
-> > If user space calls map_get_hash 2nd time the sha will be
-> > exactly the same until loader prog writes into the map.
-> > So I see no harm generalizing this bit of code.
-> > I don't have a particular use case in mind,
-> > but it seems fine to allow user space to recompute sha
-> > of exclusive and frozen map.
-> > The loader will check the sha of its map as the very first operation,
-> > so if user space did two map_get_hash() it just wasted cpu cycles.
-> > If user space is calling map_get_hash() while loader prog
-> > reads and writes into it the map->sha will change, but
-> > it doesn't matter to the loader program anymore.
-> >
-> > Also I wouldn't special case the !info.hash case for exclusive maps.
-> > It seems cleaner to waste few bytes on stack in
-> > skel_obj_get_info_by_fd() later in patch 9.
-> > Let it point to valid u8 sha[] on stack.
-> > The skel won't use it, but this way we can kernel behavior
-> > consistent.
-> > if info.hash !=3D NULL -> compute sha, update map->sha, copy to user sp=
-ace.
->
-> Here's what I updated it to:
->
->     if (info.hash) {
->         char __user *uhash =3D u64_to_user_ptr(info.hash);
->
->         if (!map->ops->map_get_hash)
->             return -EINVAL;
->
->         if (info.hash_size !=3D SHA256_DIGEST_SIZE)
->             return -EINVAL;
->
->         if (!map->excl_prog_sha || !map->frozen)
->             return -EINVAL;
->
->          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->          I think we still need this check as we want the program to
-> have exclusive control over the map when the hash is being calculated
-> right?
+On Wed, Jun 11, 2025 at 01:36:46PM +0200, Christian Brauner wrote:
+> On Mon, Jun 09, 2025 at 09:08:34AM +0100, Tingmao Wang wrote:
+> > On 6/9/25 07:23, Song Liu wrote:
+> > > On Sun, Jun 8, 2025 at 10:34 AM Tingmao Wang <m@maowtm.org> wrote:
+> > > [...]
+> > >> Hi Song, Christian, Al and others,
+> > >>
+> > >> Previously I proposed in [1] to add ability to do a reference-less parent
+> > >> walk for Landlock.  However, as Christian pointed out and I do agree in
+> > >> hindsight, it is not a good idea to do things like this in non-VFS code.
+> > >>
+> > >> However, I still think this is valuable to consider given the performance
+> > >> improvement, and after some discussion with Mickaël, I would like to
+> > >> propose extending Song's helper to support such usage.  While I recognize
+> > >> that this patch series is already in its v3, and I do not want to delay it
+> > >> by too much, putting this proposal out now is still better than after this
+> > >> has merged, so that we may consider signature changes.
+> > >>
+> > >> I've created a proof-of-concept and did some brief testing.  The
+> > >> performance improvement attained here is the same as in [1] (with a "git
+> > >> status" workload, median landlock overhead 35% -> 28%, median time in
+> > >> landlock decreases by 26.6%).
+> > >>
+> > >> If this idea is accepted, I'm happy to work on it further, split out this
+> > >> patch, update the comments and do more testing etc, potentially in
+> > >> collaboration with Song.
+> > >>
+> > >> An alternative to this is perhaps to add a new helper
+> > >> path_walk_parent_rcu, also living in namei.c, that will be used directly
+> > >> by Landlock.  I'm happy to do it either way, but with some experimentation
+> > >> I personally think that the code in this patch is still clean enough, and
+> > >> can avoid some duplication.
+> > >>
+> > >> Patch title: path_walk_parent: support reference-less walk
+> > >>
+> > >> A later commit will update the BPF path iterator to use this.
+> > >>
+> > >> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> > > [...]
+> > >>
+> > >> -bool path_walk_parent(struct path *path, const struct path *root);
+> > >> +struct parent_iterator {
+> > >> +       struct path path;
+> > >> +       struct path root;
+> > >> +       bool rcu;
+> > >> +       /* expected seq of path->dentry */
+> > >> +       unsigned next_seq;
+> > >> +       unsigned m_seq, r_seq;
+> > > 
+> > > Most of parent_iterator is not really used by reference walk.
+> > > So it is probably just separate the two APIs?
+> > 
+> > I don't mind either way, but I feel like it might be nice to just have one
+> > style of APIs (i.e. an iterator with start / end / next vs just one
+> > function), even though this is not totally necessary for the ref-taking
+> > walk.  After all, the BPF use case is iterator-based.  This also means
+> > that the code at the user's side (mostly thinking of Landlock here) is
+> > slightly simpler.
+> > 
+> > But I've not experimented with the other way.  I'm open to both, and I'm
+> > happy to send a patch later for a separate API (in that case that would
+> > not depend on this and I might just start a new series).
+> > 
+> > Would like to hear what VFS folks thinks of this first tho, and whether
+> > there's any preference in one or two APIs.
+> 
+> I really dislike exposing the sequence number for mounts an for
+> dentries. That's just nonsense and a non-VFS low-level consumer of this
+> API has zero business caring about any of that. It's easy to
+> misunderstand, it's easy to abuse so that's not a good way of doing
+> this. It's the wrong API.
+> 
+> > 
+> > > 
+> > > Also, is it ok to make m_seq and r_seq available out of fs/?
+> 
+> No, it's not.
+> 
+> > 
+> > The struct is not intended to be used directly by code outside.  Not sure
+> 
+> That doesn't mean anything. It's simply the wrong API if it has to spill
+> so much of its bowels.
+> 
+> > what is the standard way to do this but we can make it private by e.g.
+> > putting the seq values in another struct, if needed.  Alternatively I
+> > think we can hide the entire struct behind an opaque pointer by doing the
+> > allocation ourselves.
+> > 
+> > > 
+> > >> +};
+> > >> +
+> > >> +#define PATH_WALK_PARENT_UPDATED               0
+> > >> +#define PATH_WALK_PARENT_ALREADY_ROOT  -1
+> > >> +#define PATH_WALK_PARENT_RETRY                 -2
+> > >> +
+> > >> +void path_walk_parent_start(struct parent_iterator *pit,
+> > >> +                           const struct path *path, const struct path *root,
+> > >> +                           bool ref_less);
+> > >> +int path_walk_parent(struct parent_iterator *pit, struct path *next_parent);
+> > >> +int path_walk_parent_end(struct parent_iterator *pit);
+> > > 
+> > > I think it is better to make this rcu walk a separate set of APIs.
+> > > IOW, we will have:
+> > > 
+> > > int path_walk_parent(struct path *path, struct path *root);
+> > > 
+> > > and
+> > > 
+> > > void path_walk_parent_rcu_start(struct parent_iterator *pit,
+> > >                            const struct path *path, const struct path *root);
+> > > int path_walk_parent_rcu_next(struct parent_iterator *pit, struct path
+> > > *next_parent);
+> > > int path_walk_parent_rcu_end(struct parent_iterator *pit);
+> > 
+> > (replied above)
+> 
+> Exposing two sets of different APIs for essentially the same things is
+> not going to happen.
+> 
+> The VFS doesn't expose a rcu variant and a non-rcu variant for itself so
+> we are absolutely not going to do that for outside stuff.
+> 
+> It always does the try RCU first, then try to continue the walk by
+> falling back to REF walk (e.g., via try_to_unlazy()). If that doesn't
+> work then let the caller know and require them to decide whether to
+> abort or redo everything in ref-walk.
 
-Why add such a restriction?
-Whether it's frozen or exclusive or both it still races with map_get_hash.
-It's up to the user to make sure that the computed hash
-will be meaningful.
-I would allow for all maps.
-The callback will work for arrays initially, but that
-can be improved in the future.
+That's indeed what is done by choose_mountpoint() (relying on
+choose_mountpoint_rcu() when possible), but this proposal is about doing
+a full path walk (i.e. multiple calls to path_walk_parent) within RCU.
 
->         err =3D map->ops->map_get_hash(map, SHA256_DIGEST_SIZE, map->sha)=
-;
->         if (err !=3D 0)
->             return err;
->
->         if (copy_to_user(uhash, map->sha, SHA256_DIGEST_SIZE) !=3D 0)
->             return -EFAULT;
->     } else if (info.hash_size) {
->         return -EINVAL;
->     }
+> 
+> There's zero need in that scheme for the caller to see any of the
+> internals of the VFS and that's what you should aim for.
 
-yep.
+Yes, but how could we detect if a full path walk is invalid (because of
+a rename or mount change)?
