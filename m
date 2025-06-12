@@ -1,133 +1,67 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F1245948;
-	Thu, 12 Jun 2025 19:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8590E1E51EC;
+	Thu, 12 Jun 2025 19:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749755286; cv=none; b=gEwtUe0GUIxRPxDIdqFImXDumIzG9YOXSlvBBdAk1X/FcwAnsvs//Ry0IjH7lSSXKsgYg7TB0dLL0MW2zdLI1O8ZKZUNsEXSeecXsiWwFlw3eZpACerfks8huUO9bfC30nlpHMQ6weIJHX4UQ0uQGtkOJmElbIsGHGhBGqN05Vg=
+	t=1749755393; cv=none; b=eF0jDdrQof5hO8y8X2GSN77FpxpIlLxgNyYmrp+5Oy3Tj8Ox9kZRTWOf9dZdPbeosS6PnS8Z6Dkbq8yusv1FVwtVxsmskb4pZyCReyYjMN8kiB7A0mpRpS1RA8NV/tMhG3N3rzs+ozJjs1wXKP6tfs1u49+aZUv6R2hmlqOqnYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749755286; c=relaxed/simple;
-	bh=XwRA2/G52VP10pm/zUbYtKCTie/rmiKByPwc14x/Ios=;
+	s=arc-20240116; t=1749755393; c=relaxed/simple;
+	bh=1Af1d+zrUZuNAApVoW9yLRJ4UjiitNe/2/fUwbOm0M0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qvWiPDXoIznqrJaS2vWdFT3L+NS+G0tWXONieKFz1rEUtC8hcIOU1AhquHxPExjOXbYrTShmxmbLS5KZWtYYiwvuJQpZN3rO0dRP/ieAyOmt4m4jTUPEUVihFO39ipNjiUHvKX3DQRqBoVViZPDs2plzLWETZ03napYf9dOp9Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HyA7FmaM; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=dxSBGS+c9h9A6PUOX48xP4ldBGLWw89Ab2rR/1eq+eoaTIjvwbcsewYsfcaM2ob9MHGt6yTrUD5NgMvayfHkhURI55wIxRGRF8DkzJ4Oc4PcMsU2jytOtIn2ih2912PBJN/ChmyemBMMhs9nJ0AlsAHUR5nuz1OKFwRqrIqGxLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efhlF5hg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HyA7FmaM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D3DBC4CEEA;
-	Thu, 12 Jun 2025 19:08:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efhlF5hg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE214C4CEEE;
+	Thu, 12 Jun 2025 19:09:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749755285;
-	bh=XwRA2/G52VP10pm/zUbYtKCTie/rmiKByPwc14x/Ios=;
+	s=k20201202; t=1749755393;
+	bh=1Af1d+zrUZuNAApVoW9yLRJ4UjiitNe/2/fUwbOm0M0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HyA7FmaMfpoB3XaGWCdmLEMJgk5q0k8a7wpBNy1Xs2JgI2KA7jJtQMCE68Bvn5x1T
-	 xDf9bS/jL6lHuyubaM12njg9cDJo+fb9uTfbShNFoAD2RoMUoa8IoQewEFbnEwLzwm
-	 nMWtRQDTkyrfLt9lReo0ES2LrZRKg3NjI9d7d/h821Fo76UWo+XjFEN+ZBKf6BCl0x
-	 CWbRYifE/pz4xKhngPPrgZKSGfSM4Y8MNhMma9uixSVs4L5Sixilb4AcXO03wD6Hpt
-	 d40vpA6hSZj6AS8wCM7NnGBHUUERtF6pAiOUorw/Z2Z5RcMhVkpNOQNbOE5QLSDavE
-	 NluK7SyvAylnQ==
-Date: Thu, 12 Jun 2025 12:07:39 -0700
+	b=efhlF5hg5TAXEb4o1d5ltoWaiYZoYMOE5Kg6iJAySv8vXAOhdjjZfYI7KxdlEGses
+	 Ip7NnFlAtVakr3t41s+Q2nS9OpokOgVA5xJzQqlkdT9BFLPA4CXo9gjUvLU7zoUriu
+	 OJmzd/cNiu/hiDLSGi7oAC8ojAWQuAc2GTfmWuGWHp3JcDE7CCcFdcHdGfTbKroSIe
+	 0fx339A77ayA0ivbZMFneVAY9oZWjMx2tLV96l3eEYpWSiuR2J9IH6gzOmdUsAY+kx
+	 VzSs/qsmAwMCW2xMsY7osVkTjarlJWTz63GniioteQAIzFv3Nk910ELmKzV9zqPksF
+	 zGo/ql0ukyyBw==
+Date: Thu, 12 Jun 2025 12:09:26 -0700
 From: Eric Biggers <ebiggers@kernel.org>
-To: KP Singh <kpsingh@kernel.org>
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-	bboscaccy@linux.microsoft.com, paul@paul-moore.com,
-	kys@microsoft.com, ast@kernel.org, daniel@iogearbox.net,
-	andrii@kernel.org
-Subject: Re: [PATCH 01/12] bpf: Implement an internal helper for SHA256
- hashing
-Message-ID: <20250612190739.GC1283@sol>
-References: <20250606232914.317094-1-kpsingh@kernel.org>
- <20250606232914.317094-2-kpsingh@kernel.org>
+To: Fan Wu <wufan@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH] ipe: use SHA-256 library API instead of crypto_shash API
+Message-ID: <20250612190926.GD1283@sol>
+References: <20250514050546.155041-1-ebiggers@kernel.org>
+ <CAKtyLkEnJGFCAuurSihU_bUTCzEqTXEx_0dG0OHQ8353do0okA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250606232914.317094-2-kpsingh@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKtyLkEnJGFCAuurSihU_bUTCzEqTXEx_0dG0OHQ8353do0okA@mail.gmail.com>
 
-On Sat, Jun 07, 2025 at 01:29:03AM +0200, KP Singh wrote:
-> This patch introduces bpf_sha256, an internal helper function
-> that wraps the standard kernel crypto API to compute SHA256 digests of
-> the program insns and map content
+On Wed, May 14, 2025 at 12:40:45PM -0700, Fan Wu wrote:
+> On Tue, May 13, 2025 at 10:06 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > From: Eric Biggers <ebiggers@google.com>
+> >
+> > audit_policy() does not support any other algorithm, so the crypto_shash
+> > abstraction provides no value.  Just use the SHA-256 library API
+> > instead, which is much simpler and easier to use.
+> >
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
 > 
-> Signed-off-by: KP Singh <kpsingh@kernel.org>
-> ---
->  include/linux/bpf.h |  1 +
->  kernel/bpf/core.c   | 39 +++++++++++++++++++++++++++++++++++++++
->  2 files changed, 40 insertions(+)
+> Thanks. Will pull this into ipe/next.
 > 
-> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index 5b25d278409b..d5ae43b36e68 100644
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@ -2086,6 +2086,7 @@ static inline bool map_type_contains_progs(struct bpf_map *map)
->  }
->  
->  bool bpf_prog_map_compatible(struct bpf_map *map, const struct bpf_prog *fp);
-> +int bpf_sha256(u8 *data, size_t data_size, u8 *output_digest);
->  int bpf_prog_calc_tag(struct bpf_prog *fp);
->  
->  const struct bpf_func_proto *bpf_get_trace_printk_proto(void);
-> diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-> index a3e571688421..607d5322ef94 100644
-> --- a/kernel/bpf/core.c
-> +++ b/kernel/bpf/core.c
-> @@ -17,6 +17,7 @@
->   * Kris Katterjohn - Added many additional checks in bpf_check_classic()
->   */
->  
-> +#include <crypto/hash.h>
->  #include <uapi/linux/btf.h>
->  #include <linux/filter.h>
->  #include <linux/skbuff.h>
-> @@ -287,6 +288,44 @@ void __bpf_prog_free(struct bpf_prog *fp)
->  	vfree(fp);
->  }
->  
-> +int bpf_sha256(u8 *data, size_t data_size, u8 *output_digest)
-> +{
-> +	struct crypto_shash *tfm;
-> +	struct shash_desc *shash_desc;
-> +	size_t desc_size;
-> +	int ret = 0;
-> +
-> +	tfm = crypto_alloc_shash("sha256", 0, 0);
-> +	if (IS_ERR(tfm))
-> +		return PTR_ERR(tfm);
-> +
-> +
-> +	desc_size = crypto_shash_descsize(tfm) + sizeof(*shash_desc);
-> +	shash_desc = kmalloc(desc_size, GFP_KERNEL);
-> +	if (!shash_desc) {
-> +		crypto_free_shash(tfm);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	shash_desc->tfm = tfm;
-> +	ret = crypto_shash_init(shash_desc);
-> +	if (ret)
-> +		goto out_free_desc;
-> +
-> +	ret = crypto_shash_update(shash_desc, data, data_size);
-> +	if (ret)
-> +		goto out_free_desc;
-> +
-> +	ret = crypto_shash_final(shash_desc, output_digest);
-> +	if (ret)
-> +		goto out_free_desc;
-> +
-> +out_free_desc:
-> +	kfree(shash_desc);
-> +	crypto_free_shash(tfm);
-> +	return ret;
-> +}
-> +
+> -Fan
 
-You're looking for sha256() from <crypto/sha2.h>.  Just use that instead.
-
-You'll just need to select CRYPTO_LIB_SHA256.
+Thanks!  I notice this isn't in v6.16-rc1.  When is the pull request planned?
 
 - Eric
