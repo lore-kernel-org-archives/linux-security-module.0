@@ -1,104 +1,132 @@
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4985C22A4DB
-	for <linux-security-module@vger.kernel.org>; Thu, 12 Jun 2025 11:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27AA2F4322;
+	Thu, 12 Jun 2025 12:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749729120; cv=none; b=VvXOVz9JbDbRdcRTPViwImTahWBoIusiV84L0CXxyGD2rFuF2OpMW7zqobu5WZbxNVICGAQf4XOttS+Q2xMMfy1kqqbU2MjZu5/4ELcAvQCJwJHjqruAy/9IqpncWelnEW95TPzbmcUU802GskOuXnL+fs4G20ShKVCgSrborho=
+	t=1749731494; cv=none; b=DrgnrRqCxMmptPvEPEG/fWf8Kifhx3CoRAAKWn1GoWPNoPy9gfnr+r/R5eX/jNnoePtVbbTZv6egDwZR08ePr4/jkdchb3JbPpaKCQr8xX7A3fyraQFcDG3meLPXIEddJm6Pjk2uFAjhd7RI5IBAMF+SGSL1lMxJ0yhSgQf9404=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749729120; c=relaxed/simple;
-	bh=rpaoB6Kdgo30xP8EggVBx+Midw7SMjcJzLqwV3FyulY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JsG+3rMErT0IGydgzc9fpvDLL8iVRamauBGK9Cg9RkGwbDhCcwH0rLFPTdaBxb/nhioKz+TMkeBe7OT2NLVP1RIOJfG5Kj6oJqqXNv8KVcGfKKZlkrzESVtX9eguNtDlUxLT4Z0C5AXy0wJh3bJChrSIT7y1c+Qckc4iaGQ0HSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ojci9aEQ; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1749731494; c=relaxed/simple;
+	bh=plOimjf1Hornox4olvLgJ3RBchkKjUgxZh9h3lWIBkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lnc+jN3cvdtWk3NLebcc/ZpaiOIEByggQW9B+4OqaUxp7CnmoKGekP7yTwxw18DvttnYnlq0RgM5kSY6OdUTA0bp4yBaSDeofO4svuTP3jRWJMyvfPlN3lH80lcnWVDU340YRvYLMUyBN8zjLzh8JmIEomJTz4qowllAYgZ42ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W7wHX6gx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ojci9aEQ"
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4532514dee8so6896355e9.0
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Jun 2025 04:51:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749729118; x=1750333918; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LAzmGILo7rrIxQG7aEQAZf7smERdqkspR5utlYUtpd8=;
-        b=Ojci9aEQrBh485tfzv7GvvIhoDv/t9jkNfNwJ+/O8qwZ2LMc9AsO5CRjTezdP5Oz2F
-         PF51PX+X9OcfVLAUkTInFwtES4lndDA0dv5B4zYjml0JaMhzHK0r5Zunp2NfBqkheyc7
-         g/cQxfsO/Zjo08dXZIqzKdmQlMgl8Eg7DQ9zgPQcqCfoOTd4NZDgjxdg4n2kSazJ3b09
-         xsN3+OCDhHcTX2o9QypyoldVZnAS9r+qAqehn+0r45I+uceJPC71OeVVsrWn7sUGaq3a
-         IeiHj1O13UwlHGNvFyNuLjMy0/fZ2fBeHS02XWIZNP6W/zbOW6oNvG8Vh9A/ySUkdsyq
-         KyWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749729118; x=1750333918;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LAzmGILo7rrIxQG7aEQAZf7smERdqkspR5utlYUtpd8=;
-        b=Qel/bjX6jy9TQq2Vbzk4m5wJEfAZDx3ZwQBVdimfYKb9zRcl46TUoFCGuXATy7iVtY
-         rVylrJNCF5eonyV1bnbcw1jy88Lw+7+3uoQ5TkOSgNDoIDENd0irgi9DHaRFlgdI5PMj
-         1iw3i3lxLjKT9ltqUE7Hs/ph4s2ygncoggwUszOrPMvbepCKBpf3jwIwjYjhBFMRiYUz
-         21dYYsIG0JHzyAlPACZIZzX9bJn+Kd9M4UdnXIQWdtDomvQfyPQMjbS7F3FKn+n6sNkO
-         XxZW0lguh/Lw+XOZ8v9XSqkl6n7QNUygUNuDZAoYB1ilKFlisMwijjmcatsjBQRvQYSv
-         7RCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLNKfB6uwGoQugpQnYbeKNXwPEQ7zDRgOpM6bLzWCMXBGVLjrQJa/8Kle4O8vlSaOCQ9YsC837+S4KcJkRYr1H/DeLXTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQWbiiWWXazUEUwUvCCQBXjWL+WBgSu9x7FHWggvAO7yW09VIx
-	TXyhC2mKtWAK71K8fioZtgHg686Bf+pJbHK2Sy8394UGT/Fte32Ii8DVwOqY2rnqB6+bVAwnFMg
-	OndsDZA==
-X-Google-Smtp-Source: AGHT+IEsZKWdgHnANRx2ktnzmqvZGLXgx1+Ck47ZJza7y/Io0sU2Wnsif1R3hfmp7+yITN1T3BAdCVc/W1Q=
-X-Received: from wmbei22.prod.google.com ([2002:a05:600c:3f16:b0:453:99d:39ff])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:6304:b0:442:d9f2:c74e
- with SMTP id 5b1f17b1804b1-453248cadc7mr58292805e9.23.1749729117681; Thu, 12
- Jun 2025 04:51:57 -0700 (PDT)
-Date: Thu, 12 Jun 2025 13:51:55 +0200
-In-Reply-To: <20250602.ko3thoc7ooL4@digikod.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W7wHX6gx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79AF6C4CEEA;
+	Thu, 12 Jun 2025 12:31:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749731493;
+	bh=plOimjf1Hornox4olvLgJ3RBchkKjUgxZh9h3lWIBkY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W7wHX6gxBmrU2wVsFjdyFIS3aQp5X1snRh9Mmvs9UQs24DxYXjh4+w2zD0C+IzxV6
+	 KDHsCn1xEmU9LVqAjZDT/06LgNn9uS6XHzyO8O+VWC1movfClioKVy2A4q9zqkuR3A
+	 IZeWpvA8+FjveKr+MsPa+LNnCzolLDhJVT46+v8Am+FUohlXKgIbbMuGVw0NY3qEzF
+	 b5ppPTucCtnsjdYAyKcZISOXRUlVPIGm6GDtu3K9+r9GTCaKcdVThiDqroxFnHsQHF
+	 4jPcXwQdvVZCQbdY9X0Gw5U34gin+DUTkDAFkBU9HHL1XJsGW2n5eyT4iB+HyK8xS+
+	 qCtpkkiKZpD2w==
+Date: Thu, 12 Jun 2025 14:31:25 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Song Liu <song@kernel.org>, Tingmao Wang <m@maowtm.org>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, NeilBrown <neil@brown.name>, bpf@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, 
+	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, 
+	viro@zeniv.linux.org.uk, kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, 
+	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com
+Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function
+ path_walk_parent()
+Message-ID: <20250612-erraten-bepacken-42675dfcfa82@brauner>
+References: <20250606213015.255134-1-song@kernel.org>
+ <20250606213015.255134-2-song@kernel.org>
+ <174959847640.608730.1496017556661353963@noble.neil.brown.name>
+ <CAPhsuW6oet8_LbL+6mVi7Lc4U_8i7O-PN5F1zOm5esV52sBu0A@mail.gmail.com>
+ <20250611.Bee1Iohoh4We@digikod.net>
+ <CAPhsuW6jZxRBEgz00KV4SasiMhBGyMHoP5dMktoyCOeMbJwmgg@mail.gmail.com>
+ <e7115b18-84fc-4e8f-afdb-0d3d3e574497@maowtm.org>
+ <CAPhsuW4LfhtVCe8Kym4qM6s-7n5rRMY-bBkhwoWU7SPGQdk=bw@mail.gmail.com>
+ <csh2jbt5gythdlqps7b4jgizfeww6siuu7de5ftr6ygpnta6bd@umja7wbmnw7j>
+ <zlpjk36aplguzvc2feyu4j5levmbxlzwvrn3bo5jpsc5vjztm2@io27pkd44pow>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250228.b3794e33d5c0@gnoack.org> <20250304.aroh3Aifiiz9@digikod.net>
- <20250310.990b29c809af@gnoack.org> <20250311.aefai7vo6huW@digikod.net>
- <20250518.be040c48937c@gnoack.org> <20250518.xeevoom3kieY@digikod.net>
- <aDmvpOMlaAZOXrji@google.com> <20250530.ozeuZufee5yu@digikod.net>
- <aDncH8D9FoyAIsTv@google.com> <20250602.ko3thoc7ooL4@digikod.net>
-Message-ID: <aEq_IAsYm2wFjA0c@google.com>
-Subject: Re: [RFC 1/2] landlock: Multithreading support for landlock_restrict_self()
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, 
-	"=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack3000@gmail.com>, Paul Moore <paul@paul-moore.com>, sergeh@kernel.org, 
-	David Howells <dhowells@redhat.com>, Kees Cook <keescook@chromium.org>, 
-	linux-security-module@vger.kernel.org, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Jann Horn <jannh@google.com>, 
-	linux-kernel@vger.kernel.org, Peter Newman <peternewman@google.com>, 
-	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
-	Jarkko Sakkinen <jarkko@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <zlpjk36aplguzvc2feyu4j5levmbxlzwvrn3bo5jpsc5vjztm2@io27pkd44pow>
 
-On Mon, Jun 02, 2025 at 08:45:06AM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Fri, May 30, 2025 at 06:26:07PM +0200, G=C3=BCnther Noack wrote:
-> >      As Jann pointed out in [1], the tasklist_lock and siglock are not =
-sleepable
-> >      and can't be used while waiting, which is why he proposed an appro=
-ach where
-> >      we retry in a loop until no new threads show up any more, while ge=
-tting the
-> >      existing threads stuck in the task_work as well (where they can't =
-spawn new
-> >      threads).
->=20
-> This looks good.  Too bad we need to block all threads.
+On Thu, Jun 12, 2025 at 11:49:08AM +0200, Jan Kara wrote:
+> On Thu 12-06-25 11:01:16, Jan Kara wrote:
+> > On Wed 11-06-25 11:08:30, Song Liu wrote:
+> > > On Wed, Jun 11, 2025 at 10:50 AM Tingmao Wang <m@maowtm.org> wrote:
+> > > [...]
+> > > > > I think we will need some callback mechanism for this. Something like:
+> > > > >
+> > > > > for_each_parents(starting_path, root, callback_fn, cb_data, bool try_rcu) {
+> > > > >    if (!try_rcu)
+> > > > >       goto ref_walk;
+> > > > >
+> > > > >    __read_seqcount_begin();
+> > > > >     /* rcu walk parents, from starting_path until root */
+> > > > >    walk_rcu(starting_path, root, path) {
+> > > > >     callback_fn(path, cb_data);
+> > > > >   }
+> > > > >   if (!read_seqcount_retry())
+> > > > >     return xxx;  /* successful rcu walk */
+> > > > >
+> > > > > ref_walk:
+> > > > >   /* ref walk parents, from starting_path until root */
+> > > > >    walk(starting_path, root, path) {
+> > > > >     callback_fn(path, cb_data);
+> > > > >   }
+> > > > >   return xxx;
+> > > > > }
+> > > > >
+> > > > > Personally, I don't like this version very much, because the callback
+> > > > > mechanism is not very flexible, and it is tricky to use it in BPF LSM.
+> > > >
+> > > > Aside from the "exposing mount seqcounts" problem, what do you think about
+> > > > the parent_iterator approach I suggested earlier?  I feel that it is
+> > > > better than such a callback - more flexible, and also fits in right with
+> > > > the BPF API you already designed (i.e. with a callback you might then have
+> > > > to allow BPF to pass a callback?).  There are some specifics that I can
+> > > > improve - Mickaël suggested some in our discussion:
+> > > >
+> > > > - Letting the caller take rcu_read_lock outside rather than doing it in
+> > > > path_walk_parent_start
+> > > >
+> > > > - Instead of always requiring a struct parent_iterator, allow passing in
+> > > > NULL for the iterator to path_walk_parent to do a reference walk without
+> > > > needing to call path_walk_parent_start - this way might be simpler and
+> > > > path_walk_parent_start/end can just be for rcu case.
+> > > >
+> > > > but what do you think about the overall shape of it?
+> > > 
+> > > Personally, I don't have strong objections to this design. But VFS
+> > > folks may have other concerns with it.
+> > 
+> > From what I've read above I'm not sure about details of the proposal but I
+> > don't think mixing of RCU & non-RCU walk in a single function / iterator is
+> > a good idea. IMHO the code would be quite messy. After all we have
+> > follow_dotdot_rcu() and follow_dotdot() as separate functions for a reason.
+> > Also given this series went through several iterations and we don't yet
+> > have an acceptable / correct solution suggests getting even the standard
+> > walk correct is hard enough. RCU walk is going to be only worse. So I'd
+> > suggest to get the standard walk finished and agreed on first and
+> > investigate feasibility of RCU variant later.
+> 
+> OK, I've now read some of Tingmaon's and Christian's replies which I've
+> missed previously so I guess I now better understand why you complicate
+> things with RCU walking but still I'm of the opinion that we should start
+> with getting the standard walk working. IMHO pulling in RCU walk into the
+> iterator will bring it to a completely new complexity level...
 
-OK, I'll take that route then.
-
-In my understanding, if we are already blocking all threads, we might as we=
-ll
-use prepare_creds() in these threads again. -- It does not cost us much mor=
-e to
-collect these potential errors now.  Does that sound reasonable?
-
-=E2=80=94G=C3=BCnther
+I would not want it in the first place. But I have a deep seated
+aversion to exposing two different variants. Especially if the second
+variant wants or needs access to internal details such as mount or
+dentry sequence counts. I'm not at all in favor of that.
