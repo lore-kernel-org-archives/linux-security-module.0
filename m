@@ -1,111 +1,126 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB26327C179
-	for <linux-security-module@vger.kernel.org>; Thu, 12 Jun 2025 20:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E127FD;
+	Thu, 12 Jun 2025 21:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749760603; cv=none; b=Qt1hOxQWxJyBNUjNJB1zi9Rpbvu78WHJxH6qHFG96Z5a2GsHlAuQe2+X5aebPd2sOj8yyoi2tVl9IWuXwjfIk3rtMPSYruLQPp300gCkKzbpcLp28d1/vYBnzJtOvDc+j2SQYFp6ah02FdTsoDqSr9cPInriuej1rQuOtG9cgOo=
+	t=1749763966; cv=none; b=k8UlgQXJHZ5zpVXpL+aBmlYvD+cBeXsreP4hzivxsUURAnyNQ/BgndiMT6uqeNxHMdDVRCpexlNahNgiYuF0kRceGdJ2wSwKZbJ3DImolwVt23VhyKyJaADO/+WUT3D1DaJypZ4/Qz0ow68rjI7qvY0z2d91bfnW2VnMSqExMc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749760603; c=relaxed/simple;
-	bh=SAU5o2DQ0CfgLin1S8tnE5huEGqu4f6AQhBXhQIQYLU=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=tyRlL0sDPwUIZkLtUWpxn5DiNK2s3ZQ/ncsWZG7pGN4+7AhAu1cJINKsvT00AbAq+CM80d0JbmuyRTTRim86aZyGwHKMiptpUCdIzR6ctYXI6XTswzxJ+wMB/GTgsuDFqsB8Zzu3a0u8sLDNGtKf4GzR02k32mcvjxGFMQQ475g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jT8b4bai; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jT8b4bai"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749760600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gj8SQGLLh0rljui6jnNkQMA92RjfoZpiblWpalJC6vA=;
-	b=jT8b4baiUZ2r4ib2mm7mh5UzfMe0XOYMY76yAVQePMj7SSfu2ELllHyvTL4tQDgdz3pIdD
-	epdwn4A3t0QiOJpiWxFZT+IdAtQgkC7vKPwl/VDR+hqcTwnRd974mawKnqDBskYFpdi9Gj
-	m1WVW4a7ShMfPb52UA2nEAHi6j60Cb4=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-589-yC1TTY1fOoaf_k-updd0AA-1; Thu,
- 12 Jun 2025 16:36:35 -0400
-X-MC-Unique: yC1TTY1fOoaf_k-updd0AA-1
-X-Mimecast-MFC-AGG-ID: yC1TTY1fOoaf_k-updd0AA_1749760593
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E95CE180AB15;
-	Thu, 12 Jun 2025 20:36:29 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.18])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 84881195E340;
-	Thu, 12 Jun 2025 20:36:19 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <2dc7318d6c74b27a49b4c64b513f3da13d980473.camel@HansenPartnership.com>
-References: <2dc7318d6c74b27a49b4c64b513f3da13d980473.camel@HansenPartnership.com> <462886.1749731810@warthog.procyon.org.uk>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: dhowells@redhat.com, keyrings@vger.kernel.org,
-    Jarkko Sakkinen <jarkko@kernel.org>,
-    Steve French <sfrench@samba.org>,
-    Chuck Lever <chuck.lever@oracle.com>,
-    Mimi Zohar <zohar@linux.ibm.com>, Paulo Alcantara <pc@manguebit.org>,
-    Herbert Xu <herbert@gondor.apana.org.au>,
-    Jeffrey Altman <jaltman@auristor.com>, hch@infradead.org,
-    linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-    linux-cifs@vger.kernel.org, linux-security-module@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org,
-    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Keyrings: How to make them more useful
+	s=arc-20240116; t=1749763966; c=relaxed/simple;
+	bh=ON3tli/S6K3gaMncVtXAqZDYSF179jqt86fVFR3uljs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mSOfWKC6Q+0N6Lx65vrReYR7/v6518xcBlpDbyTYUMtyJtVdJrMkFhl52KgMxh8P4MwgaB7/fvrAKpZ2r25FIVPlndDaQP62+F4QaWgPU8X6iwxMYmPssbTGV5s6niLjf7Yu8oN0QMVcbAVgjWh3Ct+qipMMII+GB4rYTZnkpKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 0BA6F6B4; Thu, 12 Jun 2025 16:26:26 -0500 (CDT)
+Date: Thu, 12 Jun 2025 16:26:26 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jann Horn <jannh@google.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Richard Guy Briggs <rgb@redhat.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>, Kees Cook <kees@kernel.org>,
+	Max Kellermann <max.kellermann@ionos.com>, jmorris@namei.org,
+	Andy Lutomirski <luto@kernel.org>, morgan@kernel.org,
+	Christian Brauner <christian@brauner.io>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] exec: Correct the permission check for unsafe exec
+Message-ID: <20250612212626.GA166079@mail.hallyn.com>
+References: <202505151451.638C22B@keescook>
+ <87ecwopofp.fsf@email.froward.int.ebiederm.org>
+ <CAG48ez1VpuTR9_cvLrJEMmjOxTCYpYFswXVPmN6fE3NcSmPPVA@mail.gmail.com>
+ <87wmagnnhq.fsf@email.froward.int.ebiederm.org>
+ <202505201319.D57FDCB2A@keescook>
+ <87frgznd74.fsf_-_@email.froward.int.ebiederm.org>
+ <CAG48ez0N_1CEKyMHdjnvwsxUkCenmzsLe7dkUL=a6OmU4tPa6Q@mail.gmail.com>
+ <87zff6gf17.fsf@email.froward.int.ebiederm.org>
+ <CAG48ez1z97sCsx53W0O_dCCJL6tnf2pWuv=qaeszcYBfz_01sA@mail.gmail.com>
+ <CAHC9VhRPUXwqLvo4rbxL0++5zqHXfD8_tr-sirTJXdF_Aba_UQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <473710.1749760578.1@warthog.procyon.org.uk>
-Date: Thu, 12 Jun 2025 21:36:18 +0100
-Message-ID: <473711.1749760578@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhRPUXwqLvo4rbxL0++5zqHXfD8_tr-sirTJXdF_Aba_UQ@mail.gmail.com>
 
-James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-
-> One of the problems I keep tripping over is different special casing
-> for user keyrings (which are real struct key structures) and system
-> keyrings which are special values of the pointer in struct key *.
-
-It's meant to be like that.  The trusted system keyrings are static within
-system_keyring.c and not so easily accessible by kernel modules for
-direct modification, bypassing the security checks.
-
-Obviously this is merely a bit of obscurity and enforcement isn't possible
-against kernel code that is determined to modify those keyrings or otherwise
-interfere in the verification process.
-
-> For examples of what this special handling does, just look at things
-> like bpf_trace.c:bpf_lookup_{user|system}_key
+On Tue, Jun 10, 2025 at 08:18:56PM -0400, Paul Moore wrote:
+> On Wed, May 21, 2025 at 11:36 AM Jann Horn <jannh@google.com> wrote:
+> > On Wed, May 21, 2025 at 5:27 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> > > Jann Horn <jannh@google.com> writes:
+> > >
+> > > > On Wed, May 21, 2025 at 12:13 AM Eric W. Biederman
+> > > > <ebiederm@xmission.com> wrote:
+> > >
+> > > > Looks good to me overall, thanks for figuring out the history of this
+> > > > not-particularly-easy-to-understand code and figuring out the right
+> > > > fix.
+> > > >
+> > > > Reviewed-by: Jann Horn <jannh@google.com>
+> > > >
+> > > >> @@ -917,7 +911,7 @@ int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
+> > > >>         /* Process setpcap binaries and capabilities for uid 0 */
+> > > >>         const struct cred *old = current_cred();
+> > > >>         struct cred *new = bprm->cred;
+> > > >> -       bool effective = false, has_fcap = false, is_setid;
+> > > >> +       bool effective = false, has_fcap = false, id_changed;
+> > > >>         int ret;
+> > > >>         kuid_t root_uid;
+> > > >>
+> > > >> @@ -941,9 +935,9 @@ int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
+> > > >>          *
+> > > >>          * In addition, if NO_NEW_PRIVS, then ensure we get no new privs.
+> > > >>          */
+> > > >> -       is_setid = __is_setuid(new, old) || __is_setgid(new, old);
+> > > >> +       id_changed = !uid_eq(new->euid, old->euid) || !in_group_p(new->egid);
+> > > >
+> > > > Hm, so when we change from one EGID to another EGID which was already
+> > > > in our groups list, we don't treat it as a privileged exec? Which is
+> > > > okay because, while an unprivileged user would not just be allowed to
+> > > > change their EGID to a GID from their groups list themselves through
+> > > > __sys_setregid(), they would be allowed to create a new setgid binary
+> > > > owned by a group from their groups list and then execute that?
+> > > >
+> > > > That's fine with me, though it seems a little weird to me. setgid exec
+> > > > is changing our creds and yet we're not treating it as a "real" setgid
+> > > > execution because the execution is only granting privileges that
+> > > > userspace could have gotten anyway.
+> > >
+> > > More than could have gotten.  From permission checking point of view
+> > > permission that the application already had.  In general group based
+> > > permission checks just check in_group_p, which looks at cred->fsgid and
+> > > the group.
+> > >
+> > > The logic is since the effective permissions of the running executable
+> > > have not changed, there is nothing to special case.
+> > >
+> > > Arguably a setgid exec can drop what was egid, and if people have
+> > > configured their permissions to deny people access based upon a group
+> > > they are in that could change the result of the permission checks.  If
+> > > changing egid winds up dropping a group from the list of the process's
+> > > groups, the process could also have dropped that group with setresgid.
+> > > So I don't think we need to be concerned about the combination of
+> > > dropping egid and brpm->unsafe.
+> > >
+> > > If anyone sees a hole in that logic I am happy to change the check
+> > > to !gid_eq(new->egid, old->egid), but I just can't see a way changing
+> > > egid/fsgid to a group the process already has is a problem.
+> >
+> > I'm fine with leaving your patch as-is.
 > 
-> Since the serial allocation code has a hard coded not less than 3
-> (which looks for all the world like it was designed to mean the two
-> system keyring id's were never used as user serial numbers)
+> Aside from a tested-by verification from Max, it looks like everyone
+> is satisfied with the v2 patch, yes?
+> 
+> Serge, I see you've reviewed this patch, can I assume that now you
+> have a capabilities tree up and running you'll take this patch?
 
-That's just a coincidence.  The <3 thing predates the advent of those system
-keyring magic pointers.
+I can take another look and consider taking it on Monday, but until
+then I'm effectively afk.
 
-> I think we could simply allow the two system keyring ids to be passed into
-> lookup_user_key() (which now might be a bit misnamed) and special case not
-> freeing it in put_key().
-
-If you want to make lookup_user_key() provide access to specific keyrings like
-this, just use the next negative numbers - it's not like we're likely to run
-out soon.
-
-But I'd rather not let lookup_user_key() return pointers to these keyrings...
-
-David
-
+-serge
