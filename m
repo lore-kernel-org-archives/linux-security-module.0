@@ -1,216 +1,68 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C9D22A1D4
-	for <linux-security-module@vger.kernel.org>; Thu, 12 Jun 2025 09:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3922828032E;
+	Thu, 12 Jun 2025 10:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749721753; cv=none; b=SXr7J+PMeBw3g+j/0ChIG4myvZuN5vOeAZWZEcdCNc0efHRSmtuH6dP74gs3Xr5x43SlqK2vcncESMaS20vSgs+jmqZ4mSxMo61fYYywcT4TRGAFDD+3Qs6uYQ2pLI8DNjejpII9zQlDrvg2ROQ1oEeXHjnRXeTrpFwQY8cFnDU=
+	t=1749724356; cv=none; b=HR9vd4/OWcXL9bplXwWjJ2oD9+HN8DI+PtDVGZJCu6v05tPbnIch8bLPM40V1C3fT8+RuT4b1YVjLHOvlJDUNsHBCxzWHVmrfC1v7wQ4Taj7CO6ZvjpUPVGkzGUeOczQxRobRIEzSJVvnDj9gfrf2xrtlnYkZSSpNTYKqmG5SVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749721753; c=relaxed/simple;
-	bh=YD67daV/sh0oAnENBZMV2vwdUfWUI981+DHZ4CztA9c=;
+	s=arc-20240116; t=1749724356; c=relaxed/simple;
+	bh=YMnRaTUFakFJLPvl7q3vCoMeTDEm9FrrLwyT1W/42nk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ir7On3q04D5TEL23GN/XGyZorm9VHHU0yMld1pHe/bWqs+IKGfv4pphaSCaU4rpJtVZQi/69qJNsMPi2rSC1fLYngJ/XGLCKG1Ek7gAFpKbInUiyC8AgqAa8vJLm1K29wVn6gaO+neh+vDKXeuK4Xy2ZZtEX5iE3TqSP6eq45K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q4g2x00U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lazIq7L/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KDQWFtwP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=V15LNSs7; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	 Content-Type:Content-Disposition:In-Reply-To; b=QWGyARZ/hqdTuX+eYNO+aUBuR5YhUiifhjERTQXoGJ6cdvpmMvFEx1tK3rR4TcuOc2TCQjYNM/VagVGQi8o0gNab0pFfcjMA4ddmA7KNpupwpc5p1BIsXULW5erHBowMapr7Hm/wOwFAfZEkulbv5DvcPCAhIrjx/fhJ3TXcvCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Adhe+qAt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q4g2x00U";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lazIq7L/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KDQWFtwP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="V15LNSs7"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B297F202B8;
-	Thu, 12 Jun 2025 09:49:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749721750; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4aQoZ9hateQPHSja0+LHPW8SP7JLzubYSoax7mQaH9k=;
-	b=Q4g2x00U1KTyQJsb6R494Mr0EnvI/sRN7SbLlUy1Doyf1pwNawRtURcYCy8yvf9Uin+Eqi
-	6oJi0fFSw1RO5CJ7j6joyvyPVD/q3YYsbsJyaDMWYmirPg5IrCRw/H2r3RPYL/VeIMpw09
-	U/i7h5M9DcqBJu4Sf/H90qZYZOTYSek=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749721750;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4aQoZ9hateQPHSja0+LHPW8SP7JLzubYSoax7mQaH9k=;
-	b=lazIq7L/Qqx7hNXl+D2fwX28XaINqV9rlbAmDCRw2Am5Sf449/fizVEHjHkKq+K8r/2NOj
-	inoO/DcbB7kTdTCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=KDQWFtwP;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=V15LNSs7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749721748; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4aQoZ9hateQPHSja0+LHPW8SP7JLzubYSoax7mQaH9k=;
-	b=KDQWFtwP0sZX3fPFwiVLZTfCokfoYLQFwP68ioULjmnK/9QPkzhEbVt5o9S7DhwEOo6sgf
-	yUW1UZpRjiVGwBVKgb+YiUmPwZWaZI3TIberMtFTkeHm0Yl88iVwRVbwcPj1CUa8sk4tDY
-	oduK3GA7jxHg7JcHu5R2G9COvsmmCcE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749721748;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4aQoZ9hateQPHSja0+LHPW8SP7JLzubYSoax7mQaH9k=;
-	b=V15LNSs7Ab8jhGwEs70ZDCvS1Xw77jHF2VukAgpKr2Us17voozes7boppxCnKrgzF32vCJ
-	RAWeCLmcSCQM3FBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A34CE132D8;
-	Thu, 12 Jun 2025 09:49:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id XnSVJ5SiSmg2RgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 12 Jun 2025 09:49:08 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 547A1A099E; Thu, 12 Jun 2025 11:49:08 +0200 (CEST)
-Date: Thu, 12 Jun 2025 11:49:08 +0200
-From: Jan Kara <jack@suse.cz>
-To: Song Liu <song@kernel.org>
-Cc: Tingmao Wang <m@maowtm.org>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, NeilBrown <neil@brown.name>, Jan Kara <jack@suse.cz>, 
-	bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, 
-	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, kpsingh@kernel.org, mattbobrowski@google.com, 
-	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, 
-	gnoack@google.com
-Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function
- path_walk_parent()
-Message-ID: <zlpjk36aplguzvc2feyu4j5levmbxlzwvrn3bo5jpsc5vjztm2@io27pkd44pow>
-References: <20250606213015.255134-1-song@kernel.org>
- <20250606213015.255134-2-song@kernel.org>
- <174959847640.608730.1496017556661353963@noble.neil.brown.name>
- <CAPhsuW6oet8_LbL+6mVi7Lc4U_8i7O-PN5F1zOm5esV52sBu0A@mail.gmail.com>
- <20250611.Bee1Iohoh4We@digikod.net>
- <CAPhsuW6jZxRBEgz00KV4SasiMhBGyMHoP5dMktoyCOeMbJwmgg@mail.gmail.com>
- <e7115b18-84fc-4e8f-afdb-0d3d3e574497@maowtm.org>
- <CAPhsuW4LfhtVCe8Kym4qM6s-7n5rRMY-bBkhwoWU7SPGQdk=bw@mail.gmail.com>
- <csh2jbt5gythdlqps7b4jgizfeww6siuu7de5ftr6ygpnta6bd@umja7wbmnw7j>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Adhe+qAt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B59C7C4CEEA;
+	Thu, 12 Jun 2025 10:32:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749724356;
+	bh=YMnRaTUFakFJLPvl7q3vCoMeTDEm9FrrLwyT1W/42nk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Adhe+qAttboQeqrW31YXMRcpFEw+Cfjk/7Dd3/UlW2It87CK+vAw8qc/6foHLRNyV
+	 k7clu4nQLf4qyHiFyBAkROiQ71bragstzHznsC1EFlSU3kX0B2mIIUwkTe5DgfNxtO
+	 ZSzFeJyAaK53rmb66VND8EZguN+12wAIe1ZWu7IWzjZL3V8VA64/ElHHnxEbl6DPPB
+	 WO/pWpTY3ky2JQfCfKvqKvwvuzKX5Na2ls9bCTaL2LfsC16MWqY4xsQIERQZWRqAJt
+	 QI1CGvBzv2vYovhuI/2UsIdAzmkmZUFdQeU/ipvF8p+VmvSjFsXAJRJun08ICb6VaC
+	 LLFf5mqV/c41w==
+Date: Thu, 12 Jun 2025 13:32:32 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul Moore <paul@paul-moore.com>, David Howells <dhowells@redhat.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KEYS: Invert FINAL_PUT bit
+Message-ID: <aEqswAc8nkXVAJH7@kernel.org>
+References: <301015.1748434697@warthog.procyon.org.uk>
+ <CAHC9VhRn=EGu4+0fYup1bGdgkzWvZYpMPXKoARJf2N+4sy9g2w@mail.gmail.com>
+ <CAHk-=wjY7b0gDcXiecsimfmOgs0q+aUp_ZxPHvMfdmAG_Ex_1Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <csh2jbt5gythdlqps7b4jgizfeww6siuu7de5ftr6ygpnta6bd@umja7wbmnw7j>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: B297F202B8
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[24];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[maowtm.org,digikod.net,brown.name,suse.cz,vger.kernel.org,meta.com,kernel.org,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,google.com,toxicpanda.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.01
-X-Spam-Level: 
+In-Reply-To: <CAHk-=wjY7b0gDcXiecsimfmOgs0q+aUp_ZxPHvMfdmAG_Ex_1Q@mail.gmail.com>
 
-On Thu 12-06-25 11:01:16, Jan Kara wrote:
-> On Wed 11-06-25 11:08:30, Song Liu wrote:
-> > On Wed, Jun 11, 2025 at 10:50 AM Tingmao Wang <m@maowtm.org> wrote:
-> > [...]
-> > > > I think we will need some callback mechanism for this. Something like:
-> > > >
-> > > > for_each_parents(starting_path, root, callback_fn, cb_data, bool try_rcu) {
-> > > >    if (!try_rcu)
-> > > >       goto ref_walk;
-> > > >
-> > > >    __read_seqcount_begin();
-> > > >     /* rcu walk parents, from starting_path until root */
-> > > >    walk_rcu(starting_path, root, path) {
-> > > >     callback_fn(path, cb_data);
-> > > >   }
-> > > >   if (!read_seqcount_retry())
-> > > >     return xxx;  /* successful rcu walk */
-> > > >
-> > > > ref_walk:
-> > > >   /* ref walk parents, from starting_path until root */
-> > > >    walk(starting_path, root, path) {
-> > > >     callback_fn(path, cb_data);
-> > > >   }
-> > > >   return xxx;
-> > > > }
-> > > >
-> > > > Personally, I don't like this version very much, because the callback
-> > > > mechanism is not very flexible, and it is tricky to use it in BPF LSM.
-> > >
-> > > Aside from the "exposing mount seqcounts" problem, what do you think about
-> > > the parent_iterator approach I suggested earlier?  I feel that it is
-> > > better than such a callback - more flexible, and also fits in right with
-> > > the BPF API you already designed (i.e. with a callback you might then have
-> > > to allow BPF to pass a callback?).  There are some specifics that I can
-> > > improve - Mickaël suggested some in our discussion:
-> > >
-> > > - Letting the caller take rcu_read_lock outside rather than doing it in
-> > > path_walk_parent_start
-> > >
-> > > - Instead of always requiring a struct parent_iterator, allow passing in
-> > > NULL for the iterator to path_walk_parent to do a reference walk without
-> > > needing to call path_walk_parent_start - this way might be simpler and
-> > > path_walk_parent_start/end can just be for rcu case.
-> > >
-> > > but what do you think about the overall shape of it?
-> > 
-> > Personally, I don't have strong objections to this design. But VFS
-> > folks may have other concerns with it.
+On Wed, Jun 11, 2025 at 10:50:46AM -0700, Linus Torvalds wrote:
+> On Tue, 10 Jun 2025 at 17:23, Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > It doesn't look like this has made its way to Linus.
 > 
-> From what I've read above I'm not sure about details of the proposal but I
-> don't think mixing of RCU & non-RCU walk in a single function / iterator is
-> a good idea. IMHO the code would be quite messy. After all we have
-> follow_dotdot_rcu() and follow_dotdot() as separate functions for a reason.
-> Also given this series went through several iterations and we don't yet
-> have an acceptable / correct solution suggests getting even the standard
-> walk correct is hard enough. RCU walk is going to be only worse. So I'd
-> suggest to get the standard walk finished and agreed on first and
-> investigate feasibility of RCU variant later.
+> Bah. It "made it" in the sense that sure, it's in my inbox.
+> 
+> But particularly during the the early merge window I end up heavily
+> limiting my emails to pull requests. And then it ended up composted at
+> the bottom of my endless pile of emails.
+> 
+> I guess I can still take it if people just say "do it".
+> 
+>             Linus
 
-OK, I've now read some of Tingmaon's and Christian's replies which I've
-missed previously so I guess I now better understand why you complicate
-things with RCU walking but still I'm of the opinion that we should start
-with getting the standard walk working. IMHO pulling in RCU walk into the
-iterator will bring it to a completely new complexity level...
++1 for picking it.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+BR, Jarkko
