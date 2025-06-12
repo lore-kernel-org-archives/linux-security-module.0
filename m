@@ -1,120 +1,207 @@
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1ED1DDC1B;
-	Thu, 12 Jun 2025 03:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6909821771F
+	for <linux-security-module@vger.kernel.org>; Thu, 12 Jun 2025 09:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749697920; cv=none; b=RYaa2ByoFfy1ytfsKkwEf2flt/nyeSHD2ZEAWcLXqU2L90f5kQ9hjZ+xOvwnP3vwvJIBsRIDultBb50C03YsKDsurMU28VEpgdOCQr6oSj7p2jGBN76+EC4nNek8sqNipoaLRosHvGgXNUrfJEDRxLXnF7EoTy/QBf2+MbYO1Hs=
+	t=1749718895; cv=none; b=KlJJKKSVcwmn3jXtwKiU1LOoWNyuWmLi6k62vdPRjkf5VVy7dGY7RQu4ZOaJo9IcWZdrXEAJxr5UqbYJY2xazBDgYRUkuVcQzxHNLWUhKSs3crOzHdF2hmPLhSmt7l2D1RZqKEoeaJfmugJb7icUcu9rggA0oE44WEr3jlSYJkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749697920; c=relaxed/simple;
-	bh=RpBt7G8UMT8cBL1bpUy64BEQSdksoaRYKd4Dis2oXVA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mkoL63kG+v0v36RCu6OBZy1HeAFJOvL8D9Vx+iKXFctoTreluU4NrD2PWdLYueiMzpvMXH7/XPN03O2UiXJZxcB+lsFJhcWT16BchoB+1RZ45RFTUYe8+GatvAd+8e19k8P9pn5rbXm2TrMXCQBrP38bxOsUSpF0ztHI/TwT2po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aRm2msyw; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1749718895; c=relaxed/simple;
+	bh=yHCNSWUUPCvueXr9uU8Y5LOn3y+xXzJpqtId2WyJ3lw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pq0zb3ADqO8L7WFx1uz68zXFQKQVKzE8lOrQm1ASYyLSpLvArX6nMrV0WWgDV34Fc0H7QRiwRfqMQizp9LI+yQlbfdYIh5+61KMYxba/Y82p5wVvWv9FdlxfvkqpHOqhdkmJFR1MM5wbdO+7XyK/ZHVIU7Y/aPqazw966Bz6oLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=woaIe7Rc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=g0CRbyj6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=woaIe7Rc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=g0CRbyj6; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aRm2msyw"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=4LvPHOEpM+pAb08p/VgZZBblKknsXF/euiji+ptj9wc=; b=aRm2msywatEwP5NAsFER+/3GrW
-	WhUNrBcfcq9TfprWp/UfKZ0lb+UR4ejQ359V2CtWyrLHy6gXlx/17NAR30o7m4kzQmlBOMthSG7Lm
-	COWfJ/INa1y/AO5ywQ6CF7ed8uBa7dIYgo4vUnpbxVeTLKdHp1jvAW+dOpPxjvI6GksLkSWCs/y7s
-	YenQHcIFice7Qah5Bp59XVHkIXBsfHCbezhGciWkvntimbEPsp7kT8sTobn5vb4XAu5ZkDoW6LmGk
-	2aNjtiZsADsyMEYUWTSMIkBgJ8GuFykbFmRRTTcLyxQLlKdyAt9uYlUQilLOhy/gg6H2hVqFVuNCk
-	rHMaEQ2Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPYM7-00000009gen-0EyR;
-	Thu, 12 Jun 2025 03:11:55 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
-Subject: [PATCH 02/10] securityfs: pin filesystem only for objects directly in root
-Date: Thu, 12 Jun 2025 04:11:46 +0100
-Message-ID: <20250612031154.2308915-2-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250612031154.2308915-1-viro@zeniv.linux.org.uk>
-References: <20250612030951.GC1647736@ZenIV>
- <20250612031154.2308915-1-viro@zeniv.linux.org.uk>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="woaIe7Rc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="g0CRbyj6";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="woaIe7Rc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="g0CRbyj6"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 87DA8211FF;
+	Thu, 12 Jun 2025 09:01:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1749718891; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BxV1LbLqq2fLvkoQv9Eg6WCPphq83+KF+iydz1u2y+U=;
+	b=woaIe7RcGTHJ6bG0S3acLCUWG30aGioHfoi8WNIOKiPDmtW2jj/EJV675zDvVB0H5CaG+a
+	LLmu2D7pQPe4QBgG7fUhoOSdp3fqrWkbHSU/T4knh/wRnrzweGzM2bWt7/Y7di0kopGZts
+	1Ij4X3St287y7onA1Ovu9XnXt/O4gMc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1749718891;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BxV1LbLqq2fLvkoQv9Eg6WCPphq83+KF+iydz1u2y+U=;
+	b=g0CRbyj655kFFRJ1jJw+ocfM229bCFpVWAw6KuVTvUSxINlIOEp7PEC8lW/bOooZN7ws9O
+	DjMrao+NotIO0mAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=woaIe7Rc;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=g0CRbyj6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1749718891; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BxV1LbLqq2fLvkoQv9Eg6WCPphq83+KF+iydz1u2y+U=;
+	b=woaIe7RcGTHJ6bG0S3acLCUWG30aGioHfoi8WNIOKiPDmtW2jj/EJV675zDvVB0H5CaG+a
+	LLmu2D7pQPe4QBgG7fUhoOSdp3fqrWkbHSU/T4knh/wRnrzweGzM2bWt7/Y7di0kopGZts
+	1Ij4X3St287y7onA1Ovu9XnXt/O4gMc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1749718891;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BxV1LbLqq2fLvkoQv9Eg6WCPphq83+KF+iydz1u2y+U=;
+	b=g0CRbyj655kFFRJ1jJw+ocfM229bCFpVWAw6KuVTvUSxINlIOEp7PEC8lW/bOooZN7ws9O
+	DjMrao+NotIO0mAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 712DC139E2;
+	Thu, 12 Jun 2025 09:01:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3CCgG2uXSmjTNwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 12 Jun 2025 09:01:31 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1FE25A099E; Thu, 12 Jun 2025 11:01:16 +0200 (CEST)
+Date: Thu, 12 Jun 2025 11:01:16 +0200
+From: Jan Kara <jack@suse.cz>
+To: Song Liu <song@kernel.org>
+Cc: Tingmao Wang <m@maowtm.org>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, NeilBrown <neil@brown.name>, Jan Kara <jack@suse.cz>, 
+	bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, 
+	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, kpsingh@kernel.org, mattbobrowski@google.com, 
+	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, 
+	gnoack@google.com
+Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function
+ path_walk_parent()
+Message-ID: <csh2jbt5gythdlqps7b4jgizfeww6siuu7de5ftr6ygpnta6bd@umja7wbmnw7j>
+References: <20250606213015.255134-1-song@kernel.org>
+ <20250606213015.255134-2-song@kernel.org>
+ <174959847640.608730.1496017556661353963@noble.neil.brown.name>
+ <CAPhsuW6oet8_LbL+6mVi7Lc4U_8i7O-PN5F1zOm5esV52sBu0A@mail.gmail.com>
+ <20250611.Bee1Iohoh4We@digikod.net>
+ <CAPhsuW6jZxRBEgz00KV4SasiMhBGyMHoP5dMktoyCOeMbJwmgg@mail.gmail.com>
+ <e7115b18-84fc-4e8f-afdb-0d3d3e574497@maowtm.org>
+ <CAPhsuW4LfhtVCe8Kym4qM6s-7n5rRMY-bBkhwoWU7SPGQdk=bw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <CAPhsuW4LfhtVCe8Kym4qM6s-7n5rRMY-bBkhwoWU7SPGQdk=bw@mail.gmail.com>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 87DA8211FF
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[maowtm.org,digikod.net,brown.name,suse.cz,vger.kernel.org,meta.com,kernel.org,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,google.com,toxicpanda.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim]
+X-Spam-Score: -4.01
+X-Spam-Level: 
 
-Nothing on securityfs ever changes parents, so we don't need
-to pin the internal mount if it's already pinned for parent.
+On Wed 11-06-25 11:08:30, Song Liu wrote:
+> On Wed, Jun 11, 2025 at 10:50 AM Tingmao Wang <m@maowtm.org> wrote:
+> [...]
+> > > I think we will need some callback mechanism for this. Something like:
+> > >
+> > > for_each_parents(starting_path, root, callback_fn, cb_data, bool try_rcu) {
+> > >    if (!try_rcu)
+> > >       goto ref_walk;
+> > >
+> > >    __read_seqcount_begin();
+> > >     /* rcu walk parents, from starting_path until root */
+> > >    walk_rcu(starting_path, root, path) {
+> > >     callback_fn(path, cb_data);
+> > >   }
+> > >   if (!read_seqcount_retry())
+> > >     return xxx;  /* successful rcu walk */
+> > >
+> > > ref_walk:
+> > >   /* ref walk parents, from starting_path until root */
+> > >    walk(starting_path, root, path) {
+> > >     callback_fn(path, cb_data);
+> > >   }
+> > >   return xxx;
+> > > }
+> > >
+> > > Personally, I don't like this version very much, because the callback
+> > > mechanism is not very flexible, and it is tricky to use it in BPF LSM.
+> >
+> > Aside from the "exposing mount seqcounts" problem, what do you think about
+> > the parent_iterator approach I suggested earlier?  I feel that it is
+> > better than such a callback - more flexible, and also fits in right with
+> > the BPF API you already designed (i.e. with a callback you might then have
+> > to allow BPF to pass a callback?).  There are some specifics that I can
+> > improve - Mickaël suggested some in our discussion:
+> >
+> > - Letting the caller take rcu_read_lock outside rather than doing it in
+> > path_walk_parent_start
+> >
+> > - Instead of always requiring a struct parent_iterator, allow passing in
+> > NULL for the iterator to path_walk_parent to do a reference walk without
+> > needing to call path_walk_parent_start - this way might be simpler and
+> > path_walk_parent_start/end can just be for rcu case.
+> >
+> > but what do you think about the overall shape of it?
+> 
+> Personally, I don't have strong objections to this design. But VFS
+> folks may have other concerns with it.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- security/inode.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+From what I've read above I'm not sure about details of the proposal but I
+don't think mixing of RCU & non-RCU walk in a single function / iterator is
+a good idea. IMHO the code would be quite messy. After all we have
+follow_dotdot_rcu() and follow_dotdot() as separate functions for a reason.
+Also given this series went through several iterations and we don't yet
+have an acceptable / correct solution suggests getting even the standard
+walk correct is hard enough. RCU walk is going to be only worse. So I'd
+suggest to get the standard walk finished and agreed on first and
+investigate feasibility of RCU variant later.
 
-diff --git a/security/inode.c b/security/inode.c
-index 93460eab8216..1ecb8859c272 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -112,18 +112,20 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
- 	struct dentry *dentry;
- 	struct inode *dir, *inode;
- 	int error;
-+	bool pinned = false;
- 
- 	if (!(mode & S_IFMT))
- 		mode = (mode & S_IALLUGO) | S_IFREG;
- 
- 	pr_debug("securityfs: creating file '%s'\n",name);
- 
--	error = simple_pin_fs(&fs_type, &mount, &mount_count);
--	if (error)
--		return ERR_PTR(error);
--
--	if (!parent)
-+	if (!parent) {
-+		error = simple_pin_fs(&fs_type, &mount, &mount_count);
-+		if (error)
-+			return ERR_PTR(error);
-+		pinned = true;
- 		parent = mount->mnt_root;
-+	}
- 
- 	dir = d_inode(parent);
- 
-@@ -167,7 +169,8 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
- 	dentry = ERR_PTR(error);
- out:
- 	inode_unlock(dir);
--	simple_release_fs(&mount, &mount_count);
-+	if (pinned)
-+		simple_release_fs(&mount, &mount_count);
- 	return dentry;
- }
- 
-@@ -307,13 +310,15 @@ void securityfs_remove(struct dentry *dentry)
- 			simple_unlink(dir, dentry);
- 	}
- 	inode_unlock(dir);
--	simple_release_fs(&mount, &mount_count);
-+	if (dir == dir->i_sb->s_root->d_inode)
-+		simple_release_fs(&mount, &mount_count);
- }
- EXPORT_SYMBOL_GPL(securityfs_remove);
- 
- static void remove_one(struct dentry *victim)
- {
--	simple_release_fs(&mount, &mount_count);
-+	if (victim->d_parent == victim->d_sb->s_root)
-+		simple_release_fs(&mount, &mount_count);
- }
- 
- /**
+								Honza
 -- 
-2.39.5
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
