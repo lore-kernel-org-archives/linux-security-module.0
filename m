@@ -1,198 +1,128 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6DB18EFD1
-	for <linux-security-module@vger.kernel.org>; Fri, 13 Jun 2025 15:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE65F1F2BA4;
+	Fri, 13 Jun 2025 15:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749828540; cv=none; b=TCStYaQyYu6w0OjzdDNTIU3tr1WNqmKUhrkPU5yYu5lEUg1P5ttwQrMEcOkDiajUt4n4Ra7xY9vsvXffJ8bEoi8IfHDxedsKzQppUjIBsNmxbavSy2iZitiIzGtbRJcXSmfD+4tR1ZQsubJK3L4YlIYhCaz83TRPBPhOPK5BFLo=
+	t=1749829260; cv=none; b=Qy6cLSQqGIG/hICeKG2BTuIqMCKCLCEkuYt6+I0Flzw4R7sXn2KpvgjlNtDLyPAhfdn0Ssp5GJWCi7CuoGQKuYTBhCpOPU/DsNq57uwZNSlRpZwSB5UCb7UfmX92XtqRRLIONWqYEV3NMRwkeIdYFrl0DLHcZIt+g/albpWcCXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749828540; c=relaxed/simple;
-	bh=X079tyiC6j0ZdiMIK4gOPei70Tw5RKe51eAS+6Dan9c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A72rpGEKo46aEqWNv+G4qxadinWAsXMIN63wTwLuvgSchKcuDMVwWOUjbe+nsDtd8WLT25WFjC2FwRwn/p/Qo1sqMvgUxmvEMY+725bLUFwTUyp7cCTzwkzxTZihbXM24U0vZmB/MIl2YACRAbCAwiNmYKvKRSILRrlAH23J6H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fTZxQpsn; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1749829260; c=relaxed/simple;
+	bh=O09SdkgPIKTFU9Q1h82PH3/Bpg762GwFiRX1SYiGSNM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oH/QussdxwZqkk5KbAopMD9bFXKerl+fm5X4q3tTuzJMOvAa8O99ThfThFCjvZGbdK3V6hETCPAFqSk691CktNarxs3vdJQ9oWq4uLcQWwx1wKuaIek4DHmD8gPNcmHPYJStjDc2nSQvOPwaRRK8m+h9KKJS5/ubBQY7r1OGf1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=CNt+1EJw; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fTZxQpsn"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e740a09eae0so2108395276.1
-        for <linux-security-module@vger.kernel.org>; Fri, 13 Jun 2025 08:28:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1749828537; x=1750433337; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RYiQRuwhOfYD8gVzgR1jp9U1VSoD6Bt4ofrpbI2Hh+w=;
-        b=fTZxQpsnLWNJmIeU1bimWyViEDzYZoAdEBvxRAluDWnE2QWsWnalw2aD2WDTCRYiwk
-         isfOOoNbFSJaI6q9ie4GPFZi0cq3Oz15Df5pXLwiHTn1q6+MWl4uR/JXyolQm+4LZN+g
-         1eshsr8Nl95wIJRUoTX49GuE2U9UPXupON7jZYtlNzCDJHWyUvH5W/2KkW0ug4tzlY7z
-         Dm+/2L21Uop3Wljbpx4oFPzZsWu8Woh1+G4Wua2YML1fWHaAtFRiS1kl27Nk4oUC3tCH
-         IuHMFO0tENqrcVpJwacrrHDlwwk5gEpaRM5arSqpLIHj9OQIwQTMACAHG8zXfvzYU2xB
-         Qbsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749828537; x=1750433337;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RYiQRuwhOfYD8gVzgR1jp9U1VSoD6Bt4ofrpbI2Hh+w=;
-        b=RarSbaZhlLLvNrLYKaPhaBRfFnx6FQejOX8XeOhpetju0/PRL9EGNKgolfMBgSF4WC
-         fZPNHzJyCthYqPXnxNm4HFRkpJc0qWh+7HpxUvc9rKCf7DVPkNC6DxOIC3Zid28RU8AM
-         k/OM074mWKmI+qrdUT8zeypQay1SqmTcxXAdZjELwq54GTrMWeMXiu+MvW04kkIYVjuT
-         XNerKDXby8eiTcFRuDSoyJBjFrmE7VHegJVm003bz7Xvg3jklr0DFeN+FSfXRB2FJCrQ
-         GASTPXIyiuw1Ad2aCgWC0PiQihMLVAhoRLyW0ekfh/DMrXnMAfxLNAg5yQf5t5aEBH5p
-         aw4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVZslUIwp5Kzcv4/JvY+KWy+8w8DFHDGkAIrnu7ISRBitMZPapDstarEOTV27GfSKYvV1BUSygrSPfNn5YmOQiycMy9ZII=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzKCtKq+iOLEUHF8VMrM/09etaTZZdSeqpW0LhR24pl+eXmQvV
-	6eVU7jgNIvarcAPuG2y/xCHd207AN6p1aSr/M4fNe6pf1ZrbeiVvLfbTnJwzgBkvYg6bbm/Huyv
-	yQut6Qp62kCHiKYbDJDTR9bW792gV+P/xzakyBRJJ
-X-Gm-Gg: ASbGnct/MnyQw6rYx1eFa12HJFdpDt1yX2WnQJpmsM9PWO2glWGhtaxd08+Mre9OqUW
-	GzKvj8clB1Z87fPdwGNdY1eu7ozsDm4Gcco+TmOyxwCnhxevyDnj29BooNxa4ZqcMldCFQVWT6u
-	PscYui1puPb6lKOiCRyWW+6aU2/Fh5YfGTE80QIqGJSVE=
-X-Google-Smtp-Source: AGHT+IHAM7TIeCsgU1Wds2vBZ0OPyAgzBs8nTML+ZqkrzmDnQLVACyv894zfs5/H9eigreQUvH2pJpyDzVXsqgs4HVw=
-X-Received: by 2002:a05:6902:1501:b0:e81:69be:6388 with SMTP id
- 3f1490d57ef6-e822ac9c0bfmr211439276.39.1749828537346; Fri, 13 Jun 2025
- 08:28:57 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="CNt+1EJw"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1749829252;
+	bh=O09SdkgPIKTFU9Q1h82PH3/Bpg762GwFiRX1SYiGSNM=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=CNt+1EJw0i0D27v0lNepu+ICrvGqwJa+xY/jRfGl9iqiZMCRilkO0XCwsqZZUm1z8
+	 /pq2PmJlcsoHSxvygR7uHWpd3JBs1L8VzwMl/w9px+ougciEo+rzCZM/LPy3fhEcm8
+	 pewa2l9EquOsDWgSkycGN7i9avo8Ow4QYZt7Y8YE=
+Received: from [IPv6:2601:5c4:4302:c21::a774] (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id DD1E61C0059;
+	Fri, 13 Jun 2025 11:40:51 -0400 (EDT)
+Message-ID: <e0f91ae1e43dbb05b97c248cd09fb0030e041f51.camel@HansenPartnership.com>
+Subject: Re: [RFC] Keyrings: How to make them more useful
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>, Steve
+ French <sfrench@samba.org>, Chuck Lever <chuck.lever@oracle.com>, Mimi
+ Zohar <zohar@linux.ibm.com>, Paulo Alcantara <pc@manguebit.org>, Herbert Xu
+ <herbert@gondor.apana.org.au>, Jeffrey Altman <jaltman@auristor.com>, 
+ hch@infradead.org, linux-afs@lists.infradead.org,
+ linux-nfs@vger.kernel.org,  linux-cifs@vger.kernel.org,
+ linux-security-module@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+ linux-crypto@vger.kernel.org,  netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Fri, 13 Jun 2025 11:40:51 -0400
+In-Reply-To: <473711.1749760578@warthog.procyon.org.uk>
+References: 
+	<2dc7318d6c74b27a49b4c64b513f3da13d980473.camel@HansenPartnership.com>
+	 <462886.1749731810@warthog.procyon.org.uk>
+	 <473711.1749760578@warthog.procyon.org.uk>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202505151451.638C22B@keescook> <87ecwopofp.fsf@email.froward.int.ebiederm.org>
- <CAG48ez1VpuTR9_cvLrJEMmjOxTCYpYFswXVPmN6fE3NcSmPPVA@mail.gmail.com>
- <87wmagnnhq.fsf@email.froward.int.ebiederm.org> <202505201319.D57FDCB2A@keescook>
- <87frgznd74.fsf_-_@email.froward.int.ebiederm.org> <CAG48ez0N_1CEKyMHdjnvwsxUkCenmzsLe7dkUL=a6OmU4tPa6Q@mail.gmail.com>
- <87zff6gf17.fsf@email.froward.int.ebiederm.org> <CAG48ez1z97sCsx53W0O_dCCJL6tnf2pWuv=qaeszcYBfz_01sA@mail.gmail.com>
- <CAHC9VhRPUXwqLvo4rbxL0++5zqHXfD8_tr-sirTJXdF_Aba_UQ@mail.gmail.com>
- <20250612212626.GA166079@mail.hallyn.com> <40CCFDE0-A0DC-4F4E-8621-206F53D9225B@kernel.org>
-In-Reply-To: <40CCFDE0-A0DC-4F4E-8621-206F53D9225B@kernel.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 13 Jun 2025 11:28:46 -0400
-X-Gm-Features: AX0GCFvlLiGFQLQW5tofuZrL-olApvaLyUTQIv_CthVQiMzqD9L3OJiRvhqwEJc
-Message-ID: <CAHC9VhSMmNafbxLqP3j=nOra7OjHiECg6gUsWUuETWcZ01GrmA@mail.gmail.com>
-Subject: Re: [PATCH v2] exec: Correct the permission check for unsafe exec
-To: Kees Cook <kees@kernel.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>, Richard Guy Briggs <rgb@redhat.com>, 
-	Max Kellermann <max.kellermann@ionos.com>, jmorris@namei.org, 
-	Andy Lutomirski <luto@kernel.org>, morgan@kernel.org, 
-	Christian Brauner <christian@brauner.io>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 12, 2025 at 9:48=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
-> On June 12, 2025 2:26:26 PM PDT, "Serge E. Hallyn" <serge@hallyn.com> wro=
-te:
-> >On Tue, Jun 10, 2025 at 08:18:56PM -0400, Paul Moore wrote:
-> >> On Wed, May 21, 2025 at 11:36=E2=80=AFAM Jann Horn <jannh@google.com> =
-wrote:
-> >> > On Wed, May 21, 2025 at 5:27=E2=80=AFPM Eric W. Biederman <ebiederm@=
-xmission.com> wrote:
-> >> > > Jann Horn <jannh@google.com> writes:
-> >> > >
-> >> > > > On Wed, May 21, 2025 at 12:13=E2=80=AFAM Eric W. Biederman
-> >> > > > <ebiederm@xmission.com> wrote:
-> >> > >
-> >> > > > Looks good to me overall, thanks for figuring out the history of=
- this
-> >> > > > not-particularly-easy-to-understand code and figuring out the ri=
-ght
-> >> > > > fix.
-> >> > > >
-> >> > > > Reviewed-by: Jann Horn <jannh@google.com>
-> >> > > >
-> >> > > >> @@ -917,7 +911,7 @@ int cap_bprm_creds_from_file(struct linux_b=
-inprm *bprm, const struct file *file)
-> >> > > >>         /* Process setpcap binaries and capabilities for uid 0 =
-*/
-> >> > > >>         const struct cred *old =3D current_cred();
-> >> > > >>         struct cred *new =3D bprm->cred;
-> >> > > >> -       bool effective =3D false, has_fcap =3D false, is_setid;
-> >> > > >> +       bool effective =3D false, has_fcap =3D false, id_change=
-d;
-> >> > > >>         int ret;
-> >> > > >>         kuid_t root_uid;
-> >> > > >>
-> >> > > >> @@ -941,9 +935,9 @@ int cap_bprm_creds_from_file(struct linux_b=
-inprm *bprm, const struct file *file)
-> >> > > >>          *
-> >> > > >>          * In addition, if NO_NEW_PRIVS, then ensure we get no =
-new privs.
-> >> > > >>          */
-> >> > > >> -       is_setid =3D __is_setuid(new, old) || __is_setgid(new, =
-old);
-> >> > > >> +       id_changed =3D !uid_eq(new->euid, old->euid) || !in_gro=
-up_p(new->egid);
-> >> > > >
-> >> > > > Hm, so when we change from one EGID to another EGID which was al=
-ready
-> >> > > > in our groups list, we don't treat it as a privileged exec? Whic=
-h is
-> >> > > > okay because, while an unprivileged user would not just be allow=
-ed to
-> >> > > > change their EGID to a GID from their groups list themselves thr=
-ough
-> >> > > > __sys_setregid(), they would be allowed to create a new setgid b=
-inary
-> >> > > > owned by a group from their groups list and then execute that?
-> >> > > >
-> >> > > > That's fine with me, though it seems a little weird to me. setgi=
-d exec
-> >> > > > is changing our creds and yet we're not treating it as a "real" =
-setgid
-> >> > > > execution because the execution is only granting privileges that
-> >> > > > userspace could have gotten anyway.
-> >> > >
-> >> > > More than could have gotten.  From permission checking point of vi=
-ew
-> >> > > permission that the application already had.  In general group bas=
-ed
-> >> > > permission checks just check in_group_p, which looks at cred->fsgi=
-d and
-> >> > > the group.
-> >> > >
-> >> > > The logic is since the effective permissions of the running execut=
-able
-> >> > > have not changed, there is nothing to special case.
-> >> > >
-> >> > > Arguably a setgid exec can drop what was egid, and if people have
-> >> > > configured their permissions to deny people access based upon a gr=
-oup
-> >> > > they are in that could change the result of the permission checks.=
-  If
-> >> > > changing egid winds up dropping a group from the list of the proce=
-ss's
-> >> > > groups, the process could also have dropped that group with setres=
-gid.
-> >> > > So I don't think we need to be concerned about the combination of
-> >> > > dropping egid and brpm->unsafe.
-> >> > >
-> >> > > If anyone sees a hole in that logic I am happy to change the check
-> >> > > to !gid_eq(new->egid, old->egid), but I just can't see a way chang=
-ing
-> >> > > egid/fsgid to a group the process already has is a problem.
-> >> >
-> >> > I'm fine with leaving your patch as-is.
-> >>
-> >> Aside from a tested-by verification from Max, it looks like everyone
-> >> is satisfied with the v2 patch, yes?
-> >>
-> >> Serge, I see you've reviewed this patch, can I assume that now you
-> >> have a capabilities tree up and running you'll take this patch?
-> >
-> >I can take another look and consider taking it on Monday, but until
-> >then I'm effectively afk.
->
-> I'd rather this go via the execve/binfmt tree. I was waiting for -rc2 bef=
-ore putting it into -next. I can do Sunday night after it's out. :)
+On Thu, 2025-06-12 at 21:36 +0100, David Howells wrote:
+> James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+>=20
+> > One of the problems I keep tripping over is different special
+> > casing for user keyrings (which are real struct key structures) and
+> > system keyrings which are special values of the pointer in struct
+> > key *.
+>=20
+> It's meant to be like that.=C2=A0 The trusted system keyrings are static
+> within system_keyring.c and not so easily accessible by kernel
+> modules for direct modification, bypassing the security checks.
+>=20
+> Obviously this is merely a bit of obscurity and enforcement isn't
+> possible against kernel code that is determined to modify those
+> keyrings or otherwise interfere in the verification process.
 
-I'm not going to argue either way on this, that's between you and
-Serge, but as the entire patch is located within commoncap.c and that
-is part of the capabilities code which Serge maintains, can you
-explain why this should go via the execve/binfmt tree and not the
-capabilities tree?
+Yes, I get that, and wasn't proposing to alter it, merely make them a
+bit more usable as part of the standard workflow.
 
---=20
-paul-moore.com
+Are the permissions also deliberate?  It would be useful for ordinary
+users to see the certificates in there in case they want to condition
+anything on signatures with internal keys.
+
+> > For examples of what this special handling does, just look at
+> > things like bpf_trace.c:bpf_lookup_{user|system}_key
+> >=20
+> > Since the serial allocation code has a hard coded not less than 3
+> > (which looks for all the world like it was designed to mean the two
+> > system keyring id's were never used as user serial numbers)
+>=20
+> That's just a coincidence.=C2=A0 The <3 thing predates the advent of thos=
+e
+> system keyring magic pointers.
+
+Well coincidence or not it makes the scheme workable, but I've no
+objection to using negatives as suggested below, either.
+
+> > I think we could simply allow the two system keyring ids to be
+> > passed into lookup_user_key() (which now might be a bit misnamed)
+> > and special case not freeing it in put_key().
+>=20
+> If you want to make lookup_user_key() provide access to specific
+> keyrings like this, just use the next negative numbers - it's not
+> like we're likely to run out soon.
+>=20
+> But I'd rather not let lookup_user_key() return pointers to these
+> keyrings...
+
+That wasn't what I was proposing.  If we were to allow it I think it
+would return the standard pointer that's actually simply a number as we
+do now.  That would be enough to unify all the workflows into
+pkcs7_verify_..() and crash soon enough if the key pointers were used
+inside the kernel for stuff the system keyrings aren't supposed to do.
+
+Regards,
+
+James
+
