@@ -1,88 +1,161 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6437A1B95B;
-	Fri, 13 Jun 2025 00:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECA572636;
+	Fri, 13 Jun 2025 01:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749773799; cv=none; b=eZbBPtR20er4hB86xN7cLOn5TOOTMAi14wYg9jJIb8iZpXMK2+2z92ajPK8JvDAldcxai1QTyrhp4H36LMRmzCqgPQ/lt8rW5ZD9+xYZSqqUUhsp0UxKBfMwvXBh/Ugrt+arPtm6/DidoftE0oOUnTcyb9eYpRpnlxuM+wj1cCA=
+	t=1749779295; cv=none; b=dIdjgRQ4EynVK4acKaKJff+P+8d6Z8IPuuR7lNZTkpLA/Y9zvuV1+pryH0kVz1blkyaNA1QKUVEvU5j9scSLLwrQAADZsDYC6SjhJOpNu2bJ/NMatxBnFjHMQkJzDKgucVyllN9I08z7a70uj9JSj47fft/bSMdWx74Fe8ID+14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749773799; c=relaxed/simple;
-	bh=xlOcpHawrpAE7xy6gDyBeZgUCJfIzjIJTd8pKNa6LD4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WtT0qBHpEYYyeRL26LyEhKNLmzsqWKD5q5ry+OXp6k4u2KfDB1x5eqeSAg6QI9dWf8tAY/JFigkGmsGuJFevXVTL7QzUYJiSLl/5L38+s5KRM+Mp5QzybMUVKj61prPdqkA2x0W4v6Dcqg2gTNM21jE3yLk7X0EX7ndaDG4jq/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LadC5D/C; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749779295; c=relaxed/simple;
+	bh=q464iU8oHlOhLED7rRVpQcVddt2ATVpp07Hs0FJvkhs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=o8uxog51Y+3ePSlK60JzBD1sGjPb+Vv2qEkvHC9v/qeQ5flDxsI0B4UqIXr9F0x8BrQT2FMGLin+eMuLnbSL+VVJDhBFycAAOW3V9wr/WHwDfGjt5UGgeTkmw+FtAZDvFHF19acori8uH7udCkrjE6zdA1HlyXmsA9Kkm59XfB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1xX1Hgd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LadC5D/C"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0DC6C4CEEB;
-	Fri, 13 Jun 2025 00:16:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1xX1Hgd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38C2CC4CEEA;
+	Fri, 13 Jun 2025 01:48:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749773798;
-	bh=xlOcpHawrpAE7xy6gDyBeZgUCJfIzjIJTd8pKNa6LD4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LadC5D/Cu+CFO0cDGK0falq7Nvk3BmGWe0T6kp1cb7ZjmzGLsDYEzGcc1zFCOjrp0
-	 OP0XCVPPQv4gjTykEhmEuHf8mZgVz8XJHilaZdp1aI7K1EcDdHaF1vXxi+qnKFVd9O
-	 r5Wf8uX88jxleyiedQdD6zSB+/njRo7NW/pAz2G2ZW0z+5F3JvKqOtGd9tF07fsPvi
-	 FI84w44Hit28l2fAUQ7yga+7qt+hIbsNQ/AR+kCCGYb8KVYwkEpEj4/bO9TR7vpBlZ
-	 ctqZByGMX9bwxKy9FIOBXi3sffRmw0z24FgTtMLzkG76JhUjX4T3bTtd6D+FVj/yTI
-	 hh+PpZaJT1FBw==
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e812c817de0so1443958276.0;
-        Thu, 12 Jun 2025 17:16:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUzkBbLYHKOGB2oI8U06t6ii3VxPUxS5NLW0wRu3Xo1ZGs42hKLiuZSGCpPkTwDKElLVjZ1avyvJwq/fBo=@vger.kernel.org, AJvYcCVDoGexyL5JE8w5baRzgyK5F47R12/wW/omlyuNf0qseQFzbK9Co/05r2yDgAu5PUPrj8akuhAGyengJGrPQP1bATAq8Ws9@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDxj/oK2sB1Grb7aVRkDa7/DN5HT+rC0QlqAfegkc1ryrXjz5O
-	BPjNms+2ccKMZ99i9vAu4ZIaAJcfvLBa/eHfk66sVDoYtsfSYdhQSDxsrxhIk1mmCunEZ3ZU0XG
-	qg6vQBestvV3YIlCJ7y1UZoFC19Xr/so=
-X-Google-Smtp-Source: AGHT+IHvou+02vOs446nDMpw0JYSOHKq8Ing5XCWydC5vK4qd3PrqXqtVVEEDwlrsmUqBtQsumfoOxTRbKq0tOBjd20=
-X-Received: by 2002:a05:690c:7309:b0:710:e966:bf96 with SMTP id
- 00721157ae682-711637513cdmr21819607b3.27.1749773798185; Thu, 12 Jun 2025
- 17:16:38 -0700 (PDT)
+	s=k20201202; t=1749779295;
+	bh=q464iU8oHlOhLED7rRVpQcVddt2ATVpp07Hs0FJvkhs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=o1xX1HgdwejrnX+GXCdC9S2Fjocpu2bzjEEehryJnyXXEYAkmBK9+/h7SS+7VSwbo
+	 8U9hHjdoBxZ3eYmFRL2I2wuW5ybBhtozGPcRQGbD1p8poOk0CcjS14QtV210xu5CkD
+	 FLMf2VBCKjhdt0UDnCBbv4aFRXeXqd10mKJrX2ItmO2ggSGRTKJFKW2ZbPjdMW2hJE
+	 S1eoBKRhv2fPB4aJDeyhZhI7kroOVvAQMfoukme0U5x2l315GPE0CEXwG5Mcni/l1q
+	 gKumC53vfUQHU5dgoiXY3RMGKABIGRi/+d4wZFQsqzpMlmArJlY9m1KnXNlAxG4dob
+	 BVSOSifEpkk/A==
+Date: Thu, 12 Jun 2025 18:48:13 -0700
+From: Kees Cook <kees@kernel.org>
+To: "Serge E. Hallyn" <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>
+CC: Jann Horn <jannh@google.com>, "Eric W. Biederman" <ebiederm@xmission.com>,
+ Richard Guy Briggs <rgb@redhat.com>,
+ Max Kellermann <max.kellermann@ionos.com>, jmorris@namei.org,
+ Andy Lutomirski <luto@kernel.org>, morgan@kernel.org,
+ Christian Brauner <christian@brauner.io>,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] exec: Correct the permission check for unsafe exec
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250612212626.GA166079@mail.hallyn.com>
+References: <202505151451.638C22B@keescook> <87ecwopofp.fsf@email.froward.int.ebiederm.org> <CAG48ez1VpuTR9_cvLrJEMmjOxTCYpYFswXVPmN6fE3NcSmPPVA@mail.gmail.com> <87wmagnnhq.fsf@email.froward.int.ebiederm.org> <202505201319.D57FDCB2A@keescook> <87frgznd74.fsf_-_@email.froward.int.ebiederm.org> <CAG48ez0N_1CEKyMHdjnvwsxUkCenmzsLe7dkUL=a6OmU4tPa6Q@mail.gmail.com> <87zff6gf17.fsf@email.froward.int.ebiederm.org> <CAG48ez1z97sCsx53W0O_dCCJL6tnf2pWuv=qaeszcYBfz_01sA@mail.gmail.com> <CAHC9VhRPUXwqLvo4rbxL0++5zqHXfD8_tr-sirTJXdF_Aba_UQ@mail.gmail.com> <20250612212626.GA166079@mail.hallyn.com>
+Message-ID: <40CCFDE0-A0DC-4F4E-8621-206F53D9225B@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250514050546.155041-1-ebiggers@kernel.org> <CAKtyLkEnJGFCAuurSihU_bUTCzEqTXEx_0dG0OHQ8353do0okA@mail.gmail.com>
- <20250612190926.GD1283@sol>
-In-Reply-To: <20250612190926.GD1283@sol>
-From: Fan Wu <wufan@kernel.org>
-Date: Thu, 12 Jun 2025 17:16:26 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkGayHWvW8s-CP6sx9Aj6SZ0MJXvTHq2UiiYnisaLzRqPw@mail.gmail.com>
-X-Gm-Features: AX0GCFvDqOryf23shP1gLhA7dPmlh0oEWMar_VzX17VOXNn6aa6toU7g-xdtrxo
-Message-ID: <CAKtyLkGayHWvW8s-CP6sx9Aj6SZ0MJXvTHq2UiiYnisaLzRqPw@mail.gmail.com>
-Subject: Re: [PATCH] ipe: use SHA-256 library API instead of crypto_shash API
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Fan Wu <wufan@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	linux-security-module@vger.kernel.org, linux-crypto@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 12, 2025 at 12:09=E2=80=AFPM Eric Biggers <ebiggers@kernel.org>=
+
+
+On June 12, 2025 2:26:26 PM PDT, "Serge E=2E Hallyn" <serge@hallyn=2Ecom> =
+wrote:
+>On Tue, Jun 10, 2025 at 08:18:56PM -0400, Paul Moore wrote:
+>> On Wed, May 21, 2025 at 11:36=E2=80=AFAM Jann Horn <jannh@google=2Ecom>=
  wrote:
+>> > On Wed, May 21, 2025 at 5:27=E2=80=AFPM Eric W=2E Biederman <ebiederm=
+@xmission=2Ecom> wrote:
+>> > > Jann Horn <jannh@google=2Ecom> writes:
+>> > >
+>> > > > On Wed, May 21, 2025 at 12:13=E2=80=AFAM Eric W=2E Biederman
+>> > > > <ebiederm@xmission=2Ecom> wrote:
+>> > >
+>> > > > Looks good to me overall, thanks for figuring out the history of =
+this
+>> > > > not-particularly-easy-to-understand code and figuring out the rig=
+ht
+>> > > > fix=2E
+>> > > >
+>> > > > Reviewed-by: Jann Horn <jannh@google=2Ecom>
+>> > > >
+>> > > >> @@ -917,7 +911,7 @@ int cap_bprm_creds_from_file(struct linux_bi=
+nprm *bprm, const struct file *file)
+>> > > >>         /* Process setpcap binaries and capabilities for uid 0 *=
+/
+>> > > >>         const struct cred *old =3D current_cred();
+>> > > >>         struct cred *new =3D bprm->cred;
+>> > > >> -       bool effective =3D false, has_fcap =3D false, is_setid;
+>> > > >> +       bool effective =3D false, has_fcap =3D false, id_changed=
+;
+>> > > >>         int ret;
+>> > > >>         kuid_t root_uid;
+>> > > >>
+>> > > >> @@ -941,9 +935,9 @@ int cap_bprm_creds_from_file(struct linux_bi=
+nprm *bprm, const struct file *file)
+>> > > >>          *
+>> > > >>          * In addition, if NO_NEW_PRIVS, then ensure we get no n=
+ew privs=2E
+>> > > >>          */
+>> > > >> -       is_setid =3D __is_setuid(new, old) || __is_setgid(new, o=
+ld);
+>> > > >> +       id_changed =3D !uid_eq(new->euid, old->euid) || !in_grou=
+p_p(new->egid);
+>> > > >
+>> > > > Hm, so when we change from one EGID to another EGID which was alr=
+eady
+>> > > > in our groups list, we don't treat it as a privileged exec? Which=
+ is
+>> > > > okay because, while an unprivileged user would not just be allowe=
+d to
+>> > > > change their EGID to a GID from their groups list themselves thro=
+ugh
+>> > > > __sys_setregid(), they would be allowed to create a new setgid bi=
+nary
+>> > > > owned by a group from their groups list and then execute that?
+>> > > >
+>> > > > That's fine with me, though it seems a little weird to me=2E setg=
+id exec
+>> > > > is changing our creds and yet we're not treating it as a "real" s=
+etgid
+>> > > > execution because the execution is only granting privileges that
+>> > > > userspace could have gotten anyway=2E
+>> > >
+>> > > More than could have gotten=2E  From permission checking point of v=
+iew
+>> > > permission that the application already had=2E  In general group ba=
+sed
+>> > > permission checks just check in_group_p, which looks at cred->fsgid=
+ and
+>> > > the group=2E
+>> > >
+>> > > The logic is since the effective permissions of the running executa=
+ble
+>> > > have not changed, there is nothing to special case=2E
+>> > >
+>> > > Arguably a setgid exec can drop what was egid, and if people have
+>> > > configured their permissions to deny people access based upon a gro=
+up
+>> > > they are in that could change the result of the permission checks=
+=2E  If
+>> > > changing egid winds up dropping a group from the list of the proces=
+s's
+>> > > groups, the process could also have dropped that group with setresg=
+id=2E
+>> > > So I don't think we need to be concerned about the combination of
+>> > > dropping egid and brpm->unsafe=2E
+>> > >
+>> > > If anyone sees a hole in that logic I am happy to change the check
+>> > > to !gid_eq(new->egid, old->egid), but I just can't see a way changi=
+ng
+>> > > egid/fsgid to a group the process already has is a problem=2E
+>> >
+>> > I'm fine with leaving your patch as-is=2E
+>>=20
+>> Aside from a tested-by verification from Max, it looks like everyone
+>> is satisfied with the v2 patch, yes?
+>>=20
+>> Serge, I see you've reviewed this patch, can I assume that now you
+>> have a capabilities tree up and running you'll take this patch?
 >
-> On Wed, May 14, 2025 at 12:40:45PM -0700, Fan Wu wrote:
-> > On Tue, May 13, 2025 at 10:06=E2=80=AFPM Eric Biggers <ebiggers@kernel.=
-org> wrote:
-> > >
-> > > From: Eric Biggers <ebiggers@google.com>
-> > >
-> > > audit_policy() does not support any other algorithm, so the crypto_sh=
-ash
-> > > abstraction provides no value.  Just use the SHA-256 library API
-> > > instead, which is much simpler and easier to use.
-> > >
-> > > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> >
-> > Thanks. Will pull this into ipe/next.
-> >
-> > -Fan
->
-> Thanks!  I notice this isn't in v6.16-rc1.  When is the pull request plan=
-ned?
->
-> - Eric
+>I can take another look and consider taking it on Monday, but until
+>then I'm effectively afk=2E
 
-The current plan is to send the pull request during the next merge window.
+I'd rather this go via the execve/binfmt tree=2E I was waiting for -rc2 be=
+fore putting it into -next=2E I can do Sunday night after it's out=2E :)
 
--Fan
+--=20
+Kees Cook
