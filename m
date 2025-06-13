@@ -1,194 +1,289 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1904207F;
-	Fri, 13 Jun 2025 16:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BC1213E83;
+	Fri, 13 Jun 2025 16:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749833352; cv=none; b=CZiyJWuEHPulJ4gSywhOWzyvBZj8bxkXgrlxXECqOiLuE61om1JvV4Qpi8yN73sR0mahhANSkQwp6pfdyi+F73KW3fDIzx8+cnVvmledvRPIEGJKX703pDST34H3D659gmfEESv7TwshsE5kIVC3miA3+2FxKSn2ev1QjRcdGNQ=
+	t=1749833508; cv=none; b=td6Am0p/B8l9FhMLUMgFlnPw98oUJUX9DfSKhaNplmKk8a+0AbETRUWc7xH4tUav3/etI5mZgZMmflIMPTfoX5eWzewxau3FlBgrKQYP2xdjXHGjJPr4HKV9IKUV35i6xJ9evcQVIYUaKw+hDY9OJ2mfNAiqHokJNFC1yatBHGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749833352; c=relaxed/simple;
-	bh=Kzcv1y0IlQTrRjySbtAFTooNBaHArg/VI4VIiCWODrQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lH6Mfym1ahPKnheK2QLJs5RQi+TIJJPGKddMt3pQIP0R7PqEl2Vfl/BXVoI3AcpIKvG+iMbTbCVQ2kVhUnyiXfWk5PS07KNaVJA2qeVATknEJc8lsc8GnGRLvDoBI8WiVTndj71QcLZsa5yqvaU0f6hNoqxg6+bDabymzPnwVLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bJlKM0wr0zsSKX;
-	Sat, 14 Jun 2025 00:31:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 806121402FC;
-	Sat, 14 Jun 2025 00:32:57 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwCnLUyYUkxomp2vCQ--.58407S2;
-	Fri, 13 Jun 2025 17:32:56 +0100 (CET)
-Message-ID: <5dbd2f9d79e0ffee006c5c9f448d486737d93b6a.camel@huaweicloud.com>
-Subject: Re: Module signing and post-quantum crypto public key algorithms
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, David Howells
- <dhowells@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, Stephan
- Mueller <smueller@chronox.de>, Simo Sorce <simo@redhat.com>,
- torvalds@linux-foundation.org, Paul Moore <paul@paul-moore.com>
-Cc: Lukas Wunner <lukas@wunner.de>, Ignat Korchagin <ignat@cloudflare.com>, 
- Clemens Lang <cllang@redhat.com>, David Bohannon <dbohanno@redhat.com>,
- Roberto Sassu <roberto.sassu@huawei.com>, keyrings@vger.kernel.org, 
- linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Date: Fri, 13 Jun 2025 18:32:21 +0200
-In-Reply-To: <01f2f3171dd0f1cd9dcb496ac66bc6903767a2d2.camel@HansenPartnership.com>
-References: <501216.1749826470@warthog.procyon.org.uk>
-	 <01f2f3171dd0f1cd9dcb496ac66bc6903767a2d2.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1749833508; c=relaxed/simple;
+	bh=PTrj3PGYBSiXZH65v/wOwyOSvwyWg/BIGlckLX9Awec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iyYfjBqRXu6x4RyRsnVW/WpO/0yTUaV7ygQ4U832Hp8sqLoEkhWFP0pjJgrXS1g5nv5Kt2PgKUhprUMeknLYyyNd9eSp18Qg57y1epY82cz5gGxgWpQLtLOaiic38hKjGB8XbE3AFtJqPp8kJirvaPxiB0V2FT0prcaB8CCFTbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Siqo1lD2; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Siqo1lD2"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7487d2b524eso1303897b3a.0;
+        Fri, 13 Jun 2025 09:51:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749833506; x=1750438306; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SgaZ0q289Nq8tK0lI3HpaPXgYh5tVi0FHv+Av0kmyp0=;
+        b=Siqo1lD2woB9f1/hCLFy3fCst6NJaHL3EM3omzwRPN5/VSgA22OKGrUnZAvF/f1Yt3
+         kfFe7VpqvEhnmPE1Iy4hNtiCiqGoTW2QwxHvOk/BQOfu/FahgZ6Le+lkBxL2IF9HPxrv
+         LMDQgk+3MPGLeIw8uj2MBXihwNj7IW+4MMFelHQAitlfx+P/WHc4nlxmaIY5kGYaalJG
+         Jzjas8GJkHajvLQpCpUmX11vNJU4xlMmjtm0HLaFh3xsrGY1YV0NBK6Shws5zYVYrIjF
+         l+9IbaSjyt4zSHA14WOfK7/0BfTMeuCiIxIm0PL87E1kaoRbcztGBJCLwOTYQ515xpdA
+         pxTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749833506; x=1750438306;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SgaZ0q289Nq8tK0lI3HpaPXgYh5tVi0FHv+Av0kmyp0=;
+        b=AVaZm2TjCEAEzbelDBQ7ZX3ozv1rajqpRRL0sioA3aR9T+ZMhJy9c3GTQMXgNTTfnt
+         lEVtBO/DatQcjwzGvMEDGyMCvDrBZqrgQYacgIbFrDpksNESydJm52a/GqCYwjivtTRk
+         VP90aQEYsAhOBylf2YS1EQ1jtCMEpbEnjKrWQfzGbThxCyML+yo9YFjZhJl04vUHtLuI
+         N31/TSMdgXbWICKBKC70YImi/vzShEWJQni30IRCuPHcTxgBBKfbIwb0JErmTtf4fYOV
+         wZEUrBufcn8LTikB85QosNxXdnXybnfai79jvgWRGEzWsOc+Uft7PLucsvF+UPGUCZ6y
+         8cBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTerFWFeANDXRCuqCYnO1gO8IPGrlfWgNI8LBPevlye/CVVT9VI+pkADyO3pqqQzhiQ/e8aPhUg/75/ysfXu0ARv2b/RY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4j5nsfn03eORfD71q8L8C7bCUSgrWVFoWRU49ccIsdYGBYJfr
+	fmWjif7+UXoLqP3gXftBl0fNQkkWZ49z5m/PB2dN0tQ5PxBt7xK0w7TIxOF42L+QS5b7JJ9fFng
+	JKexlzCaebQJ1leQAAudBWpcAiiUJspSKbjB/8fY=
+X-Gm-Gg: ASbGncuB4kCsk+CsiGQRFJCAVIZYUv87sJjVGiU1Uf+A3UMHkQ/2awARER07emOqbYV
+	wQTZp0vkm3gLswTcTtusdhcPkGpavw7eVhYn4GYKlk39g6ecW9V+WoADQ1aZ8T0xF3hYlyd0UOA
+	E0Cf+Oarpt71aD105SVUKUDOpdoveU8NVzfIqujdlyRG7Z6ZDJUb5RYeOD4cI=
+X-Google-Smtp-Source: AGHT+IHVmBC8j5dp/KpNY9DSGBiXfXoNreUv73Oc3fbNbUoSHsQlDfp/toJKq7RbbobHFg5VQB7cb7hsSC0F7zoQVic=
+X-Received: by 2002:a05:6a20:e68d:b0:1f5:9069:e563 with SMTP id
+ adf61e73a8af0-21fbd5f207cmr74535637.21.1749833506089; Fri, 13 Jun 2025
+ 09:51:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwCnLUyYUkxomp2vCQ--.58407S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3GFykJr45Zr43ZF45CrWDtwb_yoW7ZFW3pF
-	W5tFWYkrWkJFn2yFn2ka18KF4Fyws3Jw45Jr9xG348Z3Z8XFnxAr1IkFWYvFZrCrs3G3WY
-	vrWSyrn2kws5ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvmb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYY7kG6xAYrwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-	UI43ZEXa7IU5pmh7UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBGhLzecHGAACsD
+References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-6-kpsingh@kernel.org>
+ <CAEf4BzYiWv9suM6PuyJuFaDiRUXZxOhy1_pBkHqZwGN+Nn=2Eg@mail.gmail.com> <CACYkzJ5PtcXCHB3vWTPJyOkUL+PuEH9cL1r66Hz=1wxrT3NEUg@mail.gmail.com>
+In-Reply-To: <CACYkzJ5PtcXCHB3vWTPJyOkUL+PuEH9cL1r66Hz=1wxrT3NEUg@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 13 Jun 2025 09:51:32 -0700
+X-Gm-Features: AX0GCFtcCSxSAh3DuySR-XgxMXXjqhhwCFo_95OsTVNPjJW_QxmuNYf-W4sE0yM
+Message-ID: <CAEf4BzZghpnHaV+z2GYDNCApzLuxMW6_=4afgpO+D7AG-zTSFQ@mail.gmail.com>
+Subject: Re: [PATCH 05/12] libbpf: Support exclusive map creation
+To: KP Singh <kpsingh@kernel.org>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-06-13 at 12:13 -0400, James Bottomley wrote:
-> On Fri, 2025-06-13 at 15:54 +0100, David Howells wrote:
-> > Hi,
-> >=20
-> > So we need to do something about the impending quantum-related
-> > obsolescence of the RSA signatures that we use for module signing,
-> > kexec, BPF signing, IMA and a bunch of other things.
->=20
-> Wait, that's not necessarily the whole threat.  There are two possible
-> ways quantum could compromise us.  One is a computer that has enough
-> qbits to run the shor algorithm and break non-quantum crypto.  The
-> other is that a computer comes along with enough qbits to speed up the
-> brute force attacks using the grover algorithm.  NIST still believes
-> the latter will happen way before the former, so our first step should
-> be doubling the number of security bits in existing algorithms, which
-> means ECC of at least 512 bits (so curve25519 needs replacing with at
-> least curve448) and for all practical purposes deprecating RSA (unless
-> someone wants to play with huge keys).
->=20
-> > From my point of view, the simplest way would be to implement key
-> > verification in the kernel for one (or more) of the available post-
-> > quantum algorithms (of which there are at least three), driving this
-> > with appropriate changes to the X.509 certificate to indicate that's
-> > what we want to use.
->=20
-> Can you at least enumerate them?  There's still a dispute going on
-> about whether we should use pure post-quantum or hybrid.  I tend to
-> think myself that hybrid is best for durable things like digital
-> signatures but given the NIST advice, we should be using > 512 bit
-> curves for that.
->=20
-> > The good news is that Stephan Mueller has an implemementation that
-> > includes
-> > kernel bits that we can use, or, at least, adapt:
-> >=20
-> > 	https://github.com/smuellerDD/leancrypto/
->=20
-> So the only hybrid scheme in there is dilithium+25519 which doesn't
-> quite fit the bill (although I'm assuming dilithium+448 could easily be
-> implemented)
->=20
-> >=20
-> > Note that we only need the signature verification bits.=C2=A0 One
-> > question, though: he's done it as a standalone "leancrypto" module,
-> > not integrated into crypto/, but should it be integrated into crypto/
-> > or is the standalone fine?
-> >=20
-> > The not so good news, as I understand it, though, is that the X.509
-> > bits are not yet standardised.
-> >=20
-> >=20
-> > However!=C2=A0 Not everyone agrees with this.=C2=A0 An alternative prop=
-osal
-> > would rather get the signature verification code out of the kernel
-> > entirely.=C2=A0 Simo Sorce's proposal, for example, AIUI, is to compile
-> > all the hashes we need into the kernel at build time, possibly with a
-> > hashed hash list to be loaded later to reduce the amount of
-> > uncompressible code in the kernel.=C2=A0 If signatures are needed at al=
-l,
-> > then this should be offloaded to a userspace program (which would
-> > also have to be hashed and marked unptraceable and I think
-> > unswappable) to do the checking.
-> >=20
-> > I don't think we can dispense with signature checking entirely,
-> > though: we need it for third party module loading, quick single-
-> > module driver updates and all the non-module checking stuff.=C2=A0 If i=
-t
-> > were to be done in userspace, this might entail an upcall for each
-> > signature we want to check - either that, or the kernel has to run a
-> > server process that it can delegate checking to.
->=20
-> I agree we can't predict everything at build time, so we need a runtime
-> scheme (like signatures) as well.  However, I'm not convinced it should
-> be run outside the kernel.  The expansion of the TCB plus the amount of
-> checking the kernel has to do to make sure the upcall is secure adds to
-> the vulnerability over in-kernel where everything just works.
->=20
-> > It's also been suggested that PQ algorithms are really slow.=C2=A0 For
-> > kernel modules that might not matter too much as we may well not load
-> > more than 200 or so during boot - but there are other users that may
-> > get used more frequently (IMA, for example).
->=20
-> If we go with a hybrid signature scheme, we can start off with only
-> verifying the pre-quantum signature and have a switch to verify both.
->=20
-> > Now, there's also a possible hybrid approach, if I understand Roberto
-> > Sassu's proposal correctly, whereby it caches bundles of hashes
-> > obtained from, say, the hashes included in an RPM.=C2=A0 These bundles =
-of
-> > hashes can be checked by signature generated by the package signing
-> > process.=C2=A0 This would reduce the PQ overhead to checking a bundle a=
-nd
-> > would also make IMA's measuring easier as the hashes can be added in
-> > the right order, rather than being dependent on the order that the
-> > binaries are used.
->=20
-> I think you're referring to the IMA digest list extension proposal:
->=20
-> https://github.com/initlove/linux/wiki/IMA-Digest-Lists-Extension
->=20
-> I'm not sure it's been progressed much.
+On Thu, Jun 12, 2025 at 4:42=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
+:
+>
+> On Fri, Jun 13, 2025 at 12:56=E2=80=AFAM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Fri, Jun 6, 2025 at 4:29=E2=80=AFPM KP Singh <kpsingh@kernel.org> wr=
+ote:
+> > >
+> > > Implement a convenient method i.e. bpf_map__make_exclusive which
+> > > calculates the hash for the program and registers it with the map for
+> > > creation as an exclusive map when the objects are loaded.
+> > >
+> > > The hash of the program must be computed after all the relocations ar=
+e
+> > > done.
+> > >
+> > > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > > ---
+> > >  tools/lib/bpf/bpf.c            |  4 +-
+> > >  tools/lib/bpf/bpf.h            |  4 +-
+> > >  tools/lib/bpf/libbpf.c         | 68 ++++++++++++++++++++++++++++++++=
++-
+> > >  tools/lib/bpf/libbpf.h         | 13 +++++++
+> > >  tools/lib/bpf/libbpf.map       |  5 +++
+> > >  tools/lib/bpf/libbpf_version.h |  2 +-
+> > >  6 files changed, 92 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
+> > > index a9c3e33d0f8a..11fa2d64ccca 100644
+> > > --- a/tools/lib/bpf/bpf.c
+> > > +++ b/tools/lib/bpf/bpf.c
+> > > @@ -172,7 +172,7 @@ int bpf_map_create(enum bpf_map_type map_type,
+> > >                    __u32 max_entries,
+> > >                    const struct bpf_map_create_opts *opts)
+> > >  {
+> > > -       const size_t attr_sz =3D offsetofend(union bpf_attr, map_toke=
+n_fd);
+> > > +       const size_t attr_sz =3D offsetofend(union bpf_attr, excl_pro=
+g_hash);
+> > >         union bpf_attr attr;
+> > >         int fd;
+> > >
+> > > @@ -203,6 +203,8 @@ int bpf_map_create(enum bpf_map_type map_type,
+> > >         attr.map_ifindex =3D OPTS_GET(opts, map_ifindex, 0);
+> > >
+> > >         attr.map_token_fd =3D OPTS_GET(opts, token_fd, 0);
+> > > +       attr.excl_prog_hash =3D ptr_to_u64(OPTS_GET(opts, excl_prog_h=
+ash, NULL));
+> > > +       attr.excl_prog_hash_size =3D OPTS_GET(opts, excl_prog_hash_si=
+ze, 0);
+> > >
+> > >         fd =3D sys_bpf_fd(BPF_MAP_CREATE, &attr, attr_sz);
+> > >         return libbpf_err_errno(fd);
+> > > diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
+> > > index 777627d33d25..a82b79c0c349 100644
+> > > --- a/tools/lib/bpf/bpf.h
+> > > +++ b/tools/lib/bpf/bpf.h
+> > > @@ -54,9 +54,11 @@ struct bpf_map_create_opts {
+> > >         __s32 value_type_btf_obj_fd;
+> > >
+> > >         __u32 token_fd;
+> > > +       __u32 excl_prog_hash_size;
+> > > +       const void *excl_prog_hash;
+> > >         size_t :0;
+> > >  };
+> > > -#define bpf_map_create_opts__last_field token_fd
+> > > +#define bpf_map_create_opts__last_field excl_prog_hash
+> > >
+> > >  LIBBPF_API int bpf_map_create(enum bpf_map_type map_type,
+> > >                               const char *map_name,
+> > > diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> > > index 475038d04cb4..17de756973f4 100644
+> > > --- a/tools/lib/bpf/libbpf.c
+> > > +++ b/tools/lib/bpf/libbpf.c
+> > > @@ -499,6 +499,7 @@ struct bpf_program {
+> > >         __u32 line_info_rec_size;
+> > >         __u32 line_info_cnt;
+> > >         __u32 prog_flags;
+> > > +       __u8  hash[SHA256_DIGEST_LENGTH];
+> > >  };
+> > >
+> > >  struct bpf_struct_ops {
+> > > @@ -578,6 +579,8 @@ struct bpf_map {
+> > >         bool autocreate;
+> > >         bool autoattach;
+> > >         __u64 map_extra;
+> > > +       const void *excl_prog_sha;
+> > > +       __u32 excl_prog_sha_size;
+> > >  };
+> > >
+> > >  enum extern_type {
+> > > @@ -4485,6 +4488,43 @@ bpf_object__section_to_libbpf_map_type(const s=
+truct bpf_object *obj, int shndx)
+> > >         }
+> > >  }
+> > >
+> > > +static int bpf_program__compute_hash(struct bpf_program *prog)
+> > > +{
+> > > +       struct bpf_insn *purged;
+> > > +       bool was_ld_map;
+> > > +       int i, err;
+> > > +
+> > > +       purged =3D calloc(1, BPF_INSN_SZ * prog->insns_cnt);
+> > > +       if (!purged)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       /* If relocations have been done, the map_fd needs to be
+> > > +        * discarded for the digest calculation.
+> > > +        */
+> >
+> > all this looks sketchy, let's think about some more robust approach
+> > here rather than randomly clearing some fields of some instructions...
+>
+> This is exactly what the kernel does:
+>
+> https://elixir.bootlin.com/linux/v6.15.1/source/kernel/bpf/core.c#L314
+>
+> We will need to update both, it does not clear them of instructions,
+> it clears an immediate value that is the FD of the map which is
+> unstable.
 
-The latest iteration can be found here:
+Looking at what libbpf is doing with relocations, we are missing the
+case of src_reg =3D=3D BPF_PSEUDO_BTF_ID in which we are setting
+insn[1].imm to kernel module BTF FD (so unstable value as well). So I
+guess we should fix kernel-side logic there as well?
 
-https://lore.kernel.org/linux-integrity/20241119104922.2772571-1-roberto.sa=
-ssu@huaweicloud.com/
 
-It is more or less ready for upstreaming (from my point of view), with
-the exception of a few comments that I still need to address.
+But overall, it's of course funny, because for a long while we've been
+saying that calculating the signature/hash of a BPF program by masking
+some parts of instructions (containing FDs and addresses) is not good
+and not secure. Now we are doing exactly that to "predict" and define
+which BPF program has exclusivity rights. This shouldn't be a problem
+for lskel as BPF program code is supposed to be stable, but it feels
+weird to do it as a general case.
 
-The main problem was parsing the RPM headers in the kernel, that Linus
-didn't like, but I believe I solved it now with Mimi's suggestion of
-making the digest list parsers pluggable (so the RPM parser has been
-removed from this submission, and moved to a kernel module that is
-expected to be signed by distros).
+>
+> >
+> > > +       for (i =3D 0, was_ld_map =3D false; i < prog->insns_cnt; i++)=
+ {
+> > > +               purged[i] =3D prog->insns[i];
+> > > +               if (!was_ld_map &&
+> > > +                   purged[i].code =3D=3D (BPF_LD | BPF_IMM | BPF_DW)=
+ &&
+> > > +                   (purged[i].src_reg =3D=3D BPF_PSEUDO_MAP_FD ||
+> > > +                    purged[i].src_reg =3D=3D BPF_PSEUDO_MAP_VALUE)) =
+{
+> > > +                       was_ld_map =3D true;
+> > > +                       purged[i].imm =3D 0;
+> > > +               } else if (was_ld_map && purged[i].code =3D=3D 0 &&
+> > > +                          purged[i].dst_reg =3D=3D 0 && purged[i].sr=
+c_reg =3D=3D 0 &&
+> > > +                          purged[i].off =3D=3D 0) {
+> > > +                       was_ld_map =3D false;
+> > > +                       purged[i].imm =3D 0;
+> > > +               } else {
+> > > +                       was_ld_map =3D false;
+> > > +               }
+> > > +       }
+> >
+> > this was_ld_map business is... unnecessary? Just access purged[i + 1]
+> > (checking i + 1 < prog->insns_cnt, of course), and i +=3D 1. This
+> > stateful approach is an unnecessary complication, IMO
+>
+> Again, I did not do much here. Happy to make it better though.
+>
 
-I explored the alternative of moving the parser to user space, but as
-you mentioned, it is a more risky approach.
+I don't know why kernel code was written in this more stateful form,
+but I find it much harder to follow, especially given that it's
+trivial to handle two-instruction ldimm64 in one go. And both libbpf
+and verifier code does handle ldimm64 as insn[0] and insn[1] parts at
+the same time elsewhere (e.g., see resolve_pseudo_ldimm64()). So at
+least for libbpf side, let's do a simpler implementation (I'd do it
+for kernel code as well, but I'm not insisting).
 
-Other than that, yes, it makes IMA much faster in my benchmarks (~34
-seconds to lookup 12312 digests and verify 303 ECDSA signatures, as
-opposed to ~98 seconds to verify 12312 ECDSA signatures).
+[...]
 
-Roberto
+> > > +       map->excl_prog_sha =3D prog->hash;
+> > > +       map->excl_prog_sha_size =3D SHA256_DIGEST_LENGTH;
+> >
+> > this is a hack, I assume that's why you compute that hash for any
+> > program all the time, right? Well, first, if this is called before
+> > bpf_object_prepare(), it will silently do the wrong thing.
+> >
+> > But also I don't think we should calculate hash proactively, we could
+> > do this lazily.
+> >
 
+So this bothered me and felt wrong. And I realized that you are doing
+it at the wrong abstraction level here. Instead of trying to calculate
+exclusivity hash in bpf_map__make_exclusive(), we should just record
+`struct bpf_program *` pointer as an exclusive target bpf program. And
+only calculate hash at map creation time where we know that the BPF
+program has been relocated.
+
+At that time we can also error out if bpf_program turned out to be
+disabled to be loaded, etc.
+
+I'd also call this a bit more like any other setter (and would add a
+getter for completeness): bpf_map__set_exclusive_program() and
+bpf_map__exclusive_program(). And I guess we can allow overwriting
+exclusive program pointer, given this explicit setter semantics.
+
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +
+> > >  static struct bpf_map *
+> > >  __bpf_map__iter(const struct bpf_map *m, const struct bpf_object *ob=
+j, int i)
+> > >  {
+
+[...]
