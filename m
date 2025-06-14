@@ -1,116 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28D6239E85;
-	Fri, 13 Jun 2025 22:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E39B27BF80
+	for <linux-security-module@vger.kernel.org>; Sat, 14 Jun 2025 11:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749853666; cv=none; b=FULDPT4vxwk0lD0BmuPylY3m6NDWvBs6eylhKvHIyTqGwnMexIZc24EWvaFh5HCvKNbfeANNWRd7tGZh1R3Iely5UOeDeyWiaiaGIgndi7uhOsfk+8L8FlovDBmzVm3LlBHNiIJf2Mc4W6Csswa1m4qAdlsAHCwko5srNyUvnGY=
+	t=1749901432; cv=none; b=FKXsYkY6kBRmKEi3pbYF0JD+qXvr4I037KUMhpVH2V9+ehquDMus5LwHQyzHC24SPq3rz+vZRDcSJXVtgMAipBy4wySRaFUD17IkGV3PsvMDa3XY0BSwx5/pFE/6Fm/CCoohVTonceOGIs4Z+f/g/0WnaM9auInNgQlnAfhjV3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749853666; c=relaxed/simple;
-	bh=oz5GGeZK5HuwW8R1dyYQv0i5Y3h3LLimhUbd5OgIOdY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IEHmnPbVgTR2ADXhd1IXWHX0voc+u4JRkUCUs1FGHqLP2/ge9eiRIoAzjTaFoATUeGyU8AUO7AUWl7uDrsIKpWGomP1k7/7qnRxbBck19MjvaPZNESIrYukKbWvh4MrfIIKrCtOUmhWraGiOof1bu1MmXETGudOaDmHo4zFlPQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCkjVS5F; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749901432; c=relaxed/simple;
+	bh=OoaoWMKFCn2qhVp1/VrgVw6hYnU7LgLNGUrn+S2eYOg=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=XTFpO3NDKVf0M8SvOr5zxZVbPuK7soeKm5NK436iazIlmWgvZQamiGmh1yoSpOdSdVjpLIzY7s6X+kQUF6MlioUN5HMyUxaa4HjwuG8iU3Eh2lDFQxD1/KJHh9xuVs+VnTlrxGyuGXZOGRJv65IoBqQ5j6GeGj5uRR/zJbh1SD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=S7lDe5Vw; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCkjVS5F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22397C4CEFB;
-	Fri, 13 Jun 2025 22:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749853666;
-	bh=oz5GGeZK5HuwW8R1dyYQv0i5Y3h3LLimhUbd5OgIOdY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aCkjVS5FxDgUtqX8oVnyg6xn4mxlqiQ+M/pLPDwe7I1MJALISNIrn8GKHULqV7I4r
-	 kHChX13gq3l+CUgS3Ahb8tWITO9+Abym2+X1naKmv8Xk9Nv+M9jqWDQUjRm0AStq5Y
-	 /z+Nnk5/MQ1Y7+FzBlcCPnhGnrkJj0ntECW8wehUAb6YANOKl8OIzPNANCXoeCnmXD
-	 +IWgTHzuUuJ3TLN3TJTOnP5h0F+BHynHLfJMUlGMpGlFLPKU8oHpFt21kTAQAnCCIi
-	 K8eLxeBqRFU7NGRIiDDI3DJm5a86FcM5ihi8Dsy3/NleQ6KDM9mXRB2G7zs++c5XAd
-	 fYWWaNz+AMVFg==
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4a44b0ed780so37103631cf.3;
-        Fri, 13 Jun 2025 15:27:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU35ZTP4YvEhF85h6pFJS83pZ4ZUMhLOPKk8I6DN8WO7kongiQ1AN2irMlkVwIAk55Gm28ae8C0ls3NAJN8@vger.kernel.org, AJvYcCUMthNvS9kkROTE9Oip4uc5uTFdNU0z8Fxg3+/FSWVj1kQCNTM/v08HKi+yssbkpmYqV4MMkOmGodctboBHNEcnq7X9NrN4@vger.kernel.org, AJvYcCWSbouNWmziph6Bni3TFS8ymb9TfeuLNyu6eF88l68Uy3l8iihr+iQ1Fll+uFuhRG/EtkcjHQXXX/Q18ILt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBlLQ3mptT7IMaf39zPj7ShTbDqnYXmyRKq/dgXtyiPJzzA8iF
-	VSgOq1+DUtfEYqQ+fFrH9Lt4K/1bCwCi42tZr27CgORx1wQ9ugiPHlQ6rcVWQ8URQL3jMuVk7on
-	3f+rxkh6Sy4dSf3zFueR+h0xwlDe5L7c=
-X-Google-Smtp-Source: AGHT+IGWkjVtdv83eE0pBs/jdfMfaxcVMpueUKvLdi3qvZP9yMR8Onxx6KI7dzY5aOnj72v0w6SET/QZNJny9oMPl7I=
-X-Received: by 2002:ac8:5a43:0:b0:4a3:fcc7:c73c with SMTP id
- d75a77b69052e-4a73c4fd271mr14044651cf.8.1749853665106; Fri, 13 Jun 2025
- 15:27:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="S7lDe5Vw"
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6fb3bba0730so26584466d6.0
+        for <linux-security-module@vger.kernel.org>; Sat, 14 Jun 2025 04:43:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1749901430; x=1750506230; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BeA+cGdqkFUYAZOJspNOScTIdPqYIEy6/Lha4BqMN50=;
+        b=S7lDe5VwURSoF5/dzDFqKowIXDUPGvLarNQJNqnkH7n50DG62mWnQeXV6E6mbQi099
+         5BYrcxFUcpomrdZeRy9hW5yBm1r8F8PthUmJVclRLocYm9TuLiDluyL/JGcoyQM0QIRC
+         uBRRD5SkMMFVPEWoOE9vtsEeiS5dPwByArHrpIr/J4QGGXl06Iwe3glJgHP8AQcP30VY
+         HmUfK1xY/lhK0tHhw2nd+SELJRYYKzKZpvwxc0C/Yskzp+jJU69YyKjJ5wLqssTbGgTs
+         kae/58AYfPyiHxNxuSbP1gwoQTq1BYw3I+n6zMZ6opIktT5rVIG+nEL7sxO/aQK+QAgM
+         CxiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749901430; x=1750506230;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BeA+cGdqkFUYAZOJspNOScTIdPqYIEy6/Lha4BqMN50=;
+        b=e+yRxdZSUwvbYDq6Mca+g4gLzOT7uffocrMQrTcrvoUsAM+zR+oeJwfKpVApI/Owa6
+         N+Zj76rqnKcrB6ldgLfse4UMDXgad+8pFZiFqYL/7uWALOvRXAlGC83AxiC0RMVpe9Eg
+         tKQAZXn4+lzSz+XncfvMGogYR8iFd0LDNVmDA2eiwyc0cnuPgEk8M/mQjAk1sBKllNH8
+         NJ+AM6mA8fNhqFbOf7ko+St9L8XNUoaIpWkhlAK15gf3L0+wUNST6ded7iZOfzyqFZW6
+         k7bp/LwI7JoMIu4EUg97msZjaCslZCGid5KzF4WLv6E+rncPy76WUQolvx188zEDVd7b
+         3CZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGJbHcd5DBLlsxJ59e3RtgZOymZxRxNvHov5zQ9W2L+/tF2Q9EUX2o022rorim29k5paIM3tjBK0krtVvbti8AY4n83Hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHh4JDmnwReZssaQcRQJRQrbEzAhlnwe0hDKaBOA34cOjp5kjY
+	b7y3l7yGqehmCcffCcWMBUnYwnwi60E1DbgazgSEQ5a6gmlbV3hgjriRvdOOFs0GCg==
+X-Gm-Gg: ASbGncuVoR94lWy0M3RvnyhB+OQ9oGktmZfgasZC/5Gx1hRc/Fpv5msG0+CEiQxFvss
+	E9c5TY8awT1nC8JDPMzpnPN/ZL4RixnttEVHRZIzOLAEoK2omtscQXBzWQn/qxZe8HOmCC2RFeG
+	l+lHuFf9ZU0bDLkL0VDR71Dqxkrufs55oq8xbLub4WEcankLrt2vJQSdAlWFW2Pto1SZ3mCNNkK
+	yDlkx4r3QZgxGt4oBhP6kXaOOn5uWqBHEkLN8ENlM2ieTSumcSgTXkDjjWsuoSQbkRffjMHBF1a
+	9K2t/QdJIHRLQh+hEaJM8IGE1LXJpjruzmv0WsAbkGzCsoYw767CKJ85Zidq
+X-Google-Smtp-Source: AGHT+IEQkio8IAsbWC+2/pmCx/HPxSFcQrkjBZhZlMj0S8DQlrj0v+c53BCsuua9D4ior6VqPrPncA==
+X-Received: by 2002:a05:6214:c67:b0:6fa:9909:12ec with SMTP id 6a1803df08f44-6fb46d4cf16mr47126126d6.2.1749901430110;
+        Sat, 14 Jun 2025 04:43:50 -0700 (PDT)
+Received: from [10.27.248.53] ([68.216.65.98])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb48217708sm5972566d6.78.2025.06.14.04.43.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Jun 2025 04:43:49 -0700 (PDT)
+From: Paul Moore <paul@paul-moore.com>
+To: Kuniyuki Iwashima <kuni1840@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>
+CC: Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, =?UTF-8?B?R8O8bnRoZXIgTm9hY2s=?= <gnoack@google.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, Kuniyuki Iwashima <kuniyu@google.com>, <bpf@vger.kernel.org>, <linux-security-module@vger.kernel.org>, <selinux@vger.kernel.org>, <netdev@vger.kernel.org>
+Date: Sat, 14 Jun 2025 07:43:46 -0400
+Message-ID: <1976e40bd50.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+In-Reply-To: <20250613222411.1216170-1-kuni1840@gmail.com>
+References: <20250613222411.1216170-1-kuni1840@gmail.com>
+User-Agent: AquaMail/1.55.1 (build: 105501552)
+Subject: Re: [PATCH v2 bpf-next 0/4] af_unix: Allow BPF LSM to filter SCM_RIGHTS at sendmsg().
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250611220220.3681382-1-song@kernel.org> <20250611220220.3681382-2-song@kernel.org>
- <174977345565.608730.2655286329643493783@noble.neil.brown.name>
-In-Reply-To: <174977345565.608730.2655286329643493783@noble.neil.brown.name>
-From: Song Liu <song@kernel.org>
-Date: Fri, 13 Jun 2025 15:27:33 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW7V9MWXBqiEFbFipUVASwysbB1pX3Lz0NCncFJ9Gjpo5w@mail.gmail.com>
-X-Gm-Features: AX0GCFsvU1L3eassdPC77vEMHxMtYL1v9e9xJtapswAl6ledQxqg87gGstBk2wM
-Message-ID: <CAPhsuW7V9MWXBqiEFbFipUVASwysbB1pX3Lz0NCncFJ9Gjpo5w@mail.gmail.com>
-Subject: Re: [PATCH v4 bpf-next 1/5] namei: Introduce new helper function path_walk_parent()
-To: NeilBrown <neil@brown.name>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, 
-	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
-	jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, gnoack@google.com, 
-	m@maowtm.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; format=flowed; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 12, 2025 at 5:11=E2=80=AFPM NeilBrown <neil@brown.name> wrote:
-[...]
-> > +
-> > +false_out:
-> > +     path_put(path);
-> > +     memset(path, 0, sizeof(*path));
-> > +     return false;
-> > +}
+
+On June 13, 2025 6:24:15 PM Kuniyuki Iwashima <kuni1840@gmail.com> wrote:
+> From: Kuniyuki Iwashima <kuniyu@google.com>
 >
-> I think the public function should return 0 on success and -error on
-> failure.  That is a well established pattern.
-
-Yeah, I think we can use this pattern.
-
-> I also think you
-> shouldn't assume that all callers will want the same flags.
-
-__path_walk_parent() only handles two LOOKUP_ flags, so
-it is a bit weird to allow all the flags. But if folks think this is a
-good idea, I don't have strong objections to taking various flags.
-
+> Since commit 77cbe1a6d873 ("af_unix: Introduce SO_PASSRIGHTS."),
+> we can disable SCM_RIGHTS per socket, but it's not flexible.
 >
-> And it isn't clear to me why you want to path_put() on failure.
+> This series allows us to implement more fine-grained filtering for
+> SCM_RIGHTS with BPF LSM.
 
-In earlier versions, we would keep "path" unchanged when the
-walk stopped. However, this is not the case in this version
-(choose_mountpoint() =3D> in_root =3D> return -EXDEV). So I
-decided to just release it, so that we will not leak a path that
-the walk should not get to.
+My ability to review this over the weekend is limited due to device and 
+network access, but I'll take a look next week.
 
->
-> I wonder if there might be other potential users in the kernel.
-> If so we should consider how well the interface meets their needs.
->
-> autofs, devpts, nfsd, landlock all call follow_up...
-> maybe they should be using the new interface...
-> nfsd is the most likely to benefit - particularly nfsd_lookup_parent().
+That said, it would be good if you could clarify the "filtering" aspect of 
+your comments; it may be obvious when I'm able to look at the full patchset 
+in context, but the commit descriptions worry me that perhaps you are still 
+intending on using the LSM framework to cut SCM_RIGHTS payloads from 
+individual messages?  Blocking messages at send time if they contain 
+SCM_RIGHTS is likely okay (pending proper implementation review), but 
+modifying packets in flight in the LSM framework is not.
 
-AFAICT, autofs and devpts can just use follow_up().
-For nfsd, nfsd_lookup_parent() and nfsd4_encode_pathname4() can
-use path_walk_parent. And 2/5 covers landlock.
+Also, a quick administrative note, I see you have marked this as 
+"bpf-next", however given the diffstat of the proposed changes this 
+patchset should go to Linus via the LSM tree and not the BPF tree.
 
-I think we can update nfsd in a follow up patch, just to keep this set
-simpler.
+--
+paul-moore.com
 
-Thanks,
-Song
 
-> Just a thought..
 
-[...]
+
