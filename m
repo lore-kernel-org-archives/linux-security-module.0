@@ -1,39 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6649C1D6DB5;
-	Mon, 16 Jun 2025 14:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994E32BEFE4;
+	Mon, 16 Jun 2025 14:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750083415; cv=none; b=J3oTIi5dsllTPX1zu83QuSUI8gdM7OOZk7PhcEJWVhddpSKRKtQopzUybnbH37XTR4KzcYUwwy5YA//bNe8gs5VgZJyu3HjLI9rb0sQFdkqWxk2aV1rLTg8K+xH+G+rXl9jtYYPdiCcPhOtJt7aZdJK2zZpX8+Rjoe0U97dPigY=
+	t=1750083574; cv=none; b=uoXnnneGeXu2bdZVK76nRO6BKL3s9sNlrVZwveJnWgcPrpvPBHHKs1KhlQrSpVTw3maCx4XDEhTrddSdX+mLOt0ITcmdMirZBGAsKvpJbrOP4LdQ+pTPuJiDHR0xXlR5MY+tx8PaXrVJCEJpCSoVYNccWuQARSrD7ZhMdOUPABQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750083415; c=relaxed/simple;
-	bh=t00n8yVXDRme/+N8FmaQFvJ8h2RSMULhGuezgfvEgrM=;
+	s=arc-20240116; t=1750083574; c=relaxed/simple;
+	bh=fAKBZKvzyJfwRzoCTS4/9oOWkDgSGwuHp8G3bK/u0aY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GU8C7anmjYaF/vq7SxMjoKT2VkldNqJbSe1wtmG5AMbBp9bpv1qGeTUiotUJ5yuJ4CvcIe6MjJMj7xWt+lxSWPHgSnTzuXJ+DNU1KDJhP9JioBnVuqvDepcHGJGkDaz9Fp1BaCWOcWG9NBkepuqc0p7llgvl1NXQqTaeiDxtl8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g0zQ8gYO; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=It/aazGk/rDSBbpZY4jBUTq3lTDoTdWve0ewcuK/0k6X6+LF6EfkbdEkLlZzPrk0EWKooKO3bKKinTYYyV/MQEzlq3ctpzZ84VZC9gmIRp1/07c2W6yfnUJTChWuIgC6oSiBRyfAib/gh/WgmREPKUQZdeL7T3Jv9or/cLg6JNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CUhiDkQ4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g0zQ8gYO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBFCDC4CEEA;
-	Mon, 16 Jun 2025 14:16:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CUhiDkQ4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31C1DC4CEED;
+	Mon, 16 Jun 2025 14:19:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750083415;
-	bh=t00n8yVXDRme/+N8FmaQFvJ8h2RSMULhGuezgfvEgrM=;
+	s=k20201202; t=1750083574;
+	bh=fAKBZKvzyJfwRzoCTS4/9oOWkDgSGwuHp8G3bK/u0aY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g0zQ8gYOkZONjpXn5uKOYx/db7VMKrCUWxVXk+WEB/Jfp26WanCW4CrZx1nOEIpaK
-	 80Fg3R1v8Frj5H5iquxK98htwo6dwIGvtBLRUsfGNtJyKGV8fUGlt0+xwongZn1QTp
-	 cDYBivXemQzq0uyXeF6JHAjLuJCUhRifUF+2d3taR8Lm1YC4SHZ4HK87oyUwDBWy5J
-	 1MbzBzN8SjpmYwsjsoLEPzP3oIj9/ej0mIsSLppWJ1cqw1dhR6yXqvD/KFPkvdpOV3
-	 anmBpWxxRTc3pJCZn+HmdZjZOIM4zPqOlek9bQ2wlIkwhBb24y5OyaaH51FY4GXHoX
-	 v+ifiTa+sLqKw==
-Date: Mon, 16 Jun 2025 16:16:51 +0200
+	b=CUhiDkQ4fkQh3HbPQwFaU1dKim+oBbytl7FE31KDgiHl1W6LyyctFd8Zn4vv4HQ0P
+	 naVAyyv0s5kKotSyo4PAJzBY/XIjUvVsp3r38ahFELkS3VOlPYGSQO6e7t3w3mxESk
+	 SMwx2NDd8YsUZRaoYnmSFQ34cBrYBkIFPx9N8G/QpnQGay4Fetjoc0/dyaGJZ56I0Z
+	 blT0BNLFCfdKAc0SPOuFvGQqLWhmANgRkbtLalgOsEXqnqWhY/buil4pbLZwng2BUN
+	 EfHpaWONF4e7WZOgmb3AO6qnJRM1SCXEGsqK80h5Un5H4C5VhHrQXIH7osvPVs56Ok
+	 JcpiDQCAeojww==
+Date: Mon, 16 Jun 2025 16:19:30 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] apparmor: file never has NULL f_path.mnt
-Message-ID: <20250616-holzlatten-biografie-94d47ed640ea@brauner>
+Subject: Re: [PATCH] selinuxfs_fill_super(): don't bother with
+ selinuxfs_info_free() on failures
+Message-ID: <20250616-buche-kognitiv-5d684b75db05@brauner>
 References: <20250615003011.GD1880847@ZenIV>
  <20250615003110.GA3011112@ZenIV>
+ <20250615020154.GE1880847@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,12 +44,15 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250615003110.GA3011112@ZenIV>
+In-Reply-To: <20250615020154.GE1880847@ZenIV>
 
-On Sun, Jun 15, 2025 at 01:31:10AM +0100, Al Viro wrote:
+On Sun, Jun 15, 2025 at 03:01:54AM +0100, Al Viro wrote:
 > [don't really care which tree that goes through; right now it's
 > in viro/vfs.git #work.misc, but if somebody prefers to grab it
 > through a different tree, just say so]
+> 
+> Failures in there will be followed by sel_kill_sb(), which will call
+> selinuxfs_info_free() anyway.
 > 
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
