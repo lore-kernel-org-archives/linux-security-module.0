@@ -1,81 +1,107 @@
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DB61E98F3
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Jun 2025 21:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBC11A8F84
+	for <linux-security-module@vger.kernel.org>; Mon, 16 Jun 2025 22:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750110178; cv=none; b=RI5RL2LqyNILJBu/6+/qbqGXCnG9vYqDRDW4vhtvHc7HS52Dr9AUpN1ydh32mG39h6ZaiX68bNQhZzSt74Xhv4nhNFelkURKcCQ74MZGvGY8Ou10EjROHPXQAYqDwi7SEIeDzsMhXTiyjPVl4SxhI1F6b5BnBwyd+dTfsgPmit4=
+	t=1750114265; cv=none; b=SkF/AbYjyhlPl5lyv+joFDjKG0gkKqjDYD1qCWeh3ePAZ+Sc+8mKq75yM/fsyh3Qm9qGWo/m8hzD6ar7Qv8dpsEmrUSbQsTOmkLMNjtlXG+6r/srFhjagYJ1WaJ6Qysd4ykB9bYABa3eBqOpS9w5FzMJrOtJ7oqMcBMSZ0JNVVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750110178; c=relaxed/simple;
-	bh=4omPnc8/kmY3dAJXfH8NAsh5NBJPfPfRL69fynJQ2m0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MgNRbwSjoNER+VspY5qY4dah7nX6N56EpcwimD+TpWwCiktbQSdWOJhTl0zhyCL49dZm45+9wVbmOp7m2lXKw/Fy3OYwcNBWOBoKqxLs7EFndbM+c7GVsDwALYB59oZhx8jd4OOB11Z/htgvrk+FPsQLrzHPjWWqjA9rvP8vyTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=tx9ztyow; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+	s=arc-20240116; t=1750114265; c=relaxed/simple;
+	bh=dgg6yAuDVo3vleEyCChbNqOWuBv+k/MlWJld3pX9/MI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=DceA7VnXwJwQkRdPJsH6aJ4/55wfcpCsxQzzuoOkjied1pLRWDIXcv54yVOq1ySq962dPaISWOdwUv+uJVrh5kfNMK/wBufyZkqymn9dI6SvDoe6C3RBoaokZf/dRv/MTAHO4m6LIbZp2NdZDyZ1CpCpak2q/khqCNQ3stI/c4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=LqWHPyrl; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="tx9ztyow"
-Message-ID: <3ba5fff5-7e24-45e3-bbec-c326cd3b0dc7@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1750110169;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wnKyocSBGngO9NUNU/RlveEWMkS3YYGJxZ/hFx+Z6CY=;
-	b=tx9ztyowMaquk9x2u9SOT8I4pj5R2VntYpWcOpYaAbqDrxEqWd+h+uGW8Qgu5HxTtS3FM/
-	yr5lxWeVpAkiqeivmKJNPVXsDJN0d0NOO2l6NNIb9sDOqMDPvBKUfzr/buOpa8XV7vziMN
-	f/54UxWahuyp8bvjgHW3My+TxB8DXLs=
-Date: Tue, 17 Jun 2025 00:43:46 +0300
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LqWHPyrl"
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-710e344bbf9so45654407b3.2
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Jun 2025 15:51:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1750114259; x=1750719059; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/eOumrIvQvMcIuJoDiv93cWolbr2s9Amklvv80KdrJs=;
+        b=LqWHPyrlt81ELG/NcxQ8Ttddv2W1VF27BB4xDSC4zFdzWcKH81jviNDQv/bs+WNcqi
+         lmDMLC903KAolT00l8YM5y23PuEBSzbOwU26vFsL8MmyMsTHGFducrsyKtOetv3cHcBg
+         fGajPWKbzdsdQ4xMJfSu2SD4dEDggoHDVqRIr9bLcLCwEmYN3KspE1NxURU9LpDuC+F0
+         0NDq3mZxquWwV8H4Y8XcIwZdCNgdCToWb9809x+iZ+vgh93hadry4g7WNQd16pVO8mQo
+         b5EQh8dSwIUR+4k1CuAVHhu3f3iWq+Do8tc09bkhLD/RgZA3N7ASOFi4x8AKECbJ1myS
+         c/Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750114259; x=1750719059;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/eOumrIvQvMcIuJoDiv93cWolbr2s9Amklvv80KdrJs=;
+        b=JP6hFAjqb8xWxg49xRR8C/+VJ73MeGLi0fhFPqMi06BG3ShV3fcheGLXVwiuG/B6hs
+         UUIxAXYrcCG8uYYEvn47UC3KQJlSeao/+b/lG7s9xcWYlduGnk2NpraQrCjwo8Han32u
+         i647slKJza7FbCJIyDkbDBxa4fZA56am2YvWe+i9gyUoGwWFXEtmGjeW+ji1da4/bNZM
+         lqacQGHK6U8ZD1hdKq6rfxEbFDYejfoKXA5Z7zOzptjZLwXyPkEsRdfEhnUwdkKXaYch
+         zxxBoL0RcjoiD9At+046THcGdpHZO2WgnFZ7QpBYgeQwIwT3PbWjkrkxfDPos/Jmt+Rn
+         ckWw==
+X-Gm-Message-State: AOJu0YzL4lDbplH0RII/DopMwq6BtAJHzFtv/m08CguhPT5toiBb/vI0
+	WlYfx3WM3lJ74wwioNrgWpOgc9/bf4Y4/MKgUzib3b7K+ShfgAmoh3IzrQsH8BMzFFf1Oj9tHtY
+	ulGZ59JUYa+Ipc+fyImUrD6w0OyePeJiFmEMmlx+NeVv81oU3Vqc8Bg==
+X-Gm-Gg: ASbGncuFXWWfYgIol9i6LHwC1Twq15VBzQZO5qBOMfirfZHfSHh/gxS4Hssvl+A2oVi
+	ujxjVBI2s2M+kURvR3l7pdscU3L6KkOORygH3a0PM4CJLUzYd1KgUtd4sVtDciOonA1beWrbHgY
+	ceVhVbx4jQ16HCIptvHIEIxRo4JW4wg+AMXmpxgsvdTsI=
+X-Google-Smtp-Source: AGHT+IH6K7b65SOcZ3UL42VzK0ycq2N+XTmuhVcIgFIlyY+zlqbt+r6MyEzGmQ316e0BK/kO1VFZytwdP/N5HYUDazs=
+X-Received: by 2002:a05:690c:7085:b0:711:33d3:92ed with SMTP id
+ 00721157ae682-7117547e398mr138894287b3.38.1750114259284; Mon, 16 Jun 2025
+ 15:50:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 0/2] smack: fix two bugs in setting task label
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org
-References: <20250315015723.1357541-1-andreev@swemel.ru>
- <0c8e9341-d044-42ca-9332-2b284a0e3e5f@swemel.ru>
- <c512e831-796b-4a97-9ae2-5eeea7321e62@schaufler-ca.com>
- <225c8775-5213-4a9c-af32-b80e78d98abb@schaufler-ca.com>
-Content-Language: en-US
-From: Konstantin Andreev <andreev@swemel.ru>
-In-Reply-To: <225c8775-5213-4a9c-af32-b80e78d98abb@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 16 Jun 2025 21:42:49.0661 (UTC) FILETIME=[9B0C6ED0:01DBDF07]
+References: <CAHC9VhS9P-fgWac_sJ_dq6_AQf76RGiqLAmOFnR_4NZ83KQogw@mail.gmail.com>
+ <CAHC9VhSae4Vhypwr+hkAvddQ5_DQ90-jaS+pWPqJwPjk_dzMZg@mail.gmail.com>
+In-Reply-To: <CAHC9VhSae4Vhypwr+hkAvddQ5_DQ90-jaS+pWPqJwPjk_dzMZg@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 16 Jun 2025 18:50:48 -0400
+X-Gm-Features: AX0GCFsxmqLGPd1Dwp438v3XRjCA8HQII6EN0vJI_Uc-Mpd9DAorAZ5Dqh4hgW4
+Message-ID: <CAHC9VhQn-HVuqn9UWVnb17VOGrYsNsqjCvqd2OEOi7=YQReCUA@mail.gmail.com>
+Subject: Re: ANN: LSM and SELinux trees to rebase to v6.16-rc2 next week
+To: linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Casey Schaufler, 16 Jun 2025 10:22:23 -0700:
-> On 6/16/2025 9:58 AM, Casey Schaufler wrote:
->> On 6/15/2025 6:52 PM, Konstantin Andreev wrote:
->>> Konstantin Andreev, 15/03/2025 в 04:57 по Москве:
->>>> These two patches have distinct subjects,
->>>> but work on the same object,
->>>>     security/smack/smack_lsm.c`do_setattr()
->>>> and the second patch partially overwrites first,
->>>> so I combine them in a series.
->>>> ...
->>> Hi, Casey.
->>>
->>> If you have time and you could have a look, that would be great.
->> Looking at it today. Monday rc rituals must be tended to, of course.
-> 
-> I don't have your v2 patches. I have the 0/2, but not the changes.
-> Can you please resend them?
+On Wed, Jun 11, 2025 at 12:45=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+> On Wed, Jun 11, 2025 at 12:45=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
+ wrote:
+> >
+> > Hi all,
+> >
+> > In order to pickup an xattr fix, link below, in the LSM and SELinux
+> > trees, I'll be rebasing the lsm/dev and selinux/dev trees next week
+> > once v6.16-rc2 is released.  Currently each tree only has one trivial
+> > patch in their respective dev branches so the rebase is expected to be
+> > trivial.
+>
+> ... here is the link I forgot to include:
+>
+> https://lore.kernel.org/selinux/20250605164852.2016-1-stephen.smalley.wor=
+k@gmail.com/
 
-I resent them in a private emails,
-to avoid extra burden on this mail list.
+Unfortunately the VFS folks did not send that patch up for v6.16-rc2
+as originally planned, but it was sent out and merged into Linus' tree
+today.  Considering the importance of the patch for testing/CI, and
+the desire to delay a of rebase the LSM and SELinux trees to
+v6.16-rc3, I've rebased both trees to commit fe78e02600f8 ("Merge tag
+'vfs-6.16-rc3.fixes' of
+git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs"), which is two
+commits past the v6.16-rc2 tag and contains the xattr patch mentioned
+last week.
 
-If this is incorrect and should be sent to the list,
-please, inform.
+Unfortunately, this does mean that the lsm/dev and selinux/dev
+branches are not based on a v6.16-rcX tag, but with everything
+considered, I believe the exception made sense.  If anyone has any
+concerns or questions, let me know.
 
-Just in case, here are links on the parts
-got to the list earlier.
-
-PATCH v2 1/2: https://lore.kernel.org/linux-security-module/20250315015723.1357541-2-andreev@swemel.ru/
-PATCH v2 2/2: https://lore.kernel.org/linux-security-module/20250315015723.1357541-3-andreev@swemel.ru/
-
-Konstantin
+--=20
+paul-moore.com
