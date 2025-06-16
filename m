@@ -1,107 +1,78 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBC11A8F84
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Jun 2025 22:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED549229B28
+	for <linux-security-module@vger.kernel.org>; Mon, 16 Jun 2025 23:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750114265; cv=none; b=SkF/AbYjyhlPl5lyv+joFDjKG0gkKqjDYD1qCWeh3ePAZ+Sc+8mKq75yM/fsyh3Qm9qGWo/m8hzD6ar7Qv8dpsEmrUSbQsTOmkLMNjtlXG+6r/srFhjagYJ1WaJ6Qysd4ykB9bYABa3eBqOpS9w5FzMJrOtJ7oqMcBMSZ0JNVVA=
+	t=1750117235; cv=none; b=UwUoNHo5e0N90j7rnytf5+cgWp68j1KyB8EuvA19QHpfXjyDKVgrMh694ruQpEYUuqnuRdcrl9PeKh1neKwo7hPsqlN8qaeqsny715gKkNEUfB9UuTWIepEkdEofQH6on81Fq6R+AyvoJX+KUEyNkSydHpuxDe9kAocJIL5ZtUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750114265; c=relaxed/simple;
-	bh=dgg6yAuDVo3vleEyCChbNqOWuBv+k/MlWJld3pX9/MI=;
+	s=arc-20240116; t=1750117235; c=relaxed/simple;
+	bh=Cqx2QT4ZsXirJdKTudVAIg2y346l5voOnlraoudOTRE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=DceA7VnXwJwQkRdPJsH6aJ4/55wfcpCsxQzzuoOkjied1pLRWDIXcv54yVOq1ySq962dPaISWOdwUv+uJVrh5kfNMK/wBufyZkqymn9dI6SvDoe6C3RBoaokZf/dRv/MTAHO4m6LIbZp2NdZDyZ1CpCpak2q/khqCNQ3stI/c4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=LqWHPyrl; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=JzyytC3xn+isqWqDVcdazavdZ+8R0WVxEC6IS0LUdatbfnO4bzS/7DXpeji2e7DyZCudL0or9iDILnFgyh34Lrs7zCajhAOl86M97bsL9qvXk+Mg8xu0MP8ObGhgUw7qvpD0WICt+jtFRdLiSmYrjNrYbeu/qRbz3niICL6nPn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nN2JijGd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LqWHPyrl"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-710e344bbf9so45654407b3.2
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Jun 2025 15:51:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1750114259; x=1750719059; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/eOumrIvQvMcIuJoDiv93cWolbr2s9Amklvv80KdrJs=;
-        b=LqWHPyrlt81ELG/NcxQ8Ttddv2W1VF27BB4xDSC4zFdzWcKH81jviNDQv/bs+WNcqi
-         lmDMLC903KAolT00l8YM5y23PuEBSzbOwU26vFsL8MmyMsTHGFducrsyKtOetv3cHcBg
-         fGajPWKbzdsdQ4xMJfSu2SD4dEDggoHDVqRIr9bLcLCwEmYN3KspE1NxURU9LpDuC+F0
-         0NDq3mZxquWwV8H4Y8XcIwZdCNgdCToWb9809x+iZ+vgh93hadry4g7WNQd16pVO8mQo
-         b5EQh8dSwIUR+4k1CuAVHhu3f3iWq+Do8tc09bkhLD/RgZA3N7ASOFi4x8AKECbJ1myS
-         c/Uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750114259; x=1750719059;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/eOumrIvQvMcIuJoDiv93cWolbr2s9Amklvv80KdrJs=;
-        b=JP6hFAjqb8xWxg49xRR8C/+VJ73MeGLi0fhFPqMi06BG3ShV3fcheGLXVwiuG/B6hs
-         UUIxAXYrcCG8uYYEvn47UC3KQJlSeao/+b/lG7s9xcWYlduGnk2NpraQrCjwo8Han32u
-         i647slKJza7FbCJIyDkbDBxa4fZA56am2YvWe+i9gyUoGwWFXEtmGjeW+ji1da4/bNZM
-         lqacQGHK6U8ZD1hdKq6rfxEbFDYejfoKXA5Z7zOzptjZLwXyPkEsRdfEhnUwdkKXaYch
-         zxxBoL0RcjoiD9At+046THcGdpHZO2WgnFZ7QpBYgeQwIwT3PbWjkrkxfDPos/Jmt+Rn
-         ckWw==
-X-Gm-Message-State: AOJu0YzL4lDbplH0RII/DopMwq6BtAJHzFtv/m08CguhPT5toiBb/vI0
-	WlYfx3WM3lJ74wwioNrgWpOgc9/bf4Y4/MKgUzib3b7K+ShfgAmoh3IzrQsH8BMzFFf1Oj9tHtY
-	ulGZ59JUYa+Ipc+fyImUrD6w0OyePeJiFmEMmlx+NeVv81oU3Vqc8Bg==
-X-Gm-Gg: ASbGncuFXWWfYgIol9i6LHwC1Twq15VBzQZO5qBOMfirfZHfSHh/gxS4Hssvl+A2oVi
-	ujxjVBI2s2M+kURvR3l7pdscU3L6KkOORygH3a0PM4CJLUzYd1KgUtd4sVtDciOonA1beWrbHgY
-	ceVhVbx4jQ16HCIptvHIEIxRo4JW4wg+AMXmpxgsvdTsI=
-X-Google-Smtp-Source: AGHT+IH6K7b65SOcZ3UL42VzK0ycq2N+XTmuhVcIgFIlyY+zlqbt+r6MyEzGmQ316e0BK/kO1VFZytwdP/N5HYUDazs=
-X-Received: by 2002:a05:690c:7085:b0:711:33d3:92ed with SMTP id
- 00721157ae682-7117547e398mr138894287b3.38.1750114259284; Mon, 16 Jun 2025
- 15:50:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nN2JijGd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91DD7C4CEEA
+	for <linux-security-module@vger.kernel.org>; Mon, 16 Jun 2025 23:40:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750117234;
+	bh=Cqx2QT4ZsXirJdKTudVAIg2y346l5voOnlraoudOTRE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nN2JijGdICG4D30yTh75WwpCFspAXFhmHzeygUf3+yT6IJHRXz90uMCIHGSXkDqTX
+	 ZNiRh76K4uAvcbPrl6pzn4mVEjO+Ezo//gvc/0GjldZG0SfgbM8h7EY0t4hCrOO8vi
+	 o7G+TkxYAQ7SDYJEnUTxaNamxRlEuHULE9YUjfuDkS3LhdqSVTKxkghdZGm5ABhxVD
+	 IgRWfW4gI3U8xIm+b/cZFFeJnIr/0Q67mGMCcIFy3Ws/R3BMdFpCq/CT5YPNpdkB6G
+	 Kg0XHWWz9CSbgsaBXhHjAcpBAuE+k83ekKS9k84r0GPorgKnZf4nsjxGg9qOkluQAF
+	 4egNYhPhAPBjg==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so8709609a12.3
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Jun 2025 16:40:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXvcjXQY+gV7mnJhyRMLQ//C4ALiQYhwNNbGu1acRJTXPnwwjB5Y+4ByaJZrv0iwDymScj/MjePrFuqYCL7aGgXP5qHWgI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0ygIvD/Yl1w3wzylN5ROcS5hCsgpdRMsUOa2w668CPSgqw6Lf
+	iUXvM2VtEjRuH+NAiaWm/aiK5nb6AttqjhUaCuln155WDXXfEICByyUPOwRcT2tyoTrql8GTUrb
+	Oo3UgfqRnbosTja2YyOPMqjrXU9hw74AYVQsi3NiH
+X-Google-Smtp-Source: AGHT+IEDKpjHo/Gbzqa2z+WMURU979MQvH4IQ1L/if+Wo9grOi1yttcHgKXO9kDbkcFfKraMC00uUsb7OCjsl0FGxsY=
+X-Received: by 2002:a05:6402:d0e:b0:602:36ce:d0e7 with SMTP id
+ 4fb4d7f45d1cf-608d08658cemr10162958a12.14.1750117233186; Mon, 16 Jun 2025
+ 16:40:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhS9P-fgWac_sJ_dq6_AQf76RGiqLAmOFnR_4NZ83KQogw@mail.gmail.com>
- <CAHC9VhSae4Vhypwr+hkAvddQ5_DQ90-jaS+pWPqJwPjk_dzMZg@mail.gmail.com>
-In-Reply-To: <CAHC9VhSae4Vhypwr+hkAvddQ5_DQ90-jaS+pWPqJwPjk_dzMZg@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 16 Jun 2025 18:50:48 -0400
-X-Gm-Features: AX0GCFsxmqLGPd1Dwp438v3XRjCA8HQII6EN0vJI_Uc-Mpd9DAorAZ5Dqh4hgW4
-Message-ID: <CAHC9VhQn-HVuqn9UWVnb17VOGrYsNsqjCvqd2OEOi7=YQReCUA@mail.gmail.com>
-Subject: Re: ANN: LSM and SELinux trees to rebase to v6.16-rc2 next week
-To: linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-2-kpsingh@kernel.org>
+ <20250612190739.GC1283@sol>
+In-Reply-To: <20250612190739.GC1283@sol>
+From: KP Singh <kpsingh@kernel.org>
+Date: Tue, 17 Jun 2025 01:40:22 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ5NbpTjwtWKx6ehqy7wyENovcFQVQqjO0-m9XoAJP=-nw@mail.gmail.com>
+X-Gm-Features: AX0GCFtvAwFa-JdmxRCygpF_xI6vbGUfQT6VZZXGn3k-VkViBMQLjbSQDgnQcXg
+Message-ID: <CACYkzJ5NbpTjwtWKx6ehqy7wyENovcFQVQqjO0-m9XoAJP=-nw@mail.gmail.com>
+Subject: Re: [PATCH 01/12] bpf: Implement an internal helper for SHA256 hashing
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 11, 2025 at 12:45=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
-> On Wed, Jun 11, 2025 at 12:45=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
-> >
-> > Hi all,
-> >
-> > In order to pickup an xattr fix, link below, in the LSM and SELinux
-> > trees, I'll be rebasing the lsm/dev and selinux/dev trees next week
-> > once v6.16-rc2 is released.  Currently each tree only has one trivial
-> > patch in their respective dev branches so the rebase is expected to be
-> > trivial.
+On Thu, Jun 12, 2025 at 9:08=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> =
+wrote:
 >
-> ... here is the link I forgot to include:
+[...]
 >
-> https://lore.kernel.org/selinux/20250605164852.2016-1-stephen.smalley.wor=
-k@gmail.com/
+> You're looking for sha256() from <crypto/sha2.h>.  Just use that instead.
 
-Unfortunately the VFS folks did not send that patch up for v6.16-rc2
-as originally planned, but it was sent out and merged into Linus' tree
-today.  Considering the importance of the patch for testing/CI, and
-the desire to delay a of rebase the LSM and SELinux trees to
-v6.16-rc3, I've rebased both trees to commit fe78e02600f8 ("Merge tag
-'vfs-6.16-rc3.fixes' of
-git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs"), which is two
-commits past the v6.16-rc2 tag and contains the xattr patch mentioned
-last week.
+I did look at it but my understanding is that it will always use the
+non-accelerated version and in theory the program can be megabytes in
+size, so might be worth using the accelerated crypto API. What do you
+think?
 
-Unfortunately, this does mean that the lsm/dev and selinux/dev
-branches are not based on a v6.16-rcX tag, but with everything
-considered, I believe the exception made sense.  If anyone has any
-concerns or questions, let me know.
+- KP
 
---=20
-paul-moore.com
+>
+> You'll just need to select CRYPTO_LIB_SHA256.
+>
+> - Eric
