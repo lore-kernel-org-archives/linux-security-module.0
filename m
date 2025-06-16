@@ -1,123 +1,142 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AF2207A0C;
-	Mon, 16 Jun 2025 20:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B29211A3C
+	for <linux-security-module@vger.kernel.org>; Mon, 16 Jun 2025 20:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750105840; cv=none; b=ucP5E70R0U3Sp/DQo9t0KHHVTZOO29IYW8HhY9KhjhUxrkfYUOdG2x6OY7qsMtZEND/zmhktfDivDmI0jbCwjVv1a/oVZRMeIeO7fVUJY4c7LuzVkNGWpHRvIU6maAmUSPGW5hqQ7gd8uF/SKafYUk+77Jupak1rv45Skq5mrPk=
+	t=1750107294; cv=none; b=X6e7znwtgg5bCL+0ScK9FhlSyp73fmXuSI3dBg6Umv1qDf1mV3HH06FLbH4uujtURZ8E/vEY/zKcopEg0OpXnkH0qoJvjXQP69GP37FFYmSlwQFzytD/jJAMDfGx2AdHYNQ7SYEmFW3gI6jbtjpvvO5X8tl4x9Lol0hRBpnol7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750105840; c=relaxed/simple;
-	bh=hamgTHtQphfJLg+71cqSsH6LRWS1AgeHRNqRdZHuBZY=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=mA+1mS5bOXftVjqqC/uRe+0FeeYVYgOOfARDzlRjtVtj7HrrFi1DfGxh91mQttsqsepS207IXV8HNtgW3UFQhYgX/P5iHRKlzK/BGH7ifmI1BFqkf18yHTIC6gKkgJo5b7nHrg3CwxbQD5nwyeVq4Zh1UcPSra1uxgNW4dQzak8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GdNnEmI6; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1750107294; c=relaxed/simple;
+	bh=X2pSs0C3diN4/CYI1z3qmfpbrRBX4z7sKZPJQQfItaU=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=BFd6YLCsIeSFHpoJEQhzd4UsS6TK1XFzcKZtv2HGuBECQgEg+6q/TdaHlkLcr458b6YdihUNLINXg9LL+Qnh+ODXp5FNjlo6JWbxABKyLZ3qjg3w8NF4BdIh+IvofPI0sBEQMrc8kCx2YntthruVWDYenfHxe+4Znxib2uQrDYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=C/sfawuN; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GdNnEmI6"
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55GErUol009585;
-	Mon, 16 Jun 2025 20:30:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=GNzNeE
-	Bm+3DzC4Zr9XQJpngwrFW2dVlrFN3SOymuvLU=; b=GdNnEmI6smwbrBlQELGdK9
-	HFDgvBvtudUFiz+42H639vtCEnnjQy8k/hBnRMe87jezx3olvu/lbW2Iz5XkdHKN
-	FA7+Tt2OaITFj8GhJY37eSbPvwvn42lIAeZtBlg4agpycXyKAkpqPlJvM11pYSKR
-	y9m5TMLbata7pBeV6EHfSQPvQy8S9CL0NxRCY7C5F+SZI2wm1sBU/7gCztoxYyuL
-	146tlJF8KyT29fWURqJRE6d7hCB97J7Bc247uBGwJm6mNwl4KdKmFSIrY5e3jyBH
-	qixBNd+1bRhM8gg+PvKMphw3wro0MO4sfUUtnTl+Jy91QchympJM75RwbUzgyqJA
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4790r1usq7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Jun 2025 20:30:09 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55GH1hIe005490;
-	Mon, 16 Jun 2025 20:30:08 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 479mwkytv2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Jun 2025 20:30:08 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55GKU7T266716102
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Jun 2025 20:30:07 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 96C4B5805A;
-	Mon, 16 Jun 2025 20:30:07 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D9F0B58054;
-	Mon, 16 Jun 2025 20:30:05 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.36.235])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 16 Jun 2025 20:30:05 +0000 (GMT)
-Message-ID: <0e70574bfae43ce939d67e89c858f303ae7ac204.camel@linux.ibm.com>
-Subject: Re: [RFC] Keyrings: How to make them more useful
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        Jarkko
- Sakkinen <jarkko@kernel.org>, Steve French <sfrench@samba.org>,
-        Chuck Lever
- <chuck.lever@oracle.com>
-Cc: Paulo Alcantara <pc@manguebit.org>,
-        Herbert Xu
- <herbert@gondor.apana.org.au>,
-        Jeffrey Altman <jaltman@auristor.com>, hch@infradead.org,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <462886.1749731810@warthog.procyon.org.uk>
-References: <462886.1749731810@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 16 Jun 2025 16:30:05 -0400
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="C/sfawuN"
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7d38ddc198eso551019685a.1
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Jun 2025 13:54:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1750107291; x=1750712091; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dRiTjLRwP8mNs38+mxGVbvKyz+mUaqj8oEBwJ01ezWs=;
+        b=C/sfawuNBOl7I0AtgN0u1S0TkyesKp3oqhQRNKgL7S/lz+POYkm8hc44ws4kqqpZx1
+         1grXg82XNhVsG8PCnCeyUT5/ye+qDkx5iw6ExgyxzF7o443+xg9UANm3V4AJiHsWd7mc
+         0WeTRA2Kahkx5pRgwdC6+Ufl9kAlfKSrOnQRx4xtm+HlvTgl8B1p1BMQSUUpyzW4Ojeb
+         Sjj+HikY0AxQTj/d4Jlvr5HJc4Fa1PJPYYDrq70eQ8rQaagNMCb8f6ZsSMgplaLBnJDa
+         rTalBAAg4UE4NJXX9BJZ8ZajZkzqTLc2T6IaOVvbE3CMncS64QSeRhFbshYJEe/Y95i0
+         seKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750107291; x=1750712091;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dRiTjLRwP8mNs38+mxGVbvKyz+mUaqj8oEBwJ01ezWs=;
+        b=Sa42YWC/9Fkmxf1gb13TGjpNdU9PhiVnw+kH/tVGU+PnPSYNmTdzGrieEtH8O0XxRQ
+         KJpln2/A4FzA5MOkgZQJRE+s/+ij9ztE5ORGgWqTqi0MNucYgQotIF8H9tyBqSQoT6Np
+         u5FUplceDbdV40qtuzZAxf+Zk9caB0zbCD5IRhHjZ9FSPZLY8U1F4JmH/D4OWaNbuijf
+         /d315LlyPU0CfBu1C13zamsC3WLw0GndDuBopluAKYPIPSG5OgO3nWr1MIsiVf1E7vsJ
+         P8scmnf+HbjjWjCyV7zym6ZIP3btTew5tYkAc+NOeww2Z8V21T53iCGcDzEyitD+dGY8
+         Uwtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVj380T3pMnc3ZxMpiKgN4k1n9G4s7yGhnJxYrBgN3El0RI2Edpis9IpIM+w+E/F/bFjJxX9ZraZze69Kq2dh0RqXrBUQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVhB3JJzujEQC8yR1+/W720SaMVGsBwBNVJHNxJ4jAGm6/1HCi
+	gxzPzVUxs5JGGASAxIGTt5tHVEqhz2gvOKCEsmmqQxXeZcVevs7vufVGUeFA2LS1Tw==
+X-Gm-Gg: ASbGncsqTmGD1dUuweRHs6qvfvC1z6MLUdvgM8kMrLGvteUTArLywDqoR9BiqCTZTz8
+	lNllJX+untv87vefcrPKiUlBqlqplhsTP85+tA+P9gqHUZ0sjn5+m6YlCznzIb501nsQcxZaSK6
+	PdGabrIp1+l7ky7PGFLAcMCO+JOXtXebOtP+2Cv3NejaLuK26LYbA2ZIgia8sN5Vea6PXv8wYmV
+	cI2+FMFQQ6/v54eUVp8FiIFyLGZ1S3bmdtFir48BZeQToe3/blK7qjN1X4BPH60vVOf/UmYRBUs
+	Bhfob/adYRaCfxBe1qK/Kz4CKRV2+YvrJi9l1IbntE963LhyBG4JoxYEJ/t/EOtcYj4UZhs/EQI
+	1NkB7edcKGjcfDpHchkvQor/tjOMX0Mp8eQYkj8Q2Ag==
+X-Google-Smtp-Source: AGHT+IHy8NfV/ifN7iD3vcgxXUiPWI4gYwnzg71q0uhFQn8iB4iMvSADwxPFz9kofNSVBcfX1gHoLw==
+X-Received: by 2002:a05:620a:4883:b0:7d2:139b:a994 with SMTP id af79cd13be357-7d3c6ce1169mr1509959185a.34.1750107291067;
+        Mon, 16 Jun 2025 13:54:51 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7d3b8dc92e8sm572879285a.5.2025.06.16.13.54.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 13:54:50 -0700 (PDT)
+Date: Mon, 16 Jun 2025 16:54:50 -0400
+Message-ID: <b6295394c101221e5a4aacd0abf021ce@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: wXse2RC_vQ4JRRGq0lWq-Sdm9JDEdfIn
-X-Proofpoint-ORIG-GUID: wXse2RC_vQ4JRRGq0lWq-Sdm9JDEdfIn
-X-Authority-Analysis: v=2.4 cv=AqTu3P9P c=1 sm=1 tr=0 ts=68507ed1 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=JoNQkPbLKCQ6XZtbux0A:9 a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDE0MCBTYWx0ZWRfX8/cI4/OlrSm1 rTcMmcQSkT8bXAKuvP126Suxa2KoCUma8s02UNrUz3zZlyCMQ6ud9aqKLBUY503LhgsjNJmWAb5 saB9BvFDbbZ73yFlY7B6+2MC/ALyGCllRpPkp2jgLPySBegRPYR4oVrkiQPQk74b6wLB2keWBjM
- +UXEUgejZPd+ToJvVgJ28UPYc80VOc2FiXWsLECTwVuKjwQXTQr6U3UXN9IkUEaZB+zykhiLQyh hm+oRUPk/3K9ribP3YyAFjxcFAjSigrznSnSl1a3Toov0xOPCfoiT7z2LYuhefkVEF/yoRNiqe5 jlGYDjbU+a6jVhOKqrons1sJzGL8iTcb4HJ+dWayPoPUmxF3aahpIW1+P3bgA49mM8iaU6J5Rt4
- mLmZwuf4boQZ/HmZV4rcPzdo3dYbg8rnnFhF5miWYZu9nXKmE4jQwwRgyxM3XK5xDiuuLpgr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-16_10,2025-06-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- lowpriorityscore=0 suspectscore=0 adultscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 mlxlogscore=768 mlxscore=0 spamscore=0
- bulkscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506160140
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250616_1212/pstg-lib:20250616_1001/pstg-pwork:20250616_1212
+From: Paul Moore <paul@paul-moore.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, eparis@redhat.com, linux-security-module@vger.kernel.org, audit@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] LSM: security_lsmblob_to_secctx module selection
+References: <20250607005134.10488-3-casey@schaufler-ca.com>
+In-Reply-To: <20250607005134.10488-3-casey@schaufler-ca.com>
 
-On Thu, 2025-06-12 at 13:36 +0100, David Howells wrote:
+On Jun  6, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> 
+> Add a parameter lsmid to security_lsmblob_to_secctx() to identify which
+> of the security modules that may be active should provide the security
+> context. If the value of lsmid is LSM_ID_UNDEF the first LSM providing
+> a hook is used. security_secid_to_secctx() is unchanged, and will
+> always report the first LSM providing a hook.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  include/linux/security.h     |  6 ++++--
+>  kernel/audit.c               |  4 ++--
+>  kernel/auditsc.c             |  8 +++++---
+>  net/netlabel/netlabel_user.c |  3 ++-
+>  security/security.c          | 13 +++++++++++--
+>  5 files changed, 24 insertions(+), 10 deletions(-)
 
-[ ...]
+...
 
->  (4) I think the keyring ACLs idea need to be revived.  We have a whole b=
-unch
->      of different keyrings, each with a specific 'domain' of usage for th=
-e
->      keys contained therein for checking signatures on things.  Can we re=
-duce
->      this to one keyring and use ACLs to declare the specific purposes fo=
-r
->      which a key may be used or the specific tasks that may use it?  Use
->      special subject IDs (ie. not simply UIDs/GIDs) to mark this.
+> diff --git a/security/security.c b/security/security.c
+> index 2b9dde02f4de..306860434200 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -3774,6 +3774,7 @@ EXPORT_SYMBOL(security_ismaclabel);
+>   * security_secid_to_secctx() - Convert a secid to a secctx
+>   * @secid: secid
+>   * @cp: the LSM context
+> + * @lsmid: which security module to report
+>   *
+>   * Convert secid to security context.  If @cp is NULL the length of the
+>   * result will be returned, but no data will be returned.  This
 
-David, which keyrings are you referring to?  What do you mean by 'domain' o=
-f
-usage?  At what level of granularity are you thinking of?  This needs to be
-describe in more detail.
+You're updating the comment block for the wrong function.
 
-thanks,
+> @@ -3800,9 +3801,17 @@ EXPORT_SYMBOL(security_secid_to_secctx);
+>   *
+>   * Return: Return length of data on success, error on failure.
+>   */
 
-Mimi
+Since you need to update the patch to fix the problem above, it would
+probably be a good thing to explain the LSM_ID_UNDEF handling in the
+function's comment block as you did in the commit description.
+
+> -int security_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp)
+> +int security_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp,
+> +			       int lsmid)
+>  {
+> -	return call_int_hook(lsmprop_to_secctx, prop, cp);
+> +	struct lsm_static_call *scall;
+> +
+> +	lsm_for_each_hook(scall, lsmprop_to_secctx) {
+> +		if (lsmid != LSM_ID_UNDEF && lsmid != scall->hl->lsmid->id)
+> +			continue;
+> +		return scall->hl->hook.lsmprop_to_secctx(prop, cp);
+> +	}
+> +	return LSM_RET_DEFAULT(lsmprop_to_secctx);
+>  }
+>  EXPORT_SYMBOL(security_lsmprop_to_secctx);
+>  
+> -- 
+> 2.47.0
+
+--
+paul-moore.com
