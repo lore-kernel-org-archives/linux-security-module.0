@@ -1,148 +1,108 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+Received: from sonic306-28.consmr.mail.ne1.yahoo.com (sonic306-28.consmr.mail.ne1.yahoo.com [66.163.189.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EBA23B634
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Jun 2025 21:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C62C1F1315
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Jun 2025 21:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750194272; cv=none; b=AmfqFXIlu3ylHmDRGMDvo6G50oQlv2/tOlhg5smCLARAsVFBaa1qht2Tfi73ZrW5UJiz/HFylwOhql+fH7DpLgdZwCkAZ5z9fotIEStEFRdqjMW+DbJ0Gfkhe0Wu4jWm9chyAMnqGdm13BUfUctrp3e9lcWGjPd4dgPZg7OuiSU=
+	t=1750194685; cv=none; b=ug0TYa17CReUdY+frLDSC6nmISjC3+Aw0rcpbqA5q2qQInxasrWLUHkyW4YfVHokh3XpAh3Nu0FXpp32JD+Fcl3aN+kJ39SHuWLlepZSeTm4Zet0G0MkMS8JZjjswzZ88zxU5GTeMD/rCEIwRcOD1mNwH13z+ImolwderhRZ9EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750194272; c=relaxed/simple;
-	bh=G7EyBO9aaixvVybf61PXE6lTfXuLk1htvEcQFvTJAzM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bw7hD0/EPPpHiwH3Ak7ZHiElObpfmid4Rdsd3d/UW2VthNUCHKsMhKSX3NoxBvU0YLr1nh3k/KOZFKdzF6I1ZTK1dABKkiuF6jOuiPmeeNUH86q0LtYOcByMRdSGmGn8zX6NpChYfrOr/D1eZtHz8Od7KseeCpV/4N6LCSvwuWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=d8kRfGIp; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1750194685; c=relaxed/simple;
+	bh=tCT/IkQxcE0Vbq14CwG/Hp5G6xxf/831Jyydl3V67Zw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=nLcCmiSf3d4T3UF1G0OZMlLoCHl5ZANaJ5t94YM+hc/dOHnRuhtbt4GZ48PtloBMJeOMAZ0jEDU26ZtB9JJZvLFxm7GLztakRV34ELKXZX6/8J1e/brh/9ceA94feQsbXNM4KnapeGNevZiIVwZ8z+xZ7iDcB512FYYKIbojagQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=bjAq5Mw4; arc=none smtp.client-ip=66.163.189.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="d8kRfGIp"
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-71101668dedso53966217b3.1
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Jun 2025 14:04:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1750194270; x=1750799070; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CLSaH5FJ0osFIVIC7b0ua1GAmBIi8+s8Y1MlWceWV4Y=;
-        b=d8kRfGIp3RdQR+cjCI8hG3Oau0KjjVm2IcPrRSLhktOd4p0gxHWAu/iYgTGn/lY8Mo
-         pT7ieg3bOESqn25Fh/zzwEZ9QmOakDGGm0qEZGpgpU1V/IYtWBFU73Ac0KkK+5bzqcMT
-         CPJR+b4xJ45cwPnsuvr+cL+PHCKal30Y0O8DmhFeF4nTjm7lPtZHwl5DC+e8nmdHcN4X
-         H6EhKQm728EDGDFgwr1vMMDqD9w+O9VrMhjUbPbXAInmC6fNLi9FbUgJzQtNIetWKiJA
-         52amJ3mIrdqyz7Sq9VjwVWmRk4Z/knaZbtwIqKWIodpZVD0IIzoTGwbSSr9R6hZJFVnL
-         YFqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750194270; x=1750799070;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CLSaH5FJ0osFIVIC7b0ua1GAmBIi8+s8Y1MlWceWV4Y=;
-        b=Mdvq3pei1qq3SF/MLyEoMjeTIFxE9FNQyr04wVWjzG6K4D9vc7oOA8I+mJTssRsB/2
-         S9gI4MEFklh3Jwg64DA8zf8MahgGjU2chrOwDl9zmGT2LyhVF5Fwe8iZxWxX4w1L1hQE
-         v3kgttZIUE2ydCnwN1Xlj6UDFBBCsIy11v9lPoSgEB6nVGtVCDwTt+qDWoRabw1Ssa3n
-         TqlwOBy2r/gZnl1JPa+f3bi07mKOClEq/uIrb/UZohMD2KaSYCLrMQswlr0qk3RrlyfS
-         jBO326zwv6Gs1LGWHQyyE3gKhf/s6GKhL3lxfa8ojTt18+0v18twijaOf1ChnWL1xfYj
-         /WpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUodEQP0RLBnmduLf0z+pxvERozWeM7AvqMMQI6D9qb0J239wIh9TFhjjxdrY08z5M1HPUjWB6iS/tmuNFokrJjyvmLdC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+1dl1SJongan8+LBDHm4nkM592yZra4wdaS1WCmoawM8s3btX
-	dKlYFPJwqKR3lcf+57A4Gvjd2zYjtaZsP15l9gXdvnVPta4V7yJVUAA9W2r5fq5SQQc7fl88Gdq
-	VoM0bk2HCPUpbXwK2kF2AMMahhKxOow0wQeW912/5
-X-Gm-Gg: ASbGnctnGDgFeGlVx84U7yXCZFBH+hbg+b67ulAse6lY6JDeFH7+i4eOHWExFknaGvi
-	Z0UKtigjRQJucpNWVE76hLe/M6E0oxnuWTfWabBu5H9z6l5fpap5fAAUMzpcI2u65FePuyoXF8o
-	L5kVQTm3kHDjyPMrWDvQ9zKlK9kOJOmKe9kh0QZBm54yY=
-X-Google-Smtp-Source: AGHT+IF1EZ1a0hQWE4asfB5JT5FSJBolOr0rcgGVLC/42lBKbzDGscabkq8Ij553a+7rnbN0R+EVacrmZkz63U4IiPM=
-X-Received: by 2002:a05:690c:6:b0:70b:6651:b3e2 with SMTP id
- 00721157ae682-71175384ed3mr212955347b3.6.1750194269666; Tue, 17 Jun 2025
- 14:04:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="bjAq5Mw4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1750194683; bh=AK3vqdHMB3C88L5thv0zFgtAigMgw0Q4QfxeUz6vjpE=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=bjAq5Mw4GEY5Xkf5lLtJ4cSlTsCGfEtX80EBdD6QXKgM5mDAUf8DQlE11AR/bGYw4HVEuhmvWgm/EUaCiDJas5nx1KbNyerPt8s7Rgx1W84H923b/ihuA3sKaSOpS75ATGFMjy55bn+1ctc1PTT0PYfiAuGdz/plIkebVrF7Bb5fqYWJ4mTyz3irAmwVvuKCH9o7rdyM2QZ2Sk5qyUcftXZ8moicUwOp9iuA/bmQJy98ZtuiZkSOxqjx3SDPK4rl7uXg/kWgtkoxxDw3xoQAPrq+odxhTHQ17HN4Wt7H2h52TEvX5xumJduSBsjd2otWGQ1U88eydUC+QWEa/qcwsQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1750194683; bh=tkoa6uhUfLc33pFa+O7pJ0RZpyinDDIiTNSYDFRzr3I=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=ha2dU/yGM3YhhKRbzmYoVkEto5gVk7tGOL4Fem/96yvUx+y8BuglKq/uUPfPbbvouOhLFh5KJ/O2ptLSBodaZkJ1s49zYt/FhG3qF+rnArtK2xSa55GhR/Zq0ob1zTQfeqjsaAO/hDYuaWsbnz6RD+HysygkrzpK1euhCB1unFD5lQ6muWx6BlPQ9BiZMJQXz1gHhlbhZ0LOwJD0GUpMUCdmpQvajS5OXiJQtxo4Wc74+V0MrXd0bUtKgxTxI6DktqnF1YLCH9qPrnrQqzEIS/BX1lg1pVBIF20msdXpKHd7a9/x5ofXA6/Rdi4nSGNHRiTJbEcwPwcc49ZOHbPyCw==
+X-YMail-OSG: _hgOV7kVM1n4ZMKNDdy4PekzRCpTxDP9kddLdxBfz_qoLBkpRVTQxWTTc7adBQg
+ JSANU4Mq1AeCT7Pq.P.Oq1xmQ5osBNuXz3yAH2wtTwPt4O0OEVv7qJ83Er0e5FcWRsH4HKExPm4z
+ ikc1lhEaJjaXYWKMqa5stGcHPHLVun4IUHQZdS5FZWs3EGHPjpuSl.tLx64WylX2P6RBd1s0gNmK
+ 2dmisQu_arHAbxBz3MMMHdQWsyEn05wZIm4sCyukdceu2CD9BYCu3ks_5jt0HRO9jZkWF1mPMazQ
+ 3WM8ha.7b7FFJZ7b8dRq0NoJp4TiNix0VU.lpAMzyUKEQ4M.gtKCq2qnGX21ANMCLBBXa3mLjsQv
+ rLt3ulFnkNsykJCMxzHapi_tm2y.LYmSKBM1XnEEN.eS1_du2hnvk0X34wuOVpb8WGzvKqFkoXMb
+ 9p_fb_7L3HbOOi55kWS16FDV6w1NbCR2QaQyDG2PUjfkL_LXwlA2MlDuMOsmyclxlt7JlEPXa8JO
+ rkZ7v8A6nddkG7p6TNFPb0Ok0TPunTZCuW9tFER4_paFwRG3T76sL7f7FSYDw8NtkQ9SujzcN9lW
+ YzLZoiPsN_Zc9ujvcLaBA7.0.Qn72OtoJ8mapePAtesWmZWcm3pekz5MluyTI_q8G.TLJCUiWoeN
+ 9sBT1bHfHl7HxP74MEdXXl8NOuILcMMyLMDYB7FxH.ju3VHFVza_TWpG1dKKPBkJiz7RHoXLuJbU
+ HgtZduGxhNxbHn1lyCtQ2pznmkKwNps77.wn5efDXGNSyMY5.4GrcQjm.povo64ZpAg_iujvpbPt
+ T3JV4PnavJ2ben__G.6Xofcw3cPh6HqXYScTcxfMl4Rjsrh4bRvZrTh6Lit1vnozoOIfSicKxBnd
+ btoz55lDNPZshLiIfVEi1B1VT9RzQG_P6A4DRBC1TImRnOHPbsZQ4RFXAl9B2v1ToOiRVDRuM1u0
+ YsSgNxV7dePB4mJqN.1dUVP3w1wy2Zc5MmrtA35oCgpQYPl2lPRBtlO.hyvxe7VtVhVuUfw1.lIB
+ W0XbDAhYS5Yk1xgNB9mKqEgR0A.qgLT0sQVJB.Ng9dPNKw1VmbccoJhbji4RqxypHcVGy23Jn7aW
+ TbfW7xZOWVgf6NVG37hrS4KrrqjyE4_QwePWd20SJ4ryUdxxtaqMa.hkwjCeG9A0RXzsXif5wdgR
+ 8Wqo.TZLNeQhes2T4TTqJAbe_UK9zORGnEgaeOrUndQ9atrFi9tYCturZdvVFgL9yL03d8cVJubF
+ .GqVCTjZE4RG7oi1tKD3_CgDC3xL8SSzq2Uv6p.PqfWvWv4DJBiyxnkRtN4ZjIP5VVqdrhAoMgEl
+ nxSWtkDfgmbMOZ.oJbjqbfCHvIquxBknfapiUo149anlvpr3SQO0s87iXU6JBLHYIgDz5gyoz.mR
+ NyQ.teUdlb_ghkBm7w.hyUKXmS4PydTUOkUzQKAQeu.ApvxV_U3grkY2tg7s191vRsqWbZpmhq9L
+ uLS_52Z0cQK9Zwb.of7GjEAJXF5v_guITiUvBJRzow6LpIsEJM9xhVZZE_W5dWsf_PUMsaMZe_fj
+ a_ybaGis9WujqtMxrssOVXdzYPLmw8.PXBfWBoBc0vRiMAZtBIJDgb3D1zQ.99sLtkwHBX8uYCaK
+ JhvNC0KzbPgO4RahJfR4D3hmfpYuoXmYHftkJ4Z9Feb8L3ZfzhvonvG8BRRHnAWtxxK3u1hg5s6n
+ vywNEoNOuajKtigOwyI1jrELBzvFTdIVELm.V5SP0nIUbREk5znILTTXxq7Yvd4BVa6alTsZO8pu
+ 5MIXbDHr2PGL237sqn4rwFTfqRCl9.Zi5NydwvU8Cy2JCA0ieZt1gTaR97AaLEwU9Wq5WhiN2sBq
+ bEKH.AuPAIMDoUH4.MsKYdazp_2Y0ZrYK7qhD7sqdtEWUDG.1wmo0b4OhEUHilYg28j9MNETloRN
+ 1BARNFrn6UR_0KhAFE0dDhJwkpWdQ9pXYj86aehGzjNub9GxdXECB11b9zY8QoNjSpF5pxWm_HWK
+ x85ncHnnULOOugYJOUQXIs79WYbe1nwnVYd53gbpxKfZBIFDtC6mp.l9BsZ05XFYcUqb2HDjAOBi
+ lBgFFA6rL.68ImcUtPFIK9fpGVcYJfcIsoj_YcQpNQGxS2FypEsbe6Zf.qQiLcDt5KQ56HzOVQew
+ LbY24tDaeFZ0xRPaIDiCFu_kyD5o.goZb0yIoN1jzX_6HF4D6.rp0jnxMSrj16cRZWhvh.An.Jw3
+ Tu95kNjX704vnyMPKJxd40hcgomJcQTnIhxBa4TOYsLyGPKSxEPX4zHMXndL3FR.K35aWvdmaIEg
+ q7O9RFuEPihKTw2qEXmCM.A--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: bbaa3d12-d970-4f7f-8d3e-d76350235311
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Tue, 17 Jun 2025 21:11:23 +0000
+Received: by hermes--production-gq1-74d64bb7d7-f4j4n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5c2f63bee58180d330568dcd5f1b3323;
+          Tue, 17 Jun 2025 21:01:09 +0000 (UTC)
+From: Casey Schaufler <casey@schaufler-ca.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	eparis@redhat.com,
+	linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org,
+	serge@hallyn.com,
+	keescook@chromium.org,
+	john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com,
+	linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: [PATCH 0/3] LSM: Multiple LSM mount options
+Date: Tue, 17 Jun 2025 14:01:02 -0700
+Message-ID: <20250617210105.17479-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616172612.920438-1-kuni1840@gmail.com>
-In-Reply-To: <20250616172612.920438-1-kuni1840@gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 17 Jun 2025 17:04:18 -0400
-X-Gm-Features: Ac12FXxP97gXP9l2v6eRR4pipJgnyOXpsbqjly8R6nBKnPWsPTOXFXGZ5UfFv1c
-Message-ID: <CAHC9VhTPymjNwkz9FHFHQbbRMgjMQT80zj1aT+3CFDVY=Eo5wg@mail.gmail.com>
-Subject: Re: [PATCH v1 net] calipso: Fix null-ptr-deref in calipso_req_{set,del}attr().
-To: Kuniyuki Iwashima <kuni1840@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Huw Davies <huw@codeweavers.com>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, syzkaller <syzkaller@googlegroups.com>, 
-	John Cheung <john.cs.hey@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+References: <20250617210105.17479-1-casey.ref@schaufler-ca.com>
 
-On Mon, Jun 16, 2025 at 1:26=E2=80=AFPM Kuniyuki Iwashima <kuni1840@gmail.c=
-om> wrote:
->
-> From: Kuniyuki Iwashima <kuniyu@google.com>
->
-> syzkaller reported a null-ptr-deref in sock_omalloc() while allocating
-> a CALIPSO option.  [0]
->
-> The NULL is of struct sock, which was fetched by sk_to_full_sk() in
-> calipso_req_setattr().
->
-> Since commit a1a5344ddbe8 ("tcp: avoid two atomic ops for syncookies"),
-> reqsk->rsk_listener could be NULL when SYN Cookie is returned to its
-> client, as hinted by the leading SYN Cookie log.
->
-> Here are 3 options to fix the bug:
->
->   1) Return 0 in calipso_req_setattr()
->   2) Return an error in calipso_req_setattr()
->   3) Alaways set rsk_listener
->
-> 1) is no go as it bypasses LSM, but 2) effectively disables SYN Cookie
-> for CALIPSO.  3) is also no go as there have been many efforts to reduce
-> atomic ops and make TCP robust against DDoS.  See also commit 3b24d854cb3=
-5
-> ("tcp/dccp: do not touch listener sk_refcnt under synflood").
->
-> As of the blamed commit, SYN Cookie already did not need refcounting,
-> and no one has stumbled on the bug for 9 years, so no CALIPSO user will
-> care about SYN Cookie.
->
-> Let's return an error in calipso_req_setattr() and calipso_req_delattr()
-> in the SYN Cookie case.
+Linux Security Module (LSM) that support mount options, currently SELinux
+and Smack, allocate their own data for those options. This patch set
+moves the handling of mount option data out of the individual LSMs and
+into the LSM infrastructure. This allows for multiple LSMs to support
+mount options at the same time.
 
-I think that's reasonable, but I think it would be nice to have a
-quick comment right before the '!sk' checks to help people who may hit
-the CALIPSO/SYN-cookie issue in the future.  Maybe "/*
-tcp_syncookies=3D2 can result in sk =3D=3D NULL */" ?
+https://github.com/cschaufler/lsm-stacking#mount-opts-6.16-rc1
 
-> diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
-> index 62618a058b8f..e25ed02a54bf 100644
-> --- a/net/ipv6/calipso.c
-> +++ b/net/ipv6/calipso.c
-> @@ -1207,6 +1207,9 @@ static int calipso_req_setattr(struct request_sock =
-*req,
->         struct ipv6_opt_hdr *old, *new;
->         struct sock *sk =3D sk_to_full_sk(req_to_sk(req));
->
-> +       if (!sk)
-> +               return -ENOMEM;
-> +
->         if (req_inet->ipv6_opt && req_inet->ipv6_opt->hopopt)
->                 old =3D req_inet->ipv6_opt->hopopt;
->         else
-> @@ -1247,6 +1250,9 @@ static void calipso_req_delattr(struct request_sock=
- *req)
->         struct ipv6_txoptions *txopts;
->         struct sock *sk =3D sk_to_full_sk(req_to_sk(req));
->
-> +       if (!sk)
-> +               return;
-> +
->         if (!req_inet->ipv6_opt || !req_inet->ipv6_opt->hopopt)
->                 return;
->
-> --
-> 2.49.0
+Based on patches Paul Moore's LSM initialization patchset.
+https://lore.kernel.org/all/20250409185019.238841-31-paul@paul-moore.com/v3
 
---=20
-paul-moore.com
+Casey Schaufler (3):
+  LSM: Add mount opts blob size tracking
+  LSM: allocate mnt_opts blobs instead of module specific data
+  LSM: Infrastructure management of the mnt_opts security blob
+
+ include/linux/lsm_hooks.h  |  2 ++
+ security/lsm_init.c        |  2 ++
+ security/security.c        | 26 ++++++++++-----
+ security/selinux/hooks.c   | 65 +++++++++++++++++++++++++-------------
+ security/smack/smack_lsm.c | 62 +++++++++++++++++++++++++-----------
+ 5 files changed, 108 insertions(+), 49 deletions(-)
+
+-- 
+2.47.0
+
