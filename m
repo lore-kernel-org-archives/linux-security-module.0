@@ -1,154 +1,148 @@
-Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BD925486E
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Jun 2025 21:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EBA23B634
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Jun 2025 21:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750194085; cv=none; b=tiARp0EiZ61CRj15zhPsgS9C2lpvyKBmYIE3ic1fbWYK53qtt5g4XBvRBEOL3deErWWdXsob02diltZsPrba1rRmy0w1PiRU0B5otp5Dt5QwIgZO3bfyM23ogMjVA2Z4+oIzEoBw0ejs6AZphqRnykX9OOTzVOBDAt10uVh53Go=
+	t=1750194272; cv=none; b=AmfqFXIlu3ylHmDRGMDvo6G50oQlv2/tOlhg5smCLARAsVFBaa1qht2Tfi73ZrW5UJiz/HFylwOhql+fH7DpLgdZwCkAZ5z9fotIEStEFRdqjMW+DbJ0Gfkhe0Wu4jWm9chyAMnqGdm13BUfUctrp3e9lcWGjPd4dgPZg7OuiSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750194085; c=relaxed/simple;
-	bh=ghH64xmkgNd+dDopUniwnekT0RE9latD+FOfh10y87g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e5RhIs3wo0MvKjQ/IQ+6CdGe1RrnDQfv6sgevXqhwWvglsJGqujmlAJIiRcq57N72w5rw0GsAjtGgtN7jEGVcMV2C85Km/adBXI9F7r5mw+iTRnyF9H74r8RUOV7ti2ieCf/hQ7xwyg7vPA2/xt2mkG9ZCMaDGeGoXW6/E/NBaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=p/kyiD1W; arc=none smtp.client-ip=66.163.186.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1750194272; c=relaxed/simple;
+	bh=G7EyBO9aaixvVybf61PXE6lTfXuLk1htvEcQFvTJAzM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bw7hD0/EPPpHiwH3Ak7ZHiElObpfmid4Rdsd3d/UW2VthNUCHKsMhKSX3NoxBvU0YLr1nh3k/KOZFKdzF6I1ZTK1dABKkiuF6jOuiPmeeNUH86q0LtYOcByMRdSGmGn8zX6NpChYfrOr/D1eZtHz8Od7KseeCpV/4N6LCSvwuWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=d8kRfGIp; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="p/kyiD1W"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1750194075; bh=HWbDnsmfiSVNjE+s03/Jh+DgFFx34sqaBnVJGk10ek0=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=p/kyiD1W46HVYkxHIE8W/FQnqwdaBtkIMS7KTgZrYgrbX9X3fy/54vytpQA3Ae+GsqvfrAhBMbrvnq3A/+G4+yzODJpNzb9m2wICwF9oeLqxn2fup8wGMWQCo7TXdIFSpchjKPlKx3CvjEWGoW3leJUT0SEJgoPNt1CetnSQH67oW4WvK9zxsickd1iDEA2Uil7IWi25/BPUeeTwRgs+SBhE/aH60wKqSHujV4JcwPQKiPQQr+1Us5kq47TZn4VxTBrwMhW0QDpsmLmHGzEjC75WKy6q4yZ3j1jglXUPw/RAdrMzGDDWh59s0cDKsqZZaIWqqeDnxzWlK+kdrMP8mw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1750194075; bh=IuGIt9h3jLFnDCz699D8qip7p+A7PrMB7VqWRav1Vq3=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=l3AjtVzt2LclLG6KXoTolp23+Bv4LrlpdU4FDFeQIkFr51Ic/IyQUpsfmfo3fr/AVOaCDtn1urH2A8KY1qruapWFAdgB6j+uijetTIZ1shSB6QthFMk4uUgZj/foqx5B2WyPuPMXn/cQZjLYvh/XCYqjRX65OvKcGCBPv4SXFg8dNo1b7cBZuAPSjBJ9c/s8MXQEChwEx68saS3YzPGnBuWKkmp4U+i9kN8gZl3I/UAyoHJWPi+9KGS5+pedoj6bKlt+jGRNajBK+L8suRNrU76QFPjcFgBn4gtYW0UFgu0iG11qv4jOc1O0ZR0hMpysIFFsDD/nQCUi2Rt2k1yypA==
-X-YMail-OSG: aZOH5UgVM1mMDVdfiaoGo.3430_kscFtQlQGPcy6zuYh2egrJJKAcSjQEhCiXXu
- JZA7RyU65KSnKESgJup1Iu.FRjGPYJmLKu1sow3gwnV.Eo6AvZOZGekmiHXvUQSKQzEdrIN0yBUo
- rBWBwj7u5We0TSKB70i6B4BcIopCHAFoYNdeUC8Cabf.y4TeZJMoRET81jlT8PU1QhW5u_3qsOtP
- opVVuvNdAltsxiAuts3ZglwIwrZBJhlVfpfyP3f0piATqq1fHkQDc9.VkYQ6RUO_BaINvPaWMJLF
- k5gQ7_ifK3bMK386BceCw0s8gEJDvgNqPo0n.XedNqjlv24.R1gJKctusJEL5C6xzf2raMRV5WgU
- pczSa15xiTmAbY1V_L5jkdUG3y98e4W1PQ7ohefcm9kh_2H8x8xthQXbO6RiZf.MI8sbmmto2x3b
- Qg4prFULqARlJTZKhJCVO9..c35Ga9adqizJb7yGQUEk_yK9votHJbH6.N3QfirjvCo3KvflXufQ
- OHMdlb570X2kO1gw_y7hcGN6ZBtB1sIRiiX4sQ_chLoxfkl.4nNWWVQk5aZRHrD9qbU9_5BVZC8T
- uRF5G_agFdEW4s0oCsi3Dbxmnwqpv0pFKV4gX1HYZ6DCwkRFu6rlUxLevz_A0jww5pgBO_mDHyb_
- HuJHtaS4oK6kQ4G5D.dWqIHeB844EOkD7tvCbCPRB6F8ZZ08xL_eERpgsIJKUpNHYEXxLhWTzZQS
- 0974kUjpy23IzPVOvOSAJ6WRHc.7_KNu2HuqMf7oJP4_oRpHJkboJkibwqfB9k0S_RhSf36ev.ui
- 5hSaC_8zNow.idS6vy_IeOcpPJQNAuPzP_Yz9thJUGiGxii1m_CxXi_kbBeibQXww3vdc5ZNEiSX
- dkeqXB8O6ywThC.v0Rd8Oi9nbthm3lR1tUzghSH4MXkLxysYNRIgH1HXKgqI2k3XgWhu9zFkL1gN
- SLOvIN_kvEw_yNC_tPqctmDjGGGjCYTQWkjkGswdvjX_Cg8gkQTbuf3_syCteH.DIym.nVF5TevG
- Tzi50sbhkhU.u205KcyBGP2.S9l8MOGRjX3woxIG2ujRpyEhLWxfq_O5GQ0Oz1MnA4duf_DrRZrq
- K8_VL_y8BDgmVtPHH0dXKSCBR.d3LwC6EpoeEoASCxdCb19M4R_RavTLeehE46aEh_hkw1Ecb9Cq
- 4h33jFY8.qU2NPyuz_O1Q4GoobsyrfiUzS1VGbn4Ey_cBIv1iTwuNVnd5wTkdj3pXAvl8GrYISsh
- 19Y2du8hSMMU_9o.MtWqUz3NykqGjPkxFrnh5Gvfh1Htf_E9gcEuQ1JeUE95zsgkrSGVS3SZsWbf
- T4vaXlXdbUq2GdoQhbio00J35ZKResDuv0S6k.HJxviUFUpc0u08IpAW0E7HVZf6MbWXtAbVUssS
- MOjjunZFnPGtdhVjdRLyXo8ev9Ap9xqac6O.b0i7SzPWMz66OQVNFJ0MATxX1rbuxvVCtzI_OlFc
- Py_vQm3j2.KCv6HSexUbl80ct1LU7McLwnqJ_S2MFuHX9kEihhaWRuqKYhMF0sVSrVMpxkUxAX5a
- P8bczJYzf3EJVEU4ZpLHT9xS1aKl48GwfDz_GuBX0IpZ81qMpjGbTzq_j.sswZaMKXYZVGLWhbcl
- J.y2A2QYJmnhY17ksphbxTJ5AqBWEwZ0L_Xa6TCpjYBtZwrDlEEaE5f0LIzEUoF2kEuMMRX8gdUg
- 6ZOWehyee2eG.mfV3_ENiLqdOvO0LNaKckg8oHQpUIFqnTK1__OG4p.bVhXG.x_LQkWHuJCM_8H8
- JZD7wOWspbMrgrqJXpioD0h.3qdjZi67RSn4om2fG7gUNaLPmdxqGA2EtxhCzj27C48eK6zbAj0I
- arVzQZ7g0dPu1vj1htT7W.3ZMpFNeqD5RJiQ3uKyY1NOHFOLXLQ.vAzVoceCahmjxxKELQYXjViL
- XwN7no3YWAQ_QyoPFt3Xuy3kGysirk5cfzs8rBH3lT87Dk2ZCA.8NlNboRhZNwEF7XS7THb28v5U
- ANuG3bSxuKgWu3GaW6XcbmWVeOP9RIEjKNL7qknCM951CVRghji2LbjXPE3N8S35NXiPzPGzIbT2
- kU2KQ905jrzbQ_lXy_Y420hdaVHdlOssQZvPLyjwtJjXTx9UBet3sb59ua28EU7kzl3si9q1es9Y
- MgGXSZYMAsFhDsZd3pGchjtnCMQZwWKmFgl_cZE9HEs2yjZ2bqc_n6352AeqH4N8hipJ5AwN6iBh
- aHF7Dme_U1i16yN.HPaRbLOinilhMIOoZ9NKudkzz119UJGqxeibOTJQssWJmCjaKBfAgfExS1OL
- U14HOOC.264AGk64YL8dTl0keWA--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 9e07d5c4-3b5b-4029-b31f-209175d0a2ed
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Tue, 17 Jun 2025 21:01:15 +0000
-Received: by hermes--production-gq1-74d64bb7d7-f4j4n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5c2f63bee58180d330568dcd5f1b3323;
-          Tue, 17 Jun 2025 21:01:11 +0000 (UTC)
-From: Casey Schaufler <casey@schaufler-ca.com>
-To: casey@schaufler-ca.com,
-	paul@paul-moore.com,
-	eparis@redhat.com,
-	linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org,
-	serge@hallyn.com,
-	keescook@chromium.org,
-	john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com,
-	linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org
-Subject: [PATCH 1/3] LSM: Add mount opts blob size tracking
-Date: Tue, 17 Jun 2025 14:01:03 -0700
-Message-ID: <20250617210105.17479-2-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250617210105.17479-1-casey@schaufler-ca.com>
-References: <20250617210105.17479-1-casey@schaufler-ca.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="d8kRfGIp"
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-71101668dedso53966217b3.1
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Jun 2025 14:04:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1750194270; x=1750799070; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CLSaH5FJ0osFIVIC7b0ua1GAmBIi8+s8Y1MlWceWV4Y=;
+        b=d8kRfGIp3RdQR+cjCI8hG3Oau0KjjVm2IcPrRSLhktOd4p0gxHWAu/iYgTGn/lY8Mo
+         pT7ieg3bOESqn25Fh/zzwEZ9QmOakDGGm0qEZGpgpU1V/IYtWBFU73Ac0KkK+5bzqcMT
+         CPJR+b4xJ45cwPnsuvr+cL+PHCKal30Y0O8DmhFeF4nTjm7lPtZHwl5DC+e8nmdHcN4X
+         H6EhKQm728EDGDFgwr1vMMDqD9w+O9VrMhjUbPbXAInmC6fNLi9FbUgJzQtNIetWKiJA
+         52amJ3mIrdqyz7Sq9VjwVWmRk4Z/knaZbtwIqKWIodpZVD0IIzoTGwbSSr9R6hZJFVnL
+         YFqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750194270; x=1750799070;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CLSaH5FJ0osFIVIC7b0ua1GAmBIi8+s8Y1MlWceWV4Y=;
+        b=Mdvq3pei1qq3SF/MLyEoMjeTIFxE9FNQyr04wVWjzG6K4D9vc7oOA8I+mJTssRsB/2
+         S9gI4MEFklh3Jwg64DA8zf8MahgGjU2chrOwDl9zmGT2LyhVF5Fwe8iZxWxX4w1L1hQE
+         v3kgttZIUE2ydCnwN1Xlj6UDFBBCsIy11v9lPoSgEB6nVGtVCDwTt+qDWoRabw1Ssa3n
+         TqlwOBy2r/gZnl1JPa+f3bi07mKOClEq/uIrb/UZohMD2KaSYCLrMQswlr0qk3RrlyfS
+         jBO326zwv6Gs1LGWHQyyE3gKhf/s6GKhL3lxfa8ojTt18+0v18twijaOf1ChnWL1xfYj
+         /WpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUodEQP0RLBnmduLf0z+pxvERozWeM7AvqMMQI6D9qb0J239wIh9TFhjjxdrY08z5M1HPUjWB6iS/tmuNFokrJjyvmLdC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+1dl1SJongan8+LBDHm4nkM592yZra4wdaS1WCmoawM8s3btX
+	dKlYFPJwqKR3lcf+57A4Gvjd2zYjtaZsP15l9gXdvnVPta4V7yJVUAA9W2r5fq5SQQc7fl88Gdq
+	VoM0bk2HCPUpbXwK2kF2AMMahhKxOow0wQeW912/5
+X-Gm-Gg: ASbGnctnGDgFeGlVx84U7yXCZFBH+hbg+b67ulAse6lY6JDeFH7+i4eOHWExFknaGvi
+	Z0UKtigjRQJucpNWVE76hLe/M6E0oxnuWTfWabBu5H9z6l5fpap5fAAUMzpcI2u65FePuyoXF8o
+	L5kVQTm3kHDjyPMrWDvQ9zKlK9kOJOmKe9kh0QZBm54yY=
+X-Google-Smtp-Source: AGHT+IF1EZ1a0hQWE4asfB5JT5FSJBolOr0rcgGVLC/42lBKbzDGscabkq8Ij553a+7rnbN0R+EVacrmZkz63U4IiPM=
+X-Received: by 2002:a05:690c:6:b0:70b:6651:b3e2 with SMTP id
+ 00721157ae682-71175384ed3mr212955347b3.6.1750194269666; Tue, 17 Jun 2025
+ 14:04:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250616172612.920438-1-kuni1840@gmail.com>
+In-Reply-To: <20250616172612.920438-1-kuni1840@gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 17 Jun 2025 17:04:18 -0400
+X-Gm-Features: Ac12FXxP97gXP9l2v6eRR4pipJgnyOXpsbqjly8R6nBKnPWsPTOXFXGZ5UfFv1c
+Message-ID: <CAHC9VhTPymjNwkz9FHFHQbbRMgjMQT80zj1aT+3CFDVY=Eo5wg@mail.gmail.com>
+Subject: Re: [PATCH v1 net] calipso: Fix null-ptr-deref in calipso_req_{set,del}attr().
+To: Kuniyuki Iwashima <kuni1840@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Huw Davies <huw@codeweavers.com>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, syzkaller <syzkaller@googlegroups.com>, 
+	John Cheung <john.cs.hey@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add mount option data to the blob size accounting in anticipation
-of using a shared mnt_opts blob.
+On Mon, Jun 16, 2025 at 1:26=E2=80=AFPM Kuniyuki Iwashima <kuni1840@gmail.c=
+om> wrote:
+>
+> From: Kuniyuki Iwashima <kuniyu@google.com>
+>
+> syzkaller reported a null-ptr-deref in sock_omalloc() while allocating
+> a CALIPSO option.  [0]
+>
+> The NULL is of struct sock, which was fetched by sk_to_full_sk() in
+> calipso_req_setattr().
+>
+> Since commit a1a5344ddbe8 ("tcp: avoid two atomic ops for syncookies"),
+> reqsk->rsk_listener could be NULL when SYN Cookie is returned to its
+> client, as hinted by the leading SYN Cookie log.
+>
+> Here are 3 options to fix the bug:
+>
+>   1) Return 0 in calipso_req_setattr()
+>   2) Return an error in calipso_req_setattr()
+>   3) Alaways set rsk_listener
+>
+> 1) is no go as it bypasses LSM, but 2) effectively disables SYN Cookie
+> for CALIPSO.  3) is also no go as there have been many efforts to reduce
+> atomic ops and make TCP robust against DDoS.  See also commit 3b24d854cb3=
+5
+> ("tcp/dccp: do not touch listener sk_refcnt under synflood").
+>
+> As of the blamed commit, SYN Cookie already did not need refcounting,
+> and no one has stumbled on the bug for 9 years, so no CALIPSO user will
+> care about SYN Cookie.
+>
+> Let's return an error in calipso_req_setattr() and calipso_req_delattr()
+> in the SYN Cookie case.
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- include/linux/lsm_hooks.h  | 1 +
- security/lsm_init.c        | 2 ++
- security/selinux/hooks.c   | 1 +
- security/smack/smack_lsm.c | 1 +
- 4 files changed, 5 insertions(+)
+I think that's reasonable, but I think it would be nice to have a
+quick comment right before the '!sk' checks to help people who may hit
+the CALIPSO/SYN-cookie issue in the future.  Maybe "/*
+tcp_syncookies=3D2 can result in sk =3D=3D NULL */" ?
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 5bc144c5f685..9741c76e4654 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -122,6 +122,7 @@ struct lsm_blob_sizes {
- 	unsigned int lbs_xattr_count; /* num xattr slots in new_xattrs array */
- 	unsigned int lbs_tun_dev;
- 	unsigned int lbs_bdev;
-+	unsigned int lbs_mnt_opts;
- };
- 
- /*
-diff --git a/security/lsm_init.c b/security/lsm_init.c
-index c2ef4db055db..26c9bdd5f851 100644
---- a/security/lsm_init.c
-+++ b/security/lsm_init.c
-@@ -318,6 +318,7 @@ static void __init lsm_prep_single(struct lsm_info *lsm)
- 	lsm_blob_size_update(&blobs->lbs_xattr_count,
- 			     &blob_sizes.lbs_xattr_count);
- 	lsm_blob_size_update(&blobs->lbs_bdev, &blob_sizes.lbs_bdev);
-+	lsm_blob_size_update(&blobs->lbs_mnt_opts, &blob_sizes.lbs_mnt_opts);
- }
- 
- /**
-@@ -459,6 +460,7 @@ int __init security_init(void)
- 		lsm_pr("blob(tun_dev) size %d\n", blob_sizes.lbs_tun_dev);
- 		lsm_pr("blob(xattr) count %d\n", blob_sizes.lbs_xattr_count);
- 		lsm_pr("blob(bdev) size %d\n", blob_sizes.lbs_bdev);
-+		lsm_pr("blob(mnt_opts) size %d\n", blob_sizes.lbs_mnt_opts);
- 	}
- 
- 	if (blob_sizes.lbs_file)
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index b00c2627286a..88cd1d56081a 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7160,6 +7160,7 @@ struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
- 	.lbs_xattr_count = SELINUX_INODE_INIT_XATTRS,
- 	.lbs_tun_dev = sizeof(struct tun_security_struct),
- 	.lbs_ib = sizeof(struct ib_security_struct),
-+	.lbs_mnt_opts = sizeof(struct selinux_mnt_opts),
- };
- 
- #ifdef CONFIG_PERF_EVENTS
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 46ef5ece991c..44bd92410425 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -5030,6 +5030,7 @@ struct lsm_blob_sizes smack_blob_sizes __ro_after_init = {
- 	.lbs_sock = sizeof(struct socket_smack),
- 	.lbs_superblock = sizeof(struct superblock_smack),
- 	.lbs_xattr_count = SMACK_INODE_INIT_XATTRS,
-+	.lbs_mnt_opts = sizeof(struct smack_mnt_opts),
- };
- 
- static const struct lsm_id smack_lsmid = {
--- 
-2.47.0
+> diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
+> index 62618a058b8f..e25ed02a54bf 100644
+> --- a/net/ipv6/calipso.c
+> +++ b/net/ipv6/calipso.c
+> @@ -1207,6 +1207,9 @@ static int calipso_req_setattr(struct request_sock =
+*req,
+>         struct ipv6_opt_hdr *old, *new;
+>         struct sock *sk =3D sk_to_full_sk(req_to_sk(req));
+>
+> +       if (!sk)
+> +               return -ENOMEM;
+> +
+>         if (req_inet->ipv6_opt && req_inet->ipv6_opt->hopopt)
+>                 old =3D req_inet->ipv6_opt->hopopt;
+>         else
+> @@ -1247,6 +1250,9 @@ static void calipso_req_delattr(struct request_sock=
+ *req)
+>         struct ipv6_txoptions *txopts;
+>         struct sock *sk =3D sk_to_full_sk(req_to_sk(req));
+>
+> +       if (!sk)
+> +               return;
+> +
+>         if (!req_inet->ipv6_opt || !req_inet->ipv6_opt->hopopt)
+>                 return;
+>
+> --
+> 2.49.0
 
+--=20
+paul-moore.com
