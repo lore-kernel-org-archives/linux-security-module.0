@@ -1,101 +1,238 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E612EF9AB;
-	Tue, 17 Jun 2025 18:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B708F54
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Jun 2025 19:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750185779; cv=none; b=RoM0pFPGo9dKa7CYzkY4vlt3JDnoBqpnEmpXbhKuWVhKeobmlI8T4I1UQx8//gESpyVwV9eUAvP+dTQAuQ6D4WKeSfDxlzz7ID2M5UNXCz4jONW7Z2fCCCk6Qd0ksck9s3Cbd0gPitdCNIKwtmrzBKFLfGg1hPLofGTf9opuu04=
+	t=1750186943; cv=none; b=RGavsnsIGKvq1C4mdtBQnmD197DPimiHF+usg9ur9quEjBzoKwhoyxV0FBllPxtafGn/ToJx51pX/beGLZBgFe52l5S92qfCM4sbdeh1UhpYwNu+KMRVZ7jB2B4t3tA1AubSrwKP8W8cYFfqTVKO8BcrA6EVD81le32+awz9YQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750185779; c=relaxed/simple;
-	bh=HJpQeF1vW1yjrdQssOc5z3xBHR1I+8cAUCILHyaitNo=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=BODsEEsO3Yj2IDUSMjDQvrZYBM6vDJkd6ULLp0qj7VvZF8CwOXud2vd7fU8JMIMe9+qtuHS5AOdIOIJhibwn9xZ5Ka8FG9G2kWECASx407XrYc+VqDL8wrkvAdR+9ypwhL2mbeR6+y/0wK99VwVHw31xzjQQ/V8qxtYq14pV9ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tWU+Yr/W; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1750186943; c=relaxed/simple;
+	bh=UMPk5giedv4xmGKjV33kkxaEh12+9CWHj6DEwstgUok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R78w6qX+JusAIVGXNkH/7OJSzZlB5a0BtIIdn6KBetZvKRFPJAdUqKBGyvnG0SGOo5952yhL+HPFKCmO/dUzBL713EoIsQxAvC79uHq0CGlA9aLwcAf3lfm6LKN7KkJFngM/paF6UxQl7c718eYYNkP5NTwEx3J5dbYdbnRoYxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=1ZCV3LlK; arc=none smtp.client-ip=84.16.66.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tWU+Yr/W"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55HGKIcZ003387;
-	Tue, 17 Jun 2025 18:42:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=HJpQeF
-	1vW1yjrdQssOc5z3xBHR1I+8cAUCILHyaitNo=; b=tWU+Yr/WCmTlwZ2qspcnKH
-	CIRA1ziMdguUundU0v66gIkEeuOyTdBM5mcdKe0/Bs5D73SoKJGqSErwuyQ4y6Iw
-	ne+yG2ahCZCzdZcOv5in6reEH3gHbDmA4qjYtx0AljFgNrg7uxKJHMd7IG+6Vifp
-	XgE6oGIO3iA3VvbygiDNFWvVxd/JxajznvP8cNT1SMwO4oRu4hyYR7WeP7uIR9co
-	bUyd0+qPpjIBu5XOLStmP3yR34ZIJgehhqY1KlCRtni6ouT8foDsSg3T4vPXR0mD
-	lgwIAQUNOMPtSBrjfKO2pwcU6BShbz5W4o/Hy48hbKtYgHMsYDG+ZtcHQCU27jig
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4794qp94y9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Jun 2025 18:42:56 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55HFUNAZ000875;
-	Tue, 17 Jun 2025 18:42:56 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 479mdp50mu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Jun 2025 18:42:56 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55HIgtZk15008342
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 17 Jun 2025 18:42:55 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1D0D95805B;
-	Tue, 17 Jun 2025 18:42:55 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 86AAC5804B;
-	Tue, 17 Jun 2025 18:42:54 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.96.173])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 17 Jun 2025 18:42:54 +0000 (GMT)
-Message-ID: <6bac287bab8b64865393805523a561111718c632.camel@linux.ibm.com>
-Subject: Re: [PATCH 06/10] ima_fs: don't bother with removal of files in
- directory we'll be removing
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Al Viro <viro@zeniv.linux.org.uk>, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
-In-Reply-To: <20250612031154.2308915-6-viro@zeniv.linux.org.uk>
-References: <20250612030951.GC1647736@ZenIV>
-	 <20250612031154.2308915-1-viro@zeniv.linux.org.uk>
-	 <20250612031154.2308915-6-viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 17 Jun 2025 14:42:54 -0400
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="1ZCV3LlK"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bMGKD0SCHzjJP;
+	Tue, 17 Jun 2025 20:55:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1750186527;
+	bh=rp09GFFGVxRWmokMi3Vq/owOUFavi/lCsvsLc+2xcIM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1ZCV3LlKavGqvfnwNAL0jCKd7TuICz+Ih3SnqGLoJh+mbMUzGJhdFjLGWIAaPAexK
+	 BS2ZqP6QTC+sBEHFV3btClJIsx4srS7GwEwpTxOcxe6bzZ5355LGMYyudU140yctoO
+	 R2ygKYnbJ0HjV95o9YgrEv6g7CJ3ofnVcZqaKnRo=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bMGKC48wGzmm6;
+	Tue, 17 Jun 2025 20:55:27 +0200 (CEST)
+Date: Tue, 17 Jun 2025 20:55:26 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] landlock/id: Fix WARNING from kunit tests
+Message-ID: <20250617.Ahngeey8shuo@digikod.net>
+References: <73e28efc5b8cc394608b99d5bc2596ca917d7c4a.1750003733.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: cHmzsrHbGLGTPrMPufJsNu0nMblhhOel
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE3MDE0NiBTYWx0ZWRfX41/kmNb2LWHc LzdavrXrrOwFvRDziQX0Xu5OP52SUphRZaB0g1kILjcXWUnWW/YEbuCEFWaG8OwiHgyti5aj2tg 2ZyNdrzc/KcsYsTVswOebnFiBopttur9lxhV5FCOZse5355aVz2Q7O2KwKn++4GN7/fwI9XPTst
- k9bPv5V+A5iWtmv5iGahMsNnJ3UcQM50PWM7vxh4o/EaggHvRcqg3W/VbC+BxkESrQp2zqNnBtG Lp2n4djX3b+c86zmZP/JL6FBs3spfMjE3SfJrTW3xhatKbjP715h/iQUAIVuGvOZEYMF/N2H5i8 1YiCtahs0JJFDoHuKxk619lVwpjsqzereMtFlQ1POkfXPd12bBd3HPlU7Lj27K3AiCKdWljZN78
- hJwNOLpAFdBNJ0Hu6D5RmwDRMwjkoSMWH4CLjnL/QnZdH/ogXI9Vdj6y17YPDsUZxWfKT0Uv
-X-Authority-Analysis: v=2.4 cv=NYfm13D4 c=1 sm=1 tr=0 ts=6851b730 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=drOt6m5kAAAA:8 a=VnNF1IyMAAAA:8 a=aSVpHF6hEU9aBlr88qQA:9 a=QEXdDO2ut3YA:10
- a=RMMjzBEyIzXRtoq5n5K6:22
-X-Proofpoint-ORIG-GUID: cHmzsrHbGLGTPrMPufJsNu0nMblhhOel
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-17_08,2025-06-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- suspectscore=0 mlxlogscore=591 mlxscore=0 impostorscore=0 phishscore=0
- lowpriorityscore=0 clxscore=1015 spamscore=0 priorityscore=1501
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506170146
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <73e28efc5b8cc394608b99d5bc2596ca917d7c4a.1750003733.git.m@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On Thu, 2025-06-12 at 04:11 +0100, Al Viro wrote:
-> removal of parent takes all children out
->=20
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+On Sun, Jun 15, 2025 at 05:09:36PM +0100, Tingmao Wang wrote:
+> Looks like get_random_u8 returned 0 here.  Fix this by clamping it.
 
-Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+Goot catch, thanks!
 
+> 
+> (Validated by running the test in a for loop for 1000 times.  Note that
+> MAX is wrong as it is only supposed to be used for unchanging variables,
+> but the lowercase version is good here.)
+> 
+> 	[..]     ok 9 test_range2_rand1
+> 	[..]     ok 10 test_range2_rand2
+> 	[..]     ok 11 test_range2_rand15
+> 	[..] ------------[ cut here ]------------
+> 	[..] WARNING: CPU: 6 PID: 104 at security/landlock/id.c:99 test_range2_rand16 (security/landlock/id.c:99 (discriminator 1) security/landlock/id.c:234 (discriminator 1))
+> 	[..] Modules linked in:
+> 	[..] CPU: 6 UID: 0 PID: 104 Comm: kunit_try_catch Tainted: G                 N  6.16.0-rc1-dev-00001-g314a2f98b65f #1 PREEMPT(undef)
+> 	[..] Tainted: [N]=TEST
+> 	[..] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> 	[..] RIP: 0010:test_range2_rand16 (security/landlock/id.c:99 (discriminator 1) security/landlock/id.c:234 (discriminator 1))
+> 	[..] Code: 49 c7 c0 10 70 30 82 4c 89 ff 48 c7 c6 a0 63 1e 83 49 c7 45 a0 e0 63 1e 83 e8 3f 95 17 00 e9 1f ff ff ff 0f 0b e9 df fd ff ff <0f> 0b ba 01 00 00 00 e9 68 fe ff ff 49 89 45 a8 49 8d 4d a0 45 31
+> 	..
+> 	[..] RSP: 0000:ffff888104eb7c78 EFLAGS: 00010246
+> 	[..] RAX: 0000000000000000 RBX: 000000000870822c RCX: 0000000000000000
+> 	          ^^^^^^^^^^^^^^^^
+> 	[..]
+> 	[..] Call Trace:
+> 	[..]
+> 	[..] ---[ end trace 0000000000000000 ]---
+> 	[..]     ok 12 test_range2_rand16
+> 	[..] # landlock_id: pass:12 fail:0 skip:0 total:12
+> 	[..] # Totals: pass:12 fail:0 skip:0 total:12
+> 	[..] ok 1 landlock_id
+> 
+> Fixes: d9d2a68ed44b ("landlock: Add unique ID generator")
+> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> ---
+>  security/landlock/id.c | 69 +++++++++++++++++++++++++-----------------
+>  1 file changed, 42 insertions(+), 27 deletions(-)
+> 
+> diff --git a/security/landlock/id.c b/security/landlock/id.c
+> index 56f7cc0fc744..b02a7da2f15d 100644
+> --- a/security/landlock/id.c
+> +++ b/security/landlock/id.c
+> @@ -119,6 +119,12 @@ static u64 get_id_range(size_t number_of_ids, atomic64_t *const counter,
+>  
+>  #ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
+>  
+> +static u8 get_random_u8_positive(void)
+> +{
+> +	/* max evaluates its arguments once */
+> +	return max(1, get_random_u8());
+> +}
+> +
+>  static void test_range1_rand0(struct kunit *const test)
+>  {
+>  	atomic64_t counter;
+> @@ -127,9 +133,10 @@ static void test_range1_rand0(struct kunit *const test)
+>  	init = get_random_u32();
+>  	atomic64_set(&counter, init);
+>  	KUNIT_EXPECT_EQ(test, get_id_range(1, &counter, 0), init);
+> -	KUNIT_EXPECT_EQ(
+> -		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
+> -		init + 1);
+> +	KUNIT_EXPECT_EQ(test,
+> +			get_id_range(get_random_u8_positive(), &counter,
+> +				     get_random_u8()),
+> +			init + 1);
+>  }
+>  
+>  static void test_range1_rand1(struct kunit *const test)
+> @@ -140,9 +147,10 @@ static void test_range1_rand1(struct kunit *const test)
+>  	init = get_random_u32();
+>  	atomic64_set(&counter, init);
+>  	KUNIT_EXPECT_EQ(test, get_id_range(1, &counter, 1), init);
+> -	KUNIT_EXPECT_EQ(
+> -		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
+> -		init + 2);
+> +	KUNIT_EXPECT_EQ(test,
+> +			get_id_range(get_random_u8_positive(), &counter,
+> +				     get_random_u8()),
+> +			init + 2);
+>  }
+>  
+>  static void test_range1_rand15(struct kunit *const test)
+> @@ -153,9 +161,10 @@ static void test_range1_rand15(struct kunit *const test)
+>  	init = get_random_u32();
+>  	atomic64_set(&counter, init);
+>  	KUNIT_EXPECT_EQ(test, get_id_range(1, &counter, 15), init);
+> -	KUNIT_EXPECT_EQ(
+> -		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
+> -		init + 16);
+> +	KUNIT_EXPECT_EQ(test,
+> +			get_id_range(get_random_u8_positive(), &counter,
+> +				     get_random_u8()),
+> +			init + 16);
+>  }
+>  
+>  static void test_range1_rand16(struct kunit *const test)
+> @@ -166,9 +175,10 @@ static void test_range1_rand16(struct kunit *const test)
+>  	init = get_random_u32();
+>  	atomic64_set(&counter, init);
+>  	KUNIT_EXPECT_EQ(test, get_id_range(1, &counter, 16), init);
+> -	KUNIT_EXPECT_EQ(
+> -		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
+> -		init + 1);
+> +	KUNIT_EXPECT_EQ(test,
+> +			get_id_range(get_random_u8_positive(), &counter,
+> +				     get_random_u8()),
+> +			init + 1);
+>  }
+>  
+>  static void test_range2_rand0(struct kunit *const test)
+> @@ -179,9 +189,10 @@ static void test_range2_rand0(struct kunit *const test)
+>  	init = get_random_u32();
+>  	atomic64_set(&counter, init);
+>  	KUNIT_EXPECT_EQ(test, get_id_range(2, &counter, 0), init);
+> -	KUNIT_EXPECT_EQ(
+> -		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
+> -		init + 2);
+> +	KUNIT_EXPECT_EQ(test,
+> +			get_id_range(get_random_u8_positive(), &counter,
+> +				     get_random_u8()),
+> +			init + 2);
+>  }
+>  
+>  static void test_range2_rand1(struct kunit *const test)
+> @@ -192,9 +203,10 @@ static void test_range2_rand1(struct kunit *const test)
+>  	init = get_random_u32();
+>  	atomic64_set(&counter, init);
+>  	KUNIT_EXPECT_EQ(test, get_id_range(2, &counter, 1), init);
+> -	KUNIT_EXPECT_EQ(
+> -		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
+> -		init + 3);
+> +	KUNIT_EXPECT_EQ(test,
+> +			get_id_range(get_random_u8_positive(), &counter,
+> +				     get_random_u8()),
+> +			init + 3);
+>  }
+>  
+>  static void test_range2_rand2(struct kunit *const test)
+> @@ -205,9 +217,10 @@ static void test_range2_rand2(struct kunit *const test)
+>  	init = get_random_u32();
+>  	atomic64_set(&counter, init);
+>  	KUNIT_EXPECT_EQ(test, get_id_range(2, &counter, 2), init);
+> -	KUNIT_EXPECT_EQ(
+> -		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
+> -		init + 4);
+> +	KUNIT_EXPECT_EQ(test,
+> +			get_id_range(get_random_u8_positive(), &counter,
+> +				     get_random_u8()),
+> +			init + 4);
+>  }
+>  
+>  static void test_range2_rand15(struct kunit *const test)
+> @@ -218,9 +231,10 @@ static void test_range2_rand15(struct kunit *const test)
+>  	init = get_random_u32();
+>  	atomic64_set(&counter, init);
+>  	KUNIT_EXPECT_EQ(test, get_id_range(2, &counter, 15), init);
+> -	KUNIT_EXPECT_EQ(
+> -		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
+> -		init + 17);
+> +	KUNIT_EXPECT_EQ(test,
+> +			get_id_range(get_random_u8_positive(), &counter,
+> +				     get_random_u8()),
+> +			init + 17);
+>  }
+>  
+>  static void test_range2_rand16(struct kunit *const test)
+> @@ -231,9 +245,10 @@ static void test_range2_rand16(struct kunit *const test)
+>  	init = get_random_u32();
+>  	atomic64_set(&counter, init);
+>  	KUNIT_EXPECT_EQ(test, get_id_range(2, &counter, 16), init);
+> -	KUNIT_EXPECT_EQ(
+> -		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
+> -		init + 2);
+> +	KUNIT_EXPECT_EQ(test,
+> +			get_id_range(get_random_u8_positive(), &counter,
+> +				     get_random_u8()),
+> +			init + 2);
+>  }
+>  
+>  #endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
+> 
+> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+> -- 
+> 2.49.0
+> 
+> 
