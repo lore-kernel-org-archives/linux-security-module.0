@@ -1,157 +1,189 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E2825D549;
-	Thu, 19 Jun 2025 08:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A1B239E78
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Jun 2025 09:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750323361; cv=none; b=jpvVQa36m73X6ttdAygDSK9MyuABNQWLlGSw1A8SPGqq1S9i7iA72rC5CtNSX/QfnUhGYBm54BHKX+l/txjkch8d8ydKvBpVCV5hR5uudRJJ5UwLabG/xvQ6W+Dj9CIPORQdAiRrPwox3BdVZ9HowhOSImqcrpGlVMgwoAgR1s0=
+	t=1750324433; cv=none; b=URFZWC1f1M2VBpfOjN3rZ5AIVnEKoWXe3l27ZcPksdaoEXy+26cDqVYEQEj8i0cTncHhgtlHGR48bDfVmQeOsIA8w5/yPXsNiyYBjngb8F49khVVR5JUM64W4DwT5oA+dBXKmKJDMlv1b8rxEXSyIKp1uf9PNsxmN2Bou3a0+gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750323361; c=relaxed/simple;
-	bh=GY39qewCO8ZjeGeZxUohtkWS54SrNUfyybjbm7an5Kw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eqnBAczf8osqgsPn2gKeN69wArhh2/+PZ1oQQxjivitUnqx9BszsRQu8FD+z2DvRQn6WbuOT+1HmZgCWRQMUBbJ+s/reZkEAVEGKqi95s8wk94H3876qqo8tUayQQ4kNlvLP3j+lc0COe3Lm7IE2AeM41t2NiSn2rNgs9GHUUTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BiG8+DpI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750324433; c=relaxed/simple;
+	bh=Ysp9bYTu3bNBsCRzRbV8hHttiStURIbk9/zpU5Fc5cU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qtDpo/q+ynMK8n6k/thlmkHxKywqO2cHf7//zKr4SEcy11G9d0PlCro01aQo9BA0UeQuXFKwSETZ0b62Eqy6q1fIZkyoe0ks8fEmDMpVAApegtxK7ltkQ51X5yQrsY0hGArFXVDz7bWssJ5jgKHE0PaEO64BGFCfAgnh4KScNRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZE4lqZIk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Bqwt3xX4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZE4lqZIk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Bqwt3xX4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BiG8+DpI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A744C4CEEA;
-	Thu, 19 Jun 2025 08:56:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750323361;
-	bh=GY39qewCO8ZjeGeZxUohtkWS54SrNUfyybjbm7an5Kw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BiG8+DpI8qK/7ehh9mHlWcIBDcd2aW6L5zsdQwFfDHxAQzkw3wpYWGPQ6B8QAPH9D
-	 y3g3vBeuapW2jbg7F3C0+1XUsLnDTo/NVZBstotfSykAdmedcEkBtU7uK0/NAe+wSt
-	 Kc+Lun055qORQz7b1mmMomPpcYDq76KH/YewkrSM0s4AR/fntnE2c+ZQiv3ylk6uFy
-	 YMe89/7ZUy5WBvyLmptPtHixT5axCELqsF3d08SoPQsMs39mRobfTX8/5lFJkTd5Ag
-	 2mulMGlFaIN9bMOa0eo2qBME6/JU5n//r22rEhdAHA56YcfKfLRjdPIb6YPhoPnwm1
-	 xxs6mMfeLDs3A==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6071ac9dc3eso846001a12.1;
-        Thu, 19 Jun 2025 01:56:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUHCkYMNw1BRTfnipAKau+57hCg6VfNnm33RULilbHOelSimGu7C9uEGZUW2F0Eig/ZlLAQWRqoKCI=@vger.kernel.org, AJvYcCUYHQlwDv8Nw267gHoMyU7XzCZhrLMQzn2w/rbH8ds2fDjD5Pg0r8zhJVp+qANqGJKqtfuT0yrDhLyOW+Fz@vger.kernel.org, AJvYcCUhtcaV4+1E5jIngF99oZe9W29MGgHZoXmUhueWcLZ1ZJF75rni+ODJrcJ3KGZcSXJpmbmc9aQQFYLHtF6CEaRH@vger.kernel.org, AJvYcCV87h/6ovZXIboDRd1TZGf7nsv2rvalW35DkYiOnJX1ExUtp89Ks28GnBoVf5JRM/5ZG7Gs9VuNiqva@vger.kernel.org, AJvYcCVpqGrCnN/Ti5ysP1DaXikAUo0fh4ZDjMhj92i1QKnT/fbTrHo/3jIwg9dVyUuzGH9LHMRqcf9WY9udF09gjLsn@vger.kernel.org, AJvYcCVveexRyt7YB4FS4dPVQBYx+13Q7Y/NXwxofIhpfCWkK9zPdDCkSPyI+VSaa8wDeRlhAYiWpq4TvRnaKw==@vger.kernel.org, AJvYcCWIJtizXqVvcHCLgTkPfLGLYrNsCghzr8Bw9/P/WuMYoYLLdu1XbSUkFx1h7cirlFB4eZ5Q81j9NVpOHdfc3L1J+AeFsDCi@vger.kernel.org, AJvYcCXVK4NWJfsCLMaDacHwC5WyphIGb+/LH3IW+23ZmVzPhFaTneUrchaHKSPRG2OCSKuVQ7065Wfoodf71XJd@vger.kernel.org, AJvYcCXkwwwKsfiJaidb2cWHNVl4pV/FAyLTI+QymCdkzLzDJi2sG7WpbJUpFVPRVtOzU2ay6wr4KJGPq0+IXg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvWPy9Wk0XYWzxt5k5naeASDm6On/ZbhdW+OkvGHt/iSB7Az9o
-	0xu+ZuaByB6Y65eZ4CiyNH15EcM3SmWkIjJyDxjlUwbN7lzcL7dqtoV078TkRBD0nuqPhUe815o
-	ksPFrkWRk4H5O7hUGvFw0iBi/nw7yfNA=
-X-Google-Smtp-Source: AGHT+IHshgFBjrE/bznWO4e6lyy0nq5bnj0JFcjbPNAIZZpdv6svyHpe5+Z0ZAFZ4cpQ+FvgAbwAckAC6VQE1xAS01s=
-X-Received: by 2002:a05:6402:26cc:b0:607:16b1:7489 with SMTP id
- 4fb4d7f45d1cf-608d094801bmr19223662a12.20.1750323359751; Thu, 19 Jun 2025
- 01:55:59 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZE4lqZIk";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Bqwt3xX4";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZE4lqZIk";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Bqwt3xX4"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BC48A21233;
+	Thu, 19 Jun 2025 09:13:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750324429; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QPtwPUAJLWNygOWph/FgmfDYqOepuyn0SMQYlnEIWbM=;
+	b=ZE4lqZIk/8WaoRYmGLkUaKWlgZwSkN+3IdoCN6q6Qdf5EXhHoMVkOn6kBrDOwWt1qcAcHs
+	gt5G/4V5LF1KmI+GFWcLXohMQN7XNB5z/IMuREEkpO4fviROw0O5fc9FSvsUxM5qahSn87
+	sWmWnI50Yi2O3pdmuJIzhaTV8TT67VA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750324429;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QPtwPUAJLWNygOWph/FgmfDYqOepuyn0SMQYlnEIWbM=;
+	b=Bqwt3xX4uugU/uvW+s2C38O2YqhbnjMcvrmUVqH1Daf1J2zbr9TNtMPe/ffnr5ruCtaC4k
+	qUiulR07rZ/qxoAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ZE4lqZIk;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Bqwt3xX4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750324429; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QPtwPUAJLWNygOWph/FgmfDYqOepuyn0SMQYlnEIWbM=;
+	b=ZE4lqZIk/8WaoRYmGLkUaKWlgZwSkN+3IdoCN6q6Qdf5EXhHoMVkOn6kBrDOwWt1qcAcHs
+	gt5G/4V5LF1KmI+GFWcLXohMQN7XNB5z/IMuREEkpO4fviROw0O5fc9FSvsUxM5qahSn87
+	sWmWnI50Yi2O3pdmuJIzhaTV8TT67VA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750324429;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QPtwPUAJLWNygOWph/FgmfDYqOepuyn0SMQYlnEIWbM=;
+	b=Bqwt3xX4uugU/uvW+s2C38O2YqhbnjMcvrmUVqH1Daf1J2zbr9TNtMPe/ffnr5ruCtaC4k
+	qUiulR07rZ/qxoAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9681413721;
+	Thu, 19 Jun 2025 09:13:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QbZmJM3UU2iQQgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 19 Jun 2025 09:13:49 +0000
+Message-ID: <da5316a7-eee3-4c96-83dd-78ae9f3e0117@suse.cz>
+Date: Thu, 19 Jun 2025 11:13:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250523043251.it.550-kees@kernel.org> <20250523043935.2009972-10-kees@kernel.org>
-In-Reply-To: <20250523043935.2009972-10-kees@kernel.org>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 19 Jun 2025 16:55:48 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4WxAwXTYVFOnphgHN80-_6jt77YZ_rw-sOBoBjjiN-yQ@mail.gmail.com>
-X-Gm-Features: AX0GCFvInY5DbmRkbwxLo6Cb2clGLakUsQ51xQCaa7Coc4b_DkkyTMX5tkJkYVA
-Message-ID: <CAAhV-H4WxAwXTYVFOnphgHN80-_6jt77YZ_rw-sOBoBjjiN-yQ@mail.gmail.com>
-Subject: Re: [PATCH v2 10/14] loongarch: Handle KCOV __init vs inline mismatches
-To: Kees Cook <kees@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, WANG Xuerui <kernel@xen0n.name>, 
-	Thomas Gleixner <tglx@linutronix.de>, Tianyang Zhang <zhangtianyang@loongson.cn>, 
-	Bibo Mao <maobibo@loongson.cn>, Jiaxun Yang <jiaxun.yang@flygoat.com>, loongarch@lists.linux.dev, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Christoph Hellwig <hch@lst.de>, Marco Elver <elver@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: export anon_inode_make_secure_inode() and fix
+ secretmem LSM bypass
+Content-Language: en-US
+To: Shivank Garg <shivankg@amd.com>, david@redhat.com,
+ akpm@linux-foundation.org, brauner@kernel.org, paul@paul-moore.com,
+ rppt@kernel.org, viro@zeniv.linux.org.uk
+Cc: seanjc@google.com, willy@infradead.org, pbonzini@redhat.com,
+ tabba@google.com, afranji@google.com, ackerleytng@google.com, jack@suse.cz,
+ hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com,
+ roypat@amazon.co.uk, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20250619073136.506022-2-shivankg@amd.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250619073136.506022-2-shivankg@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[googlemail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,infradead.org,redhat.com,suse.cz,googlemail.com,intel.com,amazon.co.uk,vger.kernel.org,kvack.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:mid]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: BC48A21233
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.51
 
-Hi, Kees,
+On 6/19/25 09:31, Shivank Garg wrote:
+> Export anon_inode_make_secure_inode() to allow KVM guest_memfd to create
+> anonymous inodes with proper security context. This replaces the current
+> pattern of calling alloc_anon_inode() followed by
+> inode_init_security_anon() for creating security context manually.
+> 
+> This change also fixes a security regression in secretmem where the
+> S_PRIVATE flag was not cleared after alloc_anon_inode(), causing
+> LSM/SELinux checks to be bypassed for secretmem file descriptors.
+> 
+> As guest_memfd currently resides in the KVM module, we need to export this
 
-On Fri, May 23, 2025 at 12:39=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
->
-> When KCOV is enabled all functions get instrumented, unless
-> the __no_sanitize_coverage attribute is used. To prepare for
-> __no_sanitize_coverage being applied to __init functions, we have to
-> handle differences in how GCC's inline optimizations get resolved. For
-> loongarch this exposed several places where __init annotations were
-> missing but ended up being "accidentally correct". Fix these cases and
-> force one function to be inline with __always_inline.
->
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Huacai Chen <chenhuacai@kernel.org>
-> Cc: WANG Xuerui <kernel@xen0n.name>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Tianyang Zhang <zhangtianyang@loongson.cn>
-> Cc: Bibo Mao <maobibo@loongson.cn>
-> Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> Cc: <loongarch@lists.linux.dev>
-> ---
->  arch/loongarch/include/asm/smp.h | 2 +-
->  arch/loongarch/kernel/time.c     | 2 +-
->  arch/loongarch/mm/ioremap.c      | 4 ++--
->  3 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/loongarch/include/asm/smp.h b/arch/loongarch/include/as=
-m/smp.h
-> index ad0bd234a0f1..88e19d8a11f4 100644
-> --- a/arch/loongarch/include/asm/smp.h
-> +++ b/arch/loongarch/include/asm/smp.h
-> @@ -39,7 +39,7 @@ int loongson_cpu_disable(void);
->  void loongson_cpu_die(unsigned int cpu);
->  #endif
->
-> -static inline void plat_smp_setup(void)
-> +static __always_inline void plat_smp_setup(void)
-Similar to x86 and arm, I prefer to mark it as __init rather than
-__always_inline.
+Could we use the new EXPORT_SYMBOL_GPL_FOR_MODULES() thingy to make this
+explicit for KVM?
 
-Huacai
-
->  {
->         loongson_smp_setup();
->  }
-> diff --git a/arch/loongarch/kernel/time.c b/arch/loongarch/kernel/time.c
-> index bc75a3a69fc8..367906b10f81 100644
-> --- a/arch/loongarch/kernel/time.c
-> +++ b/arch/loongarch/kernel/time.c
-> @@ -102,7 +102,7 @@ static int constant_timer_next_event(unsigned long de=
-lta, struct clock_event_dev
->         return 0;
->  }
->
-> -static unsigned long __init get_loops_per_jiffy(void)
-> +static unsigned long get_loops_per_jiffy(void)
->  {
->         unsigned long lpj =3D (unsigned long)const_clock_freq;
->
-> diff --git a/arch/loongarch/mm/ioremap.c b/arch/loongarch/mm/ioremap.c
-> index 70ca73019811..df949a3d0f34 100644
-> --- a/arch/loongarch/mm/ioremap.c
-> +++ b/arch/loongarch/mm/ioremap.c
-> @@ -16,12 +16,12 @@ void __init early_iounmap(void __iomem *addr, unsigne=
-d long size)
->
->  }
->
-> -void *early_memremap_ro(resource_size_t phys_addr, unsigned long size)
-> +void * __init early_memremap_ro(resource_size_t phys_addr, unsigned long=
- size)
->  {
->         return early_memremap(phys_addr, size);
->  }
->
-> -void *early_memremap_prot(resource_size_t phys_addr, unsigned long size,
-> +void * __init early_memremap_prot(resource_size_t phys_addr, unsigned lo=
-ng size,
->                     unsigned long prot_val)
->  {
->         return early_memremap(phys_addr, size);
-> --
-> 2.34.1
->
