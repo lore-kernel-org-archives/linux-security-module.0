@@ -1,44 +1,67 @@
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E9023D2A5;
-	Thu, 19 Jun 2025 12:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BDD25C818;
+	Thu, 19 Jun 2025 13:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750336311; cv=none; b=hqr6SnWMfHFaPDYIRjvyT/mXkZnN5G6QX96YlfA99c9WbGWqa26jdqLEmj8PN2NT+WhggGx2YBGDhJuLBG5hGGpvWsfxtlZWZsBTM4Kf0fELMVGIpFLtRSDQqVihapsudRC/0d7bRG9FSG+Cf+f4540SA51zA27Gd9imqOHog9k=
+	t=1750341485; cv=none; b=bafcNK8YVB+tnqA7IfWTlMrqfkiQhGklmK8e8AA7bDdk7ulM9od0xQwt3b3m7X8YSwHbmBeNF10+LeL7fdfcnJiVILH093Ft012QgKILewMzzzm/S7gWKRdBKpvLiUJMHS6vpS4U9m1sOHvtY23nhez1SGGex2VsoU0zNPQxrkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750336311; c=relaxed/simple;
-	bh=FHJKzlnEQQqv5/RHU8cRM4LVX+71p8k/NOpMFy86sKE=;
+	s=arc-20240116; t=1750341485; c=relaxed/simple;
+	bh=wjLepEGEAGOgVFQXi2T6s0A59N+eqbjbHSQb5NCvhL4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jk5v8eczlpstozfroO4uVPUBTeL/37j04o4UHcTABCOZ89XuLyuNSO+GY6Q79OTvRZp7y2U/TuotbPiJUMFxCQ4T99EeMBWCHyRB7i4xfsxsi/9y6+SrMLn7tM7qXleljqLbxkOIQ2jAPSHK0bVl/qEnHwtVOg8ZsoKD2KqKOoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 8FD0B2C000B7;
-	Thu, 19 Jun 2025 14:31:40 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 3DCA93A07F9; Thu, 19 Jun 2025 14:31:40 +0200 (CEST)
-Date: Thu, 19 Jun 2025 14:31:40 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: David Howells <dhowells@redhat.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-	Stephan Mueller <smueller@chronox.de>, Simo Sorce <simo@redhat.com>,
-	torvalds@linux-foundation.org, Paul Moore <paul@paul-moore.com>,
-	Ignat Korchagin <ignat@cloudflare.com>,
-	Clemens Lang <cllang@redhat.com>,
-	David Bohannon <dbohanno@redhat.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>, keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: Module signing and post-quantum crypto public key algorithms
-Message-ID: <aFQDLCvTs8IaAQI_@wunner.de>
-References: <501216.1749826470@warthog.procyon.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LWigepfEcucDhjVvflt60HjVexDgmYpDOhp37Fx65NIZgaEUVpVFqtqxUZrxmSWF9+/Nej47CGgD8V0CTGFfEAJuybLnduptyPtwPpz/nR90t14uxHa/6Jzq57FTeehekwIgVJYlKaH4fJ3UVRKGQru66ubkyBxVKIZ1uT8Urvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NviNWFEb; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NviNWFEb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750341484; x=1781877484;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wjLepEGEAGOgVFQXi2T6s0A59N+eqbjbHSQb5NCvhL4=;
+  b=NviNWFEb9Vki7i9CyMdLgXUmJGqSHtwiGuy/wD+ETEXtSrfpEJKm1AJS
+   mE1K7mDKkXXRYdtHSALHxvwBQmlYxUfr0k7Vv9chFEiuhYNfXAvuqRKUF
+   3gFxC06AHkQ07fil+EV7/C8/CLFY1TwU4AqlTjnB6eHBNCpnhVtbCcPFh
+   craX2JeT6rDQLVRaUlABEt5VqWNfWRmdh7zJVt/nE6JqpOk81JIj+FyrU
+   mzCJxy3saYUNWOEDXv61OJlgnh0bCdhj16zpOOkO4ALC4NpKwNt61ZTQO
+   HhyezKDuis1hOn9FVS2hTiRGwclQUATTngqVvFm+C4izm9lgIXIistM/n
+   g==;
+X-CSE-ConnectionGUID: ezccr3QSS4C7Vixa/9iklg==
+X-CSE-MsgGUID: x8cyZXA4QP+DLgDNruOCvA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="62863203"
+X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
+   d="scan'208";a="62863203"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 06:58:04 -0700
+X-CSE-ConnectionGUID: ECyZ/YiKTk+0IDKwKw/oxw==
+X-CSE-MsgGUID: eRZz2kT1TCCY7JXJv6EIAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
+   d="scan'208";a="150250014"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 19 Jun 2025 06:57:59 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uSFm8-000KnG-2h;
+	Thu, 19 Jun 2025 13:57:56 +0000
+Date: Thu, 19 Jun 2025 21:57:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, kernel-team@meta.com, andrii@kernel.org,
+	eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net,
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com,
+	amir73il@gmail.com, gregkh@linuxfoundation.org, tj@kernel.org,
+	daan.j.demeyer@gmail.com, Song Liu <song@kernel.org>
+Subject: Re: [PATCH bpf-next 1/4] kernfs: Add __kernfs_xattr_get for RCU
+ protected access
+Message-ID: <202506192154.T111naKp-lkp@intel.com>
+References: <20250618233739.189106-2-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -47,48 +70,50 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <501216.1749826470@warthog.procyon.org.uk>
+In-Reply-To: <20250618233739.189106-2-song@kernel.org>
 
-On Fri, Jun 13, 2025 at 03:54:30PM +0100, David Howells wrote:
-> The good news is that Stephan Mueller has an implemementation that includes
-> kernel bits that we can use, or, at least, adapt:
-> 
-> 	https://github.com/smuellerDD/leancrypto/
+Hi Song,
 
-I assume Herbert will insist that any new algorithm is hardened
-against side channel attacks.  Thankfully, Stephan seems to have
-put some effort into that:
+kernel test robot noticed the following build warnings:
 
-   "side-channel-resistant: A valgrind-based dynamic side channel
-    analysis is applied to find time-variant code paths based on
-    secret data."
+[auto build test WARNING on bpf-next/master]
 
-> However!  Not everyone agrees with this.  An alternative proposal
-> would rather get the signature verification code out of the kernel
-> entirely.  Simo Sorce's proposal, for example, AIUI, is to compile
-> all the hashes we need into the kernel at build time, possibly with
-> a hashed hash list to be loaded later to reduce the amount of
-> uncompressible code in the kernel.
+url:    https://github.com/intel-lab-lkp/linux/commits/Song-Liu/kernfs-Add-__kernfs_xattr_get-for-RCU-protected-access/20250619-074026
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20250618233739.189106-2-song%40kernel.org
+patch subject: [PATCH bpf-next 1/4] kernfs: Add __kernfs_xattr_get for RCU protected access
+config: m68k-randconfig-r122-20250619 (https://download.01.org/0day-ci/archive/20250619/202506192154.T111naKp-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 8.5.0
+reproduce: (https://download.01.org/0day-ci/archive/20250619/202506192154.T111naKp-lkp@intel.com/reproduce)
 
-Module signing isn't the only motivation to add PQC algorithms to
-the kernel.  Another is SPDM, a protocol for device authentication,
-measurement and secure channel setup.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506192154.T111naKp-lkp@intel.com/
 
-The DMTF has finally published SPDM 1.4.0 on May 25th and this
-revision adds support for PQC algorithms (see list on page 216):
+sparse warnings: (new ones prefixed by >>)
+>> fs/kernfs/inode.c:312:17: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   fs/kernfs/inode.c:312:17: sparse:    struct kernfs_iattrs [noderef] __rcu *
+   fs/kernfs/inode.c:312:17: sparse:    struct kernfs_iattrs *
 
-https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.4.0.pdf
+vim +312 fs/kernfs/inode.c
 
-An in-kernel implementation is being worked on by Jonathan (+cc) and me:
+   304	
+   305	int __kernfs_xattr_get(struct kernfs_node *kn, const char *name,
+   306			       void *value, size_t size)
+   307	{
+   308		struct kernfs_iattrs *attrs;
+   309	
+   310		WARN_ON_ONCE(!rcu_read_lock_held());
+   311	
+ > 312		attrs = rcu_dereference(kn->iattr);
+   313		if (!attrs)
+   314			return -ENODATA;
+   315	
+   316		return simple_xattr_get(&attrs->xattrs, name, value, size);
+   317	}
+   318	
 
-https://github.com/l1k/linux/commits/doe
-
-We haven't added SPDM 1.4 support yet, but will have to eventually.
-So far we only support RSA and ECDSA, because that's the baseline
-mandated by the PCIe Base Specification for PCI device authentication.
-I expect there'll be an ECN sooner rather than later to extend the
-baseline to PQC algorithms.
-
-Thanks,
-
-Lukas
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
