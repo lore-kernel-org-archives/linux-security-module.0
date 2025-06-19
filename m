@@ -1,162 +1,97 @@
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581AD2459F9
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Jun 2025 21:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09194260582;
+	Thu, 19 Jun 2025 22:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750367944; cv=none; b=QZHEtqZG6K/igRQPQt0qXUhyBJtJaM3sNgRHlKY5E2mkqVEo4DGmf4AC8V7n6ShfHIFZhXMcXEQlW0V7d700b2RQvzP3ANOU2xG+D+Rix9wNxOKJgvWNftoW/tvRKr6D/EpCKXTZtDlW3vDwbVWFn+/SI4FvTERL8HRA7ewVBJk=
+	t=1750370504; cv=none; b=oBoDjNpqBiSm/JuCTMb4qEuey2/CT6idfgKgV4MiGE3YcuzQHG8df5s6ZUnCeh5dQ6b8vJsQBF7q5HoswyT7s83D24RnCysPJgKLUSS1z2nilZm2uWT8BcpeM4iqIRjph+s0CUC/xT2qUVOy6QE54jOCfWv8Xj80ibk7CjMbh9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750367944; c=relaxed/simple;
-	bh=43N9xSLqG8Mvf1evULiPV3dhUbzzkfegXMMlVgJmLmY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qStg0kvy1WSTT1zW4C1hEZB2sWde5vQ433YlvTPw2PP7S72tqT+s7r+98ceQ8owadwTilRh9jv/WOLK3NWbSxWXRNvXB0aAb0+2Ni3K6PX2RdyrOORwk2CP65K9Qa79AL1cux7zCpV0s0BSgpL7JkwUKp6xuDkGxPLRyxDdy6WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=E+cJDysw; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1750370504; c=relaxed/simple;
+	bh=Tz/lGOw8O1n2Xxaax92kMOO1KRDUnAFIXp6vTgb5S2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fXN/AnrT4CFQJo1Mq0lBr1NAbkj9Erz7jGzhUxgKhAv+BVOD/KKKwSoSJ6g4y43V25n3xpt0YUlNSMicDt1wV0fXXGOEek7tq0CvkxDaD5LvcZUvZInnA9S21kpcjUEP6mocM7/kmTdZvdW6+iG7AAW1E2ftntandQNakS9ypYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s0qohlEv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="E+cJDysw"
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e740a09eb00so1058923276.0
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Jun 2025 14:19:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1750367940; x=1750972740; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f7reZQjMhm+dclXhsOljn44+uNt88uw72bwAiTZN+zs=;
-        b=E+cJDyswwCd3O1ohVQNJiyY5eOa0jtJG+bh6ZhltL81dbG/GCbHysWF05E4h1ERuRy
-         5m2LKxrLUkSDOCU4dYry+AJq2deT5henQP2QO7rE1MdJgkvzeKRraS1rHCfYuEqOeyl+
-         Hjlc5RK+v4pBI25h7GsrGJLHLw0QRMB/XjYXeFZlNnTt63ug9uX7HYVvVmv3Kx3LgCdA
-         77CKL4E6RMTbTmX2PRTgA4aski0Xm2/BJ+oHVAsTk140fbd0RZ1UrH+RiBIPT9d6L24d
-         KOOFetthlX5SvcTG4XH1ARSDK6BjU5zdRU5XNwSfv9oZOpqzmC3ML9AyGmBjlXX2yJpY
-         ZeOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750367940; x=1750972740;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f7reZQjMhm+dclXhsOljn44+uNt88uw72bwAiTZN+zs=;
-        b=ISjHlMEIgWU9Vtvy8Esk0Hy7PQBQRQc+sY3WrpzpN2MZvRjEyAL7s9a/AsQe+UnA7j
-         gjk24Gm6dMr8HfraNG1cLimT11o/NigpnS7G9wqOg2apBSL+PqnOnnkOQRjwixosOmG5
-         lg0TKP5xD2U9d9Ws0wZFJNexwHEsYp2O2V+mVBYAYm1CFFuxZLLbp502GS3K3Bd61tdl
-         baFsvYwPzo/wr2+8ZuXJbUKP6Xs1Halswvua1Rkh+GRl/WNoXTochvyouLSh/XiBhtIp
-         xc30Ksk9yhWfKyb15NyANNr2sZ1NmI3p+1zynjjtmuI/S2aq+FR/bYw9FsLJwfxTrcp9
-         muuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrfHok1rmD8WJoS6J6/KbSEu+MLl7kXPkpT+UY4gaKE47EWReYSoSB+0MOKAiv4bvT0LzUij7WnL4/MBo83I3tmZ0x9as=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIiotyjlWQWNJExXlA6cuKkaC1M3dqiYpWOiUbPTu0EGXFhX5A
-	uC70FstxKwdjL9QmerHrQkg4mx1cJMjfeetC5Jq0TWmE17WyPHLdIRK0ZUeBDQMVwxfh9KhrTQE
-	xplSdRkplA7o5N/3EQRKIqxVKItYsvuLmwloHGcoL
-X-Gm-Gg: ASbGncv6Nkd9sm7X2fnAb6MkF7Ei5ebo1tA8dPti5gZQuO0KuxiRp9R7mxF9gEYP6uP
-	8T9IbfPrGAfdddlY0uoENMCPtHH1Xy0XLDy4D222dxHyokyKbHXHQqKyOwcdsm7kJ0+N56zm36J
-	bttoGNs2JyFStStwDX7E2Vd/XGK7aIL39JvSQ38abUrzk=
-X-Google-Smtp-Source: AGHT+IGuYWqaT27fYmWdeDZ9lvr/78HUoiTAJ+pb8mrK6LB7RxNHDSBjtW66gCKrmHYUPLvXFfpMQPNhl/c9KrbuTKM=
-X-Received: by 2002:a05:690c:610f:b0:70e:1aa1:63b4 with SMTP id
- 00721157ae682-712c65125d6mr9891227b3.38.1750367940400; Thu, 19 Jun 2025
- 14:19:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0qohlEv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E212BC4CEEA;
+	Thu, 19 Jun 2025 22:01:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750370503;
+	bh=Tz/lGOw8O1n2Xxaax92kMOO1KRDUnAFIXp6vTgb5S2c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=s0qohlEvQE03XP5M5sRB4OyEsTQMF/EO/GZTSj8Lpu89jafgQhDRQ2U2XhYEZ4Jlv
+	 Qn9fcCle9/IsaWxtw5KSsoneX8oJJ7yRUYFimROJvB4rq35mjtxOsEuV29VROkwpmJ
+	 1HxxnyAetf5syxwQ6ti5OXGdcKBdZlwz90qGZ6YgnibSjAlT7GJzKMDyF7BuSnBR/S
+	 1XhcpvY6xmwQlGXNeLIlcTKb3+Senklu4mmAg8klMgG0+UjqR1BNKVTYIKLvLEu5Hi
+	 bTIjCmL+8/oJzeLPIyFIlXYEFUsvdndduqoUCuv3zU87UT4lnnnEqHTuJ5AvPPfrDe
+	 xDiJmZJRyXwwA==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: kernel-team@meta.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	kpsingh@kernel.org,
+	mattbobrowski@google.com,
+	amir73il@gmail.com,
+	gregkh@linuxfoundation.org,
+	tj@kernel.org,
+	daan.j.demeyer@gmail.com,
+	Song Liu <song@kernel.org>
+Subject: [PATCH v2 bpf-next 0/5] Introduce bpf_cgroup_read_xattr
+Date: Thu, 19 Jun 2025 15:01:09 -0700
+Message-ID: <20250619220114.3956120-1-song@kernel.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
- <CAHC9VhQfrMe7EY3_bvW6PcLdaW7tPMgv6WZuePxd1RrbhyZv-g@mail.gmail.com>
- <CAHC9VhQyDX+NgWipgm5DGMewfVTBe3DkLbe_AANRiuAj40bA1w@mail.gmail.com> <6797b694-6c40-4806-9541-05ce6a0b07fc@oracle.com>
-In-Reply-To: <6797b694-6c40-4806-9541-05ce6a0b07fc@oracle.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 19 Jun 2025 17:18:49 -0400
-X-Gm-Features: AX0GCFu9kjUfnfMnqfxH4agmkNzznUIDL4onDD-B6Nh-8MzRljESBgn1ZFaZ0Ts
-Message-ID: <CAHC9VhQsK_XpJ-bbt6AXM4fk30huhrPvvMSEuHHTPb=eJZwoUA@mail.gmail.com>
-Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity()
- interface
-To: Anna Schumaker <anna.schumaker@oracle.com>
-Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Eric Dumazet <edumazet@google.com>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Simon Horman <horms@kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 27, 2025 at 5:03=E2=80=AFPM Anna Schumaker
-<anna.schumaker@oracle.com> wrote:
-> On 5/20/25 5:31 PM, Paul Moore wrote:
-> > On Tue, Apr 29, 2025 at 7:34=E2=80=AFPM Paul Moore <paul@paul-moore.com=
-> wrote:
-> >> On Mon, Apr 28, 2025 at 4:15=E2=80=AFPM Stephen Smalley
-> >> <stephen.smalley.work@gmail.com> wrote:
-> >>>
-> >>> Update the security_inode_listsecurity() interface to allow
-> >>> use of the xattr_list_one() helper and update the hook
-> >>> implementations.
-> >>>
-> >>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.s=
-malley.work@gmail.com/
-> >>>
-> >>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> >>> ---
-> >>> This patch is relative to the one linked above, which in theory is on
-> >>> vfs.fixes but doesn't appear to have been pushed when I looked.
-> >>>
-> >>>  fs/nfs/nfs4proc.c             | 10 ++++++----
-> >>>  fs/xattr.c                    | 19 +++++++------------
-> >>>  include/linux/lsm_hook_defs.h |  4 ++--
-> >>>  include/linux/security.h      |  5 +++--
-> >>>  net/socket.c                  | 17 +++++++----------
-> >>>  security/security.c           | 16 ++++++++--------
-> >>>  security/selinux/hooks.c      | 10 +++-------
-> >>>  security/smack/smack_lsm.c    | 13 ++++---------
-> >>>  8 files changed, 40 insertions(+), 54 deletions(-)
-> >>
-> >> Thanks Stephen.  Once we get ACKs from the NFS, netdev, and Smack
-> >> folks I can pull this into the LSM tree.
-> >
-> > Gentle ping for Trond, Anna, Jakub, and Casey ... can I get some ACKs
-> > on this patch?  It's a little late for the upcoming merge window, but
-> > I'd like to merge this via the LSM tree after the merge window closes.
->
-> For the NFS change:
->     Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
+Introduce a new kfunc bpf_cgroup_read_xattr, which can read xattr from
+cgroupfs nodes. The primary users are LSMs, cgroup programs, and sched_ext.
 
-Hi Anna,
+---
 
-Thanks for reviewing the patch.  Unfortunately when merging the patch
-today and fixing up some merge conflicts I bumped into an odd case in
-the NFS space and I wanted to check with you on how you would like to
-resolve it.
+Changes v1 => v2:
+1. Replace 1/4 in v1 with Chritian's version (1/5 in v2).
+2. Rename bpf_kernfs_read_xattr => bpf_cgroup_read_xattr, and limit access
+   to cgroup only.
+3. Add 5/5, which makes bpf_cgroup_read_xattr available to cgroup and
+   struct_ops programs.
 
-Commit 243fea134633 ("NFSv4.2: fix listxattr to return selinux
-security label")[1] adds a direct call to
-security_inode_listsecurity() in nfs4_listxattr(), despite the
-existing nfs4_listxattr_nfs4_label() call which calls into the same
-LSM hook, although that call is conditional on the server supporting
-NFS_CAP_SECURITY_LABEL.  Based on a quick search, it appears the only
-caller for nfs4_listxattr_nfs4_label() is nfs4_listxattr() so I'm
-wondering if there isn't some room for improvement here.
+v1: https://lore.kernel.org/bpf/20250618233739.189106-1-song@kernel.org/
 
-I think there are two obvious options, and I'm curious about your
-thoughts on which of these you would prefer, or if there is another
-third option that you would like to see merged.
+Christian Brauner (1):
+  kernfs: remove iattr_mutex
 
-Option #1:
-Essentially back out commit 243fea134633, removing the direct LSM call
-in nfs4_listxattr() and relying on the nfs4_listxattr_nfs4_label() for
-the LSM/SELinux xattrs.  I think we would want to remove the
-NFS_CAP_SECURITY_LABEL check and build nfs4_listxattr_nfs4_label()
-regardless of CONFIG_NFS_V4_SECURITY_LABEL.
+Song Liu (4):
+  bpf: Introduce bpf_cgroup_read_xattr to read xattr of cgroup's node
+  bpf: Mark cgroup_subsys_state->cgroup RCU safe
+  selftests/bpf: Add tests for bpf_cgroup_read_xattr
+  bpf: Make bpf_cgroup_read_xattr available to cgroup and struct_ops
+    progs
 
-Option #2:
-Remove nfs4_listxattr_nfs4_label() entirely and keep the direct LSM
-call in nfs4_listxattr(), with the required changes for this patch.
+ fs/bpf_fs_kfuncs.c                            |  86 +++++++++-
+ fs/kernfs/inode.c                             |  74 ++++----
+ kernel/bpf/verifier.c                         |   5 +
+ .../selftests/bpf/prog_tests/cgroup_xattr.c   | 145 ++++++++++++++++
+ .../selftests/bpf/progs/cgroup_read_xattr.c   | 158 ++++++++++++++++++
+ .../selftests/bpf/progs/read_cgroupfs_xattr.c |  60 +++++++
+ 6 files changed, 489 insertions(+), 39 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/cgroup_xattr.c
+ create mode 100644 tools/testing/selftests/bpf/progs/cgroup_read_xattr.c
+ create mode 100644 tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c
 
-Thoughts?
-
-[1] https://lore.kernel.org/all/20250425180921.86702-1-okorniev@redhat.com/
---=20
-paul-moore.com
+--
+2.47.1
