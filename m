@@ -1,50 +1,44 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B659230BF2;
-	Thu, 19 Jun 2025 12:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E9023D2A5;
+	Thu, 19 Jun 2025 12:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750335578; cv=none; b=df+ctUHjvkxG9a3D8FPs74V41CJ+Tgocu6IZ/sugTS/d2ueI0fcciWAMCrd5U9CowHRraklctKEoQwkykFGiTKwj1MbwMhLbyao7k6o6Dz4BJ7gf6oSLgU9zOQB51Y3Z6B0WlKBgJ2Glq1DOxy7/29YiFFArZgzLtgFo8MYffAU=
+	t=1750336311; cv=none; b=hqr6SnWMfHFaPDYIRjvyT/mXkZnN5G6QX96YlfA99c9WbGWqa26jdqLEmj8PN2NT+WhggGx2YBGDhJuLBG5hGGpvWsfxtlZWZsBTM4Kf0fELMVGIpFLtRSDQqVihapsudRC/0d7bRG9FSG+Cf+f4540SA51zA27Gd9imqOHog9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750335578; c=relaxed/simple;
-	bh=bWucXohm5UQliw0jgNdes75056dCx0VKGA2x7BaDfjk=;
+	s=arc-20240116; t=1750336311; c=relaxed/simple;
+	bh=FHJKzlnEQQqv5/RHU8cRM4LVX+71p8k/NOpMFy86sKE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NOBmDwFUtPAGYKeBQc8QaFf/acnngPlEggkFEqN/Zqjb/u+3+D374T3IA/y0MCMKmxKjjc/HjCuNCfL0ohX331JqMSwhoUJ2R/z8Z0UrE4/mTnFzBOItr3+ZbM9YOq560ne9pLI7fdoDgv+jgnKabEItIKWD37J8IM8i1x7DaJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NbrveWT3; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NbrveWT3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C377C4CEEA;
-	Thu, 19 Jun 2025 12:19:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750335575;
-	bh=bWucXohm5UQliw0jgNdes75056dCx0VKGA2x7BaDfjk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NbrveWT3Ix1MhEG9PoRbqXv+NwtVpookYbG87CTowWUM78ftAPSq3WhwrvGffRsly
-	 Ss3Of6FJDub6bzJagswOrvX0zhzFraXBQAo6+pCbQ29lZIaFHTe1afbHVg3pSVSYsw
-	 nULaNztFF7DU160x9Wv/KV9OwfOJ9XriFpBXA+6HQdEi4/fAaY2eKtmRP6+hst7AgQ
-	 Yhl6G6+hp0fP/NPzVW2ZUwo0y+OF8szvwQrClId6cEIilOm3pDahCRqgupYlBepxhy
-	 HelF+ftHLlfEQKrvP1AsVqknQbnT0Njhsfr8JeZbgI/5tXAOXxrfg7OZV0klKur9sX
-	 vfWnJXwi5dYNg==
-Date: Thu, 19 Jun 2025 15:19:25 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Shivank Garg <shivankg@amd.com>,
-	david@redhat.com, akpm@linux-foundation.org, paul@paul-moore.com,
-	viro@zeniv.linux.org.uk, seanjc@google.com, willy@infradead.org,
-	pbonzini@redhat.com, tabba@google.com, afranji@google.com,
-	ackerleytng@google.com, jack@suse.cz, hch@infradead.org,
-	cgzones@googlemail.com, ira.weiny@intel.com, roypat@amazon.co.uk,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] fs: export anon_inode_make_secure_inode() and fix
- secretmem LSM bypass
-Message-ID: <aFQATWEX2h4LaQZb@kernel.org>
-References: <20250619073136.506022-2-shivankg@amd.com>
- <da5316a7-eee3-4c96-83dd-78ae9f3e0117@suse.cz>
- <20250619-fixpunkt-querfeldein-53eb22d0135f@brauner>
- <aFPuAi8tPcmsbTF4@kernel.org>
- <20250619-ablichten-korpulent-0efe2ddd0ee6@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jk5v8eczlpstozfroO4uVPUBTeL/37j04o4UHcTABCOZ89XuLyuNSO+GY6Q79OTvRZp7y2U/TuotbPiJUMFxCQ4T99EeMBWCHyRB7i4xfsxsi/9y6+SrMLn7tM7qXleljqLbxkOIQ2jAPSHK0bVl/qEnHwtVOg8ZsoKD2KqKOoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 8FD0B2C000B7;
+	Thu, 19 Jun 2025 14:31:40 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 3DCA93A07F9; Thu, 19 Jun 2025 14:31:40 +0200 (CEST)
+Date: Thu, 19 Jun 2025 14:31:40 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: David Howells <dhowells@redhat.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	Stephan Mueller <smueller@chronox.de>, Simo Sorce <simo@redhat.com>,
+	torvalds@linux-foundation.org, Paul Moore <paul@paul-moore.com>,
+	Ignat Korchagin <ignat@cloudflare.com>,
+	Clemens Lang <cllang@redhat.com>,
+	David Bohannon <dbohanno@redhat.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>, keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: Module signing and post-quantum crypto public key algorithms
+Message-ID: <aFQDLCvTs8IaAQI_@wunner.de>
+References: <501216.1749826470@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -53,49 +47,48 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250619-ablichten-korpulent-0efe2ddd0ee6@brauner>
+In-Reply-To: <501216.1749826470@warthog.procyon.org.uk>
 
-On Thu, Jun 19, 2025 at 02:06:17PM +0200, Christian Brauner wrote:
-> On Thu, Jun 19, 2025 at 02:01:22PM +0300, Mike Rapoport wrote:
-> > On Thu, Jun 19, 2025 at 12:38:25PM +0200, Christian Brauner wrote:
-> > > On Thu, Jun 19, 2025 at 11:13:49AM +0200, Vlastimil Babka wrote:
-> > > > On 6/19/25 09:31, Shivank Garg wrote:
-> > > > > Export anon_inode_make_secure_inode() to allow KVM guest_memfd to create
-> > > > > anonymous inodes with proper security context. This replaces the current
-> > > > > pattern of calling alloc_anon_inode() followed by
-> > > > > inode_init_security_anon() for creating security context manually.
-> > > > > 
-> > > > > This change also fixes a security regression in secretmem where the
-> > > > > S_PRIVATE flag was not cleared after alloc_anon_inode(), causing
-> > > > > LSM/SELinux checks to be bypassed for secretmem file descriptors.
-> > > > > 
-> > > > > As guest_memfd currently resides in the KVM module, we need to export this
-> > > > 
-> > > > Could we use the new EXPORT_SYMBOL_GPL_FOR_MODULES() thingy to make this
-> > > > explicit for KVM?
-> > > 
-> > > Oh? Enlighten me about that, if you have a second, please. 
-> > 
-> > From Documentation/core-api/symbol-namespaces.rst:
-> > 
-> > The macro takes a comma separated list of module names, allowing only those
-> > modules to access this symbol. Simple tail-globs are supported.
-> > 
-> > For example::
-> > 
-> >   EXPORT_SYMBOL_GPL_FOR_MODULES(preempt_notifier_inc, "kvm,kvm-*")
-> > 
-> > will limit usage of this symbol to modules whoes name matches the given
-> > patterns.
+On Fri, Jun 13, 2025 at 03:54:30PM +0100, David Howells wrote:
+> The good news is that Stephan Mueller has an implemementation that includes
+> kernel bits that we can use, or, at least, adapt:
 > 
-> Is that still mostly advisory and can still be easily circumenvented?
+> 	https://github.com/smuellerDD/leancrypto/
 
-The commit message says
+I assume Herbert will insist that any new algorithm is hardened
+against side channel attacks.  Thankfully, Stephan seems to have
+put some effort into that:
 
-   will limit the use of said function to kvm.ko, any other module trying
-   to use this symbol will refure to load (and get modpost build
-   failures).
- 
--- 
-Sincerely yours,
-Mike.
+   "side-channel-resistant: A valgrind-based dynamic side channel
+    analysis is applied to find time-variant code paths based on
+    secret data."
+
+> However!  Not everyone agrees with this.  An alternative proposal
+> would rather get the signature verification code out of the kernel
+> entirely.  Simo Sorce's proposal, for example, AIUI, is to compile
+> all the hashes we need into the kernel at build time, possibly with
+> a hashed hash list to be loaded later to reduce the amount of
+> uncompressible code in the kernel.
+
+Module signing isn't the only motivation to add PQC algorithms to
+the kernel.  Another is SPDM, a protocol for device authentication,
+measurement and secure channel setup.
+
+The DMTF has finally published SPDM 1.4.0 on May 25th and this
+revision adds support for PQC algorithms (see list on page 216):
+
+https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.4.0.pdf
+
+An in-kernel implementation is being worked on by Jonathan (+cc) and me:
+
+https://github.com/l1k/linux/commits/doe
+
+We haven't added SPDM 1.4 support yet, but will have to eventually.
+So far we only support RSA and ECDSA, because that's the baseline
+mandated by the PCIe Base Specification for PCI device authentication.
+I expect there'll be an ECN sooner rather than later to extend the
+baseline to PQC algorithms.
+
+Thanks,
+
+Lukas
