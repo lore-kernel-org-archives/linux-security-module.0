@@ -1,199 +1,76 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DAA29CB40;
-	Thu, 19 Jun 2025 22:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CF81624DE;
+	Thu, 19 Jun 2025 23:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750370534; cv=none; b=rQpJ+YWIMNKipIyAwfL3TJMvXp3KHoSdRP454hlFtsPUvTDmBiD4azrKLA8mlt9VDelLc65Sn9epOA2RBwjoph4mJjbtRKyf5kuDACyR3jPmEqWtIIi/PmHQEkOM8stjca6wLXPOrjBLCFc9Y5cPi4Mp25TRwkWQ5HOu2YDuI24=
+	t=1750375369; cv=none; b=ZOYJD4HRRd4MILHMUk8d6A+fEDoCwtVY1MQZG6KQPYDcyS5xHsKVEcxKA5Qic66J0ef6idpwewZxO+xNKw+IEeK8anPVwLSGGPseCtBQrxHOvEmSCcWshJKv3v7jv3H1SkMzaeHON6dkVTcN6YJUpQhxRtf6BCYvDmCS7inJlmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750370534; c=relaxed/simple;
-	bh=puTnRa7DG1Y2PCVVgbCIuZlS5MYTdTwFeWDN6MNVDzk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TINgn3FSbiNZlQButuLgN/HHezOf7lfFgJo9OH25uslnye7q9HVxZvt1+GeWCnRSVtMg/ZN7rTsw1JWlOL6wNK5iAtQvsOkI5BbJGjFHTpVIPD5C/PUlmLSiVrbudsaYiCk0JM5x/EwT2GTj+rkAXPxsJLD9Qp5vZiduEgHA1vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/7siiah; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750375369; c=relaxed/simple;
+	bh=Vfhc+F1NBou2Cp7Orz20Okwcw/W+PxblCM7CBaW11eE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QUAh52GwhKO/A91CE8/NI1IHik/lGqbnYzJx3oFr2glR9l4h6HoaJezaOzF+zH5Ad8qYEDyeTyJJF5+JUqsxnD9Mu4TO1pdtAFdEF9asrHRXDkTZPxEJhRY5MmL2VN/x8NfGtWi3KP5yXa5fLb6fCwTbEt3vuKJJB+lkVxjIWHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=nDz8fjGx; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/7siiah"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04170C4CEEE;
-	Thu, 19 Jun 2025 22:02:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750370533;
-	bh=puTnRa7DG1Y2PCVVgbCIuZlS5MYTdTwFeWDN6MNVDzk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=K/7siiahIm2+vZA2wm1AFxzo5pqkamDp6sKxQ9Vmz62HlRZ2iwBJEj9va2lWHpWFt
-	 HzRkvbJTJOBKMKlNXsI4zgUC/z3UnXa9eyxdVC8p0kt5GcPqrEt+fRYTUOqZ/+T/p9
-	 2V2GLD0wmBChNu81p44UA/T7Hl8ONPHFIVN1pKSMOjFk7l5u1iT0tpJY/P+MtYlgG3
-	 oyrZkcd3I0dQhTIQcxl/WGfyET25Q0pQiFInDTtr6vSh1guqGyhFUYj1p2VR7Di6Ah
-	 cz/F6tgeXiPl6tyvG7UpF92wxJOX+8Zx1Cy/j3tZ3umrjKwBAtITwfztifQGG4aevM
-	 krBu93NfV+KXg==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="nDz8fjGx"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=W+Y2lsXPJdi1RUH/PSEB/FJQRlCoG8VD2Nqg0GB52nc=; b=nDz8fjGxN2pP7BV25fGFwk6IrT
+	ABdXg3zraCQs5jIG/UqGltCl9nP70gM7q8Cf8T+Kv+zQnujizKWmGKrFVJ3OQiruAARi6R2qXoXKx
+	qEH28ypgsmFsOp4+KMS8+1D6QCwxgIfsINmhcLu5XZupxv+hy+Ao/ipE7wY60o4I1IQma8VzYwcvJ
+	Y+e26aicEpu4ObHlSt0D5XMJq+AGJSmhMbhJP6ifuo1I1PZA4fyuLuykPjJZeKS2eSBERAmaqRRVc
+	thTSH5+0QfvPJqXepnFMISklrlohJ19s5PSob7hZtYmhbPn3YB0HVuYsCnzkAB/mVMPoH0KqhoRay
+	OPtOi5SQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uSOL8-000R2r-10;
+	Fri, 20 Jun 2025 07:22:27 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 20 Jun 2025 07:22:26 +0800
+Date: Fri, 20 Jun 2025 07:22:26 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: David Howells <dhowells@redhat.com>,
+	Stephan Mueller <smueller@chronox.de>, Simo Sorce <simo@redhat.com>,
+	torvalds@linux-foundation.org, Paul Moore <paul@paul-moore.com>,
+	Ignat Korchagin <ignat@cloudflare.com>,
+	Clemens Lang <cllang@redhat.com>,
+	David Bohannon <dbohanno@redhat.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>, keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	amir73il@gmail.com,
-	gregkh@linuxfoundation.org,
-	tj@kernel.org,
-	daan.j.demeyer@gmail.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v2 bpf-next 5/5] bpf: Make bpf_cgroup_read_xattr available to cgroup and struct_ops progs
-Date: Thu, 19 Jun 2025 15:01:14 -0700
-Message-ID: <20250619220114.3956120-6-song@kernel.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250619220114.3956120-1-song@kernel.org>
-References: <20250619220114.3956120-1-song@kernel.org>
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: Module signing and post-quantum crypto public key algorithms
+Message-ID: <aFSbsteSI9xTRA1Q@gondor.apana.org.au>
+References: <501216.1749826470@warthog.procyon.org.uk>
+ <aFQDLCvTs8IaAQI_@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aFQDLCvTs8IaAQI_@wunner.de>
 
-cgroup BPF programs and struct_ops BPF programs (such as sched_ext), need
-bpf_cgroup_read_xattr. Make bpf_cgroup_read_xattr available to these prog
-types.
+On Thu, Jun 19, 2025 at 02:31:40PM +0200, Lukas Wunner wrote:
+>
+> I assume Herbert will insist that any new algorithm is hardened
+> against side channel attacks.  Thankfully, Stephan seems to have
+> put some effort into that:
 
-Rename bpf_fs_kfunc_* variables as bpf_lsm_fs_kfunc_*, as these are only
-available to BPF LSM programs. Then, reuse bpf_fs_kfunc_* name for cgroup
-and struct_ops prog typs.
+No I think we should instead only support public keys.  There is
+no valid use-case for private keys in the kernel.
 
-Also add a selftest with program of "cgroup/sendmsg4" type.
-
-Signed-off-by: Song Liu <song@kernel.org>
----
- fs/bpf_fs_kfuncs.c                            | 53 +++++++++++++++++--
- .../selftests/bpf/progs/cgroup_read_xattr.c   | 22 ++++++++
- 2 files changed, 70 insertions(+), 5 deletions(-)
-
-diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-index 9f3f9bd0f6f7..8e02e09e092e 100644
---- a/fs/bpf_fs_kfuncs.c
-+++ b/fs/bpf_fs_kfuncs.c
-@@ -356,7 +356,7 @@ __bpf_kfunc int bpf_cgroup_read_xattr(struct cgroup *cgroup, const char *name__s
- 
- __bpf_kfunc_end_defs();
- 
--BTF_KFUNCS_START(bpf_fs_kfunc_set_ids)
-+BTF_KFUNCS_START(bpf_lsm_fs_kfunc_set_ids)
- BTF_ID_FLAGS(func, bpf_get_task_exe_file,
- 	     KF_ACQUIRE | KF_TRUSTED_ARGS | KF_RET_NULL)
- BTF_ID_FLAGS(func, bpf_put_file, KF_RELEASE)
-@@ -366,11 +366,11 @@ BTF_ID_FLAGS(func, bpf_get_file_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, bpf_set_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, bpf_remove_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
- BTF_ID_FLAGS(func, bpf_cgroup_read_xattr, KF_RCU)
--BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
-+BTF_KFUNCS_END(bpf_lsm_fs_kfunc_set_ids)
- 
--static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_id)
-+static int bpf_lsm_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_id)
- {
--	if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id) ||
-+	if (!btf_id_set8_contains(&bpf_lsm_fs_kfunc_set_ids, kfunc_id) ||
- 	    prog->type == BPF_PROG_TYPE_LSM)
- 		return 0;
- 	return -EACCES;
-@@ -407,6 +407,40 @@ bool bpf_lsm_has_d_inode_locked(const struct bpf_prog *prog)
- 	return btf_id_set_contains(&d_inode_locked_hooks, prog->aux->attach_btf_id);
- }
- 
-+static const struct btf_kfunc_id_set bpf_lsm_fs_kfunc_set = {
-+	.owner = THIS_MODULE,
-+	.set = &bpf_lsm_fs_kfunc_set_ids,
-+	.filter = bpf_lsm_fs_kfuncs_filter,
-+};
-+
-+/*
-+ * This set contains kfuncs available to BPF programs of cgroup type and
-+ * struct_ops type.
-+ */
-+BTF_KFUNCS_START(bpf_fs_kfunc_set_ids)
-+BTF_ID_FLAGS(func, bpf_cgroup_read_xattr, KF_RCU)
-+BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
-+
-+static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_id)
-+{
-+	if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id))
-+		return 0;
-+	switch (prog->type) {
-+	case BPF_PROG_TYPE_LSM:
-+	case BPF_PROG_TYPE_STRUCT_OPS:
-+	case BPF_PROG_TYPE_CGROUP_SKB:
-+	case BPF_PROG_TYPE_CGROUP_SOCK:
-+	case BPF_PROG_TYPE_CGROUP_DEVICE:
-+	case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
-+	case BPF_PROG_TYPE_CGROUP_SYSCTL:
-+	case BPF_PROG_TYPE_CGROUP_SOCKOPT:
-+		return 0;
-+	default:
-+		break;
-+	}
-+	return -EACCES;
-+}
-+
- static const struct btf_kfunc_id_set bpf_fs_kfunc_set = {
- 	.owner = THIS_MODULE,
- 	.set = &bpf_fs_kfunc_set_ids,
-@@ -415,7 +449,16 @@ static const struct btf_kfunc_id_set bpf_fs_kfunc_set = {
- 
- static int __init bpf_fs_kfuncs_init(void)
- {
--	return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfunc_set);
-+	int ret;
-+
-+	ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_lsm_fs_kfunc_set);
-+	ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &bpf_fs_kfunc_set);
-+	ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SKB, &bpf_fs_kfunc_set);
-+	ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SOCK, &bpf_fs_kfunc_set);
-+	ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_DEVICE, &bpf_fs_kfunc_set);
-+	ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SOCK_ADDR, &bpf_fs_kfunc_set);
-+	ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SYSCTL, &bpf_fs_kfunc_set);
-+	return ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SOCKOPT, &bpf_fs_kfunc_set);
- }
- 
- late_initcall(bpf_fs_kfuncs_init);
-diff --git a/tools/testing/selftests/bpf/progs/cgroup_read_xattr.c b/tools/testing/selftests/bpf/progs/cgroup_read_xattr.c
-index b50ccb3aebcf..0995fb2ac9ff 100644
---- a/tools/testing/selftests/bpf/progs/cgroup_read_xattr.c
-+++ b/tools/testing/selftests/bpf/progs/cgroup_read_xattr.c
-@@ -134,3 +134,25 @@ int BPF_PROG(use_bpf_cgroup_ancestor)
- 	bpf_cgroup_release(cgrp);
- 	return 0;
- }
-+
-+SEC("cgroup/sendmsg4")
-+__success
-+int BPF_PROG(cgroup_skb)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup *cgrp, *ancestor;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	ancestor = bpf_cgroup_ancestor(cgrp, 1);
-+	if (!ancestor)
-+		goto out;
-+
-+	read_xattr(cgrp);
-+	bpf_cgroup_release(ancestor);
-+out:
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
+Cheers,
 -- 
-2.47.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
