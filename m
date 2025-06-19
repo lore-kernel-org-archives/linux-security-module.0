@@ -1,212 +1,119 @@
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BA930E833
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Jun 2025 18:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A33825E801
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Jun 2025 21:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750359371; cv=none; b=CT0y8ETZiu2ScELHW4kJ51IWJyS9J4SR3ZHiBsvCl+qVHLenBW47uuT/rk96ABsUWriyU+EGj1uc/FVjT5yE8QCWMDTqmQ8E7yitpsovsdiulp57YaiSIgFSj2hbhK/qHVNfF0zhLaygnZUnDKgIIzJ02xGUTIUiLF/cNeiMrZs=
+	t=1750367062; cv=none; b=tSl06dJii/RrDpsbAwDVPMOUm+t/D/RfilfPtOBbLXvh42QAxFqRzJZUu6cmxNjHDlYI699mKqT8IiYeQ1V7I9JA294EdTmLmIOMYHJHJ6LJa2hw8L1xJnXfGtiwbPBv8uz2srXIhsnN2A5FvegyWzcJRuvjnfjC+bDMuBQIeVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750359371; c=relaxed/simple;
-	bh=jTwfMNgiDqIRJOksWYTy5jCF9CPb5zihZBKzIWwSFm0=;
+	s=arc-20240116; t=1750367062; c=relaxed/simple;
+	bh=f38j4Iqo8acxnIhtuXkeD3cynLv4OcZQ7P8GpdgZm4k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t4SvOZioOuOvdE911P4qE/KFsLFA10bvt9/+SuIjSGW45ygnqSB7b0GznKwSF67wtwPFaUNK7e3sPobphMYcQ4wf7oEOY6ed+QM7ia2brte0O6+7KmTrbBelGXodcsxEf0/L75scYULCh1g+ZBm7NMn0qwf5hSH8lxbMV8iq6eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NhSECbXD; arc=none smtp.client-ip=209.85.219.178
+	 To:Cc:Content-Type; b=MNHQ79gyZDqUJzqLwKz6qpY/hlz8zi6yH46KVpo7owCTyPbPqvJL8rmfmtNUgwYy3hI80b2ZbLaEIN3rNv5T8VB8XgMLMUwYRq7Y0AJboJhTwvgff+wnxw3sDEh6xv1PhVzHvRuoBaFi4ZAk99VVp5dqOHUwI2luQOfPCV6FruY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cW6D1BRd; arc=none smtp.client-ip=209.85.128.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NhSECbXD"
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e81826d5b72so1088760276.3
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Jun 2025 11:56:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cW6D1BRd"
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-70e4b1acf41so9856557b3.3
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Jun 2025 14:04:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1750359368; x=1750964168; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1750367057; x=1750971857; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hwc/J2z7K8Oc3tRBm2Nezvg/uque+UdAnRf1u/K/WLw=;
-        b=NhSECbXDk7EohYFokjry8rDIOWcIiyUyTMwZEtVshs6Ah7fhlxc70zNncCAjkpe9oi
-         hvTE733+H/fjrOOWPCoAjzOxXg2BGGfAlhZNkDYLzu912v7CvBCX8NALxed2u1+kWyjX
-         FViOgF/e0xbcnCbSnuGgr0UqBJADSQ7LUr8DQpBbL+JRgm/EMmiT6cYUEy2YVCK+c8T2
-         725D31AEdfUmU5n4ura03tAtyIg7t05R8nnaPpXrmSTQkBHqbbmYCSgfwP/bU7fNt1qt
-         snde2yweaMOQKq7sJFzDfUeTKXCui7hi5rn3zzOH2f+aGOaTbq5Y9b7XJNuylY88ROay
-         iYUw==
+        bh=lumfk+fpW+/5RKyXlyleHS+MaP2GOeXbKZfOKNMMyIc=;
+        b=cW6D1BRdeBH/yBYWcL/wW3xI9TIZwqjiAhDhf9YbmcTVJdcRUbCyG1arPgo+Yy6/aT
+         Oaj4L9eF5s//T1+B/suXBN/LTab7Wt8VosVtYC6wWA4gLN0WbwvP46YDVaxLguhLFu1S
+         S0WufY4MjC0O4LwZcgY2FgQ8PL4jmfMAJ8fvtoA30rBXnt8C+NtpkIOcLAmwFxoeWr8Y
+         V14/jcyLgFMOTcpl3YCy6yyouurTHPnH+kId/uokOJ0Fr3WSjxbZzHpXDgLwuz3+/XbQ
+         FURBQqIQpG5Uqg3omXXvKTbMUq2QmjOcLG75sn/DNq+9wrvGnaKN9dEl+ysaV2nHAr03
+         yYFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750359368; x=1750964168;
+        d=1e100.net; s=20230601; t=1750367057; x=1750971857;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hwc/J2z7K8Oc3tRBm2Nezvg/uque+UdAnRf1u/K/WLw=;
-        b=G1Knc9XQjBDizDNekCharZWgTEdad26dg10SY/5LqyK8mh37a41SogPZIorSOtM85M
-         7vMMg3KrHm6PLy2qBb2/GBuicxqjVkjem45VzKUJEcYfMv8nt16TJukyj1nIFu1fnPdP
-         y+aIXqjy6VKq+W82UYwWZImXS/ReRfc+dODi3QxzEq/Xn5N6yhahyUvOHdor3UdZaZfn
-         q8ua/QPQzumKQtMZgNRsdvuP5lgJEO4LMVQfp8qU3I0v+5uafxxRsWZGaGmxt8ZTvZuv
-         F0OSMKGZujUxAdR0qIWuRgQjnO9BoZ5AoPo7ZQKs6Mtw9ytlPnijgf3f7T+2DftqAwx/
-         rtsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWY6H//53lwRDGzjUnQqE6r2gATCFgvjid7TxZGYpYj/dBDk7WJfSTAfd4oOPZ47hI4HacJ6OnuRAKViFJWAQeWYgqvIAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxveMNWPuNrb9Bwrbx3q0JzqYv7EtYak6n9tdqIgGGD27CGT1FJ
-	uYzlVl/QUXDoG7kxctzQiNu781ZSszSBdbDwtcX7GTexw0owv9b9MDAR5WE7BCqVQJ6BoNeGBCt
-	eYnsL6DbBoCM9PChlzic8xMe3/r/1bdstHjUJutia
-X-Gm-Gg: ASbGncsctBROKgqha88oUWK1kjg6m8zsauEesvRL6/ju5Rg5e9WZjAKWoqBzKyrTvct
-	GQj9nxDf49hD/1QK+7r7fTKK4wDeeeJxPnW0wRHX7kv+BQHKohQe7nI1qjlK6IWduBZBflXs6by
-	SCUR4LrT7rPW3xFoJF6arzbuoXJh7QjpHVh2sHcAEMth0=
-X-Google-Smtp-Source: AGHT+IH067L4bejA4TI2O2DetkqX3aZTCVzDlFULZgdP7Lam4wsYXB5eU0tsHYelUE6XF/5qHsQm4PXzb1LotTfJpvY=
-X-Received: by 2002:a05:6902:260e:b0:e84:d34:f35c with SMTP id
- 3f1490d57ef6-e842bd0763emr454620276.34.1750359368469; Thu, 19 Jun 2025
- 11:56:08 -0700 (PDT)
+        bh=lumfk+fpW+/5RKyXlyleHS+MaP2GOeXbKZfOKNMMyIc=;
+        b=efehmnRPAxZyT9wEWP3CsPwbYqeU+VOHHZJHFVLnGnoTHt3Wu4+/oamQ0x1TPUFby7
+         +awQzCofmvIUvlhmdxT691byKUwXnjcw6A7LU2MscAa4iPk4jpJk4h9gibkegitl6DX4
+         NT1A3xpaklwa1ZXtIOM2Ae/zFd/uKPnoXMpSlpFYdQdYrQrLMqAr243YlkZ0OupxoSMg
+         ptT7u5r9+F4AAeR179Jip7Ljgc655jsAAzjUjRtW1bYVhWNaHfBTyAQxqYC4C99URwYU
+         VX7HfM2wp3av7ru40WyzKtf85XWs6GTXBGuFnaiHT7D7TJQgBGsF3qxOo/wkXH39Mho+
+         8bjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxUjVGwPjKxrKGM5POhCDg73qzpVrp1MBFfxko6M3qF82o+TJVTI8qerGheA2koG164gBHRlTwRr5gkKVYIDvPkc6+OrQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXskD7BgmOCexUcSXcxfO4GENNp/dO0GnMtweALE1Uik1CAX4X
+	Fmg7NTh5Ba9fRyiS1589O1gCCgWCS7d2esayL2Ic7gnKd2B2PIxeVqOPalz9+aTQgbQGu37QeOy
+	7hMa4fLzCVlrBK7zFt7fSqWqCEkTkkhK6EDHJHFJ2
+X-Gm-Gg: ASbGncu++oULcaAtYsosV/fz1Kulc0BmrpL1geBXVoPs8QmA4IpIuMFwlIAojYoG/fU
+	qrzzAhyAHl5JNqeM/ggx0HlIgB4uHbvu+WBjvSNmgqbIrphHs7Wt7Phynmd/86cMW2Kj7IpuMP7
+	ftiLHFcd/2pg4B8sMD2Sa8WBvOIzmdfm1jZs0LaKvNRSknOxA1F6MIqQ==
+X-Google-Smtp-Source: AGHT+IHTFe77unrYK9C7+eJbf2IZV6JzFgf/SfY74D8DPdljUvrt1WKcgPBYC5tSk0+mGANvgDk4AqDQw6/LqYvuk2Y=
+X-Received: by 2002:a05:690c:350f:b0:705:750e:37b7 with SMTP id
+ 00721157ae682-712c639d784mr9888287b3.5.1750367057365; Thu, 19 Jun 2025
+ 14:04:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhRWi5QdRgU-Eko4XZ9A2W2o3uhVAagVkhu1eT18qAWdkg@mail.gmail.com>
- <20250619040127.1122427-1-kuni1840@gmail.com>
-In-Reply-To: <20250619040127.1122427-1-kuni1840@gmail.com>
+References: <20250428195022.24587-2-stephen.smalley.work@gmail.com> <20250521003211.8847-1-kuniyu@amazon.com>
+In-Reply-To: <20250521003211.8847-1-kuniyu@amazon.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 19 Jun 2025 14:55:57 -0400
-X-Gm-Features: Ac12FXydpMmxk0hVfZce2Xoy08sDvTtPT8UVGVKruYSutx9qMXgs89MIxsZJvtk
-Message-ID: <CAHC9VhSDYwekbzzZB3LwQG=hVVX0-wfFg0i2n2Y_MuyAtv7OWA@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 0/4] af_unix: Allow BPF LSM to filter
- SCM_RIGHTS at sendmsg().
-To: Kuniyuki Iwashima <kuni1840@gmail.com>
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	casey@schaufler-ca.com, daniel@iogearbox.net, eddyz87@gmail.com, 
-	gnoack@google.com, haoluo@google.com, jmorris@namei.org, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	kuniyu@google.com, linux-security-module@vger.kernel.org, 
-	martin.lau@linux.dev, memxor@gmail.com, mic@digikod.net, 
-	netdev@vger.kernel.org, omosnace@redhat.com, sdf@fomichev.me, 
-	selinux@vger.kernel.org, serge@hallyn.com, song@kernel.org, 
-	stephen.smalley.work@gmail.com, yonghong.song@linux.dev
+Date: Thu, 19 Jun 2025 17:04:06 -0400
+X-Gm-Features: AX0GCFuvQDcj0Q4-T6mYoDn82kX6DVurSN3n5y6exOy2D1H3OZ7Mt_ie8lnZOc8
+Message-ID: <CAHC9VhT71e7r6eS-j3o+ruciG1jyrBJ8zvrvQgaf3r+6CkgSuw@mail.gmail.com>
+Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity()
+ interface
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: stephen.smalley.work@gmail.com, anna@kernel.org, brauner@kernel.org, 
+	casey@schaufler-ca.com, davem@davemloft.net, edumazet@google.com, 
+	horms@kernel.org, jack@suse.cz, jmorris@namei.org, kuba@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	netdev@vger.kernel.org, omosnace@redhat.com, pabeni@redhat.com, 
+	selinux@vger.kernel.org, serge@hallyn.com, trondmy@kernel.org, 
+	viro@zeniv.linux.org.uk, willemb@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 19, 2025 at 12:01=E2=80=AFAM Kuniyuki Iwashima <kuni1840@gmail.=
-com> wrote:
-> From: Paul Moore <paul@paul-moore.com>
-> Date: Wed, 18 Jun 2025 23:23:31 -0400
-> > On Sat, Jun 14, 2025 at 4:40=E2=80=AFPM Kuniyuki Iwashima <kuni1840@gma=
-il.com> wrote:
-> > > From: Paul Moore <paul@paul-moore.com>
-> > > Date: Sat, 14 Jun 2025 07:43:46 -0400
-> > > > On June 13, 2025 6:24:15 PM Kuniyuki Iwashima <kuni1840@gmail.com> =
-wrote:
-> > > > > From: Kuniyuki Iwashima <kuniyu@google.com>
-> > > > >
-> > > > > Since commit 77cbe1a6d873 ("af_unix: Introduce SO_PASSRIGHTS."),
-> > > > > we can disable SCM_RIGHTS per socket, but it's not flexible.
-> > > > >
-> > > > > This series allows us to implement more fine-grained filtering fo=
-r
-> > > > > SCM_RIGHTS with BPF LSM.
-> > > >
-> > > > My ability to review this over the weekend is limited due to device=
- and
-> > > > network access, but I'll take a look next week.
-> > > >
-> > > > That said, it would be good if you could clarify the "filtering" as=
-pect of
-> > > > your comments; it may be obvious when I'm able to look at the full =
-patchset
-> > >
-> > > I meant to mention that just below the quoted part :)
-> > >
-> > > ---8<---
-> > > Changes:
-> > >   v2: Remove SCM_RIGHTS fd scrubbing functionality
-> > > ---8<---
+On Tue, May 20, 2025 at 8:32=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon.co=
+m> wrote:
+> From: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Date: Mon, 28 Apr 2025 15:50:19 -0400
+> > Update the security_inode_listsecurity() interface to allow
+> > use of the xattr_list_one() helper and update the hook
+> > implementations.
 > >
-> > Thanks :)
+> > Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.sma=
+lley.work@gmail.com/
 > >
-> > While looking at your patches tonight, I was wondering if you had ever
-> > considered adding a new LSM hook to __scm_send() that specifically
-> > targets SCM_RIGHTS?  I was thinking of something like this:
-> >
-> > diff --git a/net/core/scm.c b/net/core/scm.c
-> > index 0225bd94170f..5fec8abc99f5 100644
-> > --- a/net/core/scm.c
-> > +++ b/net/core/scm.c
-> > @@ -173,6 +173,9 @@ int __scm_send(struct socket *sock, struct msghdr *=
-msg, stru
-> > ct scm_cookie *p)
-> >                case SCM_RIGHTS:
-> >                        if (!ops || ops->family !=3D PF_UNIX)
-> >                                goto error;
-> > +                       err =3D security_sock_scm_rights(sock);
-> > +                       if (err<0)
-> > +                               goto error;
-> >                        err=3Dscm_fp_copy(cmsg, &p->fp);
-> >                        if (err<0)
-> >                                goto error;
-> >
-> > ... if I'm correct in my understanding of what you are trying to
-> > accomplish, I believe this should allow you to meet your goals with a
-> > much simpler and targeted approach.  Or am I thinking about this
-> > wrong?
+> > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> [...]
+> > diff --git a/net/socket.c b/net/socket.c
+> > index 9a0e720f0859..bbcaa3371fcd 100644
+> > --- a/net/socket.c
+> > +++ b/net/socket.c
+> > @@ -560,17 +560,14 @@ static ssize_t sockfs_listxattr(struct dentry *de=
+ntry, char *buffer,
+> >                               size_t size)
+> >  {
+> >       ssize_t len;
+> > -     ssize_t used =3D 0;
+> > +     ssize_t used, remaining;
+> > +     int err;
 >
-> As BPF LSM is just a hook point and not tied to a specific socket,
-> we cannot know who will receive the message in __scm_send().
+> Paul: Could you sort this in the reverse xmas tree order before merging ?
+> https://docs.kernel.org/process/maintainer-netdev.html#local-variable-ord=
+ering-reverse-xmas-tree-rcs
 
-Okay, based on your patches, I'm assuming you're okay with just the
-socket endpoint, yes? Unfortunately, it's not really possible to get
-the receiving task on the send side.
+Done, thanks for reviewing the patch.
 
-Beyond that, and given the immediate goal of access control based on
-SCM_RIGHTS files, I think I'd rather see a unix_skb_parms passed to
-the LSM instead of a skb as it will make the individual LSM subsystem
-code a bit cleaner.  I'd prefer a scm_cookie, but given the
-destructive nature of unix_scm_to_skb() and the fact that it is called
-before we've determined the socket endpoint (at least in the datagram
-case), I don't think that will work.
-
-I'm also not overly excited about converting security_unix_may_send()
-into a per-msg/skb hook for both stream and datagram sends, that has
-the potential for increasing the overhead for LSMs that really only
-care about the datagram sends and the establishment of a stream
-connection.
-
-I'm open to suggestions, thoughts, etc. but I think modifying
-security_unix_may_send() to take a unix_skb_params pointer, e.g.
-'security_unix_may_send(sk, other, UNIXCB(skb))', and moving the
-SEQ_PACKET restriction out of unix_dgram_sendmsg() and into the
-existing LSM callbacks is okay.  However, instead of adding
-security_unix_may_send() to unix_stream_sendmsg(), I would suggest the
-creation of a new hook, security_unix_send_scm(sk, other, UNIXCB(skb))
-(feel free to suggest a different name), that would handle the per-skb
-access control for streams.
-
-Of course there is an issue with unix_skb_params not being defined
-outside of net/unix, but from a practical perspective that is going to
-be a challenge regardless of which, unix_skb_params or the full skb,
-is passed to the LSM hook.  You'll need to solve this with all the
-relevant stakeholders regardless.
-
-As a FYI, we've documented our policy/guidance on both modifying
-existing LSM hooks as well as adding new hooks, see the link below.
-
-https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsm-h=
-ooks
-
-> BTW, I was about to send v3, what target tree should be specified in
-> subject, bpf-next or something else ?
-
-I wouldn't worry too much about the subject, prefix, etc. as the To/CC
-line tends to be more important, at least from a LSM subsystem
-perspective.  I would ensure that you send it to the LSM list and any
-related lists, MAINTAINERS and/or scripts/get_maintainer.pl is your
-friend here.  Since this is almost surely LSM framework tree material,
-my general rule is that I'll handle any merge conflicts so long as
-your patch is based on the lsm/dev branch or Linus' default branch.
-Of course, you can base your patch against any tree you like, and I'll
-grab it, but if there are significant merge conflicts you'll likely
-get a nasty email back about that ;)
-
-As far as a v3 is concerned, while I generally don't like to tell
-people *not* to post patches, I'll leave that up to you, I do think we
-could benefit from some additional discussion here before you post a
-v3.  Reviewer time is precious and I would hate to see it spent on an
-approach that still has open questions, just in case we all decide to
-go in a different direction.
+> otherwise the socket part looks good to me:
+>
+> Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
 --=20
 paul-moore.com
