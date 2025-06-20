@@ -1,91 +1,102 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C0918E20;
-	Fri, 20 Jun 2025 16:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CE42EA752;
+	Fri, 20 Jun 2025 18:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750438420; cv=none; b=DGGJnDckKuwhMoPInRDOTmf+/9OqWl2BSSsIPaB8YBaj63gv0vOl0+LQnI6IMYgs57MbuascAAlfQ3h72jiojZQM1euh2KJb0qh8crCUfN7tSJBprot92h6vXSRibOLvATAvGzH8Uzl3GUvpkzQb6RkPbICEBDf8dwO9ONCv21M=
+	t=1750443090; cv=none; b=Gh148CpQ+BDl5heV6qpqtCSTTQI27IAZBlfz2eCelZEqr4nu16ZzpZT0yzzhyBhHk5VKHpQ55bFs05wkvPgXWTGXVTn/U1UOvE5r+FHvsg+wLhZmS6g3Ozj0mqyZ1vS+GVPV5WkGBsDk7SOZ0wYh+LZKDomRqHlzSJccDdUWEg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750438420; c=relaxed/simple;
-	bh=PKeAjhz7PxdKmk2PDK/Y8/sjOSxcNLcgwyOicoy2Z84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bjO/2W4ClTIS1rpJtBq6gaeZF7e0Q+vNhd/7DFg2PXcZJLAp1RNKQu6LFkBIWvYUqHi82oswPa2r6MVio1HugBG/wiBjdgbPm452tFrERf5nNCWbGCCWAC4Ac1dsctiM8N7cVxWz65ccslwU+9dLkg1C34CBenxubsjJxh01+jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OnrcTh1H; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1750443090; c=relaxed/simple;
+	bh=1dDLFyjAEHX8cxwcTCC/k6iBaRFF/axpFXkeBLu67dM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NvcSxBMNFIbQaE2fo+4aWcGFvG4rJ9Bs4fmriMSUf7s6KTCXH5pbmoucFgr0xXMYuS+7MWe/4Kkh5VtU8UO5bI81kuXecE9ncgKJen95P1lnT/FZdXNNpQwGvn+IeC0ZsGgTJ0027vjl9T9IDRHql9/URNvm+rU+7u52P1USNRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fhJem19N; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OnrcTh1H"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3Eo1XSA3SmcuMbRpTgyRtVlYknk3tdpLim2DRHohEz4=; b=OnrcTh1H3MnpfGDkkQoxf1opQy
-	QjgELB6MqBVq+C0oj+tykw/OL5LNfDp2xeJgNZiFB3Q04xAMMvuDi/b9m407+tQhlW9AKFuDkx2OF
-	7TbU3ZgyGj61tx/nEwMkBmVgPk/nKhlhvxtD3OAriolG9rkNl+lYExgn0RZT2mG11GcDdfJkTWLdo
-	AdoPf7MrTzij29LOh1WPBF0ktWSsRITeYO+y4Ts2Xn1vd0Il3V1zeVZIhD7mR7QEzsT3qeY4krrbp
-	oSYtuUzMLUIz5EYnE+R7Nbv2Wvd7MmuaSrotBF/nUgWI1mF6mxvjB89f9oqy56FuyKDy/DUj5VVhX
-	iLxQfJ4Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uSezL-0000000D7nF-2NDn;
-	Fri, 20 Jun 2025 16:53:15 +0000
-Date: Fri, 20 Jun 2025 17:53:15 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Shivank Garg <shivankg@amd.com>, seanjc@google.com, david@redhat.com,
-	vbabka@suse.cz, akpm@linux-foundation.org, shuah@kernel.org,
-	pbonzini@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk
-Cc: ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
-	serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com,
-	tabba@google.com, vannapurve@google.com, chao.gao@intel.com,
-	bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
-	yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com,
-	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com,
-	jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
-	jack@suse.cz, rppt@kernel.org, hch@infradead.org,
-	cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com,
-	roypat@amazon.co.uk, ziy@nvidia.com, matthew.brost@intel.com,
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
-	gourry@gourry.net, kent.overstreet@linux.dev,
-	ying.huang@linux.alibaba.com, apopple@nvidia.com,
-	chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
-	dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com,
-	jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com,
-	yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com,
-	aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
-Subject: Re: [PATCH 2/2] filemap: Add __filemap_get_folio_mpol()
-Message-ID: <aFWR-2WAQ283SZvg@casper.infradead.org>
-References: <20250618112935.7629-4-shivankg@amd.com>
- <20250620143502.3055777-2-willy@infradead.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhJem19N"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so2188888f8f.1;
+        Fri, 20 Jun 2025 11:11:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750443087; x=1751047887; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2mEzXZ/YIhixe6E1kyZ5GIWXcl4av2h83GgvTF7RG6c=;
+        b=fhJem19Nxd5HtTVDbiWg7qT8ulK/k0VLXouM/SZffxvSjhf96aO7ROeG/XH/6vDLnX
+         SeICoFd4PtLYMZW0k4r2X0adfBPYFDvgeH1R8EQAMQ9rtdHStgFEz4ah/WIRjp5c5zGj
+         aSPECJB1/jnm+Lo72u63YDnHXm4XRMeSDQ8Th4FmoTmXsyJFzigsb7jYlV2/fVf34elI
+         EeLkmBYEBvNXDu0J/Mj4T8wcOxohINFWNw84rtCzC+KK4RH49k7TFBSu0LrCzFEDouaQ
+         cB9lupTCg3r9Iw++f3QjYqTpUF7SAV5V0Qfp3GRsfMDNzC8pmiJ71xrl+OThVaWXG4/5
+         JuKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750443087; x=1751047887;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2mEzXZ/YIhixe6E1kyZ5GIWXcl4av2h83GgvTF7RG6c=;
+        b=IxP4lGphzozaKG0sMBP1+15yOWSty9OYCT6hG/kzblsV68t1xelzPZU+YExbJWmnpG
+         iCxA2I4s9BgDs+gG84qZ8bmiskNTompCzEDhWeJhMaQYZUif6jyQgOFoqh3e+NPxMEKT
+         GLWILgFrb8tj/qSE0n0lD/pCiYshCGW+5NunHLesAwduKa4Tz83Mp5go/rMWtGt1KIhk
+         f2Btis4hpHGw7e7xDvt8nx7+bMmFqzUKz42POJ7TTnCII3ZV4roLB7nTmif1W8oZ8d25
+         yTOeJF1EKUoHeRtmcY2+WjMUQL0hGL43zwtiQHSe+yeOHZ/IZHMoRWK+HlnBG0fskZMK
+         EaSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbVelZf8AQI0YaRAsb20HT5wR9mG9In4yEzZMLQxXmdGwZFB7ZhDZATPCMU2j6Y++MJTlmag8/+gv8G9zP@vger.kernel.org, AJvYcCVOuKwyAwvluHj66MqTgZsjb4m//kuz3aBX6FnPWrYnlUR7zLsOBdWrnn+10D8QFeG573Xes9p5r5/hpSd1cU1IwkXGJvbR@vger.kernel.org, AJvYcCXEAi9NoLGr0bEFuIS0vlYHuCckHcT/6P46tdx0OtQk7Vu9WeVdA2G6AXOqGU8x7pVBlQu97rUlGyeY+dPK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw4bf1LH+J7pbPHRAlvT9yEq6EDJ9gwHkQv0YocLAE9arkccsU
+	Tvdfjfi2nxcPRHkPH9nlcK43jJaRhcWIjLY0V8OMqCzRK6DInSwF+qgOYce3tkYKtJG6ANdXDaK
+	5c5ab3KaO2TY73ldX9CMaA6odeMWBwmA=
+X-Gm-Gg: ASbGncuEdZu2bDMoPQzHH3PQJkpE+AoZmRnSGRA8cglG8RsD5js3FtQuRXgCjRFxWmx
+	TEOJilV5i9HIGbsGlwUn3MR2Z0JXgkiUig7s4CrqlzwiQ8I63UQFGlDYO8KQp1K/SYE7vAkczEz
+	e4azj8QX+hp2zTo0nb6Th3FrWZR0NnwDWC7+TfZ16HbF0lqCCwxVo2wwUmEmD9UQTJYQpsMO4O
+X-Google-Smtp-Source: AGHT+IGfJOYs+TU8Pm+1eKpur6OPfhxYVjv6rAi7gkrEUuJaY+iWia/CHhyGwOziyeDcYZ+upUUxt3w9mKnp3ZXK7uY=
+X-Received: by 2002:a05:6000:2011:b0:3a0:b565:a2cb with SMTP id
+ ffacd0b85a97d-3a6d277a9bcmr3464061f8f.1.1750443086458; Fri, 20 Jun 2025
+ 11:11:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250620143502.3055777-2-willy@infradead.org>
+References: <20250619220114.3956120-1-song@kernel.org> <20250619220114.3956120-5-song@kernel.org>
+In-Reply-To: <20250619220114.3956120-5-song@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 20 Jun 2025 11:11:15 -0700
+X-Gm-Features: Ac12FXyshEwARoZFYJF1zB3nJckCcTMlv6mMIXAMOjn59QA2CaNEhkcL1gCUHnA
+Message-ID: <CAADnVQKKQ8G91EudWVpw5TZ6zg3DTaKx9nVBUj1EdLu=7K+ByQ@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 4/5] selftests/bpf: Add tests for bpf_cgroup_read_xattr
+To: Song Liu <song@kernel.org>, "Jose E. Marchesi" <jemarch@gnu.org>, 
+	"Jose E. Marchesi" <jose.marchesi@oracle.com>
+Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tejun Heo <tj@kernel.org>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 20, 2025 at 03:34:47PM +0100, Matthew Wilcox (Oracle) wrote:
-> +struct folio *__filemap_get_folio_mpol(struct address_space *mapping,
-> +		pgoff_t index, fgf_t fgp_flags, gfp_t gfp,
-> +		struct mempolicy *policy)
->  {
->  	struct folio *folio;
->  
-> @@ -1982,7 +1984,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
->  			err = -ENOMEM;
->  			if (order > min_order)
->  				alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
-> -			folio = filemap_alloc_folio(alloc_gfp, order, NULL);
-> +			folio = filemap_alloc_folio(alloc_gfp, order, policy);
->  			if (!folio)
->  				continue;
+On Thu, Jun 19, 2025 at 3:02=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+> +       bpf_dynptr_from_mem(xattr_value, sizeof(xattr_value), 0, &value_p=
+tr);
 
-This is missing the EXPORT_SYMBOL_GPL() change.  Sorry about that.
-I'm sure you can fix it up ;-)  I only tested "make O=.build-all/ -j16
-mm/ fs/" (on an allmodconfig) which doesn't get as far as making sure
-that modules can still see all the symbols they need.
+https://github.com/kernel-patches/bpf/actions/runs/15767046528/job/44445539=
+248
+
+progs/cgroup_read_xattr.c:19:9: error: =E2=80=98bpf_dynptr_from_mem=E2=80=
+=99 is static
+but used in inline function =E2=80=98read_xattr=E2=80=99 which is not stati=
+c [-Werror]
+19 | bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
+| ^~~~~~~~~~~~~~~~~~~
+
+
+Jose,
+
+Could you please help us understand this gcc-bpf error ?
+What does it mean?
