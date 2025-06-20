@@ -1,190 +1,214 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A9B30E84F;
-	Fri, 20 Jun 2025 08:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B31127D76E
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Jun 2025 09:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750408290; cv=none; b=ixX5JPVGFBXGdyQFavQF2l2qM3e61TBvodMpDwO7t8qb4QLCdPGE5GpPs7uCmRXNOmgGbo0D3R+IJGydaC3tDfrUSr10kOLBFvnDCpBA3Wh/b33aiITZlUgDFKpOgdWoAxNno/7lr0px5hEHjyicK4zIs7XYUzG7hTBMi1DDjHA=
+	t=1750412253; cv=none; b=qm7k1c6Zz4dB+9hYFQWNhxLfm1Iguy6UJXweyVo2aQM5qD9NL2/8ICtORGAvCow3e6prXpU01oXAhQSwRQM/NW4iP90kZIOVVjk0R/Xkd1bvxoG69BCuvfVsUWB3t48yaFqEAdRowr3c6r84ojauwPXlk+HDRB9G06VwEYmIHYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750408290; c=relaxed/simple;
-	bh=Bhu2W2Zp0blQzM5tWuUNkvTkKuqo41pZEk+2ifIlZgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cUWRNwKdv6HGG4QOHCXy/InEOcRwHQpGd6hAILf8Sw/EQLIzhdn1nR+Znh8Q9bmMKmWH4BAMTMc/zNXVvWyC+d8+8Kv72fHWlht/4LfXIe3LxtYixxACDHsFqCEMcgtMWe0hr2a3E4Bj/p2Au7BYNPG25nx9Y8eMEjb9ReboBC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNJsdDEu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750412253; c=relaxed/simple;
+	bh=TwGc/WU+y8nuuK+RypntLYcBZ65rRiuDQuKPh9Fon9Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rxx4vn4MgjjrH1i8olvuljSE2jEsLAmYYCHNDKZytZfJFi+LEtXMTiFAAz8cnbESESxvj71k5dLBpz+zxeV30ISyOiReMK0wtmFP1BlLTiq8qEnj1MLdZSsW9coIt6tc0gl+rc4+KmrGG5OoiCIw1flWGcFobVMv4CUl63lJcPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uPTauNI1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VtQWQQlk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uPTauNI1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VtQWQQlk; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNJsdDEu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A50CC4CEE3;
-	Fri, 20 Jun 2025 08:31:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750408290;
-	bh=Bhu2W2Zp0blQzM5tWuUNkvTkKuqo41pZEk+2ifIlZgw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tNJsdDEualaroLs6cNc/FDnBC0ZDCzgl7Seo0MRUcyRryD8iggojfPlU6rNhjS7nw
-	 BWtBoU5RIEL8sRLABuFd+FzR7xoMqAuleDTdiGy9pJSe9kBVC7elXMJNhXlo7kkt7/
-	 RpAKYlYea16J8HyTzQJXY/P4rRkI5Gqi07GqhFP3rqe6hvbVSrtintLAfcrKbae5tR
-	 lwy6LiLkrQI+VfgD2E3qlzh4s3rbfvuqnh30ONY/O8XlFFkHPsQSGb7mpBFszWSqH+
-	 h2CDrZDZhZRZLf5aZvHkFzsiJyA7GrdhBn8qIkCtcCZcWlxwbb5BgkynGb3x/Ao8fd
-	 dZiQHdyVv2yUQ==
-Date: Fri, 20 Jun 2025 11:31:19 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Shivank Garg <shivankg@amd.com>
-Cc: david@redhat.com, akpm@linux-foundation.org, brauner@kernel.org,
-	paul@paul-moore.com, viro@zeniv.linux.org.uk, seanjc@google.com,
-	vbabka@suse.cz, willy@infradead.org, pbonzini@redhat.com,
-	tabba@google.com, afranji@google.com, ackerleytng@google.com,
-	jack@suse.cz, hch@infradead.org, cgzones@googlemail.com,
-	ira.weiny@intel.com, roypat@amazon.co.uk,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH V2] fs: export anon_inode_make_secure_inode() and fix
- secretmem LSM bypass
-Message-ID: <aFUcV-zbJYzAdYig@kernel.org>
-References: <20250620070328.803704-3-shivankg@amd.com>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uPTauNI1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VtQWQQlk";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uPTauNI1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VtQWQQlk"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4CC8C1F38D;
+	Fri, 20 Jun 2025 09:37:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750412249; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BBJFHILD9Do9Wn7lKr2d+o9XPVjgGjFz9Sr+qBv9zHA=;
+	b=uPTauNI1tTsikoj3IwxJxtdH95u87Cg7A2OW+M52sjjnJcwW6XUQ2pB2yo6vzPFPFCy52H
+	Y+09nt2ZtZqDKyWdX+o0josPpDvbyJdtqy63D7Rix686PRGXcGYSTjvM4/qmK7O0VZwmAw
+	L07icR7jBUvf3+sAU4jwImXUlSv4B70=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750412249;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BBJFHILD9Do9Wn7lKr2d+o9XPVjgGjFz9Sr+qBv9zHA=;
+	b=VtQWQQlksryJCVZkh/4Q6dSyWH5Ck/2oJVOfb/r9PH1C+bBKNUKANvTVWrGiZUqenHgBDQ
+	++zMLrYNiKIAYNCw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750412249; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BBJFHILD9Do9Wn7lKr2d+o9XPVjgGjFz9Sr+qBv9zHA=;
+	b=uPTauNI1tTsikoj3IwxJxtdH95u87Cg7A2OW+M52sjjnJcwW6XUQ2pB2yo6vzPFPFCy52H
+	Y+09nt2ZtZqDKyWdX+o0josPpDvbyJdtqy63D7Rix686PRGXcGYSTjvM4/qmK7O0VZwmAw
+	L07icR7jBUvf3+sAU4jwImXUlSv4B70=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750412249;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BBJFHILD9Do9Wn7lKr2d+o9XPVjgGjFz9Sr+qBv9zHA=;
+	b=VtQWQQlksryJCVZkh/4Q6dSyWH5Ck/2oJVOfb/r9PH1C+bBKNUKANvTVWrGiZUqenHgBDQ
+	++zMLrYNiKIAYNCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D855213736;
+	Fri, 20 Jun 2025 09:37:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OHp8NNgrVWgQdgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 20 Jun 2025 09:37:28 +0000
+Message-ID: <49455248-04b5-465e-9c76-b5dfbe6ac329@suse.cz>
+Date: Fri, 20 Jun 2025 11:37:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250620070328.803704-3-shivankg@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v8 3/7] mm/filemap: Add mempolicy support to the
+ filemap layer
+To: Shivank Garg <shivankg@amd.com>, Matthew Wilcox <willy@infradead.org>
+Cc: seanjc@google.com, david@redhat.com, akpm@linux-foundation.org,
+ shuah@kernel.org, pbonzini@redhat.com, brauner@kernel.org,
+ viro@zeniv.linux.org.uk, ackerleytng@google.com, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com,
+ tabba@google.com, vannapurve@google.com, chao.gao@intel.com,
+ bharata@amd.com, nikunj@amd.com, michael.day@amd.com, yan.y.zhao@intel.com,
+ Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com,
+ aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
+ jack@suse.cz, rppt@kernel.org, hch@infradead.org, cgzones@googlemail.com,
+ ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
+ ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com,
+ rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net,
+ kent.overstreet@linux.dev, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+ chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
+ dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com,
+ jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com,
+ yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com,
+ aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
+References: <20250618112935.7629-1-shivankg@amd.com>
+ <20250618112935.7629-4-shivankg@amd.com>
+ <aFQ0v0DfWgUvqK6L@casper.infradead.org>
+ <ce88982b-0a01-4673-a0f2-d490b66d0fa6@amd.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <ce88982b-0a01-4673-a0f2-d490b66d0fa6@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,redhat.com,linux-foundation.org,kernel.org,zeniv.linux.org.uk,paul-moore.com,namei.org,hallyn.com,suse.cz,intel.com,amd.com,nvidia.com,amazon.com,infradead.org,googlemail.com,amazon.co.uk,gmail.com,sk.com,gourry.net,linux.dev,linux.alibaba.com,arm.com,quicinc.com,vger.kernel.org,kvack.org,lists.linux.dev];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[65];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[amd.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
 
-On Fri, Jun 20, 2025 at 07:03:30AM +0000, Shivank Garg wrote:
-> Export anon_inode_make_secure_inode() to allow KVM guest_memfd to create
-> anonymous inodes with proper security context. This replaces the current
-> pattern of calling alloc_anon_inode() followed by
-> inode_init_security_anon() for creating security context manually.
+On 6/20/25 07:59, Shivank Garg wrote:
 > 
-> This change also fixes a security regression in secretmem where the
-> S_PRIVATE flag was not cleared after alloc_anon_inode(), causing
-> LSM/SELinux checks to be bypassed for secretmem file descriptors.
 > 
-> As guest_memfd currently resides in the KVM module, we need to export this
-> symbol for use outside the core kernel. In the future, guest_memfd might be
-> moved to core-mm, at which point the symbols no longer would have to be
-> exported. When/if that happens is still unclear.
+> On 6/19/2025 9:33 PM, Matthew Wilcox wrote:
+>> On Wed, Jun 18, 2025 at 11:29:31AM +0000, Shivank Garg wrote:
+>>> From: Shivansh Dhiman <shivansh.dhiman@amd.com>
+>>>
+>>> Add NUMA mempolicy support to the filemap allocation path by introducing
+>>> new APIs that take a mempolicy argument:
+>>> - filemap_grab_folio_mpol()
+>>> - filemap_alloc_folio_mpol()
+>>> - __filemap_get_folio_mpol()
+>> 
+>> You don't use these APIs in this series, so I can't evaludate whether
+>> any of my suggestiosn for improving this patch would actually work.
+>> NACK.  Introduce the APIs *with a user*.  Come on, this isn't a new
+>> requirement.
 > 
-> Fixes: 2bfe15c52612 ("mm: create security context for memfd_secret inodes")
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Suggested-by: Mike Rapoport <rppt@kernel.org>
-> Signed-off-by: Shivank Garg <shivankg@amd.com>
+> Hi willy,
+> 
+> Thank you for the feedback.
+> 
+> filemap_grab_folio_mpol() is used in [Patch 6/7] in kvm_gmem_prepare_folio().
+> 
+> filemap_alloc_folio_mpol() and __filemap_get_folio_mpol()) are internally used
+> to support the filemap_grab_folio_mpol().
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Maybe they can be static then and don't need to be declared in the header.
 
-> ---
-> The handling of the S_PRIVATE flag for these inodes was discussed
-> extensively ([1], [2], [3]).
-> 
-> As per discussion [3] with Mike and Paul, KVM guest_memfd and secretmem
-> result in user-visible file descriptors, so they should be subject to
-> LSM/SELinux security policies rather than bypassing them with S_PRIVATE.
-> 
-> [1] https://lore.kernel.org/all/b9e5fa41-62fd-4b3d-bb2d-24ae9d3c33da@redhat.com
-> [2] https://lore.kernel.org/all/cover.1748890962.git.ackerleytng@google.com
-> [3] https://lore.kernel.org/all/aFOh8N_rRdSi_Fbc@kernel.org
-> 
-> V1->V2: Use EXPORT_SYMBOL_GPL_FOR_MODULES() since KVM is the only user.
-> 
->  fs/anon_inodes.c   | 23 ++++++++++++++++++-----
->  include/linux/fs.h |  2 ++
->  mm/secretmem.c     |  9 +--------
->  3 files changed, 21 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> index e51e7d88980a..1d847a939f29 100644
-> --- a/fs/anon_inodes.c
-> +++ b/fs/anon_inodes.c
-> @@ -98,14 +98,25 @@ static struct file_system_type anon_inode_fs_type = {
->  	.kill_sb	= kill_anon_super,
->  };
->  
-> -static struct inode *anon_inode_make_secure_inode(
-> -	const char *name,
-> -	const struct inode *context_inode)
-> +/**
-> + * anon_inode_make_secure_inode - allocate an anonymous inode with security context
-> + * @sb:		[in]	Superblock to allocate from
-> + * @name:	[in]	Name of the class of the newfile (e.g., "secretmem")
-> + * @context_inode:
-> + *		[in]	Optional parent inode for security inheritance
-> + *
-> + * The function ensures proper security initialization through the LSM hook
-> + * security_inode_init_security_anon().
-> + *
-> + * Return:	Pointer to new inode on success, ERR_PTR on failure.
-> + */
-> +struct inode *anon_inode_make_secure_inode(struct super_block *sb, const char *name,
-> +					   const struct inode *context_inode)
->  {
->  	struct inode *inode;
->  	int error;
->  
-> -	inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
-> +	inode = alloc_anon_inode(sb);
->  	if (IS_ERR(inode))
->  		return inode;
->  	inode->i_flags &= ~S_PRIVATE;
-> @@ -118,6 +129,7 @@ static struct inode *anon_inode_make_secure_inode(
->  	}
->  	return inode;
->  }
-> +EXPORT_SYMBOL_GPL_FOR_MODULES(anon_inode_make_secure_inode, "kvm");
->  
->  static struct file *__anon_inode_getfile(const char *name,
->  					 const struct file_operations *fops,
-> @@ -132,7 +144,8 @@ static struct file *__anon_inode_getfile(const char *name,
->  		return ERR_PTR(-ENOENT);
->  
->  	if (make_inode) {
-> -		inode =	anon_inode_make_secure_inode(name, context_inode);
-> +		inode =	anon_inode_make_secure_inode(anon_inode_mnt->mnt_sb,
-> +						     name, context_inode);
->  		if (IS_ERR(inode)) {
->  			file = ERR_CAST(inode);
->  			goto err;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index b085f161ed22..040c0036320f 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3608,6 +3608,8 @@ extern int simple_write_begin(struct file *file, struct address_space *mapping,
->  extern const struct address_space_operations ram_aops;
->  extern int always_delete_dentry(const struct dentry *);
->  extern struct inode *alloc_anon_inode(struct super_block *);
-> +struct inode *anon_inode_make_secure_inode(struct super_block *sb, const char *name,
-> +					   const struct inode *context_inode);
->  extern int simple_nosetlease(struct file *, int, struct file_lease **, void **);
->  extern const struct dentry_operations simple_dentry_operations;
->  
-> diff --git a/mm/secretmem.c b/mm/secretmem.c
-> index 589b26c2d553..9a11a38a6770 100644
-> --- a/mm/secretmem.c
-> +++ b/mm/secretmem.c
-> @@ -195,18 +195,11 @@ static struct file *secretmem_file_create(unsigned long flags)
->  	struct file *file;
->  	struct inode *inode;
->  	const char *anon_name = "[secretmem]";
-> -	int err;
->  
-> -	inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
-> +	inode = anon_inode_make_secure_inode(secretmem_mnt->mnt_sb, anon_name, NULL);
->  	if (IS_ERR(inode))
->  		return ERR_CAST(inode);
->  
-> -	err = security_inode_init_security_anon(inode, &QSTR(anon_name), NULL);
-> -	if (err) {
-> -		file = ERR_PTR(err);
-> -		goto err_free_inode;
-> -	}
-> -
->  	file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
->  				 O_RDWR, &secretmem_fops);
->  	if (IS_ERR(file))
-> -- 
-> 2.43.0
-> 
+> Thanks,
+> Shivank
 
--- 
-Sincerely yours,
-Mike.
