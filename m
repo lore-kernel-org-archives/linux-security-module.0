@@ -1,60 +1,60 @@
-Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A1924BBE1
-	for <linux-security-module@vger.kernel.org>; Sat, 21 Jun 2025 17:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A433625A326
+	for <linux-security-module@vger.kernel.org>; Sat, 21 Jun 2025 17:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750526640; cv=none; b=GUc2TY4BjMbcTUKRhQY1CbYFisyn+fdVFq6Ybk7eQ0bX6dM+wFW52SbTRW81r511XsNmmcctoQ1Z6kecYLo7AaKXHi8TZ8XLLi+4u6vngs5+x9pDN/mlXmhwUFObj0Hx7xq7NVnxf8ULoC43+D5rxSlJw6fdGA75ooDJZyxhSFw=
+	t=1750526645; cv=none; b=MwkYrMXnHgk5XqAgC9hH4jwx0cmAKbf7VlrfQxHYFW17STn7F32IkMSr+2LaPVRYrqvILdx/cpyLctoiBF1+SRloYCqkpkIRC2jhwMU+SDo8izFRwgb6V2stDwgcIQy95N7LZHaKylZm81r06xAMa6i9pe4nyf9Dy/KqGQuiJFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750526640; c=relaxed/simple;
-	bh=HWHyaWIb/BtpPN0SB7P8ktq3MZPQ3308NHR0pTMakjE=;
+	s=arc-20240116; t=1750526645; c=relaxed/simple;
+	bh=PXNl/4U8SPxf6zMvJk8C55Fc9VC3ay7Kotmda9k1aiY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sHwhpCNacDjPOtSOw19NXvpMrUyj71sCrp+mmfGFgi18Cb5DFQYw6fkfCH9xWqXjBcB08QUjlZtqDlbhYKEBNraCcmkAxecc+m580WHa1SRM/uBi5TMfmj5ZNndsmJ7gyYYVOF6uX7b0RsyMka6SlY5HcaNa6aRNKP9iycPI7TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=bQ+bSYda; arc=none smtp.client-ip=66.163.189.89
+	 MIME-Version; b=RlgOvfrAlTRggYLwOINjKySQIpH1vi8HYumq7zUvxoxp/lcTuGYda2bIz9kiedsWTRE7aBygNAfqQ91oMrpLHwAJJD0asqTFv8P+CubOQnmlr6e7xltTTdGqhK/bGZk4RiajmuXxnFetwo1O5O025VA2VG0WTTZw2cEvnu8oniY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=WavFRWZA; arc=none smtp.client-ip=66.163.188.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="bQ+bSYda"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1750526638; bh=cJeLymkxKR6/Zy7QPMuI4QExf32iwM1KwA8MI/WeCFk=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=bQ+bSYda8V5GBT+VTeH2YY1lGgxhZEHR2yDS5kWuqx3RwpbMlU/ABPs9fLR0waS7EODe26dikGHrCE1kIERcycUgVp5LM9CkNJxLOHd7hjm7Mpfs9GeU4bS+fBzf+3eWXn7eQFF77dJDP4tMMfNCjvo3fL8yeqnwuO+xjT2ODfhXGLtNqmO53IIG1e30uvgb3t9yCM3WNtzyYgh8yZXZ8EUTv7cfvMk/BmeRtk5o6k/zYfa1+izZj76GL4XOEAmB9qfQB71a5AOrm6Do+WA7iWUZyTTA0bDqw0Zgu59d/1sQy5KcO+PJxEXTtWDRnDdlANLaFfoNqYzoTkUtrVcYew==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1750526638; bh=LifPUm+5DjJKqlIFxJgZTwDJMmE4j9e3aQjOFTs3o7T=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=GxJkFniZWEmAv47JLzv/ByA1qZkFrtb0z1r3P2n2sE/8LpPZlb8S7EdhnsHR7a7DsPGxhuc4McJSfggobQ904kKOi5R7oAaoLC7jSAEO8c7mWBW5geM7nWswPFElY2aJYNE2cboOMsX2zTIU7H6b1AyiiMCyT9D7C4pW3E6rUGrXdFpWS+HfatlkQhTbrwLaa9C6xhMurAc3UrKL8VfU5Kk7PO2BSAWVKgm0+HeziaL2hj50+LdgHQMQXrtnXrdUaEy3sTXUpd9iFqI+bTzhbFWXCG2MlxdxQJl0k39MwCdmtuYZu2N8svcPV/WPd+EINLHXdhOyqgRBtWSEq05A4Q==
-X-YMail-OSG: F39ozxAVM1msUKuhTxvq1a8AR3kYBUsn5t.Ed8k9yfIGylQGopdUedOtVbxxjxI
- iU6IssCN3Uk4xCQTuH0SXP4AO0d6jdkBvjGsHNs0nqdgy_nsKf27qFKJQ4cliIdJKqvAwHS94cWZ
- aTr0vg157v.XTzi8t1MdFjywq4B5Xj3YV8hu575nd003C4bHoK3ItCigZq1j6L3731zosXAlAfYB
- foreGxEa1q6cv4fPd.w1oXAUbnP5UN5bzK9B44YrKF.lZmIBVXcBrqSHPYADvOkzdJpgvcCzn80J
- hWspdkSyDsnlPJ3z1ivXSj3wwaqWhEBqsRvAke5FArQTAs9mrJEuxy6whs5AsZuNG0N2ZziSx.Vi
- TqZuyB4OStqFjFY4y8ssCEDpei_C0vpQ.zAq7z9_IS3VVK_u1LtTLyD76KX1G6Jp.Z9uYeyu_eXV
- PoeakUiifkvUlDwR_REnYTtVbg03D1NzvkEGQ1Ks_aC.5k6U5qh.hr9aRcmyB.xayA0Mr.fhekDS
- BTZTjVqZdpYaIv3An492atqxUS9i3B2F7JY0sNNkp_dPyHkwfoTaA.lSi.gbF2HR10UYgDcPTREB
- 6VgiQqkaBo__km3y7z5Qdu9MljcdIzdGV501mkaBFsV4uMu_PWOcFSx0jebatC6Aqb0SWpFGXKgP
- Vo89._1xZAxW4TIkBL114O3MUPTWslM2lH6ml4iu3c6D8Rdl0HOlHQh49FNrPtJrWDD3_76F7SkS
- kNm7xj5bKS7hl14PA5JZ.NdrXOd8Dmr3kSY7FVK.vd90sVtiyC8.pge.apu4XY_.evm3T5Bokd5_
- WyR5WIlQg5CohhasoOdBhEf2.b2G2f7RX8.VgV8.OqySxgHIZBBB7F.tYQMcWJW24tQJLiCnrADp
- nWBmPflhrlsTy1jo52eFliuwnzYuJIZtutuhAv558BV1Na4JxVADAqZuaTl1OeS2oHoLETdFZLAa
- RhItsSoKgjwHhq8_Y_9xILR5_uDHCN7TSSQNet_Al94c5x_KlQ2vCmiYo4psh4De6vqSZ.5HJfxd
- 0JDGKmw2Is2hMKo3YUKudVoJ4SDUNPODPZ_BN7O1HFkVD9o71O6U2l0QT.CjGTQWcGreRl3bHAxO
- 98A8usk9Kd6mueypOHZaQ1x4u3_NuMFF080UzOTBzI_6ajMebyxmGhCD._.sQggrAQKKGcu4xEB8
- Gfe4_wa5_fLCws3AMjIXDnH3Y0naESh0JGpENwayUslA.AkcZ0mdQ5eteVePcHlV0Q8Rz3I9joX0
- Hy4eKLbKY7qD7KTprRC3.znpcedQn3kJGw9ncikncMco0TuoNBDqZYrSaG6uoIxyTxC836fuvHkk
- BlhrDIolXH73JWtBMFWEasMrancbkp_wEE.ip_0_.gka0tujn_Vq3MkfCJOtaGWHiLYsJh44ddWd
- vT63mAh.K4WI9gYby.QOPUeDTU3PjMjZCgB6dfyQ.bak5Yz1u.PTHefKH.tHDesGqVG.w3.087ak
- s4_JuUPloO8fzkmRWvfd1SzzLOH2zlubhI6blGH_0oFBZ63C9M0Ua8SExhFiPDEASae0h2Dl2l0B
- sGHG5fVBCO_274nUwqSKPVEfai7tv6C7h0n_62tRRymCqAxSC2qnvJAX.MSMuiXsraVmZM1eX7ki
- Vdh417kKe.RU7W9thINFdFwNn.Czgtg_hZU7C6EJJXP0OCGnqJAQjX156fzU_Mtf2HXU3aTnhCkk
- qunpWLGbSqljM65b1F.PxTHs1RXvy9HTnb4uGaROyHS1wJDlZ.12oP2ZY8Q2nxqS1WkZUCeJVvkC
- Ig3eAvzZlFruC_Uf5NQH6C1MAFRbJmKOxOZyiixEWVr0M01HbYGGtPibmZ9NrGuppl8EKTl1YZNr
- U1WtTG2IA0mS0YbjkHWs43cV7BTzCNf5Gl6oM1ralCXognDVmCrbX24LBWGkbrjAmzPOY.vWrEPz
- rkdjbnHXC5y6GWBaiPkLsiKasOCr.4L6I.SFB91u.ylQOvVq2xLWIW2nl.fAIDU5Fj3kPGiTftlS
- 6fEW5iiuXDkCR2ysHBHZAwZQ930yiobZVhGp8Stwyd2BvTSnpgUG3CXbaPuT.61tfCe3rVTH.F4p
- rSghBABpKn_xDjQp4wG2C6KvtQ0BGfEQqmN4lfY56gXECn6pgJb5NIYVkoPo0vpBAx.5vyfliam.
- sqwgB6Tc_BQW.Yt3N5j2HNxnrCEGx5054LU8b.gpUJhln1hVVktrjYF2hxVTDCYScJLRu1sZfOjh
- cJ7Wvof4QAPD44mc5_Icf.OW8zkXovuZx3I_yRj9fvMStIsp7QycghEITcNgoZxoy2Ky31ggsKZB
- XzsGYnOKKoJZ5JT2hCYN_h7.S55d5C_yjZOlB
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="WavFRWZA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1750526642; bh=W/cTrlOevtxan2rTu6YSeU2owjx8zOs1+huUBxSxev0=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=WavFRWZAyL+1UxvSxNxOzCi53CfDmj4Bqwu0ZtYGNXsOggopcifDCuFVUMUHyXpg7L6uU41MQgnTZod7IjnbpakRcaLG+1U5ao8LlXGmuF5K40BOjn0y+LvV8oiTUVnlDbGRN1xw8VPzqbJLlK4rIU02c0QedwakH63sH2eCJQnFJgnKnCjf6mUl8SHXfW1Yrqcm7dVjZa/RcREk/T1f4sMIJbKSzN1xgt6D/jIFsxe5DvIut6Mh+484S2wxlc4KQKzOVizPZ/IHCHnYvb5zR5MT+//EyCm3OpOLXZFkTosvZRgh94hl35DpPX9o1RPL8xDyhX+llZ2RdL1Gz9r1Hg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1750526642; bh=siaMc1Pc1Y6p7sggT57dif6f4Luw/nMeR2jpnOfiNY2=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=Gkb3M8dyPWy2thVL7P8oI5F+y+vkpFGlQx459dKe2dt6ajJaIqWw4zWMYKXZIKhvBFy6mI18EdbUMgLvqjrHl3INGLHluXsC+F4aqWx7LC3KXAxpmAOJKLWVtaLnRC7ni4YNbZ5q/azzv+yUL01QygAUVdnK45E6u8DyLNuWkybhUSxo88Lqwt2ddWMNvvbcnk4M5hFNyOESjTZLQCkgtnmJLICYzU9eD0tfT9PaAGNgz1vvsmene55uCfpK1eayXDUKJRFUZqkML3u9vUtOwm6J8OiQQenXIsnOca9xkHQQA6ovg09u9EhFNwSh4yf1kXSMNBHfF+7LI9mUQUenuQ==
+X-YMail-OSG: IWDPGnAVM1lWRUNQZCk2bf1RzWdc32XWZTKIiidnTEv71DHLxeCYV.OjDgSX0pr
+ QT8nd17cvTeY6_XAVHxDKZz505daLZs48wX4a8usru0WB.TSasTv.Sb4SgNUUoaEOKn4hvaTjlnC
+ GncHDbvdu9bPuSGknf9Tq21nMS7EQAagnEuwCDZYz51iVNryOb_ZS5eZOyayn5i8uypGFTe4k3hQ
+ IkP4zO1kTHP09rZ3c_4xxb2nNrxtVw3xyJtZ4xHlQXea1SZzkL2_CdMiL2x.szgFZ44OKHPyBDYV
+ sdGVfjVjyovapu4oKdfetr5tLV2Uk_8Y9gDSIhydtsvW2KaIdmylTnCFGmJqj7p1vbvSFSI2AYuk
+ d9nJfdA8MYXstYdg_pF9BBq4JNvCs4OyLBTVQolmLct2Ts.r2PNmI8rYaQmw4kGXb0cA4oTF_1kC
+ o.lPHdKlzn2NwjC88DQnn6pkUSbHel7ohom3Swkpeh1lTS6TirGlIXXMW0Mu7j9vp0GKsr3cx7pZ
+ YYOazd1QvMgL62RvywhkHn1YcLnBFAjXx6EZ8UIIFaAD0gQr32J1bd9sW.iCgnBcIdlDT4HbEYBW
+ GXQTSk1_jsW3NCPUP.rdWF41EZ7CCSvYxrDauepSweNLs2NNWKb.A6g9vv45NhapfEp8RHSysUgy
+ p8taRsWnm2RKrxRPzi9M5qJWa.EBMrqalPSETiWKR6Hdz4tUWKrK7jeTtbgX4auIlaVtAUMvGFlT
+ 8Aha59fpj_EzZ.rlr9KFWGCUGw__m6Rp74dwuhK5EEJ7AB85Y6QXhn0CMBVdoqUQklTQrXKZzxwW
+ 1ut6uA2xmfQIHYfuJDH8DZF2D0UU22QluHybk0evv1_oKT8lSriZ7ZsjMldbYxyRbohun_Hq4a2i
+ 3D4O6AWJWsWdBSq6o4WhHXLtXScPm786shHJfMOGNmc08D8Um1_c7N1uebj46M7ad6VUU.CJL2td
+ _tTADvImukczkyXQtjRzFoOWBbisAHoRcPWPctMdey0yzWz4sLCpEBUoPI32CGd0vND1f_OziKTs
+ hbgQ5C_sV1vtsPixyEW174si_xvZj0aMsX8h46.Z_FIZyke.zwYp1XF56w3sIpZJh0zzXb1fdpqI
+ .ZwjxRzB4lUqdX4lC1VQywqk94heJVqYfjM053cle.J6DKpT9YVBlOh36EVSP7qRGQi9Cj9NxE8p
+ 8lxb6kTAPy6iY0J31m1Lchnqyeu6IWd5WUwV2tiLcIqCbMxpgxSUMO2Evt5Mopm6nVjqbaqfLH3W
+ wtNIFaNo4iIdPgNYyqA4etrb8gcBGInA0cYnB2hBKpbZTomFJVQrS9bPIGeQWERlJ5sKL6tKa1hL
+ mAhjUFJnOAAMn7XMrudvN_4SqsmK3N4TdMQRMIMMdbymo_l9LxGWVWyF5OSMrBLQpRsXBzsoNy97
+ jf6m.LlbE.9AUeK7VskgfOJ2XVJD3iz5WkiOOBisWwSivgBrXs6pHPBGs0Bk.O29kz0vokk0OtrL
+ XvxeoljlLHKtsjaWl4NXdW4ALjpy8eZcPeiwcRQvPrtXN45VXRagbFXETNFY65h1cEUt4D8kL0xy
+ 6e.M3pQiX0EoepAjEb4kE0_eXF0rcy2dC05j0POLyF9tWiwl_0728X.kdFjMO3fmzJA23iP.CzZT
+ wP7JoLjE_SEG0Iu7.hN2zPjiEEtdAoOgUgw4PANW.mPE9vyXwfDr1ilgmY2Aduttsj0.ckTLvDb2
+ .uEUpXLXcD3UWt1fkgLfNmbdD63sMdADQvNwOxCCEwEHHi0Qxw8OWsqLjx9gosw5M.nM3N4PVhAT
+ egMyDDq6tB_q9PNXoEOtPBe0oIMXi4OctYnUxChF5B6CzlhVJWhRBUAdRNabtJJNx4UKPpvUs2Mb
+ DUJ1Odcnca6RSXb5Oy9hkpmbXQ7CqdNhQK42HYTYxYT.OH4prsT1H24oMtugVp1QSvwq0kLSAC_T
+ 8gKE.e698KtL6fniemQc4GsYCQ2m1sFc_NAxQw2DuZYwsFc6VerqVh884hdy0qSABLLWUJDLw30t
+ YZ9IUVEmzW6iL89zdtR01yOwo8D1HQYpqx.oleZut5d_zVEFXVaoSBf_v.2QKLFTyeODAUwoBQgO
+ jRtUkVPZ3lkdd.CUF0jV3ViPE9q7_nb32_.iia6F8ZusyBMcxOpjbR5oET2JwV78m5AfYf6fBFhz
+ qjyF6v_eiO5sNG5HrIex1_kZo37EvlnpwmZkr9RVvT9uo88NN8TolnFO8WNSnzHQzY929ACmp7hq
+ sr_0b6_c8dhobMyT5hSK5f40h84pTln77cV69QeP5TEjO5sZ8bl1ME9Rhy6asYmpf7vIMhWqZeFe
+ H7maYBirO_4l6VPeBF5zkPA8m36KW7yP8B_KC
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 3fe1b76a-764b-47f3-8958-efcc76b5a47c
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Sat, 21 Jun 2025 17:23:58 +0000
+X-Sonic-ID: c9865e50-085c-43f5-ab63-822986864379
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Sat, 21 Jun 2025 17:24:02 +0000
 Received: by hermes--production-gq1-74d64bb7d7-dp9cd (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5256f3ef263223dbc5f852ba156c094e;
-          Sat, 21 Jun 2025 17:23:53 +0000 (UTC)
+          Sat, 21 Jun 2025 17:23:55 +0000 (UTC)
 From: Casey Schaufler <casey@schaufler-ca.com>
 To: casey@schaufler-ca.com,
 	paul@paul-moore.com,
@@ -69,9 +69,9 @@ Cc: jmorris@namei.org,
 	stephen.smalley.work@gmail.com,
 	linux-kernel@vger.kernel.org,
 	selinux@vger.kernel.org
-Subject: [RFC PATCH 13/15] LSM: restrict security_cred_getsecid() to a single LSM
-Date: Sat, 21 Jun 2025 10:18:48 -0700
-Message-ID: <20250621171851.5869-14-casey@schaufler-ca.com>
+Subject: [RFC PATCH 15/15] LSM: Remove exclusive LSM flag
+Date: Sat, 21 Jun 2025 10:18:50 -0700
+Message-ID: <20250621171851.5869-16-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20250621171851.5869-1-casey@schaufler-ca.com>
 References: <20250621171851.5869-1-casey@schaufler-ca.com>
@@ -83,34 +83,86 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The LSM hook security_cred_getsecid() provides a single secid
-that is only used by the binder driver. Provide the first value
-available, and abandon any other hooks.
+Only SELinux specifies LSM_FLAG_EXCLUSIVE, so there is no point in
+enforcing it. There is no expectation that new exclusive security
+modules will be accepted, as the reasons for exclusivity have been
+addressed. The LSM_FLAG_EXCLUSIVE flag and its enforcement can be
+removed.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- security/security.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ include/linux/lsm_hooks.h |  1 -
+ security/lsm_init.c       | 17 +----------------
+ security/selinux/hooks.c  |  2 +-
+ 3 files changed, 2 insertions(+), 18 deletions(-)
 
-diff --git a/security/security.c b/security/security.c
-index dd167a872248..409b1cb10d35 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2740,8 +2740,13 @@ void security_transfer_creds(struct cred *new, const struct cred *old)
-  */
- void security_cred_getsecid(const struct cred *c, u32 *secid)
- {
-+	struct lsm_static_call *scall;
-+
- 	*secid = 0;
--	call_void_hook(cred_getsecid, c, secid);
-+	lsm_for_each_hook(scall, cred_getsecid) {
-+		scall->hl->hook.cred_getsecid(c, secid);
-+		break;
-+	}
- }
- EXPORT_SYMBOL(security_cred_getsecid);
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 06e840fd4b63..717541fcd653 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -149,7 +149,6 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+ 			       const struct lsm_id *lsmid);
  
+ #define LSM_FLAG_LEGACY_MAJOR	BIT(0)
+-#define LSM_FLAG_EXCLUSIVE	BIT(1)
+ 
+ enum lsm_order {
+ 	LSM_ORDER_FIRST = -1,	/* This is only for capabilities. */
+diff --git a/security/lsm_init.c b/security/lsm_init.c
+index 784f8296966f..3d8f59104d8f 100644
+--- a/security/lsm_init.c
++++ b/security/lsm_init.c
+@@ -28,7 +28,6 @@ static __initdata const char *lsm_order_cmdline;
+ static __initdata const char *lsm_order_legacy;
+ 
+ /* Ordered list of LSMs to initialize. */
+-static __initdata struct lsm_info *lsm_exclusive;
+ static __initdata struct lsm_info *lsm_order[MAX_LSM_COUNT + 1];
+ 
+ #define lsm_order_for_each(iter)					\
+@@ -150,8 +149,7 @@ static bool __init lsm_order_exists(struct lsm_info *lsm)
+  * @src: source of the addition
+  *
+  * Append @lsm to the enabled LSM array after ensuring that it hasn't been
+- * explicitly disabled, is a duplicate entry, or would run afoul of the
+- * LSM_FLAG_EXCLUSIVE logic.
++ * explicitly disabled or is a duplicate entry.
+  */
+ static void __init lsm_order_append(struct lsm_info *lsm, const char *src)
+ {
+@@ -173,19 +171,6 @@ static void __init lsm_order_append(struct lsm_info *lsm, const char *src)
+ 		return;
+ 	}
+ 
+-	if (lsm->flags & LSM_FLAG_EXCLUSIVE) {
+-		if (lsm_exclusive) {
+-			lsm_pr_dbg("skip exclusive LSM conflict %s:%s\n",
+-				   src, lsm->id->name);
+-			lsm_enabled_set(lsm, false);
+-			return;
+-		} else {
+-			lsm_pr_dbg("select exclusive LSM %s:%s\n",
+-				   src, lsm->id->name);
+-			lsm_exclusive = lsm;
+-		}
+-	}
+-
+ 	lsm_enabled_set(lsm, true);
+ 	lsm_order[lsm_count] = lsm;
+ 	lsm_idlist[lsm_count++] = lsm->id;
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 9578b63bbd2a..039d03be91f0 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -7675,7 +7675,7 @@ void selinux_complete_init(void)
+    all processes and objects when they are created. */
+ DEFINE_LSM(selinux) = {
+ 	.id = &selinux_lsmid,
+-	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
++	.flags = LSM_FLAG_LEGACY_MAJOR,
+ 	.enabled = &selinux_enabled_boot,
+ 	.blobs = &selinux_blob_sizes,
+ 	.init = selinux_init,
 -- 
 2.47.0
 
