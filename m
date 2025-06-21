@@ -1,80 +1,75 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67672224898;
-	Fri, 20 Jun 2025 21:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B8C382;
+	Sat, 21 Jun 2025 02:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750456770; cv=none; b=uXsR869PLnPIBWfMSyT8ekrU8Mt+6lA3hvktaVJ2166izlqF5lw2WVdwmNHxSfDJt3fF79msdJQmNLSQnVm5V+blh5tdtbA9AW0te1GeHsWOD9fZdJEmLvp5lRgNNG2TwHwmRjGwyl+WwUm3YzRHXDJjOdURdNajBK0P3N0m48w=
+	t=1750473483; cv=none; b=QwCG+Ye8FS7V8J5Y58uLcu8XTRp+KtWjcNnc2oeMYRvwvCUXSWAIaKo6H/uEKS7h9oKVG5uVW5RsSFmkrk3cJLCs1BFoiliRWMD08krLubaSRLwspymyiSEcGUl9gXKvVEYl3mF6BMyeQ9mTlXI1gcydCmA61iJUwY6oI9D86/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750456770; c=relaxed/simple;
-	bh=63te8wwcuOZegBXprmXeQJ2OOPB2Fa+R7wapMpKOn44=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YXe6Rpuy+G/vnRrYIH39JXNeRSj+S/CZFwS1ZyJzFYuOKSDqUpF7PimSLooqAt9ZjWwyOeG1wyitctdUeWpqlRHlvVetwBtIaGFqAiJKe3g6JxytWQxL8msr/sIweo6pFGec2Ufmy59lsCD7vptiKixWuc1jxpwJ1yTN++q+ous=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O1tra5fA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750473483; c=relaxed/simple;
+	bh=BRshq0Sw3kdyROGLHlU0T9SNOnO7vor8RQIBZU60VcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rqa2zLtXWZg/KZM3nqwYl+I7IcstQ4uzDxCqrlpkB8QusLvRfg/Qms8gk3xOXXUhsNHA7YseypHN3eStAfmxBCkRrNXH8ztkFRqCd+snBcaRSsULpA2W6O61Ed6zSzAudsRxY/uS8j0sYJ7kj51VZsPSVQfCCxtuN7KVaMwsqUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z1GoAIoZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1tra5fA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0802BC4CEF2;
-	Fri, 20 Jun 2025 21:59:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z1GoAIoZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4332C4CEE3;
+	Sat, 21 Jun 2025 02:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750456770;
-	bh=63te8wwcuOZegBXprmXeQJ2OOPB2Fa+R7wapMpKOn44=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=O1tra5fA5OpmS2CF8mrWsYLyZJUoMg+5Ly9hiRBQHQtmj7TAeSv3pQzPPqNQgHf3H
-	 xVuwl0k6m560FMkJb0uCoL0/fZK1FQaVfhWt6O6P9aRUF5wy17xcW61a25K7YK6o2T
-	 d3zLV92yMLgfpycoU4G2s3JhVCRfvxApsdaEldCW+pdYzSmoXE32fHxtzuliqXm924
-	 bVSea4Dv5RF9blS75r/FU/nVWkpBhFQ8nCdskdWp4xSKnwWEn7o6xzzHCQSTXtMxy2
-	 i6SSlGhdlvXpkLwQQs0qXAhfixUJSwI6WTgpdlmLt15u8kK2gUYPgQnsYzWnXGxY8A
-	 u+EM7P+I2G8dw==
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4a440a72584so24363571cf.2;
-        Fri, 20 Jun 2025 14:59:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUXTMlvw4Cj2iiF3zQ2hxymL/pjbOea+PAFUUbIcSXVHFcI+U6zxls5a3ylHq46PPdN0jIjGptFl4bGXLaQKezZVqMlKGfX@vger.kernel.org, AJvYcCWnP9K7sU/ZodDAXlQKelVtFohhOHR2++67SmnB6xfvyn9dr5XnH8k7c+7rinOpkrLKX5fyvGcEmmtlPcGi@vger.kernel.org, AJvYcCX6anLRY3DEDPf6iqFdkgk1sURgpQGp1z+XkekfmfaqwvSF5wSmyG3YZKI6KemrzHLUxeDtWsi/HMLzs6Py@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVCCHevgHSMpMYxuvgyDWiPcic0utuXieLplXPScl2K1juyDfk
-	RsAcz39EaNll8d0CZu5O8gAyZ75/7SS79ur6fuhy7/46KaCJQzBdlKZuQ2b5vdaNa47s4hWqg/y
-	DvkkAC4CoqiEd+bMKET7jOzOtfa59CwQ=
-X-Google-Smtp-Source: AGHT+IFD3WvtlrgNG6kq+U9U7yxkF7/+ufoV54N6pbVQsB7ri9hvP39fSdWH0gFoWV+S6HvLUhxN1D9ZuXCtLuuijd4=
-X-Received: by 2002:ac8:5894:0:b0:477:c04:b512 with SMTP id
- d75a77b69052e-4a77a24bc5fmr74015541cf.16.1750456769124; Fri, 20 Jun 2025
- 14:59:29 -0700 (PDT)
+	s=k20201202; t=1750473482;
+	bh=BRshq0Sw3kdyROGLHlU0T9SNOnO7vor8RQIBZU60VcI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z1GoAIoZjvbLrWnTF8AbEJ+PwW58agRljs6lqp1FNO+XWVqzsMpWtF69E91L6ulXm
+	 VaG3P/Nzu1mWIWnsyD9Cmx6JW0WI7LCzJ4bI/mEz9+eWtGYIrBFeBN8Zp4SdO6LmD2
+	 tZOX3OPaXB1RRIkNn4eTvvZRzvnqPY7REQIURgStU1g0DftKKMA0o9Omx2hmhKo+9r
+	 0F+UqqJ/mZNn7A4kAyU4jyXzaNY9Zb3gAfE0eRJ+FxzXZaS9SILoWaLnY52Bb+vHZo
+	 mKiInqaewUo6oSMTMc6JDpcr24mxwrFq9Vm/SfvcZY3+GmgjTSIHF4EjYKnJoHcbZ2
+	 YHNwr50LAyD/Q==
+Date: Fri, 20 Jun 2025 16:38:01 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Song Liu <song@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
+	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk, jack@suse.cz, kpsingh@kernel.org,
+	mattbobrowski@google.com, amir73il@gmail.com,
+	daan.j.demeyer@gmail.com
+Subject: Re: [PATCH bpf-next 1/4] kernfs: Add __kernfs_xattr_get for RCU
+ protected access
+Message-ID: <aFYbCVRZyyoOXYa-@slm.duckdns.org>
+References: <20250618233739.189106-1-song@kernel.org>
+ <20250618233739.189106-2-song@kernel.org>
+ <20250619-kaulquappen-absagen-27377e154bc0@brauner>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250617061116.3681325-1-song@kernel.org>
-In-Reply-To: <20250617061116.3681325-1-song@kernel.org>
-From: Song Liu <song@kernel.org>
-Date: Fri, 20 Jun 2025 14:59:17 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW5uu8cOYJWJ3Gne+ixpiWVAby1hZOnUgsXcFASEhV4Xhg@mail.gmail.com>
-X-Gm-Features: AX0GCFtB5WpXbtgDqonU-KBN5EWY8ZPLkipOykAU_GhR2BYEI5Zkrc7jPl_KFTM
-Message-ID: <CAPhsuW5uu8cOYJWJ3Gne+ixpiWVAby1hZOnUgsXcFASEhV4Xhg@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
-To: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	brauner@kernel.org, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
-	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com, m@maowtm.org, 
-	neil@brown.name
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250619-kaulquappen-absagen-27377e154bc0@brauner>
 
-Hi Christian, Micka=C3=ABl, and folks,
+On Thu, Jun 19, 2025 at 12:01:19PM +0200, Christian Brauner wrote:
+> From bdc53435a1cd5c456dc28d8239eff0e7fa4e8dda Mon Sep 17 00:00:00 2001
+> From: Christian Brauner <brauner@kernel.org>
+> Date: Thu, 19 Jun 2025 11:50:26 +0200
+> Subject: [PATCH] kernfs: remove iattr_mutex
+> 
+> All allocations of struct kernfs_iattrs are serialized through a global
+> mutex. Simply do a racy allocation and let the first one win. I bet most
+> callers are under inode->i_rwsem anyway and it wouldn't be needed but
+> let's not require that.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Could you please share your comments on this version? Does this
-look sane?
+Acked-by: Tejun Heo <tj@kernel.org>
 
-Thanks,
-Song
+Thanks.
 
-On Mon, Jun 16, 2025 at 11:11=E2=80=AFPM Song Liu <song@kernel.org> wrote:
->
-> In security use cases, it is common to apply rules to VFS subtrees.
-> However, filtering files in a subtree is not straightforward [1].
->
-> One solution to this problem is to start from a path and walk up the VFS
-> tree (towards the root). Among in-tree LSMs, Landlock uses this solution.
->
-
-[...]
+-- 
+tejun
