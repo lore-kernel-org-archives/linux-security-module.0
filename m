@@ -1,96 +1,101 @@
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761921E4A4;
-	Sun, 22 Jun 2025 17:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A138914A62B;
+	Sun, 22 Jun 2025 18:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750611853; cv=none; b=iG93it+U1y1WCJj0QTz7UreSX4k2PpwwhqYVeq9D80D7ofkwsFjKn+LW+TqrY4Du748slICfFS2WJZoCvdfV4VGQMwQDtHe7Zh6FqcI4ZfLczp7rXs+SyxpIVPmWwb7c9DUZlKP/dRUf+RMbrVDBNS5MFLVU4Hor7HOEBXoRpjw=
+	t=1750617805; cv=none; b=cPnaxWuVGxyhxNtoBRMEI7b/Qzle8Wk9FbbZyJ4uDqGwzY4DzPDcS3WjwgUeWnl4f0251+fZnD7LNJ8F+x+DPPNObDJEM8a4dLhdW6xPjCPM/erGlPUy6TIkbkAOKqOsFtIqqqAwVHKOn9RGRc9M+3P77I+TZxvH7vkMjMQIThQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750611853; c=relaxed/simple;
-	bh=U+hW+7O5VUUEZoHnUj9aZblDTxsYOEy7mpifuaeGZ00=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=k951e11VQ69GYc4N/Nuk5As1gjpBcYeEHxGHQS5zJZ+ZTRNXqpw373qYOaMAtTbL4F+1iMYb/qvUeKX9LKXPamL740oiDSCGG7+NheF7/xmidwrvKZ0RnDCdeSNdAEavlo3++DjNzK+5v9Cs0r2ypUjVVIWHzEbH+BbOogRoKnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=mJx1TQri; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L6PMuuKy; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1750617805; c=relaxed/simple;
+	bh=3H2wKWU2193WXNtIUhATRt/ZTw4+1SQggiDA+AaWVjI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=E7XzzzCdO5K5VAiFzqIUfNADvLUyxudW5lLWnY43METlr6gfWwixpas0NiStI/tLQf5+F5Jc5lJwD42yqiBNJI9NwrZUMtoDwr5CwGm5O5jXALS2Oiny9gNjwlf7CVb2ndja652Ymmj2lMU61L7JDAv1+QVP8BkeybN3rO9Mumw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XHPUHLQg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="mJx1TQri";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L6PMuuKy"
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id 32D06114010B;
-	Sun, 22 Jun 2025 13:04:10 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Sun, 22 Jun 2025 13:04:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1750611850;
-	 x=1750698250; bh=4Oz8BVlocdpl9en13acAbqS/GUdquFUEZid+eG0OkBU=; b=
-	mJx1TQri8ox2LcVJZ14GImiXHURepaYJLoK5Qas2gSXS56fz5gpV7fupUQITpQ/T
-	X8ILrsp+woeSxhy3qbHfMwuuMSAdAUSfELECshYmUCUykH3cvVuaihkJGmd3QeLq
-	/+SA0kJNjsE+U6qaUNgSSne6R+sjUv3hUWUG4NHVEsZ0ALg2jM7QFE7sZIjK/AC2
-	g3qwRoVTpgyzqF0VvQDoNGhMVwFAuObLAbKGQTbNN8iMUq4oTDZFMhNp+djfK37u
-	qmI+qg7ZfdBbmqytP4dQXmxZJW/2fHFzkJNKD5x/z2elMMwnQiY4VsGY5zyQQDfl
-	gamWsl+goiyIrsmONtOZww==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1750611850; x=
-	1750698250; bh=4Oz8BVlocdpl9en13acAbqS/GUdquFUEZid+eG0OkBU=; b=L
-	6PMuuKy1khpwkaWN+y6a3ypY6Sva+TS6TYgzmQ7v9x6clr5uwrIVQRaF9pGDF96b
-	N0ze1RlNRClYMGs1r8GMaRryf6pNyZfys/9PNOXaDgh1S3IumwFKdOaTruDYrhhN
-	cMXoYYqg4LTv6eYxpzZNB2flHXoaskAR9zVjxJ+ygn1Z9dkRdd0ESzip0Nrg/5XY
-	xELJ72qCXap2Sc/mj6tWI8px6BjzbflJxvUHzNkDjDG0Hv3dBJk9W9AMp6AkMrJR
-	QFlzAp5VPo89YmWn1KOIg/jkrSuxd4Fzw9vijN5pkDq7sfWIcKv6REeDg/kmuGnV
-	329AMkA44LT3cp9OQfpIQ==
-X-ME-Sender: <xms:iTdYaFsQE20p60OfKXhDaYgslnJxZBXf2tolYPVeVRJdbcgVuS3nIQ>
-    <xme:iTdYaOfUqdc3Q-FF1GS7ZxOiwzBjLdR0OsfGmtuDR7DliUyX8IEzTbWTwvVytD_kh
-    BVOJ99QhKKuc98TSz0>
-X-ME-Received: <xmr:iTdYaIyI6_a5a7mibCZDf1YZzI87Ojcf0dKhHYKD-z036tdxIRa9EyeX66TrV09F8v7-H-AT2vtXWmONJ-xk0Nef>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddugeejudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhepkfffgggfuffhvfevfhgjtgfgsehtjeertd
-    dtvdejnecuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhr
-    gheqnecuggftrfgrthhtvghrnhepheffleegkedtueefleduueehueevffduheejudduve
-    evtdevkeelkedtudfhvdfgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
-    rghilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeefpdhmoh
-    guvgepshhmthhpohhuthdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvghtpdhr
-    tghpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:iTdYaMNX6kySZxg-A8Ssav01AaSwFPgtcUjVxrQe4i82dGSXXI9kRg>
-    <xmx:iTdYaF9UqIj6Jhhq_EWRI_aMz9WAW_VqMCoJzT2guh7DahRhXpsPkA>
-    <xmx:iTdYaMXi8xXbD435vNEEUyHd4OnyLkmK0LJJHOs7PzxV0wjZb8xdtw>
-    <xmx:iTdYaGcdzszr7AMGVL88lwD6wnpMEx47FsShIIqGE8Vw7IlG9rwZPA>
-    <xmx:ijdYaKitizEBzW1WpOEe80KntZxmt90uHgmcPjzrU8L9P7Wfs2cPcW3H>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 22 Jun 2025 13:04:09 -0400 (EDT)
-Message-ID: <7667bda1-6055-4b91-b904-0b8d49e990c5@maowtm.org>
-Date: Sun, 22 Jun 2025 18:04:07 +0100
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XHPUHLQg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D189C4CEE3;
+	Sun, 22 Jun 2025 18:43:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1750617805;
+	bh=3H2wKWU2193WXNtIUhATRt/ZTw4+1SQggiDA+AaWVjI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XHPUHLQglzrHpK2ZS8imdC6/smERAODfvRVpH2JeWdzBL/q/n5IqHb2TQkI29zi1K
+	 6oTx1a73gchf1/xMbFySG6/bhXW+GAtxWzT92/UQIr9+80WcSclzzzznwEJHOhgdE7
+	 /RQmsUSfX9zDx/b250gr43W8i8T4klKuUDPcoL2k=
+Date: Sun, 22 Jun 2025 11:43:22 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Shivank Garg <shivankg@amd.com>, seanjc@google.com, david@redhat.com,
+ vbabka@suse.cz, shuah@kernel.org, pbonzini@redhat.com, brauner@kernel.org,
+ viro@zeniv.linux.org.uk, ackerleytng@google.com, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com,
+ tabba@google.com, vannapurve@google.com, chao.gao@intel.com,
+ bharata@amd.com, nikunj@amd.com, michael.day@amd.com, yan.y.zhao@intel.com,
+ Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com,
+ aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
+ jack@suse.cz, rppt@kernel.org, hch@infradead.org, cgzones@googlemail.com,
+ ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
+ ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com,
+ rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net,
+ kent.overstreet@linux.dev, ying.huang@linux.alibaba.com,
+ apopple@nvidia.com, chao.p.peng@intel.com, amit@infradead.org,
+ ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com,
+ gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com,
+ papaluri@amd.com, yuzhao@google.com, suzuki.poulose@arm.com,
+ quic_eberman@quicinc.com, aneeshkumar.kizhakeveetil@arm.com,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-coco@lists.linux.dev
+Subject: Re: [PATCH 2/2] filemap: Add __filemap_get_folio_mpol()
+Message-Id: <20250622114322.c6c35800e01e4cc4007a0f89@linux-foundation.org>
+In-Reply-To: <aFWR-2WAQ283SZvg@casper.infradead.org>
+References: <20250618112935.7629-4-shivankg@amd.com>
+	<20250620143502.3055777-2-willy@infradead.org>
+	<aFWR-2WAQ283SZvg@casper.infradead.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/landlock: Add tests for access through
- disconnected paths
-From: Tingmao Wang <m@maowtm.org>
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <09b24128f86973a6022e6aa8338945fcfb9a33e4.1749925391.git.m@maowtm.org>
- <20250619.yohT8thouf5J@digikod.net>
- <973a4725-4744-43ba-89aa-e9c39dce4d96@maowtm.org>
-Content-Language: en-US
-In-Reply-To: <973a4725-4744-43ba-89aa-e9c39dce4d96@maowtm.org>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 6/22/25 16:42, Tingmao Wang wrote:
-> +	/* This layer only handles LANDLOCK_ACCESS_FS_READ_FILE only. */
-                                                               ^^^^^ sorry remove this
+On Fri, 20 Jun 2025 17:53:15 +0100 Matthew Wilcox <willy@infradead.org> wrote:
+
+> On Fri, Jun 20, 2025 at 03:34:47PM +0100, Matthew Wilcox (Oracle) wrote:
+> > +struct folio *__filemap_get_folio_mpol(struct address_space *mapping,
+> > +		pgoff_t index, fgf_t fgp_flags, gfp_t gfp,
+> > +		struct mempolicy *policy)
+> >  {
+> >  	struct folio *folio;
+> >  
+> > @@ -1982,7 +1984,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+> >  			err = -ENOMEM;
+> >  			if (order > min_order)
+> >  				alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
+> > -			folio = filemap_alloc_folio(alloc_gfp, order, NULL);
+> > +			folio = filemap_alloc_folio(alloc_gfp, order, policy);
+> >  			if (!folio)
+> >  				continue;
+> 
+> This is missing the EXPORT_SYMBOL_GPL() change
+
+I added this:
+
+--- a/mm/filemap.c~filemap-add-__filemap_get_folio_mpol-fix
++++ a/mm/filemap.c
+@@ -2032,7 +2032,7 @@ no_page:
+ 		folio_clear_dropbehind(folio);
+ 	return folio;
+ }
+-EXPORT_SYMBOL(__filemap_get_folio);
++EXPORT_SYMBOL(__filemap_get_folio_mpol);
+ 
+ static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
+ 		xa_mark_t mark)
+_
+
