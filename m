@@ -1,180 +1,74 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE861FE471
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Jun 2025 13:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB10C3594F;
+	Mon, 23 Jun 2025 14:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750686695; cv=none; b=blIN9S21iX4PYytmjHIiv2ITdYyi68HEJzb5y1N+iucJPp9kTlKJZ8xUIq/FyR6HjpLg7XRLwUj7uCQIjVIsmpkhdCY+t52OnbrY0iNTe9J1DgIFzWaqv4CYV0s5f5WP/1pmL84ZN/HUjB/sXsexqKVlTW8GnKVHLsx13QuWKkY=
+	t=1750687250; cv=none; b=nvXYzAYmV0FgUpq9xmRGBnBZjOQS5D5QdlitY1xvTf4xWdSf53RTFPLcvengnItuYSkcSktWhYMPpUbYW7vX1nzLZE3X9u+CfXE1Ev15S1nKvgs7hOUc/SMv+rxRAoSrsacqGy2UgZP3nRb3Q7XtZH8mSyZzjLUVnw87+ya8BRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750686695; c=relaxed/simple;
-	bh=HJmFXLX/j3dETufjqwrf6ToA6QYlCLIoKTQ0NUDZnU4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WTtAUtZu42yOQ/uD9vAiM4Rn4noIBbdqqNyzAnfi/HgrMR2tv8wVG3uVIa/3EarOQ2OzP7Lw1m187CcYPjanswfMehvYFI1MX71ELDkZDFsmv2u2nNBXgL4untd6JLpCrsD8lFf3J8sQibGpfwCWAhwmqcvQQjSt+Ee2n5U51g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YCVi3yMB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1750687250; c=relaxed/simple;
+	bh=WE7HYo0rp0Y7tGvNC3/QuQmPw4M7jfrWtaQ6YaX97sw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NaCVsl7C23L3tUGzBFK2rl97VfQ5hCablRUd64KN9WQHfEN69ZU068C/LZKy+VaKK7aEVJL+4KqLv8a8+Cp/K0llP0bFdHVnLVumxbWPBG2bpzm/lRdX5B3ptWvsNqB3QRTt/jvm2qbmzre5JOOOQq7cFmsVQI51jDob7BLeGJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rWrTkQhV; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YCVi3yMB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750686693;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aTMs4wV4SuVKhFSHjMzqgPgB1cu77va3GYx+Y9ijEiM=;
-	b=YCVi3yMBtV1eitR2jmTdmMxizul893Zq0QV5b3OIXrDuDtMBARDTYTGkupU1FdSq3kUxQz
-	eJ9T68/CercMZW30wIlXO1LAlJHEWtBI/FrUL8UqDI1wV7l0wKpP68tErmFf/r0rGZhBno
-	35mbhYt2Zho68OfSaWF94lGPUPvzR0Y=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-121-sSygX7W0Osm8q4zGbcNLoA-1; Mon, 23 Jun 2025 09:51:32 -0400
-X-MC-Unique: sSygX7W0Osm8q4zGbcNLoA-1
-X-Mimecast-MFC-AGG-ID: sSygX7W0Osm8q4zGbcNLoA_1750686691
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4535d300d2dso33760175e9.1
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Jun 2025 06:51:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750686691; x=1751291491;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aTMs4wV4SuVKhFSHjMzqgPgB1cu77va3GYx+Y9ijEiM=;
-        b=DuqzaL/KjRyig5BMqGSSCG7tM6dpvzbrjTouVCN3z9cxq67Cwxo7BsxN+WPc6K4NYJ
-         yFpMAjZuoxYHHPZXbstW3tmKWoMxE9AXnmok29up02OCVpo275ezbHPUkG/5hptxrxHJ
-         yiuzpQmdt3v8yyXSJ74kcL2CXho71MbVVWF85+R0vbSGyRPQtJ4RdpdkapuVIhiYE1Fd
-         V+MR4XB082m3FVTh8gbajBsEarFGsr8VhRzxO1/hUP+d+GL82Z4dX0tO9j0wV8gJO0Uu
-         mtargYp93QiW9dFlBYfzxnB+TQCGrBVq6ivvLK/pncEm7dMalaBRtinSHxJJro0tYA8V
-         LXow==
-X-Forwarded-Encrypted: i=1; AJvYcCW16YsOm98B5UarF1lcaJvjXz8j22tqK5ZOZle9MPThQBlYWZqxqvrRXoG1d4HYQTLe4AZ/HRye1JaGpoExa2a6N//1ehU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOtq1ru/FfUinbbshqie8MmGg4ojNxflP7zDHzj0rffLcNtsMi
-	OKh34inOIuBQUmtFVG3s7G9mYDtTvByZ5nMaCHK1oKy8aju93GqJ2N/9jSArFyUAGQkn501tRMa
-	J/Cl/7otA/CtR9TZgG9UXgbU1WOFePmMPQGXF0OzJFvX65r/nPSQg4YgE6jb0KDRAfWNmYZzlew
-	5Mnw==
-X-Gm-Gg: ASbGncsmatk0uXowQfTj2vx4qpge8H+F41qlicCyme194tINTXsdqDi8OU13DtQzINv
-	IKURablufOx37Lja66o+nQfOZlZ99Tts+V5J0GxSlz/tLMVvd+xkeRNrvfgs1/OFjgMr7Jm6xjV
-	yydDFmzDalvosA0zjPVmqRqZstpAvyl25SBjedodthFzu4jGfv3bDab0O59Z0B7YVWFQIncvezu
-	+htchZywviHE7Z8TpvLZEzx4mql8S9qsCTE1a7HWHk3xREjtiob8pIYbMFR+YTe5vAWhk387XDc
-	SnsGpQnT/bmT9i8nTCJjXv2lUd/Q0K3UhHFnTRQI7uI7HtePE+isgcxozpaO5icqJoKGG+btR7Z
-	BNdkq//XFfWxRpBS+IKRApRiyFuXdoVFyTNN9kG5RxC3LG+/1Xw==
-X-Received: by 2002:a05:600c:3b1e:b0:451:df07:f437 with SMTP id 5b1f17b1804b1-453659c0c47mr137895845e9.30.1750686690822;
-        Mon, 23 Jun 2025 06:51:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3wPA2NDZGNU+tezB/9zWFnuVdchez0lrMy4aiZ6nmbAqIOhTpniZoMot4ic342DXsB/1krw==
-X-Received: by 2002:a05:600c:3b1e:b0:451:df07:f437 with SMTP id 5b1f17b1804b1-453659c0c47mr137895525e9.30.1750686690404;
-        Mon, 23 Jun 2025 06:51:30 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159? (p200300d82f4efd008e13e3b590c81159.dip0.t-ipconnect.de. [2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535eada7adsm147297065e9.35.2025.06.23.06.51.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 06:51:29 -0700 (PDT)
-Message-ID: <f2a205a5-aca9-4788-88ff-bfb3283610c5@redhat.com>
-Date: Mon, 23 Jun 2025 15:51:28 +0200
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rWrTkQhV"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=CVVKJvWug9C6Po7124caU+eIxZcOL4L/VyLsEo25XYs=; b=rWrTkQhVehHTGoLhZo0zXoUGYY
+	BEJbnShfobP4LVoW8Cs/7VoNjinPJ8u7WiKmVR4g50htoK4t6POXo1pgrFPbz0SjfZr5L+55DGtr0
+	OkZkVv+RiSnXYuGibOvildSr4s6VqMudpKnhS12z0mneCyLH8m2ly242dqpsoPh/PFn2TFU7biiTO
+	otIUEOc9pNVvAKCqxTR7Zhqwz0qNIrqrinUjnX2LrbuDJTrPSQJ1WVgXG/qU/68BzL+564c6Tw1gN
+	8cx0wqnDRma1QBIefifvFyIKltJ3jMYq5R8DfCEfoltoDDhn+6Yz939OofxH99MvN6+XFU/atl/dC
+	FjMFLrrQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uThix-00000002xfr-30vK;
+	Mon, 23 Jun 2025 14:00:39 +0000
+Date: Mon, 23 Jun 2025 07:00:39 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Mike Rapoport <rppt@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+	Shivank Garg <shivankg@amd.com>, david@redhat.com,
+	akpm@linux-foundation.org, paul@paul-moore.com,
+	viro@zeniv.linux.org.uk, willy@infradead.org, pbonzini@redhat.com,
+	tabba@google.com, afranji@google.com, ackerleytng@google.com,
+	jack@suse.cz, hch@infradead.org, cgzones@googlemail.com,
+	ira.weiny@intel.com, roypat@amazon.co.uk,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] fs: export anon_inode_make_secure_inode() and fix
+ secretmem LSM bypass
+Message-ID: <aFleB1PztbWy3GZM@infradead.org>
+References: <20250619073136.506022-2-shivankg@amd.com>
+ <da5316a7-eee3-4c96-83dd-78ae9f3e0117@suse.cz>
+ <20250619-fixpunkt-querfeldein-53eb22d0135f@brauner>
+ <aFPuAi8tPcmsbTF4@kernel.org>
+ <20250619-ablichten-korpulent-0efe2ddd0ee6@brauner>
+ <aFQATWEX2h4LaQZb@kernel.org>
+ <aFV3-sYCxyVIkdy6@google.com>
+ <20250623-warmwasser-giftig-ff656fce89ad@brauner>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] fs: export anon_inode_make_secure_inode() and fix
- secretmem LSM bypass
-To: Shivank Garg <shivankg@amd.com>, akpm@linux-foundation.org,
- brauner@kernel.org, paul@paul-moore.com, rppt@kernel.org,
- viro@zeniv.linux.org.uk
-Cc: seanjc@google.com, vbabka@suse.cz, willy@infradead.org,
- pbonzini@redhat.com, tabba@google.com, afranji@google.com,
- ackerleytng@google.com, jack@suse.cz, hch@infradead.org,
- cgzones@googlemail.com, ira.weiny@intel.com, roypat@amazon.co.uk,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20250620070328.803704-3-shivankg@amd.com>
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250620070328.803704-3-shivankg@amd.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: uP1_8caTvnWvt8BaZvaB61F51QIgLAU1UvtyFjqKzos_1750686691
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250623-warmwasser-giftig-ff656fce89ad@brauner>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 20.06.25 09:03, Shivank Garg wrote:
-> Export anon_inode_make_secure_inode() to allow KVM guest_memfd to create
-> anonymous inodes with proper security context. This replaces the current
-> pattern of calling alloc_anon_inode() followed by
-> inode_init_security_anon() for creating security context manually.
-> 
-> This change also fixes a security regression in secretmem where the
-> S_PRIVATE flag was not cleared after alloc_anon_inode(), causing
-> LSM/SELinux checks to be bypassed for secretmem file descriptors.
-> 
-> As guest_memfd currently resides in the KVM module, we need to export this
-> symbol for use outside the core kernel. In the future, guest_memfd might be
-> moved to core-mm, at which point the symbols no longer would have to be
-> exported. When/if that happens is still unclear.
-> 
-> Fixes: 2bfe15c52612 ("mm: create security context for memfd_secret inodes")
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Suggested-by: Mike Rapoport <rppt@kernel.org>
-> Signed-off-by: Shivank Garg <shivankg@amd.com>
+On Mon, Jun 23, 2025 at 12:16:27PM +0200, Christian Brauner wrote:
+> I'm more than happy to switch a bunch of our exports so that we only
+> allow them for specific modules. But for that we also need
+> EXPOR_SYMBOL_FOR_MODULES() so we can switch our non-gpl versions.
 
-
-In general, LGTM, but I think the actual fix should be separated from 
-exporting it for guest_memfd purposes?
-
-Also makes backporting easier, when EXPORT_SYMBOL_GPL_FOR_MODULES does 
-not exist yet ...
-
-Leaving deciding about that to fs people.
-
-Reviewed-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers,
-
-David / dhildenb
-
+Huh?  Any export for a specific in-tree module (or set thereof) is
+by definition internals and an _GPL export if perfectly fine and
+expected.
