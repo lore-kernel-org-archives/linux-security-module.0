@@ -1,229 +1,265 @@
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18F029C352
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Jun 2025 19:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C3E1F8733;
+	Mon, 23 Jun 2025 23:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750707669; cv=none; b=PZXnVpVYOwRByOVoBIq8InItZFIZfbBCUAnRHq6WjOTrk0xTNZbQCvqCjfC2p0f/IlqHWo3k7qm67f3SgTve2l3QclNmjNKPBklmif9FpfHuvjPL/cOLAGqZDWCCMYE8N5wxLB8FxwagAQ+EwHyIDSK6YKNFuBEjOjbPeQXU8V0=
+	t=1750720621; cv=none; b=kiA1RCQjOocynjvGHBh/V+Z3b+BJZb3H2aGhZgjHF+YcbtgkMDf2W7VSGsmBncHKUHQsHLjwJRgaRWaO355e/U6YtxOyJK37ck5lNlyIc7QwV3IYAZ+LXX6t8WE6gsJTQ/avdC1yd7LA9ekPhKqpWMKXey/eOf8QyxASB+uSq40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750707669; c=relaxed/simple;
-	bh=5NESCJ2C0k3c/bq33kaycObKMRXxkSk7OfchAPWb61A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LxBLe6FY0Ikd7ZYO8pwmacm3hKwLxq4eo8sJW1e6vQlDeWfRpM8cEExSgjjH3PgL9we+9zVrR7UMeR9X3d4+/TJJYfTzNW3DiOFUYvFcpjwv9BZbxePZS4FTi2WkWFgkXjPnHfuZJLWIups3R2YabR+dfpoPfYArVtgGjJh7alY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=PORuIXcj; arc=none smtp.client-ip=45.157.188.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1750720621; c=relaxed/simple;
+	bh=71pJsM3gzbp8rm6YAfsKW8tj2ctRBzo5ZmlWXm4OWJU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=azP1xgTwXYsMzUZrVZgVYmwBzRrA3QALkiReKLkZBz21pDrikfXJSx5wmq8CaEqljwOfZm86hDmKTMYPM8ZaSY25AtxyEMkb9NiaYbD/dZOCpqfGqygDqBSXv6ZE63nuff7giRfnWQu/MqUgnfdahKbKP49Zual5Nbb6CJxBBKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=B0J1aNK9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LLE7CQ89; arc=none smtp.client-ip=202.12.124.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="PORuIXcj"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bQz2v0xGhzXhX;
-	Mon, 23 Jun 2025 21:40:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1750707655;
-	bh=+PdntTwQutG2Ke93Rwxbf5el2guoygdYyJGMg5CRmPc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PORuIXcj93tCuZWrSKna4Izi+Vp7SeJhJ0u6GjyPU20sD/+tVdOE2VbRQdriEWXkQ
-	 /lA/oVMXn9blC/+uvXgZ39xJf4GwjxPfxArulpzK54SkuWUK/tY2iDN5wKnznCsyHW
-	 lvZ5zHpDJp6Im27KI33e0japWfzhUH6u1e7V4vUM=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bQz2t46DczLW;
-	Mon, 23 Jun 2025 21:40:54 +0200 (CEST)
-Date: Mon, 23 Jun 2025 21:40:53 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: Song Liu <song@kernel.org>, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] selftests/landlock: Add tests for access through
- disconnected paths
-Message-ID: <20250623.kaed2Ovei8ah@digikod.net>
-References: <09b24128f86973a6022e6aa8338945fcfb9a33e4.1749925391.git.m@maowtm.org>
- <20250619.yohT8thouf5J@digikod.net>
- <973a4725-4744-43ba-89aa-e9c39dce4d96@maowtm.org>
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="B0J1aNK9";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LLE7CQ89"
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 15F547A0129;
+	Mon, 23 Jun 2025 19:16:58 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-11.internal (MEProxy); Mon, 23 Jun 2025 19:16:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1750720617;
+	 x=1750807017; bh=YB4d3JNkqZQIjLYwtoIIAzTgwhFqF5uw4DddLQBZ8z4=; b=
+	B0J1aNK9MfpJ0VOntaHqSrVdx3eI9Xo3zoZCAsLFFyhPik40MMgFLnBTgdWjopcK
+	7HAP26odyvEUmFSxfElM1uECzOz8gsWP01IzBqxFdE5r627FjAtu5Vg3lCdevuit
+	FSmqUlaChAfx3mv2jnYG2eFx3liTkCZ/sE54zogGk037czzlOxo2F1F0HOdk6DJ9
+	Ba7HDh9SK4tAv2J8slzfU0L2vvS+7TvJ/Y1HdwqFGuVZSOM1ld4Chbsm/HMpEi3B
+	RcDx8ZiUIzsRwEPLCpZciDyqry7UvlMRpCznmBtxI4cJfcUD8maqWUdkED/XXCCS
+	dYheU6CEiXW/7UFHGQIytQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1750720617; x=
+	1750807017; bh=YB4d3JNkqZQIjLYwtoIIAzTgwhFqF5uw4DddLQBZ8z4=; b=L
+	LE7CQ894Q0tAxxOwCD75QFXOIRc6oLLkGLQNdHI3JCbw2tcCJVFyBkEGBU2U/f4H
+	kBuIhtFkvG2jADVbFJFjzxKs3321eqDjCBGu1CJQxo1DQDg4sN4NeKcrPA8v3W1E
+	ToXfGo3YAuOK4g4mUXMMwbJvzgqGMBIuQkM1Jmng/obHovHu5nRfL9bMtvw8GClq
+	GcUjGiFY7poxedMmv8n5MvSNSwl3wubpELZ6+6ze7qWY3zcs7WSfrmLlrLNubpeF
+	edeyT+XkNWcuWwYA+LL7EIePbmlHm3NMZPNpPEhwGzVIowUHMWtSltRwgfbU0ikK
+	uOkAfbP5yfWuaJ/rINR+g==
+X-ME-Sender: <xms:aeBZaJS02kZJRNLpwB3bhwRtRBQGPsznKwFkPx_wHWc7bo-GOyKDiA>
+    <xme:aeBZaCz3wcH_seW2ddiE1jMp1ZzCa4nxFgpYI98HJzn9fNZZdvwquQYmX-t4UEKGa
+    9SNW8__-CtVRWqe9Nk>
+X-ME-Received: <xmr:aeBZaO0dmL-oGvBnzBzPHOpEP4oRFsO-NouCkHqKpZBvmJfPZAdtbVUzl1TxoP83Ie4nBlJ0lwJBDUCOQVjrHC28>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddukeefvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepvfhinhhgmhgr
+    ohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeejfe
+    fggefhjeeuhfehieegvdetteduiedufeevhfehgffgfffhtedufeetveduffenucffohhm
+    rghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeeh
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvg
+    htpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthhopehs
+    ohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvtghurhhith
+    ihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:aeBZaBAYB6CVv4XWrZgPYHhGR738gnBbauzkFxMEm7JdX9u3T6wHrQ>
+    <xmx:aeBZaChjp813BFmr4tAf4ee-13TV_jSArL7YJsImdNzA0GIboSsumQ>
+    <xmx:aeBZaFrEIY2vAGqO7pInpPdYeqJcmKGQpoBoltrTSJsgUchtg8LQnw>
+    <xmx:aeBZaNgHX-8tx_BYANk60HAqOTdNl25dUcNsEv39MdZcwJYVpUi_CA>
+    <xmx:aeBZaJNBYey6P8kKq6EOFq6SfA6GtRLbnm6yrzHyxFEddKichYGnMBrH>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 23 Jun 2025 19:16:56 -0400 (EDT)
+Message-ID: <351dd18f-5c17-4477-a9b9-23075e8722fa@maowtm.org>
+Date: Tue, 24 Jun 2025 00:16:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+From: Tingmao Wang <m@maowtm.org>
+Subject: Re: [PATCH] selftests/landlock: Add tests for access through
+ disconnected paths
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+Cc: Song Liu <song@kernel.org>, linux-security-module@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <09b24128f86973a6022e6aa8338945fcfb9a33e4.1749925391.git.m@maowtm.org>
+ <20250619.yohT8thouf5J@digikod.net>
+ <973a4725-4744-43ba-89aa-e9c39dce4d96@maowtm.org>
+ <20250623.kaed2Ovei8ah@digikod.net>
+Content-Language: en-US
+In-Reply-To: <20250623.kaed2Ovei8ah@digikod.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <973a4725-4744-43ba-89aa-e9c39dce4d96@maowtm.org>
-X-Infomaniak-Routing: alpha
 
-On Sun, Jun 22, 2025 at 04:42:49PM +0100, Tingmao Wang wrote:
-> On 6/19/25 12:38, Mickaël Salaün wrote:
-> > On Sat, Jun 14, 2025 at 07:25:02PM +0100, Tingmao Wang wrote:
-> >> This adds a test for the edge case discussed in [1], and in addition also
-> >> test rename operations when the operands are through disconnected paths,
-> >> as that go through a separate code path in Landlock.
-> >>
-> >> [1]: https://lore.kernel.org/linux-security-module/027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org/
-> >>
-> >> This has resulted in a WARNING, due to collect_domain_accesses() not
-> >> expecting to reach a different root from path->mnt:
-> >>
-> >> 	#  RUN           layout1_bind.path_disconnected ...
-> >> 	#            OK  layout1_bind.path_disconnected
-> >> 	ok 96 layout1_bind.path_disconnected
-> >> 	#  RUN           layout1_bind.path_disconnected_rename ...
-> >> 	[..] ------------[ cut here ]------------
-> >> 	[..] WARNING: CPU: 3 PID: 385 at security/landlock/fs.c:1065 collect_domain_accesses
-> >> 	[..] ...
-> >> 	[..] RIP: 0010:collect_domain_accesses (security/landlock/fs.c:1065 (discriminator 2) security/landlock/fs.c:1031 (discriminator 2))
-> >> 	[..] current_check_refer_path (security/landlock/fs.c:1205)
-> >> 	[..] ...
-> >> 	[..] hook_path_rename (security/landlock/fs.c:1526)
-> >> 	[..] security_path_rename (security/security.c:2026 (discriminator 1))
-> >> 	[..] do_renameat2 (fs/namei.c:5264)
-> >> 	#            OK  layout1_bind.path_disconnected_rename
-> >> 	ok 97 layout1_bind.path_disconnected_rename
-> > 
-> > Good catch and thanks for the tests!  I sent a fix:
-> > https://lore.kernel.org/all/20250618134734.1673254-1-mic@digikod.net/
-> > 
-> >>
-> >> My understanding is that terminating at the mountpoint is basically an
-> >> optimization, so that for rename operations we only walks the path from
-> >> the mountpoint to the real root once.  We probably want to keep this
-> >> optimization, as disconnected paths are probably a very rare edge case.
-> > 
-> > Rename operations can only happen within the same mount point, otherwise
-> > the kernel returns -EXDEV.  The collect_domain_accesses() is called for
-> > the source and the destination of a rename to walk to their common mount
-> > point, if any.  We could maybe improve this walk by doing them at the
-> > same time but because we don't know the depth of each path, I'm not sure
-> > the required extra complexity would be worth it.  The current approach
-> > is simple and opportunistically limits the walks.
-> > 
-> >>
-> >> This might need more thinking, but maybe if one of the operands is
-> >> disconnected, we can just let it walk until IS_ROOT(dentry), and also
-> >> collect access for the other path until IS_ROOT(dentry), then call
-> >> is_access_to_paths_allowed() passing in the root dentry we walked to?  (In
-> >> this case is_access_to_paths_allowed will not do any walking and just make
-> >> an access decision.)
-> > 
-> > If one side is in a disconnected directory and not the other side, the
-> > rename would be denied by the VFS,
+On 6/23/25 20:40, Mickaël Salaün wrote:
+> On Sun, Jun 22, 2025 at 04:42:49PM +0100, Tingmao Wang wrote:
+>> On 6/19/25 12:38, Mickaël Salaün wrote:
+>>> On Sat, Jun 14, 2025 at 07:25:02PM +0100, Tingmao Wang wrote:
+>>>> [...]
+>>>>
+>>>> This might need more thinking, but maybe if one of the operands is
+>>>> disconnected, we can just let it walk until IS_ROOT(dentry), and also
+>>>> collect access for the other path until IS_ROOT(dentry), then call
+>>>> is_access_to_paths_allowed() passing in the root dentry we walked to?  (In
+>>>> this case is_access_to_paths_allowed will not do any walking and just make
+>>>> an access decision.)
+>>>
+>>> If one side is in a disconnected directory and not the other side, the
+>>> rename would be denied by the VFS,
+>>
+>> Not always, right? For example in the path_disconnected_rename test we did:
 > 
-> Not always, right? For example in the path_disconnected_rename test we did:
+> Correct, only the mount point matter.
+> 
+>>
+>> 5051.  ASSERT_EQ(0, renameat(bind_s1d3_fd, file2_name, AT_FDCWD, file1_s2d2))
+>>                              ^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^
+>>                              Disconnected              Connected
+>>
+>> (and it also has the other way)
+>>
+>> So looks like as long as they are still reached from two fds with two
+>> paths that have the same mnt, it will be allowed.  It's just that when we
+>> do parent walk we end up missing the mount.  This also means that for this
+>> refer check, if after doing the two separate walks (with the disconnected
+>> side walking all the way to IS_ROOT), we then walk from mnt again, we
+>> would allow the rename if there is a rule on mnt (or its parents) allowing
+>> file creation and refers, even if the disconnected side technically now
+>> lives outside the file hierarchy under mnt and does not have a parent with
+>> a rule allowing file creation.
+>>
+>> (I'm not saying this is necessary wrong or needs fixing, but I think it's
+>> an interesting consequence of the current implementation.)
+> 
+> Hmm, that's indeed a very subtle side effect.  One issue with the
+> current implementation is that if a directory between the mount
+> point and the source has REFER, and another directory not part of the
+> source hierarchy but part of the disconnected directory's hierarchy has
+> REFER and no other directory has REFER, and either the source or the
+> destination hierarchy is disconnected between the mount point and the
+> directory with the REFER, then Landlock will still deny such
+> rename/link.  A directory with REFER initially between the mount point
+> and the disconnected directory would also be ignored.  There is also the
+> case where both the source and the destination are disconnected.
 
-Correct, only the mount point matter.
+Sorry, I'm having trouble following this.  Can you maybe give a more
+specific example, perhaps with commands?
 
-> 
-> 5051.  ASSERT_EQ(0, renameat(bind_s1d3_fd, file2_name, AT_FDCWD, file1_s2d2))
->                              ^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^
->                              Disconnected              Connected
-> 
-> (and it also has the other way)
-> 
-> So looks like as long as they are still reached from two fds with two
-> paths that have the same mnt, it will be allowed.  It's just that when we
-> do parent walk we end up missing the mount.  This also means that for this
-> refer check, if after doing the two separate walks (with the disconnected
-> side walking all the way to IS_ROOT), we then walk from mnt again, we
-> would allow the rename if there is a rule on mnt (or its parents) allowing
-> file creation and refers, even if the disconnected side technically now
-> lives outside the file hierarchy under mnt and does not have a parent with
-> a rule allowing file creation.
-> 
-> (I'm not saying this is necessary wrong or needs fixing, but I think it's
-> an interesting consequence of the current implementation.)
-
-Hmm, that's indeed a very subtle side effect.  One issue with the
-current implementation is that if a directory between the mount
-point and the source has REFER, and another directory not part of the
-source hierarchy but part of the disconnected directory's hierarchy has
-REFER and no other directory has REFER, and either the source or the
-destination hierarchy is disconnected between the mount point and the
-directory with the REFER, then Landlock will still deny such
-rename/link.  A directory with REFER initially between the mount point
-and the disconnected directory would also be ignored.  There is also the
-case where both the source and the destination are disconnected.
-
-I didn't consider such cases with collect_domain_accesses().  I'm
-wondering if this path walk gap should be fixed (instead of applying
-https://lore.kernel.org/all/20250618134734.1673254-1-mic@digikod.net/ )
-or not.  We should not rely on optimization side effects, but I'm not
-sure which behavior would make more sense...  Any though?
+By "mount point" do you mean the bind mount? If a path has became
+disconnected because the directory moved away from under the mountpoint,
+and is therefore not covered by any REFER (you said "either the source or
+the destination hierarchy is disconnected between the mount point and the
+directory with the REFER") wouldn't it make sense for the rename to be
+denied?
 
 > 
-> > but Landlock should still log (and then deny) the side that would be
-> > denied anyway.
-> > 
-> >>
-> >> Letting the walk continue until IS_ROOT(dentry) is what
-> >> is_access_to_paths_allowed() effectively does for non-renames.
-> >>
-A> >> (Also note: moving the const char definitions a bit above so that we can
-> >> use the path for s4d1 in cleanup code.)
-> >>
-> >> Signed-off-by: Tingmao Wang <m@maowtm.org>
-> > 
-> > I squashed your patches and push them to my next branch with some minor
-> > changes.  Please let me know if there is something wrong.
-> 
-> Thanks for the edits!  I did notice two things:
-> 
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index fa0f18ec62c4..c0a54dde7225 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -4561,6 +4561,17 @@ TEST_F_FORK(ioctl, handle_file_access_file)
->  FIXTURE(layout1_bind) {};
->  /* clang-format on */
->  
-> +static const char bind_dir_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3";
-> +static const char bind_file1_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3/f1";
-> +/* Moved targets for disconnected path tests. */
->     ^^^^^^^^^^^^^
->     I had "Move targets" here as a noun (i.e. the target/destinations of
->     the renames)
+> I didn't consider such cases with collect_domain_accesses().  I'm
+> wondering if this path walk gap should be fixed (instead of applying
+> https://lore.kernel.org/all/20250618134734.1673254-1-mic@digikod.net/ )
+> or not.  We should not rely on optimization side effects, but I'm not
+> sure which behavior would make more sense...  Any though?
 
-Makes sense now :)
+I didn't quite understand your example above and how is it possible for us
+to end up denying something that should be allowed.  My understanding of
+the current implementation is, when either operands are disconnected, it
+will walk all the way to the current filesystem's root and stop there.
+However, it will then still do the walk from the original bind mount up to
+the real root (/), and if there is any REFER rules on that path, we will
+still allow the rename.  This means that if the rename still ends up being
+denied, then it wouldn't have been allowed in the first place, even if the
+path has not become disconnected.
 
-> 
-> +static const char dir_s4d1[] = TMP_DIR "/s4d1";
-> +static const char file1_s4d1[] = TMP_DIR "/s4d1/f1";
-> ...
-> 
-> Also, I was just re-reading path_disconnected_rename and I managed to get
-> confused (i.e. "how is the rename in the forked child allowed at all (i.e.
-> how did we get EXDEV instead of EACCES) after applying layer 2?").  If you
-> end up amending that commit, can you add this short note:
-> 
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index c0a54dde7225..84615c4bb7c0 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -4936,6 +4936,8 @@ TEST_F_FORK(layout1_bind, path_disconnected_rename)
->  		},
->  		{}
->  	};
-> +
-> +	/* This layer only handles LANDLOCK_ACCESS_FS_READ_FILE only. */
+An interesting concrete example I came up with:
 
-That can be useful.
+/# uname -a
+Linux 5610c72ba8a0 6.16.0-rc2-dev #43 SMP ...
+/# mkdir /a /b
+/# mkdir /a/a1 /b/b1
+/# mount -t tmpfs none /a/a1
+/# mkdir /a/a1/a11
+/# mount --bind /a/a1/a11 /b/b1
+/# mkdir /a/a1/a11/a111
+/# tree /a /b
+/a
+`-- a1
+    `-- a11
+        `-- a111
+/b
+`-- b1
+    `-- a111
 
->  	const struct rule layer2_only_s1d2[] = {
->  		{
->  			.path = dir_s1d2,
-> 
-> Wish I had caught this earlier.  I mean neither of the two things are
-> hugely important, but I assume until you actually send the merge request
-> you can amend stuff relatively easily?  If not then it's also alright :)
+7 directories, 0 files
+/# cd /b/b1/a111/
+/b/b1/a111# mv /a/a1/a11/a111 /a/a1/a12
+/b/b1/a111# ls ..  # we're disconnected now
+ls: cannot access '..': No such file or directory
+/b/b1/a111 [2]# touch /a/a1/a12/file
 
-I apply your changes.  Commits should usually wait at least a week in
-linux-next.
+/b/b1/a111# LL_FS_RO=/:/a/a1 LL_FS_RW=/:/b/b1  /sandboxer ls
+Executing the sandboxed command...
+file
 
-> 
-> >
-> > [...]
-> 
-> Ack to all suggestions, thanks!
-> 
-> Best,
-> Tingmao
-> 
+/b/b1/a111# LL_FS_RO=/:/a/a1 LL_FS_RW=/:/b/b1  /sandboxer mv -v file file2
+Executing the sandboxed command...
+mv: cannot move 'file' to 'file2': Permission denied
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# This fails because for same dir rename we just use is_access_to_path_allowed,
+# which will stop at /a/a1 (and thus never reach either /b/b1 or /).
+
+/b/b1/a111 [1]# mkdir subdir
+/b/b1/a111# LL_FS_RO=/:/a/a1 LL_FS_RW=/b/b1  /sandboxer mv -v file subdir/file2
+Executing the sandboxed command...
+[..] WARNING: CPU: 1 PID: 656 at security/landlock/fs.c:1065 ...
+renamed 'file' -> 'subdir/file2'
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# This works because now we restart walk from /b/b1 (the bind mnt)
+
+/b/b1/a111# mv subdir/file2 file
+/b/b1/a111# LL_FS_RO=/:/a/a1 LL_FS_RW=/a  /sandboxer mv -v file subdir/file2
+Executing the sandboxed command...
+mv: cannot move 'file' to 'subdir/file2': Permission denied
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# This is also not allowed, but that's OK since even though technically we're
+# actually moving /a/a1/a12/file to /a/a1/a12/subdir/file2, we're not doing it
+# through /a (we're walking into a12 via /b/b1, so rules on /a shouldn't
+# apply anyway)
+
+/b/b1/a111 [1]# LL_FS_RO=/:/a/a1 LL_FS_RW=/b  /sandboxer mv -v file subdir/file2
+Executing the sandboxed command...
+renamed 'file' -> 'subdir/file2'
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# And this works because we walk from /b/b1 after doing collect_domain_accesses
+
+I think overall this is just a very strange edge case and people should
+not rely on the exact behavior whether it's intentional or optimization
+side-effect (as long as it deny access / renames when there is no rules at
+any of the reasonable upper directories).  Also, since as far as I can
+tell this "optimization" only accidentally allows more access (i.e.  rules
+anywhere between the bind mountpoint to real root would apply, even if
+technically the now disconnected directory belongs outside of the
+mountpoint), I think it might be fine to leave it as-is, rather than
+potentially complicating this code to deal with this quite unusual edge
+case?  (I mean, it's not exactly obvious to me whether it is more correct
+to respect rules placed between the original bind mountpoint and root, or
+more correct to ignore these rules (i.e. the behaviour of non-refer access
+checks))
+
+It is a bit weird that `mv -v file file2` and `mv -v file subdir/file2`
+behaves differently tho.
+
+If you would like to fix it, what do you think about my initial idea?:
+> This might need more thinking, but maybe if one of the operands is
+> disconnected, we can just let it walk until IS_ROOT(dentry), and also
+> collect access for the other path until IS_ROOT(dentry), then call
+> is_access_to_paths_allowed() passing in the root dentry we walked to?  (In
+> this case is_access_to_paths_allowed will not do any walking and just make
+> an access decision.)
+
+This will basically make the refer checks behave the same as non-refer
+checks on disconnected paths - walk until IS_ROOT, and stop there.
+
