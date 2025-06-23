@@ -1,108 +1,94 @@
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA481F3BB0
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Jun 2025 10:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B823C182D2;
+	Mon, 23 Jun 2025 11:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750675500; cv=none; b=V9HWaWb6LRd359xE0LylnS0NxdwJYcGdTgTW0yg3nEx+bmJP9vb7KKiYZFb/VaP37M1UrMLaUGwOqSOgJYBohUsgGfvDjCCgqF3QayEpaX6ZFmRPPAPEoHi99tUlkvjwp7eiujS3ifCaDHYIn1HyoBEtGvAlS95Aw7TXKwMGwqQ=
+	t=1750676632; cv=none; b=EvTsuLOG3zE0ZNxvmoHQXIoRoW5yFy3gLDPJ2VERxiTIMcuOcDfZcj6ZwABY1aeQ6vy+3aazaFBkmHEfBhggx6C/T9wjsI49pjWzXDf5ut4+miR6v3OXcuBGo0B2NsJFkOu0muUdGCygj8ASH19oBK+Z3GW8QMgIZuLPLMpodnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750675500; c=relaxed/simple;
-	bh=/xiGi9AKtGjBnq0MzGb9exxbcql03fu+5GgF1Qpg6zI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=X0FUxn9WsgEQrXQ7+9I7pz95Z5VRqyoPRAxA3CaiZqN7YwOdUKeHFPndZixfc5EtkK5rpUSUaG5/4LBaqeiB8SkyKgH26d9BPdDcyanzoVeoxA8/GlvdgaeX4zV1IAEJAQIUKU7G3v66I3Kb0gsFvr1RUzWgegAiVyaMZnTdrBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Sf1rQfJM; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1750676632; c=relaxed/simple;
+	bh=21smDvP5Tb5dB+EW7EZRkIvGK7NLN7oX7RKnAaZeUUc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RUPTuXQostWICFFRU0HaPuGx9AvRgBXXxXSUCcdQQJwvDMNCVy0n/rnAvaLGYVuEbxQgxb+AbMpe6dzOLeMD29N7e8uQj41FTltLrxDAZvEobRdlntNO3UD0Jn53qg8jFNgeY3HlKHtm2BMIAk4JMbOawcYdDwxs9PpefVUWjVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPkM7kW6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sf1rQfJM"
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-451d7de4ae3so23336475e9.2
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Jun 2025 03:44:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750675497; x=1751280297; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ppbg3SAN71AnYkQgqZky1I2Bcu/4MKLspU05dRI5Tuo=;
-        b=Sf1rQfJMG1y2bCVvvkKui7gzfWfiSEOF1ftkr+0kWGeY43mAnyHCVFMmjRy8Oqwb55
-         DBv/WcTP2prUdKygk+X8mESV2p5rNv3UGh2Bvn2Ow5R2PZk9YQxv3xn6/md55o0mlY8E
-         5h+dSv6rqhdACoG6KW7vmd7/F0t7V8GrwEVn4z1slnAFE/U8IUAL8bmOb+t6bgn7Z3F7
-         COMI6mEpn0pPftmd/QjnsHwwNRAYBczNnXfq/56zMMGrRoo8NZcGRBPVh2hogRNnFS5A
-         lGbAUz21OVo8LYV0ANvtKt2pugYKmKrjMxZWvrvT1XCE8OhUqyR5kaKbrbuPmrZWh3a0
-         7xfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750675497; x=1751280297;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ppbg3SAN71AnYkQgqZky1I2Bcu/4MKLspU05dRI5Tuo=;
-        b=n99FwPts2hM9CGQbMFt5FgUFOS80rThS1LEr68WN0lGstirEA9c8f7aAgA94MFYt5S
-         jEc2xn4870nHpD/B7u/N6pAQ/sfon8qCEhRhy8rug7AV8dW+Cd+eDCTtR3OAYkt5cTLw
-         qaf1+WMmRXYikpZmfDHyDFETONEfmASx+a1G3qNiHq/l64qmPVhT3stxbxj7Ed90yjhi
-         xKaaLMpx3d9xg7ElitU2SiftHc+BaV/LFKpcTxfI1f5koFRUM4zbmOkI0lyUP5CxvNeM
-         LhwYg7LzlhaR5OS5OPslLvyvuyP/hndllsqUZZO/sgVBPm23MYnjHhr0PzGziZGkPQo0
-         OIEw==
-X-Gm-Message-State: AOJu0Yw9yKs/HjETVbc/L9BDMdpF6u2P9OToAqZdiKXAMaS5U73oUiqM
-	Jq/06efmfUwA8uu+41SsZjz0xwkxju7LWa+Bqh+NB4icGbw9fWk+enapARNTT731EJUGCxb1pow
-	ZrSq7iw==
-X-Google-Smtp-Source: AGHT+IFoK7Y/CL3pORwCvVFiQqj2E1mzYymEsWgLN9+EqXf5MmBSpKR30SgQggtvI8KNMNQKCpKI6QNFZ8E=
-X-Received: from wmcq17.prod.google.com ([2002:a05:600c:c111:b0:453:6c86:95d2])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:6305:b0:43c:f513:958a
- with SMTP id 5b1f17b1804b1-453654cc279mr102977235e9.13.1750675496872; Mon, 23
- Jun 2025 03:44:56 -0700 (PDT)
-Date: Mon, 23 Jun 2025 12:44:54 +0200
-In-Reply-To: <20250618134734.1673254-1-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPkM7kW6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1349BC4CEF1;
+	Mon, 23 Jun 2025 11:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750676632;
+	bh=21smDvP5Tb5dB+EW7EZRkIvGK7NLN7oX7RKnAaZeUUc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=sPkM7kW6RGrImFy4retADz8t+GdHqqKsxHHgKwTWXDGsQDDnzvOhdlnWWDf3vYyin
+	 WXBGPLlYBeEQM3HKRxHMyatg8D7d2b7tGe+ORCrieFvWcvXnvZ9IoS0Oy+h/1SnDiS
+	 z8LFpdON2a8hlvSXKs3oxx72CthgJWiE6uiYkdX3Svut5axsWXHcGk20/N8uSLIRVC
+	 SNUgK5fb0corWQ7I8k2kxvURjaai3T3veCyQ06s7vN2qasHg+YgW0ShKH6GoPnoARO
+	 bN8d62PvTc2Y3ACPqS77nFOJv7jiegTXZh09BbEdVyEegnyKbHv/+Xk1tyVIaH6W6C
+	 yIhmWyM20aEDQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	kernel-team@meta.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	kpsingh@kernel.org,
+	mattbobrowski@google.com,
+	amir73il@gmail.com,
+	gregkh@linuxfoundation.org,
+	tj@kernel.org,
+	daan.j.demeyer@gmail.com,
+	bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 bpf-next 0/4] Introduce bpf_cgroup_read_xattr
+Date: Mon, 23 Jun 2025 13:03:22 +0200
+Message-ID: <20250623-rebel-verlust-8fcd4cdd9122@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250623063854.1896364-1-song@kernel.org>
+References: <20250623063854.1896364-1-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250618134734.1673254-1-mic@digikod.net>
-Message-ID: <aFkwFudOCoD0vsjt@google.com>
-Subject: Re: [PATCH v1] landlock: Remove warning in collect_domain_accesses()
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1306; i=brauner@kernel.org; h=from:subject:message-id; bh=21smDvP5Tb5dB+EW7EZRkIvGK7NLN7oX7RKnAaZeUUc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWREmvQxxkmWnyiY9b4jkN35i/uWIpeicHWmWex96+5JF 9YafDDsKGVhEONikBVTZHFoNwmXW85TsdkoUwNmDisTyBAGLk4BmIh1GyPDowk9n9dHRU9IrLZ0 rp9+zKBUn7/Terd+fuJpbaXy+wEyDP/snW/sa9WpmOUTMm9P8Cmno1zhJZoq86JX+DoUMp0IZGU AAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 18, 2025 at 03:47:31PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> As in is_access_to_paths_allowed(), it is also possible to reach
-> disconnected root directories in collect_domain_accesses().
->=20
-> Remove a wrong WARN_ON_ONCE() canary in collect_domain_accesses() and
-> fix comment.  Using an unlikely() annotation doesn't seem appropriate
-> here.  A following patch from Tingmao tests this case [1].
->=20
-> Cc: G=C3=BCnther Noack <gnoack@google.com>
-> Reported-by: Tingmao Wang <m@maowtm.org>
-> Link: https://lore.kernel.org/r/09b24128f86973a6022e6aa8338945fcfb9a33e4.=
-1749925391.git.m@maowtm.org [1]
-> Fixes: b91c3e4ea756 ("landlock: Add support for file reparenting with LAN=
-DLOCK_ACCESS_FS_REFER")
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> ---
->  security/landlock/fs.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 6fee7c20f64d..1d6c4e728f92 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -1061,8 +1061,8 @@ static bool collect_domain_accesses(
->  			break;
->  		}
-> =20
-> -		/* We should not reach a root other than @mnt_root. */
-> -		if (dir =3D=3D mnt_root || WARN_ON_ONCE(IS_ROOT(dir)))
-> +		/* Stops at the mount point or disconnected root directories. */
-> +		if (dir =3D=3D mnt_root || IS_ROOT(dir))
->  			break;
-> =20
->  		parent_dentry =3D dget_parent(dir);
-> --=20
-> 2.49.0
->=20
+On Sun, 22 Jun 2025 23:38:50 -0700, Song Liu wrote:
+> Introduce a new kfunc bpf_cgroup_read_xattr, which can read xattr from
+> cgroupfs nodes. The primary users are LSMs, cgroup programs, and sched_ext.
+> 
 
-Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
+Applied to the vfs-6.17.bpf branch of the vfs/vfs.git tree.
+Patches in the vfs-6.17.bpf branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.17.bpf
+
+[1/4] kernfs: remove iattr_mutex
+      https://git.kernel.org/vfs/vfs/c/d1f4e9026007
+[2/4] bpf: Introduce bpf_cgroup_read_xattr to read xattr of cgroup's node
+      https://git.kernel.org/vfs/vfs/c/535b070f4a80
+[3/4] bpf: Mark cgroup_subsys_state->cgroup RCU safe
+      https://git.kernel.org/vfs/vfs/c/1504d8c7c702
+[4/4] selftests/bpf: Add tests for bpf_cgroup_read_xattr
+      https://git.kernel.org/vfs/vfs/c/f4fba2d6d282
