@@ -1,109 +1,128 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427337263F;
-	Mon, 23 Jun 2025 14:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCE627A444
+	for <linux-security-module@vger.kernel.org>; Mon, 23 Jun 2025 17:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750688928; cv=none; b=lkjgzHyJXBH8vn964HJbZ4G6N5cDOcZF28jocL6zNl6Bu52XMXaRi3KTFu0vRsgQFoR1IzROQ8+jHHdsM3BMavIl3oRJHNfT7B31M+MXr9Z2hP56HvcwUztf8vSMFmME4i3byBgG1hxfE2dObPEgbvmOKT68Cx5Mg9Ob1vaCzL4=
+	t=1750698611; cv=none; b=BERcs9785aF5XgdDIN2CtNFJKr/Ro6DmzhQwpB58SQtBJFL7A07pMGI3BRHl9//qC1dOsGqEIXaqVZ/HepIQUv5kjVtKLvQDmwATg3WYmrNSBCNTdQ7yV9GpeN+5/63rUiDDdW3rM4Hd/Dkro7idRo2ud6KbSP2ijJbWU5E0Ujo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750688928; c=relaxed/simple;
-	bh=gIsZGD7xrODd86Bc0EvzkFe7uTg/IvFvLUlXMfZW9lE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L87lxP6hFDaoy2pMpIDaw/ddnFg7WhXL9Z+J7ZJQj6P3fMb0SUIa7hOiyZs607YyqO1Z0RySmB6Y30V/HZ8kc8srkFpLMb0/tXqh+JKptc4GUIbl/Ierjv7O4V6zPdKAQndUJC8MtxvfazaL4mKu2YcvuzrjnEGLPQzP7hbr3p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IZmcRgw7; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1750698611; c=relaxed/simple;
+	bh=sCBYTOks1RmBhwUtoCfvqP7R/Rlt9sivQKKDFmvac8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OxQzVD3Zrg4TLJqWZ956uE4hr+ePFZ5HmKQ84QiB6kASqIpLCHC2GjBZwvg/a7xU6EnxSmLCv+ESRYuqa+GIPTUEwVCBNC/H3EfBv5jPsh7Wy/XGw4tnkaABIj1t8LMJJze0mLxUCwKaF2e1EIVGAajeBm8/L77+gSldRfGpSPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=gSo7czgU; arc=none smtp.client-ip=66.163.186.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IZmcRgw7"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=y3weVWwBOUYIW/Nf1kizuLqzTbeJjj2BrNnaadbwNoE=; b=IZmcRgw7N+Xa00EMi8GPuMLYgd
-	HPnauGCGdBXcl4Aph05+5vuwgj8gGgye4hIILbZZs+qTcn2XNDon8u9UfOKJ0QI3cQol3s2fVB5SY
-	+xkdHm4YdZ/eRpohX9V7lG2JWhYhvFX4Q6x4axidiKEylraO1KI6HY6TaSyEyjZwMETfafzPQ3CL5
-	xKXH/NAs+jGBiZVJZcmqv1XexddcM5wC4GGpipWTN4mAIClKKSiFgXB8HRq2jkCwwD4vBfmn8E1b4
-	iP3KECNmomjCtWTAY1VWXsriUAlD0liquNgfhWg0rV2Wn2eY3CQT+x2xYYKVFcS7IyEp4FhP+sJp5
-	Z04IstBw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uTiA2-00000003gMC-1oeA;
-	Mon, 23 Jun 2025 14:28:38 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 978EB308989; Mon, 23 Jun 2025 16:28:36 +0200 (CEST)
-Date: Mon, 23 Jun 2025 16:28:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Mike Rapoport <rppt@kernel.org>, Shivank Garg <shivankg@amd.com>,
-	david@redhat.com, akpm@linux-foundation.org, paul@paul-moore.com,
-	viro@zeniv.linux.org.uk, willy@infradead.org, pbonzini@redhat.com,
-	tabba@google.com, afranji@google.com, ackerleytng@google.com,
-	jack@suse.cz, cgzones@googlemail.com, ira.weiny@intel.com,
-	roypat@amazon.co.uk, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] fs: export anon_inode_make_secure_inode() and fix
- secretmem LSM bypass
-Message-ID: <20250623142836.GT1613200@noisy.programming.kicks-ass.net>
-References: <da5316a7-eee3-4c96-83dd-78ae9f3e0117@suse.cz>
- <20250619-fixpunkt-querfeldein-53eb22d0135f@brauner>
- <aFPuAi8tPcmsbTF4@kernel.org>
- <20250619-ablichten-korpulent-0efe2ddd0ee6@brauner>
- <aFQATWEX2h4LaQZb@kernel.org>
- <aFV3-sYCxyVIkdy6@google.com>
- <20250623-warmwasser-giftig-ff656fce89ad@brauner>
- <aFleB1PztbWy3GZM@infradead.org>
- <aFleJN_fE-RbSoFD@infradead.org>
- <c0cc4faf-42eb-4c2f-8d25-a2441a36c41b@suse.cz>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="gSo7czgU"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1750698602; bh=rTC+yJuznklwmanB9t9oEkSsAKBRABNXCdw0jqRaNJw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=gSo7czgUNDOaTWBUDNAeBIUFREmDUcx/jb5nQbjYRvltWS5Qc20q6OkskYaUtFFhvdIquVSi6FZDoW/a/zDYMeEI8gKBKrbdAifHVyuWzN9ejavry/GoayzlKIa8o612VW5HkUQExk5dT6X7oReyMCpQblRO/zm7wGims23s62U62F+KNKSmLezaeM07p9wX5N7ZeiIR8bxxlvoqNQpFz4e812ILEzBFnw0vE4FSvGDnwS/JW8OqBrWq6N15LoB3mCNyf3Eh0+D5l9JTAmWxnlnnHHO3mu4KNdz6aHz529OdGrAUe4e7V6/ihMZLj2JrCf2nFfHjMQ4cDuaqzRssSg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1750698602; bh=v47Uzn97MVkUCKjoeYHmmgcBzqc3VWbWQ/X3rxXxIwI=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Z+TcjZMN308hnBKo/9okckQpQgc1lJNhd78BBgSsPdeMm/FDQ11kRRGR3jbowSzKMGX8PrB+PYFRGq7amZjYM65THKIiWsj5Ma84ccag6IKizFGdVF2bLC2KjQ2XW6ctXC/O75irUUHRhdNRxFcsYJ1Cqu1SKmND60XRP/arjZkngkVBDiTRnkEJHLyrlyluGQPcfpKMPiVN5EvU3S+n9gSTa+81XVo18QuQt5YvYRi59R3FGFIc8t9WGncYWHXw7FDTM8rNfnpkKVU5iLcuoKOhtrDf6KCJ2f1iaII6BsngYFzzDUMxOpQKB+kvQcIslu4Fyby/5HgKnhZCtRe5fA==
+X-YMail-OSG: Ikqi5jYVM1lAExaNvEKDH3srPcIeYpFDesH94YAZ4kZz30gm6yPCB60YH_mdlsw
+ n14uWnZ3uCxPQv691Xq4Q4O8bSt9k96fb89lckvPV4F.AgIDBFG2ezKz28JK6RYhNPUqkppajtPn
+ jQNKCBOcaXIIShco1olmswI.xwZxwZJ4bVLDqB.ye5NQBs1dNd2OC5ejZjFFXcq3mU.Xksx1ORfg
+ 4tkEU50gdUzzgKxT3um5DGTOvZmf85l85rYQaARjzH0_Wqgt26gjVletfe0WkwwjFWSPJuyCnjYe
+ C9oJiY_FiSpeBaERtslBAG3oc4.eeVRp2IDqwEzpn9kRhChBnnnHVshO20sSQhkWsoxfG8BHq45U
+ ngqBuSHGbU10FyDzckoCpATw.ScMtok.FagVjXWKBSv6SikFzgVgYKDW_VpBo9iDwkFRS8HP6DHx
+ tO1xicKctHGGPv6Uia4kz1Sbyb1XJHHEwl8LB_ZXwGmzlFN3PeOOSAdrk5K8L4AxGNfkSLpLCslZ
+ ihx4Pdm.MPO9yufRXn2fseb_0geU_h.DTCqH5wBgs0rwFWfWPcMWfuG4SHSW.lU4IzenHhJslxfg
+ qEP18JULVt2wbzUDsDWrzBZHlxxYjd8_JOAGMpi8VallKRmuOH7ab6lPQ.MLzXassLcGc5Tsh6hf
+ NsIhDb16Irjif2fkQZoFIsJKtpsIv2x8EFaPzdfXT4ZCxqqWoEitcjeK5jzAh9NCd2Pd84SPYvLh
+ NYeXNm5sXBowCvfKX_HdrAsB9hvgAsrhceJOic6tQyTf6Hg7vlkOLrFSRIaPBV.v2onhRgHPoyB5
+ l.uTGisNfbVXM9y1uKjMIbXNBk8pEyxLe62f_gP8hXoFcY4S9gByMGtxBL_.YV1DuJa70WV6PVWz
+ 9Sse4ndQtI7P8oBM3djzb8exDXeKlkuBznA0AErrcM.tkLjgt4N2FQIzKWh6G88xAd0nx9SAcKhf
+ evXRgQdLFpO_CXYHoqGQFV.LFzlQbiarQcngF5QsMJovYWiecqYv15zVUz23i2dFBJddlQLLNSgb
+ KcmcTDRVxL31g1w1EM5KfL_pS5WB.f5qCmeoafqO8qgILgV6l5ngDmX3pOvV3zvzZhAy7IGWhZMd
+ 1cG6TomCVe_UyGIxD2_8TfgtngxtXeoLxSZjpgBS45yP9A5XIHUfzRwH5VkuLtQoYM0rhBt9Swz0
+ JdT7hAp7jDNGwxyDfGaE2IAOI5RG8.TT51ZAzrPL9vVoymthJDG9gfzpCnnR4x0dwgcdzlpJ_ipQ
+ yxN7t4zCui.tuw_dmxFqtz_7clayAti_WyA77DxSVqFjS_rVS0xfvcd9CMt4lOOs9oj7HFKLLGpb
+ AXBP.iW6GjIzX8EbhdVt.JWlvA8FfRqpylV9Ju3XwJ2GJX.Kep9cRquvIZiP681bT_sedXvp8imm
+ 6DbeYQXnrGv23AjLvR8aTLW08SnG7c2A7k1vp6IDA7MmBltypkPrn2I6aTsLB2EDHbHzswI62H1o
+ fnmG4l3W.ip0k35NMbnXM1xnq6uy93_GzZlc1dR.q8i3Fn3Z86_sXCiBDeHnEZoVafjvj6eTQwmo
+ k.2J5S7mnT5uLwHdcOa5YcW533VAFSZC2V9y7oRqhV1YGvOCrr7UGN0TdZ9mFWqj0t4EtQFdDpg_
+ lTWwR_2Uu.nCjqR6bz4nqP1PQbG6ZpeMNRJmv6o5QiqWH.Ylx_VXLqOnqL.DYZZE8IkDT4ltfEZT
+ BkX1VnVsXwe7F1og9qikaHlVLOYmFbYqCJW8uo1L2Gszx2IBSLQgSsQ0ZZk0EyrrKerYiWLwJRSx
+ tv9H.giIxZHWexRUIsB.c4c5xB8VsZswnWTsCCZPnZl_64BmwYC57xexKR1O3yusVmNEvlbMMcsB
+ .ETosmVl_i50oLn7XHJr71iilgq7goeg3YkYEJPGEy7JhyX8lu5LQGfxqUL8hojIZC0mPsVV0k_O
+ 4lkoztjgrCdOyNdlCD5pk8rObdts._kQHXU9slK8bKVbviB1krzOgOHlJmAMopUq7Sm4748qxfBJ
+ TaIpOrZQIimRsLh7R9Y2RROQH5UuBteqpSjbWeMpe_OQ24_SJsEMFlmg_VwVI9HZKdz.dWLXuD3r
+ oYhEEf1hTMhliFzYyA6e5yGLkBbHa6yVO0zFnGoNEX72lY6wMPHnns8SuKtwjyHBrficfNm7o7pw
+ Z6aHKpcVXEsELQtBS8Hv3DclqDxWi4wUSB6FCs1O_lD_xyhRFHejZC191Yhx72PFWKhRkgKr4lr9
+ 9MfYFDvpawY5N4PzKLX.2fkLlhnoGBmMbV0eydFyRjYxSpXXqlu_WcJqjxS9jiqCkdBDop59sn42
+ 7uPyxvMSnb4NV1NNTKA--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 888630d6-8131-4bf6-a540-e35b135d42a5
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Mon, 23 Jun 2025 17:10:02 +0000
+Received: by hermes--production-gq1-74d64bb7d7-nccgl (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 39b94febc93afd593eb705f2f26f7baa;
+          Mon, 23 Jun 2025 17:09:57 +0000 (UTC)
+Message-ID: <e1b9e6a9-1c57-4d74-b5a2-6a321068c18c@schaufler-ca.com>
+Date: Mon, 23 Jun 2025 10:09:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c0cc4faf-42eb-4c2f-8d25-a2441a36c41b@suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] smack: fix bugs: invalid unix socket label, invalid
+ transmute attr
+To: Konstantin Andreev <andreev@swemel.ru>
+Cc: linux-security-module@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20250616010745.800386-1-andreev@swemel.ru>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250616010745.800386-1-andreev@swemel.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.24027 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Mon, Jun 23, 2025 at 04:21:15PM +0200, Vlastimil Babka wrote:
-> On 6/23/25 16:01, Christoph Hellwig wrote:
-> > On Mon, Jun 23, 2025 at 07:00:39AM -0700, Christoph Hellwig wrote:
-> >> On Mon, Jun 23, 2025 at 12:16:27PM +0200, Christian Brauner wrote:
-> >> > I'm more than happy to switch a bunch of our exports so that we only
-> >> > allow them for specific modules. But for that we also need
-> >> > EXPOR_SYMBOL_FOR_MODULES() so we can switch our non-gpl versions.
-> >> 
-> >> Huh?  Any export for a specific in-tree module (or set thereof) is
-> >> by definition internals and an _GPL export if perfectly fine and
-> >> expected.
-> 
-> Peterz tells me EXPORT_SYMBOL_GPL_FOR_MODULES() is not limited to in-tree
-> modules, so external module with GPL and matching name can import.
-> 
-> But if we're targetting in-tree stuff like kvm, we don't need to provide a
-> non-GPL variant I think?
+On 6/15/2025 6:07 PM, Konstantin Andreev wrote:
+> Formerly, Smack inode security was initialized
+> by smack_d_instantiate() for all inodes,
+> except ones under /proc
 
-So the purpose was to limit specific symbols to known in-tree module
-users (hence GPL only).
+I have taken this patch set into smack-next.
 
-Eg. KVM; x86 exports a fair amount of low level stuff just because KVM.
-Nobody else should be touching those symbols.
-
-If you have a pile of symbols for !GPL / out-of-tree consumers, it
-doesn't really make sense to limit the export to a named set of modules,
-does it?
-
-So yes, nothing limits things to in-tree modules per-se. The
-infrastructure only really cares about module names (and implicitly
-trusts the OS to not overwrite existing kernel modules etc.). So you
-could add an out-of-tree module name to the list (or have an out-of-free
-module have a name that matches a glob; "kvm-vmware" would match "kvm-*"
-for example).
-
-But that is very much beyond the intention of things.
-
-
+>
+> Commit [1] imposed the sole responsibility for
+> initializing inode security for newly created
+> filesystem objects on smack_inode_init_security().
+>
+> However, smack_inode_init_security() lacks some logic
+> present in smack_d_instantiate().
+>
+> This patch series fixes 2 particular omissions
+> I faced directly:
+>
+> 1) special handling of unix socket files (5th patch)
+> 2) S_ISDIR check for "transmute" xattr (2nd patch)
+>
+> I did not check for other omissions,
+> but there may be ones.
+>
+> Patches 1,3,4 are necessary optimizations
+> in smack_inode_init_security() made along the way.
+>
+> I structured the changes this way to make the review
+> process easier.
+>
+> The patch set applies on top of:
+> https://github.com/cschaufler/smack-next/commits/next
+> commit 4b59f4fd0a36
+>
+> [1] 2023-11-16 roberto.sassu
+> commit e63d86b8b764 ("smack: Initialize the in-memory inode in smack_inode_init_security()")
+> Link: https://lore.kernel.org/linux-security-module/20231116090125.187209-5-roberto.sassu@huaweicloud.com/
+>
+> Konstantin Andreev (5):
+>   smack: deduplicate "does access rule request transmutation"
+>   smack: fix bug: SMACK64TRANSMUTE set on non-directory
+>   smack: deduplicate xattr setting in smack_inode_init_security()
+>   smack: always "instantiate" inode in smack_inode_init_security()
+>   smack: fix bug: invalid label of unix socket file
+>
+>  Documentation/admin-guide/LSM/Smack.rst |   5 +
+>  security/smack/smack_lsm.c              | 159 +++++++++++++++---------
+>  2 files changed, 107 insertions(+), 57 deletions(-)
+>
