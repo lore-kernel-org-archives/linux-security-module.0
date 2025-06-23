@@ -1,128 +1,229 @@
-Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCE627A444
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Jun 2025 17:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18F029C352
+	for <linux-security-module@vger.kernel.org>; Mon, 23 Jun 2025 19:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750698611; cv=none; b=BERcs9785aF5XgdDIN2CtNFJKr/Ro6DmzhQwpB58SQtBJFL7A07pMGI3BRHl9//qC1dOsGqEIXaqVZ/HepIQUv5kjVtKLvQDmwATg3WYmrNSBCNTdQ7yV9GpeN+5/63rUiDDdW3rM4Hd/Dkro7idRo2ud6KbSP2ijJbWU5E0Ujo=
+	t=1750707669; cv=none; b=PZXnVpVYOwRByOVoBIq8InItZFIZfbBCUAnRHq6WjOTrk0xTNZbQCvqCjfC2p0f/IlqHWo3k7qm67f3SgTve2l3QclNmjNKPBklmif9FpfHuvjPL/cOLAGqZDWCCMYE8N5wxLB8FxwagAQ+EwHyIDSK6YKNFuBEjOjbPeQXU8V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750698611; c=relaxed/simple;
-	bh=sCBYTOks1RmBhwUtoCfvqP7R/Rlt9sivQKKDFmvac8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OxQzVD3Zrg4TLJqWZ956uE4hr+ePFZ5HmKQ84QiB6kASqIpLCHC2GjBZwvg/a7xU6EnxSmLCv+ESRYuqa+GIPTUEwVCBNC/H3EfBv5jPsh7Wy/XGw4tnkaABIj1t8LMJJze0mLxUCwKaF2e1EIVGAajeBm8/L77+gSldRfGpSPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=gSo7czgU; arc=none smtp.client-ip=66.163.186.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1750707669; c=relaxed/simple;
+	bh=5NESCJ2C0k3c/bq33kaycObKMRXxkSk7OfchAPWb61A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LxBLe6FY0Ikd7ZYO8pwmacm3hKwLxq4eo8sJW1e6vQlDeWfRpM8cEExSgjjH3PgL9we+9zVrR7UMeR9X3d4+/TJJYfTzNW3DiOFUYvFcpjwv9BZbxePZS4FTi2WkWFgkXjPnHfuZJLWIups3R2YabR+dfpoPfYArVtgGjJh7alY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=PORuIXcj; arc=none smtp.client-ip=45.157.188.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="gSo7czgU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1750698602; bh=rTC+yJuznklwmanB9t9oEkSsAKBRABNXCdw0jqRaNJw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=gSo7czgUNDOaTWBUDNAeBIUFREmDUcx/jb5nQbjYRvltWS5Qc20q6OkskYaUtFFhvdIquVSi6FZDoW/a/zDYMeEI8gKBKrbdAifHVyuWzN9ejavry/GoayzlKIa8o612VW5HkUQExk5dT6X7oReyMCpQblRO/zm7wGims23s62U62F+KNKSmLezaeM07p9wX5N7ZeiIR8bxxlvoqNQpFz4e812ILEzBFnw0vE4FSvGDnwS/JW8OqBrWq6N15LoB3mCNyf3Eh0+D5l9JTAmWxnlnnHHO3mu4KNdz6aHz529OdGrAUe4e7V6/ihMZLj2JrCf2nFfHjMQ4cDuaqzRssSg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1750698602; bh=v47Uzn97MVkUCKjoeYHmmgcBzqc3VWbWQ/X3rxXxIwI=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Z+TcjZMN308hnBKo/9okckQpQgc1lJNhd78BBgSsPdeMm/FDQ11kRRGR3jbowSzKMGX8PrB+PYFRGq7amZjYM65THKIiWsj5Ma84ccag6IKizFGdVF2bLC2KjQ2XW6ctXC/O75irUUHRhdNRxFcsYJ1Cqu1SKmND60XRP/arjZkngkVBDiTRnkEJHLyrlyluGQPcfpKMPiVN5EvU3S+n9gSTa+81XVo18QuQt5YvYRi59R3FGFIc8t9WGncYWHXw7FDTM8rNfnpkKVU5iLcuoKOhtrDf6KCJ2f1iaII6BsngYFzzDUMxOpQKB+kvQcIslu4Fyby/5HgKnhZCtRe5fA==
-X-YMail-OSG: Ikqi5jYVM1lAExaNvEKDH3srPcIeYpFDesH94YAZ4kZz30gm6yPCB60YH_mdlsw
- n14uWnZ3uCxPQv691Xq4Q4O8bSt9k96fb89lckvPV4F.AgIDBFG2ezKz28JK6RYhNPUqkppajtPn
- jQNKCBOcaXIIShco1olmswI.xwZxwZJ4bVLDqB.ye5NQBs1dNd2OC5ejZjFFXcq3mU.Xksx1ORfg
- 4tkEU50gdUzzgKxT3um5DGTOvZmf85l85rYQaARjzH0_Wqgt26gjVletfe0WkwwjFWSPJuyCnjYe
- C9oJiY_FiSpeBaERtslBAG3oc4.eeVRp2IDqwEzpn9kRhChBnnnHVshO20sSQhkWsoxfG8BHq45U
- ngqBuSHGbU10FyDzckoCpATw.ScMtok.FagVjXWKBSv6SikFzgVgYKDW_VpBo9iDwkFRS8HP6DHx
- tO1xicKctHGGPv6Uia4kz1Sbyb1XJHHEwl8LB_ZXwGmzlFN3PeOOSAdrk5K8L4AxGNfkSLpLCslZ
- ihx4Pdm.MPO9yufRXn2fseb_0geU_h.DTCqH5wBgs0rwFWfWPcMWfuG4SHSW.lU4IzenHhJslxfg
- qEP18JULVt2wbzUDsDWrzBZHlxxYjd8_JOAGMpi8VallKRmuOH7ab6lPQ.MLzXassLcGc5Tsh6hf
- NsIhDb16Irjif2fkQZoFIsJKtpsIv2x8EFaPzdfXT4ZCxqqWoEitcjeK5jzAh9NCd2Pd84SPYvLh
- NYeXNm5sXBowCvfKX_HdrAsB9hvgAsrhceJOic6tQyTf6Hg7vlkOLrFSRIaPBV.v2onhRgHPoyB5
- l.uTGisNfbVXM9y1uKjMIbXNBk8pEyxLe62f_gP8hXoFcY4S9gByMGtxBL_.YV1DuJa70WV6PVWz
- 9Sse4ndQtI7P8oBM3djzb8exDXeKlkuBznA0AErrcM.tkLjgt4N2FQIzKWh6G88xAd0nx9SAcKhf
- evXRgQdLFpO_CXYHoqGQFV.LFzlQbiarQcngF5QsMJovYWiecqYv15zVUz23i2dFBJddlQLLNSgb
- KcmcTDRVxL31g1w1EM5KfL_pS5WB.f5qCmeoafqO8qgILgV6l5ngDmX3pOvV3zvzZhAy7IGWhZMd
- 1cG6TomCVe_UyGIxD2_8TfgtngxtXeoLxSZjpgBS45yP9A5XIHUfzRwH5VkuLtQoYM0rhBt9Swz0
- JdT7hAp7jDNGwxyDfGaE2IAOI5RG8.TT51ZAzrPL9vVoymthJDG9gfzpCnnR4x0dwgcdzlpJ_ipQ
- yxN7t4zCui.tuw_dmxFqtz_7clayAti_WyA77DxSVqFjS_rVS0xfvcd9CMt4lOOs9oj7HFKLLGpb
- AXBP.iW6GjIzX8EbhdVt.JWlvA8FfRqpylV9Ju3XwJ2GJX.Kep9cRquvIZiP681bT_sedXvp8imm
- 6DbeYQXnrGv23AjLvR8aTLW08SnG7c2A7k1vp6IDA7MmBltypkPrn2I6aTsLB2EDHbHzswI62H1o
- fnmG4l3W.ip0k35NMbnXM1xnq6uy93_GzZlc1dR.q8i3Fn3Z86_sXCiBDeHnEZoVafjvj6eTQwmo
- k.2J5S7mnT5uLwHdcOa5YcW533VAFSZC2V9y7oRqhV1YGvOCrr7UGN0TdZ9mFWqj0t4EtQFdDpg_
- lTWwR_2Uu.nCjqR6bz4nqP1PQbG6ZpeMNRJmv6o5QiqWH.Ylx_VXLqOnqL.DYZZE8IkDT4ltfEZT
- BkX1VnVsXwe7F1og9qikaHlVLOYmFbYqCJW8uo1L2Gszx2IBSLQgSsQ0ZZk0EyrrKerYiWLwJRSx
- tv9H.giIxZHWexRUIsB.c4c5xB8VsZswnWTsCCZPnZl_64BmwYC57xexKR1O3yusVmNEvlbMMcsB
- .ETosmVl_i50oLn7XHJr71iilgq7goeg3YkYEJPGEy7JhyX8lu5LQGfxqUL8hojIZC0mPsVV0k_O
- 4lkoztjgrCdOyNdlCD5pk8rObdts._kQHXU9slK8bKVbviB1krzOgOHlJmAMopUq7Sm4748qxfBJ
- TaIpOrZQIimRsLh7R9Y2RROQH5UuBteqpSjbWeMpe_OQ24_SJsEMFlmg_VwVI9HZKdz.dWLXuD3r
- oYhEEf1hTMhliFzYyA6e5yGLkBbHa6yVO0zFnGoNEX72lY6wMPHnns8SuKtwjyHBrficfNm7o7pw
- Z6aHKpcVXEsELQtBS8Hv3DclqDxWi4wUSB6FCs1O_lD_xyhRFHejZC191Yhx72PFWKhRkgKr4lr9
- 9MfYFDvpawY5N4PzKLX.2fkLlhnoGBmMbV0eydFyRjYxSpXXqlu_WcJqjxS9jiqCkdBDop59sn42
- 7uPyxvMSnb4NV1NNTKA--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 888630d6-8131-4bf6-a540-e35b135d42a5
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Mon, 23 Jun 2025 17:10:02 +0000
-Received: by hermes--production-gq1-74d64bb7d7-nccgl (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 39b94febc93afd593eb705f2f26f7baa;
-          Mon, 23 Jun 2025 17:09:57 +0000 (UTC)
-Message-ID: <e1b9e6a9-1c57-4d74-b5a2-6a321068c18c@schaufler-ca.com>
-Date: Mon, 23 Jun 2025 10:09:55 -0700
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="PORuIXcj"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bQz2v0xGhzXhX;
+	Mon, 23 Jun 2025 21:40:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1750707655;
+	bh=+PdntTwQutG2Ke93Rwxbf5el2guoygdYyJGMg5CRmPc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PORuIXcj93tCuZWrSKna4Izi+Vp7SeJhJ0u6GjyPU20sD/+tVdOE2VbRQdriEWXkQ
+	 /lA/oVMXn9blC/+uvXgZ39xJf4GwjxPfxArulpzK54SkuWUK/tY2iDN5wKnznCsyHW
+	 lvZ5zHpDJp6Im27KI33e0japWfzhUH6u1e7V4vUM=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bQz2t46DczLW;
+	Mon, 23 Jun 2025 21:40:54 +0200 (CEST)
+Date: Mon, 23 Jun 2025 21:40:53 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: Song Liu <song@kernel.org>, linux-security-module@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] selftests/landlock: Add tests for access through
+ disconnected paths
+Message-ID: <20250623.kaed2Ovei8ah@digikod.net>
+References: <09b24128f86973a6022e6aa8338945fcfb9a33e4.1749925391.git.m@maowtm.org>
+ <20250619.yohT8thouf5J@digikod.net>
+ <973a4725-4744-43ba-89aa-e9c39dce4d96@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] smack: fix bugs: invalid unix socket label, invalid
- transmute attr
-To: Konstantin Andreev <andreev@swemel.ru>
-Cc: linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20250616010745.800386-1-andreev@swemel.ru>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250616010745.800386-1-andreev@swemel.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.24027 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <973a4725-4744-43ba-89aa-e9c39dce4d96@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On 6/15/2025 6:07 PM, Konstantin Andreev wrote:
-> Formerly, Smack inode security was initialized
-> by smack_d_instantiate() for all inodes,
-> except ones under /proc
+On Sun, Jun 22, 2025 at 04:42:49PM +0100, Tingmao Wang wrote:
+> On 6/19/25 12:38, Mickaël Salaün wrote:
+> > On Sat, Jun 14, 2025 at 07:25:02PM +0100, Tingmao Wang wrote:
+> >> This adds a test for the edge case discussed in [1], and in addition also
+> >> test rename operations when the operands are through disconnected paths,
+> >> as that go through a separate code path in Landlock.
+> >>
+> >> [1]: https://lore.kernel.org/linux-security-module/027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org/
+> >>
+> >> This has resulted in a WARNING, due to collect_domain_accesses() not
+> >> expecting to reach a different root from path->mnt:
+> >>
+> >> 	#  RUN           layout1_bind.path_disconnected ...
+> >> 	#            OK  layout1_bind.path_disconnected
+> >> 	ok 96 layout1_bind.path_disconnected
+> >> 	#  RUN           layout1_bind.path_disconnected_rename ...
+> >> 	[..] ------------[ cut here ]------------
+> >> 	[..] WARNING: CPU: 3 PID: 385 at security/landlock/fs.c:1065 collect_domain_accesses
+> >> 	[..] ...
+> >> 	[..] RIP: 0010:collect_domain_accesses (security/landlock/fs.c:1065 (discriminator 2) security/landlock/fs.c:1031 (discriminator 2))
+> >> 	[..] current_check_refer_path (security/landlock/fs.c:1205)
+> >> 	[..] ...
+> >> 	[..] hook_path_rename (security/landlock/fs.c:1526)
+> >> 	[..] security_path_rename (security/security.c:2026 (discriminator 1))
+> >> 	[..] do_renameat2 (fs/namei.c:5264)
+> >> 	#            OK  layout1_bind.path_disconnected_rename
+> >> 	ok 97 layout1_bind.path_disconnected_rename
+> > 
+> > Good catch and thanks for the tests!  I sent a fix:
+> > https://lore.kernel.org/all/20250618134734.1673254-1-mic@digikod.net/
+> > 
+> >>
+> >> My understanding is that terminating at the mountpoint is basically an
+> >> optimization, so that for rename operations we only walks the path from
+> >> the mountpoint to the real root once.  We probably want to keep this
+> >> optimization, as disconnected paths are probably a very rare edge case.
+> > 
+> > Rename operations can only happen within the same mount point, otherwise
+> > the kernel returns -EXDEV.  The collect_domain_accesses() is called for
+> > the source and the destination of a rename to walk to their common mount
+> > point, if any.  We could maybe improve this walk by doing them at the
+> > same time but because we don't know the depth of each path, I'm not sure
+> > the required extra complexity would be worth it.  The current approach
+> > is simple and opportunistically limits the walks.
+> > 
+> >>
+> >> This might need more thinking, but maybe if one of the operands is
+> >> disconnected, we can just let it walk until IS_ROOT(dentry), and also
+> >> collect access for the other path until IS_ROOT(dentry), then call
+> >> is_access_to_paths_allowed() passing in the root dentry we walked to?  (In
+> >> this case is_access_to_paths_allowed will not do any walking and just make
+> >> an access decision.)
+> > 
+> > If one side is in a disconnected directory and not the other side, the
+> > rename would be denied by the VFS,
+> 
+> Not always, right? For example in the path_disconnected_rename test we did:
 
-I have taken this patch set into smack-next.
+Correct, only the mount point matter.
 
->
-> Commit [1] imposed the sole responsibility for
-> initializing inode security for newly created
-> filesystem objects on smack_inode_init_security().
->
-> However, smack_inode_init_security() lacks some logic
-> present in smack_d_instantiate().
->
-> This patch series fixes 2 particular omissions
-> I faced directly:
->
-> 1) special handling of unix socket files (5th patch)
-> 2) S_ISDIR check for "transmute" xattr (2nd patch)
->
-> I did not check for other omissions,
-> but there may be ones.
->
-> Patches 1,3,4 are necessary optimizations
-> in smack_inode_init_security() made along the way.
->
-> I structured the changes this way to make the review
-> process easier.
->
-> The patch set applies on top of:
-> https://github.com/cschaufler/smack-next/commits/next
-> commit 4b59f4fd0a36
->
-> [1] 2023-11-16 roberto.sassu
-> commit e63d86b8b764 ("smack: Initialize the in-memory inode in smack_inode_init_security()")
-> Link: https://lore.kernel.org/linux-security-module/20231116090125.187209-5-roberto.sassu@huaweicloud.com/
->
-> Konstantin Andreev (5):
->   smack: deduplicate "does access rule request transmutation"
->   smack: fix bug: SMACK64TRANSMUTE set on non-directory
->   smack: deduplicate xattr setting in smack_inode_init_security()
->   smack: always "instantiate" inode in smack_inode_init_security()
->   smack: fix bug: invalid label of unix socket file
->
->  Documentation/admin-guide/LSM/Smack.rst |   5 +
->  security/smack/smack_lsm.c              | 159 +++++++++++++++---------
->  2 files changed, 107 insertions(+), 57 deletions(-)
->
+> 
+> 5051.  ASSERT_EQ(0, renameat(bind_s1d3_fd, file2_name, AT_FDCWD, file1_s2d2))
+>                              ^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^
+>                              Disconnected              Connected
+> 
+> (and it also has the other way)
+> 
+> So looks like as long as they are still reached from two fds with two
+> paths that have the same mnt, it will be allowed.  It's just that when we
+> do parent walk we end up missing the mount.  This also means that for this
+> refer check, if after doing the two separate walks (with the disconnected
+> side walking all the way to IS_ROOT), we then walk from mnt again, we
+> would allow the rename if there is a rule on mnt (or its parents) allowing
+> file creation and refers, even if the disconnected side technically now
+> lives outside the file hierarchy under mnt and does not have a parent with
+> a rule allowing file creation.
+> 
+> (I'm not saying this is necessary wrong or needs fixing, but I think it's
+> an interesting consequence of the current implementation.)
+
+Hmm, that's indeed a very subtle side effect.  One issue with the
+current implementation is that if a directory between the mount
+point and the source has REFER, and another directory not part of the
+source hierarchy but part of the disconnected directory's hierarchy has
+REFER and no other directory has REFER, and either the source or the
+destination hierarchy is disconnected between the mount point and the
+directory with the REFER, then Landlock will still deny such
+rename/link.  A directory with REFER initially between the mount point
+and the disconnected directory would also be ignored.  There is also the
+case where both the source and the destination are disconnected.
+
+I didn't consider such cases with collect_domain_accesses().  I'm
+wondering if this path walk gap should be fixed (instead of applying
+https://lore.kernel.org/all/20250618134734.1673254-1-mic@digikod.net/ )
+or not.  We should not rely on optimization side effects, but I'm not
+sure which behavior would make more sense...  Any though?
+
+> 
+> > but Landlock should still log (and then deny) the side that would be
+> > denied anyway.
+> > 
+> >>
+> >> Letting the walk continue until IS_ROOT(dentry) is what
+> >> is_access_to_paths_allowed() effectively does for non-renames.
+> >>
+A> >> (Also note: moving the const char definitions a bit above so that we can
+> >> use the path for s4d1 in cleanup code.)
+> >>
+> >> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> > 
+> > I squashed your patches and push them to my next branch with some minor
+> > changes.  Please let me know if there is something wrong.
+> 
+> Thanks for the edits!  I did notice two things:
+> 
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index fa0f18ec62c4..c0a54dde7225 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -4561,6 +4561,17 @@ TEST_F_FORK(ioctl, handle_file_access_file)
+>  FIXTURE(layout1_bind) {};
+>  /* clang-format on */
+>  
+> +static const char bind_dir_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3";
+> +static const char bind_file1_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3/f1";
+> +/* Moved targets for disconnected path tests. */
+>     ^^^^^^^^^^^^^
+>     I had "Move targets" here as a noun (i.e. the target/destinations of
+>     the renames)
+
+Makes sense now :)
+
+> 
+> +static const char dir_s4d1[] = TMP_DIR "/s4d1";
+> +static const char file1_s4d1[] = TMP_DIR "/s4d1/f1";
+> ...
+> 
+> Also, I was just re-reading path_disconnected_rename and I managed to get
+> confused (i.e. "how is the rename in the forked child allowed at all (i.e.
+> how did we get EXDEV instead of EACCES) after applying layer 2?").  If you
+> end up amending that commit, can you add this short note:
+> 
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index c0a54dde7225..84615c4bb7c0 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -4936,6 +4936,8 @@ TEST_F_FORK(layout1_bind, path_disconnected_rename)
+>  		},
+>  		{}
+>  	};
+> +
+> +	/* This layer only handles LANDLOCK_ACCESS_FS_READ_FILE only. */
+
+That can be useful.
+
+>  	const struct rule layer2_only_s1d2[] = {
+>  		{
+>  			.path = dir_s1d2,
+> 
+> Wish I had caught this earlier.  I mean neither of the two things are
+> hugely important, but I assume until you actually send the merge request
+> you can amend stuff relatively easily?  If not then it's also alright :)
+
+I apply your changes.  Commits should usually wait at least a week in
+linux-next.
+
+> 
+> >
+> > [...]
+> 
+> Ack to all suggestions, thanks!
+> 
+> Best,
+> Tingmao
+> 
