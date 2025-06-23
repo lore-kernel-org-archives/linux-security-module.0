@@ -1,86 +1,72 @@
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2064.outbound.protection.outlook.com [40.107.223.64])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2062.outbound.protection.outlook.com [40.107.93.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8772FB2;
-	Mon, 23 Jun 2025 04:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5228BA2E;
+	Mon, 23 Jun 2025 05:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.62
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750652355; cv=fail; b=cyXNYrI9sYxNwsRCq6wREcY+mZWRxpe9mg/0Kb5ylhiJTmSBBX83bGJP+lLa3BNmT68PgEBiFlt9aE1azHdk3eTzRGRrDzMHHFwzPyqmoOPLY6gcw5bVYcsQwpGFwDaio8dgsnwZG7xSL/8KKJ+/le7TFyVZkM8h27JD8peEsC4=
+	t=1750656766; cv=fail; b=VE4WK+gk+gaRa0yviJrPiWWsABnWMJDs3VM2LSEDoZbJvAZwoFRauHDsq4zzF8fc4Ql2ehv6CbvmU5zXQ22ozCSwWydSGS1tAEbcYlxIXN4dqO8U6QAFI7BKmS6FO2uGMm9n+Nsrqr0+6O/rSgdkrfty+iYKTgDvjXQ8qiTaRwg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750652355; c=relaxed/simple;
-	bh=t/oPb4vw6l3r9nRwmfmx6t0ndvdJpnGypLohb9lttVk=;
+	s=arc-20240116; t=1750656766; c=relaxed/simple;
+	bh=6RXmmHmtm8ZGvKQtDCTN9zGur91KQUzYVA9+3zbARXQ=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IM0UG/mZ7DbNC33JgfPlWvkHYLSw3xu/uNNL9MqGLS9Uz80uZl2yaLby6lfJAog4dl8WMw6SruA22QT+hAJviVwgg6oZvVdhSN/uYjoYFrmlacQorOcaUd95JN4o4lNqfTCy54gF8AsX7Ei7cPmbgx1ysGagmp3jidpHSRR+cCQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=d2M7u88N; arc=fail smtp.client-ip=40.107.223.64
+	 Content-Type:MIME-Version; b=MDrK8weANR7NRe79i1rVkeV8Zbussh3n41hP90Feiks3SSpswc2fg+nyIcyVwUaw/Ji+UJY4mDrmO7Go3eRqcUpQx0+bhT1anFFuA9iyvDyWEp1Qc0J3gv/7lNTJk8WT5sOG+nLNP1oO+RDndhpb7OmqCxv8Zp7Fr8/Oa/h9RlU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jO/BBkl9; arc=fail smtp.client-ip=40.107.93.62
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="d2M7u88N"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jO/BBkl9"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RIoyknlf4gFhwL17fr8R+aI5+jDG+HgJcCD1by22jBXMD/PdqcVJ4wxpx6yo9wJ8Rtdbd7eJUycOVdupc3lDAY1r8mSbWonHMHFDCzI2PoAppowXKKLnv9mnusYugcE88ucAkVTwiJBYSiKfjUhJP0d/OjTCh14VOswvrjf6fzTnJE5CFaMZQMyB8yjNowVlOF0zJHSe4tQ+doyscl3K6MNZr8fWU3uvEPU5XKa4XAlsYNE/Lmw8/0Ka24+ATCzRTYcxA0zjEjgk66rQsC1AvgKZOazlC9bzYbSoMpRsjV6S6+Dc2hf65OG1kVq75bbmP1cw7+DxxLOc4uFgNFZ2fg==
+ b=IrS9F/palSfrCA7NymqY6vTF3rbn4iuH15pcBiXtCPPKteuPPpANlfczN+PnUSKGoYNJNpOEpAFFS+xlz+pk9jwrxuMfj5RibqIvz0Z+qAunj5Ci51G9xqNawjY0Hb1tyyqiEvxkNm2NdYEb4Sgg0BJgEcUDCDpa3h9plrG43bxkgf2zsCo36VaQyYrbVlippS8eHMmUHDEL8X90lUtyl7kc0fhtQvFJnBi8gRnaeeBIdyEMJ+WI+lODxhbg1YZf2uHxNgkDF9lGAqIRqeKBOEJsqBmiFZhofnkxx3pxIOEUMpvP2XzZjpQLqxIf9DwCsBFrgQXkZ32e3XQ0sa9upg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6XvF8IK1T4UrMTL5OBIkuMJkgHqTAdf7NplHNZ6kym4=;
- b=yHBiQb9IIREXdf2LAn20PGLu/+oWbTtT3hYGtK5imgOUiB90KWNNu3zegeNW2LNvGmbuo0qXYV3d2mrzlcH1YgRjhH1PqESpX1Lm1ThaMqcjuSpNln6lgClhjZ+vUFh2n0Htl3V/x+h+CB5kZ68uzMkiab5NkF3BgNUh8VyvvAJacWen6KR1E4RjjOkEOVxxAqIpEvUBkWXQw2YBssXxfmM9UhcYfBRbzRjgFJHJPlAOqu4wUPQv9HBHa0MpdcBKfuoMRZsncWedaKAYWe/+XTA8QSw1EA7QGAP435jN7xTWPZHIwIYN/Q/0HE2+k2hdI7/nylr+en9tlFgvPNcmTQ==
+ bh=mWz3Tm7gqNGmXhZGN/HkQcvxu2N/bCCDPxnCx6Ijn1E=;
+ b=Pgkda/CZAaaQEX/MXywCYWZBHmei1jcZn+TLdCiOtGmxP31Ot2uFC585ynXLImU1KIOhBIDoEBD+zamRFhEcMGFkc/VW1MwbxHN3ICME0P/rbZVl5C1tS+K36ioPKhILUi3WicevTZv66goINpPsFZs9oXWJea2YuJ2NWaTUNO7zFNiWsFypbDSZJHrIbASVUZ3HezQFdFRf1InXJu5ITF+qqy668/WBx4Ak2qOKxG/Vd3dWiJMzz8anBPZoWyIvs6OBnMdA6PEWfMXW9iS+n5hnMEW8Howhfvi/RucIGkUh9XI9M7sh+2nYXwlYzIx2uml3HM0xRdbVgv3yQICadQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6XvF8IK1T4UrMTL5OBIkuMJkgHqTAdf7NplHNZ6kym4=;
- b=d2M7u88NUdfs82cB1Otj9jl1stjvwiDecp2OQscSkbUY8/xN82wSesbJjBStRrfZ/nr6rG3cFN0w/sx2eD+R5I384L5k+kfOK2jvXoeYObnnvnixRUdOgepDOKRviYGzr+cqpMcfxVo8NVQ5QxRzpwdQMEQGvZVF7I4jivJeyk0=
+ bh=mWz3Tm7gqNGmXhZGN/HkQcvxu2N/bCCDPxnCx6Ijn1E=;
+ b=jO/BBkl9je2PRpHmfSKUt9RjH8mMOWgBV8cjlDh+liiCauOISzchI6HmbQ5SiwlbCD/kPqcwIxasBJH/L+ok901l0EIvWavJW4N0SylmWSJTwMqvptoOZIXXsRCbIf4Fh+ljFbXO6K0n5mLLl69fFDQZHUIAkxygnbDxi3SowJY=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=amd.com;
 Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- (2603:10b6:a0f:fc02::9aa) by LV2PR12MB5991.namprd12.prod.outlook.com
- (2603:10b6:408:14f::9) with Microsoft SMTP Server (version=TLS1_2,
+ (2603:10b6:a0f:fc02::9aa) by DS7PR12MB6336.namprd12.prod.outlook.com
+ (2603:10b6:8:93::8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.22; Mon, 23 Jun
- 2025 04:19:08 +0000
+ 2025 05:32:38 +0000
 Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
  ([fe80::40bb:ae48:4c30:c3bf]) by SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
  ([fe80::40bb:ae48:4c30:c3bf%8]) with mapi id 15.20.8722.031; Mon, 23 Jun 2025
- 04:19:08 +0000
-Message-ID: <1af44ef0-8651-440c-b3ac-ef22a539b559@amd.com>
-Date: Mon, 23 Jun 2025 09:48:46 +0530
+ 05:32:37 +0000
+Message-ID: <49404594-880d-4f48-a855-1066b295009d@amd.com>
+Date: Mon, 23 Jun 2025 11:02:26 +0530
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] filemap: Add __filemap_get_folio_mpol()
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>, seanjc@google.com,
- david@redhat.com, vbabka@suse.cz, shuah@kernel.org, pbonzini@redhat.com,
- brauner@kernel.org, viro@zeniv.linux.org.uk, ackerleytng@google.com,
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
- bfoster@redhat.com, tabba@google.com, vannapurve@google.com,
- chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
- yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
- michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com,
- peterx@redhat.com, jack@suse.cz, rppt@kernel.org, hch@infradead.org,
- cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com,
- roypat@amazon.co.uk, ziy@nvidia.com, matthew.brost@intel.com,
- joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
- gourry@gourry.net, kent.overstreet@linux.dev, ying.huang@linux.alibaba.com,
- apopple@nvidia.com, chao.p.peng@intel.com, amit@infradead.org,
- ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com,
- gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com,
- papaluri@amd.com, yuzhao@google.com, suzuki.poulose@arm.com,
- quic_eberman@quicinc.com, aneeshkumar.kizhakeveetil@arm.com,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-coco@lists.linux.dev
-References: <20250618112935.7629-4-shivankg@amd.com>
- <20250620143502.3055777-2-willy@infradead.org>
- <aFWR-2WAQ283SZvg@casper.infradead.org>
- <20250622114322.c6c35800e01e4cc4007a0f89@linux-foundation.org>
- <d1d7feed-c450-4b88-ab73-a673f4029433@amd.com>
- <20250622151625.fb5d23362c2c3d1af22878d2@linux-foundation.org>
+Subject: Re: [PATCH] fs: export anon_inode_make_secure_inode() and fix
+ secretmem LSM bypass
+To: Sean Christopherson <seanjc@google.com>, Mike Rapoport <rppt@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ david@redhat.com, akpm@linux-foundation.org, paul@paul-moore.com,
+ viro@zeniv.linux.org.uk, willy@infradead.org, pbonzini@redhat.com,
+ tabba@google.com, afranji@google.com, ackerleytng@google.com, jack@suse.cz,
+ hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com,
+ roypat@amazon.co.uk, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20250619073136.506022-2-shivankg@amd.com>
+ <da5316a7-eee3-4c96-83dd-78ae9f3e0117@suse.cz>
+ <20250619-fixpunkt-querfeldein-53eb22d0135f@brauner>
+ <aFPuAi8tPcmsbTF4@kernel.org>
+ <20250619-ablichten-korpulent-0efe2ddd0ee6@brauner>
+ <aFQATWEX2h4LaQZb@kernel.org> <aFV3-sYCxyVIkdy6@google.com>
 Content-Language: en-US
 From: Shivank Garg <shivankg@amd.com>
-In-Reply-To: <20250622151625.fb5d23362c2c3d1af22878d2@linux-foundation.org>
+In-Reply-To: <aFV3-sYCxyVIkdy6@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN3PR01CA0158.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:c8::11) To SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0243.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:21a::6) To SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
  (2603:10b6:a0f:fc02::9aa)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -89,137 +75,174 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PPFF6E64BC2C:EE_|LV2PR12MB5991:EE_
-X-MS-Office365-Filtering-Correlation-Id: 77790a96-f9fd-49d4-1723-08ddb20d1921
+X-MS-TrafficTypeDiagnostic: SJ5PPFF6E64BC2C:EE_|DS7PR12MB6336:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc33c665-627d-4938-45cf-08ddb2175d2c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T0YrL2VFU3VWdHdGSmdGcjRqcFBYOE9oc3loWlpoQ05xWXFaL3lKN3ZhQmd5?=
- =?utf-8?B?ZDBydDdnUk90aDhySzZLZXRLekRVR01GSUE2YXRZNk5FN2U3NEI2c1JXbWtq?=
- =?utf-8?B?YVgzMm5SaGxWNHBkTUZZeXZsaHZDaFdJWUZWRnJ5ZkNpM2lLZUZNUVBCUFRB?=
- =?utf-8?B?ZWRNUkNNNFVhMkF1aXhtb3ZuRkN3TXR6OW5KN2Z5TTEwQ1BPU1VxRTFJdHB2?=
- =?utf-8?B?R2pBSGNNbkhEaE1XQUNBdmxvbklXSS9xQldxbFhJUk9FVk9RQXZEZnpPMWlN?=
- =?utf-8?B?MnRPY213SHIvS2o5TURhWGxFMzlUNFhCcTBxaHVzNFFWSTA3MThIV2IyWEwr?=
- =?utf-8?B?NXpDb05uZWFpcnk5Z0pyQk9MYTZ4amp2d1F1amc3dDNKcmxjY3RydzVqTjln?=
- =?utf-8?B?UkttUjRKVUtHMUU1cHdCWDMvMHMvZDA4Y1RhVzFNMERqMHZWUC9PZ1RxamQv?=
- =?utf-8?B?Qy9pMTdyNElLbDVhWjVWbldiNlNydzJDS3Z6LzRmU1puL3VYUXdRTEZKdWhN?=
- =?utf-8?B?NkxMM1JudVNPNVIyMXQ3aG9vRDYyYnVNWEQrU0FXRitYZVBRMDdlWmc3YTUz?=
- =?utf-8?B?cnJFRERGbWpSbVk1a29WVjErQTVxbGtxWVZKUEZuNERycGZ3MWlRNEZPWGc2?=
- =?utf-8?B?V1I0dHhRRlNOOXR1QUVrYTRyYXlQQ2EzU3BzSDhpRUV2anM1LzlOaFB3ZlBO?=
- =?utf-8?B?SWFCYkd3dXo2MUZkc3l5WVkxVG96N0VjdkNlRW1rbVRLZFJxRVJic2xvVFdD?=
- =?utf-8?B?eWhBUlJpMjcvWTg1UVFFVEkyUC9HOEJ1ZzZoRVlTV3Bab2FKMFZKODdrd2JM?=
- =?utf-8?B?NVhWQ2NNd0IrOU1JUnFURmpVNkRIZjJscEtBM2NwRkYrUHpoNldVb2ZFWEdH?=
- =?utf-8?B?WTVFYmpFWUFEYVY1aE5Sd2RZMnBxbDFabjFUMmRpOGwySzM2UDhoUTZiMHBW?=
- =?utf-8?B?SjFHK2x3UUw5NzNRK3BCSFE5Qzk5QjRFa1NtNVlZWUNWWGdEVzVpV2wxbnJW?=
- =?utf-8?B?YmlXTUl0czF0OVNFdXVOTkZNZVNqNnFVNWp6aWtQTnI4T3hCWnRxMkkzWXpk?=
- =?utf-8?B?NWcyYUw0WWV3azhMS1hHS094eXNPVERJZTFib1BsUWppRFd0V2plMVQ3dWg3?=
- =?utf-8?B?TDIyMEt4dEtCMURTSWJNY2UrTHZ6T1JLZkw2Q0RJSDgxNUw4ZHI5ZXFmb245?=
- =?utf-8?B?R0pOWGtKYnhqeVJOaDhIOEdveUY1Yld2UHRDS3JWSFU1Q0R0VllSM1RKUGVB?=
- =?utf-8?B?MzUwbmlPMnkvVGxJNHBhQi9BQm9nM1lVMHR3MTNTbWhCZFdzS0FTN0FuWHFJ?=
- =?utf-8?B?a2c0VUppQ2U2UzNBcnVobm91bjVRbklLeHhPdGJUWlUyc29LRHJuMWxPZ290?=
- =?utf-8?B?NFlYNUNENWJ3NURMRVdqM0RWSk5NM000UTRUZUxGS2VuZnFwWGdDWlBnTDF6?=
- =?utf-8?B?akxLOUdPYXRLekRNbmhvMmlMRVRhdXJFcW56bzZiZ1QxVG40bW5zV2krS3FI?=
- =?utf-8?B?Nm1DM3NMTGYvZWtwaDN5Zjh2NmcxamQ4ekpmeXRhRURwUFdLZU5aSzVDb3pw?=
- =?utf-8?B?Y0lBdGdHbkVLemsva3UySE1uTkFjZWE3QXIyNnk3b0RmTVFRcjZ1ZTBxZWpB?=
- =?utf-8?B?RkRFdmdLZUwrSXJZTzBrekpIc2ZVUzE0K1JjaHptMDc4NHl4TXlwWXJkY050?=
- =?utf-8?B?aUVpWnFiRHZXQTIxRTdzMUpFSWd1U051MGh4RXYybGl1NmdtRVQ4eGxPVGNa?=
- =?utf-8?B?enpWbkhwRWVEUGtkZG9rSG9haXBodHhnSXRqeWI1ZGpaS1B3RmlOQ1ZPaC9B?=
- =?utf-8?B?OGNtdG4zSHZBbzlyd3diQ2Nzc1A0cldtN1YzZG5GRjFVMVlnOHN4RFJUVmZw?=
- =?utf-8?B?aTBxb053dy9mY3MyYXhBWFM1M2JwK2NyMjJtQVh2aFJxRFNJOVRsVk8xYlNT?=
- =?utf-8?Q?JaeVxGmDqiI=3D?=
+	=?utf-8?B?YmEzZklJbmMvNFpZdjFTN25EZGhEa280ZkVha2o4Nnc0cWd1b2lqeFUxYkpO?=
+ =?utf-8?B?aTlnUnRCMlJxd1NnRW10Zm1vd1dURnJlcGcxZzdFTmcyQW9DZi85TXJjZ240?=
+ =?utf-8?B?cWI3OWFmakdvMGQrNU5wRHVmSmJlSVJqdVIrTjRia2xGbU9rYlE3amFqWUhK?=
+ =?utf-8?B?MURCRTErY1dmQ0pkYkhlcXdUa2c5enViSmdKQlVlWW5RbUI2MmVvS1Z2SFVJ?=
+ =?utf-8?B?N1hkeDYxd0ZHMlhRMnYrRVZ0RjFUWnRMclBZVnhUSjJXYW84eEJGVHNaSHdH?=
+ =?utf-8?B?VVpNdTRUb1ZOclJQZWhmb2RmV0pralBTUzN1bUFhZHBIM1JmdStkcWJaN0h3?=
+ =?utf-8?B?b1gySGh1UUZramVMWnM2cXNpU2R0Y1BBMWdFTnZWNWxLUVVIZTZ0cDJuZ1Ju?=
+ =?utf-8?B?d2ZHc2R3M09IR1N4YjRoNlIyaC8rek15NGYyeDdIVnJBS0FZMytzZCt0ai9k?=
+ =?utf-8?B?dGJtN3ZBS2lzTDNsais1MmdhWnNDc1J5aEpaMzVSUlZCNHZzUWk5SE5RL0pY?=
+ =?utf-8?B?RmZGeDZWQkZnaUJxVmh4aFZqK21jdm44cUtCQ0oyNkczaDNPc2VBVGZabktJ?=
+ =?utf-8?B?NFU4QitRbEgzbUlIc01La0owcU03bTJEMlNnTFF3b1hoWHMza1o0RzBTSmNQ?=
+ =?utf-8?B?SDdneHoxZHliODVqZ1hYUVBnOGN5bGtnVENMQ2N0L2ludUlSQ28wQ2IrNmFX?=
+ =?utf-8?B?RjZuTkl4UGpXSTgvWkRZRVpPcEZkdnpUdzNOYTJOaGVVTG1sb0szaWJFVkpj?=
+ =?utf-8?B?NHlnZ3BzZXRySDJEakhyMHRJeEVIUmxnV2tBY2tWMlliMGl3aHVwdWVlMjU4?=
+ =?utf-8?B?Q0ZLKzFmbTYvUllKQTkwOXNzQit6TmNReGZjd2piY0FtRjBHaUkxZ1UycnQv?=
+ =?utf-8?B?L3hKaTRRand0NUlybk4yUDNuOXh0TzFGcEUvSG5lanpIRlBESHRUaDNQazRp?=
+ =?utf-8?B?bnJzUFVyaEpWYXNlYnBCVGlRbmtsVXo4dyt1SE10MEh3SG82SzJRWHZaZ1Js?=
+ =?utf-8?B?NTFuMFBuR2NIU2pGa0lWa2J5WWxIN0VmZ2I0UkxzRFhoVWVDOVZ5azhGRURT?=
+ =?utf-8?B?ZGRrTW9rZ212Q1lhVEZBaHdIUG5uTXM4cjRRcHZVYm1OaGZXcXhRSjI1dFRB?=
+ =?utf-8?B?TkdHU1FZMUlvWndSeHRNRlMvcHErRnJ4ZFd2Z0g1T2J3cW04ODU0dEthZCtv?=
+ =?utf-8?B?dDNKaElLckFaYkdudGo5d0JEcDNreG1TK2kvN0E5RlZ2TkhLMysrWGFobHhB?=
+ =?utf-8?B?Zi9lZ29FSVRPM2FHb3hFY0dnQUxQVGhwamI3eVRwR1NxcithV0FVc2hMbFdB?=
+ =?utf-8?B?SmNYanRXaXNjb3VYaExLNDh2OVIrN0hhSEM5UVY1RHdaeitpMUNJV3lzODkw?=
+ =?utf-8?B?ZkREOWhvSFBJa1FNdzlLTU1peHNSNE5OTEhTYjQyMGs1QkVLbkQ4YmgwZFVF?=
+ =?utf-8?B?WCtPQVJ3VVgxWXpXblFsRWJQUkpHdkJqVllVSTdsWVJCSkpKUWNORjZSd2Iz?=
+ =?utf-8?B?TXNjZ0xOMGFmK1pUM1R2VWZ1YUczZFdjU21NcWh2cExweGNHeElESEVpOXQ4?=
+ =?utf-8?B?UzZZcHp1NnhEbEE4dFQ3dTVveHN0b2h1NGVjeVpCZzdZODkxRS94aUl5RFNx?=
+ =?utf-8?B?Z3d3OElSNTlyS3AySHJXaEh2NUM0Vk5vdzRHa1JVY2xRSkVqd3g3ZWZVWllm?=
+ =?utf-8?B?OVJxaU9iUktjSEo2SEw1N05WVGFtc1o2VUpqajR4TTlLL0tDMTlLTW52M012?=
+ =?utf-8?B?WXFHSTFrbWNwSktlNEZaNFkwaS9YVXIrbDdkTEtjNkkrcDVXNGNrTldlbHRo?=
+ =?utf-8?B?ckdaTXBFbHNVWDQwc2hZMFhTUnBlaUdtUlhWcUUwSDNtRGMxYXI2Z0ZwZkJD?=
+ =?utf-8?B?L0xveG1KSDhZd3pxM2VDMTlSL1lmMloyT1pJZUJMKzVQYTVHam9QcHdyODJp?=
+ =?utf-8?Q?QYbh4rLaDs0=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ5PPFF6E64BC2C.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ5PPFF6E64BC2C.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YXlwZ2VNMnV4RmFHZEFyTEwxcDROeUZVcnFHZnJLRU44WXMxQkxlWHBWMDJp?=
- =?utf-8?B?bDdyWDVKeWJtQWY4RkkvbU5KMm1LUUNTbmVnMzV3Q3EvbFRucW9sZnZLWFp4?=
- =?utf-8?B?VXBqSUR3SXoxbDhpdk5ERjBBRGw5NWVOMlIyaUJPNHNRWjU2akJjR3htc1N5?=
- =?utf-8?B?Ym50Q2pyT2ZsWE80QlpLYmhya2xzNk9JL2FjWVN5V3BieHpXZWF1djAwVm9E?=
- =?utf-8?B?d1BDemhpWnZzT0xaeDRzaFAzT2tqRS92WFkrSXVJODVkUUVMTzRUSWZ6bGN1?=
- =?utf-8?B?c2d3VjY0SC8zNmQvSmNkdUFwSjhsU0FLdjhMSGY5c2RiMUptNk5xTnJKWmZB?=
- =?utf-8?B?M0oxTHA1WnhDTnMrbmxYV2Z3SUR0c0orNU5QMEFwYjhNSWhvbk5HcTRSV25l?=
- =?utf-8?B?bHc1UC81Tm5RcFk2Vm9BSTVLTWxxa3A3OVZ1UVAySWZUYUFleDJqSUM1eTVa?=
- =?utf-8?B?Q0dHN3pWay9ySURMR2JvRExqNE9hZkFXVWxVbFcyc05qNlBqOGRVYmppSXE4?=
- =?utf-8?B?aGgzV3pZNndpaXc1bk8vdm52djBCbWlocnhmS1EySGZZbWRnNVRkLzlpc0pM?=
- =?utf-8?B?ckk3UURJdXVVWWtaYW85Q2drdFJZUzdJRm1YVHVZeVU0RzdvcS9mK243R1kr?=
- =?utf-8?B?L21jVC9nODRjZFZGdC9paHliODVwMTB5bUFhVWVEdFdzL2NGS2ZFdVpkZVQ0?=
- =?utf-8?B?ejR0c2FiN0tXWmJXbXRkRHNhbWVvaSttdC9mdHg2eE1GM3lvbzVMMHRGV0xk?=
- =?utf-8?B?NjVqZlRxay9OaTRnbFlCd2lYbW41RnVuYVZ6MnBPcUlzWWdHZUkxcDFvL2M4?=
- =?utf-8?B?dW03Z0RYM2R5RVJBQXZsakJPQU5TT2JXa3Q1OTZNTVUzVDFYVjA2UjZvZmwx?=
- =?utf-8?B?ME41NHZFVEEzc05DWDVhd0JTOXJ3eG5rRGwrR0xCYng0eHByVUNPRVBzOFdI?=
- =?utf-8?B?NzN3UmUxOEtYbVF5ZGRkOGVnM3puN2Y2MEM0RXAyUnZDemdpcHhRdDh1VitE?=
- =?utf-8?B?cHNsWTNOSXRydFJYMlZtY3Q3V0FBaUx1NlJWeGVpSDJybGJoTDRxTnBmaEtw?=
- =?utf-8?B?TzNJTG5LbFFMeXlEK2VqS3h1cEYvTnhKc0pJcmtvNFcvd0hGdUJhM3VyUDZh?=
- =?utf-8?B?TWFDNWtEOVlwdlNMLzhrOEZubWJTTnhFQ1VhR1VINmFidE4ra3N6cDdsRnFy?=
- =?utf-8?B?NFJ6aDVSM1U3N0tsUFJVQmFkaFpDaGdPY1RoRDc5ZERFUkFtTk04TXZHekti?=
- =?utf-8?B?VCtZMXhrR2VqeTNENjVwSFVOeG1KMnRIVG1LdElzOFRMc240Rmp6cGJRYmox?=
- =?utf-8?B?VitKZktoNnZibHpodlhSWm8zYXZNNHY1OUMzU2ZmcGlnSEt3c2ZMS2RiWGZL?=
- =?utf-8?B?VnpraUU4SnlXS0ZlT1dFYis3VmxWTURWRkxvcm82T1F2dXp2V05WaEpaQjQ0?=
- =?utf-8?B?ZER6Z1UxWXRMQVprMTFINStFb3lzaU5sa2RPQWVuY3FSZ0VCMk45SEZCV0tX?=
- =?utf-8?B?VnJpUmNMM2RaUmk3dTFyK1VVaFZLbGNGU2VsSFRtTmpOQVFXVjFPQVB6RkI2?=
- =?utf-8?B?LzVvOGdJU2I1Uk1md1pZTUkxUXZJbk5FcW9POHI5ZTMrS3V1ZlFXU21DblFQ?=
- =?utf-8?B?em1vMTNoOFNIMjEyMC9EaWkrbHlCcWptTEdBTEdEdzdldFV0SnVIekxxUU9D?=
- =?utf-8?B?aVd3TjFtdEIxbnREVVJvM3dtT3R1WXYrdnYzSURxazRHK0kyMitRT0FtQkdX?=
- =?utf-8?B?SFY5amoxekVNTGxvQUljMVF5VzQ4dFMvU01VeGFLdDNBVjFxckZIVEFnVmNu?=
- =?utf-8?B?Yko4VEdJa0dva0gxcDFCU1FjUC9KUnJPUlFTaCtpM093dGg3UFZ5RDJpaTdQ?=
- =?utf-8?B?c3VwL3lpZTlsOUl2UGc4WS83dEdPUWViQ1dxVXNoT3UxRVlTWEFEeU56alg4?=
- =?utf-8?B?bTE2UUw0NW9DUEQ4dW51L1FmS3ZpaFFLWUpCT3dBNEZXZE8wc1RXY2tLYUtw?=
- =?utf-8?B?ZzNQeC9JcGNRdGhMdEs5cnhPRzBidFlRNU5aKzN2akswY0srZU9yRTBMSUhL?=
- =?utf-8?B?VWg1b1RaSFl3ei8zOWdJazcrb1NCR1RUcmpqSytVaVVqNW5jc0RLR3IxYVRp?=
- =?utf-8?Q?nNGBEeokhURL6mktpjKLBupIJ?=
+	=?utf-8?B?eVUwQ2V1KzRtbHdoQlJrMHdFdkpjS1hWNDQ0MTcwRTJkdHplOXRMT245Z1lm?=
+ =?utf-8?B?bFZRMUxYajdFdUZHL0MrSzBpNDdZKytad09NY3p1VHVtaUhnRHUxckhmaGpN?=
+ =?utf-8?B?ZGp5YUNOaW0yd1ZIQnE3cGtockRCR0VFR1RxN2pzSllSSlBtWGhWb0NMSzJv?=
+ =?utf-8?B?c1FTZ21YMkgrVzFoZUNkcmd5bTA5Y1l5T001MnVtV2Q0TDYwc3EwRWRLRzgz?=
+ =?utf-8?B?cFFqV2NOL1QwVmozSkxhc0ZTMXd0NjJXRmt1cjhEcll0TDZmWkZ3MzlERkhC?=
+ =?utf-8?B?d3ZVb2ZxT2d4VlQxaVhpMlZkTTltSnQvbkRNZ21CK3J4TFltTnV2WjV0SVFN?=
+ =?utf-8?B?MGpnbGg1WkVxbHZ3THBPcVU2N0lzdlRMdkk3RDNIQ21oTUk5cXpQMnVScVJW?=
+ =?utf-8?B?ZFowNU9CQXhodGY4MUM0VVFvQk5PTC8wVUJtaXRkdkk2a0xXVGgzb0VjRmVv?=
+ =?utf-8?B?OGJWeWsrc3g1eTJRSmxwS25uTnZUNmVseEh1K3NVaGp3RktUSEo3TGtnbDBx?=
+ =?utf-8?B?UWJzVTgxUjZhajBGaHZWZWVqZHd0R0RVS3pnZ1BIMlF2ZHl1cmN6UWEzUlZp?=
+ =?utf-8?B?akNuKzRsTkQ4MHRhY2RKNkYzdUY1WVpJS0ZMK3lNR3AxNmppd1grc1ZUS1A3?=
+ =?utf-8?B?Q0s1ZWtFNGh1RmNmVFlHc3Q2azBQR2FkN3lTeUlqbVdHZGJqeStDbUpVVG5i?=
+ =?utf-8?B?Q2VZMi9ydlZNL2FZL0VJQktTNjEyY2tQdkdXUC9XTjZFZVVXZFhuT0MrOVRv?=
+ =?utf-8?B?ZGUybkx3ZXlIWXhQcmYvbmVqanVIaHNCRWN4UjBWalIzY01HZkQxTVVHcEdL?=
+ =?utf-8?B?OHAybDIzZnU3WUdlV3NYQzFZUmxIRzhGdENkM1YzRjJrVFNaUXp5QmREc0NT?=
+ =?utf-8?B?dHMzbHNWenptM3plWkE4UTB2UXJvZ0tHY2ZIOU5rSTBrYU55bUZ4dnJ2clNG?=
+ =?utf-8?B?VzRRSDJvdFByQk5rbkJQeXZJWXRhN2tPMnVqSFMwUDZ3V21oS1EwRFRBV2NC?=
+ =?utf-8?B?aWQ4a2N6eDZxMERzVW9xeTEySkJoVEw2Y0UxUWx4ODhhL1lkY2EwQnJIbFhN?=
+ =?utf-8?B?QXFKSE16Mm82WFJ6c2paNUpIQXlCVm9LVVppL0ZOZEhUWXVsWkFBSmI0aUU1?=
+ =?utf-8?B?empwWmlJUGZJZTYxWlFkTDdwSElybzlhcTBvYkJ3K3Q3OFZZZmlTYzBPTW50?=
+ =?utf-8?B?S2VaTXpZZVorSzEzOFBjUTVRY0UrRk5zTytEdVBkcHBnanhrNi90L2QrTmxS?=
+ =?utf-8?B?cnRKNmZJbHdQak52MWZ5WTN2MmVNUThLaDk1SDFJeWwwU3lWT3lrTEMyMUhC?=
+ =?utf-8?B?UGMzOE1UU1pzMmNuN0xVVE5RSVQvdnJINnhXUllwaGkzb01uVy9DdnFJV1Rm?=
+ =?utf-8?B?M0FYL2luY2VKclN4WnkvM2IvUW5BQ3ZWdk9URmhYR0l1dnZNcTRtRG9UYUhm?=
+ =?utf-8?B?UWk3VkVqT1AwRFVKbXpCY3lOV3NOcWF5a2JVWEVoakZhM2tNTkkzUEI3UEFH?=
+ =?utf-8?B?aEo0M2tKZVk4SGNtaVZxQ3JuaVlobjc1ZDA2eVNLQTJWN0NPTSsyV09KSEU0?=
+ =?utf-8?B?VUxQdWJNbGV3OXQ3TjZTbzJTZ09PZzNjOFZqZHA3Q0tmekZDVUROVVVDT3Fy?=
+ =?utf-8?B?ZGhPeC9HZDdxVzRFbWgxUFVWVDgyeHFEV1lUZzBrL29ndUxGK1lMdEFVMFF1?=
+ =?utf-8?B?QkQ5Nzk0Wlc5UVlYREhWaVBFbEZnYW9vNXFLR25YRzJSZEl5ZXg1YmZsZ1V2?=
+ =?utf-8?B?ZXRDbzJVQ0k5M0JlL3pDcWRvMW1wVkxvU3RnbzhDUjhwellIZlBsSmRPajY5?=
+ =?utf-8?B?SWk5Y1k0dmIzUk1zd21SbzBrVlhVSFdtOElBbDFwZE5GRnZHVmlJcHZzZmxz?=
+ =?utf-8?B?Y2I5cmJMRFZSNkpBUFBZYXl6OXEvRjg0d3Q0Z0J3MjU2N3RYMC9UaUVzZXRI?=
+ =?utf-8?B?YmtTZ3FyeGVrYlFZNzVjWDVjRk81ZERrd3ltbzlNdjBOcW1PRk5xZE4weWJK?=
+ =?utf-8?B?aDRybWROam9aeDUzRFVycVljR05TeFBvWE9GdGNTYnllWjRwSnc3eFZpT1F1?=
+ =?utf-8?B?bWlIM3dxY2kvRDU0djRBak9GdlhWU0JNcjBJZWlFZ1U0cXVrZzVwVnhKQktv?=
+ =?utf-8?Q?L4dvfY0VZCszb4Dzfhm4kNKIz?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77790a96-f9fd-49d4-1723-08ddb20d1921
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc33c665-627d-4938-45cf-08ddb2175d2c
 X-MS-Exchange-CrossTenant-AuthSource: SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2025 04:19:08.6839
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2025 05:32:37.7338
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6+9icrSPbSQwcu0W7oEev/tolXzjLTa1tXQpo4AEN1Yh7DkXRKGrISv1/EkVnIg988HNq3pVsymZW9AOfbKxQw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5991
+X-MS-Exchange-CrossTenant-UserPrincipalName: t5mlB28exQY423Gl6iHlKnQoYF1Jxt77/Xa7zKIQHj+Vetup/18gEc1NbmTk5wcUY8sBqymlbjDGxK6I3XFcMw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6336
 
 
 
-On 6/23/2025 3:46 AM, Andrew Morton wrote:
-> On Mon, 23 Jun 2025 00:32:05 +0530 Shivank Garg <shivankg@amd.com> wrote:
-> 
->>> -EXPORT_SYMBOL(__filemap_get_folio);
->>> +EXPORT_SYMBOL(__filemap_get_folio_mpol);
->>>  
->>>  static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
->>>  		xa_mark_t mark)
->>> _
+On 6/20/2025 8:32 PM, Sean Christopherson wrote:
+> On Thu, Jun 19, 2025, Mike Rapoport wrote:
+>> On Thu, Jun 19, 2025 at 02:06:17PM +0200, Christian Brauner wrote:
+>>> On Thu, Jun 19, 2025 at 02:01:22PM +0300, Mike Rapoport wrote:
+>>>> On Thu, Jun 19, 2025 at 12:38:25PM +0200, Christian Brauner wrote:
+>>>>> On Thu, Jun 19, 2025 at 11:13:49AM +0200, Vlastimil Babka wrote:
+>>>>>> On 6/19/25 09:31, Shivank Garg wrote:
+>>>>>>> Export anon_inode_make_secure_inode() to allow KVM guest_memfd to create
+>>>>>>> anonymous inodes with proper security context. This replaces the current
+>>>>>>> pattern of calling alloc_anon_inode() followed by
+>>>>>>> inode_init_security_anon() for creating security context manually.
+>>>>>>>
+>>>>>>> This change also fixes a security regression in secretmem where the
+>>>>>>> S_PRIVATE flag was not cleared after alloc_anon_inode(), causing
+>>>>>>> LSM/SELinux checks to be bypassed for secretmem file descriptors.
+>>>>>>>
+>>>>>>> As guest_memfd currently resides in the KVM module, we need to export this
+>>>>>>
+>>>>>> Could we use the new EXPORT_SYMBOL_GPL_FOR_MODULES() thingy to make this
+>>>>>> explicit for KVM?
+>>>>>
+>>>>> Oh? Enlighten me about that, if you have a second, please. 
+>>>>
+>>>> From Documentation/core-api/symbol-namespaces.rst:
+>>>>
+>>>> The macro takes a comma separated list of module names, allowing only those
+>>>> modules to access this symbol. Simple tail-globs are supported.
+>>>>
+>>>> For example::
+>>>>
+>>>>   EXPORT_SYMBOL_GPL_FOR_MODULES(preempt_notifier_inc, "kvm,kvm-*")
+>>>>
+>>>> will limit usage of this symbol to modules whoes name matches the given
+>>>> patterns.
 >>>
+>>> Is that still mostly advisory and can still be easily circumenvented?
+> 
+> Yes and no.  For out-of-tree modules, it's mostly advisory.  Though I can imagine
+> if someone tries to report a bug because their module is masquerading as e.g. kvm,
+> then they will be told to go away (in far less polite words :-D).
+> 
+> For in-tree modules, the restriction is much more enforceable.  Renaming a module
+> to circumvent a restricted export will raise major red flags, and getting "proper"
+> access to a symbol would require an ack from the relevant maintainers.  E.g. for
+> many KVM-induced exports, it's not that other module writers are trying to misbehave,
+> there simply aren't any guardrails to deter them from using a "dangerous" export.
+>  
+> The other big benefit I see is documentation, e.g. both for readers/developers to
+> understand the intent, and for auditing purposes (I would be shocked if there
+> aren't exports that were KVM-induced, but that are no longer necessary).
+> 
+> And we can utilize the framework to do additional hardening.  E.g. for exports
+> that exist solely for KVM, I plan on adding wrappers so that the symbols are
+> exproted if and only if KVM is enabled in the kernel .config[*].  Again, that's
+> far from perfect, e.g. AFAIK every distro enables KVM, but it should help keep
+> everyone honest.
+> 
+> [*] https://lore.kernel.org/all/ZzJOoFFPjrzYzKir@google.com 
+> 
+>> The commit message says
 >>
->> Hi Andrew,
->>
->> Thank you for addressing this.
->>
->> If you don’t mind me asking,
->> I was curious why we used EXPORT_SYMBOL instead of EXPORT_SYMBOL_GPL here.
->> I had previously received feedback recommending the use of EXPORT_SYMBOL_GPL
->> to better align with the kernel’s licensing philosophy, which made sense to me.
+>>    will limit the use of said function to kvm.ko, any other module trying
+>>    to use this symbol will refure to load (and get modpost build
+>>    failures).
 > 
-> Making this _GPL would effectively switch __filemap_get_folio() from
-> non-GPL to GPL.  Leaving it at non-GPL is less disruptive and Matthew's
-> patch did not have the intention of changing licensing.
-> 
-> Also,
-> 
-> hp2:/usr/src/25> grep "EXPORT_SYMBOL(" mm/filemap.c|wc -l
-> 48
-> hp2:/usr/src/25> grep "EXPORT_SYMBOL_GPL(" mm/filemap.c|wc -l 
-> 9
-> 
-> 
+> To Christian's point, the restrictions are trivial to circumvent by out-of-tree
+> modules.  E.g. to get access to the above, simply name your module kvm-lol.ko or
+> whatever.
 
-Thank you for the explanation.
-This makes sense to me.
+Thanks for the info.
 
-Reviewed-by: Shivank Garg <shivankg@amd.com>
+I have posted the revised patch with EXPORT_SYMBOL_GPL_FOR_MODULES:
+https://lore.kernel.org/linux-mm/20250620070328.803704-3-shivankg@amd.com
 
+Please review when you have a chance.
 
 Thanks,
 Shivank
