@@ -1,136 +1,273 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0106342056;
-	Tue, 24 Jun 2025 09:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDB7283FF0
+	for <linux-security-module@vger.kernel.org>; Tue, 24 Jun 2025 12:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750755736; cv=none; b=LUKQriVDUnfau7Fhn2agfTe6eHP3wwij8xb3RMTUKXrxB3+ySZ40Z/OW7JL6/Wjjc08qj6SLs4C5peTgI8/AHs5v5L7ZXqImbNE4E3oJ4wWia7xOyjNeKiulrOB/U+fqAWyOVoEX5Mp5P9DCzu3g14AzGgyJeKTuLpB4d2jwyn0=
+	t=1750767502; cv=none; b=SV6O8yTBqpJAeJ10B9FEsMKGLRqROWP335xzXH0iDkenbyRIZTIegeWd78K5nzP5GHTTOnM0QvYHI0raj+2VutH8cTiBkJ4U98IBwXsCuFFOaGrmQVLt+znXW86u60j+SyCOV1WVUw1dEeVXQw0HAEB7lszKjywVVQX9uS7O0do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750755736; c=relaxed/simple;
-	bh=RYBkNNitf5svZH4js90PzpOw2USAgvJPhk2Xr/4Wr4c=;
+	s=arc-20240116; t=1750767502; c=relaxed/simple;
+	bh=DndF2H368R7JPID8W7hu9MaxsrUk7MRsMn8Na9FB5fM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=upAZ90k5IbmCFpjg32yoBzUjrmSw04SoIM1vlpJL+obX8K0ZK9mRcjnCKIFvOAxSgn3ZM9eoNl/IddHOVThoaC6t5qx1hXW7JEndRAAqkfBoBGuhIeI16cPlXKIC49JKFHCH0YRBWJihIFNPV5VTuX5BLkaMmDdPHQADZbt/MZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EH4HuEM6; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=rVoT61hsucBMNhYuR8fnYEBHH3P2E3/DTaQNgnjAQMlOn8t02zr4OWx+PrUYC3+xltEOWpZ4OxlwhHTa7fPm5JbKs+vt6jSH6YwhCxfG1Mbrsebf0sp3ZJRW8pogwssZBeSfv7xRYxJ3+cypd8rho8pZg9W60Nc+EtmvEpsZQ1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZDNdCMeX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xr2OQc0R; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZDNdCMeX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xr2OQc0R; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EH4HuEM6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBAF4C4CEE3;
-	Tue, 24 Jun 2025 09:02:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750755735;
-	bh=RYBkNNitf5svZH4js90PzpOw2USAgvJPhk2Xr/4Wr4c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EH4HuEM6RvBdtrTQe68Z/JuJzhwhGI1DoOHoxlOg/zPA2Ltx43kiWw4v731PF2qQr
-	 xzAZnDdge6rY6/DdEPt4NZxhWroDrBdx4J8oAGvxwpzfa4Dr+VzBiaYrhZuZj10zJj
-	 YgreLuEQjpwZ1uLX1rc/kY3wK+sxBk2o9p/41yNuZ+9SWvAtZTa4W9QZ5CUl+WIInP
-	 pwLA5j7MVOsupjh1qcebSJWI5sYWpLZzTb4dZ2W2cnrxwROZTyEW6jfCqQd4LAZv8x
-	 iLKupLi0L7DeOnU/BFkzw68A9qL8+ttJmmiog9lbjh8W9CYo8DczBpIU3UOoGYOkXN
-	 rJmaGVdEvMpUA==
-Date: Tue, 24 Jun 2025 11:02:08 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, 
-	Christoph Hellwig <hch@infradead.org>, Sean Christopherson <seanjc@google.com>, 
-	Mike Rapoport <rppt@kernel.org>, Shivank Garg <shivankg@amd.com>, david@redhat.com, 
-	akpm@linux-foundation.org, paul@paul-moore.com, viro@zeniv.linux.org.uk, 
-	willy@infradead.org, pbonzini@redhat.com, tabba@google.com, afranji@google.com, 
-	ackerleytng@google.com, jack@suse.cz, cgzones@googlemail.com, ira.weiny@intel.com, 
-	roypat@amazon.co.uk, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] fs: export anon_inode_make_secure_inode() and fix
- secretmem LSM bypass
-Message-ID: <20250624-einwickeln-geflecht-f9cc9cc67d3c@brauner>
-References: <20250619-fixpunkt-querfeldein-53eb22d0135f@brauner>
- <aFPuAi8tPcmsbTF4@kernel.org>
- <20250619-ablichten-korpulent-0efe2ddd0ee6@brauner>
- <aFQATWEX2h4LaQZb@kernel.org>
- <aFV3-sYCxyVIkdy6@google.com>
- <20250623-warmwasser-giftig-ff656fce89ad@brauner>
- <aFleB1PztbWy3GZM@infradead.org>
- <aFleJN_fE-RbSoFD@infradead.org>
- <c0cc4faf-42eb-4c2f-8d25-a2441a36c41b@suse.cz>
- <20250623142836.GT1613200@noisy.programming.kicks-ass.net>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZDNdCMeX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xr2OQc0R";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZDNdCMeX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xr2OQc0R"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9988421196;
+	Tue, 24 Jun 2025 12:18:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750767498; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oA3tRkj5bq2qJ1oYxd2kuL6Q5137FwnQ2VWJigyeHsA=;
+	b=ZDNdCMeXK/1oA+bef4O2b+2HxklGaRVCsy2kSfRa5ucgAySjN7S6x7HNrNC4pMMuoljttS
+	ACQdOe9mF1WcJMmAU9ft37YLfrQbRj03sN/lk2xGSkDrbAZF8GfnGqHJdKJ8rtF8+wmJ/3
+	jglvkWRB1dEPMUJ5VSn1aVDyJyd6fg4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750767498;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oA3tRkj5bq2qJ1oYxd2kuL6Q5137FwnQ2VWJigyeHsA=;
+	b=xr2OQc0RWNXx0QTWhShMnXJHZMJB68lXh2PptWgP3oFy3q1pxfl8F4KFCEWKM2pLltBm9t
+	GQqvjJuzdhVACiAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750767498; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oA3tRkj5bq2qJ1oYxd2kuL6Q5137FwnQ2VWJigyeHsA=;
+	b=ZDNdCMeXK/1oA+bef4O2b+2HxklGaRVCsy2kSfRa5ucgAySjN7S6x7HNrNC4pMMuoljttS
+	ACQdOe9mF1WcJMmAU9ft37YLfrQbRj03sN/lk2xGSkDrbAZF8GfnGqHJdKJ8rtF8+wmJ/3
+	jglvkWRB1dEPMUJ5VSn1aVDyJyd6fg4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750767498;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oA3tRkj5bq2qJ1oYxd2kuL6Q5137FwnQ2VWJigyeHsA=;
+	b=xr2OQc0RWNXx0QTWhShMnXJHZMJB68lXh2PptWgP3oFy3q1pxfl8F4KFCEWKM2pLltBm9t
+	GQqvjJuzdhVACiAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8906813A24;
+	Tue, 24 Jun 2025 12:18:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5CpxIYqXWmihUwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 24 Jun 2025 12:18:18 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id C73FDA0A03; Tue, 24 Jun 2025 14:18:17 +0200 (CEST)
+Date: Tue, 24 Jun 2025 14:18:17 +0200
+From: Jan Kara <jack@suse.cz>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com, 
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	kpsingh@kernel.org, mattbobrowski@google.com, m@maowtm.org, neil@brown.name
+Subject: Re: [PATCH v5 bpf-next 1/5] namei: Introduce new helper function
+ path_walk_parent()
+Message-ID: <htn4tupeslsrhyzrqt7pi34tye7tpp7amziiwflfpluj3u2nhs@e2axcpfuucv5>
+References: <20250617061116.3681325-1-song@kernel.org>
+ <20250617061116.3681325-2-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250623142836.GT1613200@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250617061116.3681325-2-song@kernel.org>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,meta.com,kernel.org,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,suse.cz,google.com,maowtm.org,brown.name];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Mon, Jun 23, 2025 at 04:28:36PM +0200, Peter Zijlstra wrote:
-> On Mon, Jun 23, 2025 at 04:21:15PM +0200, Vlastimil Babka wrote:
-> > On 6/23/25 16:01, Christoph Hellwig wrote:
-> > > On Mon, Jun 23, 2025 at 07:00:39AM -0700, Christoph Hellwig wrote:
-> > >> On Mon, Jun 23, 2025 at 12:16:27PM +0200, Christian Brauner wrote:
-> > >> > I'm more than happy to switch a bunch of our exports so that we only
-> > >> > allow them for specific modules. But for that we also need
-> > >> > EXPOR_SYMBOL_FOR_MODULES() so we can switch our non-gpl versions.
-> > >> 
-> > >> Huh?  Any export for a specific in-tree module (or set thereof) is
-> > >> by definition internals and an _GPL export if perfectly fine and
-> > >> expected.
-> > 
-> > Peterz tells me EXPORT_SYMBOL_GPL_FOR_MODULES() is not limited to in-tree
-> > modules, so external module with GPL and matching name can import.
-> > 
-> > But if we're targetting in-tree stuff like kvm, we don't need to provide a
-> > non-GPL variant I think?
+On Mon 16-06-25 23:11:12, Song Liu wrote:
+> This helper walks an input path to its parent. Logic are added to handle
+> walking across mount tree.
 > 
-> So the purpose was to limit specific symbols to known in-tree module
-> users (hence GPL only).
+> This will be used by landlock, and BPF LSM.
 > 
-> Eg. KVM; x86 exports a fair amount of low level stuff just because KVM.
-> Nobody else should be touching those symbols.
+> Suggested-by: Neil Brown <neil@brown.name>
+> Signed-off-by: Song Liu <song@kernel.org>
+
+Looks good to me. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+One note below:
+
+> -static struct dentry *follow_dotdot(struct nameidata *nd)
+> +/**
+> + * __path_walk_parent - Find the parent of the given struct path
+> + * @path  - The struct path to start from
+> + * @root  - A struct path which serves as a boundary not to be crosses.
+> + *        - If @root is zero'ed, walk all the way to global root.
+> + * @flags - Some LOOKUP_ flags.
+> + *
+> + * Find and return the dentry for the parent of the given path
+> + * (mount/dentry). If the given path is the root of a mounted tree, it
+> + * is first updated to the mount point on which that tree is mounted.
+> + *
+> + * If %LOOKUP_NO_XDEV is given, then *after* the path is updated to a new
+> + * mount, the error EXDEV is returned.
+> + *
+> + * If no parent can be found, either because the tree is not mounted or
+> + * because the @path matches the @root, then @path->dentry is returned
+> + * unless @flags contains %LOOKUP_BENEATH, in which case -EXDEV is returned.
+> + *
+> + * Returns: either an ERR_PTR() or the chosen parent which will have had
+> + * the refcount incremented.
+> + */
+
+The behavior with LOOKUP_NO_XDEV is kind of odd (not your fault) and
+interestingly I wasn't able to find a place that would depend on the path
+being updated in that case. So either I'm missing some subtle detail (quite
+possible) or we can clean that up in the future.
+
+								Honza
+
+> +static struct dentry *__path_walk_parent(struct path *path, const struct path *root, int flags)
+>  {
+> -	struct dentry *parent;
+> -
+> -	if (path_equal(&nd->path, &nd->root))
+> +	if (path_equal(path, root))
+>  		goto in_root;
+> -	if (unlikely(nd->path.dentry == nd->path.mnt->mnt_root)) {
+> -		struct path path;
+> +	if (unlikely(path->dentry == path->mnt->mnt_root)) {
+> +		struct path new_path;
+>  
+> -		if (!choose_mountpoint(real_mount(nd->path.mnt),
+> -				       &nd->root, &path))
+> +		if (!choose_mountpoint(real_mount(path->mnt),
+> +				       root, &new_path))
+>  			goto in_root;
+> -		path_put(&nd->path);
+> -		nd->path = path;
+> -		nd->inode = path.dentry->d_inode;
+> -		if (unlikely(nd->flags & LOOKUP_NO_XDEV))
+> +		path_put(path);
+> +		*path = new_path;
+> +		if (unlikely(flags & LOOKUP_NO_XDEV))
+>  			return ERR_PTR(-EXDEV);
+>  	}
+>  	/* rare case of legitimate dget_parent()... */
+> -	parent = dget_parent(nd->path.dentry);
+> +	return dget_parent(path->dentry);
+> +
+> +in_root:
+> +	if (unlikely(flags & LOOKUP_BENEATH))
+> +		return ERR_PTR(-EXDEV);
+> +	return dget(path->dentry);
+> +}
+> +
+> +/**
+> + * path_walk_parent - Walk to the parent of path
+> + * @path: input and output path.
+> + * @root: root of the path walk, do not go beyond this root. If @root is
+> + *        zero'ed, walk all the way to real root.
+> + *
+> + * Given a path, find the parent path. Replace @path with the parent path.
+> + * If we were already at the real root or a disconnected root, @path is
+> + * not changed.
+> + *
+> + * Returns:
+> + *  0  - if @path is updated to its parent.
+> + *  <0 - if @path is already the root (real root or @root).
+> + */
+> +int path_walk_parent(struct path *path, const struct path *root)
+> +{
+> +	struct dentry *parent;
+> +
+> +	parent = __path_walk_parent(path, root, LOOKUP_BENEATH);
+> +
+> +	if (IS_ERR(parent))
+> +		return PTR_ERR(parent);
+> +
+> +	if (parent == path->dentry) {
+> +		dput(parent);
+> +		return -ENOENT;
+> +	}
+> +	dput(path->dentry);
+> +	path->dentry = parent;
+> +	return 0;
+> +}
+> +
+> +static struct dentry *follow_dotdot(struct nameidata *nd)
+> +{
+> +	struct dentry *parent = __path_walk_parent(&nd->path, &nd->root, nd->flags);
+> +
+> +	if (IS_ERR(parent))
+> +		return parent;
+>  	if (unlikely(!path_connected(nd->path.mnt, parent))) {
+>  		dput(parent);
+>  		return ERR_PTR(-ENOENT);
+>  	}
+> +	nd->inode = nd->path.dentry->d_inode;
+>  	return parent;
+> -
+> -in_root:
+> -	if (unlikely(nd->flags & LOOKUP_BENEATH))
+> -		return ERR_PTR(-EXDEV);
+> -	return dget(nd->path.dentry);
+>  }
+>  
+>  static const char *handle_dots(struct nameidata *nd, int type)
+> diff --git a/include/linux/namei.h b/include/linux/namei.h
+> index 5d085428e471..ca68fa4089e0 100644
+> --- a/include/linux/namei.h
+> +++ b/include/linux/namei.h
+> @@ -85,6 +85,8 @@ extern int follow_down_one(struct path *);
+>  extern int follow_down(struct path *path, unsigned int flags);
+>  extern int follow_up(struct path *);
+>  
+> +int path_walk_parent(struct path *path, const struct path *root);
+> +
+>  extern struct dentry *lock_rename(struct dentry *, struct dentry *);
+>  extern struct dentry *lock_rename_child(struct dentry *, struct dentry *);
+>  extern void unlock_rename(struct dentry *, struct dentry *);
+> -- 
+> 2.47.1
 > 
-> If you have a pile of symbols for !GPL / out-of-tree consumers, it
-> doesn't really make sense to limit the export to a named set of modules,
-> does it?
-> 
-> So yes, nothing limits things to in-tree modules per-se. The
-> infrastructure only really cares about module names (and implicitly
-> trusts the OS to not overwrite existing kernel modules etc.). So you
-> could add an out-of-tree module name to the list (or have an out-of-free
-> module have a name that matches a glob; "kvm-vmware" would match "kvm-*"
-> for example).
-> 
-> But that is very much beyond the intention of things.
-
-So I'm not well-versed in all the GPL vs non-GPL exports. I'm thinking
-of cases like EXPORT_SYMBOL(fget_task_next); That's exposed to gfs2 (and
-bpf but that's built-in). I see no reason to risk spreading the usage of
-that special-thing to anywhere else. So I would use
-EXPORT_*_FOR_MODULES(gfs2) for this and we'd notice if anything else is
-trying to use that thing.
-
-Another excellent candidate is:
-
-  /*
-   * synchronous analog of fput(); for kernel threads that might be needed
-   * in some umount() (and thus can't use flush_delayed_fput() without
-   * risking deadlocks), need to wait for completion of __fput() and know
-   * for this specific struct file it won't involve anything that would
-   * need them.  Use only if you really need it - at the very least,
-   * don't blindly convert fput() by kernel thread to that.
-   */
-  void __fput_sync(struct file *file)
-  {
-          if (file_ref_put(&file->f_ref))
-                  __fput(file);
-  }
-  EXPORT_SYMBOL(__fput_sync);
-
-That thing worries me to no end because that can be used to wreak all
-kinds of havoc and I want that thing tied down so no one can even look
-at it without getting a compile time or runtime error that we can
-immediately notice. So for that as well I want to allow-list modules
-that we have explictly acknowledged to use it.
-
-But iiuc I can't just switch that non-GPL exported symbol to a GPL
-exported symbol. And I don't want to be involved in some kind of
-ideological warfare around that stuff.
-
-I care about not growing more users of __fput_sync(). So any advice is
-appreciated.
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
