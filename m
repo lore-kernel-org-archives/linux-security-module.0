@@ -1,233 +1,105 @@
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95932E6D0F;
-	Tue, 24 Jun 2025 14:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF16F2D5414;
+	Tue, 24 Jun 2025 14:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750775637; cv=none; b=ZIAXYYYotg7Csk7ceTllTNfgujWttAVOkfaU2AFRDT/egs4ry0Wl9V7zLKiIXgb5NmALwyfR3kQWiqkEomaTou+CJ701fOwsHrXVrU1r6fKF1oHZPsjX78TbfPwKqmoRp+oTl+EubktBtn8O4HKSXz5RJDzVO5R2TiaVuWgB04s=
+	t=1750776553; cv=none; b=tXjQXV/r78Xv935tIeBhPx8RWsLDGLI5oYYy8UB9XI5yqTh06QX5EziRDLYzPylqaOkDg+t98WLmF3PVZVx9Pns4PHhu1cW/tSG+vbAmSzlgpOp3lcrad3IRq3A04mG9Ot9q19djpll5XkSiZ64HP4lqj7CwQWK65LnpY+yW60g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750775637; c=relaxed/simple;
-	bh=d5M/Hk14yChGkT7tf/L/6oDfqdz4CsH3WSwtJxG4I+o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mhN8jfWjAZ9ZsB7l4i5Ch/qLIzzrre8CXbqq9FIxQ9vcCT/znLb2NBaIPE6H013s5WSJCw0EtFsO0be7h4/DVaFuwkns8dH3ZZB4/QPexc/zObma8sFGU/pejiEazqSjDVNXxj9oi6c90RyPuhCB8depLDQL7PJMjYQp+mQ6Psw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=WNsqZBDE; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1750776553; c=relaxed/simple;
+	bh=XSmcinKea+soXlmgc6EymGPV4s+49fMw/x6yfEf4UpE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fzgvUeuaBnqYRpRfUFAoDaZvjuA3bQHmvVnj0GWj5p+gk+j7J+EALt0uxdb3jlF5Q+NY7Y2gkTdkDd3/D2+aJj54yMWADzluVmSsKjHjuvvTt3MVFmgLEJfqwYcMwJLo01nZS4ubxLznCNjp+HR6ZBHOfT8d9A2TgtA8TXkQGqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=OHgi/w9Y; arc=none smtp.client-ip=51.159.173.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="WNsqZBDE"
-Received: from sec2-plucky-amd64.. (lau06-h06-176-136-128-80.dsl.sta.abo.bbox.fr [176.136.128.80])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 7A4BD4018F;
-	Tue, 24 Jun 2025 14:33:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1750775629;
-	bh=X3yVcB/5qVhKayZUa41FaUh8FIUjAjD/QoJab4XolZw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type;
-	b=WNsqZBDEdQ49baJVa2zBQXXd77lSSOW1kTOl4Rm5hknAVwup7AwSx1eR6no8KGF8c
-	 vA04/0hHt9mUrvgsGBjHmOsnz677LX/nJ5I4Os7wyOX9/tpG2cAPggiEZMR5WGrEpk
-	 9qlhuhKtQYPtHVg4Q+CIynLrulYwLW6kqagQa/k86hwJVzU9g6fdFeWwYmbW2x5Y4E
-	 meLRs/6jeLetM6BZsDA65Zd+dRLqhgBvKaGZHKDOaOV33bxdCPVwe32Y8H9YQlq+ko
-	 9OTgkxOMHaiPVJ4TNRcmfiNqh9RQevXlff1WhT+3q5YmcUFQso5IXJHf2fe015KY5W
-	 LY01HJdtwXg/Q==
-From: =?UTF-8?q?Maxime=20B=C3=A9lair?= <maxime.belair@canonical.com>
-To: linux-security-module@vger.kernel.org
-Cc: john.johansen@canonical.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	mic@digikod.net,
-	kees@kernel.org,
-	stephen.smalley.work@gmail.com,
-	casey@schaufler-ca.com,
-	takedakn@nttdata.co.jp,
-	penguin-kernel@I-love.SAKURA.ne.jp,
-	song@kernel.org,
-	rdunlap@infraread.org,
-	linux-api@vger.kernel.org,
-	apparmor@lists.ubuntu.com,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Maxime=20B=C3=A9lair?= <maxime.belair@canonical.com>
-Subject: [PATCH v3 3/3] AppArmor: add support for lsm_config_self_policy and lsm_config_system_policy
-Date: Tue, 24 Jun 2025 16:30:42 +0200
-Message-ID: <20250624143211.436045-4-maxime.belair@canonical.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250624143211.436045-1-maxime.belair@canonical.com>
-References: <20250624143211.436045-1-maxime.belair@canonical.com>
+	dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="OHgi/w9Y"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=Cc:To:Message-Id:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=hwtEdFGTH8iYwyCWvuA+AVH/7v/hzPHDC9TpX58Pza0=; b=OHgi/w9YOXcZd89Cx/zcRzQLVv
+	Cn7qs+Yz+57TJ1Eaufap0yB+s5cEQVR27CI5IMMXlDzrqR2WhXc27tuehnmLSqunCSxsom0MiIkHD
+	l2QUyA3UofBzRcAGe0pfBMtDV4mhX5h0+okvF6qC+BgsqrAVCJGl/1jYty/qjFvONOw1j3tA1Ij3e
+	6Rpx74fTqrDnBhwmzZf4tF0gJHTLu/YeWAfWPBRUGA8EoDBCnT2Nr15YK0um2E5ZysPPqnXtsWB+0
+	6A9dl4u25mtOpOrxRRW9HyNB7ew0bnH0CYzORNcgeWa0KBkKKgSL2+tHq5VuZn5kGbtfdHqio8FUM
+	m+3GsiZw==;
+Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:36435 helo=[10.224.8.110])
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
+	id 1uU4xL-00000008LEa-2tuI;
+	Tue, 24 Jun 2025 16:49:03 +0200
+From: nicolas.bouchinet@oss.cyber.gouv.fr
+Date: Tue, 24 Jun 2025 16:48:51 +0200
+Subject: [PATCH] MAINTAINERS: Add Xiu and myself as Lockdown maintainers
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250624-add_myself_to_lockdown_maintainers-v1-1-bed2bc934666@ssi.gouv.fr>
+X-B4-Tracking: v=1; b=H4sIANK6WmgC/x2NzQqDMBAGX0X23IAGf2hfRUqI5otdqolkpVXEd
+ 2/oYQ5zmTlJkBhCj+KkhA8Lx5CluhU0vmyYoNhlJ13qpmx1raxzZjkEszdbNHMc3y5+g1kshy2
+ DJAptM9Rd5TH4O+XQmuB5/0/653X9ALFWoA50AAAA
+X-Change-ID: 20250624-add_myself_to_lockdown_maintainers-e65b471febf9
+To: Paul Moore <paul@paul-moore.com>
+Cc: Xiu Jianfeng <xiujianfeng@huawei.com>, 
+ =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+X-Mailer: b4 0.14.2
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Enable users to manage AppArmor policies through the new hooks
-lsm_config_self_policy and lsm_config_system_policy.
+From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 
-lsm_config_self_policy allows stacking existing policies in the kernel.
-This ensures that it can only further restrict the caller and can never
-be used to gain new privileges.
+The Lockdown LSM has been unmaintained for some time now. It requires
+some work to ensure it works as intended.
 
-lsm_config_system_policy allows loading or replacing AppArmor policies in
-any AppArmor namespace.
+Xiu Jianfeng and I volunteer to maintain the LSM.
 
-Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
+Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 ---
- security/apparmor/apparmorfs.c         | 31 +++++++++++
- security/apparmor/include/apparmorfs.h |  3 ++
- security/apparmor/lsm.c                | 71 ++++++++++++++++++++++++++
- 3 files changed, 105 insertions(+)
+ MAINTAINERS | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index 6039afae4bfc..6df43299b045 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -439,6 +439,37 @@ static ssize_t policy_update(u32 mask, const char __user *buf, size_t size,
- 	return error;
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0c1d245bf7b84f8a78b811e0c9c5a3edc09edc22..776c7fffcaec08f71faf2740599f0b4570179832 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14060,8 +14060,10 @@ F:	Documentation/admin-guide/LSM/LoadPin.rst
+ F:	security/loadpin/
  
-+/**
-+ * aa_profile_load_ns_name - load a profile into the current namespace identified by name
-+ * @name: The name of the namesapce to load the policy in. "" for root_ns
-+ * @name_size: size of @name. 0 For root ns
-+ * @buf: buffer containing the user-provided policy
-+ * @size: size of @buf
-+ * @ppos: position pointer in the file
-+ *
-+ * Returns: 0 on success, negative value on error
-+ */
-+ssize_t aa_profile_load_ns_name(char *name, size_t name_size, const void __user *buf,
-+				size_t size, loff_t *ppos)
-+{
-+	struct aa_ns *ns;
-+
-+	if (name_size == 0)
-+		ns = aa_get_ns(root_ns);
-+	else
-+		ns = aa_lookupn_ns(root_ns, name, name_size);
-+
-+	if (!ns)
-+		return -EINVAL;
-+
-+	int error = policy_update(AA_MAY_LOAD_POLICY | AA_MAY_REPLACE_POLICY,
-+				  buf, size, ppos, ns);
-+
-+	aa_put_ns(ns);
-+
-+	return error >= 0 ? 0 : error;
-+}
-+
- /* .load file hook fn to load policy */
- static ssize_t profile_load(struct file *f, const char __user *buf, size_t size,
- 			    loff_t *pos)
-diff --git a/security/apparmor/include/apparmorfs.h b/security/apparmor/include/apparmorfs.h
-index 1e94904f68d9..fd415afb7659 100644
---- a/security/apparmor/include/apparmorfs.h
-+++ b/security/apparmor/include/apparmorfs.h
-@@ -112,6 +112,9 @@ int __aafs_profile_mkdir(struct aa_profile *profile, struct dentry *parent);
- void __aafs_ns_rmdir(struct aa_ns *ns);
- int __aafs_ns_mkdir(struct aa_ns *ns, struct dentry *parent, const char *name,
- 		     struct dentry *dent);
-+ssize_t aa_profile_load_ns_name(char *name, size_t name_len, const void __user *buf,
-+				size_t size, loff_t *ppos);
-+
+ LOCKDOWN SECURITY MODULE
++M:	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
++M:	Xiu Jianfeng <xiujianfeng@huawei.com>
+ L:	linux-security-module@vger.kernel.org
+-S:	Odd Fixes
++S:	Maintained
+ T:	git https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+ F:	security/lockdown/
  
- struct aa_loaddata;
- 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 9b6c2f157f83..7ca2eb8c0981 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1275,6 +1275,73 @@ static int apparmor_socket_shutdown(struct socket *sock, int how)
- 	return aa_sock_perm(OP_SHUTDOWN, AA_MAY_SHUTDOWN, sock);
- }
- 
-+/**
-+ * apparmor_lsm_config_self_policy - Stack a profile
-+ * @lsm_id: AppArmor ID (LSM_ID_APPARMOR). Unused here
-+ * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
-+ * @buf: buffer containing the user-provided name of the profile to stack
-+ * @size: size of @buf
-+ * @flags: reserved for future use; must be zero
-+ *
-+ * Returns: 0 on success, negative value on error
-+ */
-+static int apparmor_lsm_config_self_policy(u32 lsm_id, u32 op, void __user *buf,
-+				      size_t size, u32 flags)
-+{
-+	char *name = kvmalloc(size, GFP_KERNEL);
-+	long name_size;
-+	int ret;
-+
-+	if (!name)
-+		return -ENOMEM;
-+
-+	if (op != LSM_POLICY_LOAD || flags)
-+		return -EOPNOTSUPP;
-+
-+	name_size = strncpy_from_user(name, buf, size);
-+	if (name_size < 0)
-+		return name_size;
-+
-+	ret = aa_change_profile(name, AA_CHANGE_STACK);
-+
-+	kvfree(name);
-+
-+	return ret;
-+}
-+
-+/**
-+ * apparmor_lsm_config_system_policy - Load or replace a system policy
-+ * @lsm_id: AppArmor ID (LSM_ID_APPARMOR). Unused here
-+ * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
-+ * @buf: user-supplied buffer in the form "<ns>\0<policy>"
-+ *        <ns> is the namespace to load the policy into (empty string for root)
-+ *        <policy> is the policy to load
-+ * @size: size of @buf
-+ * @flags: reserved for future uses; must be zero
-+ *
-+ * Returns: 0 on success, negative value on error
-+ */
-+static int apparmor_lsm_config_system_policy(u32 lsm_id, u32 op, void __user *buf,
-+				      size_t size, u32 flags)
-+{
-+	loff_t pos = 0; // Partial writing is not currently supported
-+	char name[256];
-+	long name_size;
-+
-+	if (op != LSM_POLICY_LOAD || flags)
-+		return -EOPNOTSUPP;
-+
-+	name_size = strncpy_from_user(name, buf, 256);
-+	if (name_size < 0)
-+		return name_size;
-+	else if (name_size == 256)
-+		return -E2BIG;
-+
-+	return aa_profile_load_ns_name(name, name_size, buf + name_size + 1,
-+				       size - name_size - 1, &pos);
-+}
-+
-+
- #ifdef CONFIG_NETWORK_SECMARK
- /**
-  * apparmor_socket_sock_rcv_skb - check perms before associating skb to sk
-@@ -1483,6 +1550,10 @@ static struct security_hook_list apparmor_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(socket_getsockopt, apparmor_socket_getsockopt),
- 	LSM_HOOK_INIT(socket_setsockopt, apparmor_socket_setsockopt),
- 	LSM_HOOK_INIT(socket_shutdown, apparmor_socket_shutdown),
-+
-+	LSM_HOOK_INIT(lsm_config_self_policy, apparmor_lsm_config_self_policy),
-+	LSM_HOOK_INIT(lsm_config_system_policy,
-+		      apparmor_lsm_config_system_policy),
- #ifdef CONFIG_NETWORK_SECMARK
- 	LSM_HOOK_INIT(socket_sock_rcv_skb, apparmor_socket_sock_rcv_skb),
- #endif
+
+---
+base-commit: 9fc86a85f36c51dd9e628c82091326151c8ff638
+change-id: 20250624-add_myself_to_lockdown_maintainers-e65b471febf9
+
+Best regards,
 -- 
-2.48.1
+Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 
