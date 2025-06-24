@@ -1,107 +1,116 @@
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381DF25A2B1;
-	Tue, 24 Jun 2025 21:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3510E25D537
+	for <linux-security-module@vger.kernel.org>; Tue, 24 Jun 2025 23:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750801146; cv=none; b=fbExkdWgD+/kFg4ryPeQcgsv8GQ892NWqL+IXAX9RkgZiC9zJVfQ5z8cgTh1MWfmF1CxSyD2wmv1K2Qfkabf0Kc7NhzRlr5r09BxSZtErglFFdaesOKwn9UdruKC0Jk7rfdm/jhI5ATjoJEzWzfAWML36/nTQKtJ32CNoEx4MeQ=
+	t=1750807567; cv=none; b=G3UQpDNvWXeUZlrcqAw8k6lC93b3jPHG8WVoGc5JaNBmwYpScJfAtgmIAQf0do6R1sHloTDQTRVRJPhFa4T72JG8DOSREorTkNZl+S96c1mpgA9egW6gCzX9eXF5EVqYdqvfHwOuPIg7gNj+trExUp7YCzGAuZA0LckWGuHgLnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750801146; c=relaxed/simple;
-	bh=Y4l0bh8VQKBCsky1AfAt+0j/ZyivsMcPWV96H9WTLso=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=OldBsxGRXT5bZbpfl80R/FiGSRG6a84zwOOGEnWD1M6kUHWXCECwlyy0hwmi7cHxDxqOKcMqAg+KG5/Nx0NMNjChP44EqNpz6WnWWWHWpcxnW61PZdEgezEslvmL4C3OBmI2oUMaHvCAx0gxq8VqtBzY34RArfDvNvqevoCq110=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uUBLy-0042q4-5A;
-	Tue, 24 Jun 2025 21:38:54 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1750807567; c=relaxed/simple;
+	bh=tlQ5FvOMjbX6Z8YhpXnrzKrOO8FlQxeVzUe9JhzvgiY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F361ztdnlehq6ML2YPX3oBYErkQ4wqKBpjAdCl2pXel8DPJHBqvqb+YtvA9YS32rlOiCYe68CeSqmWkKZn72VnLg4O76EuDLJHApu3voTag6jBiruc/KC54CUKDExjd1YzuMoX6AcxcnW8H/0T5zlR8J0e1E3zrsijTQ9GSZBeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QJerJa5X; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QJerJa5X"
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-70e23e9aeefso9046667b3.2
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Jun 2025 16:26:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1750807564; x=1751412364; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A5KAAp0hg3rI6FMNaXq3I4//0zQjQR1hKb9wxZe7KLQ=;
+        b=QJerJa5XSXpX3z0qka1G2FdLIn5C2XLSIGsFBFpTEPkIlUdx++9GV2e4VuXWCszTJA
+         9AGXX4NLoP7/U4t1JjJjVvI/tYOBxNsCWJkebJqYyAaXbCZ7ofjYXhqMJNyVPqs2FHMk
+         JWoK18nalzr6WA76/MEaLPvgsfjRhT88cWmLrihb122RGbDk9q+aWzdfETbdXVyM3kky
+         wlbGzGa0u2QXWKf8vp1jr7b4MNHZ2Vv06SMDH0t3LprWg66xvmBM9lJK1mLF2EBTT2e/
+         4J2lobOmCGiTlaRPgrKstWYWCl3BlIvC9Cqm5bClMPGWUPS1jZ7Rp78WBRTBTHM8Ke0C
+         Yk1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750807564; x=1751412364;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A5KAAp0hg3rI6FMNaXq3I4//0zQjQR1hKb9wxZe7KLQ=;
+        b=GmXd45aeuDJ1TmURLMLy/rWDUZL/W1DAidCf0NgVVAzKh6yvs9k0zcww8ZByC7qJeg
+         P94yLZ7tPWpYXRK8NEp0l2YCtHGNk2mGROT/WTouZ+cYVjp41zE1QHxe3zxscW9Gu0Ji
+         SjzflW2TZRiitZ0AnHs+NFFWCiLDaFAGXgnx7iAqe5vc/fozgBbXlVG77uu79k4SuejW
+         AMen0yOAPIpmgXHh/V4ISmAEgZV9spCpQoO5jhNrQXBKk6zcUfzMT8s8rhEex265iH5Q
+         Uh6R5OWUXns/b2MguwIoocx74cZM0Rxxzl0DtFvRC9HuA1jVe/GHf0YR0eD7yo8uqWmC
+         5IUw==
+X-Forwarded-Encrypted: i=1; AJvYcCX2zYUDe0j2gm6KLyP2huoUswnHvjbGHE6Po+rRmtvKJHUyleiJLfuSosaHVTIs1ANzzpPggPTlSYwz+7BKDdNek22gvQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnvVUr9vYhhDRkZKWweNse9zh2BKH8tImbX1i27sX5WP8xjo7S
+	flFnbb5VX3SaMIe3G0qGRSijRs3q2jYymrkbSM8JnX02U+vPpTiQ1e0vu4tWuJl4nLyfFeiBuUD
+	ftcuH2Mm5OvEqdfh5a3oNYmPOnw8yYhQmeETjttJXGVp+9d8e7YA=
+X-Gm-Gg: ASbGnctKJz1LnzRKZC9jcqc2M/DYhcZD15GN6Pr2EVDQfjEXpk3G0+X4VUyww8UX1uI
+	+y4cm/PRbh5bqaG+OF3GsXC3JACnFzGPvljygGrSDPlna5QYYXVZPZ3c006TPtCWn2ZfzkCuAyA
+	yc3h0vRhLNaz48zTOuK2kqt0wpgpb/v3fHKCwjO7DchRc=
+X-Google-Smtp-Source: AGHT+IFETM7yorOza0u5Xc4IPvb1Wj6Cy5A1k0l3kUM+G0H9Gtr1V6n15kmn5i3dgL3ZfArcgzsK9tCF6fhB/AUVhNs=
+X-Received: by 2002:a05:690c:2505:b0:70e:719e:743 with SMTP id
+ 00721157ae682-71406df28fcmr14100307b3.26.1750807564156; Tue, 24 Jun 2025
+ 16:26:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: "Song Liu" <song@kernel.org>, bpf@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, brauner@kernel.org,
- kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk,
- jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com, m@maowtm.org,
- =?utf-8?q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
-In-reply-to: <20250624.xahShi0iCh7t@digikod.net>
-References: <>, <20250624.xahShi0iCh7t@digikod.net>
-Date: Wed, 25 Jun 2025 07:38:53 +1000
-Message-id: <175080113326.2280845.18404947256630567790@noble.neil.brown.name>
+References: <20250624-add_myself_to_lockdown_maintainers-v1-1-bed2bc934666@ssi.gouv.fr>
+In-Reply-To: <20250624-add_myself_to_lockdown_maintainers-v1-1-bed2bc934666@ssi.gouv.fr>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 24 Jun 2025 19:25:53 -0400
+X-Gm-Features: Ac12FXxqbHuHNKN2wU9KiVvFlrrwz5yfJ7Mf5VRJd7P5lrOrY1rBggH5fBMw9ks
+Message-ID: <CAHC9VhS_QLEJrVVKNNtViFXcnaysseH5mFj9jMq7RK4u3to2yg@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Add Xiu and myself as Lockdown maintainers
+To: nicolas.bouchinet@oss.cyber.gouv.fr
+Cc: Xiu Jianfeng <xiujianfeng@huawei.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 25 Jun 2025, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Fri, Jun 20, 2025 at 02:59:17PM -0700, Song Liu wrote:
-> > Hi Christian, Micka=C3=ABl, and folks,
-> >=20
-> > Could you please share your comments on this version? Does this
-> > look sane?
->=20
-> This looks good to me but we need to know what is the acceptable next
-> step to support RCU.  If we can go with another _rcu helper, I'm good
-> with the current approach, otherwise we need to figure out a way to
-> leverage the current helper to make it compatible with callers being in
-> a RCU read-side critical section while leveraging safe path walk (i.e.
-> several calls to path_walk_parent).
+On Tue, Jun 24, 2025 at 10:49=E2=80=AFAM <nicolas.bouchinet@oss.cyber.gouv.=
+fr> wrote:
+>
+> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+>
+> The Lockdown LSM has been unmaintained for some time now. It requires
+> some work to ensure it works as intended.
+>
+> Xiu Jianfeng and I volunteer to maintain the LSM.
+>
+> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> ---
+>  MAINTAINERS | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-Can you spell out the minimum that you need?
+Thank you both for volunteering to maintain the Lockdown LSM!
 
-My vague impression is that you want to search up from a given strut path,
-no further then some other given path, looking for a dentry that matches
-some rule.  Is that correct?
+I'll leave this patch on the list for a bit to see if others have any
+concerns, reviewed-by tags, etc. that they want to add, but as far as
+I'm concerned right now you two have the job :)
 
-In general, the original dentry could be moved away from under the
-dentry you find moments after the match is reported.  What mechanisms do
-you have in place to ensure this doesn't happen, or that it doesn't
-matter?
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0c1d245bf7b84f8a78b811e0c9c5a3edc09edc22..776c7fffcaec08f71faf27405=
+99f0b4570179832 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14060,8 +14060,10 @@ F:     Documentation/admin-guide/LSM/LoadPin.rst
+>  F:     security/loadpin/
+>
+>  LOCKDOWN SECURITY MODULE
+> +M:     Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+> +M:     Xiu Jianfeng <xiujianfeng@huawei.com>
+>  L:     linux-security-module@vger.kernel.org
+> -S:     Odd Fixes
+> +S:     Maintained
+>  T:     git https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.g=
+it
+>  F:     security/lockdown/
 
-Would it be sufficient to have an iterator which reported successive
-ancestors in turn, or reported that you need to restart because something
-changed?  Would you need to know that a restart happened or would it be
-acceptable to transparently start again at the parent of the starting
-point?
-
-Or do you really need a "one step at a time" interface?
-
-Do you need more complex movements around the tree, or is just walking
-up sufficient?
-
-If this has been discussed or documented elsewhere I'd be happy for you
-just to provide a reference, and I can come back with follow-up
-questions if needed.
-
-Thanks,
-NeilBrown
-
-
->=20
-> >=20
-> > Thanks,
-> > Song
-> >=20
-> > On Mon, Jun 16, 2025 at 11:11=E2=80=AFPM Song Liu <song@kernel.org> wrote:
-> > >
-> > > In security use cases, it is common to apply rules to VFS subtrees.
-> > > However, filtering files in a subtree is not straightforward [1].
-> > >
-> > > One solution to this problem is to start from a path and walk up the VFS
-> > > tree (towards the root). Among in-tree LSMs, Landlock uses this solutio=
-n.
-> > >
-> >=20
-> > [...]
-> >=20
->=20
-
+--=20
+paul-moore.com
