@@ -1,72 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102952147FB;
-	Wed, 25 Jun 2025 21:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AC225A33F;
+	Wed, 25 Jun 2025 23:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750887940; cv=none; b=ZLBunYhqb3qsm/nZk/Qdj/A7GWW4+S3Tawdk4XoZfJE7iDjPIjo883BmDHlB2F3FbPCovluQZsT6zmSH+V2J/5tPjvUgr16i3f9FeFyUOpK/EYpug6fxKd/0rgQQLcCQatRTNVFYTIzlRbv2aMh0ZOYSAQLROlw/4EvKA+c1gGg=
+	t=1750892707; cv=none; b=Jfre1eebV1iGvO48lCwM1d0Y1CWvr47sKfsR61/+S94XiCbJJgrlBGaOvKyils8+tF+HBriDhh3jE03DB08jFC9gNz3c1BtAFec6l4VT784LFuSAA/qPEWmcXyT8bnB2/L8IftI3ul+wE76sBLLizzjheAAXLFE131vuf0nomng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750887940; c=relaxed/simple;
-	bh=EQERAeAUqfaASSXc/IWemtefhbnElFq93zKTtOoowZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ApFDoAq9vVSl38mwHO8KhquwR/8+V+mLVyoyv4GVXI+blpU8d7tkGNkqMoIZmR0iIeARHD5VVYoYvrvrR8Gh9MR64WhB6G0xZhXa3AbANxJVprqqPlv3d4JFe4Wp7wrcQdHIuiYD87mlm96UiidYBsYo8jiJXNJsNLO/b4NggUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C/1gtSAN; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/1gtSAN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A97AC4CEEA;
-	Wed, 25 Jun 2025 21:45:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750887939;
-	bh=EQERAeAUqfaASSXc/IWemtefhbnElFq93zKTtOoowZA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C/1gtSANXZ6neo3lmDnHuVs+x4tdxRJKU0zUzMr2Ss03QRVjgwlBS6s2PfEU1bVI3
-	 StWalVe1jc2muhYEAbdkbsrFdqcHRALYl59yU4p0A6EIjrxwtzQzZkx15dP7T/eMGc
-	 9w/Tz9l3TTqQLtV4BWEQgX4nSuH5vrkNu4ojOo8mbBYYArGCAlY4WVNCzkxmWaDrvR
-	 teNK1dHHAQrj0VGjg77Lum/svTb2ZfH/ZyhWUlxHLOi9vcKCx/YRxeXWWGtfLH5I5M
-	 Fn/gSPUBw6HuTV/OPqar8nvqR3n1RAgMssYu5JuzlGc2ZdIAXfZG56199FFhNLHLB1
-	 /MRV2Wo5RRAKQ==
-Date: Thu, 26 Jun 2025 00:45:36 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: keyrings@vger.kernel.org, Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] tpm: Create cleanup class for tpm_buf
-Message-ID: <aFxuADgb2C9DaFrh@kernel.org>
-References: <20250625213757.1236570-1-jarkko@kernel.org>
+	s=arc-20240116; t=1750892707; c=relaxed/simple;
+	bh=u7ptJ2XReCH4v22yKtQsXDi9KrS1wW909Hht8Ak/I6k=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=t8GF8RFvijcDt0TiS3YeXd+PSWAZrw7bcbFOEa8yqrk5OaeGQBSjIuciNt6RRglRcjel63PeAiCD2etBLk53YLWJvM0/GO1l7aKm49MXgfhgtrLmnN8Y0rl6q7SVHHSA7riHaM+8fzoxvfJJN0FEk59zNULMKtd/bMjsT6RYVJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uUZAn-004tNX-Di;
+	Wed, 25 Jun 2025 23:04:57 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625213757.1236570-1-jarkko@kernel.org>
+From: "NeilBrown" <neil@brown.name>
+To: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: "Song Liu" <song@kernel.org>, bpf@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, brauner@kernel.org,
+ kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
+ daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk,
+ jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com,
+ "Tingmao Wang" <m@maowtm.org>,
+ =?utf-8?q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
+In-reply-to: <20250625.Ee2Ci6chae8h@digikod.net>
+References: <>, <20250625.Ee2Ci6chae8h@digikod.net>
+Date: Thu, 26 Jun 2025 09:04:56 +1000
+Message-id: <175089269668.2280845.5681675711269608822@noble.neil.brown.name>
 
-On Thu, Jun 26, 2025 at 12:37:56AM +0300, Jarkko Sakkinen wrote:
-> From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+On Wed, 25 Jun 2025, Mickaël Salaün wrote:
+> On Wed, Jun 25, 2025 at 07:38:53AM +1000, NeilBrown wrote:
+> > 
+> > Can you spell out the minimum that you need?
 > 
-> Define a cleanup for tpm_buf, which will caused tpm_buf_destroy()
-> automatically called at the end of a function scope. This will
-> significantly decrease the likelihood of memory leaks.
+> Sure.  We'd like to call this new helper in a RCU
+> read-side critical section and leverage this capability to speed up path
+> walk when there is no concurrent hierarchy modification.  This use case
+> is similar to handle_dots() with LOOKUP_RCU calling follow_dotdot_rcu().
+> 
+> The main issue with this approach is to keep some state of the path walk
+> to know if the next call to "path_walk_parent_rcu()" would be valid
+> (i.e. something like a very light version of nameidata, mainly sequence
+> integers), and to get back to the non-RCU version otherwise.
+> 
+> > 
+> > My vague impression is that you want to search up from a given strut path,
+> > no further then some other given path, looking for a dentry that matches
+> > some rule.  Is that correct?
+> 
+> Yes
+> 
+> > 
+> > In general, the original dentry could be moved away from under the
+> > dentry you find moments after the match is reported.  What mechanisms do
+> > you have in place to ensure this doesn't happen, or that it doesn't
+> > matter?
+> 
+> In the case of Landlock, by default, a set of access rights are denied
+> and can only be allowed by an element in the file hierarchy.  The goal
+> is to only allow access to files under a specific directory (or directly
+> a specific file).  That's why we only care of the file hierarchy at the
+> time of access check.  It's not an issue if the file/directory was
+> moved or is being moved as long as we can walk its "current" hierarchy.
+> Furthermore, a sandboxed process is restricted from doing arbitrary
+> mounts (and renames/links are controlled with the
+> LANDLOCK_ACCESS_FS_REFER right).
+> 
+> However, we need to get a valid "snapshot" of the set of dentries that
+> (could) lead to the evaluated file/directory.
 
-Oops, this did not go well.
+A "snapshot" is an interesting idea - though looking at the landlock
+code you one need inodes, not dentries.
+I imagine an interface where you give it a starting path, a root, and
+and array of inode pointers, and it fills in the pointers with the path
+- all under rcu so no references are needed.
+But you would need some fallback if the array isn't big enough, so maybe
+that isn't a good idea.
 
-Here's a corrected version.
+Based on the comments by Al and Christian, I think the only viable
+approach is to pass a callback to some vfs function that does the
+walking.
 
-"Define a cleanup class for struct tpm_buf, which will take
- the responsibility of calling tpm_buf_destroy() automatically
- when tpm_buf instance is going out of scope."
+   vfs_walk_ancestors(struct path *path, struct path *root,
+		      int (*walk_cb)(struct path *ancestor, void *data),
+		      void *data)
 
-For the code change itself I noticed that I missed tpm-sysfs.c
-i.e., v2 coming post the feedback for this.
+where walk_cb() returns a negative number if it wants to abort, and is
+given a NULL ancestor if vfs_walk_ancestors() needed to restart.
 
-BR, Jarkko
+vfs_walk_ancestors() would initialise a "struct nameidata" and
+effectively call handle_dots(&nd, LAST_DOTDOT) repeatedly, calling
+    walk_cb(&nd.path, data)
+each time.
+
+How would you feel about that sort of interface?
+
+NeilBrown
