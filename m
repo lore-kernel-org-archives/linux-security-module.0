@@ -1,86 +1,59 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D979B28E0F;
-	Wed, 25 Jun 2025 01:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963893D76;
+	Wed, 25 Jun 2025 01:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750814510; cv=none; b=lxn5FjttiQuFvdu13pVywm9Nk3OHHjAjgDtQsdKn7w4xs9O3N8XrC6X/bQxoNTziS1KA6xbn38KMpD+GrIk+/8AxYwvEBPc+WXICd+hOgYZNHiOeNviu0ISaQRphd72eqsVjYlrDNXqolG5OOjL2Zi9fWSuIeVPceGm5sgTJbbQ=
+	t=1750816034; cv=none; b=J5n0mFQ704X9F4sBOg/4E4RWKMvFwivMGFzGVpvaLzfqkb8nOdnz0nET0dvIGideKYUVPD7pjCA0WXKsPBs1Zj5T975ePa6cpE2dzouQDqxOgI5a6rDnfV+PDs/7lWGNt/mKG1zRfait1d4LrkcGp/lV1wpN758oKZ9TPsXxfNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750814510; c=relaxed/simple;
-	bh=LINdDpNksnnx/f6tpqoh7uinTypzMUkZ0HdOvwoyNr8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NPdY00CqB0IyEW8Ymf5ULpUvOM4GhMPkYEWP3nCP0ROzJCF7Ik36cS0i5RkX34/fLUacFV/SJEAz1B1fwqHjcqLKr6VjY1gf4+I2oinCD6MoXZ/l2F/JiungdwAauvmADxRcAY2C46akMx/dzN6F8wJh1GWVF8uNOHtesMsiToE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 55P1L8Kq015816;
-	Wed, 25 Jun 2025 10:21:08 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 55P1L7LF015812
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 25 Jun 2025 10:21:08 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <5313b937-304a-4f2a-8563-3ad1ea194cb9@I-love.SAKURA.ne.jp>
-Date: Wed, 25 Jun 2025 10:21:06 +0900
+	s=arc-20240116; t=1750816034; c=relaxed/simple;
+	bh=sQvIdYmPuxQ+uOX0W2UxZjN4fj9yMQMbDq52o6eSYO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vt8p9UoH3grE5DkTlQ9hztmDOu6BptG4yCh3c1P3jbF8eL+VuoyovMT7CLBs07RcFRgDR06rC9pfKgON9ooi+6j/4SYSOB4SO67ABZVWdSQlFYw3Iif66rdl4yW5nprrSg//79svhSEtokuCAWtpXlquSfDChnjE6WbXNU84Pgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=p9FyyRTQ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="p9FyyRTQ"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1ZDQWzSMhI/Ws1MIJKwRRexhHYDoOWfZuAqhDpR3Iao=; b=p9FyyRTQ4Jr5ws9AGXo+h5oMgB
+	KW92+0ZAe25xn3kNMeio3lYgl2sxIn4XpSnBTjyQ6nXM3q39dEtdOQpW9DRhOT2HQmHLkWT7zNvEo
+	DACS4AMibaXOi3ssDL23o4MLeiPtICExbCu1uUJb6KHEEUKet2QCoSi+ibOeEprTm/v8XlD5rL6Qz
+	xZflZ0BLJbtXMPvC0aGOTJma+xsxurj/nbo/yDDTMri4PZfAZIZBQijMDRHRvlQYkuboPoPK5MZoc
+	lCU6eNuEWGca5QaXmZ9HCFm/6hiaiYFHErDuACFtz0r01LoiUxurto1v2mxizdTh+9u2LN3kX7YIS
+	eeHDX+VQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uUFEE-000000073aY-00uh;
+	Wed, 25 Jun 2025 01:47:10 +0000
+Date: Wed, 25 Jun 2025 02:47:09 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-security-module@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCHES][CFR][CFT] securityfs cleanups and fixes
+Message-ID: <20250625014709.GQ1880847@ZenIV>
+References: <20250612030951.GC1647736@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] AppArmor: add support for lsm_config_self_policy
- and lsm_config_system_policy
-To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
-        linux-security-module@vger.kernel.org
-Cc: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, mic@digikod.net, kees@kernel.org,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
-        takedakn@nttdata.co.jp, song@kernel.org, rdunlap@infraread.org,
-        linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
-        linux-kernel@vger.kernel.org
-References: <20250624143211.436045-1-maxime.belair@canonical.com>
- <20250624143211.436045-4-maxime.belair@canonical.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20250624143211.436045-4-maxime.belair@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Anti-Virus-Server: fsav403.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250612030951.GC1647736@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 2025/06/24 23:30, Maxime Bélair wrote:
-> +static int apparmor_lsm_config_self_policy(u32 lsm_id, u32 op, void __user *buf,
-> +				      size_t size, u32 flags)
-> +{
-> +	char *name = kvmalloc(size, GFP_KERNEL);
-> +	long name_size;
-> +	int ret;
-> +
-> +	if (!name)
-> +		return -ENOMEM;
-> +
-> +	if (op != LSM_POLICY_LOAD || flags)
+On Thu, Jun 12, 2025 at 04:09:51AM +0100, Al Viro wrote:
 
-Huge memory leak.
+> Branch (6.16-rc1-based) lives in
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.securityfs
+> Individual patches in followups.
+> 
+> Help with testing and review would be very welcome.
 
-> +		return -EOPNOTSUPP;
-> +
-> +	name_size = strncpy_from_user(name, buf, size);
-> +	if (name_size < 0)
-
-Here too. :-)
-
-> +		return name_size;
-> +
-> +	ret = aa_change_profile(name, AA_CHANGE_STACK);
-> +
-> +	kvfree(name);
-> +
-> +	return ret;
-> +}
-
+Seeing that no complaints have materialized, into -next it goes (with
+Acked-by/Tested-by attached)...
