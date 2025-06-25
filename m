@@ -1,91 +1,221 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9A819F40A
-	for <linux-security-module@vger.kernel.org>; Wed, 25 Jun 2025 02:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1935F1C4A2D
+	for <linux-security-module@vger.kernel.org>; Wed, 25 Jun 2025 08:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750817282; cv=none; b=e1L4uALliNJVgcol8S5nbDAPGwnJ7Op6+5zaxPlF1IZGqhCXrVEAPj+0QfoEP9lMu2fcHq7kEFvdHeI2IIsv02whg3fpl8A6eusMVWgWKCKiNRWpQOI9RwoLOY4cAMtVmKqVf6dtbVMt9aFsS4ZCITN/wDakTVoPYUhNHVA/4K4=
+	t=1750838547; cv=none; b=aIA6lia5Ef5gFDx4sSWPgdRCf5tgA3bkUSU47B2euoYeOmeqgrfTZ1gjEaIWY+EP1SANX0YXhZRKvqTmoyG1iH9aKbUANbuXnZocwvJY3I3QFzsixLPUjLNA/APD2AO7xlEbBc6R/Rr6XsZ/9o00FURJNaBGinE01LsBPQCmTBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750817282; c=relaxed/simple;
-	bh=ma+88H5VpAOifU7fHtlXxdBKdlhmSUKKZ8A91So9mGM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a4Us2o/fiSF6KYfR4T1925DAugqnXaW13ve/gbkb7Ii8RqnSwUDKes/LR8U0U1l7LYaL8+vYZZ5egaOUUTGmhkkHkjIqF21K87pzuskw9M4khqhfhdZ7LVh/J/R9wVUo0mbGPDlnDdA9xV/wMhwcz36kjU5z07IZgpyn108Cqk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aCu1mQrG; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1750838547; c=relaxed/simple;
+	bh=6C2AkZiqgd2PjEN9Dm9SREXxuPu6FUeexI9ox8vePJo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S0nSoTO/cLKIT9F1vKaW13x46KiY80sNCVaGOuwJ8Y4dArX3FqJncsoKl7TFF5GbttpHi0TWjwXG1WF05iBeUA8RZT4Hl0yh0I1et+NPgnRmJ8cICPTWLii+hN1K6enL0OCAcYMrppeV2Y0MB9gtjcl3kSiopgWi/W+TrkULOWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LNtjtFve; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GYfHfzp4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LNtjtFve; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GYfHfzp4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aCu1mQrG"
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-70f147b5a52so46145157b3.3
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Jun 2025 19:08:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1750817279; x=1751422079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ma+88H5VpAOifU7fHtlXxdBKdlhmSUKKZ8A91So9mGM=;
-        b=aCu1mQrGTrvIeygS6AxuH3K2HUUERSjtj4eyshr4PdYU6DEjweIS7AdEeHfW1Rcfel
-         NzeRw2llw+41r9aAyX6jQRlJpPuhGc9sX4bkMJN3PSq2wfUCwbs9/Sfy9QKgaT12ha03
-         6eVU3bguO6Oll/5C8Zc3gWxSDRWuxI81r/P0rJIf8bzeIDoD7RRNonjonehOKpNxZIWb
-         TLwJ3TCmVAq0byBuFhWj6bmtN21IdogFWjn8bFYiKQrK4LKfulmn0VjJan/YV4SXESDz
-         WLJkmX+lcN767Pf7KkeamVsL8jo5j0UVsCVOCDita6KOGOnQEVG6qgNkEROglhWh6vwp
-         CpIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750817279; x=1751422079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ma+88H5VpAOifU7fHtlXxdBKdlhmSUKKZ8A91So9mGM=;
-        b=C8deyHUFooMjafTunByOBmy8t3J49EPnJsT3aJLcty/TXve956RccbIjFScs09rcKp
-         04y+ETIOc8BFnewg6lLWw+D4CM5ymU3XSNtABYbpZEmXI4+/SYxIJapW9x/JOluZQsVa
-         zle+1yWAUR1Cn/hJIeeQHBQ5zcTW2CxBJ9k/KwblhVb9cZVeCxExGIfs1b+JNbVuJt6d
-         ftVRypLolAdxaaogUXb129e+D2vMNkPLojHMAFKsxkUfG8rUq9YDNRp+VSpZWMXk30CB
-         Vn5fvq123RSzucWKe1LJoOWjuUmxpr29EhsPG5gJQ2mZoPwOQI3PqkzrtVCUU7PkMHSf
-         Fr6w==
-X-Gm-Message-State: AOJu0YxP47BVFIm3viNMnSlgkJ1XGQCJReuTypWupFZt8lQx9dnj0dkp
-	gWBJxpooxFQuzh763fcvO4VDx2NkspRvCRlxZiiEqcb4X0r/ZBMXp+2PAznUUjKlkgtjyaCsTDU
-	dbxuiBR35G1SXdmSMgTBojX3S7zrxAnqa1zYuANKt
-X-Gm-Gg: ASbGnctw28//h6FlqYdzBUk62G3XOhVGSeqNunEDVUjVcYDpd0yp5FWj7LQpmrxJA3M
-	m0F8ondiNBCqwgspCklU6k+yamtjMNLMf2NW2D08hmQDv4ZwpGqrhJorfmzdT9qCXzwGC9LoEb2
-	bYAuubyYCKIHBw/ob/YsW6bghYE+qeFJkn4SiA4cTzAdk=
-X-Google-Smtp-Source: AGHT+IGlJ3+t50Dx73mM8Air5bfcWg1IIPvwg/Vg5HkXBBKOKiLaOFTVUfjQ8shi4PBm0CiACEhKPb3fm1gsyHDeyKc=
-X-Received: by 2002:a05:690c:3693:b0:70c:90af:154 with SMTP id
- 00721157ae682-71406dd05f1mr17609477b3.20.1750817279444; Tue, 24 Jun 2025
- 19:07:59 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LNtjtFve";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GYfHfzp4";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LNtjtFve";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GYfHfzp4"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5A89821175;
+	Wed, 25 Jun 2025 08:02:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750838544; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DrvSwNdc81zvrML++2yKpFy57j7rZ8Jo3PIz7pXVsKM=;
+	b=LNtjtFve4EAX4VLkjkuECIDnRZx+AE7ok5VYfl3q2rjrMOHh2z6AEKfm+FuA1RDKvD1YRZ
+	PoOwuxHgqbhPsXcJL+Am5Pv/hS/vSzPEgszIM1c26Hrmb7Py+5+hrn8EH+E1bOLM+Dh+ar
+	sdq0q88BW/gZxyqvwwSKdulKEKQMtEA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750838544;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DrvSwNdc81zvrML++2yKpFy57j7rZ8Jo3PIz7pXVsKM=;
+	b=GYfHfzp43BZxq+QsvjasY0OR3usK3pRwsSiH3WlMquA5/4EhOaAxwWzV1B9ZNDVMzmtaZv
+	5l6CiULxfiA7xTCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750838544; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DrvSwNdc81zvrML++2yKpFy57j7rZ8Jo3PIz7pXVsKM=;
+	b=LNtjtFve4EAX4VLkjkuECIDnRZx+AE7ok5VYfl3q2rjrMOHh2z6AEKfm+FuA1RDKvD1YRZ
+	PoOwuxHgqbhPsXcJL+Am5Pv/hS/vSzPEgszIM1c26Hrmb7Py+5+hrn8EH+E1bOLM+Dh+ar
+	sdq0q88BW/gZxyqvwwSKdulKEKQMtEA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750838544;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DrvSwNdc81zvrML++2yKpFy57j7rZ8Jo3PIz7pXVsKM=;
+	b=GYfHfzp43BZxq+QsvjasY0OR3usK3pRwsSiH3WlMquA5/4EhOaAxwWzV1B9ZNDVMzmtaZv
+	5l6CiULxfiA7xTCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 331D913301;
+	Wed, 25 Jun 2025 08:02:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TEQiDBCtW2h2FQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 25 Jun 2025 08:02:24 +0000
+Message-ID: <e5d11288-ef0c-4a82-b117-6d12d2357964@suse.cz>
+Date: Wed, 25 Jun 2025 10:02:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612030951.GC1647736@ZenIV> <20250625014709.GQ1880847@ZenIV>
-In-Reply-To: <20250625014709.GQ1880847@ZenIV>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 24 Jun 2025 22:07:48 -0400
-X-Gm-Features: Ac12FXxDWMVHh8x3oQC-oksHsfE97o8MSwUkJxZcBW8YhsT9RmghUSqQlA1JLeI
-Message-ID: <CAHC9VhSTzc-KZyd1RSOaFDMjmiXCQBscLE=d1wGvc=DWnfz6gQ@mail.gmail.com>
-Subject: Re: [PATCHES][CFR][CFT] securityfs cleanups and fixes
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: export anon_inode_make_secure_inode() and fix
+ secretmem LSM bypass
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+ Christian Brauner <brauner@kernel.org>,
+ Sean Christopherson <seanjc@google.com>, Mike Rapoport <rppt@kernel.org>,
+ Shivank Garg <shivankg@amd.com>, david@redhat.com,
+ akpm@linux-foundation.org, paul@paul-moore.com, viro@zeniv.linux.org.uk,
+ willy@infradead.org, pbonzini@redhat.com, tabba@google.com,
+ afranji@google.com, ackerleytng@google.com, jack@suse.cz,
+ cgzones@googlemail.com, ira.weiny@intel.com, roypat@amazon.co.uk,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <da5316a7-eee3-4c96-83dd-78ae9f3e0117@suse.cz>
+ <20250619-fixpunkt-querfeldein-53eb22d0135f@brauner>
+ <aFPuAi8tPcmsbTF4@kernel.org>
+ <20250619-ablichten-korpulent-0efe2ddd0ee6@brauner>
+ <aFQATWEX2h4LaQZb@kernel.org> <aFV3-sYCxyVIkdy6@google.com>
+ <20250623-warmwasser-giftig-ff656fce89ad@brauner>
+ <aFleB1PztbWy3GZM@infradead.org> <aFleJN_fE-RbSoFD@infradead.org>
+ <c0cc4faf-42eb-4c2f-8d25-a2441a36c41b@suse.cz>
+ <20250623142836.GT1613200@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
+ AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
+ jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
+ 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
+ Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
+ QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
+ 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
+ M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
+ r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
+ Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
+ uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
+ lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
+ zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
+ rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
+ khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
+ xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
+ AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
+ Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
+ rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
+ dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
+ m6M14QORSWTLRg==
+In-Reply-To: <20250623142836.GT1613200@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[googlemail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[infradead.org,kernel.org,google.com,amd.com,redhat.com,linux-foundation.org,paul-moore.com,zeniv.linux.org.uk,suse.cz,googlemail.com,intel.com,amazon.co.uk,vger.kernel.org,kvack.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
+X-Spam-Level: 
 
-On Tue, Jun 24, 2025 at 9:47=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
-> On Thu, Jun 12, 2025 at 04:09:51AM +0100, Al Viro wrote:
->
-> > Branch (6.16-rc1-based) lives in
-> > git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.securi=
-tyfs
-> > Individual patches in followups.
-> >
-> > Help with testing and review would be very welcome.
->
-> Seeing that no complaints have materialized, into -next it goes (with
-> Acked-by/Tested-by attached)...
+On 6/23/25 16:28, Peter Zijlstra wrote:
+> On Mon, Jun 23, 2025 at 04:21:15PM +0200, Vlastimil Babka wrote:
+>> On 6/23/25 16:01, Christoph Hellwig wrote:
+>> > On Mon, Jun 23, 2025 at 07:00:39AM -0700, Christoph Hellwig wrote:
+>> >> On Mon, Jun 23, 2025 at 12:16:27PM +0200, Christian Brauner wrote:
+>> >> > I'm more than happy to switch a bunch of our exports so that we only
+>> >> > allow them for specific modules. But for that we also need
+>> >> > EXPOR_SYMBOL_FOR_MODULES() so we can switch our non-gpl versions.
+>> >> 
+>> >> Huh?  Any export for a specific in-tree module (or set thereof) is
+>> >> by definition internals and an _GPL export if perfectly fine and
+>> >> expected.
+>> 
+>> Peterz tells me EXPORT_SYMBOL_GPL_FOR_MODULES() is not limited to in-tree
+>> modules, so external module with GPL and matching name can import.
+>> 
+>> But if we're targetting in-tree stuff like kvm, we don't need to provide a
+>> non-GPL variant I think?
+> 
+> So the purpose was to limit specific symbols to known in-tree module
+> users (hence GPL only).
+> 
+> Eg. KVM; x86 exports a fair amount of low level stuff just because KVM.
+> Nobody else should be touching those symbols.
+> 
+> If you have a pile of symbols for !GPL / out-of-tree consumers, it
+> doesn't really make sense to limit the export to a named set of modules,
+> does it?
+> 
+> So yes, nothing limits things to in-tree modules per-se. The
+> infrastructure only really cares about module names (and implicitly
+> trusts the OS to not overwrite existing kernel modules etc.). So you
+> could add an out-of-tree module name to the list (or have an out-of-free
+> module have a name that matches a glob; "kvm-vmware" would match "kvm-*"
+> for example).
+> 
+> But that is very much beyond the intention of things.
 
-Thanks Al, I appreciate the help cleaning this up.
+So AFAIK we have a way to recognize out of tree modules when loading, as
+there's a taint just for that. Then the same mechanism could perhaps just
+refuse loading them if they use any _FOR_MODULES() export, regardless of
+name? Then the _GPL_ part would become implicit and redundant and we could
+drop it as Christoph suggested?
 
---=20
-paul-moore.com
+
+
