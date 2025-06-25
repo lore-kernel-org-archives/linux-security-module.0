@@ -1,63 +1,75 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83E91C69D;
-	Wed, 25 Jun 2025 00:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DE81C69D;
+	Wed, 25 Jun 2025 00:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750812969; cv=none; b=L4J4bGsc2ZOwHvx0z15INRYSlW1XlcK52l56YjfUr2Aaq086iDuexHVG6swovFM7Cd4wMQW1LtQy9aEWwCI9iWdQVzIYwY0V5mv7qRJA1Il58LDiHbaN6Rm8Se/PgaSoNVVTt1dgybTS2MyafLeF+eEJROVwyq1lYOW2QG6jk0o=
+	t=1750813077; cv=none; b=BwCOwV4p94s7VzQwYwQSqlpuVgXT9/RXYuWn6YL0xKMGlazK6DCpGP36hpDH+QkgxMnQrffytrDI/5Ayvl6aAzSPQ1Y69I/npCH8qS/IUxr34P3ZErOSxT2y2jqCgWK4RSuXnzMZMhBlvv/7689Glz66qPS+rmNLorlvQIUpwlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750812969; c=relaxed/simple;
-	bh=IH2bGWZA5bhBYPjvdzUaJzZFzJ1VmY7yf8SFcjwQhsk=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=WYRuLQUPVeXAmjP4v7bF0V1S5ilZgZfYWPfZ7DHNT7qVnqAIkQzBJ/XJUPyefFwbdG3KX2aXo4M68WBA2isyGfncmaaErw0gDEReNGoiN1JM3wsrmMN58u8ei1022Z/0NPLV1kW1Ikwia/SSJAsyFEM4GAATy1dwZDIOpEmpZbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ir4KBpvA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750813077; c=relaxed/simple;
+	bh=3sxog9KarjUra1bsPTIgTp68dHv6ihs9IGtnMgPj24I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eaTyZSTA9ozvfR2Qc8F151beNYFvnb052oiILzC1RzQZ1BGWsQ8ImhEI3dHwUMU+kXXJN1wJLK6CsLQabYwPaOFUVl6FZ73Ov3bhP2CaK0er2RcEGJYnQ8VLmTv1UpEUvBlnpq9HSD4W7+uh7g20Fx8u1MwbIaepH+GCKjZEb6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=WurVgxZE; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ir4KBpvA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47172C4CEE3;
-	Wed, 25 Jun 2025 00:56:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750812969;
-	bh=IH2bGWZA5bhBYPjvdzUaJzZFzJ1VmY7yf8SFcjwQhsk=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ir4KBpvAgC5atDjh40sjGtgFT8QaY4e4ZecSOp99l0m9kYptgrlnabB55RYps1MYi
-	 li6Kk31MBSf3jB9SQqPfTojDOg256Kv0m+qSHhIQAmSe5uK+yaurJQd8uwh9xGKIF1
-	 rqbPsDluqc1597i5b0kCTCvvQcbg3aMTG8Jkf5yUO5T/OxtfsemoL5pnneVzG7sSQT
-	 Q7NLH78lA2Duq99iK0f0E36jDTG8Di5hFcYztk2kT/o2929uNV6lrW5PeFkwN+3DsT
-	 dWMaL4u/mD93rRIATPk1bNO7geqjaUJixkLT1L7x5CFVYx8QiaUXljKKsz6OIUWJ8R
-	 OJqUMBUsz3SsQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3415C39FEB73;
-	Wed, 25 Jun 2025 00:56:37 +0000 (UTC)
-Subject: Re: [GIT PULL] selinux/selinux-pr-20250624
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <190ee36309adb0efa27e3b39a1a93de3@paul-moore.com>
-References: <190ee36309adb0efa27e3b39a1a93de3@paul-moore.com>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <190ee36309adb0efa27e3b39a1a93de3@paul-moore.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20250624
-X-PR-Tracked-Commit-Id: fde46f60f6c5138ee422087addbc5bf5b4968bf1
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7595b66ae9de667bf35a8c99e8f1bfc4792e207e
-Message-Id: <175081299575.4088186.8297113350911328984.pr-tracker-bot@kernel.org>
-Date: Wed, 25 Jun 2025 00:56:35 +0000
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WurVgxZE"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=atVojG7bUTPZmKUSvlctp8HQyu35rHIBOIdL8quSxiE=; b=WurVgxZEUVqMBFhFWx3cZF0/IF
+	v2qTI11x5HFTbgEzDZJDkXsgxvs/wMo7Hs1IFqnwwGbO8HCVzjcLMXwob66ce15LcDd5FHuV8qnUP
+	OqGfLCtPZO28RIqf32+PYYpcxRXuN8fRaZWkMcCPo9zrvZamgr+mHvtw8H+8vqgutOOdS+Vphb7Uv
+	cpgz4qDfZFNjLG3O1YWHudbaJBFSGok3eR6nPd83uzr8+OBmp15BxOVyq+OlwUHQx2DqfyhKr8E9b
+	6q66Rwz/Ng4klFSV1Z925YaDkD0FJsdXtiCNRZ/tXo3DzrtWXCkA7gbnTpy568dzm8LoYmT/77w/n
+	hd/YEP8g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uUESW-00000006N6e-2vN2;
+	Wed, 25 Jun 2025 00:57:52 +0000
+Date: Wed, 25 Jun 2025 01:57:52 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
 To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH] selinuxfs_fill_super(): don't bother with
+ selinuxfs_info_free() on failures
+Message-ID: <20250625005752.GP1880847@ZenIV>
+References: <20250615003011.GD1880847@ZenIV>
+ <20250615003110.GA3011112@ZenIV>
+ <20250615020154.GE1880847@ZenIV>
+ <CAHC9VhR6BAOqHuBf+DdWQC-D+Lfd2C9WLTEpFjy1XQkqH1syig@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhR6BAOqHuBf+DdWQC-D+Lfd2C9WLTEpFjy1XQkqH1syig@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-The pull request you sent on Tue, 24 Jun 2025 20:10:50 -0400:
+On Tue, Jun 24, 2025 at 07:44:23PM -0400, Paul Moore wrote:
+> On Sat, Jun 14, 2025 at 10:02 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > [don't really care which tree that goes through; right now it's
+> > in viro/vfs.git #work.misc, but if somebody prefers to grab it
+> > through a different tree, just say so]
+> >
+> > Failures in there will be followed by sel_kill_sb(), which will call
+> > selinuxfs_info_free() anyway.
+> >
+> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > ---
+> >  security/selinux/selinuxfs.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> 
+> Thanks Al.  I went ahead and merged this into the selinux/dev branch
+> to help avoid any merge issues, but if you've changed your mind and
+> feel strongly about taking it via your tree let me know.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20250624
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7595b66ae9de667bf35a8c99e8f1bfc4792e207e
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Dropped from #work.misc and #for-next
