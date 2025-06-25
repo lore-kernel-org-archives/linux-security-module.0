@@ -1,123 +1,63 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DEA72634;
-	Wed, 25 Jun 2025 00:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83E91C69D;
+	Wed, 25 Jun 2025 00:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750812150; cv=none; b=Jnqgsls5U7zQpYZI5IGOIkEyglTSKAjjZ2U54mstcinoqdXJRWi4jlyRRUzE+k9rORCw91rhzIH3GvuvQr7w3NQU5cJFc/BCT6lrf1KLXE5xAR8BHd838lIk+kr93+eY0KPKU+N2kL0pCfhxGKmuiuuMtfJgnmMKvf0KSuC9tGQ=
+	t=1750812969; cv=none; b=L4J4bGsc2ZOwHvx0z15INRYSlW1XlcK52l56YjfUr2Aaq086iDuexHVG6swovFM7Cd4wMQW1LtQy9aEWwCI9iWdQVzIYwY0V5mv7qRJA1Il58LDiHbaN6Rm8Se/PgaSoNVVTt1dgybTS2MyafLeF+eEJROVwyq1lYOW2QG6jk0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750812150; c=relaxed/simple;
-	bh=sU2bp2FhksrcqHMdvPNPlXXnoiA4d9/n8fR2mCs2TO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M6OMCwb6e+oyT/TZqkAiK9Z0zmeYFCrWYzvrMbUrlBHJENnd8xYqqGu4Ao1+JeoD7ArLKVcJDvrpRoeDvYndfCbbUc5KzBlO1WZxiVteDIAOLcF35n6OaRJjlWIRWGnqWPFcGquGmUano3AvgZqkiXdAJVWMVkcdUDZ3sInWLqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qolb9x/4; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1750812969; c=relaxed/simple;
+	bh=IH2bGWZA5bhBYPjvdzUaJzZFzJ1VmY7yf8SFcjwQhsk=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=WYRuLQUPVeXAmjP4v7bF0V1S5ilZgZfYWPfZ7DHNT7qVnqAIkQzBJ/XJUPyefFwbdG3KX2aXo4M68WBA2isyGfncmaaErw0gDEReNGoiN1JM3wsrmMN58u8ei1022Z/0NPLV1kW1Ikwia/SSJAsyFEM4GAATy1dwZDIOpEmpZbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ir4KBpvA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qolb9x/4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750812149; x=1782348149;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sU2bp2FhksrcqHMdvPNPlXXnoiA4d9/n8fR2mCs2TO0=;
-  b=Qolb9x/441o6FMdjxErw6gweCdzLguhyzm/RVJirj3UMThlWGe8LmqGP
-   EEx/uQrwchqfj2WAYegMT/+v7wtglSeGgIui8MoQuLrCJ/T4qKIesQQeL
-   JUxUK0cBcYVlLuSKs9Io+BcwYEebFe2SjzpK59mj/+I+jOa2oEga+UHxT
-   HfEeNcOIsQY8+sWibEtb9vGdOzLWPYc2CKiVt8V8WuJlarPIlUjN9022o
-   pxNGpMGUBQVYbJMQl8TzWfh/sBdN4CU6dUxvB3K63dod5otec7VWobaLW
-   RoWFarwE23fj8PHbpFUA5BoKD9qabL/YrJPvTdCOToslJACJ1XfXAeCXr
-   Q==;
-X-CSE-ConnectionGUID: 0EJvShpNSeGq+X1pjXN1VQ==
-X-CSE-MsgGUID: 0pNFTTd8RJyHtgAxyQtrZg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="70497671"
-X-IronPort-AV: E=Sophos;i="6.16,263,1744095600"; 
-   d="scan'208";a="70497671"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 17:42:28 -0700
-X-CSE-ConnectionGUID: D6eAnGzDS2CVyTA3FvngIg==
-X-CSE-MsgGUID: b/dXdKFATX2y6HDy5S3wfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,263,1744095600"; 
-   d="scan'208";a="183103928"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 24 Jun 2025 17:42:23 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uUEDV-000Sd4-1v;
-	Wed, 25 Jun 2025 00:42:21 +0000
-Date: Wed, 25 Jun 2025 08:42:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>,
-	linux-security-module@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, john.johansen@canonical.com,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	mic@digikod.net, kees@kernel.org, stephen.smalley.work@gmail.com,
-	casey@schaufler-ca.com, takedakn@nttdata.co.jp,
-	penguin-kernel@i-love.sakura.ne.jp, song@kernel.org,
-	rdunlap@infraread.org, linux-api@vger.kernel.org,
-	apparmor@lists.ubuntu.com, linux-kernel@vger.kernel.org,
-	Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>
-Subject: Re: [PATCH v3 2/3] lsm: introduce security_lsm_config_*_policy hooks
-Message-ID: <202506250843.UnXrlnza-lkp@intel.com>
-References: <20250624143211.436045-3-maxime.belair@canonical.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ir4KBpvA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47172C4CEE3;
+	Wed, 25 Jun 2025 00:56:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750812969;
+	bh=IH2bGWZA5bhBYPjvdzUaJzZFzJ1VmY7yf8SFcjwQhsk=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ir4KBpvAgC5atDjh40sjGtgFT8QaY4e4ZecSOp99l0m9kYptgrlnabB55RYps1MYi
+	 li6Kk31MBSf3jB9SQqPfTojDOg256Kv0m+qSHhIQAmSe5uK+yaurJQd8uwh9xGKIF1
+	 rqbPsDluqc1597i5b0kCTCvvQcbg3aMTG8Jkf5yUO5T/OxtfsemoL5pnneVzG7sSQT
+	 Q7NLH78lA2Duq99iK0f0E36jDTG8Di5hFcYztk2kT/o2929uNV6lrW5PeFkwN+3DsT
+	 dWMaL4u/mD93rRIATPk1bNO7geqjaUJixkLT1L7x5CFVYx8QiaUXljKKsz6OIUWJ8R
+	 OJqUMBUsz3SsQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3415C39FEB73;
+	Wed, 25 Jun 2025 00:56:37 +0000 (UTC)
+Subject: Re: [GIT PULL] selinux/selinux-pr-20250624
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <190ee36309adb0efa27e3b39a1a93de3@paul-moore.com>
+References: <190ee36309adb0efa27e3b39a1a93de3@paul-moore.com>
+X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
+X-PR-Tracked-Message-Id: <190ee36309adb0efa27e3b39a1a93de3@paul-moore.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20250624
+X-PR-Tracked-Commit-Id: fde46f60f6c5138ee422087addbc5bf5b4968bf1
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 7595b66ae9de667bf35a8c99e8f1bfc4792e207e
+Message-Id: <175081299575.4088186.8297113350911328984.pr-tracker-bot@kernel.org>
+Date: Wed, 25 Jun 2025 00:56:35 +0000
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624143211.436045-3-maxime.belair@canonical.com>
 
-Hi Maxime,
+The pull request you sent on Tue, 24 Jun 2025 20:10:50 -0400:
 
-kernel test robot noticed the following build warnings:
+> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20250624
 
-[auto build test WARNING on 9c32cda43eb78f78c73aee4aa344b777714e259b]
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/7595b66ae9de667bf35a8c99e8f1bfc4792e207e
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-B-lair/Wire-up-lsm_config_self_policy-and-lsm_config_system_policy-syscalls/20250624-225008
-base:   9c32cda43eb78f78c73aee4aa344b777714e259b
-patch link:    https://lore.kernel.org/r/20250624143211.436045-3-maxime.belair%40canonical.com
-patch subject: [PATCH v3 2/3] lsm: introduce security_lsm_config_*_policy hooks
-config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20250625/202506250843.UnXrlnza-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250625/202506250843.UnXrlnza-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506250843.UnXrlnza-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/perf_event.h:62,
-                    from include/linux/trace_events.h:10,
-                    from include/trace/syscall.h:7,
-                    from include/linux/syscalls.h:94,
-                    from init/main.c:21:
->> include/linux/security.h:1618:12: warning: 'security_lsm_config_system_policy' defined but not used [-Wunused-function]
-    1618 | static int security_lsm_config_system_policy(u32 lsm_id, u32 op, void __user *buf,
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/security.h:1611:12: warning: 'security_lsm_config_self_policy' defined but not used [-Wunused-function]
-    1611 | static int security_lsm_config_self_policy(u32 lsm_id, u32 op, void __user *buf,
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/security_lsm_config_system_policy +1618 include/linux/security.h
-
-  1617	
-> 1618	static int security_lsm_config_system_policy(u32 lsm_id, u32 op, void __user *buf,
-  1619						     size_t size, u32 flags)
-  1620	{
-  1621	
-  1622		return -EOPNOTSUPP;
-  1623	}
-  1624	#endif	/* CONFIG_SECURITY */
-  1625	
+Thank you!
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
