@@ -1,95 +1,156 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DEE2F1FC9;
-	Thu, 26 Jun 2025 22:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F101FC0F0;
+	Thu, 26 Jun 2025 22:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750977362; cv=none; b=mNXc1Uso0p8VIgkjuhjrP8F6bLqc2pLxaNVGowrLPIgVxMj3YrY1Vkl0piCr4cKVRLvhRqcrxjm1KHp0wpejGNPtJXkBDlRHnmwdMrY/jKV0zxG4sLplQrH0PfKTnx94HqBIMx2KYBnoETv2tVjPfmzkfrDo4PD4DvoX5OFYV6s=
+	t=1750978338; cv=none; b=ebhwKnTWbzTtwGwKxr6MVWFdivWGKnRsbarclzV2o1sZHtNhumfnFWBxxWNybwagteu1RiWe5KfPZ1kXJcObV0JtFymbXdc0YuArJgxiQPnheW3mQ2+fZYO7DEHy8OdMt2Fmoh7c2t9gjLo65Cz9tBXmDi+YZi23fqs4F0T2jLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750977362; c=relaxed/simple;
-	bh=H1rfMDwf9pZjSftI60w8pVVvv8SLrC7CTgYtTp0yft0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DcpRpYe251rG9GkziKBboD+7PpxNICuya48f71n5sGVRMzV5RRaTDQwAbSFneekCP5PEM76Yssxvu5+E0AC//kJWH+Jr+9pgTkK70lwYJIiFX4NVFI/rnsjyk9dkeCMSWMnC5yUjksnRDbBEUS5d4fZjtN+7qtyPOGxg6zaGfa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HX+eokZn; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HX+eokZn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18F2AC4CEEB;
-	Thu, 26 Jun 2025 22:36:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750977361;
-	bh=H1rfMDwf9pZjSftI60w8pVVvv8SLrC7CTgYtTp0yft0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HX+eokZntsqP0VcgXZBS6TfN95r9PfAMWyWcXOlK4FzVTWb1kA7RPcqgEEjUvksDu
-	 00wyRrqXFqmZiLXjlsxT7hrDX5ZTERnVHUflQnzA01fO9ntKlTgLurEFxS3GuY1nLY
-	 qgh5TjReihiDJOf3TteVgZnjtf/ah4LbmAoJGTZMmyG3bSlo1Z+prZomTUfwnaX2PV
-	 bXhYGMuBVnnLAW/BPBhyi/AaW4cpGhDNvHfv2gEtoJ72JQ+CF4ZTZwRv7vEBB+YqO8
-	 EFfmNrXRXs0ZjUVlmu9Npol1zjZsMdAS+OiuIWIFmhT4yISqaVasAQGwK9VPG+a5AC
-	 OsKagqRrjko5w==
-Date: Fri, 27 Jun 2025 01:35:57 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2] tpm: Cleanup class for tpm_buf
-Message-ID: <aF3LTXgI2uV6k2js@kernel.org>
-References: <20250626101935.1007898-1-jarkko@kernel.org>
- <6a70dbdba3cef9f7ec580ce0147b1c89feb28074.camel@HansenPartnership.com>
- <aF2NNHilFfZwBoxA@kernel.org>
+	s=arc-20240116; t=1750978338; c=relaxed/simple;
+	bh=b8e3eSlYm0Iki0C04qxFWFSGgpEYimw2Aeh8yUtp/sc=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=hSeljsAUpwBopLb3uGhjCZ+cUCi+kkFKVP6keWhgZxPFkT7LE02NaBeaUr+KW95EMlBh/QOLuBIR++zouPUT2GqduwngCO5HRYK/pw+g9jb6Ab/JtQiYE7R+mLqRA15DUdLjf8IzztClvZCoRKsik0GVVCrDoDhMluIrbJbVR4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uUvRO-006HqN-Es;
+	Thu, 26 Jun 2025 22:51:34 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aF2NNHilFfZwBoxA@kernel.org>
+From: "NeilBrown" <neil@brown.name>
+To: "Song Liu" <songliubraving@meta.com>
+Cc: "Tingmao Wang" <m@maowtm.org>,
+ =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ "Song Liu" <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>,
+ "brauner@kernel.org" <brauner@kernel.org>,
+ "Kernel Team" <kernel-team@meta.com>, "andrii@kernel.org" <andrii@kernel.org>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "mattbobrowski@google.com" <mattbobrowski@google.com>,
+ =?utf-8?q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
+In-reply-to: <127D7BC6-1643-403B-B019-D442A89BADAB@meta.com>
+References: <>, <127D7BC6-1643-403B-B019-D442A89BADAB@meta.com>
+Date: Fri, 27 Jun 2025 08:51:21 +1000
+Message-id: <175097828167.2280845.5635569182786599451@noble.neil.brown.name>
 
-On Thu, Jun 26, 2025 at 09:11:05PM +0300, Jarkko Sakkinen wrote:
-> On Thu, Jun 26, 2025 at 10:50:22AM -0400, James Bottomley wrote:
-> > On Thu, 2025-06-26 at 13:19 +0300, Jarkko Sakkinen wrote:
-> > > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
-> > > 
-> > > Create a cleanup class for struct tpm_buf using DEFINE_CLASS(), which
-> > > will guarantee that the heap allocated memory will be freed
-> > > automatically for the transient instances of this structure, when
-> > > they go out of scope.
-> > > 
-> > > Wrap this all into help macro CLASS_TPM_BUF().
-> > > 
-> > > A TPM buffer can now be declared trivially:
-> > > 
-> > >     CLASS_TPM_BUF(buf, buf_size);
-> > 
-> > Well, that's not all ... you're also adding a size to the API that we
-> > didn't have before, which should at least be documented in the commit
-> > message and probably be a separate patch.
-> > 
-> > What is the reason for this, though?  The reason we currently use a
-> > page is that it's easy for the OS to manage (no slab fragmentation
-> > issues).  The TCG reference platform defines this to be just under 4k
-> > (actually 4096-0x80) precisely because TPM implementations don't do
-> > scatter gather, so they don't want it going over an ARM page, so
-> > there's no danger of us ever needing more than a page.
+On Fri, 27 Jun 2025, Song Liu wrote:
 > 
-> Thanks for the valuable feedback.
 > 
-> I can drop "buf_size" parameter. It is not a priority, and I also
-> agree with your comments.
+> > On Jun 26, 2025, at 3:22â€¯AM, NeilBrown <neil@brown.name> wrote:
+> 
+> [...]
+> 
+> >> I guess I misunderstood the proposal of vfs_walk_ancestors() 
+> >> initially, so some clarification:
+> >> 
+> >> I think vfs_walk_ancestors() is good for the rcu-walk, and some 
+> >> rcu-then-ref-walk. However, I donâ€™t think it fits all use cases. 
+> >> A reliable step-by-step ref-walk, like this set, works well with 
+> >> BPF, and we want to keep it.
+> > 
+> > The distinction between rcu-walk and ref-walk is an internal
+> > implementation detail.  You as a caller shouldn't need to think about
+> > the difference.  You just want to walk.  Note that LOOKUP_RCU is
+> > documented in namei.h as "semi-internal".  The only uses outside of
+> > core-VFS code is in individual filesystem's d_revalidate handler - they
+> > are checking if they are allowed to sleep or not.  You should never
+> > expect to pass LOOKUP_RCU to an VFS API - no other code does.
+> > 
+> > It might be reasonable for you as a caller to have some control over
+> > whether the call can sleep or not.  LOOKUP_CACHED is a bit like that.
+> > But for dotdot lookup the code will never sleep - so that is not
+> > relevant.
+> 
+> Unfortunately, the BPF use case is more complicated. In some cases, 
+> the callback function cannot be call in rcu critical sections. For 
+> example, the callback may need to read xatter. For these cases, we
+> we cannot use RCU walk at all. 
 
-I also noticed that I had changed one log message in tpm2-sessions.c. It
-was unintended i.e. a spurious change. I'll revert that one too.
+I really think you should stop using the terms RCU walk and ref-walk.  I
+think they might be focusing your thinking in an unhelpful direction.
 
-I'll split this into more reasonable portions for next version so these
-should be easier to review then.
+The key issue about reading xattrs is that it might need to sleep.
+Focusing on what might need to sleep and what will never need to sleep
+is a useful approach - the distinction is wide spread in the kernel and
+several function take a flag indicating if they are permitted to sleep,
+or if failure when sleeping would be required.
 
-BR, Jarkko
+So your above observation is better described as 
+
+   The vfs_walk_ancestors() API has an (implicit) requirement that the
+   callback mustn't sleep.  This is a problem for some use-cases
+   where the call back might need to sleep - e.g. for accessing xattrs.
+
+That is a good and useful observation.  I can see three possibly
+responses:
+
+1/ Add a vfs_walk_ancestors_maysleep() API for which the callback is
+   always allowed to sleep.  I don't particularly like this approach.
+
+2/ Use repeated calls to vfs_walk_parent() when the handling of each
+   ancestor might need to sleep.  I see no problem with supporting both
+   vfs_walk_ancestors() and vfs_walk_parent().  There is plenty of
+   precedent for having different  interfaces for different use cases.
+
+3/ Extend vfs_walk_ancestors() to pass a "may sleep" flag to the callback.
+   If the callback finds that it needs to sleep but that "may sleep"
+   isn't set, it returns some well known status, like -EWOULDBLOCK (or
+   -ECHILD).  It can expect to be called again but with "may sleep" set.
+   This is my preferred approach. There is precedent with the
+   d_revalidate callbacks which works like this.
+   I suspect that accessing xattrs might often be possible without
+   sleeping.  It is conceivable that we could add a "may sleep" argument
+   to vfs_getxattr() so that it could still often be used without
+   requiring vfs_walk_ancestors() to permit sleeping.
+   This would almost certainly require a clear demonstration that 
+   there was a performance cost in not having the option of non-sleeping
+   vfs_getxattr().
+
+> 
+> > I strongly suggest you stop thinking about rcu-walk vs ref-walk.  Think
+> > about the needs of your code.  If you need a high-performance API, then
+> > ask for a high-performance API, don't assume what form it will take or
+> > what the internal implementation details will be.
+> 
+> At the moment, we need a ref-walk API on the BPF side. The RCU walk
+> is a totally separate topic. 
+
+Do you mean "we need step-by-step walking" or do you mean "we need to
+potentially sleep for each ancestor"?  These are conceptually different
+requirements, but I cannot tell which you mean when you talk about "RCU
+walk".
+
+Thanks,
+NeilBrown
+
+> 
+> > I think you already have a clear answer that a step-by-step API will not
+> > be read-only on the dcache (i.e.  it will adjust refcounts) and so will
+> > not be high performance.  If you want high performance, you need to
+> > accept a different style of API.
+> 
+> Agreed. 
+> 
+> Thanks,
+> Song
+> 
+> 
+
