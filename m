@@ -1,68 +1,99 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CAE25E80D;
-	Thu, 26 Jun 2025 22:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926A82F1FC9;
+	Thu, 26 Jun 2025 22:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750975982; cv=none; b=a+Bq2dVKmS/1RO1AMhNmyj6tQONOwHPSrLWxz4WHQoROQyAbihMXHHgZOC/rd4aytSUmuWhSs7nIBXmee5+alK6BXoGt5xmnEG7a+8l00XyP9gfmZCmRXU7gYIgXwga6gMBP8289EcSoZ+gDIYY1rKrNGYwn6k3Q51FOchWENRI=
+	t=1750977188; cv=none; b=C2MYXC6Z/Mx1psnB7XmyerkjQWRBp/TXafAlv62qWEgnRVcS2B0y6lV83MIPGHBi6eq2kU6FoZbQdy8WJORT4BzunnMRbXUfRZAxhy2X7lKk5uw3mkz+pR3FvQvVXQBG4j8XwTj/Yew9dkdntCBUButg7pSpkqCtD4jO3qeIZ7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750975982; c=relaxed/simple;
-	bh=H3nHtx4WdySxscS7WlwJbNB0IsYLDw5M8JaFSplT1os=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=mAeD5qGBEG8FL/sx3pA/A1cbOzDtjUzboXASi9iPYBPXlsQAy2r2HRyvEpyxit3wMpxWNYnDJt2ImL7xyXLZFESl/nkUG++qv11m9JiHCitiwPH2s+agO8d907eTTuhClDQsYpEJMWcZSmfUaA4xFb5IzIunuBrBIOkH7fESrF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=DJzXJFHD; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1750977188; c=relaxed/simple;
+	bh=oYEdw6H3I4g+axHYIfU1xMFRXCvU8uB8d1u0c0O3u2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LRUMmxldsQ3t3itqmSuTcBdW5nHLzbv5izfpF/hcSRpHpsJ4/0ZktybPDgDWYouI5PupLt6Mue4gMBXw5vnkwpJaTok+J2TMyVcN5QEjRMNoINVAc8YdyRtYf5kcKxq5qPbWwhnv7EraL5qegtZLyO1tZTMYYLKFh76O1Hp2Bgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iq8E9cXE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="DJzXJFHD"
-Received: by linux.microsoft.com (Postfix, from userid 1216)
-	id 651BE211519B; Thu, 26 Jun 2025 15:12:54 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 651BE211519B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1750975974;
-	bh=S/ZeQ9WRmoypM6iMdsfjPU7NXHOee6zKL+IseMlKxSg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DJzXJFHD2nLZyScweINr6X2Id+YkE0EH9OoBOb4KFAdfRFQuA6HM7QMviG0Bk7hSv
-	 6MGdZjW1KBhWhECJJFxnbbRkqPgpl7Km2rKt37hVoSsXIzoFLsO/Osxydy2cBrcqVN
-	 iEdI1YtqLNDzMNUU87zukb727cGIbFDKE4LC8WX0=
-From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iq8E9cXE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFAC0C4CEEB;
+	Thu, 26 Jun 2025 22:33:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750977188;
+	bh=oYEdw6H3I4g+axHYIfU1xMFRXCvU8uB8d1u0c0O3u2c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Iq8E9cXEGHuglNY/d27sdNwpBv5ZwCg/+z79mTAUM+uovm+evzPKmyaDQyDjfHPEp
+	 IP0qN2Xhip7DHA+YJMcxsC0bWG76/qOn0H8sh/96jJc6G5LKh1+3ZcIO1xytnw4zLu
+	 MO9BgufVyOXJ/mhvLPgkbEp11WBBGR9xXpEE4djy9GxfGti66Y3jhokh4D+boyjeYE
+	 EUGgdJhVbQQtlqxV0/oDWvgWjZQLSWmEGt6M2DgKc2lHPlfww4d8vBGqn78+jc9+H7
+	 PVy2+Hpw8YwEsX9ySlcKNrTGTxtOmD+7ALETgMrZS7HcXf+ylLoNN6AB7Up/MIYgkn
+	 e0bcrrIR5RLPg==
+Date: Fri, 27 Jun 2025 01:33:04 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>,
-	Yue Haibing <yuehaibing@huawei.com>,
-	Tanya Agarwal <tanyaagarwal25699@gmail.com>,
-	Kees Cook <kees@kernel.org>,
-	linux-efi@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-Subject: [PATCH 0/2] Secure Boot lock down
-Date: Thu, 26 Jun 2025 15:10:37 -0700
-Message-Id: <1750975839-32463-1-git-send-email-hamzamahfooz@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	"open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] tpm: Create cleanup class for tpm_buf
+Message-ID: <aF3KoHdo6dY6nYbw@kernel.org>
+References: <20250625213757.1236570-1-jarkko@kernel.org>
+ <20250626144915.GD213144@ziepe.ca>
+ <aF2QbDmxzGJS903j@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aF2QbDmxzGJS903j@kernel.org>
 
-All major distros have had carried a version of this patch-set
-out of tree for sometime now, but with a bunch of magic (typically
-sprinkled in setup_arch()). Though we can avoid those architecture
-specific quirks if we call efi_get_secureboot_mode() from
-efisubsys_init() and that allows us to have a generic solution.
+On Thu, Jun 26, 2025 at 09:24:48PM +0300, Jarkko Sakkinen wrote:
+> > At least I would add the class and drop the tpm_buf_destroy() as one
+> > patch, and another would be to cleanup any empty gotos.
+> > 
+> > Also, I think the style guide for cleanup.h is to not use the
+> > variable block, so it should be more like:
+> > 
+> > CLASS(tpm_buf, buf)();
+> > if (!tpm_buf)
+> >    return -ENOMEM;
+> > 
+> > AFAICT, but that seems to be some kind of tribal knowledge.
+> 
+> This was improved in v2 :-) If you have some proposal how you'd
+> liked that version to be splitted, please give feedback.
 
-Hamza Mahfooz (2):
-  security: introduce security_lock_kernel_down()
-  efi: introduce EFI_KERNEL_LOCK_DOWN_IN_SECURE_BOOT
+After a bit of thought, II could split v2 e.g., into to the following
+list of patches (a draft, along the lines):
 
- drivers/firmware/efi/Kconfig  | 10 ++++++++++
- drivers/firmware/efi/efi.c    |  9 +++++++++
- include/linux/lsm_hook_defs.h |  1 +
- include/linux/security.h      |  8 ++++++++
- security/lockdown/lockdown.c  |  1 +
- security/security.c           | 15 +++++++++++++++
- 6 files changed, 44 insertions(+)
+1. Prepare internals for API changes.
+2. Implement tpm_buf_alloc().
+3. Implement CLASS_TPM_BUF() macro.
+4. Changes for tpm{1,2}-cmd.c.
+6. Changes for tpm2-sessions.c.
+7. Changes for tpm2-space.c.
+8. Changes for trusted_tpm{1,2}.c
+9. Remove stuff left w/o a call site.
 
--- 
-2.49.0
+It's pretty good exercise for v2 actually as it is already somewhat
+functional code. By doing this split this update will get already
+reasonably well verified.
 
+I should also probably emphasize the motivation better in the next
+version.  Especially with multiple tpm_buf instances in the same
+function scope, things do something are messy to backtrack. In addition,
+this complexity might cap the motivation for someone to contribute a
+useful feature.
+
+I don't really have even followed Linus' opinions in this topic per se
+I personally just think that since I have a measured argument for this.
+I got with that and talk with Linus if he wants to bring it up :-)
+
+BR, Jarkko
