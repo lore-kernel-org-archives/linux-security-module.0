@@ -1,109 +1,150 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BC8433CB;
-	Fri, 27 Jun 2025 04:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1271F0E34;
+	Fri, 27 Jun 2025 06:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750997086; cv=none; b=E7FIbhrbH6PixSlpLlMATi2howEXERoPIdquRPNFbOEiGizkw0tDKBZLjCDsqrqsodFYtoMmmvL2d5IT3Vdi1mnCb/H3ZKr9sJ+5oh2eGkwqYT3E7fFd31vX366Xvgs+vTulivadV4y2ZcAW6t6yPC4htr6eRHZCvlcIJFNRqrg=
+	t=1751004912; cv=none; b=VMQkR1JUZQuRwxovkDF6yyLe3c09/D1k2BOFcOe8MK1qeuGjrTBq+icfXhKL5G3Jlfgscl0OONMFqKEzlsTVDH2Zl7aWJUxzAxc4fB+HgCfRjUWr2DpTH0XDhUA9kTXvuvqRWNz00f+C57oNdi6k8xP/oVCVWo3QRFnmvw3YvPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750997086; c=relaxed/simple;
-	bh=Mma9CMSMYc/gD5PCHcAaBFj3rdMlrbBicSyXXt9PcNw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CH+fdUQoNoYrSKPhkzqKjsLyXwy3hR6iRwOjJmc0HDENGrGUJLDDdTpisrACc4SSBAdWK0YN6ntkKftS3+zJli9nGsumGHM2Lwwk0s+4VShNwaDbvgbVwMNQxgU6fKyQs9BEfbauyKcEsc3cTnZDf7oTW6XCtaK1tw2YNK7XHU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GqQsdhNH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751004912; c=relaxed/simple;
+	bh=ho1Mpm1BJGQKhTyqMeXmsElZRcoUvPwpcxQ4YCshUKY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MWjOqMVowl/sYoTaq3zVMPKNWZvZ//HblW9pg4x0oJpkCqfUP/NGQiEYlXDFiEPhEChOSfHeIU8Xe5JQVDt09ziUFVSrolpeTYNjmhJ+FOEKM4IWsKFD6gMyg0ERIwKGoaRy64AKmVyHcP2GlptgFqrKLgj6auhFjkZiXGvWcpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=RS4vt791; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GqQsdhNH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44A37C4CEF3;
-	Fri, 27 Jun 2025 04:04:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750997086;
-	bh=Mma9CMSMYc/gD5PCHcAaBFj3rdMlrbBicSyXXt9PcNw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GqQsdhNHawq+twbptt2NsZrIZKLSabBpQD8l9QCIvtKBdw6zr0kum6stEkpAQg3d4
-	 dh/Zee7lp4FeqOWOtb/hPstD7eb1WZQi7o+o0mgmxnBi/aDjVXqW9CL53IS40cof8S
-	 5btltkZpJZRkXm+lPpKeK/d6JkAZCrwL+gi8QaFZqWAv4/WRhQ6wbex8D6BHA/nB2R
-	 GLj6xRtD32CzobSbXj6JVrj3VR2al3BDFucGbOGaVOZK+zufw+FtB6oBFspD9S3B0/
-	 yeT+Zl456Sgorvbopz4XQlsW2ZerjX/8/4nuYhkBQBQqo9xxtUp4K55kyCE1h1+9Wh
-	 unEBKSHzEPiZw==
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4a6f0bcdf45so24453891cf.0;
-        Thu, 26 Jun 2025 21:04:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVEvFnWpy0Xw2lE75sZJkC7YwD49dcVKsVrN218hQjj2kS6Xw5361BfxYsg89CaBfLdHhGLEm2iMwWAvhOYrg7DnujI2a7j@vger.kernel.org, AJvYcCVuGO6WrSIk4mB57pqWphnnajmq1o9LQki7S69qaHqlRFSQcLm8k8YUdt8tUcwZRE1Uo1TLiS4KNrMQpu3C@vger.kernel.org, AJvYcCWJM/81xbjCcgU1w4+nkJN8TMyHbpcoR+ZBfVSbpCrxhKvDNq8LwdTB8Gi+Cp7Srk3tOPU=@vger.kernel.org, AJvYcCXqF5Nf9vj2euzgmzrVQqvjEEnT9TTTuK6vgRhsg6PqJKqjHrntYTakTWd7jOjsftUdzOoumY9LIBW3GuNkmA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaQQEUVYf20Df/hKMxeUlYepm0aR8PY0PNxxOv+4vUr3VoJgzm
-	Q809Bhqan9LdsBEl8tqkZRFDlZctuxgJpn9o+RaaoRq8pktU0da0aK/BPUnNKof8LY/kQkh0M7X
-	2pkaUP9sCifnDe8hxS1oW3Acmtk+Fi/Y=
-X-Google-Smtp-Source: AGHT+IEhPbrm4/U3sDNEwA/4jw/JLLVdlPl7uDfbqleHnpYFV4MonybK6KW/yjpz6QK1Zg9rw+cYaygKu52dDc4wc4Q=
-X-Received: by 2002:ac8:7d84:0:b0:4a7:1460:f1bd with SMTP id
- d75a77b69052e-4a7fc9ca4b4mr32081011cf.8.1750997085228; Thu, 26 Jun 2025
- 21:04:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="RS4vt791"
+Received: from [10.8.193.3] (unknown [50.47.147.87])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id DD1233F189;
+	Fri, 27 Jun 2025 06:14:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1751004901;
+	bh=/N7X5FWAGiV9qNbZhl0HebTtvu44whWkWgtP35K6Pes=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=RS4vt791TCKs4X6kEG5L77ki2W2NrsZFHx5zdXMcQ3g7B5Yh5FOQBXlrLO8+H1n4V
+	 91Z8+LTsyOFVfWDw92Hnbbxj6NkLRXPKr672XwAMexILNpIt8k7LY2JnMdaUe7JTxd
+	 L3cOiE+4OR//gii9ELUm/ONjBBnOr+AmfPsL6uuCjil8gZRhnNofQGo7DrHSS+4Hlu
+	 JPSxGR4wms73hxarNLD9N/pxwZ8an0GPk/9AOx6V2ybG1QRWXpzB/hXalOyZEf4s3n
+	 xE6wf1DXJANCq8EA6nYXEHaNDhmI9zFQ3AG6wRcH4mE6GO0y3N0UNLgK5ez8zyhhPm
+	 7Awnikxws4lGA==
+Message-ID: <540b7f72-58fa-4ee3-9b5b-6cd81c5959a7@canonical.com>
+Date: Thu, 26 Jun 2025 23:14:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250623063854.1896364-1-song@kernel.org> <20250623-rebel-verlust-8fcd4cdd9122@brauner>
- <CAADnVQ+iqMi2HEj_iH7hsx+XJAsqaMWqSDe4tzcGAnehFWA9Sw@mail.gmail.com>
-In-Reply-To: <CAADnVQ+iqMi2HEj_iH7hsx+XJAsqaMWqSDe4tzcGAnehFWA9Sw@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Thu, 26 Jun 2025 21:04:34 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW7JAgXUObzkMAs_B=O09uHfhkgSuFV5nvUJbsv=Fh8JyA@mail.gmail.com>
-X-Gm-Features: Ac12FXzTPC_HoMmxjQGDCDLY07r8m3jwZx7i6Y_SyAOwjpCqaDat_mHEFoscOM0
-Message-ID: <CAPhsuW7JAgXUObzkMAs_B=O09uHfhkgSuFV5nvUJbsv=Fh8JyA@mail.gmail.com>
-Subject: Re: [PATCH v3 bpf-next 0/4] Introduce bpf_cgroup_read_xattr
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	KP Singh <kpsingh@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Tejun Heo <tj@kernel.org>, Daan De Meyer <daan.j.demeyer@gmail.com>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] apparmor: use SHA-256 library API instead of crypto_shash
+ API
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
+References: <20250428190430.850240-1-ebiggers@kernel.org>
+ <20250514042147.GA2073@sol>
+ <4f37c07c-3a39-4c98-b9c4-13356f5a10dc@canonical.com>
+ <20250612191105.GE1283@sol>
+ <c80d4e69-ef03-462c-9084-e6bb56f428e6@canonical.com>
+ <20250627035918.GA15797@sol>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20250627035918.GA15797@sol>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 26, 2025 at 7:14=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
-[...]
-> ./test_progs -t lsm_cgroup
-> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
-> ./test_progs -t lsm_cgroup
-> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
-> ./test_progs -t cgroup_xattr
-> Summary: 1/8 PASSED, 0 SKIPPED, 0 FAILED
-> ./test_progs -t lsm_cgroup
-> test_lsm_cgroup_functional:PASS:bind(ETH_P_ALL) 0 nsec
-> (network_helpers.c:121: errno: Cannot assign requested address) Failed
-> to bind socket
-> test_lsm_cgroup_functional:FAIL:start_server unexpected start_server:
-> actual -1 < expected 0
-> (network_helpers.c:360: errno: Bad file descriptor) getsockopt(SOL_PROTOC=
-OL)
-> test_lsm_cgroup_functional:FAIL:connect_to_fd unexpected
-> connect_to_fd: actual -1 < expected 0
-> test_lsm_cgroup_functional:FAIL:accept unexpected accept: actual -1 < exp=
-ected 0
-> test_lsm_cgroup_functional:FAIL:getsockopt unexpected getsockopt:
-> actual -1 < expected 0
-> test_lsm_cgroup_functional:FAIL:sk_priority unexpected sk_priority:
-> actual 0 !=3D expected 234
-> ...
-> Summary: 0/1 PASSED, 0 SKIPPED, 1 FAILED
->
->
-> Song,
-> Please follow up with the fix for selftest.
-> It will be in bpf-next only.
+On 6/26/25 20:59, Eric Biggers wrote:
+> On Sun, Jun 22, 2025 at 02:16:07PM -0700, John Johansen wrote:
+>> On 6/12/25 12:11, Eric Biggers wrote:
+>>> On Sat, May 17, 2025 at 12:43:30AM -0700, John Johansen wrote:
+>>>> On 5/13/25 21:21, Eric Biggers wrote:
+>>>>> On Mon, Apr 28, 2025 at 12:04:30PM -0700, Eric Biggers wrote:
+>>>>>> From: Eric Biggers <ebiggers@google.com>
+>>>>>>
+>>>>>> This user of SHA-256 does not support any other algorithm, so the
+>>>>>> crypto_shash abstraction provides no value.  Just use the SHA-256
+>>>>>> library API instead, which is much simpler and easier to use.
+>>>>>>
+>>>>>> Signed-off-by: Eric Biggers <ebiggers@google.com>
+>>>>>> ---
+>>>>>>
+>>>>>> This patch is targeting the apparmor tree for 6.16.
+>>>>>>
+>>>>>>     security/apparmor/Kconfig  |  3 +-
+>>>>>>     security/apparmor/crypto.c | 85 ++++++--------------------------------
+>>>>>>     2 files changed, 13 insertions(+), 75 deletions(-)
+>>>>>
+>>>>> Any interest in taking this patch through the apparmor or security trees?
+>>>>>
+>>>> I can take it through my tree
+>>>
+>>> Thanks!  I notice this isn't in v6.16-rc1.  Do you have a pull request planned?
+>>>
+>>
+>> Hey Eric,
+>>
+>> sorry I have been sick and didn't get a 6.16 pull request out. I am slowly trying
+>> to dig my way out of the backlog, which is several weeks deeo. I might get together
+>> a small PR of bug fixes before the 6.17 merge window but the bulk of what is in
+>> apparmor-next will be waiting to merge in 6.17 now.
+> 
+> Hope you're feeling better!  Actually, would you mind if instead I took this
+I lot, though still generally tired/low on energy
 
-The issue is because cgroup_xattr calls "ip link set dev lo up"
-in setup, and calls "ip link set dev lo down" in cleanup. Most
-other tests only call "ip link set dev lo up". IOW, it appears to
-me that cgroup_xattr is doing the cleanup properly. To fix this,
-we can either remove "dev lo down" from cgroup_xattr, or add
-"dev lo up" to lsm_cgroups. Do you have any preference one
-way or another?
+> patch (with your ack) through the libcrypto-next tree for 6.17?
+> Otherwise there will be a silent merge conflict after I apply
+> https://lore.kernel.org/r/20250625070819.1496119-11-ebiggers@kernel.org/
+> 
+Avoiding a merge conflict? You have my ACK and blessing I will pull it out of
+the apparmor tree asap
 
-Thanks,
-Song
+
