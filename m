@@ -1,288 +1,298 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2076.outbound.protection.outlook.com [40.107.237.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE31F1FFC48;
-	Fri, 27 Jun 2025 06:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751005938; cv=none; b=G2ZAx30m/cmMxHagMLg4aI1Xga/3uRAiZ6l7Cxx3BWLPnuyO6LCWJfqbEBlQD+Xb3OXEGmVDlOg2CiWoBrZbX/hzrl9cEOedqM457iKdYmN5z+LiDyp+W+335bsmfngHEc/xORV31wCYU2aG78MICXMaEpnS8aukTWyBunFg+e8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751005938; c=relaxed/simple;
-	bh=9A9iPPrgHvn6+aPQnmmVGRl4M1HdMS5a1bIS9CDSqmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ScVu8Y/YmOGhsvRgJE+2Usp9n6TxL71vhbhV/r3WUGOPsGi6L2ep2nntQiEa5EnoOoaU+oPyfugJFJC6TSAW/EAvNJwGiskG+DCQmvKoYkNVcjpiVASv4N5zghWfRTxSDXQxi8BmGU22Ok1gpck+0aqZ1drrwFsQjmvEw+4amZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C7iDipzh; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0251F17E8;
+	Fri, 27 Jun 2025 08:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751012879; cv=fail; b=o9p5SzyzGDlvycFLpJ6RxwgTCeB+ZlQ1DGwTvyhz89vH5OO1ZyM17/+Rb1vx3G33unTcMFZ2fVfRTeiPP9a8poJFt4/E/ZYfaqOFD+j0XZ/6GUz9t8v3Cohfzb6BzYtcqx8sfAhZylQuMCGi92uooPp0GsSIdLpavgzrCEj4M4s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751012879; c=relaxed/simple;
+	bh=i+9mlIwLl53AZ0nuWmeZ+olxAYX+sUtQTXtyRkhRkIw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=CD5C4uMNrsOfGG4I7JIBABM4A/bxKyAJjitY50Cwfs8vo7c2yipzTEmkNEPABljLX5QLl9wSLT/a9Rw/pRFMayjc0wFur6xDHt7v9o81SFJBwJv4sT3XC9VTW2bdsVTCGckyO50+g8sUF5I+7CE/j0UsThW12mLNCjwJcnDZHJA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2HA+qR0N; arc=fail smtp.client-ip=40.107.237.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C7iDipzh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751005936; x=1782541936;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9A9iPPrgHvn6+aPQnmmVGRl4M1HdMS5a1bIS9CDSqmE=;
-  b=C7iDipzhNc1tVMHr5KhN5Itp5MNTweVPu5KiA7Wv8bGpMXIwV1EojUhJ
-   lZrKubdxDQ3H7SCzEhayIjXQQfy5jmTT0BDHHWRWOF0RyAO1jsQr7DcpP
-   SQkIrRrU9ikA9O5Emmp5cr2lrWVwv0R+5XxyVBzfhle+6CjztDj4xJdqI
-   f4C1s777r6LkjmM+TVlWDPG5jlqHq1rpUySniD9e3qX9Ji+o4G9DqJ74F
-   jIgGrr7jOGmALtNLI7sL41aSpZzKhFMcHw++mntGJiDk4uru+XaeuZJ8N
-   TGpzI2z0vrWIrG4oydWiLy1scZ+yA9R7bBiKYKoh1j1aea153SBe+0djt
-   A==;
-X-CSE-ConnectionGUID: BesFmqk3QrqnSpQeBmosHQ==
-X-CSE-MsgGUID: hTuioJmlQFeZdXKjvKq4CA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="63913402"
-X-IronPort-AV: E=Sophos;i="6.16,269,1744095600"; 
-   d="scan'208";a="63913402"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 23:32:15 -0700
-X-CSE-ConnectionGUID: g3a9+yP9Qs66TO486UPSXw==
-X-CSE-MsgGUID: 9z7w6EbDQP2ZXL3fpBlpFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,269,1744095600"; 
-   d="scan'208";a="152240808"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 26 Jun 2025 23:32:11 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uV2d6-000Vs0-1N;
-	Fri, 27 Jun 2025 06:32:08 +0000
-Date: Fri, 27 Jun 2025 14:31:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>,
-	linux-security-module@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, john.johansen@canonical.com,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	mic@digikod.net, kees@kernel.org, stephen.smalley.work@gmail.com,
-	casey@schaufler-ca.com, takedakn@nttdata.co.jp,
-	penguin-kernel@i-love.sakura.ne.jp, song@kernel.org,
-	rdunlap@infraread.org, linux-api@vger.kernel.org,
-	apparmor@lists.ubuntu.com, linux-kernel@vger.kernel.org,
-	Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>
-Subject: Re: [PATCH v3 1/3] Wire up lsm_config_self_policy and
- lsm_config_system_policy syscalls
-Message-ID: <202506271432.Hsg0FzKQ-lkp@intel.com>
-References: <20250624143211.436045-2-maxime.belair@canonical.com>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2HA+qR0N"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QMcvEJswvkqWoCYmb/1ScaDvd5k9In0m+6YvZOQOYpMJh1aatgLskxitEQxlSQ9+eHWsQTLwUBYffWdt/+A+y21mSqGERh8/PsPzeFSVD2EOmsEXY+KVnHw17HoJBXM/o1mJiUpGAv39HOqpC5CPACdZ1XUxs7Ol+GSbGq0hTzu9YEGTNNFD3NJesbflqff7vJs8OKfJtbXqfQQMJhRrGWcJfc8SRTpBNRJV1DFaLC1Osp9UrUcDSt8XAbZi6JfNGeIvUyOVOShqsY1iimwimIZKKcibdxQw8yjnzcv10+Mo9wZhcNL+gitdzaVoFumV0NmLvhcItIttn88I/800jA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f8lffmM6beYEeSIe7NzI/7qcpC0VQHrOoBekByvJOcw=;
+ b=nVyUEraWQUNP/1/gV4L9QagfOZFIC5xFiCDIdsEXWffFGHwcBNGg9j1decbRK5iFuunyiUmzpzlqqma9kTKla80gQek35eGD/byV08t6Ug5b4Y5wFw+oCTm2uOJkFGM7bxPUPHjTgd2Dh7HWv9Jfk0QZsG23Dhjyqa6o+9/xvhsQuwTki1CbuLmepHCJ8FtfjJj2NiPMdkGs8gYD3gXclRzQkG895ef8IzysKPu1q6Z6qTFGMlh2xa/8ky+gNb2oB/Fag+zPR2aiBNouB2MkYCDF5yRGvKEzAjOq0S9gunilnxYJzLaRy9VYyYWP4DsusHixf+TSeFN+694ZC/YNNg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f8lffmM6beYEeSIe7NzI/7qcpC0VQHrOoBekByvJOcw=;
+ b=2HA+qR0Nd4/UPdtV1y5uYmQ6mxIUpeRC43THRIjlyp/VO7lnpzR+kd+3q/NZ0I/orqbaYUCABtWhWr+KVKI8bQAUWjcJhMHrt/Fr7lhXaJpVXRFB7g3Fp5h/FaavcRuJ7wp6IRVuwKeU93tjOndwa+OozDl+eP+v8bch+5iwL8Y=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA1PR12MB8189.namprd12.prod.outlook.com (2603:10b6:208:3f0::13)
+ by PH7PR12MB7356.namprd12.prod.outlook.com (2603:10b6:510:20f::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.17; Fri, 27 Jun
+ 2025 08:27:54 +0000
+Received: from IA1PR12MB8189.namprd12.prod.outlook.com
+ ([fe80::193b:bbfd:9894:dc48]) by IA1PR12MB8189.namprd12.prod.outlook.com
+ ([fe80::193b:bbfd:9894:dc48%4]) with mapi id 15.20.8880.021; Fri, 27 Jun 2025
+ 08:27:54 +0000
+Message-ID: <9e4ffa68-1be4-4fcb-99a9-bb6e6aac7db9@amd.com>
+Date: Fri, 27 Jun 2025 10:27:49 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3] fs: generalize anon_inode_make_secure_inode() and fix
+ secretmem LSM bypass
+To: Shivank Garg <shivankg@amd.com>, david@redhat.com,
+ akpm@linux-foundation.org, brauner@kernel.org, paul@paul-moore.com,
+ rppt@kernel.org, viro@zeniv.linux.org.uk
+Cc: seanjc@google.com, vbabka@suse.cz, willy@infradead.org,
+ pbonzini@redhat.com, tabba@google.com, afranji@google.com,
+ ackerleytng@google.com, jack@suse.cz, hch@infradead.org,
+ cgzones@googlemail.com, ira.weiny@intel.com, roypat@amazon.co.uk,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20250626191425.9645-5-shivankg@amd.com>
+Content-Language: en-US
+From: "Gupta, Pankaj" <pankaj.gupta@amd.com>
+In-Reply-To: <20250626191425.9645-5-shivankg@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0113.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:bb::7) To IA1PR12MB8189.namprd12.prod.outlook.com
+ (2603:10b6:208:3f0::13)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624143211.436045-2-maxime.belair@canonical.com>
-
-Hi Maxime,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 9c32cda43eb78f78c73aee4aa344b777714e259b]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-B-lair/Wire-up-lsm_config_self_policy-and-lsm_config_system_policy-syscalls/20250624-225008
-base:   9c32cda43eb78f78c73aee4aa344b777714e259b
-patch link:    https://lore.kernel.org/r/20250624143211.436045-2-maxime.belair%40canonical.com
-patch subject: [PATCH v3 1/3] Wire up lsm_config_self_policy and lsm_config_system_policy syscalls
-config: riscv-randconfig-001-20250627 (https://download.01.org/0day-ci/archive/20250627/202506271432.Hsg0FzKQ-lkp@intel.com/config)
-compiler: riscv32-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250627/202506271432.Hsg0FzKQ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506271432.Hsg0FzKQ-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/compat.h:34,
-                    from arch/riscv/include/asm/elf.h:12,
-                    from include/linux/elf.h:6,
-                    from include/linux/module.h:19,
-                    from include/linux/bpf.h:20,
-                    from include/linux/security.h:35,
-                    from security/lsm_syscalls.c:13:
-   arch/riscv/include/asm/syscall_wrapper.h:35:14: warning: '__se_sys_lsm_set_self_attr' alias between functions of incompatible types 'long int(ulong,  ulong,  ulong,  ulong,  ulong,  ulong,  ulong)' {aka 'long int(long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int)'} and 'long int(long int,  long int,  long int,  long int)' [-Wattribute-alias]
-     static long __se_##prefix##name(ulong, ulong, ulong, ulong, ulong, ulong,  \
-                 ^~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:82:2: note: in expansion of macro '__SYSCALL_SE_DEFINEx'
-     __SYSCALL_SE_DEFINEx(x, sys, name, __VA_ARGS__)    \
-     ^~~~~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:235:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-     __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-     ^~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:227:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-    #define SYSCALL_DEFINE4(name, ...) SYSCALL_DEFINEx(4, _##name, __VA_ARGS__)
-                                       ^~~~~~~~~~~~~~~
-   security/lsm_syscalls.c:55:1: note: in expansion of macro 'SYSCALL_DEFINE4'
-    SYSCALL_DEFINE4(lsm_set_self_attr, unsigned int, attr, struct lsm_ctx __user *,
-    ^~~~~~~~~~~~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:41:14: note: aliased declaration here
-     static long ___se_##prefix##name(__MAP(x,__SC_LONG,__VA_ARGS__))
-                 ^~~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:82:2: note: in expansion of macro '__SYSCALL_SE_DEFINEx'
-     __SYSCALL_SE_DEFINEx(x, sys, name, __VA_ARGS__)    \
-     ^~~~~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:235:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-     __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-     ^~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:227:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-    #define SYSCALL_DEFINE4(name, ...) SYSCALL_DEFINEx(4, _##name, __VA_ARGS__)
-                                       ^~~~~~~~~~~~~~~
-   security/lsm_syscalls.c:55:1: note: in expansion of macro 'SYSCALL_DEFINE4'
-    SYSCALL_DEFINE4(lsm_set_self_attr, unsigned int, attr, struct lsm_ctx __user *,
-    ^~~~~~~~~~~~~~~
->> arch/riscv/include/asm/syscall_wrapper.h:35:14: warning: '__se_sys_lsm_config_system_policy' alias between functions of incompatible types 'long int(ulong,  ulong,  ulong,  ulong,  ulong,  ulong,  ulong)' {aka 'long int(long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int)'} and 'long int(long int,  long int,  long int,  long int,  long int)' [-Wattribute-alias]
-     static long __se_##prefix##name(ulong, ulong, ulong, ulong, ulong, ulong,  \
-                 ^~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:82:2: note: in expansion of macro '__SYSCALL_SE_DEFINEx'
-     __SYSCALL_SE_DEFINEx(x, sys, name, __VA_ARGS__)    \
-     ^~~~~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:235:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-     __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-     ^~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:228:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-    #define SYSCALL_DEFINE5(name, ...) SYSCALL_DEFINEx(5, _##name, __VA_ARGS__)
-                                       ^~~~~~~~~~~~~~~
-   security/lsm_syscalls.c:128:1: note: in expansion of macro 'SYSCALL_DEFINE5'
-    SYSCALL_DEFINE5(lsm_config_system_policy, u32, lsm_id, u32, op, void __user *,
-    ^~~~~~~~~~~~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:41:14: note: aliased declaration here
-     static long ___se_##prefix##name(__MAP(x,__SC_LONG,__VA_ARGS__))
-                 ^~~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:82:2: note: in expansion of macro '__SYSCALL_SE_DEFINEx'
-     __SYSCALL_SE_DEFINEx(x, sys, name, __VA_ARGS__)    \
-     ^~~~~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:235:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-     __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-     ^~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:228:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-    #define SYSCALL_DEFINE5(name, ...) SYSCALL_DEFINEx(5, _##name, __VA_ARGS__)
-                                       ^~~~~~~~~~~~~~~
-   security/lsm_syscalls.c:128:1: note: in expansion of macro 'SYSCALL_DEFINE5'
-    SYSCALL_DEFINE5(lsm_config_system_policy, u32, lsm_id, u32, op, void __user *,
-    ^~~~~~~~~~~~~~~
->> arch/riscv/include/asm/syscall_wrapper.h:35:14: warning: '__se_sys_lsm_config_self_policy' alias between functions of incompatible types 'long int(ulong,  ulong,  ulong,  ulong,  ulong,  ulong,  ulong)' {aka 'long int(long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int)'} and 'long int(long int,  long int,  long int,  long int,  long int)' [-Wattribute-alias]
-     static long __se_##prefix##name(ulong, ulong, ulong, ulong, ulong, ulong,  \
-                 ^~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:82:2: note: in expansion of macro '__SYSCALL_SE_DEFINEx'
-     __SYSCALL_SE_DEFINEx(x, sys, name, __VA_ARGS__)    \
-     ^~~~~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:235:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-     __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-     ^~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:228:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-    #define SYSCALL_DEFINE5(name, ...) SYSCALL_DEFINEx(5, _##name, __VA_ARGS__)
-                                       ^~~~~~~~~~~~~~~
-   security/lsm_syscalls.c:122:1: note: in expansion of macro 'SYSCALL_DEFINE5'
-    SYSCALL_DEFINE5(lsm_config_self_policy, u32, lsm_id, u32, op, void __user *,
-    ^~~~~~~~~~~~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:41:14: note: aliased declaration here
-     static long ___se_##prefix##name(__MAP(x,__SC_LONG,__VA_ARGS__))
-                 ^~~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:82:2: note: in expansion of macro '__SYSCALL_SE_DEFINEx'
-     __SYSCALL_SE_DEFINEx(x, sys, name, __VA_ARGS__)    \
-     ^~~~~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:235:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-     __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-     ^~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:228:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-    #define SYSCALL_DEFINE5(name, ...) SYSCALL_DEFINEx(5, _##name, __VA_ARGS__)
-                                       ^~~~~~~~~~~~~~~
-   security/lsm_syscalls.c:122:1: note: in expansion of macro 'SYSCALL_DEFINE5'
-    SYSCALL_DEFINE5(lsm_config_self_policy, u32, lsm_id, u32, op, void __user *,
-    ^~~~~~~~~~~~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:35:14: warning: '__se_sys_lsm_list_modules' alias between functions of incompatible types 'long int(ulong,  ulong,  ulong,  ulong,  ulong,  ulong,  ulong)' {aka 'long int(long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int)'} and 'long int(long int,  long int,  long int)' [-Wattribute-alias]
-     static long __se_##prefix##name(ulong, ulong, ulong, ulong, ulong, ulong,  \
-                 ^~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:82:2: note: in expansion of macro '__SYSCALL_SE_DEFINEx'
-     __SYSCALL_SE_DEFINEx(x, sys, name, __VA_ARGS__)    \
-     ^~~~~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:235:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-     __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-     ^~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:226:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-    #define SYSCALL_DEFINE3(name, ...) SYSCALL_DEFINEx(3, _##name, __VA_ARGS__)
-                                       ^~~~~~~~~~~~~~~
-   security/lsm_syscalls.c:96:1: note: in expansion of macro 'SYSCALL_DEFINE3'
-    SYSCALL_DEFINE3(lsm_list_modules, u64 __user *, ids, u32 __user *, size,
-    ^~~~~~~~~~~~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:41:14: note: aliased declaration here
-     static long ___se_##prefix##name(__MAP(x,__SC_LONG,__VA_ARGS__))
-                 ^~~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:82:2: note: in expansion of macro '__SYSCALL_SE_DEFINEx'
-     __SYSCALL_SE_DEFINEx(x, sys, name, __VA_ARGS__)    \
-     ^~~~~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:235:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-     __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-     ^~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:226:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-    #define SYSCALL_DEFINE3(name, ...) SYSCALL_DEFINEx(3, _##name, __VA_ARGS__)
-                                       ^~~~~~~~~~~~~~~
-   security/lsm_syscalls.c:96:1: note: in expansion of macro 'SYSCALL_DEFINE3'
-    SYSCALL_DEFINE3(lsm_list_modules, u64 __user *, ids, u32 __user *, size,
-    ^~~~~~~~~~~~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:35:14: warning: '__se_sys_lsm_get_self_attr' alias between functions of incompatible types 'long int(ulong,  ulong,  ulong,  ulong,  ulong,  ulong,  ulong)' {aka 'long int(long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int)'} and 'long int(long int,  long int,  long int,  long int)' [-Wattribute-alias]
-     static long __se_##prefix##name(ulong, ulong, ulong, ulong, ulong, ulong,  \
-                 ^~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:82:2: note: in expansion of macro '__SYSCALL_SE_DEFINEx'
-     __SYSCALL_SE_DEFINEx(x, sys, name, __VA_ARGS__)    \
-     ^~~~~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:235:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-     __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-     ^~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:227:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-    #define SYSCALL_DEFINE4(name, ...) SYSCALL_DEFINEx(4, _##name, __VA_ARGS__)
-                                       ^~~~~~~~~~~~~~~
-   security/lsm_syscalls.c:77:1: note: in expansion of macro 'SYSCALL_DEFINE4'
-    SYSCALL_DEFINE4(lsm_get_self_attr, unsigned int, attr, struct lsm_ctx __user *,
-    ^~~~~~~~~~~~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:41:14: note: aliased declaration here
-     static long ___se_##prefix##name(__MAP(x,__SC_LONG,__VA_ARGS__))
-                 ^~~~~~
-   arch/riscv/include/asm/syscall_wrapper.h:82:2: note: in expansion of macro '__SYSCALL_SE_DEFINEx'
-     __SYSCALL_SE_DEFINEx(x, sys, name, __VA_ARGS__)    \
-     ^~~~~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:235:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-     __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-     ^~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:227:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-    #define SYSCALL_DEFINE4(name, ...) SYSCALL_DEFINEx(4, _##name, __VA_ARGS__)
-                                       ^~~~~~~~~~~~~~~
-   security/lsm_syscalls.c:77:1: note: in expansion of macro 'SYSCALL_DEFINE4'
-    SYSCALL_DEFINE4(lsm_get_self_attr, unsigned int, attr, struct lsm_ctx __user *,
-    ^~~~~~~~~~~~~~~
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR12MB8189:EE_|PH7PR12MB7356:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6b523f19-d3c9-4402-36bb-08ddb554831c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|366016|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QTVNSXRueFZmM3VQbTVSL0EyU0xIeWJBaEh3Y1RxTXdZVng4WDVmNVNrY1A5?=
+ =?utf-8?B?WnRBRUpLU3BEMWFwTTVVdkszYzFBZ3JzUW1Mak8rV0dHQTFTb2FQTGNRc2Nl?=
+ =?utf-8?B?NU9ZYjFJNUR2NW5zZkdlb3NGbmhocmNpeEpDSitiMndYVEtMZjF6bm5CRXZF?=
+ =?utf-8?B?eEl1Z3NybS8xOGNqWkdZY004N2VtNDlXQk9TNXZLRVArSElqSzlVbVVDeUxl?=
+ =?utf-8?B?WHYxSnUrN0Y3Mk1EWTYrK3E2RWpTeERYUjUwdFNEbFFOOE1OL1lXajB0bFY2?=
+ =?utf-8?B?bWpVTzh0OEQwRGtOZ2Nnc2M4RzNDcDAxZmRkWjVYSzFRaDM3R0tjZ25FM1Vh?=
+ =?utf-8?B?ZXhVTWhTTXdKRmE3SmZwdjdBVkVEUU5GVXA1YkVkbHFhQUhKckpCNFBYOTJU?=
+ =?utf-8?B?cWVScnJTckFyU0kvSmdYWjVvTFR5VVNOQyswbmVNdUVWaS95a2oyVTUvUUk3?=
+ =?utf-8?B?MDBzSDU3VUV0ZHlqSUl6Uy9WTm5jcHlWU09SeDg0dXVjR0RSRDVnaXBHbEdM?=
+ =?utf-8?B?TmVOVWtTdnFydnRnazBERFdGejBGN1BhTk90TjRaNEo0QzhUYUpZaW1oQmtD?=
+ =?utf-8?B?bTJoZkN4UkZUNlkvMG9BTTd4N0NLZXRucDRYbUVkcG0xdEtVSHZBWThsTHBm?=
+ =?utf-8?B?cTViTCt4RG00SWI2djkzNFJMQmM0NVdZUkxrQVFSMDRPeGFnT29ZR0lXVFox?=
+ =?utf-8?B?dWREcUVuUjY5dU1uSG5QOVZoVlFyNGZSRGExRmtaeHFLaDZrQ2d3RUxRc1B6?=
+ =?utf-8?B?TnM0Z29aU1hyZFBNSmtXUmh6YTJ5M1N3alZJQmZucVY4emdGcGxFTVRhNzFY?=
+ =?utf-8?B?cFR3N1BaL2JGVzdaSDUzQXVudHJzSG81U0M1RlU1NkJSSzVSRDRRd3FHdnkr?=
+ =?utf-8?B?YjZJc1RMdU5uU3JGVVVxSDlkcXB6RFJjVlZBREIycmxFbzNJa1lHR040Mm5h?=
+ =?utf-8?B?WVdPTStyMnRIb2x0WDJPdnBwV2FQeGozaXJHcW5TaU8xSEVFbXBoWlR3UXpO?=
+ =?utf-8?B?SEVaaXVGcHBIdGt1ejQ3MXI5OCt3TExHRklLQ0gwSmhzcVhrT3VuRkQvWGUw?=
+ =?utf-8?B?S3VvNHMvd3lTakU3c2ZkNGovL3VCN1B4T0tkZ2VJT2VyVGpVbzVhSTl1NlQr?=
+ =?utf-8?B?UUpGekhPSDRJcnJpMmllV25xclI2TnJLSVpVN2VmQkpVTVFZclNrR1FTa2hR?=
+ =?utf-8?B?Qnl1VjFYWjFQa2E1OXdnT0pMTzZkY0Q5QUt0V3JJRGlUTnZZM0RsOWIzZUE0?=
+ =?utf-8?B?SjNzQUdTMWt1S3ovK0Nualh4YTU3L3FmT1NlbEdJRFA4M0FmRlVBc2xyRmY3?=
+ =?utf-8?B?UXFQNjNWRUFKaXpYbmxJbEd2WFFwSkZHRnpZbEh6aEE1aTNRZExUeDQ3NXlK?=
+ =?utf-8?B?N1p6bWk4RkRXOGx1RklQL0pLamxHOGtMd0d1cXN2UEtrTEVTbGFMVEI2OUU5?=
+ =?utf-8?B?YWdRMmRka2xLZFB2aU1tRDA5UFA1Nnd3VzEzUjdHdkNnbHlKZG95QnpsRlpw?=
+ =?utf-8?B?WllqbXBVSFpoYlU1UWZUZDZHazk3bHVsYktacndFUzR1amEyd05lNTFKcjVH?=
+ =?utf-8?B?dnl0SUk1cmlDR3duQTRuWWZ2aVdMdUFpRHhBaW1TMHU4WUJYNENFUGhBMFZj?=
+ =?utf-8?B?bzkrK1N3Zm5NR3lpVE91ZGtyZ2E5RUFhWFR5aW55M3lRWmlOUDJpNmJnQ2Jk?=
+ =?utf-8?B?Zi9rWVozSHJmM25vaXFUa3VVeHZ5ejRvWlpGRitRV09JVWlVOTN1Nlo5T2xI?=
+ =?utf-8?B?WkYxeUsvMm5keHRDZjFWak9XWW1weFlyZ0V6TkpFTW5tMytJL29rU2wvRUpB?=
+ =?utf-8?B?OWs5ZEVlRWkvb05GVmh6WGE5cm14cmtyVGoycGo0RkJMd0N4QlhGMEpoYnNS?=
+ =?utf-8?B?U0lPaU1wRmVId1Uva2RDb0N3RkM5TU9waXJ2MkpDNE9tc055NGlsNjlwQkFY?=
+ =?utf-8?Q?mbIMmuXDWnY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB8189.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dm1Edmk0Z3lLNnY3Q3prNnJMUG15Vit1Y245TUVCNEdHVXQzcXE0OHhHekp2?=
+ =?utf-8?B?TTZIQmltUHgwN25BL0QyakhEZVJFMlZaeUtuVm1IRWx2Wk1zWVZVaE9TK0RL?=
+ =?utf-8?B?MzE1U2xrTThFK2ZtRHNVK2V1NERRNk1pTlpvSmJWU3N0SzRISUlENFI2SzNE?=
+ =?utf-8?B?WHNGNVkyMm1jMW8xK0xLVldLUnNZdnExMDNqUFpLcXhsSWNTTHdtTVcwMmhq?=
+ =?utf-8?B?UXNYbUJ5cDRXbkw2WUx1NXhvNkVPZERncXdHenZmcFpaMGNGU09iSkpocFdI?=
+ =?utf-8?B?RnBqZ2l0OWR5dVVWdmdEbldHamhEeXJ1c0NRVG90Umd4S1lmWGZwUEF6TmZl?=
+ =?utf-8?B?bHJpRmptV09LNHd6RDZnT3l3OGNaeENyQzMwNkMxWjNzcUpHdGhjLzNKVmhG?=
+ =?utf-8?B?U25xRHQyL1J5bTJZWTZiK3l6WTZtOFNiOU9PdEcyNTdLT3NsM0c0MGJQbkxB?=
+ =?utf-8?B?ZEpYcUxiRlZGNzBZbW5EME5GcjFWeGxkZHNuV29aWGFXdkRWVW9PajJvcks2?=
+ =?utf-8?B?TitYSzRYcjdRekc3cjFVajdzMGQva3ZMUzNsc0Y1QjZZV0dZa2hJQzA2ODUv?=
+ =?utf-8?B?S2hVNGZSVmpOYmZaZHc0VU1xdGdsc2h3MG1HVk9yYTgvQ3kxdm1sUnNQbExC?=
+ =?utf-8?B?dnZKR2s3RS9FR0c4Nk9NOFB0b2hyUzgxZXBTMTcrZEZmOFZYbVFGalVPOEp1?=
+ =?utf-8?B?bkdiakFVbStvNW5VSHUyc2hCNjJDQlU3eFB5VVRZUWd3VFYrV1pFZS9KNmw3?=
+ =?utf-8?B?bjh3N1NWOHlRL0RmbEpwNkkyRUU1V0pZMDdkMjJhTU4rQXluVWV1NWhNa1Qw?=
+ =?utf-8?B?MEs1ZnFqclV5MWVWa3NOcStlZkFPNVBaMld0TjRRVDhIakVjZC9lbmZpOHdl?=
+ =?utf-8?B?QUU5OWE2RUt2QWFrWWJUTHZKN09MR0NhYmoyTW9IUzl6NWo5Njh2eXNNQnRm?=
+ =?utf-8?B?SXo5S1R3MmdoOHFlOFVHVFdWYmFSSlZrckVrNlVpaHRlNDd3bGlwWHpaSjVV?=
+ =?utf-8?B?WFBBUTNHMXN1MCtjVStmU0JIQWI1UkQ3cktNRi9obDNHYVovWVZQZTBZM3RE?=
+ =?utf-8?B?R0UwMlJQaE9JV1pmNGF3M3NTc2k0cUxaZ1JvK1JxSUNoUStRV3puL0M4YUVq?=
+ =?utf-8?B?TDQrL2wzVlZLRlRKcUxBb3p1MVNVZDNXaENrc3puZkw3NzIvTmdtdWwxMFdH?=
+ =?utf-8?B?ZjIxWHg2YjlhVnRUem5Yd09WeHAwMFkyT1ZmZ0ExYWQvek4xNXc5WDNPSzR4?=
+ =?utf-8?B?amtQM3VYK2U5cTg4MGpLNFFyQkE2aWVnKzhRdTcwM1p2aFRGWmZ4SUVaMm1v?=
+ =?utf-8?B?bVduSndjdWNseWwvK3JGb3NzamJ3ZG1ncDJVQlJUc05SY1RnWWUreFZYUk8y?=
+ =?utf-8?B?ZWE4WG51Z2tYVWIxMHJveHZkMFYzVUZDTXIwU2pZalo1cUYrV1JKVmFMZTdo?=
+ =?utf-8?B?YWxxcEhteml4NmsrSHdLeGM5Y0ZxNzlrL2dESWgzMkp4OUw0bEZyamMrV0o3?=
+ =?utf-8?B?NE5WOW9yT2YrVjZhM3BvVitNbmVpeDhnRGl3YndsQURNSDRCTHZQRFQ5UnNL?=
+ =?utf-8?B?dmpsbXZUbTRSWVdVUnJnaU5vcjYwSlNWMEFTcktJREZvajhHOEptZURiTkI4?=
+ =?utf-8?B?MHhoOGJ0amtxS2JoQkUyZ2NZcUlyUmVoanN1OFBEUzVNOENQRVZFZlN0eUhF?=
+ =?utf-8?B?M0hrV2lnVGFRc3JGbms5UFRISTU0SHBzK054ZmhZQWgrNnE4UUZXRTM4cUNu?=
+ =?utf-8?B?K0Yxb2FZSTFYWUlzZFIyc0F1UGJQTXNmK1lTUnNtc1ZWMnhaNEZQWUE1WlNt?=
+ =?utf-8?B?SjhybURXZG5XZ0FCQ2VZK3pyTUdaWENOeWFFVnRkb0tPNU93TUhXTW1vamVH?=
+ =?utf-8?B?WjJvRHNRYWorRjFQdUgwa2RQNHdFNjgyVVFUUGVZSjY4eVdVSjRoL1JvcjY0?=
+ =?utf-8?B?K1ZWNDRLUllnTmJlUTZYQ0gzdk55SVVLRmNUN1hraUpjWG1kdmFYVXl0R2x1?=
+ =?utf-8?B?ZlhOS1FmZTlNa09KbXlpQXNIT1Fka0NBUkdHRkxYbUNDQUZRemt4ZFlUdGpN?=
+ =?utf-8?B?NGNTeDlJZWgrRjJXWHg2Yy9aamwydG9wdEwvSmZNUi8zajhVbVlOeHZSZ3RU?=
+ =?utf-8?Q?qRQj6aWUnomHVxwqApq7YrbFw?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b523f19-d3c9-4402-36bb-08ddb554831c
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB8189.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2025 08:27:54.0212
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 19YPYcshmDlZbpH6bgAH+SylQSo5bQuHa8mjE5/f9qXEn+aZviLStGLaoj6k/ZMmN/5sWS2dRuLc/9Q5vLDuKQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7356
 
 
-vim +35 arch/riscv/include/asm/syscall_wrapper.h
+> Extend anon_inode_make_secure_inode() to take superblock parameter and
+> make it available via fs.h. This allows other subsystems to create
+> anonymous inodes with proper security context.
+> 
+> Use this function in secretmem to fix a security regression, where
+> S_PRIVATE flag wasn't cleared after alloc_anon_inode(), causing
+> LSM/SELinux checks to be skipped.
+> 
+> Using anon_inode_make_secure_inode() ensures proper security context
+> initialization through security_inode_init_security_anon().
+> 
+> Fixes: 2bfe15c52612 ("mm: create security context for memfd_secret inodes")
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Suggested-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+> Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
 
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  16  
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  17  #define __SYSCALL_SE_DEFINEx(x, prefix, name, ...)					\
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  18  	static long __se_##prefix##name(__MAP(x,__SC_LONG,__VA_ARGS__));		\
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  19  	static long __se_##prefix##name(__MAP(x,__SC_LONG,__VA_ARGS__))
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  20  
-08d0ce30e0e4fc Sami Tolvanen 2023-07-10  21  #define SC_RISCV_REGS_TO_ARGS(x, ...)							\
-08d0ce30e0e4fc Sami Tolvanen 2023-07-10  22  	__MAP(x,__SC_ARGS								\
-08d0ce30e0e4fc Sami Tolvanen 2023-07-10  23  	      ,,regs->orig_a0,,regs->a1,,regs->a2					\
-08d0ce30e0e4fc Sami Tolvanen 2023-07-10  24  	      ,,regs->a3,,regs->a4,,regs->a5,,regs->a6)
-08d0ce30e0e4fc Sami Tolvanen 2023-07-10  25  
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  26  #else
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  27  /*
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  28   * Use type aliasing to ensure registers a0-a6 are correctly passed to the syscall
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  29   * implementation when >word-size arguments are used.
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  30   */
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  31  #define __SYSCALL_SE_DEFINEx(x, prefix, name, ...)					\
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  32  	__diag_push();									\
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  33  	__diag_ignore(GCC, 8, "-Wattribute-alias",					\
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  34  			"Type aliasing is used to sanitize syscall arguments");		\
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11 @35  	static long __se_##prefix##name(ulong, ulong, ulong, ulong, ulong, ulong, 	\
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  36  					ulong)						\
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  37  			__attribute__((alias(__stringify(___se_##prefix##name))));	\
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  38  	__diag_pop();									\
-653650c468be21 Sami Tolvanen 2024-03-26  39  	static long noinline ___se_##prefix##name(__MAP(x,__SC_LONG,__VA_ARGS__))	\
-653650c468be21 Sami Tolvanen 2024-03-26  40  			__used;								\
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  41  	static long ___se_##prefix##name(__MAP(x,__SC_LONG,__VA_ARGS__))
-a9ad73295cc1e3 Sami Tolvanen 2024-03-11  42  
+Relying on 'anon_inode_make_secure_inode' for anon inodes LSM/SELinux
+checks seems okay to me.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Acked-by: Pankaj Gupta <pankaj.gupta@amd.com>
+
+
+> ---
+> The handling of the S_PRIVATE flag for these inodes was discussed
+> extensively ([1], [2], [3]).
+> 
+> As per discussion [3] with Mike and Paul, KVM guest_memfd and secretmem
+> result in user-visible file descriptors, so they should be subject to
+> LSM/SELinux security policies rather than bypassing them with S_PRIVATE.
+> 
+> [1] https://lore.kernel.org/all/b9e5fa41-62fd-4b3d-bb2d-24ae9d3c33da@redhat.com
+> [2] https://lore.kernel.org/all/cover.1748890962.git.ackerleytng@google.com
+> [3] https://lore.kernel.org/all/aFOh8N_rRdSi_Fbc@kernel.org
+> 
+> V3:
+> - Drop EXPORT to be added later in separate patch for KVM guest_memfd and
+>    keep this patch focused on fix.
+> 
+> V2: https://lore.kernel.org/all/20250620070328.803704-3-shivankg@amd.com
+> - Use EXPORT_SYMBOL_GPL_FOR_MODULES() since KVM is the only user.
+> 
+> V1: https://lore.kernel.org/all/20250619073136.506022-2-shivankg@amd.com
+> 
+>   fs/anon_inodes.c   | 22 +++++++++++++++++-----
+>   include/linux/fs.h |  2 ++
+>   mm/secretmem.c     |  9 +--------
+>   3 files changed, 20 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+> index e51e7d88980a..c530405edd15 100644
+> --- a/fs/anon_inodes.c
+> +++ b/fs/anon_inodes.c
+> @@ -98,14 +98,25 @@ static struct file_system_type anon_inode_fs_type = {
+>   	.kill_sb	= kill_anon_super,
+>   };
+>   
+> -static struct inode *anon_inode_make_secure_inode(
+> -	const char *name,
+> -	const struct inode *context_inode)
+> +/**
+> + * anon_inode_make_secure_inode - allocate an anonymous inode with security context
+> + * @sb:		[in]	Superblock to allocate from
+> + * @name:	[in]	Name of the class of the new file (e.g., "secretmem")
+> + * @context_inode:
+> + *		[in]	Optional parent inode for security inheritance
+> + *
+> + * The function ensures proper security initialization through the LSM hook
+> + * security_inode_init_security_anon().
+> + *
+> + * Return:	Pointer to new inode on success, ERR_PTR on failure.
+> + */
+> +struct inode *anon_inode_make_secure_inode(struct super_block *sb, const char *name,
+> +					   const struct inode *context_inode)
+>   {
+>   	struct inode *inode;
+>   	int error;
+>   
+> -	inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
+> +	inode = alloc_anon_inode(sb);
+>   	if (IS_ERR(inode))
+>   		return inode;
+>   	inode->i_flags &= ~S_PRIVATE;
+> @@ -132,7 +143,8 @@ static struct file *__anon_inode_getfile(const char *name,
+>   		return ERR_PTR(-ENOENT);
+>   
+>   	if (make_inode) {
+> -		inode =	anon_inode_make_secure_inode(name, context_inode);
+> +		inode =	anon_inode_make_secure_inode(anon_inode_mnt->mnt_sb,
+> +						     name, context_inode);
+>   		if (IS_ERR(inode)) {
+>   			file = ERR_CAST(inode);
+>   			goto err;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index b085f161ed22..040c0036320f 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3608,6 +3608,8 @@ extern int simple_write_begin(struct file *file, struct address_space *mapping,
+>   extern const struct address_space_operations ram_aops;
+>   extern int always_delete_dentry(const struct dentry *);
+>   extern struct inode *alloc_anon_inode(struct super_block *);
+> +struct inode *anon_inode_make_secure_inode(struct super_block *sb, const char *name,
+> +					   const struct inode *context_inode);
+>   extern int simple_nosetlease(struct file *, int, struct file_lease **, void **);
+>   extern const struct dentry_operations simple_dentry_operations;
+>   
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index 589b26c2d553..9a11a38a6770 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -195,18 +195,11 @@ static struct file *secretmem_file_create(unsigned long flags)
+>   	struct file *file;
+>   	struct inode *inode;
+>   	const char *anon_name = "[secretmem]";
+> -	int err;
+>   
+> -	inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
+> +	inode = anon_inode_make_secure_inode(secretmem_mnt->mnt_sb, anon_name, NULL);
+>   	if (IS_ERR(inode))
+>   		return ERR_CAST(inode);
+>   
+> -	err = security_inode_init_security_anon(inode, &QSTR(anon_name), NULL);
+> -	if (err) {
+> -		file = ERR_PTR(err);
+> -		goto err_free_inode;
+> -	}
+> -
+>   	file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
+>   				 O_RDWR, &secretmem_fops);
+>   	if (IS_ERR(file))
+
