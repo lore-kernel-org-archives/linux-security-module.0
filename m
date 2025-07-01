@@ -1,97 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2F172602;
-	Tue,  1 Jul 2025 08:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916F2260590
+	for <linux-security-module@vger.kernel.org>; Tue,  1 Jul 2025 08:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751358819; cv=none; b=tZg/GP4ZEAtxU2hktoP669y/sfK9MVh24K6qRu0jzWi9CAHEVMpO70cuXks8dGrxcs2DbuEYpB91A5Cj/ckYkqKMibpq0gcPLp+oA2KLtWNfewaxBKjCGHCctC8bB7ZH3JZAQByttcxlGlf+xPMz3gtkr208XMqAjW0MjhW1t0M=
+	t=1751359872; cv=none; b=tlPTUSEhjw0A1numUoPL13+wbXcxvn8LcHAlj4y3Stje38J7aWmhTJqKdEJfzViYpalQ6kiLSUEbxOJsOzUkeLl5tL1hljm3U5y+BEa11JfbGah2BFw/bjc9gyygQ1J6qjmtUyeUYa/Rt5rJZ40MP3QKzJCHXqC0U8yve3O6/us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751358819; c=relaxed/simple;
-	bh=TwVj/zN+QrMTevzg4950xW7dqK4GoQ4YRfxr5UmUR3I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L6muRnRbRzQX7lI+l0ypBE7QPM5/SCBXj7oVL6hJzmuegQrA0Dmw8sI7UGm8QNDx/eRhl1k63/3E0ZqUdZgfEKfjzVTk7GCWGe1hCWrxOmRUfKRqKyqcfT1o81TUsW6v3u526QE99J3b2H1OGtiuBnYNV7tj9EURoyDUVkcPRF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=clyt4tg2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751359872; c=relaxed/simple;
+	bh=Zv7zHWX9QCUUIhmqfhqpUipXar2S9Vx7xA7E2cUbsTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V04ZcvF11hWMNF9znIBWdMBAKl6h2YvGE5jTbARBTTFSbwN98SVqcuyHDTf+4f+5S60AUnK4o46RdDXVGsJAWKcsFdCQVThl3S3qOTy5Un/HiIYXbZNoYMwsf9fPVKp6sXZ/nFObcNBvbdnra83uzZomRMjyj/Vce6u5Gz0d/LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0b9j4gEu; arc=none smtp.client-ip=185.125.25.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="clyt4tg2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF7B0C4CEEB;
-	Tue,  1 Jul 2025 08:33:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751358819;
-	bh=TwVj/zN+QrMTevzg4950xW7dqK4GoQ4YRfxr5UmUR3I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=clyt4tg2JL9W3oAXwQtEPB0sIRKcq2cLZWvoPT3ehMRudf5w4bJghFW59PlQUVIa5
-	 pBHCd8bZoDxdFy1EvArtcgUmF8pBYGbXh6d9sV5/H4xNTe88pQRLQawAgt1ZZ7g4ui
-	 VZ67mMY+MhkySqiNj/u065RMcy8gCwm1cVVOpfXoX80HH5Usns3wWsdGNzCD+qJqSn
-	 DhyrbHL+x+8YWtK5nttaXF9Ybm5AHZX/B4yxsFJovS2+Kl6zuauIGkfnHQL0ViLG+z
-	 bOx4qN1Csd+Ci+a+tY9TzKvJ+pQFJsEBNyDO9W2nOLKpeUVPOjS0VYCnp2AWGZng9q
-	 IcWthVVyhn57g==
-From: Christian Brauner <brauner@kernel.org>
-To: Shivank Garg <shivankg@amd.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	seanjc@google.com,
-	vbabka@suse.cz,
-	willy@infradead.org,
-	pbonzini@redhat.com,
-	tabba@google.com,
-	afranji@google.com,
-	ackerleytng@google.com,
-	jack@suse.cz,
-	hch@infradead.org,
-	cgzones@googlemail.com,
-	ira.weiny@intel.com,
-	roypat@amazon.co.uk,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	david@redhat.com,
-	akpm@linux-foundation.org,
-	paul@paul-moore.com,
-	rppt@kernel.org,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH V3] fs: generalize anon_inode_make_secure_inode() and fix secretmem LSM bypass
-Date: Tue,  1 Jul 2025 10:33:25 +0200
-Message-ID: <20250701-liberal-geklebt-4c929903fc02@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250626191425.9645-5-shivankg@amd.com>
-References: <20250626191425.9645-5-shivankg@amd.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0b9j4gEu"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bWcFF0v51zSvj;
+	Tue,  1 Jul 2025 10:50:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1751359856;
+	bh=HNK3BM/12gf6KA3brcQfZRNCWeetfJXuSqh/QgcxXnY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0b9j4gEusgxlm20dQkf7tX9M2yP0tJ8Ju2mnOpsdSPiGeIF29zElnAUgpUImX9wfO
+	 txYqVd7z0NNbibL4U/2VtL+CR4cUa6EAMqEpffwKv7gafxQvpwcbDH1DL3vo/B9AOI
+	 SuFn4wUxcn1IkY7CeEyWnRkrhugW6xLLgFzM3gdM=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bWcFD47vbz90g;
+	Tue,  1 Jul 2025 10:50:56 +0200 (CEST)
+Date: Tue, 1 Jul 2025 10:50:55 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Brahmajit Das <listout@listout.xyz>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	gnoack@google.com, jamorris@linux.microsoft.com
+Subject: Re: [RFC PATCH] samples/landlock: Fix building on musl libc
+Message-ID: <20250701.Ahj9ohkee3wu@digikod.net>
+References: <20250630203248.16273-1-listout@listout.xyz>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1243; i=brauner@kernel.org; h=from:subject:message-id; bh=TwVj/zN+QrMTevzg4950xW7dqK4GoQ4YRfxr5UmUR3I=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQkz4369uyfx9MFk40U1jtLFLQGXDktILn382QexrUt+ 6Z8fHXeraOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi0/sZ/vB9eqQQbS76p7Hh 2OF7aXq72v9busjsjbgRf37LZf7ghV6MDLc2H53dIzkz6VTth6A7O9quq2T9vSLe2cGg1n7ctTp gCh8A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250630203248.16273-1-listout@listout.xyz>
+X-Infomaniak-Routing: alpha
 
-On Thu, 26 Jun 2025 19:14:29 +0000, Shivank Garg wrote:
-> Extend anon_inode_make_secure_inode() to take superblock parameter and
-> make it available via fs.h. This allows other subsystems to create
-> anonymous inodes with proper security context.
+On Tue, Jul 01, 2025 at 02:02:48AM +0530, Brahmajit Das wrote:
+> Building with make allyesconfig on musl results in the following
 > 
-> Use this function in secretmem to fix a security regression, where
-> S_PRIVATE flag wasn't cleared after alloc_anon_inode(), causing
-> LSM/SELinux checks to be skipped.
+> In file included from samples/landlock/sandboxer.c:22:
+> /usr/include/sys/prctl.h:88:8: error: redefinition of 'struct prctl_mm_map'
+>    88 | struct prctl_mm_map {
+>       |        ^~~~~~~~~~~~
+> In file included from samples/landlock/sandboxer.c:16:
+> usr/include/linux/prctl.h:134:8: note: originally defined here
+>   134 | struct prctl_mm_map {
+>       |        ^~~~~~~~~~~~
 > 
-> [...]
+> This is mainly due to differnece in the sys/prctl.h between glibC and
+> musl. The struct prctl_mm_map is defined in sys/prctl.h in musl.
+> 
+> Signed-off-by: Brahmajit Das <listout@listout.xyz>
 
-Applied to the vfs-6.17.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.17.misc branch should appear in linux-next soon.
+Thanks, applied to my -next tree. I just moved down the if/include/endif
+block.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+I tested it with check-linux.sh from
+https://github.com/landlock-lsm/landlock-test-tools
+  ARCH=x86_64 CC=musl-gcc check-linux.sh build
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.17.misc
-
-[1/1] fs: generalize anon_inode_make_secure_inode() and fix secretmem LSM bypass
-      https://git.kernel.org/vfs/vfs/c/4dc65f072c2b
+> ---
+>  samples/landlock/sandboxer.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+> index 4e2854c6f9a3..3cc990618f5b 100644
+> --- a/samples/landlock/sandboxer.c
+> +++ b/samples/landlock/sandboxer.c
+> @@ -13,7 +13,9 @@
+>  #include <errno.h>
+>  #include <fcntl.h>
+>  #include <linux/landlock.h>
+> +#if defined(__GLIBC__)
+>  #include <linux/prctl.h>
+> +#endif
+>  #include <linux/socket.h>
+>  #include <stddef.h>
+>  #include <stdio.h>
+> -- 
+> 2.50.0
+> 
+> 
