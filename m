@@ -1,75 +1,75 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B551226B77F
-	for <linux-security-module@vger.kernel.org>; Tue,  1 Jul 2025 09:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F05325F963
+	for <linux-security-module@vger.kernel.org>; Tue,  1 Jul 2025 09:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751361055; cv=none; b=NRY8nPR5vcdnHCVAfUVrgQ1kwGrbxO4qOvMiJ68sUQz+xYeXL+6/XmU2P78gcAK0NkNld4LuQ+GoX3d1/YDL9Pke8UbfLuOc2HtcfpM3OhmuBx3souqqPw9YUlH796GGfaorPZXuppoE82vlbKSHHXH7Dv8eA1uoWXSYDvuqdtk=
+	t=1751361397; cv=none; b=cPq6ZoG/fhznUZ777T3RdK7GEDjCOtQNuAf1sCVeMpc5piTIciclPxxKY/fRVdjTSNiaglChMx90293tDgULKg5N6erfpJo2J0PNhXR9YSu1CFxA6mGFk3bTAF6dwzOhb2tnPwgLmMw4FMwlrne1+DXUftbDa4rCzz1vpM5D4LE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751361055; c=relaxed/simple;
-	bh=FzQqF0J/ul9TxEtjjmA9x9umVEbue93hGArsOir7XgI=;
+	s=arc-20240116; t=1751361397; c=relaxed/simple;
+	bh=cnZfAXC7sGnFz3wmUcDfLnou2Wmc4swTjyswjZmiaWE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lXKXkRM90Ugs34ApgpQoGmCAss+ZSlJTa7AO6f/PwGuoDVrz2G7beQQK5XSxkIfb/UZ3vxukF6Kyr3uswjtsMpBF4I2jLqcFTshgLIYBOOCpzTuT3VuBQxfayGlFZxvKCAWCHNqZvylTwWBBi+yRWHaa1+rFOEQlS6cLYQMS7RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=SfzQPwVK; arc=none smtp.client-ip=185.125.188.122
+	 In-Reply-To:Content-Type; b=EYkQYjaPSq7s0HJ4cspS5zkrOuo0HqTlN6/sxzcrTb+IXtFKmijNek/oLGNDkJiToaTqcqX5eT0aGO/6BKu4OEVL8Ge38Jkdsc7MFxDU0v965Za5gFLq4tCQsBo88BLfFKqwOp4BlmOoxw2PoTPdcBKV7INFxF7fUtjCFu3bme4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=GhhbAmmq; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="SfzQPwVK"
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="GhhbAmmq"
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 728233F693
-	for <linux-security-module@vger.kernel.org>; Tue,  1 Jul 2025 09:10:49 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 698A33F6A0
+	for <linux-security-module@vger.kernel.org>; Tue,  1 Jul 2025 09:16:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1751361049;
-	bh=FzQqF0J/ul9TxEtjjmA9x9umVEbue93hGArsOir7XgI=;
+	s=20210705; t=1751361392;
+	bh=dVcX/aApl1bOZ7xau++gCdWkwO+zwwT+04d8AsO394Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=SfzQPwVKrzA0fGGuU0vF41rpIyHEFiFpRLjnLu0O/D8ZGXZasMREbc8QFxIwMa1JJ
-	 UnMF5RRonKu9kXdZHhrKs5X0byQKKcQS9gBcx+C/CU5GiCInkJ121OghZRPE1llUi0
-	 QPzXZUDy5haEJ37hn6rrSHNREDSDvFMi4mqGunTTd0H4x9qEZFaB++1do19wRE3+Ty
-	 hv7tFDGlCTGGUFubEqEvbGJdT2Gc8JChBCDCO4Ag+SGWsOrlZa50F4yN9UZt0jigW0
-	 5emRNfavon68BEXIr8jOqOgT7PtS4Zuva0KecESy4qEl0eq6AqlKgS0oikgDZzx0z3
-	 6h9b4tVGwstAA==
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-554f7b19481so3185160e87.0
-        for <linux-security-module@vger.kernel.org>; Tue, 01 Jul 2025 02:10:49 -0700 (PDT)
+	b=GhhbAmmqPcmqJX0DnkcMKvIeYWqwQP8HhnVCsxdjzNATfzZc+t1MY1isRCPlWK/O9
+	 0reU/Kle64jlp3+QlNmt+Es6NVUEQMFHH4JIKDP7f6+lbIKXE21r4aVuTcSY6OvX39
+	 lHkG4SZchb6QQCNJ+HdaqqGzdBEguapBveONvNP1mg03M4ImJbnyKbPCSKHrCwBl4b
+	 iPv9nMWj1CuJ5dLn4tySgTjW76zk/AFDY6H69ULzatMZSNbukPjTOLl2A96hpLAuPy
+	 ek+sbKWCxvEdhoI+1V6LCBpzw5XaBAqfzNdP67Ji9umWPzUi6VLhKrMYczDKLdd64f
+	 0s/D5zl9ZgcuA==
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4535ad64d30so25195325e9.3
+        for <linux-security-module@vger.kernel.org>; Tue, 01 Jul 2025 02:16:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751361049; x=1751965849;
+        d=1e100.net; s=20230601; t=1751361392; x=1751966192;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FzQqF0J/ul9TxEtjjmA9x9umVEbue93hGArsOir7XgI=;
-        b=aJbHnnEmyAdQCABzYokNC7PQb1CZxoY0P9gBV5oKbUrXTu/OhYouN8cTobK7GH646S
-         CvKPbKNODckCaeA3M3MLUU+KnMrjtwWR6OJlBHyhD3ImQvpQCQtE1dCEQh8UXX5xEkqr
-         hmJZBZcjeOnpzZRylBXF3WwabJ82kGRG8iuUyqGsZqdn1XuP/pTbzVLhFasoXO1eiaaZ
-         YRWE5tJB7VVosBr6Fjs7MbVWR7mrAPRuL3arRXqVM8hIVNoMhgv+C8frDolRWe7Er+wK
-         Z9+oVDKG5032Czs38dc7KHF43iu+He5Jc3XHeBwPXahtByYRx0tinrqU2m7I0yVxoopV
-         PGbw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSNv9jv5h9JOxNKMq2LeSnQnzByfnkEgWrWm0enk6qiz3rfbgJzGVnHw91fIrmTWBC93/a1sUNjcMCo2qh+CmZ1wuY4N8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnqSlbBNRM/lSZunEKHMjt0G/QskncSftg/TFbONHWmky4KhDk
-	GoGRJM+QZ1Qsy8Hcnr+Mw0pPvjVpiyvRC6lMReJ5EiCLAJD8Szay2WnxF9vUEv23hKCDd1GpmBk
-	bWXUOqSDoBm3aTiDoSdziGaHqjkZwElXb0jIjHSqlOh/nfq4coxypMsUjmFtT37fvTi5810bLEg
-	UGdS4SnXRnROEnVCfnpA==
-X-Gm-Gg: ASbGncv34orKGmAfjtwsB052CayjtK2xSiWiSdnFUF/u5inDZeZRq3mXm7iC9YGLV9+
-	D/6dKbvsiQO5BiHfaTXUIpfz1k7i44e+kW16QpMV4bk79yivhaE/QLWwwfqWnFemS7e1b6uKJd3
-	jBtNorAXT/Hpha0mpEG+/JUXoOXT/yGeZ5g5UP4A8Z2cHg9M5ACdfjGPeHKCpM63xkFjI5gvPYw
-	iHF9MY9UNa8zno0wSQnBCdgp5y5nuL16nzlTteS6V+r1YfLUWki9BYGsYrcboTw7Nnrjh5DodGu
-	pF6ymJCyFDBVkyiSAOSQHfin1BKLFcdd9rGZJn5iW2Oy9OLPzs4pW3WCAhY622UdGiXW0vCFLUj
-	GRQ==
-X-Received: by 2002:a05:6000:65a:b0:3a5:8d9d:27fa with SMTP id ffacd0b85a97d-3a8fdb2ae51mr14169052f8f.3.1751361038407;
-        Tue, 01 Jul 2025 02:10:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG9Wa9pcB2UUm59Z4GOCv082ua6JPrrZMxVXb+S8tPsIyn/l8uZo0KZb8KgbdGHQMaVoSmCBg==
-X-Received: by 2002:a05:6000:65a:b0:3a5:8d9d:27fa with SMTP id ffacd0b85a97d-3a8fdb2ae51mr14168505f8f.3.1751361037764;
-        Tue, 01 Jul 2025 02:10:37 -0700 (PDT)
+        bh=dVcX/aApl1bOZ7xau++gCdWkwO+zwwT+04d8AsO394Y=;
+        b=FlqBuBWcZianxHyPO+vsOw4bAYsJw/CmY1pXI7AwkEDXyrkabX4kZ4cjhIDiKJUHfR
+         WeqXxHizVuRX6tmvMqOI+x/1hCTilxlVcaRCO/wUgxQNvOvHYtFj2RKYq/0HEQptS0JF
+         qSuKb25rjJt8Atg3g4Ka7fdrWg8/g7I9iGIl5jte3SdO/H6jRB2abyihbGj928e/SjL6
+         nPWpsGE7sDOrfK3Yk6xse8DAQu5MZv+m6048wNFVfV0PxI+kjxar6YR4PM1px6l/4Umb
+         rvvxx2xO6eNH1deK4Ede+hGfki6pyciSvmyuI6oddpfxQFFi/0FpU+d+2R3M+xV5XiXT
+         eEtA==
+X-Forwarded-Encrypted: i=1; AJvYcCVlcdm/Z81KKtPKrDOcezyd0Dlv7VFvl/sd4/zYJ6o1eQxHEYtfU/nI11f7pVa0npRzTuj0uxO4SCbNM+4cvlPsAqUX8Vc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3Do/FXQBMAHcjPmgedMsKFSFvQGdQbcHR66+iciBfszS2tsD0
+	vq2k14BVTpviLMDXexkhH+oPk+5pdnlnvL1b7Q58hiFXWm4YmDQir/SQ56/rOxj5mrxTXzcMvIb
+	1xOa0eSiDNFNMen7l7hzMyBxKYRwNACc3v1CouDh2B4ZipzNV3/PtmrOYT/VpreO7H1xnyRix2r
+	aSxmWFiNr7mHmphL1ll53zqm9XWN7Q
+X-Gm-Gg: ASbGncsGZdaj6vERaGO5U1VlpH13S+t6dehjV7zy3iZoXcx8jgOPHz4XPzOlTSnSFEB
+	7dMAejB75dKzuwax5/CdLzl9FGBk1NhZCSwFbjOz5XaWGqBnoNEU1WpwkTGr9aavm3NwkV/05zn
+	pYoGE48bEcHdNOByQ8APpuKyfQSIOsdv1GH6BAiVu5ox+ClNoWjoJI+m1DXs1DpaLdgCzTfjpgh
+	g9m8JQgpUYCEH7B/g9mwF7oPrMwvw+wExythColwbHk3BZSSQZ4mHtZds5U2in3NSHFmRkDeuNs
+	OV/Q9w3FN01N+EeJPHo79jf+Il5ujkBAbYxN1LF9ZVOGWrVe81lfcN2GErbOrQLH7FHr6OxzqjR
+	GMg==
+X-Received: by 2002:a05:600c:1caa:b0:453:6150:de41 with SMTP id 5b1f17b1804b1-453936a4bcbmr162957745e9.17.1751361391806;
+        Tue, 01 Jul 2025 02:16:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGOOqyJLr4ZGrfOkvegHE3h2BS+hNoKU0ZEkODM/DAdkz3AR7uaEpoRcficw8Y2fcSj2XPNjA==
+X-Received: by 2002:a05:600c:1caa:b0:453:6150:de41 with SMTP id 5b1f17b1804b1-453936a4bcbmr162957165e9.17.1751361391309;
+        Tue, 01 Jul 2025 02:16:31 -0700 (PDT)
 Received: from ?IPV6:2001:861:3280:410:2ef0:5dff:fe60:6274? ([2001:861:3280:410:2ef0:5dff:fe60:6274])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e7481sm12850160f8f.14.2025.07.01.02.10.36
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a892e52c99sm12500699f8f.49.2025.07.01.02.16.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jul 2025 02:10:37 -0700 (PDT)
-Message-ID: <36d50ab2-ef5a-4440-b6c5-ec324afa9260@canonical.com>
-Date: Tue, 1 Jul 2025 11:10:36 +0200
+        Tue, 01 Jul 2025 02:16:30 -0700 (PDT)
+Message-ID: <6cd857e8-8f96-4ea1-81f6-e1895c208c20@canonical.com>
+Date: Tue, 1 Jul 2025 11:16:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -77,8 +77,7 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] AppArmor: add support for lsm_config_self_policy
- and lsm_config_system_policy
+Subject: Re: [PATCH v3 2/3] lsm: introduce security_lsm_config_*_policy hooks
 To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
  linux-security-module@vger.kernel.org
 Cc: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
@@ -88,8 +87,8 @@ Cc: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
  linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
  linux-kernel@vger.kernel.org
 References: <20250624143211.436045-1-maxime.belair@canonical.com>
- <20250624143211.436045-4-maxime.belair@canonical.com>
- <5313b937-304a-4f2a-8563-3ad1ea194cb9@I-love.SAKURA.ne.jp>
+ <20250624143211.436045-3-maxime.belair@canonical.com>
+ <945bf443-32b4-4432-8702-41ff7b15e420@I-love.SAKURA.ne.jp>
 Content-Language: en-US
 From: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>
 Autocrypt: addr=maxime.belair@canonical.com; keydata=
@@ -126,13 +125,36 @@ Autocrypt: addr=maxime.belair@canonical.com; keydata=
  oRAG5XUu5Q1PWG0oY4cZ6XN1z8nkj5Mj23SRhBwVjh2PY2p4cyFRTBrBDaNV38LHw6tVjdhk
  8YNqGOVqceueWdZmWbp8b88a0wzOcrPAvcxJ14FhMyMO9P7FblDYLNYr0oAYj+UyhxOPbRZz
  yriCIKEAbLqHTyj+RhbroZmv5q3X7iVq
-In-Reply-To: <5313b937-304a-4f2a-8563-3ad1ea194cb9@I-love.SAKURA.ne.jp>
+In-Reply-To: <945bf443-32b4-4432-8702-41ff7b15e420@I-love.SAKURA.ne.jp>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
 
-On 6/25/25 03:21, Tetsuo Handa wrote:
-> Huge memory leak.
-> Here too. :-)
-Nice catch, this is fixed in the next iteration.
+On 6/25/25 03:08, Tetsuo Handa wrote:
+> On 2025/06/24 23:30, Maxime Bélair wrote:
+>> +config LSM_CONFIG_SELF_POLICY_MAX_BUFFER_SIZE
+>> +	int "Maximum buffer size for lsm_config_self_policy"
+>> +	range 16384 1073741824
+>> +	depends on SECURITY
+>> +	default 4194304
+>> +	help
+>> +	  The maximum size of the buffer argument of lsm_config_self_policy.
+>> +
+>> +	  The default value of 4194304 (4MiB) is reasonable and should be large
+>> +	  enough to fit policies in for most cases.
+>> +
+> 
+> Do we want to define LSM_CONFIG_{SELF,SYSTEM}_POLICY_MAX_BUFFER_SIZE as Kconfig?
+> 
+> If security_lsm_config_{self,system}_policy() are meant to be used by multiple
+> LSM modules, the upper limit each LSM module wants to impose would vary. Also,
+> 1073741824 is larger than KMALLOC_MAX_SIZE; kmalloc()-based memory copying
+> functions will hit WARN_ON_ONCE_GFP() at __alloc_frozen_pages_noprof().
+> 
+> Since some of LSM modules might use vmalloc()-based memory copying functions from
+> security_lsm_config_{self,system}_policy(), the upper limit should be imposed by
+> individual LSM module which provides security_lsm_config_{self,system}_policy().
+> 
+That makes sense. I removed this global Kconfig and the maximum buffer
+size is now defined per module.
