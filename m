@@ -1,49 +1,40 @@
-Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6AD283FDC
-	for <linux-security-module@vger.kernel.org>; Tue,  1 Jul 2025 19:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B1B2857C7
+	for <linux-security-module@vger.kernel.org>; Tue,  1 Jul 2025 20:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751399952; cv=none; b=Gfw8cwt96tNW19p+RIvlmZUwoSV2jB6NXCXfeeriWXEijZSp4EmewJH5A53Bdn2w/eJYsYpi4mj+41IUc1N3L8b5aIma0TZk3lh1vDt27rlgB1K8hId8xosTUup+skLtoLZyxrMZ5ZfRvmnYDOpmTzJEf3CV7tSDYaNR4DzyZnc=
+	t=1751400637; cv=none; b=oBjPwtuVmWwPYyz/mTOe2AX8AbHIty7fSYnlFblN9IBcPQoSyN8CTtc7Ns9UfcMfQrMhMVVaQZHV9aaXEzeVKJ5IdwhDG8LsKjC5Ujv9BA+G2udMwGvf0wWHLFBkKyeTuwIyb+NVZDTaXTDOKXhUavcHFdtKjIZsdzjCWjhXIRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751399952; c=relaxed/simple;
-	bh=jixDHmDvR8U0dDT83hiZ8WniBwlKfoXeKBdMOX+1UdY=;
+	s=arc-20240116; t=1751400637; c=relaxed/simple;
+	bh=AOEFrwQEMYLYorbfRysPCBxzTHriI7GjtIoUI51AhLI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PmYBit5wWA9AjNHzI0EHbz2cuX49UGe43Hwy3h0emQZp84QX+TbAp2jx1sbOX7upYOTMhpWltfZik/PaFRWaZhP0nNgzFb4eFX5iYvWfXBjkZh1fariFFf2G1Tle4tExu6N3iVAa2vDZPyMc4dTyLakp6kMxcnX8OJtxWUTw9H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=e03RjFXS; arc=none smtp.client-ip=185.125.25.9
+	 Content-Type:Content-Disposition:In-Reply-To; b=EAiZ9rBKk90qjPL/KZMWJNxm1LxXXW6J2FYl7S2dME7G5DZUTWePomjDtl+KM76HoVjepb0mHgI5tLNrEu0FFruYABQo0rxn8lZ2B5pjrqdFgggBnmu8145kDbxsf4JZ6izVjw+F1A55qQhFsrmtvub2VpNbiZ7/Wc1Fqhq/4p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=k+lSiKcA; arc=none smtp.client-ip=185.125.25.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="e03RjFXS"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bWv490Z8hzy2K;
-	Tue,  1 Jul 2025 21:59:05 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="k+lSiKcA"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bWv8z2C2VzM10;
+	Tue,  1 Jul 2025 22:03:15 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1751399944;
-	bh=bPeGEVrLy0aMuCa5BmrPge0uARt7r1vTwdNVrTjoZd8=;
+	s=20191114; t=1751400195;
+	bh=wQsSGnPmX/DSqtXTMNJLb3ONYmVBJCbIpCXAyYU8l6c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e03RjFXSweLX3mJqJHNHZ2CVeVLM0/Q4MrPJ5/K0RtPzO9YS5l0xkVcny7BtICPZy
-	 5EGfKIqf6oEvzgvxPecyl0GAPvcNk1CO5el//3K4iz6dpPV6ANBJqZfp1bAm2+N6vo
-	 ypS1+JVcuvtg7U2GZcFDLrrjgGihMenHTChSy1kU=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bWv483pv9zwt7;
-	Tue,  1 Jul 2025 21:59:04 +0200 (CEST)
-Date: Tue, 1 Jul 2025 21:59:01 +0200
+	b=k+lSiKcAs1qoR+PRl9GRbjWfE5lemzQhJbwCy7k5bX/FfMkImfvfXpneVRMH9U7/Z
+	 AQ//74KFElbHHkWSkufdzjiI5L3YA02CIeJr6pwpKdJq7rR7ZW9+5fnZTB3j+auN24
+	 Jv/JTpIpi6Mwtso9zd9Kyl2Y5Xnf/vL00j2Gtb4c=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bWv8y5rR2zCwY;
+	Tue,  1 Jul 2025 22:03:14 +0200 (CEST)
+Date: Tue, 1 Jul 2025 22:03:12 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Song Liu <song@kernel.org>, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] selftests/landlock: Add tests for access through
- disconnected paths
-Message-ID: <20250701.gieSee6cieZ5@digikod.net>
-References: <09b24128f86973a6022e6aa8338945fcfb9a33e4.1749925391.git.m@maowtm.org>
- <20250619.yohT8thouf5J@digikod.net>
- <973a4725-4744-43ba-89aa-e9c39dce4d96@maowtm.org>
- <20250623.kaed2Ovei8ah@digikod.net>
- <351dd18f-5c17-4477-a9b9-23075e8722fa@maowtm.org>
- <20250625.Eem6reiGhiek@digikod.net>
- <f7e3d874-6088-4f70-8222-c4a8547d213e@maowtm.org>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>
+Subject: Re: [PATCH v1] landlock: Remove warning in collect_domain_accesses()
+Message-ID: <20250701.Thaey9eej8oo@digikod.net>
+References: <20250618134734.1673254-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -53,299 +44,48 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f7e3d874-6088-4f70-8222-c4a8547d213e@maowtm.org>
+In-Reply-To: <20250618134734.1673254-1-mic@digikod.net>
 X-Infomaniak-Routing: alpha
 
-On Wed, Jun 25, 2025 at 09:46:08PM +0100, Tingmao Wang wrote:
-> On 6/25/25 15:52, Mickaël Salaün wrote:
-> > On Tue, Jun 24, 2025 at 12:16:55AM +0100, Tingmao Wang wrote:
-> >> [..]
-> > 
-> > Let's say we initially have this hierarchy:
-> > 
-> > root
-> > ├── s1d1
-> > │   └── s1d2 [REFER]
-> > │       └── s1d3
-> > │           └── s1d4
-> > │               └── f1
-> > ├── s2d1 [bind mount of s1d1]
-> > │   └── s1d2 [REFER]
-> > │       └── s1d3
-> > │           └── s1d4
-> > │               └── f1
-> > └── s3d1 [REFER]
-> > 
-> > s1d3 has s1d2 as parent with the REFER right.
-> > 
-> > We open [fd:s1d4].
-> > 
-> > Now, s1d1/s1d2/s1d3 is moved to s3d1/s1d3, which makes [fd:s1d4]/..
-> > disconnected:
-> > 
-> > root
-> > ├── s1d1
-> > │   └── s1d2 [REFER]
-> > ├── s2d1 [bind mount of s1d1]
-> > │   └── s1d2 [REFER]
-> > └── s3d1 [REFER]
-> >     └── s1d3 [moved from s1d2]
-> >         └── s1d4
-> >             └── f1
-> > 
-> > Now, s1d3 has s3d1 as parent with the REFER right.
-> > 
-> > Moving [fd:s1d4]/f1 to s2d1/s1d2/f1 would be deny by Landlock
+On Wed, Jun 18, 2025 at 03:47:31PM +0200, Mickaël Salaün wrote:
+> As in is_access_to_paths_allowed(), it is also possible to reach
+> disconnected root directories in collect_domain_accesses().
 > 
-> Maybe I'm misunderstanding your description, but this seems to work for
-> me?
+> Remove a wrong WARN_ON_ONCE() canary in collect_domain_accesses() and
+> fix comment.  Using an unlikely() annotation doesn't seem appropriate
+> here.  A following patch from Tingmao tests this case [1].
+> 
+> Cc: Günther Noack <gnoack@google.com>
+> Reported-by: Tingmao Wang <m@maowtm.org>
+> Link: https://lore.kernel.org/r/09b24128f86973a6022e6aa8338945fcfb9a33e4.1749925391.git.m@maowtm.org [1]
+> Fixes: b91c3e4ea756 ("landlock: Add support for file reparenting with LANDLOCK_ACCESS_FS_REFER")
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
 
-You're right, this is a wrong example.
-
-> 
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index d8f9259fffe4..5e550e6da49c 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -5201,6 +5201,72 @@ TEST_F_FORK(layout1_bind, path_disconnected_link)
->  	}
->  }
->  
-> +FIXTURE(layout_disconnected_special){};
-> +FIXTURE_SETUP(layout_disconnected_special)
-> +{
-> +	prepare_layout(_metadata);
-> +
-> +	create_file(_metadata, TMP_DIR "/s1d1/s1d2/s1d3/s1d4/f1");
-> +	create_directory(_metadata, TMP_DIR "/s2d1");
-> +	create_directory(_metadata, TMP_DIR "/s3d1");
-> +
-> +	set_cap(_metadata, CAP_SYS_ADMIN);
-> +	ASSERT_EQ(0,
-> +		  mount(TMP_DIR "/s1d1", TMP_DIR "/s2d1", NULL, MS_BIND, NULL));
-> +	clear_cap(_metadata, CAP_SYS_ADMIN);
-> +}
-> +
-> +FIXTURE_TEARDOWN_PARENT(layout_disconnected_special)
-> +{
-> +	/* umount(TMP_DIR "/s2d1") is handled by namespace lifetime. */
-> +
-> +	remove_path(TMP_DIR "/s1d1/s1d2/s1d3/s1d4/f1");
-> +
-> +	cleanup_layout(_metadata);
-> +}
-> +
-> +TEST_F_FORK(layout_disconnected_special, disconnected_special)
-> +{
-> +	const __u64 access =
-> +		LANDLOCK_ACCESS_FS_REFER | LANDLOCK_ACCESS_FS_MAKE_REG |
-> +		LANDLOCK_ACCESS_FS_REMOVE_FILE | LANDLOCK_ACCESS_FS_READ_FILE;
-> +	const struct rule rules[] = {
-> +		{
-> +			.path = TMP_DIR "/s1d1/s1d2",
-> +			.access = access,
-> +		},
-> +		{
-> +			.path = TMP_DIR "/s3d1",
-> +			.access = access,
-> +		},
-> +		{},
-> +	};
-> +	int s1d4_bind_fd, ruleset_fd;
-> +
-> +	s1d4_bind_fd = open(TMP_DIR "/s2d1/s1d2/s1d3/s1d4", O_PATH | O_CLOEXEC);
-> +	EXPECT_LE(0, s1d4_bind_fd);
-> +
-> +	ruleset_fd = create_ruleset(_metadata, access, rules);
-> +	ASSERT_LE(0, ruleset_fd);
-> +
-> +	/* Make it disconnected. */
-> +	EXPECT_EQ(0, renameat(AT_FDCWD, TMP_DIR "/s1d1/s1d2/s1d3", AT_FDCWD,
-> +			      TMP_DIR "/s3d1/s1d3"));
-> +
-> +	/* Check it's disconnected. */
-> +	ASSERT_EQ(ENOENT, test_open_rel(s1d4_bind_fd, "..", O_DIRECTORY));
-> +
-> +	enforce_ruleset(_metadata, ruleset_fd);
-> +	EXPECT_EQ(0, close(ruleset_fd));
-> +
-> +	EXPECT_EQ(0, renameat(s1d4_bind_fd, "f1", AT_FDCWD,
-> +			      TMP_DIR "/s2d1/s1d2/f1"));
-> +	EXPECT_EQ(0, test_open(TMP_DIR "/s2d1/s1d2/f1", O_RDONLY));
-> +	EXPECT_EQ(0, renameat(AT_FDCWD, TMP_DIR "/s2d1/s1d2/f1", s1d4_bind_fd,
-> +			      "f1"));
-> +	EXPECT_EQ(0, test_open(TMP_DIR "/s3d1/s1d3/s1d4/f1", O_RDONLY));
-> +}
-> +
->  #define LOWER_BASE TMP_DIR "/lower"
->  #define LOWER_DATA LOWER_BASE "/data"
->  static const char lower_fl1[] = LOWER_DATA "/fl1";
-> 
-> Output:
-> 
-> 	root@5610c72ba8a0 /t/landlock# cp /linux/tools/testing/selftests/landlock/ /tmp -r
-> 	root@5610c72ba8a0 /t/landlock# ./fs_test -t disconnected_special
-> 	TAP version 13
-> 	1..1
-> 	# Starting 1 tests from 1 test cases.
-> 	#  RUN           layout_disconnected_special.disconnected_special ...
-> 	#            OK  layout_disconnected_special.disconnected_special
-> 	ok 1 layout_disconnected_special.disconnected_special
-> 	# PASSED: 1 / 1 tests passed.
-> 	# Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
-> 
-> (I think this is similar to an existing test case, but if you think it's
-> worth having, feel free to add it to the commit (maybe it needs a better
-> name than disconnected_special))
-> 
-> I tested this manually initially which would have been on virtiofs instead
-> of tmpfs, and the behaviour is the same - rename was allowed.
-> 
-> > whereas
-> > the source and destination had and still have REFER in their
-> > hierarchies.  This is because s3d1 and s1d2 are evaluated for
-> > [fd:s1d4]/f1.  We could have a similar scenario for the destination and
-> > for both.
-> > 
-> > [...]
-> >> An interesting concrete example I came up with:
-> >>
-> >> /# uname -a
-> >> Linux 5610c72ba8a0 6.16.0-rc2-dev #43 SMP ...
-> >> /# mkdir /a /b
-> >> /# mkdir /a/a1 /b/b1
-> >> /# mount -t tmpfs none /a/a1
-> >> /# mkdir /a/a1/a11
-> >> /# mount --bind /a/a1/a11 /b/b1
-> >> /# mkdir /a/a1/a11/a111
-> >> /# tree /a /b
-> >> /a
-> >> `-- a1
-> >>     `-- a11
-> >>         `-- a111
-> >> /b
-> >> `-- b1
-> >>     `-- a111
-> >>
-> >> 7 directories, 0 files
-> >> /# cd /b/b1/a111/
-> >> /b/b1/a111# mv /a/a1/a11/a111 /a/a1/a12
-> >> /b/b1/a111# ls ..  # we're disconnected now
-> >> ls: cannot access '..': No such file or directory
-> >> /b/b1/a111 [2]# touch /a/a1/a12/file
-> >>
-> >> /b/b1/a111# LL_FS_RO=/:/a/a1 LL_FS_RW=/:/b/b1  /sandboxer ls
-> >> Executing the sandboxed command...
-> >> file
-> >>
-> >> /b/b1/a111# LL_FS_RO=/:/a/a1 LL_FS_RW=/:/b/b1  /sandboxer mv -v file file2
-> >> Executing the sandboxed command...
-> >> mv: cannot move 'file' to 'file2': Permission denied
-> >> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> >> # This fails because for same dir rename we just use is_access_to_path_allowed,
-> >> # which will stop at /a/a1 (and thus never reach either /b/b1 or /).
-> > 
-> > Good example, and this rename should probably be allowed because the
-> > root directory allows REFER.
-> 
-> Well, it is disallowed for the same reason why a read to [disconnected
-> cwd]/file would be disallowed, even if root has an allow everything rule -
-> landlock never gets to the root because this is on a separate filesystem,
-> and so if the path is disconnected it can't get out of it.
-> 
-> > 
-> >>
-> >> /b/b1/a111 [1]# mkdir subdir
-> >> /b/b1/a111# LL_FS_RO=/:/a/a1 LL_FS_RW=/b/b1  /sandboxer mv -v file subdir/file2
-> >> Executing the sandboxed command...
-> >> [..] WARNING: CPU: 1 PID: 656 at security/landlock/fs.c:1065 ...
-> >> renamed 'file' -> 'subdir/file2'
-> >> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> >> # This works because now we restart walk from /b/b1 (the bind mnt)
-> >>
-> >> /b/b1/a111# mv subdir/file2 file
-> >> /b/b1/a111# LL_FS_RO=/:/a/a1 LL_FS_RW=/a  /sandboxer mv -v file subdir/file2
-> >> Executing the sandboxed command...
-> >> mv: cannot move 'file' to 'subdir/file2': Permission denied
-> >> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> >> # This is also not allowed, but that's OK since even though technically we're
-> >> # actually moving /a/a1/a12/file to /a/a1/a12/subdir/file2, we're not doing it
-> >> # through /a (we're walking into a12 via /b/b1, so rules on /a shouldn't
-> >> # apply anyway)
-> > 
-> > Yes
-> > 
-> >>
-> >> /b/b1/a111 [1]# LL_FS_RO=/:/a/a1 LL_FS_RW=/b  /sandboxer mv -v file subdir/file2
-> >> Executing the sandboxed command...
-> >> renamed 'file' -> 'subdir/file2'
-> >> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> >> # And this works because we walk from /b/b1 after doing collect_domain_accesses
-> >>
-> >> I think overall this is just a very strange edge case and people should
-> >> not rely on the exact behavior whether it's intentional or optimization
-> >> side-effect (as long as it deny access / renames when there is no rules at
-> >> any of the reasonable upper directories).  Also, since as far as I can
-> >> tell this "optimization" only accidentally allows more access (i.e.  rules
-> >> anywhere between the bind mountpoint to real root would apply, even if
-> >> technically the now disconnected directory belongs outside of the
-> >> mountpoint), I think it might be fine to leave it as-is, rather than
-> >> potentially complicating this code to deal with this quite unusual edge
-> >> case?  (I mean, it's not exactly obvious to me whether it is more correct
-> >> to respect rules placed between the original bind mountpoint and root, or
-> >> more correct to ignore these rules (i.e. the behaviour of non-refer access
-> >> checks))
-> > 
-> > I kind of agree, overall it's not really a security issue (if we
-> > consider the origin of files), but it may still be inconsistent for
-> > users in rare cases.  Anyway, even if we don't want it, users could rely
-> > on this edge case (cf. Hyrum's law).
-> > 
-> >>
-> >> It is a bit weird that `mv -v file file2` and `mv -v file subdir/file2`
-> >> behaves differently tho.
-> > 
-> > Yes, `mv file file2` doesn't depends on REFER because it cannot impact a
-> > Landlock security policy.  This behavior is a bit weird without kernel
-> > and Landlock knowledge though.
-> > 
-> >>
-> >> If you would like to fix it, what do you think about my initial idea?:
-> >>> This might need more thinking, but maybe if one of the operands is
-> >>> disconnected, we can just let it walk until IS_ROOT(dentry), and also
-> >>> collect access for the other path until IS_ROOT(dentry), then call
-> > 
-> > Until then, it would be unchanged, right?
-> 
-> Sorry, I'm not fully clear on what you meant by "until then", and what
-> would be unchanged, but on second thought I think this proposal is
-> problematic as it would mean that we won't follow_up on mountpoints even
-> for the other connected path (as collect_domain_accesses does not do
-> that).
-> 
-> > 
-> >>> is_access_to_paths_allowed() passing in the root dentry we walked to?  (In
-> >>> this case is_access_to_paths_allowed will not do any walking and just make
-> >>> an access decision.)
-> > 
-> > Are you suggesting to not evaluate mnt_dir for disconnected paths?  What
-> > about the case where both the source and the destination are
-> > disconnected?
-> 
-> Yes basically, but I think my proposal was problematic.
-> 
-> > 
-> >>
-> >> This will basically make the refer checks behave the same as non-refer
-> >> checks on disconnected paths - walk until IS_ROOT, and stop there.
-> > 
-> > I think it would make more sense indeed.
-> 
-> It would make sense if both sides are disconnected, but not if just one
-> side is.  In that case we still want to walk the other connected path
-> normally.
-
-This discussion made me think about different edge cases and I sent a
-proposal for a fix with tests that should cover all the cases we talked
-about here:
+This patch hides an edge cases that I though wasn't supposed to happen.
+I'll drop it in favor of this other patch which fixes the underlying
+issue:
 https://lore.kernel.org/all/20250701183812.3201231-1-mic@digikod.net/
+
+> ---
+>  security/landlock/fs.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 6fee7c20f64d..1d6c4e728f92 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -1061,8 +1061,8 @@ static bool collect_domain_accesses(
+>  			break;
+>  		}
+>  
+> -		/* We should not reach a root other than @mnt_root. */
+> -		if (dir == mnt_root || WARN_ON_ONCE(IS_ROOT(dir)))
+> +		/* Stops at the mount point or disconnected root directories. */
+> +		if (dir == mnt_root || IS_ROOT(dir))
+>  			break;
+>  
+>  		parent_dentry = dget_parent(dir);
+> -- 
+> 2.49.0
+> 
+> 
