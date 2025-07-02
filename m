@@ -1,90 +1,371 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCB02BE626
-	for <linux-security-module@vger.kernel.org>; Wed,  2 Jul 2025 19:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D51BA2E;
+	Wed,  2 Jul 2025 22:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751484300; cv=none; b=Yx0SRZXZUqR+rLKkShkQybBjhYG2OYLo5uwstWk0VzSql+TNDPMz9UE2yT36ajgiNne6CzrcZEtHhHwf/6ugTZIs/qsDqUYrMILKhgfeC7gpdlxdr81hNQGxSZmElfricBRSKGg31K2meP1nf1MEdygBlkrIcsrogiYpINuIeAc=
+	t=1751495919; cv=none; b=czAwvVRdDUFOnKYoFHyLar2Zb9DdTqac+WoiTRkKdKcIMh8zIQBlsn5PzDU3Nb7ZZE+yzoIWkz5KM0IGxPB0tBQ6FXDqwPJNSoyjzhJOMgZC5wyASODVjx7LkKO119tfOw2ymST4XSVVAf+e/jTrjgYOjDdsr+cCQGk9371t9oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751484300; c=relaxed/simple;
-	bh=KK4ynMiBHY0thbjaKNOn/kUYd4MYbYdKNVAr0/lf4n4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ox8mx9ISDUCr+DZG2K3UQBMD9Y8vdcvbClls7/X7oB2G7+PCsQ6wQzX8WQ3W444DtrBrQct8L8TefYrIgdDoGTaXH767GBAVHa+Yf4w3XIQQGAM/5Y8yglDZotx3s7bdehkFB+qPn2fcBd8LFHeMlLuYUPKhhsL/Ua3/m+YyW/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ByItZai0; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1751495919; c=relaxed/simple;
+	bh=M15wTBRDUxuzUSxsq10ndWKT/U/CMaX/pdQy2NUcoRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KefguDpd7a6lxHoIuVRvDSnFFwPE3hHfzXM3mYI5nYfeiQVLTxHwk08QLnBdbaSnK8iQ97hnVQrkYjF3xL/Q7kXNUkg3BlCMiPst/KwvDj26tyCPamDa9qPcbpE+oejio1ktsQ90PAD/LXfyKHA3rJ99RmHBPY+0HgdT1QgFHF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uGwhfXMP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ByItZai0"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e740a09eae0so6788979276.1
-        for <linux-security-module@vger.kernel.org>; Wed, 02 Jul 2025 12:24:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1751484297; x=1752089097; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RisGUs6Qykk07nJw80m0Ftg7mf8erIx6Cg/HctC8ynk=;
-        b=ByItZai0w8MGT3rkQg9Fse6epWc0z7aza9psyjNIslDY02rb45inRL5w27IE/oJ11f
-         toscM2B9hzhUCDHK15bMnsPE/Di2s1Fnzup6bh7976ZiwfV/heNX4UwBgb9ogSoco/OL
-         k8ON+PSZdN4V8YpzO6Y9Ggr/S6rKfC40f5GbvphbrqMm9Xzo20823UAr62YyCVa6TdV6
-         5kiXFi6zt5BX5S4WFny3X9Qf+qxgCUBdRgJ/F/hF0BTnYamqKTtPEijdzi4/9ClftHUD
-         oAJ5qjAaRWbqoSuQSZK8e4mnB9jHFs9k/8Ko8BjapzrR+Z4FqGj85d7nSwCD1SUGYz/q
-         GIxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751484297; x=1752089097;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RisGUs6Qykk07nJw80m0Ftg7mf8erIx6Cg/HctC8ynk=;
-        b=e9NyR2FHcea2AjqsMIDHEhcJgAE+YK8u/rfctJx/xxlT/j+PLs1c32EOuzGI6WC9Al
-         lsSLe8iWBzDX8fWQ5e3p05w9vjVM9yZlij1rCEZwHNhQ5GimiGnGJ+1Xn4SKVWtT4a+F
-         xU6w+yVWBvjdnQ41GhaVjBSzVixeFCSAmb1pt9rqONCkDpmxtPEckuztOamLPFvXXrHt
-         M3SSDZBM8Ho7o0D8v1TunsVA2ck2Yqx3HInFdu4Aguj9XMV6qCAKDcoYWdoGbn1Sw9ZH
-         2qXTZ4E77ECa9pXc20ePgR3D5Sh4wtvoRO1YlDr4xlJi9+tDMTb5C37P1mtvvomIGfyY
-         3xCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSzBqszK+QpDCvDrGlep+qfXqLgnuB0dTyYtspem3CJ7XV7xIE//MCW6sEdnPS4gcPrpZyzrb7+vHvJRzUh8/pmV1AqL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0oKk/6RKLNPzD0qHcPNASj+eGiu+F/rQuXd6kmegymTXREa4K
-	QcBckHDOL88i8JnY7znLBe/wGxJfwvxTsJU//7JWCzuF9mR6/bwdKm/JncWtCWOiJn2dzggLtSb
-	8oFG2TQ58kngBsg2J4DRrKd5tB2+0zOuCc32ku4Q0
-X-Gm-Gg: ASbGncsmNWciQQYXWuMUlCJdCrL2eXTyr38LxorK/F6RCOJ2GSgV4MLgW8Ne7l5i+pS
-	KOfkgdUyHv638yYdxSC1UdXcD0q8k5Tdizm04xtR21YYB4Npfvl3xqi+Z5gffh9YBJffLdmRGbq
-	uCFAeEdEWryXliw9Z64gzRlVN+Wx5M80+OPGnHMCi5dis=
-X-Google-Smtp-Source: AGHT+IHvhasAtxRO9RpFu2NYbRrcynF3zeEZltmoq9Luzh1btO4Igu87XYFa3nEiA/TfmY8TNO2agVgG/zRUYfJtTIM=
-X-Received: by 2002:a05:690c:6486:b0:70e:185b:356d with SMTP id
- 00721157ae682-7164d398834mr54967477b3.14.1751484297140; Wed, 02 Jul 2025
- 12:24:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGwhfXMP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B72E7C4CEE7;
+	Wed,  2 Jul 2025 22:38:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751495918;
+	bh=M15wTBRDUxuzUSxsq10ndWKT/U/CMaX/pdQy2NUcoRo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uGwhfXMPR1PvpKgUQEecCWVX3ZSxSNI26yaRu8fUX0qOzfZhlnZ3Ti2OITm2qM2HU
+	 GpjxFcDZVrrxFlzODXUqYgHWicnu5LTCx4f/+BDhaeXN8hWRRqLwVYIk2VzwJ93n6i
+	 XaAVw6VJL9igfWcPTxADlhrL8VxigEgZz40eWHk242gW1jVSWukHhvy4sFM8eTU6HP
+	 l1R5VnTpTOYpfd5pUCcTRg8NvVywZ4KExZf+QiaeouQMCDY2zudGIZKd8odAzHmpyo
+	 zg1B05dH6Dr/tcl84LefShpkHhFtqFkHz49KeNAQEIB9ccmkh2RrSeo7yat8ZssEGv
+	 KwGcm6bbtzr4g==
+Date: Thu, 3 Jul 2025 01:38:34 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stefan Berger <stefanb@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v4] tpm: Managed allocations for tpm_buf instances
+Message-ID: <aGW06nxmFXMYEyJ2@kernel.org>
+References: <20250701145136.82726-1-jarkko@kernel.org>
+ <29f206ec-1d9e-4c2f-b051-3af458173692@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702055820.112190-1-zhaochenguang@kylinos.cn>
-In-Reply-To: <20250702055820.112190-1-zhaochenguang@kylinos.cn>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 2 Jul 2025 15:24:46 -0400
-X-Gm-Features: Ac12FXyjMghT7240fFXsw7E25qCJfe8hMIplSYH8wjk3i5VEZLbQ2yBp0Z1HQmU
-Message-ID: <CAHC9VhTg7cwXu17tHMgSJF3ZRWjA_ozZg3TK3aLJOs2X4QBJ=w@mail.gmail.com>
-Subject: Re: [PATCH] net: ipv6: Fix spelling mistake
-To: Chenguang Zhao <zhaochenguang@kylinos.cn>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <29f206ec-1d9e-4c2f-b051-3af458173692@linux.ibm.com>
 
-On Wed, Jul 2, 2025 at 1:59=E2=80=AFAM Chenguang Zhao <zhaochenguang@kylino=
-s.cn> wrote:
->
-> change 'Maximium' to 'Maximum'
->
-> Signed-off-by: Chenguang Zhao <zhaochenguang@kylinos.cn>
-> ---
->  net/ipv6/calipso.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+On Tue, Jul 01, 2025 at 05:42:47PM -0400, Stefan Berger wrote:
+> 
+> 
+> On 7/1/25 10:51 AM, Jarkko Sakkinen wrote:
+> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > 
+> > Repeal and replace tpm_buf_init() and tpm_buf_init_sized() with
+> > tpm_buf_alloc(), which returns a buffer of  memory with the struct tpm_buf
+> > header at the beginning of the returned buffer. This leaves 4090 bytes of
+> > free space for the payload.
+> > 
+> > Given that kfree() is now the destructor for struct tpm_buf instances,
+> > tpm_buf_destroy() becomes obsolete, and can be safely wiped of too.
+> 
+> s/of/off/  or s/wiped of/remove,/
+> 
+> > 
+> > The actual gist is that now a tpm_buf can be now declared using
+> 
+> s/that now a/that a/
+> 
+> > __free(kfree) declared in linux/slab.h:
+> > 
+> > 	struct tpm_buf *buf __free(kfree) = NULL;
+> > 
+> > 	/* ... */
+> > 
+> > 	buf = tpm_buf_alloc();
+> > 
+> > Doing this has two-folded benefits:
+> > 
+> > 1. Yet to be discoverd memory leaks in the pre-existing code base.
+> 
+> -> discovered
+> 
+> 
+> A couple of nits below and one stray 'return rc;' that should not be
+> there...
+> 
+> > 2. Memory leaks concerning  new features and other contributions.
+> > 
+> > In addition, the barrier to contribute is lowered given that managing
+> > memory is a factor easier.
+> > 
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> > index 524d802ede26..86b961f4027b 100644
+> > --- a/drivers/char/tpm/tpm2-cmd.c
+> > +++ b/drivers/char/tpm/tpm2-cmd.c
+> > @@ -165,14 +165,18 @@ struct tpm2_pcr_read_out {
+> >   int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
+> >   		  struct tpm_digest *digest, u16 *digest_size_ptr)
+> >   {
+> > +	struct tpm_buf *buf __free(kfree) = NULL;
+> >   	int i;
+> >   	int rc;
+> > -	struct tpm_buf buf;
+> >   	struct tpm2_pcr_read_out *out;
+> >   	u8 pcr_select[TPM2_PCR_SELECT_MIN] = {0};
+> >   	u16 digest_size;
+> >   	u16 expected_digest_size = 0;
+> > +	buf = tpm_buf_alloc();
+> > +	if (!buf)
+> > +		return -ENOMEM;
+> > +
+> >   	if (pcr_idx >= TPM2_PLATFORM_PCR)
+> >   		return -EINVAL;
+> > @@ -187,23 +191,21 @@ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
+> >   		expected_digest_size = chip->allocated_banks[i].digest_size;
+> >   	}
+> > -	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_PCR_READ);
+> > -	if (rc)
+> > -		return rc;
+> > +	tpm_buf_reset(buf, TPM2_ST_NO_SESSIONS, TPM2_CC_PCR_READ);
+> >   	pcr_select[pcr_idx >> 3] = 1 << (pcr_idx & 0x7);
+> > -	tpm_buf_append_u32(&buf, 1);
+> > -	tpm_buf_append_u16(&buf, digest->alg_id);
+> > -	tpm_buf_append_u8(&buf, TPM2_PCR_SELECT_MIN);
+> > -	tpm_buf_append(&buf, (const unsigned char *)pcr_select,
+> > +	tpm_buf_append_u32(buf, 1);
+> > +	tpm_buf_append_u16(buf, digest->alg_id);
+> > +	tpm_buf_append_u8(buf, TPM2_PCR_SELECT_MIN);
+> > +	tpm_buf_append(buf, (const unsigned char *)pcr_select,
+> >   		       sizeof(pcr_select));
+> > -	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to read a pcr value");
+> > +	rc = tpm_transmit_cmd(chip, buf, 0, "attempting to read a pcr value");
+> >   	if (rc)
+> >   		goto out;
+> 
+> nit: -> return rc; ?
+> 
+> > -	out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
+> > +	out = (struct tpm2_pcr_read_out *)&buf->data[TPM_HEADER_SIZE];
+> >   	digest_size = be16_to_cpu(out->digest_size);
+> >   	if (digest_size > sizeof(digest->digest) ||
+> >   	    (!digest_size_ptr && digest_size != expected_digest_size)) {
+> > @@ -216,7 +218,6 @@ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
+> >   	memcpy(digest->digest, out->digest, digest_size);
+> >   out:
+> 
+> probably can remove this label
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+yup, i agree
 
---=20
-paul-moore.com
+> 
+> > -	tpm_buf_destroy(&buf);
+> >   	return rc;
+> >   }
+> > @@ -574,8 +569,8 @@ struct tpm2_pcr_selection {
+> >   ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+> >   {
+> > +	struct tpm_buf *buf __free(kfree) = NULL;
+> >   	struct tpm2_pcr_selection pcr_selection;
+> > -	struct tpm_buf buf;
+> >   	void *marker;
+> >   	void *end;
+> >   	void *pcr_select_offset;
+> > @@ -587,41 +582,39 @@ ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+> >   	int rc;
+> >   	int i = 0;
+> > -	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
+> > -	if (rc)
+> > -		return rc;
+> > +	buf = tpm_buf_alloc();
+> > +	if (!buf)
+> > +		return -ENOMEM;
+> > -	tpm_buf_append_u32(&buf, TPM2_CAP_PCRS);
+> > -	tpm_buf_append_u32(&buf, 0);
+> > -	tpm_buf_append_u32(&buf, 1);
+> > +	tpm_buf_reset(buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
+> > +	tpm_buf_append_u32(buf, TPM2_CAP_PCRS);
+> > +	tpm_buf_append_u32(buf, 0);
+> > +	tpm_buf_append_u32(buf, 1);
+> > -	rc = tpm_transmit_cmd(chip, &buf, 9, "get tpm pcr allocation");
+> > +	rc = tpm_transmit_cmd(chip, buf, 9, "get tpm pcr allocation");
+> >   	if (rc)
+> > -		goto out;
+> > +		return rc;
+> >   	nr_possible_banks = be32_to_cpup(
+> > -		(__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
+> > +		(__be32 *)&buf->data[TPM_HEADER_SIZE + 5]);
+> >   	chip->allocated_banks = kcalloc(nr_possible_banks,
+> >   					sizeof(*chip->allocated_banks),
+> >   					GFP_KERNEL);
+> > -	if (!chip->allocated_banks) {
+> > -		rc = -ENOMEM;
+> > -		goto out;
+> > -	}
+> > +	if (!chip->allocated_banks)
+> > +		return -ENOMEM;
+> > -	marker = &buf.data[TPM_HEADER_SIZE + 9];
+> > +	marker = &buf->data[TPM_HEADER_SIZE + 9];
+> > -	rsp_len = be32_to_cpup((__be32 *)&buf.data[2]);
+> > -	end = &buf.data[rsp_len];
+> > +	rsp_len = be32_to_cpup((__be32 *)&buf->data[2]);
+> > +	end = &buf->data[rsp_len];
+> > +	return rc;
+> 
+> 
+> this doesn't look right...
+
+thanks for catching this!
+
+> 
+> 
+> >   	for (i = 0; i < nr_possible_banks; i++) {
+> >   		pcr_select_offset = marker +
+> >   			offsetof(struct tpm2_pcr_selection, size_of_select);
+> > -		if (pcr_select_offset >= end) {
+> > -			rc = -EFAULT;
+> > -			break;
+> > -		}
+> > +		if (pcr_select_offset >= end)
+> > +			return -EFAULT;
+> >   		memcpy(&pcr_selection, marker, sizeof(pcr_selection));
+> >   		hash_alg = be16_to_cpu(pcr_selection.hash_alg);
+> > @@ -633,7 +626,7 @@ ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+> > diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+> > index 024be262702f..54bcd8d0621e 100644
+> > --- a/security/keys/trusted-keys/trusted_tpm2.c
+> > +++ b/security/keys/trusted-keys/trusted_tpm2.c
+> > @@ -241,14 +241,23 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> >   		      struct trusted_key_payload *payload,
+> >   		      struct trusted_key_options *options)
+> >   {
+> > +	struct tpm_buf *buf __free(kfree) = NULL;
+> > +	struct tpm_buf *sized __free(kfree) = NULL;
+> 
+> Revert order of the above two lines.
+> 
+> >   	off_t offset = TPM_HEADER_SIZE;
+> > -	struct tpm_buf buf, sized;
+> >   	int blob_len = 0;
+> >   	u32 hash;
+> >   	u32 flags;
+> >   	int i;
+> >   	int rc;
+> > +	buf = tpm_buf_alloc();
+> > +	if (!buf)
+> > +		return -ENOMEM;
+> > +
+> > +	sized = tpm_buf_alloc();
+> > +	if (!sized)
+> > +		return -ENOMEM;
+> > +
+> >   	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {>   		if
+> (options->hash == tpm2_hash_map[i].crypto_id) {
+> >   			hash = tpm2_hash_map[i].tpm_id;
+> > @@ -270,89 +279,76 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> >   	if (rc)
+> >   		goto out_put;
+> > -	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_CREATE);
+> > -	if (rc) {
+> > -		tpm2_end_auth_session(chip);
+> > -		goto out_put;
+> > -	}
+> > -
+> > -	rc = tpm_buf_init_sized(&sized);
+> > -	if (rc) {
+> > -		tpm_buf_destroy(&buf);
+> > -		tpm2_end_auth_session(chip);
+> > -		goto out_put;
+> > -	}
+> > -
+> > -	tpm_buf_append_name(chip, &buf, options->keyhandle, NULL);
+> > -	tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_DECRYPT,
+> > +	tpm_buf_reset(buf, TPM2_ST_SESSIONS, TPM2_CC_CREATE);
+> > +	tpm_buf_reset_sized(sized);
+> > +	tpm_buf_append_name(chip, buf, options->keyhandle, NULL);
+> > +	tpm_buf_append_hmac_session(chip, buf, TPM2_SA_DECRYPT,
+> >   				    options->keyauth, TPM_DIGEST_SIZE);
+> >   	/* sensitive */
+> > -	tpm_buf_append_u16(&sized, options->blobauth_len);
+> > +	tpm_buf_append_u16(sized, options->blobauth_len);
+> >   	if (options->blobauth_len)
+> > -		tpm_buf_append(&sized, options->blobauth, options->blobauth_len);
+> > +		tpm_buf_append(sized, options->blobauth, options->blobauth_len);
+> > -	tpm_buf_append_u16(&sized, payload->key_len);
+> > -	tpm_buf_append(&sized, payload->key, payload->key_len);
+> > -	tpm_buf_append(&buf, sized.data, sized.length);
+> > +	tpm_buf_append_u16(sized, payload->key_len);
+> > +	tpm_buf_append(sized, payload->key, payload->key_len);
+> > +	tpm_buf_append(buf, sized->data, sized->length);
+> >   	/* public */
+> > -	tpm_buf_reset_sized(&sized);
+> > -	tpm_buf_append_u16(&sized, TPM_ALG_KEYEDHASH);
+> > -	tpm_buf_append_u16(&sized, hash);
+> > +	tpm_buf_reset_sized(sized);
+> > +	tpm_buf_append_u16(sized, TPM_ALG_KEYEDHASH);
+> > +	tpm_buf_append_u16(sized, hash);
+> >   	/* key properties */
+> >   	flags = 0;
+> >   	flags |= options->policydigest_len ? 0 : TPM2_OA_USER_WITH_AUTH;
+> >   	flags |= payload->migratable ? 0 : (TPM2_OA_FIXED_TPM | TPM2_OA_FIXED_PARENT);
+> > -	tpm_buf_append_u32(&sized, flags);
+> > +	tpm_buf_append_u32(sized, flags);
+> >   	/* policy */
+> > -	tpm_buf_append_u16(&sized, options->policydigest_len);
+> > +	tpm_buf_append_u16(sized, options->policydigest_len);
+> >   	if (options->policydigest_len)
+> > -		tpm_buf_append(&sized, options->policydigest, options->policydigest_len);
+> > +		tpm_buf_append(sized, options->policydigest, options->policydigest_len);
+> >   	/* public parameters */
+> > -	tpm_buf_append_u16(&sized, TPM_ALG_NULL);
+> > -	tpm_buf_append_u16(&sized, 0);
+> > +	tpm_buf_append_u16(sized, TPM_ALG_NULL);
+> > +	tpm_buf_append_u16(sized, 0);
+> > -	tpm_buf_append(&buf, sized.data, sized.length);
+> > +	tpm_buf_append(buf, sized->data, sized->length);
+> >   	/* outside info */
+> > -	tpm_buf_append_u16(&buf, 0);
+> > +	tpm_buf_append_u16(buf, 0);
+> >   	/* creation PCR */
+> > -	tpm_buf_append_u32(&buf, 0);
+> > +	tpm_buf_append_u32(buf, 0);
+> > -	if (buf.flags & TPM_BUF_OVERFLOW) {
+> > +	if (buf->flags & TPM_BUF_OVERFLOW) {
+> >   		rc = -E2BIG;
+> >   		tpm2_end_auth_session(chip);
+> >   		goto out;
+> >   	}
+> > -	tpm_buf_fill_hmac_session(chip, &buf);
+> > -	rc = tpm_transmit_cmd(chip, &buf, 4, "sealing data");
+> > -	rc = tpm_buf_check_hmac_response(chip, &buf, rc);
+> > +	tpm_buf_fill_hmac_session(chip, buf);
+> > +	rc = tpm_transmit_cmd(chip, buf, 4, "sealing data");
+> > +	rc = tpm_buf_check_hmac_response(chip, buf, rc);
+> >   	if (rc)
+> >   		goto out;
+> > -	blob_len = tpm_buf_read_u32(&buf, &offset);
+> > -	if (blob_len > MAX_BLOB_SIZE || buf.flags & TPM_BUF_BOUNDARY_ERROR) {
+> > +	blob_len = tpm_buf_read_u32(buf, &offset);
+> > +	if (blob_len > MAX_BLOB_SIZE || buf->flags & TPM_BUF_BOUNDARY_ERROR) {
+> >   		rc = -E2BIG;
+> >   		goto out;
+> >   	}
+> > -	if (buf.length - offset < blob_len) {
+> > +	if (buf->length - offset < blob_len) {
+> >   		rc = -EFAULT;
+> >   		goto out;
+> >   	}
+> > -	blob_len = tpm2_key_encode(payload, options, &buf.data[offset], blob_len);
+> > +	blob_len = tpm2_key_encode(payload, options, &buf->data[offset],
+> > +				   blob_len);
+> >   out:
+> > -	tpm_buf_destroy(&sized);
+> > -	tpm_buf_destroy(&buf);
+> > -
+> >   	if (rc > 0) {
+> >   		if (tpm2_rc_value(rc) == TPM2_RC_HASH)
+> >   			rc = -EINVAL;
+
+
+Thanks for the remarks.
+
+BR, Jarkko
