@@ -1,153 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp.eurecom.fr (smtp.eurecom.fr [193.55.113.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF64199FAB;
-	Wed,  2 Jul 2025 08:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3C6189902
+	for <linux-security-module@vger.kernel.org>; Wed,  2 Jul 2025 10:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.55.113.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751445448; cv=none; b=armS+Hiy3L71eBDHTU1JS0PHFwQn0gAKsDmU2jwVuK4+aXHJaXC2rxU/R3m0ou9IMBLYPC4XAdpGsFZD/iqQQLJm4osJiT4YgEQzfmlSJ+BnCNKPSmlx4qpQbYYm4fQk5m9yGbTtA4UaAEJmQv63n9ZjR+AzlhM7cz+gGdp3+hg=
+	t=1751450444; cv=none; b=u22ycp56FiWHBl5hdXXisTufIO+QWrbcGpkJgnjia4HWwyIZhf9LGBMcPQS7+Y7V0li53UVX2ZT/Ny3x6yzKcsKLTdYTG7PR9MOD4/2HKnq87jRVH1d8AvLOpuwaUyUWuX8AyeiX3IMzqGKJyd8R8Wnazv/G93rrfd425PlsCuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751445448; c=relaxed/simple;
-	bh=7FKJlxsE3jn0DBQjOcrwyHFOhJYRK7izfigAF+uSDSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=obMa0h7InINWRncBTAPO/D3uePD++XTYnV9YiZdq7Zh0VaPHcZ9M9+4rTBH7LtRojyKB/2HsjkyIGPbIPPeb5Jwr6iuMhPRBTvhGxVJwkzYLwicaTTTfZw1j6nOPQH46DuzU2JUzzXcH75zw5e0xABxTUE2QgU1HtFEVlHRa12M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JnbQj4P+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751450444; c=relaxed/simple;
+	bh=/H8nlSVptfM8cvLEUDKt9w2phlkY99AZhhL4PtHvnZk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=eE/RGVEcm2u3vjl8CXAyl6iLbGikEQeJrgSnj3dJuQFztICip9amgCzcQ7hbTT34szybWGKX1giWVpjOnCiM/gSj7vOmyWjruIGJfsIdZpBuKOP8pGuA0qoSRctx+oMepv2Idk9TbwALCSpEhsK5X0GTpzRoZGh4yyKtd3pOJ/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=eurecom.fr; spf=pass smtp.mailfrom=eurecom.fr; dkim=pass (1024-bit key) header.d=eurecom.fr header.i=@eurecom.fr header.b=YVHPpmbu; arc=none smtp.client-ip=193.55.113.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=eurecom.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eurecom.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JnbQj4P+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D89CC4CEED;
-	Wed,  2 Jul 2025 08:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751445447;
-	bh=7FKJlxsE3jn0DBQjOcrwyHFOhJYRK7izfigAF+uSDSw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JnbQj4P+3Qk3nuPFka95au2yTsmaM4nbadj3AFA7E2doUoKwlPJFnM9XZqkkqUxtH
-	 h9zolEpQ7MgT8sSL5uSNNOPxOSZ5FehghjL2cXHztZpJ5G4BKycMWImcEa98WUwVaJ
-	 PsxPVx7i1HC6nkfcPbHinKf9AUEYxQTr+HU/Teo7GGiJ0Dd9+VsiJ3LWRc8d3Mu4ov
-	 e0OBp7eRIyv9ks3/H8Rzqz87VLigFw8Jh4O20X/pQWBsrx6iorZQ67/V78PkADkGDj
-	 0sttnQ2RrP06/biqhNfR8xK51U/9vVYd0rdN2ulLaoXaxmMUxr6C94yZBvtmcv0bkD
-	 Ztk1gC1XnJQxg==
-Date: Wed, 2 Jul 2025 10:37:20 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Song Liu <song@kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tejun Heo <tj@kernel.org>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v3 bpf-next 0/4] Introduce bpf_cgroup_read_xattr
-Message-ID: <20250702-anhaften-postleitzahl-06a4d4771641@brauner>
-References: <20250623063854.1896364-1-song@kernel.org>
- <20250623-rebel-verlust-8fcd4cdd9122@brauner>
- <CAADnVQ+iqMi2HEj_iH7hsx+XJAsqaMWqSDe4tzcGAnehFWA9Sw@mail.gmail.com>
- <20250701-angebahnt-fortan-6d4804227e87@brauner>
- <CAADnVQ+pPt7Zt8gS0aW75WGrwjmcUcn3s37Ahd9bnLyzOfB=3g@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=eurecom.fr header.i=@eurecom.fr header.b="YVHPpmbu"
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=eurecom.fr; i=@eurecom.fr; q=dns/txt; s=default;
+  t=1751450441; x=1782986441;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=/H8nlSVptfM8cvLEUDKt9w2phlkY99AZhhL4PtHvnZk=;
+  b=YVHPpmbuA9holumvkU2/JThvz6TS8K51usbk7VBPhh3YVYSIEXPTrw4Z
+   afRloV9SNGJreKSc0WMdjALKuOr1d7moD+ov2rF0hsmM/mtkwZ0KrmmPx
+   H1whol9NL7U4IiCBbCegsVvT4vicF8a4g/tBIGPREfZ+ytXg1letcZEem
+   k=;
+X-CSE-ConnectionGUID: 0xOV0C8bSSikpfUPeWoNTw==
+X-CSE-MsgGUID: dF7gXEe8TCyrG304MFJmMw==
+X-IronPort-AV: E=Sophos;i="6.16,281,1744063200"; 
+   d="scan'208,217";a="2012175"
+Received: from waha.eurecom.fr (HELO smtps.eurecom.fr) ([10.3.2.236])
+  by drago1i.eurecom.fr with ESMTP; 02 Jul 2025 12:00:34 +0200
+Received: from s76.. (88-183-119-157.subs.proxad.net [88.183.119.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtps.eurecom.fr (Postfix) with ESMTPSA id 467CB2F09;
+	Wed,  2 Jul 2025 12:00:33 +0200 (CEST)
+From: Ariel Otilibili <ariel.otilibili-anieli@eurecom.fr>
+To: linux-security-module@vger.kernel.org
+Cc: "Andrew G . Morgan" <morgan@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Serge Hallyn <serge@hallyn.com>,
+	Ariel Otilibili <ariel.otilibili-anieli@eurecom.fr>
+Subject: [PATCH v2 0/1] uapi: fix broken link in linux/capability.h
+Date: Wed,  2 Jul 2025 12:00:20 +0200
+Message-Id: <20250702100021.1849243-1-ariel.otilibili-anieli@eurecom.fr>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250629120301.1702897-1-ariel.otilibili-anieli@eurecom.fr>
+References: <20250629120301.1702897-1-ariel.otilibili-anieli@eurecom.fr>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQ+pPt7Zt8gS0aW75WGrwjmcUcn3s37Ahd9bnLyzOfB=3g@mail.gmail.com>
 
-On Tue, Jul 01, 2025 at 07:51:55AM -0700, Alexei Starovoitov wrote:
-> On Tue, Jul 1, 2025 at 1:32 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Thu, Jun 26, 2025 at 07:14:20PM -0700, Alexei Starovoitov wrote:
-> > > On Mon, Jun 23, 2025 at 4:03 AM Christian Brauner <brauner@kernel.org> wrote:
-> > > >
-> > > > On Sun, 22 Jun 2025 23:38:50 -0700, Song Liu wrote:
-> > > > > Introduce a new kfunc bpf_cgroup_read_xattr, which can read xattr from
-> > > > > cgroupfs nodes. The primary users are LSMs, cgroup programs, and sched_ext.
-> > > > >
-> > > >
-> > > > Applied to the vfs-6.17.bpf branch of the vfs/vfs.git tree.
-> > > > Patches in the vfs-6.17.bpf branch should appear in linux-next soon.
-> > >
-> > > Thanks.
-> > > Now merged into bpf-next/master as well.
-> > >
-> > > > Please report any outstanding bugs that were missed during review in a
-> > > > new review to the original patch series allowing us to drop it.
-> > >
-> > > bugs :(
-> > >
-> > > > It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> > > > patch has now been applied. If possible patch trailers will be updated.
-> > >
-> > > Pls don't. Keep it as-is, otherwise there will be merge conflicts
-> > > during the merge window.
-> >
-> > This is just the common blurb. As soon as another part of the tree
-> > relies on something we stabilize the branch and only do fixes on top and
-> > never rebase. We usually recommend just pulling the branch which I think
-> > you did.
-> >
-> > >
-> > > > Note that commit hashes shown below are subject to change due to rebase,
-> > > > trailer updates or similar. If in doubt, please check the listed branch.
-> > > >
-> > > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> > > > branch: vfs-6.17.bpf
-> > > >
-> > > > [1/4] kernfs: remove iattr_mutex
-> > > >       https://git.kernel.org/vfs/vfs/c/d1f4e9026007
-> > > > [2/4] bpf: Introduce bpf_cgroup_read_xattr to read xattr of cgroup's node
-> > > >       https://git.kernel.org/vfs/vfs/c/535b070f4a80
-> > > > [3/4] bpf: Mark cgroup_subsys_state->cgroup RCU safe
-> > > >       https://git.kernel.org/vfs/vfs/c/1504d8c7c702
-> > > > [4/4] selftests/bpf: Add tests for bpf_cgroup_read_xattr
-> > > >       https://git.kernel.org/vfs/vfs/c/f4fba2d6d282
-> > >
-> > > Something wrong with this selftest.
-> > > Cleanup is not done correctly.
-> > >
-> > > ./test_progs -t lsm_cgroup
-> > > Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
-> > > ./test_progs -t lsm_cgroup
-> > > Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
-> > > ./test_progs -t cgroup_xattr
-> > > Summary: 1/8 PASSED, 0 SKIPPED, 0 FAILED
-> > > ./test_progs -t lsm_cgroup
-> > > test_lsm_cgroup_functional:PASS:bind(ETH_P_ALL) 0 nsec
-> > > (network_helpers.c:121: errno: Cannot assign requested address) Failed
-> > > to bind socket
-> > > test_lsm_cgroup_functional:FAIL:start_server unexpected start_server:
-> > > actual -1 < expected 0
-> > > (network_helpers.c:360: errno: Bad file descriptor) getsockopt(SOL_PROTOCOL)
-> > > test_lsm_cgroup_functional:FAIL:connect_to_fd unexpected
-> > > connect_to_fd: actual -1 < expected 0
-> > > test_lsm_cgroup_functional:FAIL:accept unexpected accept: actual -1 < expected 0
-> > > test_lsm_cgroup_functional:FAIL:getsockopt unexpected getsockopt:
-> > > actual -1 < expected 0
-> > > test_lsm_cgroup_functional:FAIL:sk_priority unexpected sk_priority:
-> > > actual 0 != expected 234
-> > > ...
-> > > Summary: 0/1 PASSED, 0 SKIPPED, 1 FAILED
-> > >
-> > >
-> > > Song,
-> > > Please follow up with the fix for selftest.
-> > > It will be in bpf-next only.
-> >
-> > We should put that commit on the shared vfs-6.17.bpf branch.
-> 
-> The branch had a conflict with bpf-next which was resolved
-> in the merge commit. Then _two_ fixes were applied on top.
-> And one fix is right where conflict was.
-> So it's not possible to apply both fixes to vfs-6.17.bpf.
-> imo this shared branch experience wasn't good.
-> We should have applied the series to bpf-next only.
-> It was more bpf material than vfs. I wouldn't do this again.
+Hello,
 
-Absolutely not. Anything that touches VFS will go through VFS. Shared
-branches work just fine. We manage to do this with everyone else in the
-kernel so bpf is able to do this as well. If you'd just asked this would
-not have been an issue. Merge conflicts are a fact of kernel
-development, we all deal with it you can too.
+This patch fixes a broken link to the libcap library. The old link is outdated:
+
+> $ curl "https://www.kernel.org/pub/linux/libs/security/linux-privs/kernel-2.6/"
+>
+> <html>
+> <head><title>Index of /pub/linux/libs/security/linux-privs/kernel-2.6/</title></head>
+> <body>
+> <h1>Index of /pub/linux/libs/security/linux-privs/kernel-2.6/</h1><hr><pre><a href="../">../</a>
+> </pre><hr></body>
+> </html>
+
+Moreover the patch gives the full reference of the compliance with POSIX.
+
+The README of libcap2 says it is based on Draft 15 [1]; but, as far as I could see, only copies of Draft 17 exist online [2, 3].
+
+Your feedback is much appreciated,
+Ariel
+
+[1] https://git.kernel.org/pub/scm/libs/libcap/libcap.git/tree/README
+[2] https://drive.google.com/file/d/16yTUA10JLyi6zKky9_KBu7P8FpZrprl3/view?usp=sharing
+[3] https://simson.net/ref/1997/posix_1003.1e-990310.pdf
+---
+v2:
+* reworded commit log (Paul Moore)
+* reworded cover letter
+
+v1 (https://lore.kernel.org/all/20250629120301.1702897-1-ariel.otilibili-anieli@eurecom.fr)
+
+Ariel Otilibili (1):
+  uapi: fix broken link in linux/capability.h
+
+ include/uapi/linux/capability.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
+
