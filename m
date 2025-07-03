@@ -1,35 +1,45 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB42260575;
-	Wed,  2 Jul 2025 22:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A741853;
+	Thu,  3 Jul 2025 01:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751496604; cv=none; b=rlh5ZzhesVvsLPglOHNb46E67JaIApmFYFym6JnDK2GULJUBpEuhG04Cn4Hh2af5twzK9KexwRaXt+hYkkxJPJujvBHBNhULAGwocxNi1E6PfTrVTMtrFMt284KgDHcGTejv3iTqZn3AxFD+8N5cuTqGuBuhYh1SP+Rnq5pMvi0=
+	t=1751506440; cv=none; b=XxTOnfNUVWBhTDQ+OfyKMutEbkG3NQLQWQv4HidMHddkKsteNcp0vqJLF7A0LpnIEa8KzGbdfVbUsEF8IMB4jttoEtXBotBU6TT6jHaSblhDNXNJ+A4F2txDB8I6SSQNPa52d3Z8/Py9tePkSBqc5p2q9Qc4qE3AjpZL6afOBOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751496604; c=relaxed/simple;
-	bh=Wycl/TIHNL8gwnmGyoRRgjyRHlwQWQEqNA5Db38y2VU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=h0DF6/fpjqwOVftiLFaq7xTbMnDMf0rCTTJnCMVh3sj9VrhDmyprDlLndEWkSqOK25O6lqT8+onAPDR6O1mbvAPD125pTYQgepr4Nd3apOZZDxmwn5JW8E5ePM1h0m82R+k1IYgzMGfkDY2dEgBC1OJoqCx5Bs+yYYIpRvG8TKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AW3KD/H/; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AW3KD/H/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B581C4CEF3;
-	Wed,  2 Jul 2025 22:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751496604;
-	bh=Wycl/TIHNL8gwnmGyoRRgjyRHlwQWQEqNA5Db38y2VU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=AW3KD/H/a7I0wzEGre23ZmtdgiA+poJQ92pc0ROvjV3+BbBti9kNumA5mBhjOv8JZ
-	 oUTBgi8V3Vd53Eki07GBndgLfhvo1uWqcy81v601tuIlQ8piSBkFP6Y2M3yOmnEx2e
-	 pJy3zPY1m+WeFEjbHIYFBmciwD8pKUV6Ag+e+twDvTisQJ/lKxGq8hHxY5hF+q4Qna
-	 LZ4omZMEYH7lV7sfM1pPIPychSbBB9JddNXMUjIBEKvcCBJ4Z6oH3/s33BG/lJuYuV
-	 X/tJR2GSPBmmQyVjRjSn9tD9c0H4FmOKCYDLvuReBUIcQBiZkGSISRTmKVnedmXTm/
-	 uw7V74CvqqX+g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADA6383B274;
-	Wed,  2 Jul 2025 22:50:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1751506440; c=relaxed/simple;
+	bh=wB63E55R6GEbdZL69RCytBGhgs7kgufcm+3PucP2thk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OPfvliJ6RgyHfaM3jogR2dQ6vSPcsx2flcgTnRIgRF1l0SMJbYu2rBZ3ayyRIeOJGqCLIgY7b0VxUvhodxnH7n8ejVJ4EMb1+WZ4sBgSynsHU8Zymj3Um3tcL3vn+NmmG6gjPzJgRDEb76A2KmyDuQb/uyEeQQsnGJjxyyaXBzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bXfQl0FsWztSk4;
+	Thu,  3 Jul 2025 09:32:47 +0800 (CST)
+Received: from kwepemg100016.china.huawei.com (unknown [7.202.181.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id B1F001400E3;
+	Thu,  3 Jul 2025 09:33:54 +0800 (CST)
+Received: from huawei.com (10.67.174.33) by kwepemg100016.china.huawei.com
+ (7.202.181.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 3 Jul
+ 2025 09:33:53 +0800
+From: GONG Ruiqi <gongruiqi1@huawei.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
+	<roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
+CC: Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore
+	<paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn"
+	<serge@hallyn.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H . Peter Anvin"
+	<hpa@zytor.com>, <linux-kernel@vger.kernel.org>,
+	<linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<linux-efi@vger.kernel.org>, <keyrings@vger.kernel.org>, Lu Jialin
+	<lujialin4@huawei.com>, <gongruiqi1@huawei.com>
+Subject: [PATCH v3 0/2] integrity: Extract secure boot enquiry function out of IMA
+Date: Thu, 3 Jul 2025 09:43:51 +0800
+Message-ID: <20250703014353.3366268-1-gongruiqi1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -37,39 +47,49 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: ipv6: Fix spelling mistake
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175149662850.890932.9219557571562861851.git-patchwork-notify@kernel.org>
-Date: Wed, 02 Jul 2025 22:50:28 +0000
-References: <20250702055820.112190-1-zhaochenguang@kylinos.cn>
-In-Reply-To: <20250702055820.112190-1-zhaochenguang@kylinos.cn>
-To: Chenguang Zhao <zhaochenguang@kylinos.cn>
-Cc: paul@paul-moore.com, davem@davemloft.net, dsahern@kernel.org,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemg100016.china.huawei.com (7.202.181.57)
 
-Hello:
+v3:
+- Redesign the implementation. Keep the name of arch_ima_get_secureboot
+  to escape from the morass consisted of multiple arch and configs.
+- Rephrase the commit message.
+v2:
+- Fix compile errors for CONFIG_IMA_ARCH_POLICY=n on s390 & powerpc
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+---
 
-On Wed,  2 Jul 2025 13:58:20 +0800 you wrote:
-> change 'Maximium' to 'Maximum'
-> 
-> Signed-off-by: Chenguang Zhao <zhaochenguang@kylinos.cn>
-> ---
->  net/ipv6/calipso.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+Hi,
 
-Here is the summary with links:
-  - net: ipv6: Fix spelling mistake
-    https://git.kernel.org/netdev/net-next/c/8b98f34ce1d8
+We encountered a boot failure issue in an in-house testing, where the
+kernel refused to load its modules since it couldn't verify their
+signature. The root cause turned out to be the early return of
+load_uefi_certs(), where arch_ima_get_secureboot() returned false
+unconditionally due to CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT=n, even
+though the secure boot was enabled.
 
-You are awesome, thank you!
+This patch set attempts to remove this implicit dependency by shifting
+the functionality of efi secure boot enquiry from IMA to the integrity
+subsystem, so that both certificate loading and IMA can make use of it
+independently.
+
+-Ruiqi
+
+GONG Ruiqi (2):
+  x86/efi: Rename IMA-related function and macro of boot mode
+  integrity: Extract secure boot enquiry function out of IMA
+
+ arch/x86/include/asm/efi.h                    |  4 +-
+ arch/x86/platform/efi/efi.c                   |  2 +-
+ include/linux/integrity.h                     |  1 +
+ security/integrity/Makefile                   |  1 +
+ security/integrity/ima/ima_efi.c              | 42 +----------------
+ security/integrity/platform_certs/load_uefi.c |  3 +-
+ security/integrity/secureboot.c               | 46 +++++++++++++++++++
+ 7 files changed, 54 insertions(+), 45 deletions(-)
+ create mode 100644 security/integrity/secureboot.c
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.25.1
 
