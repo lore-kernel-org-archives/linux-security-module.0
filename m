@@ -1,217 +1,138 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FE624B26;
-	Thu,  3 Jul 2025 01:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D4C1386B4
+	for <linux-security-module@vger.kernel.org>; Thu,  3 Jul 2025 02:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751506881; cv=none; b=CvZOwPW9dqKQw+cr58nYBZj7g0CnavJ233Y+Bq9RUxkj4+0/Pox2cBnpyrT2f4N2tnI7aZesa3VZXBwh6IturxwG5oNNlw1EYlxNTbKc8S7p7bn4wadN95ZYjDyJq0+ghBIC6nR883E5pzEA/ydQ0LyjNwqkXJ2YK2g1XLhrKT0=
+	t=1751508801; cv=none; b=Aj9nvgROsj9BoECz5SrdwzWtrlv/3mK/VNWwq2XZSquzGJNtgEwxRqT/o/MmZy8OSB3Llahv3rAv4lAZ+ohH9g65W7ZCd6jrnI3p1gbd8pwXss0RDWcXVy8lvjupCaXOTrl466+FvUARa3BebU1KKojDQ8YYTCIy+TDDkbQdHMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751506881; c=relaxed/simple;
-	bh=bYk+beEvyNSrtWe8TLCnuZ3Czg7guwJvIJTUr8dpyl8=;
-	h=Message-ID:Subject:From:To:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=oRcwaIedq3WBb/7cnS0iOzOPsgknxgvIh5CMvTmxi8Mxn4QL/x2dYbOONsWlDzWhr2GVaLkEvaTm/Y5dEuJ8AJ9UzTr0YaiyHqZSglmq0o/no0nej3luA3aHGGYRcxFdVXbz9ZF6C7BYtjfT+e45Db1NxDK57FmpmL0yrea1tS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SxumQl2/; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1751508801; c=relaxed/simple;
+	bh=5ymmmvaYHZkZ63J3xtIxq0o0ASFDyKJPxoguG2Sd+B0=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=QOfEqcQkg5PEETOLs6DYdoJBH5h/FhfL9iFVyQAna+dg2U4aOB0ZCW4Ioazrka8fYy9IfWrZXV3NFm28mxw2rawBF8nP4kHJF6hdi0ANbq5ggJ7iEvC/ecP8TuwBflo+RzpeldO/WNOb2jcVTYkWCth0IRr9/RFIn8Zh3nKKvEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=e8xmKeux; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SxumQl2/"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562GGrmp005007;
-	Thu, 3 Jul 2025 01:40:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=R5PNGw
-	dUeo1P2y29DTq2u13P0iKMarZk0BBQqNMHgXI=; b=SxumQl2/xHfsBe/esso+Ix
-	hwYdBlOaiNP2LXYH92TcYFXdPAgyMNnAEyawWWg2h1oYOa1PQjKDTlKaAVCEUS3B
-	GhjzuHKyAJvS106OYOBkOWSZrq1kVLqPuWS8tr7eqQcnWi6kG7AFxAxYYDtCEjK8
-	30yvamMYiRRsaxkH0q7IKxjvEilF+ne+KFfX/rpypHSC5isC/kYAt5AM49wEq1W9
-	Legh7XDcdDGApb215o/4lytx9Hvr49PojIGWZ8qW5R9oMPtfl2qXSJAxCIBGceOA
-	jj/rhaYYU0V3zA7oMN2nVip4AMAD3D7gFErL/YATGVaL1pmbY3u5xDneMXCs8Qvg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j5ttgtvw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Jul 2025 01:40:55 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5631YCSK016241;
-	Thu, 3 Jul 2025 01:40:55 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j5ttgtvu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Jul 2025 01:40:55 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 562MDsKr011823;
-	Thu, 3 Jul 2025 01:40:54 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47jv7n2cen-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Jul 2025 01:40:54 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5631ermp30409432
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 3 Jul 2025 01:40:53 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6EBBF58052;
-	Thu,  3 Jul 2025 01:40:53 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E0B158050;
-	Thu,  3 Jul 2025 01:40:52 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.102.8])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  3 Jul 2025 01:40:52 +0000 (GMT)
-Message-ID: <1a6cf2097487816e4b93890ad760f18fe750bd70.camel@linux.ibm.com>
-Subject: Re: [PATCH] Revert "integrity: Do not load MOK and MOKx when
- secure boot be disabled"
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Lennart Poettering <mzxreary@0pointer.de>,
-        Jarkko Sakkinen	
- <jarkko@kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry
- Kasatkin	 <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg
- <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>,
-        "Serge E. Hallyn"	 <serge@hallyn.com>, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Lee,
- Chun-Yi" <joeyli.kernel@gmail.com>
-In-Reply-To: <Z9wDxeRQPhTi1EIS@gardel-login>
-References: <Z9wDxeRQPhTi1EIS@gardel-login>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 02 Jul 2025 21:40:51 -0400
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="e8xmKeux"
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4a9741b513eso32553061cf.1
+        for <linux-security-module@vger.kernel.org>; Wed, 02 Jul 2025 19:13:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1751508797; x=1752113597; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TzXhie4CIWJW7jzt+VKFb4S+L+Efm25Tu2fG/WJtN10=;
+        b=e8xmKeuxN8pjpI9dI7PMfKLhAdn3rhXeTwTPuJGm6mG9lYLViCvAOysvO2DA4uva3e
+         LQ3aEQrfZ+HPPm7h4flY5zzSEnL8Ncib/SROeW5ptYSgE8iLE8WUrmYT53DFkvaZeuXU
+         GJ2uZa1xQUJVL0lFeVEUpCD3+YvgvqIVQCaXJIYv08dPIfdQdQVllVa3bVwyyQpyUep5
+         bBGjwkBqY/d4VSINVzCUXbjhrkY30HGAOc2R2MFl7ADcVuBRky5z3vSJ0Pb+zyNiLN83
+         ljIYpLU1QinagELHB2JpPhKWvflRsq1RXfaHvFqOTosaebS9V4Fr6OGwqR20+pZfZGGp
+         NSIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751508797; x=1752113597;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TzXhie4CIWJW7jzt+VKFb4S+L+Efm25Tu2fG/WJtN10=;
+        b=IuJeQSd1a1fkp0UTyvBfwH8cZD2nK++rm0ni+SCSGHupeSQjuhWsPgYd6IlpB4wni+
+         VwqsjxsXPxM3pZfZfSdpzfQniDJRBNqfFUdl6H9S71tUu74JOO3izf3tpgC8RW24UWHl
+         d/FWljqcZJGk/6wQnNmut6DSJMlMPfwn4sLxN6EaX4S8wvjg/i+suNqNOeoTtt1E+uGC
+         2gJIMzyfIGiRb9jJuk0w3fT2N8JR+ph02K/q9kMnaKyQ8LC/wKSFl2SYKOsBCy5oVPMu
+         VejYgrMNpUXWNgqFUsen7XNxcjCaulz+jkxqCbg2u3oV0iiP0ylrXv+FRjot14jxGJlj
+         RcpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQHw1/JvT1yvvAxPq7DolWl6kK21TlY1oC9cHr13AjtQ+BYnO4s2L4m18dS1fpKC8ZORpi7RpL9QlBsoEd1vG/TwCdtlQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRkoRCll3zUIWYTba2ieUKpKdVfVLrUDmrttfGcb1zucGgVPBI
+	fwF+pUOonXJqSqWXt7h+U8CWm0F5NnYWKGcsYqqHZ74/OuicP7iQMIwRxwXxaRPy+g==
+X-Gm-Gg: ASbGnctS9T3hQrwJyfPlsUjmHCuFJbP6pJcV/exo5ISDH6oLe9fAB0XTbinnKiK7EWh
+	AnEXMh68e3r00oz5ad6Q5fQuL7VSbfXcbX2WnKrSNnswrzA9iREpv7fbPZRL9ecLjgtpLQ0OdDe
+	//vD9AIIb6yrA9oAaq/1XyPZ1SsxRRbUS3q3W46kJdVUyn8NIX287qLWRtWOybrHkFqrVZGBU9M
+	r5GrtVHV21g6FKpEINiL1KpcOtJkxwcK03xdcVq2yjjFxmk8XD/tatJ4S4FnW5YBESIwSYNn0VH
+	aJkXQVDWVNW6UkDwBAwqFlPw1iz1RbhIU8PsMD408xfh4el7msL7xmJpY4858n1X/f/HF9nNa4K
+	EIV3PKUkHgBGW5JsRehFK9tqX3p39GV0=
+X-Google-Smtp-Source: AGHT+IELjxIty3QvxZPgn1IkijyUpwDEpAbFyjSsKr5nQr+vunzikG5BR25gm20fjjhw/qG4dKVsnw==
+X-Received: by 2002:a05:622a:4e:b0:476:add4:d2cf with SMTP id d75a77b69052e-4a9879c3c8fmr28867621cf.16.1751508797160;
+        Wed, 02 Jul 2025 19:13:17 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7d44316a54fsm1034468285a.34.2025.07.02.19.13.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 19:13:16 -0700 (PDT)
+Date: Wed, 02 Jul 2025 22:13:16 -0400
+Message-ID: <a888364d0562815ca7e848b4d4f5b629@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: iXih6juvG1pOvD8zDxh_LayWe2zjWSgh
-X-Authority-Analysis: v=2.4 cv=UtNjN/wB c=1 sm=1 tr=0 ts=6865dfa7 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=Aly7C2BPMCjRMeM9-aoA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: Ou1YQEP7s2rHaZnTt0poCHIdHxTm9rIN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAzMDAwOCBTYWx0ZWRfX3a8f3jU1gpWl PH7I7voBC+vshsJccDRdBHsp1T0Cc3+8yK3oqRwmdvU3qQOa08m4WQC+nObPsfwCXIzkttyGOIr R+TrNI1bNtkIw0zJzdMOvWoEzfednqjW4ISc/eZPJz3YqhElQj2OIZmMHU9ALi8S61MJZ32gm8C
- 6qRCuXTNOqU8b/E6vLNwvpiCp/QfD6GliwMgPCC0IBRVEg/32URcU1KcEQX46u5AGNtLcG15VeE WNqAm9NhqYtwBcmVkxQMGFurqmuKz4y9OeccIgA6fkV2nekxWJFUNrtGquD2riIuJHctHRGxPzz 39AmkDDtcQaKC5d2DF7T8KS/RyGk+dFg5yV4bY29/T0a18O54NyoY1x/hRcJfQZdr2220EBkE8g
- FkJ40jXU97fW/A8HOT71B+yk4GtZ/ssp67m3GFcLfYImjJSphChPrDwyzsaNxAzYo742NoZW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-03_01,2025-07-02_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
- adultscore=0 clxscore=1011 lowpriorityscore=0 bulkscore=0 impostorscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507030008
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250702_2201/pstg-lib:20250702_2201/pstg-pwork:20250702_2201
+From: Paul Moore <paul@paul-moore.com>
+To: Shivank Garg <shivankg@amd.com>, <david@redhat.com>, <akpm@linux-foundation.org>, <brauner@kernel.org>, <rppt@kernel.org>, <viro@zeniv.linux.org.uk>
+Cc: <seanjc@google.com>, <vbabka@suse.cz>, <willy@infradead.org>, <pbonzini@redhat.com>, <tabba@google.com>, <afranji@google.com>, <ackerleytng@google.com>, <shivankg@amd.com>, <jack@suse.cz>, <hch@infradead.org>, <cgzones@googlemail.com>, <ira.weiny@intel.com>, <roypat@amazon.co.uk>, <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v3] fs: generalize anon_inode_make_secure_inode() and fix  secretmem LSM bypass
+References: <20250626191425.9645-5-shivankg@amd.com>
+In-Reply-To: <20250626191425.9645-5-shivankg@amd.com>
 
-On Thu, 2025-03-20 at 13:02 +0100, Lennart Poettering wrote:
-> This reverts commit 92ad19559ea9a8ec6f158480934ae26ebfe2c14f.
->=20
-> This original commit this reverts creates a strange situation: it
-> ensures more restrictive behaviour if SecureBoot is off then when it
-> is on, which is the opposite of what one would expect.
->=20
-> Typically, one would expect that if SB is off the validation of
-> resources during the pre-kernel and kernel initialization is less
-> restrictive, not more restrictive. But this check turned the world on
-> its head.
-
-Hi Lennart,
-
-I'm really sorry for the long delay ...
-
-From an IMA perspective, the default is to only trust keys built into the k=
-ernel
-or certificates signed by the builtin keys and loaded onto the
-.secondary_trusted_keys keyring.
-                                                                           =
-    =20
-The ability of loading MOK keys onto the .machine keyring and linked to the
-.secondary_trusted_keys keyring is an exception based on the assumption tha=
-t
-that there is a secure boot chain of trust.  Allowing untrusted keys onto o=
-r
-linked to the .secondary_trusted_keys keyring, would potentially allow load=
-ing
-code signing keys onto the IMA keyring signed by untrusted MOK keys.
-                                                                           =
-    =20
-I was really hesitant to allow this exception of loading MOK keys onto the
-.machine keyring in the first place.  I'm now even more concerned.
-                                                                           =
-    =20
-This is not just an issue of being more or less restrictive, but of adding =
-a new
-integrity gap when one didn't exist previously.
-
-Mimi
-
-
->=20
-> I'd like to ask for this commit to be reverted. If SB is on all bets are
-> off regarding integrity of boot loaders and stuff, hence it makes no
-> sense to be restrictive here: you cannot regain integrity once you gave
-> it up once, hence if all bets are off anyway we might as well import any
-> Mok keys passed to us into the kernel keyring.
->=20
-> Or to say this differently: if an attacker got control of the pre-kernel
-> boot phase they might as well patch around in the firmware apis to make
-> the kernel believe it is in SB mode even if it is not. Hence the check
-> carries no value. It doesn't protect anything in any effective way.
->=20
-> The reason i'd like this check to go is that I'd like a nice way to
-> insert keys from pre-boot into into the kernel keyring for use with
-> signed dm-verity, without requiring recompilation of the kernel, and
-> without SB database games. i.e. i'd like to use a regular, signed
-> distro kernel, and pass to it additional keys to insert into the
-> kernel keyring in a reasonable way. The mok stuff would be great for that=
-,
-> except it all falls apart once SB is off.
->=20
-> You might wonder what signed dm-verity gives me if I have SB off. If
-> we authenticate the boot phase up to Linux userspace via TPM-based PCR
-> policies (i.e. measured boot) we can be sure of the boot integrity
-> without having to rely on SB. But then we'd still like to use
-> dm-verity based code signing for userspace.
+On Jun 26, 2025 Shivank Garg <shivankg@amd.com> wrote:
+> 
+> Extend anon_inode_make_secure_inode() to take superblock parameter and
+> make it available via fs.h. This allows other subsystems to create
+> anonymous inodes with proper security context.
+> 
+> Use this function in secretmem to fix a security regression, where
+> S_PRIVATE flag wasn't cleared after alloc_anon_inode(), causing
+> LSM/SELinux checks to be skipped.
+> 
+> Using anon_inode_make_secure_inode() ensures proper security context
+> initialization through security_inode_init_security_anon().
+> 
+> Fixes: 2bfe15c52612 ("mm: create security context for memfd_secret inodes")
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Suggested-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+> Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
+> Acked-by: Pankaj Gupta <pankaj.gupta@amd.com>
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 > ---
->  security/integrity/platform_certs/load_uefi.c | 5 -----
->  1 file changed, 5 deletions(-)
->=20
-> diff --git a/security/integrity/platform_certs/load_uefi.c b/security/int=
-egrity/platform_certs/load_uefi.c
-> index d1fdd113450a..7783bcacd26c 100644
-> --- a/security/integrity/platform_certs/load_uefi.c
-> +++ b/security/integrity/platform_certs/load_uefi.c
-> @@ -7,7 +7,6 @@
->  #include <linux/err.h>
->  #include <linux/efi.h>
->  #include <linux/slab.h>
-> -#include <linux/ima.h>
->  #include <keys/asymmetric-type.h>
->  #include <keys/system_keyring.h>
->  #include "../integrity.h"
-> @@ -211,10 +210,6 @@ static int __init load_uefi_certs(void)
->  		kfree(dbx);
->  	}
->=20
-> -	/* the MOK/MOKx can not be trusted when secure boot is disabled */
-> -	if (!arch_ima_get_secureboot())
-> -		return 0;
-> -
->  	mokx =3D get_cert_list(L"MokListXRT", &mok_var, &mokxsize, &status);
->  	if (!mokx) {
->  		if (status =3D=3D EFI_NOT_FOUND)
-> --
-> 2.48.1
->=20
->=20
-> Lennart
->=20
-> --
-> Lennart Poettering, Berlin
->=20
+> The handling of the S_PRIVATE flag for these inodes was discussed
+> extensively ([1], [2], [3]).
+> 
+> As per discussion [3] with Mike and Paul, KVM guest_memfd and secretmem
+> result in user-visible file descriptors, so they should be subject to
+> LSM/SELinux security policies rather than bypassing them with S_PRIVATE.
+> 
+> [1] https://lore.kernel.org/all/b9e5fa41-62fd-4b3d-bb2d-24ae9d3c33da@redhat.com
+> [2] https://lore.kernel.org/all/cover.1748890962.git.ackerleytng@google.com
+> [3] https://lore.kernel.org/all/aFOh8N_rRdSi_Fbc@kernel.org
+> 
+> V3:
+> - Drop EXPORT to be added later in separate patch for KVM guest_memfd and
+>   keep this patch focused on fix.
+> 
+> V2: https://lore.kernel.org/all/20250620070328.803704-3-shivankg@amd.com
+> - Use EXPORT_SYMBOL_GPL_FOR_MODULES() since KVM is the only user.
+> 
+> V1: https://lore.kernel.org/all/20250619073136.506022-2-shivankg@amd.com
+> 
+>  fs/anon_inodes.c   | 22 +++++++++++++++++-----
+>  include/linux/fs.h |  2 ++
+>  mm/secretmem.c     |  9 +--------
+>  3 files changed, 20 insertions(+), 13 deletions(-)
 
+Thanks again for your continued work on this!  I think the patch looks
+pretty reasonable, but it would be good to hear a bit about how you've
+tested this before ACK'ing the patch.  For example, have you tested this
+against any of the LSMs which provide anonymous inode support?
+
+At the very least, the selinux-testsuite has a basic secretmem test, it
+would be good to know if the test passes with this patch or if any
+additional work is needed to ensure compatibility.
+
+https://github.com/SELinuxProject/selinux-testsuite
+
+--
+paul-moore.com
