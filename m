@@ -1,375 +1,239 @@
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic301-38.consmr.mail.ne1.yahoo.com (sonic301-38.consmr.mail.ne1.yahoo.com [66.163.184.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A0C217F24
-	for <linux-security-module@vger.kernel.org>; Fri,  4 Jul 2025 18:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39C62E36E7
+	for <linux-security-module@vger.kernel.org>; Fri,  4 Jul 2025 20:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751654237; cv=none; b=gpOHeIU8KymlruHCWOduUv1UddXYhnDDiZ8OkoiuSpgnWBTlWJSYS9+IRbsXIMHOVCn6jNHQeFumCBnIiQJK0VRe6iXUntg79RPF5gtdBSGS2WRmJMF7Dg4LxjLNi/stROOGKhJAva3A39A2EqLhsLNhb8Dacrj5AjrhZtor1fs=
+	t=1751661545; cv=none; b=VdppC5R6SeZRrRzbdzI/QdPk1Y380+Y5/0Sqho6Z4ARK0BQdsG+6oSPkqZGqX7x5PSpyqJXSiS2kSP5Xn+dpcCkPI+r5GE6hfIgmpzwjE2biFc1DshGjfg8GJ70EdaZMVVv+ZJrErhcMNDiB9BbeVgE1DYQiJ7za0SaGHZdS0pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751654237; c=relaxed/simple;
-	bh=5HtNG0MSeW1BujCOgklQGjz5Xi+ba1D+X41TBjJvCAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TJlK1ZLCmvcujxD+5v17b9Ej97eGG9bFfTIjxdUrYotv0X4H5mNoQE8AXNQjjDtKqgwTeLOsoG07bgYEtEFJ/tACOJ2M3abWzXIk+w8zhtU698qXG36wJ/zDljh+hG+3KvOyV0Ci83mQVNr46vObh4lb31G6yb2bdQPp/9Xet/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mMxAqAoV; arc=none smtp.client-ip=83.166.143.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1751661545; c=relaxed/simple;
+	bh=wmTwb/ESj8mt3RdCb/bQcf81LWxmx7wO751Td3wNT7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MEFDrEaJEqSsQbKHTouuDA1KxFOU3xrNMYaqePV9IzixCxRg+QngjrE/UwJvX01lc9dgUwh0ZNujZs3v5GAjmJMWsgNdtelACbBlf1sD38x3Or/f0NE/h0UZ3WyMRhKmsUuYKZtpb/ZWgUT68W+8VER9Z70lIAKaTDft24JpI54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=eSLZfeLP; arc=none smtp.client-ip=66.163.184.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mMxAqAoV"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bYj6H3rrqztKJ;
-	Fri,  4 Jul 2025 20:37:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1751654231;
-	bh=T7orxL5CYqwGPp8kSYq7Zk6BqxK+a3hm4Qvvl9BrI8E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mMxAqAoV9eiYVyGwIh1CdPZ+8pauk047d3KcViFe7irmxofZI/EzB3C+PK9FaY7Oe
-	 jX4qUrZO4CHS+wvCnLalhk1Hfc7qqlMWga5ZVDT/xUf8lAX2D/tJVGvJfIByCBhoSL
-	 Q3QX0uroWlrIYQyLeWv2tKNdxxZLJAQplFv/pRxw=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bYj6F6Y1wzkvT;
-	Fri,  4 Jul 2025 20:37:09 +0200 (CEST)
-Date: Fri, 4 Jul 2025 20:37:06 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Eric Van Hensbergen <ericvh@kernel.org>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Latchesar Ionkov <lucho@ionkov.net>, 
-	Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: Tingmao Wang <m@maowtm.org>, v9fs@lists.linux.dev, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: Re: [RFC PATCH 0/6] fs/9p: Reuse inode based on path (in addition to
- qid)
-Message-ID: <20250704.eek1caeveC0c@digikod.net>
-References: <cover.1743971855.git.m@maowtm.org>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="eSLZfeLP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1751661541; bh=BFdTymDCauQuYahgXXk7TeWFJYMaJlv8kgHtcNY0uuk=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=eSLZfeLPbiZ2ACrzS/eqWGiedrd+KzXqghLhAArT3AvcwXvNp6v96niMZRU+GAQvGeo/e0pjh3hadYunSYDRmC8ek+4rZeJg/cIEMwWiNyCAYTGiYQSwBlFWE1VCnUgf6shV8cxUJL7xNNjtqeTB6GEe0dS9XRkevUeDcvjNkWrEMuCunzMVtfzz4hEsLps/kbHpOVsZFDm8C6oGhINziGWgb4mmyFGmCIgzagWg4FmKGabGjJdqy1DErEnmRd2inhYM6YwkHx2VY0B9h6It+qYpPL4Bt9nYjyUmkhTLfll9TyjrO8hYZs5fV5b6j3UlaXMnXZyTRzKLlQDONyKLyA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1751661541; bh=8TcmyW/BOYO41b1kbXTRkGeD9WpDU1pTr2ezD84CPgm=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=aWIGsn/BKahEFGWg+NZ2I2IdXC8+hwT1WrtqBGjfmIGJaFcGIe/C+VGWLhNWF3RQqJ6lPWvIwTguc8qNNT3wa6O6nosj2G7yCJL4d8sZcaJvDVzXWo5emwKT4gGb4nf759HVN5hWUz9Xt611+ARat4280zBAnI1Lj1ci+pa8n+Pzhpd5npyam0lipxJSJ84U1FuaXr0iXIi7pSi9gExzQOmJxhocJDmmPrittZjWr4Yu9aCgyT3ln9jiO0fdw6qVtAJjj3xt3bHdPW47+JznRhuVUe7DWc3jGLews/rPvUwQX9GelDN4JWibCT/BDSv7mVJ7z7Jo0H9+kpi3fKD3FQ==
+X-YMail-OSG: GtR.pvgVM1mKXLbwN5Q1McAYDhm8smCGUCBDyHlvhvh2O9RjttbXRQE2cKMlqwq
+ ngrp_Qptm1jBZq3xe7vStpWTEYXFVQWihSoKnm_WUyD3SYs3i3OXgkolmN1Tu2.h4HkUm.YLk4Ty
+ 5bV.Axjkmy1w8qY04zno37J8xEdU6SXCotC8eBQv5RLdkdCptGpl7pQ6IJv4F9KDP4vXAlVLCtID
+ 9UV_A_GjH_JgB.aRuVdJwZzHVr3KhE6Hs7IQqD.cFlROzdRTOAMoI1XSdAqWfY8K2xFUUfdKqn9C
+ afGLyl8Og_TdCFj95QfVeiws0FADcaMIEAGmEeMEy2gqCY1wJWcgtCtOYMEyzroERlGY9aJmh30T
+ 253RdUcBR5YkiJ_9ALO9dbL9prHEoXUuYpBoLF8xsRsKeH_KBe1VmOr.2cJy5CFr2uqQqaByTgFW
+ 54xucmdy_iJ6seNUvehFP89zcAe64Wpigoi_xrey9BM_NtoDNYWuZu1manpbcjUkbErBJwiZ5BwG
+ H708YgWZwOFUHWgtS2c8h_imsXOq.2fjYj.e12wEss2nzEHwLCFlLVuudGekXTWDIp1hNdwQ6FXM
+ VSJNc9N93nbfdoWzn1RN_JmwZs2ph2RD7YnwtwRp8nKcJApXihFZrrni7iqdUec7Cveh2SlMPH.k
+ doCt75Ije3yU_KkZh88QYBxvAO7STtiYHx.l3yBW0ISDSCXAM8OCj0_nJhZzN8602Vklfp9GxfSE
+ 9prfe8.pZw6.jXO70GajeinpUTwbPfxTi4Fh_3MnL02UV1cOtYDT7D8JaEy38gtIem9WX1WWob3J
+ YJOWbc6LS2Fd5aic99RQ.z82joRK2d7W1mlgZGkbnv26EVRHRofuWWjxUPbq1f4.G8r6DVJmDVCZ
+ ZfHYyVjWurOlWY46mSCBOeN6oU0pIfwhlC._pULYsu7XVSEz.aPDvgMt8n.2vZNClagSIpijtPqc
+ m1ZA5eMvjJl6OmBB3nn7Lf1eF0IYOXtGWUBJIkGZXZmmMwxMIosOQa0V12ObjOeUmPuvpHWwaOG_
+ luJLJNtDHmf2tETqdzsAuWQFya.XLMuKC5ySnJqTI7v.o9Ah0MhrojAt8J5Y6iXP9r2ks6XdWQns
+ F90EZAtpvfA1mY65UND18YCp06.tXgRAeAZF_Y_PCBt2XHF5Y.hmyBfGlrPXls.VwKdtFBouXoLY
+ vkzY.iyFq3uutsovzmt83iygQ.RIo5SGKpo7faoqvjN7wbiXvcTwV4Z_qHEKZ8FRwwr2MVQQ63zT
+ 1OWupSSJaSR_nTqnK7cR4BxziRqUm_pH26dZt8IWIymi.prmtag4gXpA9oSh3HehIcQgDBi5tdGL
+ lncjEyEii.N6sVIsIhP5ERt7iKT9_8lOKzdY0_e84O6dCVEUWwtHue2DONocXIqTcr6V51Dw8SAN
+ eIu6NlAqzwBW9YE7yUUgxPHJYNpdWd_fg6V_kdjDlZApls9uNNCI6DALK3fqahi.A.RxRYA7uoLc
+ KpprzdyqSj0wl7x2FqxGRf0q1tiGHhx67DP_duW87sZosyYLjhZlM2RV51lx.AK18Xk7UhzCWCOf
+ .ERYNFeHXrjdAjUv.YcwP_iYkdHO7IwyzsWY3XhpPckoOhTtjfT5Ff3ziNIt9lWvrSMVpUzueqNB
+ xerJHscMhrpMPHLCC5z4dVw930uRyACxSIrXXrky1JsfCUWShB6o6FSarNhqa1VEDPZtD3e2or1E
+ Jlo6VdNxUO2.90hupj6SRHmNLW_IFRNHtdrQqwjkvOUvnU.qh0NMn19dlIRP0aFQUfQuCzywDzWC
+ UEcoH5UfV7VOmIDsv_8EIFvG79D0T4lG9pcXGUw79.1ZBR3xAKBjbBYO3r0JE23MQPUwu_9XsCyQ
+ 42V85hUmynSD8DGFK8hXmhwPcDxEJcUwg8yd7qYCLClHjY5w.OpTDn3JtZreHvBkFG5V2cxPJ8Cq
+ TIsFlGBA7_gSgILmFlg31OKxej.bI3YV30hmLz4OLPnNDQUelE7VQCddKjSB_Q8xMjiwhds6dW_F
+ 7gWdW2lSzljEe7Emqhxi5qQRptpCIgY_1gzLF2yDC84KA3pmJflVqqjBdLWIdatttxykN2gZKeKL
+ UiwzLf8PfBxIYYqaDZN6eRvBc0tslFFiGmaIZ_ta3Bjh1iN0hxgBIXQIiEQhN5KO_OOKzgbbFDji
+ HyjxHLK4g9Q2M0I5spmGRXQwqcjk85kNnmHMYUjpdvjPCLRQjDACM5HkMm5GIebB2eiVBwUG.TUS
+ GUs6Gg9oS0xm33NyZPBUKB590BL76klMYkmfaDQSz6WSSVfZK50umHPy.ETVZLnFvue5.F11OISQ
+ hyZo3yviXRfBn9e7wG1luC9fZGRDw
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: fa6aedc0-9693-446b-ab2c-8b3725ad2efb
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Fri, 4 Jul 2025 20:39:01 +0000
+Received: by hermes--production-gq1-74d64bb7d7-cmxx8 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ce5598f86d5bbd8e79ee8ba7cd309f9a;
+          Fri, 04 Jul 2025 20:18:42 +0000 (UTC)
+Message-ID: <9fcc7e8f-7d5c-4499-9693-787bd7ecc8ed@schaufler-ca.com>
+Date: Fri, 4 Jul 2025 13:18:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1743971855.git.m@maowtm.org>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] Audit: Add record for multiple object contexts
+To: Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
+ linux-security-module@vger.kernel.org, audit@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250607005134.10488-5-casey@schaufler-ca.com>
+ <88f740c7efa914435e2223e90666c8b2@paul-moore.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <88f740c7efa914435e2223e90666c8b2@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.24099 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Hi,
+On 6/16/2025 1:54 PM, Paul Moore wrote:
+> On Jun  6, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> Create a new audit record AUDIT_MAC_OBJ_CONTEXTS.
+>> An example of the MAC_OBJ_CONTEXTS record is:
+>>
+>>     type=MAC_OBJ_CONTEXTS
+>>     msg=audit(1601152467.009:1050):
+>>     obj_selinux=unconfined_u:object_r:user_home_t:s0
+>>
+>> When an audit event includes a AUDIT_MAC_OBJ_CONTEXTS record
+>> the "obj=" field in other records in the event will be "obj=?".
+>> An AUDIT_MAC_OBJ_CONTEXTS record is supplied when the system has
+>> multiple security modules that may make access decisions based
+>> on an object security context.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  include/linux/audit.h      |  7 +++++
+>>  include/uapi/linux/audit.h |  1 +
+>>  kernel/audit.c             | 58 +++++++++++++++++++++++++++++++++++++-
+>>  kernel/auditsc.c           | 45 ++++++++---------------------
+>>  security/selinux/hooks.c   |  3 +-
+>>  security/smack/smack_lsm.c |  3 +-
+>>  6 files changed, 80 insertions(+), 37 deletions(-)
+> ..
+>
+>> diff --git a/kernel/audit.c b/kernel/audit.c
+>> index 0987b2f391cc..451c36965889 100644
+>> --- a/kernel/audit.c
+>> +++ b/kernel/audit.c
+>> @@ -2337,6 +2344,55 @@ int audit_log_task_context(struct audit_buffer *ab)
+>>  }
+>>  EXPORT_SYMBOL(audit_log_task_context);
+>>  
+>> +int audit_log_obj_ctx(struct audit_buffer *ab, struct lsm_prop *prop)
+>> +{
+>> +	int i;
+>> +	int rc;
+>> +	int error = 0;
+>> +	char *space = "";
+>> +	struct lsm_context ctx;
+>> +
+>> +	if (audit_obj_secctx_cnt < 2) {
+>> +		error = security_lsmprop_to_secctx(prop, &ctx, LSM_ID_UNDEF);
+>> +		if (error < 0) {
+>> +			if (error != -EINVAL)
+>> +				goto error_path;
+>> +			return error;
+>> +		}
+>> +		audit_log_format(ab, " obj=%s", ctx.context);
+>> +		security_release_secctx(&ctx);
+>> +		return 0;
+>> +	}
+>> +	audit_log_format(ab, " obj=?");
+>> +	error = audit_buffer_aux_new(ab, AUDIT_MAC_OBJ_CONTEXTS);
+>> +	if (error)
+>> +		goto error_path;
+>> +
+>> +	for (i = 0; i < audit_obj_secctx_cnt; i++) {
+>> +		rc = security_lsmprop_to_secctx(prop, &ctx,
+>> +						audit_obj_lsms[i]->id);
+>> +		if (rc < 0) {
+>> +			audit_log_format(ab, "%sobj_%s=?", space,
+>> +					 audit_obj_lsms[i]->name);
+>> +			if (rc != -EINVAL)
+>> +				audit_panic("error in audit_log_obj_ctx");
+>> +			error = rc;
+> Do we need the same logic as in audit_log_subj_ctx()?
 
-I tested this patch series and I confirm that it fixes the issue for
-Landlock.  Tingmao explained that it also fixes other subsystems such as
-fanotify, and 9p itself.  I sent a patch to test this fix with Landlock
-and I'll merge it once 9p is fixed:
-https://lore.kernel.org/all/20250704171345.1393451-1-mic@digikod.net/
+I seriously debated the issue. Subjects always have data to put in
+the aux record. Objects may or may not, in the AppArmor case. Not having
+a subject context is an error, not having an object context is interesting,
+but not necessarily an error. Hence the different treatment. You can tell
+me I'm wrong, and I'll make them consistent.
 
-Could you please give it a try in linux-next and consider it for the
-next merge window?
+>
+>> +		} else {
+>> +			audit_log_format(ab, "%sobj_%s=%s", space,
+>> +					 audit_obj_lsms[i]->name, ctx.context);
+>> +			security_release_secctx(&ctx);
+>> +		}
+>> +		space = " ";
+>> +	}
+>> +
+>> +	audit_buffer_aux_end(ab);
+>> +	return error;
+>> +
+>> +error_path:
+>> +	audit_panic("error in audit_log_obj_ctx");
+>> +	return error;
+>> +}
+>> +
+>>  void audit_log_d_path_exe(struct audit_buffer *ab,
+>>  			  struct mm_struct *mm)
+>>  {
+>> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+>> index 322d4e27f28e..0c28fa33d099 100644
+>> --- a/kernel/auditsc.c
+>> +++ b/kernel/auditsc.c
+>> @@ -1098,7 +1098,6 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
+>>  				 char *comm)
+>>  {
+>>  	struct audit_buffer *ab;
+>> -	struct lsm_context ctx;
+>>  	int rc = 0;
+>>  
+>>  	ab = audit_log_start(context, GFP_KERNEL, AUDIT_OBJ_PID);
+>> @@ -1108,15 +1107,9 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
+>>  	audit_log_format(ab, "opid=%d oauid=%d ouid=%d oses=%d", pid,
+>>  			 from_kuid(&init_user_ns, auid),
+>>  			 from_kuid(&init_user_ns, uid), sessionid);
+>> -	if (lsmprop_is_set(prop)) {
+>> -		if (security_lsmprop_to_secctx(prop, &ctx, LSM_ID_UNDEF) < 0) {
+>> -			audit_log_format(ab, " obj=(none)");
+>> -			rc = 1;
+>> -		} else {
+>> -			audit_log_format(ab, " obj=%s", ctx.context);
+>> -			security_release_secctx(&ctx);
+>> -		}
+>> -	}
+>> +	if (lsmprop_is_set(prop) && audit_log_obj_ctx(ab, prop))
+>> +		rc = 1;
+> We should probably use the return value from audit_log_obj_ctx().
 
-Regards,
- Mickaël
+Sure.
 
-On Sun, Apr 06, 2025 at 09:43:01PM +0100, Tingmao Wang wrote:
-> Hi 9p-fs maintainers,
-> 
-> (CC'ing Landlock and Fanotify/inotify people as this affects both use
-> cases, although most of my investigation has been on Landlock)
-> 
-> Previously [1], I noticed that when using 9pfs filesystems, the Landlock
-> LSM is blocking access even for files / directories allowed by rules, and
-> that this has something to do with 9pfs creating new inodes despite
-> Landlock holding a reference to the existing one.  Because Landlock uses
-> inodes' in-memory state (i_security) to identify allowed fs
-> objects/hierarchies, this causes Landlock to partially break on 9pfs, at
-> least in uncached mode, which is the default:
-> 
->     # mount -t 9p -o trans=virtio test /mnt
->     # env LL_FS_RO=/etc:/usr:/bin:/lib:/mnt/readme LL_FS_RW= /sandboxer bash
->     Executing the sandboxed command...
->     bash: cannot set terminal process group (164): Inappropriate ioctl for device
->     bash: no job control in this shell
->     # cat /mnt/readme
->     cat: /mnt/readme: Permission denied
-> 
-> This, however, works if somebody is holding onto the dentry (and it also
-> works with cache=loose), as in both cases the inode is reused:
-> 
->     # tail -f /mnt/readme &
->     [1] 196
->     # env LL_FS_RO=/etc:/usr:/bin:/lib:/mnt/readme LL_FS_RW= /sandboxer bash
->     Executing the sandboxed command...
->     bash: cannot set terminal process group (164): Inappropriate ioctl for device
->     bash: no job control in this shell
->     # cat /mnt/readme
->     aa
-> 
-> It also works on directories if one have a shell that cd into the
-> directory.  Note that this means only certain usage of Landlock are
-> affected - for example, sandboxing applications that takes a list of files
-> to allow, landlocks itself, then evecve.  On the other hand, this does not
-> affect applications that opens a file, then Landlocks itself while keeping
-> the file it needs open.
-> 
-> While the above is a very simple example, this is problematic in
-> real-world use cases if Landlock is used to sandox applications on system
-> that has files mounted via 9pfs, or use 9pfs as the root filesystem.  In
-> addition, this also affects fanotify / inotify when using inode mark (for
-> local access):
-> 
->     root@d8c28a676d72:/# ./fanotify-basic-open /readme & # on virtiofs
->     [1] 173
->     root@d8c28a676d72:/# cat readme
->     aa
->     FAN_OPEN: File /readme
->     root@d8c28a676d72:/# mount -t 9p -o trans=virtio test /mnt
->     root@d8c28a676d72:/# ./fanotify-basic-open /mnt/readme & # on 9pfs
->     [2] 176
->     root@d8c28a676d72:/# cat /mnt/readme
->     aa
->     root@d8c28a676d72:/#
-> 
-> Same can be demonstrated with inotifywait.  The source code for
-> fanotify-basic-open, adopted from the fanotify man page, is available at
-> the end of this email.
-> 
-> Note that this is not a security bug for Landlock since it can only cause
-> legitimate access to be denied, but might be a problem for fanotify perm
-> (although I do recognize that using perm on individual inodes is already
-> perhaps a bit unreliable?)
-> 
-> It seems that there was an attempt at making 9pfs reuse inodes, based on
-> qid.path, however it was reverted [2] due to issues with servers that
-> present duplicate qids, for example on a QEMU host that has multiple
-> filesystems mounted under a single 9pfs export without multidevs=remap, or
-> in the case of other servers that doesn't necessarily support remapping
-> qids ([3] and more).  I've done some testing on v6.12-rc4 which has the
-> simplified 9pfs inode code before it was reverted, and found that Landlock
-> works (however, we of course then have the issue demonstrated in [2]).
-> 
-> Unrelated to the above problem, it also seems like even with the revert in
-> [2], because in cached mode inode are still reused based on qid (and type,
-> version (aka mtime), etc), the setup mentioned in [2] still causes
-> problems in th latest kernel with cache=loose:
-> 
->     host # cd /tmp/linux-test
->     host # mkdir m1 m2
->     host # mount -t tmpfs tmpfs m1
->     host # mount -t tmpfs tmpfs m2
->     host # mkdir m1/dir m2/dir  # needs to be done together so that they have the same mtime
->     host # echo foo > m1/dir/foo
->     host # echo bar > m2/dir/bar
-> 
->     guest # mount -t 9p -o trans=virtio,cache=loose test /mnt
->     guest # cd /mnt/m1/dir
->     qemu-system-x86_64: warning: 9p: Multiple devices detected in same VirtFS export, which might lead to file ID collisions and severe misbehaviours on guest! You should either use a separate export for each device shared from host or use virtfs option 'multidevs=remap'!
->     guest # ls
->     foo
->     guest # ls /mnt/m2/dir
->     foo # <- should be bar
->     guest # uname -a
->     Linux d8c28a676d72 6.14.0-dev #92 SMP PREEMPT_DYNAMIC Sun Apr  6 18:47:54 BST 2025 x86_64 GNU/Linux
-> 
-> With the above in mind, I have a proposal for 9pfs to:
-> 1. Reuse inodes even in uncached mode
-> 2. However, reuse them based on qid.path AND the actual pathname, by doing
->    the appropriate testing in v9fs_test(_new)?_inode(_dotl)?
-> 
-> The main problem here is how to store the pathname in a sensible way and
-> tie it to the inode.  For now I opted with an array of names acquired with
-> take_dentry_name_snapshot, which reuses the same memory as the dcache to
-> store the actual strings, but doesn't tie the lifetime of the dentry with
-> the inode (I thought about holding a reference to the dentry in the
-> v9fs_inode, but it seemed like a wrong approach and would cause dentries
-> to not be evicted/released).
-> 
-> Maybe ideally there could be a general way for filesystems to tell
-> VFS/dcache to "pin" a dentry as long as the inode is alive, but still
-> allows the dentry and inode to be evicted based on memory pressure?  In
-> fact, if the dentry is alive, we might not even need to do this in 9pfs,
-> as we will automatically get the same inode pointed to by the dentry.
+>
+>>  	audit_log_format(ab, " ocomm=");
+>>  	audit_log_untrustedstring(ab, comm);
+>>  	audit_log_end(ab);
+> ..
+>
+>> @@ -1780,15 +1756,16 @@ static void audit_log_exit(void)
+>>  						  axs->target_sessionid[i],
+>>  						  &axs->target_ref[i],
+>>  						  axs->target_comm[i]))
+>> -				call_panic = 1;
+>> +			call_panic = 1;
+>>  	}
+>>  
+>>  	if (context->target_pid &&
+>>  	    audit_log_pid_context(context, context->target_pid,
+>>  				  context->target_auid, context->target_uid,
+>>  				  context->target_sessionid,
+>> -				  &context->target_ref, context->target_comm))
+>> -			call_panic = 1;
+>> +				  &context->target_ref,
+>> +				  context->target_comm))
+>> +		call_panic = 1;
+> I appreciate the indent fixes, would you mind pulling this out and
+> submitting them separately?
 
-Christian, any though?
+Sure.
 
-> 
-> Currently this pathname is immutable once attached to an inode, and
-> therefore it is not protected by locks or RCU, but this might have to
-> change for us to support renames that preserve the inode on next access.
-> This is not in this patchset yet.  Also let me know if I've missed any
-> locks etc (I'm new to VFS, or for that matter, the kernel).
-> 
-> Storing one pathname per inode also means we don't reuse the same inode
-> for hardlinks -- maybe this can be fixed as well in a future version, if
-> this approach sounds good?
-> 
-> From some QEMU documentation I read [4] it seems like there is a plan to
-> resolve these kind of problems in a new version of the protocol, by
-> expanding the qid to include the filesystem identifier of a file on the
-> host, so maybe this can be disabled after a successful protocol version
-> check with the host?  For now this is implemented as a default option,
-> inodeident=path, which can be set to 'none' to instead get the previous
-> behaviour.
-> 
-> This patchset is still a bit of a work in progress, and I've not tested
-> the performance impact.  It currently uses strncmp to compare paths but
-> this might be able to be optimized into a hash comparison first.  It
-> should also normally only need to do it for one pair of filenames, as the
-> test is only done if qid.path matches in the first place.
-> 
-> Also, currently the inode is not reused in cached mode if mtime changed
-> AND the dentry was evicted -- I considered removing the qid.version test
-> in v9fs_test_inode_dotl but I think perhaps care needs to be taken to
-> ensure we can refresh an inode that potentially has data cached?  This is
-> a TODO for this patchset.
-> 
-> Another TODO is to maybe add support for case-insensitive matching?
-> 
-> For this patch series I've tested modifying files on both host and guest,
-> changing a file from regular file to dir then back while preserving ino,
-> keeping a file open in the guest with a fd, and using Landlock (which
-> results in an ihold but does not keep the dentry) then trying to access
-> the file from both inside and outside the Landlocked shell.
-> 
-> Let me know what's your thought on this -- if this is a viable approach
-> I'm happy to work on it more and do more testing.  The main motivation
-> behind this is getting Landlock to work "out of the box" on 9pfs.
-> 
-> This patch series was based on, and tested on v6.14 + [5]
-> 
-> Kind regards,
-> Tingmao
-> 
-> [1]: https://github.com/landlock-lsm/linux/issues/45
-> [2]: https://lore.kernel.org/all/20241024-revert_iget-v1-4-4cac63d25f72@codewreck.org/
-> [3]: https://lore.kernel.org/all/20240923100508.GA32066@willie-the-truck/
-> [4]: https://wiki.qemu.org/Documentation/9p#Protocol_Plans
-> [5]: https://lore.kernel.org/all/cover.1743956147.git.m@maowtm.org/
-> 
-> fanotify-basic-open.c:
-> 
->     #define _GNU_SOURCE /* Needed to get O_LARGEFILE definition */
->     #include <errno.h>
->     #include <fcntl.h>
->     #include <limits.h>
->     #include <poll.h>
->     #include <stdio.h>
->     #include <stdlib.h>
->     #include <sys/fanotify.h>
->     #include <unistd.h>
-> 
->     /* Read all available fanotify events from the file descriptor 'fd'. */
-> 
->     static void handle_events(int fd)
->     {
->         const struct fanotify_event_metadata *metadata;
->         struct fanotify_event_metadata buf[200];
->         ssize_t size;
->         char path[PATH_MAX];
->         ssize_t path_len;
->         char procfd_path[PATH_MAX];
->         struct fanotify_response response;
-> 
->         for (;;) {
->             size = read(fd, buf, sizeof(buf));
->             if (size == -1 && errno != EAGAIN) {
->                 perror("read");
->                 exit(EXIT_FAILURE);
->             }
-> 
->             /* Check if end of available data reached. */
-> 
->             if (size <= 0)
->                 break;
-> 
->             /* Point to the first event in the buffer. */
-> 
->             metadata = buf;
-> 
->             /* Loop over all events in the buffer. */
-> 
->             while (FAN_EVENT_OK(metadata, size)) {
->                 if (metadata->fd >= 0) {
->                     if (metadata->mask & FAN_OPEN) {
->                         printf("FAN_OPEN: ");
->                     }
-> 
->                     /* Retrieve and print pathname of the accessed file. */
-> 
->                     snprintf(procfd_path, sizeof(procfd_path),
->                         "/proc/self/fd/%d", metadata->fd);
->                     path_len = readlink(procfd_path, path,
->                                 sizeof(path) - 1);
->                     if (path_len == -1) {
->                         perror("readlink");
->                         exit(EXIT_FAILURE);
->                     }
-> 
->                     path[path_len] = '\0';
->                     printf("File %s\n", path);
-> 
->                     /* Close the file descriptor of the event. */
-> 
->                     close(metadata->fd);
->                 }
-> 
->                 /* Advance to next event. */
-> 
->                 metadata = FAN_EVENT_NEXT(metadata, size);
->             }
->         }
->     }
-> 
->     int main(int argc, char *argv[])
->     {
->         char buf;
->         int fd, poll_num;
->         nfds_t nfds;
->         struct pollfd fds[2];
-> 
->         /* Check mount point is supplied. */
-> 
->         if (argc != 2) {
->             fprintf(stderr, "Usage: %s FILE\n", argv[0]);
->             exit(EXIT_FAILURE);
->         }
-> 
->         fd = fanotify_init(0, O_RDONLY | O_LARGEFILE);
->         if (fd == -1) {
->             perror("fanotify_init");
->             exit(EXIT_FAILURE);
->         }
-> 
->         if (fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_INODE, FAN_OPEN, AT_FDCWD,
->                 argv[1]) == -1) {
->             perror("fanotify_mark");
->             exit(EXIT_FAILURE);
->         }
-> 
->         while (1) {
->             handle_events(fd);
->         }
->     }
-> 
-> Tingmao Wang (6):
->   fs/9p: Add ability to identify inode by path for .L
->   fs/9p: add default option for path-based inodes
->   fs/9p: Hide inodeident=path from show_options as it is the default
->   fs/9p: Add ability to identify inode by path for non-.L
->   fs/9p: .L: Refresh stale inodes on reuse
->   fs/9p: non-.L: Refresh stale inodes on reuse
-> 
->  fs/9p/Makefile         |   3 +-
->  fs/9p/ino_path.c       | 114 ++++++++++++++++++++++++++++++++++++++
->  fs/9p/v9fs.c           |  33 ++++++++++-
->  fs/9p/v9fs.h           |  63 +++++++++++++++------
->  fs/9p/vfs_inode.c      | 122 +++++++++++++++++++++++++++++++++++------
->  fs/9p/vfs_inode_dotl.c | 108 +++++++++++++++++++++++++++++++++---
->  fs/9p/vfs_super.c      |  10 +++-
->  7 files changed, 406 insertions(+), 47 deletions(-)
->  create mode 100644 fs/9p/ino_path.c
-> 
-> 
-> base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
-> prerequisite-patch-id: 12dc6676db52ff32eed082b1e5d273f297737f61
-> prerequisite-patch-id: 93ab54c52a41fa44b8d0baf55df949d0ad27e99a
-> prerequisite-patch-id: 5f558bf969e6eaa3d011c98de0806ca8ad369efe
+>
 > --
-> 2.39.5
-> 
+> paul-moore.com
