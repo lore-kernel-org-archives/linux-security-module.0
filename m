@@ -1,186 +1,250 @@
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8585A2D836C
-	for <linux-security-module@vger.kernel.org>; Fri,  4 Jul 2025 17:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8D62D8371
+	for <linux-security-module@vger.kernel.org>; Fri,  4 Jul 2025 17:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751649254; cv=none; b=uAu/3n/85pdfnNa2SJxW5r2oK9+xsz0HOXP/Y3O0lPsk5PeecH0wjqH0E5j59bISNa7JlWsbrWq8y3utvisy/Lu5TQ/8AtfROeB7aIJ5mhZMcrh/loQQ/Ue3NfFGHUz6BRV3Ko1bs644yiHjWdvGfiFb7BSpnWLurX6XBOFsUUQ=
+	t=1751650856; cv=none; b=sUvaOiPaYmfV2Wg1ihRsBVJAn06SWSYrAgvSkHCfdsTPS5WQoCDLABTtErNQWrzA+MSAM2NF40QW4w+3jd1sOINcaGJLdPFVLpXCzIQUfS/QB2vn+UMn2/Est6u5yRRWHOic5NwxkPhPV604bp/jEeBg+pC9XUSWys/Sl0d8fmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751649254; c=relaxed/simple;
-	bh=mF0Ld24Ox8jElEpW8jFQ9uimGtaO+xA1ABV+LLyeOKg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mQ0+T4sBiRoVTZEv8/e6L3O75jfO9hfQtVezQcK9XTNWgWXFmCOXpjqnHlUbi6QYlhIq4w4SyWGLqD2w1z+BllEK0hssyhOIzkPI47p4NWm3GErQcycKHCACvd+bnUYeRFt/IU3RULjH6wO4drFTb1yegQ4CMfcQfdc/y+GwELc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=E8yL3vGh; arc=none smtp.client-ip=84.16.66.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1751650856; c=relaxed/simple;
+	bh=j1y5fK2pSIFjeIzluaoTZB7LiubY9SK90IFdNX+JcVI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jQORxX/vBADa3af/AS4cRkUtDk9M+dcITYmeFUcl50RkMsTrI97imz+VnHhd+oEvPcGPyueGES+uq6DqL4LlAUzbywl+kg7BZGbf7m0ofT9jImhUFSrcyZf3EumoC0SQ5l5KI8A/PxbqFIl/XdWp6Uf+K9j/0JFMZj281EGF5GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pKspoYDT; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="E8yL3vGh"
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bYgGN6cGbzXhC;
-	Fri,  4 Jul 2025 19:14:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1751649244;
-	bh=K4ElhYNB/0QwQ65XpwoZgfAHS/upJtR69NR6tzwtv98=;
-	h=From:To:Cc:Subject:Date:From;
-	b=E8yL3vGhSNpAeI+IFC6N09PiVrBYCyT0irRxVWtqHnfenL/XPVNaU9ydKy6mm1Sw7
-	 1GFhH83MNibS0rOcut2bzq27qOC44c6Td5zoTDZPBGFj4PWJBGtjaNIbHq6P/Djksm
-	 qQCuuzEhZu4QlzNmRq1djFRSfEFXBMXwHvKvGxfw=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bYgGN0WcKzYVZ;
-	Fri,  4 Jul 2025 19:14:03 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Tingmao Wang <m@maowtm.org>
-Subject: [PATCH v1] selftests/landlock: Add 9p and FUSE filesystem tests
-Date: Fri,  4 Jul 2025 19:13:42 +0200
-Message-ID: <20250704171345.1393451-1-mic@digikod.net>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pKspoYDT"
+Message-ID: <2459c10e-d74c-4118-9b6d-c37d05ecec02@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751650841;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xIRcNmmy2VbVp7gJQIkaTFfPIXvag7FLLr7FrIV0lQo=;
+	b=pKspoYDT8P7/dYSLFT3Wcf6V3S1xlnly+2wS8ALTKH+MecAV9raqgDtRFHb0+N2lny17mW
+	Urcm4546PBB3ywrgOhyT2lNXU6S1ODfdsqWVsxtfy8Ky7lG6s44qnb6dsS029GqH9Obmh5
+	BPBmV3Y+sZ0PNlQN6O1PuI38XaEGhZU=
+Date: Fri, 4 Jul 2025 10:40:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Subject: Re: [PATCH v5 bpf-next 1/5] namei: Introduce new helper function
+ path_walk_parent()
+Content-Language: en-GB
+To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+Cc: kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
+ ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ kpsingh@kernel.org, mattbobrowski@google.com, m@maowtm.org, neil@brown.name
+References: <20250617061116.3681325-1-song@kernel.org>
+ <20250617061116.3681325-2-song@kernel.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250617061116.3681325-2-song@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-FUSE is already supported but v9fs requires some fixes [1].
 
-These tests require /mnt/test-v9fs and /mnt/test-fuse to be already
-mounted.  It would be too complex to set up such mount points with the
-test fixtures because of the related daemons' lifetime, but it is easy
-to run these tests with check-linux.sh from landlock-test-tools [2].
 
-Add new kernel configurations to support these two new filesystems.
+On 6/16/25 11:11 PM, Song Liu wrote:
+> This helper walks an input path to its parent. Logic are added to handle
+> walking across mount tree.
+>
+> This will be used by landlock, and BPF LSM.
+>
+> Suggested-by: Neil Brown <neil@brown.name>
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>   fs/namei.c            | 95 +++++++++++++++++++++++++++++++++++--------
+>   include/linux/namei.h |  2 +
+>   2 files changed, 79 insertions(+), 18 deletions(-)
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 4bb889fc980b..d0557c0b5cc8 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2048,36 +2048,95 @@ static struct dentry *follow_dotdot_rcu(struct nameidata *nd)
+>   	return nd->path.dentry;
+>   }
+>   
+> -static struct dentry *follow_dotdot(struct nameidata *nd)
+> +/**
+> + * __path_walk_parent - Find the parent of the given struct path
+> + * @path  - The struct path to start from
+> + * @root  - A struct path which serves as a boundary not to be crosses.
+> + *        - If @root is zero'ed, walk all the way to global root.
+> + * @flags - Some LOOKUP_ flags.
+> + *
+> + * Find and return the dentry for the parent of the given path
+> + * (mount/dentry). If the given path is the root of a mounted tree, it
+> + * is first updated to the mount point on which that tree is mounted.
+> + *
+> + * If %LOOKUP_NO_XDEV is given, then *after* the path is updated to a new
+> + * mount, the error EXDEV is returned.
+> + *
+> + * If no parent can be found, either because the tree is not mounted or
+> + * because the @path matches the @root, then @path->dentry is returned
+> + * unless @flags contains %LOOKUP_BENEATH, in which case -EXDEV is returned.
+> + *
+> + * Returns: either an ERR_PTR() or the chosen parent which will have had
+> + * the refcount incremented.
+> + */
+> +static struct dentry *__path_walk_parent(struct path *path, const struct path *root, int flags)
+>   {
+> -	struct dentry *parent;
+> -
+> -	if (path_equal(&nd->path, &nd->root))
+> +	if (path_equal(path, root))
+>   		goto in_root;
+> -	if (unlikely(nd->path.dentry == nd->path.mnt->mnt_root)) {
+> -		struct path path;
+> +	if (unlikely(path->dentry == path->mnt->mnt_root)) {
+> +		struct path new_path;
+>   
+> -		if (!choose_mountpoint(real_mount(nd->path.mnt),
+> -				       &nd->root, &path))
+> +		if (!choose_mountpoint(real_mount(path->mnt),
+> +				       root, &new_path))
+>   			goto in_root;
+> -		path_put(&nd->path);
+> -		nd->path = path;
+> -		nd->inode = path.dentry->d_inode;
+> -		if (unlikely(nd->flags & LOOKUP_NO_XDEV))
+> +		path_put(path);
+> +		*path = new_path;
+> +		if (unlikely(flags & LOOKUP_NO_XDEV))
+>   			return ERR_PTR(-EXDEV);
+>   	}
+>   	/* rare case of legitimate dget_parent()... */
+> -	parent = dget_parent(nd->path.dentry);
+> +	return dget_parent(path->dentry);
 
-Rename and update path_is_fs() to take a path as argument.
+I have some confusion with this patch when crossing mount boundary.
 
-Cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>
-Cc: Günther Noack <gnoack@google.com>
-Cc: Latchesar Ionkov <lucho@ionkov.net>
-Cc: Tingmao Wang <m@maowtm.org>
-Link: https://lore.kernel.org/r/cover.1743971855.git.m@maowtm.org [1]
-Link: https://github.com/landlock-lsm/landlock-test-tools/pull/21 [2]
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
----
- tools/testing/selftests/landlock/config    |  5 +++
- tools/testing/selftests/landlock/fs_test.c | 45 ++++++++++++++++++----
- 2 files changed, 43 insertions(+), 7 deletions(-)
+In d_path.c, we have
 
-diff --git a/tools/testing/selftests/landlock/config b/tools/testing/selftests/landlock/config
-index 8fe9b461b1fd..02427db3cb7b 100644
---- a/tools/testing/selftests/landlock/config
-+++ b/tools/testing/selftests/landlock/config
-@@ -1,13 +1,18 @@
-+CONFIG_9P_FS=y
- CONFIG_AF_UNIX_OOB=y
- CONFIG_AUDIT=y
- CONFIG_CGROUPS=y
- CONFIG_CGROUP_SCHED=y
-+CONFIG_FUSE_FS=y
- CONFIG_INET=y
- CONFIG_IPV6=y
- CONFIG_KEYS=y
- CONFIG_MPTCP=y
- CONFIG_MPTCP_IPV6=y
- CONFIG_NET=y
-+CONFIG_NETWORK_FILESYSTEMS=y
-+CONFIG_NET_9P=y
-+CONFIG_NET_9P_FD=y
- CONFIG_NET_NS=y
- CONFIG_OVERLAY_FS=y
- CONFIG_PROC_FS=y
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 73729382d40f..788fa030cbe3 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -176,15 +176,19 @@ static bool supports_filesystem(const char *const filesystem)
- 	return res;
- }
- 
--static bool cwd_matches_fs(unsigned int fs_magic)
-+static bool path_is_fs(const char *path, unsigned int fs_magic)
- {
- 	struct statfs statfs_buf;
- 
--	if (!fs_magic)
-+	if (!fs_magic || !path)
- 		return true;
- 
--	if (statfs(".", &statfs_buf))
--		return true;
-+	/* Hack for the hostfs test because TMP_DIR doesn't exist yet. */
-+	if (strcmp(path, TMP_DIR) == 0)
-+		path = ".";
-+
-+	if (statfs(path, &statfs_buf))
-+		return false;
- 
- 	return statfs_buf.f_type == fs_magic;
- }
-@@ -5294,7 +5298,7 @@ FIXTURE_VARIANT(layout3_fs)
- {
- 	const struct mnt_opt mnt;
- 	const char *const file_path;
--	unsigned int cwd_fs_magic;
-+	unsigned int fs_magic;
- };
- 
- /* clang-format off */
-@@ -5342,7 +5346,34 @@ FIXTURE_VARIANT_ADD(layout3_fs, hostfs) {
- 		.flags = MS_BIND,
- 	},
- 	.file_path = TMP_DIR "/dir/file",
--	.cwd_fs_magic = HOSTFS_SUPER_MAGIC,
-+	.fs_magic = HOSTFS_SUPER_MAGIC,
-+};
-+
-+/*
-+ * This test requires a mounted 9p filesystem e.g., with:
-+ * diod -n -l 127.0.0.1:564 -e /mnt/test-v9fs-src
-+ * mount.diod -n 127.0.0.1:/mnt/test-v9fs-src /mnt/test-v9fs
-+ */
-+FIXTURE_VARIANT_ADD(layout3_fs, v9fs) {
-+	.mnt = {
-+		.source = "/mnt/test-v9fs",
-+		.flags = MS_BIND,
-+	},
-+	.file_path = TMP_DIR "/dir/file",
-+	.fs_magic = V9FS_MAGIC,
-+};
-+
-+/*
-+ * This test requires a mounted FUSE filesystem e.g., with:
-+ * bindfs /mnt/test-fuse-src /mnt/test-fuse
-+ */
-+FIXTURE_VARIANT_ADD(layout3_fs, fuse) {
-+	.mnt = {
-+		.source = "/mnt/test-fuse",
-+		.flags = MS_BIND,
-+	},
-+	.file_path = TMP_DIR "/dir/file",
-+	.fs_magic = FUSE_SUPER_MAGIC,
- };
- 
- static char *dirname_alloc(const char *path)
-@@ -5365,7 +5396,7 @@ FIXTURE_SETUP(layout3_fs)
- 	char *dir_path = dirname_alloc(variant->file_path);
- 
- 	if (!supports_filesystem(variant->mnt.type) ||
--	    !cwd_matches_fs(variant->cwd_fs_magic)) {
-+	    !path_is_fs(variant->mnt.source, variant->fs_magic)) {
- 		self->skip_test = true;
- 		SKIP(return, "this filesystem is not supported (setup)");
- 	}
--- 
-2.50.0
+static int __prepend_path(const struct dentry *dentry, const struct mount *mnt,
+                           const struct path *root, struct prepend_buffer *p)
+{
+         while (dentry != root->dentry || &mnt->mnt != root->mnt) {
+                 const struct dentry *parent = READ_ONCE(dentry->d_parent);
+
+                 if (dentry == mnt->mnt.mnt_root) {
+                         struct mount *m = READ_ONCE(mnt->mnt_parent);
+                         struct mnt_namespace *mnt_ns;
+
+                         if (likely(mnt != m)) {
+                                 dentry = READ_ONCE(mnt->mnt_mountpoint);
+                                 mnt = m;
+                                 continue;
+                         }
+                         /* Global root */
+                         mnt_ns = READ_ONCE(mnt->mnt_ns);
+                         /* open-coded is_mounted() to use local mnt_ns */
+                         if (!IS_ERR_OR_NULL(mnt_ns) && !is_anon_ns(mnt_ns))
+                                 return 1;       // absolute root
+                         else
+                                 return 2;       // detached or not attached yet
+                 }
+
+                 if (unlikely(dentry == parent))
+                         /* Escaped? */
+                         return 3;
+
+                 prefetch(parent);
+                 if (!prepend_name(p, &dentry->d_name))
+                         break;
+                 dentry = parent;
+         }
+         return 0;
+}
+
+At the mount boundary and not at root mount, the code has
+	dentry = READ_ONCE(mnt->mnt_mountpoint);
+	mnt = m; /* 'mnt' will be parent mount */
+	continue;
+
+After that, we have
+	const struct dentry *parent = READ_ONCE(dentry->d_parent);
+	if (dentry == mnt->mnt.mnt_root) {
+		/* assume this is false */
+	}
+	...
+	prefetch(parent);
+         if (!prepend_name(p, &dentry->d_name))
+                 break;
+         dentry = parent;
+
+So the prepend_name(p, &dentry->d_name) is actually from mnt->mnt_mountpoint.
+
+In your above code, maybe we should return path->dentry in the below if statement?
+
+         if (unlikely(path->dentry == path->mnt->mnt_root)) {
+                 struct path new_path;
+
+                 if (!choose_mountpoint(real_mount(path->mnt),
+                                        root, &new_path))
+                         goto in_root;
+                 path_put(path);
+                 *path = new_path;
+                 if (unlikely(flags & LOOKUP_NO_XDEV))
+                         return ERR_PTR(-EXDEV);
++		return path->dentry;
+         }
+         /* rare case of legitimate dget_parent()... */
+         return dget_parent(path->dentry);
+
+Also, could you add some selftests cross mount points? This will
+have more coverages with __path_walk_parent().
+
+> +
+> +in_root:
+> +	if (unlikely(flags & LOOKUP_BENEATH))
+> +		return ERR_PTR(-EXDEV);
+> +	return dget(path->dentry);
+> +}
+> +
+> +/**
+> + * path_walk_parent - Walk to the parent of path
+> + * @path: input and output path.
+> + * @root: root of the path walk, do not go beyond this root. If @root is
+> + *        zero'ed, walk all the way to real root.
+> + *
+> + * Given a path, find the parent path. Replace @path with the parent path.
+> + * If we were already at the real root or a disconnected root, @path is
+> + * not changed.
+> + *
+> + * Returns:
+> + *  0  - if @path is updated to its parent.
+> + *  <0 - if @path is already the root (real root or @root).
+> + */
+> +int path_walk_parent(struct path *path, const struct path *root)
+> +{
+> +	struct dentry *parent;
+> +
+> +	parent = __path_walk_parent(path, root, LOOKUP_BENEATH);
+> +
+> +	if (IS_ERR(parent))
+> +		return PTR_ERR(parent);
+> +
+> +	if (parent == path->dentry) {
+> +		dput(parent);
+> +		return -ENOENT;
+> +	}
+> +	dput(path->dentry);
+> +	path->dentry = parent;
+> +	return 0;
+> +}
+> +
+
+[...]
 
