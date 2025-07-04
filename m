@@ -1,250 +1,375 @@
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8D62D8371
-	for <linux-security-module@vger.kernel.org>; Fri,  4 Jul 2025 17:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A0C217F24
+	for <linux-security-module@vger.kernel.org>; Fri,  4 Jul 2025 18:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751650856; cv=none; b=sUvaOiPaYmfV2Wg1ihRsBVJAn06SWSYrAgvSkHCfdsTPS5WQoCDLABTtErNQWrzA+MSAM2NF40QW4w+3jd1sOINcaGJLdPFVLpXCzIQUfS/QB2vn+UMn2/Est6u5yRRWHOic5NwxkPhPV604bp/jEeBg+pC9XUSWys/Sl0d8fmc=
+	t=1751654237; cv=none; b=gpOHeIU8KymlruHCWOduUv1UddXYhnDDiZ8OkoiuSpgnWBTlWJSYS9+IRbsXIMHOVCn6jNHQeFumCBnIiQJK0VRe6iXUntg79RPF5gtdBSGS2WRmJMF7Dg4LxjLNi/stROOGKhJAva3A39A2EqLhsLNhb8Dacrj5AjrhZtor1fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751650856; c=relaxed/simple;
-	bh=j1y5fK2pSIFjeIzluaoTZB7LiubY9SK90IFdNX+JcVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jQORxX/vBADa3af/AS4cRkUtDk9M+dcITYmeFUcl50RkMsTrI97imz+VnHhd+oEvPcGPyueGES+uq6DqL4LlAUzbywl+kg7BZGbf7m0ofT9jImhUFSrcyZf3EumoC0SQ5l5KI8A/PxbqFIl/XdWp6Uf+K9j/0JFMZj281EGF5GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pKspoYDT; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1751654237; c=relaxed/simple;
+	bh=5HtNG0MSeW1BujCOgklQGjz5Xi+ba1D+X41TBjJvCAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TJlK1ZLCmvcujxD+5v17b9Ej97eGG9bFfTIjxdUrYotv0X4H5mNoQE8AXNQjjDtKqgwTeLOsoG07bgYEtEFJ/tACOJ2M3abWzXIk+w8zhtU698qXG36wJ/zDljh+hG+3KvOyV0Ci83mQVNr46vObh4lb31G6yb2bdQPp/9Xet/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mMxAqAoV; arc=none smtp.client-ip=83.166.143.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pKspoYDT"
-Message-ID: <2459c10e-d74c-4118-9b6d-c37d05ecec02@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751650841;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xIRcNmmy2VbVp7gJQIkaTFfPIXvag7FLLr7FrIV0lQo=;
-	b=pKspoYDT8P7/dYSLFT3Wcf6V3S1xlnly+2wS8ALTKH+MecAV9raqgDtRFHb0+N2lny17mW
-	Urcm4546PBB3ywrgOhyT2lNXU6S1ODfdsqWVsxtfy8Ky7lG6s44qnb6dsS029GqH9Obmh5
-	BPBmV3Y+sZ0PNlQN6O1PuI38XaEGhZU=
-Date: Fri, 4 Jul 2025 10:40:18 -0700
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mMxAqAoV"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bYj6H3rrqztKJ;
+	Fri,  4 Jul 2025 20:37:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1751654231;
+	bh=T7orxL5CYqwGPp8kSYq7Zk6BqxK+a3hm4Qvvl9BrI8E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mMxAqAoV9eiYVyGwIh1CdPZ+8pauk047d3KcViFe7irmxofZI/EzB3C+PK9FaY7Oe
+	 jX4qUrZO4CHS+wvCnLalhk1Hfc7qqlMWga5ZVDT/xUf8lAX2D/tJVGvJfIByCBhoSL
+	 Q3QX0uroWlrIYQyLeWv2tKNdxxZLJAQplFv/pRxw=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bYj6F6Y1wzkvT;
+	Fri,  4 Jul 2025 20:37:09 +0200 (CEST)
+Date: Fri, 4 Jul 2025 20:37:06 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Eric Van Hensbergen <ericvh@kernel.org>, 
+	Dominique Martinet <asmadeus@codewreck.org>, Latchesar Ionkov <lucho@ionkov.net>, 
+	Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: Tingmao Wang <m@maowtm.org>, v9fs@lists.linux.dev, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Subject: Re: [RFC PATCH 0/6] fs/9p: Reuse inode based on path (in addition to
+ qid)
+Message-ID: <20250704.eek1caeveC0c@digikod.net>
+References: <cover.1743971855.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v5 bpf-next 1/5] namei: Introduce new helper function
- path_walk_parent()
-Content-Language: en-GB
-To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
- ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
- viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- kpsingh@kernel.org, mattbobrowski@google.com, m@maowtm.org, neil@brown.name
-References: <20250617061116.3681325-1-song@kernel.org>
- <20250617061116.3681325-2-song@kernel.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20250617061116.3681325-2-song@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1743971855.git.m@maowtm.org>
+X-Infomaniak-Routing: alpha
 
+Hi,
 
+I tested this patch series and I confirm that it fixes the issue for
+Landlock.  Tingmao explained that it also fixes other subsystems such as
+fanotify, and 9p itself.  I sent a patch to test this fix with Landlock
+and I'll merge it once 9p is fixed:
+https://lore.kernel.org/all/20250704171345.1393451-1-mic@digikod.net/
 
-On 6/16/25 11:11 PM, Song Liu wrote:
-> This helper walks an input path to its parent. Logic are added to handle
-> walking across mount tree.
->
-> This will be used by landlock, and BPF LSM.
->
-> Suggested-by: Neil Brown <neil@brown.name>
-> Signed-off-by: Song Liu <song@kernel.org>
-> ---
->   fs/namei.c            | 95 +++++++++++++++++++++++++++++++++++--------
->   include/linux/namei.h |  2 +
->   2 files changed, 79 insertions(+), 18 deletions(-)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 4bb889fc980b..d0557c0b5cc8 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2048,36 +2048,95 @@ static struct dentry *follow_dotdot_rcu(struct nameidata *nd)
->   	return nd->path.dentry;
->   }
->   
-> -static struct dentry *follow_dotdot(struct nameidata *nd)
-> +/**
-> + * __path_walk_parent - Find the parent of the given struct path
-> + * @path  - The struct path to start from
-> + * @root  - A struct path which serves as a boundary not to be crosses.
-> + *        - If @root is zero'ed, walk all the way to global root.
-> + * @flags - Some LOOKUP_ flags.
-> + *
-> + * Find and return the dentry for the parent of the given path
-> + * (mount/dentry). If the given path is the root of a mounted tree, it
-> + * is first updated to the mount point on which that tree is mounted.
-> + *
-> + * If %LOOKUP_NO_XDEV is given, then *after* the path is updated to a new
-> + * mount, the error EXDEV is returned.
-> + *
-> + * If no parent can be found, either because the tree is not mounted or
-> + * because the @path matches the @root, then @path->dentry is returned
-> + * unless @flags contains %LOOKUP_BENEATH, in which case -EXDEV is returned.
-> + *
-> + * Returns: either an ERR_PTR() or the chosen parent which will have had
-> + * the refcount incremented.
-> + */
-> +static struct dentry *__path_walk_parent(struct path *path, const struct path *root, int flags)
->   {
-> -	struct dentry *parent;
-> -
-> -	if (path_equal(&nd->path, &nd->root))
-> +	if (path_equal(path, root))
->   		goto in_root;
-> -	if (unlikely(nd->path.dentry == nd->path.mnt->mnt_root)) {
-> -		struct path path;
-> +	if (unlikely(path->dentry == path->mnt->mnt_root)) {
-> +		struct path new_path;
->   
-> -		if (!choose_mountpoint(real_mount(nd->path.mnt),
-> -				       &nd->root, &path))
-> +		if (!choose_mountpoint(real_mount(path->mnt),
-> +				       root, &new_path))
->   			goto in_root;
-> -		path_put(&nd->path);
-> -		nd->path = path;
-> -		nd->inode = path.dentry->d_inode;
-> -		if (unlikely(nd->flags & LOOKUP_NO_XDEV))
-> +		path_put(path);
-> +		*path = new_path;
-> +		if (unlikely(flags & LOOKUP_NO_XDEV))
->   			return ERR_PTR(-EXDEV);
->   	}
->   	/* rare case of legitimate dget_parent()... */
-> -	parent = dget_parent(nd->path.dentry);
-> +	return dget_parent(path->dentry);
+Could you please give it a try in linux-next and consider it for the
+next merge window?
 
-I have some confusion with this patch when crossing mount boundary.
+Regards,
+ Mickaël
 
-In d_path.c, we have
+On Sun, Apr 06, 2025 at 09:43:01PM +0100, Tingmao Wang wrote:
+> Hi 9p-fs maintainers,
+> 
+> (CC'ing Landlock and Fanotify/inotify people as this affects both use
+> cases, although most of my investigation has been on Landlock)
+> 
+> Previously [1], I noticed that when using 9pfs filesystems, the Landlock
+> LSM is blocking access even for files / directories allowed by rules, and
+> that this has something to do with 9pfs creating new inodes despite
+> Landlock holding a reference to the existing one.  Because Landlock uses
+> inodes' in-memory state (i_security) to identify allowed fs
+> objects/hierarchies, this causes Landlock to partially break on 9pfs, at
+> least in uncached mode, which is the default:
+> 
+>     # mount -t 9p -o trans=virtio test /mnt
+>     # env LL_FS_RO=/etc:/usr:/bin:/lib:/mnt/readme LL_FS_RW= /sandboxer bash
+>     Executing the sandboxed command...
+>     bash: cannot set terminal process group (164): Inappropriate ioctl for device
+>     bash: no job control in this shell
+>     # cat /mnt/readme
+>     cat: /mnt/readme: Permission denied
+> 
+> This, however, works if somebody is holding onto the dentry (and it also
+> works with cache=loose), as in both cases the inode is reused:
+> 
+>     # tail -f /mnt/readme &
+>     [1] 196
+>     # env LL_FS_RO=/etc:/usr:/bin:/lib:/mnt/readme LL_FS_RW= /sandboxer bash
+>     Executing the sandboxed command...
+>     bash: cannot set terminal process group (164): Inappropriate ioctl for device
+>     bash: no job control in this shell
+>     # cat /mnt/readme
+>     aa
+> 
+> It also works on directories if one have a shell that cd into the
+> directory.  Note that this means only certain usage of Landlock are
+> affected - for example, sandboxing applications that takes a list of files
+> to allow, landlocks itself, then evecve.  On the other hand, this does not
+> affect applications that opens a file, then Landlocks itself while keeping
+> the file it needs open.
+> 
+> While the above is a very simple example, this is problematic in
+> real-world use cases if Landlock is used to sandox applications on system
+> that has files mounted via 9pfs, or use 9pfs as the root filesystem.  In
+> addition, this also affects fanotify / inotify when using inode mark (for
+> local access):
+> 
+>     root@d8c28a676d72:/# ./fanotify-basic-open /readme & # on virtiofs
+>     [1] 173
+>     root@d8c28a676d72:/# cat readme
+>     aa
+>     FAN_OPEN: File /readme
+>     root@d8c28a676d72:/# mount -t 9p -o trans=virtio test /mnt
+>     root@d8c28a676d72:/# ./fanotify-basic-open /mnt/readme & # on 9pfs
+>     [2] 176
+>     root@d8c28a676d72:/# cat /mnt/readme
+>     aa
+>     root@d8c28a676d72:/#
+> 
+> Same can be demonstrated with inotifywait.  The source code for
+> fanotify-basic-open, adopted from the fanotify man page, is available at
+> the end of this email.
+> 
+> Note that this is not a security bug for Landlock since it can only cause
+> legitimate access to be denied, but might be a problem for fanotify perm
+> (although I do recognize that using perm on individual inodes is already
+> perhaps a bit unreliable?)
+> 
+> It seems that there was an attempt at making 9pfs reuse inodes, based on
+> qid.path, however it was reverted [2] due to issues with servers that
+> present duplicate qids, for example on a QEMU host that has multiple
+> filesystems mounted under a single 9pfs export without multidevs=remap, or
+> in the case of other servers that doesn't necessarily support remapping
+> qids ([3] and more).  I've done some testing on v6.12-rc4 which has the
+> simplified 9pfs inode code before it was reverted, and found that Landlock
+> works (however, we of course then have the issue demonstrated in [2]).
+> 
+> Unrelated to the above problem, it also seems like even with the revert in
+> [2], because in cached mode inode are still reused based on qid (and type,
+> version (aka mtime), etc), the setup mentioned in [2] still causes
+> problems in th latest kernel with cache=loose:
+> 
+>     host # cd /tmp/linux-test
+>     host # mkdir m1 m2
+>     host # mount -t tmpfs tmpfs m1
+>     host # mount -t tmpfs tmpfs m2
+>     host # mkdir m1/dir m2/dir  # needs to be done together so that they have the same mtime
+>     host # echo foo > m1/dir/foo
+>     host # echo bar > m2/dir/bar
+> 
+>     guest # mount -t 9p -o trans=virtio,cache=loose test /mnt
+>     guest # cd /mnt/m1/dir
+>     qemu-system-x86_64: warning: 9p: Multiple devices detected in same VirtFS export, which might lead to file ID collisions and severe misbehaviours on guest! You should either use a separate export for each device shared from host or use virtfs option 'multidevs=remap'!
+>     guest # ls
+>     foo
+>     guest # ls /mnt/m2/dir
+>     foo # <- should be bar
+>     guest # uname -a
+>     Linux d8c28a676d72 6.14.0-dev #92 SMP PREEMPT_DYNAMIC Sun Apr  6 18:47:54 BST 2025 x86_64 GNU/Linux
+> 
+> With the above in mind, I have a proposal for 9pfs to:
+> 1. Reuse inodes even in uncached mode
+> 2. However, reuse them based on qid.path AND the actual pathname, by doing
+>    the appropriate testing in v9fs_test(_new)?_inode(_dotl)?
+> 
+> The main problem here is how to store the pathname in a sensible way and
+> tie it to the inode.  For now I opted with an array of names acquired with
+> take_dentry_name_snapshot, which reuses the same memory as the dcache to
+> store the actual strings, but doesn't tie the lifetime of the dentry with
+> the inode (I thought about holding a reference to the dentry in the
+> v9fs_inode, but it seemed like a wrong approach and would cause dentries
+> to not be evicted/released).
+> 
+> Maybe ideally there could be a general way for filesystems to tell
+> VFS/dcache to "pin" a dentry as long as the inode is alive, but still
+> allows the dentry and inode to be evicted based on memory pressure?  In
+> fact, if the dentry is alive, we might not even need to do this in 9pfs,
+> as we will automatically get the same inode pointed to by the dentry.
 
-static int __prepend_path(const struct dentry *dentry, const struct mount *mnt,
-                           const struct path *root, struct prepend_buffer *p)
-{
-         while (dentry != root->dentry || &mnt->mnt != root->mnt) {
-                 const struct dentry *parent = READ_ONCE(dentry->d_parent);
+Christian, any though?
 
-                 if (dentry == mnt->mnt.mnt_root) {
-                         struct mount *m = READ_ONCE(mnt->mnt_parent);
-                         struct mnt_namespace *mnt_ns;
-
-                         if (likely(mnt != m)) {
-                                 dentry = READ_ONCE(mnt->mnt_mountpoint);
-                                 mnt = m;
-                                 continue;
-                         }
-                         /* Global root */
-                         mnt_ns = READ_ONCE(mnt->mnt_ns);
-                         /* open-coded is_mounted() to use local mnt_ns */
-                         if (!IS_ERR_OR_NULL(mnt_ns) && !is_anon_ns(mnt_ns))
-                                 return 1;       // absolute root
-                         else
-                                 return 2;       // detached or not attached yet
-                 }
-
-                 if (unlikely(dentry == parent))
-                         /* Escaped? */
-                         return 3;
-
-                 prefetch(parent);
-                 if (!prepend_name(p, &dentry->d_name))
-                         break;
-                 dentry = parent;
-         }
-         return 0;
-}
-
-At the mount boundary and not at root mount, the code has
-	dentry = READ_ONCE(mnt->mnt_mountpoint);
-	mnt = m; /* 'mnt' will be parent mount */
-	continue;
-
-After that, we have
-	const struct dentry *parent = READ_ONCE(dentry->d_parent);
-	if (dentry == mnt->mnt.mnt_root) {
-		/* assume this is false */
-	}
-	...
-	prefetch(parent);
-         if (!prepend_name(p, &dentry->d_name))
-                 break;
-         dentry = parent;
-
-So the prepend_name(p, &dentry->d_name) is actually from mnt->mnt_mountpoint.
-
-In your above code, maybe we should return path->dentry in the below if statement?
-
-         if (unlikely(path->dentry == path->mnt->mnt_root)) {
-                 struct path new_path;
-
-                 if (!choose_mountpoint(real_mount(path->mnt),
-                                        root, &new_path))
-                         goto in_root;
-                 path_put(path);
-                 *path = new_path;
-                 if (unlikely(flags & LOOKUP_NO_XDEV))
-                         return ERR_PTR(-EXDEV);
-+		return path->dentry;
-         }
-         /* rare case of legitimate dget_parent()... */
-         return dget_parent(path->dentry);
-
-Also, could you add some selftests cross mount points? This will
-have more coverages with __path_walk_parent().
-
-> +
-> +in_root:
-> +	if (unlikely(flags & LOOKUP_BENEATH))
-> +		return ERR_PTR(-EXDEV);
-> +	return dget(path->dentry);
-> +}
-> +
-> +/**
-> + * path_walk_parent - Walk to the parent of path
-> + * @path: input and output path.
-> + * @root: root of the path walk, do not go beyond this root. If @root is
-> + *        zero'ed, walk all the way to real root.
-> + *
-> + * Given a path, find the parent path. Replace @path with the parent path.
-> + * If we were already at the real root or a disconnected root, @path is
-> + * not changed.
-> + *
-> + * Returns:
-> + *  0  - if @path is updated to its parent.
-> + *  <0 - if @path is already the root (real root or @root).
-> + */
-> +int path_walk_parent(struct path *path, const struct path *root)
-> +{
-> +	struct dentry *parent;
-> +
-> +	parent = __path_walk_parent(path, root, LOOKUP_BENEATH);
-> +
-> +	if (IS_ERR(parent))
-> +		return PTR_ERR(parent);
-> +
-> +	if (parent == path->dentry) {
-> +		dput(parent);
-> +		return -ENOENT;
-> +	}
-> +	dput(path->dentry);
-> +	path->dentry = parent;
-> +	return 0;
-> +}
-> +
-
-[...]
-
+> 
+> Currently this pathname is immutable once attached to an inode, and
+> therefore it is not protected by locks or RCU, but this might have to
+> change for us to support renames that preserve the inode on next access.
+> This is not in this patchset yet.  Also let me know if I've missed any
+> locks etc (I'm new to VFS, or for that matter, the kernel).
+> 
+> Storing one pathname per inode also means we don't reuse the same inode
+> for hardlinks -- maybe this can be fixed as well in a future version, if
+> this approach sounds good?
+> 
+> From some QEMU documentation I read [4] it seems like there is a plan to
+> resolve these kind of problems in a new version of the protocol, by
+> expanding the qid to include the filesystem identifier of a file on the
+> host, so maybe this can be disabled after a successful protocol version
+> check with the host?  For now this is implemented as a default option,
+> inodeident=path, which can be set to 'none' to instead get the previous
+> behaviour.
+> 
+> This patchset is still a bit of a work in progress, and I've not tested
+> the performance impact.  It currently uses strncmp to compare paths but
+> this might be able to be optimized into a hash comparison first.  It
+> should also normally only need to do it for one pair of filenames, as the
+> test is only done if qid.path matches in the first place.
+> 
+> Also, currently the inode is not reused in cached mode if mtime changed
+> AND the dentry was evicted -- I considered removing the qid.version test
+> in v9fs_test_inode_dotl but I think perhaps care needs to be taken to
+> ensure we can refresh an inode that potentially has data cached?  This is
+> a TODO for this patchset.
+> 
+> Another TODO is to maybe add support for case-insensitive matching?
+> 
+> For this patch series I've tested modifying files on both host and guest,
+> changing a file from regular file to dir then back while preserving ino,
+> keeping a file open in the guest with a fd, and using Landlock (which
+> results in an ihold but does not keep the dentry) then trying to access
+> the file from both inside and outside the Landlocked shell.
+> 
+> Let me know what's your thought on this -- if this is a viable approach
+> I'm happy to work on it more and do more testing.  The main motivation
+> behind this is getting Landlock to work "out of the box" on 9pfs.
+> 
+> This patch series was based on, and tested on v6.14 + [5]
+> 
+> Kind regards,
+> Tingmao
+> 
+> [1]: https://github.com/landlock-lsm/linux/issues/45
+> [2]: https://lore.kernel.org/all/20241024-revert_iget-v1-4-4cac63d25f72@codewreck.org/
+> [3]: https://lore.kernel.org/all/20240923100508.GA32066@willie-the-truck/
+> [4]: https://wiki.qemu.org/Documentation/9p#Protocol_Plans
+> [5]: https://lore.kernel.org/all/cover.1743956147.git.m@maowtm.org/
+> 
+> fanotify-basic-open.c:
+> 
+>     #define _GNU_SOURCE /* Needed to get O_LARGEFILE definition */
+>     #include <errno.h>
+>     #include <fcntl.h>
+>     #include <limits.h>
+>     #include <poll.h>
+>     #include <stdio.h>
+>     #include <stdlib.h>
+>     #include <sys/fanotify.h>
+>     #include <unistd.h>
+> 
+>     /* Read all available fanotify events from the file descriptor 'fd'. */
+> 
+>     static void handle_events(int fd)
+>     {
+>         const struct fanotify_event_metadata *metadata;
+>         struct fanotify_event_metadata buf[200];
+>         ssize_t size;
+>         char path[PATH_MAX];
+>         ssize_t path_len;
+>         char procfd_path[PATH_MAX];
+>         struct fanotify_response response;
+> 
+>         for (;;) {
+>             size = read(fd, buf, sizeof(buf));
+>             if (size == -1 && errno != EAGAIN) {
+>                 perror("read");
+>                 exit(EXIT_FAILURE);
+>             }
+> 
+>             /* Check if end of available data reached. */
+> 
+>             if (size <= 0)
+>                 break;
+> 
+>             /* Point to the first event in the buffer. */
+> 
+>             metadata = buf;
+> 
+>             /* Loop over all events in the buffer. */
+> 
+>             while (FAN_EVENT_OK(metadata, size)) {
+>                 if (metadata->fd >= 0) {
+>                     if (metadata->mask & FAN_OPEN) {
+>                         printf("FAN_OPEN: ");
+>                     }
+> 
+>                     /* Retrieve and print pathname of the accessed file. */
+> 
+>                     snprintf(procfd_path, sizeof(procfd_path),
+>                         "/proc/self/fd/%d", metadata->fd);
+>                     path_len = readlink(procfd_path, path,
+>                                 sizeof(path) - 1);
+>                     if (path_len == -1) {
+>                         perror("readlink");
+>                         exit(EXIT_FAILURE);
+>                     }
+> 
+>                     path[path_len] = '\0';
+>                     printf("File %s\n", path);
+> 
+>                     /* Close the file descriptor of the event. */
+> 
+>                     close(metadata->fd);
+>                 }
+> 
+>                 /* Advance to next event. */
+> 
+>                 metadata = FAN_EVENT_NEXT(metadata, size);
+>             }
+>         }
+>     }
+> 
+>     int main(int argc, char *argv[])
+>     {
+>         char buf;
+>         int fd, poll_num;
+>         nfds_t nfds;
+>         struct pollfd fds[2];
+> 
+>         /* Check mount point is supplied. */
+> 
+>         if (argc != 2) {
+>             fprintf(stderr, "Usage: %s FILE\n", argv[0]);
+>             exit(EXIT_FAILURE);
+>         }
+> 
+>         fd = fanotify_init(0, O_RDONLY | O_LARGEFILE);
+>         if (fd == -1) {
+>             perror("fanotify_init");
+>             exit(EXIT_FAILURE);
+>         }
+> 
+>         if (fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_INODE, FAN_OPEN, AT_FDCWD,
+>                 argv[1]) == -1) {
+>             perror("fanotify_mark");
+>             exit(EXIT_FAILURE);
+>         }
+> 
+>         while (1) {
+>             handle_events(fd);
+>         }
+>     }
+> 
+> Tingmao Wang (6):
+>   fs/9p: Add ability to identify inode by path for .L
+>   fs/9p: add default option for path-based inodes
+>   fs/9p: Hide inodeident=path from show_options as it is the default
+>   fs/9p: Add ability to identify inode by path for non-.L
+>   fs/9p: .L: Refresh stale inodes on reuse
+>   fs/9p: non-.L: Refresh stale inodes on reuse
+> 
+>  fs/9p/Makefile         |   3 +-
+>  fs/9p/ino_path.c       | 114 ++++++++++++++++++++++++++++++++++++++
+>  fs/9p/v9fs.c           |  33 ++++++++++-
+>  fs/9p/v9fs.h           |  63 +++++++++++++++------
+>  fs/9p/vfs_inode.c      | 122 +++++++++++++++++++++++++++++++++++------
+>  fs/9p/vfs_inode_dotl.c | 108 +++++++++++++++++++++++++++++++++---
+>  fs/9p/vfs_super.c      |  10 +++-
+>  7 files changed, 406 insertions(+), 47 deletions(-)
+>  create mode 100644 fs/9p/ino_path.c
+> 
+> 
+> base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
+> prerequisite-patch-id: 12dc6676db52ff32eed082b1e5d273f297737f61
+> prerequisite-patch-id: 93ab54c52a41fa44b8d0baf55df949d0ad27e99a
+> prerequisite-patch-id: 5f558bf969e6eaa3d011c98de0806ca8ad369efe
+> --
+> 2.39.5
+> 
