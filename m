@@ -1,239 +1,88 @@
-Received: from sonic301-38.consmr.mail.ne1.yahoo.com (sonic301-38.consmr.mail.ne1.yahoo.com [66.163.184.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39C62E36E7
-	for <linux-security-module@vger.kernel.org>; Fri,  4 Jul 2025 20:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB0E79F2;
+	Sat,  5 Jul 2025 00:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751661545; cv=none; b=VdppC5R6SeZRrRzbdzI/QdPk1Y380+Y5/0Sqho6Z4ARK0BQdsG+6oSPkqZGqX7x5PSpyqJXSiS2kSP5Xn+dpcCkPI+r5GE6hfIgmpzwjE2biFc1DshGjfg8GJ70EdaZMVVv+ZJrErhcMNDiB9BbeVgE1DYQiJ7za0SaGHZdS0pg=
+	t=1751674761; cv=none; b=r45PXg28qxZK8Nj87ZeD8cwQNfWqOiEq5Yg76p07eNjtrcKYxu0G0DHLyumnjXklVQ6EZYWB25hrQLTE6t0JCqWFXaHA+1fTfRRMAV1tRl16/+ORjC3ZWZLfu2feU5wMaeF/EBKexwlrcwVeEXOWbpSDRltJgKV8ZMQb+w8Wbn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751661545; c=relaxed/simple;
-	bh=wmTwb/ESj8mt3RdCb/bQcf81LWxmx7wO751Td3wNT7c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MEFDrEaJEqSsQbKHTouuDA1KxFOU3xrNMYaqePV9IzixCxRg+QngjrE/UwJvX01lc9dgUwh0ZNujZs3v5GAjmJMWsgNdtelACbBlf1sD38x3Or/f0NE/h0UZ3WyMRhKmsUuYKZtpb/ZWgUT68W+8VER9Z70lIAKaTDft24JpI54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=eSLZfeLP; arc=none smtp.client-ip=66.163.184.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1751674761; c=relaxed/simple;
+	bh=7KSEMpdQv5K6O+lHIpQ7p5r1UkCpC6IhDPJCq11BzAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lz3/wW6pBacXOkg10cfpBGoKs4dEt015bTgEZYH9XCIpQKn9sYfx6cAAj7sd80/az+cVQf4WsR7xxXcdTHGdeVSYfk1UbwMeot5Kp4ouMe1/OOAVGKOieoqxqdxE/WvZ1FreuYawJCr3/ur70qCMHkguRtJZvkEsr+J7eMhpMFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NnoVZDgn; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="eSLZfeLP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1751661541; bh=BFdTymDCauQuYahgXXk7TeWFJYMaJlv8kgHtcNY0uuk=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=eSLZfeLPbiZ2ACrzS/eqWGiedrd+KzXqghLhAArT3AvcwXvNp6v96niMZRU+GAQvGeo/e0pjh3hadYunSYDRmC8ek+4rZeJg/cIEMwWiNyCAYTGiYQSwBlFWE1VCnUgf6shV8cxUJL7xNNjtqeTB6GEe0dS9XRkevUeDcvjNkWrEMuCunzMVtfzz4hEsLps/kbHpOVsZFDm8C6oGhINziGWgb4mmyFGmCIgzagWg4FmKGabGjJdqy1DErEnmRd2inhYM6YwkHx2VY0B9h6It+qYpPL4Bt9nYjyUmkhTLfll9TyjrO8hYZs5fV5b6j3UlaXMnXZyTRzKLlQDONyKLyA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1751661541; bh=8TcmyW/BOYO41b1kbXTRkGeD9WpDU1pTr2ezD84CPgm=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=aWIGsn/BKahEFGWg+NZ2I2IdXC8+hwT1WrtqBGjfmIGJaFcGIe/C+VGWLhNWF3RQqJ6lPWvIwTguc8qNNT3wa6O6nosj2G7yCJL4d8sZcaJvDVzXWo5emwKT4gGb4nf759HVN5hWUz9Xt611+ARat4280zBAnI1Lj1ci+pa8n+Pzhpd5npyam0lipxJSJ84U1FuaXr0iXIi7pSi9gExzQOmJxhocJDmmPrittZjWr4Yu9aCgyT3ln9jiO0fdw6qVtAJjj3xt3bHdPW47+JznRhuVUe7DWc3jGLews/rPvUwQX9GelDN4JWibCT/BDSv7mVJ7z7Jo0H9+kpi3fKD3FQ==
-X-YMail-OSG: GtR.pvgVM1mKXLbwN5Q1McAYDhm8smCGUCBDyHlvhvh2O9RjttbXRQE2cKMlqwq
- ngrp_Qptm1jBZq3xe7vStpWTEYXFVQWihSoKnm_WUyD3SYs3i3OXgkolmN1Tu2.h4HkUm.YLk4Ty
- 5bV.Axjkmy1w8qY04zno37J8xEdU6SXCotC8eBQv5RLdkdCptGpl7pQ6IJv4F9KDP4vXAlVLCtID
- 9UV_A_GjH_JgB.aRuVdJwZzHVr3KhE6Hs7IQqD.cFlROzdRTOAMoI1XSdAqWfY8K2xFUUfdKqn9C
- afGLyl8Og_TdCFj95QfVeiws0FADcaMIEAGmEeMEy2gqCY1wJWcgtCtOYMEyzroERlGY9aJmh30T
- 253RdUcBR5YkiJ_9ALO9dbL9prHEoXUuYpBoLF8xsRsKeH_KBe1VmOr.2cJy5CFr2uqQqaByTgFW
- 54xucmdy_iJ6seNUvehFP89zcAe64Wpigoi_xrey9BM_NtoDNYWuZu1manpbcjUkbErBJwiZ5BwG
- H708YgWZwOFUHWgtS2c8h_imsXOq.2fjYj.e12wEss2nzEHwLCFlLVuudGekXTWDIp1hNdwQ6FXM
- VSJNc9N93nbfdoWzn1RN_JmwZs2ph2RD7YnwtwRp8nKcJApXihFZrrni7iqdUec7Cveh2SlMPH.k
- doCt75Ije3yU_KkZh88QYBxvAO7STtiYHx.l3yBW0ISDSCXAM8OCj0_nJhZzN8602Vklfp9GxfSE
- 9prfe8.pZw6.jXO70GajeinpUTwbPfxTi4Fh_3MnL02UV1cOtYDT7D8JaEy38gtIem9WX1WWob3J
- YJOWbc6LS2Fd5aic99RQ.z82joRK2d7W1mlgZGkbnv26EVRHRofuWWjxUPbq1f4.G8r6DVJmDVCZ
- ZfHYyVjWurOlWY46mSCBOeN6oU0pIfwhlC._pULYsu7XVSEz.aPDvgMt8n.2vZNClagSIpijtPqc
- m1ZA5eMvjJl6OmBB3nn7Lf1eF0IYOXtGWUBJIkGZXZmmMwxMIosOQa0V12ObjOeUmPuvpHWwaOG_
- luJLJNtDHmf2tETqdzsAuWQFya.XLMuKC5ySnJqTI7v.o9Ah0MhrojAt8J5Y6iXP9r2ks6XdWQns
- F90EZAtpvfA1mY65UND18YCp06.tXgRAeAZF_Y_PCBt2XHF5Y.hmyBfGlrPXls.VwKdtFBouXoLY
- vkzY.iyFq3uutsovzmt83iygQ.RIo5SGKpo7faoqvjN7wbiXvcTwV4Z_qHEKZ8FRwwr2MVQQ63zT
- 1OWupSSJaSR_nTqnK7cR4BxziRqUm_pH26dZt8IWIymi.prmtag4gXpA9oSh3HehIcQgDBi5tdGL
- lncjEyEii.N6sVIsIhP5ERt7iKT9_8lOKzdY0_e84O6dCVEUWwtHue2DONocXIqTcr6V51Dw8SAN
- eIu6NlAqzwBW9YE7yUUgxPHJYNpdWd_fg6V_kdjDlZApls9uNNCI6DALK3fqahi.A.RxRYA7uoLc
- KpprzdyqSj0wl7x2FqxGRf0q1tiGHhx67DP_duW87sZosyYLjhZlM2RV51lx.AK18Xk7UhzCWCOf
- .ERYNFeHXrjdAjUv.YcwP_iYkdHO7IwyzsWY3XhpPckoOhTtjfT5Ff3ziNIt9lWvrSMVpUzueqNB
- xerJHscMhrpMPHLCC5z4dVw930uRyACxSIrXXrky1JsfCUWShB6o6FSarNhqa1VEDPZtD3e2or1E
- Jlo6VdNxUO2.90hupj6SRHmNLW_IFRNHtdrQqwjkvOUvnU.qh0NMn19dlIRP0aFQUfQuCzywDzWC
- UEcoH5UfV7VOmIDsv_8EIFvG79D0T4lG9pcXGUw79.1ZBR3xAKBjbBYO3r0JE23MQPUwu_9XsCyQ
- 42V85hUmynSD8DGFK8hXmhwPcDxEJcUwg8yd7qYCLClHjY5w.OpTDn3JtZreHvBkFG5V2cxPJ8Cq
- TIsFlGBA7_gSgILmFlg31OKxej.bI3YV30hmLz4OLPnNDQUelE7VQCddKjSB_Q8xMjiwhds6dW_F
- 7gWdW2lSzljEe7Emqhxi5qQRptpCIgY_1gzLF2yDC84KA3pmJflVqqjBdLWIdatttxykN2gZKeKL
- UiwzLf8PfBxIYYqaDZN6eRvBc0tslFFiGmaIZ_ta3Bjh1iN0hxgBIXQIiEQhN5KO_OOKzgbbFDji
- HyjxHLK4g9Q2M0I5spmGRXQwqcjk85kNnmHMYUjpdvjPCLRQjDACM5HkMm5GIebB2eiVBwUG.TUS
- GUs6Gg9oS0xm33NyZPBUKB590BL76klMYkmfaDQSz6WSSVfZK50umHPy.ETVZLnFvue5.F11OISQ
- hyZo3yviXRfBn9e7wG1luC9fZGRDw
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: fa6aedc0-9693-446b-ab2c-8b3725ad2efb
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Fri, 4 Jul 2025 20:39:01 +0000
-Received: by hermes--production-gq1-74d64bb7d7-cmxx8 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ce5598f86d5bbd8e79ee8ba7cd309f9a;
-          Fri, 04 Jul 2025 20:18:42 +0000 (UTC)
-Message-ID: <9fcc7e8f-7d5c-4499-9693-787bd7ecc8ed@schaufler-ca.com>
-Date: Fri, 4 Jul 2025 13:18:41 -0700
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NnoVZDgn"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LuJgoONVd4nqFv/9TM+3f7c8gw4kfdDPriGqzKrxWKs=; b=NnoVZDgn75e9F98pgaHn47CXG0
+	EDY3IOk7ohVG9n+eTlQaXv4aSW87xBnyRegkrV3psIKd+tlomm3dg1xeytdHjWhcTiQiL8S1PkttZ
+	CahZ898r9gWBygzwcXw2T5kqfkw9q1BEzfUj/6vZH1o1Fin9jZJAYGnb3es2Zo+l2sUNPu4lL2Mw0
+	Jcgfb0D3em22Djgz8RAne4Td9hLwlf8WgxKx5SHG9wIDukuOJO0TtPw208dl2wdCFf0LBzZQ7uF4I
+	DGG/iaztfImBsC+joYFA2HbU7aTUd0sOks2iOPgjbRPNWHFNPUbXy8zfSv0vOS3KeMm2stWTnV6Li
+	WG3FoyOg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uXqcc-0000000G8ZK-07h3;
+	Sat, 05 Jul 2025 00:19:14 +0000
+Date: Sat, 5 Jul 2025 01:19:13 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Tingmao Wang <m@maowtm.org>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Matthew Bobrowski <repnop@google.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/6] fs/9p: Add ability to identify inode by path for
+ .L
+Message-ID: <20250705001913.GV1880847@ZenIV>
+References: <cover.1743971855.git.m@maowtm.org>
+ <e839a49e0673b12eb5a1ed2605a0a5267ff644db.1743971855.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] Audit: Add record for multiple object contexts
-To: Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
- linux-security-module@vger.kernel.org, audit@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
- stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20250607005134.10488-5-casey@schaufler-ca.com>
- <88f740c7efa914435e2223e90666c8b2@paul-moore.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <88f740c7efa914435e2223e90666c8b2@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.24099 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e839a49e0673b12eb5a1ed2605a0a5267ff644db.1743971855.git.m@maowtm.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 6/16/2025 1:54 PM, Paul Moore wrote:
-> On Jun  6, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
->> Create a new audit record AUDIT_MAC_OBJ_CONTEXTS.
->> An example of the MAC_OBJ_CONTEXTS record is:
->>
->>     type=MAC_OBJ_CONTEXTS
->>     msg=audit(1601152467.009:1050):
->>     obj_selinux=unconfined_u:object_r:user_home_t:s0
->>
->> When an audit event includes a AUDIT_MAC_OBJ_CONTEXTS record
->> the "obj=" field in other records in the event will be "obj=?".
->> An AUDIT_MAC_OBJ_CONTEXTS record is supplied when the system has
->> multiple security modules that may make access decisions based
->> on an object security context.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>  include/linux/audit.h      |  7 +++++
->>  include/uapi/linux/audit.h |  1 +
->>  kernel/audit.c             | 58 +++++++++++++++++++++++++++++++++++++-
->>  kernel/auditsc.c           | 45 ++++++++---------------------
->>  security/selinux/hooks.c   |  3 +-
->>  security/smack/smack_lsm.c |  3 +-
->>  6 files changed, 80 insertions(+), 37 deletions(-)
-> ..
->
->> diff --git a/kernel/audit.c b/kernel/audit.c
->> index 0987b2f391cc..451c36965889 100644
->> --- a/kernel/audit.c
->> +++ b/kernel/audit.c
->> @@ -2337,6 +2344,55 @@ int audit_log_task_context(struct audit_buffer *ab)
->>  }
->>  EXPORT_SYMBOL(audit_log_task_context);
->>  
->> +int audit_log_obj_ctx(struct audit_buffer *ab, struct lsm_prop *prop)
->> +{
->> +	int i;
->> +	int rc;
->> +	int error = 0;
->> +	char *space = "";
->> +	struct lsm_context ctx;
->> +
->> +	if (audit_obj_secctx_cnt < 2) {
->> +		error = security_lsmprop_to_secctx(prop, &ctx, LSM_ID_UNDEF);
->> +		if (error < 0) {
->> +			if (error != -EINVAL)
->> +				goto error_path;
->> +			return error;
->> +		}
->> +		audit_log_format(ab, " obj=%s", ctx.context);
->> +		security_release_secctx(&ctx);
->> +		return 0;
->> +	}
->> +	audit_log_format(ab, " obj=?");
->> +	error = audit_buffer_aux_new(ab, AUDIT_MAC_OBJ_CONTEXTS);
->> +	if (error)
->> +		goto error_path;
->> +
->> +	for (i = 0; i < audit_obj_secctx_cnt; i++) {
->> +		rc = security_lsmprop_to_secctx(prop, &ctx,
->> +						audit_obj_lsms[i]->id);
->> +		if (rc < 0) {
->> +			audit_log_format(ab, "%sobj_%s=?", space,
->> +					 audit_obj_lsms[i]->name);
->> +			if (rc != -EINVAL)
->> +				audit_panic("error in audit_log_obj_ctx");
->> +			error = rc;
-> Do we need the same logic as in audit_log_subj_ctx()?
+On Sun, Apr 06, 2025 at 09:43:02PM +0100, Tingmao Wang wrote:
 
-I seriously debated the issue. Subjects always have data to put in
-the aux record. Objects may or may not, in the AppArmor case. Not having
-a subject context is an error, not having an object context is interesting,
-but not necessarily an error. Hence the different treatment. You can tell
-me I'm wrong, and I'll make them consistent.
+> +struct v9fs_ino_path *make_ino_path(struct dentry *dentry)
+> +{
+> +	struct v9fs_ino_path *path;
+> +	size_t path_components = 0;
+> +	struct dentry *curr = dentry;
+> +	ssize_t i;
+> +
+> +	lockdep_assert_held_read(&v9fs_dentry2v9ses(dentry)->rename_sem);
+> +
+> +	rcu_read_lock();
+> +
+> +    /* Don't include the root dentry */
+> +	while (curr->d_parent != curr) {
+> +		path_components++;
+> +		curr = curr->d_parent;
+> +	}
+> +	if (WARN_ON(path_components > SSIZE_MAX)) {
+> +		rcu_read_unlock();
+> +		return NULL;
+> +	}
+> +
+> +	path = kmalloc(struct_size(path, names, path_components),
+> +		       GFP_KERNEL);
 
->
->> +		} else {
->> +			audit_log_format(ab, "%sobj_%s=%s", space,
->> +					 audit_obj_lsms[i]->name, ctx.context);
->> +			security_release_secctx(&ctx);
->> +		}
->> +		space = " ";
->> +	}
->> +
->> +	audit_buffer_aux_end(ab);
->> +	return error;
->> +
->> +error_path:
->> +	audit_panic("error in audit_log_obj_ctx");
->> +	return error;
->> +}
->> +
->>  void audit_log_d_path_exe(struct audit_buffer *ab,
->>  			  struct mm_struct *mm)
->>  {
->> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
->> index 322d4e27f28e..0c28fa33d099 100644
->> --- a/kernel/auditsc.c
->> +++ b/kernel/auditsc.c
->> @@ -1098,7 +1098,6 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
->>  				 char *comm)
->>  {
->>  	struct audit_buffer *ab;
->> -	struct lsm_context ctx;
->>  	int rc = 0;
->>  
->>  	ab = audit_log_start(context, GFP_KERNEL, AUDIT_OBJ_PID);
->> @@ -1108,15 +1107,9 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
->>  	audit_log_format(ab, "opid=%d oauid=%d ouid=%d oses=%d", pid,
->>  			 from_kuid(&init_user_ns, auid),
->>  			 from_kuid(&init_user_ns, uid), sessionid);
->> -	if (lsmprop_is_set(prop)) {
->> -		if (security_lsmprop_to_secctx(prop, &ctx, LSM_ID_UNDEF) < 0) {
->> -			audit_log_format(ab, " obj=(none)");
->> -			rc = 1;
->> -		} else {
->> -			audit_log_format(ab, " obj=%s", ctx.context);
->> -			security_release_secctx(&ctx);
->> -		}
->> -	}
->> +	if (lsmprop_is_set(prop) && audit_log_obj_ctx(ab, prop))
->> +		rc = 1;
-> We should probably use the return value from audit_log_obj_ctx().
-
-Sure.
-
->
->>  	audit_log_format(ab, " ocomm=");
->>  	audit_log_untrustedstring(ab, comm);
->>  	audit_log_end(ab);
-> ..
->
->> @@ -1780,15 +1756,16 @@ static void audit_log_exit(void)
->>  						  axs->target_sessionid[i],
->>  						  &axs->target_ref[i],
->>  						  axs->target_comm[i]))
->> -				call_panic = 1;
->> +			call_panic = 1;
->>  	}
->>  
->>  	if (context->target_pid &&
->>  	    audit_log_pid_context(context, context->target_pid,
->>  				  context->target_auid, context->target_uid,
->>  				  context->target_sessionid,
->> -				  &context->target_ref, context->target_comm))
->> -			call_panic = 1;
->> +				  &context->target_ref,
->> +				  context->target_comm))
->> +		call_panic = 1;
-> I appreciate the indent fixes, would you mind pulling this out and
-> submitting them separately?
-
-Sure.
-
->
-> --
-> paul-moore.com
+Blocking allocation under rcu_read_lock().
