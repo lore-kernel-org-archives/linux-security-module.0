@@ -1,43 +1,53 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D0235972
-	for <linux-security-module@vger.kernel.org>; Sat,  5 Jul 2025 00:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B34C79F2;
+	Sat,  5 Jul 2025 00:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751675105; cv=none; b=jjh+m6nboQDo9plOsriqAF4dt8smYEHaEX4MmR1DHfEXwlAwpiYfzgINedFN6yJKPav95MA4KMrzVvLe6hee3FWiXYM7hoVjmtPxnSWb84JZTBORUlBFzucHCTvUgXK4Bx/sRbzfImp8m0hfvhTdfyQBPSxOHgQhmxECVZzGSE8=
+	t=1751675142; cv=none; b=pf8OR0V1QnRe8oWQGLleTLCWqTj9mr3J5+T8jipzqYoGlAkUcYqQe0ILBJwndEQBlodIoD6CHieyXXr5Su5JttqVenbqEACK2FS41Oll/rRpEPCNIVQvHPDCqcXhdGtxE6uZe++3qw36QBRDK82SVWhRhTikBmVafPDVTnBhlVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751675105; c=relaxed/simple;
-	bh=JqkyfkKeSDyj510CqGvRxJHBsr4iRlmQFI5mtQuBP8w=;
+	s=arc-20240116; t=1751675142; c=relaxed/simple;
+	bh=BeQeTfmyYnm2mOzsi53634ox7T6k5A28RilZNxYG6lo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BLdsbsVFszUMddpeiLDCwCjkWUOs1GrKCwhbrkraufDSso2kzNLk16bq1Jh3P/kGagCtU2yDfa2BLD/5+AXqnC6Frk/iBiILCwS8DM3iO6o9Yo02WS9pUnhLp4uBqJsqbq6xSvDFYBJKREdTQcrfiY2DIa6kx0OWTVQMq2c19vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AOKRVo+B; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=MekupcZh5ZaPDodzkYg1GrekcOEv5ABMUb312EYc/zdOHN6yD0ydjeLzMDvjcRScTQCdiCuQ2z78J2oHFXXERHTnQ8kJro5WUQdzPPhGdz6k5+Ffu4b5JElE2CRdVxgefvFmQAAdm8E5nA52ilrykkurbWDtpaoC1rB09B9zhgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=rir315Ua; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AOKRVo+B"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B63EC4CEE3;
-	Sat,  5 Jul 2025 00:25:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751675104;
-	bh=JqkyfkKeSDyj510CqGvRxJHBsr4iRlmQFI5mtQuBP8w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AOKRVo+Bk420ozXAcqlzxllpy4F4ZcLv2Sc1eJ55w53xm2Ux6p3bui9ACNmtJpWlI
-	 R5f4Rdh0J4n0jg8dDVaQDrKC0x92JY2ttwj19tnAa/yu4IcuMgH9xMSCa2WwR5k4Ds
-	 8Z3N0E1HAnFhY2Y7jztryGdBm+ViE3Q72grTaFfXugj69Dkd+xoM/Nffp5/3Sfc5MS
-	 /loGKHGhrGMKttwDfzWRCpeFleqHLXdsthI7jvzCELpHK8MGDf2LQ5qsRpVE6+WKPA
-	 05l6Ahwxya48Q9IXKe1VDBR4rw5s6yFurEUs2Zec0v+5jEbyUS2S9I3FluJ28BmO6x
-	 8/FO7qZedvk2w==
-Date: Sat, 5 Jul 2025 00:25:00 +0000
-From: sergeh@kernel.org
-To: Ariel Otilibili-Anieli <Ariel.Otilibili-Anieli@eurecom.fr>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
-	linux-security-module@vger.kernel.org,
-	"Andrew G . Morgan" <morgan@kernel.org>
-Subject: Re: [PATCH 1/1] uapi: fix broken link in linux/capability.h
-Message-ID: <aGhw3P94nyNpuwCU@lei>
-References: <20250629120301.1702897-2-ariel.otilibili-anieli@eurecom.fr>
- <66376202561209641dad1c8894ec62cb@paul-moore.com>
- <aGSXgF797s+Oz4C5@mail.hallyn.com>
- <1ad13b-68650480-81f-51fddb80@179270172>
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="rir315Ua"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XwhfMgFq3ICeCByvEN6EISqFtxiGdSUTFXxixMwtQCs=; b=rir315UajBgbPeDrAOAOJfKkJ7
+	y+C4vyqiJWdGmy+lxxnZr90QpWrbrff7kRU0cJ/yKNiIJx7vfd5vF3OFzxQH45pq8XssJcldqQLbk
+	JSbxHR6YssgyCrtMgEDGAFugN5L82G9qfaR6A8haClZTE6DbbrusMd7ghNTnJLzI/SHrWXcLnbNL8
+	QBgZjET8shnJztCRFuPdroohVDTlbYNbMXlMG9z2Vct+wIqbOJDTQywQHE57+I0oZI+W/OLIDWSav
+	tmxpRm5AF+CLxLGgiRnFCAof5jpuABsz3w19dD6R1PVa18Pfw6ZMAPCsohY5xbllN8AnRy1gT5rLQ
+	ogw2rf5w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uXqim-0000000GAip-46EE;
+	Sat, 05 Jul 2025 00:25:37 +0000
+Date: Sat, 5 Jul 2025 01:25:36 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Tingmao Wang <m@maowtm.org>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Matthew Bobrowski <repnop@google.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/6] fs/9p: Add ability to identify inode by path for
+ .L
+Message-ID: <20250705002536.GW1880847@ZenIV>
+References: <cover.1743971855.git.m@maowtm.org>
+ <e839a49e0673b12eb5a1ed2605a0a5267ff644db.1743971855.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -46,36 +56,41 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1ad13b-68650480-81f-51fddb80@179270172>
+In-Reply-To: <e839a49e0673b12eb5a1ed2605a0a5267ff644db.1743971855.git.m@maowtm.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Jul 02, 2025 at 12:05:36PM +0200, Ariel Otilibili-Anieli wrote:
-> Hi Serge, hi Paul,
-> 
-> On Wednesday, July 02, 2025 04:20 CEST, "Serge E. Hallyn" <serge@hallyn.com> wrote:
-> 
-> > On Tue, Jul 01, 2025 at 10:05:45PM -0400, Paul Moore wrote:
-> > > On Jun 29, 2025 Ariel Otilibili <ariel.otilibili-anieli@eurecom.fr> wrote:
-> > > > Signed-off-by: Ariel Otilibili <ariel.otilibili-anieli@eurecom.fr>
-> > > > Acked-by: Andrew G. Morgan <morgan@kernel.org>
-> > > 
-> > > My personal preference would be for a commit description that doesn't
-> > > wrap when running 'git log' on a 80 char wide terminal, but ultimately
-> > 
-> > Agreed.  Would you mind updating that, and then I'll pull it in?
-> 
-> Sure, there you are: https://lore.kernel.org/all/20250702100021.1849243-2-ariel.otilibili-anieli@eurecom.fr/
-> > 
-> > thanks,
-> > -serge
-> > 
-> > > that is Serge's call to make.  Otherwise, the updated URL looks good to
-> > > me.
-> > > 
-> > > Reviewed-by: Paul Moore <paul@paul-moore.com>
-> 
-> Thanks for your feedback,
-> Ariel
+On Sun, Apr 06, 2025 at 09:43:02PM +0100, Tingmao Wang wrote:
+> +bool ino_path_compare(struct v9fs_ino_path *ino_path,
+> +			     struct dentry *dentry)
+> +{
+> +	struct dentry *curr = dentry;
+> +	struct qstr *curr_name;
+> +	struct name_snapshot *compare;
+> +	ssize_t i;
+> +
+> +	lockdep_assert_held_read(&v9fs_dentry2v9ses(dentry)->rename_sem);
+> +
+> +	rcu_read_lock();
+> +	for (i = ino_path->nr_components - 1; i >= 0; i--) {
+> +		if (curr->d_parent == curr) {
+> +			/* We're supposed to have more components to walk */
+> +			rcu_read_unlock();
+> +			return false;
+> +		}
+> +		curr_name = &curr->d_name;
+> +		compare = &ino_path->names[i];
+> +		/*
+> +		 * We can't use hash_len because it is salted with the parent
+> +		 * dentry pointer.  We could make this faster by pre-computing our
+> +		 * own hashlen for compare and ino_path outside, probably.
+> +		 */
+> +		if (curr_name->len != compare->name.len) {
+> +			rcu_read_unlock();
+> +			return false;
+> +		}
+> +		if (strncmp(curr_name->name, compare->name.name,
+> +			    curr_name->len) != 0) {
 
-Thanks - applied.
-
--serge
+... without any kind of protection for curr_name.  Incidentally,
+what about rename()?  Not a cross-directory one, just one that
+changes the name of a subdirectory within the same parent?
