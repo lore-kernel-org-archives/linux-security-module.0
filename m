@@ -1,77 +1,77 @@
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A2814A09C
-	for <linux-security-module@vger.kernel.org>; Sun,  6 Jul 2025 15:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200BC4A3E
+	for <linux-security-module@vger.kernel.org>; Sun,  6 Jul 2025 15:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751815107; cv=none; b=YiIQT+YjcR/QYeN1Yv2sPInztgyy+KIDBJ1Piq/GqABHihF95AK7oBkY0df1pBbFsykDuGXeVKr4ZkDGwi6pdnmxEAjqBGG2LU3pT9ajIqQcUDc0RgMIFVDFmadhreCicK0TDyrCaa1jjfLfiFNS0ZFag9ebFMTSzUZePEi805c=
+	t=1751815110; cv=none; b=VfCR9IF+aO+7uJ3JK4vI10s5wPHOXxqC4toQ6T+iCn3knqIuuYqpXSORYntKRE2hUt3rjqHAcTAOqDFZEdmTMwKfV5qTvNbq+G3YpDkyemyDQPLD3YyfPcJIxlebX+NsQ4tHA4YyS4XXmkoXbd1N2OjBtNpU/gPqS2EDKYFU3ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751815107; c=relaxed/simple;
-	bh=eFmRlGhJ7mbbpHb87gfmgkIRgCg/Tkvfks3L2vy3JGo=;
+	s=arc-20240116; t=1751815110; c=relaxed/simple;
+	bh=+SuKGUc+A39OLSp3t2PPVRWUKWvP2o3Rk/hmWYCSMDI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J+iQ/tZX3w8V1D768yqRN7+VMyxkSX+KSqiU9uX54qH2FAP/YiJCHe/E/zwuop2248ZA7on3aYuCW0Emr3vojJfMKRJzKjRRyY3l7LdthJsZLuo90QKT1rgZHaJreyGSaESKSZHv08rLC7oiqSuA7nKun0Z6mmiFPuDZ/+fuTE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=fJVZYai6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=d2gcasvu; arc=none smtp.client-ip=202.12.124.157
+	 MIME-Version:Content-Type; b=OKZzp9KeSXfAjqmwVs0LT/GrBsl6urOIipGFVu6yr/x1PranwkxZAcOnrY8r1waPUutMpgSbnWfWWGitZCzh0S8540VRuRYmstCbi43zPSlVZav79eWH9WSmuFSaYXvCCqUF1gkqj1d/tcNASHas9kfVNfr6R8zggAom8HZJEPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=e2YCdnEO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KYycgjRq; arc=none smtp.client-ip=202.12.124.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="fJVZYai6";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="d2gcasvu"
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="e2YCdnEO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KYycgjRq"
 Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id E5A9F7A0156;
-	Sun,  6 Jul 2025 11:18:24 -0400 (EDT)
+	by mailfout.stl.internal (Postfix) with ESMTP id 4CA191D000E7;
+	Sun,  6 Jul 2025 11:18:27 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Sun, 06 Jul 2025 11:18:25 -0400
+  by phl-compute-06.internal (MEProxy); Sun, 06 Jul 2025 11:18:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1751815104; x=
-	1751901504; bh=ns/awOqnsyViP4TgpwNjVld8cDoBYcDfiLPRIDXknXk=; b=f
-	JVZYai6bkYtL3/6KiZ8GXo7iW36pUziOsExaiVL15OFu7D6uIIJowGwZ5ErC/3sA
-	dwugiMQxzLaAb5sJucsI7mrlTPyzRmvTCc43FJQIkTbWxDp53Jav/h293o3lAdEQ
-	88OgXDv0ELwub7jDwBhGYaNGHcgSBVPpLwu3cXIi3e+qjNnixDR4c+HzkQG2+nIp
-	hw8zWqh7A5oWfpSKyL7NqXCw7aUuhpt+SsbXMPJF678gvqyCxOEbehUi6wBA4Vlz
-	Vs+rYCM2TsGEqJ0sGKpd7yOAKGnBxZiJkeyTckvBLG04f43+25Rpr46yFIiRNZr2
-	I6ZsD/KMfxQ6AGTyaqdNw==
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1751815107;
+	 x=1751901507; bh=yyR3cfGpnyxrijxSheYyR6Ft61RJWdKONZEUC5/wa6I=; b=
+	e2YCdnEOMNz4yyzN1TDFpv77m2dfpS4sZNXLDpEL8INhknySKK2H+F/VS+GqWKsh
+	c7d/hYmXhF7f+txDaccfvBfqeSyvepBhcLSKW7R/qgFQXtLuUNTwI8clrNz+5xy8
+	Qs/tzYLg0xRhmPRUtn9+yevKKasnWflvX+i0nViVva/X9vnH9rClE7sDT93Vp4ZV
+	LmmW8pjZoD/760cjxTYTqK7dcv+Rbyk4q0VXwhu/22OW2dOivkfr8eJ6NFAYShAp
+	QwBgWZj17X1tdlhmSgFVL3ZSi8b5B4RXKXtN0c1/zBVvbfSZ/O5+KO4sY5WeEIGE
+	4xV4TImYXQgMyCRnsRVG0w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm2; t=1751815104; x=1751901504; bh=n
-	s/awOqnsyViP4TgpwNjVld8cDoBYcDfiLPRIDXknXk=; b=d2gcasvuvRgEhbe55
-	rmfRHOWEJM0mAESa/xof3UGeSLXhdE0Bus+xu8lFwicnWNbWK0U3qpUobDx4ddgD
-	FlsZyoTSqVmPxdNGYf3VufZ4jtih+xG6IIi6ylwGPiZbB9T9kWhRxCd4+EBI++C3
-	JMZuiczwSm4deaBoY871xHTLfH+yNgQlShPlsbFqg+wM2a/XvhE4hVDYFshMtEn+
-	ls4PzaCSzpMK34VXPvWFdcvqzwVimb68PgOYHuwCLUQDAoPyFSmtNuWNWQ344xGM
-	ODv0huUzmPyDHK3rE/lVkVy3JZSJZ/8WQAsmF4iYOkn7xr5RsVuo7M55wdCLOeDo
-	6bEWg==
-X-ME-Sender: <xms:wJNqaDT1W8O9rzr8IQ-SCsiHy2WkuVp115JS5l8mTlJg8mbl7AcKuw>
-    <xme:wJNqaEw7Wji9JpQyieKQ6vK6oKOj9Pf1zu-MoG6wNCu_TD4b37J_HfAR6pcO-dejf
-    bsFYXSVhBnzmdF8a9k>
-X-ME-Received: <xmr:wJNqaI3fIZmJ_GLOWPqO4I2lkxasK2Ji2UjzOkqGeTkOuEix8ALoY2TjASLT5c9j0xjp6yUVOQdhDXhElyf0ZwLE9bOQ5ZkZi-imsa7NpuYwy0vhNktD>
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751815107; x=
+	1751901507; bh=yyR3cfGpnyxrijxSheYyR6Ft61RJWdKONZEUC5/wa6I=; b=K
+	YycgjRquF4D2gFIR+9hbZy5lRJlfFMiZQVzCzzp0wDOom3OmXql4jfVbU5j6xbIE
+	g+luvHHE/Xd9vjmly3VR72PLq3vhBvRMaRtopbZzsR0fQA+CPsOlH7HeqcHEbd69
+	3Vo0t8J2RjlecLgFk8fBBhvTM2ty79F7+pTdw6hzwl30/k6SSKqTjSq7UZcbjUUw
+	inio5JmP3r0CAps+B6kHeHWjPDfldOmZuKVTESQzCKmNHYZBnBrYLf0Jwn3MeQql
+	PkkUtJOY/nz65L1SSOh4I3eyYMpDvRkpHMkr3UKi3uRgNh4b2nTkzFBUi3iyRwMf
+	UAw5ONCaHjfvgFzd9MExg==
+X-ME-Sender: <xms:w5NqaIl6t_Wt_QYWNpYDTy9WckyrbfO72XTCpYhCFuH4E21skJAQNg>
+    <xme:w5NqaH1eeIOhlUN64bvJqzKbtl8cGJTcu4eEV2XA_g04iMILcekhLzvuJj8vStPa7
+    30jqz9U2pbI5rG_X2w>
+X-ME-Received: <xmr:w5NqaGrhwJf1py-04mNb7l5NUAgFtuZXlkJRz7e0KoykLBsEypxuhaui86IOAiyLLdemmY2wmW-4kbb-9mj_7sooutCIZ8l-Yr37HeKeLLlreFci3529>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvledviecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefvihhnghhmrgho
-    ucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepudeghe
-    elheegffffgeeivdefledtuddtjeegffefueeijeevtdefudeuteeugedtnecuffhomhgr
-    ihhnpeifihhkihhpvgguihgrrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthho
-    peeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihgtseguihhgihhkohgurd
-    hnvghtpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthho
-    pehmsehmrghofihtmhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthi
-    dqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhvrghn
-    ohhvrdhmihhkhhgrihhludeshhhurgifvghiqdhprghrthhnvghrshdrtghomhdprhgtph
-    htthhopehjrghnnhhhsehgohhoghhlvgdrtghomh
-X-ME-Proxy: <xmx:wJNqaDBJJEMPWDCda7AItRAqNNNNRTsIRbvNL_DE19RI2jbbCHpjjw>
-    <xmx:wJNqaMgNuIQ7N9D1TyOczgneiO3fM6RYn_qFK574PgABPYeHvk7ttg>
-    <xmx:wJNqaHoqBoT84bnEVRfDVSuZ5BoZmhSJKuwyCvLxUEsTchCFTlIiYQ>
-    <xmx:wJNqaHhD3yc9eO-uBNWpX5NQA8DpN7UuBqFD0EWRZw-bAhqis66z7w>
-    <xmx:wJNqaIpW3VD0pKr0FxRMEM4hxaANtxNGJDpCs6tXVzZxo90S0w0oyBUI>
+    hrpefhvfevufffkffojghfgggtgfesthekredtredtjeenucfhrhhomhepvfhinhhgmhgr
+    ohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpedvff
+    fhteelhffghefgieegkeejjeffteeuveehudefveegveeuffelheeuhfduueenucffohhm
+    rghinhepkhgvhidruggrthgrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeeipdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvghtpd
+    hrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthhopehmsehm
+    rghofihtmhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoug
+    hulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhvrghnohhvrdhm
+    ihhkhhgrihhludeshhhurgifvghiqdhprghrthhnvghrshdrtghomhdprhgtphhtthhope
+    hjrghnnhhhsehgohhoghhlvgdrtghomh
+X-ME-Proxy: <xmx:w5NqaEmiQOb2jBKhLp_Sp7owgcyFkCbzJ67RCD6Yrl-Ew5dCz00Jjw>
+    <xmx:w5NqaG1z4kD_77wn4TnpNc3BDkmiGP_m1aHfYePF1yK8_yZgCaVKjQ>
+    <xmx:w5NqaLuvgYN8Tdcht7q0o-nYoLi8Pshg8svQKr3k21f49LxcM53Dhw>
+    <xmx:w5NqaCVmGx-_p7NUmwEQyo6ouwhrVSyghtqIt8dlGntsH-O_1lbYbQ>
+    <xmx:w5NqaC4hi4R0_Sg4nM66KITyPZA6fk3o6BmSVRI_DvQBw4c5Kkch23DQ>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 6 Jul 2025 11:18:23 -0400 (EDT)
+ 6 Jul 2025 11:18:26 -0400 (EDT)
 From: Tingmao Wang <m@maowtm.org>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
@@ -79,9 +79,9 @@ Cc: Tingmao Wang <m@maowtm.org>,
 	linux-security-module@vger.kernel.org,
 	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
 	Jann Horn <jannh@google.com>
-Subject: [RFC PATCH v2 05/12] landlock/coalesced_hash: Implement insert
-Date: Sun,  6 Jul 2025 16:16:46 +0100
-Message-ID: <d761a029478bd322455a83f9c3cb15536cc50bb2.1751814658.git.m@maowtm.org>
+Subject: [RFC PATCH v2 06/12] landlock/domain: Implement merging of a parent domain and a ruleset
+Date: Sun,  6 Jul 2025 16:16:47 +0100
+Message-ID: <2d13e11a0a9ec20e424dbdafca9f288102877ce0.1751814658.git.m@maowtm.org>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <cover.1751814658.git.m@maowtm.org>
 References: <cover.1751814658.git.m@maowtm.org>
@@ -91,324 +91,331 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This algorithm is a slight alteration of the one on Wikipedia at the time
-of writing [1].  The difference is that when we are trying to insert into
-a slot that is already being used (whether by an element that doesn't
-actually belong there, and is just in a collision chain of a different
-hash, or whether it is the head of a chain and thus has the correct hash),
-we move the existing element away and insert the new element in its place.
-The result is that if there is some element in the hash table with a
-certain hash, the slot corresponding to that hash will always be the slot
-that starts the collision chain for that hash.  In order words, chains
-won't "mix" and if we detect that the hash of the element at the slot
-we're targeting is not correct, we know that the hash table does not
-contain the hash we want.
+This implements a 3-stage merge, generic over the type of rules (so that
+it can be repeated for fs and net).  It contains a small refactor to
+re-use the rbtree search code in ruleset.c.
 
-[1]: https://en.wikipedia.org/w/index.php?title=Coalesced_hashing&oldid=1214362866
-
-This patch seems to have hit a checkpatch false positive:
-
-	ERROR: need consistent spacing around '*' (ctx:WxV)
-	#281: FILE: security/landlock/coalesced_hash.h:349:
-	+               elem_type *table, h_index_t table_size)                       \
-	                          ^
-
-	ERROR: need consistent spacing around '*' (ctx:WxV)
-	#288: FILE: security/landlock/coalesced_hash.h:356:
-	+               struct h_insert_scratch *scratch, const elem_type *elem)      \
-	                                                                  ^
-
-Since this is kinda a niche use-case, I will make a report only after this
-series gets out of RFC (and if they still show up).
+3 passes are needed because, aside from calculating the size of the arrays
+to allocate, we also need to first populate the index table before we can
+write out the layers sequentially, as the index will not be written
+in-order.  Doing it this way means that one rule's layers ends where the
+next rule's layers start.
 
 Signed-off-by: Tingmao Wang <m@maowtm.org>
 ---
- security/landlock/coalesced_hash.h | 265 +++++++++++++++++++++++++++++
- 1 file changed, 265 insertions(+)
+ security/landlock/domain.c  | 218 +++++++++++++++++++++++++++++++++++-
+ security/landlock/ruleset.c |  16 +--
+ security/landlock/ruleset.h |  20 ++++
+ 3 files changed, 238 insertions(+), 16 deletions(-)
 
-diff --git a/security/landlock/coalesced_hash.h b/security/landlock/coalesced_hash.h
-index 14950915f0b5..56d32cf70d67 100644
---- a/security/landlock/coalesced_hash.h
-+++ b/security/landlock/coalesced_hash.h
-@@ -68,6 +68,256 @@ static inline void *h_find(const void *table, h_index_t table_size,
- 	return NULL;
+diff --git a/security/landlock/domain.c b/security/landlock/domain.c
+index 83233bf3be6a..89d36736a59c 100644
+--- a/security/landlock/domain.c
++++ b/security/landlock/domain.c
+@@ -5,6 +5,7 @@
+  * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
+  * Copyright © 2018-2020 ANSSI
+  * Copyright © 2024-2025 Microsoft Corporation
++ * Copyright © 2025      Tingmao Wang <m@maowtm.org>
+  */
+ 
+ #include <kunit/test.h>
+@@ -24,7 +25,7 @@
+ #include "domain.h"
+ #include "id.h"
+ 
+-static void __maybe_unused build_check_domain(void)
++static void build_check_domain(void)
+ {
+ 	BUILD_BUG_ON(LANDLOCK_MAX_NUM_RULES >= U32_MAX - 1);
+ 	/* Non-inclusive end indices are involved, so needs to be U32_MAX - 1. */
+@@ -32,6 +33,221 @@ static void __maybe_unused build_check_domain(void)
+ 		     U32_MAX - 1);
  }
  
-+static inline void h_initialize(void *table, h_index_t table_size,
-+				size_t elem_size,
-+				set_next_collision_t set_next_collision,
-+				element_is_empty_t element_is_empty)
++/**
++ * dom_calculate_merged_sizes - Calculate the eventual size of the part of
++ * a new domain for a given rule size (i.e. either fs or net).  Correct
++ * usage requires the caller to hold the ruleset lock throughout the
++ * merge.  Returns -E2BIG if limits would be exceeded.
++ *
++ * @dom_ind_array: The index table in the parent domain for the relevant
++ * rule type.  Can be NULL if there is no parent domain.
++ * @dom_num_indices: The length of @dom_ind_array, or 0 if no parent
++ * domain.
++ * @dom_num_layers: The total number of distinct layer objects in the
++ * parent domain for the relevant rule type.
++ * @child_rules: The root of the rules tree to be merged.
++ * @out_num_indices: Outputs the number of indices that would be needed in
++ * the new domain.
++ * @out_num_layers: Outputs the number of layer objects that would be
++ * needed in the new domain.
++ */
++static int __maybe_unused dom_calculate_merged_sizes(
++	const struct landlock_domain_index *const dom_ind_array,
++	const u32 dom_num_indices, const u32 dom_num_layers,
++	const struct rb_root *const child_rules, u32 *const out_num_indices,
++	u32 *const out_num_layers)
 +{
-+	h_index_t i;
-+	void *elem;
++	u32 num_indices = dom_num_indices;
++	u32 num_layers = dom_num_layers;
++	const struct landlock_rule *walker_rule, *next_rule;
++	struct landlock_domain_index find_key;
++	const struct landlock_domain_index *found;
 +
-+	WARN_ON_ONCE(array_size(table_size, elem_size) == SIZE_MAX);
++	build_check_domain();
 +
-+	for (i = 0; i < table_size; i++) {
-+		elem = table + i * elem_size;
-+		set_next_collision(elem, i);
-+	}
-+}
++	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule,
++					     child_rules, node) {
++		found = NULL;
++		if (dom_ind_array) {
++			find_key.key = walker_rule->key;
++			found = dom_hash_find(dom_ind_array, dom_num_indices,
++					      &find_key);
++		}
++		/* A new index is only needed if this is a non-overlapping new rule */
++		if (!found) {
++			if (num_indices >= LANDLOCK_MAX_NUM_RULES)
++				return -E2BIG;
++			num_indices++;
++		}
 +
-+struct h_insert_scratch {
-+	/**
-+	 * @prev_index: For each slot which belongs in a collision chain,
-+	 * stores the index of the previous element in the chain.  (The next
-+	 * index in the chain is stored in the element itself.)
-+	 */
-+	h_index_t *prev_index;
-+	/**
-+	 * @next_free_index: This index moves from end of the table towards
-+	 * the beginning.
-+	 */
-+	h_index_t next_free_index;
-+
-+	/*
-+	 * The following members just helps us avoid passing those arguments
-+	 * around all the time.
-+	 */
-+	h_index_t table_size;
-+	void *table;
-+	size_t elem_size;
-+};
-+
-+static inline int h_init_insert_scratch(struct h_insert_scratch *scratch,
-+					void *table, h_index_t table_size,
-+					size_t elem_size)
-+{
-+	h_index_t i;
-+
-+	if (table_size == 0) {
-+		memset(scratch, 0, sizeof(*scratch));
-+		scratch->table = table;
-+		scratch->elem_size = elem_size;
-+		return 0;
++		/* Regardless, we have a new layer. */
++		if (WARN_ON_ONCE(num_layers >= U32_MAX - 1))
++			/*
++			 * This situation should not be possible with the proper rule
++			 * number limit.
++			 */
++			return -E2BIG;
++		num_layers++;
 +	}
 +
-+	if (array_size(table_size, elem_size) == SIZE_MAX)
-+		return -ENOMEM;
-+
-+	scratch->prev_index =
-+		kcalloc(table_size, sizeof(h_index_t), GFP_KERNEL_ACCOUNT);
-+	if (!scratch->prev_index)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < table_size; i++)
-+		scratch->prev_index[i] = i;
-+
-+	scratch->table_size = table_size;
-+	scratch->next_free_index = table_size - 1;
-+	scratch->table = table;
-+	scratch->elem_size = elem_size;
++	*out_num_indices = num_indices;
++	*out_num_layers = num_layers;
 +	return 0;
 +}
 +
-+static inline void h_free_insert_scratch(struct h_insert_scratch *scratch)
++/**
++ * dom_populate_indices - Populate the index table of a new domain.
++ *
++ * @dom_ind_array: The index table in the parent domain for the relevant
++ * rule type.  Can be NULL if there is no parent domain.
++ * @dom_num_indices: The length of @dom_ind_array, or 0 if no parent
++ * domain.
++ * @child_rules: The root of the rules tree to be merged.
++ * @out_indices: The output indices array to be populated.
++ * @out_size: The size of @out_indices, in number of elements.
++ */
++static int __maybe_unused dom_populate_indices(
++	const struct landlock_domain_index *const dom_ind_array,
++	const u32 dom_num_indices, const struct rb_root *const child_rules,
++	struct landlock_domain_index *const out_indices, const u32 out_size)
 +{
-+	if (!scratch)
-+		return;
++	u32 indices_written = 0;
++	const struct landlock_domain_index *walker_index;
++	struct landlock_domain_index target = {};
++	const struct landlock_rule *walker_rule, *next_rule;
++	const struct landlock_domain_index *found;
++	struct h_insert_scratch scratch;
++	int ret;
++	size_t i;
 +
-+	kfree(scratch->prev_index);
-+	memset(scratch, 0, sizeof(*scratch));
-+}
-+
-+static inline h_index_t
-+__h_insert_get_next_free(struct h_insert_scratch *scratch,
-+			 element_is_empty_t element_is_empty)
-+{
-+	h_index_t index_to_ret = scratch->next_free_index;
-+	void *free_slot;
-+
-+	if (WARN_ON_ONCE(index_to_ret >= scratch->table_size)) {
-+		/*
-+		 * We used up all the available slots already.  This isn't
-+		 * supposed to happen with correct usage.
-+		 */
-+		return 0;
++	dom_hash_initialize(out_indices, out_size);
++	for (i = 0; i < out_size; i++) {
++		out_indices[i].key.data = 0;
++		out_indices[i].layer_index = U32_MAX;
 +	}
 +
-+	free_slot = scratch->table + index_to_ret * scratch->elem_size;
-+	while (!element_is_empty(free_slot)) {
-+		if (WARN_ON_ONCE(index_to_ret == 0)) {
-+			/* We unexpectedly used up all slots. */
-+			return 0;
++	ret = h_init_insert_scratch(&scratch, out_indices, out_size,
++				    sizeof(*out_indices));
++	if (ret)
++		return ret;
++
++	/* Copy over all parent indices directly */
++	for (size_t i = 0; i < dom_num_indices; i++) {
++		walker_index = &dom_ind_array[i];
++		if (WARN_ON_ONCE(indices_written >= out_size)) {
++			ret = -E2BIG;
++			goto out_free;
 +		}
-+		index_to_ret--;
-+		free_slot = scratch->table + index_to_ret * scratch->elem_size;
++		/* Don't copy over layer_index */
++		target.key = walker_index->key;
++		dom_hash_insert(&scratch, &target);
++		indices_written++;
 +	}
 +
-+	if (index_to_ret == 0)
-+		scratch->next_free_index = scratch->table_size;
-+	else
-+		scratch->next_free_index = index_to_ret - 1;
++	/* Copy over new child rules */
++	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule,
++					     child_rules, node) {
++		target.key = walker_rule->key;
++		found = NULL;
++		if (dom_ind_array)
++			found = dom_hash_find(dom_ind_array, dom_num_indices,
++					      &target);
++		if (!found) {
++			if (WARN_ON_ONCE(indices_written >= out_size)) {
++				ret = -E2BIG;
++				goto out_free;
++			}
++			dom_hash_insert(&scratch, &target);
++			indices_written++;
++		}
++	}
 +
-+	return index_to_ret;
++out_free:
++	h_free_insert_scratch(&scratch);
++
++	if (ret)
++		return ret;
++
++	for (i = 0; i < out_size; i++) {
++		walker_index = &out_indices[i];
++		/* We are not supposed to leave empty slots behind. */
++		WARN_ON_ONCE(dom_index_is_empty(walker_index));
++	}
++
++	return 0;
 +}
 +
 +/**
-+ * __h_relocate_collision_slot - Moves the element at idx_to_move to
-+ * another free slot, and make the original slot free.  We will update any
-+ * chain links (scratch->prev_index and target->next_collision).
++ * dom_populate_layers - Populate the layer array of a new domain.
 + *
-+ * Returns the new index of the moved element.
++ * @dom_ind_array: The index table in the parent domain for the relevant
++ * rule type.  Can be NULL if there is no parent domain.
++ * @dom_num_indices: The length of @dom_ind_array, or 0 if no parent
++ * domain.
++ * @dom_layer_array: The layer array in the parent domain for the relevant
++ * rule type.  Can be NULL if there is no parent domain.
++ * @dom_num_layers: The length of @dom_layer_array, or 0 if no parent
++ * domain.
++ * @child_rules: The root of the rules tree to be merged.
++ * @child_indices: The already populated index table in the child ruleset
++ * to be merged.  This function will set the layer_index field on each
++ * indices.
++ * @child_indices_size: The size of @child_indices, in number of elements.
++ * @new_level: The level number of any new layers that will be added to
++ * @out_layers.
++ * @out_layers: The output layers array to be populated.
++ * @out_size: The size of @out_layers, in number of elements.
 + */
-+static inline h_index_t
-+__h_relocate_collision_slot(struct h_insert_scratch *scratch,
-+			    h_index_t idx_to_move,
-+			    get_next_collision_t get_next_collision,
-+			    set_next_collision_t set_next_collision,
-+			    element_is_empty_t element_is_empty)
++static int
++dom_populate_layers(const struct landlock_domain_index *const dom_ind_array,
++		    const u32 dom_num_indices,
++		    const struct landlock_layer *const dom_layer_array,
++		    const u32 dom_num_layers,
++		    const struct rb_root *const child_rules,
++		    struct landlock_domain_index *const child_indices,
++		    const u32 child_indices_size, const u32 new_level,
++		    struct landlock_layer *const out_layers, const u32 out_size)
 +{
-+	h_index_t move_to = __h_insert_get_next_free(scratch, element_is_empty);
-+	void *move_to_elem = scratch->table + move_to * scratch->elem_size;
-+	void *move_target_elem =
-+		scratch->table + idx_to_move * scratch->elem_size;
-+	h_index_t old_next = get_next_collision(move_target_elem);
-+	h_index_t old_prev = scratch->prev_index[idx_to_move];
-+	void *old_prev_elem = scratch->table + old_prev * scratch->elem_size;
++	u32 layers_written = 0;
++	struct landlock_domain_index *merged_index;
++	struct landlock_found_rule found_in_parent;
++	const struct landlock_rule *found_in_child;
++	const struct landlock_layer *layer;
++	struct landlock_layer child_layer;
 +
-+	memcpy(move_to_elem, move_target_elem, scratch->elem_size);
++	for (size_t i = 0; i < child_indices_size; i++) {
++		merged_index = &child_indices[i];
++		merged_index->layer_index = layers_written;
 +
-+	/*
-+	 * The logic here is essentially hlist_replace_rcu, except in the
-+	 * hlist case the tail have next == NULL, whereas in our case the tail
-+	 * has next set to itself.
-+	 */
++		found_in_parent.layers_start = NULL;
++		found_in_parent.layers_end = NULL;
++		if (dom_ind_array)
++			found_in_parent = landlock_domain_find(
++				dom_ind_array, dom_num_indices, dom_layer_array,
++				dom_num_layers, merged_index->key);
++		dom_rule_for_each_layer(found_in_parent, layer)
++		{
++			if (WARN_ON_ONCE(layers_written >= out_size))
++				return -E2BIG;
++			out_layers[layers_written++] = *layer;
++		}
 +
-+	/*
-+	 * if move target already points to something else, it would have been
-+	 * memcpy'd across.
-+	 */
-+	if (old_next == idx_to_move)
-+		/*
-+		 * Need to fix the tail pointer - it points to itself.  It's own
-+		 * prev is correct already.
-+		 */
-+		set_next_collision(move_to_elem, move_to);
-+	else
-+		/*
-+		 * the next_collision would have been memcpy'd over, but we need to
-+		 * fix that next element's prev
-+		 */
-+		scratch->prev_index[old_next] = move_to;
-+
-+	if (old_prev == idx_to_move)
-+		/* The moved element is a head.  Fix its prev. */
-+		scratch->prev_index[move_to] = move_to;
-+	else {
-+		/*
-+		 * Need to make the moved element's prev point to it, and copy over
-+		 * the prev pointer.
-+		 */
-+		set_next_collision(old_prev_elem, move_to);
-+		scratch->prev_index[move_to] = old_prev;
-+	}
-+
-+	scratch->prev_index[idx_to_move] = idx_to_move;
-+	memset(move_target_elem, 0, scratch->elem_size);
-+	set_next_collision(move_target_elem, idx_to_move);
-+
-+	return move_to;
-+}
-+
-+static inline void h_insert(struct h_insert_scratch *scratch, const void *elem,
-+			    hash_element_t hash_elem,
-+			    get_next_collision_t get_next_collision,
-+			    set_next_collision_t set_next_collision,
-+			    element_is_empty_t element_is_empty)
-+{
-+	h_index_t target_idx, target_hash, moved_to;
-+	void *target_elem;
-+
-+	if (WARN_ON_ONCE(!scratch->table || !scratch->table_size))
-+		return;
-+	if (WARN_ON_ONCE(scratch->next_free_index >= scratch->table_size))
-+		/*
-+		 * We used up all the available slots already.  This isn't
-+		 * supposed to happen with correct usage.
-+		 */
-+		return;
-+	if (WARN_ON_ONCE(element_is_empty(elem)))
-+		return;
-+
-+	/*
-+	 * The general logic here is basically that we always insert the new
-+	 * element at its rightful place, but we move any existing element in
-+	 * that place around.  Consider these cases:
-+	 *
-+	 * 1. target slot is empty - we can just insert the new element.
-+	 *
-+	 * 2. target slot is occupied by an element that is in a collision
-+	 *    chain (but not the head).
-+	 *    In this case, we can just move that existing element to a free
-+	 *    slot, and insert the new element in its rightful place.  This
-+	 *    will start a new chain (the fact that the target slot is not a
-+	 *    head means) that there is no existing chain with this hash.
-+	 *
-+	 * 3. target slot is occupied by the head of a chain (i.e. that
-+	 *    existing element is already in its "rightful place").  In this
-+	 *    case, we can still move that existing element to a free slot,
-+	 *    and steals its current place to use for the new element.  The
-+	 *    new element will become the new head of the chain, and will
-+	 *    point to the existing element.
-+	 */
-+
-+	target_idx = hash_elem(elem, scratch->table_size);
-+	if (WARN_ON_ONCE(target_idx >= scratch->table_size))
-+		return;
-+	target_elem = scratch->table + target_idx * scratch->elem_size;
-+
-+	if (element_is_empty(target_elem)) {
-+		/*
-+		 * Simple case - just insert it.  scratch->prev_index is already
-+		 * correctly initialized.
-+		 */
-+		memcpy(target_elem, elem, scratch->elem_size);
-+		set_next_collision(target_elem, target_idx);
-+	} else {
-+		target_hash = hash_elem(target_elem, scratch->table_size);
-+		moved_to = __h_relocate_collision_slot(scratch, target_idx,
-+						       get_next_collision,
-+						       set_next_collision,
-+						       element_is_empty);
-+		memcpy(target_elem, elem, scratch->elem_size);
-+		if (target_hash == target_idx) {
-+			/* We should be in the collision chain of the original target */
-+			set_next_collision(target_elem, moved_to);
-+			WARN_ON_ONCE(scratch->prev_index[moved_to] != moved_to);
-+			scratch->prev_index[moved_to] = target_idx;
-+		} else {
-+			/* We are starting a new chain. */
-+			set_next_collision(target_elem, target_idx);
++		found_in_child =
++			landlock_find_in_tree(child_rules, merged_index->key);
++		if (found_in_child) {
++			if (WARN_ON_ONCE(layers_written >= out_size))
++				return -E2BIG;
++			if (WARN_ON_ONCE(found_in_child->num_layers != 1))
++				return -EINVAL;
++			child_layer.access = found_in_child->layers[0].access;
++			child_layer.level = new_level;
++			out_layers[layers_written++] = child_layer;
 +		}
 +	}
++
++	return 0;
 +}
 +
+ #ifdef CONFIG_AUDIT
+ 
  /**
-  * DEFINE_COALESCED_HASH_TABLE - Define a set of functions to mainpulate a
-  * coalesced hash table holding elements of type @elem_type.
-@@ -127,4 +377,19 @@ static inline void *h_find(const void *table, h_index_t table_size,
- 			      table_func_prefix##_get_next_collision,         \
- 			      table_func_prefix##_compare_elem,               \
- 			      table_func_prefix##_element_is_empty);          \
-+	}                                                                     \
-+	static inline void table_func_prefix##_initialize(                    \
-+		elem_type *table, h_index_t table_size)                       \
-+	{                                                                     \
-+		h_initialize(table, table_size, sizeof(elem_type),            \
-+			     table_func_prefix##_set_next_collision,          \
-+			     table_func_prefix##_element_is_empty);           \
-+	}                                                                     \
-+	static inline void table_func_prefix##_insert(                        \
-+		struct h_insert_scratch *scratch, const elem_type *elem)      \
-+	{                                                                     \
-+		h_insert(scratch, elem, table_func_prefix##_hash_elem,        \
-+			 table_func_prefix##_get_next_collision,              \
-+			 table_func_prefix##_set_next_collision,              \
-+			 table_func_prefix##_element_is_empty);               \
- 	}
+diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+index ce7940efea51..12fcea6a2a99 100644
+--- a/security/landlock/ruleset.c
++++ b/security/landlock/ruleset.c
+@@ -584,25 +584,11 @@ landlock_find_rule(const struct landlock_ruleset *const ruleset,
+ 		   const struct landlock_id id)
+ {
+ 	const struct rb_root *root;
+-	const struct rb_node *node;
+ 
+ 	root = get_root((struct landlock_ruleset *)ruleset, id.type);
+ 	if (IS_ERR(root))
+ 		return NULL;
+-	node = root->rb_node;
+-
+-	while (node) {
+-		struct landlock_rule *this =
+-			rb_entry(node, struct landlock_rule, node);
+-
+-		if (this->key.data == id.key.data)
+-			return this;
+-		if (this->key.data < id.key.data)
+-			node = node->rb_right;
+-		else
+-			node = node->rb_left;
+-	}
+-	return NULL;
++	return landlock_find_in_tree(root, id.key);
+ }
+ 
+ /*
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index 5da9a64f5af7..e45abff968c5 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -208,6 +208,26 @@ struct landlock_ruleset *
+ landlock_merge_ruleset(struct landlock_ruleset *const parent,
+ 		       struct landlock_ruleset *const ruleset);
+ 
++static inline struct landlock_rule *
++landlock_find_in_tree(const struct rb_root *const root,
++		      const union landlock_key key)
++{
++	struct rb_node *node = root->rb_node;
++
++	while (node) {
++		struct landlock_rule *this =
++			rb_entry(node, struct landlock_rule, node);
++
++		if (this->key.data == key.data)
++			return this;
++		if (this->key.data < key.data)
++			node = node->rb_right;
++		else
++			node = node->rb_left;
++	}
++	return NULL;
++}
++
+ const struct landlock_rule *
+ landlock_find_rule(const struct landlock_ruleset *const ruleset,
+ 		   const struct landlock_id id);
 -- 
 2.49.0
 
