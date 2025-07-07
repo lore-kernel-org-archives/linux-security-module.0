@@ -1,166 +1,212 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7488D286894;
-	Mon,  7 Jul 2025 11:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E63261586
+	for <linux-security-module@vger.kernel.org>; Mon,  7 Jul 2025 17:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751887036; cv=none; b=oBbiHpBwYFBcAVASdKGv6KYps13631x8SIhi9b3WmD88kOCttGFIhuKClqFalzm8z9DcyT81czgv7jyqoKKCxO0IwofF0k87rEcW+gvIq5iLRn/30YRE1zspagmeqvZ2ppk9ed5opCLYkp82yv+1d24z4MTZUTD1M5h/vd2jAj4=
+	t=1751910816; cv=none; b=RXXL3DfRV/4OOlBReHldRk/rDDRqhK3cEKKG5k7gxE9N/UYWbU1a2C65MVoFUSq+MJ0qH92gg42NJrWE0P2HMh1agrYLsKeIjBO4wRqkQqPVIr/NfuxJWxI763bktIJDd0JReeVAebsHKXW3cVbF/eqWw16P2u2pCQ9+pC/oNcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751887036; c=relaxed/simple;
-	bh=mZci8TeX7qUcPrKXdFIKPDSMO9TpTh92KYP/6ZMcG9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=btD53u+q0Y234pwS9F1Y3hjFgFnvJVvhiG/j+GWdOV19g/bZd1BAudN261qDiaRTyPGCWin2qh1lqAKXOlozY6sbsfBH3DTeY2YI0CXeqr0F9QCscZSXijCCJNnJ/cVxqhPcbSHLM2k3jM4kYNo2Lg/qs89fnq+GCmPg8DnLxkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VeaijYXK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751910816; c=relaxed/simple;
+	bh=PJCUxndDyy9aKoL7TqeI0FjfwhSH8f/NYHniHwJOEvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HnY5izk+srmoMEmU3LplSNwHL67K8QJKLGO/rYDZ+NxHofeqh4pHNJLTfBG8+v1jeLizRZk1EEJczv1FjQjsCWLMXNmq4LkRPhKXPVWWjQTyYjhkDqvfKB0o/fC+nEBHtM4T5SBbQTCVfffroi21GWO2K0x1HWheEbzoWKM5A0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sa/y7kEq; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VeaijYXK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B10EAC4CEE3;
-	Mon,  7 Jul 2025 11:17:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751887035;
-	bh=mZci8TeX7qUcPrKXdFIKPDSMO9TpTh92KYP/6ZMcG9o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VeaijYXKWeUXseYflfhabXjRCJZwlOXubNU6omLNg3MEQYZN6d9J7h9zjM7+p33pe
-	 K++TjgTLtkpWwdIQ8JJWWGwtd9Gd3rQPGtx3rezu0p3lyklk0tkTGsSmNGpOpthJ2u
-	 xBJPkTwko21LRQodClE9gzgVTYLpryhajvHYUGMLGaAmWd2HnswxFwXxUQDxWPliet
-	 8WMa1ppaAOFmr4NxtTZ8ZpbY/yMoyn0AdWUGqIHpQTtboViieVZ/aW9C3Gxkt7q3Cd
-	 2MfcQjJ4CzqcD/Pf7AYMVjDPChXmpB30JGJSJevD1Trzajd0SFmJi2D0aNMu5Gw49U
-	 wnVJTqRZctz1Q==
-Date: Mon, 7 Jul 2025 13:17:09 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Song Liu <songliubraving@meta.com>, Tingmao Wang <m@maowtm.org>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, Song Liu <song@kernel.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
-	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
-	"martin.lau@linux.dev" <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-	"jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
-	"mattbobrowski@google.com" <mattbobrowski@google.com>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
-Message-ID: <20250707-netto-campieren-501525a7d10a@brauner>
-References: <>
- <127D7BC6-1643-403B-B019-D442A89BADAB@meta.com>
- <175097828167.2280845.5635569182786599451@noble.neil.brown.name>
- <20250707-kneifen-zielvereinbarungen-62c1ccdbb9c6@brauner>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sa/y7kEq"
+Message-ID: <74ae6eb2-cea7-4e3e-82eb-72978dd0f101@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751910812;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AQHayfYIL+d6HS8rf76iOroTc9ml4KgNSGNH0xgeoG4=;
+	b=sa/y7kEq3NvAVMCZWcAKa8HALGKl+Ftu6Y9Le6CVHE2UAFzNqMkOaw3FJDpPYTfvRTZzV6
+	NQbTd7RS/k/2lIMK5rIeu8b8VQZjq87jud6HPv7Z6uL8hpftsT0Vuxj3lAG0ewOurVToDl
+	QINEbvKN4Tnwr0RgYmfV/P9vHIcP000=
+Date: Mon, 7 Jul 2025 10:53:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Subject: Re: [PATCH v5 bpf-next 1/5] namei: Introduce new helper function
+ path_walk_parent()
+Content-Language: en-GB
+To: Song Liu <songliubraving@meta.com>
+Cc: Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>,
+ "andrii@kernel.org" <andrii@kernel.org>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>,
+ "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "mattbobrowski@google.com" <mattbobrowski@google.com>,
+ "m@maowtm.org" <m@maowtm.org>, "neil@brown.name" <neil@brown.name>
+References: <20250617061116.3681325-1-song@kernel.org>
+ <20250617061116.3681325-2-song@kernel.org>
+ <2459c10e-d74c-4118-9b6d-c37d05ecec02@linux.dev>
+ <58FB95C4-1499-4865-8FA7-3E1F64EB5EDE@meta.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <58FB95C4-1499-4865-8FA7-3E1F64EB5EDE@meta.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250707-kneifen-zielvereinbarungen-62c1ccdbb9c6@brauner>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Jul 07, 2025 at 12:46:41PM +0200, Christian Brauner wrote:
-> On Fri, Jun 27, 2025 at 08:51:21AM +1000, NeilBrown wrote:
-> > On Fri, 27 Jun 2025, Song Liu wrote:
-> > > 
-> > > 
-> > > > On Jun 26, 2025, at 3:22 AM, NeilBrown <neil@brown.name> wrote:
-> > > 
-> > > [...]
-> > > 
-> > > >> I guess I misunderstood the proposal of vfs_walk_ancestors() 
-> > > >> initially, so some clarification:
-> > > >> 
-> > > >> I think vfs_walk_ancestors() is good for the rcu-walk, and some 
-> > > >> rcu-then-ref-walk. However, I don’t think it fits all use cases. 
-> > > >> A reliable step-by-step ref-walk, like this set, works well with 
-> > > >> BPF, and we want to keep it.
-> > > > 
-> > > > The distinction between rcu-walk and ref-walk is an internal
-> > > > implementation detail.  You as a caller shouldn't need to think about
-> > > > the difference.  You just want to walk.  Note that LOOKUP_RCU is
-> > > > documented in namei.h as "semi-internal".  The only uses outside of
-> > > > core-VFS code is in individual filesystem's d_revalidate handler - they
-> > > > are checking if they are allowed to sleep or not.  You should never
-> > > > expect to pass LOOKUP_RCU to an VFS API - no other code does.
-> > > > 
-> > > > It might be reasonable for you as a caller to have some control over
-> > > > whether the call can sleep or not.  LOOKUP_CACHED is a bit like that.
-> > > > But for dotdot lookup the code will never sleep - so that is not
-> > > > relevant.
-> > > 
-> > > Unfortunately, the BPF use case is more complicated. In some cases, 
-> > > the callback function cannot be call in rcu critical sections. For 
-> > > example, the callback may need to read xatter. For these cases, we
-> > > we cannot use RCU walk at all. 
-> > 
-> > I really think you should stop using the terms RCU walk and ref-walk.  I
-> > think they might be focusing your thinking in an unhelpful direction.
-> 
-> Thank you! I really appreciate you helping to shape this API and it
-> aligns a lot with my thinking.
-> 
-> > The key issue about reading xattrs is that it might need to sleep.
-> > Focusing on what might need to sleep and what will never need to sleep
-> > is a useful approach - the distinction is wide spread in the kernel and
-> > several function take a flag indicating if they are permitted to sleep,
-> > or if failure when sleeping would be required.
-> > 
-> > So your above observation is better described as 
-> > 
-> >    The vfs_walk_ancestors() API has an (implicit) requirement that the
-> >    callback mustn't sleep.  This is a problem for some use-cases
-> >    where the call back might need to sleep - e.g. for accessing xattrs.
-> > 
-> > That is a good and useful observation.  I can see three possibly
-> > responses:
-> > 
-> > 1/ Add a vfs_walk_ancestors_maysleep() API for which the callback is
-> >    always allowed to sleep.  I don't particularly like this approach.
-> 
-> Agreed.
-> 
-> > 
-> > 2/ Use repeated calls to vfs_walk_parent() when the handling of each
-> >    ancestor might need to sleep.  I see no problem with supporting both
-> >    vfs_walk_ancestors() and vfs_walk_parent().  There is plenty of
-> >    precedent for having different  interfaces for different use cases.
-> 
-> Meh.
-> 
-> > 
-> > 3/ Extend vfs_walk_ancestors() to pass a "may sleep" flag to the callback.
-> 
-> I think that's fine.
 
-Ok, sorry for the delay but there's a lot of different things going on
-right now and this one isn't exactly an easy thing to solve.
 
-I mentioned this before and so did Neil: the lookup implementation
-supports two modes sleeping and non-sleeping. That api is abstracted
-away as heavily as possible by the VFS so that non-core code will not be
-exposed to it other than in exceptional circumstances and doesn't have
-to care about it.
+On 7/6/25 4:54 PM, Song Liu wrote:
+>
+>> On Jul 4, 2025, at 10:40 AM, Yonghong Song <yonghong.song@linux.dev> wrote:
+> [...]
+>>> +static struct dentry *__path_walk_parent(struct path *path, const struct path *root, int flags)
+>>>   {
+>>> - struct dentry *parent;
+>>> -
+>>> - if (path_equal(&nd->path, &nd->root))
+>>> + if (path_equal(path, root))
+>>>    goto in_root;
+>>> - if (unlikely(nd->path.dentry == nd->path.mnt->mnt_root)) {
+>>> - struct path path;
+>>> + if (unlikely(path->dentry == path->mnt->mnt_root)) {
+>>> + struct path new_path;
+>>>   - if (!choose_mountpoint(real_mount(nd->path.mnt),
+>>> -       &nd->root, &path))
+>>> + if (!choose_mountpoint(real_mount(path->mnt),
+>>> +       root, &new_path))
+>>>    goto in_root;
+>>> - path_put(&nd->path);
+>>> - nd->path = path;
+>>> - nd->inode = path.dentry->d_inode;
+>>> - if (unlikely(nd->flags & LOOKUP_NO_XDEV))
+>>> + path_put(path);
+>>> + *path = new_path;
+>>> + if (unlikely(flags & LOOKUP_NO_XDEV))
+>>>    return ERR_PTR(-EXDEV);
+>>>    }
+>>>    /* rare case of legitimate dget_parent()... */
+>>> - parent = dget_parent(nd->path.dentry);
+>>> + return dget_parent(path->dentry);
+>> I have some confusion with this patch when crossing mount boundary.
+>>
+>> In d_path.c, we have
+>>
+>> static int __prepend_path(const struct dentry *dentry, const struct mount *mnt,
+>>                           const struct path *root, struct prepend_buffer *p)
+>> {
+>>         while (dentry != root->dentry || &mnt->mnt != root->mnt) {
+>>                 const struct dentry *parent = READ_ONCE(dentry->d_parent);
+>>
+>>                 if (dentry == mnt->mnt.mnt_root) {
+>>                         struct mount *m = READ_ONCE(mnt->mnt_parent);
+>>                         struct mnt_namespace *mnt_ns;
+>>
+>>                         if (likely(mnt != m)) {
+>>                                 dentry = READ_ONCE(mnt->mnt_mountpoint);
+>>                                 mnt = m;
+>>                                 continue;
+>>                         }
+>>                         /* Global root */
+>>                         mnt_ns = READ_ONCE(mnt->mnt_ns);
+>>                         /* open-coded is_mounted() to use local mnt_ns */
+>>                         if (!IS_ERR_OR_NULL(mnt_ns) && !is_anon_ns(mnt_ns))
+>>                                 return 1;       // absolute root
+>>                         else
+>>                                 return 2;       // detached or not attached yet
+>>                 }
+>>
+>>                 if (unlikely(dentry == parent))
+>>                         /* Escaped? */
+>>                         return 3;
+>>
+>>                 prefetch(parent);
+>>                 if (!prepend_name(p, &dentry->d_name))
+>>                         break;
+>>                 dentry = parent;
+>>         }
+>>         return 0;
+>> }
+>>
+>> At the mount boundary and not at root mount, the code has
+>> dentry = READ_ONCE(mnt->mnt_mountpoint);
+>> mnt = m; /* 'mnt' will be parent mount */
+>> continue;
+>>
+>> After that, we have
+>> const struct dentry *parent = READ_ONCE(dentry->d_parent);
+>> if (dentry == mnt->mnt.mnt_root) {
+>> /* assume this is false */
+>> }
+>> ...
+>> prefetch(parent);
+>>         if (!prepend_name(p, &dentry->d_name))
+>>                 break;
+>>         dentry = parent;
+>>
+>> So the prepend_name(p, &dentry->d_name) is actually from mnt->mnt_mountpoint.
+> I am not quite following the question. In the code below:
+>
+>                 if (dentry == mnt->mnt.mnt_root) {
+>                         struct mount *m = READ_ONCE(mnt->mnt_parent);
+>                         struct mnt_namespace *mnt_ns;
+>
+>                         if (likely(mnt != m)) {
+>                                 dentry = READ_ONCE(mnt->mnt_mountpoint);
+>                                 mnt = m;
+>                                 continue;
+> /* We either continue, here */
+>
+>                         }
+>                         /* Global root */
+>                         mnt_ns = READ_ONCE(mnt->mnt_ns);
+>                         /* open-coded is_mounted() to use local mnt_ns */
+>                         if (!IS_ERR_OR_NULL(mnt_ns) && !is_anon_ns(mnt_ns))
+>                                 return 1;       // absolute root
+>                         else
+>                                 return 2;       // detached or not attached yet
+> /* Or return here */
+>                 }
+>
+> So we will not hit prepend_name(). Does this answer the
+> question?
+>
+>> In your above code, maybe we should return path->dentry in the below if statement?
+>>
+>>         if (unlikely(path->dentry == path->mnt->mnt_root)) {
+>>                 struct path new_path;
+>>
+>>                 if (!choose_mountpoint(real_mount(path->mnt),
+>>                                        root, &new_path))
+>>                         goto in_root;
+>>                 path_put(path);
+>>                 *path = new_path;
+>>                 if (unlikely(flags & LOOKUP_NO_XDEV))
+>>                         return ERR_PTR(-EXDEV);
+>> + return path->dentry;
+>>         }
+>>         /* rare case of legitimate dget_parent()... */
+>>         return dget_parent(path->dentry);
+>>
+>> Also, could you add some selftests cross mount points? This will
+>> have more coverages with __path_walk_parent().
 
-It is a conceptual dead-end to expose these two modes via separate APIs
-and leak this implementation detail into non-core code. It will not
-happen as far as I'm concerned.
+Looks like __path_walk_parent() works for the root of mounted fs.
+If this is the case, the implementation is correct. It could be
+good to add some comments to clarify.
 
-I very much understand the urge to get the refcount step-by-step thing
-merged asap. Everyone wants their APIs merged fast. And if it's
-reasonable to move fast we will (see the kernfs xattr thing).
+> Yeah, I will try to add more tests in the next revision.
+>
+> Thanks,
+> Song
+>
 
-But here are two use-cases that ask for the same thing with different
-constraints that closely mirror our unified approach. Merging one
-quickly just to have something and then later bolting the other one on
-top, augmenting, or replacing, possible having to deprecate the old API
-is just objectively nuts. That's how we end up with a spaghetthi helper
-collection. We want as little helper fragmentation as possible.
-
-We need a unified API that serves both use-cases. I dislike
-callback-based APIs generally but we have precedent in the VFS for this
-for cases where the internal state handling is delicate enough that it
-should not be exposed (see __iterate_supers() which does exactly work
-like Neil suggested down to the flag argument itself I added).
-
-So I'm open to the callback solution.
-
-(Note for really absurd perf requirements you could even make it work
-with static calls I'm pretty sure.)
