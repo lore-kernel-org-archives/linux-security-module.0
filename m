@@ -1,286 +1,269 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31F21F1517;
-	Tue,  8 Jul 2025 21:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5F41DDA18
+	for <linux-security-module@vger.kernel.org>; Tue,  8 Jul 2025 22:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752009355; cv=none; b=P0w8z1uNu/D4ZfHlN8lhNV2bnxFVDvAu4uLE0IN3+3X0ZpCYELS+QDCLoLY3BVJBPDeqVQqTK7WoA8t/oRgZKlD3mVe7d7xe6tNS5mgZvPlPgtQD/t2XgrTAwZYYLAjqoc/oR8ENMsU+zFjFIL/dZV9o/BW433yHYe69g8MDYMg=
+	t=1752013651; cv=none; b=lGjqkrMVf21CFqKtci8p51KxmkB8HKwuSzYg/WCs+UF+yEksqNBAnISy9S7GhBzsYdKPKecFSMg46rctSiAKkZZYiFF1pFXuV/91GJR9PIyWi77jHWNMH7zr67/hDWWx/GOzr7KXnnjUou691rnIJK1mK8qgLKIRWnw+Q77B3ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752009355; c=relaxed/simple;
-	bh=LusyPBGgzacCDHgEcHbswfhqnjZtC0hI2hz8Ri3QjBs=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=rpsNFNzryHhQ5MSjDWsaupK6EqaxzXuSCvTIF6V0Ld6yOyqNxTMJB7enskq0IE4rJ0EyOdFpmAMLcacqA6PRxgKGQoEo3L2qX5kWyfz58WKyL2it0yqZ1WUtqGetWhRMkzWYQEIFeOOadkncExU4gFhflZzLKpsNASadlv/LMoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=no1hMP5/; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="no1hMP5/"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568FlkFZ030869;
-	Tue, 8 Jul 2025 21:15:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=LusyPB
-	GgzacCDHgEcHbswfhqnjZtC0hI2hz8Ri3QjBs=; b=no1hMP5/4uzUEs1hsuE8Sh
-	nDZwnGcFNth88MWQRkOQuMoPVMZqVBJhvxZSxOM9fPqgMi5Xkip31NnN53kbIrvf
-	ZSVBlegQlz9ZyjfpuaNMx2lwrmaCFbto0OSU2LSXXFx/6s0lmAWGxmKYCwH5atf7
-	2lut0KLs/X5no4PW14a6wdZmcY7FSeS8SUvh5iRJ5ObazOfxMzmi4CJtU+VgXwls
-	sDeAWkCm2swBniNPVSjwb+awn1IoySPCKSFDKeyO47AOKtdgMqUhpdFYFThcvm4s
-	JjFOLkI/nwZ/hD2fsQHWWxk8mqsPT2WPEn9j+BcteFcrPe3KjafJ6G5wVHfoC/UA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47puk42jcu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 21:15:31 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 568LFUJ2011158;
-	Tue, 8 Jul 2025 21:15:30 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47puk42jcq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 21:15:30 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 568KhVwK024284;
-	Tue, 8 Jul 2025 21:15:29 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qh32cm6b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 21:15:29 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 568LFS2E25297452
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 8 Jul 2025 21:15:28 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 57B8358063;
-	Tue,  8 Jul 2025 21:15:28 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BAC1358059;
-	Tue,  8 Jul 2025 21:15:27 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.96.173])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  8 Jul 2025 21:15:27 +0000 (GMT)
-Message-ID: <7724b1a0263b3a7083ba52a5639ac5a023b6e5c8.camel@linux.ibm.com>
-Subject: Re: [PATCH -next RFC 0/4] IMA Root of Trust (RoT) Framework
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: GONG Ruiqi <gongruiqi1@huawei.com>,
-        Roberto Sassu
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E .
- Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Lu
- Jialin <lujialin4@huawei.com>
-In-Reply-To: <20250630125928.765285-1-gongruiqi1@huawei.com>
-References: <20250630125928.765285-1-gongruiqi1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Date: Tue, 08 Jul 2025 17:15:27 -0400
+	s=arc-20240116; t=1752013651; c=relaxed/simple;
+	bh=sayrtEG6guArnwkZuIBE5coX1Qj2xO25GUYAvkcYqu4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nX7rNjUCqbfWZBCBjlGBG+ZWNj0aKjfFn8c+XTAMpKDgqFBc3/6CIzC0/PZLzTWLsYQ2ozK6ij7qo0wDHPmrQJMRagXwJWqNYhw9hDsC8dZRiAs0OHclVbJR210FeOKYUOdnYCbpTKxjkAYL/3rxMwB4MBN31/M5NivpnOBjCOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-87632a0275dso404549539f.1
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Jul 2025 15:27:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752013648; x=1752618448;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d1xR6ooTAkYxfNV5IzQoDoKyH/Bd84tfDPZiEZOdJDM=;
+        b=urKxxKOWLN+vJpxRMgp9Ny3YDR4hZT+Bjxby4riZJrftEceSByxGubnba1VIxsXNl7
+         JRX+fW7fgc/MR5y1ZhbofoE4nqQITY3u41s64sZnvw/0BNstfWizSk4PZSbGX2KzIdJl
+         mqWUcMJg61TvkRNsZIuO4Mhxb1zLrQislEcipSRjlBcNtZ5/xZwhALFYgkxNsjCYzB5D
+         3RFGNP2Xs/MRGfUAJxeiaLd0m4kBafAiILgwiNRKEwVu+0YJTjsFBykgJy5bLWD24Fgh
+         V7APeol5VTX00KtQxReYL3QtoaISAHIADUAXc7y8W6dTZeBLLXRPvS7ZPJ47gsp3liXz
+         GNJA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1px40fkZv4pdXpAT+DrWZFsWqOMKdbCP4jTgGRETcMlDyzviGJ7WGqsYmNZV8UWkhVZRtadwOFD4vCCAcpjPseRgf15Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPrdm8F5f74xNiap7MMtdRlSH042dZtUcY693uyhJksyQaCL2g
+	1V2rI3/RxPHKwZqm7zVr3JLDYFwP/DsIpZlrn4isO/oGFuKE3zHGIP8SvGCxbelv4yLZMCmObkF
+	dRqJNNbyuSwQUzMIGzHiXy8GelU20In38gLPCQ2lilhh98bhECEwFMytNhwc=
+X-Google-Smtp-Source: AGHT+IGphRgLQSuvfExX3Per8u8Emz46SEksZLHuClAGnJGJe1jNRHv0GDjO4mtS4u6HbSTYgVJhfq6i3M51lYoxkUNn/mmzUh+k
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDE3NiBTYWx0ZWRfXyFaA4xYTHg9q MLrWG81QbfQUXQGFelNn15chvZQQrPoCD8sdRByjc9CMDhuzglOfaTBHStzOLHH/fXrAPafgHCb ijvDPEs/scN4vV7XXwlRufVVYDzBCwq4pV3iiEBH0u8FW4oRmg4+iI95OQ7EyS0QWV+cUkvv06j
- ajZhaBKAqIjIY/YjNeIEovYIdj/TITU4cFZvUnuN0o1Fu63zqTeIK92CIdBeQfJ53jkv4nRlpG9 nes+ohNz9/yYmdPjfBBDTUcIc51C56isjR3hDzuGaQSHS9lduOly+CKDr6zYlyK8odqvlD52KQg ozTO3yXnYNHSD4NANnKvoQY1SlXwiVUVK/mKVciLUKYTj5hYP6R/n1X4qxP95FQYDOmoa+FTi0G
- IehRKLuXe6xV3Zcq/yzLP1hs4gZqdSJLk5LCppPBreEi+riHEcsJWQaA2pNlTOXzrYfehLEf
-X-Authority-Analysis: v=2.4 cv=XYeJzJ55 c=1 sm=1 tr=0 ts=686d8a73 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=e1ojlNwIAAAA:8 a=MZLLVwi8AAAA:8 a=2wmZI80qAAAA:8 a=GcuPlxIqdTfJUpQC_x4A:9
- a=QEXdDO2ut3YA:10 a=86ZOcgpm5hAA:10 a=Ib5Rf7K5V1gA:10 a=9wcPP0O2aqUXY9w_FFGQ:22
-X-Proofpoint-ORIG-GUID: eg_MOLwppZn3fg2sUYlOKCqnAQ9e9SmP
-X-Proofpoint-GUID: AtjIUYe9CEYe5yxPlgm4A7BlthLHJcq0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_05,2025-07-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 suspectscore=0
- mlxscore=0 impostorscore=0 phishscore=0 bulkscore=0 clxscore=1015
- spamscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507080176
+X-Received: by 2002:a05:6602:2c8e:b0:879:26b0:1cca with SMTP id
+ ca18e2360f4ac-8795b4d8c99mr46794639f.13.1752013648377; Tue, 08 Jul 2025
+ 15:27:28 -0700 (PDT)
+Date: Tue, 08 Jul 2025 15:27:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <686d9b50.050a0220.1ffab7.0020.GAE@google.com>
+Subject: [syzbot] [lsm?] [net?] WARNING in kvfree_call_rcu
+From: syzbot <syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, paul@paul-moore.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-SGkgUnVpcWksCgpJTUEgaGFzIGRpZmZlcmVudCByb290cyBvZiB0cnVzdCBmb3Igc2VjdXJlIGFu
-ZCB0cnVzdGVkIGJvb3QuICBJIGFzc3VtZSB0aGlzCnBhdGNoIHNldCBpcyBkaXNjdXNzaW5nIHRo
-ZSBJTUEgbWVhc3VyZW1lbnQgcm9vdCBvZiB0cnVzdC4KCkFjcm9ueW1zIGFyZcKgImFuIGFiYnJl
-dmlhdGlvbiBjb25zaXN0aW5nIG9mIHRoZSBmaXJzdCBsZXR0ZXJzIG9mIGVhY2ggd29yZCBpbgp0
-aGUgbmFtZSBvZiBzb21ldGhpbmcsIHByb25vdW5jZWQgYXMgYSB3b3JkIlsxXS4gIE5vdCBhbGwg
-YWNyb255bXMgYXJlCnByb25vdW5jZWQgYXMgYSB3b3JkLCBidXQgaW4gdGhpcyBjYXNlIGl0IHdv
-dWxkIGJlLiAgSSBzdWdnZXN0IHlvdSBjb25zaWRlciBhCmRpZmZlcmVudCBhY3JvbnltLgoKWzFd
-IGh0dHBzOi8vZGljdGlvbmFyeS5jYW1icmlkZ2Uub3JnL3VzL2RpY3Rpb25hcnkvZW5nbGlzaC9h
-Y3JvbnltCgpPbiBNb24sIDIwMjUtMDYtMzAgYXQgMjA6NTkgKzA4MDAsIEdPTkcgUnVpcWkgd3Jv
-dGU6Cj4gQ3VycmVudGx5LCB0aGUgSU1BIHN1YnN5c3RlbSBjYW4gb25seSB1c2UgVFBNIGFzIHRo
-ZSBSb290IG9mIFRydXN0Cj4gKFJvVCkgZGV2aWNlLCBhbmQgaXRzIGNvZGluZyBpcyB0aWdodGx5
-IGNvdXBsZWQgd2l0aCBUUE0gb3BlcmF0aW9ucy4KPiAKPiAgICAgICAgIOKUjOKUgOKUgOKUgOKU
-gOKUgOKUgOKUgOKUgOKUgOKUgOKUkCAgICDilIzilIDilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilJAKPiAgICAgICAg4pSM4pS04pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSQ4pSC
-ICAg4pSM4pS04pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSQ4pSCCj4gICAgICAgIOKU
-giBQcm9ncmFtcyDilJzilJggICDilIIgTGlicmFyaWVzIOKUnOKUmAo+ICAgICAgICDilJTilIDi
-lIDilIDilIDilKzilIDilIDilIDilIDilIDilJggICAg4pSU4pSA4pSA4pSA4pSA4pSs4pSA4pSA
-4pSA4pSA4pSA4pSA4pSYICAgICAgICAgICAgICAgICAgICAgICBVc2VyCj4g4pSAIOKUgCDilIAg
-4pSAIOKUgCDilIAg4pSCIOKUgCDilIAg4pSAIOKUgCDilIAg4pSAIOKUgCDilIIg4pSAIOKUgCDi
-lIAg4pSAIOKUgCDilIAg4pSAIOKUgCDilIAg4pSAIOKUgCDilIAg4pSAIOKUgCDilIAg4pSAIOKU
-gCDilIAg4pSACj4gICAgICAgICAgICAg4pSU4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSs4pSA
-4pSA4pSA4pSA4pSA4pSA4pSYICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgS2VybmVsCj4g
-ICAgICAgICAgICAgICAgICAgICAg4pa8Cj4gICDilIzilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilIDilIDilIDilIDilIDilIDilIDilJAgIOKUjOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKU
-gOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUkAo+ICAg4pSCICAgICAgICAgICAgICBJTUEgSG9v
-a3MgICAgICAgICAgICAg4pSCICDilIIgICAgICAgICAgICAgICAg4pSCCj4gICDilIIgKGZpbGUg
-cmVhZCwgZXhlY3V0ZWQsIG1tYXBwZWQgZXRjKSDilIIgIOKUgiAgICAgICAgICAgICAgICDilIIK
-PiAgIOKUlOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKU
-gOKUgOKUrOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKU
-gOKUmCAg4pSCICAgICAgSU1BICAgICAgIOKUggo+ICAgICAgICAgICAgICAgICAgICAgIOKWvCAg
-ICAgICAgICAgICAgICAgICAg4pSCIEluaXRpYWxpemF0aW9uIOKUggo+ICAg4pSM4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSQICDilIIgICAgICAg
-ICAgICAgICAg4pSCCj4gICDilIIgICAgICAgIElNQSBNZWFzdXJlbWVudCBMaXN0ICAgICAgICDi
-lIIgIOKUgiAgICAgICAgICAgICAgICDilIIKPiAgIOKUlOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKU
-gOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUrOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKU
-gOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUmCAg4pSU4pSA4pSA4pSA4pSA4pSs4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSs4pSA4pSA4pSA4pSYCj4gICAgICAgICAgICAgICAgZXh0ZW5k4pSC
-ICAgICAgY2FsY19ib290X2FnZ3JlZ2F0ZeKUgiAgIGluaXTilIIKPiAgICAgICAgICAgICAgICAg
-ICAgICDilrwgICAgICAgICAgICAgICAgICAgICAgICAg4pa8ICAgICAgIOKWvAo+ICAg4pSM4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSQCj4g
-ICDilIIgICAgICAgICAgICAgICAgICAgIFRQTSBEZXZpY2UgRHJpdmVyICAgICAgICAgICAgICAg
-ICAgIOKUggo+ICAg4pSU4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSs4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSYCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICDilIIKPiDi
-lIAg4pSAIOKUgCDilIAg4pSAIOKUgCDilIAg4pSAIOKUgCDilIAg4pSAIOKUgCDilIAg4pSAIOKU
-gCDilIAg4pSCIOKUgCDilIAg4pSAIOKUgCDilIAg4pSAIOKUgCDilIAg4pSAIOKUgCDilIAg4pSA
-IOKUgCDilIAg4pSAIOKUgCDilIAKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIOKW
-vCAgICAgICAgICAgICAgICAgICAgICAgICAgSGFyZHdhcmUKPiAgICAgICAgICAgICAgICAgICAg
-ICDilIzilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilJAKPiAgICAgICAgICAgICAgICAgICAgICDilIIgICAgVFBNIERldmljZSAgICDilIIKPiAg
-ICAgICAgICAgICAgICAgICAgICDilJTilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilIDilIDilIDilIDilIDilJgKPiAKPiBJbiByZWNlbnQgeWVhcnMsIG5ldyBzY2VuYXJp
-b3Mgc3VjaCBhcyBDb25maWRlbnRpYWwgQ29tcHV0aW5nIGhhdmUKPiBlbWVyZ2VkLCByZXF1aXJp
-bmcgSU1BIHRvIHVzZSB2YXJpb3VzIG5ldyBSb1QgZGV2aWNlcyBwcm9wb3NlZCBieQo+IGRpZmZl
-cmVudCB2ZW5kb3JzLCBzdWNoIGFzIEludGVsIFREWFsxXSBhbmQgSHVhd2VpIFZpcnRDQ0FbMl0u
-IFRvIG1ha2UKPiBpdCBlYXNpZXIgZm9yIHRoZXNlIGRldmljZXMgdG8gYmUgaW50ZWdyYXRlZCBp
-bnRvIHRoZSBJTUEgc3Vic3lzdGVtLCBpdAo+IGlzIG5lY2Vzc2FyeSB0byBkZWNvdXBsZSBUUE0g
-c3BlY2lmaWMgY29kZSBmcm9tIElNQSwgd2hpbGUgYWJzdHJhY3RpbmcKPiBJTUEncyBjb25maWd1
-cmF0aW9uIGFuZCBvcGVyYXRpb24gdG8gUm9UIGRldmljZXMgaW50byBtdWx0aXBsZQo+IGluZGVw
-ZW5kZW50IGludGVyZmFjZXMsIHVsdGltYXRlbHkgZm9ybWluZyBhbiBJTUEgUm9UIGRldmljZSBm
-cmFtZXdvcmsuCj4gVGhpcyBmcmFtZXdvcmsgYWJzdHJhY3RzIGF3YXkgdGhlIHVuZGVybHlpbmcg
-ZGV0YWlscyBvZiB2YXJpb3VzIFJvVAo+IGRldmljZXMgZm9yIElNQSwgYW5kIGVhY2ggdHlwZSBv
-ZiBSb1QgZGV2aWNlcyBjYW4gYmUgInBsdWdnZWQgaW4iIGFuZAo+IHV0aWxpemVkIGJ5IElNQSBz
-aW1wbHkgdmlhIGltcGxlbWVudGluZyB0aGUgZnJhbWV3b3JrIGludGVyZmFjZXMuCj4gCj4gICAg
-ICAgICAgICAg4pSM4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSQICAgIOKUjOKUgOKU
-gOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUkAo+ICAgICAgICAgICAg4pSM4pS04pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSQ4pSCICAg4pSM4pS04pSA4pSA4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSQ4pSCCj4gICAgICAgICAgICDilIIgUHJvZ3JhbXMg4pSc4pSYICAg4pSCIExp
-YnJhcmllcyDilJzilJgKPiAgICAgICAgICAgIOKUlOKUgOKUgOKUgOKUgOKUrOKUgOKUgOKUgOKU
-gOKUgOKUmCAgICDilJTilIDilIDilIDilIDilKzilIDilIDilIDilIDilIDilIDilJggICAgICAg
-ICAgICAgICAgICAgICAgICBVc2VyCj4g4pSAIOKUgCDilIAg4pSAIOKUgCDilIAg4pSAIOKUgCDi
-lIIg4pSAIOKUgCDilIAg4pSAIOKUgCDilIAg4pSAIOKUgiDilIAg4pSAIOKUgCDilIAg4pSAIOKU
-gCDilIAg4pSAIOKUgCDilIAg4pSAIOKUgCDilIAg4pSAIOKUgCDilIAg4pSAIOKUgCDilIAKPiAg
-ICAgICAgICAgICAgICAg4pSU4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSs4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSYICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEtlcm5lbAo+ICAgICAgICAg
-ICAgICAgICAgICAgICAgIOKWvAo+ICAgICAg4pSM4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSQICDilIzilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilIDilIDilIDilIDilIDilIDilJAKPiAgICAgIOKUgiAgICAgICAgICAgICAgSU1BIEhv
-b2tzICAgICAgICAgICAgIOKUgiAg4pSCICAgICAgICAgICAgICAgIOKUggo+ICAgICAg4pSCIChm
-aWxlIHJlYWQsIGV4ZWN1dGVkLCBtbWFwcGVkIGV0Yykg4pSCICDilIIgICAgICAgICAgICAgICAg
-4pSCCj4gICAgICDilJTilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilIDilIDilKzilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilIDilJggIOKUgiAgICAgIElNQSAgICAgICDilIIKPiAgICAgICAgICAgICAgICAgICAg
-ICAgICDilrwgICAgICAgICAgICAgICAgICAgIOKUgiBJbml0aWFsaXphdGlvbiDilIIKPiAgICAg
-IOKUjOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKU
-gOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKU
-kCAg4pSCICAgICAgICAgICAgICAgIOKUggo+ICAgICAg4pSCICAgICAgICBJTUEgTWVhc3VyZW1l
-bnQgTGlzdCAgICAgICAg4pSCICDilIIgICAgICAgICAgICAgICAg4pSCCj4gICAgICDilJTilIDi
-lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilKzilIDi
-lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilJggIOKUlOKU
-gOKUgOKUgOKUgOKUrOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUrOKUgOKUgOKUgOKUmAo+ICAgICAg
-ICAgICAgICAgICAgIGV4dGVuZOKUgiAgICAgIGNhbGNfYm9vdF9hZ2dyZWdhdGXilIIgICBpbml0
-4pSCCj4gICAgICAgICAgICAgICAgICAgICAgICAg4pa8ICAgICAgICAgICAgICAgICAgICAgICAg
-IOKWvCAgICAgICDilrwKPiAgICAgIOKUjOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKU
-gOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKU
-gOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKU
-gOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUkAo+ICAgICAg4pSCICAgICAgICAgICAgICAgICAgICAg
-ICAgSU1BIFJvVCAgICAgICAgICAgICAgICAgICAgICAgICDilIIKPiAgICAgIOKUgiAgICAgICAg
-ICAgICAgICAgICAgICAgRnJhbWV3b3JrICAgICAgICAgICAgICAgICAgICAgICAg4pSCCj4gICAg
-ICDilJTilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilKzilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilJgKPiAgICAgICAgICDilIzilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilIDilKzilIDilIDilIDilIDilIDilIDilIDilLTilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilKzilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilJAKPiAgICAgICAgICDilrwgICAgICAgICAgICAgICDilrwgICAgICAgICAgICAgICAgIOKW
-vCAgICAgICAgICAgICAgICAg4pa8Cj4g4pSM4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSQIOKUjOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKU
-gOKUgOKUkCDilIzilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilIDilJAg4pSM4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSQCj4g
-4pSCIFZpcnRDQ0EgRHJpdmVyIOKUgiDilIIgVFBNIERyaXZlciDilIIg4pSCIEludGVsIFREWCBE
-cml2ZXIg4pSCIOKUgiB4eHggRHJpdmVyIOKUggo+IOKUlOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKU
-gOKUrOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUmCDilJTilIDilIDilIDilIDilIDilKzilIDilIDi
-lIDilIDilIDilIDilJgg4pSU4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSs4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSYIOKUlOKUgOKUgOKUgOKUgOKUgOKUrOKUgOKUgOKUgOKUgOKUgOKU
-gOKUmAo+ICAgICAgICAgIOKUgiAgICAgICAgICAgICAgIOKUgiAgICAgICAgICAgICAgICAg4pSC
-ICAgICAgICAgICAgICAgICDilIIKPiDilIAg4pSAIOKUgCDilIAg4pSA4pSC4pSAIOKUgCDilIAg
-4pSAIOKUgCDilIAg4pSAIOKUgOKUguKUgCDilIAg4pSAIOKUgCDilIAg4pSAIOKUgCDilIAg4pSA
-4pSC4pSAIOKUgCDilIAg4pSAIOKUgCDilIAg4pSAIOKUgCDilIDilILilIAg4pSAIOKUgCDilIAg
-4pSACj4gICAgICAgICAg4pSCICAgICAgICAgICAgICAg4pSCICAgICAgICAgICAgICAgICDilIIg
-ICAgICAgICAgICAgICAgIOKUgiAgSGFyZHdhcmUKPiAgICAgICAgICDilrwgICAgICAgICAgICAg
-ICDilrwgICAgICAgICAgICAgICAgIOKWvCAgICAgICAgICAgICAgICAg4pa8Cj4g4pSM4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSQIOKUjOKUgOKUgOKU
-gOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUkCDilIzilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilJAg4pSM4pSA4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSQCj4g4pSCIFZpcnRDQ0EgRGV2aWNlIOKUgiDilIIgVFBNIERl
-dmljZSDilIIg4pSCIEludGVsIFREWCBEZXZpY2Ug4pSCIOKUgiB4eHggRGV2aWNlIOKUggo+IOKU
-lOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUmCDilJTi
-lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilJgg4pSU4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSYIOKUlOKUgOKUgOKUgOKU
-gOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUmAo+IAo+IFRoaXMgcGF0Y2ggc2V0IHByb3ZpZGVz
-IGFuIGltcGxlbWVudGF0aW9uIG9mIHRoZSBhZm9yZW1lbnRpb25lZCBJTUEgUm9UCj4gZnJhbWV3
-b3JrLCB3aGljaCBjYW4gZmFjaWxpdGF0ZSBlYXNpZXIgYWRhcHRhdGlvbiBmb3IgbmV3IGRldmlj
-ZXMgc3VjaAo+IGFzIEludGVsIFREWCBhbmQgSHVhd2VpIFZpcnRDQ0EsIGFzIHdlbGwgYXMgdGhl
-IGNsYXNzaWMgVFBNLCB0byBiZSBhbgo+IFJvVCB0aGF0IElNQSBjYW4gdXRpbGl6ZSB0byBtYWlu
-dGFpbiBzeXN0ZW0ncyBpbnRlZ3JpdHkuCgpXaGVuIGV4dGVuZGluZyBhbiBleGlzdGluZyBzdWJz
-eXN0ZW0sIHRoZSBleGlzdGluZyBzZWN1cml0eSBndWFyYW50ZWVzIG5lZWQgdG8KcGVyc2lzdC4g
-IElmIHRoZXkgZG9uJ3QsIHRoZXJlIG5lZWRzIHRvIGJlIGEgY2xlYXIgZXhwbGFuYXRpb24gYXMg
-dG8gd2h5IHRoZXkKZG9uJ3QuICBGb3IgZXhhbXBsZSwgaWYgbm8gbWVhc3VyZW1lbnQgcm9vdCBv
-ZiB0cnVzdCBpcyBzcGVjaWZpZWQgb24gdGhlIGJvb3QKY29tbWFuZCBsaW5lLCB0aGUgZGVmYXVs
-dCBtZWFzdXJlbWVudCByb290IG9mIHRydXN0IHNob3VsZCBiZSBjb25maWd1cmVkIGF0CmJ1aWxk
-IHRvIGRlZmF1bHQgdG8gdGhlIFRQTS4KCkRvIHlvdSBleHBlY3QgdG8gc3VwcG9ydCBtdWx0aXBs
-ZSBtZWFzdXJlbWVudCByb290cyBvZiB0cnVzdCBhdCB0aGUgc2FtZSB0aW1lPwoKTWltaQoKPiAK
-PiBbMV06IFJlZmVyZW5jZSBmb3IgSW50ZWwgVERYIHdpdGggSU1BOgo+IGh0dHBzOi8vd3d3Lmlu
-dGVsLmNuL2NvbnRlbnQvd3d3L2NuL3poL2RldmVsb3Blci9hcnRpY2xlcy9jb21tdW5pdHkvcnVu
-dGltZS1pbnRlZ3JpdHktbWVhc3VyZS1hbmQtYXR0ZXN0LXRydXN0LWRvbWFpbi5odG1sCj4gCj4g
-WzJdOiBSZWZlcmVuY2UgZm9yIEh1YXdlaSBWaXJ0Q0NBOgo+IGh0dHBzOi8vZ2l0ZWUuY29tL29w
-ZW5ldWxlci9rZXJuZWwvYmxvYi9PTEstNi42L0RvY3VtZW50YXRpb24vdmlydGNjYS92aXJ0Y2Nh
-LnR4dAo+IAo+IAo+IEdPTkcgUnVpcWkgKDQpOgo+ICAgaW1hOiByb3Q6IEludHJvZHVjZSBiYXNp
-YyBmcmFtZXdvcmsKPiAgIGltYTogcm90OiBQcmVwYXJlIFRQTSBhcyBhbiBSb1QKPiAgIGltYTog
-cm90OiBNYWtlIFJvVCBraWNrIGluCj4gICBpbWE6IHJvdDogSW52b2x2ZSBwZXItUm9UIGRlZmF1
-bHQgUENSIGluZGV4Cj4gCj4gIHNlY3VyaXR5L2ludGVncml0eS9pbWEvS2NvbmZpZyAgICAgICAg
-ICAgIHwgIDEyICstCj4gIHNlY3VyaXR5L2ludGVncml0eS9pbWEvTWFrZWZpbGUgICAgICAgICAg
-IHwgICAzICstCj4gIHNlY3VyaXR5L2ludGVncml0eS9pbWEvaW1hLmggICAgICAgICAgICAgIHwg
-IDExICstCj4gIHNlY3VyaXR5L2ludGVncml0eS9pbWEvaW1hX2FwaS5jICAgICAgICAgIHwgICA0
-ICstCj4gIHNlY3VyaXR5L2ludGVncml0eS9pbWEvaW1hX2NyeXB0by5jICAgICAgIHwgMTM5ICsr
-Ky0tLS0tLS0tLS0tLS0tLS0KPiAgc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfZnMuYyAgICAg
-ICAgICAgfCAgIDQgKy0KPiAgc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfaW5pdC5jICAgICAg
-ICAgfCAgMTQgKy0KPiAgc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfbWFpbi5jICAgICAgICAg
-fCAgIDQgKy0KPiAgc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfcXVldWUuYyAgICAgICAgfCAg
-MzkgKystLS0tCj4gIHNlY3VyaXR5L2ludGVncml0eS9pbWEvaW1hX3JvdC5jICAgICAgICAgIHwg
-MTA4ICsrKysrKysrKysrKysrKwo+ICBzZWN1cml0eS9pbnRlZ3JpdHkvaW1hL2ltYV9yb3QuaCAg
-ICAgICAgICB8ICA0MiArKysrKysKPiAgc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfdGVtcGxh
-dGUuYyAgICAgfCAgIDIgKy0KPiAgc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfdGVtcGxhdGVf
-bGliLmMgfCAgIDQgKy0KPiAgc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfdHBtLmMgICAgICAg
-ICAgfCAxNTQgKysrKysrKysrKysrKysrKysrKysrKwo+ICBzZWN1cml0eS9pbnRlZ3JpdHkvaW1h
-L2ltYV90cG0uaCAgICAgICAgICB8ICAxOSArKysKPiAgMTUgZmlsZXMgY2hhbmdlZCwgMzg4IGlu
-c2VydGlvbnMoKyksIDE3MSBkZWxldGlvbnMoLSkKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IHNlY3Vy
-aXR5L2ludGVncml0eS9pbWEvaW1hX3JvdC5jCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBzZWN1cml0
-eS9pbnRlZ3JpdHkvaW1hL2ltYV9yb3QuaAo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgc2VjdXJpdHkv
-aW50ZWdyaXR5L2ltYS9pbWFfdHBtLmMKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IHNlY3VyaXR5L2lu
-dGVncml0eS9pbWEvaW1hX3RwbS5oCj4gCgo=
+Hello,
 
+syzbot found the following issue on:
+
+HEAD commit:    7482bb149b9f Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=130c528c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3c06e3e2454512b3
+dashboard link: https://syzkaller.appspot.com/bug?extid=40bf00346c3fe40f90f2
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1257428c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15fe9582580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f623d741d651/disk-7482bb14.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/483e23ae71b1/vmlinux-7482bb14.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/79b5baaa1b50/Image-7482bb14.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+ODEBUG: activate active (active state 1) object: 000000006921da73 object type: rcu_head hint: 0x0
+WARNING: CPU: 0 PID: 6718 at lib/debugobjects.c:615 debug_print_object lib/debugobjects.c:612 [inline]
+WARNING: CPU: 0 PID: 6718 at lib/debugobjects.c:615 debug_object_activate+0x344/0x460 lib/debugobjects.c:842
+Modules linked in:
+CPU: 0 UID: 0 PID: 6718 Comm: syz.0.17 Not tainted 6.16.0-rc4-syzkaller-g7482bb149b9f #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : debug_print_object lib/debugobjects.c:612 [inline]
+pc : debug_object_activate+0x344/0x460 lib/debugobjects.c:842
+lr : debug_print_object lib/debugobjects.c:612 [inline]
+lr : debug_object_activate+0x344/0x460 lib/debugobjects.c:842
+sp : ffff8000a03a76d0
+x29: ffff8000a03a76d0 x28: ffff8000976d7000 x27: dfff800000000000
+x26: ffff80008afc2480 x25: 0000000000000001 x24: ffff8000891ac9a0
+x23: 0000000000000003 x22: ffff80008b539420 x21: 0000000000000000
+x20: ffff80008afc2480 x19: ffff8000891ac9a0 x18: 00000000ffffffff
+x17: 3761643132393630 x16: ffff80008ae642c8 x15: ffff700011ede14c
+x14: 1ffff00011ede14c x13: 0000000000000004 x12: ffffffffffffffff
+x11: ffff700011ede14c x10: 0000000000ff0100 x9 : 5fa3c1ffaf0ff000
+x8 : 5fa3c1ffaf0ff000 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff8000a03a7018 x4 : ffff80008f766c20 x3 : ffff80008054d360
+x2 : 0000000000000000 x1 : 0000000000000201 x0 : 0000000000000000
+Call trace:
+ debug_print_object lib/debugobjects.c:612 [inline] (P)
+ debug_object_activate+0x344/0x460 lib/debugobjects.c:842 (P)
+ debug_rcu_head_queue kernel/rcu/rcu.h:236 [inline]
+ kvfree_call_rcu+0x4c/0x3f0 mm/slab_common.c:1953
+ cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
+ netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
+ smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
+ smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
+ security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
+ __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
+ __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
+ vfs_setxattr+0x158/0x2ac fs/xattr.c:321
+ do_setxattr fs/xattr.c:636 [inline]
+ file_setxattr+0x1b8/0x294 fs/xattr.c:646
+ path_setxattrat+0x2ac/0x320 fs/xattr.c:711
+ __do_sys_fsetxattr fs/xattr.c:761 [inline]
+ __se_sys_fsetxattr fs/xattr.c:758 [inline]
+ __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+irq event stamp: 739
+hardirqs last  enabled at (738): [<ffff80008055484c>] __up_console_sem kernel/printk/printk.c:344 [inline]
+hardirqs last  enabled at (738): [<ffff80008055484c>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
+hardirqs last disabled at (739): [<ffff80008aef73d4>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
+softirqs last  enabled at (668): [<ffff8000891992e0>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
+softirqs last  enabled at (668): [<ffff8000891992e0>] release_sock+0x14c/0x1ac net/core/sock.c:3776
+softirqs last disabled at (712): [<ffff800082c8970c>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+ODEBUG: active_state active (active state 1) object: 000000006921da73 object type: rcu_head hint: 0x0
+WARNING: CPU: 0 PID: 6718 at lib/debugobjects.c:615 debug_print_object lib/debugobjects.c:612 [inline]
+WARNING: CPU: 0 PID: 6718 at lib/debugobjects.c:615 debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
+Modules linked in:
+CPU: 0 UID: 0 PID: 6718 Comm: syz.0.17 Tainted: G        W           6.16.0-rc4-syzkaller-g7482bb149b9f #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : debug_print_object lib/debugobjects.c:612 [inline]
+pc : debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
+lr : debug_print_object lib/debugobjects.c:612 [inline]
+lr : debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
+sp : ffff8000a03a76c0
+x29: ffff8000a03a76d0 x28: ffff80008f671000 x27: dfff800000000000
+x26: 0000000000000003 x25: 0000000000000000 x24: ffff0000cb6fd7a8
+x23: 0000000000000001 x22: ffff80008afc2480 x21: ffff80008b539420
+x20: 0000000000000000 x19: ffff8000891ac9a0 x18: 00000000ffffffff
+x17: 3239363030303030 x16: ffff80008ae642c8 x15: ffff700011ede14c
+x14: 1ffff00011ede14c x13: 0000000000000004 x12: ffffffffffffffff
+x11: ffff700011ede14c x10: 0000000000ff0100 x9 : 5fa3c1ffaf0ff000
+x8 : 5fa3c1ffaf0ff000 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff8000a03a7018 x4 : ffff80008f766c20 x3 : ffff80008054d360
+x2 : 0000000000000000 x1 : 0000000000000201 x0 : 0000000000000000
+Call trace:
+ debug_print_object lib/debugobjects.c:612 [inline] (P)
+ debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064 (P)
+ debug_rcu_head_queue kernel/rcu/rcu.h:237 [inline]
+ kvfree_call_rcu+0x64/0x3f0 mm/slab_common.c:1953
+ cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
+ netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
+ smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
+ smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
+ security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
+ __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
+ __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
+ vfs_setxattr+0x158/0x2ac fs/xattr.c:321
+ do_setxattr fs/xattr.c:636 [inline]
+ file_setxattr+0x1b8/0x294 fs/xattr.c:646
+ path_setxattrat+0x2ac/0x320 fs/xattr.c:711
+ __do_sys_fsetxattr fs/xattr.c:761 [inline]
+ __se_sys_fsetxattr fs/xattr.c:758 [inline]
+ __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+irq event stamp: 765
+hardirqs last  enabled at (764): [<ffff80008055484c>] __up_console_sem kernel/printk/printk.c:344 [inline]
+hardirqs last  enabled at (764): [<ffff80008055484c>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
+hardirqs last disabled at (765): [<ffff80008aef73d4>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
+softirqs last  enabled at (668): [<ffff8000891992e0>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
+softirqs last  enabled at (668): [<ffff8000891992e0>] release_sock+0x14c/0x1ac net/core/sock.c:3776
+softirqs last disabled at (712): [<ffff800082c8970c>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+kvfree_call_rcu(): Double-freed call. rcu_head 000000006921da73
+WARNING: CPU: 0 PID: 6718 at mm/slab_common.c:1956 kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
+Modules linked in:
+CPU: 0 UID: 0 PID: 6718 Comm: syz.0.17 Tainted: G        W           6.16.0-rc4-syzkaller-g7482bb149b9f #0 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
+lr : kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
+sp : ffff8000a03a7730
+x29: ffff8000a03a7730 x28: 00000000fffffff5 x27: 1fffe000184823d3
+x26: dfff800000000000 x25: ffff0000c2411e9e x24: ffff0000dd88da00
+x23: ffff8000891ac9a0 x22: 00000000ffffffea x21: ffff8000891ac9a0
+x20: ffff8000891ac9a0 x19: ffff80008afc2480 x18: 00000000ffffffff
+x17: 0000000000000000 x16: ffff80008ae642c8 x15: ffff700011ede14c
+x14: 1ffff00011ede14c x13: 0000000000000004 x12: ffffffffffffffff
+x11: ffff700011ede14c x10: 0000000000ff0100 x9 : 5fa3c1ffaf0ff000
+x8 : 5fa3c1ffaf0ff000 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff8000a03a7078 x4 : ffff80008f766c20 x3 : ffff80008054d360
+x2 : 0000000000000000 x1 : 0000000000000201 x0 : 0000000000000000
+Call trace:
+ kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955 (P)
+ cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
+ netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
+ smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
+ smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
+ security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
+ __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
+ __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
+ vfs_setxattr+0x158/0x2ac fs/xattr.c:321
+ do_setxattr fs/xattr.c:636 [inline]
+ file_setxattr+0x1b8/0x294 fs/xattr.c:646
+ path_setxattrat+0x2ac/0x320 fs/xattr.c:711
+ __do_sys_fsetxattr fs/xattr.c:761 [inline]
+ __se_sys_fsetxattr fs/xattr.c:758 [inline]
+ __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+irq event stamp: 789
+hardirqs last  enabled at (788): [<ffff80008055484c>] __up_console_sem kernel/printk/printk.c:344 [inline]
+hardirqs last  enabled at (788): [<ffff80008055484c>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
+hardirqs last disabled at (789): [<ffff80008aef73d4>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
+softirqs last  enabled at (668): [<ffff8000891992e0>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
+softirqs last  enabled at (668): [<ffff8000891992e0>] release_sock+0x14c/0x1ac net/core/sock.c:3776
+softirqs last disabled at (712): [<ffff800082c8970c>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
