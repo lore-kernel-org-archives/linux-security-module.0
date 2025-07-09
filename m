@@ -1,224 +1,196 @@
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A3B21CA02
-	for <linux-security-module@vger.kernel.org>; Wed,  9 Jul 2025 16:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247F21C1F02
+	for <linux-security-module@vger.kernel.org>; Wed,  9 Jul 2025 16:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752077207; cv=none; b=tsFE6qm5XsAzasEaqY4kMeKlckFa329DsSgOd0oYm+ECHM6k/EvAebEZFIRGLnxBioqN+HQqCv36GEUpiNI7mW6OgXyzTftG1REHn644xFJvnt4KCFkMsRhPmuX7R3yysy81Wwp4iNE3pYoArpOiKSmvOqUYG2X67rjlNKASYnw=
+	t=1752079715; cv=none; b=UXHoXkrCvV2Wck5bjFOywV9X56AtYN03Ai+zeCZYAp8aLyxblicRw2AzvzMMMyuBr3773kRZKqwKmLwlPcqz6F4shuwtmiNg5LLyDY/lyaX3Hl3ShEWUckq/61eW2l3Mi+bg3033Ison8wnWtPRdOAiB0W9cBRqwVNBGnPoFC44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752077207; c=relaxed/simple;
-	bh=x9sp22toYkpc4VtFP6GGbIJjLYOoiHU3v8jcNMvPaTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JPGnQ+rFvtymJiPE0zyV2HwG1Q6xSXzaVGI/odZEgm3pN8S5vp2ypHr0UEChcuJlzJrGOCwXYwgfQDSz57V9SYJZLrMj5b/Z2NbrRxhhfpoDUHiBJ6fubZaEpUYcDxxCH1S6HP+VY+tDQqgnEi+VLBO/KKOTCGugp4U1JHf0u4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=PjxytSW+; arc=none smtp.client-ip=84.16.66.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1752079715; c=relaxed/simple;
+	bh=wRmR9hNZzz7aXnp2PmuXRHHVYJ7nrQGQYHH/VK1KGAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LpmTgXDfNZAcVg+qCT4WQrKVbobz2tvuqA+Zw/YI3+mRpu1gVM0atnrgFkVkjhvmaiYbkP6rgVNne/fSVMw6+EgQbuwXocVs5hFhDqI9S9EnU2dhOOWZN6p7MtawdvCCxPDUV7GrRBh9nMwhvBLim+yLGb27Cv2EJIhvye7TSS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=ALzddMnZ; arc=none smtp.client-ip=66.163.186.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="PjxytSW+"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bcjXH6mb4zNH0;
-	Wed,  9 Jul 2025 18:06:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1752077199;
-	bh=wDp5dd28Btxni9BGX/xFdhzPZyWhhotO9GBlMsWmrcI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PjxytSW+GUIQ1kQilkQn1YBWpaBzJdiqxMlmzc3xOBGsjBG+/qilBz9fvlo4i+mDv
-	 YfU1wvFgQFgnKKP/yHlb3ycF3lo4KurXxrqPWNMakoE5gjmi4thge5h9B+jTWQ7afr
-	 f12TNiPQwhR5XaA2LjD833NmC71N3a0UtLx3UMYo=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bcjXG5rnbzwBb;
-	Wed,  9 Jul 2025 18:06:38 +0200 (CEST)
-Date: Wed, 9 Jul 2025 18:06:38 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Song Liu <songliubraving@meta.com>
-Cc: Christian Brauner <brauner@kernel.org>, NeilBrown <neil@brown.name>, 
-	Tingmao Wang <m@maowtm.org>, Song Liu <song@kernel.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
-	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
-	"martin.lau@linux.dev" <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-	"jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
-	"mattbobrowski@google.com" <mattbobrowski@google.com>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
-Message-ID: <20250709.daHaek7ezame@digikod.net>
-References: <127D7BC6-1643-403B-B019-D442A89BADAB@meta.com>
- <175097828167.2280845.5635569182786599451@noble.neil.brown.name>
- <20250707-kneifen-zielvereinbarungen-62c1ccdbb9c6@brauner>
- <20250707-netto-campieren-501525a7d10a@brauner>
- <40D24586-5EC7-462A-9940-425182F2972A@meta.com>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ALzddMnZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1752079706; bh=kc36E2wI4bhwWTlYhfYkcEYRMP1zv/4SkOL/rVZnv6o=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ALzddMnZhWw2MIif5phz8ng9yIsyHTKbMwEg3MgQpZOrTplxU6XaXfZrHwBi2B02I08pxWW9JXpj3RuZL5HIVibYMOtygMfheWchqy2vJ92bESmhdGHbXUtiHQVI3RjXxt8rGeVq+Xhxx/rVab22u0J1ynCNbu1bGBcRsZTJ0wNQVLYQ+5qEsNGYUohQt0tDYeA5hnBYtnRqm4cAbqG1VevQFRiy7mnXV9ZkvU9J8psWNgUDa99iPb2rJOSD/+oLEh87q18uYgthjFK9aMGn4qjLlprq+Gyo5p5VSUGyLdO6YssSZamK/O9YSTQgx5wNOVUC10RsuL2bSS/OE1RubQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1752079706; bh=/mimeaU6GDhZfsBWZ6ZZR/0Q2Yiel8Egxhz3jIsQSoW=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=S+d+xLE6zPZBmQT9qohqGXIifGui7v/TKaqMrobiq9b7HvlZEr9K777tIbdErFunYk+Y2cj3kLieHEqVNgAfhLqFA93r98KhFnmB2Y4sGyOn/zfhiuQUTEYIlbjzPLKAQifhtZPJT5gLVbqTVTW6dt8VEJEA3iSnoVT5J+v2+3ONnGe0MH2lKFwlIrywZYeSzjC+YLiDxV9UzujPFeaA7IAVeLjOZhoH728bBmlidS5E/UemNmti1rZwhWAJ7frkBHTXNdk+kloEBeLA5dMBi3z3bBc3SoVp4AOa+uYu/MbWz/DV1d6WPreIXPuaRNk9w1Pd79/H/CSIp0Z6mRnkRA==
+X-YMail-OSG: oOjeceIVM1lDOKc2hTjru7tHo9CzfFuHeUnjAvTkZY7lzXBXz7k8nP8XqPkQ2yM
+ BffS_2b.NZl77j_O6.aSgk.49KcS1YEzfRQMY0p1KEpjiXqVpGjEoBvrRYV3dZkd1AXVgrUe9mGo
+ P00QSszv1gCX6qDeyF9KBc3a4WM09qLeq1OPIeZovnQbfmhpnshzuXUtJNjO4mdKKDvhotPNzLwW
+ _xrwycoKeLXUZ.LRQpVLhBeV3wKM_Wtai.CpJJXiTzg_G_iA9HomCma8_iyVG07FfpDOz1KmRuVr
+ Luk.AdwkS1E5ggZZkqhcLyf0ljM2q1jnqgHCqxsrWwtijV5JibS7Lgzifx1OTK_mi46qZ9yFqHeU
+ JqDMaXPTeaI4SiMyl9vdM_LPPigfww6GRPMljxl_aJIxiCp8819C.T5DQ.ptJ.BLOqckR4rMonpc
+ X_4QFWtryCZsab.5x_U2ub34RiVt09dPm0BE7Ozu5GAV1Fx.0l1QKExh.Ffxy0sVcch77NSpUqBf
+ Pz_j4pwXhJsz0F6PnFPReAIC1jdX2SHMD0vati581YmqnI4y6KyBexSxFqQ9t.cyfPh2.aX22gVy
+ P2tth18W.eIV_6WzD2uIo5HqxunmH1aPorIt4DFG6lroHEETOMVEO56qKeZOWYBqbD2MrRKoCxxm
+ _6VIxHUdA6Z1Qj7ZrMl.CGA7A4LGoApPIzAssmGtScHf1xZmclTlEnMjCWESB4Ekqzci0GpMgqXa
+ D_3Ol24JNMesLMedscOzNumP_YHdi6sY8Ls7k6cMVdeCyLgpj2A1RheLLhHHGjXd1FLrbBLOMIQ5
+ LRWZCGKUPsW4MQAeXdFMsn7PAv2ZgeP9ueksDKkoVsuqjx0uXaU4AlBXboRZ4ro2zZtsP.aP8i7t
+ 6t.QKYLTMQsQ2h5IzV5R2wdxx8aVhlWrufi8g.r0qLm8wNDT1mJ9TuUveT59gV0ctVBjZD7kDj5F
+ Elw63n0ECmIprDQBqe_xPnL4SfLki3kkcqIXQBF5ShfsODzCPvOX7nYgObFL0j2AvcIciyfnKQai
+ gSf6xkEJ_dQ32eVUfWkWLY7_ja.vZu1kGYQgBF2jgEVOfEk5ihhmpcwVKkuyOYKVn.XP6DpqXEWG
+ FRHdxQ.SJ1fevh07Sxu8D.sFaSuT54th1fZ8OcFpdJmTuReZFrJew6rx5cDjItAFuNJAGFpTIdM.
+ Yk42VATl84vbQ7tWgcxLWUxBKWRXHVRJJLr1uO_cTFsB0bl3BiKQfT0zxdkAUup1W0CmnxA7bIGR
+ jG8MjOKiITW.1x5qJDDKlj.879lEjmwUvFI2RZBLS6fYuIn.GWxQOY3x7s6rRk6ACEpymN1PJb3b
+ 2okO.BnZkqof93_1C6G.QfHtzK3f144bO9MeNE6LugnbB3Cfm_921SqVIb0a6170m0AABOkDkgCX
+ WO5Lqy8rHyKqWuGoF0CCI7KX4I0IYBVPw9MfOHcxZIbRVJC4Ddyrav6jegXjPNQY2UORgxvNYBGU
+ WgPCA4uRmCtBO3pvkSK9nHdFFBqsjRLx3TAl0HFFcP7tlttuBp7NyIEx_gkMJxwbKb4iKqAsgQDh
+ tJdqb_7m9NKa0F7j2iuhKppL0LtPLtPTN7mperGNvjaUlNl4FFhdgM7Bk0pQ2AEIjEf_Y.utrnlW
+ 4ujR673upy4cONQbOWdQcYl.Uwnv4DcNE9v153OjfUE704NLiX0FVu_ciDJELWFIDp.R3g0N6scu
+ n6TsN6RE0VlikbbhY3d0EIvf6VgCwf12V5MyVs66Na1dvjmSicHFSSvFhvUsYkoQ.junpPN22llQ
+ eSObtvTNXZh6wYxeAi30PaEBfxs7swQ_oh45oRti9xkJE_QGbd3md11PoSy1nnlctgW45FD2N765
+ fLwZZuF9fHSQQZA9MTkF39kLIB_fViEiaCfxw.lrUts3H9.WIW7VhNhrwYBFmCOjW5o2gJJJv57i
+ ZoKpQw7so85w95vC.ONQfaSlH3WXX5mI86ngm4Uys868kB29IvDe2kgWvyPDRwipzpCIPTLODeXn
+ 0iKb90XcijGK.w.vmfnP5T63D6Czd4D6OSLUu.rbPjY2kO5SIBigO2KwfSIfuUwbxt_3BLJh0ybJ
+ 1eKXTXsA16.jpR0SgJ9LEvnv6zzamxuAQDyKoTM6NuOQkrPn5.FrJP6yJVhEqQSJx7eJQjH_M.6Z
+ gf4BIgExu1fqIJr8w3BtejYxu613S.FKVHHqMwal9uvstZ9E_gtGeClLvuKgafIy7YKD.DmyNID7
+ Th8ym1DxwiM4ob0qRP2Dpj6H3vUBDVD3wVeLVRrcHltDcXU_y2b3NlI0zG8EJi.82hR44rzFOm1a
+ 7fRO9ucClRTz3a3j5rbI-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 95f83a92-85ed-4d51-9d2f-7281f23145f7
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Wed, 9 Jul 2025 16:48:26 +0000
+Received: by hermes--production-gq1-74d64bb7d7-s6s6l (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 91ff29a2e51ab3f0eda0900cc0979479;
+          Wed, 09 Jul 2025 16:48:24 +0000 (UTC)
+Message-ID: <5ae541ce-613f-47c0-8a23-1ec9a0b346cf@schaufler-ca.com>
+Date: Wed, 9 Jul 2025 09:48:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/3] lsm: introduce lsm_config_self_policy() and
+ lsm_config_system_policy() syscalls
+To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
+ linux-security-module@vger.kernel.org
+Cc: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, mic@digikod.net, kees@kernel.org,
+ stephen.smalley.work@gmail.com, takedakn@nttdata.co.jp,
+ penguin-kernel@I-love.SAKURA.ne.jp, song@kernel.org, rdunlap@infradead.org,
+ linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
+ linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250709080220.110947-1-maxime.belair@canonical.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250709080220.110947-1-maxime.belair@canonical.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <40D24586-5EC7-462A-9940-425182F2972A@meta.com>
-X-Infomaniak-Routing: alpha
+X-Mailer: WebService/1.1.24099 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Mon, Jul 07, 2025 at 06:50:12PM +0000, Song Liu wrote:
-> Hi Christian, 
-> 
-> Thanks for your comments! 
-> 
-> > On Jul 7, 2025, at 4:17 AM, Christian Brauner <brauner@kernel.org> wrote:
-> 
-> [...]
-> 
-> >>> 3/ Extend vfs_walk_ancestors() to pass a "may sleep" flag to the callback.
-> >> 
-> >> I think that's fine.
-> > 
-> > Ok, sorry for the delay but there's a lot of different things going on
-> > right now and this one isn't exactly an easy thing to solve.
-> > 
-> > I mentioned this before and so did Neil: the lookup implementation
-> > supports two modes sleeping and non-sleeping. That api is abstracted
-> > away as heavily as possible by the VFS so that non-core code will not be
-> > exposed to it other than in exceptional circumstances and doesn't have
-> > to care about it.
-> > 
-> > It is a conceptual dead-end to expose these two modes via separate APIs
-> > and leak this implementation detail into non-core code. It will not
-> > happen as far as I'm concerned.
-> > 
-> > I very much understand the urge to get the refcount step-by-step thing
-> > merged asap. Everyone wants their APIs merged fast. And if it's
-> > reasonable to move fast we will (see the kernfs xattr thing).
-> > 
-> > But here are two use-cases that ask for the same thing with different
-> > constraints that closely mirror our unified approach. Merging one
-> > quickly just to have something and then later bolting the other one on
-> > top, augmenting, or replacing, possible having to deprecate the old API
-> > is just objectively nuts. That's how we end up with a spaghetthi helper
-> > collection. We want as little helper fragmentation as possible.
-> > 
-> > We need a unified API that serves both use-cases. I dislike
-> > callback-based APIs generally but we have precedent in the VFS for this
-> > for cases where the internal state handling is delicate enough that it
-> > should not be exposed (see __iterate_supers() which does exactly work
-> > like Neil suggested down to the flag argument itself I added).
-> > 
-> > So I'm open to the callback solution.
-> > 
-> > (Note for really absurd perf requirements you could even make it work
-> > with static calls I'm pretty sure.)
-> 
-> I guess we will go with Mickaël’s idea:
-> 
-> > int vfs_walk_ancestors(struct path *path,
-> >                       bool (*walk_cb)(const struct path *ancestor, void *data),
+On 7/9/2025 1:00 AM, Maxime Bélair wrote:
+> This patchset introduces two new syscalls: lsm_config_self_policy(),
+> lsm_config_system_policy() and the associated Linux Security Module hooks
+> security_lsm_config_*_policy(), providing a unified interface for loading
+> and managing LSM policies. These syscalls complement the existing per‑LSM
+> pseudo‑filesystem mechanism and work even when those filesystems are not
+> mounted or available.
+>
+> With these new syscalls, users and administrators may lock down access to
+> the pseudo‑filesystem yet still manage LSM policies. Two tightly-scoped
+> entry points then replace the many file operations exposed by those
+> filesystems, significantly reducing the attack surface. This is
+> particularly useful in containers or processes already confined by
+> Landlock, where these pseudo‑filesystems are typically unavailable.
+>
+> Because they provide a logical and unified interface, these syscalls are
+> simpler to use than several heterogeneous pseudo‑filesystems and avoid
+> edge cases such as partially loaded policies. They also eliminates VFS
+> overhead, yielding performance gains notably when many policies are
+> loaded, for instance at boot time.
+>
+> This initial implementation is intentionally minimal to limit the scope
+> of changes. Currently, only policy loading is supported, and only
+> AppArmor registers this LSM hook. However, any LSM can adopt this
+> interface, and future patches could extend this syscall to support more
+> operations, such as replacing, removing, or querying loaded policies.
 
-> >                       void *data, int flags)
-> > 
-> > The walk continue while walk_cb() returns true.  walk_cb() can then
-> > check if @ancestor is equal to a @root, or other properties.  The
-> > walk_cb() return value (if not bool) should not be returned by
-> > vfs_walk_ancestors() because a walk stop doesn't mean an error.
-> 
-> If necessary, we hide “root" inside @data. This is good. 
-> 
-> > @path would be updated with latest ancestor path (e.g. @root).
-> 
-> Update @path to the last ancestor and hold proper references. 
-> I missed this part earlier. With this feature, vfs_walk_ancestors 
-> should work usable with open-codeed bpf path iterator. 
-> 
-> I have a question about this behavior with RCU walk. IIUC, RCU 
-> walk does not hold reference to @ancestor when calling walk_cb().
+It would help me be more confident in the interface if you also included
+hooks for SELinux and Smack. The API needs to be general enough to support
+SELinux's atomic policy load, Smack's atomic and incremental load options,
+and Smack's self rule loads. I really don't want to have to implement
+lsm_config_self_policy2() when I decide to us it for Smack.
 
-I think a reference to the mount should be held, but not necessarily to
-the dentry if we are still in the same mount as the original path.
-
-> If walk_cb() returns false, shall vfs_walk_ancestors() then
-> grab a reference on @ancestor? This feels a bit weird to me. 
-
-If walk_cb() checks for a root, it will return false when the path will
-match, and the caller would expect to get this root path, right?
-
-In general, it's safer to always have the same behavior when holding or
-releasing a reference.  I think the caller should then always call
-path_put() after vfs_walk_ancestors() whatever the return code is.
-
-> Maybe “updating @path to the last ancestor” should only apply to
-> LOOKUP_RCU==false case? 
-> 
-> > @flags could contain LOOKUP_RCU or not, which enables us to have
-> > walk_cb() not-RCU compatible.
-> > 
-> > When passing LOOKUP_RCU, if the first call to vfs_walk_ancestors()
-> > failed with -ECHILD, the caller can restart the walk by calling
-> > vfs_walk_ancestors() again but without LOOKUP_RCU.
-> 
-> 
-> Given we want callers to handle -ECHILD and call vfs_walk_ancestors
-> again without LOOKUP_RCU, I think we should keep @path not changed
-> With LOOKUP_RCU==true, and only update it to the last ancestor 
-> when LOOKUP_RCU==false. 
-
-As Neil said, we don't want to explicitly pass LOOKUP_RCU as a public
-flag.  Instead, walk_cb() should never sleep (and then potentially be
-called under RCU by the vfs_walk_ancestors() implementation).
-
-> 
-> With this behavior, landlock code will be like:
-> 
-> 
-> /* Assume we hold reference on “path”. 
->  * With LOOKUP_RCU, path will not change, we don’t need 
->  * extra reference on “path”.
->  */
-> err = vfs_walk_ancestors(path, ll_cb, data, LOOKUP_RCU);
-> /* 
->  * At this point, whether err is 0 or not, path is not 
->  * changed.
->  */
-> 
-> if (err == -ECHILD) {
-> 	struct path walk_path = *path;
-> 
-> 	/* reset any data changed by the walk */
-> 	reset_data(data);
-> 
-> 	/* get a reference on walk_path. */
-> 	path_get(&walk_path);
-> 
-> 	err = vfs_walk_ancestors(&walk_path, ll_cb, data, 0);
-> 	/* Now, walk_path might be updated */
-> 
-> 	/* Always release reference on walk_path */
-> 	path_put(&walk_path);
-> }
-> 
-> 
-> BPF path iterator sode will look like:
-> 
-> static bool bpf_cb(const struct path *ancestor, void *data)
-> {
-> 	return false;
-> }
-
-Instead of this callback, we could just always return if walk_cb is
-NULL.
-
-> 
-> struct path *bpf_iter_path_next(struct bpf_iter_path *it)
-> {
-> 	struct bpf_iter_path_kern *kit = (void *)it;
-> 
-> 	if (vfs_walk_ancestors(&kit->path, bpf_cb, NULL))
-> 		return NULL;
-> 	return &kit->path;
-> }
-> 
-> 
-> Does this sound reasonable to every body?
-> 
-> Thanks,
-> Song
-> 
+>
+> Landlock already provides three Landlock‑specific syscalls (e.g.
+> landlock_add_rule()) to restrict ambient rights for sets of processes
+> without touching any pseudo-filesystem. lsm_config_*_policy() generalizes
+> that approach to the entire LSM layer, so any module can choose to
+> support either or both of these syscalls, and expose its policy
+> operations through a uniform interface and reap the advantages outlined
+> above.
+>
+> This patchset is available at [1], a minimal user space example
+> showing how to use lsm_config_system_policy with AppArmor is at [2] and a
+> performance benchmark of both syscalls is available at [3].
+>
+> [1] https://github.com/emixam16/linux/tree/lsm_syscall
+> [2] https://gitlab.com/emixam16/apparmor/tree/lsm_syscall
+> [3] https://gitlab.com/-/snippets/4864908
+>
+> ---
+> Changes in v5
+>  - Improve syscall input verification
+>  - Do not export security_lsm_config_*_policy symbols
+>
+> Changes in v4
+>  - Make the syscall's maximum buffer size defined per module
+>  - Fix a memory leak
+>
+> Changes in v3
+>  - Fix typos
+>
+> Changes in v2
+>  - Split lsm_manage_policy() into two distinct syscalls:
+>    lsm_config_self_policy() and lsm_config_system_policy()
+>  - The LSM hook now calls only the appropriate LSM (and not all LSMs)
+>  - Add a configuration variable to limit the buffer size of these
+>    syscalls
+>  - AppArmor now allows stacking policies through lsm_config_self_policy()
+>    and loading policies in any namespace through
+>    lsm_config_system_policy()
+> ---
+>
+> Maxime Bélair (3):
+>   Wire up lsm_config_self_policy and lsm_config_system_policy syscalls
+>   lsm: introduce security_lsm_config_*_policy hooks
+>   AppArmor: add support for lsm_config_self_policy and
+>     lsm_config_system_policy
+>
+>  arch/alpha/kernel/syscalls/syscall.tbl        |  2 +
+>  arch/arm/tools/syscall.tbl                    |  2 +
+>  arch/m68k/kernel/syscalls/syscall.tbl         |  2 +
+>  arch/microblaze/kernel/syscalls/syscall.tbl   |  2 +
+>  arch/mips/kernel/syscalls/syscall_n32.tbl     |  2 +
+>  arch/mips/kernel/syscalls/syscall_n64.tbl     |  2 +
+>  arch/mips/kernel/syscalls/syscall_o32.tbl     |  2 +
+>  arch/parisc/kernel/syscalls/syscall.tbl       |  2 +
+>  arch/powerpc/kernel/syscalls/syscall.tbl      |  2 +
+>  arch/s390/kernel/syscalls/syscall.tbl         |  2 +
+>  arch/sh/kernel/syscalls/syscall.tbl           |  2 +
+>  arch/sparc/kernel/syscalls/syscall.tbl        |  2 +
+>  arch/x86/entry/syscalls/syscall_32.tbl        |  2 +
+>  arch/x86/entry/syscalls/syscall_64.tbl        |  2 +
+>  arch/xtensa/kernel/syscalls/syscall.tbl       |  2 +
+>  include/linux/lsm_hook_defs.h                 |  4 +
+>  include/linux/security.h                      | 20 +++++
+>  include/linux/syscalls.h                      |  5 ++
+>  include/uapi/asm-generic/unistd.h             |  6 +-
+>  include/uapi/linux/lsm.h                      |  8 ++
+>  kernel/sys_ni.c                               |  2 +
+>  security/apparmor/apparmorfs.c                | 31 +++++++
+>  security/apparmor/include/apparmor.h          |  4 +
+>  security/apparmor/include/apparmorfs.h        |  3 +
+>  security/apparmor/lsm.c                       | 84 +++++++++++++++++++
+>  security/lsm_syscalls.c                       | 25 ++++++
+>  security/security.c                           | 60 +++++++++++++
+>  tools/include/uapi/asm-generic/unistd.h       |  6 +-
+>  .../arch/x86/entry/syscalls/syscall_64.tbl    |  2 +
+>  29 files changed, 288 insertions(+), 2 deletions(-)
+>
+>
+> base-commit: 9c32cda43eb78f78c73aee4aa344b777714e259b
