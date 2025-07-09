@@ -1,108 +1,92 @@
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFBD289E01;
-	Wed,  9 Jul 2025 10:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31F828E56B;
+	Wed,  9 Jul 2025 11:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752056662; cv=none; b=qMQpBLH5xRJYsILkvFsV2xQaZr2GGiSK81zRhG6mkSvZ/IloHb3JTZZ1ste/Xrs0+2UTC4J2QSyWrh50FMV4v+ZI+yZw0Jk44gzlSglylDv1InPNSvrKibHbnnfkv/ObgVbPrVP+rhmJUhqsUeJrx9GoL2jNkYxm4WEBSFAkMII=
+	t=1752058843; cv=none; b=ZpqGw15rm+jRfbEUIM3k9B0dOz4QHF+JuKhTTbydMHDk8xALQ4jqIv/oQjDcOr8QXwJS0HdHdjIvQ45oqlQQbEoU3jYWmCYc7f66f3/jlu12uFshfEu7Cn7UtQ+DHzcziDiJqeYbZpXnCwOSKwS4VURvxpPuKiccyUbJ0MXeZtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752056662; c=relaxed/simple;
-	bh=eceDHLR9jfkyk8ah6iJSeORnmSddRn+V+ec4+M2xGQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q9EGxHgvt8fz2d+sAz2VrHyclnBs9bpiR4UmUN6B3XLV4QnlZqVAephSPCdTrSbcFBwdpg+2FWMu3gR/LncxAzWuTgZXSngchm111QUtJMyZ3OuwN/N+lZVtMGReznWNqRUaJZex0Eh0aU5tPyBe3Odzl5btImEyMdOghVIosVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BpF5Rk++; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BpF5Rk++"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=NJ2YU3x+ZI7uTsAkTW0WNQnC6o7r6JZlBGNIPTD2op0=; b=BpF5Rk++Aj382yTKz7Tg3d84o3
-	kfPx/EtP/dkFLegkE7YqOAlGDhpxZCHvcMtcsjUtMLvTjJsLAwV1FeDez1mzkYhhQZzVDPNCJuIPt
-	DOq6LnT+U3Z2l3RNZuw+c2YUEjLxth2uDSsA0zFDvvPrgckK8YyjsRS8iFY/TYwJjKq8XrVgcjUTX
-	s/SH1kMJUTvnqK3Td601Hhm85Od9WD1Eoffps7UGsR19z3wY7gJfqrj1EBZs3u75AZvDOgsymfO6o
-	vkyO5suUR/EnF4+RRUjZHa6LuKiYGfYtZZ+RE3iwnGvqt4QgehnZ//wFRDEVs1Cagcjw0g0F8NFlh
-	XTPIG1Ag==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uZRyE-0000000H4uh-3XNx;
-	Wed, 09 Jul 2025 10:24:10 +0000
-Date: Wed, 9 Jul 2025 11:24:10 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	apparmor@lists.ubuntu.com, selinux@vger.kernel.org,
-	tomoyo-users_en@lists.sourceforge.net,
-	tomoyo-users_ja@lists.sourceforge.net, kernel-team@meta.com,
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
-	daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org,
-	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com,
-	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org,
-	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com,
-	m@maowtm.org, john.johansen@canonical.com, john@apparmor.net,
-	stephen.smalley.work@gmail.com, omosnace@redhat.com,
-	takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp,
-	enlightened@chromium.org
-Subject: Re: [RFC] vfs: security: Parse dev_name before calling
- security_sb_mount
-Message-ID: <20250709102410.GU1880847@ZenIV>
-References: <20250708230504.3994335-1-song@kernel.org>
+	s=arc-20240116; t=1752058843; c=relaxed/simple;
+	bh=nroZtb7CcNsJWvIP5IyDXnbfeHRiFuSdeUL2mtj3yik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l6CoxfyRUIdGkcMONZ9X0HoKhbR22zf2rWkabDB0212t7N+cg+OkvXJJ3mhCFuEMFrtJ1+wUuObX7l2rLXILMkk+4AzGtRBDFP5kyIrdxebcnB9ejP/o1jF+omKO7BBkSo2T3exao0NpB1EJXQ4ShZ117w//peeBd0tRsOxpkdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 569AxOQL003680;
+	Wed, 9 Jul 2025 19:59:24 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 569AxO7L003674
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 9 Jul 2025 19:59:24 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <be405f31-d6d9-4ecd-b941-503b6a5d2011@I-love.SAKURA.ne.jp>
+Date: Wed, 9 Jul 2025 19:59:24 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708230504.3994335-1-song@kernel.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] AppArmor: add support for lsm_config_self_policy
+ and lsm_config_system_policy
+To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
+        linux-security-module@vger.kernel.org
+Cc: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, mic@digikod.net, kees@kernel.org,
+        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
+        takedakn@nttdata.co.jp, song@kernel.org, rdunlap@infradead.org,
+        linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
+        linux-kernel@vger.kernel.org
+References: <20250709080220.110947-1-maxime.belair@canonical.com>
+ <20250709080220.110947-4-maxime.belair@canonical.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20250709080220.110947-4-maxime.belair@canonical.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Anti-Virus-Server: fsav201.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Tue, Jul 08, 2025 at 04:05:04PM -0700, Song Liu wrote:
-> security_sb_mount handles multiple types of mounts: new mount, bind
-> mount, etc. When parameter dev_name is a path, it need to be parsed
-> with kern_path.
-> 
-> Move the parsing of dev_name to path_mount, and pass the result to
-> security_sb_mount, so that:
-> 1. The LSMs do not need to call kern_path again;
-> 2. For BPF LSM, we can use struct path dev_path, which is much easier to
->    use than a string.
-> 3. We can now remove do_move_mount_old.
-> 
-> Also, move may_mount check to before security_sb_mount and potential
-> kern_path, so that requests without proper capability will be rejected
-> sooner.
-> 
-> Signed-off-by: Song Liu <song@kernel.org>
-> 
-> ---
-> The primary motivation of this change is to monitor bind mount and move
-> mount in BPF LSM. There are a few options for this to work:
-> 1. Introduce bpf_kern_path kfunc.
-> 2. Add new hook(s), such as [1].
-> 3. Something like this patch.
-> 
-> At this moment, I think this patch is the best solution.
-> 
-> New mount for filesystems with FS_REQUIRES_DEV also need kern_path for
-> dev_name. apparmor and tomoyo still call kern_path in such cases.
-> However, it is a bit tricky to move this kern_path call to path_mount,
-> so new mount path is not changed in this version.
+On 2025/07/09 17:00, Maxime Bélair wrote:
+> +static int apparmor_lsm_config_self_policy(u32 lsm_id, u32 op, void __user *buf,
+> +				      size_t size, u32 flags)
+> +{
+> +	char *name;
+> +	long name_size;
+> +	int ret;
+> +
+> +	if (op != LSM_POLICY_LOAD || flags)
+> +		return -EOPNOTSUPP;
+> +	if (size == 0)
+> +		return -EINVAL;
+> +	if (size > AA_PROFILE_NAME_MAX_SIZE)
+> +		return -E2BIG;
+> +
+> +	name = kmalloc(size, GFP_KERNEL);
+> +	if (!name)
+> +		return -ENOMEM;
+> +
+> +
+> +	name_size = strncpy_from_user(name, buf, size);
+> +	if (name_size < 0) {
+> +		kfree(name);
+> +		return name_size;
+> +	}
 
-security_sb_mount() is and had always been a mind-boggling trash of an API.
+name is not '\0'-terminated when name_size == size && 0 < size && size <= AA_PROFILE_NAME_MAX_SIZE.
+Please check boundary conditions by writing userspace programs for testing.
 
-It makes no sense in terms of operations being requested.  And any questions
-regarding its semantics had been consistently met with blanket "piss off,
-LSM gets to do whatever it wants to do, you are not to question the sanity
-and you are not to request any kind of rules - give us the fucking syscall
-arguments and let us at it".
+> +
+> +	ret = aa_change_profile(name, AA_CHANGE_STACK);
+> +
+> +	kfree(name);
+> +
+> +	return ret;
+> +}
 
-Come up with a saner API.  We are done accomodating that idiocy.  The only
-changes you get to make in fs/namespace.c are "here's our better-defined
-hooks, please call <this hook> when you do <that>".
-
-NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
