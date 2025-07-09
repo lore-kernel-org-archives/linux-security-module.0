@@ -1,125 +1,158 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0F42D3EFD
-	for <linux-security-module@vger.kernel.org>; Wed,  9 Jul 2025 15:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2264C2E8894
+	for <linux-security-module@vger.kernel.org>; Wed,  9 Jul 2025 15:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752074384; cv=none; b=MItWD/6Q/eIe7cQr62yz4eFizIaAzb3WuCIMQMEoQQ0SvfCHNkhMVcw//FTmNqhCeRYrGsA6kNFSTVBOsGO+k1G+GFQuKkoDn18xTSd40zjQEFBpuJT47WmwWGaipKmI47aDJTBcpaGxF4oYwipZQP36ZuQARrzGHojT+eWJWwI=
+	t=1752074982; cv=none; b=qfnss0lvPdTtDjDiTper5Rg877dV1VBEprMsiiKFt0CDHtxHZEpMagwa3SDadPHr+VOGrqMpsg+8Jc5bXchG8tGamBG3Ft2huaQitAaXpblfjgsKeVn+1mkjlqIcVjP68py6OvbG9PCOGgBll04jRbwjX6/QRA6AGQgDdDN86F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752074384; c=relaxed/simple;
-	bh=jX5tGhwQ7UlQseFYx0r6Xq1z1pSzCZuykZeE/E6aZLw=;
+	s=arc-20240116; t=1752074982; c=relaxed/simple;
+	bh=p8u1I+TwDnZvr0r3AL4vw+eoMhlu7STVgxRUoFgI2GU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=em1m2pJC+wx2QYplSccbnEQzMTYL5hNwTr6GQO9zdNfO7fXpENQgS7r20VM3PFfavHjiLoJVlCCELTFRtcZlp7T/BlmyRZPw1NcNX/mzCZJhRvHX246y3YBuasHFo49CHBPOa9vQaG64qhn5KCwi1YJ8GPzKhwNjH0cIYR8AgPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PReXMYE9; arc=none smtp.client-ip=209.85.219.177
+	 To:Cc:Content-Type; b=TXqnPhwp5qprOOMzB5jgX3OsmLJcbZTMetEuCGGSPe2NA5ERc2wIAoY937zxMuaUEXMEfApTEbJBbQBoY+IOVbbaXEYDO11O/fgTmrgkyrQXTyzPEFmMQySaFwdjeSr1vYTsahHmzAB9K/M7Y5C0WaGoeDit4+liBo47NWc9wVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=LOtOa/+5; arc=none smtp.client-ip=209.85.128.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PReXMYE9"
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e81749142b3so4595151276.3
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Jul 2025 08:19:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LOtOa/+5"
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-70e77831d68so410787b3.2
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Jul 2025 08:29:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1752074382; x=1752679182; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1752074978; x=1752679778; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YzEGonVmXproAomin5eIhv7ocY+0CXz52Ye0JGlwwtY=;
-        b=PReXMYE9vxDaCblE0ryYjn329fImJCE4IW1XDWhk+ctbfYYeukIAD+qQDBPrQyV8fb
-         mgGell5vdkvPLhx2roO83HBztkglI5Y1rOjxeEuwjX2HRHQi6L4GvfJD/95sba+VPg/U
-         hMdnUlrGjNu7ov7hP+Gjrz7LZTDdThNIPEmhLPd/8vX0wwUrRvnfQxkmftAu1ZoduwuV
-         5rM0qigpQhZzgH3EnBR0gKuV/NlKVfvxiodqgXjIVZLU5lJGm+9uxtdMXebLAL689M7Y
-         ng1xu910hSOHK2S4c3L10Vb/X8Y2fxb4vis3B7Fve/ZY3mi+cpdx8vTovJA/ZypvxBmF
-         7diQ==
+        bh=Qi9rgpEnLHZiafsUKLOufZyd7/6HZqWViU92Vja6Uog=;
+        b=LOtOa/+5jQalS4WprVyD/D7ZtWnXDVRitYTzPWO8g9cHWF0lvePdNi/8503R092h9u
+         /0YUzmWEwvxg/QWeFI8gkQyO/Mm91MVtPiEUrWv47tWCxLq5tm4BvD8cKJcPi2kByDv2
+         6SPwTh1X4j7fARSI9Dx8mFZutxjtgiXj/3cb6RDTtBynA2zV/xmalQQewYeO4uykoNx+
+         t1JGV1uVRVILLiVHqy++bzzewxxmUDX2V+FzxEbX0TQLajmQ6cL+7QCZ7j0/tmdWCLng
+         Vkk4x/Mq2w8rX2oR7M16zKOagmjefPWZZBY7vzN64mZReLJvqABD+w+xMbjkClv4F7mg
+         EKxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752074382; x=1752679182;
+        d=1e100.net; s=20230601; t=1752074978; x=1752679778;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YzEGonVmXproAomin5eIhv7ocY+0CXz52Ye0JGlwwtY=;
-        b=S+AHdZIrpcQrJwK9fl8oUT4zfPmnjsRIEBJk6L8dMfdC1mAb50KXmdYxpHbTZiqUqK
-         hZWSQKfRfar0Xv00Xv8Gv5denCwbBDd4+z7K6aueCS+jcEK2rLlJgszVy/GyLayIocE6
-         2pzWVXwkQuoR9ZAp74/7lb8VEqNPIwluKDDMfCue1vFOOFxbexfawaRgtdh2pESj1sgV
-         F8X5vL1Amqd1J442e9l/zcvC/Evh1WSQIzIFmcYUkAIEO2BPF1UeBMEHKs9nheW/fRc1
-         Z8rwIzZe1OETOdIPSUylCSDf76ygYSq0G0AsXe0E16V/ycTYKLYOA0Ll5291nwW4g+UD
-         AWrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqUIqWdTRXA5vd/UU//HrGXh+/4OIBOQYWsZHMPhZFa7CiRbRLLZHhRveDCeshBH9iMOS2JDVp1dGPi7IYr/uaSubb3Ko=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl+UEUOSzGws03iQZUJ16v9IngLFUXCKUgIhkKdiWN8DvrtxDA
-	EgVOB1U6W/Gy8P6kWh5qyh7deooylK51NGVZNXqyreNxaEZVedlTZ/FoC78SU4X1vWTXvLf/KpD
-	TKqESSRdkMUXB4htzeyYRdK0f3S+Cisrm3JmUXM3N
-X-Gm-Gg: ASbGnct5hwLPIgLP8nhbx1H7jT/NJtzpbZQ5Gx0e7l1MvFT9uRe8CEGBfSif6J3JFkE
-	sNH3Xwt50NNL9BqTvSRnx4A/ChmWGNUJUQLYRTBvr96WGNEO3i0c6qSE2+l8fpS63YlfanjQThR
-	o5Tqnws1gJM/Cwe7kamT9X9Lwo5ruPXB6ULnLAlC6VT7Y=
-X-Google-Smtp-Source: AGHT+IFjdm/SLcamSWISUQ66DrdwMnktjlqu7nOrNWg4Q3frFotVmkLuYoFvM0O8pXxaPwSx2wsTZlYITGZbRbzkEHs=
-X-Received: by 2002:a05:690c:62c5:b0:70e:7706:8250 with SMTP id
- 00721157ae682-717b17ace8cmr45883167b3.16.1752074381801; Wed, 09 Jul 2025
- 08:19:41 -0700 (PDT)
+        bh=Qi9rgpEnLHZiafsUKLOufZyd7/6HZqWViU92Vja6Uog=;
+        b=hd8uJ6TQ2hodwbZXIYO+EHO03p8G1oAiq6LhjeaPjVF57A1FwlHF2Xg7H+p06kWzUg
+         +xYfcIJzmuYDynJB5GnLogYnbo4/pCY7tjTwFtkwicz1kqpCxEaVbz1slC1ACoohPSGU
+         HYG9vnuefPfBmq4SpftUgxeBtEOsVVpXzWLkK+rkrD3asllGe/X5QjymukRbh+qmE7Fn
+         pjlDMkX0zp2FcVBTbOp4d++8xnTfsdKJGun2j7LvnAuAwcNuBLar2q0WSnKiCqcrwxbW
+         t9pUPg+p5ShUOntluC7YtJIWrUcMMAAAieiYSmUiKjv+E7IV76LDVIYv6cTkAf/xSAnM
+         mPqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbfhtLvZ3jFyFP0GjfrAYAcd2K9wS2ThN/DzJjtRX/I3J4v7jVtV/de0bTPLoNMjGPnvIhUxPNgyj7MF4Bz2eHMfUqnD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzvf+F3BdaFV3a5vgIlxXBrMO9R/MdRZvA4Icyj5ormKyih5KbF
+	QGvemxxpuDYQ4z8lZArDOharP58IL/yZbkaU9/WYnbu3rUvbevIy7VrNt2//j0WXgqnRyLbUClg
+	tIBoatDZtkbkDi1QBQw7p0V0N37gM3n7BZpA7Zf7H
+X-Gm-Gg: ASbGnct7jjJWpm8gkn75c0rJkHHcnYfsMXLFLjf3B6HAhgKkQaQA4CXEZ5bIJsrK6Y7
+	MwiYwfq1W90RAWckWU5Cks0PTHTaUEu7I75LiRynIB+7ur9niDpwTGvLlGYW4tpWBEOprMGAytp
+	OjXkLJGZcqVwbSkOHBA6eh2N6Ig/F3DibBYYQ7Zu8E6ag=
+X-Google-Smtp-Source: AGHT+IEd2P6zJ3kWghatDD3PuttWYXbQstUnXrNxhPW9V/XABSJDX4cZ3tvH6hXpPKypZE3XGkQDfVX5HjrqG3b1m4k=
+X-Received: by 2002:a05:690c:6d04:b0:70e:731f:d4c7 with SMTP id
+ 00721157ae682-717b1b00f7fmr39534977b3.8.1752074978213; Wed, 09 Jul 2025
+ 08:29:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708230504.3994335-1-song@kernel.org> <20250709102410.GU1880847@ZenIV>
-In-Reply-To: <20250709102410.GU1880847@ZenIV>
+References: <20240729180233.1114694-1-mic@digikod.net> <20241007.aek5Ohpahlai@digikod.net>
+ <20250709.ZooYu6oasaiN@digikod.net>
+In-Reply-To: <20250709.ZooYu6oasaiN@digikod.net>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 9 Jul 2025 11:19:30 -0400
-X-Gm-Features: Ac12FXxwFg_uAGld7AFSlsXAxl6RXBEAoPyYFqRJUVoeSEfIzHaujAQ4qrD1sLk
-Message-ID: <CAHC9VhSS1O+Cp7UJoJnWNbv-Towia72DitOPH0zmKCa4PBttkw@mail.gmail.com>
-Subject: Re: [RFC] vfs: security: Parse dev_name before calling security_sb_mount
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Song Liu <song@kernel.org>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, selinux@vger.kernel.org, 
-	tomoyo-users_en@lists.sourceforge.net, tomoyo-users_ja@lists.sourceforge.net, 
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org, jack@suse.cz, 
-	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, 
-	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, 
-	gnoack@google.com, m@maowtm.org, john.johansen@canonical.com, 
-	john@apparmor.net, stephen.smalley.work@gmail.com, omosnace@redhat.com, 
-	takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, 
-	enlightened@chromium.org
+Date: Wed, 9 Jul 2025 11:29:27 -0400
+X-Gm-Features: Ac12FXyFIPyY3gbGpyuEASo18cXUllnIboPZdeX6_Di8-I0tjzRR9-qOUQiFx04
+Message-ID: <CAHC9VhSZ7bfyKvUxmN+0P-XSN-FC6CH44PTKB5nj5mS32vRNHg@mail.gmail.com>
+Subject: Re: [PATCH] tools/certs: Make print-cert-tbs-hash.sh compatible with
+ recent OpenSSL
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: David Howells <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>, keyrings@vger.kernel.org, 
+	Eric Snowberg <eric.snowberg@oracle.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Daniel Urbonas <t-durbonas@microsoft.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 9, 2025 at 6:24=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
-> On Tue, Jul 08, 2025 at 04:05:04PM -0700, Song Liu wrote:
-> > security_sb_mount handles multiple types of mounts: new mount, bind
-> > mount, etc. When parameter dev_name is a path, it need to be parsed
-> > with kern_path.
-
-...
-
-> security_sb_mount() is and had always been a mind-boggling trash of an AP=
-I.
+On Wed, Jul 9, 2025 at 9:20=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
 >
-> It makes no sense in terms of operations being requested.  And any questi=
-ons
-> regarding its semantics had been consistently met with blanket "piss off,
-> LSM gets to do whatever it wants to do, you are not to question the sanit=
-y
-> and you are not to request any kind of rules - give us the fucking syscal=
-l
-> arguments and let us at it".
+> I can take it but I'd like an Acked-by please.
 
-I'm not going to comment on past remarks made by other devs, but I do
-want to make it clear that I am interested in making sure we have LSM
-hooks which satisfy both the needs of the existing in-tree LSMs while
-also presenting a sane API to the kernel subsystems in which they are
-placed.  I'm happy to revisit any of our existing LSM hooks to
-restructure them to better fit these goals; simply send some patches
-and let's discuss them.
+%  openssl -v
+OpenSSL 3.5.1 1 Jul 2025 (Library: OpenSSL 3.5.1 1 Jul 2025)
 
-> Come up with a saner API.  We are done accomodating that idiocy.  The onl=
-y
-> changes you get to make in fs/namespace.c are "here's our better-defined
-> hooks, please call <this hook> when you do <that>".
+With Linus' current tree:
+% ./print-cert-tbs-hash.sh ./LVFS-CA.pem
+Could not open file or uri for loading certificate from -: No such file or =
+direc
+tory
+tbs:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 
-I don't have the cycles to revisit the security_sb_mount() hook
-myself, but perhaps Song Liu does with some suggestions/guidance from
-you or Christian on what an improved LSM hook would look like from a
-VFS perspective.
+With the patch below:
+% ./print-cert-tbs-hash.sh ./LVFS-CA.pem
+tbs:b11d0663606508a8510b760d68acb599f1911726f7c06c01df4d122fce8b957b
+
+Tested-by: Paul Moore <paul@paul-moore.com>
+
+> On Mon, Oct 07, 2024 at 08:42:16PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+> > Could someone please take this patch?
+> >
+> > On Mon, Jul 29, 2024 at 08:02:32PM +0200, Micka=C3=ABl Sala=C3=BCn wrot=
+e:
+> > > Recent OpenSSL versions (2 or 3) broke the "x509" argument parsing by
+> > > not handling "-in -" (unlike OpenSSL 1.1):
+> > >   Could not open file or uri for loading certificate from -: No such
+> > >   file or directory
+> > >
+> > > Avoid this issue and still make this script work with older versions =
+of
+> > > OpenSSL by using implicit arguments instead.
+> > >
+> > > To hopefully make it more future-proof, apply the same simplification=
+s
+> > > for other OpenSSL commands.
+> > >
+> > > Cc: David Howells <dhowells@redhat.com>
+> > > Cc: David Woodhouse <dwmw2@infradead.org>
+> > > Cc: Eric Snowberg <eric.snowberg@oracle.com>
+> > > Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> > > Reported-by: Daniel Urbonas <t-durbonas@microsoft.com>
+> > > Fixes: 58d416351e6d ("tools/certs: Add print-cert-tbs-hash.sh")
+> > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > > ---
+> > >  tools/certs/print-cert-tbs-hash.sh | 6 +++---
+> > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/tools/certs/print-cert-tbs-hash.sh b/tools/certs/print-c=
+ert-tbs-hash.sh
+> > > index c93df5387ec9..22bdeec4d286 100755
+> > > --- a/tools/certs/print-cert-tbs-hash.sh
+> > > +++ b/tools/certs/print-cert-tbs-hash.sh
+> > > @@ -54,7 +54,7 @@ RANGE_AND_DIGEST_RE=3D'
+> > >  '
+> > >
+> > >  RANGE_AND_DIGEST=3D($(echo "${PEM}" | \
+> > > -   openssl asn1parse -in - | \
+> > > +   openssl asn1parse | \
+> > >     sed -n -e "${RANGE_AND_DIGEST_RE}"))
+> > >
+> > >  if [ "${#RANGE_AND_DIGEST[@]}" !=3D 3 ]; then
+> > > @@ -85,7 +85,7 @@ if [ -z "${DIGEST_MATCH}" ]; then
+> > >  fi
+> > >
+> > >  echo "${PEM}" | \
+> > > -   openssl x509 -in - -outform DER | \
+> > > +   openssl x509 -outform DER | \
+> > >     dd "bs=3D1" "skip=3D${OFFSET}" "count=3D${END}" "status=3Dnone" |=
+ \
+> > > -   openssl dgst "-${DIGEST_MATCH}" - | \
+> > > +   openssl dgst "-${DIGEST_MATCH}" | \
+> > >     awk '{printf "tbs:" $2}'
+> > > --
+> > > 2.45.2
 
 --=20
 paul-moore.com
