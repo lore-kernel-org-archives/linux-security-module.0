@@ -1,124 +1,143 @@
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C72F72636;
-	Thu, 10 Jul 2025 00:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C5A846C;
+	Thu, 10 Jul 2025 01:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752109119; cv=none; b=WDKopYji/7mW1InflJHpEkTp4a4xkzTT7Phxd2M38fORi3qMPie75U5fAgWbbvWboOZ5ev0UDZwFfnFSp/FGASW5Ozc82T0cV0pe+DL1kwcbWLFLofqKwi3+EmOCIj6l8RmBBmXAsfhI3ZMhZKxwAFXaEqc+vsThpC6wCOhMy7Q=
+	t=1752112622; cv=none; b=TIeD5c50jmuF0uKXJ+D63N4yxfI//3XthxMTfEb+oMEqPR5pdOKTf7EONnMPIXLBh3uywfypaWPiDpDZbW9YO9DnSgU+re4gNwirWirDP5nR3xa2f4vtkxh7rfH3uUoNp2GTJ6pf6F5sDjMtDHADk1DTRe81eiuSZXQhVHemxlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752109119; c=relaxed/simple;
-	bh=XZbKtfqPPiCgKWUAMA7ouwhZLt7x2jDpVVWpB+SmN5A=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=W8TJ5CFubTiR/l3KmHo3EFuQOBpBeE7EmP0H6/uXJLddJghT9Mh/XvxdzZzRIKR/qWk3MQxxrTPOBxIZzbSf/VBET9H9mrEsCxODoaxQw8uGSJWVbn2y4NMXbp2R22vC6wbcSRQBAF0EosAjvldQlnMXzpKAYYAyU6cr/chuLGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uZfcO-001H9r-LD;
-	Thu, 10 Jul 2025 00:58:34 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1752112622; c=relaxed/simple;
+	bh=V5+0JeybGuGj3hNbNrffhOaKN4FNKIUQicNKhhV6M9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=omIPSsBs5r7iLg7+sjAVJY9UtCGN9PHUC5gc9uws4aUuGSXXfoAJLKaBa0+DZBMjISWhj0ClhBa3rQ44AlTN0nVkGfO1mDLqwg84gQUwhgcGc70ICfVkH4V0nJYGRKLvvUzm5DX8zGe9+bIYfwvt1qNDMRnY+Hq6beGvjC/DtSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s36gQ67r; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s36gQ67r"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B5A6C4CEEF;
+	Thu, 10 Jul 2025 01:57:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752112621;
+	bh=V5+0JeybGuGj3hNbNrffhOaKN4FNKIUQicNKhhV6M9M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s36gQ67r+HzmWOakvqjLN2Bi+cxAqgCf9b1jm8CeVANKXagOyi4qRCxno997vOt7I
+	 npTW9Sqm4fAIHoISBPWcX7vjQIgal5suR6GEB+4EiYf2hwAgwibu53TlZdekzLZBEQ
+	 9ABBQhGaRUZwnPIix2Qtgh30B7PYqrpPimSO1KfrR0HfIEongwbMYk/1onz4hpDV26
+	 GuIsiO8b8UJiiZ9KWrmQ80LhTJRWiOT9thCwXfahXz+KypMzoUnp19aAp8cABbtMDx
+	 gSq60cIssEQ+9AYdxjTLFvnKp8xU42OaucaV/Fz2aUcFFHry0HoCkWdrBfNWJs8YVU
+	 kLmHPK8kS1RBw==
+Date: Wed, 9 Jul 2025 18:57:00 -0700
+From: Kees Cook <kees@kernel.org>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linuxppc-dev@lists.ozlabs.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, kasan-dev@googlegroups.com,
+	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v2 08/14] powerpc: Handle KCOV __init vs inline mismatches
+Message-ID: <202507091856.C6510D809A@keescook>
+References: <20250523043251.it.550-kees@kernel.org>
+ <20250523043935.2009972-8-kees@kernel.org>
+ <87jz662ssp.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Song Liu" <songliubraving@meta.com>
-Cc: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- "Christian Brauner" <brauner@kernel.org>, "Tingmao Wang" <m@maowtm.org>,
- "Song Liu" <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, "Kernel Team" <kernel-team@meta.com>,
- "andrii@kernel.org" <andrii@kernel.org>,
- "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
- "daniel@iogearbox.net" <daniel@iogearbox.net>,
- "martin.lau@linux.dev" <martin.lau@linux.dev>,
- "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
- "jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>,
- "mattbobrowski@google.com" <mattbobrowski@google.com>,
- =?utf-8?q?G=C3=BCnther?= Noack <gnoack@google.com>,
- "Jann Horn" <jannh@google.com>
-Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
-In-reply-to: <474C8D99-6946-4CFF-A925-157329879DA9@meta.com>
-References: <>, <474C8D99-6946-4CFF-A925-157329879DA9@meta.com>
-Date: Thu, 10 Jul 2025 10:58:33 +1000
-Message-id: <175210911389.2234665.8053137657588792026@noble.neil.brown.name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87jz662ssp.fsf@gmail.com>
 
-On Thu, 10 Jul 2025, Song Liu wrote:
+On Sat, May 24, 2025 at 04:13:02PM +0530, Ritesh Harjani wrote:
+> Kees Cook <kees@kernel.org> writes:
 > 
+> > When KCOV is enabled all functions get instrumented, unless
+> > the __no_sanitize_coverage attribute is used. To prepare for
+> > __no_sanitize_coverage being applied to __init functions, we have to
+> > handle differences in how GCC's inline optimizations get resolved. For
+> > s390 this requires forcing a couple functions to be inline with
+> > __always_inline.
+> >
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> > ---
+> > Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> > Cc: Michael Ellerman <mpe@ellerman.id.au>
+> > Cc: Nicholas Piggin <npiggin@gmail.com>
+> > Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> > Cc: Naveen N Rao <naveen@kernel.org>
+> > Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+> > Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: <linuxppc-dev@lists.ozlabs.org>
+> > ---
+> >  arch/powerpc/mm/book3s64/hash_utils.c    | 2 +-
+> >  arch/powerpc/mm/book3s64/radix_pgtable.c | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/powerpc/mm/book3s64/hash_utils.c b/arch/powerpc/mm/book3s64/hash_utils.c
+> > index 5158aefe4873..93f1e1eb5ea6 100644
+> > --- a/arch/powerpc/mm/book3s64/hash_utils.c
+> > +++ b/arch/powerpc/mm/book3s64/hash_utils.c
+> > @@ -409,7 +409,7 @@ static DEFINE_RAW_SPINLOCK(linear_map_kf_hash_lock);
+> >  
+> >  static phys_addr_t kfence_pool;
+> >  
+> > -static inline void hash_kfence_alloc_pool(void)
+> > +static __always_inline void hash_kfence_alloc_pool(void)
+> >  {
+> >  	if (!kfence_early_init_enabled())
+> >  		goto err;
+> > diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/book3s64/radix_pgtable.c
+> > index 9f764bc42b8c..3238e9ed46b5 100644
+> > --- a/arch/powerpc/mm/book3s64/radix_pgtable.c
+> > +++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
+> > @@ -363,7 +363,7 @@ static int __meminit create_physical_mapping(unsigned long start,
+> >  }
+> >  
+> >  #ifdef CONFIG_KFENCE
+> > -static inline phys_addr_t alloc_kfence_pool(void)
+> > +static __always_inline phys_addr_t alloc_kfence_pool(void)
+> >  {
+> >  	phys_addr_t kfence_pool;
+> >  
 > 
-> > On Jul 9, 2025, at 3:24 PM, NeilBrown <neil@brown.name> wrote:
-> [...]
-> >> 
-> >> How should the user handle -ECHILD without LOOKUP_RCU flag? Say the
-> >> following code in landlocked:
-> >> 
-> >> /* Try RCU walk first */
-> >> err = vfs_walk_ancestors(path, ll_cb, data, LOOKUP_RCU);
-> >> 
-> >> if (err == -ECHILD) {
-> >> struct path walk_path = *path;
-> >> 
-> >> /* reset any data changed by the walk */
-> >> reset_data(data);
-> >> 
-> >> /* now do ref-walk */
-> >> err = vfs_walk_ancestors(&walk_path, ll_cb, data, 0);
-> >> }
-> >> 
-> >> Or do you mean vfs_walk_ancestors will never return -ECHILD?
-> >> Then we need vfs_walk_ancestors to call reset_data logic, right?
-> > 
-> > It isn't clear to me that vfs_walk_ancestors() needs to return anything.
-> > All the communication happens through walk_cb()
-> > 
-> > walk_cb() is called with a path, the data, and a "may_sleep" flag.
-> > If it needs to sleep but may_sleep is not set, it returns "-ECHILD"
-> > which causes the walk to restart and use refcounts.
-> > If it wants to stop, it returns 0.
-> > If it wants to continue, it returns 1.
-> > If it wants a reference to the path then it can use (new)
-> > vfs_legitimize_path() which might fail.
-> > If it wants a reference to the path and may_sleep is true, it can use
-> > path_get() which won't fail.
-> > 
-> > When returning -ECHILD (either because of a need to sleep or because
-> > vfs_legitimize_path() fails), walk_cb() would reset_data().
+> I remember seeing a warning msg around .init.text section. Let me dig
+> that...
 > 
-> This might actually work. 
+> ... Here it is: https://lore.kernel.org/oe-kbuild-all/202504190552.mnFGs5sj-lkp@intel.com/
 > 
-> My only concern is with vfs_legitimize_path. It is probably safer if 
-> we only allow taking references with may_sleep==true, so that path_get
-> won’t fail. In this case, we will not need walk_cb() to call 
-> vfs_legitimize_path. If the user want a reference, the walk_cb will 
-> first return -ECHILD, and call path_get when may_sleep is true. 
+> I am not sure why it only complains for hash_debug_pagealloc_alloc_slots().
+> I believe there should me more functions to mark with __init here.
+> Anyways, here is the patch of what I had in mind.. I am not a compiler expert,
+> so please let me know your thoughts on this.
 
-What is your concern with vfs_legitimize_path() ??
+Yeah, this looks good. I'll snag your patch and drop mine. :)
 
-I've since realised that always restarting in response to -ECHILD isn't
-necessary and isn't how normal path-walk works.  Restarting might be
-needed, but the first response to -ECHILD is to try legitimize_path().
-If that succeeds, then it is safe to sleep.
-So returning -ECHILD might just result in vfs_walk_ancestors() calling
-legitimize_path() and then calling walk_cb() again.  Why not have
-walk_cb() do the vfs_legitimize_path() call (which will almost always
-succeed in practice).
+-Kees
 
-NeilBrown
-
-
-> 
-> Does this make sense? Did I miss any cases? 
-> 
-> Thanks,
-> Song
-> 
-> 
-
+-- 
+Kees Cook
