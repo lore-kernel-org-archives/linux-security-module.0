@@ -1,118 +1,129 @@
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A795028DF27
-	for <linux-security-module@vger.kernel.org>; Thu, 10 Jul 2025 21:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5479E253F12;
+	Fri, 11 Jul 2025 09:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752184571; cv=none; b=o2a7C7EaikVc0ugMm2go7xMd8cfcl6vBSe3xkat2Mw35Q4oybezY2XjLpeRU0rkHCfW1oFRv9XHpO9si05gwKlcuRsCrswyg3xsZq/lHx9q/B76UBMdKZXeX7+G8cDaOQ94zToomi+yRQOmmDd8WcMMfF5s0IpOWSzBOuzRnDkI=
+	t=1752226592; cv=none; b=ORotkoGB9yoOtX+0Gc6/qElvah8/5Py/61nExpXjwcB/fN8jA7ZVHhR3hvVg15IB6HGR+zduL6xPMwGLSjZwlX5xpIvd32+DLSM2yVcp9ZnjQy8BadJkKEa+KlifqZykRToVwWLv5mhdPomETENAWZ/vFnmcTmuW6V6STOTGoDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752184571; c=relaxed/simple;
-	bh=yEUe36iGT2tjYBEroWVItA/U8MgbKRguqLFT0OU+jLo=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=tJGFdqpsJQ1ogDkyUB6BTE5rpCWbDmDhw2/AbyhtRO9F6oJHSs71ejW3P5y/jMqqtoHFRyLN171wZgJ5T885XtchWS7RCQ+8yE1YrqdqpKr7w+mQWmepGmtUsKgJXiZiJ6t9DQxXD74nvaFqnQGBdF04jrZ52Qk8fH7LBo4VXOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AneX5pvc; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1752226592; c=relaxed/simple;
+	bh=wravLw2QyrJLSNCdmXnM24JOPnV05g3lbLl4G+9JMH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qS7qBFU8pf8uQeqcRle30bMpnHcX4mqwbG5phFs8p00GwjP66+2HeVES4ooOWkUesArvJZTlFgPlGCwPDUwlNQ2AvIk6ZZfES+wqz5+JuHYaorVJelZta8xovKCYs4iWjjLIvUOW/Qbbwi5gHTOyXoZCOM1UgmaLqqkvlpwlaSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OfDSUfdR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AneX5pvc"
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4a818ed5b51so11926901cf.1
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Jul 2025 14:56:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1752184568; x=1752789368; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yWbp11K8y8N54piZ0w9HEapGynmdQ61Of/cRxlwOOcw=;
-        b=AneX5pvcDwhox3k3cfU2QySpiKm4c0b7zBygPtlf0O5EIRHmYDOKnxdVgfLbqQXE8s
-         EJ444n5LJAAu3d6bBMgCFPso9AnU8+R/dmEc52Qyf3fiiNrCzjqoIZ3hjZufR//pq7qE
-         Th6R2I+3rViKIq3gVsPWuAHlRYprf0CS52RhSLIijc27ExlRyaS2c9xBIw0TodX/N0HJ
-         YjxNGAbvcuw58x/jcqcsJUFCNADYWrWHw82bSX1/Zq0x3IoTtJhgJ3PorpfAMsGFaDh6
-         1ON0U4aBAof86ogjtcqzHck7s0/38FUNfoYCJu3ZY50qpDocns2oPNHTo03kLGvN/ZVU
-         QGvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752184568; x=1752789368;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yWbp11K8y8N54piZ0w9HEapGynmdQ61Of/cRxlwOOcw=;
-        b=QtYqNoz70u5jnM3KAnzUUHfCLqA68w1twool7hpZ0NA4T4wBsDbV+6qbiaq9Zh5qM2
-         BKVcQGbxkulOPjA+rRIYLzc77Zgi1NQauOxkFiEMmG0oVzHf/Ymodsh/ovm9thC8WUQd
-         zIC6sZujZ9DY6yhYoGN6meQevSD4aGByawZ8alWebt9eOgz2NU7ro5uMtbZ1sJNunimR
-         zu+m4WerzumPzSR+AZixfYfH2gIOyoUL49RyFC6Wm2dw2mrbBub9UJcllTiaXj9TyIhq
-         XvyHhx9UIod9HOoFZUnni31EbmYQZQRYX/UuL5bNV5sxaZb3Qqkee0L9eOXfnHDR1ANY
-         iODg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzjJd3o3obstxjey84crkhN77YGIctgfMjpuXJD+T3fXa1hu4pnXTKgfYdiOOweJ7QBkqO6ItgyLswmZHvm5oJgMl/VEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb6OkvA8wBiV/TZZhuAHTtal8CRB8j4vgxe0OnIRjh+Q0T4qPe
-	AxEkKkcf44txv6WmTxLxKDaNtoBjv2Yb4ZdWHiWDQq6rGdkD4+yCQAZupKDfBOe+xEyWb3tdEou
-	Ob3o=
-X-Gm-Gg: ASbGnctx0HqZYU6RKhGktJaFBrk9T6cbDFqHLOLp9IFtDqE0xaRcAGTRwQJeJ6cGKNQ
-	7C+hmYpoFBFiNmb3kt3u4NkNJ4PGb8433DwbIOr4AqT5Gm5dwYYiPBwKRutrwOEi8YxCoJXAMgR
-	ICLIFloviLiZWDf+Q1wSjIneXunT1abh63GV/ukrKk5jr8RgGT/IbBbk43HEWDj7vMjb4YxwvXP
-	IEz59wVxQObcasVOzMfNmL+Y6iglMiSoeBGv85NXyD9nBCni1YBkmnxo2/jBhkc3av4Lqh+kOMO
-	AAG8dvoPnDn2IjFHb76YJp3EEvgsKP0NRQz5zRUhnpYKaU8aVib7jFGwDeMyurETN+UF3kl/Dua
-	XQMpjKVbzJq74HuYUHVnhr/hr6qvEwqg=
-X-Google-Smtp-Source: AGHT+IEpnELhzqIjxusSklObVJoQn6zvdS6ZOqrP6ujD96X7xvUTFs2JekOXI6D29K/IxMigh4k6Mg==
-X-Received: by 2002:ac8:7c48:0:b0:4a7:fbd0:79c4 with SMTP id d75a77b69052e-4aa35ca48dbmr4704511cf.11.1752184568511;
-        Thu, 10 Jul 2025 14:56:08 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4a9ede764acsm13481451cf.38.2025.07.10.14.56.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 14:56:08 -0700 (PDT)
-Date: Thu, 10 Jul 2025 17:56:07 -0400
-Message-ID: <9076ab8364625a675e2c548adedeb854@paul-moore.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OfDSUfdR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6DFAC4CEED;
+	Fri, 11 Jul 2025 09:36:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752226591;
+	bh=wravLw2QyrJLSNCdmXnM24JOPnV05g3lbLl4G+9JMH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OfDSUfdRw476/lz/ONpYwW1LihVsJP6g0T4SmP1iy2bvr6qRewRf+NN6qbBh4loy4
+	 XRACTQsVQQKkeVgPiZ+RWxgjPwc4mFpA7ovzYbzspNEdtIOM16+PsVIznQZuGXTAjO
+	 YZepOneoK/wohc6HXIs4ZC6Dw0BMRD2fZXWkmRYafw+nYnYuohAHbnQyfuMF4JKUzo
+	 b/kZEPC8SbEEm0PHcf5sIEjBTqR4I9EN5tqD8XTVmuUcTUJyvUBSuDhq4FG32/pV4q
+	 Nk1uYNjkE5XN2AF5ImMIUTv0KevWM9wO4dVYjLt97vGrQgXCndA8TJQLrAVNEasasg
+	 H4O1AEKzCaDFg==
+Date: Fri, 11 Jul 2025 11:36:22 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <songliubraving@meta.com>
+Cc: Paul Moore <paul@paul-moore.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>, 
+	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
+	"tomoyo-users_en@lists.sourceforge.net" <tomoyo-users_en@lists.sourceforge.net>, 
+	"tomoyo-users_ja@lists.sourceforge.net" <tomoyo-users_ja@lists.sourceforge.net>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
+	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
+	"martin.lau@linux.dev" <martin.lau@linux.dev>, "jack@suse.cz" <jack@suse.cz>, 
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
+	"amir73il@gmail.com" <amir73il@gmail.com>, "repnop@google.com" <repnop@google.com>, 
+	"jlayton@kernel.org" <jlayton@kernel.org>, "josef@toxicpanda.com" <josef@toxicpanda.com>, 
+	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>, 
+	"m@maowtm.org" <m@maowtm.org>, "john.johansen@canonical.com" <john.johansen@canonical.com>, 
+	"john@apparmor.net" <john@apparmor.net>, 
+	"stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>, "omosnace@redhat.com" <omosnace@redhat.com>, 
+	"takedakn@nttdata.co.jp" <takedakn@nttdata.co.jp>, 
+	"penguin-kernel@i-love.sakura.ne.jp" <penguin-kernel@i-love.sakura.ne.jp>, "enlightened@chromium.org" <enlightened@chromium.org>
+Subject: Re: [RFC] vfs: security: Parse dev_name before calling
+ security_sb_mount
+Message-ID: <20250711-pfirsich-worum-c408f9a14b13@brauner>
+References: <20250708230504.3994335-1-song@kernel.org>
+ <20250709102410.GU1880847@ZenIV>
+ <CAHC9VhSS1O+Cp7UJoJnWNbv-Towia72DitOPH0zmKCa4PBttkw@mail.gmail.com>
+ <1959367A-15AB-4332-B1BC-7BBCCA646636@meta.com>
+ <20250710-roden-hosen-ba7f215706bb@brauner>
+ <5EB3EFBC-69BA-49CC-B416-D4A7398A2B47@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250710_1750/pstg-lib:20250710_1741/pstg-pwork:20250710_1750
-From: Paul Moore <paul@paul-moore.com>
-To: nicolas.bouchinet@oss.cyber.gouv.fr
-Cc: Xiu Jianfeng <xiujianfeng@huawei.com>, =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-Subject: Re: [PATCH] MAINTAINERS: Add Xiu and myself as Lockdown maintainers
-References: <20250624-add_myself_to_lockdown_maintainers-v1-1-bed2bc934666@ssi.gouv.fr>
-In-Reply-To: <20250624-add_myself_to_lockdown_maintainers-v1-1-bed2bc934666@ssi.gouv.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5EB3EFBC-69BA-49CC-B416-D4A7398A2B47@meta.com>
 
-On Jun 24, 2025 nicolas.bouchinet@oss.cyber.gouv.fr wrote:
+On Thu, Jul 10, 2025 at 05:00:18PM +0000, Song Liu wrote:
 > 
-> The Lockdown LSM has been unmaintained for some time now. It requires
-> some work to ensure it works as intended.
 > 
-> Xiu Jianfeng and I volunteer to maintain the LSM.
+> > On Jul 10, 2025, at 4:46 AM, Christian Brauner <brauner@kernel.org> wrote:
 > 
-> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> Acked-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-> ---
->  MAINTAINERS | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> [...]
+> 
+> >> Right now, we have security_sb_mount and security_move_mount, for 
+> >> syscall “mount” and “move_mount” respectively. This is confusing 
+> >> because we can also do move mount with syscall “mount”. How about 
+> >> we create 5 different security hooks:
+> >> 
+> >> security_bind_mount
+> >> security_new_mount
+> >> security_reconfigure_mount
+> >> security_remount
+> >> security_change_type_mount
+> >> 
+> >> and remove security_sb_mount. After this, we will have 6 hooks for
+> >> each type of mount (the 5 above plus security_move_mount).
+> > 
+> > I've multiple times pointed out that the current mount security hooks
+> > aren't working and basically everything in the new mount api is
+> > unsupervised from an LSM perspective.
+> 
+> To make sure I understand the comment. By “new mount api”, do you mean 
+> the code path under do_new_mount()? 
 
-It's been a couple of weeks now without any objections, so I'm merging
-this into lsm/dev and will send this up to Linus during the next merge
-window.  Once again, thank you both for volunteering to maintain
-Lockdown.
+fsopen()
+fsconfig()
+fsmount()
+open_tree()
+open_tree_attr()
+move_mount()
+statmount()
+listmount()
 
-There are a few more adinistrative things we need to do off-list, but
-those are probably best deferred until this change lands in Linus' tree.
+I think that's all.
 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0c1d245bf7b84f8a78b811e0c9c5a3edc09edc22..776c7fffcaec08f71faf2740599f0b4570179832 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14060,8 +14060,10 @@ F:	Documentation/admin-guide/LSM/LoadPin.rst
->  F:	security/loadpin/
->  
->  LOCKDOWN SECURITY MODULE
-> +M:	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-> +M:	Xiu Jianfeng <xiujianfeng@huawei.com>
->  L:	linux-security-module@vger.kernel.org
-> -S:	Odd Fixes
-> +S:	Maintained
->  T:	git https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
->  F:	security/lockdown/
+> 
+> > My recommendation is make a list of all the currently supported
+> > security_*() hooks in the mount code (I certainly don't have them in my
+> > head). Figure out what each of them allow to mediate effectively and how
+> > the callchains are related.
+> > 
+> > Then make a proposal how to replace them with something that a) doesn't
+> > cause regressions which is probably something that the LSMs care about
+> > and b) that covers the new mount API sufficiently to be properly
+> > mediated.
+> > 
+> > I'll happily review proposals. Fwiw, I'm pretty sure that this is
+> > something that Mickael is interested in as well.
+> 
+> So we will consider a proper redesign of LSM hooks for mount syscalls, 
+> but we do not want incremental improvements like this one. Do I get 
+> the direction right?
 
---
-paul-moore.com
+If incremental is workable then I think so yes. But it would be great to
+get a consistent picture of what people want/need.
