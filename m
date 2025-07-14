@@ -1,59 +1,59 @@
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE687239E6B;
-	Mon, 14 Jul 2025 20:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B043323AB87;
+	Mon, 14 Jul 2025 21:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752526603; cv=none; b=R1q3pE3jNAE/Unrm+VddU5bmvma8k1D5RxWvE9qMvh+OZB9wRa25iJpC2PdSrwaqLYlrU/Bz5p31WzDy9WsXKPSWZH4oO7P6exfyr/6OJ4gUcanLt1ZbdzAyqkUgUoi3hCJbopi/Fu8yYuNbu36yFGovEoXF0itM1jHlZgIbbbU=
+	t=1752527152; cv=none; b=IPiUyy6Qti0SyHT21vSFI3PAnDYOMFGN2893WUzwIqAXCSHWQVal6ooXU/L9HwchcITVoU3MAlo42pUbqRepbnuK+6R24tt1tu4OBq+LG/2WQ1tlQryUSBTVL4tGgW+qrqWfCJbfVYZOP/mjjGYx88RI+cdGT62/9KVEunCLFT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752526603; c=relaxed/simple;
-	bh=0YShKZtSncb/nch0G4vGOX+qOxCRREuAJGnfSkEXYFc=;
+	s=arc-20240116; t=1752527152; c=relaxed/simple;
+	bh=NusgdEidmqg7WdLyA3nBpIQMXLCY2DEchKW9L6Su5k8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FhKJsIpvU/4JZgTvZF9M3aBdhBn1c+dl2cG6npFM57o0BfcucESL9tlJY0aeCkf9JQPUcaGB/r0+h+bVata4qvpRGHtLL83kfww56ae3b7UQ2bMfVldxBmliEi+xeWYxIttkLj3Iqsh2tnOcb7wiTSiBTYTe2kKoKQABQkrcKuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HCHTvO2e; arc=none smtp.client-ip=209.85.215.178
+	 To:Cc:Content-Type; b=ai9hHRbVMPjcvJwlRl/sGu0JPqOPFgarIwZpfyiL36iGwOUfkBrOBn8xE96Z5INEtcY7MuEIFV+oU08yrMHDiOsJTuSl6W5UjA9P1CJIw6GTxWlHIP4LbUJCN8HJu/gvClA1M7lo9BejrUAjnlkOjtE1DPzDhDB1GFohgrXNXIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BBMvBztC; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCHTvO2e"
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b390136ed88so3550095a12.2;
-        Mon, 14 Jul 2025 13:56:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BBMvBztC"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3138e64b42aso5267086a91.0;
+        Mon, 14 Jul 2025 14:05:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752526601; x=1753131401; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752527150; x=1753131950; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T7hS8xv7YrfADJ1HYUxX6xnUnehE1Jq8V6yW09+p82I=;
-        b=HCHTvO2eDgDr4EvSGXCgKJoSV58C1VeStUDxtOQ5HA+wR7J7vS3L+xdxKesshz1Sk+
-         q8L9syzHnuJIGvJQVpm5ipQ+7KcvV+sPOzAeFHx03U0VrYNyNh8TXJEAaAz+xW5o5vtH
-         OVPpM3EL9UVbeSCo+8O4R2A4CXPxber7BvxeYM5lihQpaD+RSpCpJoEjDD6Ugk6ZEZK8
-         Py8mN9MtTMbWfYxNTssjtqBRK4meZvjfFBMnCcrHjAFH0YoQn5b2OnS9h6+62SY711rc
-         FbHZG3LB1U2V6hfUYZYuSvcMoEw3knwHCL+il9D5Cf8okPVb0JacZKINqirVHKDOatsp
-         FzNQ==
+        bh=MjbOZUP2p87+AFpsykpDIoA3T27NYccoxH/LzMqLX/8=;
+        b=BBMvBztC04Ken0GqVH1f0T8KwS4f9ox8aX9EGcmKefkYOUdrQEXVIUMRzr0tjEJ1YQ
+         zTIGvXki1Gk7U+PgybNANoIAu81/9j65iEz3S8tfB4ZJAu0CHglBTSMwiK3mbGKVG0po
+         DEAxoBPZ0xbJscWD5qKZ4YFx5Dcxf90SHiWOkMwsUtKQqYMph1zQySrtSCE1OxC9MTzS
+         +IXrCa6y4TOw5fZPhpBpF/bdEpGDVQ9QNYpKdBtAqJugWBDqZl1iQDpKkeqBbwnvKCUY
+         nqpC1KAfglTWrYHxqWV2xPKqS0ZhZJy3eJ0AyNZrO4kYuy6v73jay5yswWDsd/Ozjamf
+         6gdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752526601; x=1753131401;
+        d=1e100.net; s=20230601; t=1752527150; x=1753131950;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T7hS8xv7YrfADJ1HYUxX6xnUnehE1Jq8V6yW09+p82I=;
-        b=HpVbKXmaWafHjdOKU+/91zvi7fDJ5DapWRE/MfMvuz2dPdO5N+5YjWSFxvcLfnYTpO
-         4JD3xvlpOrk/j6enufrn+vc8Jtf+LRf1msovSbQ+RZeo8NoF7vQZ5tQG4yqtZMctlget
-         38f0aN3CRnU9SyjKFon5xDVfeOMmbpHmeOfWAIGDIDxeBUHRQrpOqVZMK33stsGgiJcN
-         sRPrLCgjKOflzPgCR7fBDZ3j1gvFq5BaAGGOPYdO3xnXgnO4dUt9XbCvmxJJb5tOd8WJ
-         F7+/gKe3uABU+D9V2hwDsmVDgxV3pGaxFQ2Fk4C49r3cUHR5VJ94zj23uWwPo8NBl2lW
-         AHRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUs8FLRMEF2j21SkTPL4PQJpYZeZKkrJVJTbK5QWyIVEgSZTJoCk5kasTjRuWu6PhSmhXdHC4p6lRO42lRqy+NWi/ykL+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzXeDKuEypXv4Wgf1OdzRIqKxQsUcMJqzxQEuENipUaJn4/dpL
-	c3N8kKesqxFlUgVA55yU45RumnoEP+rGebZBu3PgrN7PdraYL8uhSwX9+RF+FAwqur1mfRDIWLj
-	mA9lwTwEANIxP76p0y9ut+1C+jftLlCwnxRfI
-X-Gm-Gg: ASbGncsIufKvyuDkMjIynp70S2OsrC4A8ovqFN7Oun1ZJIr0Aa7xsi0xIYCTksJidZY
-	seGaQ76e+e/HaW1Iw2vKc+2zfG4hdEPYEPhVQ9XYW+GDKHt/PMwZZfGknLPVMZ5NGvIyoa5cwla
-	OUCzozHN1AOa7AjfAyRiYesW2if/oFP/NCYhCn7Tng1XScjXwhuj+DbuOWdYYbkBkMf1Qw5hvx3
-	rn7khIKCdI+ffavB0/Jr+BCXa2zCcWEgQ==
-X-Google-Smtp-Source: AGHT+IH9uNE+Gn9ulUlrKKRv3i2K+rCPFSAonU1Gmf/Za5qPCf51TcNjbl1w7iIzTXdiIS+yswb3/lsUrTaHPADIAz8=
-X-Received: by 2002:a17:90a:da90:b0:31c:72d7:558b with SMTP id
- 98e67ed59e1d1-31c72d75601mr9523482a91.32.1752526600982; Mon, 14 Jul 2025
- 13:56:40 -0700 (PDT)
+        bh=MjbOZUP2p87+AFpsykpDIoA3T27NYccoxH/LzMqLX/8=;
+        b=g/rjnOVTgccZjiPyP54fOH2zTuzrSjaz9QMARzjUdBzShNrh0sHYZApJp4HT75BrYt
+         Euht35bsjQgwFXJ8p+8JjIvUm+igpDrvqEOTSxquPhTfVop65IS8B4sVRnfrc+0hn4cf
+         eAZsfNbjjvHzVCjt4FNOISDeNkWbJgfaAWBgsfEoLpL+GVAjjURe150wdn9w9DPDyWm9
+         BU47dP6kJc/oVuJhV+OG41hrmPGBp0JKDCCSJz+4AyVOY30aabaWndaGB246t8Zg3aWl
+         L4OVa99EbDotTmCp1m3ZJRM7bRKIOgOEBJ6v6tCFuqBa7UpKEh6EVrzw66EP1/koG02F
+         0ACQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLAjCkCqyjbBKVxqL+og7SVWIJfWLwIgM7HOIb1A27T5BmPvGPC9AH+We8k7iA6nfRgNr/yDUHAsN09nGQ7is8Quahyq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUjmjNl/i2/QBYRohYBWbUkq4ni251nNsBeTqajUBZdUxQQudY
+	uYGaCrm1XckF8GlzDyp1DNZwIp7p6N8dqEhHVPs+cjRA2PBRu1+ZHOpirdtYczGJH+mAEQAHd/B
+	sluefLIfYFEKeAnYdb66VwiG1n1T1c10=
+X-Gm-Gg: ASbGncun+Lw1G8P1TTDWt7F+p8n800iFIG7Fc0SsBE3Ynt4/dVY6OUPr+MrYL+Z9w9y
+	kI+NcrWhmxYoDrwbW//+kkVGf/JAHv59CFFfVOZJgzC5Jo7LZYz4avzli++4SwlEXIn1uIS0D2I
+	qUEvostQoMdTpaqskFuWlrvZBF+P3zaTTRqmYl4PKNmqZO9lYNGvLPsqqsta4puJcwUIRloipgK
+	DOQ8/EKLdqC4DNBpN09AYE=
+X-Google-Smtp-Source: AGHT+IF0eemj59tu5WQxp9B7wK4lrZ/MFsXjYqjmK+pUqG5vzb6SjNxEhzxwFmuLF/36YG+KOmdD4Txr1V1SceZxdKY=
+X-Received: by 2002:a17:90a:d610:b0:313:fb08:4261 with SMTP id
+ 98e67ed59e1d1-31c4cd55c4cmr21017440a91.32.1752527149792; Mon, 14 Jul 2025
+ 14:05:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -61,12 +61,13 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-6-kpsingh@kernel.org>
- <CAEf4BzYiWv9suM6PuyJuFaDiRUXZxOhy1_pBkHqZwGN+Nn=2Eg@mail.gmail.com> <CACYkzJ7_JfCmDC5mdjTUzO3ZKA2E1-WamPMxQ5F0iLoKgaFrAQ@mail.gmail.com>
-In-Reply-To: <CACYkzJ7_JfCmDC5mdjTUzO3ZKA2E1-WamPMxQ5F0iLoKgaFrAQ@mail.gmail.com>
+ <CAEf4BzYiWv9suM6PuyJuFaDiRUXZxOhy1_pBkHqZwGN+Nn=2Eg@mail.gmail.com>
+ <CACYkzJ4qs=CuKxjLkqqt+UeFTgqsqT9NvX_33C5QYGHry6femg@mail.gmail.com> <CACYkzJ6d6=mftCjCDw=cWOZqj87Asv7LNL_wyF=KeCjU=vSE4g@mail.gmail.com>
+In-Reply-To: <CACYkzJ6d6=mftCjCDw=cWOZqj87Asv7LNL_wyF=KeCjU=vSE4g@mail.gmail.com>
 From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 14 Jul 2025 13:56:26 -0700
-X-Gm-Features: Ac12FXwu6azm8uxU8Ec0cY2Ck0p-WJn6QewZFNi1DVWLjy7UP0cPhf150zA-9F4
-Message-ID: <CAEf4BzYFfXbarqDYj7GBXabNr03xFYHaj2-yBx1EZnkVP+hN4Q@mail.gmail.com>
+Date: Mon, 14 Jul 2025 14:05:34 -0700
+X-Gm-Features: Ac12FXwmolxB6HyYYRdL65YaqZvyfUl4479ldpgWhqX5OQ21shua_llwYFXpcgo
+Message-ID: <CAEf4BzYtU2VCJfW+P=1Wj7hxOW+Up6jWCTJ-YPs6jLL05JzMGQ@mail.gmail.com>
 Subject: Re: [PATCH 05/12] libbpf: Support exclusive map creation
 To: KP Singh <kpsingh@kernel.org>
 Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
@@ -75,93 +76,214 @@ Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 11, 2025 at 5:53=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
+On Mon, Jul 14, 2025 at 5:55=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrote=
 :
 >
-> On Fri, Jun 13, 2025 at 12:56=E2=80=AFAM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
+> On Mon, Jul 14, 2025 at 2:29=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
+te:
 > >
-> > On Fri, Jun 6, 2025 at 4:29=E2=80=AFPM KP Singh <kpsingh@kernel.org> wr=
-ote:
+> > On Fri, Jun 13, 2025 at 12:56=E2=80=AFAM Andrii Nakryiko
+> > <andrii.nakryiko@gmail.com> wrote:
 > > >
-> > > Implement a convenient method i.e. bpf_map__make_exclusive which
-> > > calculates the hash for the program and registers it with the map for
-> > > creation as an exclusive map when the objects are loaded.
+> > > On Fri, Jun 6, 2025 at 4:29=E2=80=AFPM KP Singh <kpsingh@kernel.org> =
+wrote:
+> > > >
+> > > > Implement a convenient method i.e. bpf_map__make_exclusive which
+> > > > calculates the hash for the program and registers it with the map f=
+or
+> > > > creation as an exclusive map when the objects are loaded.
+> > > >
+> > > > The hash of the program must be computed after all the relocations =
+are
+> > > > done.
+> > > >
+> > > > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > > > ---
+> > > >  tools/lib/bpf/bpf.c            |  4 +-
+> > > >  tools/lib/bpf/bpf.h            |  4 +-
+> > > >  tools/lib/bpf/libbpf.c         | 68 ++++++++++++++++++++++++++++++=
++++-
+> > > >  tools/lib/bpf/libbpf.h         | 13 +++++++
+> > > >  tools/lib/bpf/libbpf.map       |  5 +++
+> > > >  tools/lib/bpf/libbpf_version.h |  2 +-
+> > > >  6 files changed, 92 insertions(+), 4 deletions(-)
+> > > >
+> > > > diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
+> > > > index a9c3e33d0f8a..11fa2d64ccca 100644
+> > > > --- a/tools/lib/bpf/bpf.c
+> > > > +++ b/tools/lib/bpf/bpf.c
+> > > > @@ -172,7 +172,7 @@ int bpf_map_create(enum bpf_map_type map_type,
+> > > >                    __u32 max_entries,
+> > > >                    const struct bpf_map_create_opts *opts)
+> > > >  {
+> > > > -       const size_t attr_sz =3D offsetofend(union bpf_attr, map_to=
+ken_fd);
+> > > > +       const size_t attr_sz =3D offsetofend(union bpf_attr, excl_p=
+rog_hash);
+> > > >         union bpf_attr attr;
+> > > >         int fd;
+> > > >
+> > > > @@ -203,6 +203,8 @@ int bpf_map_create(enum bpf_map_type map_type,
+> > > >         attr.map_ifindex =3D OPTS_GET(opts, map_ifindex, 0);
+> > > >
+> > > >         attr.map_token_fd =3D OPTS_GET(opts, token_fd, 0);
+> > > > +       attr.excl_prog_hash =3D ptr_to_u64(OPTS_GET(opts, excl_prog=
+_hash, NULL));
+> > > > +       attr.excl_prog_hash_size =3D OPTS_GET(opts, excl_prog_hash_=
+size, 0);
+> > > >
+> > > >         fd =3D sys_bpf_fd(BPF_MAP_CREATE, &attr, attr_sz);
+> > > >         return libbpf_err_errno(fd);
+> > > > diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
+> > > > index 777627d33d25..a82b79c0c349 100644
+> > > > --- a/tools/lib/bpf/bpf.h
+> > > > +++ b/tools/lib/bpf/bpf.h
+> > > > @@ -54,9 +54,11 @@ struct bpf_map_create_opts {
+> > > >         __s32 value_type_btf_obj_fd;
+> > > >
+> > > >         __u32 token_fd;
+> > > > +       __u32 excl_prog_hash_size;
+> > > > +       const void *excl_prog_hash;
+> > > >         size_t :0;
+> > > >  };
+> > > > -#define bpf_map_create_opts__last_field token_fd
+> > > > +#define bpf_map_create_opts__last_field excl_prog_hash
+> > > >
+> > > >  LIBBPF_API int bpf_map_create(enum bpf_map_type map_type,
+> > > >                               const char *map_name,
+> > > > diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> > > > index 475038d04cb4..17de756973f4 100644
+> > > > --- a/tools/lib/bpf/libbpf.c
+> > > > +++ b/tools/lib/bpf/libbpf.c
+> > > > @@ -499,6 +499,7 @@ struct bpf_program {
+> > > >         __u32 line_info_rec_size;
+> > > >         __u32 line_info_cnt;
+> > > >         __u32 prog_flags;
+> > > > +       __u8  hash[SHA256_DIGEST_LENGTH];
+> > > >  };
+> > > >
+> > > >  struct bpf_struct_ops {
+> > > > @@ -578,6 +579,8 @@ struct bpf_map {
+> > > >         bool autocreate;
+> > > >         bool autoattach;
+> > > >         __u64 map_extra;
+> > > > +       const void *excl_prog_sha;
+> > > > +       __u32 excl_prog_sha_size;
+> > > >  };
+> > > >
+> > > >  enum extern_type {
+> > > > @@ -4485,6 +4488,43 @@ bpf_object__section_to_libbpf_map_type(const=
+ struct bpf_object *obj, int shndx)
+> > > >         }
+> > > >  }
+> > > >
+> > > > +static int bpf_program__compute_hash(struct bpf_program *prog)
+> > > > +{
+> > > > +       struct bpf_insn *purged;
+> > > > +       bool was_ld_map;
+> > > > +       int i, err;
+> > > > +
+> > > > +       purged =3D calloc(1, BPF_INSN_SZ * prog->insns_cnt);
+> > > > +       if (!purged)
+> > > > +               return -ENOMEM;
+> > > > +
+> > > > +       /* If relocations have been done, the map_fd needs to be
+> > > > +        * discarded for the digest calculation.
+> > > > +        */
 > > >
-> > > The hash of the program must be computed after all the relocations ar=
-e
-> > > done.
+> > > all this looks sketchy, let's think about some more robust approach
+> > > here rather than randomly clearing some fields of some instructions..=
+.
 > > >
-> > > Signed-off-by: KP Singh <kpsingh@kernel.org>
-> > > ---
-> > >  tools/lib/bpf/bpf.c            |  4 +-
-> > >  tools/lib/bpf/bpf.h            |  4 +-
-> > >  tools/lib/bpf/libbpf.c         | 68 ++++++++++++++++++++++++++++++++=
-+-
-> > >  tools/lib/bpf/libbpf.h         | 13 +++++++
-> > >  tools/lib/bpf/libbpf.map       |  5 +++
-> > >  tools/lib/bpf/libbpf_version.h |  2 +-
-> > >  6 files changed, 92 insertions(+), 4 deletions(-)
+> > > > +       for (i =3D 0, was_ld_map =3D false; i < prog->insns_cnt; i+=
++) {
+> > > > +               purged[i] =3D prog->insns[i];
+> > > > +               if (!was_ld_map &&
+> > > > +                   purged[i].code =3D=3D (BPF_LD | BPF_IMM | BPF_D=
+W) &&
+> > > > +                   (purged[i].src_reg =3D=3D BPF_PSEUDO_MAP_FD ||
+> > > > +                    purged[i].src_reg =3D=3D BPF_PSEUDO_MAP_VALUE)=
+) {
+> > > > +                       was_ld_map =3D true;
+> > > > +                       purged[i].imm =3D 0;
+> > > > +               } else if (was_ld_map && purged[i].code =3D=3D 0 &&
+> > > > +                          purged[i].dst_reg =3D=3D 0 && purged[i].=
+src_reg =3D=3D 0 &&
+> > > > +                          purged[i].off =3D=3D 0) {
+> > > > +                       was_ld_map =3D false;
+> > > > +                       purged[i].imm =3D 0;
+> > > > +               } else {
+> > > > +                       was_ld_map =3D false;
+> > > > +               }
+> > > > +       }
 > > >
-
-[...]
-
-> > > +int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program =
-*prog)
-> > > +{
-> > > +       if (map_is_created(map)) {
-> > > +               pr_warn("%s must be called before creation\n", __func=
-__);
+> > > this was_ld_map business is... unnecessary? Just access purged[i + 1]
+> > > (checking i + 1 < prog->insns_cnt, of course), and i +=3D 1. This
+> > > stateful approach is an unnecessary complication, IMO
 > >
-> > we don't really add __func__ for a long while now, please drop, we
-> > have a consistent "map '%s': what the problem is" format
+> > Does this look better to you, the next instruction has to be the
+> > second half of the double word right?
 > >
-> > but for checks like this we also just return -EBUSY or something like
-> > that without error message, so I'd just drop the message altogether
-> >
-> > > +               return libbpf_err(-EINVAL);
-> > > +       }
-> > > +
-> > > +       if (prog->obj->state =3D=3D OBJ_LOADED) {
-> > > +               pr_warn("%s must be called before the prog load\n", _=
-_func__);
-> > > +               return libbpf_err(-EINVAL);
-> > > +       }
-> >
-> > this is unnecessary, map_is_created() takes care of this
+> > for (int i =3D 0; i < prog->insns_cnt; i++) {
+> >     purged[i] =3D prog->insns[i];
+> >     if (purged[i].code =3D=3D (BPF_LD | BPF_IMM | BPF_DW) &&
+> >         (purged[i].src_reg =3D=3D BPF_PSEUDO_MAP_FD ||
+> >          purged[i].src_reg =3D=3D BPF_PSEUDO_MAP_VALUE)) {
+> >         purged[i].imm =3D 0;
+> >         i++;
+> >         if (i >=3D prog->insns_cnt ||
+> >             prog->insns[i].code !=3D 0 ||
+> >             prog->insns[i].dst_reg !=3D 0 ||
+> >             prog->insns[i].src_reg !=3D 0 ||
+> >             prog->insns[i].off !=3D 0) {
+> >             return -EINVAL;
+> >         }
 >
-> No it does not? This is about the program and the latter is about the
-> map, how does map_is_created check if the program is already loaded. A
-> map needs to be marked as an exclusive to the program before the
-> program is loaded.
-
-Um... both map_is_created() and your `prog->obj->state =3D=3D OBJ_LOADED`
-check *object* state, making sure it didn't progress past some
-specific stage. excl_prog_sha is *map* attribute, and *maps* are
-created at the preparation stage (OBJ_PREPARED), which comes before
-OBJ_LOADED step. OBJ_PREPARED is already too late, and so OBJ_LOADED
-check is meaningless altogether because map_is_created() will return
-true before that.
-
-
-What am I missing?
-
+> I mean ofcourse
 >
+> err =3D -EINVAL;
+> goto out;
 >
-> >
-> > > +       map->excl_prog_sha =3D prog->hash;
-> > > +       map->excl_prog_sha_size =3D SHA256_DIGEST_LENGTH;
-> >
-> > this is a hack, I assume that's why you compute that hash for any
-> > program all the time, right? Well, first, if this is called before
-> > bpf_object_prepare(), it will silently do the wrong thing.
-> >
-> > But also I don't think we should calculate hash proactively, we could
-> > do this lazily.
-> >
-> > > +       return 0;
-> > > +}
-> > > +
-> > > +
+> to free the buffer.
+
+
+Yes, but I'd probably modify it a bit for conciseness:
+
+struct bpf_insn *purged, *insn;
+int i;
+
+purged =3D calloc(..);
+memcpy(purged, prog->insns, ...);
+
+for (i =3D 0; i < prog->insns_cnt; i++) {
+    insn =3D &purged[i];
+    if (insn[0].code =3D=3D (BPF_LD | BPF_IMM | BPF_DW) &&
+        (insn[0].src_reg =3D=3D BPF_PSEUDO_MAP_FD || ...) {
+        insn[0].imm =3D 0;
+        if (i >=3D prog_insns_cnt) {
+            err =3D -EINVAL;
+            goto err;
+        }
+        insn[1].imm =3D 0;
+        i++;
+}
+
+
+(I'm not sure libbpf needs to check code,dst_reg,src_reg,off for
+ldimm64, verifier will do it anyways, so I'd protect against
+out-of-bounds access only)
+
+I'd even consider just doing:
+
+if (i + 1 < prog->insns_cnt && insn[0].code =3D=3D (BPF_LD | BPF_IMM |
+BPF_DW) ...) {
+    insn[0].imm =3D 0;
+    insn[1].imm =3D 0;
+    i++;
+}
+
+
+i.e., don't even error out, verifier will do that anyway later because
+program is malformed, and hash won't even matter at that point
 
 [...]
