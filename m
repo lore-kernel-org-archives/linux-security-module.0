@@ -1,140 +1,167 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB69726B94E;
-	Mon, 14 Jul 2025 18:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE687239E6B;
+	Mon, 14 Jul 2025 20:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752516476; cv=none; b=FZDQm7nY0Dnv8Pw+kJrIJtCMzKcJ0HljCl2mEdrYJE8sSAj+Ho+HjgRps7f8gNhZI/55B81fz9SPuA5g9QlYYFPvUEPCL9iomwM6EZ4YtsNwpD73sjF6GThlB09TiCbmtFHbQCnx2WJVVCqqqsycOgwsa4N4iCcWpQ1buy+9gAk=
+	t=1752526603; cv=none; b=R1q3pE3jNAE/Unrm+VddU5bmvma8k1D5RxWvE9qMvh+OZB9wRa25iJpC2PdSrwaqLYlrU/Bz5p31WzDy9WsXKPSWZH4oO7P6exfyr/6OJ4gUcanLt1ZbdzAyqkUgUoi3hCJbopi/Fu8yYuNbu36yFGovEoXF0itM1jHlZgIbbbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752516476; c=relaxed/simple;
-	bh=dAR/rUsYNa6PZyDHeSqqc2o3AIhtW8QY+gby5DdA4gM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KtIQgJz1phDD7NMDBvsvfVAErrAllQv0NvGBkuMxcvRSlHkOT7HBygRNfQ2Ko0GsPCvQaFE+oiqXha8tUCXHCPT7FDIFBJ12EZ7LYIvGZeNl0iLDmE8loFDhVDZVJf5tq8DdrAnLhS9VlVIx6KtggEax2/hTajUgucjXcunwod8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iVx6V50J; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1752526603; c=relaxed/simple;
+	bh=0YShKZtSncb/nch0G4vGOX+qOxCRREuAJGnfSkEXYFc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FhKJsIpvU/4JZgTvZF9M3aBdhBn1c+dl2cG6npFM57o0BfcucESL9tlJY0aeCkf9JQPUcaGB/r0+h+bVata4qvpRGHtLL83kfww56ae3b7UQ2bMfVldxBmliEi+xeWYxIttkLj3Iqsh2tnOcb7wiTSiBTYTe2kKoKQABQkrcKuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HCHTvO2e; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iVx6V50J"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752516475; x=1784052475;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dAR/rUsYNa6PZyDHeSqqc2o3AIhtW8QY+gby5DdA4gM=;
-  b=iVx6V50JWGmUJLwHCIvFUDspkTcuqxHIq4T3i7wsUqKAj8dz3fTPVDtF
-   FP5sC9r9gENqFYvTc6SE5ZsUksgBWRIYJfzVAhmzMdKx08t7r9QtFTuTA
-   11+9wxG8D+tQUXUNguh5S99Ys+BtG1eshyfb3hHT2TP5YHu8zUoCbrssa
-   Obzp3D/slYq25zpNrH9uRvaw4+aYfY28ej/yGsEpKQN1l/bd2Iga0HLkC
-   sM7G7sCIJYNiN/0+JtNvYP/zbGnGojNuOe2It1BYs1U86qQ5OGESR48GT
-   Ij177bvz9XfoJaNLhBFYDFThOf+fHR/kzIT8VTUtF4WrhR7XzEiBwNtd7
-   A==;
-X-CSE-ConnectionGUID: 7zaGDubiSTW7PxV43NHsqg==
-X-CSE-MsgGUID: Agm7RjEqQSOhLDNSvNVxQQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54845950"
-X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
-   d="scan'208";a="54845950"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2025 11:07:54 -0700
-X-CSE-ConnectionGUID: zTt/8AEyS6u9eDHt80S9tg==
-X-CSE-MsgGUID: fxml/+LHQEyTrbc2FF8K0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,311,1744095600"; 
-   d="scan'208";a="188001945"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 14 Jul 2025 11:07:50 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ubNae-0009Ch-0V;
-	Mon, 14 Jul 2025 18:07:48 +0000
-Date: Tue, 15 Jul 2025 02:07:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>,
-	linux-security-module@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, john.johansen@canonical.com,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	mic@digikod.net, kees@kernel.org, stephen.smalley.work@gmail.com,
-	casey@schaufler-ca.com, takedakn@nttdata.co.jp,
-	penguin-kernel@i-love.sakura.ne.jp, song@kernel.org,
-	rdunlap@infradead.org, linux-api@vger.kernel.org,
-	apparmor@lists.ubuntu.com, linux-kernel@vger.kernel.org,
-	Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>
-Subject: Re: [PATCH v5 3/3] AppArmor: add support for lsm_config_self_policy
- and lsm_config_system_policy
-Message-ID: <202507150132.xWRFcZgf-lkp@intel.com>
-References: <20250709080220.110947-4-maxime.belair@canonical.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCHTvO2e"
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b390136ed88so3550095a12.2;
+        Mon, 14 Jul 2025 13:56:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752526601; x=1753131401; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T7hS8xv7YrfADJ1HYUxX6xnUnehE1Jq8V6yW09+p82I=;
+        b=HCHTvO2eDgDr4EvSGXCgKJoSV58C1VeStUDxtOQ5HA+wR7J7vS3L+xdxKesshz1Sk+
+         q8L9syzHnuJIGvJQVpm5ipQ+7KcvV+sPOzAeFHx03U0VrYNyNh8TXJEAaAz+xW5o5vtH
+         OVPpM3EL9UVbeSCo+8O4R2A4CXPxber7BvxeYM5lihQpaD+RSpCpJoEjDD6Ugk6ZEZK8
+         Py8mN9MtTMbWfYxNTssjtqBRK4meZvjfFBMnCcrHjAFH0YoQn5b2OnS9h6+62SY711rc
+         FbHZG3LB1U2V6hfUYZYuSvcMoEw3knwHCL+il9D5Cf8okPVb0JacZKINqirVHKDOatsp
+         FzNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752526601; x=1753131401;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T7hS8xv7YrfADJ1HYUxX6xnUnehE1Jq8V6yW09+p82I=;
+        b=HpVbKXmaWafHjdOKU+/91zvi7fDJ5DapWRE/MfMvuz2dPdO5N+5YjWSFxvcLfnYTpO
+         4JD3xvlpOrk/j6enufrn+vc8Jtf+LRf1msovSbQ+RZeo8NoF7vQZ5tQG4yqtZMctlget
+         38f0aN3CRnU9SyjKFon5xDVfeOMmbpHmeOfWAIGDIDxeBUHRQrpOqVZMK33stsGgiJcN
+         sRPrLCgjKOflzPgCR7fBDZ3j1gvFq5BaAGGOPYdO3xnXgnO4dUt9XbCvmxJJb5tOd8WJ
+         F7+/gKe3uABU+D9V2hwDsmVDgxV3pGaxFQ2Fk4C49r3cUHR5VJ94zj23uWwPo8NBl2lW
+         AHRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUs8FLRMEF2j21SkTPL4PQJpYZeZKkrJVJTbK5QWyIVEgSZTJoCk5kasTjRuWu6PhSmhXdHC4p6lRO42lRqy+NWi/ykL+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzXeDKuEypXv4Wgf1OdzRIqKxQsUcMJqzxQEuENipUaJn4/dpL
+	c3N8kKesqxFlUgVA55yU45RumnoEP+rGebZBu3PgrN7PdraYL8uhSwX9+RF+FAwqur1mfRDIWLj
+	mA9lwTwEANIxP76p0y9ut+1C+jftLlCwnxRfI
+X-Gm-Gg: ASbGncsIufKvyuDkMjIynp70S2OsrC4A8ovqFN7Oun1ZJIr0Aa7xsi0xIYCTksJidZY
+	seGaQ76e+e/HaW1Iw2vKc+2zfG4hdEPYEPhVQ9XYW+GDKHt/PMwZZfGknLPVMZ5NGvIyoa5cwla
+	OUCzozHN1AOa7AjfAyRiYesW2if/oFP/NCYhCn7Tng1XScjXwhuj+DbuOWdYYbkBkMf1Qw5hvx3
+	rn7khIKCdI+ffavB0/Jr+BCXa2zCcWEgQ==
+X-Google-Smtp-Source: AGHT+IH9uNE+Gn9ulUlrKKRv3i2K+rCPFSAonU1Gmf/Za5qPCf51TcNjbl1w7iIzTXdiIS+yswb3/lsUrTaHPADIAz8=
+X-Received: by 2002:a17:90a:da90:b0:31c:72d7:558b with SMTP id
+ 98e67ed59e1d1-31c72d75601mr9523482a91.32.1752526600982; Mon, 14 Jul 2025
+ 13:56:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709080220.110947-4-maxime.belair@canonical.com>
+References: <20250606232914.317094-1-kpsingh@kernel.org> <20250606232914.317094-6-kpsingh@kernel.org>
+ <CAEf4BzYiWv9suM6PuyJuFaDiRUXZxOhy1_pBkHqZwGN+Nn=2Eg@mail.gmail.com> <CACYkzJ7_JfCmDC5mdjTUzO3ZKA2E1-WamPMxQ5F0iLoKgaFrAQ@mail.gmail.com>
+In-Reply-To: <CACYkzJ7_JfCmDC5mdjTUzO3ZKA2E1-WamPMxQ5F0iLoKgaFrAQ@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 14 Jul 2025 13:56:26 -0700
+X-Gm-Features: Ac12FXwu6azm8uxU8Ec0cY2Ck0p-WJn6QewZFNi1DVWLjy7UP0cPhf150zA-9F4
+Message-ID: <CAEf4BzYFfXbarqDYj7GBXabNr03xFYHaj2-yBx1EZnkVP+hN4Q@mail.gmail.com>
+Subject: Re: [PATCH 05/12] libbpf: Support exclusive map creation
+To: KP Singh <kpsingh@kernel.org>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Maxime,
+On Fri, Jul 11, 2025 at 5:53=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
+:
+>
+> On Fri, Jun 13, 2025 at 12:56=E2=80=AFAM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Fri, Jun 6, 2025 at 4:29=E2=80=AFPM KP Singh <kpsingh@kernel.org> wr=
+ote:
+> > >
+> > > Implement a convenient method i.e. bpf_map__make_exclusive which
+> > > calculates the hash for the program and registers it with the map for
+> > > creation as an exclusive map when the objects are loaded.
+> > >
+> > > The hash of the program must be computed after all the relocations ar=
+e
+> > > done.
+> > >
+> > > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > > ---
+> > >  tools/lib/bpf/bpf.c            |  4 +-
+> > >  tools/lib/bpf/bpf.h            |  4 +-
+> > >  tools/lib/bpf/libbpf.c         | 68 ++++++++++++++++++++++++++++++++=
++-
+> > >  tools/lib/bpf/libbpf.h         | 13 +++++++
+> > >  tools/lib/bpf/libbpf.map       |  5 +++
+> > >  tools/lib/bpf/libbpf_version.h |  2 +-
+> > >  6 files changed, 92 insertions(+), 4 deletions(-)
+> > >
 
-kernel test robot noticed the following build warnings:
+[...]
 
-[auto build test WARNING on 9c32cda43eb78f78c73aee4aa344b777714e259b]
+> > > +int bpf_map__make_exclusive(struct bpf_map *map, struct bpf_program =
+*prog)
+> > > +{
+> > > +       if (map_is_created(map)) {
+> > > +               pr_warn("%s must be called before creation\n", __func=
+__);
+> >
+> > we don't really add __func__ for a long while now, please drop, we
+> > have a consistent "map '%s': what the problem is" format
+> >
+> > but for checks like this we also just return -EBUSY or something like
+> > that without error message, so I'd just drop the message altogether
+> >
+> > > +               return libbpf_err(-EINVAL);
+> > > +       }
+> > > +
+> > > +       if (prog->obj->state =3D=3D OBJ_LOADED) {
+> > > +               pr_warn("%s must be called before the prog load\n", _=
+_func__);
+> > > +               return libbpf_err(-EINVAL);
+> > > +       }
+> >
+> > this is unnecessary, map_is_created() takes care of this
+>
+> No it does not? This is about the program and the latter is about the
+> map, how does map_is_created check if the program is already loaded. A
+> map needs to be marked as an exclusive to the program before the
+> program is loaded.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-B-lair/Wire-up-lsm_config_self_policy-and-lsm_config_system_policy-syscalls/20250709-160720
-base:   9c32cda43eb78f78c73aee4aa344b777714e259b
-patch link:    https://lore.kernel.org/r/20250709080220.110947-4-maxime.belair%40canonical.com
-patch subject: [PATCH v5 3/3] AppArmor: add support for lsm_config_self_policy and lsm_config_system_policy
-config: hexagon-randconfig-r072-20250714 (https://download.01.org/0day-ci/archive/20250715/202507150132.xWRFcZgf-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+Um... both map_is_created() and your `prog->obj->state =3D=3D OBJ_LOADED`
+check *object* state, making sure it didn't progress past some
+specific stage. excl_prog_sha is *map* attribute, and *maps* are
+created at the preparation stage (OBJ_PREPARED), which comes before
+OBJ_LOADED step. OBJ_PREPARED is already too late, and so OBJ_LOADED
+check is meaningless altogether because map_is_created() will return
+true before that.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507150132.xWRFcZgf-lkp@intel.com/
 
-smatch warnings:
-security/apparmor/lsm.c:1348 apparmor_lsm_config_system_policy() warn: unsigned 'ns_size' is never less than zero.
+What am I missing?
 
-vim +/ns_size +1348 security/apparmor/lsm.c
+>
+>
+> >
+> > > +       map->excl_prog_sha =3D prog->hash;
+> > > +       map->excl_prog_sha_size =3D SHA256_DIGEST_LENGTH;
+> >
+> > this is a hack, I assume that's why you compute that hash for any
+> > program all the time, right? Well, first, if this is called before
+> > bpf_object_prepare(), it will silently do the wrong thing.
+> >
+> > But also I don't think we should calculate hash proactively, we could
+> > do this lazily.
+> >
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +
 
-  1319	
-  1320	/**
-  1321	 * apparmor_lsm_config_system_policy - Load or replace a system policy
-  1322	 * @lsm_id: AppArmor ID (LSM_ID_APPARMOR). Unused here
-  1323	 * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
-  1324	 * @buf: user-supplied buffer in the form "<ns>\0<policy>"
-  1325	 *        <ns> is the namespace to load the policy into (empty string for root)
-  1326	 *        <policy> is the policy to load
-  1327	 * @size: size of @buf
-  1328	 * @flags: reserved for future uses; must be zero
-  1329	 *
-  1330	 * Returns: 0 on success, negative value on error
-  1331	 */
-  1332	static int apparmor_lsm_config_system_policy(u32 lsm_id, u32 op, void __user *buf,
-  1333					      size_t size, u32 flags)
-  1334	{
-  1335		loff_t pos = 0; // Partial writing is not currently supported
-  1336		char ns_name[AA_PROFILE_NAME_MAX_SIZE];
-  1337		size_t ns_size;
-  1338		size_t max_ns_size = min(size, AA_PROFILE_NAME_MAX_SIZE);
-  1339	
-  1340		if (op != LSM_POLICY_LOAD || flags)
-  1341			return -EOPNOTSUPP;
-  1342		if (size < 2)
-  1343			return -EINVAL;
-  1344		if (size > AA_PROFILE_MAX_SIZE)
-  1345			return -E2BIG;
-  1346	
-  1347		ns_size = strncpy_from_user(ns_name, buf, max_ns_size);
-> 1348		if (ns_size < 0)
-  1349			return ns_size;
-  1350		if (ns_size == max_ns_size)
-  1351			return -E2BIG;
-  1352	
-  1353		return aa_profile_load_ns_name(ns_name, ns_size, buf + ns_size + 1,
-  1354					       size - ns_size - 1, &pos);
-  1355	}
-  1356	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+[...]
