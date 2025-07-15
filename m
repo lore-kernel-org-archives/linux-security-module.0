@@ -1,66 +1,47 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE442475E3;
-	Tue, 15 Jul 2025 10:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2E32BE62B
+	for <linux-security-module@vger.kernel.org>; Tue, 15 Jul 2025 18:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752574690; cv=none; b=bjNXVF5C4DqZBLeTSH2R8haK0wu0CMBw5wwWFZtNAISP5UdwqzYJZ4bgKfE42zk4PrzpIlQ5tb+f2Hel0nIAVzyU+3Gn9XN5pTpx0PG29yxEXXxPqqhfWWzzNtNKyHBwX0/ZvLn2bz5RwEywASJ2tM2+cAtjymYnkwCAadh8TSs=
+	t=1752605906; cv=none; b=iL61mOqCIFFzWnmPr2Om/Py8/dL86u+UbRZcCj3gXalguMVnnNgcOCNY341fmmfftRe0SgVdiHy0C2pi2vUTZNO42bIt7qhwrPgkG2JWN3fxGQG0/kPqvVYWv0WpJ3MZM/Wt+e1mOVjwROAUb5RTDzrQI0tXvnks+iWfakXo+Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752574690; c=relaxed/simple;
-	bh=MR6q/geuJGxm8/wZrl4YYFQ5XKIXGNHi6Rtqi170EHw=;
+	s=arc-20240116; t=1752605906; c=relaxed/simple;
+	bh=9Q21YQWM/kqUcQXIMbPHLgtp3QZpOuCqUhTrJ3iQKJs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TAvC6Clas2hB+YjVdcnw1d98UQxaWL1gsVyrNSvtflsXJcdsozSfjobp2BywserIoI2zFWZJGPGGrKoYaWJM2RniDDA/AUauAuTMQiEj4rZMGgngm0kQddvsoKKBV+5swyOZW9clRmX1LCjrRieY5CoKAhKTtzGLDwZuluDb3t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ck0fVEUx; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=JS5Iggf16X73fyGpBLz7GSd6sd8u1d2DG454CVc2KM8a04lZ7woT56ADpRi3x7mgkmyEwI6lpqeu8BKJRLT5nZhs39w28dA/6i3V3J49oQe1BDz2t1ofHRwA81JIlHs+/juOU6n1s94V6zJQZK214q818r9zCmWcB4z9/6LpBhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=oKanVOmf; arc=none smtp.client-ip=84.16.66.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ck0fVEUx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24204C4CEE3;
-	Tue, 15 Jul 2025 10:18:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752574689;
-	bh=MR6q/geuJGxm8/wZrl4YYFQ5XKIXGNHi6Rtqi170EHw=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="oKanVOmf"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bhSwm2nF6z3X5;
+	Tue, 15 Jul 2025 20:52:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1752605544;
+	bh=UeOe+dfXu3Qf3uZbhoIuxiYMztJEpKfTjUIwqTSxVP0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ck0fVEUx2KEdhj3ok/Wm3DEMI8e6ZuXmmpXA3SZqyaJvVSHhT3egfr19RmV/Hxb9h
-	 qSal6nwSBBvrSJflFMO2kgf1nM6PQcW6mUB98MntVpxFOsTciA9HSfw8LGddZHfBmI
-	 d3PZk2nb0z341rntBAMatM766ucxWLO90DGo3rI7iCyWYYFmkUwWcMTNjwq9PquYWt
-	 TFFMi/rSJAkAkZOMedTK4AFTdRF9xf/Mh4IuqNl3bhl+8yXQbWGWb2V9SSt7RJ3aag
-	 pL64AaDUiV4SkQ35D4DqGAq/XApDsXJOLiHLAb2yX2K4bNdhLWa16/M9b1B4ue0zuF
-	 YLbkb54PyprIQ==
-Date: Tue, 15 Jul 2025 12:18:00 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Paul Moore <paul@paul-moore.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>, 
-	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
-	"tomoyo-users_en@lists.sourceforge.net" <tomoyo-users_en@lists.sourceforge.net>, 
-	"tomoyo-users_ja@lists.sourceforge.net" <tomoyo-users_ja@lists.sourceforge.net>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
-	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
-	"martin.lau@linux.dev" <martin.lau@linux.dev>, "jack@suse.cz" <jack@suse.cz>, 
-	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
-	"amir73il@gmail.com" <amir73il@gmail.com>, "repnop@google.com" <repnop@google.com>, 
-	"jlayton@kernel.org" <jlayton@kernel.org>, "josef@toxicpanda.com" <josef@toxicpanda.com>, 
-	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>, 
-	"m@maowtm.org" <m@maowtm.org>, "john.johansen@canonical.com" <john.johansen@canonical.com>, 
-	"john@apparmor.net" <john@apparmor.net>, 
-	"stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>, "omosnace@redhat.com" <omosnace@redhat.com>, 
-	"takedakn@nttdata.co.jp" <takedakn@nttdata.co.jp>, 
-	"penguin-kernel@i-love.sakura.ne.jp" <penguin-kernel@i-love.sakura.ne.jp>, "enlightened@chromium.org" <enlightened@chromium.org>
-Subject: Re: [RFC] vfs: security: Parse dev_name before calling
- security_sb_mount
-Message-ID: <20250715-knattern-hochklassig-ddc27ddd4557@brauner>
-References: <20250708230504.3994335-1-song@kernel.org>
- <20250709102410.GU1880847@ZenIV>
- <CAHC9VhSS1O+Cp7UJoJnWNbv-Towia72DitOPH0zmKCa4PBttkw@mail.gmail.com>
- <1959367A-15AB-4332-B1BC-7BBCCA646636@meta.com>
- <20250710-roden-hosen-ba7f215706bb@brauner>
- <5EB3EFBC-69BA-49CC-B416-D4A7398A2B47@meta.com>
- <20250711-pfirsich-worum-c408f9a14b13@brauner>
- <4EE690E2-4276-41E6-9D8C-FBF7E90B9EB3@meta.com>
- <20250714-ansonsten-shrimps-b4df1566f016@brauner>
- <3ACFCAB1-9FEC-4D4E-BFB0-9F37A21AA204@meta.com>
+	b=oKanVOmf30YXMgXtUeGie7ocC5Bnx9ljrxvs2hNkWvn9cy0P+YNX+Jp924V9AWyvi
+	 yBwYCVDoPElgld4XY6ryB9p6PgvDemvKI0EmDnYVsvkevSssQAlmSJwJbfAQETtzUi
+	 GYd/1K4QPkAnWNG8fxR28sIcoL7y/wHxgti6VEnM=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bhSwl48b7zxkK;
+	Tue, 15 Jul 2025 20:52:23 +0200 (CEST)
+Date: Tue, 15 Jul 2025 20:52:22 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Ben Scarlato <akhna@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Daniel Burgener <dburgener@linux.microsoft.com>, 
+	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, NeilBrown <neil@brown.name>, 
+	Paul Moore <paul@paul-moore.com>, Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] landlock: Fix handling of disconnected directories
+Message-ID: <20250715.Alielah5eeh7@digikod.net>
+References: <20250711191938.2007175-1-mic@digikod.net>
+ <20250711191938.2007175-2-mic@digikod.net>
+ <4d23784f-03de-4053-a326-96a0fa833456@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -70,119 +51,101 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3ACFCAB1-9FEC-4D4E-BFB0-9F37A21AA204@meta.com>
+In-Reply-To: <4d23784f-03de-4053-a326-96a0fa833456@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On Mon, Jul 14, 2025 at 03:10:57PM +0000, Song Liu wrote:
+On Mon, Jul 14, 2025 at 01:39:12PM +0100, Tingmao Wang wrote:
+> On 7/11/25 20:19, Mickaël Salaün wrote:
+> > [...]
+> > @@ -800,6 +802,8 @@ static bool is_access_to_paths_allowed(
+> >  		access_masked_parent1 = access_masked_parent2 =
+> >  			landlock_union_access_masks(domain).fs;
+> >  		is_dom_check = true;
+> > +		memcpy(&_layer_masks_parent2_bkp, layer_masks_parent2,
+> > +		       sizeof(_layer_masks_parent2_bkp));
+> >  	} else {
+> >  		if (WARN_ON_ONCE(dentry_child1 || dentry_child2))
+> >  			return false;
+> > @@ -807,6 +811,8 @@ static bool is_access_to_paths_allowed(
+> >  		access_masked_parent1 = access_request_parent1;
+> >  		access_masked_parent2 = access_request_parent2;
+> >  		is_dom_check = false;
+> > +		memcpy(&_layer_masks_parent1_bkp, layer_masks_parent1,
+> > +		       sizeof(_layer_masks_parent1_bkp));
 > 
+> Is this memcpy meant to be in this else branch?  If parent2 is set, we
+> will leave _layer_masks_parent1_bkp uninitialized right?
 > 
-> > On Jul 14, 2025, at 1:45 AM, Christian Brauner <brauner@kernel.org> wrote:
-> > 
-> > On Fri, Jul 11, 2025 at 04:22:52PM +0000, Song Liu wrote:
-> >> 
-> >> 
-> >>> On Jul 11, 2025, at 2:36 AM, Christian Brauner <brauner@kernel.org> wrote:
-> >> 
-> >> [...]
-> >> 
-> >>>>> 
-> >>>> To make sure I understand the comment. By “new mount api”, do you mean 
-> >>>> the code path under do_new_mount()?
-> >>> 
-> >>> fsopen()
-> >>> fsconfig()
-> >>> fsmount()
-> >>> open_tree()
-> >>> open_tree_attr()
-> >>> move_mount()
-> >>> statmount()
-> >>> listmount()
-> >>> 
-> >>> I think that's all.
-> >> 
-> >> Thanks for the clarification and pointer!
-> >> 
-> >>> 
-> >>>> 
-> >>>>> My recommendation is make a list of all the currently supported
-> >>>>> security_*() hooks in the mount code (I certainly don't have them in my
-> >>>>> head). Figure out what each of them allow to mediate effectively and how
-> >>>>> the callchains are related.
-> >>>>> 
-> >>>>> Then make a proposal how to replace them with something that a) doesn't
-> >>>>> cause regressions which is probably something that the LSMs care about
-> >>>>> and b) that covers the new mount API sufficiently to be properly
-> >>>>> mediated.
-> >>>>> 
-> >>>>> I'll happily review proposals. Fwiw, I'm pretty sure that this is
-> >>>>> something that Mickael is interested in as well.
-> >>>> 
-> >>>> So we will consider a proper redesign of LSM hooks for mount syscalls, 
-> >>>> but we do not want incremental improvements like this one. Do I get 
-> >>>> the direction right?
-> >>> 
-> >>> If incremental is workable then I think so yes. But it would be great to
-> >>> get a consistent picture of what people want/need.
-> >> 
-> >> In short term, we would like a way to get struct path of dev_name for  
-> > 
-> > You scared me for a second. By "dev_name" you mean the source path.
+> >  	}
+> >  
+> >  	if (unlikely(dentry_child1)) {
+> > @@ -858,6 +864,14 @@ static bool is_access_to_paths_allowed(
+> >  				     child1_is_directory, layer_masks_parent2,
+> >  				     layer_masks_child2,
+> >  				     child2_is_directory))) {
+> > +			/*
+> > +			 * Rewinds walk for disconnected directories before any other state
+> > +			 * change.
+> > +			 */
+> > +			if (unlikely(!path_connected(walker_path.mnt,
+> > +						     walker_path.dentry)))
+> > +				goto reset_to_mount_root;
+> > +
+> >  			/*
+> >  			 * Now, downgrades the remaining checks from domain
+> >  			 * handled accesses to requested accesses.
 > 
-> Right, we need to get struct path for the source path specified by 
-> string “dev_name”.
-> 
-> > 
-> >> bind mount. AFAICT, there are a few options:
-> >> 
-> >> 1. Introduce bpf_kern_path kfunc.
-> >> 2. Add new hook(s), such as [1].
-> >> 3. Something like this patch.
-> >> 
-> >> [1] https://lore.kernel.org/linux-security-module/20250110021008.2704246-1-enlightened@chromium.org/ 
-> >> 
-> >> Do you think we can ship one of them?
-> > 
-> > If you place a new security hook into __do_loopback() the only thing
-> > that I'm not excited about is that we're holding the global namespace
-> > semaphore at that point. And I want to have as little LSM hook calls
-> > under the namespace semaphore as possible.
-> 
-> do_loopback() changed a bit since [1]. But if we put the new hook 
-> in do_loopback() before lock_mount(), we don’t have the problem with
-> the namespace semaphore, right? Also, this RFC doesn’t seem to have 
-> this issue either. 
+> I think reasoning about how the domain check interacts with
+> reset_to_mount_root was very tricky, and I wonder if you could add some
+> more comments explaining the various cases?
 
-While the mount isn't locked another mount can still be mounted on top
-of it. lock_mount() will detect this and lookup the topmost mount and
-use that. IOW, the value of old_path->mnt may have changed after
-lock_mount().
+Yes, it's tricky, I'll add more comments.
 
-> > If you have 1000 containers each calling into
-> > security_something_something_bind_mount() and then you do your "walk
-> > upwards towards the root stuff" and that root is 100000 directories away
-> > you've introduced a proper DOS or at least a severe new bottleneck into
-> > the system. And because of mount namespace propagation that needs to be
-> > serialized across all mount namespaces the namespace semaphore isn't
-> > something we can just massage away.
+> For example, one fact which
+> took me a while to realize is that for renames, this function will never
+> see the bottom-most child being disconnected with its mount, since we
+> start walking from the mountpoint, and so it is really only handling the
+> case of the mountpoint itself being disconnected.
 > 
-> AFAICT, a poorly designed LSM can easily DoS a system. Therefore, I 
-> don’t think we need to overthink about a LSM helper causing DoS in 
-> some special scenarios. The owner of the LSM, either built-in LSM or 
-> BPF LSM, need to be aware of such risks and design the LSM rules 
-> properly to avoid DoS risks. For example, if the path tree is really 
-> deep, the LSM may decide to block the mount after walking a preset 
-> number of steps. 
+> Also, it was not very clear to me whether it would always be correct to
+> reset to the backed up layer mask, if the backup was taken when we were
+> still in domain check mode (and thus have the domain handled access bits
+> set, not just the requested ones), but we then exit domain check mode, and
+> before reaching the next mountpoint we suddenly found out the current path
+> is disconnected, and thus resetting to the backup (but without going back
+> into domain check mode, since we don't reset that).
+> 
+> Because of the !path_connected check within the if(is_dom_check ...)
+> branch itself, the above situation would only happen in some race
+> condition tho.
 
-The scope of the lock matters _a lot_. If a poorly designed LSM happens
-to take exorbitant amount of time under the inode_lock() it's annoying:
-to anyone else wanting to grab the inode_lock() _for that single inode_.
+That's right.  There are potential race conditions after each
+!path_connected() checks, but AFAICT it doesn't matter at that point
+because the access state for the current dentry is valid.  This dentry
+could be renamed after this check, but we always check with another
+!path_connected() or mnt_root after that.  This means that we could have
+partial access rights while a path is being renamed, but they should all
+be consistent at time of checks, right?
 
-If a poorly designed LSM does broken stuff under the namespace semaphore
-any mount event on the whole system will block, effectively deadlocking
-the system in an instant. For example, if anything even glances at
-/proc/<pid>/mountinfo it's game over. It's already iffy that we allow
-security_sb_statfs() under there but that's at least guaranteed to be
-fast.
+> 
+> I also wonder if there's another potential issue (although I've not tested
+> it), where if the file being renamed itself is disconnected from its
+> mountpoint, when we get to is_access_to_paths_allowed, the passed in
+> layer_masks_parent1 would be empty (which is correct), but when we do the
+> no_more_access check, we're still using layer_masks_child{1,2} which has
+> access bits set according to rules attached directly to the child. I think
+> technically if the child is disconnected from its mount, we're supposed to
+> ignore any access rules it has on itself as well?  And so this
+> no_more_access check would be a bit inconsistent, I think.
 
-If you can make it work so that we don't have to place security_*()
-under the namespace semaphore and you can figure out how to deal with a
-potential overmount racing you then this would be ideal for everyone.
+The layer_masks_child* accesses are only used to check if the moved file
+(or directory) would not get more access rights on the destination
+(excluding those directly moved with the child).  Once we know the move
+would be safe, we check if the move is allowed according to the parent
+source and the parent destination (but the child access rights are
+ignored).
+
+It should be tested with
+layout4_disconnected_leafs.s1d41_s1d42_disconnected
+
+Thanks for the review!
