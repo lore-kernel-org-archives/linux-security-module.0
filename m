@@ -1,173 +1,184 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110A12EA749;
-	Wed, 16 Jul 2025 08:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5272C326B;
+	Wed, 16 Jul 2025 12:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752654724; cv=none; b=LTYaCrc7jaZNRT3jOS+miyLLaounv2F9IzWDOJFMeNaZ6Z6ZtkEy5x0scIRgDQ0iWqfOLNPjQgJRfY6p4g5nX3zkbMTAYpEdXVoy9aad5r8ux9Yv++bZeDOo8eCcxQlzogy8qwjhj6YgRsmdIvSPMZ+Qs0ogbdyd0CRGpDc9/JU=
+	t=1752668121; cv=none; b=nSZJPDTlZvQBS9xlWPP8lcH1BEmya+5eMahF+SlhJy71/LnwxZFvlfo5cWSlfEM+IBnIca/6lb5l9m0DKg4HuaIvGKS8rzN6RiIh5N1NnD7Y9nfTD34T2wRBAZqskmllyEHktIkxsNHCl5Bm14lhBBqKRCvJnL8s5ZrRGjE4NIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752654724; c=relaxed/simple;
-	bh=pixhDAk3NXF+ez/UC4sCfxH4mfu5c2ZCe/3FOrSKxmA=;
+	s=arc-20240116; t=1752668121; c=relaxed/simple;
+	bh=AdTCjyoYthmJF0tNb39i1JvmHw/jhnzoFM+rmCHkjMA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N1JbmuQZwm0092RdX2YZ7GlHmrhDEIqFhdeWHDlSm+awzmxhyD68HsrB2c7vYn225sVKi8QFggtfDiGmfjasHezQ8Gj3OmuuvlFpEMH4AZSBThLlweJE8h+a3LAx3cn0aZ236m9eugpMK/vr2L4oBIZQo19KVEHtNN7kjqgCQfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjGFTVb7; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=pbxu+bIlRoEcm4NPoXyV8iUwnGhPsD3mAuDFTypBYI6QrSJyiHhMJHubSEZ/sYKJbGNou8D5G/Pn6bIcpqvcKbPREpOQXyMwf4nNYKjZWKHtBw+Ylqd1WvnHZqqDMRWoq1Ghkd2ZoVubHK+TWwZWN+MVNBjCaRtDXw9M6sAFwqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GOrj/5vI; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjGFTVb7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC1AC4CEF0;
-	Wed, 16 Jul 2025 08:31:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752654723;
-	bh=pixhDAk3NXF+ez/UC4sCfxH4mfu5c2ZCe/3FOrSKxmA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TjGFTVb7WA8CXJ6fa9ZunnX0H7E3pACvrqlm6U6kufhsPuFT7/qKNj+2PuK4rf422
-	 +/Vz5U7FyZF1IKEu6uwNqPHz+FJaWsNVM3NJmGFvApIa55S4kznSr5h0dOm9jqrvcS
-	 ZPWl1dYW0SDaotH84/KEdVcBl9HWmemC76mRyRv1mFee8RuPfM+aSSgy4AsWsR0Jtt
-	 2428KtOR29kVeXOrvqufoE3TflupQjHHf5sr6r2T2XqQCjsHhG0vGUZPWgvobe7gw3
-	 YiaNk0muRgqqvpTWNR8BqdV5pCZV+sLz8AY6vym0qlT1Prz0py2hxARudlILw5soG7
-	 GJGCOYu1gVsYQ==
-Date: Wed, 16 Jul 2025 10:31:53 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Paul Moore <paul@paul-moore.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>, 
-	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
-	"tomoyo-users_en@lists.sourceforge.net" <tomoyo-users_en@lists.sourceforge.net>, 
-	"tomoyo-users_ja@lists.sourceforge.net" <tomoyo-users_ja@lists.sourceforge.net>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
-	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
-	"martin.lau@linux.dev" <martin.lau@linux.dev>, "jack@suse.cz" <jack@suse.cz>, 
-	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
-	"amir73il@gmail.com" <amir73il@gmail.com>, "repnop@google.com" <repnop@google.com>, 
-	"jlayton@kernel.org" <jlayton@kernel.org>, "josef@toxicpanda.com" <josef@toxicpanda.com>, 
-	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>, 
-	"m@maowtm.org" <m@maowtm.org>, "john.johansen@canonical.com" <john.johansen@canonical.com>, 
-	"john@apparmor.net" <john@apparmor.net>, 
-	"stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>, "omosnace@redhat.com" <omosnace@redhat.com>, 
-	"takedakn@nttdata.co.jp" <takedakn@nttdata.co.jp>, 
-	"penguin-kernel@i-love.sakura.ne.jp" <penguin-kernel@i-love.sakura.ne.jp>, "enlightened@chromium.org" <enlightened@chromium.org>
-Subject: Re: [RFC] vfs: security: Parse dev_name before calling
- security_sb_mount
-Message-ID: <20250716-unsolidarisch-sagst-e70630ddf6b7@brauner>
-References: <CAHC9VhSS1O+Cp7UJoJnWNbv-Towia72DitOPH0zmKCa4PBttkw@mail.gmail.com>
- <1959367A-15AB-4332-B1BC-7BBCCA646636@meta.com>
- <20250710-roden-hosen-ba7f215706bb@brauner>
- <5EB3EFBC-69BA-49CC-B416-D4A7398A2B47@meta.com>
- <20250711-pfirsich-worum-c408f9a14b13@brauner>
- <4EE690E2-4276-41E6-9D8C-FBF7E90B9EB3@meta.com>
- <20250714-ansonsten-shrimps-b4df1566f016@brauner>
- <3ACFCAB1-9FEC-4D4E-BFB0-9F37A21AA204@meta.com>
- <20250715-knattern-hochklassig-ddc27ddd4557@brauner>
- <B2872298-BC9C-4BFD-8C88-CED88E0B7E3A@meta.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GOrj/5vI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752668118; x=1784204118;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AdTCjyoYthmJF0tNb39i1JvmHw/jhnzoFM+rmCHkjMA=;
+  b=GOrj/5vIV+0OJUOtOkaxHWdSenVnEWnG7eFHXfqz69oKQuihy8qtlowk
+   TJkyelFY0jBYoXtnIF0dwvhP3HyrGdlEvtU5oM1lRbSHMrIK2kaa6wTH3
+   W49ZqIRay/FEY+IIipsOAH2S+0TSE7jEN6qlMUZ9N6nEF/JQkIsvAmI3J
+   cjV4OwhI8bjhMkv5oRhWyxKi/vp/ZD1W2dksJvERnU9VOgOCs3AGXNYH2
+   fI9aRNXgBTIZrEoS47ecyne0fRs/n8sgWHK6IDJJFU8O/dS8eSV3PDRqR
+   wNmmgNV8ccXatBaCKlNNjNu4Pu1g9E923AKweUzfWLSITh4jt+Y8gG0+6
+   w==;
+X-CSE-ConnectionGUID: kThxH8TyRyeIWoosPfd39A==
+X-CSE-MsgGUID: VpZEYpzNTcuFK1lUtkYQ8g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="80361442"
+X-IronPort-AV: E=Sophos;i="6.16,316,1744095600"; 
+   d="scan'208";a="80361442"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2025 05:15:18 -0700
+X-CSE-ConnectionGUID: EmmNPO7IR+SpvleOnSb+uQ==
+X-CSE-MsgGUID: 5zwc3n4jQ2O1XoCH+q7TgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,316,1744095600"; 
+   d="scan'208";a="157150648"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 16 Jul 2025 05:15:14 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uc12W-000CLj-0z;
+	Wed, 16 Jul 2025 12:15:12 +0000
+Date: Wed, 16 Jul 2025 20:14:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	John Johansen <john.johansen@canonical.com>,
+	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org, bpf@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH] lsm,selinux: Add LSM blob support for BPF objects
+Message-ID: <202507161903.ToApi2Jk-lkp@intel.com>
+References: <20250715222655.705241-1-bboscaccy@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <B2872298-BC9C-4BFD-8C88-CED88E0B7E3A@meta.com>
+In-Reply-To: <20250715222655.705241-1-bboscaccy@linux.microsoft.com>
 
-On Tue, Jul 15, 2025 at 10:31:39PM +0000, Song Liu wrote:
-> 
-> > On Jul 15, 2025, at 3:18 AM, Christian Brauner <brauner@kernel.org> wrote:
-> > On Mon, Jul 14, 2025 at 03:10:57PM +0000, Song Liu wrote:
-> 
-> 
-> [...]
-> 
-> >>> If you place a new security hook into __do_loopback() the only thing
-> >>> that I'm not excited about is that we're holding the global namespace
-> >>> semaphore at that point. And I want to have as little LSM hook calls
-> >>> under the namespace semaphore as possible.
-> >> 
-> >> do_loopback() changed a bit since [1]. But if we put the new hook 
-> >> in do_loopback() before lock_mount(), we don’t have the problem with
-> >> the namespace semaphore, right? Also, this RFC doesn’t seem to have 
-> >> this issue either.
-> > 
-> > While the mount isn't locked another mount can still be mounted on top
-> > of it. lock_mount() will detect this and lookup the topmost mount and
-> > use that. IOW, the value of old_path->mnt may have changed after
-> > lock_mount().
-> 
-> I am probably confused. Do you mean path->mnt (instead of old_path->mnt) 
-> may have changed after lock_mount()? 
+Hi Blaise,
 
-I mean the target path. I forgot that the code uses @old_path to mean
-the source path not the target path. And you're interested in the source
-path, not the target path.
+kernel test robot noticed the following build warnings:
 
-> 
-> > If you have 1000 containers each calling into
-> >>> security_something_something_bind_mount() and then you do your "walk
-> >>> upwards towards the root stuff" and that root is 100000 directories away
-> >>> you've introduced a proper DOS or at least a severe new bottleneck into
-> >>> the system. And because of mount namespace propagation that needs to be
-> >>> serialized across all mount namespaces the namespace semaphore isn't
-> >>> something we can just massage away.
-> >> 
-> >> AFAICT, a poorly designed LSM can easily DoS a system. Therefore, I 
-> >> don’t think we need to overthink about a LSM helper causing DoS in 
-> >> some special scenarios. The owner of the LSM, either built-in LSM or 
-> >> BPF LSM, need to be aware of such risks and design the LSM rules 
-> >> properly to avoid DoS risks. For example, if the path tree is really 
-> >> deep, the LSM may decide to block the mount after walking a preset 
-> >> number of steps.
-> > 
-> > The scope of the lock matters _a lot_. If a poorly designed LSM happens
-> > to take exorbitant amount of time under the inode_lock() it's annoying:
-> > to anyone else wanting to grab the inode_lock() _for that single inode_.
-> > 
-> > If a poorly designed LSM does broken stuff under the namespace semaphore
-> > any mount event on the whole system will block, effectively deadlocking
-> > the system in an instant. For example, if anything even glances at
-> > /proc/<pid>/mountinfo it's game over. It's already iffy that we allow
-> > security_sb_statfs() under there but that's at least guaranteed to be
-> > fast.
-> > 
-> > If you can make it work so that we don't have to place security_*()
-> > under the namespace semaphore and you can figure out how to deal with a
-> > potential overmount racing you then this would be ideal for everyone.
-> 
-> I am trying to understand all the challenges here. 
+[auto build test WARNING on pcmoore-selinux/next]
+[also build test WARNING on linus/master v6.16-rc6 next-20250715]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-As long as you're only interested in the source path's mount, you're
-fine.
+url:    https://github.com/intel-lab-lkp/linux/commits/Blaise-Boscaccy/lsm-selinux-Add-LSM-blob-support-for-BPF-objects/20250716-062844
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+patch link:    https://lore.kernel.org/r/20250715222655.705241-1-bboscaccy%40linux.microsoft.com
+patch subject: [PATCH] lsm,selinux: Add LSM blob support for BPF objects
+config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20250716/202507161903.ToApi2Jk-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250716/202507161903.ToApi2Jk-lkp@intel.com/reproduce)
 
-> 
-> It appears to me that do_loopback() has the tricky issue:
-> 
-> static int do_loopback(struct path *path, ...)
-> {
-> 	...
-> 	/* 
-> 	 * path may still change, so not a good point to add
-> 	 * security hook 
-> 	 */
-> 	mp = lock_mount(path);
-> 	if (IS_ERR(mp)) {
-> 		/* ... */
-> 	}
-> 	/* 
-> 	 * namespace_sem is locked, so not a good point to add
-> 	 * security hook
-> 	 */
-> 	...
-> }
-> 
-> Basically, without major work with locking, there is no good 
-> spot to insert a security hook into do_loopback(). Or, maybe 
-> we can add a hook somewhere in lock_mount()? 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507161903.ToApi2Jk-lkp@intel.com/
 
-You can't really because the lookup_mnt() call in lock_mount() happens
-under the namespace semaphore already and if it's the topmost mount it
-won't be dropped again and you can't drop it again without risking
-overmounts again.
+All warnings (new ones prefixed by >>):
 
-But again, as long as you are interested in the source mount you should
-be fine.
+>> security/security.c:896:12: warning: 'lsm_bpf_token_alloc' defined but not used [-Wunused-function]
+     896 | static int lsm_bpf_token_alloc(struct bpf_token *token)
+         |            ^~~~~~~~~~~~~~~~~~~
+>> security/security.c:874:12: warning: 'lsm_bpf_prog_alloc' defined but not used [-Wunused-function]
+     874 | static int lsm_bpf_prog_alloc(struct bpf_prog *prog)
+         |            ^~~~~~~~~~~~~~~~~~
+>> security/security.c:852:12: warning: 'lsm_bpf_map_alloc' defined but not used [-Wunused-function]
+     852 | static int lsm_bpf_map_alloc(struct bpf_map *map)
+         |            ^~~~~~~~~~~~~~~~~
+
+
+vim +/lsm_bpf_token_alloc +896 security/security.c
+
+   843	
+   844	/**
+   845	 * lsm_bpf_map_alloc - allocate a composite bpf_map blob
+   846	 * @map: the bpf_map that needs a blob
+   847	 *
+   848	 * Allocate the bpf_map blob for all the modules
+   849	 *
+   850	 * Returns 0, or -ENOMEM if memory can't be allocated.
+   851	 */
+ > 852	static int lsm_bpf_map_alloc(struct bpf_map *map)
+   853	{
+   854		if (blob_sizes.lbs_bpf_map == 0) {
+   855			map->security = NULL;
+   856			return 0;
+   857		}
+   858	
+   859		map->security = kzalloc(blob_sizes.lbs_bpf_map, GFP_KERNEL);
+   860		if (!map->security)
+   861			return -ENOMEM;
+   862	
+   863		return 0;
+   864	}
+   865	
+   866	/**
+   867	 * lsm_bpf_prog_alloc - allocate a composite bpf_prog blob
+   868	 * @prog: the bpf_prog that needs a blob
+   869	 *
+   870	 * Allocate the bpf_prog blob for all the modules
+   871	 *
+   872	 * Returns 0, or -ENOMEM if memory can't be allocated.
+   873	 */
+ > 874	static int lsm_bpf_prog_alloc(struct bpf_prog *prog)
+   875	{
+   876		if (blob_sizes.lbs_bpf_prog == 0) {
+   877			prog->aux->security = NULL;
+   878			return 0;
+   879		}
+   880	
+   881		prog->aux->security = kzalloc(blob_sizes.lbs_bpf_prog, GFP_KERNEL);
+   882		if (!prog->aux->security)
+   883			return -ENOMEM;
+   884	
+   885		return 0;
+   886	}
+   887	
+   888	/**
+   889	 * lsm_bpf_token_alloc - allocate a composite bpf_token blob
+   890	 * @token: the bpf_token that needs a blob
+   891	 *
+   892	 * Allocate the bpf_token blob for all the modules
+   893	 *
+   894	 * Returns 0, or -ENOMEM if memory can't be allocated.
+   895	 */
+ > 896	static int lsm_bpf_token_alloc(struct bpf_token *token)
+   897	{
+   898		if (blob_sizes.lbs_bpf_token == 0) {
+   899			token->security = NULL;
+   900			return 0;
+   901		}
+   902	
+   903		token->security = kzalloc(blob_sizes.lbs_bpf_token, GFP_KERNEL);
+   904		if (!token->security)
+   905			return -ENOMEM;
+   906	
+   907		return 0;
+   908	}
+   909	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
