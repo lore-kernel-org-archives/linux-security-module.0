@@ -1,73 +1,161 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C225A296141;
-	Wed, 16 Jul 2025 21:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DA71C8605
+	for <linux-security-module@vger.kernel.org>; Thu, 17 Jul 2025 02:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752701367; cv=none; b=ghq0jVYcv7i0wHK1R8GyBmda36RIeSjcFxcR6kVAZfuB89u3oc2pRFwc9CKyUw+Lm/9aLpy9AQ/BDoexmvykaTKuOZAih2/+ljF+BurpkPWlRBomcEZ6hehROWMFdc3zAKksL0Uj4cp3vgAt/NMQM8JHXUW23HpdI68F6UQx8AU=
+	t=1752718324; cv=none; b=G1dudNgdWGgPcQ56qLU5HogLnoYnILLquiff//Vz4zMM59KnIAMs3aD63dh21tKRlvohxvI0w1apvPGRgtcQKnV0NfyRV/MFcXKAL4gRAso4+xTmLkPR8JueZoHVsjluXa8TYddoNetTmSSzD8wKaEH3l3Pkls6rYoPigbOUO2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752701367; c=relaxed/simple;
-	bh=c236qv4fi2S1BQktSI+b1jq0ameaanhtvAO7pdQAco8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rtFiCLka5wppw/e8SOHoEAtgmjjNsHkZcLdJnJBxjGGOsK9yIEWsUHuDAxNObhilfXGv8MaZYk8db7dP+A4IlsRGeNzJBlqjjpgV7dgWIKsRjmU/n/00838imvsNhkv3Dv9LK6iO6p+24iHBp8mDnZAHTjM8tHht+OJzctTbQuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Xv3we7Yu; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1752718324; c=relaxed/simple;
+	bh=b+dsztBU/r5KZ5oBd4fLVEt5uMjqjDnr7oo/Ji9YG2A=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Subject:
+	 References:In-Reply-To; b=JjU3636Gf4TwvHZHx6WuHqf0cvFOPdFPWJU7SqVMIiboIgBTJIabe4x7GQoOQnCg2iNUvW+BeVodWJsJbVf3m8Ro1do79uxGvpvzosJPmH3bJ9kh/MVhHN0CdmiWcYdCKmQeN4N0HOFR30MWnt/eo3daqpghJVkjzbZ+OJDhf3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=C8qSUifp; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Xv3we7Yu"
-Received: by linux.microsoft.com (Postfix, from userid 1216)
-	id 6CF71211580C; Wed, 16 Jul 2025 14:29:25 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6CF71211580C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1752701365;
-	bh=RKMf9p6mMMkwdxaPqp/9o52yYa90tQ4MT8vHSN4XKqE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xv3we7Yu04gJW7e793PKMmN2O6k8jbfZJGq1B0M9haILknTHBAWjxZYo+NXhezHCT
-	 wJRqurr8rn6gUePsfo5ytND/Fjyumb09+KPqM1Z+MfMjEvbUVmC1x4xlXX8FE5ET1a
-	 p0BqCuhqfVhz8SMmR7rKsWrQmu0B1yDPXPWjp9Uo=
-Date: Wed, 16 Jul 2025 14:29:25 -0700
-From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Yue Haibing <yuehaibing@huawei.com>,
-	Tanya Agarwal <tanyaagarwal25699@gmail.com>,
-	Kees Cook <kees@kernel.org>, linux-efi@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 0/2] Secure Boot lock down
-Message-ID: <20250716212925.GA14322@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1750975839-32463-1-git-send-email-hamzamahfooz@linux.microsoft.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="C8qSUifp"
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7e32c9577ddso47810385a.0
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Jul 2025 19:12:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1752718321; x=1753323121; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8Ut1Oz5cd4mrEHQ1G48QmwzT5AxIKSMflR+AU1YWamE=;
+        b=C8qSUifpcGHb8plW4ItZQ65sjSTRw6E0bS9xEcmiI55WSN9lZuD0o23ohTIG8/v0/4
+         9CYW16W0n4fkYyIRiK1xpfTkyVLYizEnaZWz85UAO+AtZHj7RYb+XjS+Wp3g/6KdNll7
+         yAEHAqALOLTZbLGmv2Ec6ssSgR4XOElfRiulEN+zV15fnmpk2UAgJ9yljLaXlb5/d7f0
+         Ia8PrpzWLQtJDBObVFj2G41aMqMCLzxH1jbtTpV0jzwelcq0O0HCi3FHOQ5kgh92mTBC
+         l3P0VL6R20eG/0U7bv6pmyrLdAcLvS0p1rxahakCfLoUD53gXhKfSWL6s9vdaNobydId
+         taXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752718321; x=1753323121;
+        h=in-reply-to:references:subject:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8Ut1Oz5cd4mrEHQ1G48QmwzT5AxIKSMflR+AU1YWamE=;
+        b=H7gFrS1eOSqpfio0akalaRDef/EdCBrM8WZANvUwrB21ttOhDKILXk76Ni/RRys0Rq
+         2wX8JpAX6jIzZuiLNuqLH2VOghuDtRaTp5KqkdpwgQ6rYdHThSRtesgR45p/bhW+/G3J
+         mrGf6bWQajuy+qEwXdUSgWZVnY7xhZ9Ha51XFUIgz0vtySTFWiuARgI+Tv7OKtTKMjBC
+         Nlqo5wu0MR9DJWsyryc29cPRobmdx41FSQCMwBSl9CmtzK6OHD6XTsAm233F8EcsziEy
+         bPmU+0eoYYzac0ycCK5NOmzbRVVj/dFi7LIrGkB0VgDmKusytIr0B31GnjqAmR43mqDX
+         WtbA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/bX2tstXM3LnncW2d6kfMwZnJ/YkNjb5eVUfn85yMksPN+nBzUe3973B3tHLfpHQoPfcbUm4Gppg+Pi0jIdpx08Oz+s0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/d3KfHNqwH6UUcQGPFdSKHaYpUZkMNGj79yS+iDwh8rHdE5eq
+	7jJQC+n3nm7ozeBA7SD1qTgaK3rEHFH6RXGMluUYo9ATXPiO5/yxxBzMN0yNKMaEyw==
+X-Gm-Gg: ASbGnctQzt4hgdkKJuS4+0kXPBNwYFNgafw+MDHaPbcc0LDhApD8o4d3vgkry4otJV3
+	fYflpkoyaDL/zNvV0YMs3tM/Gj9YSpDT7iUnkOYCTrecpETAnIu9harIysAt/fLy/RPkfONxiAa
+	lluUG5SMdUbzovOlTBCzCL4YLKs4cMcACAtOuzwlC5IWfxIxE7jFKb86q2zt//5gkwPiAsc78Ml
+	V5rUW5nQactN+pIeRywQRn33Lc2Xx4vBtPkVP4uDEFVg/Qz3o4YJCGMl8KgPFp4kk4chHjTCZaL
+	njwZOICis8gRJ9jGIRkKMgDPstBTt3ygAI9qkO+8VV4TvnpYZ1Ofew/b9eIfH6b6AQVxEmRxyTK
+	/ZC1Cyyq2NLFB1fR1gJu30vOPaJhesNT2HH4x0AXQRP9Ie//crYH3RFtoHvfVGMsDMJs=
+X-Google-Smtp-Source: AGHT+IFuGKGX5Ead/7aQlWXcVtLRDlQcD2Ir2V+fQdBijZ0wUN1PmbDTqZlpVsgTNU2+Tbf1nb3Oew==
+X-Received: by 2002:a05:620a:31a0:b0:7df:dea8:6384 with SMTP id af79cd13be357-7e34362a36cmr806543485a.47.1752718320727;
+        Wed, 16 Jul 2025 19:12:00 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7e342f14ca0sm178636785a.111.2025.07.16.19.12.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 19:12:00 -0700 (PDT)
+Date: Wed, 16 Jul 2025 22:11:59 -0400
+Message-ID: <941986e9f4f295f247e5982002e16fe9@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1750975839-32463-1-git-send-email-hamzamahfooz@linux.microsoft.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250716_2146/pstg-lib:20250716_1156/pstg-pwork:20250716_2146
+From: Paul Moore <paul@paul-moore.com>
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, Blaise Boscaccy <bboscaccy@linux.microsoft.com>, =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH] lsm,selinux: Add LSM blob support for BPF objects
+References: <20250715222655.705241-1-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20250715222655.705241-1-bboscaccy@linux.microsoft.com>
 
-Ping?
+On Jul 15, 2025 Blaise Boscaccy <bboscaccy@linux.microsoft.com> wrote:
+> 
+> This patch introduces LSM blob support for BPF maps, programs, and
+> tokens to enable LSM stacking and multiplexing of LSM modules that
+> govern BPF objects. Additionally, the existing BPF hooks used by
+> SELinux have been updated to utilize the new blob infrastructure,
+> removing the assumption of exclusive ownership of the security
+> pointer.
+> 
+> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> ---
+>  include/linux/lsm_hooks.h         |   3 +
+>  security/security.c               | 120 +++++++++++++++++++++++++++++-
+>  security/selinux/hooks.c          |  56 +++-----------
+>  security/selinux/include/objsec.h |  17 +++++
+>  4 files changed, 147 insertions(+), 49 deletions(-)
 
-On Thu, Jun 26, 2025 at 03:10:37PM -0700, Hamza Mahfooz wrote:
-> All major distros have had carried a version of this patch-set
-> out of tree for sometime now, but with a bunch of magic (typically
-> sprinkled in setup_arch()). Though we can avoid those architecture
-> specific quirks if we call efi_get_secureboot_mode() from
-> efisubsys_init() and that allows us to have a generic solution.
-> 
-> Hamza Mahfooz (2):
->   security: introduce security_lock_kernel_down()
->   efi: introduce EFI_KERNEL_LOCK_DOWN_IN_SECURE_BOOT
-> 
->  drivers/firmware/efi/Kconfig  | 10 ++++++++++
->  drivers/firmware/efi/efi.c    |  9 +++++++++
->  include/linux/lsm_hook_defs.h |  1 +
->  include/linux/security.h      |  8 ++++++++
->  security/lockdown/lockdown.c  |  1 +
->  security/security.c           | 15 +++++++++++++++
->  6 files changed, 44 insertions(+)
-> 
-> -- 
-> 2.49.0
+...
+
+> @@ -835,6 +841,72 @@ static int lsm_bdev_alloc(struct block_device *bdev)
+>  	return 0;
+>  }
+>  
+> +/**
+> + * lsm_bpf_map_alloc - allocate a composite bpf_map blob
+> + * @map: the bpf_map that needs a blob
+> + *
+> + * Allocate the bpf_map blob for all the modules
+> + *
+> + * Returns 0, or -ENOMEM if memory can't be allocated.
+> + */
+> +static int lsm_bpf_map_alloc(struct bpf_map *map)
+> +{
+> +	if (blob_sizes.lbs_bpf_map == 0) {
+> +		map->security = NULL;
+> +		return 0;
+> +	}
+> +
+> +	map->security = kzalloc(blob_sizes.lbs_bpf_map, GFP_KERNEL);
+> +	if (!map->security)
+> +		return -ENOMEM;
+> +
+> +	return 0;
+> +}
+
+Casey suggested considering kmem_cache for the different BPF objects,
+but my gut feeling is that none ofthe BPF objects are going to be
+allocated with either enough frequency, or enough quantity, where a
+simple kzalloc() wouldn't be sufficient, at least for now.  Thoughts
+on this Blaise?
+
+Assuming we stick with kazlloc() based allocation, please look at using
+the lsm_blob_alloc() helper function as Song mentioned  As I'm writing
+this I'm realizing there are a few allocatiors that aren't using the
+helper, I need to fix those up ...
+
+It's worth mentioning that the allocation scheme is an internal LSM
+implementation detail, something we can change at any time with a small
+patch, so I wouldn't stress too much about "Getting it Right" at this
+point in time.
+
+> @@ -5763,7 +5862,12 @@ int security_bpf_token_capable(const struct bpf_token *token, int cap)
+>   */
+>  void security_bpf_map_free(struct bpf_map *map)
+>  {
+> +	if (!map->security)
+> +		return;
+> +
+
+We don't currently check if map->security is NULL in the current hook,
+or the SELinux callback (it's not a common pattern for the LSM blobs),
+did you run into a problem where the blob pointer was NULL?
+
+The same comment applies to all three blob types.
+
+>  	call_void_hook(bpf_map_free, map);
+> +	kfree(map->security);
+> +	map->security = NULL;
+>  }
+>  
+>  /**
+
+--
+paul-moore.com
