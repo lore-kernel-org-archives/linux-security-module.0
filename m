@@ -1,113 +1,192 @@
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76582BEC28
-	for <linux-security-module@vger.kernel.org>; Thu, 17 Jul 2025 18:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4A723771E;
+	Thu, 17 Jul 2025 23:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752776538; cv=none; b=Jumi9X108zEveYwPUbPEPW/uycei9nv6a8mFa0VPDAdOdC5dNR04JSa/HAPDGUuSRAtTXk2vo8BN8/QyTOuuV7WUMo62SmePs3cCFyf/1ujvcDbS/cw2pMgebSWUCGG8glxjlQDVPfyfEphW0miELAxrkSVISGPjb7LyrOnIYMw=
+	t=1752794720; cv=none; b=c8yonrc24YZt+QAq2eNw6qR2PVQTpf6fvrxgOOz3hKkJwY0HUqzeuC2dzvH5SsltWqsMB+tL/pCKwX+GHDycJ5+T0ggTI3nf5G0bCbH6GrnISC6D3L5MaYlUHjHqIBlM3F/CRjCimRXXp1eV6kDg7QHZ5HcUKbmEhWPTQuqY5tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752776538; c=relaxed/simple;
-	bh=G3jL+wG+8NOo0C9q/J7PTimEdtDkh4rD9YQDFto56U4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gJIbPrLFePZViPLcOe+GisCUm68kwCqX9+vKQF0yXsMejscvuTWDtmLqcztoS1mmMl9S4l/NC7jWJCiUcviAhQdnKZz2KXQd3xL3PEJsHDQXh+8MnfDTPdByTc8s4koVXX/YU3YTrLp10neYVwj+OeOyHrkKaoERxNoGy3NUhU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=N21Wm9PT; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1752794720; c=relaxed/simple;
+	bh=ix3ybSX3HXyR5ul7nVKO/r/KYy1s5o0+DAZiEgLkmcM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=lWjGbImXRLXkYQAN3ouUQg/JrefeI50iZX6s39DzF1qWyKOcMiHYIWmneI3SiLdQYunrhfnug15u/g7RCO8eWj9Rvx2Jdm+greXXrhOXiYl8BhZPQYmdXjjpv7t93BapY4zkcw9+vLs5ezbr7/BvOCBQFaGk71BQLIsaY1z/8K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gn7vBNA8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="N21Wm9PT"
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e8bcbe46cf1so1284575276.2
-        for <linux-security-module@vger.kernel.org>; Thu, 17 Jul 2025 11:22:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1752776536; x=1753381336; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dj/cZu4K955u3WxbJO5Yyn51Gj07gNitENbpCqXBrlg=;
-        b=N21Wm9PT616dOulvzkGsVasCVbVeqicWkekZa2o7Jwi6tNsB9ScbQOk2uCWrJ4BSgQ
-         byQZpN5CcZQqZCfF6dv1uY3Y10LswZOOjDIh7iNF585cz8MaPb+VK4T1ZxOpP5MeBpdF
-         gE8tnyZnY+O1DwXMOndAnND4Sam1fGlvwXn9rMcnKlOuJocT7ZCh9vFGp7nirLEIMhLx
-         iHSpY8YCtdmbAOVhEznjsbwFgHt3ukCVD1+uCud1upaeTJhzmYtfasW7Foewh5npChNE
-         mUiIpQEOfvtHtLkXVJ/bLu0e4cgf382HGv00YzcVAm7HMwyOG8NZRa3Oi/lH1JQby+0S
-         y7aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752776536; x=1753381336;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dj/cZu4K955u3WxbJO5Yyn51Gj07gNitENbpCqXBrlg=;
-        b=aeGhCKkE80bhTeb7Eql/FLaSeLHqnAvVFvZkV5DRD0kzDAW+Dfoo9I9/fX8qRhpBOs
-         XEmZmStvmtWT1NYWH99Ruhc78zBjqITeKG9/INyS8PsWCCo8vJmnvA84F9YQ/KJGYlo5
-         vXm5lMa9ykogsGexO7I8VK8t9FuCU0ZnjTVOY6CT+AFrw4zIypbGORjMJWbCWHdMNzC4
-         xGr/yL/eJTsRLh+Ff9xK5dQgLnbEmqFyCKcvweQk6Kd8yATyl3mRW0Xthmtef6aEp+0C
-         f3ND5l34ENuC1F69zmrKem8JKmrdD7V16H2bj4fzyLRIinTdA7yTQrBgsKgEdl14lPWC
-         t0jw==
-X-Forwarded-Encrypted: i=1; AJvYcCWazajqsptDCv304h2NzjsmDhu63zCRNS6SaIlTJSfY1KV2GZekc3X0CQUsSIriyOe9rGdair8pCkyEDcG0y+PMwhcIL+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOxiZH4EE67emZMxA8d1f+wqZruZ9oG0Tb9eSX5Cq2MhcDpmsX
-	fuGSQDcIcZHwKFnpbsdqkkt7S9AO8Twkx9cze9JOWo2iNR6hoJ/E4e4bSYo3GmJtuGogpgs4Sfr
-	xhpt9j8VvzYAqIVYHuxVbP3tNwUuP0LVDtugM732UZkOgI2FlLcAIGA==
-X-Gm-Gg: ASbGnctVso1w0o7yq/1ucxieSuPM5gsH6+flnctZkIGuvQ0bpQ+yc95y/L86jQ7mYDT
-	EjIHZu5pr/ghYhK+8bJf/OWSZ9Ga85J2zCd4f00Ll7WDVJlBXyISLGAqkEdNb06J6pn+cyA12G4
-	u37l8vkwMkMhm3iP6r7vsTXySyyD3OMUNCTfXVqqJrHX2RnXluvwRQG9+WbZnfu0ET81mXJzdRh
-	IR+eiYgh2SA7PZScw==
-X-Google-Smtp-Source: AGHT+IFl6UDPpr/oWWaFnlHMWZyVT1LMOLcL/IIjAuyhHi/01vC0aMu35s2078tcgwodJEbgmu0BPGrHYuDoxJtxfp0=
-X-Received: by 2002:a05:6902:248d:b0:e82:1f55:effd with SMTP id
- 3f1490d57ef6-e8bc269ebadmr9165657276.5.1752776535732; Thu, 17 Jul 2025
- 11:22:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gn7vBNA8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29831C4CEEB;
+	Thu, 17 Jul 2025 23:25:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752794720;
+	bh=ix3ybSX3HXyR5ul7nVKO/r/KYy1s5o0+DAZiEgLkmcM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Gn7vBNA8ECW01pz7bzzi6l7uJmullsgdYyyFGomxO2fchHp+SDepdG+I6wOhD/gNK
+	 T3SEIM+1NfmErc+8DhsFxy8ppv7/K4qPjswgAhSVTH/FsykQ/fNbHEvrnupijvTyea
+	 b5T6AUCskwP0bPJyW348phxgXsYznPGl6Tfu0rEgmHXOlEMleiD7DVHcHq590DH2FY
+	 oMdbUTk24voKuAcf1WeqMrcw3JXvI5a4jYL/MBUz2SF0aWznalOa6/vg9ppvdbzmOv
+	 2MAUd25KsoHSEQdyNB+y5jYu/S+BPCr2PLArdK7j9HFT5emGVOiw+WzwFsulmUJmbM
+	 r4pAIwieJbXxA==
+From: Kees Cook <kees@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kees Cook <kees@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	kasan-dev@googlegroups.com,
+	linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linux-efi@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH v3 00/13] stackleak: Support Clang stack depth tracking
+Date: Thu, 17 Jul 2025 16:25:05 -0700
+Message-Id: <20250717231756.make.423-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1750975839-32463-1-git-send-email-hamzamahfooz@linux.microsoft.com>
- <20250716212925.GA14322@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-In-Reply-To: <20250716212925.GA14322@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 17 Jul 2025 14:22:04 -0400
-X-Gm-Features: Ac12FXxe4T_hN6jEbI53FNZzZFqap9jNRjhELwIEMsW3hFfT4g6e4hyRn79zWz0
-Message-ID: <CAHC9VhS3qY=+DVYqzkgbHLETUo4KgQ17qr_BC3pn9TeG+cr8Mg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Secure Boot lock down
-To: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Yue Haibing <yuehaibing@huawei.com>, Tanya Agarwal <tanyaagarwal25699@gmail.com>, 
-	Kees Cook <kees@kernel.org>, linux-efi@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5918; i=kees@kernel.org; h=from:subject:message-id; bh=ix3ybSX3HXyR5ul7nVKO/r/KYy1s5o0+DAZiEgLkmcM=; b=owGbwMvMwCVmps19z/KJym7G02pJDBmVbZHJG+bN3K/qtDByvmFFwWZOiegr7v9P8cdPbSg4o 3Zj+4WOjlIWBjEuBlkxRZYgO/c4F4+37eHucxVh5rAygQxh4OIUgIkYBjMyfNv4wNam5MZaxztb DVV2bLscf+z93ddLbf58MJq2fUdLOyfDP/uXom2zOn6oGNnZ+vY/6tuxYr3x7FmnbTaV1Sr/nay 2lB0A
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 16, 2025 at 5:29=E2=80=AFPM Hamza Mahfooz
-<hamzamahfooz@linux.microsoft.com> wrote:
->
-> Ping?
+ v3:
+  - split up and drop __init vs inline patches that went via arch trees
+  - apply feedback about preferring __init to __always_inline
+  - incorporate Ritesh Harjani's patch for __init cleanups in powerpc
+  - wider build testing on older compilers
+ v2: https://lore.kernel.org/lkml/20250523043251.it.550-kees@kernel.org/
+ v1: https://lore.kernel.org/lkml/20250507180852.work.231-kees@kernel.org/
 
-Adding the new Lockdown maintainers to the To/CC line for review in
-case they missed it earlier.  For reference, the patchset can be found
-at the lore link below:
+Hi,
 
-https://lore.kernel.org/linux-security-module/1750975839-32463-1-git-send-e=
-mail-hamzamahfooz@linux.microsoft.com/
+As part of looking at what GCC plugins could be replaced with Clang
+implementations, this series uses the recently landed stack depth tracking
+callback in Clang[1] to implement the stackleak feature. Since the Clang
+feature is now landed, I'm moving this out of RFC to a v1.
 
-> On Thu, Jun 26, 2025 at 03:10:37PM -0700, Hamza Mahfooz wrote:
-> > All major distros have had carried a version of this patch-set
-> > out of tree for sometime now, but with a bunch of magic (typically
-> > sprinkled in setup_arch()). Though we can avoid those architecture
-> > specific quirks if we call efi_get_secureboot_mode() from
-> > efisubsys_init() and that allows us to have a generic solution.
-> >
-> > Hamza Mahfooz (2):
-> >   security: introduce security_lock_kernel_down()
-> >   efi: introduce EFI_KERNEL_LOCK_DOWN_IN_SECURE_BOOT
-> >
-> >  drivers/firmware/efi/Kconfig  | 10 ++++++++++
-> >  drivers/firmware/efi/efi.c    |  9 +++++++++
-> >  include/linux/lsm_hook_defs.h |  1 +
-> >  include/linux/security.h      |  8 ++++++++
-> >  security/lockdown/lockdown.c  |  1 +
-> >  security/security.c           | 15 +++++++++++++++
-> >  6 files changed, 44 insertions(+)
+Since this touches a lot of arch-specific Makefiles, I tried to trim
+the CC list down to just mailing lists in those cases, otherwise the CC
+was giant.
 
---=20
-paul-moore.com
+Thanks!
+
+-Kees
+
+[1] https://clang.llvm.org/docs/SanitizerCoverage.html#tracing-stack-depth
+
+Kees Cook (12):
+  stackleak: Rename STACKLEAK to KSTACK_ERASE
+  stackleak: Rename stackleak_track_stack to __sanitizer_cov_stack_depth
+  stackleak: Split KSTACK_ERASE_CFLAGS from GCC_PLUGINS_CFLAGS
+  x86: Handle KCOV __init vs inline mismatches
+  arm: Handle KCOV __init vs inline mismatches
+  arm64: Handle KCOV __init vs inline mismatches
+  s390: Handle KCOV __init vs inline mismatches
+  mips: Handle KCOV __init vs inline mismatch
+  init.h: Disable sanitizer coverage for __init and __head
+  kstack_erase: Support Clang stack depth tracking
+  configs/hardening: Enable CONFIG_KSTACK_ERASE
+  configs/hardening: Enable CONFIG_INIT_ON_FREE_DEFAULT_ON
+
+Ritesh Harjani (IBM) (1):
+  powerpc/mm/book3s64: Move kfence and debug_pagealloc related calls to
+    __init section
+
+ arch/Kconfig                                  |  4 +-
+ arch/arm/Kconfig                              |  2 +-
+ arch/arm64/Kconfig                            |  2 +-
+ arch/riscv/Kconfig                            |  2 +-
+ arch/s390/Kconfig                             |  2 +-
+ arch/x86/Kconfig                              |  2 +-
+ security/Kconfig.hardening                    | 45 +++++++++-------
+ Makefile                                      |  1 +
+ arch/arm/boot/compressed/Makefile             |  2 +-
+ arch/arm/vdso/Makefile                        |  2 +-
+ arch/arm64/kernel/pi/Makefile                 |  2 +-
+ arch/arm64/kernel/vdso/Makefile               |  3 +-
+ arch/arm64/kvm/hyp/nvhe/Makefile              |  2 +-
+ arch/riscv/kernel/pi/Makefile                 |  2 +-
+ arch/riscv/purgatory/Makefile                 |  2 +-
+ arch/sparc/vdso/Makefile                      |  3 +-
+ arch/x86/entry/vdso/Makefile                  |  3 +-
+ arch/x86/purgatory/Makefile                   |  2 +-
+ drivers/firmware/efi/libstub/Makefile         |  8 +--
+ drivers/misc/lkdtm/Makefile                   |  2 +-
+ kernel/Makefile                               | 10 ++--
+ lib/Makefile                                  |  2 +-
+ scripts/Makefile.gcc-plugins                  | 16 +-----
+ scripts/Makefile.kstack_erase                 | 21 ++++++++
+ scripts/gcc-plugins/stackleak_plugin.c        | 52 +++++++++----------
+ Documentation/admin-guide/sysctl/kernel.rst   |  4 +-
+ Documentation/arch/x86/x86_64/mm.rst          |  2 +-
+ Documentation/security/self-protection.rst    |  2 +-
+ .../zh_CN/security/self-protection.rst        |  2 +-
+ arch/arm64/include/asm/acpi.h                 |  2 +-
+ arch/mips/include/asm/time.h                  |  2 +-
+ arch/s390/hypfs/hypfs.h                       |  2 +-
+ arch/s390/hypfs/hypfs_diag.h                  |  2 +-
+ arch/x86/entry/calling.h                      |  4 +-
+ arch/x86/include/asm/acpi.h                   |  4 +-
+ arch/x86/include/asm/init.h                   |  2 +-
+ arch/x86/include/asm/realmode.h               |  2 +-
+ include/linux/acpi.h                          |  4 +-
+ include/linux/bootconfig.h                    |  2 +-
+ include/linux/efi.h                           |  2 +-
+ include/linux/init.h                          |  4 +-
+ include/linux/{stackleak.h => kstack_erase.h} | 20 +++----
+ include/linux/memblock.h                      |  2 +-
+ include/linux/mfd/dbx500-prcmu.h              |  2 +-
+ include/linux/sched.h                         |  4 +-
+ include/linux/smp.h                           |  2 +-
+ arch/arm/kernel/entry-common.S                |  2 +-
+ arch/arm64/kernel/entry.S                     |  2 +-
+ arch/riscv/kernel/entry.S                     |  2 +-
+ arch/s390/kernel/entry.S                      |  2 +-
+ arch/arm/mm/cache-feroceon-l2.c               |  2 +-
+ arch/arm/mm/cache-tauros2.c                   |  2 +-
+ arch/powerpc/mm/book3s64/hash_utils.c         |  6 +--
+ arch/powerpc/mm/book3s64/radix_pgtable.c      |  4 +-
+ arch/s390/mm/init.c                           |  2 +-
+ arch/x86/kernel/kvm.c                         |  2 +-
+ arch/x86/mm/init_64.c                         |  2 +-
+ drivers/clocksource/timer-orion.c             |  2 +-
+ .../lkdtm/{stackleak.c => kstack_erase.c}     | 26 +++++-----
+ drivers/soc/ti/pm33xx.c                       |  2 +-
+ fs/proc/base.c                                |  6 +--
+ kernel/fork.c                                 |  2 +-
+ kernel/kexec_handover.c                       |  4 +-
+ kernel/{stackleak.c => kstack_erase.c}        | 22 ++++----
+ tools/objtool/check.c                         |  4 +-
+ tools/testing/selftests/lkdtm/config          |  2 +-
+ MAINTAINERS                                   |  6 ++-
+ kernel/configs/hardening.config               |  6 +++
+ 68 files changed, 204 insertions(+), 172 deletions(-)
+ create mode 100644 scripts/Makefile.kstack_erase
+ rename include/linux/{stackleak.h => kstack_erase.h} (81%)
+ rename drivers/misc/lkdtm/{stackleak.c => kstack_erase.c} (89%)
+ rename kernel/{stackleak.c => kstack_erase.c} (87%)
+
+-- 
+2.34.1
+
