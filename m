@@ -1,126 +1,150 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364BA2E7BBD
-	for <linux-security-module@vger.kernel.org>; Fri, 18 Jul 2025 16:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D2D224AFB;
+	Fri, 18 Jul 2025 22:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752857057; cv=none; b=Y4+D9FjTcVCv63h2SX4KeLI9zJqh2k5NEuKMTBhcS/s2g7sy0n8S73aHCtvJgFfl+nNdvqH0+kYbXnt/4X3loRAYuMs6hjxj8AZzIfnozdQxfQF2YAfjcpAnT4dYwC/ijEv8HezPwuIt7KhfZDGA1JjmQEz8d3Ym5Uchivetmec=
+	t=1752879089; cv=none; b=S3MILflS8Cf19q+M1ugUM9nr3hCErwhnmRs4Qeh2HM2Uy7IPGii8uqPCudEWjUEtX34LZYs8qH0Je5AYBSPGWhdV7Dv74trvZCru2ggaDKIwSKz1pXODf+sM16Hfs8Im8guWp4c7ereH5PUKWbcy3d1LTGyZZCKapX9NeBORdq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752857057; c=relaxed/simple;
-	bh=CjXVboOD7jqFsvDghr8v4qIw9uJof1firp6NqKPVwxE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cKoN61GzXUyzy5IuDmSjBlKWxmk/pmGIohQ6hikxCmZ/LWrDIbMWe1j3kbokF5xd9U50Re/NLFNEARirnLkw1fVf8hhxN6xpcDonDpjghvDK0dCazI26mqbN3urBO0stjoWZVv+DulyAKDcSoBLV53NMI9gcE6oqL3uAbqQyU5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vEPL2M+U; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1752879089; c=relaxed/simple;
+	bh=9wq1gPYvCplHPaY4Wm5XgoLMe+aODde2O7VcmHcmk98=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uPLgdyUatVim0CECah6F4FPsKF/Ls5gb4V26IYBlQ1t173MdwVyCoWuoCPsOvoYdTionaiaKpw/1zEypEwH8hQ3ac8ZeL+s+ZrJ3IowNbuL9fEz1xfQN0oSbLJgtdU8JIsb0nKL4BcNLpdplupJAQ+SQ37o8H60Ag8plhzcuNkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VmiVcikE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vEPL2M+U"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4562b2d98bcso335e9.1
-        for <linux-security-module@vger.kernel.org>; Fri, 18 Jul 2025 09:44:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752857052; x=1753461852; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UYyOeEuwNocsHdGNCsBfI8Qe4KQ4QZ4n9Q1Dj/3rQ6Y=;
-        b=vEPL2M+U4NlkFiH8vw9Mi0q0YwQy7SCstLVL0r5OCYmK548HpmG3Zl/xALUvgL+pYl
-         VTCPaY2AIlcOkXusskFuOLDQEiS4As2qyZpYeqSso8fgKivA1LN7apYF/DJcrP525Bda
-         htNhX/ZuEix8J+BAH+nCAnLCATtBCbvbj5AmOJMg7WMdqqF/a4HlPKiXCKlKFv2SgFPh
-         B5+z+pJg4Pc4gFZkj6iCEDJ5anafmrYVkGrev9SdStvLYPLQ+D+Hix3UKf+8OkyjyHhc
-         SVxOMWDT9u6cq4hUBS/9SaovcYMmOxOe2agNv0cm2AkkUX5iF+3Jwr724k9Q/P1aGKOQ
-         Sfrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752857052; x=1753461852;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UYyOeEuwNocsHdGNCsBfI8Qe4KQ4QZ4n9Q1Dj/3rQ6Y=;
-        b=jWb4GSGmuiGpr027DSlFSDgH7fsnc0v1htits3eLAsGUZ6YLiEYpQqchPDtDd0cGnu
-         wZ7nlk+06gPCKK27Vua1Caqun+4b+inJHr8ZGlwXOG+gvnysT+2u2IDsPsmIW1YjQLnb
-         yArObTsSGcNL2BcHGAd9v2ZAhpbntuc52y8PSmMmF0fhTqtJ34pdQTyJs92BcXyAblEx
-         6qvgNgQK5I0hhMwHNdaNwgmb65yTd/OX8ksDWfMbEVaBAx2PODKnoWSf2X5m9IfoyNC4
-         pxjq/bBuELBHDLRpcL6ZcCLwTYErZkL3I5PfjzmcdLlq98415vpMtdj1T6ow4xV31Ew8
-         /eSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOTX9O6bVCVRKWlzA+zCRy0N8ol7OUcWw66Mcc+1FrR6Xw8pvBUmeVhC+fId02cl+QDF9OhWV0A5Y1rLjBj9UkqI5c5mE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/ZqnF3ZGDLC5y7/A3Sx14GEVuRMFaY2hKeGIxHi8uJ1V7kjf5
-	ccnEXGfbpG1KFwixmg5115gOmWnKGMbs2Slj+WqdG/esgj8P/5He6OrZ2rfNENhHe48YdBHhjmB
-	56LO+jL7Me7l/cXJRxhQnFoCld92gF9QyU2hT4SYc
-X-Gm-Gg: ASbGncuqlXi+4LWTU+Cxlume3Ck62N5o3l0uXarStsBtq2xkUB3n6BpNU2d4CtKRwfd
-	OkWIqp7ykza+gAV1KApcp7cM9LEXHtfKGxTGCz+5eijHwKd301ICD4xEaS77rSirywkoua4btbK
-	3sqecFiOoDveuBNfQ57Gj9qxDPtk/Luk5V07I9cukHgUW7MsXLJ0NNKCD980VG79TLt0X5TK/DU
-	ZFy7bl5ZAINK7NHDDhmmJHftVm2QW2RS1tsyrMevtLdKg==
-X-Google-Smtp-Source: AGHT+IGfFvKzY08YuywrQMEICEvAuGeTVE+YW6Kb55R7MDhzINiZnoYDjpVLaeSISZL79sgVvYJwp63L+LUq6vf/bhs=
-X-Received: by 2002:a05:600c:35d5:b0:453:65f4:f4c8 with SMTP id
- 5b1f17b1804b1-4563a7821f9mr2358065e9.3.1752857052166; Fri, 18 Jul 2025
- 09:44:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmiVcikE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0591C4CEF1;
+	Fri, 18 Jul 2025 22:51:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752879088;
+	bh=9wq1gPYvCplHPaY4Wm5XgoLMe+aODde2O7VcmHcmk98=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VmiVcikElcqZk72BFs7/zWioNVg/RlBsEZTqUIs6HsScTtVwOS6j7B3ua7R/5a+8f
+	 B/Xx/QRZM/EQh/lO2RicrfWNUj4TspYI7v5C1esxaGnMy5qNgSFrlaLuHCW1KuRQE/
+	 vwjy0/1yadEDESYc6Jup2r2d1g6hRKk98N3uI9FiR3pIjtw/6N8d9/1A9DF/kI7Ptp
+	 /KtF2y8xo3+DKYzmZGh9ileKlyQIK4tsMmB+vc1VQguKTRnI0Md6sJRL9kCLGWssqH
+	 x60/sDs7wvwXbxMyYV4GlknlF8akcqkSZPz9pRU1nNtV+O7XtlJK1/hNvPy3K6SwqK
+	 vqLjSPHvQBQpQ==
+Date: Fri, 18 Jul 2025 15:51:28 -0700
+From: Kees Cook <kees@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>, Will Deacon <will@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Michal Wilczynski <michal.wilczynski@intel.com>,
+	Juergen Gross <jgross@suse.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Roger Pau Monne <roger.pau@citrix.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Usama Arif <usama.arif@bytedance.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
+	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
+	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-mm@kvack.org, Ingo Molnar <mingo@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v3 04/13] x86: Handle KCOV __init vs inline mismatches
+Message-ID: <202507181541.B8CFAC7E@keescook>
+References: <20250717231756.make.423-kees@kernel.org>
+ <20250717232519.2984886-4-kees@kernel.org>
+ <aHoHkDvvp4AHIzU1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718-yama_fix-v1-1-a51455359e67@ssi.gouv.fr>
- <CAG48ez23HLtb9GJ-BbSXaWFhdPjXyFNED9fbuyaNP5EXJ_Wv8w@mail.gmail.com> <cehkmvl3y3u6qugobjo2h4yez6h5uw5pffqcr3mfjuki3sb32t@nr7nxkk3bdsg>
-In-Reply-To: <cehkmvl3y3u6qugobjo2h4yez6h5uw5pffqcr3mfjuki3sb32t@nr7nxkk3bdsg>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 18 Jul 2025 18:43:35 +0200
-X-Gm-Features: Ac12FXzUGFJ7pnOjsyrzSLeBgsD9Po9gE2spiaKDjwY_YHbiT_yMwuF9Rp53xNw
-Message-ID: <CAG48ez2rKDc_OPFYYaHahAdZWYTYwnF-cQBYf28=_5aAjYy2UA@mail.gmail.com>
-Subject: Re: [PATCH] lsm: yama: Check for PTRACE_MODE_READ_FSCREDS access
-To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-Cc: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Olivier Bal-Petre <olivier.bal-petre@oss.cyber.gouv.fr>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHoHkDvvp4AHIzU1@kernel.org>
 
-On Fri, Jul 18, 2025 at 5:55=E2=80=AFPM Nicolas Bouchinet
-<nicolas.bouchinet@oss.cyber.gouv.fr> wrote:
-> On Fri, Jul 18, 2025 at 04:52:51PM +0200, Jann Horn wrote:
-> > On Fri, Jul 18, 2025 at 10:47=E2=80=AFAM <nicolas.bouchinet@oss.cyber.g=
-ouv.fr> wrote:
-> > > From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> > >
-> > > Currently, yama only checks if the `PTRACE_MODE_ATTACH` mode is set
-> > > during the `yama_ptrace_access_check()` LSM hook implementation.
-> > >
-> > > In cases of call with the `PTRACE_MODE_READ_FSCREDS` mode, nothing
-> > > happens. Thus, yama does not interact properly with the
-> > > "hidepid=3Dptraceable" option.
-> > >
-> > > hidepid's "ptraceable" option being documented as follow :
-> > >
-> > > - hidepid=3Dptraceable or hidepid=3D4 means that procfs should only c=
-ontain
-> > >   `/proc/<pid>/` directories that the caller can ptrace.
-> > >
-> > > This patch simply add yama a `PTRACE_MODE_READ_FSCREDS` mode check to
-> > > enable an interaction with "hidepid=3Dptraceable".
-> >
-> > Please note that PTRACE_MODE_READ_FSCREDS is actually a combination of
-> > two flags, and the intention is that the PTRACE_MODE_REALCREDS /
-> > PTRACE_MODE_FSCREDS part of the flags should basically only be used to
-> > determine where to read the caller's credentials from:
-> >
-> > /* shorthands for READ/ATTACH and FSCREDS/REALCREDS combinations */
-> > #define PTRACE_MODE_READ_FSCREDS (PTRACE_MODE_READ | PTRACE_MODE_FSCRED=
-S)
-> > #define PTRACE_MODE_READ_REALCREDS (PTRACE_MODE_READ | PTRACE_MODE_REAL=
-CREDS)
-> > #define PTRACE_MODE_ATTACH_FSCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_FS=
-CREDS)
-> > #define PTRACE_MODE_ATTACH_REALCREDS (PTRACE_MODE_ATTACH |
-> > PTRACE_MODE_REALCREDS)
-> >
->
-> Yes my bad, I should have sent the hidepid [1] patch in the same batch.
-> The idea here is to take "hidepid=3Dptraceable" into account. Which
-> already calls yama with `PTRACE_MODE_READ_FSCREDS`.
+On Fri, Jul 18, 2025 at 11:36:32AM +0300, Mike Rapoport wrote:
+> Hi Kees,
+> 
+> On Thu, Jul 17, 2025 at 04:25:09PM -0700, Kees Cook wrote:
+> > When KCOV is enabled all functions get instrumented, unless the
+> > __no_sanitize_coverage attribute is used. To prepare for
+> > __no_sanitize_coverage being applied to __init functions, we have to
+> > handle differences in how GCC's inline optimizations get resolved. For
+> > x86 this means forcing several functions to be inline with
+> > __always_inline.
+> > 
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> 
+> ...
+> 
+> > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> > index bb19a2534224..b96746376e17 100644
+> > --- a/include/linux/memblock.h
+> > +++ b/include/linux/memblock.h
+> > @@ -463,7 +463,7 @@ static inline void *memblock_alloc_raw(phys_addr_t size,
+> >  					  NUMA_NO_NODE);
+> >  }
+> >  
+> > -static inline void *memblock_alloc_from(phys_addr_t size,
+> > +static __always_inline void *memblock_alloc_from(phys_addr_t size,
+> >  						phys_addr_t align,
+> >  						phys_addr_t min_addr)
+> 
+> I'm curious why from all memblock_alloc* wrappers this is the only one that
+> needs to be __always_inline?
 
-To be clearer: "if (mode & (PTRACE_MODE_ATTACH |
-PTRACE_MODE_READ_FSCREDS))" does not make sense, because it expands to
-"if (mode & (PTRACE_MODE_ATTACH | PTRACE_MODE_READ |
-PTRACE_MODE_FSCREDS))", which is always true.
+Thread-merge[1], adding Will Deacon, who was kind of asking the same
+question.
+
+Based on what I can tell, GCC has kind of fragile inlining logic, in the
+sense that it can change whether or not it inlines something based on
+optimizations. It looks like the kcov instrumentation being added (or in
+this case, removed) from a function changes the optimization results,
+and some functions marked "inline" are _not_ inlined. In that case, we end up
+with __init code calling a function not marked __init, and we get the
+build warnings I'm trying to eliminate.
+
+So, to Will's comment, yes, the problem is somewhat fragile (though
+using either __always_inline or __init will deterministically solve it).
+We've tripped over this before with GCC and the solution has usually
+been to just use __always_inline and move on.
+
+For memblock_alloc*, it appears to be that the heuristic GCC uses
+resulted in only memblock_alloc_from() being a problem in this case. I
+can certainly mark them all as __always_inline if that is preferred.
+
+Some maintainers have wanted things marked __init, some have wanted
+__always_inline. I opted for __always_inline since that was basically
+the intent of marking a function "inline" in the first place. I am happy
+to do whatever. :)
+
+-Kees
+
+[1] https://lore.kernel.org/lkml/aHouXI5-tyQw78Ht@willie-the-truck/
+
+-- 
+Kees Cook
