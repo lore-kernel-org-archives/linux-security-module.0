@@ -1,145 +1,106 @@
-Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51374221F04;
-	Fri, 18 Jul 2025 09:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A111E5B78;
+	Fri, 18 Jul 2025 09:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752829913; cv=none; b=hI+nr5To7s2XNrMQ1cnF4jLNVgW7uRrNlITTU7KbnKer/u8l5fpg1RI7MksgkIKZwvaBmzqrBk9i1yC0unEQPoOd+hub2b7lBAfzCbb1JrW/iNw+up/yCZFD99ySmn/1H8R6ohjaJ+OfnAxeBLR7jXcaBkERax+O7R2nUhQpBE4=
+	t=1752830296; cv=none; b=ueIBKhxETet13/O0JaXx4rHoN6bhxSBHQeuE1fVw2qkgikiwlL7Zp3UQHUdjnHzgSaGDaXmWDBQ+N9p9EAEnDKE4/ikJS/sekO3Iybw2GnNJjnch8DEE5fvCCuId1nbxhv8mIja29JFJ4s1q+NkBDHLxjrLEeG2IZ72W+3AdZ3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752829913; c=relaxed/simple;
-	bh=DqvbrXMz4qPH25izBAOoE+tg01crtThvN9qYeSNBET8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RsehWKBviHz+iy+Abk4UeU3OJhyXxqK7yazHq+5ZYkryrD2l+4DJXKS/4iM1Rf9s1OLFz50UUEZFba5Jj/86XkdTTqlAgGhMlqLYR6SOHWBdQagsEwAFqkw6kR1Cy+fhcLSi0hAjXnjvlfUgaTQICURc/LjS3z1+AjQy/hrryTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=K4dIjt2q; arc=none smtp.client-ip=51.159.173.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+	s=arc-20240116; t=1752830296; c=relaxed/simple;
+	bh=iN0MjV8lG6vlPY6QKWEDWqXP3y58juMGr+peNv9I/+Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AYWM+8wuerHdH4uclnn1P1V5B4lZzQfsfVzWPL2PAAUp0bevycDJ0BfbUxPdhLOH2vsQY9xeX3tR5m4Fu9z+H+Lv+GF9K3uWkRaULer50Q9VxA97mpxISj78zZsqA1VxBaZJlx+hY5d9f9Z/2Lgbw+1REBz49VboqjwgiFtneMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upUCLIdr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="K4dIjt2q"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:References:Cc:To:From:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=9PapmoOxKFgC+jrWSEIuR/hzimXtYSXZjnqcfACEJjg=; b=K4dIjt2qvuHzCc3AAGvu2ksdDU
-	nsIMnsBgQggHezz8URH2//dLZLDBFILIGDVEHjLuxOLRCIQedofIwe1m/XB1HkpaqlZ3Q3b/NZgSZ
-	HKsYaeWZ8oALtn0GAJUcsdQqAllbKSV1LTa3zPetjmUajWqi1fhQ6/0p1bkva6ctJaFSui0DVTjc4
-	1pQ79ZCwjfIvpySj3cp7PM9pqzAnUB1H23tk/yr9etW5n/F5rHQugzecyb7P4O8GZX1Kn414LrsM3
-	l7CK5qk65fD807T7OLsmXpUMq8eaKONIEjgYwBn2/8ZI97cSYKGZc4hmeUku76f+jobtNUoDjXlc5
-	eUtXQ8/w==;
-Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:36235 helo=[10.224.8.110])
-	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.2)
-	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
-	id 1uch89-0000000AEBa-0dSo;
-	Fri, 18 Jul 2025 11:11:49 +0200
-Message-ID: <cf43bc15-e42d-4fde-a2b7-4fe832e177a8@oss.cyber.gouv.fr>
-Date: Fri, 18 Jul 2025 11:11:48 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upUCLIdr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 191D5C4CEF0;
+	Fri, 18 Jul 2025 09:18:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752830296;
+	bh=iN0MjV8lG6vlPY6QKWEDWqXP3y58juMGr+peNv9I/+Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=upUCLIdrbbvEbKjUsZgTdUEGyRbXXPVKgUMJXI8oVEu7IuCo+NlAr8pZ3hP/3OpCS
+	 z+m8WoLkMvYdx42mseDFgent82TIUAOPaXDuO0MHrSBPWaortApspXcggf+7lhNmY8
+	 tOaGg0j7eaXiZqMy8OhhL3BAvuI4qqptGCOW5qdmQyljlx4c3DuNukqLAdC4airAsq
+	 nJKi0Be3SrrR2xHh9RGmjhMqPl6sRDW75QEF/7Lu21+PwIinNh5ZPzzmyUHWJMe6cp
+	 dzghcLYsnfaa3tVtbk0VeArOxbSMW6EX7TzfWbBD0ifZlVbF7q2+xGG6ugEJd7zFXx
+	 5DD1NmgbOVSgg==
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60c4521ae2cso3330368a12.0;
+        Fri, 18 Jul 2025 02:18:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV0AKoUIuonJeWHXWR2Cf7jQZCRjErGiIBNVCjuW0tpqJD3VWWQANTownXAYV244/9x+GvGSnXz7RM=@vger.kernel.org, AJvYcCV1TzUiHaDkQFdVridp0GhxD2QtBGx6xg0Lr3SAHadBj8NveE8r0J+4KYw8N9NpbhNp0K9s8iPNyi/xFTtJ@vger.kernel.org, AJvYcCV2RECSTJAxpYbYkY1rF1Lmt4kB3iosuDgXE19K1ASc8SE6fNRcv92tm/AHUzPKsA8+5FB65qL3NxnsoeKoZUx8@vger.kernel.org, AJvYcCV2fhkW998v5WZH4nLwEFwnzJO9W7r645GdDIgGB3cHzpXmDvZBGe03Upj0r4vlUbk44Oh0fDx97PlMAQ==@vger.kernel.org, AJvYcCVHdEZ8u7svwgKUodrkLtM/yJIIvU6xWOJc2TZJBZxyOX9PxZcyAJ0FmM5nCiAGOa7F1nRqPsmDjedv@vger.kernel.org, AJvYcCW4IDaSJazeWSwFFgACWN7b69epSroBWv2UjtCV4FoSmmVDdLNrz0ZML2pgVp0fPyOFulXTEhsYGbk7yA==@vger.kernel.org, AJvYcCX54pACOS+AT+fpvWNPmgl03ntroAgVDVSeFEZLJCxJoA7bevDnRDhIiCiI4qh+bhZoOHbq223hNnGkOq8KPjz3@vger.kernel.org, AJvYcCXI1xdPeZEbwcZTymERqI5WYVZVnRug5O0uQP3+54Ly+XPRoFapANuj6cb7nMIR75kkF9JyOiLz3rlpclN5@vger.kernel.org, AJvYcCXWHCcRsafKEhSZun1fPA+F8bDs0z7gysLDMQj5i4bfYF4K6fFmjSEG068g/vYSBMUDDLQC77HKfITkIj956HRV8Rob5ZLW@vger.kernel.org, AJvYcCXqNg6XyAk9/D4vsEBX1q7rzepaXITLUvpATBsxMYuqEQPgjantjzmPcNjOZr6xYNATsfGYAM5TpRD2rQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKJwdOXXj+QpoI1AL07zJBq6cn8RioZhFakuWRHcCYSS299SHg
+	B6dE6nWhyVZBwFGCBr4SkKevZyzO9uT19Cf5S5TC1wdpfbrwO03biextpt0qsRIGo2Dz+QevQ2k
+	y2LtfM2znofuQa60xHNXrOK5iQYEJz44=
+X-Google-Smtp-Source: AGHT+IH+CR6kK9khsoUi4kQxVa0vWTn3qqM4Z4G6WAw+0g0YyuRvDHP3ooIXGfMWBaXJUiPtMEtFUptkHeWtXN/zID4=
+X-Received: by 2002:a05:6402:26d5:b0:60c:6a48:8047 with SMTP id
+ 4fb4d7f45d1cf-612d456bb15mr803449a12.11.1752830294637; Fri, 18 Jul 2025
+ 02:18:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: yama: Check for PTRACE_MODE_READ_FSCREDS access
-From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-To: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- Olivier Bal-Petre <olivier.bal-petre@oss.cyber.gouv.fr>,
- Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-References: <20250718-yama_fix-v1-1-a51455359e67@ssi.gouv.fr>
-Content-Language: en-US
-In-Reply-To: <20250718-yama_fix-v1-1-a51455359e67@ssi.gouv.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
-X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20250717231756.make.423-kees@kernel.org> <20250717232519.2984886-9-kees@kernel.org>
+In-Reply-To: <20250717232519.2984886-9-kees@kernel.org>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 18 Jul 2025 17:18:03 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4RyZQTak5AgYj6TaXHyEefgw+wmXs9Gi8jUJWrUV5HQw@mail.gmail.com>
+X-Gm-Features: Ac12FXyrA9A9-rpLV3MB79YH2kXhj6f2Fk9F6HAlk-0emUPTHthuyPP3lR9zQXg
+Message-ID: <CAAhV-H4RyZQTak5AgYj6TaXHyEefgw+wmXs9Gi8jUJWrUV5HQw@mail.gmail.com>
+Subject: Re: [PATCH v3 09/13] mips: Handle KCOV __init vs inline mismatch
+To: Kees Cook <kees@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Note that a hidepid patch has also been sent [1].
+Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
 
-[1]: https://lore.kernel.org/all/20250718-hidepid_fix-v1-1-3fd5566980bc@ssi.gouv.fr/
-
-Best regards,
-
-Nicolas
-
-On 7/18/25 10:47, nicolas.bouchinet@oss.cyber.gouv.fr wrote:
-> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+On Fri, Jul 18, 2025 at 7:26=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
 >
-> Currently, yama only checks if the `PTRACE_MODE_ATTACH` mode is set
-> during the `yama_ptrace_access_check()` LSM hook implementation.
+> When KCOV is enabled all functions get instrumented, unless
+> the __no_sanitize_coverage attribute is used. To prepare for
+> __no_sanitize_coverage being applied to __init functions, we
+> have to handle differences in how GCC's inline optimizations get
+> resolved. For mips this requires adding the __init annotation on
+> init_mips_clocksource().
 >
-> In cases of call with the `PTRACE_MODE_READ_FSCREDS` mode, nothing
-> happens. Thus, yama does not interact properly with the
-> "hidepid=ptraceable" option.
->
-> hidepid's "ptraceable" option being documented as follow :
->
-> - hidepid=ptraceable or hidepid=4 means that procfs should only contain
->    `/proc/<pid>/` directories that the caller can ptrace.
->
-> This patch simply add yama a `PTRACE_MODE_READ_FSCREDS` mode check to
-> enable an interaction with "hidepid=ptraceable".
->
-> Combined with hidepid=ptraceable, the following behaviors will then
-> happen while reading in `/proc/<pid>`:
->
-> - "restricted": A process that has a predefined relationship with the
->    inferior will see the inferior process in `/proc`.
->
-> - "admin-only": A process that has the CAP_SYS_PTRACE will be able to
->    see every processes in `/proc`.
->
-> - "no attach": A process will not see anything but itself in
->    `/proc/<pid>/`.
->
-> It is important to note that the combination of "hidepid=ptraceable" and
-> yama "no attach" also makes PIDs invisible to root.
->
-> No access reports are logged in case of denied access with
-> `PTRACE_MODE_READ_FSCREDS` to avoid flooding kernel logs.
->
-> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> Signed-off-by: Kees Cook <kees@kernel.org>
 > ---
->   security/yama/yama_lsm.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-> index 3d064dd4e03f9eaaf5258b37ad05641b35967995..63b589850a88d35dd6a08b23c14ba1a660e6f1b3 100644
-> --- a/security/yama/yama_lsm.c
-> +++ b/security/yama/yama_lsm.c
-> @@ -352,7 +352,7 @@ static int yama_ptrace_access_check(struct task_struct *child,
->   	int rc = 0;
->   
->   	/* require ptrace target be a child of ptracer on attach */
-> -	if (mode & PTRACE_MODE_ATTACH) {
-> +	if (mode & (PTRACE_MODE_ATTACH | PTRACE_MODE_READ_FSCREDS)) {
->   		switch (ptrace_scope) {
->   		case YAMA_SCOPE_DISABLED:
->   			/* No additional restrictions. */
-> @@ -380,7 +380,7 @@ static int yama_ptrace_access_check(struct task_struct *child,
->   		}
->   	}
->   
-> -	if (rc && (mode & PTRACE_MODE_NOAUDIT) == 0)
-> +	if (rc && (mode & PTRACE_MODE_NOAUDIT) == 0 && (mode & PTRACE_MODE_ATTACH))
->   		report_access("attach", child, current);
->   
->   	return rc;
->
+> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> Cc: <linux-mips@vger.kernel.org>
 > ---
-> base-commit: 5d8b97c946777118930e1cfb075cab59a139ca7c
-> change-id: 20250718-yama_fix-ea5c2c4b2fbe
+>  arch/mips/include/asm/time.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Best regards,
+> diff --git a/arch/mips/include/asm/time.h b/arch/mips/include/asm/time.h
+> index e855a3611d92..5e7193b759f3 100644
+> --- a/arch/mips/include/asm/time.h
+> +++ b/arch/mips/include/asm/time.h
+> @@ -55,7 +55,7 @@ static inline int mips_clockevent_init(void)
+>   */
+>  extern int init_r4k_clocksource(void);
+>
+> -static inline int init_mips_clocksource(void)
+> +static inline __init int init_mips_clocksource(void)
+>  {
+>  #ifdef CONFIG_CSRC_R4K
+>         return init_r4k_clocksource();
+> --
+> 2.34.1
+>
+>
