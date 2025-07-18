@@ -1,177 +1,136 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147282C08BB;
-	Fri, 18 Jul 2025 13:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7596E1B87F0
+	for <linux-security-module@vger.kernel.org>; Fri, 18 Jul 2025 14:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752843850; cv=none; b=otpCtaWkDSXuwpQGtfETqHzzMCHn7vpo30KQF9Um8eYWyqrj1hYJaMv5H8cfq306GrkZZ65aBgQG4PNLQt/27GTruAu0TacM87LNAjRW0JNP2AK8DoJ8cNqopGVUYLIBJ+3F4jOW7SoSh62ijBDHaZcBrptQpiEGxuwUDzLORYk=
+	t=1752850412; cv=none; b=L8RHeQ6TcRshvCKMypwJ66vBi6cfsLbnAVPRV306CaBeNhePRoDXX1zxI/EILW/5CLpzT/O9wDFJ3vUqexGTwBJ9Av6pmthisVYng2hg1SJMd0E7IFYa81IpP4iR3CGpMN6Ps/eWp8OfDNVS9QlQO1vnrNsudyfaN3XOYrrtGF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752843850; c=relaxed/simple;
-	bh=e9JV0Z0iQk3JJlBwUijpHfs6OkBiHHnta1gSH+W9zOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q4cNNy1iQbLnNATt4KxTKtj9IG2Zhl9rd7ci+oBA/SHW2T5SW4fUF4xQ8oImpC2R/jJY/aSudbc54c9gc/yZdvp/csqTaOBlRpxYLsJaHvtvBjWKZzexpC9hYBaOhIbZb/0NYFzgdmhdifAWo/C+Rcvk2rkl+0gR8vdX5/+Akbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSHIa+Mr; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752850412; c=relaxed/simple;
+	bh=+cz4HCPr5tjchC6wb2VLVqvPWbpYeCdVtpSnQppLTSI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hY7/1TtoU2YC6on5xaFJj5j9tEcZpxjBTl9DbPhQTj9QRSF/o3C3jciz2uFfEQc/qh05vsLqqHdMZHgXuQ7VsgDrKt1EqSiKQ11kvbN4nfS29aeCe4CCMwakZIS5SB1bHYfPKUIA6cIIjJofomOrB9q3uBuN8uD3b2Y2oOJ9Qzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3J6d9SCj; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSHIa+Mr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76E41C4CEEB;
-	Fri, 18 Jul 2025 13:04:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752843849;
-	bh=e9JV0Z0iQk3JJlBwUijpHfs6OkBiHHnta1gSH+W9zOQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dSHIa+MrlwXDsebHQMAOBrcdcgNNRuFu1OTjumS8fxdFBEiWA23QLsWePa1HP1jXa
-	 DP7rD2arOXkIYe04ayLXrk6t48TKPhah+qrfUQk4ky4F4LbYRccQTgZL/kXp3nQJYB
-	 nrJLucASNeNNY+00+8mINN6UNjKqm5BId8c4coJWxb2glH/Jf36YSDoPuBM+WSroOr
-	 n4i8t1jm9SduQegLb6spa4A1/MFx1Gu+g8rrZJhbtALp3VA5PnisWIVkS3OfF1re3r
-	 AMqmvtywhenvyRLdeSc0OM7qWEwqaMFUvF5JgNdpEgu+srMur2jwIhNPEyXJW5TR2q
-	 5vV09+6vxMu3A==
-Date: Fri, 18 Jul 2025 14:04:00 +0100
-From: Lee Jones <lee@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Nishanth Menon <nm@ti.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Allison Randal <allison@lohutok.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Ingo Molnar <mingo@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, kasan-dev@googlegroups.com,
-	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-efi@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v3 05/13] arm: Handle KCOV __init vs inline mismatches
-Message-ID: <20250718130400.GB11056@google.com>
-References: <20250717231756.make.423-kees@kernel.org>
- <20250717232519.2984886-5-kees@kernel.org>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3J6d9SCj"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-611d32903d5so12132a12.0
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Jul 2025 07:53:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752850409; x=1753455209; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/hzBLC06b+5l1Jibi7tNWcnqjU2kBOrH0ilPtK5Nqww=;
+        b=3J6d9SCjRHdZJtVgVlLOflA9rtmh8HrYLIyP2MO4YmnSiqCAwIkfJR13ADdLXt324y
+         zRqiVa8o9ULQX3LMUVvGdIrU7wufoJUHLrgjtBCLFV7+MzFxvxJB4ym/dh33Am6fhKzi
+         6yoxoN+tZE31hBU4f+X1hvJUXbpvWiDgV5CXYrNiXSfJNs4FbGS65KYImpP+U6dbA7yG
+         +7n6GPljBmNgRUja+n+Qgbw6iSnBVQTdV1gqB+D+h35h5YsdA6NQIaDumIgpldhUp1Z0
+         zEnjuT5I1M97ka8yaixU+xjPvQ3CN9QFMQSZT+s0VBnZuWCtcNo9g8jOvDZgkr9Ym7lA
+         n1pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752850409; x=1753455209;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/hzBLC06b+5l1Jibi7tNWcnqjU2kBOrH0ilPtK5Nqww=;
+        b=bqdQZS+PvsOKzIUP+MzUzHjxfqFPw7C7vC+JrSdMfC0SAEawLngUwV6huH+RXF1qSG
+         EbfPhx0oreOVfghbT8Le1dzy9qXHcwgckw26+wFkNfVTosJQCW3HPIzPeRY5f107wSCQ
+         yUEhK7nnCjqkhy/85+FCDwRz0QPOR50k3WOYyokmEvpOX9XZ3llvZiCp3Kg3VtC9tdO9
+         xPlsJepkmotf6PDpEbiBPIyRceoXA8eee2HAKiB/qo3d+0KgSAmQzKSqRS7KojWF1G9D
+         aiU98GAp2lScGpoHV6XzikVSCNf3ouheaVUTqj9PvpkbQMLbvi80671IfEUg8apk4Yez
+         tRCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVco/YtpE3Vr1BvPc4lLDGRDeHy+1wiKL6ldVnJZS6yMMi371V8flb7/AjsWn4+UablKxk1lbY1hGjjUbDz7k87V2xlNjQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPKma97YJw35MgiPbCuxrcnzNUyij+iTuYj4aNlO2oAkS0gfSD
+	XV9GLOG0ycLhoRUdaYcAxkwsBVI3OGla6MIjDdcXKxtXjsYipqUZ9GEen7rUfkAx8k25XICdTpl
+	dpkylwxEl5chUqxbu3mgqSXOuUPWthxOViFWqL/ym
+X-Gm-Gg: ASbGnctcj7YY2siCLQYxlziu0MjGBqJvQj2VyRn0wKne7m5nzk5GUt4aHVLIfIFtr0G
+	FXwkLJNL6yIZZAE+F/XwcXQq5wDKM/St91AmuGUk++txIkkeRH693WT1D1GDbLK7wiMalqpotHt
+	P77GFK7GfYDBfqEcF7hVo8CHeWaaalcATDNOJl3qOlqqrCphOYAnpqeX3CtYQ8cTGf94VqAqNud
+	u/Qd0KjFMYz/xTFMKsLQsOE11mWnE9ecbd+AbqtmrvsWQ==
+X-Google-Smtp-Source: AGHT+IHhIPDeunFBo1vWbIckgOjZNTBX+72Iuj3bDcvIABI3tBDgDiU9nGOHjPKBy83vW/xX7fddjk+XYV/k/HG0dn0=
+X-Received: by 2002:a05:6402:31b6:b0:611:ff6c:50de with SMTP id
+ 4fb4d7f45d1cf-612c234e830mr103625a12.4.1752850408383; Fri, 18 Jul 2025
+ 07:53:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250717232519.2984886-5-kees@kernel.org>
+References: <20250718-yama_fix-v1-1-a51455359e67@ssi.gouv.fr>
+In-Reply-To: <20250718-yama_fix-v1-1-a51455359e67@ssi.gouv.fr>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 18 Jul 2025 16:52:51 +0200
+X-Gm-Features: Ac12FXwt7R8GLFUkdtizIwT7mYdidtRUy78w_KziKqUlTZowf2o8kv3DmkXhuRM
+Message-ID: <CAG48ez23HLtb9GJ-BbSXaWFhdPjXyFNED9fbuyaNP5EXJ_Wv8w@mail.gmail.com>
+Subject: Re: [PATCH] lsm: yama: Check for PTRACE_MODE_READ_FSCREDS access
+To: nicolas.bouchinet@oss.cyber.gouv.fr
+Cc: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Olivier Bal-Petre <olivier.bal-petre@oss.cyber.gouv.fr>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 17 Jul 2025, Kees Cook wrote:
+On Fri, Jul 18, 2025 at 10:47=E2=80=AFAM <nicolas.bouchinet@oss.cyber.gouv.=
+fr> wrote:
+> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+>
+> Currently, yama only checks if the `PTRACE_MODE_ATTACH` mode is set
+> during the `yama_ptrace_access_check()` LSM hook implementation.
+>
+> In cases of call with the `PTRACE_MODE_READ_FSCREDS` mode, nothing
+> happens. Thus, yama does not interact properly with the
+> "hidepid=3Dptraceable" option.
+>
+> hidepid's "ptraceable" option being documented as follow :
+>
+> - hidepid=3Dptraceable or hidepid=3D4 means that procfs should only conta=
+in
+>   `/proc/<pid>/` directories that the caller can ptrace.
+>
+> This patch simply add yama a `PTRACE_MODE_READ_FSCREDS` mode check to
+> enable an interaction with "hidepid=3Dptraceable".
 
-> When KCOV is enabled all functions get instrumented, unless
-> the __no_sanitize_coverage attribute is used. To prepare for
-> __no_sanitize_coverage being applied to __init functions, we have to
-> handle differences in how GCC's inline optimizations get resolved. For
-> arm this exposed several places where __init annotations were missing
-> but ended up being "accidentally correct". Fix these cases and force
-> several functions to be inline with __always_inline.
-> 
-> Acked-by: Nishanth Menon <nm@ti.com>
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Nishanth Menon <nm@ti.com>
-> Cc: Santosh Shilimkar <ssantosh@kernel.org>
-> Cc: Lee Jones <lee@kernel.org>
-> Cc: Allison Randal <allison@lohutok.net>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: <linux-arm-kernel@lists.infradead.org>
-> ---
->  include/linux/mfd/dbx500-prcmu.h  | 2 +-
+Please note that PTRACE_MODE_READ_FSCREDS is actually a combination of
+two flags, and the intention is that the PTRACE_MODE_REALCREDS /
+PTRACE_MODE_FSCREDS part of the flags should basically only be used to
+determine where to read the caller's credentials from:
 
-Acked-by: Lee Jones <lee@kernel.org>
+/* shorthands for READ/ATTACH and FSCREDS/REALCREDS combinations */
+#define PTRACE_MODE_READ_FSCREDS (PTRACE_MODE_READ | PTRACE_MODE_FSCREDS)
+#define PTRACE_MODE_READ_REALCREDS (PTRACE_MODE_READ | PTRACE_MODE_REALCRED=
+S)
+#define PTRACE_MODE_ATTACH_FSCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_FSCRED=
+S)
+#define PTRACE_MODE_ATTACH_REALCREDS (PTRACE_MODE_ATTACH |
+PTRACE_MODE_REALCREDS)
 
->  arch/arm/mm/cache-feroceon-l2.c   | 2 +-
->  arch/arm/mm/cache-tauros2.c       | 2 +-
->  drivers/clocksource/timer-orion.c | 2 +-
->  drivers/soc/ti/pm33xx.c           | 2 +-
->  5 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/mfd/dbx500-prcmu.h b/include/linux/mfd/dbx500-prcmu.h
-> index 98567623c9df..828362b7860c 100644
-> --- a/include/linux/mfd/dbx500-prcmu.h
-> +++ b/include/linux/mfd/dbx500-prcmu.h
-> @@ -213,7 +213,7 @@ struct prcmu_fw_version {
->  
->  #if defined(CONFIG_UX500_SOC_DB8500)
->  
-> -static inline void prcmu_early_init(void)
-> +static inline void __init prcmu_early_init(void)
->  {
->  	db8500_prcmu_early_init();
->  }
-> diff --git a/arch/arm/mm/cache-feroceon-l2.c b/arch/arm/mm/cache-feroceon-l2.c
-> index 25dbd84a1aaf..2bfefb252ffd 100644
-> --- a/arch/arm/mm/cache-feroceon-l2.c
-> +++ b/arch/arm/mm/cache-feroceon-l2.c
-> @@ -295,7 +295,7 @@ static inline u32 read_extra_features(void)
->  	return u;
->  }
->  
-> -static inline void write_extra_features(u32 u)
-> +static inline void __init write_extra_features(u32 u)
->  {
->  	__asm__("mcr p15, 1, %0, c15, c1, 0" : : "r" (u));
->  }
-> diff --git a/arch/arm/mm/cache-tauros2.c b/arch/arm/mm/cache-tauros2.c
-> index b1e1aba602f7..bfe166ccace0 100644
-> --- a/arch/arm/mm/cache-tauros2.c
-> +++ b/arch/arm/mm/cache-tauros2.c
-> @@ -177,7 +177,7 @@ static inline void __init write_actlr(u32 actlr)
->  	__asm__("mcr p15, 0, %0, c1, c0, 1\n" : : "r" (actlr));
->  }
->  
-> -static void enable_extra_feature(unsigned int features)
-> +static void __init enable_extra_feature(unsigned int features)
->  {
->  	u32 u;
->  
-> diff --git a/drivers/clocksource/timer-orion.c b/drivers/clocksource/timer-orion.c
-> index 49e86cb70a7a..61f1e27fc41e 100644
-> --- a/drivers/clocksource/timer-orion.c
-> +++ b/drivers/clocksource/timer-orion.c
-> @@ -43,7 +43,7 @@ static struct delay_timer orion_delay_timer = {
->  	.read_current_timer = orion_read_timer,
->  };
->  
-> -static void orion_delay_timer_init(unsigned long rate)
-> +static void __init orion_delay_timer_init(unsigned long rate)
->  {
->  	orion_delay_timer.freq = rate;
->  	register_current_timer_delay(&orion_delay_timer);
-> diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
-> index dfdff186c805..dc52a2197d24 100644
-> --- a/drivers/soc/ti/pm33xx.c
-> +++ b/drivers/soc/ti/pm33xx.c
-> @@ -145,7 +145,7 @@ static int am33xx_do_sram_idle(u32 wfi_flags)
->  	return pm_ops->cpu_suspend(am33xx_do_wfi_sram, wfi_flags);
->  }
->  
-> -static int __init am43xx_map_gic(void)
-> +static int am43xx_map_gic(void)
->  {
->  	gic_dist_base = ioremap(AM43XX_GIC_DIST_BASE, SZ_4K);
->  
-> -- 
-> 2.34.1
-> 
+> Combined with hidepid=3Dptraceable, the following behaviors will then
+> happen while reading in `/proc/<pid>`:
+>
+> - "restricted": A process that has a predefined relationship with the
+>   inferior will see the inferior process in `/proc`.
+>
+> - "admin-only": A process that has the CAP_SYS_PTRACE will be able to
+>   see every processes in `/proc`.
+>
+> - "no attach": A process will not see anything but itself in
+>   `/proc/<pid>/`.
+>
+> It is important to note that the combination of "hidepid=3Dptraceable" an=
+d
+> yama "no attach" also makes PIDs invisible to root.
+>
+> No access reports are logged in case of denied access with
+> `PTRACE_MODE_READ_FSCREDS` to avoid flooding kernel logs.
 
--- 
-Lee Jones [李琼斯]
+This seems like a major semantic change; I believe it essentially
+means that commands like "ps" stop working entirely on systems that
+enable hidepid. While that might be desirable in some scenarios, I
+think changing the semantics like this without making it opt-in
+through a new sysctl knob or such would be a bad idea.
