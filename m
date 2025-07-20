@@ -1,365 +1,136 @@
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772E32874EA;
-	Sat, 19 Jul 2025 12:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AC9182B4;
+	Sun, 20 Jul 2025 06:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752928894; cv=none; b=VXn+xcKQ5vdMGD3eEPWhYxyicuU1YcZCuj8nzbJ9NvWe6cGXljI1KPujAKtKesbd8oBojCBqhT5mMcSsW7UG82MOa0OjKRDL3U97Tm/bUxAynf1lSht1cFkHS/uNWOkEnpwoqpNhoiZgCo8zeg0FoJssNRV55okoflEjYgz8WtA=
+	t=1752991820; cv=none; b=hBg14WIWsHUwYzEBvDy6ZfacHxXSkegdexfZYQLuL/U8dHbCaqSj+1JMtHhTs4iTMAU3fRhjvZcOtl9jYhRPRRHWVcutH/t6JlXtPagErXpq4heNZKF5XsbbQ4Lv0rCBcOxrFXBG4gCMF0FLUyWKQ4+iGrVNrDn5bH7Y1IfnCSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752928894; c=relaxed/simple;
-	bh=qO3QxPss+Ez6xIoDiDgrczAiXZ6fDnwcU1lYnvb8G1k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SnHMa7v3JWhEXWIbsaYCfp0l039b/uaZpMMAefaet47dr1xQvBLIFPxIKOeogy86TMPc6w3nhFnRaj+K3PPj54I1O7aeCl6jlT1o4eb2h8jEHXrqMSx4reia1XrybmmD1hTl11GVZ2qZuUOqoCLFFUxK1mVsznwvMV1GMKT+Ufk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CK/GsN5d; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1752991820; c=relaxed/simple;
+	bh=ombXy5J9mN5+Ko6iFhW8NndKJFf3Fpi4o6CQRaezi3g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c9eCXqwwDh9roo9isXlqCDWW9w1gibgSa9w8uQrPosnaH/t2ssC/UAwLyPBFIiokTXLlgVfK9eBwl2GxuQi5MJOlL8pqrITNFuImlqFWNOKoed6ves6KfG0Gf4UksAUZzJ5VGtD93NBZ6wf/vbC5psPpmSAp7Yuka/nNbEdWAhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HcocEkaA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CK/GsN5d"
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-879d2e419b9so1906437a12.2;
-        Sat, 19 Jul 2025 05:41:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752928891; x=1753533691; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ryY05QWgY0BpbA6XnF96jvKEPsrBSeX6x+oxWgmAkOs=;
-        b=CK/GsN5dfRi8S3QgEP/jc0hOLogfqxK2uDqb9fVbFAtmDb6WevUetfVAq805PWPw3I
-         RZCD1ry8/rL2m8YYltFRuX/822geatSVBzrFkJH1SsTQMxzcsLWTcw7+GC7PyARe3sNA
-         16kvR8QlaE6+Leyl5O0LYwR+1A/HuiuUD7J/4W+NcXyBxYKzVmWsCQy4nMdSat7bsAfA
-         eS102F48vBITCcB3BseQf0rYx9GVNaGRBFPbcijOihOT/tCAZ/8QM5lgspoG/+tAtzrc
-         sXjDxSEaEZ8rhL1/gskmMUkHDcbiBYMFskOMoCblFc323vQiPcyNarH6GpzggZCGjh06
-         cxwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752928891; x=1753533691;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ryY05QWgY0BpbA6XnF96jvKEPsrBSeX6x+oxWgmAkOs=;
-        b=hIoAYdNDRHCSBRdw/apTIlQ1HbT5dJKNDTf5qYkilfbxze9fn+qSUgxq2NxFSXaT5o
-         1Q0EnohO15mcUNZVhithOJ8DFbUJkxFt4Bv4AMw8eHJCaUHqoB/bACQTFyDTUV19ogED
-         faAPIdCglttYN4PdbE+ZjAkA2ODjxpv/CDaREr8uzeP69R1RjWpfaUZzDIDZSOsArOue
-         vDcoqPFRnBKuxFQAaVz4fAx2+l9P/outciGpSAd7C+k4JJtVNlaCv7uKXclZ29aIbGvS
-         QVqq3KZhj482umihDsWkBLiiEhGN3WR1ne8s2zBIpX+5DWfrNOM2QkJVDhHSgtKYcTbw
-         PDMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLbp66y1sH+N7GxgPe1YClCPTFrHGj8JkRnaMcECDoUhfm7km/guLlbR7xf929ZKThypRRQzVypR2qdKo=@vger.kernel.org, AJvYcCW/VRHGmWtNKonv4BsqAEnuGtI3OC9Y2T3wSQcrvIsDIaLBcWB8lsxtjeXRyLL4GoBdtRjUpfdsytLr6LLXmA2k@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeuzGyv79b0Di4Uu4iZQ/Z94q59WEbRWc+nHx1335pMaOF03Tn
-	UYeShWs2TqbmRI9LcHjky4aiZLbC7Z9Z5kKIl7KR2/YkKPLX8UO7JA1qMGDebWYKoK0=
-X-Gm-Gg: ASbGncv/Yi0emMOF8rK8SGcn6FB8wrKPevM4f0e75QGjOyhRCqG3o344MvUK31SK02v
-	Dj5zIjRFE9fE5YQgEjwm8yjROsPlHPThe4BFX/yLmuGMQQavSqJ/esxgZ++/eVg30mb7kG+f/qC
-	o3w6lrTPT0T2Lr/dxbtpk+r6A4kWlN5rAVVJgvR73NLIVaI+t6OAJRM8/qowztKXIwm2r0qoGw2
-	LKl7fq0HHnzwi+LkWshn5TpzjDT/PehGkdPe+aXkYtjbQzEOQ0QNeQBWxQME39iWGz8RqdTq3O1
-	4DeWuSalYAGDg2IvLaQCQyTkAWNE8/ji+8buENZb4QqaiEfRaYBQ5t0tCqaPQfg5EjgcoJS1qam
-	l4aV7agM+O05LhdZ6vGtE
-X-Google-Smtp-Source: AGHT+IHYuAxOrMgO/Wpm79sqhhVsbWC416DCFuuEjxJq8fq/Lg1VX5N6WHG0lsCXCnA1XfV2hDtCwg==
-X-Received: by 2002:a17:903:3b8b:b0:234:d679:72e3 with SMTP id d9443c01a7336-23e24f59dbfmr194060805ad.42.1752928891045;
-        Sat, 19 Jul 2025 05:41:31 -0700 (PDT)
-Received: from [0.0.5.57] ([136.159.213.146])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6b4b36sm28630285ad.92.2025.07.19.05.41.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Jul 2025 05:41:30 -0700 (PDT)
-From: Abhinav Saxena <xandfury@gmail.com>
-Date: Sat, 19 Jul 2025 06:41:26 -0600
-Subject: [PATCH RFC 3/3] selftests/landlock: add cross-domain signal tests
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HcocEkaA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D626EC19421;
+	Sun, 20 Jul 2025 06:10:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752991819;
+	bh=ombXy5J9mN5+Ko6iFhW8NndKJFf3Fpi4o6CQRaezi3g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HcocEkaAHqoiHoBCIs5ZO1zgy5A6mlv32UCcJW8LJrNOH9xTJsjCjR+0l+k+rDugt
+	 FfJRK0wuMhP1+l40qQ4Zsqb2kNgofBEYfXVrDcz5S49YWRrNZuwLyidR4kwpzmO+j+
+	 2Ti22ok5s651Cl0DKENNJulslvkPPeDYInLV6/E1rLq+3JS2kHByx10FDPlWtaaYoO
+	 zbBEeae5MrdFJ4uyBR+eocuvKJFVtcaQkoastPWeZ1nTyt+lAAqN/K7z9f9MgU77QF
+	 ns3N6LeIPgbEVfylgBuIAeVsTpY9WQPioWqB+bD85jLB/SdJceatFgmEgi7I3n/vBJ
+	 jDFV6fT3ykiRg==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55622414cf4so2928807e87.3;
+        Sat, 19 Jul 2025 23:10:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUKELGM/ashHPFgoKCL9nctb4y0d4y+qbD4P53Q+1tSd7LRfn9MV78LpsXGidu3HrJeLdmsoOJOhWGw@vger.kernel.org, AJvYcCUMiohBnJmrFxFxFe9PYL17Q7ShcYP2VeZeeYLZsnH9E+hr5lOvu21HFVubc80PBWY2fWPy3R4NjfkOvjzpLBVI@vger.kernel.org, AJvYcCUlNBIJSfM8sgAbeaxc85+pdeBUcZyk8iMSNYW6U1rSffrvBjVByJXOft6TzypgTUWIgQZ3Cfjf7CjVvA==@vger.kernel.org, AJvYcCV2NXQwjeR4DYr6Ind0bCxoOzQTh9XOa9N++vn6rP6EcHI2j4nUprBFHpNnU3enXwfg/maKhfx/X/9cx0gy6UOO@vger.kernel.org, AJvYcCVGne03iuMAcCztfyBqjN3EINlYyOHUIRcdhlM5muxd3DJQJkdAkyWmqKKoNh0NPZs0Hc/M7VIksDVqVXjjHnW+8sZz@vger.kernel.org, AJvYcCVnw3A0foCIkyfH2UIPAS6ZgSqrtA5SkB/FKqtvWeKjyObQOxciuHpphgUoKjxe52YuHCiF5up8AFaq1Q==@vger.kernel.org, AJvYcCVr/3B8F1Vjvnjzldjpwg/hnAzOlh/NVZdAxDi4X7FELWh82PyulBQrI8ssQHDSUKmhNrTqVDnzCxQANaTQ@vger.kernel.org, AJvYcCW4D6JFTgCvOiopuKLxIpG0vcqq0RHn4BRSLOdmBA3EOU//G9v6cVg9ZitGdwohFExrCnI=@vger.kernel.org, AJvYcCWqraamdjbvXObGalFIXiBcb62yFGO4wxDPUyxoaIJvOyVBm1Kr/4M/APrySHKNOj9yU6SeWFzSxXD+@vger.kernel.org, AJvYcCWsMvJ6sfvfskTZrJxe33y1RORyQLmqEZfnkbylM9FU7OrC1Nu8TWxq6GnYCwY1AKgc3g/WBjdEFtuZBtZVtQH26ZLN1ZyG@vger.kernel.org, AJvYcCX8hi+duU26oTYVSKJIRMloRGdwGZrS3Hpd74gmpVo3BEqB/YlzqOu9Fu6OCRv+WBmdP9nbdAt6QHvFwpvSVDvVnZkUYQ==@vger.kernel.org, AJvYcCXXnwZn7kkbncLKby6XxH86oz9GvSxSTLUmMVXlaRlzm1jVRyZD+fpg46VZW2rRjKCuCvvHIeWpug1rRA==@vger.kernel.org, AJvYcCXjk8tNlYGrU1DrrV3YTxAh2tHKeSaod8NnL9nuf+efZM0hB/Xr3BUcCBF4BFmfzc3CKesjqurhYNcY+iOm@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGSOgQY3WWLFbolB0FzpUU+BEwg/oGmgLXO6Jkb5qFFhTxfUMF
+	7SAW79ISsthUVrkoDDIH1v94w97nlSEVld5QUKbTlUHj7p2s6FkuWr6VfsisnuyIrtGmAouy6gR
+	UpAbV+UN5yvInMfSnHYh1eS0M9F1vjTY=
+X-Google-Smtp-Source: AGHT+IGzW7z8MZyh/6NVryj0xIRWvZtmGLwUiyHXGC4Qk/FYdRSLZqwcI4BFS0lrRzeksvOsF0eTUUFywEq3kCkPty0=
+X-Received: by 2002:a05:6512:2301:b0:553:5176:48a with SMTP id
+ 2adb3069b0e04-55a31843110mr2007807e87.21.1752991817889; Sat, 19 Jul 2025
+ 23:10:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250719-landlock_abstractions-v1-3-2c4fd61f8973@gmail.com>
-References: <20250719-landlock_abstractions-v1-0-2c4fd61f8973@gmail.com>
-In-Reply-To: <20250719-landlock_abstractions-v1-0-2c4fd61f8973@gmail.com>
-To: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
- =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Abhinav Saxena <xandfury@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752928886; l=8891;
- i=xandfury@gmail.com; s=20250614; h=from:subject:message-id;
- bh=qO3QxPss+Ez6xIoDiDgrczAiXZ6fDnwcU1lYnvb8G1k=;
- b=+RxX9CTwk3BxNj4tjinZT8HNGYy8ZuS4HWwl/bwj7taZWoKrYxZdzmloBZhokScfRz/hwGmn8
- W6fRce7JUCrB9lhK2Ze+fdsKfvUlKNfZRmkTizVkFGC9XobrXWBOZRA
-X-Developer-Key: i=xandfury@gmail.com; a=ed25519;
- pk=YN6w7WNet8skqvMWxhG5BlAmtd1SQmo8If6Mofh4k44=
+References: <20250717231756.make.423-kees@kernel.org> <20250717232519.2984886-4-kees@kernel.org>
+ <aHoHkDvvp4AHIzU1@kernel.org> <202507181541.B8CFAC7E@keescook>
+In-Reply-To: <202507181541.B8CFAC7E@keescook>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sun, 20 Jul 2025 16:10:01 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXGAwjChyFvjQcTbL8dFXkFWnn9n47bkN7FP=+EsLNsJdg@mail.gmail.com>
+X-Gm-Features: Ac12FXxx6bD_QGQsGFgOANxpcIEdVmgITnXc8yZmdE0EdDE9cBbQCb787bRnEwA
+Message-ID: <CAMj1kXGAwjChyFvjQcTbL8dFXkFWnn9n47bkN7FP=+EsLNsJdg@mail.gmail.com>
+Subject: Re: [PATCH v3 04/13] x86: Handle KCOV __init vs inline mismatches
+To: Kees Cook <kees@kernel.org>
+Cc: Mike Rapoport <rppt@kernel.org>, Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Michal Wilczynski <michal.wilczynski@intel.com>, 
+	Juergen Gross <jgross@suse.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Roger Pau Monne <roger.pau@citrix.com>, 
+	David Woodhouse <dwmw@amazon.co.uk>, Usama Arif <usama.arif@bytedance.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>, 
+	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, 
+	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-mm@kvack.org, Ingo Molnar <mingo@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	sparclinux@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Add cross_domain_signal test using the new cross-domain variants to
-validate signal delivery between independent peer domains. This fills
-a gap in current test coverage which only exercises hierarchical
-domain relationships.
+On Sat, 19 Jul 2025 at 08:51, Kees Cook <kees@kernel.org> wrote:
+>
+> On Fri, Jul 18, 2025 at 11:36:32AM +0300, Mike Rapoport wrote:
+> > Hi Kees,
+> >
+> > On Thu, Jul 17, 2025 at 04:25:09PM -0700, Kees Cook wrote:
+> > > When KCOV is enabled all functions get instrumented, unless the
+> > > __no_sanitize_coverage attribute is used. To prepare for
+> > > __no_sanitize_coverage being applied to __init functions, we have to
+> > > handle differences in how GCC's inline optimizations get resolved. For
+> > > x86 this means forcing several functions to be inline with
+> > > __always_inline.
+> > >
+> > > Signed-off-by: Kees Cook <kees@kernel.org>
+> >
+> > ...
+> >
+> > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> > > index bb19a2534224..b96746376e17 100644
+> > > --- a/include/linux/memblock.h
+> > > +++ b/include/linux/memblock.h
+> > > @@ -463,7 +463,7 @@ static inline void *memblock_alloc_raw(phys_addr_t size,
+> > >                                       NUMA_NO_NODE);
+> > >  }
+> > >
+> > > -static inline void *memblock_alloc_from(phys_addr_t size,
+> > > +static __always_inline void *memblock_alloc_from(phys_addr_t size,
+> > >                                             phys_addr_t align,
+> > >                                             phys_addr_t min_addr)
+> >
+> > I'm curious why from all memblock_alloc* wrappers this is the only one that
+> > needs to be __always_inline?
+>
+> Thread-merge[1], adding Will Deacon, who was kind of asking the same
+> question.
+>
+> Based on what I can tell, GCC has kind of fragile inlining logic, in the
+> sense that it can change whether or not it inlines something based on
+> optimizations. It looks like the kcov instrumentation being added (or in
+> this case, removed) from a function changes the optimization results,
+> and some functions marked "inline" are _not_ inlined. In that case, we end up
+> with __init code calling a function not marked __init, and we get the
+> build warnings I'm trying to eliminate.
+>
+> So, to Will's comment, yes, the problem is somewhat fragile (though
+> using either __always_inline or __init will deterministically solve it).
+> We've tripped over this before with GCC and the solution has usually
+> been to just use __always_inline and move on.
+>
 
-The test creates a fork tree where both children call
-landlock_restrict_self() for the first time, ensuring their
-domain->parent pointers are NULL and creating true peer domains:
-
-    coordinator (no domain)
-    |
-    +-- resource_proc (Domain X) /* owns the resource */
-    |
-    +-- accessor_proc (Domain Y) /* tries to access */
-
-Tests verify that kill(SIGUSR1) behaves correctly across all four
-domain combinations, with scoped accessors properly denied (-EPERM)
-when attempting cross-domain signal delivery.
-
-This establishes the resource-accessor test pattern for future scope
-types where Landlock restrictions apply only to the accessor side.
-
-Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
----
- .../selftests/landlock/scoped_signal_test.c        | 237 +++++++++++++++++++++
- 1 file changed, 237 insertions(+)
-
-diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
-index d8bf33417619..b52eaf1f3c0a 100644
---- a/tools/testing/selftests/landlock/scoped_signal_test.c
-+++ b/tools/testing/selftests/landlock/scoped_signal_test.c
-@@ -559,4 +559,241 @@ TEST_F(fown, sigurg_socket)
- 		_metadata->exit_code = KSFT_FAIL;
- }
- 
-+FIXTURE(cross_domain_scope)
-+{
-+	int coordinator_to_resource_pipe[2]; /* coordinator -> resource sync */
-+	int coordinator_to_accessor_pipe[2]; /* coordinator -> accessor sync */
-+	int result_pipe[2]; /* accessor -> coordinator result */
-+	pid_t resource_pid; /* Domain X process */
-+	pid_t accessor_pid; /* Domain Y process */
-+};
-+
-+/* Include the cross-domain variants */
-+#include "scoped_cross_domain_variants.h"
-+
-+FIXTURE_SETUP(cross_domain_scope)
-+{
-+	drop_caps(_metadata);
-+	/* Create communication channels */
-+	ASSERT_EQ(0, pipe2(self->coordinator_to_resource_pipe, O_CLOEXEC));
-+	ASSERT_EQ(0, pipe2(self->coordinator_to_accessor_pipe, O_CLOEXEC));
-+	ASSERT_EQ(0, pipe2(self->result_pipe, O_CLOEXEC));
-+
-+	signal_received = 0; /* Reset for each test */
-+	self->resource_pid = -1;
-+	self->accessor_pid = -1;
-+}
-+
-+FIXTURE_TEARDOWN(cross_domain_scope)
-+{
-+	close(self->coordinator_to_resource_pipe[0]);
-+	close(self->coordinator_to_resource_pipe[1]);
-+	close(self->coordinator_to_accessor_pipe[0]);
-+	close(self->coordinator_to_accessor_pipe[1]);
-+	close(self->result_pipe[0]);
-+	close(self->result_pipe[1]);
-+}
-+
-+static void cross_domain_signal_handler(int sig)
-+{
-+	if (sig == SIGUSR1 || sig == SIGURG)
-+		signal_received = 1;
-+	else if (sig == SIGALRM)
-+		signal_received = 2; /* Alarm timeout */
-+}
-+
-+/*
-+ * Maybe this should go into common.h or scoped_common.h so that
-+ * we can perhaps test interactions b/w different types of sanboxes
-+ */
-+static void create_independent_domain(struct __test_metadata *_metadata,
-+				      enum sandbox_type domain_type,
-+				      const char *process_role)
-+{
-+	if (domain_type == SCOPE_SANDBOX) {
-+		/*
-+		 * This is the critical call - first landlock_restrict_self()
-+		 * ensures domain->parent == NULL, creating true peer domains
-+		 */
-+		create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
-+	}
-+}
-+
-+TEST_F(cross_domain_scope, cross_domain_signal)
-+{
-+	enum sandbox_type resource_domain = variant->resource_domain;
-+	enum sandbox_type accessor_domain = variant->accessor_domain;
-+
-+	TH_LOG("Resource domain: %s",
-+	       resource_domain == NO_SANDBOX ? "unrestricted" : "scoped");
-+	TH_LOG("Accessor domain: %s",
-+	       accessor_domain == NO_SANDBOX ? "unrestricted" : "scoped");
-+	/*
-+	 * Fork tree:
-+	 * coordinator (no domain)
-+	 * ├── resource_proc (Domain X)
-+	 * └── accessor_proc (Domain Y)
-+	 */
-+
-+	/* === RESOURCE PROCESS (Domain X) === */
-+	self->resource_pid = fork();
-+	ASSERT_GE(self->resource_pid, 0);
-+
-+	if (self->resource_pid == 0) {
-+		/* Close unused pipe ends */
-+
-+		/* Don't write to coordinator */
-+		close(self->coordinator_to_resource_pipe[1]);
-+		/* Don't read accessor pipe */
-+		close(self->coordinator_to_accessor_pipe[0]);
-+		/* Don't write accessor pipe */
-+		close(self->coordinator_to_accessor_pipe[1]);
-+		close(self->result_pipe[0]); /* Don't read results */
-+		close(self->result_pipe[1]); /* Don't write results */
-+
-+		/* Create independent domain */
-+		create_independent_domain(_metadata, resource_domain,
-+					  "RESOURCE");
-+
-+		/* Install signal handler */
-+		struct sigaction sa = {
-+			.sa_handler = cross_domain_signal_handler,
-+			.sa_flags = SA_RESTART
-+		};
-+
-+		sigemptyset(&sa.sa_mask);
-+		ASSERT_EQ(0, sigaction(SIGUSR1, &sa, NULL));
-+		ASSERT_EQ(0, sigaction(SIGALRM, &sa, NULL));
-+
-+		/* Wait for coordinator signal to start */
-+		char sync_byte;
-+		ssize_t ret = read(self->coordinator_to_resource_pipe[0],
-+				   &sync_byte, 1);
-+		ASSERT_EQ(1, ret);
-+		close(self->coordinator_to_resource_pipe[0]);
-+
-+		/* Set timeout and wait for signal */
-+		alarm(3);
-+		pause();
-+
-+		/*
-+		 * Exit based on what signal was received
-+		 * 0=success, 1=timeout/failure
-+		 */
-+		_exit(signal_received == 1 ? 0 : 1);
-+	}
-+
-+	/* === ACCESSOR PROCESS (Domain Y) === */
-+	self->accessor_pid = fork();
-+	ASSERT_GE(self->accessor_pid, 0);
-+
-+	if (self->accessor_pid == 0) {
-+		/* Close unused pipe ends */
-+
-+		/* Don't read resource pipe */
-+		close(self->coordinator_to_resource_pipe[0]);
-+		/* Don't write resource pipe */
-+		close(self->coordinator_to_resource_pipe[1]);
-+		/* Don't write to coordinator */
-+		close(self->coordinator_to_accessor_pipe[1]);
-+		close(self->result_pipe[0]); /* Don't read results */
-+
-+		create_independent_domain(_metadata, accessor_domain,
-+					  "ACCESSOR");
-+
-+		/* Wait for coordinator to signal start */
-+		char sync_byte;
-+		ssize_t ret = read(self->coordinator_to_accessor_pipe[0],
-+				   &sync_byte, 1);
-+		ASSERT_EQ(1, ret);
-+		close(self->coordinator_to_accessor_pipe[0]);
-+
-+		/* 200ms delay to ensure resource is in pause() */
-+		usleep(200000);
-+
-+		/* Attempt cross-domain signal - this is the core test */
-+		int kill_result = kill(self->resource_pid, SIGUSR1);
-+		int kill_errno = errno;
-+
-+		/* Send results back to coordinator */
-+		struct {
-+			int result;
-+			int error;
-+		} test_result = { kill_result, kill_errno };
-+
-+		ret = write(self->result_pipe[1], &test_result,
-+			    sizeof(test_result));
-+		ASSERT_EQ(sizeof(test_result), ret);
-+		close(self->result_pipe[1]);
-+
-+		_exit(0);
-+	}
-+
-+	/* === COORDINATOR PROCESS (No domain) === */
-+
-+	/* Close unused pipe ends */
-+	close(self->coordinator_to_resource_pipe[0]); /* Don't read from resource */
-+	close(self->coordinator_to_accessor_pipe[0]); /* Don't read from accessor */
-+	close(self->result_pipe[1]); /* Don't write results */
-+
-+	/* Give processes time to set up domains */
-+	usleep(100000); /* 100ms */
-+
-+	/* Signal both processes to start the test */
-+	char go_signal = '1';
-+
-+	ASSERT_EQ(1,
-+		  write(self->coordinator_to_resource_pipe[1], &go_signal, 1));
-+
-+	ASSERT_EQ(1,
-+		  write(self->coordinator_to_accessor_pipe[1], &go_signal, 1));
-+
-+	close(self->coordinator_to_resource_pipe[1]);
-+	close(self->coordinator_to_accessor_pipe[1]);
-+
-+	/* Collect accessor results */
-+	struct {
-+		int result;
-+		int error;
-+	} test_result;
-+
-+	ssize_t ret =
-+		read(self->result_pipe[0], &test_result, sizeof(test_result));
-+	ASSERT_EQ(sizeof(test_result), ret);
-+	close(self->result_pipe[0]);
-+
-+	/* Wait for both processes to complete */
-+	int accessor_status, resource_status;
-+
-+	/* Accessor should always exit cleanly */
-+	ASSERT_EQ(self->accessor_pid,
-+		  waitpid(self->accessor_pid, &accessor_status, 0));
-+
-+	ASSERT_EQ(self->resource_pid,
-+		  waitpid(self->resource_pid, &resource_status, 0));
-+
-+	EXPECT_EQ(0, WEXITSTATUS(accessor_status));
-+	/* Determine expected behavior based on your table */
-+	bool should_succeed = (accessor_domain == NO_SANDBOX);
-+
-+	if (should_succeed) {
-+		/* Signal should succeed across domains */
-+		EXPECT_EQ(0, test_result.result); /* kill() succeeds */
-+		/* resource receives signal */
-+		EXPECT_EQ(0, WEXITSTATUS(resource_status));
-+	} else {
-+		/* Signal should be blocked by cross-domain isolation */
-+		EXPECT_EQ(-1, test_result.result); /* kill() fails */
-+		EXPECT_EQ(EPERM, test_result.error); /* with EPERM */
-+		/* resource times out */
-+		EXPECT_NE(0, WEXITSTATUS(resource_status));
-+	}
-+}
-+
-+/* Test for socket-based signals (SIGURG) across independent domains */
-+TEST_F(cross_domain_scope, DISABLED_file_signal_cross_domain)
-+{
-+	SKIP(return, "Skip for now");
-+}
-+
- TEST_HARNESS_MAIN
-
--- 
-2.43.0
-
+Given that 'inline' is already a macro in the kernel, could we just
+add __attribute__((__always_inline__)) to it when KCOV is enabled?
