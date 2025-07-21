@@ -1,168 +1,378 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BD423B600;
-	Mon, 21 Jul 2025 20:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA3A2222BB;
+	Mon, 21 Jul 2025 21:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753130994; cv=none; b=XcF5tWe03lfzSPFwvh9DS8+1MX74O3iRvJOvF9EbsgSwioqcLgmaPwHtiunOnwHPf16v10FsTUXRoTD+1pCFNZu1G5gAOm4VPlddyagvA2gxIWOWN4II1j2v1s+JpKiHsiE3FnOPOHhSLJE/K4aV6DxWgLYdQkN3FSS6UMnB7Es=
+	t=1753132805; cv=none; b=Ym6dne1o2FE46hHl6S/grJ1YebaqWfaCQpXpeyW/QN5WRt3i5UhH0T7wvE0jDioZGQVMG65mkVtGZuj6eNq/k+XWDGkIPcSUjoN5GSOCBucjrJ/ixXuQQIQPxL9fBz1L3SwoZlWubaKwFfpenAT0cCaIdkz2Qg/L0HfNDMvVNm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753130994; c=relaxed/simple;
-	bh=RGpMFousrm9JXr2aga1XoiQZq81gXpkDZQCrU7p8kG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J+n0C7+8nLAWgOnQW0vsAOF+FaLhTTplzKC54xFgeQ6Gu6Yfxn82pTzBXT7OIcicQDss77m0fR5TKg4i6AgdpM5k8LR3a1Qvi/HMsV6fjtQoClC2B2Nh+HMcxqviyz4ogdjjtSdxhmiUaMIn2yEw5re21gJzMp9WCXi7VWIa34g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USwBlGGy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753132805; c=relaxed/simple;
+	bh=DdMZqGsMcsX2j5Fwr65TWS1YgbRCYftmS2bbZClwudk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BNHdtV6+OI2nC2BWOmbWJIg7/rY9HOz4EZzrMaWLVkfKrXYPQVR4TcdnjefmhsOWdos4RddcDvgB/2g498mSTlDTYGv5BTiXl9OQPuR8yDX0Y7VgQSj2xKcegyCzXQFgxl5yBVEdFdkwMLzaoPOfrMLx2f7ZBOVIwcAKUKViKeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxXL0iZz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USwBlGGy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EA0DC4CEF7;
-	Mon, 21 Jul 2025 20:49:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxXL0iZz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CABFC4CEED;
+	Mon, 21 Jul 2025 21:20:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753130994;
-	bh=RGpMFousrm9JXr2aga1XoiQZq81gXpkDZQCrU7p8kG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=USwBlGGycUbYKwRlz8H1PUciShFkTuZXfVpLM5MtEpyQ2A97ZmBOIYa0cGOwBplAM
-	 P/UloDehuLPGSIqgqNRVeLye3ZQJwvjrIvND/8XbCEE/heb6TuWjlHXRTmnHic7i+/
-	 ufyzJfA+Tj1dnxW4WNlS2ijwfnLETqFwratBaRXG4lRw2vboY071pv4Rgj4gG0uneL
-	 vJADYIT6M2Sug0BnFp+wdbmKStgy/2g++iMRLOa45PAedgg8EJByYxkT5u6rz9xzId
-	 7//OhF3fMircm2SYJfkHca/mWkXbMTQEr5KB9GUZB1xfjt2aV3YLzdWsmNabD0jVLY
-	 gzg6qfQMQz07w==
-Date: Mon, 21 Jul 2025 13:49:53 -0700
-From: Kees Cook <kees@kernel.org>
-To: Will Deacon <will@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Michal Wilczynski <michal.wilczynski@intel.com>,
-	Juergen Gross <jgross@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Roger Pau Monne <roger.pau@citrix.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Usama Arif <usama.arif@bytedance.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-mm@kvack.org, Ingo Molnar <mingo@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v3 04/13] x86: Handle KCOV __init vs inline mismatches
-Message-ID: <202507211349.D93679FB25@keescook>
-References: <20250717231756.make.423-kees@kernel.org>
- <20250717232519.2984886-4-kees@kernel.org>
- <aHoHkDvvp4AHIzU1@kernel.org>
- <202507181541.B8CFAC7E@keescook>
- <CAMj1kXGAwjChyFvjQcTbL8dFXkFWnn9n47bkN7FP=+EsLNsJdg@mail.gmail.com>
- <aH42--h-ARsvX5Wk@willie-the-truck>
- <202507211311.8DAC4C7@keescook>
+	s=k20201202; t=1753132805;
+	bh=DdMZqGsMcsX2j5Fwr65TWS1YgbRCYftmS2bbZClwudk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sxXL0iZzBjLDI3GORBNFaBZR44fWtFMVaAGQbjy35okBCFBE3UhnVuTtbj9sWbXqb
+	 gsl40ft0NpOAUypvL0l6skjWDQB42CfKLrGg2NCght/XNOmh66hXkHSBvzT474BQ4g
+	 WpRWRwvUL0QMsrSRIZyYCWNvdEPkPyPL64FWc+Fl8Q5qHc7DXaPDBtgasBl5ZAKanM
+	 bOqv4QViCT9bSB2/idTZMigoic/XduK1KRwydMhxRC7UWI/Ghkdq4l2Q2k21G8dQy9
+	 ZFEsPU7m4b9C8rgHkmGOZPIMaaVjQBQeX+8A1N9wdPMKy31rRddE4B6ciVp/qvdJ2Y
+	 52q3Ljnb3nFjg==
+From: KP Singh <kpsingh@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: bboscaccy@linux.microsoft.com,
+	paul@paul-moore.com,
+	kys@microsoft.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org
+Subject: [PATCH v2 00/13] Signed BPF programs
+Date: Mon, 21 Jul 2025 23:19:45 +0200
+Message-ID: <20250721211958.1881379-1-kpsingh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202507211311.8DAC4C7@keescook>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 21, 2025 at 01:14:36PM -0700, Kees Cook wrote:
-> On Mon, Jul 21, 2025 at 01:47:55PM +0100, Will Deacon wrote:
-> > On Sun, Jul 20, 2025 at 04:10:01PM +1000, Ard Biesheuvel wrote:
-> > > On Sat, 19 Jul 2025 at 08:51, Kees Cook <kees@kernel.org> wrote:
-> > > > On Fri, Jul 18, 2025 at 11:36:32AM +0300, Mike Rapoport wrote:
-> > > > > On Thu, Jul 17, 2025 at 04:25:09PM -0700, Kees Cook wrote:
-> > > > > > When KCOV is enabled all functions get instrumented, unless the
-> > > > > > __no_sanitize_coverage attribute is used. To prepare for
-> > > > > > __no_sanitize_coverage being applied to __init functions, we have to
-> > > > > > handle differences in how GCC's inline optimizations get resolved. For
-> > > > > > x86 this means forcing several functions to be inline with
-> > > > > > __always_inline.
-> > > > > >
-> > > > > > Signed-off-by: Kees Cook <kees@kernel.org>
-> > > > >
-> > > > > ...
-> > > > >
-> > > > > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> > > > > > index bb19a2534224..b96746376e17 100644
-> > > > > > --- a/include/linux/memblock.h
-> > > > > > +++ b/include/linux/memblock.h
-> > > > > > @@ -463,7 +463,7 @@ static inline void *memblock_alloc_raw(phys_addr_t size,
-> > > > > >                                       NUMA_NO_NODE);
-> > > > > >  }
-> > > > > >
-> > > > > > -static inline void *memblock_alloc_from(phys_addr_t size,
-> > > > > > +static __always_inline void *memblock_alloc_from(phys_addr_t size,
-> > > > > >                                             phys_addr_t align,
-> > > > > >                                             phys_addr_t min_addr)
-> > > > >
-> > > > > I'm curious why from all memblock_alloc* wrappers this is the only one that
-> > > > > needs to be __always_inline?
-> > > >
-> > > > Thread-merge[1], adding Will Deacon, who was kind of asking the same
-> > > > question.
-> > > >
-> > > > Based on what I can tell, GCC has kind of fragile inlining logic, in the
-> > > > sense that it can change whether or not it inlines something based on
-> > > > optimizations. It looks like the kcov instrumentation being added (or in
-> > > > this case, removed) from a function changes the optimization results,
-> > > > and some functions marked "inline" are _not_ inlined. In that case, we end up
-> > > > with __init code calling a function not marked __init, and we get the
-> > > > build warnings I'm trying to eliminate.
-> > 
-> > Got it, thanks for the explanation!
-> > 
-> > > > So, to Will's comment, yes, the problem is somewhat fragile (though
-> > > > using either __always_inline or __init will deterministically solve it).
-> > > > We've tripped over this before with GCC and the solution has usually
-> > > > been to just use __always_inline and move on.
-> > > >
-> > > 
-> > > Given that 'inline' is already a macro in the kernel, could we just
-> > > add __attribute__((__always_inline__)) to it when KCOV is enabled?
-> > 
-> > That sounds like a more robust approach and, by the sounds of it, we
-> > could predicate it on GCC too. That would also provide a neat place for
-> > a comment describing the problem.
-> > 
-> > Kees, would that work for you?
-> 
-> That seems like an extremely large hammer for this problem, IMO. It
-> feels like it could cause new strange corner cases. I'd much prefer the
-> small fixes I've currently got since it keeps it focused. KCOV is
-> already enabled for "allmodconfig", so any new instances would be found
-> very quickly, etc. (And GCC's fragility in this regard has already been
-> exposed to these cases -- it's just that I changed one of the
-> combinations of __init vs inline vs instrumentation.
-> 
-> I could give it a try, if you really prefer the big hammer approach...
+#v1 -> v2
 
-I gave it a try -- it fails spectacularly. ;) Let's stick to my small
-fixes instead?
+* Addressed feedback on excl maps and their implementation
+* fixed s390x and other tests that were failing in the CI.
+* using the kernel's sha256 API since it now uses acceleration if available
+* simple signing test case, this can be extended to inject a false SHA into
+  the loader
+
+BPF Signing has gone over multiple discussions in various conferences with the
+kernel and BPF community and the following patch series is a culmination
+of the current of discussion and signed BPF programs. Once signing is
+implemented, the next focus would be to implement the right security policies
+for all BPF use-cases (dynamically generated bpf programs, simple non CO-RE
+programs).
+
+Signing also paves the way for allowing unrivileged users to
+load vetted BPF programs and helps in adhering to the principle of least
+privlege by avoiding unnecessary elevation of privileges to CAP_BPF and
+CAP_SYS_ADMIN (ofcourse, with the appropriate security policy active).
+
+A early version of this design was proposed in [1]:
+
+# General Idea: Trusted Hash Chain
+
+The key idea of the design is to use a signing algorithm that allows
+us to integrity-protect a number of future payloads, including their
+order, by creating a chain of trust.
+
+Consider that Alice needs to send messages M_1, M_2, ..., M_n to Bob.
+We define blocks of data such that:
+
+    B_n = M_n || H(termination_marker)
+
+(Each block contains its corresponding message and the hash of the
+*next* block in the chain.)
+
+    B_{n-1} = M_{n-1} || H(B_n)
+    B_{n-2} = M_{n-2} || H(B_{n-1})
+
+  ...
+
+    B_2 = M_2 || H(B_3)
+    B_1 = M_1 || H(B_2)
+
+Alice does the following (e.g., on a build system where all payloads
+are available):
+
+  * Assembles the blocks B_1, B_2, ..., B_n.
+  * Calculates H(B_1) and signs it, yielding Sig(H(B_1)).
+
+Alice sends the following to Bob:
+
+    M_1, H(B_2), Sig(H(B_1))
+
+Bob receives this payload and does the following:
+
+    * Reconstructs B_1 as B_1' using the received M_1 and H(B_2)
+(i.e., B_1' = M_1 || H(B_2)).
+    * Recomputes H(B_1') and verifies the signature against the
+received Sig(H(B_1)).
+    * If the signature verifies, it establishes the integrity of M_1
+and H(B_2) (and transitively, the integrity of the entire chain). Bob
+now stores the verified H(B_2) until it receives the next message.
+    * When Bob receives M_2 (and H(B_3) if n > 2), it reconstructs
+B_2' (e.g., B_2' = M_2 || H(B_3), or if n=2, B_2' = M_2 ||
+H(termination_marker)). Bob then computes H(B_2') and compares it
+against the stored H(B_2) that was verified in the previous step.
+
+This process continues until the last block is received and verified.
+
+Now, applying this to the BPF signing use-case, we simplify to two messages:
+
+    M_1 = I_loader (the instructions of the loader program)
+    M_2 = M_metadata (the metadata for the loader program, passed in a
+map, which includes the programs to be loaded and other context)
+
+For this specific BPF case, we will directly sign a composite of the
+first message and the hash of the second. Let H_meta = H(M_metadata).
+The block to be signed is effectively:
+
+    B_signed = I_loader || H_meta
+
+The signature generated is Sig(B_signed).
+
+The process then follows a similar pattern to the Alice and Bob model,
+where the kernel (Bob) verifies I_loader and H_meta using the
+signature. Then, the trusted I_loader is responsible for verifying
+M_metadata against the trusted H_meta.
+
+From an implementation standpoint:
+
+# Build
+
+bpftool (or some other tool in a trusted build environment) knows
+about the metadata (M_metadata) and the loader program (I_loader). It
+first calculates H_meta = H(M_metadata). Then it constructs the object
+to be signed and computes the signature:
+
+    Sig(I_loader || H_meta)
+
+# Loader
+
+The loader program and the metadata are a hermetic representation of the source
+of the eBPF program, its maps and context. The loader program is generated by
+libbpf as a part of a standard API i.e. bpf_object__gen_loader.
+
+## Supply chain
+
+While users can use light skeletons as a convenient method to use signing
+support, they can directly use the loader program generation using libbpf
+(bpf_object__gen_loader) into their own trusted toolchains.
+
+libbpf, which has access to the program's instruction buffer is a key part of
+the TCB of the build environment
+
+An advanced threat model that does not intend to depend on libbpf (or any provenant
+userspace BPF libraries) due to supply chain risks despite it being developed
+in the kernel source and by the kernel community will require reimplmenting a
+lot of the core BPF userspace support (like instruction relocation, map handling).
+
+Such an advanced user would also need to integrate the generation of the loader
+into their toolchain.
+
+Given that many use-cases (e.g. Cilium) generate trusted BPF programs,
+trusted loaders are an inevitability and a requirement for signing support, a
+entrusting loader programs will be a fundamental requirement for an security
+policy.
+
+The initial instructions of the loader program verify the SHA256 hash
+of the metadata (M_metadata) that will be passed in a map. These instructions
+effectively embed the precomputed H_meta as immediate values.
+
+    ld_imm64 r1, const_ptr_to_map // insn[0].src_reg == BPF_PSEUDO_MAP_IDX
+    r2 = *(u64 *)(r1 + 0);
+    ld_imm64 r3, sha256_of_map_part1 // precomputed by bpf_object__gen_load/libbpf (H_meta_1)
+    if r2 != r3 goto out;
+
+    r2 = *(u64 *)(r1 + 8);
+    ld_imm64 r3, sha256_of_map_part2 // precomputed by bpf_object__gen_load/libbpf (H_meta_2)
+    if r2 != r3 goto out;
+
+    r2 = *(u64 *)(r1 + 16);
+    ld_imm64 r3, sha256_of_map_part3 // precomputed by bpf_object__gen_load/libbpf (H_meta_3)
+    if r2 != r3 goto out;
+
+    r2 = *(u64 *)(r1 + 24);
+    ld_imm64 r3, sha256_of_map_part4 // precomputed by bpf_object__gen_load/libbpf (H_meta_4)
+    if r2 != r3 goto out;
+    ...
+
+This implicitly makes the payload equivalent to the signed block (B_signed)
+
+    I_loader || H_meta
+
+bpftool then generates the signature of this I_loader payload (which
+now contains the expected H_meta) using a key and an identity:
+
+This signature is stored in bpf_attr, which is extended as follows for
+the BPF_PROG_LOAD command:
+
+    __aligned_u64 signature;
+    __u32 signature_size;
+    __u32 keyring_id;
+
+The reasons for a simpler UAPI is that it's more future proof (e.g.) with more
+stable instruction buffers, loader programs being directly into the compilers.
+A simple API also allows simple programs e.g. for networking that don't need
+loader programs to directly use signing.
+
+# Extending OBJ_GET_INFO_BY_FD for hashes
+
+OBJ_GET_INFO_BY_FD is used to get information about BPF objects (maps, programs, links) and
+returning the hash of the map is a natural extension of the UAPI as it can be
+helpful for debugging, fingerprinting etc.
+
+Currently, it's only implemented for BPF_MAP_TYPE_ARRAY. It can be trivially
+extended for BPF programs to return the complete SHA256 along with the tag.
+
+The SHA is stored in struct bpf_map for exclusive and frozen maps
+
+    struct bpf_map {
+    +   u64 sha[4];
+        const struct bpf_map_ops *ops;
+        struct bpf_map *inner_map_meta;
+    };
+
+## Exclusive BPF maps
+
+Exclusivity ensures that the map can only be used by a future BPF
+program whose SHA256 hash matches sha256_of_future_prog.
+
+First, bpf_prog_calc_tag() is updated to compute the SHA256 instead of
+SHA1, and this hash is stored in struct bpf_prog_aux:
+
+    @@ -1588,6 +1588,7 @@ struct bpf_prog_aux {
+         int cgroup_atype; /* enum cgroup_bpf_attach_type */
+         struct bpf_map *cgroup_storage[MAX_BPF_CGROUP_STORAGE_TYPE];
+         char name[BPF_OBJ_NAME_LEN];
+    +    u64 sha[4];
+         u64 (*bpf_exception_cb)(u64 cookie, u64 sp, u64 bp, u64, u64);
+         // ...
+    };
+
+An exclusive is created by passing an excl_prog_hash
+(and excl_prog_hash_size) in the BPF_MAP_CREATE command.
+When a BPF program is subsequently loaded and it attempts to use this map,
+the kernel will compare the program's own SHA256 hash against the one
+registered with the map, if matching, it will be added to prog->used_maps[].
+
+The program load will fail if the hashes do not match or if the map is
+already in use by another (non-matching) exclusive program.
+
+Exclusive maps ensure that no other BPF programs and compromise the intergity of
+the map post the signature verification.
+
+NOTE: Exclusive maps cannot be added as inner maps.
+
+# Light Skeleton Sequence (Userspace Example)
+
+	err = map_fd = skel_map_create(BPF_MAP_TYPE_ARRAY, "__loader.map",
+				       opts->excl_prog_hash,
+				       opts->excl_prog_hash_sz, 4,
+				       opts->data_sz, 1);
+	err = skel_map_update_elem(map_fd, &key, opts->data, 0);
+
+	err = skel_map_freeze(map_fd);
+
+	// Kernel computes the hash of the map.
+	err = skel_obj_get_info_by_fd(map_fd);
+
+	memset(&attr, 0, prog_load_attr_sz);
+	attr.prog_type = BPF_PROG_TYPE_SYSCALL;
+	attr.insns = (long) opts->insns;
+	attr.insn_cnt = opts->insns_sz / sizeof(struct bpf_insn);
+	attr.signature = (long) opts->signature;
+	attr.signature_size = opts->signature_sz;
+	attr.keyring_id = opts->keyring_id;
+	attr.license = (long) "Dual BSD/GPL";
+
+The kernel will:
+
+    * Compute the hash of the provided I_loader bytecode.
+    * Verify the signature against this computed hash.
+    * Check if the metadata map (now exclusive) is intended for this
+      program's hash.
+
+The signature check happens in BPF_PROG_LOAD before the security_bpf_prog
+LSM hook.
+
+This ensures that the loaded loader program (I_loader), including the
+embedded expected hash of the metadata (H_meta), is trusted.
+Since the loader program is now trusted, it can be entrusted to verify
+the actual metadata (M_metadata) read from the (now exclusive and
+frozen) map against the embedded (and trusted) H_meta. There is no
+Time-of-Check-Time-of-Use (TOCTOU) vulnerability here because:
+
+    * The signature covers the I_loader and its embedded H_meta.
+    * The metadata map M_metadata is frozen before the loader program is loaded
+      and associated with it.
+    * The map is made exclusive to the specific (signed and verified)
+      loader program.
+
+[1] https://lore.kernel.org/bpf/CACYkzJ6VQUExfyt0=-FmXz46GHJh3d=FXh5j4KfexcEFbHV-vg@mail.gmail.com/#t
+
+
+KP Singh (13):
+  bpf: Update the bpf_prog_calc_tag to use SHA256
+  bpf: Implement exclusive map creation
+  libbpf: Implement SHA256 internal helper
+  libbpf: Support exclusive map creation
+  selftests/bpf: Add tests for exclusive maps
+  bpf: Return hashes of maps in BPF_OBJ_GET_INFO_BY_FD
+  bpf: Move the signature kfuncs to helpers.c
+  bpf: Implement signature verification for BPF programs
+  libbpf: Update light skeleton for signing
+  libbpf: Embed and verify the metadata hash in the loader
+  bpftool: Add support for signing BPF programs
+  selftests/bpf: Enable signature verification for all lskel tests
+  selftests/bpf: Add test for signed programs
+
+ crypto/asymmetric_keys/pkcs7_verify.c         |   1 +
+ include/linux/bpf.h                           |  42 +++-
+ include/linux/filter.h                        |   6 -
+ include/linux/verification.h                  |   1 +
+ include/uapi/linux/bpf.h                      |  14 ++
+ kernel/bpf/Kconfig                            |   2 +-
+ kernel/bpf/arraymap.c                         |  13 ++
+ kernel/bpf/core.c                             |  50 +----
+ kernel/bpf/helpers.c                          | 166 ++++++++++++++
+ kernel/bpf/syscall.c                          |  96 +++++++-
+ kernel/bpf/verifier.c                         |   6 +
+ kernel/trace/bpf_trace.c                      | 183 ---------------
+ .../bpf/bpftool/Documentation/bpftool-gen.rst |  12 +
+ .../bpftool/Documentation/bpftool-prog.rst    |  12 +
+ tools/bpf/bpftool/Makefile                    |   6 +-
+ tools/bpf/bpftool/cgroup.c                    |   5 +-
+ tools/bpf/bpftool/gen.c                       |  58 ++++-
+ tools/bpf/bpftool/main.c                      |  21 +-
+ tools/bpf/bpftool/main.h                      |  11 +
+ tools/bpf/bpftool/prog.c                      |  25 +++
+ tools/bpf/bpftool/sign.c                      | 210 ++++++++++++++++++
+ tools/include/uapi/linux/bpf.h                |  14 ++
+ tools/lib/bpf/bpf.c                           |   6 +-
+ tools/lib/bpf/bpf.h                           |   4 +-
+ tools/lib/bpf/bpf_gen_internal.h              |   2 +
+ tools/lib/bpf/gen_loader.c                    |  55 +++++
+ tools/lib/bpf/libbpf.c                        | 125 +++++++++++
+ tools/lib/bpf/libbpf.h                        |  21 +-
+ tools/lib/bpf/libbpf.map                      |   2 +
+ tools/lib/bpf/libbpf_internal.h               |   4 +
+ tools/lib/bpf/skel_internal.h                 |  75 ++++++-
+ tools/testing/selftests/bpf/.gitignore        |   1 +
+ tools/testing/selftests/bpf/Makefile          |  19 +-
+ .../selftests/bpf/prog_tests/map_excl.c       |  56 +++++
+ .../selftests/bpf/prog_tests/signing.c        |  36 +++
+ tools/testing/selftests/bpf/progs/map_excl.c  |  34 +++
+ tools/testing/selftests/bpf/progs/signing.c   |  16 ++
+ .../selftests/bpf/progs/verifier_map_ptr.c    |   7 +-
+ tools/testing/selftests/bpf/test_progs.c      |  13 ++
+ .../testing/selftests/bpf/verify_sig_setup.sh |  13 +-
+ 40 files changed, 1183 insertions(+), 260 deletions(-)
+ create mode 100644 tools/bpf/bpftool/sign.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/map_excl.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/signing.c
+ create mode 100644 tools/testing/selftests/bpf/progs/map_excl.c
+ create mode 100644 tools/testing/selftests/bpf/progs/signing.c
 
 -- 
-Kees Cook
+2.43.0
+
