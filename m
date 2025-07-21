@@ -1,140 +1,129 @@
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2F422F16C
-	for <linux-security-module@vger.kernel.org>; Mon, 21 Jul 2025 21:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6303E1AA7BF;
+	Mon, 21 Jul 2025 23:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753135170; cv=none; b=g3qtYU5+tqPRwFfsck1YW+pB0zxJnX8xoWLCvbKnBYHEiLO89L5XGrKdN94y10Lpn4eB9lAvjNEtaXWdxLhwkjY70ZWAF0Ysj6v/eeAY4GWcsRA603y1Mtkm5ff/i6YiJa3iMN+ashgSKvzqZ0gjO7HrYgNjL9Vwzb3FFHXwDLk=
+	t=1753139445; cv=none; b=mzhvQmc7/LQQrtKoEnOJIBgA3wohyILxhtLZ2zpeXrxHR8BqmHBp7rpSJSABzrNt5hqn9TSFcYdf/5jZM4K927QODs742EHkn1C+8AhsP8mc/ImZAC8ugfNUawiwUgFijdUYnwB8p88IKWSbom90/GBdoPQ8IvmRhk+yJmGOkFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753135170; c=relaxed/simple;
-	bh=GN/2VDE/5x9sy0SuMuAkFZFulF2F7YMdN8uaKg0YNr0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CmY4CvaX670zQLmq38eH5COxvUsLMboSTpOzOGW1S6/u42L8QyLE3ZISiDOkcizbLhFyGLcA0iPjJGO8+jzlVeWJwParbd6FdUZf47jVVrJuDs8xDfYutr06nXARGrCeClEp5Of91fI47a5nNIUFVbPYVZPK0ruTQNPTQgeIGhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YwjV8zPw; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1753139445; c=relaxed/simple;
+	bh=kneTeTFYKo+CWcirlkXTb2Istnakau89H07ZQXWG0YQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=p9rVrivjlbZGWnyI1twF8KPpeCgyF1QU8nDwWGct2DNXAOtgGsUne7TfAuMrsDFv+bYGSnqnhO3PrEbPgDXT0GhjAhEfVuiwy3fXTgw/fMrXGsQgyBWfmzhanvePn0xoSyiwvgKHnCKT/1dJQaqSyOzuf+X/jPhlsLPxRHU71cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D4dE5iGs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YwjV8zPw"
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e8db917573dso172827276.1
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Jul 2025 14:59:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1753135167; x=1753739967; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b+ppndZkAqudCa4AHUWqjkn54p+d1I1igNofPGCGnJo=;
-        b=YwjV8zPw3aH95HHglQCGrMKUULeO8jldPBkl7OPSaAI1WW8AFkW+siJj7TZMgtJ48W
-         L9etvhB0EOwFWPKWHEzrwhyPxlInHgiN8pOoG2nA3P5mV9koICSsMZ/5PnEkVEsrubEP
-         Qg8yXWXKMIFcR3ci2JbKuGh6Yp1EA21QZmn29xmqZpdomKs+UyS0WzqVl2NRN60ZX8A7
-         UNflZpP9AwgStdCc1awUDjbMcRz0s1nFYe/Q9rblEjhjit/J41UcfBcZgAaxdN6i0Fn2
-         KM7tkPZM+m02645zxuWkK6IPIEF+WfeihSXJfKSDTFqyObYm4RpQApPV00GVYZf5CLgo
-         Uz/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753135167; x=1753739967;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b+ppndZkAqudCa4AHUWqjkn54p+d1I1igNofPGCGnJo=;
-        b=INhYGGBRhWbGjDNyA908KFjQ3J15NN3nN24cMFM5BLdtGt8BoHOFu27DxmWTjqB/LP
-         blKKNL+UPLcdDDljr7bt7IaRy8SUemSJyuJD4T0Z94b6nqeFbh00InjKUGOgZtUf9Ei3
-         3s3MkhQh2QXBq9aCyJC5LJHZ6o9WHgSV3kbwIpm4pOzfRbCuIQjQZRE8O4VYFCRKhJDO
-         BGL+6zFXxK+U40ablToe/pqZSwzk+C91v5aeIt9ooy/GruGX9+g/AstyrP9MtZMsQ5Wu
-         mp6HUeQFsX90dVAH4Pf5N8uAVxMeF60YnmnpcELCUnvmtoOUmG6NKf5zqLpu6/0VlFS6
-         /tRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUo5IYcJMemena98FizI91xv6tlbesxKFdygdcSt75p4TcEg7pnvEdKRReEqHMQt55Vw7NLbzDlCUR7XS6Th//KNtLIpXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1yKSOzfudWCvAZAGPvFId1wlxeDkv8QG4rJ3TYZ9AGnWzMRB4
-	IKZ3QsCAnLMpKeMcPXktTjq4KruEJohzc68+P77lGhjpzE0wDD22mmxImn948KpFpPi3TeqsrKy
-	e2abRrTZWUMMp1Oe9ujxbRqUbo4AAZ7P4vbRnnjph5FVK1CSTrUU=
-X-Gm-Gg: ASbGncsXA8kUwrAz7icTE7vQbuT71cBQtTc/FGXpzhoHkNK7LpsJ0N46mioTbM8yLSw
-	5elZxYCVt3QuGxMVXY4acsHguX/im8lM/u1E9ZCA8nLcIo2YSglzNNeicAv541gYhqI8JLSxL8+
-	caFvCrUeJeFvRhIgCIX1l9NGLsR6CJI71tMoEiBWEqPtBxNTfwu1P+QR93EAMVyUUefxaybnPFR
-	pmRq0K3IaVqf5pSbg==
-X-Google-Smtp-Source: AGHT+IE1qvvx8c7K5J7JCPj9GKxpg1bKS0SyLyBqGrVR1kvAC6PumEIScnTtUQFYLL39P2IaCpRb7QubQ5VqCaV5cCE=
-X-Received: by 2002:a05:6902:841:b0:e8b:3e67:b90c with SMTP id
- 3f1490d57ef6-e8bc2454590mr23300713276.16.1753135167230; Mon, 21 Jul 2025
- 14:59:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D4dE5iGs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBE8CC4CEED;
+	Mon, 21 Jul 2025 23:10:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753139444;
+	bh=kneTeTFYKo+CWcirlkXTb2Istnakau89H07ZQXWG0YQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=D4dE5iGsJI42UvzHKkLkkxBvAZNq+9cbKlomQNr1FN6ETAWUoICBB7lETktTW47+L
+	 U70Tl7/eLDKGXnRCS/RiGxiVIp9usvTElrMJNuJhBbXPV2Vx5ZTFnX0KHHuI00Zhp/
+	 VAQ+NWDKqby6fSzfD/ms74eCfp9CRrzrb/MoiJRi3TazozHAU5wgpv1W9x13klM54g
+	 t2fEbCfq15+RcLm8TDTbSPEXwN+mTcfxkYfqa0sAggnlj4yMUTVlryxckiqSxr03+/
+	 6osNckHm3ZmwX5nmPDfsNFdfuyQq5G+dBWpjAJvyYRePf47YncRylWRGrg6kvgNlaP
+	 Gu8A2mHpjBLYA==
+Date: Mon, 21 Jul 2025 16:10:41 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: John Johansen <john.johansen@canonical.com>
+Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: -Wformat-invalid-specifier after 88fec3526e84 in -next
+Message-ID: <20250721231041.GA1015606@ax162>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409185019.238841-31-paul@paul-moore.com> <20250409185019.238841-56-paul@paul-moore.com>
- <12d9ea5981f5a2c33a01798311543db2e9bd4ee3.camel@linux.ibm.com>
- <CAHC9VhTfNQeu3gcWii7kUrGY+fVygXs6j4UhybodPqjuSzA-pQ@mail.gmail.com> <ae5e62722e238f55315b7ce523f7d2eb3af5e063.camel@linux.ibm.com>
-In-Reply-To: <ae5e62722e238f55315b7ce523f7d2eb3af5e063.camel@linux.ibm.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 21 Jul 2025 17:59:15 -0400
-X-Gm-Features: Ac12FXzqKIhaDFZBAQ7R-47fmnQb7MjQIOuEzggw7RCTbVzRyGOsED2sjeYEfy4
-Message-ID: <CAHC9VhQPxNDeXGAa0WLJ_O7uFVQhhYO8y+KMaXDM7TJ6P8wG3w@mail.gmail.com>
-Subject: Re: [RFC PATCH 25/29] ima,evm: move initcalls to the LSM framework
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: David Howells <dhowells@redhat.com>, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
-	John Johansen <john.johansen@canonical.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Fan Wu <wufan@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Eric Snowberg <eric.snowberg@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, Jun 13, 2025 at 4:35=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
-ote:
-> On Wed, 2025-06-11 at 16:27 -0400, Paul Moore wrote:
-> > On Fri, May 30, 2025 at 6:04=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com=
-> wrote:
-> > > On Wed, 2025-04-09 at 14:50 -0400, Paul Moore wrote:
-> > > > This patch converts IMA and EVM to use the LSM frameworks's initcal=
-l
-> > > > mechanism.  There were two challenges to doing this conversion: the
-> > > > first simply being the number of initcalls across IMA and EVM, and =
-the
-> > > > second was the number of resources shared between the two related,
-> > > > yet independent LSMs.
-> > >
-> > > There are a number of the initcalls under integrity/platform/, which =
-load arch
-> > > specific keys onto the platform and machine keyrings, which shouldn't=
- be
-> > > included in this patch.
-> >
-> > I don't want to assume too much from your reply, but if the cert/key
-> > loading under integrity/platform shouldn't be subject to the LSM
-> > initcall rework, that implies that the integrity/platform cert/key
-> > loading is independent of IMA/EVM and should perhaps live somewhere
-> > else, e.g. security/keys?
-> >
-> > Or am I misunderstanding something?
->
-> When the .platform keyring was upstreamed it was upstreamed for a very sp=
-ecific
-> purpose so that IMA could verify the kexec kernel image.  Afterwareds it =
-was
-> immediately used to verify the pesigned kexec image.  Now it is being (ab=
-)used
-> by other subsystems - ipe and dm-verity - and is being proposed by the "[=
-PATCH
-> RFC 0/1] module: Optionally use .platform keyring for signatures verifica=
-tion".
-> From an integrity perspective this is definitely not a good idea.  The
-> discussion, which I'm sure you're aware of, is here:
-> https://lore.kernel.org/linux-integrity/20250602132535.897944-1-vkuznets@=
-redhat.com/
->
-> It does not make any sense to move the code for the platform and machine
-> keyrings to security/keys.  If they need to move anywhere, it would be to=
- the
-> certs/ directory.
+Hi John,
 
-To bring some off-list discussions back on-list, and wrap up this
-thread, Mimi has agreed to move the platform and machine keyring code
-to the certs/ directory as they are no longer IMA/EVM-only keyrings.
-I'll also be dropping them from the next revision of LSM
-initialization rework patchset will be posted at some point this
-evening (waiting on a testing refresh).
+After commit 88fec3526e84 ("apparmor: make sure unix socket labeling is
+correctly updated.") in -next, I am seeing some warnings from clang when
+building arm64 allmodconfig with LTO enabled. This can be more simply
+reproduced on top of defconfig:
 
---=20
-paul-moore.com
+  $ make -skj"$(nproc)" ARCH=arm64 LLVM=1 mrproper defconfig
+
+  $ scripts/config \
+      -d LTO_NONE \
+      -e LTO_CLANG_THIN \
+      -e SECURITY_APPARMOR \
+      -e SECURITY_APPARMOR_DEBUG
+
+  $ make -skj"$(nproc)" ARCH=arm64 LLVM=1 olddefconfig security/apparmor/lsm.o
+  security/apparmor/lsm.c:1206:2: warning: invalid conversion specifier '0' [-Wformat-invalid-specifier]
+   1206 |         AA_BUG(rcu_access_pointer(new_ctx->label));
+        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  security/apparmor/include/lib.h:56:3: note: expanded from macro 'AA_BUG'
+     56 |                 AA_BUG_FMT((X), "" args);                                   \
+        |                 ^~~~~~~~~~~~~~~~~~~~~~~~
+  security/apparmor/include/lib.h:61:34: note: expanded from macro 'AA_BUG_FMT'
+     61 |         WARN((X), "AppArmor WARN %s: (" #X "): " fmt, __func__, ##args)
+        |                                         ^~
+  <scratch space>:2:1144: note: expanded from here
+      2 | "(({ typeof(*(new_ctx->label)) *__UNIQUE_ID_rcu1155 = (typeof(*(new_ctx->label)) *)({ do { __attribute__((__noreturn__)) extern void __compiletime_assert_1156(void) __attribute__((__error__(\"Unsupported access size for {READ,WRITE}_ONCE().\"))); ..."
+  ...
+  include/asm-generic/bug.h:134:29: note: expanded from macro 'WARN'
+    134 |                 __WARN_printf(TAINT_WARN, format);                      \
+        |                                           ^~~~~~
+  include/asm-generic/bug.h:106:17: note: expanded from macro '__WARN_printf'
+    106 |                 __warn_printk(arg);                                     \
+        |                               ^~~
+
+Ultimately, rcu_access_pointer() expands to __READ_ONCE(), which arm64
+specifically defines for CONFIG_LTO using some inline asm expressions,
+see commit e35123d83ee3 ("arm64: lto: Strengthen READ_ONCE() to acquire
+when CONFIG_LTO=y"). Within those asm literals are % characters for the
+asm templates, which are ultimately interpreted as format specifiers
+when they get expanded by the preprocessors, hence the warning.
+
+There is nothing technically wrong here, although if this were to ever
+trigger, it would probably look quite ugly in the kernel log because of
+how long the string literal expansion of __READ_ONCE would be. It is
+possible to shut this warning up in a similar manner to the existing GCC
+pragma if necessary but I was unsure if that would be preferred off bat,
+hence just the report at first.
+
+Cheers,
+Nathan
+
+diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
+index 2e7c2c282f3a..9dfbc6dc8859 100644
+--- a/include/linux/compiler-clang.h
++++ b/include/linux/compiler-clang.h
+@@ -114,10 +114,10 @@
+ #define __diag_str(s)		__diag_str1(s)
+ #define __diag(s)		_Pragma(__diag_str(clang diagnostic s))
+ 
+-#define __diag_clang_13(s)	__diag(s)
++#define __diag_clang_all(s)	__diag(s)
+ 
+ #define __diag_ignore_all(option, comment) \
+-	__diag_clang(13, ignore, option)
++	__diag_clang(all, ignore, option)
+ 
+ /*
+  * clang has horrible behavior with "g" or "rm" constraints for asm
+diff --git a/security/apparmor/include/lib.h b/security/apparmor/include/lib.h
+index 444197075fd6..7f2c649dc7dd 100644
+--- a/security/apparmor/include/lib.h
++++ b/security/apparmor/include/lib.h
+@@ -53,7 +53,11 @@ do {									\
+ #define AA_BUG(X, args...)						    \
+ 	do {								    \
+ 		_Pragma("GCC diagnostic ignored \"-Wformat-zero-length\""); \
++		__diag_push();						    \
++		__diag_ignore(clang, all, "-Wformat-invalid-specifier",	    \
++			      "May be called with asm that has %");	    \
+ 		AA_BUG_FMT((X), "" args);				    \
++		__diag_pop();						    \
+ 		_Pragma("GCC diagnostic warning \"-Wformat-zero-length\""); \
+ 	} while (0)
+ #ifdef CONFIG_SECURITY_APPARMOR_DEBUG_ASSERTS
