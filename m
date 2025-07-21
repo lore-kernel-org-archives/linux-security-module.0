@@ -1,150 +1,208 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E424502F;
-	Mon, 21 Jul 2025 12:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8477021B9F5
+	for <linux-security-module@vger.kernel.org>; Mon, 21 Jul 2025 13:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753102089; cv=none; b=E8jZoPuVMg3Fp8eB1JExRdlxpUXTxuyaHxIVIDqfiW1CnTqRG7QkKUnTN7AwmtWQTfvIh3DHlGy0G/ojCya/Yc2/lTCjfQgahjwWT41RMTZNNiR5xC9xuOpyFcKRS4dnHEf72GjmTsfDQcK6QtLQCxnW1/FEfqH3Ns72O2GwfWc=
+	t=1753104624; cv=none; b=Phaf3NdMOamUsWybaygmuTURMFJwGhMq6Y4dTGA1lHjA6qdLWOhB5mVNttbSvhYZF7WfXFYHZuDKCqoU7QyjRfmNEzEUOEk7/JIGdjlPA2RkOPs9sKbKV+ZY8gKiu2z0ViKZuxysG5eGBONkVH7NEBcJIYJR7WEpLq5aP7a8+JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753102089; c=relaxed/simple;
-	bh=fhUrUAac/iSii6E8bCY5/2OzAP/25KtTiniEKeJQXGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PdSKdNjtBboMgd832HDbP+uXPaRLqk5gH43+jq8vlM1Hc4dWSbJ50xkdj0WNZbdnrejhlZFh0alyVYXwTE1HxqaXdlipy/qcX255Zo/Sd8XhRxZIm5OMID6J0an5xZ63VZTx10Wb++nILTSxyC0qtE01UAmwtUiiRLoJ/+c1UNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8evXuR+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753104624; c=relaxed/simple;
+	bh=Xf3tL8TpHMcwIYWXK+Cl3ZYOiJTLp6Car2XMD35q4Yw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sJdmQjLJHyDLSn4TKLGpQkSoNA0JhbgGvZPxpiuYvUW1xhOftJBZxP37JyRfGVBgUkSlBwkCacPcEKM3U0K4m080DlIdC5mOfzWlq/ZHsJ7Ta1yerL568njrK/9AtSzaEri+toA4N5uYRRRFOqX4l8leswvKRNky1uL+ZPuX+Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oqtSgejU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yTE9LxRL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oqtSgejU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yTE9LxRL; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8evXuR+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2550C4CEED;
-	Mon, 21 Jul 2025 12:47:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753102088;
-	bh=fhUrUAac/iSii6E8bCY5/2OzAP/25KtTiniEKeJQXGA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R8evXuR+wAan3GKqOPc31OKb0HXwT1fcr9RAvjn3iXq9AafrC9dr+uhqKKHXhydc/
-	 ommMgMhlPSa10h8tXea70KugAvoZCogNM+Xt21kS9UmsttjWDnOELNHjux+Ju59MNY
-	 /URVoorMncYyCzvX9VeofQFk7WldoN/Ri5qk6rB1XFXfi+hA14lKHW1R2sRPlxfo/E
-	 LGLDW2D8KsMU/Gla3tq/bXrtgsgK9NPEPhMAYMtEgjB4rEKVqgNW9ZLANwHmFPzbv2
-	 KyzNMpjT5XzFw+NFZx3vex8f/0R9leYdi3PuQeMO27/gBBOFaJYqsNHIsKj7h+b3pJ
-	 6c41KggZR4CKg==
-Date: Mon, 21 Jul 2025 13:47:55 +0100
-From: Will Deacon <will@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Michal Wilczynski <michal.wilczynski@intel.com>,
-	Juergen Gross <jgross@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Roger Pau Monne <roger.pau@citrix.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Usama Arif <usama.arif@bytedance.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-mm@kvack.org, Ingo Molnar <mingo@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v3 04/13] x86: Handle KCOV __init vs inline mismatches
-Message-ID: <aH42--h-ARsvX5Wk@willie-the-truck>
-References: <20250717231756.make.423-kees@kernel.org>
- <20250717232519.2984886-4-kees@kernel.org>
- <aHoHkDvvp4AHIzU1@kernel.org>
- <202507181541.B8CFAC7E@keescook>
- <CAMj1kXGAwjChyFvjQcTbL8dFXkFWnn9n47bkN7FP=+EsLNsJdg@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oqtSgejU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yTE9LxRL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oqtSgejU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yTE9LxRL"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A5B7921B86;
+	Mon, 21 Jul 2025 13:30:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753104619; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PaZCofBqOjUcg+lD1fg+YBI1f5pe8r67jPpNIhq9pe8=;
+	b=oqtSgejUTICJzhBKlkFyj8Tv6TBZ7b5g3f3pRqU00nqdP1pQZ9RYGgTbwWRP6bl3Ag5Q06
+	lNs65MNLmQSy2Ff6Hs0GVZm4tPio2688eBdEYgwOH8hL3HdC0pWQZxmAYyFS2/+RTjwvMS
+	j3hqomOAFHTsaSMg7P5cpqCNdD6gQwY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753104619;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PaZCofBqOjUcg+lD1fg+YBI1f5pe8r67jPpNIhq9pe8=;
+	b=yTE9LxRLSxYvDfmv3jiW9tAHZ8xAAUcvWzT0IN4zAmkD+N8A8Z+CY7t30wiXUzWjokPN1k
+	UAwX92wHByIDrtAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753104619; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PaZCofBqOjUcg+lD1fg+YBI1f5pe8r67jPpNIhq9pe8=;
+	b=oqtSgejUTICJzhBKlkFyj8Tv6TBZ7b5g3f3pRqU00nqdP1pQZ9RYGgTbwWRP6bl3Ag5Q06
+	lNs65MNLmQSy2Ff6Hs0GVZm4tPio2688eBdEYgwOH8hL3HdC0pWQZxmAYyFS2/+RTjwvMS
+	j3hqomOAFHTsaSMg7P5cpqCNdD6gQwY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753104619;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PaZCofBqOjUcg+lD1fg+YBI1f5pe8r67jPpNIhq9pe8=;
+	b=yTE9LxRLSxYvDfmv3jiW9tAHZ8xAAUcvWzT0IN4zAmkD+N8A8Z+CY7t30wiXUzWjokPN1k
+	UAwX92wHByIDrtAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3FB1D136A8;
+	Mon, 21 Jul 2025 13:30:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fQA/D+tAfmikUwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 21 Jul 2025 13:30:19 +0000
+Message-ID: <651d0f59-990d-460e-829b-be5cb1ee7fe7@suse.cz>
+Date: Mon, 21 Jul 2025 15:30:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXGAwjChyFvjQcTbL8dFXkFWnn9n47bkN7FP=+EsLNsJdg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V9 6/7] KVM: guest_memfd: Enforce NUMA mempolicy using
+ shared policy
+Content-Language: en-US
+To: Shivank Garg <shivankg@amd.com>, seanjc@google.com, david@redhat.com,
+ willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
+ pbonzini@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk
+Cc: ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, tabba@google.com,
+ vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
+ michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com,
+ Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com,
+ aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
+ jack@suse.cz, rppt@kernel.org, hch@infradead.org, cgzones@googlemail.com,
+ ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
+ ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com,
+ rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net,
+ kent.overstreet@linux.dev, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+ chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
+ dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com,
+ jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com,
+ yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com,
+ aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
+References: <20250713174339.13981-2-shivankg@amd.com>
+ <20250713174339.13981-9-shivankg@amd.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250713174339.13981-9-shivankg@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,paul-moore.com,namei.org,hallyn.com,suse.cz,redhat.com,intel.com,amd.com,nvidia.com,amazon.com,kernel.org,infradead.org,googlemail.com,amazon.co.uk,gmail.com,sk.com,gourry.net,linux.dev,linux.alibaba.com,arm.com,quicinc.com,vger.kernel.org,kvack.org,lists.linux.dev];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[66];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[amd.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
-On Sun, Jul 20, 2025 at 04:10:01PM +1000, Ard Biesheuvel wrote:
-> On Sat, 19 Jul 2025 at 08:51, Kees Cook <kees@kernel.org> wrote:
-> > On Fri, Jul 18, 2025 at 11:36:32AM +0300, Mike Rapoport wrote:
-> > > On Thu, Jul 17, 2025 at 04:25:09PM -0700, Kees Cook wrote:
-> > > > When KCOV is enabled all functions get instrumented, unless the
-> > > > __no_sanitize_coverage attribute is used. To prepare for
-> > > > __no_sanitize_coverage being applied to __init functions, we have to
-> > > > handle differences in how GCC's inline optimizations get resolved. For
-> > > > x86 this means forcing several functions to be inline with
-> > > > __always_inline.
-> > > >
-> > > > Signed-off-by: Kees Cook <kees@kernel.org>
-> > >
-> > > ...
-> > >
-> > > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> > > > index bb19a2534224..b96746376e17 100644
-> > > > --- a/include/linux/memblock.h
-> > > > +++ b/include/linux/memblock.h
-> > > > @@ -463,7 +463,7 @@ static inline void *memblock_alloc_raw(phys_addr_t size,
-> > > >                                       NUMA_NO_NODE);
-> > > >  }
-> > > >
-> > > > -static inline void *memblock_alloc_from(phys_addr_t size,
-> > > > +static __always_inline void *memblock_alloc_from(phys_addr_t size,
-> > > >                                             phys_addr_t align,
-> > > >                                             phys_addr_t min_addr)
-> > >
-> > > I'm curious why from all memblock_alloc* wrappers this is the only one that
-> > > needs to be __always_inline?
-> >
-> > Thread-merge[1], adding Will Deacon, who was kind of asking the same
-> > question.
-> >
-> > Based on what I can tell, GCC has kind of fragile inlining logic, in the
-> > sense that it can change whether or not it inlines something based on
-> > optimizations. It looks like the kcov instrumentation being added (or in
-> > this case, removed) from a function changes the optimization results,
-> > and some functions marked "inline" are _not_ inlined. In that case, we end up
-> > with __init code calling a function not marked __init, and we get the
-> > build warnings I'm trying to eliminate.
-
-Got it, thanks for the explanation!
-
-> > So, to Will's comment, yes, the problem is somewhat fragile (though
-> > using either __always_inline or __init will deterministically solve it).
-> > We've tripped over this before with GCC and the solution has usually
-> > been to just use __always_inline and move on.
-> >
+On 7/13/25 19:43, Shivank Garg wrote:
+> Previously, guest-memfd allocations followed local NUMA node id in absence
+> of process mempolicy, resulting in arbitrary memory allocation.
+> Moreover, mbind() couldn't be used  by the VMM as guest memory wasn't
+> mapped into userspace when allocation occurred.
 > 
-> Given that 'inline' is already a macro in the kernel, could we just
-> add __attribute__((__always_inline__)) to it when KCOV is enabled?
+> Enable NUMA policy support by implementing vm_ops for guest-memfd mmap
+> operation. This allows the VMM to map the memory and use mbind() to set the
+> desired NUMA policy. The policy is stored in the inode structure via
+> kvm_gmem_inode_info, as memory policy is a property of the memory (struct
+> inode) itself. The policy is then retrieved via mpol_shared_policy_lookup()
+> and passed to filemap_grab_folio_mpol() to ensure that allocations follow
+> the specified memory policy.
+> 
+> This enables the VMM to control guest memory NUMA placement by calling
+> mbind() on the mapped memory regions, providing fine-grained control over
+> guest memory allocation across NUMA nodes.
+> 
+> The policy change only affect future allocations and does not migrate
+> existing memory. This matches mbind(2)'s default behavior which affects
+> only new allocations unless overridden with MPOL_MF_MOVE/MPOL_MF_MOVE_ALL
+> flags, which are not supported for guest_memfd as it is unmovable.
+> 
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
 
-That sounds like a more robust approach and, by the sounds of it, we
-could predicate it on GCC too. That would also provide a neat place for
-a comment describing the problem.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Kees, would that work for you?
-
-Will
