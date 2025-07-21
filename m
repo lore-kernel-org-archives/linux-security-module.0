@@ -1,132 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851E022D785;
-	Mon, 21 Jul 2025 21:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2F422F16C
+	for <linux-security-module@vger.kernel.org>; Mon, 21 Jul 2025 21:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753132834; cv=none; b=kzt19uyptjReMNHb8+ngpNyOh1FLzgYd73c38YDGwJRZ80csyqMFmR+X9JsduqQZwPIEoJDOy1aylcMLwZ+pQfqoHTFvc4/aXOx7MfBTvM4F8vBlkoNemXb4YlgFSF1EiDiCJzzBol/GaToClNj4s3DKG6ylKBoqHN27Egcxdx4=
+	t=1753135170; cv=none; b=g3qtYU5+tqPRwFfsck1YW+pB0zxJnX8xoWLCvbKnBYHEiLO89L5XGrKdN94y10Lpn4eB9lAvjNEtaXWdxLhwkjY70ZWAF0Ysj6v/eeAY4GWcsRA603y1Mtkm5ff/i6YiJa3iMN+ashgSKvzqZ0gjO7HrYgNjL9Vwzb3FFHXwDLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753132834; c=relaxed/simple;
-	bh=4Jj9YEw8izELwPJmD1u2s79IYCPn0vJipaSRP2dhUnA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ubP1NnC0ZzgZ3Vw7Wce1Cav/E9vd5aKPZAHN2RkIxeW2h1Fte9kfa1PXh3E11oJoa6cQJDezslx3H0qHXdre0DdhgehBINw6K4WPcWXTiGgjl0J5sh3mBhz67EErg4Y5jIru3lzQFWjICH94NRldjJNp49g3uq7q/cYed+874Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NUkeVJVq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753135170; c=relaxed/simple;
+	bh=GN/2VDE/5x9sy0SuMuAkFZFulF2F7YMdN8uaKg0YNr0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CmY4CvaX670zQLmq38eH5COxvUsLMboSTpOzOGW1S6/u42L8QyLE3ZISiDOkcizbLhFyGLcA0iPjJGO8+jzlVeWJwParbd6FdUZf47jVVrJuDs8xDfYutr06nXARGrCeClEp5Of91fI47a5nNIUFVbPYVZPK0ruTQNPTQgeIGhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YwjV8zPw; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NUkeVJVq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AB70C4CEED;
-	Mon, 21 Jul 2025 21:20:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753132834;
-	bh=4Jj9YEw8izELwPJmD1u2s79IYCPn0vJipaSRP2dhUnA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NUkeVJVq7Jk9IE4wRYbtJFLNVeLRQtqF0CcYJZT3HHIUBlgLCmYixADIzzKDZ5JL1
-	 fW1Q1pp05r3kj8jkao1yAbzSjXTEeHZqWmmUUhrNgsGrfo20zqmwH6NGPJZV+VcrKB
-	 X7iMe+KoWj2Tg9eW6fBSpcvzRVuy7OCUrlVbRUOYMXiTgqXdYubjnk0z+67Vji7EHL
-	 4404yekV+eYqGHaZtEnsmvGs5m4ILwBhqttKBa1mLUXTRzm8T/TtZSANvw2BoV12Ey
-	 tg6e53d8okYm71W8vqVdmYM834ThTsnRzEJRoSVjv41UdoXeu7wN0Krurq9L3wzqgG
-	 Mz5oK9NmP2bPQ==
-From: KP Singh <kpsingh@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: bboscaccy@linux.microsoft.com,
-	paul@paul-moore.com,
-	kys@microsoft.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	KP Singh <kpsingh@kernel.org>
-Subject: [PATCH v2 13/13] selftests/bpf: Add test for signed programs
-Date: Mon, 21 Jul 2025 23:19:58 +0200
-Message-ID: <20250721211958.1881379-14-kpsingh@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250721211958.1881379-1-kpsingh@kernel.org>
-References: <20250721211958.1881379-1-kpsingh@kernel.org>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YwjV8zPw"
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e8db917573dso172827276.1
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Jul 2025 14:59:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1753135167; x=1753739967; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b+ppndZkAqudCa4AHUWqjkn54p+d1I1igNofPGCGnJo=;
+        b=YwjV8zPw3aH95HHglQCGrMKUULeO8jldPBkl7OPSaAI1WW8AFkW+siJj7TZMgtJ48W
+         L9etvhB0EOwFWPKWHEzrwhyPxlInHgiN8pOoG2nA3P5mV9koICSsMZ/5PnEkVEsrubEP
+         Qg8yXWXKMIFcR3ci2JbKuGh6Yp1EA21QZmn29xmqZpdomKs+UyS0WzqVl2NRN60ZX8A7
+         UNflZpP9AwgStdCc1awUDjbMcRz0s1nFYe/Q9rblEjhjit/J41UcfBcZgAaxdN6i0Fn2
+         KM7tkPZM+m02645zxuWkK6IPIEF+WfeihSXJfKSDTFqyObYm4RpQApPV00GVYZf5CLgo
+         Uz/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753135167; x=1753739967;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b+ppndZkAqudCa4AHUWqjkn54p+d1I1igNofPGCGnJo=;
+        b=INhYGGBRhWbGjDNyA908KFjQ3J15NN3nN24cMFM5BLdtGt8BoHOFu27DxmWTjqB/LP
+         blKKNL+UPLcdDDljr7bt7IaRy8SUemSJyuJD4T0Z94b6nqeFbh00InjKUGOgZtUf9Ei3
+         3s3MkhQh2QXBq9aCyJC5LJHZ6o9WHgSV3kbwIpm4pOzfRbCuIQjQZRE8O4VYFCRKhJDO
+         BGL+6zFXxK+U40ablToe/pqZSwzk+C91v5aeIt9ooy/GruGX9+g/AstyrP9MtZMsQ5Wu
+         mp6HUeQFsX90dVAH4Pf5N8uAVxMeF60YnmnpcELCUnvmtoOUmG6NKf5zqLpu6/0VlFS6
+         /tRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUo5IYcJMemena98FizI91xv6tlbesxKFdygdcSt75p4TcEg7pnvEdKRReEqHMQt55Vw7NLbzDlCUR7XS6Th//KNtLIpXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1yKSOzfudWCvAZAGPvFId1wlxeDkv8QG4rJ3TYZ9AGnWzMRB4
+	IKZ3QsCAnLMpKeMcPXktTjq4KruEJohzc68+P77lGhjpzE0wDD22mmxImn948KpFpPi3TeqsrKy
+	e2abRrTZWUMMp1Oe9ujxbRqUbo4AAZ7P4vbRnnjph5FVK1CSTrUU=
+X-Gm-Gg: ASbGncsXA8kUwrAz7icTE7vQbuT71cBQtTc/FGXpzhoHkNK7LpsJ0N46mioTbM8yLSw
+	5elZxYCVt3QuGxMVXY4acsHguX/im8lM/u1E9ZCA8nLcIo2YSglzNNeicAv541gYhqI8JLSxL8+
+	caFvCrUeJeFvRhIgCIX1l9NGLsR6CJI71tMoEiBWEqPtBxNTfwu1P+QR93EAMVyUUefxaybnPFR
+	pmRq0K3IaVqf5pSbg==
+X-Google-Smtp-Source: AGHT+IE1qvvx8c7K5J7JCPj9GKxpg1bKS0SyLyBqGrVR1kvAC6PumEIScnTtUQFYLL39P2IaCpRb7QubQ5VqCaV5cCE=
+X-Received: by 2002:a05:6902:841:b0:e8b:3e67:b90c with SMTP id
+ 3f1490d57ef6-e8bc2454590mr23300713276.16.1753135167230; Mon, 21 Jul 2025
+ 14:59:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250409185019.238841-31-paul@paul-moore.com> <20250409185019.238841-56-paul@paul-moore.com>
+ <12d9ea5981f5a2c33a01798311543db2e9bd4ee3.camel@linux.ibm.com>
+ <CAHC9VhTfNQeu3gcWii7kUrGY+fVygXs6j4UhybodPqjuSzA-pQ@mail.gmail.com> <ae5e62722e238f55315b7ce523f7d2eb3af5e063.camel@linux.ibm.com>
+In-Reply-To: <ae5e62722e238f55315b7ce523f7d2eb3af5e063.camel@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 21 Jul 2025 17:59:15 -0400
+X-Gm-Features: Ac12FXzqKIhaDFZBAQ7R-47fmnQb7MjQIOuEzggw7RCTbVzRyGOsED2sjeYEfy4
+Message-ID: <CAHC9VhQPxNDeXGAa0WLJ_O7uFVQhhYO8y+KMaXDM7TJ6P8wG3w@mail.gmail.com>
+Subject: Re: [RFC PATCH 25/29] ima,evm: move initcalls to the LSM framework
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: David Howells <dhowells@redhat.com>, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
+	John Johansen <john.johansen@canonical.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Fan Wu <wufan@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	Eric Snowberg <eric.snowberg@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is a basic test that checks of bpf_prog_verify_signature is called
-and returns a success for a valid program by loading a program that
-captures the return value of bpf_prog_verify_signature and then loading
-a signed skeleton
+On Fri, Jun 13, 2025 at 4:35=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+> On Wed, 2025-06-11 at 16:27 -0400, Paul Moore wrote:
+> > On Fri, May 30, 2025 at 6:04=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com=
+> wrote:
+> > > On Wed, 2025-04-09 at 14:50 -0400, Paul Moore wrote:
+> > > > This patch converts IMA and EVM to use the LSM frameworks's initcal=
+l
+> > > > mechanism.  There were two challenges to doing this conversion: the
+> > > > first simply being the number of initcalls across IMA and EVM, and =
+the
+> > > > second was the number of resources shared between the two related,
+> > > > yet independent LSMs.
+> > >
+> > > There are a number of the initcalls under integrity/platform/, which =
+load arch
+> > > specific keys onto the platform and machine keyrings, which shouldn't=
+ be
+> > > included in this patch.
+> >
+> > I don't want to assume too much from your reply, but if the cert/key
+> > loading under integrity/platform shouldn't be subject to the LSM
+> > initcall rework, that implies that the integrity/platform cert/key
+> > loading is independent of IMA/EVM and should perhaps live somewhere
+> > else, e.g. security/keys?
+> >
+> > Or am I misunderstanding something?
+>
+> When the .platform keyring was upstreamed it was upstreamed for a very sp=
+ecific
+> purpose so that IMA could verify the kexec kernel image.  Afterwareds it =
+was
+> immediately used to verify the pesigned kexec image.  Now it is being (ab=
+)used
+> by other subsystems - ipe and dm-verity - and is being proposed by the "[=
+PATCH
+> RFC 0/1] module: Optionally use .platform keyring for signatures verifica=
+tion".
+> From an integrity perspective this is definitely not a good idea.  The
+> discussion, which I'm sure you're aware of, is here:
+> https://lore.kernel.org/linux-integrity/20250602132535.897944-1-vkuznets@=
+redhat.com/
+>
+> It does not make any sense to move the code for the platform and machine
+> keyrings to security/keys.  If they need to move anywhere, it would be to=
+ the
+> certs/ directory.
 
-Signed-off-by: KP Singh <kpsingh@kernel.org>
----
- .../selftests/bpf/prog_tests/signing.c        | 36 +++++++++++++++++++
- tools/testing/selftests/bpf/progs/signing.c   | 16 +++++++++
- 2 files changed, 52 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/signing.c
- create mode 100644 tools/testing/selftests/bpf/progs/signing.c
+To bring some off-list discussions back on-list, and wrap up this
+thread, Mimi has agreed to move the platform and machine keyring code
+to the certs/ directory as they are no longer IMA/EVM-only keyrings.
+I'll also be dropping them from the next revision of LSM
+initialization rework patchset will be posted at some point this
+evening (waiting on a testing refresh).
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/signing.c b/tools/testing/selftests/bpf/prog_tests/signing.c
-new file mode 100644
-index 000000000000..0c4fca8cd86f
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/signing.c
-@@ -0,0 +1,36 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Google */
-+#include <test_progs.h>
-+#include "signing.skel.h"
-+#include "fentry_test.lskel.h"
-+
-+void test_signing(void)
-+{
-+	struct signing *skel = NULL;
-+	struct fentry_test_lskel *lskel = NULL;
-+	int err;
-+
-+	/* load a program that verifies the result of signing */
-+	skel = signing__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "signing_skel_load"))
-+		goto close_prog;
-+
-+	err = signing__attach(skel);
-+	if (!ASSERT_OK(err, "signing_attach"))
-+		goto close_prog;
-+
-+	/* Load a signed light skeleton */
-+	lskel = fentry_test_lskel__open_and_load();
-+	if (!ASSERT_OK_PTR(lskel, "signing_skel_load"))
-+		goto close_prog;
-+
-+	err = fentry_test_lskel__attach(lskel);
-+	if (!ASSERT_OK(err, "signing_attach"))
-+		goto close_prog;
-+
-+	ASSERT_OK(skel->data->sig_verify_retval, "bpf_prog_verify_signature");
-+
-+close_prog:
-+	signing__destroy(skel);
-+	fentry_test_lskel__destroy(lskel);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/signing.c b/tools/testing/selftests/bpf/progs/signing.c
-new file mode 100644
-index 000000000000..cc03f6363975
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/signing.c
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Google */
-+#include "vmlinux.h"
-+#include <limits.h>
-+#include <bpf/bpf_tracing.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+__u64 sig_verify_retval = -INT_MAX;
-+
-+SEC("fexit/bpf_prog_verify_signature")
-+int BPF_PROG(bpf_sign, struct bpf_prog *prog, union bpf_attr *attr, bool is_kernel, int ret)
-+{
-+	sig_verify_retval = ret;
-+	return 0;
-+}
--- 
-2.43.0
-
+--=20
+paul-moore.com
