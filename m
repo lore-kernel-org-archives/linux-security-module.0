@@ -1,163 +1,297 @@
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0343128BAAC
-	for <linux-security-module@vger.kernel.org>; Mon, 21 Jul 2025 09:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31AC2BE626
+	for <linux-security-module@vger.kernel.org>; Mon, 21 Jul 2025 11:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753090533; cv=none; b=GKEjC59jeNUVSnqU+JgmabAskPsmGxgXT+FfVWPp0Xj42fcerylBANxUTVE9EpaLdjTntO3yHQCwfbnCp/GNQSgxKICkabQwGvc9ci6eWoEdSKybMFytv4zZ3XbZ/2zrTHwfK7KTqtd9Hvu/fic2SBSFuHRSOJPNJMIhiKYrPbQ=
+	t=1753098287; cv=none; b=pYAtyWRZnVwW/EfYvRq2JQvSbbuG3AfZe+khEVYMNg5P8By7CUUlAfJz4k0RUerEyQxvpoRHm2MXFhpCSfatSLjr1rPUCd83EZYau6wE7lT9t4vzA9J5anZJjsEnGvYpBlPcrsd4V2Pb/oPGO6NtsG/72A9zw2i0ZCEKJ+HW1Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753090533; c=relaxed/simple;
-	bh=IKWSUoc2lmCa1ZM8P6Cy7IVnFLEsLv+kUIyNaVjpkDk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WG07naO85ak1aLZtrqNhT/n3aCBoBYVsE5ZsJRutQHwFKzd0tVIaslJ/WYsnHw4FWIVocFAt4UZJECMEWGNkKnnXNERIFQE09uwbjwZNdu5ayHZIu/z0dMMI4cPCdjTdWHKC0CCD52hI76xwSNacpvO2nZKpzerVbnQrDLrG6Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-87c24b196cbso157245539f.2
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Jul 2025 02:35:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753090531; x=1753695331;
-        h=content-transfer-encoding:to:from:subject:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uYc/vDtNMTkmIow0Px2oZm6vbRSlAyud1JI5Tp027Wk=;
-        b=OSSxE+222LVEw1BsPBBEj/qIiwkZQlKL771n9eWpCgLPpp/eLCURvtuqG5DxcbZCZ0
-         BemOwmokLsOHS/D/bVNMcMYw5ndzvHQNVZMkkb9hUeZ2nkkYmHIN2+HvvevEiTrMx2uy
-         d0UOUbumg9yLNRiI9Qdk4AaxHRgnHdpA4BOuqyQcq5pI/QcGHiH2OewKGcjrMZ+dZQso
-         aqCFYGpWjg1M6SuCo3/GsZyAJZKXjdg0bNNsGTNkfNMSp4xTT6okVaNlqWG6IJOn33/o
-         KdqLYPqgIUIEJUhixMYsFW9BhXvQ4cXxRKreD8+lMryO6K3yBflgCKqd9PN7xH3kURxH
-         1KFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCWGdrLaWAUfz87NSEQgHhSvxWopH1GoG0KLFIRtV8MdZNgLitP3SkHQEZSP9WUyssm3J02erRmfcYdveIepBOD7UTJ84=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhTBhcgKLD9ksR8/1AtKtgN52oXXgLNbK+vcB7JDMo5nUrtJ5K
-	xOMF+3NJZQ9lHGEkAP6bvlZyneVu+eD8z2Xi1hXwjuVVTJlV4dyEZuPfMpih+Aa3d4zJyG4hcTl
-	PuWB6rR8O+mCGIXN34gzzSFEL5qj970EXFO1/4uQsae3ov7QJK/E5Jrj6QjA=
-X-Google-Smtp-Source: AGHT+IE36MNzd0e64f6m1+Tts8MfnrEcPlLa/PxmLnThU6J0DiYR17Mzo8OX7AtvIC3BO5/vjSetMa49v6BW0mV1BOW9UYSiKaVX
+	s=arc-20240116; t=1753098287; c=relaxed/simple;
+	bh=y2ZY6q5DHvBrjnCU7EvVvqgu4wCoeygwatNPsmLRFaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IbZ63Q6koAUnmXwxbiMogPSjbPIAzUFm0ZmV5uYwjU9LJzSwsXJQNl8wrX7P5py5HZ94b+AsRERwo8mi0Ftmx4z59fUk2XQVy228frGN9orCnDE5lZvBRulxMOHo3OnBBRlp0ItrqJI68C7+WyweZDpvhNis61JsGZBZoRR9q3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1Y0U/RV7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2shmLIXc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZiNxp/l1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=X5eysvCX; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1Y0U/RV7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2shmLIXc";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZiNxp/l1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="X5eysvCX"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DC56C21B43;
+	Mon, 21 Jul 2025 11:44:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753098283; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NUmNYP0zD96NJMt2QiJF3yH4rGim2UQsUeVCtMOyHVk=;
+	b=1Y0U/RV7y6jdLP39ld2T8fNtJm+RxB2r5KWi4u6f3i9FKz0/m+UqO5x+6ljcTc8SLLFC+N
+	fswGbzhRxaU5AldqhJbY4bJg6Bpt2nTbWar2tbpkLM0ZX+uAs5b3VW5pjGWdQgugTJhesP
+	9porNnODmkQBr/jpgB1JUihfnMYSxfk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753098283;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NUmNYP0zD96NJMt2QiJF3yH4rGim2UQsUeVCtMOyHVk=;
+	b=2shmLIXcpt9sF7Gt05RDg5czHIluPVLQifJKYHwvlyvefDzErx5HKJh6cq4MpMOzfLO5OT
+	h8TO/AohfNI3FhCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="ZiNxp/l1";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=X5eysvCX
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753098282; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NUmNYP0zD96NJMt2QiJF3yH4rGim2UQsUeVCtMOyHVk=;
+	b=ZiNxp/l1ik8lvzeCSoaGr/IzgCefVwK2VlvCYGdFMoEyTbfIaODdp3+z92+wGWZYZAYbEx
+	8T3k/Tsh0SfiuLyfJ5m6n9PLCbVG9ANUT8qS9v9MUGfl0O4jCmT9MbwV8ZSLILVcGN8sRf
+	A570qiXiMTa2Hguvs3tzK3kLMR1oosg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753098282;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NUmNYP0zD96NJMt2QiJF3yH4rGim2UQsUeVCtMOyHVk=;
+	b=X5eysvCXZRU7ogAWyK98TQUiKwA56IzcSvOJO9ZMkfcYWm4BFBhRZjf8LxR8pPClwbLFA9
+	XdraXbSvp72r9tBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 71EF813A88;
+	Mon, 21 Jul 2025 11:44:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nelPGyoofmjUMgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 21 Jul 2025 11:44:42 +0000
+Message-ID: <78f3032d-dfa4-4907-be42-6a7e8a34371e@suse.cz>
+Date: Mon, 21 Jul 2025 13:44:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:400e:b0:87c:1542:8abc with SMTP id
- ca18e2360f4ac-87c15428e5cmr1298312539f.4.1753090531132; Mon, 21 Jul 2025
- 02:35:31 -0700 (PDT)
-Date: Mon, 21 Jul 2025 02:35:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687e09e3.a70a0220.693ce.00eb.GAE@google.com>
-Subject: [syzbot] [apparmor?] linux-next test error: WARNING in apparmor_unix_stream_connect
-From: syzbot <syzbot+cd38ee04bcb3866b0c6d@syzkaller.appspotmail.com>
-To: apparmor@lists.ubuntu.com, jmorris@namei.org, john.johansen@canonical.com, 
-	john@apparmor.net, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
-	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V9 5/7] KVM: guest_memfd: Add slab-allocated inode cache
+Content-Language: en-US
+To: Shivank Garg <shivankg@amd.com>, seanjc@google.com, david@redhat.com,
+ willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
+ pbonzini@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk
+Cc: ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, tabba@google.com,
+ vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
+ michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com,
+ Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com,
+ aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
+ jack@suse.cz, rppt@kernel.org, hch@infradead.org, cgzones@googlemail.com,
+ ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
+ ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com,
+ rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net,
+ kent.overstreet@linux.dev, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+ chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
+ dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com,
+ jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com,
+ yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com,
+ aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
+References: <20250713174339.13981-2-shivankg@amd.com>
+ <20250713174339.13981-8-shivankg@amd.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250713174339.13981-8-shivankg@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: DC56C21B43
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,paul-moore.com,namei.org,hallyn.com,suse.cz,redhat.com,intel.com,amd.com,nvidia.com,amazon.com,kernel.org,infradead.org,googlemail.com,amazon.co.uk,gmail.com,sk.com,gourry.net,linux.dev,linux.alibaba.com,arm.com,quicinc.com,vger.kernel.org,kvack.org,lists.linux.dev];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[66];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -3.01
 
-Hello,
+On 7/13/25 19:43, Shivank Garg wrote:
+> Add dedicated inode structure (kvm_gmem_inode_info) and slab-allocated
+> inode cache for guest memory backing, similar to how shmem handles inodes.
+> 
+> This adds the necessary allocation/destruction functions and prepares
+> for upcoming guest_memfd NUMA policy support changes.
+> 
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
+> ---
+>  virt/kvm/guest_memfd.c | 58 ++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 56 insertions(+), 2 deletions(-)
+> 
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index dabcc2317291..989e2b26b344 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -17,6 +17,15 @@ struct kvm_gmem {
+>  	struct list_head entry;
+>  };
+>  
+> +struct kvm_gmem_inode_info {
+> +	struct inode vfs_inode;
+> +};
+> +
+> +static inline struct kvm_gmem_inode_info *KVM_GMEM_I(struct inode *inode)
+> +{
+> +	return container_of(inode, struct kvm_gmem_inode_info, vfs_inode);
+> +}
+> +
+>  /**
+>   * folio_file_pfn - like folio_file_page, but return a pfn.
+>   * @folio: The folio which contains this index.
+> @@ -392,8 +401,33 @@ static struct file_operations kvm_gmem_fops = {
+>  	.fallocate	= kvm_gmem_fallocate,
+>  };
+>  
+> +static struct kmem_cache *kvm_gmem_inode_cachep;
+> +
+> +static struct inode *kvm_gmem_alloc_inode(struct super_block *sb)
+> +{
+> +	struct kvm_gmem_inode_info *info;
+> +
+> +	info = alloc_inode_sb(sb, kvm_gmem_inode_cachep, GFP_KERNEL);
+> +	if (!info)
+> +		return NULL;
+> +
+> +	return &info->vfs_inode;
+> +}
+> +
+> +static void kvm_gmem_destroy_inode(struct inode *inode)
+> +{
+> +}
+> +
+> +static void kvm_gmem_free_inode(struct inode *inode)
+> +{
+> +	kmem_cache_free(kvm_gmem_inode_cachep, KVM_GMEM_I(inode));
+> +}
+> +
+>  static const struct super_operations kvm_gmem_super_operations = {
+>  	.statfs		= simple_statfs,
+> +	.alloc_inode	= kvm_gmem_alloc_inode,
+> +	.destroy_inode	= kvm_gmem_destroy_inode,
+> +	.free_inode	= kvm_gmem_free_inode,
+>  };
+>  
+>  static int kvm_gmem_init_fs_context(struct fs_context *fc)
+> @@ -426,17 +460,37 @@ static int kvm_gmem_init_mount(void)
+>  	return 0;
+>  }
+>  
+> +static void kvm_gmem_init_inode(void *foo)
+> +{
+> +	struct kvm_gmem_inode_info *info = foo;
+> +
+> +	inode_init_once(&info->vfs_inode);
+> +}
+> +
+>  int kvm_gmem_init(struct module *module)
+>  {
+> -	kvm_gmem_fops.owner = module;
+> +	int ret;
+>  
+> -	return kvm_gmem_init_mount();
+> +	kvm_gmem_fops.owner = module;
+> +	kvm_gmem_inode_cachep = kmem_cache_create("kvm_gmem_inode_cache",
+> +						  sizeof(struct kvm_gmem_inode_info),
+> +						  0, SLAB_ACCOUNT,
+> +						  kvm_gmem_init_inode);
 
-syzbot found the following issue on:
+Since this is new code, please use the new variant of kmem_cache_create()
+that takes the args parameter.
 
-HEAD commit:    979875200256 Add linux-next specific files for 20250721
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=3D13bf7f98580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D9baac92c2ceb707
-dashboard link: https://syzkaller.appspot.com/bug?extid=3Dcd38ee04bcb3866b0=
-c6d
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-=
-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> +	if (!kvm_gmem_inode_cachep)
+> +		return -ENOMEM;
+> +	ret = kvm_gmem_init_mount();
+> +	if (ret) {
+> +		kmem_cache_destroy(kvm_gmem_inode_cachep);
+> +		return ret;
+> +	}
+> +	return 0;
+>  }
+>  
+>  void kvm_gmem_exit(void)
+>  {
+>  	kern_unmount(kvm_gmem_mnt);
+>  	kvm_gmem_mnt = NULL;
+> +	kmem_cache_destroy(kvm_gmem_inode_cachep);
+>  }
+>  
+>  static int kvm_gmem_migrate_folio(struct address_space *mapping,
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9bf2232f3c8e/disk-=
-97987520.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ae51e7da64a4/vmlinux-=
-97987520.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e05ecb1741a9/bzI=
-mage-97987520.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit=
-:
-Reported-by: syzbot+cd38ee04bcb3866b0c6d@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-AppArmor WARN apparmor_unix_stream_connect: ((({ typeof(*(new_ctx->label)) =
-*__UNIQUE_ID_rcu2213 =3D (typeof(*(new_ctx->label)) *)({ do { __attribute__=
-((__noreturn__)) extern void __compiletime_assert_2214(void) __attribute__(=
-(__error__("Unsupported access size for {READ,WRITE}_ONCE()."))); if (!((si=
-zeof((new_ctx->label)) =3D=3D sizeof(char) || sizeof((new_ctx->label)) =3D=
-=3D sizeof(short) || sizeof((new_ctx->label)) =3D=3D sizeof(int) || sizeof(=
-(new_ctx->label)) =3D=3D sizeof(long)) || sizeof((new_ctx->label)) =3D=3D s=
-izeof(long long))) __compiletime_assert_2214(); } while (0); (*(const volat=
-ile typeof( _Generic(((new_ctx->label)), char: (char)0, unsigned char: (uns=
-igned char)0, signed char: (signed char)0, unsigned short: (unsigned short)=
-0, signed short: (signed short)0, unsigned int: (unsigned int)0, signed int=
-: (signed int)0, unsigned long: (unsigned long)0, signed long: (signed long=
-)0, unsigned long long: (unsigned long long)0, signed long long: (signed lo=
-ng long)0, default: ((new_ctx->label)))) *)&((new_ctx->label))); }); ;=20
-WARNING: security/apparmor/lsm.c:1211 at apparmor_unix_stream_connect+0x5fa=
-/0x650 security/apparmor/lsm.c:1211, CPU#0: udevadm/5318
-Modules linked in:
-CPU: 0 UID: 0 PID: 5318 Comm: udevadm Not tainted 6.16.0-rc7-next-20250721-=
-syzkaller #0 PREEMPT(full)=20
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
-gle 05/07/2025
-RIP: 0010:apparmor_unix_stream_connect+0x5fa/0x650 security/apparmor/lsm.c:=
-1211
-Code: 1c 3b fd 48 89 ef e8 35 4d 00 00 e9 09 fe ff ff e8 ab 1c 3b fd 90 48 =
-c7 c7 40 31 fd 8b 48 c7 c6 2a 2e c7 8d e8 07 a4 fe fc 90 <0f> 0b 90 90 e9 2=
-7 fe ff ff e8 88 1c 3b fd be 02 00 00 00 eb 0a e8
-RSP: 0018:ffffc90003367c38 EFLAGS: 00010246
-RAX: 5674fa5d0d24c800 RBX: 1ffff1100fad97d0 RCX: ffff888026cd5a00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
-RBP: ffff88801ba8f8f8 R08: ffff8880b8624253 R09: 1ffff110170c484a
-R10: dffffc0000000000 R11: ffffed10170c484b R12: ffff88807d6cbe80
-R13: 1ffff1100fbc1bc8 R14: 0000000000000000 R15: 000000000000002f
-FS:  00007f8de3bff880(0000) GS:ffff8881257a6000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8de347ae00 CR3: 000000007fc96000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- security_unix_stream_connect+0xcb/0x2c0 security/security.c:4540
- unix_stream_connect+0x8fc/0x1010 net/unix/af_unix.c:1753
- __sys_connect_file net/socket.c:2086 [inline]
- __sys_connect+0x313/0x440 net/socket.c:2105
- __do_sys_connect net/socket.c:2111 [inline]
- __se_sys_connect net/socket.c:2108 [inline]
- __x64_sys_connect+0x7a/0x90 net/socket.c:2108
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8de34a7407
-Code: 48 89 fa 4c 89 df e8 38 aa 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc =
-74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 0=
-0 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
-RSP: 002b:00007ffc79327430 EFLAGS: 00000202 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 00007f8de3bff880 RCX: 00007f8de34a7407
-RDX: 0000000000000013 RSI: 000055d4ba7cf948 RDI: 0000000000000003
-RBP: 000000000000001e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffc79327490
-R13: 0000000000000000 R14: 0000000000000007 R15: 0000000000000000
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
