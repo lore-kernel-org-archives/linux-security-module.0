@@ -1,147 +1,163 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E230318B0F;
-	Sun, 20 Jul 2025 07:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0343128BAAC
+	for <linux-security-module@vger.kernel.org>; Mon, 21 Jul 2025 09:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752996782; cv=none; b=uYksHege3qfwed1x61lXDpt/uo72W4JB7nBdlSOCp6nbLgIvfcZiaVIfSrnHKKYBwFOBuDv2sJn16EJ6L4Kvvpzogo9rjeOg0M19rYXJhidfxbhJ/zzdwZND42/KDcwtI9SHMxKwINeKi8EvKgFgU5b58IAu2GHA+UB3RacHFvk=
+	t=1753090533; cv=none; b=GKEjC59jeNUVSnqU+JgmabAskPsmGxgXT+FfVWPp0Xj42fcerylBANxUTVE9EpaLdjTntO3yHQCwfbnCp/GNQSgxKICkabQwGvc9ci6eWoEdSKybMFytv4zZ3XbZ/2zrTHwfK7KTqtd9Hvu/fic2SBSFuHRSOJPNJMIhiKYrPbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752996782; c=relaxed/simple;
-	bh=GUf6N3TqKM3NlAZc3TkaUseabajlOnvUW3B1TeZqF2g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Btl9RqtozmSexxejP6Q8qgyxVVj6rtnuv+JZuxuHRF7pm3TXFnUMAkZDZdU6RfGC9c/+xWgZ78r+ui38o+hxygHuxmug7NdufD4b4dvYtm5XV/FubBPQmFz7C9qbEuk5HPDNfmCLbPP/wJbAC2hFfll2RM7lzxV/HPOrvl+CRKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WIdEM+FG; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIdEM+FG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 896C4C4CEFA;
-	Sun, 20 Jul 2025 07:33:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752996781;
-	bh=GUf6N3TqKM3NlAZc3TkaUseabajlOnvUW3B1TeZqF2g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WIdEM+FGmgqw7d5Ow5RRj2eJFVnGzRZAH2SQcPMs5HlVLhXED6o9vu4EyHelH6bSN
-	 8lZexpZgFWmnRn7lM1S0SIJlVUFpH4H5/1RdHGKHBjPSZ2E15mWgS390se+GXUma1D
-	 P9RNNxu+pHQt/Mku+9k+VcNBwuMcpUnD9M+O3nosI4DSmfnRaIadkfA2i6FyVPWi+c
-	 BqottYw3OPAqU2RQzbg0uIZ6AoIlqLSOCQFBRSwFBF3Tj0rM73MYQgzYQwXluLe07F
-	 qu+NU0SD9eunGyWxHF6sB7fGsZY+VQNAKRRWDVo1MkeGUayi0e/YsWvjJHcKfre/VH
-	 +YszUogZ7J0zw==
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-711d4689084so29684307b3.0;
-        Sun, 20 Jul 2025 00:33:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUdjXD+dYoaAU1XagmLcq30dlCEySnfD2DRfaYgL2UMl9KpaHs5f/z8N3aS0EOorAke1pXhZLj8ueyk8mTTQIgb@vger.kernel.org, AJvYcCUuKK3uBN8RqWsYtBsh3gbYBOhr97ISfhiA2t+XI713zzimJqsfIktkwHCJJmouQLM+PSXq+sgVX6mPHwhc7slfBH2c52C9@vger.kernel.org, AJvYcCWFeUWRZ6LGnVmuOtsuvbI5ng2m68e8NKEPuVkr4y7Qh6pKF85SH/p3EIixs002Z5yo6Ww+pgc3ANIPA6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx615i89ytRkSdvDMkKP2pLbztUyETX2RMMu+nI6VljNgibYraX
-	YPyHLxvRRPCfYNfKCNKQxdefmORvIy3ZDaspBodIu+kkENp8fy9K8RSyb++guW32vZnFZps6EDI
-	F8KXvrdfBxlVlD7ZutzxJP0yYceuyNQo=
-X-Google-Smtp-Source: AGHT+IF1VxxR+4HdNpFLZwc7UhA2IPzQimfkylbquxsG4X+5YY29CDKhDrh1yAjgYaYXhcX5RSmunUxONBPEJavLmbA=
-X-Received: by 2002:a05:690c:6d06:b0:70e:2d30:43d6 with SMTP id
- 00721157ae682-7183517c58fmr221992957b3.38.1752996780713; Sun, 20 Jul 2025
- 00:33:00 -0700 (PDT)
+	s=arc-20240116; t=1753090533; c=relaxed/simple;
+	bh=IKWSUoc2lmCa1ZM8P6Cy7IVnFLEsLv+kUIyNaVjpkDk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WG07naO85ak1aLZtrqNhT/n3aCBoBYVsE5ZsJRutQHwFKzd0tVIaslJ/WYsnHw4FWIVocFAt4UZJECMEWGNkKnnXNERIFQE09uwbjwZNdu5ayHZIu/z0dMMI4cPCdjTdWHKC0CCD52hI76xwSNacpvO2nZKpzerVbnQrDLrG6Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-87c24b196cbso157245539f.2
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Jul 2025 02:35:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753090531; x=1753695331;
+        h=content-transfer-encoding:to:from:subject:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uYc/vDtNMTkmIow0Px2oZm6vbRSlAyud1JI5Tp027Wk=;
+        b=OSSxE+222LVEw1BsPBBEj/qIiwkZQlKL771n9eWpCgLPpp/eLCURvtuqG5DxcbZCZ0
+         BemOwmokLsOHS/D/bVNMcMYw5ndzvHQNVZMkkb9hUeZ2nkkYmHIN2+HvvevEiTrMx2uy
+         d0UOUbumg9yLNRiI9Qdk4AaxHRgnHdpA4BOuqyQcq5pI/QcGHiH2OewKGcjrMZ+dZQso
+         aqCFYGpWjg1M6SuCo3/GsZyAJZKXjdg0bNNsGTNkfNMSp4xTT6okVaNlqWG6IJOn33/o
+         KdqLYPqgIUIEJUhixMYsFW9BhXvQ4cXxRKreD8+lMryO6K3yBflgCKqd9PN7xH3kURxH
+         1KFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCWGdrLaWAUfz87NSEQgHhSvxWopH1GoG0KLFIRtV8MdZNgLitP3SkHQEZSP9WUyssm3J02erRmfcYdveIepBOD7UTJ84=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhTBhcgKLD9ksR8/1AtKtgN52oXXgLNbK+vcB7JDMo5nUrtJ5K
+	xOMF+3NJZQ9lHGEkAP6bvlZyneVu+eD8z2Xi1hXwjuVVTJlV4dyEZuPfMpih+Aa3d4zJyG4hcTl
+	PuWB6rR8O+mCGIXN34gzzSFEL5qj970EXFO1/4uQsae3ov7QJK/E5Jrj6QjA=
+X-Google-Smtp-Source: AGHT+IE36MNzd0e64f6m1+Tts8MfnrEcPlLa/PxmLnThU6J0DiYR17Mzo8OX7AtvIC3BO5/vjSetMa49v6BW0mV1BOW9UYSiKaVX
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250719-memfd-exec-v1-0-0ef7feba5821@gmail.com> <20250719-memfd-exec-v1-2-0ef7feba5821@gmail.com>
-In-Reply-To: <20250719-memfd-exec-v1-2-0ef7feba5821@gmail.com>
-From: Fan Wu <wufan@kernel.org>
-Date: Sun, 20 Jul 2025 00:32:50 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkEJKLgO1GvpTNmW=DnRhrsiPXGgz9=F7oJXVQPLSocSeA@mail.gmail.com>
-X-Gm-Features: Ac12FXwM5d9XENWMfedXVCr4EtwnEwR84CVbOz6P-hi7ZGkZgUIUwlZziX0dfMw
-Message-ID: <CAKtyLkEJKLgO1GvpTNmW=DnRhrsiPXGgz9=F7oJXVQPLSocSeA@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/4] landlock: implement memfd detection
-To: Abhinav Saxena <xandfury@gmail.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, llvm@lists.linux.dev
+X-Received: by 2002:a05:6602:400e:b0:87c:1542:8abc with SMTP id
+ ca18e2360f4ac-87c15428e5cmr1298312539f.4.1753090531132; Mon, 21 Jul 2025
+ 02:35:31 -0700 (PDT)
+Date: Mon, 21 Jul 2025 02:35:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687e09e3.a70a0220.693ce.00eb.GAE@google.com>
+Subject: [syzbot] [apparmor?] linux-next test error: WARNING in apparmor_unix_stream_connect
+From: syzbot <syzbot+cd38ee04bcb3866b0c6d@syzkaller.appspotmail.com>
+To: apparmor@lists.ubuntu.com, jmorris@namei.org, john.johansen@canonical.com, 
+	john@apparmor.net, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
+	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 19, 2025 at 4:13=E2=80=AFAM Abhinav Saxena <xandfury@gmail.com>=
- wrote:
->
-> Add is_memfd_file() function to reliably detect memfd files by checking
-> for "memfd:" prefix in dentry names on shmem-backed files. This
-> distinguishes true memfd files from regular shmem files.
->
-> Move domain_is_scoped() to domain.c for reuse across subsystems.
-> Add comprehensive kunit tests for memfd detection edge cases.
->
-> Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
-> ---
->  security/landlock/domain.c |  67 +++++++++++++++
->  security/landlock/domain.h |   4 +
->  security/landlock/fs.c     | 210 +++++++++++++++++++++++++++++++++++++++=
-++++++
->  security/landlock/task.c   |  67 ---------------
->  4 files changed, 281 insertions(+), 67 deletions(-)
+Hello,
 
-...
+syzbot found the following issue on:
 
->
-> +/**
-> + * is_memfd_file - Check if file was created via memfd_create()
-> + * @file: File to check
-> + *
-> + * Returns true if @file was created via memfd_create(), false otherwise=
-.
-> + *
-> + * memfd files are shmem-backed files with "memfd:" prefix in their dent=
-ry name.
-> + * This is the definitive way to distinguish memfd files from regular sh=
-mem
-> + * files.
-> + */
-> +static bool is_memfd_file(struct file *file)
-> +{
-> +       const struct dentry *dentry;
-> +       const unsigned char *name;
-> +       size_t name_len;
-> +
-> +       /* Fast path: basic validation */
-> +       if (unlikely(!file))
-> +               return false;
-> +
-> +       /* Must be shmem-backed first - this is the cheapest definitive c=
-heck */
-> +       if (!shmem_file(file))
-> +               return false;
-> +
-> +#ifdef CONFIG_MEMFD_CREATE
-> +
-> +       /* Validate dentry and get name info */
-> +       dentry =3D file->f_path.dentry;
-> +       if (unlikely(!dentry))
-> +               return false;
-> +
-> +       name_len =3D dentry->d_name.len;
-> +       name =3D dentry->d_name.name;
-> +
-> +       /* memfd files always have "memfd:" prefix (6 characters) */
-> +       if (name_len < 6 || unlikely(!name))
-> +               return false;
-> +
-> +       /* Check for exact "memfd:" prefix */
-> +       return memcmp(name, "memfd:", 6) =3D=3D 0;
-> +#else
-> +       return false;
-> +#endif
+HEAD commit:    979875200256 Add linux-next specific files for 20250721
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D13bf7f98580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D9baac92c2ceb707
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Dcd38ee04bcb3866b0=
+c6d
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-=
+1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-I was trying to do something similar early this year but didn't hear
-feedback from the linux-mm folks.
-https://lore.kernel.org/linux-security-module/20250129203932.22165-1-wufan@=
-kernel.org/
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9bf2232f3c8e/disk-=
+97987520.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ae51e7da64a4/vmlinux-=
+97987520.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e05ecb1741a9/bzI=
+mage-97987520.xz
 
-I have considered this approach but didn't use it. My concern is,
-potentially a malicious user can create a file in a shmem fs, e.g.
-tmpfs , with the "memfd:" prefix, which can be used to bypass security
-policy.
-(Resending this message due to a misconfiguration with my email
-client. Apologies for any inconvenience.)
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:
+Reported-by: syzbot+cd38ee04bcb3866b0c6d@syzkaller.appspotmail.com
 
--Fan
+------------[ cut here ]------------
+AppArmor WARN apparmor_unix_stream_connect: ((({ typeof(*(new_ctx->label)) =
+*__UNIQUE_ID_rcu2213 =3D (typeof(*(new_ctx->label)) *)({ do { __attribute__=
+((__noreturn__)) extern void __compiletime_assert_2214(void) __attribute__(=
+(__error__("Unsupported access size for {READ,WRITE}_ONCE()."))); if (!((si=
+zeof((new_ctx->label)) =3D=3D sizeof(char) || sizeof((new_ctx->label)) =3D=
+=3D sizeof(short) || sizeof((new_ctx->label)) =3D=3D sizeof(int) || sizeof(=
+(new_ctx->label)) =3D=3D sizeof(long)) || sizeof((new_ctx->label)) =3D=3D s=
+izeof(long long))) __compiletime_assert_2214(); } while (0); (*(const volat=
+ile typeof( _Generic(((new_ctx->label)), char: (char)0, unsigned char: (uns=
+igned char)0, signed char: (signed char)0, unsigned short: (unsigned short)=
+0, signed short: (signed short)0, unsigned int: (unsigned int)0, signed int=
+: (signed int)0, unsigned long: (unsigned long)0, signed long: (signed long=
+)0, unsigned long long: (unsigned long long)0, signed long long: (signed lo=
+ng long)0, default: ((new_ctx->label)))) *)&((new_ctx->label))); }); ;=20
+WARNING: security/apparmor/lsm.c:1211 at apparmor_unix_stream_connect+0x5fa=
+/0x650 security/apparmor/lsm.c:1211, CPU#0: udevadm/5318
+Modules linked in:
+CPU: 0 UID: 0 PID: 5318 Comm: udevadm Not tainted 6.16.0-rc7-next-20250721-=
+syzkaller #0 PREEMPT(full)=20
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
+gle 05/07/2025
+RIP: 0010:apparmor_unix_stream_connect+0x5fa/0x650 security/apparmor/lsm.c:=
+1211
+Code: 1c 3b fd 48 89 ef e8 35 4d 00 00 e9 09 fe ff ff e8 ab 1c 3b fd 90 48 =
+c7 c7 40 31 fd 8b 48 c7 c6 2a 2e c7 8d e8 07 a4 fe fc 90 <0f> 0b 90 90 e9 2=
+7 fe ff ff e8 88 1c 3b fd be 02 00 00 00 eb 0a e8
+RSP: 0018:ffffc90003367c38 EFLAGS: 00010246
+RAX: 5674fa5d0d24c800 RBX: 1ffff1100fad97d0 RCX: ffff888026cd5a00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
+RBP: ffff88801ba8f8f8 R08: ffff8880b8624253 R09: 1ffff110170c484a
+R10: dffffc0000000000 R11: ffffed10170c484b R12: ffff88807d6cbe80
+R13: 1ffff1100fbc1bc8 R14: 0000000000000000 R15: 000000000000002f
+FS:  00007f8de3bff880(0000) GS:ffff8881257a6000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f8de347ae00 CR3: 000000007fc96000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ security_unix_stream_connect+0xcb/0x2c0 security/security.c:4540
+ unix_stream_connect+0x8fc/0x1010 net/unix/af_unix.c:1753
+ __sys_connect_file net/socket.c:2086 [inline]
+ __sys_connect+0x313/0x440 net/socket.c:2105
+ __do_sys_connect net/socket.c:2111 [inline]
+ __se_sys_connect net/socket.c:2108 [inline]
+ __x64_sys_connect+0x7a/0x90 net/socket.c:2108
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8de34a7407
+Code: 48 89 fa 4c 89 df e8 38 aa 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc =
+74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 0=
+0 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+RSP: 002b:00007ffc79327430 EFLAGS: 00000202 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: 00007f8de3bff880 RCX: 00007f8de34a7407
+RDX: 0000000000000013 RSI: 000055d4ba7cf948 RDI: 0000000000000003
+RBP: 000000000000001e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffc79327490
+R13: 0000000000000000 R14: 0000000000000007 R15: 0000000000000000
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
