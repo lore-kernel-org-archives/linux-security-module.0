@@ -1,74 +1,33 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FC0279DC6
-	for <linux-security-module@vger.kernel.org>; Tue, 22 Jul 2025 15:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F335D27990B;
+	Tue, 22 Jul 2025 15:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753199472; cv=none; b=CWNbRlBodp4ZO9fUy5KcypaVFVBP+IMDFXZwdJac5Pb9c0SIiPP+Mi3g5JWD68qhnjo9ci+d8oZeCSWvb/ksdw6N/rd6zZdvlmKYIz4YGJtIxBIsbC6VZ/Bo3EyONCYGQSqQzCk2tyS4w6EAY+SE9VtvXjGShIEbjI6t+JmZaCI=
+	t=1753199502; cv=none; b=I1X0DjdBBIREiKE73itbrGs5YAga/p6RlE/igtH5qj2cHZeOB/q/ntBlsz0mTWeLW8T+WMEhHfWxZvmOvG9QR+a3IN4VzAO7o77HCNNk8EE12Fi3GJo+lkivPKbIau5J/1UXhmyQzaDlAukZN0v1Nhe8rQ0XfL+Ps6EEOpreF+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753199472; c=relaxed/simple;
-	bh=MqusCp5gjBKIVMloHsIZ6ErrDPcq+7/+0/XcqLkQXRA=;
+	s=arc-20240116; t=1753199502; c=relaxed/simple;
+	bh=bt8/tE3z2EzRv9/tmy5jzeSFjcDxC2Zmdcs3sq+D0D8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e4/IaQTcFRh2ngGYiO9fcps9pY68agtdNW5G4SJKd4y5WyeASWopKnVD6iFuPnQjd1DjR6nPMDxTIUKge8PFNg/f848venfsBUGCdloIv8/dmT7ehX+b+gAOEJ16Wge63o/WDem7YoGW+yaRJFy1CgOQ/VY0XOCch2Eshw7B1mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cFTGAGmp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 In-Reply-To:Content-Type; b=s8eEHppZjQZ+dvXmUhreAAtTWxmbfMJakO+1uuTAGYVm9GR4480iDCHs4I78FnZKTA7uaw7YBlEKLksArid4sOX5vjiA6U8ZRV62ZNBF7LTSVE6vuGvFaGgndsZOzh1rRzNOMN7L5OMx4eDQzx1OxbJVBco8csv5+MYknyriXu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOFAGqXY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cFTGAGmp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753199469;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SlkGDyZmqfarTxh5iJOxgcRyWvjlf8J8u4Rc9/G05cY=;
-	b=cFTGAGmpvVQbIKYEaqHqYHiCR7bOqFDTDUbQb7Zfgg5bn7+ERPr6J5bpMJH3Xufp+WBIT4
-	ljTw29SzvZOZoIoYcJE8EOjPHUVlv6e9NnHaM8QDunsd/9EKHubP83H329N9GjnWKm8Mit
-	pEeSRSlVvay5a0gggpuVHvWkgYMl9Oo=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-467-Rn05FtUpNK2bUaJnKL7y6A-1; Tue, 22 Jul 2025 11:51:08 -0400
-X-MC-Unique: Rn05FtUpNK2bUaJnKL7y6A-1
-X-Mimecast-MFC-AGG-ID: Rn05FtUpNK2bUaJnKL7y6A_1753199467
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4eec544c6so2226055f8f.0
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Jul 2025 08:51:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753199467; x=1753804267;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=SlkGDyZmqfarTxh5iJOxgcRyWvjlf8J8u4Rc9/G05cY=;
-        b=pqd8goiBnkVzsc+aeOUdevQ3WANGATs4XbB/SB9gtDWWY7dG2ERmaBv9bopzw7sNPP
-         EByEadZpMOvdNDL+eQHQUmGDzDXq7NDs2pt22eTvDkIRkbehYJeobm8UT6STzElsY1KP
-         IrUutAnnkfL+kJBZ+PB2FBXGBNC8MEfliiGB+6gUwY2d2PTL0xsTTmanBtmpynrYc3RK
-         W10IhMKUM1b4RtGxyeZtVcIp3ZUz72/4aG4Ne1sFbRvUowyVVz84l5lWnMnD9rt+jG9G
-         8/d8JV+nzzkHccRnmjCBfk4vAgdXFZO71eozeece5Mo5leqIP3Qtw0W6PPNRYoY74Un2
-         2cng==
-X-Forwarded-Encrypted: i=1; AJvYcCUGEvsGr73F17LfLU4FGYscLlHP1Mg0hroAbDePWK5rtK1oODc/8sIb3fffiEgtYNghJkvVfs8vfMGYN+0ThCsUJQz0XNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqbSvrZCUSFImvhjfdeg5mgBvvJX2No+EusLMUpykJEUaDuLW3
-	+Qn3b75p5RnuvixluQPmAUUqnZhC8sNzl3quQrrkVdd7+U8xm61rH/Ym0cMXwb+OfPh2s4678mW
-	eeviguMjUEOv8yuAfgX0SUirwH9xFP9I17LqzZ883abfYA4lLhX39FkK2n+uhhp5I/jqQHvfVo8
-	kNeg==
-X-Gm-Gg: ASbGncu4Zdu7qaFSPkOmB5EbQVwxObN8R0x+QQvFAYK91MQ6fW/mWz/RPUmEvIaVJv4
-	s8mDl6F9JUcvvbQM4nfjpYIbMajZ+34ryF/kX0ihCGhCy592YWCv0mgoJASFjFTOFCezr+F7ssD
-	NMEKaL3P63tf0dxf5MOd0m9EgueijHyp/DdOmQEsQymJRxiFGAmQJGHT2ATJDuP1pg4AmM3EhlM
-	Kjxarvxs5UqpCwTMmVuGjzNqQSKwkmgKIcMwB+jFr7xKMm+a2fiqWZXGSxSX1pmQit9RiTK2GPy
-	Rb2Ie1BKNcyq16usk5WNFujdj/q0b3voExmoZC37ANiTetPL8pG5UVdq7fieM99SQNfOHQjpgfO
-	q03qBkQUZrCvJmIXkGX4EICX0vpz/knu49ti5mWwJsqpCfV+RZ8bZESfbmDIcnY7Wv5w=
-X-Received: by 2002:a05:6000:2310:b0:3b6:463:d85d with SMTP id ffacd0b85a97d-3b613e6009bmr18304939f8f.11.1753199466906;
-        Tue, 22 Jul 2025 08:51:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEkDfCaoi3LHsLkKqFiAXihZtN/+Fsy2fLKOrcY5Mqg0ADhJH0qc+QAMJ0yQdyroq1ofLrPmw==
-X-Received: by 2002:a05:6000:2310:b0:3b6:463:d85d with SMTP id ffacd0b85a97d-3b613e6009bmr18304895f8f.11.1753199466286;
-        Tue, 22 Jul 2025 08:51:06 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f28:de00:1efe:3ea4:63ba:1713? (p200300d82f28de001efe3ea463ba1713.dip0.t-ipconnect.de. [2003:d8:2f28:de00:1efe:3ea4:63ba:1713])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca48823sm13874304f8f.43.2025.07.22.08.51.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 08:51:05 -0700 (PDT)
-Message-ID: <80a047e2-e0fb-40cd-bb88-cce05ca017ac@redhat.com>
-Date: Tue, 22 Jul 2025 17:51:02 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOFAGqXY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 105A7C4CEEB;
+	Tue, 22 Jul 2025 15:51:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753199501;
+	bh=bt8/tE3z2EzRv9/tmy5jzeSFjcDxC2Zmdcs3sq+D0D8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NOFAGqXYcfcb0fOor4DCeCE+qvzanWtrzuWfxPiEO8X9EZ9b0udTujZcWdilSVw0V
+	 JcE49xS9pc3TrWXII6ShSgxSn7lzDZUcHqSI/fI3zT9uwz9OepD32pGTW+6e96xaRv
+	 6d52b1u/PsIiztVOu0CQDqauyg+MsuSm+WHJH9wwMUVTPoed72C/N70WSN5OwvA43Y
+	 19BBpM8G2aY7xu+8C9LymJo+JXFicMHFBFsTAB4hTrifF9/ntMCvfksSabtNcccQAh
+	 OdBKQLU0JDQp2eofVlFHn+gMkj0tDjlEdlwih9Pxj1ymKd299C0HD4Eqq2pUc2g4U4
+	 uLbfMoDgYqHMw==
+Message-ID: <2b417a1a-8f0b-4bca-ad44-aa4195040ef1@kernel.org>
+Date: Tue, 22 Jul 2025 16:51:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -76,101 +35,359 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V9 0/7] Add NUMA mempolicy support for KVM guest-memfd
-To: Sean Christopherson <seanjc@google.com>
-Cc: Shivank Garg <shivankg@amd.com>, vbabka@suse.cz, willy@infradead.org,
- akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com,
- brauner@kernel.org, viro@zeniv.linux.org.uk, ackerleytng@google.com,
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
- bfoster@redhat.com, tabba@google.com, vannapurve@google.com,
- chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
- shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com,
- thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com,
- kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, rppt@kernel.org,
- hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com,
- rientjes@google.com, roypat@amazon.co.uk, ziy@nvidia.com,
- matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
- byungchul@sk.com, gourry@gourry.net, kent.overstreet@linux.dev,
- ying.huang@linux.alibaba.com, apopple@nvidia.com, chao.p.peng@intel.com,
- amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com,
- ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com,
- pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com,
- suzuki.poulose@arm.com, quic_eberman@quicinc.com,
- aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
-References: <20250713174339.13981-2-shivankg@amd.com>
- <bdce1a12-ab73-4de1-892b-f8e849a8ab51@redhat.com>
- <aH-j8bOXMfOKdpHp@google.com>
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <aH-j8bOXMfOKdpHp@google.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: KiWM6jju3oGv6RJMsYJosvWv-bD8CoCZi83QC7MbcqE_1753199467
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2 11/13] bpftool: Add support for signing BPF programs
+To: KP Singh <kpsingh@kernel.org>, bpf@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+Cc: bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com,
+ ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
+References: <20250721211958.1881379-1-kpsingh@kernel.org>
+ <20250721211958.1881379-12-kpsingh@kernel.org>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <20250721211958.1881379-12-kpsingh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22.07.25 16:45, Sean Christopherson wrote:
-> On Tue, Jul 22, 2025, David Hildenbrand wrote:
->> Just to clarify: this is based on Fuad's stage 1 and should probably still be
->> tagged "RFC" until stage-1 is finally upstream.
->>
->> (I was hoping stage-1 would go upstream in 6.17, but I am not sure yet if that is
->> still feasible looking at the never-ending review)
+2025-07-21 23:19 UTC+0200 ~ KP Singh <kpsingh@kernel.org>
+> Two modes of operation being added:
 > 
-> 6.17 is very doable.
+> Add two modes of operation:
+> 
+> * For prog load, allow signing a program immediately before loading. This
+>   is essential for command-line testing and administration.
+> 
+>       bpftool prog load -S -k <private_key> -i <identity_cert> fentry_test.bpf.o
+> 
+> * For gen skeleton, embed a pre-generated signature into the C skeleton
+>   file. This supports the use of signed programs in compiled applications.
+> 
+>       bpftool gen skeleton -S -k <private_key> -i <identity_cert> fentry_test.bpf.o
+> 
+> Generation of the loader program and its metadata map is implemented in
+> libbpf (bpf_obj__gen_loader). bpftool generates a skeleton that loads
+> the program and automates the required steps: freezing the map, creating
+> an exclusive map, loading, and running. Users can use standard libbpf
+> APIs directly or integrate loader program generation into their own
+> toolchains.
 
-I like your optimism :)
 
--- 
-Cheers,
+Thanks KP! Some bpftool-related comments below. Looks good overall, I
+mostly have minor comments.
 
-David / dhildenb
+One concern might be the license for the new file, GPL-2.0 in your
+patch, whereas bpftool is dual-licensed. I hope this is simply an oversight?
 
+
+> 
+> Signed-off-by: KP Singh <kpsingh@kernel.org>
+> ---
+>  .../bpf/bpftool/Documentation/bpftool-gen.rst |  12 +
+>  .../bpftool/Documentation/bpftool-prog.rst    |  12 +
+>  tools/bpf/bpftool/Makefile                    |   6 +-
+>  tools/bpf/bpftool/cgroup.c                    |   5 +-
+>  tools/bpf/bpftool/gen.c                       |  58 ++++-
+>  tools/bpf/bpftool/main.c                      |  21 +-
+>  tools/bpf/bpftool/main.h                      |  11 +
+>  tools/bpf/bpftool/prog.c                      |  25 +++
+>  tools/bpf/bpftool/sign.c                      | 210 ++++++++++++++++++
+>  9 files changed, 352 insertions(+), 8 deletions(-)
+>  create mode 100644 tools/bpf/bpftool/sign.c
+> 
+> diff --git a/tools/bpf/bpftool/Documentation/bpftool-gen.rst b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+> index ca860fd97d8d..2997313003b1 100644
+> --- a/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+> +++ b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+> @@ -185,6 +185,18 @@ OPTIONS
+>      For skeletons, generate a "light" skeleton (also known as "loader"
+>      skeleton). A light skeleton contains a loader eBPF program. It does not use
+>      the majority of the libbpf infrastructure, and does not need libelf.
+
+
+Blank line separator, please
+
+
+> +-S, --sign
+> +    For skeletons, generate a signed skeleton. This option must be used with
+> +    **-k** and **-i**. Using this flag implicitly enables **--use-loader**.
+> +    See the "Signed Skeletons" section in the description of the
+> +    **gen skeleton** command for more details.
+> +
+> +-k <private_key.pem>
+> +    Path to the private key file in PEM format, required for signing.
+> +
+> +-i <certificate.x509>
+> +    Path to the X.509 certificate file in PEM or DER format, required for
+> +    signing.
+
+
+Please also update the options list in the SYNOPSIS section at the top
+of the page; and the option list at the bottom of gen.c (just like for
+"--use-loader").
+
+Can you also please take a look at the bash completion update? It
+shouldn't be too hard if you look at how it deals with other options, in
+particular --base-btf that also takes one argument - and I can help if
+necessary.
+
+
+>  
+>  EXAMPLES
+>  ========
+> diff --git a/tools/bpf/bpftool/Documentation/bpftool-prog.rst b/tools/bpf/bpftool/Documentation/bpftool-prog.rst
+> index f69fd92df8d8..dc2ca196137e 100644
+> --- a/tools/bpf/bpftool/Documentation/bpftool-prog.rst
+> +++ b/tools/bpf/bpftool/Documentation/bpftool-prog.rst
+> @@ -248,6 +248,18 @@ OPTIONS
+>      creating the maps, and loading the programs (see **bpftool prog tracelog**
+>      as a way to dump those messages).
+>  
+> +-S, --sign
+> +    Enable signing of the BPF program before loading. This option must be
+> +    used with **-k** and **-i**. Using this flag implicitly enables
+> +    **--use-loader**.
+> +
+> +-k <private_key.pem>
+> +    Path to the private key file in PEM format, required when signing.
+> +
+> +-i <certificate.x509>
+> +    Path to the X.509 certificate file in PEM or DER format, required when
+> +    signing.
+
+
+Same as for skeletons: please update the list of options in the synopsis
+and at the bottom of prog.c (bash completion for skeletons' options
+should also cover this case, so no additional work required here).
+
+
+> +
+>  EXAMPLES
+>  ========
+>  **# bpftool prog show**
+> diff --git a/tools/bpf/bpftool/Makefile b/tools/bpf/bpftool/Makefile
+> index 9e9a5f006cd2..586d1b2595d1 100644
+> --- a/tools/bpf/bpftool/Makefile
+> +++ b/tools/bpf/bpftool/Makefile
+> @@ -130,8 +130,8 @@ include $(FEATURES_DUMP)
+>  endif
+>  endif
+>  
+> -LIBS = $(LIBBPF) -lelf -lz
+> -LIBS_BOOTSTRAP = $(LIBBPF_BOOTSTRAP) -lelf -lz
+> +LIBS = $(LIBBPF) -lelf -lz -lcrypto
+> +LIBS_BOOTSTRAP = $(LIBBPF_BOOTSTRAP) -lelf -lz -lcrypto
+>  
+>  ifeq ($(feature-libelf-zstd),1)
+>  LIBS += -lzstd
+> @@ -194,7 +194,7 @@ endif
+>  
+>  BPFTOOL_BOOTSTRAP := $(BOOTSTRAP_OUTPUT)bpftool
+>  
+> -BOOTSTRAP_OBJS = $(addprefix $(BOOTSTRAP_OUTPUT),main.o common.o json_writer.o gen.o btf.o)
+> +BOOTSTRAP_OBJS = $(addprefix $(BOOTSTRAP_OUTPUT),main.o common.o json_writer.o gen.o btf.o sign.o)
+>  $(BOOTSTRAP_OBJS): $(LIBBPF_BOOTSTRAP)
+>  
+>  OBJS = $(patsubst %.c,$(OUTPUT)%.o,$(SRCS)) $(OUTPUT)disasm.o
+> diff --git a/tools/bpf/bpftool/cgroup.c b/tools/bpf/bpftool/cgroup.c
+> index 944ebe21a216..90c9aa297806 100644
+> --- a/tools/bpf/bpftool/cgroup.c
+> +++ b/tools/bpf/bpftool/cgroup.c
+> @@ -1,7 +1,10 @@
+>  // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>  // Copyright (C) 2017 Facebook
+>  // Author: Roman Gushchin <guro@fb.com>
+> -
+
+
+Let's keep the blank line
+
+
+> +#undef GCC_VERSION
+> +#ifndef _GNU_SOURCE
+> +#define _GNU_SOURCE
+> +#endif
+
+
+What are these for?
+
+
+>  #define _XOPEN_SOURCE 500
+>  #include <errno.h>
+>  #include <fcntl.h>
+
+[...]
+
+> diff --git a/tools/bpf/bpftool/main.c b/tools/bpf/bpftool/main.c
+> index 2b7f2bd3a7db..fc25bb390ec7 100644
+> --- a/tools/bpf/bpftool/main.c
+> +++ b/tools/bpf/bpftool/main.c
+> @@ -33,6 +33,9 @@ bool relaxed_maps;
+>  bool use_loader;
+>  struct btf *base_btf;
+>  struct hashmap *refs_table;
+> +bool sign_progs;
+> +const char *private_key_path;
+> +const char *cert_path;
+>  
+>  static void __noreturn clean_and_exit(int i)
+>  {
+> @@ -447,6 +450,7 @@ int main(int argc, char **argv)
+>  		{ "nomount",	no_argument,	NULL,	'n' },
+>  		{ "debug",	no_argument,	NULL,	'd' },
+>  		{ "use-loader",	no_argument,	NULL,	'L' },
+> +		{ "sign",	required_argument, NULL, 'S'},
+>  		{ "base-btf",	required_argument, NULL, 'B' },
+>  		{ 0 }
+>  	};
+> @@ -473,7 +477,7 @@ int main(int argc, char **argv)
+>  	bin_name = "bpftool";
+>  
+>  	opterr = 0;
+> -	while ((opt = getopt_long(argc, argv, "VhpjfLmndB:l",
+> +	while ((opt = getopt_long(argc, argv, "VhpjfLmndSi:k:B:l",
+>  				  options, NULL)) >= 0) {
+>  		switch (opt) {
+>  		case 'V':
+> @@ -519,6 +523,16 @@ int main(int argc, char **argv)
+>  		case 'L':
+>  			use_loader = true;
+>  			break;
+> +		case 'S':
+> +			sign_progs = true;
+> +			use_loader = true;
+> +			break;
+> +		case 'k':
+> +			private_key_path = optarg;
+> +			break;
+> +		case 'i':
+> +			cert_path = optarg;
+> +			break;
+>  		default:
+>  			p_err("unrecognized option '%s'", argv[optind - 1]);
+>  			if (json_output)
+> @@ -533,6 +547,11 @@ int main(int argc, char **argv)
+>  	if (argc < 0)
+>  		usage();
+>  
+> +	if (sign_progs && (private_key_path == NULL || cert_path == NULL)) {
+> +		p_err("-i <identity_x509_cert> and -k <private> key must be supplied with -S for signing");
+> +		return -EINVAL;
+> +	}
+
+
+What if -i and/or -k are passed without -S?
+
+
+> +
+>  	if (version_requested)
+>  		ret = do_version(argc, argv);
+>  	else
+> diff --git a/tools/bpf/bpftool/main.h b/tools/bpf/bpftool/main.h
+> index 6db704fda5c0..f921af3cda87 100644
+> --- a/tools/bpf/bpftool/main.h
+> +++ b/tools/bpf/bpftool/main.h
+> @@ -6,9 +6,14 @@
+>  
+>  /* BFD and kernel.h both define GCC_VERSION, differently */
+>  #undef GCC_VERSION
+> +#ifndef _GNU_SOURCE
+> +#define _GNU_SOURCE
+> +#endif
+>  #include <stdbool.h>
+>  #include <stdio.h>
+> +#include <errno.h>
+>  #include <stdlib.h>
+> +#include <bpf/skel_internal.h>
+
+
+Wnat do you need these includes (and _GNU_SOURCE) in main.h for?
+
+
+>  #include <linux/bpf.h>
+>  #include <linux/compiler.h>
+>  #include <linux/kernel.h>
+
+[...]
+
+> diff --git a/tools/bpf/bpftool/sign.c b/tools/bpf/bpftool/sign.c
+> new file mode 100644
+> index 000000000000..f0b5dd10a46b
+> --- /dev/null
+> +++ b/tools/bpf/bpftool/sign.c
+> @@ -0,0 +1,210 @@
+> +// SPDX-License-Identifier: GPL-2.0
+
+
+Please consider making this file dual-licensed like the rest of
+bpftool's source code, "(GPL-2.0-only OR BSD-2-Clause)".
+
+
+> +
+> +/*
+> + * Copyright (C) 2022 Google LLC.
+
+
+2025?
+
+
+> + */
+> +#define _GNU_SOURCE
+
+
+Please guard this:
+
+	#ifndef _GNU_SOURCE
+	#define _GNU_SOURCE
+	#endif
+
+This is because "llvm-config --cflags" passes -D_GNU_SOURCE and we may
+end up with a duplicate definition, otherwise.
+
+
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <stdint.h>
+> +#include <stdbool.h>
+> +#include <string.h>
+> +#include <string.h>
+> +#include <getopt.h>
+> +#include <err.h>
+> +#include <openssl/opensslv.h>
+> +#include <openssl/bio.h>
+> +#include <openssl/evp.h>
+> +#include <openssl/pem.h>
+> +#include <openssl/err.h>
+> +#include <openssl/cms.h>
+> +#include <linux/keyctl.h>
+> +#include <errno.h>
+> +
+> +#include <bpf/skel_internal.h>
+> +
+> +#include "main.h"
+> +
+> +#define OPEN_SSL_ERR_BUF_LEN 256
+> +
+> +static void display_openssl_errors(int l)
+> +{
+> +	char buf[OPEN_SSL_ERR_BUF_LEN];
+> +	const char *file;
+> +	const char *data;
+> +	unsigned long e;
+> +	int flags;
+> +	int line;
+> +
+> +	while ((e = ERR_get_error_all(&file, &line, NULL, &data, &flags))) {
+> +		ERR_error_string_n(e, buf, sizeof(buf));
+> +		if (data && (flags & ERR_TXT_STRING)) {
+> +			p_err("OpenSSL %s: %s:%d: %s\n", buf, file, line, data);
+
+
+Please remove the trailing '\n', p_err() handles it already.
+
+
+> +		} else {
+> +			p_err("OpenSSL %s: %s:%d\n", buf, file, line);
+
+
+Same here.
+
+[...]
