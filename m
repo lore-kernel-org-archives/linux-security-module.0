@@ -1,177 +1,227 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC5C2D3EFB;
-	Tue, 22 Jul 2025 13:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B552EA721
+	for <linux-security-module@vger.kernel.org>; Tue, 22 Jul 2025 14:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753190973; cv=none; b=jUbfq6LzYuDe8e2xZhmDFylAk82T8N+MMEYIKpBxojGEidYm6Vylg0yaPAmkkshn63vdVSCUD90HSWt9MO0R3nd1J32RRgIX4mb0D6rlNoWgRNSg1PxGtO5l89YlRRw1xld2RfKsd6w/+ImvwDJYoACPN0XaAhdiTKSZlVwGOhI=
+	t=1753195242; cv=none; b=JCQwwmCeH7NIau44LwQ7QcoGZ3vkY0+v8v5xDjv4sxf/YYQ2kn+WQglgKTYqCOtvc6JmP/M9aUQ0ZZ+n7fqRsS4gu5pJSCESdRq1L9GsintFsuWCCtgiLJW/BA4Wb/eBvvBir4KC9Xjy9a/UZ53WMb/UOeCiqXYpm4+3dVFTGLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753190973; c=relaxed/simple;
-	bh=v5BLSIwd7srHi/OWA5ndIBkdalmEzmLEQmrp+RewTTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IGItBp7f0LJtFN0uHXVdSHBZ7Iu7ohLohoEN0sVtiLa0UUj8G20bvsqoZjSP4BErfMdtD4RlWkyaRGSWt6bsjq7zMwMV4jXbODJdDpGEMpH1y8lqKrHlolk0AgMXEnqGIcwunW3BYJWaZpefdQsci7y5deQ/aHn4RQNvfZPCnrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=icCzbYE3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753195242; c=relaxed/simple;
+	bh=g6fr8aNxpMhPqjfbNdJAwT69KRiiao2VoPZhgIgVUdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RgT9WBsD2huECc3iINkrloXKeTMEYeElbZ/PVp5T5dFfVi8x+2iag1rM2IMaQDnkO8j7uKOA6gqFMK3z2vYcQdQNE71I6oAyXPDi0W++MYD08QkfqEwKoqEcmWO5ZNSQEnM+ylItBZvML/L19NrZIpkuk3KIgA2s+MdxR3Sk7RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RFogwg/s; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="icCzbYE3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B00BC4CEEB;
-	Tue, 22 Jul 2025 13:29:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753190972;
-	bh=v5BLSIwd7srHi/OWA5ndIBkdalmEzmLEQmrp+RewTTQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=icCzbYE3Gw4FMkjzZQGdd5PRl3DLgwJi4XEJMOcR2bhXW2g1yFhd+T0X/aqMi3/BP
-	 CibFuID4nbj6OAYkc1NMOYpqf8N3QkVei13FupO8PIGWwd7LMLFew2Gjxu4KdVUg1O
-	 DkTKaYgXxxbbsiX0+w7BLz0w/qJZtmL94y+JVE7CzC9ZZx6kQNyfp3ET4nPZ9scvga
-	 Dn2CpPG5UqY1IGli6LRySAYz4YmMRdxPp1TJllyeOcCWdL2WRYt94l/h9D04DE4+Uc
-	 MGgZG1jWvtMVVXZVVriPuhmhhcn2IesGNkPl/Ho6XBcy/wvha6uvWcQ0AKEDdQ4Ukm
-	 HjjZtlQLlu8FQ==
-Date: Tue, 22 Jul 2025 14:29:19 +0100
-From: Will Deacon <will@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Michal Wilczynski <michal.wilczynski@intel.com>,
-	Juergen Gross <jgross@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Roger Pau Monne <roger.pau@citrix.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Usama Arif <usama.arif@bytedance.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-mm@kvack.org, Ingo Molnar <mingo@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v3 04/13] x86: Handle KCOV __init vs inline mismatches
-Message-ID: <aH-SL2V2bSPkJ18o@willie-the-truck>
-References: <20250717231756.make.423-kees@kernel.org>
- <20250717232519.2984886-4-kees@kernel.org>
- <aHoHkDvvp4AHIzU1@kernel.org>
- <202507181541.B8CFAC7E@keescook>
- <CAMj1kXGAwjChyFvjQcTbL8dFXkFWnn9n47bkN7FP=+EsLNsJdg@mail.gmail.com>
- <aH42--h-ARsvX5Wk@willie-the-truck>
- <202507211311.8DAC4C7@keescook>
- <202507211349.D93679FB25@keescook>
- <CAMj1kXGoy7D+_hKyQrT_uXdjuFMYGUEMDYdRf6mx69PLeuBQQg@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RFogwg/s"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753195239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KLkgHc/8d7d4QDAstqhqEvMayi/3ZoWX1vWISlyZq0E=;
+	b=RFogwg/sv3HB5gePowBDL7KYsWmBw2D1ep81edBIt1OziskttoqR2CoyeR4wimsjigqrco
+	C/169oi3oPCL745SQWl7YV8xwhePp/PNo1Wiu/rLoXw9ExFzKa6a+tzxiu/oH+zlrbxzJL
+	3epcWBpdAU66wHeQ/961I13CHN2x/JY=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-93-5ntbVbXYOAaRDkKmmTWsug-1; Tue, 22 Jul 2025 10:40:37 -0400
+X-MC-Unique: 5ntbVbXYOAaRDkKmmTWsug-1
+X-Mimecast-MFC-AGG-ID: 5ntbVbXYOAaRDkKmmTWsug_1753195236
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-451ecc3be97so30542065e9.0
+        for <linux-security-module@vger.kernel.org>; Tue, 22 Jul 2025 07:40:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753195236; x=1753800036;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KLkgHc/8d7d4QDAstqhqEvMayi/3ZoWX1vWISlyZq0E=;
+        b=hYdulr9xaX739ZNGKkt9Dv4bDmq7XprZ8XUstsWLl7gF3YoAIwN8xhpX+ZqyINYdrw
+         yjoTS/AckfdUcq4BYhAs9GPvrA0cXRgRBI92SK8u80c3mwDQOdfG5DF9eB/LZfc9DOBw
+         DRmpqYIcAJAXAK52StHJMYkY2yU5S/EQDOUzw3U6PTsq27tBeE1hJCVGhgq+NdXIi688
+         Bskk68jHZkABvToFoTZJ6s2WQ2YrAo9MzB2Bx+10tuCZuT75kJ3q3CtvlMY2RvD0s7V8
+         nRQ/dVJUsHYBu7pMnwJ5N+OUoGgmHhYkjOd3A2i0b/cZ8aigFwaUvFbwjtwLbEpPyz6J
+         HrBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPRjsIkGl+pbfMryvL4d4KZjDAQJpOZG7qaVAfcJG74JwRwrn9ovr2UfjVliCio/NYf9r17RpCBp2j6Xa4hinN0C/2oKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYWA6rwz8sW3ZcHoNJmcPqKgoUMPEAVuCiDCB3T5uwvoNRdGzz
+	stOaRH+T2b3aFYWGKXeFwVlTX5HgB0VvZauS4WlzUeRtLNBrrcxMHsPPSsx2CyvQtdkJqmsb6tk
+	gdVqwolqG+Ry8Od27y+kqb3kjXSUhH0SY4RC6USlX8SvAKOn9Naf+4A8+VVvBRYlbBP2ejjVdwH
+	B4tA==
+X-Gm-Gg: ASbGncu/zaVim5fVUAfv+EdkEW0bZJLwxmhHiVgGbWkvYM+mAsialCnLP60WqXlZCTt
+	56iyB5yMf63eXHN0MWzZ6dYhKp2q+MOznvSUEnDZjLiWSdQbw20uuPSgdRcoY6IUkCw1iJC+JfV
+	nyymFQYuPQod93vKVPnTaFzvof3d9pUX88gUMtn8vNRadV2/gbYhxJyQfZi3fK3sYUbxmiv+RKl
+	norh7YBCcWV89d3RJ4oCOi7yNWYTCWWevdBmaOxwtk2XXot1HIPjhk8G6PGhv+98lGW2JFmIw93
+	oun+XYiFOzfPcgW6Mc+igGRQqT5ggxfVeMyVLh8t7RumleodAf1FUK8Ynu5xJ5pzbXGMUJwA8mX
+	NxYHRNpspzsQ0sx750YX0KytDE/gwuOaQwvO46lWPipU8TVIZr44qe17FXoKLhg5NaqI=
+X-Received: by 2002:a05:600c:3596:b0:445:1984:2479 with SMTP id 5b1f17b1804b1-4562e031df5mr212332665e9.5.1753195235943;
+        Tue, 22 Jul 2025 07:40:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IECMtNli8iBCH8Jdtpg8WMwaAxwFDlddcCQOBvhQ52M/6+c870zweXxX/J/td5+Uj+75e/P8Q==
+X-Received: by 2002:a05:600c:3596:b0:445:1984:2479 with SMTP id 5b1f17b1804b1-4562e031df5mr212331795e9.5.1753195235265;
+        Tue, 22 Jul 2025 07:40:35 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f28:de00:1efe:3ea4:63ba:1713? (p200300d82f28de001efe3ea463ba1713.dip0.t-ipconnect.de. [2003:d8:2f28:de00:1efe:3ea4:63ba:1713])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4563b73fa43sm131117765e9.21.2025.07.22.07.40.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 07:40:34 -0700 (PDT)
+Message-ID: <bdce1a12-ab73-4de1-892b-f8e849a8ab51@redhat.com>
+Date: Tue, 22 Jul 2025 16:40:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXGoy7D+_hKyQrT_uXdjuFMYGUEMDYdRf6mx69PLeuBQQg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V9 0/7] Add NUMA mempolicy support for KVM guest-memfd
+To: Shivank Garg <shivankg@amd.com>, seanjc@google.com, vbabka@suse.cz,
+ willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
+ pbonzini@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk
+Cc: ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, tabba@google.com,
+ vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
+ michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com,
+ Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com,
+ aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
+ jack@suse.cz, rppt@kernel.org, hch@infradead.org, cgzones@googlemail.com,
+ ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
+ ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com,
+ rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net,
+ kent.overstreet@linux.dev, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+ chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
+ dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com,
+ jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com,
+ yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com,
+ aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
+References: <20250713174339.13981-2-shivankg@amd.com>
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250713174339.13981-2-shivankg@amd.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 1lN2V1AIKiyPbY4kS6DiqtcE9CXuyqki6XPqxeP5mpM_1753195236
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 22, 2025 at 04:55:47PM +1000, Ard Biesheuvel wrote:
-> On Tue, 22 Jul 2025 at 06:49, Kees Cook <kees@kernel.org> wrote:
-> >
-> > On Mon, Jul 21, 2025 at 01:14:36PM -0700, Kees Cook wrote:
-> > > On Mon, Jul 21, 2025 at 01:47:55PM +0100, Will Deacon wrote:
-> > > > On Sun, Jul 20, 2025 at 04:10:01PM +1000, Ard Biesheuvel wrote:
-> > > > > On Sat, 19 Jul 2025 at 08:51, Kees Cook <kees@kernel.org> wrote:
-> > > > > > On Fri, Jul 18, 2025 at 11:36:32AM +0300, Mike Rapoport wrote:
-> > > > > > > On Thu, Jul 17, 2025 at 04:25:09PM -0700, Kees Cook wrote:
-> > > > > > > > When KCOV is enabled all functions get instrumented, unless the
-> > > > > > > > __no_sanitize_coverage attribute is used. To prepare for
-> > > > > > > > __no_sanitize_coverage being applied to __init functions, we have to
-> > > > > > > > handle differences in how GCC's inline optimizations get resolved. For
-> > > > > > > > x86 this means forcing several functions to be inline with
-> > > > > > > > __always_inline.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Kees Cook <kees@kernel.org>
-> > > > > > >
-> > > > > > > ...
-> > > > > > >
-> > > > > > > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> > > > > > > > index bb19a2534224..b96746376e17 100644
-> > > > > > > > --- a/include/linux/memblock.h
-> > > > > > > > +++ b/include/linux/memblock.h
-> > > > > > > > @@ -463,7 +463,7 @@ static inline void *memblock_alloc_raw(phys_addr_t size,
-> > > > > > > >                                       NUMA_NO_NODE);
-> > > > > > > >  }
-> > > > > > > >
-> > > > > > > > -static inline void *memblock_alloc_from(phys_addr_t size,
-> > > > > > > > +static __always_inline void *memblock_alloc_from(phys_addr_t size,
-> > > > > > > >                                             phys_addr_t align,
-> > > > > > > >                                             phys_addr_t min_addr)
-> > > > > > >
-> > > > > > > I'm curious why from all memblock_alloc* wrappers this is the only one that
-> > > > > > > needs to be __always_inline?
-> > > > > >
-> > > > > > Thread-merge[1], adding Will Deacon, who was kind of asking the same
-> > > > > > question.
-> > > > > >
-> > > > > > Based on what I can tell, GCC has kind of fragile inlining logic, in the
-> > > > > > sense that it can change whether or not it inlines something based on
-> > > > > > optimizations. It looks like the kcov instrumentation being added (or in
-> > > > > > this case, removed) from a function changes the optimization results,
-> > > > > > and some functions marked "inline" are _not_ inlined. In that case, we end up
-> > > > > > with __init code calling a function not marked __init, and we get the
-> > > > > > build warnings I'm trying to eliminate.
-> > > >
-> > > > Got it, thanks for the explanation!
-> > > >
-> > > > > > So, to Will's comment, yes, the problem is somewhat fragile (though
-> > > > > > using either __always_inline or __init will deterministically solve it).
-> > > > > > We've tripped over this before with GCC and the solution has usually
-> > > > > > been to just use __always_inline and move on.
-> > > > > >
-> > > > >
-> > > > > Given that 'inline' is already a macro in the kernel, could we just
-> > > > > add __attribute__((__always_inline__)) to it when KCOV is enabled?
-> > > >
-> > > > That sounds like a more robust approach and, by the sounds of it, we
-> > > > could predicate it on GCC too. That would also provide a neat place for
-> > > > a comment describing the problem.
-> > > >
-> > > > Kees, would that work for you?
-> > >
-> > > That seems like an extremely large hammer for this problem, IMO. It
-> > > feels like it could cause new strange corner cases. I'd much prefer the
-> > > small fixes I've currently got since it keeps it focused. KCOV is
-> > > already enabled for "allmodconfig", so any new instances would be found
-> > > very quickly, etc. (And GCC's fragility in this regard has already been
-> > > exposed to these cases -- it's just that I changed one of the
-> > > combinations of __init vs inline vs instrumentation.
-> > >
-> > > I could give it a try, if you really prefer the big hammer approach...
-> >
-> > I gave it a try -- it fails spectacularly. ;) Let's stick to my small
-> > fixes instead?
-> >
+On 13.07.25 19:43, Shivank Garg wrote:
+> This series introduces NUMA-aware memory placement support for KVM guests
+> with guest_memfd memory backends. It builds upon Fuad Tabba's work that
+> enabled host-mapping for guest_memfd memory [1].
 > 
-> Fair enough :-)
+> == Background ==
+> KVM's guest-memfd memory backend currently lacks support for NUMA policy
+> enforcement, causing guest memory allocations to be distributed across host
+> nodes  according to kernel's default behavior, irrespective of any policy
+> specified by the VMM. This limitation arises because conventional userspace
+> NUMA control mechanisms like mbind(2) don't work since the memory isn't
+> directly mapped to userspace when allocations occur.
+> Fuad's work [1] provides the necessary mmap capability, and this series
+> leverages it to enable mbind(2).
+> 
+> == Implementation ==
+> 
+> This series implements proper NUMA policy support for guest-memfd by:
+> 
+> 1. Adding mempolicy-aware allocation APIs to the filemap layer.
+> 2. Introducing custom inodes (via a dedicated slab-allocated inode cache,
+>     kvm_gmem_inode_info) to store NUMA policy and metadata for guest memory.
+> 3. Implementing get/set_policy vm_ops in guest_memfd to support NUMA
+>     policy.
+> 
+> With these changes, VMMs can now control guest memory placement by mapping
+> guest_memfd file descriptor and using mbind(2) to specify:
+> - Policy modes: default, bind, interleave, or preferred
+> - Host NUMA nodes: List of target nodes for memory allocation
+> 
+> These Policies affect only future allocations and do not migrate existing
+> memory. This matches mbind(2)'s default behavior which affects only new
+> allocations unless overridden with MPOL_MF_MOVE/MPOL_MF_MOVE_ALL flags (Not
+> supported for guest_memfd as it is unmovable by design).
+> 
+> == Upstream Plan ==
+> Phased approach as per David's guest_memfd extension overview [2] and
+> community calls [3]:
+> 
+> Phase 1 (this series):
+> 1. Focuses on shared guest_memfd support (non-CoCo VMs).
+> 2. Builds on Fuad's host-mapping work.
 
-(but please add the helpful explanation you provided to the commit message!)
+Just to clarify: this is based on Fuad's stage 1 and should probably still be
+tagged "RFC" until stage-1 is finally upstream.
 
-Will
+(I was hoping stage-1 would go upstream in 6.17, but I am not sure yet if that is
+still feasible looking at the never-ending review)
+
+I'm surprised to see that
+
+commit cbe4134ea4bc493239786220bd69cb8a13493190
+Author: Shivank Garg <shivankg@amd.com>
+Date:   Fri Jun 20 07:03:30 2025 +0000
+
+     fs: export anon_inode_make_secure_inode() and fix secretmem LSM bypass
+     
+was merged with the kvm export
+
+	EXPORT_SYMBOL_GPL_FOR_MODULES(anon_inode_make_secure_inode, "kvm");
+
+I thought I commented that this is something to done separately and not really
+"fix" material.
+
+Anyhow, good for this series, no need to touch that.
+
+-- 
+Cheers,
+
+David / dhildenb
+
