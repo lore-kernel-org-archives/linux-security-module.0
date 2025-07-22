@@ -1,50 +1,41 @@
-Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B18F2DE6F0;
-	Tue, 22 Jul 2025 08:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B50E2E3701
+	for <linux-security-module@vger.kernel.org>; Tue, 22 Jul 2025 12:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753174727; cv=none; b=G8fynNnERFrY8DhlZynPYRHi/M8sq8cFDcM7r7zAji+f9GgjXY64+ku98FWZbQBezIwf0p69knN33C0xRwXO+5BOP5fB53T1iGs0CkKT8m4gqjvSZ16f333Zf8g2WrnvZoFkC4o3QAQJKZ9THXFpVGQoY/NSAHLqEhybDwN/ou8=
+	t=1753188781; cv=none; b=rPJ9l/vhv2uTlYIXC/rqrOrDBcMZi+ZpnxRYQjdivLfW9dTfgAeW7450vibIhnmCywhwr/p5g6K2jQ0iqwi/3Nr3keCYA5pptenvzM9oP9b3OyjRREpauNd16S/3XcIZnlOhtZPMEhLOkHU6ayAgcWWqQxIaRiQteNFLK9SWJq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753174727; c=relaxed/simple;
-	bh=fLqOd3NlZqp/Dm5IAtQBecr5Wsnr4Ngm0ae9pB6FEJI=;
+	s=arc-20240116; t=1753188781; c=relaxed/simple;
+	bh=unclxwUwkHJB+zlphy+D4JjPANj7XVmeM+d28PpZIQw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZokJ7AhpgADymxcn1fou11ojtQTzoSFlilJi/HOsWgwN5iin4BoN8f21CEtjz8U+ETXOA9owDY8mugq5x1GPBytvd1c/ngj3sPPDxnH513sVmtZ1X5GGiETp2UWnHtEKfF3Jm2ns6yR+W+wqTQrIYxUCs9msNGpv1ycE/LM1TUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=fd3ReWAH; arc=none smtp.client-ip=51.159.173.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+	 Content-Type:Content-Disposition:In-Reply-To; b=OsfAdwj0UJNzGnG80qyKWS9G7cT1rTNceb6+PR1CGSicOqhbnpjUYFCV12gBf2MEBywoMrwGs4xfl7ffmeFE9uI+2w3xYMFGTzghNAavnmsZs+qe86yPB3cAGOYhV25H+KqO2cGTz5hJdHYKQLUCC6Cx50uVSTYgKG6NNl00rF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ilo5V673; arc=none smtp.client-ip=83.166.143.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="fd3ReWAH"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oss.cyber.gouv.fr; s=default; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=PErdeFVm6n5PNMonriQ7Iv7glPD8lxBP71LP0KLCfjU=; b=fd3ReWAHKtVqFysYx3VE/XrL80
-	bfL6IT337i7XCnOu6gTPtkgyl4TEgumifCVVqY/LZFpYampdTSZ/p0czE1jvA3l+oqnysQ3I7Dqdh
-	67y+PveXk3pU4Nmi3K7BMECN7u+0ljr/16eMWbxXfOih4uGDw3GcxtnkeqScR96UkVAWui45uy/20
-	jK81ROWdyuAE1XgMgikh3t/DK1ZH4CIi7ViaJVU2bYq1PRZcNHsiTQR6WAwhaZ45pkdtKbS50+N5p
-	fXhx1ezm3XhJrLpx8RqASimsXYrFULfhA8KLPA2Rk0dNHinl53g1HMDGazgQpKYKPkvzJw3zPBpv1
-	vumC+R5Q==;
-Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:8481 helo=archlinux)
-	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
-	id 1ue8pf-0000000FCQY-2G2O;
-	Tue, 22 Jul 2025 10:58:43 +0200
-Date: Tue, 22 Jul 2025 10:58:38 +0200
-From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-To: Jann Horn <jannh@google.com>
-Cc: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Olivier Bal-Petre <olivier.bal-petre@oss.cyber.gouv.fr>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-Subject: Re: [PATCH] lsm: yama: Check for PTRACE_MODE_READ_FSCREDS access
-Message-ID: <bkcmiikytfd3pnlytfx4llecl2i4oidwhe2iifzsir3mrcqddw@wzgb5qqcrwcv>
-References: <20250718-yama_fix-v1-1-a51455359e67@ssi.gouv.fr>
- <CAG48ez23HLtb9GJ-BbSXaWFhdPjXyFNED9fbuyaNP5EXJ_Wv8w@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ilo5V673"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bmccZ67n9zHQp;
+	Tue, 22 Jul 2025 14:52:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1753188766;
+	bh=4BCqvtZ48OEN1kkoyipLq6VcTxhuN0F/qR+fCkGvOHo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ilo5V673QmRdlrloSVI58vM5uxFCx8vy07PSark15wHhLY5tUaqccTMD60pYEB+hm
+	 WHLbQ3mxcB+7U8blPvXvhumTViSAMNC5HuW6xgfHfl47Ak42SByCxJP5dv18ELL+1u
+	 ajIDjTb+3F71rr0vko1aQQx5xfkC7EQLQ/v8pb4U=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bmccZ2yDhzYy8;
+	Tue, 22 Jul 2025 14:52:46 +0200 (CEST)
+Date: Tue, 22 Jul 2025 14:52:45 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] landlock/ruleset: Minor comments improvements
+Message-ID: <20250722.aeyai8aiVeam@digikod.net>
+References: <20297185fd71ffbb5ce4fec14b38e5444c719c96.1748379182.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -54,76 +45,77 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez23HLtb9GJ-BbSXaWFhdPjXyFNED9fbuyaNP5EXJ_Wv8w@mail.gmail.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
-X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+In-Reply-To: <20297185fd71ffbb5ce4fec14b38e5444c719c96.1748379182.git.m@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On Fri, Jul 18, 2025 at 04:52:51PM +0200, Jann Horn wrote:
-> On Fri, Jul 18, 2025 at 10:47 AM <nicolas.bouchinet@oss.cyber.gouv.fr> wrote:
-> > From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> >
-> > Currently, yama only checks if the `PTRACE_MODE_ATTACH` mode is set
-> > during the `yama_ptrace_access_check()` LSM hook implementation.
-> >
-> > In cases of call with the `PTRACE_MODE_READ_FSCREDS` mode, nothing
-> > happens. Thus, yama does not interact properly with the
-> > "hidepid=ptraceable" option.
-> >
-> > hidepid's "ptraceable" option being documented as follow :
-> >
-> > - hidepid=ptraceable or hidepid=4 means that procfs should only contain
-> >   `/proc/<pid>/` directories that the caller can ptrace.
-> >
-> > This patch simply add yama a `PTRACE_MODE_READ_FSCREDS` mode check to
-> > enable an interaction with "hidepid=ptraceable".
-> 
-> Please note that PTRACE_MODE_READ_FSCREDS is actually a combination of
-> two flags, and the intention is that the PTRACE_MODE_REALCREDS /
-> PTRACE_MODE_FSCREDS part of the flags should basically only be used to
-> determine where to read the caller's credentials from:
-> 
-> /* shorthands for READ/ATTACH and FSCREDS/REALCREDS combinations */
-> #define PTRACE_MODE_READ_FSCREDS (PTRACE_MODE_READ | PTRACE_MODE_FSCREDS)
-> #define PTRACE_MODE_READ_REALCREDS (PTRACE_MODE_READ | PTRACE_MODE_REALCREDS)
-> #define PTRACE_MODE_ATTACH_FSCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_FSCREDS)
-> #define PTRACE_MODE_ATTACH_REALCREDS (PTRACE_MODE_ATTACH |
-> PTRACE_MODE_REALCREDS)
-> 
-> > Combined with hidepid=ptraceable, the following behaviors will then
-> > happen while reading in `/proc/<pid>`:
-> >
-> > - "restricted": A process that has a predefined relationship with the
-> >   inferior will see the inferior process in `/proc`.
-> >
-> > - "admin-only": A process that has the CAP_SYS_PTRACE will be able to
-> >   see every processes in `/proc`.
-> >
-> > - "no attach": A process will not see anything but itself in
-> >   `/proc/<pid>/`.
-> >
-> > It is important to note that the combination of "hidepid=ptraceable" and
-> > yama "no attach" also makes PIDs invisible to root.
-> >
-> > No access reports are logged in case of denied access with
-> > `PTRACE_MODE_READ_FSCREDS` to avoid flooding kernel logs.
-> 
-> This seems like a major semantic change; I believe it essentially
-> means that commands like "ps" stop working entirely on systems that
-> enable hidepid. While that might be desirable in some scenarios, I
-> think changing the semantics like this without making it opt-in
-> through a new sysctl knob or such would be a bad idea.
+I squash with patch with the fs.c one.  They are now in my -next tree.
+Thanks!
 
-I agree with you, it is a bit to harsh, I'll add a new orthogonal sysctl
-knob that enables this yama behavior. Will send a V2 with it.
-
-Thanks,
-
-Nicolas
+On Tue, May 27, 2025 at 09:54:48PM +0100, Tingmao Wang wrote:
+> Hi Mickaël,
+> 
+> This patch contains some small comment changes.  The first three I sort of
+> made along the way while working on / trying to understand landlock, and
+> the last one was from the hashtable patch but extracted here.
+> 
+> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> ---
+>  security/landlock/ruleset.c | 11 ++++++++++-
+>  security/landlock/ruleset.h |  2 +-
+>  2 files changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> index ce7940efea51..2ed7043ed2f2 100644
+> --- a/security/landlock/ruleset.c
+> +++ b/security/landlock/ruleset.c
+> @@ -83,6 +83,10 @@ static void build_check_rule(void)
+>  		.num_layers = ~0,
+>  	};
+>  
+> +	/*
+> +	 * Check that .num_layers is large enough for at least
+> +	 * LANDLOCK_MAX_NUM_LAYERS layers
+> +	 */
+>  	BUILD_BUG_ON(rule.num_layers < LANDLOCK_MAX_NUM_LAYERS);
+>  }
+>  
+> @@ -290,6 +294,10 @@ static void build_check_layer(void)
+>  		.access = ~0,
+>  	};
+>  
+> +	/*
+> +	 * Check that .level and .access are large enough to contain their
+> +	 * expected max values.
+> +	 */
+>  	BUILD_BUG_ON(layer.level < LANDLOCK_MAX_NUM_LAYERS);
+>  	BUILD_BUG_ON(layer.access < LANDLOCK_MASK_ACCESS_FS);
+>  }
+> @@ -645,7 +653,8 @@ bool landlock_unmask_layers(const struct landlock_rule *const rule,
+>  
+>  		/*
+>  		 * Records in @layer_masks which layer grants access to each
+> -		 * requested access.
+> +		 * requested access (bit in layer mask cleared if layer grants
+> +		 * access).
+>  		 */
+>  		is_empty = true;
+>  		for_each_set_bit(access_bit, &access_req, masks_array_size) {
+> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> index 5da9a64f5af7..dfd883a9a52a 100644
+> --- a/security/landlock/ruleset.h
+> +++ b/security/landlock/ruleset.h
+> @@ -27,7 +27,7 @@ struct landlock_hierarchy;
+>   */
+>  struct landlock_layer {
+>  	/**
+> -	 * @level: Position of this layer in the layer stack.
+> +	 * @level: Position of this layer in the layer stack. Starts from 1.
+>  	 */
+>  	u16 level;
+>  	/**
+> 
+> base-commit: a5806cd506af5a7c19bcd596e4708b5c464bfd21
+> -- 
+> 2.49.0
+> 
+> 
