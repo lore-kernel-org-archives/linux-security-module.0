@@ -1,41 +1,42 @@
-Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B50E2E3701
-	for <linux-security-module@vger.kernel.org>; Tue, 22 Jul 2025 12:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC811AC88B
+	for <linux-security-module@vger.kernel.org>; Tue, 22 Jul 2025 12:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753188781; cv=none; b=rPJ9l/vhv2uTlYIXC/rqrOrDBcMZi+ZpnxRYQjdivLfW9dTfgAeW7450vibIhnmCywhwr/p5g6K2jQ0iqwi/3Nr3keCYA5pptenvzM9oP9b3OyjRREpauNd16S/3XcIZnlOhtZPMEhLOkHU6ayAgcWWqQxIaRiQteNFLK9SWJq4=
+	t=1753188857; cv=none; b=dlduqn5hv207yBlUbJmlB5PhuP7qJ5ErK61cgpY2e0M6+wqUmbOL96DIAL1yUlfCPyS8FFfN/7n2PFf/A8KLgA2sJLMw/XTwvN9ryI3Bl9Cmzg7JCk984Z+PYMOuaIv57ve3JnMksEY9P49dsF54jmXUdm1NtU25L3LLdtTXCZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753188781; c=relaxed/simple;
-	bh=unclxwUwkHJB+zlphy+D4JjPANj7XVmeM+d28PpZIQw=;
+	s=arc-20240116; t=1753188857; c=relaxed/simple;
+	bh=l1pjhmn+os5vU1bYmN2siBwN7ztuvZS3LuDqr/BLGN8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OsfAdwj0UJNzGnG80qyKWS9G7cT1rTNceb6+PR1CGSicOqhbnpjUYFCV12gBf2MEBywoMrwGs4xfl7ffmeFE9uI+2w3xYMFGTzghNAavnmsZs+qe86yPB3cAGOYhV25H+KqO2cGTz5hJdHYKQLUCC6Cx50uVSTYgKG6NNl00rF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ilo5V673; arc=none smtp.client-ip=83.166.143.168
+	 Content-Type:Content-Disposition:In-Reply-To; b=t3zBiQd0Xuzz+kWssim/OIgstmyUnGwQVupIz4rfCWwIvjDXpWE4aT+Kd5NCULep2XBGRsav0un12+Wr7aGzoluITAL6vwLs1y5l5aboBwlcZy27rp50RWdCP4O0Pcfqik3oJTXlphAZ7vM/NqMJ/l8gJFlGTdRC8drMSiUFq6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=pLPJ1GYK; arc=none smtp.client-ip=185.125.25.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ilo5V673"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bmccZ67n9zHQp;
-	Tue, 22 Jul 2025 14:52:46 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="pLPJ1GYK"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bmcf52RgFzkNC;
+	Tue, 22 Jul 2025 14:54:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1753188766;
-	bh=4BCqvtZ48OEN1kkoyipLq6VcTxhuN0F/qR+fCkGvOHo=;
+	s=20191114; t=1753188845;
+	bh=cP5SnByLdcIjrCHEGaUgRQChFWyWTB7bf9Yn2XJjM3M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ilo5V673QmRdlrloSVI58vM5uxFCx8vy07PSark15wHhLY5tUaqccTMD60pYEB+hm
-	 WHLbQ3mxcB+7U8blPvXvhumTViSAMNC5HuW6xgfHfl47Ak42SByCxJP5dv18ELL+1u
-	 ajIDjTb+3F71rr0vko1aQQx5xfkC7EQLQ/v8pb4U=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bmccZ2yDhzYy8;
-	Tue, 22 Jul 2025 14:52:46 +0200 (CEST)
-Date: Tue, 22 Jul 2025 14:52:45 +0200
+	b=pLPJ1GYKv1My5vFuRk335E0Yo7SS3/NAb+Az1YwJFqmvYE2UfT14CWqn8ktDe/lAs
+	 f8VeKXKgeNh3HB2usDEc/AnkPIueomObDjpFFcE/gxXN/EYjA7mSw7iKT6rUAEf/FF
+	 tlhzv7mzEJYInsCZ2ZafRzibz3zCpH7vyTxyQsgI=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bmcf46lgSztBr;
+	Tue, 22 Jul 2025 14:54:04 +0200 (CEST)
+Date: Tue, 22 Jul 2025 14:54:04 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: Tingmao Wang <m@maowtm.org>
 Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
 	linux-security-module@vger.kernel.org
 Subject: Re: [PATCH] landlock/ruleset: Minor comments improvements
-Message-ID: <20250722.aeyai8aiVeam@digikod.net>
+Message-ID: <20250722.ahCe4yi4thou@digikod.net>
 References: <20297185fd71ffbb5ce4fec14b38e5444c719c96.1748379182.git.m@maowtm.org>
+ <20250603215636.111939-1-m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -44,78 +45,41 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20297185fd71ffbb5ce4fec14b38e5444c719c96.1748379182.git.m@maowtm.org>
+In-Reply-To: <20250603215636.111939-1-m@maowtm.org>
 X-Infomaniak-Routing: alpha
 
-I squash with patch with the fs.c one.  They are now in my -next tree.
-Thanks!
+I updated the comments with the disconnected directory patch series, and
+I took this patch into account.  Thanks!
 
-On Tue, May 27, 2025 at 09:54:48PM +0100, Tingmao Wang wrote:
-> Hi Mickaël,
+On Tue, Jun 03, 2025 at 10:56:35PM +0100, Tingmao Wang wrote:
+> As discussed in chat, here is another one for you to consider and squash :)
 > 
-> This patch contains some small comment changes.  The first three I sort of
-> made along the way while working on / trying to understand landlock, and
-> the last one was from the hashtable patch but extracted here.
+> Current comment here is IMO a bit confusing - it says "Only allow ...
+> internal filesystems" but that's not the case.
 > 
 > Signed-off-by: Tingmao Wang <m@maowtm.org>
 > ---
->  security/landlock/ruleset.c | 11 ++++++++++-
->  security/landlock/ruleset.h |  2 +-
->  2 files changed, 11 insertions(+), 2 deletions(-)
+>  security/landlock/fs.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-> index ce7940efea51..2ed7043ed2f2 100644
-> --- a/security/landlock/ruleset.c
-> +++ b/security/landlock/ruleset.c
-> @@ -83,6 +83,10 @@ static void build_check_rule(void)
->  		.num_layers = ~0,
->  	};
->  
-> +	/*
-> +	 * Check that .num_layers is large enough for at least
-> +	 * LANDLOCK_MAX_NUM_LAYERS layers
-> +	 */
->  	BUILD_BUG_ON(rule.num_layers < LANDLOCK_MAX_NUM_LAYERS);
->  }
->  
-> @@ -290,6 +294,10 @@ static void build_check_layer(void)
->  		.access = ~0,
->  	};
->  
-> +	/*
-> +	 * Check that .level and .access are large enough to contain their
-> +	 * expected max values.
-> +	 */
->  	BUILD_BUG_ON(layer.level < LANDLOCK_MAX_NUM_LAYERS);
->  	BUILD_BUG_ON(layer.access < LANDLOCK_MASK_ACCESS_FS);
->  }
-> @@ -645,7 +653,8 @@ bool landlock_unmask_layers(const struct landlock_rule *const rule,
->  
->  		/*
->  		 * Records in @layer_masks which layer grants access to each
-> -		 * requested access.
-> +		 * requested access (bit in layer mask cleared if layer grants
-> +		 * access).
->  		 */
->  		is_empty = true;
->  		for_each_set_bit(access_bit, &access_req, masks_array_size) {
-> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> index 5da9a64f5af7..dfd883a9a52a 100644
-> --- a/security/landlock/ruleset.h
-> +++ b/security/landlock/ruleset.h
-> @@ -27,7 +27,7 @@ struct landlock_hierarchy;
->   */
->  struct landlock_layer {
->  	/**
-> -	 * @level: Position of this layer in the layer stack.
-> +	 * @level: Position of this layer in the layer stack. Starts from 1.
->  	 */
->  	u16 level;
->  	/**
-> 
-> base-commit: a5806cd506af5a7c19bcd596e4708b5c464bfd21
-> -- 
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 9396d2d9df40..11b469002c03 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -911,9 +911,10 @@ static bool is_access_to_paths_allowed(
+>  		}
+>  		if (unlikely(IS_ROOT(walker_path.dentry))) {
+>  			/*
+> -			 * Stops at disconnected root directories.  Only allows
+> -			 * access to internal filesystems (e.g. nsfs, which is
+> -			 * reachable through /proc/<pid>/ns/<namespace>).
+> +			 * Stops at disconnected root directories.  Allows access to
+> +			 * internal filesystems (e.g. nsfs, which is reachable through
+> +			 * /proc/<pid>/ns/<namespace>), in addition to what's already
+> +			 * allowed.
+>  			 */
+>  			if (walker_path.mnt->mnt_flags & MNT_INTERNAL) {
+>  				allowed_parent1 = true;
+> --
 > 2.49.0
-> 
 > 
