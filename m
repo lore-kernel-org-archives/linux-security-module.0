@@ -1,74 +1,74 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918B42E406
-	for <linux-security-module@vger.kernel.org>; Tue, 22 Jul 2025 15:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A7326B2B3
+	for <linux-security-module@vger.kernel.org>; Tue, 22 Jul 2025 15:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753197724; cv=none; b=dUqzgNyuLmhkZBI0hFPyYdJq++TlfeQNBTdK75g6xXQ24fUY+voyGkVZ0J5z3B5CSKuMYKdAJzPfXS/o+THkYYyuNXS0Ibu5BO0zNp4Oh9sbupow+NsKy8CxU6Z0aqQlH/JIIPHdM1Q2QjfRPNNbm6IpY3irHmimunDKrMos/X8=
+	t=1753197856; cv=none; b=ZxOFqs42ZrK93TQbl64XmFpI0WuX0dBwLmxWnAQ4OB//zz6mom9VqmWbq1mscnCxNyRJDUYKd3F/rFPsXF9Qm5tX6u/Enr2LwOJ4hZVjNAU0SD2Chwjd6Bv+rGzEiFrxo1rowkF4lzkG3QH3ZmUDzk1Kc9Z1s0Rts9xHisrf67s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753197724; c=relaxed/simple;
-	bh=Bz0qVqHYmaFGLr0K3Aste3DeRRvF4uZB3IkjMQ1SJXE=;
+	s=arc-20240116; t=1753197856; c=relaxed/simple;
+	bh=D45gInbYMkQwYJSHRIjviRcfD6CR5ao7rIPrwVwFcLc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IzT3/Qor9TIayvYGNJeSiV/oJC0gHuHZvigaJWZa3mxpo3jNaOHjKmJdN5AiMPDMHHBic2hh7iQG0UX1DmY3mfexVnqEkR7ETbNqjF0cZ+RbicCwYBmxbOrnp6T3KpvbL3w3ajKErIHTXfDncczgbHaR79t6NDYx22wK6DLcA4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UtGdWKgb; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=I4nVB7CxsWqpDTLom+HFmSu/6xTbbJ7HWIZbA+K5ZF+Jf5ixwtQHhyW2JXvUo2KNZbX/1OJSiRYymNZ2sp2HFEdprGTLoSneZnurglaLerb+i0ZRiRTIzm0qfZUc9x4qofWnBoWLUStekWn1gGL9BNg10qisQEKi88JdKm/saMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g/EuAKpi; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UtGdWKgb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g/EuAKpi"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753197721;
+	s=mimecast20190719; t=1753197854;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3lGVCvSvU+dwTTyQ/1aMBu54ELfXmjnvHtRzgY3JvgA=;
-	b=UtGdWKgbQ6OHfwUwmcLIc0xFyABxhgc/ng8b16nrmF3wNOcNfTw6PIofYDUbOiGUeIh+zq
-	/sb0fR5nc21iYjxni81FPsqaGShYjxwpOb4mYmWJP6sFINNHwswnN+1rL5shtXi090XqzW
-	iEXzlgdRtsbRVE01MMU3D4rOxU9cnco=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Rx5E9H0SC0/ybWC8xu2y/OKAH1d8PpGj5fdVT0GTL0Q=;
+	b=g/EuAKpivND6DY4sJzHLbrJ8PepyzS1ynE2joGTztfLW8ea8TQIyEwunHP7fcD7WupoYnB
+	IWnR9PrsVFoQmGnVXv64FUxZmKbHMMVl0a+/AJA1CzkH4Yz3n5dQ/L561rDf5oB/SxlSDw
+	8lQz8jwM1sS+1CS9pyt+VNUjUgYTNlM=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-683-fpdT6kzaNvmPrvvnm1EgyQ-1; Tue, 22 Jul 2025 11:21:58 -0400
-X-MC-Unique: fpdT6kzaNvmPrvvnm1EgyQ-1
-X-Mimecast-MFC-AGG-ID: fpdT6kzaNvmPrvvnm1EgyQ_1753197717
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-451ac1b43c4so35282935e9.0
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Jul 2025 08:21:58 -0700 (PDT)
+ us-mta-479-HEJAHrXqNm6AL6fshsJnCw-1; Tue, 22 Jul 2025 11:24:12 -0400
+X-MC-Unique: HEJAHrXqNm6AL6fshsJnCw-1
+X-Mimecast-MFC-AGG-ID: HEJAHrXqNm6AL6fshsJnCw_1753197851
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45600d19a2aso48141485e9.1
+        for <linux-security-module@vger.kernel.org>; Tue, 22 Jul 2025 08:24:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753197717; x=1753802517;
+        d=1e100.net; s=20230601; t=1753197851; x=1753802651;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=3lGVCvSvU+dwTTyQ/1aMBu54ELfXmjnvHtRzgY3JvgA=;
-        b=VQSMeaI6YuOeRxLYb+exl44FuZiB2atu4IlDgC536rJQnb8hY5QlEqxbpjn1WDDQst
-         uN4x07XB2HJbY0UEpINVctg5lpqSOdkDHzNXRtbZAe4sEZe5n5+k0tmNjnCo53gTqV0W
-         3TteML8E6DcSZCucyROANknRJYFNSi3SuIKZSUKxB5Wv4jehfh8pbyv1VMBEjNHJkwkk
-         tclzR3+YZYfVUpTw/EA+WBqazoeA+I7qdYmTE1a/j5L29b9eV+46MAYeH4VnZ3Q6sVBh
-         jS9+4lb5m9VADvopr64dTiZdWvLuMR+R+R5cl4QCVT2f6J2sInXT7oRfzZsFb8CQAkri
-         8JpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHsLD4keSSICCfXzZeVrfbJb96P2fMpS6fObdFxfXGgISOsfICkKJvikF8lLj5nZAgu6VJmkWAdqW4E+XentzKXx6UMPw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1qMEJXhpeEU9DiKoSC6lDwq9YWiPiF+9dabQ/AxpoNAONwJMP
-	31a3gFsrYEQB/tRdZwXEb7/FuE81BeSvEG2Mzz6Jxs4qkNlWiUGlkh7fZZ56DIlPDGDh03WnzpJ
-	2Kw2UmOklrsNRe076AYFiDbW2x87YmaX3W/Ekg7QOe9xcZG9ZReksNiKq23+/naiiiC52NeAWZp
-	c1mw==
-X-Gm-Gg: ASbGncsPAmeKDOVGhe+HEl34dXm6qLMCrAJpE/7syw2MktEGOZh6Ott+GUO1Z/aq/8n
-	WItd2IEmgVW6NO5tMA3nIzIV4GBktAFt24oXjHTI8vtsgzTU+K4p6R5P5Utf111y8aO0Q6P+poX
-	TXXn6IUt0T0ltbmZXkiSd2NeRHObAGu5/CR6n0xY2u8LPCBRWU5tPrh7jFRf4BBgT4436zJi8AM
-	nuGbyZ1ZClNxNa02EbcJwf+PNZPiB3bbtwNSlU31uvnVkTblojuLH9z3XcLA3KqRUiYyyWwwf9i
-	vP/urGZJSDbgNde6roPukayiR1L7mwEguc0Z/tncvRzMhNCtr9gVW+yDRh9kV5giQw6paQ+EkKv
-	b1tQIzuFnSmrpvAo0y30iEO7qNs/zLwRBqAqs9zy4PDPjLyOu3qbtrCQxix8/X11h7Bc=
-X-Received: by 2002:a05:600c:1389:b0:456:26a1:a0c1 with SMTP id 5b1f17b1804b1-456437a59efmr137996955e9.17.1753197716950;
-        Tue, 22 Jul 2025 08:21:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF5enLdCYgzjySAx4ybbYU0jMVafZgCttcr6BLFjBoC3XlTsR3XaXP1SUNWMbt7hDHDm6g3EA==
-X-Received: by 2002:a05:600c:1389:b0:456:26a1:a0c1 with SMTP id 5b1f17b1804b1-456437a59efmr137995965e9.17.1753197716277;
-        Tue, 22 Jul 2025 08:21:56 -0700 (PDT)
+        bh=Rx5E9H0SC0/ybWC8xu2y/OKAH1d8PpGj5fdVT0GTL0Q=;
+        b=BVQw27xKeXTxZ9PTlfTX8XEiN07RynaIjRBl9cZm1g0W2WzZgrLjeVjy/FPgZfc74W
+         OjDrshcVblXg7BSZkk6TrMp8oDtpOm4Ko4QTzPnOLYaVXWjVA5kHIEcV6wUiIa+XURy4
+         2m0Cds/l5OsSOjrcePsKc91YzQ8E6xCMQwiNvjKbx2u3mGDKkDyckPPVi7xrHXNo3m9g
+         KVFnEHUcEQi/8aS5gNtJgI9v/n4BVzZRCvA+bqXaJptbg0Ygup690Sf6geybu9n56z/w
+         ucOTJzGkJulQuJwcleDvQeIZ4eTf6WcT78uEbAFihZ68ozz5/UHKlylbUow6dxHzPSe4
+         opYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7TRqCpvtC0gLnG2qSrwP6BN8dH6Fgpcu4pmYe1xHZq5vRSAgCOi6HQ9vghWs7BMZKkJMj8RqVUzKEFz2vreb4I4VRSCw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi+00U5gy2HpXEe5KJIMyxNWxAeEedUvqym0k3tPBfg5jqQCgt
+	mOc8GN5ojqC2qqqMJTw448nGD6hp5kpckXnLqPW1qsIFhHaFYqFa+BtjmAisQvU5EOordPhmY2r
+	b+yIjpjrWSnaMmHm//r/LLY630/5+YHrPi+w1Rd4Plyse0LpSZzeorj9zK4tFJnMNxEIMvomwsH
+	lrcg==
+X-Gm-Gg: ASbGnctTM1XbpMRneDbz2H5ScCENTEAA0e/bChdm7kdcDLFbqG2MRzzetzF2gGxs8GU
+	78v3b+FfwbzybI+mCuwRcPMhUAMz6z/jySJ5MwwSSu/qNVc2nEXxjD9bFdYgKhxK1UC6PphPbJf
+	iO9NnM0zhSviPWPXjN45aHMBQITvLNJWHpNa5/qdKIxUiMwSBLgpNvrIstyjUUpFo6UUb1s8n8X
+	l0DQeNGghZdBF6dW14eWODZCPANreAq7QyncwJaT/kLZPKFnrOKYcVNXKBK0ay4L5xHQ6MVX2cW
+	6rXydm3x81v5XKUACjPeA87lvOBeprBka7seRxv3kSiSDWh42cPT6XZNVJDTdTBKGipzIODyP3g
+	rh5efuLbcFjXhWtvKBoaDIhFqHa+31FwYciT9Ozrs3zY42RPBMtbEcMA7blzH4QOoA7Y=
+X-Received: by 2002:a05:600c:468b:b0:456:2419:dc05 with SMTP id 5b1f17b1804b1-4562e33db7fmr263466755e9.12.1753197850407;
+        Tue, 22 Jul 2025 08:24:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHOsjO7fjOeuKEDb3sg67N0CFru6e9rNRczL4vElOqdWtp9KxYPog3BjoVMTfLEZMaSXLXdOA==
+X-Received: by 2002:a05:600c:468b:b0:456:2419:dc05 with SMTP id 5b1f17b1804b1-4562e33db7fmr263465705e9.12.1753197849746;
+        Tue, 22 Jul 2025 08:24:09 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f28:de00:1efe:3ea4:63ba:1713? (p200300d82f28de001efe3ea463ba1713.dip0.t-ipconnect.de. [2003:d8:2f28:de00:1efe:3ea4:63ba:1713])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e802ae4sm192273375e9.13.2025.07.22.08.21.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4563b73f76esm131398455e9.18.2025.07.22.08.24.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 08:21:55 -0700 (PDT)
-Message-ID: <33da1127-f00e-446f-891f-01ccbd53efd6@redhat.com>
-Date: Tue, 22 Jul 2025 17:21:52 +0200
+        Tue, 22 Jul 2025 08:24:09 -0700 (PDT)
+Message-ID: <e7573f7d-971e-491a-930d-fccb16274224@redhat.com>
+Date: Tue, 22 Jul 2025 17:24:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -76,8 +76,8 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V9 3/7] mm/filemap: Extend __filemap_get_folio() to
- support NUMA memory policies
+Subject: Re: [PATCH V9 6/7] KVM: guest_memfd: Enforce NUMA mempolicy using
+ shared policy
 To: Shivank Garg <shivankg@amd.com>, seanjc@google.com, vbabka@suse.cz,
  willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
  pbonzini@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk
@@ -101,7 +101,7 @@ Cc: ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
  linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
  linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
 References: <20250713174339.13981-2-shivankg@amd.com>
- <20250713174339.13981-6-shivankg@amd.com>
+ <20250713174339.13981-9-shivankg@amd.com>
 From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -148,32 +148,42 @@ Autocrypt: addr=david@redhat.com; keydata=
  WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
  g3eXuA==
 Organization: Red Hat
-In-Reply-To: <20250713174339.13981-6-shivankg@amd.com>
+In-Reply-To: <20250713174339.13981-9-shivankg@amd.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: qmnw3ep73NoR2P0fKC9MkrD4H09pYS7KS6-8NEknMWs_1753197717
+X-Mimecast-MFC-PROC-ID: OeIivXPil4x23KM3qVIpHkbGCxabqH2JUXHYMFWT-T8_1753197851
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 13.07.25 19:43, Shivank Garg wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> Previously, guest-memfd allocations followed local NUMA node id in absence
+> of process mempolicy, resulting in arbitrary memory allocation.
+> Moreover, mbind() couldn't be used  by the VMM as guest memory wasn't
+> mapped into userspace when allocation occurred.
 > 
-> Extend __filemap_get_folio() to support NUMA memory policies by
-> renaming the implementation to __filemap_get_folio_mpol() and adding
-> a mempolicy parameter. The original function becomes a static inline
-> wrapper that passes NULL for the mempolicy.
+> Enable NUMA policy support by implementing vm_ops for guest-memfd mmap
+> operation. This allows the VMM to map the memory and use mbind() to set the
+> desired NUMA policy. The policy is stored in the inode structure via
+> kvm_gmem_inode_info, as memory policy is a property of the memory (struct
+> inode) itself. The policy is then retrieved via mpol_shared_policy_lookup()
+> and passed to filemap_grab_folio_mpol() to ensure that allocations follow
+> the specified memory policy.
 > 
-> This infrastructure will enable future support for NUMA-aware page cache
-> allocations in guest_memfd memory backend KVM guests.
+> This enables the VMM to control guest memory NUMA placement by calling
+> mbind() on the mapped memory regions, providing fine-grained control over
+> guest memory allocation across NUMA nodes.
 > 
-> Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
-> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> The policy change only affect future allocations and does not migrate
+> existing memory. This matches mbind(2)'s default behavior which affects
+> only new allocations unless overridden with MPOL_MF_MOVE/MPOL_MF_MOVE_ALL
+> flags, which are not supported for guest_memfd as it is unmovable.
+> 
+> Suggested-by: David Hildenbrand <david@redhat.com>
 > Signed-off-by: Shivank Garg <shivankg@amd.com>
 > ---
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers,
