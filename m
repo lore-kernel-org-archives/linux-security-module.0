@@ -1,299 +1,407 @@
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333221DF270;
-	Tue, 22 Jul 2025 18:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CE06F06B;
+	Tue, 22 Jul 2025 21:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753207449; cv=none; b=tbQmksa+CM/hYBbfgkj1GHmAKHobIsWSB7NTDEgE09CL+Tn6/IqEk/G6GAbNeARnd8aFBS25U+m4LZNjRARTELgr07WdGfl6gHbdxJN5PXA9nxEThBAp5vYXdZFnTa6OER+mYq26qCpjGdgybGnEp3PcdltDz7jY71l5lH5Miz0=
+	t=1753219309; cv=none; b=AgfwGBxkD2DURq3nTvUyfDoEfYPzwGas2MfiEBHuEBFCcB+EDz78HGs+uqSV2eNZUUCDAkQ/SeTYg0JUlD1ZwOsIaZNbsIIzt+9NJOwtTPId5Dm4q1HxpN3QUDusVJq4HXWuINF+7ba0AOmZLETUucMLUB81MzpYK2LeoG4XnrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753207449; c=relaxed/simple;
-	bh=O4W9ok36sOMhqnk/GG/Fs1eqq/lA4zTF19ANoOfjY6A=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=u5lF2DV+kogEtaMyIcNJBZNk+/J42yxAhPccQvGz/cz6+GMoM6iyxY+Y8EB5NaypV9g1vtTZVHsrSjeyE1goyXI8zJdpdg2EoIefO1ltGHUrbf9Lqcq5NA3DOotr4fzKuPbinGudoelsGhHYoaTqRIIxW2A4ICxPwW4d42kwWZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=RmaqNLPm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eFI5pVpx; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1753219309; c=relaxed/simple;
+	bh=XrnpoJlS+kIzusQ6wg+AgThvzL7cR2cbx2SkS3z/T2g=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Ikuhbt07Pbv2Sq6m+7JGLMTVulctoAgNieqyv9vaelvjfRuPmRdvhmkYUCuxqi/xvq30YW/zxILxDoN3mW7JElhQcGjze9b9ZciJSoLXfQ1ArZr6SAMYNpiCfTKD7LjU1QPjNPCLTF9nG76PP1QzVMp6LW7rR/M+BO2VAi/Vlic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Dqn8K8nd; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="RmaqNLPm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eFI5pVpx"
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 3F6A21400504;
-	Tue, 22 Jul 2025 14:04:06 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Tue, 22 Jul 2025 14:04:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1753207446;
-	 x=1753293846; bh=+hXXyBYk+ld9rL0qPwJPscTr5LI2GnAdvZDaR8aPFTI=; b=
-	RmaqNLPml8Vf4V9JGAnIohmfh4VDCSbqwcAnl7gCqaFnjheBOWVhGIvHb99M97tI
-	7/NTZC0IgyJkzD0tWrNwMUOUtA3XwolLmKCJKjJOaoDffett+4w36e3oiHv213kb
-	LLL3OQ+qIQuEL+W427hLmMpLwMiqDhY66LlUBKietJtE2Z8dunMds7FRpJw0vpsE
-	iu9Fl93+mpCcCuj63MdkEGeTIjkPubY69RKUmk5vrvY/DjKF2bCcF8zjkIqHDWsr
-	KtQQw4JMif2/XDN/i2cGzRVd+P6EPsfs9Kq9zz9qRNea4471ZbbjYriTmTBT76Io
-	eXSxQSwTDWMxgyQjhDVKYg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753207446; x=
-	1753293846; bh=+hXXyBYk+ld9rL0qPwJPscTr5LI2GnAdvZDaR8aPFTI=; b=e
-	FI5pVpxk+a4d+Jaye4xw/MRUYUC8g/yXdgnuipxwE3fE1j7BHFVSVQJuhoguh3SB
-	0w3CBI0wjSmmThfEtdY9Tzv3W6GGqDCPitZjBdQ/BvlCNC0UCvk8QlSUMtKNNt4c
-	H7Ya9zvWiHrS+07uD8HQOBHoLB747amlggR9EZHHqSRZNw9phGeiFT637Tt5W2EP
-	dvck/wIizPYsI1K+mO2/ibaSXH3db+6mzZDYKvXPFK7dbGA8hku++Tr+iiLZMGo9
-	w6jvXnBnwk10KSRBlPQ+UzkQkTVIbQ6APIqWdr+Ep9mFAQ+/7gDkWGRL6DsQdZ78
-	uBa6s2TClsNCAHEWoQrqw==
-X-ME-Sender: <xms:lNJ_aKlibJG951BX2A7AdY27GFYNZfNDEnHQttr1n7IQbczugJ1maQ>
-    <xme:lNJ_aNp3XHovF_Rj3Vit46qRobmxCEDzKkr_2_mchuNVHkbXvKde9zEhp-XeawTaM
-    GRYb5Hq_YB9NyPp7dw>
-X-ME-Received: <xmr:lNJ_aPEHbNEtra261RmSUj96fBergAQKSLIcvtyqKVQMgg-XRPLRl2kehcV0g2TwJiA1c2w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejheehiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepvfhinhhgmhgr
-    ohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpedvge
-    duuefgudejgfdtteffudejjeelleeiudekueejudehtefghfegvdetveffueenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmh
-    drohhrghdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghksehgoh
-    hoghhlvgdrtghomhdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhr
-    ghdruhhkpdhrtghpthhtoheprghkhhhnrgesghhoohhglhgvrdgtohhmpdhrtghpthhtoh
-    epsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggsuhhrghgvnhgv
-    rheslhhinhhugidrmhhitghrohhsohhfthdrtghomhdprhgtphhtthhopehjrghnnhhhse
-    hgohhoghhlvgdrtghomhdprhgtphhtthhopehjvghffhiguhesghhoohhglhgvrdgtohhm
-    pdhrtghpthhtohepnhgvihhlsegsrhhofihnrdhnrghmvg
-X-ME-Proxy: <xmx:ldJ_aLTseB4UIztJ9I1yziF27EoVWXw9LFo3P8fhbnYq4wG1Kgp8Cg>
-    <xmx:ldJ_aNPzwB8Hbaupf1njJVWkNh8IcrGAX3T3yt0zJ7v_jAEpt5k_6A>
-    <xmx:ldJ_aAnTngFa2Ph0jLFFY8f87Dey-qy474tXHEvoptfr4yINZCXV8Q>
-    <xmx:ldJ_aHbAFxP9dOAQeNNjo4vlqN19WDS9mla37Toq2Vu_o5NVOlAoXQ>
-    <xmx:ltJ_aH6Z2xPnsre9T-XEKmul9BeFA3gLo8zQ2xQ4QpNW1KAhkaAUQEbU>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 22 Jul 2025 14:04:03 -0400 (EDT)
-Message-ID: <18425339-1f4b-4d98-8400-1decef26eda7@maowtm.org>
-Date: Tue, 22 Jul 2025 19:04:02 +0100
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Dqn8K8nd"
+Received: from narnia.corp.microsoft.com (unknown [40.86.183.173])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3850621268B0;
+	Tue, 22 Jul 2025 14:21:46 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3850621268B0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1753219307;
+	bh=v2qRwMEll6JJz01rpCJMZbc9SZPepGpyWnk0eqCwAzk=;
+	h=From:To:Subject:Date:From;
+	b=Dqn8K8ndQ6+ZNaU0zOKnA6Zxu/oblYuD7q4Y6c5lVQX5zv4dh1KVd1Py2g9boEb4a
+	 T8Pm/qYwnKHZPObjzoQpW8hY0UztPm8o6T52WyIAhE6H19TMI5PPIUOlnjGPUytARU
+	 I0DgF/CbYRQBzEZvcjD4cfz3sBhRTo+iBFel4Iks=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	John Johansen <john.johansen@canonical.com>,
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
+	=?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
+	Song Liu <song@kernel.org>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: [PATCH v2] lsm,selinux: Add LSM blob support for BPF objects
+Date: Tue, 22 Jul 2025 14:21:34 -0700
+Message-ID: <20250722212139.1666060-1-bboscaccy@linux.microsoft.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Tingmao Wang <m@maowtm.org>
-Subject: Re: [PATCH v3 2/4] landlock: Fix handling of disconnected directories
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Ben Scarlato <akhna@google.com>,
- Christian Brauner <brauner@kernel.org>,
- Daniel Burgener <dburgener@linux.microsoft.com>, Jann Horn
- <jannh@google.com>, Jeff Xu <jeffxu@google.com>, NeilBrown
- <neil@brown.name>, Paul Moore <paul@paul-moore.com>,
- Ryan Sullivan <rysulliv@redhat.com>, Song Liu <song@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20250719104204.545188-1-mic@digikod.net>
- <20250719104204.545188-3-mic@digikod.net>
-Content-Language: en-US
-In-Reply-To: <20250719104204.545188-3-mic@digikod.net>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 7/19/25 11:42, Mickaël Salaün wrote:
-> [...]
-> @@ -784,12 +787,18 @@ static bool is_access_to_paths_allowed(
->  	if (WARN_ON_ONCE(!layer_masks_parent1))
->  		return false;
->  
-> -	allowed_parent1 = is_layer_masks_allowed(layer_masks_parent1);
-> -
->  	if (unlikely(layer_masks_parent2)) {
->  		if (WARN_ON_ONCE(!dentry_child1))
->  			return false;
->  
-> +		/*
-> +		 * Creates a backup of the initial layer masks to be able to restore
-> +		 * them if we find out that we were walking a disconnected directory,
-> +		 * which would make the collected access rights inconsistent (cf.
-> +		 * reset_to_mount_root).
-> +		 */
+This patch introduces LSM blob support for BPF maps, programs, and
+tokens to enable LSM stacking and multiplexing of LSM modules that
+govern BPF objects. Additionally, the existing BPF hooks used by
+SELinux have been updated to utilize the new blob infrastructure,
+removing the assumption of exclusive ownership of the security
+pointer.
 
-This comment is duplicate with the one below, is this intentional?
+Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+---
+v2:
+- Use lsm_blob_alloc
+- Remove unneded null check
+- ifdef guard bpf alloc helpers
+---
+ include/linux/lsm_hooks.h         |  3 ++
+ security/security.c               | 86 +++++++++++++++++++++++++++++--
+ security/selinux/hooks.c          | 56 ++++----------------
+ security/selinux/include/objsec.h | 17 ++++++
+ 4 files changed, 113 insertions(+), 49 deletions(-)
 
-> [...]
-
-On the other hand, I'm still a bit uncertain about the domain check
-semantics.  While it would not cause a rename to be allowed if it is
-otherwise not allowed by any rules on or above the mountpoint, this gets a
-bit weird if we have a situation where renames are allowed on the
-mountpoint or everywhere, but not read/writes, however read/writes are
-allowed directly on a file, but the dir containing that file gets
-disconnected so the sandboxed application can't read or write to it.
-(Maybe someone would set up such a policy where renames are allowed,
-expecting Landlock to always prevent renames where additional permissions
-would be exposed?)
-
-In the above situation, if the file is then moved to a connected
-directory, it will become readable/writable again.
-
-Here is an example test, using the layout1_bind fixture for flexibility
-for now (and also because I needed to just go to bed yesterday lol) (but
-this would probably be better written as an additional
-layout5_disconnected_branch variant).
-
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 21dd95aaf5e4..2274f165d933 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -5100,6 +5100,118 @@ TEST_F_FORK(layout1_bind, path_disconnected_rename)
- 	EXPECT_EQ(0, test_open(file1_s1d3, O_RDONLY));
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 090d1d3e19fed..79ec5a2bdcca7 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -116,6 +116,9 @@ struct lsm_blob_sizes {
+ 	int lbs_xattr_count; /* number of xattr slots in new_xattrs array */
+ 	int lbs_tun_dev;
+ 	int lbs_bdev;
++	int lbs_bpf_map;
++	int lbs_bpf_prog;
++	int lbs_bpf_token;
+ };
+ 
+ /*
+diff --git a/security/security.c b/security/security.c
+index 596d418185773..e34b33ffc26cf 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -283,6 +283,9 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+ 	lsm_set_blob_size(&needed->lbs_xattr_count,
+ 			  &blob_sizes.lbs_xattr_count);
+ 	lsm_set_blob_size(&needed->lbs_bdev, &blob_sizes.lbs_bdev);
++	lsm_set_blob_size(&needed->lbs_bpf_map, &blob_sizes.lbs_bpf_map);
++	lsm_set_blob_size(&needed->lbs_bpf_prog, &blob_sizes.lbs_bpf_prog);
++	lsm_set_blob_size(&needed->lbs_bpf_token, &blob_sizes.lbs_bpf_token);
  }
  
-+static void
-+path_disconnected_gain_back_rights_via_rename(struct __test_metadata *_metadata,
-+					      bool has_read_rule_on_other_d)
+ /* Prepare LSM for initialization. */
+@@ -480,6 +483,9 @@ static void __init ordered_lsm_init(void)
+ 	init_debug("tun device blob size = %d\n", blob_sizes.lbs_tun_dev);
+ 	init_debug("xattr slots          = %d\n", blob_sizes.lbs_xattr_count);
+ 	init_debug("bdev blob size       = %d\n", blob_sizes.lbs_bdev);
++	init_debug("bpf map blob size    = %d\n", blob_sizes.lbs_bpf_map);
++	init_debug("bpf prog blob size   = %d\n", blob_sizes.lbs_bpf_prog);
++	init_debug("bpf token blob size  = %d\n", blob_sizes.lbs_bpf_token);
+ 
+ 	/*
+ 	 * Create any kmem_caches needed for blobs
+@@ -835,6 +841,47 @@ static int lsm_bdev_alloc(struct block_device *bdev)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_BPF_SYSCALL
++/**
++ * lsm_bpf_map_alloc - allocate a composite bpf_map blob
++ * @map: the bpf_map that needs a blob
++ *
++ * Allocate the bpf_map blob for all the modules
++ *
++ * Returns 0, or -ENOMEM if memory can't be allocated.
++ */
++static int lsm_bpf_map_alloc(struct bpf_map *map)
 +{
-+	/*
-+	 * This is a ruleset where rename/create/delete rights are allowed
-+	 * anywhere under the mount, and so still applies after path gets
-+	 * disconnected.  However the only read right is given to the file
-+	 * directly, and therefore the file is no longer readable after the
-+	 * path to it being disconnected.
-+	 */
-+	// clang-format off
-+	struct rule layer1[] = {
-+		{
-+			.path = dir_s2d2,
-+			.access = LANDLOCK_ACCESS_FS_REFER |
-+					LANDLOCK_ACCESS_FS_MAKE_DIR |
-+					LANDLOCK_ACCESS_FS_REMOVE_DIR |
-+					LANDLOCK_ACCESS_FS_MAKE_REG |
-+					LANDLOCK_ACCESS_FS_REMOVE_FILE
-+		},
-+		{
-+			.path = file1_s1d3,
-+			.access = LANDLOCK_ACCESS_FS_READ_FILE,
-+		},
-+		{
-+			.path = TMP_DIR "/s1d1/s1d2/s1d3_2",
-+			.access = LANDLOCK_ACCESS_FS_READ_FILE,
-+		},
-+		{}
-+	};
-+	// clang-format on
-+
-+	int ruleset_fd, bind_s1d3_fd, res;
-+
-+	if (!has_read_rule_on_other_d) {
-+		layer1[2].path = NULL;
-+		layer1[2].access = 0;
-+	}
-+
-+	ASSERT_EQ(0, mkdir(dir_s4d1, 0755))
-+	{
-+		TH_LOG("Failed to create %s: %s", dir_s4d1, strerror(errno));
-+	}
-+
-+	/* Directory used to move the file into, in order to try to regain read */
-+	ASSERT_EQ(0, mkdir(TMP_DIR "/s1d1/s1d2/s1d3_2", 0755))
-+	{
-+		TH_LOG("Failed to create %s: %s", TMP_DIR "/s1d1/s1d2/s1d3_2",
-+		       strerror(errno));
-+	}
-+
-+	ruleset_fd = create_ruleset(_metadata, ACCESS_ALL, layer1);
-+	ASSERT_LE(0, ruleset_fd);
-+
-+	bind_s1d3_fd = open(bind_dir_s1d3, O_PATH | O_CLOEXEC);
-+	ASSERT_LE(0, bind_s1d3_fd);
-+	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
-+
-+	/* Make disconnected */
-+	ASSERT_EQ(0, rename(dir_s1d3, dir_s4d2))
-+	{
-+		TH_LOG("Failed to rename %s to %s: %s", dir_s1d3, dir_s4d2,
-+		       strerror(errno));
-+	}
-+
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	/* We shouldn't be able to read file1 under disconnected path now */
-+	EXPECT_EQ(EACCES, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
-+
-+	/*
-+	 * But can we circumvent it by moving file1 to a connected path when
-+	 * either we're allowed to read that move destination, or if we have
-+	 * allow rules on the original file, then the move target doesn't even
-+	 * need read rules on itself.
-+	 *
-+	 * This is possible even though the domain check should semantically
-+	 * ensure that any path (?) we can't read can't become readable
-+	 * (through that path) again by a rename?
-+	 */
-+	res = renameat(bind_s1d3_fd, file1_name, AT_FDCWD,
-+		       TMP_DIR "/s2d1/s2d2/s1d3_2/f1");
-+	if (res == 0) {
-+		TH_LOG("Renamed file1 to %s, which should not have been allowed.",
-+		       TMP_DIR "/s2d1/s2d2/s1d3_2/f1");
-+		/* At this point the test has failed, but let's try reading it */
-+		res = test_open(TMP_DIR "/s2d1/s2d2/s1d3_2/f1", O_RDONLY);
-+		if (res != 0) {
-+			TH_LOG("Failed to read file1 after rename: %s",
-+			       strerror(res));
-+		} else {
-+			TH_LOG("file1 is readable after rename!");
-+			ASSERT_TRUE(false);
-+		}
-+		ASSERT_TRUE(false);
-+	}
-+	ASSERT_EQ(-1, res);
-+	EXPECT_EQ(EXDEV, errno);
++	return lsm_blob_alloc(&map->security, blob_sizes.lbs_bpf_map, GFP_KERNEL);
 +}
 +
-+TEST_F_FORK(layout1_bind, path_disconnected_gain_back_rights_1)
++/**
++ * lsm_bpf_prog_alloc - allocate a composite bpf_prog blob
++ * @prog: the bpf_prog that needs a blob
++ *
++ * Allocate the bpf_prog blob for all the modules
++ *
++ * Returns 0, or -ENOMEM if memory can't be allocated.
++ */
++static int lsm_bpf_prog_alloc(struct bpf_prog *prog)
 +{
-+	path_disconnected_gain_back_rights_via_rename(_metadata, false);
++	return lsm_blob_alloc(&prog->aux->security, blob_sizes.lbs_bpf_prog, GFP_KERNEL);
 +}
 +
-+TEST_F_FORK(layout1_bind, path_disconnected_gain_back_rights_2)
++/**
++ * lsm_bpf_token_alloc - allocate a composite bpf_token blob
++ * @token: the bpf_token that needs a blob
++ *
++ * Allocate the bpf_token blob for all the modules
++ *
++ * Returns 0, or -ENOMEM if memory can't be allocated.
++ */
++static int lsm_bpf_token_alloc(struct bpf_token *token)
 +{
-+	path_disconnected_gain_back_rights_via_rename(_metadata, true);
++	return lsm_blob_alloc(&token->security, blob_sizes.lbs_bpf_token, GFP_KERNEL);
++}
++#endif /* CONFIG_BPF_SYSCALL */
++
+ /**
+  * lsm_early_task - during initialization allocate a composite task blob
+  * @task: the task that needs a blob
+@@ -5684,7 +5731,16 @@ int security_bpf_prog(struct bpf_prog *prog)
+ int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
+ 			    struct bpf_token *token, bool kernel)
+ {
+-	return call_int_hook(bpf_map_create, map, attr, token, kernel);
++	int rc = 0;
++
++	rc = lsm_bpf_map_alloc(map);
++	if (unlikely(rc))
++		return rc;
++
++	rc = call_int_hook(bpf_map_create, map, attr, token, kernel);
++	if (unlikely(rc))
++		security_bpf_map_free(map);
++	return rc;
+ }
+ 
+ /**
+@@ -5703,7 +5759,16 @@ int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
+ int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
+ 			   struct bpf_token *token, bool kernel)
+ {
+-	return call_int_hook(bpf_prog_load, prog, attr, token, kernel);
++	int rc = 0;
++
++	rc = lsm_bpf_prog_alloc(prog);
++	if (unlikely(rc))
++		return rc;
++
++	rc = call_int_hook(bpf_prog_load, prog, attr, token, kernel);
++	if (unlikely(rc))
++		security_bpf_prog_free(prog);
++	return rc;
+ }
+ 
+ /**
+@@ -5720,7 +5785,16 @@ int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
+ int security_bpf_token_create(struct bpf_token *token, union bpf_attr *attr,
+ 			      const struct path *path)
+ {
+-	return call_int_hook(bpf_token_create, token, attr, path);
++	int rc = 0;
++
++	rc = lsm_bpf_token_alloc(token);
++	if (unlikely(rc))
++		return rc;
++
++	rc = call_int_hook(bpf_token_create, token, attr, path);
++	if (unlikely(rc))
++		security_bpf_token_free(token);
++	return rc;
+ }
+ 
+ /**
+@@ -5764,6 +5838,8 @@ int security_bpf_token_capable(const struct bpf_token *token, int cap)
+ void security_bpf_map_free(struct bpf_map *map)
+ {
+ 	call_void_hook(bpf_map_free, map);
++	kfree(map->security);
++	map->security = NULL;
+ }
+ 
+ /**
+@@ -5775,6 +5851,8 @@ void security_bpf_map_free(struct bpf_map *map)
+ void security_bpf_prog_free(struct bpf_prog *prog)
+ {
+ 	call_void_hook(bpf_prog_free, prog);
++	kfree(prog->aux->security);
++	prog->aux->security = NULL;
+ }
+ 
+ /**
+@@ -5786,6 +5864,8 @@ void security_bpf_prog_free(struct bpf_prog *prog)
+ void security_bpf_token_free(struct bpf_token *token)
+ {
+ 	call_void_hook(bpf_token_free, token);
++	kfree(token->security);
++	token->security = NULL;
+ }
+ #endif /* CONFIG_BPF_SYSCALL */
+ 
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 595ceb314aeb3..8052fb5fafc4d 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -7038,14 +7038,14 @@ static int bpf_fd_pass(const struct file *file, u32 sid)
+ 
+ 	if (file->f_op == &bpf_map_fops) {
+ 		map = file->private_data;
+-		bpfsec = map->security;
++		bpfsec = selinux_bpf_map_security(map);
+ 		ret = avc_has_perm(sid, bpfsec->sid, SECCLASS_BPF,
+ 				   bpf_map_fmode_to_av(file->f_mode), NULL);
+ 		if (ret)
+ 			return ret;
+ 	} else if (file->f_op == &bpf_prog_fops) {
+ 		prog = file->private_data;
+-		bpfsec = prog->aux->security;
++		bpfsec = selinux_bpf_prog_security(prog);
+ 		ret = avc_has_perm(sid, bpfsec->sid, SECCLASS_BPF,
+ 				   BPF__PROG_RUN, NULL);
+ 		if (ret)
+@@ -7059,7 +7059,7 @@ static int selinux_bpf_map(struct bpf_map *map, fmode_t fmode)
+ 	u32 sid = current_sid();
+ 	struct bpf_security_struct *bpfsec;
+ 
+-	bpfsec = map->security;
++	bpfsec = selinux_bpf_map_security(map);
+ 	return avc_has_perm(sid, bpfsec->sid, SECCLASS_BPF,
+ 			    bpf_map_fmode_to_av(fmode), NULL);
+ }
+@@ -7069,7 +7069,7 @@ static int selinux_bpf_prog(struct bpf_prog *prog)
+ 	u32 sid = current_sid();
+ 	struct bpf_security_struct *bpfsec;
+ 
+-	bpfsec = prog->aux->security;
++	bpfsec = selinux_bpf_prog_security(prog);
+ 	return avc_has_perm(sid, bpfsec->sid, SECCLASS_BPF,
+ 			    BPF__PROG_RUN, NULL);
+ }
+@@ -7079,69 +7079,33 @@ static int selinux_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
+ {
+ 	struct bpf_security_struct *bpfsec;
+ 
+-	bpfsec = kzalloc(sizeof(*bpfsec), GFP_KERNEL);
+-	if (!bpfsec)
+-		return -ENOMEM;
+-
++	bpfsec = selinux_bpf_map_security(map);
+ 	bpfsec->sid = current_sid();
+-	map->security = bpfsec;
+ 
+ 	return 0;
+ }
+ 
+-static void selinux_bpf_map_free(struct bpf_map *map)
+-{
+-	struct bpf_security_struct *bpfsec = map->security;
+-
+-	map->security = NULL;
+-	kfree(bpfsec);
+-}
+-
+ static int selinux_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
+ 				 struct bpf_token *token, bool kernel)
+ {
+ 	struct bpf_security_struct *bpfsec;
+ 
+-	bpfsec = kzalloc(sizeof(*bpfsec), GFP_KERNEL);
+-	if (!bpfsec)
+-		return -ENOMEM;
+-
++	bpfsec = selinux_bpf_prog_security(prog);
+ 	bpfsec->sid = current_sid();
+-	prog->aux->security = bpfsec;
+ 
+ 	return 0;
+ }
+ 
+-static void selinux_bpf_prog_free(struct bpf_prog *prog)
+-{
+-	struct bpf_security_struct *bpfsec = prog->aux->security;
+-
+-	prog->aux->security = NULL;
+-	kfree(bpfsec);
+-}
+-
+ static int selinux_bpf_token_create(struct bpf_token *token, union bpf_attr *attr,
+ 				    const struct path *path)
+ {
+ 	struct bpf_security_struct *bpfsec;
+ 
+-	bpfsec = kzalloc(sizeof(*bpfsec), GFP_KERNEL);
+-	if (!bpfsec)
+-		return -ENOMEM;
+-
++	bpfsec = selinux_bpf_token_security(token);
+ 	bpfsec->sid = current_sid();
+-	token->security = bpfsec;
+ 
+ 	return 0;
+ }
+-
+-static void selinux_bpf_token_free(struct bpf_token *token)
+-{
+-	struct bpf_security_struct *bpfsec = token->security;
+-
+-	token->security = NULL;
+-	kfree(bpfsec);
+-}
+ #endif
+ 
+ struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
+@@ -7159,6 +7123,9 @@ struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
+ 	.lbs_xattr_count = SELINUX_INODE_INIT_XATTRS,
+ 	.lbs_tun_dev = sizeof(struct tun_security_struct),
+ 	.lbs_ib = sizeof(struct ib_security_struct),
++	.lbs_bpf_map = sizeof(struct bpf_security_struct),
++	.lbs_bpf_prog = sizeof(struct bpf_security_struct),
++	.lbs_bpf_token = sizeof(struct bpf_security_struct),
+ };
+ 
+ #ifdef CONFIG_PERF_EVENTS
+@@ -7510,9 +7477,6 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(bpf, selinux_bpf),
+ 	LSM_HOOK_INIT(bpf_map, selinux_bpf_map),
+ 	LSM_HOOK_INIT(bpf_prog, selinux_bpf_prog),
+-	LSM_HOOK_INIT(bpf_map_free, selinux_bpf_map_free),
+-	LSM_HOOK_INIT(bpf_prog_free, selinux_bpf_prog_free),
+-	LSM_HOOK_INIT(bpf_token_free, selinux_bpf_token_free),
+ #endif
+ 
+ #ifdef CONFIG_PERF_EVENTS
+diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+index 6ee7dc4dfd6e0..9f935ed9a761f 100644
+--- a/security/selinux/include/objsec.h
++++ b/security/selinux/include/objsec.h
+@@ -26,6 +26,7 @@
+ #include <linux/lsm_hooks.h>
+ #include <linux/msg.h>
+ #include <net/net_namespace.h>
++#include <linux/bpf.h>
+ #include "flask.h"
+ #include "avc.h"
+ 
+@@ -237,4 +238,20 @@ selinux_perf_event(void *perf_event)
+ 	return perf_event + selinux_blob_sizes.lbs_perf_event;
+ }
+ 
++#ifdef CONFIG_BPF_SYSCALL
++static inline struct bpf_security_struct *selinux_bpf_map_security(struct bpf_map *map)
++{
++	return map->security + selinux_blob_sizes.lbs_bpf_map;
 +}
 +
- /*
-  * Test that linkat(2) with disconnected paths works under Landlock. This
-  * test moves s1d3 to s4d1.
++static inline struct bpf_security_struct *selinux_bpf_prog_security(struct bpf_prog *prog)
++{
++	return prog->aux->security + selinux_blob_sizes.lbs_bpf_prog;
++}
++
++static inline struct bpf_security_struct *selinux_bpf_token_security(struct bpf_token *token)
++{
++	return token->security + selinux_blob_sizes.lbs_bpf_token;
++}
++#endif /* CONFIG_BPF_SYSCALL */
+ #endif /* _SELINUX_OBJSEC_H_ */
+-- 
+2.48.1
 
-The behavior is as hypothesized above:
-
-	root@b8f2ef644787 /t/landlock# ./fs_test -t path_disconnected_gain_back_rights_1 -t path_disconnected_gain_back_rights_2
-	TAP version 13
-	1..2
-	# Starting 2 tests from 1 test cases.
-	#  RUN           layout1_bind.path_disconnected_gain_back_rights_1 ...
-	# fs_test.c:5188:path_disconnected_gain_back_rights_1:Renamed file1 to tmp/s2d1/s2d2/s1d3_2/f1, which should not have been allowed.
-	# fs_test.c:5196:path_disconnected_gain_back_rights_1:file1 is readable after rename!
-	# fs_test.c:5197:path_disconnected_gain_back_rights_1:Expected 0 (0) != false (0)
-	# path_disconnected_gain_back_rights_1: Test terminated by assertion
-	#          FAIL  layout1_bind.path_disconnected_gain_back_rights_1
-	not ok 1 layout1_bind.path_disconnected_gain_back_rights_1
-	#  RUN           layout1_bind.path_disconnected_gain_back_rights_2 ...
-	# fs_test.c:5188:path_disconnected_gain_back_rights_2:Renamed file1 to tmp/s2d1/s2d2/s1d3_2/f1, which should not have been allowed.
-	# fs_test.c:5196:path_disconnected_gain_back_rights_2:file1 is readable after rename!
-	# fs_test.c:5197:path_disconnected_gain_back_rights_2:Expected 0 (0) != false (0)
-	# path_disconnected_gain_back_rights_2: Test terminated by assertion
-	#          FAIL  layout1_bind.path_disconnected_gain_back_rights_2
-	not ok 2 layout1_bind.path_disconnected_gain_back_rights_2
-	# FAILED: 0 / 2 tests passed.
-	# Totals: pass:0 fail:2 xfail:0 xpass:0 skip:0 error:0
-
-Would it be worth it to have the domain check take into account this edge
-case?  (But on the other hand, one could argue that if rights are granted
-directly to a file, then the policy author intended for access to be
-allowed, but in which case shouldn't access, even if through disconnected
-path, be allowed?)
-
-Best,
-Tingmao
