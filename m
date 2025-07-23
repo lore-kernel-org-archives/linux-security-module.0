@@ -1,156 +1,292 @@
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E1217C91;
-	Wed, 23 Jul 2025 17:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042A62376F2
+	for <linux-security-module@vger.kernel.org>; Wed, 23 Jul 2025 21:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753290677; cv=none; b=lqnvzJuANM3Yf+kVT0RK4pYmfw734bJeqGIXs9H0H08n5NgthmJXPfOuKotzG6EjTrHfumgwJ+o+XT5/3clNcBGxcBrFaX0BlYuXtJjnWJ9eVJyqFRs/oKynrWCdfxEawfBUZNU7g4yIZ09kibMC4h4xl1rAT5eEHvjSKm5RgyQ=
+	t=1753304907; cv=none; b=nJhZpGhsSrsvSTlxYY/VkZc30fQO0OKUGmdMNelXrYk37lcWtAhUT2njiNccooqxmBioy3NfAm/3RzW4QQLxvTih090QZtRTpBJ78BPzQfYKNbpg3i0ZngJeWoI8nDJmjNfdShQBoL0jjmhhJDzr7kJ3dBFBXmQTBE2SXYTS0/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753290677; c=relaxed/simple;
-	bh=FD9CM3pcDkPBmmVDRc3/f9Dd6klbjtJVYxz9qItX36Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=P4iXo8xvbPgeSg7vx5xXM3sJuL8TQaNY3Jkd/0dPW/yDoilEZDSNE969p5AU9e0JrS6vVtn0dMKdJoX2YQsvGMLSDpMKhMZ3kzqtPxKwBKHtatfHRDA5PK9A4MkqHBz/UwBwlf7ronoJkw+sc7oqjgioxTcv0yudve6L/DpIa5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=YY/QrJxF; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+	s=arc-20240116; t=1753304907; c=relaxed/simple;
+	bh=n+0HSs87fesXbREkl+dtrCopS3LC+zQD7e1RCVVR3QQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CrkrHpeXb0/1WIQQ4wIfmisUOqSpg6YT9coNpjlp0Z1wXmz//YPUCInYQ/SDX6sliDeZpAb3yoz8KrPzu2X07Ph4pc4h3nGeqPphBydnTzef+1rnu201sWaoUVrHlR6c7gtQP7fFpGxYQNa61n958ux+BWRU/STJtetNL5vc61U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mbCGSZTn; arc=none smtp.client-ip=84.16.66.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="YY/QrJxF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1753290674;
-	bh=FD9CM3pcDkPBmmVDRc3/f9Dd6klbjtJVYxz9qItX36Q=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=YY/QrJxFK7Y4Qsb9K0hlmweu7Eax4MrSLEm1b+I48J5OafRNKnaiLtDQ9NeH8tGEk
-	 cl79/Irya3fd0a7z+wHaP+lUhiKjK9ij7xlS0PjIZQjz7tifTiSYSEAx30wFoPHArf
-	 jI7oBY1B0Za2byIG8ikJI+pCB0S13P0VSPj7SaqE=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 520681C003D;
-	Wed, 23 Jul 2025 13:11:14 -0400 (EDT)
-Message-ID: <c6ed224b9fb5db2cfac2620c75a49fa22cbaf617.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 08/13] bpf: Implement signature verification for BPF
- programs
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: KP Singh <kpsingh@kernel.org>, bpf@vger.kernel.org, 
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mbCGSZTn"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bnRQH5dB9zH39;
+	Wed, 23 Jul 2025 23:01:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1753304503;
+	bh=YMBV64h4usnoU4LNYkOsA6ceCQPl0nWBOgtg+p6IAS4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mbCGSZTncRc+BI2sYHaiBkv/zmtwpKLe0TASKjh9X2cVkzjCG9OnOpu57igaudzzV
+	 LJXSRzU14qLT8nI+4XxXybRv141mmV1jmMoxZkNq2POt+YDF5MKuIXsj3vKx4xBhFj
+	 WGLL3L9FUcY/PcfGsHsfKSPrqePb7CTtxLPIWn4I=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bnRQG5mwmz3hd;
+	Wed, 23 Jul 2025 23:01:42 +0200 (CEST)
+Date: Wed, 23 Jul 2025 23:01:42 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jann Horn <jannh@google.com>, 
+	John Johansen <john.johansen@canonical.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Ben Scarlato <akhna@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Daniel Burgener <dburgener@linux.microsoft.com>, 
+	Jeff Xu <jeffxu@google.com>, NeilBrown <neil@brown.name>, Paul Moore <paul@paul-moore.com>, 
+	Ryan Sullivan <rysulliv@redhat.com>, Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
 	linux-security-module@vger.kernel.org
-Cc: bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
-Date: Wed, 23 Jul 2025 13:11:13 -0400
-In-Reply-To: <20250721211958.1881379-9-kpsingh@kernel.org>
-References: <20250721211958.1881379-1-kpsingh@kernel.org>
-	 <20250721211958.1881379-9-kpsingh@kernel.org>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+Subject: Re: [PATCH v3 2/4] landlock: Fix handling of disconnected directories
+Message-ID: <20250723.vouso1Kievao@digikod.net>
+References: <20250719104204.545188-1-mic@digikod.net>
+ <20250719104204.545188-3-mic@digikod.net>
+ <18425339-1f4b-4d98-8400-1decef26eda7@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <18425339-1f4b-4d98-8400-1decef26eda7@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On Mon, 2025-07-21 at 23:19 +0200, KP Singh wrote:
-[...]
+On Tue, Jul 22, 2025 at 07:04:02PM +0100, Tingmao Wang wrote:
+> On 7/19/25 11:42, Mickaël Salaün wrote:
+> > [...]
+> > @@ -784,12 +787,18 @@ static bool is_access_to_paths_allowed(
+> >  	if (WARN_ON_ONCE(!layer_masks_parent1))
+> >  		return false;
+> >  
+> > -	allowed_parent1 = is_layer_masks_allowed(layer_masks_parent1);
+> > -
+> >  	if (unlikely(layer_masks_parent2)) {
+> >  		if (WARN_ON_ONCE(!dentry_child1))
+> >  			return false;
+> >  
+> > +		/*
+> > +		 * Creates a backup of the initial layer masks to be able to restore
+> > +		 * them if we find out that we were walking a disconnected directory,
+> > +		 * which would make the collected access rights inconsistent (cf.
+> > +		 * reset_to_mount_root).
+> > +		 */
+> 
+> This comment is duplicate with the one below, is this intentional?
+> 
+> > [...]
+> 
+> On the other hand, I'm still a bit uncertain about the domain check
+> semantics.  While it would not cause a rename to be allowed if it is
+> otherwise not allowed by any rules on or above the mountpoint, this gets a
+> bit weird if we have a situation where renames are allowed on the
+> mountpoint or everywhere, but not read/writes, however read/writes are
+> allowed directly on a file, but the dir containing that file gets
+> disconnected so the sandboxed application can't read or write to it.
+> (Maybe someone would set up such a policy where renames are allowed,
+> expecting Landlock to always prevent renames where additional permissions
+> would be exposed?)
+> 
+> In the above situation, if the file is then moved to a connected
+> directory, it will become readable/writable again.
 
-> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> index fd3b895ebebf..b42c3740e053 100644
-> --- a/include/uapi/linux/bpf.h
-> +++ b/include/uapi/linux/bpf.h
-> @@ -1607,6 +1607,16 @@ union bpf_attr {
-> =C2=A0		 * continuous.
-> =C2=A0		 */
-> =C2=A0		__u32		fd_array_cnt;
-> +		/* Pointer to a buffer containing the signature of
-> the BPF
-> +		 * program.
-> +		 */
-> +		__aligned_u64=C2=A0=C2=A0 signature;
-> +		/* Size of the signature buffer in bytes. */
-> +		__u32=C2=A0		signature_size;
-> +		/* ID of the kernel keyring to be used for signature
-> +		 * verification.
-> +		 */
-> +		__u32=C2=A0		keyring_id;
+We can generalize this issue to not only the end file but any component
+of the path: disconnected directories.  In fact, the main issue is the
+potential inconsistency of access checks over time (e.g. between two
+renames).  This could be exploited to bypass the security checks done
+for FS_REFER.
 
-This should become __s32 to match the value passed in to
-bpf_lookup_user_key().
+I see two solutions:
 
-[...]
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index 22fda92ab7ce..111f91a99166 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -2779,8 +2779,41 @@ static bool is_perfmon_prog_type(enum
-> bpf_prog_type prog_type)
-> =C2=A0	}
-> =C2=A0}
-> =C2=A0
-> +static noinline int bpf_prog_verify_signature(struct bpf_prog *prog,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 union bpf_attr *attr,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool is_kernel)
+1. *Always* walk down to the IS_ROOT directory, and then jump to the
+   mount point.  This makes it possible to have consistent access checks
+   for renames and open/use.  The first downside is that that would
+   change the current behavior for bind mounts that could get more
+   access rights (if the policy explicitly sets rights for the hidden
+   directories).  The second downside is that we'll do more walk.
+
+2. Return -EACCES (or -ENOENT) for actions involving disconnected
+   directories, or renames of disconnected opened files.  This second
+   solution is simpler and safer but completely disables the use of
+   disconnected directories and the rename of disconnected files for
+   sandboxed processes.
+
+It would be much better to be able to handle opened directories as
+(object) capabilities, but that is not currently possible because of the
+way paths are handled by the VFS and LSM hooks.
+
+Tingmao, Günther, Jann, what do you think?
+
+It looks like AppArmor also denies access to disconnected path in some
+cases, but it tries to reconstruct the path for known internal
+filesystems, and it seems to specifically handle the case of chroot.  I
+don't know when PATH_CONNECT_PATH is set though.
+
+John, could you please clarify how disconnected directories and files
+are handled by AppArmor?
+
+> 
+> Here is an example test, using the layout1_bind fixture for flexibility
+> for now (and also because I needed to just go to bed yesterday lol) (but
+> this would probably be better written as an additional
+> layout5_disconnected_branch variant).
+> 
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index 21dd95aaf5e4..2274f165d933 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -5100,6 +5100,118 @@ TEST_F_FORK(layout1_bind, path_disconnected_rename)
+>  	EXPECT_EQ(0, test_open(file1_s1d3, O_RDONLY));
+>  }
+>  
+> +static void
+> +path_disconnected_gain_back_rights_via_rename(struct __test_metadata *_metadata,
+> +					      bool has_read_rule_on_other_d)
 > +{
-> +	bpfptr_t usig =3D make_bpfptr(attr->signature, is_kernel);
-> +	struct bpf_dynptr_kern sig_ptr, insns_ptr;
-> +	struct bpf_key *key =3D NULL;
-> +	void *sig;
-> +	int err =3D 0;
+> +	/*
+> +	 * This is a ruleset where rename/create/delete rights are allowed
+> +	 * anywhere under the mount, and so still applies after path gets
+> +	 * disconnected.  However the only read right is given to the file
+> +	 * directly, and therefore the file is no longer readable after the
+> +	 * path to it being disconnected.
+> +	 */
+> +	// clang-format off
+> +	struct rule layer1[] = {
+> +		{
+> +			.path = dir_s2d2,
+> +			.access = LANDLOCK_ACCESS_FS_REFER |
+> +					LANDLOCK_ACCESS_FS_MAKE_DIR |
+> +					LANDLOCK_ACCESS_FS_REMOVE_DIR |
+> +					LANDLOCK_ACCESS_FS_MAKE_REG |
+> +					LANDLOCK_ACCESS_FS_REMOVE_FILE
+> +		},
+> +		{
+> +			.path = file1_s1d3,
+> +			.access = LANDLOCK_ACCESS_FS_READ_FILE,
+> +		},
+> +		{
+> +			.path = TMP_DIR "/s1d1/s1d2/s1d3_2",
+> +			.access = LANDLOCK_ACCESS_FS_READ_FILE,
+> +		},
+> +		{}
+> +	};
+> +	// clang-format on
 > +
-> +	key =3D bpf_lookup_user_key(attr->keyring_id, 0);
-> +	if (!key)
-> +		return -ENOKEY;
-
-This still only checks against user keyrings and not system trusted
-keyrings as was pointed out in v1.  Since user keyrings are negative
-and user key serials begin at 3 or more, there's no overlap with the
-system keyring specifiers and you can just overload attr->keyring_id,
-like the below.
-
-Regards,
-
-James
-
----
-
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 111f91a99166..10fd3ea5d91f 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -13,6 +13,7 @@
- #include <linux/slab.h>
- #include <linux/sched/signal.h>
- #include <linux/vmalloc.h>
-+#include <linux/verification.h>
- #include <linux/mmzone.h>
- #include <linux/anon_inodes.h>
- #include <linux/fdtable.h>
-@@ -2789,7 +2790,10 @@ static noinline int bpf_prog_verify_signature(struct=
- bpf_prog *prog,
- 	void *sig;
- 	int err =3D 0;
-=20
--	key =3D bpf_lookup_user_key(attr->keyring_id, 0);
-+	if (system_keyring_id_check(attr->keyring_id) =3D=3D 0)
-+		key =3D bpf_lookup_system_key(attr->keyring_id);
-+	else
-+		key =3D bpf_lookup_user_key(attr->keyring_id, 0);
- 	if (!key)
- 		return -ENOKEY;
-=20
-
-
-
-
-
-
+> +	int ruleset_fd, bind_s1d3_fd, res;
+> +
+> +	if (!has_read_rule_on_other_d) {
+> +		layer1[2].path = NULL;
+> +		layer1[2].access = 0;
+> +	}
+> +
+> +	ASSERT_EQ(0, mkdir(dir_s4d1, 0755))
+> +	{
+> +		TH_LOG("Failed to create %s: %s", dir_s4d1, strerror(errno));
+> +	}
+> +
+> +	/* Directory used to move the file into, in order to try to regain read */
+> +	ASSERT_EQ(0, mkdir(TMP_DIR "/s1d1/s1d2/s1d3_2", 0755))
+> +	{
+> +		TH_LOG("Failed to create %s: %s", TMP_DIR "/s1d1/s1d2/s1d3_2",
+> +		       strerror(errno));
+> +	}
+> +
+> +	ruleset_fd = create_ruleset(_metadata, ACCESS_ALL, layer1);
+> +	ASSERT_LE(0, ruleset_fd);
+> +
+> +	bind_s1d3_fd = open(bind_dir_s1d3, O_PATH | O_CLOEXEC);
+> +	ASSERT_LE(0, bind_s1d3_fd);
+> +	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
+> +
+> +	/* Make disconnected */
+> +	ASSERT_EQ(0, rename(dir_s1d3, dir_s4d2))
+> +	{
+> +		TH_LOG("Failed to rename %s to %s: %s", dir_s1d3, dir_s4d2,
+> +		       strerror(errno));
+> +	}
+> +
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	EXPECT_EQ(0, close(ruleset_fd));
+> +
+> +	/* We shouldn't be able to read file1 under disconnected path now */
+> +	EXPECT_EQ(EACCES, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
+> +
+> +	/*
+> +	 * But can we circumvent it by moving file1 to a connected path when
+> +	 * either we're allowed to read that move destination, or if we have
+> +	 * allow rules on the original file, then the move target doesn't even
+> +	 * need read rules on itself.
+> +	 *
+> +	 * This is possible even though the domain check should semantically
+> +	 * ensure that any path (?) we can't read can't become readable
+> +	 * (through that path) again by a rename?
+> +	 */
+> +	res = renameat(bind_s1d3_fd, file1_name, AT_FDCWD,
+> +		       TMP_DIR "/s2d1/s2d2/s1d3_2/f1");
+> +	if (res == 0) {
+> +		TH_LOG("Renamed file1 to %s, which should not have been allowed.",
+> +		       TMP_DIR "/s2d1/s2d2/s1d3_2/f1");
+> +		/* At this point the test has failed, but let's try reading it */
+> +		res = test_open(TMP_DIR "/s2d1/s2d2/s1d3_2/f1", O_RDONLY);
+> +		if (res != 0) {
+> +			TH_LOG("Failed to read file1 after rename: %s",
+> +			       strerror(res));
+> +		} else {
+> +			TH_LOG("file1 is readable after rename!");
+> +			ASSERT_TRUE(false);
+> +		}
+> +		ASSERT_TRUE(false);
+> +	}
+> +	ASSERT_EQ(-1, res);
+> +	EXPECT_EQ(EXDEV, errno);
+> +}
+> +
+> +TEST_F_FORK(layout1_bind, path_disconnected_gain_back_rights_1)
+> +{
+> +	path_disconnected_gain_back_rights_via_rename(_metadata, false);
+> +}
+> +
+> +TEST_F_FORK(layout1_bind, path_disconnected_gain_back_rights_2)
+> +{
+> +	path_disconnected_gain_back_rights_via_rename(_metadata, true);
+> +}
+> +
+>  /*
+>   * Test that linkat(2) with disconnected paths works under Landlock. This
+>   * test moves s1d3 to s4d1.
+> 
+> The behavior is as hypothesized above:
+> 
+> 	root@b8f2ef644787 /t/landlock# ./fs_test -t path_disconnected_gain_back_rights_1 -t path_disconnected_gain_back_rights_2
+> 	TAP version 13
+> 	1..2
+> 	# Starting 2 tests from 1 test cases.
+> 	#  RUN           layout1_bind.path_disconnected_gain_back_rights_1 ...
+> 	# fs_test.c:5188:path_disconnected_gain_back_rights_1:Renamed file1 to tmp/s2d1/s2d2/s1d3_2/f1, which should not have been allowed.
+> 	# fs_test.c:5196:path_disconnected_gain_back_rights_1:file1 is readable after rename!
+> 	# fs_test.c:5197:path_disconnected_gain_back_rights_1:Expected 0 (0) != false (0)
+> 	# path_disconnected_gain_back_rights_1: Test terminated by assertion
+> 	#          FAIL  layout1_bind.path_disconnected_gain_back_rights_1
+> 	not ok 1 layout1_bind.path_disconnected_gain_back_rights_1
+> 	#  RUN           layout1_bind.path_disconnected_gain_back_rights_2 ...
+> 	# fs_test.c:5188:path_disconnected_gain_back_rights_2:Renamed file1 to tmp/s2d1/s2d2/s1d3_2/f1, which should not have been allowed.
+> 	# fs_test.c:5196:path_disconnected_gain_back_rights_2:file1 is readable after rename!
+> 	# fs_test.c:5197:path_disconnected_gain_back_rights_2:Expected 0 (0) != false (0)
+> 	# path_disconnected_gain_back_rights_2: Test terminated by assertion
+> 	#          FAIL  layout1_bind.path_disconnected_gain_back_rights_2
+> 	not ok 2 layout1_bind.path_disconnected_gain_back_rights_2
+> 	# FAILED: 0 / 2 tests passed.
+> 	# Totals: pass:0 fail:2 xfail:0 xpass:0 skip:0 error:0
+> 
+> Would it be worth it to have the domain check take into account this edge
+> case?  (But on the other hand, one could argue that if rights are granted
+> directly to a file, then the policy author intended for access to be
+> allowed, but in which case shouldn't access, even if through disconnected
+> path, be allowed?)
+> 
+> Best,
+> Tingmao
+> 
