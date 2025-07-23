@@ -1,46 +1,46 @@
 Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934871E1DFC;
-	Wed, 23 Jul 2025 16:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E1217C91;
+	Wed, 23 Jul 2025 17:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753289226; cv=none; b=We18g8A6TNrmsJi34JOqQB5hVUFzY5DEPTjD82mFKkx7qVxA+i5xX1qN0MS/i/sNvm4YjF0tc5OhLmx5+8nZzTd6C5vIFm2fpxvHosRrnc2FitFmytaAepE3RZ+4BcmzPulQ6syNDka5lXxyvoMbBWR5O6dE4ojvTW8O+CUB9i4=
+	t=1753290677; cv=none; b=lqnvzJuANM3Yf+kVT0RK4pYmfw734bJeqGIXs9H0H08n5NgthmJXPfOuKotzG6EjTrHfumgwJ+o+XT5/3clNcBGxcBrFaX0BlYuXtJjnWJ9eVJyqFRs/oKynrWCdfxEawfBUZNU7g4yIZ09kibMC4h4xl1rAT5eEHvjSKm5RgyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753289226; c=relaxed/simple;
-	bh=OebRE4JHXQgfMJk70wB4++gIFX560orEBEkSh1xYJlg=;
+	s=arc-20240116; t=1753290677; c=relaxed/simple;
+	bh=FD9CM3pcDkPBmmVDRc3/f9Dd6klbjtJVYxz9qItX36Q=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bzMt0+jrUtgOKeoKo2wviXhXDwKmjVBRjC/cqA1FjcaA0f3Cm85arihzb+5Im+m/Yt4hp4o6rewzSN0U0QNnPXQZwjZUUH9Zw99ezTDOk6sGhx6NgxYRjhaH0W/wqbFDbysp155n7oZGW32/F27lGGRF7eE9nNFUwjZrAq1A6V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Uy6aU5Hk; arc=none smtp.client-ip=198.37.111.173
+	 Content-Type:MIME-Version; b=P4iXo8xvbPgeSg7vx5xXM3sJuL8TQaNY3Jkd/0dPW/yDoilEZDSNE969p5AU9e0JrS6vVtn0dMKdJoX2YQsvGMLSDpMKhMZ3kzqtPxKwBKHtatfHRDA5PK9A4MkqHBz/UwBwlf7ronoJkw+sc7oqjgioxTcv0yudve6L/DpIa5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=YY/QrJxF; arc=none smtp.client-ip=198.37.111.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Uy6aU5Hk"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="YY/QrJxF"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1753289223;
-	bh=OebRE4JHXQgfMJk70wB4++gIFX560orEBEkSh1xYJlg=;
+	d=hansenpartnership.com; s=20151216; t=1753290674;
+	bh=FD9CM3pcDkPBmmVDRc3/f9Dd6klbjtJVYxz9qItX36Q=;
 	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=Uy6aU5HkL8Ap+doTlmZhFZqwzKv9HgYfx4GcYH9LQ378ulXdJSedszEeVsaT8yOQd
-	 HlybcNzuHNPqO+1S44ySsyWeJuc4YWzdovyYjnl+bTYQxflJxwhY8AXLoeVLlBMPTo
-	 TAtGBn4qgQfMhnYfRu2Pj4lyX5KrdXxDyQ/5KeRA=
+	b=YY/QrJxFK7Y4Qsb9K0hlmweu7Eax4MrSLEm1b+I48J5OafRNKnaiLtDQ9NeH8tGEk
+	 cl79/Irya3fd0a7z+wHaP+lUhiKjK9ij7xlS0PjIZQjz7tifTiSYSEAx30wFoPHArf
+	 jI7oBY1B0Za2byIG8ikJI+pCB0S13P0VSPj7SaqE=
 Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id F2D8A1C007E;
-	Wed, 23 Jul 2025 12:47:02 -0400 (EDT)
-Message-ID: <9809376005476a93762a33028c35aa611af965e0.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 07/13] bpf: Move the signature kfuncs to helpers.c
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 520681C003D;
+	Wed, 23 Jul 2025 13:11:14 -0400 (EDT)
+Message-ID: <c6ed224b9fb5db2cfac2620c75a49fa22cbaf617.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2 08/13] bpf: Implement signature verification for BPF
+ programs
 From: James Bottomley <James.Bottomley@HansenPartnership.com>
 To: KP Singh <kpsingh@kernel.org>, bpf@vger.kernel.org, 
 	linux-security-module@vger.kernel.org
 Cc: bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, Roberto Sassu
-	 <roberto.sassu@huawei.com>
-Date: Wed, 23 Jul 2025 12:47:02 -0400
-In-Reply-To: <20250721211958.1881379-8-kpsingh@kernel.org>
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
+Date: Wed, 23 Jul 2025 13:11:13 -0400
+In-Reply-To: <20250721211958.1881379-9-kpsingh@kernel.org>
 References: <20250721211958.1881379-1-kpsingh@kernel.org>
-	 <20250721211958.1881379-8-kpsingh@kernel.org>
+	 <20250721211958.1881379-9-kpsingh@kernel.org>
 Autocrypt: addr=James.Bottomley@HansenPartnership.com;
  prefer-encrypt=mutual;
  keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNElecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHURfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvdHRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmBLmY0FCRs1hL0ACgkQgUrkfCFIVNaEiQgAg18F4G7PGWQ68xqnIrccke7Reh5thjUz6kQIii6Dh64BDW6/UvXn20UxK2uSs/0TBLO81k1mV4c6rNE+H8b7IEjieGR9frBsp/+Q01JpToJfzzMUY7ZTDV1IXQZ+AY9L7vRzyimnJHx0Ba4JTlAyHB+Ly5i4Ab2+uZcnNfBXquWrG3oPWz+qPK88LJLya5Jxse1m1QT6R/isDuPivBzntLOooxPk+Cwf5sFAAJND+idTAzWzslexr9j7rtQ1UW6FjO4CvK9yVNz7dgG6FvEZl6J/HOr1rivtGgpCZTBzKNF8jg034n49zGfKkkzWLuXbPUOp3/oGfsKv8pnEu1c2GbQpSmFtZXMgQm90dG9tbGV5IDxqZWpiQGxpbnV4LnZuZXQuaWJtLmNvbT6JAVYEEwEIAEACGwMHCwkIBwMCAQYVC
@@ -62,24 +62,95 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Mon, 2025-07-21 at 23:19 +0200, KP Singh wrote:
-> No functional changes, except for the addition of the headers for the
-> kfuncs so that they can be used for signature verification.
+[...]
 
-Not really anything to do with this code, but looking at the whole of
-the keyrings handing, it does seem to be a bit pointlessly redundant.=20
-There's actually no need for the
+> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> index fd3b895ebebf..b42c3740e053 100644
+> --- a/include/uapi/linux/bpf.h
+> +++ b/include/uapi/linux/bpf.h
+> @@ -1607,6 +1607,16 @@ union bpf_attr {
+> =C2=A0		 * continuous.
+> =C2=A0		 */
+> =C2=A0		__u32		fd_array_cnt;
+> +		/* Pointer to a buffer containing the signature of
+> the BPF
+> +		 * program.
+> +		 */
+> +		__aligned_u64=C2=A0=C2=A0 signature;
+> +		/* Size of the signature buffer in bytes. */
+> +		__u32=C2=A0		signature_size;
+> +		/* ID of the kernel keyring to be used for signature
+> +		 * verification.
+> +		 */
+> +		__u32=C2=A0		keyring_id;
 
-bool has_ref;
+This should become __s32 to match the value passed in to
+bpf_lookup_user_key().
 
-in struct bpf_key because there's already an exported macro that can
-tell you that based on struct key *
-(verification.h:system_id_keyring_check), so if you replaced that, you
-could drop has_ref and then, I think you could eliminate the pointer
-allocation as well meaning bpf_key simply becomes an alias for struct
-key ... it should simplify the code quite a lot.  I can put a patch set
-together and see what it looks like.
+[...]
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index 22fda92ab7ce..111f91a99166 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -2779,8 +2779,41 @@ static bool is_perfmon_prog_type(enum
+> bpf_prog_type prog_type)
+> =C2=A0	}
+> =C2=A0}
+> =C2=A0
+> +static noinline int bpf_prog_verify_signature(struct bpf_prog *prog,
+> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 union bpf_attr *attr,
+> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool is_kernel)
+> +{
+> +	bpfptr_t usig =3D make_bpfptr(attr->signature, is_kernel);
+> +	struct bpf_dynptr_kern sig_ptr, insns_ptr;
+> +	struct bpf_key *key =3D NULL;
+> +	void *sig;
+> +	int err =3D 0;
+> +
+> +	key =3D bpf_lookup_user_key(attr->keyring_id, 0);
+> +	if (!key)
+> +		return -ENOKEY;
+
+This still only checks against user keyrings and not system trusted
+keyrings as was pointed out in v1.  Since user keyrings are negative
+and user key serials begin at 3 or more, there's no overlap with the
+system keyring specifiers and you can just overload attr->keyring_id,
+like the below.
 
 Regards,
 
 James
+
+---
+
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 111f91a99166..10fd3ea5d91f 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -13,6 +13,7 @@
+ #include <linux/slab.h>
+ #include <linux/sched/signal.h>
+ #include <linux/vmalloc.h>
++#include <linux/verification.h>
+ #include <linux/mmzone.h>
+ #include <linux/anon_inodes.h>
+ #include <linux/fdtable.h>
+@@ -2789,7 +2790,10 @@ static noinline int bpf_prog_verify_signature(struct=
+ bpf_prog *prog,
+ 	void *sig;
+ 	int err =3D 0;
+=20
+-	key =3D bpf_lookup_user_key(attr->keyring_id, 0);
++	if (system_keyring_id_check(attr->keyring_id) =3D=3D 0)
++		key =3D bpf_lookup_system_key(attr->keyring_id);
++	else
++		key =3D bpf_lookup_user_key(attr->keyring_id, 0);
+ 	if (!key)
+ 		return -ENOKEY;
+=20
+
+
+
+
+
 
