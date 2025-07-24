@@ -1,37 +1,37 @@
 Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62022D5C6A
-	for <linux-security-module@vger.kernel.org>; Thu, 24 Jul 2025 13:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B593F2D5412
+	for <linux-security-module@vger.kernel.org>; Thu, 24 Jul 2025 13:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753362634; cv=none; b=hPxLkweAvjOk7Zon7ysSeWV5PVQkc9xUzOmIV3FPabUZarkEw5lZ1OcKpo4bUNZtPLK1MzeLFfcUTjc9b0C0Q0dmDuU4vHQF6HXt+PyCjd6IC1/4nOl54f+C8Nht+FfZvXr+C/SbOn5hbSZozcvwjnfLED/HUyhdb3R3hshz2+s=
+	t=1753362634; cv=none; b=dXU/wVrGIXPIzRVlThMTQSvBDoCXFDrYNcZTE1EzAh97HlOJ+CfdRQaveLm96dkFpXBhlJvD2+XsL7p12jWs6X5Uu2hUf9iVdo/GrUw+FFdk4F+q0Q9m/Fr9XRPSk5dADMIzcHGIB8YUvYotxLZYZN5yN4imHv/PZ9iujdNonE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753362634; c=relaxed/simple;
-	bh=ZGSRMdHTAYg0xIqYvQa42aLUMIQAu9r9GpcdnngrEuw=;
+	bh=shFyCXFyYKvP52biuR1enfSiq1R79U7PbGOhFprfL9s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mCoBVcC/7XZ2lyoqxFJI7mZG/nSysoG31CixW0XyoSPnF2Jru8GLKZFOyw3Ze2dnzgCv7zsQ3lHQAAnmUl90mf8ENODS7l/UznczLwTOucnSLUkc812DPzj6K8s3WGUkSUkWAEEX8/I0kcWB6fiHASzdoVDAquqJ9ODAgon/vkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=bJ1k6LCx; arc=none smtp.client-ip=95.143.211.150
+	 MIME-Version; b=aLmXabe0TqimdFJ1kaze1+Ll/d1ONXtvvA3vUceszCwCpiVaaK3nJIloBkAWYEBg7b4yhDGR2cx5HMv/PCDEvnqUnByH+eDhXLz5WMrEjZVHsyqUJZ0FagFoud3FnHmMnK3ciRC8GCMJCBxxxBAdB5no6+GAm8n4sds0mjIe9+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=aGLojPv6; arc=none smtp.client-ip=95.143.211.150
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="bJ1k6LCx"
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="aGLojPv6"
 From: Konstantin Andreev <andreev@swemel.ru>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1753362623;
+	t=1753362622;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XR7D4r5m7BOcZfYF6Nf5+a53yKd7FbHvvfTY4ig0Ryc=;
-	b=bJ1k6LCxyusfybFB65EJSbvATJ7xA232dlBVQWDEUUU478mgncwR7hNc4oiYnuv4oIkogY
-	ANXMkpiZylEgOgOn289ugs5p+mEJbM9sesrsa+f9BvpdCs56apyTWZOB6Gk+wQdnkv2iyZ
-	qF9d5q+HYbrlPOPg9VdBCoDWshAFZxw=
+	bh=+EQWsx7gMfVWl9uZgVN4izYN///Pk01ciB35/DNjDVw=;
+	b=aGLojPv62JkzEjuZV/svIOXpu0KeD2xilpaVjS9/ZjPnoQSQUaRsgTryHzZJmXDv96g0ZV
+	UKOtt7LFVCxJ26JkRGVJzQ76F601uNXApbYSD9xQjahaCtwiCf+Vf2rDEHRe6stNWFwt3s
+	4kfvNoiwNCj62xi9Riq3AG4ygUMVTQU=
 To: casey@schaufler-ca.com
 Cc: linux-security-module@vger.kernel.org
-Subject: [PATCH 14/19] smack: return EOPNOTSUPP for setxattr() unsupported SMACK64(TRANSMUTE)
-Date: Thu, 24 Jul 2025 16:09:47 +0300
-Message-ID: <4c7cf8accc533becc52ff2576069e3c8b6b9df21.1753356770.git.andreev@swemel.ru>
+Subject: [PATCH 07/19] smack: deduplicate task label validation
+Date: Thu, 24 Jul 2025 16:09:40 +0300
+Message-ID: <6dcbc66cfd327fcd0563f6afda53d76f2c6d043f.1753356770.git.andreev@swemel.ru>
 In-Reply-To: <cover.1753356770.git.andreev@swemel.ru>
 References: <cover.1753356770.git.andreev@swemel.ru>
 Precedence: bulk
@@ -42,75 +42,123 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The SMACK64TRANSMUTE is supported only for directories.
+The part of the description of smk_task_invalid_label()
+("Smack prohibits ... explicitly.")
+was taken verbatim from the commit message of:
 
-"The standard return value for unsupported attribute names is
- -EOPNOTSUPP, as opposed to undefined but supported attributes
- (-ENODATA)" [3]
-
-Smack follows [4] the convention
-for get/setxattr() SMACK64IPIN/IPOUT
-
-It is more appropriate to return -EOPNOTSUPP
-instead of -EINVAL when attempting to set SMACK64TRANSMUTE
-on a non-directory object.
-
-A Unix domain socket (UDS) with a BSD address, and
-the inode of a socket file descriptor (sockfs inode)
-have fixed (*) nominal SMACK64 label [2]
-
-Likewise, it is more appropriate to return -EOPNOTSUPP
-instead of -EINVAL when attempting to set
-the SMACK64 xattr on either type of socket inode.
-
-The commits being fixed [1,2] are recent enough
-so this change should not break userspace.
-
-[1] 2023-11-16 roberto.sassu
-Fixes: 9c82169208dd ("smack: Set SMACK64TRANSMUTE only for dirs in smack_inode_setxattr()")
-Link: https://lore.kernel.org/linux-security-module/20231116090125.187209-2-roberto.sassu@huaweicloud.com/
-
-[2] 2025-06-16 andreev
-Fixes: 78fc6a94be25 ("smack: fix bug: invalid label of unix socket file")
-Link: https://lore.kernel.org/linux-security-module/20250616010745.800386-6-andreev@swemel.ru/
-
-[3] 2016-09-29 agruenba
-commit 971df15bd54a ("sockfs: getxattr: Fail with -EOPNOTSUPP
-                      for invalid attribute names")
-
-[4] 2008-02-04 casey
-commit e114e473771c ("Smack: Simplified Mandatory Access Control Kernel")
+2013-12-16 Casey Schaufler
+commit 19760ad03cc6 ("Smack: Prevent the * and @ labels
+                      from being used in SMACK64EXEC")
 
 Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
 ---
- security/smack/smack_lsm.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ security/smack/smack_lsm.c | 47 +++++++++++++++++++++-----------------
+ 1 file changed, 26 insertions(+), 21 deletions(-)
 
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 6712fa047722..113371887b4d 100644
+index 052404e2fda6..39e2e7b5bc3c 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -1412,7 +1412,7 @@ static int smack_inode_setxattr(struct mnt_idmap *idmap,
- 		 * UDS inode have fixed label
- 		 */
- 		if (S_ISSOCK(i_mode))
--			return -EINVAL;
-+			return -EOPNOTSUPP;
- 	} else if (strcmp(name, XATTR_NAME_SMACKIPIN) == 0 ||
- 		   strcmp(name, XATTR_NAME_SMACKIPOUT) == 0) {
- 		/*
-@@ -1429,8 +1429,9 @@ static int smack_inode_setxattr(struct mnt_idmap *idmap,
- 			return -EOPNOTSUPP;
- 		task_label = true;
+@@ -1369,6 +1369,21 @@ static int smack_inode_xattr_skipcap(const char *name)
+ 	return 0;
+ }
+ 
++/*
++ * Smack prohibits processes from using the star ("*") and web ("@") labels
++ * because we don't want files with those labels getting created implicitly.
++ * All setting of those labels should be done explicitly.
++ *
++ * Comparing smack_known's assumes label has been imported. Until only builtin
++ * labels are prohibited, just imported label is not eligible for rejection.
++ */
++static bool
++smk_task_invalid_label(const struct smack_known * const skp)
++{
++	return skp == &smack_known_web ||
++	       skp == &smack_known_star;
++}
++
+ /**
+  * smack_inode_setxattr - Smack check for setting xattrs
+  * @idmap: idmap of the mount
+@@ -1387,7 +1402,7 @@ static int smack_inode_setxattr(struct mnt_idmap *idmap,
+ 				const void *value, size_t size, int flags)
+ {
+ 	bool label_inside = true;
+-	int check_star = 0;
++	bool task_label = false;
+ 	struct inode * const inode = d_backing_inode(dentry);
+ 	umode_t const i_mode = inode->i_mode;
+ 
+@@ -1403,7 +1418,7 @@ static int smack_inode_setxattr(struct mnt_idmap *idmap,
+ 		;
+ 	} else if (strcmp(name, XATTR_NAME_SMACKEXEC) == 0 ||
+ 		   strcmp(name, XATTR_NAME_SMACKMMAP) == 0) {
+-		check_star = 1;
++		task_label = true;
  	} else if (strcmp(name, XATTR_NAME_SMACKTRANSMUTE) == 0) {
--		if (!S_ISDIR(i_mode) ||
--		    size != TRANS_TRUE_SIZE ||
-+		if (!S_ISDIR(i_mode))
-+			return -EOPNOTSUPP;
-+		if (size != TRANS_TRUE_SIZE ||
- 		    strncmp(value, TRANS_TRUE, TRANS_TRUE_SIZE) != 0)
- 			return -EINVAL;
- 		label_inside = false;
+ 		if (!S_ISDIR(i_mode) ||
+ 		    size != TRANS_TRUE_SIZE ||
+@@ -1436,10 +1451,10 @@ static int smack_inode_setxattr(struct mnt_idmap *idmap,
+ 		if (IS_ERR(skp))
+ 			return PTR_ERR(skp);
+ 
+-		if (check_star &&
+-		    (skp == &smack_known_star ||
+-		     skp == &smack_known_web))
+-			return -EINVAL;
++		if (task_label) {
++			if (smk_task_invalid_label(skp))
++				return -EINVAL;
++		}
+ 	}
+ 
+ 	return 0;
+@@ -3726,14 +3741,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+ 		 * Don't let the exec or mmap label be "*" or "@".
+ 		 */
+ 		skp = smk_fetch(XATTR_NAME_SMACKEXEC, inode, dp);
+-		if (IS_ERR(skp) || skp == &smack_known_star ||
+-		    skp == &smack_known_web)
++		if (IS_ERR(skp) || smk_task_invalid_label(skp))
+ 			skp = NULL;
+ 		isp->smk_task = skp;
+ 
+ 		skp = smk_fetch(XATTR_NAME_SMACKMMAP, inode, dp);
+-		if (IS_ERR(skp) || skp == &smack_known_star ||
+-		    skp == &smack_known_web)
++		if (IS_ERR(skp) || smk_task_invalid_label(skp))
+ 			skp = NULL;
+ 		isp->smk_mmap = skp;
+ 
+@@ -3830,17 +3843,6 @@ static int do_setattr(unsigned int attr, void *value, size_t size)
+ 	 */
+ 	if (smk_parse_label(value, size))
+ 		return -EINVAL;
+-	/*
+-	 * No process is ever allowed the web ("@") label
+-	 * and the star ("*") label.
+-	 */
+-	if (size == 1 /* '@', '*' */) {
+-		const char c = *(const char *)value;
+-
+-		if (c == *smack_known_web.smk_known ||
+-		    c == *smack_known_star.smk_known)
+-			return -EPERM;
+-	}
+ 
+ 	if (!smack_privileged(CAP_MAC_ADMIN)) {
+ 		const struct smack_known_list_elem *sklep;
+@@ -3860,6 +3862,9 @@ static int do_setattr(unsigned int attr, void *value, size_t size)
+ 	if (IS_ERR(skp))
+ 		return PTR_ERR(skp);
+ 
++	if (smk_task_invalid_label(skp))
++		return -EPERM;
++
+ 	new = prepare_creds();
+ 	if (new == NULL)
+ 		return -ENOMEM;
 -- 
 2.43.0
 
