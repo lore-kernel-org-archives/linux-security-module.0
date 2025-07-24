@@ -1,260 +1,83 @@
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4732D77F1
-	for <linux-security-module@vger.kernel.org>; Thu, 24 Jul 2025 13:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B304C81;
+	Thu, 24 Jul 2025 14:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753363214; cv=none; b=Q3a/LsNUmC/MvmwN7Ux1v3ajh9qafG081O/ONYLFcPZVZpTec0oPNVKnbk4OxxhyIwozzF01ogQcCofT0eC2fCoU7t6iJWeuCgv45k6DV9cNAqI2SgddiF6kUVzBal9Et3/Hp1K2T6kI0aRhrz4FMY7agMPEy6wRoZ3lqN0lUTs=
+	t=1753366426; cv=none; b=Srm48FOb/J3A04n5LwZdvJAqG3RtAwQpHXRP9v3VvRLNKBBjQYOJNn27982oy5Bgh++8LI2OrnAVTET99ra35WIpLEC8KtK7msayr5Ftjnty0/SpB5xhn6FCdXdwNvWRKiMJTf9A+I6KQOTP9VGwELO5I+jrpXuQz0/mSFQ5GD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753363214; c=relaxed/simple;
-	bh=/9vFDBPGMRFWsmmc2G8vrgrFdHH30SptzmsK++WuB+E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hDhV45p4/gOqikk/m6AKIKnj4aWExmMP2ndLDpdeWAdLoGXLtulLuf/ywnhX6i16iKv6soFg7aT8qN1zes/fMKKSYmDtet/MHrREVuCBpImH/YgJqXBSUsUDtqhI8gHghpZY44a6o0p16dfE4lKFLyodudF6kL7tY3khgFtDV58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=jrNFgvQw; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+	s=arc-20240116; t=1753366426; c=relaxed/simple;
+	bh=/qxJTTEzh01jlFnrh3Ccjd7LLr6vEXxwGyZG4BhP97g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bV4yt97wmTqoSRbyOPR4MtLdR2HuLrlndYHP8lSWq+Au7K+RZLp1o+OBr/BzGnwLrhYKbBz4XHpg3XhGDi6hrbnshuQjExeDUWVxDu+tGkzboOyaor+RclDGImeQrvIBBAEGSbwoEStOUo2Ud/WUMKof31vIniR2xEp+UVDzhpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tdJAINky; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="jrNFgvQw"
-From: Konstantin Andreev <andreev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1753362621;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KxgI/jMP79/JDWegobrSDvfa7kaVU4yGIXj32r516UA=;
-	b=jrNFgvQww4DN/JtxhoOAQMPbejwUNAL0SMLynfnJQBjBsbBb2BmX+sLkiPYRaqx7/RYD15
-	LmZOttFaGGMvy5X0eJE9POGn14F5QmlXIE3XyeAjg7zr3gsXghrTwiNFpU5n+PMgsy8bVL
-	EjKr2/WuhHZPE0JDFoO23Hn/Rwymct8=
-To: casey@schaufler-ca.com
-Cc: linux-security-module@vger.kernel.org
-Subject: [PATCH 03/19] smack: fix bug: setting label-containing xattrs silently ignores input garbage
-Date: Thu, 24 Jul 2025 16:09:36 +0300
-Message-ID: <ae1100894499a1f6ce8e783727635388b3ac3af8.1753356770.git.andreev@swemel.ru>
-In-Reply-To: <cover.1753356770.git.andreev@swemel.ru>
-References: <cover.1753356770.git.andreev@swemel.ru>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tdJAINky"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDF99C4CEEF;
+	Thu, 24 Jul 2025 14:13:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753366426;
+	bh=/qxJTTEzh01jlFnrh3Ccjd7LLr6vEXxwGyZG4BhP97g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tdJAINkymtj2thSAy4DIKcO9znbtYUAxdqmuA3eZ06MqVqP+Tmb/aJjntKAV5PQZ2
+	 EFPhmd+7kxybeKkNguIPyVRTtlB6+zODI1Tf7euYKFDpHjquDFAYr9biL+MUrbQGaN
+	 Ek4Zfw8B9uN/Uh/2yNMfzn+0t5XEWr7HlZGc1RYI7TKy8Bd3hhsxvx+kvMorucA5IT
+	 k3Jn4d3nuBKa1sL1YGJO/tazCsGUvT1L4+Hp82vJFNI6ZTbHkFo6GFs+EONBkvbEwQ
+	 Gmm5JuixdjXR18jXx61RYWtmoOQwfWgI1ZX6iYi6hJx8dvOfCYxzGEQjiIyIVDb66J
+	 2WUBYj0Ejvj8Q==
+Date: Thu, 24 Jul 2025 14:13:41 +0000
+From: sergeh@kernel.org
+To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+Cc: Paul Moore <paul@paul-moore.com>,
+	Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
+	Xiu Jianfeng <xiujianfeng@huawei.com>, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Yue Haibing <yuehaibing@huawei.com>,
+	Tanya Agarwal <tanyaagarwal25699@gmail.com>,
+	Kees Cook <kees@kernel.org>, linux-efi@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 0/2] Secure Boot lock down
+Message-ID: <aII_lcRmLr5n70ix@lei>
+References: <1750975839-32463-1-git-send-email-hamzamahfooz@linux.microsoft.com>
+ <20250716212925.GA14322@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <CAHC9VhS3qY=+DVYqzkgbHLETUo4KgQ17qr_BC3pn9TeG+cr8Mg@mail.gmail.com>
+ <xfabe3wvdsfkch3yhxmswhootf5vj6suyow5s3ffumcnjkojjz@e7ojgu3s7ion>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xfabe3wvdsfkch3yhxmswhootf5vj6suyow5s3ffumcnjkojjz@e7ojgu3s7ion>
 
-The following command:
-    # setfattr -n security.SMACK64 -v foo/bar FILE
+On Thu, Jul 24, 2025 at 02:59:39PM +0200, Nicolas Bouchinet wrote:
+> Hi Hamza, thanks for your patch.
+> 
+> Thanks, Paul, for the forward. 
+> 
+> Sorry for the delay, we took a bit of time to do some lore archaeology
+> and discuss it with Xiu. 
+> 
+> As you might know, this has already been through debates in 2017 [1]. At
+> that time, the decision was not to merge this behavior. 
+> 
+> Distros have indeed carried downstream patches reflecting this behavior
+> for a long time and have been affected by vulnerabilities like
+> CVE-2025-1272 [2], which is caused by the magic sprinkled in
+> setup_arch(). 
+> 
+> While your implementation looks cleaner to me. One of the points in
+> previous debates was to have a Lockdown side Kconfig knob to enable or
+> not this behavior. It would gate the registration of the Lockdown LSM to
+> the security_lock_kernel_down() hook. 
 
-sets the label of FILE to 'foo' w/o indication
-that label does not match input.
+Well, but there is a default-n kconfig.  What do you mean by "Lockdown
+side Kconfig knob"?  I'm sure I'm missing something, but not sure
+what...
 
-This happens due to the use of an unsuitable parsing
-function: smk_import_entry(), which acquires only
-that part from the beginning of the input
-that looks like a label.
-
-This is exactly the same issue as described in [1],
-but it occurs with Smack label-containing xattrs
-instead of /proc/PID/attr/smack/current.
-
-Curiously,
-
-    # setfattr -n security.SMACK64     -v foo/bar FILE
-    # setfattr -n security.SMACK64EXEC -v fo2/ba2 FILE
-    # setfattr -n security.SMACK64MMAP -v fo3/ba3 FILE
-    # getfattr -hd -m - FILE
-    security.SMACK64="foo"            // garbage ignored
-    security.SMACK64EXEC="fo2/ba2"    // garbage taken?!
-    security.SMACK64MMAP="fo3/ba3"    // garbage taken?!
-
-It looks like label-containing xattrs SMACK64EXEC
-and SMACK64MMAP can acquire invalid Smack label.
-
-In fact, inode contains the labels `fo2' and `fo3',
-but, due to another Smack bug [2] we do not see them -
-instead we see the on-disk content of the SMACK64EXEC
-and SMACK64MMAP xattrs, that is, indeed, `fo2/ba2'
-and `fo3/ba3'
-
-This change detects input garbage by adding a check:
-   taken label length == input length
-and indicates -EINVAL to the caller if they do not match
-
-(2008-02-04 Casey Schaufler)
-Fixes: e114e473771c ("Smack: Simplified Mandatory Access Control Kernel")
-
-[1] 2025-06-17 andreev
-commit 674e2b24791c ("smack: fix bug: setting task label
-                      silently ignores input garbage")
-Link: https://lore.kernel.org/linux-security-module/20250315015723.1357541-3-andreev@swemel.ru/
-
-[2] 2025-07 andreev (forward reference)
-commit ("smack: fix bug: getxattr() returns invalid SMACK64EXEC/MMAP")
-Link: https://lore.kernel.org/linux-security-module/ba2af0356940d61d932af15d4b1a265a61e7d16c.1753356770.git.andreev@swemel.ru/
-
-Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
----
- security/smack/smack_lsm.c | 81 +++++++++++++++++++++++++++-----------
- 1 file changed, 57 insertions(+), 24 deletions(-)
-
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 5a159a2653a6..4ef6355c84c0 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -263,6 +263,49 @@ static int smk_bu_credfile(const struct cred *cred, struct file *file,
- #define smk_bu_credfile(cred, file, mode, RC) (RC)
- #endif
- 
-+/**
-+ * smk_parse_label - check @string (not \0-terminated) is a valid Smack label
-+ * @string: a string to check, not \0-terminated
-+ * @string_len: the length of the @string
-+ *
-+ * Return: 0 or an error code
-+ */
-+static int
-+smk_parse_label(const char *string, size_t string_len)
-+{
-+	int label_len;
-+
-+	if (unlikely(string == NULL || string_len == 0 ||
-+		     string_len >= SMK_LONGLABEL))
-+		return -EINVAL;
-+
-+	label_len = smk_parse_label_len(string, string_len);
-+	if (label_len < 0 ||         /* invalid label */
-+	    label_len != string_len) /* garbage after label */
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+/**
-+ * smk_import_label - import a label, return the list entry
-+ * @string: a text string that may be a valid Smack label, not \0-terminated
-+ * @string_len: the length of the text string in the @string
-+ *
-+ * Contrast to smk_import_entry(), the full @string_len of the @string
-+ * must constitute a valid Smack label to be imported.
-+ *
-+ * Return: see description of smk_import_entry()
-+ */
-+static struct smack_known *
-+smk_import_label(const char *string, int string_len)
-+{
-+	if (smk_parse_label(string, string_len))
-+		return ERR_PTR(-EINVAL);
-+
-+	return smk_import_valid_label(string, string_len, GFP_NOFS);
-+}
-+
- /**
-  * smk_fetch - Fetch the smack label from a file.
-  * @name: type of the label (attribute)
-@@ -1343,14 +1386,11 @@ static int smack_inode_setxattr(struct mnt_idmap *idmap,
- 				struct dentry *dentry, const char *name,
- 				const void *value, size_t size, int flags)
- {
--	int check_import = 0;
-+	bool label_inside = true;
- 	int check_star = 0;
- 	struct inode * const inode = d_backing_inode(dentry);
- 	umode_t const i_mode = inode->i_mode;
- 
--	/*
--	 * Check label validity here so import won't fail in post_setxattr
--	 */
- 	if (strcmp(name, XATTR_NAME_SMACK) == 0) {
- 		/*
- 		 * inode of socket file descriptor (sockfs inode) and
-@@ -1358,19 +1398,18 @@ static int smack_inode_setxattr(struct mnt_idmap *idmap,
- 		 */
- 		if (S_ISSOCK(i_mode))
- 			return -EINVAL;
--		check_import = 1;
- 	} else if (strcmp(name, XATTR_NAME_SMACKIPIN) == 0 ||
- 		   strcmp(name, XATTR_NAME_SMACKIPOUT) == 0) {
--		check_import = 1;
-+		;
- 	} else if (strcmp(name, XATTR_NAME_SMACKEXEC) == 0 ||
- 		   strcmp(name, XATTR_NAME_SMACKMMAP) == 0) {
--		check_import = 1;
- 		check_star = 1;
- 	} else if (strcmp(name, XATTR_NAME_SMACKTRANSMUTE) == 0) {
- 		if (!S_ISDIR(i_mode) ||
- 		    size != TRANS_TRUE_SIZE ||
- 		    strncmp(value, TRANS_TRUE, TRANS_TRUE_SIZE) != 0)
- 			return -EINVAL;
-+		label_inside = false;
- 	} else {
- 		/*
- 		 * treat other xattrs as labeled data
-@@ -1387,13 +1426,13 @@ static int smack_inode_setxattr(struct mnt_idmap *idmap,
- 	if (!smack_privileged(CAP_MAC_ADMIN))
- 		return -EPERM;
- 
--	if (check_import) {
--		const struct smack_known *skp;
-+	/*
-+	 * Import label now, so import won't fail in smack_inode_post_setxattr
-+	 */
-+	if (label_inside) {
-+		const struct smack_known * const skp =
-+			smk_import_label(value, size);
- 
--		if (size == 0)
--			return -EINVAL;
--
--		skp = smk_import_entry(value, size);
- 		if (IS_ERR(skp))
- 			return PTR_ERR(skp);
- 
-@@ -3781,23 +3820,17 @@ static int do_setattr(unsigned int attr, void *value, size_t size)
- 	struct task_smack *tsp = smack_cred(current_cred());
- 	struct cred *new;
- 	struct smack_known *skp;
--	int label_len;
- 
- 	/*
- 	 * let unprivileged user validate input, check permissions later
- 	 */
--	if (value == NULL || size == 0 || size >= SMK_LONGLABEL)
-+	if (smk_parse_label(value, size))
- 		return -EINVAL;
--
--	label_len = smk_parse_label_len(value, size);
--	if (label_len < 0 || label_len != size)
--		return -EINVAL;
--
- 	/*
- 	 * No process is ever allowed the web ("@") label
- 	 * and the star ("*") label.
- 	 */
--	if (label_len == 1 /* '@', '*' */) {
-+	if (size == 1 /* '@', '*' */) {
- 		const char c = *(const char *)value;
- 
- 		if (c == *smack_known_web.smk_known ||
-@@ -3810,8 +3843,8 @@ static int do_setattr(unsigned int attr, void *value, size_t size)
- 		list_for_each_entry(sklep, &tsp->smk_relabel, list) {
- 			const char *cp = sklep->smk_label->smk_known;
- 
--			if (strlen(cp) == label_len &&
--			    strncmp(cp, value, label_len) == 0)
-+			if (strlen(cp) == size &&
-+			    strncmp(cp, value, size) == 0)
- 				goto in_relabel;
- 		}
- 		return -EPERM;
-@@ -3819,7 +3852,7 @@ static int do_setattr(unsigned int attr, void *value, size_t size)
- 		;
- 	}
- 
--	skp = smk_import_valid_label(value, label_len, GFP_KERNEL);
-+	skp = smk_import_valid_label(value, size, GFP_KERNEL);
- 	if (IS_ERR(skp))
- 		return PTR_ERR(skp);
- 
--- 
-2.43.0
-
+thanks,
+-serge
