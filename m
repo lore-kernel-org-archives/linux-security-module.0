@@ -1,156 +1,199 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978567494
-	for <linux-security-module@vger.kernel.org>; Thu, 24 Jul 2025 17:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDD1285045;
+	Thu, 24 Jul 2025 17:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753377768; cv=none; b=PyYL3LNJajW3AXbn6iI7bCnLwBRWViyRA+s507bYqgfywGXXQzSTvHi+9w3l64J7C2mOy0lHna3PqMG20srn2MfipA6zGLe+Yi2jqPkCoTnvnsT9o5voHfB4b4Ml18S/uFiH60I9XfR2RB5MbiTfTtbCPqVIfZ9bbipQvSlsuHw=
+	t=1753378567; cv=none; b=UKmpLzMl0TdKBiwwiMihJHIO9kf5JnKfOKQMhht+FisozsSgDO9m+xveIBaqCpeDIQ7C6UX90QYsHRmYzMIWaZzDJVXX3mQCL99wF5Zb4giI+Zf4bbXAMCZVsTJdZBTD79jjeT+jKcgzm/OYwflj/EbgWpc0WU8F7bcPiSz8zXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753377768; c=relaxed/simple;
-	bh=iHv6FcFr9ubdNqnfE/PzII/jmlXlOCHMeiqQyuRtKBc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VqElENRK0Xrndal48eRXxLNBvL6nXiUdeWIUHlKm1RtxMq1mWuUrD2AJqVmFlVkb+QtMFTn7uW34Ox3H+E5YCRNt0Qe+UqnlJK7457lgfenWaT05xkBNsiUmuycP4OY1iJfkB/zA+Sy6Y34M1l0MoFYEoseP3gaxPBKdkUB5tKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLveus91; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753378567; c=relaxed/simple;
+	bh=D2M/54N8zJdjcIvoq97yxEel8qGk9C9JommktQkhxgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FrAteMyb+1Wup/fl3+v1jV6zA7tTFcX7f/x5ser8ZLY5Nlxl2TKq8XXzrwDCcBC+77/W/31+a7TZLitloxxYsyLfibekkJz4H+1nqomkltzcPq13zyAlXCnwXqUJVHfwMqTlnAVbPBGAKGEMCEUZUosCKYOPiqMZB+sGdSfFBdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=YBkgsVL/; arc=none smtp.client-ip=185.125.25.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLveus91"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F1F1C4CEF4
-	for <linux-security-module@vger.kernel.org>; Thu, 24 Jul 2025 17:22:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753377768;
-	bh=iHv6FcFr9ubdNqnfE/PzII/jmlXlOCHMeiqQyuRtKBc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YLveus919Jiz+6wpVXvrW/RMXmwrvYH9cnclPMpOeu6WkidDgCEhj/NRfI59kNlQL
-	 ePiufOE9Mv7XD7n5GhALyT9EqdGT4AzGQ7NRZVgSF2Gy551u+FOVkV2qfVMb+qtBsp
-	 39C2gEI5j91juKHL7OjN9gfkab+2ezjkZHOjJBd/kafDjAEy/DLn8XZB0UyMCLzPPv
-	 EoK+w6rhUSxq5Mllx8NcjwOgyTAF6eqgBQmAZNEjZUT8Wm2x8A1O2or1w6T/fMMS7t
-	 SyKCPqPg2k10u1/twpnuTp+ZjXYUoCzodMrAY1rElE/X+FbY2J17k9QmmVZfzQ9Lzx
-	 pSw41LcPCrEnA==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-60700a745e5so2736443a12.3
-        for <linux-security-module@vger.kernel.org>; Thu, 24 Jul 2025 10:22:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWNBsJhJHMdaMBsA4x9sd2l4XcpLa2w5itd/R+51obrjA+A0fCF5oxqYNFpX5+S1mHyTlab0GJErdf3/Q0QQ3jHbWkDuSM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVwZarzD4dbySlFYSByzEBKL624fMWjnthSOF6tHPeN5B7G99m
-	g+nDuTSJOmkZ2F0TN20RUo/06Lrt6QToBLK/lifpMxZ2MfOX/yXfZaS2EbmL4YHpxgZV5J8zq38
-	seQlFhCEhq7N78CjwMRSv0wwCeAxlQQ45WYQjedyX
-X-Google-Smtp-Source: AGHT+IGRIfTM4kAibJSn6oNcZo9iTyHDOU/dXANlzSYv1+sBg7kSkBPEZA+rCTf9i2uBWVPcYtECBYeUY6b3Ob93eiU=
-X-Received: by 2002:a05:6402:2353:b0:607:f513:4808 with SMTP id
- 4fb4d7f45d1cf-6149b409f40mr6227925a12.1.1753377766652; Thu, 24 Jul 2025
- 10:22:46 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="YBkgsVL/"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bnypN0JkbzZFV;
+	Thu, 24 Jul 2025 19:35:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1753378555;
+	bh=HbR89xL0fAs890Zk4g+qtVNW0JcpnRM+e9fsbsymfzQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YBkgsVL/y/clichoX+1MWFq35vB9gAha7jDqPq3GNLrkjbKlA1dq6EwQchjig3Ci8
+	 1bVaB4Cpj8L7lWGdAH8lrtKArewe0lM3Jz3rrUKQXRafhD7sUaeYYpZz5YKndRT1d/
+	 0GR03WaeVnf4t+P7BIXoYtfVPSaXZzE1AIK6HLJg=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bnypM0b6NzxQB;
+	Thu, 24 Jul 2025 19:35:55 +0200 (CEST)
+Date: Thu, 24 Jul 2025 19:35:54 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Song Liu <songliubraving@meta.com>
+Cc: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
+	Tingmao Wang <m@maowtm.org>, Song Liu <song@kernel.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
+	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
+	"martin.lau@linux.dev" <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"mattbobrowski@google.com" <mattbobrowski@google.com>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
+Message-ID: <20250724.ij7AhF9quoow@digikod.net>
+References: <474C8D99-6946-4CFF-A925-157329879DA9@meta.com>
+ <175210911389.2234665.8053137657588792026@noble.neil.brown.name>
+ <B33A07A6-6133-486D-B333-970E1C4C5CA3@meta.com>
+ <2243B959-AA11-4D24-A6D0-0598E244BE3E@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721211958.1881379-1-kpsingh@kernel.org> <20250721211958.1881379-9-kpsingh@kernel.org>
- <c6ed224b9fb5db2cfac2620c75a49fa22cbaf617.camel@HansenPartnership.com>
-In-Reply-To: <c6ed224b9fb5db2cfac2620c75a49fa22cbaf617.camel@HansenPartnership.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Thu, 24 Jul 2025 19:22:35 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ79h9G1gdxtS=H8oNoCTxCqsG0d+Ox5xfXx225_OtLfHQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzPweP5i9EJaJM1of7IwHtvD9t_8b1buJnKLosF6lAT6MI2RoPdH3O8jeM
-Message-ID: <CACYkzJ79h9G1gdxtS=H8oNoCTxCqsG0d+Ox5xfXx225_OtLfHQ@mail.gmail.com>
-Subject: Re: [PATCH v2 08/13] bpf: Implement signature verification for BPF programs
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2243B959-AA11-4D24-A6D0-0598E244BE3E@meta.com>
+X-Infomaniak-Routing: alpha
 
-On Wed, Jul 23, 2025 at 7:11=E2=80=AFPM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> On Mon, 2025-07-21 at 23:19 +0200, KP Singh wrote:
+On Mon, Jul 14, 2025 at 09:09:42PM +0000, Song Liu wrote:
+> 
+> > On Jul 9, 2025, at 11:28 PM, Song Liu <songliubraving@meta.com> wrote:
+> 
 > [...]
->
-> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> > index fd3b895ebebf..b42c3740e053 100644
-> > --- a/include/uapi/linux/bpf.h
-> > +++ b/include/uapi/linux/bpf.h
-> > @@ -1607,6 +1607,16 @@ union bpf_attr {
-> >                * continuous.
-> >                */
-> >               __u32           fd_array_cnt;
-> > +             /* Pointer to a buffer containing the signature of
-> > the BPF
-> > +              * program.
-> > +              */
-> > +             __aligned_u64   signature;
-> > +             /* Size of the signature buffer in bytes. */
-> > +             __u32           signature_size;
-> > +             /* ID of the kernel keyring to be used for signature
-> > +              * verification.
-> > +              */
-> > +             __u32           keyring_id;
->
-> This should become __s32 to match the value passed in to
-> bpf_lookup_user_key().
->
-> [...]
-> > diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> > index 22fda92ab7ce..111f91a99166 100644
-> > --- a/kernel/bpf/syscall.c
-> > +++ b/kernel/bpf/syscall.c
-> > @@ -2779,8 +2779,41 @@ static bool is_perfmon_prog_type(enum
-> > bpf_prog_type prog_type)
-> >       }
-> >  }
-> >
-> > +static noinline int bpf_prog_verify_signature(struct bpf_prog *prog,
-> > +                                           union bpf_attr *attr,
-> > +                                           bool is_kernel)
-> > +{
-> > +     bpfptr_t usig =3D make_bpfptr(attr->signature, is_kernel);
-> > +     struct bpf_dynptr_kern sig_ptr, insns_ptr;
-> > +     struct bpf_key *key =3D NULL;
-> > +     void *sig;
-> > +     int err =3D 0;
-> > +
-> > +     key =3D bpf_lookup_user_key(attr->keyring_id, 0);
-> > +     if (!key)
-> > +             return -ENOKEY;
->
-> This still only checks against user keyrings and not system trusted
-> keyrings as was pointed out in v1.  Since user keyrings are negative
-> and user key serials begin at 3 or more, there's no overlap with the
-> system keyring specifiers and you can just overload attr->keyring_id,
-> like the below.
->
-> Regards,
->
-> James
->
-> ---
->
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index 111f91a99166..10fd3ea5d91f 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -13,6 +13,7 @@
->  #include <linux/slab.h>
->  #include <linux/sched/signal.h>
->  #include <linux/vmalloc.h>
-> +#include <linux/verification.h>
->  #include <linux/mmzone.h>
->  #include <linux/anon_inodes.h>
->  #include <linux/fdtable.h>
-> @@ -2789,7 +2790,10 @@ static noinline int bpf_prog_verify_signature(stru=
-ct bpf_prog *prog,
->         void *sig;
->         int err =3D 0;
->
-> -       key =3D bpf_lookup_user_key(attr->keyring_id, 0);
-> +       if (system_keyring_id_check(attr->keyring_id) =3D=3D 0)
-> +               key =3D bpf_lookup_system_key(attr->keyring_id);
-> +       else
-> +               key =3D bpf_lookup_user_key(attr->keyring_id, 0);
->         if (!key)
->                 return -ENOKEY;
->
+> 
+> >>>> It isn't clear to me that vfs_walk_ancestors() needs to return anything.
+> >>>> All the communication happens through walk_cb()
+> >>>> 
+> >>>> walk_cb() is called with a path, the data, and a "may_sleep" flag.
+> >>>> If it needs to sleep but may_sleep is not set, it returns "-ECHILD"
+> >>>> which causes the walk to restart and use refcounts.
+> >>>> If it wants to stop, it returns 0.
+> >>>> If it wants to continue, it returns 1.
+> >>>> If it wants a reference to the path then it can use (new)
+> >>>> vfs_legitimize_path() which might fail.
+> >>>> If it wants a reference to the path and may_sleep is true, it can use
+> >>>> path_get() which won't fail.
+> >>>> 
+> >>>> When returning -ECHILD (either because of a need to sleep or because
+> >>>> vfs_legitimize_path() fails), walk_cb() would reset_data().
+> >>> 
+> >>> This might actually work. 
+> >>> 
+> >>> My only concern is with vfs_legitimize_path. It is probably safer if 
+> >>> we only allow taking references with may_sleep==true, so that path_get
+> >>> won’t fail. In this case, we will not need walk_cb() to call 
+> >>> vfs_legitimize_path. If the user want a reference, the walk_cb will 
+> >>> first return -ECHILD, and call path_get when may_sleep is true.
+> >> 
+> >> What is your concern with vfs_legitimize_path() ??
+> >> 
+> >> I've since realised that always restarting in response to -ECHILD isn't
+> >> necessary and isn't how normal path-walk works.  Restarting might be
+> >> needed, but the first response to -ECHILD is to try legitimize_path().
+> >> If that succeeds, then it is safe to sleep.
+> >> So returning -ECHILD might just result in vfs_walk_ancestors() calling
+> >> legitimize_path() and then calling walk_cb() again.  Why not have
+> >> walk_cb() do the vfs_legitimize_path() call (which will almost always
+> >> succeed in practice).
+> > 
+> > After reading the emails and the code more, I think I misunderstood 
+> > why we need to call vfs_legitimize_path(). The goal of “legitimize” 
+> > is to get a reference on @path, so a reference-less walk may not
+> > need legitimize_path() at all. Do I get this right this time? 
+> > 
+> > However, I still have some concern with legitimize_path: it requires
+> > m_seq and r_seq recorded at the beginning of the walk, do we want
+> > to pass those to walk_cb()? IIUC, one of the reason we prefer a 
+> > callback based solution is that it doesn’t expose nameidata (or a
+> > subset of it). Letting walk_cb to call legitimize_path appears to 
+> > defeat this benefit, no? 
 
-Thanks James, updated.
+Yes, walk_cb() should be very light and non-blocking/non-sleepable.  If
+the caller cannot give these guarantees, then it can just pass NULL
+instead of a valid walk_cb(), and continue the walk (if needed) by
+calling the vfs_walk_ancentors() helper again, which would not benefit
+from the RCU optimization in this case.
 
-- KP
+Before this patch series land, handling of disconnected directories
+should be well defined, or at least let the caller deal with it.  How do
+you plan to handle disconnected directories for the eBPF use case?  See
+https://lore.kernel.org/all/20250719104204.545188-1-mic@digikod.net/
+Unfortunately, this issue is not solved for Landlock yet.
 
->
+> > 
+> > 
+> > A separate question below. 
+> > 
+> > I still have some question about how vfs_walk_ancestors() and the 
+> > walk_cb() interact. Let’s look at the landlock use case: the user 
+> > (landlock) just want to look at each ancestor, but doesn’t need to 
+> > take any references. walk_cb() will check @path against @root, and 
+> > return 0 when @path is the same as @root. 
+> > 
+> > IIUC, in this case, we will record m_seq and r_seq at the beginning
+> > of vfs_walk_ancestors(), and check them against mount_lock and 
+> > rename_lock at the end of the walk. (Maybe we also need to check 
+> > them at some points before the end of the walk?) If either seq
+> > changed during the walk, we need to restart the walk, and take
+> > reference on each step. Did I get this right so far? 
+
+I think so.  You should get some inspiration from prepend_path().
+
+> > 
+> > If the above is right, here are my questions about the 
+> > reference-less walk above: 
+> > 
+> > 1. Which function (vfs_walk_ancestors or walk_cb) will check m_seq 
+> >   and r_seq? I think vfs_walk_ancestors should check them. 
+
+Yes, walk_cb() should be as simple as possible: the simpler version
+should just return a constant.
+
+> > 2. When either seq changes, which function will call reset_data?
+> >   I think there are 3 options here:
+> >  2.a: vfs_walk_ancestors calls reset_data, which will be another
+> >       callback function the caller passes to vfs_walk_ancestors. 
+> >  2.b: walk_cb will call reset_data(), but we need a mechanism to
+> >       tell walk_cb to do it, maybe a “restart” flag?
+> >  2.c: Caller of vfs_walk_ancestors will call reset_data(). In 
+> >       this case, vfs_walk_ancestors will return -ECHILD to its
+> >       caller. But I think this option is NACKed. 
+> > 
+> > I think the right solution is to have vfs_walk_ancestors check
+> > m_seq and r_seq, and have walk_cb call reset_data. But this is
+> > Different to the proposal above. 
+
+I'm not sure a reset_data() would be useful if walk_cb() never sleep.
+
+If we really need such reset_data(), a fourth option would be for
+walk_cb() to return a specific value (an enum instead of a bool) to
+trigger the reset.
+
+> > 
+> > Do my questions above make any sense? Or maybe I totally 
+> > misunderstood something?
+> 
+> Hi Neil, 
+> 
+> Did my questions/comments above make sense? I am hoping we can 
+> agree on some design soon. 
+> 
+> Christian and Mickaël, 
+> 
+> Could you please also share your thoughts on this?
+> 
+> Current requirements from BPF side is straightforward: we just
+> need a mechanism to “walk up one level and hold reference”. So
+> most of the requirement comes from LandLock side. 
+
+Have you thought about how to handle disconnected directories?
+
+> 
+> Thanks,
+> Song
+> 
