@@ -1,173 +1,164 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8005E19CC02
-	for <linux-security-module@vger.kernel.org>; Thu, 24 Jul 2025 02:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC5119A;
+	Thu, 24 Jul 2025 05:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753323011; cv=none; b=mue9TVjCqWbmk3V1Qtd3er7i8gGRon7rURSaYfEubFHghMmYjzJd0GmtlGxx4jMS9g12vd3pmatsUei2Z9aVBLyYf3DvQrMQGN5Gf/91khvXou1avGKzMylmZ09hnLkJUrmP7CmLk0ucxrA4Bt1yAIk4hb7n4R4M3FA+zgyoVsI=
+	t=1753336230; cv=none; b=IpAVAd2sdeb+i90SpfFcJ13FSAaJ2K8PdcNMwrGWjxgoBqH/vBssrXKevYhkk7dH2CoxnBblcUC2ffuY3FReU0FWneoeV0drh0JLtnoSSTCVjknQvqlq/5LqFKtIgW9f55eFqVqJZILq7RzSdyBrFq2xdmrXkDaIpY9C1o0XR54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753323011; c=relaxed/simple;
-	bh=ffvh4rw69doyRsmJ7u3cRO1OWqVlFCUnRhvVhvHpZTk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iYfW2umYm/4B/G86UfVOmMFCwF2Ei3WnGUFeX4B1k4GLZZmmjTb7y6dGUFXsFZkCRekdqIZKRemAf4hVwW5BNhM6xW10iTZx3FPf7w1XgmFEKkNb0ZE4EOOwbPdrms81aGhItj8LO4ZSpzX/LNLJWGGHfz1KNH4qKyTSvR++9Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=JTcDKuI/; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1753336230; c=relaxed/simple;
+	bh=XE3wpC5OKAVRvxdPiqi/2WsaLPvDes1ay28krOB8Nyg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GbvBthKYc2PBKFKeWlHtxGVmfWQkQAumr14Qv7e8tvzlf+Z0CGh7o9BwA1Cg+UFsWT5Z35YS4WNxzuTi6V3A0oallX0Mb4lC4chVV643wW+iIjjFT2JR51lkt2Y0GLrKAC918ZXZDOtYEjpNRT6+Pfmtxngk892fQxEtTyNuouY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d0/TMlHJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="JTcDKuI/"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e8bbb02b887so342773276.3
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Jul 2025 19:10:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1753323008; x=1753927808; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ezOsh3Rw02sTHRTVL0D2zAjlIafvsBxPOvx6XqZve/E=;
-        b=JTcDKuI/5CUQCswz04ZlBKuJ9nt1HfEgvhgr0nGsG9qp4BfN+m+hvEEEj2n1KSB5t5
-         Hxia7vyFpvdiDnvE2X9hHOj8zKmSDAdrbDLE8CmWjesvRLDha7n4X9vXlfjpu6i1lIf5
-         s5YmjwyTrKz7KDqG9G6wjRcjlDiB3ySIBdQCj4Hqgp7gwybEXQ+EFIBWRTkS+JUKxC3Z
-         HE3YVrql5NXTPsdBwztgQAj6ZHafhnWx7Y1aZAd8pUBm+jAxolMA9D12Coe2nmSmnqrW
-         a/b1qZmN1v9C/VqBmE7cu88zdzjd2+GScqCoLSusEJMLpxas41Qu/5Vr8kdEsDllqlXI
-         JsBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753323008; x=1753927808;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ezOsh3Rw02sTHRTVL0D2zAjlIafvsBxPOvx6XqZve/E=;
-        b=DRqb/YTqYWjRd+K+O365bLfy70+87k31XbrFtCBHETVGhSFb5OnFNmaSyAzk/kmMar
-         JG3rqaMiLU+lGFmIX4Xb9Wb7zi3N9uGKURzw1xbfR8Nk8uug8NJAm5/7iruuz1SLhKym
-         0etBAOZsDFL3hT05kb7d5UjqELhseSO/2P8pRzOm+o2im0PDDUwMUuUQgrI8IRYUrwxb
-         Ld462yPE41nnEZPcguBUmjEx+5mceuJc4Jx/U4n3q4p2auqjvUXQlJTtAMRl5HMM+HKX
-         HQ9bNQ5HS5L6HFFIQ1kySoOi5IVXnlROejVW8TLOeMKjqv5jvUVU4/eWffoGEiO1UK9H
-         wP3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW+1vvatwBBL65cWwpr2aY5N2Ip0MlZNmMtbZk2NbPt99+Kv961uk9a1Stla9XDDGgiHMU0cql1uYNb5lUx+ZLm1PVZ9es=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH92GpG4Vkk4/lt+vwFgBjmDDzVgFyq0/VLxhYTpDuvTfMfavr
-	uBlEDGuyq3ceFjjaQe2ES/YDUJRxcVW2+bqtKVFoM5KLpw37IprhPbexjSPYHEojVr57Gdh8R3s
-	gJ7+Qy3sDcY9VBivBy+36R6nDLmXU1vPHeBT+tA7B
-X-Gm-Gg: ASbGncsvlH3SE2iVSPtpz22hYJVYSn+ik2eyU5Iga0+dgUEgy0uRabFeEjAYsgWsm8w
-	urYXs3FIzLRov7oENJygkUu/TilB5onYn09ARBSsyz+bfsNCFT3Qg2t/3eXaJjI35l12NJOrGED
-	UBCrjs5Jm+l9w8IUJ3VXv07uMrvBJFFRAQYz1QSv7oPookAuH6tEm9ErSn6e9Y8rb/N9W3KzCuK
-	Btwf0k=
-X-Google-Smtp-Source: AGHT+IEjtM0YH/uIkH5EC6RHdxIYSOEo9s7z9JMeuLNs93fJxU9BkwVAtv1fRHAPFv5MIBRtQfg1omYHVhyQIQh0vnM=
-X-Received: by 2002:a05:6902:1288:b0:e82:17a1:5c15 with SMTP id
- 3f1490d57ef6-e8dc57e75dcmr6464733276.10.1753323006953; Wed, 23 Jul 2025
- 19:10:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0/TMlHJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA19C4CEF4;
+	Thu, 24 Jul 2025 05:50:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753336230;
+	bh=XE3wpC5OKAVRvxdPiqi/2WsaLPvDes1ay28krOB8Nyg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=d0/TMlHJD3g/KJWGAgQ/f/vsSu6dz+U/wQhw7RJ+hpjI1X/Sb0vKcWNoCHtrHbwiT
+	 fH44GGf8Ya+PkaTReniUuYLdOVN2Z7VZtAILtvfvcjiAgUuEzQ5NtxiABxovHh0dhh
+	 CjjXTbcKODbX01+IxIuANaBudNKSlp4sTNUtj/Dm700M2Xeul+T3LNAq2Cwpvn93hM
+	 3mtHpKM4dxgJplW4BiyL41PLzD8gk1AUnlrUjfa7EyvQF15EPpx30bWI4LoLGEpTl8
+	 AnYSr9DuaqtX57N9wGYm/6ZnjhE8O4TTw5SsPmlN/kayzZrdvOKdlCPjUMa8a9ErZI
+	 bpYkRhkl38Olg==
+From: Kees Cook <kees@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kees Cook <kees@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Gavin Shan <gshan@redhat.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	James Morse <james.morse@arm.com>,
+	Oza Pawandeep <quic_poza@quicinc.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michal Wilczynski <michal.wilczynski@intel.com>,
+	Juergen Gross <jgross@suse.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Kirill A. Shutemov" <kas@kernel.org>,
+	Roger Pau Monne <roger.pau@citrix.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Usama Arif <usama.arif@bytedance.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Thomas Huth <thuth@redhat.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Hou Wenlong <houwenlong.hwl@antgroup.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Baoquan He <bhe@redhat.com>,
+	Alexander Graf <graf@amazon.com>,
+	Changyuan Lyu <changyuanl@google.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Jan Beulich <jbeulich@suse.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Bibo Mao <maobibo@loongson.cn>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	x86@kernel.org,
+	kvm@vger.kernel.org,
+	ibm-acpi-devel@lists.sourceforge.net,
+	platform-driver-x86@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org,
+	linux-mm@kvack.org,
+	kasan-dev@googlegroups.com,
+	linux-kbuild@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH v4 0/4] stackleak: Support Clang stack depth tracking
+Date: Wed, 23 Jul 2025 22:50:24 -0700
+Message-Id: <20250724054419.it.405-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
- <CAHC9VhQfrMe7EY3_bvW6PcLdaW7tPMgv6WZuePxd1RrbhyZv-g@mail.gmail.com>
- <CAHC9VhQyDX+NgWipgm5DGMewfVTBe3DkLbe_AANRiuAj40bA1w@mail.gmail.com>
- <6797b694-6c40-4806-9541-05ce6a0b07fc@oracle.com> <CAHC9VhQsK_XpJ-bbt6AXM4fk30huhrPvvMSEuHHTPb=eJZwoUA@mail.gmail.com>
-In-Reply-To: <CAHC9VhQsK_XpJ-bbt6AXM4fk30huhrPvvMSEuHHTPb=eJZwoUA@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 23 Jul 2025 22:09:56 -0400
-X-Gm-Features: Ac12FXzwcvMXRcY-HOujXriwLTi0J58g3gNTBeLJ4hgKLEq2xrVmA3w4Jght3uY
-Message-ID: <CAHC9VhQnR6TKzzzpE9XQqiFivV0ECbVx7GH+1fQmz917-MAhsw@mail.gmail.com>
-Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity()
- interface
-To: Anna Schumaker <anna.schumaker@oracle.com>
-Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Simon Horman <horms@kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1439; i=kees@kernel.org; h=from:subject:message-id; bh=XE3wpC5OKAVRvxdPiqi/2WsaLPvDes1ay28krOB8Nyg=; b=owGbwMvMwCVmps19z/KJym7G02pJDBmNJxc5mZrpNj5K4tORy/7TeZXhw9upF18pr/M4P+mO0 qJ1Zxv/dZSyMIhxMciKKbIE2bnHuXi8bQ93n6sIM4eVCWQIAxenAExkx3ZGhj3Lo9RPfd61sO3K 6ZOX39cZ7GLmn/6vehbf2xvW83qXM01nZOhJWph/qli05kP325oNd1z3S2krH/3OsOnxZQ05w52 HynkB
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 19, 2025 at 5:18=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Tue, May 27, 2025 at 5:03=E2=80=AFPM Anna Schumaker
-> <anna.schumaker@oracle.com> wrote:
-> > On 5/20/25 5:31 PM, Paul Moore wrote:
-> > > On Tue, Apr 29, 2025 at 7:34=E2=80=AFPM Paul Moore <paul@paul-moore.c=
-om> wrote:
-> > >> On Mon, Apr 28, 2025 at 4:15=E2=80=AFPM Stephen Smalley
-> > >> <stephen.smalley.work@gmail.com> wrote:
-> > >>>
-> > >>> Update the security_inode_listsecurity() interface to allow
-> > >>> use of the xattr_list_one() helper and update the hook
-> > >>> implementations.
-> > >>>
-> > >>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen=
-.smalley.work@gmail.com/
-> > >>>
-> > >>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > >>> ---
-> > >>> This patch is relative to the one linked above, which in theory is =
-on
-> > >>> vfs.fixes but doesn't appear to have been pushed when I looked.
-> > >>>
-> > >>>  fs/nfs/nfs4proc.c             | 10 ++++++----
-> > >>>  fs/xattr.c                    | 19 +++++++------------
-> > >>>  include/linux/lsm_hook_defs.h |  4 ++--
-> > >>>  include/linux/security.h      |  5 +++--
-> > >>>  net/socket.c                  | 17 +++++++----------
-> > >>>  security/security.c           | 16 ++++++++--------
-> > >>>  security/selinux/hooks.c      | 10 +++-------
-> > >>>  security/smack/smack_lsm.c    | 13 ++++---------
-> > >>>  8 files changed, 40 insertions(+), 54 deletions(-)
-> > >>
-> > >> Thanks Stephen.  Once we get ACKs from the NFS, netdev, and Smack
-> > >> folks I can pull this into the LSM tree.
-> > >
-> > > Gentle ping for Trond, Anna, Jakub, and Casey ... can I get some ACKs
-> > > on this patch?  It's a little late for the upcoming merge window, but
-> > > I'd like to merge this via the LSM tree after the merge window closes=
-.
-> >
-> > For the NFS change:
-> >     Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
->
-> Hi Anna,
->
-> Thanks for reviewing the patch.  Unfortunately when merging the patch
-> today and fixing up some merge conflicts I bumped into an odd case in
-> the NFS space and I wanted to check with you on how you would like to
-> resolve it.
->
-> Commit 243fea134633 ("NFSv4.2: fix listxattr to return selinux
-> security label")[1] adds a direct call to
-> security_inode_listsecurity() in nfs4_listxattr(), despite the
-> existing nfs4_listxattr_nfs4_label() call which calls into the same
-> LSM hook, although that call is conditional on the server supporting
-> NFS_CAP_SECURITY_LABEL.  Based on a quick search, it appears the only
-> caller for nfs4_listxattr_nfs4_label() is nfs4_listxattr() so I'm
-> wondering if there isn't some room for improvement here.
->
-> I think there are two obvious options, and I'm curious about your
-> thoughts on which of these you would prefer, or if there is another
-> third option that you would like to see merged.
->
-> Option #1:
-> Essentially back out commit 243fea134633, removing the direct LSM call
-> in nfs4_listxattr() and relying on the nfs4_listxattr_nfs4_label() for
-> the LSM/SELinux xattrs.  I think we would want to remove the
-> NFS_CAP_SECURITY_LABEL check and build nfs4_listxattr_nfs4_label()
-> regardless of CONFIG_NFS_V4_SECURITY_LABEL.
->
-> Option #2:
-> Remove nfs4_listxattr_nfs4_label() entirely and keep the direct LSM
-> call in nfs4_listxattr(), with the required changes for this patch.
->
-> Thoughts?
->
-> [1] https://lore.kernel.org/all/20250425180921.86702-1-okorniev@redhat.co=
-m/
+ v4:
+  - rebase on for-next/hardening tree (took subset of v3 patches)
+  - improve commit logs for x86 and arm64 changes (Mike, Will, Ard)
+ v3: https://lore.kernel.org/lkml/20250717231756.make.423-kees@kernel.org/
+ v2: https://lore.kernel.org/lkml/20250523043251.it.550-kees@kernel.org/
+ v1: https://lore.kernel.org/lkml/20250507180852.work.231-kees@kernel.org/
 
-A gentle ping on the question above for the NFS folks.  If I don't
-hear anything I'll hack up something and send it out for review, but I
-thought it would nice if we could sort out the proper fix first.
+Hi,
 
---=20
-paul-moore.com
+These are the remaining changes needed to support Clang stack depth
+tracking for kstack_erase (nee stackleak).
+
+Thanks!
+
+-Kees
+
+Kees Cook (4):
+  arm64: Handle KCOV __init vs inline mismatches
+  x86: Handle KCOV __init vs inline mismatches
+  init.h: Disable sanitizer coverage for __init and __head
+  kstack_erase: Support Clang stack depth tracking
+
+ security/Kconfig.hardening      | 5 ++++-
+ scripts/Makefile.kstack_erase   | 6 ++++++
+ arch/arm64/include/asm/acpi.h   | 2 +-
+ arch/x86/include/asm/acpi.h     | 4 ++--
+ arch/x86/include/asm/init.h     | 2 +-
+ arch/x86/include/asm/realmode.h | 2 +-
+ include/linux/acpi.h            | 4 ++--
+ include/linux/bootconfig.h      | 2 +-
+ include/linux/efi.h             | 2 +-
+ include/linux/init.h            | 4 +++-
+ include/linux/memblock.h        | 2 +-
+ include/linux/smp.h             | 2 +-
+ arch/x86/kernel/kvm.c           | 2 +-
+ arch/x86/mm/init_64.c           | 2 +-
+ kernel/kexec_handover.c         | 4 ++--
+ 15 files changed, 28 insertions(+), 17 deletions(-)
+
+-- 
+2.34.1
+
