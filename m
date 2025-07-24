@@ -1,292 +1,173 @@
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042A62376F2
-	for <linux-security-module@vger.kernel.org>; Wed, 23 Jul 2025 21:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8005E19CC02
+	for <linux-security-module@vger.kernel.org>; Thu, 24 Jul 2025 02:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753304907; cv=none; b=nJhZpGhsSrsvSTlxYY/VkZc30fQO0OKUGmdMNelXrYk37lcWtAhUT2njiNccooqxmBioy3NfAm/3RzW4QQLxvTih090QZtRTpBJ78BPzQfYKNbpg3i0ZngJeWoI8nDJmjNfdShQBoL0jjmhhJDzr7kJ3dBFBXmQTBE2SXYTS0/o=
+	t=1753323011; cv=none; b=mue9TVjCqWbmk3V1Qtd3er7i8gGRon7rURSaYfEubFHghMmYjzJd0GmtlGxx4jMS9g12vd3pmatsUei2Z9aVBLyYf3DvQrMQGN5Gf/91khvXou1avGKzMylmZ09hnLkJUrmP7CmLk0ucxrA4Bt1yAIk4hb7n4R4M3FA+zgyoVsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753304907; c=relaxed/simple;
-	bh=n+0HSs87fesXbREkl+dtrCopS3LC+zQD7e1RCVVR3QQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CrkrHpeXb0/1WIQQ4wIfmisUOqSpg6YT9coNpjlp0Z1wXmz//YPUCInYQ/SDX6sliDeZpAb3yoz8KrPzu2X07Ph4pc4h3nGeqPphBydnTzef+1rnu201sWaoUVrHlR6c7gtQP7fFpGxYQNa61n958ux+BWRU/STJtetNL5vc61U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mbCGSZTn; arc=none smtp.client-ip=84.16.66.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1753323011; c=relaxed/simple;
+	bh=ffvh4rw69doyRsmJ7u3cRO1OWqVlFCUnRhvVhvHpZTk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iYfW2umYm/4B/G86UfVOmMFCwF2Ei3WnGUFeX4B1k4GLZZmmjTb7y6dGUFXsFZkCRekdqIZKRemAf4hVwW5BNhM6xW10iTZx3FPf7w1XgmFEKkNb0ZE4EOOwbPdrms81aGhItj8LO4ZSpzX/LNLJWGGHfz1KNH4qKyTSvR++9Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=JTcDKuI/; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mbCGSZTn"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bnRQH5dB9zH39;
-	Wed, 23 Jul 2025 23:01:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1753304503;
-	bh=YMBV64h4usnoU4LNYkOsA6ceCQPl0nWBOgtg+p6IAS4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mbCGSZTncRc+BI2sYHaiBkv/zmtwpKLe0TASKjh9X2cVkzjCG9OnOpu57igaudzzV
-	 LJXSRzU14qLT8nI+4XxXybRv141mmV1jmMoxZkNq2POt+YDF5MKuIXsj3vKx4xBhFj
-	 WGLL3L9FUcY/PcfGsHsfKSPrqePb7CTtxLPIWn4I=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bnRQG5mwmz3hd;
-	Wed, 23 Jul 2025 23:01:42 +0200 (CEST)
-Date: Wed, 23 Jul 2025 23:01:42 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jann Horn <jannh@google.com>, 
-	John Johansen <john.johansen@canonical.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Ben Scarlato <akhna@google.com>, 
-	Christian Brauner <brauner@kernel.org>, Daniel Burgener <dburgener@linux.microsoft.com>, 
-	Jeff Xu <jeffxu@google.com>, NeilBrown <neil@brown.name>, Paul Moore <paul@paul-moore.com>, 
-	Ryan Sullivan <rysulliv@redhat.com>, Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] landlock: Fix handling of disconnected directories
-Message-ID: <20250723.vouso1Kievao@digikod.net>
-References: <20250719104204.545188-1-mic@digikod.net>
- <20250719104204.545188-3-mic@digikod.net>
- <18425339-1f4b-4d98-8400-1decef26eda7@maowtm.org>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="JTcDKuI/"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e8bbb02b887so342773276.3
+        for <linux-security-module@vger.kernel.org>; Wed, 23 Jul 2025 19:10:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1753323008; x=1753927808; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ezOsh3Rw02sTHRTVL0D2zAjlIafvsBxPOvx6XqZve/E=;
+        b=JTcDKuI/5CUQCswz04ZlBKuJ9nt1HfEgvhgr0nGsG9qp4BfN+m+hvEEEj2n1KSB5t5
+         Hxia7vyFpvdiDnvE2X9hHOj8zKmSDAdrbDLE8CmWjesvRLDha7n4X9vXlfjpu6i1lIf5
+         s5YmjwyTrKz7KDqG9G6wjRcjlDiB3ySIBdQCj4Hqgp7gwybEXQ+EFIBWRTkS+JUKxC3Z
+         HE3YVrql5NXTPsdBwztgQAj6ZHafhnWx7Y1aZAd8pUBm+jAxolMA9D12Coe2nmSmnqrW
+         a/b1qZmN1v9C/VqBmE7cu88zdzjd2+GScqCoLSusEJMLpxas41Qu/5Vr8kdEsDllqlXI
+         JsBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753323008; x=1753927808;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ezOsh3Rw02sTHRTVL0D2zAjlIafvsBxPOvx6XqZve/E=;
+        b=DRqb/YTqYWjRd+K+O365bLfy70+87k31XbrFtCBHETVGhSFb5OnFNmaSyAzk/kmMar
+         JG3rqaMiLU+lGFmIX4Xb9Wb7zi3N9uGKURzw1xbfR8Nk8uug8NJAm5/7iruuz1SLhKym
+         0etBAOZsDFL3hT05kb7d5UjqELhseSO/2P8pRzOm+o2im0PDDUwMUuUQgrI8IRYUrwxb
+         Ld462yPE41nnEZPcguBUmjEx+5mceuJc4Jx/U4n3q4p2auqjvUXQlJTtAMRl5HMM+HKX
+         HQ9bNQ5HS5L6HFFIQ1kySoOi5IVXnlROejVW8TLOeMKjqv5jvUVU4/eWffoGEiO1UK9H
+         wP3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW+1vvatwBBL65cWwpr2aY5N2Ip0MlZNmMtbZk2NbPt99+Kv961uk9a1Stla9XDDGgiHMU0cql1uYNb5lUx+ZLm1PVZ9es=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH92GpG4Vkk4/lt+vwFgBjmDDzVgFyq0/VLxhYTpDuvTfMfavr
+	uBlEDGuyq3ceFjjaQe2ES/YDUJRxcVW2+bqtKVFoM5KLpw37IprhPbexjSPYHEojVr57Gdh8R3s
+	gJ7+Qy3sDcY9VBivBy+36R6nDLmXU1vPHeBT+tA7B
+X-Gm-Gg: ASbGncsvlH3SE2iVSPtpz22hYJVYSn+ik2eyU5Iga0+dgUEgy0uRabFeEjAYsgWsm8w
+	urYXs3FIzLRov7oENJygkUu/TilB5onYn09ARBSsyz+bfsNCFT3Qg2t/3eXaJjI35l12NJOrGED
+	UBCrjs5Jm+l9w8IUJ3VXv07uMrvBJFFRAQYz1QSv7oPookAuH6tEm9ErSn6e9Y8rb/N9W3KzCuK
+	Btwf0k=
+X-Google-Smtp-Source: AGHT+IEjtM0YH/uIkH5EC6RHdxIYSOEo9s7z9JMeuLNs93fJxU9BkwVAtv1fRHAPFv5MIBRtQfg1omYHVhyQIQh0vnM=
+X-Received: by 2002:a05:6902:1288:b0:e82:17a1:5c15 with SMTP id
+ 3f1490d57ef6-e8dc57e75dcmr6464733276.10.1753323006953; Wed, 23 Jul 2025
+ 19:10:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <18425339-1f4b-4d98-8400-1decef26eda7@maowtm.org>
-X-Infomaniak-Routing: alpha
+References: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
+ <CAHC9VhQfrMe7EY3_bvW6PcLdaW7tPMgv6WZuePxd1RrbhyZv-g@mail.gmail.com>
+ <CAHC9VhQyDX+NgWipgm5DGMewfVTBe3DkLbe_AANRiuAj40bA1w@mail.gmail.com>
+ <6797b694-6c40-4806-9541-05ce6a0b07fc@oracle.com> <CAHC9VhQsK_XpJ-bbt6AXM4fk30huhrPvvMSEuHHTPb=eJZwoUA@mail.gmail.com>
+In-Reply-To: <CAHC9VhQsK_XpJ-bbt6AXM4fk30huhrPvvMSEuHHTPb=eJZwoUA@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 23 Jul 2025 22:09:56 -0400
+X-Gm-Features: Ac12FXzwcvMXRcY-HOujXriwLTi0J58g3gNTBeLJ4hgKLEq2xrVmA3w4Jght3uY
+Message-ID: <CAHC9VhQnR6TKzzzpE9XQqiFivV0ECbVx7GH+1fQmz917-MAhsw@mail.gmail.com>
+Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity()
+ interface
+To: Anna Schumaker <anna.schumaker@oracle.com>
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Simon Horman <horms@kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 22, 2025 at 07:04:02PM +0100, Tingmao Wang wrote:
-> On 7/19/25 11:42, Mickaël Salaün wrote:
-> > [...]
-> > @@ -784,12 +787,18 @@ static bool is_access_to_paths_allowed(
-> >  	if (WARN_ON_ONCE(!layer_masks_parent1))
-> >  		return false;
-> >  
-> > -	allowed_parent1 = is_layer_masks_allowed(layer_masks_parent1);
-> > -
-> >  	if (unlikely(layer_masks_parent2)) {
-> >  		if (WARN_ON_ONCE(!dentry_child1))
-> >  			return false;
-> >  
-> > +		/*
-> > +		 * Creates a backup of the initial layer masks to be able to restore
-> > +		 * them if we find out that we were walking a disconnected directory,
-> > +		 * which would make the collected access rights inconsistent (cf.
-> > +		 * reset_to_mount_root).
-> > +		 */
-> 
-> This comment is duplicate with the one below, is this intentional?
-> 
-> > [...]
-> 
-> On the other hand, I'm still a bit uncertain about the domain check
-> semantics.  While it would not cause a rename to be allowed if it is
-> otherwise not allowed by any rules on or above the mountpoint, this gets a
-> bit weird if we have a situation where renames are allowed on the
-> mountpoint or everywhere, but not read/writes, however read/writes are
-> allowed directly on a file, but the dir containing that file gets
-> disconnected so the sandboxed application can't read or write to it.
-> (Maybe someone would set up such a policy where renames are allowed,
-> expecting Landlock to always prevent renames where additional permissions
-> would be exposed?)
-> 
-> In the above situation, if the file is then moved to a connected
-> directory, it will become readable/writable again.
+On Thu, Jun 19, 2025 at 5:18=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> On Tue, May 27, 2025 at 5:03=E2=80=AFPM Anna Schumaker
+> <anna.schumaker@oracle.com> wrote:
+> > On 5/20/25 5:31 PM, Paul Moore wrote:
+> > > On Tue, Apr 29, 2025 at 7:34=E2=80=AFPM Paul Moore <paul@paul-moore.c=
+om> wrote:
+> > >> On Mon, Apr 28, 2025 at 4:15=E2=80=AFPM Stephen Smalley
+> > >> <stephen.smalley.work@gmail.com> wrote:
+> > >>>
+> > >>> Update the security_inode_listsecurity() interface to allow
+> > >>> use of the xattr_list_one() helper and update the hook
+> > >>> implementations.
+> > >>>
+> > >>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen=
+.smalley.work@gmail.com/
+> > >>>
+> > >>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > >>> ---
+> > >>> This patch is relative to the one linked above, which in theory is =
+on
+> > >>> vfs.fixes but doesn't appear to have been pushed when I looked.
+> > >>>
+> > >>>  fs/nfs/nfs4proc.c             | 10 ++++++----
+> > >>>  fs/xattr.c                    | 19 +++++++------------
+> > >>>  include/linux/lsm_hook_defs.h |  4 ++--
+> > >>>  include/linux/security.h      |  5 +++--
+> > >>>  net/socket.c                  | 17 +++++++----------
+> > >>>  security/security.c           | 16 ++++++++--------
+> > >>>  security/selinux/hooks.c      | 10 +++-------
+> > >>>  security/smack/smack_lsm.c    | 13 ++++---------
+> > >>>  8 files changed, 40 insertions(+), 54 deletions(-)
+> > >>
+> > >> Thanks Stephen.  Once we get ACKs from the NFS, netdev, and Smack
+> > >> folks I can pull this into the LSM tree.
+> > >
+> > > Gentle ping for Trond, Anna, Jakub, and Casey ... can I get some ACKs
+> > > on this patch?  It's a little late for the upcoming merge window, but
+> > > I'd like to merge this via the LSM tree after the merge window closes=
+.
+> >
+> > For the NFS change:
+> >     Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
+>
+> Hi Anna,
+>
+> Thanks for reviewing the patch.  Unfortunately when merging the patch
+> today and fixing up some merge conflicts I bumped into an odd case in
+> the NFS space and I wanted to check with you on how you would like to
+> resolve it.
+>
+> Commit 243fea134633 ("NFSv4.2: fix listxattr to return selinux
+> security label")[1] adds a direct call to
+> security_inode_listsecurity() in nfs4_listxattr(), despite the
+> existing nfs4_listxattr_nfs4_label() call which calls into the same
+> LSM hook, although that call is conditional on the server supporting
+> NFS_CAP_SECURITY_LABEL.  Based on a quick search, it appears the only
+> caller for nfs4_listxattr_nfs4_label() is nfs4_listxattr() so I'm
+> wondering if there isn't some room for improvement here.
+>
+> I think there are two obvious options, and I'm curious about your
+> thoughts on which of these you would prefer, or if there is another
+> third option that you would like to see merged.
+>
+> Option #1:
+> Essentially back out commit 243fea134633, removing the direct LSM call
+> in nfs4_listxattr() and relying on the nfs4_listxattr_nfs4_label() for
+> the LSM/SELinux xattrs.  I think we would want to remove the
+> NFS_CAP_SECURITY_LABEL check and build nfs4_listxattr_nfs4_label()
+> regardless of CONFIG_NFS_V4_SECURITY_LABEL.
+>
+> Option #2:
+> Remove nfs4_listxattr_nfs4_label() entirely and keep the direct LSM
+> call in nfs4_listxattr(), with the required changes for this patch.
+>
+> Thoughts?
+>
+> [1] https://lore.kernel.org/all/20250425180921.86702-1-okorniev@redhat.co=
+m/
 
-We can generalize this issue to not only the end file but any component
-of the path: disconnected directories.  In fact, the main issue is the
-potential inconsistency of access checks over time (e.g. between two
-renames).  This could be exploited to bypass the security checks done
-for FS_REFER.
+A gentle ping on the question above for the NFS folks.  If I don't
+hear anything I'll hack up something and send it out for review, but I
+thought it would nice if we could sort out the proper fix first.
 
-I see two solutions:
-
-1. *Always* walk down to the IS_ROOT directory, and then jump to the
-   mount point.  This makes it possible to have consistent access checks
-   for renames and open/use.  The first downside is that that would
-   change the current behavior for bind mounts that could get more
-   access rights (if the policy explicitly sets rights for the hidden
-   directories).  The second downside is that we'll do more walk.
-
-2. Return -EACCES (or -ENOENT) for actions involving disconnected
-   directories, or renames of disconnected opened files.  This second
-   solution is simpler and safer but completely disables the use of
-   disconnected directories and the rename of disconnected files for
-   sandboxed processes.
-
-It would be much better to be able to handle opened directories as
-(object) capabilities, but that is not currently possible because of the
-way paths are handled by the VFS and LSM hooks.
-
-Tingmao, Günther, Jann, what do you think?
-
-It looks like AppArmor also denies access to disconnected path in some
-cases, but it tries to reconstruct the path for known internal
-filesystems, and it seems to specifically handle the case of chroot.  I
-don't know when PATH_CONNECT_PATH is set though.
-
-John, could you please clarify how disconnected directories and files
-are handled by AppArmor?
-
-> 
-> Here is an example test, using the layout1_bind fixture for flexibility
-> for now (and also because I needed to just go to bed yesterday lol) (but
-> this would probably be better written as an additional
-> layout5_disconnected_branch variant).
-> 
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index 21dd95aaf5e4..2274f165d933 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -5100,6 +5100,118 @@ TEST_F_FORK(layout1_bind, path_disconnected_rename)
->  	EXPECT_EQ(0, test_open(file1_s1d3, O_RDONLY));
->  }
->  
-> +static void
-> +path_disconnected_gain_back_rights_via_rename(struct __test_metadata *_metadata,
-> +					      bool has_read_rule_on_other_d)
-> +{
-> +	/*
-> +	 * This is a ruleset where rename/create/delete rights are allowed
-> +	 * anywhere under the mount, and so still applies after path gets
-> +	 * disconnected.  However the only read right is given to the file
-> +	 * directly, and therefore the file is no longer readable after the
-> +	 * path to it being disconnected.
-> +	 */
-> +	// clang-format off
-> +	struct rule layer1[] = {
-> +		{
-> +			.path = dir_s2d2,
-> +			.access = LANDLOCK_ACCESS_FS_REFER |
-> +					LANDLOCK_ACCESS_FS_MAKE_DIR |
-> +					LANDLOCK_ACCESS_FS_REMOVE_DIR |
-> +					LANDLOCK_ACCESS_FS_MAKE_REG |
-> +					LANDLOCK_ACCESS_FS_REMOVE_FILE
-> +		},
-> +		{
-> +			.path = file1_s1d3,
-> +			.access = LANDLOCK_ACCESS_FS_READ_FILE,
-> +		},
-> +		{
-> +			.path = TMP_DIR "/s1d1/s1d2/s1d3_2",
-> +			.access = LANDLOCK_ACCESS_FS_READ_FILE,
-> +		},
-> +		{}
-> +	};
-> +	// clang-format on
-> +
-> +	int ruleset_fd, bind_s1d3_fd, res;
-> +
-> +	if (!has_read_rule_on_other_d) {
-> +		layer1[2].path = NULL;
-> +		layer1[2].access = 0;
-> +	}
-> +
-> +	ASSERT_EQ(0, mkdir(dir_s4d1, 0755))
-> +	{
-> +		TH_LOG("Failed to create %s: %s", dir_s4d1, strerror(errno));
-> +	}
-> +
-> +	/* Directory used to move the file into, in order to try to regain read */
-> +	ASSERT_EQ(0, mkdir(TMP_DIR "/s1d1/s1d2/s1d3_2", 0755))
-> +	{
-> +		TH_LOG("Failed to create %s: %s", TMP_DIR "/s1d1/s1d2/s1d3_2",
-> +		       strerror(errno));
-> +	}
-> +
-> +	ruleset_fd = create_ruleset(_metadata, ACCESS_ALL, layer1);
-> +	ASSERT_LE(0, ruleset_fd);
-> +
-> +	bind_s1d3_fd = open(bind_dir_s1d3, O_PATH | O_CLOEXEC);
-> +	ASSERT_LE(0, bind_s1d3_fd);
-> +	EXPECT_EQ(0, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
-> +
-> +	/* Make disconnected */
-> +	ASSERT_EQ(0, rename(dir_s1d3, dir_s4d2))
-> +	{
-> +		TH_LOG("Failed to rename %s to %s: %s", dir_s1d3, dir_s4d2,
-> +		       strerror(errno));
-> +	}
-> +
-> +	enforce_ruleset(_metadata, ruleset_fd);
-> +	EXPECT_EQ(0, close(ruleset_fd));
-> +
-> +	/* We shouldn't be able to read file1 under disconnected path now */
-> +	EXPECT_EQ(EACCES, test_open_rel(bind_s1d3_fd, file1_name, O_RDONLY));
-> +
-> +	/*
-> +	 * But can we circumvent it by moving file1 to a connected path when
-> +	 * either we're allowed to read that move destination, or if we have
-> +	 * allow rules on the original file, then the move target doesn't even
-> +	 * need read rules on itself.
-> +	 *
-> +	 * This is possible even though the domain check should semantically
-> +	 * ensure that any path (?) we can't read can't become readable
-> +	 * (through that path) again by a rename?
-> +	 */
-> +	res = renameat(bind_s1d3_fd, file1_name, AT_FDCWD,
-> +		       TMP_DIR "/s2d1/s2d2/s1d3_2/f1");
-> +	if (res == 0) {
-> +		TH_LOG("Renamed file1 to %s, which should not have been allowed.",
-> +		       TMP_DIR "/s2d1/s2d2/s1d3_2/f1");
-> +		/* At this point the test has failed, but let's try reading it */
-> +		res = test_open(TMP_DIR "/s2d1/s2d2/s1d3_2/f1", O_RDONLY);
-> +		if (res != 0) {
-> +			TH_LOG("Failed to read file1 after rename: %s",
-> +			       strerror(res));
-> +		} else {
-> +			TH_LOG("file1 is readable after rename!");
-> +			ASSERT_TRUE(false);
-> +		}
-> +		ASSERT_TRUE(false);
-> +	}
-> +	ASSERT_EQ(-1, res);
-> +	EXPECT_EQ(EXDEV, errno);
-> +}
-> +
-> +TEST_F_FORK(layout1_bind, path_disconnected_gain_back_rights_1)
-> +{
-> +	path_disconnected_gain_back_rights_via_rename(_metadata, false);
-> +}
-> +
-> +TEST_F_FORK(layout1_bind, path_disconnected_gain_back_rights_2)
-> +{
-> +	path_disconnected_gain_back_rights_via_rename(_metadata, true);
-> +}
-> +
->  /*
->   * Test that linkat(2) with disconnected paths works under Landlock. This
->   * test moves s1d3 to s4d1.
-> 
-> The behavior is as hypothesized above:
-> 
-> 	root@b8f2ef644787 /t/landlock# ./fs_test -t path_disconnected_gain_back_rights_1 -t path_disconnected_gain_back_rights_2
-> 	TAP version 13
-> 	1..2
-> 	# Starting 2 tests from 1 test cases.
-> 	#  RUN           layout1_bind.path_disconnected_gain_back_rights_1 ...
-> 	# fs_test.c:5188:path_disconnected_gain_back_rights_1:Renamed file1 to tmp/s2d1/s2d2/s1d3_2/f1, which should not have been allowed.
-> 	# fs_test.c:5196:path_disconnected_gain_back_rights_1:file1 is readable after rename!
-> 	# fs_test.c:5197:path_disconnected_gain_back_rights_1:Expected 0 (0) != false (0)
-> 	# path_disconnected_gain_back_rights_1: Test terminated by assertion
-> 	#          FAIL  layout1_bind.path_disconnected_gain_back_rights_1
-> 	not ok 1 layout1_bind.path_disconnected_gain_back_rights_1
-> 	#  RUN           layout1_bind.path_disconnected_gain_back_rights_2 ...
-> 	# fs_test.c:5188:path_disconnected_gain_back_rights_2:Renamed file1 to tmp/s2d1/s2d2/s1d3_2/f1, which should not have been allowed.
-> 	# fs_test.c:5196:path_disconnected_gain_back_rights_2:file1 is readable after rename!
-> 	# fs_test.c:5197:path_disconnected_gain_back_rights_2:Expected 0 (0) != false (0)
-> 	# path_disconnected_gain_back_rights_2: Test terminated by assertion
-> 	#          FAIL  layout1_bind.path_disconnected_gain_back_rights_2
-> 	not ok 2 layout1_bind.path_disconnected_gain_back_rights_2
-> 	# FAILED: 0 / 2 tests passed.
-> 	# Totals: pass:0 fail:2 xfail:0 xpass:0 skip:0 error:0
-> 
-> Would it be worth it to have the domain check take into account this edge
-> case?  (But on the other hand, one could argue that if rights are granted
-> directly to a file, then the policy author intended for access to be
-> allowed, but in which case shouldn't access, even if through disconnected
-> path, be allowed?)
-> 
-> Best,
-> Tingmao
-> 
+--=20
+paul-moore.com
