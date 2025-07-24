@@ -1,217 +1,156 @@
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0016D285045;
-	Thu, 24 Jul 2025 17:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978567494
+	for <linux-security-module@vger.kernel.org>; Thu, 24 Jul 2025 17:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753377030; cv=none; b=tuYd0Xj3mfT1TpynA5FsVKHp6jb00TnncQv9WyC183EjiQP1ob1tjGuGWf5lsEwdomRFDsFYKn4tHT5vlG7DMt4IZyuwYo5udEKcw0uy99WvTtoefS6R4896Rc4TtZ6NhZNSoqYWBR7gjLHm93yhLn5K0OlNyj8NtlStcLIdgiw=
+	t=1753377768; cv=none; b=PyYL3LNJajW3AXbn6iI7bCnLwBRWViyRA+s507bYqgfywGXXQzSTvHi+9w3l64J7C2mOy0lHna3PqMG20srn2MfipA6zGLe+Yi2jqPkCoTnvnsT9o5voHfB4b4Ml18S/uFiH60I9XfR2RB5MbiTfTtbCPqVIfZ9bbipQvSlsuHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753377030; c=relaxed/simple;
-	bh=HuQ1X40d3HdWi4r5uTvkEVmKf3SZuSUnjDmbIj5gKO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pHAz04Ac9gpJp6MtTFHuHPFMdaQeDtY4KanT4Z28POCrLC1GfJi/EfNoIf5dXu5AHQr53Zn3ZxejPy+6YKHLeoPkUAIML6QVNcB98N2EkJe2+yhVpFzPmlamakw4XsYEUlVRN6Hjh438n2/maqq6eUECFuzvI+/HvBbivyuajlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=nqgmgnfq; arc=none smtp.client-ip=84.16.66.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1753377768; c=relaxed/simple;
+	bh=iHv6FcFr9ubdNqnfE/PzII/jmlXlOCHMeiqQyuRtKBc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VqElENRK0Xrndal48eRXxLNBvL6nXiUdeWIUHlKm1RtxMq1mWuUrD2AJqVmFlVkb+QtMFTn7uW34Ox3H+E5YCRNt0Qe+UqnlJK7457lgfenWaT05xkBNsiUmuycP4OY1iJfkB/zA+Sy6Y34M1l0MoFYEoseP3gaxPBKdkUB5tKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLveus91; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="nqgmgnfq"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bnyDm4LlVzTFy;
-	Thu, 24 Jul 2025 19:10:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1753377016;
-	bh=uyXcrCnqFFQKLSZxrC3lv0uiQIEd9ws4tiolv28Gjx0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nqgmgnfq1MmwfzuPL2YSvUn0mkapUWws0VhNoaFyfluTSr/ZV/xVfjEsnYpMylaSy
-	 edwJE0gzzwdQJwnUkfEBNYdfUR8M5lh2SX2EDR4ED52ZiKlLLk3OqL9YqGVBOu8y4z
-	 1H/vl29iN9Na67qjBwKRo0c1LyEJMpAkzC43IlZo=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bnyDk5wv9zt7M;
-	Thu, 24 Jul 2025 19:10:14 +0200 (CEST)
-Date: Thu, 24 Jul 2025 19:10:11 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: Tingmao Wang <m@maowtm.org>, Jann Horn <jannh@google.com>, 
-	John Johansen <john.johansen@canonical.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Ben Scarlato <akhna@google.com>, Christian Brauner <brauner@kernel.org>, 
-	Daniel Burgener <dburgener@linux.microsoft.com>, Jeff Xu <jeffxu@google.com>, NeilBrown <neil@brown.name>, 
-	Paul Moore <paul@paul-moore.com>, Ryan Sullivan <rysulliv@redhat.com>, Song Liu <song@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] landlock: Fix handling of disconnected directories
-Message-ID: <20250724.ECiGoor4ulub@digikod.net>
-References: <20250719104204.545188-1-mic@digikod.net>
- <20250719104204.545188-3-mic@digikod.net>
- <18425339-1f4b-4d98-8400-1decef26eda7@maowtm.org>
- <20250723.vouso1Kievao@digikod.net>
- <aIJH9CoEKWNq0HwN@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLveus91"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F1F1C4CEF4
+	for <linux-security-module@vger.kernel.org>; Thu, 24 Jul 2025 17:22:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753377768;
+	bh=iHv6FcFr9ubdNqnfE/PzII/jmlXlOCHMeiqQyuRtKBc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YLveus919Jiz+6wpVXvrW/RMXmwrvYH9cnclPMpOeu6WkidDgCEhj/NRfI59kNlQL
+	 ePiufOE9Mv7XD7n5GhALyT9EqdGT4AzGQ7NRZVgSF2Gy551u+FOVkV2qfVMb+qtBsp
+	 39C2gEI5j91juKHL7OjN9gfkab+2ezjkZHOjJBd/kafDjAEy/DLn8XZB0UyMCLzPPv
+	 EoK+w6rhUSxq5Mllx8NcjwOgyTAF6eqgBQmAZNEjZUT8Wm2x8A1O2or1w6T/fMMS7t
+	 SyKCPqPg2k10u1/twpnuTp+ZjXYUoCzodMrAY1rElE/X+FbY2J17k9QmmVZfzQ9Lzx
+	 pSw41LcPCrEnA==
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-60700a745e5so2736443a12.3
+        for <linux-security-module@vger.kernel.org>; Thu, 24 Jul 2025 10:22:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWNBsJhJHMdaMBsA4x9sd2l4XcpLa2w5itd/R+51obrjA+A0fCF5oxqYNFpX5+S1mHyTlab0GJErdf3/Q0QQ3jHbWkDuSM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVwZarzD4dbySlFYSByzEBKL624fMWjnthSOF6tHPeN5B7G99m
+	g+nDuTSJOmkZ2F0TN20RUo/06Lrt6QToBLK/lifpMxZ2MfOX/yXfZaS2EbmL4YHpxgZV5J8zq38
+	seQlFhCEhq7N78CjwMRSv0wwCeAxlQQ45WYQjedyX
+X-Google-Smtp-Source: AGHT+IGRIfTM4kAibJSn6oNcZo9iTyHDOU/dXANlzSYv1+sBg7kSkBPEZA+rCTf9i2uBWVPcYtECBYeUY6b3Ob93eiU=
+X-Received: by 2002:a05:6402:2353:b0:607:f513:4808 with SMTP id
+ 4fb4d7f45d1cf-6149b409f40mr6227925a12.1.1753377766652; Thu, 24 Jul 2025
+ 10:22:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aIJH9CoEKWNq0HwN@google.com>
-X-Infomaniak-Routing: alpha
+References: <20250721211958.1881379-1-kpsingh@kernel.org> <20250721211958.1881379-9-kpsingh@kernel.org>
+ <c6ed224b9fb5db2cfac2620c75a49fa22cbaf617.camel@HansenPartnership.com>
+In-Reply-To: <c6ed224b9fb5db2cfac2620c75a49fa22cbaf617.camel@HansenPartnership.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Thu, 24 Jul 2025 19:22:35 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ79h9G1gdxtS=H8oNoCTxCqsG0d+Ox5xfXx225_OtLfHQ@mail.gmail.com>
+X-Gm-Features: Ac12FXzPweP5i9EJaJM1of7IwHtvD9t_8b1buJnKLosF6lAT6MI2RoPdH3O8jeM
+Message-ID: <CACYkzJ79h9G1gdxtS=H8oNoCTxCqsG0d+Ox5xfXx225_OtLfHQ@mail.gmail.com>
+Subject: Re: [PATCH v2 08/13] bpf: Implement signature verification for BPF programs
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 24, 2025 at 04:49:24PM +0200, Günther Noack wrote:
-> On Wed, Jul 23, 2025 at 11:01:42PM +0200, Mickaël Salaün wrote:
-> > On Tue, Jul 22, 2025 at 07:04:02PM +0100, Tingmao Wang wrote:
-> > > On the other hand, I'm still a bit uncertain about the domain check
-> > > semantics.  While it would not cause a rename to be allowed if it is
-> > > otherwise not allowed by any rules on or above the mountpoint, this gets a
-> > > bit weird if we have a situation where renames are allowed on the
-> > > mountpoint or everywhere, but not read/writes, however read/writes are
-> > > allowed directly on a file, but the dir containing that file gets
-> > > disconnected so the sandboxed application can't read or write to it.
-> > > (Maybe someone would set up such a policy where renames are allowed,
-> > > expecting Landlock to always prevent renames where additional permissions
-> > > would be exposed?)
-> > > 
-> > > In the above situation, if the file is then moved to a connected
-> > > directory, it will become readable/writable again.
-> > 
-> > We can generalize this issue to not only the end file but any component
-> > of the path: disconnected directories.  In fact, the main issue is the
-> > potential inconsistency of access checks over time (e.g. between two
-> > renames).  This could be exploited to bypass the security checks done
-> > for FS_REFER.
-> > 
-> > I see two solutions:
-> > 
-> > 1. *Always* walk down to the IS_ROOT directory, and then jump to the
-> >    mount point.  This makes it possible to have consistent access checks
-> >    for renames and open/use.  The first downside is that that would
-> >    change the current behavior for bind mounts that could get more
-> >    access rights (if the policy explicitly sets rights for the hidden
-> >    directories).  The second downside is that we'll do more walk.
-> > 
-> > 2. Return -EACCES (or -ENOENT) for actions involving disconnected
-> >    directories, or renames of disconnected opened files.  This second
-> >    solution is simpler and safer but completely disables the use of
-> >    disconnected directories and the rename of disconnected files for
-> >    sandboxed processes.
-> > 
-> > It would be much better to be able to handle opened directories as
-> > (object) capabilities, but that is not currently possible because of the
-> > way paths are handled by the VFS and LSM hooks.
-> > 
-> > Tingmao, Günther, Jann, what do you think?
-> 
-> I have to admit that so far, I still failed to wrap my head around the
-> full patch set and its possible corner cases.  I hope I did not
-> misunderstand things all too badly below:
-> 
-> As far as I understand the proposed patch, we are "checkpointing" the
-> intermediate results of the path walk at every mount point boundary,
-> and in the case where we run into a disconnected directory in one of
-> the nested mount points, we restore from the intermediate result at
-> the previous mount point directory and skip to the next mount point.
+On Wed, Jul 23, 2025 at 7:11=E2=80=AFPM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> On Mon, 2025-07-21 at 23:19 +0200, KP Singh wrote:
+> [...]
+>
+> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> > index fd3b895ebebf..b42c3740e053 100644
+> > --- a/include/uapi/linux/bpf.h
+> > +++ b/include/uapi/linux/bpf.h
+> > @@ -1607,6 +1607,16 @@ union bpf_attr {
+> >                * continuous.
+> >                */
+> >               __u32           fd_array_cnt;
+> > +             /* Pointer to a buffer containing the signature of
+> > the BPF
+> > +              * program.
+> > +              */
+> > +             __aligned_u64   signature;
+> > +             /* Size of the signature buffer in bytes. */
+> > +             __u32           signature_size;
+> > +             /* ID of the kernel keyring to be used for signature
+> > +              * verification.
+> > +              */
+> > +             __u32           keyring_id;
+>
+> This should become __s32 to match the value passed in to
+> bpf_lookup_user_key().
+>
+> [...]
+> > diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> > index 22fda92ab7ce..111f91a99166 100644
+> > --- a/kernel/bpf/syscall.c
+> > +++ b/kernel/bpf/syscall.c
+> > @@ -2779,8 +2779,41 @@ static bool is_perfmon_prog_type(enum
+> > bpf_prog_type prog_type)
+> >       }
+> >  }
+> >
+> > +static noinline int bpf_prog_verify_signature(struct bpf_prog *prog,
+> > +                                           union bpf_attr *attr,
+> > +                                           bool is_kernel)
+> > +{
+> > +     bpfptr_t usig =3D make_bpfptr(attr->signature, is_kernel);
+> > +     struct bpf_dynptr_kern sig_ptr, insns_ptr;
+> > +     struct bpf_key *key =3D NULL;
+> > +     void *sig;
+> > +     int err =3D 0;
+> > +
+> > +     key =3D bpf_lookup_user_key(attr->keyring_id, 0);
+> > +     if (!key)
+> > +             return -ENOKEY;
+>
+> This still only checks against user keyrings and not system trusted
+> keyrings as was pointed out in v1.  Since user keyrings are negative
+> and user key serials begin at 3 or more, there's no overlap with the
+> system keyring specifiers and you can just overload attr->keyring_id,
+> like the below.
+>
+> Regards,
+>
+> James
+>
+> ---
+>
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index 111f91a99166..10fd3ea5d91f 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/sched/signal.h>
+>  #include <linux/vmalloc.h>
+> +#include <linux/verification.h>
+>  #include <linux/mmzone.h>
+>  #include <linux/anon_inodes.h>
+>  #include <linux/fdtable.h>
+> @@ -2789,7 +2790,10 @@ static noinline int bpf_prog_verify_signature(stru=
+ct bpf_prog *prog,
+>         void *sig;
+>         int err =3D 0;
+>
+> -       key =3D bpf_lookup_user_key(attr->keyring_id, 0);
+> +       if (system_keyring_id_check(attr->keyring_id) =3D=3D 0)
+> +               key =3D bpf_lookup_system_key(attr->keyring_id);
+> +       else
+> +               key =3D bpf_lookup_user_key(attr->keyring_id, 0);
+>         if (!key)
+>                 return -ENOKEY;
+>
 
-Correct
+Thanks James, updated.
 
-> 
-> Visually speaking, if the layout is this (where ":" denotes a
-> mountpoint boundary between the mountpoints MP1, MP2, MP3):
-> 
->                           dirfd
->                             |
->           :                 V         :
-> 	  :       ham <--- spam <--- eggs <--- x.txt
-> 	  :    (disconn.)             :
->           :                           :
->   / <--- foo <--- bar <--- baz        :
->           :                           :
->     MP1                 MP2                  MP3
-> 
-> When a process holds a reference to the "spam" directory, which is now
-> disconnected, and invokes openat(dirfd, "eggs/x.txt", ...), then we
-> would:
-> 
->   * traverse x.txt
->   * traverse eggs (checkpointing the intermediate result) <-.
->   * traverse spam                                           |
->   * traverse ham                                            |
->   * discover that ham is disconnected:                      |
->      * restore the intermediate result from "eggs" ---------'
->      * continue the walk at foo
->   * end up at the root
-> 
-> So effectively, since the results from "spam" and "ham" are discarded,
-> we would traverse only the inodes in the outer and inner mountpoints
-> MP1 and MP3, but effectively return a result that looks like we did
-> not traverse MP2?
+- KP
 
-We'd still check MP2's inode, but otherwise yes.
-
-> 
-> Maybe (likely) I misread the code. :) It's not clear to me what the
-> thinking behind this is.  Also, if there was another directory in
-> between "spam" and "eggs" in MP2, wouldn't we be missing the access
-> rights attached to this directory?
-
-Yes, we would ignore this access right because we don't know that the
-path was resolved from spam.
-
-> 
-> 
-> Regarding the capability approach:
-> 
-> I agree that a "capability" approach would be the better solution, but
-> it seems infeasible with the existing LSM hooks at the moment.  I
-> would be in favor of it though.
-
-Yes, it would be a new feature with potential important changes.
-
-In the meantime, we still need a fix for disconnected directories, and
-this fix needs to be backported.  That's why the capability approach is
-not part of the two solutions. ;)
-
-> 
-> To spell it out a bit more explicitly what that would mean in my mind:
-> 
-> When a path is looked up relative to a dirfd, the path walk upwards
-> would terminate at the dirfd and use previously calculated access
-> rights stored in the associated struct file.  These access rights
-> would be determined at the time of opening the dirfd, similar to how we
-> are already storing the "truncate" access right today for regular
-> files.
-> 
-> (Remark: There might still be corner cases where we have to solve it
-> the hard way, if someone uses ".." together with a dirfd-relative
-> lookup.)
-
-Yep, real capabilities don't have ".." in their design.  On Linux (and
-Landlock), we need to properly handle "..", which is challenging.
-
-> 
-> I also looked at what it would take to change the LSM hooks to pass
-> the directory that the lookup was done relative to, but it seems that
-> this would have to be passed through a bunch of VFS callbacks as well,
-> which seems like a larger change.  I would be curious whether that
-> would be deemed an acceptable change.
-> 
-> —Günther
-> 
-> 
-> P.S. Related to relative directory lookups, there is some movement in
-> the BSDs as well to use dirfds as capabilities, by adding a flag to
-> open directories that enforces O_BENEATH on subsequent opens:
-> 
->  * https://undeadly.org/cgi?action=article;sid=20250529080623
->  * https://reviews.freebsd.org/D50371
-> 
-> (both found via https://news.ycombinator.com/item?id=44575361)
-> 
-> If a dirfd had such a flag, that would get rid of the corner case
-> above.
-
-This would be nice but it would not solve the current issue because we
-cannot force all processes to use this flag (which breaks some use
-cases).
-
-FYI, Capsicum is a more complete implementation:
-https://man.freebsd.org/cgi/man.cgi?query=capsicum&sektion=4
-See the vfs.lookup_cap_dotdot sysctl too.
+>
