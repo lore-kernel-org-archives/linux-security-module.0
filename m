@@ -1,171 +1,124 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533C9233156
-	for <linux-security-module@vger.kernel.org>; Fri, 25 Jul 2025 02:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E9E230BD2
+	for <linux-security-module@vger.kernel.org>; Fri, 25 Jul 2025 02:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753410522; cv=none; b=Y3H9yL5PRtTtoY1Sf98tZDhFO4YHu4gCbD1FQN0W0OKuP5uKU7q6AVUyOwTQpcLMxYLax+hl6fg6bn3Wx72fHAAGvdyQflZyRw3qLAsx447i9da1nQC+Dzjw2TuFpnpOAfgnB3x3cB+kiFVF8fgvTdLXuDKBmkArmj6YucQuDgY=
+	t=1753411438; cv=none; b=u/KHx4zlnSGlknYjEq48pzI5gHUCgw8Z93LyBJbDCFTpbWcs4ger9A1B44uTMA0TKB5AQBJuWzEnFboLRv+DUvTrdiTKxZUMKjXAS/rmwQV+vFRzEITa1cW/wuTR89V+u3x9ztS4rGhJQjMHWUygA/cf/3UhlCInYiYqrf8Cd/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753410522; c=relaxed/simple;
-	bh=GAnMHTlCdd99u3tfdAsMu7FC3xYg7vAJjeLv7IlrUcU=;
+	s=arc-20240116; t=1753411438; c=relaxed/simple;
+	bh=7hlZomtnwSEYXgOyb5FEyanHu7jwB5H+48d2zwgeTUg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BBBZAV8BChDZ1CvC2+31T2EuFuZsROSRyAsG2Ko9N98XsgIN/mUvj/5NI1tZOVlUve9Ke5n6Dx81IZ+yU6k63bhOb44nj2O6mp7rwaQPnRUxw0Sjqxd4A0ixtXqN/BHAiEOM3II7joKIw49x/dMz+THvjLBfmQZ4mpyjWQn/xHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=WHRR0his; arc=none smtp.client-ip=209.85.219.182
+	 To:Cc:Content-Type; b=JF7GKiHnLcWH6Wu9GATtNkMZ8C3DWwDabAa1RYOsQepJ401MNogb5itDiagEbzGXm5ykSRtUq/4+ax0FDWdGVGNaE/myXvFO8LHonSpxZMv07WYbmjHjPLGBqTBZT11RSawdFhnlZ4+9NqMIyEyzKHeiPZcLK8hyDcZ8eLMkhPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NnZNDbMp; arc=none smtp.client-ip=209.85.219.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="WHRR0his"
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e8d70c65a0aso1307641276.0
-        for <linux-security-module@vger.kernel.org>; Thu, 24 Jul 2025 19:28:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NnZNDbMp"
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e7311e66a8eso1515729276.2
+        for <linux-security-module@vger.kernel.org>; Thu, 24 Jul 2025 19:43:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1753410518; x=1754015318; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1753411436; x=1754016236; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=76kf2nT7BLoBgPFUTjrSe3BF7zBjdFtl9axEtNhkDAA=;
-        b=WHRR0hisT7/TjHIoZrAL5ykqISRi1UTWMPFxYKm02upcVH4TmoYfa5/VcA+IZlxa18
-         6DUDWbUaQrMtj5RyPJN4AS+W9msDkwmfW7Cxvw95ZOWpJpXbG+HYVUTT6SEl+ofgueaa
-         PSPGxzuEYWfhL92ApJ7LIxp2yBlk/GAvghq+BDLGj34ZoM++ShY4sdPDw3DPpLoAaKaZ
-         HPzdCXZt73+xO/M2VTV68a6msiBxqyCjrR+oC6EVf9IbnY24AqbZr3aYH/doIJNwUDlw
-         87UGPU+ZInJQf9anHJUoT18AhTVbggBRB5J3NCra1fzEM3pQMRryiMOU8oB86QHafXaQ
-         sFmw==
+        bh=FySz+cRu8BfNFHOSnCCE2y4s68tkhJQYIqvY80ZJOyg=;
+        b=NnZNDbMp6cO1yeqOxSzJnQHbtkt8YjbLFdeK2oiZJOaqEDKfGwtANFCOytqsmHBnpX
+         g07As2ZGtKdnx632yB3Fo9nZEHYkmlOZHr9gFo4Gv0zp4ApBc/Qw54MEV+efM0iYV+KP
+         IEIcpQ4n72+XHkp9T3xNcDnZPqnTvL1EMN65rZ87N8iTXGgt44UuNPtTt3pTIptjd37W
+         pddb1v+TIbQR7xW5DgCVpRkCSqmnWMmn7KUz/I+wews+3ls06v544i3VBezGGny3IT6u
+         P3hkZfT7U9DezUjN59PpiI/S/tyuzjwSkZgO9ok+oht6MEh3NAkQvLz9Q0YaWb/0xwvK
+         XhpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753410518; x=1754015318;
+        d=1e100.net; s=20230601; t=1753411436; x=1754016236;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=76kf2nT7BLoBgPFUTjrSe3BF7zBjdFtl9axEtNhkDAA=;
-        b=tdnxE/VJhwz+EMGMv/cnITAZ8a/kD9K0RJBMoMhb2WUJa8zYLYt2UpCZNrYvXTeTuq
-         vZdBSBSeG7MNDRLMYYkGo5B5WzbTo3avMVpAhwraT87pMwALws4SgV9L4reeN45cm0jv
-         cGkJ4k1gULgQyEWSdpmrzfdH4gmDVwGcMb97tMuziiIs2//wfqhl7aM2yaRMb78UR/p2
-         sZx4CzdOMv5lwNdWxfHX0zhslgec7V2rpgVpBEtu64kmWaGiavlai+EFz0Fb8ap9Zr9F
-         TUtKlcBDifl0JGYvgFR9BWnnQeO0zUdJ+ajFkKhJ7lEpbMG6v/7Lgg9IH8KJJP9uKdix
-         jHMQ==
-X-Gm-Message-State: AOJu0YyaeN1z1LKpy+6DM1LUAwghRA1pwqWPZoEAPavIogxxkUWRRkH/
-	4fhzjkXJVNjX3LXK8j2TEgzNWAfCo90wBVbL3OWlc7hE8kFFzq6ZL51XXUPqqNJh2bPJRhmTTUy
-	YDQqyBHVmOH2uqEqFtINE/vTiOuSKMfHMDV/gmrGV
-X-Gm-Gg: ASbGncuxuVg/ra3EgXg5V+KtdzxQQ7ztv2gWv7km/FMFowTgeh96Cd2tkGmvJinYSdG
-	y28vy7hwKQBKmQHodFTPPLqgnaODf8sTdrZq7wCMfaULwaASps62R6a2U0J7l12aN6/Xk/aL9nG
-	rtbtrBGYZMzstvXunIQJbXuPgtIkOLBV5bPrc9ocyaVH9477SFK9QAsAKVNmaD0M3NOoFDq5Yp2
-	48JGqY=
-X-Google-Smtp-Source: AGHT+IEJ9GccTLafI+eecGRlClmMtuHE2kwpnWx8W6YsYJWnDUno+dKKfkfNq2iUaGnrMXJN6U+a7Y6k027a8lR6STc=
-X-Received: by 2002:a05:6902:12ca:b0:e8d:868a:bae1 with SMTP id
- 3f1490d57ef6-e8df11147c2mr144468276.13.1753410518164; Thu, 24 Jul 2025
- 19:28:38 -0700 (PDT)
+        bh=FySz+cRu8BfNFHOSnCCE2y4s68tkhJQYIqvY80ZJOyg=;
+        b=IYk3gxhDVVC4Q20NL4XxMhCTVgS0ankA/5lPeh63qxa7wJVU4mCrh8V8ISuEWOt4U9
+         xAFew++ktaOwjDchCstuy4e8dhbIZ3AhyhqIqkcZiDXUjMqAuN72OsStmqO8avGNRFqa
+         +ifKzqgm4lU+F5RDkmXCa9/A2zX4PttmO0ukjaESLq/o1nM6Gf0GpLZ+cXruEhYsAccT
+         DRSG5VLpwlI+OiJYU5fX8iw3WIBJpfcq5aXgcGciCOIGZUPLSViiL231Av+lggEXAcQU
+         FoLp//CgG+ZnWTqjE3+drtokeJmqmkSeV1+lwpltGBpqQ5oOc3E+63ugycNDyQk1oLAj
+         176w==
+X-Forwarded-Encrypted: i=1; AJvYcCXUxAKaaiiyCffV2k/XG4aXenSHRSHjEPL7QVujDHMjF3Enqof6IB41qUvdpSGbPrCWSOy7CVBmG1bmuv7LX5UpYyBIx8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN796XDzLKrpdFrjwyGkPskKBWH1JkEorAUgE2q5P0GtGvPUp1
+	7qbNVMLiLAlfIe+AB99JHi+Ao/XEfpVopzIsGloZbRJ2UnbRN1yxns7om6Yt38LNIBh/jW3Xe/a
+	Bi6Fb3KzbdZGBWH+R5Ym0VllhES8Wgqwq3x5ctP1n
+X-Gm-Gg: ASbGncvr6bO7qRBTWRYR/bxENjvEuxxgw19J29hbeZEbCyhKk4CIHD9Ny14+sfetq5/
+	2fCq6N1zOCyJPa+wusIAvwY1Zr4/HQ/2gixHvsevOOWKzCB5RcyjSQwF26rHzYFyDy1Gr+Rvsjq
+	X5kgmHCN4RO+RUoDLZgTaXlf6iP88qmqXOcWMFihAm/046L0q4Oe3azyDgMYk/bluFreVWbTZh/
+	nZhzPk=
+X-Google-Smtp-Source: AGHT+IGy0kReF31F1j3wAaPhrwrQg7J25T0JtgcUwvIMbS5nqsDq9A60L8ppu0vixFFhHxaUG+UyC2kOcMggzd4esWk=
+X-Received: by 2002:a05:6902:1747:b0:e8d:9f9a:79bd with SMTP id
+ 3f1490d57ef6-e8df1134dbemr143078276.17.1753411435973; Thu, 24 Jul 2025
+ 19:43:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721232142.77224-36-paul@paul-moore.com> <20250721232142.77224-47-paul@paul-moore.com>
- <6e5422c4-0458-4a15-8833-462e318f283d@schaufler-ca.com>
-In-Reply-To: <6e5422c4-0458-4a15-8833-462e318f283d@schaufler-ca.com>
+References: <1750975839-32463-1-git-send-email-hamzamahfooz@linux.microsoft.com>
+ <20250716212925.GA14322@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <CAHC9VhS3qY=+DVYqzkgbHLETUo4KgQ17qr_BC3pn9TeG+cr8Mg@mail.gmail.com> <xfabe3wvdsfkch3yhxmswhootf5vj6suyow5s3ffumcnjkojjz@e7ojgu3s7ion>
+In-Reply-To: <xfabe3wvdsfkch3yhxmswhootf5vj6suyow5s3ffumcnjkojjz@e7ojgu3s7ion>
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 24 Jul 2025 22:28:26 -0400
-X-Gm-Features: Ac12FXyKd_Ubn7_Mym9qREpK7hYDPp8KcVHvLsUwOoojDPjjfmv8o5G-4OtQEiM
-Message-ID: <CAHC9VhThNtGCA-jmjRagJfzPJaTh9myqFcwqA4J5Zv3ojEFDfQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 11/34] lsm: get rid of the lsm_names list and do
- some cleanup
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Fan Wu <wufan@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>
+Date: Thu, 24 Jul 2025 22:43:44 -0400
+X-Gm-Features: Ac12FXx7R_BHZgXqsCbTxD-hHKdNeH-KBiya6C276YAbabcH3l3gvX9QAvZbV9M
+Message-ID: <CAHC9VhQ+4=J=nf2Yeb_QACVD4-d3_aUScpBAZhGyj7_+z+mBEw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Secure Boot lock down
+To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>, Xiu Jianfeng <xiujianfeng@huawei.com>, 
+	linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Yue Haibing <yuehaibing@huawei.com>, Tanya Agarwal <tanyaagarwal25699@gmail.com>, 
+	Kees Cook <kees@kernel.org>, linux-efi@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 24, 2025 at 11:39=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
-a.com> wrote:
-> On 7/21/2025 4:21 PM, Paul Moore wrote:
-> > The LSM currently has a lot of code to maintain a list of the currently
-> > active LSMs in a human readable string, with the only user being the
-> > "/sys/kernel/security/lsm" code.  Let's drop all of that code and
-> > generate the string on first use and then cache it for subsequent use.
-> >
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > ---
-> >  include/linux/lsm_hooks.h |  1 -
-> >  security/inode.c          | 59 +++++++++++++++++++++++++++++++++++++--
-> >  security/lsm_init.c       | 49 --------------------------------
-> >  3 files changed, 57 insertions(+), 52 deletions(-)
-
-...
-
-> > +/* NOTE: we never free the string below once it is set. */
-> > +static DEFINE_SPINLOCK(lsm_read_lock);
-> > +static char *lsm_read_str =3D NULL;
-> > +static ssize_t lsm_read_len =3D 0;
-> > +
-> >  static ssize_t lsm_read(struct file *filp, char __user *buf, size_t co=
-unt,
-> >                       loff_t *ppos)
-> >  {
-> > -     return simple_read_from_buffer(buf, count, ppos, lsm_names,
-> > -             strlen(lsm_names));
-> > +     int i;
-> > +     char *str;
-> > +     ssize_t len;
-> > +
-> > +restart:
-> > +
-> > +     rcu_read_lock();
-> > +     if (!lsm_read_str) {
-> > +             /* we need to generate the string and try again */
-> > +             rcu_read_unlock();
-> > +             goto generate_string;
-> > +     }
-> > +     len =3D simple_read_from_buffer(buf, count, ppos,
-> > +                                   rcu_dereference(lsm_read_str),
-> > +                                   lsm_read_len);
-> > +     rcu_read_unlock();
-> > +     return len;
-> > +
-> > +generate_string:
-> > +
-> > +     for (i =3D 0; i < lsm_active_cnt; i++)
-> > +             /* the '+ 1' accounts for either a comma or a NUL */
-> > +             len +=3D strlen(lsm_idlist[i]->name) + 1;
-> > +
-> > +     str =3D kmalloc(len, GFP_KERNEL);
-> > +     if (!str)
-> > +             return -ENOMEM;
-> > +     str[0] =3D '\0';
-> > +
-> > +     for (i =3D 0; i < lsm_active_cnt; i++) {
-> > +             if (i > 0)
-> > +                     strcat(str, ",");
-> > +             strcat(str, lsm_idlist[i]->name);
-> > +     }
-> > +
-> > +     spin_lock(&lsm_read_lock);
-> > +     if (lsm_read_str) {
-> > +             /* we raced and lost */
-> > +             spin_unlock(&lsm_read_lock);
-> > +             kfree(str);
-> > +             goto restart;
-> > +     }
-> > +     lsm_read_str =3D str;
-> > +     lsm_read_len =3D len;
+On Thu, Jul 24, 2025 at 8:59=E2=80=AFAM Nicolas Bouchinet
+<nicolas.bouchinet@oss.cyber.gouv.fr> wrote:
 >
-> You're going to get a nul byte at the end of the string because
-> you accounted for the ',' above, but there isn't one at the end
-> of the string.
+> Hi Hamza, thanks for your patch.
+>
+> Thanks, Paul, for the forward.
+>
+> Sorry for the delay, we took a bit of time to do some lore archaeology
+> and discuss it with Xiu.
+>
+> As you might know, this has already been through debates in 2017 [1]. At
+> that time, the decision was not to merge this behavior.
+>
+> Distros have indeed carried downstream patches reflecting this behavior
+> for a long time and have been affected by vulnerabilities like
+> CVE-2025-1272 [2], which is caused by the magic sprinkled in
+> setup_arch().
+>
+> While your implementation looks cleaner to me. One of the points in
+> previous debates was to have a Lockdown side Kconfig knob to enable or
+> not this behavior. It would gate the registration of the Lockdown LSM to
+> the security_lock_kernel_down() hook.
+>
+> However, what bothers me is that with this patch, if UEFI Secure Boot is
+> activated and a user wants to disable Lockdown, they need to go through
+> disabling Secure Boot. I'm really not fond of that. A user shouldn't
+> have to be forced to disable security firmware settings because of a
+> kernel feature.
+>
+> We thus might want to add a way to disable Lockdown through kernel
+> cmdline.
 
-I'm not sure I understand your concern here, can you phrase it differently?
-
-If you're worried about lsm_read_str potentially not being terminated
-with a NUL byte, the strcat() should copy over the trailing NUL.
-
-> > +     spin_unlock(&lsm_read_lock);
-> > +
-> > +     goto restart;
-> >  }
+One can enable/disable "normal" LSMs via the "lsm=3D" kernel command
+line option, however, as Lockdown is an "early" LSM, it is enabled
+prior to the command line option parsing in the kernel so that isn't
+really an option unless we add some mechanism to later disable
+Lockdown during the "normal" LSM initialization phase when the command
+line options are available.  This would result in a window of time
+during very early boot where Lockdown would be enabled, before being
+disabled, but I have no idea how problematic that might be for users.
 
 --=20
 paul-moore.com
