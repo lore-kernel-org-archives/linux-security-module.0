@@ -1,134 +1,136 @@
-Received: from sonic.asd.mail.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDB521C9E3
-	for <linux-security-module@vger.kernel.org>; Sat, 26 Jul 2025 17:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4F24A11;
+	Sat, 26 Jul 2025 21:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753551704; cv=none; b=lp4YuqRh0VxrIuJNOVdcEVtFHE3d8o6VaecPbS8dQH8S/SvVMDhMps5juck09mqPXO/0iY+rfRDF4qGX1UAtm0TU1KUKYwaHMaqCJOWjH4LnaroOODyh6p5JhuA8pJjKEv3P8PKIMMepYsm0Bws+kr7U9z4KYfaZM/5iLdftn9I=
+	t=1753566480; cv=none; b=axwMFKDiA8JzQuB3ODmPAVaNSzfU2YiZBrNt1Pm+LodcXw8rCAATeeYxs5NSVYiyBBaFHFpx/TC5gFOPsivk6wvJ41I+7Mb/LLvYqOiZjMVARVxlOnCm2AfYNkqkIxX5jL4cJqGk5QX5B3Dkgd5GvuC/zZqeOeWg0I4kkP/T7DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753551704; c=relaxed/simple;
-	bh=3Rm6ZUi9ZqWaBQO7uznkLuG4xdQ6j+BGtZQ0SimE4ew=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f+Kvy9EoHkCpAGvl3pisIltIOIVSATtUls2pnAHQ/6u9v8a2vPfVBYIKDRZMqhyUgmiR9zD+PX79PpPl2O/XyHR0pnmDmJrBUihuxoGqecaYxfLs2i9AFT74Mf3uTIjdAXO3ezBNj3Iu4hrjLKlTeC76JAYxFwQbt8RnUwhPVaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=bNkc6v0F; arc=none smtp.client-ip=66.163.184.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1753566480; c=relaxed/simple;
+	bh=/eYVX8SoAB6x3E1/nt7tNV75VsKCSwlna2pvOjAdRkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BDFcYlHgG0bHE0u+Bbu8i8KkCwBz81yZtZNmgTYafCMqO79+QCwmasg6TRgTkrbfq9bGNGQgUIWPmHdDMJgvyjXHBDSK5coPJMuW1zkKHhKpm5p8lnTWR8tWiTz7bPWK+0fUzAINB/eB43D2PbDPHtUIBpbo1EC0duLveibShIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLV+aIK/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="bNkc6v0F"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1753551695; bh=h11HbvDLieCOHgVd8NjsGbEJwy1Yw5M/33jQEM/DuUg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=bNkc6v0FFYjm92xbkteLA9TC7ZyW2wjr+A2UpJ76pc7VSXPXBV0OlUPTUdO3rkhcXCdvGWgjjLBDkcvQUkMdLdUAmCbxZ7QZBKEDD4kpUUU1aV2UUVR8+Ou5Dla3XWLOxW9jiQ9QCeGatZSkHSDuACKbtvrj91Pu3SjAljOUgk4EhPz7WzHFRbe39dwTXYaNWR4sNOKcbKW2dBEPZK4dibZI2JU3PgxPlaXyk72xq9xtWU97d3ND4gXmhJs5JaXj/2Zxp4yPnuRKia7TAX0lRMOxfTEuQe/ulXa3rERL8kO8Einns+uVzDP1HQOl8xlh9K8FZIUTNbv7dRFp7gfriw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1753551695; bh=Opum4AKoyKPtJg5EWGOITQGTzgIpGv9lI39Uo1B6aEj=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=iGDwAUCX69F/Ic0y9BPBQTsGgKZV00sw3v3v3k7Vm3V7JYwqmbVa6EFzQkIC+glAq0iKLS2PTEuDtjq5Amse/Atd/K7u3trxIQy+LwaDYZcHlmz/FTD3JA0odmvxVtj7j8LZT+29l5ygD6cQlgynIWnUMrLm+kHLqWpqMlMGCTSiwi1vioea7Mv02kBvhHN7TfCrYf5EYm5bb4CdRb/NOpHisvvn7BYMYFdjvMjgtiq+PZEvg000eco9SMS9nF8azqNFoMCeZ1Gp3AHt3/VtGg1Nd5iiriuGaQxw0QcK7mE+q8RkVm9RsOWx9E26abT7qDEjti5ifRQbYON74f/UYQ==
-X-YMail-OSG: V5aqVZUVM1lVPh1WucFPobhOIoxKTH1VLu_kSWBQYGk8e4vs2qFNVjvIsdbHERJ
- uDLDRor5FBVxG80oza2NlUqPCDCa.VK3.1Ent0eMqQNOogUq1zbRexdRYLBJNdsh13kUj1rpp5uQ
- gm0NFO5hYSPTup13oOc3Rpz2GDMTL2deYQxyCeqD3zfJmWhURjxguDRBVxM4Opnc6UfpKw2Lu.EO
- _l2bMnGWl12gE6UIwioWWj.LdVvp_AIAZMzSq8KUe1QS73DDJ7XsxZOarlVAN0xgYNrwI0ApRwfq
- fpf3wmDp0kAWUfTZlDMVNwL1KSVPnFpNmK0mPXrYkKGh9CeOO_8e0oRA5Vev_g4vFaIX.q7p2UnZ
- ZtDWiXXvzQ_nzYw2iPsmJB2K9NJYAyvD2MO.soVYygv_fVAz8Jw7SZkyHLTsvu6aCmzv_uOOWdgP
- zyinV2836HiZko9wKB00uj5sM2gs85Q_4rLBKsS96Jnj.qtk_oLbrgICPDQuKx0TOUBqfwziI0vw
- qCzUFqBS8SFhP99qY06.C17MevXKuyKl_YoT.t2yjOBari_UT8aYkqea_FHJDVUjGC9nyZczMXi_
- HLpbBmn5hQTSCKiZG0iSXHpg2yXZHDxkmRXUdgWjuHP2Af3eTYGjDiNbNXT5KwlkY5d_WeXG0Qvo
- 6iMYGuXyQjHdTx0oMneW379MF1VfjoV0kmQ.VyA7w.WAectMUvlFTx_KFFAMVIAGnRdYQ8SUJzuC
- EIK1hdDHepZ2nzxngz1nVxMqLHQnCT_dGw2MtaDzySvvL_8XANOcY_YW8L96A4zwbBSTSGiAEC8u
- Xu27EASWN7jz6ZsW8QUOfUE0OgC8FlQhpaQE.E_bb913MffN3UWEEemTEKQSFL6c7mN2QR_hyxbr
- .XjWZpRsv2jk2D0RuPkVPxPi.GSli0A_95e.kuyF9KKFd3Qqy7wLnkwzWsp5jKxfSTRuLGb5vHlK
- KZyDJ73KT0Sj1aTK7TTFvSIOyfY7esU92qOJELo6RREV2ac7VM7fbA1mjxhOAC8pn.T.m1i5fX0x
- 0r7pcU2KtbLzzqizdh8e.2mO6UvzNrnx4Iarr5Iocp61.Jm_oFnmuuRBFCj7y090dOHCy1X9WyqS
- Ga7e_kkEVUfS5BvVof_VxG15zl9rQ_tfwh7NGcDWjoh9DFbNMXFcUdhYVXcMGnDbQgxRzH8vgmEh
- wlU_ECiC1tUlEO815lCrze3lemjOiGJ_sSdqmGgXFthXqFU3PRsJzWENG1_hHdPIzAnNoxh.7MM0
- VRc8k.Hn3WGvb62b8N103ulKfCdr2hmIBZzuGIz0CFG0EVjNGoKsHKxfl7jCl6mQbnnzsvY9n1nE
- GZhOpU1PnpWt4WT2KYV6iQzNLyj1qvPxnNtFmwgg5GrpCFsC5Ko.Ti_0KX6AdcavF4.yIs1W0OsJ
- uSiNXBcknf9qvSTaX_dhISwjV1ElT3uAFmeGpPlqhvpBEnUZUvdutg_Bs1L5BD.qTX7mmiM0id13
- jrOOyfPCnFdHdWq1lS5haepZiAnfRCYxLNxzBgkYdyfRnfTM0x.l9c7ARvET6wIJMAyXnoReNbDe
- dFHZx5xQBsGObOUejyGAhCHXEmaYjuedxnvR9Lr9BNsXeBtn_fdGWZwxAbAO_W.H7_kDi.jgRoKH
- 3upbLEEkdRYJbmex2S7vpn4BN4vSalju.opHKDTiZXpOVRJRWezZBQGCXSQH7V3DFVkSQvA_cHiH
- hTngjlbgGy0sm4PAgRmaTa2ZUhKk3S8369c6ISwqgVR91RlbVSMMh8KToohdzg2DOHtqz8xkxodF
- V1C5pIkq2eIPfensftapcmlIFrV7tCoYo3m2J5oK6zrNLJ9TQmYFfB5YcVyTPP.c7cdo8Bk6AFcO
- PEupVz02h5Y53KNT0Kys10vUwZyyu2pGqHzuAcqhZz4l58RBtDgB4rF24gFt9PnBuoCZ_vy5ug9S
- jLQ6pha71ITg1ZFpKtBakFUKqkcveyytkV_tdeiBoKunnxlQeAME_23NqCJdyTkSz1soOUFheiCa
- NRbeD9iqrDT4qHe7pEshsOma3pmQqcjpG5gxgoXRS3HYlX1m4YAkQ3iWgYAGuc1_tL1tW1mG4qau
- KfL6c1MpcjKRii56qMx9ZyScR3GpIF0YktBdBXdTiRCyYcfRw..B6YcXhSQuVzgvH2quB_UgDrse
- rXZwzbvOKvc4bMRALlIUPakeZ2HluqOoH2JplLXeCXyqMdY2sBTVsS5aTSDp6UY2AB99wfZQIA09
- VFWhYZpvUBjPU41eaIShvCPGNQdoXOZe.iW58nxeWhUTEdb0v1mg3aaoopLToN5lbn_aL8MuG8Mx
- hg9pHWi3s_Lxzng--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 9a4b9640-e6c3-42a9-8ede-93f836c078d4
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Sat, 26 Jul 2025 17:41:35 +0000
-Received: by hermes--production-gq1-74d64bb7d7-r4nbl (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 73c5e332a9fcc7c7bff98fd547659fcd;
-          Sat, 26 Jul 2025 17:41:33 +0000 (UTC)
-Message-ID: <f4b697c8-7851-4e46-ad33-bd0eed50af06@schaufler-ca.com>
-Date: Sat, 26 Jul 2025 10:41:32 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLV+aIK/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF06C4CEF4;
+	Sat, 26 Jul 2025 21:47:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753566479;
+	bh=/eYVX8SoAB6x3E1/nt7tNV75VsKCSwlna2pvOjAdRkY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fLV+aIK/Vze5Yi37yRjGGquqtluZaj6oEyf8QVw+wrbGGLvpPqO/3VWgN6Q1uJ3EQ
+	 QH0nRrCHz1m2MVaid0DwO/ZAreS3vZit+HvBLazabv8sPBvyPMeFsxbcwMrKLtctLL
+	 j3NuYhUDBuP296I9Gm2LbU3o4w0jf03jgW1XCsrOoQO/rnS2XvncxSS5g/BxbXsPUY
+	 cZFoUBccYezObyf23E1vFbZZhbN05/QUjpb9Nu6YNxWPCEvwX+Xct1jvhL6BlIkWyO
+	 EQM6085jWFo3sxIkJ4QMkSe5eI9/li5cIvDNYY225Ouro0eBfYuV1C42m7ggGqabpt
+	 /L2PyqAmEpzaQ==
+Date: Sat, 26 Jul 2025 14:47:59 -0700
+From: Kees Cook <kees@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Gavin Shan <gshan@redhat.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	James Morse <james.morse@arm.com>,
+	Oza Pawandeep <quic_poza@quicinc.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	Hans de Goede <hansg@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+	Michal Wilczynski <michal.wilczynski@intel.com>,
+	Juergen Gross <jgross@suse.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Kirill A. Shutemov" <kas@kernel.org>,
+	Roger Pau Monne <roger.pau@citrix.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Usama Arif <usama.arif@bytedance.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
+	Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Hou Wenlong <houwenlong.hwl@antgroup.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>, Baoquan He <bhe@redhat.com>,
+	Alexander Graf <graf@amazon.com>,
+	Changyuan Lyu <changyuanl@google.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Jan Beulich <jbeulich@suse.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Bibo Mao <maobibo@loongson.cn>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
+	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-mm@kvack.org, kasan-dev@googlegroups.com,
+	linux-kbuild@vger.kernel.org, linux-hardening@vger.kernel.org,
+	kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v4 0/4] stackleak: Support Clang stack depth tracking
+Message-ID: <202507261446.8BDE8B8@keescook>
+References: <20250724054419.it.405-kees@kernel.org>
+ <20250726004313.GA3650901@ax162>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/19] smack: clean up xattr handling
-To: Konstantin Andreev <andreev@swemel.ru>
-Cc: linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <cover.1753356770.git.andreev@swemel.ru>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <cover.1753356770.git.andreev@swemel.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.24187 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250726004313.GA3650901@ax162>
 
-On 7/24/2025 6:09 AM, Konstantin Andreev wrote:
-> A set of minor bug fixes and optimizations in Smack xattr handling.
-> Logically independent, but with the code dependencies.
+On Fri, Jul 25, 2025 at 05:43:13PM -0700, Nathan Chancellor wrote:
+>   ld.lld: error: undefined symbol: __sanitizer_cov_stack_depth
+>   >>> referenced by atags_to_fdt.c
 
-Please break this into two (or more) patch sets. The patches regarding
-restrictions on getting and setting the file type specific attributes
-should be presented independently of the xattr "fixes".
+Proposed fix:
+https://lore.kernel.org/lkml/20250726212945.work.975-kees@kernel.org/
 
-There appears to be a misunderstanding regarding "valid" Smack labels.
-A Smack label is a text string. The intention is that a label is "valid"
-if the system is exposed to it. For example,
+>   kernel/kstack_erase.c:168:2: warning: function with attribute 'no_caller_saved_registers' should only call a function with attribute 'no_caller_saved_registers' or be compiled with '-mgeneral-regs-only' [-Wexcessive-regsave]
 
-	# echo Oatmeal > /proc/self/attr/smack/current
+Proposed fix:
+https://lore.kernel.org/lkml/20250726212615.work.800-kees@kernel.org/
 
-should introduce "Oatmeal" as a Smack label if is has never been used
-before. After a reboot the system may find the label "Bacon" on a file,
-and if the label isn't known it is imported. Similarly, if a CIPSO packet
-includes a label that has not been seen in is added.
+>   In file included from kernel/fork.c:96:
+>   include/linux/kstack_erase.h:29:37: error: passing 'const struct task_struct *' to parameter of type 'struct task_struct *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+>      29 |         return (unsigned long)end_of_stack(tsk) + sizeof(unsigned long);
+>         |                                            ^~~
+>   include/linux/sched/task_stack.h:56:63: note: passing argument to parameter 'p' here
+>      56 | static inline unsigned long *end_of_stack(struct task_struct *p)
+>         |                                                               ^
 
-This policy is necessary in part because there is a valid use case for
-a Smack label with no explicit access rules.
+Proposed fix:
+https://lore.kernel.org/lkml/20250726210641.work.114-kees@kernel.org/
 
-I tried out the combined set and encountered many unexpected failures.
+Thanks for the reports! :)
 
->
-> The patch set applies on top of:
-> https://github.com/cschaufler/smack-next/commits/next
-> commit 6ddd169d0288
->
-> Konstantin Andreev (19):
->   smack: fix bug: changing Smack xattrs requires cap_sys_admin
->   smack: fix bug: changing Smack xattrs requires cap_mac_override
->   smack: fix bug: setting label-containing xattrs silently ignores input garbage
->   smack: stop polling other LSMs & VFS to getxattr() unsupported SMACK64IPIN/OUT
->   smack: restrict getxattr() SMACK64TRANSMUTE to directories
->   smack: fix bug: getxattr() returns invalid SMACK64EXEC/MMAP
->   smack: deduplicate task label validation
->   smack: smack_inode_setsecurity: prevent setting SMACK64EXEC/MMAP in other LSMs
->   smack: smack_inode_setsecurity: prevent setting SMACK64IPIN/OUT in other LSMs
->   smack: fix bug: smack_inode_setsecurity() imports alien xattrs as labels
->   smack: fix bug: smack_inode_setsecurity() false EINVAL for alien xattrs
->   smack: restrict setxattr() SMACK64IPIN/IPOUT to sockets
->   smack: restrict setxattr() SMACK64EXEC/MMAP to regular files
->   smack: return EOPNOTSUPP for setxattr() unsupported SMACK64(TRANSMUTE)
->   smack: smack_inode_setsecurity(): skip checks for SMACK64TRANSMUTE
->   smack: smack_inode_notifysecctx(): reject invalid labels
->   smack: smack_inode_post_setxattr(): find label instead of import
->   smack: smack_inode_setsecurity(): find label instead of import
->   smack: deduplicate strcmp(name, XATTR_{,NAME_}SMACK*)
->
->  Documentation/admin-guide/LSM/Smack.rst |   3 +-
->  security/smack/smack.h                  |   2 +
->  security/smack/smack_access.c           |  22 +-
->  security/smack/smack_lsm.c              | 492 +++++++++++++++---------
->  4 files changed, 324 insertions(+), 195 deletions(-)
->
+-Kees
+
+-- 
+Kees Cook
