@@ -1,165 +1,234 @@
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7705425178C
-	for <linux-security-module@vger.kernel.org>; Fri, 25 Jul 2025 20:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467762B9BA;
+	Sat, 26 Jul 2025 00:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753476571; cv=none; b=RjZHxx/2do/YMV/x1eJ9mY5u8dHY3e5HaeVfk1Z1uKhZNV1wAfMXIfPd3JHzetqV26EPozM5htw0ML9OJIg/jPhW1sQMtnqIk2lE5spCbK6cxdM2v5yCh9EOVMcewd4HGamP7gxCYIoLUftPtwG4GXymzALeBuBPOkSpkvzARPk=
+	t=1753490611; cv=none; b=qPi4tXDvCFfEt/BfNZrNP1ELuTpeoZu4ZYEN5iRrVUjIb2Xb6BdXQ3B7v9MNsesJZMQGDyAMGzVaN7PirM3x1B/QC2727rSdZAF+EJaMiQyTuoCpfZBvU5fqavjRJMu0OpCXM1gfmn/PtJRkmexRiNkOMa80ebUCTQTg8wnU4W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753476571; c=relaxed/simple;
-	bh=ROdFTJiGd5/GLp4z8lMfSmyZbwS5owsCw58X/jelgDU=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=a/M7EH+6c63SlhTYcomsydY10KOLKfjcWOJ+lqfnogIWS73Juyf45ZAsSuIH54EdjFaapVI5Zyh6zH8folRBBvydMRqOROv5rPrwB+3WPwzjvAzWXe+AUOcCMeSBCo4FmeX+gLZHKrjM/eM65T70C6G6W69i+DZuR+wpYoq+x7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KgornxXM; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1753490611; c=relaxed/simple;
+	bh=FRa9xY4x5DiJRX0obptGEWaAk44wN8I8KzUTZYrUCjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=teWuTX5tshkXvp0VMN50DKvVldt+QmyROOaSpwIZ/6Q2oqEBk6eqO8I+MW5pGZkwUznaux4V1EYcrWINNjOOIcknbPR6RlBw80t7g70RROl/eGXTJ3ATDmW8A0+YrOaa/tvRA/Kf07IsVCUs8G6m8Ke5btiUbvvTrMdP3pVwbZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBaBfcy8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KgornxXM"
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6f8aa9e6ffdso24638876d6.3
-        for <linux-security-module@vger.kernel.org>; Fri, 25 Jul 2025 13:49:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1753476568; x=1754081368; darn=vger.kernel.org;
-        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8FkTgvWlgVmQ5f7CUc4jJgwLNzq3m1FsFuj0gNddDPA=;
-        b=KgornxXMfRYsP03LtjWqTZsaan3uxIm4rDU+sq4UaCZI80JJPM0aRHRQrT5mFIieJe
-         nQwpGys0WjkZFkwicEYCXFHx/cZUi/D8qeSZXZb+nSG1W87Nb4hiGpXLTq1n2o9rR3T2
-         ZX5dd0Or7ue5b9O7hKcZh6MWbGtvbU0W7EmTKe9prcoOXIkJwmjlH20c01WrsLZxmP3R
-         wq+ieH0HvA8U8VP+r3d6X5DLD0FPc+JlCh87Hb7uPP6pa9DV82qwPjucKfqL/qkVqVy9
-         TbuNm6WiJlTyNtPGQ5bCAXAR3HvfcMAthSL+MX2Hkgb7wf/Mjbb2EoiAle7A0gMGk/aQ
-         a9Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753476568; x=1754081368;
-        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8FkTgvWlgVmQ5f7CUc4jJgwLNzq3m1FsFuj0gNddDPA=;
-        b=ZNj/rkjSyaDx+cHK1tsKIwpzWaghCfeS6HQG+SIKQXiGkEn5kDxRB8i2yibxjGNT+M
-         Ijd4hCBXmJ6/3mV87cnMdxtWRBolrM+GeaW6FY3A2zHB2kTsMG+iUIYLNMwWQXcz5yWU
-         7EEPnBvEDDA5xKzFuyPDrSq+XVCEmHuqAB7BIe2djd5jCrdEn80Q+n6fwMaZ79DlqPvN
-         7sdixkfLYKyRvwLxhZ98OoeeJpBIHBCLkmGtU7rk7C5vOSeaGdWLd49N3qXMykCOhRtF
-         pmnoNRN4E+faHFyy8bZtPzRZP3kRFrzWPdabspRK/iujvsSU+7P+OSsRkkJGBCa26O/G
-         zWMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWvVH/+n93M6HeE03RJw+BVqxoZ5KqV/GryTnnaP+/XcudJqZWfFfN1GqB4+67e2eryTiBKlUPjNlje22ckah/tdLT2aCQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB/ePx2cBxCwf9pDKEJV2fvd2JjM3EKzx1Ks4T/FnL906okgdB
-	EJD65Z5wjeI5N3tnaDjK0xlb+nJiNoG/eFqcQ8SRMLajV3hY2SUth8P1x/UjMmsEEw==
-X-Gm-Gg: ASbGnct2g5xjPMp3QdwZ+ToBbO40D4O0Or7Vgs4mwxr0Lh2M5+5nbJlCi8knoluOubD
-	GsAx65wJIgG8eOwPUJrngyjWi50G+NCq7FWXTRD0T+shPUtyAI7hqQytsLvTy/1zzsbuGQLvHI5
-	nD2/0mMXUIH1p602hdeBX/qJnPlQcHvVq5SxR71yOeeMTQGYjaDw0qmD6rthsAnk6/XJsrhYURH
-	dI8Q7bzAL6r9fnrznAhYYCXTmyJXRRC5XjYl3xgUVVs8V99Uv+lqssufzPuj2ogoiS9+uXnRF1H
-	mdJyuO7ICGmEXndZHC7TZKx8dadQx7MlSs4KThnXQQWbzp8tu2uvhMFBEqwFDImqJhkrhS3q4Nc
-	F6FmYFeaKVkJeiziLX7Mi6uRLnL8TvmzHIlweVdyOWL+MXJldFMWEnJ8m7pKY3Cun70k=
-X-Google-Smtp-Source: AGHT+IGZjdXnqtxButa1Ssw869Og0wrfY516fhkT7Po12uDx1Dt5t8zMGMqQJq1ZQ3TwTXDsIoGl0A==
-X-Received: by 2002:a05:6214:767:b0:706:c9df:8f84 with SMTP id 6a1803df08f44-707204f5ac1mr49798896d6.16.1753476568338;
-        Fri, 25 Jul 2025 13:49:28 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-70729a04ce8sm4555716d6.19.2025.07.25.13.49.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 13:49:27 -0700 (PDT)
-Date: Fri, 25 Jul 2025 16:49:27 -0400
-Message-ID: <6e344a8bd7d60522825222628e949a14@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] selinux/selinux-pr-20250725
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBaBfcy8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1170C4CEE7;
+	Sat, 26 Jul 2025 00:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753490610;
+	bh=FRa9xY4x5DiJRX0obptGEWaAk44wN8I8KzUTZYrUCjI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kBaBfcy8cvOEOsPzmxHVilPiLtCGr+TDf8X/qOm2ye9g94waAiMThV6LQwkD5mGES
+	 PDjLL+F1jsLeU64wJNGH2USu78DXOVIauVdSn5Za3ug6EyGqMkDWY68qx6CO1Gpj84
+	 N2fKc/oxH+okv+yKP2JrlydnIbTVzpb6w9fxjXPvPbNQT1zbh2x+enrj7WanGNqURj
+	 oluIdS5LRKkHy5qC/5rWJa6TJsIQMsqWbSs6k1imrXOBgatcUYq26mfwhTEKJwXKN7
+	 wK8GX+boueI26+UPx4/MDOH6NBVBpUuOSwVrQlpds5FDuUw13v4g1+lMsu+qwH3eh6
+	 5w2Rudv02W7cA==
+Date: Fri, 25 Jul 2025 17:43:13 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Gavin Shan <gshan@redhat.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	James Morse <james.morse@arm.com>,
+	Oza Pawandeep <quic_poza@quicinc.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	Hans de Goede <hansg@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+	Michal Wilczynski <michal.wilczynski@intel.com>,
+	Juergen Gross <jgross@suse.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Kirill A. Shutemov" <kas@kernel.org>,
+	Roger Pau Monne <roger.pau@citrix.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Usama Arif <usama.arif@bytedance.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
+	Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Hou Wenlong <houwenlong.hwl@antgroup.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>, Baoquan He <bhe@redhat.com>,
+	Alexander Graf <graf@amazon.com>,
+	Changyuan Lyu <changyuanl@google.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Jan Beulich <jbeulich@suse.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Bibo Mao <maobibo@loongson.cn>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
+	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-mm@kvack.org, kasan-dev@googlegroups.com,
+	linux-kbuild@vger.kernel.org, linux-hardening@vger.kernel.org,
+	kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v4 0/4] stackleak: Support Clang stack depth tracking
+Message-ID: <20250726004313.GA3650901@ax162>
+References: <20250724054419.it.405-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724054419.it.405-kees@kernel.org>
 
-Linus,
+Hi Kees,
 
-Six SELinux patches for the upcoming merge window, the highlights are
-below, but I also wanted to mention that this pull request isn't based
-on the usual -rc1 tag, but rather on a VFS merge that happened shortly
-after -rc2 so we could pick up an important xattr/LSM fix.
+On Wed, Jul 23, 2025 at 10:50:24PM -0700, Kees Cook wrote:
+>  v4:
+>   - rebase on for-next/hardening tree (took subset of v3 patches)
+>   - improve commit logs for x86 and arm64 changes (Mike, Will, Ard)
+>  v3: https://lore.kernel.org/lkml/20250717231756.make.423-kees@kernel.org/
+>  v2: https://lore.kernel.org/lkml/20250523043251.it.550-kees@kernel.org/
+>  v1: https://lore.kernel.org/lkml/20250507180852.work.231-kees@kernel.org/
+> 
+> Hi,
+> 
+> These are the remaining changes needed to support Clang stack depth
+> tracking for kstack_erase (nee stackleak).
 
-- Introduce the concept of a SELinux "neveraudit" type which prevents
-  all auditing of the given type/domain.
-  
-  Taken by itself, the benefit of marking a SELinux domain with the
-  "neveraudit" tag is likely not very interesting, especially given
-  the significant overlap with the "dontaudit" tag.  However, given
-  that the "neveraudit" tag applies to *all* auditing of the tagged
-  domain, we can do some fairly interesting optimizations when a
-  SELinux domain is marked as both "permissive" and "dontaudit" (think
-  of the unconfined_t domain).  While this pull request includes
-  optimized inode permission and getattr hooks, these optimizations
-  require SELinux policy changes, therefore the improvements may not be
-  visible on standard downstream Linux distos for a period of time.
+A few build issues that I see when building next-20250725, which seem
+related to this series.
 
-- Continue the deprecation process of /sys/fs/selinux/user.
+1. I see
 
-  After removing the associated userspace code in 2020, we marked the
-  /sys/fs/selinux/user interface as deprecated in Linux v6.13 with
-  pr_warn() and the usual documention update.  This pull request adds
-  a five second sleep after the pr_warn(), following a previous
-  deprecation process pattern that has worked well for us in the past
-  in helping identify any existing users that we haven't yet reached.
+  ld.lld: error: undefined symbol: __sanitizer_cov_stack_depth
+  >>> referenced by atags_to_fdt.c
+  >>>               arch/arm/boot/compressed/atags_to_fdt.o:(atags_to_fdt)
+  make[5]: *** [arch/arm/boot/compressed/Makefile:152: arch/arm/boot/compressed/vmlinux] Error 1
 
-- Add a __GFP_NOWARN flag to our initial hash table allocation.
+when building ARCH=arm allmodconfig on next-20250725. The following diff appears to cure that one.
 
-  Fuzzers such a syzbot often attempt abnormally large SELinux policy
-  loads, which the SELinux code gracefully handles by checking for
-  allocation failures, but not before the allocator emits a warning
-  which causes the automated fuzzing to flag this as an error and
-  report it to the list.  While we want to continue to support the
-  work done by the fuzzing teams, we want to focus on proper issues
-  and not an error case that is already handled safely.  Add a NOWARN
-  flag to quiet the allocator and prevent syzbot from tripping on this
-  again.
-
-- Remove some unnecessary selinuxfs cleanup code, courtesy of Al.
-
-- Update the SELinux in-kernel documentation with pointers to additional
-  information.
-
-Paul
-
+diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
+index f9075edfd773..f6142946b162 100644
+--- a/arch/arm/boot/compressed/Makefile
++++ b/arch/arm/boot/compressed/Makefile
+@@ -9,7 +9,6 @@ OBJS		=
+ 
+ HEAD	= head.o
+ OBJS	+= misc.o decompress.o
+-CFLAGS_decompress.o += $(DISABLE_KSTACK_ERASE)
+ ifeq ($(CONFIG_DEBUG_UNCOMPRESS),y)
+ OBJS	+= debug.o
+ AFLAGS_head.o += -DDEBUG
+@@ -96,7 +95,7 @@ KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
+ 
+ ccflags-y := -fpic $(call cc-option,-mno-single-pic-base,) -fno-builtin \
+ 	     -I$(srctree)/scripts/dtc/libfdt -fno-stack-protector \
+-	     -I$(obj)
++	     -I$(obj) $(DISABLE_KSTACK_ERASE)
+ ccflags-remove-$(CONFIG_FUNCTION_TRACER) += -pg
+ asflags-y := -DZIMAGE
+ 
 --
-The following changes since commit fe78e02600f83d81e55f6fc352d82c4f264a2901:
 
-  Merge tag 'vfs-6.16-rc3.fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs
-    (2025-06-16 08:18:43 -0700)
+2. I see
 
-are available in the Git repository at:
+  kernel/kstack_erase.c:168:2: warning: function with attribute 'no_caller_saved_registers' should only call a function with attribute 'no_caller_saved_registers' or be compiled with '-mgeneral-regs-only' [-Wexcessive-regsave]
+    168 |         BUILD_BUG_ON(CONFIG_KSTACK_ERASE_TRACK_MIN_SIZE > KSTACK_ERASE_SEARCH_DEPTH);
+        |         ^
+  include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
+     50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+        |         ^
+  include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
+     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+        |                                     ^
+  include/linux/compiler_types.h:568:2: note: expanded from macro 'compiletime_assert'
+    568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+        |         ^
+  include/linux/compiler_types.h:556:2: note: expanded from macro '_compiletime_assert'
+    556 |         __compiletime_assert(condition, msg, prefix, suffix)
+        |         ^
+  include/linux/compiler_types.h:549:4: note: expanded from macro '__compiletime_assert'
+    549 |                         prefix ## suffix();                             \
+        |                         ^
+  <scratch space>:97:1: note: expanded from here
+     97 | __compiletime_assert_521
+        | ^
+  kernel/kstack_erase.c:168:2: note: '__compiletime_assert_521' declared here
+  include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
+     50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+        |         ^
+  include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
+     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+        |                                     ^
+  include/linux/compiler_types.h:568:2: note: expanded from macro 'compiletime_assert'
+    568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+        |         ^
+  include/linux/compiler_types.h:556:2: note: expanded from macro '_compiletime_assert'
+    556 |         __compiletime_assert(condition, msg, prefix, suffix)
+        |         ^
+  include/linux/compiler_types.h:546:26: note: expanded from macro '__compiletime_assert'
+    546 |                 __noreturn extern void prefix ## suffix(void)           \
+        |                                        ^
+  <scratch space>:96:1: note: expanded from here
+     96 | __compiletime_assert_521
+        | ^
+  kernel/kstack_erase.c:172:11: warning: function with attribute 'no_caller_saved_registers' should only call a function with attribute 'no_caller_saved_registers' or be compiled with '-mgeneral-regs-only' [-Wexcessive-regsave]
+    172 |         if (sp < current->lowest_stack &&
+        |                  ^
+  arch/x86/include/asm/current.h:28:17: note: expanded from macro 'current'
+     28 | #define current get_current()
+        |                 ^
+  arch/x86/include/asm/current.h:20:44: note: 'get_current' declared here
+     20 | static __always_inline struct task_struct *get_current(void)
+        |                                            ^
+  kernel/kstack_erase.c:173:37: warning: function with attribute 'no_caller_saved_registers' should only call a function with attribute 'no_caller_saved_registers' or be compiled with '-mgeneral-regs-only' [-Wexcessive-regsave]
+    173 |             sp >= stackleak_task_low_bound(current)) {
+        |                                            ^
+  arch/x86/include/asm/current.h:28:17: note: expanded from macro 'current'
+     28 | #define current get_current()
+        |                 ^
+  arch/x86/include/asm/current.h:20:44: note: 'get_current' declared here
+     20 | static __always_inline struct task_struct *get_current(void)
+        |                                            ^
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-    tags/selinux-pr-20250725
+when building ARCH=i386 allmodconfig.
 
-for you to fetch changes up to ee79ba39b3d6fdcfa53de6519d7e259e284e78f7:
+3. I see
 
-  selinux: don't bother with selinuxfs_info_free() on failures
-    (2025-06-24 19:39:28 -0400)
+  In file included from kernel/fork.c:96:
+  include/linux/kstack_erase.h:29:37: error: passing 'const struct task_struct *' to parameter of type 'struct task_struct *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+     29 |         return (unsigned long)end_of_stack(tsk) + sizeof(unsigned long);
+        |                                            ^~~
+  include/linux/sched/task_stack.h:56:63: note: passing argument to parameter 'p' here
+     56 | static inline unsigned long *end_of_stack(struct task_struct *p)
+        |                                                               ^
 
-----------------------------------------------------------------
-selinux/stable-6.17 PR 20250725
-----------------------------------------------------------------
+when building ARCH=loongarch allmodconfig, which does not support
+CONFIG_THREAD_INFO_IN_TASK it seems.
 
-Al Viro (1):
-      selinux: don't bother with selinuxfs_info_free() on failures
-
-Paul Moore (2):
-      selinux: add a 5 second sleep to /sys/fs/selinux/user
-      selinux: add __GFP_NOWARN to hashtab_init() allocations
-
-Stephen Smalley (3):
-      documentation: add links to SELinux resources
-      selinux: introduce neveraudit types
-      selinux: optimize selinux_inode_getattr/permission() based on
-         neveraudit|permissive
-
- Documentation/admin-guide/LSM/SELinux.rst |   11 +++++++++++
- security/selinux/hooks.c                  |   14 +++++++++++++-
- security/selinux/include/avc.h            |    4 ++++
- security/selinux/include/objsec.h         |    8 ++++++++
- security/selinux/include/security.h       |    4 +++-
- security/selinux/selinuxfs.c              |    3 +--
- security/selinux/ss/hashtab.c             |    3 ++-
- security/selinux/ss/policydb.c            |   19 +++++++++++++++++++
- security/selinux/ss/policydb.h            |    2 ++
- security/selinux/ss/services.c            |   20 ++++++++++++++++++++
- 10 files changed, 83 insertions(+), 5 deletions(-)
-
---
-paul-moore.com
+Cheers,
+Nathan
