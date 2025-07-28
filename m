@@ -1,87 +1,194 @@
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7495C224B12
-	for <linux-security-module@vger.kernel.org>; Mon, 28 Jul 2025 08:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4DB22C35D;
+	Mon, 28 Jul 2025 09:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753690628; cv=none; b=iQBHmFYKcNWvcA4av+7GRdJHswocgyeE15bAiv/YS/xlY6G5o0dj0wl5pgExlmu8zxvzTaJTWwwzHDamrDPpd3mFaia2dd8r6J98nxRGWKjVLtngobxn6UGB8QTG9vJzs/h5uzKHQC6ksZZuv0fLQkdjTVaLUuam9y4QEOcLRtY=
+	t=1753695987; cv=none; b=qAocOyMiItMAJeGCLEtKmloDbZdnXOMgN+GROyAAbHmSF+Ei6TMURZaepOHZbWYnrOcmRPqnz/JKigctXgZ2YJbdqsZQsONSujBUCjtCZw8zHNbF//qigXOP1i0kqDnc+G9zwgwR0ApCJLxh3gnTy7SslRk0iDOQOut1uIDLFJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753690628; c=relaxed/simple;
-	bh=oVOsc6ibl2c4BxKOGSlypnNZvk85m52BrD53itvnuCs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FljIumcp9xoNfi3fDfwZ1tJeuUYz0xbcUu/m4Tatb40FzQ/GFA4iNxmfeD4lJzAqGEbE3XCG2T1GpCZffiPDrcvFckHrGs7qisTWf6+b1zjWKxvbpJjTYqOyPaLabOzvmvS0DxWOjgZDOVZtLnweCzMKORvE02WzrtM0a/30xk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vVOfrBKq; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vVOfrBKq"
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6fac7147cb8so54778606d6.1
-        for <linux-security-module@vger.kernel.org>; Mon, 28 Jul 2025 01:17:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753690625; x=1754295425; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oVOsc6ibl2c4BxKOGSlypnNZvk85m52BrD53itvnuCs=;
-        b=vVOfrBKqXZq82K89blrYjpqba8kIYshhPZ28MnlENhy/eXPoiyesny97PmdYur41io
-         4Eif5JXu1QhjSy9ykPYotE4ZMFK5TZyB32gjOf2gt/b4Sp9UJMdi01g1IL1xfrEqA3gs
-         PMTo7HlzgZrxp7yO3bMTQRpS9EfQNXKkWkZx605Vso0j0draAqohyCNwmj5AHamASmTq
-         kz1Y8cggL19lTavQVjd0XA/li8C4Bv4mHCi8o/QyELbkPp7YEm8Fgo6ZqdeF6N1zeaXm
-         mQrakeNMLPc+Yj64I6o7bKXDB+r/LEppFTbJp+ib3Ga1hYfgwlNT+Zen+29n83VxjYSY
-         QpPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753690625; x=1754295425;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oVOsc6ibl2c4BxKOGSlypnNZvk85m52BrD53itvnuCs=;
-        b=w8BY5XVf4olpSjqruPxMFEH7wgESBys4+dBNF6uRpI82NJYeAOl4srn08grLEEsIMt
-         BPfcthglspX3IZz30MfVvVUT2RtSP/V31taTtcsZ5jTEB06BW1hylgk9MnOw6WEO5TH/
-         D9Bvb/QFZ5cRF552uw01rTA5ZKqkdMphF9RNwy6MMnEzXP42sM1yfqBNcvuNmVVkv6X1
-         ffh4ufGIYS8V8iVKJTI11AME+sJpbjfLKw77T4zl1N+8XVN0IXgolMm5S1gfboP86ja/
-         Huf54JlG6adcMASdUuVgfmWJ6uXJ2aluwV50afNcnzyyZ1D8xSzUMpeLoqn53WCgRDzB
-         9adA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIU/+rReW9gVgP2qIEOhMvQEqkyKtFmAw+9n1AmiYc/JjgnY2JhacgY8MDnAJpUlrQjIUQOznEyNoLCnrKjAHbb7X33ec=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6rz5ouUdfMlpL/hyTtBDQzPXcl6lpmYV0XghHla/UiTdjHm9Y
-	T37fk8TovN0f53hDcSDwclcwXK+ACZWZsQNO/of9g6PRf3cz1jdMmrdkBRr5ooqv+OnkBjTXCN1
-	b+gUpRIYvbXiUJ4XIVhsQiKHWVQy5iza0BtFO6siK
-X-Gm-Gg: ASbGncs27zvy55vXdJAc/JOfABuoZJywR6KNoxhXochT38lBwIms7XljNsLyb62DrqX
-	b2OU9VM4L+ycwCweXG3hPOwo/hkw9NYp27ckUx93V/8hV67XNy9Su0QFIS5+QwrvTl8mGTpdCdR
-	iD0gj4AAplDm8qztPml3O0KLt8/euzs9RtnviV6qwdIs2uxkNY3BbEGXZhBwdbpJGnSOVxluB6M
-	3zCmpDJdT1f/rlq3Q+ecokBmopYSdB//s4gGA==
-X-Google-Smtp-Source: AGHT+IGJVja+BOlBDSueHM4xwgtmGAcntpknGmQBU6g6I7fWUhaq1g+6fNhuHcvRNLAtk8WzaUNpyzvQMZ0Hf40qYp8=
-X-Received: by 2002:a05:6214:5290:b0:704:95c6:f5f1 with SMTP id
- 6a1803df08f44-707205c02c1mr132327006d6.34.1753690625039; Mon, 28 Jul 2025
- 01:17:05 -0700 (PDT)
+	s=arc-20240116; t=1753695987; c=relaxed/simple;
+	bh=P62eZg/nm410fwbt5YFv3Mb7ON32QFktxryCVgTdFF4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OY65dEYN8Gf0Cc4cirOY6Mr+yBV3bfLVySUsdwGkixt30PceElE6ifLHOd+T+AfmXZ9Q94n0twCVUIB5ZdVFxA80Mo3KKtgBpKubO5hSbLRXIfIg2upzmRh2/4cEanqpRjjnkoH4gzaGfG6X0IrWBHHESLioludiI+GkX6hMTO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4brD9P1qtYz1HCbV;
+	Mon, 28 Jul 2025 17:45:13 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 48EA614037D;
+	Mon, 28 Jul 2025 17:46:16 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwD301bdRodoTzb3AA--.22192S2;
+	Mon, 28 Jul 2025 10:46:15 +0100 (CET)
+Message-ID: <5ff016adea8969e4a97387d4ed88a172bdc4b3de.camel@huaweicloud.com>
+Subject: Re: [RFC PATCH v2 26/34] smack: move initcalls to the LSM framework
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+  linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Cc: John Johansen <john.johansen@canonical.com>, Mimi Zohar
+ <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, Fan Wu
+ <wufan@kernel.org>, =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>, 
+ =?ISO-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>, Kees Cook
+ <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, Casey Schaufler
+ <casey@schaufler-ca.com>, Tetsuo Handa
+ <penguin-kernel@I-love.SAKURA.ne.jp>, Nicolas Bouchinet
+ <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>
+Date: Mon, 28 Jul 2025 11:46:02 +0200
+In-Reply-To: <20250721232142.77224-62-paul@paul-moore.com>
+References: <20250721232142.77224-36-paul@paul-moore.com>
+	 <20250721232142.77224-62-paul@paul-moore.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <687e09e3.a70a0220.693ce.00eb.GAE@google.com>
-In-Reply-To: <687e09e3.a70a0220.693ce.00eb.GAE@google.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Mon, 28 Jul 2025 10:16:28 +0200
-X-Gm-Features: Ac12FXyuIo8mg0__JhxicCkBMBx-2UyW5BATXdwFGTnJezh5fbSE4P26Te_FKXc
-Message-ID: <CAG_fn=WSae7yjaHh=_iUc7eFALHX1vLQFMw8ryfas4-ijgFTiQ@mail.gmail.com>
-Subject: Re: [syzbot] [apparmor?] linux-next test error: WARNING in apparmor_unix_stream_connect
-To: john.johansen@canonical.com
-Cc: apparmor@lists.ubuntu.com, jmorris@namei.org, john@apparmor.net, 
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
-	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:GxC2BwD301bdRodoTzb3AA--.22192S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGr47AF4xZw4rKFWUuw1UGFg_yoW5KFWDpr
+	WDtFnxKF1xtFZ7AF17u347KFyag395GryUCrs8uw15ZFnxWry8Grn3Zry7AF1fGF4DZF4r
+	KF47Xr13W3WqkrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFk
+	u4UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBGiHHzsCbQAAsi
 
-On Mon, Jul 21, 2025 at 11:35=E2=80=AFAM syzbot
-<syzbot+cd38ee04bcb3866b0c6d@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
+On Mon, 2025-07-21 at 19:21 -0400, Paul Moore wrote:
+> As the LSM framework only supports one LSM initcall callback for each
+> initcall type, the init_smk_fs() and smack_nf_ip_init() functions were
+> wrapped with a new function, smack_initcall() that is registered with
+> the LSM framework.
+>=20
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> ---
+>  security/smack/smack.h           | 7 +++++++
+>  security/smack/smack_lsm.c       | 9 +++++++++
+>  security/smack/smack_netfilter.c | 4 +---
+>  security/smack/smackfs.c         | 4 +---
+>  4 files changed, 18 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/security/smack/smack.h b/security/smack/smack.h
+> index bf6a6ed3946c..885a2f2929fd 100644
+> --- a/security/smack/smack.h
+> +++ b/security/smack/smack.h
+> @@ -275,6 +275,13 @@ struct smk_audit_info {
+>  #endif
+>  };
+> =20
+> +/*
+> + * Initialization
+> + */
+> +int init_smk_fs(void);
+> +int smack_nf_ip_init(void);
 
-John, do you have an idea what's going on?
-This is pretty likely to be related to your "apparmor: make sure unix
-socket labeling is correctly updated." patch.
+I made the following changes (due to not having
+CONFIG_SECURITY_SMACK_NETFILTER):
+
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index 885a2f2929fd..4401cee2bbb7 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -279,9 +279,17 @@ struct smk_audit_info {
+  * Initialization
+  */
+ int init_smk_fs(void);
+-int smack_nf_ip_init(void);
+ int smack_initcall(void);
+=20
++#ifdef CONFIG_SECURITY_SMACK_NETFILTER
++int smack_nf_ip_init(void);
++#else
++static inline int smack_nf_ip_init(void)
++{
++       return 0;
++}
++#endif
++
+
+Roberto
+
+> +int smack_initcall(void);
+> +
+>  /*
+>   * These functions are in smack_access.c
+>   */
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index e09490c75f59..f14d536c516b 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -5270,6 +5270,14 @@ static __init int smack_init(void)
+>  	return 0;
+>  }
+> =20
+> +int __init smack_initcall(void)
+> +{
+> +	int rc_fs =3D init_smk_fs();
+> +	int rc_nf =3D smack_nf_ip_init();
+> +
+> +	return rc_fs ? rc_fs : rc_nf;
+> +}
+> +
+>  /*
+>   * Smack requires early initialization in order to label
+>   * all processes and objects when they are created.
+> @@ -5279,4 +5287,5 @@ DEFINE_LSM(smack) =3D {
+>  	.flags =3D LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+>  	.blobs =3D &smack_blob_sizes,
+>  	.init =3D smack_init,
+> +	.initcall_device =3D smack_initcall,
+>  };
+> diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netf=
+ilter.c
+> index 8fd747b3653a..17ba578b1308 100644
+> --- a/security/smack/smack_netfilter.c
+> +++ b/security/smack/smack_netfilter.c
+> @@ -68,7 +68,7 @@ static struct pernet_operations smack_net_ops =3D {
+>  	.exit =3D smack_nf_unregister,
+>  };
+> =20
+> -static int __init smack_nf_ip_init(void)
+> +int __init smack_nf_ip_init(void)
+>  {
+>  	if (smack_enabled =3D=3D 0)
+>  		return 0;
+> @@ -76,5 +76,3 @@ static int __init smack_nf_ip_init(void)
+>  	printk(KERN_DEBUG "Smack: Registering netfilter hooks\n");
+>  	return register_pernet_subsys(&smack_net_ops);
+>  }
+> -
+> -__initcall(smack_nf_ip_init);
+> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+> index b1e5e62f5cbd..405ace6db109 100644
+> --- a/security/smack/smackfs.c
+> +++ b/security/smack/smackfs.c
+> @@ -2978,7 +2978,7 @@ static struct vfsmount *smackfs_mount;
+>   * Returns true if we were not chosen on boot or if
+>   * we were chosen and filesystem registration succeeded.
+>   */
+> -static int __init init_smk_fs(void)
+> +int __init init_smk_fs(void)
+>  {
+>  	int err;
+>  	int rc;
+> @@ -3021,5 +3021,3 @@ static int __init init_smk_fs(void)
+> =20
+>  	return err;
+>  }
+> -
+> -__initcall(init_smk_fs);
+
