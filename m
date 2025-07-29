@@ -1,60 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C3C2080C4;
-	Tue, 29 Jul 2025 02:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5049214210;
+	Tue, 29 Jul 2025 02:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753755861; cv=none; b=V3YpZ8CdrothWTgDzdvzuZ2Gdy1KkVZI5daAImZmMjoIp5+XNEUWaqflWeis+pCce+VffA2F/GMx93qPFG7uUCph1J1xzDh9QGqLPrUdlYxwEgJYtR6K2Z6uTETkUb08MglljLJn/ZkyO2VFKc04Rjn/FZ6HcUqOFn7RR75dEOQ=
+	t=1753755863; cv=none; b=iBPF3SW+3VxwHh/o+kB6yAAq3/tj2xVPFUDxe3pqF44jHCMc837QeCqxuesXRXnn9zWbRKssu1AzlzaVwZ/zwOk68M8iomXzY88Dsl/McoDVwi2foiXOgMhhtGScAW8uP/+IcOUu/nCXxHcwTZDM8V0ok+7gVaqXCTnLblWyg68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753755861; c=relaxed/simple;
-	bh=UxIcKKZoXzc+XxOR3q0eKe5YGEWD2+jitj9uR4rsLVc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=rNYvq/ocNiB8Ikqsmykm+WrIj/7V7u2jSIPbknnYoEbmNNJ7p1AblGdhFKgRLV2OGM3ZV5gyowZSi9RhvNqJRKDBkKa/QstMTkppPTF2bZKHS7ovOcIOBGVwnnPDtuvZdTrMGqR5ukO/FtkY9AAI/sk/qews8qSF0oYRgd1aXT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMT+L/Kv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753755863; c=relaxed/simple;
+	bh=IMbYkLASt6ZSAThWVaUFJYFkgrjOTAkJN0zp8UYjtXM=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=YvCz89m/OJc+bxOn6htPE6FWZbh4wbPYpG/kLFep523T4O4oGHL7JglPQuBBO2GscF7roOumMPMZqclSx6hVJoBCJdutHdmEAI9df+PlxJR4z4CydAZ7ZnbbjkH1FtEkZi5b1IippZLLzWz2ymYxkC0iZAu/ngQk1htypEc/bCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KaZINrnE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMT+L/Kv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF61CC4CEEF;
-	Tue, 29 Jul 2025 02:24:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KaZINrnE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B08EC4CEE7;
+	Tue, 29 Jul 2025 02:24:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753755861;
-	bh=UxIcKKZoXzc+XxOR3q0eKe5YGEWD2+jitj9uR4rsLVc=;
+	s=k20201202; t=1753755862;
+	bh=IMbYkLASt6ZSAThWVaUFJYFkgrjOTAkJN0zp8UYjtXM=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=gMT+L/Kv1ksMmxm/xNg8J/cyhIF51nvA94X3pcmqvkYXP8mChZ/ahAkLGfAe+HbXc
-	 xLtXK/W5nF/uEY60kujm1ROtNBeBN3Uyi5ghzeS3KRIwWKGvb0/e1+r0XeVRdF/+n7
-	 l5D12I8v/q8GsAF5ADdBFkdp2zzWRHe3fcgyju3zU/Qr7zbF5GL24i1rpHyKOEUctM
-	 /SUjlOSyvdXyCyoDSDjx/Zo8yN0Jpgi9wlLMuEW9v9HjJ8fxb6FiJ2D0csCGAYj7Fw
-	 dnQtNYGANAzVRBib9j9cjU+XX91LB9Ua43UVJ+K3dXE/WnHsK9QqQV7ey4VH3nxxzj
-	 6QkLO+4vooZBA==
+	b=KaZINrnE1tHJoR7vRV/ofGpOjcxjkO0OwmdrgFq5G5ONIobfDu4bwxUFd9mdKj7h0
+	 bNf3wXtGCChNgrlJwMMFA3A0pbLaj+UPJXs43y1HZ7kclhm77WKDMhT8NJbP+r9epf
+	 qlGYKRNpHhKSEtGII1ctiwRrXJmQ6TtLw3SzP34q99wmt+KzmaBOLxm6rNkSrF+0/I
+	 GxP5QK6Lxhq+g41rFnag+kxt0jkAM/GcvGa79RlP/dunV2UYx3wmiFTdRKKe85KiTa
+	 zvX15USdLyFswbVw9b+1WPDIspEfNsmncju8Sif6ymp+d8vTujU2MFcnmyXHA8EBEE
+	 ZKIrRV1cmnCag==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF55383BF5F;
-	Tue, 29 Jul 2025 02:24:38 +0000 (UTC)
-Subject: Re: [GIT PULL] lsm/lsm-pr-20250725
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C08383BF5F;
+	Tue, 29 Jul 2025 02:24:40 +0000 (UTC)
+Subject: Re: [GIT PULL] selinux/selinux-pr-20250725
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <a981f40c12a45fe974beb197fa7b86dc@paul-moore.com>
-References: <a981f40c12a45fe974beb197fa7b86dc@paul-moore.com>
+In-Reply-To: <6e344a8bd7d60522825222628e949a14@paul-moore.com>
+References: <6e344a8bd7d60522825222628e949a14@paul-moore.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <a981f40c12a45fe974beb197fa7b86dc@paul-moore.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20250725
-X-PR-Tracked-Commit-Id: 5d8b97c946777118930e1cfb075cab59a139ca7c
+X-PR-Tracked-Message-Id: <6e344a8bd7d60522825222628e949a14@paul-moore.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20250725
+X-PR-Tracked-Commit-Id: ee79ba39b3d6fdcfa53de6519d7e259e284e78f7
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 30b9dcae9815ae7e752fe3aa00aa283fadf16c6a
-Message-Id: <175375587734.935612.14303295904159178400.pr-tracker-bot@kernel.org>
-Date: Tue, 29 Jul 2025 02:24:37 +0000
+X-PR-Merge-Commit-Id: dffb641bea1d0c5a4017771aafb39513701095be
+Message-Id: <175375587889.935612.4691676896986606922.pr-tracker-bot@kernel.org>
+Date: Tue, 29 Jul 2025 02:24:38 +0000
 To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 25 Jul 2025 16:49:02 -0400:
+The pull request you sent on Fri, 25 Jul 2025 16:49:27 -0400:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20250725
+> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20250725
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/30b9dcae9815ae7e752fe3aa00aa283fadf16c6a
+https://git.kernel.org/torvalds/c/dffb641bea1d0c5a4017771aafb39513701095be
 
 Thank you!
 
