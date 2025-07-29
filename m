@@ -1,73 +1,72 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545BB1FE44D;
-	Tue, 29 Jul 2025 02:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D9D207DFE;
+	Tue, 29 Jul 2025 02:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753756072; cv=none; b=W+yYw4GThDLg4DJISvCLma5u+Yvp7iLJ9OqAdtfkQYuQrst5D3nVxV+JfalujR+7CfMERf8EB53I+9Xs5evlpRUq550SgN4hh8FO+vmf9kC5ghvNf40NZ733omifMQceDjy3thobnYd7plgeQ2ucHs4STUVJlw+AFODJjJoABo0=
+	t=1753756245; cv=none; b=eDSUxmj0pDrU4mOs4s38aTTiP/+7Vb2niyDB5PvRmjvInR24FY84cjUrsojY6anAQZ5mXyDC9Rqx3k2oP/zdx93Sw9zolzVpt8ZJ5CCxToF3vXyQVwVfGoFhgxjblZujB4jECop629wbNzLBm4kpc+vdlirVcagOyDV8Lp8I7r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753756072; c=relaxed/simple;
-	bh=wiDYpJvTKn/tBt1aS/imHGSW3aLNn3ZDGbCHPJ1a/X0=;
+	s=arc-20240116; t=1753756245; c=relaxed/simple;
+	bh=VIlt+cPjlH5yGEWbPl2P48kKgLbz97KO7EGeqA2xmFU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gL9o4imXU+w3af+DYkR9sRrILgcNUZjqiHJ6M3cNoLTOG3UuAZewlfmtn3cmCB355srbUANrvruvsbLl+DLS495G7ZidIMm44S2vqVMO65GciBzYCe1exuzEKjThM8sRLfQgicXr4uA//vDAAKBWm9sWL6aZlxD8/eoVxoaFlgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RSK75bEW; arc=none smtp.client-ip=209.85.221.45
+	 To:Cc:Content-Type; b=dOBbzhk9yX06tkmKI6qWkVVQfmWnFSF3ZLcZ8YWiZLx2LeJIZBLGjq7HxB9Xfyv3DR0h29XMLLLxoOpHbGzBz/dQ7OOpXUnYWp21R542+EAKMPE8TRuTBHB7fsTNu/AAPXLsl21LMdKN4f1wKryUMS5WY8iYVggPphbvAbktnHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MSKVnSIm; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RSK75bEW"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b7892609a5so858698f8f.1;
-        Mon, 28 Jul 2025 19:27:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSKVnSIm"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a54700a46eso2372476f8f.1;
+        Mon, 28 Jul 2025 19:30:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753756068; x=1754360868; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753756242; x=1754361042; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=paT5Rnl1J+a4eKjTLjjH2rWqAOkaC13uBNJR10avqIg=;
-        b=RSK75bEW6LBTTL/y2Y/V5y/F0yexbgAp8CcOYK5K9yzcfd6lFSKJdeNJ/p5ZuNbnEI
-         hT40tn+e3Fzoey/Cgrkd8snWlZANyLW1L3L/pckabChbxjrYOIatRM2DVA97FQ8CgvYu
-         2jzfWioCaPrduGhk/DKs6L/0pQChtcKbiIb3jTll8EBBtpqgxZHpt8WearCz/fHfEH4p
-         JxYoAUBf2BWnu2MaKwPK74RudzohpZHf6hENU7d/QbdcEYvLQKWRUvLu7xOpotooC/x3
-         WaxkEgkopYuxLe+2fCK0Z296xr+S5v4/HKW4FipD31XI9i2/5PrCx/5svu73+xuWOKN0
-         p8Ew==
+        bh=VIlt+cPjlH5yGEWbPl2P48kKgLbz97KO7EGeqA2xmFU=;
+        b=MSKVnSImH10l+i/XMGXd62yn7YAx8l56hQT8XhiRzbNf5fw9biVxfu7GbaY3akiyON
+         +k3OrWppEsfec/fXouMzWIDOxmL8S3qHdUKcRLtkB7ShVVyyQWXR7xvaqGLERrTe72R7
+         ZllznOh9/GnHIMQFGEj4CcdgwsLDLow5gs24XcEw2USCIvcuEHAN4JdHKnJDqZvnAClM
+         DP3gX2JSFEcCYuhv8FHjEbqWvWroR8o9z6bvQ8hnrDpY5xy0qK13uGkdXJfdPo5Y6Kud
+         4L6EJVtq1ngUT3YIWFEOZnwgPEn3mB2thWo9uKtVaAY0R2HPO8ivs41GOXRsgZtNMYoc
+         TomA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753756068; x=1754360868;
+        d=1e100.net; s=20230601; t=1753756242; x=1754361042;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=paT5Rnl1J+a4eKjTLjjH2rWqAOkaC13uBNJR10avqIg=;
-        b=rZpK8rPcqENsVRF7SdTyi9+ZNzYx5pdU3kELIjnvCJx7x7B1CmJgttiC3PEEGw8I9z
-         WZSPLbL+pnCqcS44KRJTT2W0H7eWPwg9eKOSESgqrlmvuYn3adV1Xe3z/dQjku0jZESN
-         5V7d5S+rmIoEC2WgcZBSBwNJuCwQU3FQblK+mlLH9EVds8rFr/8aijz1tIGZQXI0DB4H
-         Qw6XcqYWSWfBKpWJMukBA1gj68l+s0Dqjq4JxjIdb+oYVUEkFycGf5sPzGGlat+PBsLR
-         M6H532Kz+qXgUzYwSbrcPL25TqP+RsZara07sOeRjANXoyvhugLpam7geq2Z2g5v0G2G
-         jQqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPGZiVT5U6F8R9Og0CtkRXwFflVZ1ohRiL/X/SpsLnyA0WWneIca/GiTYwfP4tcNYOykMvZ0qfyHOratyi8MWv+J3DliY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiiML/vL8tV0PYbQKEglr4IWOKE6c1hu58HfsrGbVwyG2HQx0R
-	9ngt1q43LR1UstSHMtmKk3ILH9l+5jZ8UmcjQP0lbqlWLDfefj/MfJRtht3FKSANCAlz/FAGJca
-	57oS6766iqXkTMs7e72iXJU+hFpPrvBw=
-X-Gm-Gg: ASbGncspuf5huTn6xbuDy1vFozHGgET+kay6mkpjIUkGNstk9MtcrevSO73K+pwPNJ4
-	p8LR3TOlV8rWNZu159tfId9+c8+rkCKqa+GUKmIv3EMRc7W3pOEUuhAnqp7NJJo+B7fPuVoVmOM
-	/KyJV0IJWl/jK2sdOtM9T9Hnvx7gvUWlSpVgifutu4/7AOCLnb2dTo+q9wcDyBw2ptLd+YvB2JT
-	42zKnsxyfJSvECluneragLcYJA9953uTYwRL/R+6OVJ6yg=
-X-Google-Smtp-Source: AGHT+IGhMxEyIpT5LMGOwNnOBctXTZO/pkUpO9LC8ScFvb3AB4MCPcybJ1b2EN4YGzc3H/3kv/8sY1jsIgbmROuSius=
-X-Received: by 2002:a05:6000:250c:b0:3a8:30b8:cb93 with SMTP id
- ffacd0b85a97d-3b77675bd64mr10065474f8f.32.1753756068549; Mon, 28 Jul 2025
- 19:27:48 -0700 (PDT)
+        bh=VIlt+cPjlH5yGEWbPl2P48kKgLbz97KO7EGeqA2xmFU=;
+        b=Io4t0GMBCxNFRQxO5fjeNy+6GZySzWpUs6HJ9PDLgOL6FSUZzQVJsBgDOMPZ3L6LIE
+         mc0CwS/ymjUIWz17LyyKDLcfAk7rc/Y6o5Uob8hV9S5twMN+l+Yno6BQhuLBsojdLnDz
+         dTAv2XMBf7tV2g9egs/W2ZyYVTPgk1dNf1tBH7zQHrTDkko6rmvUm0w2/wOZKQxZFfeZ
+         ONFWHKcyv/qsuVWom1vOr4JSIE2ctJ+NG6WzXrTUtbswUlzfC1J91+scNYty1msJebq/
+         c8OSk5uj0W4JsI62hy5rvWWqFzNuEBiCWKd2Z3gOpe24tQpwP8lY7s/YUQMld98lBTxy
+         i7Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCWs9O2nCH4G03vEkzbVMd5zvPV5DcbCt/t6c4LoNI1BclTTQ0rQ3yfmlK0ULBpxBro+z5gXVCvsbPX8jZ4OtnHhtwNSBSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+mNDQCx9/DXLPumfwiRjlt2aDNXshK0c0aW0byIZkLrSxEdlK
+	AN/5wS5R0nWTFjet6nRHp3SGV2OoLtNq+hkY642y6nAVFrNAhto9u1u3wnGKRRR41T9egXqaeNi
+	lb9kB+fJh4leumuC1vuzTHJlvUndtHFo=
+X-Gm-Gg: ASbGncsQN7B+5TJ4cwPkjNs1zBjp/PPieDHfKiAXqQUkQ1sY991pe2QpHlhi6F3waQX
+	d2OVp5bX9sLbg6qX5h5OgSxi6+X49b7kMlOr6urzq29o7boMy6xJBh9r6rzdvaHtPmHltnBolQq
+	FHA4ovrkmeT6FcH1bYy+J30o40TF2Zrsu9YLapMkfBtw5XEAexPr2fr9amLolngoMmdeKR39V/b
+	N8hOP7FS8UsAZ20IxEQ/gDeGQg/mQK//Cwr
+X-Google-Smtp-Source: AGHT+IEwV6W9dllVcWTqbIRo/UZHNHsRd1gkPY6sQsHZqOp+67ZeRCRvLyKnqU1b35Qwce5AXcC15PXsrJY9LLlB55c=
+X-Received: by 2002:a5d:64c4:0:b0:3b7:8b2e:cc5a with SMTP id
+ ffacd0b85a97d-3b78b2ecdd4mr2789725f8f.40.1753756242344; Mon, 28 Jul 2025
+ 19:30:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721211958.1881379-1-kpsingh@kernel.org> <20250721211958.1881379-13-kpsingh@kernel.org>
-In-Reply-To: <20250721211958.1881379-13-kpsingh@kernel.org>
+References: <20250721211958.1881379-1-kpsingh@kernel.org> <20250721211958.1881379-14-kpsingh@kernel.org>
+In-Reply-To: <20250721211958.1881379-14-kpsingh@kernel.org>
 From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 28 Jul 2025 19:27:36 -0700
-X-Gm-Features: Ac12FXyHeq6W7E3xVN5SOuF-CODJBk3zwpkYsyutA8l2JaFtsPMSEFehaIlEC48
-Message-ID: <CAADnVQJ28MimhbBKr6ck85zBVCa9vf96aZzq0H3ZOQ-zvgzWxg@mail.gmail.com>
-Subject: Re: [PATCH v2 12/13] selftests/bpf: Enable signature verification for
- all lskel tests
+Date: Mon, 28 Jul 2025 19:30:31 -0700
+X-Gm-Features: Ac12FXx-z5yBEmEFBhELgLaXQpxI2kivd5Rco0XK1vTq2uWBXUNP6DkCPimj8XI
+Message-ID: <CAADnVQ+3XYyJY_zcQtNPt81zyJwK4zv5oA+SLN9ohoLkD9XyZg@mail.gmail.com>
+Subject: Re: [PATCH v2 13/13] selftests/bpf: Add test for signed programs
 To: KP Singh <kpsingh@kernel.org>
 Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
 	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
@@ -78,28 +77,13 @@ Content-Transfer-Encoding: quoted-printable
 
 On Mon, Jul 21, 2025 at 2:20=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
 :
->
+> +
+> +SEC("fexit/bpf_prog_verify_signature")
+> +int BPF_PROG(bpf_sign, struct bpf_prog *prog, union bpf_attr *attr, bool=
+ is_kernel, int ret)
 
->
-> +LSKEL_SIGN :=3D -S -k $(PRIVATE_KEY) -i $(VERIFICATION_CERT)
->  TRUNNER_OUTPUT :=3D $(OUTPUT)$(if $2,/)$2
->  TRUNNER_BINARY :=3D $1$(if $2,-)$2
->  TRUNNER_TEST_OBJS :=3D $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.test.o,     =
- \
-> @@ -601,7 +602,7 @@ $(TRUNNER_BPF_LSKELS): %.lskel.h: %.bpf.o $(BPFTOOL) =
-| $(TRUNNER_OUTPUT)
->         $(Q)$$(BPFTOOL) gen object $$(<:.o=3D.llinked2.o) $$(<:.o=3D.llin=
-ked1.o)
->         $(Q)$$(BPFTOOL) gen object $$(<:.o=3D.llinked3.o) $$(<:.o=3D.llin=
-ked2.o)
->         $(Q)diff $$(<:.o=3D.llinked2.o) $$(<:.o=3D.llinked3.o)
-> -       $(Q)$$(BPFTOOL) gen skeleton -L $$(<:.o=3D.llinked3.o) name $$(no=
-tdir $$(<:.bpf.o=3D_lskel)) > $$@
-> +       $(Q)$$(BPFTOOL) gen skeleton $(LSKEL_SIGN) $$(<:.o=3D.llinked3.o)=
- name $$(notdir $$(<:.bpf.o=3D_lskel)) > $$@
->         $(Q)rm -f $$(<:.o=3D.llinked1.o) $$(<:.o=3D.llinked2.o) $$(<:.o=
-=3D.llinked3.o)
-
-Does it mean that it makes all lskel tests to be signed tests ?
-It's great that CI green lights it, but imo it's an overkill.
-Let's have a few signed tests instead of making all of them.
+I don't understand why it needs to peek into the kernel to
+verify that it goes well. The exposed uapi should be good enough.
+If the signature was specified and it is loaded fine we're good.
+Double checking the kernel decisions goes too far.
+Especially since this function can be inlined by the compiler.
