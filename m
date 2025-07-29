@@ -1,143 +1,74 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EE9230BCE;
-	Tue, 29 Jul 2025 08:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A77415A8;
+	Tue, 29 Jul 2025 09:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753777721; cv=none; b=V/oXYeX+UODDBjg0hWGXk4WbyBx0QO8I560iQZbTV+YJNSidaMEhnnGbQZ3nR6ks6ebRaqq1oHwRV1h8FxwiXdKi7qWgJhxOGiw513BIQ+uifXK63WY/rsj4VRDw42boqdLvpRXy461GssVtrFnqiCZ2o/RkFm6xS1FTre5YBg8=
+	t=1753780187; cv=none; b=QZ9FOC8o/DyRqnjNhJmmYMSczq+pTTab8zFHuA7Uyi/aoZVPLtq1qAGbNKFf9VBtGp77JyoBUSvAYh/ia6yrCVRCW6c8SwF6TKBUJ5J85wN8Li51TxZDIs8tnZGS5unwg4gki6rrKHn1iJxI18W7m22HLuCk6FWHNXerSIJ/QL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753777721; c=relaxed/simple;
-	bh=P+RKJolWrlScvE03/wuLDUcQEOrpyiH5p1dHdVtXVqk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fnH78eB4TNnOJDUOwHBJvj/AS9LeB0mL9WzSW+3Mjcr4TiSFPmrLiifipz7mpgsGkkwmCOM5Hdl9ZYS7h7dxluPVqcZubrZ8OyjC4F8AAvBnL6VIlPdD/3Cwyow5wZK3H1aucGqonsUSjv4JOTKBF9O9ETpoGjgkkzMGpCnnObQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKsDX+KR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753780187; c=relaxed/simple;
+	bh=DW5aO2WkVqkdAYdyp4EwCSKfFo6OF+HWNk557USvI3A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H8nncV0DxLcEwMfMfBpSg7vxf5r0dVDfP+ChdGHd28LVQwppeBel8I0qR8CZvTGJ3adktRbnVVJnswrAebPTuIga5zvMXhFz9VqER1cNZD1KPdETSYtx5Rm5l8r5c+OLl3JOuZxMcEApikMlp5Z81SHszORyPlRrcm8kOBO/bUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FOGWaqqY; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKsDX+KR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D23CC4CEEF;
-	Tue, 29 Jul 2025 08:28:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753777721;
-	bh=P+RKJolWrlScvE03/wuLDUcQEOrpyiH5p1dHdVtXVqk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XKsDX+KRLzAFuf1kLKdAmDj9dggFsRzjLIQ05RDsi+xPOxdHLALkhNkurvUosgFfb
-	 ftJlhmN/pjoAT4/au8qTUftIBkqDaJhrJ9SmRZi3Ve7JVy7Eg31DCCYSekcyfaaJNQ
-	 JbMb4DIBM9PPiwPI8OZcRcytRu3/nqoGHVDzvP77YimImLNlQUbkZujH5O0JN2T+nM
-	 BtsmRo4XDjlCw0KnWSDM6rk+MZk6QP0uSqf7QW3w7lmJVVGYAkgz4EWZXggXy7tATT
-	 HSfQX1ig9jgw3cwDIYjp+vOlzwygxMw47ojEswZF9ZVaUkapQqAqU4ht2sNRBTvD+l
-	 uIGHhOPpyE+nA==
-Date: Tue, 29 Jul 2025 11:28:14 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Michal Wilczynski <michal.wilczynski@intel.com>,
-	Juergen Gross <jgross@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Roger Pau Monne <roger.pau@citrix.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Usama Arif <usama.arif@bytedance.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-mm@kvack.org, Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Gavin Shan <gshan@redhat.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	James Morse <james.morse@arm.com>,
-	Oza Pawandeep <quic_poza@quicinc.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Hans de Goede <hansg@kernel.org>,
-	"Kirill A. Shutemov" <kas@kernel.org>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Hou Wenlong <houwenlong.hwl@antgroup.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>, Baoquan He <bhe@redhat.com>,
-	Alexander Graf <graf@amazon.com>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FOGWaqqY"
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1753780176; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=qbzRbm/1jyacBHJjAXitMRMfMoRh9hLlAQIMYXnu/dg=;
+	b=FOGWaqqYx97Zma0xuHVr9q/CeKovfbzgU9fEUuaqh7Ocq+5x84ugXMgprAcrhWTjLN3XYsmC3naSsGfvuQsXtkTmSOJXhyLY489pjYLp5dTb/7SQfSk3JC8PAGFfrLQBq0f9R2tSNO1UKEa0DAb90NEqhVdYGRbmVOZaJmrkTCU=
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0WkPYu9q_1753780175 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 29 Jul 2025 17:09:35 +0800
+From: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+To: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Jan Beulich <jbeulich@suse.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Bibo Mao <maobibo@loongson.cn>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kasan-dev@googlegroups.com,
-	linux-kbuild@vger.kernel.org, linux-hardening@vger.kernel.org,
-	kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v4 2/4] x86: Handle KCOV __init vs inline mismatches
-Message-ID: <aIiGHmw8IJb9vsM5@kernel.org>
-References: <20250724054419.it.405-kees@kernel.org>
- <20250724055029.3623499-2-kees@kernel.org>
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Subject: [PATCH] lsm: simplify security_inode_copy_up_xattr()
+Date: Tue, 29 Jul 2025 17:09:33 +0800
+Message-Id: <20250729090933.94942-1-tianjia.zhang@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724055029.3623499-2-kees@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 23, 2025 at 10:50:26PM -0700, Kees Cook wrote:
-> GCC appears to have kind of fragile inlining heuristics, in the
-> sense that it can change whether or not it inlines something based on
-> optimizations. It looks like the kcov instrumentation being added (or in
-> this case, removed) from a function changes the optimization results,
-> and some functions marked "inline" are _not_ inlined. In that case,
-> we end up with __init code calling a function not marked __init, and we
-> get the build warnings I'm trying to eliminate in the coming patch that
-> adds __no_sanitize_coverage to __init functions:
-> 
-> WARNING: modpost: vmlinux: section mismatch in reference: xbc_exit+0x8 (section: .text.unlikely) -> _xbc_exit (section: .init.text)
-> WARNING: modpost: vmlinux: section mismatch in reference: real_mode_size_needed+0x15 (section: .text.unlikely) -> real_mode_blob_end (section: .init.data)
-> WARNING: modpost: vmlinux: section mismatch in reference: __set_percpu_decrypted+0x16 (section: .text.unlikely) -> early_set_memory_decrypted (section: .init.text)
-> WARNING: modpost: vmlinux: section mismatch in reference: memblock_alloc_from+0x26 (section: .text.unlikely) -> memblock_alloc_try_nid (section: .init.text)
-> WARNING: modpost: vmlinux: section mismatch in reference: acpi_arch_set_root_pointer+0xc (section: .text.unlikely) -> x86_init (section: .init.data)
-> WARNING: modpost: vmlinux: section mismatch in reference: acpi_arch_get_root_pointer+0x8 (section: .text.unlikely) -> x86_init (section: .init.data)
-> WARNING: modpost: vmlinux: section mismatch in reference: efi_config_table_is_usable+0x16 (section: .text.unlikely) -> xen_efi_config_table_is_usable (section: .init.text)
-> 
-> This problem is somewhat fragile (though using either __always_inline
-> or __init will deterministically solve it), but we've tripped over
-> this before with GCC and the solution has usually been to just use
-> __always_inline and move on.
-> 
-> For x86 this means forcing several functions to be inline with
-> __always_inline.
-> 
-> Signed-off-by: Kees Cook <kees@kernel.org>
+The implementation of function security_inode_copy_up_xattr can be
+simplified to directly call call_int_hook().
 
-For memblock bit:
+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+---
+ security/security.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-
+diff --git a/security/security.c b/security/security.c
+index 596d41818577..a5c2e5a8009f 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2774,13 +2774,7 @@ EXPORT_SYMBOL(security_inode_copy_up);
+  */
+ int security_inode_copy_up_xattr(struct dentry *src, const char *name)
+ {
+-	int rc;
+-
+-	rc = call_int_hook(inode_copy_up_xattr, src, name);
+-	if (rc != LSM_RET_DEFAULT(inode_copy_up_xattr))
+-		return rc;
+-
+-	return LSM_RET_DEFAULT(inode_copy_up_xattr);
++	return call_int_hook(inode_copy_up_xattr, src, name);
+ }
+ EXPORT_SYMBOL(security_inode_copy_up_xattr);
+ 
 -- 
-Sincerely yours,
-Mike.
+2.39.5 (Apple Git-154)
+
