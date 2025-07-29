@@ -1,91 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49294A23;
-	Tue, 29 Jul 2025 02:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5763B202976;
+	Tue, 29 Jul 2025 02:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753755358; cv=none; b=ZdXO0sIfykOUZDgiS5VUtKOi/0BDNxNUvg7zJUWyyyGUMQJjTd9SndY/N+09p3NWgDCLe2s8BJi0J89xvBHDhaRHT9oQjTFU1SymSwiFuQLJFlf38oB4FDaldDKC2JKFfNzNrNoqeUwqWcM8lhYrjbYl0iU6tJ7fFkfOYSAfHus=
+	t=1753755859; cv=none; b=gEn2+J05Zgrx2X8EsxykNrKnsnzM/aWud+GP38vNvUcQ+RS5+beuQ8X9p6+UJdchqXGCJFfF4vqCr1ZZP827a+kD7WW4i0XgpNGjrWDJZf6LpQ8rBvUkmsIhPWCjwiWzT/JddUcFpCjp1IijdmMi9bZEufsWkvhBmHqYc3/+1Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753755358; c=relaxed/simple;
-	bh=fgaF3JYWiesxie2b/8woXZbjAbW5F20267YHTL7iCNw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=ebEtd8KCGKWtlv/an9bo4EQpuCE4vd/4rKNrZhhFq+Sjk47pRfPMQgqvH47pkeRL+xG4/jKo9u/QQeAA6W+UyZvsi/yqv6GKmIosFR54DOR96XGbg9casjZOE7qyQQw6q0WuVDmegpukkbMQqAwPwTsXSQp+NCZ5rBaE4yfYwJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mijs1/uE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753755859; c=relaxed/simple;
+	bh=uhPFXjGwvJq7GuaHtjcvPT+EQlr6V+fAI8IS0F59pgs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=qmxXcyPeJ/EBpXV5609y09eb6muC89uqoPXErWke39F/FiqNYfDKwk6jfQqzbasx/kHxN4/wYmo9nm+FNocEeK4NW7A5mJwAPrfdWJlCQicX2IohcKobwZzWI1ZDeKvznfhk+iMz/chx8M6Y6yzC2nJxbka4Xgx0UMio6LRz+BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQJVFX+5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mijs1/uE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43778C4CEF6;
-	Tue, 29 Jul 2025 02:15:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQJVFX+5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3599DC4CEE7;
+	Tue, 29 Jul 2025 02:24:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753755358;
-	bh=fgaF3JYWiesxie2b/8woXZbjAbW5F20267YHTL7iCNw=;
-	h=From:Date:Subject:To:From;
-	b=mijs1/uEDLy23gJHICvKh8ZNtEGxMQQtOjyCz+SSaU0wOoJJpMSiiSF2oLeeRyntQ
-	 bNgjpfZxiCjDN9o7taWA/a4n6G9dPiy6kUUxXGCJDBKOsrUB9ld6WKHQzUgae7mocX
-	 nv/H+SXTlbMjIIuX5zxffqbtxXv1LPPFrKEeBTrFUKsOVUTB7N0fDDxp8RL4iEGDZT
-	 igaho/PJHhnZ3vQ81448H0N9bQeW+DyzfExJTDlUgSR1IxfO3sNl7+oWS2zFPl/ujX
-	 AQYfmqF71O5ecFt3YNJrabw9BYpQDLM3MZry2q4zdPHXW4Vnjtk8s4CXHIqTzsZjhr
-	 VDC+9g99JpCkQ==
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e8e1ae319c6so1191060276.0;
-        Mon, 28 Jul 2025 19:15:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUdDWssyQWcT3f87Twt1Cgkq39O+kT3HLZt5Co4sT+squ4CEbgUqEDymeBehT9FTk7Fd7f7W8ETXjWwsJU=@vger.kernel.org, AJvYcCWKgbf7OXNiainlSE6wHkEi+Fwah3lUYqjaUHAjOcHVN2yeIWv/BlgZa5gmYPX5L/fmrqrm8jc5nDwtUI/RQNaR5Ai/a8xz@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYGrEAIdS6asfrtF0ivN/2b6DgA0cF4G/+ziVzKI0o6kGAnfSm
-	WK6He9Vn2F6eHOTCfr/WBJKswWQeMottyWELXUSI+pPWSqMHQkbiZcNdy00WPx6I8pZSDzUgMPL
-	Cjsrp21WNXgcTZ6FJaF7vQ/nJyaUcN6I=
-X-Google-Smtp-Source: AGHT+IGLn9yD82vtmJcDSKuzRhByMYfngK4NyIMaY+bn+DjnQBQSFZTLaZJ8YcLLzt6f+J9An+0cak4bkfV56xxAOKY=
-X-Received: by 2002:a05:6902:2685:b0:e8e:1911:293d with SMTP id
- 3f1490d57ef6-e8e19112e9bmr6217229276.24.1753755357537; Mon, 28 Jul 2025
- 19:15:57 -0700 (PDT)
+	s=k20201202; t=1753755859;
+	bh=uhPFXjGwvJq7GuaHtjcvPT+EQlr6V+fAI8IS0F59pgs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=cQJVFX+5kK9R5xVNtU3SsP/f489a2xYM9Amm3d91Sk7joE+/h2hiGHWQ9aR6FrUV0
+	 tdgpsLepZcpFNGdzOc89nh5MfA3qScR3UaLthIcBZTcrw+Mv9eFa/TGWdc50G3ST4c
+	 DJI0V0ODbDV0/gpf8l1pksT3ZCq3oQMZKjs5ISPKvmOvE8ChBeC28NgRlZ0jfe/ytn
+	 vaFjl+7jPMkdd5pfh6KwlEaRKDZQ28aas0YOpbwf8FWyg3I0TQz3l+m/B9MphqDyBC
+	 JQe6y9kfXL+GXO6O2GMJjdyPWC6fSP65JHN/X5jiLjoCVEx11P/OifG1GwwrHxyRvw
+	 iVogxOMYTlDPQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF21383BF5F;
+	Tue, 29 Jul 2025 02:24:36 +0000 (UTC)
+Subject: Re: [GIT PULL] Landlock update for v6.17-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250725095511.446960-1-mic@digikod.net>
+References: <20250725095511.446960-1-mic@digikod.net>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250725095511.446960-1-mic@digikod.net>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.17-rc1
+X-PR-Tracked-Commit-Id: 6803b6ebb8164c1d306600f8836a39b6fceffeec
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ae388edd4a8f0226f3ef7b102c34f78220756c3d
+Message-Id: <175375587555.935612.7876394236170920954.pr-tracker-bot@kernel.org>
+Date: Tue, 29 Jul 2025 02:24:35 +0000
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Brahmajit Das <listout@listout.xyz>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, Song Liu <song@kernel.org>, Tingmao Wang <m@maowtm.org>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Fan Wu <wufan@kernel.org>
-Date: Mon, 28 Jul 2025 19:15:44 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkFWt6+5iKWy8BKJH2L51OpfPsEFkpjjn-EQGfHaSRnqAA@mail.gmail.com>
-X-Gm-Features: Ac12FXxEXD_s42XqLW4v2wfyHe0T_ER0l7GNW_Lq8iuS6adhApZyu7aNN1I9xew
-Message-ID: <CAKtyLkFWt6+5iKWy8BKJH2L51OpfPsEFkpjjn-EQGfHaSRnqAA@mail.gmail.com>
-Subject: [GIT PULL] IPE update for 6.17
-To: torvalds@linux-foundation.org, linux-security-module@vger.kernel.org, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Biggers <ebiggers@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+The pull request you sent on Fri, 25 Jul 2025 11:55:11 +0200:
 
-Please merge this PR for the IPE update for 6.17.
+> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.17-rc1
 
-This PR contains a single commit from Eric Biggers. It simplifies IPE
-policy audit with SHA-256 library API.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ae388edd4a8f0226f3ef7b102c34f78220756c3d
 
-This commit has been tested for several weeks in linux-next without any issues.
+Thank you!
 
-Thanks,
-Fan
-
---
-
-The following changes since commit 038d61fd642278bab63ee8ef722c50d10ab01e8f:
-
-  Linux 6.16 (2025-07-27 14:26:38 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wufan/ipe.git
-tags/ipe-pr-20250728
-
-for you to fetch changes up to b90bb6dbf1d60d70969f8f8f2f30033f49711594:
-
-  ipe: use SHA-256 library API instead of crypto_shash API (2025-07-28
-18:54:18 -0700)
-
-----------------------------------------------------------------
-ipe/stable-6.17 PR 20250728
-
-----------------------------------------------------------------
-Eric Biggers (1):
-      ipe: use SHA-256 library API instead of crypto_shash API
-
- security/ipe/Kconfig |  1 +
- security/ipe/audit.c | 33 +++++----------------------------
- 2 files changed, 6 insertions(+), 28 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
