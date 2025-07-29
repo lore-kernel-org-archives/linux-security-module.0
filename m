@@ -1,258 +1,119 @@
-Received: from flow-b5-smtp.messagingengine.com (flow-b5-smtp.messagingengine.com [202.12.124.140])
+Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2EA288516;
-	Tue, 29 Jul 2025 09:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562CE288C37;
+	Tue, 29 Jul 2025 12:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753781754; cv=none; b=bT/pRl3zLqnTi0zhMb1oS/CsTQXmM4p/CbppHNqbcKGa0PQB5Dze+rDiEEEO6gA1e0OW3CDVa/BBiWdm/ZwyvSZ6jMhtlC+EgtqUNk+ntqEr8QlYFSxrHrssQRwUREy6C54UjebMRQFIVdmF5BQA+KD4P3iNQAJd+aHoDK8kcBs=
+	t=1753791426; cv=none; b=ZVR85KBWi6b6AafON9y4q9UtOO38Z8yQK0haay6wQZ77EZnC6wJDuQFJ0fQkaaSQoMjNyQGVZXB8lXlo7+j+yxm5PgDptM4JUaUmpWG0VsGl73cohrAG9LaUwj7Ht9ad1/5WMn7P/pkQqjNb+ujIAmNHLQtc8HtcOaIG+A/Vubs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753781754; c=relaxed/simple;
-	bh=g+vpis/SpU05sbo8Vmp+65jPjCMeiygq63OVHIYclpc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=RqYzr4tC0eFZirougPWnfdyB0SyEhUwGX09OXiGsvSw/BDduxmjx9ocmezn65ZIi754jBuNqWZQf9KjsNCGVZzcVDBRAV781qEdBMlt4Y7uLBhi7is+8fzhpF24ZEg+V1CWA94KodiZXUhM0ir0jB5UhPlArX9LfCVWm8xCvQMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=T0M0CDw9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=buJJFSqR; arc=none smtp.client-ip=202.12.124.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1753791426; c=relaxed/simple;
+	bh=no0lrymv4RgXYfc8OR5+GOYkwyzqdwdbzCQ6jmn/YEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F7yXBk5xfYRbGt9voiny8hcsgkjpeioHcE3Gp6O2M1GWeEIuWXjFCf3vSym3dc7MD0adgF+sJBV5BachVH8NGS+fxVD7SUTwYJm5kEM4pv30mNcQUAC/kidKQ1gtBFazRznLgYEJKVqksCv5/xxl3uGKH+O55rVYCLSxTHxG96s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=aQ2BFgsO; arc=none smtp.client-ip=51.159.173.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="T0M0CDw9";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="buJJFSqR"
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailflow.stl.internal (Postfix) with ESMTP id 83C331302001;
-	Tue, 29 Jul 2025 05:35:49 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Tue, 29 Jul 2025 05:35:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1753781749;
-	 x=1753788949; bh=//ORI/NIeaAxh1YrBcckAswwPCVYsSmGgDQbyUkZAq8=; b=
-	T0M0CDw90VbSLjna7vCcfe6mTMKCQ5endMYTmbm5F+kZuNuH4nc4BQuqm9/kFxYO
-	cQELYjIMlvNKw4lJ6TCvYDOi6/GwbiFcq8V1FL9vON4SMrAYZBHEMyr3TapvJ32Q
-	EuCcZwakLVvoMKIuhtNhw9MpoU1pIRLsrJBuKfw0mFvSH27q/GYmQZrzLEpJzswO
-	GdKXjvNgbHsWZp/zE+Lg+mEXxE3fEhCRBZiE76eszktahyeCSVZQu6/kPCC3i4ZU
-	uXu4AJQyuOJ4LmQeRHhGFlF5/SpiTMdgAiOzotcaAGdLwfh/H5w+q56btZTRpbJ7
-	8OFkhBqJ4bK5fdS1U8Lbrg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1753781749; x=
-	1753788949; bh=//ORI/NIeaAxh1YrBcckAswwPCVYsSmGgDQbyUkZAq8=; b=b
-	uJJFSqRDP45vHQljpA7Vz5hxUd4Ye4pvXCFm5P+xUL3+GeSv2Jf9TQHBok2h5/y2
-	8/PZ9GxYgAgtcQpNwox5EnnRktB7wG3sB0/j0KvR/u0lZ+CnNXcE0cmlrZO+y5ZV
-	9yem6aXNjbvR7nkneYRaElOeon59Ocxqje2qLUNlkME5Sa7zPk4kjPv9pZqHNKNh
-	lJV3swLKBE9qqltK0HfW4aTL83MPWE1v/JKK8VeT/xPzY6Nnm7iNFa/W7BubAO9J
-	3ffb5NBK06Z9dokUuQl2fLD6FS2cFL30C4YYZiw2Iduv5cvgWcUOa8OL1iybrgXJ
-	mUVNSzzn8C2I/WoIb3d+g==
-X-ME-Sender: <xms:85WIaMyhieSSZlSTT0yHTn72mdFb2rWSE8kDBFOTHT75_XQsqr_aHQ>
-    <xme:85WIaARI_U36niK6nz84PWzTnfAtsvJXL8KAZzHI9PFLHL4DmUN20-ne2_bXTcjrC
-    kpOt2tuPjxukqMBaus>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelgeejudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeeftddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepuggrvhgvrdhhrghnshgvnheslhhinhhugidrihhnthgvlhdrtghomh
-    dprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgt
-    ohhmpdhrtghpthhtohepkhhirhhilhhlrdhshhhuthgvmhhovheslhhinhhugidrihhnth
-    gvlhdrtghomhdprhgtphhtthhopehkvgigvggtsehlihhsthhsrdhinhhfrhgruggvrggu
-    rdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrd
-    hinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhlvhhmsehlihhsthhsrdhlihhn
-    uhigrdguvghvpdhrtghpthhtohepihgsmhdqrggtphhiqdguvghvvghlsehlihhsthhsrd
-    hsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthhtohepmhgrohgsihgsoheslhhoohhn
-    ghhsohhnrdgtnhdprhgtphhtthhopehjmhhorhhrihhssehnrghmvghirdhorhhg
-X-ME-Proxy: <xmx:85WIaPnIcgaIATKBhxVWwK2-m2EfS8PuHbx7ehTzbZYYwEyhpGDr_A>
-    <xmx:85WIaBEA4xy-CXl_decDoAPBk3bbcRqPT4EvT8P_Ytm06SHygu9mPg>
-    <xmx:85WIaCzO8e92MmMJKlNqjd5utHh39rP5DKbEOnMvLMHZjHXDsuvHGQ>
-    <xmx:85WIaKabnqwzN2tmkaM4lt9r0XopNiElVkycoMHYr9aBhvYdocxU-w>
-    <xmx:9ZWIaNYEQ0icn8P3P-aCu5BQdrX6XDYXkrqNxknDiXSDJWuFBQyFgcIe>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 9F298700065; Tue, 29 Jul 2025 05:35:47 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="aQ2BFgsO"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Ja/rpFmme61qsVwtiG2iEWQLNzHPxWHDhttFM3TSdWA=; b=aQ2BFgsObO4y12z6Aut9Z4C18B
+	DHypJn3ZepinYaIkmKBMUi9zF8GUkiKrU98Zr46DwfipLovZNCqNe59fXJG+eliTElIZN8c4H2ood
+	xnHMvI4XFBg5jam0PgWlmmFDB6WjxUhbROSXG7vYcI/GxAUSwSCQTg+x7S5RjyO6e0g9awi4znZ2b
+	jtHgsILUVVjra77jDW8aloo2+gl67mvvP5aAy1utDXOhnjSHV009jKD+e2Xv+YmPoWCVmX8nXXBpG
+	sl3ou0Enj+9TPkghx80JKopjIcyD3eBUqjMzWa4Y+SUSEAdY9bKqCwn4bfxIMHu4rSTBMr9AeoWG2
+	Pj1smPUw==;
+Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:64728 helo=archlinux)
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
+	id 1ugjGK-0000000Drss-2vYm;
+	Tue, 29 Jul 2025 14:16:56 +0200
+Date: Tue, 29 Jul 2025 14:16:53 +0200
+From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	paul@paul-moore.com, serge@hallyn.com, jmorris@namei.org, dan.j.williams@intel.com
+Subject: Re: [PATCH v2 0/3] Allow individual features to be locked down
+Message-ID: <kl4rvgnupxnz4zrwlofrawdfy23tj2ylp5s3wovnsjxkr6tbrt@x5s3avqo2e7t>
+References: <20250728111517.134116-1-nik.borisov@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tf1c1d2456aa020de
-Date: Tue, 29 Jul 2025 11:34:57 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Kees Cook" <kees@kernel.org>
-Cc: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, "Paolo Bonzini" <pbonzini@redhat.com>,
- "Mike Rapoport" <rppt@kernel.org>, "Ard Biesheuvel" <ardb@kernel.org>,
- "Vitaly Kuznetsov" <vkuznets@redhat.com>,
- "Henrique de Moraes Holschuh" <hmh@hmh.eng.br>,
- "Hans de Goede" <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>, "Len Brown" <lenb@kernel.org>,
- "Masami Hiramatsu" <mhiramat@kernel.org>,
- "Michal Wilczynski" <michal.wilczynski@intel.com>,
- "Juergen Gross" <jgross@suse.com>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- "Roger Pau Monne" <roger.pau@citrix.com>,
- "David Woodhouse" <dwmw@amazon.co.uk>,
- "Usama Arif" <usama.arif@bytedance.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
- "Thomas Huth" <thuth@redhat.com>, "Brian Gerst" <brgerst@gmail.com>,
- kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
- platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
- linux-mm@kvack.org, "Will Deacon" <will@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
- "Gavin Shan" <gshan@redhat.com>,
- "Russell King" <rmk+kernel@armlinux.org.uk>,
- "James Morse" <james.morse@arm.com>,
- "Oza Pawandeep" <quic_poza@quicinc.com>,
- "Anshuman Khandual" <anshuman.khandual@arm.com>,
- "Hans de Goede" <hansg@kernel.org>,
- "Kirill A. Shutemov" <kas@kernel.org>, "Marco Elver" <elver@google.com>,
- "Andrey Konovalov" <andreyknvl@gmail.com>,
- "Andrey Ryabinin" <ryabinin.a.a@gmail.com>,
- "Hou Wenlong" <houwenlong.hwl@antgroup.com>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Masahiro Yamada" <masahiroy@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Luis Chamberlain" <mcgrof@kernel.org>,
- "Sami Tolvanen" <samitolvanen@google.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Nathan Chancellor" <nathan@kernel.org>,
- "Nicolas Schier" <nicolas.schier@linux.dev>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- "Andy Lutomirski" <luto@kernel.org>, "Baoquan He" <bhe@redhat.com>,
- "Alexander Graf" <graf@amazon.com>,
- "Changyuan Lyu" <changyuanl@google.com>,
- "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Nick Desaulniers" <nick.desaulniers+lkml@gmail.com>,
- "Bill Wendling" <morbo@google.com>,
- "Justin Stitt" <justinstitt@google.com>,
- "Jan Beulich" <jbeulich@suse.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Viresh Kumar" <viresh.kumar@linaro.org>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- "Bibo Mao" <maobibo@loongson.cn>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kasan-dev@googlegroups.com,
- linux-kbuild@vger.kernel.org, linux-hardening@vger.kernel.org,
- kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
- llvm@lists.linux.dev
-Message-Id: <f8bcf5ce-8b8b-4555-a210-14e1974eac92@app.fastmail.com>
-In-Reply-To: <20250724055029.3623499-2-kees@kernel.org>
-References: <20250724054419.it.405-kees@kernel.org>
- <20250724055029.3623499-2-kees@kernel.org>
-Subject: Re: [PATCH v4 2/4] x86: Handle KCOV __init vs inline mismatches
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728111517.134116-1-nik.borisov@suse.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Thu, Jul 24, 2025, at 07:50, Kees Cook wrote:
-> GCC appears to have kind of fragile inlining heuristics, in the
-> sense that it can change whether or not it inlines something based on
-> optimizations. It looks like the kcov instrumentation being added (or in
-> this case, removed) from a function changes the optimization results,
-> and some functions marked "inline" are _not_ inlined. In that case,
-> we end up with __init code calling a function not marked __init, and we
-> get the build warnings I'm trying to eliminate in the coming patch that
-> adds __no_sanitize_coverage to __init functions:
->
-> WARNING: modpost: vmlinux: section mismatch in reference: xbc_exit+0x8 
-> (section: .text.unlikely) -> _xbc_exit (section: .init.text)
-> WARNING: modpost: vmlinux: section mismatch in reference: 
-> real_mode_size_needed+0x15 (section: .text.unlikely) -> 
-> real_mode_blob_end (section: .init.data)
-> WARNING: modpost: vmlinux: section mismatch in reference: 
-> __set_percpu_decrypted+0x16 (section: .text.unlikely) -> 
-> early_set_memory_decrypted (section: .init.text)
-> WARNING: modpost: vmlinux: section mismatch in reference: 
-> memblock_alloc_from+0x26 (section: .text.unlikely) -> 
-> memblock_alloc_try_nid (section: .init.text)
-> WARNING: modpost: vmlinux: section mismatch in reference: 
-> acpi_arch_set_root_pointer+0xc (section: .text.unlikely) -> x86_init 
-> (section: .init.data)
-> WARNING: modpost: vmlinux: section mismatch in reference: 
-> acpi_arch_get_root_pointer+0x8 (section: .text.unlikely) -> x86_init 
-> (section: .init.data)
-> WARNING: modpost: vmlinux: section mismatch in reference: 
-> efi_config_table_is_usable+0x16 (section: .text.unlikely) -> 
-> xen_efi_config_table_is_usable (section: .init.text)
->
-> This problem is somewhat fragile (though using either __always_inline
-> or __init will deterministically solve it), but we've tripped over
-> this before with GCC and the solution has usually been to just use
-> __always_inline and move on.
->
-> For x86 this means forcing several functions to be inline with
-> __always_inline.
->
-> Signed-off-by: Kees Cook <kees@kernel.org>
+Hi Nikolay,
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Thanks for you patch.
 
-In my randconfig tests, I got these ones as well:
+Quoting Kees [1], Lockdown is "about creating a bright line between
+uid-0 and ring-0".
 
-WARNING: modpost: vmlinux: section mismatch in reference: early_page_ext_enabled+0x14 (section: .text.unlikely) -> early_
-page_ext (section: .init.data)
-x86_64-linux-ld: lm75.c:(.text+0xd25): undefined reference to `i3c_device_do_priv_xfers'
+Having a bitmap enabled Lockdown would mean that Lockdown reasons could
+be activated independently. I fear this would lead to a false sense of
+security, locking one reason alone often permits Lockdown restrictions
+bypass. i.e enforcing kernel module signature verification but not
+blocking accesses to `/dev/{k,}mem` or authorizing gkdb which can be
+used to disable the module signature enforcement.
 
-And one more with a private patch of mine.
+If one wants to restrict accesses to `/dev/mem`,
+`security_locked_down(LOCKDOWN_DEV_MEM)` should be sufficient.
 
-These are the fixups that make it build for arm/arm64/x86
-randconfigs for me, so you could fold them as well in
-as well. I have already sent the i3c patch for upstream
-but not the page_ext.h patch.
+My understanding of your problem is that this locks too much for your
+usecase and you want to restrict reasons of Lockdown independently in
+case it has not been enabled in "integrity" mode by default ?
 
---- a/include/linux/page_ext.h
-+++ b/include/linux/page_ext.h
-@@ -57,7 +57,7 @@ extern bool early_page_ext;
- extern unsigned long page_ext_size;
- extern void pgdat_page_ext_init(struct pglist_data *pgdat);
- 
--static inline bool early_page_ext_enabled(void)
-+static __always_inline bool early_page_ext_enabled(void)
- {
-        return early_page_ext;
- }
-@@ -189,7 +189,7 @@ static inline struct page_ext *page_ext_iter_get(const struct page_ext_iter *ite
- #else /* !CONFIG_PAGE_EXTENSION */
- struct page_ext;
- 
--static inline bool early_page_ext_enabled(void)
-+static __always_inline bool early_page_ext_enabled(void)
- {
-        return false;
- }
---- a/include/linux/i3c/device.h
-+++ b/include/linux/i3c/device.h
-@@ -245,7 +245,7 @@ void i3c_driver_unregister(struct i3c_driver *drv);
-  *
-  * Return: 0 if both registrations succeeds, a negative error code otherwise.
-  */
--static inline int i3c_i2c_driver_register(struct i3c_driver *i3cdrv,
-+static __always_inline int i3c_i2c_driver_register(struct i3c_driver *i3cdrv,
-                                          struct i2c_driver *i2cdrv)
- {
-        int ret;
-@@ -270,7 +270,7 @@ static inline int i3c_i2c_driver_register(struct i3c_driver *i3cdrv,
-  * Note that when CONFIG_I3C is not enabled, this function only unregisters the
-  * @i2cdrv.
-  */
--static inline void i3c_i2c_driver_unregister(struct i3c_driver *i3cdrv,
-+static __always_inline void i3c_i2c_driver_unregister(struct i3c_driver *i3cdrv,
-                                             struct i2c_driver *i2cdrv)
- {
-        if (IS_ENABLED(CONFIG_I3C))
+Can you elaborate more on the usecases for COCO ?
 
-As I understand, the underlying problem is less gcc inlining
-being fragile, but more that gcc does not inline functions
-when they have different __no_sanitize_coverage attributes.
+[1]: https://lore.kernel.org/all/CAGXu5j+UWQWDacMvvRCke3xUOb7uTkxn=WaHzG4kJTKWh-6tAA@mail.gmail.com/
 
-      Arnd
+Best regards,
+
+Nicolas
+
+---
+
+On Mon, Jul 28, 2025 at 02:15:14PM +0300, Nikolay Borisov wrote:
+> This simple change allows usecases where someone might want to  lock only specific
+> feature at a finer granularity than integrity/confidentiality levels allows.
+> The first likely user of this is the CoCo subsystem where certain features will be
+> disabled.
+> 
+> Changes since v1:
+>  * Added Patch 3 to incoroporate Serge's hardening suggestion
+> 
+> Nikolay Borisov (3):
+>   lockdown: Switch implementation to using bitmap
+>   lockdown/kunit: Introduce kunit tests
+>   lockdown: Use snprintf in lockdown_read
+> 
+>  security/lockdown/Kconfig         |  5 +++
+>  security/lockdown/Makefile        |  1 +
+>  security/lockdown/lockdown.c      | 36 +++++++++++++++------
+>  security/lockdown/lockdown_test.c | 54 +++++++++++++++++++++++++++++++
+>  4 files changed, 86 insertions(+), 10 deletions(-)
+>  create mode 100644 security/lockdown/lockdown_test.c
+> 
+> --
+> 2.34.1
+> 
