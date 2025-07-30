@@ -1,193 +1,137 @@
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D7C26FA4C
-	for <linux-security-module@vger.kernel.org>; Wed, 30 Jul 2025 10:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338CD1AA786
+	for <linux-security-module@vger.kernel.org>; Wed, 30 Jul 2025 15:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753870814; cv=none; b=oX+s7UvpOQNQqE5XC8nMdLb5Sf+l2Wka4l0+OTyKuIAxmLrI3yknpnvv73bbQ0qLACYkcgXZ6t09tECOYnxiOueRMKrCJ3HPXGx3kARxu/eTsmmbO7/X4j/GobiXjbyrxQBXCPZczPVmS1RXDNj2q6LN0YI8MGSeLj+Ompe92jE=
+	t=1753889760; cv=none; b=fyOWjwkHY6e+NmdKfvVmWYaul+RW6aJ4K2v03CSwA5QqOXVlpFeIJxroHZi1hDuBU5QIByCQz4Jp+I/9lNcSnn1EmBa5S9Zc0A2bxPAlztyiAxp3iCssgX6LoDwlfpsfDwVofXp66Jic8IOvBWZyDAQQ/tB9oYCOfpa/v65EYX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753870814; c=relaxed/simple;
-	bh=7j7hx0Lp01jYu3rqCOign1fIXLyxhBcrqyiQBj181Ho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l73EYvnB6XK555m6pl9cEQPpxR4N+reG8lS7M33pNBvm34zHvJga9p2Aju3xnSk4h50mQVsuiBOqm0cHBIUD/n/UEtJbVqS2HAY+rmIzOyL3iP0xaJwwfEMmc3hRt6VNPYFF9oXAxyLMsuk8xrR9qAN11tDK3tPypFt2i2ObhtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=igIMW3Le; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1753889760; c=relaxed/simple;
+	bh=Fn+JoHGu2fmkl2V8wuLwnhatCqJPEW/WjG3PFXvz5Cw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fTct3ffjkwSE59ANolPNJAsXV9rStT8tbm0a1yeH/9tBZzaebFFR5QPtgYKz/sCuOn+0kvc19HOB86jo/jKePU9uomR5IlZin+JOj04NnWYZK3zGW90PtzDXRmOHuhUo68Is2NfoNUSyLGeUqJHhi6lMXKFhkLpuItazuV67XQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Sun8qJ61; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="igIMW3Le"
-Received: from [192.168.192.85] (unknown [50.47.147.87])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 1403D41C0F;
-	Wed, 30 Jul 2025 10:20:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1753870809;
-	bh=SqIR4bElaBazv08NFhvjlO+Bzrdx0xGl9+ztLyC4Dss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=igIMW3LejgImtO9IVhzjs6Ub/9D/kkYdsuWSWEliW868DJnp9irD59kaFV++GsHp2
-	 7sI/Kb7q8gHtcSolTB13MHsKuB8WuBlW0beeg+pwHpKtBORsNTjjhipVBgWJ2wDV2S
-	 shvfUTKHRb7VM8pjl5jK6UCQFYqrVqn+gFTmB9y5q6MfGot9ByPAjVQSphnMAeGn60
-	 W/nikIhfEtWpUISD5cckr3EwS2NICBTJcufJfneTKBvzTdp9pMEql9EDXV+tZwKoGP
-	 jsByEpph/GSRRe+Q5cb+8+W8y8NtxGpgILorKWhdBP7K1e5GaLm0tEQBm4+k9BN6s3
-	 WeXjWUtst49kA==
-Message-ID: <f021b454-bd51-42f9-ba96-f6ae98cb22f2@canonical.com>
-Date: Wed, 30 Jul 2025 03:20:06 -0700
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Sun8qJ61"
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e8986a25cbfso4783168276.0
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Jul 2025 08:35:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1753889758; x=1754494558; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DYVwqY2ETDDR+r8F+Lmb7APTZLHZrnbDJy59pL4+VDE=;
+        b=Sun8qJ61lPaujzr7yEE7INgIVrK+z/PagX4y1+l/mlZItIflc6xuYwuafCqkBT/8qn
+         nEo67zS3vWNHxSU+1twcTOhsku4pXbDt0R+PTUvdvNaerGygAmNlyZj1G1FeyErUX2TX
+         rLjKyMRkBiQH/fbsOqttVUBo3/h84VhytWiHD5IFDn1oNyZl9fYrXfSrpirG/hYJt7ob
+         kZp5cI8m0pQRoLLoYi81jGM1OWhTTURq3wQ5HWwhuvw1UwwymogexfndI1HkvmyfJUtZ
+         K41ILu+2v3psSQWzi1CH/u3TDn6E358r9nTRhFc33+Aj/tXFogYYKpBLpQNdmQAJUH5k
+         SWfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753889758; x=1754494558;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DYVwqY2ETDDR+r8F+Lmb7APTZLHZrnbDJy59pL4+VDE=;
+        b=w9OYfdIsw685VsQwXChJUobUQxSxIW04+OKBqFKWBvsJHlgQ1YTvZWBWxx3sm6qp6I
+         Fb+8fKrO0gIBL6TbPsZDTaQrg/KqPfCCEoODi0iLYWaieD58qznMxe6Cop7hdjXxub+J
+         spsrxsSQJC441rGmLmcfv6teLu7IAvWHhmXLFPASSHIXkJVVuLRBy4t3j7OqxpnlT+CF
+         Aqf7US9A36y9Oci3CqgbgrPvh8n6As8FNRgwQ/kBtZPzqD9yy/R8WflO2eJzbiqVJPWz
+         L1rbck93239+HZANyc7gkNSO1HOI/Qv5dRivMVFMcPzo/pE88Jxpft045xcb28W/jHZx
+         M3Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCWj4eBNt8Mg3HmPj7fSZAG4IX6JQT0wbjsipLbh1oMJcE2d8ng2iASoQt4BssSiuWw7BM5egQPg/sqjanoJWCncBrcUtyY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKIXpmMSZXKfcuFaFfBE5/2Q+Oj0RqFFbMlWnhWuyoqFGcvoIL
+	Y8XsTMXGyRk4fNDL5SGFKM1A+djTIVCDscSQBn9JqaduxC9R8Fh56kz1v/gLC5zoaJEimy6v4rn
+	MuZ/Mek5xXfR5DpPt7gzUYKOcmvuN3zaZnWSZ6x1f
+X-Gm-Gg: ASbGncvEf8Oq04cZsPMKd5GmkE6/wRbmGzB6VUe/hMibVBl7KLNejq1vDXkh0VVUCUT
+	BkYO9o5lICDM1jm9RBNLpxMAphgYo5PrBjNFfrNjH+gTOqx/meCLuCS8083mgZ73atlAN1ZX9xE
+	wgSU9rmvgLBDvAEbqluiax0SI7h/xr4nkloSnY7pLAPuAzMbm+5aQKu8uud1jxzhMKk6tOIszp8
+	JAQ3R4=
+X-Google-Smtp-Source: AGHT+IGjgexjMCxSTA/9heTLxOWR5U+m0nGq+jGDNorEMw/O+tX1NfjXbc3s1L9+tpttq3ce9sidcKvY8R/vZFsyc48=
+X-Received: by 2002:a05:6902:3484:b0:e8e:2e63:80e6 with SMTP id
+ 3f1490d57ef6-e8e3160271dmr4217022276.49.1753889758046; Wed, 30 Jul 2025
+ 08:35:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: -Wformat-invalid-specifier after 88fec3526e84 in -next
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- llvm@lists.linux.dev
-References: <20250721231041.GA1015606@ax162>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20250721231041.GA1015606@ax162>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250729090933.94942-1-tianjia.zhang@linux.alibaba.com>
+ <e81ba8e7-8938-4b76-ae7b-bfee6021aeac@schaufler-ca.com> <CAHC9VhQAVvvXUoFu7xnh0uBhmvgYinP=AhiC4y17JJ02M9s5Nw@mail.gmail.com>
+ <c946ad53-15c8-497d-863b-a237e6c4466c@linux.alibaba.com>
+In-Reply-To: <c946ad53-15c8-497d-863b-a237e6c4466c@linux.alibaba.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 30 Jul 2025 11:35:46 -0400
+X-Gm-Features: Ac12FXzDSSQrNzkzWz_OdDUhSgYlH9sgCmxX7ixpI8_UP4lioWUnWPq42raBykA
+Message-ID: <CAHC9VhQ_f=YyFtxkMf0a8x-bRAi9Nzw-SdgEn8ndkDewydPzuA@mail.gmail.com>
+Subject: Re: [PATCH] lsm: simplify security_inode_copy_up_xattr()
+To: "tianjia.zhang" <tianjia.zhang@linux.alibaba.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/21/25 16:10, Nathan Chancellor wrote:
-> Hi John,
-> 
-> After commit 88fec3526e84 ("apparmor: make sure unix socket labeling is
-> correctly updated.") in -next, I am seeing some warnings from clang when
-> building arm64 allmodconfig with LTO enabled. This can be more simply
-> reproduced on top of defconfig:
-> 
->    $ make -skj"$(nproc)" ARCH=arm64 LLVM=1 mrproper defconfig
-> 
->    $ scripts/config \
->        -d LTO_NONE \
->        -e LTO_CLANG_THIN \
->        -e SECURITY_APPARMOR \
->        -e SECURITY_APPARMOR_DEBUG
-> 
->    $ make -skj"$(nproc)" ARCH=arm64 LLVM=1 olddefconfig security/apparmor/lsm.o
->    security/apparmor/lsm.c:1206:2: warning: invalid conversion specifier '0' [-Wformat-invalid-specifier]
->     1206 |         AA_BUG(rcu_access_pointer(new_ctx->label));
->          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    security/apparmor/include/lib.h:56:3: note: expanded from macro 'AA_BUG'
->       56 |                 AA_BUG_FMT((X), "" args);                                   \
->          |                 ^~~~~~~~~~~~~~~~~~~~~~~~
->    security/apparmor/include/lib.h:61:34: note: expanded from macro 'AA_BUG_FMT'
->       61 |         WARN((X), "AppArmor WARN %s: (" #X "): " fmt, __func__, ##args)
->          |                                         ^~
->    <scratch space>:2:1144: note: expanded from here
->        2 | "(({ typeof(*(new_ctx->label)) *__UNIQUE_ID_rcu1155 = (typeof(*(new_ctx->label)) *)({ do { __attribute__((__noreturn__)) extern void __compiletime_assert_1156(void) __attribute__((__error__(\"Unsupported access size for {READ,WRITE}_ONCE().\"))); ..."
->    ...
->    include/asm-generic/bug.h:134:29: note: expanded from macro 'WARN'
->      134 |                 __WARN_printf(TAINT_WARN, format);                      \
->          |                                           ^~~~~~
->    include/asm-generic/bug.h:106:17: note: expanded from macro '__WARN_printf'
->      106 |                 __warn_printk(arg);                                     \
->          |                               ^~~
-> 
-> Ultimately, rcu_access_pointer() expands to __READ_ONCE(), which arm64
-> specifically defines for CONFIG_LTO using some inline asm expressions,
-> see commit e35123d83ee3 ("arm64: lto: Strengthen READ_ONCE() to acquire
-> when CONFIG_LTO=y"). Within those asm literals are % characters for the
-> asm templates, which are ultimately interpreted as format specifiers
-> when they get expanded by the preprocessors, hence the warning.
-> 
-> There is nothing technically wrong here, although if this were to ever
-> trigger, it would probably look quite ugly in the kernel log because of
-> how long the string literal expansion of __READ_ONCE would be. It is
-> possible to shut this warning up in a similar manner to the existing GCC
-> pragma if necessary but I was unsure if that would be preferred off bat,
-> hence just the report at first.
-> 
+On Wed, Jul 30, 2025 at 5:26=E2=80=AFAM tianjia.zhang
+<tianjia.zhang@linux.alibaba.com> wrote:
+> On 7/29/25 11:09 PM, Paul Moore wrote:
+> > On Tue, Jul 29, 2025 at 10:43=E2=80=AFAM Casey Schaufler <casey@schaufl=
+er-ca.com> wrote:
+> >> On 7/29/2025 2:09 AM, Tianjia Zhang wrote:
+> >>> The implementation of function security_inode_copy_up_xattr can be
+> >>> simplified to directly call call_int_hook().
+> >>>
+> >>> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> >>> ---
+> >>>   security/security.c | 8 +-------
+> >>>   1 file changed, 1 insertion(+), 7 deletions(-)
+> >>>
+> >>> diff --git a/security/security.c b/security/security.c
+> >>> index 596d41818577..a5c2e5a8009f 100644
+> >>> --- a/security/security.c
+> >>> +++ b/security/security.c
+> >>> @@ -2774,13 +2774,7 @@ EXPORT_SYMBOL(security_inode_copy_up);
+> >>>    */
+> >>>   int security_inode_copy_up_xattr(struct dentry *src, const char *na=
+me)
+> >>>   {
+> >>> -     int rc;
+> >>> -
+> >>> -     rc =3D call_int_hook(inode_copy_up_xattr, src, name);
+> >>> -     if (rc !=3D LSM_RET_DEFAULT(inode_copy_up_xattr))
+> >>> -             return rc;
+> >>> -
+> >>> -     return LSM_RET_DEFAULT(inode_copy_up_xattr);
+> >>> +     return call_int_hook(inode_copy_up_xattr, src, name);
+> >>
+> >> Both the existing code and the proposed change are incorrect.
+> >> If two LSMs supply the hook, and the first does not recognize
+> >> the attribute, the second, which might recognize the attribute,
+> >> will not be called. As SELinux and EVM both supply this hook
+> >> there may be a real problem here.
+> >
+> > It appears that Smack also supplies a inode_copy_up_xattr() callback
+> > via smack_inode_copy_up_xattr().
+> >
+> > Someone should double check this logic, but looking at it very
+> > quickly, it would appear that LSM framework should run the individual
+> > LSM callbacks in order so long as they return -EOPNOTSUPP, if they do
+> > not return -EOPNOTSUPP, the return value should be returned to the
+> > caller without executing any further callbacks.  As a default return
+> > value, or if all of the LSM callbacks succeed with -EOPNOTSUPP, the
+> > hook should return -EOPNOTSUPP.
+> >
+> > Tianjia Zhang, would you be able to develop and test a patch for this?
+> >
+>
+> Yes, I will submit a new patch to try to fix this issue. Thanks for your
+> suggestion.
 
-Thanks for the info Nathan,
+Great, thank you.
 
-in this case
-88fec3526e84 apparmor: make sure unix socket labeling is correctly updated.
-
-actually made this check invalid, so it as been removed, fixing this issue.
-
-> Cheers,
-> Nathan
-> 
-> diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-> index 2e7c2c282f3a..9dfbc6dc8859 100644
-> --- a/include/linux/compiler-clang.h
-> +++ b/include/linux/compiler-clang.h
-> @@ -114,10 +114,10 @@
->   #define __diag_str(s)		__diag_str1(s)
->   #define __diag(s)		_Pragma(__diag_str(clang diagnostic s))
->   
-> -#define __diag_clang_13(s)	__diag(s)
-> +#define __diag_clang_all(s)	__diag(s)
->   
->   #define __diag_ignore_all(option, comment) \
-> -	__diag_clang(13, ignore, option)
-> +	__diag_clang(all, ignore, option)
->   
->   /*
->    * clang has horrible behavior with "g" or "rm" constraints for asm
-> diff --git a/security/apparmor/include/lib.h b/security/apparmor/include/lib.h
-> index 444197075fd6..7f2c649dc7dd 100644
-> --- a/security/apparmor/include/lib.h
-> +++ b/security/apparmor/include/lib.h
-> @@ -53,7 +53,11 @@ do {									\
->   #define AA_BUG(X, args...)						    \
->   	do {								    \
->   		_Pragma("GCC diagnostic ignored \"-Wformat-zero-length\""); \
-> +		__diag_push();						    \
-> +		__diag_ignore(clang, all, "-Wformat-invalid-specifier",	    \
-> +			      "May be called with asm that has %");	    \
->   		AA_BUG_FMT((X), "" args);				    \
-> +		__diag_pop();						    \
->   		_Pragma("GCC diagnostic warning \"-Wformat-zero-length\""); \
->   	} while (0)
->   #ifdef CONFIG_SECURITY_APPARMOR_DEBUG_ASSERTS
-
+--=20
+paul-moore.com
