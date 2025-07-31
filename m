@@ -1,159 +1,134 @@
-Received: from sonic.asd.mail.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F02F189F5C
-	for <linux-security-module@vger.kernel.org>; Thu, 31 Jul 2025 15:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6FA1F3B97
+	for <linux-security-module@vger.kernel.org>; Thu, 31 Jul 2025 15:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753974073; cv=none; b=np9SqRdIS/lqYSLBN2La4xmTBJ5a/WgM+2bs8jpp6cVKVKBzzHdUAUZpQiCh2CtJKWCwgKJlt5FW4istgaGrcGYdJLi/aBYdzI88Ab54itj1TJovbZV7p5/yUd8Gqd9x6az5UOQHWeJr401dqEiQS0LTxWJxt/QHb898f4qshpE=
+	t=1753977466; cv=none; b=c87C4KaGXksb5/iXKOr3j6O727fB9akTS6Uw/MqZEtlZUF4nAmXaUrQJ/4bZWxzIGhV43NYnMoVp7Jk0bCmfACcFwYO/dQtvYcTDLg/DPMkIf9JMiCK7VjHAlzQcBcfMydpFzXsZoXbKFbV5Xv3iJEkyFFaTxK9Oa8gvv+rN9ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753974073; c=relaxed/simple;
-	bh=yF70jT5zZihJChERM7/8WsqLm75Xwk4VVMdeZOCWEGo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ck0iH9n4tL51zoprES5xSJzjvKDoSIZw6jzhufisJTCFQR6/5iE02FkdFOvs9UPxXlhjcq7xbJXbB4Gur+7h7Rfg/fga6D9Z07bUY5LtYN4G9hmdeWyvAxTYnpIUC9tOq3kSeUdyLvzcf1CTMJM88SoSj/Q2Xk7aUyZaISssEiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=qULecYV7; arc=none smtp.client-ip=66.163.186.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1753977466; c=relaxed/simple;
+	bh=zXqYwYUo5V5xtf38XeLw47tBDZGEMXc9yoHG17JPGAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=IIW3VKygfylp6TJGXX13mzjJykKk5cBY8lZbf64t9xrZE46ph6a2skZxTGhmVZysHKx8b7yyStAMYWC0Cldh3QJlZ/wb/N09vweLx2rYtvDCWCfFFMclNl1fIxbY5wluzNVmk7Ru9RE8hdU/BmXYc1o3AIR0RdHnf1LyU6BpLLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uQCpaCeu; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qULecYV7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1753974063; bh=yF70jT5zZihJChERM7/8WsqLm75Xwk4VVMdeZOCWEGo=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=qULecYV7ZKv3DcGJP7YAKTPw1Et8pq2u80jal+2b8VOfFVJmHMCnsfXthf1JUWY4WdeUXRQV8Qe417pG6n4HvMsfd/09o/bufrfL1gzm7uxwMZXcAvhoz+eyq6kZlgf03LAqXqSGJkyDSEDSOzJv3KcB90O1aM7QPW5zbLUeLt1A1kQPuLajX9fowZghT2b0CztdHfru5fPsvyDwAccplRjvucHbjU67SzvHL1T3LEa4QWWUNJCcRY6gY9KwAawAJGMd9LzXVUeDK22+c0NEc7hXXatavty3D4vWmvdjpcEH95KdazDmiTfLwRy6ery9A2gvFpGyxiqqWyurRr9+3A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1753974063; bh=gP2lmCIzQWZVtg3PpiJsfmyKf4DpqJPtggQ3WJ3ZDQm=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=AUcoGv6UTDQ+T9OrExnKgjrDWOJloqZC9AyOqqlWyPskm+ExbqEeOG7/S7Q1e+dgpMJdty24eaeK2jzf+kqr7R8VNHPM6kepEbd2djcxNvNkbh/E/alm07+86MGvJUC7FD9BgK7cIfcPqnh+tBxTvwiYT+3TGRAp8YW+qDCA9pZXfw7lfzw+fCpP+mf6wS4N3A4RC6bBAzd70woH2X+8D8sLn7fzaTnX1XOELJc6/umwwCF2wq+6CVQR3NbAsjKI7ae+2qv6dxAJc4GYHD7q31r+SU9XkkC8CLu9l1H9OwPj2xYuNxPJggm3dEOEhUM6j17VzJ+W0U030JADqTbGiQ==
-X-YMail-OSG: HfvcoZgVM1ki3y_4yxzOigsPq6lpUGl95H2IQG.AEE2bpqDPbUEEveSHBxrCzTV
- MwQf5vxglMY8Ni3MxvbLRgwH5cZR6WREwSuQis2_U5_K563rm9ISCryg_WGC1zDOY5OnKndpc.QS
- dz2g.0zbHNlYTGM35rnrIzxfl5t5luYxjtjbwisPRRn3bB50J7BEsui9ai4t4sW6zxVFQ6qbCuKO
- L0RzJSKgJvNv1n38Re1x9DU6DNkf7oW3dYYHP9yZoPLZ0YyDgEM1Rm8Xag2HTI6OKNxDGJsRn44R
- fxyL4i4Aue_rYSQSg.q8NHdNK6.3xrv7zGKxRlN7DahkQLAH86BD7WnWmw99MmX5bRiLSYhc5H0k
- 923X0KMmyW8FF6knw0Uf0HSiH7AgIuXMpz4.Z2IC82rerCMSwHVPRhBVfQOKfPWgJCergb2YeNAx
- GHPvkz8oXxhtyV6bYAjQuJ3eHBEmyG62jMELx5iXY9sqNop4geYxXci98sIEqfQ1SQKmMezKM47G
- Osrr9tb1GyXseXZePwCiZXQDO7MNewKpSZrGgrqSClhgMoW3_B78O.VcFc5dLxJ31IoEelwJdCnm
- PpESrWA7FaFS1QUotsQyw6PkXojEQiX_UpunlYGTGMLAj3GfKZyUC2UZ_rhUOyiYFWcoWsEzD0HC
- eKprd_PGshRUqOVvWRk3sM7VW1FMoRoxDGUzbJd9ehC5F7Cdh4KnOrvyuaPPAFVNEikAK5wJ68Uq
- AiS9v0.Rt.InfvzgUCWiwKhZxYWDzu_Vwo.pdLyHwIjU0sqHGOZnGMqD7xkZNhtAzlL3_5Hw4vqm
- jq.7bfwX7OodGCup7ht_MlPSAm4AGoo_Dtgw_nAih0L1ftNINDYuQsA4wXzuZ.2qEbqBfelJuwMN
- 2OrrpIP_gokTUkQc4qVPHhKAWIidXQEa6PBtvLgu0W.PxiwmokKcmRqlPis4UIvawR2nPMwJpT8l
- GsLHiiqRL1Rc1fHuhBERYT8TVaQdY6cA77ulVWMck2KR_IXQ8wKgkzO.jM.VqSvOjdbboEY0_Tw4
- f1acIaGD7x8bemaaKRwZbr8GhYzO.4AWS3.A3HV9AluQvfmYj4OMjqbBqt1dVZPBdiwFRMdiwVcp
- 0F27RuxsdUuxw4TfLl5Vxde8H9ZQ1jJrF00mwsZFRuKcG.Vjr_vrcRhBT5eZoMBgJsnzbHOwRqq.
- bO0.5ySXoCFsz4HJL2ojroSi1zhFDdBBd7h.1yPJEtl9JqHyK7XHNq7p23Q0SyDDqklRfO647Kap
- Pja.y14eo1e2tbn0JWuUjX_YNMWcVOqoWBewQrdLKEFLaq521tMj2Yewb0pf9rrnBVwE06pi.3SV
- 4CFI1jrkIV.A99qKHgeeMofELPaI_6XyIFNyY5oKgmzAAN2cF0oXgMI_59gs2m.Vpnw7kirJuCss
- 2S5PaS86oc96x70kAhuCXwHiuwxNqXT4NPh_4uKRphZpMO5gMLmy8QbzTUlZ86vSQSODiItW2VfC
- mgMm_8lj5xqfMS3m_tKLVTtFMHHF801bbIEHu2fGiU4J2P3uM30ACRkvCLEwZgdveTQa1tCLhyzX
- zW5xauAjA8WJNTEjoY4pJdM3sFbk8EhrSXNoIFm_s.QdrwWd1TriYQnzgdSAbvokczkFnwTMEvjn
- UY_kWu_4uYH9ZeGGxb7mUallrpRPgs9pXWhTIkJj_0GtFdCmj39oUwDFtZxoivLSuvfr3nV3_ulf
- SFMoxWAqpy5lYi4WLns_YYAYi5rq8jdTkzAHeWumdx0wmBQyPOjvutqsZb_OwFTjh2VURGHEER6L
- MvwT1Qs3V84aRFRzHQ.Ysho0R4CIDmfDFmWprDzo3HhETSGmoKodrNstY.aSOv.I1pHB6ZBvn8_.
- gHUSLLYvhfQrrs.Jtct1DB8KpvtOFax8yqGixRKrYx.6.SZTlfwL0Xx_NPr2kt62uIewfamoVFqS
- 9reZ4pAjFQssQK72mzdnddyRXPdB2GJ3wrPtbdtntLyv7X4FIWu4u3gexIK7UqgtgDD_QLoXcoEd
- lWoGfCq0qzp.a7C5aXU8yQ18rUpobWtOrV1griSnuFefhQ.jiVmVvPQXRKMjFJqbWhAn523naylc
- bWh6rVm717E9yEOnpMypxVMJwN4n7RKFJWAqUOQ3QFH4gI.u8xZE0bEgZb9AaIrNyG7pa.EvZ4ip
- 1i9sCq20Cn4WKAlF4nPcr8aL.nz3FLvgKoVpSBOZ5cD8N8cLMMNyaYNZ.sMvIMc8dPOQ6ybYs3Vd
- LxMh90dzTM.it7k2PZjmeaXHicfKqKHfmVca09Do.ol8lnO9aNfEjEVaOc5rON71Y.brrwyemCz2
- dBnlLqQyERhNMKpc-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 8b95bc7b-b260-44f9-b6a1-9753808c2201
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Thu, 31 Jul 2025 15:01:03 +0000
-Received: by hermes--production-gq1-74d64bb7d7-74ntb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID da4533f52ef555abea23905bd1b25012;
-          Thu, 31 Jul 2025 15:00:57 +0000 (UTC)
-Message-ID: <9dc21c28-1a4b-4d88-a67c-7b5050cdf0b8@schaufler-ca.com>
-Date: Thu, 31 Jul 2025 08:00:54 -0700
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uQCpaCeu"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a588da60dfso350489f8f.1
+        for <linux-security-module@vger.kernel.org>; Thu, 31 Jul 2025 08:57:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753977462; x=1754582262; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mwEehyIvfFZxsxz6xG2f5ye6bcAONjKwPvSd6npT8hI=;
+        b=uQCpaCeu488YzeJaqdtnpSe9JwJPNqEpBRpSw7umCywMzJkQaArjkMboySJ+37y7eX
+         3l74AeaBFzWbTS8Q3oiaVX6FqmIypchnDkF5Tza5s+9z+BKDqvBDfSLAkTKDswMi2EHh
+         rVOnMimM1pTDg20/rFX/WPG+s+cUQJ2vi8hksg7plziau4Ln+DkmVqtC1thMLLlXM/5d
+         LQel6Op+cTuent21fKW7sWRUzh8Szmy40ynmhaBlseV9aJvcpbgx+Re+eYmpFc7lt/D2
+         AyHDLvb+V1NE+SmqriJFPWVtEZ8c5gHGvGWBz/V9CJVCSCLsD+RlLGxUMqFV7Jp/+T1M
+         YEuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753977462; x=1754582262;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mwEehyIvfFZxsxz6xG2f5ye6bcAONjKwPvSd6npT8hI=;
+        b=jR3srBKaw1p+2ypumBBCARAKIEuAikJnyaCNPYnJqiJkinTcph2FTzPCywUjTaHL+4
+         7S55MOzoLEpq8JKj7vNDhc5tCDGk1mVsZuSKUt+n7mEAxeoRAu90TzX/EUpvKqvMISNk
+         n2+03nx0dhYpNzCiAa5qo2HtZ9dM3oecREjm5Uu+KSHI/saKQWW7n1KJ1nLY0pAdJxhe
+         uQQBszYCcf8YA/ZXP3HrSFZLrZNBZ6qErAAoDKWXWheqVLzIBIgA4H934JncjsQyKL3N
+         3XMnkohs+1UTGwHGV7OkOgBuaV9LJ2ZadVkmy5rZasfRrWwxFeLchKExvKM4WbHxx3tc
+         X1eA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSw8eEtjhk2aF6nsGt3dhwfC8xwzfATEBWZ8ph11AyiaTX7Q6VwgRk+AZ/5kkqBn2yGwf5TXdkNdYOwYZT9r3G6IKPphA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAu22D6lE3AZ0PipbFEZiyk6Z7GLbTZsX/UsqRdAvb3WP0a/87
+	xfGWAjEYi3jJyQH0B99QwDcLvAzPZ2slglpwKZUyRduEpotxFAJkvtcP3CuMF/p/GeU=
+X-Gm-Gg: ASbGncsGZw+c+CzNiSMOdIJougiwLyfmwu5kx8S/Pk1czi3vG3gbPRotpSQfweIj+ml
+	IWVKm2ZpHmSEQEg+V2i5mgXNH5Ay0IQPWj2Yt1OTL97OOY9oqSCH4D5fqryx5Hhz+bXsMH2s+O/
+	T9/Oyx4C1x4Cs7BsHZMgDJH4RbPMhzZJukQCvAXLS1DcFJkqNLREbka0szWpx6B7SDh4km7WtKt
+	HCljllyf2z9Z9wAnrT5Jjslq0wiSSJT5F+4pQr75CGRSlaIx7zlryLb8KsEcWiD9ZapsWbDYG8N
+	v1OrtCzkaN7uAZ46kxiA0Xypyx1Kjo7zOqNb2AHXLwb+evhB479coL4CAmnJeK+hR3QbS2tXSzh
+	Jj/tYTpm7oxmY4Usktjjzpt8e560=
+X-Google-Smtp-Source: AGHT+IEJypDs3Srfs5Ta2SryXW3PqrPZ2bjD8Bn1TfOmElhJKEUhoyptNdeCt1IpSC2bX7kUHiSQGg==
+X-Received: by 2002:a05:6000:2f85:b0:3a6:d93e:5282 with SMTP id ffacd0b85a97d-3b79501dd3fmr7085161f8f.59.1753977461645;
+        Thu, 31 Jul 2025 08:57:41 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589edfcdf4sm32052495e9.11.2025.07.31.08.57.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 08:57:41 -0700 (PDT)
+Date: Thu, 31 Jul 2025 18:57:38 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, KP Singh <kpsingh@kernel.org>,
+	bpf@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	bboscaccy@linux.microsoft.com, paul@paul-moore.com,
+	kys@microsoft.com, ast@kernel.org, daniel@iogearbox.net,
+	andrii@kernel.org, KP Singh <kpsingh@kernel.org>
+Subject: Re: [PATCH v2 08/13] bpf: Implement signature verification for BPF
+ programs
+Message-ID: <0b060832-4f55-486a-8994-f52d84c39e38@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: simplify security_inode_copy_up_xattr()
-To: "tianjia.zhang" <tianjia.zhang@linux.alibaba.com>,
- Paul Moore <paul@paul-moore.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20250729090933.94942-1-tianjia.zhang@linux.alibaba.com>
- <e81ba8e7-8938-4b76-ae7b-bfee6021aeac@schaufler-ca.com>
- <CAHC9VhQAVvvXUoFu7xnh0uBhmvgYinP=AhiC4y17JJ02M9s5Nw@mail.gmail.com>
- <2aa4da27-28fc-46e0-8d1a-d9e63b03d502@linux.alibaba.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <2aa4da27-28fc-46e0-8d1a-d9e63b03d502@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.24260 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250721211958.1881379-9-kpsingh@kernel.org>
 
-On 7/31/2025 4:59 AM, tianjia.zhang wrote:
->
->
-> On 7/29/25 11:09 PM, Paul Moore wrote:
->> On Tue, Jul 29, 2025 at 10:43 AM Casey Schaufler
->> <casey@schaufler-ca.com> wrote:
->>> On 7/29/2025 2:09 AM, Tianjia Zhang wrote:
->>>> The implementation of function security_inode_copy_up_xattr can be
->>>> simplified to directly call call_int_hook().
->>>>
->>>> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
->>>> ---
->>>>   security/security.c | 8 +-------
->>>>   1 file changed, 1 insertion(+), 7 deletions(-)
->>>>
->>>> diff --git a/security/security.c b/security/security.c
->>>> index 596d41818577..a5c2e5a8009f 100644
->>>> --- a/security/security.c
->>>> +++ b/security/security.c
->>>> @@ -2774,13 +2774,7 @@ EXPORT_SYMBOL(security_inode_copy_up);
->>>>    */
->>>>   int security_inode_copy_up_xattr(struct dentry *src, const char
->>>> *name)
->>>>   {
->>>> -     int rc;
->>>> -
->>>> -     rc = call_int_hook(inode_copy_up_xattr, src, name);
->>>> -     if (rc != LSM_RET_DEFAULT(inode_copy_up_xattr))
->>>> -             return rc;
->>>> -
->>>> -     return LSM_RET_DEFAULT(inode_copy_up_xattr);
->>>> +     return call_int_hook(inode_copy_up_xattr, src, name);
->>>
->>> Both the existing code and the proposed change are incorrect.
->>> If two LSMs supply the hook, and the first does not recognize
->>> the attribute, the second, which might recognize the attribute,
->>> will not be called. As SELinux and EVM both supply this hook
->>> there may be a real problem here.
->>
->> It appears that Smack also supplies a inode_copy_up_xattr() callback
->> via smack_inode_copy_up_xattr().
->>
->> Someone should double check this logic, but looking at it very
->> quickly, it would appear that LSM framework should run the individual
->> LSM callbacks in order so long as they return -EOPNOTSUPP, if they do
->> not return -EOPNOTSUPP, the return value should be returned to the
->> caller without executing any further callbacks.  As a default return
->> value, or if all of the LSM callbacks succeed with -EOPNOTSUPP, the
->> hook should return -EOPNOTSUPP.
->>
->> Tianjia Zhang, would you be able to develop and test a patch for this?
->>
->
-> I carefully checked the logic of security_inode_copy_up_xattr(). I think
-> there is no problem with the current code. The default return value of
-> inode_copy_up_xattr LSM is -EOPNOTSUPP. Therefore, when -EOPNOTSUPP is
-> returned in the LSM callback, the next callback function will be called
-> in a loop. When an LSM module recognizes the attribute name that needs
-> to be ignored, it will return -ECANCELED to indicate
-> security_inode_copy_up_xattr() to jump out of the loop and ignore the
-> copy of this attribute in overlayfs.
->
-> Currently, the SELinux, EVM, and Smack that supply inode_copy_up_xattr
-> callback all return -ECANCELED after recognizing the extended attribute
-> name they are concerned about, to indicate overlayfs to discard the
-> copy_up operation of this attribute. I think this is in line with
-> expectations.
+Hi KP,
 
-I looked at the code more carefully and I think you're right.
-My objection was based on the behavior of a much earlier version
-of call_int_hook(). With that, I think your proposed change is
-reasonable.
+kernel test robot noticed the following build warnings:
 
->
-> Tianjia,
-> Cheers
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/KP-Singh/bpf-Update-the-bpf_prog_calc_tag-to-use-SHA256/20250722-052316
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20250721211958.1881379-9-kpsingh%40kernel.org
+patch subject: [PATCH v2 08/13] bpf: Implement signature verification for BPF programs
+config: m68k-randconfig-r073-20250723 (https://download.01.org/0day-ci/archive/20250723/202507231202.8rYZJ8D1-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.3.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202507231202.8rYZJ8D1-lkp@intel.com/
+
+smatch warnings:
+kernel/bpf/syscall.c:2797 bpf_prog_verify_signature() warn: 'sig' is an error pointer or valid
+
+vim +/sig +2797 kernel/bpf/syscall.c
+
+c83b0ba795b625 KP Singh           2025-07-21  2782  static noinline int bpf_prog_verify_signature(struct bpf_prog *prog,
+c83b0ba795b625 KP Singh           2025-07-21  2783  					      union bpf_attr *attr,
+c83b0ba795b625 KP Singh           2025-07-21  2784  					      bool is_kernel)
+c83b0ba795b625 KP Singh           2025-07-21  2785  {
+c83b0ba795b625 KP Singh           2025-07-21  2786  	bpfptr_t usig = make_bpfptr(attr->signature, is_kernel);
+c83b0ba795b625 KP Singh           2025-07-21  2787  	struct bpf_dynptr_kern sig_ptr, insns_ptr;
+c83b0ba795b625 KP Singh           2025-07-21  2788  	struct bpf_key *key = NULL;
+c83b0ba795b625 KP Singh           2025-07-21  2789  	void *sig;
+c83b0ba795b625 KP Singh           2025-07-21  2790  	int err = 0;
+c83b0ba795b625 KP Singh           2025-07-21  2791  
+c83b0ba795b625 KP Singh           2025-07-21  2792  	key = bpf_lookup_user_key(attr->keyring_id, 0);
+c83b0ba795b625 KP Singh           2025-07-21  2793  	if (!key)
+c83b0ba795b625 KP Singh           2025-07-21  2794  		return -ENOKEY;
+c83b0ba795b625 KP Singh           2025-07-21  2795  
+c83b0ba795b625 KP Singh           2025-07-21  2796  	sig = kvmemdup_bpfptr(usig, attr->signature_size);
+c83b0ba795b625 KP Singh           2025-07-21 @2797  	if (!sig) {
+
+This should be an if (!IS_ERR(sig)) { check.
+
+c83b0ba795b625 KP Singh           2025-07-21  2798  		bpf_key_put(key);
+c83b0ba795b625 KP Singh           2025-07-21  2799  		return -ENOMEM;
+c83b0ba795b625 KP Singh           2025-07-21  2800  	}
+c83b0ba795b625 KP Singh           2025-07-21  2801  
+c83b0ba795b625 KP Singh           2025-07-21  2802  	bpf_dynptr_init(&sig_ptr, sig, BPF_DYNPTR_TYPE_LOCAL, 0,
+c83b0ba795b625 KP Singh           2025-07-21  2803  			attr->signature_size);
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
