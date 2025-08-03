@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE418207DE2;
-	Sun,  3 Aug 2025 21:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522ED155CBD;
+	Sun,  3 Aug 2025 21:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754256188; cv=none; b=UwYooMXdDxCqKlJiB5iMYUwh7ORRhQhwtRmdg79dPPNSJF3BYgNi7U45jBpChXe2jbCseXvT1+w95Pz5aH5JVt5zWiSoNAla5RXMWSK41HtYC2NgwjPg0UxcR9CZIE2z1Ia33VkBWHRYDHFDe53uQtzp6wncrj9mMBxD1QYGaFs=
+	t=1754256211; cv=none; b=r2Oo3nePr/XMo0acV/CqY5Vrc0mygtpkBRjRqrzvtKTh7D243Az6Ym9dHOAInumIy7Yqku1LR/qvt/w1hva8hDQNq4BupmgorB9E6I5HiwYJky70dJrzQdJGk9umN6ZKH/zduM2n5LAD/JE76TJzz4/207TbT1+2zEOFdjc8kSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754256188; c=relaxed/simple;
+	s=arc-20240116; t=1754256211; c=relaxed/simple;
 	bh=ypW0rxu6CPke5sHwiG6FaiHwUEHIiqglPxR7OI4ZONk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lEAZzr7SS1U5eRV4krs7uuRAYh9Dr5Pe56e7UtoTO78j3DEZMFmLQU81GUz2oGuwmcMZqsJTx+v2EO0PeOZp1xrCjpZ3iEDKqGteeeZbwARMXDBPY6ivAugnPUlVuF3aoDG1c6Apyn0g05dUdAOlm7atzkXK1FniVndpIi2esMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qh3cHfN8; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=MfKK+EX6ulXX3KnL70eh26s8CTEVDJ69RJi3f3HlhujUmsWMGlyJ0hL22NHZ++o9kFjVJNQnpDNYqabz44Izij36Hw4aCguY3cZ1nOHrooY/HmMjofTzkl4FULGu+YWPRsWwxGlPadtV45XNxeMfrMd0ZEHj3XoTVpZYJoctn3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avkK870b; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qh3cHfN8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C901C4CEEB;
-	Sun,  3 Aug 2025 21:23:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avkK870b"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DA22C4CEF0;
+	Sun,  3 Aug 2025 21:23:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754256188;
+	s=k20201202; t=1754256210;
 	bh=ypW0rxu6CPke5sHwiG6FaiHwUEHIiqglPxR7OI4ZONk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Qh3cHfN80s8GVViOxEyMwwf6PpCsiUsFwdxJmISH4ghyxrZuRPGeH4a1y8CWJpONz
-	 /FNpWJ94uz2Zy5FbVIjDuySgDUU6yiAqTQ3mW69SOVMrPSD3orpb3XMKCrt3t7zQ2f
-	 vcO+XZe+4538A3/fsIkZ2cno1eMFoiAfy/hMjKMyPVPk5xQPx+paU8nMrsSirdApZ6
-	 f15Il9a+FUesXYiUsHACWyNAlkF8jX6j/Iai8p0yD+oOEq7sAx3lCezipExWcjkjj8
-	 jqWYAqP7Y+E12R/MiOBXq69Nh7avbpwTORZQTaMJU452WkDdvc+/Zz+ZRaGeNdgMr5
-	 Su7KLBtWQD4zQ==
+	b=avkK870bD3f7OG2qsyezVfMu4ZYZMj4UJuM/FGfNe/gpLyawlwiSdLIx4gKAXvyBn
+	 n1rz4ZpVcNE/pP/RmvKd2xE8kFvOZORw9jnHUz2IqpEyMfrgRt8726AYDEG+to4Wum
+	 w4d8oq5A/WiBLkWCqInDNOuG7DfwOMMrSOvpErc7NjX578hWeVPSy6vx0HLIjYwNpg
+	 7v0lyqkStGL49diCarbzsVDwFwLzLrZwryApN1CEX/P6kkZIIO4K0E8iSWgd6VODP9
+	 bgV+gbzvH4aq4CADy4COweofVIE/iLq6Nh3bD6U+Fqem/WaSUQQ68ff52Di2DIH3hH
+	 qTf/lMa5QdguA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -35,12 +35,12 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	jmorris@namei.org,
 	serge@hallyn.com,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 11/11] securityfs: don't pin dentries twice, once is enough...
-Date: Sun,  3 Aug 2025 17:22:41 -0400
-Message-Id: <20250803212242.3549318-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 9/9] securityfs: don't pin dentries twice, once is enough...
+Date: Sun,  3 Aug 2025 17:23:09 -0400
+Message-Id: <20250803212309.3549683-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250803212242.3549318-1-sashal@kernel.org>
-References: <20250803212242.3549318-1-sashal@kernel.org>
+In-Reply-To: <20250803212309.3549683-1-sashal@kernel.org>
+References: <20250803212309.3549683-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.240
+X-stable-base: Linux 5.4.296
 Content-Transfer-Encoding: 8bit
 
 From: Al Viro <viro@zeniv.linux.org.uk>
