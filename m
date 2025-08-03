@@ -1,149 +1,162 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630A117DFE7
-	for <linux-security-module@vger.kernel.org>; Thu, 31 Jul 2025 21:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D571F55FA;
+	Sun,  3 Aug 2025 21:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753996686; cv=none; b=g7pLvz+PDgrYWQlE5Oumgf606EQIpC88DrvP+TinMXU27vCePEu3L0pgkDeRwKvQ9vxX1lAdA2erVn7l7J0a6l4rBfBLAomoZbLRAWKg+UGIHF0fCube8svs3XkO3np1MZXLJLbXZDOjHCRXkfOWcQp+sJWu9IJNA9QoMcs+DMw=
+	t=1754256084; cv=none; b=tbnoSAgZxGa/5Kg3IK3rEW1Y6rfWrWUOoKcStRqdBVZtZDx3O5BijpTcRdyumdkVtDV+PsymP2fMzxbqc10fTuqyvL6616POnelC3n4ijQXYIBi8/59F4/iqRsmOXMrUUxpOKygLVa9ajrNIJhhyJ8pqOQhl36nga2zhtKqmdqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753996686; c=relaxed/simple;
-	bh=xnqfoHl/fAflSNusyAXjqlvBsKleVOAowvjUT28kdYs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DYgTNkNwhg7e6HKj7+SfaKwN9WW1RYwTlJcSiHLDoBHfSe37Q4EQEdTFVSjLJXk6hHe+2woYS/5GoHg2Zure8oo+7nDObVuZW7nIBLVdniyVoO9BDb3m4ujb9mdNs05qWmjmstQ1pMIplDYglbkSxqUp0fiznhqvLYHZ9qxvtB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FP1llkH+; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1754256084; c=relaxed/simple;
+	bh=Wjuh+88gIfpZbZvg0P+FC6E/yTVkpI+mgnaqh1NxZkY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bFufm1VjBJkOUlf9Gmjkg3od0VHR1KBYzm+Jo7++l1g95lhWF69GslRv04Y67huaEr36expBMsoYoCLLzR8nTWlAvA2kaN3jhGdQqQBi9MMpEvsAWdoW9ywuAu7J5HbGkAUlu99+eLXBhmRAaYqsLv1srbtCAFhIdDm7x0cA5yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yj8Qd/Xj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FP1llkH+"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e8e2b50f8f1so198740276.0
-        for <linux-security-module@vger.kernel.org>; Thu, 31 Jul 2025 14:18:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1753996683; x=1754601483; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ls3ljTCIq9ppiuzc0Wfe6Xw973/8/AHKNAw2u1Z5GXw=;
-        b=FP1llkH+uEChsRrp/2iGioBV81TydSGOJJ+O08d9ZdmIHuThvGYNVsuKvSMbZv8E9R
-         4RWT3H1pItj39I3VBmJhgsDNUFqueF+Nq1eigtLPRtdOAdev8EeGucGcxeXVjBxlUsHu
-         f5hGx1Zpm6/QmLQL/SIxXpDrSZb0vNWQRji4dQ6KUGTnD2ksK8CJJkTYvOz98NJaHriN
-         YiURPQ4mQmUMMwq56oqfzasaANjtUG2/20PtXA/ZiwVDa1HD6hZWbYwrxg993t6NQ4M1
-         VXkZLrDWwcKuy0lKWrKHuP7nMmEG1KkCjsjrjLhqUGkOXdDVjDFFfXKuSSK/2NjCpUyQ
-         UjfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753996683; x=1754601483;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ls3ljTCIq9ppiuzc0Wfe6Xw973/8/AHKNAw2u1Z5GXw=;
-        b=btXYTxDpMEhQY1gFCS9BYJba9V520U+TUKtCf+V8DkNYSR12BMVREgX6u1ohLIJMMi
-         yRGOSLBtlXvAPINaX+9S0G4FXMVTbhcb++p6oRIMj88fgHZ+o0SFD9gaxI1HfRy/C4SK
-         ReSELNX4HVCcCAmVlXtJVYQM4BFRZgt64yU/Lk4ct3xX7RTDxL4U43+xVxWN5a7uEeNs
-         l+euGlgvwpBOW3El//hyWKEI2xPY98B9OIiT4B5gxV8uQcbMOq+BylCxVQQKR9cEl67E
-         uCkBqwTlIo9Zn2g1U5bF39m30mRMZTiRrCbZw05K5Q6ojmnffOudKkJT34k9I5s4R9eD
-         sLww==
-X-Forwarded-Encrypted: i=1; AJvYcCXlK165cQNqex7+9SJg0LpIbO3rg2Dt/S3W8uRGJwKggAWabcd42ChoyzTiyOYs8BL3a2l47/KGBa4DYZjEZvwqwT/CPOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnVIdQQD9zUVyBVoPJOQGarr7xWkA6CcsJ4IU/BS4Vsgghi38B
-	KimnTQPRCxrwcyUmxh22mh+nT1eTw5oDpOcwGpDv6qymHJEaf92cXY5xTiTisKjYETAcHnydfel
-	MABwiFN6IXiqYHQecaoG4qqiS6CCRf+58DN4PU8Y2
-X-Gm-Gg: ASbGnct3Og/vD5PEz4/k6jURg9hVBXgBhqdn3q1sDn0nbZrCHZo1UHYvVPgqS2tl2JW
-	b/FQ1J/ZGekxAzOhUS1Pkm/e8HGMEyp5wje5VUJwoDO60QAEyt8BLZpqTJqX+9ptftzrUi8rdvc
-	lHpkgx03+E8N1Toitpm+B1y70gK2F3wRsr2S0WwfgoRG3vC5hZZ51dI0L6BFARSoCvJ7u6cZ/Rx
-	Axmw+k=
-X-Google-Smtp-Source: AGHT+IHxbVoakma6E5jErYw+J2tjsiw5SbLEOoBRBZciJg4VRe6z14ff6hn9lTo1rNUbsfCgHuhhJ7lH5Xg5cyv1L3k=
-X-Received: by 2002:a05:690c:6c04:b0:719:f1b0:5c1e with SMTP id
- 00721157ae682-71a4696e8dfmr120573597b3.41.1753996683352; Thu, 31 Jul 2025
- 14:18:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yj8Qd/Xj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00ED9C4CEF8;
+	Sun,  3 Aug 2025 21:21:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754256083;
+	bh=Wjuh+88gIfpZbZvg0P+FC6E/yTVkpI+mgnaqh1NxZkY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Yj8Qd/Xjlajv954bji5YCsh69Q8gJfCw/IFfn2H40G5G2SHdXBw/T/wNXInoBppeA
+	 0bW8PXALvWaTmj1RqLaSY/c4Uqm1wUO00q+DyQktx8ol4A8Tysf0laLUkCh6WzTDn6
+	 N6O9pnUsQvnPNGTVQkikvG80TwJCu04Dy0EATcJ5y91Vk9AcvhmdhWmqE2NjdF7GRu
+	 U/6yjrxFKExqyBwzZfAfg+a+wAV4WZOs/CS7UF9p8GBo+spAWgHqzA/o7MWivy5188
+	 /F0U4ZPOufpUVTDhl9GxG64tnB4ogbelp69JUd8aOpxuamQGek240sQXKSIYi0bYKH
+	 sSblQm42rAbPQ==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Sasha Levin <sashal@kernel.org>,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 22/23] securityfs: don't pin dentries twice, once is enough...
+Date: Sun,  3 Aug 2025 17:20:29 -0400
+Message-Id: <20250803212031.3547641-22-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250803212031.3547641-1-sashal@kernel.org>
+References: <20250803212031.3547641-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729090933.94942-1-tianjia.zhang@linux.alibaba.com>
- <e81ba8e7-8938-4b76-ae7b-bfee6021aeac@schaufler-ca.com> <CAHC9VhQAVvvXUoFu7xnh0uBhmvgYinP=AhiC4y17JJ02M9s5Nw@mail.gmail.com>
- <2aa4da27-28fc-46e0-8d1a-d9e63b03d502@linux.alibaba.com>
-In-Reply-To: <2aa4da27-28fc-46e0-8d1a-d9e63b03d502@linux.alibaba.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 31 Jul 2025 17:17:51 -0400
-X-Gm-Features: Ac12FXyQLeqW73x4_ifris7ry6grmpz8fDB0kTkhm4CDJTOwER1qhgRNQOhJ-y8
-Message-ID: <CAHC9VhRS2DrGoSb72uY61yVNXXZjOqKSkEdK7vNgPJxVdZgujA@mail.gmail.com>
-Subject: Re: [PATCH] lsm: simplify security_inode_copy_up_xattr()
-To: "tianjia.zhang" <tianjia.zhang@linux.alibaba.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.101
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 31, 2025 at 7:59=E2=80=AFAM tianjia.zhang
-<tianjia.zhang@linux.alibaba.com> wrote:
-> On 7/29/25 11:09 PM, Paul Moore wrote:
-> > On Tue, Jul 29, 2025 at 10:43=E2=80=AFAM Casey Schaufler <casey@schaufl=
-er-ca.com> wrote:
-> >> On 7/29/2025 2:09 AM, Tianjia Zhang wrote:
-> >>> The implementation of function security_inode_copy_up_xattr can be
-> >>> simplified to directly call call_int_hook().
-> >>>
-> >>> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> >>> ---
-> >>>   security/security.c | 8 +-------
-> >>>   1 file changed, 1 insertion(+), 7 deletions(-)
-> >>>
-> >>> diff --git a/security/security.c b/security/security.c
-> >>> index 596d41818577..a5c2e5a8009f 100644
-> >>> --- a/security/security.c
-> >>> +++ b/security/security.c
-> >>> @@ -2774,13 +2774,7 @@ EXPORT_SYMBOL(security_inode_copy_up);
-> >>>    */
-> >>>   int security_inode_copy_up_xattr(struct dentry *src, const char *na=
-me)
-> >>>   {
-> >>> -     int rc;
-> >>> -
-> >>> -     rc =3D call_int_hook(inode_copy_up_xattr, src, name);
-> >>> -     if (rc !=3D LSM_RET_DEFAULT(inode_copy_up_xattr))
-> >>> -             return rc;
-> >>> -
-> >>> -     return LSM_RET_DEFAULT(inode_copy_up_xattr);
-> >>> +     return call_int_hook(inode_copy_up_xattr, src, name);
-> >>
-> >> Both the existing code and the proposed change are incorrect.
-> >> If two LSMs supply the hook, and the first does not recognize
-> >> the attribute, the second, which might recognize the attribute,
-> >> will not be called. As SELinux and EVM both supply this hook
-> >> there may be a real problem here.
-> >
-> > It appears that Smack also supplies a inode_copy_up_xattr() callback
-> > via smack_inode_copy_up_xattr().
-> >
-> > Someone should double check this logic, but looking at it very
-> > quickly, it would appear that LSM framework should run the individual
-> > LSM callbacks in order so long as they return -EOPNOTSUPP, if they do
-> > not return -EOPNOTSUPP, the return value should be returned to the
-> > caller without executing any further callbacks.  As a default return
-> > value, or if all of the LSM callbacks succeed with -EOPNOTSUPP, the
-> > hook should return -EOPNOTSUPP.
-> >
-> > Tianjia Zhang, would you be able to develop and test a patch for this?
-> >
->
-> I carefully checked the logic of security_inode_copy_up_xattr(). I think
-> there is no problem with the current code. The default return value of
-> inode_copy_up_xattr LSM is -EOPNOTSUPP. Therefore, when -EOPNOTSUPP is
-> returned in the LSM callback, the next callback function will be called
-> in a loop. When an LSM module recognizes the attribute name that needs
-> to be ignored, it will return -ECANCELED to indicate
-> security_inode_copy_up_xattr() to jump out of the loop and ignore the
-> copy of this attribute in overlayfs.
->
-> Currently, the SELinux, EVM, and Smack that supply inode_copy_up_xattr
-> callback all return -ECANCELED after recognizing the extended attribute
-> name they are concerned about, to indicate overlayfs to discard the
-> copy_up operation of this attribute. I think this is in line with
-> expectations.
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-Perfect, thanks!
+[ Upstream commit 27cd1bf1240d482e4f02ca4f9812e748f3106e4f ]
 
---=20
-paul-moore.com
+incidentally, securityfs_recursive_remove() is broken without that -
+it leaks dentries, since simple_recursive_removal() does not expect
+anything of that sort.  It could be worked around by dput() in
+remove_one() callback, but it's easier to just drop that double-get
+stuff.
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+
+LLM Generated explanations, may be completely bogus:
+
+Now I have a clear understanding of the issue. Let me analyze this:
+
+**YES**
+
+This commit should be backported to stable kernel trees. Here's the
+extensive analysis:
+
+## Analysis of the Double Dentry Reference Issue
+
+The commit fixes a clear bug in securityfs where dentries are being
+pinned twice:
+
+1. **The Bug**: In `securityfs_create_dentry()` at line 162, there's a
+   `dget(dentry)` call immediately after `d_instantiate(dentry, inode)`.
+   This creates an extra reference count on the dentry that is never
+   properly balanced.
+
+2. **Impact on `securityfs_remove()`**: The traditional
+   `securityfs_remove()` function does call `dput(dentry)` at line 309,
+   which would balance the extra `dget()`. However, this only happens
+   for the simple remove case.
+
+3. **Critical Impact on `securityfs_recursive_remove()`**: The newly
+   added `securityfs_recursive_remove()` function (added in commit
+   7138679ff2a2) uses `simple_recursive_removal()` which expects normal
+   dentry reference counting. The `simple_recursive_removal()` function
+   in fs/libfs.c:
+   - Takes its own reference with `dget(dentry)` at the beginning
+   - Properly releases references with `dput()` calls throughout its
+     execution
+   - Does NOT expect the dentries to have extra references
+
+4. **The Leak**: When `securityfs_recursive_remove()` is called, the
+   extra reference from the `dget()` in `securityfs_create_dentry()` is
+   never released because:
+   - `simple_recursive_removal()` only releases the references it takes
+   - The `remove_one()` callback only calls `simple_release_fs()` but
+     doesn't do any `dput()`
+   - This results in dentries being leaked with a refcount that never
+     reaches zero
+
+5. **Pattern Consistency**: Looking at similar filesystem
+   implementations like debugfs (fs/debugfs/inode.c), they do NOT add an
+   extra `dget()` after `d_instantiate()`. The pattern is simply:
+  ```c
+  d_instantiate(dentry, inode);
+  return end_creating(dentry);
+  ```
+  No extra reference is taken.
+
+6. **Backport Criteria Met**:
+   - **Fixes a real bug**: Memory leak of dentries when using
+     `securityfs_recursive_remove()`
+   - **Small and contained**: Single-line removal in two locations
+   - **No side effects**: Removing the extra `dget()` brings the code in
+     line with standard VFS patterns
+   - **Low regression risk**: The fix makes securityfs consistent with
+     other similar filesystems
+   - **Important for stability**: Memory leaks in kernel filesystem code
+     can accumulate over time
+
+The commit message clearly identifies this as a bug fix
+("securityfs_recursive_remove() is broken without that - it leaks
+dentries"), and the fix is minimal and correct. This makes it an ideal
+candidate for stable backporting.
+
+ security/inode.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/security/inode.c b/security/inode.c
+index 3aa75fffa8c9..a90b043695d9 100644
+--- a/security/inode.c
++++ b/security/inode.c
+@@ -159,7 +159,6 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
+ 		inode->i_fop = fops;
+ 	}
+ 	d_instantiate(dentry, inode);
+-	dget(dentry);
+ 	inode_unlock(dir);
+ 	return dentry;
+ 
+@@ -306,7 +305,6 @@ void securityfs_remove(struct dentry *dentry)
+ 			simple_rmdir(dir, dentry);
+ 		else
+ 			simple_unlink(dir, dentry);
+-		dput(dentry);
+ 	}
+ 	inode_unlock(dir);
+ 	simple_release_fs(&mount, &mount_count);
+-- 
+2.39.5
+
