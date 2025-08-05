@@ -1,459 +1,257 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B62F2951DD;
-	Tue,  5 Aug 2025 18:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B00421D5BF
+	for <linux-security-module@vger.kernel.org>; Tue,  5 Aug 2025 19:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754418504; cv=none; b=G31v3ytwvpZx8Oqo+LN2L8Y1yE4+yAFrAoey1V4Wo08eZrqVZz+u7dV7Z3UIyJErKbg9bp3ieUsJ4MLqhv9uUw6nnnp/KqbRmBxq9fCIm/3C9NBUlH4RleOqOQ5fFnLDM0kV8ae0/pFejo1kw598LXuIyrwaTLugQKqk4sq+/Xo=
+	t=1754422755; cv=none; b=BFxtCN/qdbKBw65R6/E1GQIh/y2L3b/CPm//xQY13helj0oMO4kZrvz2UBngsPXL1KhH6xaf6jdG/7I/dIgSKo7d/zIazD8wjYRLjm84yKojxCMmYmvRE6Yw+F+UfFbK0KveZo3XEg0JuxQ6aZEp75kHB4i6SvIbc+KFW1db+Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754418504; c=relaxed/simple;
-	bh=f/UM9JLqI2Jc4ZU+EZVhHs5u5pZuurKc9RQzZPhr+fM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FfQXxcDZ9NWmcX4tuCIRq/XGR/8N1GSSJQGwZGoGMU8rVn9VRNEPimAxYv+JCi1MD9vOmqqVOnkVlymMpQDCDW8A3fy6sqzbNtWsXSFNq1BJPk9PTcKGiWb/CF7T4tiSPK8gCegfRnvbRD+rLTtXmQRCpY3elb2Zkw5byl93JeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ADh+JXQA; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1754422755; c=relaxed/simple;
+	bh=mNM5ceg27t1pmPc6MFL1IkCx1VG1gkdG1QIjBvtyi7c=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=Q42ouGEBHdvUZvEEQ2bZeWBbY7x+cORwEd3MsKokRXPNx64Jaz4aE/iRWmrogCsK6f2dn2vtCO1LrRrYFXBv6P+ClkQVwugovEPefTKmDcKyQ7XGH1f9UhDCdFl/tAISecZGXxw2tVOEMBtkWutDfdSifUhO4bi38bzatRx5Kw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Qw0fbRPm; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ADh+JXQA"
-Received: from narnia (unknown [40.118.131.60])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 9D9F3202189A;
-	Tue,  5 Aug 2025 11:28:21 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9D9F3202189A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1754418502;
-	bh=3KeCsWFKQKXPFRMBs18dddePu2U+xw5tInmf8PLQlAM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ADh+JXQAARJkGxcYgiul0PAr6Ei2X6T0AaklgXhRHEJRqfTSPaueM4NH77gDpei2T
-	 9TkO6tUBTJBTy9W0LEBWd2R+9K/j2WuWskVn0m+MLNKw0FnslGAIizmrf3Re9x+uYx
-	 032JJgaBHLfHbJUDs2u48ZIvNocy+oa7a3hcyK2E=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: KP Singh <kpsingh@kernel.org>, bpf@vger.kernel.org,
- linux-security-module@vger.kernel.org
-Cc: paul@paul-moore.com, kys@microsoft.com, ast@kernel.org,
- daniel@iogearbox.net, andrii@kernel.org, KP Singh <kpsingh@kernel.org>,
- James.Bottomley@HansenPartnership.com, wufan@kernel.org
-Subject: Re: [PATCH v2 08/13] bpf: Implement signature verification for BPF
- programs
-In-Reply-To: <20250721211958.1881379-9-kpsingh@kernel.org>
-References: <20250721211958.1881379-1-kpsingh@kernel.org>
- <20250721211958.1881379-9-kpsingh@kernel.org>
-Date: Tue, 05 Aug 2025 11:28:20 -0700
-Message-ID: <87sei58vy3.fsf@microsoft.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Qw0fbRPm"
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b07cb2d13bso22172441cf.1
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Aug 2025 12:39:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1754422752; x=1755027552; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZTPNLEZZkuqyqQbmqm6Yfc3sc2AjHLZIpvjt/gfXteU=;
+        b=Qw0fbRPmQEB1LYmjJNbWlfw2ahY3H9mrmRSpdv7bm+TU4q7AUiZOZkIYQpzsR3pbKR
+         KrU8n5TM9Qhgbzyx5piyv0tbflSLxWspj/yKt5unYY+LbTToKyY/zRCORTBG+OJUtCjz
+         I0FjyuUnU/xilHk5v+CWoKgdzXJDAuHv1lkwfhb8CjKxdjBLNNsyctssUgwBayL9xnwh
+         uZLzoUvy/L3sgeWGyj4+gT7WLLkuQbenDfhbDwcfIMo475xseSKWE4u2cuRWIW7NFKsT
+         9GretgrGFwQbXDFD8KMsho5ORPAC4Am0YkCJSYi0xHW5OuwZZh8wpnmB4fiTVD6C2yPB
+         Q2KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754422752; x=1755027552;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZTPNLEZZkuqyqQbmqm6Yfc3sc2AjHLZIpvjt/gfXteU=;
+        b=hsYmiXJPjzXd8o7OuZZ8PxICEinz5HOC138BeLAgL+rDMH5c7chPv717Og9xQI9cFc
+         X3/mgQLr0N7EGimd9p7jJ/RInalTEE9dwHjCIUXAnx0FcQJjHoIyDrKdGEBmB2A/fMrb
+         izHEC/8nALi9dKCBiFEIoWtCUVO9S+eR9xDILBJtlQTTDfrEO3Czejmvt4GO9Lg52ZgY
+         W1n+YjXCZMXHanqLrNjjHKBQTqZ9vsqcC2bfq+t/C8OzGVa5MZOunUNhVIr88454ndfX
+         AHLe0MhzivYVhUO994CnG3PYc1wSCmWtBcMGYoKdOU/bUq0JTDoS+LQ/J5g+oyfioSs7
+         AD8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVO7dJvbRQMuPNSY+BIfjEZq6lzcADXyEzYNhQYDpWYsheioZfda6cQbRTpvNyBM7UHyA7cWA57dNGdt2Oedm3vVVQZAZo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxNuHmujpLizcx4b1qdWy6wsf5lkMbvqklCMAE7HmSqUJBUzZy
+	DQQrfcHO+CKOEBlG+Wp0peCHiuz5Gz9HlG9gMpNmQHkdGo1EG/fQDVdWiSH/kWptQw==
+X-Gm-Gg: ASbGnctqIVA9pRu1r/3ErgT2rGeTxtJ36wwKggdmmH5ERS/+6Kq54eKr8ox0EnxuZHm
+	joM4OI5zpJabiLx8HHMXJmHLsP6oq+L8ItUdFf6bqFF2bRdBMvSIeLTYlYkk3rW6XiXs5FtLAjp
+	Ki8t9wA3EGYTYwMXRwwFVO7MyIN5NFbFf8P/5us/la/8TmypodAyzvVqENhIDzmXd253PYyoPS/
+	lA6RJXa9/vFW08PgOO1E6tTPu5rWgO8OkK2R+978siqL4NqJI0njTPKCHnQ4dC6snwhvUQYerOd
+	mHPe8kaBBmDWsg4VYOpvlPJT2LT2LUt7VR3/h8eg4LX1EOUNFSc/zRC3om0O5rHOQsApWKpiWK1
+	Yo0GJX7cOoaSk4ecAm+kQySPh52+TxV9+krLFWd1BgnSO98H2tVxks/IlbXtiWbT6UZ8=
+X-Google-Smtp-Source: AGHT+IG8l0bLRrSlwfPmL45Yk0MG8/c7kPJgmEK8f1pFbtct6QaXmsUO6kX5XPX2x2gQ5mXM1RQ4YA==
+X-Received: by 2002:a05:622a:216:b0:4ab:c0ec:6236 with SMTP id d75a77b69052e-4b09132dd52mr2620841cf.12.1754422752057;
+        Tue, 05 Aug 2025 12:39:12 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4aeeed67010sm69419191cf.30.2025.08.05.12.39.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 12:39:11 -0700 (PDT)
+Date: Tue, 05 Aug 2025 15:39:10 -0400
+Message-ID: <aafebe14727836ea747b97982926cc38@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250805_1248/pstg-lib:20250804_1752/pstg-pwork:20250805_1248
+From: Paul Moore <paul@paul-moore.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, eparis@redhat.com, linux-security-module@vger.kernel.org, audit@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v5 3/5] Audit: Add record for multiple task security  contexts
+References: <20250716212731.31628-4-casey@schaufler-ca.com>
+In-Reply-To: <20250716212731.31628-4-casey@schaufler-ca.com>
 
-KP Singh <kpsingh@kernel.org> writes:
+On Jul 16, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> 
+> Replace the single skb pointer in an audit_buffer with a list of
+> skb pointers. Add the audit_stamp information to the audit_buffer as
+> there's no guarantee that there will be an audit_context containing
+> the stamp associated with the event. At audit_log_end() time create
+> auxiliary records as have been added to the list. Functions are
+> created to manage the skb list in the audit_buffer.
+> 
+> Create a new audit record AUDIT_MAC_TASK_CONTEXTS.
+> An example of the MAC_TASK_CONTEXTS record is:
+> 
+>     type=MAC_TASK_CONTEXTS
+>     msg=audit(1600880931.832:113)
+>     subj_apparmor=unconfined
+>     subj_smack=_
+> 
+> When an audit event includes a AUDIT_MAC_TASK_CONTEXTS record the
+> "subj=" field in other records in the event will be "subj=?".
+> An AUDIT_MAC_TASK_CONTEXTS record is supplied when the system has
+> multiple security modules that may make access decisions based on a
+> subject security context.
+> 
+> Refactor audit_log_task_context(), creating a new audit_log_subj_ctx().
+> This is used in netlabel auditing to provide multiple subject security
+> contexts as necessary.
+> 
+> Suggested-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  include/linux/audit.h        |  16 +++
+>  include/uapi/linux/audit.h   |   1 +
+>  kernel/audit.c               | 207 +++++++++++++++++++++++++++++------
+>  net/netlabel/netlabel_user.c |   9 +-
+>  security/apparmor/lsm.c      |   3 +
+>  security/lsm.h               |   4 -
+>  security/lsm_init.c          |   5 -
+>  security/security.c          |   3 -
+>  security/selinux/hooks.c     |   3 +
+>  security/smack/smack_lsm.c   |   3 +
+>  10 files changed, 202 insertions(+), 52 deletions(-)
 
-> This patch extends the BPF_PROG_LOAD command by adding three new fields
-> to `union bpf_attr` in the user-space API:
->
->   - signature: A pointer to the signature blob.
->   - signature_size: The size of the signature blob.
->   - keyring_id: The serial number of a loaded kernel keyring (e.g.,
->     the user or session keyring) containing the trusted public keys.
->
-> When a BPF program is loaded with a signature, the kernel:
->
-> 1.  Retrieves the trusted keyring using the provided `keyring_id`.
-> 2.  Verifies the supplied signature against the BPF program's
->     instruction buffer.
-> 3.  If the signature is valid and was generated by a key in the trusted
->     keyring, the program load proceeds.
-> 4.  If no signature is provided, the load proceeds as before, allowing
->     for backward compatibility. LSMs can chose to restrict unsigned
->     programs and implement a security policy.
-> 5.  If signature verification fails for any reason,
->     the program is not loaded.
-[...]
+If there were no other issues with this patch I would have just fixed
+this up during the merge (I did it in my review branch already), but
+since you're no longer dependent on the LSM init rework changes (and
+I've dropped the subj/obj counting in the latest revision), just go
+ahead and base your next revision on the audit tree or Linus' tree as
+one normally would.
 
-The following is what we propose to build on top of this to implement
-in-kernel hash chain verification. This allows for signature
-verification of arbitrary maps and isn't coupled to light-skeletons or
-any specific implementation.
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index 226c8ae00d04..c7dea6bfacdd 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
 
+...
 
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Date: Mon, 28 Jul 2025 08:14:57 -0700
-Subject: bpf: Add hash chain signature support for arbitrary maps
+> +/**
+> + * audit_log_subj_ctx - Add LSM subject information
+> + * @ab: audit_buffer
+> + * @prop: LSM subject properties.
+> + *
+> + * Add a subj= field and, if necessary, a AUDIT_MAC_TASK_CONTEXTS record.
+> + */
+> +int audit_log_subj_ctx(struct audit_buffer *ab, struct lsm_prop *prop)
+>  {
+> -	struct lsm_prop prop;
+>  	struct lsm_context ctx;
+> +	char *space = "";
+>  	int error;
+> +	int i;
+>  
+> -	security_current_getlsmprop_subj(&prop);
+> -	if (!lsmprop_is_set(&prop))
+> +	security_current_getlsmprop_subj(prop);
+> +	if (!lsmprop_is_set(prop))
+>  		return 0;
+>  
+> -	error = security_lsmprop_to_secctx(&prop, &ctx, LSM_ID_UNDEF);
+> -	if (error < 0) {
+> -		if (error != -EINVAL)
+> -			goto error_path;
+> +	if (audit_subj_secctx_cnt < 2) {
+> +		error = security_lsmprop_to_secctx(prop, &ctx, LSM_ID_UNDEF);
+> +		if (error < 0) {
+> +			if (error != -EINVAL)
+> +				goto error_path;
+> +			return 0;
+> +		}
+> +		audit_log_format(ab, " subj=%s", ctx.context);
+> +		security_release_secctx(&ctx);
+>  		return 0;
+>  	}
+> -
+> -	audit_log_format(ab, " subj=%s", ctx.context);
+> -	security_release_secctx(&ctx);
+> +	/* Multiple LSMs provide contexts. Include an aux record. */
+> +	audit_log_format(ab, " subj=?");
+> +	error = audit_buffer_aux_new(ab, AUDIT_MAC_TASK_CONTEXTS);
+> +	if (error)
+> +		goto error_path;
+> +
+> +	for (i = 0; i < audit_subj_secctx_cnt; i++) {
+> +		error = security_lsmprop_to_secctx(prop, &ctx,
+> +						   audit_subj_lsms[i]->id);
+> +		if (error < 0) {
+> +			/*
+> +			 * Don't print anything. An LSM like BPF could
+> +			 * claim to support contexts, but only do so under
+> +			 * certain conditions.
+> +			 */
+> +			if (error == -EOPNOTSUPP)
+> +				continue;
+> +			if (error != -EINVAL)
+> +				audit_panic("error in audit_log_task_context");
 
-This patch introduces hash chain support for signature verification of
-arbitrary bpf map objects which was described here:
-https://lore.kernel.org/linux-security-module/20250721211958.1881379-1-kpsingh@kernel.org/
+Argh ... please read prior review comments a bit more carefully.  As was
+pointed out in the v4 posting you're using the wrong function name here.
 
-The UAPI is extended to allow for in-kernel checking of maps passed in
-via the fd_array. A hash chain is constructed from the maps, in order
-specified by the signature_maps field. The hash chain is terminated
-with the hash of the program itself.
+https://lore.kernel.org/audit/fc242f4c853fee16e587e9c78e1f282e@paul-moore.com
 
-Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
----
- include/uapi/linux/bpf.h       |  6 +++
- kernel/bpf/syscall.c           | 75 ++++++++++++++++++++++++++++++++--
- tools/include/uapi/linux/bpf.h |  6 +++
- 3 files changed, 83 insertions(+), 4 deletions(-)
+> +		} else {
+> +			audit_log_format(ab, "%ssubj_%s=%s", space,
+> +					 audit_subj_lsms[i]->name, ctx.context);
+> +			space = " ";
+> +			security_release_secctx(&ctx);
+> +		}
+> +	}
+> +	audit_buffer_aux_end(ab);
+>  	return 0;
+>  
+>  error_path:
+> -	audit_panic("error in audit_log_task_context");
+> +	audit_panic("error in audit_log_subj_ctx");
+>  	return error;
+>  }
+> +EXPORT_SYMBOL(audit_log_subj_ctx);
 
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index b42c3740e053e..c83f2a34674fd 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -1617,6 +1617,12 @@ union bpf_attr {
- 		 * verification.
- 		 */
- 		__u32 		keyring_id;
-+		/* Pointer to a buffer containing the maps used in the signature
-+		 * hash chain of the BPF program.
-+		 */
-+		__aligned_u64   signature_maps;
-+		/* Size of the signature maps buffer. */
-+		__u32		signature_maps_size;
- 	};
- 
- 	struct { /* anonymous struct used by BPF_OBJ_* commands */
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 10fd3ea5d91fd..f7e9bcabd9dcc 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2780,15 +2780,36 @@ static bool is_perfmon_prog_type(enum bpf_prog_type prog_type)
- 	}
- }
- 
-+static inline int bpf_map_get_hash(int map_fd, void *buffer)
-+{
-+	struct bpf_map *map;
-+
-+	CLASS(fd, f)(map_fd);
-+	map = __bpf_map_get(f);
-+	if (IS_ERR(map))
-+		return PTR_ERR(map);
-+
-+	if (!map->ops->map_get_hash)
-+		return -EINVAL;
-+
-+	return map->ops->map_get_hash(map, SHA256_DIGEST_SIZE, buffer);
-+}
-+
- static noinline int bpf_prog_verify_signature(struct bpf_prog *prog,
- 					      union bpf_attr *attr,
- 					      bool is_kernel)
- {
- 	bpfptr_t usig = make_bpfptr(attr->signature, is_kernel);
--	struct bpf_dynptr_kern sig_ptr, insns_ptr;
-+	bpfptr_t umaps;
-+	struct bpf_dynptr_kern sig_ptr, insns_ptr, hash_ptr;
- 	struct bpf_key *key = NULL;
- 	void *sig;
-+	int *maps;
-+	int map_fd;
- 	int err = 0;
-+	u64 buffer[8];
-+	u64 hash[4];
-+	int n;
- 
- 	if (system_keyring_id_check(attr->keyring_id) == 0)
- 		key = bpf_lookup_system_key(attr->keyring_id);
-@@ -2808,16 +2829,62 @@ static noinline int bpf_prog_verify_signature(struct bpf_prog *prog,
- 	bpf_dynptr_init(&insns_ptr, prog->insnsi, BPF_DYNPTR_TYPE_LOCAL, 0,
- 			prog->len * sizeof(struct bpf_insn));
- 
--	err = bpf_verify_pkcs7_signature((struct bpf_dynptr *)&insns_ptr,
--					 (struct bpf_dynptr *)&sig_ptr, key);
-+	if (!attr->signature_maps_size) {
-+		err = bpf_verify_pkcs7_signature((struct bpf_dynptr *)&insns_ptr,
-+						 (struct bpf_dynptr *)&sig_ptr, key);
-+	} else {
-+		bpf_dynptr_init(&hash_ptr, hash, BPF_DYNPTR_TYPE_LOCAL, 0,
-+				sizeof(hash));
-+		umaps = make_bpfptr(attr->signature_maps, is_kernel);
-+		maps = kvmemdup_bpfptr(umaps, attr->signature_maps_size * sizeof(*maps));
-+		if (!maps) {
-+			err = -ENOMEM;
-+			goto out;
-+		}
-+		n = attr->signature_maps_size - 1;
-+		err = copy_from_bpfptr_offset(&map_fd, make_bpfptr(attr->fd_array, is_kernel),
-+					      maps[n] * sizeof(map_fd),
-+					      sizeof(map_fd));
-+		if (err < 0)
-+			goto free_maps;
-+
-+		err = bpf_map_get_hash(map_fd, hash);
-+		if (err != 0)
-+			goto free_maps;
-+
-+		n--;
-+		while (n >= 0) {
-+			memcpy(buffer, hash, sizeof(hash));
-+			err = copy_from_bpfptr_offset(&map_fd,
-+						      make_bpfptr(attr->fd_array, is_kernel),
-+						      maps[n] * sizeof(map_fd),
-+						      sizeof(map_fd));
-+			if (err < 0)
-+				goto free_maps;
-+
-+			err = bpf_map_get_hash(map_fd, buffer+4);
-+			if (err != 0)
-+				goto free_maps;
-+			sha256((u8 *)buffer, sizeof(buffer), (u8 *)&hash);
-+			n--;
-+		}
-+		sha256((u8 *)prog->insnsi, prog->len * sizeof(struct bpf_insn), (u8 *)&buffer);
-+		memcpy(buffer+4, hash, sizeof(hash));
-+		sha256((u8 *)buffer, sizeof(buffer), (u8 *)&hash);
-+		err = bpf_verify_pkcs7_signature((struct bpf_dynptr *)&hash_ptr,
-+						 (struct bpf_dynptr *)&sig_ptr, key);
- 
-+free_maps:
-+		kvfree(maps);
-+	}
-+out:
- 	bpf_key_put(key);
- 	kvfree(sig);
- 	return err;
- }
- 
- /* last field in 'union bpf_attr' used by this command */
--#define BPF_PROG_LOAD_LAST_FIELD keyring_id
-+#define BPF_PROG_LOAD_LAST_FIELD signature_maps_size
- 
- static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
- {
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-index b42c3740e053e..c83f2a34674fd 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@ -1617,6 +1617,12 @@ union bpf_attr {
- 		 * verification.
- 		 */
- 		__u32 		keyring_id;
-+		/* Pointer to a buffer containing the maps used in the signature
-+		 * hash chain of the BPF program.
-+		 */
-+		__aligned_u64   signature_maps;
-+		/* Size of the signature maps buffer. */
-+		__u32		signature_maps_size;
- 	};
- 
- 	struct { /* anonymous struct used by BPF_OBJ_* commands */
--- 
-2.48.1
+...
 
+> @@ -2423,25 +2575,16 @@ int audit_signal_info(int sig, struct task_struct *t)
+>  void audit_log_end(struct audit_buffer *ab)
+>  {
+>  	struct sk_buff *skb;
+> -	struct nlmsghdr *nlh;
+>  
+>  	if (!ab)
+>  		return;
+>  
+> -	if (audit_rate_check()) {
+> -		skb = ab->skb;
+> -		ab->skb = NULL;
+> +	while ((skb = skb_dequeue(&ab->skb_list)))
+> +		__audit_log_end(skb);
+>  
+> -		/* setup the netlink header, see the comments in
+> -		 * kauditd_send_multicast_skb() for length quirks */
+> -		nlh = nlmsg_hdr(skb);
+> -		nlh->nlmsg_len = skb->len - NLMSG_HDRLEN;
+> -
+> -		/* queue the netlink packet and poke the kauditd thread */
+> -		skb_queue_tail(&audit_queue, skb);
+> +	/* poke the kauditd thread */
+> +	if (audit_rate_check())
+>  		wake_up_interruptible(&kauditd_wait);
+> -	} else
+> -		audit_log_lost("rate limit exceeded");
 
-And here is a reference usage implementation:
+... here is another case where you've missed/ignored previous feedback.
+I believe this is the second revision in the history of this patchset
+where you've missed feedback; *please* try to do better Casey, stuff like
+this wastes time and drags things out longer than needed.
 
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Date: Mon, 28 Jul 2025 21:30:56 -0700
-Subject: libbpf: Add hash chain signing support to light  skeletons.
+https://lore.kernel.org/audit/fc242f4c853fee16e587e9c78e1f282e@paul-moore.com
 
-This patch introduces a hash chain signing support for light-skeleton
-assets. A new flag '-M' is added which constructs a hash chain with
-the loader program and the target payload.
+>  	audit_buffer_free(ab);
+>  }
 
-Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
----
- tools/bpf/bpftool/gen.c       | 25 +++++++++++++++++++++++++
- tools/bpf/bpftool/main.c      |  8 +++++++-
- tools/bpf/bpftool/main.h      |  1 +
- tools/bpf/bpftool/sign.c      | 17 ++++++++++++++---
- tools/lib/bpf/libbpf.h        |  3 ++-
- tools/lib/bpf/skel_internal.h |  6 +++++-
- 6 files changed, 54 insertions(+), 6 deletions(-)
-
-diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
-index ab6fc86598ad3..e660fbc701c5d 100644
---- a/tools/bpf/bpftool/gen.c
-+++ b/tools/bpf/bpftool/gen.c
-@@ -699,6 +699,9 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
- 	if (sign_progs)
- 		opts.gen_hash = true;
- 
-+	if (sign_maps)
-+		opts.sign_maps = true;
-+
- 	err = bpf_object__gen_loader(obj, &opts);
- 	if (err)
- 		return err;
-@@ -793,6 +796,8 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
- 	if (sign_progs) {
- 		sopts.insns = opts.insns;
- 		sopts.insns_sz = opts.insns_sz;
-+		sopts.data = opts.data;
-+		sopts.data_sz = opts.data_sz;
- 		sopts.excl_prog_hash = prog_sha;
- 		sopts.excl_prog_hash_sz = sizeof(prog_sha);
- 		sopts.signature = sig_buf;
-@@ -821,6 +826,13 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
- 		\n\
- 		\";\n");
- 
-+		if (sign_maps) {
-+			codegen("\
-+			\n\
-+				static const int opts_signature_maps[1] __attribute__((__aligned__(8))) = {0}; \n\
-+			");
-+		}
-+
- 		codegen("\
- 		\n\
- 			opts.signature = (void *)opts_sig;			\n\
-@@ -829,6 +841,19 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
- 			opts.excl_prog_hash_sz = sizeof(opts_excl_hash) - 1;	\n\
- 			opts.keyring_id = KEY_SPEC_SESSION_KEYRING;		\n\
- 		");
-+		if (sign_maps) {
-+			codegen("\
-+			\n\
-+				opts.signature_maps = (void *)opts_signature_maps;	\n\
-+				opts.signature_maps_sz = 1; 				\n\
-+			");
-+		} else {
-+			codegen("\
-+			\n\
-+				opts.signature_maps = (void *)NULL;		\n\
-+				opts.signature_maps_sz = 0;			\n\
-+			");
-+		}
- 	}
- 
- 	codegen("\
-diff --git a/tools/bpf/bpftool/main.c b/tools/bpf/bpftool/main.c
-index fc25bb390ec71..287e8205494cb 100644
---- a/tools/bpf/bpftool/main.c
-+++ b/tools/bpf/bpftool/main.c
-@@ -34,6 +34,7 @@ bool use_loader;
- struct btf *base_btf;
- struct hashmap *refs_table;
- bool sign_progs;
-+bool sign_maps;
- const char *private_key_path;
- const char *cert_path;
- 
-@@ -477,7 +478,7 @@ int main(int argc, char **argv)
- 	bin_name = "bpftool";
- 
- 	opterr = 0;
--	while ((opt = getopt_long(argc, argv, "VhpjfLmndSi:k:B:l",
-+	while ((opt = getopt_long(argc, argv, "VhpjfLmndSMi:k:B:l",
- 				  options, NULL)) >= 0) {
- 		switch (opt) {
- 		case 'V':
-@@ -527,6 +528,11 @@ int main(int argc, char **argv)
- 			sign_progs = true;
- 			use_loader = true;
- 			break;
-+		case 'M':
-+			sign_maps = true;
-+			sign_progs = true;
-+			use_loader = true;
-+			break;
- 		case 'k':
- 			private_key_path = optarg;
- 			break;
-diff --git a/tools/bpf/bpftool/main.h b/tools/bpf/bpftool/main.h
-index f921af3cda87f..805c3d87a1330 100644
---- a/tools/bpf/bpftool/main.h
-+++ b/tools/bpf/bpftool/main.h
-@@ -92,6 +92,7 @@ extern bool use_loader;
- extern struct btf *base_btf;
- extern struct hashmap *refs_table;
- extern bool sign_progs;
-+extern bool sign_maps;
- extern const char *private_key_path;
- extern const char *cert_path;
- 
-diff --git a/tools/bpf/bpftool/sign.c b/tools/bpf/bpftool/sign.c
-index f0b5dd10a46b2..d5514b7d2b82d 100644
---- a/tools/bpf/bpftool/sign.c
-+++ b/tools/bpf/bpftool/sign.c
-@@ -22,6 +22,7 @@
- #include <errno.h>
- 
- #include <bpf/skel_internal.h>
-+#include <bpf/libbpf_internal.h>
- 
- #include "main.h"
- 
-@@ -129,8 +130,18 @@ int bpftool_prog_sign(struct bpf_load_and_run_opts *opts)
- 	long actual_sig_len = 0;
- 	X509 *x509 = NULL;
- 	int err = 0;
--
--	bd_in = BIO_new_mem_buf(opts->insns, opts->insns_sz);
-+	unsigned char hash[SHA256_DIGEST_LENGTH  * 2];
-+	unsigned char term[SHA256_DIGEST_LENGTH];
-+
-+	if (sign_maps) {
-+		libbpf_sha256(opts->insns, opts->insns_sz, hash, SHA256_DIGEST_LENGTH);
-+		libbpf_sha256(opts->data, opts->data_sz, hash + SHA256_DIGEST_LENGTH,
-+			      SHA256_DIGEST_LENGTH);
-+		libbpf_sha256(hash, sizeof(hash), term, sizeof(term));
-+		bd_in = BIO_new_mem_buf(term, sizeof(term));
-+	} else {
-+		bd_in = BIO_new_mem_buf(opts->insns, opts->insns_sz);
-+	}
- 	if (!bd_in) {
- 		err = -ENOMEM;
- 		goto cleanup;
-@@ -171,7 +182,7 @@ int bpftool_prog_sign(struct bpf_load_and_run_opts *opts)
- 	EVP_Digest(opts->insns, opts->insns_sz, opts->excl_prog_hash,
- 		   &opts->excl_prog_hash_sz, EVP_sha256(), NULL);
- 
--		bd_out = BIO_new(BIO_s_mem());
-+	bd_out = BIO_new(BIO_s_mem());
- 	if (!bd_out) {
- 		err = -ENOMEM;
- 		goto cleanup;
-diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
-index 7cad8470d9ebe..aad0288cd05e3 100644
---- a/tools/lib/bpf/libbpf.h
-+++ b/tools/lib/bpf/libbpf.h
-@@ -1827,9 +1827,10 @@ struct gen_loader_opts {
- 	__u32 data_sz;
- 	__u32 insns_sz;
- 	bool gen_hash;
-+	bool sign_maps;
- };
- 
--#define gen_loader_opts__last_field gen_hash
-+#define gen_loader_opts__last_field sign_maps
- LIBBPF_API int bpf_object__gen_loader(struct bpf_object *obj,
- 				      struct gen_loader_opts *opts);
- 
-diff --git a/tools/lib/bpf/skel_internal.h b/tools/lib/bpf/skel_internal.h
-index 5b6d1b09dc8a6..c25a4f1308e44 100644
---- a/tools/lib/bpf/skel_internal.h
-+++ b/tools/lib/bpf/skel_internal.h
-@@ -74,6 +74,8 @@ struct bpf_load_and_run_opts {
- 	__u32 keyring_id;
- 	void * excl_prog_hash;
- 	__u32 excl_prog_hash_sz;
-+	const int *signature_maps;
-+	__u32 signature_maps_sz;
- };
- 
- long kern_sys_bpf(__u32 cmd, void *attr, __u32 attr_size);
-@@ -351,7 +353,7 @@ static inline int skel_map_freeze(int fd)
- 
- static inline int bpf_load_and_run(struct bpf_load_and_run_opts *opts)
- {
--	const size_t prog_load_attr_sz = offsetofend(union bpf_attr, keyring_id);
-+	const size_t prog_load_attr_sz = offsetofend(union bpf_attr, signature_maps_size);
- 	const size_t test_run_attr_sz = offsetofend(union bpf_attr, test);
- 	int map_fd = -1, prog_fd = -1, key = 0, err;
- 	union bpf_attr attr;
-@@ -394,6 +396,8 @@ static inline int bpf_load_and_run(struct bpf_load_and_run_opts *opts)
- #ifndef __KERNEL__
- 	attr.signature = (long) opts->signature;
- 	attr.signature_size = opts->signature_sz;
-+	attr.signature_maps = (long) opts->signature_maps;
-+	attr.signature_maps_size = opts->signature_maps_sz;
- #else
- 	if (opts->signature || opts->signature_sz)
- 		pr_warn("signatures are not supported from bpf_preload\n");
--- 
-2.48.1
-
--blaise
+--
+paul-moore.com
