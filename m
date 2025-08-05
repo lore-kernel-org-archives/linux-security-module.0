@@ -1,65 +1,65 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FDF2904
-	for <linux-security-module@vger.kernel.org>; Tue,  5 Aug 2025 07:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675131D61AA
+	for <linux-security-module@vger.kernel.org>; Tue,  5 Aug 2025 08:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754380605; cv=none; b=tkr5ilVSkvtsa2kz0deL3MwrHAHbW3+H9jpOXyZ80fdVTXYpd0zZVPhSdfFCfmeV1OfGywyhFiHYqyaYRGRdMBs5NHgQmPV6qm1J3hfuLaIPbLy8rBYnI6Z6gx7G4L38yvG0BMjyXaDQlx5wU7hxaqzl585zUM84/Wguqnns0sw=
+	t=1754380986; cv=none; b=vACuLYxpwszvQQ1WhCJqzkOl9zkrr4GCTdbq82hGkujtJO/oJ4EEviuWANC+rtVIgq8drjIhzYfMVPq70JqM2cgU0ppYaRuhd50B7dv3pi/uGqViQvy99ndE3MRrzZNEj7uSxfbJtVTSPF5wRVBNGblgvkXrgLQqCDaIpkqGJ2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754380605; c=relaxed/simple;
-	bh=GcCDnzzNKJSLASeE6zY2VMTyOPq534TsQG74RyKmfh8=;
+	s=arc-20240116; t=1754380986; c=relaxed/simple;
+	bh=oQm/ztvGyOGwifmduBh40jvKEHQI6Sw3B8DUIu9PyT4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pDMbalHO6VwPNIr+fR8GJi+dSvJSvWw7kO4Ofev+HDHPQao0r9lbUNZHf0zvzMFn2EPIzMHBwnedPJs9YSY0J8CX0xM9zp9PIntYPVz2Gj4MyucWz3yEUtq4rPDIzLTwyI9aA6BaS5De5bbW9U9nm7UJ0OTv+UMMK1U5eER0f2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DvV3lIgr; arc=none smtp.client-ip=209.85.218.54
+	 In-Reply-To:Content-Type; b=JTjcfJcgzPuriDHnPCaWAnbh2PQnYfEkA3wqbZ1wJoZO8wmasTOtOehKUZ5+CpnkX6u4r8BdwUXfL1CdqFMj4O/ASUOwPvMOxhSuh00EObEvaOG4x5IfCF6YzmI4+DyOeBCKGE+aVG+WKS+ryT5MUOUFNdfrVUgWyEVyAXpjk98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=C1QsGGua; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DvV3lIgr"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae6f8d3bcd4so1070305566b.1
-        for <linux-security-module@vger.kernel.org>; Tue, 05 Aug 2025 00:56:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="C1QsGGua"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso4462677f8f.3
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Aug 2025 01:03:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1754380600; x=1754985400; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1754380983; x=1754985783; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=YF5VjXxXte7gkCHkX5qgWn0i/bXccD8eilhzu51cehs=;
-        b=DvV3lIgrcvNfpbNyM1k7MXfjvvlyII/1poUQETKBphkJnYJpPVxEpguWO3G1rrROU2
-         Nq+OZ7NDk5u5ZsBz5jL4clxPpYObyUe6SDxMIDNaFwlksW3dK//dq/rI+eWJAaoMN+cL
-         DIfJQMVG4wGlaAh02FGDQhh4TkmxUEidtVZiFiTBNi51wSJTYEcR3ghzveHndhIst8yq
-         AvNnaJnQk/6mNMTRLYSLY012LKSXykkeJA/irynhucAiNlJlDaYKAzy2akoFAiskpejQ
-         McxZVrPMXZzBjOXVZ9jqj7efkBbYcECgOZmzx5OY4/YCSf63y0bqXPmq+87aA/MvNeJr
-         1+Xg==
+        bh=I+ANpje7dfs6pZ7qzQnGOwzuarpMyrDg5V24pULqjSc=;
+        b=C1QsGGuaE1kPauyh3rEGbMJmlC+dcymNyu73rtoXjAzwM16mSUfC+bwje98fAeBvb6
+         vRqIwRskVI1lnY6s1HrtJF2uLmJ/7ZRptLqethwttfrV2VJxHleuYE9DN+4HGuDqeNsy
+         kK1cWedA1jvYTm6ggYPrNhVb78yVCx81ygaX04BL7GSYj3KQG2gULBMNoNZ/RD9khliD
+         jzyoCgI/ABK5PXZRFxduAZ/FiKq7v4YM7JnE6BU67SC12Wm7a3kfl8Nk8/8z5nVEphM7
+         FbhR133nhmX7mIViIhL9nYufH0407PdX2v4AP1Oe7t+EA74+JmdMHTwTWE5UisXaWGko
+         GOIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754380600; x=1754985400;
+        d=1e100.net; s=20230601; t=1754380983; x=1754985783;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YF5VjXxXte7gkCHkX5qgWn0i/bXccD8eilhzu51cehs=;
-        b=u7saPvalkDZyNGYI0bTok4z/BLSBHhU4DgWp+RttuzPOXleKtZaH9ujRu6JcwPRsfD
-         s5Yvn9WqZTeWJ6qo46iiqN0uNVNlZ9P/Fdn3G5wXBnFATC9shX2c9P46KtKPMM6OuDnb
-         F7uumoj6WE9AY9hSnWhXLBCe/az6c83dQGDKoB2blxKV85+GvJ0CkA0vOJd8wsLPot1s
-         9AqjnrItlRPvUz0HUvrFSoPX7pMN5+Bdq7n80MRvMvEJH8SRyQW4ssdI5ZvftJb0Zg6b
-         tdFOIUlXI6Kfdo2TVRKgEljVwx94MBggVvWR9xdy4yfnMUjM07wbOdHe8eW4Aq9RW4hL
-         g3fQ==
-X-Gm-Message-State: AOJu0YyBN62vjAIoqVtDDOquhKd8O9lI3zeS8sin7ZPeDmZpftiVPHvN
-	gIGFQAU/uy6C+w6fwEhJUTBRPCTE0CSZ6YBN6Mpk+XNhLp/2T7l+1mD2C9Nwgym7m8Y=
-X-Gm-Gg: ASbGncuABKjt1V95CyCeZGUNt7Tg5nRuaArXKXe6ycqoLFNMvpHLC6To1ZNpdDux2eC
-	3rpBrkVRO7gKIm9HabzBL2w0CjQ9eu9Svxa8JF05zYJaHh+j5AQm+ZxuhtDrmLrw3VTybS49CmU
-	ZwqzCaE7cx2m9+ojqWJeU+vgGHovOAOlgMHks+fAebnIReSOduNTnFz3OfYpNHe5SB2tK0Fi6AQ
-	hCVd5Je7HmH/FT7ei00oYfZJZuLntqsvHotfklsHVz0Y3GTbUy1a6HmEUgczGM9TiVx5ZLG55bm
-	AmdKhqi10ApwfbXtQQe3CqUT7EeMvfiC2RCXtvOzl99MHGiv2pS+eKr/cuYgMsvyzuJYxtzQw9B
-	TS/ubZr0JOm55XS7epqjBKahRRWLRq46X997+qIVAKIMPwQ6oiQ==
-X-Google-Smtp-Source: AGHT+IH/PBsDE7FiuN1y7XN/F2PGYWGv7aZGHyzG7kFb/hAFbZv6nUUweZy7BW5EfSg4ZFuJhFvTRg==
-X-Received: by 2002:a17:907:c13:b0:ae0:a483:7b29 with SMTP id a640c23a62f3a-af94020a369mr1243578366b.49.1754380600248;
-        Tue, 05 Aug 2025 00:56:40 -0700 (PDT)
+        bh=I+ANpje7dfs6pZ7qzQnGOwzuarpMyrDg5V24pULqjSc=;
+        b=QyosIQ5xdMaSNol3dfCW6u+5thJEuWEt6GvmppHgNvrxJuhAD0oMa2YFnvUultXFiQ
+         2qrZmLF//1j3qVZxgEx2Cb46LPrTlKUNvpkwEoMJrxNk98x0ya8L/7Z4kuBef68EnkJ9
+         tPw5BEVaxWobDU2ovek651jfSEIi00bx0OxNzYTe350bdmZ90PGZhulyFqChAo4W0Typ
+         dscyt5aAb+1b7BAaqX2S+aEztzccR/FNPZq9lQpoNO04cHu2QD9p8GycGLr6KBznav1Q
+         NLOvBiBaL7SMnOfSbvMVVYmpKOPlOY7PYSIp7MFZW8RlODywjkd3MWwjxnQBCIHHIY9C
+         kF7A==
+X-Gm-Message-State: AOJu0YzGZcFDb/i61sh+jDBotudjCWpe8BweicKV71O/zx7ID/80wuku
+	nWqWdpLIGjkAnGZ66MKXc1GUtk0jfZTBrCoOFaZ1QRA5E5SV/VtB3u03//2aCN7l3Q4=
+X-Gm-Gg: ASbGnctaqYnb0ElCr+PpAtFFSzt2pShJY0PoXi+p6WoJDSmOV2WWTIx68WQgGnE8QTe
+	53u6reTAVTF07GP7cblXz3pjVITCBwpa85L9I//0Rg73PDUKMx9URJASfZTydUtMBdLcZ97kwd5
+	8LE/fr2rjlvRcnZzK+wPqCaqTp2NhVSHLH1wKavOyq911tSdBp5puUdhBlmP1JanvgbXo5f7lYJ
+	teJmOg70Rma+vPemq4kgGh/B4BIw8qwXg7s771ZmaT/+c9h8h9bIpFc3BinzyOSRkcWH0OqTWhK
+	DtSUsY6x5lxxPli6LJ0GEW+vCULBS/gGFHVlUq0DQZCgJsY3DSA1/Tc4HrK2Gu32bwwC8kKbdgG
+	uetUjDmK7lZ82ivnqQmeey/qvt/ndHNyeoikElvCy8AfBp4HVyw==
+X-Google-Smtp-Source: AGHT+IHMG6M7h+w11+BYMtMmX8WemVMsPXxcbMHZpgW5luIfhyB84aA+NcxV5dCTd4atZPw7v8raPg==
+X-Received: by 2002:a05:6000:4027:b0:3b6:936:976c with SMTP id ffacd0b85a97d-3b8d94720e7mr8536259f8f.17.1754380982575;
+        Tue, 05 Aug 2025 01:03:02 -0700 (PDT)
 Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [109.121.143.247])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a1e833dsm848779766b.64.2025.08.05.00.56.39
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458b9159e00sm122794765e9.9.2025.08.05.01.03.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Aug 2025 00:56:39 -0700 (PDT)
-Message-ID: <ec7add92-2865-48dd-9f87-078860d8e57b@suse.com>
-Date: Tue, 5 Aug 2025 10:56:38 +0300
+        Tue, 05 Aug 2025 01:03:02 -0700 (PDT)
+Message-ID: <3be6b1c2-4b54-4107-8bdd-67d5cbcff58c@suse.com>
+Date: Tue, 5 Aug 2025 11:03:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -67,13 +67,16 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] lockdown: Use snprintf in lockdown_read
-To: "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v2 0/3] Allow individual features to be locked down
+To: xiujianfeng <xiujianfeng@huawei.com>,
+ Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
 Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- paul@paul-moore.com, jmorris@namei.org, dan.j.williams@intel.com
+ paul@paul-moore.com, serge@hallyn.com, jmorris@namei.org,
+ dan.j.williams@intel.com
 References: <20250728111517.134116-1-nik.borisov@suse.com>
- <20250728111517.134116-4-nik.borisov@suse.com>
- <aIdvhOEiiPMDY4gW@mail.hallyn.com>
+ <kl4rvgnupxnz4zrwlofrawdfy23tj2ylp5s3wovnsjxkr6tbrt@x5s3avqo2e7t>
+ <9b6fd06e-5438-4539-821c-6f3d5fa6b7d1@suse.com>
+ <42b2cf1b-417e-1594-d525-f4c84f7405b0@huawei.com>
 Content-Language: en-US
 From: Nikolay Borisov <nik.borisov@suse.com>
 Autocrypt: addr=nik.borisov@suse.com; keydata=
@@ -119,77 +122,71 @@ Autocrypt: addr=nik.borisov@suse.com; keydata=
  JDjakbdjBoYDWVoaPbp5KAQ2VQRiR54lir/inyqGX+dwzPX/F4OHfB5RTiAFLJliCxniKFsM
  d8eHe88jWjm6/ilx4IlLl9/MdVUGjLpBi18X7ejLz3U2quYD8DBAGzCjy49wJ4Di4qQjblb2
  pTXoEyM2L6E604NbDu0VDvHg7EXh1WwmijEu28c/hEB6DwtzslLpBSsJV0s1/jE=
-In-Reply-To: <aIdvhOEiiPMDY4gW@mail.hallyn.com>
+In-Reply-To: <42b2cf1b-417e-1594-d525-f4c84f7405b0@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
 
-On 7/28/25 15:39, Serge E. Hallyn wrote:
-> On Mon, Jul 28, 2025 at 02:15:17PM +0300, Nikolay Borisov wrote:
->> Since individual features are now locked down separately ensure that if
->> the printing code is change to list them a buffer overrun won't be
->> introduced.  As per Serge's recommendation switch from using sprintf to
->> using snprintf and return EINVAL in case longer than 80 char string hasi
->> to be printed.
->>
->> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
+On 8/5/25 09:57, xiujianfeng wrote:
 > 
-> Thanks, 2 comments below
 > 
->> ---
->>   security/lockdown/lockdown.c | 12 ++++++++++--
->>   1 file changed, 10 insertions(+), 2 deletions(-)
+> On 2025/7/29 20:25, Nikolay Borisov wrote:
 >>
->> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
->> index 412184121279..ed1dde41d7d3 100644
->> --- a/security/lockdown/lockdown.c
->> +++ b/security/lockdown/lockdown.c
->> @@ -112,11 +112,19 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
 >>
->>   		if (lockdown_reasons[level]) {
->>   			const char *label = lockdown_reasons[level];
->> +			int ret = 0;
->> +			int write_len = 80-offset;
+>> On 29.07.25 г. 15:16 ч., Nicolas Bouchinet wrote:
+>>> Hi Nikolay,
+>>>
+>>> Thanks for you patch.
+>>>
+>>> Quoting Kees [1], Lockdown is "about creating a bright line between
+>>> uid-0 and ring-0".
+>>>
+>>> Having a bitmap enabled Lockdown would mean that Lockdown reasons could
+>>> be activated independently. I fear this would lead to a false sense of
+>>> security, locking one reason alone often permits Lockdown restrictions
+>>> bypass. i.e enforcing kernel module signature verification but not
+>>> blocking accesses to `/dev/{k,}mem` or authorizing gkdb which can be
+>>> used to disable the module signature enforcement.
+>>>
+>>> If one wants to restrict accesses to `/dev/mem`,
+>>> `security_locked_down(LOCKDOWN_DEV_MEM)` should be sufficient.
+>>>
+>>> My understanding of your problem is that this locks too much for your
+>>> usecase and you want to restrict reasons of Lockdown independently in
+>>> case it has not been enabled in "integrity" mode by default ?
+>>>
+>>> Can you elaborate more on the usecases for COCO ?
+>>
+>> Initially this patchset was supposed to allow us selectively disable
+>> /dev/iomem access in a CoCo context [0]. As evident from Dan's initial
+>> response that point pretty much became moot as the issue was fixed in a
+>> different way. However, later [1] he came back and said that actually
+>> this patch could be useful in a similar context. So This v2 is
+>> essentially following up on that.
 > 
-> 80 should really be a #define (and used to declare the length of temp as
-> well).
-
-ack
-
+> Hi Nikolay,
 > 
->> +
->>
->>   			if (test_bit(level, kernel_locked_down))
->> -				offset += sprintf(temp+offset, "[%s] ", label);
->> +				ret = snprintf(temp+offset, write_len, "[%s] ", label);
->>   			else
->> -				offset += sprintf(temp+offset, "%s ", label);
->> +				ret = snprintf(temp+offset, write_len, "%s ", label);
->> +
->> +			if (ret < 0 || ret >= write_len)
->> +				return -ENOMEM;
+> I share a similar view with Nicolas, namely that using a bitmap
+> implementation would compromise the goal of Lockdown.
 > 
-> is ENOMEM right here, or should it be something like EINVAL or E2BIG?
-
-Indeed, I was wondering the same when writing the code initially. I 
-guess either einval/e2big are both well fitted in this case. If I had to 
-choose I'd likely go with E2BIG since it's less prevalent than einval 
-and if someone changes the implementation and starts getting E2BIG it 
-should be easier to spot where it's coming from. That'd be my only 
-consideration between the 2.
-
-However, given that this series seems to be unconvincing for the 
-maintainer I'll defer those changes until it's decided that it's 
-eventually getting merged :)
-
+> After reading the threads below, I understand you aim is to block user
+> access to /dev/mem, but without having Lockdown integrity mode enabled
+> to block other reasons, right? How about using BPF LSM? It seems it
+> could address your requirements.
 > 
->> +
->> +			offset += ret;
->>   		}
->>   	}
+
+Well the use case that my change allows  (barring the original issue) is 
+say if someone wants LOCKDOWN_INTEGRITY_MAX + 1 or 2 things from the 
+CONFIDENTIALY_MAX level.
+
 >>
->> --
->> 2.34.1
 >>
+>> [0]
+>> https://lore.kernel.org/all/67f69600ed221_71fe2946f@dwillia2-xfh.jf.intel.com.notmuch/
+>>
+>> [1]
+>> https://lore.kernel.org/all/68226ad551afd_29032945b@dwillia2-xfh.jf.intel.com.notmuch/
+>>
+>> <snip>
 
