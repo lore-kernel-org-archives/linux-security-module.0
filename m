@@ -1,111 +1,100 @@
-Received: from sonic.asd.mail.yahoo.com (sonic305-28.consmr.mail.ne1.yahoo.com [66.163.185.154])
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816CD21FF33
-	for <linux-security-module@vger.kernel.org>; Wed,  6 Aug 2025 21:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114301C5D72
+	for <linux-security-module@vger.kernel.org>; Wed,  6 Aug 2025 22:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754516146; cv=none; b=NGwsI7oaNnzD4mAFohbZatd+/LmItMM0wBep3T2G4f+Sc5joxT3L4f5lRwxHKWxAkS3QnmgzTWwkT0h/vdTBDCBl2tRU8lm3Pc/jbZznMvlXMoijiGmy2vT2EKMgsWgaI5xFh2ZxN4VsXbHHADsrRMkwAamJdG49gupuK0TJQ24=
+	t=1754517976; cv=none; b=n7btjaRAUq4U7TGMNZVLvR+3FUX+0M8XVl9xBwG3OmQPgryTncQlg3vBmXj7WEWIkzTnVw3zNge6V77r+gQtNHQd+1f7WHih4O8waQHDClawRGv4lFScdVruDEOTvVuXeA1m6FKhS0lYHh1r6GGTqe4WSAU3k+2DUMWa6HBpVWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754516146; c=relaxed/simple;
-	bh=R1dbgfgeNAI0p5iT478eeqfKGM4CRQX8JJzi4ToDu5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bPoS6eyMnHGfGPljLABT5yJkb8vl3d+aWI1pPE3lgdzdK9IvnQFknkAnOP3vKPa85z25K+8DZ7eRWFcl9YojhwQyDHB7nqUXI1p92tMbRKxLkVjCqghiEPgZ74RdSkV7MGA1PR6QR0Gcp90K36PlCOc45F09eYMtyx9Izu47uhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=OGEa66vz; arc=none smtp.client-ip=66.163.185.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1754517976; c=relaxed/simple;
+	bh=AZb3s71JJh33LT/OJ6WTaBPpWMRvxVzhiysQxR+t4Yo=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=VvFa1McGUdl/TsaGuz1DAE4hHFR8ok5UlZ4HRJgxUNLwNzYu6wP60jULDVvNecdhmh3RIcYz9Bf6X/tJoepKRY8obwKjetynFMjDWHppoo8oe+xKfMIRATPvMNEjy4r1XSK0XsD0IjNOcEK14+PnjBaMH/OVl3ndFwxy+kx45as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KqKCtHbP; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="OGEa66vz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1754516143; bh=bATQnY4Gbe35C5i64O+p8qwEVNL0o6sqqOVpBCtXqU0=; h=Date:Subject:To:References:From:In-Reply-To:From:Subject:Reply-To; b=OGEa66vzKujXI7rbAM7wfVxupGy2e57T/0V94A+uhFIZB70GNfLdV6fVoCY8MPm7gMXTqUuhGkUzDJTcB3CwK87UKUgynhdkYSWBHia3PJWi36EVmRKAScNjxPxerqbBvRP9eXw11UXOlhijVclF9xO1Nqb4w/k7ZIdul1BB7T4CCp9EU7lNMWJBjBS9uxjhJlB8mezanmjwlmaeK8/k6oBxNiijoLHXDlie09InOi3Zj3sALVqOHF1jM5GwHZIQWnAHwN0yar57WZI9KcLBEatXTSO21wWArYa0PWheoQFBPcreq6doOn5Y5zAQWP3TJTrf7dsF7fX7Men4pwid2A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1754516143; bh=kdgG7wZWZSizaGRMEXV5lsauztvZ0FlcmYTE0LBf1oz=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=AlT15oOJ4sMLBVm7l7cnkl/Y5c+fWlhY5ydV70TrMs0gA1PBpY8aiMaPDzU1LoDSdFqPgWV2qkGSaY9/0PkfYYyxulvp+x2dbQefZBHska4gjwUd5jxj1bk+/NF8muOs+qcDvXbsSaMamixIIivVM6OWjFLWO9cLpPnnXZy5iKVdmNxFESIVZu+5cA1F8M9HmkNgt8hTA5tRlckDDCKTZGuVT74P/4i5c0p9KJBVM/llT7WvkfQXkRX8UgtrMHP7jsUsV6prkut3BZR11PDjEJ4QVUYv7FSFuMC5tqxb3NTk1L/eRCzQTM5aiJMo+kNZgHfhACsehsgoPvw3oSiTNQ==
-X-YMail-OSG: uZtSw6sVM1ng1ExWmGGkTNmyQ7LnVYGeoOmi_p.qNk4Smvu58qLLmLidVriBrfU
- .jzT7QI26sF.qER7txbiSwdJVS4Wj6YiI3Lzc018gb7gy8saOJkeSFu_GUZCSRyiaoPidOdDoXvL
- mbwwgkWMd0Oc1Sx.1wC1ls9Hky22jS4PY_mCVRkO1jdZobBUNDsTc5V240ftRma3AxHhFN4Hslv9
- amDJIR36NrbZT_Yz1vImgnokPeRQsCqoT1Vxfgr8VJSyfB.OzFhfDSWAUCDfaUbyyMM_X224JYJi
- lXjFaWf8WpohWi1fnKbc2rulFD9wDbApMpQSYrO7XH8AcvVgOxFFe7nUgX3.mykud9rWyDPxr_DL
- 30Ici6MCtHMAarig7_tSDqQD5f0TbAxnhv.CoWI1MOsYJCRGIZ0jld75kkf6X.ZDVtb2ldGD7S09
- byHjniUQuk_doIRQ5VNsA8WWoX6bNPCmn5K3una5tYUVh8VDCiayYvn7D1MHGYDcCrdb72E6WETD
- oWf0zcjw.Qug7ywta4ZVK82glx0Ijlvf4lMyFoBqHFv0f5Zi9Lph0D_j5AvqSojPrzNrU4QHxPF4
- 714V8bviAM.MNS3V0Dh5m.q4_iTf8aJXM3UxwOIRqix7EgGQAz3tA5MJVelFXMnCi4c1y9helFcs
- 5YCqlqHYBVn12XJCOG4JBmrhottRwTYbYHhkikmtn0.z_gTc_bRwtpuADLCONQkhhhxvbMGu42.Q
- lMYrtrsyRwyFdrfqxB4AvlIZwaxRJ.QCxyd8SXqXJ9n2giZ9SUpFNSfj2k7aY5wzE_mOEEMFvVR.
- 8HzGI2wAcuSq3UwFK0W1B5WzQ9Duj2JYjmonbq6JOeAnhkaRsG4aaF.MUK6TZTjKBOTXn6oMycCj
- 4FWRLrW2.cOAAFg_lZveJWy32fHhevPbmA2a8lpRWsvaMu36s9YlzPtbPfk4XnHIn.LgKWlZWVhN
- RIe0TO7gM0Ecxvxj6kLMEeTtb6JrlSEzhkf_jvcvyxOtgLIEzGOtRdFF2.GnTXtA_fK0syivwuoo
- bLTPh_SCySVT7O3ketvONj.GJ9fFX0sryK1b2fgBi3.z.O9FKjiZp0fh4JBlI.HzT9_j6DEUnv.H
- IEtRqx5oXdWorIwT5LsLCdO56Q4lngnxNSD2rNz3_4yB7X6A6Z40qvedL9p7ptvSGhbafflw94AB
- rHVybMD6PkcHbyl5IAmzKOSM43lz05OP71Ec2nL8oJTZVO3UDwcQaB1cL_0iWe7RcRL5Mi7VX5lU
- 4EgSdL4ByHf.Jdph5hEfZuk3YzeIbcPPAFqU3I6x9WVqne3jX02Vrc8.esUtyUk6ZofhIRig8HYk
- rzoZnd9ZvLbJoYPHEv5HtVwKnP7BQOusQ1S_x4uqUqc0yWm9yy7Bgshv3RLFBwP3YHDclrLLUCLG
- W070GiWuMjrfzR0gPRcY4hC2txEmQbIT3rhKqEzVzDsf0zVFcZ.qd.fdiarFe2n6dOVwQ7Q9mmjv
- FbEXd41E0VuvxUayIo8n2h7WrVRvnVJelOSF4bqQ9pYd8cGO.Hj9xMW47Ap8qJceAglqNe6pDwqw
- vEk_wkheWIUx5sz3Sugaidk5.GJ8xDnlQmiiArERJdBaBGU1WTfYwqCFTRAyU6i2yCwEZ50KBx_L
- yvmkmUZRz8P3S4jYwqnHcS3VwKubER1OINhsmLpV2WeABumb8L_ieVrtoxkSrrEUOhBSJ50xUNN9
- 2gghUqAeQ0M_QAUVvMKe0vPYLLuCMGhiZDvz4SgzYUHDJpN99TUhRry0Gms.y2.P7n1jolomksHh
- OGNa1.GLTZMAjIf5_cVyCZ5P8UI2sJYAEjI6QybncTmNdgTDclNoEMohNPVx1LYUL8lK_ATNxRLK
- 7gvANOM6KAsoPoE_1ye9UxYLdzTn7yizn5mi1l1dofJWsUO_nGxs4S6DVJC6y1l.lmZhBUPUpgnI
- 4b5SrdEwsVP9jizcD0U6gXQyB0PSyKF5s6TWrhWXzn9E3YAeMHFq7dGNPc2YBWUjIrlH3pAmwCJ7
- AMliOu417s3rICBgHC8abMZMIZTy7rC_uwoU1rUO1UoOIB6qhCwiwTllrQWLh7Rr_g.77Vz.4Sb7
- BfSMIxnpgFDy8HxDMYNk3CN0rtwwu_YDOqMhcLJn4OINTRakV7xlV7Z7PglxoJlEMhKXnmWWhiX6
- beP4a9iSgGYkhr6S6rprdvuZubxCjdxVTTreHEW7mShhIwFO56YH5g.KnEo0zRBrbYYpmHvpdgmq
- ul6yuBjnNnYLKEpzosONhJKD9JceRbz08gP2ENhXAuqM2N5FRicrxxSaWkj4Ys5ZKkzC4hhJ9iAi
- OUDiddxQHtHI-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 3baa9904-de4b-4ee3-9efb-82502f0ddcd1
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Wed, 6 Aug 2025 21:35:43 +0000
-Received: by hermes--production-gq1-74d64bb7d7-w6q4t (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 14fd28e34360ecb6eaaef070cafb6951;
-          Wed, 06 Aug 2025 21:35:39 +0000 (UTC)
-Message-ID: <08325274-13d1-4fa8-a165-9d6dbd6fc692@schaufler-ca.com>
-Date: Wed, 6 Aug 2025 14:35:36 -0700
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KqKCtHbP"
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b06d162789so4377901cf.2
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Aug 2025 15:06:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1754517973; x=1755122773; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1o80sNmGFwzKlK4FxAE/E67Erwh6Se4s2RUs98B2vc0=;
+        b=KqKCtHbPnuDXRIY+fhAZjVUj+3FIOk6+LdpoQun47mvWq3iDGxfZQx8mvZ+dM6OLli
+         aEgKnWZL2Csvrc0hfMITHWLc0Rjmg/V+OyTpyWgiwe1hsreV3UUqV5s76tKJzfJZV3KC
+         /5bVqqdquQlc+27y9Sta6Nw38+EBtZK0jiN7OEYd97+QcALMsrFucfDGHrxGcDoMvRUN
+         X1b/APBElAfNVYTpDOpBUOH3aBrOcf39M2Or84eZwUKW9xs2Skuk3tgvkDKuKihOj1t3
+         ZVP/us2flk87x2oHs8NTH0OCI+oCTChB1ld1gu78VBS1IKRFMzMZhJjLG2PFoyMAN6xr
+         o/cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754517973; x=1755122773;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1o80sNmGFwzKlK4FxAE/E67Erwh6Se4s2RUs98B2vc0=;
+        b=C8R3gfbsEWVtN1nkhZW/88NTOCFszrGpnwhDsFpRyM2b7U6TD/2OyPu8oja11eRVR/
+         v4CgHxmVpGGEkA5SodrUxZJxhJTaq08gBUwz355FTNhDixfqExiWkLxeqCfaotGsnVY+
+         0/i9Q208xWY5nnjVU+TccDZkLXbBM9SyCuW+wzUoNdbWxqOrJMLNxBxvNfLZJ2RJUhGy
+         XznYTJs9CEK6VOe+PgQY7OjMQBtlMB6g2cHzyCBT5QlDRJaLkBysVThHylQi/Rddh6DN
+         gv69PAAHTvLaBjStmXq3jsOTMup3Yglc0ocKgSWArzAerbnaeAwXRZgp5cQ9yvyTPqqN
+         Mjhw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbfUtC/MSrI5XeHUFJSbdyw2Bius6aVAjwHOByOYoNhiIClV9J+tkNaTL036zTzd2RpCNW0quE3/t9ilWQeDX3fT67eLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRVv3DvCx9Zwt2MOTp1rYVmUQJzGVMpLngf2HbDEFkRFNgH/y0
+	HAxODOjpCkoSPudLKvIHNHwxLhQfPUAGaETp5OY9YxbPbZxMk9mCeJkE0LBZ4kom6A==
+X-Gm-Gg: ASbGncv/+Ik1oRuvCxVzeL6xaxnbsQnBOMkzbeJ1HchkXO29TfDMTEO9+QqR/WudH75
+	YpOCaDx+pMjDTxuzlwfu9B44KR0HZcQ7gsa64q8lrZVbAqLHUwtFIvkrf+Y/nOT8pWKxtGrfAPn
+	Xwmczxd5+zs76YRVv3rdXWglrvP9a80+rqrTeRHBJi1GsJdQZ81k5IQguTDznYjVKuPvLQlO3SI
+	ufVYIKPXm8xZXz9PEBFSv00RNzj59z9AcUUiSPHKxMSePlNG0PLQvS3a8BbDmtzOV3wBhoWpz7p
+	+HR4BpJ8nEKITZindKrwBBbvvyLuLHaDJjXZv7h4uNp6W9xSgyAjjY1wxJZuBs3WjYvBxcYk5TX
+	3eySxickXJcy8RLxoQ1j6TT+biDMpN6Ky+5UvtMGgIb4OS3Cqn9ACvN9Jte1dSW7fUGY=
+X-Google-Smtp-Source: AGHT+IG4WOTe52hbcaGbNLSDM3J6PCnYw/yKUN/TtQ1ElGqLlp3dNbbODonDRI+YTHlBq/QwlhefrA==
+X-Received: by 2002:a05:622a:4012:b0:4ab:a762:4c8d with SMTP id d75a77b69052e-4b0924b5879mr63239841cf.4.1754517972960;
+        Wed, 06 Aug 2025 15:06:12 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4b06f790834sm40991931cf.60.2025.08.06.15.06.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 15:06:12 -0700 (PDT)
+Date: Wed, 06 Aug 2025 18:06:11 -0400
+Message-ID: <3e45e20228c80f9f6a126d09208ff995@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: use lsm_blob_alloc() in lsm_bdev_alloc()
-To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
-References: <20250806212552.240730-2-paul@paul-moore.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250806212552.240730-2-paul@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.24260 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250806_1659/pstg-lib:20250806_1657/pstg-pwork:20250806_1659
+From: Paul Moore <paul@paul-moore.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, eparis@redhat.com, linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH 1/3] LSM: Add mount opts blob size tracking
+References: <20250617210105.17479-2-casey@schaufler-ca.com>
+In-Reply-To: <20250617210105.17479-2-casey@schaufler-ca.com>
 
-On 8/6/2025 2:25 PM, Paul Moore wrote:
-> Convert the lsm_bdev_alloc() function to use the lsm_blob_alloc() helper
-> like all of the other LSM security blob allocators.
->
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-
+On Jun 17, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> 
+> Add mount option data to the blob size accounting in anticipation
+> of using a shared mnt_opts blob.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
->  security/security.c | 12 ++----------
->  1 file changed, 2 insertions(+), 10 deletions(-)
->
-> diff --git a/security/security.c b/security/security.c
-> index ad163f06bf7a..a88ebfca3224 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -823,16 +823,8 @@ static int lsm_msg_msg_alloc(struct msg_msg *mp)
->   */
->  static int lsm_bdev_alloc(struct block_device *bdev)
->  {
-> -	if (blob_sizes.lbs_bdev == 0) {
-> -		bdev->bd_security = NULL;
-> -		return 0;
-> -	}
-> -
-> -	bdev->bd_security = kzalloc(blob_sizes.lbs_bdev, GFP_KERNEL);
-> -	if (!bdev->bd_security)
-> -		return -ENOMEM;
-> -
-> -	return 0;
-> +	return lsm_blob_alloc(&bdev->bd_security, blob_sizes.lbs_bdev,
-> +			      GFP_KERNEL);
->  }
->  
->  /**
+>  include/linux/lsm_hooks.h  | 1 +
+>  security/lsm_init.c        | 2 ++
+>  security/selinux/hooks.c   | 1 +
+>  security/smack/smack_lsm.c | 1 +
+>  4 files changed, 5 insertions(+)
+
+Since you're respinning this patchset for other reasons, just base it
+on the existing LSM initialization code.  If this patchset collides with
+the init rework mid-flight I'll handle the merge fixup.
+
+I appreciate the consideration, but in this case I think it's easier to
+not have the dependency.
+
+--
+paul-moore.com
