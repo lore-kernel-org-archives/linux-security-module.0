@@ -1,205 +1,132 @@
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756C1242D8C
-	for <linux-security-module@vger.kernel.org>; Thu,  7 Aug 2025 07:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF36E43146
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Aug 2025 17:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754553475; cv=none; b=ic01rOJhHWp/3D9C83TtB1uiG6hiuLHvukhnYljndseSmdvsfbYp0mp/i6h8+EQHfV0SnqIKZt/zbtvZzOdLhDNSxE60zYJcpmaxB5yB4xuQEV+R909hx9xazlCslNcPB0DIBsGtGl1Wdidi1kOknCboN7meX9crzL5CpnfrZJM=
+	t=1754587276; cv=none; b=QV4v6JBYjCEyG/+B8/47bNvoTOXcMkVu/eWraSzHApmcqYJ1/R1ZNvGsRnUFp0n6HebDhK29bswyIQ3/riQ3e6dySwN8E4A9I/Ox4B/lBR0MmBrg7k5hTuSNzKNmcAdFGQAcPIOJZiAp6uAEEFYgdZSn4OnJWbCFAgl0hTF9VpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754553475; c=relaxed/simple;
-	bh=xN8SgTYjPE3paXbAT6wVrG1234fQaF1txx30pF6zyjk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GBFvFhfIHqeU4aPgkvVQbKV3WICz/p1tlfWQajpuarHOrfQ9LKj9gy56VLcLVUwSUBUbE/b3+0CwzO7Z2CTyjatgpvRdT9vrn10Y75AOf4JNcL/eP4gSEinW92qSYqNwXPnGGBRd75bWw7rVcY909finpNha9f471h/HvtOphUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tweek.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kXc6hT0J; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tweek.bounces.google.com
+	s=arc-20240116; t=1754587276; c=relaxed/simple;
+	bh=S5duOYIsIrTSQJWDktRsp7LMwwNw3gBQciu6NPWEOk8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P8oaVjmIgJ24c6VuCYXm8iFYS9+SJLCtuVVGtDlDjh3W1Wq8lMDWV0brdCGgOoDCkgLz34UsGdax6G9gCX3eI4IrdycUvedE1BYQLBle3rNQQLn1Y08RvYHBgU3T5Q+22Pkft6r/qbU4ePpuw9f8hS6G65Cy/4eJmBwHHQtiTpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KjRWxR8t; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kXc6hT0J"
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2407248a180so6778905ad.3
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Aug 2025 00:57:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KjRWxR8t"
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3214762071bso1555766a91.3
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Aug 2025 10:21:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754553474; x=1755158274; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YlvLgISNZUMVd8V5cqfKKA37QM8euuKbf1YxDJ77g88=;
-        b=kXc6hT0JRGZ1lOjKiZFx8sj8ckA6OaSMHbvDC8kwRxjUL2LZibIqhrGHp/mVfAKRDS
-         7xT7/e5xnO0Rc2DVuFXDQkjAWgugClkLsTw2ObqZpaUNIKFYwLCF81/engmfByScty9W
-         PgewgsHaDybdXp5BM/86FuUZU3rMrY0TLUmV4SMhtsjMo+2MJvqQ5BmDxe4ckOsHMps3
-         bb13jywXSzPtiKyj46K/U6fBdK/NK/TTITrksh23bZq22boNbu87k2ZBeQNxbmGt/AEd
-         r1a1q4laVE05fXTbjTopU6WHv4iiVoBRMua1k14KimfaL0ddUtQViW6xZNsCcS2tjqQY
-         IC2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754553474; x=1755158274;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1754587274; x=1755192074; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YlvLgISNZUMVd8V5cqfKKA37QM8euuKbf1YxDJ77g88=;
-        b=o8a3D1SIYwOPooZojn/LC+ZGdN+lVITODY1aze5Mlf9I2FI0fTNnsX7D2y0fR7151K
-         5XJmgtsz0k2W3auEybHOWV9QFfcVQvza4Tx1alBvpSDBz5w87AHU9CdvexqAP3v9guLG
-         kYgKZ7K5qUIE6WovfT5L99DZAtxDuBu3fzeHyDhdiEL29tRDmcMSNXQzai8Nr8OHtmCa
-         1iKmKmmupvIoUcYHp9ijVT4shR4DxL3mrRBtOsk2nAbmQX08bunlEeThuQ2Hsz+XKeX5
-         aFF6/fc1J0yDmnkrykJVnkhe2xCBmIgDx5KsHXtND8G+o35lN2+HeBgtcmpOodMCVtJA
-         bfLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWiK1INwqXHzWZKSC31gIc6wNdv3gz6Q+G8U/jyFkIcPPALVx0uyJeuFYOczFN9ZoWDWG679min96le79Pe1HTcu8xPn/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcFAMmPnchwfwGxd3K+XxTKEesA5py0A2hlfk3F37FDUU46qgl
-	GL1ra/m9pnTjhguFsTp1oZ2qfQGyEYum64q0cgFdSWQm8zlPmAOTlBWOmeunD+WvVI8/H95+Hs+
-	Zsw==
-X-Google-Smtp-Source: AGHT+IHNIIcS02q9yEtK/CycKioNSm/xVnF7oU0CQTIF6GSZSwCqJv0pj1GYTNZPgPdmBaaClonc0irU2w==
-X-Received: from pllo14.prod.google.com ([2002:a17:902:778e:b0:23f:8d14:d415])
- (user=tweek job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d4c2:b0:240:6ae4:3695
- with SMTP id d9443c01a7336-2429f520b52mr65586545ad.4.1754553473692; Thu, 07
- Aug 2025 00:57:53 -0700 (PDT)
-Date: Thu,  7 Aug 2025 17:57:45 +1000
+        bh=PCv33JLYlQWvy+u2owQ6Y5A7BoaiU+a+e/6Fp8KCqBY=;
+        b=KjRWxR8tU2WfdzQYcLaNY76W1GlrEn6aWc3E9JmwqdaAUjcZAgxcv86KvZ0qFhk8Y0
+         Un7NIihk2wfcwu6N8WWWPY4iQf6NjEtIj5pP0k9dF+kagSZ7lQPAbEawfeq1jnoOMtpV
+         3QYWKxJDEk2BX2IZxkenvy1EzwSN7F/RBIvp0+8gQAhli07ENYG/ozsjOxoaXVTNXlkQ
+         zOttwgwrbSh3NWQ9Op4YuXviS0Bi8/GnYzjvblkPEjS8J988smz2eTeuKUXW6JYO5hBl
+         /JnHPugzgvUKdHYavJqpnfbFLnhysbf8t4W+27gTcsT8s0qi2SmO1a5JT2kJKqpYZKGr
+         mprA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754587274; x=1755192074;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PCv33JLYlQWvy+u2owQ6Y5A7BoaiU+a+e/6Fp8KCqBY=;
+        b=io7pnoeOMZchUipAJeTGjWczyw+4ScYo6Wf6vm99rBlrXg52oDe9i48S9Yhk9TMoYX
+         p3lCxMc+IK0yRAcCBLOol4DKlsfEk53sxScogQDAqhYszvAlcOcULlUCxINVKJJgBaQx
+         sh4ZK65GaH0ci7loNJt3V4AmTGdj+v3dKCLSu8knei3ElJsSUNyJmnn1o7SPVddjn89j
+         VHenusTAEBifHdBRR5EenhnuVi7pBugo4SenjlOcbh0pwC2Mnn43Y18xeAlDwZbolcO2
+         4oMZZNDDZW3jEiNAXlA/SBMuyt0987EIGkni3M9txyYsCNj0DuTV0FQjyyUyrP9WxzyZ
+         bldw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBnDIlwFB31vW8hr2JWpijN0h2LecH0kuyzzT8WLROPly9uQA+wSCu//m1Li9DiBYHWWXNAXx0L8Y8n14Qg+yH7bgY6CU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXcewyvFbxfMgwS922IoGyHizQOpLT7TukXqqqwpLoIHYsC60E
+	0ij4hu4DzHLzJqNsVrHQGQrd17z0KqxmXD2AbIam0sXwZvvQCduZj1Q5vVyeemg365jbt11ioaH
+	FJ2/2cWUIbqxi/etLtAYzR21Kg8WKRXJ/dZ5YiTox
+X-Gm-Gg: ASbGncs9+Do9mz6Y6kSY4UvtrHAX2Egj5SyQyBlPmAut/uNfD7hvr0XI0pr7s4A88zy
+	XkHilx91tIZuoBrVeuJQNUixm7xIP42CRNfC6PNzWtgTlp2WMJTJ43dpkDN2QT29ESJCgJTimf4
+	QoRYDTuH9zgsxdQSs44NbxHwyjFxnpHLHFRf5pk9ib9Kqg7oayp7cNRpZ/CfkYCqG8cS9R8WE5B
+	F1+r0I=
+X-Google-Smtp-Source: AGHT+IE1js9/9cU38IinGxfvXT2Ji0uPC3Bg69YPXOFInZafaUocl0WGvMzZgGZ+mkjiCIVl33QfNGzjWOqBIV71i4o=
+X-Received: by 2002:a17:90b:1f90:b0:312:1d2d:18e2 with SMTP id
+ 98e67ed59e1d1-32166ca45cbmr9173240a91.20.1754587274179; Thu, 07 Aug 2025
+ 10:21:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
-Message-ID: <20250807075745.756415-1-tweek@google.com>
-Subject: [RFC PATCH 2/2] memfd: call security_inode_init_security_anon
-From: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>
-To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Hugh Dickins <hughd@google.com>, 
-	Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>
-Cc: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+MIME-Version: 1.0
+References: <20250722212139.1666060-1-bboscaccy@linux.microsoft.com>
+ <8d6e0d9d4bb99481d01500a7211e5119@paul-moore.com> <87pld788yu.fsf@microsoft.com>
+In-Reply-To: <87pld788yu.fsf@microsoft.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 7 Aug 2025 13:21:02 -0400
+X-Gm-Features: Ac12FXyww-IWezWFt1gs_pTcPutnWqR1fhfrR3ryTkQDZeZCYr98-5G2rs8gz-M
+Message-ID: <CAHC9VhTPrrgRh7v-H7qpizbxHNcW-V1qj-=24+Z8at2w4Co4uw@mail.gmail.com>
+Subject: Re: [PATCH v2] lsm,selinux: Add LSM blob support for BPF objects
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, 
+	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, 
+	Song Liu <song@kernel.org>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Prior to this change, no security hooks were called at the creation of a
-memfd file. It means that, for SELinux as an example, it will receive
-the default type of the filesystem that backs the in-memory inode. In
-most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
-be hugetlbfs. Both can be considered implementation details of memfd.
-
-It also means that it is not possible to differentiate between a file
-coming from memfd_create and a file coming from a standard tmpfs mount
-point.
-
-Additionally, no permission is validated at creation, which differs from
-the similar memfd_secret syscall.
-
-Call security_inode_init_security_anon during creation. This ensures
-that the file is setup similarly to other anonymous inodes. On SELinux,
-it means that the file will receive the security context of its task.
-
-The ability to limit fexecve on memfd has been of interest to avoid
-potential pitfalls where /proc/self/exe or similar would be executed
-[1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
-similarly to the file class. These access vectors may not make sense for
-the existing "anon_inode" class. Therefore, define and assign a new
-class "memfd_file" to support such access vectors.
-
-[1] https://crbug.com/1305267
-[2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.com/
-
-Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
----
- mm/memfd.c                          | 16 ++++++++++++++--
- security/selinux/hooks.c            | 15 +++++++++++----
- security/selinux/include/classmap.h |  2 ++
- 3 files changed, 27 insertions(+), 6 deletions(-)
-
-diff --git a/mm/memfd.c b/mm/memfd.c
-index bbe679895ef6..13bff0e91816 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -433,6 +433,9 @@ static struct file *alloc_file(const char *name, unsign=
-ed int flags)
- {
- 	unsigned int *file_seals;
- 	struct file *file;
-+	struct inode *inode;
-+	int err =3D 0;
-+	const char *anon_name =3D "[memfd]";
-=20
- 	if (flags & MFD_HUGETLB) {
- 		file =3D hugetlb_file_setup(name, 0, VM_NORESERVE,
-@@ -444,12 +447,21 @@ static struct file *alloc_file(const char *name, unsi=
-gned int flags)
- 	}
- 	if (IS_ERR(file))
- 		return file;
-+
-+	inode =3D file_inode(file);
-+	err =3D security_inode_init_security_anon(inode,
-+			LSM_ANON_INODE_MEMFD,
-+			&QSTR(anon_name), NULL);
-+	if (err) {
-+		fput(file);
-+		file =3D ERR_PTR(err);
-+		return file;
-+	}
-+
- 	file->f_mode |=3D FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
- 	file->f_flags |=3D O_LARGEFILE;
-=20
- 	if (flags & MFD_NOEXEC_SEAL) {
--		struct inode *inode =3D file_inode(file);
+On Thu, Aug 7, 2025 at 11:09=E2=80=AFAM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
+> Paul Moore <paul@paul-moore.com> writes:
+>
+> > On Jul 22, 2025 Blaise Boscaccy <bboscaccy@linux.microsoft.com> wrote:
+> >>
+> >> This patch introduces LSM blob support for BPF maps, programs, and
+> >> tokens to enable LSM stacking and multiplexing of LSM modules that
+> >> govern BPF objects. Additionally, the existing BPF hooks used by
+> >> SELinux have been updated to utilize the new blob infrastructure,
+> >> removing the assumption of exclusive ownership of the security
+> >> pointer.
+> >>
+> >> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> >> ---
+> >> v2:
+> >> - Use lsm_blob_alloc
+> >> - Remove unneded null check
+> >> - ifdef guard bpf alloc helpers
+> >> ---
+> >>  include/linux/lsm_hooks.h         |  3 ++
+> >>  security/security.c               | 86 +++++++++++++++++++++++++++++-=
 -
- 		inode->i_mode &=3D ~0111;
- 		file_seals =3D memfd_file_seals_ptr(file);
- 		if (file_seals) {
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 8d36d5ebb6e5..49742930e706 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2367,8 +2367,8 @@ static int selinux_bprm_creds_for_exec(struct linux_b=
-inprm *bprm)
- 	ad.u.file =3D bprm->file;
-=20
- 	if (new_tsec->sid =3D=3D old_tsec->sid) {
--		rc =3D avc_has_perm(old_tsec->sid, isec->sid,
--				  SECCLASS_FILE, FILE__EXECUTE_NO_TRANS, &ad);
-+		rc =3D avc_has_perm(old_tsec->sid, isec->sid, isec->sclass,
-+				  FILE__EXECUTE_NO_TRANS, &ad);
- 		if (rc)
- 			return rc;
- 	} else {
-@@ -2378,8 +2378,8 @@ static int selinux_bprm_creds_for_exec(struct linux_b=
-inprm *bprm)
- 		if (rc)
- 			return rc;
-=20
--		rc =3D avc_has_perm(new_tsec->sid, isec->sid,
--				  SECCLASS_FILE, FILE__ENTRYPOINT, &ad);
-+		rc =3D avc_has_perm(new_tsec->sid, isec->sid, isec->sclass,
-+				  FILE__ENTRYPOINT, &ad);
- 		if (rc)
- 			return rc;
-=20
-@@ -2997,6 +2997,13 @@ static int selinux_inode_init_security_anon(struct i=
-node *inode,
-=20
- 		isec->sclass =3D context_isec->sclass;
- 		isec->sid =3D context_isec->sid;
-+	} else if (type =3D=3D LSM_ANON_INODE_MEMFD) {
-+		isec->sclass =3D SECCLASS_MEMFD_FILE;
-+		rc =3D security_transition_sid(
-+			sid, sid,
-+			isec->sclass, name, &isec->sid);
-+		if (rc)
-+			return rc;
- 	} else {
- 		isec->sclass =3D SECCLASS_ANON_INODE;
- 		rc =3D security_transition_sid(
-diff --git a/security/selinux/include/classmap.h b/security/selinux/include=
-/classmap.h
-index 5665aa5e7853..3ec85142771f 100644
---- a/security/selinux/include/classmap.h
-+++ b/security/selinux/include/classmap.h
-@@ -179,6 +179,8 @@ const struct security_class_mapping secclass_map[] =3D =
-{
- 	{ "anon_inode", { COMMON_FILE_PERMS, NULL } },
- 	{ "io_uring", { "override_creds", "sqpoll", "cmd", "allowed", NULL } },
- 	{ "user_namespace", { "create", NULL } },
-+	{ "memfd_file",
-+	  { COMMON_FILE_PERMS, "execute_no_trans", "entrypoint", NULL } },
- 	/* last one */ { NULL, {} }
- };
-=20
---=20
-2.50.1.703.g449372360f-goog
+> >>  security/selinux/hooks.c          | 56 ++++----------------
+> >>  security/selinux/include/objsec.h | 17 ++++++
+> >>  4 files changed, 113 insertions(+), 49 deletions(-)
+> >
+> > This looks good to me, one nit/question below ...
+> >
+> >> @@ -5684,7 +5731,16 @@ int security_bpf_prog(struct bpf_prog *prog)
+> >>  int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr=
+,
+> >>                          struct bpf_token *token, bool kernel)
+> >>  {
+> >> -    return call_int_hook(bpf_map_create, map, attr, token, kernel);
+> >> +    int rc =3D 0;
+> >
+> > I understand the motivation behind initializing @rc to zero, but to be
+> > honest it is redundant and will surely result in a follow on patch from
+> > someone to remove the initialization.
+> >
+> > Do you have any objection to me removing the initialization during the
+> > merge?  This would obviously apply to the other two as well.
+> >
+>
+> No objections on my end. Thanks.
 
+Okay, merged to lsm/dev-staging with plans to move it to lsm/dev once
+the merge window closes.
+
+--=20
+paul-moore.com
