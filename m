@@ -1,132 +1,281 @@
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF36E43146
-	for <linux-security-module@vger.kernel.org>; Thu,  7 Aug 2025 17:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E1D2E370A
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Aug 2025 21:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754587276; cv=none; b=QV4v6JBYjCEyG/+B8/47bNvoTOXcMkVu/eWraSzHApmcqYJ1/R1ZNvGsRnUFp0n6HebDhK29bswyIQ3/riQ3e6dySwN8E4A9I/Ox4B/lBR0MmBrg7k5hTuSNzKNmcAdFGQAcPIOJZiAp6uAEEFYgdZSn4OnJWbCFAgl0hTF9VpQ=
+	t=1754602468; cv=none; b=nhK+BCgMJDJSBq15vtMvKdl8pbv9h1NNx1lvezqxcuFZX6zAxT/UR84EopJqGHMDKpB6FhP8IRqc7B8m0YexcAq/faap8VPwR8vKPbLDj6ao+/JKSOyFsKydwC6y+ReIVAWPhuX+Jv5DXLIGJmavzxinvnDdx9xVsIi4pkGQrhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754587276; c=relaxed/simple;
-	bh=S5duOYIsIrTSQJWDktRsp7LMwwNw3gBQciu6NPWEOk8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P8oaVjmIgJ24c6VuCYXm8iFYS9+SJLCtuVVGtDlDjh3W1Wq8lMDWV0brdCGgOoDCkgLz34UsGdax6G9gCX3eI4IrdycUvedE1BYQLBle3rNQQLn1Y08RvYHBgU3T5Q+22Pkft6r/qbU4ePpuw9f8hS6G65Cy/4eJmBwHHQtiTpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KjRWxR8t; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1754602468; c=relaxed/simple;
+	bh=JlG1vtTJvdw82uvVilSW6OkfU8OcNVk2IJUHb+2IkTk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=V57SZRSafPRxIQs6pHX7SwcckadRHAVzbOCq0n44ThS7rbr1fABskQOA9lIGsFss34O/TSlK6U62X1oGxMCH1hVjoyMLDvfukdlsar256lbJOI8lIBeiqj7XWJeM5K+4F4fpjFwPLbw77+1Jblc97pxWSuZsB9/2NVGWevgkBq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qPzDoJY8; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KjRWxR8t"
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3214762071bso1555766a91.3
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Aug 2025 10:21:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qPzDoJY8"
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2400cbd4241so21577245ad.3
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Aug 2025 14:34:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1754587274; x=1755192074; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PCv33JLYlQWvy+u2owQ6Y5A7BoaiU+a+e/6Fp8KCqBY=;
-        b=KjRWxR8tU2WfdzQYcLaNY76W1GlrEn6aWc3E9JmwqdaAUjcZAgxcv86KvZ0qFhk8Y0
-         Un7NIihk2wfcwu6N8WWWPY4iQf6NjEtIj5pP0k9dF+kagSZ7lQPAbEawfeq1jnoOMtpV
-         3QYWKxJDEk2BX2IZxkenvy1EzwSN7F/RBIvp0+8gQAhli07ENYG/ozsjOxoaXVTNXlkQ
-         zOttwgwrbSh3NWQ9Op4YuXviS0Bi8/GnYzjvblkPEjS8J988smz2eTeuKUXW6JYO5hBl
-         /JnHPugzgvUKdHYavJqpnfbFLnhysbf8t4W+27gTcsT8s0qi2SmO1a5JT2kJKqpYZKGr
-         mprA==
+        d=google.com; s=20230601; t=1754602465; x=1755207265; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=euT/8AA//Jz5ZAvA5q9RKbxUinHczFI9QPq5RPbWgzY=;
+        b=qPzDoJY8D4xuocYnV5uVVyVvxgMNYTJSRpGmhnx/GP4hoHGaQqJhfcCLpLXU7Phja7
+         JYFq+jhYHyp1nPRTkxJ8itPcyRX096GXbIsXzinaRmfmOpJLf6YpBCaniuGsr7Hh+YD0
+         S7h0DriDhMd/yOmQVwEkE3Cu5lFxWM8x5bp8+HPp/ZE/Z7eaGnWSVYTJmIWfjohtn2FV
+         QW3eJPKIfTVIaktAtO2mYHW3yPZoDCDHhBhtHd9TJ29C/DH8BRNusw98OwbT/WYuXd8B
+         WDDu0PjK5o78CtegaLbTnjZWzpn7pWfiKGKPbQyaogD+r6Rs0MNifKMA54oVE8lB7ffm
+         0/RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754587274; x=1755192074;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PCv33JLYlQWvy+u2owQ6Y5A7BoaiU+a+e/6Fp8KCqBY=;
-        b=io7pnoeOMZchUipAJeTGjWczyw+4ScYo6Wf6vm99rBlrXg52oDe9i48S9Yhk9TMoYX
-         p3lCxMc+IK0yRAcCBLOol4DKlsfEk53sxScogQDAqhYszvAlcOcULlUCxINVKJJgBaQx
-         sh4ZK65GaH0ci7loNJt3V4AmTGdj+v3dKCLSu8knei3ElJsSUNyJmnn1o7SPVddjn89j
-         VHenusTAEBifHdBRR5EenhnuVi7pBugo4SenjlOcbh0pwC2Mnn43Y18xeAlDwZbolcO2
-         4oMZZNDDZW3jEiNAXlA/SBMuyt0987EIGkni3M9txyYsCNj0DuTV0FQjyyUyrP9WxzyZ
-         bldw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBnDIlwFB31vW8hr2JWpijN0h2LecH0kuyzzT8WLROPly9uQA+wSCu//m1Li9DiBYHWWXNAXx0L8Y8n14Qg+yH7bgY6CU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXcewyvFbxfMgwS922IoGyHizQOpLT7TukXqqqwpLoIHYsC60E
-	0ij4hu4DzHLzJqNsVrHQGQrd17z0KqxmXD2AbIam0sXwZvvQCduZj1Q5vVyeemg365jbt11ioaH
-	FJ2/2cWUIbqxi/etLtAYzR21Kg8WKRXJ/dZ5YiTox
-X-Gm-Gg: ASbGncs9+Do9mz6Y6kSY4UvtrHAX2Egj5SyQyBlPmAut/uNfD7hvr0XI0pr7s4A88zy
-	XkHilx91tIZuoBrVeuJQNUixm7xIP42CRNfC6PNzWtgTlp2WMJTJ43dpkDN2QT29ESJCgJTimf4
-	QoRYDTuH9zgsxdQSs44NbxHwyjFxnpHLHFRf5pk9ib9Kqg7oayp7cNRpZ/CfkYCqG8cS9R8WE5B
-	F1+r0I=
-X-Google-Smtp-Source: AGHT+IE1js9/9cU38IinGxfvXT2Ji0uPC3Bg69YPXOFInZafaUocl0WGvMzZgGZ+mkjiCIVl33QfNGzjWOqBIV71i4o=
-X-Received: by 2002:a17:90b:1f90:b0:312:1d2d:18e2 with SMTP id
- 98e67ed59e1d1-32166ca45cbmr9173240a91.20.1754587274179; Thu, 07 Aug 2025
- 10:21:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754602465; x=1755207265;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=euT/8AA//Jz5ZAvA5q9RKbxUinHczFI9QPq5RPbWgzY=;
+        b=THPiMujpjWNLHzLkuWCpG3r1/dm6RXjpKUjw+bXZi7vtvqvlhEHKL9uvVOesv4EaGh
+         jcmx5xfM41YExnZON0qR6QLz5FqXvUhtCW3kwTybauY4KivOIJryDPfjVTnR3llXRPcb
+         uvYCMBdWtxOx/1xcw9iIZcYoabAUpi2BQehWjrb6/g78U8U43Ybd3TBeL0SL3+dflgRE
+         oXMmMgkT3BEEoSiEzUcBjXvu2fWRy1mT73tfnPYPG7VyzfWp4N5V7RXmE+UdWmGFnnlH
+         VErgFUO8x1PjQir9eX49/cZX/1aIuEtJi/EQzQ5HyAWdddBfUC0as7UJBpjJv7r3veH3
+         0N3A==
+X-Forwarded-Encrypted: i=1; AJvYcCV8KGNjOHKdv0fZ3MKX7w5oFPi0zNSPlxWW7EaHI/vTlRR1FjaGRMtYUf2zif5h6VYt+T5SKywD69dBxQwFO1PI7Oq4PMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl0DzvZRdscHW6SHqPzNav54CjE4d7aYoAS8gV1hl0bX6/MRQ8
+	juXI5Lt0ONC7a6cfO+1BqNJMFcZXx+UQHiGrZjgWBCm22HDOkYilMomN/IKKdLVSzw4vfc5kWYV
+	pqCt1aVhraWzo5JQ7ofEn9o/30w==
+X-Google-Smtp-Source: AGHT+IHT05ItRE3IEgvLcZ+lHAyFN+6DaRgxPxErhggbmCLRvoYXLPmLesz+SqrwGnv72L7qbCLUCgFDzQ08eW50HQ==
+X-Received: from plbko5.prod.google.com ([2002:a17:903:7c5:b0:23f:e9a5:d20a])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:ef0a:b0:235:f459:69c7 with SMTP id d9443c01a7336-242c225dbfemr7374775ad.52.1754602464480;
+ Thu, 07 Aug 2025 14:34:24 -0700 (PDT)
+Date: Thu, 07 Aug 2025 14:34:23 -0700
+In-Reply-To: <1e37e4e7-aa7b-4a2a-b1aa-1243f8094dcb@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250722212139.1666060-1-bboscaccy@linux.microsoft.com>
- <8d6e0d9d4bb99481d01500a7211e5119@paul-moore.com> <87pld788yu.fsf@microsoft.com>
-In-Reply-To: <87pld788yu.fsf@microsoft.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 7 Aug 2025 13:21:02 -0400
-X-Gm-Features: Ac12FXyww-IWezWFt1gs_pTcPutnWqR1fhfrR3ryTkQDZeZCYr98-5G2rs8gz-M
-Message-ID: <CAHC9VhTPrrgRh7v-H7qpizbxHNcW-V1qj-=24+Z8at2w4Co4uw@mail.gmail.com>
-Subject: Re: [PATCH v2] lsm,selinux: Add LSM blob support for BPF objects
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, 
-	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, 
-	Song Liu <song@kernel.org>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+Mime-Version: 1.0
+References: <20250713174339.13981-2-shivankg@amd.com> <20250713174339.13981-4-shivankg@amd.com>
+ <1e37e4e7-aa7b-4a2a-b1aa-1243f8094dcb@redhat.com>
+Message-ID: <diqz4iui4y00.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [PATCH V9 1/7] KVM: guest_memfd: Use guest mem inodes instead of
+ anonymous inodes
+From: Ackerley Tng <ackerleytng@google.com>
+To: David Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>, seanjc@google.com, 
+	vbabka@suse.cz, willy@infradead.org, akpm@linux-foundation.org, 
+	shuah@kernel.org, pbonzini@redhat.com, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, 
+	bfoster@redhat.com, tabba@google.com, vannapurve@google.com, 
+	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
+	shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, 
+	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, 
+	kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, rppt@kernel.org, 
+	hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
+	rientjes@google.com, roypat@amazon.co.uk, ziy@nvidia.com, 
+	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com, 
+	byungchul@sk.com, gourry@gourry.net, kent.overstreet@linux.dev, 
+	ying.huang@linux.alibaba.com, apopple@nvidia.com, chao.p.peng@intel.com, 
+	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
+	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
+	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
+	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
+	aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 7, 2025 at 11:09=E2=80=AFAM Blaise Boscaccy
-<bboscaccy@linux.microsoft.com> wrote:
-> Paul Moore <paul@paul-moore.com> writes:
+David Hildenbrand <david@redhat.com> writes:
+
+> On 13.07.25 19:43, Shivank Garg wrote:
+>> From: Ackerley Tng <ackerleytng@google.com>
+>> 
+>> guest_memfd's inode represents memory the guest_memfd is
+>> providing. guest_memfd's file represents a struct kvm's view of that
+>> memory.
+>> 
+>> Using a custom inode allows customization of the inode teardown
+>> process via callbacks. For example, ->evict_inode() allows
+>> customization of the truncation process on file close, and
+>> ->destroy_inode() and ->free_inode() allow customization of the inode
+>> freeing process.
+>> 
+>> Customizing the truncation process allows flexibility in management of
+>> guest_memfd memory and customization of the inode freeing process
+>> allows proper cleanup of memory metadata stored on the inode.
+>> 
+>> Memory metadata is more appropriately stored on the inode (as opposed
+>> to the file), since the metadata is for the memory and is not unique
+>> to a specific binding and struct kvm.
+>> 
+>> Co-developed-by: Fuad Tabba <tabba@google.com>
+>> Signed-off-by: Fuad Tabba <tabba@google.com>
+>> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+>> Signed-off-by: Shivank Garg <shivankg@amd.com>
+>> ---
 >
-> > On Jul 22, 2025 Blaise Boscaccy <bboscaccy@linux.microsoft.com> wrote:
-> >>
-> >> This patch introduces LSM blob support for BPF maps, programs, and
-> >> tokens to enable LSM stacking and multiplexing of LSM modules that
-> >> govern BPF objects. Additionally, the existing BPF hooks used by
-> >> SELinux have been updated to utilize the new blob infrastructure,
-> >> removing the assumption of exclusive ownership of the security
-> >> pointer.
-> >>
-> >> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-> >> ---
-> >> v2:
-> >> - Use lsm_blob_alloc
-> >> - Remove unneded null check
-> >> - ifdef guard bpf alloc helpers
-> >> ---
-> >>  include/linux/lsm_hooks.h         |  3 ++
-> >>  security/security.c               | 86 +++++++++++++++++++++++++++++-=
--
-> >>  security/selinux/hooks.c          | 56 ++++----------------
-> >>  security/selinux/include/objsec.h | 17 ++++++
-> >>  4 files changed, 113 insertions(+), 49 deletions(-)
-> >
-> > This looks good to me, one nit/question below ...
-> >
-> >> @@ -5684,7 +5731,16 @@ int security_bpf_prog(struct bpf_prog *prog)
-> >>  int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr=
-,
-> >>                          struct bpf_token *token, bool kernel)
-> >>  {
-> >> -    return call_int_hook(bpf_map_create, map, attr, token, kernel);
-> >> +    int rc =3D 0;
-> >
-> > I understand the motivation behind initializing @rc to zero, but to be
-> > honest it is redundant and will surely result in a follow on patch from
-> > someone to remove the initialization.
-> >
-> > Do you have any objection to me removing the initialization during the
-> > merge?  This would obviously apply to the other two as well.
-> >
+> [...]
 >
-> No objections on my end. Thanks.
+>>   
+>>   #include "kvm_mm.h"
+>>   
+>> +static struct vfsmount *kvm_gmem_mnt;
+>> +
+>>   struct kvm_gmem {
+>>   	struct kvm *kvm;
+>>   	struct xarray bindings;
+>> @@ -388,9 +392,51 @@ static struct file_operations kvm_gmem_fops = {
+>>   	.fallocate	= kvm_gmem_fallocate,
+>>   };
+>>   
+>> -void kvm_gmem_init(struct module *module)
+>> +static const struct super_operations kvm_gmem_super_operations = {
+>> +	.statfs		= simple_statfs,
+>> +};
+>> +
+>> +static int kvm_gmem_init_fs_context(struct fs_context *fc)
+>> +{
+>> +	struct pseudo_fs_context *ctx;
+>> +
+>> +	if (!init_pseudo(fc, GUEST_MEMFD_MAGIC))
+>> +		return -ENOMEM;
+>> +
+>> +	ctx = fc->fs_private;
+>> +	ctx->ops = &kvm_gmem_super_operations;
+>
+> Curious, why is that required? (secretmem doesn't have it, so I wonder)
+>
 
-Okay, merged to lsm/dev-staging with plans to move it to lsm/dev once
-the merge window closes.
+Good point! pseudo_fs_fill_super() fills in a struct super_operations
+which already does simple_statfs, so guest_memfd doesn't need this.
 
---=20
-paul-moore.com
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static struct file_system_type kvm_gmem_fs = {
+>> +	.name		 = "kvm_guest_memory",
+>
+> It's GUEST_MEMFD_MAGIC but here "kvm_guest_memory".
+>
+> For secretmem it's SECRETMEM_MAGIC vs. "secretmem".
+>
+> So naturally, I wonder if that is to be made consistent :)
+>
+
+I'll update this to "guest_memfd" to be consistent. 
+
+>> +	.init_fs_context = kvm_gmem_init_fs_context,
+>> +	.kill_sb	 = kill_anon_super,
+>> +};
+>> +
+>> +static int kvm_gmem_init_mount(void)
+>> +{
+>> +	kvm_gmem_mnt = kern_mount(&kvm_gmem_fs);
+>> +
+>> +	if (IS_ERR(kvm_gmem_mnt))
+>> +		return PTR_ERR(kvm_gmem_mnt);
+>> +
+>> +	kvm_gmem_mnt->mnt_flags |= MNT_NOEXEC;
+>> +	return 0;
+>> +}
+>> +
+>> +int kvm_gmem_init(struct module *module)
+>>   {
+>>   	kvm_gmem_fops.owner = module;
+>> +
+>> +	return kvm_gmem_init_mount();
+>> +}
+>> +
+>> +void kvm_gmem_exit(void)
+>> +{
+>> +	kern_unmount(kvm_gmem_mnt);
+>> +	kvm_gmem_mnt = NULL;
+>>   }
+>>   
+>>   static int kvm_gmem_migrate_folio(struct address_space *mapping,
+>> @@ -472,11 +518,71 @@ static const struct inode_operations kvm_gmem_iops = {
+>>   	.setattr	= kvm_gmem_setattr,
+>>   };
+>>   
+>> +static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
+>> +						      loff_t size, u64 flags)
+>> +{
+>> +	struct inode *inode;
+>> +
+>> +	inode = anon_inode_make_secure_inode(kvm_gmem_mnt->mnt_sb, name, NULL);
+>> +	if (IS_ERR(inode))
+>> +		return inode;
+>> +
+>> +	inode->i_private = (void *)(unsigned long)flags;
+>> +	inode->i_op = &kvm_gmem_iops;
+>> +	inode->i_mapping->a_ops = &kvm_gmem_aops;
+>> +	inode->i_mode |= S_IFREG;
+>> +	inode->i_size = size;
+>> +	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+>> +	mapping_set_inaccessible(inode->i_mapping);
+>> +	/* Unmovable mappings are supposed to be marked unevictable as well. */
+>> +	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
+>> +
+>> +	return inode;
+>> +}
+>> +
+>> +static struct file *kvm_gmem_inode_create_getfile(void *priv, loff_t size,
+>> +						  u64 flags)
+>> +{
+>> +	static const char *name = "[kvm-gmem]";
+>> +	struct inode *inode;
+>> +	struct file *file;
+>> +	int err;
+>> +
+>> +	err = -ENOENT;
+>> +	if (!try_module_get(kvm_gmem_fops.owner))
+>> +		goto err;
+>
+> Curious, shouldn't there be a module_put() somewhere after this function 
+> returned a file?
+>
+
+This was interesting indeed, but IIUC this is correct.
+
+I think this flow was basically copied from __anon_inode_getfile(),
+which does this try_module_get().
+
+The corresponding module_put() is in __fput(), which calls fops_put()
+and calls module_put() on the owner.
+
+>> +
+>> +	inode = kvm_gmem_inode_make_secure_inode(name, size, flags);
+>> +	if (IS_ERR(inode)) {
+>> +		err = PTR_ERR(inode);
+>> +		goto err_put_module;
+>> +	}
+>> +
+>> +	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR,
+>> +				 &kvm_gmem_fops);
+>> +	if (IS_ERR(file)) {
+>> +		err = PTR_ERR(file);
+>> +		goto err_put_inode;
+>> +	}
+>> +
+>> +	file->f_flags |= O_LARGEFILE;
+>> +	file->private_data = priv;
+>> +
+>>
+>
+> Nothing else jumped at me.
+>
+
+Thanks for the review!
+
+Since we're going to submit this patch through Shivank's mempolicy
+support series, I'll follow up soon by sending a replacement patch in
+reply to this series so Shivank could build on top of that?
+
+> -- 
+> Cheers,
+>
+> David / dhildenb
