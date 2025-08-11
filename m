@@ -1,80 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1A222126B
-	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 14:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E702512EE
+	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 14:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754922253; cv=none; b=ca9RtusyGVl/YWAwqmrIvmKRbvLi2tiLcDqgsAQHOKINpHkQqZ57OqMpiHe6srE2M31Eu8AiMfn3UecFxjf3yboGfCEhmRm4O6gOuKHkUy7A2hn34aWBA2VVl7dkd5p5ehJ1pOeiTYyMufK6B5kDkAm2T3fv3uJdOHIz3ro9Wx0=
+	t=1754922858; cv=none; b=XPL1YAJ84rOyWlkXIg9B5luPu+eA3WLhSyCo3EsueSDWMAWulIoMkAX49WUxmxGX5B1VmjtaN/D99g2GJeu7PtrQs3wHtDUdHB8hH5NZO3PnR7Z4ZLqVXzPGRAiyAGCDw4m9yAH3bxAENzBbgh+apQ8UXU8bstQoI5AgNZ2n1dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754922253; c=relaxed/simple;
-	bh=y54uHbKJnL4X8HbYK5mRijobivOkYRL4IYus4ChAimg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B9U7PzngW99H/Fgxdv0jfQQ+E+nktoAtAPU5lhNKz5KYNfuGWs77oqq2SYfZIm8bGp7Fhe6/f3B9zhzNADOEB1gLFh0wk+qFOCqSOXKTDMN/JboyoL246hvZ6vsC9VKTnmj/39J1FMjEeaW4XUXlj6TjRRgVyl0dYjDzoLrGeWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9EQRBI9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754922858; c=relaxed/simple;
+	bh=bruREYZz13FVqwhmiTuhvJnq89yjM0qtV4JcUUKirMo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=sXR2uCP+8CkQ01XmKwIUO7nOGuMG1CQQCJ5hK4JH7CMepjtFsUFDJeabCipDLhPql7yV1hUpbRZhLM9jDiRX9TpIMi6r9MAfXiSh1DE0PMXsdyoJ2NB+wf0WWze9gV5zHKIkFFmHeJKX7YukDk4rjG7aaresTMawGaGXGTPhY9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DIbEH2Ox; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9EQRBI9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00DF9C4AF0B
-	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 14:24:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754922253;
-	bh=y54uHbKJnL4X8HbYK5mRijobivOkYRL4IYus4ChAimg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=e9EQRBI90nyUC9yki9qRFcNMEdIoP5viGav7HvYvoK5C073ZYcqJ8vYgAlA0xZ5YZ
-	 ySFbhKwDHsHzsiSf+8onqOaqrb4DkAOkCoXzpiG/X9NVX2SteDFi4WlGPldSV6IYig
-	 ugHcwBrhiZjtB2sepjyS1w5HAltyx68gUhoVgozcy/3oqYgEhO4h2VE5xWixB3cwFG
-	 qpsrQ1Yy3TPIXMt90wPRKDsCnORt8Szto8R7T/f9xRSYPD9OWVGbrFjZlvn8xr6Pzj
-	 JR9yHoF8eurK3VKPrngGIjSm3ugsfnsbpJOjbigFpHgMY4qNglSrwnbUp5NDZ9kJm6
-	 Sd8QcFP3gNzsQ==
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-af97c0290dcso776279366b.0
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 07:24:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6/fnEz7C2p0Btcs/pq3HBI1YDBNZxoMOgltRJW/jHj5E6uL2Y6Wrii3PbFTKHyoC+TDzqnbjbiiHmTKTFx0lroujc88A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrjuyqLZbXMNDRMe9av0pEnDR1dOxlQXb47k3I370jPVsSWztK
-	z9qWxizrII85MUcP5UeEWDQbrcQXcQq5wrJqd/bbcxQxY7QibbKM2B45IGS33xrCKX0u9ztwBf/
-	p7iJotGIBE7/eZCSVlP7odb0Cpuqotgn3nySF6R20
-X-Google-Smtp-Source: AGHT+IHo9DcI0nz5oLtF5ZoCb/t25wgS4J1gVaS9v5nTyvXcR2nKDXXjxHWOHYnBOZEFJUSXbIX/IMzWeVx+A34LQ88=
-X-Received: by 2002:a17:906:9fd0:b0:af9:495b:99e1 with SMTP id
- a640c23a62f3a-af9c65b086cmr1286417966b.43.1754922251592; Mon, 11 Aug 2025
- 07:24:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DIbEH2Ox"
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76c2ef87618so8729355b3a.3
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 07:34:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754922857; x=1755527657; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=s3QC/DofyyJ1kIbquP7TygGRJBogDIdpEUbLnTdcdHg=;
+        b=DIbEH2OxjBvZkBS8teorCGp39U2CsmDZuMeaPxaLBtckmwePYI1C99M65EyxVI7trh
+         HMj94pK8tSAk3aLUDeLtAL6D0cSxG/BAIn/jY23E+Z+FueDmK4DbobALuGZ7GOUSpFAV
+         pFuN9hANNqRVIBG3ZvvVCSw2QTKDTvKP8zGpnXzSyTfcMqchaQovLADWbt6PftZYq+8u
+         MDnxb7e9+ghOdjDXxhD0wKp0209GGbj42znut7BAb3XeN1mYs9dLBE8YTT0TeccuZFNV
+         78Z3olcG5TguJmbCuK46mBMg9bII8+GyNCNGPCcxWsmK1r2rbJoaYCZLg7gIdLsEdA9X
+         HxAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754922857; x=1755527657;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s3QC/DofyyJ1kIbquP7TygGRJBogDIdpEUbLnTdcdHg=;
+        b=bNcyauZohJB6J2Gi4uXoTEpdyM0oU5nnP5J6Yaedjsc1bA243As/+waA1u26YXyUB7
+         dHKZEEssIqzLPmULAXwb3/F1ss6aWEw21bWKT+iRjHMoZUSnFvcQIfHEx1WmJZX47Y9I
+         6XkxZUTnjdFmXUp5Uk3LIIIrVpC5zrDCBxLjYTTb9nExiQaK/4owNz5rWi8K1sifBXnM
+         TZX/MfEKTQI6LVPMVvYQia/093djWomAZSlXSmWFbu+4nn08dePeGpxHhHoCVN9ASjDe
+         1H4AQcFblwf/hv5o8a+DZtl+ih9B5ftTQK0j//JNeltt0xkmTtzEJ7ZnnJUTL7eWoUmV
+         9d4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUk9QcoYBoASKq+sjFJc//gXBuhCD/A1MR7vdnsk1RLbW53FUCqxoY9c6BF1Cpn4ZwfxBGMahn2nvbyGVajHX/tQBm1sJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbCbYAhS4dK2mcSDZXcuGCC64qWwtTL3s43dyl7G5SLP4fEpEq
+	iLv43CTJDbGEljZTB7+vjy3NMH8C7LCwDa+Go+xpQh8FE7ipWTXBf2ZxHggEv4v8KX3HfKEPULx
+	lVADH3g==
+X-Google-Smtp-Source: AGHT+IHDzFt+0zXjA0CUz3si8YkwDTRVPFUsiiRh4VZN4Dkprgq2wlq3CPL9ofZgO6/62HnwUQZt6ujhFVk=
+X-Received: from pgos21.prod.google.com ([2002:a63:af55:0:b0:b31:d198:ffb2])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d8b:b0:240:6dc:9164
+ with SMTP id adf61e73a8af0-2405502ffeamr23223057637.15.1754922855887; Mon, 11
+ Aug 2025 07:34:15 -0700 (PDT)
+Date: Mon, 11 Aug 2025 07:34:14 -0700
+In-Reply-To: <20250811090605.16057-2-shivankg@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250721211958.1881379-1-kpsingh@kernel.org> <20250721211958.1881379-14-kpsingh@kernel.org>
- <CAADnVQ+3XYyJY_zcQtNPt81zyJwK4zv5oA+SLN9ohoLkD9XyZg@mail.gmail.com>
-In-Reply-To: <CAADnVQ+3XYyJY_zcQtNPt81zyJwK4zv5oA+SLN9ohoLkD9XyZg@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Mon, 11 Aug 2025 16:24:00 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ48iNq902tRNJ18pd+wyqwdnKJrG40QFZWneRhiwjJDbA@mail.gmail.com>
-X-Gm-Features: Ac12FXw7kOiFzTlcYrO8-2DFOyRsceTpCaGTpWBuKZY1oXQujmd8hYWHtiHPMx4
-Message-ID: <CACYkzJ48iNq902tRNJ18pd+wyqwdnKJrG40QFZWneRhiwjJDbA@mail.gmail.com>
-Subject: Re: [PATCH v2 13/13] selftests/bpf: Add test for signed programs
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250811090605.16057-2-shivankg@amd.com>
+Message-ID: <aJn_ZvD2AfZBX4Ox@google.com>
+Subject: Re: [PATCH RFC V10 0/7] Add NUMA mempolicy support for KVM guest-memfd
+From: Sean Christopherson <seanjc@google.com>
+To: Shivank Garg <shivankg@amd.com>
+Cc: david@redhat.com, vbabka@suse.cz, willy@infradead.org, 
+	akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com, 
+	brauner@kernel.org, viro@zeniv.linux.org.uk, ackerleytng@google.com, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, 
+	bfoster@redhat.com, tabba@google.com, vannapurve@google.com, 
+	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
+	shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, 
+	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, 
+	kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, rppt@kernel.org, 
+	hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
+	rientjes@google.com, roypat@amazon.co.uk, ziy@nvidia.com, 
+	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com, 
+	byungchul@sk.com, gourry@gourry.net, kent.overstreet@linux.dev, 
+	ying.huang@linux.alibaba.com, apopple@nvidia.com, chao.p.peng@intel.com, 
+	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
+	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
+	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
+	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
+	aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Jul 29, 2025 at 4:30=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Mon, Jul 21, 2025 at 2:20=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
-te:
-> > +
-> > +SEC("fexit/bpf_prog_verify_signature")
-> > +int BPF_PROG(bpf_sign, struct bpf_prog *prog, union bpf_attr *attr, bo=
-ol is_kernel, int ret)
->
-> I don't understand why it needs to peek into the kernel to
-> verify that it goes well. The exposed uapi should be good enough.
-> If the signature was specified and it is loaded fine we're good.
-> Double checking the kernel decisions goes too far.
-> Especially since this function can be inlined by the compiler.
+On Mon, Aug 11, 2025, Shivank Garg wrote:
+> This series introduces NUMA-aware memory placement support for KVM guests
+> with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
+> that enabled host-mapping for guest_memfd memory [1].
 
-Fair, I will drop this patch
-
-- KP
+Is this still actually an RFC?  If so, why?  If not, drop tag on the next version
+(if one is needed/sent).
