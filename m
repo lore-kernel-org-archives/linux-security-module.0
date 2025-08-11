@@ -1,95 +1,105 @@
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E702512EE
-	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 14:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EAC264A60;
+	Mon, 11 Aug 2025 14:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754922858; cv=none; b=XPL1YAJ84rOyWlkXIg9B5luPu+eA3WLhSyCo3EsueSDWMAWulIoMkAX49WUxmxGX5B1VmjtaN/D99g2GJeu7PtrQs3wHtDUdHB8hH5NZO3PnR7Z4ZLqVXzPGRAiyAGCDw4m9yAH3bxAENzBbgh+apQ8UXU8bstQoI5AgNZ2n1dE=
+	t=1754923147; cv=none; b=Jjm91gQZ5WYTqUGRJkmpjpiq/GRzG6XfCwhQ3wrVtiRky6E4w4JNlanqvgqMasJbsKILr1J+3JGaPgN4ZLSLqhmFPHdcm6HPMYi2ntbRqCZ7WxXsNlRsfx8Mq+9HAZr+PRGuN+km7jReJi4ic5U6KOxivBWGqzOrRm4E9fjyMBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754922858; c=relaxed/simple;
-	bh=bruREYZz13FVqwhmiTuhvJnq89yjM0qtV4JcUUKirMo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sXR2uCP+8CkQ01XmKwIUO7nOGuMG1CQQCJ5hK4JH7CMepjtFsUFDJeabCipDLhPql7yV1hUpbRZhLM9jDiRX9TpIMi6r9MAfXiSh1DE0PMXsdyoJ2NB+wf0WWze9gV5zHKIkFFmHeJKX7YukDk4rjG7aaresTMawGaGXGTPhY9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DIbEH2Ox; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+	s=arc-20240116; t=1754923147; c=relaxed/simple;
+	bh=ifGAXlbozYs3K4GIdILeV4fl10TVo7tI2pHUZvvUmKA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hPSAN1S9qZTrsfks73PU5qodxxe6apTqiXU90Btg1C3Aeb9ftLmYCPINJPSVP3hyUgNY88VwcDxv23ShCODMoqrZl79XtWU1cLD5sisX2KyJpa1fzBfH6uMRjrBldcKJr2Qv6HwOk/4YnhnNDgejxJspM3r6SIbgocGkGhLC2U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koNSET90; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DIbEH2Ox"
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76c2ef87618so8729355b3a.3
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 07:34:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754922857; x=1755527657; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s3QC/DofyyJ1kIbquP7TygGRJBogDIdpEUbLnTdcdHg=;
-        b=DIbEH2OxjBvZkBS8teorCGp39U2CsmDZuMeaPxaLBtckmwePYI1C99M65EyxVI7trh
-         HMj94pK8tSAk3aLUDeLtAL6D0cSxG/BAIn/jY23E+Z+FueDmK4DbobALuGZ7GOUSpFAV
-         pFuN9hANNqRVIBG3ZvvVCSw2QTKDTvKP8zGpnXzSyTfcMqchaQovLADWbt6PftZYq+8u
-         MDnxb7e9+ghOdjDXxhD0wKp0209GGbj42znut7BAb3XeN1mYs9dLBE8YTT0TeccuZFNV
-         78Z3olcG5TguJmbCuK46mBMg9bII8+GyNCNGPCcxWsmK1r2rbJoaYCZLg7gIdLsEdA9X
-         HxAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754922857; x=1755527657;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s3QC/DofyyJ1kIbquP7TygGRJBogDIdpEUbLnTdcdHg=;
-        b=bNcyauZohJB6J2Gi4uXoTEpdyM0oU5nnP5J6Yaedjsc1bA243As/+waA1u26YXyUB7
-         dHKZEEssIqzLPmULAXwb3/F1ss6aWEw21bWKT+iRjHMoZUSnFvcQIfHEx1WmJZX47Y9I
-         6XkxZUTnjdFmXUp5Uk3LIIIrVpC5zrDCBxLjYTTb9nExiQaK/4owNz5rWi8K1sifBXnM
-         TZX/MfEKTQI6LVPMVvYQia/093djWomAZSlXSmWFbu+4nn08dePeGpxHhHoCVN9ASjDe
-         1H4AQcFblwf/hv5o8a+DZtl+ih9B5ftTQK0j//JNeltt0xkmTtzEJ7ZnnJUTL7eWoUmV
-         9d4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUk9QcoYBoASKq+sjFJc//gXBuhCD/A1MR7vdnsk1RLbW53FUCqxoY9c6BF1Cpn4ZwfxBGMahn2nvbyGVajHX/tQBm1sJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbCbYAhS4dK2mcSDZXcuGCC64qWwtTL3s43dyl7G5SLP4fEpEq
-	iLv43CTJDbGEljZTB7+vjy3NMH8C7LCwDa+Go+xpQh8FE7ipWTXBf2ZxHggEv4v8KX3HfKEPULx
-	lVADH3g==
-X-Google-Smtp-Source: AGHT+IHDzFt+0zXjA0CUz3si8YkwDTRVPFUsiiRh4VZN4Dkprgq2wlq3CPL9ofZgO6/62HnwUQZt6ujhFVk=
-X-Received: from pgos21.prod.google.com ([2002:a63:af55:0:b0:b31:d198:ffb2])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d8b:b0:240:6dc:9164
- with SMTP id adf61e73a8af0-2405502ffeamr23223057637.15.1754922855887; Mon, 11
- Aug 2025 07:34:15 -0700 (PDT)
-Date: Mon, 11 Aug 2025 07:34:14 -0700
-In-Reply-To: <20250811090605.16057-2-shivankg@amd.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koNSET90"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13EB4C4CEED;
+	Mon, 11 Aug 2025 14:39:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754923147;
+	bh=ifGAXlbozYs3K4GIdILeV4fl10TVo7tI2pHUZvvUmKA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=koNSET90HP7qS3LJV5osLYX3L2l0cZJ0kauDHijdeJcXIV9Qw1dvK2ikrL3fiZE89
+	 vvM0E93JhXCwW0j5wSSeGmV0aWz6Ufu++reTSviE3s7aQG6nrzbZin5mC9dfNgOl7Y
+	 aU0FFesEeZsEvimS/9y4PTt7a6Yp2deEWno8PYF/JczpS76iw3qQUGYQXabp/6mYPc
+	 5rexegRcwsC36+/zfCrc/uE5oW0JyzmfZxGx8rWjLJITrq7PY1vQ+jJtPikqGjlbNN
+	 Fff/aqSGU6Zn2r/B9zrQMsMWtz0Bgyg/si/wv7TUNUUDkjYxbesjl2l4XaK2uIJmaZ
+	 6SV/AHeDCy+0Q==
+Message-ID: <02f7a7d1-297b-4304-8c11-dab091e20f2a@kernel.org>
+Date: Mon, 11 Aug 2025 15:39:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250811090605.16057-2-shivankg@amd.com>
-Message-ID: <aJn_ZvD2AfZBX4Ox@google.com>
-Subject: Re: [PATCH RFC V10 0/7] Add NUMA mempolicy support for KVM guest-memfd
-From: Sean Christopherson <seanjc@google.com>
-To: Shivank Garg <shivankg@amd.com>
-Cc: david@redhat.com, vbabka@suse.cz, willy@infradead.org, 
-	akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com, 
-	brauner@kernel.org, viro@zeniv.linux.org.uk, ackerleytng@google.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, 
-	bfoster@redhat.com, tabba@google.com, vannapurve@google.com, 
-	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
-	shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, 
-	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, 
-	kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, rppt@kernel.org, 
-	hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
-	rientjes@google.com, roypat@amazon.co.uk, ziy@nvidia.com, 
-	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com, 
-	byungchul@sk.com, gourry@gourry.net, kent.overstreet@linux.dev, 
-	ying.huang@linux.alibaba.com, apopple@nvidia.com, chao.p.peng@intel.com, 
-	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
-	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
-	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
-	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
-	aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 11/13] bpftool: Add support for signing BPF programs
+To: KP Singh <kpsingh@kernel.org>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+ bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com,
+ ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
+References: <20250721211958.1881379-1-kpsingh@kernel.org>
+ <20250721211958.1881379-12-kpsingh@kernel.org>
+ <2b417a1a-8f0b-4bca-ad44-aa4195040ef1@kernel.org>
+ <CACYkzJ42L-w_eXyc1k+E7yK4DGC3xjdiwjBAznYJdXWzuq4-jA@mail.gmail.com>
+ <CACYkzJ4_DUx-HXmygptxKDg1PjkwnQGKzkfRMms8O_wN2Urpmg@mail.gmail.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <CACYkzJ4_DUx-HXmygptxKDg1PjkwnQGKzkfRMms8O_wN2Urpmg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 11, 2025, Shivank Garg wrote:
-> This series introduces NUMA-aware memory placement support for KVM guests
-> with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
-> that enabled host-mapping for guest_memfd memory [1].
+2025-08-11 16:23 UTC+0200 ~ KP Singh <kpsingh@kernel.org>
+> On Thu, Jul 24, 2025 at 7:07 PM KP Singh <kpsingh@kernel.org> wrote:
+>>
+>> On Tue, Jul 22, 2025 at 5:51 PM Quentin Monnet <qmo@kernel.org> wrote:
+>>>
+>>> 2025-07-21 23:19 UTC+0200 ~ KP Singh <kpsingh@kernel.org>
 
-Is this still actually an RFC?  If so, why?  If not, drop tag on the next version
-(if one is needed/sent).
+[...]
+
+>>>> @@ -533,6 +547,11 @@ int main(int argc, char **argv)
+>>>>       if (argc < 0)
+>>>>               usage();
+>>>>
+>>>> +     if (sign_progs && (private_key_path == NULL || cert_path == NULL)) {
+>>>> +             p_err("-i <identity_x509_cert> and -k <private> key must be supplied with -S for signing");
+>>>> +             return -EINVAL;
+>>>> +     }
+>>>
+>>>
+>>> What if -i and/or -k are passed without -S?
+>>
+>> We can either print a warning or error out
+>>
+>> A) User does not want to sign removes --sign and forgets to remove -i
+>> -k (better with warning)
+>> B) User wants to sign but forgets to --sign (better with error)
+>>
+>> I'd say we print an error so that we don't accidentally not sign, WDYT?
+>>
+>> The reason why I think we should keep an explicit --sign is because we
+>> can also extend this to have e.g. --verify.
+> 
+> if (!sign_progs && (private_key_path != NULL || cert_path != NULL)) {
+> p_err("-i <identity_x509_cert> and -k <private> also need --sign to be
+> used for sign programs");
+> return -EINVAL;
+> }
+> 
+> I will error out, I was waiting for Quentin's reply, we can fix it
+> later if needed.
+
+Hi KP, I meant to reply to your email but forgot, apologies.
+
+Yes please, it makes sense to me to error out in that case. Let's make
+sure that users have the right syntax rather than letting them
+accidentally turn off signing.
+
+Thanks for your other comments and clarification too, looks all good to
+me :)
+
+Thanks,
+Quentin
