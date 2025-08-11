@@ -1,263 +1,539 @@
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6C42D837F;
-	Mon, 11 Aug 2025 13:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B172264DE
+	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 14:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754917748; cv=none; b=O3+md3eR4chhY/rPCxb4IAp9FOXDTDhXdnzaoi6Zf25giGPnOAtqaHu2ipFm5c1EdSnpv3D8ZJJCWd6WBeuXzTQHx9T7r8XefYtkBnhpob/yhaqpPHfUddoav7HizgSNGps2rq2HAYwCxk6xOpjy//JZil8oiHUaaEFS0Q/4/5g=
+	t=1754922222; cv=none; b=aVRl5/Zt8RfNcEwYrFx3n/ueMXQ7IJ8G2154s4BDdZ8o3sZJNeMmBIvAUAJay8x1LD96CLy1lTJabt0UnvbYPaBTXXRgm1W/4dUsTUt18FdHSUkTPUdmG2404Ym5Qidg522UckUCzs1P8KUXE7zrXVkF1GXztjSpsMeVGMy/Ye8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754917748; c=relaxed/simple;
-	bh=eBgBRJVoS7DYSj9feWbTy0rKg0r6zcKv6B/FUANB2bQ=;
+	s=arc-20240116; t=1754922222; c=relaxed/simple;
+	bh=B+7q3Kt5dYdv/hyIGDXUFNl5mW3PlPsV4RmZSEXdFtU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W1YsN5jfii9pU0CuVKj9IlJFVvJxTsAU1cJa9NxJjkK2Z+hE27nDz+4o3znjbGCaeu2aY4ryCUYdcwSoLmdxCTlyN2mWWApTMEeT+tHDsSNienAuAth0++JE1WCcKSPThs89nCYd0coOYeVK4BUYOjc8xSvqTCkKbKnNE8K7S1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsfCLNtw; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=LE14ErK2xdEqeV9ZDnfVH2tFanG77l5pEY8AbA/QaleDNK6AzSnAgwon2lJMhZLYhf9iiqyfhIPnGdxHyZ0vv8/rNjxG8+yv74WkeY6anD48uvSXkVEiwS5TJ7K7DExnMlSAJHxtG4jNtCBTgJx278mzh6r8LwZ/OHNzlJ6dwhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJgwmP3b; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsfCLNtw"
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-321a5d6d301so847974a91.3;
-        Mon, 11 Aug 2025 06:09:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754917746; x=1755522546; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4ogNKkFUnl/KTIW6622rNeCrp5ddWTYKEpkW/T/1M24=;
-        b=RsfCLNtwL0cMVdXL6TWcCHO4O4F8w79rko4RCKfik3I/ZgHmBUUuBnvla23H2cwSEw
-         YTDP03dg4/QPgqevnPTPvhRjRXsl55mWY8oIPgMANFGbB2rkdUWvzNzXvFTlgZjcA1Dx
-         woVeFcmEmkqrFnoziU7aZx9pN9ydBezXVamjds1dhb791f6H+3Yqda9TGxTEeB8UhECK
-         UDNcAkSUyLkLnqkQlIwAR5cxYhKKzjGYaZO/GC+Dlw0BjNjA0g//uqLw93KWDPtN6KFq
-         Xqoj5nKqHmqkJMwmsO6tcRxgVE/P/qih0COULR/SeW6u3Et0g3d4r5lC9LgjHMVJFyb7
-         lr6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754917746; x=1755522546;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4ogNKkFUnl/KTIW6622rNeCrp5ddWTYKEpkW/T/1M24=;
-        b=sZAVoavnd/+PXVsquqDNjauZoP5KcaSMl/P0aCkrDCN/jr636uBsQFne6uVontESpy
-         xZYztl0sc7ewTSfpSKIMf6oi3T2C33WGk3R3nx1ODsXyih46qFvjdRLV7lvVzjGkwmP6
-         Uag46mrrCU3kgK4B+c6gFjW01c0LhSeFV+G4nTIjVDktSGavroWIB5/L+SSJJNu7D8sK
-         JxyypaOtPqysQfEFKce7AcxjTeTooMqKO7PbHmPt96OeJoYompSauchn7gscr30MuNfF
-         fPBsFFBUbgEPc0CSiiTNk8z+ttW3LfuP43PvoZj3Ib09cpHaGosmKKsMdnoI8jI3inWl
-         WpPA==
-X-Forwarded-Encrypted: i=1; AJvYcCU87f95g7q9AUKDfSkey1NW5T7pxO/46ZI6z9moqeb4jDyfE53gn0NWOp/uKDOKJV4/HYGPImZ+j+ZhutI=@vger.kernel.org, AJvYcCVSdzJmNHwHofTTrJZivZgEoxr+4hDFHa6IkMf9YTMedaHG+gFoFEeJaR4qxlqRPQfoqnHYu1Lkgw==@vger.kernel.org, AJvYcCXOLor6Gbgmpgm6uqbDG5ba6RdqshRMNiwd8f3xnxPlp2QZ3V+s5rTcU68aSoEZRJd9ns80kICuYKQKHe1KMgDzvayH1+SS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEz81jxnwdM+RmluN0Lk6vV9wT08mtP/vVL4h4DwxwbCofdel2
-	InDe/zht98p9lPwgnKZjYON3iCmrLWuV6daZD5Nq7HeGtyErGVOTPFAQOKVFUEzqrFvR5sgYBmS
-	g2NIvRnLrpeirKxeiWYzkvyqveA8YV4E=
-X-Gm-Gg: ASbGnct8qRPywN1HO2JjFqHC0L8vb+3Uiyxba/sE7N4UqnzuMVthCXLtKhZ6vN0vW70
-	UHem8FOEjQewL4kSxxoIZolX6+6EmFNN2KHDAzPoleddzbovqG47aJKpJ3ugeh4TnIYGLRNBD39
-	DYBplVGY3nW+YQFDRp7lwsNGz89TRF85cTCTPGtBn3uIIr7C9HSdW37g5l2d9sgAAGsx4P658cd
-	1IvJTQ=
-X-Google-Smtp-Source: AGHT+IGPBhTDMG2k2oThC8/6k3S12XhowfoSS6hgtZCLwN6Z15Ejq3oLTPWY6Osc+OLrV8Qd6iD3c9GF91YK69BusRY=
-X-Received: by 2002:a17:90b:2ec4:b0:311:df4b:4b7a with SMTP id
- 98e67ed59e1d1-32183c45f65mr18288999a91.29.1754917745440; Mon, 11 Aug 2025
- 06:09:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJgwmP3b"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDCC5C4CEF4
+	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 14:23:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754922221;
+	bh=B+7q3Kt5dYdv/hyIGDXUFNl5mW3PlPsV4RmZSEXdFtU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MJgwmP3bVz6vrBCdff7ecdnc7A2iuThlMChNjCkCruf9Bnj4+evSTvqcL1Rq3MXBr
+	 wsWM0xgg80Wv4PpDLrybXViYLuTjqu5w78X3q2Gz1DVn42ceWV5uGAEg8GqklM7r1g
+	 ohFf8LVLrrt3/P2SwNCo8liC0GpL5PHjHKNQXveuB4MNMpLzo06YyfimTNH/8Ijv9L
+	 n3dGZ5U0eg7JmszN9n+/wdJn9QI2rWsjJ7679dpgUi7oBUa0d2WRVzXJjm1qxfsZwE
+	 1hUu5MAC5YO+iIYaZEAJlet68GTbAzVSRb4YYgAzbOmTfhXxXeCnO8rbNdu9QxNIU5
+	 VYdQtdn60GE1w==
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61557997574so6258475a12.3
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 07:23:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXlZ0njdmZpPPQRdaoNey8t9yPVpcixodOtIFqtKbawe9EDcJILPJLEXa6rOFw3/9rdK+eL3mVbJYJSaE6r/m8BWHQtyQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxogsU7bZJvx+TauHhpATsWwfuroRht0QSX/RF727E21owZ27mZ
+	O5Kp5p59g9NxO4L82onP2NvL/0xYIa/DE/cR8xtt1d3SicdZWCN7pAgy7jljKZs+S5S6TIm21qS
+	gDQygkQTfk1jiBGb+JE4NasI730HLrgBMgnwtucrv
+X-Google-Smtp-Source: AGHT+IGzrNUldFvAbePDv1iBn3bMYLnd1fENWG34npEboYHVak9FGL4QjBX5usZhH4GRr0aIyHxHtF47ADIhfeVTs8A=
+X-Received: by 2002:a05:6402:4313:b0:618:3182:9ef3 with SMTP id
+ 4fb4d7f45d1cf-6183182a49amr2933037a12.27.1754922220264; Mon, 11 Aug 2025
+ 07:23:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807075745.756415-1-tweek@google.com> <CAEjxPJ5nC7s=+Os4+9XjkzhGTyaNVrCyJgx+rz5n3baRFWVrzA@mail.gmail.com>
- <CAEjxPJ7JFHs1w71qeOFYSAmReZsghAz3+XVJrTKH=v=P822yxQ@mail.gmail.com> <CA+zpnLeaKkXAdxUuA5kNbKwrGVX+UCf+VFLK0XbtrbovvPGUWQ@mail.gmail.com>
-In-Reply-To: <CA+zpnLeaKkXAdxUuA5kNbKwrGVX+UCf+VFLK0XbtrbovvPGUWQ@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Mon, 11 Aug 2025 09:08:53 -0400
-X-Gm-Features: Ac12FXz7TJ3NbuWNt1BCQDFngT_zpEroMpbufMYABI6NkRQtA7S0T7RfK3qIg50
-Message-ID: <CAEjxPJ5otOTmP44QcYXpqcAyg1JU+CTPmS6UgPugnQbFJ_9=dw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] memfd: call security_inode_init_security_anon
-To: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	Hugh Dickins <hughd@google.com>, Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, 
-	Jeff Xu <jeffxu@google.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+References: <20250721211958.1881379-1-kpsingh@kernel.org> <20250721211958.1881379-12-kpsingh@kernel.org>
+ <2b417a1a-8f0b-4bca-ad44-aa4195040ef1@kernel.org> <CACYkzJ42L-w_eXyc1k+E7yK4DGC3xjdiwjBAznYJdXWzuq4-jA@mail.gmail.com>
+In-Reply-To: <CACYkzJ42L-w_eXyc1k+E7yK4DGC3xjdiwjBAznYJdXWzuq4-jA@mail.gmail.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Mon, 11 Aug 2025 16:23:29 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ4_DUx-HXmygptxKDg1PjkwnQGKzkfRMms8O_wN2Urpmg@mail.gmail.com>
+X-Gm-Features: Ac12FXyDmlbbIaWinOheDvXewMQ7uUt3cJ1XAoL9bvfYtn1bF_dEWwD3pU7hQKs
+Message-ID: <CACYkzJ4_DUx-HXmygptxKDg1PjkwnQGKzkfRMms8O_wN2Urpmg@mail.gmail.com>
+Subject: Re: [PATCH v2 11/13] bpftool: Add support for signing BPF programs
+To: Quentin Monnet <qmo@kernel.org>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 11, 2025 at 1:34=E2=80=AFAM Thi=C3=A9baud Weksteen <tweek@googl=
-e.com> wrote:
+On Thu, Jul 24, 2025 at 7:07=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
+:
 >
-> On Fri, Aug 8, 2025 at 10:41=E2=80=AFPM Stephen Smalley
-> <stephen.smalley.work@gmail.com> wrote:
+> On Tue, Jul 22, 2025 at 5:51=E2=80=AFPM Quentin Monnet <qmo@kernel.org> w=
+rote:
 > >
-> > On Fri, Aug 8, 2025 at 7:57=E2=80=AFAM Stephen Smalley
-> > <stephen.smalley.work@gmail.com> wrote:
->
-> Thanks for the review Stephen.
->
+> > 2025-07-21 23:19 UTC+0200 ~ KP Singh <kpsingh@kernel.org>
+> > > Two modes of operation being added:
 > > >
-> > > On Thu, Aug 7, 2025 at 3:57=E2=80=AFAM Thi=C3=A9baud Weksteen <tweek@=
-google.com> wrote:
-> > > >
-> > > > Prior to this change, no security hooks were called at the creation=
- of a
-> > > > memfd file. It means that, for SELinux as an example, it will recei=
-ve
-> > > > the default type of the filesystem that backs the in-memory inode. =
-In
-> > > > most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it w=
-ill
-> > > > be hugetlbfs. Both can be considered implementation details of memf=
-d.
-> > > >
-> > > > It also means that it is not possible to differentiate between a fi=
-le
-> > > > coming from memfd_create and a file coming from a standard tmpfs mo=
-unt
-> > > > point.
-> > > >
-> > > > Additionally, no permission is validated at creation, which differs=
- from
-> > > > the similar memfd_secret syscall.
-> > > >
-> > > > Call security_inode_init_security_anon during creation. This ensure=
-s
-> > > > that the file is setup similarly to other anonymous inodes. On SELi=
-nux,
-> > > > it means that the file will receive the security context of its tas=
-k.
-> > > >
-> > > > The ability to limit fexecve on memfd has been of interest to avoid
-> > > > potential pitfalls where /proc/self/exe or similar would be execute=
-d
-> > > > [1][2]. Reuse the "execute_no_trans" and "entrypoint" access vector=
-s,
-> > > > similarly to the file class. These access vectors may not make sens=
-e for
-> > > > the existing "anon_inode" class. Therefore, define and assign a new
-> > > > class "memfd_file" to support such access vectors.
+> > > Add two modes of operation:
 > > >
-> > > To provide backward compatibility, I would anticipate that you will
-> > > need to define a new SELinux policy capability and make this change
-> > > conditional on it being enabled, see:
-> > > https://github.com/SELinuxProject/selinux-kernel/wiki/Getting-Started=
-#adding-a-new-selinux-policy-capability
-> > > for instructions and links to examples.
+> > > * For prog load, allow signing a program immediately before loading. =
+This
+> > >   is essential for command-line testing and administration.
 > > >
->
-> I agree. Thanks, I'll add this to the next patchset.
->
-> > > Otherwise, see below.
+> > >       bpftool prog load -S -k <private_key> -i <identity_cert> fentry=
+_test.bpf.o
 > > >
-> > > >
-> > > > [1] https://crbug.com/1305267
-> > > > [2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@goog=
-le.com/
-> > > >
-> > > > Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
-> > > > ---
-> > > >  mm/memfd.c                          | 16 ++++++++++++++--
-> > > >  security/selinux/hooks.c            | 15 +++++++++++----
-> > > >  security/selinux/include/classmap.h |  2 ++
-> > > >  3 files changed, 27 insertions(+), 6 deletions(-)
-> > > >
-> > > > diff --git a/mm/memfd.c b/mm/memfd.c
-> > > > index bbe679895ef6..13bff0e91816 100644
-> > > > --- a/mm/memfd.c
-> > > > +++ b/mm/memfd.c
-> > > > @@ -433,6 +433,9 @@ static struct file *alloc_file(const char *name=
-, unsigned int flags)
-> > > >  {
-> > > >         unsigned int *file_seals;
-> > > >         struct file *file;
-> > > > +       struct inode *inode;
-> > > > +       int err =3D 0;
-> > > > +       const char *anon_name =3D "[memfd]";
-> > > >
-> > > >         if (flags & MFD_HUGETLB) {
-> > > >                 file =3D hugetlb_file_setup(name, 0, VM_NORESERVE,
-> > > > @@ -444,12 +447,21 @@ static struct file *alloc_file(const char *na=
-me, unsigned int flags)
-> > > >         }
-> > > >         if (IS_ERR(file))
-> > > >                 return file;
-> > > > +
-> > > > +       inode =3D file_inode(file);
-> > > > +       err =3D security_inode_init_security_anon(inode,
-> > > > +                       LSM_ANON_INODE_MEMFD,
-> > > > +                       &QSTR(anon_name), NULL);
+> > > * For gen skeleton, embed a pre-generated signature into the C skelet=
+on
+> > >   file. This supports the use of signed programs in compiled applicat=
+ions.
 > > >
-> > > Since the anon_name already indicates that this is a memfd, so can't
-> > > you already distinguish these via name-based type_transition rules?
-> > > Why do we need the enum argument?
+> > >       bpftool gen skeleton -S -k <private_key> -i <identity_cert> fen=
+try_test.bpf.o
+> > >
+> > > Generation of the loader program and its metadata map is implemented =
+in
+> > > libbpf (bpf_obj__gen_loader). bpftool generates a skeleton that loads
+> > > the program and automates the required steps: freezing the map, creat=
+ing
+> > > an exclusive map, loading, and running. Users can use standard libbpf
+> > > APIs directly or integrate loader program generation into their own
+> > > toolchains.
 > >
-> > On second thought, I see that you are distinguishing not just the
-> > security context/type but also the security class, but the question
-> > remains: can't you compare the name to make this determination?
 > >
+> > Thanks KP! Some bpftool-related comments below. Looks good overall, I
+> > mostly have minor comments.
+> >
+> > One concern might be the license for the new file, GPL-2.0 in your
+> > patch, whereas bpftool is dual-licensed. I hope this is simply an overs=
+ight?
 >
-> I definitely can. My initial thought was that a string comparison
-> would not be adequate here (performance-wise), but I guess calls to
-> this method are infrequent enough that a strncmp would work here?
-
-Open to data showing otherwise, but would think that a fixed-size
-small string comparison would be in the noise here.
-
+> An oversight, fixed.
 >
-> On the option of just relying on name-based type transitions, this has
-> an impact on the size of the policy: for Android, the transition from
-> ashmem to memfd means that virtually all domains will rely on such a
-> file. It means that we would need to define a type transition and a
-> new type for all our domains. (This is an argument on top of the need
-> for execute_no_trans, as I described in the commit message).
->
+> >
+> >
 > > >
-> > > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > > > index 8d36d5ebb6e5..49742930e706 100644
-> > > > --- a/security/selinux/hooks.c
-> > > > +++ b/security/selinux/hooks.c
-> > > > @@ -2367,8 +2367,8 @@ static int selinux_bprm_creds_for_exec(struct=
- linux_binprm *bprm)
-> > > >         ad.u.file =3D bprm->file;
-> > > >
-> > > >         if (new_tsec->sid =3D=3D old_tsec->sid) {
-> > > > -               rc =3D avc_has_perm(old_tsec->sid, isec->sid,
-> > > > -                                 SECCLASS_FILE, FILE__EXECUTE_NO_T=
-RANS, &ad);
-> > > > +               rc =3D avc_has_perm(old_tsec->sid, isec->sid, isec-=
->sclass,
-> > > > +                                 FILE__EXECUTE_NO_TRANS, &ad);
+> > > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > > ---
+> > >  .../bpf/bpftool/Documentation/bpftool-gen.rst |  12 +
+> > >  .../bpftool/Documentation/bpftool-prog.rst    |  12 +
+> > >  tools/bpf/bpftool/Makefile                    |   6 +-
+> > >  tools/bpf/bpftool/cgroup.c                    |   5 +-
+> > >  tools/bpf/bpftool/gen.c                       |  58 ++++-
+> > >  tools/bpf/bpftool/main.c                      |  21 +-
+> > >  tools/bpf/bpftool/main.h                      |  11 +
+> > >  tools/bpf/bpftool/prog.c                      |  25 +++
+> > >  tools/bpf/bpftool/sign.c                      | 210 ++++++++++++++++=
+++
+> > >  9 files changed, 352 insertions(+), 8 deletions(-)
+> > >  create mode 100644 tools/bpf/bpftool/sign.c
 > > >
-> > > Here and below I am a little concerned that we could end up reaching
-> > > this code on an inode with an isec->sclass that does not define the
-> > > execute_no_trans and entrypoint permissions. We should do something t=
-o
-> > > make that never happens, or check for it and always deny in that case=
+> > > diff --git a/tools/bpf/bpftool/Documentation/bpftool-gen.rst b/tools/=
+bpf/bpftool/Documentation/bpftool-gen.rst
+> > > index ca860fd97d8d..2997313003b1 100644
+> > > --- a/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+> > > +++ b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+> > > @@ -185,6 +185,18 @@ OPTIONS
+> > >      For skeletons, generate a "light" skeleton (also known as "loade=
+r"
+> > >      skeleton). A light skeleton contains a loader eBPF program. It d=
+oes not use
+> > >      the majority of the libbpf infrastructure, and does not need lib=
+elf.
+> >
+> >
+> > Blank line separator, please
+>
+> done
+>
+> >
+> >
+> > > +-S, --sign
+> > > +    For skeletons, generate a signed skeleton. This option must be u=
+sed with
+> > > +    **-k** and **-i**. Using this flag implicitly enables **--use-lo=
+ader**.
+> > > +    See the "Signed Skeletons" section in the description of the
+> > > +    **gen skeleton** command for more details.
+> > > +
+> > > +-k <private_key.pem>
+> > > +    Path to the private key file in PEM format, required for signing=
 .
+> > > +
+> > > +-i <certificate.x509>
+> > > +    Path to the X.509 certificate file in PEM or DER format, require=
+d for
+> > > +    signing.
+> >
+> >
+> > Please also update the options list in the SYNOPSIS section at the top
+> > of the page; and the option list at the bottom of gen.c (just like for
+> > "--use-loader").
 >
-> I agree. I can add a condition to make sure only these 2 classes (file
-> or memfd_file) are used here.
+> done also, isn't this the right formatting for the SYNOPSIS given that
+> some of these are optional?
 >
+> **bpftool** [*OPTIONS*] **prog** *COMMAND*
+> *OPTIONS* :=3D { |COMMON_OPTIONS| [ { **-f** | **--bpffs** } ] [ {
+> **-m** | **--mapcompat** } ]
+> [ { **-n** | **--nomount** } ] [ { **-L** | **--use-loader** } ]
+> [ { { **-S** | **--sign** } **-k** <private_key.pem> **-i**
+> <certificate.x509> } ] }
+>
+> not an expert here but I vaguely remember.
+>
+> Also do you think we need to:
+>
+>                 { "use-loader", no_argument,    NULL,   'L' },
+> -               { "sign",       required_argument, NULL, 'S'},
+> +               { "sign",       no_argument,    NULL,   'S' },
+>
+>
+> Now that we don't use an argument blob for --sign?
+>
+>
+> >
+> > Can you also please take a look at the bash completion update? It
+> > shouldn't be too hard if you look at how it deals with other options, i=
+n
+> > particular --base-btf that also takes one argument - and I can help if
+> > necessary.
+>
+> I will give it a go.
+>
+> >
+> >
 > > >
-> > > >                 if (rc)
-> > > >                         return rc;
-> > > >         } else {
-> > > > @@ -2378,8 +2378,8 @@ static int selinux_bprm_creds_for_exec(struct=
- linux_binprm *bprm)
-> > > >                 if (rc)
-> > > >                         return rc;
-> > > >
-> > > > -               rc =3D avc_has_perm(new_tsec->sid, isec->sid,
-> > > > -                                 SECCLASS_FILE, FILE__ENTRYPOINT, =
-&ad);
-> > > > +               rc =3D avc_has_perm(new_tsec->sid, isec->sid, isec-=
->sclass,
-> > > > +                                 FILE__ENTRYPOINT, &ad);
-> > > >                 if (rc)
-> > > >                         return rc;
-> > > >
-> > > > @@ -2997,6 +2997,13 @@ static int selinux_inode_init_security_anon(=
-struct inode *inode,
-> > > >
-> > > >                 isec->sclass =3D context_isec->sclass;
-> > > >                 isec->sid =3D context_isec->sid;
-> > > > +       } else if (type =3D=3D LSM_ANON_INODE_MEMFD) {
-> > > > +               isec->sclass =3D SECCLASS_MEMFD_FILE;
-> > > > +               rc =3D security_transition_sid(
-> > > > +                       sid, sid,
-> > > > +                       isec->sclass, name, &isec->sid);
+> > >  EXAMPLES
+> > >  =3D=3D=3D=3D=3D=3D=3D=3D
+> > > diff --git a/tools/bpf/bpftool/Documentation/bpftool-prog.rst b/tools=
+/bpf/bpftool/Documentation/bpftool-prog.rst
+> > > index f69fd92df8d8..dc2ca196137e 100644
+> > > --- a/tools/bpf/bpftool/Documentation/bpftool-prog.rst
+> > > +++ b/tools/bpf/bpftool/Documentation/bpftool-prog.rst
+> > > @@ -248,6 +248,18 @@ OPTIONS
+> > >      creating the maps, and loading the programs (see **bpftool prog =
+tracelog**
+> > >      as a way to dump those messages).
 > > >
-> > > Again, name-based type_transitions ought to be able to distinguish
-> > > memfd based on the name argument IIUC.
+> > > +-S, --sign
+> > > +    Enable signing of the BPF program before loading. This option mu=
+st be
+> > > +    used with **-k** and **-i**. Using this flag implicitly enables
+> > > +    **--use-loader**.
+> > > +
+> > > +-k <private_key.pem>
+> > > +    Path to the private key file in PEM format, required when signin=
+g.
+> > > +
+> > > +-i <certificate.x509>
+> > > +    Path to the X.509 certificate file in PEM or DER format, require=
+d when
+> > > +    signing.
+> >
+> >
+> > Same as for skeletons: please update the list of options in the synopsi=
+s
+> > and at the bottom of prog.c (bash completion for skeletons' options
+> > should also cover this case, so no additional work required here).
+> >
+> >
+> > > +
+> > >  EXAMPLES
+> > >  =3D=3D=3D=3D=3D=3D=3D=3D
+> > >  **# bpftool prog show**
+> > > diff --git a/tools/bpf/bpftool/Makefile b/tools/bpf/bpftool/Makefile
+> > > index 9e9a5f006cd2..586d1b2595d1 100644
+> > > --- a/tools/bpf/bpftool/Makefile
+> > > +++ b/tools/bpf/bpftool/Makefile
+> > > @@ -130,8 +130,8 @@ include $(FEATURES_DUMP)
+> > >  endif
+> > >  endif
+> > >
+> > > -LIBS =3D $(LIBBPF) -lelf -lz
+> > > -LIBS_BOOTSTRAP =3D $(LIBBPF_BOOTSTRAP) -lelf -lz
+> > > +LIBS =3D $(LIBBPF) -lelf -lz -lcrypto
+> > > +LIBS_BOOTSTRAP =3D $(LIBBPF_BOOTSTRAP) -lelf -lz -lcrypto
+> > >
+> > >  ifeq ($(feature-libelf-zstd),1)
+> > >  LIBS +=3D -lzstd
+> > > @@ -194,7 +194,7 @@ endif
+> > >
+> > >  BPFTOOL_BOOTSTRAP :=3D $(BOOTSTRAP_OUTPUT)bpftool
+> > >
+> > > -BOOTSTRAP_OBJS =3D $(addprefix $(BOOTSTRAP_OUTPUT),main.o common.o j=
+son_writer.o gen.o btf.o)
+> > > +BOOTSTRAP_OBJS =3D $(addprefix $(BOOTSTRAP_OUTPUT),main.o common.o j=
+son_writer.o gen.o btf.o sign.o)
+> > >  $(BOOTSTRAP_OBJS): $(LIBBPF_BOOTSTRAP)
+> > >
+> > >  OBJS =3D $(patsubst %.c,$(OUTPUT)%.o,$(SRCS)) $(OUTPUT)disasm.o
+> > > diff --git a/tools/bpf/bpftool/cgroup.c b/tools/bpf/bpftool/cgroup.c
+> > > index 944ebe21a216..90c9aa297806 100644
+> > > --- a/tools/bpf/bpftool/cgroup.c
+> > > +++ b/tools/bpf/bpftool/cgroup.c
+> > > @@ -1,7 +1,10 @@
+> > >  // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > >  // Copyright (C) 2017 Facebook
+> > >  // Author: Roman Gushchin <guro@fb.com>
+> > > -
+> >
+> >
+> > Let's keep the blank line
+>
+> Done
+>
+> >
+> >
+> > > +#undef GCC_VERSION
+> > > +#ifndef _GNU_SOURCE
+> > > +#define _GNU_SOURCE
+> > > +#endif
+> >
+> >
+> > What are these for?
+>
+> kpsingh@kpsingh-genoa:~/projects/linux/tools/bpf/bpftool$ vmk
+>
+> Auto-detecting system features:
+> ...                         clang-bpf-co-re: [ on  ]
+> ...                                    llvm: [ on  ]
+> ...                                  libcap: [ on  ]
+> ...                                  libbfd: [ OFF ]
+>
+> In file included from cgroup.c:19:
+> In file included from ./main.h:16:
+> /home/kpsingh/projects/linux/tools/bpf/bpftool/libbpf/include/bpf/skel_in=
+ternal.h:87:9:
+> error: call to undeclared function 'syscall'; ISO C99 and later do not
+> support implicit function declarations
+> [-Wimplicit-function-declaration]
+>    87 |         return syscall(__NR_bpf, cmd, attr, size);
+>       |                ^
+> 1 error generated.
+>
+> >
+> >
+> > >  #define _XOPEN_SOURCE 500
+> > >  #include <errno.h>
+> > >  #include <fcntl.h>
+> >
+> > [...]
+> >
+> > > diff --git a/tools/bpf/bpftool/main.c b/tools/bpf/bpftool/main.c
+> > > index 2b7f2bd3a7db..fc25bb390ec7 100644
+> > > --- a/tools/bpf/bpftool/main.c
+> > > +++ b/tools/bpf/bpftool/main.c
+> > > @@ -33,6 +33,9 @@ bool relaxed_maps;
+> > >  bool use_loader;
+> > >  struct btf *base_btf;
+> > >  struct hashmap *refs_table;
+> > > +bool sign_progs;
+> > > +const char *private_key_path;
+> > > +const char *cert_path;
+> > >
+> > >  static void __noreturn clean_and_exit(int i)
+> > >  {
+> > > @@ -447,6 +450,7 @@ int main(int argc, char **argv)
+> > >               { "nomount",    no_argument,    NULL,   'n' },
+> > >               { "debug",      no_argument,    NULL,   'd' },
+> > >               { "use-loader", no_argument,    NULL,   'L' },
+> > > +             { "sign",       required_argument, NULL, 'S'},
+> > >               { "base-btf",   required_argument, NULL, 'B' },
+> > >               { 0 }
+> > >       };
+> > > @@ -473,7 +477,7 @@ int main(int argc, char **argv)
+> > >       bin_name =3D "bpftool";
+> > >
+> > >       opterr =3D 0;
+> > > -     while ((opt =3D getopt_long(argc, argv, "VhpjfLmndB:l",
+> > > +     while ((opt =3D getopt_long(argc, argv, "VhpjfLmndSi:k:B:l",
+> > >                                 options, NULL)) >=3D 0) {
+> > >               switch (opt) {
+> > >               case 'V':
+> > > @@ -519,6 +523,16 @@ int main(int argc, char **argv)
+> > >               case 'L':
+> > >                       use_loader =3D true;
+> > >                       break;
+> > > +             case 'S':
+> > > +                     sign_progs =3D true;
+> > > +                     use_loader =3D true;
+> > > +                     break;
+> > > +             case 'k':
+> > > +                     private_key_path =3D optarg;
+> > > +                     break;
+> > > +             case 'i':
+> > > +                     cert_path =3D optarg;
+> > > +                     break;
+> > >               default:
+> > >                       p_err("unrecognized option '%s'", argv[optind -=
+ 1]);
+> > >                       if (json_output)
+> > > @@ -533,6 +547,11 @@ int main(int argc, char **argv)
+> > >       if (argc < 0)
+> > >               usage();
+> > >
+> > > +     if (sign_progs && (private_key_path =3D=3D NULL || cert_path =
+=3D=3D NULL)) {
+> > > +             p_err("-i <identity_x509_cert> and -k <private> key mus=
+t be supplied with -S for signing");
+> > > +             return -EINVAL;
+> > > +     }
+> >
+> >
+> > What if -i and/or -k are passed without -S?
+>
+> We can either print a warning or error out
+>
+> A) User does not want to sign removes --sign and forgets to remove -i
+> -k (better with warning)
+> B) User wants to sign but forgets to --sign (better with error)
+>
+> I'd say we print an error so that we don't accidentally not sign, WDYT?
+>
+> The reason why I think we should keep an explicit --sign is because we
+> can also extend this to have e.g. --verify.
+
+if (!sign_progs && (private_key_path !=3D NULL || cert_path !=3D NULL)) {
+p_err("-i <identity_x509_cert> and -k <private> also need --sign to be
+used for sign programs");
+return -EINVAL;
+}
+
+I will error out, I was waiting for Quentin's reply, we can fix it
+later if needed.
+
+- KP
+
+>
+> - KP
+>
+> >
+> >
+> > > +
+> > >       if (version_requested)
+> > >               ret =3D do_version(argc, argv);
+> > >       else
+> > > diff --git a/tools/bpf/bpftool/main.h b/tools/bpf/bpftool/main.h
+> > > index 6db704fda5c0..f921af3cda87 100644
+> > > --- a/tools/bpf/bpftool/main.h
+> > > +++ b/tools/bpf/bpftool/main.h
+> > > @@ -6,9 +6,14 @@
+> > >
+> > >  /* BFD and kernel.h both define GCC_VERSION, differently */
+> > >  #undef GCC_VERSION
+> > > +#ifndef _GNU_SOURCE
+> > > +#define _GNU_SOURCE
+> > > +#endif
+> > >  #include <stdbool.h>
+> > >  #include <stdio.h>
+> > > +#include <errno.h>
+> > >  #include <stdlib.h>
+> > > +#include <bpf/skel_internal.h>
+> >
+> >
+> > Wnat do you need these includes (and _GNU_SOURCE) in main.h for?
+>
+> Explained above, let me know if you have better ideas on where to place t=
+hese.
+>
+> >
+> >
+> > >  #include <linux/bpf.h>
+> > >  #include <linux/compiler.h>
+> > >  #include <linux/kernel.h>
+> >
+> > [...]
+> >
+> > > diff --git a/tools/bpf/bpftool/sign.c b/tools/bpf/bpftool/sign.c
+> > > new file mode 100644
+> > > index 000000000000..f0b5dd10a46b
+> > > --- /dev/null
+> > > +++ b/tools/bpf/bpftool/sign.c
+> > > @@ -0,0 +1,210 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> >
+> >
+> > Please consider making this file dual-licensed like the rest of
+> > bpftool's source code, "(GPL-2.0-only OR BSD-2-Clause)".
+>
+> Done.
+>
+> >
+> >
+> > > +
+> > > +/*
+> > > + * Copyright (C) 2022 Google LLC.
+> >
+> >
+> > 2025?
+>
+> Let's keep it 2022, nah just kidding :) Thanks.
+>
+> >
+> >
+> > > + */
+> > > +#define _GNU_SOURCE
+> >
+> >
+> > Please guard this:
+> >
+> >         #ifndef _GNU_SOURCE
+> >         #define _GNU_SOURCE
+> >         #endif
+> >
+> > This is because "llvm-config --cflags" passes -D_GNU_SOURCE and we may
+> > end up with a duplicate definition, otherwise.
+>
+> ack, done.
+>
+> >
+> >
+> > > +#include <stdio.h>
+> > > +#include <stdlib.h>
+> > > +#include <stdint.h>
+> > > +#include <stdbool.h>
+> > > +#include <string.h>
+> > > +#include <string.h>
+> > > +#include <getopt.h>
+> > > +#include <err.h>
+> > > +#include <openssl/opensslv.h>
+> > > +#include <openssl/bio.h>
+> > > +#include <openssl/evp.h>
+> > > +#include <openssl/pem.h>
+> > > +#include <openssl/err.h>
+> > > +#include <openssl/cms.h>
+> > > +#include <linux/keyctl.h>
+> > > +#include <errno.h>
+> > > +
+> > > +#include <bpf/skel_internal.h>
+> > > +
+> > > +#include "main.h"
+> > > +
+> > > +#define OPEN_SSL_ERR_BUF_LEN 256
+> > > +
+> > > +static void display_openssl_errors(int l)
+> > > +{
+> > > +     char buf[OPEN_SSL_ERR_BUF_LEN];
+> > > +     const char *file;
+> > > +     const char *data;
+> > > +     unsigned long e;
+> > > +     int flags;
+> > > +     int line;
+> > > +
+> > > +     while ((e =3D ERR_get_error_all(&file, &line, NULL, &data, &fla=
+gs))) {
+> > > +             ERR_error_string_n(e, buf, sizeof(buf));
+> > > +             if (data && (flags & ERR_TXT_STRING)) {
+> > > +                     p_err("OpenSSL %s: %s:%d: %s\n", buf, file, lin=
+e, data);
+> >
+> >
+> > Please remove the trailing '\n', p_err() handles it already.
+> >
+> >
+> > > +             } else {
+> > > +                     p_err("OpenSSL %s: %s:%d\n", buf, file, line);
+> >
+> >
+> > Same here.
+>
+> done.
+>
+> - KP
+>
+> >
+> > [...]
