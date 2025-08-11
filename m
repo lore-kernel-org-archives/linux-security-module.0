@@ -1,139 +1,99 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3923F21FF3C
-	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 22:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820E31C1AB4
+	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 22:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754950820; cv=none; b=pUpyXxClqLrqeu/0QMfrUi8HprBapVeiLnQ8D5HuKLtapNTXOZqBCE9d/M6zW3wUADRjWJiUiWBOTDLgFFA30ICH7dZKIkDathoVJFxttqx8XKN/Ozz6648DOgX/ZADmXSreHg+lZoCIMXxJZ+yO08KrgI4Nc5ga1GphQn+CH0Q=
+	t=1754950888; cv=none; b=J76IzSbPeOYZjQnjcHGB5fR6bm2Kd7zRbHHw5YAPi/Hu3RI6EserzC6J0FWcLU2c502LLqbGmWcePLuvFgLBTJOAeqzMCj4RS+YxzMOPRpVWSGNhuV+bmQXM/Cdjskgaz68qSTR/vt826DwIR23lRRnLp8+0Ew/bXFZxomyHT2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754950820; c=relaxed/simple;
-	bh=dL794EfEHytNyeO9iROdlZzBXbWT5d8yCfj/FT+Njbk=;
+	s=arc-20240116; t=1754950888; c=relaxed/simple;
+	bh=qXhanpL+DK2WbdhWgqSJLD1CMqNGLtc5qG4llyV7dp0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G6JEJ01S/M8GYRBvwy08Zh6wkXG6bVW60JE7Es2SDqQFOXDK48llfweJO5qUmPzhH5LiciQFcF99buIypqSqZKd1HIt0pXJ5qJ/CXSCyz343uIhZ5kql9Vk3tobibHa18q2ZLGnsssAfXpgU30H3RbDzYdQ5GQXDLPntX0v2sXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i7VsB0d1; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=tfMttqc2Nxd7HB5TXd1s5QX3i2isKFtz00e9vF0ULHdehZGDiMQmaI9KUQUILeCHOUtdW8ccQ+qRwewIwAjDdpA9GcB7YTRA5/yjl16Okp1EUh+fxsSj7DzlLTRWzFMYTfsx48ygLuaMAjyAaMK52abL8A8TCtd0ulrN5BcNvgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=btRRtqFp; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7VsB0d1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8400C4CEF9
-	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 22:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754950819;
-	bh=dL794EfEHytNyeO9iROdlZzBXbWT5d8yCfj/FT+Njbk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=i7VsB0d1zFtUCRGUQ9+PCSBnpm/pYopHHpQUXuZaQGN6hq+x2yOGF98WTFkVL01ln
-	 S5KK1n5jUOHcMFm+0R7fveZbs4qO9hkNADezeqQ4Hecs7puSxoi3L5teu+RHXLDsdv
-	 z7E0PEQQMbsY4nHmjyTV5i4Bv60CDW/v3EXAza4xMDguvtLQlNK+4mzMx3v0xFVK33
-	 0Y0lBkL6vuwJu9qvh63kKOACg0efsMsMaNvNXeFDiNtr+O7a8N0mkBBCPxM6Mu7QX4
-	 gSbDReTQcqHeqrVB9G6jRc3Ul1fBYLnyPuoyIgVmmCEwNLWkYV/tCEmP1Fg90LywQT
-	 lD1UyJ3NhIJRw==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61568fbed16so7554091a12.3
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 15:20:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW74Jdh3faV/yNk/yRudH4fa3eDza22KIyahxKc3ah9c8NSTnTRRIumqWA0aYtLs79aJ8stqN7e9xFtRiw+dSJbt2QK8Vw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaimdTVSW/C+grt7NF8BHLvIVntM4BxDltGMpO6GW9qzA+stCa
-	cDJ1gXscE1XOdgOrB5mOc+fv2uKvbgmmnizhA8EMyOW2rJolUUf1h1/aTy74yDAKD3lZsqo+lqS
-	JJtLDcQWCIm90y6J1LbHqwvOekjWDhAIi6u8vFcL2
-X-Google-Smtp-Source: AGHT+IGrrTJZ4YFe2orW4HiV1kP4DlTxBFucWhLcOXEv2Lp6p5DVB+i+rcsowHRGwCDHpzLQuuXwSjRZOtDF5smE7L0=
-X-Received: by 2002:a05:6402:5214:b0:615:990c:6d56 with SMTP id
- 4fb4d7f45d1cf-617e2b70364mr13075682a12.4.1754950818187; Mon, 11 Aug 2025
- 15:20:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="btRRtqFp"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-31efc10bb03so4164884a91.0
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 15:21:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1754950887; x=1755555687; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TXdnb41bcMRYFaefBcCIWWyf9vYxHasNkQCzWhItBkQ=;
+        b=btRRtqFp9k1+3KHuadN8gK06YGLKpjW0+GWFyE9XG1iqlTQ16dWPQsFMmp51ph97Gj
+         dLwIiXpomEM44yjpyqMmDrEv4P3wjNHXIYW6cGkpDaJt/NKkVf8AqZoieUypJT2i/UIh
+         FriZsMf4aVn6qbLqdrEhohLz1rCS8ggHux2ODerie5ayBFWaS50j/EAqaLZj1aOLqcad
+         XeYbY6PtgZpCRy8xnD0CFzH0MaFNaYaCzvcvkzFmDqQauEGA0Uu7fEj4huf6/5yCOzLA
+         KlJb3aoG3F3DEp7WxAQxAi299lp1OJW51AUAGcvGJ+MdIoVSgb1gIWOzIOge6W2IRrdG
+         xKjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754950887; x=1755555687;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TXdnb41bcMRYFaefBcCIWWyf9vYxHasNkQCzWhItBkQ=;
+        b=pWl1I5Ga9XoKppbVBd04dTZrm9R7ID5xiQn8BAWPN4OFm3shQ4p6CaUMF2O6vj/GCz
+         27IJVPhqVxBpdmC2jzy21UmnmYT2An6kyxAMsD1/RbB/DkDJh0osQbAUNvbsu70ZobMR
+         OZ8OnuHXT4TEs/q6HxBK3b41LsUuzthvuAN+6cvPn4acFdtaxTiUB98TPwNextVbsMVm
+         midlcC0dSgkj0EhpYIwAFYO37OcMp1kmRTiWoTOuEoJ5DRRCnma8tFa3UyhjUq45eSmC
+         lKonjpTIUbWzOnMmiGubYuVad5z+N6NWj6owtapHINEBUfUAlqqQC//ejN/RuZn0CWVr
+         Fn1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVAtDuJbbwrlALhIfpYaZFj1l9hrUtAzAP/W7/mau5YjyIIh7Rpij8xaFzAjauRpdOjjBkUlqWq8yt/QjQ0JTBfbW9C3qA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKG6TI1b7YXlbHqU8mFSoYGQHwPmdl1J2i3Zq2UpNmkgACokwf
+	UjG1l6aDKua3cnNDJJK1K8C9DI3ZENptB2AKTc4jHIYh2oXsqjzKi2JmFVXNCElSu+tHLtinAA0
+	o3MJGPlssmDtQy3uOOYiEAyGpUySfNWdj+aFPp91q
+X-Gm-Gg: ASbGncvIHZpqkZprop/oXvAmF042h4gEsGlnhvA3R+VT5Ni+kBEuV8NzzM7B4K3La+v
+	I9CrIBWpf5XVDLbHkRVKHkDjtLRTR5aC5aAbAVuhbqEKi1aXZC9agB9ehINK0EAFeUaK21qNZBx
+	w+e3HYqt8Neqkx8J77NFPfZEAQDKXTC1946AUgMINbCt15kZMfNFAJdoLaA08NS5rY0/DeCzqiz
+	QxkxzwRnFn5XzZBcw==
+X-Google-Smtp-Source: AGHT+IEss2X+BEVYoSZIRFPMdBMIECB9EsuPm1/5BEpb7wMtfKbuhIPqkxFcGxZboN3KJZ7oj0OWy4xB2RyQ2dN40eo=
+X-Received: by 2002:a17:90a:dfc4:b0:321:6ac:532b with SMTP id
+ 98e67ed59e1d1-321c0b3493dmr1670945a91.35.1754950886988; Mon, 11 Aug 2025
+ 15:21:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721211958.1881379-1-kpsingh@kernel.org> <20250721211958.1881379-13-kpsingh@kernel.org>
- <CAADnVQJ28MimhbBKr6ck85zBVCa9vf96aZzq0H3ZOQ-zvgzWxg@mail.gmail.com>
-In-Reply-To: <CAADnVQJ28MimhbBKr6ck85zBVCa9vf96aZzq0H3ZOQ-zvgzWxg@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Tue, 12 Aug 2025 00:20:07 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ5qyA2eVnnF1eOLFZqrF0HsFUnD753r+aUWartyHsMd0g@mail.gmail.com>
-X-Gm-Features: Ac12FXz1mC6TjZZCXlmk7Mq_4K2Rst7Hl4LhfB1VOBZ123jjntXjsBOoejREwXM
-Message-ID: <CACYkzJ5qyA2eVnnF1eOLFZqrF0HsFUnD753r+aUWartyHsMd0g@mail.gmail.com>
-Subject: Re: [PATCH v2 12/13] selftests/bpf: Enable signature verification for
- all lskel tests
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>
+References: <20250716212731.31628-5-casey@schaufler-ca.com>
+ <d5f0d7a5edea8511ab4467e0fb225b8b@paul-moore.com> <4f6c9294-dfb3-45cf-8f46-c1a0063d2921@schaufler-ca.com>
+In-Reply-To: <4f6c9294-dfb3-45cf-8f46-c1a0063d2921@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 11 Aug 2025 18:21:14 -0400
+X-Gm-Features: Ac12FXyMjcnxuMYwY6jL1gdJPw-g9F2DzMGA2F70iCe8j7vzY4irDpbe-2aJOKM
+Message-ID: <CAHC9VhR-Jd8JGhEETSBLDQA843FtsyN+ocM1XjfA_A6g+tJeng@mail.gmail.com>
+Subject: Re: [PATCH v5 4/5] Audit: Fix indentation in audit_log_exit
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: eparis@redhat.com, linux-security-module@vger.kernel.org, 
+	audit@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[...]
-
-> >         $(Q)diff $$(<:.o=.llinked2.o) $$(<:.o=.llinked3.o)
-> > -       $(Q)$$(BPFTOOL) gen skeleton -L $$(<:.o=.llinked3.o) name $$(notdir $$(<:.bpf.o=_lskel)) > $$@
-> > +       $(Q)$$(BPFTOOL) gen skeleton $(LSKEL_SIGN) $$(<:.o=.llinked3.o) name $$(notdir $$(<:.bpf.o=_lskel)) > $$@
-> >         $(Q)rm -f $$(<:.o=.llinked1.o) $$(<:.o=.llinked2.o) $$(<:.o=.llinked3.o)
+On Tue, Aug 5, 2025 at 7:06=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
+com> wrote:
+> On 8/5/2025 12:39 PM, Paul Moore wrote:
+> > On Jul 16, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> Fix two indentation errors in audit_log_exit().
+> >>
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> ---
+> >>  kernel/auditsc.c | 7 ++++---
+> >>  1 file changed, 4 insertions(+), 3 deletions(-)
+> > As this is indepdendent of all the other changes in this patchset, I'm
+> > going to merge this into audit/dev-staging now and audit/dev later when
+> > the merge window is closed.
 >
-> Does it mean that it makes all lskel tests to be signed tests ?
-> It's great that CI green lights it, but imo it's an overkill.
-> Let's have a few signed tests instead of making all of them.
+> Spiffy. Thank You.
 
-Updated:
+... and now it's in audit/dev, thanks!
 
-diff --git a/tools/testing/selftests/bpf/Makefile
-b/tools/testing/selftests/bpf/Makefile
-index 1295ff8f26ff..e473e2d780fb 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -496,15 +496,16 @@ LINKED_SKELS := test_static_linked.skel.h
-linked_funcs.skel.h             \
-                test_subskeleton.skel.h test_subskeleton_lib.skel.h     \
-                test_usdt.skel.h
-
--LSKELS := fentry_test.c fexit_test.c fexit_sleep.c atomics.c           \
--       trace_printk.c trace_vprintk.c map_ptr_kern.c                   \
-+LSKELS := fexit_sleep.c trace_printk.c trace_vprintk.c map_ptr_kern.c  \
-        core_kern.c core_kern_overflow.c test_ringbuf.c                 \
-        test_ringbuf_n.c test_ringbuf_map_key.c test_ringbuf_write.c
-
-+LSKELS_SIGNED := fentry_test.c fexit_test.c atomics.c
-+
- # Generate both light skeleton and libbpf skeleton for these
- LSKELS_EXTRA := test_ksyms_module.c test_ksyms_weak.c kfunc_call_test.c \
-        kfunc_call_test_subprog.c
--SKEL_BLACKLIST += $$(LSKELS)
-+SKEL_BLACKLIST += $$(LSKELS) $$(LSKELS_SIGNED)
-
- test_static_linked.skel.h-deps := test_static_linked1.bpf.o
-test_static_linked2.bpf.o
- linked_funcs.skel.h-deps := linked_funcs1.bpf.o linked_funcs2.bpf.o
-@@ -551,6 +552,7 @@ TRUNNER_BPF_SKELS := $$(patsubst
-%.c,$$(TRUNNER_OUTPUT)/%.skel.h,   \
-                                               $$(TRUNNER_BPF_SRCS)))
- TRUNNER_BPF_LSKELS := $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.lskel.h,
-$$(LSKELS) $$(LSKELS_EXTRA))
- TRUNNER_BPF_SKELS_LINKED := $$(addprefix $$(TRUNNER_OUTPUT)/,$(LINKED_SKELS))
-+TRUNNER_BPF_LSKELS_SIGNED := $$(patsubst
-%.c,$$(TRUNNER_OUTPUT)/%.lskel.h, $$(LSKELS_SIGNED))
- TEST_GEN_FILES += $$(TRUNNER_BPF_OBJS)
-
- # Evaluate rules now with extra TRUNNER_XXX variables above already defined
-@@ -602,6 +604,15 @@ $(TRUNNER_BPF_LSKELS): %.lskel.h: %.bpf.o
-$(BPFTOOL) | $(TRUNNER_OUTPUT)
-        $(Q)$$(BPFTOOL) gen object $$(<:.o=.llinked2.o) $$(<:.o=.llinked1.o)
-        $(Q)$$(BPFTOOL) gen object $$(<:.o=.llinked3.o) $$(<:.o=.llinked2.o)
-        $(Q)diff $$(<:.o=.llinked2.o) $$(<:.o=.llinked3.o)
-+       $(Q)$$(BPFTOOL) gen skeleton -L $$(<:.o=.llinked3.o) name
-$$(notdir $$(<:.bpf.o=_lskel)) > $$@
-+       $(Q)rm -f $$(<:.o=.llinked1.o) $$(<:.o=.llinked2.o) $$(<:.o=.llinked3.o)
-+
-+$(TRUNNER_BPF_LSKELS_SIGNED): %.lskel.h: %.bpf.o $(BPFTOOL) | $(TRUNNER_OUTPUT)
-+       $$(call msg,GEN-SKEL,$(TRUNNER_BINARY) (signed),$$@)
-+       $(Q)$$(BPFTOOL) gen object $$(<:.o=.llinked1.o) $$<
-+       $(Q)$$(BPFTOOL) gen object $$(<:.o=.llinked2.o) $$(<:.o=.llinked1.o)
-+       $(Q)$$(BPFTOOL) gen object $$(<:.o=.llinked3.o) $$(<:.o=.llinked2.o)
-+       $(Q)diff $$(<:.o=.llinked2.o) $$(<:.o=.llinked3.o)
-        $(Q)$$(BPFTOOL) gen skeleton $(LSKEL_SIGN)
-$$(<:.o=.llinked3.o) name $$(notdir $$(<:.bpf.o=_lskel)) > $$@
-        $(Q)rm -f $$(<:.o=.llinked1.o) $$(<:.o=.llinked2.o) $$(<:.o=.llinked3.o)
-
-@@ -654,6 +665,7 @@ $(TRUNNER_TEST_OBJS:.o=.d):
-$(TRUNNER_OUTPUT)/%.test.d:                     \
-                            $(TRUNNER_EXTRA_HDRS)                       \
-                            $(TRUNNER_BPF_SKELS)                        \
-                            $(TRUNNER_BPF_LSKELS)                       \
-+                           $(TRUNNER_BPF_LSKELS_SIGNED)                \
-                            $(TRUNNER_BPF_SKELS_LINKED)                 \
-                            $$(BPFOBJ) | $(TRUNNER_OUTPUT)
+--=20
+paul-moore.com
