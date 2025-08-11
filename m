@@ -1,86 +1,135 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5802253FE
-	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 22:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B239021B1BC
+	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 22:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754950973; cv=none; b=m1OBBCOAj82QE7kK/LqxesP2WUSxrUoQpgehFDrtM9S79A//HuJiY7fVIA12eYpwo6mBAy3i1GYazcGQvJQfQg+Za0tlaCfX/0ws0u8SZAZRWTapZ//JWzVgBHyusEH2v2cSCSDdAZMuAS8ZlE6YL2xZ2YxKcsMgOXlYHF1lWwc=
+	t=1754952522; cv=none; b=pVEDgrTzrv0zM8qhhFAUMuBg0Iiyb3rYqZZs0PNjTSJ5Hpsy5CyktzjH+XIFm9Apiq8HCU+ZcrT4Z0uJIn7dTkyaJuSsNVFuHCtdJpj34KtERxY1BO4LLNpd8nRAlsnIBPGRa2TIvVU5pQWAg1j2YADezb+y34TNcp3Rgp5yESE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754950973; c=relaxed/simple;
-	bh=utU4IFpCWHAbSaaIhlArg9nAH82LpriYxTRLkSz28O4=;
+	s=arc-20240116; t=1754952522; c=relaxed/simple;
+	bh=CR+piw1nSlTb56tUWLPg3HrUiMch7K3t3vJzftJs9yI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UqK6TVC/UpYDfM0sDZbk71Ua0ukYdu1FGbDMKS9xmXpSoGC3SzvdQN6gcGDXeMWyhTKjWR3TDWkiAiiM2NyD0N1SQ5cZzJKe+tSS8bpkaXOwaNK4rSQwClMQZGbTdsgVcQwfUSa8BSjEowK0To9FxAZBZNMPs8vbUfwxIk2aqKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=netmX57D; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=JoQ2B/qAzYGE/d2Mveg/c9VxB1hl47dW05tiKNtBT+38stFJhsHRG5BBqWdUfKdD2j7pmuantuCxhpQuVbDg3213AZefE0JuHthXxp2W2NSqY2PHucuS6qRpPgX31gVRsbdFNXVEAadpSPJp4vgg/jkmhYBGAV/IIlVoSyD40YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VjrakOEK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="netmX57D"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA2ABC4CEF7
-	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 22:22:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VjrakOEK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E2BAC4CEED
+	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 22:48:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754950972;
-	bh=utU4IFpCWHAbSaaIhlArg9nAH82LpriYxTRLkSz28O4=;
+	s=k20201202; t=1754952522;
+	bh=CR+piw1nSlTb56tUWLPg3HrUiMch7K3t3vJzftJs9yI=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=netmX57DC4ayPq1E1eF/MVFeT6hoyBg1KZGJaW8H8OvMWPmPwe09N7LwozHxDyWYk
-	 9+/7B4V9lFwXvymOYu0heJAyPffS6zmk1ZtLPp/72TYFOXLoedNXtf0RozkW8yuOvB
-	 1eWYUm3RWkoOV1prn7LEtes1kAlo21BWBzoBGyrEKDNB75mDeD1VQmZJnpNsK8ty3Y
-	 tqq+8Rgpl2WZ1qt/Kj235NF99Cgbf570INGChqNkcHYzNqpmv74AOHsqjOQpXP4Syh
-	 8EEdT55WQls8vrpbjlwjZYJ9T/3TWTp1y2UwZM+9VlYjLttf6FugVOJK8C+UDGAddC
-	 E9aHamNQauvEQ==
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6154d14d6f6so5697948a12.2
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 15:22:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVjeoAQFdoxRNzNbhmXLDVvGcLMlpiCLHME4ArLFRLbEvNaH/MhEuq9msChPxoRQEzK8jKwR+gFbQ/UpIuyEjPiVVNpZEs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz93HYTA2+6NM2l6hF1Rnw9d8r+BvXW8aYU7RCRZBCX6B3GQqWU
-	xHwmyJlW8V2joM+NBLCsrP8oftiS7bzSlnKYC95nIDlYNRSc7Eo3J4X4pMJS5TQ50Zi/sCRozul
-	B785e8N+wy2opi/57UlRXfiS50aARd1lQv8SX3ueQ
-X-Google-Smtp-Source: AGHT+IFqDV1orE2TgpxB+ErLN3s9x7HnNpyMPPYsQAZOCtLrgYxMtQBz9aLK6MQOpNaAyDjo81a7hrxcv9MieLGa+DU=
-X-Received: by 2002:a05:6402:46:b0:618:4ab5:e85c with SMTP id
- 4fb4d7f45d1cf-6184ecac96dmr510284a12.34.1754950971377; Mon, 11 Aug 2025
- 15:22:51 -0700 (PDT)
+	b=VjrakOEKJvi6vLnwqkHFj/nr8C7bLkQoC2B1u8XNKQGfWfQd+kQdvG2SpWBi2Jhr0
+	 Wlesx7iak/xy1get1n76DiRqEa8u9uBcO32msUd1IqF09CdSrO9hlHxe6NqOWUR72I
+	 8M/11XParhzv/VU9dnWmPgy937Kmpf1TI1GxEclgtW2aN8pRJNlynOxbOdUrxzdea4
+	 EJUVkFTmJvw+hnmO8Z8ZtVgEtN/YSjIDu6vbsuo7X6PHXmnHjKApgLae0YXwnl8iKO
+	 cn+3H36VP9LkPuhlaDrr0tKNh89sp8rIclCMR0/oagw5KUY9TfBIxIFlroQ/fLAodT
+	 sBR19jk6KAg5w==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61571192ba5so7644501a12.2
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 15:48:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVcg9MqrS9yYOhJbGluAbHvEROtjMJwrg23SqnWn5ZHEk4kJLyyF5uHpFdRS+LhICo3IURQ8Mg/NY+xVG7H+PwrhzEJxzw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7r5oc3Yi1CIY4FyLWdamOYrw3tgry9525/z4kYY6Smrtn5zuZ
+	jkCSV9yXjPp57/1sso23Tq3YQ0+9WoUpK/Z8yFUSjq+tFFeFaZv09c9QnAT6JvEylrJ4ReIrbLC
+	ZQL/6uoMh/aPyiXmW2b4ZUf7YLb9XNqBFlPKm1Zh6
+X-Google-Smtp-Source: AGHT+IHPXiFturS5wj58BEw8njsdnBaZv37fH5gNQ4g4I/F8t6TCBnpHZbxmcG1Mv9ycNbPx6F3TtMGbphTCiSEXXfE=
+X-Received: by 2002:a05:6402:5210:b0:617:d024:9e75 with SMTP id
+ 4fb4d7f45d1cf-6184e3c0d5fmr924962a12.0.1754952520768; Mon, 11 Aug 2025
+ 15:48:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721211958.1881379-9-kpsingh@kernel.org> <0b060832-4f55-486a-8994-f52d84c39e38@suswa.mountain>
-In-Reply-To: <0b060832-4f55-486a-8994-f52d84c39e38@suswa.mountain>
+References: <20250721211958.1881379-1-kpsingh@kernel.org> <20250721211958.1881379-3-kpsingh@kernel.org>
+ <CAKtyLkGOBMBF_d1=qUTa=Fxj5HE6_GRWaE6tVgxyEe3WP1oNPg@mail.gmail.com>
+In-Reply-To: <CAKtyLkGOBMBF_d1=qUTa=Fxj5HE6_GRWaE6tVgxyEe3WP1oNPg@mail.gmail.com>
 From: KP Singh <kpsingh@kernel.org>
-Date: Tue, 12 Aug 2025 00:22:40 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ6xVfebK5NuLD3edjG_UTpKxjJtHo+yVS5wZRZAiUB3HQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzm92awyCYFXv8pLv-6O6W2DVP0WLLZed4-_elzPc1Si0Zm4bJEtY3pK1Q
-Message-ID: <CACYkzJ6xVfebK5NuLD3edjG_UTpKxjJtHo+yVS5wZRZAiUB3HQ@mail.gmail.com>
-Subject: Re: [PATCH v2 08/13] bpf: Implement signature verification for BPF programs
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, lkp@intel.com, 
-	oe-kbuild-all@lists.linux.dev, bboscaccy@linux.microsoft.com, 
-	paul@paul-moore.com, kys@microsoft.com, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org
+Date: Tue, 12 Aug 2025 00:48:30 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ4R0MALU65waf0L=eu1ethmM3dHrSMzi3q64cc=ni=_iA@mail.gmail.com>
+X-Gm-Features: Ac12FXw-2UfEpYvQXWC3hl9wVuMao5rpS2KZ0Led54t_HzacdgAuOFbLECQc99k
+Message-ID: <CACYkzJ4R0MALU65waf0L=eu1ethmM3dHrSMzi3q64cc=ni=_iA@mail.gmail.com>
+Subject: Re: [PATCH v2 02/13] bpf: Implement exclusive map creation
+To: Fan Wu <wufan@kernel.org>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[...]
-
-> vim +/sig +2797 kernel/bpf/syscall.c
+On Wed, Jul 30, 2025 at 12:59=E2=80=AFAM Fan Wu <wufan@kernel.org> wrote:
 >
-> c83b0ba795b625 KP Singh           2025-07-21  2782  static noinline int bpf_prog_verify_signature(struct bpf_prog *prog,
-> c83b0ba795b625 KP Singh           2025-07-21  2783                                            union bpf_attr *attr,
-> c83b0ba795b625 KP Singh           2025-07-21  2784                                            bool is_kernel)
-> c83b0ba795b625 KP Singh           2025-07-21  2785  {
-> c83b0ba795b625 KP Singh           2025-07-21  2786      bpfptr_t usig = make_bpfptr(attr->signature, is_kernel);
-> c83b0ba795b625 KP Singh           2025-07-21  2787      struct bpf_dynptr_kern sig_ptr, insns_ptr;
-> c83b0ba795b625 KP Singh           2025-07-21  2788      struct bpf_key *key = NULL;
-> c83b0ba795b625 KP Singh           2025-07-21  2789      void *sig;
-> c83b0ba795b625 KP Singh           2025-07-21  2790      int err = 0;
-> c83b0ba795b625 KP Singh           2025-07-21  2791
-> c83b0ba795b625 KP Singh           2025-07-21  2792      key = bpf_lookup_user_key(attr->keyring_id, 0);
-> c83b0ba795b625 KP Singh           2025-07-21  2793      if (!key)
-> c83b0ba795b625 KP Singh           2025-07-21  2794              return -ENOKEY;
-> c83b0ba795b625 KP Singh           2025-07-21  2795
-> c83b0ba795b625 KP Singh           2025-07-21  2796      sig = kvmemdup_bpfptr(usig, attr->signature_size);
-> c83b0ba795b625 KP Singh           2025-07-21 @2797      if (!sig) {
+> On Mon, Jul 21, 2025 at 2:35=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
+te:
+> >
+> > Exclusive maps allow maps to only be accessed by program with a
+> > program with a matching hash which is specified in the excl_prog_hash
+> > attr.
+> >
+> > For the signing use-case, this allows the trusted loader program
+> > to load the map and verify the integrity
+> >
+> > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > ---
+> >  include/linux/bpf.h            |  1 +
+> >  include/uapi/linux/bpf.h       |  2 ++
+> >  kernel/bpf/syscall.c           | 32 ++++++++++++++++++++++++++++----
+> >  kernel/bpf/verifier.c          |  6 ++++++
+> >  tools/include/uapi/linux/bpf.h |  2 ++
+> >  5 files changed, 39 insertions(+), 4 deletions(-)
+> >
 >
-> This should be an if (!IS_ERR(sig)) { check.
+> ...
+>
+> > -static int map_create(union bpf_attr *attr, bool kernel)
+> > +static int map_create(union bpf_attr *attr, bpfptr_t uattr)
+> >  {
+> >         const struct bpf_map_ops *ops;
+> >         struct bpf_token *token =3D NULL;
+> > @@ -1527,7 +1528,30 @@ static int map_create(union bpf_attr *attr, bool=
+ kernel)
+> >                         attr->btf_vmlinux_value_type_id;
+> >         }
+> >
+> > -       err =3D security_bpf_map_create(map, attr, token, kernel);
+> > +       if (attr->excl_prog_hash) {
+> > +               bpfptr_t uprog_hash =3D make_bpfptr(attr->excl_prog_has=
+h, uattr.is_kernel);
+> > +
+> > +               map->excl_prog_sha =3D kzalloc(SHA256_DIGEST_SIZE, GFP_=
+KERNEL);
+> > +               if (!map->excl_prog_sha) {
+> > +                       err =3D -ENOMEM;
+> > +                       goto free_map;
+> > +               }
+> > +
+> > +               if (attr->excl_prog_hash_size !=3D SHA256_DIGEST_SIZE) =
+{
+> > +                       err =3D -EINVAL;
+> > +                       goto free_map;
+> > +               }
+>
+> Nit: Maybe check the size first to avoid unncessary kzalloc?
 
 Thanks, fixed.
 
 - KP
+>
+> -Fan
+>
+> > +
+> > +               if (copy_from_bpfptr(map->excl_prog_sha, uprog_hash,
+> > +                                    SHA256_DIGEST_SIZE)) {
+> > +                       err =3D -EFAULT;
+> > +                       goto free_map;
+> > +               }
+> > +       } else if (attr->excl_prog_hash_size) {
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       err =3D security_bpf_map_create(map, attr, token, uattr.is_kern=
+el);
+> >         if (err)
+> >                 goto free_map_sec;
+> >
