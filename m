@@ -1,99 +1,86 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820E31C1AB4
-	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 22:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5802253FE
+	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 22:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754950888; cv=none; b=J76IzSbPeOYZjQnjcHGB5fR6bm2Kd7zRbHHw5YAPi/Hu3RI6EserzC6J0FWcLU2c502LLqbGmWcePLuvFgLBTJOAeqzMCj4RS+YxzMOPRpVWSGNhuV+bmQXM/Cdjskgaz68qSTR/vt826DwIR23lRRnLp8+0Ew/bXFZxomyHT2k=
+	t=1754950973; cv=none; b=m1OBBCOAj82QE7kK/LqxesP2WUSxrUoQpgehFDrtM9S79A//HuJiY7fVIA12eYpwo6mBAy3i1GYazcGQvJQfQg+Za0tlaCfX/0ws0u8SZAZRWTapZ//JWzVgBHyusEH2v2cSCSDdAZMuAS8ZlE6YL2xZ2YxKcsMgOXlYHF1lWwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754950888; c=relaxed/simple;
-	bh=qXhanpL+DK2WbdhWgqSJLD1CMqNGLtc5qG4llyV7dp0=;
+	s=arc-20240116; t=1754950973; c=relaxed/simple;
+	bh=utU4IFpCWHAbSaaIhlArg9nAH82LpriYxTRLkSz28O4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tfMttqc2Nxd7HB5TXd1s5QX3i2isKFtz00e9vF0ULHdehZGDiMQmaI9KUQUILeCHOUtdW8ccQ+qRwewIwAjDdpA9GcB7YTRA5/yjl16Okp1EUh+fxsSj7DzlLTRWzFMYTfsx48ygLuaMAjyAaMK52abL8A8TCtd0ulrN5BcNvgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=btRRtqFp; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=UqK6TVC/UpYDfM0sDZbk71Ua0ukYdu1FGbDMKS9xmXpSoGC3SzvdQN6gcGDXeMWyhTKjWR3TDWkiAiiM2NyD0N1SQ5cZzJKe+tSS8bpkaXOwaNK4rSQwClMQZGbTdsgVcQwfUSa8BSjEowK0To9FxAZBZNMPs8vbUfwxIk2aqKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=netmX57D; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="btRRtqFp"
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-31efc10bb03so4164884a91.0
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 15:21:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1754950887; x=1755555687; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TXdnb41bcMRYFaefBcCIWWyf9vYxHasNkQCzWhItBkQ=;
-        b=btRRtqFp9k1+3KHuadN8gK06YGLKpjW0+GWFyE9XG1iqlTQ16dWPQsFMmp51ph97Gj
-         dLwIiXpomEM44yjpyqMmDrEv4P3wjNHXIYW6cGkpDaJt/NKkVf8AqZoieUypJT2i/UIh
-         FriZsMf4aVn6qbLqdrEhohLz1rCS8ggHux2ODerie5ayBFWaS50j/EAqaLZj1aOLqcad
-         XeYbY6PtgZpCRy8xnD0CFzH0MaFNaYaCzvcvkzFmDqQauEGA0Uu7fEj4huf6/5yCOzLA
-         KlJb3aoG3F3DEp7WxAQxAi299lp1OJW51AUAGcvGJ+MdIoVSgb1gIWOzIOge6W2IRrdG
-         xKjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754950887; x=1755555687;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TXdnb41bcMRYFaefBcCIWWyf9vYxHasNkQCzWhItBkQ=;
-        b=pWl1I5Ga9XoKppbVBd04dTZrm9R7ID5xiQn8BAWPN4OFm3shQ4p6CaUMF2O6vj/GCz
-         27IJVPhqVxBpdmC2jzy21UmnmYT2An6kyxAMsD1/RbB/DkDJh0osQbAUNvbsu70ZobMR
-         OZ8OnuHXT4TEs/q6HxBK3b41LsUuzthvuAN+6cvPn4acFdtaxTiUB98TPwNextVbsMVm
-         midlcC0dSgkj0EhpYIwAFYO37OcMp1kmRTiWoTOuEoJ5DRRCnma8tFa3UyhjUq45eSmC
-         lKonjpTIUbWzOnMmiGubYuVad5z+N6NWj6owtapHINEBUfUAlqqQC//ejN/RuZn0CWVr
-         Fn1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVAtDuJbbwrlALhIfpYaZFj1l9hrUtAzAP/W7/mau5YjyIIh7Rpij8xaFzAjauRpdOjjBkUlqWq8yt/QjQ0JTBfbW9C3qA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKG6TI1b7YXlbHqU8mFSoYGQHwPmdl1J2i3Zq2UpNmkgACokwf
-	UjG1l6aDKua3cnNDJJK1K8C9DI3ZENptB2AKTc4jHIYh2oXsqjzKi2JmFVXNCElSu+tHLtinAA0
-	o3MJGPlssmDtQy3uOOYiEAyGpUySfNWdj+aFPp91q
-X-Gm-Gg: ASbGncvIHZpqkZprop/oXvAmF042h4gEsGlnhvA3R+VT5Ni+kBEuV8NzzM7B4K3La+v
-	I9CrIBWpf5XVDLbHkRVKHkDjtLRTR5aC5aAbAVuhbqEKi1aXZC9agB9ehINK0EAFeUaK21qNZBx
-	w+e3HYqt8Neqkx8J77NFPfZEAQDKXTC1946AUgMINbCt15kZMfNFAJdoLaA08NS5rY0/DeCzqiz
-	QxkxzwRnFn5XzZBcw==
-X-Google-Smtp-Source: AGHT+IEss2X+BEVYoSZIRFPMdBMIECB9EsuPm1/5BEpb7wMtfKbuhIPqkxFcGxZboN3KJZ7oj0OWy4xB2RyQ2dN40eo=
-X-Received: by 2002:a17:90a:dfc4:b0:321:6ac:532b with SMTP id
- 98e67ed59e1d1-321c0b3493dmr1670945a91.35.1754950886988; Mon, 11 Aug 2025
- 15:21:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="netmX57D"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA2ABC4CEF7
+	for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 22:22:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754950972;
+	bh=utU4IFpCWHAbSaaIhlArg9nAH82LpriYxTRLkSz28O4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=netmX57DC4ayPq1E1eF/MVFeT6hoyBg1KZGJaW8H8OvMWPmPwe09N7LwozHxDyWYk
+	 9+/7B4V9lFwXvymOYu0heJAyPffS6zmk1ZtLPp/72TYFOXLoedNXtf0RozkW8yuOvB
+	 1eWYUm3RWkoOV1prn7LEtes1kAlo21BWBzoBGyrEKDNB75mDeD1VQmZJnpNsK8ty3Y
+	 tqq+8Rgpl2WZ1qt/Kj235NF99Cgbf570INGChqNkcHYzNqpmv74AOHsqjOQpXP4Syh
+	 8EEdT55WQls8vrpbjlwjZYJ9T/3TWTp1y2UwZM+9VlYjLttf6FugVOJK8C+UDGAddC
+	 E9aHamNQauvEQ==
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6154d14d6f6so5697948a12.2
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Aug 2025 15:22:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVjeoAQFdoxRNzNbhmXLDVvGcLMlpiCLHME4ArLFRLbEvNaH/MhEuq9msChPxoRQEzK8jKwR+gFbQ/UpIuyEjPiVVNpZEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz93HYTA2+6NM2l6hF1Rnw9d8r+BvXW8aYU7RCRZBCX6B3GQqWU
+	xHwmyJlW8V2joM+NBLCsrP8oftiS7bzSlnKYC95nIDlYNRSc7Eo3J4X4pMJS5TQ50Zi/sCRozul
+	B785e8N+wy2opi/57UlRXfiS50aARd1lQv8SX3ueQ
+X-Google-Smtp-Source: AGHT+IFqDV1orE2TgpxB+ErLN3s9x7HnNpyMPPYsQAZOCtLrgYxMtQBz9aLK6MQOpNaAyDjo81a7hrxcv9MieLGa+DU=
+X-Received: by 2002:a05:6402:46:b0:618:4ab5:e85c with SMTP id
+ 4fb4d7f45d1cf-6184ecac96dmr510284a12.34.1754950971377; Mon, 11 Aug 2025
+ 15:22:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716212731.31628-5-casey@schaufler-ca.com>
- <d5f0d7a5edea8511ab4467e0fb225b8b@paul-moore.com> <4f6c9294-dfb3-45cf-8f46-c1a0063d2921@schaufler-ca.com>
-In-Reply-To: <4f6c9294-dfb3-45cf-8f46-c1a0063d2921@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 11 Aug 2025 18:21:14 -0400
-X-Gm-Features: Ac12FXyMjcnxuMYwY6jL1gdJPw-g9F2DzMGA2F70iCe8j7vzY4irDpbe-2aJOKM
-Message-ID: <CAHC9VhR-Jd8JGhEETSBLDQA843FtsyN+ocM1XjfA_A6g+tJeng@mail.gmail.com>
-Subject: Re: [PATCH v5 4/5] Audit: Fix indentation in audit_log_exit
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: eparis@redhat.com, linux-security-module@vger.kernel.org, 
-	audit@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
-	keescook@chromium.org, john.johansen@canonical.com, 
-	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+References: <20250721211958.1881379-9-kpsingh@kernel.org> <0b060832-4f55-486a-8994-f52d84c39e38@suswa.mountain>
+In-Reply-To: <0b060832-4f55-486a-8994-f52d84c39e38@suswa.mountain>
+From: KP Singh <kpsingh@kernel.org>
+Date: Tue, 12 Aug 2025 00:22:40 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ6xVfebK5NuLD3edjG_UTpKxjJtHo+yVS5wZRZAiUB3HQ@mail.gmail.com>
+X-Gm-Features: Ac12FXzm92awyCYFXv8pLv-6O6W2DVP0WLLZed4-_elzPc1Si0Zm4bJEtY3pK1Q
+Message-ID: <CACYkzJ6xVfebK5NuLD3edjG_UTpKxjJtHo+yVS5wZRZAiUB3HQ@mail.gmail.com>
+Subject: Re: [PATCH v2 08/13] bpf: Implement signature verification for BPF programs
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: oe-kbuild@lists.linux.dev, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, lkp@intel.com, 
+	oe-kbuild-all@lists.linux.dev, bboscaccy@linux.microsoft.com, 
+	paul@paul-moore.com, kys@microsoft.com, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 5, 2025 at 7:06=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
-> On 8/5/2025 12:39 PM, Paul Moore wrote:
-> > On Jul 16, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> Fix two indentation errors in audit_log_exit().
-> >>
-> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> >> ---
-> >>  kernel/auditsc.c | 7 ++++---
-> >>  1 file changed, 4 insertions(+), 3 deletions(-)
-> > As this is indepdendent of all the other changes in this patchset, I'm
-> > going to merge this into audit/dev-staging now and audit/dev later when
-> > the merge window is closed.
+[...]
+
+> vim +/sig +2797 kernel/bpf/syscall.c
 >
-> Spiffy. Thank You.
+> c83b0ba795b625 KP Singh           2025-07-21  2782  static noinline int bpf_prog_verify_signature(struct bpf_prog *prog,
+> c83b0ba795b625 KP Singh           2025-07-21  2783                                            union bpf_attr *attr,
+> c83b0ba795b625 KP Singh           2025-07-21  2784                                            bool is_kernel)
+> c83b0ba795b625 KP Singh           2025-07-21  2785  {
+> c83b0ba795b625 KP Singh           2025-07-21  2786      bpfptr_t usig = make_bpfptr(attr->signature, is_kernel);
+> c83b0ba795b625 KP Singh           2025-07-21  2787      struct bpf_dynptr_kern sig_ptr, insns_ptr;
+> c83b0ba795b625 KP Singh           2025-07-21  2788      struct bpf_key *key = NULL;
+> c83b0ba795b625 KP Singh           2025-07-21  2789      void *sig;
+> c83b0ba795b625 KP Singh           2025-07-21  2790      int err = 0;
+> c83b0ba795b625 KP Singh           2025-07-21  2791
+> c83b0ba795b625 KP Singh           2025-07-21  2792      key = bpf_lookup_user_key(attr->keyring_id, 0);
+> c83b0ba795b625 KP Singh           2025-07-21  2793      if (!key)
+> c83b0ba795b625 KP Singh           2025-07-21  2794              return -ENOKEY;
+> c83b0ba795b625 KP Singh           2025-07-21  2795
+> c83b0ba795b625 KP Singh           2025-07-21  2796      sig = kvmemdup_bpfptr(usig, attr->signature_size);
+> c83b0ba795b625 KP Singh           2025-07-21 @2797      if (!sig) {
+>
+> This should be an if (!IS_ERR(sig)) { check.
 
-... and now it's in audit/dev, thanks!
+Thanks, fixed.
 
---=20
-paul-moore.com
+- KP
