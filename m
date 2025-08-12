@@ -1,212 +1,236 @@
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289692CA9;
-	Tue, 12 Aug 2025 18:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274FB2FFDD8;
+	Tue, 12 Aug 2025 23:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755025165; cv=none; b=QyBsx7Dkx7N9fLpEkZ2wNIOQDNh3V8uky26R9y4veTGmB7k0bn+M5/0ctJvF8WFrHkQxUw8WY5s29eZFppYUnPe4Q8YLDxOHz3nTzR+qaB8UaY3RK4kceMLfBjvaDpJ84yIhcMrEfhbQ6RIKF4r8l9HSZ/6S1FMCo22A63IHMiI=
+	t=1755042825; cv=none; b=f35Dp7WFOlx06Ob0qDni3a3bf87bffr4we3JMb7XBXKAJztQo448XtzM3m2uj/9Pwll9ZzNsz8u2dWDkCfYRqU5L9s+nXb095E3EGUS5DwqsyeOOpQis60Ut3Wt6I6crsOPQmMIlkjPEWc+Uio6drb5guP5gSvWmamnVAddxujM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755025165; c=relaxed/simple;
-	bh=XGQjyes+DkHFAuA5XGPVF/cN6DzKqU2ii27ZlxqfHMA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pg44A03QTP/LjbNOrE5+zkahGpIikQl2lZuJwpJOXq/oIS5lhjlvEsPlkpTbbaz8Dx3ffk0TBLmLIH+yKPGP1gB9cr/tll0N+3RmMLELKE+CP4Zn/LsMFK+WSy1ViaVRhPHeT9EdyYt6yP293vvLrXVjXz6JZ8rj3zbrQbhyIbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=POTtW70b; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+	s=arc-20240116; t=1755042825; c=relaxed/simple;
+	bh=8bvUfGdy/4CX9YbEa5WAWf+9OFbb/luone3iWCIXdPs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WFhDH2m0RzXaXcP53O0KN2VBslxq0Eog0hZiWA3ITMsUM9XLNGC413PGFtj1DCr0saFd/bs4GYPP7/pyS9rQLXSxd9iQIMM85TjErLy1+KJDd1ltMfwy8BY0E0bAX7PuZzW39h5PjSLPjnJdmzyvoCOzpEKNiZEVphwDLM0C/JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=ueNoPElG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PYdpvhUV; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="POTtW70b"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=1DMQ0VBygMOvwakIBCsvDifzmVs+bPS4rzyHa/WOn+o=; t=1755025163;
-	x=1755629963; b=POTtW70bCmescaCdrCdX8XP9asqhxFD1OaTI+7hrkIw/vxL92WFbJiXDdASe+
-	Mf3X4re0zXG2hxCE+z3candYdPiATw2/IkWimSo/F6mYH8i5REAr0RU4eImBJ87xRGUR8BLRQOND3
-	19srgq0YSwam32QEzWewGOKrL/KyXM5W2WjtEvd7LVzUG+UOHPrYiB7ncMZvM0+Ypg6JkNSjtYdhO
-	JKcX4Nz09/c2c/v6XjOUatdRA6C+m0Q+2Dna8noUURW2Rqa2jbI4edHo91ynIYXN+6R4/MSHQzVIQ
-	g84UsFfE4TQTRCJUbyNWz2pTQTHJtcbapOO/pvb8lHfuS70+dQ==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1uluDJ-000000023LZ-2n1M; Tue, 12 Aug 2025 20:59:13 +0200
-Received: from p57bd96d0.dip0.t-ipconnect.de ([87.189.150.208] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1uluDJ-00000003wKp-1aOu; Tue, 12 Aug 2025 20:59:13 +0200
-Message-ID: <c69487a248eb5660aa817fdbb0f9a10d770feab6.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v5 18/23] bpf: Use vmalloc special flag
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "peterz@infradead.org"
-	 <peterz@infradead.org>, "mingo@redhat.com" <mingo@redhat.com>, 
- "luto@kernel.org"
-	 <luto@kernel.org>, "bp@alien8.de" <bp@alien8.de>
-Cc: "sam@gentoo.org" <sam@gentoo.org>, "andreas@gaisler.com"	
- <andreas@gaisler.com>, "nadav.amit@gmail.com" <nadav.amit@gmail.com>, 
- "anthony.yznaga@oracle.com"	 <anthony.yznaga@oracle.com>,
- "dave.hansen@linux.intel.com"	 <dave.hansen@linux.intel.com>,
- "akpm@linux-foundation.org"	 <akpm@linux-foundation.org>,
- "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>,
- "linux_dti@icloud.com" <linux_dti@icloud.com>,  "will.deacon@arm.com"	
- <will.deacon@arm.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
- "tglx@linutronix.de"	 <tglx@linutronix.de>,
- "linux-security-module@vger.kernel.org"	
- <linux-security-module@vger.kernel.org>, "sparclinux@vger.kernel.org"	
- <sparclinux@vger.kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, 
- "linux-integrity@vger.kernel.org"	 <linux-integrity@vger.kernel.org>,
- "daniel@iogearbox.net" <daniel@iogearbox.net>, 
- "kernel-hardening@lists.openwall.com"	
- <kernel-hardening@lists.openwall.com>, "ast@kernel.org" <ast@kernel.org>, 
- "x86@kernel.org"	 <x86@kernel.org>, "kristen@linux.intel.com"
- <kristen@linux.intel.com>
-Date: Tue, 12 Aug 2025 20:59:12 +0200
-In-Reply-To: <7e4dfc01e132196d3ff10df18622252a8455d1b8.camel@intel.com>
-References: <20190426001143.4983-1-namit@vmware.com>
-		 <20190426001143.4983-19-namit@vmware.com>
-		 <14437e403ed8fceacafe0a89521d3b731211156e.camel@physik.fu-berlin.de>
-		 <1738e24239cc0c001245fdd4bd3811175c573ce2.camel@intel.com>
-		 <49b112b80b211ae05b5f3c36a55f67041783f51e.camel@physik.fu-berlin.de>
-	 <7e4dfc01e132196d3ff10df18622252a8455d1b8.camel@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="ueNoPElG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PYdpvhUV"
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 5247C140005B;
+	Tue, 12 Aug 2025 19:53:42 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Tue, 12 Aug 2025 19:53:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1755042822;
+	 x=1755129222; bh=XLBQ1JOtdE1KY0DlabBTT2NFzPxxhYJ/GR+ZB9hVK3U=; b=
+	ueNoPElGunDTP+AIYiQYHCXPrE4tdYAGBQQFc7C0j/KVq5B/rso1okMxxNhcjnFu
+	lDaO+CNTCJTOhGtWXKKK2JXbOBEjsiG4zyU673ntIxsgYiaumtV6pB2SVUfKte8Y
+	a2Km2FTL3KR5rXOGPBmxAm8AOxz3JFm/nAClGYJ4JzNCiCmo0Twq6GPXObsvH8RS
+	K0GJZAPmnnU2TLMGaPZTzPegp9lWly6bypTW6HjTOxHlsRoG3AwAffegWg9kXsnC
+	vXM1AYqGMMUYwKedoplrCrsbRjM+zo8LLgEwnSXOboDbk5pjIYzTu9CXjwLrUeNf
+	50DeMjcqFYnDs4nuUdgEoA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755042822; x=
+	1755129222; bh=XLBQ1JOtdE1KY0DlabBTT2NFzPxxhYJ/GR+ZB9hVK3U=; b=P
+	YdpvhUVpylpmritIomVjV4uY6espHnL9LGgeBKmxp9vrXk43vO873MDCCE7Af8iX
+	jhNahXhtSs2j0w6eGtFCGx2C8MWYs1pMlUd1kktPgFOcOnAcy+JaJqHL63JlWK3V
+	W4UlmMLfPiKe5qC6Tro9hR87A5OZXWGG2DC4ujuKe5Dv7dpSo2/w9ti/qnDHjAam
+	w8ANm49HVWsYX5NXiF0/snZX+dJ7Rq7ArGR/lSTHPuCa8PwW1NPHdi1UheFsyqde
+	csODme7txn4I/nSsiEAhVtOfcNsFA/CKZ+Eebp/8rcrHSdOS7p9mVbsNn09cmLsy
+	7CRuBvjlyeFUGVQdLLEIA==
+X-ME-Sender: <xms:BNSbaArauuSEbZVtq-of3rqid7cVmtX1v81Z3s94m5xuVm3y5Vz_WQ>
+    <xme:BNSbaFJaFhANtvwLXIqCxEsNlVe6fiLzy2CzZa6vs6Qi1Rd4eKWT3shC45sFBDi3W
+    2B9fGaH7BEUDoYYxJ0>
+X-ME-Received: <xmr:BNSbaAtgYOxMwNeAsWk3AePFkbeEGoEFHfUIvUu6ImxjMKuyp9AWaE1gFT12yni601klHQRuZfQO1p5W0BXBEQ5f>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeeijedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefvihhnghhm
+    rghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepud
+    ekvefhgeevvdevieehvddvgefhgeelgfdugeeftedvkeeigfeltdehgeeghffgnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgrohifth
+    hmrdhorhhgpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtoheprghsmhgruggvuhhssegtohguvgifrhgvtghkrdhorhhgpdhrtghpthhtoheplh
+    hinhhugigpohhsshestghruhguvggshihtvgdrtghomhdprhgtphhtthhopegvrhhitghv
+    hheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhutghhohesihhonhhkohhvrdhnvg
+    htpdhrtghpthhtohepvhelfhhssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthht
+    ohepmhhitgesughighhikhhougdrnhgvthdprhgtphhtthhopehgnhhorggtkhesghhooh
+    hglhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhl
+    vgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrggtkhesshhushgvrd
+    gtii
+X-ME-Proxy: <xmx:BNSbaCBa8jG_WH2gUrLcLw72gKwi6ROtUq2biWNbEWI2EpnfTR9JpA>
+    <xmx:BNSbaI6fiRcGpQ1cRv1HqRjZARKpKL2rFDMERYhsq001qNkWTjUAmQ>
+    <xmx:BNSbaKAUlihntSxmA44arQgYRy1n2GU0xia-l8upFBnO7WEt17Kfyw>
+    <xmx:BNSbaO6cI2nKsRdbcGk2JFdpOm0HyfVY5EdhUq3ZiQLWhA-mV45JIg>
+    <xmx:BtSbaK608ARYjuEsDIdb5PnIT52AdUV1E8NBCVLOCuqqJSY5ss_8cwO2>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 12 Aug 2025 19:53:39 -0400 (EDT)
+Message-ID: <b9aa9f6f-483f-41a5-a8d7-a3126d7e4b8f@maowtm.org>
+Date: Wed, 13 Aug 2025 00:53:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/6] fs/9p: Reuse inode based on path (in addition to
+ qid)
+To: Dominique Martinet <asmadeus@codewreck.org>,
+ Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
+ Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+References: <cover.1743971855.git.m@maowtm.org>
+ <aJXRAzCqTrY4aVEP@codewreck.org> <13395769.lPas3JvW2k@silver>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <13395769.lPas3JvW2k@silver>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-08-12 at 18:49 +0000, Edgecombe, Rick P wrote:
-> On Tue, 2025-08-12 at 20:37 +0200, John Paul Adrian Glaubitz wrote:
-> > That could be true. I knew about the patch in [1] but I didn't think of=
- applying it.
-> >=20
-> > FWIW, the crashes we're seeing on recent kernel versions look like this=
-:
-> >=20
-> > [=C2=A0=C2=A0 40.992851]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \|/ ____ \|/
-> > [=C2=A0=C2=A0 40.992851]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "@'/ .. \`@"
-> > [=C2=A0=C2=A0 40.992851]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /_| \__/ |_\
-> > [=C2=A0=C2=A0 40.992851]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \__U_/
-> > [=C2=A0=C2=A0 41.186220] (udev-worker)(88): Kernel illegal instruction =
-[#1]
->=20
-> Possibly re-using some stale TLB executable VA which's page now has other=
- data
-> in it.
+On 8/8/25 11:27, Dominique Martinet wrote:
+> Sorry for the delay...
 
-Makes sense given the memory is actually zero'd out.
+No worries, thanks for picking this up!
 
-> > [=C2=A0=C2=A0 41.262910] CPU: 0 UID: 0 PID: 88 Comm: (udev-worker) Tain=
-ted: G=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 W=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 6.12.0+ #25
-> > [=C2=A0=C2=A0 41.376151] Tainted: [W]=3DWARN
-> > [=C2=A0=C2=A0 41.415025] TSTATE: 0000004411001607 TPC: 00000000101c21c0=
- TNPC: 00000000101c21c4 Y: 00000000=C2=A0=C2=A0=C2=A0 Tainted: G=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 W=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=20
-> > [=C2=A0=C2=A0 41.563717] TPC: <ehci_init_driver+0x0/0x160 [ehci_hcd]>
-> > [=C2=A0=C2=A0 41.633584] g0: 00000000012005b8 g1: 00000000100a1800 g2: =
-0000000010206000 g3: 00000000101de000
-> > [=C2=A0=C2=A0 41.747962] g4: fff000000a5af380 g5: 0000000000000000 g6: =
-fff000000aac8000 g7: 0000000000000e7b
-> > [=C2=A0=C2=A0 41.862338] o0: 0000000010060118 o1: 000000001020a000 o2: =
-fff000000aa30ce0 o3: 0000000000000e7a
-> > [=C2=A0=C2=A0 41.976728] o4: 00000000ff000000 o5: 00ff000000000000 sp: =
-fff000000aacb091 ret_pc: 00000000101de028
-> > [=C2=A0=C2=A0 42.095768] RPC: <ehci_pci_init+0x28/0x2000 [ehci_pci]>
-> > [=C2=A0=C2=A0 42.164394] l0: 0000000000000000 l1: 0000000100043fff l2: =
-ffffffffff800000 l3: 0000000000800000
-> > [=C2=A0=C2=A0 42.278768] l4: fff00000001c8008 l5: 0000000000000000 l6: =
-00000000013358e0 l7: 0000000001002800
-> > [=C2=A0=C2=A0 42.393143] i0: ffffffffffffffed i1: 00000000004db8d8 i2: =
-0000000000000000 i3: fff000000aa304e0
-> > [=C2=A0=C2=A0 42.507517] i4: 0000000001127250 i5: 0000000010060000 i6: =
-fff000000aacb141 i7: 0000000000427d90
-> > [=C2=A0=C2=A0 42.621893] I7: <do_one_initcall+0x30/0x200>
-> > [=C2=A0=C2=A0 42.677931] Call Trace:
-> > [=C2=A0=C2=A0 42.709953] [<0000000000427d90>] do_one_initcall+0x30/0x20=
-0
-> > [=C2=A0=C2=A0 42.783158] [<00000000004db908>] do_init_module+0x48/0x240
-> > [=C2=A0=C2=A0 42.855214] [<00000000004dd82c>] load_module+0x19cc/0x1f20
-> > [=C2=A0=C2=A0 42.927270] [<00000000004ddf8c>] init_module_from_file+0x6=
-c/0xa0
-> > [=C2=A0=C2=A0 43.006189] [<00000000004de1e4>] sys_finit_module+0x1c4/0x=
-2c0
-> > [=C2=A0=C2=A0 43.081677] [<0000000000406174>] linux_sparc_syscall+0x34/=
-0x44
-> > [=C2=A0=C2=A0 43.158307] Disabling lock debugging due to kernel taint
-> > [=C2=A0=C2=A0 43.228077] Caller[0000000000427d90]: do_one_initcall+0x30=
-/0x200
-> > [=C2=A0=C2=A0 43.306995] Caller[00000000004db908]: do_init_module+0x48/=
-0x240
-> > [=C2=A0=C2=A0 43.384772] Caller[00000000004dd82c]: load_module+0x19cc/0=
-x1f20
-> > [=C2=A0=C2=A0 43.462544] Caller[00000000004ddf8c]: init_module_from_fil=
-e+0x6c/0xa0
-> > [=C2=A0=C2=A0 43.547184] Caller[00000000004de1e4]: sys_finit_module+0x1=
-c4/0x2c0
-> > [=C2=A0=C2=A0 43.628389] Caller[0000000000406174]: linux_sparc_syscall+=
-0x34/0x44
-> > [=C2=A0=C2=A0 43.710741] Caller[fff000010480e2fc]: 0xfff000010480e2fc
-> > [=C2=A0=C2=A0 43.780508] Instruction DUMP:
-> > [=C2=A0=C2=A0 43.780511]=C2=A0 00000000=20
-> > [=C2=A0=C2=A0 43.819394]=C2=A0 00000000=20
-> > [=C2=A0=C2=A0 43.850273]=C2=A0 00000000=20
-> > [=C2=A0=C2=A0 43.881153] <00000000>
-> > [=C2=A0=C2=A0 43.912036]=C2=A0 00000000=20
-> > [=C2=A0=C2=A0 43.942917]=C2=A0 00000000=20
-> > [=C2=A0=C2=A0 43.973797]=C2=A0 00000000=20
-> > [=C2=A0=C2=A0 44.004678]=C2=A0 00000000=20
-> > [=C2=A0=C2=A0 44.035561]=C2=A0 00000000=20
-> > [=C2=A0=C2=A0 44.066443]
-> >=20
-> > Do you have any suggestion what to bisect?
->=20
-> This does look like kernel range TLB flush related. Not sure how it's rel=
-ated to
-> userspace huge pages. Perhaps the userspace range TLB flush has issues to=
-? Or
-> the TLB flush asm needs to be fixed in this another sparc variant?
+> 
+> Tingmao Wang wrote on Sun, Apr 06, 2025 at 09:43:01PM +0100:
+>> Unrelated to the above problem, it also seems like even with the revert in
+>> [2], because in cached mode inode are still reused based on qid (and type,
+>> version (aka mtime), etc), the setup mentioned in [2] still causes
+>> problems in th latest kernel with cache=loose:
+> 
+> cache=loose is "you're on your own", I think it's fine to keep as is,
+> especially given qemu can handle it with multidevs=remap if required
 
-The patch you previously linked actually fixed this particular SPARC varian=
-t which
-is sun4u, i.e. the non-hypervisor variant with sun4v being the hypervisor o=
-ne.
+On 8/8/25 11:52, Christian Schoenebeck wrote:
+>> [...]
+> 
+> As of QEMU 10.0, multidevs=remap (i.e. remapping inodes from host to guest) is
+> now the default behaviour, since inode collisions were constantly causing
+> issues and confusion among 9p users.
+> 
+> And yeah, cache=loose means 9p client is blind for whatever changes on 9p
+> server side.
+> 
+> /Christian
+> 
 
-I was already thinking that the fix in d3c976c14ad8 was possible incomplete=
-.
+My understanding of cache=loose was that it only assumes that the server
+side can't change the fs under the client, but otherwise things like
+inodes should work identically, even though currently it works differently
+due to (only) cached mode re-using inodes - was this deliberate?
 
-> So far two issues were found with that patch and they were both rare
-> architectures with broken kernel TLB flushes. Kernel TLB flushes can actu=
-ally
-> not be required for a long time, so probably the bug normally looked like
-> unexplained crashes after days. The VM_FLUSH_RESET_PERMS just made them s=
-how up
-> earlier in a bisectable way.
+Basically, assuming no unexpected server side changes, I would think that
+the user would not be totally "on their own" (even if there are colliding
+qids).  But given the issue with breaking how hardlinks currently works in
+cached mode, as Dominique mentioned below, and the fact that inode
+collisions should be rare given the new QEMU default, maybe we do need to
+handle this differently (i.e. keep the existing behaviour and working
+hardlinks for cached mode)?  I'm happy either way (Landlock already works
+currently with cached mode)
 
-Yeah, I think that could actually be the case.
+On 8/8/25 11:27, Dominique Martinet wrote:
+> Tingmao Wang wrote on Sun, Apr 06, 2025 at 09:43:01PM +0100:
+> [...]
+>> With the above in mind, I have a proposal for 9pfs to:
+>> 1. Reuse inodes even in uncached mode
+>> 2. However, reuse them based on qid.path AND the actual pathname, by doing
+>>    the appropriate testing in v9fs_test(_new)?_inode(_dotl)?
+> 
+> I think that's fine for cache=none, but it breaks hardlinks on
+> cache=loose so I think this ought to only be done without cache
+> (I haven't really played with the cache flag bits, not check pathname if
+> any of loose, writeback or metadata are set?)
+> 
 
-I wonder whether I can revert both d3c976c14ad8 and a74ad5e660a9 on a curre=
-nt
-tree and see if that fixes the bug.
+I think currently 9pfs reuse inodes if cache is either loose or metadata
+(but not writeback), given:
 
-Adrian
+	else if (v9ses->cache & (CACHE_META|CACHE_LOOSE))
+		inode = v9fs_get_inode_from_fid(v9ses, fid, dir->i_sb);
+	else
+		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+in v9fs_vfs_lookup, so maybe we keep this pattern and not check pathname
+if (loose|metadata) is set (but not writeback)?
+
+>> The main problem here is how to store the pathname in a sensible way and
+>> tie it to the inode.  For now I opted with an array of names acquired with
+>> take_dentry_name_snapshot, which reuses the same memory as the dcache to
+>> store the actual strings
+
+(Self correction: technically, the space is only shared if they are long
+enough to not be inlined, which is DNAME_INLINE_LEN = 40 for 64bit or 20
+for 32bit, so in most cases the names would probably be copied.  Maybe it
+would be more compact in terms of memory usage to just store the path as a
+string, with '/' separating components?  But then the code would be more
+complex and we can't easily use d_same_name anymore, so maybe it's not
+worth doing, unless this will prove useful for other purposes, like the
+re-opening of fid mentioned below?)
+
+>> , but doesn't tie the lifetime of the dentry with
+>> the inode (I thought about holding a reference to the dentry in the
+>> v9fs_inode, but it seemed like a wrong approach and would cause dentries
+>> to not be evicted/released).
+> 
+> That's pretty hard to get right and I wish we had more robust testing
+> there... But I guess that's appropriate enough.
+> 
+> I know Atos has done an implementation that keeps the full path
+> somewhere to re-open fids in case of server reconnections, but that code
+> has never been submitted upstream that I can see so I can't check how
+> they used to store the path :/ Ohwell.
+> 
+>> Storing one pathname per inode also means we don't reuse the same inode
+>> for hardlinks -- maybe this can be fixed as well in a future version, if
+>> this approach sounds good?
+> 
+> Ah, you pointed it out yourself. I don't see how we could fix that, as
+> we have no way other than the qid to identify hard links; so this really
+> ought to depend on cache level if you want to support landlock/*notify
+> in cache=none.
+
+In that case, and as discussed above, I'm happy to change this patch
+series to only affect uncached.
+
+> 
+> Frankly the *notify use-case is difficult to support properly, as files
+> can change from under us (e.g. modifying the file directly on the host
+> in qemu case, or just multiple mounts of the same directory), so it
+> can't be relied on in the general case anyway -- 9p doesn't have
+> anything like NFSv4 leases to get notified when other clients write a
+> file we "own", so whatever we do will always be limited...
+> But I guess it can make sense for limited monitoring e.g. rebuilding
+> something on change and things like that?
+
+One of the first use case I can think of here is IDE/code editors
+reloading state (e.g. the file tree) on change, which I think didn't work
+for 9pfs folders opened with vscode if I remembered correctly (but I
+haven't tested this recently).  Even though we can't monitor for remote
+changes, having this work for local changes would still be nice.
+
+
+Note that aside from Mickaël's comments which I will apply in the next
+version, I also realized that I haven't done the proper handling for
+renames (it should probably update the v9fs_ino_path in the renamed
+inode).  I will do that in the next version (in addition to changing the
+cached behaviour).  Do let me know if you have any other comment on the
+patch series.
+
+Best,
+Tingmao
