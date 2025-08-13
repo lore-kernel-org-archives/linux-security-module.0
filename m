@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23402EBDD2;
-	Wed, 13 Aug 2025 20:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8C62F28FC;
+	Wed, 13 Aug 2025 20:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755118538; cv=none; b=eTHlDvyxJKPF7A3bbmW6ZgZsBJ4N5Hb9wwDnbZxNDp63J5LXyWUsE0jfE+PEhy9sYl+mjcnge1DTkhshNnRe2xUgdjJhlbXJYhYVLfiIKTIrh6vVJn/fbmL+aGiMNLQB7qyMphiBFOnNnGcwZIOQgB1y74dLMuIJbe9SKEjq/i8=
+	t=1755118540; cv=none; b=WPbl7hvBqChxml3tyDnWORtmxeAAkJ790FPGfG4yfcB1ClAPtmiELYrQemhF1ZPssVgufnlc5VWVHCQouBc61fZpGJXNhMd8YKiy5qu6Qt0NKtJHZw+W7xDlHJpp0Hr7Wt7cRkiJGD9GDfuqqAgChK44BISKbWimFyphsroFtUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755118538; c=relaxed/simple;
-	bh=o+QnQXBbsNnhzc+F7XR5RGGcsAzuJwGoRpwGKKVP7iY=;
+	s=arc-20240116; t=1755118540; c=relaxed/simple;
+	bh=R6RBBJ+UoXPm+YKr+z5Go8Pp/xR66pnVPokn7HqXPsA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MZYiG6BqF3Lbh6FcQT+rWMiQH3rNJPZ0yFO9Mn61uKvANwTfkVJQ7KHDw72pJc865WAz5pyFAydQYMGyIi8f90DhguISUx79RsnfZMs3i0L7qYj4ZbPfXv1Xpfqjpv7F1f5nsawIzWXb8+IzVg48WgqRUzOlfuWh9xB2YlV6pgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QNBFjLH6; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=RxCKOVmE3QMW86piC6okUDliu8frniSiCkbOgklC0NC8Qi3OStXOLZe6b/VpjHPCR/OkkDaNU6azjYobSdv8FTiLCAqGapvwfLPdKiy8GoRHng6vH2cfZd/r+Lr2A6ugzuZdlp0wTBV2i58YG+rcmpn9GXsIQ5Z15PKp9EeWlfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jg3fuv20; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QNBFjLH6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53B2DC4CEEB;
-	Wed, 13 Aug 2025 20:55:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jg3fuv20"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2CEFC4CEED;
+	Wed, 13 Aug 2025 20:55:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755118534;
-	bh=o+QnQXBbsNnhzc+F7XR5RGGcsAzuJwGoRpwGKKVP7iY=;
+	s=k20201202; t=1755118538;
+	bh=R6RBBJ+UoXPm+YKr+z5Go8Pp/xR66pnVPokn7HqXPsA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QNBFjLH6XJmorVw7m/V+G+ydoKpJlWxlSi4khAVSppDyRrLoI/+lcnz9kGhOozG1I
-	 ik6Na3jHYhGBdt8TTyQU6xQQauhY1vgopQfosrOIRn8F3f5MNcBqshYb2KngqY9gzd
-	 Y5b1xRJS0LBKOL/TIEp7W/izdAg6TzCgO3l4BNpa+Q2DGzSYVDcyrNt+VUvBamlYdy
-	 yadvJcg1myzDCK5tAgE4UcTcBw3vPm6mjLlM5ArfmdsQ/edJQKXUE8i5rzbJrPhBRA
-	 ytlRVy7THEmsn5WhpqTeUL+CC7ci8KxJLtnr/elqMZgz8oUmZ9aBEqw/brbRbDaNvN
-	 LAs1ANQrCqVpg==
+	b=jg3fuv20q2ecUeiC/5TLIMf5i+ME3Ubw+SSJXgVwQG425MUKMmHOKSLmaLTFZs8b+
+	 oGtIpHmD+ggyH3Ta5eY2QsSCPfAFaYItokuF7oESK3Co7Kloz/ZotFtJduTLbgueii
+	 xM4iJAkk5xz4Jg6zGmoI3cLEDW3JyRt2PU5uqJoyKJZKvERPzz1gr7MeGIJS8+Wguo
+	 COIi49d3Vkj0UmsLJDm2NiJ13s9vfV4Z0G1+/cAGKdQwtnlBL1kGu6lg9SkevHwD2g
+	 lrF1uxTaDr7r4BXpdkSSZrvMWuLxnrb6NMcmnB5BOrve5NIlHdyawq3qIAZIXgSHCw
+	 1q+sELe8NdWHw==
 From: KP Singh <kpsingh@kernel.org>
 To: bpf@vger.kernel.org,
 	linux-security-module@vger.kernel.org
@@ -36,9 +36,9 @@ Cc: bboscaccy@linux.microsoft.com,
 	daniel@iogearbox.net,
 	andrii@kernel.org,
 	KP Singh <kpsingh@kernel.org>
-Subject: [PATCH v3 01/12] bpf: Update the bpf_prog_calc_tag to use SHA256
-Date: Wed, 13 Aug 2025 22:55:15 +0200
-Message-ID: <20250813205526.2992911-2-kpsingh@kernel.org>
+Subject: [PATCH v3 03/12] libbpf: Implement SHA256 internal helper
+Date: Wed, 13 Aug 2025 22:55:17 +0200
+Message-ID: <20250813205526.2992911-4-kpsingh@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250813205526.2992911-1-kpsingh@kernel.org>
 References: <20250813205526.2992911-1-kpsingh@kernel.org>
@@ -50,160 +50,104 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Exclusive maps restrict map access to specific programs using a hash.
-The current hash used for this is SHA1, which is prone to collisions.
-This patch uses SHA256, which  is more resilient against
-collisions. This new hash is stored in bpf_prog and used by the verifier
-to determine if a program can access a given exclusive map.
-
-The original 64-bit tags are kept, as they are used by users as a short,
-possibly colliding program identifier for non-security purposes.
+Use AF_ALG sockets to not have libbpf depend on OpenSSL. The helper is
+used for the loader generation code to embed the metadata hash in the
+loader program and also by the bpf_map__make_exclusive API to calculate
+the hash of the program the map is exclusive to.
 
 Signed-off-by: KP Singh <kpsingh@kernel.org>
 ---
- include/linux/bpf.h    |  6 ++++-
- include/linux/filter.h |  6 -----
- kernel/bpf/Kconfig     |  2 +-
- kernel/bpf/core.c      | 50 +++++++-----------------------------------
- 4 files changed, 14 insertions(+), 50 deletions(-)
+ tools/lib/bpf/libbpf.c          | 59 +++++++++++++++++++++++++++++++++
+ tools/lib/bpf/libbpf_internal.h |  4 +++
+ 2 files changed, 63 insertions(+)
 
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index e7ee089e8a31..b98c5b5bf2a1 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -31,6 +31,7 @@
- #include <linux/memcontrol.h>
- #include <linux/cfi.h>
- #include <asm/rqspinlock.h>
-+#include <crypto/sha2.h>
- 
- struct bpf_verifier_env;
- struct bpf_verifier_log;
-@@ -1711,7 +1712,10 @@ struct bpf_prog {
- 	enum bpf_attach_type	expected_attach_type; /* For some prog types */
- 	u32			len;		/* Number of filter blocks */
- 	u32			jited_len;	/* Size of jited insns in bytes */
--	u8			tag[BPF_TAG_SIZE];
-+	union {
-+		u8 digest[SHA256_DIGEST_SIZE];
-+		u8 tag[BPF_TAG_SIZE];
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 8f5a81b672e1..0bb3d71dcd9f 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -43,6 +43,9 @@
+ #include <sys/vfs.h>
+ #include <sys/utsname.h>
+ #include <sys/resource.h>
++#include <sys/socket.h>
++#include <linux/if_alg.h>
++#include <linux/socket.h>
+ #include <libelf.h>
+ #include <gelf.h>
+ #include <zlib.h>
+@@ -14207,3 +14210,59 @@ void bpf_object__destroy_skeleton(struct bpf_object_skeleton *s)
+ 	free(s->progs);
+ 	free(s);
+ }
++
++int libbpf_sha256(const void *data, size_t data_sz, void *sha_out, size_t sha_out_sz)
++{
++	struct sockaddr_alg sa = {
++		.salg_family = AF_ALG,
++		.salg_type   = "hash",
++		.salg_name   = "sha256"
 +	};
- 	struct bpf_prog_stats __percpu *stats;
- 	int __percpu		*active;
- 	unsigned int		(*bpf_func)(const void *ctx,
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index 1e7fd3ee759e..1bcc81ab3227 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -997,12 +997,6 @@ static inline u32 bpf_prog_insn_size(const struct bpf_prog *prog)
- 	return prog->len * sizeof(struct bpf_insn);
- }
++	int sock_fd = -1;
++	int op_fd = -1;
++	int err = 0;
++
++	if (sha_out_sz != SHA256_DIGEST_LENGTH) {
++		pr_warn("sha_out_sz should be exactly 32 bytes for a SHA256 digest");
++		return libbpf_err(-EINVAL);
++	}
++
++	sock_fd = socket(AF_ALG, SOCK_SEQPACKET, 0);
++	if (sock_fd < 0) {
++		err = -errno;
++		pr_warn("failed to create AF_ALG socket for SHA256: %s\n", errstr(err));
++		return libbpf_err(err);
++	}
++
++	if (bind(sock_fd, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
++		err = -errno;
++		pr_warn("failed to bind to AF_ALG socket for SHA256: %s\n", errstr(err));
++		goto out;
++	}
++
++	op_fd = accept(sock_fd, NULL, 0);
++	if (op_fd < 0) {
++		err = -errno;
++		pr_warn("failed to accept from AF_ALG socket for SHA256: %s\n", errstr(err));
++		goto out;
++	}
++
++	if (write(op_fd, data, data_sz) != data_sz) {
++		err = -errno;
++		pr_warn("failed to write data to AF_ALG socket for SHA256: %s\n", errstr(err));
++		goto out;
++	}
++
++	if (read(op_fd, sha_out, SHA256_DIGEST_LENGTH) != SHA256_DIGEST_LENGTH) {
++		err = -errno;
++		pr_warn("failed to read SHA256 from AF_ALG socket: %s\n", errstr(err));
++		goto out;
++	}
++
++out:
++	if (op_fd >= 0)
++		close(op_fd);
++	if (sock_fd >= 0)
++		close(sock_fd);
++	return libbpf_err(err);
++}
+diff --git a/tools/lib/bpf/libbpf_internal.h b/tools/lib/bpf/libbpf_internal.h
+index 477a3b3389a0..8a055de0d324 100644
+--- a/tools/lib/bpf/libbpf_internal.h
++++ b/tools/lib/bpf/libbpf_internal.h
+@@ -736,4 +736,8 @@ int elf_resolve_pattern_offsets(const char *binary_path, const char *pattern,
  
--static inline u32 bpf_prog_tag_scratch_size(const struct bpf_prog *prog)
--{
--	return round_up(bpf_prog_insn_size(prog) +
--			sizeof(__be64) + 1, SHA1_BLOCK_SIZE);
--}
--
- static inline unsigned int bpf_prog_size(unsigned int proglen)
- {
- 	return max(sizeof(struct bpf_prog),
-diff --git a/kernel/bpf/Kconfig b/kernel/bpf/Kconfig
-index 17067dcb4386..eb3de35734f0 100644
---- a/kernel/bpf/Kconfig
-+++ b/kernel/bpf/Kconfig
-@@ -3,7 +3,7 @@
- # BPF interpreter that, for example, classic socket filters depend on.
- config BPF
- 	bool
--	select CRYPTO_LIB_SHA1
-+	select CRYPTO_LIB_SHA256
+ int probe_fd(int fd);
  
- # Used by archs to tell that they support BPF JIT compiler plus which
- # flavour. Only one of the two can be selected for a specific arch since
-diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 5d1650af899d..d1a7ea759c82 100644
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -38,6 +38,7 @@
- #include <linux/bpf_mem_alloc.h>
- #include <linux/memcontrol.h>
- #include <linux/execmem.h>
-+#include <crypto/sha2.h>
- 
- #include <asm/barrier.h>
- #include <linux/unaligned.h>
-@@ -293,28 +294,18 @@ void __bpf_prog_free(struct bpf_prog *fp)
- 
- int bpf_prog_calc_tag(struct bpf_prog *fp)
- {
--	const u32 bits_offset = SHA1_BLOCK_SIZE - sizeof(__be64);
--	u32 raw_size = bpf_prog_tag_scratch_size(fp);
--	u32 digest[SHA1_DIGEST_WORDS];
--	u32 ws[SHA1_WORKSPACE_WORDS];
--	u32 i, bsize, psize, blocks;
-+	u32 insn_size = bpf_prog_insn_size(fp);
- 	struct bpf_insn *dst;
- 	bool was_ld_map;
--	u8 *raw, *todo;
--	__be32 *result;
--	__be64 *bits;
-+	int i, ret = 0;
- 
--	raw = vmalloc(raw_size);
--	if (!raw)
-+	dst = vmalloc(insn_size);
-+	if (!dst)
- 		return -ENOMEM;
- 
--	sha1_init_raw(digest);
--	memset(ws, 0, sizeof(ws));
--
- 	/* We need to take out the map fd for the digest calculation
- 	 * since they are unstable from user space side.
- 	 */
--	dst = (void *)raw;
- 	for (i = 0, was_ld_map = false; i < fp->len; i++) {
- 		dst[i] = fp->insnsi[i];
- 		if (!was_ld_map &&
-@@ -334,34 +325,9 @@ int bpf_prog_calc_tag(struct bpf_prog *fp)
- 			was_ld_map = false;
- 		}
- 	}
--
--	psize = bpf_prog_insn_size(fp);
--	memset(&raw[psize], 0, raw_size - psize);
--	raw[psize++] = 0x80;
--
--	bsize  = round_up(psize, SHA1_BLOCK_SIZE);
--	blocks = bsize / SHA1_BLOCK_SIZE;
--	todo   = raw;
--	if (bsize - psize >= sizeof(__be64)) {
--		bits = (__be64 *)(todo + bsize - sizeof(__be64));
--	} else {
--		bits = (__be64 *)(todo + bsize + bits_offset);
--		blocks++;
--	}
--	*bits = cpu_to_be64((psize - 1) << 3);
--
--	while (blocks--) {
--		sha1_transform(digest, todo, ws);
--		todo += SHA1_BLOCK_SIZE;
--	}
--
--	result = (__force __be32 *)digest;
--	for (i = 0; i < SHA1_DIGEST_WORDS; i++)
--		result[i] = cpu_to_be32(digest[i]);
--	memcpy(fp->tag, result, sizeof(fp->tag));
--
--	vfree(raw);
--	return 0;
-+	sha256((u8 *)dst, insn_size, fp->digest);
-+	vfree(dst);
-+	return ret;
- }
- 
- static int bpf_adj_delta_to_imm(struct bpf_insn *insn, u32 pos, s32 end_old,
++#define SHA256_DIGEST_LENGTH 32
++#define SHA256_DWORD_SIZE SHA256_DIGEST_LENGTH / sizeof(__u64)
++
++int libbpf_sha256(const void *data, size_t data_sz, void *sha_out, size_t sha_out_sz);
+ #endif /* __LIBBPF_LIBBPF_INTERNAL_H */
 -- 
 2.43.0
 
