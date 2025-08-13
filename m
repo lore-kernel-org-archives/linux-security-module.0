@@ -1,76 +1,42 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C00728469A;
-	Wed, 13 Aug 2025 16:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DADF2D0274;
+	Wed, 13 Aug 2025 20:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755100927; cv=none; b=Y99BKU9DyzbVy/N5IhZRBVLgFooEEIppaGLeIYU87aKUy0K7wpKpsPAbe/7mfZ/eTH0uRrNeIdonp7sE2RY5k3UuqyxftKIVQtS30m3H3vOdFSurRpVGasT3VwT1IlNlOo4h9u5fnliOIxXUhoDQ6SO23eQl+kyrwx4fTLiBNZ4=
+	t=1755118533; cv=none; b=OtgAS3TekF/LcBukBtonnyrwIimFVe2d3sqqFSbzpMsqDpiZfUTUK8MOZRYrz/TsviAnkA8HaCenNhKJqvl1Zex2NNckKihEbrZiL4tdUVJjGmDjF91HhzRC0ISt2MVICrCSDGsUJeT+u5lUKa0IIqikIMtYsWt2+die+B6d5dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755100927; c=relaxed/simple;
-	bh=UDmbkCATMj3zYzhEYu3RaoajQKcynIBgbBYwP3uZH3Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fZIhD4LYOK/sMywd0lazsz/Y/Lpi5oEKWpAsNZx87IvuHQKfZ0+1G+niNfVkTIY9QahyvSlBh1WfDzKIklX9CjeXSEFFd2eC4oNB+2GolA9G+ixj+b42Z/D+z9wyaGdYkodRA25nYA5YdlMDiVq4NT92u7pzmKXXIoFm3teQ+ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GeDNfJep; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1755118533; c=relaxed/simple;
+	bh=3WvU84u1HxYJenRL0b9KSubdu7vo7PBQDavXNaGavkE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oE84/tjIcAMnspLrei5LLawM4H/jhxXEh+r7HaZ37XGMATtetO1GBWw5uoP5fot+eQiqjXZKuCPKQoiovPN0N4slabKdDXSYKS3jima6oMYA3Jl1R8Yxw999yw+smBEIFBi0DaQ1P89Yb8os29DgHp12jfj4AmJ4Bti4WPSoeH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XgChyPcQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GeDNfJep"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2406fe901c4so43253975ad.1;
-        Wed, 13 Aug 2025 09:02:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755100925; x=1755705725; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=15PDS4kBFxnfhGyuPIxLhWrdICQOQTl1rvLJxElN8H8=;
-        b=GeDNfJepympUCYCYVbW7S+2qnGu7ESKNWjVQuKZxJ4GTV70nOvvcnyMQDCiwGljTgw
-         W8AvRIbI44UiIa4+t44aFWi4WQQp7VmdnDu0Degd+m1XoyVa/yse8QK+MB4bMUailzwi
-         KLeOtzWfSUAGI09zaKSHM9OcXH9VXumQo8OjCHl7hxuSLZbS+y/eYwknig87acOMYegR
-         HPzcryR699bbiP1xQV09Tfg/9f2H3aGQQNcHqzG20y5h/mZOj/R/Wgy5riOMR00pLrTQ
-         nJQXJDXPRD5yDh9JhV+cUTMVtqbRX1yr1yeqne+lK8XEyG0F0byYluZNHCrx/SwRW0K7
-         Va4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755100925; x=1755705725;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=15PDS4kBFxnfhGyuPIxLhWrdICQOQTl1rvLJxElN8H8=;
-        b=BAEiOEKQuwpGWQEnrVeq7SVhiZKlSnUAkfpdn0/rVjHZaGelXGxKBjRmJ3qGesGuqH
-         vWDwAayKzTaosyTCG4ICiyt0I9A8fXSgdkNH+CdByrkMXMWSBVOMGK7LCY8N7reerY7p
-         q2DgiMS3rnFPklZx+towDlduTJaXRJ9USNBVVbAbw8SZaPvBTNousNfyyINioPkOsJFR
-         h8dMXl3Wyxl31ny662i53lAi2aTMFC82cGsEHZnVCHfCw1UTAIo8swY8Rwekw91Rkqnu
-         BlWP5LP2oyrUY8uy1egoBXF3hH6uBIpIC4cBLqDxtLzsLTnFuErJrDHJ2RovxQ3VM34N
-         zGAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAiOPBLzhG6m7iCosil09kl1Rg5g56MJGLaE+a2JIXfZ/PzF8ujs1JD6HHk9dVm+e3XenJ0fJe3Vkrgp4=@vger.kernel.org, AJvYcCWfkcPO/GXKh00ptlvbi80bVXu6imrhjfAWLj21PpL7towdXtDtbpbxkCB/lE2SKU0JM0WV4yUe/hlfoJVqaIafJQfLwN8j@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPs+BeuHQkFf2dLoyGprgfm54e+dzulfP+xzVdOwDhtSrGrEQd
-	uU/tjnsbKCtC0Df72xxJX4bNpzdLQ9eKtJYgwfir4uWRISmb4lV7EHGdFtWJ+w==
-X-Gm-Gg: ASbGncuPuA6DKiPnbn9bBjfkY9ViLrXTrOrkgEMsXFUsCZDTSAgnKuivLt/aFljlkx2
-	EIAtXFlm4ihXMh7jGJsYsVyE37pEHliWoGU6ysLXKgODocIHK3SqPPxM1gubBCvF0Hu18oS/FW/
-	0l3UU9z0nKRfSruipaVxq24IhsJwl153W9ixOFqaTPF1co0Hzwsv/3m8FkECUIFlAzYQ/VcXzEF
-	TEp036tYzRy9H3ogqqGePmexdLf7ycM1gbFew1M2Va3QhMBrcvq7yPUeU1quslGkRnLPDaDQKLy
-	M5B1L22EGEYunfKmxH85khTXxS8tejGbGzTJiAX0hWK7Tko9inE2Sy0dll23ZaMQ40+sb0VyAsc
-	85f1Ty1ehYEi4VPSPuYsscnCFGyp0yaaEnM5af0mzEItlgZP6dpL1BnMTO6W4G4NCSemPFOrbgh
-	VuIQ==
-X-Google-Smtp-Source: AGHT+IFneh6DcSCXvD6FkQgAozlcfSCn7Et/p7McK6cLRii7ICb97K3VSPkcw+k/fd98jJHchkAFog==
-X-Received: by 2002:a17:903:1aec:b0:240:2e93:8a9a with SMTP id d9443c01a7336-2430d1e570amr56436565ad.42.1755100924906;
-        Wed, 13 Aug 2025 09:02:04 -0700 (PDT)
-Received: from chandra-mohan-sundar.aristanetworks.com ([2401:4900:1cb8:7b85:9b4a:84f0:66de:85c7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2429b4ca995sm197380615ad.177.2025.08.13.09.02.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 09:02:04 -0700 (PDT)
-From: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
-To: john.johansen@canonical.com,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XgChyPcQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02052C4CEED;
+	Wed, 13 Aug 2025 20:55:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755118531;
+	bh=3WvU84u1HxYJenRL0b9KSubdu7vo7PBQDavXNaGavkE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XgChyPcQLp+Za/JsvQbK09l1kAonmdsEdZCZU9jSUmRswgy+AgiI1NjYcWV+f8mYv
+	 SOP8I9sgCpF5jhUCoPZmkiBN31oJf5DYCj3jWz6lks9qEf+LiAunhDq/dNnV+JEwgg
+	 UJyXZrg7gEJaFrLyNMEh/fOQvLqNlVaL9wBOXS09fHdMOIuFJgJkgdHbbF9jJPy8hS
+	 MZiFGiQiyBTf6Mofcxs56yuvBGDYJuo6z7C1z1UJh393bhXa19SlBJ4G+OP3le68EA
+	 eB7z/wu719eH69UxtQl1CoczSv/iQ+tacFn2m/sbymrM77elxfIeruU57aM2ywbWft
+	 IKxEGLl6jaXCw==
+From: KP Singh <kpsingh@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: bboscaccy@linux.microsoft.com,
 	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org
-Cc: Chandra Mohan Sundar <chandramohan.explore@gmail.com>,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH] apparmor: Remove unused value
-Date: Wed, 13 Aug 2025 21:31:43 +0530
-Message-ID: <20250813160148.132192-1-chandramohan.explore@gmail.com>
+	kys@microsoft.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org
+Subject: [PATCH v3 00/12] Signed BPF programs
+Date: Wed, 13 Aug 2025 22:55:14 +0200
+Message-ID: <20250813205526.2992911-1-kpsingh@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -80,30 +46,334 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The value "new" is being assigned to NULL but that statement does not
- have effect since "new" is being overwritten in the subsequent fallback case.
+# v2 -> v3
 
-Remove the unused value. This issue was reported by coverity static
-analyzer.
+* Dropped unstable test where function can be inlined and only select few
+  LSKEL tests are using signing per Alexei's request
+* Some other feedback incorporated.
 
-Fixes: a9eb185be84e9 (apparmor: fix x_table_lookup)
-Signed-off-by: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
----
- security/apparmor/domain.c | 1 -
- 1 file changed, 1 deletion(-)
+#v1 -> v2
 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 267da82afb14..9c0c7fa8de46 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -592,7 +592,6 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
- 		if (!new || **lookupname != '&')
- 			break;
- 		stack = new;
--		new = NULL;
- 		fallthrough;	/* to X_NAME */
- 	case AA_X_NAME:
- 		if (xindex & AA_X_CHILD)
+* Addressed feedback on excl maps and their implementation
+* fixed s390x and other tests that were failing in the CI.
+* using the kernel's sha256 API since it now uses acceleration if available
+* simple signing test case, this can be extended to inject a false SHA into
+  the loader
+
+BPF Signing has gone over multiple discussions in various conferences with the
+kernel and BPF community and the following patch series is a culmination
+of the current of discussion and signed BPF programs. Once signing is
+implemented, the next focus would be to implement the right security policies
+for all BPF use-cases (dynamically generated bpf programs, simple non CO-RE
+programs).
+
+Signing also paves the way for allowing unrivileged users to
+load vetted BPF programs and helps in adhering to the principle of least
+privlege by avoiding unnecessary elevation of privileges to CAP_BPF and
+CAP_SYS_ADMIN (ofcourse, with the appropriate security policy active).
+
+A early version of this design was proposed in [1]:
+
+# General Idea: Trusted Hash Chain
+
+The key idea of the design is to use a signing algorithm that allows
+us to integrity-protect a number of future payloads, including their
+order, by creating a chain of trust.
+
+Consider that Alice needs to send messages M_1, M_2, ..., M_n to Bob.
+We define blocks of data such that:
+
+    B_n = M_n || H(termination_marker)
+
+(Each block contains its corresponding message and the hash of the
+*next* block in the chain.)
+
+    B_{n-1} = M_{n-1} || H(B_n)
+    B_{n-2} = M_{n-2} || H(B_{n-1})
+
+  ...
+
+    B_2 = M_2 || H(B_3)
+    B_1 = M_1 || H(B_2)
+
+Alice does the following (e.g., on a build system where all payloads
+are available):
+
+  * Assembles the blocks B_1, B_2, ..., B_n.
+  * Calculates H(B_1) and signs it, yielding Sig(H(B_1)).
+
+Alice sends the following to Bob:
+
+    M_1, H(B_2), Sig(H(B_1))
+
+Bob receives this payload and does the following:
+
+    * Reconstructs B_1 as B_1' using the received M_1 and H(B_2)
+(i.e., B_1' = M_1 || H(B_2)).
+    * Recomputes H(B_1') and verifies the signature against the
+received Sig(H(B_1)).
+    * If the signature verifies, it establishes the integrity of M_1
+and H(B_2) (and transitively, the integrity of the entire chain). Bob
+now stores the verified H(B_2) until it receives the next message.
+    * When Bob receives M_2 (and H(B_3) if n > 2), it reconstructs
+B_2' (e.g., B_2' = M_2 || H(B_3), or if n=2, B_2' = M_2 ||
+H(termination_marker)). Bob then computes H(B_2') and compares it
+against the stored H(B_2) that was verified in the previous step.
+
+This process continues until the last block is received and verified.
+
+Now, applying this to the BPF signing use-case, we simplify to two messages:
+
+    M_1 = I_loader (the instructions of the loader program)
+    M_2 = M_metadata (the metadata for the loader program, passed in a
+map, which includes the programs to be loaded and other context)
+
+For this specific BPF case, we will directly sign a composite of the
+first message and the hash of the second. Let H_meta = H(M_metadata).
+The block to be signed is effectively:
+
+    B_signed = I_loader || H_meta
+
+The signature generated is Sig(B_signed).
+
+The process then follows a similar pattern to the Alice and Bob model,
+where the kernel (Bob) verifies I_loader and H_meta using the
+signature. Then, the trusted I_loader is responsible for verifying
+M_metadata against the trusted H_meta.
+
+From an implementation standpoint:
+
+# Build
+
+bpftool (or some other tool in a trusted build environment) knows
+about the metadata (M_metadata) and the loader program (I_loader). It
+first calculates H_meta = H(M_metadata). Then it constructs the object
+to be signed and computes the signature:
+
+    Sig(I_loader || H_meta)
+
+# Loader
+
+The loader program and the metadata are a hermetic representation of the source
+of the eBPF program, its maps and context. The loader program is generated by
+libbpf as a part of a standard API i.e. bpf_object__gen_loader.
+
+## Supply chain
+
+While users can use light skeletons as a convenient method to use signing
+support, they can directly use the loader program generation using libbpf
+(bpf_object__gen_loader) into their own trusted toolchains.
+
+libbpf, which has access to the program's instruction buffer is a key part of
+the TCB of the build environment
+
+An advanced threat model that does not intend to depend on libbpf (or any provenant
+userspace BPF libraries) due to supply chain risks despite it being developed
+in the kernel source and by the kernel community will require reimplmenting a
+lot of the core BPF userspace support (like instruction relocation, map handling).
+
+Such an advanced user would also need to integrate the generation of the loader
+into their toolchain.
+
+Given that many use-cases (e.g. Cilium) generate trusted BPF programs,
+trusted loaders are an inevitability and a requirement for signing support, a
+entrusting loader programs will be a fundamental requirement for an security
+policy.
+
+The initial instructions of the loader program verify the SHA256 hash
+of the metadata (M_metadata) that will be passed in a map. These instructions
+effectively embed the precomputed H_meta as immediate values.
+
+    ld_imm64 r1, const_ptr_to_map // insn[0].src_reg == BPF_PSEUDO_MAP_IDX
+    r2 = *(u64 *)(r1 + 0);
+    ld_imm64 r3, sha256_of_map_part1 // precomputed by bpf_object__gen_load/libbpf (H_meta_1)
+    if r2 != r3 goto out;
+
+    r2 = *(u64 *)(r1 + 8);
+    ld_imm64 r3, sha256_of_map_part2 // precomputed by bpf_object__gen_load/libbpf (H_meta_2)
+    if r2 != r3 goto out;
+
+    r2 = *(u64 *)(r1 + 16);
+    ld_imm64 r3, sha256_of_map_part3 // precomputed by bpf_object__gen_load/libbpf (H_meta_3)
+    if r2 != r3 goto out;
+
+    r2 = *(u64 *)(r1 + 24);
+    ld_imm64 r3, sha256_of_map_part4 // precomputed by bpf_object__gen_load/libbpf (H_meta_4)
+    if r2 != r3 goto out;
+    ...
+
+This implicitly makes the payload equivalent to the signed block (B_signed)
+
+    I_loader || H_meta
+
+bpftool then generates the signature of this I_loader payload (which
+now contains the expected H_meta) using a key and an identity:
+
+This signature is stored in bpf_attr, which is extended as follows for
+the BPF_PROG_LOAD command:
+
+    __aligned_u64 signature;
+    __u32 signature_size;
+    __u32 keyring_id;
+
+The reasons for a simpler UAPI is that it's more future proof (e.g.) with more
+stable instruction buffers, loader programs being directly into the compilers.
+A simple API also allows simple programs e.g. for networking that don't need
+loader programs to directly use signing.
+
+# Extending OBJ_GET_INFO_BY_FD for hashes
+
+OBJ_GET_INFO_BY_FD is used to get information about BPF objects (maps, programs, links) and
+returning the hash of the map is a natural extension of the UAPI as it can be
+helpful for debugging, fingerprinting etc.
+
+Currently, it's only implemented for BPF_MAP_TYPE_ARRAY. It can be trivially
+extended for BPF programs to return the complete SHA256 along with the tag.
+
+The SHA is stored in struct bpf_map for exclusive and frozen maps
+
+    struct bpf_map {
+    +   u64 sha[4];
+        const struct bpf_map_ops *ops;
+        struct bpf_map *inner_map_meta;
+    };
+
+## Exclusive BPF maps
+
+Exclusivity ensures that the map can only be used by a future BPF
+program whose SHA256 hash matches sha256_of_future_prog.
+
+First, bpf_prog_calc_tag() is updated to compute the SHA256 instead of
+SHA1, and this hash is stored in struct bpf_prog_aux:
+
+    @@ -1588,6 +1588,7 @@ struct bpf_prog_aux {
+         int cgroup_atype; /* enum cgroup_bpf_attach_type */
+         struct bpf_map *cgroup_storage[MAX_BPF_CGROUP_STORAGE_TYPE];
+         char name[BPF_OBJ_NAME_LEN];
+    +    u64 sha[4];
+         u64 (*bpf_exception_cb)(u64 cookie, u64 sp, u64 bp, u64, u64);
+         // ...
+    };
+
+An exclusive is created by passing an excl_prog_hash
+(and excl_prog_hash_size) in the BPF_MAP_CREATE command.
+When a BPF program is subsequently loaded and it attempts to use this map,
+the kernel will compare the program's own SHA256 hash against the one
+registered with the map, if matching, it will be added to prog->used_maps[].
+
+The program load will fail if the hashes do not match or if the map is
+already in use by another (non-matching) exclusive program.
+
+Exclusive maps ensure that no other BPF programs and compromise the intergity of
+the map post the signature verification.
+
+NOTE: Exclusive maps cannot be added as inner maps.
+
+# Light Skeleton Sequence (Userspace Example)
+
+	err = map_fd = skel_map_create(BPF_MAP_TYPE_ARRAY, "__loader.map",
+				       opts->excl_prog_hash,
+				       opts->excl_prog_hash_sz, 4,
+				       opts->data_sz, 1);
+	err = skel_map_update_elem(map_fd, &key, opts->data, 0);
+
+	err = skel_map_freeze(map_fd);
+
+	// Kernel computes the hash of the map.
+	err = skel_obj_get_info_by_fd(map_fd);
+
+	memset(&attr, 0, prog_load_attr_sz);
+	attr.prog_type = BPF_PROG_TYPE_SYSCALL;
+	attr.insns = (long) opts->insns;
+	attr.insn_cnt = opts->insns_sz / sizeof(struct bpf_insn);
+	attr.signature = (long) opts->signature;
+	attr.signature_size = opts->signature_sz;
+	attr.keyring_id = opts->keyring_id;
+	attr.license = (long) "Dual BSD/GPL";
+
+The kernel will:
+
+    * Compute the hash of the provided I_loader bytecode.
+    * Verify the signature against this computed hash.
+    * Check if the metadata map (now exclusive) is intended for this
+      program's hash.
+
+The signature check happens in BPF_PROG_LOAD before the security_bpf_prog
+LSM hook.
+
+This ensures that the loaded loader program (I_loader), including the
+embedded expected hash of the metadata (H_meta), is trusted.
+Since the loader program is now trusted, it can be entrusted to verify
+the actual metadata (M_metadata) read from the (now exclusive and
+frozen) map against the embedded (and trusted) H_meta. There is no
+Time-of-Check-Time-of-Use (TOCTOU) vulnerability here because:
+
+    * The signature covers the I_loader and its embedded H_meta.
+    * The metadata map M_metadata is frozen before the loader program is loaded
+      and associated with it.
+    * The map is made exclusive to the specific (signed and verified)
+      loader program.
+
+[1] https://lore.kernel.org/bpf/CACYkzJ6VQUExfyt0=-FmXz46GHJh3d=FXh5j4KfexcEFbHV-vg@mail.gmail.com/#t
+
+
+KP Singh (12):
+  bpf: Update the bpf_prog_calc_tag to use SHA256
+  bpf: Implement exclusive map creation
+  libbpf: Implement SHA256 internal helper
+  libbpf: Support exclusive map creation
+  selftests/bpf: Add tests for exclusive maps
+  bpf: Return hashes of maps in BPF_OBJ_GET_INFO_BY_FD
+  bpf: Move the signature kfuncs to helpers.c
+  bpf: Implement signature verification for BPF programs
+  libbpf: Update light skeleton for signing
+  libbpf: Embed and verify the metadata hash in the loader
+  bpftool: Add support for signing BPF programs
+  selftests/bpf: Enable signature verification for some lskel tests
+
+ crypto/asymmetric_keys/pkcs7_verify.c         |   1 +
+ include/linux/bpf.h                           |  42 +++-
+ include/linux/filter.h                        |   6 -
+ include/linux/verification.h                  |   1 +
+ include/uapi/linux/bpf.h                      |  14 ++
+ kernel/bpf/Kconfig                            |   2 +-
+ kernel/bpf/arraymap.c                         |  13 ++
+ kernel/bpf/core.c                             |  50 +----
+ kernel/bpf/helpers.c                          | 166 ++++++++++++++
+ kernel/bpf/syscall.c                          |  97 +++++++-
+ kernel/bpf/verifier.c                         |   6 +
+ kernel/trace/bpf_trace.c                      | 183 ---------------
+ .../bpf/bpftool/Documentation/bpftool-gen.rst |  16 +-
+ .../bpftool/Documentation/bpftool-prog.rst    |  18 +-
+ tools/bpf/bpftool/Makefile                    |   6 +-
+ tools/bpf/bpftool/cgroup.c                    |   4 +
+ tools/bpf/bpftool/gen.c                       |  60 ++++-
+ tools/bpf/bpftool/main.c                      |  26 ++-
+ tools/bpf/bpftool/main.h                      |  11 +
+ tools/bpf/bpftool/prog.c                      |  27 ++-
+ tools/bpf/bpftool/sign.c                      | 212 ++++++++++++++++++
+ tools/include/uapi/linux/bpf.h                |  14 ++
+ tools/lib/bpf/bpf.c                           |   6 +-
+ tools/lib/bpf/bpf.h                           |   4 +-
+ tools/lib/bpf/bpf_gen_internal.h              |   2 +
+ tools/lib/bpf/gen_loader.c                    |  55 +++++
+ tools/lib/bpf/libbpf.c                        | 125 +++++++++++
+ tools/lib/bpf/libbpf.h                        |  21 +-
+ tools/lib/bpf/libbpf.map                      |   2 +
+ tools/lib/bpf/libbpf_internal.h               |   4 +
+ tools/lib/bpf/skel_internal.h                 |  75 ++++++-
+ tools/testing/selftests/bpf/.gitignore        |   1 +
+ tools/testing/selftests/bpf/Makefile          |  35 ++-
+ .../selftests/bpf/prog_tests/map_excl.c       |  56 +++++
+ tools/testing/selftests/bpf/progs/map_excl.c  |  34 +++
+ .../selftests/bpf/progs/verifier_map_ptr.c    |   7 +-
+ tools/testing/selftests/bpf/test_progs.c      |  13 ++
+ .../testing/selftests/bpf/verify_sig_setup.sh |  13 +-
+ 38 files changed, 1161 insertions(+), 267 deletions(-)
+ create mode 100644 tools/bpf/bpftool/sign.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/map_excl.c
+ create mode 100644 tools/testing/selftests/bpf/progs/map_excl.c
+
 -- 
 2.43.0
 
