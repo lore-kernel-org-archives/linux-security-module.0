@@ -1,240 +1,281 @@
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D0E2EA74F;
-	Tue, 12 Aug 2025 23:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A97D1ACEDC
+	for <linux-security-module@vger.kernel.org>; Wed, 13 Aug 2025 02:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755043075; cv=none; b=OijpBFycHxHpfllKSkYA5tveuA5O30qYLng/EiPp1CSxtAc9UjzIpxy6LP5zyVPpZqE2jmMT6sm7bS52Nw1n2TdBOUlQBsS+8oBZqlBgaUqlvFDAwdySC6drs1/VUATfYu/a2fFiSInGbR8IzRXXflVoYeNXcpCFBH2BBaJT/ms=
+	t=1755051635; cv=none; b=emjxMcv5HoQByD7GW/uB+MwZMyu93zr8y39iO25cESnzQs5dgAwzjrikamAd385Dc+pQaZbzryC4FCTd06i80cgY2VRYSN8Tsps82DiYQjS0Sjs8iM6Es0JvpBG5D8ujsfEGJkM7ExOIsWxrLg4u1plxF0v4U7B/JAGuzWe+hlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755043075; c=relaxed/simple;
-	bh=sMvhu4TdkpgakOTSi4x1spk9QG2rt6czlkpdGjm+6yw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k9yIL4w7IMQGsVBZPaFbO0engPreI+nSpy+rBH/k80UqlikhLDvpGp8acyUu5TyePUlTXtK3hQALD87x94OY5uMvGne1SIqz3Iyhhk/82KWQwBqKNWVoYY73bvp49z6NoFXihJhESFw4/YHs3mJv7f0cLcH3c+ecUpnRcRSQdGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=tv5tSeLQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HjktL8i4; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1755051635; c=relaxed/simple;
+	bh=NJ+Pu4qunYCS2H0KAMAkWGhXEIHviWAMqbAGS9tACPk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AJqGotL0VXgtAjoYZT96Q8w/p2JbKBxyY1uTFwjqjPPsKyFGPbnnYjPCFwh3Wj5SC1OpwloesdHy/tVvm2oSspQAyPK0s/4OlFXHxesDwsJHy4Kt/+AYt2mG/c8C1Dvr5JDK36ROtsgcs+vam3BVHOeYgtK/FcwAA/ZtTuM5AkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=HUCJ41R9; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="tv5tSeLQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HjktL8i4"
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 6C4DB1400064;
-	Tue, 12 Aug 2025 19:57:52 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Tue, 12 Aug 2025 19:57:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1755043072;
-	 x=1755129472; bh=h3el4ckOyJ37LXsuVeXcfC9YiExy+og4FR7WaG0k+tE=; b=
-	tv5tSeLQTi3ROiFlCDegxgVrLKTEF31aHc0r9ANZDr5RABM6wVNydE7cnolK3zv1
-	2XEnHI07wRY5QCAUWSLVIpFHCasxVBUX6lpkFBfe+We2FX5FDvd/8I18LarjmDus
-	AvQghHgpe55XLz3B815NjBjTqgZqU0kxUEhw8LwzQinG59Y2d40HaASM5KCEbTf/
-	0vW72tHeDv07BnCBfvqK+WP8g+dNiNW+Pact3CSSvRi4gLbt2fCqYT2GZO5tX5j2
-	n1z+sKVq0yr5f9zXBI7CUmywZRHHaFlGTrgbALfBteFSQhG9mMnKJu81h/HX08gg
-	GYutiZSfiLha1wyu4RVygQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755043072; x=
-	1755129472; bh=h3el4ckOyJ37LXsuVeXcfC9YiExy+og4FR7WaG0k+tE=; b=H
-	jktL8i4Zs0V1aAyODb5W9xLG1ZUxSuvUFji+kRBZQ7njiVc6rmxUB4qOO1LX+gtB
-	JAhtoTuB/HbLK8VeDZY6k1H7rHUdD4/jrSv7nfx57VEkVcSb+8S3bgiVEaoTBOyt
-	Z8g1npSgC2GsHTugK7rQQeAHaOxsswpONt6y767sQGo1dt7JEy6HWzUag2An4W1t
-	XtHJUVTEPwbPyf7BCckL8bfUDZlhlE+jt/6Zy2vWmy1IKsYXtWIGq4ei4xkXF7nt
-	DiMakigaMSuI5EkwqYtUojaM00sS/amhzJDrKFiZqu3WfxWguw5UCyfnIk1VkSV2
-	WeFJzPoOboUPzYiIgqEQg==
-X-ME-Sender: <xms:_9SbaO5B6I0s6fH2WEiEVFGUHnpma_BNm5Ccx3nJFd57XDAfwvYy0A>
-    <xme:_9SbaGZu8mFia7mvU9pDBkWc7IYyiY4OtSvO88w34iDVFvvFIJOtHR2cc1nWmtLPX
-    Weo0e6dq26EkIHcyuU>
-X-ME-Received: <xmr:_9SbaI_kjlsLjAfQ-x677gGDMM9U5b6e_pkymdOGp-Me1HNovzerB5QPs5zDapXeAXmH2-4pjQhSUhKGcHTEBkWB>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeeijeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefvihhnghhm
-    rghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepud
-    ekvefhgeevvdevieehvddvgefhgeelgfdugeeftedvkeeigfeltdehgeeghffgnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgrohifth
-    hmrdhorhhgpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtohepmhhitgesughighhikhhougdrnhgvthdprhgtphhtthhopegrshhmrgguvghush
-    estghouggvfihrvggtkhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhi
-    nhhugidrohhrghdruhhkpdhrtghpthhtohepvghrihgtvhhhsehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopehluhgthhhosehiohhnkhhovhdrnhgvthdprhgtphhtthhopehlihhn
-    uhigpghoshhssegtrhhuuggvsgihthgvrdgtohhmpdhrtghpthhtohepvhelfhhssehlih
-    hsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvgdr
-    tghomhdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:_9SbaFRef_URq3Yo26rqICcr0m1hrRGph9F-qrmUucip0o0JGyiG9A>
-    <xmx:_9SbaLIhSwQj4cpOArbxP13zM1WOwiq8EaDUDuPL6TzV_YVRiSCooA>
-    <xmx:_9SbaPTVFgPrcFvU-dj90N24WDQW_hJBfnvEGXthkJAVWH-R_Ns7SA>
-    <xmx:_9SbaLJlFzGJPupctVKgai8-DGflxEj1M4xkZcZM21HKbYeMTmjoPw>
-    <xmx:ANWbaELsTLqGaC9v3TDZ9yuOVrot9bjT-1ITv5ZHumUNKj8GZU-s6CZg>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 12 Aug 2025 19:57:50 -0400 (EDT)
-Message-ID: <df6cb208-cb14-4ca5-bd25-cb0f05bfc6a1@maowtm.org>
-Date: Wed, 13 Aug 2025 00:57:49 +0100
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="HUCJ41R9"
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7682560a2f2so479667b3a.1
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Aug 2025 19:20:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1755051633; x=1755656433; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nq8Ay+9EPnIfeYY6CIxQsvSVzCQv2jRc0S2l1wh01Io=;
+        b=HUCJ41R9GSkdXssW98qf7Z+2gPaDndZOdQmsV6W/VA6if1BG3o0yMwYIZbmCysUOTI
+         d/FUxsmI9skD+EMkCOTENVvLcB1/fdBw0E9Ibbs4JKhlolkjpbCoj7JplefxEhUGgiOE
+         r82eQebKUT1QvMwW4nBm8JbnnTNtBYuKXdUYf8m8XeQKbwpdw78lUwhvaUMLjr/qxixg
+         EyHOlb93CHjy4UNz1OI+jT3Bm8jZtgA3aKp62pZ+M8QJtHjydlY2CSbx/JgbMcLj2ZVs
+         Ao2lH5dSdjc0Qj6VYUBdE7uPKw1CDSyvSn5aUi9D2lJ0CoGv1a7xe/oLaLMY5HlCk38c
+         OJmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755051633; x=1755656433;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nq8Ay+9EPnIfeYY6CIxQsvSVzCQv2jRc0S2l1wh01Io=;
+        b=LoDpj4z6tqgjdAbbxHso/KXGPQ6SVjTIrwfbFIvSo9jEced8UyHXMw7qDqo28TMgig
+         1/qKk7uq/2qigdmClC2Yk7ivqZ9tpmRcnQJhKDHIUm50fX7Lu1PZdtr25uLYcoV1skl3
+         1xax/oUoFTat4fu/hwX6ROSSSk3Ddkz8DzMXexT7hdVgnhKibxM/ecxoaadF9Jb/xC+T
+         cUoXkHdKaRoIX12nPua17rst5ISJa4pamvBgBVd+UDdIDl6Rm4jyeSeTMgfKzCXNLB6A
+         dvZ16ccvjudipy3IlGd5nK5ik5LtjkBVxKBFnbqX0TJAtA6l+cHmIOgPEaR/c7b/I8IW
+         lVdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXy+Jk+S733O0p6BnWaH0y5L4zLaMoWh7yCe63HT8subVaFPODkD+vJLjRlhE3mQqB30dF4E76u9YAxZohPsxoUkG/io4E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz07k/nHjB8pj08TEG+YtIxLfUFHlY/zHioX20UXk4NmqgO6kyr
+	O6ak5EDoqLY5VSNT3UU12wku1JvjILioafjg/ktowTHokzGojCI4rzEyfTOSkjPAK48ioodNVmz
+	tr4sZBLG+xXDyZtKs/fF2bPI3DNYcMLltNSXGeHBRukFcyoM4/cg=
+X-Gm-Gg: ASbGncvRbVv/5wdu4K/Qx9xd9HtJYrnyVRfLtJdZLeZTa6UsSKRI3G0T/zjm+ckIWZc
+	VDllC/6WGcaroTRFvH88B7fzMsl3TkxTxUfkz/JX8PwdjnK0+vTW+WRB1lRGcqeRhpfVSmZvjA2
+	Avh4FeHBayHSK4OTkfXxmTsYlDFoCtZEooV6oRDunwlEKCsdiQUPy4A+pG5Juuwbcjx3bfJQmqk
+	pKJ5Xs=
+X-Google-Smtp-Source: AGHT+IFgW/L6HVHu5YjwzYNMM46yXE7YoE0MlGKzYGNFCHPyQeRoJCOkb1wgNuwCVFcfQn6S+RkIX4kM3jMCmSAJZZA=
+X-Received: by 2002:a05:6a20:3d1c:b0:238:351a:f960 with SMTP id
+ adf61e73a8af0-240ab4304c3mr1359387637.23.1755051632762; Tue, 12 Aug 2025
+ 19:20:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/6] fs/9p: Add ability to identify inode by path for
- .L
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- Dominique Martinet <asmadeus@codewreck.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Eric Van Hensbergen
- <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>,
- Christian Schoenebeck <linux_oss@crudebyte.com>, v9fs@lists.linux.dev,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
- Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
- linux-fsdevel@vger.kernel.org
-References: <cover.1743971855.git.m@maowtm.org>
- <e839a49e0673b12eb5a1ed2605a0a5267ff644db.1743971855.git.m@maowtm.org>
- <20250705002536.GW1880847@ZenIV>
- <b32e2088-92c0-43e0-8c90-cb20d4567973@maowtm.org>
- <20250808.oog4xee5Pee2@digikod.net>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20250808.oog4xee5Pee2@digikod.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250721211958.1881379-1-kpsingh@kernel.org> <20250721211958.1881379-9-kpsingh@kernel.org>
+ <87sei58vy3.fsf@microsoft.com>
+In-Reply-To: <87sei58vy3.fsf@microsoft.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 12 Aug 2025 22:20:21 -0400
+X-Gm-Features: Ac12FXysUcbMuD1nf3ihlEeZxea1ewYPaC5jN8QaJuuVMTwdgLLQNDZ7i3SnxDE
+Message-ID: <CAHC9VhTrKnKhh_7oxMfY6QYrhzpL6UQ-ZkpcOYzyb7c4JJCJXA@mail.gmail.com>
+Subject: Re: [PATCH v2 08/13] bpf: Implement signature verification for BPF programs
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, KP Singh <kpsingh@kernel.org>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kys@microsoft.com, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	James.Bottomley@hansenpartnership.com, wufan@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the review :)  I will try to send a v2 in the coming weeks with
-the two changes you suggested and the changes to cached mode as suggested
-by Dominique (plus rename handling).  (will also try to figure out how to
-test with xfstests)
-
-On 8/8/25 09:32, Mickaël Salaün wrote:
+On Tue, Aug 5, 2025 at 2:28=E2=80=AFPM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
+> KP Singh <kpsingh@kernel.org> writes:
+> > This patch extends the BPF_PROG_LOAD command by adding three new fields
+> > to `union bpf_attr` in the user-space API:
+> >
+> >   - signature: A pointer to the signature blob.
+> >   - signature_size: The size of the signature blob.
+> >   - keyring_id: The serial number of a loaded kernel keyring (e.g.,
+> >     the user or session keyring) containing the trusted public keys.
+> >
+> > When a BPF program is loaded with a signature, the kernel:
+> >
+> > 1.  Retrieves the trusted keyring using the provided `keyring_id`.
+> > 2.  Verifies the supplied signature against the BPF program's
+> >     instruction buffer.
+> > 3.  If the signature is valid and was generated by a key in the trusted
+> >     keyring, the program load proceeds.
+> > 4.  If no signature is provided, the load proceeds as before, allowing
+> >     for backward compatibility. LSMs can chose to restrict unsigned
+> >     programs and implement a security policy.
+> > 5.  If signature verification fails for any reason,
+> >     the program is not loaded.
 > [...]
->> On 7/5/25 01:25, Al Viro wrote:
->>> On Sun, Apr 06, 2025 at 09:43:02PM +0100, Tingmao Wang wrote:
->>>> +bool ino_path_compare(struct v9fs_ino_path *ino_path,
->>>> +			     struct dentry *dentry)
->>>> +{
->>>> +	struct dentry *curr = dentry;
->>>> +	struct qstr *curr_name;
->>>> +	struct name_snapshot *compare;
->>>> +	ssize_t i;
->>>> +
->>>> +	lockdep_assert_held_read(&v9fs_dentry2v9ses(dentry)->rename_sem);
->>>> +
->>>> +	rcu_read_lock();
->>>> +	for (i = ino_path->nr_components - 1; i >= 0; i--) {
->>>> +		if (curr->d_parent == curr) {
->>>> +			/* We're supposed to have more components to walk */
->>>> +			rcu_read_unlock();
->>>> +			return false;
->>>> +		}
->>>> +		curr_name = &curr->d_name;
->>>> +		compare = &ino_path->names[i];
->>>> +		/*
->>>> +		 * We can't use hash_len because it is salted with the parent
->>>> +		 * dentry pointer.  We could make this faster by pre-computing our
->>>> +		 * own hashlen for compare and ino_path outside, probably.
->>>> +		 */
->>>> +		if (curr_name->len != compare->name.len) {
->>>> +			rcu_read_unlock();
->>>> +			return false;
->>>> +		}
->>>> +		if (strncmp(curr_name->name, compare->name.name,
->>>> +			    curr_name->len) != 0) {
->>>
->>> ... without any kind of protection for curr_name.  Incidentally,
->>> what about rename()?  Not a cross-directory one, just one that
->>> changes the name of a subdirectory within the same parent?
->>
->> As far as I can tell, in v9fs_vfs_rename, v9ses->rename_sem is taken for
->> both same-parent and different parent renames, so I think we're safe here
->> (and hopefully for any v9fs dentries, nobody should be causing d_name to
->> change except for ourselves when we call d_move in v9fs_vfs_rename?  If
->> yes then because we also take v9ses->rename_sem, in theory we should be
->> fine here...?)
-> 
-> A lockdep_assert_held() or similar and a comment would make this clear.
+>
+> The following is what we propose to build on top of this to implement
+> in-kernel hash chain verification. This allows for signature
+> verification of arbitrary maps and isn't coupled to light-skeletons or
+> any specific implementation.
+>
+>
+> From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> Date: Mon, 28 Jul 2025 08:14:57 -0700
+> Subject: bpf: Add hash chain signature support for arbitrary maps
+>
+> This patch introduces hash chain support for signature verification of
+> arbitrary bpf map objects which was described here:
+> https://lore.kernel.org/linux-security-module/20250721211958.1881379-1-kp=
+singh@kernel.org/
+>
+> The UAPI is extended to allow for in-kernel checking of maps passed in
+> via the fd_array. A hash chain is constructed from the maps, in order
+> specified by the signature_maps field. The hash chain is terminated
+> with the hash of the program itself.
+>
+> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> ---
+>  include/uapi/linux/bpf.h       |  6 +++
+>  kernel/bpf/syscall.c           | 75 ++++++++++++++++++++++++++++++++--
+>  tools/include/uapi/linux/bpf.h |  6 +++
+>  3 files changed, 83 insertions(+), 4 deletions(-)
 
-I can add a comment, but there is already a lockdep_assert_held_read of
-the v9fs rename sem at the top of this function.
+Some minor comments below, but in general I think this approach is
+good in that it preserves the signature scheme in KP's patchset while
+also supporting a scheme that is not reliant on the lskel or
+verification, with the user loading the program/lskel choosing which
+signature scheme to use.  Unless something has changed since we've
+discussed this last, I believe this should provide the basic BPF
+infrastructure needed to satisfy all the different requirements
+already described.
 
-> [...]
->> /*
->>  * Must hold rename_sem due to traversing parents
->>  */
->> bool ino_path_compare(struct v9fs_ino_path *ino_path, struct dentry *dentry)
->> {
->> 	struct dentry *curr = dentry;
->> 	struct name_snapshot *compare;
->> 	ssize_t i;
->>
->> 	lockdep_assert_held_read(&v9fs_dentry2v9ses(dentry)->rename_sem);
->>
->> 	rcu_read_lock();
->> 	for (i = ino_path->nr_components - 1; i >= 0; i--) {
->> 		if (curr->d_parent == curr) {
->> 			/* We're supposed to have more components to walk */
->> 			rcu_read_unlock();
->> 			return false;
->> 		}
->> 		compare = &ino_path->names[i];
->> 		if (!d_same_name(curr, curr->d_parent, &compare->name)) {
->> 			rcu_read_unlock();
->> 			return false;
->> 		}
->> 		curr = curr->d_parent;
->> 	}
->> 	rcu_read_unlock();
->> 	if (curr != curr->d_parent) {
+Thoughts on this KP (as well as any others who have been following along)?
 
-Looking at this again I think this check probably needs to be done inside
-RCU, will fix as below:
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index 10fd3ea5d91fd..f7e9bcabd9dcc 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -2780,15 +2780,36 @@ static bool is_perfmon_prog_type(enum bpf_prog_ty=
+pe prog_type)
+>         }
+>  }
+>
+> +static inline int bpf_map_get_hash(int map_fd, void *buffer)
+> +{
+> +       struct bpf_map *map;
+> +
+> +       CLASS(fd, f)(map_fd);
+> +       map =3D __bpf_map_get(f);
+> +       if (IS_ERR(map))
+> +               return PTR_ERR(map);
+> +
+> +       if (!map->ops->map_get_hash)
+> +               return -EINVAL;
+> +
+> +       return map->ops->map_get_hash(map, SHA256_DIGEST_SIZE, buffer);
+> +}
 
->> 		/* dentry is deeper than ino_path */
->> 		return false;
->> 	}
->> 	return true;
->> }
+It would be nice to see some agility on the hash algorithm, but it's
+probably not critical for a first effort.  I can easily see an
+algorithm field being added to bpf_attr, using the same digest
+algorithm as specified in the PKCS7 signature, or something else
+sufficiently clever.
 
-diff --git a/fs/9p/ino_path.c b/fs/9p/ino_path.c
-index 0000b4964df0..7264003cb087 100644
---- a/fs/9p/ino_path.c
-+++ b/fs/9p/ino_path.c
-@@ -77,13 +77,15 @@ void free_ino_path(struct v9fs_ino_path *path)
- }
- 
- /*
-- * Must hold rename_sem due to traversing parents
-+ * Must hold rename_sem due to traversing parents.  Returns whether
-+ * ino_path matches with the path of a v9fs dentry.
-  */
- bool ino_path_compare(struct v9fs_ino_path *ino_path, struct dentry *dentry)
- {
- 	struct dentry *curr = dentry;
- 	struct name_snapshot *compare;
- 	ssize_t i;
-+	bool ret;
- 
- 	lockdep_assert_held_read(&v9fs_dentry2v9ses(dentry)->rename_sem);
- 
-@@ -101,10 +103,8 @@ bool ino_path_compare(struct v9fs_ino_path *ino_path, struct dentry *dentry)
- 		}
- 		curr = curr->d_parent;
- 	}
-+	/* Comparison fails if dentry is deeper than ino_path */
-+	ret = (curr == curr->d_parent);
- 	rcu_read_unlock();
--	if (curr != curr->d_parent) {
--		/* dentry is deeper than ino_path */
--		return false;
--	}
--	return true;
-+	return ret;
- }
+>  static noinline int bpf_prog_verify_signature(struct bpf_prog *prog,
+>                                               union bpf_attr *attr,
+>                                               bool is_kernel)
+>  {
+>         bpfptr_t usig =3D make_bpfptr(attr->signature, is_kernel);
+> -       struct bpf_dynptr_kern sig_ptr, insns_ptr;
+> +       bpfptr_t umaps;
+> +       struct bpf_dynptr_kern sig_ptr, insns_ptr, hash_ptr;
+>         struct bpf_key *key =3D NULL;
+>         void *sig;
+> +       int *maps;
+> +       int map_fd;
+>         int err =3D 0;
+> +       u64 buffer[8];
+> +       u64 hash[4];
 
-> 
-> I like this new version.
-> 
+It would be good to replace the magic numbers above with something
+that is a bit more self documenting, e.g. 'u64 hash[SHA256_DIGEST_SIZE
+/ sizeof(u64)]'.  The same goes for some of the pointer offset math
+below, assuming the result isn't too ugly.  If the resulting code is
+pretty awful to look at, a quick comment or two might be a good idea.
+
+> +       int n;
+>
+>         if (system_keyring_id_check(attr->keyring_id) =3D=3D 0)
+>                 key =3D bpf_lookup_system_key(attr->keyring_id);
+> @@ -2808,16 +2829,62 @@ static noinline int bpf_prog_verify_signature(str=
+uct bpf_prog *prog,
+>         bpf_dynptr_init(&insns_ptr, prog->insnsi, BPF_DYNPTR_TYPE_LOCAL, =
+0,
+>                         prog->len * sizeof(struct bpf_insn));
+>
+> -       err =3D bpf_verify_pkcs7_signature((struct bpf_dynptr *)&insns_pt=
+r,
+> -                                        (struct bpf_dynptr *)&sig_ptr, k=
+ey);
+> +       if (!attr->signature_maps_size) {
+> +               err =3D bpf_verify_pkcs7_signature((struct bpf_dynptr *)&=
+insns_ptr,
+> +                                                (struct bpf_dynptr *)&si=
+g_ptr, key);
+> +       } else {
+> +               bpf_dynptr_init(&hash_ptr, hash, BPF_DYNPTR_TYPE_LOCAL, 0=
+,
+> +                               sizeof(hash));
+> +               umaps =3D make_bpfptr(attr->signature_maps, is_kernel);
+> +               maps =3D kvmemdup_bpfptr(umaps, attr->signature_maps_size=
+ * sizeof(*maps));
+> +               if (!maps) {
+> +                       err =3D -ENOMEM;
+> +                       goto out;
+> +               }
+> +               n =3D attr->signature_maps_size - 1;
+> +               err =3D copy_from_bpfptr_offset(&map_fd, make_bpfptr(attr=
+->fd_array, is_kernel),
+> +                                             maps[n] * sizeof(map_fd),
+> +                                             sizeof(map_fd));
+> +               if (err < 0)
+> +                       goto free_maps;
+> +
+> +               err =3D bpf_map_get_hash(map_fd, hash);
+> +               if (err !=3D 0)
+> +                       goto free_maps;
+> +
+> +               n--;
+> +               while (n >=3D 0) {
+> +                       memcpy(buffer, hash, sizeof(hash));
+> +                       err =3D copy_from_bpfptr_offset(&map_fd,
+> +                                                     make_bpfptr(attr->f=
+d_array, is_kernel),
+> +                                                     maps[n] * sizeof(ma=
+p_fd),
+> +                                                     sizeof(map_fd));
+> +                       if (err < 0)
+> +                               goto free_maps;
+> +
+> +                       err =3D bpf_map_get_hash(map_fd, buffer+4);
+> +                       if (err !=3D 0)
+> +                               goto free_maps;
+> +                       sha256((u8 *)buffer, sizeof(buffer), (u8 *)&hash)=
+;
+> +                       n--;
+> +               }
+> +               sha256((u8 *)prog->insnsi, prog->len * sizeof(struct bpf_=
+insn), (u8 *)&buffer);
+> +               memcpy(buffer+4, hash, sizeof(hash));
+> +               sha256((u8 *)buffer, sizeof(buffer), (u8 *)&hash);
+> +               err =3D bpf_verify_pkcs7_signature((struct bpf_dynptr *)&=
+hash_ptr,
+> +                                                (struct bpf_dynptr *)&si=
+g_ptr, key);
+>
+> +free_maps:
+> +               kvfree(maps);
+> +       }
+> +out:
+>         bpf_key_put(key);
+>         kvfree(sig);
+>         return err;
+>  }
+>
+>  /* last field in 'union bpf_attr' used by this command */
+> -#define BPF_PROG_LOAD_LAST_FIELD keyring_id
+> +#define BPF_PROG_LOAD_LAST_FIELD signature_maps_size
+>
+>  static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr=
+_size)
+>  {
+
+--=20
+paul-moore.com
