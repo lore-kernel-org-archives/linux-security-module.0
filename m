@@ -1,113 +1,87 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C74166F1A;
-	Thu, 14 Aug 2025 16:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1AB3002C3;
+	Thu, 14 Aug 2025 17:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755190463; cv=none; b=J1mxVTeYpHHmzPfXGI1lE3oOCxYJFxG5Fg8+vpj5jBS31XfrvN/PjDxZ2N7GB+f3GBGo1AcT9tJWzkTqiLlla1d4X0qmycdkSCIUdO0dvQsJlnisQNLukMWE0ATW5peIv8nCTPFYkA0oFO6dXt0gDU/JZI8Af7xNotj75IwkNhI=
+	t=1755192521; cv=none; b=BcpXQ/P4J8yssfs/CnoqWUAP10w5Ue8mScaFnw2qZiTzox9rVmjtA1FYfLiOsUsENp+hcraH5kYBFOXekLffh9yyhaKG552fAyiMqIScUxKscEYfBdoLSuQueRMu0SMtb+lfNBlXljlQZ5TEwgScgsILUBqMFXEw1oTlo+93Lck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755190463; c=relaxed/simple;
-	bh=YfHkh+eSRqs9I6udgnVleOU/rOxXdnn1bs0TZZvIbmU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tRwTnKYz0Z+YadCARFIBC86fihacooaMUCxfLQ4xyqy0jkCS1ytHLXAnrv1YaMh6q6QG7Kw7iG9N7f89PIGxYmQIQ+uVdJzGd5OqXELjzGKrK6UDheAsu6IfLDVbTFAA/v0EpgKqUkMhiOuWllVs2qQswIelTAwriaGXeDAncuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gfH/zQy0; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1755192521; c=relaxed/simple;
+	bh=K9Fz3Tth55oSSqbiAqsMup4T6Q6LSvXB5ma6wbSQSgc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Nnb+FtDJrACzTbAgGH6igr8lCp1H7FFwAPlh9DZKqa4YFqBzcxCC1IRjzboGYFObtfvoPp86ZXgNBUU0SB8a2Bjyd+qzkxOllFphOwky01wiPa+AvHspC7CUj8/P61SZu0rf7Q1uvFBITL7gE2mLrth2TMnk3s4CgIGapu2LdQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cLhOoIr2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfH/zQy0"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24457f47000so10011075ad.0;
-        Thu, 14 Aug 2025 09:54:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755190461; x=1755795261; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bzAUOwpAWoQpgwAW5jB4MGjXOdEDxLQtc2FXn4/gdjw=;
-        b=gfH/zQy0i6G9/4roGh5krWToK/2GnUf9pQwDfIQrCD3c82XHBc1e/ySv7DszgXeHpf
-         /f0njJqVIeumvqcSAE68wQcxJUCc8JFZa1XbA/ufYsmmTGAQzpleaP4mjxGs0VgZNyY8
-         66PCy3dTUT8biHWduHb/PqJnFlEYraoZGAuqbF4vPjdkPYR8IiC86Ephh5VrolFAFhgK
-         bUNnOmCEVTpSHqERHAJ3JDXL9W1634EcI9nORMUaXBekLs9p2st9HLHWLMlpjDnoyGGP
-         a5mIiffh5lQvv8XwJJGLLoQIvqIFFgoMxUGsiq337oH8yb61G6W+54qpvbAqzPN5DuYa
-         JHdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755190461; x=1755795261;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bzAUOwpAWoQpgwAW5jB4MGjXOdEDxLQtc2FXn4/gdjw=;
-        b=bOAQQpwG3ady6njLW/+KzIbYZeOlWeQztGjHANq9aJ1v8r6Blt1JP9EGm34caodRZZ
-         GsvZYqXuopVddOkQdhu1SGKIrnJ44AMvpLzUIDNPpE4gkprDfsp/lXLkrKBqnSi0o8IG
-         a9hy5vECRyAfX3/3aKZEXpDN2NUWpaDOLbi+dlQoLf24luDVmNvccBytVrQ7PwuUTf1K
-         Eg5m2GGGWhW3p/StqMDwBQafrx3BgwjtZtfjyiTu58nfpV6WKCnQnr3BssDuYIqc31mY
-         gBz5s/PbMm6M6gfOLiswTa0CiF8jhd4idAXAYxzFol6KhZg2XUb66xpft+0LdWPOdJa5
-         0inQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/0Jb036T0Op4GTVq8eYhzks9OyPlKOlcHSLjp9fyG8FYa0MG4PrIbM2jgpbbD2A54UE8gDXCNBSbkr6eJ/aCa7aVpBBl8@vger.kernel.org, AJvYcCWbtbud9UZ7EDWJszJH4Z7WgY2dA4sxbupuRxKeNuQic771daIdKOHeXV5PA8bwEKhsUSwzmggIEkVRr3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIcHVhFjlM2A9DGUIOYGtFuOYvq7Tb+nlOqF/MYgPNUfXSIx1l
-	k6XOQgFrTkY+8yha9xjGndv7Owx7KcICBDHo3E4Oy36Y6K2QMU10SRmq
-X-Gm-Gg: ASbGncuSc97eHVYCTG99OWai2VjrEYgKEAQwEb11IaYSdvm6aPRPX3NYiRBJjy/y4M4
-	hOinYk8dc7anqWMpItAm0tR4v0pVR8BSR5KyylRqiEmuexBy9CVxePo+/dnECp9xT0uQSdGSsPa
-	KuNO3F8da71dTodRD5Qr7MBvInw9wp78TYx4an5GeZGL4v4c1wOU5ua/8PGpgsq04SI9AsVPPb4
-	5iole71nmQGWaLZuEfoMb9qva0xI2/z+x9H5h14iT9O07YCBPIu4jAvby/09h81bhYFZ7RrQuFS
-	wGxTupXkJRYhDdWwOwsMM95c7vzqmHN/gnndqY27XiqA0WPl1+08SQd4Ee8nTWwSCyaSl4ZF/FK
-	NXzLlh7/UVQxhEH2otvCBalcjOJcTKZJ+TBFsfRHAKb5Rr4eEqlPE7Ek7B9+5U2cMMat9O8zsig
-	I=
-X-Google-Smtp-Source: AGHT+IEqMpZO5u/tm/cwn+0YsGs4tZglauzhONrWB/FV5p8lGP3iOxI6+izHLFRBqWNEDG3eBmVaBw==
-X-Received: by 2002:a17:902:c952:b0:234:ba37:879e with SMTP id d9443c01a7336-244586bf29amr53951435ad.38.1755190461424;
-        Thu, 14 Aug 2025 09:54:21 -0700 (PDT)
-Received: from chandra-mohan-sundar.aristanetworks.com ([2401:4900:1cb8:7b85:37eb:c20:7321:181])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24244f5c1c0sm310205985ad.45.2025.08.14.09.54.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 09:54:21 -0700 (PDT)
-From: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
-To: john.johansen@canonical.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org
-Cc: Chandra Mohan Sundar <chandramohan.explore@gmail.com>,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH v2] apparmor: Remove unused value
-Date: Thu, 14 Aug 2025 22:24:01 +0530
-Message-ID: <20250814165403.616195-1-chandramohan.explore@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cLhOoIr2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38CEEC4CEED;
+	Thu, 14 Aug 2025 17:28:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755192521;
+	bh=K9Fz3Tth55oSSqbiAqsMup4T6Q6LSvXB5ma6wbSQSgc=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=cLhOoIr2l8NexPjtcgbrjw/7MnuAYz5wNom/HwtFo/D4JlY/f7RLNozjGQ02cb7Ij
+	 RWPgRsiCq+/c9bmln4BPErVW83L3Wih2wkAaLrkNgbIH6On0qFovvXwrSLGOh7DuVH
+	 qlCtCmreZojwrdAEpyLHQ1tewEWjljootVbgUMeZ1ivq+yCmNUZEtnTGoqT6rjYKtL
+	 5J/RTGZgNJcmtpP0QcWZSAfOtYPYS8I5wFHIMBVXR5+8NGDT0XtNsFn+qpCmlZwovK
+	 1vjAAh05GPWzf5pFCdLyAMye8zfNfrdHB1uQHs+V/e8AK70uxVubt07iObzoykvmrd
+	 Y5PQyJ6UH8uoA==
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 14 Aug 2025 19:28:36 +0200
+Message-Id: <DC2BTIG40SRU.16QBMDH0PP01Q@kernel.org>
+Cc: "Alice Ryhl" <aliceryhl@google.com>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Fiona Behrens" <me@kloenk.dev>, "Jocelyn Falempe" <jfalempe@redhat.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v3 07/11] rust: security: replace `core::mem::zeroed`
+ with `pin_init::zeroed`
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Paul Moore" <paul@paul-moore.com>, "Miguel Ojeda"
+ <miguel.ojeda.sandonis@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250814093046.2071971-1-lossin@kernel.org>
+ <20250814093046.2071971-8-lossin@kernel.org>
+ <CAHC9VhQXOezJ2=B1BQOqLgfuzDJEVS5G_r9+_bQ+OUNTpjZCKw@mail.gmail.com>
+ <CANiq72=vhPsGjSx9u0FvDa6uzMFkFQFP9qG+DhtZ_U5TyV=bJQ@mail.gmail.com>
+ <CAHC9VhQNi31KSpB-MtvZO9e5fzuM_87VWb6rrMtxcqOGSPTiNg@mail.gmail.com>
+In-Reply-To: <CAHC9VhQNi31KSpB-MtvZO9e5fzuM_87VWb6rrMtxcqOGSPTiNg@mail.gmail.com>
 
-The value "new" is being assigned to NULL but that statement does not
-have effect since "new" is being overwritten in the subsequent
-fallback case.
+On Thu Aug 14, 2025 at 5:54 PM CEST, Paul Moore wrote:
+> On Thu, Aug 14, 2025 at 11:31=E2=80=AFAM Miguel Ojeda
+> <miguel.ojeda.sandonis@gmail.com> wrote:
+>> On Thu, Aug 14, 2025 at 5:19=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
+ wrote:
+>> >
+>> > I'm happy to take this via the LSM tree, but it would be nice to see a
+>> > Reviewed-by/Acked-by from someone with a better understanding of Rust
+>> > :)
+>>
+>> I think the idea is to take all these through the Rust one with
+>> Acked-bys from the maintainers (or we can skip this one and do it in a
+>> future cycle when the first patches get in).
+>
+> [CC'd the LSM list, as I just realized it wasn't on the original patch
+> posting; in the future please include the LSM list on LSM related Rust
+> patchsets/patches]
 
-Remove the unused value. This issue was reported by coverity static
-analyzer.
+I checked and I didn't find a maintainers entry for that this file & the
+LSM list. I'm using scripts/get_maintainer.pl to get the people I send
+patches to and that also checks git commits, so I guess it added you
+through that (which is very good :). So can we add a maintainers entry
+for `rust/kernel/security.rs` so people don't miss this in the future?
+Thanks!
 
-Fixes: a9eb185be84e9 ("apparmor: fix x_table_lookup when stacking is not the first entry")
-Signed-off-by: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
 ---
-Changes since v1:
-    Fixed the commit message and Fixes tag message formatting.
-
- security/apparmor/domain.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 267da82afb14..9c0c7fa8de46 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -592,7 +592,6 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
- 		if (!new || **lookupname != '&')
- 			break;
- 		stack = new;
--		new = NULL;
- 		fallthrough;	/* to X_NAME */
- 	case AA_X_NAME:
- 		if (xindex & AA_X_CHILD)
--- 
-2.43.0
-
+Cheers,
+Benno
