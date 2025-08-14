@@ -1,63 +1,63 @@
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F28628312D
-	for <linux-security-module@vger.kernel.org>; Thu, 14 Aug 2025 22:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272BF283FDA
+	for <linux-security-module@vger.kernel.org>; Thu, 14 Aug 2025 22:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755212073; cv=none; b=kfOlcyA1RytXj6cBflRgagnRMJt3ZnuUN1xPGHcAKLp1TKaKUHe4M3venQqH+ZM9lZoP8tbzJHdBhn4XWNdopr1P/2Gj9HA1bm3f4sICtC9zW69CFFTTfOKuBDHwlFxhStPJWnEiX6YF/pLOuuBS8pCnR0rjr6OoOJTGDOZXiJo=
+	t=1755212075; cv=none; b=VLR8yDBTf49rUavIp5B+VQsUy54y1subkM/92j0RBQ8illIQor/fBzeXOmHgxgO2Lyu6+Gt4bRGsKdkK202EcRFXGU1rtAUVTA3oEnugKEkYnOQxJwcGTbjlDzJJYhlM8np0ycsvGewUh5C2vQfPLFbH0PlOBhmJ/gc5Pnc1W8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755212073; c=relaxed/simple;
-	bh=7XLq8rxFwmmbDljx6EHznQWqg7Km4bL3DuFZpYrBJBo=;
+	s=arc-20240116; t=1755212075; c=relaxed/simple;
+	bh=iRVF+xEWfqXJbI7sAP87mt7RMtwKEgN9MdoWayDEog8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g0IlQJD4kYAGbQQyAo7FNIe6m7u5q2I45CA9u7rY99/gUaTZdhbHUC0S2IQ2b/G2oNzZ1gGAqMzildT1EP5GSAcNqgahtmtsdI2ryq2D2wQObRRvn6H74WXY+uVHgnKB1I+Kbxz1SgVATsUxKOMBg4oEq6CbOHnpp56yUaZbUGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fpjVNv9z; arc=none smtp.client-ip=209.85.219.50
+	 MIME-Version; b=pLHzW502kNRlhfrNN75NnVL1Dta5YUJr/kKqtiHPgptoMZPIjfuhY3l+BNctarRYHVROpNtrNAXNJTSKXyUZDDAvscHYRk7yhIpLkuuF47x7OFFVc5RryeG6a3V1xXDppPsEWP6hGVdf/AOeD5aY5jP4BprR9z/YJNC58HhDSeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=d8w/0XFF; arc=none smtp.client-ip=209.85.222.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fpjVNv9z"
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-70a9f5625b7so13861036d6.2
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Aug 2025 15:54:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="d8w/0XFF"
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7e870636870so139799385a.2
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Aug 2025 15:54:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1755212070; x=1755816870; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1755212072; x=1755816872; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FR2DWSSV9BKP0vHAocB1KanHVxcTq4nxTL3M7JMbPR0=;
-        b=fpjVNv9zUwPLVsNPhfDIEdAy+NLa1fIT2beAf7ZL55pp8h5UKa8g1BXQS7I5O017+J
-         IdJqRLoNYMY11sfLncaY6giXEoAo7ScYRxi/lU5VRpxI4ovI2oA7T92XQahPnaxJfwob
-         088fyS4JksvPn2HFNL5/paQylHHcUIbCki1DXs9Fz3A9FJa0rUBZTYI+W3SYxLKavyY2
-         DYz/CXKAnaCHFG8qxXe/VHMpTlzde44UogsnVMsc5TM/MEfb2xnR3ChwYfW2YSjeN8jI
-         nxU9ixVYQtjI1RLqO2Bf0+/fvzlsNzGQxp9VrCkK+GDC3q+RkJorGjfcgckvJxOpDC2h
-         zniQ==
+        bh=tpenjMuo7Sc6NJRPsD7JHoZWrUfjH+eq6PW9etyz+XM=;
+        b=d8w/0XFFOtFIJUTDsiAlS3VsTePw3jH8gAMIY1qHWHCg3fW2eshnf7Im1RGJ2aKCel
+         oT9+1NxfWHBoJhOVFpwnTFzdN3mG5utvcfcp6nyuynxideFzIuMtQmHZ4HAxANp8Culv
+         X1lYytoUgbNrHYbMzsOQTyS/xIqhjx4VOttSi44zx858xt46yNO9d6qq3/RLLWuwowJY
+         Lc4V0wPgRwZDkVWQK3FfMVTW6KkXnOx5UmLUcCj/MD5SHqAS/R5fcZyjWTHkYm880KaG
+         7pUhUmFtEH3rL5omAMClqUFh4A9/6xjvb45Vo3vrLlcC+dYBasNu2nPgME11UxDWRgtf
+         L0eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755212070; x=1755816870;
+        d=1e100.net; s=20230601; t=1755212072; x=1755816872;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FR2DWSSV9BKP0vHAocB1KanHVxcTq4nxTL3M7JMbPR0=;
-        b=v5qUyxXPfj6ZmX7cmMmiut0yjG3wS01Rv9EdYlOPil5Er4YB134PicRHUz0G8dhxGW
-         7L8jxYazNNXrcBSm3NyE7UfC1aiigVvJIxZ3Oagzn0kM4RtfPb1v/N4aaX66Xr8VRsiS
-         PmeYa1ewDUshbtHIaBrkwa7ceOyWvCpeqdWI6ptyOqSM+mW+54nadTBsnBxYa+GyZR3G
-         9YXZ/LvqZY5/zP6sYTIlg+aNGHZHjYM7CFZHcIZifidfpce1CIL9I7WsGvvDPKKGAvuv
-         DhQQ6CBox5jDQoGjwZ63JT5bS0hJnSrXqf0LQIEynSTiS8VuTI3EkOQhXwmONaLTO3lg
-         tgUw==
-X-Gm-Message-State: AOJu0YzoN0b5RL7auZ3coKpYg12FdbcbnW06lmRkahY4j3QIUmO5wCiM
-	mUzBNt64b2O4VrxewZlHvifZ089uARDAUstNjQ5Sda4a8AX5jTBa0ucuPnKhb0EGr+ejNLb7iHa
-	AZh8=
-X-Gm-Gg: ASbGncvKyEnerauMxuEVq08BcsBeDb1zfvg0zwpTo0DrQFrQHk2kjN618OYlltLIu73
-	tEozqZOCwYsZt/oqACJylFMRuWLVEOKx7xH5jTec7fUlExJqa2i8/D7eu9APj6eCcCsgXiff4oh
-	dG6vYk3IHjwKB1uOW3XPOBE/Gcu1RKQyvQuFxwA8j06K0KUoSJE3p+v2yTu0g/vo3FjWOqWEcB1
-	yiUf9hHDj6P9vTU4o6HUqcFp8qPeF09sQUBxqq4fXac3TramZG++sYgWKiuN549j0altr4uxog8
-	UMJge5FANbkI3+5DqRWBHJ9R0WoDqmXMcCngTqqE/dwMM9+zDhJmcz6fvCltfk2nrmPS43NZZh0
-	dd907LinplMYdFqPkyRCidjy76YjcwfAvKun42ZxbKR2gOYOEMK5cr17Ai0gdL6NJko8=
-X-Google-Smtp-Source: AGHT+IGOZnDW6kMg6lvfCr5KMqUmek08jcnigqYok/3JQKY9A9pTnDRAxXGO2E6vajOM9BArHwIvGA==
-X-Received: by 2002:ad4:5bc9:0:b0:709:2ab3:17ba with SMTP id 6a1803df08f44-70af5c8880bmr63533856d6.47.1755212070316;
-        Thu, 14 Aug 2025 15:54:30 -0700 (PDT)
+        bh=tpenjMuo7Sc6NJRPsD7JHoZWrUfjH+eq6PW9etyz+XM=;
+        b=lBMVhaDY7YgXlIjeRlQI11KnLP/kxY3RymKUKH37fXbLBd6+ONm9TX9Yl1XPlD0p5I
+         EK8C+Q7OR/vfv4Nq0xOXmLIDaHcFE3pW/Mz1zjGt/WFsg4N3Vg5I2byvIc5j3YEqzaT2
+         Gf87Y3/EcxvdUYGpHf0bxR9S8NoGY6eI9bQEiK0ZIMO/0ZjTXDR+zk1gDZW97+e78X3C
+         /9SNvLA+OT1Ys6sGFzr7t6P1utUQci7gYkl9qIPEYOOCGm2v1APW45KOtoYhhNh3FPWX
+         9hcMCIUMbjbBZOq+7Qez/QL9JVd8rK/USzGc7ECOsOh+ASxa8d68xp/0lpJILntv5HDn
+         1QAQ==
+X-Gm-Message-State: AOJu0YyoKQzLvvxz+o7/vI9tqVFgnYZwZO3MfGMXLZjt9gtvKi6fXzgs
+	xSfv36oxnmt/cph5HkPvBASV7l6b78pZ2LjAQ/ioleaJbl6FZ3L5jNvng/eq+lvHqATKx2GWNCy
+	HYX0=
+X-Gm-Gg: ASbGnctCMIFKKaCjMsVAAnSqP2k6Pih34ebyU5BNu/cjMVHBbMeZgrkZGejfuweLJtk
+	61fuI0eyFWQZxGtQeT4vso9T0Uj9/g8voskuF3sDOLFELXbxyv32vW88tBXE/eF4OBA9A/80RIl
+	boiflzSIg7xO009DQkurrctKsVzLpmz/uLlvOuxLELSllP9KadIL9m3WAoOfe8ZOoDOY6FM/zpi
+	FLrpquY7uwI4xAo/D5NZU41XJlPS+uaTPzY3jZVsA07hgvMg9ZPoZfwNT1pJAs3/It9bxcbe7e4
+	EDvPl6soOH25CiufaL4OzVU6jIdHMPkf0nqzS8IgHqJzP+hFA8zv3zhKJEcnPAxUAaJpEMlczJy
+	8WTK+Smqc5ZCIpv8Vgt1BI88ycAkGgCcZndWBlpi0L9RnVESu9XR3b7hXM+hiWOHsGvw=
+X-Google-Smtp-Source: AGHT+IGrT0Q3QuP+/VewGYOnaQRFcP1EgaRxcCxaEqXrFX20fAQOduQGqYztMGHm7U73uOCWz/XiNA==
+X-Received: by 2002:a05:620a:aa03:b0:7e3:6a01:e6ba with SMTP id af79cd13be357-7e8703d4be7mr618870385a.8.1755212072387;
+        Thu, 14 Aug 2025 15:54:32 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-70adc1cc9d2sm19838106d6.1.2025.08.14.15.54.28
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7e87b4f3f9asm41984085a.66.2025.08.14.15.54.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 15:54:28 -0700 (PDT)
+        Thu, 14 Aug 2025 15:54:30 -0700 (PDT)
 From: Paul Moore <paul@paul-moore.com>
 To: linux-security-module@vger.kernel.org,
 	linux-integrity@vger.kernel.org,
@@ -74,9 +74,9 @@ Cc: John Johansen <john.johansen@canonical.com>,
 	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
 	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
 	Xiu Jianfeng <xiujianfeng@huawei.com>
-Subject: [PATCH v3 15/34] lsm: rename/rework ordered_lsm_parse() to lsm_order_parse()
-Date: Thu, 14 Aug 2025 18:50:24 -0400
-Message-ID: <20250814225159.275901-51-paul@paul-moore.com>
+Subject: [PATCH v3 16/34] lsm: cleanup the LSM blob size code
+Date: Thu, 14 Aug 2025 18:50:25 -0400
+Message-ID: <20250814225159.275901-52-paul@paul-moore.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250814225159.275901-36-paul@paul-moore.com>
 References: <20250814225159.275901-36-paul@paul-moore.com>
@@ -86,159 +86,151 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4838; i=paul@paul-moore.com; h=from:subject; bh=7XLq8rxFwmmbDljx6EHznQWqg7Km4bL3DuFZpYrBJBo=; b=owEBbQKS/ZANAwAKAeog8tqXN4lzAcsmYgBonmi9QIVZ9hk3ACP8hD00f15qI5qZrYo3aXc/B v9mQONvwYGJAjMEAAEKAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCaJ5ovQAKCRDqIPLalzeJ c81kD/9Zn3yshX+a203TWtYOChot99TKLj1RDt2N5gEFE3Y3MnbK/fiAP8zPw6ZzFLlr1izGznC prqzrvbDZAEVp+ZaQQ5xggMFsny4NZWNoaFxPGnoQRVBENEEH2ClAqZ23dUFxhO8gc2WRceNAWR xNE3YioyHWzgV8ZbJn4k0xAQIkptK9hKiTp7Z45MBm29/vfjKzfotHWEfQq4RwRUjlliTM2bERF 4Up4VmJJYvKU8YmUmdhOxP2DSgrY7Db0barLUcHykNTDJuaHNW/SgQEbgsDpX+ytfZM4+JoZJQX Wf3dpL8S0aXV36WFXNTrPUYvv/ZRHERL/xdHqkwGgPYkmleKzwBsCJMIEnbZ5ioNZPDv4genK95 K3LRv2fy3jqnlKp/3WCVH18pyEy58TP+dXrJgRQej2EqMlI/sGi+nhlHmwTNfHNJrfqR4k5vlMz rNJJTTCOrrZ4gCrNt1TZgUhZynSZbedL7mSCkYvOeF9Dlm5Ss/B4xgjbYb67yYNjqHDQ6eMup8x /Y2e68aXbBxWWTXGVQB9rnspd1Cv2xw+tITsGTlnzGa8xJ/t8ZgqVj2Q9SxREgoeo+Bsi3MFz+w ftMHcJPknm3fxmLVKFjRiubtYBL+T8ve+5K1iI2oiZt0Rx8P5DcipP9UYfO2we8QqFAZcIgHUH7 kj2UfqHeT1oqacg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5509; i=paul@paul-moore.com; h=from:subject; bh=iRVF+xEWfqXJbI7sAP87mt7RMtwKEgN9MdoWayDEog8=; b=owEBbQKS/ZANAwAKAeog8tqXN4lzAcsmYgBonmjAVqcKekGsxdwEpFZ+R851tyjFUIv6kJFTE eleO+7BQFuJAjMEAAEKAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCaJ5owAAKCRDqIPLalzeJ c/+MD/9JJFLjWjyaEFpILy7cW/H/cQCsAR+P+X1Vo8gZ6uHhHdbC6rbAgddrwwN1p+6kleeociy W6+02O95eq5traXDIzNPx06or8sDt5zj4pFP6XZsKSDiH5RAfNigGfXNbBX3wd3rCe1+KDIqSvd KXJyEZTwTUx5klGu1jXzMS5nxTTGysgyfTL+Og/SgazK0go93Nzc6wLZdBMYZZANE02BYRj0rRI cNjuBI9vxmzab3mcsS6SGygo9DGRIbi8Z7KUk0tojDdQR2/DC5W//vY3sCbaaIDzR5rUySsdMjx +nwEBtCskJGR7HKOmCFMh2Op9dRfQlkrKulnSGvdhCIKdto21+KA0bIiTiFAf+njpq0+BYs5anI d7nETlQ/VrBSg1dwwVqbB6hYG3pq4AranrI3n2ayu01O8jpIWS9Ta5fSGXvWjsDwws2bXf6OP/Y yAFn7yRF+OKhLZNFGfZaXqLgrmfJeeseYVRxBtuqkR00znXDnD3lnBIbBMbVJRevL/EdWEL5TO3 SxtQGLScXMXIf8RjXUndof9rgBJS5jY4sqWHwr+27WLyVaSR7xoz8mx+FICRsLTuDHgGOjLtPBs 4boYqelSn4xWoQHQVMCL1qpBegx2u4YejCu/HTUWkW33Lv+RASGxMY2IiTnsIwl1sS9rptkDQb3 VaRrifnrTkHWdAw==
 X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
 Content-Transfer-Encoding: 8bit
 
-Rename ordered_lsm_parse() to lsm_order_parse() for the sake of
-consistency with the other LSM initialization routines, and also
-do some minor rework of the function.  Aside from some minor style
-decisions, the majority of the rework involved shuffling the order
-of the LSM_FLAG_LEGACY and LSM_ORDER_FIRST code so that the
-LSM_FLAG_LEGACY checks are handled first; it is important to note
-that this doesn't affect the order in which the LSMs are registered.
+Convert the lsm_blob_size fields to unsigned integers as there is no
+current need for them to be negative, change "lsm_set_blob_size()" to
+"lsm_blob_size_update()" to better reflect reality, and perform some
+other minor cleanups to the associated code.
 
+Reviewed-by: Kees Cook <kees@kernel.org>
+Reviewed-by: John Johansen <john.johansen@canonical.com>
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
- security/lsm_init.c | 82 ++++++++++++++++++++-------------------------
- 1 file changed, 37 insertions(+), 45 deletions(-)
+ include/linux/lsm_hooks.h | 34 +++++++++++------------
+ security/lsm_init.c       | 57 ++++++++++++++++++++++-----------------
+ 2 files changed, 50 insertions(+), 41 deletions(-)
 
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 65a8227bece7..86e457aa8809 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -102,23 +102,23 @@ struct security_hook_list {
+  * Security blob size or offset data.
+  */
+ struct lsm_blob_sizes {
+-	int lbs_cred;
+-	int lbs_file;
+-	int lbs_ib;
+-	int lbs_inode;
+-	int lbs_sock;
+-	int lbs_superblock;
+-	int lbs_ipc;
+-	int lbs_key;
+-	int lbs_msg_msg;
+-	int lbs_perf_event;
+-	int lbs_task;
+-	int lbs_xattr_count; /* number of xattr slots in new_xattrs array */
+-	int lbs_tun_dev;
+-	int lbs_bdev;
+-	int lbs_bpf_map;
+-	int lbs_bpf_prog;
+-	int lbs_bpf_token;
++	unsigned int lbs_cred;
++	unsigned int lbs_file;
++	unsigned int lbs_ib;
++	unsigned int lbs_inode;
++	unsigned int lbs_sock;
++	unsigned int lbs_superblock;
++	unsigned int lbs_ipc;
++	unsigned int lbs_key;
++	unsigned int lbs_msg_msg;
++	unsigned int lbs_perf_event;
++	unsigned int lbs_task;
++	unsigned int lbs_xattr_count; /* num xattr slots in new_xattrs array */
++	unsigned int lbs_tun_dev;
++	unsigned int lbs_bdev;
++	unsigned int lbs_bpf_map;
++	unsigned int lbs_bpf_prog;
++	unsigned int lbs_bpf_token;
+ };
+ 
+ /*
 diff --git a/security/lsm_init.c b/security/lsm_init.c
-index a314484d7c2f..7b2491120fc8 100644
+index 7b2491120fc8..5249aa044d9d 100644
 --- a/security/lsm_init.c
 +++ b/security/lsm_init.c
-@@ -228,83 +228,75 @@ static void __init initialize_lsm(struct lsm_info *lsm)
- 	}
+@@ -169,16 +169,22 @@ static void __init lsm_order_append(struct lsm_info *lsm, const char *src)
+ 		   lsm_is_enabled(lsm) ? "enabled" : "disabled");
  }
  
--/* Populate ordered LSMs list from comma-separated LSM name list. */
--static void __init ordered_lsm_parse(const char *order, const char *origin)
+-static void __init lsm_set_blob_size(int *need, int *lbs)
 +/**
-+ * lsm_order_parse - Parse the comma delimited LSM list
-+ * @list: LSM list
-+ * @src: source of the list
++ * lsm_blob_size_update - Update the LSM blob size and offset information
++ * @sz_req: the requested additional blob size
++ * @sz_cur: the existing blob size
 + */
-+static void __init lsm_order_parse(const char *list, const char *src)
++static void __init lsm_blob_size_update(unsigned int *sz_req,
++					unsigned int *sz_cur)
  {
- 	struct lsm_info *lsm;
- 	char *sep, *name, *next;
+-	int offset;
++	unsigned int offset;
  
--	/* LSM_ORDER_FIRST is always first. */
--	lsm_for_each_raw(lsm) {
--		if (lsm->order == LSM_ORDER_FIRST)
--			lsm_order_append(lsm, "  first");
--	}
--
--	/* Process "security=", if given. */
-+	/* Handle any Legacy LSM exclusions if one was specified. */
- 	if (lsm_order_legacy) {
--		struct lsm_info *major;
--
- 		/*
--		 * To match the original "security=" behavior, this
--		 * explicitly does NOT fallback to another Legacy Major
--		 * if the selected one was separately disabled: disable
--		 * all non-matching Legacy Major LSMs.
-+		 * To match the original "security=" behavior, this explicitly
-+		 * does NOT fallback to another Legacy Major if the selected
-+		 * one was separately disabled: disable all non-matching
-+		 * Legacy Major LSMs.
- 		 */
--		lsm_for_each_raw(major) {
--			if ((major->flags & LSM_FLAG_LEGACY_MAJOR) &&
--			    strcmp(major->id->name, lsm_order_legacy) != 0) {
--				lsm_enabled_set(major, false);
-+		lsm_for_each_raw(lsm) {
-+			if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) &&
-+			     strcmp(lsm->id->name, lsm_order_legacy)) {
-+				lsm_enabled_set(lsm, false);
- 				init_debug("security=%s disabled: %s (only one legacy major LSM)\n",
--					   lsm_order_legacy, major->id->name);
-+					   lsm_order_legacy, lsm->id->name);
- 			}
- 		}
- 	}
+-	if (*need <= 0)
++	if (*sz_req == 0)
+ 		return;
  
--	sep = kstrdup(order, GFP_KERNEL);
-+	/* LSM_ORDER_FIRST */
-+	lsm_for_each_raw(lsm) {
-+		if (lsm->order == LSM_ORDER_FIRST)
-+			lsm_order_append(lsm, "first");
-+	}
-+
-+	/* Normal or "mutable" LSMs */
-+	sep = kstrdup(list, GFP_KERNEL);
- 	next = sep;
- 	/* Walk the list, looking for matching LSMs. */
- 	while ((name = strsep(&next, ",")) != NULL) {
--		bool found = false;
--
- 		lsm_for_each_raw(lsm) {
--			if (strcmp(lsm->id->name, name) == 0) {
--				if (lsm->order == LSM_ORDER_MUTABLE)
--					lsm_order_append(lsm, origin);
--				found = true;
--			}
-+			if (!strcmp(lsm->id->name, name) &&
-+			    lsm->order == LSM_ORDER_MUTABLE)
-+				lsm_order_append(lsm, src);
- 		}
--
--		if (!found)
--			init_debug("%s ignored: %s (not built into kernel)\n",
--				   origin, name);
- 	}
-+	kfree(sep);
- 
--	/* Process "security=", if given. */
-+	/* Legacy LSM if specified. */
- 	if (lsm_order_legacy) {
- 		lsm_for_each_raw(lsm) {
--			if (lsm_order_exists(lsm))
--				continue;
--			if (strcmp(lsm->id->name, lsm_order_legacy) == 0)
--				lsm_order_append(lsm, "security=");
-+			if (!strcmp(lsm->id->name, lsm_order_legacy))
-+				lsm_order_append(lsm, src);
- 		}
- 	}
- 
--	/* LSM_ORDER_LAST is always last. */
-+	/* LSM_ORDER_LAST */
- 	lsm_for_each_raw(lsm) {
- 		if (lsm->order == LSM_ORDER_LAST)
--			lsm_order_append(lsm, "   last");
-+			lsm_order_append(lsm, "last");
- 	}
- 
--	/* Disable all LSMs not in the ordered list. */
-+	/* Disable all LSMs not previously enabled. */
- 	lsm_for_each_raw(lsm) {
- 		if (lsm_order_exists(lsm))
- 			continue;
- 		lsm_enabled_set(lsm, false);
- 		init_debug("%s skipped: %s (not in requested order)\n",
--			   origin, lsm->id->name);
-+			   src, lsm->id->name);
- 	}
--
--	kfree(sep);
+-	offset = ALIGN(*lbs, sizeof(void *));
+-	*lbs = offset + *need;
+-	*need = offset;
++	offset = ALIGN(*sz_cur, sizeof(void *));
++	*sz_cur = offset + *sz_req;
++	*sz_req = offset;
  }
  
  /**
-@@ -322,9 +314,9 @@ static void __init lsm_init_ordered(void)
- 				lsm_order_legacy, lsm_order_cmdline);
- 			lsm_order_legacy = NULL;
- 		}
--		ordered_lsm_parse(lsm_order_cmdline, "cmdline");
-+		lsm_order_parse(lsm_order_cmdline, "cmdline");
- 	} else
--		ordered_lsm_parse(lsm_order_builtin, "builtin");
-+		lsm_order_parse(lsm_order_builtin, "builtin");
+@@ -193,27 +199,30 @@ static void __init lsm_prepare(struct lsm_info *lsm)
+ 		return;
  
- 	lsm_order_for_each(lsm) {
- 		lsm_prepare(*lsm);
+ 	/* Register the LSM blob sizes. */
+-	lsm_set_blob_size(&blobs->lbs_cred, &blob_sizes.lbs_cred);
+-	lsm_set_blob_size(&blobs->lbs_file, &blob_sizes.lbs_file);
+-	lsm_set_blob_size(&blobs->lbs_ib, &blob_sizes.lbs_ib);
++	blobs = lsm->blobs;
++	lsm_blob_size_update(&blobs->lbs_cred, &blob_sizes.lbs_cred);
++	lsm_blob_size_update(&blobs->lbs_file, &blob_sizes.lbs_file);
++	lsm_blob_size_update(&blobs->lbs_ib, &blob_sizes.lbs_ib);
+ 	/* inode blob gets an rcu_head in addition to LSM blobs. */
+ 	if (blobs->lbs_inode && blob_sizes.lbs_inode == 0)
+ 		blob_sizes.lbs_inode = sizeof(struct rcu_head);
+-	lsm_set_blob_size(&blobs->lbs_inode, &blob_sizes.lbs_inode);
+-	lsm_set_blob_size(&blobs->lbs_ipc, &blob_sizes.lbs_ipc);
+-	lsm_set_blob_size(&blobs->lbs_key, &blob_sizes.lbs_key);
+-	lsm_set_blob_size(&blobs->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
+-	lsm_set_blob_size(&blobs->lbs_perf_event, &blob_sizes.lbs_perf_event);
+-	lsm_set_blob_size(&blobs->lbs_sock, &blob_sizes.lbs_sock);
+-	lsm_set_blob_size(&blobs->lbs_superblock, &blob_sizes.lbs_superblock);
+-	lsm_set_blob_size(&blobs->lbs_task, &blob_sizes.lbs_task);
+-	lsm_set_blob_size(&blobs->lbs_tun_dev, &blob_sizes.lbs_tun_dev);
+-	lsm_set_blob_size(&blobs->lbs_xattr_count,
+-			  &blob_sizes.lbs_xattr_count);
+-	lsm_set_blob_size(&blobs->lbs_bdev, &blob_sizes.lbs_bdev);
+-	lsm_set_blob_size(&blobs->lbs_bpf_map, &blob_sizes.lbs_bpf_map);
+-	lsm_set_blob_size(&blobs->lbs_bpf_prog, &blob_sizes.lbs_bpf_prog);
+-	lsm_set_blob_size(&blobs->lbs_bpf_token, &blob_sizes.lbs_bpf_token);
++	lsm_blob_size_update(&blobs->lbs_inode, &blob_sizes.lbs_inode);
++	lsm_blob_size_update(&blobs->lbs_ipc, &blob_sizes.lbs_ipc);
++	lsm_blob_size_update(&blobs->lbs_key, &blob_sizes.lbs_key);
++	lsm_blob_size_update(&blobs->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
++	lsm_blob_size_update(&blobs->lbs_perf_event,
++			     &blob_sizes.lbs_perf_event);
++	lsm_blob_size_update(&blobs->lbs_sock, &blob_sizes.lbs_sock);
++	lsm_blob_size_update(&blobs->lbs_superblock,
++			     &blob_sizes.lbs_superblock);
++	lsm_blob_size_update(&blobs->lbs_task, &blob_sizes.lbs_task);
++	lsm_blob_size_update(&blobs->lbs_tun_dev, &blob_sizes.lbs_tun_dev);
++	lsm_blob_size_update(&blobs->lbs_xattr_count,
++			     &blob_sizes.lbs_xattr_count);
++	lsm_blob_size_update(&blobs->lbs_bdev, &blob_sizes.lbs_bdev);
++	lsm_blob_size_update(&blobs->lbs_bpf_map, &blob_sizes.lbs_bpf_map);
++	lsm_blob_size_update(&blobs->lbs_bpf_prog, &blob_sizes.lbs_bpf_prog);
++	lsm_blob_size_update(&blobs->lbs_bpf_token, &blob_sizes.lbs_bpf_token);
+ }
+ 
+ /* Initialize a given LSM, if it is enabled. */
 -- 
 2.50.1
 
