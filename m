@@ -1,167 +1,121 @@
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012038.outbound.protection.outlook.com [52.101.126.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157ED321422;
-	Thu, 14 Aug 2025 14:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755181629; cv=fail; b=h3SKojd9celc3qnyX0wPQ6tqrkan0tKE0bdCZJAuXiGMzemLE88cKEHAqJij7OU0nUriBa7NYU7w6CdtSvm0tJivYDLUoqCyJG4mPdyoi8egGNQJniUgqAfw4+vyeAyhZuGWRdNuZ2U0vKeYnG0qDOm6GQ3tU6uaH94oAub35wA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755181629; c=relaxed/simple;
-	bh=Ijw6XuYSFn0DPfxFavkxWo7rudFLO68RvTRJ+qzQALE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=KJgIqRzCoOkJyJ3x3SEosq9ciDBmhWHfNoBX1dztr1XXbMFj2JLok1leq+XX4leM73a8YNVrxsdhYAyHRn0cwjlJciKvi8z1pN25uqMt/vbqa5v1vGkb0bPZ3+voWNkIZtuo6C+EPRFZnaQ6AG4OKtcF7Q2kJmbNVACQq+3Teps=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=VZDaXl5X; arc=fail smtp.client-ip=52.101.126.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FDC3A8F7
+	for <linux-security-module@vger.kernel.org>; Thu, 14 Aug 2025 15:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755186881; cv=none; b=e38tqtlcQsRnCGUM3zG+puGf0ron0tYlY1Us4f+er2qzsOzBOC8dxPWL8v+YETiT8WnGK8yzJeW4Jmvvl5oVET+qpmVfRxRXbri+kTVw5MeYoISfUQOXcoRCHVz/2sH1FvGl6c2r1n+RfARkZ7KMMc7gmmVIx7YA2vN/kchbKGc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755186881; c=relaxed/simple;
+	bh=F0pElEsvxrR0RRjThz7t1RhU6UkOvkMNrQNHbBwmIrc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EBaViw+juU+ot9+rEz3uWR2jFwsC03pGjvijLXlkpS5hpYZAZdah+NpkDm7Hw7cIzM2e3h26QeO866vYcT5sjrw693qFQXutNY/RdkMt3h48ccU+XZyg8QgCvL6gY1aZFh83kEiKIqP9OocH5RHUWwc3wgvPXclAL+CtC+CtokA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AesMwfFg; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="VZDaXl5X"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Gl4BjwfusXUnh8UK7LY77DntQCu3NMNsCVMlefIb3XlDClIMG5oUoFS4u94PwHg5SdYaX3uKoJBE/dgUOd+QWl3lx/xT0k7Lr/wMXE0r0NfLixknHCd63mHr50Xm+kXlJVh4C8YrGR46QvJC5PSUN6phjaENAsImwTMPlcPSNu9h7LVMjYdvJFtYHtdl37eO5ueP3cfmF+5ds2r/BBSCOd6ut3+M02ge+B3NykdmlBDVhh3zjJSNnvfHnENdVVAmrLsPmbH1gmukRYGTqy5ZuTFhY+M4wrS2e3pZiLPe47M/qhN8VqG5gWea311va32xidQNYwUTchdH8JnNyxQE/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4Fn915DscocWHWA6epXDvba+TqxcI4FYi3oNXToYM3Y=;
- b=Y4XjKFx7dhVTwLcczVvGWGmLwYX8b370ejdZfJgok9o6RYpKCx+/RRvi5em/rR7QTaLJ8Sun4JQM0fqMiMC7ZVu5f8/gM/F9LJqIGtclAOqqK6LxVdR4U719M8nRfHLz5hXlRPAg0KgQOyuRURhmLbUyTZorBixbZ7ahpFNP7YAf2RYW+hoXYxdgOOPx9KVyK6opN11XWVEszOBAbH2tApcQiD0Hs2OY/5l/VVRUurQh8njl3BzAU363VWP3q6Woo/zknbhdHfjzYIq1dQrLkXyIW1XFMemVM/hCx3wbK8rxtg2bgn84QGJz1iGpvSVjjy91503JLEhRYPIgpxvWyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4Fn915DscocWHWA6epXDvba+TqxcI4FYi3oNXToYM3Y=;
- b=VZDaXl5XBq7h0F4VmfrLCwveocqbLZpI3MOGVh8X6OEZw+QwtLfjYaX+mprkK8pYXgeyuzUrbDIZSCjzogUgqL9SNpp0XRd68RJn72AGhFUsPwQ6lt4KXaohK5PHNW1QBP+XaTB9GfB3MECjZpMb3cUR22RQHkohrrztdDP0z9iNL/NWwFJocg09pgOlT7YhGJgsog8y0nJU4+AKR/O8RAYhWTZhq4vDsbDd28/b28N+H3wFBUBfDCeM7RGojl6wXEv7Vm0zxNJgkQBSkWI2oLttslwoMrp4Cdci9m8R7i6XE+3nnDFsAEq/Afh7H5jz7bSTpNhdRg1DdAwNr5vVAA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- TYSPR06MB6361.apcprd06.prod.outlook.com (2603:1096:400:42d::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
- 2025 14:27:04 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
- 14:27:04 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>
-Subject: [PATCH] security: min_addr: use max() to improve code
-Date: Thu, 14 Aug 2025 22:26:53 +0800
-Message-Id: <20250814142653.283355-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP301CA0085.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7b::7) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AesMwfFg"
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-323267adb81so1494499a91.1
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Aug 2025 08:54:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1755186879; x=1755791679; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CvabB1TykqrJuGy2/4C13LzT2Q6NuaXnmqhVowsnYYk=;
+        b=AesMwfFg2Y4v8ydIg5KcWovRFzao8+OjlqgnSWYZ6hMnmFQZdYhYcdM1rG2dJ7PRpl
+         pQ2Dnnk2PrbTalMzEaiX8/m1WxFyS+x6yslVs5Z9KcBeD+5wfHRkB6NKb6AB335aGlkE
+         TAANeaCbrp8LuJ4suTnrLW2BxdacPGqFG9ag6ioofzBUt3quhmDpmDYMdGoXR/MB8qhb
+         pn/7HInE0PgdGqz7r9Wbknq8QMg2NXOqCvqPZhiwgufAGzZynpX6hvOty3E5RUXFr+bD
+         FsDG/7dA502flcnP0i3xXA1Fehyq+dm5e90lWWS3l7srK5xNzbBZ+rnBR/ueV3q/sooy
+         jwWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755186879; x=1755791679;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CvabB1TykqrJuGy2/4C13LzT2Q6NuaXnmqhVowsnYYk=;
+        b=Q2qlT+crZqKcP+S9s5DZGRFIBCtInGNXrUNUu3BsieuwJwDGXlf9IYiG0ROr4LrnJm
+         Pl8osWhPY9rp3LM8IDZmKtbDo5dEpFZqT22d9uT349foDO2FkPH2x+LmF8gA71yBT7cI
+         afjPTVQxCOUBpJPM2Gm8RSHhPUb6zr1yxvhojyuwrR0voP14MG2NOSlx+SHa+p3ZQnBr
+         YrBrepAV+f85OY8kT/CwGj8bkcGMTATCYlZOYETa/y6b8oVLZaFl3lRMdnZv5MksBGtm
+         52h4bjdGMpNJWNaArYXlY7+s5vGAFKERhlUfqldgivutpsq0FGoQT5vllo12HluSHpG0
+         H1lA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCwbky5hv45fEDStl8TmpaJ89TvOwn6ST+d1xge1Q8OL/uMipMn05ICMXryY9r1XeHJFrmlgaaJ+hgHV2dWXRiJxNRW2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOjlKpCj9CsRjTD8JBpUk+jVJrRkIV6l5e8cbWQKBlA8Wq+mKC
+	wAsmodc2FSgvKjJvWBOHDjEAgbnyjSUFZsukNdKNxbsDPtbYoyUh7h8RlAcL9sSTiB0RhiFbMOb
+	HVyrFV56u3neo5BcTWHLe54L2bPoph/ANX0VHatp2
+X-Gm-Gg: ASbGncs1y3PznQWqPN8OW8seCk/8KkN2DTXnZe49hsPDc52PQOXTePXsksAOv+2Bq4S
+	ItffzEuCK0FSta2zNWjRr5ac3/iPPdr8/0t+XBdddv0PuZUtvPMqam9pIWqdUAbVP81L83dYdqF
+	YxuYzZlfLOJex4/qidn67Ql9qDAlUvQuYFJPhwrygL/7RAG3jcBPzzEHToAPP88G4Wus6d32APq
+	sNqwMbGmB/1ceMkFA==
+X-Google-Smtp-Source: AGHT+IF3C041JRsjxUqaaZy5hpDym6lDLSiH1UTT6ITfTxQxD+tAO83OLFzF/MDi+d7eudf6g7YOpN2iMFBcxPHh4Nk=
+X-Received: by 2002:a17:90b:39c7:b0:312:1d2d:18e2 with SMTP id
+ 98e67ed59e1d1-32327a51eecmr5939431a91.20.1755186879054; Thu, 14 Aug 2025
+ 08:54:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TYSPR06MB6361:EE_
-X-MS-Office365-Filtering-Correlation-Id: c634e431-a9ea-4d50-2a42-08dddb3ea3c9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CFRgJO1GEzuVzqrprxzDum9Cgnmnj15RNdi6WOsvZr1k7NsmtTH4alVHhPJx?=
- =?us-ascii?Q?byL/SAodAdccuiAQ7PfYFFo+BGBXvtJ/HikP0iSMfiBFRrK+0ywSBBeLuwje?=
- =?us-ascii?Q?b1yLAxKaxB0upe4eiStEdw6U86nTPXrWK5/ILZc7T3uQKDZIHdIei0Rs6Hpy?=
- =?us-ascii?Q?vMtAO0p9w9VhB53NAOi0t9AycCTl2dWMsAPJj6xG3HWz2nhZH35Uwb364wP2?=
- =?us-ascii?Q?t4giCzfs6+rGtbdj0aSZRfZvFmo1096nXD1styt6eXZTENxkdds7ugR1euLc?=
- =?us-ascii?Q?IjLYGs/T26s2tvqVTIfeb67HcxLqRbmoHZSux8sBeV10i/y7162Y2bT8bl54?=
- =?us-ascii?Q?TO3QK3XUHxcN9XDcDpjQmFmn7mWpwxbjyKflx0sPqA+drsU4draQqJfVbg9D?=
- =?us-ascii?Q?Iv+j1hUKOQQCJQv5McSBVlgd3s9Nlmg+FZoRt9fRd3ga1d/PTU9vJF9TblSd?=
- =?us-ascii?Q?WO/6Bwn5MQc9/aGC0MSIWd6iIiNiHlxE4OPx6CZ80NuvFHczbTyuYXg28z1n?=
- =?us-ascii?Q?euvLB71d/XKhun0DypXbGX249TQsIsmDBdKB/F15pDQxceF5SAXmKlJ3s6Xx?=
- =?us-ascii?Q?il3c5xc+XvVW9lHUOYydJOwhV60gJTfnNL5nEMDkIZC/HLaIWqIwD2SWs9y6?=
- =?us-ascii?Q?8IVrcKUjwGyIGjbu0P3pQQ3xvs38/J62dhJfrNNF3mOC7Zk3eYMS/ylXQzfU?=
- =?us-ascii?Q?NIvNI6+MvW9IchKYdJSR8Fx/o/WzoeAJMv6vQzSZ0JLaP6AGXTb18afH4AWv?=
- =?us-ascii?Q?70HIM1iF5QUZRAXARw9iMg57FECGAnIv1REx0tCC71faC7PVSCtUpJ4StTKL?=
- =?us-ascii?Q?e1pb6G5OFh5IK8F6kYQDAiBU2HvJLumM058q7JKdQZdV/qX60z95cSh1srQ/?=
- =?us-ascii?Q?hJgO4tb4KW4gUug+Hh+YHzJN3HE6SCblskTeckqHl/ulq2deyAuTezbWiksE?=
- =?us-ascii?Q?09bVFs8RrR376vJB49cjZECITFp8ZeNmrAAHRPrB3znS3lG+Bdl69JZO+jQZ?=
- =?us-ascii?Q?OQr8QVA899xm992EmstKJDBJST19JaxMfsms3Ve+Obr7d12Esd8gB8cKkmVS?=
- =?us-ascii?Q?7ZgXSMaLuDhpA//cCQcZMcB1xPpMkymL7NYqtouOd+AZh3oH4eo0Q4d4EMeU?=
- =?us-ascii?Q?acB9szubDkUdP6V/cIWF9rc/1pRh4PWrz4N2HmPNySkz9fhUx6Kh2cygr7JH?=
- =?us-ascii?Q?vnrb0s4Ti/cOa5LX2db2jcEzPhJYzTC6mQrvNaP+SwZnpc0v+O43DwcOGkpg?=
- =?us-ascii?Q?WSBI3djzW81cmSrrAv9x/4GbgjhwyMhnsi2eIzCqnPS7w1M100tK7O7z5iJH?=
- =?us-ascii?Q?xLetct8cM5XypKWmKTsRjYCr6eyZch0tfkDZSk9s0iIZAGneshABoJwBsoCh?=
- =?us-ascii?Q?3W5dLh9WlUWwhObdKy4basj+Lxg63T4aFg/7y/UcFmVbPMT4I8LiLT+6BjdT?=
- =?us-ascii?Q?Yb/lgdbAF6OXeoL3h97uwp68AijcPQH1S+jVJWIkNM0IJDsDFF9P0A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ZdURS1jJNou5NF3FkOEgJesPmDaHy0TIiv1h0jJz1je/Dy0cXyKehLH0J0EI?=
- =?us-ascii?Q?2Kmr/ynN1iM9MXcfRBY0Pix0NgUzAenXUo06/3mS1mrYtzfDNL0Dj3gTpluf?=
- =?us-ascii?Q?Aq8Xv8nUZHHnSq95WDYcu3PIXQXR+DOwzcwLzxH9m4QGKTgjbNSCyteT/b3c?=
- =?us-ascii?Q?BfzpRZDcVQwdX5f4Rcupp8kyL+BSg6pEfUjGD47WgC3tJsa1I4R9zImbDXqO?=
- =?us-ascii?Q?x+c6YN3TK32VZjq7o/vgEfFv8oi6OLJGv1sVqkKRKZgGv8TC+A5aVTw/2h7Z?=
- =?us-ascii?Q?lzdW5aQZ+cuxryCvTB3MrrglT6rBk+T1Gy5gTAyri5RLYVf/YPnpdh3jvpeZ?=
- =?us-ascii?Q?Fm6l8Wp/G/F2qX+/CY8SiCpnXv1ohCggss2sxFswe6JIBsX11oDLvgLzTfln?=
- =?us-ascii?Q?CYp5kgVXxGB3tWCh6LyGCKYQ6xhr9yTCe1mAySGg7MhYO/4LzZvPs/JDyIxF?=
- =?us-ascii?Q?hz8LBEX1v/x68cUZ/MYGBo+UEuCzxWVoue5mb68pWMivPIpwfXgq/68a8Hj8?=
- =?us-ascii?Q?8elfLt2j5Ds3Ow/7sXDJ0tBQwd7XO3VtB60ZKohaJTYXJ9eJXBuT2dZoK2Ge?=
- =?us-ascii?Q?M8+eZPUx/PcO+fBN+6l0iC3YhO3BPO+UUmM3+WrBqfL0lwNQhmJ0TW8/13Mv?=
- =?us-ascii?Q?jKIpCAx/+mJL0p2fm5UlOAqsXcP6gVLpsLc8/pVtktxpve8sASIefQ8AGbOP?=
- =?us-ascii?Q?aN1KlN1zSHi0z5wO+k9kYUdl5OTynEro74Vzj74+iq5LMhpWM955zvUjIS7F?=
- =?us-ascii?Q?ljhUrFF4U/hlP4v2HOGBw+5qmg6UqssAoZsDQnRaE4n8YcudPSE4gYf4KxUl?=
- =?us-ascii?Q?AVt8edJM7+s4xGCzoWZ/kU5LZa56WMicULRNw2vyyR4yzvBV7PiU7LrvSQS8?=
- =?us-ascii?Q?ykdm3PG85au7HmWLwtAQ8OFmoGywEQpBr4iS+pzYGzkJuqmTV9yR542Hm0h2?=
- =?us-ascii?Q?aKMnk4BPBJxZqSpTBYWXI4Y0aD9PTBmmtKME1E8Hdg8005U+7wpiyA6IN8y6?=
- =?us-ascii?Q?eEyGxIfHfBc50e+5oSe1gh4KzToPNjbDFbC37lon8MqVIreoCqAouCqXattK?=
- =?us-ascii?Q?RNGp/CTMNMzhTlCZdBpdfUaIIeZc5uRQGuthsbyC8hi2xYdTLKUqKYvwEXu7?=
- =?us-ascii?Q?AALfRj1nOZqPeqtIAJDSc1GIw3iulwFucaT3YQz3UUAYL/RVsjKnxkGnQGU0?=
- =?us-ascii?Q?U68+jUeK9+drer/O3CECAmzfjwodccnHblinahySsjkG6npduQJt3Bssb2nd?=
- =?us-ascii?Q?3wbY5iPHclQLVooet3BuQM8K1QfvKv6oCV0324uZCqVIjPMnKjcBI3BtLwOo?=
- =?us-ascii?Q?Qc1W69BTCKJTRTe+0pCuWmhD6IQ40bE0qZ3eti/wNkZihyWae7sh6//B/Tp3?=
- =?us-ascii?Q?LxVQLzsW5JC49UwtVZMh8Qe3giIadNd67GuUWpkIY8wByz65klxjbdbnmPKI?=
- =?us-ascii?Q?8tUuyxsHQ7yrQLSM2YfMy+wbpBDEGIr0ns1apiZvar7Xr/A4AG5orwckPLmv?=
- =?us-ascii?Q?PFpXk7BPpNhW6KOyjjTfo2xkTovfUmz2VWcUisqaCOhDr196tUeHUJYre0yV?=
- =?us-ascii?Q?dRZSKDe5Rv21Cey6J3YF+pPJDghf7D75TmqsprRh?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c634e431-a9ea-4d50-2a42-08dddb3ea3c9
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 14:27:04.1552
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lqJV26jDeXQsJ6mpZ1GVvgpf9TnvEL/d7jycc+O2G7sSfqTWJpcCzPNxwh5ASjmyAkdMm1mpzYJJm5etf8HUTA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6361
+References: <20250814093046.2071971-1-lossin@kernel.org> <20250814093046.2071971-8-lossin@kernel.org>
+ <CAHC9VhQXOezJ2=B1BQOqLgfuzDJEVS5G_r9+_bQ+OUNTpjZCKw@mail.gmail.com> <CANiq72=vhPsGjSx9u0FvDa6uzMFkFQFP9qG+DhtZ_U5TyV=bJQ@mail.gmail.com>
+In-Reply-To: <CANiq72=vhPsGjSx9u0FvDa6uzMFkFQFP9qG+DhtZ_U5TyV=bJQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 14 Aug 2025 11:54:27 -0400
+X-Gm-Features: Ac12FXzlwiXq64khBtAeerI7ifBROgc4LhPQT_zvpgV5Z4PtTDCkCmp0ECJQmC4
+Message-ID: <CAHC9VhQNi31KSpB-MtvZO9e5fzuM_87VWb6rrMtxcqOGSPTiNg@mail.gmail.com>
+Subject: Re: [PATCH v3 07/11] rust: security: replace `core::mem::zeroed` with `pin_init::zeroed`
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>, Jocelyn Falempe <jfalempe@redhat.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use max() to reduce the code in update_mmap_min_addr() and improve its
-readability.
+On Thu, Aug 14, 2025 at 11:31=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+> On Thu, Aug 14, 2025 at 5:19=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> >
+> > I'm happy to take this via the LSM tree, but it would be nice to see a
+> > Reviewed-by/Acked-by from someone with a better understanding of Rust
+> > :)
+>
+> I think the idea is to take all these through the Rust one with
+> Acked-bys from the maintainers (or we can skip this one and do it in a
+> future cycle when the first patches get in).
 
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
----
- security/min_addr.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+[CC'd the LSM list, as I just realized it wasn't on the original patch
+posting; in the future please include the LSM list on LSM related Rust
+patchsets/patches]
 
-diff --git a/security/min_addr.c b/security/min_addr.c
-index df1bc643d886..50035bc9281c 100644
---- a/security/min_addr.c
-+++ b/security/min_addr.c
-@@ -16,10 +16,7 @@ unsigned long dac_mmap_min_addr = CONFIG_DEFAULT_MMAP_MIN_ADDR;
- static void update_mmap_min_addr(void)
- {
- #ifdef CONFIG_LSM_MMAP_MIN_ADDR
--	if (dac_mmap_min_addr > CONFIG_LSM_MMAP_MIN_ADDR)
--		mmap_min_addr = dac_mmap_min_addr;
--	else
--		mmap_min_addr = CONFIG_LSM_MMAP_MIN_ADDR;
-+	mmap_min_addr = max(dac_mmap_min_addr, CONFIG_LSM_MMAP_MIN_ADDR);
- #else
- 	mmap_min_addr = dac_mmap_min_addr;
- #endif
--- 
-2.34.1
+That's fine, it wasn't clear from the post that was the plan, and I
+vaguely recalled from past conversations with Rust devs that they
+preferred Rust wrappers/helpers to go in via the associated subsystem
+tree.
 
+> In any case, Benno is very knowledgeable in Rust -- he wrote the
+> library being called here -- so unless you see something out of the
+> ordinary, it seems OK to me.
+
+My comment asking for additional review/ACK tags wasn't due to any
+distrust of Benno - thank you for your work Benno - it is just a
+matter of trying to make sure there are at least two sets of
+(knowledgeable) eyes on a patch before it is merged.  If it is
+something I'm merging into one the trees I maintain, normally I count
+myself as the second set of eyes, but in this case I don't (yet)
+consider myself a knowledgeable Rust reviewer so I was asking for an
+additional explicit review tag.  If someone else is going to merge
+this patch{set}, then it's up to them; although I would hope they
+would do something similar.
+
+--=20
+paul-moore.com
