@@ -1,119 +1,103 @@
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84AF229B02
-	for <linux-security-module@vger.kernel.org>; Fri, 15 Aug 2025 12:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB792E5D01;
+	Fri, 15 Aug 2025 16:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755260929; cv=none; b=sKQFLBc/RctUpv6KTp6vWbM3JwclznGkpA5MMbvx2IbxzKEKgdQtgc5DmrjDTAtfTIAjSYofT5UZ/uQVODzauNd+Oxt3zDqkUcAUsnUPq3DAbsMP+81BiTIT5IRfcCGufzzo2cb9S2eGvT6Ni/D3A7dmCkN1JPneAgvVNXYws0I=
+	t=1755276724; cv=none; b=MSjnr6tcD0sv74VdfwAP+BRDLfKSFwy5Cw/AxZjfIuAsCMKyoPAjCMMvt3j3PjDWkQgXpH93+5AcTQKtFv18G0LivxPvIdM+tzGYuq8/pKEnFkq4H8aL7HgkDR7MUqEi9hb3MK799u2pDLtbbdVBeeOzqPKF7mK0tZujToPFisI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755260929; c=relaxed/simple;
-	bh=LpFQvQEZLY7rXEx8rVKL1EKG/x0+GDQrKNPebN/3RSM=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=argglJ0kjcVufD+HBk3DdQNAcKTNxoS2CxVYQdQPWGDuT0UerILQaosSRsCWsgqiVG3AhstiGipWn8S0yecp/WTSTzAK79D+1JbiiQXHdV+3jcL7wZSgH/vqwSyNNqkvrPs8l5b9GFV22mxsVE2vVOiHMfjzK30Ri1TNlGeQ83E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c3LtT6V9Cz2TTG3;
-	Fri, 15 Aug 2025 20:25:53 +0800 (CST)
-Received: from kwepemj100006.china.huawei.com (unknown [7.202.195.251])
-	by mail.maildlp.com (Postfix) with ESMTPS id C2E34140149;
-	Fri, 15 Aug 2025 20:28:36 +0800 (CST)
-Received: from kwepemj100004.china.huawei.com (7.202.195.249) by
- kwepemj100006.china.huawei.com (7.202.195.251) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 15 Aug 2025 20:28:36 +0800
-Received: from kwepemj100004.china.huawei.com ([7.202.195.249]) by
- kwepemj100004.china.huawei.com ([7.202.195.249]) with mapi id 15.02.1544.011;
- Fri, 15 Aug 2025 20:28:36 +0800
-From: Xiujianfeng <xiujianfeng@huawei.com>
-To: Dmitry Antipov <dmantipov@yandex.ru>, Nicolas Bouchinet
-	<nicolas.bouchinet@oss.cyber.gouv.fr>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>
-CC: "linux-security-module@vger.kernel.org"
-	<linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] lockdown: avoid extra call to strlen() in lockdown_read()
-Thread-Topic: [PATCH] lockdown: avoid extra call to strlen() in
- lockdown_read()
-Thread-Index: AdwNtqKOkD5xINj9QaqwkRg56Io9cw==
-Date: Fri, 15 Aug 2025 12:28:36 +0000
-Message-ID: <d20a898c651c4e77bc32d01cf769682f@huawei.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1755276724; c=relaxed/simple;
+	bh=x/eQ5T/Y2xKfN/pPvQynA7CPWVBQZTgkNUc/ATBpy3s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WieKBTk9qN0vr+j7IRyuRvCtdoCMHBjLPT6u+Uf5/XzW89AIVlkSbIznrCRXNxoab24qdjSYpqMLd9evqQcq2+E2r0BHq6zvEjjQ+S+h2I5HJ9IUpy2eS0M4RxCZhHxMSTAByhfvsph2pH8AANKog5OloBCAhb0EYHNMnh3FROA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hujAPVHK; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hujAPVHK"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24458263458so18673285ad.3;
+        Fri, 15 Aug 2025 09:52:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755276722; x=1755881522; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/mST8g2ZgOoFqntACn2g18PfHFWyVsn3eT/UQGou6mA=;
+        b=hujAPVHK9Yln/2Wsmo7xPpciBJTjmX/QdNf6VDdXpEXqPMck9+VGgHeSugqvLNPLva
+         vRwEX6CTNPQ1bT0/kLAQMcugw0bwnvXilmwg4LiPIUAAJmgw03K1AthBMXRyl936ZEwC
+         8f0yj9+0JggwYd5Vii25AnwkGjiP0J5yi9Kzvi5t2dLKvD0sViDbrl5K0l7li/GgTpti
+         sGCbhw9QVt/q5krrJwfGRDVGR3CRSg/YSvrihKG5R2wYjqwMDWe2+z7ysRMmNn2Ewa36
+         Qfwdedd7iu28JPa8sPh+rw+CjK4O+3nSXxv5lwkvLkSOmUmh6ZmQ4JFUxRy1dzjn+KPF
+         dx0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755276722; x=1755881522;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/mST8g2ZgOoFqntACn2g18PfHFWyVsn3eT/UQGou6mA=;
+        b=ZmzoEzOJjipUYVxktuovS4mvCmF5tOwh8jH4jqHi7hijAxSjMG8iUQ34d6zfUZLBwC
+         LrkEt3VC28HfBF8rff5UBYBmhLuzhYmTYgV0AIs9Nh2nBQRhf+OJKLR1tZxRqOFDFXgH
+         G5qbRTuPn7mTRHU46GoNRLPdfFlVGT6JlQYnu6zG9Uz+gJBDUTgRQEQYZO1QDj2furiL
+         02UI0Kd8dYjwtURDf9pKbTV1teCZjYHIT+IMYC72iDweDMtZcsXaq/awIJMxBOMYexaC
+         IzXQWnbkC+094q0RDDbFupkZNZ26kZEHHEcaiStAiZdaPYS/f9zwbpOrpwsamv8B4Am4
+         HX0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVnftn+M9EVMwuUu7/Eu3wmEY2llOpoRwy589iE9Wc60Zj5zEmNc//2bx6d2D95TKpBqi1owSlE/wJ4Ymz1C6xB@vger.kernel.org, AJvYcCX04FahZz3rbxeoDzDNqmyHI5aNmlbH4YkpHk82eYO3aJO6UFfJJYRWnvMrr/mpDt4/mmW1fnpzbu2xK78=@vger.kernel.org, AJvYcCXPZ5UTfIZYCNe6cljJI4txUEifTAFdYuUGe+FYBM0PKShkdtYAbkwHZhpNJyxgtIXdH+hrKEyABt8YHSD7nCyF//88X+vd@vger.kernel.org
+X-Gm-Message-State: AOJu0YycfpNPY7lcX/VpzOiRecRkLoGlp6+FbgKWRM1Nj/wdTtA9lBfM
+	nlfc8lJWzdDbsICYKExDYK8/dFhvi0NXD0+mkXk4FcTEbsldLoBVZ4Yq
+X-Gm-Gg: ASbGncvrwhBZQmpxNhPBaV2ceY7TEcOBawSaiNNJrS7BPED/M7hNQ1OJAsxfhKIop9C
+	CAC+8LohR0JxrE5UQYyhMVVPA/4DKTJVVquuBTlY9KE/HpDY7Mfw5fQe2lCaKkZ4bYUfq0Yhxl2
+	I7tQoWFJ2UEtk3TiX6973plXR6uUeWervWQMUaAA/1cSamBc8+iscIKRmnKm8+4QgAHPvq+Ym3a
+	gZGGDUJN8SMr+PdIk8KNQaHD8XNirDRGPziELTiQ6QX/pv4rajkJaDPIK5v18UITa1JdpXuMgnv
+	TD7CWQKui9seyMtQ4vstCq+A21BNT4+yXwdJKtHBiiE3GD4xBe4InnS5Rifdd3Jvlrap6FRNLvU
+	KqpR2kO53l+4GtEpjVsyYsL99Mg==
+X-Google-Smtp-Source: AGHT+IFaIGRG5l69hsOSGWYl040A/tu0+gqoTQTrAfX6O+iI+P4Piv5NKOktlkNubRPL926At9mD3Q==
+X-Received: by 2002:a17:902:ea06:b0:23f:f39b:eaf6 with SMTP id d9443c01a7336-2446d94654cmr48291535ad.46.1755276722370;
+        Fri, 15 Aug 2025 09:52:02 -0700 (PDT)
+Received: from gmail.com ([157.50.13.41])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2446d54fe22sm17694525ad.133.2025.08.15.09.51.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Aug 2025 09:52:01 -0700 (PDT)
+From: hariconscious@gmail.com
+To: mic@digikod.net,
+	gnoack@google.com,
+	shuah@kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: HariKrishna <hariconscious@gmail.com>
+Subject: [PATCH] kselftest/landlock : fixed typo errors
+Date: Fri, 15 Aug 2025 22:21:52 +0530
+Message-ID: <20250815165152.17046-1-hariconscious@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Dmitry,
+From: HariKrishna <hariconscious@gmail.com>
 
-> Since s*printf() family of functions returns the number of characters emi=
-tted,
-> avoid redundant call to strlen() in lockdown_read() and prefer
-> snprintf() over sprintf() for an extra protection against buffer overflow=
-.
->=20
-> Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
-> ---
->  security/lockdown/lockdown.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
->=20
-> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-> index cf83afa1d879..10537d7c4437 100644
-> --- a/security/lockdown/lockdown.c
-> +++ b/security/lockdown/lockdown.c
-> @@ -106,9 +106,13 @@ static ssize_t lockdown_read(struct file *filp, char
-> __user *buf, size_t count,
->  			const char *label =3D lockdown_reasons[level];
->=20
->  			if (kernel_locked_down =3D=3D level)
-> -				offset +=3D sprintf(temp+offset, "[%s] ", label);
-> +				offset +=3D snprintf(temp + offset,
-> +						   sizeof(temp) - offset,
-> +						   "[%s] ", label);
->  			else
-> -				offset +=3D sprintf(temp+offset, "%s ", label);
-> +				offset +=3D snprintf(temp + offset,
-> +						   sizeof(temp) - offset,
-> +						   "%s ", label);
->  		}
->  	}
->=20
-> @@ -116,7 +120,7 @@ static ssize_t lockdown_read(struct file *filp, char
-> __user *buf, size_t count,
->  	if (offset > 0)
->  		temp[offset-1] =3D '\n';
->=20
-> -	return simple_read_from_buffer(buf, count, ppos, temp, strlen(temp));
-> +	return simple_read_from_buffer(buf, count, ppos, temp, offset);
+fixed typo errors
 
-Thanks for your patch.
+Signed-off-by: HariKrishna <hariconscious@gmail.com>
+---
+ tools/testing/selftests/landlock/net_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Since the current `lockdown_levels` array is static and has only three memb=
-ers,
-and the total number of characters of these three reasons is far from excee=
-ding 80,
-there seems to be no risk of buffer overflow for now.
-
-About the change to strlen, I think lockdown_read() is not on the hot path,=
- the impact
-is minimal.
-
-So I prefer to leave them as is, thanks.
-
-Best regards,
-
-Xiu
-
->  }
->=20
->  static ssize_t lockdown_write(struct file *file, const char __user *buf,
-> --
-> 2.50.1
+diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+index 2a45208551e6..2dc0eca25ed3 100644
+--- a/tools/testing/selftests/landlock/net_test.c
++++ b/tools/testing/selftests/landlock/net_test.c
+@@ -1587,7 +1587,7 @@ TEST_F(ipv4_tcp, port_endianness)
+ 				       &bind_connect_host_endian_p1, 0));
+ 	enforce_ruleset(_metadata, ruleset_fd);
+ 
+-	/* No restriction for big endinan CPU. */
++	/* No restriction for big endian CPU. */
+ 	test_bind_and_connect(_metadata, &self->srv0, false, little_endian);
+ 
+ 	/* No restriction for any CPU. */
+-- 
+2.43.0
 
