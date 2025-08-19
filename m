@@ -1,92 +1,135 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1958F271472;
-	Tue, 19 Aug 2025 20:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1352B2EB5DA
+	for <linux-security-module@vger.kernel.org>; Tue, 19 Aug 2025 20:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755633838; cv=none; b=G/fJ6mc5ve+jCkl5k+mm2H7ufbjgZDYtXdEFEkocmvUdanh1ynW/cCKKZsUeANpHOtjthcgIZtzhv4brKIeMC8z7iAmyRXIOGiIJKfrRE8UUK0ILzPA9at2/RAMFm1OG+rzBEeaVyhfqi4QBLXWw7HGSvEL6SmShKsv2LDxAYfs=
+	t=1755634001; cv=none; b=ri+goPqkyN+PjCiNNy7wyj9w2p3WNWG9d5d7f03/F6HlkVdyWEHZTYUv9cx+KdOYyBxRxy4V8B5lAv2U1IFbgrZZ1mABGHS1gK96sMSJoZfP1up8nW/yxbmqO0dM4Dwq4eMAm9OeJZGVStrng5K7DZLL8ta3n9vStvEJ3JhnyQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755633838; c=relaxed/simple;
-	bh=rTVP19kuX9z4ilZTIXM/dKx6fGXjWcfgz/aLkcj4l/Y=;
+	s=arc-20240116; t=1755634001; c=relaxed/simple;
+	bh=6C7QObJMPTFtgGJIId7CRBPWyV4FKO1/eq+Hnu6qUCU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dorx3lArgBOBKUqb0V+3C1hlTUUHHHQlj6WgYlJ1/fmgK3M0PtezpmMyfS7QrNgBwvuiSqsRkf0Wa9IjhUvrV0l1dP1sWhwFcwHHFM5ZCDjMfM+dV5ljcr+W4CMM5b4gRsva8ZqiVLr17yy9fZxOQwO9xkJcew81o5aarWxfEP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VH23Q1iM; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=qcHGU0gVoYyLhcNIQ1+qG/LZcruvaFaat6k91s1C1wVoeHPplkf2zpDXekM5PU2ous5Fpze/Zjn0KKynuNEzMuqkvaOsrBUt5/CO6GFZpC2O4naUfWpIut90b9KrbHdcSMUhbfdhharWfm4tWPDSmH4/+InlwGhuEsggfpZomSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fiK6RmiL; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VH23Q1iM"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2447d607b70so3761015ad.3;
-        Tue, 19 Aug 2025 13:03:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fiK6RmiL"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-321cfa7ad29so218651a91.1
+        for <linux-security-module@vger.kernel.org>; Tue, 19 Aug 2025 13:06:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755633835; x=1756238635; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1755633999; x=1756238799; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rTVP19kuX9z4ilZTIXM/dKx6fGXjWcfgz/aLkcj4l/Y=;
-        b=VH23Q1iMKyQgW0M/DWlGnVM5IWf1lzhzXg8Iy7LL6hjoVBHXM1IlJoC8Aea9l6Yi3Y
-         4AL0HPVSx1p6OTRbDR+wkMCiVsAPf/MGPWWjXPZGlmzB49mEqS5SSt+9RQPOIeSKSKp8
-         aDNXmCyzBBY7V1bu4nPoNFl6EqfgiyQ6iNolbm0kIxFmCmnolBkZZG5km12hiXXWwYZP
-         SJf8LBqzETfj3Wx78oow/iC+56v+GXVUTXCm2ht4kX4JqD5NUgm41OUpP8roGkj47lzr
-         /RtGFQcMS4dFvZrAqeBKR7RQxAb/s+8gfbqe4EtFmMocAkR0dZWHP8LUTCRMyUBU+SBe
-         ClmA==
+        bh=7dbnrRYjA6r8sWlA78GZUM/iB+0DcVA0eZZwoGwYzm0=;
+        b=fiK6RmiLIW/OQJti9UmZuPb4gSwF4/uL4Ffk2VnyLkbxVn4nn9yb0X1TkjjqikdETb
+         ym/D/DKZU+BJOkadeNJQ9ifxO2ME0zf4T8QgxOybCiMWQilovEJfSETyZejIztir56oK
+         EQC+ZCw1G2Zs1VVGMYWxI62lm3rDCU2xOd+dCM6cx/l7OwpI6eRRm9Ic9eQfi34bZNXb
+         ffFNCdwgqq+FdHzal9/a4ZuFPOhz2lwADYPVS/ASEWesAKS/76Isoq8hd8c+s/L9LYey
+         cSXlnPJMIQsJwTzqBYMu5252h5DnVuVV3ooXEIftOQSgFaUDX9oW1egSc8X2ayNcjkEU
+         2ygQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755633835; x=1756238635;
+        d=1e100.net; s=20230601; t=1755633999; x=1756238799;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rTVP19kuX9z4ilZTIXM/dKx6fGXjWcfgz/aLkcj4l/Y=;
-        b=P/bXehuA4+oU3t5F9kQWaxFaUnA1djLuIhJdAjeKO6+K565+w7zUlRT/His7IZm8oH
-         c8Xa1WrH/DV/2gdccqSKgztmyeTU7OOs+C+dA0IIxLEYVFT/cbyBr+88fKFRviUFQKMS
-         a4RliO6UeIq17heCGM2F9DgNtbDiGOBqOlnMbaHmZ15zqE7tnuS9tzm3EHiQNj7glsWt
-         LW0I6mYvr8DsjGKKsXX4NowWwZ8CIgJUA4YXNWZ2ISkpisdVwW4eCKFMjQEgzndAB3oB
-         agQ5HJv5bQ9TlA2B9behYAGdz6lyhNCEvvbzEGBMyWVIN9sXs/A6MZfBeErcEsJtCDyC
-         wRfg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4ISeRfbg0UY4NcUTGfQgWAITykhUZ2t8sYQhUWKR2sNTTTtXs/aNHLBkU+DghrjK2lDnCsp5t2DoQYW9NWg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNBfs4MzzN1j22v9CUN84ePdDktMAGiR6KS1/YTqnT44vvzQqZ
-	pnLcF1Y7vQwiCFvDtaPscK19hcfWbgsxbowKEhX9959Umk3j9Rs5RTTYWz9tctEKr7L26tQvr3F
-	w0s/GXiGyRspD8UD4QPvwevP0zFQaiuocmv0ZgMk=
-X-Gm-Gg: ASbGncuxE568IgXdwUXdbpsBqqQkS2+Tm3gnnLM7DqyfrEpcYBWy9Oj4PIflOivndgR
-	Qm3Uf5rNCdYlt33BpCA6JDl6m3eBjXS0UtcBw5KRAg9GiOoBDzpR7iJbvr5MwHiwkK5cgSNicTO
-	lybY74pUEfIaM/wU3dHuJYVT8dpH6lHNJ+hN/2Iu+o3510k3SkQqm5O07AUiwgFiLescTtw9174
-	ORWRBb1
-X-Google-Smtp-Source: AGHT+IEPaZYukJ4IdWRl5XUPLlbm320nNCd+bEH2Gb+NxcNewl3Sqpfcd6vgEx5A0I5mMGSHn3aDuxOjwvkQmmXb1ns=
-X-Received: by 2002:a17:903:1a68:b0:234:8f5d:e3a0 with SMTP id
- d9443c01a7336-245ef11a18emr1781815ad.2.1755633835210; Tue, 19 Aug 2025
- 13:03:55 -0700 (PDT)
+        bh=7dbnrRYjA6r8sWlA78GZUM/iB+0DcVA0eZZwoGwYzm0=;
+        b=m9rqgF7wbAl2RtDXhEzMjKRGRR1eLDJwiG9+o+u2uSjUr2baDt2GC4bX4EVBnByGgF
+         3/pc4+KXN/xY9+wSeMLyJCr+z5WQmzLZlRCALGcUcWZfLefZI0t/lSKSMhF7B1hDK7gJ
+         H4EbbHL4cMVSoE2X/QXxFsbmBdcuPMVEIr7HFbOPOas4b9MQYIy711MJGEMy9Mj3gwFT
+         zoWnKAxI15Rc/oM1wPonWo48oOjHxwOx63jayDTiUdHiO6rnzjMeb3aBVXuhbnQA2a2F
+         gQFl+dUQY8n0vYaX/8OKyIjqv3tlOd4ufnmphUzy636Lkxq3zkDQ9S3UU10vzfBY60FN
+         XJBg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3IjT3kQHfD+9Nt/uDV/j7f32vXpMwJwNCpQ7cWo/Il4GautAT6aTUSZchaoj4KZERaMV2pvxjs+5gFrRRwYlkeqVtzRM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgYKSmFrCGtKAVTexUHur3SAeBiu4agnzy0ITt3t+lgZA16sLq
+	xl5ON5yMp1Fk0eY+XeNB+T6WHt0S1+sHdiRcqIkFVZ8HlQ9ZHFsRTnzopETK927W4nccGk6jqQ4
+	sLBM04q9Zwbhklkfxx+XIW75BPPAC0lhesUCveYF8
+X-Gm-Gg: ASbGncuVYAI7FNG9vWalm08juEob0QLmLvZu79xwTM+Rk0zRnOBKRHPSQQkvxaokQkH
+	D8QeMkKyBrv3T5Xqhu/MdxQ2kNqNZp3a3GLuXhyoEMSvEM+5BUW2E6mfErDMdXh8y0L80QCpDgE
+	VLjons7NYQBopLp9dTClqOZtS18bTiZfnX9wyypkdSLT0OdWK3SoHxlHjyXP7SYN2UQR/fFfKJj
+	4rtT/g=
+X-Google-Smtp-Source: AGHT+IE57Vpn4Z/uLflLQmdS1WKySyLuxyfc5IrS7pgY9y0NqhnygvL19NrSeye7I82eCLBPuD+9tEQKPBa1kQf69dE=
+X-Received: by 2002:a17:90b:1dca:b0:31e:7417:9e86 with SMTP id
+ 98e67ed59e1d1-324d34f0608mr5508407a91.9.1755633998729; Tue, 19 Aug 2025
+ 13:06:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819195841.238246-2-paul@paul-moore.com>
-In-Reply-To: <20250819195841.238246-2-paul@paul-moore.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 19 Aug 2025 22:03:43 +0200
-X-Gm-Features: Ac12FXwm7Ez5ZJmBzBEUk4vgyM3DGBmh9ZfGDM3Syy2dHncKfy0E_Kw18SsqNE4
-Message-ID: <CANiq72nkvcGesG+XUzw3b2pyN1-J9Eo4utsEAYnBiifOvGGpQg@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: add the associated Rust helper to the
- CREDENTIALS section
-To: Paul Moore <paul@paul-moore.com>, Christian Brauner <brauner@kernel.org>
-Cc: linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20250816114409.10107-1-shankari.ak0208@gmail.com>
+ <aKKdULYbLFRMS9qe@mail.hallyn.com> <CAHC9VhRwpYx0jVybcAnGdm4AGDno-GwyCzZCS7U+56Fwu2tuCg@mail.gmail.com>
+ <CAH5fLgin9OhTmf52i2hQKztYLcHTxE+n1gMPXDFN83atE+u_oA@mail.gmail.com>
+In-Reply-To: <CAH5fLgin9OhTmf52i2hQKztYLcHTxE+n1gMPXDFN83atE+u_oA@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 19 Aug 2025 16:06:26 -0400
+X-Gm-Features: Ac12FXx10lJQLGyCNfT5IQBtbILTFmhFyVz6sTMSaLCEXVmUXNmYmvs8TLi8yIM
+Message-ID: <CAHC9VhSoyh3EqFqYD7tXDmPXsao8FLQo2PMAKEmJVJ6khPA51Q@mail.gmail.com>
+Subject: Re: [PATCH] rust: cred: update AlwaysRefCounted import to sync::aref
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, Shankari Anand <shankari.ak0208@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 19, 2025 at 9:59=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
+On Mon, Aug 18, 2025 at 6:06=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+> On Mon, Aug 18, 2025 at 11:22=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
+ wrote:
+> >
+> > On Sun, Aug 17, 2025 at 11:26=E2=80=AFPM Serge E. Hallyn <serge@hallyn.=
+com> wrote:
+> > > On Sat, Aug 16, 2025 at 05:14:09PM +0530, Shankari Anand wrote:
+> > > > Update the import of `AlwaysRefCounted` in `cred.rs` to use `sync::=
+aref`
+> > > > instead of `types`.
+> > >
+> > > Thank you for forwarding, Miguel.
+> > >
+> > > As far as I can see from the included links, this looks good.
+> > >
+> > > > This is part of the ongoing effort to move `ARef` and
+> > > > `AlwaysRefCounted` to the `sync` module for better modularity.
+> > > >
+> > > > Suggested-by: Benno Lossin <lossin@kernel.org>
+> > > > Link: https://github.com/Rust-for-Linux/linux/issues/1173
+> > > > Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
 >
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>
+> > > Acked-by: Serge Hallyn <serge@hallyn.com>
+> >
+> > As mentioned previously, I'm still not well versed in Rust so as long
+> > as Serge is happy with it, I'm good with it too :)
+> >
+> > I'm guessing it probably makes sense to include rust/kernel/cred.rs in
+> > the creds MAINTAINERS section just as we did (or will do) with the LSM
+> > Rust shim?
+>
+> That would make sense to me.
 
-Sounds great, thanks for taking ownership of the file!
+Okay, patch sent.
 
-Cc'ing Christian, since he originally took the first patches to the
-file. (I think some people may be filtering based on whether they are
-Cc'd or not, so it may be good to Cc others too)
+https://lore.kernel.org/linux-security-module/20250819195841.238246-2-paul@=
+paul-moore.com
 
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
+> My understanding is that this patch, unlike the pin-init one, is
+> intended to go through the LSM / CRED tree rather than taking
+> everything through a shared tree with Acked-bys.
 
-It may be a good idea to give some context in the commit message too.
+In that case, I've gone ahead and merged Shankari's patch into lsm/dev
+and will plan to send it up to Linus during the next merge window.  If
+something changes and the Rust folks want to send this up via a Rust
+tree just let me know and I'll drop the patch.
 
-Cheers,
-Miguel
+--=20
+paul-moore.com
