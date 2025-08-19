@@ -1,101 +1,150 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710FB258ECE;
-	Tue, 19 Aug 2025 18:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E17284B59
+	for <linux-security-module@vger.kernel.org>; Tue, 19 Aug 2025 19:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755629909; cv=none; b=Y54aDIXbFJLvTKsfsDzNB03YTzTP2XXF+YdqX9njOBj0aWTn38QoSN9sBm5mVfVc7D22bCUEEpfaUsf9dFbx2hjA80tZu7WLhOfl3X/nDosIMtDGFL1zUFi6pE4JA4oKE4vchP3iiFZG87ZdznbOR56w47B5wsQCUvqcxMS3Qko=
+	t=1755631156; cv=none; b=J+zqlD5VMUmZ6ZpykxJLfhPxoEI1OFAcx9rMhStqlU+DAsIBAg1NVX/+BDc4XO9EimFfKs+1Z9KIc9+7SeisGcKguJPym1Y6lwKqTA3z1hfd58ScgUMHMz2gKmKQoWhoa/T6aoz7CeONtp1y87iDtxF3FbAUoi2SkRGuNphCAxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755629909; c=relaxed/simple;
-	bh=rHQqrR9awc9iGjIkEB/xn4JTH0DWf9zfoZPAzieR+e0=;
+	s=arc-20240116; t=1755631156; c=relaxed/simple;
+	bh=nDtZD5FSmG/CGBdUNE7KHpOsJwsBrvENXVA3O410/EA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JDp/y3lDHmxdfeeQL8ob94yLdFI343hGTtq5cJomGXoN2D0p2eQ5hvpxeUXmUZgxFfct3A+8Xz8mWOK+skhUAjvrtVCqlvxT3HCb8KhR0IK1oL46czjP00jj5bMoTok5KzYcb7VoMzERh0iSRxuYTJeZn0+8s/JOZl0AZOVqvWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EkSz/76O; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=QG5tTeGaVPPX2F0eKhn0RC/OMhWz1AHobhvcmSx6IXoecYPg5XCh4bIQo8B6u0d1VnrW2dA25YFUtQhq1RRS0oNbo8ZoccehkVajz8Ywe3nwBxEOvpSBa0OPAlwjNL/ls8nwK7lpUsXv3+UMW8H1vA+oYjARuN+bzDEthd1qkv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SK75aR/U; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EkSz/76O"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2445806df50so42369635ad.1;
-        Tue, 19 Aug 2025 11:58:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SK75aR/U"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32326e5a623so4697690a91.3
+        for <linux-security-module@vger.kernel.org>; Tue, 19 Aug 2025 12:19:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755629908; x=1756234708; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1755631153; x=1756235953; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EIaobvd0OUtyWkmHEExMq7PsYIyI2GQUyCk8KLI9Sds=;
-        b=EkSz/76Od+VFX8mtL+zNzMAOEESKNPmgQCpro0jtmJTJQllnqNPF5pM+bHuQpwP3RM
-         TKJHZK/r7E74yLHXRI6pMTufSHfX0+EsAGX9S81eV3NL2xc5IjPpSZNiKlaYXUM412Fm
-         UfGptITkU5Pld8qPTcNNCT2oFuzV5zlIrsamnp8OhbWqS1nrC0+DXw6MIUnlj6LWmc9q
-         peQ9bMiVt55SNp9Bh3eRRnpT4ZsnqIIuUwu7LIWI+grGS8JXdsRUPJE+tivE3q6bo0LM
-         uBxLj8l7zUIyDA5/Sme8DcZ4VSlWgcTayz896SUOEeqbE5Ulk3kS5Bc8oXKA5czSaUHV
-         oWRw==
+        bh=8W/M64oSvf4Fk1SKGFHqHfMPFcbRUqp42HLrlC1xskA=;
+        b=SK75aR/UWPu+bcnMFSS5I0DENKZUOKz2w5uZmuhPfe7JAc2WQ8yt9SQdrD9fsMPCH0
+         gp8h/3BcQ9VlPMXkc0M9AUm1tWZM98Lpcit4+TCtuHF5pxKucA+Zx8KgOcMObobw/nIf
+         HGdGGN1oTQPyshsRNMXqjU8Z5RjLhyJlVS/ee+sajulNV13gXZP8fB42qi80uzyi5M63
+         JkP4VuapfHIuHVhCYekS5YU6eCwvTcrRmFXdS6KRFBZ879Madwe6AuY5r6sWC89lHKuf
+         D1bQxF2BWNlwQ976NPStEhzrbq4RwEfyZR+NTwGi6tlJMUQPloolBNxLtpep/zUlZZ3Z
+         uCqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755629908; x=1756234708;
+        d=1e100.net; s=20230601; t=1755631153; x=1756235953;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EIaobvd0OUtyWkmHEExMq7PsYIyI2GQUyCk8KLI9Sds=;
-        b=g4DLPp2bD7ZLe8sy6naGs4eE0QIJHIL17gucj9Xn8Uh37RNxcJwVWqAOXDr/2Cpgyy
-         cUPA06CTOUwTfMU+sASdH6JIb9Uzq+akenRFMLYCGMsMjyB0Nos7yEXIc2CYR2f8NofE
-         4+lJ5DhtW2l33j2WFWmZ65qLIRjaGdWs20Wz+Oom76MthdYlt7Y6/R/RhHlJGkgcWh1D
-         mhZ2GNqRSgpCZcX2rxu1HteqAlseqFVdyeTVGf/rQW36tA5mLKKuJmZ0FemTm7QdAT//
-         6pBExzUdRkcwbnoEfOETT84tPobm1qgwMOmav6vILkcVpXCaN95uQgSMpQfRKCK0w0Lr
-         EJ0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVNNYthK12NFBabZcdZoulDnES94Kxm4kF+mrH2s/bQu6NWVB2VS2d/Eihhf2NjodSSVYW8IR5qHw==@vger.kernel.org, AJvYcCXcKH09CISEjD1g22Ddxz2rVGaeDYKfvWNQRgCoE/74MFS5yify7fymgH0artvwILCb3/l9ePvRv0zNt/uW/C6WxdW1bEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6xcKHMrNH+n+Kx/zlHzSlvYb4L6KK2sjDT45QC91S+qENOrSc
-	FgaitdmrIY7PWYF+xisXM46F1OJg7gQGeDphqhx5YnoNjSSK/QM49o0Wi3Cxt/8ECvYRQ8p0z2r
-	ysa+K1SKxLMVwO6cm3d0rA6ibnsPbS94=
-X-Gm-Gg: ASbGnctNJa57GPxQUch2RCFDJPfoc7GSbbnXHXYL8wRKkzrY/DKB6n0kFdoSE5ELyw1
-	O+At4U7Wojnz6fjaDNyRahnGsm7rASNSMXQuxE/j++68dThjWq2E4Ndh6i+Bu8zXbrR0weptsur
-	n6e0eo2MhuY1+T57MAE+UFFbEjhz3lilj9RR+0ZMDlGEWyvA69FN3fD+gJn/VNZPUcWlnIMxsFB
-	t8+OKU=
-X-Google-Smtp-Source: AGHT+IFKvnB6MyC4sp/bNfOLpHICPMxKCazA9S3bUdqITNFb6U96ND5qaxZnNIQJ0RaNlW+e/8KfuyDUJ9QlBKlXLZI=
-X-Received: by 2002:a17:903:11d1:b0:240:3b9e:dd65 with SMTP id
- d9443c01a7336-245ef25b7fcmr679165ad.38.1755629907679; Tue, 19 Aug 2025
- 11:58:27 -0700 (PDT)
+        bh=8W/M64oSvf4Fk1SKGFHqHfMPFcbRUqp42HLrlC1xskA=;
+        b=oJgnFMvAtpyadtCjt3tjyQhKYjftnAb4qCUpsqMDlpzk7xEy+1zGt9oz8OTuTsb9h6
+         pjAr5HG+l6+yeGs+mwaf++PNkUAGWjkbq9y5t2E2W4DtX0PJrnrWLsN5irAdP61YvaHp
+         svst+S/CqGiLaUoKkuqQ5xYngva8T9Fk9IThrRQ/dP+Ka35Bp2e0mO+2PP1jBXKYSTea
+         ZdQ9q+q2ZOK2F3Vo24JYhqBOi8icf0uTSZexN54B9o89+Gl19fHylFGmSCyUQZKoeqWZ
+         OxhrbvyHtnWnmtvsGSJV6TopUEwxMOQ35P0yB4hfADx0lApsPlKe8CC8/pxXlzfsmNXZ
+         3hHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXNLK+vGL/fZHiO8bxHQ6jomu1QdAV/PeslDAhNwG0qCX1E6NePJ9t6xTBKGFyczco4D6/wSOYgd1e3XBc6PgVL1DJ4Bk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8FCvjX8+zXr+FO1W+0ltgaWfk8R7g7JGVmEQzQaekl6sgi8Iy
+	DWWdSA/4+ImZB1RYoQzNPuPao7oVxJevP83B+SotbKBovJXwihAh5m+xTPfKadtTkau/TKDdxMT
+	G9CHjglI7IFIxA8joAl2oIyH9JSR/EJMtMgCVRSSM
+X-Gm-Gg: ASbGnctW1xfGs8WBzaPPcMTRXtW4h0OYh2tViL8xBxnHHm9damwB3u1udb6ixV09Blx
+	gF8ym1PEbO6bduOYnjZhD7ZzVr3ISMppE7h5G0ZznYgMhgd2l3L+duKwVaNgvZUvKZQKMWfBHXh
+	qvwzsgX1App113YfRmrN9RDqsSUN4Mj1YHz8GwSa3tQbxV1bZvSxec3Lz+dbaWw7AXQBxyULsPH
+	6X4Wbs=
+X-Google-Smtp-Source: AGHT+IFt/MV4wB7eQ5hkwdRDFrUNtetg38g/aENjZTxF6uNMPgcELY2nmhyFsvRjDbiLLTWF6RNjAybGWjmy77iCqZc=
+X-Received: by 2002:a17:90b:2fc3:b0:312:26d9:d5b2 with SMTP id
+ 98e67ed59e1d1-324e117c685mr542450a91.0.1755631152712; Tue, 19 Aug 2025
+ 12:19:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
- <2e303958-ca60-4458-ac6d-6b83f331f660@schaufler-ca.com> <CAHC9VhQ5Vs+_DYAcN_Z4M9PVqW=PjaHcr4sVXADU5yqp1zFHVQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhQ5Vs+_DYAcN_Z4M9PVqW=PjaHcr4sVXADU5yqp1zFHVQ@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Tue, 19 Aug 2025 14:58:16 -0400
-X-Gm-Features: Ac12FXy5xUNqUTqPJDOe3ps596yYQP4Jldnt33U6IaU6sIoeEVRLqt4oexr_23w
-Message-ID: <CAEjxPJ7NpSdfUZzzj0SnN8WuUv7E9SEj5v28x_y8R178_JMESA@mail.gmail.com>
-Subject: Re: LSM namespacing API
-To: Paul Moore <paul@paul-moore.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>
+References: <20250813205526.2992911-1-kpsingh@kernel.org> <20250813205526.2992911-9-kpsingh@kernel.org>
+ <CAHC9VhR=VQ9QB6YfxOp2B8itj82PPtsiF8K+nyJCL26nFVdQww@mail.gmail.com>
+ <CACYkzJ7vBf3v-ezX1_xWp6HBJffDdUMHC3bgNUuSGUH-anKZKg@mail.gmail.com> <CAHC9VhT2Q4QOKq+mY9qWHz8pYg6GzUuhntg1Vd-cpGcQ7x6TLg@mail.gmail.com>
+In-Reply-To: <CAHC9VhT2Q4QOKq+mY9qWHz8pYg6GzUuhntg1Vd-cpGcQ7x6TLg@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 19 Aug 2025 15:19:01 -0400
+X-Gm-Features: Ac12FXxvAxNrILnesY9oRSkXSP2x71I8_vwlv_1Nd_1NvTJP0yyJUdWY-g0WNIA
+Message-ID: <CAHC9VhTFF4gnc2Lu4XOkA+20sQtcvG3WgmJnXN4eiPSifc-+sg@mail.gmail.com>
+Subject: Re: [PATCH v3 08/12] bpf: Implement signature verification for BPF programs
+To: KP Singh <kpsingh@kernel.org>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bboscaccy@linux.microsoft.com, kys@microsoft.com, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 19, 2025 at 2:41=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+On Wed, Aug 13, 2025 at 6:17=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
 ote:
->
-> On Tue, Aug 19, 2025 at 1:11=E2=80=AFPM Casey Schaufler <casey@schaufler-=
-ca.com> wrote:
+> On Wed, Aug 13, 2025 at 5:37=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
+te:
+> > On Wed, Aug 13, 2025 at 11:02=E2=80=AFPM Paul Moore <paul@paul-moore.co=
+m> wrote:
+> > >
+> > > It's nice to see a v3 revision, but it would be good to see some
+> > > comments on Blaise's reply to your v2 revision.  From what I can see
+> > > it should enable the different use cases and requirements that have
+> > > been posted.
 > >
-> > The advantage of a clone flag is that the operation is atomic with
-> > the other namespace flag based behaviors. Having a two step process
-> >
-> >         clone(); lsm_set_self_attr(); - or -
-> >         lsm_set_self_attr(); clone();
-> >
-> > is going to lead to cases where neither order really works correctly.
->
-> I was envisioning something that works similarly to LSM_ATTR_EXEC
-> where the unshare isn't immediate, but rather happens at a future
-> event.  With LSM_ATTR_EXEC it happens at the next exec*(), with
-> LSM_ATTR_UNSHARE I imagine it would happen at the next clone*().
+> > I will defer to Alexei and others here (mostly due to time crunch). It
+> > would however be useful to explain the use-cases in which signed maps
+> > are useful (beyond being a different approach than the current
+> > delegated verification).
 
-I've only implemented support for an immediate unsharing of the
-SELinux namespace, not any kind of deferred unsharing until the next
-exec or clone.
-Not saying that would be impossible, but since I was following the
-example of clone(2) and unshare(2) I didn't do it.
-May be some complications in doing so, but I haven't looked at it yet.
+I wanted to bring this up again as it has been another week with no
+comment from the BPF side of the house regarding Blaise's additions.
+As a reminder, Blaise's patch can be found here:
+
+https://lore.kernel.org/linux-security-module/87sei58vy3.fsf@microsoft.com
+
+> The use cases and requirements have been described quite a bit in
+> previous threads already, with both you and Alexei participating in
+> those discussions.  If you really can't find the threads on lore let
+> me know and I'll be happy to send you links to all of the various
+> threads from the past several months.
+>
+> However, if I had to point to a single email that I felt best
+> summarized my requirements, I think it might be this:
+>
+> <<< QUOTE >>>
+> The loader (+ implicit loader verification of maps w/original program)
+> signature verification scheme has been requested by Alexei/KP, and
+> that's fine, the code is trivial and if the user/admin is satisfied
+> with that as a solution, great.  However, the loader + map signature
+> verification scheme has some advantages and helps satisfy some
+> requirements that are not satisfied by only verifying the loader and
+> relying on the loader to verify the original program stored in the
+> maps.  One obvious advantage is that the lskel loader is much simpler
+> in this case as it doesn't need to worry about verification of the
+> program maps as that has already been done in bpf_check_signature().
+> I'm sure there are probably some other obvious reasons, but beyond the
+> one mentioned above, the other advantages that I'm interested in are a
+> little less obvious, or at least I haven't seen them brought up yet.
+> As I mentioned in an earlier thread, it's important to have the LSM
+> hook that handles authorization of a BPF program load *after* the BPF
+> program's signature has been verified.  This is not simply because the
+> LSM implementation might want to enforce and access control on a BPF
+> program load due to the signature state (signature verified vs no
+> signature), but also because the LSM might want to measure system
+> state and/or provide a record of the operation.  If we only verify the
+> lskel loader, at the point in time that the security_bpf_prog_load()
+> hook is called, we haven't properly verified both the loader and the
+> original BPF program stored in the map, that doesn't happen until much
+> later when the lskel loader executes.  Yes, I understand that may
+> sound very pedantic and fussy, but there are users who care very much
+> about those details, and if they see an event in the logs that
+> indicates that the BPF program signature has been verified as "good",
+> they need that log event to be fully, 100% true, and not have an
+> asterix of "only the lskel loader has been verified, the original BPF
+> program will potentially be verified later without any additional
+> events being logged to indicate the verification".
+> <<< /QUOTE >>>
+>
+> The above was taken from this on-list email:
+> https://lore.kernel.org/linux-security-module/CAHC9VhQT=3Dymqssa9ymXtvssH=
+TdVH_64T8Mpb0Mh8oxRD0Guo_Q@mail.gmail.com/
+
+--=20
+paul-moore.com
