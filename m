@@ -1,62 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5365214A94;
-	Tue, 19 Aug 2025 10:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B80A2820B6
+	for <linux-security-module@vger.kernel.org>; Tue, 19 Aug 2025 14:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755597967; cv=none; b=qr2YLCNC/m5LU1crOM2b3l+bqHc3IpGON7736BiIkfn/A+hBfq2Ka3hZf1fn6XZk8SW49aWzq4UlzTvSjwj/QhzTh4jPMzSBeutov+TDQx//UpjqkjIhG+FCB+BAoULrCZPMBTSqD79K6hCauw+EPWl/elLoEJT2gbr4lgt9FMU=
+	t=1755615403; cv=none; b=CAOLxpEoSMdN3N2TtLGwRNLf9GmC2gxYvwIf7G4P0PGc2DMtZp38D9NhoQ8lLDJv6/AJuqQkpgATX2jjMQ5RstMQWtNWUrBJwkG0UOVzpy64uJu6R8IW0TBwhTHyRUWjO8BFmBicki0MhJLOjYflKpfEQj6fnN1RNXF/xDYZ7es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755597967; c=relaxed/simple;
-	bh=f11Nx1TP9s58QGMUEaL0dUNWCcSlCF3s7K3LOMVa4Sk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FHh9X5+3Yzqclgw7Eg8SfCe8w1/OIvDPKIsVqQOEEr+wry0TW5tEY/M7fy2vh4ofBalMw1tksJt5rEzwswHdDj4vT2up0jouyU22kvvZJmGHunPMJPekKhehSJHzIqaFPsIiVsg/qBqnAUfC79FGKNzrYU9Hia+Xx9qtqBQk+KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OeUekBQh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755615403; c=relaxed/simple;
+	bh=ELRQ3hOZwpeTiP42YnBceOBTrxHGJHFkt+FI+54mVyU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=DVN8RbWsmTtTgCokvUkVRBS7gFPi2cRxtJphXcinrepwTiBi+UcGjjKt8ZKl24vnlUoJF6mCtYCeq1zW4gjzwc3ZnqsaFQNd1o2VZXKyachr1f14cngNYWTGjGP9cjKM5niWpik/dyKWBtBfNGioRdKyB/pPIbfK6Ad2sWT/LpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QGmWCOAa; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OeUekBQh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32BB8C4CEF1;
-	Tue, 19 Aug 2025 10:06:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755597967;
-	bh=f11Nx1TP9s58QGMUEaL0dUNWCcSlCF3s7K3LOMVa4Sk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OeUekBQhoKymirQThWTQEUSmYYDqL0zpi6B3Ib4UAq3xnwHAWPbwoz0k1VYryWLn0
-	 yD30OJJeQtEwe8gdRIJWv+g1OMyvJBWtCGsSfMmHCzRBrQ5PlIJB6eRKT1u1fO9w/U
-	 G7+zck9mUM9Q2g24o05MB+OX51y7ELkCM/6u4a++l8nCC89xx4v6mlrKDw0/n5njb7
-	 aMXoBPe3YqNdc0Sbl4xL97yIZfpuTZolYVwXU9BcvU63MBWPAbYzSc2q2AAxg9N/oU
-	 9jBt2xBByNtZVpNDjiaEYRhtTqKFGfaJZHGrhhRFquay3tkFoWSqb3u26l8G9cM4X7
-	 x5PorQse9sWKQ==
-Date: Tue, 19 Aug 2025 12:05:58 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, 
-	Song Liu <song@kernel.org>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com, 
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz, kpsingh@kernel.org, 
-	mattbobrowski@google.com, amir73il@gmail.com, gregkh@linuxfoundation.org, tj@kernel.org, 
-	daan.j.demeyer@gmail.com, Will McVicker <willmcvicker@google.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	kernel-team@android.com
-Subject: Re: [PATCH v3 bpf-next 1/4] kernfs: remove iattr_mutex
-Message-ID: <20250819-tonstudio-abgas-7feaac93f501@brauner>
-References: <20250623063854.1896364-1-song@kernel.org>
- <20250623063854.1896364-2-song@kernel.org>
- <78b13bcdae82ade95e88f315682966051f461dde.camel@linaro.org>
- <20250702-hochmoderne-abklatsch-af9c605b57b2@brauner>
- <8f53c544-fd4a-4526-957f-9264a36aead6@siemens.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QGmWCOAa"
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-323267b98a4so4606226a91.1
+        for <linux-security-module@vger.kernel.org>; Tue, 19 Aug 2025 07:56:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1755615399; x=1756220199; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=om8+GylJanYijPqNxQuupiP0PYjgSVTngOJHk0kcsDs=;
+        b=QGmWCOAaSnIEPzqU1vqtjpyKIOs8QOuD8qKrxO2rmU3JGj5kFz8CBDafeKG/KwE3IZ
+         hK6S7FycWbZIp35iN2VnlKCKkLdL3ZRjq7BS6WGhtBUDuWDeu6UXYTOXejLetrDZjoeE
+         fKiD+f0/Pbew9iE5U2mkEKyl7TZUyOZwVqAz07PNPxSy/F6F5I/Pp2s6A6399gNMp6R6
+         tFjBxqefz8Jxc/FEW2hpFmau9jZvi560rBXvrDBd5ewvNyWoLbwbyID82Wk23Yvlw6B7
+         Z55mgZPIeqGvR/ve2HIt9Qq1C4X9tQR+3KE9aYY+27Xwig2iSShjLe6857i58lWdv45o
+         P0+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755615399; x=1756220199;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=om8+GylJanYijPqNxQuupiP0PYjgSVTngOJHk0kcsDs=;
+        b=CPjdvVPkHwTu/gLPtajAwVgUIRpM1mm5V2nYnGKEPuAeogu26xUpEDI8GfvS4FKT1f
+         hkXQ2UGjtx4j2Q/R1RYf7148Hs7Rl9Q0jD07hqjiI13jflyVAWFtwRPLhs4OPMtl30KD
+         i+jZ7TjzfnEe0Rj0IPAoDJaJn3A1RGlx/TwTixTHGddzyk7L6v8Ws+sZTS8JZk3ysi3l
+         hA3uxRm7K0VsDf31/0QRRmCsYfcXP6iPfimbRh/SUJvN//nDuHig3lIs/rHJlW16qZCt
+         LPrTJfDTtiTX+izvJqL8H8lpfmanlaZlOjF3pOHaKzVtVhhVrdkWmoE64rwdEmmojSDV
+         nB+Q==
+X-Gm-Message-State: AOJu0Yx/WkmdXpDmxaZezcBVOKiMcPKd0L8UmDUoNmuesS4KqZaSXp/S
+	oKKKBwJT0ZC4HC34vIfH7vnOhwoao5nXq332doSBqTC6leSeSmiWbcDWCpojseF4WCNFCERHUPR
+	fw6NnTX9176fXCj/AotH4W/Jk2693sbFuIUg7EWcpJRsmqjEfeVnvXw==
+X-Gm-Gg: ASbGnctNv50gAh+eRg5qHXWhIFZcLm9dIHKwYREYf6NY6xlgXiMZrgQ1QOIuqhgEcBO
+	nDto6RbOIepOvcuBobD7a3DD3oTlyeHzUSVNpu4PAYGE8Q0w7Su9NeY0++iMW3RnqU22yx/VP2W
+	/reCUxzoznGFMzeh4N15KVX5kLpBAwKrXgxrefaFozOQVrfqCdRZO5RjcGQma2G8mQL8B0EZKAB
+	7OhI1M=
+X-Google-Smtp-Source: AGHT+IE49+XPnBQc6B8Q5oFF3ZybE61TRrP8sGpydu+cRS/OemldinxpEQ2S7YE7y6mOMXaC6E4L57zujbzwokba3R4=
+X-Received: by 2002:a17:90b:39cd:b0:321:b975:abe5 with SMTP id
+ 98e67ed59e1d1-324423497b4mr4040268a91.0.1755615399425; Tue, 19 Aug 2025
+ 07:56:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <8f53c544-fd4a-4526-957f-9264a36aead6@siemens.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 19 Aug 2025 10:56:27 -0400
+X-Gm-Features: Ac12FXwMom27El91QycvjYzBe1ILor1PtOm_viaQq7KOGF6ZD2EdzLeM-qMaBDE
+Message-ID: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
+Subject: LSM namespacing API
+To: linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc: John Johansen <john.johansen@canonical.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-> ...but it looks like v3 was merged as-is in the end, without this fixup.
-> Is there some separate patch in the pipeline, or was this forgotten?
+Hello all,
 
-This is a result of the trees diverging which we discussed earlier.
-I sent a fix.
+As most of you are likely aware, Stephen Smalley has been working on
+adding namespace support to SELinux, and the work has now progressed
+to the point where a serious discussion on the API is warranted.  For
+those of you are unfamiliar with the details or Stephen's patchset, or
+simply need a refresher, he has some excellent documentation in his
+work-in-progress repo:
+
+* https://github.com/stephensmalley/selinuxns
+
+Stephen also gave a (pre-recorded) presentation at LSS-NA this year
+about SELinux namespacing, you can watch the presentation here:
+
+* https://www.youtube.com/watch?v=AwzGCOwxLoM
+
+In the past you've heard me state, rather firmly at times, that I
+believe namespacing at the LSM framework layer to be a mistake,
+although if there is something that can be done to help facilitate the
+namespacing of individual LSMs at the framework layer, I would be
+supportive of that.  I think that a single LSM namespace API, similar
+to our recently added LSM syscalls, may be such a thing, so I'd like
+us to have a discussion to see if we all agree on that, and if so,
+what such an API might look like.
+
+At LSS-NA this year, John Johansen and I had a brief discussion where
+he suggested a single LSM wide clone*(2) flag that individual LSM's
+could opt into via callbacks.  John is directly CC'd on this mail, so
+I'll let him expand on this idea.
+
+While I agree with John that a fs based API is problematic (see all of
+our discussions around the LSM syscalls), I'm concerned that a single
+clone*(2) flag will significantly limit our flexibility around how
+individual LSMs are namespaced, something I don't want to see happen.
+This makes me wonder about the potential for expanding
+lsm_set_self_attr(2) to support a new LSM attribute that would support
+a namespace "unshare" operation, e.g. LSM_ATTR_UNSHARE.  This would
+provide a single LSM framework API for an unshare operation while also
+providing a mechanism to pass LSM specific via the lsm_ctx struct if
+needed.  Just as we do with the other LSM_ATTR_* flags today,
+individual LSMs can opt-in to the API fairly easily by providing a
+setselfattr() LSM callback.
+
+Thoughts?
+
+-- 
+paul-moore.com
