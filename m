@@ -1,91 +1,129 @@
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3672D8762
-	for <linux-security-module@vger.kernel.org>; Wed, 20 Aug 2025 08:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4901A7264
+	for <linux-security-module@vger.kernel.org>; Wed, 20 Aug 2025 14:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755678538; cv=none; b=HJraOGGZntw4EbhAa4jjg9Gbs/y09IZL/3nBhBh8x20oaULR7UFPSabgPbhkYoVLshssyxHBU4bHod38e914bz8WP3yugBD2puI7svDwOkfHZLMUc7nBLLiet8ak/UIvTd5mpIOrUlh9Wh+f6GmPkAv/K8ePquvEWcbxW7LM67E=
+	t=1755700213; cv=none; b=tXl7SAp7O7GsQ2M37C9szgs+vpCzOBzRABi+u99feAvyEgfa5e4/XpBU2N5NqStJXnwFAlnMB7Is275sE62QQq+0I7PEASBkHWtMgMETPV2PpPMZaLdkNVXOfsUTB5U7nax7JdfJnY+jIVDx7hU1OpMhnxaB+LCsb2iyaI1ROSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755678538; c=relaxed/simple;
-	bh=zF0KJzDGb4FVwJYN7hE92OHSrRFWAOyPof8nv4wkan0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mf29VERDEe7tPUIeTPZA27pmOOMzJegUyMTAifwPJXaNmrOQSDN8KOloBZikA//0Chkyt+KZs/th4L1QVF2DFE59O6oAnpqc7c8gOTYx9ydD+zUR+QhKY1jGcBCXDBM50zEo6Qsku3b6Rm7wZGWJ1SYsIDM0zNevYdI1mCFZMoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fdUab7eR; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+	s=arc-20240116; t=1755700213; c=relaxed/simple;
+	bh=0TOR+DWEQveln64ogY19kIycWh3ujoS1GDWw1oUi7mI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bhHmu9RZ1I24KRm9novhd+1k56Mkledew+VL7KfaQCVsZO/pTpvOZvbptGO52i43yYLWj6eIBlaUG9ZsckYSXZw4CZ+4xX2fbUFoAPKC+5apqaK4vFv1N5hRULjsTarqOMhH+2I4L5PB+0rc5oLnJqCxbsMOv3QTtKWy/w4VKx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Kt94xQjW; arc=none smtp.client-ip=185.125.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fdUab7eR"
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3b9e41475edso4379594f8f.2
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Aug 2025 01:28:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755678533; x=1756283333; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xc1tKyYSTPJPxeU53+y1RcwFkYkWpuTBa3RAA51ynQg=;
-        b=fdUab7eRZrBgOuepxSVALOxiDozd3rsCAUwlR6Tr8Oh3+cWlB2Qa6rjlOmxExNZnh0
-         37iQay8ASNrTqd2X6Qg5TY8aBr55JA057jlWROUztQ+yuQ5wWBD1xUAOaTjy+UB/gaRs
-         41RJg5vofWpOA5G+1jvmW74gLQ7p3YjbP9smNI7WpGlpJ/cjz42aU06wxndr0t/6dQKi
-         DXGbJKz1uDPabg8eHmpf6m4+CR+ODIrc98ZFfkbqOL+r0wkEWEuqw6g5B+D4/HnyBFA5
-         0vO3SDbY7DsTrBG5NTWoN87KhhjuKSAzEAxF+pQEQSzFq0yY7uwGZPfCWDrb/bSQUNmw
-         nFYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755678533; x=1756283333;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xc1tKyYSTPJPxeU53+y1RcwFkYkWpuTBa3RAA51ynQg=;
-        b=L0Go38H+4SUlc1YRK2U2aBitFGPuAAQ3NWae5aGv2HEAJ+VW7vc+yAnMnoAPP4SVfL
-         rL35gab063CfKnicYbKjkIUxIU7CLLK8AiTBMUcllupWsvg7djSdFyt22oBXdHU4aEeE
-         kKCDG10t5M9Rre8SUA0RJzvdgf/jjrrKwE06JGefgk72/KciaLopTuROAFPK8FSd6UGi
-         YHF9BXgB53KHqiWNv8lLSvZs6pcqk0l4pXStZk9ciA/+QLNjjTxxbKrOQm++WH7re4cv
-         +xJiaElWiCZ/QRnWIsQR7ej8UCAKWUJlTbHJtpb7RRLF+AIiDByhqJiaZzM2aJUSMYrO
-         +DNg==
-X-Gm-Message-State: AOJu0YyxoWeIaaY9J6V/wDVT7JAOHgkjTtqwDO04I9lao1f8UfgJsCbd
-	XpJZsAQHiQHRrzlhJWAfv3T4/ypamOGIe9uSYWj6kC+r8QOf+Jynm25DWAyS01tS65znVGjA9bz
-	XYd4qIp20plH3KytYPQ==
-X-Google-Smtp-Source: AGHT+IFAyzNnBS6IDJSFSMEJ/UC4rW4CUjOyxVXmLmSBHEX87SDM2/8LeBdUjyimto1XFzjeWwzfcrQ1TRzdQh4=
-X-Received: from wrs12.prod.google.com ([2002:a05:6000:64c:b0:3b8:e341:aea3])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a5d:5f8b:0:b0:3b4:9721:2b13 with SMTP id ffacd0b85a97d-3c32ca06babmr1467563f8f.14.1755678533695;
- Wed, 20 Aug 2025 01:28:53 -0700 (PDT)
-Date: Wed, 20 Aug 2025 08:28:52 +0000
-In-Reply-To: <20250819195841.238246-2-paul@paul-moore.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Kt94xQjW"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4c6TCk5jswzdGp;
+	Wed, 20 Aug 2025 16:21:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1755699698;
+	bh=CXR191gI9VFxnHUj46tHAq2zbqPVStTyJFC0XmKMaGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kt94xQjWz/H6FyKlVjzQsdddQ/ksR4ttzoYQrrvq+nRhYG5W3suZ1U0s8XB0BGzaV
+	 mMOHSk5fkpWzefFUW3h1M7m3MBpNqqLOmROVOB8pFsCkNPtJ1qbH4PYCKPvkqWdt+e
+	 ChrCDYSkIRKceVvbtPaMp9G8NSnzyz6pFZ9vDP60=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4c6TCk1JbMzwvP;
+	Wed, 20 Aug 2025 16:21:38 +0200 (CEST)
+Date: Wed, 20 Aug 2025 16:21:37 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Maxime =?utf-8?Q?B=C3=A9lair?= <maxime.belair@canonical.com>
+Cc: linux-security-module@vger.kernel.org, john.johansen@canonical.com, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, kees@kernel.org, 
+	stephen.smalley.work@gmail.com, casey@schaufler-ca.com, takedakn@nttdata.co.jp, 
+	penguin-kernel@i-love.sakura.ne.jp, song@kernel.org, rdunlap@infradead.org, 
+	linux-api@vger.kernel.org, apparmor@lists.ubuntu.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] AppArmor: add support for lsm_config_self_policy
+ and lsm_config_system_policy
+Message-ID: <20250820.Ohei2aj4ie0a@digikod.net>
+References: <20250709080220.110947-1-maxime.belair@canonical.com>
+ <20250709080220.110947-4-maxime.belair@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250819195841.238246-2-paul@paul-moore.com>
-Message-ID: <aKWHRADe-EmKumGJ@google.com>
-Subject: Re: [PATCH] MAINTAINERS: add the associated Rust helper to the
- CREDENTIALS section
-From: Alice Ryhl <aliceryhl@google.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250709080220.110947-4-maxime.belair@canonical.com>
+X-Infomaniak-Routing: alpha
 
-On Tue, Aug 19, 2025 at 03:58:42PM -0400, Paul Moore wrote:
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+On Wed, Jul 09, 2025 at 10:00:56AM +0200, Maxime Bélair wrote:
+> Enable users to manage AppArmor policies through the new hooks
+> lsm_config_self_policy and lsm_config_system_policy.
+> 
+> lsm_config_self_policy allows stacking existing policies in the kernel.
+> This ensures that it can only further restrict the caller and can never
+> be used to gain new privileges.
+> 
+> lsm_config_system_policy allows loading or replacing AppArmor policies in
+> any AppArmor namespace.
+> 
+> Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
 > ---
-
-Acked-by: Alice Ryhl <aliceryhl@google.com>
-
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
+>  security/apparmor/apparmorfs.c         | 31 ++++++++++
+>  security/apparmor/include/apparmor.h   |  4 ++
+>  security/apparmor/include/apparmorfs.h |  3 +
+>  security/apparmor/lsm.c                | 84 ++++++++++++++++++++++++++
+>  4 files changed, 122 insertions(+)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d61f7246e5bf..0ee0098f2df8 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6484,6 +6484,7 @@ S:	Supported
->  T:	git https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
->  F:	include/linux/cred.h
->  F:	kernel/cred.c
-> +F:	rust/kernel/cred.rs
->  F:	Documentation/security/credentials.rst
+
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index 9b6c2f157f83..0ce40290f44e 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -1275,6 +1275,86 @@ static int apparmor_socket_shutdown(struct socket *sock, int how)
+>  	return aa_sock_perm(OP_SHUTDOWN, AA_MAY_SHUTDOWN, sock);
+>  }
 >  
->  INTEL CRPS COMMON REDUNDANT PSU DRIVER
-> -- 
-> 2.50.1
-> 
+> +/**
+> + * apparmor_lsm_config_self_policy - Stack a profile
+> + * @lsm_id: AppArmor ID (LSM_ID_APPARMOR). Unused here
+> + * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
+> + * @buf: buffer containing the user-provided name of the profile to stack
+> + * @size: size of @buf
+> + * @flags: reserved for future use; must be zero
+> + *
+> + * Returns: 0 on success, negative value on error
+> + */
+> +static int apparmor_lsm_config_self_policy(u32 lsm_id, u32 op, void __user *buf,
+> +				      size_t size, u32 flags)
+> +{
+> +	char *name;
+> +	long name_size;
+> +	int ret;
+> +
+
+
+> +	if (op != LSM_POLICY_LOAD || flags)
+> +		return -EOPNOTSUPP;
+> +	if (size == 0)
+> +		return -EINVAL;
+> +	if (size > AA_PROFILE_NAME_MAX_SIZE)
+> +		return -E2BIG;
+> +
+> +	name = kmalloc(size, GFP_KERNEL);
+> +	if (!name)
+> +		return -ENOMEM;
+
+This hunk should be part of the syscall code and shared amongst LSMs.
+
+> +
+> +
+> +	name_size = strncpy_from_user(name, buf, size);
+> +	if (name_size < 0) {
+> +		kfree(name);
+> +		return name_size;
+> +	}
+> +
+> +	ret = aa_change_profile(name, AA_CHANGE_STACK);
+> +
+> +	kfree(name);
+> +
+> +	return ret;
+> +}
