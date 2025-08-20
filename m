@@ -1,315 +1,142 @@
-Received: from sonic313-14.consmr.mail.ne1.yahoo.com (sonic313-14.consmr.mail.ne1.yahoo.com [66.163.185.37])
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB79320CCC
-	for <linux-security-module@vger.kernel.org>; Wed, 20 Aug 2025 15:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C4E2857CB
+	for <linux-security-module@vger.kernel.org>; Wed, 20 Aug 2025 20:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755705058; cv=none; b=r4Z9iuzVa2qWzeIDKBZsFeSH/4ST0L/ly80IwG4PP2kw1ewtEhTpWCGAUla3TdfDjfav5E9X8nTQhZXjeuXON3WXs+o7D+Ur+NesgPkGXYSkDNvdkZ+1txADT1aTkWZU0hmwt0bYeSlPIjeI200dcHnrZRr1KcCc1t7hse1pyks=
+	t=1755722849; cv=none; b=LKwIunAu0PobGkEaW8e1n0jExEWP6QkVz5E+oriMqrKlWsxr3yPL3POiSFsY1KPspPNBDJzH7YipMG6upQj4JvZL1TgzoQoe4GIREJMdTRg5MV+7QLUuSInN1/W62/9P3ERSu7MHkGeRD9iZU2DIjmieuy35rvn7FOUf1uv4tFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755705058; c=relaxed/simple;
-	bh=SXNx3lKmPrwkEW7gZM7YKiNTckmkOV0arfd/pQSGMyI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RYNrVQsOr88htnBNkyAzXh0jEHzu7a38t/XYWPrRQpuAOBRRiwkwImuF7n45HBaJAjHf0tj4kV8cbHblflNNs+9EyD3QRseEJHlF6/CltB3EroXMz/wjIszgV/Jvt2qudsg3XRvGfyK/2xOGI9TJklVJQnbWDYSrY8Iv+KCfjvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=mye5x5No; arc=none smtp.client-ip=66.163.185.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1755722849; c=relaxed/simple;
+	bh=LLGwe5WKKiR+/T0UVyJ8BMXr5RI9JCQuA6qnVVXw4Nc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hc2q5IBNCqtbVMYq02nUPGEDM6CelTAVBPtR4W5wdw8+5o6LHmBWZRQjfTGUA3qjHY3k5mC1bEHGiXnzsBFeSrcKnoJuGsvO3OyIxuA15fHf/AZvkRGVq7psIQi2t2bv9MI2XEAiQ5wyiCVlVCv6sUwcdMnzVn8Be2epZZOoP1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RaqsC6+a; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="mye5x5No"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755705055; bh=jmxlOiKMyZpeZfhOYibZ1US2MQGZwPRZx/AFnnpMg34=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=mye5x5NoRT+rHTIzKiWvxG3J0Y6AXNhJavf36aNnL0WqaYPmdwnV1kn1oGKfRKV+ZUksVyIAVYGJ1ZAeOz+E9W8JKHkqffsPA+SGTWwzUsicC5cyRqePI1Vw0J262ORMPJzXR/I8PvtYwW+LQdD7rR5vKPsW27XXdc5TGHzGV6doxca5LygxxMZnGNdh5WLgm6Du4P6Yn2jtNXBq8gzy8QAcC54v/fnlsbdRNpckqSciy3QFKYNDxHURsqP9oNctC72hUbyen4uJ0rwuCBkN1qHN6FV8/gZXhVuGHaNWpv0vPxtjspGlhAglLzRk7phj0CbRXig8QaA9oY80ZzphhQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755705055; bh=CjuRhkkiQhd3jlehpqYxzHO6xUf0HBCbBgWnOH3T6yz=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=bXyUXROTgE2c5Fmmpm1D7rKiXI2UxgDlPXKmsKE5firW8s53OUA0ID0s8nM+uq685ajayIeMdwFDnaWnrGdzpOOMRFe+mB8sQ3h8CKJqeP2dcvzVAATPTecvmsykmeH+VZot+4mzWt933CFBQ1UGdgPWDj0gVeXmyIOGenBVzsU4U5uSce+lwMw1ukzz4gAx+uhcplD2YO0LxXV5h8u4zIfRkGcQBC1ycMYbVC/cPikG4qSVHgTJ+Kn6AdG7Yg6GHuHKMjPgsi0cI2f3VI1k+h+karxY2EVTHrpZGQKk8C59KbKQFCV6q5xKMDrICubCCzrhJHRpkZ1R+LVUb4Jwxw==
-X-YMail-OSG: BKd4qI0VM1m_siIoA_J1.f5_Ft3MOgvP_vxb9aCPlavZqe1BIrns.zUuLW8Ckt6
- 0nLSfx8QdxyXeE0OWRUb70tbhcZj8IKvpT1ztj1UIRGxCCSXemY5ON.tg34TMAUkEGi95kKlCryo
- A0zaQJCaF.xZcJq56wnhmisOuGIPmFUWDR5en44ufd_JHcGUQF72wBQgUy0EUuXbHM3IUdQpKFUd
- YmwoXLuVCkNa4IvEjGShqaDLXMgPh8_szgEFf2KpUZ73PX1PL8BBV1pRXzn4wfB4YjZDxDC6kynQ
- r5QZkaHNyEk4YrAAs4qveU9s4QIjrKEH0k2NariJPaTuGu9JMYiVfGi9yjMMBh1.vaPaTJkeQ5Pj
- 1tgiI47Z5XQ96bqleDtBZZCyOWEd9Mj.8jof7juJZlY6EWZdOUqfU_VLTYDjAqM9oOq64TRVOYAe
- 1OJeDwXMjUj85STB.hPY2WHcBhmedkFrADDc4Yt6Pj0lTmw176PflNq3BqSHhxuOqXJIS1nBERAf
- f6WVmk.1u6w0uXXpKmao8bolpiD7P42DMHZuqrcWlYQ2ubVVM7SaL2e.RbzQYq_sYC1XNqYjFuXN
- NgToFyTOD41HRX3MDfOPlIi09rxRP3MjsAU9wPDj.Ga1C3UW2DVXBmuZEH7S2p5aVmkTvKZbcy1Q
- zUJUgbu5hkA88A2vWMl7PVhBEhTmO8aS9PP.zeZzHNDCm4bRh5etyxvJyLBO7mFEE4pjBUEcWeVr
- wW3Ac1phNTlpgzD.BbnzK5aFmpzaK4vj1IFV9Y7jLn9N7pbGKwqRnRYiajvj5YmccYM6PSiYqivd
- 4aTTLihHs9eQFNXSLFJWgfpwqoQcwA7sduxM1eA4Z04sDV2PhqDQPuZHv_HEmnqeRYrzQFTCYAIg
- e5buOfdkDjGDL3RgcoJ0PpuJD8e8v13iIV_BhnPUjj52fPYQixSBsiQKk4jsvnUNAfs5S5m0xlxd
- aGQxHyoFKVq7QNEUstkwYu39iTd5oHHXmGkKb6s0c2.VFyrUwtbU1INVFlo2wZbODZHFDDGPNemx
- LJ3HDsPY0AIeS1fr8lm567fipCpe6ToUVmij3LfnKcPRV3N8Up.72J6w8xEuM9Gv42eO9j0LkhJ1
- OU17VtT5JBIkwi6SO62nKn.48SFMK4wtdy6skQMpsvSgD.yxf4E2j._VGWgfIYT0joJ64bMlHZhT
- qv88CpviU1bTlIGbOD_UqJn0bTEaaMHBr1lbYuh8nbYb9g2Aimv8TrE8.06E6L03pPhYeMEuxUhy
- REpgfN0Bx55MdxBMDCjqOOKiv1YQVPtDFAV2qQ6OXyjSL3T.jtEHnGF5Js1glQQ7qV5QsDspJA3V
- ydgq.vsIv8wfmzilooT_l4d6zWwUzvuSbF_3iE_jCQVv5XENQ_03E1FEruCCMg9ZI6bCTkm2L.Qh
- URiXyWQ8gq9fR7TSeqZFSsIgdf7Xnrih0Oeh7.fPhzrk.K7JsyHjpN1ymCv4XVDso6c20ie8ci2E
- GUrUcimBjwDmuGbpkAdZFr96KBHLnqR9C5JIFEWUjnbypYWjTfTcqasxgSJ4d8ghSb.V1okv0waW
- 0oXXRAcxKCZscUt8kmhxBEwBVsB7ALidn8DZi9NQr3JyRfqY8PxmeKgzK1wh9Jdq48zXt2bpCbJa
- BwNBEKvvi.1FE5.sA6CcPriHHrMqP9dscKS7._Drqg5UeiVoq3CMUgdd1Wu9TUy_PAeAeupgB5yp
- xZ330S066_Dl3IFviXkJi3yoF3LrGJ1oZyAXcwzbOdcE9mB9JHETzDjxmzgXIUa6BY6Fgj3EQKu.
- qAkvyonKtV9lblGZH6F_tyAFAVSdCvbBXgAZ_AIrNi5xy8AMLzgbquEeDEN6V7yYXcUBU2VnsJrM
- gTWXKfPs3gptqcPtXc8vQnJw_CtVK6RKF4e54BgYScLgsRJOOK7VvkxOaEbQFv3YXulA2gpmRKRx
- CPjYQrmYTEmqdCBlAW.W9ssj71oc5CUTRSTzsPc0C4EbKL0t9OIPktIqG8tL0ogkbVwsbgobZraF
- zOab5kV_S_rrrLuqvOgpPsIOE0bKff.076Yu_NhRO0TZ9HTe10ILJXOv10YRqSl8fkcTITbPPKdb
- gc_hWgD..PhR2NUp_F70vozes.cieots1t5_bcNrWSn7cpCdeO6wYUbyV.nNSyAsGv9rmDlrSvhA
- 1Edc_wGV5XvqtHHnVEK2P.SzALxi.zB7uBCL3EJdShT953YJpbH8nlBYCNDXTo2tNrxBtdz9saTI
- YjJtAV0uehdKI9YcXMT6NK4NzXjki5rjfWoLX2gekoT.Xiss1C042T1GNann63Ejv1iWec.l2HxO
- Kv92oyXpQ8TgpKf3s
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 0e4b2175-bc63-45c1-87a7-54204571253d
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Wed, 20 Aug 2025 15:50:55 +0000
-Received: by hermes--production-gq1-74d64bb7d7-r5xbr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f21546110efcd91dfbf53c9b19723f70;
-          Wed, 20 Aug 2025 15:30:35 +0000 (UTC)
-Message-ID: <0c7a19cb-d270-403f-9f97-354405aba746@schaufler-ca.com>
-Date: Wed, 20 Aug 2025 08:30:33 -0700
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RaqsC6+a"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-32326e5f0bfso325319a91.3
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Aug 2025 13:47:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1755722847; x=1756327647; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6/ItnwIKlKwrAH7BkYoa42hrDmspyKaszOsyRccCX1w=;
+        b=RaqsC6+aSu9HcmBTO54iHHbjYG9cLklo3N8TRNfUNSub04v4tO7tXvrQ0r79njh1iU
+         xqlkieAqEm8bOxRx5gDvFKS8/hHTOOnOkzQa/LBBMUKmdKtQZHazACZInhnyo1K1Menf
+         EWWWiIjWRisI66TBGxoR8y827JHsd4xIuZsL3+huMpldUICM1NDPNPsMfsSHBbZ6ZxnE
+         BCANGn5EcmHN8ZOxrs00DwmNfDm4oRioJCJhbpkeEFTzRVZ7MOhCfEmjLLiw5KWEHMaF
+         Z7prwme7mhI31JmyZ5KIgQbRGKWb3mePltygHQ0n2cFBtlUnSl1wLlB/XFCkhwAqesgy
+         0lRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755722847; x=1756327647;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6/ItnwIKlKwrAH7BkYoa42hrDmspyKaszOsyRccCX1w=;
+        b=Sceg5XNUf1PZNA1QuQE54oAW6pTw720Ue2U+S8N0974g8poCu1OQd2aUvH2jCxEwc/
+         0vzQd8yYQoZFfbb/+M3s3/rrs/GQ9OpWB/w2IfKTDBSa+hcV/qDNEFw3s2Q/KO9ci7hj
+         HsQTa8DG8USTBsVg5fjH8sOKEAajm3sDMSALHt55zMU7pV48gsAtXIPs4zlgr7fmcbUG
+         TDAwInUIrso33iuDxcjrEh7SbCcgg5xEbd3+08o55SHUhfKbq4Ty/g/DI5hy7F9WrH6+
+         HaNaSkU9opv96XyDrAVq4tnT5fp8rtXxS+tu/FOT9cXjbuVYSv3qNoU499q3AbTiSK43
+         0oVw==
+X-Forwarded-Encrypted: i=1; AJvYcCURqj+C/Ovyee0lPSxVWGAkpCGDJwJGtDQ6EC44bflLfOYEoiMXLOld2/dMeNa57eRvrLPH+QHvthsI/PmDqSvr2AgSpl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQPHTByykOg/clXdbb2ihadVngQufeniSbAdS3kJjzHqkVXxk+
+	tS+k7NmeLPo95bmtUnl6CkHxrdqDmoSX4Qo4mUutvJ5JV4J6UlukwRbX4zEk6AzwDeRrVP0cHv1
+	rk+r+jLill+AnrnQUwU35Sdp767bmiE+w6IwGwwwF
+X-Gm-Gg: ASbGncuPqdoPTQq3mkfLSNKsSizArhX7pctWkx1wh1odapVK5eku/ixgNtDYO0hQX1+
+	K+xd2mAhSwmRdXqY9Llg2T6aKM3k8eAtxGSb2WXSlPTf0jHQHo/OTNc1TnBaxwk529bu2AIw5uq
+	BJXlVQubcSklP5Kxv3NaFNJZ6aPE4Wu6H6Zs99+9ew/LOvlWcxjKdD0N7VbKMg88zs31aa3iflG
+	wOe908=
+X-Google-Smtp-Source: AGHT+IHlYPutLT2oSST8npSUhTtoKml8G2f6TV3BT52vGO5/zR8EoiIIEn0wbnhrPEKd715/Wu+n/cQQS/YY8ur8rN4=
+X-Received: by 2002:a17:90b:4d89:b0:31e:5cc7:133 with SMTP id
+ 98e67ed59e1d1-324ed1191c0mr237216a91.11.1755722847048; Wed, 20 Aug 2025
+ 13:47:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] lsm: introduce security_lsm_config_*_policy hooks
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>
-Cc: linux-security-module@vger.kernel.org, john.johansen@canonical.com,
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, kees@kernel.org,
- stephen.smalley.work@gmail.com, takedakn@nttdata.co.jp,
- penguin-kernel@i-love.sakura.ne.jp, song@kernel.org, rdunlap@infradead.org,
- linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20250709080220.110947-1-maxime.belair@canonical.com>
- <20250709080220.110947-3-maxime.belair@canonical.com>
- <20250820.Ao3iquoshaiB@digikod.net>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250820.Ao3iquoshaiB@digikod.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.24338 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
+ <CAEjxPJ5EvR+2fboLu_nBGZu+ZVUpX4KM6xdPUqDErCmw=iA37g@mail.gmail.com>
+ <CAHC9VhSubXA4tAUoz7T==UvfrM_DXS6nF5s0tJZ1HrrVizMgZA@mail.gmail.com> <20250820.ieNg1quoRouz@digikod.net>
+In-Reply-To: <20250820.ieNg1quoRouz@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 20 Aug 2025 16:47:15 -0400
+X-Gm-Features: Ac12FXxekNNUodMCyui3r7zk-6AkI6wHmMwDFgSht8ALnfPP7m7btBD4wLyVLrQ
+Message-ID: <CAHC9VhS3c257ywxADRzPYE-DsXSwRp8P2RhAfdDnXJHOX5bXTQ@mail.gmail.com>
+Subject: Re: LSM namespacing API
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
+	=?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/20/2025 7:21 AM, Mickaël Salaün wrote:
-> On Wed, Jul 09, 2025 at 10:00:55AM +0200, Maxime Bélair wrote:
->> Define two new LSM hooks: security_lsm_config_self_policy and
->> security_lsm_config_system_policy and wire them into the corresponding
->> lsm_config_*_policy() syscalls so that LSMs can register a unified
->> interface for policy management. This initial, minimal implementation
->> only supports the LSM_POLICY_LOAD operation to limit changes.
->>
->> Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
->> ---
->>  include/linux/lsm_hook_defs.h |  4 +++
->>  include/linux/security.h      | 20 ++++++++++++
->>  include/uapi/linux/lsm.h      |  8 +++++
->>  security/lsm_syscalls.c       | 17 ++++++++--
->>  security/security.c           | 60 +++++++++++++++++++++++++++++++++++
->>  5 files changed, 107 insertions(+), 2 deletions(-)
->>
->> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
->> index bf3bbac4e02a..fca490444643 100644
->> --- a/include/linux/lsm_hook_defs.h
->> +++ b/include/linux/lsm_hook_defs.h
->> @@ -464,3 +464,7 @@ LSM_HOOK(int, 0, bdev_alloc_security, struct block_device *bdev)
->>  LSM_HOOK(void, LSM_RET_VOID, bdev_free_security, struct block_device *bdev)
->>  LSM_HOOK(int, 0, bdev_setintegrity, struct block_device *bdev,
->>  	 enum lsm_integrity_type type, const void *value, size_t size)
->> +LSM_HOOK(int, -EINVAL, lsm_config_self_policy, u32 lsm_id, u32 op,
->> +	 void __user *buf, size_t size, u32 flags)
->> +LSM_HOOK(int, -EINVAL, lsm_config_system_policy, u32 lsm_id, u32 op,
->> +	 void __user *buf, size_t size, u32 flags)
->> diff --git a/include/linux/security.h b/include/linux/security.h
->> index cc9b54d95d22..54acaee4a994 100644
->> --- a/include/linux/security.h
->> +++ b/include/linux/security.h
->> @@ -581,6 +581,11 @@ void security_bdev_free(struct block_device *bdev);
->>  int security_bdev_setintegrity(struct block_device *bdev,
->>  			       enum lsm_integrity_type type, const void *value,
->>  			       size_t size);
->> +int security_lsm_config_self_policy(u32 lsm_id, u32 op, void __user *buf,
->> +				    size_t size, u32 flags);
->> +int security_lsm_config_system_policy(u32 lsm_id, u32 op, void __user *buf,
->> +				      size_t size, u32 flags);
->> +
->>  #else /* CONFIG_SECURITY */
->>  
->>  /**
->> @@ -1603,6 +1608,21 @@ static inline int security_bdev_setintegrity(struct block_device *bdev,
->>  	return 0;
->>  }
->>  
->> +static inline int security_lsm_config_self_policy(u32 lsm_id, u32 op,
->> +						  void __user *buf,
->> +						  size_t size, u32 flags)
->> +{
->> +
->> +	return -EOPNOTSUPP;
->> +}
->> +
->> +static inline int security_lsm_config_system_policy(u32 lsm_id, u32 op,
->> +						    void __user *buf,
->> +						    size_t size, u32 flags)
->> +{
->> +
->> +	return -EOPNOTSUPP;
->> +}
->>  #endif	/* CONFIG_SECURITY */
->>  
->>  #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
->> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
->> index 938593dfd5da..2b9432a30cdc 100644
->> --- a/include/uapi/linux/lsm.h
->> +++ b/include/uapi/linux/lsm.h
->> @@ -90,4 +90,12 @@ struct lsm_ctx {
->>   */
->>  #define LSM_FLAG_SINGLE	0x0001
->>  
->> +/*
->> + * LSM_POLICY_XXX definitions identify the different operations
->> + * to configure LSM policies
->> + */
->> +
->> +#define LSM_POLICY_UNDEF	0
->> +#define LSM_POLICY_LOAD		100
-> Why the gap between 0 and 100?
+On Wed, Aug 20, 2025 at 10:44=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
+> On Tue, Aug 19, 2025 at 02:51:00PM -0400, Paul Moore wrote:
+> > On Tue, Aug 19, 2025 at 1:47=E2=80=AFPM Stephen Smalley
+> > <stephen.smalley.work@gmail.com> wrote:
 
-It's conventional in LSM syscalls to start identifiers at 100.
-No compelling reason other than to appease the LSM maintainer.
+...
 
+> > Since we have an existing LSM namespace combination, with processes
+> > running inside of it, it might be sufficient to simply support moving
+> > into an existing LSM namespace set with setns(2) using only a pidfd
+> > and a new CLONE_LSMNS flag (or similar, upstream might want this as
+> > CLONE_NEWLSM).  This would simply set the LSM namespace set for the
 >
->> +
->>  #endif /* _UAPI_LINUX_LSM_H */
->> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
->> index a3cb6dab8102..dd016ba6976c 100644
->> --- a/security/lsm_syscalls.c
->> +++ b/security/lsm_syscalls.c
->> @@ -122,11 +122,24 @@ SYSCALL_DEFINE3(lsm_list_modules, u64 __user *, ids, u32 __user *, size,
->>  SYSCALL_DEFINE5(lsm_config_self_policy, u32, lsm_id, u32, op, void __user *,
->>  		buf, u32 __user *, size, u32, flags)
-> Given these are a multiplexor syscalls, I'm wondering if they should not
-> have common flags and LSM-specific flags.  Alternatively, the op
-> argument could also contains some optional flags.  In either case, the
-> documentation should guide LSM developers for flags that may be shared
-> amongst LSMs.
+> Bike shedding but, I would prefer CLONE_NEWSEC or something without LSM
+> because the goal is not to add a new LSM but a new "security" namespace.
+
+I disagree with your statement about the goal.  In fact I would argue
+that one of the goals is to explicitly *not* create a generic
+"security" namespace.  Defining a single, LSM-wide namespace, is
+already an almost impossible task, extending it to become a generic
+"security" namespace seems maddening.
+
+> > setns(2) caller to match that of the target pidfd.  We still wouldn't
+> > want to support CLONE_LSMNS/CLONE_NEWLSM for clone*().
 >
-> Examples of such flags could be to restrict the whole process instead of
-> the calling thread.
+> Why making clone*() support this flag would be an issue?
+
+With the understanding that I'm not going to support a single LSM-wide
+namespace (see my previous comments), we would need multiple flags for
+clone*(), one for each LSM that wanted to implement a namespace.
+While clone3() has expanded the number of flag bits from clone(),
+there is still a limitation of 64-bits and I'm fairly certain the
+other kernel devs are not going to be supportive of a flag for each
+LSM that wants one.
+
+Maybe we could argue for our own u64 in cl_args, or create our own
+lsm_clone(2) syscall that mimics clone3(2) with better LSM support,
+but neither of these seem like great ideas at the moment.
+
+> > Any other ideas?
 >
->>  {
->> -	return 0;
->> +	size_t usize;
->> +
->> +	if (get_user(usize, size))
-> Size should just be u32, not a pointer.
->
->> +		return -EFAULT;
->> +
->> +	return security_lsm_config_self_policy(lsm_id, op, buf, usize, flags);
->>  }
->>  
->>  SYSCALL_DEFINE5(lsm_config_system_policy, u32, lsm_id, u32, op, void __user *,
->>  		buf, u32 __user *, size, u32, flags)
->>  {
->> -	return 0;
->> +	size_t usize;
->> +
->> +	if (!capable(CAP_SYS_ADMIN))
->> +		return -EPERM;
-> I like this mandatory capability check for this specific syscall.  This
-> makes the semantic clearer.  However, to avoid the superpower of
-> CAP_SYS_ADMIN, I'm wondering how we could use the CAP_MAC_ADMIN instead.
-> This syscall could require CAP_MAC_ADMIN, and current LSMs (relying on a
-> filesystem interface for policy configuration) could also enforce
-> CAP_SYS_ADMIN for compatibility reasons.
->
-> In fact, this "system" syscall could be a "namespace" syscall, which
-> would take a security/LSM namespace file descriptor as argument.  If the
-> namespace is not the initial namespace, any CAP_SYS_ADMIN implemented by
-> current LSMs could be avoided.  See
-> https://lore.kernel.org/r/CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com
->
->> +
->> +	if (get_user(usize, size))
-> ditto
->
->> +		return -EFAULT;
->> +
->> +	return security_lsm_config_system_policy(lsm_id, op, buf, usize, flags);
->>  }
->> diff --git a/security/security.c b/security/security.c
->> index fb57e8fddd91..166d7d9936d0 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -5883,6 +5883,66 @@ int security_bdev_setintegrity(struct block_device *bdev,
->>  }
->>  EXPORT_SYMBOL(security_bdev_setintegrity);
->>  
->> +/**
->> + * security_lsm_config_self_policy() - Configure caller's LSM policies
->> + * @lsm_id: id of the LSM to target
->> + * @op: Operation to perform (one of the LSM_POLICY_XXX values)
->> + * @buf: userspace pointer to policy data
->> + * @size: size of @buf
->> + * @flags: lsm policy configuration flags
->> + *
->> + * Configure the policies of a LSM for the current domain/user. This notably
->> + * allows to update them even when the lsmfs is unavailable or restricted.
->> + * Currently, only LSM_POLICY_LOAD is supported.
->> + *
->> + * Return: Returns 0 on success, error on failure.
->> + */
->> +int security_lsm_config_self_policy(u32 lsm_id, u32 op, void __user *buf,
->> +				 size_t size, u32 flags)
->> +{
->> +	int rc = LSM_RET_DEFAULT(lsm_config_self_policy);
->> +	struct lsm_static_call *scall;
->> +
->> +	lsm_for_each_hook(scall, lsm_config_self_policy) {
->> +		if ((scall->hl->lsmid->id) == lsm_id) {
->> +			rc = scall->hl->hook.lsm_config_self_policy(lsm_id, op, buf, size, flags);
-> The lsm_id should not be passed to the hook.
->
-> The LSM syscall should manage the argument copy and buffer allocation
-> instead of duplicating this code in each LSM hook implementation (see
-> other LSM syscalls).
->
->> +			break;
->> +		}
->> +	}
->> +
->> +	return rc;
->> +}
->> +
->> +/**
->> + * security_lsm_config_system_policy() - Configure system LSM policies
->> + * @lsm_id: id of the lsm to target
->> + * @op: Operation to perform (one of the LSM_POLICY_XXX values)
->> + * @buf: userspace pointer to policy data
->> + * @size: size of @buf
->> + * @flags: lsm policy configuration flags
->> + *
->> + * Configure the policies of a LSM for the whole system. This notably allows
->> + * to update them even when the lsmfs is unavailable or restricted. Currently,
->> + * only LSM_POLICY_LOAD is supported.
->> + *
->> + * Return: Returns 0 on success, error on failure.
->> + */
->> +int security_lsm_config_system_policy(u32 lsm_id, u32 op, void __user *buf,
->> +				   size_t size, u32 flags)
->> +{
->> +	int rc = LSM_RET_DEFAULT(lsm_config_system_policy);
->> +	struct lsm_static_call *scall;
->> +
->> +	lsm_for_each_hook(scall, lsm_config_system_policy) {
->> +		if ((scall->hl->lsmid->id) == lsm_id) {
->> +			rc = scall->hl->hook.lsm_config_system_policy(lsm_id, op, buf, size, flags);
-> ditto
->
->> +			break;
->> +		}
->> +	}
->> +
->> +	return rc;
->> +}
->> +
->>  #ifdef CONFIG_PERF_EVENTS
->>  /**
->>   * security_perf_event_open() - Check if a perf event open is allowed
->> -- 
->> 2.48.1
->>
->>
+> The goal of a namespace is to configure absolute references (e.g. file
+> path, network address, PID, time).  I think it would make sense to have
+> an LSM/MAC/SEC namespace that would enforce a consistent access control
+> on every processes in this namespace.
+
+Once again, I'm not going to support the idea of a namespace at the
+LSM framework layer, individual LSMs are better suited to implementing
+their own namespacing concepts.  However, I do support the LSM
+framework providing an API and/or helpers to help make it easier for
+individual LSMs and userspace to create/manage individual LSM
+namespaces.
+
+> A related namespace file
+> descriptor could then be used with an LSM-specific syscall to configure
+> the policy related to a specific namespace (instead of only the current
+> namespace)
+
+That is a reasonable request, and I think the same underlying solution
+that we would use for setns(2) could also be used here.
+
+--
+paul-moore.com
