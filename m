@@ -1,46 +1,44 @@
-Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
+Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4901A7264
-	for <linux-security-module@vger.kernel.org>; Wed, 20 Aug 2025 14:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9A628150F
+	for <linux-security-module@vger.kernel.org>; Wed, 20 Aug 2025 14:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755700213; cv=none; b=tXl7SAp7O7GsQ2M37C9szgs+vpCzOBzRABi+u99feAvyEgfa5e4/XpBU2N5NqStJXnwFAlnMB7Is275sE62QQq+0I7PEASBkHWtMgMETPV2PpPMZaLdkNVXOfsUTB5U7nax7JdfJnY+jIVDx7hU1OpMhnxaB+LCsb2iyaI1ROSY=
+	t=1755701093; cv=none; b=n1sA0wjddNHZ/4hUOVQHFNmVknKDwvKCSEFo6csGye/NzkNFIcsnVphf7/x+0BBLKUkAot3ngxYu8b/q5bcYML/Gu+Vr5tKXRacPehGhYDZqXn4BxZjEt419/92nIiUaiJ1WRLDxAuaIi+bAOCe2PQFVtXNerX08Z1ialx9gbRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755700213; c=relaxed/simple;
-	bh=0TOR+DWEQveln64ogY19kIycWh3ujoS1GDWw1oUi7mI=;
+	s=arc-20240116; t=1755701093; c=relaxed/simple;
+	bh=zCh6qK9xv4CQicnQ5qrWcgEC3rrgEK8HXP9qElrkPSA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bhHmu9RZ1I24KRm9novhd+1k56Mkledew+VL7KfaQCVsZO/pTpvOZvbptGO52i43yYLWj6eIBlaUG9ZsckYSXZw4CZ+4xX2fbUFoAPKC+5apqaK4vFv1N5hRULjsTarqOMhH+2I4L5PB+0rc5oLnJqCxbsMOv3QTtKWy/w4VKx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Kt94xQjW; arc=none smtp.client-ip=185.125.25.9
+	 Content-Type:Content-Disposition:In-Reply-To; b=ISHBhxhz8fJfJ4v0DbBcy9E5PPiZLOoDLrRxEFEXL+24zusyHWYZm3J5rswAc0m39datQuy5ppLavECI0NDMME2pdvYe2PGEU9s1dZQWjIP7mGEA0j8i3QI5Ooh6LUY/cKGLLYycuvyOOB5umaNMdej8w55ahgIvhZghJKdBin4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=1CzxXx9Z; arc=none smtp.client-ip=84.16.66.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Kt94xQjW"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="1CzxXx9Z"
 Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4c6TCk5jswzdGp;
-	Wed, 20 Aug 2025 16:21:38 +0200 (CEST)
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4c6TkR4k16zfyh;
+	Wed, 20 Aug 2025 16:44:47 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1755699698;
-	bh=CXR191gI9VFxnHUj46tHAq2zbqPVStTyJFC0XmKMaGA=;
+	s=20191114; t=1755701087;
+	bh=6T9cQdp2s0GiiasprizIFB2Oul/nL9rjbsqRDs6iQX0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kt94xQjWz/H6FyKlVjzQsdddQ/ksR4ttzoYQrrvq+nRhYG5W3suZ1U0s8XB0BGzaV
-	 mMOHSk5fkpWzefFUW3h1M7m3MBpNqqLOmROVOB8pFsCkNPtJ1qbH4PYCKPvkqWdt+e
-	 ChrCDYSkIRKceVvbtPaMp9G8NSnzyz6pFZ9vDP60=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4c6TCk1JbMzwvP;
-	Wed, 20 Aug 2025 16:21:38 +0200 (CEST)
-Date: Wed, 20 Aug 2025 16:21:37 +0200
+	b=1CzxXx9ZCPyXYqGbH2Ad3FbV23ZFpUfRX/Tde8TxaPT+Ct6LvyTR247ZNIt3WXkjO
+	 da9q/7fHRoA+Vftfn3z4aqQ1IUaYSeJP+WOPp0Cw7RqHQEOUfPYATrkpwe5+Q+4Gkv
+	 AiTO0xkKOwi4kVeqtqzIu4GxvNNHx38+c2t97JSw=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4c6TkR08bNz235;
+	Wed, 20 Aug 2025 16:44:47 +0200 (CEST)
+Date: Wed, 20 Aug 2025 16:44:46 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Maxime =?utf-8?Q?B=C3=A9lair?= <maxime.belair@canonical.com>
-Cc: linux-security-module@vger.kernel.org, john.johansen@canonical.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, kees@kernel.org, 
-	stephen.smalley.work@gmail.com, casey@schaufler-ca.com, takedakn@nttdata.co.jp, 
-	penguin-kernel@i-love.sakura.ne.jp, song@kernel.org, rdunlap@infradead.org, 
-	linux-api@vger.kernel.org, apparmor@lists.ubuntu.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] AppArmor: add support for lsm_config_self_policy
- and lsm_config_system_policy
-Message-ID: <20250820.Ohei2aj4ie0a@digikod.net>
-References: <20250709080220.110947-1-maxime.belair@canonical.com>
- <20250709080220.110947-4-maxime.belair@canonical.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	John Johansen <john.johansen@canonical.com>, Maxime =?utf-8?Q?B=C3=A9lair?= <maxime.belair@canonical.com>
+Subject: Re: LSM namespacing API
+Message-ID: <20250820.ieNg1quoRouz@digikod.net>
+References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
+ <CAEjxPJ5EvR+2fboLu_nBGZu+ZVUpX4KM6xdPUqDErCmw=iA37g@mail.gmail.com>
+ <CAHC9VhSubXA4tAUoz7T==UvfrM_DXS6nF5s0tJZ1HrrVizMgZA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -50,80 +48,70 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250709080220.110947-4-maxime.belair@canonical.com>
+In-Reply-To: <CAHC9VhSubXA4tAUoz7T==UvfrM_DXS6nF5s0tJZ1HrrVizMgZA@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Wed, Jul 09, 2025 at 10:00:56AM +0200, Maxime Bélair wrote:
-> Enable users to manage AppArmor policies through the new hooks
-> lsm_config_self_policy and lsm_config_system_policy.
+On Tue, Aug 19, 2025 at 02:51:00PM -0400, Paul Moore wrote:
+> On Tue, Aug 19, 2025 at 1:47 PM Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
+> >
+> > I think we want to be able to unshare a specific security module
+> > namespace without unsharing the others, i.e. just SELinux or just
+> > AppArmor.
+> > Not sure if your suggestion above supports that already but wanted to note it.
 > 
-> lsm_config_self_policy allows stacking existing policies in the kernel.
-> This ensures that it can only further restrict the caller and can never
-> be used to gain new privileges.
+> The lsm_set_self_attr(2) approach allows for LSM specific unshare
+> operations.  Take the existing LSM_ATTR_EXEC attribute as an example,
+> two LSMs have implemented support (AppArmor and SELinux), and
+> userspace can independently set the attribute as desired for each LSM.
 > 
-> lsm_config_system_policy allows loading or replacing AppArmor policies in
-> any AppArmor namespace.
+> > Serge pointed out that we also will need an API to attach to an
+> > existing SELinux namespace, which I captured here:
+> > https://github.com/stephensmalley/selinuxns/issues/19
+> > This is handled for other Linux namespaces by opening a pseudo file
+> > under /proc/pid/ns and invoking setns(2), so not sure how we want to
+> > do it.
 > 
-> Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
-> ---
->  security/apparmor/apparmorfs.c         | 31 ++++++++++
->  security/apparmor/include/apparmor.h   |  4 ++
->  security/apparmor/include/apparmorfs.h |  3 +
->  security/apparmor/lsm.c                | 84 ++++++++++++++++++++++++++
->  4 files changed, 122 insertions(+)
+> One option would be to have a the LSM framework return a LSM namespace
+> "handle" for a given LSM using lsm_get_self_attr(2) and then do a
+> setns(2)-esque operation using lsm_set_self_attr(2) with that
+> "handle".  We would need to figure out what would constitute a
+> "handle" but let's just mark that as TBD for now with this approach (I
+> think better options are available).
 > 
+> Since we have an existing LSM namespace combination, with processes
+> running inside of it, it might be sufficient to simply support moving
+> into an existing LSM namespace set with setns(2) using only a pidfd
+> and a new CLONE_LSMNS flag (or similar, upstream might want this as
+> CLONE_NEWLSM).  This would simply set the LSM namespace set for the
 
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index 9b6c2f157f83..0ce40290f44e 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1275,6 +1275,86 @@ static int apparmor_socket_shutdown(struct socket *sock, int how)
->  	return aa_sock_perm(OP_SHUTDOWN, AA_MAY_SHUTDOWN, sock);
->  }
->  
-> +/**
-> + * apparmor_lsm_config_self_policy - Stack a profile
-> + * @lsm_id: AppArmor ID (LSM_ID_APPARMOR). Unused here
-> + * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
-> + * @buf: buffer containing the user-provided name of the profile to stack
-> + * @size: size of @buf
-> + * @flags: reserved for future use; must be zero
-> + *
-> + * Returns: 0 on success, negative value on error
-> + */
-> +static int apparmor_lsm_config_self_policy(u32 lsm_id, u32 op, void __user *buf,
-> +				      size_t size, u32 flags)
-> +{
-> +	char *name;
-> +	long name_size;
-> +	int ret;
-> +
+Bike shedding but, I would prefer CLONE_NEWSEC or something without LSM
+because the goal is not to add a new LSM but a new "security" namespace.
+To fit with existing capabilities that could be reused by such security
+namespace (CAP_MAC_ADMIN), CLONE_NEWMAC is another option.  I know that
+LSM may not be enforce MAC, but I think "LSM" would be confusing for
+users.
 
+> setns(2) caller to match that of the target pidfd.  We still wouldn't
+> want to support CLONE_LSMNS/CLONE_NEWLSM for clone*().
 
-> +	if (op != LSM_POLICY_LOAD || flags)
-> +		return -EOPNOTSUPP;
-> +	if (size == 0)
-> +		return -EINVAL;
-> +	if (size > AA_PROFILE_NAME_MAX_SIZE)
-> +		return -E2BIG;
-> +
-> +	name = kmalloc(size, GFP_KERNEL);
-> +	if (!name)
-> +		return -ENOMEM;
+Why making clone*() support this flag would be an issue?
 
-This hunk should be part of the syscall code and shared amongst LSMs.
+> 
+> Any other ideas?
 
-> +
-> +
-> +	name_size = strncpy_from_user(name, buf, size);
-> +	if (name_size < 0) {
-> +		kfree(name);
-> +		return name_size;
-> +	}
-> +
-> +	ret = aa_change_profile(name, AA_CHANGE_STACK);
-> +
-> +	kfree(name);
-> +
-> +	return ret;
-> +}
+The goal of a namespace is to configure absolute references (e.g. file
+path, network address, PID, time).  I think it would make sense to have
+an LSM/MAC/SEC namespace that would enforce a consistent access control
+on every processes in this namespace.  A related namespace file
+descriptor could then be used with an LSM-specific syscall to configure
+the policy related to a specific namespace (instead of only the current
+namespace), see
+https://lore.kernel.org/r/20250820.Ao3iquoshaiB@digikod.net
+That would enables us to build a context before running untrusted code
+in it, and to update the related security policy without requiring a
+trusted (and exposed) process in each namespace.
+
+I guess a security namespace would not be exclusive to an LSM but could
+be shared, right?  If yes, then it's OK to only have one new security
+namespace instead of one per LSM. ;)
