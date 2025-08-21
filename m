@@ -1,142 +1,103 @@
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C4E2857CB
-	for <linux-security-module@vger.kernel.org>; Wed, 20 Aug 2025 20:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58332D5C8B;
+	Thu, 21 Aug 2025 02:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755722849; cv=none; b=LKwIunAu0PobGkEaW8e1n0jExEWP6QkVz5E+oriMqrKlWsxr3yPL3POiSFsY1KPspPNBDJzH7YipMG6upQj4JvZL1TgzoQoe4GIREJMdTRg5MV+7QLUuSInN1/W62/9P3ERSu7MHkGeRD9iZU2DIjmieuy35rvn7FOUf1uv4tFQ=
+	t=1755741923; cv=none; b=GJbYVvcdAnLFiOq4StQsnmqijjTDDfCxtD8NGJT59m/ggYWG+hQCSiK7RGm197E8gRp6oqML21957h1TvWexRyuTgT0De2/P5E3gJuRtpdsxIL8ePfE+e02pM/qvvwy4jN+gbF+mRDDNaIpTkw9HugHyy9Hd6XZk9JMiN2+keaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755722849; c=relaxed/simple;
-	bh=LLGwe5WKKiR+/T0UVyJ8BMXr5RI9JCQuA6qnVVXw4Nc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hc2q5IBNCqtbVMYq02nUPGEDM6CelTAVBPtR4W5wdw8+5o6LHmBWZRQjfTGUA3qjHY3k5mC1bEHGiXnzsBFeSrcKnoJuGsvO3OyIxuA15fHf/AZvkRGVq7psIQi2t2bv9MI2XEAiQ5wyiCVlVCv6sUwcdMnzVn8Be2epZZOoP1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RaqsC6+a; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RaqsC6+a"
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-32326e5f0bfso325319a91.3
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Aug 2025 13:47:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1755722847; x=1756327647; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6/ItnwIKlKwrAH7BkYoa42hrDmspyKaszOsyRccCX1w=;
-        b=RaqsC6+aSu9HcmBTO54iHHbjYG9cLklo3N8TRNfUNSub04v4tO7tXvrQ0r79njh1iU
-         xqlkieAqEm8bOxRx5gDvFKS8/hHTOOnOkzQa/LBBMUKmdKtQZHazACZInhnyo1K1Menf
-         EWWWiIjWRisI66TBGxoR8y827JHsd4xIuZsL3+huMpldUICM1NDPNPsMfsSHBbZ6ZxnE
-         BCANGn5EcmHN8ZOxrs00DwmNfDm4oRioJCJhbpkeEFTzRVZ7MOhCfEmjLLiw5KWEHMaF
-         Z7prwme7mhI31JmyZ5KIgQbRGKWb3mePltygHQ0n2cFBtlUnSl1wLlB/XFCkhwAqesgy
-         0lRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755722847; x=1756327647;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6/ItnwIKlKwrAH7BkYoa42hrDmspyKaszOsyRccCX1w=;
-        b=Sceg5XNUf1PZNA1QuQE54oAW6pTw720Ue2U+S8N0974g8poCu1OQd2aUvH2jCxEwc/
-         0vzQd8yYQoZFfbb/+M3s3/rrs/GQ9OpWB/w2IfKTDBSa+hcV/qDNEFw3s2Q/KO9ci7hj
-         HsQTa8DG8USTBsVg5fjH8sOKEAajm3sDMSALHt55zMU7pV48gsAtXIPs4zlgr7fmcbUG
-         TDAwInUIrso33iuDxcjrEh7SbCcgg5xEbd3+08o55SHUhfKbq4Ty/g/DI5hy7F9WrH6+
-         HaNaSkU9opv96XyDrAVq4tnT5fp8rtXxS+tu/FOT9cXjbuVYSv3qNoU499q3AbTiSK43
-         0oVw==
-X-Forwarded-Encrypted: i=1; AJvYcCURqj+C/Ovyee0lPSxVWGAkpCGDJwJGtDQ6EC44bflLfOYEoiMXLOld2/dMeNa57eRvrLPH+QHvthsI/PmDqSvr2AgSpl4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQPHTByykOg/clXdbb2ihadVngQufeniSbAdS3kJjzHqkVXxk+
-	tS+k7NmeLPo95bmtUnl6CkHxrdqDmoSX4Qo4mUutvJ5JV4J6UlukwRbX4zEk6AzwDeRrVP0cHv1
-	rk+r+jLill+AnrnQUwU35Sdp767bmiE+w6IwGwwwF
-X-Gm-Gg: ASbGncuPqdoPTQq3mkfLSNKsSizArhX7pctWkx1wh1odapVK5eku/ixgNtDYO0hQX1+
-	K+xd2mAhSwmRdXqY9Llg2T6aKM3k8eAtxGSb2WXSlPTf0jHQHo/OTNc1TnBaxwk529bu2AIw5uq
-	BJXlVQubcSklP5Kxv3NaFNJZ6aPE4Wu6H6Zs99+9ew/LOvlWcxjKdD0N7VbKMg88zs31aa3iflG
-	wOe908=
-X-Google-Smtp-Source: AGHT+IHlYPutLT2oSST8npSUhTtoKml8G2f6TV3BT52vGO5/zR8EoiIIEn0wbnhrPEKd715/Wu+n/cQQS/YY8ur8rN4=
-X-Received: by 2002:a17:90b:4d89:b0:31e:5cc7:133 with SMTP id
- 98e67ed59e1d1-324ed1191c0mr237216a91.11.1755722847048; Wed, 20 Aug 2025
- 13:47:27 -0700 (PDT)
+	s=arc-20240116; t=1755741923; c=relaxed/simple;
+	bh=fq/NfVlYRVfigE7BdwSQj6XsZ9TBqyVOnrt9lfSwkE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=St5puMY/8h64Bl6DUuge5X1WSJPg+xRW5TxRFHLqMShGLdxZlI7YJW4Ngf9xDvvk0K5/E8sw8Z+tqzMn9s4SCB2X5ZKFttV1f02ERvj+vw0x5X33ACHomGTbcjNMvS2lYyQKojWU/WGdykFlV0qxnESp/J0ACyr62ZFPJ85UcoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 184D1318; Wed, 20 Aug 2025 21:05:12 -0500 (CDT)
+Date: Wed, 20 Aug 2025 21:05:12 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>,
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+	John Johansen <john.johansen@canonical.com>
+Subject: Re: LSM namespacing API
+Message-ID: <aKZ+2NMx+ZQhpySY@mail.hallyn.com>
+References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
+ <CAEjxPJ5EvR+2fboLu_nBGZu+ZVUpX4KM6xdPUqDErCmw=iA37g@mail.gmail.com>
+ <CAHC9VhSubXA4tAUoz7T==UvfrM_DXS6nF5s0tJZ1HrrVizMgZA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
- <CAEjxPJ5EvR+2fboLu_nBGZu+ZVUpX4KM6xdPUqDErCmw=iA37g@mail.gmail.com>
- <CAHC9VhSubXA4tAUoz7T==UvfrM_DXS6nF5s0tJZ1HrrVizMgZA@mail.gmail.com> <20250820.ieNg1quoRouz@digikod.net>
-In-Reply-To: <20250820.ieNg1quoRouz@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 20 Aug 2025 16:47:15 -0400
-X-Gm-Features: Ac12FXxekNNUodMCyui3r7zk-6AkI6wHmMwDFgSht8ALnfPP7m7btBD4wLyVLrQ
-Message-ID: <CAHC9VhS3c257ywxADRzPYE-DsXSwRp8P2RhAfdDnXJHOX5bXTQ@mail.gmail.com>
-Subject: Re: LSM namespacing API
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
-	=?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhSubXA4tAUoz7T==UvfrM_DXS6nF5s0tJZ1HrrVizMgZA@mail.gmail.com>
 
-On Wed, Aug 20, 2025 at 10:44=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
-> On Tue, Aug 19, 2025 at 02:51:00PM -0400, Paul Moore wrote:
-> > On Tue, Aug 19, 2025 at 1:47=E2=80=AFPM Stephen Smalley
-> > <stephen.smalley.work@gmail.com> wrote:
+On Tue, Aug 19, 2025 at 02:51:00PM -0400, Paul Moore wrote:
+> On Tue, Aug 19, 2025 at 1:47 PM Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
+> >
+> > I think we want to be able to unshare a specific security module
+> > namespace without unsharing the others, i.e. just SELinux or just
+> > AppArmor.
+> > Not sure if your suggestion above supports that already but wanted to note it.
+> 
+> The lsm_set_self_attr(2) approach allows for LSM specific unshare
+> operations.  Take the existing LSM_ATTR_EXEC attribute as an example,
+> two LSMs have implemented support (AppArmor and SELinux), and
+> userspace can independently set the attribute as desired for each LSM.
 
-...
+Overall I really like the idea.
 
-> > Since we have an existing LSM namespace combination, with processes
-> > running inside of it, it might be sufficient to simply support moving
-> > into an existing LSM namespace set with setns(2) using only a pidfd
-> > and a new CLONE_LSMNS flag (or similar, upstream might want this as
-> > CLONE_NEWLSM).  This would simply set the LSM namespace set for the
->
-> Bike shedding but, I would prefer CLONE_NEWSEC or something without LSM
-> because the goal is not to add a new LSM but a new "security" namespace.
+> > Serge pointed out that we also will need an API to attach to an
+> > existing SELinux namespace, which I captured here:
+> > https://github.com/stephensmalley/selinuxns/issues/19
+> > This is handled for other Linux namespaces by opening a pseudo file
+> > under /proc/pid/ns and invoking setns(2), so not sure how we want to
+> > do it.
+> 
+> One option would be to have a the LSM framework return a LSM namespace
+> "handle" for a given LSM using lsm_get_self_attr(2) and then do a
+> setns(2)-esque operation using lsm_set_self_attr(2) with that
+> "handle".  We would need to figure out what would constitute a
+> "handle" but let's just mark that as TBD for now with this approach (I
+> think better options are available).
 
-I disagree with your statement about the goal.  In fact I would argue
-that one of the goals is to explicitly *not* create a generic
-"security" namespace.  Defining a single, LSM-wide namespace, is
-already an almost impossible task, extending it to become a generic
-"security" namespace seems maddening.
+The use case which would be complicated (not blocked) by this, is
 
-> > setns(2) caller to match that of the target pidfd.  We still wouldn't
-> > want to support CLONE_LSMNS/CLONE_NEWLSM for clone*().
->
-> Why making clone*() support this flag would be an issue?
+* a runtime creates a process p1
+  * p1 unshares its lsm namespace
+* runtime forks a debug/admin process p2
+  * p2 wants to enter p1's namespace
 
-With the understanding that I'm not going to support a single LSM-wide
-namespace (see my previous comments), we would need multiple flags for
-clone*(), one for each LSM that wanted to implement a namespace.
-While clone3() has expanded the number of flag bits from clone(),
-there is still a limitation of 64-bits and I'm fairly certain the
-other kernel devs are not going to be supportive of a flag for each
-LSM that wants one.
+Of course the runtime could work around it by, before relinquishing
+control of p1 to a new executable, returning the lsm_get_self_attr()
+data to over a pipe.
 
-Maybe we could argue for our own u64 in cl_args, or create our own
-lsm_clone(2) syscall that mimics clone3(2) with better LSM support,
-but neither of these seem like great ideas at the moment.
+Note I don't think we should support setting another task's namespace,
+only getting its namespace ID.
 
-> > Any other ideas?
->
-> The goal of a namespace is to configure absolute references (e.g. file
-> path, network address, PID, time).  I think it would make sense to have
-> an LSM/MAC/SEC namespace that would enforce a consistent access control
-> on every processes in this namespace.
+> Since we have an existing LSM namespace combination, with processes
+> running inside of it, it might be sufficient to simply support moving
+> into an existing LSM namespace set with setns(2) using only a pidfd
+> and a new CLONE_LSMNS flag (or similar, upstream might want this as
+> CLONE_NEWLSM).  This would simply set the LSM namespace set for the
+> setns(2) caller to match that of the target pidfd.  We still wouldn't
+> want to support CLONE_LSMNS/CLONE_NEWLSM for clone*().
 
-Once again, I'm not going to support the idea of a namespace at the
-LSM framework layer, individual LSMs are better suited to implementing
-their own namespacing concepts.  However, I do support the LSM
-framework providing an API and/or helpers to help make it easier for
-individual LSMs and userspace to create/manage individual LSM
-namespaces.
+A part of me is telling (another part of) me that being able to setns
+to a subset of the lsms could lead to privilege escapes through
+weird policy configurations for the various LSMs.  In which case,
+an all-or-nothing LSM setns might actually be preferable.
 
-> A related namespace file
-> descriptor could then be used with an LSM-specific syscall to configure
-> the policy related to a specific namespace (instead of only the current
-> namespace)
+I haven't thought of a concrete example, though.
 
-That is a reasonable request, and I think the same underlying solution
-that we would use for setns(2) could also be used here.
-
---
-paul-moore.com
+> Any other ideas?
+> 
+> -- 
+> paul-moore.com
