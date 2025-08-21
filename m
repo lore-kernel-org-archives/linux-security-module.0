@@ -1,376 +1,108 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C4F2D77EC
-	for <linux-security-module@vger.kernel.org>; Thu, 21 Aug 2025 14:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187992D7807;
+	Thu, 21 Aug 2025 14:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755787462; cv=none; b=Z8dx8UHhICjfk9jP+/wvLwZE2WSeRuuiqJ73tS8c5SmY/+FUrdEWPgO+9GeE+gAQlFjC40xFkzsgbB7Z3Tpp0jzqukeuPUcYymfGYZ8mSub4F8ZF733TpBi16ZIaAeNisCl57M5N8EU8KhutTUf0cbik3kVIv9cHzXlWIUIsxp8=
+	t=1755787576; cv=none; b=FWkz/SdTKKPFKF0JLmls1hWvVCZC8VcINB9TmYHdbhECx1HNYL3+18c6NspoJN2oCPoRDmz4tG1miZQVpLGM1n4gwmGH1CZ9MmzCCXFXO5w9cSKpNVG4k/nAT0Awxm6mqwjccgtwzS1M0Zx0VYRIOkAEgqGmasJl3WQcq7DBY+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755787462; c=relaxed/simple;
-	bh=YO1gVdvZhKpLWYfzBCY1eHOYqhJMZZdgk8siPgvrWmk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j+QrROMNVaR1GQFudLIlE3xvZvMW/xQBju/7/cgXMj877s0ifVlHLJy/4AO5oc2BcF6t5Pa+3wj5/Fgfz/ejlgic0N2ONduNN8OuTJJPGCGmXIrjqPaBgNBGwGbbgt+MHh+z09id9TENoyIf0SZq5WuqmRVKy0B7S00Ux5N9Irc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=BIVeEgHu; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1755787576; c=relaxed/simple;
+	bh=+4n4utJycwA3AgzQiJvu/ewM4+9QABDzfmE0ooAk+9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s6IHIsBz3vR8zPKZFWsV+SKaMpD+OkfPSIbKVLDGFzt1Ls6/3XlHbh2A+mDhEdssqqhRiTN/viTrqv16Bd40Ue6IVSlBFlKbLY5QT1pBznsbZR7DmyhD7b9jwNraxkL5iEpACbwmWiMhwUnQdmmQ2zuQ+ykWsa9QJY4mtt/mnsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AqVoQXge; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="BIVeEgHu"
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 8F8213F7C2
-	for <linux-security-module@vger.kernel.org>; Thu, 21 Aug 2025 14:44:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1755787454;
-	bh=jzTYLKjkL9ZMt1fp4vgtxFLWayh8S/XgPzEY+xF6xb8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=BIVeEgHuNSHSA0qJ++5Mleg7j+IlF+KjrvEJmLZ8j/HXZKMD9MbSQA7pnO0vx1RPS
-	 ksG3o5vjt1+lmss7TjKuu7jh6ttFiL+ZG33JB30HFRzmPDzebvBI1wgsciEob5Qmsa
-	 N5PFx8rkMCmztOClTCGXkmruSIEOmXcedgAmmiuGxIdgUG27BTEfW8EG/nMkRfVCZe
-	 mhmpu140aYyeC2ogwP2tMVVXP/jAfXRK0/S4g0ncRiklWXYKP0MCQjP5ydTnQjTCEG
-	 z39uX4hLshKXLX1c3gKeQlIY5SUqq2o+Z5TWyNHFS/KLzAd1ZDW9ceQbFAUxJ/nW+T
-	 tLhHKjVQ3EjdQ==
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-244582bc5e4so14004925ad.2
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Aug 2025 07:44:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755787452; x=1756392252;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqVoQXge"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afcb78fb04cso146794466b.1;
+        Thu, 21 Aug 2025 07:46:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755787573; x=1756392373; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jzTYLKjkL9ZMt1fp4vgtxFLWayh8S/XgPzEY+xF6xb8=;
-        b=DkC1QEyhxoUPnGk9JKH3/06DVqNtZxz9jJsJJQYXZ1RX2k37xi69aE9DoM8JFzqZre
-         hbVViafsFHh2/dC5Xs06NurLmEBBQm+WozjyXKq33Yugf/+p9jX5BzfFImrXb3axlrGv
-         8y+enmi4KzY4NkvtUdZ8PdtknsoEZntCJUbGT0Fj4hvZQq5O07rx4WpTpGx5SLOWXm35
-         rxr+L2ZpBvtMKHVFmwmWjYC4zwzY2ZEQuRq1oon0w0SgVVuseW1DTsdLC5/H1DTQgl6+
-         g4jkWcRgCNI/IL7OL2qDxWiU+umjEGZJ2Dt6Mdiv0cdiBdk0CoLLz3GX95eazxfO9GCM
-         nRAg==
-X-Gm-Message-State: AOJu0Yw46NJW80Zt/DOvmuAHY6Y9bew0gL1+RqIHJw+TkCs1XGSZjlgg
-	t9RSK2bPc8aIGpp6HW+GWyxCCPk4SfRYFn2jEw5dr8bmIVokZwXMHfa9bZHMPGtxl+RhEbe4OCA
-	GkGsLNxQDVcgltF94OBjXP4J0UW5xmp8KgtYvIgloSrtU/wmuz3hHV9D1M95VTbH6C6oFo+x0st
-	POeBttSVEjKmLjfi7E3Zkqs2atVw==
-X-Gm-Gg: ASbGncu+Bi369RRf7ubvnlVvEXAutR9DLBOQm93fwVp0noNswGGENoZhy0i611CQIJ9
-	9OJi65P424csQ4QPqrwCoBXWr565WTHpfP8vwRHKzXAlAR9taVvt1YAi717kibQ7elfe5cXYfjA
-	qwEXVy/Yf4NiCii3XxUMC/oPb575JzJRGm3jBMxWocg7Oxh29LM2KnT6FnJNZnepjf7fpxS3tJt
-	8YVWRlMuwF3R81vCoFTJgObvgYwcFqBQd0PzO53FdQodWXZ1Xar45gl/IYn7bCHD17q9YECFll7
-	XKs3D835UHus4/a3i4rfrwZB1m+PQPHV2nbRODuZmD1TntUe7FUGBw==
-X-Received: by 2002:a17:902:fc8d:b0:235:e76c:4362 with SMTP id d9443c01a7336-245febf8e0cmr35918625ad.18.1755787451728;
-        Thu, 21 Aug 2025 07:44:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGahWwApq0i4t6A4LoiarZetMIHjxOK7/oM7/tt2XrZewjao2+hzBcsjI/PmdvRAYWGoeVhdQ==
-X-Received: by 2002:a17:902:fc8d:b0:235:e76c:4362 with SMTP id d9443c01a7336-245febf8e0cmr35918215ad.18.1755787451170;
-        Thu, 21 Aug 2025 07:44:11 -0700 (PDT)
-Received: from [192.168.192.85] ([50.39.98.232])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-245ed33df68sm57932305ad.21.2025.08.21.07.44.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Aug 2025 07:44:10 -0700 (PDT)
-Message-ID: <aa5833f7-3ece-4d20-b49d-4d5dbaf8628c@canonical.com>
-Date: Thu, 21 Aug 2025 07:44:09 -0700
+        bh=JIG+w3J97fChnrmJiRIedihpzfaTzFXkYAGxoj1msbc=;
+        b=AqVoQXge4f8XKgAkV7MwOXYnIvKnTpJERlLRXE5o1I/cTt8eOjyTntq5EBFH6Yvwo5
+         sPbrtacyvY4b7b8rpYReQWypmCQ5+EaZyxg5fDuxx6aUjSQKXl97QR6Ow6g5IYuaR4xg
+         V9uS1eJJpzwtYNrba8surhmOUUAKh94/sf/s3hJfOZZMq8XiexriavLpUhowiUmNL7Hv
+         n/yGHT2YMdEj42gsWBPXYRwQEqSAfNVeIvrjaVXRSZKVqYJONit1adpyPY3DBnBkgCQK
+         QnPj463BBwJDls+NJ/yfj8ScJUU3iObiBmbpod22MQtqVTVPRbryeoelmWhEkjCwxD7I
+         Iy1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755787573; x=1756392373;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JIG+w3J97fChnrmJiRIedihpzfaTzFXkYAGxoj1msbc=;
+        b=eQBytU54YdhqbUOnB3+xe0nrujljX7GxtXpjB3W3SBv62tAHMYFhMUqDNH9Ru0YGBw
+         hdj0B/SWzy1X3d7Z3YtFEFHOg7qw9ffOCt7xMDIEhSoTw6P1g6F5aY2d6I2H0Om4qT1W
+         GjmX7tLGbIrVxhQ13dcoqtSmKwJfO+BigE6lvzkFyM8x5DvG8gvixyfs89f34KiJyXq9
+         OksAkgsFKNqT/4n1797MpEwGVUV5Ds8CILIJ6jKQR7H93g5EjkBsVQedEIfuayYzfjkL
+         IrtHgdC8mdKPlWW8eDjf160J68OmvnodgE70oEOSrlhy3/jqPNAkIl9WWDj93T+EN9St
+         MjcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlcz9w0asp0bUMmRqqVibDgpKYurMxu89yUXtgQEWRuENA8mEtzqqrBcMPwZQymZYSUUSe20CLdXSo/dOTyvY0@vger.kernel.org, AJvYcCUqETeRT0u+dqfxyJuGVvvnSHJ2PztdZvWJpdLLVnwujso4XFxE4O+l/EQktPPWiEJ2wQg5flpX@vger.kernel.org, AJvYcCVcPRatREGm3rqxXcP2VMQoz7Exy5hm4eZRU1W0pupFwS1Xq01N9hST4skFr0n6wTCkOSDMqYFa44IPx4UIAjjz+mE/1pJp@vger.kernel.org, AJvYcCW9x+AsI2JoiY/2ku2GrFh1Ztf37yCFlXGRjdEkg73q2BQPCQJd0VjuH7wWuY4LIcd19SAxTa7Tf/hVQg==@vger.kernel.org, AJvYcCWCikeRm3+KgSdeEays8WdhfZDEcp/sHxSn3sQV0MqOnuiXuHrP+yO/IpJS7g+ZMBq/h/uKp4CkMxXzagD+rw==@vger.kernel.org, AJvYcCWYngZVbeocT5AqRqDqScjJqnv/z9pYNv5bXXuxkC4lO67lMPs+eJshV58TRCB3+USOyrNfNQYJ4ADs7tvK@vger.kernel.org
+X-Gm-Message-State: AOJu0YztjZciqUPxzxhXB7dtr2fFtWoqjnPaw9JGJCYVfaYI2FgLMTUD
+	vcVQBTsOjO3prEo4hlVBXGq15/0M4ssAWvGrDLY1Tb/3KB57pc5JHwMs
+X-Gm-Gg: ASbGncu+PUyAvFa4XMGtvgyBq0tzZDMxnl5hwuOVzfgdxa/biYCejwxYf873nHYcOUI
+	RjvPD2fPtwYUq3sq7uf7H2hI+dqBTGW2Ph+QwFFzfp0GVYTVF82w7NPAyxetY350GGT8OYX4rdX
+	4TlxswhKE7u+M+kLE7FK53YeOT0S23e+J78arzlKl7PT2xW7FilDO6gsJhAGp9bms8TLt66xtPN
+	6CHTCDdwscDuykS5G4ek2xJEmdkzahTKioy975WUlKL0KbQx1JKYttqys4wt3ytkU7iqfnIow8B
+	EhY3eQK3aYlYZ4AEBlwClQm/w2bwJu4vxfA4Ebe8mKJ6OvVtptZP5Tr3xBTPHdmDfrplHUYe9qG
+	EDU9j++vCPVStG8H+hPdmOwtc5NFqMXE9
+X-Google-Smtp-Source: AGHT+IGLVuYVD4/5frXWAQs5H5qLefX8r3lwrN7PcOc+bxumtnjbgdiK8HV2S0+1muwsZBsiec73zw==
+X-Received: by 2002:a17:907:1c17:b0:ad8:9997:aa76 with SMTP id a640c23a62f3a-afe07b96fcemr266557066b.37.1755787573131;
+        Thu, 21 Aug 2025 07:46:13 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afdfa887a90sm289060966b.11.2025.08.21.07.46.12
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Aug 2025 07:46:12 -0700 (PDT)
+Date: Thu, 21 Aug 2025 14:46:12 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+Cc: akpm@linux-foundation.org, shuah@kernel.org, mic@digikod.net,
+	gnoack@google.com, david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, ming.lei@redhat.com, skhan@linuxfoundation.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+	netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: Re: [PATCH] selftests: centralise maybe-unused definition in
+ kselftest.h
+Message-ID: <20250821144612.a26otz2yriqb5gdq@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250821101159.2238-1-reddybalavignesh9979@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: LSM namespacing API
-To: "Dr. Greg" <greg@enjellic.com>, Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
- Stephen Smalley <stephen.smalley.work@gmail.com>
-References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
- <20250821112011.GA31850@wind.enjellic.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20250821112011.GA31850@wind.enjellic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821101159.2238-1-reddybalavignesh9979@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On 8/21/25 04:20, Dr. Greg wrote:
-> On Tue, Aug 19, 2025 at 10:56:27AM -0400, Paul Moore wrote:
-> 
->> Hello all,
-> 
-> Good morning, I hope the day is going well for everyone.
-> 
->> As most of you are likely aware, Stephen Smalley has been working on
->> adding namespace support to SELinux, and the work has now progressed
->> to the point where a serious discussion on the API is warranted.  For
->> those of you are unfamiliar with the details or Stephen's patchset, or
->> simply need a refresher, he has some excellent documentation in his
->> work-in-progress repo:
->>
->> * https://github.com/stephensmalley/selinuxns
->>
->> Stephen also gave a (pre-recorded) presentation at LSS-NA this year
->> about SELinux namespacing, you can watch the presentation here:
->>
->> * https://www.youtube.com/watch?v=AwzGCOwxLoM
->>
->> In the past you've heard me state, rather firmly at times, that I
->> believe namespacing at the LSM framework layer to be a mistake,
->> although if there is something that can be done to help facilitate the
->> namespacing of individual LSMs at the framework layer, I would be
->> supportive of that.  I think that a single LSM namespace API, similar
->> to our recently added LSM syscalls, may be such a thing, so I'd like
->> us to have a discussion to see if we all agree on that, and if so,
->> what such an API might look like.
->>
->> At LSS-NA this year, John Johansen and I had a brief discussion where
->> he suggested a single LSM wide clone*(2) flag that individual LSM's
->> could opt into via callbacks.  John is directly CC'd on this mail, so
->> I'll let him expand on this idea.
->>
->> While I agree with John that a fs based API is problematic (see all of
->> our discussions around the LSM syscalls), I'm concerned that a single
->> clone*(2) flag will significantly limit our flexibility around how
->> individual LSMs are namespaced, something I don't want to see happen.
->> This makes me wonder about the potential for expanding
->> lsm_set_self_attr(2) to support a new LSM attribute that would support
->> a namespace "unshare" operation, e.g. LSM_ATTR_UNSHARE.  This would
->> provide a single LSM framework API for an unshare operation while also
->> providing a mechanism to pass LSM specific via the lsm_ctx struct if
->> needed.  Just as we do with the other LSM_ATTR_* flags today,
->> individual LSMs can opt-in to the API fairly easily by providing a
->> setselfattr() LSM callback.
->>
->> Thoughts?
-> 
-> There has been an adage that traces back to the writings of George
-> Santayana in 1905 that seems relevant:
-> 
-> "Those who cannot remember the past are condemned to repeat it."
-> 
-> To that end, some input from more than a decade of our work on this
-> issue.  Some of our reflections below are relevant to issues being
-> covered in downstream components of this thread, particularly by John
-> in the last few hours.
-> 
-> We have had code on the table for three years with respect to the
-> problem of generic namespacing of security policy/model/architecture,
-> whatever one chooses to call it.
-> 
-> For everyone's reference, here are the URL's to the patch series:
-> 
-> V1:
-> https://lore.kernel.org/linux-security-module/20230204050954.11583-1-greg@enjellic.com/T/#t
-> 
-> V2:
-> https://lore.kernel.org/linux-security-module/20230710102319.19716-1-greg@enjellic.com/T/#t
-> 
-> V3:
-> https://lore.kernel.org/linux-security-module/20240401105015.27614-1-greg@enjellic.com/T/#t
-> 
-> V4:
-> https://lore.kernel.org/linux-security-module/20240826103728.3378-1-greg@enjellic.com/T/#t
-> 
-> We started this work about 13-15 years ago.  We initially described
-> our work and the need for it, 10 years ago almost to this day.  See
-> our 2015 paper at the Linux Security Summit in Seattle.
-> 
-> James Morris and Casey were in the first row, Stephen and a co-worker
-> from the NSA were in the second row, to the speakers left.
-> 
-> If one spends some time looking under the hood, TSEM is in large part
-> about providing a generic framework for running multiple, independent
-> and orthogonal security frameworks/policies/architectures, whatever
-> one chooses to call these entities.
-> 
-> The reason that we argue that TSEM is a generic framework, is that in
-> our internal work, we have ported the major LSM's, including the IMA
-> infrastructure, to run in isolated namespaces as plugins for TSEM's
-> notion of Trusted Modeling Agents (TMA's).  We also have ongoing work
-> that enables Kubernetes to dispatch workloads, using whatever LSM
-> based security policy that container developers desire for their
-> workloads.
-> 
-> Suffice it to say, we have howed a lot of ground on the issues
-> surrounding this, including issues surrounding production deployment
-> of this type of technology.
-> 
-> In our initial implementation, circa 2015, we adopted the approach of
-> using a CLONE_* flag and wired the implementation of security
-> namespaces into the rest of the namespace infrastructure.
-> 
-> During COVID, we re-architected the entire implementation and moved to
-> using a control file in the pseudo-filesystem that TSEM implements, we
-> have never looked back on this decision.
-> 
-> TSEM security workloads are a poster child for security namespaces
-> that require a number of different setup parameters.  A command verb
-> syntax with key=value pairs, written to a pseudo-file, has proven
-> itself to be the most flexible approach when setting up security
-> workloads.
-> 
-> With respect to namespace transition, we trigger the transition of a
-> process to a new namespace (unsharing) when the process issues the
-> request via the control file.  This has proven to be, at once, the
-> most straight forward and least security prone approach.
-> 
-> The other major, and thorny issue, is the notion of another process
-> 'entering' a security namespace.  There are a ton of open issues to be
-> considered with this, the approach that we took that has worked well
-> to date, is the notion of a 'trust orchestrator' that has
-> responsibility for controlling the namespace.  Any manipulations or
-> control of the namespace are conducted through the orchestrator
-> process.
-> 
-> If anyone chooses to look at our implementation, you will find that we
-> 'bless' the orchestrator process, at the time of namespace creation,
-> with access to the security namespace context control structure for
-> the namespace being created.  The orchestrator is the only entity that
-> can access the security state of the namespace, other than processes
-> within the namespace itself.
-> 
-> This significantly narrows the scope of vulnerability with respect to
-> who or what can manipulate a security namespace.  There are a number
-> of thorny issues, that we have not seen anyone mention, that surface
-> with respect to allowing entry into a security namespace by an
-> arbitrary process.  Believe me when I say we have found a number of
-> them by accident and incident.
-> 
-indeed, this has to be tightly controlled. Much more so than just
-creating a namespace. And its not just the "security/LSM" namespace
-but the entire context around it. That is whether or not you can
-step into say the mount namespace separate from the security/LSM
-namespace it was created with.
+On Thu, Aug 21, 2025 at 03:41:59PM +0530, Bala-Vignesh-Reddy wrote:
+>Several selftests subdirectories duplicated the define __maybe_unused,
+>leading to redundant code. Moved to kselftest.h header and removed
+>other definition.
+>
+>This addresses the duplication noted in the proc-pid-vm warning fix
+>
+>Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+>Link:https://lore.kernel.org/lkml/20250820143954.33d95635e504e94df01930d0@linux-foundation.org/
+>
+>Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
 
-Each and everyone of those opens potential attack surface. Even if you
-if it turns out to be safe, you have to carefully evaluate each
-potential combination.
+Looks reasonable.
 
-> So big picture.
-> 
-> Over a decade of experience with these issues, suggests that Paul's
-> premise that most of these issues are best left to specific LSM's that
-> elect to implement namespacing, is correct.
-> 
-> The challenge is that this situation ends up being all or nothing.
-> 
-> The actual amount of code involved in unsharing a namespace is so
-> trivial, in comparison to the work involved with setting up and
-> maintaining state information for a security namespace context, that
-> it seems to make little sense to implement this support at the level
-> of the LSM infrastructure itself.
-> 
-actually I think that is pretty much the goal, just a minimal thin
-layer that provides the hooks and maybe an LSM blob object for the
-individual LSMs to do their thing.
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-Instead of each LSM implementing their own interface there is a common
-one for container orchastrators to use to make the request.
-
-> If the decision is made to provide generic namespace support, other
-> than a request to create a namespace, it will rapidly become a
-> slippery slope with respect to the amount of infrastructure needed to
-> address the complexities associated with every security model being
-> different from every other.
-> 
-yep, this is really just about a thin common API, and minimal
-infrastructure around the existing system namespacing calls (clone,
-ushare, setns).
-
-> The caveat to this is if our notion of a 'trust orchestrator' would be
-> deemed to have merit.  In that case, an LSM based namespace separation
-> architecture would provide a common point for the orchestrator to be
-> 'blessed' with access to control of a namespace.
-> 
-A trust orchestrator isn't necessarily needed. Each LSM can manage its
-own trust within its policy. A trust orchestrator becomes more necessary
-when you are trying to namespacing without the LSMs themselves
-participating in the decision around namespacing. Which admittedly has
-largely been the current situation.
-
-> The other open issue is whether or not a separate capability should be
-> implemented that allows the creation of a new security namespace.  If
-> one paws through our TSEM submissions, one will see that we proposed
-> such a capability bit.
-> 
-Its not needed if individual LSMs are making decisions around namespacing
-based on policy. In fact in that case it can even be harmful. Per LSM
-policy would be finer grained, where a capability becomes this shared
-flag that lacks context. Examples abound in the kernel where we have
-a cap check without context and then a more context based security
-check.
-
-Where the capability might be useful is wehn LSMs aren't dealing with
-the namespacing request directly.
-
-> Casey noted, rather emphatically, that no new capabilities were going
-> to be implemented in Linux, particularly for what was described as a
-> 'toy' project.  He indicated that CAP_MAC_ADMIN was the canonical
-> capability that should be used for manipulating LSM's.
-> 
-I disagree with the reuse of CAP_MAC_ADMIN, if there is going to be
-a capability around this it should be distinct from MAC_ADMIN and
-MAC_OVERRIDE, as it very much has different semantics.
-
-> We will be very interested in seeing how a discussion around this
-> evolves, as 'escaping' from an existing security context to a new one
-> is an extremely critical operation from a security perspective, if one
-
-yes. I might have mentioned just how much I dislike setns().
-
-> stands back and looks at the issue objectively.  If the concept of a
-> 'security orchestrator' is embraced, it would make perfect sense for
-> the orchestrator to drop CAP_SEC_NS, or whatever it would be called,
-> and retain CAP_MAC_ADMIN in order to manage the namespace.
-> 
-> So lots of issues to consider; thorny, political and otherwise, on
-> multiple fronts.
-> 
->> paul-moore.com
-> 
-> Have a good day.
-> 
-> As always,
-> Dr. Greg
-> 
-> The Quixote Project - Flailing at the Travails of Cybersecurity
->                https://github.com/Quixote-Project
-> 
-
+-- 
+Wei Yang
+Help you, Help me
