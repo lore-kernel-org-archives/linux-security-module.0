@@ -1,73 +1,74 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262742E88B4
-	for <linux-security-module@vger.kernel.org>; Thu, 21 Aug 2025 07:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAEF283FEB
+	for <linux-security-module@vger.kernel.org>; Thu, 21 Aug 2025 07:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755761018; cv=none; b=gOY/sNlj90ddzQW0ZW/gBiTr+PtwZwFE2JElpm57UglGuhKEOwtZuxl7+XS6x8ynTSsGkWeL/xhzCQYKreIXyHJweaUa4ohkyFGwHvVYjinQnVWlTxPBhP78fCfSuGhAWv0vJhSB8gnT5nUmNetu7DXjEGuh8fpK+yl5oVk9bn4=
+	t=1755761222; cv=none; b=cLoLzbjP3pmK0RZjE5NFpSVC11IvyEetjlqvEbpIi038+siRAJx3Ev/z426XRNG6Q8aOu5AM6QK1H8MeFbOd1Z9VmzcWvkipsv6SEPnqFff1hvJSRl0qCq7oXpxvkRGt+8Vn3ja+LQXEM+neLbpC2wmOgpUUNajFDxGNQSp9LUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755761018; c=relaxed/simple;
-	bh=D8rrGwDasgphAEpIHrNyQKnQpsy39nxMN7y2rXqfqok=;
+	s=arc-20240116; t=1755761222; c=relaxed/simple;
+	bh=hfvkqTAOApD9wjX8xERqq7B9PhJVuhrMgW8OzvJfo8E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U6k5FXyZB1JVj6IY+M1Q4vvgOLscxotsVBBMRtz4/J0H5khR+szVs2xguyGbdeEI3sHvttR2xOxb/jftjjR/rHnSyahjBcsbhIEX2EWQc9F5pnCwcY2kpoEY0FQs+JfoNPHbsrlAZ0lyr61hFWIpcLE343WwvWXTWu5BDBFPk6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=oZ6sEa1b; arc=none smtp.client-ip=185.125.188.122
+	 In-Reply-To:Content-Type; b=IfYuyPQPOUxp2hs9I0yuvDz8LBsTBlmt6PleuIEYQ/p5nRLVyaZJYza4uE94pdwfeTZSLIqdFOHurv0K4tKwoqmY0niiDWbWJlmXuptXXNVMq1rsT/19eQuGLgv+s0WfrqR9VWaG85y+By7beMm9jSkjSiz/1LrkfaDDn8o6xJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=WVZURp/N; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="oZ6sEa1b"
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="WVZURp/N"
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id F2B0D3F723
-	for <linux-security-module@vger.kernel.org>; Thu, 21 Aug 2025 07:23:32 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9ED193F32E
+	for <linux-security-module@vger.kernel.org>; Thu, 21 Aug 2025 07:26:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1755761013;
-	bh=1UdB6YDwCu8+B0RwSxb1MjcdS1xlgzUS9TquEYnc0lo=;
+	s=20210705; t=1755761217;
+	bh=ue+OkzzV4KiLpEQiFbe32AtZ1fJoFqD1qTwNljdERLI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=oZ6sEa1bCEXTMnFcAD9u4Z/9WQZFoiC1o+Y4H5l3VeFQpLkO7um5i5vAm1tR4o13H
-	 JtILoqcE+U12MNSTuBjWh1NAuI2DqhVZKn8mVSTw0yibzXDgIB9rowhTApp4bJEO8k
-	 k7T24NjTGxEw1+sgXLRYavI4C9+MI69K9/bSXN7aT8zUmSFFlrPv48kmBYOWrs6ivL
-	 29PD2WHioo8E+m3QVanTXXov0XdRaHeBQONpI2cSBsFUM9tcQNBOfi8OGI16u4wn1Y
-	 73RCo2gC06QBJ7NtqeL1XGqNpMsAKrJxMAhRjlJJ7M3IQRQKA0rHHATgy+lg8CXnNj
-	 v1AdYjW7GylSQ==
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b4750376ca8so478042a12.2
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Aug 2025 00:23:32 -0700 (PDT)
+	b=WVZURp/Nlw7Uifs1017xsT22qYbrv8FO5kivpB7v78zgF1Kl787CUEsolW/5nSPXz
+	 GqnD/SKAJrOKD9BHxdPzjIoMz7liS6/sS0lsyeM2aC8RAUqBpAq6nkPoMxv1Bsyu/o
+	 gNL1FG2b2FIFyh6MP25y+gSaMXdqOaeFUOpw6jEMrL3bALrkgq9nAn+pD1gYGI41On
+	 uaVjl9gw6RUzA5S4mieYMw3ISsLth6WNroPl/IDSvk11e2F55tIg+DZh8yH5cRxRv9
+	 jkGchMTUOjMPP8vckOO6uzl5YX5dlIWeHhZYOiN7J8gX+T2SqTdMhXCXwUg01ua3d9
+	 QXMKTwdQ9mppg==
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b471757d82fso585482a12.3
+        for <linux-security-module@vger.kernel.org>; Thu, 21 Aug 2025 00:26:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755761011; x=1756365811;
+        d=1e100.net; s=20230601; t=1755761216; x=1756366016;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1UdB6YDwCu8+B0RwSxb1MjcdS1xlgzUS9TquEYnc0lo=;
-        b=Jzwte50/3u3u0+7ypBHYbAC3gKPmHroL8GPURxlYBg+tq0XhVuOLQcpJeFypsOKOoD
-         X7lAwlQsAkhvE3keNwBMKzMVLMb7rdN/lx4tC0LqReiGqJSHw6THucqUD/9vVoZgVoGf
-         V2NrnCDWAWCOGjTN2ItCy2AFqN38d/C5I0UQ4lLYvcQGunxJtQCsb1E8W6HCea1dy7OB
-         9vj3y5qojA+Cb052/7w7hKtn6UlpRk3uLxByX1yRSXO7isSgM/lfXvV9qbcv/G1bJztH
-         R1DxKNC/yXvxJNNVcdtRT2vqxOrtD3GwRNAAn1nNQNT/WdzG7D/cNgvgxIMkwzVuhEYQ
-         0sTA==
-X-Gm-Message-State: AOJu0Yx/dK9M7DHiIy4VG8LfbSvPHkc9oMg7/gUmu+wENMhehIYnlWo1
-	1eOclFvT+OD6XUM4HGTzGU087APNt3gGwZNeJaf+AdKI11IGwdWjyPGVGFaZ/VOj37ZfRqbDjg5
-	V6knsrnDzXmfCztwD4oG/CinrfDQDxLmuLpRNZOQ7lWiz37z+H4fYj8AIXETy8AzVpxsoKzSQ9v
-	RavBr9to4O47Ff7J6wFA==
-X-Gm-Gg: ASbGncufmFbdFIWikOnn1u5wNyaWwAAc+aCwOijh19+WsSojEtRpTVQ478qFL/XCcIv
-	dKsV4Uf7AQDxDXLXMWC51U+Tk0GXfLMdcNHxdFnw35QuVNr5no4mbyIysFpEjgLFEeHZHnavivX
-	BQq92MqA8rx4s0hWi8rMzBDdKsigaLBquu6329xgF4e0OEr8gKcad4cpOcqSp1JpBCDAKnnUJcH
-	D27HFVWfRfr7SNy75SLVR+CKCnZUsHj0tKNOXf1qJum7fHQtFMo7CveN78mYCPdXGH2Ow0h1qH/
-	2v8DWshS8rcKkNxmF0CBFeCFKi9NIlK6H/x4WiZd0I/EdzNwAZUylA==
-X-Received: by 2002:a05:6a20:729b:b0:240:30c:273e with SMTP id adf61e73a8af0-2433089dd4amr1879037637.15.1755761011516;
-        Thu, 21 Aug 2025 00:23:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2kbgR3RWmMnRvSLUDWTTq+4WW7cgjddoxa6NCNLPchL+Vl8xi54jvhD46K4U6W5FWTya+tg==
-X-Received: by 2002:a05:6a20:729b:b0:240:30c:273e with SMTP id adf61e73a8af0-2433089dd4amr1879012637.15.1755761011089;
-        Thu, 21 Aug 2025 00:23:31 -0700 (PDT)
+        bh=ue+OkzzV4KiLpEQiFbe32AtZ1fJoFqD1qTwNljdERLI=;
+        b=MGM67pZ8Eyah/P1fBsYHpZCQMlqbXiGv8wgJOE9Knf1EpzUlMqYxpfsYL6JAg0lRfi
+         9lYXaevjT2s43iMsUOkbUzie/xZs27IMAROVv5UaeZpc3z+PRwHVnYaMqs3GFaOE06/M
+         9JYuxppfXkSUte3sOB3ikmQ+YG+iA6YQhJuan7um0nxesQ3hwQkiN7qRO9WVSUAD/OZp
+         G3H61mPt62vu52i05i15pqvMC+VYwnYtu4pgo7B42CwNS20nr3NevvUjKfe2fv8d77YH
+         3kq9lHMHdTWn7JN5qCBzVc3yllN00vaSTcUVO8LnIRPXPcgU5g6EwC/miGueC5K8skhn
+         6r5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVVorKgN/G725eRmTxydZa0ygtghD1isTLQDSiVlGdNX5lsVsbMkjTQpHesFYSz+0JIzaL8F9NGhc7ZQMCUOR4fM9FCz0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK+xaemCiYMsugTpPUqrwrhEW+ooKoV2zb27gsVgGy+m9+SUTC
+	Q5JTlgn3ERTQDb8tQIM7CmUcudmwOeFKPYqyZ1hGudEr0CkFb5B7ACqpOFwoH1mC0oCrNw+kgR0
+	VGxKo6xsEtk7ebJLzsNh9PSy7MdpbF8plPfhDuJiczp8x5l112F1Hf3pxPJGNuJudW+AEdhOP//
+	IJzn7vjOuntrUHuKfC2w==
+X-Gm-Gg: ASbGncta+ta4fhPD1W4xiY/0J1IQ23qm5Z5lX1kYXgwAoy6g0Ig++qCggsRGmP/NySu
+	ISSOAbyy57HmoGOPisq/LlyrTL1y3v2ORGiLQfR+pUZszpkxqnaYMymS90cESd+7LGKqF51qfo1
+	anS0QQc6WWvF/y6ym+zcF90juRQoiTkd4p2IrN0v4QeO4QDNq7OPt/jmkgwHSTBAKD1h2Iig9uC
+	clhO49KQyDC4zluOzYeeySpa+0ZiaP1v8GmZ3rf84rrEpUMclbPMw6tKx+QDt6sAPWukgVXrNvR
+	yyN7NVgzYblAPZlyqm6UttiCWg201YMVTA+QinS69hYMvcDghw0FrQ==
+X-Received: by 2002:a05:6a20:5491:b0:243:78a:82a6 with SMTP id adf61e73a8af0-24330b3d501mr1985587637.60.1755761216177;
+        Thu, 21 Aug 2025 00:26:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFjCWtMRF+Hu+oQrp6a212vrecViVy2agy7+gPfMCUx2OtWLBxQ994MtDvOa5rf9EuEWC0mLA==
+X-Received: by 2002:a05:6a20:5491:b0:243:78a:82a6 with SMTP id adf61e73a8af0-24330b3d501mr1985543637.60.1755761215241;
+        Thu, 21 Aug 2025 00:26:55 -0700 (PDT)
 Received: from [192.168.192.85] ([50.39.98.232])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b47640d3e3fsm3970040a12.56.2025.08.21.00.23.30
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-76e7d0d98dfsm7375246b3a.17.2025.08.21.00.26.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Aug 2025 00:23:30 -0700 (PDT)
-Message-ID: <7d4d60d6-fe50-4646-9f9b-0cb524aef3fb@canonical.com>
-Date: Thu, 21 Aug 2025 00:23:29 -0700
+        Thu, 21 Aug 2025 00:26:54 -0700 (PDT)
+Message-ID: <bd0733d3-02d1-4543-9430-af685b644f24@canonical.com>
+Date: Thu, 21 Aug 2025 00:26:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -76,12 +77,14 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: LSM namespacing API
-To: Paul Moore <paul@paul-moore.com>, Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
- Stephen Smalley <stephen.smalley.work@gmail.com>
+To: Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Paul Moore <paul@paul-moore.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>,
+ linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
  <2e303958-ca60-4458-ac6d-6b83f331f660@schaufler-ca.com>
  <CAHC9VhQ5Vs+_DYAcN_Z4M9PVqW=PjaHcr4sVXADU5yqp1zFHVQ@mail.gmail.com>
+ <CAEjxPJ7NpSdfUZzzj0SnN8WuUv7E9SEj5v28x_y8R178_JMESA@mail.gmail.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -127,33 +130,36 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <CAHC9VhQ5Vs+_DYAcN_Z4M9PVqW=PjaHcr4sVXADU5yqp1zFHVQ@mail.gmail.com>
+In-Reply-To: <CAEjxPJ7NpSdfUZzzj0SnN8WuUv7E9SEj5v28x_y8R178_JMESA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 8/19/25 11:40, Paul Moore wrote:
-> On Tue, Aug 19, 2025 at 1:11 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+On 8/19/25 11:58, Stephen Smalley wrote:
+> On Tue, Aug 19, 2025 at 2:41 PM Paul Moore <paul@paul-moore.com> wrote:
 >>
->> The advantage of a clone flag is that the operation is atomic with
->> the other namespace flag based behaviors. Having a two step process
+>> On Tue, Aug 19, 2025 at 1:11 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>
+>>> The advantage of a clone flag is that the operation is atomic with
+>>> the other namespace flag based behaviors. Having a two step process
+>>>
+>>>          clone(); lsm_set_self_attr(); - or -
+>>>          lsm_set_self_attr(); clone();
+>>>
+>>> is going to lead to cases where neither order really works correctly.
 >>
->>          clone(); lsm_set_self_attr(); - or -
->>          lsm_set_self_attr(); clone();
->>
->> is going to lead to cases where neither order really works correctly.
+>> I was envisioning something that works similarly to LSM_ATTR_EXEC
+>> where the unshare isn't immediate, but rather happens at a future
+>> event.  With LSM_ATTR_EXEC it happens at the next exec*(), with
+>> LSM_ATTR_UNSHARE I imagine it would happen at the next clone*().
 > 
-> I was envisioning something that works similarly to LSM_ATTR_EXEC
-> where the unshare isn't immediate, but rather happens at a future
-> event.  With LSM_ATTR_EXEC it happens at the next exec*(), with
-> LSM_ATTR_UNSHARE I imagine it would happen at the next clone*().
-> 
-I do think something like this is needed to deal well with the two
-step process. Without it is fairly easy to get into situations
-where you either need more permissions, than strictly necessary,
-because of steps in between or as Casey says things just don't work
-correctly.
+> I've only implemented support for an immediate unsharing of the
+> SELinux namespace, not any kind of deferred unsharing until the next
+> exec or clone.
+> Not saying that would be impossible, but since I was following the
+> example of clone(2) and unshare(2) I didn't do it.
+> May be some complications in doing so, but I haven't looked at it yet.
 
-There will need to be an additional call that allows entering a
-namespace separately from clone/unshare, but that covers a different
-use case.
+if the hooks are setup correctly I expect it will actually remove some
+potential complications. But I haven't deep dived the selinux code
+yet so call that an uninformed hunch.
 
