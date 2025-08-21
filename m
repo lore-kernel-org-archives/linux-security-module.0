@@ -1,155 +1,240 @@
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA932459C9
-	for <linux-security-module@vger.kernel.org>; Thu, 21 Aug 2025 10:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922123054E0;
+	Thu, 21 Aug 2025 11:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755771325; cv=none; b=HDBz27e6wYrCnIh/LoDdC1QCm76UTofPS2ctvJeDmNEgehUWsF4F9Pt5JeCG7Eh/IhYUE7KHMkOBY6Hm2K5mrgZ7AlkELW6M4XwOU3Jri4ASN3Vpp3b4JAOjchPOiLVYQi2S9tz4g3nlaC0ZxCwaS+xfVZtyWy6wqrgf5ZmX76E=
+	t=1755775540; cv=none; b=MxoIzkj/RtKxhK5TYbuVVpXrQbUsf3g7ZdEpaylmSLZrGKVkj7PvN1NulCbg9tU69NzkeQ7/xq9znLwDpaTpSqys60a6+lCYJ/agmMRnOonQxWAfIgkhheeov1vgkFcysrw6ugF/WWSs9A9+CKLqt4KPT/j5n0T9cERQWIPY/4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755771325; c=relaxed/simple;
-	bh=RD++S/2gB9rhfpyLLace3/VKTHkKstFCChwuvbgMXtc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gOwh9NR0W67BgPF5TlVsRJmnANDol+TTZe5S0PQAR+Biedfv6MoFoVFTCdjU3BNSNps+wktJqxYxla6pAG5Dgyt2ip7FcO8vZzVR47wFv2bI+vYU5h/eqeP0L3z8xx3IPhrU8dHPzSRcF9S8JyG0Oi+dwisx7gatbMEg1y6ry8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZlTa45mg; arc=none smtp.client-ip=45.157.188.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZlTa45mg"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4c6zHb0XS5z7n0;
-	Thu, 21 Aug 2025 11:56:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1755770202;
-	bh=CcF96cTH8TvqDj/jopGA6l4dQnniN37SmQZfVrjgA5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZlTa45mgBaEvPksgDV0n5FHogncwebFkXt9a/LeLPx5oGamuvY2fhbBoeymZaf/Xm
-	 A8tC2rG5tvEnfO5/4qx3+7AvKkEzqg9mSO4lQGO6mCq3TE/nXcgaUbBa2kwTNtkeaN
-	 bP1TCVhn+D+cKhN1mAVSSJSvJQgkvERz0AgsSndg=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4c6zHZ3BYyzV3X;
-	Thu, 21 Aug 2025 11:56:42 +0200 (CEST)
-Date: Thu, 21 Aug 2025 11:56:41 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+	s=arc-20240116; t=1755775540; c=relaxed/simple;
+	bh=3aSDVqLgdzpgGlEgR3TiPrT5jO6i3NSV2fMp8nRPNGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9SGu5dgahjmUIouzvNpaq6/GfILgkfOLM25TLrW7gd1SXRj9SI8L28qmAKVOTDsOYQxr086uhilm7gaiAMqN7oCsHr05YpFtrl2Dl/qtdXF9Z1PuR9ntsoJRMa09WB4OC2cGe6yVEuSCAIv0oNIDVK9YYs4gBA6mCRuKyKyYkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 57LBKEDu031957;
+	Thu, 21 Aug 2025 06:20:14 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 57LBKBVi031956;
+	Thu, 21 Aug 2025 06:20:11 -0500
+Date: Thu, 21 Aug 2025 06:20:11 -0500
+From: "Dr. Greg" <greg@enjellic.com>
 To: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	John Johansen <john.johansen@canonical.com>, Maxime =?utf-8?Q?B=C3=A9lair?= <maxime.belair@canonical.com>
+Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>
 Subject: Re: LSM namespacing API
-Message-ID: <20250821.Ree4Liedeita@digikod.net>
+Message-ID: <20250821112011.GA31850@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
 References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
- <CAEjxPJ5EvR+2fboLu_nBGZu+ZVUpX4KM6xdPUqDErCmw=iA37g@mail.gmail.com>
- <CAHC9VhSubXA4tAUoz7T==UvfrM_DXS6nF5s0tJZ1HrrVizMgZA@mail.gmail.com>
- <20250820.ieNg1quoRouz@digikod.net>
- <CAHC9VhS3c257ywxADRzPYE-DsXSwRp8P2RhAfdDnXJHOX5bXTQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhS3c257ywxADRzPYE-DsXSwRp8P2RhAfdDnXJHOX5bXTQ@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 21 Aug 2025 06:20:14 -0500 (CDT)
 
-On Wed, Aug 20, 2025 at 04:47:15PM -0400, Paul Moore wrote:
-> On Wed, Aug 20, 2025 at 10:44 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > On Tue, Aug 19, 2025 at 02:51:00PM -0400, Paul Moore wrote:
-> > > On Tue, Aug 19, 2025 at 1:47 PM Stephen Smalley
-> > > <stephen.smalley.work@gmail.com> wrote:
+On Tue, Aug 19, 2025 at 10:56:27AM -0400, Paul Moore wrote:
+
+> Hello all,
+
+Good morning, I hope the day is going well for everyone.
+
+> As most of you are likely aware, Stephen Smalley has been working on
+> adding namespace support to SELinux, and the work has now progressed
+> to the point where a serious discussion on the API is warranted.  For
+> those of you are unfamiliar with the details or Stephen's patchset, or
+> simply need a refresher, he has some excellent documentation in his
+> work-in-progress repo:
 > 
-> ...
+> * https://github.com/stephensmalley/selinuxns
 > 
-> > > Since we have an existing LSM namespace combination, with processes
-> > > running inside of it, it might be sufficient to simply support moving
-> > > into an existing LSM namespace set with setns(2) using only a pidfd
-> > > and a new CLONE_LSMNS flag (or similar, upstream might want this as
-> > > CLONE_NEWLSM).  This would simply set the LSM namespace set for the
-> >
-> > Bike shedding but, I would prefer CLONE_NEWSEC or something without LSM
-> > because the goal is not to add a new LSM but a new "security" namespace.
+> Stephen also gave a (pre-recorded) presentation at LSS-NA this year
+> about SELinux namespacing, you can watch the presentation here:
 > 
-> I disagree with your statement about the goal.  In fact I would argue
-> that one of the goals is to explicitly *not* create a generic
-> "security" namespace.  Defining a single, LSM-wide namespace, is
-> already an almost impossible task, extending it to become a generic
-> "security" namespace seems maddening.
-
-I didn't suggest a generic "security" namespace that would include
-non-LSM access checks, just using the name "security" instead of "LSM",
-but never mind.
-
+> * https://www.youtube.com/watch?v=AwzGCOwxLoM
 > 
-> > > setns(2) caller to match that of the target pidfd.  We still wouldn't
-> > > want to support CLONE_LSMNS/CLONE_NEWLSM for clone*().
-> >
-> > Why making clone*() support this flag would be an issue?
+> In the past you've heard me state, rather firmly at times, that I
+> believe namespacing at the LSM framework layer to be a mistake,
+> although if there is something that can be done to help facilitate the
+> namespacing of individual LSMs at the framework layer, I would be
+> supportive of that.  I think that a single LSM namespace API, similar
+> to our recently added LSM syscalls, may be such a thing, so I'd like
+> us to have a discussion to see if we all agree on that, and if so,
+> what such an API might look like.
 > 
-> With the understanding that I'm not going to support a single LSM-wide
-> namespace (see my previous comments), we would need multiple flags for
-
-I'm confused about the goal of this thread...  When I read namespace I
-think about the user space interface that enables to tie a set of
-processes to ambient kernel objects.  I'm not suggesting to force all
-LSM to handle namespaces, but to have a unified user space interface
-(i.e. namespace flag, file descriptor...) that can be used by user space
-to request a new "context" that may or may not be used by running LSMs.
-
-> clone*(), one for each LSM that wanted to implement a namespace.
-
-My understanding of this proposal was to create a LSM-wide namespace,
-and one of the reason was to avoid one namespace per LSM.  As I
-explained in my previous email, I think it would make sense and could be
-convincing.
-
-> While clone3() has expanded the number of flag bits from clone(),
-> there is still a limitation of 64-bits and I'm fairly certain the
-> other kernel devs are not going to be supportive of a flag for each
-> LSM that wants one.
+> At LSS-NA this year, John Johansen and I had a brief discussion where
+> he suggested a single LSM wide clone*(2) flag that individual LSM's
+> could opt into via callbacks.  John is directly CC'd on this mail, so
+> I'll let him expand on this idea.
 > 
-> Maybe we could argue for our own u64 in cl_args, or create our own
-> lsm_clone(2) syscall that mimics clone3(2) with better LSM support,
-> but neither of these seem like great ideas at the moment.
-
-My idea was that using CLONE_NEWLSM would just fork the current/initial
-namespace used by LSMs to tie security policies/configurations to
-processes, but as John already said, it would be the responsibility of
-each LSM to either inherit and keep in sync the parent policy (e.g.
-SELinux) or start with a blank/default one (e.g. Yama).
-
-One way to configure a newly created namespace could be to load a
-configuration in the parent namespace (e.g. with one of the new LSM
-config syscall and a dedicated flag) that would only be applied to child
-namespaces when they are created, similarly to attr/exec for execve(2).
-I think this is what you meant with the LSM_UNSHARE flag, right?
-
+> While I agree with John that a fs based API is problematic (see all of
+> our discussions around the LSM syscalls), I'm concerned that a single
+> clone*(2) flag will significantly limit our flexibility around how
+> individual LSMs are namespaced, something I don't want to see happen.
+> This makes me wonder about the potential for expanding
+> lsm_set_self_attr(2) to support a new LSM attribute that would support
+> a namespace "unshare" operation, e.g. LSM_ATTR_UNSHARE.  This would
+> provide a single LSM framework API for an unshare operation while also
+> providing a mechanism to pass LSM specific via the lsm_ctx struct if
+> needed.  Just as we do with the other LSM_ATTR_* flags today,
+> individual LSMs can opt-in to the API fairly easily by providing a
+> setselfattr() LSM callback.
 > 
-> > > Any other ideas?
-> >
-> > The goal of a namespace is to configure absolute references (e.g. file
-> > path, network address, PID, time).  I think it would make sense to have
-> > an LSM/MAC/SEC namespace that would enforce a consistent access control
-> > on every processes in this namespace.
-> 
-> Once again, I'm not going to support the idea of a namespace at the
-> LSM framework layer, individual LSMs are better suited to implementing
-> their own namespacing concepts.  However, I do support the LSM
-> framework providing an API and/or helpers to help make it easier for
-> individual LSMs and userspace to create/manage individual LSM
-> namespaces.
+> Thoughts?
 
-Should we still talk about "namespace" or use another name?
+There has been an adage that traces back to the writings of George
+Santayana in 1905 that seems relevant:
 
-> 
-> > A related namespace file
-> > descriptor could then be used with an LSM-specific syscall to configure
-> > the policy related to a specific namespace (instead of only the current
-> > namespace)
-> 
-> That is a reasonable request, and I think the same underlying solution
-> that we would use for setns(2) could also be used here.
+"Those who cannot remember the past are condemned to repeat it."
 
-I'm not sure having a set of namespace file descriptors without related
-clone flags would be acceptable, at least for what we currently call
-Linux "namespace".
+To that end, some input from more than a decade of our work on this
+issue.  Some of our reflections below are relevant to issues being
+covered in downstream components of this thread, particularly by John
+in the last few hours.
+
+We have had code on the table for three years with respect to the
+problem of generic namespacing of security policy/model/architecture,
+whatever one chooses to call it.
+
+For everyone's reference, here are the URL's to the patch series:
+
+V1:
+https://lore.kernel.org/linux-security-module/20230204050954.11583-1-greg@enjellic.com/T/#t
+
+V2:
+https://lore.kernel.org/linux-security-module/20230710102319.19716-1-greg@enjellic.com/T/#t
+
+V3:
+https://lore.kernel.org/linux-security-module/20240401105015.27614-1-greg@enjellic.com/T/#t
+
+V4:
+https://lore.kernel.org/linux-security-module/20240826103728.3378-1-greg@enjellic.com/T/#t
+
+We started this work about 13-15 years ago.  We initially described
+our work and the need for it, 10 years ago almost to this day.  See
+our 2015 paper at the Linux Security Summit in Seattle.
+
+James Morris and Casey were in the first row, Stephen and a co-worker
+from the NSA were in the second row, to the speakers left.
+
+If one spends some time looking under the hood, TSEM is in large part
+about providing a generic framework for running multiple, independent
+and orthogonal security frameworks/policies/architectures, whatever
+one chooses to call these entities.
+
+The reason that we argue that TSEM is a generic framework, is that in
+our internal work, we have ported the major LSM's, including the IMA
+infrastructure, to run in isolated namespaces as plugins for TSEM's
+notion of Trusted Modeling Agents (TMA's).  We also have ongoing work
+that enables Kubernetes to dispatch workloads, using whatever LSM
+based security policy that container developers desire for their
+workloads.
+
+Suffice it to say, we have howed a lot of ground on the issues
+surrounding this, including issues surrounding production deployment
+of this type of technology.
+
+In our initial implementation, circa 2015, we adopted the approach of
+using a CLONE_* flag and wired the implementation of security
+namespaces into the rest of the namespace infrastructure.
+
+During COVID, we re-architected the entire implementation and moved to
+using a control file in the pseudo-filesystem that TSEM implements, we
+have never looked back on this decision.
+
+TSEM security workloads are a poster child for security namespaces
+that require a number of different setup parameters.  A command verb
+syntax with key=value pairs, written to a pseudo-file, has proven
+itself to be the most flexible approach when setting up security
+workloads.
+
+With respect to namespace transition, we trigger the transition of a
+process to a new namespace (unsharing) when the process issues the
+request via the control file.  This has proven to be, at once, the
+most straight forward and least security prone approach.
+
+The other major, and thorny issue, is the notion of another process
+'entering' a security namespace.  There are a ton of open issues to be
+considered with this, the approach that we took that has worked well
+to date, is the notion of a 'trust orchestrator' that has
+responsibility for controlling the namespace.  Any manipulations or
+control of the namespace are conducted through the orchestrator
+process.
+
+If anyone chooses to look at our implementation, you will find that we
+'bless' the orchestrator process, at the time of namespace creation,
+with access to the security namespace context control structure for
+the namespace being created.  The orchestrator is the only entity that
+can access the security state of the namespace, other than processes
+within the namespace itself.
+
+This significantly narrows the scope of vulnerability with respect to
+who or what can manipulate a security namespace.  There are a number
+of thorny issues, that we have not seen anyone mention, that surface
+with respect to allowing entry into a security namespace by an
+arbitrary process.  Believe me when I say we have found a number of
+them by accident and incident.
+
+So big picture.
+
+Over a decade of experience with these issues, suggests that Paul's
+premise that most of these issues are best left to specific LSM's that
+elect to implement namespacing, is correct.
+
+The challenge is that this situation ends up being all or nothing.
+
+The actual amount of code involved in unsharing a namespace is so
+trivial, in comparison to the work involved with setting up and
+maintaining state information for a security namespace context, that
+it seems to make little sense to implement this support at the level
+of the LSM infrastructure itself.
+
+If the decision is made to provide generic namespace support, other
+than a request to create a namespace, it will rapidly become a
+slippery slope with respect to the amount of infrastructure needed to
+address the complexities associated with every security model being
+different from every other.
+
+The caveat to this is if our notion of a 'trust orchestrator' would be
+deemed to have merit.  In that case, an LSM based namespace separation
+architecture would provide a common point for the orchestrator to be
+'blessed' with access to control of a namespace.
+
+The other open issue is whether or not a separate capability should be
+implemented that allows the creation of a new security namespace.  If
+one paws through our TSEM submissions, one will see that we proposed
+such a capability bit.
+
+Casey noted, rather emphatically, that no new capabilities were going
+to be implemented in Linux, particularly for what was described as a
+'toy' project.  He indicated that CAP_MAC_ADMIN was the canonical
+capability that should be used for manipulating LSM's.
+
+We will be very interested in seeing how a discussion around this
+evolves, as 'escaping' from an existing security context to a new one
+is an extremely critical operation from a security perspective, if one
+stands back and looks at the issue objectively.  If the concept of a
+'security orchestrator' is embraced, it would make perfect sense for
+the orchestrator to drop CAP_SEC_NS, or whatever it would be called,
+and retain CAP_MAC_ADMIN in order to manage the namespace.
+
+So lots of issues to consider; thorny, political and otherwise, on
+multiple fronts.
+
+> paul-moore.com
+
+Have a good day.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
+
