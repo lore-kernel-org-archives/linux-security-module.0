@@ -1,126 +1,213 @@
-Received: from sonic317-38.consmr.mail.ne1.yahoo.com (sonic317-38.consmr.mail.ne1.yahoo.com [66.163.184.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A5A2E2EF0
-	for <linux-security-module@vger.kernel.org>; Fri, 22 Aug 2025 14:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0477B1487E9
+	for <linux-security-module@vger.kernel.org>; Fri, 22 Aug 2025 15:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755874690; cv=none; b=fRHFjgLhqcqFCWNySGqL+kncw/5JoXOROhr6h5mrTGbpSvGQ+P+7LJM9esdhB+CNsaTAVMpB0UWWE+44MPlZHw/F6SQYJN1jpcIdQMrVpJUIpnwe4cFf2xIsuS+CcomCnZVrOtChLaQqqtVZQSAJmJBskcSauJyOeJh/HmDhOaw=
+	t=1755876618; cv=none; b=qVQViAWOXaQ576Fm7MFpAfFKfk2xSi4fJ+b1ozdY07NSQSKzerGyLchA9JJr0tY5/Sgf6AXJNGwgO7kQ9iKS0+qKhF7TqTOabaRZk4qZ5deMsinjdih4dsT0Q6Ms3JTlx2O+IIU0UX4B+Rjx9VGuI3K7ArySikPLPvKcOAqC0w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755874690; c=relaxed/simple;
-	bh=0uBDp71UoYPwyOUhhl+RNtU1adNBg4dLjJdIaxsH8wI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oAVOduTk04m1CJSs9ZGf9XvDLr1gAHmiOeVvAlr0LWJhTmGGt3BYxIa16aNtfsBP7DvhVgUFHYSLNuCJX9gHMDhVaQdb1khl6Up94Piulrs3tJKOpB5zUkO/i7d5e+X6kfm2+UwUdQZG1bp0UezDoIFKoMP6SqbtG9Slt9BfpHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=iGkspA/I; arc=none smtp.client-ip=66.163.184.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1755876618; c=relaxed/simple;
+	bh=Hdq5Ry1Oo1i4/2GBD0dGqX7HHIwg6UOJzlHrNI7JCgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZzKNGUyBOJZDZ60uoovcZlPTLK/TcRWubwnwqcUYQNnc8ip9n4gRdPtUs/kb2VrNhfZPBa4hJdvgPp65+KBzADeYcbRKgwUsIgH+OFd2z2A/7N5V4ngqT/f0zvFo0JhW22koXrBBmf+N4b5wW8dRdLn14k6dPoOXCoVUAT4SdXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=TvcZ+Kjv; arc=none smtp.client-ip=185.125.25.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="iGkspA/I"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755874681; bh=jgAvmR9fLvEdFinMwbwUuyk5/7co1gaNpIW47yD8sEQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=iGkspA/I8poksH1U9fBH4zefyQwSmuoL1837QBTkcoYpPsVVXikw09+r7v8EILi2DbhXxvtfCYTCKw2AzD50L+Aqfec4FQnjK4qoJswRt7RJDsOjncL9SvR1aZFDDk3bFtSZnBcZDeGKtdlaVHSWh0SdJ5FMxisoFHWYlWOQRN9I9RKraY8O+GUepWxtZiddH8jM49R4pcOKoBBynNymLrPyzGp4xgGzHBwKcg66sfoyvVWx97K6afVC+JncTugnVsn1RWCfSKRaiNxc7LGDBGoHrFJzVRcf3r6At2EpnEoz+SdaguX+4CIYOHJk91Shcifl+Yc44sTfrD4JoFOCtw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755874681; bh=EUfSMLr9RdRlnsj3KkNb01Wq3KT1GbefkYzrSbUVbWq=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=opnb6P7HtY3hCHCg2EFdNrER3ZQ4UWyJy4ajSDM9tcciRqBYAViU+GrC/AeaSiIu2VZk9+bzMEBS5KDaSUD4m6xWpR8EUWUTxyo+wOTnbgfCZ7XiekilCivz+z8hNaLLNvOUM6zb9p5LCkfxFn89U04m6MHC9pZRUP8gcMZwgD2QaGXuTKJkfZYugU6kwXhpRhZerSZtdsbnza/xZWIcMVS5/vJ0eCKaq93Nnu5Rc024olH3y90udhW7icSfW04XPXfLqbkVox0GThqyuUKYJYBY1Tche78Gf+vcBm0odGxa3Slkwz/HYrpcgnRd8gqLadfQFZ2TuK+A8HUF3zOoHQ==
-X-YMail-OSG: GbaHoxcVM1lU0.QHsTTTinSc1bQV0KtWS3Qj_v0KCstbTTUDzta70p6RqjemQVB
- iOzHT7ZDy1G_IRfm0QK1fZJe8wgceZhxNvmMN7Kcmr36B6HGFU_amuUK.4fnS1CBH5prfHKXr0iO
- 5WASrITUUmdjFJo.RuMgWDi_FRXPXGAS3PfOgt1cQ3N_Fv78uKxHwVTE.30Wxl5yOOnr1QGJ07RQ
- 5Nwz.PKdpekEX9VCWOy7ItNufMsljYTM0ecoq0Qf1DZR8QrG5GOrq7BqWMIjK.X4MFxEcD.9F2pL
- mGc4npjR4h63tcuFBZeOZCumpXZ1zpz2SXeMFzQW4TfB5dLW.IkExWFiaDH97xDGSoEFa.099r7R
- xJCqZRp0YjDfoivpnfCHGqBtT2llc740mNsR5VKsOxB9BYsnTSCf5m1R7HtKeXVTejav7k.gcrjR
- Nz2VNFNAEc6Gx71pzOvUsttbVHCxNJck31ozR7xB6DqGaQlXE4Y7tJqcuQXglnFaLLlJlotDp5_h
- zUgTiN2WMc0I.cuk.d02gWiAyosdlFD206PGyrW0UcIOloBo9MijBIip3YTWS51G1HfObpYufaL3
- 7TNNPU6XNeGkyMhvkD5GE4O2nROviEwj0DDRNHpHPSXJGbLHVLpJb7U7EXNsvFaBYPct5MX_cimc
- lwuyF_ghZe0Ojvnf7kZ0RWjQvUmNVSC9KPrKkFcLZIUv0ExNS8QGHBybxJPFhwVCcxOGT4xwPRjY
- iNOxh5hA07RZJlC2MT3pvMe7lSR9EUtSyUZMjUrjLL7b.h5nrgabmhj0BtuxC6bs6EnENcQsf4be
- HDl55dGUeC_huF0BZQSClmBNXkUTON6gLwoBvTgY6KQn6uD7Kf37870GM08eL1isg1HxZkMSpUWC
- 6i9IMdVnIjGqq9wogm4XHaUbLfPsz6WoTmsiQ4SXYXiMctO0h5SWFhkQ43bluQDvjHwPFR3O616X
- bEZThbG55qsiFK0acq7aAd.tFejqzmlegUEuHE.Gi0_kAFE5FVRlMX9pBB7mtUNh66lQAa76IZYM
- tVgt2_untc4tZbJ_9xybLG7u.FE0P8KK.m6xt2Y4cnfnz6._eyhP8i379votqMGq8HdjNruzkjI7
- chZuN5H4stHxG8uwoLieNkV9sf8twdFhU5DLRzxCX1Jk2OJ8qOiGqj7wiNjodHhKyDdf1GySWGgb
- mPWomvEtmb5_zSv7QwxvfXoB_IO5HPJanyFHcvdzcpOCJV_LZ8BujrFk5VjudJLrFuWZl9Njy.PR
- T1nggKMi11rEasPKo4JMFcke63SCkdqL0aaStFJA7RKJJ7RVUfSWZrAt4LyQT495U2nmC2dqOYpc
- uBHz9pevlBIy.33QyDxIq2S3_QR11.vscf.3tG3.kKLTzpvy8HA26mqza5Bodjzp6Gb09cZ9FXL_
- NwkprninSzGqkm895Yadow8nr0i_VfMIujDEDAHrhCpsXSWItOKcnapXNgm_8nXHFeXuongRvcnu
- KpZHIc3hHD66rgjLzx9yRwaz.VAIJHppwqYWEGT4ybkoWLLTUX5uD7mhtrqml_6Y13AGeSR41EP6
- UVFHp4VBQJr6mSpJ3ZOMhJ105Nrm7I6vkkx3A8.UYAqX4zZ9IYqLdrMD4QhkO3k72gzLGxe691qB
- mv56KTU2TWUEfU9NGcvECuxVR94T4oQqTS8QmT010sx_Lye_2SQEBavk3OX8Y_dh5KQgIPpBfH2o
- wnhXR8RAKPUukQ_9UwSwCfHwFlE5Watu6Sk57YVdTAapoUiBkX7RVw0SkD.B_BgW46GVxiyn5d5Y
- K._hjST2amMkg66cka4fSHz3nqmJoz4UUvIteCEUX5qYB478gCM2yDd5ACvOs7xk6HWQT.Xv0gcw
- FIxRBkpjOLfEDJ5hxHu9VBdMP.lUAHrOi5HfyXf3en5k5juIGuZmtPNHIQdgbKM5lQOQjRV6Rbbb
- r1hXn_InBH3u5EaQpCX43NbseO7Rv1D08eBRxgl_mCPwOGVSfwrvj_him.2bgTx_vjSiARAKIljM
- j1PhmvsScHF9O1eaAyaSi67R1aFZHo4sWNoq3mjsHoXScAeEzfCTxWCq5i6Po2eN03pEovjM1ZJt
- zl.Ndx2brUpQL3maF5nqzKy.EmusP.nSWOxeBd5mYzy5OOQ2wNhkjPgXeC5N9cpc2mu3vLf1u0cc
- Rl.RsrCSCOoyo9YRfXbH5wqkR_ft36zVk13pEeN6KQ.c9fAgDjPlIlvSujEt3lfkEyeX4y4askfh
- ggDR1AgFuLpnG8_eSMwGYgOMmM.epMiACyJ1YOA9_n7pgzN.cAlbjgxixeECaP_pKxRxVWRI3yaX
- nNwlFMlbM.LfSOf8tOA--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 77d36f34-8c9e-401b-8a86-cf22f9007e46
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Fri, 22 Aug 2025 14:58:01 +0000
-Received: by hermes--production-gq1-74d64bb7d7-bcggp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID cd81e3fa79d1c28c8db669a0b7f10f5c;
-          Fri, 22 Aug 2025 14:47:54 +0000 (UTC)
-Message-ID: <5612ec76-9257-402b-ac98-bdc8a8287a60@schaufler-ca.com>
-Date: Fri, 22 Aug 2025 07:47:51 -0700
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="TvcZ+Kjv"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4c7jmv6Yzyz997;
+	Fri, 22 Aug 2025 16:51:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1755874271;
+	bh=zTTfmyqDupOjx6oqqavArctJ4iCrnJ+ZVQgZlvGbaKA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TvcZ+Kjv3uiFSzBmD6CV25iFw47KiUlXV6COeYfUKWUrElaR53ZVWrCnbp9ydTekv
+	 6UsvJuVk02SEcKusMSylawRGBOCGBi4Qv9BNyoTgDZPnVA7pj2yrujLWENWoohYZv6
+	 yCsGRC0FUxE07oBZSN53cZxCMXLrRrgGZYhsCVak=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4c7jmt2VbwzFpN;
+	Fri, 22 Aug 2025 16:51:10 +0200 (CEST)
+Date: Fri, 22 Aug 2025 16:51:09 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+Cc: akpm@linux-foundation.org, shuah@kernel.org, gnoack@google.com, 
+	david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	horms@kernel.org, ming.lei@redhat.com, skhan@linuxfoundation.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH] selftests: centralise maybe-unused definition in
+ kselftest.h
+Message-ID: <20250822.Ahno5pong1Ai@digikod.net>
+References: <20250821101159.2238-1-reddybalavignesh9979@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: LSM namespacing API
-To: Paul Moore <paul@paul-moore.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
- John Johansen <john.johansen@canonical.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>,
- =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
- <2e303958-ca60-4458-ac6d-6b83f331f660@schaufler-ca.com>
- <CAHC9VhQ5Vs+_DYAcN_Z4M9PVqW=PjaHcr4sVXADU5yqp1zFHVQ@mail.gmail.com>
- <20250820.xo0hee4Zeeyu@digikod.net>
- <CAHC9VhSS1K0Zsq_ULP4sK9Okwthd+CO3vUdVPAf+F8FKfZsVqQ@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhSS1K0Zsq_ULP4sK9Okwthd+CO3vUdVPAf+F8FKfZsVqQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.24362 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+In-Reply-To: <20250821101159.2238-1-reddybalavignesh9979@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On 8/21/2025 7:14 PM, Paul Moore wrote:
-> On Thu, Aug 21, 2025 at 6:00 AM Mickaël Salaün <mic@digikod.net> wrote:
->> On Tue, Aug 19, 2025 at 02:40:52PM -0400, Paul Moore wrote:
->>> On Tue, Aug 19, 2025 at 1:11 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>> The advantage of a clone flag is that the operation is atomic with
->>>> the other namespace flag based behaviors. Having a two step process
->>>>
->>>>         clone(); lsm_set_self_attr(); - or -
->>>>         lsm_set_self_attr(); clone();
->>>>
->>>> is going to lead to cases where neither order really works correctly.
->>> I was envisioning something that works similarly to LSM_ATTR_EXEC
->>> where the unshare isn't immediate, but rather happens at a future
->>> event.  With LSM_ATTR_EXEC it happens at the next exec*(), with
->>> LSM_ATTR_UNSHARE I imagine it would happen at the next clone*().
->> The next unshare(2) would make more sense to me.
-> That's definitely something to discuss.  I've been fairly loose on
-> that in the discussion thus far, but as things are starting to settle
-> on the lsm_set_self_attr(2) approach as one API, we should start to
-> clarify that.
->
->> This deferred operation could be requested with a flag in
->> lsm_config_system_policy(2) instead:
->> https://lore.kernel.org/r/20250709080220.110947-1-maxime.belair@canonical.com
-> I want to keep the policy syscall work separate from the LSM namespace
-> discussion as we don't want to require a policy load operation to
-> create a new LSM namespace.  I think it's probably okay if the policy
-> syscall work were to be namespace aware so that an orchestrator could
-> load a LSM policy into a LSM namespace other than it's own, but that
-> is still not overly dependent on what we are discussing here (yes,
-> maybe it is a little, but only just so).
+On Thu, Aug 21, 2025 at 03:41:59PM +0530, Bala-Vignesh-Reddy wrote:
+> Several selftests subdirectories duplicated the define __maybe_unused,
+> leading to redundant code. Moved to kselftest.h header and removed
+> other definition.
+> 
+> This addresses the duplication noted in the proc-pid-vm warning fix
+> 
+> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+> Link:https://lore.kernel.org/lkml/20250820143954.33d95635e504e94df01930d0@linux-foundation.org/
+> 
+> Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
 
-Policy load and namespace manipulation *must* be kept separate. Smack
-requires the ability to "load policy" at any time. Smack allows a process
-to add "policy" to further restrict its own access, and does not require
-a namespace change. There has been an implementation of namespaces for
-Smack, but the developers disappeared quietly and sadly no one picked it
-up. Introducing a requirement that LSMs support namespaces in order to
-load policy beyond system initialization is a non-starter.
+Looks good for Landlock:
 
+Acked-by: Mickaël Salaün <mic@digikod.net>
+
+> ---
+>  tools/testing/selftests/kselftest.h                    | 4 ++++
+>  tools/testing/selftests/landlock/audit.h               | 6 ++----
+>  tools/testing/selftests/landlock/common.h              | 4 ----
+>  tools/testing/selftests/mm/pkey-helpers.h              | 3 ---
+>  tools/testing/selftests/net/psock_lib.h                | 4 ----
+>  tools/testing/selftests/perf_events/watermark_signal.c | 2 --
+>  tools/testing/selftests/proc/proc-pid-vm.c             | 4 ----
+>  tools/testing/selftests/ublk/utils.h                   | 2 --
+>  8 files changed, 6 insertions(+), 23 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
+> index c3b6d2604b1e..661d31c4b558 100644
+> --- a/tools/testing/selftests/kselftest.h
+> +++ b/tools/testing/selftests/kselftest.h
+> @@ -92,6 +92,10 @@
+>  #endif
+>  #define __printf(a, b)   __attribute__((format(printf, a, b)))
+>  
+> +#ifndef __maybe_unused
+> +#define __maybe_unused __attribute__((__unused__))
+> +#endif
+> +
+>  /* counters */
+>  struct ksft_count {
+>  	unsigned int ksft_pass;
+> diff --git a/tools/testing/selftests/landlock/audit.h b/tools/testing/selftests/landlock/audit.h
+> index b16986aa6442..02fd1393947a 100644
+> --- a/tools/testing/selftests/landlock/audit.h
+> +++ b/tools/testing/selftests/landlock/audit.h
+> @@ -20,14 +20,12 @@
+>  #include <sys/time.h>
+>  #include <unistd.h>
+>  
+> +#include "../kselftest.h"
+> +
+>  #ifndef ARRAY_SIZE
+>  #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+>  #endif
+>  
+> -#ifndef __maybe_unused
+> -#define __maybe_unused __attribute__((__unused__))
+> -#endif
+> -
+>  #define REGEX_LANDLOCK_PREFIX "^audit([0-9.:]\\+): domain=\\([0-9a-f]\\+\\)"
+>  
+>  struct audit_filter {
+> diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
+> index 88a3c78f5d98..9acecae36f51 100644
+> --- a/tools/testing/selftests/landlock/common.h
+> +++ b/tools/testing/selftests/landlock/common.h
+> @@ -22,10 +22,6 @@
+>  
+>  #define TMP_DIR "tmp"
+>  
+> -#ifndef __maybe_unused
+> -#define __maybe_unused __attribute__((__unused__))
+> -#endif
+> -
+
+We could explicitly include kselftest.h in this file, but it's already
+included by kselftest_harness.h, so that's OK.
+
+>  /* TEST_F_FORK() should not be used for new tests. */
+>  #define TEST_F_FORK(fixture_name, test_name) TEST_F(fixture_name, test_name)
+>  
+> diff --git a/tools/testing/selftests/mm/pkey-helpers.h b/tools/testing/selftests/mm/pkey-helpers.h
+> index ea404f80e6cb..fa15f006fa68 100644
+> --- a/tools/testing/selftests/mm/pkey-helpers.h
+> +++ b/tools/testing/selftests/mm/pkey-helpers.h
+> @@ -84,9 +84,6 @@ extern void abort_hooks(void);
+>  #ifndef noinline
+>  # define noinline __attribute__((noinline))
+>  #endif
+> -#ifndef __maybe_unused
+> -# define __maybe_unused __attribute__((__unused__))
+> -#endif
+>  
+>  int sys_pkey_alloc(unsigned long flags, unsigned long init_val);
+>  int sys_pkey_free(unsigned long pkey);
+> diff --git a/tools/testing/selftests/net/psock_lib.h b/tools/testing/selftests/net/psock_lib.h
+> index 6e4fef560873..067265b0a554 100644
+> --- a/tools/testing/selftests/net/psock_lib.h
+> +++ b/tools/testing/selftests/net/psock_lib.h
+> @@ -22,10 +22,6 @@
+>  
+>  #define PORT_BASE			8000
+>  
+> -#ifndef __maybe_unused
+> -# define __maybe_unused		__attribute__ ((__unused__))
+> -#endif
+> -
+>  static __maybe_unused void pair_udp_setfilter(int fd)
+>  {
+>  	/* the filter below checks for all of the following conditions that
+> diff --git a/tools/testing/selftests/perf_events/watermark_signal.c b/tools/testing/selftests/perf_events/watermark_signal.c
+> index e03fe1b9bba2..b3a72f0ac522 100644
+> --- a/tools/testing/selftests/perf_events/watermark_signal.c
+> +++ b/tools/testing/selftests/perf_events/watermark_signal.c
+> @@ -17,8 +17,6 @@
+>  
+>  #include "../kselftest_harness.h"
+>  
+> -#define __maybe_unused __attribute__((__unused__))
+> -
+>  static int sigio_count;
+>  
+>  static void handle_sigio(int signum __maybe_unused,
+> diff --git a/tools/testing/selftests/proc/proc-pid-vm.c b/tools/testing/selftests/proc/proc-pid-vm.c
+> index 978cbcb3eb11..2a72d37ad008 100644
+> --- a/tools/testing/selftests/proc/proc-pid-vm.c
+> +++ b/tools/testing/selftests/proc/proc-pid-vm.c
+> @@ -47,10 +47,6 @@
+>  #include <sys/resource.h>
+>  #include <linux/fs.h>
+>  
+> -#ifndef __maybe_unused
+> -#define __maybe_unused __attribute__((__unused__))
+> -#endif
+> -
+>  #include "../kselftest.h"
+>  
+>  static inline long sys_execveat(int dirfd, const char *pathname, char **argv, char **envp, int flags)
+> diff --git a/tools/testing/selftests/ublk/utils.h b/tools/testing/selftests/ublk/utils.h
+> index 36545d1567f1..a852e0b7153e 100644
+> --- a/tools/testing/selftests/ublk/utils.h
+> +++ b/tools/testing/selftests/ublk/utils.h
+> @@ -2,8 +2,6 @@
+>  #ifndef KUBLK_UTILS_H
+>  #define KUBLK_UTILS_H
+>  
+> -#define __maybe_unused __attribute__((unused))
+> -
+>  #ifndef min
+>  #define min(a, b) ((a) < (b) ? (a) : (b))
+>  #endif
+> -- 
+> 2.43.0
+> 
+> 
