@@ -1,59 +1,59 @@
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030C71CF5C6
-	for <linux-security-module@vger.kernel.org>; Fri, 22 Aug 2025 01:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E391B4F0E
+	for <linux-security-module@vger.kernel.org>; Fri, 22 Aug 2025 01:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755827865; cv=none; b=lqc1aA3Xv7AUlEsoSPW1MYzdbkI0ET+xJVSnGVjBdInkRegUMnKhsOu9hLNm/wSjTtlTBbvD1/0Y2+Uojeikk28Es/u9VxNDFgMFqwt5OAFii8kIifLN6OPgoCuispwlQdI5QCYCvh3WmGH84p3AZvZZUzlRLeL08/VMoYueGUg=
+	t=1755827978; cv=none; b=VLlPLqt33B6ACTzLyiCS1+ayANGI/Hw8LMU2MbjK8dXqa4qsJmucbzTjhGI6dkRZiWt0Ug1998dQXKtIUA2NdMa2FWoF4/oir+YcAchb8Zt3ZasXxismvmagsYn5ItZpre6wHq4OS4C3LcHLgSZTH+Ira9hxlzBo5kd4yFWps/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755827865; c=relaxed/simple;
-	bh=HDX1vDIz38irxRzjmhKxNAsgi3hHXTFvqpG5Z+AVS30=;
+	s=arc-20240116; t=1755827978; c=relaxed/simple;
+	bh=TsNvDlSM3gTmQZlPmCWdbzWUbbUcf6kgb6BjCZfXKWU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gcvTuzBL8xAqVAPats1e9GlKlDyLa+LIH1u8jO6LJ2CsKq/hOZgIfVoHbRB4Y9wIszzwZMJMA+FVHmlDF5YHh/kMYYjYH4FxSnFN4MrFJ9iOFFMKAws7KWRmVwmvyHmNCe9pHfl6FV49RxDFENq8Smsmt/tNJw4SASZ+8kHZPFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Z7sLC5UY; arc=none smtp.client-ip=209.85.216.41
+	 To:Cc:Content-Type; b=lRu757NsYBR9XudYcN70j+QeeldaGEI8Y0xV7BZeNRp6YkucC4jHrKsFqxZaIb59mTI19nLFn+Lecl18dbIQuwJDZbwylkptGt70awEY/ZZ0Yt15C2Io1U+cEEAfUlNfqA4C3xu7/Zuqi6FWNp4xjdtffjNfYJF7IglcSn+0q4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MERo+fdJ; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Z7sLC5UY"
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-323267b7dfcso1551474a91.1
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Aug 2025 18:57:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MERo+fdJ"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76e2e89e89fso2204607b3a.1
+        for <linux-security-module@vger.kernel.org>; Thu, 21 Aug 2025 18:59:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1755827863; x=1756432663; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1755827977; x=1756432777; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gcBAWRWLzV8vtHRJ/EsUJUqne4oZl3PFu9tayvpjkk4=;
-        b=Z7sLC5UYgRndZdeJEyH7I0of2R+NfeQKux4stXUk0WwVZtlQfSuh19W1yW0OLfJN6b
-         pYB+nDCViksrSXrHJR80kKSJaq/Z5YKtImQgd/mx1Yn79USjXFpKZqNhhogXDRd5k3mf
-         pPBYeI2Vi7VRJahUiZBmPTWx2DDneDibMKS1FJi0GidCT389c2ypnkj4azIvwj4LbkQg
-         tG0sJ9kUD6uhyRTMFCZL7AmU42jwmDynlo3ANlo0MmMteCKED++4bOdeLLjX0DCOAMNV
-         cRcjeaeWa4jo6KkDQ0uuczMQkDqsX/54qTEbPVFuebE6rHRg/+ikHzzFBWpUKGKu9La/
-         HrEg==
+        bh=TsNvDlSM3gTmQZlPmCWdbzWUbbUcf6kgb6BjCZfXKWU=;
+        b=MERo+fdJcSrwdNWzlgZXn2nqkb/atm+apeRvsEPfNXHeWjYCGlYLuZGh3Jy+Hg3NRY
+         7yC/9bZBiYGn0+0kiU/UYBYnxJR30TwOSZz6x4jy9cQTKVxn8NY1RM93vTA0abMlmLRG
+         9/LcYKJAvDIBN7ii5507YK8yRPLhCid+u1/jWcBgqR6kXi2MpimY1GODT36m3oewPpFX
+         Dyyj8kZ1bMlL07n1Z3T8ju6nk1U8MGv9kjHe/52IgIPlrakewaIx3d+QwetXxGCCbTfv
+         Qxg1dw5Bo+ctyW1q+cwhPggxUd9ZzZkXSQzDAPEfcRAft7+i054+dJ7gfS/1Fl+21Ld1
+         aB8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755827863; x=1756432663;
+        d=1e100.net; s=20230601; t=1755827977; x=1756432777;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gcBAWRWLzV8vtHRJ/EsUJUqne4oZl3PFu9tayvpjkk4=;
-        b=j95I8la1epLP2SUosvllNWZO/atlywtKCfWfzHYA5bgfM7TldB2+YfRqT+QhR8cpRR
-         IItOHGvPS4oS/As24ciYhGUK8JWeW+1ewtojkdaCL5a1USUyG8b2koqJ3EB2N0epy6Ib
-         C4L1NDz0Ss0B6e/cRvqsRh547VXdzCo2wCxel+JTAu/1VQNDf+WOozZx6+jCpE+nD72C
-         SKpgIXlQZyYCpaMTqiBG7uyQH6EGn6u+VYJERhbq4XQnnNixQoI0mrB4YlH6nvnObjl7
-         0WHPrwwHqMcFgky91tyWByBZ/jqbWUnXNoOardWm6fL6yoWlIhcqQNiWIVHXJM5iLOcN
-         CXkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXSkinX1RJ/uxpYc5GgQys6zRGDzwxQLv+fjBpIOxzZFHeP/uJIanvzeUys7zqm2TyuqhU1zwCnkqT1Iay/G4k58Y7n6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwANX3gFl7VBBsisPsghXOTNSVJPqfFyVbM7EpgszqE+fHBTDmp
-	wBitiOjKlXrnFw4kjwc17wpsnHCxX4vWVThOpDSfoOUUIPIxe+PI3AXlIwTCPeJShyrAxixO5z6
-	hAPXUmV0LRsOaHRTVlpYBTysP5u/hfPJnT8AR1uoJ
-X-Gm-Gg: ASbGncuBjKXbG+38FoVMBxjkd0U4ibs/Ettyb2H3neVPrWlXXFGq4J1DPZOb2rkZaV/
-	FSKNmCABzj6DJ9FK/Bk+vrpFRyMuyl7TmMolPt3xQTBBJ4Y9UKsXYFlGSEZbdgRL5iVVkPsjphb
-	DCK+XGEHhXEeNWeG8SnriQXC6WMyMPdMAXQ+nOmAkYIWmiGsAfBtSuqiy9rjvMKOCxi6GoqwZ+t
-	mvM1x0=
-X-Google-Smtp-Source: AGHT+IH1ZNLlrreE+FgUP32WDzmZEEGJ35VFFAoRBIDSZnK7lVhaDwQEoGoFQeeB2hiGhWT/z4O7Mb90t+H3MSdKkm4=
-X-Received: by 2002:a17:90b:3ec2:b0:321:c53c:4e50 with SMTP id
- 98e67ed59e1d1-3251774af1emr1953469a91.18.1755827862963; Thu, 21 Aug 2025
- 18:57:42 -0700 (PDT)
+        bh=TsNvDlSM3gTmQZlPmCWdbzWUbbUcf6kgb6BjCZfXKWU=;
+        b=BiJlE2SVowghbGeFrDF2ADRKmkaZCaaruxFMygqFW21eFbARab80nCbfOGrnYdRF95
+         MqWIMf/MY70rmdj/oAuXk0zHL3l/XzqA/AnPTgNBvhbE6oCoez5zWQGnmP1dFzW0VBjy
+         yqZKf6hyTezBkPEHuyp1x/0bLsDEqvXixMxDmvfpKX2QHyEI14ebbVANuvCa3D89Hg73
+         /qaie2lLy40wIShab9gUiXv3r6ScW8OLH0W8NbFggjQtwLS0MSqvZQ5p3T9naBbnv3yX
+         qVlC7kLFTcz76gc5Vv7jdMYSr5bjQo04WalHC3Kj+zdcr+1h6B9TP/UzSIcXn/vilflU
+         0ToA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyGh5rS70o2PP5MNK16ipJx87fTBbBNoahkYMKBNzrn5iTcFNPnURxT+Gm3nbwRq1Xxsg0AWRGeqFia1BnGy9lSRecWdY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9oGBHEvj47siJ3pJSb6edeLQbhvEZpLE3RazeLkFXpVwbhlKz
+	vuolE/8Cq0w7iob319ITF2GHgFUjdQwesjXozptbjvJfMhawwjwiU9id9xS7FB1VygnC3dIR4T4
+	UN2FV9zoBYP1CS6WINkuhXecqlC6ESjlKHc3yfnm1
+X-Gm-Gg: ASbGnctREwTulQRq9nz243pArk9+nskIVcDaLxSCflvw3KebdziBZahnx+aT/dEUfaf
+	o7gI2z0haHLhJx/AyHbody1FCdGhnwfbr1VTqS3TMJcM7caojzS1fBEvR8dj+alZAoh9tFjRhF3
+	K+QYS7GJoz+T+dLv0ejULeFamUoRObyUcTdMCuds14AuxrGbrpEInD8wiZNUI4y+gb7eiO1h7rP
+	U4nGgs=
+X-Google-Smtp-Source: AGHT+IHGNO4iEBDmIi3DVZcy3lafa7NWsHIA6a9tO/5Ie7EVox8OrGnAGwKfGuYi3Oa7zqhlrzLYPlyi8GEij6RXFk8=
+X-Received: by 2002:a05:6a20:549d:b0:240:1090:76f2 with SMTP id
+ adf61e73a8af0-24340ccf1d4mr1803058637.23.1755827976647; Thu, 21 Aug 2025
+ 18:59:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -61,61 +61,33 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
- <2e303958-ca60-4458-ac6d-6b83f331f660@schaufler-ca.com> <CAHC9VhQ5Vs+_DYAcN_Z4M9PVqW=PjaHcr4sVXADU5yqp1zFHVQ@mail.gmail.com>
- <7d4d60d6-fe50-4646-9f9b-0cb524aef3fb@canonical.com>
-In-Reply-To: <7d4d60d6-fe50-4646-9f9b-0cb524aef3fb@canonical.com>
+ <CAEjxPJ5EvR+2fboLu_nBGZu+ZVUpX4KM6xdPUqDErCmw=iA37g@mail.gmail.com> <67e72960-c985-48e1-aaeb-a4286cc8508f@canonical.com>
+In-Reply-To: <67e72960-c985-48e1-aaeb-a4286cc8508f@canonical.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 21 Aug 2025 21:57:31 -0400
-X-Gm-Features: Ac12FXy3E6XDKd9eaGMKRCdxhTTgCYLxDzvUXMH19j3rU9CkgbY9aMGY9kit2rY
-Message-ID: <CAHC9VhTE3cf80U0BRJLhYcWj9vc6+S_8fotrEHo7eRfFkLnveA@mail.gmail.com>
+Date: Thu, 21 Aug 2025 21:59:24 -0400
+X-Gm-Features: Ac12FXwauI7eA7Trf3V22GYm2aQdDEQlqqrtcS1pjjrc1NspBpwZU8gWgWLTUaQ
+Message-ID: <CAHC9VhQ1hR4Yowf0a2X9jvY=CobcXVa=4uCwa+qwvktBGReUUw@mail.gmail.com>
 Subject: Re: LSM namespacing API
 To: John Johansen <john.johansen@canonical.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 21, 2025 at 3:23=E2=80=AFAM John Johansen
+On Thu, Aug 21, 2025 at 3:46=E2=80=AFAM John Johansen
 <john.johansen@canonical.com> wrote:
-> On 8/19/25 11:40, Paul Moore wrote:
-> > On Tue, Aug 19, 2025 at 1:11=E2=80=AFPM Casey Schaufler <casey@schaufle=
-r-ca.com> wrote:
-> >>
-> >> The advantage of a clone flag is that the operation is atomic with
-> >> the other namespace flag based behaviors. Having a two step process
-> >>
-> >>          clone(); lsm_set_self_attr(); - or -
-> >>          lsm_set_self_attr(); clone();
-> >>
-> >> is going to lead to cases where neither order really works correctly.
-> >
-> > I was envisioning something that works similarly to LSM_ATTR_EXEC
-> > where the unshare isn't immediate, but rather happens at a future
-> > event.  With LSM_ATTR_EXEC it happens at the next exec*(), with
-> > LSM_ATTR_UNSHARE I imagine it would happen at the next clone*().
+> On 8/19/25 10:47, Stephen Smalley wrote:
+
+...
+
+> > This is handled for other Linux namespaces by opening a pseudo file
+> > under /proc/pid/ns and invoking setns(2), so not sure how we want to
+> > do it.
 >
-> I do think something like this is needed to deal well with the two
-> step process. Without it is fairly easy to get into situations
-> where you either need more permissions, than strictly necessary,
-> because of steps in between or as Casey says things just don't work
-> correctly.
+> That is a possible interface, not one that I like, so I would like to
+> explore other options first.
 
-I think we're starting to all coalesce on this basic idea now, at
-least for creating new LSM namespace sets, that's good.  As the only
-LSM that really has a namespace currently, would AppArmor be able to
-work within the lsm_set_self_attr(2) approach, or would you need
-something a bit different?  If so, can you give us a basic idea of
-what AA would need to work?
-
-> There will need to be an additional call that allows entering a
-> namespace separately from clone/unshare, but that covers a different
-> use case.
-
-In this particular case I've been thinking of not allowing the same
-level of arbitrary LSM namespace composability, but rather limiting
-the caller to the set of LSM namespaces already configured for a given
-process, using the procfs/setns(2) mechanism.  Does that work for your
-use case(s), or do you need more flexibility?
+Fair enough, suggestions are definitely welcome :)
 
 --=20
 paul-moore.com
