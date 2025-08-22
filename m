@@ -1,213 +1,121 @@
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0477B1487E9
-	for <linux-security-module@vger.kernel.org>; Fri, 22 Aug 2025 15:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A806B2EE5FE
+	for <linux-security-module@vger.kernel.org>; Fri, 22 Aug 2025 17:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755876618; cv=none; b=qVQViAWOXaQ576Fm7MFpAfFKfk2xSi4fJ+b1ozdY07NSQSKzerGyLchA9JJr0tY5/Sgf6AXJNGwgO7kQ9iKS0+qKhF7TqTOabaRZk4qZ5deMsinjdih4dsT0Q6Ms3JTlx2O+IIU0UX4B+Rjx9VGuI3K7ArySikPLPvKcOAqC0w0=
+	t=1755882501; cv=none; b=l0W3W1dGBixtuzzM60yVoEGEmnv3bWzaXDESfAEYxkGMm0zUzU6lxvu8BmLUGj0w9ImWqt0dNSBsIv5THLm0m6WFt/8XjWJ+UXRhAxgkykepoQPQY7KRCqgMI/lw1ApTt08MpJINR0Q7IrbzKrOneffksiVGzIJspPHTM5oL9xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755876618; c=relaxed/simple;
-	bh=Hdq5Ry1Oo1i4/2GBD0dGqX7HHIwg6UOJzlHrNI7JCgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZzKNGUyBOJZDZ60uoovcZlPTLK/TcRWubwnwqcUYQNnc8ip9n4gRdPtUs/kb2VrNhfZPBa4hJdvgPp65+KBzADeYcbRKgwUsIgH+OFd2z2A/7N5V4ngqT/f0zvFo0JhW22koXrBBmf+N4b5wW8dRdLn14k6dPoOXCoVUAT4SdXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=TvcZ+Kjv; arc=none smtp.client-ip=185.125.25.10
+	s=arc-20240116; t=1755882501; c=relaxed/simple;
+	bh=V2ZTsarFg/J8E5OaQui6bJ/rqih15nGa1jJfmYgVI1U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=drrguibY5Y57e3IaYdlFpooNJ8JqcD4DSatwGMBIfXk74H3zOTKgHBHwFTHHxTxxwk5cp9ohBnedIv58xRm2EWYo+9FqmMsEgw4ZGthuQ2wb4W9UDDL6Vx4p0Pd7yMkAJOR9a/p3n0u1+uJApStasu+b988/g1uNd+CeMYq0y60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=hG5HIpVS; arc=none smtp.client-ip=45.157.188.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="TvcZ+Kjv"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4c7jmv6Yzyz997;
-	Fri, 22 Aug 2025 16:51:11 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="hG5HIpVS"
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4c7mpy134kzxXK;
+	Fri, 22 Aug 2025 19:08:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1755874271;
-	bh=zTTfmyqDupOjx6oqqavArctJ4iCrnJ+ZVQgZlvGbaKA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TvcZ+Kjv3uiFSzBmD6CV25iFw47KiUlXV6COeYfUKWUrElaR53ZVWrCnbp9ydTekv
-	 6UsvJuVk02SEcKusMSylawRGBOCGBi4Qv9BNyoTgDZPnVA7pj2yrujLWENWoohYZv6
-	 yCsGRC0FUxE07oBZSN53cZxCMXLrRrgGZYhsCVak=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4c7jmt2VbwzFpN;
-	Fri, 22 Aug 2025 16:51:10 +0200 (CEST)
-Date: Fri, 22 Aug 2025 16:51:09 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
-Cc: akpm@linux-foundation.org, shuah@kernel.org, gnoack@google.com, 
-	david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	horms@kernel.org, ming.lei@redhat.com, skhan@linuxfoundation.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH] selftests: centralise maybe-unused definition in
- kselftest.h
-Message-ID: <20250822.Ahno5pong1Ai@digikod.net>
-References: <20250821101159.2238-1-reddybalavignesh9979@gmail.com>
+	s=20191114; t=1755882489;
+	bh=NUlPE+heYCOxk91D6n6N1q+wkFLg9BAFfbEyk2M2p7s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hG5HIpVSutSZRtsFd06T355DYxH9qGfeUrqxCfDId/uv7nj6uXVjPRBf18tBMYdh4
+	 J6MiUTTm1h4vs8d4xuZbZYXJlYRjshhhkRv5DqPl8As0hFQMoU8Fji4LbbavOEzeD6
+	 pu8JGqfHl0XehVrNxAaaC0/jXXueFPe5Q8Oj6srA=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4c7mpw1MlWzprv;
+	Fri, 22 Aug 2025 19:08:08 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Serge Hallyn <serge@hallyn.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Heimes <christian@python.org>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Elliott Hughes <enh@google.com>,
+	Fan Wu <wufan@linux.microsoft.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jordan R Abrahams <ajordanr@google.com>,
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+	Luca Boccassi <bluca@debian.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+	Robert Waite <rowait@microsoft.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Scott Shell <scottsh@microsoft.com>,
+	Steve Dower <steve.dower@python.org>,
+	Steve Grubb <sgrubb@redhat.com>,
+	kernel-hardening@lists.openwall.com,
+	linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+Date: Fri, 22 Aug 2025 19:07:58 +0200
+Message-ID: <20250822170800.2116980-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250821101159.2238-1-reddybalavignesh9979@gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Thu, Aug 21, 2025 at 03:41:59PM +0530, Bala-Vignesh-Reddy wrote:
-> Several selftests subdirectories duplicated the define __maybe_unused,
-> leading to redundant code. Moved to kselftest.h header and removed
-> other definition.
-> 
-> This addresses the duplication noted in the proc-pid-vm warning fix
-> 
-> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> Link:https://lore.kernel.org/lkml/20250820143954.33d95635e504e94df01930d0@linux-foundation.org/
-> 
-> Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+Hi,
 
-Looks good for Landlock:
+Script interpreters can check if a file would be allowed to be executed
+by the kernel using the new AT_EXECVE_CHECK flag. This approach works
+well on systems with write-xor-execute policies, where scripts cannot
+be modified by malicious processes. However, this protection may not be
+available on more generic distributions.
 
-Acked-by: Mickaël Salaün <mic@digikod.net>
+The key difference between `./script.sh` and `sh script.sh` (when using
+AT_EXECVE_CHECK) is that execve(2) prevents the script from being opened
+for writing while it's being executed. To achieve parity, the kernel
+should provide a mechanism for script interpreters to deny write access
+during script interpretation. While interpreters can copy script content
+into a buffer, a race condition remains possible after AT_EXECVE_CHECK.
 
-> ---
->  tools/testing/selftests/kselftest.h                    | 4 ++++
->  tools/testing/selftests/landlock/audit.h               | 6 ++----
->  tools/testing/selftests/landlock/common.h              | 4 ----
->  tools/testing/selftests/mm/pkey-helpers.h              | 3 ---
->  tools/testing/selftests/net/psock_lib.h                | 4 ----
->  tools/testing/selftests/perf_events/watermark_signal.c | 2 --
->  tools/testing/selftests/proc/proc-pid-vm.c             | 4 ----
->  tools/testing/selftests/ublk/utils.h                   | 2 --
->  8 files changed, 6 insertions(+), 23 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
-> index c3b6d2604b1e..661d31c4b558 100644
-> --- a/tools/testing/selftests/kselftest.h
-> +++ b/tools/testing/selftests/kselftest.h
-> @@ -92,6 +92,10 @@
->  #endif
->  #define __printf(a, b)   __attribute__((format(printf, a, b)))
->  
-> +#ifndef __maybe_unused
-> +#define __maybe_unused __attribute__((__unused__))
-> +#endif
-> +
->  /* counters */
->  struct ksft_count {
->  	unsigned int ksft_pass;
-> diff --git a/tools/testing/selftests/landlock/audit.h b/tools/testing/selftests/landlock/audit.h
-> index b16986aa6442..02fd1393947a 100644
-> --- a/tools/testing/selftests/landlock/audit.h
-> +++ b/tools/testing/selftests/landlock/audit.h
-> @@ -20,14 +20,12 @@
->  #include <sys/time.h>
->  #include <unistd.h>
->  
-> +#include "../kselftest.h"
-> +
->  #ifndef ARRAY_SIZE
->  #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
->  #endif
->  
-> -#ifndef __maybe_unused
-> -#define __maybe_unused __attribute__((__unused__))
-> -#endif
-> -
->  #define REGEX_LANDLOCK_PREFIX "^audit([0-9.:]\\+): domain=\\([0-9a-f]\\+\\)"
->  
->  struct audit_filter {
-> diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
-> index 88a3c78f5d98..9acecae36f51 100644
-> --- a/tools/testing/selftests/landlock/common.h
-> +++ b/tools/testing/selftests/landlock/common.h
-> @@ -22,10 +22,6 @@
->  
->  #define TMP_DIR "tmp"
->  
-> -#ifndef __maybe_unused
-> -#define __maybe_unused __attribute__((__unused__))
-> -#endif
-> -
+This patch series introduces a new O_DENY_WRITE flag for use with
+open*(2) and fcntl(2). Both interfaces are necessary since script
+interpreters may receive either a file path or file descriptor. For
+backward compatibility, open(2) with O_DENY_WRITE will not fail on
+unsupported systems, while users requiring explicit support guarantees
+can use openat2(2).
 
-We could explicitly include kselftest.h in this file, but it's already
-included by kselftest_harness.h, so that's OK.
+The check_exec.rst documentation and related examples do not mention this new
+feature yet.
 
->  /* TEST_F_FORK() should not be used for new tests. */
->  #define TEST_F_FORK(fixture_name, test_name) TEST_F(fixture_name, test_name)
->  
-> diff --git a/tools/testing/selftests/mm/pkey-helpers.h b/tools/testing/selftests/mm/pkey-helpers.h
-> index ea404f80e6cb..fa15f006fa68 100644
-> --- a/tools/testing/selftests/mm/pkey-helpers.h
-> +++ b/tools/testing/selftests/mm/pkey-helpers.h
-> @@ -84,9 +84,6 @@ extern void abort_hooks(void);
->  #ifndef noinline
->  # define noinline __attribute__((noinline))
->  #endif
-> -#ifndef __maybe_unused
-> -# define __maybe_unused __attribute__((__unused__))
-> -#endif
->  
->  int sys_pkey_alloc(unsigned long flags, unsigned long init_val);
->  int sys_pkey_free(unsigned long pkey);
-> diff --git a/tools/testing/selftests/net/psock_lib.h b/tools/testing/selftests/net/psock_lib.h
-> index 6e4fef560873..067265b0a554 100644
-> --- a/tools/testing/selftests/net/psock_lib.h
-> +++ b/tools/testing/selftests/net/psock_lib.h
-> @@ -22,10 +22,6 @@
->  
->  #define PORT_BASE			8000
->  
-> -#ifndef __maybe_unused
-> -# define __maybe_unused		__attribute__ ((__unused__))
-> -#endif
-> -
->  static __maybe_unused void pair_udp_setfilter(int fd)
->  {
->  	/* the filter below checks for all of the following conditions that
-> diff --git a/tools/testing/selftests/perf_events/watermark_signal.c b/tools/testing/selftests/perf_events/watermark_signal.c
-> index e03fe1b9bba2..b3a72f0ac522 100644
-> --- a/tools/testing/selftests/perf_events/watermark_signal.c
-> +++ b/tools/testing/selftests/perf_events/watermark_signal.c
-> @@ -17,8 +17,6 @@
->  
->  #include "../kselftest_harness.h"
->  
-> -#define __maybe_unused __attribute__((__unused__))
-> -
->  static int sigio_count;
->  
->  static void handle_sigio(int signum __maybe_unused,
-> diff --git a/tools/testing/selftests/proc/proc-pid-vm.c b/tools/testing/selftests/proc/proc-pid-vm.c
-> index 978cbcb3eb11..2a72d37ad008 100644
-> --- a/tools/testing/selftests/proc/proc-pid-vm.c
-> +++ b/tools/testing/selftests/proc/proc-pid-vm.c
-> @@ -47,10 +47,6 @@
->  #include <sys/resource.h>
->  #include <linux/fs.h>
->  
-> -#ifndef __maybe_unused
-> -#define __maybe_unused __attribute__((__unused__))
-> -#endif
-> -
->  #include "../kselftest.h"
->  
->  static inline long sys_execveat(int dirfd, const char *pathname, char **argv, char **envp, int flags)
-> diff --git a/tools/testing/selftests/ublk/utils.h b/tools/testing/selftests/ublk/utils.h
-> index 36545d1567f1..a852e0b7153e 100644
-> --- a/tools/testing/selftests/ublk/utils.h
-> +++ b/tools/testing/selftests/ublk/utils.h
-> @@ -2,8 +2,6 @@
->  #ifndef KUBLK_UTILS_H
->  #define KUBLK_UTILS_H
->  
-> -#define __maybe_unused __attribute__((unused))
-> -
->  #ifndef min
->  #define min(a, b) ((a) < (b) ? (a) : (b))
->  #endif
-> -- 
-> 2.43.0
-> 
-> 
+Regards,
+
+Mickaël Salaün (2):
+  fs: Add O_DENY_WRITE
+  selftests/exec: Add O_DENY_WRITE tests
+
+ fs/fcntl.c                                |  26 ++-
+ fs/file_table.c                           |   2 +
+ fs/namei.c                                |   6 +
+ include/linux/fcntl.h                     |   2 +-
+ include/uapi/asm-generic/fcntl.h          |   4 +
+ tools/testing/selftests/exec/check-exec.c | 219 ++++++++++++++++++++++
+ 6 files changed, 256 insertions(+), 3 deletions(-)
+
+
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+-- 
+2.50.1
+
