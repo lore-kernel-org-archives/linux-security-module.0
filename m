@@ -1,220 +1,86 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D382C21C1
-	for <linux-security-module@vger.kernel.org>; Fri, 22 Aug 2025 19:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808C72367DF
+	for <linux-security-module@vger.kernel.org>; Fri, 22 Aug 2025 20:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755892778; cv=none; b=ZEZTD+Zz0fxivoyOYO7DKA00qBM3Ie3bBvnLbleIJ5Qhpuhzyi3L5Fl3HlvuERaN+HN70w/FfJkGj0mS3mVV0Pnz7vCpDXXjCphpOWamDDKGIRewHAfV1kw1lhaJ19vqqaxJV0Lo6lF2+RghqF3CvTwd96zvEbYP8XfnzVBx8qw=
+	t=1755894968; cv=none; b=bHwljf2JoWQirjK6BLHdDkuMqbUvuvTIjdi8CRWGp6bdZqHC+9kwqwy97MT1ti1pgXlZgKraBuLdEylnO0qxRxjKE7yc30ltw7tMPkN6OWm9mkJFo1xDo6Yq6MHZ1v2Qdz5n0oe6fWmh0U3fLA76ySMQpUVxmwQhse5hv1X2ZWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755892778; c=relaxed/simple;
-	bh=5o5iNF5vR3Y3p9dV+cI1rL7eyLwuB/IxntgySa7q/RE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BesOP0KVs7GhCSRra47uddXoOYMWZj4T7b/DmSOauSiq3DrNAGUrzrjYnJN1OREl0Z3ACsSUEuWjevDBzF7VkcsITq32bhUyQIvhb5zTqrt1GFqTQxJjpJKpOwJWVayg5titQw7sFlmFE/V4iGZ54WxzmS4UTwOVz9p1KvNB7es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=sLzAu+0a; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1755894968; c=relaxed/simple;
+	bh=ZejjpqegP7pBTsXg9DqvJDX9XFOOUc/JCgIxN5DaavY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O9+onJ3WN7g0onzh7BOFQJCvYkUTpLF7IzH14HTIezJmtN1bJ1ojG07/nrUcuaKJXPEaBhhl/oWabIeTp1mQsYlIM4fmF/l6uzOX6vX0dXd4Dd5IgakpaHrPZ4sbgb0p1bgEV/4kCHKait+Qeyp/6t1RS6M4Vq6Prjmkn5m1+Y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ISzxKzsB; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="sLzAu+0a"
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D7F353F884
-	for <linux-security-module@vger.kernel.org>; Fri, 22 Aug 2025 19:59:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1755892773;
-	bh=bI/oV2xm0uXYEj6u6e/KKEWhLtafSGL7rix/Hpjl/6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=sLzAu+0aRPmo4amhMEHnl8bK2gDcXoESV8VDc9aE+T0/y0jWOsSd3dd7ZAY/nMi7d
-	 /fERXS1jVrwLVOiQMKRZbSaWNYgdgedA6/1pz6h2bymnLLUAInHSuwdjzCKZO2OXFx
-	 zePudHt9rWP6JAwkJXQWBjqb3OB6bcSmsIDDNWRQh3gKhaHFtHurrJI5bg2gb5A0/5
-	 B7f21OpFKAiJXe8VAgBYvd/UF5HTKNWz4BxsYVyDTwwlPEV5hFM57Fbe+xPO8PYM6W
-	 JmW8dYoVi6FBR/ALulVEPKWigBwIyD6CrZiP0D9FeZnV6fGCY+S4muUqo0k1tXiD1X
-	 FM7l7owQqKaSg==
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2465bc6da05so6868755ad.0
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Aug 2025 12:59:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755892772; x=1756497572;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ISzxKzsB"
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-76e2eb09041so2399526b3a.3
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Aug 2025 13:36:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1755894964; x=1756499764; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bI/oV2xm0uXYEj6u6e/KKEWhLtafSGL7rix/Hpjl/6E=;
-        b=AlGq1tGXmnRcOxrdzFbUXubA0rLFpe+d89Ym9Tmaqa9S9LUVOsHXvfrtX1wt+HuC2G
-         okkcFTQFPncB/HIu+tM8rsnhPp47G6V33+HqZSdsGyy5CES+divmjCYpgJPoXeRHvdDh
-         fIy/PfzfRWi5N3SGHWse2b4kr84mWG4LqFPT0eE0jAKsnv3f6tPcOaQ6mnVIHku2wBI4
-         LIZ/D5iyiGV8dlPIWvDa0qi3g+VOptORCv8DIZaxsTrtQ5cNi5zJ77tjivDNwUg9DuUc
-         5z/Da8HrXBlS8uUowQHeOOCLyZ8AhpGaIILsP3qreF9KSBxXBXEDJdY2R8vencOfnLRd
-         wJ5w==
-X-Gm-Message-State: AOJu0YwEgAugdR7CeFq4N4GdA1N78fgO8WKBTL0f1hGIypPH41tyneww
-	mJ31h81hDNR6g9k0qzQDwuXrijERW470bN03/wZhk8aQdbUw4L9+yrvZ5+tPD0fmQSXB+ipdysC
-	iIqCxCrSlcxeWrMesN6NxFkJ4SOXVaS3ewLXTC24UKUtxkDm1XFJu0S2s5nFxReewQzbzcMzb1Q
-	Uudqwv0mnnRuc4DKY+yg==
-X-Gm-Gg: ASbGnctw8nenDh4dcM85TIQsy2QcUK46iFYbXPpefecdUx5WkLkKKn0IqmpzNAMTxrX
-	dTS1iGNnNHz7r8bD2XTvEG3hfRGAi2Lphyi6PCBS9qFS4RAZiNTwNLyTSAHLEwkbp+eDBjMEZat
-	EiBJ4Y1fn/pg7Y1/O0FLLyKpmFN10Hg87i8e+pEnP+z6Md0gfve2ho0+C0ER6VysZA+13HFAp6x
-	MSgAZAE7tktNnh4VHIt2QwgYrAhSneppg23HiPK0h59yzONlwtxv+/yL++6/vTEme893l5p3fCF
-	vA8EU1b60p1BzXEOJl0DHt/dlrXyqXGop5rGLGBrYtebcYCirrmgZQ==
-X-Received: by 2002:a17:902:d590:b0:246:4eb3:9c08 with SMTP id d9443c01a7336-2464eb39dd3mr35801855ad.5.1755892771943;
-        Fri, 22 Aug 2025 12:59:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3qpYSvHC+OZRK+eA+RVCmZkR0p+1DMePLmyzuuXlBp7zlP9fYNLsL+nXYkfx6nq46onbZtw==
-X-Received: by 2002:a17:902:d590:b0:246:4eb3:9c08 with SMTP id d9443c01a7336-2464eb39dd3mr35801515ad.5.1755892771466;
-        Fri, 22 Aug 2025 12:59:31 -0700 (PDT)
-Received: from [192.168.192.85] ([50.39.98.232])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2466886456csm4054785ad.72.2025.08.22.12.59.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Aug 2025 12:59:30 -0700 (PDT)
-Message-ID: <47fb07e3-5047-49dc-b5fa-83b4f82f9dce@canonical.com>
-Date: Fri, 22 Aug 2025 12:59:29 -0700
+        bh=QKAAjhqefwh7uPKlXCd2E5AVbFKIHMZ8KVLO9HosMUo=;
+        b=ISzxKzsBIWosgcOcsVgWgVvJPIIotn+CQZDRA2ljgU8GImow1RapGZLR8yE/+ebvFQ
+         /QGvAXYo7mt9TE1RGFQ4E883vO1m9MiqgleliCoD7I3SPgo3DMwBQgTEeyzUoY+VWPZi
+         eeZ7xHmqQN23xc2EvJF+TGvWpuWSpw1VbzWzULaF6FFS7hzFlsmQYvPZ/lDgZb/Bs+w8
+         4M6RHc7RI7AytX8zhXOKmJxNauuO7KjpVeBB3OSuxPgEPKGbVSFysjTA5DYkJroPrpec
+         RuJAYR8V6eqQHQm4hT8uNffMTnxtK1T/BNOKcmRm0iA/OdvVR6yv2cjafVOj0/qitcbX
+         aoXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755894964; x=1756499764;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QKAAjhqefwh7uPKlXCd2E5AVbFKIHMZ8KVLO9HosMUo=;
+        b=sz8Sn0HAR9ctVai7fcwuKLQYK3fxKL5eOoxLCoFUJgYL7Rp4c4yOoLRN4d4hF2K8F9
+         Po72RnhNRYwXEbvAOowYXiiHkAg7ZdyYYkEJm0pOa4IpODdE2/FDwIDhlh1pj+QcvFx8
+         5Sm2Q9IKLu6kyzacx63brLMCeRBJbdjVdFNXX/8SUS2Dp2GnsJed02Hn8qh+tMA0pLNZ
+         Gdu4ikOTo9gZNd4sulbrf4/6ise7hSCvxNoOX2SdjAjBUMkqhQhhgjyND+zoZ3Jg8J1F
+         YnTgYDpUyVqPKzvgMVISVQjoIEc3CFkJhCPnoQkNk22kpK/aZRODqqtJPLVtlzkukb/h
+         ySbw==
+X-Gm-Message-State: AOJu0Yw75izNWA4O64vA+Z+lm0WseraP3o3ckH/ICOp8V5MgmNoWnWn2
+	lNsHwCbIZ+BxNtvVk5D7pqM6IdEqNqSeWWX8JzGtTjlDzl84eL5y32mwv+OFeMVfWvBfGDrBhAC
+	dPFubb7JAC5YowS4dds2fJMjr4axtMALhOg4H00lp6gjBL/ThPn8=
+X-Gm-Gg: ASbGnct266rZ9v3g67pDAUL2yK89gV+R8MoGsqz0ecWym5ohOHW3XSX9iD1xvc9HE48
+	qInGXOBlXoiptsyWhK4cef9TjDYOa2psp1jKP9iZC/u/sD3TG6c/ciZhL0HcRNajPegTyi8SFcK
+	YiCDubTTbBm5UOZL223ok1MW7qgZM5K5cbrMfTCkoOE7usWpDTS4jcBo2ET3fDIhdAc8yzxfupO
+	LYr/SY=
+X-Google-Smtp-Source: AGHT+IEeqb9LOIwDePeOzUDkkBBVBhy7VP6Szb0uOXwpyBOa6YvHwRKoPJKBWDzYak2H7n+uwfYdGUtWrsI70HXM30k=
+X-Received: by 2002:a05:6a20:939e:b0:21c:faa4:9ab8 with SMTP id
+ adf61e73a8af0-24340af31famr6874718637.10.1755894963694; Fri, 22 Aug 2025
+ 13:36:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: LSM namespacing API
-To: Casey Schaufler <casey@schaufler-ca.com>, Paul Moore
- <paul@paul-moore.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
- Stephen Smalley <stephen.smalley.work@gmail.com>,
- =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>
-References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
- <2e303958-ca60-4458-ac6d-6b83f331f660@schaufler-ca.com>
- <CAHC9VhQ5Vs+_DYAcN_Z4M9PVqW=PjaHcr4sVXADU5yqp1zFHVQ@mail.gmail.com>
- <20250820.xo0hee4Zeeyu@digikod.net>
- <CAHC9VhSS1K0Zsq_ULP4sK9Okwthd+CO3vUdVPAf+F8FKfZsVqQ@mail.gmail.com>
- <5612ec76-9257-402b-ac98-bdc8a8287a60@schaufler-ca.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <5612ec76-9257-402b-ac98-bdc8a8287a60@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250814215952.238316-2-paul@paul-moore.com>
+In-Reply-To: <20250814215952.238316-2-paul@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 22 Aug 2025 16:35:52 -0400
+X-Gm-Features: Ac12FXwcxjutDfwr33r8XIpqPeJ5-fxP3t4zmwIbrZ33XjBqbxBeT86_UFAC3ZI
+Message-ID: <CAHC9VhS7qSHe3STDZN8CM=cPT6h=Q1kzKPD42csOb8dmCYgs3A@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: add the associated Rust helper to the LSM section
+To: linux-security-module@vger.kernel.org
+Cc: Benno Lossin <lossin@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/22/25 07:47, Casey Schaufler wrote:
-> On 8/21/2025 7:14 PM, Paul Moore wrote:
->> On Thu, Aug 21, 2025 at 6:00 AM Mickaël Salaün <mic@digikod.net> wrote:
->>> On Tue, Aug 19, 2025 at 02:40:52PM -0400, Paul Moore wrote:
->>>> On Tue, Aug 19, 2025 at 1:11 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>>> The advantage of a clone flag is that the operation is atomic with
->>>>> the other namespace flag based behaviors. Having a two step process
->>>>>
->>>>>          clone(); lsm_set_self_attr(); - or -
->>>>>          lsm_set_self_attr(); clone();
->>>>>
->>>>> is going to lead to cases where neither order really works correctly.
->>>> I was envisioning something that works similarly to LSM_ATTR_EXEC
->>>> where the unshare isn't immediate, but rather happens at a future
->>>> event.  With LSM_ATTR_EXEC it happens at the next exec*(), with
->>>> LSM_ATTR_UNSHARE I imagine it would happen at the next clone*().
->>> The next unshare(2) would make more sense to me.
->> That's definitely something to discuss.  I've been fairly loose on
->> that in the discussion thus far, but as things are starting to settle
->> on the lsm_set_self_attr(2) approach as one API, we should start to
->> clarify that.
->>
->>> This deferred operation could be requested with a flag in
->>> lsm_config_system_policy(2) instead:
->>> https://lore.kernel.org/r/20250709080220.110947-1-maxime.belair@canonical.com
->> I want to keep the policy syscall work separate from the LSM namespace
->> discussion as we don't want to require a policy load operation to
->> create a new LSM namespace.  I think it's probably okay if the policy
->> syscall work were to be namespace aware so that an orchestrator could
->> load a LSM policy into a LSM namespace other than it's own, but that
->> is still not overly dependent on what we are discussing here (yes,
->> maybe it is a little, but only just so).
-> 
-> Policy load and namespace manipulation *must* be kept separate. Smack
-> requires the ability to "load policy" at any time. Smack allows a process
-> to add "policy" to further restrict its own access, and does not require
-> a namespace change. There has been an implementation of namespaces for
-> Smack, but the developers disappeared quietly and sadly no one picked it
-> up. Introducing a requirement that LSMs support namespaces in order to
-> load policy beyond system initialization is a non-starter.
-> 
-yes the ability to load policy must be exist separately, however
-policy load could be made namespace aware so that a parent could
-inject policy into a child.
+On Thu, Aug 14, 2025 at 5:59=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
 
-There is also an open question as to whether we need to allow, but not
-require, some kind of policy manipulation/injection with the creation
-of the LSM namespace so that the there is an atomic transition with
-entering the namespace. Is there a case where policy really needs to
-be present atomically with the creation of the namespace? If so we
-need to further break it down to
+Merged into lsm/dev.
 
-1. is it sufficient for the LSM to do it, without container manager
-guidance?  An inherit of policy, or already present policy that can be
-injected. Then we don't need policy load inject to be considered at
-the point of clone/unshare.
-
-2. do we need to let the container manager hint/load policy.
-
-So far I think the inherit/policy directed injection works for
-apparmor, and selinux. Container managers generally speaking have to
-additional setup after the container is created before running the
-work load, which means a separate load phase should be fine.
-
-However I can see an argument for having policy in place when
-clone/unshare exit. Admittedly atm its largely around flexibility, and
-nebulous ill defined use cases. Just because something works for
-apparmor, selinux, and I think smack, doesn't mean it would work for
-all use cases.
-
-But we also should add flexibility for flexibility just because we can
-see there might be some future utility for some future use case. It
-would certainly make the interface uglier, and more complicated, and I
-would hate to have to carry that without a concrete use case.
-
-I think unless there is a solid use case for making clone/unshare
-policy aware we don't worry about it for now. A new interface can be
-add in the future if the capability is really needed.
-
-
-
-
+--=20
+paul-moore.com
