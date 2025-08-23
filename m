@@ -1,304 +1,182 @@
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A562E0B5D
-	for <linux-security-module@vger.kernel.org>; Fri, 22 Aug 2025 20:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB3BE552;
+	Sat, 23 Aug 2025 17:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755895515; cv=none; b=TCSQG6GypxJuj93ofHrXmQvXeIRXQDyrAJkuNl/VMJ+MRepdCickYoVqWDmsmZm2OtJj6S7rvMrkgCEDGM2T2+4JDfap06EKIDoBV1/kz0hNyYbu/inuRS74/GurDgCRKuMC6II4OHOeNAviRcMlKtI8jDRDJkxPLwwYYbwwexA=
+	t=1755970901; cv=none; b=oWG6Jpavn+/owc0YB3+A4NU2Aql31RRYjUJ8dab8uLG6SP9vggGv0Ae8T7WjcK43TVOTfTbEQrV7wDTgKJqGzTrWO/MPx+vomHumFBuSG512YZrnxtNesbUn7B8Vs44kGW7hPWXOxE/hx9sBYXY7vRwbAMwazYcLHcjpcttpTys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755895515; c=relaxed/simple;
-	bh=FppbUkkuDBCNhvS9ysIo/hrG7giHrLQyR/P0bRPzaCQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xd0PQPJjgmWnccTR+q50lVAdD7NqaN28WyR5RKq/pKlwlHjDJoaYfqzpMEXxaEMmN/R/pCmxjliK0xNMfn+XdE2Qw5a1UdSla0Gili01Isplx7KMq91mSXrijAXpXiw6ibfX9viU+ejglcUb9vkMKmWC2erWWLFu9TaJZUIABc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=I8Zg25xw; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="I8Zg25xw"
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b49c622e598so640915a12.1
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Aug 2025 13:45:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1755895512; x=1756500312; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oPJhEisFp5RIuunPMpN4KZpGxRCTcK4wip8JiWHd0Mc=;
-        b=I8Zg25xw7uWIxJM06QGIlysqbOCjCe6TnmlSDwOZA3LYHkb7uDhovCRQ5k+4sqL9db
-         N2sM2hhZRbItdQ/MRtQSKjziDQN9tEsLFBsA4KqVMeRF0RroLsCPZ01RQ95FvFsf97g6
-         3NXQKEvHm4aglmYeOThN+8/4fg9UvgRRpO7nJHqIBXly6f1K3p1l5Mvwc8KAr1F3zOs2
-         qDukRkDSFlPn3wkIy0rw2bl47QKoQVKDJFGD4pQ6YWojAKxmLTUOR4+urcDxm/OL8GSW
-         GjfgypQD2wDGqj41P/Jpe++cV+qdBvBWLNQ8Q3s/OcUqG7cLUWX+LLMPETY4tdzmRikw
-         4wlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755895512; x=1756500312;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oPJhEisFp5RIuunPMpN4KZpGxRCTcK4wip8JiWHd0Mc=;
-        b=MaU7+w398U9d0Q87qeZLkBC0wPt4qOyAE8MSJgzzswbMo1VnkLtaOFXpj6GSSKNnUv
-         atHQ0C4IJ9gJlpDGRCTtncsyn2Nsc6qUq7YpkIzVIi6dBtp1L4yBSqBSITJ0ISvxJvMj
-         4PG9PQFYAAzQ+CU0XdEjaCRaKSmE3z6+20uCwLH+ZurK6mT8Jp2yWqvJsZXP0swPCjAi
-         75hkH7BNWErszzergCOtQB+X365A4jAeDGa5/rBacr0aTgXD1X3pBjsfipQhO30F+mFF
-         nCEcCzHUQYltI54R50bSKrDz+3BA8rYzwthJr8rOOyZTQRNoV5JkMcTHf6K7zkqtklZA
-         Kghw==
-X-Gm-Message-State: AOJu0Yx/OEJEt6iFXCJLNZOp7yaVcb2rHFwDch4dYDHjhAeowAhBFDFw
-	mwLTJH8V5d0gIOaNZEtc7o1E6r37iquSmU9irZRf9quTIMLiG2EdD/Pg2X4qniC/3tNNkb2ZST1
-	4Z6hk/3YJX3gIeXfh76EYhs5ula5rrKciwasHCqLI
-X-Gm-Gg: ASbGncs010dSv7sn9U5vvyM1XGOJyyh/NbD9MJ58/bSXQ24spr2j+js+cpGnePCtC/c
-	8K72xYhngGHKFM3EPRQwDmhGOaN/AAfsjxgrWwMrU8Zx9MNFWOdXKSODThgG1TJuB2pfW1MGlko
-	7/7aX2I56NvuOobdhezZRpoEo3ex6XzBuC4BkYyUC5O+l4NOBbf96nW54lfiiXc+TtYKF3lGMu1
-	7uP7Zo=
-X-Google-Smtp-Source: AGHT+IEseLmqhypcA8hxPueCpLuTQOpnoAeGd2rXXtub95U2zol/Z4aBXKVTyYKfNo1S21aJewQscGd1mSXj4uHONQM=
-X-Received: by 2002:a17:902:e892:b0:243:8f:6db5 with SMTP id
- d9443c01a7336-2462ee0baa0mr71583245ad.6.1755895512376; Fri, 22 Aug 2025
- 13:45:12 -0700 (PDT)
+	s=arc-20240116; t=1755970901; c=relaxed/simple;
+	bh=Xvr9IrPEglbACbyEUBHhwORvutq5JO4DS9Wxee73eGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nBMWMSoLIZfLTvCE4he/tsH74nlL0naqdZFwUgoUpcnrYrdxEv9Hup/fFcRQm0eIGUbCR4ssDlV64UEe2iOBW1G6aPeLbWNyO8pscxjneyzU1f6XHxCXt9ASTIbcjGKDWh4G6XnG8kq4ptL4DY021kjJy7aNwwFRgpWGTZuTawc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 57NHf6wm023363;
+	Sat, 23 Aug 2025 12:41:06 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 57NHf1Rs023361;
+	Sat, 23 Aug 2025 12:41:01 -0500
+Date: Sat, 23 Aug 2025 12:41:01 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: John Johansen <john.johansen@canonical.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, Paul Moore <paul@paul-moore.com>,
+        Micka??l Sala??n <mic@digikod.net>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Maxime B??lair <maxime.belair@canonical.com>
+Subject: Re: LSM namespacing API
+Message-ID: <20250823174101.GA22123@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com> <2e303958-ca60-4458-ac6d-6b83f331f660@schaufler-ca.com> <CAHC9VhQ5Vs+_DYAcN_Z4M9PVqW=PjaHcr4sVXADU5yqp1zFHVQ@mail.gmail.com> <20250820.xo0hee4Zeeyu@digikod.net> <CAHC9VhSS1K0Zsq_ULP4sK9Okwthd+CO3vUdVPAf+F8FKfZsVqQ@mail.gmail.com> <5612ec76-9257-402b-ac98-bdc8a8287a60@schaufler-ca.com> <47fb07e3-5047-49dc-b5fa-83b4f82f9dce@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250814225159.275901-36-paul@paul-moore.com> <20250814225159.275901-67-paul@paul-moore.com>
-In-Reply-To: <20250814225159.275901-67-paul@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 22 Aug 2025 16:45:01 -0400
-X-Gm-Features: Ac12FXwAmBOh1Qla5u9ysof2AD0FPd676U7pDGbNXskY4u6RCqn1903OQNx1Eek
-Message-ID: <CAHC9VhS3KdVO9n-dgk1qFzTae0i+Oab8atMmt0CAsMEm1D4v5w@mail.gmail.com>
-Subject: Re: [PATCH v3 31/34] ima,evm: move initcalls to the LSM framework
-To: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>
-Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
-	Fan Wu <wufan@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <47fb07e3-5047-49dc-b5fa-83b4f82f9dce@canonical.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sat, 23 Aug 2025 12:41:06 -0500 (CDT)
 
-On Thu, Aug 14, 2025 at 6:55=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> This patch converts IMA and EVM to use the LSM frameworks's initcall
-> mechanism.  There was a minor challenge in this conversion that wasn't
-> seen when converting the other LSMs brought about by the resource
-> sharing between the two related, yes independent IMA and EVM LSMs.
-> This was resolved by registering the same initcalls for each LSM and
-> including code in each registered initcall to ensure it only executes
-> once during each boot.
->
-> It is worth mentioning that this patch does not touch any of the
-> "platform certs" code that lives in the security/integrity/platform_certs
-> directory as the IMA/EVM maintainers have assured me that this code is
-> unrelated to IMA/EVM, despite the location, and will be moved to a more
-> relevant subsystem in the future.
->
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->  security/integrity/Makefile       |  2 +-
->  security/integrity/evm/evm_main.c |  6 ++---
->  security/integrity/iint.c         |  4 +--
->  security/integrity/ima/ima_main.c |  6 ++---
->  security/integrity/initcalls.c    | 41 +++++++++++++++++++++++++++++++
->  security/integrity/initcalls.h    | 28 +++++++++++++++++++++
->  6 files changed, 78 insertions(+), 9 deletions(-)
->  create mode 100644 security/integrity/initcalls.c
->  create mode 100644 security/integrity/initcalls.h
+On Fri, Aug 22, 2025 at 12:59:29PM -0700, John Johansen wrote:
 
-Mimi, Roberto, I believe I've incorporated all of your feedback thus
-far, does this patch look okay to you?  If so, can I get an ACK from
-one or both of you?
+Good morning, I hope the weekend is going well for everyone.
 
-> diff --git a/security/integrity/Makefile b/security/integrity/Makefile
-> index 92b63039c654..6ea330ea88b1 100644
-> --- a/security/integrity/Makefile
-> +++ b/security/integrity/Makefile
-> @@ -5,7 +5,7 @@
->
->  obj-$(CONFIG_INTEGRITY) +=3D integrity.o
->
-> -integrity-y :=3D iint.o
-> +integrity-y :=3D iint.o initcalls.o
->  integrity-$(CONFIG_INTEGRITY_AUDIT) +=3D integrity_audit.o
->  integrity-$(CONFIG_INTEGRITY_SIGNATURE) +=3D digsig.o
->  integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) +=3D digsig_asymmetric.o
-> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/e=
-vm_main.c
-> index db8e324ed4e6..823573bcaa27 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-> @@ -25,6 +25,7 @@
->  #include <crypto/hash.h>
->  #include <crypto/hash_info.h>
->  #include <crypto/utils.h>
-> +#include "../initcalls.h"
->  #include "evm.h"
->
->  int evm_initialized;
-> @@ -1112,7 +1113,7 @@ void __init evm_load_x509(void)
->  }
->  #endif
->
-> -static int __init init_evm(void)
-> +int __init init_evm(void)
->  {
->         int error;
->         struct list_head *pos, *q;
-> @@ -1179,6 +1180,5 @@ DEFINE_LSM(evm) =3D {
->         .init =3D init_evm_lsm,
->         .order =3D LSM_ORDER_LAST,
->         .blobs =3D &evm_blob_sizes,
-> +       .initcall_late =3D integrity_late_init,
->  };
-> -
-> -late_initcall(init_evm);
-> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> index 068ac6c2ae1e..a4b88d67ff43 100644
-> --- a/security/integrity/iint.c
-> +++ b/security/integrity/iint.c
-> @@ -11,6 +11,7 @@
->   */
->  #include <linux/security.h>
->  #include "integrity.h"
-> +#include "initcalls.h"
->
->  struct dentry *integrity_dir;
->
-> @@ -42,7 +43,7 @@ void __init integrity_load_keys(void)
->                 evm_load_x509();
->  }
->
-> -static int __init integrity_fs_init(void)
-> +int __init integrity_fs_init(void)
->  {
->         integrity_dir =3D securityfs_create_dir("integrity", NULL);
->         if (IS_ERR(integrity_dir)) {
-> @@ -58,4 +59,3 @@ static int __init integrity_fs_init(void)
->         return 0;
->  }
->
-> -late_initcall(integrity_fs_init)
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/i=
-ma_main.c
-> index eade8e1e3cb1..06ae59cd77f4 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -28,6 +28,7 @@
->  #include <linux/iversion.h>
->  #include <linux/evm.h>
->  #include <linux/crash_dump.h>
-> +#include "../initcalls.h"
->
->  #include "ima.h"
->
-> @@ -1202,7 +1203,7 @@ static int ima_kernel_module_request(char *kmod_nam=
-e)
->
->  #endif /* CONFIG_INTEGRITY_ASYMMETRIC_KEYS */
->
-> -static int __init init_ima(void)
-> +int __init init_ima(void)
->  {
->         int error;
->
-> @@ -1283,6 +1284,5 @@ DEFINE_LSM(ima) =3D {
->         .init =3D init_ima_lsm,
->         .order =3D LSM_ORDER_LAST,
->         .blobs =3D &ima_blob_sizes,
-> +       .initcall_late =3D integrity_late_init,
->  };
-> -
-> -late_initcall(init_ima);       /* Start IMA after the TPM is available *=
-/
-> diff --git a/security/integrity/initcalls.c b/security/integrity/initcall=
-s.c
-> new file mode 100644
-> index 000000000000..6afa411068f2
-> --- /dev/null
-> +++ b/security/integrity/initcalls.c
-> @@ -0,0 +1,41 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * IMA/EVM initcalls
-> + *
-> + */
-> +
-> +#include <linux/init.h>
-> +
-> +#include "initcalls.h"
-> +
-> +/**
-> + * integrity_late_init - late_initcalls for IMA/EVM
-> + *
-> + * This helper function wraps all of the late_initcalls for both IMA and=
- EVM.
-> + * It can be called multiple times, e.g. once from IMA and once from EVM=
-,
-> + * without problem as it maintains an internal static state variable whi=
-ch
-> + * ensures that any setup/initialization is only done once.
-> + */
-> +int __init integrity_late_init(void)
-> +{
-> +       int rc =3D 0, rc_tmp;
-> +       static bool setup =3D false;
-> +
-> +       if (setup)
-> +               return 0;
-> +       setup =3D true;
-> +
-> +       rc_tmp =3D integrity_fs_init();
-> +       if (!rc && rc_tmp)
-> +               rc =3D rc_tmp;
-> +
-> +       rc_tmp =3D init_ima();
-> +       if (!rc && rc_tmp)
-> +               rc =3D rc_tmp;
-> +
-> +       rc_tmp =3D init_evm();
-> +       if (!rc && rc_tmp)
-> +               rc =3D rc_tmp;
-> +
-> +       return rc;
-> +}
-> diff --git a/security/integrity/initcalls.h b/security/integrity/initcall=
-s.h
-> new file mode 100644
-> index 000000000000..b56e9c576505
-> --- /dev/null
-> +++ b/security/integrity/initcalls.h
-> @@ -0,0 +1,28 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#ifndef _INTEGRITY_INITCALLS_H
-> +#define _INTEGRITY_INITCALLS_H
-> +
-> +int integrity_fs_init(void);
-> +
-> +#ifdef CONFIG_IMA
-> +int init_ima(void);
-> +#else
-> +static inline int init_ima(void)
-> +{
-> +       return 0;
-> +}
-> +#endif
-> +
-> +#ifdef CONFIG_EVM
-> +int init_evm(void);
-> +#else
-> +static inline int init_evm(void)
-> +{
-> +       return 0;
-> +}
-> +#endif
-> +
-> +int integrity_late_init(void);
-> +
-> +#endif
-> --
-> 2.50.1
+> On 8/22/25 07:47, Casey Schaufler wrote:
+> >On 8/21/2025 7:14 PM, Paul Moore wrote:
+> >>On Thu, Aug 21, 2025 at 6:00???AM Micka??l Sala??n <mic@digikod.net> 
+> >>wrote:
+> >>>On Tue, Aug 19, 2025 at 02:40:52PM -0400, Paul Moore wrote:
+> >>>>On Tue, Aug 19, 2025 at 1:11???PM Casey Schaufler 
+> >>>><casey@schaufler-ca.com> wrote:
+> >>>>>The advantage of a clone flag is that the operation is atomic with
+> >>>>>the other namespace flag based behaviors. Having a two step process
+> >>>>>
+> >>>>>         clone(); lsm_set_self_attr(); - or -
+> >>>>>         lsm_set_self_attr(); clone();
+> >>>>>
+> >>>>>is going to lead to cases where neither order really works correctly.
+> >>>>I was envisioning something that works similarly to LSM_ATTR_EXEC
+> >>>>where the unshare isn't immediate, but rather happens at a future
+> >>>>event.  With LSM_ATTR_EXEC it happens at the next exec*(), with
+> >>>>LSM_ATTR_UNSHARE I imagine it would happen at the next clone*().
+> >>>The next unshare(2) would make more sense to me.
+> >>That's definitely something to discuss.  I've been fairly loose on
+> >>that in the discussion thus far, but as things are starting to settle
+> >>on the lsm_set_self_attr(2) approach as one API, we should start to
+> >>clarify that.
+> >>
+> >>>This deferred operation could be requested with a flag in
+> >>>lsm_config_system_policy(2) instead:
+> >>>https://lore.kernel.org/r/20250709080220.110947-1-maxime.belair@canonical.com
+> >>I want to keep the policy syscall work separate from the LSM namespace
+> >>discussion as we don't want to require a policy load operation to
+> >>create a new LSM namespace.  I think it's probably okay if the policy
+> >>syscall work were to be namespace aware so that an orchestrator could
+> >>load a LSM policy into a LSM namespace other than it's own, but that
+> >>is still not overly dependent on what we are discussing here (yes,
+> >>maybe it is a little, but only just so).
+> >
+> >Policy load and namespace manipulation *must* be kept separate. Smack
+> >requires the ability to "load policy" at any time. Smack allows a process
+> >to add "policy" to further restrict its own access, and does not require
+> >a namespace change. There has been an implementation of namespaces for
+> >Smack, but the developers disappeared quietly and sadly no one picked it
+> >up. Introducing a requirement that LSMs support namespaces in order to
+> >load policy beyond system initialization is a non-starter.
 
---=20
-paul-moore.com
+> yes the ability to load policy must be exist separately, however
+> policy load could be made namespace aware so that a parent could
+> inject policy into a child.
+
+Policy or model load, specific to the subordinate namespace, will be
+a necessity.
+
+As Casey noted, some LSM namespaces will require configuration and
+management calls well after the namespace has started.  Other LSM's
+will want the configuration to be completed before the namespace
+starts, with any further configurations to the namespace blocked.
+
+There is a very valid security rationale for isolating the capability
+for namespace separation from the capability that allows the
+configuration of a security model.  It would be an entirely realistic
+security objective for a namespace to block further separation
+attempts, while still allowing for management operations to be
+conducted in the context of the subordinate namespace.
+
+Hence the rationale for splitting CAP_MAC_ADMIN from whatever name the
+bike shedding process around the new capability naming process
+produces.
+
+> There is also an open question as to whether we need to allow, but
+> not require, some kind of policy manipulation/injection with the
+> creation of the LSM namespace so that the there is an atomic
+> transition with entering the namespace. Is there a case where policy
+> really needs to be present atomically with the creation of the
+> namespace? If so we need to further break it down to
+>
+> 1. is it sufficient for the LSM to do it, without container manager
+> guidance?  An inherit of policy, or already present policy that can be
+> injected. Then we don't need policy load inject to be considered at
+> the point of clone/unshare.
+> 
+> 2. do we need to let the container manager hint/load policy.
+
+Policy load needs to be atomic with respect to namespace separation.
+In other words, the policy needs to be in place when execution within
+the context of the new security namespace begins.
+
+A resource orchestrator will need the ability to load the new policy
+that will be enforced into the context of the new namespace.
+
+In the case of some model/integrity based LSM's, the security events
+related to the policy load need to occur in the context of the parent
+LSM namespace.
+
+See the writings of Werner Karl Heisenberg for the reasoning behind
+that... :-)
+
+> So far I think the inherit/policy directed injection works for
+> apparmor, and selinux. Container managers generally speaking have to
+> additional setup after the container is created before running the
+> work load, which means a separate load phase should be fine.
+> 
+> However I can see an argument for having policy in place when
+> clone/unshare exit. Admittedly atm its largely around flexibility, and
+> nebulous ill defined use cases. Just because something works for
+> apparmor, selinux, and I think smack, doesn't mean it would work for
+> all use cases.
+> 
+> But we also should add flexibility for flexibility just because we can
+> see there might be some future utility for some future use case. It
+> would certainly make the interface uglier, and more complicated, and I
+> would hate to have to carry that without a concrete use case.
+> 
+> I think unless there is a solid use case for making clone/unshare
+> policy aware we don't worry about it for now. A new interface can be
+> add in the future if the capability is really needed.
+
+We will respond more directly to the issue of clone, unshare and
+external process entry, in the other thread where you initiated a
+discussion of these issues.  We believe there is a strong argument to
+be made that LSM namespace separation is a poor fit for the classic
+fork/unshare model of the other resource namespaces.
+
+Among other issues, a direct separation model places the complexity of
+policy verification and loading in userspace.  As was noted above,
+accounting for the security events related to the policy verification
+and load process, in the orchestrator process, will be a requirement
+for some integrity and functional models.
+
+Have a good weekend.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
+
