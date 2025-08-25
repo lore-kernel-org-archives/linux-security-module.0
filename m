@@ -1,249 +1,209 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608932E11D5
-	for <linux-security-module@vger.kernel.org>; Mon, 25 Aug 2025 11:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0B32309B2
+	for <linux-security-module@vger.kernel.org>; Mon, 25 Aug 2025 16:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756122047; cv=none; b=VWfmO/smKjwJG1lGQHYEBH2VJB6E5mNU75cYggBsXnEOTfOrjeN+SZg0otefL/9crg+rHVslQ7GcN1t0CAQ6NVYTjpaf25eA7kLyviWjub5Z/r9CXMr0H933NNHcMCHQMacUd/5j90xwq/nJr8Y44AZJ1QVKkafIHxNzlz5ogjY=
+	t=1756140227; cv=none; b=tp8PfH8ktRMul6e2XovORB/dWJRLirRQfYG5QSRurTErA+NY0SOkOEUALm2tpVx89lohxuZIy7PJq5B4BMYRJ4GjQ2alO1GH5kWWDOHm8qtfo20RFIqYBd08tRxd2zsYQukMeJpNE0HndkWITooTatl1NJYvdZDoAU5HvqyMy3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756122047; c=relaxed/simple;
-	bh=XmOeOd1pViwutI8wtiDdDhgWiGhbRMXdQ9LlGz9YIc0=;
+	s=arc-20240116; t=1756140227; c=relaxed/simple;
+	bh=mrvVK8/Xsrljs2OlTw2saC30UIQ8XhkSiEQOYrZEW8Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E10hOGCkvMGlABXCb2+8zyPgrnmodupwVt4xHwNJHHmx1KCSsGs82kCrWt+7JpjorNsEzoQRa+YiPSh4AxkoJdTMrLL2lOLvzADG3k6Unbj1lyivj6dY9QJK6fpX3PP13tbn3vPxgL187RrQSj6RmqL7omd2GIL9hhSsaVmnb5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YwqShMBX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 To:Cc:Content-Type; b=jy3HBTBUJ3pRuZyxaLCSD0r5gADiKhulOq9madiPHzB6NwyTX9VfTyN2kF7xch3pvVrkGz/R2IQByk1cO7YSt5/5y7ScslLshWz8qkNlHkzj0rvACCy1E7kk2g3oSn9f6tv0MCqLoY7C2R+wWQ5mvncHRi2itN/Xn97hcsNFRCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=LJBtn8hz; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YwqShMBX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756122043;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i1tL7FInsElGn6Q+dpU9DZrUipU/+oqNog7jlscNK44=;
-	b=YwqShMBX9jA+mf8SZCUuPsKAezr/h6m/wxFUgNc01ysRSWnd9K8Szh82KkN/4UNIBm+V+u
-	l1zETnTTA60+VA9lKsxcqfTROfOg0d61CiRY7clzP/b6o6yw7trt99TLNeX9f9aofpLoA1
-	jgjjy6Z5Lq6eEnI3KCZwgm2zG9qKpV4=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-259--HvWrsYhO5S3EzssOkrdEQ-1; Mon, 25 Aug 2025 07:40:42 -0400
-X-MC-Unique: -HvWrsYhO5S3EzssOkrdEQ-1
-X-Mimecast-MFC-AGG-ID: -HvWrsYhO5S3EzssOkrdEQ_1756122041
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-24457ef983fso89569175ad.0
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Aug 2025 04:40:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="LJBtn8hz"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-333f918d71eso32651381fa.3
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Aug 2025 09:43:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1756140224; x=1756745024; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7PLv6y/UhSOB8bdOkGYyaQMgyRuq9HEBdk6Xh5IVulM=;
+        b=LJBtn8hz9+1q0YtwAmqQoOT4NrmZQ2SKq2o/M1bmIOD8I7C0es7ckJbRx/MOsfdmK6
+         MgmVBU9kkITmd8wHsdZGW1WCqOCLFGo44p7hgKXyb53xCpqlhlrbKYk/UfVp4IoiAGQl
+         DcSx6PbRN6eNvl+q38qNWi1twzzm+8oeiKRvoIr3wmC4XN/mQS5IrDEOQ0t2HkCYkbS3
+         IEOjewoT1zuKhaMU75icXZWujI8GwB8CEIOTKJuwXuCYk0WIkvgaMXDOJ5Fo+v5oPQDn
+         VvJcIlFEWgd3h4CAWTuHai2S2TkozFw1Nl/RZ/O+XUS5hxyTTKwxZNHE4ADffnjQg3TN
+         3+Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756122041; x=1756726841;
+        d=1e100.net; s=20230601; t=1756140224; x=1756745024;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=i1tL7FInsElGn6Q+dpU9DZrUipU/+oqNog7jlscNK44=;
-        b=LTWwe2Mfr1Uv0nkcTqmDjPzmNCQ5DkGMZEuBfGR3/rbfLU89SuMQlpZbl4c9aI+zC4
-         wePipCgzIrlzhIBlJ2qr4lFWuFWZYv06Xo3guqLZVc+Yq1zdLy5VDCJHgNIPxiau4kpP
-         3oMSmG2wf3Jlwk2ge3q6KaXVSozi78UK0ukADYv0GxqZqamJiGImhmv54+D0ERdBI2YA
-         3fcTX7qSJ0/KxGp41W6iurpoUR4NWV+ZNhLbC9DTOfsg+rEuZQY4d67SJ6wR2CHiwrNW
-         7+tWycwv77aBCWn1/oZ0g92s4PO+5WzOZRP8ytxnB6ohoX5IyGusPyytTAW/MCUWu1UC
-         p3wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUG+6Ty7orhQ3gRcJcWodgqt9RqlCfOLBpDleg/4M+wG2FngM40K0f3ti5IJA+zDKz6ErTl4WiMj94D7frXakaD69BTMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO08wvo6j17l9TaJaVrEK02FxecRVDGnPGPwmvAE/kvrSmOqJZ
-	lObGJzYCXHoGKnjApyL29ltG8ZLXdXyXuP2aKlCgbMSE+6dTsU5AwkYgPVNsQ/aEBKBX5T91mDF
-	8SDnGu4CWeog+InpartAYzI2nFVVU0hEEXeNrOdl34sXoaJXsyRkxZLiM+MCSlZ9tBFNpkej5Y/
-	fb0+VYnJpC8Y4Nb4NZ/3Vtyiu0HomxHy+A9/KzdGD12balLBhvDaRB
-X-Gm-Gg: ASbGncuH9groXdFyREHoQumWwPjfXNWTLBFwI6tq+B8wPjeIi3j8O69Sb12rq1nT6FT
-	teezWsJ12dFhQPRWZNg94kuPcATBHDWqNS6HZ+YphvW1pcQicfz4kqV+XbUhEKj0xE1oV/Ig8Sl
-	RLaFGMH5nQLH2jaX74VPnlveq55ZUo70zlB++ChfQQHe81smjOxlElZA==
-X-Received: by 2002:a17:903:187:b0:235:ec11:f0ee with SMTP id d9443c01a7336-2462eded8bbmr149438035ad.14.1756122040921;
-        Mon, 25 Aug 2025 04:40:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHLCziNmCrrf8tECcKtIH9dzFLSdIyn7zlRi1/szsUtdVvup0dJYiATJcecD2+pMYNgqYeGYRFvetRjSq8AhlA=
-X-Received: by 2002:a17:903:187:b0:235:ec11:f0ee with SMTP id
- d9443c01a7336-2462eded8bbmr149437725ad.14.1756122040456; Mon, 25 Aug 2025
- 04:40:40 -0700 (PDT)
+        bh=7PLv6y/UhSOB8bdOkGYyaQMgyRuq9HEBdk6Xh5IVulM=;
+        b=KyruYupisL8Y6LhwHOa2WHxQAWSd5P+6F8Zl0JfVuOSkzQylF9LTuv2EFp/7mQK8yY
+         MwRn1x1gNiwudwAKWhrms5YGymxM/AjyGQL9TcDWAYsDZppt9401WIRtEDEF+7aTpY7j
+         +lLPVVQ3gVfnTd5SJuBCErzx3MQVOwnyXTvFUpEzF4y7EE8oUayHDf/ORdmAqU1Vs8kh
+         Bnb0hSPaNyz647ZFseOxUZkw6zry1Ez4INregNPaEQSjnB06qDJ1Co9Ih5omNLYsfHi9
+         IDSiwbMAvcrzxEnA5mVjY1E/dzJmFoxpy4tPWPvyehKy9eQP06gz20rqkLgIeVHcFFic
+         5myg==
+X-Forwarded-Encrypted: i=1; AJvYcCWx0FkoR4AzKd+7VbQyNYL8+7NiXmaAlIU4xoVifm/e9+4RUvNTF97nhoT837aqtici+4wvNr5qR0rMGlZmhXEZT5pAbag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxwEZ4Ok001a7KkvFqtz0wVpwcmeoQly3g/l3EiXf4gf2ndxDV
+	RBNfFtSIgD2j03QkZMqWyTRnG8Ls9gAurdHyzPkKduyCtH+MriV0j02WSEgpJ1GCeUyTXpZaHNH
+	q0wpy+yA2YrrVta9dRkSZOnyxyUHyfT5NSXHfATJs
+X-Gm-Gg: ASbGncvShZaGk9qi531iUtE++sbTrPyROp0GFlrDoYprtNGVLw8fp0t5tOn1wK860bz
+	JapL4SS18sgBAurtQADoTTQxktjFmARjQPB+H/ahTjAz/Qpuexq1tdwqYRvd0wzhakF2zJ8f3HA
+	veYAGoH28mnm7n0sUcpc5azC3X5Y5Y3mGb8ao2b/8bNnkfny7uH6Lz55HT2aw78tRuU5O86svCa
+	Zpvxg==
+X-Google-Smtp-Source: AGHT+IEMdqK/C2LpKtNe8HwPygFUadpsqtunEn/HXVLtMBboXyEX1vSk+kxH2wVSUzVD8p+wSlL+I8mi2gjoh9eWb18=
+X-Received: by 2002:a2e:a018:0:b0:330:d981:1755 with SMTP id
+ 38308e7fff4ca-33650de81e9mr24090271fa.6.1756140223780; Mon, 25 Aug 2025
+ 09:43:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806143105.915748-1-omosnace@redhat.com> <aJP+/1VGbe1EcgKz@mail.hallyn.com>
- <aJaPQZqDIcT17aAU@mail.hallyn.com> <CAADnVQKY0z1RAJdAmRGbLWZxrJPG6Kawe6_qQHjoVM7Xz8CfuA@mail.gmail.com>
- <CAFqZXNtAfzFJtL3gG7ViEFOWoAE2VNrvCOA5DxqMmWt7z6g5Yg@mail.gmail.com>
-In-Reply-To: <CAFqZXNtAfzFJtL3gG7ViEFOWoAE2VNrvCOA5DxqMmWt7z6g5Yg@mail.gmail.com>
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Mon, 25 Aug 2025 13:40:29 +0200
-X-Gm-Features: Ac12FXywkjbpILypI5RWnFIND68dT-H5iuSShUyGnrn6lJQ2zbZhJJjba7Q-KBA
-Message-ID: <CAFqZXNukE9n6MN_kQ+Q2c5fFaMt3aO-Z8km-u_RSpiJCr+eb2A@mail.gmail.com>
-Subject: Re: [PATCH] x86/bpf: use bpf_capable() instead of capable(CAP_SYS_ADMIN)
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, daniel.sneddon@linux.intel.com, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, alexandre.chartre@oracle.com, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>, 
-	selinux@vger.kernel.org, LSM List <linux-security-module@vger.kernel.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: UWZ_0gg9_ow6Jvcr4ViS_jhOQ5BnDQlIlv25ZVOlyAA_1756122041
-X-Mimecast-Originator: redhat.com
+References: <20250822170800.2116980-1-mic@digikod.net> <20250822170800.2116980-2-mic@digikod.net>
+ <CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
+ <20250824.Ujoh8unahy5a@digikod.net> <CALCETrWwd90qQ3U2nZg9Fhye6CMQ6ZF20oQ4ME6BoyrFd0t88Q@mail.gmail.com>
+ <20250825.mahNeel0dohz@digikod.net>
+In-Reply-To: <20250825.mahNeel0dohz@digikod.net>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Mon, 25 Aug 2025 09:43:31 -0700
+X-Gm-Features: Ac12FXyB6lzRP1sYgoa00swEucBzjGB4o1VKS2fSTUJC8HJqzdooeCFOZN6Irw4
+Message-ID: <CALCETrX+OpkRSvOZhaWiqOsAPr-hRb+kY5=Hh5LU3H+1xPb3qg@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Jann Horn <jannh@google.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Jeff Xu <jeffxu@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025 at 11:49=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.c=
-om> wrote:
+On Mon, Aug 25, 2025 at 2:31=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
 >
-> On Sat, Aug 9, 2025 at 2:46=E2=80=AFAM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Fri, Aug 8, 2025 at 4:59=E2=80=AFPM Serge E. Hallyn <serge@hallyn.co=
-m> wrote:
+> On Sun, Aug 24, 2025 at 11:04:03AM -0700, Andy Lutomirski wrote:
+> > On Sun, Aug 24, 2025 at 4:03=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
 > > >
-> > > On Wed, Aug 06, 2025 at 08:18:55PM -0500, Serge E. Hallyn wrote:
-> > > > On Wed, Aug 06, 2025 at 04:31:05PM +0200, Ondrej Mosnacek wrote:
-> > > > > Don't check against the overloaded CAP_SYS_ADMINin do_jit(), but =
-instead
-> > > > > use bpf_capable(), which checks against the more granular CAP_BPF=
- first.
-> > > > > Going straight to CAP_SYS_ADMIN may cause unnecessary audit log s=
-pam
-> > > > > under SELinux, as privileged domains using BPF would usually only=
- be
-> > > > > allowed CAP_BPF and not CAP_SYS_ADMIN.
+> > > On Fri, Aug 22, 2025 at 09:45:32PM +0200, Jann Horn wrote:
+> > > > On Fri, Aug 22, 2025 at 7:08=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <m=
+ic@digikod.net> wrote:
+> > > > > Add a new O_DENY_WRITE flag usable at open time and on opened fil=
+e (e.g.
+> > > > > passed file descriptors).  This changes the state of the opened f=
+ile by
+> > > > > making it read-only until it is closed.  The main use case is for=
+ script
+> > > > > interpreters to get the guarantee that script' content cannot be =
+altered
+> > > > > while being read and interpreted.  This is useful for generic dis=
+tros
+> > > > > that may not have a write-xor-execute policy.  See commit a5874fd=
+e3c08
+> > > > > ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
 > > > > >
-> > > > > Link: https://bugzilla.redhat.com/show_bug.cgi?id=3D2369326
-> > > > > Fixes: d4e89d212d40 ("x86/bpf: Call branch history clearing seque=
-nce on exit")
-> > > > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > > > > Both execve(2) and the IOCTL to enable fsverity can already set t=
+his
+> > > > > property on files with deny_write_access().  This new O_DENY_WRIT=
+E make
 > > > >
-> > > > So this seems correct, *provided* that we consider it within the pu=
-rview of
-> > > > CAP_BPF to be able to avoid clearing the branch history buffer.
-> >
-> > true, but...
-> >
-> > > >
-> > > > I suspect that's the case, but it might warrant discussion.
-> > > >
-> > > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> > > > The kernel actually tried to get rid of this behavior on execve() i=
+n
+> > > > commit 2a010c41285345da60cece35575b4e0af7e7bf44.; but sadly that ha=
+d
+> > > > to be reverted in commit 3b832035387ff508fdcf0fba66701afc78f79e3d
+> > > > because it broke userspace assumptions.
 > > >
-> > > (BTW, I'm assuming this will get pulled into a BPF tree or something,=
- and
-> > > doesn't need to go into the capabilities tree.  Let me know if that's=
- wrong)
+> > > Oh, good to know.
+> > >
+> > > >
+> > > > > it widely available.  This is similar to what other OSs may provi=
+de
+> > > > > e.g., opening a file with only FILE_SHARE_READ on Windows.
+> > > >
+> > > > We used to have the analogous mmap() flag MAP_DENYWRITE, and that w=
+as
+> > > > removed for security reasons; as
+> > > > https://man7.org/linux/man-pages/man2/mmap.2.html says:
+> > > >
+> > > > |        MAP_DENYWRITE
+> > > > |               This flag is ignored.  (Long ago=E2=80=94Linux 2.0 =
+and earlier=E2=80=94it
+> > > > |               signaled that attempts to write to the underlying f=
+ile
+> > > > |               should fail with ETXTBSY.  But this was a source of=
+ denial-
+> > > > |               of-service attacks.)"
+> > > >
+> > > > It seems to me that the same issue applies to your patch - it would
+> > > > allow unprivileged processes to essentially lock files such that ot=
+her
+> > > > processes can't write to them anymore. This might allow unprivilege=
+d
+> > > > users to prevent root from updating config files or stuff like that=
+ if
+> > > > they're updated in-place.
+> > >
+> > > Yes, I agree, but since it is the case for executed files I though it
+> > > was worth starting a discussion on this topic.  This new flag could b=
+e
+> > > restricted to executable files, but we should avoid system-wide locks
+> > > like this.  I'm not sure how Windows handle these issues though.
+> > >
+> > > Anyway, we should rely on the access control policy to control write =
+and
+> > > execute access in a consistent way (e.g. write-xor-execute).  Thanks =
+for
+> > > the references and the background!
 > >
-> > Right.
-> > scripts/get_maintainer.pl arch/x86/net/bpf_jit_comp.c
-> > is your friend.
+> > I'm confused.  I understand that there are many contexts in which one
+> > would want to prevent execution of unapproved content, which might
+> > include preventing a given process from modifying some code and then
+> > executing it.
 > >
-> > Pls cc author-s of the commit in question in the future.
-> > Adding them now.
-> >
-> > > > > diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_c=
-omp.c
-> > > > > index 15672cb926fc1..2a825e5745ca1 100644
-> > > > > --- a/arch/x86/net/bpf_jit_comp.c
-> > > > > +++ b/arch/x86/net/bpf_jit_comp.c
-> > > > > @@ -2591,8 +2591,7 @@ emit_jmp:
-> > > > >                     seen_exit =3D true;
-> > > > >                     /* Update cleanup_addr */
-> > > > >                     ctx->cleanup_addr =3D proglen;
-> > > > > -                   if (bpf_prog_was_classic(bpf_prog) &&
-> > > > > -                       !capable(CAP_SYS_ADMIN)) {
-> > > > > +                   if (bpf_prog_was_classic(bpf_prog) && !bpf_ca=
-pable()) {
-> >
-> > This looks wrong for several reasons.
-> >
-> > 1.
-> > bpf_capable() and CAP_BPF in general applies to eBPF only.
-> > There is no precedent so far to do anything differently
-> > for cBPF when CAP_BPF is present.
+> > I don't understand what these deny-write features have to do with it.
+> > These features merely prevent someone from modifying code *that is
+> > currently in use*, which is not at all the same thing as preventing
+> > modifying code that might get executed -- one can often modify
+> > contents *before* executing those contents.
 >
-> That's not entirely true, see below.
->
-> > 2.
-> > commit log states that
-> > "privileged domains using BPF would usually only be allowed CAP_BPF
-> > and not CAP_SYS_ADMIN"
-> > which is true for eBPF only, since cBPF is always allowed for
-> > all unpriv users.
-> > Start chrome browser and you get cBPF loaded.
->
-> Processes using cBPF (via SO_ATTACH_FILTER) already can trigger a
-> CAP_BPF check - when the net.core.bpf_jit_harden sysctl is set to 1,
-> then the sequence sk_attach_filter() -> __get_filter() ->
-> bpf_prog_alloc() -> bpf_prog_alloc_no_stats() ->
-> bpf_jit_blinding_enabled() -> bpf_token_capable() happens for the same
-> iio-sensor-proxy syscall as the one that hits the CAP_SYS_ADMIN check.
-> Because of this we have already granted the BPF capability in
-> Fedora/RHEL SELinux policy to many domains that would usually run as
-> root and that use SO_ATTACH_FILTER. The logic being that they are
-> legitimately using BPF + without SELinux they would be fully
-> privileged (root) and they would pass that check + it seemed they
-> could otherwise lose some performance due to the hardening (though I'm
-> not sure now if it applies to cBPF, so this point could be moot) +
-> CAP_BPF doesn't grant any excess privileges beyond this (as opposed to
-> e.g. CAP_SYS_ADMIN). This is what I meant behind that commit log
-> statement, though I didn't remember the details, so I didn't state it
-> as clearly as I could have (my apologies).
->
-> Now this same usage started triggering the new plain CAP_SYS_ADMIN
-> check so I naturally assumed that changing it to bpf_capable() would
-> be the most logical solution (as it would let us keep the services
-> excluded from the hardening via CAP_BPF without granting the broad
-> CAP_SYS_ADMIN).
->
-> Is the fact that CAP_BPF check is reachable via cBPF use unexpected
-> behavior? If both cBPF and eBPF can be JIT'd and CAP_BPF is already
-> being used for the "exempt from JIT hardening" semantics in one place,
-> why should cBPF and eBPF be treated differently? In fact, shouldn't
-> the decision to apply the Spectre mitigation also take into account
-> the net.core.bpf_jit_harden sysctl even when the program is not cBPF?
->
-> > 3.
-> > glancing over bugzilla it seems that the issue is
-> > excessive audit spam and not related to CAP_BPF and privileges.
-> > If so then the fix is to use
-> > ns_capable_noaudit(&init_user_ns, CAP_SYS_ADMIN)
-> >
-> > 4.
-> > I don't understand how the patch is supposed to fix the issue.
-> > iio-sensor-proxy is probably unpriv. Why would it use CAP_BPF?
-> > It's using cBPF, so there is no reason for it to have CAP_BPF.
-> > So capable(CAP_BPF) will fail just like capable(CAP_SYS_ADMIN),
-> > but since CAP_BPF check was done first, the audit won't
-> > be printed, because it's some undocumented internal selinux behavior ?
-> > None of it is in the commit log :(
->
-> It is not unprivileged. It runs as root and without SELinux it would
-> have all capabilities allowed. If it were running without any
-> capabilities, then indeed there would be no SELinux checks.
->
-> > 5.
-> > And finally all that looks like a selinux bug.
-> > Just because something in the kernel is asking capable(CAP_SYS_ADMIN)
-> > there is no need to spam users with the wrong message:
-> > "SELinux is preventing iio-sensor-prox from using the 'sys_admin' capab=
-ilities."
-> > iio-sensor-prox is not trying to use 'sys_admin' capabilities.
-> > cBPF prog will be loaded anyway, with or without BHB clearing.
->
-> Well, it depends... In this case the AVC denial informs us that the
-> kernel is making some decision depending on the capability and that a
-> decision should be made in the policy to allow or silence the access
-> vector. Even when the consequence is not a failure of the syscall, it
-> still may be useful to have the denial reported, since there is a
-> potential performance impact. OTOH, with CAP_SYS_ADMIN if the decision
-> is to not allow it, then silencing it via a dontaudit rule would
-> potentially hide other more critical CAP_SYS_ADMIN denials, so it's
-> hard to decide what is better - to silence this specific case in the
-> kernel vs. to let the user allow/silence the specific AV in the
-> policy...
+> The order of checks would be:
+> 1. open script with O_DENY_WRITE
+> 2. check executability with AT_EXECVE_CHECK
+> 3. read the content and interpret it
 
-Bumping this, as I'd like to hear some feedback to the points above.
+Hmm.  Common LSM configurations should be able to handle this without
+deny write, I think.  If you don't want a program to be able to make
+their own scripts, then don't allow AT_EXECVE_CHECK to succeed on a
+script that the program can write.
 
-Thanks,
+Keep in mind that trying to lock this down too hard is pointless for
+users who are allowed to to ptrace-write to their own processes.  Or
+for users who can do JIT, or for users who can run a REPL, etc.
 
---=20
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+> > But maybe a less kludgy version could be used for real.  What if there
+> > was a syscall that would take an fd and make a snapshot of the file?
+>
+> Yes, that would be a clean solution.  I don't think this is achievable
+> in an efficient way without involving filesystem implementations though.
 
+It wouldn't be so terrible to involve filesystem implementations.
+Most of the filesystems that people who care at all about security run
+their binaries from either support reflinks or are immutable.  Things
+like OCI implementations may already fit meet those criteria, and it
+would be pretty nifty if the kernel was actually aware that OCI layers
+are intended to be immutable.  We could even have an API to
+generically query the hash of an immutable file and to ask the kernel
+if it's validating the hash on reads.
