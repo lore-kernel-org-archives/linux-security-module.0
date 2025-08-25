@@ -1,59 +1,59 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0B32309B2
-	for <linux-security-module@vger.kernel.org>; Mon, 25 Aug 2025 16:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9998307ACB
+	for <linux-security-module@vger.kernel.org>; Mon, 25 Aug 2025 17:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756140227; cv=none; b=tp8PfH8ktRMul6e2XovORB/dWJRLirRQfYG5QSRurTErA+NY0SOkOEUALm2tpVx89lohxuZIy7PJq5B4BMYRJ4GjQ2alO1GH5kWWDOHm8qtfo20RFIqYBd08tRxd2zsYQukMeJpNE0HndkWITooTatl1NJYvdZDoAU5HvqyMy3g=
+	t=1756144720; cv=none; b=N+1kTbVgGqDBJPppL1R0Q9m4aQ1VlIvDPttSEX/PnSD+FGJ6nm+k+2oOeFxRYeL6Tf9M2Ey1zMvHjMG6TRLRcJQ3oD5YI0F2/C+MEShL1rHOdOacJUbNgXDfuhMQ2wdpUa+wO8eYobV+BrKsJJ5ntb4+75jbE6LYp9F097xcKM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756140227; c=relaxed/simple;
-	bh=mrvVK8/Xsrljs2OlTw2saC30UIQ8XhkSiEQOYrZEW8Q=;
+	s=arc-20240116; t=1756144720; c=relaxed/simple;
+	bh=4GQMW7y4hB6OnpRIcEB2iZaqJ0oZoARp3ba61McckPM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jy3HBTBUJ3pRuZyxaLCSD0r5gADiKhulOq9madiPHzB6NwyTX9VfTyN2kF7xch3pvVrkGz/R2IQByk1cO7YSt5/5y7ScslLshWz8qkNlHkzj0rvACCy1E7kk2g3oSn9f6tv0MCqLoY7C2R+wWQ5mvncHRi2itN/Xn97hcsNFRCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=LJBtn8hz; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
+	 To:Cc:Content-Type; b=F4aT0QAsQGsMFSiqBpjGTu8bUSznmJlKzDjZFRVucvuAlUqKu5wgoR0wQaMcnHSsrgsViPSiXXHTg47aeqtvTCp6jdBV3PsUGlfkmMSspvA6Jp6TOU+JHSXngWRS92gSRYKNz32a8imDjbe81tZ3MYxc8rayGFEsr2l6RJFtM60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u7+dSJWm; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="LJBtn8hz"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-333f918d71eso32651381fa.3
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Aug 2025 09:43:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u7+dSJWm"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-459fbc92e69so7165e9.0
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Aug 2025 10:58:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1756140224; x=1756745024; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756144715; x=1756749515; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7PLv6y/UhSOB8bdOkGYyaQMgyRuq9HEBdk6Xh5IVulM=;
-        b=LJBtn8hz9+1q0YtwAmqQoOT4NrmZQ2SKq2o/M1bmIOD8I7C0es7ckJbRx/MOsfdmK6
-         MgmVBU9kkITmd8wHsdZGW1WCqOCLFGo44p7hgKXyb53xCpqlhlrbKYk/UfVp4IoiAGQl
-         DcSx6PbRN6eNvl+q38qNWi1twzzm+8oeiKRvoIr3wmC4XN/mQS5IrDEOQ0t2HkCYkbS3
-         IEOjewoT1zuKhaMU75icXZWujI8GwB8CEIOTKJuwXuCYk0WIkvgaMXDOJ5Fo+v5oPQDn
-         VvJcIlFEWgd3h4CAWTuHai2S2TkozFw1Nl/RZ/O+XUS5hxyTTKwxZNHE4ADffnjQg3TN
-         3+Gg==
+        bh=e5yo9Tha3EYZ7QDWhjTh1gNp5eXSF1E//nUjICwrq4k=;
+        b=u7+dSJWmVmjCDzkOc/+o9pNju1PVWZxyMDFdMqcF1qQUWCrO3gOBEufIdc6TDhYb8a
+         pqdW7m6yd2jcjO3p0y5g9rSPMktXUwJr1oEkSJcsjJoowgiF2SbxGpV5l21gyNJsvHJq
+         LTGulZYKbV9dmabNwXL4XxgOfhfXn7uefmZgJWI26f2DRr2Rb1Vb42MEiyVcMUZNjtzL
+         fWwIRd4gVCoRNLH5ZgMwLwkxon09bJ9kE0XCOyZ8KcxN/+LIZxxJfyzcJIywx7B7q3R4
+         zUklveOK6ovTkTEUIyVD4E2SVa81Mcp3/aLfyq+xhwwwb5FQUR8h7G8Ht7oB3PcPsEqV
+         LsQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756140224; x=1756745024;
+        d=1e100.net; s=20230601; t=1756144715; x=1756749515;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7PLv6y/UhSOB8bdOkGYyaQMgyRuq9HEBdk6Xh5IVulM=;
-        b=KyruYupisL8Y6LhwHOa2WHxQAWSd5P+6F8Zl0JfVuOSkzQylF9LTuv2EFp/7mQK8yY
-         MwRn1x1gNiwudwAKWhrms5YGymxM/AjyGQL9TcDWAYsDZppt9401WIRtEDEF+7aTpY7j
-         +lLPVVQ3gVfnTd5SJuBCErzx3MQVOwnyXTvFUpEzF4y7EE8oUayHDf/ORdmAqU1Vs8kh
-         Bnb0hSPaNyz647ZFseOxUZkw6zry1Ez4INregNPaEQSjnB06qDJ1Co9Ih5omNLYsfHi9
-         IDSiwbMAvcrzxEnA5mVjY1E/dzJmFoxpy4tPWPvyehKy9eQP06gz20rqkLgIeVHcFFic
-         5myg==
-X-Forwarded-Encrypted: i=1; AJvYcCWx0FkoR4AzKd+7VbQyNYL8+7NiXmaAlIU4xoVifm/e9+4RUvNTF97nhoT837aqtici+4wvNr5qR0rMGlZmhXEZT5pAbag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxwEZ4Ok001a7KkvFqtz0wVpwcmeoQly3g/l3EiXf4gf2ndxDV
-	RBNfFtSIgD2j03QkZMqWyTRnG8Ls9gAurdHyzPkKduyCtH+MriV0j02WSEgpJ1GCeUyTXpZaHNH
-	q0wpy+yA2YrrVta9dRkSZOnyxyUHyfT5NSXHfATJs
-X-Gm-Gg: ASbGncvShZaGk9qi531iUtE++sbTrPyROp0GFlrDoYprtNGVLw8fp0t5tOn1wK860bz
-	JapL4SS18sgBAurtQADoTTQxktjFmARjQPB+H/ahTjAz/Qpuexq1tdwqYRvd0wzhakF2zJ8f3HA
-	veYAGoH28mnm7n0sUcpc5azC3X5Y5Y3mGb8ao2b/8bNnkfny7uH6Lz55HT2aw78tRuU5O86svCa
-	Zpvxg==
-X-Google-Smtp-Source: AGHT+IEMdqK/C2LpKtNe8HwPygFUadpsqtunEn/HXVLtMBboXyEX1vSk+kxH2wVSUzVD8p+wSlL+I8mi2gjoh9eWb18=
-X-Received: by 2002:a2e:a018:0:b0:330:d981:1755 with SMTP id
- 38308e7fff4ca-33650de81e9mr24090271fa.6.1756140223780; Mon, 25 Aug 2025
- 09:43:43 -0700 (PDT)
+        bh=e5yo9Tha3EYZ7QDWhjTh1gNp5eXSF1E//nUjICwrq4k=;
+        b=aGQwahmnYQFlISLaN7guqqQ3GuTfl8UBrtP2JhWEk66SBytEAfBth5F3DXhVswJauX
+         gTdUAiMSevx9ZDGMrWOfhmvtDyjjdpQv7cllWp/XIsdwM8XJ9ZpCOIWgB8AkIe1Kspiq
+         wPD7LJPCKAJZMhFzak06m1Rm6hlOKPCyP6QopfZZ/dZeEoFbkjxHMrzINFuWbX4cqLgG
+         GC6qA5tfqijYLdGUpT3LIywiZ5dE+hptBMj2uNZG/LrKeS54BPulLH2SklvON86HgAAL
+         MeqI1XIebOH3rGDNZ9yfuPG689MyrtCnByY/EncC989E8rq6ZbUxFxyyPoxDQcXRS65y
+         SHPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHCFkbMIKondnL62fZV1NDVCau70YBwkhd7xVNd22PZn656dEGRrIPael9JZl5ReCFJqYPUQOILcmP43ZpyJAnJBXLX5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7zlVBvrEBhmArH2HklO4I1waep0KLGxJoh7CjK7JobQQEkhFD
+	UiZ/IB1MsYMgluahBJvaM/LEgMnNfMGUd4zBhfMwF1CMK24tkYdwO6sQlD7qHt7u3gO8/dg4Tgj
+	LZc1ZWClxAM/v1FiKgSpzBVv5UkmZKq3/trvf+8I4
+X-Gm-Gg: ASbGncsZ7o33VThmxcx4m3ZHVoDv9kMLr9lxYKkRbEhTqDBnxxsYSkP8V5l17ftwRv+
+	qsLDR3duIob06PJ58WTQ4RcpV477XyDjq7tqykRYSU9JBAlv3sA4xkUw7QqdS7YCU13RsrraEZs
+	bRJNVAhH825wVITFGDK8Ovuj4nU+AHZ3r1KKWTZ68K/KhyDKKQjbi+WoZHMdlUArrM9sKGpXjox
+	3gpa4yZ7hPa5HU/619tPu66a8BebWWR8uSrDnpq2/nk
+X-Google-Smtp-Source: AGHT+IGoEbuuaQmf6ejPreW/3EnO6Pdxa5HefL1xaCUoTpRbYEOTACur/ikE7cpdM/TuCFok1aNUpgjgLfri4GxZboA=
+X-Received: by 2002:a05:600c:3b9f:b0:439:8f59:2c56 with SMTP id
+ 5b1f17b1804b1-45b65e97671mr61125e9.2.1756144714893; Mon, 25 Aug 2025 10:58:34
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -65,18 +65,19 @@ References: <20250822170800.2116980-1-mic@digikod.net> <20250822170800.2116980-2
  <20250824.Ujoh8unahy5a@digikod.net> <CALCETrWwd90qQ3U2nZg9Fhye6CMQ6ZF20oQ4ME6BoyrFd0t88Q@mail.gmail.com>
  <20250825.mahNeel0dohz@digikod.net>
 In-Reply-To: <20250825.mahNeel0dohz@digikod.net>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Mon, 25 Aug 2025 09:43:31 -0700
-X-Gm-Features: Ac12FXyB6lzRP1sYgoa00swEucBzjGB4o1VKS2fSTUJC8HJqzdooeCFOZN6Irw4
-Message-ID: <CALCETrX+OpkRSvOZhaWiqOsAPr-hRb+kY5=Hh5LU3H+1xPb3qg@mail.gmail.com>
+From: Jeff Xu <jeffxu@google.com>
+Date: Mon, 25 Aug 2025 10:57:57 -0700
+X-Gm-Features: Ac12FXxz9pJE0h6HrBGgWJl3z0z4f3e-FfLHbDFV9MrECVyOF6U4dJWEVdkn5yM
+Message-ID: <CALmYWFv90uzq0J76+xtUFjZxDzR2rYvrFbrr5Jva5zdy_dvoHA@mail.gmail.com>
 Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
 To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Jann Horn <jannh@google.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+Cc: Andy Lutomirski <luto@amacapital.net>, Jann Horn <jannh@google.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
 	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
 	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
 	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
@@ -89,6 +90,8 @@ Cc: Jann Horn <jannh@google.com>, Al Viro <viro@zeniv.linux.org.uk>,
 	Jeff Xu <jeffxu@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+
+Hi Micka=C3=ABl
 
 On Mon, Aug 25, 2025 at 2:31=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
 od.net> wrote:
@@ -183,27 +186,37 @@ for
 > 1. open script with O_DENY_WRITE
 > 2. check executability with AT_EXECVE_CHECK
 > 3. read the content and interpret it
-
-Hmm.  Common LSM configurations should be able to handle this without
-deny write, I think.  If you don't want a program to be able to make
-their own scripts, then don't allow AT_EXECVE_CHECK to succeed on a
-script that the program can write.
-
-Keep in mind that trying to lock this down too hard is pointless for
-users who are allowed to to ptrace-write to their own processes.  Or
-for users who can do JIT, or for users who can run a REPL, etc.
-
-> > But maybe a less kludgy version could be used for real.  What if there
-> > was a syscall that would take an fd and make a snapshot of the file?
 >
-> Yes, that would be a clean solution.  I don't think this is achievable
-> in an efficient way without involving filesystem implementations though.
+I'm not sure about the O_DENY_WRITE approach, but the problem is worth solv=
+ing.
 
-It wouldn't be so terrible to involve filesystem implementations.
-Most of the filesystems that people who care at all about security run
-their binaries from either support reflinks or are immutable.  Things
-like OCI implementations may already fit meet those criteria, and it
-would be pretty nifty if the kernel was actually aware that OCI layers
-are intended to be immutable.  We could even have an API to
-generically query the hash of an immutable file and to ask the kernel
-if it's validating the hash on reads.
+AT_EXECVE_CHECK is not just for scripting languages. It could also
+work with bytecodes like Java, for example. If we let the Java runtime
+call AT_EXECVE_CHECK before loading the bytecode, the LSM could
+develop a policy based on that.
+
+> The deny-write feature was to guarantee that there is no race condition
+> between step 2 and 3.  All these checks are supposed to be done by a
+> trusted interpreter (which is allowed to be executed).  The
+> AT_EXECVE_CHECK call enables the caller to know if the kernel (and
+> associated security policies) allowed the *current* content of the file
+> to be executed.  Whatever happen before or after that (wrt.
+> O_DENY_WRITE) should be covered by the security policy.
+>
+Agree, the race problem needs to be solved in order for AT_EXECVE_CHECK.
+
+Enforcing non-write for the path that stores scripts or bytecodes can
+be challenging due to historical or backward compatibility reasons.
+Since AT_EXECVE_CHECK provides a mechanism to check the file right
+before it is used, we can assume it will detect any "problem" that
+happened before that, (e.g. the file was overwritten). However, that
+also imposes two additional requirements:
+1> the file doesn't change while AT_EXECVE_CHECK does the check.
+2>The file content kept by the process remains unchanged after passing
+the AT_EXECVE_CHECK.
+
+I imagine, the complete solution for AT_EXECVE_CHECK would include
+those two grantees.
+
+Thanks
+-Jeff
