@@ -1,150 +1,268 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C1A153BED;
-	Mon, 25 Aug 2025 22:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7248223DD5
+	for <linux-security-module@vger.kernel.org>; Mon, 25 Aug 2025 23:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756162238; cv=none; b=oxPA79Pecbf9WKeoD6hmM68tKsXKp7neualp3qeVKWGYquF+of5amRU9Ih2tMGkIt7pxsNNAjMqbCdqZ2MCJzjrOngJXEA+sSQETNqnuZbtsAjAkqUF8ct2FKki/6KQ0DsCyOdkRKQCflVpq4qc5Kaql7k+jGPGk7f/Ib1xTrys=
+	t=1756163237; cv=none; b=ZeirzVtcLSau+9kMKCKxMBXvQAWl16VQwi+OW2joLJtJ085ok7+JsSj3WpHo8hwwDdTmPwy5m8UP3uEe+o8FkuLl3tNcuOcfbi/H+7orgDZ2YiJMUG0iYXXjosWKz3foncMSnolgnYHsDAvItkpR4IvEstSd/UWspQxBr2V0GLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756162238; c=relaxed/simple;
-	bh=qLAILGylpNDxCGNnXDGO6cizwxD+QRteD6rM/sVBaQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OFLWYIBT95e2KmR+eHoF7NQxrgr3N+Jqk/bdMVSunZZI1w9z1NyKFtQ1DkCiSY29/HLwxOfOtcp7JNKO6rGUV37VZ3KCRy1QuWgtlQ0wPFeNMyWGqGs+bKJ9jojA7XB1uan/dWY7T/D6Q+8/hVA9Mya6ONjkjsPDs4mi16iBwJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FyLObBu4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756163237; c=relaxed/simple;
+	bh=r7HxHZFAB4nVSfSxKE+8VIcX37QZj7bnbJDOmxZXzgI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rqtFqhW2/cjTD7GZ9QFndcJM3o1ue8XPI8B8IftIg+ZL/9XUyrWleVdT6T18LMq5rzliNkh0nSbulHmg/d/nc1KKLZqAJh1pDmnnk2FGk9WypvykQLwWpYqU1qCngJTr1bFy2W1p/iNMKKw29jy73LVFtAurRDO//hLO6qqlr34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XpPjAQHm; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FyLObBu4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA55CC4CEED;
-	Mon, 25 Aug 2025 22:50:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756162235;
-	bh=qLAILGylpNDxCGNnXDGO6cizwxD+QRteD6rM/sVBaQo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FyLObBu4yeae/4I2HhwQ42nY1rjeme9QShssPkYP8kikxHnjai/1d2K8R/KplTRmx
-	 hn3niZf58Eug0UdO6tIzkmWfOM3vnJLg3l3QKGplgQ9/0niLNIHNfBu9ctfLJLAR6c
-	 d6Nb5vTXX5ZM06XOkj0GcnsMm7ZFiWFw2bXrtDNKISw9qU4248bNplSGjG1/fMCBLB
-	 O3kVVBMNgs6jEPqNuXraby7NzXLORT1qtghIYdM4DbNqYibWY0oofzFfvbqFxKNwjW
-	 XW6PDanOgpwKU6CLLBBNBxH+zQ43SFYEJkQycbRq18BB/tTfBsVbIb3i1yl2rTD9Zv
-	 2qcg0r3YFDKTQ==
-Date: Tue, 26 Aug 2025 01:50:31 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH] security: keys: use menuconfig for KEYS symbol
-Message-ID: <aKzot67f7F3wtHs7@kernel.org>
-References: <20250824222813.92300-1-rdunlap@infradead.org>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XpPjAQHm"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-459fbc92e69so27295e9.0
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Aug 2025 16:07:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756163234; x=1756768034; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+L5AsGrJuImxDbD9S66ptTgGaLweygGmtz10pt7M4KI=;
+        b=XpPjAQHmjg+uz22+Vmi/PzT4V4XC6f84C9DDCIWL0ovyN5rmOphxsuhdsxRtBm/4fi
+         7Bcp/hTF4tB2tZvW4xDrLQUO6F/BeWXP01/f69zt9ovUbUjOHUL9KUaO2JFypuI6FgOi
+         AJXQLffesDhUwMhvcd7ustwtZQjp5T/Onhx26Z5M4Sm/dgR/zm0pKEoi/mb+IL3ECm0o
+         7LVdRsun1TUh1+CdsQQClKJ2Fe1vHJsHEUJmAA7dMuqIaT78ew+MmVsTSDyPHcPHZy5T
+         79FOEEFFhwPxQnMNpZ700f6QW2Z6hWpkQRkr5WHzH63daLsBwVr6UbTwSxbLSQhgk7m8
+         hj+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756163234; x=1756768034;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+L5AsGrJuImxDbD9S66ptTgGaLweygGmtz10pt7M4KI=;
+        b=ncnAismbTfqShQqUtmtOcFmRqGsGH71c+R3LaNPcSgBZmGOKQsWGmZQQ8PRLsdMgwR
+         3WQFkcW3HQ/wDjz+JP/NT0dx8Mi32lNC7jEG/Kh+R4A/mOKuyOFNK2yTvOOFJdqpBEHf
+         tAkmxStQlrltITsrOOXmRLmbU//huLduRJ6haMR/adFcZg3ex6XfL33d5SfrZYd7zOek
+         IAOx8mbprXmqTxG/S9g5dTLIdmW1J1Sz+eUa2vt5l/AHuiPrY4CqERSKcLSdt6kNhtgn
+         MM1Stt8MY8RK7lZ8Ahhct9aElYRejaN1yin7zQZfkQKtH1JBlnVV5mHfjlmEI/2bABRF
+         Np6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWzHEuoYBqZmLEb26n3ghoIp5KEIaqwzh8HcWJzS85eKlNeHoxKjqoSxdw8gr5hR8AGw0Fq401hORcj7j/rxSZn0ahAF1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl2jdlDPEn1sZtYm9Yk9DHSWjvK5nym64CqkNRiWnJoGInWA+F
+	E7eH60DCwuN80x9i987T7uYCCuPzQEYxhd5OjW5+ASqPThB78s7EcD4c7XEMDT0Si9zDSjumw+a
+	+JYJp59LRWoSpfnOPIvL9/s88fe4zadRVr7KasqEp
+X-Gm-Gg: ASbGnctALt2GBbzvaIZZ+pBX8KuFurBetvtlGS3dvyrI46hOBx14GGa1qnMPFiDARQP
+	pnA7tS6Nndk9KJ+QAegyvuR9Ox2EJ/vSW3PWaHK2gvK7TkBPEvF+AOMyvfXTTAQmQkbDWI2bjm+
+	ANnlZmGTRHGgBvXmjk6g5ZEQIDxo2udHKVym7mDhc2a86izB8FMYLb2zOgBtGHrjN+Am2AXYinr
+	PXzTk2LWId5h/JiFjIY3ET2B5m6F2EjuRxr7wpB+5c2
+X-Google-Smtp-Source: AGHT+IHIdI2gVCWLS0AakXMTgfvOfywSQxcckFQOuk+b+Ouf9TyXhvGefpAayJFTAxmqY/j4TP3DjIWphxCApJMvrZE=
+X-Received: by 2002:a05:600c:793:b0:442:feea:622d with SMTP id
+ 5b1f17b1804b1-45b669691bcmr131075e9.1.1756163233954; Mon, 25 Aug 2025
+ 16:07:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250824222813.92300-1-rdunlap@infradead.org>
+References: <F0E70FC7-8DCE-4057-8E91-9FA1AC5BC758@amacapital.net>
+In-Reply-To: <F0E70FC7-8DCE-4057-8E91-9FA1AC5BC758@amacapital.net>
+From: Jeff Xu <jeffxu@google.com>
+Date: Mon, 25 Aug 2025 16:06:34 -0700
+X-Gm-Features: Ac12FXyT_7DxME9htDUZJHRjmIirfag-BknO_I14rcxQwO3Vxf2xOZIPpcG4k04
+Message-ID: <CALmYWFuijKhKO+xOJfcLT2OQnJJTC1WrNG5yevLdRBNdVtWcUA@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Jann Horn <jannh@google.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Jeff Xu <jeffxu@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 24, 2025 at 03:28:13PM -0700, Randy Dunlap wrote:
-> Give the KEYS kconfig symbol and its associated symbols a separate
-> menu space under Security options by using "menuconfig" instead of
-> "config".
-> 
-> This also makes it easier to find the security and LSM options.
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> ---
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Jarkko Sakkinen <jarkko@kernel.org>
-> Cc: keyrings@vger.kernel.org
-> Cc: linux-security-module@vger.kernel.org
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> 
->  security/keys/Kconfig |   14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
-> 
-> --- linux-next-20250819.orig/security/keys/Kconfig
-> +++ linux-next-20250819/security/keys/Kconfig
-> @@ -3,7 +3,7 @@
->  # Key management configuration
->  #
->  
-> -config KEYS
-> +menuconfig KEYS
->  	bool "Enable access key retention support"
->  	select ASSOCIATIVE_ARRAY
->  	help
-> @@ -21,9 +21,10 @@ config KEYS
->  
->  	  If you are unsure as to whether this is required, answer N.
->  
-> +if KEYS
-> +
->  config KEYS_REQUEST_CACHE
->  	bool "Enable temporary caching of the last request_key() result"
-> -	depends on KEYS
->  	help
->  	  This option causes the result of the last successful request_key()
->  	  call that didn't upcall to the kernel to be cached temporarily in the
-> @@ -41,7 +42,6 @@ config KEYS_REQUEST_CACHE
->  
->  config PERSISTENT_KEYRINGS
->  	bool "Enable register of persistent per-UID keyrings"
-> -	depends on KEYS
->  	help
->  	  This option provides a register of persistent per-UID keyrings,
->  	  primarily aimed at Kerberos key storage.  The keyrings are persistent
-> @@ -58,7 +58,6 @@ config PERSISTENT_KEYRINGS
->  
->  config BIG_KEYS
->  	bool "Large payload keys"
-> -	depends on KEYS
->  	depends on TMPFS
->  	select CRYPTO_LIB_CHACHA20POLY1305
->  	help
-> @@ -70,7 +69,6 @@ config BIG_KEYS
->  
->  config TRUSTED_KEYS
->  	tristate "TRUSTED KEYS"
-> -	depends on KEYS
->  	help
->  	  This option provides support for creating, sealing, and unsealing
->  	  keys in the kernel. Trusted keys are random number symmetric keys,
-> @@ -85,7 +83,6 @@ endif
->  
->  config ENCRYPTED_KEYS
->  	tristate "ENCRYPTED KEYS"
-> -	depends on KEYS
->  	select CRYPTO
->  	select CRYPTO_HMAC
->  	select CRYPTO_AES
-> @@ -114,7 +111,6 @@ config USER_DECRYPTED_DATA
->  
->  config KEY_DH_OPERATIONS
->         bool "Diffie-Hellman operations on retained keys"
-> -       depends on KEYS
->         select CRYPTO
->         select CRYPTO_KDF800108_CTR
->         select CRYPTO_DH
-> @@ -127,9 +123,11 @@ config KEY_DH_OPERATIONS
->  
->  config KEY_NOTIFICATIONS
->  	bool "Provide key/keyring change notifications"
-> -	depends on KEYS && WATCH_QUEUE
-> +	depends on WATCH_QUEUE
->  	help
->  	  This option provides support for getting change notifications
->  	  on keys and keyrings on which the caller has View permission.
->  	  This makes use of pipes to handle the notification buffer and
->  	  provides KEYCTL_WATCH_KEY to enable/disable watches.
-> +
-> +endif # KEYS
+On Mon, Aug 25, 2025 at 2:56=E2=80=AFPM Andy Lutomirski <luto@amacapital.ne=
+t> wrote:
+>
+>
+> > On Aug 25, 2025, at 11:10=E2=80=AFAM, Jeff Xu <jeffxu@google.com> wrote=
+:
+> >
+> > =EF=BB=BFOn Mon, Aug 25, 2025 at 9:43=E2=80=AFAM Andy Lutomirski <luto@=
+amacapital.net> wrote:
+> >>> On Mon, Aug 25, 2025 at 2:31=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic=
+@digikod.net> wrote:
+> >>> On Sun, Aug 24, 2025 at 11:04:03AM -0700, Andy Lutomirski wrote:
+> >>>> On Sun, Aug 24, 2025 at 4:03=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mi=
+c@digikod.net> wrote:
+> >>>>> On Fri, Aug 22, 2025 at 09:45:32PM +0200, Jann Horn wrote:
+> >>>>>> On Fri, Aug 22, 2025 at 7:08=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <=
+mic@digikod.net> wrote:
+> >>>>>>> Add a new O_DENY_WRITE flag usable at open time and on opened fil=
+e (e.g.
+> >>>>>>> passed file descriptors).  This changes the state of the opened f=
+ile by
+> >>>>>>> making it read-only until it is closed.  The main use case is for=
+ script
+> >>>>>>> interpreters to get the guarantee that script' content cannot be =
+altered
+> >>>>>>> while being read and interpreted.  This is useful for generic dis=
+tros
+> >>>>>>> that may not have a write-xor-execute policy.  See commit a5874fd=
+e3c08
+> >>>>>>> ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
+> >>>>>>> Both execve(2) and the IOCTL to enable fsverity can already set t=
+his
+> >>>>>>> property on files with deny_write_access().  This new O_DENY_WRIT=
+E make
+> >>>>>> The kernel actually tried to get rid of this behavior on execve() =
+in
+> >>>>>> commit 2a010c41285345da60cece35575b4e0af7e7bf44.; but sadly that h=
+ad
+> >>>>>> to be reverted in commit 3b832035387ff508fdcf0fba66701afc78f79e3d
+> >>>>>> because it broke userspace assumptions.
+> >>>>> Oh, good to know.
+> >>>>>>> it widely available.  This is similar to what other OSs may provi=
+de
+> >>>>>>> e.g., opening a file with only FILE_SHARE_READ on Windows.
+> >>>>>> We used to have the analogous mmap() flag MAP_DENYWRITE, and that =
+was
+> >>>>>> removed for security reasons; as
+> >>>>>> https://man7.org/linux/man-pages/man2/mmap.2.html says:
+> >>>>>> |        MAP_DENYWRITE
+> >>>>>> |               This flag is ignored.  (Long ago=E2=80=94Linux 2.0=
+ and earlier=E2=80=94it
+> >>>>>> |               signaled that attempts to write to the underlying =
+file
+> >>>>>> |               should fail with ETXTBSY.  But this was a source o=
+f denial-
+> >>>>>> |               of-service attacks.)"
+> >>>>>> It seems to me that the same issue applies to your patch - it woul=
+d
+> >>>>>> allow unprivileged processes to essentially lock files such that o=
+ther
+> >>>>>> processes can't write to them anymore. This might allow unprivileg=
+ed
+> >>>>>> users to prevent root from updating config files or stuff like tha=
+t if
+> >>>>>> they're updated in-place.
+> >>>>> Yes, I agree, but since it is the case for executed files I though =
+it
+> >>>>> was worth starting a discussion on this topic.  This new flag could=
+ be
+> >>>>> restricted to executable files, but we should avoid system-wide loc=
+ks
+> >>>>> like this.  I'm not sure how Windows handle these issues though.
+> >>>>> Anyway, we should rely on the access control policy to control writ=
+e and
+> >>>>> execute access in a consistent way (e.g. write-xor-execute).  Thank=
+s for
+> >>>>> the references and the background!
+> >>>> I'm confused.  I understand that there are many contexts in which on=
+e
+> >>>> would want to prevent execution of unapproved content, which might
+> >>>> include preventing a given process from modifying some code and then
+> >>>> executing it.
+> >>>> I don't understand what these deny-write features have to do with it=
+.
+> >>>> These features merely prevent someone from modifying code *that is
+> >>>> currently in use*, which is not at all the same thing as preventing
+> >>>> modifying code that might get executed -- one can often modify
+> >>>> contents *before* executing those contents.
+> >>> The order of checks would be:
+> >>> 1. open script with O_DENY_WRITE
+> >>> 2. check executability with AT_EXECVE_CHECK
+> >>> 3. read the content and interpret it
+> >> Hmm.  Common LSM configurations should be able to handle this without
+> >> deny write, I think.  If you don't want a program to be able to make
+> >> their own scripts, then don't allow AT_EXECVE_CHECK to succeed on a
+> >> script that the program can write.
+> > Yes, Common LSM could handle this, however, due to historic and app
+> > backward compability reason, sometimes it is impossible to enforce
+> > that kind of policy in practice, therefore as an alternative, a
+> > machinism such as AT_EXECVE_CHECK is really useful.
+>
+> Can you clarify?  I=E2=80=99m suspicious that we=E2=80=99re taking past e=
+ach other.
+>
+Apology, my response isn't clear.
 
-I wote for this at least. Definitely an improvement:
+> AT_EXECVE_CHECK solves a problem that there are actions that effectively =
+=E2=80=9Cexecute=E2=80=9D a file that don=E2=80=99t execute literal CPU ins=
+tructions for it. Sometimes open+read has the effect of interpreting the co=
+ntents of the file as something code-like.
+>
+Yes. We have the same understanding of this.
+As an example, shell script or java byte code, their file permission
+can be rw, but no x bit set. The interpreter reads those and executes
+them.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> But, as I see it, deny-write is almost entirely orthogonal. If you open a=
+ file with the intent of executing it (mmap-execute or interpret =E2=80=94 =
+makes little practical difference here), then the kernel can enforce some p=
+olicy. If the file is writable by a process that ought not have permission =
+to execute code in the context of the opening-for-execute process, then LSM=
+s need deny-write to be enforced so that they can verify the contents at th=
+e time of opening.
+>
+> But let=E2=80=99s step back a moment: is there any actual sensible securi=
+ty policy that does this?  If I want to *enforce* that a process only execu=
+te approved code, then wouldn=E2=80=99t I do it be only allowing executing =
+files that the process can=E2=80=99t write?
+>
+I imagine the following situation: an app has both "rw" access to the
+file that holds the script code, the "w" is needed because the app
+updates the script sometimes.
 
-BR, Jarkko
+What is a reasonable sandbox solution for such an app? There are maybe
+two options:
+
+1> split the app as two processes: processA has "w" access to the
+script for updating when needed. Process B has "r" access but no "w",
+for executing. ProcessA and ProcessB will coordinate to avoid racing
+on the script update.
+
+2> The process will use AT_EXECVE_CHECK (added by interpreter) to
+validate the file before opening , and the file content held by the
+process should be immutable while being validated and executed later
+by interpreter.
+
+option 1 is the ideal, and IIUC, you promote this too. However, that
+requires refactoring the app as two processes.
+option 2 is an alternative. Because it doesn't require the change from
+the apps, therefore a solution worth considering.
+
+> The reason that the removal of deny-write wasn=E2=80=99t security =E2=80=
+=94 it was a functionality issue: a linker accidentally modified an in-use =
+binary. If you have permission to use gcc or lld, etc to create binaries, a=
+nd you have permission to run them, then you pretty much have permission to=
+ run whatever code you like.
+>
+> So, if there=E2=80=99s a real security use case for deny-write, I=E2=80=
+=99m still not seeing it.
+>
+Although the current patch might not be ideal due to the potential DOS
+attack, it does offer a starting point to address the needs. Let's
+continue the discussion based on this patch and explore different
+ideas.
+
+Thanks and regards,
+-Jeff
+
+> >> Keep in mind that trying to lock this down too hard is pointless for
+> >> users who are allowed to to ptrace-write to their own processes.  Or
+> >> for users who can do JIT, or for users who can run a REPL, etc.
+> > The ptrace-write and /proc/pid/mem writing are on my radar, at least
+> > for ChomeOS and Android.
+> > AT_EXECVE_CHECK is orthogonal to those IMO, I hope eventually all
+> > those paths will be hardened.
+> >
+> > Thanks and regards,
+> > -Jeff
