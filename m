@@ -1,145 +1,268 @@
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEC2368092;
-	Tue, 26 Aug 2025 18:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5040134A30E
+	for <linux-security-module@vger.kernel.org>; Tue, 26 Aug 2025 20:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756232488; cv=none; b=sMSQsb8DNPZ/abtqh5XBZQpaHlKZWatXPuwYzR0goMNnGGkNdB04rqPcVmfN7/ltRlU2OsnIFFu2fGbzOOu9DqmrsaPvQ72yHet363UsH1E+srvAj9bB28p+dA/f/lfqiqm4bh20QPInTXl+I1oDWmg0V1ia3Z0YCT3llw1vyx0=
+	t=1756240210; cv=none; b=g1ew+earQ/LGhhzksuNdDVcvqyFg++/tCOrWGZX6CMBLthnuvChWAp/H4mosyimLFFp2BlAavwOoouwhs/6Lh9cqz9r879Gb/YVyRvY/HyYfw4DYRdayy6LceemGFLQu3y46Xjdlugyuz77ludUy1rN9X9AeyxVl/sMkWByCh3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756232488; c=relaxed/simple;
-	bh=B6jdH8HP6wEJcaBfFcYa/Jt54pKRzu6ZWCW/l7bqB9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QqbVSQtx/jFBzuyjQAcckxM9agpDHRKwNzKA1Q2H1rK6vkcddU3xda3iL9ueFGDZULhTmLP0Zc0F4s57XVVMRtCczp2bUFFjdcVx4DTRZRUqigEpWEwyNvcEtUmF0JBmJOb7uKS0wT3MRVicDLp7AURup0jjyqzX8n79xpNo0Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XekmSBv7; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1756240210; c=relaxed/simple;
+	bh=5Yva8w0OLKud+X5aAI7svQHkkphh5vemNMSFzLT6xf8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WQB++mHjQyPlAg6vodjNrrqXCnaCv6nePCgbJqros9n9+wlrSdn6QZaeUhuWshAMZR58zISGk2jEbQFAsJKN+lUkjWfjSXpu44I5/Glpp8zaiPs3YbLn+pFQbaE2tWtODgltcw8bXdMc80rJWicaEKSI74dBJHKXq2Twyq5BSv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aYfY1X1I; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XekmSBv7"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=eKrsZ8n9c1Uhnt/CnikDa+5wZlJ2YhlU+uxnrgRiAFw=; b=XekmSBv7dFXym2MgTXupORM5i4
-	K2rBmKKpE9CPkslVaxxm3OcPzNCiuhCCnCzMrmgu8g3uVsG+COaBR8PwsbzEX7DivbXdO1zX+OgYA
-	jEo+B7ZNQjcIE5d22aCJzS9doXxqa/HRkOwqItf4YRrCzWjxnqGCpe8vN7KhirMX+jd0ori0bfBnF
-	ufJVsS9Nd9mAqeAPrG1bZ5m4r2TXSqugN0QK5X9RbpjRLlaB8KhrUPphcPuNkciE9VCYDudxG3t5R
-	qJjE4S6jwdbBhbWFHfd/re5SEzY9h67fmLKSq6k+Tq1yP3fYqWXGW6XkNNLpaBivzI9XbDn4ZHSO5
-	BwLpSVvQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqyIO-00000004A2y-0OkV;
-	Tue, 26 Aug 2025 18:21:24 +0000
-Date: Tue, 26 Aug 2025 19:21:24 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	Christian Brauner <brauner@kernel.org>,
-	linux-security-module@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>
-Subject: [RFC][PATCH] switch do_new_mount_fc() to using fc_mount()
-Message-ID: <20250826182124.GV39973@ZenIV>
-References: <20250825044046.GI39973@ZenIV>
- <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
- <20250825044355.1541941-25-viro@zeniv.linux.org.uk>
- <20250825-zugute-verkohlen-945073b3851f@brauner>
- <20250825160939.GL39973@ZenIV>
- <20250826-kronleuchter-vortag-af3c087ae46a@brauner>
- <20250826170044.GT39973@ZenIV>
- <20250826175501.GU39973@ZenIV>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aYfY1X1I"
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-30ccec232bbso672613fac.3
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Aug 2025 13:30:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1756240207; x=1756845007; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OAsI7lkO85Qu24POEIN33spwG++nYWteW+y/gu6TAE8=;
+        b=aYfY1X1ItZH0Nq+ABgXd2ZWXZ9XarQjryy8pSgZCM1C1MccBQyy+o0jtJKHipxXW2C
+         /9NuhmpXKz6umMCCXaFe7HlLeL/WXwXbpE8aosW8BaOYcr6cAifaS/HFJ/eDOqyTgd/2
+         k1Mg0NBpHzpMO0yQu1ZHQkfVXk+HTH8PFy/J0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756240207; x=1756845007;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OAsI7lkO85Qu24POEIN33spwG++nYWteW+y/gu6TAE8=;
+        b=Z4NCyH8rmn/yx5vqxnBkDXtBGEXUbqLUC0b064M6WPl0o3TY15/QhVG8mtk55d6PPy
+         K/oNQYLPXckcttpWVTyjkxIFMyyvydlnEAH/tIUKxdyUYS4P5m9Ljne+VFE6k9QvxvsQ
+         T4gqqYyTHkIBfSc+mB/VaDx6zLCFxDHyvRG5unSSFPmqjqCnz9wKGKm5YayyB8zZjSCP
+         VFWs5S7Y/+Skxw4kFICAXaiVpc9ory6jI6dF1Rv/t1GvHoen6r+AHRsbxOENVyd9zWCt
+         Man/t6E+TwZXFbShVZ8TquGGRNm8p4JUXT1N7cJjAzPk+wOhx6fCiwjZIQbAvpBbR3vm
+         4UeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVK0rTulxUztFBrGgbqsB1OWYfA0l89ZNQOC+cZmLy/Tj7eqpjIjqY0fe1FqrlZVeqi+JpFLEtL+vSZQzfMtGAyv7jyoaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0Fi0j/xgpGEGU/XGfV08XxErCNJd6k2ScQP14A43ru2eaK/Ob
+	nJWSn58lXpWxoJNG8ohG/LZkPSvmlZBSp4ovhki+vFjUN9ChzyzMN7Bvm/LmDjpHegy4elyKiW0
+	LExNdy9QsiyyU2A1lpzqXYg85dbJJc/9e3AK6T39/
+X-Gm-Gg: ASbGnctXJ47JIgUqjqnv5saC4Y45eoOw+dFIUx6vqlX6SsUIYZnSzNFRSXh+YzSmuBc
+	UlwxxF5Obsvmv0NK2VJhuQ0v9/AP2E1RFysdTDrH69+0oLOQ1PMP96alaLDAapC3OdQ0JjmkYz+
+	S2yloQxWPn7EGYYFXTN6c1qoiwMb/5QFTR59qfoHXDE9y+n/d7rTHDXyjYnZyZ1GWvyvZz1rOoe
+	kvnFklUfth4eyMoJt0P5vKLAZGxgR8vGqHRL5cdP+dhWsA4
+X-Google-Smtp-Source: AGHT+IEqMMabA/35+v3UTBnnJZZB7a76MG6s4q+lyF2blEFWTaSGCycoM6fEKn6oGGUjAN3NGYoIAVE7wBld6B8kh8o=
+X-Received: by 2002:a05:6870:17aa:b0:30b:8000:7cc9 with SMTP id
+ 586e51a60fabf-314dcb65a17mr3692227fac.5.1756240207161; Tue, 26 Aug 2025
+ 13:30:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250826175501.GU39973@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20250822170800.2116980-1-mic@digikod.net> <20250822170800.2116980-2-mic@digikod.net>
+ <CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
+ <20250824.Ujoh8unahy5a@digikod.net> <CALCETrWwd90qQ3U2nZg9Fhye6CMQ6ZF20oQ4ME6BoyrFd0t88Q@mail.gmail.com>
+ <20250825.mahNeel0dohz@digikod.net> <CALmYWFv90uzq0J76+xtUFjZxDzR2rYvrFbrr5Jva5zdy_dvoHA@mail.gmail.com>
+ <20250826.eWi6chuayae4@digikod.net>
+In-Reply-To: <20250826.eWi6chuayae4@digikod.net>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Tue, 26 Aug 2025 13:29:55 -0700
+X-Gm-Features: Ac12FXzXGcYCly10UOhTkJvRs0pLvpZsq1ovTThMDokvEl9gFo72WEQTeksVM4c
+Message-ID: <CABi2SkUJ1PDm_uri=4o+C13o5wFQD=xA7zVKU-we+unsEDm3dw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Jeff Xu <jeffxu@google.com>, Andy Lutomirski <luto@amacapital.net>, Jann Horn <jannh@google.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[
-This is on top of -rc3; if nobody objects, I'll insert that early in series
-in viro/vfs.git#work.mount.  It has an impact for LSM folks - ->sb_kern_mount()
-would be called without ->s_umount; nothing in-tree cares, but if you have
-objections, yell now.
-]
+Hi Micka=C3=ABl
 
-Prior to the call of do_new_mount_fc() the caller has just done successful
-vfs_get_tree().  Then do_new_mount_fc() does several checks on resulting
-superblock, and either does fc_drop_locked() and returns an error or
-proceeds to unlock the superblock and call vfs_create_mount().
-    
-The thing is, there's no reason to delay that unlock + vfs_create_mount() -
-the tests do not rely upon the state of ->s_umount and
-        fc_drop_locked()
-        put_fs_context()
-is equivalent to
-        unlock ->s_umount
-        put_fs_context()
+On Tue, Aug 26, 2025 at 5:39=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+>
+> On Mon, Aug 25, 2025 at 10:57:57AM -0700, Jeff Xu wrote:
+> > Hi Micka=C3=ABl
+> >
+> > On Mon, Aug 25, 2025 at 2:31=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
+> > >
+> > > On Sun, Aug 24, 2025 at 11:04:03AM -0700, Andy Lutomirski wrote:
+> > > > On Sun, Aug 24, 2025 at 4:03=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <m=
+ic@digikod.net> wrote:
+> > > > >
+> > > > > On Fri, Aug 22, 2025 at 09:45:32PM +0200, Jann Horn wrote:
+> > > > > > On Fri, Aug 22, 2025 at 7:08=E2=80=AFPM Micka=C3=ABl Sala=C3=BC=
+n <mic@digikod.net> wrote:
+> > > > > > > Add a new O_DENY_WRITE flag usable at open time and on opened=
+ file (e.g.
+> > > > > > > passed file descriptors).  This changes the state of the open=
+ed file by
+> > > > > > > making it read-only until it is closed.  The main use case is=
+ for script
+> > > > > > > interpreters to get the guarantee that script' content cannot=
+ be altered
+> > > > > > > while being read and interpreted.  This is useful for generic=
+ distros
+> > > > > > > that may not have a write-xor-execute policy.  See commit a58=
+74fde3c08
+> > > > > > > ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
+> > > > > > >
+> > > > > > > Both execve(2) and the IOCTL to enable fsverity can already s=
+et this
+> > > > > > > property on files with deny_write_access().  This new O_DENY_=
+WRITE make
+> > > > > >
+> > > > > > The kernel actually tried to get rid of this behavior on execve=
+() in
+> > > > > > commit 2a010c41285345da60cece35575b4e0af7e7bf44.; but sadly tha=
+t had
+> > > > > > to be reverted in commit 3b832035387ff508fdcf0fba66701afc78f79e=
+3d
+> > > > > > because it broke userspace assumptions.
+> > > > >
+> > > > > Oh, good to know.
+> > > > >
+> > > > > >
+> > > > > > > it widely available.  This is similar to what other OSs may p=
+rovide
+> > > > > > > e.g., opening a file with only FILE_SHARE_READ on Windows.
+> > > > > >
+> > > > > > We used to have the analogous mmap() flag MAP_DENYWRITE, and th=
+at was
+> > > > > > removed for security reasons; as
+> > > > > > https://man7.org/linux/man-pages/man2/mmap.2.html says:
+> > > > > >
+> > > > > > |        MAP_DENYWRITE
+> > > > > > |               This flag is ignored.  (Long ago=E2=80=94Linux =
+2.0 and earlier=E2=80=94it
+> > > > > > |               signaled that attempts to write to the underlyi=
+ng file
+> > > > > > |               should fail with ETXTBSY.  But this was a sourc=
+e of denial-
+> > > > > > |               of-service attacks.)"
+> > > > > >
+> > > > > > It seems to me that the same issue applies to your patch - it w=
+ould
+> > > > > > allow unprivileged processes to essentially lock files such tha=
+t other
+> > > > > > processes can't write to them anymore. This might allow unprivi=
+leged
+> > > > > > users to prevent root from updating config files or stuff like =
+that if
+> > > > > > they're updated in-place.
+> > > > >
+> > > > > Yes, I agree, but since it is the case for executed files I thoug=
+h it
+> > > > > was worth starting a discussion on this topic.  This new flag cou=
+ld be
+> > > > > restricted to executable files, but we should avoid system-wide l=
+ocks
+> > > > > like this.  I'm not sure how Windows handle these issues though.
+> > > > >
+> > > > > Anyway, we should rely on the access control policy to control wr=
+ite and
+> > > > > execute access in a consistent way (e.g. write-xor-execute).  Tha=
+nks for
+> > > > > the references and the background!
+> > > >
+> > > > I'm confused.  I understand that there are many contexts in which o=
+ne
+> > > > would want to prevent execution of unapproved content, which might
+> > > > include preventing a given process from modifying some code and the=
+n
+> > > > executing it.
+> > > >
+> > > > I don't understand what these deny-write features have to do with i=
+t.
+> > > > These features merely prevent someone from modifying code *that is
+> > > > currently in use*, which is not at all the same thing as preventing
+> > > > modifying code that might get executed -- one can often modify
+> > > > contents *before* executing those contents.
+> > >
+> > > The order of checks would be:
+> > > 1. open script with O_DENY_WRITE
+> > > 2. check executability with AT_EXECVE_CHECK
+> > > 3. read the content and interpret it
+> > >
+> > I'm not sure about the O_DENY_WRITE approach, but the problem is worth =
+solving.
+> >
+> > AT_EXECVE_CHECK is not just for scripting languages. It could also
+> > work with bytecodes like Java, for example. If we let the Java runtime
+> > call AT_EXECVE_CHECK before loading the bytecode, the LSM could
+> > develop a policy based on that.
+>
+> Sure, I'm using "script" to make it simple, but this applies to other
+> use cases.
+>
+That makes sense.
 
-Doing vfs_create_mount() before the checks allows us to move vfs_get_tree()
-from caller to do_new_mount_fc() and collapse it with vfs_create_mount()
-into an fc_mount() call.
+> >
+> > > The deny-write feature was to guarantee that there is no race conditi=
+on
+> > > between step 2 and 3.  All these checks are supposed to be done by a
+> > > trusted interpreter (which is allowed to be executed).  The
+> > > AT_EXECVE_CHECK call enables the caller to know if the kernel (and
+> > > associated security policies) allowed the *current* content of the fi=
+le
+> > > to be executed.  Whatever happen before or after that (wrt.
+> > > O_DENY_WRITE) should be covered by the security policy.
+> > >
+> > Agree, the race problem needs to be solved in order for AT_EXECVE_CHECK=
+.
+> >
+> > Enforcing non-write for the path that stores scripts or bytecodes can
+> > be challenging due to historical or backward compatibility reasons.
+> > Since AT_EXECVE_CHECK provides a mechanism to check the file right
+> > before it is used, we can assume it will detect any "problem" that
+> > happened before that, (e.g. the file was overwritten). However, that
+> > also imposes two additional requirements:
+> > 1> the file doesn't change while AT_EXECVE_CHECK does the check.
+>
+> This is already the case, so any kind of LSM checks are good.
+>
+May I ask how this is done? some code in do_open_execat() does this ?
+Apologies if this is a basic question.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-diff --git a/fs/namespace.c b/fs/namespace.c
-index ae6d1312b184..9e1b7319532c 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3721,25 +3721,19 @@ static bool mount_too_revealing(const struct super_block *sb, int *new_mnt_flags
- static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
- 			   unsigned int mnt_flags)
- {
--	struct vfsmount *mnt;
- 	struct pinned_mountpoint mp = {};
- 	struct super_block *sb = fc->root->d_sb;
-+	struct vfsmount *mnt = fc_mount(fc);
- 	int error;
- 
-+	if (IS_ERR(mnt))
-+		return PTR_ERR(mnt);
-+
- 	error = security_sb_kern_mount(sb);
- 	if (!error && mount_too_revealing(sb, &mnt_flags))
- 		error = -EPERM;
--
--	if (unlikely(error)) {
--		fc_drop_locked(fc);
--		return error;
--	}
--
--	up_write(&sb->s_umount);
--
--	mnt = vfs_create_mount(fc);
--	if (IS_ERR(mnt))
--		return PTR_ERR(mnt);
-+	if (unlikely(error))
-+		goto out;
- 
- 	mnt_warn_timestamp_expiry(mountpoint, mnt);
- 
-@@ -3747,10 +3741,12 @@ static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
- 	if (!error) {
- 		error = do_add_mount(real_mount(mnt), mp.mp,
- 				     mountpoint, mnt_flags);
-+		if (!error)
-+			mnt = NULL;	// consumed on success
- 		unlock_mount(&mp);
- 	}
--	if (error < 0)
--		mntput(mnt);
-+out:
-+	mntput(mnt);
- 	return error;
- }
- 
-@@ -3804,8 +3800,6 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
- 		err = parse_monolithic_mount_data(fc, data);
- 	if (!err && !mount_capable(fc))
- 		err = -EPERM;
--	if (!err)
--		err = vfs_get_tree(fc);
- 	if (!err)
- 		err = do_new_mount_fc(fc, path, mnt_flags);
- 
+> > 2>The file content kept by the process remains unchanged after passing
+> > the AT_EXECVE_CHECK.
+>
+> The goal of this patch was to avoid such race condition in the case
+> where executable files can be updated.  But in most cases it should not
+> be a security issue (because processes allowed to write to executable
+> files should be trusted), but this could still lead to bugs (because of
+> inconsistent file content, half-updated).
+>
+There is also a time gap between:
+a> the time of AT_EXECVE_CHECK
+b> the time that the app opens the file for execution.
+right ? another potential attack path (though this is not the case I
+mentioned previously).
+
+For the case I mentioned previously, I have to think more if the race
+condition is a bug or security issue.
+IIUC, two solutions are discussed so far:
+1> the process could write to fs to update the script.  However, for
+execution, the process still uses the copy that passed the
+AT_EXECVE_CHECK. (snapshot solution by Andy Lutomirski)
+or 2> the process blocks the write while opening the file as read only
+and executing the script. (this seems to be the approach of this
+patch).
+
+I wonder if there are other ideas.
+
+Thanks and regards,
+-Jeff
