@@ -1,112 +1,145 @@
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872A92746A;
-	Tue, 26 Aug 2025 17:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEC2368092;
+	Tue, 26 Aug 2025 18:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756230462; cv=none; b=Dw1KNUF6L3+n55tGVSDdKHaEe5BlyEuzF1yz5pOnEoaN3a0QCsa5TES0Nr2KJ5zgjMRLBbQK9CS5fC3w61uErwP1J0uDCHEv+oU8+exj/5hKC5uXb/VH91/KwY1hm1HJKW9Gif9ZwZVTNv41dgGVcoEd7CAFpOqCfoimDKp7smE=
+	t=1756232488; cv=none; b=sMSQsb8DNPZ/abtqh5XBZQpaHlKZWatXPuwYzR0goMNnGGkNdB04rqPcVmfN7/ltRlU2OsnIFFu2fGbzOOu9DqmrsaPvQ72yHet363UsH1E+srvAj9bB28p+dA/f/lfqiqm4bh20QPInTXl+I1oDWmg0V1ia3Z0YCT3llw1vyx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756230462; c=relaxed/simple;
-	bh=sFRIu8Am2jIzlH44DxKpMs4s+3Je74MeBIKW4BmL/IE=;
+	s=arc-20240116; t=1756232488; c=relaxed/simple;
+	bh=B6jdH8HP6wEJcaBfFcYa/Jt54pKRzu6ZWCW/l7bqB9c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qX70MPEbZr6/bCCuhVY7t0Wqs8fI3RkK2Cuvk0k5zJMPOGeBIkE0pU1e92vBxG8U4irNau4cchTuqE5Ka1ockkZHzMMI4PqSUoQ1PneHWJNuJvn2HVbliIUovl9Chsxzz/H2LQ5fo1nqff1IR244p3cZ2HytEr80fkmM0arf+LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=JzF5NGct; arc=none smtp.client-ip=45.157.188.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=QqbVSQtx/jFBzuyjQAcckxM9agpDHRKwNzKA1Q2H1rK6vkcddU3xda3iL9ueFGDZULhTmLP0Zc0F4s57XVVMRtCczp2bUFFjdcVx4DTRZRUqigEpWEwyNvcEtUmF0JBmJOb7uKS0wT3MRVicDLp7AURup0jjyqzX8n79xpNo0Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XekmSBv7; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="JzF5NGct"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cBFVZ6s0YzsK9;
-	Tue, 26 Aug 2025 19:47:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1756230454;
-	bh=z/NUjKchTuxG8z+dgzPttXLaScBMzIR69Ax8SOVBUjA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JzF5NGctdlftcM1YJwG89Bu/YKhZpb2TC6flRXGDGvSAhwm7E9aTjbdy+MTPNR5Cf
-	 wcuscZ0FG7I5fwGhBzF51K2dbWsjCtZ6LzO0l8iqWC0cfaoHkystxzh+QdA6e4M5Yo
-	 5iaVkRVK9xXxIBIjDfYAAvTB0Ap23RVRVZB8hzag=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4cBFVW0pJ9z4V8;
-	Tue, 26 Aug 2025 19:47:31 +0200 (CEST)
-Date: Tue, 26 Aug 2025 19:47:30 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
-	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-Message-ID: <20250826.iewie7Et5aiw@digikod.net>
-References: <20250822170800.2116980-1-mic@digikod.net>
- <20250826-skorpion-magma-141496988fdc@brauner>
- <20250826.aig5aiShunga@digikod.net>
- <20250826123041.GB1603531@mit.edu>
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XekmSBv7"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=eKrsZ8n9c1Uhnt/CnikDa+5wZlJ2YhlU+uxnrgRiAFw=; b=XekmSBv7dFXym2MgTXupORM5i4
+	K2rBmKKpE9CPkslVaxxm3OcPzNCiuhCCnCzMrmgu8g3uVsG+COaBR8PwsbzEX7DivbXdO1zX+OgYA
+	jEo+B7ZNQjcIE5d22aCJzS9doXxqa/HRkOwqItf4YRrCzWjxnqGCpe8vN7KhirMX+jd0ori0bfBnF
+	ufJVsS9Nd9mAqeAPrG1bZ5m4r2TXSqugN0QK5X9RbpjRLlaB8KhrUPphcPuNkciE9VCYDudxG3t5R
+	qJjE4S6jwdbBhbWFHfd/re5SEzY9h67fmLKSq6k+Tq1yP3fYqWXGW6XkNNLpaBivzI9XbDn4ZHSO5
+	BwLpSVvQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqyIO-00000004A2y-0OkV;
+	Tue, 26 Aug 2025 18:21:24 +0000
+Date: Tue, 26 Aug 2025 19:21:24 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	Christian Brauner <brauner@kernel.org>,
+	linux-security-module@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>
+Subject: [RFC][PATCH] switch do_new_mount_fc() to using fc_mount()
+Message-ID: <20250826182124.GV39973@ZenIV>
+References: <20250825044046.GI39973@ZenIV>
+ <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
+ <20250825044355.1541941-25-viro@zeniv.linux.org.uk>
+ <20250825-zugute-verkohlen-945073b3851f@brauner>
+ <20250825160939.GL39973@ZenIV>
+ <20250826-kronleuchter-vortag-af3c087ae46a@brauner>
+ <20250826170044.GT39973@ZenIV>
+ <20250826175501.GU39973@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250826123041.GB1603531@mit.edu>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20250826175501.GU39973@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Aug 26, 2025 at 08:30:41AM -0400, Theodore Ts'o wrote:
-> Is there a single, unified design and requirements document that
-> describes the threat model, and what you are trying to achieve with
-> AT_EXECVE_CHECK and O_DENY_WRITE?  I've been looking at the cover
-> letters for AT_EXECVE_CHECK and O_DENY_WRITE, and the documentation
-> that has landed for AT_EXECVE_CHECK and it really doesn't describe
-> what *are* the checks that AT_EXECVE_CHECK is trying to achieve:
-> 
->    "The AT_EXECVE_CHECK execveat(2) flag, and the
->    SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE
->    securebits are intended for script interpreters and dynamic linkers
->    to enforce a consistent execution security policy handled by the
->    kernel."
+[
+This is on top of -rc3; if nobody objects, I'll insert that early in series
+in viro/vfs.git#work.mount.  It has an impact for LSM folks - ->sb_kern_mount()
+would be called without ->s_umount; nothing in-tree cares, but if you have
+objections, yell now.
+]
 
-From the documentation:
+Prior to the call of do_new_mount_fc() the caller has just done successful
+vfs_get_tree().  Then do_new_mount_fc() does several checks on resulting
+superblock, and either does fc_drop_locked() and returns an error or
+proceeds to unlock the superblock and call vfs_create_mount().
+    
+The thing is, there's no reason to delay that unlock + vfs_create_mount() -
+the tests do not rely upon the state of ->s_umount and
+        fc_drop_locked()
+        put_fs_context()
+is equivalent to
+        unlock ->s_umount
+        put_fs_context()
 
-  Passing the AT_EXECVE_CHECK flag to execveat(2) only performs a check
-  on a regular file and returns 0 if execution of this file would be
-  allowed, ignoring the file format and then the related interpreter
-  dependencies (e.g. ELF libraries, script’s shebang).
+Doing vfs_create_mount() before the checks allows us to move vfs_get_tree()
+from caller to do_new_mount_fc() and collapse it with vfs_create_mount()
+into an fc_mount() call.
 
-> 
-> Um, what security policy?
-
-Whether the file is allowed to be executed.  This includes file
-permission, mount point option, ACL, LSM policies...
-
-> What checks?
-
-Executability checks?
-
-> What is a sample exploit
-> which is blocked by AT_EXECVE_CHECK?
-
-Executing/interpreting any data: sh script.txt
-
-> 
-> And then on top of it, why can't you do these checks by modifying the
-> script interpreters?
-
-The script interpreter requires modification to use AT_EXECVE_CHECK.
-
-There is no other way for user space to reliably check executability of
-files (taking into account all enforced security
-policies/configurations).
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/fs/namespace.c b/fs/namespace.c
+index ae6d1312b184..9e1b7319532c 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3721,25 +3721,19 @@ static bool mount_too_revealing(const struct super_block *sb, int *new_mnt_flags
+ static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
+ 			   unsigned int mnt_flags)
+ {
+-	struct vfsmount *mnt;
+ 	struct pinned_mountpoint mp = {};
+ 	struct super_block *sb = fc->root->d_sb;
++	struct vfsmount *mnt = fc_mount(fc);
+ 	int error;
+ 
++	if (IS_ERR(mnt))
++		return PTR_ERR(mnt);
++
+ 	error = security_sb_kern_mount(sb);
+ 	if (!error && mount_too_revealing(sb, &mnt_flags))
+ 		error = -EPERM;
+-
+-	if (unlikely(error)) {
+-		fc_drop_locked(fc);
+-		return error;
+-	}
+-
+-	up_write(&sb->s_umount);
+-
+-	mnt = vfs_create_mount(fc);
+-	if (IS_ERR(mnt))
+-		return PTR_ERR(mnt);
++	if (unlikely(error))
++		goto out;
+ 
+ 	mnt_warn_timestamp_expiry(mountpoint, mnt);
+ 
+@@ -3747,10 +3741,12 @@ static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
+ 	if (!error) {
+ 		error = do_add_mount(real_mount(mnt), mp.mp,
+ 				     mountpoint, mnt_flags);
++		if (!error)
++			mnt = NULL;	// consumed on success
+ 		unlock_mount(&mp);
+ 	}
+-	if (error < 0)
+-		mntput(mnt);
++out:
++	mntput(mnt);
+ 	return error;
+ }
+ 
+@@ -3804,8 +3800,6 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
+ 		err = parse_monolithic_mount_data(fc, data);
+ 	if (!err && !mount_capable(fc))
+ 		err = -EPERM;
+-	if (!err)
+-		err = vfs_get_tree(fc);
+ 	if (!err)
+ 		err = do_new_mount_fc(fc, path, mnt_flags);
+ 
