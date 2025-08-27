@@ -1,220 +1,400 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585952F39D4
-	for <linux-security-module@vger.kernel.org>; Wed, 27 Aug 2025 20:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1E030F929
+	for <linux-security-module@vger.kernel.org>; Wed, 27 Aug 2025 22:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756326929; cv=none; b=TnpTcSE+3yz4683h3mociVT8OwBbQn4kwoij+G5hyBqYmjAXNs5KOjqzTHuFoDIukCO8E/NV7KU2SE4EQkLwSvKeZUoHM9nzNj60+7ez/nsQ68MQSH5FGD6lIe0kf8w3f1XP9LR+JxoPB0Le9cgCZV8CMUcGOeh6ONzwSN7t6v8=
+	t=1756334605; cv=none; b=Q0zfT20ODAwABo1A9sC/QD+TZ2XxFMQpsy2Vefi93OkNihSauPrdSeQL79V+T/w/zbPbBbyO6GbM6HKIKAx5bTsUBFjPNtO7q0CYz7kFMzQOYf5OYcNA8xhSahosujoGXeGcu2kWrznAFkZ4oea+zRj787VhvhamqocGpf4Wq6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756326929; c=relaxed/simple;
-	bh=p6ZnKcI6F1mAg5pkdsDn0kIOGkIWEzaMWKJgn7QqNeU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C6xkDd2mT3onRcFIZ5xwmn7HZq2PBf8TYtXAgC6vU6CltQGuQa13/lulA2heZJZa2GMi8ud6er0c138JqLHr7aHfPn3wrFL9KWXw/XRLS1x+Ig0A/ulRZEFE5h5Tv6PWsG1zlPXTzeFCKJj3bvsrtod9HtF140swnJNq1Jw2UaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=GJalcVct; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
+	s=arc-20240116; t=1756334605; c=relaxed/simple;
+	bh=UV40lWEU1CK8wkwXXYA9M+vhaPbr7DhrqOxUAeNCRJo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lOJs8dDrRgMc9MSICZTgX/B88Y6dxMPNLao/OXWs6DaSxvrTH7b/9ZFXBE1gkVN0SOy3b03jd9+aq9Yf8DWrRnf/9CA9BtX9uMmbbDL3wlsXLdad2X/On6vN4eaKP5i/kxH134cEbzBhd522ocpTbz6ZAEztyz/tusrfKLeEpqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vod2eeVa; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="GJalcVct"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3367483097eso2367721fa.0
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Aug 2025 13:35:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vod2eeVa"
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b474b68cff7so263704a12.1
+        for <linux-security-module@vger.kernel.org>; Wed, 27 Aug 2025 15:43:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1756326925; x=1756931725; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wl0ljXkPyLBoAJTX9TjDS8ZEVo6BAT27dTBeN90CXWg=;
-        b=GJalcVct1ylww4R06bAl1a/YAkEtNyGc/ApXVXzRUqrz0sigmC8ZNhV/T7KYq1MxEV
-         fuEGCNtGIuRSX8GnpWnIq9hJ30M6m1ekxmwHqof1Jjz7jADsVFmlS4oTd0nlzZ6j0PVt
-         QrZwp0Ypi3RX9o/0HCFgroQPTM/K9NCOOyjL+aN2l1Dc5r+ZGI2UW5OVJ9/jbcVVFLwa
-         +Vb5Q9zDwglekmx/8z7aN719XO79/0FXhF3gT9MYCJpyuMBDI2SIeFQ2PtDVVIxvHpN8
-         ijCb5Lx7q67MG8jt+zxONJ5o9Kla1DK+jezTp00pnbh3+A060Z+2pmPyKi1L1wXPQ8zq
-         TJTQ==
+        d=google.com; s=20230601; t=1756334602; x=1756939402; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LKcxlPw0uQjBkw7eQMnE+gmOL2ekj9P4WG4v5yuEZSw=;
+        b=vod2eeVaG9wM5K3kMJQUXDUIs0qUQmbSpjatH1C0VQtHAZNudlYjdOSs4Mz3L+Wsr0
+         Xf8NkhtoHLdlMbHtLhepBZgxwsIzZCgToO6bYPJlE+M2X75B5pdPdZpqRjNHvlP/Kwju
+         CPEWmXknSGiP7munSagw5dkuKQM+bpqBAiPbx0sIi5aB2cUsdrbunHwqBQSTIDRiKbP+
+         1ftpgfg9xI1258b1WKxVHLiPL9Lf6jZIGIzZnQxvt9qpdQaaV/NwHkaTrjYVcC2DvB/6
+         oUsFg5x9cJv8FQcWAXTmA9bsCLDd5etuqmFhEDkdsS/UbG3V70dTig0MIYladc63PzsY
+         iVEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756326925; x=1756931725;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wl0ljXkPyLBoAJTX9TjDS8ZEVo6BAT27dTBeN90CXWg=;
-        b=wSA/RUesX8EkBsNFE8CHAl0NTFHOywMLmy5vILrYpn8255dsFqRxiZE71B0dITYJqt
-         grviFXWOPv0hHI7IInaTCLezjWxX3QQmekGLGTbKDLIgiCk93awA9O8ZcgOHaggZXzYz
-         8EtkTmWw2B6FobksPjLmeGoNVVa0sK1V64W4wiaIYgWHTKV+lyu7yE1WI9gR8Ya40pt7
-         UvtAp7ShFz5NXOjIHSA9C9txR58utQOIgThsabR6/COGnxK9HBCeqdjwhQ7Y0dpyl6eK
-         OJ5mOVbpgLeSmhV7jJiAatkvF1TwAsrcd4d9Xel5PYPqH3+WsHYbB99sxBYEHTf6Hhs0
-         SLEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUten1Ok89w8SOfZ2mW1VnHcaQ47zQVjUkyrHU4w1WEc5XHAh8YDEKNSsKksKSyg4cyIl/bLiKg7SY6aPrkhYDBv3Dvl6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTdmk4zyEbkyuWzztnGh702lYNK3DHAK3U1imWCG9Pdwc0sfW0
-	3coZ53gnpfOjsuKID+lNd9ykk+sGETf2gpo9xMH3ujyfsnewI19Uy3SbOqdn/QWKLMwJCIlllXF
-	aVk3OQbgn9pZainKKX+N2d62HMUEV++fXq3yv9Brr
-X-Gm-Gg: ASbGncu142lmKm89CM1lTFlcAFan0G9sUMfp9jtX25OHbNx1GVG/9nJtYEQ3gcYqpCf
-	39/sGjC41S6gLtUqcHE5kzZgywJehuI6FNm+KSCR1Vx4KiUjtDtmU6F/Nm2tC//0ULgdhDrlns7
-	ftGlKUMOalNddq6N6c/JX9hKMVGrsLRJIYY6SWA1PW7FCuqhNSOpI28gR2kLD4jFjAOyvxmzGjm
-	yh0Sw+36RP107U8+oY=
-X-Google-Smtp-Source: AGHT+IGjsa20oKobGhO2nM0A+5O9r9SpySfPXdDwEkZvs/Q/UX/cGwHkgk6K1CRbBEum5T5gJOenn7JtwIEd8EnKFq0=
-X-Received: by 2002:a05:651c:41cf:b0:335:4d0e:9493 with SMTP id
- 38308e7fff4ca-33650f997d5mr58918271fa.28.1756326925222; Wed, 27 Aug 2025
- 13:35:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756334602; x=1756939402;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LKcxlPw0uQjBkw7eQMnE+gmOL2ekj9P4WG4v5yuEZSw=;
+        b=ZuIAkpDhLvPa9ofKE4bugPS34HmWn7PxnGvfhQCs+DyxDiV5MdnPiI9VE+DnwVcLrg
+         KibJjEM6B3X2+bjkYU2FT5kM8Aol92Y1NT1lpjJdj5oABWy0Ho1Zx53+Hxpu3pDHSwvH
+         ZE/6tzBbPAHlUYWJ2SD4XBkVy804jHL7/8yj7l1xqZlp7u6SspZEWLRiYBUY10XYBj8T
+         EfnMZze0okm0c6RXnLZ39A6+McwKKp2xmyq2NpalUydrdgXCdRX7+XnU2q+Jd2FrF6pJ
+         7qcPWmAOU4DLl/Jomyo/7RTmSfyNPFH/W7OkCuhgExsArNhO6PqtWs/tw+GMgqA53g2w
+         VZJw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4GY9ieR35z191Zmq/NzeW5ADlgtGbLo+7a2n81lYkovDhfHWFIMxPvyX3p515sdwbiS+16u4x8rjAUfcYKCpuWf01h0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqpDD97DKUX1YHwXT3tUpTVL+jKOyEHzXNVDW2ft7qY5YZZDXq
+	Mqr7aDnxLVAWtCZ1jDdAJFZr69oupemaof9BzJebQSQOPhi5zeZgb8OV5Qq+weE1zN9PcMxsJuK
+	sPy911yFsjVwwXnjUUY5VbU0LBw==
+X-Google-Smtp-Source: AGHT+IGNhCki+zRNFnf7AupQOwuzR8TBEtFWXAfIyU7yRpBo61MiAC41fjzXQhOiSXx1TrtlLAFGHZ8M3ImJd0zqNQ==
+X-Received: from pjl11.prod.google.com ([2002:a17:90b:2f8b:b0:325:7fbe:1c64])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90a:da8c:b0:327:7c8e:8725 with SMTP id 98e67ed59e1d1-3277c8eb5a6mr3670514a91.10.1756334602319;
+ Wed, 27 Aug 2025 15:43:22 -0700 (PDT)
+Date: Wed, 27 Aug 2025 15:43:20 -0700
+In-Reply-To: <20250827175247.83322-7-shivankg@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250822170800.2116980-1-mic@digikod.net> <20250826-skorpion-magma-141496988fdc@brauner>
- <20250826.aig5aiShunga@digikod.net> <20250826123041.GB1603531@mit.edu>
- <20250826.iewie7Et5aiw@digikod.net> <CALCETrW=V9vst_ho2Q4sQUJ5uZECY5h7TnF==sG4JWq8PsWb8Q@mail.gmail.com>
- <20250827.Fuo1Iel1pa7i@digikod.net>
-In-Reply-To: <20250827.Fuo1Iel1pa7i@digikod.net>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Wed, 27 Aug 2025 13:35:13 -0700
-X-Gm-Features: Ac12FXyp51op4OQBdoTDCrgv2p90HecB5l5_GBOrhFfKRX5VCL-77MvuK466l-o
-Message-ID: <CALCETrVDJYK+vWOe+-NACAqQ9i4nhCz-7rMMdkRuxexgnpzZow@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Andy Lutomirski <luto@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
-	Serge Hallyn <serge@hallyn.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Mime-Version: 1.0
+References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-7-shivankg@amd.com>
+Message-ID: <diqztt1sbd2v.fsf@google.com>
+Subject: Re: [PATCH kvm-next V11 4/7] KVM: guest_memfd: Use guest mem inodes
+ instead of anonymous inodes
+From: Ackerley Tng <ackerleytng@google.com>
+To: Shivank Garg <shivankg@amd.com>, willy@infradead.org, akpm@linux-foundation.org, 
+	david@redhat.com, pbonzini@redhat.com, shuah@kernel.org, seanjc@google.com, 
+	vbabka@suse.cz
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com, 
+	xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, 
+	josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com, 
+	jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
+	surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com, 
+	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
+	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
+	tabba@google.com, shivankg@amd.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, vannapurve@google.com, 
+	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
+	shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, 
+	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, 
+	kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, hch@infradead.org, 
+	cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com, 
+	roypat@amazon.co.uk, chao.p.peng@intel.com, amit@infradead.org, 
+	ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com, 
+	gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com, 
+	yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-coco@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 27, 2025 at 12:07=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
->
-> On Wed, Aug 27, 2025 at 10:35:28AM -0700, Andy Lutomirski wrote:
-> > On Tue, Aug 26, 2025 at 10:47=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@=
-digikod.net> wrote:
-> > >
-> > > On Tue, Aug 26, 2025 at 08:30:41AM -0400, Theodore Ts'o wrote:
-> > > > Is there a single, unified design and requirements document that
-> > > > describes the threat model, and what you are trying to achieve with
-> > > > AT_EXECVE_CHECK and O_DENY_WRITE?  I've been looking at the cover
-> > > > letters for AT_EXECVE_CHECK and O_DENY_WRITE, and the documentation
-> > > > that has landed for AT_EXECVE_CHECK and it really doesn't describe
-> > > > what *are* the checks that AT_EXECVE_CHECK is trying to achieve:
-> > > >
-> > > >    "The AT_EXECVE_CHECK execveat(2) flag, and the
-> > > >    SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE
-> > > >    securebits are intended for script interpreters and dynamic link=
-ers
-> > > >    to enforce a consistent execution security policy handled by the
-> > > >    kernel."
-> > >
-> > > From the documentation:
-> > >
-> > >   Passing the AT_EXECVE_CHECK flag to execveat(2) only performs a che=
-ck
-> > >   on a regular file and returns 0 if execution of this file would be
-> > >   allowed, ignoring the file format and then the related interpreter
-> > >   dependencies (e.g. ELF libraries, script=E2=80=99s shebang).
-> > >
-> > > >
-> > > > Um, what security policy?
-> > >
-> > > Whether the file is allowed to be executed.  This includes file
-> > > permission, mount point option, ACL, LSM policies...
-> >
-> > This needs *waaaaay* more detail for any sort of useful evaluation.
-> > Is an actual credible security policy rolling dice?  Asking ChatGPT?
-> > Looking at security labels?  Does it care who can write to the file,
-> > or who owns the file, or what the file's hash is, or what filesystem
-> > it's on, or where it came from?  Does it dynamically inspect the
-> > contents?  Is it controlled by an unprivileged process?
->
-> AT_EXECVE_CHECK only does the same checks as done by other execveat(2)
-> calls, but without actually executing the file/fd.
->
+Shivank Garg <shivankg@amd.com> writes:
 
-okay... but see below.
+> 
+> [...snip...]
+> 
 
-> >
-> > I can easily come up with security policies for which DENYWRITE is
-> > completely useless.  I can come up with convoluted and
-> > not-really-credible policies where DENYWRITE is important, but I'm
-> > honestly not sure that those policies are actually useful.  I'm
-> > honestly a bit concerned that AT_EXECVE_CHECK is fundamentally busted
-> > because it should have been parametrized by *what format is expected*
-> > -- it might be possible to bypass a policy by executing a perfectly
-> > fine Python script using bash, for example.
->
-> There have been a lot of bikesheding for the AT_EXECVE_CHECK patch
-> series, and a lot of discussions too (you where part of them).  We ended
-> up with this design, which is simple and follows the kernel semantic
-> (requested by Linus).
+I meant to send this to you before this version went out but you were
+too quick!
 
-I recall this.  That doesn't mean I totally love AT_EXECVE_CHECK.  And
-it especially doesn't mean that I believe that it usefully does
-something that justifies anything like DENYWRITE.
+Here's a new version, Fuad and I reviewed this again internally. The
+changes are:
 
->
-> >
-> > I genuinely have not come up with a security policy that I believe
-> > makes sense that needs AT_EXECVE_CHECK and DENYWRITE.  I'm not saying
-> > that such a policy does not exist -- I'm saying that I have not
-> > thought of such a thing after a few minutes of thought and reading
-> > these threads.
->
-> A simple use case is for systems that wants to enforce a
-> write-xor-execute policy e.g., thanks to mount point options.
++ Sort linux/pseudo_fs.h after linux/pagemap.h (alphabetical)
++ Don't set MNT_NOEXEC on the mount, since SB_I_NOEXEC was already set
+  on the superblock
++ Rename kvm_gmem_inode_make_secure_inode() to kvm_gmem_inode_create()
+    + Emphasizes that there is a creation in this function
+    + Remove "secure" from the function name to remove confusion that
+      there may be a "non-secure" version
++ In kvm_gmem_inode_create_getfile()'s error path, return ERR_PTR(err)
+  directly instead of having a goto
 
-Sure, but I'm contemplating DENYWRITE, and this thread is about
-DENYWRITE.  If the kernel is enforcing W^X, then there are really two
-almost unrelated things going on:
 
-1. LSM policy that enforces W^X for memory mappings.  This is to
-enforce that applications don't do nasty things like having executable
-stacks, and it's a mess because no one has really figured out how JITs
-are supposed to work in this world.  It has almost nothing to do with
-execve except incidentally.
+From ada9814b216eac129ed44dffd3acf76fce2cc08a Mon Sep 17 00:00:00 2001
+From: Ackerley Tng <ackerleytng@google.com>
+Date: Sun, 13 Jul 2025 17:43:35 +0000
+Subject: [PATCH] KVM: guest_memfd: Use guest mem inodes instead of anonymous
+ inodes
 
-2. LSM policy that enforces that someone doesn't execve (or similar)
-something that *that user* can write.  Or that non-root can write.  Or
-that anyone at all can write, etc.
+guest_memfd's inode represents memory the guest_memfd is
+providing. guest_memfd's file represents a struct kvm's view of that
+memory.
 
-I think, but I'm not sure, that you're talking about #2.  So maybe
-there's a policy that says that one may only exec things that are on
-an fs with the 'exec' mount option.  Or maybe there's a policy that
-says that one may only exec things that are on a readonly fs.  In
-these specific cases, I believe in AT_EXECVE_CHECK.  *But* I don't
-believe in DENYWRITE: in the 'exec' case, if an fs has the exec option
-set, that doesn't change if the file is subsequently modified.  And if
-an fs is readonly, then the file is quite unlikely to be modified at
-all and will certainly not be modified via the mount through which
-it's being executed.  And you don't need DENYWRITE.
+Using a custom inode allows customization of the inode teardown
+process via callbacks. For example, ->evict_inode() allows
+customization of the truncation process on file close, and
+->destroy_inode() and ->free_inode() allow customization of the inode
+freeing process.
 
-So I think my question still stands: is there a credible security
-policy *that actually benefits from DENYWRITE*?  If so, can you give
-an example?
+Customizing the truncation process allows flexibility in management of
+guest_memfd memory and customization of the inode freeing process
+allows proper cleanup of memory metadata stored on the inode.
 
-> >
-> > Seriously, consider all the unending recent attacks on LLMs an
-> > inspiration.  The implications of viewing an image, downscaling the
-> > image, possibly interpreting the image as something containing text,
-> > possibly following instructions in a given language contained in the
-> > image, etc are all wildly different.  A mechanism for asking for
-> > general permission to "consume this image" is COMPLETELY MISSING THE
-> > POINT.  (Never mind that the current crop of LLMs seem entirely
-> > incapable of constraining their own use of some piece of input, but
-> > that's a different issue and is besides the point here.)
->
-> You're asking about what should we consider executable.  This is a good
-> question, but AT_EXECVE_CHECK is there to answer another question: would
-> the kernel execute it or not?
->
+Memory metadata is more appropriately stored on the inode (as opposed
+to the file), since the metadata is for the memory and is not unique
+to a specific binding and struct kvm.
 
-That's a sort of odd way of putting it.  The kernel won't execute it
-because the kernel doesn't know how to :)  But I think I understand
-what you're saying.
+Co-developed-by: Fuad Tabba <tabba@google.com>
+Signed-off-by: Fuad Tabba <tabba@google.com>
+Signed-off-by: Shivank Garg <shivankg@amd.com>
+Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+---
+ include/uapi/linux/magic.h |   1 +
+ virt/kvm/guest_memfd.c     | 126 ++++++++++++++++++++++++++++++-------
+ virt/kvm/kvm_main.c        |   7 ++-
+ virt/kvm/kvm_mm.h          |   9 +--
+ 4 files changed, 116 insertions(+), 27 deletions(-)
+
+diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+index bb575f3ab45e5..638ca21b7a909 100644
+--- a/include/uapi/linux/magic.h
++++ b/include/uapi/linux/magic.h
+@@ -103,5 +103,6 @@
+ #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
+ #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
+ #define PID_FS_MAGIC		0x50494446	/* "PIDF" */
++#define GUEST_MEMFD_MAGIC	0x474d454d	/* "GMEM" */
+
+ #endif /* __LINUX_MAGIC_H__ */
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 08a6bc7d25b60..234e51fd69ff6 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -1,12 +1,16 @@
+ // SPDX-License-Identifier: GPL-2.0
++#include <linux/anon_inodes.h>
+ #include <linux/backing-dev.h>
+ #include <linux/falloc.h>
++#include <linux/fs.h>
+ #include <linux/kvm_host.h>
+ #include <linux/pagemap.h>
+-#include <linux/anon_inodes.h>
++#include <linux/pseudo_fs.h>
+
+ #include "kvm_mm.h"
+
++static struct vfsmount *kvm_gmem_mnt;
++
+ struct kvm_gmem {
+ 	struct kvm *kvm;
+ 	struct xarray bindings;
+@@ -385,9 +389,44 @@ static struct file_operations kvm_gmem_fops = {
+ 	.fallocate	= kvm_gmem_fallocate,
+ };
+
+-void kvm_gmem_init(struct module *module)
++static int kvm_gmem_init_fs_context(struct fs_context *fc)
++{
++	if (!init_pseudo(fc, GUEST_MEMFD_MAGIC))
++		return -ENOMEM;
++
++	fc->s_iflags |= SB_I_NOEXEC;
++	fc->s_iflags |= SB_I_NODEV;
++
++	return 0;
++}
++
++static struct file_system_type kvm_gmem_fs = {
++	.name		 = "guest_memfd",
++	.init_fs_context = kvm_gmem_init_fs_context,
++	.kill_sb	 = kill_anon_super,
++};
++
++static int kvm_gmem_init_mount(void)
++{
++	kvm_gmem_mnt = kern_mount(&kvm_gmem_fs);
++
++	if (IS_ERR(kvm_gmem_mnt))
++		return PTR_ERR(kvm_gmem_mnt);
++
++	return 0;
++}
++
++int kvm_gmem_init(struct module *module)
+ {
+ 	kvm_gmem_fops.owner = module;
++
++	return kvm_gmem_init_mount();
++}
++
++void kvm_gmem_exit(void)
++{
++	kern_unmount(kvm_gmem_mnt);
++	kvm_gmem_mnt = NULL;
+ }
+
+ static int kvm_gmem_migrate_folio(struct address_space *mapping,
+@@ -463,11 +502,70 @@ bool __weak kvm_arch_supports_gmem_mmap(struct kvm *kvm)
+ 	return true;
+ }
+
++static struct inode *kvm_gmem_inode_create(const char *name, loff_t size,
++					   u64 flags)
++{
++	struct inode *inode;
++
++	inode = anon_inode_make_secure_inode(kvm_gmem_mnt->mnt_sb, name, NULL);
++	if (IS_ERR(inode))
++		return inode;
++
++	inode->i_private = (void *)(unsigned long)flags;
++	inode->i_op = &kvm_gmem_iops;
++	inode->i_mapping->a_ops = &kvm_gmem_aops;
++	inode->i_mode |= S_IFREG;
++	inode->i_size = size;
++	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
++	mapping_set_inaccessible(inode->i_mapping);
++	/* Unmovable mappings are supposed to be marked unevictable as well. */
++	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
++
++	return inode;
++}
++
++static struct file *kvm_gmem_inode_create_getfile(void *priv, loff_t size,
++						  u64 flags)
++{
++	static const char *name = "[kvm-gmem]";
++	struct inode *inode;
++	struct file *file;
++	int err;
++
++	err = -ENOENT;
++	/* __fput() will take care of fops_put(). */
++	if (!fops_get(&kvm_gmem_fops))
++		goto err;
++
++	inode = kvm_gmem_inode_create(name, size, flags);
++	if (IS_ERR(inode)) {
++		err = PTR_ERR(inode);
++		goto err_fops_put;
++	}
++
++	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR,
++				 &kvm_gmem_fops);
++	if (IS_ERR(file)) {
++		err = PTR_ERR(file);
++		goto err_put_inode;
++	}
++
++	file->f_flags |= O_LARGEFILE;
++	file->private_data = priv;
++
++	return file;
++
++err_put_inode:
++	iput(inode);
++err_fops_put:
++	fops_put(&kvm_gmem_fops);
++err:
++	return ERR_PTR(err);
++}
++
+ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+ {
+-	const char *anon_name = "[kvm-gmem]";
+ 	struct kvm_gmem *gmem;
+-	struct inode *inode;
+ 	struct file *file;
+ 	int fd, err;
+
+@@ -481,32 +579,16 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+ 		goto err_fd;
+ 	}
+
+-	file = anon_inode_create_getfile(anon_name, &kvm_gmem_fops, gmem,
+-					 O_RDWR, NULL);
++	file = kvm_gmem_inode_create_getfile(gmem, size, flags);
+ 	if (IS_ERR(file)) {
+ 		err = PTR_ERR(file);
+ 		goto err_gmem;
+ 	}
+
+-	file->f_flags |= O_LARGEFILE;
+-
+-	inode = file->f_inode;
+-	WARN_ON(file->f_mapping != inode->i_mapping);
+-
+-	inode->i_private = (void *)(unsigned long)flags;
+-	inode->i_op = &kvm_gmem_iops;
+-	inode->i_mapping->a_ops = &kvm_gmem_aops;
+-	inode->i_mode |= S_IFREG;
+-	inode->i_size = size;
+-	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+-	mapping_set_inaccessible(inode->i_mapping);
+-	/* Unmovable mappings are supposed to be marked unevictable as well. */
+-	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
+-
+ 	kvm_get_kvm(kvm);
+ 	gmem->kvm = kvm;
+ 	xa_init(&gmem->bindings);
+-	list_add(&gmem->entry, &inode->i_mapping->i_private_list);
++	list_add(&gmem->entry, &file_inode(file)->i_mapping->i_private_list);
+
+ 	fd_install(fd, file);
+ 	return fd;
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 18f29ef935437..301d48d6e00d0 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -6489,7 +6489,9 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
+ 	if (WARN_ON_ONCE(r))
+ 		goto err_vfio;
+
+-	kvm_gmem_init(module);
++	r = kvm_gmem_init(module);
++	if (r)
++		goto err_gmem;
+
+ 	r = kvm_init_virtualization();
+ 	if (r)
+@@ -6510,6 +6512,8 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
+ err_register:
+ 	kvm_uninit_virtualization();
+ err_virt:
++	kvm_gmem_exit();
++err_gmem:
+ 	kvm_vfio_ops_exit();
+ err_vfio:
+ 	kvm_async_pf_deinit();
+@@ -6541,6 +6545,7 @@ void kvm_exit(void)
+ 	for_each_possible_cpu(cpu)
+ 		free_cpumask_var(per_cpu(cpu_kick_mask, cpu));
+ 	kmem_cache_destroy(kvm_vcpu_cache);
++	kvm_gmem_exit();
+ 	kvm_vfio_ops_exit();
+ 	kvm_async_pf_deinit();
+ 	kvm_irqfd_exit();
+diff --git a/virt/kvm/kvm_mm.h b/virt/kvm/kvm_mm.h
+index 31defb08ccbab..9fcc5d5b7f8d0 100644
+--- a/virt/kvm/kvm_mm.h
++++ b/virt/kvm/kvm_mm.h
+@@ -68,17 +68,18 @@ static inline void gfn_to_pfn_cache_invalidate_start(struct kvm *kvm,
+ #endif /* HAVE_KVM_PFNCACHE */
+
+ #ifdef CONFIG_KVM_GUEST_MEMFD
+-void kvm_gmem_init(struct module *module);
++int kvm_gmem_init(struct module *module);
++void kvm_gmem_exit(void);
+ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args);
+ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 		  unsigned int fd, loff_t offset);
+ void kvm_gmem_unbind(struct kvm_memory_slot *slot);
+ #else
+-static inline void kvm_gmem_init(struct module *module)
++static inline int kvm_gmem_init(struct module *module)
+ {
+-
++	return 0;
+ }
+-
++static inline void kvm_gmem_exit(void) {};
+ static inline int kvm_gmem_bind(struct kvm *kvm,
+ 					 struct kvm_memory_slot *slot,
+ 					 unsigned int fd, loff_t offset)
+--
+2.51.0.268.g9569e192d0-goog
