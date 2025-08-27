@@ -1,118 +1,152 @@
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E016229B8F8
-	for <linux-security-module@vger.kernel.org>; Wed, 27 Aug 2025 15:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA2927D77B
+	for <linux-security-module@vger.kernel.org>; Wed, 27 Aug 2025 17:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756309103; cv=none; b=YzwPfwu3xgWbBmB2DbP4E1RHI1EFQ8PSpw3wTp6ErrpLuh394ss4eejxut5J6lkI29oqIX1dilJr8svTP5+mMF0w5lUbXakvI3m0oFpyd5+R5njKpCV3xWW7PRZdmigE+SGU6SJs4LzBLAb/Iyn6ylN+HFSpOobsOPuYE9AMo1M=
+	t=1756316142; cv=none; b=iv2U9sL/kX9Ud/FSsNR9LhrHSTS0reIb0UY98WWPn1vpUg9IQdInC4jmI5z/gdOefMf+2qR722DSjZ3Atqy5zckcyadmINkr6f1wshfMzLfrto8FoN40XTpP2KMZ94kwvFcMTCJD9/3wuId/XYkPb7ZxjQmjHcWsj5DYW8s6Ops=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756309103; c=relaxed/simple;
-	bh=5V5gmHT4ib9khjTGQ2iAE/pbDIJrEyHXN89uDM9KYh4=;
+	s=arc-20240116; t=1756316142; c=relaxed/simple;
+	bh=FIed+i9mU8QVyJwJUuYJhiPLw4w7Z4LZFu4tEeKK2tQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HINA0sbo/LFhBMe/6rd0MmSD0CqNDQoKEdmS/aihEeKMWdqTnpEeZ1flPby++CmzSoIXkOLkh6DiMG52/W65NkXeyP1Rs9iM6DVvL1+MxU1CNwaVGbr/HX1xmZnD/s5drJlo5tVVnaf1ReMBIybvC4pTXc/uDwOLrGv5fwk8yv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=HP8FNLFN; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=i1JbjopmvAOJtJHMrZ0wjzQPBDiiYcirGDHvlw29f85OinVm9UCprlVOu/YFn7IzFMkD1RDOxOncezz5vOom1o1ex3vFNVc+2g6i7L54tvYexOaXtWOJNZMV5k0dFLD/a2D34ik7EHLHy6JdafraiqKqeMIwJ00K/WFh2MUFz/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxcM90Mr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="HP8FNLFN"
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3256986ca60so4694049a91.1
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Aug 2025 08:38:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1756309100; x=1756913900; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XCaj9qU1uTlK3Io/0yLAp0BC9tLpIJ8rHughNbkImAs=;
-        b=HP8FNLFN/oeTa/q2z0v9DvphaeVF51yppEkoHCzBEfBnnOyRhZAvVaas7TIL/8uSOM
-         MOorrs1uRuCA2tTYm2OhjjuTVSR529ohETkWSXSLv7Fpj+ZKy18d/sx9KOsB6FiYiHpb
-         i2FrRaXRF89KcsIhTB18q19jmZ+LdcAqAoDZieHG2eWaZrpuMzR61PCXClVBK6VaR5Hr
-         AMvtbmT04DmdGBVOW8nZBIKrj0zZyzEFJw0EjwfBfbEFxv82w/RQlplRNVQBNJDwf24N
-         aqEmjRgm68lGTG4fWsbdPRrggl7TpuRK7gAgauROmg+eFSiHzgEK+FoFqBxMi08FBgaH
-         h7zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756309100; x=1756913900;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XCaj9qU1uTlK3Io/0yLAp0BC9tLpIJ8rHughNbkImAs=;
-        b=batrdYhXwXUQPBLJZiz9qix6VQIFFNqjZWvyI5MjQxhFP2rKLXtXTsPLxCL3XJlR1b
-         ISPjshhfKIH2YEVWiKmPuIRssWSiDbO2PPzepO90pPs7am23iSFUIp+5P0pvmMfNcEG8
-         kgOHb/xBUBUzM3BmC5yLI2tciLyyri94pILTYQBRN0yBP/1gZJrqX+UEOkhmvDvqVyOP
-         cWXxKrZpDco5X477tgLok5YF+984zi7n2Yal4xC6KL8o2KrPSWcen7UeaOTZNIh+T7kI
-         2qqPrSjs5PENQyzSmfhZMaz1FP3g28WZQQPB0z1WJNs41Pyr4WgibKoa4KVIlfrazNxY
-         oVkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjB1K9B77zY9T5qgF+NCHCZQKSajFvbX+Hqa+5xY/8Dk3oQnqE6/NcBUksuOfW/uUJvwk/t0rE/BXbXyXnE7fnaS/+apA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTpKbOSAQsaSprrDXwqzVLd1gciYZp9r5H7X9G1AXvvZxv/5ML
-	V6l47cL/6eBsQ/CEgqcz6EJs9RFfRuwVSDxs1fqSara+RYZfRnNHsvx5EOINdOn1mpkjJLoie3s
-	VQVBj9Mu+Pv5+M/XJ+XECGTykr75YjQSQqrUK/BvX
-X-Gm-Gg: ASbGncvDNLJCv1io8yK6FzmQP5xNZSyb+YOtb8BO35L3s9BSngACPEq16J65UBV4IlS
-	fWqbtl16seydfbHCazpCepS5UQVo/NVgTTZYswHlOCBrz3UruoVPNr+AqFCg95qW52fciHGrP06
-	N7LLHJcbcUnDO6kIbKBgcsIN6ZN/VslTSpOwuLxXgDKrTSYVd7VZbu0tC07CvQRt49SRSRP1z40
-	7ZFwXgVbHKlZp3oBg==
-X-Google-Smtp-Source: AGHT+IHtW2dnjAZbisWoax5mDslCTJ0tibAgoeGxJEVde+ImUinBOPTyITNYGZAcvnmQsIs+XXzFMCwatNRnWjAZUS0=
-X-Received: by 2002:a17:90b:3f90:b0:324:ff5a:38c7 with SMTP id
- 98e67ed59e1d1-32515e4f4e3mr28437601a91.16.1756309100066; Wed, 27 Aug 2025
- 08:38:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxcM90Mr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16DB8C4CEFB
+	for <linux-security-module@vger.kernel.org>; Wed, 27 Aug 2025 17:35:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756316142;
+	bh=FIed+i9mU8QVyJwJUuYJhiPLw4w7Z4LZFu4tEeKK2tQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rxcM90Mr7RLpuUh7uleG8dKJQyT7RaI0Xnq+WTZK+85Dx6J+7v5UhTymmilOudGvS
+	 ENBzUWXBQnykk4ork6goPhQrsRxhXqB2KsqXdzcG4yroDdvgKUquOIKsCddJcgFMWb
+	 /REcfpuedCSwUMesMYQ7NwIBx5iJocUbOmIc7TKXfVe13ej6qwy+8GoE635+Gqfbjb
+	 u/KG7s55NH8OQP7pfd7isrbxhlS9N9DX51mGcNacb5BE6piKCAhMfeEN0RU0kMkA5o
+	 m+XoPDLBkZocfzA+N2LEXxhOhcKzsaqUVALdAf/aFRL5emh1HAiw3MHPPEip45MW+E
+	 g6Gi4J1spr58w==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3366ce6889bso709461fa.0
+        for <linux-security-module@vger.kernel.org>; Wed, 27 Aug 2025 10:35:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW3DA/CAXHuvzB7fUgP9W4rg4yk7jNekIPPtPiqK3GLLETrhkQ55jkbU+K2V1DC47l0q8A+ss23f7N0J+0XLCDbVSME/a8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAXqyv95ZRRLVeubdBHqc26IQ3ZOCbkj5/nh7ONSoj4hemznGw
+	Kn5ldwSdTsDRi2YtlaMSQ+3Mbi2IlwnwMpQEDF+8sMtrZ/osvcXUtGboTAQDwIJlQHgeKQ7zJEU
+	2WK2UbHekzkJrl/fHQcyPix2Lx4FIT+4Tpe6kW0XJ
+X-Google-Smtp-Source: AGHT+IHUn8MO0aESC/OldXVkEKhuKEEb6fGxgOuf4xrzSp6WeZVtALeUAoQkfV5FV3cUoazA0fJyWvYRcGm5SnNCYls=
+X-Received: by 2002:a05:651c:23d2:10b0:333:f086:3092 with SMTP id
+ 38308e7fff4ca-33650e704femr46730461fa.11.1756316140285; Wed, 27 Aug 2025
+ 10:35:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825044046.GI39973@ZenIV> <20250825044355.1541941-1-viro@zeniv.linux.org.uk>
- <20250825044355.1541941-25-viro@zeniv.linux.org.uk> <20250825-zugute-verkohlen-945073b3851f@brauner>
- <20250825160939.GL39973@ZenIV> <20250826-kronleuchter-vortag-af3c087ae46a@brauner>
- <20250826170044.GT39973@ZenIV> <20250826175501.GU39973@ZenIV> <20250826182124.GV39973@ZenIV>
-In-Reply-To: <20250826182124.GV39973@ZenIV>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 27 Aug 2025 11:38:07 -0400
-X-Gm-Features: Ac12FXwI_c9yQVliIi4jpN4iAYA38ukwD9hnjwkrY0xsL1nLzMdiDBBGXi7UHag
-Message-ID: <CAHC9VhQ9p3W79N5nFJFgoiogNH-zANi+65ydYXhZikMPEvqKkQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH] switch do_new_mount_fc() to using fc_mount()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, 
-	jack@suse.cz, Christian Brauner <brauner@kernel.org>, linux-security-module@vger.kernel.org
+References: <20250822170800.2116980-1-mic@digikod.net> <20250826-skorpion-magma-141496988fdc@brauner>
+ <20250826.aig5aiShunga@digikod.net> <20250826123041.GB1603531@mit.edu> <20250826.iewie7Et5aiw@digikod.net>
+In-Reply-To: <20250826.iewie7Et5aiw@digikod.net>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Wed, 27 Aug 2025 10:35:28 -0700
+X-Gmail-Original-Message-ID: <CALCETrW=V9vst_ho2Q4sQUJ5uZECY5h7TnF==sG4JWq8PsWb8Q@mail.gmail.com>
+X-Gm-Features: Ac12FXxYtvycqmWfxuJptxMotttRmHwSaZZf5AQ5i4iJuwxj-1Y4BGUYtJz7etM
+Message-ID: <CALCETrW=V9vst_ho2Q4sQUJ5uZECY5h7TnF==sG4JWq8PsWb8Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 26, 2025 at 2:21=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
+On Tue, Aug 26, 2025 at 10:47=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
 >
-> [
-> This is on top of -rc3; if nobody objects, I'll insert that early in seri=
-es
-> in viro/vfs.git#work.mount.  It has an impact for LSM folks - ->sb_kern_m=
-ount()
-> would be called without ->s_umount; nothing in-tree cares, but if you hav=
-e
-> objections, yell now.
-> ]
+> On Tue, Aug 26, 2025 at 08:30:41AM -0400, Theodore Ts'o wrote:
+> > Is there a single, unified design and requirements document that
+> > describes the threat model, and what you are trying to achieve with
+> > AT_EXECVE_CHECK and O_DENY_WRITE?  I've been looking at the cover
+> > letters for AT_EXECVE_CHECK and O_DENY_WRITE, and the documentation
+> > that has landed for AT_EXECVE_CHECK and it really doesn't describe
+> > what *are* the checks that AT_EXECVE_CHECK is trying to achieve:
+> >
+> >    "The AT_EXECVE_CHECK execveat(2) flag, and the
+> >    SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE
+> >    securebits are intended for script interpreters and dynamic linkers
+> >    to enforce a consistent execution security policy handled by the
+> >    kernel."
+>
+> From the documentation:
+>
+>   Passing the AT_EXECVE_CHECK flag to execveat(2) only performs a check
+>   on a regular file and returns 0 if execution of this file would be
+>   allowed, ignoring the file format and then the related interpreter
+>   dependencies (e.g. ELF libraries, script=E2=80=99s shebang).
+>
+> >
+> > Um, what security policy?
+>
+> Whether the file is allowed to be executed.  This includes file
+> permission, mount point option, ACL, LSM policies...
 
-Thanks for the heads-up, I'm not aware of anyone currently
-posting/working-on patches that would be dependent on this.
+This needs *waaaaay* more detail for any sort of useful evaluation.
+Is an actual credible security policy rolling dice?  Asking ChatGPT?
+Looking at security labels?  Does it care who can write to the file,
+or who owns the file, or what the file's hash is, or what filesystem
+it's on, or where it came from?  Does it dynamically inspect the
+contents?  Is it controlled by an unprivileged process?
 
-> Prior to the call of do_new_mount_fc() the caller has just done successfu=
-l
-> vfs_get_tree().  Then do_new_mount_fc() does several checks on resulting
-> superblock, and either does fc_drop_locked() and returns an error or
-> proceeds to unlock the superblock and call vfs_create_mount().
->
-> The thing is, there's no reason to delay that unlock + vfs_create_mount()=
- -
-> the tests do not rely upon the state of ->s_umount and
->         fc_drop_locked()
->         put_fs_context()
-> is equivalent to
->         unlock ->s_umount
->         put_fs_context()
->
-> Doing vfs_create_mount() before the checks allows us to move vfs_get_tree=
-()
-> from caller to do_new_mount_fc() and collapse it with vfs_create_mount()
-> into an fc_mount() call.
->
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+I can easily come up with security policies for which DENYWRITE is
+completely useless.  I can come up with convoluted and
+not-really-credible policies where DENYWRITE is important, but I'm
+honestly not sure that those policies are actually useful.  I'm
+honestly a bit concerned that AT_EXECVE_CHECK is fundamentally busted
+because it should have been parametrized by *what format is expected*
+-- it might be possible to bypass a policy by executing a perfectly
+fine Python script using bash, for example.
 
---=20
-paul-moore.com
+I genuinely have not come up with a security policy that I believe
+makes sense that needs AT_EXECVE_CHECK and DENYWRITE.  I'm not saying
+that such a policy does not exist -- I'm saying that I have not
+thought of such a thing after a few minutes of thought and reading
+these threads.
+
+
+> > And then on top of it, why can't you do these checks by modifying the
+> > script interpreters?
+>
+> The script interpreter requires modification to use AT_EXECVE_CHECK.
+>
+> There is no other way for user space to reliably check executability of
+> files (taking into account all enforced security
+> policies/configurations).
+>
+
+As mentioned above, even AT_EXECVE_CHECK does not obviously accomplish
+this goal.  If it were genuinely useful, I would much, much prefer a
+totally different API: a *syscall* that takes, as input, a file
+descriptor of something that an interpreter wants to execute and a
+whole lot of context as to what that interpreter wants to do with it.
+And I admit I'm *still* not convinced.
+
+Seriously, consider all the unending recent attacks on LLMs an
+inspiration.  The implications of viewing an image, downscaling the
+image, possibly interpreting the image as something containing text,
+possibly following instructions in a given language contained in the
+image, etc are all wildly different.  A mechanism for asking for
+general permission to "consume this image" is COMPLETELY MISSING THE
+POINT.  (Never mind that the current crop of LLMs seem entirely
+incapable of constraining their own use of some piece of input, but
+that's a different issue and is besides the point here.)
