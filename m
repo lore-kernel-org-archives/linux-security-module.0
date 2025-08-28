@@ -1,119 +1,223 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D622D9787;
-	Thu, 28 Aug 2025 09:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1883081C2
+	for <linux-security-module@vger.kernel.org>; Thu, 28 Aug 2025 10:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756374029; cv=none; b=WaT6fkNjy21h0qrTRRBk6RuWx6PD6wvV33bxjzFt7X/Z15gwAV4pCQBwaPhWloQ/MjUk3HECslhwg+Wt1JvJC8qNO0F8bNCwWquTYLoRj+wX49sEBDY+zGe8tuaypTPa+cTDdA+K4nmJxzFk49rza2PW9RBF1iSBsmjC0zC3h50=
+	t=1756375583; cv=none; b=CpMkEPBd84XRjwf8x7YQ+s6b3dCBgVy/LfbDVn+3am5Yd5pMn3WoKKfjDrcKAGnbxLe9MlVI9MNEsHVn61BvhgcZiA71P/oAb8VoO+l+2XmHPpqub7HVlvvJJ0zn4koUxJBRK7bcXkPHM9Vm1WnBLTFHvi7vHkNVpsEa0Q976WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756374029; c=relaxed/simple;
-	bh=R6jxNMAjDI19J1IHRQGgmZqJDB7pJyMti4vDt5IrhUw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Uc/Lbbwd8yPXSm5N8avOsHK/jiP7hY6WuuVnj9+9paODmOefoka5za54cv6LGqJ6W2kpzbsAsD38Zv9X72uLi+QB2FeQ+VJRfY7xi4e6qkOay79QX2UlRNn5Ia8b2SCnDiegURI+fBnRDEkmcpnpCFF9jrVcs9OmujRKfoy8oEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQ4P75mu; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756375583; c=relaxed/simple;
+	bh=ibgMcx0t2DMAR/JWdWYa3j0j+waNK81T6Ne/9aFD2pI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BxmIsCMnSe8BtzHhZeepWfEVx1L6n4mroUXgPvl2qNarPxLeHzXBU6ue1a9RJwbXdfetUjnZT5rRy7TU2S4iWsNId5QOeVjuhrCAJ74afFwistZ8FBu77ujR+JCIb+EgMekUOE5K3/JwAX9/HZVixww7ouOoY8z4B+1pe8imdtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdu/+Evn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQ4P75mu"
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-323267872f3so714856a91.1;
-        Thu, 28 Aug 2025 02:40:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756374027; x=1756978827; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R6jxNMAjDI19J1IHRQGgmZqJDB7pJyMti4vDt5IrhUw=;
-        b=GQ4P75muGjUYUrm0Zp+8YgA9k79Aw+UT6J50VCF/ZbBvQ4WS1YSP+4QEntgZaX0AgC
-         l0Q2gQL8mWI3XuPgGwsu/+oslUhvctFNQFOvBntI5jkCOW4cZJnFdqLZRrC47GItua5p
-         i36pIzU2Z9bU5sNf9t3a8MEFGJwEBbjDf9saotQT3mQTElheQa2zqYVbANnTON3rv+St
-         wIwOsGKEQJtfAEQuBR+wLvpUjupXo9EuBVSGkDTaFRErNxjw/vGBxVmbhrBdfITJhvvy
-         Tbhyu9ZnjU2RzzsDHAgqpi+XeBTJuf7JxTvG+eFx9zOjOm/37s4CvgXgBYcVoWHMCJ/4
-         PjEw==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bdu/+Evn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756375580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=AIuF++MW+9cppH2LcogxBtVCMHjKY7lH5B9a+qhZ5nk=;
+	b=bdu/+EvndH9UhyH0ZtPZs5gvfrDagRlK7thkh+a8MgwcZppz6adUqXtsr+qFWlkLn4jvMU
+	EgIidaV4acS53iwtM/B3xPFcDBkU5MLOwg+h7+ghla/2hiMNZlD36tgYRMbIbryjMvFOUQ
+	6e8LfP+6H+j7rqCWUMxQ7bYxZc8Fvp4=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-507-UGgSb5kfObmMAtdfaLduJA-1; Thu, 28 Aug 2025 06:06:19 -0400
+X-MC-Unique: UGgSb5kfObmMAtdfaLduJA-1
+X-Mimecast-MFC-AGG-ID: UGgSb5kfObmMAtdfaLduJA_1756375578
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3cceb92ea73so463329f8f.0
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Aug 2025 03:06:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756374027; x=1756978827;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R6jxNMAjDI19J1IHRQGgmZqJDB7pJyMti4vDt5IrhUw=;
-        b=j0aZn1N1+zvXV/DqbyBI1IaNebOisGPmdzMLpU4XEyFP7WbBArKKaEaJ48igKOHoq7
-         d8A0FmY6b/g1Ews8zLXFo4c0Zgef0WzGMXF0X61RHDWN+LmT5ePhLO9vxUNoj67l/5dA
-         eyZDQ/IQyacAegVWD0PhpvwQe3RGAbHvpbpAOopkbtVfGcsThKEQof2YLPm9ryMePs18
-         ZoPjIu6OCA60ZjTP9m5q1nEcdbre9BAlcYk3VS2H/INHvFAF1H6zzJkWa584wkgOQawQ
-         KjwfiW6v4ZIYSfQGA52FP3IJgLjulT3Lky15S4W57ghjztZqhwL+QO6SalhHUjPA7SYE
-         iaZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3K/C9s+fCfP8HlAuNTiaqDakFKYJ6LvIZoZIZq4VW+XwHMIW45TDHywAbEKHhcMZeUHMkBwRRz5Aas/A=@vger.kernel.org, AJvYcCVfEtBEugOUw+CY9x1cZ8f2wiF/HlqSy0IRYjGJawrsao0Y4UiDkXx6ty6SUS5Spi44yf8LjyKbL64/XINcbkvA@vger.kernel.org, AJvYcCXDUKye5n6Q6BEtB3PDLyegrO5USMobWAwDy1pAAXZIruZZTQ7s1ILNppwzojK4Dxh49yQVlOXTIl9tc0qy99D+dsG1cSKd@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkBtyMkL6ddYxDJVnXIvXA0J1lmKnUgw63dozYXJgjVjVEYAQd
-	obg+0HG6RANDb8HwKWiVbVdA6eT6XgqmOahL0MoDeHDs8Pg5xYRrIyBgjeiccVWIucU=
-X-Gm-Gg: ASbGncuIyKJvioctgKDSG4c2wkNpbArWX5aCz3Xh/AAMDQYoBiC5F38JMntljZ8A4ar
-	wb28E/4V4FgjvuJlyqm7p8/vWNmdbajVb90dqoyqOzBNE2BGdlNXKZgnUxaj3/t7oKNJapzMU37
-	NojXRLHaf7FcxJ8uc0+zFKKoTZCQaYSxj+ZWCPVCIo+LDPmJbJTvlyrlYW83ttQNQyrbkCJ9s9m
-	TOUf1RE+aQrqMG3HrDaR32QtnhdpCZ1hoikrunLfxSmOVX4qouE/sxdyn7r1HytJL/TXhWyI/mJ
-	ZcQ+EEgobGjrvIFyF5K+HI7iZ2dRk7IeyGg889wtVnFAp5MooAR1L2ge2p8RnhuiOD6EiZBxmsN
-	BzyTh8WansJuQrpCj0BBeerGv1hFhEBR3dOjesViXa3/S1a25TDwEWVZ6CFaxUE8Frp0YfnqZlC
-	yI6jyK7L1t1L4BZeCNRQ==
-X-Google-Smtp-Source: AGHT+IFyJcs7VZXQO4bl1E7h+tk1g9mI2keQqRtJvL/QqXUnkVgw42POnmQAIbH/7ZuAy7kHK1BBsA==
-X-Received: by 2002:a17:90b:1649:b0:321:4182:2b9e with SMTP id 98e67ed59e1d1-32515e37410mr28758623a91.12.1756374026134;
-        Thu, 28 Aug 2025 02:40:26 -0700 (PDT)
-Received: from server.. ([103.251.57.213])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fcd33c1sm4518432a91.17.2025.08.28.02.40.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 02:40:25 -0700 (PDT)
-From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
-To: richard.weiyang@gmail.com
-Cc: Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org,
-	davem@davemloft.net,
-	david@redhat.com,
-	edumazet@google.com,
-	gnoack@google.com,
-	horms@kernel.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	lorenzo.stoakes@oracle.com,
-	mhocko@suse.com,
-	mic@digikod.net,
-	ming.lei@redhat.com,
-	pabeni@redhat.com,
-	reddybalavignesh9979@gmail.com,
-	rppt@kernel.org,
-	shuah@kernel.org,
-	skhan@linuxfoundation.org,
-	surenb@google.com,
-	vbabka@suse.cz
-Subject: Re: [PATCH 2/2] selftests: Replace relative includes with non-relative for kselftest.h and kselftest_harness.h
-Date: Thu, 28 Aug 2025 15:10:16 +0530
-Message-ID: <20250828094016.18063-1-reddybalavignesh9979@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250828081026.yx6vgphtsf4pmr3y@master>
-References: <20250828081026.yx6vgphtsf4pmr3y@master>
+        d=1e100.net; s=20230601; t=1756375578; x=1756980378;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AIuF++MW+9cppH2LcogxBtVCMHjKY7lH5B9a+qhZ5nk=;
+        b=jzCrlpmZU2ztHbbxUnSyz8HQ9kt7xZWINih/1UxbTzH4d6DzcDiRMgT+POb6JWD2Rq
+         RpiSxEvBM9/YOkOkBAGS8D6yCvQ8ghWAz9pc4ELXReRDlorZo7fn9c9FmxoY1/TYKyQB
+         gp18v6Tp/BVhjvqSp5nPYi2MtgYPPkEpJ0rv9BMdEJIWrN7if24NowZiZYh4AfcahmVS
+         wDWYK+Zz2QUhiAqe7O0yObdsgqRZJT6/KKGd9J/dWdm5YfYGPGjXv1NRflKnft9pYNxT
+         fOo/DS2yLyWRRWYye+fvRJBvaD+CDq3oGNeoWXoef4EPXlpjyRSGKcI/gZkqQMc4M6cl
+         Ta+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXFtQr0RiXTNorMUB0pDfGW4JPgpM0ry/bJjpojWQpvpld3+1nFVZVBevXsoJojrjOZ+4ysx3GU6ccEqlkGbPjBKHjlkjQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvyLOMXaJwHaoCR/VsaXiUeSqp9s+67h0BUon44EqMpj7TsXk5
+	QsAWaT+d7aaL4FmnBksXFEPD28kBHZy5QQ5NURoqQYMc06T8CnokW0AT/uGRveCcWopRlyqqK1n
+	x/bLCj1rIAwM09pDRcY9LO8sBEphhcwQ6ZYlUaqKKZGcEhn2leUa4J+ObI3kt2OiX4/Rw+3k4zI
+	2Jzw==
+X-Gm-Gg: ASbGncsN3yEj+wyhCUqABEIyi7UiwOzctdAiignNIPZi79k4hnaKNJG7k7siL4UzvKe
+	iJWfg8LKvsZuz4QLYlc4RS88HuLv25yidaoL9BnGvSR8Cd6tF8TjWjiiIQzdE1BIjfK3FUIP6Fh
+	+Dm8jqJ16IvJbt++vCApA1rSUjchIvpIAMfYUV7rL4onkHL/YIXMARfHh+FMniKCkVS+NXWS4B6
+	NX4ZL5lP+RslZZ9rTILtCmfE4SKLJJ6VmGL4bHukUuh0pOdCt2tvywNpun3tlca2ypwvzEiE4MC
+	N0RoRzZcBCGvEGRyZJYlegUhDUIKHtonX2D0J0Pk+A5oKTJ89diX7O9jbHXyiJFdfrmDXTBCIs5
+	OJr7NJc9FBjqWkfwbBg88/hXxGga2d4XwYiCFC1LA3Vw5AZI81LJ9fMufcPcyNa2hoks=
+X-Received: by 2002:a5d:64e1:0:b0:3b6:436:b8ea with SMTP id ffacd0b85a97d-3c5da83c601mr15705140f8f.6.1756375577457;
+        Thu, 28 Aug 2025 03:06:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHv6FDhe/e4+uPIRUaF8D2ckX5J+70BvRLKIj3J1sQm8lva6qxwVAKdzmfSmO9HiwptWSyrXw==
+X-Received: by 2002:a5d:64e1:0:b0:3b6:436:b8ea with SMTP id ffacd0b85a97d-3c5da83c601mr15705026f8f.6.1756375576743;
+        Thu, 28 Aug 2025 03:06:16 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f28:c100:2225:10aa:f247:7b85? (p200300d82f28c100222510aaf2477b85.dip0.t-ipconnect.de. [2003:d8:2f28:c100:2225:10aa:f247:7b85])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70e4b9f8dsm26199961f8f.9.2025.08.28.03.06.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 03:06:15 -0700 (PDT)
+Message-ID: <4db9239a-efe3-43b2-b7b4-af497eb9ee28@redhat.com>
+Date: Thu, 28 Aug 2025 12:06:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH kvm-next V11 4/7] KVM: guest_memfd: Use guest mem inodes
+ instead of anonymous inodes
+To: Ackerley Tng <ackerleytng@google.com>, Shivank Garg <shivankg@amd.com>,
+ willy@infradead.org, akpm@linux-foundation.org, pbonzini@redhat.com,
+ shuah@kernel.org, seanjc@google.com, vbabka@suse.cz
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com,
+ xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com,
+ josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com,
+ jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com,
+ joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
+ gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+ tabba@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ pvorel@suse.cz, bfoster@redhat.com, vannapurve@google.com,
+ chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
+ shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com,
+ thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com,
+ kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, hch@infradead.org,
+ cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com,
+ roypat@amazon.co.uk, chao.p.peng@intel.com, amit@infradead.org,
+ ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com,
+ gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com,
+ papaluri@amd.com, yuzhao@google.com, suzuki.poulose@arm.com,
+ quic_eberman@quicinc.com, linux-bcachefs@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
+References: <20250827175247.83322-2-shivankg@amd.com>
+ <20250827175247.83322-7-shivankg@amd.com> <diqztt1sbd2v.fsf@google.com>
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <diqztt1sbd2v.fsf@google.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: YeVW1wb54FeKWpa1az65mmw0i4uBfTxizWSwbve5zm8_1756375578
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Wei,
+On 28.08.25 00:43, Ackerley Tng wrote:
+> Shivank Garg <shivankg@amd.com> writes:
+> 
+>>
+>> [...snip...]
+>>
+> 
+> I meant to send this to you before this version went out but you were
+> too quick!
+> 
+> Here's a new version, Fuad and I reviewed this again internally. The
+> changes are:
+> 
+> + Sort linux/pseudo_fs.h after linux/pagemap.h (alphabetical)
+> + Don't set MNT_NOEXEC on the mount, since SB_I_NOEXEC was already set
+>    on the superblock
+> + Rename kvm_gmem_inode_make_secure_inode() to kvm_gmem_inode_create()
+>      + Emphasizes that there is a creation in this function
+>      + Remove "secure" from the function name to remove confusion that
+>        there may be a "non-secure" version
+> + In kvm_gmem_inode_create_getfile()'s error path, return ERR_PTR(err)
+>    directly instead of having a goto
+> 
+> 
+>  From ada9814b216eac129ed44dffd3acf76fce2cc08a Mon Sep 17 00:00:00 2001
+> From: Ackerley Tng <ackerleytng@google.com>
+> Date: Sun, 13 Jul 2025 17:43:35 +0000
+> Subject: [PATCH] KVM: guest_memfd: Use guest mem inodes instead of anonymous
+>   inodes
+> 
+> guest_memfd's inode represents memory the guest_memfd is
+> providing. guest_memfd's file represents a struct kvm's view of that
+> memory.
+> 
+> Using a custom inode allows customization of the inode teardown
+> process via callbacks. For example, ->evict_inode() allows
+> customization of the truncation process on file close, and
+> ->destroy_inode() and ->free_inode() allow customization of the inode
+> freeing process.
+> 
+> Customizing the truncation process allows flexibility in management of
+> guest_memfd memory and customization of the inode freeing process
+> allows proper cleanup of memory metadata stored on the inode.
+> 
+> Memory metadata is more appropriately stored on the inode (as opposed
+> to the file), since the metadata is for the memory and is not unique
+> to a specific binding and struct kvm.
+> 
+> Co-developed-by: Fuad Tabba <tabba@google.com>
+> Signed-off-by: Fuad Tabba <tabba@google.com>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
 
-Thanks for testing and for your feedback.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Yeah, if you try to build inside a subdirectory, the top level
-export may not apply, so CFLAGS don't get updated, and even if
-they did, the path could be pointing to wrong location.
+-- 
+Cheers
 
-As the docs recommend, building selftest using TARGETS,
-either from kernel source or "tools/testing/selftests/"
-works fine and doesn't fail.
-
-If you really want to build from selftests/mm/ directory then
-defining KSFT_INCLUDES with a fallback in the Makefile will
-resolve it, but there is no need of it if we stick with "TARGETS=mm".
-
-Thanks
-Bala Vignesh
+David / dhildenb
 
