@@ -1,120 +1,119 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2455B79DA;
-	Thu, 28 Aug 2025 08:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D622D9787;
+	Thu, 28 Aug 2025 09:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756368631; cv=none; b=rpBkrDGp2bDPBZdR6AvkJszMEmdSm+SYxy0dwH6KdYHi3qHAlOwfAVEdxdp8Dcw1d/w3iVAAbHgrJr+MYfWIsHhSpkNPmRdSaprnVmAxXnIZa2qOGS8NSz/9phf+SDgG3sTbPgKHRKhJHz1FHdwBgLBIHD2lIXQe0elrt1rAo5c=
+	t=1756374029; cv=none; b=WaT6fkNjy21h0qrTRRBk6RuWx6PD6wvV33bxjzFt7X/Z15gwAV4pCQBwaPhWloQ/MjUk3HECslhwg+Wt1JvJC8qNO0F8bNCwWquTYLoRj+wX49sEBDY+zGe8tuaypTPa+cTDdA+K4nmJxzFk49rza2PW9RBF1iSBsmjC0zC3h50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756368631; c=relaxed/simple;
-	bh=/wfpzR0IeOuJryZPOkNOky05v6lmr91pjRC2wFXEOlI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n+9/q72MF5zUjt2/yw2u6Te6HaRKvl6JReiFDBsX8DXhjEbmVCUAGGAf8mxnsZHK7AE1PnrHmFT2vVJnBGOdjQJX8bm0w7LaHmmw0oykYsmnSaRG1cBbqjd2P9ns8km6i9qTYc99XvyV78WAelYF3ePPPoN2lAxnNSESP2t+B5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a3Ai0oZe; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1756374029; c=relaxed/simple;
+	bh=R6jxNMAjDI19J1IHRQGgmZqJDB7pJyMti4vDt5IrhUw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Uc/Lbbwd8yPXSm5N8avOsHK/jiP7hY6WuuVnj9+9paODmOefoka5za54cv6LGqJ6W2kpzbsAsD38Zv9X72uLi+QB2FeQ+VJRfY7xi4e6qkOay79QX2UlRNn5Ia8b2SCnDiegURI+fBnRDEkmcpnpCFF9jrVcs9OmujRKfoy8oEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQ4P75mu; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a3Ai0oZe"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61cdab7eee8so498146a12.0;
-        Thu, 28 Aug 2025 01:10:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQ4P75mu"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-323267872f3so714856a91.1;
+        Thu, 28 Aug 2025 02:40:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756368627; x=1756973427; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1756374027; x=1756978827; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WsYlmHfU3hwTMO0ZELDyq62SrO+5nMwqV4kPXeXXGBI=;
-        b=a3Ai0oZe1XcWuu+TaFLu0DpVJBTlF1ADyjrAo7Z1yjTZIE7VFp+nMyUxUZICs7GOfo
-         A2/2n1erR3xh7Tj3sxSy0habsmzgjW4KI5t/J+wFEMTw6ooms7WIKU75BLl1YxCX8M/2
-         5HFKQOlWWhvOLolaBg8q/+tnDoPT+3YqXVRElUONUN0n+HIk6q+YCvBOGgF/hQ837Psd
-         gTkX3vrsqMrFQJJsE/NfbClo4UjqWVGZAGyyeXfzATe5yYt7W6D50qOdcRikQ5ioi3Eb
-         uiS56iLgZ7iIcQnu7Rw/wifshbmRqxS0yAQ3iiFc+UHWMkoYyFzuRaQBC+fhOCFKy57N
-         O0qQ==
+        bh=R6jxNMAjDI19J1IHRQGgmZqJDB7pJyMti4vDt5IrhUw=;
+        b=GQ4P75muGjUYUrm0Zp+8YgA9k79Aw+UT6J50VCF/ZbBvQ4WS1YSP+4QEntgZaX0AgC
+         l0Q2gQL8mWI3XuPgGwsu/+oslUhvctFNQFOvBntI5jkCOW4cZJnFdqLZRrC47GItua5p
+         i36pIzU2Z9bU5sNf9t3a8MEFGJwEBbjDf9saotQT3mQTElheQa2zqYVbANnTON3rv+St
+         wIwOsGKEQJtfAEQuBR+wLvpUjupXo9EuBVSGkDTaFRErNxjw/vGBxVmbhrBdfITJhvvy
+         Tbhyu9ZnjU2RzzsDHAgqpi+XeBTJuf7JxTvG+eFx9zOjOm/37s4CvgXgBYcVoWHMCJ/4
+         PjEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756368627; x=1756973427;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=WsYlmHfU3hwTMO0ZELDyq62SrO+5nMwqV4kPXeXXGBI=;
-        b=mUvHR23KNOcPf/wLaFXwVyZQN4PkfFbnUGOmyUC1QpQRWCjIF7W1fdvo5Asr0DtbB3
-         jklcdXKN2L1L8eDYPWNxfWgLpx/CX+lctWTfheOBop5EP2FOVjVMega5kBf+2QF3r278
-         w7qqbqSq9zYWeSPEMqDsccD0+V1DutBXesbgxhLjNE99nxqQgeScKtTsqqEsjQxApp/p
-         OgLORlrpbxC48sxGfD1JKqqKdehi4vTy8dwqhno3TaPXjfiCOeOk82Ro34bru4NRHhq+
-         1qH8DFkk8piMgaqd5tYqC2QAhn0xZa1AYlIIk40VGgCua2nfUMRK6TXkoMgex5wOHPiF
-         fd7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVuHRQgyvZi7TQKEO1PMW3NYDuUOa4pNi5mLYTbENMmB2h5tOwmWeuvt7EC2Il9EKCAzYzMVNC5q2aAvzc=@vger.kernel.org, AJvYcCWG3VvSQJutbgbWWMdaGsNaB6PxdgL+6fFwfztlUSnQIw8lVmlRgLf+s1vPxaQfiSjEAGE4rNqwZoJkKcJLTxvc@vger.kernel.org, AJvYcCXLA1JTzbBRPw3Z/6v9VL1O5OvWjA1bJ62OijKOvcNmk/tqB9C0mhLJGL0mn8eyDo91YOPX6SB6jmBthhGfU21Iu2cR9Srr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+hehCa580MIriUM87lQDG1Yb7XR5nT5nyFGS9MQmg6KpOrE2k
-	Z8W6dg1WG8dkmccnD3k53AEP+YyC+2WvqbEXqSIBJACSNiwNH1dP8l/8
-X-Gm-Gg: ASbGncu9VVhpXdasZPwfJkbP/tw8D/jrD7YJDAgN34gfVgN9OV2JJr5FcKqxHqxcEEi
-	0u2jwFhT2R+rq+lE4fgb4h7c8i6c6uBbJrthKybYSuBxwfGVD5FWBaBmqCEGQRfeVkjIZMhAvZ3
-	9fAntosMN+YmcE6HYnyymopg5OROjpJ1k41YCQvaF8EaCkBs0EvZfwb4U5nEZRXbQsPEXjHhtNl
-	k+0gOlTavuGMxDNxdEdaa5dj0dKEV9P53GzoML+T3KIUZTaa9+jNvprrckQuMzfvuovOKs8Ujk4
-	IKK2C3qIAtocLpmbjhf9X1vYkqr2soeofkpu7sfJOvBl0cE6MhLEZmrJzAgN2T7eHcBjVPZgzrt
-	ojRgG82YI2KhgOl9DesTzJM2jIrWsKr1RvCKap/rMR6ixBJg=
-X-Google-Smtp-Source: AGHT+IGIthkWv6z5MdlsIhO9u//UvPeOJujLKVBOFVuuS4souaYefx3hzHkd5Tzm4EztK/4S7+XRVg==
-X-Received: by 2002:a05:6402:270f:b0:61c:6968:d1a5 with SMTP id 4fb4d7f45d1cf-61c6968e6b3mr10645149a12.25.1756368627342;
-        Thu, 28 Aug 2025 01:10:27 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c533e96dfsm9090558a12.18.2025.08.28.01.10.26
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 28 Aug 2025 01:10:26 -0700 (PDT)
-Date: Thu, 28 Aug 2025 08:10:26 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
-Cc: akpm@linux-foundation.org, shuah@kernel.org, mic@digikod.net,
-	gnoack@google.com, david@redhat.com, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, ming.lei@redhat.com, skhan@linuxfoundation.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 2/2] selftests: Replace relative includes with
- non-relative for kselftest.h and kselftest_harness.h
-Message-ID: <20250828081026.yx6vgphtsf4pmr3y@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250827144733.82277-1-reddybalavignesh9979@gmail.com>
- <20250827144733.82277-3-reddybalavignesh9979@gmail.com>
+        d=1e100.net; s=20230601; t=1756374027; x=1756978827;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R6jxNMAjDI19J1IHRQGgmZqJDB7pJyMti4vDt5IrhUw=;
+        b=j0aZn1N1+zvXV/DqbyBI1IaNebOisGPmdzMLpU4XEyFP7WbBArKKaEaJ48igKOHoq7
+         d8A0FmY6b/g1Ews8zLXFo4c0Zgef0WzGMXF0X61RHDWN+LmT5ePhLO9vxUNoj67l/5dA
+         eyZDQ/IQyacAegVWD0PhpvwQe3RGAbHvpbpAOopkbtVfGcsThKEQof2YLPm9ryMePs18
+         ZoPjIu6OCA60ZjTP9m5q1nEcdbre9BAlcYk3VS2H/INHvFAF1H6zzJkWa584wkgOQawQ
+         KjwfiW6v4ZIYSfQGA52FP3IJgLjulT3Lky15S4W57ghjztZqhwL+QO6SalhHUjPA7SYE
+         iaZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3K/C9s+fCfP8HlAuNTiaqDakFKYJ6LvIZoZIZq4VW+XwHMIW45TDHywAbEKHhcMZeUHMkBwRRz5Aas/A=@vger.kernel.org, AJvYcCVfEtBEugOUw+CY9x1cZ8f2wiF/HlqSy0IRYjGJawrsao0Y4UiDkXx6ty6SUS5Spi44yf8LjyKbL64/XINcbkvA@vger.kernel.org, AJvYcCXDUKye5n6Q6BEtB3PDLyegrO5USMobWAwDy1pAAXZIruZZTQ7s1ILNppwzojK4Dxh49yQVlOXTIl9tc0qy99D+dsG1cSKd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkBtyMkL6ddYxDJVnXIvXA0J1lmKnUgw63dozYXJgjVjVEYAQd
+	obg+0HG6RANDb8HwKWiVbVdA6eT6XgqmOahL0MoDeHDs8Pg5xYRrIyBgjeiccVWIucU=
+X-Gm-Gg: ASbGncuIyKJvioctgKDSG4c2wkNpbArWX5aCz3Xh/AAMDQYoBiC5F38JMntljZ8A4ar
+	wb28E/4V4FgjvuJlyqm7p8/vWNmdbajVb90dqoyqOzBNE2BGdlNXKZgnUxaj3/t7oKNJapzMU37
+	NojXRLHaf7FcxJ8uc0+zFKKoTZCQaYSxj+ZWCPVCIo+LDPmJbJTvlyrlYW83ttQNQyrbkCJ9s9m
+	TOUf1RE+aQrqMG3HrDaR32QtnhdpCZ1hoikrunLfxSmOVX4qouE/sxdyn7r1HytJL/TXhWyI/mJ
+	ZcQ+EEgobGjrvIFyF5K+HI7iZ2dRk7IeyGg889wtVnFAp5MooAR1L2ge2p8RnhuiOD6EiZBxmsN
+	BzyTh8WansJuQrpCj0BBeerGv1hFhEBR3dOjesViXa3/S1a25TDwEWVZ6CFaxUE8Frp0YfnqZlC
+	yI6jyK7L1t1L4BZeCNRQ==
+X-Google-Smtp-Source: AGHT+IFyJcs7VZXQO4bl1E7h+tk1g9mI2keQqRtJvL/QqXUnkVgw42POnmQAIbH/7ZuAy7kHK1BBsA==
+X-Received: by 2002:a17:90b:1649:b0:321:4182:2b9e with SMTP id 98e67ed59e1d1-32515e37410mr28758623a91.12.1756374026134;
+        Thu, 28 Aug 2025 02:40:26 -0700 (PDT)
+Received: from server.. ([103.251.57.213])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fcd33c1sm4518432a91.17.2025.08.28.02.40.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 02:40:25 -0700 (PDT)
+From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+To: richard.weiyang@gmail.com
+Cc: Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org,
+	davem@davemloft.net,
+	david@redhat.com,
+	edumazet@google.com,
+	gnoack@google.com,
+	horms@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	lorenzo.stoakes@oracle.com,
+	mhocko@suse.com,
+	mic@digikod.net,
+	ming.lei@redhat.com,
+	pabeni@redhat.com,
+	reddybalavignesh9979@gmail.com,
+	rppt@kernel.org,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org,
+	surenb@google.com,
+	vbabka@suse.cz
+Subject: Re: [PATCH 2/2] selftests: Replace relative includes with non-relative for kselftest.h and kselftest_harness.h
+Date: Thu, 28 Aug 2025 15:10:16 +0530
+Message-ID: <20250828094016.18063-1-reddybalavignesh9979@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250828081026.yx6vgphtsf4pmr3y@master>
+References: <20250828081026.yx6vgphtsf4pmr3y@master>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827144733.82277-3-reddybalavignesh9979@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 27, 2025 at 08:17:33PM +0530, Bala-Vignesh-Reddy wrote:
->Replaced relative path of kselftest.h and kselftest_harness.h
->to a non-relative path
->
->Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
->
-[...]
->diff --git a/tools/testing/selftests/mm/cow.c b/tools/testing/selftests/mm/cow.c
->index d30625c18259..ccbb1958d467 100644
->--- a/tools/testing/selftests/mm/cow.c
->+++ b/tools/testing/selftests/mm/cow.c
->@@ -27,7 +27,7 @@
-> #endif /* LOCAL_CONFIG_HAVE_LIBURING */
-> 
-> #include "../../../../mm/gup_test.h"
->-#include "../kselftest.h"
->+#include "kselftest.h"
-> #include "vm_util.h"
-> #include "thp_settings.h"
-> 
+Hi Wei,
 
-Well there are too many changes and I failed to apply this one on current
-mm-new. So I just manually change this with patch 1 applied.
+Thanks for testing and for your feedback.
 
-This fails when I "cd tools/testing/selftests/mm/" and then make.
+Yeah, if you try to build inside a subdirectory, the top level
+export may not apply, so CFLAGS don't get updated, and even if
+they did, the path could be pointing to wrong location.
 
-The Makefile in selftests/mm doesn't include ../Makefile so ../lib.mk doesn't
-know the new CFLAGS when I do build in selftests/mm directory.
+As the docs recommend, building selftest using TARGETS,
+either from kernel source or "tools/testing/selftests/"
+works fine and doesn't fail.
 
--- 
-Wei Yang
-Help you, Help me
+If you really want to build from selftests/mm/ directory then
+defining KSFT_INCLUDES with a fallback in the Makefile will
+resolve it, but there is no need of it if we stick with "TARGETS=mm".
+
+Thanks
+Bala Vignesh
+
