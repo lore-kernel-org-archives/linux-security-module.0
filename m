@@ -1,79 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6DA3081A3;
-	Fri, 29 Aug 2025 10:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361DB30FC1E;
+	Fri, 29 Aug 2025 10:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756461686; cv=none; b=T3kmtxTuNg4uUG/I21eG+FhyTts6sGs0hWPIhcDaYavzeBhfveUQ9ZkJs65o6bwFW/bIEbR98I17C/mp9wWOhuovnIauYmCFys6X3yg0+oj55508rmYvHl8NtGKVLnCFVZDzZbvjTUPFJ8CVlB/BRrsrn6HMadk9U8qMZgNHhDU=
+	t=1756464799; cv=none; b=jKR/MZgmHEwr/j8UKaSGYfreeH1ewmj0Ds84fHlQ99OM33UjWKnS/f9L537Hd5PSexzIxJE9BwVNO4gBjpFmU2YTihjk7CweyQ/J9zpeF3Vmt6Zblez/frqErtAFlhtxMroCY7I+ffLc6xjpg3/Ji6+qPghwC7tuIV+uFW4t4cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756461686; c=relaxed/simple;
-	bh=92fN0UR0hrt8PjaauCManqwbTnRkMOX7oJ/IaHyEcJc=;
+	s=arc-20240116; t=1756464799; c=relaxed/simple;
+	bh=hfWM5gPtVgoPnOifkHwbxrGhPNxVzmmMJ165dTe33yA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fPX+uzrlqqqeFf/u7vXMR/R89tEBIW/d9YfXqhYzUlvQV6/Piu72xZ0Uf6ucPN8LEA5DoG5kWjgxq1B/FlpY9GAQz18tI470J2kZARsE/baML9UG4aC5oJhpNomkq3Q6J9EBuKH1y4FRII101o5KrhSZii2TrJUM2u0YaCwR1p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MegpgKDB; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=R0uwlY++eGE9MpnS8mv3bh7cve2LYOy0RHHH9ogIq9xu0/BYX9uKMfahk9yz1JNCs03Vi0mwft6NqBWDRSLc1eb7dREdACJQMOTV9ICwBOQEgTP/H+A+Pp+zwZB3MPgw163+/++trfgsXylcABPSzjPRgUZ135KGHuwkB4xWG/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cF4rz0S5; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MegpgKDB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6E04C4CEF0;
-	Fri, 29 Aug 2025 10:01:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756461685;
-	bh=92fN0UR0hrt8PjaauCManqwbTnRkMOX7oJ/IaHyEcJc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MegpgKDBL6rvhcZYq1rVot1SopMcYG4xeBVWoAFOWPYTtAYIoB5Z78bPJBzQv/X1k
-	 BJs+xv++sPeVKCdxxhdVMVcHfBAaHCfKnfiFeQKeecfas4mQpvXie0337o0mUuOz0R
-	 P+31cezhZ8piF0AXt2/u/J51Sa2tITAsFCoOD8/ar7BL+4UWtMBjaoapZDXBJdCE7C
-	 bQzK1dckl7yEf2B5XEoow3SNAypJY3MiXwwu2dMs944K34eT7Eor1B4CbAeC21pDbG
-	 y/xfprJvO9EKye9SlPld4IhSTK/h3HqfxRCbICtzcqN3lzBkjz1//joduyAAaNIb/U
-	 h1Lr6gfhFoJ2Q==
-From: Christian Brauner <brauner@kernel.org>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	jack@suse.cz,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cF4rz0S5"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-770530175b2so1559546b3a.3;
+        Fri, 29 Aug 2025 03:53:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756464796; x=1757069596; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hfWM5gPtVgoPnOifkHwbxrGhPNxVzmmMJ165dTe33yA=;
+        b=cF4rz0S58mFnndSTdKd9wHETQqB6a5ydVaU5IAe8jNzR4wvJ7DOqn/75DN25hdpLva
+         CY2MscBgCgeE0kXwbNmjF4rA/rBhSD91GjMJpwIPQ+dLqEAK+rJ0OJKHoc7pWupAeNGI
+         McDsgVeKLfWs5OWJcn/NxvNuNjneMwniTJ476F0r0G5Uc+EST3kmSEle+zY8qClAWCN5
+         ExbXHg7Xov+xxP/Nbj5ATFiCnfhkFNS8ilFcOaaAYuMh6aOlHNn8N6s5vueNJkE9Nz1r
+         l5N+mzqOM5ZelOK5LGSZRp8dKb/sgpaqIdq/9y2UA2mXwN18fKqnMnm9FrVdHZX4MofX
+         BBCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756464796; x=1757069596;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hfWM5gPtVgoPnOifkHwbxrGhPNxVzmmMJ165dTe33yA=;
+        b=EMePqoaMRS2i4op6wMnBTGQ1SRAWXLGwop/KusA/ny8ZThlc7ft0WwTbE6BEmmW7TN
+         nYxINEIIssv7G4PZY5DjYYUB782r4as3rT7rmQc8NbAuKbRDHIjxVrRvxh6ncRalcYID
+         Oim32Mxm4G58LuFiDwPTJw8zerWP5Bh+h1nsJ5pqPdlDUC5JbSZ/+LAhmwuzgCUBy2JD
+         i8jKYcDS7Kn2yW0OSKFkOINeG9i8IAaBQFzX8hATjaEVWVsGVB8ydHChzx/IIet+DwBA
+         povDNvwSJBgStESXyJ130IL6lCLgf29Th/JudJVTwqjTewGIUIyh7DnxEzeKB8apUn+L
+         O6lg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKoGH8ecWIPfGHo3VYxcfcMGIzARpMrBF+5teuiS22f/bUsiNJ40Bu0wC22UWVRl+EiNksp5kFGecdky4=@vger.kernel.org, AJvYcCVLxJ7BAvY/sDiF+CQ59srp+CfotnCHVIeJCR4PQX27r+Wemin8odD7egZvLU8QG6s/ImYO/L6ZzhByRnBhek4BVCeaRS1e@vger.kernel.org, AJvYcCVVEDnjHiHD74KkF15MK4ssVaoQDINk2jK5Sb7v9ByuFUBoT3L6oq3QONikeMY+zFpnbt5lH7sA7mH7urUgzb9u@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7YFE7npGB3ONG44opvKHX9SWzxL1gw96T2Y3Hy2OEpcWfm2BG
+	lRxA1vvRFQeQHZgpIP2/ZO47oJkXZ8/0X6AyphrEJ1OPSDUWuhjUdqw4
+X-Gm-Gg: ASbGncsAr8+YsWSa1FhMvY72cbq9u4sYDHjGWXX2oyXmiCJ32IXdqUFdrJZY+8HvbZY
+	0STufnkdo+BvOtRTGQ6F/uVvJn6JySImJADswkP7tuGDacDMIEll6+s/D+IhEnR915aqPH7Ne2R
+	7VFlOE4py6zVksBmRo5wo8ohuVlvRHoTwFAWieSLXPSV5yRlYTWr+YHV4FiwU4WVidb52epd+kw
+	0k4Jv2qx1Yzzxw9RmuC9QsSctaFryuj0UTWp6ZvglEDOqEphZmb0ZgfwkMFQJjEipq8ZnEdTzxe
+	74MQ1EaZOHOe8OIo7iufKivbW34rh5euWVVy/i4XnOFaBkimEtMyJmay0xV7D6NwroaKicgO6IL
+	V4+rPqPphEqLzR7qNdJi1NDVStOnpfJsQWivTxyubvB/KDPjfGWY8djA4GuGmF7T1XPNEgIjQbg
+	NgnEyl+BHo2o9K0oWHvvnBeCFj6cZN
+X-Google-Smtp-Source: AGHT+IGeY7PCESR6PZttPTaRE+UYm3QcI+YG1R9VvupfIk/fQ9aWIiMXNoIMcW7W4YR2qBrV1ijFdA==
+X-Received: by 2002:a05:6a20:7001:b0:243:6f4e:fba0 with SMTP id adf61e73a8af0-2436f4efc69mr19121813637.4.1756464796272;
+        Fri, 29 Aug 2025 03:53:16 -0700 (PDT)
+Received: from server.. ([103.251.57.240])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd28b38besm1900987a12.35.2025.08.29.03.53.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 03:53:15 -0700 (PDT)
+From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+To: richard.weiyang@gmail.com
+Cc: Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org,
+	davem@davemloft.net,
+	david@redhat.com,
+	edumazet@google.com,
 	gnoack@google.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
+	horms@kernel.org,
+	kuba@kernel.org,
 	linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	mic@digikod.net
-Subject: Re: [PATCH] fs: Replace offsetof() with struct_size() in ioctl_file_dedupe_range()
-Date: Fri, 29 Aug 2025 12:01:20 +0200
-Message-ID: <20250829-passierbar-losen-cd47a4b68c3d@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250829091510.597858-1-zhao.xichao@vivo.com>
-References: <20250829091510.597858-1-zhao.xichao@vivo.com>
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	lorenzo.stoakes@oracle.com,
+	mhocko@suse.com,
+	mic@digikod.net,
+	ming.lei@redhat.com,
+	pabeni@redhat.com,
+	reddybalavignesh9979@gmail.com,
+	rppt@kernel.org,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org,
+	surenb@google.com,
+	vbabka@suse.cz
+Subject: Re: [PATCH 2/2] selftests: Replace relative includes with non-relative for kselftest.h and kselftest_harness.h
+Date: Fri, 29 Aug 2025 16:23:06 +0530
+Message-ID: <20250829105306.6638-1-reddybalavignesh9979@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250829014358.qk3zme4qlaojun53@master>
+References: <20250829014358.qk3zme4qlaojun53@master>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1077; i=brauner@kernel.org; h=from:subject:message-id; bh=92fN0UR0hrt8PjaauCManqwbTnRkMOX7oJ/IaHyEcJc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRsrCq8feC67/xd6Yc7QzrsijYd/8syadc9mfirXNHcf gXOcy5f7ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIEmVGhlmR0zJPBix0qJnb 8nOFkaBSx517n5h+LNdr3BB6xzf1VDUjw7K1y9XvZah9tuL6kmHLXcfBoWWWHRzFOFfjq0JiUmQ hMwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Fri, 29 Aug 2025 17:15:10 +0800, Xichao Zhao wrote:
-> When dealing with structures containing flexible arrays, struct_size()
-> provides additional compile-time checks compared to offsetof(). This
-> enhances code robustness and reduces the risk of potential errors.
-> 
-> 
 
-Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.18.misc branch should appear in linux-next soon.
+>+ifeq ($(KSFT_INCLUDES),)
+>+KSFT_INCLUDES := -I../
+>+endif
+>+
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+This makes sense, but if we do it for mm/ then we have to
+follow this for all subdirectories in selftests.. that might
+cause problems if subdirectories are nested ones likes filesystems/.
+Duplicating this across all subdir Makefile adds churn and can
+lead to errors.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Another way, is adding `CFLAGS += -I../` as is done in net/Makefile,
+but this also doesn't solve the problem completely as this also
+remain to relative addressing.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+But, if preferred we can add this snippet in Makefile to
+resolve the error temporarily.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.18.misc
-
-[1/1] fs: Replace offsetof() with struct_size() in ioctl_file_dedupe_range()
-      https://git.kernel.org/vfs/vfs/c/38d1227fa71d
+Thanks,
+Bala Vignesh
