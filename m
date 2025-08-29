@@ -1,121 +1,120 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361DB30FC1E;
-	Fri, 29 Aug 2025 10:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE6431062C
+	for <linux-security-module@vger.kernel.org>; Fri, 29 Aug 2025 10:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756464799; cv=none; b=jKR/MZgmHEwr/j8UKaSGYfreeH1ewmj0Ds84fHlQ99OM33UjWKnS/f9L537Hd5PSexzIxJE9BwVNO4gBjpFmU2YTihjk7CweyQ/J9zpeF3Vmt6Zblez/frqErtAFlhtxMroCY7I+ffLc6xjpg3/Ji6+qPghwC7tuIV+uFW4t4cc=
+	t=1756465017; cv=none; b=rzwmQDSKQwKmgXTx/jgMtF+z9MF+sANyDMaud0oJaubU0xENkCtbNC809DTEouUu6t/nSDlnRFKeEJVigVlLv34TWZ822My+Txwu04EarjrItyRe50AohoNNB5uPto3GI73dCadJS6KwdqE0sgikGTzXkb0eLqy8cAhEEkWA5ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756464799; c=relaxed/simple;
-	bh=hfWM5gPtVgoPnOifkHwbxrGhPNxVzmmMJ165dTe33yA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R0uwlY++eGE9MpnS8mv3bh7cve2LYOy0RHHH9ogIq9xu0/BYX9uKMfahk9yz1JNCs03Vi0mwft6NqBWDRSLc1eb7dREdACJQMOTV9ICwBOQEgTP/H+A+Pp+zwZB3MPgw163+/++trfgsXylcABPSzjPRgUZ135KGHuwkB4xWG/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cF4rz0S5; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756465017; c=relaxed/simple;
+	bh=4JhnELOzvG8e3FT52auD4scH9nQubd86lYx6BkLcuWM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oQfeb/gHH27C/7OTKZnIseVEiGF7lolrTUgVRNcypKo5i32rkS0/oSquMyjTEpfY7A+8TixyU08ched66V7UOvCtgW5ygxrw21eaL44RsObYsiyauCLyh9Ln3RJGPQzo2unAcfRBrVzMp8hBULnbGJIsX9nJZ5JXzT6D5Fl5Nvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=W+mcKVMq; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cF4rz0S5"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-770530175b2so1559546b3a.3;
-        Fri, 29 Aug 2025 03:53:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="W+mcKVMq"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-32326e2f0b3so1589202a91.2
+        for <linux-security-module@vger.kernel.org>; Fri, 29 Aug 2025 03:56:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756464796; x=1757069596; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1756465015; x=1757069815; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hfWM5gPtVgoPnOifkHwbxrGhPNxVzmmMJ165dTe33yA=;
-        b=cF4rz0S58mFnndSTdKd9wHETQqB6a5ydVaU5IAe8jNzR4wvJ7DOqn/75DN25hdpLva
-         CY2MscBgCgeE0kXwbNmjF4rA/rBhSD91GjMJpwIPQ+dLqEAK+rJ0OJKHoc7pWupAeNGI
-         McDsgVeKLfWs5OWJcn/NxvNuNjneMwniTJ476F0r0G5Uc+EST3kmSEle+zY8qClAWCN5
-         ExbXHg7Xov+xxP/Nbj5ATFiCnfhkFNS8ilFcOaaAYuMh6aOlHNn8N6s5vueNJkE9Nz1r
-         l5N+mzqOM5ZelOK5LGSZRp8dKb/sgpaqIdq/9y2UA2mXwN18fKqnMnm9FrVdHZX4MofX
-         BBCg==
+        bh=Z6MPSbkVIlc+V387DVzsSzTxYHOue4NoSXRJwOKRRC4=;
+        b=W+mcKVMq+nWiUQA68i2gIqIOl0K4KWfARp+OVsi1I2sDcmLkkOXsewgYzs5PChRSKq
+         x8xxtTqW21eQqjSAGsjjA0NapSNsq6XbS6ba4r9j8X0YT99dO1V/rIFZCOE/iBgAxuF2
+         bxxJ5SXxoUTX5hu2hOMJjGpsjY0ZTqbNQ1XFdgYyVU/nwEW8rzZiJYItSxilp5GBshIu
+         K1fPVY3pibILmSfsRyJb2cFMMl8MIRSrZKRT23xrMnXsxzdm/wVQvnvcLvVfnw5Hagdf
+         1I+CutVJFYSRLOW08yj7uKd7aEuhu9T37Fdremp9xrKVArLaGnErDGzRAHvNnbLpsSz7
+         3mDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756464796; x=1757069596;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1756465015; x=1757069815;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hfWM5gPtVgoPnOifkHwbxrGhPNxVzmmMJ165dTe33yA=;
-        b=EMePqoaMRS2i4op6wMnBTGQ1SRAWXLGwop/KusA/ny8ZThlc7ft0WwTbE6BEmmW7TN
-         nYxINEIIssv7G4PZY5DjYYUB782r4as3rT7rmQc8NbAuKbRDHIjxVrRvxh6ncRalcYID
-         Oim32Mxm4G58LuFiDwPTJw8zerWP5Bh+h1nsJ5pqPdlDUC5JbSZ/+LAhmwuzgCUBy2JD
-         i8jKYcDS7Kn2yW0OSKFkOINeG9i8IAaBQFzX8hATjaEVWVsGVB8ydHChzx/IIet+DwBA
-         povDNvwSJBgStESXyJ130IL6lCLgf29Th/JudJVTwqjTewGIUIyh7DnxEzeKB8apUn+L
-         O6lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKoGH8ecWIPfGHo3VYxcfcMGIzARpMrBF+5teuiS22f/bUsiNJ40Bu0wC22UWVRl+EiNksp5kFGecdky4=@vger.kernel.org, AJvYcCVLxJ7BAvY/sDiF+CQ59srp+CfotnCHVIeJCR4PQX27r+Wemin8odD7egZvLU8QG6s/ImYO/L6ZzhByRnBhek4BVCeaRS1e@vger.kernel.org, AJvYcCVVEDnjHiHD74KkF15MK4ssVaoQDINk2jK5Sb7v9ByuFUBoT3L6oq3QONikeMY+zFpnbt5lH7sA7mH7urUgzb9u@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7YFE7npGB3ONG44opvKHX9SWzxL1gw96T2Y3Hy2OEpcWfm2BG
-	lRxA1vvRFQeQHZgpIP2/ZO47oJkXZ8/0X6AyphrEJ1OPSDUWuhjUdqw4
-X-Gm-Gg: ASbGncsAr8+YsWSa1FhMvY72cbq9u4sYDHjGWXX2oyXmiCJ32IXdqUFdrJZY+8HvbZY
-	0STufnkdo+BvOtRTGQ6F/uVvJn6JySImJADswkP7tuGDacDMIEll6+s/D+IhEnR915aqPH7Ne2R
-	7VFlOE4py6zVksBmRo5wo8ohuVlvRHoTwFAWieSLXPSV5yRlYTWr+YHV4FiwU4WVidb52epd+kw
-	0k4Jv2qx1Yzzxw9RmuC9QsSctaFryuj0UTWp6ZvglEDOqEphZmb0ZgfwkMFQJjEipq8ZnEdTzxe
-	74MQ1EaZOHOe8OIo7iufKivbW34rh5euWVVy/i4XnOFaBkimEtMyJmay0xV7D6NwroaKicgO6IL
-	V4+rPqPphEqLzR7qNdJi1NDVStOnpfJsQWivTxyubvB/KDPjfGWY8djA4GuGmF7T1XPNEgIjQbg
-	NgnEyl+BHo2o9K0oWHvvnBeCFj6cZN
-X-Google-Smtp-Source: AGHT+IGeY7PCESR6PZttPTaRE+UYm3QcI+YG1R9VvupfIk/fQ9aWIiMXNoIMcW7W4YR2qBrV1ijFdA==
-X-Received: by 2002:a05:6a20:7001:b0:243:6f4e:fba0 with SMTP id adf61e73a8af0-2436f4efc69mr19121813637.4.1756464796272;
-        Fri, 29 Aug 2025 03:53:16 -0700 (PDT)
-Received: from server.. ([103.251.57.240])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd28b38besm1900987a12.35.2025.08.29.03.53.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 03:53:15 -0700 (PDT)
-From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
-To: richard.weiyang@gmail.com
-Cc: Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org,
-	davem@davemloft.net,
-	david@redhat.com,
-	edumazet@google.com,
-	gnoack@google.com,
-	horms@kernel.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	lorenzo.stoakes@oracle.com,
-	mhocko@suse.com,
-	mic@digikod.net,
-	ming.lei@redhat.com,
-	pabeni@redhat.com,
-	reddybalavignesh9979@gmail.com,
-	rppt@kernel.org,
-	shuah@kernel.org,
-	skhan@linuxfoundation.org,
-	surenb@google.com,
-	vbabka@suse.cz
-Subject: Re: [PATCH 2/2] selftests: Replace relative includes with non-relative for kselftest.h and kselftest_harness.h
-Date: Fri, 29 Aug 2025 16:23:06 +0530
-Message-ID: <20250829105306.6638-1-reddybalavignesh9979@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250829014358.qk3zme4qlaojun53@master>
-References: <20250829014358.qk3zme4qlaojun53@master>
+        bh=Z6MPSbkVIlc+V387DVzsSzTxYHOue4NoSXRJwOKRRC4=;
+        b=cTVFA2nFOacQ7FY10ii5zujRggtvyQklR4lbezM5C2e7MWiL0AVyZhULOTYezMh7t5
+         49dELa1RaaZJJYsGGGy1apVZxLYpAEhzzpBNVozY0uUQz9PurhyQGleZhlh27VePwFyb
+         I3Nl24kT9PtkBWym81sW7fm9RgpZuO5JFEnb+4VfhbOF+Pjne1iB55o3tDMXkj3ANAW3
+         eleodnAm3QY/gLaZTqMjHxvHLccmwlhAhulnFkdzT6LLH3LDsoY2KyuiEFeAg6cNbrgb
+         p0HAGhHJT8CLYCFS4ww/Z6yTiloyrKZzF3PSqBOntd0NdZbDeW0iurUwURjoP8NiWmU9
+         gqiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWW0RS2mmnEcv1QNzRAS0W5YWI2GJYSZtc5FN0fgLbOrvbmAMQlw31SEx2eMDJcPwp0JyDv+Ku3GW0+HTV06Zftu4a28Jo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydM9pOacrBr7H3kd6HeRBL7LBiuMzc9A4Ct0s+aDR7LfwDksij
+	RNz/qFgwoC/uB++trDLZr8WaqNUkHNHLpWPPy53NiKSk1+MU3ZTaNz4Yuej45y4YIFkSYd/bs/G
+	S4Ok1GWG47lbRaGbh6vWhSYxfllwElLiZzBzvrGaq
+X-Gm-Gg: ASbGncshF53p8TWovY5gK3adGd8a2muQG5ptdHpmzorcVpTrgOvsLF7V/AOs5O1PLws
+	PPIzWEP8XRVxzi6rqvMonfuotK0tlklilUVxPLDQL+UxXsTyGUf6v6SWxLVsx/86xc8vP8SC7di
+	4iAEXcZ7KqVJKP4zCDLM9bjCUmikNSfI8cf6VlGgn0CfhbWXp8YnovynTl0DJ4en+HSmpfCyZn8
+	4AQJ+zdJQBodp3c+9U=
+X-Google-Smtp-Source: AGHT+IGDPrqU3qCXUsbx1z+D7spAudal7m6VvB/YAbl6Q44JNBA1bTqtvYkoa8fRk6dewuZp4Ua7WUer9nRt/kc21go=
+X-Received: by 2002:a17:90b:2f87:b0:31f:8723:d128 with SMTP id
+ 98e67ed59e1d1-32517b2db8fmr34283941a91.34.1756465015189; Fri, 29 Aug 2025
+ 03:56:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250826031824.1227551-1-tweek@google.com> <CAEjxPJ6G2iK9Yp8eCwbwHQfF1J3WBEVU42kAMQHNuuC_H5QHNw@mail.gmail.com>
+ <CAEjxPJ70O5SY=XYJKrQDLkHOO3spD4VSjYCv0LkhYKCvK=GP7Q@mail.gmail.com>
+In-Reply-To: <CAEjxPJ70O5SY=XYJKrQDLkHOO3spD4VSjYCv0LkhYKCvK=GP7Q@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 29 Aug 2025 06:56:43 -0400
+X-Gm-Features: Ac12FXwA4RT9c8sFjxx8AgkdJv47bPShawvWIx_UbmmXOiQU9WoRBN8gx-RGKJY
+Message-ID: <CAHC9VhSkBSyHRRimb0Br9nJD02ZN_wgDY1A7uWuMh9rXhFSuzg@mail.gmail.com>
+Subject: Re: [PATCH] memfd,selinux: call security_inode_init_security_anon
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
+	James Morris <jmorris@namei.org>, Hugh Dickins <hughd@google.com>, 
+	Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Aug 28, 2025 at 9:30=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Wed, Aug 27, 2025 at 9:23=E2=80=AFAM Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
+> > On Mon, Aug 25, 2025 at 11:18=E2=80=AFPM Thi=C3=A9baud Weksteen <tweek@=
+google.com> wrote:
+> > >
+> > > Prior to this change, no security hooks were called at the creation o=
+f a
+> > > memfd file. It means that, for SELinux as an example, it will receive
+> > > the default type of the filesystem that backs the in-memory inode ...
+>
+> Also, we'll need a corresponding patch to define the new policy
+> capability in libsepol, and will need to de-conflict with the other
+> pending patches that are also trying to claim the next available
+> policy capability bit (so you may end up with a different one
+> upstream).
 
->+ifeq ($(KSFT_INCLUDES),)
->+KSFT_INCLUDES := -I../
->+endif
->+
+My apologies for the late reply, I have limited network access this
+week and haven't yet been able to give this a proper review, but I
+expect things to get back to normal next week.  That said, Stephen's
+comments about a test suite addition are important, and I would like
+to see a test addition before merging this code both to ensure this
+works on a wider range of SELinux based systems beyond Android (you
+should also test this on something other than Android, e.g. a modern
+Fedora system) and to provide a reliable test that we can use to test
+for regressions in the future.
 
-This makes sense, but if we do it for mm/ then we have to
-follow this for all subdirectories in selftests.. that might
-cause problems if subdirectories are nested ones likes filesystems/.
-Duplicating this across all subdir Makefile adds churn and can
-lead to errors.
+As far as the policy capability bit offset is concerned, don't worry
+too much about that right now.  Allocated magic numbers like the
+policy capability bits are never really fixed until they land in an
+upstream tree (technically not until they land in a proper tagged
+release from Linus); if/when a patch is merged that requires a new
+capability bit I simply assign it the next unused offset at the time
+the patch is merged.  Other approaches either end up potentially
+creating holes in the capability bitmap (yuck) or creating merge
+dependencies between otherwise independent pact{sets} (extra double
+yuck).
 
-Another way, is adding `CFLAGS += -I../` as is done in net/Makefile,
-but this also doesn't solve the problem completely as this also
-remain to relative addressing.
-
-But, if preferred we can add this snippet in Makefile to
-resolve the error temporarily.
-
-Thanks,
-Bala Vignesh
+--=20
+paul-moore.com
