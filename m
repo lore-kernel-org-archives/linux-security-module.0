@@ -1,66 +1,65 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E5D2773F9
-	for <linux-security-module@vger.kernel.org>; Sat, 30 Aug 2025 14:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E6523BD01
+	for <linux-security-module@vger.kernel.org>; Sat, 30 Aug 2025 14:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756563318; cv=none; b=i/JrD3/iIeZNe0TlswQU7bGENwLVOEs96nPFeICSwJCvc+IdMr5prcVMYhaJF/TolQzbg+cFgKVb40mSNx6vK8jYKPNw+cGow4SdH3tbyN8LTKK1URXj+oOhjk8i1MSSYOoSASTqK7U3xyhPaBz1xjzSfHbn9JPLehTppHlhRmQ=
+	t=1756563329; cv=none; b=ocbQ+1H5SO6X9i70ocTwN3XwQ/1JMOlTrqVHvxRE7STsIBbzyOSn1orCA7xT2K6Te5Z+e74Il+NOH+7knDwz8YZV8JEbXgsoWM4ZELqhQQMLXbqW1Og50QHifFpi+Bdlt6gKwhrl1chOpvIxJz3Mn7/s9Y0TpWll/KucvvdTpdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756563318; c=relaxed/simple;
-	bh=JUvCDmRXFunAkEsF1GRXbXtYikzq0w1vDWUP6HCoymU=;
+	s=arc-20240116; t=1756563329; c=relaxed/simple;
+	bh=lL9TZZ/BH9fXb2IasJ4LrIBwJ6L6IbyqBrTMpkJsTsw=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=Dq0CcXAg9GYjU5rcvsNqS94/RHKb1A8objcZZDlw6Me/nEQPVRipuG3+xsRnTI/Uhj/MGKQu9b8sscExSsCDC8Iv4fzCAE/IbH0kFL2TfBE3PqHfADwGeXsChTuru3gKbPdmPsy9dO1n9f4ETsR9EXxheq4/HNxfIE0S8oXzh6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PAcJ58PU; arc=none smtp.client-ip=209.85.215.181
+	 References:In-Reply-To; b=hQoNDr56Lou+rndXpdB/EamgW3kmFUgg92TiKlmIESl8SOxTS4+NsREILE0wuD4MxiZn58+YKsjefG5dzbD8uj9W3bVAw+CoMrYcsIbVVu2OUiQqc7aGvsg7w7xNFR4ctXChG4KyNjgCHjQxGAkgjAIUWfC6H6XqM8e9d/YloU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CJ2NKvoz; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PAcJ58PU"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b476c67c5easo2057203a12.0
-        for <linux-security-module@vger.kernel.org>; Sat, 30 Aug 2025 07:15:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CJ2NKvoz"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-771ed4a8124so3068468b3a.2
+        for <linux-security-module@vger.kernel.org>; Sat, 30 Aug 2025 07:15:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1756563316; x=1757168116; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1756563327; x=1757168127; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xdijhc2hQ+HCzm0Bxa3P9aIQeay6kqPQfSVWfxshLOQ=;
-        b=PAcJ58PUHfp4hMcxmDTRQ7mRryINHbS+m+lSZ7TAjVR3iI99kawAFbYvh9WVYxrpZy
-         getGeM4yZeVviSxsCRg1BL0FC2KgdgiGS6GK+3kilIhXLCwmi0prmwRKWJrCDKLXncCV
-         1WgHT2JADs/f8s2meak1aqvHkLdnW3+8gwlGrcuNT2ZXwo2AI9sWZfyH4Dlxp3LJhgbm
-         aaotxR3RztfRL1ELuPgSUdr7EHIpdewzIu+11FRlShCkvz9Vtue4KdL3vBm+zHyvxKum
-         SGcelhgtLcSUAgUgRiZPDVvKO6sla5ijwCfYLtYHqvseiL8NvfK0lmKCJOYWykMDswix
-         Ci9Q==
+        bh=y69h1UcOXut0Ylir+EUHpoR9nI3kmLoFEjeqKBYKfI0=;
+        b=CJ2NKvozbnQRJikyMKUXtoTkcYjVS71c5lotg9+KiUwjqlXMeNsPUhDlyFHHqop+wv
+         xZHMPuYxXYsuNw+GFZ8wpxj3ABBgYq0QSE0XSgcWxZlqK3Kw3ziDbzEYNLylxgpiTTl3
+         3KpTDRIagFQPTLzfnOgZoPmclC0F9sqCt6q/9zILW+mlyAltckaec7A6ETwWBo5W6G14
+         /7WNZblcENNYufhjgonfpWyUA+Xn9NIXBYdcvDav+gV6L9Lg5mkskUJSqw6Zr1XkpVPt
+         3XcmcUd0n5G/T/VBkzdwlFcdZ2BZp3Oejor1NvirSXIwJi10ZJXNOHLgm2kBQvDQC+4z
+         7NNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756563316; x=1757168116;
+        d=1e100.net; s=20230601; t=1756563327; x=1757168127;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=xdijhc2hQ+HCzm0Bxa3P9aIQeay6kqPQfSVWfxshLOQ=;
-        b=qWNf30RUf0FeOmjdhZVDHsUphVNkAi8rNcAIXjI4vzamNf44qbRZRC1rnywHLBihbW
-         W5Rw+Q6MpNP15MzU83PPeMenSml1DlTy/1doD4UmFG4jRlvA7s92EJG8K1Lym5Bs9gLu
-         5Pm4nywBdE0uTbcAB6qs/SFbbn2ra5XZH8ffu54PJ2tXwF852/X7JVo4/awvxXDC7C8U
-         8rbQKKW8cTFuwPqw0ug882x/XU/g0dyGHM/yQ/MVHXM4UdQmlaPv2fUKN6YF+KiYwsFp
-         FN4U/pEjjGTHT8azOr6fTuyj9Tu3Mkz19i4Keby47hsKi2SWtF2VBCGVJ9TB7TyegXn9
-         fuxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWx5FOHXFsT0wQCFivtQ221g89ZrpNuCdDXrWekKPQRvpAW4wFpRtJsBjb41PL3txQ+XSx9oipPBmf833iIJZ92fvdk/x8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywhp7wxXWCOBQo8xV1Cy2NTle/23VthNZGuM0GEDqBfQx/xsfVH
-	XvTzKH7q4YrIgJRS/5MRRbW5Atcbk0d91DEmbwG7c3PLdieZgHRuIRFncuJ0l+ttCHABHlyV2Op
-	8qTi3zA==
-X-Gm-Gg: ASbGncunEoARPy45pE46BAd7yZ3HPFQWPZzgJRL+GsK2FVyB2ZSHAby/cXnR06RRHFr
-	cOxkZITmITVMqhIDnSEp8jER1Z0Z9OXCDkSarrtYboCJgYZSlBgCpyq2AvhqIPVCeDZ++Ahs+jt
-	WWzYwrxjdWhQoA50X1ScXGKy89qsnHrRkhF+U90PVeToYdj/EfbnjhYh1b1nbyopcaNkcXxB8St
-	Vsau3iHGEEyAwpPeB5EB/fhWE6JTjafgCE/fHEq5IqslMuw9G/rRKnPn55Qr6nCqcDgMi5SUh6A
-	t9qK9uZpj4shuQG7nDRg8ohO7KGfMswyf0c2/SQ9gHrW1TmMNgVplSTjMvp7yG14FVf0rvr0lCB
-	5k01Ccvlid3ac8dbHsDxqVUsr
-X-Google-Smtp-Source: AGHT+IEQEsGM+8lfyVtjTlgkC5lbtII1qVz6+A4KiCnqNKckDNqV+kxRsJNCugaEBNYu7LYPVzpTNQ==
-X-Received: by 2002:a17:903:186:b0:246:2cb3:5768 with SMTP id d9443c01a7336-24944b4323fmr31449135ad.30.1756563316240;
-        Sat, 30 Aug 2025 07:15:16 -0700 (PDT)
+        bh=y69h1UcOXut0Ylir+EUHpoR9nI3kmLoFEjeqKBYKfI0=;
+        b=KgWar2SPpX5C5MEJ6SewSRqhuYVimmTKkHUDqJz+iRPWx83qrFZ2Wyz7AMYuFF5nXQ
+         euaYH69yZ5wVUY3iXi78tFCW8cjXBG0QTN8JumC9X/A0huDyNal6dG4G8cokNPbDN2vP
+         9XrUTt+b8AxCWCpc9fvCX4+0kdrCyTG5ocY6AF6uzmLBdwPF7hSfejzVVOrMeCCDMt0n
+         gxKiorkjkYDKk1sxWNQnanvfH+LAiF1Zb9c0tRopq+yMmU2lBW2ROLKnP+edkD/FZlLV
+         xbjofIXBwMng4xxH4AGEhIWID0Hr9nxxWzATzhvEfr5l+IIhws274jn+BG/vh6HmDk5M
+         IL6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU+8osFB/HHFirAYW2uoC+nXdWNhlPxKawKoodqzxl/OENKe7UrGG+oT5K4YCOlYQWD9HztQ3vD1JB2O1I93VNF8KpSmNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMMIHsHNLe725WxUuPqv04un41v6nJBkeYD2MA+7dspWOgdtWV
+	8mCgaH35nLFc2h/3N3fKziQ/iiTvNzr3dvABdg9cLXxT4HQVs2+RjUtqXp2Uf+bWTA==
+X-Gm-Gg: ASbGncvavLBjQUQjei6M8ZKZL1PXwRvpXL72mdreApdiYKqAMVElJuBIqRUlLpHXryI
+	Ne0yjGO5C5JFSTb8xAPNlXhGIEZd+9Ecw+pV1xg5aLTlfDlyX4C0bXqB+PLYTXamVJaTrw9HFqj
+	p/5cEy3wIGHVWXtqQmO1plQYO4uXML30M784BiM6nvyGpd4MaOtP9VV31Eeun8qoB3DmiDVMI3U
+	ZpdX5rpL0KANbDd7HDjTQugpui3ujkhZVoPZuLKyl16LxTOpBy4+sHOIolK0k3Cc5NOhdIJddzK
+	JP79XLFEg6LyKcrOoeEj32qHV3wug+zDBIo6asn0cTETJ3BvP9Z1iq47DC/2+JMQL6l6PdYRSYD
+	GQxQ0HzJo+68StDv6DtJ+jJQB
+X-Google-Smtp-Source: AGHT+IGL4OfyFEaEZdVSYEKPN6ZBrAyplAqXNRfv6Ik+ZXab4VyJSnykpSuF8eLpW38m9zQkwRaHpg==
+X-Received: by 2002:aa7:8881:0:b0:771:e451:4edf with SMTP id d2e1a72fcca58-7723e0d46cdmr2221100b3a.0.1756563326726;
+        Sat, 30 Aug 2025 07:15:26 -0700 (PDT)
 Received: from localhost ([205.220.129.22])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-24903755851sm53673845ad.56.2025.08.30.07.15.14
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7722a26a0b3sm5441563b3a.10.2025.08.30.07.15.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 07:15:15 -0700 (PDT)
-Date: Sat, 30 Aug 2025 10:15:06 -0400
-Message-ID: <1c0e40a52934243b9721df47aa604734@paul-moore.com>
+        Sat, 30 Aug 2025 07:15:26 -0700 (PDT)
+Date: Sat, 30 Aug 2025 10:15:17 -0400
+Message-ID: <82fda5ee57f82d4a470d08969781b6c0@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -73,48 +72,34 @@ X-Mailer: pstg-pwork:20250830_ 948/pstg-lib:20250830_ 845/pstg-pwork:20250830_ 9
 From: Paul Moore <paul@paul-moore.com>
 To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, eparis@redhat.com, linux-security-module@vger.kernel.org, audit@vger.kernel.org
 Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v6 3/4] Audit: Add record for multiple task security  contexts
-References: <20250816172859.6437-4-casey@schaufler-ca.com>
-In-Reply-To: <20250816172859.6437-4-casey@schaufler-ca.com>
+Subject: Re: [PATCH v6 4/4] Audit: Add record for multiple object contexts
+References: <20250816172859.6437-5-casey@schaufler-ca.com>
+In-Reply-To: <20250816172859.6437-5-casey@schaufler-ca.com>
 
 On Aug 16, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
 > 
-> Replace the single skb pointer in an audit_buffer with a list of
-> skb pointers. Add the audit_stamp information to the audit_buffer as
-> there's no guarantee that there will be an audit_context containing
-> the stamp associated with the event. At audit_log_end() time create
-> auxiliary records as have been added to the list. Functions are
-> created to manage the skb list in the audit_buffer.
+> Create a new audit record AUDIT_MAC_OBJ_CONTEXTS.
+> An example of the MAC_OBJ_CONTEXTS record is:
 > 
-> Create a new audit record AUDIT_MAC_TASK_CONTEXTS.
-> An example of the MAC_TASK_CONTEXTS record is:
+>     type=MAC_OBJ_CONTEXTS
+>     msg=audit(1601152467.009:1050):
+>     obj_selinux=unconfined_u:object_r:user_home_t:s0
 > 
->     type=MAC_TASK_CONTEXTS
->     msg=audit(1600880931.832:113)
->     subj_apparmor=unconfined
->     subj_smack=_
+> When an audit event includes a AUDIT_MAC_OBJ_CONTEXTS record
+> the "obj=" field in other records in the event will be "obj=?".
+> An AUDIT_MAC_OBJ_CONTEXTS record is supplied when the system has
+> multiple security modules that may make access decisions based
+> on an object security context.
 > 
-> When an audit event includes a AUDIT_MAC_TASK_CONTEXTS record the
-> "subj=" field in other records in the event will be "subj=?".
-> An AUDIT_MAC_TASK_CONTEXTS record is supplied when the system has
-> multiple security modules that may make access decisions based on a
-> subject security context.
-> 
-> Refactor audit_log_task_context(), creating a new audit_log_subj_ctx().
-> This is used in netlabel auditing to provide multiple subject security
-> contexts as necessary.
-> 
-> Suggested-by: Paul Moore <paul@paul-moore.com>
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
->  include/linux/audit.h        |  16 +++
->  include/uapi/linux/audit.h   |   1 +
->  kernel/audit.c               | 208 +++++++++++++++++++++++++++++------
->  net/netlabel/netlabel_user.c |   9 +-
->  security/apparmor/lsm.c      |   3 +
->  security/selinux/hooks.c     |   3 +
->  security/smack/smack_lsm.c   |   3 +
->  7 files changed, 202 insertions(+), 41 deletions(-)
+>  include/linux/audit.h      |  7 +++++
+>  include/uapi/linux/audit.h |  1 +
+>  kernel/audit.c             | 58 +++++++++++++++++++++++++++++++++++++-
+>  kernel/auditsc.c           | 38 +++++--------------------
+>  security/selinux/hooks.c   |  4 ++-
+>  security/smack/smack_lsm.c |  4 ++-
+>  6 files changed, 78 insertions(+), 34 deletions(-)
 
 Merged into audit/dev, thanks.
 
