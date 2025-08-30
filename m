@@ -1,120 +1,138 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE6431062C
-	for <linux-security-module@vger.kernel.org>; Fri, 29 Aug 2025 10:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAF62033A;
+	Sat, 30 Aug 2025 00:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756465017; cv=none; b=rzwmQDSKQwKmgXTx/jgMtF+z9MF+sANyDMaud0oJaubU0xENkCtbNC809DTEouUu6t/nSDlnRFKeEJVigVlLv34TWZ822My+Txwu04EarjrItyRe50AohoNNB5uPto3GI73dCadJS6KwdqE0sgikGTzXkb0eLqy8cAhEEkWA5ic=
+	t=1756515360; cv=none; b=Xa8P8sYd1iBoltvWthEVya67VG6x8awxuy0Du5tIfL+57mpd+Q9WajSMaAju+p+pgXVLEA77uLX03HrnIqAYsb/u2nryVcMvJ5OdZVAJOH42WPCUPColEodrP5ljgKCrMjr20U+nXRcnLuoUCDasuZZzQtKVWunNHaSuRJdnob8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756465017; c=relaxed/simple;
-	bh=4JhnELOzvG8e3FT52auD4scH9nQubd86lYx6BkLcuWM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oQfeb/gHH27C/7OTKZnIseVEiGF7lolrTUgVRNcypKo5i32rkS0/oSquMyjTEpfY7A+8TixyU08ched66V7UOvCtgW5ygxrw21eaL44RsObYsiyauCLyh9Ln3RJGPQzo2unAcfRBrVzMp8hBULnbGJIsX9nJZ5JXzT6D5Fl5Nvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=W+mcKVMq; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1756515360; c=relaxed/simple;
+	bh=4IIst6fsOMFqOY7ljlrPtObocW7F6+CnLwyE8yKoYOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=syw5O56+ltUtrLmyrQqW3bPbLW0pUTLe4CUC8tqMTLhykembynRzE/YhlsK/dv0KqaM/gUq3qRlQIEB9/P9OdvFh+ZLX/5gSsnhAk7YgyDg1jDXG3T02a2pLnFPC3Z503n0Fx4xYmxRqrWdV58RTdiCBXBVEBHEnjZn8o18mBvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fWcFVISk; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="W+mcKVMq"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-32326e2f0b3so1589202a91.2
-        for <linux-security-module@vger.kernel.org>; Fri, 29 Aug 2025 03:56:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fWcFVISk"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61ce4c32a36so3807128a12.3;
+        Fri, 29 Aug 2025 17:55:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1756465015; x=1757069815; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1756515356; x=1757120156; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Z6MPSbkVIlc+V387DVzsSzTxYHOue4NoSXRJwOKRRC4=;
-        b=W+mcKVMq+nWiUQA68i2gIqIOl0K4KWfARp+OVsi1I2sDcmLkkOXsewgYzs5PChRSKq
-         x8xxtTqW21eQqjSAGsjjA0NapSNsq6XbS6ba4r9j8X0YT99dO1V/rIFZCOE/iBgAxuF2
-         bxxJ5SXxoUTX5hu2hOMJjGpsjY0ZTqbNQ1XFdgYyVU/nwEW8rzZiJYItSxilp5GBshIu
-         K1fPVY3pibILmSfsRyJb2cFMMl8MIRSrZKRT23xrMnXsxzdm/wVQvnvcLvVfnw5Hagdf
-         1I+CutVJFYSRLOW08yj7uKd7aEuhu9T37Fdremp9xrKVArLaGnErDGzRAHvNnbLpsSz7
-         3mDw==
+        bh=4fmjVDdFrMx9ZSS1uNIb9RY2hqkvjiZO5mAN50cFP8A=;
+        b=fWcFVISkDEqliWypGeoprg8ikamE5nVAjvSneh+DLAykFoZhtvnTyMtoiCH6HbVEU2
+         c+ZQozvtn5N58NEA3o35J0VCRAk/rNUgBQ47zBPSbTw3q8ZtcmSdmEdO+d9oDXehliCc
+         M2nAL2NbDI41d2SNJDTTd13bVYLgPSvk9J3bML9tpIzSZT4EfGprZJS+v25Q/f4MWQ2J
+         SnfN3r3yEiMUhQcRaZ1KIQ6SNInk+r33wtCmllHvHuA0De00xgvmuKBV3CIb9BLb1RgC
+         iwX6Ls/JwjeQ4TNKbwIbH+GQO9wHPHfjc2tpnTYlLp1sNW2WsPotyZTGdeflWHZsWhOu
+         HIkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756465015; x=1757069815;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z6MPSbkVIlc+V387DVzsSzTxYHOue4NoSXRJwOKRRC4=;
-        b=cTVFA2nFOacQ7FY10ii5zujRggtvyQklR4lbezM5C2e7MWiL0AVyZhULOTYezMh7t5
-         49dELa1RaaZJJYsGGGy1apVZxLYpAEhzzpBNVozY0uUQz9PurhyQGleZhlh27VePwFyb
-         I3Nl24kT9PtkBWym81sW7fm9RgpZuO5JFEnb+4VfhbOF+Pjne1iB55o3tDMXkj3ANAW3
-         eleodnAm3QY/gLaZTqMjHxvHLccmwlhAhulnFkdzT6LLH3LDsoY2KyuiEFeAg6cNbrgb
-         p0HAGhHJT8CLYCFS4ww/Z6yTiloyrKZzF3PSqBOntd0NdZbDeW0iurUwURjoP8NiWmU9
-         gqiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWW0RS2mmnEcv1QNzRAS0W5YWI2GJYSZtc5FN0fgLbOrvbmAMQlw31SEx2eMDJcPwp0JyDv+Ku3GW0+HTV06Zftu4a28Jo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydM9pOacrBr7H3kd6HeRBL7LBiuMzc9A4Ct0s+aDR7LfwDksij
-	RNz/qFgwoC/uB++trDLZr8WaqNUkHNHLpWPPy53NiKSk1+MU3ZTaNz4Yuej45y4YIFkSYd/bs/G
-	S4Ok1GWG47lbRaGbh6vWhSYxfllwElLiZzBzvrGaq
-X-Gm-Gg: ASbGncshF53p8TWovY5gK3adGd8a2muQG5ptdHpmzorcVpTrgOvsLF7V/AOs5O1PLws
-	PPIzWEP8XRVxzi6rqvMonfuotK0tlklilUVxPLDQL+UxXsTyGUf6v6SWxLVsx/86xc8vP8SC7di
-	4iAEXcZ7KqVJKP4zCDLM9bjCUmikNSfI8cf6VlGgn0CfhbWXp8YnovynTl0DJ4en+HSmpfCyZn8
-	4AQJ+zdJQBodp3c+9U=
-X-Google-Smtp-Source: AGHT+IGDPrqU3qCXUsbx1z+D7spAudal7m6VvB/YAbl6Q44JNBA1bTqtvYkoa8fRk6dewuZp4Ua7WUer9nRt/kc21go=
-X-Received: by 2002:a17:90b:2f87:b0:31f:8723:d128 with SMTP id
- 98e67ed59e1d1-32517b2db8fmr34283941a91.34.1756465015189; Fri, 29 Aug 2025
- 03:56:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756515356; x=1757120156;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=4fmjVDdFrMx9ZSS1uNIb9RY2hqkvjiZO5mAN50cFP8A=;
+        b=jQRkfbTDZwGsVkGBV49P20Fw/fZiknQp/VJh0tsulW20gqZ90UKUAggWK3EW8bdXZy
+         H8Yb4wVXNOos+zdJCRJSXcscavCB5eItczXgdonX0umvGvpoP/DUi8g5H1ERxZHHOdBs
+         3CtFCuk9SROia4BROHYXSFIvkkj5AlrLbovBKoSVkpzI8w3+T7IhubDu/ZRR7fkoBb01
+         BOTAVvUeSUw77c9YuDEbeiRCdz/7olBajuQVf4KYMYvBDQQOrWGKL1hpkydGCTN912uK
+         NYf1fMTtjd6Yfb330hJsYeoHU5DCjoRTPR46bxjccdvvgWu/cJLtFeANHXu7b0ZNDrOu
+         +P7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUCF9Q9f1mP05qAT1qMBG8ZWPQZoXAl0wgcmCS/EF8b2akggi8+W8J6PIP7O+U0SWkl6fbCe/OS3qEb0xE=@vger.kernel.org, AJvYcCWnSsbJ5Qpnq2KYWvBdyFKPtF7JEHen7PzV1ZbCqsfDeHq7q9K1fUHCxTgC2J3qNVtaFr4gVdAFQM8G3QtFvbZN@vger.kernel.org, AJvYcCXe5wtMwB2hGTZ1Ci/+0fKpze6pPO23dnvyP7+OCbH1bpKK9ju48HX2Wzcg6HSm6COLXn8oA6mG5LTDEeEjsJpsNDRspLyC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq4NSJNspWtzUA9tFt2AmiS4lGZ+AQaq8pM30qbd4yRtnIjZAi
+	d4VF96ywfyW8+2x+lJByqnGgw0hBlG2ypBMEjipi+vFHNR9h44yQ+7mu
+X-Gm-Gg: ASbGncu78sXW+rGjcvZEfbct/KiGVpsD6z0eOH+HA/l5AZqdvgCQe1Rrk3lhwpcOGEF
+	BEv1eiSkrODH+xxM7zhvPspnISU2yfInc4AUCOveF72ff614x+Fbilx/vt2cphTshzjbsEsNNaM
+	11vOeDxjQxJPDvT1Sq17Kab9Oe2xAt7i3SP7W/QOPzMwaoh6dUXP3AqypibIpv1syY/g7V6/tF4
+	IyD0oL51MH0XuXvEeAX2XdhDN/DGMNZJHChArHU1cmShPyU2UOXC+hbe4meYO6DmnLdFgTxUYZC
+	NDunxjTq0MM4ZPfSo1c8PDgXc8L0e3EfzaPMOdPUCv3mmd76TepyIdqKtVNTGyR3YXGeI/xhmcW
+	51ZFG8VSnNkwymy5KUnuWOlfsAiQGWmi2oNcP
+X-Google-Smtp-Source: AGHT+IE/li/Ts2UpBwuWVuVSIjcO4SAipUbYlLSRWpymiN4ghQfYMrr6M82K/BEJSs15LPmF9GkV2g==
+X-Received: by 2002:a05:6402:5cb:b0:618:bc4:5777 with SMTP id 4fb4d7f45d1cf-61d2688bff2mr442032a12.9.1756515356279;
+        Fri, 29 Aug 2025 17:55:56 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc214e2csm2654649a12.15.2025.08.29.17.55.55
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 29 Aug 2025 17:55:55 -0700 (PDT)
+Date: Sat, 30 Aug 2025 00:55:55 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+Cc: richard.weiyang@gmail.com, Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org, davem@davemloft.net, david@redhat.com,
+	edumazet@google.com, gnoack@google.com, horms@kernel.org,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com,
+	mhocko@suse.com, mic@digikod.net, ming.lei@redhat.com,
+	pabeni@redhat.com, rppt@kernel.org, shuah@kernel.org,
+	skhan@linuxfoundation.org, surenb@google.com, vbabka@suse.cz
+Subject: Re: [PATCH 2/2] selftests: Replace relative includes with
+ non-relative for kselftest.h and kselftest_harness.h
+Message-ID: <20250830005555.ebx6sq2j22mm3plp@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250829014358.qk3zme4qlaojun53@master>
+ <20250829105306.6638-1-reddybalavignesh9979@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826031824.1227551-1-tweek@google.com> <CAEjxPJ6G2iK9Yp8eCwbwHQfF1J3WBEVU42kAMQHNuuC_H5QHNw@mail.gmail.com>
- <CAEjxPJ70O5SY=XYJKrQDLkHOO3spD4VSjYCv0LkhYKCvK=GP7Q@mail.gmail.com>
-In-Reply-To: <CAEjxPJ70O5SY=XYJKrQDLkHOO3spD4VSjYCv0LkhYKCvK=GP7Q@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 29 Aug 2025 06:56:43 -0400
-X-Gm-Features: Ac12FXwA4RT9c8sFjxx8AgkdJv47bPShawvWIx_UbmmXOiQU9WoRBN8gx-RGKJY
-Message-ID: <CAHC9VhSkBSyHRRimb0Br9nJD02ZN_wgDY1A7uWuMh9rXhFSuzg@mail.gmail.com>
-Subject: Re: [PATCH] memfd,selinux: call security_inode_init_security_anon
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
-	James Morris <jmorris@namei.org>, Hugh Dickins <hughd@google.com>, 
-	Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829105306.6638-1-reddybalavignesh9979@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Thu, Aug 28, 2025 at 9:30=E2=80=AFAM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
-> On Wed, Aug 27, 2025 at 9:23=E2=80=AFAM Stephen Smalley
-> <stephen.smalley.work@gmail.com> wrote:
-> > On Mon, Aug 25, 2025 at 11:18=E2=80=AFPM Thi=C3=A9baud Weksteen <tweek@=
-google.com> wrote:
-> > >
-> > > Prior to this change, no security hooks were called at the creation o=
-f a
-> > > memfd file. It means that, for SELinux as an example, it will receive
-> > > the default type of the filesystem that backs the in-memory inode ...
+On Fri, Aug 29, 2025 at 04:23:06PM +0530, Bala-Vignesh-Reddy wrote:
 >
-> Also, we'll need a corresponding patch to define the new policy
-> capability in libsepol, and will need to de-conflict with the other
-> pending patches that are also trying to claim the next available
-> policy capability bit (so you may end up with a different one
-> upstream).
+>>+ifeq ($(KSFT_INCLUDES),)
+>>+KSFT_INCLUDES := -I../
+>>+endif
+>>+
+>
+>This makes sense, but if we do it for mm/ then we have to
+>follow this for all subdirectories in selftests.. that might
+>cause problems if subdirectories are nested ones likes filesystems/.
+>Duplicating this across all subdir Makefile adds churn and can
+>lead to errors.
+>
+>Another way, is adding `CFLAGS += -I../` as is done in net/Makefile,
+>but this also doesn't solve the problem completely as this also
+>remain to relative addressing.
+>
+>But, if preferred we can add this snippet in Makefile to
+>resolve the error temporarily.
 
-My apologies for the late reply, I have limited network access this
-week and haven't yet been able to give this a proper review, but I
-expect things to get back to normal next week.  That said, Stephen's
-comments about a test suite addition are important, and I would like
-to see a test addition before merging this code both to ensure this
-works on a wider range of SELinux based systems beyond Android (you
-should also test this on something other than Android, e.g. a modern
-Fedora system) and to provide a reliable test that we can use to test
-for regressions in the future.
+Well, maybe I find a way.
 
-As far as the policy capability bit offset is concerned, don't worry
-too much about that right now.  Allocated magic numbers like the
-policy capability bits are never really fixed until they land in an
-upstream tree (technically not until they land in a proper tagged
-release from Linus); if/when a patch is merged that requires a new
-capability bit I simply assign it the next unused offset at the time
-the patch is merged.  Other approaches either end up potentially
-creating holes in the capability bitmap (yuck) or creating merge
-dependencies between otherwise independent pact{sets} (extra double
-yuck).
+Since we already get the top_srcdir in lib.mk, sounds we can add the include
+path directly in lib.mk.
 
---=20
-paul-moore.com
+Some quick build looks good, not fully tested.
+
+diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
+index 530390033929..1d3d0ad037d7 100644
+--- a/tools/testing/selftests/lib.mk
++++ b/tools/testing/selftests/lib.mk
+@@ -199,11 +199,18 @@ clean: $(if $(TEST_GEN_MODS_DIR),clean_mods_dir)
+ # Build with _GNU_SOURCE by default
+ CFLAGS += -D_GNU_SOURCE=
+ 
++CFLAGS += -I${top_srcdir}/tools/testing/selftests
++
+ # Enables to extend CFLAGS and LDFLAGS from command line, e.g.
+ # make USERCFLAGS=-Werror USERLDFLAGS=-static
+ CFLAGS += $(USERCFLAGS)
+ LDFLAGS += $(USERLDFLAGS)
+
+>
+>Thanks,
+>Bala Vignesh
+
+-- 
+Wei Yang
+Help you, Help me
