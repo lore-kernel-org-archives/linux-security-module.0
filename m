@@ -1,100 +1,415 @@
-Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBCC19047F
-	for <linux-security-module@vger.kernel.org>; Sat, 30 Aug 2025 16:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21CD3D81;
+	Sat, 30 Aug 2025 16:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756569760; cv=none; b=oyx4Hc2/mfs3gXy/u2s+4tuLsrAMZFLtP4C/MrBHaoMS37lh5+nXK+uIj1lEj+z1YkZXEVuf5vR7gnTl09ees4xR0H8A1Lf1U5/95LMYhHY3SavL/jETsYkRF3ZNuEqpu8KcjhSyD1TWCothHwr/l4kbFWuHRicdIFqgP15Sr9k=
+	t=1756572005; cv=none; b=u5olPE4ra/H3MxWxwipP9y5zOZenVjzOB+ZLgj+SygVIoHkP4QrX8cntT3oDfBG8yhJi07SPIfC+4KuXVGQ8niFrRAemqNu3V1hMu1LUXq0ZeNMI82zB7WTpIFJNCMlCMdmmsDNDANcyzLEZbsek/KDfPgYG9v+b/5u60W2YAhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756569760; c=relaxed/simple;
-	bh=h6Kv4MLU5D0qa95VwZu+T1SQxDTE4mAm8HdMidMKxbg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X42kXkzI9x2O9Hj0WBaCraq5oLiXLpq1lzKbwKufdJzmKuUF0yb+usqANaC+ySMejrloKt93XVaJ/jp+r8BmJUrZK/rY+akh7+9hu1M+GhNcvJYB3B5X9lUT6p6SChOlmsnf1DqDORjk1crtP5ztgJ2wOgeGJkgeS7Ku8trKkZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=KizHdrY+; arc=none smtp.client-ip=66.163.188.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1756572005; c=relaxed/simple;
+	bh=VY5EGysWxYRXKaO4Uc9O5D9U1rkmcEVpcHP5BrHc9rk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ajMIN49PHNVGjQlyh83FuDFe3yyVf5O5E2o3K/tnM6SFqQGtozyAELxdpJ+rKWRsGmnPzM1I6hMc7N8E1mq+B9xZ09WEpCVm6YnZBVbZNDKA2AsAshVzn2ClbnTOLW1ObNq7dfk3xEgStFVHFqkAxcndj3kTHKnFNybJ20HetAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PiygzKf+; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="KizHdrY+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1756569758; bh=lf5YxXe3wERb30ft13xY8rG2yVlyo1de6EHDnd4WiOY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=KizHdrY+WjgAsI3YgRj6USglmevMEsRZTUvaAuKofBMfTKlb05TSDVetCSTohAwznpOeGoF2mMoEgj3spXdMxWk4o7FmuJKTNZjg/Aq/ucrgIX3ivEXzHHB1vMVCISU6P0VKYEPGYU6x7Pz7tr/Ggjr1rAV3CkPQMbks/vjoIEyxAIM2VzovvV/DzBboRb9efnigLJo5iQIOjEOYcb9k1gobgTYwR9RNiFIbz4s+CbTqfchOaNOdsQOzLMY5895a1ubHssiqcLSeZV4wOm47S1d+cT/lr41phDdeQrSde4MYc0l9M1sWy2cBnq1rwyorZnZd6oEAB3zUV4hb1PW7+A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1756569758; bh=3HtTM1k5nMva1zZ2d/BvAM/PsRG3koWoauuuAWzVRco=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=I1kotUuy68FrkoMO0eHdG8Ce8TfZ0nw4GyrG2ffgd9uyB6JaQthN1oNh4n8Tzw0CZBzwKB6Ml+svjPH93zAAQUU5lPmMQpBY+Bn+8tTcW6daBP4XfXn8n6/P/RHgc1ULTc2/jedJ1a09kWx9o1khFsUSXld4UaWQlgXoALIyiLF4dP/N2yIvtxXtYj/KFF92GcVqqDROQDYqQHAy41Ra0cYwp8HOWnCP7tULvbcvhIl0M3Qi6mMkW3DJvDF7fliTMoPyT4PvaFVgbf8fu2f+S5TSXR3RLpWJThPrK53ac0/s5vIdhhP+tkVSh9i19LXxt1/suvLEZsPbQ9Fd50D5vw==
-X-YMail-OSG: CLALg4YVM1n2PDGmmwJ1egWq0cMLWTqw9To9a1DADbl6jVr_0FUovqe8BPJ9xjU
- mpAjFWUFUr.qWS9m.5DXvRiJ4Bt0UpkEzvaYhlYVaC5KmYcsRsPpM0gqBVM3nDi8FJHZSYcv8Oe7
- 40aqrEJKI95we8u_552s4hssFjwsBCaoUIsycYWB461iO8VNHuYiZufA3Ee.fhPjqxi2W2FT4Qoo
- jPtjZkjKFGCLA4i62QRXIiv9i849sISXsbGpUYOweg4P7OJ42ql9wfSPhf4IunL8cMosoOzizViO
- Uhs8KqlwlaBSMArhtna_DzG4H7uUUho_yxzSl5Rf916dr2Gh8XvkTO2ApuQ3xWkuKZM93iXqyWdt
- GZ6FE1gzCvPiRl8Ro27P6SpHtC1XnwE.wzrIIjjSs8FO1vLrFGwCrhPphfJEP_f.qUg9K7CM.lPj
- ntOf2mOtlHqXASLJs8ND0Fo8ZRCZuwBIfRkgJaZabWyLCAVytlhVbgpWQiaxsvrDqk54PbBd1.Jv
- iYKLsmkXrcloXwyJZGbRf2JLCpLv2B5PiSQ594xv_s5wt1ofrbFz1onhgMRrYEO6BdN5d_87hkt_
- UT9vfW4sexJKVs.RE.UnZgOgBovbpvqKQ5S15RPuOtSNPeIYrpxKu4yIFiAhHMjgXogSAobitpOh
- Yek7qKUcV2Ew7ZwS0H17EyVkpOl4z_GaT0IGg3bNCzhmKc5J80WOXNyKN9gY0ZgyogZAupymnwhK
- sKErXtVpDMNDM1LOfPheiOEaqZvH.hF0MWS8Ms46R_VLrP68l.p9UeLv8ufyo9Ygyr425jRP_nhR
- FAthHv80HMHRbyjLAqUgxILHyOx5TSUxT441OjxleOpjom1fMHocyEpoqhArjPe1WqQQW7NhWVcL
- 7sCqC6MsmPxLPvinQTo.q0KY543BnnA2D2vH.qCZiV_TY7jMSCyzY7b0KjumHH.SYePi0XNnQpGg
- O4pg_0hdbah2VY3EnbsKwiCuOKK4sxypoOc2TQWvePOrSTIEzxzl1ki.suMwbhDaYlSzv6hGsk1Q
- e6lqZp.L15KYZ6VjqGwK5gCT1u797lXo87UcM8rCKkyOBEBEga.yROrpgyVQmXtsAY2UrCMdExMR
- QFitELxDslhuH6j6i2Vi0qm1Xn46h3SA5UaNIoktjMDDydKrUFTxAvQjod8tqV_WPa5HSWYZdH6m
- 9x5.cTvUagPT4iKcfSfKVxE9EXEQuUjFgPdFyX_f1L6mJ79Mb.8OjvyOGO39gqoYC0GM9uMZp8AP
- Ky5YZJiEzY1.pp8sklX.IOOm68zHT8OZaF1A04OkdWfQDBzOECARSEtJvSolvb3fJEcGvina12.P
- IpetMzlaU_8IMlHfo2aEsl_O1Ln.JIVkztMRSO6wFmg.I17axsxlkJKqWCb48_jXGKyNw.AN4jwl
- ZxWiDAUHOd9EqPDWQKMF9Ysm_gO3uiprlXHVUGjva3A6_Xbqns7gGpNdkvnTXTaDJlDKlEIyp1Ez
- OUamDSI7g2JWtB5NUJKr2WSONTA.VVmWw3kEml9Jrd_w7meu1YU1AA5mdWS3AdYYbqfEcT3ik1ta
- PFDdiIPqr.3YTu8RSeMy1g1oiYYkXJHFyp8_azHKUPMKt2sBvlVNsqe4M9yiCESkeLexbysBJn.R
- EK8I2FgB6UmmzyvEC63mDGVCgvxrijeFw_VC5Z1C2.8avbpLE2M1H8UaK1MQ5RhTjSk4sVfy81U1
- mmJQssAsO84F0sZZRN1Ttk4CuD9bBJ3DcKKpkL6pdVG5KwNO0QEXHYff.YgtNNRYb4S1Ynkm1QGs
- GfM5jZqlpZKrFbCHbHGfZeCZkaFl5BvbWXawHEU_YUkkSqyPF8GeGcmeSNSjv0FK2CbAoifN5wBp
- XNObpY.g.08dlRsxZlBwSJU_PZHnS4Iim_k4RsqEMpq.v3t4maC6UHyLYJ.bdQd87CylXmdPZw5x
- fY7p6lTKoAO89e8xPp0euOw9Z.NCdD8QtHJnt8AlmBMBYlBvh4BT2kF.Q6OlPdtd7JAZVC0BcgDP
- 0hTacYZFk0I0Gy_YfhveWKa_9iHrRkOM9np9WCVPGeBtNidZKkptxY9D2qRs7og2zT1QRZwfsThH
- Hw15BidbIr2PlZqHR2SYnEf4VHYJ0lpmyJuIaf10Y7usPGlYj.FhBYyy7Xm4ORqZz8SOS6YIyh4O
- THSR6uOVird7FHjTwBh556olIpQ3yL2wa6A4KmApu4Mbdo7yGFfsB3WtqC7yhIJMXP7oVH.Sn6X9
- kbM7Kr31y74qsAHmxzk_nB9r.R3UHlKZULo6J.B0-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 2afd97eb-3d4c-41bf-b716-43836558ef00
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Sat, 30 Aug 2025 16:02:38 +0000
-Received: by hermes--production-gq1-7bfc77444d-7l9vb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 261e6242d60e90c99a8fd30b59c0cef4;
-          Sat, 30 Aug 2025 15:42:21 +0000 (UTC)
-Message-ID: <43a0ff8e-f814-4305-a0f7-04c820b8f39c@schaufler-ca.com>
-Date: Sat, 30 Aug 2025 08:42:18 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PiygzKf+"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-248c676a2eeso21125375ad.2;
+        Sat, 30 Aug 2025 09:40:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756572002; x=1757176802; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=omIq/jRweSA2RXSesekY4OTDGwBK1jNfbMwnq5InzPE=;
+        b=PiygzKf+bb+f2byy1/8urr1o73RqWkk/McE8/7hHR1AiEWkxTZFrfXRlS175sOEyK2
+         dxpuYz3mgVl8Ot21GM7CQroAXDQ375H/SeW7aKvdctRymDCE7I4xSra6I53zr+O2lTDh
+         uF6CCHNPnsqFdCkSiBnXIIdOfPz7Hf00N76OkJwSI+1WuKRk6XbYjtD025gGRzWXSK9w
+         GZrQUng18HEWLHY6uDccmYDMW6Fcr9ck2fGdmwiW72qWmy0zNuExPyTgQP4iyjDskH/0
+         Z0RFlb657j8skloGrFlxd3Ng83dYCgHV1qFOg+eS1yWGwVh2HPdMl2htM/c2yErtHdNQ
+         Vsbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756572002; x=1757176802;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=omIq/jRweSA2RXSesekY4OTDGwBK1jNfbMwnq5InzPE=;
+        b=UtwBU6IG6Khk5CMmWxx3opDK+0AlAHmuMZFJQzRqFTnqrmc/a1cc5kasAJ7m2IbAOS
+         B4A3xYLT2uOMZzS9uT4+KUV+OyEfWszKd9UW207ys4hRLJ7lUytvek6R8+R57k2joHwc
+         9QEGEULYfDpF8EMumCLm+iRk3DcOgU7EnfoiQOGzf9ZUbkWHMOJZqYIlYUbNlvJ8/SmA
+         madQRqPTYJeO0IFce8KBputyqDl1KeHYe/4TyxEFR1l/Y9l4YNiWQ8OuzNkjFWVJXDQM
+         UpP0IRo0l3uRWtGChFZ82OtEj87hvwmwBVwqHM6DXzU+BTIq0y+WIzs6xs+O7NqvHMiL
+         j3PA==
+X-Forwarded-Encrypted: i=1; AJvYcCVMp2PcyO2HFzKoWgSh1BXP5iD6Ff9Lq2REbxhWjLKNaZg7y1hR7s4QtAYtktdHL7IqEJmpVmD73nUhB9YGLg2J@vger.kernel.org, AJvYcCVNZNvt8WVw1vf2MX02cgyqeFMAZyqrZakUBN7wTx2VwViMNaa4hocbknzcdvGRwMSlEuRWX4MXWc06zQHtQDg/ygNYbOZN@vger.kernel.org, AJvYcCXNqlCLN3u/dmgOV9J+wB8JTRbi7H/WQq5IPYvEMVtcM/lySXTINCNvUhMc1DQuBjLV7NN1+o4lVZWL5Mc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy45QxjYwNHlOPF5Z3CqqmFpWJcPfr/Opcg1VLcXxG0enTXKFLv
+	XeLT38oAHo5bmjydkVKjB/x5njOtA7eBV9EsewTC5n/HMf1UHzpbLrHu
+X-Gm-Gg: ASbGncsY5dmPk7Veg6frvs7qW7F7Zo+W2nRt13M+tQE300tn5gsJm2j/+VRP0Zss8i7
+	8FZSMXuvl+watsUs/moZFS/lUeDn9xaRjtkZqzFgKzDFkP0wkm3JpA5UbYaYxiL/tYFptNdjSTd
+	iNzdZh9TupcJYYHnk+6UYgA626TKJvMR71NAUHgze4BTnf4lnqM1FMnJshrI3H019F+g3szx659
+	WCj68vOmVLYKiHQIZoCmN/JWsL5BTkflkGWlVvOpGWKcxdkX+wWVpUHdAXy08eabUP3jf2U656R
+	BIZYQiDFeaQ+QrKPGwxRGkEo925XEyR7mh75EYsDnIaYTcdglK/ZbkOApnewl0ckl053rrAWGKj
+	7TfPcirdGyIHqSZoKgJ+l6q2vv5gLt3+F01KCvAjHwA6B3IQW2B/+AAs9u1m8jfQvoDgyqn3ba7
+	bYD46pOMcxfsExyaUruA==
+X-Google-Smtp-Source: AGHT+IF58PN49BVPicK4eXVJa8rOyB8Avo9KrMnatVloYSyi+rVeeyvzrog6JTu0UoAF3EqvJJSf5g==
+X-Received: by 2002:a17:903:19e4:b0:248:db40:daed with SMTP id d9443c01a7336-24944871fc8mr43509805ad.1.1756572001992;
+        Sat, 30 Aug 2025 09:40:01 -0700 (PDT)
+Received: from server.. ([103.251.57.240])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24903702396sm56975555ad.14.2025.08.30.09.39.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 09:40:01 -0700 (PDT)
+From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+To: reddybalavignesh9979@gmail.com,
+	akpm@linux-foundation.org,
+	richard.weiyang@gmail.com
+Cc: Liam.Howlett@oracle.com,
+	davem@davemloft.net,
+	david@redhat.com,
+	edumazet@google.com,
+	gnoack@google.com,
+	horms@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	lorenzo.stoakes@oracle.com,
+	mhocko@suse.com,
+	mic@digikod.net,
+	ming.lei@redhat.com,
+	pabeni@redhat.com,
+	rppt@kernel.org,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org,
+	surenb@google.com,
+	vbabka@suse.cz
+Subject: [PATCH v2 0/2] selftests: Centralize kselftest headers to avoid relative includes
+Date: Sat, 30 Aug 2025 22:09:47 +0530
+Message-ID: <20250830163949.20952-1-reddybalavignesh9979@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250827144733.82277-1-reddybalavignesh9979@gmail.com>
+References: <20250827144733.82277-1-reddybalavignesh9979@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/4] Audit: Create audit_stamp structure
-To: Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
- linux-security-module@vger.kernel.org, audit@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
- stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20250816172859.6437-2-casey@schaufler-ca.com>
- <e6e9ea4bacac5553810f7963533a71ca@paul-moore.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <e6e9ea4bacac5553810f7963533a71ca@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.24362 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: 8bit
 
-On 8/30/2025 7:14 AM, Paul Moore wrote:
-> On Aug 16, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
->> Replace the timestamp and serial number pair used in audit records
->> with a structure containing the two elements.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>  kernel/audit.c   | 17 +++++++++--------
->>  kernel/audit.h   | 13 +++++++++----
->>  kernel/auditsc.c | 22 +++++++++-------------
->>  3 files changed, 27 insertions(+), 25 deletions(-)
-> Merged into audit/dev, thanks.
+This series centralize the handling of kselftest.h and
+kselftest_harness.h includes in selftests, replacing relative
+paths with a non-relative approach using shared -I path.
 
-Thank you.
+Patch-1 updates the build files lib.mk and 
+include CFLAGS in sync/Makefile to resolve not found error
+Patch-2 applies bulk source changes
 
->
-> --
-> paul-moore.com
->
+In v2, the include path for selftests headers is added once in
+lib.mk via top_srcdir, by which top level selftests build and
+direct subdirectory builds work.
+
+Tested with gcc-13.3 and clang-18.1.
+
+Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+Link: https://lore.kernel.org/lkml/20250820143954.33d95635e504e94df01930d0@linux-foundation.org/
+
+Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+---
+Changes in v2:
+Patch 1: Move include path into lib.mk using top_srcdir; drop Makefile change;
+Patch 2 unchanged.
+Suggested-by: Wei Yang <richard.weiyang@gmail.com>
+---
+
+Bala-Vignesh-Reddy (2):
+  selftests: Centralize include path for kselftest.h and
+    kselftest_harness.h
+  selftests: Replace relative includes with non-relative for kselftest.h
+    and kselftest_harness.h
+
+ tools/testing/selftests/acct/acct_syscall.c                   | 2 +-
+ tools/testing/selftests/alsa/conf.c                           | 2 +-
+ tools/testing/selftests/alsa/mixer-test.c                     | 2 +-
+ tools/testing/selftests/alsa/pcm-test.c                       | 2 +-
+ tools/testing/selftests/alsa/test-pcmtest-driver.c            | 2 +-
+ tools/testing/selftests/alsa/utimer-test.c                    | 2 +-
+ tools/testing/selftests/arm64/abi/hwcap.c                     | 2 +-
+ tools/testing/selftests/arm64/abi/ptrace.c                    | 2 +-
+ tools/testing/selftests/arm64/abi/syscall-abi.c               | 2 +-
+ tools/testing/selftests/arm64/fp/fp-ptrace.c                  | 2 +-
+ tools/testing/selftests/arm64/fp/fp-stress.c                  | 2 +-
+ tools/testing/selftests/arm64/fp/sve-probe-vls.c              | 2 +-
+ tools/testing/selftests/arm64/fp/sve-ptrace.c                 | 2 +-
+ tools/testing/selftests/arm64/fp/vec-syscfg.c                 | 2 +-
+ tools/testing/selftests/arm64/fp/za-ptrace.c                  | 2 +-
+ tools/testing/selftests/arm64/fp/zt-ptrace.c                  | 2 +-
+ tools/testing/selftests/arm64/gcs/gcs-stress.c                | 2 +-
+ tools/testing/selftests/arm64/pauth/pac.c                     | 2 +-
+ tools/testing/selftests/arm64/tags/tags_test.c                | 2 +-
+ tools/testing/selftests/bpf/xskxceiver.c                      | 2 +-
+ tools/testing/selftests/breakpoints/breakpoint_test.c         | 2 +-
+ tools/testing/selftests/breakpoints/breakpoint_test_arm64.c   | 2 +-
+ tools/testing/selftests/breakpoints/step_after_suspend_test.c | 2 +-
+ tools/testing/selftests/cachestat/test_cachestat.c            | 2 +-
+ tools/testing/selftests/capabilities/test_execve.c            | 2 +-
+ tools/testing/selftests/capabilities/validate_cap.c           | 2 +-
+ tools/testing/selftests/cgroup/test_core.c                    | 2 +-
+ tools/testing/selftests/cgroup/test_cpu.c                     | 2 +-
+ tools/testing/selftests/cgroup/test_cpuset.c                  | 2 +-
+ tools/testing/selftests/cgroup/test_freezer.c                 | 2 +-
+ tools/testing/selftests/cgroup/test_hugetlb_memcg.c           | 2 +-
+ tools/testing/selftests/cgroup/test_kill.c                    | 2 +-
+ tools/testing/selftests/cgroup/test_kmem.c                    | 2 +-
+ tools/testing/selftests/cgroup/test_memcontrol.c              | 2 +-
+ tools/testing/selftests/cgroup/test_pids.c                    | 2 +-
+ tools/testing/selftests/cgroup/test_zswap.c                   | 2 +-
+ tools/testing/selftests/clone3/clone3.c                       | 2 +-
+ .../testing/selftests/clone3/clone3_cap_checkpoint_restore.c  | 2 +-
+ tools/testing/selftests/clone3/clone3_clear_sighand.c         | 2 +-
+ tools/testing/selftests/clone3/clone3_selftests.h             | 2 +-
+ tools/testing/selftests/clone3/clone3_set_tid.c               | 2 +-
+ tools/testing/selftests/connector/proc_filter.c               | 2 +-
+ tools/testing/selftests/core/close_range_test.c               | 2 +-
+ tools/testing/selftests/core/unshare_test.c                   | 2 +-
+ tools/testing/selftests/coredump/stackdump_test.c             | 2 +-
+ tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c            | 2 +-
+ tools/testing/selftests/drivers/dma-buf/udmabuf.c             | 2 +-
+ tools/testing/selftests/drivers/ntsync/ntsync.c               | 2 +-
+ .../testing/selftests/drivers/s390x/uvdevice/test_uvdevice.c  | 2 +-
+ tools/testing/selftests/exec/check-exec.c                     | 2 +-
+ tools/testing/selftests/exec/execveat.c                       | 2 +-
+ tools/testing/selftests/exec/load_address.c                   | 2 +-
+ tools/testing/selftests/exec/non-regular.c                    | 2 +-
+ tools/testing/selftests/exec/null-argv.c                      | 2 +-
+ tools/testing/selftests/exec/recursion-depth.c                | 2 +-
+ tools/testing/selftests/fchmodat2/fchmodat2_test.c            | 2 +-
+ tools/testing/selftests/filelock/ofdlocks.c                   | 2 +-
+ tools/testing/selftests/filesystems/anon_inode_test.c         | 2 +-
+ tools/testing/selftests/filesystems/binderfs/binderfs_test.c  | 2 +-
+ tools/testing/selftests/filesystems/devpts_pts.c              | 2 +-
+ tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c | 2 +-
+ tools/testing/selftests/filesystems/eventfd/eventfd_test.c    | 2 +-
+ tools/testing/selftests/filesystems/file_stressor.c           | 2 +-
+ tools/testing/selftests/filesystems/kernfs_test.c             | 2 +-
+ .../selftests/filesystems/mount-notify/mount-notify_test.c    | 2 +-
+ .../selftests/filesystems/mount-notify/mount-notify_test_ns.c | 2 +-
+ tools/testing/selftests/filesystems/nsfs/iterate_mntns.c      | 2 +-
+ tools/testing/selftests/filesystems/overlayfs/dev_in_maps.c   | 2 +-
+ .../selftests/filesystems/overlayfs/set_layers_via_fds.c      | 2 +-
+ .../testing/selftests/filesystems/statmount/listmount_test.c  | 2 +-
+ .../testing/selftests/filesystems/statmount/statmount_test.c  | 2 +-
+ .../selftests/filesystems/statmount/statmount_test_ns.c       | 2 +-
+ tools/testing/selftests/filesystems/utils.c                   | 2 +-
+ tools/testing/selftests/hid/hid_common.h                      | 2 +-
+ tools/testing/selftests/intel_pstate/aperf.c                  | 2 +-
+ tools/testing/selftests/iommu/iommufd_utils.h                 | 2 +-
+ tools/testing/selftests/ipc/msgque.c                          | 2 +-
+ tools/testing/selftests/ir/ir_loopback.c                      | 2 +-
+ tools/testing/selftests/kcmp/kcmp_test.c                      | 2 +-
+ tools/testing/selftests/kselftest_harness.h                   | 2 +-
+ tools/testing/selftests/kselftest_harness/harness-selftest.c  | 2 +-
+ tools/testing/selftests/landlock/audit.h                      | 2 +-
+ tools/testing/selftests/landlock/common.h                     | 2 +-
+ tools/testing/selftests/lib.mk                                | 2 ++
+ tools/testing/selftests/lsm/lsm_get_self_attr_test.c          | 2 +-
+ tools/testing/selftests/lsm/lsm_list_modules_test.c           | 2 +-
+ tools/testing/selftests/lsm/lsm_set_self_attr_test.c          | 2 +-
+ tools/testing/selftests/media_tests/media_device_open.c       | 2 +-
+ tools/testing/selftests/media_tests/media_device_test.c       | 2 +-
+ tools/testing/selftests/membarrier/membarrier_test_impl.h     | 2 +-
+ tools/testing/selftests/mincore/mincore_selftest.c            | 4 ++--
+ tools/testing/selftests/mm/compaction_test.c                  | 2 +-
+ tools/testing/selftests/mm/cow.c                              | 2 +-
+ tools/testing/selftests/mm/droppable.c                        | 2 +-
+ tools/testing/selftests/mm/guard-regions.c                    | 2 +-
+ tools/testing/selftests/mm/gup_longterm.c                     | 2 +-
+ tools/testing/selftests/mm/gup_test.c                         | 2 +-
+ tools/testing/selftests/mm/hmm-tests.c                        | 2 +-
+ tools/testing/selftests/mm/hugepage-mmap.c                    | 2 +-
+ tools/testing/selftests/mm/hugepage-mremap.c                  | 2 +-
+ tools/testing/selftests/mm/hugetlb-madvise.c                  | 2 +-
+ tools/testing/selftests/mm/hugetlb-read-hwpoison.c            | 2 +-
+ tools/testing/selftests/mm/hugetlb-soft-offline.c             | 2 +-
+ tools/testing/selftests/mm/hugetlb_dio.c                      | 2 +-
+ tools/testing/selftests/mm/hugetlb_fault_after_madv.c         | 2 +-
+ tools/testing/selftests/mm/hugetlb_madv_vs_map.c              | 2 +-
+ tools/testing/selftests/mm/ksm_functional_tests.c             | 2 +-
+ tools/testing/selftests/mm/ksm_tests.c                        | 2 +-
+ tools/testing/selftests/mm/madv_populate.c                    | 2 +-
+ tools/testing/selftests/mm/map_fixed_noreplace.c              | 2 +-
+ tools/testing/selftests/mm/map_hugetlb.c                      | 2 +-
+ tools/testing/selftests/mm/map_populate.c                     | 2 +-
+ tools/testing/selftests/mm/mdwe_test.c                        | 2 +-
+ tools/testing/selftests/mm/memfd_secret.c                     | 2 +-
+ tools/testing/selftests/mm/merge.c                            | 2 +-
+ tools/testing/selftests/mm/migration.c                        | 2 +-
+ tools/testing/selftests/mm/mkdirty.c                          | 2 +-
+ tools/testing/selftests/mm/mlock-random-test.c                | 2 +-
+ tools/testing/selftests/mm/mlock2-tests.c                     | 2 +-
+ tools/testing/selftests/mm/mrelease_test.c                    | 2 +-
+ tools/testing/selftests/mm/mremap_dontunmap.c                 | 2 +-
+ tools/testing/selftests/mm/mremap_test.c                      | 2 +-
+ tools/testing/selftests/mm/mseal_test.c                       | 2 +-
+ tools/testing/selftests/mm/on-fault-limit.c                   | 2 +-
+ tools/testing/selftests/mm/pagemap_ioctl.c                    | 2 +-
+ tools/testing/selftests/mm/pfnmap.c                           | 2 +-
+ tools/testing/selftests/mm/pkey-helpers.h                     | 2 +-
+ tools/testing/selftests/mm/process_madv.c                     | 2 +-
+ tools/testing/selftests/mm/soft-dirty.c                       | 2 +-
+ tools/testing/selftests/mm/split_huge_page_test.c             | 2 +-
+ tools/testing/selftests/mm/thuge-gen.c                        | 2 +-
+ tools/testing/selftests/mm/transhuge-stress.c                 | 2 +-
+ tools/testing/selftests/mm/uffd-common.h                      | 2 +-
+ tools/testing/selftests/mm/uffd-wp-mremap.c                   | 2 +-
+ tools/testing/selftests/mm/va_high_addr_switch.c              | 2 +-
+ tools/testing/selftests/mm/virtual_address_range.c            | 2 +-
+ tools/testing/selftests/mm/vm_util.c                          | 2 +-
+ tools/testing/selftests/mm/vm_util.h                          | 2 +-
+ tools/testing/selftests/mount_setattr/mount_setattr_test.c    | 2 +-
+ .../move_mount_set_group/move_mount_set_group_test.c          | 2 +-
+ tools/testing/selftests/mqueue/mq_open_tests.c                | 2 +-
+ tools/testing/selftests/mqueue/mq_perf_tests.c                | 2 +-
+ .../selftests/mseal_system_mappings/sysmap_is_sealed.c        | 4 ++--
+ tools/testing/selftests/nci/nci_dev.c                         | 2 +-
+ tools/testing/selftests/net/af_unix/diag_uid.c                | 2 +-
+ tools/testing/selftests/net/af_unix/msg_oob.c                 | 2 +-
+ tools/testing/selftests/net/af_unix/scm_inq.c                 | 2 +-
+ tools/testing/selftests/net/af_unix/scm_pidfd.c               | 2 +-
+ tools/testing/selftests/net/af_unix/scm_rights.c              | 2 +-
+ tools/testing/selftests/net/af_unix/unix_connect.c            | 2 +-
+ tools/testing/selftests/net/bind_timewait.c                   | 2 +-
+ tools/testing/selftests/net/bind_wildcard.c                   | 2 +-
+ tools/testing/selftests/net/can/test_raw_filter.c             | 2 +-
+ tools/testing/selftests/net/cmsg_sender.c                     | 2 +-
+ tools/testing/selftests/net/epoll_busy_poll.c                 | 2 +-
+ tools/testing/selftests/net/gro.c                             | 2 +-
+ tools/testing/selftests/net/ip_local_port_range.c             | 2 +-
+ tools/testing/selftests/net/ipsec.c                           | 2 +-
+ tools/testing/selftests/net/netfilter/conntrack_dump_flush.c  | 2 +-
+ tools/testing/selftests/net/netlink-dumps.c                   | 2 +-
+ tools/testing/selftests/net/proc_net_pktgen.c                 | 2 +-
+ tools/testing/selftests/net/psock_fanout.c                    | 2 +-
+ tools/testing/selftests/net/psock_tpacket.c                   | 2 +-
+ tools/testing/selftests/net/reuseaddr_ports_exhausted.c       | 2 +-
+ tools/testing/selftests/net/reuseport_bpf.c                   | 2 +-
+ tools/testing/selftests/net/reuseport_bpf_numa.c              | 2 +-
+ tools/testing/selftests/net/rxtimestamp.c                     | 2 +-
+ tools/testing/selftests/net/sk_so_peek_off.c                  | 2 +-
+ tools/testing/selftests/net/so_incoming_cpu.c                 | 2 +-
+ tools/testing/selftests/net/socket.c                          | 2 +-
+ tools/testing/selftests/net/tap.c                             | 2 +-
+ tools/testing/selftests/net/tcp_ao/lib/setup.c                | 2 +-
+ tools/testing/selftests/net/tcp_fastopen_backup_key.c         | 2 +-
+ tools/testing/selftests/net/tls.c                             | 2 +-
+ tools/testing/selftests/net/toeplitz.c                        | 2 +-
+ tools/testing/selftests/net/tun.c                             | 2 +-
+ tools/testing/selftests/net/udpgso_bench_tx.c                 | 2 +-
+ tools/testing/selftests/openat2/helpers.h                     | 2 +-
+ tools/testing/selftests/openat2/openat2_test.c                | 2 +-
+ tools/testing/selftests/openat2/rename_attack_test.c          | 2 +-
+ tools/testing/selftests/openat2/resolve_test.c                | 2 +-
+ tools/testing/selftests/pci_endpoint/pci_endpoint_test.c      | 2 +-
+ tools/testing/selftests/perf_events/mmap.c                    | 2 +-
+ tools/testing/selftests/perf_events/remove_on_exec.c          | 2 +-
+ tools/testing/selftests/perf_events/sigtrap_threads.c         | 2 +-
+ tools/testing/selftests/perf_events/watermark_signal.c        | 2 +-
+ tools/testing/selftests/pid_namespace/pid_max.c               | 2 +-
+ tools/testing/selftests/pid_namespace/regression_enomem.c     | 2 +-
+ tools/testing/selftests/pidfd/pidfd.h                         | 2 +-
+ tools/testing/selftests/pidfd/pidfd_bind_mount.c              | 2 +-
+ tools/testing/selftests/pidfd/pidfd_fdinfo_test.c             | 2 +-
+ tools/testing/selftests/pidfd/pidfd_file_handle_test.c        | 2 +-
+ tools/testing/selftests/pidfd/pidfd_getfd_test.c              | 2 +-
+ tools/testing/selftests/pidfd/pidfd_info_test.c               | 2 +-
+ tools/testing/selftests/pidfd/pidfd_open_test.c               | 2 +-
+ tools/testing/selftests/pidfd/pidfd_poll_test.c               | 2 +-
+ tools/testing/selftests/pidfd/pidfd_setattr_test.c            | 2 +-
+ tools/testing/selftests/pidfd/pidfd_setns_test.c              | 2 +-
+ tools/testing/selftests/pidfd/pidfd_test.c                    | 2 +-
+ tools/testing/selftests/pidfd/pidfd_wait.c                    | 2 +-
+ tools/testing/selftests/pidfd/pidfd_xattr_test.c              | 2 +-
+ tools/testing/selftests/prctl/set-anon-vma-name-test.c        | 2 +-
+ tools/testing/selftests/prctl/set-process-name.c              | 2 +-
+ tools/testing/selftests/proc/proc-maps-race.c                 | 2 +-
+ tools/testing/selftests/proc/proc-pid-vm.c                    | 2 +-
+ tools/testing/selftests/ptrace/get_set_sud.c                  | 2 +-
+ tools/testing/selftests/ptrace/get_syscall_info.c             | 2 +-
+ tools/testing/selftests/ptrace/set_syscall_info.c             | 2 +-
+ tools/testing/selftests/ptrace/vmaccess.c                     | 2 +-
+ tools/testing/selftests/resctrl/resctrl.h                     | 2 +-
+ tools/testing/selftests/ring-buffer/map_test.c                | 2 +-
+ tools/testing/selftests/riscv/abi/pointer_masking.c           | 2 +-
+ tools/testing/selftests/riscv/hwprobe/cbo.c                   | 2 +-
+ tools/testing/selftests/riscv/hwprobe/hwprobe.c               | 2 +-
+ tools/testing/selftests/riscv/hwprobe/which-cpus.c            | 2 +-
+ tools/testing/selftests/riscv/mm/mmap_bottomup.c              | 2 +-
+ tools/testing/selftests/riscv/mm/mmap_default.c               | 2 +-
+ tools/testing/selftests/riscv/mm/mmap_test.h                  | 2 +-
+ tools/testing/selftests/riscv/sigreturn/sigreturn.c           | 2 +-
+ tools/testing/selftests/riscv/vector/v_initval.c              | 2 +-
+ tools/testing/selftests/riscv/vector/vstate_prctl.c           | 2 +-
+ tools/testing/selftests/rseq/basic_percpu_ops_test.c          | 2 +-
+ tools/testing/selftests/rseq/rseq.c                           | 2 +-
+ tools/testing/selftests/rtc/rtctest.c                         | 2 +-
+ tools/testing/selftests/seccomp/seccomp_benchmark.c           | 2 +-
+ tools/testing/selftests/seccomp/seccomp_bpf.c                 | 2 +-
+ tools/testing/selftests/sgx/main.c                            | 2 +-
+ tools/testing/selftests/signal/mangle_uc_sigmask.c            | 2 +-
+ tools/testing/selftests/signal/sas.c                          | 2 +-
+ tools/testing/selftests/sparc64/drivers/adi-test.c            | 2 +-
+ tools/testing/selftests/sync/Makefile                         | 2 +-
+ tools/testing/selftests/sync/sync_test.c                      | 2 +-
+ tools/testing/selftests/sync/synctest.h                       | 2 +-
+ tools/testing/selftests/syscall_user_dispatch/sud_test.c      | 2 +-
+ tools/testing/selftests/tdx/tdx_guest_test.c                  | 2 +-
+ tools/testing/selftests/timens/timens.h                       | 2 +-
+ tools/testing/selftests/timers/adjtick.c                      | 2 +-
+ tools/testing/selftests/timers/alarmtimer-suspend.c           | 2 +-
+ tools/testing/selftests/timers/change_skew.c                  | 2 +-
+ tools/testing/selftests/timers/clocksource-switch.c           | 2 +-
+ tools/testing/selftests/timers/freq-step.c                    | 2 +-
+ tools/testing/selftests/timers/inconsistency-check.c          | 2 +-
+ tools/testing/selftests/timers/leap-a-day.c                   | 2 +-
+ tools/testing/selftests/timers/leapcrash.c                    | 2 +-
+ tools/testing/selftests/timers/mqueue-lat.c                   | 2 +-
+ tools/testing/selftests/timers/nanosleep.c                    | 2 +-
+ tools/testing/selftests/timers/nsleep-lat.c                   | 2 +-
+ tools/testing/selftests/timers/posix_timers.c                 | 2 +-
+ tools/testing/selftests/timers/raw_skew.c                     | 2 +-
+ tools/testing/selftests/timers/rtcpie.c                       | 2 +-
+ tools/testing/selftests/timers/set-2038.c                     | 2 +-
+ tools/testing/selftests/timers/set-tai.c                      | 2 +-
+ tools/testing/selftests/timers/set-timer-lat.c                | 2 +-
+ tools/testing/selftests/timers/set-tz.c                       | 2 +-
+ tools/testing/selftests/timers/skew_consistency.c             | 2 +-
+ tools/testing/selftests/timers/threadtest.c                   | 2 +-
+ tools/testing/selftests/timers/valid-adjtimex.c               | 2 +-
+ tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c            | 2 +-
+ tools/testing/selftests/tty/tty_tstamp_update.c               | 2 +-
+ tools/testing/selftests/uevent/uevent_filtering.c             | 2 +-
+ tools/testing/selftests/user_events/abi_test.c                | 2 +-
+ tools/testing/selftests/user_events/dyn_test.c                | 2 +-
+ tools/testing/selftests/user_events/ftrace_test.c             | 2 +-
+ tools/testing/selftests/user_events/perf_test.c               | 2 +-
+ tools/testing/selftests/user_events/user_events_selftests.h   | 2 +-
+ tools/testing/selftests/vDSO/vdso_test_abi.c                  | 2 +-
+ tools/testing/selftests/vDSO/vdso_test_chacha.c               | 2 +-
+ tools/testing/selftests/vDSO/vdso_test_clock_getres.c         | 2 +-
+ tools/testing/selftests/vDSO/vdso_test_correctness.c          | 2 +-
+ tools/testing/selftests/vDSO/vdso_test_getcpu.c               | 2 +-
+ tools/testing/selftests/vDSO/vdso_test_getrandom.c            | 2 +-
+ tools/testing/selftests/vDSO/vdso_test_gettimeofday.c         | 2 +-
+ tools/testing/selftests/x86/corrupt_xstate_header.c           | 2 +-
+ tools/testing/selftests/x86/helpers.h                         | 2 +-
+ tools/testing/selftests/x86/lam.c                             | 2 +-
+ tools/testing/selftests/x86/syscall_numbering.c               | 2 +-
+ tools/testing/selftests/x86/test_mremap_vdso.c                | 2 +-
+ tools/testing/selftests/x86/test_vsyscall.c                   | 2 +-
+ tools/testing/selftests/x86/xstate.h                          | 2 +-
+ 279 files changed, 282 insertions(+), 280 deletions(-)
+
+-- 
+2.43.0
+
