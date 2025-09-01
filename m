@@ -1,193 +1,171 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2067.outbound.protection.outlook.com [40.107.94.67])
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B362F0670;
-	Mon,  1 Sep 2025 08:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756716046; cv=fail; b=DCoyoVbAgQgeZHJhQ5Bmqkbdm/ksQs97cNINGdnTtvl3SY2jBiqi/Sm9ZmPbet6Rw9lwLUZKY0Vk7umNZsbbgeX1nRk667ffQU6eKsXSac1SVCN9bFtGRRjdC8VbJgle5fLfHPk3DRlMDph8iQul/og+bPthnEDwrtfeUK9MPgY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756716046; c=relaxed/simple;
-	bh=pqUG3wSxYKAk0hAGc7hkOz7ZtYNZPHcZ1jCsIS9RSXo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=C1TDVhOhTTO5MhrHW+SlheFe9/SwM7A6xje0Wq2bNsXcCh3OgNr7NIsxUemJOICjjr0l6oSH4O474AyA+lRcJZBTie1R5hpZcFgOJiR5Pcd0ARBcLJCHfkGBaTvPrPpEoyY6gmXDkJREMj+/DdqttPbkFB1BTr6xtD6tDG8EH5A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Z+Hw00X9; arc=fail smtp.client-ip=40.107.94.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Z+Hw00X9"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C/9WfRXcoZ6MDIvalFO+mmU26zqDn++js4/nPfly/vj4yCx6HwYnmPq/UvrfnoexpmikAnW+huK/p0WcFLz15hAcQzqEwI6yatSiwhXzgCZ0IEFhT9ZUwIwZiwLRE56+RCjm8FqpRjxHHNCuaiZnKAz+xtXC//+TJDVJJc+d+1Cgu3GbbHUjsE+ekTH8/j2LkbhfWUY/tYdEGhn2xvXn4AeDlD5cC2CucIIM44LRwJAWzvTrlJE0UGhr+dZnulKpRwTjB8MCn0gqbm2Zd8lhUX5McqeHI9X1SpcMhEnSOx0aQ+0PVRJrF4K1AYPvJeNr7/rxVHsFgzeXqZi9hpYWew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U+0YRanMaVrZkBHmXyFsKoA8c5uhSJoEg2ntqsEdrQw=;
- b=iywCnlh0j0sTLop+5CP3LUDClrjjM9rzne2yZTgiIHMvzpa7CjGEQtc0MZ5OvHoE61ekxQpxEQ7IOd7oomYdXk0PQppD5tI8mcOM7v+q7wpL6jNvdRdPkQda3mYm8evCvAZrcNKSaE6zuwagyW9cVAb2RE5mFelnjGusfWO00OH09kM4NzpBv00MGGANrmE7CQ4JFURdDYwmfsyP7ZPFHF2s97JvDECc3/zeQj/opCcoGlTpqGJZ030QJNnsrn9JerD81fZjRZoPNDQhNqcp6ax0Ol3/ErE+fbAt9Q6W4lEPiEsGHGRF7tIw/y7CDrrn0LZoY6K6XRLmyKMtsz4XkA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U+0YRanMaVrZkBHmXyFsKoA8c5uhSJoEg2ntqsEdrQw=;
- b=Z+Hw00X9lKcOUKG6+ErSezrdC9hJnBdd6HKCNIikWhBiOVwKopX4z+9FqXvOxTAAkHZStHnRtbuvIK2J21Yj83TCaJ/7bxchr/81Ewzm3kUI5fIOusqxrOZ1+91vrcLtUGvUDNVQhzEt3//nbFZXubq611BZL7SDjRbs3UH4j+WUYsD9VISPtcX3VmUD9BToLOh0QqwKIfD/2gH4J+hSCamATnvvFKv4s3GkN9aOZTtEMpDlRNSXz4YfvdCrSk9CDoDbEdCTVDaP1lA7wNT7l1qZxznRxzV5EFxWiIZ7vvOK6xybCtvAUujlQ3olOr0Hr/8dgUeOqQ76S2ifqGtx/A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12)
- by DS0PR12MB7606.namprd12.prod.outlook.com (2603:10b6:8:13c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Mon, 1 Sep
- 2025 08:40:41 +0000
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::66fc:f8a2:1bfb:6de8]) by SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::66fc:f8a2:1bfb:6de8%6]) with mapi id 15.20.9073.021; Mon, 1 Sep 2025
- 08:40:41 +0000
-Date: Mon, 1 Sep 2025 11:40:26 +0300
-From: Ido Schimmel <idosch@nvidia.com>
-To: netdev@vger.kernel.org, kuba@kernel.org, pabeni@redhat.com
-Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org,
-	paul@paul-moore.com, dsahern@kernel.org, petrm@nvidia.com,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH net-next 0/8] ipv4: icmp: Fix source IP derivation in
- presence of VRFs
-Message-ID: <aLVb-ujDn_KhOt4V@shredder>
-References: <20250901083027.183468-1-idosch@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901083027.183468-1-idosch@nvidia.com>
-X-ClientProxiedBy: TLZP290CA0007.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:9::7)
- To SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286C623E23C;
+	Mon,  1 Sep 2025 09:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756719673; cv=none; b=clhaBZraJXjorHnOgUbwtz+f6dvnS+EUi8c+2I/1WaBeWmpHo82BsDGKrKssN+2e8bETpnmxZwPrbhe7Q9IN+lR/61GZYawMKSgpHBL9KtMkR/lg3tJaa4LERGA2JtwssEWqh9ow/2o/84tW6BnuLM6+mxA/YefOET9mWBzQe5Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756719673; c=relaxed/simple;
+	bh=tTYf9LKW6XZAWe8Mq9GSfJKgl+eQpwHG4OYySo6GQLc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=n39j9hn00eH6jAd6oN8WiFXQb8vt/ukkXAuNxAipTKMEPWhnCNjZlHyqTXZwFqqES9rJsqCh2wDf7Vt9djh4/HLUIdE+/6uK3Ikm/Z7D/SDA+lQF2U0bn1XAKkJYY1WIjwd9owpQ13a9y/TY2BicJ7cyEr1+NPOMz72jz9tf84M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cFk1X1B79z1HBR7;
+	Mon,  1 Sep 2025 17:22:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id CBB331402C4;
+	Mon,  1 Sep 2025 17:24:39 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwAXbEFDZrVod9SLAA--.60560S2;
+	Mon, 01 Sep 2025 10:24:38 +0100 (CET)
+Message-ID: <54e27d05bae55749a975bc7cbe109b237b2b1323.camel@huaweicloud.com>
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Aleksa Sarai <cyphar@cyphar.com>, =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?=
+	 <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro
+ <viro@zeniv.linux.org.uk>,  Kees Cook <keescook@chromium.org>, Paul Moore
+ <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>,  Andy Lutomirski
+ <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Christian Heimes
+ <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes
+ <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, Florian Weimer
+ <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu
+ <jeffxu@google.com>,  Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams
+ <ajordanr@google.com>, Lakshmi Ramasubramanian
+ <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, Matt
+ Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>,
+ Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet
+ <nicolas.bouchinet@oss.cyber.gouv.fr>,  Robert Waite
+ <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, Scott
+ Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, Steve
+ Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, 
+ linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-security-module@vger.kernel.org
+Date: Mon, 01 Sep 2025 11:24:17 +0200
+In-Reply-To: <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
+References: <20250822170800.2116980-1-mic@digikod.net>
+	 <20250826-skorpion-magma-141496988fdc@brauner>
+	 <20250826.aig5aiShunga@digikod.net>
+	 <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA3PR12MB7901:EE_|DS0PR12MB7606:EE_
-X-MS-Office365-Filtering-Correlation-Id: 18641d0b-38eb-4fd2-3b57-08dde9333bad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tgTFtaSiRaCx+HP3q91fXL9pHFf5EWH0N0B7RCLQImEnXwXTBuISbW43aWj2?=
- =?us-ascii?Q?jglTd7hqSvqYsbDGSXf3igHujc97+orsPvSYiroM+qSB7Vs3LoPWRtZBGdBe?=
- =?us-ascii?Q?7AMTMIzBIXTS/PDJu/GQNXJkJs8utIyKq4jJ8Nqw2ncjuih+MBchrhBJVlv+?=
- =?us-ascii?Q?Z3HEjI1gJnJyfHZPO69sPlbLnCkIs95y+5SbCPRHVXthGehegYMUuNth5SMR?=
- =?us-ascii?Q?pdfwyoOemyxCv4rrOKacUnWf5/hEPl3OXKEADcRPebaTRQIFoYkQdMPiVVp5?=
- =?us-ascii?Q?0HftX+8mtX6p/lBbYiik60A5HGokBqd2IKsvh3pAlougBzx517ewnAA86kWj?=
- =?us-ascii?Q?fVArAnTLfQGsoabst8MlV+KvPfCK8h3uXX00kiJNCVFvqZBlBOc/lqMD9/MC?=
- =?us-ascii?Q?iVW8k4zjLDpndPCX5Hx9TObdDmRa178pVZu8/pMPcSBHaXAKb63ia59pwoVD?=
- =?us-ascii?Q?qWEESXrvPRuXWYAPpSkTuoRiPJ63GF3THOV0+mkyvZBdGb18jLfK0spPY8/g?=
- =?us-ascii?Q?w7Vxl5HZRwGw5m8C/7wX2wM/T7kmzOv2jQ+GiXRsIM9zn8XjRkkccTF8h8NQ?=
- =?us-ascii?Q?0ZmSy9HINQfvPeW+/QsfEuJ9C6wNjWzix43C+WaKGdEi0AEhJ4x/t/hTiXJO?=
- =?us-ascii?Q?R6N/VO93qKuU61HW1d1+OzigtaqefRiAXpHLkFdnftLKKfOJjkbyRuIct0x0?=
- =?us-ascii?Q?fCN/Giuhr1fzvLSVhOxUj6+XRIp0vQunRTJR42j9On2qlHIMxy60Bls14QiZ?=
- =?us-ascii?Q?o2+PwqU6YfoVx6PsH0s4BQgmH2Nim5KTcDlISH/KqdrPYGbNfm1TGFwb6YNh?=
- =?us-ascii?Q?viWL4nDkXxspvfIRaW2h3nc6gHymB+WtLMwfShsCmmQbPrKMfDYRryXK57WQ?=
- =?us-ascii?Q?Qy505K8OBSfgXtWdawI2Hio4AQC7149Zth4nx5bg0bUa6ZSgidU8/aVt9GbD?=
- =?us-ascii?Q?OFzYHjv3HxIs8UzoP4X7d/qxQNmmk9gmn2HtVujqDL2FJWMekgVn0lMyhVfT?=
- =?us-ascii?Q?zno8iHJQwVG6UNiwFFWj4zMBLENZeNv3l+bdY235C63FYi3v1DtIhb+/aOMy?=
- =?us-ascii?Q?5CDMJbAZzr6s5VZCAoXnZse36rvynp8ZATT8p63aMTupbio66cOKWgI1pf2u?=
- =?us-ascii?Q?atwo/trCSGSjg4UJk3a4moiVl24OCjfFq7bu5acSFeBJSaq3PlKjsulppsO/?=
- =?us-ascii?Q?/nwbOrW6/Upv4ggwB+JRxFLemPAt7ImyRWA86gHBWwjU6pTTBYr37WOpzUFR?=
- =?us-ascii?Q?Ukac+hy+2vU3uwBmYijKvIPCcFgiqgkM0qP3ungxHHVvHFu3v3rwq9AO0Ngd?=
- =?us-ascii?Q?ULayVX4oHrppEowxaagFPT0n3pUBw9mpOegNtayxXvhuXfspCDUqBE26ddWV?=
- =?us-ascii?Q?NAtkpk4V6aRnAc/nvBoeo9TXg5xfnRNnLrYKh1u0LcBLOa2cF3Lb7Wsve3Ft?=
- =?us-ascii?Q?ZSsefOqnYvo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR12MB7901.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?0yBVIgvVml9svgAXEl6vDZOEA2mKNjkumod7Vx+BUJht+mF2Tf+5IrCDuGm6?=
- =?us-ascii?Q?eAOyaOthXDfF/jaYqG10vMk7gqzCxz37m9s/Y79oP8CcyYvKbXOYDVCaCu4O?=
- =?us-ascii?Q?GtkosGVZlsP4v4Dj9ZjZuzFcKo6SZ1LqMYT2NAUt3zfLe6JzKMzeZkRKPoGv?=
- =?us-ascii?Q?m9ASvJu18vgKBZlSEkgyhoXTg0ho1UQ0UeCm+tm+lBA9PCqSG/YLKRBecp0Z?=
- =?us-ascii?Q?EyCe/SW2jByeZYDzFFfOftzDJn7s8oX+ZLqMxoMciu3wVpeQrmbw9FjWBNfX?=
- =?us-ascii?Q?Vh/VG1NCCU7Z+ZBIW7IBTeJBcjlKjsAbCh9BJ0AQjnCq7X8TFWGZ3g8Czy7U?=
- =?us-ascii?Q?tmufmyr+bwtLzQt2icoVk+9L3ZqL5ofUQ6gRCOA2h5dZwfIMLWI/KUQHVjtX?=
- =?us-ascii?Q?eQoPFKjw7F3Aj2TvxjF0uR7dW61Jp9B3gg70N0pl41lWUEtCvWFQz+X4Xbkz?=
- =?us-ascii?Q?7ZSKHRxmbWPGLcpXg+wmFVh/v20vm2WHVUMT5+L25maai8gONFKSJfWlGcIr?=
- =?us-ascii?Q?K4GLnKflIrhCKhuzcl3E/U6fr76fOLhc2/YZ4fANdm2LtRbxDu9kvDiAmf0z?=
- =?us-ascii?Q?KTeuZS2Zpo5QyYchFS8MK5eBgHJINN6gAY++29LDYhg1vqq5aBEYsThyChzK?=
- =?us-ascii?Q?wImgUiK7/89JNHdHDCs1pKVQfTVqAFv4WrILZOxaPVdWTifovSdHpPaKBFOu?=
- =?us-ascii?Q?LDzHMLjHJr7YPOv3qBGy+WGa249CdCPbhoLPCiI0uLAUfM3T+1AE8DxrLDsw?=
- =?us-ascii?Q?rWl389cY6TkGCbiD+RO9WZhA4xff/YXJeKWVg8Wjg7Eoy+fSxihLiABY0U0z?=
- =?us-ascii?Q?E0JpL2ddqDCHRbJ7O3F5Hm7aojAq9W506UiQo4CZMJLg9HKnebeHVrcMvufE?=
- =?us-ascii?Q?I+aH5xljOJdQUwzxzIYr8RATWyQ/IWaN0spAuOZ1+UYar9tTqZP8wjaO5cqG?=
- =?us-ascii?Q?YNpAlUMR7Y+JidGWc/CV+ILePi9WNF1VRdwP5RvgWoAZ4gzpG+q94L3CdtWp?=
- =?us-ascii?Q?l7WOn3PakO+N5hHFGj9JhQiPCJFdiXXYshUcQz0+5Vrkkr/DZmoUByBfoUXn?=
- =?us-ascii?Q?fGBhsQpqwo9+o+LmHbCyDmocleNosz7YWYNsOm/lBzN6WPwFIEDGo+GPTzNw?=
- =?us-ascii?Q?ZOLYMXhiPWUdAxDjrRTbGGcEg3+TzioFkckezlyzxWZfU6iGoTbbaXnlV+45?=
- =?us-ascii?Q?RhSQ1oVW5W4B7EnAbspTvFCoACqk67kML8DjKBgKPetD7uvKaL6d1viIrAD+?=
- =?us-ascii?Q?wX/GbyDlE1obzYGWwgyK2oiZ9Uo5vBDhWTuQgbjdFBKFNmi8ugBO7W/m8EEG?=
- =?us-ascii?Q?X1JYC1ZO4j74J2Qio6HleMEXw+g9eD1EHMWtAkuVmq+UPusmk9z0kOqZkxca?=
- =?us-ascii?Q?EQJUou/2zL7xTAPEPrbrjquvzv6hduBIePzjWdqU3szymnnQu359kC0TfQXF?=
- =?us-ascii?Q?q8Eibdp0ppShdqTATA4xSTeoJ1mT8g1VkIg6ItjD+zl/9BbkvLZrGY7C5EIe?=
- =?us-ascii?Q?aq4m95EPEJgubQ5axGxmNFECJOb8bR00UoZZ1DnuzAxJ1qbTxkWzWE2B0Dpy?=
- =?us-ascii?Q?jqbDFJS1ynMDsyNIniMhyHoHos3yYC8ktjC0pLNu?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18641d0b-38eb-4fd2-3b57-08dde9333bad
-X-MS-Exchange-CrossTenant-AuthSource: SA3PR12MB7901.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 08:40:41.1600
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ryWfYh+HfBX+wne+6K43VlEKVgu6cC7XO1GBWF94SdoIGeQHFL3pBCnT9siokluS3KSVvOMMMNx//w0h1ScCWQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7606
+X-CM-TRANSID:GxC2BwAXbEFDZrVod9SLAA--.60560S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF15Gr15Jr4xtrW8Zw4fKrg_yoWrCFyfpF
+	WFqwnIkF1DJr1Iyw1xC3WxZ3yFywsxJay3Jr95JrykA3W5uF1Igr1fKr4YvFZrCF4fKw1j
+	vrWIv3s8urWDAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
+	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	EksDUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBGi1Q8AC1wAAsc
 
-On Mon, Sep 01, 2025 at 11:30:19AM +0300, Ido Schimmel wrote:
-> Align IPv4 with IPv6 and in the presence of VRFs generate ICMP error
-> messages with a source IP that is derived from the receiving interface
-> and not from its VRF master. This is especially important when the error
-> messages are "Time Exceeded" messages as it means that utilities like
-> traceroute will show an incorrect packet path.
-> 
-> Patches #1-#2 are preparations.
-> 
-> Patch #3 is the actual change.
-> 
-> Patches #4-#7 make small improvements in the existing traceroute test.
-> 
-> Patch #8 extends the traceroute test with VRF test cases for both IPv4
-> and IPv6.
+On Thu, 2025-08-28 at 10:14 +1000, Aleksa Sarai wrote:
+> On 2025-08-26, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wrote:
+> > On Tue, Aug 26, 2025 at 11:07:03AM +0200, Christian Brauner wrote:
+> > > Nothing has changed in that regard and I'm not interested in stuffing
+> > > the VFS APIs full of special-purpose behavior to work around the fact
+> > > that this is work that needs to be done in userspace. Change the apps=
+,
+> > > stop pushing more and more cruft into the VFS that has no business
+> > > there.
+> >=20
+> > It would be interesting to know how to patch user space to get the same
+> > guarantees...  Do you think I would propose a kernel patch otherwise?
+>=20
+> You could mmap the script file with MAP_PRIVATE. This is the *actual*
+> protection the kernel uses against overwriting binaries (yes, ETXTBSY is
+> nice but IIRC there are ways to get around it anyway). Of course, most
+> interpreters don't mmap their scripts, but this is a potential solution.
+> If the security policy is based on validating the script text in some
+> way, this avoids the TOCTOU.
+>=20
+> Now, in cases where you have IMA or something and you only permit signed
+> binaries to execute, you could argue there is a different race here (an
+> attacker creates a malicious script, runs it, and then replaces it with
+> a valid script's contents and metadata after the fact to get
+> AT_EXECVE_CHECK to permit the execution). However, I'm not sure that
 
-Jakub / Paolo, patch #2 is going to conflict with the following net
-patch:
+Uhm, let's consider measurement, I'm more familiar with.
 
-https://lore.kernel.org/all/20250828091435.161962-1-fabian@blaese.de/
+I think the race you wanted to express was that the attacker replaces
+the good script, verified with AT_EXECVE_CHECK, with the bad script
+after the IMA verification but before the interpreter reads it.
 
-Resolution is below. Please let me know if you prefer that I repost next
-week in order to avoid the conflict.
+Fortunately, IMA is able to cope with this situation, since this race
+can happen for any file open, where of course a file can be not read-
+locked.
 
-@@ -799,15 +800,16 @@ EXPORT_SYMBOL(__icmp_send);
- void icmp_ndo_send(struct sk_buff *skb_in, int type, int code, __be32 info)
- {
-        struct sk_buff *cloned_skb = NULL;
--       struct ip_options opts = { 0 };
-        enum ip_conntrack_info ctinfo;
-        enum ip_conntrack_dir dir;
-+       struct inet_skb_parm parm;
-        struct nf_conn *ct;
-        __be32 orig_ip;
- 
-+       memset(&parm, 0, sizeof(parm));
-        ct = nf_ct_get(skb_in, &ctinfo);
-        if (!ct || !(READ_ONCE(ct->status) & IPS_NAT_MASK)) {
--               __icmp_send(skb_in, type, code, info, &opts);
-+               __icmp_send(skb_in, type, code, info, &parm);
-                return;
-        }
- 
-@@ -823,7 +825,7 @@ void icmp_ndo_send(struct sk_buff *skb_in, int type, int code, __be32 info)
-        orig_ip = ip_hdr(skb_in)->saddr;
-        dir = CTINFO2DIR(ctinfo);
-        ip_hdr(skb_in)->saddr = ct->tuplehash[dir].tuple.src.u3.ip;
--       __icmp_send(skb_in, type, code, info, &opts);
-+       __icmp_send(skb_in, type, code, info, &parm);
-        ip_hdr(skb_in)->saddr = orig_ip;
- out:
-        consume_skb(cloned_skb);
+If the attacker tries to concurrently open the script for write in this
+race window, IMA will report this event (called violation) in the
+measurement list, and during remote attestation it will be clear that
+the interpreter did not read what was measured.
+
+We just need to run the violation check for the BPRM_CHECK hook too
+(then, probably for us the O_DENY_WRITE flag or alternative solution
+would not be needed, for measurement).
+
+Please, let us know when you apply patches like 2a010c412853 ("fs:
+don't block i_writecount during exec"). We had a discussion [1], but
+probably I missed when it was decided to be applied (I saw now it was
+in the same thread, but didn't get that at the time). We would have
+needed to update our code accordingly. In the future, we will try to
+clarify better our expectations from the VFS.
+
+Thanks
+
+Roberto
+
+[1]: https://lore.kernel.org/linux-fsdevel/88d5a92379755413e1ec3c981d9a04e6=
+796da110.camel@huaweicloud.com/#t
+
+> this is even possible with IMA (can an unprivileged user even set
+> security.ima?). But even then, I would expect users that really need
+> this would also probably use fs-verity or dm-verity that would block
+> this kind of attack since it would render the files read-only anyway.
+>=20
+> This is why a more detailed threat model of what kinds of attacks are
+> relevant is useful. I was there for the talk you gave and subsequent
+> discussion at last year's LPC, but I felt that your threat model was
+> not really fleshed out at all. I am still not sure what capabilities you
+> expect the attacker to have nor what is being used to authenticate
+> binaries (other than AT_EXECVE_CHECK). Maybe I'm wrong with my above
+> assumptions, but I can't know without knowing what threat model you have
+> in mind, *in detail*.
+>=20
+> For example, if you are dealing with an attacker that has CAP_SYS_ADMIN,
+> there are plenty of ways for an attacker to execute their own code
+> without using interpreters (create a new tmpfs with fsopen(2) for
+> instance). Executable memfds are even easier and don't require
+> privileges on most systems (yes, you can block them with vm.memfd_noexec
+> but CAP_SYS_ADMIN can disable that -- and there's always fsopen(2) or
+> mount(2)).
+>=20
+> (As an aside, it's a shame that AT_EXECVE_CHECK burned one of the
+> top-level AT_* bits for a per-syscall flag -- the block comment I added
+> in b4fef22c2fb9 ("uapi: explain how per-syscall AT_* flags should be
+> allocated") was meant to avoid this happening but it seems you and the
+> reviewers missed that...)
+>=20
 
