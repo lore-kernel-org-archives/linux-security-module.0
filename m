@@ -1,178 +1,275 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic317-38.consmr.mail.ne1.yahoo.com (sonic317-38.consmr.mail.ne1.yahoo.com [66.163.184.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923BA3064BC;
-	Mon,  1 Sep 2025 17:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD842E6CDF
+	for <linux-security-module@vger.kernel.org>; Mon,  1 Sep 2025 17:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756747210; cv=none; b=hTBr/NQZk+61cuLhmnS6CfyDGIq69ZFy+g0poavrP5r8oPU19O5uGV9QpgBVOfO2stfbSzGzYmJvZnUiJINUBWPtFv9DGHAUp5TWslObY+EqA/3H73n0L5+AFJ76PcCjFe2ycb47mZz9V0MkwMs5zvDFmWxFoqbaMmvQU2Pk2u4=
+	t=1756748516; cv=none; b=r/jQQL543prGMOsPNRl/zcXRD+LtjnFZmzMacb7nwCH6QPhy/GdGMiGa20bCRlrlWVVcLPs+tXiTmxxHPBfybI1o5t7QHM7oTcd68cElhBsqnv73p/DU6qsAEjP+t0pZIgxesOFkI3S6RGOnxE29sVbWIckCPrKbW85Uzdb9XNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756747210; c=relaxed/simple;
-	bh=OCliu1SfADOcDmYo8NJcH4lbnknWaTHsYL6JjXO5UT4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Wc1jiQt73x7dDYtzsfC1fT61Wxxxw9eggJGWQGZWjouQlclZgp+7ovZMFg0T17B5ftQWQZY/24PjV1ceSaHx9tcSnGiGzpOoy4Ezs8PGTzvLUKJPeJlqI2+uzbZ4TbQxUi4qZIsVhW5GxbYLV79JCRAWD/imYaD/1xLyZrYwb5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cFw9T1cfQzsZST;
-	Tue,  2 Sep 2025 01:00:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 7C42F1402EC;
-	Tue,  2 Sep 2025 01:02:06 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwBnvEF40bVoycaQAA--.3519S2;
-	Mon, 01 Sep 2025 18:02:05 +0100 (CET)
-Message-ID: <3d89a03f31cacb53a2ed8017899f2dab10476b62.camel@huaweicloud.com>
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?=
- <mic@digikod.net>, Christian Brauner <brauner@kernel.org>, Al Viro
- <viro@zeniv.linux.org.uk>, Kees Cook <keescook@chromium.org>, Paul Moore
- <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, Arnd Bergmann
- <arnd@arndb.de>, Christian Heimes <christian@python.org>, Dmitry Vyukov
- <dvyukov@google.com>, Elliott Hughes <enh@google.com>, Fan Wu
- <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, Jann Horn
- <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet
- <corbet@lwn.net>,  Jordan R Abrahams <ajordanr@google.com>, Lakshmi
- Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi
- <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, Miklos
- Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, Nicolas
- Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite
- <rowait@microsoft.com>,  Roberto Sassu <roberto.sassu@huawei.com>, Scott
- Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, Steve
- Grubb <sgrubb@redhat.com>,  kernel-hardening@lists.openwall.com,
- linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
- linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org
-Date: Mon, 01 Sep 2025 19:01:42 +0200
-In-Reply-To: <CALCETrUtJmWxKYSi6QQAGpQR_ETNfoBidCu_VEq8Lx9iJAOyEw@mail.gmail.com>
-References: <20250822170800.2116980-1-mic@digikod.net>
-	 <20250826-skorpion-magma-141496988fdc@brauner>
-	 <20250826.aig5aiShunga@digikod.net>
-	 <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
-	 <54e27d05bae55749a975bc7cbe109b237b2b1323.camel@huaweicloud.com>
-	 <CALCETrUtJmWxKYSi6QQAGpQR_ETNfoBidCu_VEq8Lx9iJAOyEw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1756748516; c=relaxed/simple;
+	bh=aeO7w22JsIXvwgIVmsOZtSBEpoX8hLYBy75BKM8cZEg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pxi0bfkvj+fHwIXnQgqFOOak46ziNCL42fRW+qj3viFrSS33sDEQWhoXnUG0iOsQLQWMTz2Ot4DpLHuBbcGKJkIpE1UmXaqls1f6IEn22+/UoKCMIZIMDZ/Rx5OwOa6gIMMgnl2AWqwJikpaRcG1gUFZ8kGRu+wOO7j3WmWEFSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=WVvquctc; arc=none smtp.client-ip=66.163.184.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="WVvquctc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1756748513; bh=POM1fQ/+P+zBZfrS3l3h0rrmQRygV/aJvyFDpjpsvJ0=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=WVvquctcGzwKfRL7oaXDCSNafwdUy8+ENQ09XzLIqsZp+FNhnlkpU7A4AC7DOt9+pOfuMvQcOqul64P0MImypI1To/zl3WIXL2QIQxOzlBNwLj4A8byEWBMzzNZ5GaeY7buElmJykdpcvxEMCiTYVAXpmrX6/NL+0GNopzJya1iVOA/B8BVc73KttKoCyhklzjHHsPVBpfFDJLq7DKPfmc5NuOMKgMDcH583lAHYsQGkKXp95gNIp0t2n60tu3JfjIaE3s+BJ1tQtsp489kEbqslzdPLnDlSXrdb5EXoILHh64+aI/DDm3NOc9GhhFowBmd9NAPqUIpQ6RpHfxE5EA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1756748513; bh=O6bhy6IcwbFU5fd9BMIxXJK31F0H3xElsME/1OqboS3=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=OeZANhX4k1NYpCqacUF+tzaHCrX7bbJsgQz3cBiBJ/irYPHf78KH1GXqvjhAQgurtSo50Z0yYOcKrJQrZzuXaZy7r/soInVHwRxK+/oIyTXaf8McJ8nZAIq8H7qswg6OWj39YOERF2c6dmc9hnqOJ4N7hKqLApMl6iGRn8gG6G5onIBJcl2AVOy+7l7+Gq4PptHusCBa65u++LqZpwtXclTyPIKTnNqTAfKi+O7VN+0gOnMuFXM6+oo2ptHTW3Dl6GbUKOiEkzyg6GpJ+L5jymOK6JC+tYPFRmCvmL9uKmXUjtYpQGVsS4ceBWHUUX/4U9YwwEtZuPuEpjXnto6HAg==
+X-YMail-OSG: QdFLtB8VM1kQR67xgKoKRHaRETUc9a9DyKEzL9xN1VYCEdWIY4oOCobQ9em.ZGi
+ KF_8dQcMkxc4zEbliuf9qVQXIB9fjjcB85WJLSS1nZuuIYqzEJhopltXX7MbDeUx6po4P4urGt.m
+ Ws.D3_vD7519vWsep3PfQZWwmRRFAoCs2RZ1d99s5F6AtXHi_xoV1BwHu.P1aJPy2XkjCO3sqCgl
+ x_i4MKoST.JtuFirMXTtl1cRs5mrBIt5AgRv1ZTvhQZpDHqTIMqKXN86E5HCtRr1NG5dDwAvZ_6w
+ iaTOij6gV_wmqLhdilgSz0XXLh6tgGVACA6BXWiSYJEvGfMjFMKfZBUUmZtjyNV92Hr1dyeht_7o
+ c8EgkGfHa6GM7WuZHZvR1gsu3TCSRzkBF6UcsChN5SK9CXLbkB4yNFZobNQRUaHpoWw7BzXF3BUj
+ bG9oZwOV_SLP9HJM9eXBjz7tabzZpOSK.WbRwQ64d78Zp2KPWpTkNieWE511ckrXQopJ3pIqxDLi
+ fIl5LoVuKXf3hoUj_De6TsAjABewjk3Vberty3ILbwOhdlzhtuQOWPTcvV9W7rL918V_JAc1Z3SF
+ 0jItNTpryaP9GuQUBptRkTWN3QFgrMbhZ5CGFHW3dn9ZctB7ryckRvWoS0INmUScG8ceeiao18zI
+ oeaZFDvjoy_g8gTDBTcglJ20vtwNofXOT.XIf7ukw0I5NEOGko2UAFl.klUIuBfdLp601pOl40Qz
+ T3eHcjtTBjX4qxfcM6nBtOwH6PyPnJu6jeiwJVe6TILdhdUe9_rq8Hcgs2gDBuAgzvuLqd1zX0cj
+ 8s8oxRX9mcBIDWcnuhoHE81UbjLLhwknPds20UbhDTP3Wn9ypgW8nAJvr1NSMe2xngOztIKIZuBr
+ DpfSah0dMWQWnuss_8LjU_btZnAKQHqS_8ouQadhCWhROz_MaAjTIHkbDr5Fb3rQ.7DdmjLWGM2d
+ OfkJkuF6KPc5ETu3EyfIFb0IlB9.srHau_PtO2D3yjEanOVB_9D82eoC1iISQAGeDrSJ.kwjaFcD
+ l0Ym41efJGtEORzHYbSXjN93AI5PEyWtsM3zm0rpDInUNOVqclJQxfBM5NvmOXJoQAoUBGOli6U6
+ OSJj_8.iRdxnDe422T_Ap88fIt1wUJM1n_AxOMJjReGhPZE6Km_cySOAGedX0nG0IEjACSReSEp6
+ 2o7F4BluA67e0r_wldx2T_41rNsJXrGJhCyj_OSFWi5sceSV1q0VlP9fz8jHzvn1C7CmIyWtp3kk
+ hn9Vm8hsmPEqqz3VUEXVfiV6MvDH9TwhaTpNmc9wRKfayKcn_HkYDWStPrMeMKlhrTEP45GMFNtC
+ CwbZh7LJjWXAPnubfL63B.xao.Y9oGxif2r13CvMG1QSryx.iI1LOGmzzXiMtRnDw6Lyz2doOpNE
+ DLlbEwAu3NV3QiTIIBcjaopN1OwO8KL.DgItuQVY6yXcYdXT1qroJ91OXPDQFToKn9mJ4omcGb4w
+ UxwHc5dkmignCfuOqt9wazWPwL4tT4Qu6Ul7t7JQlpHYgFK6M7DnPvDMceAhURNEKahAqq5Z3Udp
+ sKNpq8wYBthhLQ8ypfyvHn1l_Cng1GLwWYVE6gJf6IOB.IjXAYJEvOyJrT8vEzxxXi_.1my1zW_g
+ kql8RvUNnXu6wKhI5ZXMbJq4G2xy8LyU.Dj5TCVvvItOyuvIMijhZV2AH1vUt11eyzmd.xJVG2.y
+ Z2MuU2kPQN7pKy2gu_HwU1rXtAFr6khWeDNV0XfBc2ma3pImJzcEsEq8x2Drxs.K51wTS0.H9n_n
+ A4BZKtFduW9.pWJurhChIwbSi8TQXQwGv3kym7v7z3ThzH7hNx5gkIOte4CV8.Fa0iQZFCuCNXmZ
+ g6mDSAfqgjDhjRHKPbLItShxcXmeOkPVpAXiKT5lQzT7wyOmBoP_DimhPgLddP1Y5S1ecqz6lbWv
+ X.7_qITPD3hVvFgcVCPAEnGyQz_Xb.2BLut0nOGy66Ygg1YaBK9RW_2.9MB9DJGPlr3.sS.xG_rh
+ GrBLOPopbMi8pmEXeaXeWDt.TgCcQfr78XGvne0_.icHkDddndSjr8Xlcmap_seBDkl68C.MefqM
+ QZDlKXlkCrjK5zN2I9BccUaMgvOOZza9aw8ylg4ucQ9aif5phG88iys.fG3NPw1IyBcuQNSNoAJX
+ IDh0himGm91xVaIQ7qMZ56dqytdTI28hfaRGNz7qcKv97Na4rv5RQDPvUiRpxguREoLIDmEh.Jnu
+ MHKFaewyYsBJ5k7CPgYgFgdbn63ZZrPH_Hx1uFWY6VWTs9gF7E3Jlyd.DkmSXOCpyrLi.1g9c89x
+ u6t68_8wnX2s0Aa6u
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 30a0067b-e111-43e1-8a48-99a3e3fca653
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Mon, 1 Sep 2025 17:41:53 +0000
+Received: by hermes--production-gq1-7bfc77444d-qpx7l (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6ac7bd9a5dd28be86d0a7d9b2d3af8b1;
+          Mon, 01 Sep 2025 17:31:44 +0000 (UTC)
+Message-ID: <3826d6c2-164b-415f-8bf4-63060ce428df@schaufler-ca.com>
+Date: Mon, 1 Sep 2025 10:31:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwBnvEF40bVoycaQAA--.3519S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGFykArWDJF1kKFykWw4fuFg_yoWrCw1xpF
-	WFgw1kK3WDGF1xJw1xC3W7ZF1rCa4rJw43Jrn8tw1kAF98Zr10qrySgFWSqa4xZF9Ykw4Y
-	qw4093s5Cw4DZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
-	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	EksDUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgASBGi1Q+gIFwAAs9
+User-Agent: Mozilla Thunderbird
+Subject: Re: LSM namespacing API
+To: "Dr. Greg" <greg@enjellic.com>,
+ John Johansen <john.johansen@canonical.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+ selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
+ <CAEjxPJ5EvR+2fboLu_nBGZu+ZVUpX4KM6xdPUqDErCmw=iA37g@mail.gmail.com>
+ <67e72960-c985-48e1-aaeb-a4286cc8508f@canonical.com>
+ <aKcskclwVVe1X4kP@mail.hallyn.com>
+ <6c69fc81-32a7-442c-8c7f-992eda9c2d18@canonical.com>
+ <20250901160102.GA9179@wind.enjellic.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250901160102.GA9179@wind.enjellic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.24362 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Mon, 2025-09-01 at 09:25 -0700, Andy Lutomirski wrote:
-> Can you clarify this a bit for those of us who are not well-versed in
-> exactly what "measurement" does?
->=20
-> On Mon, Sep 1, 2025 at 2:42=E2=80=AFAM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > > Now, in cases where you have IMA or something and you only permit sig=
-ned
-> > > binaries to execute, you could argue there is a different race here (=
-an
-> > > attacker creates a malicious script, runs it, and then replaces it wi=
-th
-> > > a valid script's contents and metadata after the fact to get
-> > > AT_EXECVE_CHECK to permit the execution). However, I'm not sure that
-> >=20
-> > Uhm, let's consider measurement, I'm more familiar with.
-> >=20
-> > I think the race you wanted to express was that the attacker replaces
-> > the good script, verified with AT_EXECVE_CHECK, with the bad script
-> > after the IMA verification but before the interpreter reads it.
-> >=20
-> > Fortunately, IMA is able to cope with this situation, since this race
-> > can happen for any file open, where of course a file can be not read-
-> > locked.
->=20
-> I assume you mean that this has nothing specifically to do with
-> scripts, as IMA tries to protect ordinary (non-"execute" file access)
-> as well.  Am I right?
+On 9/1/2025 9:01 AM, Dr. Greg wrote:
+> On Thu, Aug 21, 2025 at 07:57:11AM -0700, John Johansen wrote:
+>
+> Good morning, I hope the week is starting well for everyone.
+>
+> Now that everyone is getting past the summer holiday season, it would
+> seem useful to specifically clarify some of the LSM namespace
+> implementation details.
+>
+>> On 8/21/25 07:26, Serge E. Hallyn wrote:
+>>> On Thu, Aug 21, 2025 at 12:46:10AM -0700, John Johansen wrote:
+>>>> On 8/19/25 10:47, Stephen Smalley wrote:
+>>>>> On Tue, Aug 19, 2025 at 10:56???AM Paul Moore <paul@paul-moore.com> 
+>>>>> wrote:
+>>>>>> Hello all,
+>>>>>>
+>>>>>> As most of you are likely aware, Stephen Smalley has been working on
+>>>>>> adding namespace support to SELinux, and the work has now progressed
+>>>>>> to the point where a serious discussion on the API is warranted.  For
+>>>>>> those of you are unfamiliar with the details or Stephen's patchset, or
+>>>>>> simply need a refresher, he has some excellent documentation in his
+>>>>>> work-in-progress repo:
+>>>>>>
+>>>>>> * https://github.com/stephensmalley/selinuxns
+>>>>>>
+>>>>>> Stephen also gave a (pre-recorded) presentation at LSS-NA this year
+>>>>>> about SELinux namespacing, you can watch the presentation here:
+>>>>>>
+>>>>>> * https://www.youtube.com/watch?v=AwzGCOwxLoM
+>>>>>>
+>>>>>> In the past you've heard me state, rather firmly at times, that I
+>>>>>> believe namespacing at the LSM framework layer to be a mistake,
+>>>>>> although if there is something that can be done to help facilitate the
+>>>>>> namespacing of individual LSMs at the framework layer, I would be
+>>>>>> supportive of that.  I think that a single LSM namespace API, similar
+>>>>>> to our recently added LSM syscalls, may be such a thing, so I'd like
+>>>>>> us to have a discussion to see if we all agree on that, and if so,
+>>>>>> what such an API might look like.
+>>>>>>
+>>>>>> At LSS-NA this year, John Johansen and I had a brief discussion where
+>>>>>> he suggested a single LSM wide clone*(2) flag that individual LSM's
+>>>>>> could opt into via callbacks.  John is directly CC'd on this mail, so
+>>>>>> I'll let him expand on this idea.
+>>>>>>
+>>>>>> While I agree with John that a fs based API is problematic (see all of
+>>>>>> our discussions around the LSM syscalls), I'm concerned that a single
+>>>>>> clone*(2) flag will significantly limit our flexibility around how
+>>>>>> individual LSMs are namespaced, something I don't want to see happen.
+>>>>>> This makes me wonder about the potential for expanding
+>>>>>> lsm_set_self_attr(2) to support a new LSM attribute that would support
+>>>>>> a namespace "unshare" operation, e.g. LSM_ATTR_UNSHARE.  This would
+>>>>>> provide a single LSM framework API for an unshare operation while also
+>>>>>> providing a mechanism to pass LSM specific via the lsm_ctx struct if
+>>>>>> needed.  Just as we do with the other LSM_ATTR_* flags today,
+>>>>>> individual LSMs can opt-in to the API fairly easily by providing a
+>>>>>> setselfattr() LSM callback.
+>>>>>>
+>>>>>> Thoughts?
+>>>>> I think we want to be able to unshare a specific security module
+>>>>> namespace without unsharing the others, i.e. just SELinux or just
+>>>>> AppArmor.
+>>>> yes which is part of the problem with the single flag. That choice
+>>>> would be entirely at the policy level, without any input from userspace.
+>>> AIUI Paul's suggestion is the user can pre-set the details of which
+>>> lsms to unshare and how with the lsm_set_self_attr(), and then a
+>>> single CLONE_LSM effects that.
+>> yes, I was specifically addressing the conversation I had with Paul at
+>> LSS that Paul brought up. That is
+>>
+>>   At LSS-NA this year, John Johansen and I had a brief discussion where
+>>   he suggested a single LSM wide clone*(2) flag that individual LSM's
+>>   could opt into via callbacks.
+>>
+>> the idea there isn't all that different than what Paul proposed. You
+>> could have a single flag, if you can provide ancillary information. But
+>> a single flag on its own isn't sufficient.
+> If one thing has come out of this thread, it would seem to be the fact
+> that there is going to be little commonality in the requirements that
+> various LSM's will have for the creation of a namespace.
+>
+> Given that, the most infrastructure that the LSM should provide would
+> be a common API for a resource orchestrator to request namespace
+> separation and to provide a framework for configuring the namespace
+> prior to when execution begins in the context of the namespace.
+>
+> The first issue to resolve would seem to be what namespace separation
+> implies.
+>
+> John, if I interpret your comments in this discussion correctly, your
+> contention is that when namespace separation is requested, all of the
+> LSM's that implement namespaces will create a subordinate namespace,
+> is that a correct assumption?
+>
+> It would seem, consistent with the 'stacking' concept, that any LSM
+> with namespace capability that chooses not to separate, will result in
+> denial of the separation request.  That in turn will imply the need to
+> unwind or delete any namespace context that other LSM's may have
+> allocated before the refusal occurred.
 
-Yes, correct, violations are checked for all open() and mmap()
-involving regular files. It would not be special to do it for scripts.
+Were it true that 'stacking' rated the status of a 'concept'.
 
-> > If the attacker tries to concurrently open the script for write in this
-> > race window, IMA will report this event (called violation) in the
-> > measurement list, and during remote attestation it will be clear that
-> > the interpreter did not read what was measured.
-> >=20
-> > We just need to run the violation check for the BPRM_CHECK hook too
-> > (then, probably for us the O_DENY_WRITE flag or alternative solution
-> > would not be needed, for measurement).
->=20
-> This seems consistent with my interpretation above, but ...
+An LSM that is capable of namespacing (the definition of which is
+elusive at this time) should be allowed to decline participation
+in a namespace creation. That, or there needs to be a convention
+for "null" namespaces, by which an LSM can pretend that it isn't
+involved in the new namespace. I think the latter smells funny
+and would invite "security people don't understand performance"
+remarks. No LSM should be allowed to prevent another from using
+namespaces.
 
-The comment here [1] seems to be clear on why the violation check it is
-not done for execution (BPRM_CHECK hook). Since the OS read-locks the
-files during execution, this implicitly guarantees that there will not
-be concurrent writes, and thus no IMA violations.
 
-However, recently, we took advantage of AT_EXECVE_CHECK to also
-evaluate the integrity of scripts (when not executed via ./). Since we
-are using the same hook for both executed files (read-locked) and
-scripts (I guess non-read-locked), then we need to do a violation check
-for BPRM_CHECK too, although it will be redundant for the first
-category.
+>
+> This model also implies that the orchestrator requesting the
+> separation will need to pass a set of parameters describing the
+> characteristics of each namespace, described by the LSM identifier
+> that they pertain to.  Since there may be a need to configure multiple
+> namespaces there would be a requirement to pass an array or list of
+> these parameter sets.
 
-> > Please, let us know when you apply patches like 2a010c412853 ("fs:
-> > don't block i_writecount during exec"). We had a discussion [1], but
-> > probably I missed when it was decided to be applied (I saw now it was
-> > in the same thread, but didn't get that at the time). We would have
-> > needed to update our code accordingly. In the future, we will try to
-> > clarify better our expectations from the VFS.
->=20
-> ... I didn't follow this.
->=20
-> Suppose there's some valid contents of /bin/sleep.  I execute
-> /bin/sleep 1m.  While it's running, I modify /bin/sleep (by opening it
-> for write, not by replacing it), and the kernel in question doesn't do
-> ETXTBSY.  Then the sleep process reads (and executes) the modified
-> contents.  Wouldn't a subsequent attestation fail?  Why is ETXTBSY
-> needed?
+Just like lsm_set_self_attr(2).
 
-Ok, this is actually a good opportunity to explain what it will be
-missing. If you do the operations in the order you proposed, actually a
-violation will be emitted, because the violating operation is an open()
-and the check is done for this system call.
+> There will also be a need to inject, possibly substantial amounts of
+> policy or model information into the namespace, before execution in
+> the context of the namespace begins.
 
-However, if you do the opposite, first open for write and then
-execution, IMA will not be aware of that since it trusts the OS to not
-make it happen and will not check for violations.
+Yup. A major downside of loadable policy.
 
-So yes, in your case the remote attestation will fail (actually it is
-up to the remote verifier to decide...). But in the opposite case, the
-writer could wait for IMA to measure the genuine content and then
-modify the content conveniently. The remote attestation will succeed.
+> There will also be a need to decide whether namespace separation
+> should occur at the request of the orchestrator or at the next fork,
+> the latter model being what the other resource namespaces use.  We
+> believe the argument for direct separation can be made by looking at
+> the gymnastics that orchestrators need to jump through with the
+> 'change-on-fork' model.
+>
+> Case in point, it would seem realistic that a process with sufficient
+> privilege, may desire to place itself in a new LSM namespace context
+> in a manner that does not require re-execution of itself.
+>
+> With respect to separation, the remaining issue is if a new security
+> capability bit needs to be implemented to gate namespace separation.
+> John, based on your comments, I believe you would support this need?
 
-Adding the violation check on BPRM_CHECK should be sufficient to avoid
-such situation, but I would try to think if there are other
-implications for IMA of not read-locking the files on execution.
+I don't like the notion of a new capability for this. But then,
+I object to almost every new capability proposed. Existing namespaces
+don't need their own capabilities. I don't see this case as special.
 
-Roberto
+>
+>> You can do a subset with a single flag and only policy directing things,
+>> but that would cut container managers out of the decision. Without a
+>> universal container identifier that really limits what you can do. In
+>> another email I likend it to the MCS label approach to the container
+>> where you have a single security policy for the container and each
+>> container gets to be a unique instance of that policy. Its not a perfect
+>> analogy as with namespace policy can be loaded into the namespace making
+>> it unique. I don't think the approach is right because not all namespaces
+>> implement a loadable policy, and even when they do I think we can do a
+>> better job if the container manager is allowed to provide additional
+>> context with the namespacing request.
+> In order to be relevant, the configuration of LSM namespaces need to
+> be under control of a resource orchestrator or container manager.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/security/integrity/ima/ima_main.c?h=3Dv6.17-rc4#n565
+I do not approve of kernel features that are pointless without specific
+user space support. If it can't be used in ways other than those
+defined by a particular user space component they really don't belong
+in the kernel. 
 
+>
+> What we hear from people doing Kubernetes, at scale, is a desire to be
+> able to request that a container be run somewhere in the hardware
+> resource pool and for that container to implement a security model
+> specific to the needs of the workload running in that container.  In a
+> manner that is orthogonal from other security policies that may be in
+> effect for other workloads, on the host or in other containers.
+
+That sounds to me like they want per-container security policy. That
+would require that the kernel have the 'concept' of a container. That's
+not something I expect to see in my lifetime.
+
+>
+> Hopefully the above will be of assistance in furthering discussion.
+>
+> Have a good week.
+>
+> As always,
+> Dr. Greg
+>
+> The Quixote Project - Flailing at the Travails of Cybersecurity
+>               https://github.com/Quixote-Project
+>
