@@ -1,28 +1,28 @@
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2050.outbound.protection.outlook.com [40.107.95.50])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2076.outbound.protection.outlook.com [40.107.243.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F79B2FA0C6;
-	Mon,  1 Sep 2025 08:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833E32F83D8;
+	Mon,  1 Sep 2025 08:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.76
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756715581; cv=fail; b=H6ahAloAFBOQ8tYmVzRsw2DSe63lk/YzedLWSRrqy1S0kbqqwBi9a4Sad4cwGsPeCDl848jXvtIGyzeJWz0oAP06hQMni/xe1Q/WEamO6tMxADStG0CLYxxMYSQvDRfvjM/4ruGTTMszBSjTMWiaJezW0v2R0Qu3RBbsybqta+0=
+	t=1756715586; cv=fail; b=LW/o+5HJwj1KuMQ3EjnVFZy9INQmPIkkkAZN8oYiNYETtMpcJOdSIpPXeNnTuaH8K2480PVrMhrhand9Eg8SZVp6ShV8IYpFRlwHmz5+0tQCTTlPtTgC2T5rzuXNQ8Vsyap2lesQshXSy8bRo/ClZRc7RRY3myZMfL0Qz4AUq50=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756715581; c=relaxed/simple;
-	bh=mZYzsiFwxoE+HCdk0GNHD8eE5Eiv46/9isbf5ifXrJo=;
+	s=arc-20240116; t=1756715586; c=relaxed/simple;
+	bh=THeQWeHsfqGXNCffkF/BIS2Fh3RRFQ0IKAWqDvmPnfU=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HCF1ibokiFXprb9mxvOZiXn/Y4AtnDbil7HZ+O5c8bqIggUa1kcl1GQeUiTvo2ehPy2uPrIY+ZZu6tKj8DqSRrQP9UjCbfjVGLbGmne8lfmZHQlc23abEWWKwPiAT0Rd+nLYEbwVQztxLf9v/WuFYKlqv5KmWKg6DY6m+JzbqlU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nRBz5naN; arc=fail smtp.client-ip=40.107.95.50
+	 MIME-Version:Content-Type; b=a6ewsGQNUyE/ccKTlAfNKAJZP5kWNwTMcOktBr1pS7oal4vpAKcNN4qkqSrqdgwuN+JbX1yX/7YLNan/zEzDeMgk6a2U1gUCWBrj/iOG+cK0VLJqGHGhw2aLNaKBhEKUUJBxxgsZ5XmFdNEOD+phPj4hHrBH127pOfKn5euMvio=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=piEMcilm; arc=fail smtp.client-ip=40.107.243.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nRBz5naN"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="piEMcilm"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=n3YYvEZPtx86PifBjrGmV7gD2iBz56mstEJhtq7aHriv3VpWWiYS5YljqVQ8cZxnTICssfj4ymzXoiqvXgfDUZt45S0Z5l4ov+/nxvgPNfKV9wVkPoHRMrMHbbPMjmlt6411wNfnnnuo62illa0sjl9bE3DM+jbAaDCIU4LocD2uQRR04mzud3nVFsQEeTKoOrpIIqCSJXUo8DzQY3BTRiUneiRcvzz9axVt6QXqUEnw2Aj6mKTF8TTYRcsF6D2D81cpno02N9n8aa8rqxiKAb5E/eA96TYDeoFOplqRIcHpIz5Dggp5uNXnI1WRV1GtrWoTzDRrUoPNNnt3aaUnew==
+ b=S27BR3DjzdGp0Tdozp9vh2++yJdgpryHBNSy4sntT8oDX9BLwy8NdVteliwCkLXUXSgwscF0hdtG4KMqp0/UuvLiLjiZ7lH6cL8gHuJK37G+MZgT7YyHsk70Zz5UCCLVNt+8MpypAaCTdxElFKtX6uuAka8KHFcAS9YF/Lv9wajoi1Be/hPcTkqS2HCIDXZ976ao/6lWPHYWlW+XvwRVj0pCNQGNyjKo7zgnaptEcfelWmm8FwL8b0tFs8Hb2aXKtZ6Kn6VNcSWE971HhdcXvhkBFoz1PLEo8OxooYmj3Dddu5gYzXHKNlOqRBmvBUcrtx7wEqLn33IW3w5Zcl2pDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KPx65eLImKAw5xWeIWS3LcNtWbYBB3nLW34VFzKn9kA=;
- b=elJAv4M2jYAJ+yuqqnEygNF/H9UFRWpW29q3rqhA/3Kmx4DWKdZJmABddCO+vQrGSmaFpShFXLsBuQh7HecaDUbvKSaeeUcF3W7v7rlB44QhRXni1AicYeUB9781jKFyHw05HaxnUw91ht44HjTD5556nNW/9Uv0xQ1vn9xb27R0i+hSO0FDaE32ruXSny+ELYTpgxqNutXWpzeYWB/07qqg95AEllnpqodqOKom7yp+/i290XEJh4huv/GezGfBT10TiA1LRhpGzTlvHXl/wZpUKO9GS/MLlI6lbB8+XVRyK2byadM8l3tLsV6aOtu7DHgmhHSdBHn1EuusSwqVSw==
+ bh=DVTHYsD3q/WrgK122FFxe+Z11Wwpsl7J2h6FckQ/Gnc=;
+ b=DcNhgGpCLSah/iVzc2vEX/uz10AhbA/VBN4RQ5hdssTtRFB5r3ioFBLib2dM4SssvL2gujJlrYYmhnezyJe0OOJpS12men9zBpmUG6ISp2Pdl3l/Jjwn5nublGuyZUdmDwv5gYY6YoMiuRVi55oY0PBZrX0jPcV9oc2BiONfOtRddO10crO/EbH8gWyyOR+hO73rnvHPp1g5h0GpZLosK1QLuPkEHpETUfelCK3xpXj7Je6vcue9XjnLKhkywQqvaM/xEVA7jhwLcG9n9TJGKodbtUD5JNeNYzMmEuuYp3lSTLygQoCaAV56ssiz1ukx9g1pgd8nJungMjh+qpTr/A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.161) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KPx65eLImKAw5xWeIWS3LcNtWbYBB3nLW34VFzKn9kA=;
- b=nRBz5naND+wbbwi31aR6Hk0jR+TStzIe95mfr5dOE/h0AEopbyH+2fCUtgNtOs//qBytnIg6IwOflteriLOr/vrGGiwWBiVjA5uzcUnpq6S3CQWZmO6qxZlAYCPwY+KYMxLjLQCCQYZE4e/z+s14SQMgFNCYXvHI80LXAmwZo2SBoyeVUQB+I2cTa76igLVRKJ1pbGNq8MI4l9Pw/o/TQNoYML7T4Kr1SAb/03I6hOjoaVll5aEb4Ksm4KGmOps1BPQO4KFhbDzvJMHtFVcGWPCjalSkHXVeZfH7ouv+fEoov8QxBNjfCeOgs4hrUxchQZxThD+R2wJGn0FOKy7L2g==
-Received: from PH2PEPF0000384B.namprd17.prod.outlook.com (2603:10b6:518:1::68)
- by LV8PR12MB9155.namprd12.prod.outlook.com (2603:10b6:408:183::8) with
+ bh=DVTHYsD3q/WrgK122FFxe+Z11Wwpsl7J2h6FckQ/Gnc=;
+ b=piEMcilmgt/9dliUeyGEND40NTVgRWUdXe1N3KWFFsO7JAZNerSv0yAnjD1rhJvWOJcJlVh9a5VW35xEqiK4LHy7HQhmdlcS7+RyJuqVVaa5GoBxX534/0Sg+u20Jvdru8DYzGJBMNKYcS5W+nbDXDMZ/LOOVXj6c9Yscafflz/93lZqIrqi7QiWFKKUoPLy3LexxT/4bV66P8Loh95hZ1U0ELdTMp9OILUumiY3u/vZvjTK/2nIOI0lWrKJZEieTCkt6fS6AOk57UKKLXOyXcViNxEtQla1heVH/364yLlOqxTmXECANA646F7GVTorbRjDa+GYdqgBvtBhA3iW8A==
+Received: from PH7P221CA0064.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:328::18)
+ by SJ1PR12MB6074.namprd12.prod.outlook.com (2603:10b6:a03:45f::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Mon, 1 Sep
- 2025 08:32:53 +0000
-Received: from SJ1PEPF000023D5.namprd21.prod.outlook.com
- (2a01:111:f403:c902::13) by PH2PEPF0000384B.outlook.office365.com
- (2603:1036:903:48::3) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.21 via Frontend Transport; Mon,
- 1 Sep 2025 08:32:53 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.21; Mon, 1 Sep
+ 2025 08:32:59 +0000
+Received: from SJ1PEPF000023D6.namprd21.prod.outlook.com
+ (2603:10b6:510:328:cafe::d) by PH7P221CA0064.outlook.office365.com
+ (2603:10b6:510:328::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.27 via Frontend Transport; Mon,
+ 1 Sep 2025 08:32:58 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -49,26 +49,26 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- SJ1PEPF000023D5.mail.protection.outlook.com (10.167.244.70) with Microsoft
+ SJ1PEPF000023D6.mail.protection.outlook.com (10.167.244.71) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.0 via Frontend Transport; Mon, 1 Sep 2025 08:32:53 +0000
+ 15.20.9115.0 via Frontend Transport; Mon, 1 Sep 2025 08:32:58 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 1 Sep
- 2025 01:32:32 -0700
+ 2025 01:32:38 -0700
 Received: from shredder.nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 1 Sep
- 2025 01:32:28 -0700
+ 2025 01:32:35 -0700
 From: Ido Schimmel <idosch@nvidia.com>
 To: <netdev@vger.kernel.org>
 CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
 	<edumazet@google.com>, <horms@kernel.org>, <paul@paul-moore.com>,
 	<dsahern@kernel.org>, <petrm@nvidia.com>,
 	<linux-security-module@vger.kernel.org>, Ido Schimmel <idosch@nvidia.com>
-Subject: [PATCH net-next 2/8] ipv4: icmp: Pass IPv4 control block structure as an argument to __icmp_send()
-Date: Mon, 1 Sep 2025 11:30:21 +0300
-Message-ID: <20250901083027.183468-3-idosch@nvidia.com>
+Subject: [PATCH net-next 4/8] selftests: traceroute: Return correct value on failure
+Date: Mon, 1 Sep 2025 11:30:23 +0300
+Message-ID: <20250901083027.183468-5-idosch@nvidia.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250901083027.183468-1-idosch@nvidia.com>
 References: <20250901083027.183468-1-idosch@nvidia.com>
@@ -84,244 +84,161 @@ X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D5:EE_|LV8PR12MB9155:EE_
-X-MS-Office365-Filtering-Correlation-Id: 97919ad3-04b3-4857-986b-08dde93224e1
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D6:EE_|SJ1PR12MB6074:EE_
+X-MS-Office365-Filtering-Correlation-Id: c546c0e3-e121-482f-0b43-08dde9322839
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eSYyTWaqRN4c0xdO+oZxjcLV8HTPBvW4qyK1DNB9c7zgiw5Y854c1N/Ts0tG?=
- =?us-ascii?Q?sSv85jsAtB6/3HYyYtto3T0zZ9oEjPl/2fAkktlD7WtsOEXTG6qxAcNRnMpo?=
- =?us-ascii?Q?2OJ+igb3yRe//izmJOMQOZ7vw9rJlHCc2RLusdCHWcUxnP+53/gQc0HqrG+2?=
- =?us-ascii?Q?5Z6oMW2GpOrO238Ad7WJH+PYpXv22FaIVs6oOJTP1VeUMh50s/5DKb6+hPAy?=
- =?us-ascii?Q?BQEd2jm7icxzRPLEX7E9+1aCyL+Vyv/beI8ymsVlg1BCbmsjU9DxGT+AerjA?=
- =?us-ascii?Q?G9q76BJn1DW9882MbwBkhlMkLmuRuqckoghGivnz4776exxNf6xHWg/5cbNf?=
- =?us-ascii?Q?035MZeXNs0ndbd66dr7sjcwiR+0HrfSwK7vOJXHV4QwMWqwoO7FY/sjJ20g6?=
- =?us-ascii?Q?hey6xvMLMY6tiQsf9d55iszoa6pftVPu/Tk8MHNdaGYNAEDBFJyjpgCFtwm5?=
- =?us-ascii?Q?XSTsN3ezHIIwY/UBmvXf/XOs5f3OEHKX5FH1DaDjxhTkaokCSdUcqj+tYckU?=
- =?us-ascii?Q?lvJwSVb8AjO8HQk00OkxelSfymtMohjDupKtC6kfOgAxDtewKftplPmdrMcG?=
- =?us-ascii?Q?YKQG0Tkm+jFzM7wcnVM3034kv6CeG6baxxf3ccwuM1XZtAT37qPs72xvpoi2?=
- =?us-ascii?Q?JVrK8x8KkOEuuDflZzPrFvUSZCydfGqaVFtLEIcEWxqHDlg2oSfWIiKCvqPb?=
- =?us-ascii?Q?qj+4NOtsHZ81qtaFIt/LeeTNHoFWx4HOySSDGAx7lFojNGQIVx3bZVfZrJmI?=
- =?us-ascii?Q?koZ8ZYaUCaRaNrA4In6rwL1EC06C9N9y6T2JF+k8k7Zqp756w/Nob4yXhv1K?=
- =?us-ascii?Q?04BgeTOIzG56C8JMLpz1GxH6iPa9Jy3eaPGYp4+1IvKa57Kbt+CgFzY8yqWR?=
- =?us-ascii?Q?sG52UQd5qR5eyMsI03UrLVYHY4sFZQW2X+r2A4JSY/mL4y6mzzKxdEmF92Ar?=
- =?us-ascii?Q?BILqb+On3gmi68YVXNiuyKRJR2jqbv9qec1mld7OvHbobRqC30I1NlCbbc6o?=
- =?us-ascii?Q?wx63Es85vKQN3bhDQzBFbIZeRD2oO3e7T12Pguepjov1ezvqyQfhMes7/j5S?=
- =?us-ascii?Q?jJpYGdwFamK1CMkoRGnPyzVxLJVKqEe6h6x1FamRBgy7LuNcTX4BkolJrs9E?=
- =?us-ascii?Q?wKP7UHZwDvQ0NddZnQ95x/uoOP4NwUxCca1TjWr1M1hN/HbQwQrt8QsIbemR?=
- =?us-ascii?Q?EQR0XJ/ydk8K+7GPXLLvbVT0jjiq/N9nTlGzJPO816t3+L+MY81zsu/RZ1qh?=
- =?us-ascii?Q?mv/9xlZNKTEe0Gz3nF6vLNNzt7znk20sSaecGJAXQSzEM/GQa6LDZFFMRjeH?=
- =?us-ascii?Q?jBnHnjG9pQyTB29QjoLpSrkrqo+0GZgViPTXiU0LS1GmRuUJK4LoC/6E5zA/?=
- =?us-ascii?Q?ld2nZWq2OqE8oA22gBNsP060VxYrYCFqbJ+pwWRlp+PRoeIaYhp8/VZzGiBq?=
- =?us-ascii?Q?eF9TBEopxlKocC41j2YHrD4oTt4wmopc99tUN18D2zK7u8EJzVZQc4NG2oiE?=
- =?us-ascii?Q?soKRM8+zpZi1eodZ52B5+BxTlwb0TJbe20LM?=
+	=?us-ascii?Q?tskPMUaXEFfqUKQH3OEwXRv+XBDr47nWXf+ed+ttBhaz73RcZLyFZP2glB8+?=
+ =?us-ascii?Q?2v32HNo8vL8ZogLCRzlmPvdBjdKGiUDbBOxal4iVkfaBHEy63tSGKH8/wLcr?=
+ =?us-ascii?Q?3JSTMqinuWZLfNXKJaEqlTvEJFw5mdr+wqojXJAvKQvRhoQqouCO9nx9RQ8s?=
+ =?us-ascii?Q?QNmjsCVq8y19zEEOq5ttk+QtmUluVzuiKD0cgUhnoC7hrzXB+w8IUNzgkqXf?=
+ =?us-ascii?Q?s8cDHykP+aBjqF5Rbe7WcjNJY5Ou9M4iqCOrMwzers+y/8nC2OQtfGwvSlXE?=
+ =?us-ascii?Q?g4DCebjaijTvktSUM2olYIgcyZTjkn/q5En8UW2FyoZOWXhSIdwaSRqHWXQl?=
+ =?us-ascii?Q?Idqsg8GB5SH0Co+us5XDTGgjrZRlvVSzRHSM8BCk1MuTe7chQAbY5bPPTf1V?=
+ =?us-ascii?Q?BA2ZzSQ657Gd5q+WmIybFcm3dYTyYGxmc9cejqFnAMJaXC+V41ldJNX3Wrcm?=
+ =?us-ascii?Q?DgZmUNLrnewciDRpSnM154JHuPy+CuIBP19H+rW2xaaEXX+bLMaLaNERHEG4?=
+ =?us-ascii?Q?HP7uprBuYDeWzaBAQO9G/AjYK6kIUuh4tyr4dBk5PxOA92bzILxxugg1iK4i?=
+ =?us-ascii?Q?YEf2sauPb4s2TbJKuQYWTZlA3vZFONsm7HO/8Q1mJUSuoS2iVAb4jrHWlfcf?=
+ =?us-ascii?Q?nH78WH2Pul/Efzjo++HWCqyi0epyQPbIH5K1EBTM68zGwg3E6sXzvtVXP9bN?=
+ =?us-ascii?Q?WqSGjXrzW0EAm4UY4KTm1CxFJoVIjHf3qz4zTRhn5qS/pgYBlVBMAzw3Ktiw?=
+ =?us-ascii?Q?pJVzW82kQGuV6HkiXttSTWKaKMG/FT5MXcFERPvAP2NHc6iFXPHHsK4RBO8t?=
+ =?us-ascii?Q?MjZc5NJx4W4zRLM2wYGvn2QpjHYcSEwjM3po8rFwXCa4hapvZnG3GsiC27l+?=
+ =?us-ascii?Q?J8yyCd0QjomsQghKK7nFfdcsDPv+oLTj8KwuSoCTLPjzhx986yUriKGayFt+?=
+ =?us-ascii?Q?bd+M0db1yZoSOSovQTXfqM4evKnj8gWgrocshBi+OT1uLmfj7nlJkoAnPYk+?=
+ =?us-ascii?Q?wHau6XcR/orvKQP1uV8QiT2MZNcxUghzzDqN9FxK4wv3miAF4oJFs8OCf4h1?=
+ =?us-ascii?Q?sPMWlxSDutyBSzEfkNafDQOQFHxyYOZkpSqkGJYwoemzAx8ZyVwROUMLs5Ys?=
+ =?us-ascii?Q?iDX/IxSg3A73S3QUXVfnUvfHacOaqg6RvOaYV/OvbLp0Whnhjdurw1c2iRR8?=
+ =?us-ascii?Q?M8WR9hGSXXY0dMXmD08liuO3bY9Wll5tBs7Qw/KsPKn+s0x8gc/vv0itCoMQ?=
+ =?us-ascii?Q?Y8q7LkmStvLfyATB0J/O0n+qw8i+1E3uul0R541bZQ/udLi53wW37sLLjtGE?=
+ =?us-ascii?Q?vjpPWFIobn/dgMDikQdWcR6tNysN25rY91BBd0vRIe90UKDUXenMK95Kn+Tf?=
+ =?us-ascii?Q?ZL73QLIr1P3+Jhb9elSUyFL3mGmEEJZP9tEHBBrHvp38qkITFk5Gl94A2U70?=
+ =?us-ascii?Q?5H5bTzzOZ1m4tDa3CxSr1aJ/innChBFvBeFGGUy1W2RVO8KCOyq8QPZHB6Nr?=
+ =?us-ascii?Q?1tqgJxeLidnC6mKM9bCboXpQfriE+PLPjZDD?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 08:32:53.1647
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 08:32:58.7682
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97919ad3-04b3-4857-986b-08dde93224e1
+X-MS-Exchange-CrossTenant-Network-Message-Id: c546c0e3-e121-482f-0b43-08dde9322839
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D5.namprd21.prod.outlook.com
+	SJ1PEPF000023D6.namprd21.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9155
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6074
 
-__icmp_send() is used to generate ICMP error messages in response to
-various situations such as MTU errors (i.e., "Fragmentation Required")
-and too many hops (i.e., "Time Exceeded").
+The test always returns success even if some tests were modified to
+fail. Fix by converting the test to use the appropriate library
+functions instead of using its own functions.
 
-The skb that generated the error does not necessarily come from the IPv4
-layer and does not always have a valid IPv4 control block in skb->cb.
+Before:
 
-Therefore, commit 9ef6b42ad6fd ("net: Add __icmp_send helper.") changed
-the function to take the IP options structure as argument instead of
-deriving it from the skb's control block. Some callers of this function
-such as icmp_send() pass the IP options structure from the skb's control
-block as in these call paths the control block is known to be valid, but
-other callers simply pass a zeroed structure.
+ # ./traceroute.sh
+ TEST: IPV6 traceroute                                               [FAIL]
+ TEST: IPV4 traceroute                                               [ OK ]
 
-A subsequent patch will need __icmp_send() to access more information
-from the IPv4 control block (specifically, the ifindex of the input
-interface). As a preparation for this change, change the function to
-take the IPv4 control block structure as an argument instead of the IP
-options structure. This makes the function similar to its IPv6
-counterpart that already takes the IPv6 control block structure as an
-argument.
+ Tests passed:   1
+ Tests failed:   1
+ $ echo $?
+ 0
 
-No functional changes intended.
+After:
+
+ # ./traceroute.sh
+ TEST: IPv6 traceroute                                               [FAIL]
+         traceroute6 did not return 2000:102::2
+ TEST: IPv4 traceroute                                               [ OK ]
+ $ echo $?
+ 1
 
 Reviewed-by: Petr Machata <petrm@nvidia.com>
 Signed-off-by: Ido Schimmel <idosch@nvidia.com>
 ---
- include/net/icmp.h    | 10 ++++++----
- net/ipv4/cipso_ipv4.c | 12 ++++++------
- net/ipv4/icmp.c       | 12 +++++++-----
- net/ipv4/route.c      | 10 +++++-----
- 4 files changed, 24 insertions(+), 20 deletions(-)
+ tools/testing/selftests/net/traceroute.sh | 38 ++++++-----------------
+ 1 file changed, 9 insertions(+), 29 deletions(-)
 
-diff --git a/include/net/icmp.h b/include/net/icmp.h
-index caddf4a59ad1..935ee13d9ae9 100644
---- a/include/net/icmp.h
-+++ b/include/net/icmp.h
-@@ -37,10 +37,10 @@ struct sk_buff;
- struct net;
+diff --git a/tools/testing/selftests/net/traceroute.sh b/tools/testing/selftests/net/traceroute.sh
+index 282f14760940..46cb37e124ce 100755
+--- a/tools/testing/selftests/net/traceroute.sh
++++ b/tools/testing/selftests/net/traceroute.sh
+@@ -10,28 +10,6 @@ PAUSE_ON_FAIL=no
  
- void __icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info,
--		 const struct ip_options *opt);
-+		 const struct inet_skb_parm *parm);
- static inline void icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info)
+ ################################################################################
+ #
+-log_test()
+-{
+-	local rc=$1
+-	local expected=$2
+-	local msg="$3"
+-
+-	if [ ${rc} -eq ${expected} ]; then
+-		printf "TEST: %-60s  [ OK ]\n" "${msg}"
+-		nsuccess=$((nsuccess+1))
+-	else
+-		ret=1
+-		nfail=$((nfail+1))
+-		printf "TEST: %-60s  [FAIL]\n" "${msg}"
+-		if [ "${PAUSE_ON_FAIL}" = "yes" ]; then
+-			echo
+-			echo "hit enter to continue, 'q' to quit"
+-			read a
+-			[ "$a" = "q" ] && exit 1
+-		fi
+-	fi
+-}
+-
+ run_cmd()
  {
--	__icmp_send(skb_in, type, code, info, &IPCB(skb_in)->opt);
-+	__icmp_send(skb_in, type, code, info, IPCB(skb_in));
- }
+ 	local ns
+@@ -210,9 +188,12 @@ run_traceroute6()
  
- #if IS_ENABLED(CONFIG_NF_NAT)
-@@ -48,8 +48,10 @@ void icmp_ndo_send(struct sk_buff *skb_in, int type, int code, __be32 info);
- #else
- static inline void icmp_ndo_send(struct sk_buff *skb_in, int type, int code, __be32 info)
- {
--	struct ip_options opts = { 0 };
--	__icmp_send(skb_in, type, code, info, &opts);
-+	struct inet_skb_parm parm;
+ 	setup_traceroute6
+ 
++	RET=0
 +
-+	memset(&parm, 0, sizeof(parm));
-+	__icmp_send(skb_in, type, code, info, &parm);
+ 	# traceroute6 host-2 from host-1 (expects 2000:102::2)
+ 	run_cmd $h1 "traceroute6 2000:103::4 | grep -q 2000:102::2"
+-	log_test $? 0 "IPV6 traceroute"
++	check_err $? "traceroute6 did not return 2000:102::2"
++	log_test "IPv6 traceroute"
+ 
+ 	cleanup_traceroute6
  }
- #endif
+@@ -275,9 +256,12 @@ run_traceroute()
  
-diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-index c7c949c37e2d..709021197e1c 100644
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -1715,7 +1715,7 @@ int cipso_v4_validate(const struct sk_buff *skb, unsigned char **option)
-  */
- void cipso_v4_error(struct sk_buff *skb, int error, u32 gateway)
- {
--	struct ip_options opt;
-+	struct inet_skb_parm parm;
- 	int res;
+ 	setup_traceroute
  
- 	if (ip_hdr(skb)->protocol == IPPROTO_ICMP || error != -EACCES)
-@@ -1726,19 +1726,19 @@ void cipso_v4_error(struct sk_buff *skb, int error, u32 gateway)
- 	 * so we can not use icmp_send and IPCB here.
- 	 */
++	RET=0
++
+ 	# traceroute host-2 from host-1 (expects 1.0.1.1). Takes a while.
+ 	run_cmd $h1 "traceroute 1.0.2.4 | grep -q 1.0.1.1"
+-	log_test $? 0 "IPV4 traceroute"
++	check_err $? "traceroute did not return 1.0.1.1"
++	log_test "IPv4 traceroute"
  
--	memset(&opt, 0, sizeof(opt));
--	opt.optlen = ip_hdr(skb)->ihl * 4 - sizeof(struct iphdr);
-+	memset(&parm, 0, sizeof(parm));
-+	parm.opt.optlen = ip_hdr(skb)->ihl * 4 - sizeof(struct iphdr);
- 	rcu_read_lock();
--	res = __ip_options_compile(dev_net(skb->dev), &opt, skb, NULL);
-+	res = __ip_options_compile(dev_net(skb->dev), &parm.opt, skb, NULL);
- 	rcu_read_unlock();
- 
- 	if (res)
- 		return;
- 
- 	if (gateway)
--		__icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0, &opt);
-+		__icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0, &parm);
- 	else
--		__icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0, &opt);
-+		__icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0, &parm);
+ 	cleanup_traceroute
  }
+@@ -294,9 +278,6 @@ run_tests()
+ ################################################################################
+ # main
  
- /**
-diff --git a/net/ipv4/icmp.c b/net/ipv4/icmp.c
-index 823c70e34de8..92fb7aef4abf 100644
---- a/net/ipv4/icmp.c
-+++ b/net/ipv4/icmp.c
-@@ -594,7 +594,7 @@ static struct rtable *icmp_route_lookup(struct net *net, struct flowi4 *fl4,
-  */
+-declare -i nfail=0
+-declare -i nsuccess=0
+-
+ while getopts :pv o
+ do
+ 	case $o in
+@@ -308,5 +289,4 @@ done
  
- void __icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info,
--		 const struct ip_options *opt)
-+		 const struct inet_skb_parm *parm)
- {
- 	struct iphdr *iph;
- 	int room;
-@@ -725,7 +725,8 @@ void __icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info,
- 					   iph->tos;
- 	mark = IP4_REPLY_MARK(net, skb_in->mark);
+ run_tests
  
--	if (__ip_options_echo(net, &icmp_param.replyopts.opt.opt, skb_in, opt))
-+	if (__ip_options_echo(net, &icmp_param.replyopts.opt.opt, skb_in,
-+			      &parm->opt))
- 		goto out_unlock;
- 
- 
-@@ -799,14 +800,15 @@ EXPORT_SYMBOL(__icmp_send);
- void icmp_ndo_send(struct sk_buff *skb_in, int type, int code, __be32 info)
- {
- 	struct sk_buff *cloned_skb = NULL;
--	struct ip_options opts = { 0 };
- 	enum ip_conntrack_info ctinfo;
-+	struct inet_skb_parm parm;
- 	struct nf_conn *ct;
- 	__be32 orig_ip;
- 
-+	memset(&parm, 0, sizeof(parm));
- 	ct = nf_ct_get(skb_in, &ctinfo);
- 	if (!ct || !(ct->status & IPS_SRC_NAT)) {
--		__icmp_send(skb_in, type, code, info, &opts);
-+		__icmp_send(skb_in, type, code, info, &parm);
- 		return;
- 	}
- 
-@@ -821,7 +823,7 @@ void icmp_ndo_send(struct sk_buff *skb_in, int type, int code, __be32 info)
- 
- 	orig_ip = ip_hdr(skb_in)->saddr;
- 	ip_hdr(skb_in)->saddr = ct->tuplehash[0].tuple.src.u3.ip;
--	__icmp_send(skb_in, type, code, info, &opts);
-+	__icmp_send(skb_in, type, code, info, &parm);
- 	ip_hdr(skb_in)->saddr = orig_ip;
- out:
- 	consume_skb(cloned_skb);
-diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-index 50309f2ab132..6d27d3610c1c 100644
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -1222,8 +1222,8 @@ EXPORT_INDIRECT_CALLABLE(ipv4_dst_check);
- 
- static void ipv4_send_dest_unreach(struct sk_buff *skb)
- {
-+	struct inet_skb_parm parm;
- 	struct net_device *dev;
--	struct ip_options opt;
- 	int res;
- 
- 	/* Recompile ip options since IPCB may not be valid anymore.
-@@ -1233,21 +1233,21 @@ static void ipv4_send_dest_unreach(struct sk_buff *skb)
- 	    ip_hdr(skb)->version != 4 || ip_hdr(skb)->ihl < 5)
- 		return;
- 
--	memset(&opt, 0, sizeof(opt));
-+	memset(&parm, 0, sizeof(parm));
- 	if (ip_hdr(skb)->ihl > 5) {
- 		if (!pskb_network_may_pull(skb, ip_hdr(skb)->ihl * 4))
- 			return;
--		opt.optlen = ip_hdr(skb)->ihl * 4 - sizeof(struct iphdr);
-+		parm.opt.optlen = ip_hdr(skb)->ihl * 4 - sizeof(struct iphdr);
- 
- 		rcu_read_lock();
- 		dev = skb->dev ? skb->dev : skb_rtable(skb)->dst.dev;
--		res = __ip_options_compile(dev_net(dev), &opt, skb, NULL);
-+		res = __ip_options_compile(dev_net(dev), &parm.opt, skb, NULL);
- 		rcu_read_unlock();
- 
- 		if (res)
- 			return;
- 	}
--	__icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_UNREACH, 0, &opt);
-+	__icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_UNREACH, 0, &parm);
- }
- 
- static void ipv4_link_failure(struct sk_buff *skb)
+-printf "\nTests passed: %3d\n" ${nsuccess}
+-printf "Tests failed: %3d\n"   ${nfail}
++exit "${EXIT_STATUS}"
 -- 
 2.51.0
 
