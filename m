@@ -1,70 +1,111 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA421DC9B1;
-	Sun, 31 Aug 2025 20:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A0710F2;
+	Mon,  1 Sep 2025 02:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756670622; cv=none; b=UyTRS84Cu9Ck2bjUqc0Q1BVDJ7ZXV307zFhQ6Wl9/aCLZFkRqZmNpEjcCkRmMSjwOvz2ckbTAPikUwU+raA+TMV8DBD6bH040wwozgLknmd2vInvR5skyncPmWyGH4oDAFO+87TwdC6CGjhRD7Scs7x/NbaWbSK1p8EvWISCiRk=
+	t=1756695509; cv=none; b=gfkMNt/GB29MTMw8z8KXhPKWYf9Wt2fcS9fOelplgAtGJzUUMdFMrViaWwFrkVbYj+Rf2sZX0k7C1k4oowfgpIhP836StMvnpqqOGaeITVq0k97VfFsSc7eSw1U3KxwpPuUHyNL14sCUNq5lJCkGh2IVR2thmNDaIOGT/KEk8GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756670622; c=relaxed/simple;
-	bh=DPPkcb21slAFTG9P0dPfTMqmPZQZs0zA6URZPmIF4aQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ZJluhrdIMmKbtuxbpby0mMLhOBZKXIyb35hNCOnXKSZwkTtJteZJWoHGWRbC90LsfP8bpo8VdqKP4UwFquT9IgZabiuN86qQGvLJpaQOsO7HoSCf/cqb3U34CRWTxK3UOhQWvSjdhUWRJODgGtnLtlYtXYy8H5TaHntM59tSaU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=I9cY79ni; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756695509; c=relaxed/simple;
+	bh=8xc5xb7dUSiUl+N7EzdGMbpJHVkz/svcP008qWdxybM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TX4qpkC33U3COUT0M/ELwx19ssoSuDs90jzRbwiw39af91LV+JuOvcCl20YZBeGRag4a0t8Na444MZfEsL65Adwi3jh8oI9XSJBTVGdtsjgS1FWY3HUyACLQMP/gVJku+Kc8eaEiGOEejfNTySVCTV5Ij8rXDVI1q5eMuIBpv9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dvc2hXJL; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="I9cY79ni"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43B50C4CEED;
-	Sun, 31 Aug 2025 20:03:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1756670622;
-	bh=DPPkcb21slAFTG9P0dPfTMqmPZQZs0zA6URZPmIF4aQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=I9cY79niBHMOtwU5hsj7SCJxtuY2+gGtapyoxfF8v+481gGJZRLlj15P+mbhewE9U
-	 6WCA4kEeFGXjQw0z86jDb80fzDEAPnyf7wgNxXkEZ4JTzB9l4VP200eSkqXEZfZJhx
-	 Cw+qht02yc54pcjkoNk+/jH6Jws2xsl6DOYUNCbQ=
-Date: Sun, 31 Aug 2025 13:03:40 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
-Cc: richard.weiyang@gmail.com, Liam.Howlett@oracle.com, davem@davemloft.net,
- david@redhat.com, edumazet@google.com, gnoack@google.com, horms@kernel.org,
- kuba@kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com,
- mhocko@suse.com, mic@digikod.net, ming.lei@redhat.com, pabeni@redhat.com,
- rppt@kernel.org, shuah@kernel.org, skhan@linuxfoundation.org,
- surenb@google.com, vbabka@suse.cz
-Subject: Re: [PATCH v2 2/2] selftests: Replace relative includes with
- non-relative for kselftest.h and kselftest_harness.h
-Message-Id: <20250831130340.c096ab001dd38bcdb11146b8@linux-foundation.org>
-In-Reply-To: <20250830163949.20952-3-reddybalavignesh9979@gmail.com>
-References: <20250827144733.82277-1-reddybalavignesh9979@gmail.com>
-	<20250830163949.20952-1-reddybalavignesh9979@gmail.com>
-	<20250830163949.20952-3-reddybalavignesh9979@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dvc2hXJL"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24879ed7c17so29223955ad.1;
+        Sun, 31 Aug 2025 19:58:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756695507; x=1757300307; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8xc5xb7dUSiUl+N7EzdGMbpJHVkz/svcP008qWdxybM=;
+        b=dvc2hXJLCBG6VoVniW1uTEGbdXmI6Er2KinhjWxHazq8vPg346w4Ow+9xU/9GF0Gh1
+         JV0l5VoV1I1C8OymWdtzauJ3WzPdowgqa4GYf0EWmvPhq8fuN0lBsiOXmWsHqxjxzZCc
+         vJdXdAvqK1HtRuCDtVD1V0gtqfb05JRpIKhgG4V9pwm/5PRTCgNh4sVrFmZRQzO3MwdG
+         ZxxUGFrgjhR0KT7pxBFpQt9TkGCxjVEmTkWKUf1+Fq7o6OATjGfcHA19DCfQu6G2AzxT
+         7btFVWZTkhY8pipoJCN8+FJZvhahpnlzu1He78ME3gNQ97zKPYF0GIQweEKGCXklNE0Y
+         tPCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756695507; x=1757300307;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8xc5xb7dUSiUl+N7EzdGMbpJHVkz/svcP008qWdxybM=;
+        b=K2CIPzaNeuk0WQZCeV1dTXsj1RAYuiLbdUhA+XDCWkmAqMg7VeVcxCOvaWq96vxlgJ
+         UQ+Uxj7iFhi34tLxo+50dJNDL+0Jm+CMbmnDTOs81iIWrUdlBzkl2Jm1dmVFGIdkIpt1
+         54tIYO7HE2w+WwMC//NRctC4i7ZzPcOPevTdYRsJxbwIyBlP5L0IHH2Wm9h5/xP0EKMa
+         hbYAV7P9NA8cTY/EQB7UTuRuinpWAetiNw3S47Kyu0oBrJ7To08o8lEAdvV86N8Z8bS/
+         PxCok8Yd9EVojnkpG2U+jOnRRap+BmBZYuQqPomSVMvxbOc73ZuqBKHgKZcBACKwdN85
+         Ax6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVuUhM1taF2ClStPLxJ9++Xjr56d3xG+vtIbEBtP+O4r4tSm3RAsABjPNzm77yffLCGKNK1v9yc8dOFPzPGUbDh@vger.kernel.org, AJvYcCW+441w79owyqtp+sc6Fr8lVzlsgrtYqUa+jTER9QCU6PbiXX+YDfkAlrqYsVOlBIdXxwO+KtLqID80daivkFi8KaKc57q7@vger.kernel.org, AJvYcCWxXlJxEiW5nzhdZP0PBJjRR8qcfH3ZdVaY0AwIFV56MoF++FbuavO9D5Fthd4Cm4YXRC0h9NRdHTi/3HE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9T3mIP5C9gEe/haoYj/9WOU2XY+VmDeHyGO4JNx3h6zAfgu8Z
+	1ZfJq/u2aFSLQygLpT02T3KbSnAdgwLGR6hcnUTGwNuaoFKPty/I7BB9
+X-Gm-Gg: ASbGnct4ivi0AGbylarZMzq4moZWGgk+5KH3ulyCxcSF0lATda7pGTLR1/SKEv/zpxp
+	z/keF6a5o7A0El5VdVJ4ZTH6K32tf31mDHc1nmlsO84LeiYO3fqInFnLabTozpIWWRCIWKX8YPj
+	QfdhABTBfdNMX1Tqy3kVjyEcVlVDWp9F562ivxEzPVd9LZ72S2BLhUBIgaF778vBSoBqikgeHzU
+	dfcFzMM6c4lKifJbxlStzLzQzKR6AkeyQ2DayFtcSoGHJIY9AsA4yWgk9wrcoGzYCBufb/rg1ZS
+	5Rqsnjumxf34AW9ndDgv9lubzkidcfLu1mXAlwaQNqKOz2ShAV7Wns+48DAOAhnfb1DfPFV0IEu
+	mDqM+hPjLSipqVpe0Zln167l8tJbTXemxGGpR1QZrqDdscDBRA3JPpmsl2420Ea2Xx7QzId0APL
+	x/NwiJ0r8HmbciHqQivg==
+X-Google-Smtp-Source: AGHT+IFyHhiruqCGi2RbQrXtTVcp3oahgZsFHaTw5UBozGNvye3RIxU3ujQdE+d1aHrK4k6SNgCdrw==
+X-Received: by 2002:a17:903:2f8a:b0:24a:e25d:c704 with SMTP id d9443c01a7336-24ae25dc9a2mr7167595ad.47.1756695506906;
+        Sun, 31 Aug 2025 19:58:26 -0700 (PDT)
+Received: from server.. ([103.251.57.240])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249065d1b19sm86681015ad.131.2025.08.31.19.58.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 19:58:26 -0700 (PDT)
+From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+To: akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com,
+	davem@davemloft.net,
+	david@redhat.com,
+	edumazet@google.com,
+	gnoack@google.com,
+	horms@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	lorenzo.stoakes@oracle.com,
+	mhocko@suse.com,
+	mic@digikod.net,
+	ming.lei@redhat.com,
+	pabeni@redhat.com,
+	reddybalavignesh9979@gmail.com,
+	richard.weiyang@gmail.com,
+	rppt@kernel.org,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org,
+	surenb@google.com,
+	vbabka@suse.cz
+Subject: Re: [PATCH v2 2/2] selftests: Replace relative includes with non-relative for kselftest.h and kselftest_harness.h
+Date: Mon,  1 Sep 2025 08:28:16 +0530
+Message-ID: <20250901025816.1729-1-reddybalavignesh9979@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250831130340.c096ab001dd38bcdb11146b8@linux-foundation.org>
+References: <20250831130340.c096ab001dd38bcdb11146b8@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sat, 30 Aug 2025 22:09:49 +0530 Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com> wrote:
+Hi Andrew,
 
-> Replaced relative path of kselftest.h and kselftest_harness.h
-> to a non-relative path
+Sorry for the trouble caused by this patch. No problem on
+dropping the conflicting hunks.
 
-This patch causes me some trouble.  It alters things which are also
-altered in both mm.git's `mm' and `non-mm' branches.  I try to keep
-those branches independent and this patch won't apply to either branch.
-And I'd rather not mess around doing git tricks to address this just
-for one patch.
+I'll send a follow up patch after 6.17 to cover the missed
+conversion sites.
 
-So what I plan to do is to simply drop the problematic hunks from this
-patch.  So what will be queued in mm.git's mm-nonmm will have a few
-missed conversion sites.  Everything should still work OK and I'll ask
-that after 6.17 is released, you send along a followup patch which fixes
-those missed sites, OK?
+Thanks for your review.
 
+Bala Vignesh
