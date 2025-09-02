@@ -1,56 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3937A32C336;
-	Mon,  1 Sep 2025 18:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C211D5CC6;
+	Tue,  2 Sep 2025 02:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756752204; cv=none; b=lNTuiMPRXlyj5ySizLsM+l+Wkio2aNZG8KY2rdHth2B46ui9w/o9fzE72B/xWeOQ5uqK/Ol11oYiQx5nt3DyVwq/VVoaDIGK0y84pI3Sy8oi+7ELVikNpoQHetoNRRgmpFcIOPC6uqEgXCe3NHjpswqnCHZVjnjFu4xmrgt/c54=
+	t=1756780606; cv=none; b=D5pbgOd5TV6YZdxyOifY7oU/x1YpNY//Nq3w6/6FiInSZ2ZWHuCrYyOSfdOnkCTQbLQZ6P+ORoiSTngEePsFpxu1zC90dToYQPooMFYEXKSbEgb5NAKZmdQuuqhDypEoq0HWo4KcPXMlUxafJHhrptPPveE3ylcUU1tTHc5Ia78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756752204; c=relaxed/simple;
-	bh=BV2QsffPgCcItQbw3iqsgjwnrPEDHIbObuX55WuEqsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SNkXG4j0N7BV/DZ2wuD+szng+Duf9gU+9p+UlFwKK/Y4yrmMDxspZSslfKMXGhr0+JWHcHt5rpJCXZxDd0yhmR9U+4MKJ5RTNirIdapsBZCvX+ktVkHE0xED2wdeIlV+Bsm/BJktcOHc1bDcXCq4/px9dBEiEFETgTyMyqQZT6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iz/O2iYD; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756780606; c=relaxed/simple;
+	bh=G3UL+zhIEv+kcRJvzWxOeNkWYM7dcXV480M745+UwG4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mn/KPd54S0/eT98AzqZZUj0c5k9Ztf8jEENvY7w7gNkxPpLGZ/9P1qeAtEu1x8DMi6luxIy3I93vi/iSYcYCL6GpKAs6UyMJLCtY8oTIKxNhUp1wVQPhXTXkkUYSOBFVvvWb6RCX0YVfwWFm8tBgAbML70mcVpQCWkC0/RkorPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXl6S2XA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iz/O2iYD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A233C4CEF0;
-	Mon,  1 Sep 2025 18:43:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXl6S2XA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9EA7C4CEF0;
+	Tue,  2 Sep 2025 02:36:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756752204;
-	bh=BV2QsffPgCcItQbw3iqsgjwnrPEDHIbObuX55WuEqsc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iz/O2iYDD67lO+giYrZ7cx1t7PCq1FVSktNTJVdcsNDym0/f4t5xfP1cAgOrfsAvR
-	 ufS9Vznj01HBn7XaduqqxCeXQoOAzrZsrfiZyIWbI1NMka0kpUbiLdSP0kFf+4cznU
-	 IkvElZ7DR1LhrQgvTLDMgB0sNkFCViihEFHB/V8G4CXAPojr/RC5juylMoLCbjT5xM
-	 LwJ235ammDyCRLYqXys9ErfA1gpd9U7ca0T0kwslGRiE/EVZphUgSHi49jwaA15u6u
-	 8GGHO1XKfVV30UuIctOl4IwjKaEx5dh8zmIPjReALsOlXW7Nfc+UBcePhzQrhQThFy
-	 DeE3DezaERw/A==
-Date: Mon, 1 Sep 2025 11:43:22 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Ido Schimmel <idosch@nvidia.com>
-Cc: netdev@vger.kernel.org, pabeni@redhat.com, davem@davemloft.net,
- edumazet@google.com, horms@kernel.org, paul@paul-moore.com,
- dsahern@kernel.org, petrm@nvidia.com, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH net-next 0/8] ipv4: icmp: Fix source IP derivation in
- presence of VRFs
-Message-ID: <20250901114322.3f1ca417@kernel.org>
-In-Reply-To: <aLVb-ujDn_KhOt4V@shredder>
-References: <20250901083027.183468-1-idosch@nvidia.com>
-	<aLVb-ujDn_KhOt4V@shredder>
+	s=k20201202; t=1756780606;
+	bh=G3UL+zhIEv+kcRJvzWxOeNkWYM7dcXV480M745+UwG4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RXl6S2XAmGhkdjvce4ufYzb0PLNXcS4LLPvrip8VmIMWWjFMVRjeYl/x9QSce6SJj
+	 yYFu+FnclDhyIQ0a5c0jXDMrW1lQjZQJnIVbdrQDtJshiB+4zauHAkCDqBllPyXbUp
+	 v1EH/h3xa4GPOzFPvbB1TYDOgQZTKRAj1G+evSd5Z7WoSkJe3Uzcf7zhWO5wbU8/Jb
+	 5QqZGl/2VB7Tse+BZHPdfvSlp48zTnYPZdF5AgeCjBz+v2wCnAsDZCMg9CQ2M2gPV3
+	 uCdqF9NBl0Nl3gHYepNND4cS0bkXxWS6I8AOt2+WmOgkpxn7N5gfwy5iEjWWUgSGdE
+	 BMvzTluoYnr4w==
+Message-ID: <8e2200fd-65ce-46f4-ab28-2231ee85a2b5@kernel.org>
+Date: Mon, 1 Sep 2025 20:36:44 -0600
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/8] ipv4: cipso: Simplify IP options handling in
+ cipso_v4_error()
+Content-Language: en-US
+To: Ido Schimmel <idosch@nvidia.com>, netdev@vger.kernel.org
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+ edumazet@google.com, horms@kernel.org, paul@paul-moore.com,
+ petrm@nvidia.com, linux-security-module@vger.kernel.org
+References: <20250901083027.183468-1-idosch@nvidia.com>
+ <20250901083027.183468-2-idosch@nvidia.com>
+From: David Ahern <dsahern@kernel.org>
+In-Reply-To: <20250901083027.183468-2-idosch@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Mon, 1 Sep 2025 11:40:26 +0300 Ido Schimmel wrote:
-> Resolution is below. Please let me know if you prefer that I repost next
-> week in order to avoid the conflict.
+On 9/1/25 2:30 AM, Ido Schimmel wrote:
+> When __ip_options_compile() is called with an skb, the IP options are
+> parsed from the skb data into the provided IP option argument. This is
+> in contrast to the case where the skb argument is NULL and the options
+> are parsed from opt->__data.
+> 
+> Given that cipso_v4_error() always passes an skb to
+> __ip_options_compile(), there is no need to allocate an extra 40 bytes
+> (maximum IP options size).
+> 
+> Therefore, simplify the function by removing these extra bytes and make
+> the function similar to ipv4_send_dest_unreach() which also calls both
+> __ip_options_compile() and __icmp_send().
+> 
+> This is a preparation for changing the arguments being passed to
+> __icmp_send().
+> 
+> No functional changes intended.
+> 
+> Reviewed-by: Petr Machata <petrm@nvidia.com>
+> Signed-off-by: Ido Schimmel <idosch@nvidia.com>
+> ---
+>  net/ipv4/cipso_ipv4.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+> 
 
-Yes, please!
--- 
-pw-bot: defer
+Reviewed-by: David Ahern <dsahern@kernel.org>
+
+
