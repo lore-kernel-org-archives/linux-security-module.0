@@ -1,74 +1,74 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B883469F3
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Sep 2025 18:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B45C34AB05
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Sep 2025 18:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756836554; cv=none; b=O2L+K3ObcCEedwM8VvllfO7W7uJnjDQKNfVs0cJH+dIBI9FvpvOTJozdsV8NI3ePrZoqm715dZk07ezvQStLUQDbT9czVEvSUvhsaX+Z1OX7f32raltjWB8/aMeuGo0wBMY/lzIu6K68xc3UI5+sBmcKtjr7NM36CCq48a64ghw=
+	t=1756836609; cv=none; b=uMQD0IRUZg+GZvugJJUlFtG4iPZR4ldW5e5/7sFKp9Z5GcN/9QVF+SIU0h8Hl6DglBg3l+N58N/YOlxoM5ak8N2WwO7RqGNAsrtDNKwcHLNgB77Wc9XJmoYUA245rAxxIHhmFuhrjCedmoARKJMQNKLEDYpX9JtVf1wnNfAC0is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756836554; c=relaxed/simple;
-	bh=p6CVWu6DNUAbPiauCgm5nLeQC5frLxwLDGRHHz8QAF4=;
+	s=arc-20240116; t=1756836609; c=relaxed/simple;
+	bh=x37aYtQf1T+qQIfI57QuxqNoCxBKfMb0foRem8DJSzE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k6z72NtcGWOLEcDUEvvpAst7djp6K5VJRihdM/bRS4HaZTysb010gTJYlH1lcX36W8lY7nf6vHoCy/1c7jwC+/6QlJNaHEwsAOh7Ay28Gtrd7UjKT+vtziiOp44EIMlDZrt/izKC+II6JtvTMhaqeq2iVdXUzely1q96OeZ7YPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=RLIU86Y0; arc=none smtp.client-ip=185.125.188.122
+	 In-Reply-To:Content-Type; b=L2vFlB7Rf5Fz91vPUrmtgKizc5y2yYdJkk1CCUuX9qQsXpYmsZs/cL5o1oKlAtMzoCcsDKoK4POhzTB3tvhW8ndQKsV4dP+ULdJFTfIIG39cwMYwVD5OQqHUW0hyo8rZcLoDMyD/4qz8o1eB31o4+0zFiCqfPw0rJC0tLkKlS9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=RucdsYBn; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="RLIU86Y0"
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="RucdsYBn"
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id F06DE3F4A6
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Sep 2025 18:09:10 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 78E7E3F67E
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Sep 2025 18:10:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1756836551;
-	bh=gut242FNzqQvCbcBa+2mDwx9DOvk43Mv7SLcnnjnX18=;
+	s=20210705; t=1756836606;
+	bh=vF3jqd81vSB4gpqfdDwkV1Nw7zHIphbc4gz/EPHOY0E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=RLIU86Y0Eor6dVTyW6SCyCCxvC9/Ix+2keV/kkpeg8CRq6N4m+r6JBnjH6UikgMHr
-	 lAzdEO1H90ZWM4/2Ekjhnjtxyd5chv7NIjQHrpgcKx91dXA1ziVPhmTKZ0wTF15Ya3
-	 /JZeHJWOl9svI10oXwO/In8uaU7Dr4apfLGaqL5OkHwG46zLiG5CQitkTiGXjndch5
-	 xTEDTrREdphW1MRnvmB3yq8fOBBErB4aY8+v1Mx/N8TYrYrsU2e1Z0ulqLdneSp7uU
-	 NxseCcodDoczLgmKNwxX3Te/H7EKOlXCurmCNQPeoIQJvj32q2+rrsKTzSBELxTXMP
-	 ghRxj77RjM+9g==
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-329e55e686dso1175203a91.3
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Sep 2025 11:09:10 -0700 (PDT)
+	b=RucdsYBnKhqem84RSrMPYWd3Wa6iecbyS7dCmmRQvr5qJyrqUX9tuWszhcczRcgRe
+	 xPWuhBIvFWasFWlmtjWSfA7ybxYzqSOLGOCSS9eM7S9A756oBmBxIUeOJ/Km3Es/ZX
+	 eSIIgJXInCbjYu4sIQDSs+zT/8ZKko9cVaAoHjdZpj3KFW64Rly0snLxuZd64uKHPo
+	 ekrXuC/o6LXtTzfdUIAOFcVMemRBBcUN0Kb08GT6bp4WvpaZi5QphENHmCIm3HvRD3
+	 J439JkfVZsmc0cKxsm8XVdKDkCd3e3CcFXi2OklX6ZBY7dFuB5LFok4TgiPt8UYraT
+	 lga/byVApDZxg==
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-76e395107e2so5573179b3a.3
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Sep 2025 11:10:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756836549; x=1757441349;
+        d=1e100.net; s=20230601; t=1756836605; x=1757441405;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gut242FNzqQvCbcBa+2mDwx9DOvk43Mv7SLcnnjnX18=;
-        b=AfX8pffFNkvE1lQfs0m/uIsQGGYP1833E3uCzrD7nif3xQdUd7beQICzXSYBPVbFV1
-         bePQ2E0qMUUbr6CK1GRqgkRo4zeuZwoFn5dE2XDXE+rMnfsDS89U2CLFwva+ohX0Uz2t
-         X1EhcBRtdhaHdeEE+d8wrO2bYqdO2YfZepUj3dm3Z1PQfO1aUMqw7w24YkWOLKGKx5+U
-         Vt2I9o4Axe4OiiCa8YXkmUJLT33kA5H18KovdOrTeNObT+qVRbY15aQ/U5YjR5xoFhez
-         3jDxTu+d3NAnA9Ti9sBbsPrkcDSLioV2syFS6m74k0VJjfxGUhOc9yWzwGFwFbzGpNT9
-         DD+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXeHI9ttQjDGtKjmnAhZR3gCAWYhISGujXligiziXTDxNyCVUTs+3w+GkbVJOWqXATpaJhBblgP+WdDVr5hbfefC5PJ/a8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygMhpTQsFQdE95z4T/JgsPjD4vynb9GihqtSG5G+PEiO7XGDMm
-	u8k0ON4Qyl7L0oJ1+5fm055yrMGNTc1RF7hBx4h1d0nLaVd99rjD1aJTWhwaASKSGbQsy0zovNS
-	q2yEzZsDa3ietko0DAW4M+DWMlkVUqToycb83BTJ5Nm1IUbNUrGKvDGS3f3M4XECrA6Kzs8wY8c
-	pSMPFxmUDjbYWCcKrrtg==
-X-Gm-Gg: ASbGncvUDQhvBBCbQd5fNmS/nShJWtVCjSjrSrlyZOG8LNlqNE9QH+eXqJd6q8gsdel
-	bl3XKf8pV3ho86kHI/gkTS2TCFcag34WAicOaedDZR+P0nQkkOWPTzhzH15ONxw2GKh0poBGLW9
-	NMzIOlkzyW70JNqO9CbVwG5q8BYMFgqvsHFPG8bddYx2+INCbGV+wXxKqVSdfimPDAHxTVVcuma
-	3WOJsx8aXqRu3NWxknLN/Yzb2Rj0IpFbcgFQ2CRmJj0eIYitxqyMTe4jL3evosDA1nzK703nPuT
-	iOWi8p0aRu+ogBAf59/kgk8clZizT1pn4Ls5MaV+yqJccHaQ/U/+dg==
-X-Received: by 2002:a17:90b:4f8c:b0:327:fd72:bd6a with SMTP id 98e67ed59e1d1-328156e2dd2mr14344780a91.29.1756836549499;
-        Tue, 02 Sep 2025 11:09:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEyPVnP+4wmsTAMgV3o6IqyTLkZ5QGrhqOcGlnnJB0mrKXgi5Dwl9XXonao20L1u55WhoIMLw==
-X-Received: by 2002:a17:90b:4f8c:b0:327:fd72:bd6a with SMTP id 98e67ed59e1d1-328156e2dd2mr14344744a91.29.1756836548910;
-        Tue, 02 Sep 2025 11:09:08 -0700 (PDT)
+        bh=vF3jqd81vSB4gpqfdDwkV1Nw7zHIphbc4gz/EPHOY0E=;
+        b=WH/ayQeUw0kc9GR/R71D1t++2GF3YXP8hne4y7d8my0ZTaoSNz0LIxacsT1iO95xuz
+         7dv4M3w/hInLnaUl5987b6aMJP8QGa1pe9IDwIiLrOtJcLKLy/Cg23G2/9RVxivtmFMF
+         BLuBMDMKbMvT8KjvrtbaKDSHvUifPeEckZXcDB4skdE+DhhWNOZicbTVlB2IQZ5ZKXea
+         dK0LQzuJZZiwfp0I8GaK/a3zNu8Aql8uI/Pq+LApXBw5qcNb00HIzqSmCsfT/sIg5jSh
+         rPztsMgH9zgvkR7VgZVl/kievTMkbKMoXuhksf5ADBIQolOpXkG98aIqeLchKPPDPJRV
+         X8Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5ei9Bnt6fM42cJ+GYTuCyzexTgZb0eQsgkTgCbCAjXXLSeVuhsjpC3LzrrrZJObX1exC6tZnshygBwnsO1seBlifD3XM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHViydq+KHwzXvuMJ0AZz4/hu9ORv+BwFIg31RpSBXi0ASrLHw
+	eAibUZpPVqLUPAfbcnLHnyue15xxtqak0EfsgYOocFrpNBZqW+gd9sIOyslIjz1iMr/EVeAHzgF
+	gumlJ7nwUGq5q178Mgyaphu5GFiov9LsoOYSJGpLHnoNG+8zwiKejPFpgwT9C2jJoyOdd1H0lUS
+	L1nB4epae08Im133BiKA==
+X-Gm-Gg: ASbGncubYBH7zIkaW8QME2tYQYQxxwS2/sx/EXp2uxVhSPkzJe+yVoTJXjLVJA4nJPk
+	yyegdyWgaca4r7Gb7G9O9u7eiAN6VEX6LfVr6a43MkKp9ueSjrqi7I2jhP/rsFDgJgcdb8U0ATt
+	pswLwVHXX/czkhywMrhKOyG9muwKRtEFOIEVdNSP96XBx6QSNMpYfO7lvUACkeoIXM/xQUfRVgs
+	TrrQCBN4z6dATIYvA2tPFbwt0TcW81jVhsHEOm4nuz8bGIQWFovzhHqTkKht13hQMjSgXbVJZ+E
+	onBbx+HZtmRsT1i6f3EgzGmmIRimTVYrAUpL3R3DQaG6z6J3T0aTuA==
+X-Received: by 2002:a05:6a20:394a:b0:246:5be:ca75 with SMTP id adf61e73a8af0-24605becd8bmr1112240637.19.1756836604651;
+        Tue, 02 Sep 2025 11:10:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEAdky4X83dCdLD8W2rdTaUFzawINMvKdk8EFavw2MC7ZaX/ZlbN7IUOQIlY+PSUl6Dzc5J2w==
+X-Received: by 2002:a05:6a20:394a:b0:246:5be:ca75 with SMTP id adf61e73a8af0-24605becd8bmr1112201637.19.1756836604144;
+        Tue, 02 Sep 2025 11:10:04 -0700 (PDT)
 Received: from [192.168.192.85] ([50.47.129.42])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-3276fcd6232sm20459303a91.16.2025.09.02.11.09.07
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7722a4e1ca7sm14187917b3a.71.2025.09.02.11.10.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 11:09:08 -0700 (PDT)
-Message-ID: <e97f2f08-7bf3-434b-a9b6-d2729161f738@canonical.com>
-Date: Tue, 2 Sep 2025 11:09:07 -0700
+        Tue, 02 Sep 2025 11:10:03 -0700 (PDT)
+Message-ID: <fa97f146-828c-419a-9365-b45d7cb91f35@canonical.com>
+Date: Tue, 2 Sep 2025 11:10:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -76,7 +76,7 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 27/34] tomoyo: move initcalls to the LSM framework
+Subject: Re: [PATCH v3 28/34] safesetid: move initcalls to the LSM framework
 To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
  linux-integrity@vger.kernel.org, selinux@vger.kernel.org
 Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
@@ -89,7 +89,7 @@ Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
  Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
  Xiu Jianfeng <xiujianfeng@huawei.com>
 References: <20250814225159.275901-36-paul@paul-moore.com>
- <20250814225159.275901-63-paul@paul-moore.com>
+ <20250814225159.275901-64-paul@paul-moore.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -135,62 +135,60 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20250814225159.275901-63-paul@paul-moore.com>
+In-Reply-To: <20250814225159.275901-64-paul@paul-moore.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 8/14/25 15:50, Paul Moore wrote:
 > Reviewed-by: Kees Cook <kees@kernel.org>
+> Acked-by: Micah Morton <mortonm@chromium.org>
 > Signed-off-by: Paul Moore <paul@paul-moore.com>
 
 Reviewed-by: John Johansen <john.johansen@canonical.com>
 
 > ---
->   security/tomoyo/common.h        | 2 ++
->   security/tomoyo/securityfs_if.c | 4 +---
->   security/tomoyo/tomoyo.c        | 1 +
->   3 files changed, 4 insertions(+), 3 deletions(-)
+>   security/safesetid/lsm.c        | 1 +
+>   security/safesetid/lsm.h        | 2 ++
+>   security/safesetid/securityfs.c | 3 +--
+>   3 files changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
-> index 0e8e2e959aef..3b2a97d10a5d 100644
-> --- a/security/tomoyo/common.h
-> +++ b/security/tomoyo/common.h
-> @@ -924,6 +924,8 @@ struct tomoyo_task {
->   
->   /********** Function prototypes. **********/
->   
-> +int tomoyo_interface_init(void);
-> +
->   bool tomoyo_address_matches_group(const bool is_ipv6, const __be32 *address,
->   				  const struct tomoyo_group *group);
->   bool tomoyo_compare_number_union(const unsigned long value,
-> diff --git a/security/tomoyo/securityfs_if.c b/security/tomoyo/securityfs_if.c
-> index 7e69747b2f77..33933645f5b9 100644
-> --- a/security/tomoyo/securityfs_if.c
-> +++ b/security/tomoyo/securityfs_if.c
-> @@ -233,7 +233,7 @@ static void __init tomoyo_create_entry(const char *name, const umode_t mode,
->    *
->    * Returns 0.
->    */
-> -static int __init tomoyo_interface_init(void)
-> +int __init tomoyo_interface_init(void)
->   {
->   	struct tomoyo_domain_info *domain;
->   	struct dentry *tomoyo_dir;
-> @@ -269,5 +269,3 @@ static int __init tomoyo_interface_init(void)
->   	tomoyo_load_builtin_policy();
->   	return 0;
->   }
-> -
-> -fs_initcall(tomoyo_interface_init);
-> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-> index ed0f7b052a85..a015cf0c4a00 100644
-> --- a/security/tomoyo/tomoyo.c
-> +++ b/security/tomoyo/tomoyo.c
-> @@ -617,4 +617,5 @@ DEFINE_LSM(tomoyo) = {
->   	.flags = LSM_FLAG_LEGACY_MAJOR,
->   	.blobs = &tomoyo_blob_sizes,
->   	.init = tomoyo_init,
-> +	.initcall_fs = tomoyo_interface_init,
+> diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
+> index 9a7c68d4e642..d5fb949050dd 100644
+> --- a/security/safesetid/lsm.c
+> +++ b/security/safesetid/lsm.c
+> @@ -289,4 +289,5 @@ static int __init safesetid_security_init(void)
+>   DEFINE_LSM(safesetid_security_init) = {
+>   	.id = &safesetid_lsmid,
+>   	.init = safesetid_security_init,
+> +	.initcall_fs = safesetid_init_securityfs,
 >   };
+> diff --git a/security/safesetid/lsm.h b/security/safesetid/lsm.h
+> index d346f4849cea..bf5172e2c3f7 100644
+> --- a/security/safesetid/lsm.h
+> +++ b/security/safesetid/lsm.h
+> @@ -70,4 +70,6 @@ enum sid_policy_type _setid_policy_lookup(struct setid_ruleset *policy,
+>   extern struct setid_ruleset __rcu *safesetid_setuid_rules;
+>   extern struct setid_ruleset __rcu *safesetid_setgid_rules;
+>   
+> +int safesetid_init_securityfs(void);
+> +
+>   #endif /* _SAFESETID_H */
+> diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
+> index 8e1ffd70b18a..ece259f75b0d 100644
+> --- a/security/safesetid/securityfs.c
+> +++ b/security/safesetid/securityfs.c
+> @@ -308,7 +308,7 @@ static const struct file_operations safesetid_gid_file_fops = {
+>   	.write = safesetid_gid_file_write,
+>   };
+>   
+> -static int __init safesetid_init_securityfs(void)
+> +int __init safesetid_init_securityfs(void)
+>   {
+>   	int ret;
+>   	struct dentry *policy_dir;
+> @@ -345,4 +345,3 @@ static int __init safesetid_init_securityfs(void)
+>   	securityfs_remove(policy_dir);
+>   	return ret;
+>   }
+> -fs_initcall(safesetid_init_securityfs);
 
