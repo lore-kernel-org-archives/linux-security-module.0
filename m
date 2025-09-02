@@ -1,229 +1,302 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052B52D9784;
-	Tue,  2 Sep 2025 12:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F23340D82
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Sep 2025 16:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756817996; cv=none; b=hR/xgvcDIkhjnjcV0HP0H/3maVj4Y4M5uPpCkOxJl2Mi6uHSjGx8SEY5NlowYVGmPTBoW8/EIOs68EOnqi9vNswbZlrJzF1dPsDWgNBkWHKZCXERniSctUf0hcFRoMq8wsg2JAD57b9mthzcM9DViE1KxUYgty2HKB9MYN10Y4U=
+	t=1756830840; cv=none; b=rOFIvoXTDMJjWnNXcwe/xuPBD3x/upWvVp6CrOVmRe/mRHtAwpok3PvBz2yX2V+E+15/ag/g8DN4q2piDsx93Y90DYm8yrqvhfOrf1o3wkd72kezqQdIR02GvPBwOZ5bYMe5I/tYN17fNWUQyormKzVFnMWffjHkrpTnx3iPiDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756817996; c=relaxed/simple;
-	bh=l7NMA9SCuOeZytQ1wMt0IZ0DxTjEV3/p7b8oa+JmsNg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lyqu1Q9WxO9RcfyIuV+VUeROu0ERcY79aKaKicp1NuWkv8OcXfpqF9NOYlMDNbmbVjjjsrOkVKyK1qrZD5PXLrKsY5lM/DtTL/Zd0WNJtim2yKdF58gbuP5iCpNz0pUz/zX+AlKHsw+au7L5bx1Y+z1Kws3eThQ8WyEX0LDf7m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cGQlF3lMqz1HCj6;
-	Tue,  2 Sep 2025 20:58:01 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 894C6140157;
-	Tue,  2 Sep 2025 20:58:46 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwBHRqW26bZovoWeAA--.18504S2;
-	Tue, 02 Sep 2025 13:57:36 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: paul@paul-moore.com,
-	zohar@linux.ibm.com,
-	roberto.sassu@huawei.com
-Cc: linux-security-module@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	selinux@vger.kernel.org,
-	john.johansen@canonical.com,
-	wufan@kernel.org,
-	mic@digikod.net,
-	kees@kernel.org,
-	mortonm@chromium.org,
-	casey@schaufler-ca.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	nicolas.bouchinet@oss.cyber.gouv.fr,
-	xiujianfeng@huawei.com
-Subject: [PATCH] ima,evm: move initcalls to the LSM framework
-Date: Tue,  2 Sep 2025 14:54:57 +0200
-Message-ID: <20250902125457.2689519-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <9f35539de7188c6b853c55b76958a286131f5928.camel@huaweicloud.com>
-References: <9f35539de7188c6b853c55b76958a286131f5928.camel@huaweicloud.com>
+	s=arc-20240116; t=1756830840; c=relaxed/simple;
+	bh=3CKPjXS+62km7X0/6aJotIckvejq/CGVbLS5Rl+XgF4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nv+wLcN37l5KcxEo/K/NKy9EZ8bmz2ZjpnUDuGjjoXyoXDxcD+91ZX49NiSOhmII9x1ESNAU4H6pI6UlReNzSQ5ATW2Eaouz1Clky/LSNtnS0vGXd285Xffjq3/HtI9waYZzH40BKxNm8is0cYOXTrQ+ocicj0RA92pKFQt2fs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=S8oNdGl0; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="S8oNdGl0"
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id CD7583F679
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Sep 2025 16:33:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1756830834;
+	bh=sOZkHxXo1/YNUXVW+3Mywfo/hX5/YhPe3KHdeFDN1f0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=S8oNdGl0SYgU48NbMZ0wtJg5UUCmD33O4kGNlw1vjwPmr+QudmmuaQHFuTmjomoS2
+	 9/ZRlCo7RtaOZ71pW68DGpK8TSGBafw56uhN9cU9GMTmVDFHn8PlkAK4pN54wqOjal
+	 UekII21ZjRCuy1i4FIMeZF32GA2Z0uJYlcqxV6zYQtTymnMIT4vj49+zrFhN8AhdaI
+	 EshuxMbPeno8PK7GEfJv1bJVlVbuHOJfDj/Sqv4zAB59xipsNilTePw+kO6uO7pIIk
+	 dunqhHvRsfD9UzgFSvKqRYUsiMTlRCt5O/N9AOG38udv1ta0WJU1ZY7GTkAE4ES2sf
+	 btfkzLUhl76jA==
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b471737e673so7942260a12.1
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Sep 2025 09:33:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756830833; x=1757435633;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sOZkHxXo1/YNUXVW+3Mywfo/hX5/YhPe3KHdeFDN1f0=;
+        b=FZ6bKvxoGWeQHe7adDkwDNiz4JkULdiBUwPtbcdXskHZy4+iuHPBIXOvBtvJerQWAY
+         YJEx+SBOFGPwp9LAry058JxV+SwrETzntxwAYPrnkw77zZ5rusen4kUJXHzNlFZ/THoc
+         dv19LzPmsiwoxfyDhrGxCl0rF89bQiT4IHk3Ds42OgafEMHpJTnt6joAkSTUMwotmb2Z
+         i4QT9MQ/E80TdYP2hBpz0nET9uwQS+s/uzdvmsWiha1zPxg1IIqo/Ybbpg2N/hMWRH8n
+         Oh3r1KRiCaewtWMSIuie1qUdkGZmlRMw4aBSFGlkxJhpH2YVdnp+8ojXN7CZUfYSq0jq
+         kxFw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1ksu3COpb5kuoiRYgWXAq84R9r6HzWPiWeV5+KgEC3UA2tHCunrsaz5hXRaNCfRxkBLw+Dcx3ky2y5tEsNCXRQBRSvSo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywY2oSn+UfBfd8jjxKQu/RUW/tcZfSe1AITmU460/qA/i85qRq
+	awJceZ9ncfTbd43stnCHmmw1cqLJ27qokpq/MjhHm2WUErf+lQAOhztwZzH0TRrtFIgJzZkbqx/
+	lyVSWF2HRzAg2cBPuNTU1bRkZ2yEdbOYMG70PWM3pglW1P4gUTFk/hkydqssyf38BsOYvGlyNyL
+	RHqIGk70UEha1PfE2s9w==
+X-Gm-Gg: ASbGncvCohUeXwU3DXSXf5SGpGUMjRXF/+Dl8IW5PUZTTwrkUc5GyrAm/k2dJAj0Rzm
+	9RUdV4rDXRWIxA8Bzygnv8+9jx2NS4wGakqcn1IRH5V3ctw1DTki1uIAhtT4tQz1yR3fBLocji9
+	Lf+R0AVqsjfxDTGsPMr5AaItSS20LajEealiJnZJq5pIRFEh9vIM7unbi1XJHQWDVdn0gO9ScPS
+	17t2s4OIIjeAIoGHtqZDHO5IX+hgDgEZtBOzSOZBvBwPFxNZWNipBJAr8OFRK4+d8ooKHpZljSs
+	VmPBzclkaOVJTTbITrukMHASu4lfugx8wT5gggu/xOce1GXLdT2KVg==
+X-Received: by 2002:a17:902:ecc6:b0:249:1440:5999 with SMTP id d9443c01a7336-24944b90a10mr163464195ad.61.1756830833223;
+        Tue, 02 Sep 2025 09:33:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGM3sSE5hqRkohJHJ79GZFqFQPo94ZW/qo1PvBbWIWUDEh9i8cbS39dxmznTeUhUQcCIbd68A==
+X-Received: by 2002:a17:902:ecc6:b0:249:1440:5999 with SMTP id d9443c01a7336-24944b90a10mr163463885ad.61.1756830832788;
+        Tue, 02 Sep 2025 09:33:52 -0700 (PDT)
+Received: from [192.168.192.85] ([50.47.129.42])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-249037223d7sm133806205ad.32.2025.09.02.09.33.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 09:33:52 -0700 (PDT)
+Message-ID: <b5b60236-3aa5-4dcc-add6-978bb6dfce31@canonical.com>
+Date: Tue, 2 Sep 2025 09:33:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwBHRqW26bZovoWeAA--.18504S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Xw1kuFWrGr1DGw1kAF4fKrg_yoW7XF45pa
-	1qgay8Gr18AFWIkF97Aa43CFWfK3yFg34UWws8Cw1vyasxZr1UXr97AryUCr13WrW5tFyr
-	twnIvw43Aw1DtFJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-	w2AFwI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-	xUV-txDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQATBGi2lUAE-wAAsm
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/34] lsm: consolidate lsm_allowed() and prepare_lsm()
+ into lsm_prepare()
+To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+ linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
+ <roberto.sassu@huawei.com>, Fan Wu <wufan@kernel.org>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+ Xiu Jianfeng <xiujianfeng@huawei.com>
+References: <20250814225159.275901-36-paul@paul-moore.com>
+ <20250814225159.275901-39-paul@paul-moore.com>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20250814225159.275901-39-paul@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Paul Moore <paul@paul-moore.com>
+On 8/14/25 15:50, Paul Moore wrote:
+> Simplify and consolidate the lsm_allowed() and prepare_lsm() functions
+> into a new function, lsm_prepare().
+> 
+> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
 
-This patch converts IMA and EVM to use the LSM frameworks's initcall
-mechanism. It moved the integrity_fs_init() call to ima_fs_init() and
-evm_init_secfs(), to work around the fact that there is no "integrity" LSM,
-and introduced integrity_fs_fini() to remove the integrity directory, if
-empty. Both integrity_fs_init() and integrity_fs_fini() support the
-scenario of being called by both the IMA and EVM LSMs.
+Looks good
 
-It is worth mentioning that this patch does not touch any of the
-"platform certs" code that lives in the security/integrity/platform_certs
-directory as the IMA/EVM maintainers have assured me that this code is
-unrelated to IMA/EVM, despite the location, and will be moved to a more
-relevant subsystem in the future.
+Reviewed-by: John Johansen <john.johhansen@canonical.com>
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/evm/evm_main.c  |  3 +--
- security/integrity/evm/evm_secfs.c | 11 +++++++++--
- security/integrity/iint.c          | 14 ++++++++++++--
- security/integrity/ima/ima_fs.c    | 11 +++++++++--
- security/integrity/ima/ima_main.c  |  4 ++--
- security/integrity/integrity.h     |  2 ++
- 6 files changed, 35 insertions(+), 10 deletions(-)
-
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index db8e324ed4e6..73d500a375cb 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -1179,6 +1179,5 @@ DEFINE_LSM(evm) = {
- 	.init = init_evm_lsm,
- 	.order = LSM_ORDER_LAST,
- 	.blobs = &evm_blob_sizes,
-+	.initcall_late = init_evm,
- };
--
--late_initcall(init_evm);
-diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-index b0d2aad27850..c26724690cec 100644
---- a/security/integrity/evm/evm_secfs.c
-+++ b/security/integrity/evm/evm_secfs.c
-@@ -302,10 +302,16 @@ int __init evm_init_secfs(void)
- 	int error = 0;
- 	struct dentry *dentry;
- 
--	evm_dir = securityfs_create_dir("evm", integrity_dir);
--	if (IS_ERR(evm_dir))
-+	error = integrity_fs_init();
-+	if (error < 0)
- 		return -EFAULT;
- 
-+	evm_dir = securityfs_create_dir("evm", integrity_dir);
-+	if (IS_ERR(evm_dir)) {
-+		error = -EFAULT;
-+		goto out;
-+	}
-+
- 	dentry = securityfs_create_file("evm", 0660,
- 				      evm_dir, NULL, &evm_key_ops);
- 	if (IS_ERR(dentry)) {
-@@ -329,5 +335,6 @@ int __init evm_init_secfs(void)
- out:
- 	securityfs_remove(evm_symlink);
- 	securityfs_remove(evm_dir);
-+	integrity_fs_fini();
- 	return error;
- }
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 068ac6c2ae1e..8ec1a3436a71 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -42,8 +42,11 @@ void __init integrity_load_keys(void)
- 		evm_load_x509();
- }
- 
--static int __init integrity_fs_init(void)
-+int __init integrity_fs_init(void)
- {
-+	if (integrity_dir)
-+		return 0;
-+
- 	integrity_dir = securityfs_create_dir("integrity", NULL);
- 	if (IS_ERR(integrity_dir)) {
- 		int ret = PTR_ERR(integrity_dir);
-@@ -58,4 +61,11 @@ static int __init integrity_fs_init(void)
- 	return 0;
- }
- 
--late_initcall(integrity_fs_init)
-+void __init integrity_fs_fini(void)
-+{
-+	if (!integrity_dir || !simple_empty(integrity_dir))
-+		return;
-+
-+	securityfs_remove(integrity_dir);
-+	integrity_dir = NULL;
-+}
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 87045b09f120..012a58959ff0 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -499,9 +499,15 @@ int __init ima_fs_init(void)
- 	struct dentry *dentry;
- 	int ret;
- 
-+	ret = integrity_fs_init();
-+	if (ret < 0)
-+		return ret;
-+
- 	ima_dir = securityfs_create_dir("ima", integrity_dir);
--	if (IS_ERR(ima_dir))
--		return PTR_ERR(ima_dir);
-+	if (IS_ERR(ima_dir)) {
-+		ret = PTR_ERR(ima_dir);
-+		goto out;
-+	}
- 
- 	ima_symlink = securityfs_create_symlink("ima", NULL, "integrity/ima",
- 						NULL);
-@@ -555,6 +561,7 @@ int __init ima_fs_init(void)
- out:
- 	securityfs_remove(ima_symlink);
- 	securityfs_remove(ima_dir);
-+	integrity_fs_fini();
- 
- 	return ret;
- }
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index eade8e1e3cb1..b703bfc2f470 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -1283,6 +1283,6 @@ DEFINE_LSM(ima) = {
- 	.init = init_ima_lsm,
- 	.order = LSM_ORDER_LAST,
- 	.blobs = &ima_blob_sizes,
-+	/* Start IMA after the TPM is available */
-+	.initcall_late = init_ima,
- };
--
--late_initcall(init_ima);	/* Start IMA after the TPM is available */
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index c2c2da691123..7b388b66cf80 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -114,6 +114,8 @@ struct ima_file_id {
- 
- int integrity_kernel_read(struct file *file, loff_t offset,
- 			  void *addr, unsigned long count);
-+int __init integrity_fs_init(void);
-+void __init integrity_fs_fini(void);
- 
- #define INTEGRITY_KEYRING_EVM		0
- #define INTEGRITY_KEYRING_IMA		1
--- 
-2.43.0
+> ---
+>   security/lsm_init.c | 109 +++++++++++++++++++-------------------------
+>   1 file changed, 46 insertions(+), 63 deletions(-)
+> 
+> diff --git a/security/lsm_init.c b/security/lsm_init.c
+> index 124213b906af..6f40ab1d2f54 100644
+> --- a/security/lsm_init.c
+> +++ b/security/lsm_init.c
+> @@ -123,22 +123,6 @@ static void __init append_ordered_lsm(struct lsm_info *lsm, const char *from)
+>   		   is_enabled(lsm) ? "enabled" : "disabled");
+>   }
+>   
+> -/* Is an LSM allowed to be initialized? */
+> -static bool __init lsm_allowed(struct lsm_info *lsm)
+> -{
+> -	/* Skip if the LSM is disabled. */
+> -	if (!is_enabled(lsm))
+> -		return false;
+> -
+> -	/* Not allowed if another exclusive LSM already initialized. */
+> -	if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && exclusive) {
+> -		init_debug("exclusive disabled: %s\n", lsm->name);
+> -		return false;
+> -	}
+> -
+> -	return true;
+> -}
+> -
+>   static void __init lsm_set_blob_size(int *need, int *lbs)
+>   {
+>   	int offset;
+> @@ -151,54 +135,53 @@ static void __init lsm_set_blob_size(int *need, int *lbs)
+>   	*need = offset;
+>   }
+>   
+> -static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+> +/**
+> + * lsm_prepare - Prepare the LSM framework for a new LSM
+> + * @lsm: LSM definition
+> + */
+> +static void __init lsm_prepare(struct lsm_info *lsm)
+>   {
+> -	if (!needed)
+> +	struct lsm_blob_sizes *blobs;
+> +
+> +	if (!is_enabled(lsm)) {
+> +		set_enabled(lsm, false);
+> +		return;
+> +	} else if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && exclusive) {
+> +		init_debug("exclusive disabled: %s\n", lsm->name);
+> +		set_enabled(lsm, false);
+>   		return;
+> -
+> -	lsm_set_blob_size(&needed->lbs_cred, &blob_sizes.lbs_cred);
+> -	lsm_set_blob_size(&needed->lbs_file, &blob_sizes.lbs_file);
+> -	lsm_set_blob_size(&needed->lbs_ib, &blob_sizes.lbs_ib);
+> -	/*
+> -	 * The inode blob gets an rcu_head in addition to
+> -	 * what the modules might need.
+> -	 */
+> -	if (needed->lbs_inode && blob_sizes.lbs_inode == 0)
+> -		blob_sizes.lbs_inode = sizeof(struct rcu_head);
+> -	lsm_set_blob_size(&needed->lbs_inode, &blob_sizes.lbs_inode);
+> -	lsm_set_blob_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
+> -	lsm_set_blob_size(&needed->lbs_key, &blob_sizes.lbs_key);
+> -	lsm_set_blob_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
+> -	lsm_set_blob_size(&needed->lbs_perf_event, &blob_sizes.lbs_perf_event);
+> -	lsm_set_blob_size(&needed->lbs_sock, &blob_sizes.lbs_sock);
+> -	lsm_set_blob_size(&needed->lbs_superblock, &blob_sizes.lbs_superblock);
+> -	lsm_set_blob_size(&needed->lbs_task, &blob_sizes.lbs_task);
+> -	lsm_set_blob_size(&needed->lbs_tun_dev, &blob_sizes.lbs_tun_dev);
+> -	lsm_set_blob_size(&needed->lbs_xattr_count,
+> -			  &blob_sizes.lbs_xattr_count);
+> -	lsm_set_blob_size(&needed->lbs_bdev, &blob_sizes.lbs_bdev);
+> -	lsm_set_blob_size(&needed->lbs_bpf_map, &blob_sizes.lbs_bpf_map);
+> -	lsm_set_blob_size(&needed->lbs_bpf_prog, &blob_sizes.lbs_bpf_prog);
+> -	lsm_set_blob_size(&needed->lbs_bpf_token, &blob_sizes.lbs_bpf_token);
+> -}
+> -
+> -/* Prepare LSM for initialization. */
+> -static void __init prepare_lsm(struct lsm_info *lsm)
+> -{
+> -	int enabled = lsm_allowed(lsm);
+> -
+> -	/* Record enablement (to handle any following exclusive LSMs). */
+> -	set_enabled(lsm, enabled);
+> -
+> -	/* If enabled, do pre-initialization work. */
+> -	if (enabled) {
+> -		if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && !exclusive) {
+> -			exclusive = lsm;
+> -			init_debug("exclusive chosen:   %s\n", lsm->name);
+> -		}
+> -
+> -		lsm_set_blob_sizes(lsm->blobs);
+>   	}
+> +
+> +	/* Mark the LSM as enabled. */
+> +	set_enabled(lsm, true);
+> +	if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && !exclusive) {
+> +		init_debug("exclusive chosen:   %s\n", lsm->name);
+> +		exclusive = lsm;
+> +	}
+> +
+> +	/* Register the LSM blob sizes. */
+> +	blobs = lsm->blobs;
+> +	lsm_set_blob_size(&blobs->lbs_cred, &blob_sizes.lbs_cred);
+> +	lsm_set_blob_size(&blobs->lbs_file, &blob_sizes.lbs_file);
+> +	lsm_set_blob_size(&blobs->lbs_ib, &blob_sizes.lbs_ib);
+> +	/* inode blob gets an rcu_head in addition to LSM blobs. */
+> +	if (blobs->lbs_inode && blob_sizes.lbs_inode == 0)
+> +		blob_sizes.lbs_inode = sizeof(struct rcu_head);
+> +	lsm_set_blob_size(&blobs->lbs_inode, &blob_sizes.lbs_inode);
+> +	lsm_set_blob_size(&blobs->lbs_ipc, &blob_sizes.lbs_ipc);
+> +	lsm_set_blob_size(&blobs->lbs_key, &blob_sizes.lbs_key);
+> +	lsm_set_blob_size(&blobs->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
+> +	lsm_set_blob_size(&blobs->lbs_perf_event, &blob_sizes.lbs_perf_event);
+> +	lsm_set_blob_size(&blobs->lbs_sock, &blob_sizes.lbs_sock);
+> +	lsm_set_blob_size(&blobs->lbs_superblock, &blob_sizes.lbs_superblock);
+> +	lsm_set_blob_size(&blobs->lbs_task, &blob_sizes.lbs_task);
+> +	lsm_set_blob_size(&blobs->lbs_tun_dev, &blob_sizes.lbs_tun_dev);
+> +	lsm_set_blob_size(&blobs->lbs_xattr_count,
+> +			  &blob_sizes.lbs_xattr_count);
+> +	lsm_set_blob_size(&blobs->lbs_bdev, &blob_sizes.lbs_bdev);
+> +	lsm_set_blob_size(&blobs->lbs_bpf_map, &blob_sizes.lbs_bpf_map);
+> +	lsm_set_blob_size(&blobs->lbs_bpf_prog, &blob_sizes.lbs_bpf_prog);
+> +	lsm_set_blob_size(&blobs->lbs_bpf_token, &blob_sizes.lbs_bpf_token);
+>   }
+>   
+>   /* Initialize a given LSM, if it is enabled. */
+> @@ -361,7 +344,7 @@ static void __init ordered_lsm_init(void)
+>   		ordered_lsm_parse(builtin_lsm_order, "builtin");
+>   
+>   	for (lsm = ordered_lsms; *lsm; lsm++)
+> -		prepare_lsm(*lsm);
+> +		lsm_prepare(*lsm);
+>   
+>   	report_lsm_order();
+>   
+> @@ -505,7 +488,7 @@ int __init early_security_init(void)
+>   	for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
+>   		if (!lsm->enabled)
+>   			lsm->enabled = &lsm_enabled_true;
+> -		prepare_lsm(lsm);
+> +		lsm_prepare(lsm);
+>   		initialize_lsm(lsm);
+>   	}
+>   
 
