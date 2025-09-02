@@ -1,74 +1,74 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60B7283144
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Sep 2025 17:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E309F320A31
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Sep 2025 17:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756835482; cv=none; b=Sqf9gqxUkTGsquXcaXJE0k/07VDnzd3C1vufIvDJxdEtr1wbUUIKxK0hIFGtvERcna2iBatcVpuyI3FzX7JPnt8V0mJtdUs0VsTApePHG63OlmPSKXvh7YMbEGq4uMLB3EbqzFHrjQLRi7rc3S0vwauqh6QfNxC+E8Ai2S2CokU=
+	t=1756835581; cv=none; b=a8pU3DYGRghVuqWaueZPyxceHx6USEb32Lf8SVaN31jV6VSsqAyBhElXQ6IX9DgYrL+AelK9P5xZJFMYh0X6Nh4uwULIdiXf4iaE3Ob5pg17ag4nP6p5N8hxUTJMCGMXFtVsvUUwHkNIEG8ZjSrmsiuekuRqch/F3vNaQ5wVFv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756835482; c=relaxed/simple;
-	bh=ij3QU8NGC7NeXdaBvPYfa9JhjcDXbQ6Y+v9D62BQ/uQ=;
+	s=arc-20240116; t=1756835581; c=relaxed/simple;
+	bh=JEOupSin7pKtPN3pihuGrO9WryLFaHbNLWHULw2oJt4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PIqdhh8h04lV+ae+5hvoaaI2p8X9b9Kb9AWWkUiBHSxmg6jICbEMUrJuEZwjECmZ8XUMhl2giU8sV4gceb7ROdqDmsDrh28P95fQEsimBEL3fGrp3YYD4F3QqkOEllQZruqUg59wPc9neU5KOuypgMksJkW2LqzAwFswBnF/KtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=rTaPzSNJ; arc=none smtp.client-ip=185.125.188.122
+	 In-Reply-To:Content-Type; b=nC8PXLbroTGqVCgpSK6EbY0Tl0fgs+8w0vuiAfjrd9omuVQwOOsDYkwFfdY6JQsTTwrQ4L1io1adSpwmIxxaHCihklKYaYVTSS3Co1MPlXKz9xYG0s0SLTCs06CJW6ZVbxAo93EMFX5FDlBh/9YSEsiGIOmltuVZ0MQWerCmnLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=OHk0Jj4H; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="rTaPzSNJ"
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="OHk0Jj4H"
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 573FF3F52D
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Sep 2025 17:51:19 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 6F0873F679
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Sep 2025 17:52:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1756835479;
-	bh=HfZznrJfB1dICVVaT+f4HXRi6Umt1xD9tUrHuERyGaU=;
+	s=20210705; t=1756835578;
+	bh=kfAtA0V7pdZn4XM2+1ZyJYSF7zYI6cGbncjMpse8tG4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=rTaPzSNJZz85SNjx2d/adCUu706QA32IlpuL2xH47gzDtsUfWBJZlNfjJXO3oqeyh
-	 8pyb8gm9KY4Bobvs3hAoTJM4rIbE+s6kjpeUhJ8c8E+tCDNZt9f2yb6KJBxAD5H/iV
-	 Pt4wzy1ERRd8HsgwJlsoOcKMcAXWgkL9thm4woDhbHZxRQjl7yegMPrWuBgA5PHTav
-	 H74svW4nu4HJvE9ZNrlQjzAvGfnS5fdDOGHPxCwCMPkUR+6ryyWmzmCbzt4D/8ZFlX
-	 2B2/ix6KO+TMEgIbK/n32wSJaq4lxw8Mc3JUXxgMxnefCW7EYx3I9x+V28osBhurSB
-	 Zuaf1YWfIq4NQ==
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b4c46fbb997so103960a12.0
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Sep 2025 10:51:19 -0700 (PDT)
+	b=OHk0Jj4HTMYtZs8mzQexV4jHvuXxEMnavgh2Rs1MAYQE9zF4cVoUr5Ks5wvFa8oiX
+	 7WLhYxAUlyMiHMTG591rBKJ3zGdc7I924h7HTOC56HC/NibQ5r37BF5QEFEMW9ZSme
+	 YTmjEHZXY509NpGiJBxW4BXEPSNxoXCQ2rAlivuC0lcXKJKuQlQeFqiZZ7SCdWTxpG
+	 7WuhfZXMteiLP7O4FzPhz/e39uKByKtiSo8Lr5TRCD4SN/OJCGuQg+UeLFS+79cHm5
+	 CQ4XwMeJI+J99cKNwFRgS8wKB4ZjEuSOnYCXS9ubvV0nMJ1vfTXaBUiXWkA5O1k8PS
+	 J/EZMExQ4x5FQ==
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-24b4aa90c20so7650515ad.2
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Sep 2025 10:52:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756835476; x=1757440276;
+        d=1e100.net; s=20230601; t=1756835576; x=1757440376;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HfZznrJfB1dICVVaT+f4HXRi6Umt1xD9tUrHuERyGaU=;
-        b=Jx/YJOCXJtKdvfAvoulAXKTCLd7G1nbEQufWjHHSX5Wm1txaSrRTCuoufY4fWO7OJS
-         Xqd1hfWXErav024HHjCgTgmJm3eh8fOrmlDM6SG6PQ/rRxVjlQ8dyoDvF9+p4eFeuh3d
-         6STxdtp7qNAR0dFs/ScKUKT72mn/X4tsD626RoTnvY3elHt0aGEil2L7XgMj96PE5cGJ
-         aCr3Yz8evXt4dTNrjbzxwAKIvQvdMuG0bsaIXmszwI9kQwHLLgsxBKFY5grxKZQkWcYC
-         kLhJZE8Od5CmviH7fpRRl7sJIE6bNkIdNYURUgJdv5mLdt6SNB669SfKfqnBSl/N4+5M
-         Sjug==
-X-Forwarded-Encrypted: i=1; AJvYcCVPna/WM9M+IuCkKHBzUiul3iGv7VQskE2Lp1hJhZEVNo6yRm7TWJplNMWMSkckrZbntCs16QqL7e6FfDrQOmJ2Safw7MM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzED1JI5ZBOUlbz1bcIFiOh9HyZx8LaoTFTOG2ggZVBeUqr/jC2
-	6JlEC8q/ps3rZSoo+UHtMKFpmt2AUKcqtVN9IkgbY4zJhh+rL4ykn3haymtr3iMO2XVxXc9NK7J
-	+jS2f85eSu7anpz38Xa5nLhdT/+rjP5L9S+JIV9LWOynUhAsw96+FT0qHltGIxSjvOcSIATwETt
-	BbgGC8jAm+XlnwJNZGHw==
-X-Gm-Gg: ASbGnctSt4EkcfBpkD2ckikPeEYpZxTxg22bXcm6uj5mQdvu7UNSzpu99/iQGldhGrc
-	AUYPYVfoVaKeVZto63EPzf7efrHX0nYRIJHGlpUk1ss0qCjhvGhILzf1dWKuhrwFRsCRwkp6yL5
-	iX1ipkHhWRNoQR4Q1rFCBfeOnVYXpFi2jujD4z71aM9hXRS+tTC0qSjmFVpWvNwsMTsyQdhmdEg
-	5DFyaPbmn/zZDczEh5vnzBG64w6hVnQiwyW+nQKNKxMjl70GeJZxOqeSQiEWCpQzQYuLLkVlntn
-	yWMUJUimPw4VzAsdtkOo7HUxlAypgUOvogK/l5Wi6h1tfdV2awkqfA==
-X-Received: by 2002:a17:90b:3148:b0:325:6598:30d7 with SMTP id 98e67ed59e1d1-3280d364e5dmr16357095a91.16.1756835476427;
-        Tue, 02 Sep 2025 10:51:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3NfrNr0u5Dl1pH4RPhQ18KvyHS94K+Vbw2+IqYN4A6Mu17B0XKZuKf5zW+cDevvlZZMUBGA==
-X-Received: by 2002:a17:90b:3148:b0:325:6598:30d7 with SMTP id 98e67ed59e1d1-3280d364e5dmr16357053a91.16.1756835476018;
-        Tue, 02 Sep 2025 10:51:16 -0700 (PDT)
+        bh=kfAtA0V7pdZn4XM2+1ZyJYSF7zYI6cGbncjMpse8tG4=;
+        b=AMJLGYoObGabdqAJiqc0pf0KwHZsLhDKovli/IKEUNztdqsyzp0dbU9sARi3bvnMKe
+         Hqm9K5qM1MnvwmQjO8BTQEkFPMl4TL0Z3NNgXegqdQJTn5gLJudOPEioC+Rigd0zdQWK
+         hXdj7BQhrJeXWK8izBshoqyYVeamvygeF1ssRy1NDk8KNwte55y6f8um8scvnC1NDIRW
+         m0pQnJwLt2RuAH6KipqKupL7PLXZq7RDPeFpOyETPp+ec6bgshFt+Yibic2s1V+O0A2a
+         hHjj1ZNlnvmJRS7IThEvup7JqolNiGYTJwMxGoNpLvkLZILjBO3+OKj2GYto3NL1Du8Z
+         XMAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWI644TV4k2qXJtbWUEWfXfuAAEiM/rFMmEl/OLnqUdIZlrZEzyxcP/PKZy5h0ycXmy1TSu9r5DJH2PJK7f0pioFlkWvZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvF78btBdoIf92WZC9MFhejRaDYWpADzAq1W9Rk9RWwl4eGDSc
+	kuFdNovU/W+7BiDUTV/CVzxCQjNCkBcMdxPhlCkDOlwfCRfPBzh2fUfvdd1LU1J9g/b3AIuYasd
+	q5ic08hrDOXJ5cv0pwxgyNbA9v3bgVTUIptF11QMFRTNVY2Be9x+T642tS6jDiNDOG6adwQkpjt
+	ZPRErlI8dTPfp5MgNWLw==
+X-Gm-Gg: ASbGncsroaY9OMpChmSDDZAHddfIYDNeTSCcpdJP891aSf+esRn4BftJmvSDYgc8Vrn
+	zVvs5uFMcwMGjGk5ocx4U1mI82aah79+0/PCQxWErOE0DbLArt06szRKvWr99834LUaTPPnkB3M
+	BuOqX6FGg990FSC1auTBGVmlKN6dxPMGVsm6RI/03sBmYQFyI8O76K5Lj0+nsN4Ojs3rK68Nu/g
+	Pg3ob2timqpPWHpbAb/iGIfDuK/GtWmA3m3Z0ePitCKJIJmDcacKQQt5DKpJaeLTRl5bY/tS1/P
+	7xM/8mxmBBpk5Qt/Tq45S++3dSL+sdwUkeMbFDUp2hZ+3RM5E8pJ8A==
+X-Received: by 2002:a17:903:388d:b0:249:1f6b:3268 with SMTP id d9443c01a7336-249448e3b08mr179956965ad.18.1756835576544;
+        Tue, 02 Sep 2025 10:52:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFaGktaLb6RznTiVgBA0DK5/XFfETIc/FFrAST2RBlUIOVcDtBDWqoTklWzRRQZ4IN5On5ZvA==
+X-Received: by 2002:a17:903:388d:b0:249:1f6b:3268 with SMTP id d9443c01a7336-249448e3b08mr179956755ad.18.1756835576156;
+        Tue, 02 Sep 2025 10:52:56 -0700 (PDT)
 Received: from [192.168.192.85] ([50.47.129.42])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b4cd366a909sm12145798a12.52.2025.09.02.10.51.15
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-249067de9f1sm136566315ad.151.2025.09.02.10.52.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 10:51:15 -0700 (PDT)
-Message-ID: <00faa5b3-819a-40b4-99b1-5f6a3b7d9831@canonical.com>
-Date: Tue, 2 Sep 2025 10:51:14 -0700
+        Tue, 02 Sep 2025 10:52:55 -0700 (PDT)
+Message-ID: <6b35b7bf-5043-40bc-867d-2ef349cd6a75@canonical.com>
+Date: Tue, 2 Sep 2025 10:52:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -76,7 +76,7 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 24/34] loadpin: move initcalls to the LSM framework
+Subject: Re: [PATCH v3 25/34] ipe: move initcalls to the LSM framework
 To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
  linux-integrity@vger.kernel.org, selinux@vger.kernel.org
 Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
@@ -89,7 +89,7 @@ Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
  Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
  Xiu Jianfeng <xiujianfeng@huawei.com>
 References: <20250814225159.275901-36-paul@paul-moore.com>
- <20250814225159.275901-60-paul@paul-moore.com>
+ <20250814225159.275901-61-paul@paul-moore.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -135,53 +135,62 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20250814225159.275901-60-paul@paul-moore.com>
+In-Reply-To: <20250814225159.275901-61-paul@paul-moore.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 8/14/25 15:50, Paul Moore wrote:
-> Acked-by: Kees Cook <kees@kernel.org>
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> Tested-by: Fan Wu <wufan@kernel.org>
+> Acked-by: Fan Wu <wufan@kernel.org>
 > Signed-off-by: Paul Moore <paul@paul-moore.com>
 
 Reviewed-by: John Johansen <john.johansen@canonical.com>
 
 > ---
->   security/loadpin/loadpin.c | 15 ++++++++-------
->   1 file changed, 8 insertions(+), 7 deletions(-)
+>   security/ipe/fs.c  | 4 +---
+>   security/ipe/ipe.c | 1 +
+>   security/ipe/ipe.h | 2 ++
+>   3 files changed, 4 insertions(+), 3 deletions(-)
 > 
-> diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-> index b9ddf05c5c16..273ffbd6defe 100644
-> --- a/security/loadpin/loadpin.c
-> +++ b/security/loadpin/loadpin.c
-> @@ -270,11 +270,6 @@ static int __init loadpin_init(void)
->   	return 0;
+> diff --git a/security/ipe/fs.c b/security/ipe/fs.c
+> index 0bb9468b8026..076c111c85c8 100644
+> --- a/security/ipe/fs.c
+> +++ b/security/ipe/fs.c
+> @@ -193,7 +193,7 @@ static const struct file_operations enforce_fops = {
+>    * Return: %0 on success. If an error occurs, the function will return
+>    * the -errno.
+>    */
+> -static int __init ipe_init_securityfs(void)
+> +int __init ipe_init_securityfs(void)
+>   {
+>   	int rc = 0;
+>   	struct ipe_policy *ap;
+> @@ -244,5 +244,3 @@ static int __init ipe_init_securityfs(void)
+>   	securityfs_remove(root);
+>   	return rc;
 >   }
->   
-> -DEFINE_LSM(loadpin) = {
-> -	.id = &loadpin_lsmid,
-> -	.init = loadpin_init,
-> -};
 > -
->   #ifdef CONFIG_SECURITY_LOADPIN_VERITY
+> -fs_initcall(ipe_init_securityfs);
+> diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
+> index 2426441181dc..71644748ed56 100644
+> --- a/security/ipe/ipe.c
+> +++ b/security/ipe/ipe.c
+> @@ -95,4 +95,5 @@ DEFINE_LSM(ipe) = {
+>   	.id = &ipe_lsmid,
+>   	.init = ipe_init,
+>   	.blobs = &ipe_blobs,
+> +	.initcall_fs = ipe_init_securityfs,
+>   };
+> diff --git a/security/ipe/ipe.h b/security/ipe/ipe.h
+> index fb37513812dd..25cfdb8f0c20 100644
+> --- a/security/ipe/ipe.h
+> +++ b/security/ipe/ipe.h
+> @@ -23,4 +23,6 @@ struct ipe_bdev *ipe_bdev(struct block_device *b);
+>   struct ipe_inode *ipe_inode(const struct inode *inode);
+>   #endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
 >   
->   enum loadpin_securityfs_interface_index {
-> @@ -434,10 +429,16 @@ static int __init init_loadpin_securityfs(void)
->   	return 0;
->   }
->   
-> -fs_initcall(init_loadpin_securityfs);
-> -
->   #endif /* CONFIG_SECURITY_LOADPIN_VERITY */
->   
-> +DEFINE_LSM(loadpin) = {
-> +	.id = &loadpin_lsmid,
-> +	.init = loadpin_init,
-> +#ifdef CONFIG_SECURITY_LOADPIN_VERITY
-> +	.initcall_fs = init_loadpin_securityfs,
-> +#endif /* CONFIG_SECURITY_LOADPIN_VERITY */
-> +};
+> +int ipe_init_securityfs(void);
 > +
->   /* Should not be mutable after boot, so not listed in sysfs (perm == 0). */
->   module_param(enforce, int, 0);
->   MODULE_PARM_DESC(enforce, "Enforce module/firmware pinning");
+>   #endif /* _IPE_H */
 
