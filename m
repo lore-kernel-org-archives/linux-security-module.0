@@ -1,74 +1,74 @@
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF5C31B13D
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Sep 2025 16:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E00F2F6594
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Sep 2025 16:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756831044; cv=none; b=VB8+lofVPWONaoUodjPx4O7Q4jvwXnwqoD/V4be4Av9K32tG9oVdAjPnJuYV1PC0XGctGsiA66q7W1AQ8Q1bybUcLa6IGG4Zi/5SVhZu3Wv6Ab+pZT5iI4xslwMz6WdEW5NudYqBEj93FnY0Tpk1rjKkrQlPKMSqR1TklXLN5WI=
+	t=1756832035; cv=none; b=q1S9QCwGT8vYxh3CbeVlRQEyuAfKF/zjQsEeR3p/JNAKCzy6MZkHyPcxzYfFRwb6VEsXYEWn/CKwlCJNknsGXhEnShoiAy4bILEApQN2lLYm8AxqB9Vb1/UrLsX6gwSisZxVZ4RdBH3GW816ND0GD3ykg7Ws93NU6+sK1VQJr38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756831044; c=relaxed/simple;
-	bh=lX5CVDR6umZkvzSyLIyqOeZWiWEsX7qhlSNvuLHh9Ek=;
+	s=arc-20240116; t=1756832035; c=relaxed/simple;
+	bh=30XQ6tkc1YhEQ6UZWGp9RGftrfvqpn/DxIVuoenzK38=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UV6ugkwLoSM3MqyXws3gZfYypI+HNICW3wxvQKAYtvSVeGiek8Xb05y5Iuon2gc8buIdOSKM3VGvOfcatP3JnIeWA5modLUnoex99I6M8g397F4U3wO03zwjzRNC0auITaph3tOxUDUA4Ufd4GBSJRmDXLupzpFb1mtEv4/sNU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=bGu4k1if; arc=none smtp.client-ip=185.125.188.123
+	 In-Reply-To:Content-Type; b=n5hHpg3/PAuclq6MERwQZayKW1/bG+DfXUH2btRmyAI0w4Nx2AgsNj8lMfdCNOgTpx6D9jmI8uaKIvpsAVDCoDXOjQnLREGENdE4ANBlqGKJbxSGpoPzy+p8jt0/CC6//2Nom7jVCude98nqvWPdbnsTinUKnOAvvoKBVSKcgOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=vlXaI+pB; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="bGu4k1if"
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="vlXaI+pB"
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 687B53F675
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Sep 2025 16:37:21 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 93EC43F284
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Sep 2025 16:53:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1756831041;
-	bh=X79iWGzsrYcNCnMB1bw3eBVILKAFS1+ceM31KkkDuqk=;
+	s=20210705; t=1756832028;
+	bh=T+7jN7cEM1G09nGFPNHBEb1kKweKEUGK2LzUhIAIkyQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=bGu4k1ifM2HZBEUxAiJKS32iILtIIRmQvKoKuGeEY/6RYx0zfaI5ZMpnVmNd0uMZm
-	 oawdp1SsnMoewaYWnA0gzcOeN/D1RVp+slRjkQdHnKEtXiDjll/4+1uxRTQavEEgff
-	 dCTa6IiuEnx8BdSkncXHeigvmcnykVcNdGb+GmB7TtKEvOXXPg1HaxHK9ZZ8u7Vhm3
-	 JqZXTqZKp/2VbmcOyolM2XlaNTknuyq7fTvgkCM2lCRiqqlWh9Q67JA1v8KcyUuHu1
-	 xzSTlcYK1NTuUrZv1/DypmgXAHJKV5ahil4KPvi3x9gOAzyuFcSFqrlnsF4UgLn6yQ
-	 DNzw+OaU/XGZw==
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-77260b29516so3483648b3a.3
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Sep 2025 09:37:21 -0700 (PDT)
+	b=vlXaI+pB5ZzCfvW+VwQyUW4baLko5r7jVqj/AkhnC5z4XYUVPzCk/jBZ1kOJOXy6D
+	 lfTd8cn36KJqNWNpRLQjLLOe8Y3z1xKCOJRZB04oUIqqoieeo/Jr0nMRQOMYWWiMGH
+	 DBRc7mJbeP2GEEOA+u0YzwvhxtvoxGoMYNNqLDagkpAQ1diDs9tKzxx3tCDsitgcpa
+	 gxDNnBEdsgPDzIE0e22KzQiuSUsXAjAfqadX/S18fsezqg6JoMTowL4hBusDxPcJXm
+	 5FqUpdyt5Cs9o8tjnXbiV4K3Yn8c+LyLyonQsLD7XCSzZgmVZ+TeX3yRtZfBZy7+wj
+	 dS/+u2YVbzFBQ==
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b4c46fbb997so65984a12.0
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Sep 2025 09:53:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756831040; x=1757435840;
+        d=1e100.net; s=20230601; t=1756832027; x=1757436827;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=X79iWGzsrYcNCnMB1bw3eBVILKAFS1+ceM31KkkDuqk=;
-        b=g0WuXBzd7Z91tXxPKq4ItYcmqDEyvkH3sfsG2tFK/wAAxOJjv6Do7zJUELS0wJuGRd
-         rQTfUwCqGUP2W1Kb6LgwpwRumGlp5l9zLefshAbQHvgx/Suxqi0ReVgG3cFyuxYmlKR8
-         ypJXNK9zLYmc7YV+7p0VUxpSbVUfNhQoBdLgSQmV7GRCCt3uOuYhEFpvIg4UcqB6wxIl
-         CABWel/UVOtPvYI7faLaTOqBUNm7HpQj0VyJZjZb7BN2fLDVspfRyZez+rBSBnQyctH5
-         eRQ4ODCgKw2wTG/Xl9HbCpcFuPIWtYgFaubQP1rY87TgkNMDKDWySfaA2OyVjTdIsCyZ
-         SaKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSVGTDlx04NihLR6J33O5F49r/uBjRMVWvgmbk9yQcP+41tFqGMlf8CLFTHIWevhKLJcNTQj+sXpBJzSdUyuTKlACtJhw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOBnXuN09mzCKlSRyPOt2mhiyeNr5GJBUary8eaTrGcxFT1Pqu
-	alXKvWJVPACD3rirD/Jn9DSX8LLRLZAlWDSQJJqOr+VN2xbGIXRapMCiSVtG7pwMzslnA8++NOo
-	LPBRm2zYScrTeZtYHJFT3fgtT1aWwsP8byCF5jJUBWbwvopj9k3DU419Y6NqBwiXFz+un13cwid
-	G/lyIIi5/yGY4FSIulag==
-X-Gm-Gg: ASbGncsVc72RJWBYldVZow6lMlilagLJ6obW6dFG4tAxf7nF2gqrwq10HeSnB+uwqiQ
-	Ql3HN3U8lt2TJ8B39pDmbKF6HIn46IVykb/e+0XLUDvjqwo0BMC2m9aS9DBpRvy86lhVDmoahM/
-	d7zeeRyS2RlUIuub1f/7VCJ0n/2ygt65GQOqO6mDFLppXVLbINYAxiiUSy+3pymc6loM0LqJA4a
-	8/EU/COzlSN8dvef6c+zbq2Oz+97GxGcLD61yWf7NxW81tpUZL+jvJMFhfW1HfDMcobPNCovhF9
-	dXU7mN1kUpoBJQA7h7SH8TIJR9Lyw6FFdEgZt2nu1oUhG4ZUfTyPwg==
-X-Received: by 2002:a05:6a20:3ca8:b0:243:15b9:765d with SMTP id adf61e73a8af0-243d6f8822fmr16295174637.55.1756831039659;
-        Tue, 02 Sep 2025 09:37:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH8Ub5Kte9WUe0ugpXEllAAi4l/lJFZkdi3buuoyU5sFQEgZKzqzK/zS+/fOSMOWBW9VR6MSg==
-X-Received: by 2002:a05:6a20:3ca8:b0:243:15b9:765d with SMTP id adf61e73a8af0-243d6f8822fmr16295122637.55.1756831039033;
-        Tue, 02 Sep 2025 09:37:19 -0700 (PDT)
+        bh=T+7jN7cEM1G09nGFPNHBEb1kKweKEUGK2LzUhIAIkyQ=;
+        b=QLYCb/GykblQLtfAM1xtQS707s2w+JixLjTljVC+RWS39I46GqSuIjsr3C/Sevhu3j
+         RS7h95/ctvIQSrZ7r5x1lEER5usAHe2sYc+Q+gTPF6AeuE3MmNI8WwGH8rFjAEpks+fw
+         fn5ia38iv65XU5rT74uSaaL9InZQrl+oX2Uv5vSBT8x5owl+gx6ARy4EgxdQhIfuBLbn
+         /QJpOoX6yK8IJ5Zlsh/zru7IB8ucWrJ/108W8UnBcXy5f1wXVtoLPSuEKi3dUCehSBtj
+         xYyGSPM/PUrWgl1UFm2lQCmcWfn3YwFizLn8zty1OiHg/Wy+Gnm2rs3LwlBkVsrpjsFH
+         HkpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUo+kEMV2jRzz8nlPktZs4pkibL/giHRtQKEiUxYyFcjk8ypy9oeLanrC8cmu/9Sa2QqhWzS9uDrxAhsD2WCJoKrYtMskw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk1y7jEtEY1tBpdGTPhD+hObFax9m0u5VzO4yhmolV/rW0NS1h
+	Kjf5pEk6iDHVm51Ax3CInpVp0IhaTXyBxhIz0QI6yBu6aKagCeDR3huwRvLwWpLYoAIB9TCH6fV
+	Rg9qES8Xn6pnYA4WTOC2F0DrwbvPMWCotovFmpnewWUXaEfv6id6tqtxExNAbxiJswUbdI9F5uo
+	HjZX5KYswhhoUaV3qslg==
+X-Gm-Gg: ASbGncsYBEaszmP0YvQSbq3hX8EwTwMWaWBuckd56bFNj+SIrARnhkcCUxP1LjOEaRG
+	dNyWJZasF8DPk/rBAEWjtXBlz2HxW6+BYtFXSAsgDCQWSvmx1P1/ejU8V/zSBSKDptbv9MOq269
+	ZTG9czMAG+0UvmJN5AtvycNC9VwKHFOIZCdj+dkUIQdC4RBmu5sk3+K70Qe+DOPcBQJq9ETActU
+	EaT06gB6vPGdfWGP89Cea1oAuxCWUik4uFG6ulJae3DYTE9hQxise0jBxlKy5QyNsxF8dLpj4y4
+	ehectjW1fDG9PR7vA1fVQY5mh0WOoUIGDLMkIt3m2RlZY4fiQ76JRA==
+X-Received: by 2002:a17:902:c945:b0:24a:b06e:f814 with SMTP id d9443c01a7336-24ab06efee6mr112020145ad.12.1756832027112;
+        Tue, 02 Sep 2025 09:53:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGJRhxCp5UPNj8Y+BWmMbFgfZTYKNYOe1kOAFS3XfBptXI28wng/yTH0b8iccEaONmGWl4Ytg==
+X-Received: by 2002:a17:902:c945:b0:24a:b06e:f814 with SMTP id d9443c01a7336-24ab06efee6mr112019895ad.12.1756832026696;
+        Tue, 02 Sep 2025 09:53:46 -0700 (PDT)
 Received: from [192.168.192.85] ([50.47.129.42])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b4e5684da06sm9299895a12.17.2025.09.02.09.37.17
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-249037022d9sm138103805ad.23.2025.09.02.09.53.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 09:37:18 -0700 (PDT)
-Message-ID: <e3a54d30-85c4-482f-be91-6d10e0ff6e0e@canonical.com>
-Date: Tue, 2 Sep 2025 09:37:17 -0700
+        Tue, 02 Sep 2025 09:53:46 -0700 (PDT)
+Message-ID: <e1e26c8b-5f8e-42ce-9044-59c57032ee5a@canonical.com>
+Date: Tue, 2 Sep 2025 09:53:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -76,8 +76,8 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/34] lsm: introduce looping macros for the
- initialization code
+Subject: Re: [PATCH v3 05/34] lsm: integrate report_lsm_order() code into
+ caller
 To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
  linux-integrity@vger.kernel.org, selinux@vger.kernel.org
 Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
@@ -90,7 +90,7 @@ Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
  Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
  Xiu Jianfeng <xiujianfeng@huawei.com>
 References: <20250814225159.275901-36-paul@paul-moore.com>
- <20250814225159.275901-40-paul@paul-moore.com>
+ <20250814225159.275901-41-paul@paul-moore.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -136,170 +136,81 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20250814225159.275901-40-paul@paul-moore.com>
+In-Reply-To: <20250814225159.275901-41-paul@paul-moore.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 8/14/25 15:50, Paul Moore wrote:
-> There are three common for loop patterns in the LSM initialization code
-> to loop through the ordered LSM list and the registered "early" LSMs.
-> This patch implements these loop patterns as macros to help simplify the
-> code and reduce the change for errors.
-                       ^
-                       chance
+> With only one caller of report_lsm_order(), insert the function's code
+> directly into the caller and ger rid of report_lsm_order().
+> 
+> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
 
-otherwise looks good, and you can add my
 
 Reviewed-by: John Johansen <john.johansen@canonical.com>
 
-
-> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
 > ---
->   security/lsm_init.c | 42 +++++++++++++++++++++++++++---------------
->   1 file changed, 27 insertions(+), 15 deletions(-)
+>   security/lsm_init.c | 33 ++++++++++++---------------------
+>   1 file changed, 12 insertions(+), 21 deletions(-)
 > 
 > diff --git a/security/lsm_init.c b/security/lsm_init.c
-> index 6f40ab1d2f54..18828a65c364 100644
+> index 18828a65c364..09afa7ad719e 100644
 > --- a/security/lsm_init.c
 > +++ b/security/lsm_init.c
-> @@ -32,6 +32,15 @@ static __initdata bool debug;
->   			pr_info(__VA_ARGS__);				\
->   	} while (0)
+> @@ -291,26 +291,6 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+>   	kfree(sep);
+>   }
 >   
-> +#define lsm_order_for_each(iter)					\
-> +	for ((iter) = ordered_lsms; *(iter); (iter)++)
-> +#define lsm_for_each_raw(iter)						\
-> +	for ((iter) = __start_lsm_info;					\
-> +	     (iter) < __end_lsm_info; (iter)++)
-> +#define lsm_early_for_each_raw(iter)					\
-> +	for ((iter) = __start_early_lsm_info;				\
-> +	     (iter) < __end_early_lsm_info; (iter)++)
-> +
->   static int lsm_append(const char *new, char **result);
+> -static void __init report_lsm_order(void)
+> -{
+> -	struct lsm_info **lsm, *early;
+> -	int first = 0;
+> -
+> -	pr_info("initializing lsm=");
+> -
+> -	/* Report each enabled LSM name, comma separated. */
+> -	lsm_early_for_each_raw(early) {
+> -		if (is_enabled(early))
+> -			pr_cont("%s%s", first++ == 0 ? "" : ",", early->name);
+> -	}
+> -	lsm_order_for_each(lsm) {
+> -		if (is_enabled(*lsm))
+> -			pr_cont("%s%s", first++ == 0 ? "" : ",", (*lsm)->name);
+> -	}
+> -
+> -	pr_cont("\n");
+> -}
+> -
+>   /**
+>    * lsm_early_cred - during initialization allocate a composite cred blob
+>    * @cred: the cred that needs a blob
+> @@ -341,7 +321,9 @@ static void __init lsm_early_task(struct task_struct *task)
 >   
->   /* Save user chosen LSM */
-> @@ -96,9 +105,10 @@ static bool __init exists_ordered_lsm(struct lsm_info *lsm)
+>   static void __init ordered_lsm_init(void)
 >   {
->   	struct lsm_info **check;
+> +	unsigned int first = 0;
+>   	struct lsm_info **lsm;
+> +	struct lsm_info *early;
 >   
-> -	for (check = ordered_lsms; *check; check++)
-> +	lsm_order_for_each(check) {
->   		if (*check == lsm)
->   			return true;
-> +	}
->   
->   	return false;
->   }
-> @@ -209,7 +219,7 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
->   	char *sep, *name, *next;
->   
->   	/* LSM_ORDER_FIRST is always first. */
-> -	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> +	lsm_for_each_raw(lsm) {
->   		if (lsm->order == LSM_ORDER_FIRST)
->   			append_ordered_lsm(lsm, "  first");
->   	}
-> @@ -224,8 +234,7 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
->   		 * if the selected one was separately disabled: disable
->   		 * all non-matching Legacy Major LSMs.
->   		 */
-> -		for (major = __start_lsm_info; major < __end_lsm_info;
-> -		     major++) {
-> +		lsm_for_each_raw(major) {
->   			if ((major->flags & LSM_FLAG_LEGACY_MAJOR) &&
->   			    strcmp(major->name, chosen_major_lsm) != 0) {
->   				set_enabled(major, false);
-> @@ -241,7 +250,7 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
->   	while ((name = strsep(&next, ",")) != NULL) {
->   		bool found = false;
->   
-> -		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> +		lsm_for_each_raw(lsm) {
->   			if (strcmp(lsm->name, name) == 0) {
->   				if (lsm->order == LSM_ORDER_MUTABLE)
->   					append_ordered_lsm(lsm, origin);
-> @@ -256,7 +265,7 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
->   
->   	/* Process "security=", if given. */
->   	if (chosen_major_lsm) {
-> -		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> +		lsm_for_each_raw(lsm) {
->   			if (exists_ordered_lsm(lsm))
->   				continue;
->   			if (strcmp(lsm->name, chosen_major_lsm) == 0)
-> @@ -265,13 +274,13 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
->   	}
->   
->   	/* LSM_ORDER_LAST is always last. */
-> -	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> +	lsm_for_each_raw(lsm) {
->   		if (lsm->order == LSM_ORDER_LAST)
->   			append_ordered_lsm(lsm, "   last");
->   	}
->   
->   	/* Disable all LSMs not in the ordered list. */
-> -	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> +	lsm_for_each_raw(lsm) {
->   		if (exists_ordered_lsm(lsm))
->   			continue;
->   		set_enabled(lsm, false);
-> @@ -290,13 +299,14 @@ static void __init report_lsm_order(void)
->   	pr_info("initializing lsm=");
->   
->   	/* Report each enabled LSM name, comma separated. */
-> -	for (early = __start_early_lsm_info;
-> -	     early < __end_early_lsm_info; early++)
-> +	lsm_early_for_each_raw(early) {
->   		if (is_enabled(early))
->   			pr_cont("%s%s", first++ == 0 ? "" : ",", early->name);
-> -	for (lsm = ordered_lsms; *lsm; lsm++)
-> +	}
-> +	lsm_order_for_each(lsm) {
->   		if (is_enabled(*lsm))
->   			pr_cont("%s%s", first++ == 0 ? "" : ",", (*lsm)->name);
-> +	}
->   
->   	pr_cont("\n");
->   }
-> @@ -343,8 +353,9 @@ static void __init ordered_lsm_init(void)
->   	} else
->   		ordered_lsm_parse(builtin_lsm_order, "builtin");
->   
-> -	for (lsm = ordered_lsms; *lsm; lsm++)
-> +	lsm_order_for_each(lsm) {
+>   	if (chosen_lsm_order) {
+>   		if (chosen_major_lsm) {
+> @@ -357,7 +339,16 @@ static void __init ordered_lsm_init(void)
 >   		lsm_prepare(*lsm);
+>   	}
+>   
+> -	report_lsm_order();
+> +	pr_info("initializing lsm=");
+> +	lsm_early_for_each_raw(early) {
+> +		if (is_enabled(early))
+> +			pr_cont("%s%s", first++ == 0 ? "" : ",", early->name);
 > +	}
->   
->   	report_lsm_order();
->   
-> @@ -382,8 +393,9 @@ static void __init ordered_lsm_init(void)
->   
->   	lsm_early_cred((struct cred *) current->cred);
->   	lsm_early_task(current);
-> -	for (lsm = ordered_lsms; *lsm; lsm++)
 > +	lsm_order_for_each(lsm) {
->   		initialize_lsm(*lsm);
+> +		if (is_enabled(*lsm))
+> +			pr_cont("%s%s", first++ == 0 ? "" : ",", (*lsm)->name);
 > +	}
->   }
+> +	pr_cont("\n");
 >   
->   static bool match_last_lsm(const char *list, const char *lsm)
-> @@ -485,7 +497,7 @@ int __init early_security_init(void)
->   {
->   	struct lsm_info *lsm;
->   
-> -	for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
-> +	lsm_early_for_each_raw(lsm) {
->   		if (!lsm->enabled)
->   			lsm->enabled = &lsm_enabled_true;
->   		lsm_prepare(lsm);
-> @@ -512,7 +524,7 @@ int __init security_init(void)
->   	 * Append the names of the early LSM modules now that kmalloc() is
->   	 * available
->   	 */
-> -	for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
-> +	lsm_early_for_each_raw(lsm) {
->   		init_debug("  early started: %s (%s)\n", lsm->name,
->   			   is_enabled(lsm) ? "enabled" : "disabled");
->   		if (lsm->enabled)
+>   	init_debug("cred blob size       = %d\n", blob_sizes.lbs_cred);
+>   	init_debug("file blob size       = %d\n", blob_sizes.lbs_file);
 
