@@ -1,277 +1,234 @@
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629CB32F755
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Sep 2025 21:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E3B2FE05F
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Sep 2025 23:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756934787; cv=none; b=uwkgB0C9uAyQGtlHnL+png8/Bxl4ubU1haaE3C4l9S1ZBVFanMK5dyj0fDA4PX4yUQ45vISMhRoKjG5TEh4RUdcoS905GYo77IAkl827GVvz4bWkETkdWnMfVXoTC5GiCZelBoaviNLSYaTd7W8B9Eb4qCJiwt7YYt5BNDPW/RU=
+	t=1756941165; cv=none; b=ub5Tu8g+lIqVxEooqWzIyaVNTTmrB/ygTLe8TYO9NWLKo89BIbSF6+5K4eMOVUEErc6vr/JjGf1nM1u4MVO6Em1izXwWERKRjcTyFARevZQ/9qLKpC0kbQ6ylZvH13PfU0Ohgql/miJQaZOPyY5Ktm75bVi4vLg/cJhjg8jSldQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756934787; c=relaxed/simple;
-	bh=M33kH1V3bhnMJw3m4nRTDU3lB0zxC4Qc4fFgF5IA4WY=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=QA+HgETemSW86MSeCY7aK4yq52fQa/QGcJpqya62h4Jn1DjZjDZaEimxJyuPxTa/Tv/iys4IR3rkUsvKvxTLk/Ic7F5X8LlgRLkFsBWuiYbgH3CXjTrxNGBB9HQ5KDOmTlLc4IvvG2lw4Js5ZVA4rN3rIxlPvx9XzBghOZW1KR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AJ5QMHyv; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1756941165; c=relaxed/simple;
+	bh=pxNzgUjLJkNLU9SdD2zq9OE6MWf/9W8LuG+5f212wqM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=roEu1lGeAWNrj1onos5H4PawGQZM87pxfX8I9WHSx1FGo1ZbVzG/V+xFmDj5KqpWD/XiExXonrCjNC+n9UDVcuyN1K+m9NwXItV+ydXHg6YQpp8okwPpMasuwr0kD1EiJObCGCXPO8ht1KBpGZ5MJOpDKYsj59BJX7ON2pPaMmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=kaCKFuZF; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AJ5QMHyv"
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-7251e6b2f9eso1757426d6.1
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Sep 2025 14:26:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1756934783; x=1757539583; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZKAFUEHK8OBYchmycuUbisd/bzFy1QHMzYkOvBvFOpA=;
-        b=AJ5QMHyvKING3BjPluB3ye0NMQAKeruFPXa6w2AHY1AyPZz4nZqoS2i/Hre48Tz3sf
-         al3j3k9PQlmnXKJn1XcFr4YVG47PczuSbk/YIlrLgokKqHBF9c6xkaSU+ChUsDYys0TX
-         EH/fiOWXvdbb4EnqeYmHfcoemFb7LhINf4LeR65gs5x3qcErdkEfpCeSo33ZVqHugGOD
-         BrWRY9mW1zqPxCh+T96a7ohNvcDUm9aYcuyGAjeJeQY7fMRUp4Vrat6RAS7TmzJzOeZk
-         8SD8qMCyvbJkLPZeVl5bXwk2hMa0AnFICIqc9s/1/teFwZWwlAYtYVpg8/nu4INQx/cu
-         nFow==
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="kaCKFuZF"
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E7BB53F715
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Sep 2025 23:12:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1756941155;
+	bh=Q64SqV0O/o9aJmf976zGMIB6qbGdmRmpysnXyHWPzVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=kaCKFuZFDAouzkPs+hHKJHo7c7xZAEb8XtOZygdgdU14et06RjJ2sdoAzKSoKPiU3
+	 51F+wGdb6NaGB91dmDlWD3qqOYAezKFRkR9xnpAS/qIjs31mXd5vswCX9CB7d54GAm
+	 JgMciRr0tyMhSdMOfrVfERPLNCdrb6BKfI573vFmFyncz0hakMkWBdXRwO6ResB5/O
+	 RMWL/Go//m5CN+3FS3YublQ52in3+xxG1wDuSlLGmh94OEWhZnO2p5HsZlsqXrCFFw
+	 bVnuJ9B3uCDOr2aKH+rYbTuSr4bvzS2sCHZ3lLlElMqm9ASIp57Ac5K0zQEcxgFZ7s
+	 AbgawO4NVNBVQ==
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-325ce1082bcso430229a91.0
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Sep 2025 16:12:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756934783; x=1757539583;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZKAFUEHK8OBYchmycuUbisd/bzFy1QHMzYkOvBvFOpA=;
-        b=Wl96/dWNAZdBdi2TEcspbHIhP5LNKj8XJjpQ/Slf7OY87x8TM6MzKB8GU1aITaPlko
-         D2Gzy3OhSpbbUWSLScpb59U24BG8QMzh2rm8de6ACif/iMLAC6AtjGmUtav4x2u74fWK
-         s4Ce6/g9DcNbGi8D5GuA60muBLNIBpQcGQ/aIXDLnCLVkXlNrXytNg4ZsKJYmz8PWWtb
-         mBJLcmi3QXBLJXajknEDRjwl3h/4y32YOHH7K5KXGGcCiZbs5wyOPh/vX690u38Gf9wv
-         0a5WSPqtFVygYa9csa5pg+9X5y83qfGPoeG5MsCy/NGXtfrDEOogJxcSU8P/7HK7GdY5
-         LbvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCZwhz3TCfgj7csupae16OAFZRg8nMH9kzJKeiJT4hK7ftC9ubbylXqsjjjfht0048R8u8OvDjQd6J2fCiCOLmruWx384=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpQMRUtIHn5DkK5ejUlH7a4AXAvr4UPsoYkCjasNfVjhjwBGOG
-	/WRfWkRjYfMLVgZecY6XaUZrmQo+GrwMQp3WUuzfDWsurMgQGOr126HZDik7l4jkBA==
-X-Gm-Gg: ASbGncsA7FKdmZ8iWrojDdmDpNdoaIXdRbYXenQ7YIOgisjG0/InWZt/Rc/OYT47O//
-	H3UDNMnx0g1xvgJlxHy/mBbWLDmG0tGxX6qfquXGkxeSi6cL+KeN/fZGGLpKa5PDjouC4p5Q05i
-	FNJ15EHNfC3eH4yxU00Jix0LAjbTG9YoVQaGC/OM374J/mCmXi3bi3FlnFFRBZ23291MVgv+ux6
-	kLWrlBnKgSsrY/bmzwpGQ2XQNJXaQTKsRK0b/3G3WXtC1YvJ7rnuSoRHtmzYebil+HYcyW5v6Wa
-	BHr4Ko+JKlSzf8ucyPYyVx9oTtjOiIt+1pYYvx5apltXpbegpOb3knP4UhZuPB5c0+HKR7iPQLe
-	bZ6v6FNGXB4sQWHyQjws2qsoi2ooNL+54Fo2NpEfaMK97cSXDoYsZUaTx1MJCJ91OeWYJ45Y4l3
-	iPf5o=
-X-Google-Smtp-Source: AGHT+IGjeGVBk59qanrKojqKe1+ebv5QbBLUr+xq2vrJdB1gpx6C81S9JV5wN46o/dcj2HWmCycKCg==
-X-Received: by 2002:a05:6214:c65:b0:71d:478f:e0cd with SMTP id 6a1803df08f44-71d478fe49fmr118773496d6.26.1756934782933;
-        Wed, 03 Sep 2025 14:26:22 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-720b466614bsm34702456d6.38.2025.09.03.14.26.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 14:26:21 -0700 (PDT)
-Date: Wed, 03 Sep 2025 17:26:21 -0400
-Message-ID: <6afc91a9f5caef96b2ca335b6d143670@paul-moore.com>
+        d=1e100.net; s=20230601; t=1756941154; x=1757545954;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q64SqV0O/o9aJmf976zGMIB6qbGdmRmpysnXyHWPzVU=;
+        b=TS8T0HRgsF7gInYw+zS5m421RYHOjmGeckn+D7DSGypBnu2dM+2F91Z5VEjyJ8YmR6
+         oMj/YdpXIJJZrG1dGdH+yyJB4wQMW2aypiILWk20dVHd18K51caUNQ9qcvFj9zAIFmjW
+         aBNslF3pAoztz28bLojp00KyLdtBAcDWKcfqGMWyEp/jBh2vazKNSwvd0F9O9xqRKWzx
+         DxobPTJ899+6nisw/oK7Spz8bb1XEew6gKhGdq0OaBv41Z3heIYD3jcejlOhcxurF9wd
+         TmiE3XLJIZQBwzaesTdJPay2RyOr3diLdcXw4zJE3Bsae8k8TS41h8jc2/jmo6JUi4q8
+         sZFg==
+X-Gm-Message-State: AOJu0YwiD923mgJTy21rg4aIAQ/lZWfTpyuOKLqou53XCPmxnNEZKhTp
+	oOViDlMbjXkHCM6398PKHLfvCyhqOJkA48uyzdfu/21EQJk45N/AN44YTCvTgryd/nXL9K2R757
+	2rCKcK3kRdFDQPbANB9NT5IyYZL3szxyTeK8bPxHBf2MvnqsBE3kR5GDDAJKv8CPpmg3WLYdjhF
+	6Q5PApXjSx0BLR31OueQ==
+X-Gm-Gg: ASbGncv94yQrwPbOezDJRNpz5TJg+NwRYQDhazH9Nj7K5xZQLrsmdQ80lmV7apuViIs
+	yd34i1Axfh72eciaGUBefup0Jwv/WcoYLp7h0zmzcIgMBE1K6gDAF6lvXw2I92HMHCyramHuKjd
+	fHqq0KBMWRtGjegogBcc3uxgC+Fl+jqZc9denPLJvntscPispNbbfKMcGgMdBqr9Xqt/IIkHrGr
+	fAM+TXDPNjH8ZM5bmNfBJQzk1wg+lSwQbGAzUTgiroE+XYS+ZKRCxAhlv3ecAUZxVAW5Iuy9PCA
+	nTaFchbw8uGzpMzgHzBjN3eYSIDUQuIQYTHx+NBMKj7qws2vY8aUnA==
+X-Received: by 2002:a17:90a:c105:b0:32b:9506:1780 with SMTP id 98e67ed59e1d1-32b95061914mr509680a91.9.1756941153951;
+        Wed, 03 Sep 2025 16:12:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJraQjlwbN0zR+9PwpbOqHhv2LNJC9dD5qnPC8pEAW8rMp5MFpb5ckWx2qAd3V/w/pIHuUOg==
+X-Received: by 2002:a17:90a:c105:b0:32b:9506:1780 with SMTP id 98e67ed59e1d1-32b95061914mr509641a91.9.1756941153501;
+        Wed, 03 Sep 2025 16:12:33 -0700 (PDT)
+Received: from [192.168.192.85] ([50.47.129.42])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7722a26abbbsm17543955b3a.5.2025.09.03.16.12.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 16:12:33 -0700 (PDT)
+Message-ID: <2def01c9-56d8-4554-83e9-62522805d5ff@canonical.com>
+Date: Wed, 3 Sep 2025 16:12:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250903_1645/pstg-lib:20250903_1606/pstg-pwork:20250903_1645
-From: Paul Moore <paul@paul-moore.com>
-To: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>, James Morris <jmorris@namei.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, Hugh Dickins <hughd@google.com>, Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] memfd,selinux: call security_inode_init_security_anon
-References: <20250826031824.1227551-1-tweek@google.com>
-In-Reply-To: <20250826031824.1227551-1-tweek@google.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 11/34] lsm: get rid of the lsm_names list and do some
+ cleanup
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
+ selinux@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>, Fan Wu <wufan@kernel.org>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+ Xiu Jianfeng <xiujianfeng@huawei.com>
+References: <20250814225159.275901-36-paul@paul-moore.com>
+ <20250814225159.275901-47-paul@paul-moore.com>
+ <06a68323-b297-4be7-92eb-c2091207b9f0@canonical.com>
+ <CAHC9VhQnFJLXrhcbQ2b7rWDNYjRRKoevqiKYchE_39ShcjgLEw@mail.gmail.com>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <CAHC9VhQnFJLXrhcbQ2b7rWDNYjRRKoevqiKYchE_39ShcjgLEw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Aug 25, 2025 "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com> wrote:
+On 9/3/25 13:26, Paul Moore wrote:
+> On Tue, Sep 2, 2025 at 1:20 PM John Johansen
+> <john.johansen@canonical.com> wrote:
+>> On 8/14/25 15:50, Paul Moore wrote:
+>>> The LSM currently has a lot of code to maintain a list of the currently
+>>> active LSMs in a human readable string, with the only user being the
+>>> "/sys/kernel/security/lsm" code.  Let's drop all of that code and
+>>> generate the string on first use and then cache it for subsequent use.
+>>>
+>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+>>> ---
+>>>    include/linux/lsm_hooks.h |  1 -
+>>>    security/inode.c          | 59 +++++++++++++++++++++++++++++++++++++--
+>>>    security/lsm_init.c       | 49 --------------------------------
+>>>    3 files changed, 57 insertions(+), 52 deletions(-)
+>>>
+>>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>>> index 7343dd60b1d5..65a8227bece7 100644
+>>> --- a/include/linux/lsm_hooks.h
+>>> +++ b/include/linux/lsm_hooks.h
+>>> @@ -172,7 +172,6 @@ struct lsm_info {
+>>>
+>>>
+>>>    /* DO NOT tamper with these variables outside of the LSM framework */
+>>> -extern char *lsm_names;
+>>>    extern struct lsm_static_calls_table static_calls_table __ro_after_init;
+>>>
+>>>    /**
+>>> diff --git a/security/inode.c b/security/inode.c
+>>> index 43382ef8896e..a5e7a073e672 100644
+>>> --- a/security/inode.c
+>>> +++ b/security/inode.c
+>>> @@ -22,6 +22,8 @@
+>>>    #include <linux/lsm_hooks.h>
+>>>    #include <linux/magic.h>
+>>>
+>>> +#include "lsm.h"
+>>> +
+>>>    static struct vfsmount *mount;
+>>>    static int mount_count;
+>>>
+>>> @@ -315,12 +317,65 @@ void securityfs_remove(struct dentry *dentry)
+>>>    EXPORT_SYMBOL_GPL(securityfs_remove);
+>>>
+>>>    #ifdef CONFIG_SECURITY
+>>> +#include <linux/spinlock.h>
+>>> +
+>>>    static struct dentry *lsm_dentry;
+>>> +
+>>> +/* NOTE: we never free the string below once it is set. */
+>>> +static DEFINE_SPINLOCK(lsm_read_lock);
+>>
+>> nit, this is only used on the write side, so not the best name
 > 
-> Prior to this change, no security hooks were called at the creation of a
-> memfd file. It means that, for SELinux as an example, it will receive
-> the default type of the filesystem that backs the in-memory inode. In
-> most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
-> be hugetlbfs. Both can be considered implementation details of memfd.
+> Fair point, I'll rename it to lsm_read_str_lock, it still has "read"
+> in the name, but it should be a bit more clear that it references the
+> lsm_read_str variable.
 > 
-> It also means that it is not possible to differentiate between a file
-> coming from memfd_create and a file coming from a standard tmpfs mount
-> point.
+>>> +static char *lsm_read_str = NULL;
+>>> +static ssize_t lsm_read_len = 0;
 > 
-> Additionally, no permission is validated at creation, which differs from
-> the similar memfd_secret syscall.
+> Similarly, I'm renaming lsm_read_len to lsm_read_str_len.
 > 
-> Call security_inode_init_security_anon during creation. This ensures
-> that the file is setup similarly to other anonymous inodes. On SELinux,
-> it means that the file will receive the security context of its task.
+>>>    static ssize_t lsm_read(struct file *filp, char __user *buf, size_t count,
+>>>                        loff_t *ppos)
+>>>    {
+>>> -     return simple_read_from_buffer(buf, count, ppos, lsm_names,
+>>> -             strlen(lsm_names));
+>>> +     int i;
+>>> +     char *str;
+>>> +     ssize_t len;
+>>> +
+>>> +restart:
+>>> +
+>>> +     rcu_read_lock();
+>>> +     if (!lsm_read_str) {
+>>
+>> should probably be
+>> if (!rcu_access_pointer(lsm_read_str)) {
 > 
-> The ability to limit fexecve on memfd has been of interest to avoid
-> potential pitfalls where /proc/self/exe or similar would be executed
-> [1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
-> similarly to the file class. These access vectors may not make sense for
-> the existing "anon_inode" class. Therefore, define and assign a new
-> class "memfd_file" to support such access vectors.
+> The description for rcu_access_pointer() contains the following sentence:
 > 
-> Guard these changes behind a new policy capability named "memfd_class".
+>    "Within an RCU read-side critical section, there is little reason to
+>     use rcu_access_pointer()."
+>    https://elixir.bootlin.com/linux/v6.17-rc4/source/include/linux/rcupdate.h#L628
 > 
-> [1] https://crbug.com/1305267
-> [2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.com/
+> Perhaps I'm reading it wrong, but it looks like the RCU folks would
+> prefer we not use rcu_access_pointer() here?
 > 
-> Signed-off-by: Thiébaud Weksteen <tweek@google.com>
-> Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> ---
-> Changes since RFC:
-> - Remove enum argument, simply compare the anon inode name
-> - Introduce a policy capability for compatility
-> - Add validation of class in selinux_bprm_creds_for_exec
-> 
->  include/linux/memfd.h                      |  2 ++
->  mm/memfd.c                                 | 14 +++++++++--
->  security/selinux/hooks.c                   | 27 ++++++++++++++++++----
->  security/selinux/include/classmap.h        |  2 ++
->  security/selinux/include/policycap.h       |  1 +
->  security/selinux/include/policycap_names.h |  1 +
->  security/selinux/include/security.h        |  5 ++++
->  7 files changed, 46 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/memfd.h b/include/linux/memfd.h
-> index 6f606d9573c3..cc74de3dbcfe 100644
-> --- a/include/linux/memfd.h
-> +++ b/include/linux/memfd.h
-> @@ -4,6 +4,8 @@
->  
->  #include <linux/file.h>
->  
-> +#define MEMFD_ANON_NAME "[memfd]"
-> +
->  #ifdef CONFIG_MEMFD_CREATE
->  extern long memfd_fcntl(struct file *file, unsigned int cmd, unsigned int arg);
->  struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx);
-> diff --git a/mm/memfd.c b/mm/memfd.c
-> index bbe679895ef6..63b439eb402a 100644
-> --- a/mm/memfd.c
-> +++ b/mm/memfd.c
-> @@ -433,6 +433,8 @@ static struct file *alloc_file(const char *name, unsigned int flags)
->  {
->  	unsigned int *file_seals;
->  	struct file *file;
-> +	struct inode *inode;
-> +	int err = 0;
->  
->  	if (flags & MFD_HUGETLB) {
->  		file = hugetlb_file_setup(name, 0, VM_NORESERVE,
-> @@ -444,12 +446,20 @@ static struct file *alloc_file(const char *name, unsigned int flags)
->  	}
->  	if (IS_ERR(file))
->  		return file;
-> +
-> +	inode = file_inode(file);
-> +	err = security_inode_init_security_anon(inode,
-> +			&QSTR(MEMFD_ANON_NAME), NULL);
-> +	if (err) {
-> +		fput(file);
-> +		file = ERR_PTR(err);
-> +		return file;
-> +	}
-> +
->  	file->f_mode |= FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
->  	file->f_flags |= O_LARGEFILE;
->  
->  	if (flags & MFD_NOEXEC_SEAL) {
-> -		struct inode *inode = file_inode(file);
-> -
->  		inode->i_mode &= ~0111;
->  		file_seals = memfd_file_seals_ptr(file);
->  		if (file_seals) {
+no, I just forgot that detail
 
-Hugh, Baolin, and shmem/mm folks, are you okay with the changes above? If
-so it would be nice to get an ACK from one of you.
-
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index c95a5874bf7d..429b2269b35a 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -93,6 +93,7 @@
->  #include <linux/fanotify.h>
->  #include <linux/io_uring/cmd.h>
->  #include <uapi/linux/lsm.h>
-> +#include <linux/memfd.h>
->  
->  #include "avc.h"
->  #include "objsec.h"
-> @@ -2366,9 +2367,12 @@ static int selinux_bprm_creds_for_exec(struct linux_binprm *bprm)
->  	ad.type = LSM_AUDIT_DATA_FILE;
->  	ad.u.file = bprm->file;
->  
-> +	if (isec->sclass != SECCLASS_FILE && isec->sclass != SECCLASS_MEMFD_FILE)
-> +		return -EPERM;
-
-In the interest of failing fast, this should probably be moved up in the
-function to just after where @isec is set.  There are also a number of
-checks that happen prior to this placement, but after the isec assignment.
-While I don't think any of those checks should be an issue, I'd rather
-not to have to worry about those and just fail the non-FILE/MEMFD_FILE
-case as soon as we can in selinux_bprm_creds_for_exec().
-
->  	if (new_tsec->sid == old_tsec->sid) {
-> -		rc = avc_has_perm(old_tsec->sid, isec->sid,
-> -				  SECCLASS_FILE, FILE__EXECUTE_NO_TRANS, &ad);
-> +		rc = avc_has_perm(old_tsec->sid, isec->sid, isec->sclass,
-> +				  FILE__EXECUTE_NO_TRANS, &ad);
->  		if (rc)
->  			return rc;
->  	} else {
-> @@ -2378,8 +2382,8 @@ static int selinux_bprm_creds_for_exec(struct linux_binprm *bprm)
->  		if (rc)
->  			return rc;
->  
-> -		rc = avc_has_perm(new_tsec->sid, isec->sid,
-> -				  SECCLASS_FILE, FILE__ENTRYPOINT, &ad);
-> +		rc = avc_has_perm(new_tsec->sid, isec->sid, isec->sclass,
-> +				  FILE__ENTRYPOINT, &ad);
->  		if (rc)
->  			return rc;
->  
-> @@ -2974,10 +2978,18 @@ static int selinux_inode_init_security_anon(struct inode *inode,
->  	struct common_audit_data ad;
->  	struct inode_security_struct *isec;
->  	int rc;
-> +	bool is_memfd = false;
->  
->  	if (unlikely(!selinux_initialized()))
->  		return 0;
->  
-> +	if (name != NULL && name->name != NULL &&
-> +	    !strcmp(name->name, MEMFD_ANON_NAME)) {
-> +		if (!selinux_policycap_memfd_class())
-> +			return 0;
-> +		is_memfd = true;
-> +	}
-> +
->  	isec = selinux_inode(inode);
->  
->  	/*
-> @@ -2996,6 +3008,13 @@ static int selinux_inode_init_security_anon(struct inode *inode,
->  
->  		isec->sclass = context_isec->sclass;
->  		isec->sid = context_isec->sid;
-> +	} else if (is_memfd) {
-> +		isec->sclass = SECCLASS_MEMFD_FILE;
-> +		rc = security_transition_sid(
-> +			sid, sid,
-> +			isec->sclass, name, &isec->sid);
-> +		if (rc)
-> +			return rc;
->  	} else {
->  		isec->sclass = SECCLASS_ANON_INODE;
->  		rc = security_transition_sid(
-
-We're duplicating the security_transition_sid() call which seems less
-than ideal, how about something like this?
-
-  if (context_inode) {
-    /* ... existing stuff ... */
-  } else {
-    if (is_memfd)
-      isec->sclass = SECCLASS_MEMFD_FILE;
-    else
-      isec->sclass = SECCLASS_ANON_INODE;
-    rc = security_transition_sid(...);
-    if (rc)
-      return rc;
-  }
-
---
-paul-moore.com
