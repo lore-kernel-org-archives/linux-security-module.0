@@ -1,73 +1,74 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E3B2FE05F
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Sep 2025 23:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756B432F775
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Sep 2025 23:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756941165; cv=none; b=ub5Tu8g+lIqVxEooqWzIyaVNTTmrB/ygTLe8TYO9NWLKo89BIbSF6+5K4eMOVUEErc6vr/JjGf1nM1u4MVO6Em1izXwWERKRjcTyFARevZQ/9qLKpC0kbQ6ylZvH13PfU0Ohgql/miJQaZOPyY5Ktm75bVi4vLg/cJhjg8jSldQ=
+	t=1756941329; cv=none; b=Au458LtRSf+7jg0kr+C+Wx6d9TZxHrIsdxBdRQZ/sQIzbm+hoFMy0tZenlVcX7EbF1FYEFtJXvKFIMDAFNjapZQZ/RP66ZAsbASLjd/Gbr8tKHDzKz1RxOrVTJeulQR39kqkNdJ92wlcMXTXJ2FWSsWENkB0KP8cjPXQMOZ+118=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756941165; c=relaxed/simple;
-	bh=pxNzgUjLJkNLU9SdD2zq9OE6MWf/9W8LuG+5f212wqM=;
+	s=arc-20240116; t=1756941329; c=relaxed/simple;
+	bh=+HyzO08ogt4Y7H9ozlBdWmLwQX6VVEN/aGrjwNWQx9A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=roEu1lGeAWNrj1onos5H4PawGQZM87pxfX8I9WHSx1FGo1ZbVzG/V+xFmDj5KqpWD/XiExXonrCjNC+n9UDVcuyN1K+m9NwXItV+ydXHg6YQpp8okwPpMasuwr0kD1EiJObCGCXPO8ht1KBpGZ5MJOpDKYsj59BJX7ON2pPaMmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=kaCKFuZF; arc=none smtp.client-ip=185.125.188.123
+	 In-Reply-To:Content-Type; b=lUCb15KX9FSenS9649tBKUrYBQezCSG+WfAAFeHj3WFkR2+LjzwqG8QqI3ta4bwL+Ko5ZyMBxAyJ6UCr+RXy5BC/MWdkbUJKhOKutKs7zOua6w9Ew2bzIvwWCIe7QRzyr6gjBRe8QPNITY1GD7DY91fxZ8N0Qp7td/Z1YWFZ+dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=X50p5cZA; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="kaCKFuZF"
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="X50p5cZA"
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E7BB53F715
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Sep 2025 23:12:35 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id CBE643F66E
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Sep 2025 23:15:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1756941155;
-	bh=Q64SqV0O/o9aJmf976zGMIB6qbGdmRmpysnXyHWPzVU=;
+	s=20210705; t=1756941324;
+	bh=RLyBibt/QwCZJKMEFRGK73uRJznOCAQuRWoluK4JE1c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=kaCKFuZFDAouzkPs+hHKJHo7c7xZAEb8XtOZygdgdU14et06RjJ2sdoAzKSoKPiU3
-	 51F+wGdb6NaGB91dmDlWD3qqOYAezKFRkR9xnpAS/qIjs31mXd5vswCX9CB7d54GAm
-	 JgMciRr0tyMhSdMOfrVfERPLNCdrb6BKfI573vFmFyncz0hakMkWBdXRwO6ResB5/O
-	 RMWL/Go//m5CN+3FS3YublQ52in3+xxG1wDuSlLGmh94OEWhZnO2p5HsZlsqXrCFFw
-	 bVnuJ9B3uCDOr2aKH+rYbTuSr4bvzS2sCHZ3lLlElMqm9ASIp57Ac5K0zQEcxgFZ7s
-	 AbgawO4NVNBVQ==
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-325ce1082bcso430229a91.0
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Sep 2025 16:12:35 -0700 (PDT)
+	b=X50p5cZAAYenGsa7LV6uOn1cR489jf1KQ8qhh5EbHrkWeuUBcoDN6r31q6ZMgLoo2
+	 4rAQOrA0zJFaMiefo9A1osUI9eBwZSZURY2tEqRarrhpVK9WGh5tf/rqPbBteQeT38
+	 7CCMUL86/Wlo8NapPFEdLabx/z4EnFB+cAqJvC+qz5tSkwwnkLU4emTulbJ+xKvyhj
+	 FMH7fZlTi7GCWt1HUMjGGdR3IQH/DftZJaTjBlmx8pVrjxKbZ8LV5AQ/OtmUtCRWHp
+	 2a1uGzYYnOQTg+ypPiKJMU4H01Oc9+qGP/h3M50w1dJaGU6k3mOnnXYLyeoU/9jy4X
+	 zizUfrvgb7kwA==
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24c99bd543aso6056145ad.3
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Sep 2025 16:15:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756941154; x=1757545954;
+        d=1e100.net; s=20230601; t=1756941323; x=1757546123;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q64SqV0O/o9aJmf976zGMIB6qbGdmRmpysnXyHWPzVU=;
-        b=TS8T0HRgsF7gInYw+zS5m421RYHOjmGeckn+D7DSGypBnu2dM+2F91Z5VEjyJ8YmR6
-         oMj/YdpXIJJZrG1dGdH+yyJB4wQMW2aypiILWk20dVHd18K51caUNQ9qcvFj9zAIFmjW
-         aBNslF3pAoztz28bLojp00KyLdtBAcDWKcfqGMWyEp/jBh2vazKNSwvd0F9O9xqRKWzx
-         DxobPTJ899+6nisw/oK7Spz8bb1XEew6gKhGdq0OaBv41Z3heIYD3jcejlOhcxurF9wd
-         TmiE3XLJIZQBwzaesTdJPay2RyOr3diLdcXw4zJE3Bsae8k8TS41h8jc2/jmo6JUi4q8
-         sZFg==
-X-Gm-Message-State: AOJu0YwiD923mgJTy21rg4aIAQ/lZWfTpyuOKLqou53XCPmxnNEZKhTp
-	oOViDlMbjXkHCM6398PKHLfvCyhqOJkA48uyzdfu/21EQJk45N/AN44YTCvTgryd/nXL9K2R757
-	2rCKcK3kRdFDQPbANB9NT5IyYZL3szxyTeK8bPxHBf2MvnqsBE3kR5GDDAJKv8CPpmg3WLYdjhF
-	6Q5PApXjSx0BLR31OueQ==
-X-Gm-Gg: ASbGncv94yQrwPbOezDJRNpz5TJg+NwRYQDhazH9Nj7K5xZQLrsmdQ80lmV7apuViIs
-	yd34i1Axfh72eciaGUBefup0Jwv/WcoYLp7h0zmzcIgMBE1K6gDAF6lvXw2I92HMHCyramHuKjd
-	fHqq0KBMWRtGjegogBcc3uxgC+Fl+jqZc9denPLJvntscPispNbbfKMcGgMdBqr9Xqt/IIkHrGr
-	fAM+TXDPNjH8ZM5bmNfBJQzk1wg+lSwQbGAzUTgiroE+XYS+ZKRCxAhlv3ecAUZxVAW5Iuy9PCA
-	nTaFchbw8uGzpMzgHzBjN3eYSIDUQuIQYTHx+NBMKj7qws2vY8aUnA==
-X-Received: by 2002:a17:90a:c105:b0:32b:9506:1780 with SMTP id 98e67ed59e1d1-32b95061914mr509680a91.9.1756941153951;
-        Wed, 03 Sep 2025 16:12:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFJraQjlwbN0zR+9PwpbOqHhv2LNJC9dD5qnPC8pEAW8rMp5MFpb5ckWx2qAd3V/w/pIHuUOg==
-X-Received: by 2002:a17:90a:c105:b0:32b:9506:1780 with SMTP id 98e67ed59e1d1-32b95061914mr509641a91.9.1756941153501;
-        Wed, 03 Sep 2025 16:12:33 -0700 (PDT)
+        bh=RLyBibt/QwCZJKMEFRGK73uRJznOCAQuRWoluK4JE1c=;
+        b=AMDVzWr1DX531KqB/wg+z5S1SaDKhsSsRjNNhTJ6iDL5RIPBugqUc8vrHRMD428LPj
+         WCknho5BhE59jFGQVINalFtsGxKhD8x7wvmJNegn0ctKUfynzse7QiGTpTsOKY7/jMRa
+         4YmyQsFMq1rRIJR07PcSwtQJz0vRJ9E+/ie3rwKq/iPu8vFxM2lBMvajJrvpq5x8x0Ie
+         SdoH7aDPbi3g3dm7BcyaoDOWpdej93M7LTpgmiysV0ILZcQ16Lwzm2y3e+Av0b4O5QQ+
+         Hx0PUJJZiCXhb+ycdM5Flwr8xegv9Np5QG6xk/VVv7XlpBzcWeclMLYnKI+NxaxPUB/0
+         pBIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoBWTnR/oNeaWYnuRUAtYr+0ktAHEhnKhK4ql3GMSX51tBbz8nk1T8OSmFtkih48TfXD1ibQHKuSiltAV5FMmwPcmXKlM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzovvKtDG6hIpbqXabGn4py6pLNmm9jgOV8w2HlI59e+JHjyInh
+	zw4NbWdSfzrW8B7GgjlqobVJpKZYni2Fufn24M9VEARenkfolRD1QIAipjzbTdMsjGoZNO2yLjb
+	+H6tZSAaH71eAFhO3eY5AeznoHFDxEbogG0RNMrXSufGQMS79+OA5nINViBLl7UKkeYpnDZjKlK
+	/rKhXtu1LM/tk/zuoUTg==
+X-Gm-Gg: ASbGncuRDKNbNV8la5HJZ0zw/2M3P1NnoWY4HlThTiq0D+WwhIFr/YQdCea10twSbXl
+	KW9Rv3Df+Kw8FvK+giyii5BnlXtibXLroBL//sV6jpcWuHRnqkgrUw5K9QmdweYN0ozLGp8uMLF
+	baBlbAYoEABbLQJf3KoO91sx2agmCcjOKaDuezxt1lBkpbj3sduObrZFR2VnpL5ozVr2BQ1rEQM
+	d5pLpNu5LdZk8o5nRihRuDNb1gPErY/Fn9imCja0KFXr1zTAvngT0/p9xwyn4OupEYSPioc00sm
+	NV7mVW/LKx0AAWVqIrtjDMhlESrJ7kWLmzmMxYdlSVkH+fLPwnf9DQ==
+X-Received: by 2002:a17:903:1448:b0:248:c5d7:1b94 with SMTP id d9443c01a7336-24944b695e6mr195993815ad.53.1756941323283;
+        Wed, 03 Sep 2025 16:15:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEqQZq3nyVvHHB+AaItbBDnr0OhRLkp1vkDzBeU+FMmm6/TnQueGHvEtQ9NNAPiGG5vDG89tA==
+X-Received: by 2002:a17:903:1448:b0:248:c5d7:1b94 with SMTP id d9443c01a7336-24944b695e6mr195993485ad.53.1756941322816;
+        Wed, 03 Sep 2025 16:15:22 -0700 (PDT)
 Received: from [192.168.192.85] ([50.47.129.42])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7722a26abbbsm17543955b3a.5.2025.09.03.16.12.32
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2490359f808sm173122195ad.0.2025.09.03.16.15.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 16:12:33 -0700 (PDT)
-Message-ID: <2def01c9-56d8-4554-83e9-62522805d5ff@canonical.com>
-Date: Wed, 3 Sep 2025 16:12:32 -0700
+        Wed, 03 Sep 2025 16:15:22 -0700 (PDT)
+Message-ID: <1932305e-c6df-42c6-906b-d57364652242@canonical.com>
+Date: Wed, 3 Sep 2025 16:15:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -75,11 +76,10 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 11/34] lsm: get rid of the lsm_names list and do some
- cleanup
+Subject: Re: [PATCH v3 29/34] apparmor: move initcalls to the LSM framework
 To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
- selinux@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+Cc: selinux@vger.kernel.org, linux-integrity@vger.kernel.org,
+ linux-security-module@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
  Roberto Sassu <roberto.sassu@huawei.com>, Fan Wu <wufan@kernel.org>,
  =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
  =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
@@ -89,9 +89,8 @@ Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
  Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
  Xiu Jianfeng <xiujianfeng@huawei.com>
 References: <20250814225159.275901-36-paul@paul-moore.com>
- <20250814225159.275901-47-paul@paul-moore.com>
- <06a68323-b297-4be7-92eb-c2091207b9f0@canonical.com>
- <CAHC9VhQnFJLXrhcbQ2b7rWDNYjRRKoevqiKYchE_39ShcjgLEw@mail.gmail.com>
+ <20250814225159.275901-65-paul@paul-moore.com>
+ <CAHC9VhRwHLaWP-qUCEVC7-6hEWf0K1H9DwbxWMW9c3a5uUF94w@mail.gmail.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -137,98 +136,121 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <CAHC9VhQnFJLXrhcbQ2b7rWDNYjRRKoevqiKYchE_39ShcjgLEw@mail.gmail.com>
+In-Reply-To: <CAHC9VhRwHLaWP-qUCEVC7-6hEWf0K1H9DwbxWMW9c3a5uUF94w@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 9/3/25 13:26, Paul Moore wrote:
-> On Tue, Sep 2, 2025 at 1:20 PM John Johansen
-> <john.johansen@canonical.com> wrote:
->> On 8/14/25 15:50, Paul Moore wrote:
->>> The LSM currently has a lot of code to maintain a list of the currently
->>> active LSMs in a human readable string, with the only user being the
->>> "/sys/kernel/security/lsm" code.  Let's drop all of that code and
->>> generate the string on first use and then cache it for subsequent use.
->>>
->>> Signed-off-by: Paul Moore <paul@paul-moore.com>
->>> ---
->>>    include/linux/lsm_hooks.h |  1 -
->>>    security/inode.c          | 59 +++++++++++++++++++++++++++++++++++++--
->>>    security/lsm_init.c       | 49 --------------------------------
->>>    3 files changed, 57 insertions(+), 52 deletions(-)
->>>
->>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->>> index 7343dd60b1d5..65a8227bece7 100644
->>> --- a/include/linux/lsm_hooks.h
->>> +++ b/include/linux/lsm_hooks.h
->>> @@ -172,7 +172,6 @@ struct lsm_info {
->>>
->>>
->>>    /* DO NOT tamper with these variables outside of the LSM framework */
->>> -extern char *lsm_names;
->>>    extern struct lsm_static_calls_table static_calls_table __ro_after_init;
->>>
->>>    /**
->>> diff --git a/security/inode.c b/security/inode.c
->>> index 43382ef8896e..a5e7a073e672 100644
->>> --- a/security/inode.c
->>> +++ b/security/inode.c
->>> @@ -22,6 +22,8 @@
->>>    #include <linux/lsm_hooks.h>
->>>    #include <linux/magic.h>
->>>
->>> +#include "lsm.h"
->>> +
->>>    static struct vfsmount *mount;
->>>    static int mount_count;
->>>
->>> @@ -315,12 +317,65 @@ void securityfs_remove(struct dentry *dentry)
->>>    EXPORT_SYMBOL_GPL(securityfs_remove);
->>>
->>>    #ifdef CONFIG_SECURITY
->>> +#include <linux/spinlock.h>
->>> +
->>>    static struct dentry *lsm_dentry;
->>> +
->>> +/* NOTE: we never free the string below once it is set. */
->>> +static DEFINE_SPINLOCK(lsm_read_lock);
+On 9/3/25 13:34, Paul Moore wrote:
+> On Thu, Aug 14, 2025 at 6:54 PM Paul Moore <paul@paul-moore.com> wrote:
 >>
->> nit, this is only used on the write side, so not the best name
+>> Reviewed-by: Kees Cook <kees@kernel.org>
+>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+>> ---
+>>   security/apparmor/apparmorfs.c         | 4 +---
+>>   security/apparmor/crypto.c             | 3 +--
+>>   security/apparmor/include/apparmorfs.h | 2 ++
+>>   security/apparmor/include/crypto.h     | 1 +
+>>   security/apparmor/lsm.c                | 9 ++++++++-
+>>   5 files changed, 13 insertions(+), 6 deletions(-)
 > 
-> Fair point, I'll rename it to lsm_read_str_lock, it still has "read"
-> in the name, but it should be a bit more clear that it references the
-> lsm_read_str variable.
+> Thanks for reviewing all the other patches John.  Assuming you are
+> okay with this patch, can I get an ACK?
 > 
->>> +static char *lsm_read_str = NULL;
->>> +static ssize_t lsm_read_len = 0;
-> 
-> Similarly, I'm renaming lsm_read_len to lsm_read_str_len.
-> 
->>>    static ssize_t lsm_read(struct file *filp, char __user *buf, size_t count,
->>>                        loff_t *ppos)
->>>    {
->>> -     return simple_read_from_buffer(buf, count, ppos, lsm_names,
->>> -             strlen(lsm_names));
->>> +     int i;
->>> +     char *str;
->>> +     ssize_t len;
->>> +
->>> +restart:
->>> +
->>> +     rcu_read_lock();
->>> +     if (!lsm_read_str) {
+I'm working on it. I managed to get down to I think 3 patches remaining to review/ack, and I wanted to get some testing on this one before acking. Hopefully will get that done today
+
+>> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+>> index 391a586d0557..ee04c1ac9d6e 100644
+>> --- a/security/apparmor/apparmorfs.c
+>> +++ b/security/apparmor/apparmorfs.c
+>> @@ -2649,7 +2649,7 @@ static const struct inode_operations policy_link_iops = {
+>>    *
+>>    * Returns: error on failure
+>>    */
+>> -static int __init aa_create_aafs(void)
+>> +int __init aa_create_aafs(void)
+>>   {
+>>          struct dentry *dent;
+>>          int error;
+>> @@ -2728,5 +2728,3 @@ static int __init aa_create_aafs(void)
+>>          AA_ERROR("Error creating AppArmor securityfs\n");
+>>          return error;
+>>   }
+>> -
+>> -fs_initcall(aa_create_aafs);
+>> diff --git a/security/apparmor/crypto.c b/security/apparmor/crypto.c
+>> index 227d47c14907..d8a7bde94d79 100644
+>> --- a/security/apparmor/crypto.c
+>> +++ b/security/apparmor/crypto.c
+>> @@ -53,10 +53,9 @@ int aa_calc_profile_hash(struct aa_profile *profile, u32 version, void *start,
+>>          return 0;
+>>   }
 >>
->> should probably be
->> if (!rcu_access_pointer(lsm_read_str)) {
+>> -static int __init init_profile_hash(void)
+>> +int __init init_profile_hash(void)
+>>   {
+>>          if (apparmor_initialized)
+>>                  aa_info_message("AppArmor sha256 policy hashing enabled");
+>>          return 0;
+>>   }
+>> -late_initcall(init_profile_hash);
+>> diff --git a/security/apparmor/include/apparmorfs.h b/security/apparmor/include/apparmorfs.h
+>> index 1e94904f68d9..dd580594dfb7 100644
+>> --- a/security/apparmor/include/apparmorfs.h
+>> +++ b/security/apparmor/include/apparmorfs.h
+>> @@ -104,6 +104,8 @@ enum aafs_prof_type {
+>>   #define prof_dir(X) ((X)->dents[AAFS_PROF_DIR])
+>>   #define prof_child_dir(X) ((X)->dents[AAFS_PROF_PROFS])
+>>
+>> +int aa_create_aafs(void);
+>> +
+>>   void __aa_bump_ns_revision(struct aa_ns *ns);
+>>   void __aafs_profile_rmdir(struct aa_profile *profile);
+>>   void __aafs_profile_migrate_dents(struct aa_profile *old,
+>> diff --git a/security/apparmor/include/crypto.h b/security/apparmor/include/crypto.h
+>> index 636a04e20d91..f3ffd388cc58 100644
+>> --- a/security/apparmor/include/crypto.h
+>> +++ b/security/apparmor/include/crypto.h
+>> @@ -13,6 +13,7 @@
+>>   #include "policy.h"
+>>
+>>   #ifdef CONFIG_SECURITY_APPARMOR_HASH
+>> +int init_profile_hash(void);
+>>   unsigned int aa_hash_size(void);
+>>   char *aa_calc_hash(void *data, size_t len);
+>>   int aa_calc_profile_hash(struct aa_profile *profile, u32 version, void *start,
+>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+>> index 45b3a304d525..647c13e13e63 100644
+>> --- a/security/apparmor/lsm.c
+>> +++ b/security/apparmor/lsm.c
+>> @@ -32,6 +32,7 @@
+>>   #include "include/audit.h"
+>>   #include "include/capability.h"
+>>   #include "include/cred.h"
+>> +#include "include/crypto.h"
+>>   #include "include/file.h"
+>>   #include "include/ipc.h"
+>>   #include "include/net.h"
+>> @@ -2426,7 +2427,6 @@ static int __init apparmor_nf_ip_init(void)
+>>
+>>          return 0;
+>>   }
+>> -__initcall(apparmor_nf_ip_init);
+>>   #endif
+>>
+>>   static char nulldfa_src[] __aligned(8) = {
+>> @@ -2557,4 +2557,11 @@ DEFINE_LSM(apparmor) = {
+>>          .enabled = &apparmor_enabled,
+>>          .blobs = &apparmor_blob_sizes,
+>>          .init = apparmor_init,
+>> +       .initcall_fs = aa_create_aafs,
+>> +#if defined(CONFIG_NETFILTER) && defined(CONFIG_NETWORK_SECMARK)
+>> +       .initcall_device = apparmor_nf_ip_init,
+>> +#endif
+>> +#ifdef CONFIG_SECURITY_APPARMOR_HASH
+>> +       .initcall_late = init_profile_hash,
+>> +#endif
+>>   };
+>> --
+>> 2.50.1
 > 
-> The description for rcu_access_pointer() contains the following sentence:
-> 
->    "Within an RCU read-side critical section, there is little reason to
->     use rcu_access_pointer()."
->    https://elixir.bootlin.com/linux/v6.17-rc4/source/include/linux/rcupdate.h#L628
-> 
-> Perhaps I'm reading it wrong, but it looks like the RCU folks would
-> prefer we not use rcu_access_pointer() here?
-> 
-no, I just forgot that detail
 
