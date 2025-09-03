@@ -1,74 +1,74 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C332E6CB4
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Sep 2025 08:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDA92868AF
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Sep 2025 08:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756889259; cv=none; b=gbku6h3+AtVZqRyEApP90c6EFValfRIBxVLTkfp2AxlgVKGSpV2XXMIkMicEUBFXJ959Ye9l1L5zfQtC9twJTJ8qiRSTVX+BS49Ns9YD1FmvSbbVWx5yJXuKN06/H5FUOO5gXO0RIX5b2YOHCzOnXmyoeIVXhwol1Dx8ffkYIKQ=
+	t=1756889309; cv=none; b=AyZCXx6QCBRd3TjwGnh5EF8O7TkcN7B1F4Bl6Kg6nSgP/R6yVm0PoJioWuFTyvbAakRDs/9IwJZNkL9pSZn6A/KP6VAK+U92yp7Gd6gLITjU9ecu+jw/D//XSaIOFqIMNSpw84bJjjVlGZBoyqVo5DL72+nOCrzUEi0xIVPMDzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756889259; c=relaxed/simple;
-	bh=ac7EqySBguPKgv6xPiXC664YTMTQTy42OQwsYfOwmnU=;
+	s=arc-20240116; t=1756889309; c=relaxed/simple;
+	bh=y9ZYSUEhCgsCJs3MwjoxmJGXrLDrMvHRP13qwAwxu/o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Suvb2FszC736eoZ9BzRVLu+i0Xy6D+35+dY+91G68QjNmcFWg+EjxJzxgR4yVKIZ+Y2u3YWALBeGOlFYzhPW59ajCxaMVKoEYmEiJXxxgrYDX6DIQPB0Y30pdW31hMhZYBLbsf9CKb/PG0Y2wKPLkjbJtqdKO85nHV+g4/FT9nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=UQ9E/O9d; arc=none smtp.client-ip=185.125.188.123
+	 In-Reply-To:Content-Type; b=cbl197Zb+p0JVvnYcNrAwGf+oC7LqBoH66DmI6u/ZaamNrBchelmVN+1CDxK3A4279+ZU35akJiv5lb4b610hTVoMsPR10rkB5bLgbng/qP0fgGvSeFDPh7aRr6DzbWQpV111DQlhSiQdWeci4YWHkJlCDPxsaw/TshkyW9buww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=JK0C1X4y; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="UQ9E/O9d"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="JK0C1X4y"
 Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A59873F68C
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Sep 2025 08:47:33 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id E6E0B3F57D
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Sep 2025 08:48:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1756889253;
-	bh=VzK2rSQaQQohIIhg7/9GUOu09QgezDsJ9dSX0Tn1W4w=;
+	s=20210705; t=1756889304;
+	bh=ffOZA5hnHgybhwTy/ph2Q460TcUr010LL7KmyqTh0ro=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=UQ9E/O9dsD2fx2/1LjUEUHZdrNl87w4j1X1whMfvPeVw3T6fbEHjWrnq2WcM9CBpq
-	 5KneqitXO197tNJcsin7VSxPYuqp6pVEfpVrhY+hplKS0mhU3Ypl06EVwfsVPYJ5pO
-	 U7g+sYz9uDo5Jr7qWngR7m2IxWlDNe8Af9QNoS98Z/A//6WbmYq62EaEboYZNEVdIy
-	 iE8S8HT6sJ02OzW3Kdqc5SyqiuJa5DS42+SxM6R7hQTeROce/3cvu/qR8oJMRwW6Pk
-	 l6jx8ZEASNOtJwSsigOiZ1q/KJMr1QRyGvuHIk+eBL+5QaEHTiHCrCPMzRbriC7Nfs
-	 6d5Smdt9b6gug==
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-329ee69e7deso1566713a91.3
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Sep 2025 01:47:33 -0700 (PDT)
+	b=JK0C1X4yHunLbl9CGcpHk8bIJKx8hNH3pY9cFf5+octVhZSbmKZxRwJ7mNmeoQuVf
+	 x74b2x0eMtrI0B0nUIWvN6ZYqpzkBT9Cwg/mQjbXIQ7DkGp4/1xx2ukW5wOg7xEVke
+	 SAnvyT8yufrGwcfaXhpSgCDw6kqNpPBN9fjmz35CCMpF6aCCk5saO6QtbQqqTE4A5l
+	 d+0/ODtSPp/+OH+FdGcY7cewuXyPsHUFZFu//an2A8tWitoIgDnIBgz1jeghXnxXAp
+	 1vflQ5NXGvW2UHsqpfIalm1OQcfjKmYXsH2fRn95feD+ckXRnXVil3eQCk7J8j4tzN
+	 3pVx2xb1sSHbA==
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-32b698861d8so289990a91.2
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Sep 2025 01:48:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756889251; x=1757494051;
+        d=1e100.net; s=20230601; t=1756889303; x=1757494103;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VzK2rSQaQQohIIhg7/9GUOu09QgezDsJ9dSX0Tn1W4w=;
-        b=a33Lyj73GL9qD8Y1t+smISjMaEzb2Zo8ZZEIBsOa4U8A4Ra+5BujP012xQVZfIuLr1
-         ewNYj5sEBjDGxsgyKyA2MtKUkYOXhDb5AvjqXvW948a56Mo62qi8n0vjbvts8VfTcP/j
-         lckHwgvOOhNe47nlQd8zztbcLOGq+1wiiTbSsITSLmiV9l1FIcUcLBRcKeCoUBkVElgn
-         JWT7KtUIVLcLJoxHMpSL3tvdUUd4+0aXO0wcVI6H6yPJldnvXz6QKp6qNTXls3aHeDaW
-         8wI7Jt2DAVnn6J2wEh8EZiY/LbHggJLoyHPxN1WoA9wIUDyYHPdjeNqRDiGp74NQHxWu
-         jzMg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9HJoAkc8eVXFKfbVS6Xd1B2xZvZXIerhrpxGCXk9MMSb1sS5v+baA7v81axSMiytU7TQT3h0jKwvLWIoPo9TG9T4CL0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGohiAIqJ7GsBCwLpnPSmUO5PRSpQPbGdB1+2e6YE1/exEsOnw
-	7ky/XLexrkSx30JFsqIJbDzZg8JvXn7DgzkBevcmwEZGZhcbZSDmOjLvmznTPrdwuKZoFOLXfso
-	TEG7dlQTJ6U+7t5sdB/Jmthv1nXnOw/serT5sTnrhULOHvrYNWxX3tmiwu8a1O2uM+UebgObLZj
-	K6vovDBf1AweyQGSPjug==
-X-Gm-Gg: ASbGnct5o2ZdUBQytctd1VSxVMURPHpeJxb0yRZwwT+udpVJernBbBDrEbUSMoZXDFP
-	CrV3veuuwZ9ctgnbv1AjnGdPuRgTJVQD1InnliYlcH6/2IKCBBrAx6A4V7/w3DrnX01SvW+QsWl
-	C0+s1Ccgt/Jgnn1gbviGfPqZLtc9T7i8r17StICRyRQPb/Xn3bYkhrQJUp4MsXqNgKNav4ejoLa
-	z1stGg9VRaIjHGa1eFo4syPTeUxjK1bJeUTND66MRFuRQPSvniwPuj9v0Cvl3Yjt0zjzTpc5BBF
-	h4ruxqYNwJlKl0gRwH1V/zjRr2bG/IK485yrni8MG+xk6u/T8wWVhQ==
-X-Received: by 2002:a17:90b:3f8d:b0:32b:5f2f:f675 with SMTP id 98e67ed59e1d1-32b5f2ff9b4mr2488417a91.19.1756889250724;
-        Wed, 03 Sep 2025 01:47:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGLGIQOwGVWLMSTRfaDmoNY+ufQw1MfRrjPTWZV4OMEhb2ZaBxy7WM6YboLSJ+JRkSjBzaA5A==
-X-Received: by 2002:a17:90b:3f8d:b0:32b:5f2f:f675 with SMTP id 98e67ed59e1d1-32b5f2ff9b4mr2488387a91.19.1756889250314;
-        Wed, 03 Sep 2025 01:47:30 -0700 (PDT)
+        bh=ffOZA5hnHgybhwTy/ph2Q460TcUr010LL7KmyqTh0ro=;
+        b=Iispu+ysAQut2K5Bo2pHLW8Nhe2rArI6BlPFu9Nq6OB+Y7pjouWYo/M0xiKiMjbZX2
+         x6YAUn1L0otcotFe2liBAoXkr8dWL1GtsZNEY382KarU4gKmmaUHxJ61AgdMMV9HAl5i
+         SxSGnjAiptsb7c90YQmBIeNUy6vOsZ+jOWt0TDWO9gY+2t8ai/j5yyKvEonIAZk4fZs4
+         bbaG82xb2e2XjkI9xzrWk3cHy0/Srx2jJATvq0OARZd4NzOXKcHejQVSJxJN68wM1o4j
+         mdm7pnzfVHrroDFdRVw7/ErCWtv1dq3iNRPGIBPgvd5Oa4CrO+1XaN5k5z4eswmgfZK8
+         1DWw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+tFcnw/YMCd2GjP5wE5uwbjO9gTrA+MsQXY+ovXV4F5hCvvEER1GCZG4V+N7Z63OrQaojE/nqBnZM1kE+5WKjb5BRmls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtEKPi4rU8S1Mhrki+2a7KjwvEgQDaw2o0+wzla/V7TNgzAFPK
+	vt0M6zdNdIkziHwdfan0hA0W+S5miAm+dz4GcU65rENYY2VO2+EHH/V9TTRsFOgpGGHX66G5sC8
+	56SDt46EjHVsmSPfzWIPdj3pLr5aIDA5tcNAHfKxoHWy+IbNJX+eFjdAiZJ8DSTuRkRfRmBx5oE
+	QAYOtWcslMqM6QbU+OLA==
+X-Gm-Gg: ASbGnctHYGmqIzrUjwGEU0uMSPP4KTOT8c1kJw9EsO9LF2bSP+BP5ASgy4pMXmSx/bu
+	Bqg/S7xLVu4rESjnfDGmYpyN+O5bOz33YJpXkIhrlD+PirkShlGImYs7Ayy8mZl93yDoqGK17VO
+	zFH1b6As9oAkuFIxSguATikaZjN1E/uOt80AEmLi2+52NVDD5k7b7cABV/IOariHJP5XJ6sB5Eo
+	V1AC5au0iTK7BPB7NT/RnAjbCjIBdcSvip0jOThXnU9anwHkoZBz22vtXJCssJbCMmvUpa+d7DN
+	ERze9p1illkmI0z49YQTY8m5EzMNckSylKYQYvLxPCva/sXRD/mezg==
+X-Received: by 2002:a17:90a:d408:b0:329:ca48:70b0 with SMTP id 98e67ed59e1d1-329ca487480mr8579838a91.34.1756889303237;
+        Wed, 03 Sep 2025 01:48:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IETN1qvfRt9Y3d3UzU/fKb/YpD4Cp2ZijD2fStapzs597LcKIRDuItaN79/2XYzzasAA6LXkA==
+X-Received: by 2002:a17:90a:d408:b0:329:ca48:70b0 with SMTP id 98e67ed59e1d1-329ca487480mr8579807a91.34.1756889302811;
+        Wed, 03 Sep 2025 01:48:22 -0700 (PDT)
 Received: from [192.168.192.85] ([50.47.129.42])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-32745900a2dsm12139666a91.4.2025.09.03.01.47.29
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-329f633749bsm3523330a91.27.2025.09.03.01.48.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 01:47:29 -0700 (PDT)
-Message-ID: <180e8f03-66b3-44c7-a8d9-f185370267cf@canonical.com>
-Date: Wed, 3 Sep 2025 01:47:28 -0700
+        Wed, 03 Sep 2025 01:48:22 -0700 (PDT)
+Message-ID: <12483ddf-db29-4e43-a870-cfd77b01de97@canonical.com>
+Date: Wed, 3 Sep 2025 01:48:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -76,8 +76,8 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 18/34] lsm: fold lsm_init_ordered() into
- security_init()
+Subject: Re: [PATCH v3 19/34] lsm: add/tweak function header comment blocks in
+ lsm_init.c
 To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
  linux-integrity@vger.kernel.org, selinux@vger.kernel.org
 Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
@@ -90,7 +90,7 @@ Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
  Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
  Xiu Jianfeng <xiujianfeng@huawei.com>
 References: <20250814225159.275901-36-paul@paul-moore.com>
- <20250814225159.275901-54-paul@paul-moore.com>
+ <20250814225159.275901-55-paul@paul-moore.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -136,14 +136,14 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20250814225159.275901-54-paul@paul-moore.com>
+In-Reply-To: <20250814225159.275901-55-paul@paul-moore.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 8/14/25 15:50, Paul Moore wrote:
-> With only security_init() calling lsm_init_ordered, it makes little
-> sense to keep lsm_init_ordered() as a standalone function.  Fold
-> lsm_init_ordered() into security_init().
+> Add function header comments for lsm_static_call_init() and
+> early_security_init(), tweak the existing comment block for
+> security_add_hooks().
 > 
 > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 > Signed-off-by: Paul Moore <paul@paul-moore.com>
@@ -151,212 +151,50 @@ On 8/14/25 15:50, Paul Moore wrote:
 Reviewed-by: John Johansen <john.johansen@canonical.com>
 
 > ---
->   security/lsm_init.c | 159 ++++++++++++++++++++------------------------
->   1 file changed, 73 insertions(+), 86 deletions(-)
+>   security/lsm_init.c | 17 ++++++++++++-----
+>   1 file changed, 12 insertions(+), 5 deletions(-)
 > 
 > diff --git a/security/lsm_init.c b/security/lsm_init.c
-> index 1f64222925c1..f87f5441617b 100644
+> index f87f5441617b..37593805ba9e 100644
 > --- a/security/lsm_init.c
 > +++ b/security/lsm_init.c
-> @@ -18,6 +18,9 @@ static __initdata int lsm_enabled_false = 0;
->   extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
->   extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
->   
-> +/* Number of "early" LSMs */
-> +static __initdata unsigned int lsm_count_early;
-> +
->   /* Build and boot-time LSM ordering. */
->   static __initconst const char *const lsm_order_builtin = CONFIG_LSM;
->   static __initdata const char *lsm_order_cmdline;
-> @@ -169,7 +172,6 @@ static void __init lsm_order_append(struct lsm_info *lsm, const char *src)
->   		   lsm_is_enabled(lsm) ? "enabled" : "disabled");
->   }
->   
-> -
->   /**
->    * lsm_blob_size_update - Update the LSM blob size and offset information
->    * @sz_req: the requested additional blob size
-> @@ -313,14 +315,74 @@ static void __init lsm_order_parse(const char *list, const char *src)
+> @@ -315,6 +315,10 @@ static void __init lsm_order_parse(const char *list, const char *src)
 >   	}
 >   }
 >   
-> -/**
-> - * lsm_init_ordered - Initialize the ordered LSMs
-> - */
-> -static void __init lsm_init_ordered(void)
-> +static void __init lsm_static_call_init(struct security_hook_list *hl)
+> +/**
+> + * lsm_static_call_init - Initialize a LSM's static calls
+> + * @hl: LSM hook list
+> + */
+>   static void __init lsm_static_call_init(struct security_hook_list *hl)
 >   {
-> -	unsigned int first = 0;
-> +	struct lsm_static_call *scall = hl->scalls;
-> +	int i;
-> +
-> +	for (i = 0; i < MAX_LSM_COUNT; i++) {
-> +		/* Update the first static call that is not used yet */
-> +		if (!scall->hl) {
-> +			__static_call_update(scall->key, scall->trampoline,
-> +					     hl->hook.lsm_func_addr);
-> +			scall->hl = hl;
-> +			static_branch_enable(scall->active);
-> +			return;
-> +		}
-> +		scall++;
-> +	}
-> +	panic("%s - Ran out of static slots.\n", __func__);
-> +}
-> +
-> +/**
-> + * security_add_hooks - Add a modules hooks to the hook lists.
-> + * @hooks: the hooks to add
-> + * @count: the number of hooks to add
-> + * @lsmid: the identification information for the security module
-> + *
-> + * Each LSM has to register its hooks with the infrastructure.
-> + */
-> +void __init security_add_hooks(struct security_hook_list *hooks, int count,
-> +			       const struct lsm_id *lsmid)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < count; i++) {
-> +		hooks[i].lsmid = lsmid;
-> +		lsm_static_call_init(&hooks[i]);
-> +	}
-> +}
-> +
-> +int __init early_security_init(void)
-> +{
-> +	struct lsm_info *lsm;
-> +
-> +	lsm_early_for_each_raw(lsm) {
-> +		lsm_enabled_set(lsm, true);
-> +		lsm_order_append(lsm, "early");
-> +		lsm_prepare(lsm);
-> +		lsm_init_single(lsm);
-> +		lsm_count_early++;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * security_init - Initializes the LSM framework
-> + *
-> + * This should be called early in the kernel initialization sequence.
-> + */
-> +int __init security_init(void)
-> +{
-> +	unsigned int cnt;
->   	struct lsm_info **lsm;
->   	struct lsm_info *early;
-> +	unsigned int first = 0;
-> +
-> +	init_debug("legacy security=%s\n", lsm_order_legacy ? : " *unspecified*");
-> +	init_debug("  CONFIG_LSM=%s\n", lsm_order_builtin);
-> +	init_debug("boot arg lsm=%s\n", lsm_order_cmdline ? : " *unspecified*");
+>   	struct lsm_static_call *scall = hl->scalls;
+> @@ -335,12 +339,12 @@ static void __init lsm_static_call_init(struct security_hook_list *hl)
+>   }
 >   
->   	if (lsm_order_cmdline) {
->   		if (lsm_order_legacy) {
-> @@ -332,9 +394,8 @@ static void __init lsm_init_ordered(void)
->   	} else
->   		lsm_order_parse(lsm_order_builtin, "builtin");
->   
-> -	lsm_order_for_each(lsm) {
-> +	lsm_order_for_each(lsm)
->   		lsm_prepare(*lsm);
-> -	}
->   
->   	pr_info("initializing lsm=");
->   	lsm_early_for_each_raw(early) {
-> @@ -383,87 +444,13 @@ static void __init lsm_init_ordered(void)
->   	if (lsm_task_alloc(current))
->   		panic("%s: early task alloc failed.\n", __func__);
->   
-> +	cnt = 0;
->   	lsm_order_for_each(lsm) {
-> +		/* skip the "early" LSMs as they have already been setup */
-> +		if (cnt++ < lsm_count_early)
-> +			continue;
->   		lsm_init_single(*lsm);
->   	}
-> -}
-> -
-> -static void __init lsm_static_call_init(struct security_hook_list *hl)
-> -{
-> -	struct lsm_static_call *scall = hl->scalls;
-> -	int i;
-> -
-> -	for (i = 0; i < MAX_LSM_COUNT; i++) {
-> -		/* Update the first static call that is not used yet */
-> -		if (!scall->hl) {
-> -			__static_call_update(scall->key, scall->trampoline,
-> -					     hl->hook.lsm_func_addr);
-> -			scall->hl = hl;
-> -			static_branch_enable(scall->active);
-> -			return;
-> -		}
-> -		scall++;
-> -	}
-> -	panic("%s - Ran out of static slots.\n", __func__);
-> -}
-> -
-> -/**
+>   /**
 > - * security_add_hooks - Add a modules hooks to the hook lists.
 > - * @hooks: the hooks to add
 > - * @count: the number of hooks to add
 > - * @lsmid: the identification information for the security module
-> - *
+> + * security_add_hooks - Add a LSM's hooks to the LSM framework's hook lists
+> + * @hooks: LSM hooks to add
+> + * @count: number of hooks to add
+> + * @lsmid: identification information for the LSM
+>    *
 > - * Each LSM has to register its hooks with the infrastructure.
-> - */
-> -void __init security_add_hooks(struct security_hook_list *hooks, int count,
-> -			       const struct lsm_id *lsmid)
-> -{
-> -	int i;
-> -
-> -	for (i = 0; i < count; i++) {
-> -		hooks[i].lsmid = lsmid;
-> -		lsm_static_call_init(&hooks[i]);
-> -	}
-> -}
-> -
-> -int __init early_security_init(void)
-> -{
-> -	struct lsm_info *lsm;
-> -
-> -	lsm_early_for_each_raw(lsm) {
-> -		lsm_enabled_set(lsm, true);
-> -		lsm_order_append(lsm, "early");
-> -		lsm_prepare(lsm);
-> -		lsm_init_single(lsm);
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -/**
-> - * security_init - initializes the security framework
-> - *
-> - * This should be called early in the kernel initialization sequence.
-> - */
-> -int __init security_init(void)
-> -{
-> -	struct lsm_info *lsm;
-> -
-> -	init_debug("legacy security=%s\n", lsm_order_legacy ? : " *unspecified*");
-> -	init_debug("  CONFIG_LSM=%s\n", lsm_order_builtin);
-> -	init_debug("boot arg lsm=%s\n", lsm_order_cmdline ? : " *unspecified*");
-> -
-> -	/*
-> -	 * Append the names of the early LSM modules now that kmalloc() is
-> -	 * available
-> -	 */
-> -	lsm_early_for_each_raw(lsm) {
-> -		init_debug("  early started: %s (%s)\n", lsm->id->name,
-> -			   lsm_is_enabled(lsm) ? "enabled" : "disabled");
-> -	}
-> -
-> -	/* Load LSMs in specified order. */
-> -	lsm_init_ordered();
->   
->   	return 0;
+> + * Each LSM has to register its hooks with the LSM framework.
+>    */
+>   void __init security_add_hooks(struct security_hook_list *hooks, int count,
+>   			       const struct lsm_id *lsmid)
+> @@ -353,6 +357,9 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+>   	}
 >   }
+>   
+> +/**
+> + * early_security_init - Initialize the early LSMs
+> + */
+>   int __init early_security_init(void)
+>   {
+>   	struct lsm_info *lsm;
 
