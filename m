@@ -1,175 +1,144 @@
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACC42E3716
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Sep 2025 20:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9481E6DC5
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Sep 2025 20:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756931202; cv=none; b=sRnbwdtjzoJmj79NgWc+SIqQ8Bx9qLfD9X8Zw2AKyozUXNUIf2rJYQ0M05w8f/nskmtfE8/HVNdNRGFpS/6BFP3MAlO+PwdaX701QR/24+Rn2pbObSmvcDqxzFGugCc2ve+n3u0KVvETcaovIuK6OzReL63sj1u7BRk5F4SpE+s=
+	t=1756931540; cv=none; b=M7wfu7OWUt4jflp0sKZg6MqOiBAE+oTRTvgBOhGMXWMgdNacS4lQEQ0TwiHj9BlrsoPHycEazjYk36IawCEt1RHaHoFMa/clkxfjOjks0d/bZWL6GDrrfYue89BIQr3clfHYrxE0FMNCu5MJvFFe+wwgqbhgTdkYQiW/YenM75M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756931202; c=relaxed/simple;
-	bh=0MaG39Q10+lRsjDKYez8QkznlAN7+rEuOEcO8KHI5a0=;
+	s=arc-20240116; t=1756931540; c=relaxed/simple;
+	bh=JUqQcth+48yfR5IRsTgNIhgR29SjLMaLxedyYS8m8CQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k43Ap14J47LL1Y/zM7K44tGz/7t/wMfhC2q16qNhJ378rEAbHBKmB0tpXPszhzpWvzCkz7za/oi3xTCjdUZowSkOC4jKY0sJAdtI0jNOM+kk+0dhW2hvLIhr8Witshk0CCWLXPuajtcZVkbIHYUXdPhNd0tdu/xVJRrFixiiEOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZkE6CsCz; arc=none smtp.client-ip=209.85.216.43
+	 To:Cc:Content-Type; b=kNW8f5zV+WCEYStFGPMOnS5WEUmDWBNTveSaD+aKlknPbC9498h8UsJjB3D0CpaZJ+xj6uuChkgQRfQL6K7uj86awZMDCRWuI/7TUs8KgN2knpWlgqEpM9n7hg5n+1YBSlZ02S3F69PVbyiuCu9G///sfiGjbO+Y26mwY+fu4I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FpdG7/vk; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZkE6CsCz"
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32b6108f2d5so164329a91.3
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Sep 2025 13:26:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FpdG7/vk"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-329e47dfa3eso217034a91.1
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Sep 2025 13:32:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1756931199; x=1757535999; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1756931538; x=1757536338; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EXOKUhuO1qAsEEf2zdDA37wCLb2DEnMcoGNBMXWm0MY=;
-        b=ZkE6CsCziq8zVGP9z73lM6U9o7/BXD4HzR9kNQfyCbvZOBSeAnbO4UohlU7z0woW6T
-         srUizqZ6kBhlN553jVhSoQODEOUTYOb/dHnRCQ4lQnMd5TBphl9UvAFZTMZSPSIJUllM
-         MBnl/mCRq6HdGpYI3B8+BCp8QVKqTM22vBgzTIFoKA7WgEyLf8perBKVUUg6bLbhinJi
-         uM5lcV5XiZqKrv+YKj3Qzh3pJnXvbWWxzYr+Z/ibEEVt0ZMSYYl3cjM+HH3CJIe+a/Er
-         f+x5KL607eya2h2G0sPICeCuVrNYv9JoJsqVqZ6ohrkzu6D5qEMBPFJT/N/6kgufysfb
-         be7w==
+        bh=kJ5BuvO47PQ9ewZ74GpkgcMd6NO4tOTKv4Zu027LJSk=;
+        b=FpdG7/vkPJMDuRMoiyqqOtBKQA9SZW1OxJAtE1GdU0vLThwnowuKC/8CtZHGqPBsLS
+         t4lvf98l7b09+9vZhwGme0okqRdsoqWQqpnkbidWzTQZpWEyxii9RSDTlHxASRB9/rL0
+         8U+GcYLZK+68QwJymxDV2eRSmNRgaLjjQsqeZdbGgoiA9vTnSxAl5ZOSarIm5fxobgjm
+         iNMHOy12Hj8oHOHMX476MAIiRA88HmdbjsTD5fH8R0Blu66wMX52SSIPoChdsjrywg04
+         dmSmlVGn1AflS50XjrTt/vLJmD/mwKny3km76YWtdMrQFw8y4t8pyhIxu+oTmZBg3WVB
+         tPZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756931199; x=1757535999;
+        d=1e100.net; s=20230601; t=1756931538; x=1757536338;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EXOKUhuO1qAsEEf2zdDA37wCLb2DEnMcoGNBMXWm0MY=;
-        b=vbH3tX+9vpFi2Mvc2o+0WKKIJskARewd+dFE0o9XFXku/CHE1XNPtLEyZOcVQYWstj
-         PlFq2HAEQ/RIUwymbiFjnmmmIfpGnVTv1w05xaztckZhgKR/9pZNiOi8oWQucokmF7b2
-         cAAwD0d7gsdWsycU+KFFAm1W3gTfjd1JEM3GT4v8tCjHePkvM24u8wVfqDEd4PFTfr0O
-         l8NNPlRjEs4g3OU5XAQxCGqllCFM4YgniBkryrwW8O2yt0INsqNDBmzudT1fDD97ZbxH
-         8jRcqu8hJysBjJUHXQ4dYeeWgRap32o9nJd4lEe/bMnQxX2PKrrejLiJziZKnJqLdk2i
-         MSUQ==
-X-Gm-Message-State: AOJu0YyEhwXu43vVjwzQrFQZpIHqRnIK8aAsvgNQywD/Kj1/xGChVzG7
-	vW4+d3hmS041VYXduAZrgjF11ZK501VCvuxwnWNOLveANPtDBvvGQIYoxWzh+wXotQNNrKEjgcv
-	esidm2+tFP9rKRGA+WrMc/D0ytOQPL6soBUv61mfq
-X-Gm-Gg: ASbGnctDtLExGdilPFrdFniIkd+VmJqMAs+df+3bP1mshCwSKb6el/M7pwhCVZEsiHe
-	asn3ow3IK4W9njWHRTCbOOPwPjVbqydglKbOr5JzU1WBeHfKbQKvLai9ud8NtCOEh51DUjDru2T
-	oliGQAo9+f38RQAWOqiL//bhldXOsgoaYtq2cbjoWxdesMDZwJL5cIE1fUCHG5K+9EMn5PpvOyv
-	WDyP8Y=
-X-Google-Smtp-Source: AGHT+IGlvup2xpjVL7Dhtel9vzzWcSj+zF8XRGa4iEdhrLRU5CzfIiVjQSX5z0wuO723g1nSxHsZHaxDuStGWwe0zYc=
-X-Received: by 2002:a17:90b:2550:b0:32b:92ac:cfb6 with SMTP id
- 98e67ed59e1d1-32b92acd0a2mr453692a91.12.1756931199212; Wed, 03 Sep 2025
- 13:26:39 -0700 (PDT)
+        bh=kJ5BuvO47PQ9ewZ74GpkgcMd6NO4tOTKv4Zu027LJSk=;
+        b=Y5y0vW9Xtb2jxRm6/ryUI3psN7OwO6um88KuIFauQm2ZDR6TLmgnrle6ZsjQTOJjZ8
+         qU+RfIzN+0EAMlBL4l1c8kYlCvgcOle59ZE/3WX2Ynf24dMgTrnip6sXOhhHymzz8Tjd
+         s9jus5eQQ6S0t89dR5juUpDbsWnBvvKadZ3mxLokz2Yxypfrf/4J/HN/QyWxvLln+Xct
+         QqcRDyoHofeWqmv+/75teSlMw6ExwbhT2PRkAipbIpvr3hzaDFPTEUOYGn8Wry5AT58c
+         Mevoc8m7OTlKE8ojRUDudLRdW5HBODHlDiWDrTnTReJ4hoLaDXoTMD1f6X/l0HlAZQyv
+         6CXQ==
+X-Gm-Message-State: AOJu0YwkXDcy3DkoLopp7kzcznx7L2dxlHX0s8C1G2sIvIKmXEROiiQn
+	BOOyy07izgRqW6iOkrpiD1Jmxa3o0Qun+rdW+W+BZ4CxQiCMnQXxfO9h94u5O1R70NU2QHn5uIx
+	Jic8W0KsKVy6dw+wFJ3h0B5YuSq8/Oe+B8OPPeznf
+X-Gm-Gg: ASbGncsYqwcjtVNopBORuNTLdOvfp2PqvTzgEgIvz91Viq6jBrAV8DE06lhxP88kunx
+	iSyQSVJ1SsmoDPLmf4xtX+Mo/8Avn5fNOH05ye/4ccj/Dk21fbvmvw6gFNhIBUf9VRw6tmEXQHz
+	/XQ4vmybuoV+MjUlmLb7qoGeNUd/4c9C8Ie24ekRljOEkJmaL7rScmDGc3samoGBLOqg6LcK225
+	z8Tt4g=
+X-Google-Smtp-Source: AGHT+IHWOotiu9t3J3R4HLk+zVm85x2J3ZLURGCvKo08zpnUTB2Nq7s2ZiHCnKKIbSxlGxWk4FiAQSQ6hXeX5qsrKUQ=
+X-Received: by 2002:a17:90b:5865:b0:328:a89:3dc8 with SMTP id
+ 98e67ed59e1d1-3281543cc5emr21520105a91.14.1756931538487; Wed, 03 Sep 2025
+ 13:32:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814225159.275901-36-paul@paul-moore.com> <20250814225159.275901-47-paul@paul-moore.com>
- <06a68323-b297-4be7-92eb-c2091207b9f0@canonical.com>
-In-Reply-To: <06a68323-b297-4be7-92eb-c2091207b9f0@canonical.com>
+References: <20250814225159.275901-36-paul@paul-moore.com> <20250814225159.275901-63-paul@paul-moore.com>
+In-Reply-To: <20250814225159.275901-63-paul@paul-moore.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 3 Sep 2025 16:26:26 -0400
-X-Gm-Features: Ac12FXx8har4tdX6rI0dDPC0HOg1CPyZ1wT-CCBQj6hwAZvlOnWX7etUk1-2YCQ
-Message-ID: <CAHC9VhQnFJLXrhcbQ2b7rWDNYjRRKoevqiKYchE_39ShcjgLEw@mail.gmail.com>
-Subject: Re: [PATCH v3 11/34] lsm: get rid of the lsm_names list and do some cleanup
-To: John Johansen <john.johansen@canonical.com>
-Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	selinux@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, 
+Date: Wed, 3 Sep 2025 16:32:06 -0400
+X-Gm-Features: Ac12FXyNJitgpL2yinQCFeDyrkKRUyO_0xYJ9X1mCNjeHnVb6sYzdHeJtz7l_1U
+Message-ID: <CAHC9VhSf=zo0BkTc_=Qqq59OMVHsMUs_OqcmSUK501LYpAdMYg@mail.gmail.com>
+Subject: Re: [PATCH v3 27/34] tomoyo: move initcalls to the LSM framework
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: linux-security-module@vger.kernel.org, 
+	John Johansen <john.johansen@canonical.com>, Mimi Zohar <zohar@linux.ibm.com>, 
 	Roberto Sassu <roberto.sassu@huawei.com>, Fan Wu <wufan@kernel.org>, 
 	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
 	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
 	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>
+	Casey Schaufler <casey@schaufler-ca.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>, 
+	linux-integrity@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 2, 2025 at 1:20=E2=80=AFPM John Johansen
-<john.johansen@canonical.com> wrote:
-> On 8/14/25 15:50, Paul Moore wrote:
-> > The LSM currently has a lot of code to maintain a list of the currently
-> > active LSMs in a human readable string, with the only user being the
-> > "/sys/kernel/security/lsm" code.  Let's drop all of that code and
-> > generate the string on first use and then cache it for subsequent use.
-> >
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > ---
-> >   include/linux/lsm_hooks.h |  1 -
-> >   security/inode.c          | 59 +++++++++++++++++++++++++++++++++++++-=
--
-> >   security/lsm_init.c       | 49 --------------------------------
-> >   3 files changed, 57 insertions(+), 52 deletions(-)
-> >
-> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > index 7343dd60b1d5..65a8227bece7 100644
-> > --- a/include/linux/lsm_hooks.h
-> > +++ b/include/linux/lsm_hooks.h
-> > @@ -172,7 +172,6 @@ struct lsm_info {
-> >
-> >
-> >   /* DO NOT tamper with these variables outside of the LSM framework */
-> > -extern char *lsm_names;
-> >   extern struct lsm_static_calls_table static_calls_table __ro_after_in=
-it;
-> >
-> >   /**
-> > diff --git a/security/inode.c b/security/inode.c
-> > index 43382ef8896e..a5e7a073e672 100644
-> > --- a/security/inode.c
-> > +++ b/security/inode.c
-> > @@ -22,6 +22,8 @@
-> >   #include <linux/lsm_hooks.h>
-> >   #include <linux/magic.h>
-> >
-> > +#include "lsm.h"
-> > +
-> >   static struct vfsmount *mount;
-> >   static int mount_count;
-> >
-> > @@ -315,12 +317,65 @@ void securityfs_remove(struct dentry *dentry)
-> >   EXPORT_SYMBOL_GPL(securityfs_remove);
-> >
-> >   #ifdef CONFIG_SECURITY
-> > +#include <linux/spinlock.h>
-> > +
-> >   static struct dentry *lsm_dentry;
-> > +
-> > +/* NOTE: we never free the string below once it is set. */
-> > +static DEFINE_SPINLOCK(lsm_read_lock);
+On Thu, Aug 14, 2025 at 6:54=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
 >
-> nit, this is only used on the write side, so not the best name
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> ---
+>  security/tomoyo/common.h        | 2 ++
+>  security/tomoyo/securityfs_if.c | 4 +---
+>  security/tomoyo/tomoyo.c        | 1 +
+>  3 files changed, 4 insertions(+), 3 deletions(-)
 
-Fair point, I'll rename it to lsm_read_str_lock, it still has "read"
-in the name, but it should be a bit more clear that it references the
-lsm_read_str variable.
+Tetsuo, does this look okay to you?
 
-> > +static char *lsm_read_str =3D NULL;
-> > +static ssize_t lsm_read_len =3D 0;
-
-Similarly, I'm renaming lsm_read_len to lsm_read_str_len.
-
-> >   static ssize_t lsm_read(struct file *filp, char __user *buf, size_t c=
-ount,
-> >                       loff_t *ppos)
-> >   {
-> > -     return simple_read_from_buffer(buf, count, ppos, lsm_names,
-> > -             strlen(lsm_names));
-> > +     int i;
-> > +     char *str;
-> > +     ssize_t len;
-> > +
-> > +restart:
-> > +
-> > +     rcu_read_lock();
-> > +     if (!lsm_read_str) {
+> diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
+> index 0e8e2e959aef..3b2a97d10a5d 100644
+> --- a/security/tomoyo/common.h
+> +++ b/security/tomoyo/common.h
+> @@ -924,6 +924,8 @@ struct tomoyo_task {
 >
-> should probably be
-> if (!rcu_access_pointer(lsm_read_str)) {
-
-The description for rcu_access_pointer() contains the following sentence:
-
-  "Within an RCU read-side critical section, there is little reason to
-   use rcu_access_pointer()."
-  https://elixir.bootlin.com/linux/v6.17-rc4/source/include/linux/rcupdate.=
-h#L628
-
-Perhaps I'm reading it wrong, but it looks like the RCU folks would
-prefer we not use rcu_access_pointer() here?
+>  /********** Function prototypes. **********/
+>
+> +int tomoyo_interface_init(void);
+> +
+>  bool tomoyo_address_matches_group(const bool is_ipv6, const __be32 *addr=
+ess,
+>                                   const struct tomoyo_group *group);
+>  bool tomoyo_compare_number_union(const unsigned long value,
+> diff --git a/security/tomoyo/securityfs_if.c b/security/tomoyo/securityfs=
+_if.c
+> index 7e69747b2f77..33933645f5b9 100644
+> --- a/security/tomoyo/securityfs_if.c
+> +++ b/security/tomoyo/securityfs_if.c
+> @@ -233,7 +233,7 @@ static void __init tomoyo_create_entry(const char *na=
+me, const umode_t mode,
+>   *
+>   * Returns 0.
+>   */
+> -static int __init tomoyo_interface_init(void)
+> +int __init tomoyo_interface_init(void)
+>  {
+>         struct tomoyo_domain_info *domain;
+>         struct dentry *tomoyo_dir;
+> @@ -269,5 +269,3 @@ static int __init tomoyo_interface_init(void)
+>         tomoyo_load_builtin_policy();
+>         return 0;
+>  }
+> -
+> -fs_initcall(tomoyo_interface_init);
+> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+> index ed0f7b052a85..a015cf0c4a00 100644
+> --- a/security/tomoyo/tomoyo.c
+> +++ b/security/tomoyo/tomoyo.c
+> @@ -617,4 +617,5 @@ DEFINE_LSM(tomoyo) =3D {
+>         .flags =3D LSM_FLAG_LEGACY_MAJOR,
+>         .blobs =3D &tomoyo_blob_sizes,
+>         .init =3D tomoyo_init,
+> +       .initcall_fs =3D tomoyo_interface_init,
+>  };
+> --
+> 2.50.1
 
 --=20
 paul-moore.com
