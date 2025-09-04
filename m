@@ -1,159 +1,107 @@
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9D4321459
-	for <linux-security-module@vger.kernel.org>; Thu,  4 Sep 2025 17:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63247BA4A
+	for <linux-security-module@vger.kernel.org>; Thu,  4 Sep 2025 21:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757008363; cv=none; b=pPLZ68YSx8I2o5V0nSOUaYpnFCuTzIpEX9a1o2dpQ4GYqaYfPk/P8P7jcvReGvskeyCCqyRZKT/NornEomCYeVyhrm7CX46WwaN1dnjIzBmva/2Gs3Nuyf/XWWQhc/cYyDRUMt9eYtSjvtES6ixDJhuexfAO+8AtlxyIbcIXq64=
+	t=1757022386; cv=none; b=pIjldmajDwDrhX6Mpb8E4/Apcuo/uBCHp/5mnDrbDIe5maerVPrs5yljhgkgRljzAvx/0ZVIPoPIKvWyKtYDomsVDiQ+WJeAeC/VbVYLDFi0weV3abpRf72PD7hV378NUwK3NbUTLrVAohkBMQX+X3kyvtuUWhJAzDdYxOfNrMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757008363; c=relaxed/simple;
-	bh=zIUzBoqMCs+upPbaW+SMs3OzZCg0Ui90/iMoYugGpcA=;
+	s=arc-20240116; t=1757022386; c=relaxed/simple;
+	bh=UkcFu038SgzaQoqpHuqh7rm8Kk5hlryjIpk433T8ZFE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ey9vFr1KehcV78Kk2IR4KNhH/3mqghiHHXJrrQMceAJFLrreVItgW/+uHI3lTT07H1hgSFHCOnxtfP8v31rXT02fEUdqKFq+CqaBkjbyW8xeZCLYTsdOhCbeCrx4z6IiL47hgCEWzvwpfkNYWABDk/q3MyeYnGik5eyDDc0TQFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=So/iaw8n; arc=none smtp.client-ip=209.85.216.54
+	 To:Cc:Content-Type; b=GkRyqnrtF1ir/tBmz14OSt32amYLP6FnOtx2kScI7n5GI8CfYW9N9mNCipHW/dO737fPFTMffHBSKrkDARKgjPxBrubwCZIHpDAmG4fKY4kLmPNpTEebR7vhKOOyjhiQ1GhtKOovYP+fAID5UGaeOa3lKm4UJuCHWYXhUD9nyss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=G9+uN+4d; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="So/iaw8n"
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32326e09f58so1454847a91.2
-        for <linux-security-module@vger.kernel.org>; Thu, 04 Sep 2025 10:52:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="G9+uN+4d"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e4f2e4c40so1354933b3a.2
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Sep 2025 14:46:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1757008360; x=1757613160; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1757022384; x=1757627184; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r4wEovec4irSS2AhdcFcIsDZ/T4ifbTabakPGYBIh1g=;
-        b=So/iaw8nesXY9P9+e0uQGrdh161TLgza4xvrjT5shKr9021QC6xTBGJpsOLweGWomi
-         l1Z0+AYvsHc3dIWaNZRpFkzqBBodi46XwW1Mp7nTpJmqe/di5/aJl5/seC37hLIjsH6z
-         4oC+KpkdnPULeR6LH8xeWEl5XVQON5BQ8GhyCGfF5SSXYj4zRF55UWFuDQ1rYgtI3uWs
-         IKMBkXbwvlwBnnkr6xnJTICw0m51DI0bjV2t1n3Xhf0zG/VIxPreoBuJDD2QNIMp/AHo
-         PLPae7rG3sqtJ+ZtCuv/xhjs+f29HyXCY4JW9hD8njWAlm73MUh5O3RvvZn0/PjdV7OE
-         tHkQ==
+        bh=58UCbBJx7XFHUgMt81Q1QMPCRrjbTg/IHTwhF1TE8Rw=;
+        b=G9+uN+4dAw/RvS1MOeW/F4F4tj36xIFiPcmhTaBt3PyoUFo9/zX+nsuhxIX5+Qj/Wo
+         QFuvjuOVX4BkRawQd+e5UpAHXLiVmf8CJcjk2oSYkXKux7CokX5z4Eph1LECDNaBSu0X
+         UsS1fLwMnLhkYnSeCnS71Mqzh7lNhifSgi8aFneC9FiRc7v3goHjURgEGc0/0hkS/cZp
+         7d+RQU5i4oyp/E6heYca3W9BEdwlV1dTkSV3RwLXTCvrLJlDT9mTCG/BUHKxbvsXUjl+
+         bPa2fUIg+0+cyFEfXel65r0IGW4ToSqx1GSOUqaOJjGO5we71RskF6/p+rPatQ4ejuBQ
+         cjcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757008360; x=1757613160;
+        d=1e100.net; s=20230601; t=1757022384; x=1757627184;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=r4wEovec4irSS2AhdcFcIsDZ/T4ifbTabakPGYBIh1g=;
-        b=TJVD8oOledLasoAm8YwwlJFh5nnxM74vD02ueUSXeD28bEMGJnv3ICFGL/H0LY8icN
-         15ibaJIzKZI8G4UVNIi+/bb2CYyw1Gk+yqloHVYnQZ+fsHkhwcqDIeIUFalMM5PD7t7M
-         m+8plQrta35gqbNWCQtEht0J8V44JBb59jA2G1Tz6jeEe3EZW/TTelfz7x29pf4xKIQJ
-         JM1hIdZZMHYYIlsZpK+zTRBcHOHhU05SaBWyYjxwwdTLDUU0TxPxwmfDGQj/tv8zDejs
-         RHVZFVm9qiAtntTsR2y7x2Amgcq4MP4cIY3c4EPDsXzBD2SDUyoeaH+HawFfAJW4fpTZ
-         YE9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVqEuWcIlW2R6wJronnSRL556iGYHQ3Y3Np2HMCmuNWNMYUR0RltbmSfz6BaJ9WRA2l0SP2IrE2esetDkO1vsV+vFIlhbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyI1B2sueUz6phy11yrECdmwki1+QUr9VUsyEqJDn9rBBgfukG
-	LmIvkVZ9SHsO+yyflRvlaTONHz2H91ufUmUDgDZosdECnTkJENfGgdUzAtl+Uuh2dFQ8b7kN/MQ
-	95kh4uoD4CEyJJsayXbtRboVQbKjTcHfyjI2AzkbT
-X-Gm-Gg: ASbGncumqeOQM6fB7npyg984oYlDPIE7NpmLQbh2qVWn7olSa+zfkrvqfqexx6xQxpc
-	NyEtDjiznWTNYb6a+LEbqeE/c13W6vDCcMTRq1NG4bl0l/oeIHLJTSXqFHlZqG/JEgczWmvZ7UD
-	hMbcH5WIkG+QsE7wUSIs4iirueaSc+7tbkbl0jJYwi3Qs4NWa/TAWDfi52Btxp5/ZE/Xx3PLxdl
-	fgXEPxOB/OxtECUkw==
-X-Google-Smtp-Source: AGHT+IHARERwIOrQzAiha36b5KLgb4mgjkt5iW0JpSJFow8LH+VqRSx10lHb02TqQRnwF0ghmxuhvBrs9ntvdzohquQ=
-X-Received: by 2002:a17:90b:3d48:b0:32b:70a7:16da with SMTP id
- 98e67ed59e1d1-32b70a71b2fmr8276282a91.20.1757008359843; Thu, 04 Sep 2025
- 10:52:39 -0700 (PDT)
+        bh=58UCbBJx7XFHUgMt81Q1QMPCRrjbTg/IHTwhF1TE8Rw=;
+        b=mH/HxORsirv8Z1kMKkGUIV+/dpgywdZXFA0ERNNucMU/Gm85YCo/RoX5luajK46XQM
+         C0hmfCV6ujazuRkUGEOXE9Dov6yUJrQk/dfDFBBDPNQxggO4XW+hboRfFNvVHAodO5cw
+         +/kQ/kETjrVwkLVYcGHm6awbJ68IK3WkTvrei9FlQto8KgAAe3WPJG93fwsEuOjDmsWb
+         vzatE17363/TJjb8Q63CBklM9XCVDzhKKzObM9SRiOXSDSJABj71C8BkoqsHZEN0h9CH
+         zGamTB9f4Jy4imVU4Lh54kVQdsJvjeiQLLvzu9xe4WSC82zDBuNOXcgx69An2BSH3vQM
+         6sLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsQm0skCv8xxa4UWG6/yaCK5wlzAMX6dGD8vz5wkfNbPEajG6GhscxGpq9AkL/nOl5EHMZhKqg34OUQ1OARDXw/zNCETg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx17nooFwbl47NMx/vvxkA1Pe3DAWkArbgppymBcLjeC8cU0T1L
+	9InuhNWiubIGhbcINBDsYDwzC51zlPD3+ea0BvPfw/vKvzIzMGQktkdz+MaR67MkWFv7wIoQFR6
+	arox12GaVb/8iIM6WCpnjzMc8Rmc5+Gqtt6jlIgfU
+X-Gm-Gg: ASbGncvaFt4XrSVmIXuz+gR3jKMR7N7o2n7XnwgAyV88krxjKYitLILhVWyVVjBD66c
+	GG0Cd/wJ7w5JD9X5+sXNe9aTOKjODdKVAhstOY4FALvX0BBOYv+vr3pR5E9v6QT3n7a1Y1+lLoi
+	ZtsFtYnUcyc8MzSsy7byNa7ms+0OQi2LJ6QoUSut9utlUVG5k6bSG/5gK04VT3m2qitRhPqvJCT
+	PEOMSE=
+X-Google-Smtp-Source: AGHT+IHSmBNyZQvwAPcR/toxhKoWlcaMb7YElYq5CeuEyUQYfTCgL75F0sbfJLNBWxvT0UehgGKBnvJC1dOhHKYC0XY=
+X-Received: by 2002:a17:902:d552:b0:248:fbc1:daf6 with SMTP id
+ d9443c01a7336-24944ad55a3mr260481835ad.43.1757022383625; Thu, 04 Sep 2025
+ 14:46:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814225159.275901-36-paul@paul-moore.com> <20250814225159.275901-47-paul@paul-moore.com>
- <06a68323-b297-4be7-92eb-c2091207b9f0@canonical.com> <dd03266930a7b219c590c54bb2c210366f8d89a1.camel@huaweicloud.com>
- <e92064a4-06c5-4913-917c-f9aca02378f3@canonical.com> <CAHC9VhQPmF-RCSUjZo-pe1+sWyw5ZGdnD7P0CWb7yXQQoo+92g@mail.gmail.com>
-In-Reply-To: <CAHC9VhQPmF-RCSUjZo-pe1+sWyw5ZGdnD7P0CWb7yXQQoo+92g@mail.gmail.com>
+References: <20250901083027.183468-1-idosch@nvidia.com> <20250901083027.183468-2-idosch@nvidia.com>
+In-Reply-To: <20250901083027.183468-2-idosch@nvidia.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 4 Sep 2025 13:52:27 -0400
-X-Gm-Features: Ac12FXzUqs3EGM9cpy-oy7cir66WjVMKoCa34Q4_quIWr1Hu03-7eQL_aCQUQYE
-Message-ID: <CAHC9VhRjQrjvsn65A-TGKKGrVFjZdnPBu+1vp=7w86SOjoyiUw@mail.gmail.com>
-Subject: Re: [PATCH v3 11/34] lsm: get rid of the lsm_names list and do some cleanup
-To: John Johansen <john.johansen@canonical.com>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
-	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Fan Wu <wufan@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>
+Date: Thu, 4 Sep 2025 17:46:12 -0400
+X-Gm-Features: Ac12FXyloQ_dak-O_Wva3QydnpbJf4zA16Hm_GfCIDXj33RkHuULUszNqR9cDOg
+Message-ID: <CAHC9VhQb8D=2=FX_JaQghA1e==s5XfMyKvdg6=1eVxjimhmqdg@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/8] ipv4: cipso: Simplify IP options handling in cipso_v4_error()
+To: Ido Schimmel <idosch@nvidia.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org, 
+	pabeni@redhat.com, edumazet@google.com, horms@kernel.org, dsahern@kernel.org, 
+	petrm@nvidia.com, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 4, 2025 at 11:18=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
-ote:
+On Mon, Sep 1, 2025 at 4:32=E2=80=AFAM Ido Schimmel <idosch@nvidia.com> wro=
+te:
 >
-> I'll rework this function, but I'll hold off on posting another
-> revision until I hear back on some of the reviews that are still
-> pending in case additional edits are needed.
+> When __ip_options_compile() is called with an skb, the IP options are
+> parsed from the skb data into the provided IP option argument. This is
+> in contrast to the case where the skb argument is NULL and the options
+> are parsed from opt->__data.
+>
+> Given that cipso_v4_error() always passes an skb to
+> __ip_options_compile(), there is no need to allocate an extra 40 bytes
+> (maximum IP options size).
+>
+> Therefore, simplify the function by removing these extra bytes and make
+> the function similar to ipv4_send_dest_unreach() which also calls both
+> __ip_options_compile() and __icmp_send().
+>
+> This is a preparation for changing the arguments being passed to
+> __icmp_send().
+>
+> No functional changes intended.
+>
+> Reviewed-by: Petr Machata <petrm@nvidia.com>
+> Signed-off-by: Ido Schimmel <idosch@nvidia.com>
+> ---
+>  net/ipv4/cipso_ipv4.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
 
-For the curious, here is what it looks like now:
-
-diff --git a/security/inode.c b/security/inode.c
-index 43382ef8896e..4813d116fd7c 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -22,6 +22,8 @@
-#include <linux/lsm_hooks.h>
-#include <linux/magic.h>
-
-+#include "lsm.h"
-+
-static struct vfsmount *mount;
-static int mount_count;
-
-@@ -315,12 +317,49 @@ void securityfs_remove(struct dentry *dentry)
-EXPORT_SYMBOL_GPL(securityfs_remove);
-
-#ifdef CONFIG_SECURITY
-+#include <linux/spinlock.h>
-+
-static struct dentry *lsm_dentry;
-+
-static ssize_t lsm_read(struct file *filp, char __user *buf, size_t count,
-                       loff_t *ppos)
-{
--       return simple_read_from_buffer(buf, count, ppos, lsm_names,
--               strlen(lsm_names));
-+       int i;
-+       static char *str;
-+       static size_t len;
-+       static DEFINE_SPINLOCK(lock);
-+
-+       /* NOTE: we never free or modify the string once it is set */
-+
-+       if (unlikely(!str)) {
-+               char *str_tmp;
-+               size_t len_tmp =3D 0;
-+
-+               for (i =3D 0; i < lsm_active_cnt; i++)
-+                       /* the '+ 1' accounts for either a comma or a NUL *=
-/
-+                       len_tmp +=3D strlen(lsm_idlist[i]->name) + 1;
-+
-+               str_tmp =3D kmalloc(len_tmp, GFP_KERNEL);
-+               if (!str_tmp)
-+                       return -ENOMEM;
-+               str_tmp[0] =3D '\0';
-+
-+               for (i =3D 0; i < lsm_active_cnt; i++) {
-+                       if (i > 0)
-+                               strcat(str_tmp, ",");
-+                       strcat(str_tmp, lsm_idlist[i]->name);
-+               }
-+
-+               spin_lock(&lock);
-+               if (!str) {
-+                       str =3D str_tmp;
-+                       len =3D len_tmp - 1;
-+               } else
-+                       kfree(str_tmp);
-+               spin_unlock(&lock);
-+       }
-+
-+       return simple_read_from_buffer(buf, count, ppos, str, len);
-}
+Acked-by: Paul Moore <paul@paul-moore.com>
 
 --=20
 paul-moore.com
