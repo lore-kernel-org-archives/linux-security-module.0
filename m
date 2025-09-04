@@ -1,185 +1,131 @@
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715931E3DED
-	for <linux-security-module@vger.kernel.org>; Thu,  4 Sep 2025 15:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EC9225A29
+	for <linux-security-module@vger.kernel.org>; Thu,  4 Sep 2025 16:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756999151; cv=none; b=LRifVGJWRwlqN1q/ft05QbcYRDG5bxTOWMCPl32gmtSpfbkpX6D7pOkjpAwuQmIoK9/tZqNmSg3FGhL5jl6LCZiDcgA52C2NXx53RSuqptsmf0d2mqFA/BMwnJP64zH0CP6b5G0Xpz+mHzEmNUne7/zlYW+XZGt65o1xkQsdRm4=
+	t=1757003121; cv=none; b=jJqBdaEDobkrlmjLd07kbJJkLhlkxMf6+7hlWQWIh/IecErdPAtmWHyKJiQ6i8hUAAtkomGA2er13Ak9RAZ6c8GZzr0lI6hFOCb90WNb7YG8wr5Xgvay7uVuHvgYJdBgrgfMgF3Y+WBaEsICf/qL5dK89kV/3d3w2nTX6ECdJ/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756999151; c=relaxed/simple;
-	bh=nYETEdFM2Q23PtRWuaKSlqXYtOHj0CVVvgSenoBh4iU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QIxOjFYgTBYC/KXmIDD3IIR5hmw4wpCVWGiHzcS1LBis+QX8nRBAqsO/pYFmSb/L5626tZJ7sTGa9wtrufG+Iu/oYFX073YMEWbI/XAPUJz1gPvSjRUPjcMNU+OEwn+qsDK4UG4Xs+LBRzFCiRnJAHr983imo04ulNNXJE07UGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NcJKZspB; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1757003121; c=relaxed/simple;
+	bh=Xr7HXV2EDj1MUXPmxuHpYx/sRLGDUigEszHvOfugdJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGhYHxC+Gz2fbPqONMAfkPOHwrS0HrxXn2fG7oKLxjz+tZJ0ho3mXdF4TPcbjGA2UywyXK4l0p+BUPHegvQL+HiRDwpr2SjjLG4Qst+uuuDbFQaSiLeuIbFxLIUKrOmmHlBCbD2bk2xiTB1e+cqDXnepFKsT5dY2BU35exKG7fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Avj5ZyE1; arc=none smtp.client-ip=45.157.188.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NcJKZspB"
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b4c6fee41c9so878839a12.1
-        for <linux-security-module@vger.kernel.org>; Thu, 04 Sep 2025 08:19:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1756999149; x=1757603949; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FmTNeG4SrXOqz+4cfRCRJg+2hK/lpQxkTAHLWvqFN5w=;
-        b=NcJKZspBpsgaPV2fktZK4DqkkNYyBlWvj+eNsLhMsPLeaP1oVFjboUBLaOJCc/aDmw
-         vZjhrJqvOPtp2y2G2v1jnQIXQ6CCoGeznjuFn7dP4DoVOIL9Esr9h3guoCMa6wZLJ4ZL
-         K6dRJq6vfhCbdd4C6y1+01pG8pBFVBaUoLPg/0/YMW+PZsh1HHR1GuzdV7Ju2bMjV83s
-         LI9dtHk6eBW7uHZDVrCKMOBkEHCz89TQo2t17wZL/b5PIqmcDCGYnlWGv6gDRBnpR0dD
-         nMFS0vJr3Bmd4fivQ9FucOIRP1NMmhseDsp2+AJUhGYPib/4+y1u622b8fAMHmT+B9Aw
-         5JRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756999149; x=1757603949;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FmTNeG4SrXOqz+4cfRCRJg+2hK/lpQxkTAHLWvqFN5w=;
-        b=UIBzyMycbh/zS9p3eG3VqYHEzKMtqef6O7bXVHS/PJfkmjBHV95eNs8LP/72PzdRQv
-         h/YWDfU850GEz06SRwigg45houT/z7HgtwnyVzFcLPLnn5IliFsN/CyASl+CoFczZWdN
-         s0S7V62/Qqb5P/AEo4+EK2Sw32zUodJR5xw6Hh+AwjkvI7R47oueJZSR9rB902NfvfR/
-         4YYT95/9wwQYv3d5SK4jxA/76YVHXKDQO2rPpT8O4/VE7X1jFXVpFnxWJndp+i0ktXWt
-         46RT3SVK8gnZapy8DAQ7p2AffGGXPDEc6KKIqdfJKI6iLIIO5qGJ3DYytbJpEiP8GkZ1
-         7Efg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsXXjNQXjkoC6TUpcbSEOe+R3pVT8v+4KI6KSoepo02G7oCPOG3BsQi/2gU9FYJIq+EReCHf1JcXPfc9lvQxEnWS1J7/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyBy8Z8zDO8PHobMu/VTjwwbMg+MB3Um2d5jIGB3Mgjm8QXmeY
-	MfarqwrKR7UbukDPXVAh04qXmRRwF8SPfPgwBuS1Lwul1niAbZI6l0edUVoC4EJaSazjFd6U7b6
-	hAwE5Hn9nko5DjGj0UgCk30paSgbII7BUkA1f3ekg
-X-Gm-Gg: ASbGncubePztDJb/zGIh/fcZpoaJd9Mya9vIG3jXHcwH3A0kPOT8vVdbGjSMeOdosRr
-	f0KOYU0osV8LCRgmIk4k3p2P4BfGPeolNyTv84q/kEl1RFGZHREhQniYQ/IMhOG2Cthas0/Re/g
-	A1/1TAmSL6qpCqpzcFGFcARPXAkOJPEWXC5CZ50+gw1Y88FxIq9di9k7nWfbmmUaDwmIxBusrzC
-	qukvXNysezECoGP8g==
-X-Google-Smtp-Source: AGHT+IFhoa8t1irT70EePzG4ai40L7SfCBHvnhGypGx1ev2J21pr9crG6m2DUiO924RVZUUs0vOhBamZg1D3PjHb4rw=
-X-Received: by 2002:a17:90a:e708:b0:32b:9595:ea58 with SMTP id
- 98e67ed59e1d1-32b9595ec97mr3351549a91.34.1756999149480; Thu, 04 Sep 2025
- 08:19:09 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Avj5ZyE1"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cHjcS5yPWzfRJ;
+	Thu,  4 Sep 2025 17:11:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1756998696;
+	bh=U2mCz3zznSLsWb7GNeP1eHBLdUbSnWIoGL7c11C9feg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Avj5ZyE1T5StHeQ9hVNvK1r+CVM1voY2tYMZDYfh6WHLK689wDoxb87r3+Piou/oE
+	 XFN8qdXhQRcGm1ATYXkTX//HIHbm/jEhpPjqTopY8M/J8tLsLcP1JvYnlyQb0dgA3X
+	 XAgvq4GMpLViKLATuUEVpW29hYN27jFBVfXN9kcQ=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4cHjcS0Bk0zGB8;
+	Thu,  4 Sep 2025 17:11:35 +0200 (CEST)
+Date: Thu, 4 Sep 2025 17:11:35 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Jann Horn <jannh@google.com>
+Subject: Re: [RFC PATCH] selftests/landlock: Support running the full fs test
+ suite on another FS
+Message-ID: <20250904.Jai9ahj2eoh2@digikod.net>
+References: <20250830034753.186551-1-m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814225159.275901-36-paul@paul-moore.com> <20250814225159.275901-47-paul@paul-moore.com>
- <06a68323-b297-4be7-92eb-c2091207b9f0@canonical.com> <dd03266930a7b219c590c54bb2c210366f8d89a1.camel@huaweicloud.com>
- <e92064a4-06c5-4913-917c-f9aca02378f3@canonical.com>
-In-Reply-To: <e92064a4-06c5-4913-917c-f9aca02378f3@canonical.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 4 Sep 2025 11:18:57 -0400
-X-Gm-Features: Ac12FXx2OvA4rbsYuJXfl6083HXp7bWTgYTn93ovNHC1jnaP7FZo6lWW50T_8jQ
-Message-ID: <CAHC9VhQPmF-RCSUjZo-pe1+sWyw5ZGdnD7P0CWb7yXQQoo+92g@mail.gmail.com>
-Subject: Re: [PATCH v3 11/34] lsm: get rid of the lsm_names list and do some cleanup
-To: John Johansen <john.johansen@canonical.com>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
-	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Fan Wu <wufan@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250830034753.186551-1-m@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On Thu, Sep 4, 2025 at 4:48=E2=80=AFAM John Johansen
-<john.johansen@canonical.com> wrote:
-> On 9/4/25 01:12, Roberto Sassu wrote:
-> > On Tue, 2025-09-02 at 10:20 -0700, John Johansen wrote:
-> >> On 8/14/25 15:50, Paul Moore wrote:
-> >>> The LSM currently has a lot of code to maintain a list of the current=
-ly
-> >>> active LSMs in a human readable string, with the only user being the
-> >>> "/sys/kernel/security/lsm" code.  Let's drop all of that code and
-> >>> generate the string on first use and then cache it for subsequent use=
-.
-> >>>
-> >>> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> >>> ---
-> >>>    include/linux/lsm_hooks.h |  1 -
-> >>>    security/inode.c          | 59 +++++++++++++++++++++++++++++++++++=
-++--
-> >>>    security/lsm_init.c       | 49 --------------------------------
-> >>>    3 files changed, 57 insertions(+), 52 deletions(-)
-> >>>
-> >>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> >>> index 7343dd60b1d5..65a8227bece7 100644
-> >>> --- a/include/linux/lsm_hooks.h
-> >>> +++ b/include/linux/lsm_hooks.h
-> >>> @@ -172,7 +172,6 @@ struct lsm_info {
-> >>>
-> >>>
-> >>>    /* DO NOT tamper with these variables outside of the LSM framework=
- */
-> >>> -extern char *lsm_names;
-> >>>    extern struct lsm_static_calls_table static_calls_table __ro_after=
-_init;
-> >>>
-> >>>    /**
-> >>> diff --git a/security/inode.c b/security/inode.c
-> >>> index 43382ef8896e..a5e7a073e672 100644
-> >>> --- a/security/inode.c
-> >>> +++ b/security/inode.c
-> >>> @@ -22,6 +22,8 @@
-> >>>    #include <linux/lsm_hooks.h>
-> >>>    #include <linux/magic.h>
-> >>>
-> >>> +#include "lsm.h"
-> >>> +
-> >>>    static struct vfsmount *mount;
-> >>>    static int mount_count;
-> >>>
-> >>> @@ -315,12 +317,65 @@ void securityfs_remove(struct dentry *dentry)
-> >>>    EXPORT_SYMBOL_GPL(securityfs_remove);
-> >>>
-> >>>    #ifdef CONFIG_SECURITY
-> >>> +#include <linux/spinlock.h>
-> >>> +
-> >>>    static struct dentry *lsm_dentry;
-> >>> +
-> >>> +/* NOTE: we never free the string below once it is set. */
-> >>> +static DEFINE_SPINLOCK(lsm_read_lock);
-> >>
-> >> nit, this is only used on the write side, so not the best name
-> >>
-> >>> +static char *lsm_read_str =3D NULL;
-> >>> +static ssize_t lsm_read_len =3D 0;
-> >>> +
-> >>>    static ssize_t lsm_read(struct file *filp, char __user *buf, size_=
-t count,
-> >>>                     loff_t *ppos)
-> >>>    {
-> >>> -   return simple_read_from_buffer(buf, count, ppos, lsm_names,
-> >>> -           strlen(lsm_names));
-> >>> +   int i;
-> >>> +   char *str;
-> >>> +   ssize_t len;
-> >>> +
-> >>> +restart:
-> >>> +
-> >>> +   rcu_read_lock();
-> >
-> > Uhm, it seems we cannot use plain RCU here, simple_read_from_buffer()
-> > can sleep.
->
-> doh, yes.
+On Sat, Aug 30, 2025 at 11:47:51AM +0800, Tingmao Wang wrote:
+> Adds a TMP_BIND_TO environment variable which the test binary will check,
+> and if present, instead of mounting a tmpfs on ./tmp, it will bind mount
+> that path to ./tmp instead.
+> 
+> Currently there is the layout3_fs tests which runs a few tests (but not
+> the full set of Landlock tests) in separate filesystems, notably no file
+> creation/write/rename etc.  This is necessary for certain special fs such
+> as proc or sysfs, as the tests can only read a specific path.  However,
+> for a more typical fs like v9fs, this is limitting.
+> 
+> This test makes it possible to run the full set on any filesystem (even
+> though this is still not automated).  Note that there are some expected
+> failures, such as v9fs not supporting RENAME_EXCHANGE, as well as the
+> known issue of ephemeral inodes, which may be fixed by a later revision of
+> [1].
+> 
+> Suggestions for alternatives welcome.  Maybe we need to also detect the
+> fs, and disable known-unsupported tests like RENAME_EXCHANGE?
 
-D'oh indeed!  Thanks for catching this.
+Extending layout3_fs tests with new ones that make sense (i.e. those you
+listed) would make be more consistent whithout scaling issue.  We can
+extend the fixture variants to skip some tests.
 
-> But we shouldn't need RCU here either. This is a write once, never update
-> again situation. Instead we can get away with just a lock on the write
-> side to ensure exclusion on setting the value.
->
-> We don't even need the read side memory barrier, if the assumption that
-> the pointer is read as a single value holds, and the the null read will
-> go to the lock, and end up rereading.
+This patch should help:
+https://lore.kernel.org/all/20250704171345.1393451-1-mic@digikod.net/
+Feel free to take it with your 9pfs patch series and add a new patch
+with extended checks.
 
-It's funny you bring this up, my first draft of this function
-(unposted) did just that, although I figured I'd add the RCU read side
-protection ... "just in case".
-
-I'll rework this function, but I'll hold off on posting another
-revision until I hear back on some of the reviews that are still
-pending in case additional edits are needed.
-
---=20
-paul-moore.com
+> 
+> Link: https://lore.kernel.org/v9fs/cover.1743971855.git.m@maowtm.org/ [1]
+> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> ---
+>  tools/testing/selftests/landlock/fs_test.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index fa0f18ec62c4..847be67fff9e 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -285,6 +285,22 @@ static const struct mnt_opt mnt_tmp = {
+>  	.data = MNT_TMP_DATA,
+>  };
+>  
+> +static struct mnt_opt get_tmp_mnt_opt(void)
+> +{
+> +	const char *const tmp_bind_to = getenv("TMP_BIND_TO");
+> +
+> +	if (tmp_bind_to) {
+> +		struct mnt_opt mnt = {
+> +			.flags = MS_BIND,
+> +			.source = tmp_bind_to
+> +		};
+> +
+> +		return mnt;
+> +	}
+> +
+> +	return mnt_tmp;
+> +}
+> +
+>  static int mount_opt(const struct mnt_opt *const mnt, const char *const target)
+>  {
+>  	return mount(mnt->source ?: mnt->type, target, mnt->type, mnt->flags,
+> @@ -322,7 +338,9 @@ static void prepare_layout_opt(struct __test_metadata *const _metadata,
+>  
+>  static void prepare_layout(struct __test_metadata *const _metadata)
+>  {
+> -	prepare_layout_opt(_metadata, &mnt_tmp);
+> +	struct mnt_opt mnt = get_tmp_mnt_opt();
+> +
+> +	prepare_layout_opt(_metadata, &mnt);
+>  }
+>  
+>  static void cleanup_layout(struct __test_metadata *const _metadata)
+> 
+> base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+> -- 
+> 2.51.0
+> 
+> 
