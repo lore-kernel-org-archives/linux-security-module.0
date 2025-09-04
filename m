@@ -1,128 +1,185 @@
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4721930CDAA
-	for <linux-security-module@vger.kernel.org>; Thu,  4 Sep 2025 15:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715931E3DED
+	for <linux-security-module@vger.kernel.org>; Thu,  4 Sep 2025 15:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756998794; cv=none; b=fLiMV9F3pQaklT8MUoN2oXWiY8KKvo8ikUz0JJ+cx1WkJ0+wrr6Cel0FpD7Dk8NPa36BuRaf5sdl2tbk49azgC0lOitrK05jAJzdyb2ymgiUtpQnc/x8O9AdtIZX+Vl3zbq5FanOWYuMTbP7tO40WuZPLmrO+CrcjGeUtxklmmU=
+	t=1756999151; cv=none; b=LRifVGJWRwlqN1q/ft05QbcYRDG5bxTOWMCPl32gmtSpfbkpX6D7pOkjpAwuQmIoK9/tZqNmSg3FGhL5jl6LCZiDcgA52C2NXx53RSuqptsmf0d2mqFA/BMwnJP64zH0CP6b5G0Xpz+mHzEmNUne7/zlYW+XZGt65o1xkQsdRm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756998794; c=relaxed/simple;
-	bh=hQTesLUjwHoE69NvEeQegylR6nw/aEJIYz4xhLEq3pA=;
+	s=arc-20240116; t=1756999151; c=relaxed/simple;
+	bh=nYETEdFM2Q23PtRWuaKSlqXYtOHj0CVVvgSenoBh4iU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ez3Nc0cnYvyTiyl2bokm/WgBx7ouWSNnkzOuLRCPGfFKE/3Yxw/AiGINyZpJFp25FAfMgsz6VoVj4NVMdirT8+VhOUgDg4/47u5Lo57LODumAlPhrfuUaLks1rO0y1+vumJHWSXh4ud7gohXwk2uIENNHO0AQfKpa61XUp5JQN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BpvHdX66; arc=none smtp.client-ip=209.85.216.51
+	 To:Cc:Content-Type; b=QIxOjFYgTBYC/KXmIDD3IIR5hmw4wpCVWGiHzcS1LBis+QX8nRBAqsO/pYFmSb/L5626tZJ7sTGa9wtrufG+Iu/oYFX073YMEWbI/XAPUJz1gPvSjRUPjcMNU+OEwn+qsDK4UG4Xs+LBRzFCiRnJAHr983imo04ulNNXJE07UGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NcJKZspB; arc=none smtp.client-ip=209.85.215.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BpvHdX66"
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-32b02d88d80so1043440a91.0
-        for <linux-security-module@vger.kernel.org>; Thu, 04 Sep 2025 08:13:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NcJKZspB"
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b4c6fee41c9so878839a12.1
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Sep 2025 08:19:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1756998793; x=1757603593; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1756999149; x=1757603949; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zWu8/uT79TLkFHaoOripy/trgu/RnF6WTT4bI5QB+j8=;
-        b=BpvHdX66LvkycmwydTOg/y7ECD+YX4EjnHp/f0PRlCAltaGzCodAfm2TX9c77LiJF4
-         9j1wYGKxoj8xxT7IcVcZ6XGcKxpbmjZn1YywAh935G3WjDNKCpG20ojRzELorZ5DhL8a
-         oUx96WIDS8oeYFGOgBNtlcsjEnC0Q5MSA/BgLFGw5JrxNXNAjnnj/A2JakkfO9tzZUvB
-         05eF2WwEHp7fRyNwbkk2UOW80WuV6BszewWr8MwKEq8jO05eDlAuoKmXxO/0X2wMCEYv
-         dV2Fohl7aIPCTcPplo0VBdMn0SKMU5uT1D4IAYKQBYgahXlYY79f/+XgSBi4/1moUbc3
-         Is5w==
+        bh=FmTNeG4SrXOqz+4cfRCRJg+2hK/lpQxkTAHLWvqFN5w=;
+        b=NcJKZspBpsgaPV2fktZK4DqkkNYyBlWvj+eNsLhMsPLeaP1oVFjboUBLaOJCc/aDmw
+         vZjhrJqvOPtp2y2G2v1jnQIXQ6CCoGeznjuFn7dP4DoVOIL9Esr9h3guoCMa6wZLJ4ZL
+         K6dRJq6vfhCbdd4C6y1+01pG8pBFVBaUoLPg/0/YMW+PZsh1HHR1GuzdV7Ju2bMjV83s
+         LI9dtHk6eBW7uHZDVrCKMOBkEHCz89TQo2t17wZL/b5PIqmcDCGYnlWGv6gDRBnpR0dD
+         nMFS0vJr3Bmd4fivQ9FucOIRP1NMmhseDsp2+AJUhGYPib/4+y1u622b8fAMHmT+B9Aw
+         5JRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756998793; x=1757603593;
+        d=1e100.net; s=20230601; t=1756999149; x=1757603949;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zWu8/uT79TLkFHaoOripy/trgu/RnF6WTT4bI5QB+j8=;
-        b=byOg/7f/KVwyzXNpUnu+kuNzKhZbWL2FOZaZhb981f1nwDZRG6bXTz+Ze8JBRp6FWA
-         tl1XrIWSTw2324sslI+7Uz2OnvEHVuJrNvMWiwP1raCXTvO+oOIoUNnoingYCGVMkBss
-         woPLa8OYC0V/Ag8gohi7itzYcHiEjMaOtuz19FxaGHmifCVNDWDFXtwT3oQifsGaswoB
-         lRIiLL4tqZmYnuXNeNAtMYEHVVcCFRqJKAnvD5XjDjMoMC5+IrAn6RNmZYqaHlTdsY0F
-         BKjT+vD5VOWjNw0dHuv99hq74wMl11L+Iit8C6Kza78dGTPuIF0aGoGEjszTaWyRKJG+
-         5zcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUd8neD4+yW4xqTBPZSX7BVxExwJ8swhI/PtaX6Qdmi3HZnBUVWIp7xgUx/LHti7esZC9FjqNZzKJ7zIye6SWdednqWs0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxpF8LW/sGbwZ/WB7nIe5kxh2BwHQ5cYM4oqnBgNw+EdOuMhYh
-	UQhyzVB3v5RajUlexk0n48wLNpPHwBvq7UlrOxm4VwvzTLY+nqbk8Nc9WhmmGOkw72CxtHQjoB1
-	Ykx7rPEK4O09m9Zb1YtieZkhAIYyVsefbc1RsJKDN
-X-Gm-Gg: ASbGncsIR15jhhJzEj7kKb2Z0yvTtFBtq5O0QgPhOuK3Yo6j0dQozeeEInTcN5RM/Av
-	FA9JSclAXWHjp7Yt5XgtvXOZaZjywJ1UPlcB4k5AcUoJN5RYebMImqyG7EqzA7kqrcZ5I2EyhjK
-	kx147LNogwPOP4cHoYUl21n4y+pnqjdJ0zECnc69iL6U+F3dkipsnctfVWT3+OpIiB+FTUyaUD2
-	6i60v2UBqr+Pf8BLQ==
-X-Google-Smtp-Source: AGHT+IGqcMqHHAT75zSTTPlBqCVyFcn6AnTIKyagfTnT5D4zUa/iS7NyI7Sait1maUMEoXcJ2nw24OBTrZDWN8ZihOE=
-X-Received: by 2002:a17:90b:2ec7:b0:327:e59d:2cc2 with SMTP id
- 98e67ed59e1d1-32815436083mr27618387a91.10.1756998792394; Thu, 04 Sep 2025
- 08:13:12 -0700 (PDT)
+        bh=FmTNeG4SrXOqz+4cfRCRJg+2hK/lpQxkTAHLWvqFN5w=;
+        b=UIBzyMycbh/zS9p3eG3VqYHEzKMtqef6O7bXVHS/PJfkmjBHV95eNs8LP/72PzdRQv
+         h/YWDfU850GEz06SRwigg45houT/z7HgtwnyVzFcLPLnn5IliFsN/CyASl+CoFczZWdN
+         s0S7V62/Qqb5P/AEo4+EK2Sw32zUodJR5xw6Hh+AwjkvI7R47oueJZSR9rB902NfvfR/
+         4YYT95/9wwQYv3d5SK4jxA/76YVHXKDQO2rPpT8O4/VE7X1jFXVpFnxWJndp+i0ktXWt
+         46RT3SVK8gnZapy8DAQ7p2AffGGXPDEc6KKIqdfJKI6iLIIO5qGJ3DYytbJpEiP8GkZ1
+         7Efg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsXXjNQXjkoC6TUpcbSEOe+R3pVT8v+4KI6KSoepo02G7oCPOG3BsQi/2gU9FYJIq+EReCHf1JcXPfc9lvQxEnWS1J7/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyBy8Z8zDO8PHobMu/VTjwwbMg+MB3Um2d5jIGB3Mgjm8QXmeY
+	MfarqwrKR7UbukDPXVAh04qXmRRwF8SPfPgwBuS1Lwul1niAbZI6l0edUVoC4EJaSazjFd6U7b6
+	hAwE5Hn9nko5DjGj0UgCk30paSgbII7BUkA1f3ekg
+X-Gm-Gg: ASbGncubePztDJb/zGIh/fcZpoaJd9Mya9vIG3jXHcwH3A0kPOT8vVdbGjSMeOdosRr
+	f0KOYU0osV8LCRgmIk4k3p2P4BfGPeolNyTv84q/kEl1RFGZHREhQniYQ/IMhOG2Cthas0/Re/g
+	A1/1TAmSL6qpCqpzcFGFcARPXAkOJPEWXC5CZ50+gw1Y88FxIq9di9k7nWfbmmUaDwmIxBusrzC
+	qukvXNysezECoGP8g==
+X-Google-Smtp-Source: AGHT+IFhoa8t1irT70EePzG4ai40L7SfCBHvnhGypGx1ev2J21pr9crG6m2DUiO924RVZUUs0vOhBamZg1D3PjHb4rw=
+X-Received: by 2002:a17:90a:e708:b0:32b:9595:ea58 with SMTP id
+ 98e67ed59e1d1-32b9595ec97mr3351549a91.34.1756999149480; Thu, 04 Sep 2025
+ 08:19:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68b93e3c.a00a0220.eb3d.0000.GAE@google.com> <68b9ab18.050a0220.192772.0008.GAE@google.com>
-In-Reply-To: <68b9ab18.050a0220.192772.0008.GAE@google.com>
+References: <20250814225159.275901-36-paul@paul-moore.com> <20250814225159.275901-47-paul@paul-moore.com>
+ <06a68323-b297-4be7-92eb-c2091207b9f0@canonical.com> <dd03266930a7b219c590c54bb2c210366f8d89a1.camel@huaweicloud.com>
+ <e92064a4-06c5-4913-917c-f9aca02378f3@canonical.com>
+In-Reply-To: <e92064a4-06c5-4913-917c-f9aca02378f3@canonical.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 4 Sep 2025 11:12:59 -0400
-X-Gm-Features: Ac12FXzmdDvybcxdLMeRBs2OONbitrTJM6yCl57blUt8t099sFu8t2Ati4PBkBs
-Message-ID: <CAHC9VhR6+cHx+FvonHtAvuNZ-Ls77HjGnU5k5VR7qy1BUSaxdA@mail.gmail.com>
-Subject: Re: [syzbot] [kernel?] INFO: trying to register non-static key in
- skb_dequeue (4)
-To: syzbot <syzbot+bb185b018a51f8d91fd2@syzkaller.appspotmail.com>
-Cc: apparmor@lists.ubuntu.com, audit@vger.kernel.org, casey@schaufler-ca.com, 
-	davem@davemloft.net, edumazet@google.com, eparis@redhat.com, 
-	eric.dumazet@gmail.com, horms@kernel.org, jmorris@namei.org, 
-	john.johansen@canonical.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, luto@kernel.org, 
-	netdev@vger.kernel.org, omosnace@redhat.com, pabeni@redhat.com, 
-	peterz@infradead.org, selinux@vger.kernel.org, serge@hallyn.com, 
-	stephen.smalley.work@gmail.com, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de
+Date: Thu, 4 Sep 2025 11:18:57 -0400
+X-Gm-Features: Ac12FXx2OvA4rbsYuJXfl6083HXp7bWTgYTn93ovNHC1jnaP7FZo6lWW50T_8jQ
+Message-ID: <CAHC9VhQPmF-RCSUjZo-pe1+sWyw5ZGdnD7P0CWb7yXQQoo+92g@mail.gmail.com>
+Subject: Re: [PATCH v3 11/34] lsm: get rid of the lsm_names list and do some cleanup
+To: John Johansen <john.johansen@canonical.com>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Fan Wu <wufan@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 4, 2025 at 11:07=E2=80=AFAM syzbot
-<syzbot+bb185b018a51f8d91fd2@syzkaller.appspotmail.com> wrote:
+On Thu, Sep 4, 2025 at 4:48=E2=80=AFAM John Johansen
+<john.johansen@canonical.com> wrote:
+> On 9/4/25 01:12, Roberto Sassu wrote:
+> > On Tue, 2025-09-02 at 10:20 -0700, John Johansen wrote:
+> >> On 8/14/25 15:50, Paul Moore wrote:
+> >>> The LSM currently has a lot of code to maintain a list of the current=
+ly
+> >>> active LSMs in a human readable string, with the only user being the
+> >>> "/sys/kernel/security/lsm" code.  Let's drop all of that code and
+> >>> generate the string on first use and then cache it for subsequent use=
+.
+> >>>
+> >>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> >>> ---
+> >>>    include/linux/lsm_hooks.h |  1 -
+> >>>    security/inode.c          | 59 +++++++++++++++++++++++++++++++++++=
+++--
+> >>>    security/lsm_init.c       | 49 --------------------------------
+> >>>    3 files changed, 57 insertions(+), 52 deletions(-)
+> >>>
+> >>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> >>> index 7343dd60b1d5..65a8227bece7 100644
+> >>> --- a/include/linux/lsm_hooks.h
+> >>> +++ b/include/linux/lsm_hooks.h
+> >>> @@ -172,7 +172,6 @@ struct lsm_info {
+> >>>
+> >>>
+> >>>    /* DO NOT tamper with these variables outside of the LSM framework=
+ */
+> >>> -extern char *lsm_names;
+> >>>    extern struct lsm_static_calls_table static_calls_table __ro_after=
+_init;
+> >>>
+> >>>    /**
+> >>> diff --git a/security/inode.c b/security/inode.c
+> >>> index 43382ef8896e..a5e7a073e672 100644
+> >>> --- a/security/inode.c
+> >>> +++ b/security/inode.c
+> >>> @@ -22,6 +22,8 @@
+> >>>    #include <linux/lsm_hooks.h>
+> >>>    #include <linux/magic.h>
+> >>>
+> >>> +#include "lsm.h"
+> >>> +
+> >>>    static struct vfsmount *mount;
+> >>>    static int mount_count;
+> >>>
+> >>> @@ -315,12 +317,65 @@ void securityfs_remove(struct dentry *dentry)
+> >>>    EXPORT_SYMBOL_GPL(securityfs_remove);
+> >>>
+> >>>    #ifdef CONFIG_SECURITY
+> >>> +#include <linux/spinlock.h>
+> >>> +
+> >>>    static struct dentry *lsm_dentry;
+> >>> +
+> >>> +/* NOTE: we never free the string below once it is set. */
+> >>> +static DEFINE_SPINLOCK(lsm_read_lock);
+> >>
+> >> nit, this is only used on the write side, so not the best name
+> >>
+> >>> +static char *lsm_read_str =3D NULL;
+> >>> +static ssize_t lsm_read_len =3D 0;
+> >>> +
+> >>>    static ssize_t lsm_read(struct file *filp, char __user *buf, size_=
+t count,
+> >>>                     loff_t *ppos)
+> >>>    {
+> >>> -   return simple_read_from_buffer(buf, count, ppos, lsm_names,
+> >>> -           strlen(lsm_names));
+> >>> +   int i;
+> >>> +   char *str;
+> >>> +   ssize_t len;
+> >>> +
+> >>> +restart:
+> >>> +
+> >>> +   rcu_read_lock();
+> >
+> > Uhm, it seems we cannot use plain RCU here, simple_read_from_buffer()
+> > can sleep.
 >
-> syzbot has bisected this issue to:
->
-> commit eb59d494eebd4c5414728a35cdea6a0ba78ff26e
-> Author: Casey Schaufler <casey@schaufler-ca.com>
-> Date:   Sat Aug 16 17:28:58 2025 +0000
->
->     audit: add record for multiple task security contexts
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1199fe6258=
-0000
-> start commit:   5d50cf9f7cf2 Add linux-next specific files for 20250903
-> git tree:       linux-next
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D1399fe6258=
-0000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1599fe6258000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D7d2429dff5531=
-d80
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dbb185b018a51f8d=
-91fd2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D15b9a312580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16819e6258000=
-0
->
-> Reported-by: syzbot+bb185b018a51f8d91fd2@syzkaller.appspotmail.com
-> Fixes: eb59d494eebd ("audit: add record for multiple task security contex=
-ts")
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
+> doh, yes.
 
-The timing on this is amusing, I got the sysbot report just as I
-merged a fix for this provided by Eric Dumazet :)
+D'oh indeed!  Thanks for catching this.
 
-https://lore.kernel.org/audit/20250904072537.2278210-1-edumazet@google.com
+> But we shouldn't need RCU here either. This is a write once, never update
+> again situation. Instead we can get away with just a lock on the write
+> side to ensure exclusion on setting the value.
+>
+> We don't even need the read side memory barrier, if the assumption that
+> the pointer is read as a single value holds, and the the null read will
+> go to the lock, and end up rereading.
 
-The commit has the appropriate syzbot tags so this should close out
-automatically.
+It's funny you bring this up, my first draft of this function
+(unposted) did just that, although I figured I'd add the RCU read side
+protection ... "just in case".
+
+I'll rework this function, but I'll hold off on posting another
+revision until I hear back on some of the reviews that are still
+pending in case additional edits are needed.
 
 --=20
 paul-moore.com
