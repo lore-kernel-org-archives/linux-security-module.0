@@ -1,169 +1,110 @@
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3983D125A9;
-	Thu,  4 Sep 2025 00:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53188374C4
+	for <linux-security-module@vger.kernel.org>; Thu,  4 Sep 2025 01:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756944334; cv=none; b=GvE0Ey02pxzerftLk8mQVgdnFxUrpY5ohp1yeym0cMHGiQO0f7j62AcwjAgyZbKTsO23dHrcWZEfC1+KbDpsN2QVSRttrk/pxkuY3WBgS+697nsU0btAWBoRrDdH12k4Xnw4bwn2anb3gYzlC98kN84mNAgko83MaTSAnRoFjck=
+	t=1756949331; cv=none; b=abNi0qrXPbZoYQR1DoSp1DJnb0k8TQQyPgnSWoKK7FF6XrueLTDTIggCndjASi0jqa2qedfMqN1jYfoI5JIgGxtOWvGyuaiW5h+9QmGbBMpC7FSoklXJxTMYQ/WWw7FAk4r4dFBKYKzFc3t9yDtjCCFic0fMHbfcbMvnmgTQSDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756944334; c=relaxed/simple;
-	bh=HeyVWVmdu2Gnz28ip5qk5OaQRBY3QWrBK9+gCmnExwo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ddrn+nlkwyr3UybSA+dHYSwmXFdfJqulwmu+eTblk6i693Jf2TT3Jaabj9dzJ++Y6qgOxIYaUYO4TS+R+tRy+emEnq6h4RmPVfCZUeOSynTpW7xS1qwP1u47bwuiWTEKxuiBGj+GifVpKGJdFcdbRX2wfacy0KyWOPehx9fa5W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=LnDVFotn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EFUUTY19; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1756949331; c=relaxed/simple;
+	bh=IaQ5uwK4QwBnH+gS9G1h8dmnPscMOmuMdmvaxqjSAxQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nIxSVldjgZdAfJ1VgOz7PSfb+FH317kh+SGYqXpfp+qo/mbjRiQT7ezE5OXts7Pffqlq+ldmSHtUHfhHqBNRKY0YwKjVuaTgiRlDtW7d7OGx5NYcPTGXun35vbbkGNgn08fMhmW77K+O5r3Ah5ta/O13BlJfkGqNX2Jkt7hyIOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=I+mNVC5p; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="LnDVFotn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EFUUTY19"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 8470D14005D3;
-	Wed,  3 Sep 2025 20:05:32 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Wed, 03 Sep 2025 20:05:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1756944332; x=
-	1757030732; bh=bi6KFMXLXw2rU6KRbsDWud5jypdQj8humwHJMDHqoIU=; b=L
-	nDVFotn7xZCCJxewHV7u64KbU7AxedsycyXaqfwZ6V54JeCfNozjEQ8GaBVVlOtB
-	WhFKZ+svsR1/YRwDTOsQknV6vDTwVjREsOEzXDGhin9X356caFOk4alNzlFzbUfu
-	40rFssnUErCGZiZ4h7n0mFvaY8ak3FU078m1Xs0SNb/iiKa//XR5msN/4xrtSchU
-	cw04Jez6qkSm0/RiABWdwASrg+Ci2ZWrmIKQdoX/MHLFWoJa7116B/LQOtWEhMIx
-	0stG/PqSBv8s1lo8Ub29GSJKmVMp1JyOrRq8KT19EjqV0a83v6vLhJe4aeBl24bH
-	8kWD9QF6ZRQJT8qIr0P4A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1756944332; x=1757030732; bh=b
-	i6KFMXLXw2rU6KRbsDWud5jypdQj8humwHJMDHqoIU=; b=EFUUTY19BIdcHV/y6
-	dDG6T5NYEuFRD/InW560C9yoS6XcCTaKMLZMMlA8tbAGqX2pa6a3qlIc18Y8lypL
-	/oyIVA9X8MkplviDfTYWRrySTnOfbu+ZXwsHPiBgd5ROzVpoetwjNPWT8yk2EId1
-	jL9/iiwzmel8WWtymXJGzC1FofJaVSWwoKsUo3E3hT2ahAJvq4MpjGMwb2GDviU0
-	wUVk8bSKajgLJGIn0BXXjeTRtdnqwAEEXD4V9TSU+N5tYNktw0p95C8r86Eme2O1
-	eKYIsccYr2EqJjCL3ZICw/5GboeTXLr05yKHPhsWOIl8wxPrMi1JcmxGM5j/KoJu
-	cIZog==
-X-ME-Sender: <xms:zNe4aG3u1VsE7asFuWb3bZuew181SuGR9B-FQt9t0oBh6L2y3_DjWQ>
-    <xme:zNe4aE4Sj02eR5tIUVkAd4DEVsBrASPA4YuAVliMSG92m2FHuI55q0YRkXOiLMeYp
-    3c3JSMSAlrrQb-_00E>
-X-ME-Received: <xmr:zNe4aFUDrC_XiBlgiJfU6jlsnjwFEHE4ESiYPtiVMtsDNHejihdSQ7fPGW-yFbnz75CZGeqwdpli8ZmVcJzPOUZaQGGU66acqNmNe9kdPgju3fEU4ngeMk1o8A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegheefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    ephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepvfhinhhgmhgrohcu
-    hggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeeuuddthe
-    fhhefhvdejteevvddvteefffegteetueegueeljeefueekjeetieeuleenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdroh
-    hrghdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
-    pegrshhmrgguvghushestghouggvfihrvggtkhdrohhrghdprhgtphhtthhopegvrhhitg
-    hvhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhutghhohesihhonhhkohhvrdhn
-    vghtpdhrtghpthhtoheplhhinhhugigpohhsshestghruhguvggshihtvgdrtghomhdprh
-    gtphhtthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepmhesmhgrohif
-    thhmrdhorhhgpdhrtghpthhtohepvhelfhhssehlihhsthhsrdhlihhnuhigrdguvghvpd
-    hrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhn
-    uhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:zNe4aEjOwjM_OdO6Od803c7lCu4mfWwjM9l-r8KeP6wqdEGKI5YSSA>
-    <xmx:zNe4aNf3UN14ECoUPqtCXIDZyqbvfmujUi0itjqbNXfvO2WPRlkBzQ>
-    <xmx:zNe4aL0gPEeuIogDJER2gqPpWemEXZpJP_BpTadq_AzVAuIu7P1kiQ>
-    <xmx:zNe4aBqO0cQ3S4W5nXWBEVnYtPXtfoDagTbyKV-hVjWERmhiuZ3NIQ>
-    <xmx:zNe4aOFY9PcwPVB4KEdZWryeKqB7XqV7uyktFJN3w_yrJlMXF6MgyOB9>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Sep 2025 20:05:30 -0400 (EDT)
-From: Tingmao Wang <m@maowtm.org>
-To: Dominique Martinet <asmadeus@codewreck.org>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Tingmao Wang <m@maowtm.org>,
-	v9fs@lists.linux.dev,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	linux-security-module@vger.kernel.org,
-	Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Matthew Bobrowski <repnop@google.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 7/7] docs: fs/9p: Document the "inodeident" option
-Date: Thu,  4 Sep 2025 01:04:17 +0100
-Message-ID: <7ef55d4b0541108e367e547cf3b87825f05a68c9.1756935780.git.m@maowtm.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1756935780.git.m@maowtm.org>
-References: <cover.1756935780.git.m@maowtm.org>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="I+mNVC5p"
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-329b760080fso471790a91.1
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Sep 2025 18:28:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1756949328; x=1757554128; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QIOfyHMtIuoJpOd+VlEFA0bHfp6Gtl4PKzs6FIPewXA=;
+        b=I+mNVC5p8jsB4c5LGhX+j4MhdLjPXQIPnp5qzLJTPHAE+z6X0j1+aVElLhqIReksk/
+         NIq6qDy1eSTdVSYa/aC+dSpTOEt2ghoFtQMkh1LvmN9b+f0X6PyP0bzjaO3mSZ3bwZEi
+         XUVNbl+Zvp2RgvzrOyP3H1LtuhJYsTBSdTNxbBvFJciS2pl0CB0DXR0caH26a1/gysKW
+         SPiUf1gI1pylraX6ni8iSvfhv0G+SfRAvO2BwqO66EaknX2B35yHPt54GZ9Dg5HnMOyN
+         2tbNxR0D6umhQUS7lK6hSQIu7KyUnIZWt+KfkmMDk0e0SFFGjQMG9jIHi/4QW0tE+j3Y
+         vj3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756949328; x=1757554128;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QIOfyHMtIuoJpOd+VlEFA0bHfp6Gtl4PKzs6FIPewXA=;
+        b=THg+b6bKHLpqSi5N9ihzufDyyMRsr1U7dXHHaxRbkKUCMoq0HVT0ZEyVxlrGnYeuxb
+         GrYPqhVfjJgsIXjt+5L2PITN9dvh8yihM2NN2mMw1voa0iEAodNSUA87MxgNqXEGdTye
+         191w9X789gy03lit/ySAb/ollZq81h+jIPa1JG81BQlFO6P+iWuZZDNnHtNAnX/O6YDr
+         xfyv5d8HOsSrEvEX5td/B5Sz1beIIuKAEAg8aITD9rIva6O0s6ZGZ+UqU1yZhZiv8r9Y
+         3BHpLgkq+jT/1ogJi6NLU0RzelMipUOfZB0ER5EyLMv5RudNQ/RU6pqeqW8NJbyR8bWA
+         FSkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgLzwvQ+JX030XoscgzOao63feBXUAUkagkLkQdb8ctyrDuYoxMnjli78fvsuCF99i9ump4S1VFLHre6cX383LAsvQsd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybdX7Imv8wO+/BhpnL7j/fjmO4AuHLxPH09DKAPfcfkY2nLrfn
+	bJ0yi00uqPjcXbmVl+FrC2OLG1ZWzPpg7tozLPq0s8MFsYOl/iWCxwWTK73+VRjKEZL6E7o6MvV
+	eeJVbeA7yLImFiNQ8pHnZ1Tdnj6cLStgNsYAbHQqk
+X-Gm-Gg: ASbGncs26l6WSCaDsWmeHSlP0jqbYjM5+jXcAShQoRe87D9wvfiAQ/aOeMAKGfQRIhd
+	HEhey55SaCfCxd7f+8Gne0qZZRxxHK95JqPB/u1lxhqOPFUsDiAggzXI73EJ//eQVd9PwS7sTuH
+	TE1L/pAhpzOjIYWfIqhDMUeAhlIQfxfCnka0hwndl0NVInL3Hsj74GAZ4TprWVYI95CSMmdOVNa
+	V4MS9u0NxLmNrvferpOK3pwWgFX
+X-Google-Smtp-Source: AGHT+IFBKmXhFkhlf3AO3YklhmlQlkknPiNAGzAs3/NGtNx5EdCIX4CD+Vo4Pco6SEL0557kGd49fhJOqXjMoxsF0Cw=
+X-Received: by 2002:a17:90b:3fcc:b0:329:f630:6c3 with SMTP id
+ 98e67ed59e1d1-329f630078dmr9758647a91.20.1756949328511; Wed, 03 Sep 2025
+ 18:28:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250814225159.275901-36-paul@paul-moore.com> <20250814225159.275901-65-paul@paul-moore.com>
+ <CAHC9VhRwHLaWP-qUCEVC7-6hEWf0K1H9DwbxWMW9c3a5uUF94w@mail.gmail.com> <1932305e-c6df-42c6-906b-d57364652242@canonical.com>
+In-Reply-To: <1932305e-c6df-42c6-906b-d57364652242@canonical.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 3 Sep 2025 21:28:35 -0400
+X-Gm-Features: Ac12FXwM_owd8hqAIDRgoryFAGYaav8zfNn8ISHgZWw1QPDHSomawRHnM-NiHCQ
+Message-ID: <CAHC9VhQbRp7i6dP_Z1W41ykeG6N2Dp_fGzE6sh8xXo_pxPSfWw@mail.gmail.com>
+Subject: Re: [PATCH v3 29/34] apparmor: move initcalls to the LSM framework
+To: John Johansen <john.johansen@canonical.com>
+Cc: selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Fan Wu <wufan@kernel.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a row for this option in the Options table.
+On Wed, Sep 3, 2025 at 7:15=E2=80=AFPM John Johansen
+<john.johansen@canonical.com> wrote:
+> On 9/3/25 13:34, Paul Moore wrote:
+> > On Thu, Aug 14, 2025 at 6:54=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> >>
+> >> Reviewed-by: Kees Cook <kees@kernel.org>
+> >> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> >> ---
+> >>   security/apparmor/apparmorfs.c         | 4 +---
+> >>   security/apparmor/crypto.c             | 3 +--
+> >>   security/apparmor/include/apparmorfs.h | 2 ++
+> >>   security/apparmor/include/crypto.h     | 1 +
+> >>   security/apparmor/lsm.c                | 9 ++++++++-
+> >>   5 files changed, 13 insertions(+), 6 deletions(-)
+> >
+> > Thanks for reviewing all the other patches John.  Assuming you are
+> > okay with this patch, can I get an ACK?
+>
+> I'm working on it. I managed to get down to I think 3 patches remaining t=
+o review/ack, and I wanted to get some testing on this one before acking. H=
+opefully will get that done today
 
-Signed-off-by: Tingmao Wang <m@maowtm.org>
+No worries, I just wanted to make sure it wasn't an oversight.  Thanks
+again for reviewing everything.
 
----
-New patch in v2
-
- Documentation/filesystems/9p.rst | 42 ++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
-
-diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems/9p.rst
-index be3504ca034a..8b570a7ae698 100644
---- a/Documentation/filesystems/9p.rst
-+++ b/Documentation/filesystems/9p.rst
-@@ -238,6 +238,48 @@ Options
-   cachetag	cache tag to use the specified persistent cache.
- 		cache tags for existing cache sessions can be listed at
- 		/sys/fs/9p/caches. (applies only to cache=fscache)
-+
-+  inodeident	this setting controls how inodes work on this filesystem.
-+		More specifically, how they are "reused".  This is most
-+		relevant when used with features like Landlock and
-+		fanotify (in inode mark mode).  These features rely on
-+		holding a specific inode and identifying further access to
-+		the same file (as identified by that inode).
-+
-+		There are 2 possible values:
-+			qid
-+				This is the default and the only possible
-+				option if loose or metadata cache is
-+				enabled.  In this mode, 9pfs assumes that
-+				the server will not present different
-+				files with the same inode number, and will
-+				use the presented inode number to lookup
-+				inodes.  For QEMU users, this can be
-+				ensured by setting multidevs=remap.  If
-+				the server does present inode number
-+				collisions, this may lead to unpredictable
-+				behaviour when both files are accessed.
-+			path
-+				This is the default if neither loose nor
-+				metadata cache bits are enabled.  This
-+				option causes 9pfs to internally track the
-+				file path that an inode originated from,
-+				and will only use an existing inode
-+				(instead of allocating a new one) if the
-+				path matches, even if the file's inode
-+				number matches that of an existing inode.
-+
-+		.. note::
-+			For inodeident=path, when a directory is renamed
-+			or moved, inodeident=path mode currently does not
-+			update its children's inodes to point to the new
-+			path, and thus further access to them via the new
-+			location will use newly allocated inodes, and
-+			existing inode marks placed by Landlock and
-+			fanotify on them will no longer work.
-+
-+			The inode path for the target being renamed itself
-+			(not its children) *is* updated, however.
-   ============= ===============================================================
- 
- Behavior
--- 
-2.51.0
+--=20
+paul-moore.com
