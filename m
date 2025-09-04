@@ -1,256 +1,372 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756B432F775
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Sep 2025 23:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B748C15D1;
+	Thu,  4 Sep 2025 00:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756941329; cv=none; b=Au458LtRSf+7jg0kr+C+Wx6d9TZxHrIsdxBdRQZ/sQIzbm+hoFMy0tZenlVcX7EbF1FYEFtJXvKFIMDAFNjapZQZ/RP66ZAsbASLjd/Gbr8tKHDzKz1RxOrVTJeulQR39kqkNdJ92wlcMXTXJ2FWSsWENkB0KP8cjPXQMOZ+118=
+	t=1756944310; cv=none; b=HkAezbe6YdpnVJydkimp8/alKVgdzHaSzkcef1xsB3wc57Tj9YQKzXNTilazxX0laOvHphzOmaTNqeOVxuO4x08bz5U5m9Pzw/l4Zl4cOCXiZVrsoseyGzAFFXaPgMOSFENE9e0+myBwMWanBr7gM4+2xpedBOKLvMVFoVXz+6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756941329; c=relaxed/simple;
-	bh=+HyzO08ogt4Y7H9ozlBdWmLwQX6VVEN/aGrjwNWQx9A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lUCb15KX9FSenS9649tBKUrYBQezCSG+WfAAFeHj3WFkR2+LjzwqG8QqI3ta4bwL+Ko5ZyMBxAyJ6UCr+RXy5BC/MWdkbUJKhOKutKs7zOua6w9Ew2bzIvwWCIe7QRzyr6gjBRe8QPNITY1GD7DY91fxZ8N0Qp7td/Z1YWFZ+dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=X50p5cZA; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1756944310; c=relaxed/simple;
+	bh=ZAJf0nLRcJlZlTx7A2TNbBvgSmi5ZwHN0LK45NTPAaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oTeADb8KaPZ+m4BVwN5C39Y97Fih4PnLGXX6ZzYc59fu/4MwRzhlUXLIIRsP6IrYUnY9ooaW14H+ylyumFVRZndKN7G+NCw6Tc4v3pfSVT58P2Hci8BgcUUBowGtsDjKY9FST2V6Eqcxl23Zrk9Lh9iKuD6XQoY3PE6F5GCq52M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=z/Nxg2Wz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kIu2jTz+; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="X50p5cZA"
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id CBE643F66E
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Sep 2025 23:15:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1756941324;
-	bh=RLyBibt/QwCZJKMEFRGK73uRJznOCAQuRWoluK4JE1c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=X50p5cZAAYenGsa7LV6uOn1cR489jf1KQ8qhh5EbHrkWeuUBcoDN6r31q6ZMgLoo2
-	 4rAQOrA0zJFaMiefo9A1osUI9eBwZSZURY2tEqRarrhpVK9WGh5tf/rqPbBteQeT38
-	 7CCMUL86/Wlo8NapPFEdLabx/z4EnFB+cAqJvC+qz5tSkwwnkLU4emTulbJ+xKvyhj
-	 FMH7fZlTi7GCWt1HUMjGGdR3IQH/DftZJaTjBlmx8pVrjxKbZ8LV5AQ/OtmUtCRWHp
-	 2a1uGzYYnOQTg+ypPiKJMU4H01Oc9+qGP/h3M50w1dJaGU6k3mOnnXYLyeoU/9jy4X
-	 zizUfrvgb7kwA==
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24c99bd543aso6056145ad.3
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Sep 2025 16:15:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756941323; x=1757546123;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RLyBibt/QwCZJKMEFRGK73uRJznOCAQuRWoluK4JE1c=;
-        b=AMDVzWr1DX531KqB/wg+z5S1SaDKhsSsRjNNhTJ6iDL5RIPBugqUc8vrHRMD428LPj
-         WCknho5BhE59jFGQVINalFtsGxKhD8x7wvmJNegn0ctKUfynzse7QiGTpTsOKY7/jMRa
-         4YmyQsFMq1rRIJR07PcSwtQJz0vRJ9E+/ie3rwKq/iPu8vFxM2lBMvajJrvpq5x8x0Ie
-         SdoH7aDPbi3g3dm7BcyaoDOWpdej93M7LTpgmiysV0ILZcQ16Lwzm2y3e+Av0b4O5QQ+
-         Hx0PUJJZiCXhb+ycdM5Flwr8xegv9Np5QG6xk/VVv7XlpBzcWeclMLYnKI+NxaxPUB/0
-         pBIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVoBWTnR/oNeaWYnuRUAtYr+0ktAHEhnKhK4ql3GMSX51tBbz8nk1T8OSmFtkih48TfXD1ibQHKuSiltAV5FMmwPcmXKlM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzovvKtDG6hIpbqXabGn4py6pLNmm9jgOV8w2HlI59e+JHjyInh
-	zw4NbWdSfzrW8B7GgjlqobVJpKZYni2Fufn24M9VEARenkfolRD1QIAipjzbTdMsjGoZNO2yLjb
-	+H6tZSAaH71eAFhO3eY5AeznoHFDxEbogG0RNMrXSufGQMS79+OA5nINViBLl7UKkeYpnDZjKlK
-	/rKhXtu1LM/tk/zuoUTg==
-X-Gm-Gg: ASbGncuRDKNbNV8la5HJZ0zw/2M3P1NnoWY4HlThTiq0D+WwhIFr/YQdCea10twSbXl
-	KW9Rv3Df+Kw8FvK+giyii5BnlXtibXLroBL//sV6jpcWuHRnqkgrUw5K9QmdweYN0ozLGp8uMLF
-	baBlbAYoEABbLQJf3KoO91sx2agmCcjOKaDuezxt1lBkpbj3sduObrZFR2VnpL5ozVr2BQ1rEQM
-	d5pLpNu5LdZk8o5nRihRuDNb1gPErY/Fn9imCja0KFXr1zTAvngT0/p9xwyn4OupEYSPioc00sm
-	NV7mVW/LKx0AAWVqIrtjDMhlESrJ7kWLmzmMxYdlSVkH+fLPwnf9DQ==
-X-Received: by 2002:a17:903:1448:b0:248:c5d7:1b94 with SMTP id d9443c01a7336-24944b695e6mr195993815ad.53.1756941323283;
-        Wed, 03 Sep 2025 16:15:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEqQZq3nyVvHHB+AaItbBDnr0OhRLkp1vkDzBeU+FMmm6/TnQueGHvEtQ9NNAPiGG5vDG89tA==
-X-Received: by 2002:a17:903:1448:b0:248:c5d7:1b94 with SMTP id d9443c01a7336-24944b695e6mr195993485ad.53.1756941322816;
-        Wed, 03 Sep 2025 16:15:22 -0700 (PDT)
-Received: from [192.168.192.85] ([50.47.129.42])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2490359f808sm173122195ad.0.2025.09.03.16.15.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 16:15:22 -0700 (PDT)
-Message-ID: <1932305e-c6df-42c6-906b-d57364652242@canonical.com>
-Date: Wed, 3 Sep 2025 16:15:21 -0700
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="z/Nxg2Wz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kIu2jTz+"
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id EBEDBEC00FD;
+	Wed,  3 Sep 2025 20:05:06 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Wed, 03 Sep 2025 20:05:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1756944306; x=1757030706; bh=5h
+	I2HFEsKvGreKEA2r0Ojv7MP5qEzL0WZM03hVBdSPg=; b=z/Nxg2Wzrr6RsRcJK7
+	k2OocOSYDDtK6c9P2jR1qnHhM5JowjJnqspGq41fmZiaSn/PxR1rtB88B8SwRQPi
+	eqd9cannhmK7sdDr87a8xN+TLSBNpyrf6HBsMsl14S/zdTkGqhzoW3JCSs/IxhP3
+	YtkQCL3nzOd5QSjNkkd62LOa9WioZx38rfl+82I5aDVNVI1D8P4ldHjvFswto51K
+	C9RUAZMF4VnB6AEJOJLvDyThTeQmsz0aA0PYFpNEFO81rJQ2KsEVVqxcxB6Knmvz
+	2WGedAYovB1aKCQAa5X/JEjegCjrwJrMsEU1/g+Td05ke/o7ZJZQW3FJY/9Jtzix
+	5eTw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1756944306; x=1757030706; bh=5hI2HFEsKvGreKEA2r0Ojv7MP5qE
+	zL0WZM03hVBdSPg=; b=kIu2jTz+1+OAskk+71P8FzY9ekI0yyO5UmFaBEliocx4
+	laA8rvtQtUtJwby8CZe0C5O5MkYqh94Vi0x4ApQ2/BfsygXgYW0s2j6GOcMKGDFw
+	cbcqRtN+fSNkNdpNfP2iJLomujOvuK5kAz15YUlQKF6SeI9SLn74pVpkHBwxzg0D
+	yHJt21WW0biU54e5Tb6wW9Ta4+8zX8cYMHid0Id3B+RwQfaAOPDjZTNpb7ilOFIH
+	nVLOgw/dhojM5gqRFR8wcNlZ+k3panbLJh7vg1Z+n5qrlhO4W8/UdxGso0DyXhh1
+	3Zo5hH8U+L+5K/JwMJ0rWpwkcr0YO99RukUd8z8mXw==
+X-ME-Sender: <xms:sde4aACxkOPoQ5OpVgcf1aqXBu59DUOGTgdnM3WLcEA3Iqa9C0LS3Q>
+    <xme:sde4aOX8Z7xKa5D2kbOLLLjrBhj0smCJ-_mjEZQFQNSHaZzPTTmYjvIzjdb2tXWXb
+    U1hKXLUWnyQEnrr_5A>
+X-ME-Received: <xmr:sde4aKCP_3lKeRcIEOS1AUtyMAlCIYKX9sJdD7yMXrRCOaqnpVY-9VMfJ-SOxZgJ6qDYbZyPonu5nEoqAGePsNQLEVYaRp2b_UKT604R14UbY7ths44XVbNyGg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegheegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    ephffvvefufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpefvihhnghhmrghoucgh
+    rghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepveffgfevhf
+    evheeuffetteduveekgfekudeludfhieegvdeugeeiueeuiedtffehnecuffhomhgrihhn
+    pehkvghrnhgvlhdrohhrghdpmhgrohifthhmrdhorhhgpdhgihhthhhusgdrtghomhdpqh
+    gvmhhurdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
+    rhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopedugedpmhhouggvpe
+    hsmhhtphhouhhtpdhrtghpthhtoheprghsmhgruggvuhhssegtohguvgifrhgvtghkrdho
+    rhhgpdhrtghpthhtohepvghrihgtvhhhsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hluhgthhhosehiohhnkhhovhdrnhgvthdprhgtphhtthhopehlihhnuhigpghoshhssegt
+    rhhuuggvsgihthgvrdgtohhmpdhrtghpthhtohepmhhitgesughighhikhhougdrnhgvth
+    dprhgtphhtthhopehmsehmrghofihtmhdrohhrghdprhgtphhtthhopehvlehfsheslhhi
+    shhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehgnhhorggtkhesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhg
+    vghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:sde4aDfshEiDYYxEK1eD0AIl2jhcahRwc5P7Zg9P1hgVzJJusoWMfg>
+    <xmx:sde4aJpwMPXIKxL_cnNApcNdpFPydl3E06cC4i72oHRGdgxDZJyreA>
+    <xmx:sde4aMS9paUbVMz-ll6gUBY0376FYhthr23H7uzpUOFexxDJ9PWU1A>
+    <xmx:sde4aBW0Ua9zwcvtbHsg2719IrL_HVFqIAVQG-CcL-nA_eOMrJ7v9A>
+    <xmx:ste4aFz-L7V_pdhRQrZtSHLqyAlyFFIzXmrhxn_SCMOWfcYzoYN9zm7K>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 3 Sep 2025 20:05:03 -0400 (EDT)
+From: Tingmao Wang <m@maowtm.org>
+To: Dominique Martinet <asmadeus@codewreck.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Tingmao Wang <m@maowtm.org>,
+	v9fs@lists.linux.dev,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	linux-security-module@vger.kernel.org,
+	Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Matthew Bobrowski <repnop@google.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to qid)
+Date: Thu,  4 Sep 2025 01:04:10 +0100
+Message-ID: <cover.1756935780.git.m@maowtm.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 29/34] apparmor: move initcalls to the LSM framework
-To: Paul Moore <paul@paul-moore.com>
-Cc: selinux@vger.kernel.org, linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
- Roberto Sassu <roberto.sassu@huawei.com>, Fan Wu <wufan@kernel.org>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
- Xiu Jianfeng <xiujianfeng@huawei.com>
-References: <20250814225159.275901-36-paul@paul-moore.com>
- <20250814225159.275901-65-paul@paul-moore.com>
- <CAHC9VhRwHLaWP-qUCEVC7-6hEWf0K1H9DwbxWMW9c3a5uUF94w@mail.gmail.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <CAHC9VhRwHLaWP-qUCEVC7-6hEWf0K1H9DwbxWMW9c3a5uUF94w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 9/3/25 13:34, Paul Moore wrote:
-> On Thu, Aug 14, 2025 at 6:54 PM Paul Moore <paul@paul-moore.com> wrote:
->>
->> Reviewed-by: Kees Cook <kees@kernel.org>
->> Signed-off-by: Paul Moore <paul@paul-moore.com>
->> ---
->>   security/apparmor/apparmorfs.c         | 4 +---
->>   security/apparmor/crypto.c             | 3 +--
->>   security/apparmor/include/apparmorfs.h | 2 ++
->>   security/apparmor/include/crypto.h     | 1 +
->>   security/apparmor/lsm.c                | 9 ++++++++-
->>   5 files changed, 13 insertions(+), 6 deletions(-)
-> 
-> Thanks for reviewing all the other patches John.  Assuming you are
-> okay with this patch, can I get an ACK?
-> 
-I'm working on it. I managed to get down to I think 3 patches remaining to review/ack, and I wanted to get some testing on this one before acking. Hopefully will get that done today
+Hi!
 
->> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
->> index 391a586d0557..ee04c1ac9d6e 100644
->> --- a/security/apparmor/apparmorfs.c
->> +++ b/security/apparmor/apparmorfs.c
->> @@ -2649,7 +2649,7 @@ static const struct inode_operations policy_link_iops = {
->>    *
->>    * Returns: error on failure
->>    */
->> -static int __init aa_create_aafs(void)
->> +int __init aa_create_aafs(void)
->>   {
->>          struct dentry *dent;
->>          int error;
->> @@ -2728,5 +2728,3 @@ static int __init aa_create_aafs(void)
->>          AA_ERROR("Error creating AppArmor securityfs\n");
->>          return error;
->>   }
->> -
->> -fs_initcall(aa_create_aafs);
->> diff --git a/security/apparmor/crypto.c b/security/apparmor/crypto.c
->> index 227d47c14907..d8a7bde94d79 100644
->> --- a/security/apparmor/crypto.c
->> +++ b/security/apparmor/crypto.c
->> @@ -53,10 +53,9 @@ int aa_calc_profile_hash(struct aa_profile *profile, u32 version, void *start,
->>          return 0;
->>   }
->>
->> -static int __init init_profile_hash(void)
->> +int __init init_profile_hash(void)
->>   {
->>          if (apparmor_initialized)
->>                  aa_info_message("AppArmor sha256 policy hashing enabled");
->>          return 0;
->>   }
->> -late_initcall(init_profile_hash);
->> diff --git a/security/apparmor/include/apparmorfs.h b/security/apparmor/include/apparmorfs.h
->> index 1e94904f68d9..dd580594dfb7 100644
->> --- a/security/apparmor/include/apparmorfs.h
->> +++ b/security/apparmor/include/apparmorfs.h
->> @@ -104,6 +104,8 @@ enum aafs_prof_type {
->>   #define prof_dir(X) ((X)->dents[AAFS_PROF_DIR])
->>   #define prof_child_dir(X) ((X)->dents[AAFS_PROF_PROFS])
->>
->> +int aa_create_aafs(void);
->> +
->>   void __aa_bump_ns_revision(struct aa_ns *ns);
->>   void __aafs_profile_rmdir(struct aa_profile *profile);
->>   void __aafs_profile_migrate_dents(struct aa_profile *old,
->> diff --git a/security/apparmor/include/crypto.h b/security/apparmor/include/crypto.h
->> index 636a04e20d91..f3ffd388cc58 100644
->> --- a/security/apparmor/include/crypto.h
->> +++ b/security/apparmor/include/crypto.h
->> @@ -13,6 +13,7 @@
->>   #include "policy.h"
->>
->>   #ifdef CONFIG_SECURITY_APPARMOR_HASH
->> +int init_profile_hash(void);
->>   unsigned int aa_hash_size(void);
->>   char *aa_calc_hash(void *data, size_t len);
->>   int aa_calc_profile_hash(struct aa_profile *profile, u32 version, void *start,
->> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
->> index 45b3a304d525..647c13e13e63 100644
->> --- a/security/apparmor/lsm.c
->> +++ b/security/apparmor/lsm.c
->> @@ -32,6 +32,7 @@
->>   #include "include/audit.h"
->>   #include "include/capability.h"
->>   #include "include/cred.h"
->> +#include "include/crypto.h"
->>   #include "include/file.h"
->>   #include "include/ipc.h"
->>   #include "include/net.h"
->> @@ -2426,7 +2427,6 @@ static int __init apparmor_nf_ip_init(void)
->>
->>          return 0;
->>   }
->> -__initcall(apparmor_nf_ip_init);
->>   #endif
->>
->>   static char nulldfa_src[] __aligned(8) = {
->> @@ -2557,4 +2557,11 @@ DEFINE_LSM(apparmor) = {
->>          .enabled = &apparmor_enabled,
->>          .blobs = &apparmor_blob_sizes,
->>          .init = apparmor_init,
->> +       .initcall_fs = aa_create_aafs,
->> +#if defined(CONFIG_NETFILTER) && defined(CONFIG_NETWORK_SECMARK)
->> +       .initcall_device = apparmor_nf_ip_init,
->> +#endif
->> +#ifdef CONFIG_SECURITY_APPARMOR_HASH
->> +       .initcall_late = init_profile_hash,
->> +#endif
->>   };
->> --
->> 2.50.1
-> 
+This is the second version of this series.  The individual commits
+contains changelogs (most of them are in the first patch), but overall,
+most significantly cached mode (loose or metadata) is now unchanged, there
+is no longer a "don't reuse inodes at all" mode, bug fixes, using the
+right functions, basic rename handling, and new documentation.
 
+Thanks in advance for the review effort :)
+
+v1: https://lore.kernel.org/all/cover.1743971855.git.m@maowtm.org/
+
+Background
+----------
+
+(This section has basically the same content as the v1 cover letter)
+
+Previously [1], I noticed that when using 9pfs filesystems, the Landlock
+LSM is blocking access even for files / directories allowed by rules, and
+that this has something to do with 9pfs creating new inodes despite
+Landlock holding a reference to the existing one.  Because Landlock uses
+inodes' in-memory state (i_security) to identify allowed fs
+objects/hierarchies, this causes Landlock to partially break on 9pfs, at
+least in uncached mode, which is the default:
+
+    # mount -t 9p -o trans=virtio test /mnt
+    # env LL_FS_RO=/etc:/usr:/bin:/lib:/mnt/readme LL_FS_RW= /sandboxer bash
+    Executing the sandboxed command...
+    # cat /mnt/readme
+    cat: /mnt/readme: Permission denied
+
+This, however, works if somebody is holding onto the dentry (and it also
+works with cache=loose), as in both cases the inode is reused:
+
+    # tail -f /mnt/readme &
+    [1] 196
+    # env LL_FS_RO=/etc:/usr:/bin:/lib:/mnt/readme LL_FS_RW= /sandboxer bash
+    Executing the sandboxed command...
+    # cat /mnt/readme
+    aa
+
+It also works on directories if one have a shell that cd into the
+directory.  Note that this means only certain usage of Landlock are
+affected - for example, sandboxing applications that takes a list of files
+to allow, landlocks itself, then evecve.  On the other hand, this does not
+affect applications that opens a file, then Landlocks itself while keeping
+the file it needs open.
+
+While the above is a very simple example, this is problematic in
+real-world use cases if Landlock is used to sandox applications on system
+that has files mounted via 9pfs, or use 9pfs as the root filesystem.  In
+addition, this also affects fanotify / inotify when using inode mark (for
+local access):
+
+    root@d8c28a676d72:/# ./fanotify-basic-open /readme & # on virtiofs
+    [1] 173
+    root@d8c28a676d72:/# cat readme
+    aa
+    FAN_OPEN: File /readme
+    root@d8c28a676d72:/# mount -t 9p -o trans=virtio test /mnt
+    root@d8c28a676d72:/# ./fanotify-basic-open /mnt/readme & # on 9pfs
+    [2] 176
+    root@d8c28a676d72:/# cat /mnt/readme
+    aa
+    root@d8c28a676d72:/#
+
+Same can be demonstrated with inotifywait.  The source code for
+fanotify-basic-open, adopted from the fanotify man page, is available at
+https://fileshare.maowtm.org/9pfs-landlock-fix/20250903/fanotify-basic-open.c [2].
+
+Note that this is not a security bug for Landlock since it can only cause
+legitimate access to be denied, but might be a problem for fanotify perm
+(although I do recognize that using perm on individual inodes is already
+perhaps a bit unreliable?)
+
+It seems that there was an attempt at making 9pfs reuse inodes on uncached
+mode as well, based on qid.path, however it was reverted [3] due to issues
+with servers that present duplicate qids, for example on a QEMU host that
+has multiple filesystems mounted under a single 9pfs export without
+multidevs=remap, or in the case of other servers that doesn't necessarily
+support remapping qids ([4] and more).  I've done some testing on
+v6.12-rc4 which has the simplified 9pfs inode code before it was reverted,
+and found that Landlock works (however, we of course then have the issue
+demonstrated in [3]).
+
+What this series do
+-------------------
+
+(Changes since v1: added more reasoning for the ino_path struct)
+
+With the above in mind, I have a proposal for 9pfs to:
+1. Reuse inodes even in uncached mode
+2. However, reuse them based on qid.path AND the actual pathname, by doing
+   the appropriate testing in v9fs_test_inode(_dotl)?
+
+The main problem here is how to store the pathname in a sensible way and
+tie it to the inode.  For now I opted with an array of names acquired with
+take_dentry_name_snapshot, which reuses the same memory as the dcache to
+store the actual strings, but doesn't tie the lifetime of the dentry with
+the inode (I thought about holding a reference to the dentry in the
+v9fs_inode, but it seemed like a wrong approach and would cause dentries
+to not be evicted/released).
+
+Additional discussions
+----------------------
+
+(New section)
+
+From some QEMU documentation I read [5] it seems like there is a plan to
+resolve these kind of problems in a new version of the protocol, by
+expanding the qid to include the filesystem identifier of a file on the
+host, so maybe this can be disabled after a successful protocol version
+check with the host?  For now, inodeident=path will be the default for
+uncached filesystems, which can be set to 'qid' to instead to reuse based
+only on server-provided inode numbers.
+
+This patchset currently uses strncmp to compare paths but this might be
+able to be optimized into a hash comparison first (not done yet).
+Alternatively the path can be stored more compactly in the form of a
+single string with `/` in it (like normal paths).  However, we should
+normally only need to do this comparison for one pair of filenames, as the
+test is only done if qid.path matches in the first place.
+
+This patchset currently does not support enabling path-based inodes in
+cached mode.  Additional care needs to be taken to ensure we can refresh
+an inode that potentially has data cached, but since Dominique is happy
+with cached mode behaving as-is (reusing inodes via qid only), this is not
+done.
+
+The current implementation will handle client-side renames of a single
+file (or empty directory) correctly, but server side renames, or renaming
+a non-empty directory (client or server side), will cause the files being
+renamed (or files under the renamed directory) to use new inodes (unless
+they are renamed back).  The decision to not update the children of a
+client-renamed directory is purely to reduce the complexity of this patch,
+but is in principle possible.
+
+Testing and explanations
+------------------------
+
+(New section)
+
+    # mount -t 9p -o ... test /mnt
+        with the following options:
+        - trans=virtio
+        - trans=virtio,inodeident=qid
+        - trans=virtio,cache=loose
+    # env LL_FS_RO=/etc:/usr:/bin:/lib:/mnt/readme LL_FS_RW= /sandboxer bash
+    Executing the sandboxed command...
+    # cat /mnt/readme
+    hi
+    ^^ landlock works
+
+    # mount -t 9p -o trans=virtio test /mnt
+    # mkdir /mnt/dir
+    # mv /mnt/readme /mnt/dir/readme
+    # env LL_FS_RO=/etc:/usr:/bin:/lib:/mnt/dir/readme LL_FS_RW= /sandboxer bash
+    Executing the sandboxed command...
+    # cat /mnt/dir/readme
+    hi
+    ^^ landlock works
+
+    # # another terminal in guest: mv /mnt/dir/readme /mnt/dir/readme.2
+    # cat /mnt/dir/readme.2
+    hi
+    ^^ ino_path is carried with renames
+
+    # # host: mv 9pfs/dir/readme.2 9pfs/dir/readme
+    # cat /mnt/dir/readme.2
+    cat: /mnt/dir/readme.2: No such file or directory
+    # cat /mnt/dir/readme
+    cat: /mnt/dir/readme: Permission denied
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ we can't track renames on the server side
+    # # host: mv 9pfs/dir/readme 9pfs/dir/readme.2
+    # cat /mnt/dir/readme.2
+    hi
+    ^^ once the file is back at its original place it works as expected.
+
+    # # another terminal in guest: mv /mnt/dir/readme.2 /mnt/dir/readme
+    # cat /mnt/dir/readme
+    hi
+    ^^ we can track renames of the file directly...
+    # # another terminal in guest: mv /mnt/dir /mnt/dir.2
+    # cat /mnt/dir.2/readme
+    cat: /mnt/dir.2/readme: Permission denied
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ but not renames of the parent directory, even if done client-side
+
+    # # another terminal in guest: mv /mnt/dir.2 /mnt/dir
+    # cat /mnt/dir/readme
+    hi
+    ^^ works once it's back
+    # # another terminal in guest: mv /mnt/dir /mnt/dir.2 && mkdir /mnt/dir && echo hi2 > /mnt/dir/readme
+    # cat /mnt/dir/readme
+    cat: /mnt/dir/readme: Permission denied
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ a different file uses a different inode even if same path
+
+    # # another terminal in guest: mv /mnt/dir.2/readme /mnt/dir/readme
+    # cat /mnt/dir/readme
+    hi
+    # # host: rm 9pfs/dir/readme && echo hi3 > 9pfs/dir/readme
+    # cat /mnt/dir/readme
+    cat: /mnt/dir/readme: Permission denied
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ a different file (identified by server-side qid changes) uses different inode
+
+fanotify also works, as tested with the program attached at the end.
+
+In addition, I ran xfstests on a uncached 9pfs mount, and while there are
+some test failures, it is the same set of failures as on the current
+mainline.  Test logs at https://fileshare.maowtm.org/9pfs-landlock-fix/20250903/index.html
+
+Tested also with Mickaël's new v9fs landlock tests [6] (unmerged yet):
+
+    #  RUN           layout3_fs.v9fs.tag_inode_dir_parent ...
+    #            OK  layout3_fs.v9fs.tag_inode_dir_parent
+    ok 129 layout3_fs.v9fs.tag_inode_dir_parent
+    #  RUN           layout3_fs.v9fs.tag_inode_dir_mnt ...
+    #            OK  layout3_fs.v9fs.tag_inode_dir_mnt
+    ok 130 layout3_fs.v9fs.tag_inode_dir_mnt
+    #  RUN           layout3_fs.v9fs.tag_inode_dir_child ...
+    #            OK  layout3_fs.v9fs.tag_inode_dir_child
+    ok 131 layout3_fs.v9fs.tag_inode_dir_child
+    #  RUN           layout3_fs.v9fs.tag_inode_file ...
+    #            OK  layout3_fs.v9fs.tag_inode_file
+    ok 132 layout3_fs.v9fs.tag_inode_file
+    #  RUN           layout3_fs.v9fs.release_inodes ...
+    #            OK  layout3_fs.v9fs.release_inodes
+    ok 133 layout3_fs.v9fs.release_inodes
+
+This patch series was based on, and mostly tested on v6.17-rc1 + [7]
+
+Kind regards,
+Tingmao
+
+[1]: https://github.com/landlock-lsm/linux/issues/45
+[2]: https://fileshare.maowtm.org/9pfs-landlock-fix/20250903/fanotify-basic-open.c
+[3]: https://lore.kernel.org/all/20241024-revert_iget-v1-4-4cac63d25f72@codewreck.org/
+[4]: https://lore.kernel.org/all/20240923100508.GA32066@willie-the-truck/
+[5]: https://wiki.qemu.org/Documentation/9p#Protocol_Plans
+[6]: https://lore.kernel.org/all/20250704171345.1393451-1-mic@digikod.net/
+[7]: https://lore.kernel.org/all/cover.1743956147.git.m@maowtm.org/
+
+Tingmao Wang (7):
+  fs/9p: Add ability to identify inode by path for .L in uncached mode
+  fs/9p: add option for path-based inodes
+  fs/9p: Add ability to identify inode by path for non-.L in uncached
+    mode
+  fs/9p: .L: Refresh stale inodes on reuse
+  fs/9p: non-.L: Refresh stale inodes on reuse
+  fs/9p: update the target's ino_path on rename
+  docs: fs/9p: Document the "inodeident" option
+
+ Documentation/filesystems/9p.rst |  42 +++++++
+ fs/9p/Makefile                   |   3 +-
+ fs/9p/ino_path.c                 | 111 ++++++++++++++++++
+ fs/9p/v9fs.c                     |  59 +++++++++-
+ fs/9p/v9fs.h                     |  87 ++++++++++----
+ fs/9p/vfs_inode.c                | 195 ++++++++++++++++++++++++++-----
+ fs/9p/vfs_inode_dotl.c           | 171 +++++++++++++++++++++++----
+ fs/9p/vfs_super.c                |  13 ++-
+ 8 files changed, 611 insertions(+), 70 deletions(-)
+ create mode 100644 fs/9p/ino_path.c
+
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+prerequisite-patch-id: 3dae487a4b3d676de7c20b269553e3e2176b1e36
+prerequisite-patch-id: 93ab54c52a41fa44b8d0baf55df949d0ad27e99a
+prerequisite-patch-id: 5f558bf969e6eaa3d011c98de0806ca8ad369efe
+-- 
+2.51.0
