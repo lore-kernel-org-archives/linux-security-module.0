@@ -1,131 +1,193 @@
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EFA84D02
-	for <linux-security-module@vger.kernel.org>; Mon,  8 Sep 2025 23:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771D335959
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Sep 2025 00:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757372770; cv=none; b=RlfrJ8yHpUdRwRnH0bFkYFH+lqJv9dvvt/5KVr3yDUlZOrN7DfjAbQYVymkwSbhb7/EMuLNiYcOYm4N3Kx1p32coJlQhRL5nYKzNk+XphbG7AzK4f2Yn5g48FHeTqAIiQZ5tVfroJIEbNTIhMFoFFYnbrcgVyH4hAZc3UC7FZtk=
+	t=1757376418; cv=none; b=mPf9tAKNSX1L7lZNt+DrHaCumehIRDC3icFHrQy3pocH533Wst04hKAS1hfSzXEWFYpE5nLEIR+jlw1ZVbGHyctKFUtKAosmigIaIHwSDp4bWdszK3JiVLcADmtfDDHSMul5h/vmQWer3THdk3o7PHDWWcK/r/jdQBaYpIseINU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757372770; c=relaxed/simple;
-	bh=Y5RZSb94nAB2oyU1qoO8afAl+wCOgH+J1m+ytAgunGs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=geUjgnVwF7sEnjucHZrcJIi65+NCAWpN8hTTD0S9r1MgrcK3fhYaygnpcTT05Egg1QIsnXZwvnPbCH/43nZa+cSC/HQEyzyUDLdQHkgtwXDuR3uRUEGeX3Xrg7wKXj5nwzhgcpQ+H/I9iWW78j6HoCSBVowj5t9N2wXtIi3t0qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FuCn4CUU; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1757376418; c=relaxed/simple;
+	bh=tWVeEYNCohk3iC1GsirW/IUA0QtntRhaaFFWAxULG2A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fppp1JQjFuDF+gZ0bE3MMGonW/Dc6OJ0wuRPwQIv9hUIaO4QDqlfgzSvxNGV1lwOKHX/etJcyzTJVI2OEHfYa024osVuJP6jVfVfOoNiRixc/BjsbjPywSP0SAxgAKgWagtYrtPnlXMlc9jxQbWj3jWkChzXkVJr2o6pe+4Gyg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=PB5M76cv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jBWMAFdH; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FuCn4CUU"
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-32b590d819aso4194240a91.3
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Sep 2025 16:06:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1757372768; x=1757977568; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Erv6ujYQyM5esz/88jb3LaQCpJ9LwDgjjS4NuHxBBhU=;
-        b=FuCn4CUUjgnNvtegpU/nHCxIG72/RqpukgPzgn/NB7mzyhx8waHFDDfVtFZ84r0haq
-         A5CltYE17oZ6zKlQ1KkO7Rh1IcvqXZaZ84CPwy3RHww4qXC2AhxZOnzqVjQSJUwUu/i7
-         Sgrp5zVpM2ekQyNsnpxNcfPoJ8x8PTufkYZ0diGzB38hw0qmxafGRm00yjbZBoiImyrg
-         VawHe2RPR4E8xX5LD1cAgcT+Be7Fkgxpi5zuy9afzLCB98yv5jgM46zVjl1ysuuqgood
-         zH5oHWUNiP/27MAJB3teMsatItiUqzQi4/z3wMEyPSZ6y8ljkRDGGf61maLLITB8cPzL
-         q3/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757372768; x=1757977568;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Erv6ujYQyM5esz/88jb3LaQCpJ9LwDgjjS4NuHxBBhU=;
-        b=UM7iMQfAY8tP/cO+a4uvUN4LMtz5+orc4k4NCPcRNw+6x3PMmnczuRY3hW1tRFd1Hq
-         8dPcdWJHh3d9qpFA0PF0VNqDTRA8cupo+/x6L7ZjWAXjMnnfUlV34b0beMZV9lgFiJWJ
-         cfsGswEf31LAxQMbsKUnOe9ClIfQIeaVUKpC4ivujTRGCTyKer6lS8W/eIEp0Mn8gAFn
-         znxvZFcMo877pM/oT6EdlK9e1Km0rb8vOYFFNZEDqT5Cz2uzCLdQt7YBfqvgTodv6Qd9
-         /TbirDwbnMGgYdsKO9uXHjBnc7P3KRF6Uc/L5BhLaqxH3YIvvWYU5UGT+FCo0KETVdz3
-         z1RA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxUJ7BNMLYK3fkeuGnZGBtwU68Du5qyN4Protnz8dMwOc4TtQiSZOLifOQaKbxE09QzhP5kN5f+b61on9BRHA5pUFurUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI8HAw4vQIKi73/+mI6zXZPMgU1w1fgTANNF5M7dcTuzgD+8VB
-	BjeWL04i79rFN4B8DJu/mi+B7uc7RxfHyUcITu5j6V0W03taRS4Ov38YFqL5O/r3nsxYJpFdsMc
-	Pp0k44/hICQmKEbO0e6Aw8mwQFFefmM4cBeWf2mcb
-X-Gm-Gg: ASbGncvKoDjtqtSzE9kcdddhJLPWsfMJ57q73CVhVaxa59bsvMRZm/YlQbFaNFy0Plr
-	iq7I4bx2uRyfRKW8l9dJPa+gsRi0eIav5SNEtZIbh76no64Py3FDR9JbETzDbKKSPDLIEJWbyYw
-	tnMvpGJOo8N/gQ9R/veeSXwA0qm8K+08BcPFN4RXfi5gjqtJh1wJ6PH+kf0Q466Ba6XeDfAWjuC
-	C3Yx+U=
-X-Google-Smtp-Source: AGHT+IFB+FxnX4rjcAYZGM7fEt911DkcKdbHyBbmx41VKn8nMmV/AAJIF3WqaGwCTnbvarfbhMxVBFEgH0t3USpFar8=
-X-Received: by 2002:a17:90b:1d0b:b0:32b:df0e:9284 with SMTP id
- 98e67ed59e1d1-32d43f45856mr12879413a91.10.1757372768528; Mon, 08 Sep 2025
- 16:06:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="PB5M76cv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jBWMAFdH"
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 453967A0183;
+	Mon,  8 Sep 2025 20:06:54 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Mon, 08 Sep 2025 20:06:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1757376414; x=1757462814; bh=Tt
+	Qm6nZG1xiqalST041DzJ1DVIHmxriZzeQfpbBCFCA=; b=PB5M76cvlgtM/JvZRe
+	jW9ZXRmcnuVSa41djKRSrP3Pz29bnlYEOpI37RHfIT3bXLGh3BwG2rzdv4kjf+nE
+	YTzk8/OmT3OFg0tlEIPIXhDPCNDm5hjB53lPrGWi12ZgOT9sK43z6U0r0US0glKs
+	mwNi9UOuJvH0DBc3O7lH7k0mfGGLP141RFGQ3/Aq8f/WB8xf2/okwm+/la/N7H1h
+	3d1m7jcAaMH6WzXnYgJ9Vz2avdkykS5KeCKxlwF7Bvr2oyRGvg1lumSJckUUrJRW
+	DDqe1XbUYQCiRavj2bNThHVjmpheMYGlUvYxp/rtJoznhO469MYyX4ijexfz3fx8
+	KGhw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1757376414; x=1757462814; bh=TtQm6nZG1xiqalST041DzJ1DVIHm
+	xriZzeQfpbBCFCA=; b=jBWMAFdHEajsWmRpPOYTZ0scITgOHZITUOeoflWwC+Vo
+	10L01/flQ9OTyQot4wmmVpGm/wCvmTQ+EBC/gjpkf+ge3fFkiBZs7sR7MQN6xyZ2
+	q6zPxZSEyfXu+s/mxx6WSlyHlc2m9307FYWMt921QwX6tTR4gbQy4hrOjgvCHOtq
+	QzHjlabXWds5r0khwJ79mkdXgycYd23JA2hJtrhhGbJGYifvNyOa6Pgzaw30JWKy
+	VbSTfhoaruHDePOcaxzTWnf1+KPs9Tv3AAh9iCp5WCmZv694AYDDPl7Mjl4PJaoV
+	gjILpNMGl3HHk7bT747kl43gKFUSz01Vx3toPNI3hA==
+X-ME-Sender: <xms:nW-_aBcv0jTDL1ESXqfmBjASTHXbafiFCHTaaq9WU-P9DqpN-gqMrA>
+    <xme:nW-_aKtJE1JngZ5LOF8DbxREa3sQX-Sxy3m0rG6025JmRBje6JyN-uD4qFnTl6gPA
+    4Dww0FzXWcUMKgPIfA>
+X-ME-Received: <xmr:nW-_aA8qq_-oqEnsMDSeKMgr_NXsem_DtxXJPHzrYuBanVScPx6tXB0LjeXqbUqKbPRWVu_DsWIRwOmSs_zR6WzybaEUUeLUf2PjFAhSgVYlEI6O5CmrwCztGw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeelfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkffogggtgfesthekredtredtjeenucfhrhhomhepvfhinhhgmhgrohcu
+    hggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeeukedvje
+    ejveeuudeiiefhudeuueekkedtgeehhfelgfdukefgveduvefglefgvdenucffohhmrghi
+    nhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeehpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvghtpd
+    hrtghpthhtohepmhesmhgrohifthhmrdhorhhgpdhrtghpthhtohepghhnohgrtghksehg
+    ohhoghhlvgdrtghomhdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtth
+    hopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhg
+X-ME-Proxy: <xmx:nW-_aF0flKBZBc-GPzXkNt1aB2IyC-IGaomyMpyqgdaepxiINIZg9w>
+    <xmx:nW-_aFBC9wZ7Wo7JyahvrOJqStq-smK3IDDa6K35XsmbGxo4cE0TeQ>
+    <xmx:nW-_aBdk1PT42SR7JNMLsj7ppuwyxR5aHXF1i997QpC_pDVskgbplA>
+    <xmx:nW-_aC6JAD-JcRpbKWNOjg7TcMt0F2tURW6XJon0HDb6jRWYsrekog>
+    <xmx:nm-_aA6sLrCCPTf_54h-HSGViAOIT2zDjamG_jGZ2GPoPfjCdZeEQ_hB>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 8 Sep 2025 20:06:52 -0400 (EDT)
+From: Tingmao Wang <m@maowtm.org>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Tingmao Wang <m@maowtm.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Jan Kara <jack@suse.cz>,
+	linux-security-module@vger.kernel.org
+Subject: [RFC PATCH 0/6] Implement LANDLOCK_ADD_RULE_QUIET
+Date: Tue,  9 Sep 2025 01:06:34 +0100
+Message-ID: <cover.1757376311.git.m@maowtm.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814225159.275901-36-paul@paul-moore.com> <20250814225159.275901-47-paul@paul-moore.com>
- <06a68323-b297-4be7-92eb-c2091207b9f0@canonical.com> <dd03266930a7b219c590c54bb2c210366f8d89a1.camel@huaweicloud.com>
- <e92064a4-06c5-4913-917c-f9aca02378f3@canonical.com> <CAHC9VhQPmF-RCSUjZo-pe1+sWyw5ZGdnD7P0CWb7yXQQoo+92g@mail.gmail.com>
- <CAHC9VhRjQrjvsn65A-TGKKGrVFjZdnPBu+1vp=7w86SOjoyiUw@mail.gmail.com>
- <6e4bb79d-ba8f-47fa-ad12-0bb79d4442e0@I-love.SAKURA.ne.jp> <91e6cbd4-9811-4890-84e6-4d58c22a02b0@I-love.SAKURA.ne.jp>
-In-Reply-To: <91e6cbd4-9811-4890-84e6-4d58c22a02b0@I-love.SAKURA.ne.jp>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 8 Sep 2025 19:05:56 -0400
-X-Gm-Features: Ac12FXxJDTl9FmflOjd4KGcqf27UBcWa5-_QkD1wxw_L_dqqk3VN6ThLKrEYEI4
-Message-ID: <CAHC9VhRvdxdmyp1+hDpiOZTLdJjuK1u5Rvk5dTsbN=oDAyPkNA@mail.gmail.com>
-Subject: Re: [PATCH v3 11/34] lsm: get rid of the lsm_names list and do some cleanup
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: John Johansen <john.johansen@canonical.com>, 
-	Roberto Sassu <roberto.sassu@huaweicloud.com>, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
-	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Fan Wu <wufan@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 8, 2025 at 9:07=E2=80=AFAM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2025/09/07 16:35, Tetsuo Handa wrote:
-> > On 2025/09/05 2:52, Paul Moore wrote:
-> >> +               if (!str) {
-> >> +                       str =3D str_tmp;
-> >> +                       len =3D len_tmp - 1;
-> >
-> > This needs to be
-> >
-> >                       len =3D len_tmp - 1;
-> >                       mb();
-> >                       str =3D str_tmp;
-> >
-> > , or concurrent access might reach simple_read_from_buffer()
-> > with str !=3D 0 and len =3D=3D 0. (If you don't want mb(), you can use
-> >
-> > -     if (unlikely(!str)) {
-> > +     if (unlikely(!str || !len)) {
+Hi Mickaël,
 
-Good catch, thanks.  I'm going to go with the approach above as it is
-rather straightforward.
+This RFC patch series implements a first pass patch of the "quiet flag"
+feature as proposed in [1].  I've evolved the design beyond the original
+discussion to come up with what I believe would be most useful.  For this
+implementation:
 
-> Well, memory barrier is more complicated; it will be
->
->         len =3D len_tmp - 1;
->         wmb();
->         str =3D str_tmp;
->
-> and
->
->         }
->         rmb();
->         return simple_read_from_buffer(buf, count, ppos, str, len);
->
-> pair.
->
-> Just splitting the whole { } block that follows "if (unlikely(!str))"
-> out as an initcall function is much simpler ...
+- The user can set the quiet flag for a layer on any part of the fs
+  hierarchy, and the flag inherits down (no support for "cancelling" the
+  inheritance of the flag in specific subdirectories).
 
-I would very much prefer to get the string generation out of the boot,
-and generate it on demand.
+- The youngest layer that denies a request gets to decide whether the
+  denial is audited or not.  This means that a compromised binary, for
+  example, cannot "turn off" Landlock auditing when it tries to access
+  files, unless it denies access to the files itself.  There is some
+  debate to be had on whether, if a parent layer sets the quiet flag, but
+  the request is denied by a deeper layer, whether Landlock should still
+  audit anyway (since the rule author of the child layer likely did not
+  expect the denial, so it would be good diagnostic)
 
---=20
-paul-moore.com
+This series does not add any tests yet (and also no support for
+suppressing optional access denial audit yet due to complexity).  If
+you're happy with this design I can write some tests (and add the missing
+support).  Here is a sandboxer demo:
+
+    # LL_FS_RO=/ LL_FS_RW= LL_FORCE_LOG=1 LL_FS_QUIET=/tmp linux/samples/landlock/sandboxer /bin/bash
+    Executing the sandboxed command...
+    [  135.126499][   T60] audit: type=1423 audit(1757374868.281:942): domain=1a435130e blockers=fs.write_file path="/dev/tty" dev="devtmpfs" ino=11
+    [  135.133298][   T60] audit: type=1424 audit(1757374868.281:942): domain=1a435130e status=allocated mode=enforcing pid=959 uid=0 exe="/linux/samples/landlock/sandboxer" comm="sandboxer"
+    [  135.141869][   T60] audit: type=1300 audit(1757374868.281:942): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=557a9cda83d1 a2=802 a3=0 items=0 ppid=958 pid=959 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
+    [  135.156620][   T60] audit: type=1327 audit(1757374868.281:942): proctitle="/bin/bash"
+    bash: cannot set terminal process group (958): Inappropriate ioctl for device
+    bash: no job control in this shell
+
+    # echo quiet > /tmp/aa
+    bash: /tmp/aa: Permission denied
+
+    # echo not quiet > /usr/aa
+    [  165.358804][   T60] audit: type=1423 audit(1757374898.513:943): domain=1a435130e blockers=fs.make_reg path="/usr" dev="virtiofs" ino=840
+    [  165.363746][   T60] audit: type=1300 audit(1757374898.513:943): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=557a9ce447c0 a2=241 a3=1b6 items=0 ppid=958 pid=959 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
+    [  165.375594][   T60] audit: type=1327 audit(1757374898.513:943): proctitle="/bin/bash"
+    bash: /usr/aa: Permission denied
+
+    ## (still in sandboxer)
+    # LL_FS_RO= LL_FS_RW=/ LL_FS_QUIET=/ linux/samples/landlock/sandboxer /bin/bash
+    Executing the sandboxed command...
+    [  203.490417][   T60] audit: type=1423 audit(1757374936.645:944): domain=1a435130e blockers=fs.write_file path="/dev/tty" dev="devtmpfs" ino=11
+    ...
+    # echo "child can't suppress audit logs" > /usr/a
+    [  219.948543][   T60] audit: type=1423 audit(1757374953.101:945): domain=1a435130e blockers=fs.make_reg path="/usr" dev="virtiofs" ino=840
+    [  219.953918][   T60] audit: type=1300 audit(1757374953.101:945): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5651ea7875c0 a2=241 a3=1b6 items=0 ppid=959 pid=960 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
+    [  219.969167][   T60] audit: type=1327 audit(1757374953.101:945): proctitle="/bin/bash"
+    bash: /usr/a: Permission denied
+    # echo "/tmp is still quiet" > /tmp/a
+    bash: /tmp/a: Permission denied
+    # exit
+
+    (still in first layer sandboxer)
+    # LL_FS_RO=/ LL_FS_RW= LL_FS_QUIET= LL_FORCE_LOG=1 linux/samples/landlock/sandboxer /bin/bash
+    Executing the sandboxed command...
+    ...
+    root@fced6595bd01:/# echo "not quiet now" > /tmp/a
+    [  492.130486][   T60] audit: type=1423 audit(1757375225.285:949): domain=1a435132a blockers=fs.make_reg path="/tmp" dev="tmpfs" ino=1
+    [  492.136729][   T60] audit: type=1300 audit(1757375225.285:949): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=55fc4c168450 a2=241 a3=1b6 items=0 ppid=959 pid=964 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
+    [  492.151727][   T60] audit: type=1327 audit(1757375225.285:949): proctitle="/bin/bash"
+    bash: /tmp/a: Permission denied
+
+All existing kselftests pass.
+
+[1]: https://github.com/landlock-lsm/linux/issues/44#issuecomment-2876500918
+
+Kind regards,
+Tingmao
+
+Tingmao Wang (6):
+  landlock: Add a place for flags to layer rules
+  landlock: Add API support for the quiet flag
+  landlock/audit: Check for quiet flag in landlock_log_denial
+  landlock/audit: Fix wrong type usage
+  landlock/access: Improve explanation on the deny_masks_t
+  samples/landlock: Add FS quiet flag support to sandboxer
+
+ include/uapi/linux/landlock.h                | 25 +++++
+ samples/landlock/sandboxer.c                 | 20 +++-
+ security/landlock/access.h                   |  6 +-
+ security/landlock/audit.c                    | 18 +++-
+ security/landlock/audit.h                    |  3 +-
+ security/landlock/fs.c                       | 99 ++++++++++++--------
+ security/landlock/fs.h                       |  2 +-
+ security/landlock/net.c                      | 11 ++-
+ security/landlock/net.h                      |  3 +-
+ security/landlock/ruleset.c                  | 17 +++-
+ security/landlock/ruleset.h                  | 29 +++++-
+ security/landlock/syscalls.c                 | 28 +++---
+ security/landlock/task.c                     | 12 +--
+ tools/testing/selftests/landlock/base_test.c |  2 +-
+ 14 files changed, 199 insertions(+), 76 deletions(-)
+
+
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+-- 
+2.51.0
+
