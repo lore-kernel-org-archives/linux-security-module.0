@@ -1,261 +1,184 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5415C350D79;
-	Tue,  9 Sep 2025 16:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3EF4253351
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Sep 2025 21:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757435045; cv=none; b=S9I64rFZvUOd3KaGs37slYxhrD0n4kBNU6pMTsV/NOVa9bchg2BiZggFUATfzuD0tUAUc0OZpr5FhATNj2BgF7JR+13Xfm7R71QJnlHDm3LOKpn6IkZSK20N2eNlvXIS7rggTzJWWqbBKyrKwosJx475sUYD5rcM7KtQSEw6V6I=
+	t=1757452223; cv=none; b=F8wVcAFLk7do42vCYrbqJiCKQbR+GC54CdUUHexN0n8vrMwxRFP+JQ6ZzHek6t/E1HS0C0L7CEqS9IJL0r9V2G63NKkOSdTJtf4bHb2F82OrQzOz5CPmSndjcU149l+Ebl0uSVqQdvv9niNFr30ee7yIhsLIgHyEo1oOFd1N1+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757435045; c=relaxed/simple;
-	bh=I32WngEpEkzMhJkylrVhFdmVlSiCTuqpVVsRlHBU8v4=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OOZiOD2D6ezap3FfpgInVzJCfVwLDCqWBDLUj4w62GnhPjLSLzLUI5WG4hUIKmQZ0zzksAQ+8wabs6JAXOOA9PiTTLaN5IQuGUL9VQSDOExZDXbpbGOCwRvL1rjWjUCf97WYnvfJZfAQ6kQbrBIBwXhTZvRvBb4ew8D2Jla1UkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=d1B5gu2I; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1757452223; c=relaxed/simple;
+	bh=Dt42INzN9U0WvxS+jUlTdxOxsoOoT8a2dyEqiGv005U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fVdMrrH53K40xgBWYMLTcw9aWkskzZ5HOEWHR5CISgUdO3CwacxcmNYbNISf+jivIKUQhDQkYNXPdiCaYm6vfZleXweqOjNKFx7buyw3hL2aOnMs+XI9HXhq7z6MGMZ3PL/bj14rlt9vyrZR19FKZ5tiz0ZSfjvY3qh/SWstDmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=LbEfWq1/; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="d1B5gu2I"
-Received: from narnia.corp.microsoft.com (unknown [13.88.17.9])
-	by linux.microsoft.com (Postfix) with ESMTPSA id DCE2B211AA25;
-	Tue,  9 Sep 2025 09:23:56 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DCE2B211AA25
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1757435037;
-	bh=D4yo43ZMZEZO65LVJTXGntngPaYaKdzB0OWLprFptuE=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=d1B5gu2I75OIFfPD78ouwb+u+jc/4ouebRThY7a2iuKF6Xl0savLUVlnO9YnovWxx
-	 OpW3Wa1BkaEMiHLDqK4qLIvhWq71rB6VikrPdZCWKEznaysJqqNUTxiqU6wE5cIu5/
-	 41l5c5H9Si1h8x5oaC2KJtq4K3EVP5tGRkqbH5ys=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: bpf@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	kpsingh@kernel.org,
-	bboscaccy@linux.microsoft.com,
-	paul@paul-moore.com,
-	kys@microsoft.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	James.Bottomley@hansenpartnership.com,
-	wufan@linux.microsoft.com
-Subject: [RFC 2/2] libbpf: Add hash chain signing support to light skeletons.
-Date: Tue,  9 Sep 2025 09:20:59 -0700
-Message-ID: <20250909162345.569889-3-bboscaccy@linux.microsoft.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250909162345.569889-1-bboscaccy@linux.microsoft.com>
-References: <20250909162345.569889-1-bboscaccy@linux.microsoft.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LbEfWq1/"
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b4f7053cc38so3819554a12.2
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Sep 2025 14:10:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1757452220; x=1758057020; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/2cG/mK5wqDybUQGFQEkWBC5lBJfTdv6AvrW8OgR6q8=;
+        b=LbEfWq1/BY7Eg5u3jpBUaGbdIH8Ox6CoivkaIA//44MtzSAtN9tQEsiqIk0Dos3qk0
+         3BQC4LeqBenlSMaktB9PIiEGuxUc6yM+vRDuQbEVVPelXbNZDgAjXliyR5I99dD3NBcM
+         iq5TEjskZGTiGUZFN2IdMNtUVx2GTuqAth59V+pZ7RC6LTBwoMlOjeR9u0zsBpgOrZbW
+         DSGMvdoiG7JXgFXQWxEiUnno4z7bJtuk5daouK2pby15IHfZ+/CTAtUqfeuPxHX7Jzwm
+         6W6V+k0B9GZaz3Awl8sskNfbPF1rEQwLWk7SfMI4SMR2xmSp5rl+z2EygWo6g6VXFECK
+         u21g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757452220; x=1758057020;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/2cG/mK5wqDybUQGFQEkWBC5lBJfTdv6AvrW8OgR6q8=;
+        b=srDIbxEq/yLJqZ6wd7dDUTIgdVzKJsIt4xi1sjYVOiKxalRvllO6ccfK6ChNapxHT0
+         8h7hvDmTcE7xOUImOQ2mybFQNSqkA+0fYL630KU+HdFmg7wrX1Sv8ijT+9PW9jfffCB/
+         QR/L6TSD8DLUeCtoKxXdM9MZpUtceRAagBfPjbA5TRvDUJSmZdo/02oK55AL/YwjNRfr
+         jF9XJFkRCAWLsJ01sh7CvhEEHZS2SZn2LEWOaRVpbRz6lPHBS760wX+NrZ4LLtZh2yC9
+         43rPmUcNNUcvu5IQcllN6W6z84orZMxLTY1hProaUDl1FTrkx3ZVvSmulcc6m29Zdvp+
+         cPjg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4TzAKxT5CX+vSXCAxzBDbvUXH7HObnhDwELW2mzzoV70pJPIFOJ4/g8eao0dO64CQzoA7rZ/Tb9dHPcteVLAf1d9wDvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5NT0Cc3K+V6WxCUT+uV73qpwIycVCYVX4cM9v49cA0LrYWOld
+	T+jRD4fvHwnPY2lSV2j/edxdqS5Wkr9vOT8HVMyoon2foskoknOy4CJzMXT7TFQP9MclYMoumq5
+	0D6szXQaH03U6DOXasRq9vAAxtlPjyMMBj3tQkPSy
+X-Gm-Gg: ASbGncuwmHBAr+Skl23OKqYESVmE4Y6mzvlYR5aI2j9tQ6Z8mKixDmmPDo9j7BknoNV
+	wR35bYCAFZ4RaazsZrQfTiRGQHGjUkHly97Io2LOIyYhFsjvkQwYqOR6Tkv/CifhNtXxsa5Tfzj
+	pUyVCOe1+BXxgOcQMStL8+QcHaMKZa9sIFSwu0gitQQwB5GNg0yDQNHakC/RLAm6XQ5nd+p6i8J
+	HranO0=
+X-Google-Smtp-Source: AGHT+IFG7w3FOCnO7S8iIokZgAsSINZsrpiz3Ys96zLr6kCQRn865YPB71KK71zIy8iQMBZAebWvkkV/MJhLqntWdHY=
+X-Received: by 2002:a17:90b:3c0f:b0:329:f408:1070 with SMTP id
+ 98e67ed59e1d1-32d43fcfd9emr20011740a91.33.1757452220060; Tue, 09 Sep 2025
+ 14:10:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250908013419.4186627-1-tweek@google.com> <CAEjxPJ5q0eriGjo1tdfN+pzBBN5OeyfMaYp_sNQcOg-rDaXVCA@mail.gmail.com>
+In-Reply-To: <CAEjxPJ5q0eriGjo1tdfN+pzBBN5OeyfMaYp_sNQcOg-rDaXVCA@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 9 Sep 2025 17:10:08 -0400
+X-Gm-Features: Ac12FXwWb3SOwQ7VnHVntpJWLHK5Nv99C1sNZTrun4dRgTex4G1DZb8W4i4WZ_Q
+Message-ID: <CAHC9VhR1pEFYzSFaqqWsU8C6vDaH_E8uZZ5g=KyK6TJvA7a8MQ@mail.gmail.com>
+Subject: Re: [PATCH v2] memfd,selinux: call security_inode_init_security_anon
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
+	James Morris <jmorris@namei.org>, Hugh Dickins <hughd@google.com>, 
+	Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Isaac Manjarres <isaacmanjarres@google.com>, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch introduces a hash chain signing support for light-skeleton
-assets. A new flag '-M' is added which constructs a hash chain with
-the loader program and the target payload.
+On Mon, Sep 8, 2025 at 12:32=E2=80=AFPM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Sun, Sep 7, 2025 at 9:34=E2=80=AFPM Thi=C3=A9baud Weksteen <tweek@goog=
+le.com> wrote:
+> >
+> > Prior to this change, no security hooks were called at the creation of =
+a
+> > memfd file. It means that, for SELinux as an example, it will receive
+> > the default type of the filesystem that backs the in-memory inode. In
+> > most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
+> > be hugetlbfs. Both can be considered implementation details of memfd.
+> >
+> > It also means that it is not possible to differentiate between a file
+> > coming from memfd_create and a file coming from a standard tmpfs mount
+> > point.
+> >
+> > Additionally, no permission is validated at creation, which differs fro=
+m
+> > the similar memfd_secret syscall.
+> >
+> > Call security_inode_init_security_anon during creation. This ensures
+> > that the file is setup similarly to other anonymous inodes. On SELinux,
+> > it means that the file will receive the security context of its task.
+> >
+> > The ability to limit fexecve on memfd has been of interest to avoid
+> > potential pitfalls where /proc/self/exe or similar would be executed
+> > [1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
+> > similarly to the file class. These access vectors may not make sense fo=
+r
+> > the existing "anon_inode" class. Therefore, define and assign a new
+> > class "memfd_file" to support such access vectors.
+> >
+> > Guard these changes behind a new policy capability named "memfd_class".
+> >
+> > [1] https://crbug.com/1305267
+> > [2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.c=
+om/
+> >
+> > Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
+> > Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > ---
+> > Changes since v1:
+> > - Move test of class earlier in selinux_bprm_creds_for_exec
+> > - Remove duplicate call to security_transition_sid
+> >
+> > Changes since RFC:
+> > - Remove enum argument, simply compare the anon inode name
+> > - Introduce a policy capability for compatility
+> > - Add validation of class in selinux_bprm_creds_for_exec
+> >
+> >  include/linux/memfd.h                      |  2 ++
+> >  mm/memfd.c                                 | 14 ++++++++++--
+> >  security/selinux/hooks.c                   | 26 +++++++++++++++++-----
+> >  security/selinux/include/classmap.h        |  2 ++
+> >  security/selinux/include/policycap.h       |  1 +
+> >  security/selinux/include/policycap_names.h |  1 +
+> >  security/selinux/include/security.h        |  5 +++++
+> >  7 files changed, 44 insertions(+), 7 deletions(-)
+> >
+>
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index c95a5874bf7d..6adf2f393ed9 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -2315,6 +2316,9 @@ static int selinux_bprm_creds_for_exec(struct lin=
+ux_binprm *bprm)
+> >         new_tsec =3D selinux_cred(bprm->cred);
+> >         isec =3D inode_security(inode);
+> >
+> > +       if (isec->sclass !=3D SECCLASS_FILE && isec->sclass !=3D SECCLA=
+SS_MEMFD_FILE)
+> > +               return -EPERM;
+> > +
+>
+> Sorry, I should have mentioned this earlier, but usually we try to
+> avoid triggering silent denials from SELinux since it provides no hint
+> to the user as to what went wrong or how to resolve.
 
-Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
----
- tools/bpf/bpftool/gen.c       | 25 +++++++++++++++++++++++++
- tools/bpf/bpftool/main.c      |  8 +++++++-
- tools/bpf/bpftool/main.h      |  1 +
- tools/bpf/bpftool/sign.c      | 17 ++++++++++++++---
- tools/lib/bpf/libbpf.h        |  3 ++-
- tools/lib/bpf/skel_internal.h |  6 +++++-
- 6 files changed, 54 insertions(+), 6 deletions(-)
+Ooof, yeah, I should have noticed that too.
 
-diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
-index ab6fc86598ad3..e660fbc701c5d 100644
---- a/tools/bpf/bpftool/gen.c
-+++ b/tools/bpf/bpftool/gen.c
-@@ -699,6 +699,9 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
- 	if (sign_progs)
- 		opts.gen_hash = true;
- 
-+	if (sign_maps)
-+		opts.sign_maps = true;
-+
- 	err = bpf_object__gen_loader(obj, &opts);
- 	if (err)
- 		return err;
-@@ -793,6 +796,8 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
- 	if (sign_progs) {
- 		sopts.insns = opts.insns;
- 		sopts.insns_sz = opts.insns_sz;
-+		sopts.data = opts.data;
-+		sopts.data_sz = opts.data_sz;
- 		sopts.excl_prog_hash = prog_sha;
- 		sopts.excl_prog_hash_sz = sizeof(prog_sha);
- 		sopts.signature = sig_buf;
-@@ -821,6 +826,13 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
- 		\n\
- 		\";\n");
- 
-+		if (sign_maps) {
-+			codegen("\
-+			\n\
-+				static const int opts_signature_maps[1] __attribute__((__aligned__(8))) = {0}; \n\
-+			");
-+		}
-+
- 		codegen("\
- 		\n\
- 			opts.signature = (void *)opts_sig;			\n\
-@@ -829,6 +841,19 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
- 			opts.excl_prog_hash_sz = sizeof(opts_excl_hash) - 1;	\n\
- 			opts.keyring_id = KEY_SPEC_SESSION_KEYRING;		\n\
- 		");
-+		if (sign_maps) {
-+			codegen("\
-+			\n\
-+				opts.signature_maps = (void *)opts_signature_maps;	\n\
-+				opts.signature_maps_sz = 1; 				\n\
-+			");
-+		} else {
-+			codegen("\
-+			\n\
-+				opts.signature_maps = (void *)NULL;		\n\
-+				opts.signature_maps_sz = 0;			\n\
-+			");
-+		}
- 	}
- 
- 	codegen("\
-diff --git a/tools/bpf/bpftool/main.c b/tools/bpf/bpftool/main.c
-index fc25bb390ec71..287e8205494cb 100644
---- a/tools/bpf/bpftool/main.c
-+++ b/tools/bpf/bpftool/main.c
-@@ -34,6 +34,7 @@ bool use_loader;
- struct btf *base_btf;
- struct hashmap *refs_table;
- bool sign_progs;
-+bool sign_maps;
- const char *private_key_path;
- const char *cert_path;
- 
-@@ -477,7 +478,7 @@ int main(int argc, char **argv)
- 	bin_name = "bpftool";
- 
- 	opterr = 0;
--	while ((opt = getopt_long(argc, argv, "VhpjfLmndSi:k:B:l",
-+	while ((opt = getopt_long(argc, argv, "VhpjfLmndSMi:k:B:l",
- 				  options, NULL)) >= 0) {
- 		switch (opt) {
- 		case 'V':
-@@ -527,6 +528,11 @@ int main(int argc, char **argv)
- 			sign_progs = true;
- 			use_loader = true;
- 			break;
-+		case 'M':
-+			sign_maps = true;
-+			sign_progs = true;
-+			use_loader = true;
-+			break;
- 		case 'k':
- 			private_key_path = optarg;
- 			break;
-diff --git a/tools/bpf/bpftool/main.h b/tools/bpf/bpftool/main.h
-index f921af3cda87f..805c3d87a1330 100644
---- a/tools/bpf/bpftool/main.h
-+++ b/tools/bpf/bpftool/main.h
-@@ -92,6 +92,7 @@ extern bool use_loader;
- extern struct btf *base_btf;
- extern struct hashmap *refs_table;
- extern bool sign_progs;
-+extern bool sign_maps;
- extern const char *private_key_path;
- extern const char *cert_path;
- 
-diff --git a/tools/bpf/bpftool/sign.c b/tools/bpf/bpftool/sign.c
-index f0b5dd10a46b2..d5514b7d2b82d 100644
---- a/tools/bpf/bpftool/sign.c
-+++ b/tools/bpf/bpftool/sign.c
-@@ -22,6 +22,7 @@
- #include <errno.h>
- 
- #include <bpf/skel_internal.h>
-+#include <bpf/libbpf_internal.h>
- 
- #include "main.h"
- 
-@@ -129,8 +130,18 @@ int bpftool_prog_sign(struct bpf_load_and_run_opts *opts)
- 	long actual_sig_len = 0;
- 	X509 *x509 = NULL;
- 	int err = 0;
--
--	bd_in = BIO_new_mem_buf(opts->insns, opts->insns_sz);
-+	unsigned char hash[SHA256_DIGEST_LENGTH  * 2];
-+	unsigned char term[SHA256_DIGEST_LENGTH];
-+
-+	if (sign_maps) {
-+		libbpf_sha256(opts->insns, opts->insns_sz, hash, SHA256_DIGEST_LENGTH);
-+		libbpf_sha256(opts->data, opts->data_sz, hash + SHA256_DIGEST_LENGTH,
-+			      SHA256_DIGEST_LENGTH);
-+		libbpf_sha256(hash, sizeof(hash), term, sizeof(term));
-+		bd_in = BIO_new_mem_buf(term, sizeof(term));
-+	} else {
-+		bd_in = BIO_new_mem_buf(opts->insns, opts->insns_sz);
-+	}
- 	if (!bd_in) {
- 		err = -ENOMEM;
- 		goto cleanup;
-@@ -171,7 +182,7 @@ int bpftool_prog_sign(struct bpf_load_and_run_opts *opts)
- 	EVP_Digest(opts->insns, opts->insns_sz, opts->excl_prog_hash,
- 		   &opts->excl_prog_hash_sz, EVP_sha256(), NULL);
- 
--		bd_out = BIO_new(BIO_s_mem());
-+	bd_out = BIO_new(BIO_s_mem());
- 	if (!bd_out) {
- 		err = -ENOMEM;
- 		goto cleanup;
-diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
-index 7cad8470d9ebe..aad0288cd05e3 100644
---- a/tools/lib/bpf/libbpf.h
-+++ b/tools/lib/bpf/libbpf.h
-@@ -1827,9 +1827,10 @@ struct gen_loader_opts {
- 	__u32 data_sz;
- 	__u32 insns_sz;
- 	bool gen_hash;
-+	bool sign_maps;
- };
- 
--#define gen_loader_opts__last_field gen_hash
-+#define gen_loader_opts__last_field sign_maps
- LIBBPF_API int bpf_object__gen_loader(struct bpf_object *obj,
- 				      struct gen_loader_opts *opts);
- 
-diff --git a/tools/lib/bpf/skel_internal.h b/tools/lib/bpf/skel_internal.h
-index 5b6d1b09dc8a6..c25a4f1308e44 100644
---- a/tools/lib/bpf/skel_internal.h
-+++ b/tools/lib/bpf/skel_internal.h
-@@ -74,6 +74,8 @@ struct bpf_load_and_run_opts {
- 	__u32 keyring_id;
- 	void * excl_prog_hash;
- 	__u32 excl_prog_hash_sz;
-+	const int *signature_maps;
-+	__u32 signature_maps_sz;
- };
- 
- long kern_sys_bpf(__u32 cmd, void *attr, __u32 attr_size);
-@@ -351,7 +353,7 @@ static inline int skel_map_freeze(int fd)
- 
- static inline int bpf_load_and_run(struct bpf_load_and_run_opts *opts)
- {
--	const size_t prog_load_attr_sz = offsetofend(union bpf_attr, keyring_id);
-+	const size_t prog_load_attr_sz = offsetofend(union bpf_attr, signature_maps_size);
- 	const size_t test_run_attr_sz = offsetofend(union bpf_attr, test);
- 	int map_fd = -1, prog_fd = -1, key = 0, err;
- 	union bpf_attr attr;
-@@ -394,6 +396,8 @@ static inline int bpf_load_and_run(struct bpf_load_and_run_opts *opts)
- #ifndef __KERNEL__
- 	attr.signature = (long) opts->signature;
- 	attr.signature_size = opts->signature_sz;
-+	attr.signature_maps = (long) opts->signature_maps;
-+	attr.signature_maps_size = opts->signature_maps_sz;
- #else
- 	if (opts->signature || opts->signature_sz)
- 		pr_warn("signatures are not supported from bpf_preload\n");
--- 
-2.48.1
+> Arguably reaching this code would be suggestive of a kernel bug but I
+> know that BUG_ON() is frowned upon these days.
+> Maybe we should WARN_ON_ONCE() here or similar?
 
+BUG_ON() is definitely a no-no, but WARN_ON_ONCE()/WARN_ON() is still
+considered okay last I checked (no forced panic).  Of the two I think
+WARN_ON() would be a better choice here.
+
+> We also rarely return
+> -EPERM from SELinux outside of capability checks since usually EPERM
+> means a failed capability check
+> (vs -EACCES). Defer to Paul on how/if he wants to handle this and
+> whether it requires re-spinning this patch or just a follow-on one.
+
+Another fair point.
+
+Considering that we are at -rc5 right now, we only have a few more
+days left in the current dev cycle, I'm going to merge this now (with
+a subject line tweak and some unnecessary vertical whitespace
+removed), and I'll put together a quick little patch to do the
+WARN_ON()/EACCES conversion which you'll see on list shortly ...
+
+--=20
+paul-moore.com
