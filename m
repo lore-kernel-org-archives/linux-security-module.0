@@ -1,55 +1,55 @@
 Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF8E1172A
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Sep 2025 00:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E081B808
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Sep 2025 00:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757376420; cv=none; b=QJEaafCCNXRd08iSxKT7ntEJE9/L7yDrKMpThfl8SuPqHZXd2p6i+6FRwV/s8jNTmVgteJtPSAbXtS/IwglTXl2Z4uBXj2tLSLklVuzEN8QCUA96YTNLUw0bIRu+11avPZMAWENHaZn+r3YyhHw5BixU83cK52UCgRk8gZlxeVw=
+	t=1757376423; cv=none; b=WGgSLIpERDkBD853BDEukzW9agolwFTTcbR0GbwToJF2f7NQOfqnWhtRup8PgfKM1ebTkYGqvTkPy4m8IamQrriQQgCXh2tZfqHMB9q8+O3DqxOWFOpm4BJbGMLQhe0+qsni13MXyqlqi3BE3nkjIVn+1FJLDMWW4pfSsm6NkCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757376420; c=relaxed/simple;
-	bh=WorUqO2lCJn7UEs4OhhQiaaGNgnvP+73Vse+/gFqQXM=;
+	s=arc-20240116; t=1757376423; c=relaxed/simple;
+	bh=Csd1vaQ5H38hPbweOO9CK7n6pEI39y1rydMEzDWMQJU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f8xlg9tdoBUKQc4/jJPNKLRGiaZoKSvG7IaqeujUm/R5YN84ZSYYjiEitpRsHAssRlkxpRQoS9gEF2SF1PZZPiZkupeNX4RrLvNgcnsdXzyxHU03TicnyaSTBCZ88pVvadkLYkX9i428HowmL9mp45Mk2ggK4NOInaMb7nmoQPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=hneHbzUW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JuraBqfB; arc=none smtp.client-ip=202.12.124.149
+	 MIME-Version; b=u8KEl7rkA+cnTC43igUd6MD3bf7gxBhXhxom32nViTeAr4EE8feVqOdxKbYCw9COv9h0cL7jfTR1sORbLSKS56YYsJP3C1p/SU0CsNGSss0ziuEcieaf+Z6R79NGfLjM5xU9GszmlVwGYzZ4uCDRVf7EqQnqHKn3b5YuSEamP4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=oyvUEOzX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=D0reK48b; arc=none smtp.client-ip=202.12.124.149
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="hneHbzUW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JuraBqfB"
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id C01AA1D0018D;
-	Mon,  8 Sep 2025 20:06:57 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="oyvUEOzX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D0reK48b"
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+	by mailfout.stl.internal (Postfix) with ESMTP id 42B5A1D0018C;
+	Mon,  8 Sep 2025 20:06:59 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Mon, 08 Sep 2025 20:06:57 -0400
+  by phl-compute-07.internal (MEProxy); Mon, 08 Sep 2025 20:06:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1757376417; x=
-	1757462817; bh=zOg8fxeDMiUC7bcxHVMFlFlb7j9f6rW8/0Q3x6Z3qFI=; b=h
-	neHbzUWtc5icQt3cGVfT+eJlhj7Ofc4EecekUYJMpO8QilWmfk2CbGGw3yDPYmyX
-	P8DZNV2iEhgRN8uHeTJKsIZq9scKEuLe1YqF8RaxpmzQSYP7fTENiIeHcDzTplbP
-	YZKt3PSWJCRW1uwh09uR1lJ+4S9Uhdi6vVUztMYEDOV3YljnEUVqJ4kVhOonVm/1
-	SkcXYWAIRnq2dJAKciKFKku1CdsNBj0MgqAMO0y7M4gp1MpFFDF+DTLNgXsr6jq4
-	DaP00Jfkyz8AAbGrrJJI44KJxXtMl3jdroWN54YvWDNpEiqhXKoOc21AIAmo98tl
-	kj3h1wm/0x39ORI3nhHzQ==
+	:reply-to:subject:subject:to:to; s=fm1; t=1757376419; x=
+	1757462819; bh=VK3YxJkM0uXLdjZar4lbhVAxJ9h/0c6ahhjLeQ9NeyY=; b=o
+	yvUEOzXZg9BNLWSKbiltXoDXVzcaUUycslEpX8nluTvJDdukIIP9BPC7qIYxbtiy
+	xcCBMT9y3rLcZJ8evpM3pEwSNnnIar3nh0Ii2PLPeQtYo88GBrKV++8QkoLt5uA2
+	VYvmFQpzm2PTgRpsHMpIZnTMEP2NSjlCeOXFFMTddBGTN4PcV6/6cVTsOtII82cC
+	2IcrkJIfwWcbIlb7XDNjeYR6OnIXPnH9kklS7Lvh/gHCAuH7KE31sf13+AutHGmn
+	TW4T9AvzkMKncIJdC82Xz8+vg+Ug8doZ6xTcH5RMjK2IHRPaKh7wqDhDjjI0X+YG
+	0upRKeVZLqcdilmtPPRDQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1757376417; x=1757462817; bh=z
-	Og8fxeDMiUC7bcxHVMFlFlb7j9f6rW8/0Q3x6Z3qFI=; b=JuraBqfBm2j7X31cT
-	zl2cb5RiVHcm6FXDE9duiP7GhnwqX/Mlp4X/E3faHZfuGkY6W80qXYzaktTEIOsd
-	Jn3ARvT2t4WMz30QLOh/f2c1+MhkBixyG1UbQvCnj95NS3e1GG0vV/mdZNCTwnr1
-	oNDoCR+98RPBCXiCam90HEf/o3XBMnh7+wiMRhyZgonj/VT3Hh9AkB2CSHHYWa4U
-	RMDNnOcyTEpkGoRNhjnCCBrtjULxx+oS2Xv5Ge0PiInCUAVkdQ+89xoD6X162fdp
-	4O7miQCRDT6TW288MNnC3rYhLVxBHsmclHlVgXEDSewWpxIeFY2tGa3xo824eMe1
-	RniBw==
-X-ME-Sender: <xms:oW-_aFyKstgZU2Ftl9iBosX1e0PcKLMV_1SG6TvZHWYmi6AlPVgInA>
-    <xme:oW-_aAwkNqT3ZkPZvJlnr1XJinUX39YjGbMbUW7IrIbgLX1C7cQoK75_vN9tha8XV
-    qx7cS8bHJFpSJDfkxk>
-X-ME-Received: <xmr:oW-_aFxLIbgX1tKT93gmXCH5w4PrKy6b80eQFlH4c-g2TpUvZ1SEo8xMiwOZKJQYgIAhyDhnjH8URofzaDM-kFujxlt4O7S30GpSa21bk76H0rQiJfyk4SRqyA>
+	:x-me-sender:x-sasl-enc; s=fm1; t=1757376419; x=1757462819; bh=V
+	K3YxJkM0uXLdjZar4lbhVAxJ9h/0c6ahhjLeQ9NeyY=; b=D0reK48bkBrurdkxp
+	3y0RVoixD2rrqEVgnGnOCWiY4WIyJY0Iq4clj0yozG5cIBoR5DrTIqOl+2XXSvTm
+	FBLOU/3raURzXwgxlsl5Fbusv1HGtO1uPn/wBD6Iynt9SrOZlxjRu0yUUYeYLRW0
+	q+Rs+vTzs2IcSvDLKewOTqWModiEd6G3wIUPyO6tbfdmrnHIJ0N97BeLNeBPvcbN
+	MXkbz81hMIMEjSWiSRIKyS6DmygayC8YRXPPe5rrN7bifGTj7y/S9rnC3iuFg2jQ
+	CaLkBmyORL9pS/SDUszT3EIwHH9U8mOc9+yUb2HUIXA2rPOsv3Ubc97t4I8Pbnn2
+	5bikA==
+X-ME-Sender: <xms:om-_aOwXcRpf7ACAE-1g5Rg1Pf_B7EC4Uy7wIY0lgbJJOW4uPMCJ6w>
+    <xme:om-_aFzKRzbfJeburmiQwtCrkk9tEkNaya5l_GJvAXdYuvJIVcUpo1JNBNodHN9sb
+    l2wUvXjJL7dcwRoun0>
+X-ME-Received: <xmr:om-_aGz70Ha22RYFwe2HvIkmIHkw5wngG4hit1v2_1fSxW4sHhHsp9dVh8e2L3Ta1zCvo0qC1J8kV6z-rlHqF_erG3YlqgNg02UidgNBGV317t7SGbCOiGjp7g>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeelfecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
@@ -62,23 +62,23 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeelfecutefuodetgg
     hgpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthhopehj
     rggtkhesshhushgvrdgtiidprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmh
     houghulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:oW-_aCZ7x8UK6T8hz5U-MdgdurvVhX0QIpDZwFNKllJp4KI1L4tw1A>
-    <xmx:oW-_aOXsl-2HhsE0-K7Fh9lu41DLl-3Uai_k4yko-ZDeA3khuS-8OA>
-    <xmx:oW-_aIjj2veUYTIqUsqygo_i8j2d-txSiUhqlIsjpl2JW0C-fkZj6g>
-    <xmx:oW-_aEtScNkiHmZ3aXPjjBvBJa2sjyekDj_Ihfc64MxVQ5vFkrgxSg>
-    <xmx:oW-_aLdsx7zDxpLT2_hF-qFMquDgbAQrCbExFFlXYbTKCN71VmmM6foA>
+X-ME-Proxy: <xmx:om-_aPbRg_1IrOPvyDFXVyjbqJ_Yo_RfiQj21kAh-UUSf9KPhToYBQ>
+    <xmx:om-_aHXDh0bw4gKA9y3nx-5RrPbdManiBtyb6NPt6NHFEvw8NX_rnQ>
+    <xmx:om-_aNiefv3p5KroAniBevo6luZ0Ur9ZDAyfvPmaIs4mZv-9UUDwdA>
+    <xmx:om-_aFvzMGgStdGiK5hialxTSb4VX34lRXqd_VLJN43BNQmrc9EKWw>
+    <xmx:o2-_aIdJbvy0H9tuJCBpZ7AMwQnHgUHS6REWU2zIszaRr2A-_xPtdySc>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 8 Sep 2025 20:06:56 -0400 (EDT)
+ 8 Sep 2025 20:06:58 -0400 (EDT)
 From: Tingmao Wang <m@maowtm.org>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: Tingmao Wang <m@maowtm.org>,
 	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	Jan Kara <jack@suse.cz>,
 	linux-security-module@vger.kernel.org
-Subject: [RFC PATCH 2/6] landlock: Add API support for the quiet flag
-Date: Tue,  9 Sep 2025 01:06:36 +0100
-Message-ID: <e9462ee16376d706188d48d8f4b4fd50760432e5.1757376311.git.m@maowtm.org>
+Subject: [RFC PATCH 3/6] landlock/audit: Check for quiet flag in landlock_log_denial
+Date: Tue,  9 Sep 2025 01:06:37 +0100
+Message-ID: <366f215b1687eb3d530bfde11626ec0256d51180.1757376311.git.m@maowtm.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1757376311.git.m@maowtm.org>
 References: <cover.1757376311.git.m@maowtm.org>
@@ -90,306 +90,225 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Also added documentation.
+Suppresses logging if the flag is effective on the youngest layer.
 
-As for kselftests, for now we just change add_rule_checks_ordering to use
-a different invalid flag.  I will add tests for the quiet flag in a later
-version.
+This does not handle optional access logging yet - to do that correctly we will
+need to expand deny_masks to support representing "don't log anything"
 
 Signed-off-by: Tingmao Wang <m@maowtm.org>
 ---
- include/uapi/linux/landlock.h                | 25 +++++++++++++++++
- security/landlock/fs.c                       |  4 +--
- security/landlock/fs.h                       |  2 +-
- security/landlock/net.c                      |  5 ++--
- security/landlock/net.h                      |  3 ++-
- security/landlock/ruleset.c                  |  8 +++++-
- security/landlock/ruleset.h                  |  2 +-
- security/landlock/syscalls.c                 | 28 ++++++++++++--------
- tools/testing/selftests/landlock/base_test.c |  2 +-
- 9 files changed, 59 insertions(+), 20 deletions(-)
+ security/landlock/audit.c | 16 +++++++++++++++-
+ security/landlock/audit.h |  3 ++-
+ security/landlock/fs.c    | 20 +++++++++++---------
+ security/landlock/net.c   |  3 ++-
+ security/landlock/task.c  | 12 ++++++------
+ 5 files changed, 36 insertions(+), 18 deletions(-)
 
-diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-index f030adc462ee..3e5b2ce0b18b 100644
---- a/include/uapi/linux/landlock.h
-+++ b/include/uapi/linux/landlock.h
-@@ -69,6 +69,31 @@ struct landlock_ruleset_attr {
- #define LANDLOCK_CREATE_RULESET_ERRATA			(1U << 1)
- /* clang-format on */
- 
-+/**
-+ * DOC: landlock_add_rule_flags
-+ *
-+ * **Flags**
-+ *
-+ * %LANDLOCK_ADD_RULE_QUIET
-+ *     This flag controls whether Landlock will log audit messages when
-+ *     access to the objects covered by this rule is denied by this layer.
-+ *
-+ *     When Landlock denies an access, if audit logging is enabled,
-+ *     Landlock will check if the youngest layer that denied the access
-+ *     has marked the object in question as "quiet".  If so, no audit log
-+ *     will be generated.  Note that logging is only suppressed if the
-+ *     layer that denied the access is this layer.  This means that a
-+ *     sandboxed program cannot use this flag to "hide" access denials,
-+ *     unless it denies itself the access.
-+ *
-+ *     When this flag is present, the caller is allowed to pass in a rule
-+ *     with empty allowed_access.
-+ */
-+
-+/* clang-format off */
-+#define LANDLOCK_ADD_RULE_QUIET			(1U << 0)
-+/* clang-format on */
-+
- /**
-  * DOC: landlock_restrict_self_flags
+diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+index c52d079cdb77..2b3edd1ab374 100644
+--- a/security/landlock/audit.c
++++ b/security/landlock/audit.c
+@@ -386,9 +386,12 @@ static bool is_valid_request(const struct landlock_request *const request)
   *
+  * @subject: The Landlock subject's credential denying an action.
+  * @request: Detail of the user space request.
++ * @rule_flags: The flags for the matched rule, or NULL if this is a
++ * scope request (no particular object involved).
+  */
+ void landlock_log_denial(const struct landlock_cred_security *const subject,
+-			 const struct landlock_request *const request)
++			 const struct landlock_request *const request,
++			 const struct collected_rule_flags *const rule_flags)
+ {
+ 	struct audit_buffer *ab;
+ 	struct landlock_hierarchy *youngest_denied;
+@@ -436,6 +439,17 @@ void landlock_log_denial(const struct landlock_cred_security *const subject,
+ 	if (!audit_enabled)
+ 		return;
+ 
++	/*
++	 * Check if the object is marked quiet by the layer that denied the
++	 * request.  (If it's a different layer that marked it as quiet, but
++	 * that layer is not the one that denied the request, we should still
++	 * audit log the denial)
++	 */
++	if (rule_flags &&
++	    rule_flags->quiet_masks & BIT(youngest_layer)) {
++		return;
++	}
++
+ 	/* Checks if the current exec was restricting itself. */
+ 	if (subject->domain_exec & BIT(youngest_layer)) {
+ 		/* Ignores denials for the same execution. */
+diff --git a/security/landlock/audit.h b/security/landlock/audit.h
+index 92428b7fc4d8..e6f76d417c2f 100644
+--- a/security/landlock/audit.h
++++ b/security/landlock/audit.h
+@@ -56,7 +56,8 @@ struct landlock_request {
+ void landlock_log_drop_domain(const struct landlock_hierarchy *const hierarchy);
+ 
+ void landlock_log_denial(const struct landlock_cred_security *const subject,
+-			 const struct landlock_request *const request);
++			 const struct landlock_request *const request,
++			 const struct collected_rule_flags *const rule_flags);
+ 
+ #else /* CONFIG_AUDIT */
+ 
 diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index e7eaf55093e9..b566ae498df5 100644
+index b566ae498df5..ba93b0de384c 100644
 --- a/security/landlock/fs.c
 +++ b/security/landlock/fs.c
-@@ -322,7 +322,7 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
-  */
- int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
- 			    const struct path *const path,
--			    access_mask_t access_rights)
-+			    access_mask_t access_rights, const int flags)
- {
- 	int err;
- 	struct landlock_id id = {
-@@ -343,7 +343,7 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
- 	if (IS_ERR(id.key.object))
- 		return PTR_ERR(id.key.object);
- 	mutex_lock(&ruleset->lock);
--	err = landlock_insert_rule(ruleset, id, access_rights);
-+	err = landlock_insert_rule(ruleset, id, access_rights, flags);
- 	mutex_unlock(&ruleset->lock);
+@@ -984,7 +984,7 @@ static int current_check_access_path(const struct path *const path,
+ 				       NULL, 0, NULL, NULL, NULL, NULL))
+ 		return 0;
+ 
+-	landlock_log_denial(subject, &request);
++	landlock_log_denial(subject, &request, &rule_flags);
+ 	return -EACCES;
+ }
+ 
+@@ -1194,7 +1194,7 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+ 			    &request1, NULL, 0, NULL, NULL, NULL, NULL))
+ 			return 0;
+ 
+-		landlock_log_denial(subject, &request1);
++		landlock_log_denial(subject, &request1, &rule_flags_parent1);
+ 		return -EACCES;
+ 	}
+ 
+@@ -1243,11 +1243,13 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+ 
+ 	if (request1.access) {
+ 		request1.audit.u.path.dentry = old_parent;
+-		landlock_log_denial(subject, &request1);
++		landlock_log_denial(subject, &request1,
++				    &rule_flags_parent1);
+ 	}
+ 	if (request2.access) {
+ 		request2.audit.u.path.dentry = new_dir->dentry;
+-		landlock_log_denial(subject, &request2);
++		landlock_log_denial(subject, &request2,
++				    &rule_flags_parent2);
+ 	}
+ 
  	/*
- 	 * No need to check for an error because landlock_insert_rule()
-diff --git a/security/landlock/fs.h b/security/landlock/fs.h
-index bf9948941f2f..cb7e654933ac 100644
---- a/security/landlock/fs.h
-+++ b/security/landlock/fs.h
-@@ -126,6 +126,6 @@ __init void landlock_add_fs_hooks(void);
+@@ -1403,7 +1405,7 @@ log_fs_change_topology_path(const struct landlock_cred_security *const subject,
+ 			.u.path = *path,
+ 		},
+ 		.layer_plus_one = handle_layer + 1,
+-	});
++	}, NULL);
+ }
  
- int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
- 			    const struct path *const path,
--			    access_mask_t access_hierarchy);
-+			    access_mask_t access_hierarchy, const int flags);
+ static void log_fs_change_topology_dentry(
+@@ -1417,7 +1419,7 @@ static void log_fs_change_topology_dentry(
+ 			.u.dentry = dentry,
+ 		},
+ 		.layer_plus_one = handle_layer + 1,
+-	});
++	}, NULL);
+ }
  
- #endif /* _SECURITY_LANDLOCK_FS_H */
+ /*
+@@ -1705,7 +1707,7 @@ static int hook_file_open(struct file *const file)
+ 
+ 	/* Sets access to reflect the actual request. */
+ 	request.access = open_access_request;
+-	landlock_log_denial(subject, &request);
++	landlock_log_denial(subject, &request, &rule_flags);
+ 	return -EACCES;
+ }
+ 
+@@ -1735,7 +1737,7 @@ static int hook_file_truncate(struct file *const file)
+ #ifdef CONFIG_AUDIT
+ 		.deny_masks = landlock_file(file)->deny_masks,
+ #endif /* CONFIG_AUDIT */
+-	});
++	}, NULL);
+ 	return -EACCES;
+ }
+ 
+@@ -1774,7 +1776,7 @@ static int hook_file_ioctl_common(const struct file *const file,
+ #ifdef CONFIG_AUDIT
+ 		.deny_masks = landlock_file(file)->deny_masks,
+ #endif /* CONFIG_AUDIT */
+-	});
++	}, NULL);
+ 	return -EACCES;
+ }
+ 
 diff --git a/security/landlock/net.c b/security/landlock/net.c
-index fc6369dffa51..bddbe93d69fd 100644
+index bddbe93d69fd..d242bb9fa5b4 100644
 --- a/security/landlock/net.c
 +++ b/security/landlock/net.c
-@@ -20,7 +20,8 @@
- #include "ruleset.h"
- 
- int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
--			     const u16 port, access_mask_t access_rights)
-+			     const u16 port, access_mask_t access_rights,
-+			     const int flags)
- {
- 	int err;
- 	const struct landlock_id id = {
-@@ -35,7 +36,7 @@ int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
- 			 ~landlock_get_net_access_mask(ruleset, 0);
- 
- 	mutex_lock(&ruleset->lock);
--	err = landlock_insert_rule(ruleset, id, access_rights);
-+	err = landlock_insert_rule(ruleset, id, access_rights, flags);
- 	mutex_unlock(&ruleset->lock);
- 
- 	return err;
-diff --git a/security/landlock/net.h b/security/landlock/net.h
-index 09960c237a13..799cedd5d0b7 100644
---- a/security/landlock/net.h
-+++ b/security/landlock/net.h
-@@ -16,7 +16,8 @@
- __init void landlock_add_net_hooks(void);
- 
- int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
--			     const u16 port, access_mask_t access_rights);
-+			     const u16 port, access_mask_t access_rights,
-+			     const int flags);
- #else /* IS_ENABLED(CONFIG_INET) */
- static inline void landlock_add_net_hooks(void)
- {
-diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-index 3aa4e33ac95b..990aa1a2c120 100644
---- a/security/landlock/ruleset.c
-+++ b/security/landlock/ruleset.c
-@@ -21,6 +21,7 @@
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/workqueue.h>
-+#include <uapi/linux/landlock.h>
- 
- #include "access.h"
- #include "audit.h"
-@@ -251,6 +252,7 @@ static int insert_rule(struct landlock_ruleset *const ruleset,
- 			if (WARN_ON_ONCE(this->layers[0].level != 0))
- 				return -EINVAL;
- 			this->layers[0].access |= (*layers)[0].access;
-+			this->layers[0].flags.quiet |= (*layers)[0].flags.quiet;
- 			return 0;
- 		}
- 
-@@ -297,12 +299,15 @@ static void build_check_layer(void)
- /* @ruleset must be locked by the caller. */
- int landlock_insert_rule(struct landlock_ruleset *const ruleset,
- 			 const struct landlock_id id,
--			 const access_mask_t access)
-+			 const access_mask_t access, const int flags)
- {
- 	struct landlock_layer layers[] = { {
- 		.access = access,
- 		/* When @level is zero, insert_rule() extends @ruleset. */
- 		.level = 0,
-+		.flags = {
-+			.quiet = flags & LANDLOCK_ADD_RULE_QUIET ? 1 : 0,
-+		}
- 	} };
- 
- 	build_check_layer();
-@@ -343,6 +348,7 @@ static int merge_tree(struct landlock_ruleset *const dst,
- 			return -EINVAL;
- 
- 		layers[0].access = walker_rule->layers[0].access;
-+		layers[0].flags = walker_rule->layers[0].flags;
- 
- 		err = insert_rule(dst, id, &layers, ARRAY_SIZE(layers));
- 		if (err)
-diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-index d4b70b6af137..4f184d2da382 100644
---- a/security/landlock/ruleset.h
-+++ b/security/landlock/ruleset.h
-@@ -224,7 +224,7 @@ DEFINE_FREE(landlock_put_ruleset, struct landlock_ruleset *,
- 
- int landlock_insert_rule(struct landlock_ruleset *const ruleset,
- 			 const struct landlock_id id,
--			 const access_mask_t access);
-+			 const access_mask_t access, const int flags);
- 
- struct landlock_ruleset *
- landlock_merge_ruleset(struct landlock_ruleset *const parent,
-diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-index 0116e9f93ffe..e46164246fdb 100644
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -312,7 +312,7 @@ static int get_path_from_fd(const s32 fd, struct path *const path)
+@@ -193,7 +193,8 @@ static int current_check_access_socket(struct socket *const sock,
+ 				    .access = access_request,
+ 				    .layer_masks = &layer_masks,
+ 				    .layer_masks_size = ARRAY_SIZE(layer_masks),
+-			    });
++			    },
++			    &rule_flags);
+ 	return -EACCES;
  }
  
- static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
--				 const void __user *const rule_attr)
-+				 const void __user *const rule_attr, int flags)
- {
- 	struct landlock_path_beneath_attr path_beneath_attr;
- 	struct path path;
-@@ -328,8 +328,10 @@ static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
- 	/*
- 	 * Informs about useless rule: empty allowed_access (i.e. deny rules)
- 	 * are ignored in path walks.
-+	 * (However, the rule is not useless if it is there to hold a quiet
-+	 * flag)
- 	 */
--	if (!path_beneath_attr.allowed_access)
-+	if (!flags && !path_beneath_attr.allowed_access)
- 		return -ENOMSG;
+diff --git a/security/landlock/task.c b/security/landlock/task.c
+index 2385017418ca..dfea227ce1d7 100644
+--- a/security/landlock/task.c
++++ b/security/landlock/task.c
+@@ -115,7 +115,7 @@ static int hook_ptrace_access_check(struct task_struct *const child,
+ 				.u.tsk = child,
+ 			},
+ 			.layer_plus_one = parent_subject->domain->num_layers,
+-		});
++		}, NULL);
  
- 	/* Checks that allowed_access matches the @ruleset constraints. */
-@@ -344,13 +346,13 @@ static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
- 
- 	/* Imports the new rule. */
- 	err = landlock_append_fs_rule(ruleset, &path,
--				      path_beneath_attr.allowed_access);
-+				      path_beneath_attr.allowed_access, flags);
- 	path_put(&path);
+ 	return err;
+ }
+@@ -161,7 +161,7 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
+ 			.u.tsk = current,
+ 		},
+ 		.layer_plus_one = parent_subject->domain->num_layers,
+-	});
++	}, NULL);
  	return err;
  }
  
- static int add_rule_net_port(struct landlock_ruleset *ruleset,
--			     const void __user *const rule_attr)
-+			     const void __user *const rule_attr, int flags)
- {
- 	struct landlock_net_port_attr net_port_attr;
- 	int res;
-@@ -364,8 +366,10 @@ static int add_rule_net_port(struct landlock_ruleset *ruleset,
- 	/*
- 	 * Informs about useless rule: empty allowed_access (i.e. deny rules)
- 	 * are ignored by network actions.
-+	 * (However, the rule is not useless if it is there to hold a quiet
-+	 * flag)
- 	 */
--	if (!net_port_attr.allowed_access)
-+	if (!flags && !net_port_attr.allowed_access)
- 		return -ENOMSG;
- 
- 	/* Checks that allowed_access matches the @ruleset constraints. */
-@@ -379,7 +383,7 @@ static int add_rule_net_port(struct landlock_ruleset *ruleset,
- 
- 	/* Imports the new rule. */
- 	return landlock_append_net_rule(ruleset, net_port_attr.port,
--					net_port_attr.allowed_access);
-+					net_port_attr.allowed_access, flags);
+@@ -290,7 +290,7 @@ static int hook_unix_stream_connect(struct sock *const sock,
+ 			},
+ 		},
+ 		.layer_plus_one = handle_layer + 1,
+-	});
++	}, NULL);
+ 	return -EPERM;
  }
  
- /**
-@@ -390,7 +394,7 @@ static int add_rule_net_port(struct landlock_ruleset *ruleset,
-  * @rule_type: Identify the structure type pointed to by @rule_attr:
-  *             %LANDLOCK_RULE_PATH_BENEATH or %LANDLOCK_RULE_NET_PORT.
-  * @rule_attr: Pointer to a rule (matching the @rule_type).
-- * @flags: Must be 0.
-+ * @flags: Must be 0 or %LANDLOCK_ADD_RULE_QUIET.
-  *
-  * This system call enables to define a new rule and add it to an existing
-  * ruleset.
-@@ -414,6 +418,9 @@ static int add_rule_net_port(struct landlock_ruleset *ruleset,
-  *   @rule_attr is not the expected file descriptor type;
-  * - %EPERM: @ruleset_fd has no write access to the underlying ruleset;
-  * - %EFAULT: @rule_attr was not a valid address.
-+ *
-+ * .. kernel-doc:: include/uapi/linux/landlock.h
-+ *     :identifiers: landlock_add_rule_flags
-  */
- SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
- 		const enum landlock_rule_type, rule_type,
-@@ -424,8 +431,7 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
- 	if (!is_initialized())
- 		return -EOPNOTSUPP;
+@@ -327,7 +327,7 @@ static int hook_unix_may_send(struct socket *const sock,
+ 			},
+ 		},
+ 		.layer_plus_one = handle_layer + 1,
+-	});
++	}, NULL);
+ 	return -EPERM;
+ }
  
--	/* No flag for now. */
--	if (flags)
-+	if (flags && flags != LANDLOCK_ADD_RULE_QUIET)
- 		return -EINVAL;
+@@ -383,7 +383,7 @@ static int hook_task_kill(struct task_struct *const p,
+ 			.u.tsk = p,
+ 		},
+ 		.layer_plus_one = handle_layer + 1,
+-	});
++	}, NULL);
+ 	return -EPERM;
+ }
  
- 	/* Gets and checks the ruleset. */
-@@ -435,9 +441,9 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
+@@ -426,7 +426,7 @@ static int hook_file_send_sigiotask(struct task_struct *tsk,
+ #ifdef CONFIG_AUDIT
+ 		.layer_plus_one = landlock_file(fown->file)->fown_layer + 1,
+ #endif /* CONFIG_AUDIT */
+-	});
++	}, NULL);
+ 	return -EPERM;
+ }
  
- 	switch (rule_type) {
- 	case LANDLOCK_RULE_PATH_BENEATH:
--		return add_rule_path_beneath(ruleset, rule_attr);
-+		return add_rule_path_beneath(ruleset, rule_attr, flags);
- 	case LANDLOCK_RULE_NET_PORT:
--		return add_rule_net_port(ruleset, rule_attr);
-+		return add_rule_net_port(ruleset, rule_attr, flags);
- 	default:
- 		return -EINVAL;
- 	}
-diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
-index 7b69002239d7..d07a0bf6927c 100644
---- a/tools/testing/selftests/landlock/base_test.c
-+++ b/tools/testing/selftests/landlock/base_test.c
-@@ -201,7 +201,7 @@ TEST(add_rule_checks_ordering)
- 	ASSERT_LE(0, ruleset_fd);
- 
- 	/* Checks invalid flags. */
--	ASSERT_EQ(-1, landlock_add_rule(-1, 0, NULL, 1));
-+	ASSERT_EQ(-1, landlock_add_rule(-1, 0, NULL, 100));
- 	ASSERT_EQ(EINVAL, errno);
- 
- 	/* Checks invalid ruleset FD. */
 -- 
 2.51.0
 
