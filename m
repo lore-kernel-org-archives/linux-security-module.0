@@ -1,153 +1,198 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E578E33EAEC
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Sep 2025 13:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16ED125D209;
+	Tue,  9 Sep 2025 15:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757423474; cv=none; b=h2wIkZUyvtxFP3KjYdDE4kaOK/+QqCs+ZnsQEz650dkA7k7EJYomCRikWGUsD8Ly/B/WpIWpFGfjWLWyC1EnCZSTtty7jKUvp22Zh6Cd+4q497IHq6BOlVDjqU0M63Q5OlKrUXKrvcdfWN8rPJjc0YjN1IJcyjxRWFc3VVPPdC8=
+	t=1757431906; cv=none; b=pdABBwkYeTsnYQq0El1Xie3AoCDFDRTQFTZgeoghyDbqMk9ptHTfYBvOjSpFZZvVqQAfaDuyBdodJDpzIc3EgFoZiLJpGmMtiSHmxEGghJmKbjn7QOLo/NDKsmOfm3bVijYeg0Ri+Yf78LARweeSjcPCJrTUqjSH4BmqyneJYYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757423474; c=relaxed/simple;
-	bh=Zo3oH4aw0tiSXOUVsgBT9EB9o0z8d/2riNIK+49I9S8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EfXVHPilMu2oBIlPq1Q22uKYF7mxuWTFv7mirEytdsVFDPRkWIzUaeFFkBt7rX6q4hzFTw/KCvOz3UBUY5bCtnomHl2C4OUhdK4GQMgCDUZPGveIYvrtDWsQ79+4mpFjdnNXIxwr0SZ287ALzHgQvtMS+6x/CRUv2xaN9BfUiuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Ef/R4DrD; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1757431906; c=relaxed/simple;
+	bh=9u4csa/Fww/W7t8uP7zd9sB1+c5iLLbS/3N7rDstuh4=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=aNe9UmqN8wCqkvaDcwJ2KWtiBN4JDOrC/W7rYYFNF6cPozkDGFQIG/3SbFETVD58JgEQCoRe+jRBSrlO0DNx/bKb2VgY1Lhqnc1vPtVHK+c8KiCqUm9QDQmpacTlm4e7FpOuEr3GShQjUbON65v6kt6TPX+LtZey8Tp2HqDa5rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YPsi05+d; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Ef/R4DrD"
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9BC423F282
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Sep 2025 13:11:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1757423462;
-	bh=mTARHUNH6YPuN2/2Pw5N85BTAXOgi/Y6NWg4iRpTdcE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=Ef/R4DrDaTEPuviXTMb0yDYNgToLODEuTSrk7m9DGQiwviLWMc1lzM1KXCd8CEyLY
-	 rRSjx9ir51l5622h9XLdWioDvC6CA9y7QMUAshsgpj4GOfkm5fAHmn3YsCLDPN0wOy
-	 yC522+uj3wveGlHF+IjILEL/NC1MBuoypQIauQc2RAkyq0hzb2JvjCOl+cLRrEGVR1
-	 NXz1niJ5T11coJSB3+yUc1wR7b8aNdeZ65RRZhx6brf5E6l7mvPsD7NQJ/Cdn0MYoY
-	 tUeo/V+4vVgraxPJ4/bI5y+sW5r0a/grGriFRBlmBlpAwkmpcTFlWe8gfr5Xybg5AY
-	 WbbNu9Tlc29/w==
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-76e2eb787f2so5894472b3a.3
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Sep 2025 06:11:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757423461; x=1758028261;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mTARHUNH6YPuN2/2Pw5N85BTAXOgi/Y6NWg4iRpTdcE=;
-        b=Nm/zYOWabIhXhpkhXf0Zsbs7WcFVfpdMTkmFHNFRJJR1JPjom7O7Cos1k9Hzdi+wA0
-         8q3H3WvxwIWEHIcbuXhilUt23ATcSNbACFWPDdlsNHGCKKIX6x3piqLWXrYI1xavVoaG
-         4WRRRKGU4Ripk30S+UYSkSL4lznANGjdyCluWh0QPeLoe+DuNOJLeNrHGAbDWzDV8ktZ
-         HaEeMdTMyzb4tajICATKXAQs/JDPq1FMtOtbv1Fs2qAokglPtc2rqJ7AyxrivRkJ766W
-         NSS4Gw7dqD37aaHqKf7jrDpzLpICfWtDW1wLyMzf6Q2oJfFu7B/YZtfaR21WN/95EAG+
-         9+PA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeV/Gl8XuVjTDbWNyo4ewcAsHbn3rjq7KcxQnWkSOisSrxrEDS2c6UKYasnquh4AYXzwXlQ0q6nBlyOA1xqDCW66bfT60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuKDbNLo3CYjBFn9kOpqXykLAPM+LBPxKjHgRPt3BWdyLEMxyH
-	FNXBXbM+aW7/M+UmW05Kr6Tdf07k8PEbZSvbedLzS3XU6+AwILZD2REWzQXDUgKvo+8brGRi1Is
-	suE9MzbYbS+NPEVld1jsOWySHntE2g3svO91Y+fTYyEFXrx3f27zyhEhO9yYb28ac31SmLpnPyu
-	q5KvUYbDiQeyRJHEqU3g==
-X-Gm-Gg: ASbGnctnKWGnhuk7z8UTA8yXM50au6W5ApVV5trPQidxNVApMWSkl/RabHUtEoQkQmI
-	PEhIDduOIt4xmIcmf/m85DTe90+t8fDZn5HYTimAXtC1Ph2a78ZZYU9GSvetED+jpS4DOXU2Cr6
-	YLRQJ1mdsjnM4GyJob827B23gtbzFgcIBCfBvzLOchM4undTPOmNzl+Y1rz0AniKkFw4XsCMwlv
-	5F5z2clQ0E0DGybG7M7738wNAJmcnMmNQZQUGKVaXjfNsGudv+ZF/3Mh7uTzRxCz3X1qhwqjnam
-	bA14+vv7ydxu1dFL5HSX8jddkcAXgIt2oiQCg1f3r59437rgFf9eFSB3+E7WHsZ8IBB3mIAnnRt
-	X996ulKI=
-X-Received: by 2002:a05:6a00:1821:b0:772:499e:99c4 with SMTP id d2e1a72fcca58-7742dddbe77mr15427276b3a.18.1757423461183;
-        Tue, 09 Sep 2025 06:11:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE9luBLssO1ocG8bZoCNKhOLSOO/E7cpZTqVelHzSs0SjLcBreTUD1zt4mInD7HeDgyEKmFpg==
-X-Received: by 2002:a05:6a00:1821:b0:772:499e:99c4 with SMTP id d2e1a72fcca58-7742dddbe77mr15427222b3a.18.1757423460643;
-        Tue, 09 Sep 2025 06:11:00 -0700 (PDT)
-Received: from noble-c.lxd (118-163-61-247.hinet-ip.hinet.net. [118.163.61.247])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-774660e4dcfsm2171452b3a.18.2025.09.09.06.10.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 06:10:59 -0700 (PDT)
-From: Gerald Yang <gerald.yang@canonical.com>
-To: Casey Schaufler <casey@schaufler-ca.com>,
-	Paul Moore <paul@paul-moore.com>,
-	linux-security-module@vger.kernel.org,
-	audit@vger.kernel.org
-Cc: gerald.yang.tw@gmail.com
-Subject: [PATCH] Audit: Fix skb leak when audit rate limit is exceeded
-Date: Tue,  9 Sep 2025 13:10:52 +0000
-Message-ID: <20250909131056.3395574-1-gerald.yang@canonical.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YPsi05+d"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 589Bd18F018250;
+	Tue, 9 Sep 2025 15:31:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=90Byf5
+	XT5MVaruoMf5NIbSiGdAOV7cZPs2ms46N+2LA=; b=YPsi05+dFuGfVRukLZbm9E
+	wQLhH9DhwNhgJ8Dz4+FB5hINwSYpknUXM6cISW9HqXUYj28ieN+bVRsK497f3umO
+	9iGJKsdmDBgX+7w4T9hGjXRY2vMZC6Qh1YzbMVTHp5Nsqw5dd47bxuuTaJ2G/Vfg
+	EfMO4hqMs4Tc1KWUlfkTExjkqAI+7IZH18ygMuM8VXjFP0pVS3Ufs954epJOhl95
+	/Tad37qIrQtUupup7wGUC6PfgWLhFXcPLt5zCPAb29X60gOvc/jr3dCyMa2bionw
+	Sag8W7oC2H4pjGMf+p4cCHYwiCoLmfq3NVsOUvUekYDwefPjQF5GHGBx9dezjkrw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cff8rj8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 15:31:24 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 589FVG7f019321;
+	Tue, 9 Sep 2025 15:31:23 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cff8rhw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 15:31:23 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 589E5aTX010613;
+	Tue, 9 Sep 2025 15:31:22 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4910smurvx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 15:31:22 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 589FVLdm29950706
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 9 Sep 2025 15:31:22 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CB3FC58063;
+	Tue,  9 Sep 2025 15:31:21 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3145D58057;
+	Tue,  9 Sep 2025 15:31:21 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.147.133])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  9 Sep 2025 15:31:21 +0000 (GMT)
+Message-ID: <5aeecf1aa6eff8ae0ea0a9e95d5df79aee338b32.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: setting security.ima to fix security.evm for a
+ file with IMA signature
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin	
+ <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul
+ Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E.
+ Hallyn"	 <serge@hallyn.com>,
+        "open list:SECURITY SUBSYSTEM"	
+ <linux-security-module@vger.kernel.org>,
+        open list	
+ <linux-kernel@vger.kernel.org>
+In-Reply-To: <20250909041954.1626914-1-coxu@redhat.com>
+References: <20250909041954.1626914-1-coxu@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 09 Sep 2025 11:31:20 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: LIpIJ4Th07-G7SHRm1oHskGpVS30Mlud
+X-Proofpoint-GUID: Vjm5K-ly7Hr2I-wroiZSdDn6d9Ge4Wwu
+X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68c0484c cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=vUXcQdf43LBxS_wO:21 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8
+ a=_UlRNL-Y48Z5G6zc6kMA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX+04/QzGKh42V
+ 7R3TZfQ5zixYo4gMQfKXaKQZHxt5tr3UCtAOLCxTYfFEvrb+o6EgJST+U0E19vYjwWpTeu04TDR
+ IlM7W3x5WTYsPGS3I5SJK9j1AKdPKADvttGJYv7C44r1T4R9tGfD+24/sb//PrIr/FLgxXe6T8p
+ 3Kn/hdo0dsYf3BfVF3T6tVGgCFNegFGcr4ZYJHhchs5eRlnX8DF+38SYw7x9FpRh9NA4bDvly8N
+ KgZAO8HiO870zMRO2cl8a98/9ANGG/3ErAd+o9WmO5SdDNOUsbA6lrFt0S+MRCwQtbqyBv5bmtE
+ oYVUsQSFBfXEoxvmT9wc9c1LBJ2WbJzcjjI5cCii8wQxrTuu0JJypxzxLq5rU3JTYmAVsOW8R8v
+ +zitNgjl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-09_02,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
 
-When configuring a small audit rate limit in
-/etc/audit/rules.d/audit.rules:
--a always,exit -F arch=b64 -S openat -S truncate -S ftruncate
--F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access -r 100
+On Tue, 2025-09-09 at 12:19 +0800, Coiby Xu wrote:
+> When both IMA and EVM fix modes are enabled, accessing a file with IMA
+> signature won't cause security.evm to be fixed. But this doesn't happen
+> to a file with correct IMA hash already set because accessing it will
+> cause setting security.ima again which triggers fixing security.evm
+> thanks to security_inode_post_setxattr->evm_update_evmxattr.
+>=20
+> Let's use the same mechanism to fix security.evm for a file with IMA
+> signature.
+>=20
+> Signed-off-by: Coiby Xu <coxu@redhat.com>
 
-And then repeatedly triggering permission denied as a normal user:
-while :; do cat /proc/1/environ; done
+Agreed, re-writing the file signature stored as security.ima would force
+security.evm to be updated.
 
-We can see the messages in kernel log:
-  [ 2531.862184] audit: rate limit exceeded
+Unfortunately, I'm missing something. ima_appraise_measurement() first veri=
+fies
+the existing security.evm xattr, before verifying the security.ima xattr.  =
+If
+the EVM HMAC fails to verify, it immediately exits ima_appraise_measurement=
+().=20
+security.ima in this case is never verified.
 
-The unreclaimable slab objects start to leak quickly. With kmemleak
-enabled, many call traces appear like:
-unreferenced object 0xffff99144b13f600 (size 232):
-  comm "cat", pid 1100, jiffies 4294739144
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace (crc 8540ec4f):
-    kmemleak_alloc+0x4a/0x90
-    kmem_cache_alloc_node+0x2ea/0x390
-    __alloc_skb+0x174/0x1b0
-    audit_log_start+0x198/0x3d0
-    audit_log_proctitle+0x32/0x160
-    audit_log_exit+0x6c6/0x780
-    __audit_syscall_exit+0xee/0x140
-    syscall_exit_work+0x12b/0x150
-    syscall_exit_to_user_mode_prepare+0x39/0x80
-    syscall_exit_to_user_mode+0x11/0x260
-    do_syscall_64+0x8c/0x180
-    entry_SYSCALL_64_after_hwframe+0x78/0x80
+This patch seems to address the case where the existing security.evm is val=
+id,
+but the file signature stored in security.ima is invalid.  (To get to the n=
+ew
+code, the "status" flag is not INTEGRITY_PASS.)  Re-writing the same invali=
+d
+file signature would solve an invalid security.evm, but not an invalid IMA =
+file
+signature.  What am I missing?
 
-This shows that the skb allocated in audit_log_start() and queued
-onto skb_list is never freed.
+thanks,
 
-In audit_log_end(), each skb is dequeued from skb_list and passed
-to __audit_log_end(). However, when the audit rate limit is exceeded,
-__audit_log_end() simply prints "rate limit exceeded" and returns
-without processing the skb. Since the skb is already removed from
-skb_list, audit_buffer_free() cannot free it later, leading to a
-memory leak.
+Mimi
 
-Fix this by freeing the skb when the rate limit is exceeded.
-
-Signed-off-by: Gerald Yang <gerald.yang@canonical.com>
----
- kernel/audit.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/audit.c b/kernel/audit.c
-index bd7474fd8d2c..89530ddf3807 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -2615,8 +2615,10 @@ static void __audit_log_end(struct sk_buff *skb)
- 
- 		/* queue the netlink packet */
- 		skb_queue_tail(&audit_queue, skb);
--	} else
-+	} else {
- 		audit_log_lost("rate limit exceeded");
-+		kfree_skb(skb);
-+	}
- }
- 
- /**
--- 
-2.43.0
+> ---
+>  security/integrity/ima/ima_appraise.c | 27 +++++++++++++++++++++------
+>  1 file changed, 21 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/i=
+ma/ima_appraise.c
+> index f435eff4667f..18c3907c5e44 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -595,12 +595,27 @@ int ima_appraise_measurement(enum ima_hooks func, s=
+truct ima_iint_cache *iint,
+>  		integrity_audit_msg(audit_msgno, inode, filename,
+>  				    op, cause, rc, 0);
+>  	} else if (status !=3D INTEGRITY_PASS) {
+> -		/* Fix mode, but don't replace file signatures. */
+> -		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig &&
+> -		    (!xattr_value ||
+> -		     xattr_value->type !=3D EVM_IMA_XATTR_DIGSIG)) {
+> -			if (!ima_fix_xattr(dentry, iint))
+> -				status =3D INTEGRITY_PASS;
+> +		/*
+> +		 * Fix mode, but don't replace file signatures.
+> +		 *
+> +		 * When EVM fix mode is also enabled, security.evm will be
+> +		 * fixed automatically when security.ima is set because of
+> +		 * security_inode_post_setxattr->evm_update_evmxattr.
+> +		 */
+> +		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig) {
+> +			if (!xattr_value ||
+> +			    xattr_value->type !=3D EVM_IMA_XATTR_DIGSIG) {
+> +				if (ima_fix_xattr(dentry, iint))
+> +					status =3D INTEGRITY_PASS;
+> +			} else if (xattr_value->type =3D=3D EVM_IMA_XATTR_DIGSIG &&
+> +				   evm_revalidate_status(XATTR_NAME_IMA)) {
+> +				if (!__vfs_setxattr_noperm(&nop_mnt_idmap,
+> +							   dentry,
+> +							   XATTR_NAME_IMA,
+> +							   xattr_value,
+> +							   xattr_len, 0))
+> +					status =3D INTEGRITY_PASS;
+> +			}
+>  		}
+> =20
+>  		/*
+>=20
+> base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
 
