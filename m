@@ -1,125 +1,153 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CD71D5CE8;
-	Tue,  9 Sep 2025 07:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E578E33EAEC
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Sep 2025 13:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757404092; cv=none; b=amfjUoGyjxIyXvo47152pwr7DSZJAvCbLC1XAD9zYR0YG3hu+29nZoinzeqywJpzvQQZpbYRIs8mXABAW1/Os/zFdZWPIkcV09/WOxd5Y7LmvmfrdArOXy6i52VWP+wpordp8vKasO/lQhVtyokqYACjeHBylTvPQWcLFQyprpE=
+	t=1757423474; cv=none; b=h2wIkZUyvtxFP3KjYdDE4kaOK/+QqCs+ZnsQEz650dkA7k7EJYomCRikWGUsD8Ly/B/WpIWpFGfjWLWyC1EnCZSTtty7jKUvp22Zh6Cd+4q497IHq6BOlVDjqU0M63Q5OlKrUXKrvcdfWN8rPJjc0YjN1IJcyjxRWFc3VVPPdC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757404092; c=relaxed/simple;
-	bh=c5iAKbXkqPtpHNGYxMaTOQYt1Gf9eA8cH13MWswLUdM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GoWqCrfdnjzW5vJvwYDuCiUVQg88qkLA6by6XZpm1beZ8+IXMt27Nso5xgw9zlcmjagIKeV1H7P7KPvTYXXjgVuNYIHUGxJurcyAqWeXRTlJIlqYRFBFVwZr5AAswg9PKRQbvddKFxMIDXSwmc6oKnGKfNAJtxX00sl3lw8XB/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cLbVH1wg2zsjt1;
-	Tue,  9 Sep 2025 15:46:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 38F341402FA;
-	Tue,  9 Sep 2025 15:48:01 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwBXrUKn279olzIGAQ--.52053S2;
-	Tue, 09 Sep 2025 08:48:00 +0100 (CET)
-Message-ID: <db0b620e1eac353190927c45a2adbc13f35722b9.camel@huaweicloud.com>
-Subject: Re: [PATCH] ima,evm: move initcalls to the LSM framework
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Paul Moore <paul@paul-moore.com>, roberto.sassu@huawei.com
-Cc: Mimi Zohar <zohar@linux.ibm.com>, linux-security-module@vger.kernel.org,
-  linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
- john.johansen@canonical.com, wufan@kernel.org, mic@digikod.net,
- kees@kernel.org,  mortonm@chromium.org, casey@schaufler-ca.com,
- penguin-kernel@i-love.sakura.ne.jp,  nicolas.bouchinet@oss.cyber.gouv.fr,
- xiujianfeng@huawei.com
-Date: Tue, 09 Sep 2025 09:47:47 +0200
-In-Reply-To: <CAHC9VhRWt54V3nvRDpN_=gb5Fc68KznwDd7xhNmyGJw5+TQ5Dw@mail.gmail.com>
-References: <9f35539de7188c6b853c55b76958a286131f5928.camel@huaweicloud.com>
-	 <20250902125457.2689519-1-roberto.sassu@huaweicloud.com>
-	 <82f22f97486622408bec772a9b025e301c8fa2f4.camel@linux.ibm.com>
-	 <CAHC9VhTGAcMTXHReinybpLzer7seCN+NUTHcFte+aU2oRNtNNg@mail.gmail.com>
-	 <0cccd05c0005d3b9e85ab92e35363cc69ea6a3f2.camel@linux.ibm.com>
-	 <CAHC9VhRWt54V3nvRDpN_=gb5Fc68KznwDd7xhNmyGJw5+TQ5Dw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1757423474; c=relaxed/simple;
+	bh=Zo3oH4aw0tiSXOUVsgBT9EB9o0z8d/2riNIK+49I9S8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EfXVHPilMu2oBIlPq1Q22uKYF7mxuWTFv7mirEytdsVFDPRkWIzUaeFFkBt7rX6q4hzFTw/KCvOz3UBUY5bCtnomHl2C4OUhdK4GQMgCDUZPGveIYvrtDWsQ79+4mpFjdnNXIxwr0SZ287ALzHgQvtMS+6x/CRUv2xaN9BfUiuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Ef/R4DrD; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Ef/R4DrD"
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9BC423F282
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Sep 2025 13:11:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1757423462;
+	bh=mTARHUNH6YPuN2/2Pw5N85BTAXOgi/Y6NWg4iRpTdcE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=Ef/R4DrDaTEPuviXTMb0yDYNgToLODEuTSrk7m9DGQiwviLWMc1lzM1KXCd8CEyLY
+	 rRSjx9ir51l5622h9XLdWioDvC6CA9y7QMUAshsgpj4GOfkm5fAHmn3YsCLDPN0wOy
+	 yC522+uj3wveGlHF+IjILEL/NC1MBuoypQIauQc2RAkyq0hzb2JvjCOl+cLRrEGVR1
+	 NXz1niJ5T11coJSB3+yUc1wR7b8aNdeZ65RRZhx6brf5E6l7mvPsD7NQJ/Cdn0MYoY
+	 tUeo/V+4vVgraxPJ4/bI5y+sW5r0a/grGriFRBlmBlpAwkmpcTFlWe8gfr5Xybg5AY
+	 WbbNu9Tlc29/w==
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-76e2eb787f2so5894472b3a.3
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Sep 2025 06:11:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757423461; x=1758028261;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mTARHUNH6YPuN2/2Pw5N85BTAXOgi/Y6NWg4iRpTdcE=;
+        b=Nm/zYOWabIhXhpkhXf0Zsbs7WcFVfpdMTkmFHNFRJJR1JPjom7O7Cos1k9Hzdi+wA0
+         8q3H3WvxwIWEHIcbuXhilUt23ATcSNbACFWPDdlsNHGCKKIX6x3piqLWXrYI1xavVoaG
+         4WRRRKGU4Ripk30S+UYSkSL4lznANGjdyCluWh0QPeLoe+DuNOJLeNrHGAbDWzDV8ktZ
+         HaEeMdTMyzb4tajICATKXAQs/JDPq1FMtOtbv1Fs2qAokglPtc2rqJ7AyxrivRkJ766W
+         NSS4Gw7dqD37aaHqKf7jrDpzLpICfWtDW1wLyMzf6Q2oJfFu7B/YZtfaR21WN/95EAG+
+         9+PA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeV/Gl8XuVjTDbWNyo4ewcAsHbn3rjq7KcxQnWkSOisSrxrEDS2c6UKYasnquh4AYXzwXlQ0q6nBlyOA1xqDCW66bfT60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuKDbNLo3CYjBFn9kOpqXykLAPM+LBPxKjHgRPt3BWdyLEMxyH
+	FNXBXbM+aW7/M+UmW05Kr6Tdf07k8PEbZSvbedLzS3XU6+AwILZD2REWzQXDUgKvo+8brGRi1Is
+	suE9MzbYbS+NPEVld1jsOWySHntE2g3svO91Y+fTYyEFXrx3f27zyhEhO9yYb28ac31SmLpnPyu
+	q5KvUYbDiQeyRJHEqU3g==
+X-Gm-Gg: ASbGnctnKWGnhuk7z8UTA8yXM50au6W5ApVV5trPQidxNVApMWSkl/RabHUtEoQkQmI
+	PEhIDduOIt4xmIcmf/m85DTe90+t8fDZn5HYTimAXtC1Ph2a78ZZYU9GSvetED+jpS4DOXU2Cr6
+	YLRQJ1mdsjnM4GyJob827B23gtbzFgcIBCfBvzLOchM4undTPOmNzl+Y1rz0AniKkFw4XsCMwlv
+	5F5z2clQ0E0DGybG7M7738wNAJmcnMmNQZQUGKVaXjfNsGudv+ZF/3Mh7uTzRxCz3X1qhwqjnam
+	bA14+vv7ydxu1dFL5HSX8jddkcAXgIt2oiQCg1f3r59437rgFf9eFSB3+E7WHsZ8IBB3mIAnnRt
+	X996ulKI=
+X-Received: by 2002:a05:6a00:1821:b0:772:499e:99c4 with SMTP id d2e1a72fcca58-7742dddbe77mr15427276b3a.18.1757423461183;
+        Tue, 09 Sep 2025 06:11:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE9luBLssO1ocG8bZoCNKhOLSOO/E7cpZTqVelHzSs0SjLcBreTUD1zt4mInD7HeDgyEKmFpg==
+X-Received: by 2002:a05:6a00:1821:b0:772:499e:99c4 with SMTP id d2e1a72fcca58-7742dddbe77mr15427222b3a.18.1757423460643;
+        Tue, 09 Sep 2025 06:11:00 -0700 (PDT)
+Received: from noble-c.lxd (118-163-61-247.hinet-ip.hinet.net. [118.163.61.247])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-774660e4dcfsm2171452b3a.18.2025.09.09.06.10.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 06:10:59 -0700 (PDT)
+From: Gerald Yang <gerald.yang@canonical.com>
+To: Casey Schaufler <casey@schaufler-ca.com>,
+	Paul Moore <paul@paul-moore.com>,
+	linux-security-module@vger.kernel.org,
+	audit@vger.kernel.org
+Cc: gerald.yang.tw@gmail.com
+Subject: [PATCH] Audit: Fix skb leak when audit rate limit is exceeded
+Date: Tue,  9 Sep 2025 13:10:52 +0000
+Message-ID: <20250909131056.3395574-1-gerald.yang@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwBXrUKn279olzIGAQ--.52053S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zr43Xw18uF1fXrW5Zw13Jwb_yoW8CFW5pF
-	W7tayUKr4qvr4aywn2v3W5Ar4Yk3s3XFy5Xrn8t34UA3sI9rnrXr1xCFy5CFyDGr4fJ343
-	ZF18Z343A3WDAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAGBGi-z8EAnQAAsH
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-09-08 at 17:04 -0400, Paul Moore wrote:
-> On Sun, Sep 7, 2025 at 10:46=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> =
-wrote:
-> > On Sun, 2025-09-07 at 21:08 -0400, Paul Moore wrote:
-> > > On Sun, Sep 7, 2025 at 5:18=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.co=
-m> wrote:
-> > > > On Tue, 2025-09-02 at 14:54 +0200, Roberto Sassu wrote:
-> > > > > From: Paul Moore <paul@paul-moore.com>
-> > > >=20
-> > > > Remove above ...
-> > > >=20
-> > > > >=20
-> > > > > This patch converts IMA and EVM to use the LSM frameworks's initc=
-all
-> > > > > mechanism. It moved the integrity_fs_init() call to ima_fs_init()=
- and
-> > > > > evm_init_secfs(), to work around the fact that there is no "integ=
-rity" LSM,
-> > > > > and introduced integrity_fs_fini() to remove the integrity direct=
-ory, if
-> > > > > empty. Both integrity_fs_init() and integrity_fs_fini() support t=
-he
-> > > > > scenario of being called by both the IMA and EVM LSMs.
-> > > > >=20
-> > > > > It is worth mentioning that this patch does not touch any of the
-> > > > > "platform certs" code that lives in the security/integrity/platfo=
-rm_certs
-> > > > > directory as the IMA/EVM maintainers have assured me that this co=
-de is
-> > > > > unrelated to IMA/EVM, despite the location, and will be moved to =
-a more
-> > > >=20
-> > > > This wording "unrelated to IMA/EVM" was taken from Paul's patch des=
-cription, but
-> > > > needs to be tweaked.  Please refer to my comment on Paul's patch.
-> > >=20
-> > > Minim, Roberto, would both of you be okay if I changed the second
-> > > paragraph to read as follows:
-> > >=20
-> > > "This patch does not touch any of the platform certificate code that
-> > > lives under the security/integrity/platform_certs directory as the
-> > > IMA/EVM developers would prefer to address that in a future patchset.=
-"
-> >=20
-> > That's fine.
->=20
-> Roberto, is it okay if I update your patch with the text above and use
-> it to replace my IMA/EVM patch in the LSM init patchset?  I'll retain
-> your From/Sign-off of course.
+When configuring a small audit rate limit in
+/etc/audit/rules.d/audit.rules:
+-a always,exit -F arch=b64 -S openat -S truncate -S ftruncate
+-F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access -r 100
 
-Yes, absolutely!
+And then repeatedly triggering permission denied as a normal user:
+while :; do cat /proc/1/environ; done
 
-Roberto
+We can see the messages in kernel log:
+  [ 2531.862184] audit: rate limit exceeded
+
+The unreclaimable slab objects start to leak quickly. With kmemleak
+enabled, many call traces appear like:
+unreferenced object 0xffff99144b13f600 (size 232):
+  comm "cat", pid 1100, jiffies 4294739144
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 8540ec4f):
+    kmemleak_alloc+0x4a/0x90
+    kmem_cache_alloc_node+0x2ea/0x390
+    __alloc_skb+0x174/0x1b0
+    audit_log_start+0x198/0x3d0
+    audit_log_proctitle+0x32/0x160
+    audit_log_exit+0x6c6/0x780
+    __audit_syscall_exit+0xee/0x140
+    syscall_exit_work+0x12b/0x150
+    syscall_exit_to_user_mode_prepare+0x39/0x80
+    syscall_exit_to_user_mode+0x11/0x260
+    do_syscall_64+0x8c/0x180
+    entry_SYSCALL_64_after_hwframe+0x78/0x80
+
+This shows that the skb allocated in audit_log_start() and queued
+onto skb_list is never freed.
+
+In audit_log_end(), each skb is dequeued from skb_list and passed
+to __audit_log_end(). However, when the audit rate limit is exceeded,
+__audit_log_end() simply prints "rate limit exceeded" and returns
+without processing the skb. Since the skb is already removed from
+skb_list, audit_buffer_free() cannot free it later, leading to a
+memory leak.
+
+Fix this by freeing the skb when the rate limit is exceeded.
+
+Signed-off-by: Gerald Yang <gerald.yang@canonical.com>
+---
+ kernel/audit.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/audit.c b/kernel/audit.c
+index bd7474fd8d2c..89530ddf3807 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -2615,8 +2615,10 @@ static void __audit_log_end(struct sk_buff *skb)
+ 
+ 		/* queue the netlink packet */
+ 		skb_queue_tail(&audit_queue, skb);
+-	} else
++	} else {
+ 		audit_log_lost("rate limit exceeded");
++		kfree_skb(skb);
++	}
+ }
+ 
+ /**
+-- 
+2.43.0
 
