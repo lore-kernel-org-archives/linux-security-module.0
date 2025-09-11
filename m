@@ -1,257 +1,174 @@
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from sonic313-14.consmr.mail.ne1.yahoo.com (sonic313-14.consmr.mail.ne1.yahoo.com [66.163.185.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2343331D364;
-	Thu, 11 Sep 2025 14:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4764C2206A9
+	for <linux-security-module@vger.kernel.org>; Thu, 11 Sep 2025 15:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757599270; cv=none; b=dlfNAKr+BrIULcZ0hfNeQ0SYlueTF/kLxJgRC48+HyV9O0cUaV2ZSnfnA3Rr2QimC/Nbtw9LW3CdImcH7P5DsUaKSNnL/MeAgazrocts+lufVVnq4iHbTbrxDWZ6EV4U94oELT8nUE7APc3V1WFWwZIGvmliHs6jbuIDr7R2v2g=
+	t=1757602869; cv=none; b=uRFec3V7887W31BP7uiOF88mh4FrtmyqjTQoIj7GVe+Yyef86gof0+BlX73vZgiU4H0NrcyORPty9UObZJRZ7UA7gjjh1jL1f9atIOouAJeLelb9zqKiEkTOJfLWLRetvi4golJFH5be5Mo/91b4LVclq3R6jrBZBbVuytaT7w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757599270; c=relaxed/simple;
-	bh=5FQciLyfkw/1Nr/g4wrbD+FlhUHdnpLTO3NpsbXz4WQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=irFLtzqikBbD+nuusTD6UEpCeRVj7tn/kl1GVKC9f5PhgiphnAc2AKJctrnGwbHtsVD8OT8HjRgdT7HSZ8WfcWJIoGeHmufc4GqrffGlR05tYLw9IUyE+9Ud//d24psefdNpaNFcuVNKFUeNOmm2Lj381sBCsv8XJJQ/7txOtVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7kJ0qRn; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757602869; c=relaxed/simple;
+	bh=QZEsoQGOsjlnmtFhMbREm0kY3s6DmitEWkyCWliE/20=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s/UmFqN9QMs6kqehSD4xmCQODzXdu2XGjrNhQlm12eyCwtzn7dILlAzb47btO4JcCFZ0MMsF5m6plpeRPWHimV5X5MGx99smB1dMPZ9XtyjUWeAxN2yutQcMWhOFMD+wUPpaVFlKkLprs1beYym5mMRpaoPEXBjphobLTXleMZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=lCrz45r+; arc=none smtp.client-ip=66.163.185.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7kJ0qRn"
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32b8919e7c7so842327a91.2;
-        Thu, 11 Sep 2025 07:01:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757599268; x=1758204068; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MHkD6BwVLYAFhBmfkzAvqjPu6AQAFcmIArg7IqukgJ4=;
-        b=V7kJ0qRnYAbMSU80mtTXks8COuCImWl6LDrxAnRcg0gi2N9IS1geE1EqmW1fzAz8eJ
-         C4KEbkNVwB4xUDP2mZRKWgA7vOzJwTLCh+9tSaRZxrjuByVpm176mT28GnOy8LQxpyaL
-         Aa9V97oE1f0OozFrctzRSfaUD4Vc4rPrqkllAEHM58+6BX83D7u1FvfeKPt5MIMHCCZh
-         MP5pyQBBBXiXEXPk1G2nrrT/i8uXNor0MC9kwsaA3qYKeYtW1CzRj+60xhjv8zejOisS
-         5UYSFDxGYfp7wRLtHNL/D0DlTrA6uCC1OgBfLSjeReFXIPzTFe06nO41ChQbG4mwoG/t
-         pbyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757599268; x=1758204068;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MHkD6BwVLYAFhBmfkzAvqjPu6AQAFcmIArg7IqukgJ4=;
-        b=hVPSPleilRN/ubCji8O2gzKUWtvnUa6z85x+oUH714InbLY6BjEyVPACHVRPX5pt96
-         srhkhi6EQ5ufQ8w5aucR8tWjs36c7TKWPB1hQatBVVQvfm35oT5iNPVBqWVN8rWLiq29
-         beJXOPqwSD0Zfo8rf2cvubcqL77Pon18QRGxq404P0UelmTJS9QpdwZEhJ8IXompk6YA
-         hqeuOvuWfAgl9Mlj6wjzZJWbe/tOawJyPWp5vr5ebNz12MLKzV/d4InvOI9WXuuDvzWy
-         iq/ybPN94A6QSrXXvwRuwwurY2YQLjCPfFhhuSSxUR9RK9PCzcsWFuV6Nih4BqGWGyNt
-         J64w==
-X-Forwarded-Encrypted: i=1; AJvYcCUSvPQGZXb3KloVpeg8IdP31xE93Zx1TY4Dn4wvjD+CSin9G+Rf1RRn2HAFgE0c6cW3l2hHIpesUqP57Va7t7UA+xqdb9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7y8FTDvakNbETdpBF/BGhkB1ImA6v/JApVmm15c+faF4mts47
-	AaLtZLaeeV/mzBH+4A7vyCHhEAYouGqXA49/ESlzR0GJ8RUTlGURjieJALaVje1nX3oaVEW5ibJ
-	Jxr7XVJZCmKSbZ0xPwRHcZvOm3Dxapo2l7A==
-X-Gm-Gg: ASbGncuCCEucYk3fb9BLwc924wQuyEfDvdWM6960K3LSK8uoxbhwMjz+tqMKHYj0Plt
-	2PXgK/dd4RxTOSbt5x6q92Yq2uKF2BqWlX7e/6UzKwf+sVNLK1yLX73JalMx6sgzklFi1rRtU3C
-	IvcdZqu3NEvXh0fq2DgjM3fuVv2qxHQqZtZ214XRrFc845ay5r2io2lkdm/QyZqzsvBGDm1xpJN
-	3mpot+N+r5kCatGZQ==
-X-Google-Smtp-Source: AGHT+IH/dWW4EKJBkVryXIwBS6BMHWnT8oPFCrQ0gryxM+nteBI4BRTfwS2r0Mg9rMjPDn3vYy+Bfydna3x7e3Qg6ps=
-X-Received: by 2002:a17:90b:530b:b0:32b:d502:6ff2 with SMTP id
- 98e67ed59e1d1-32d440d9ef6mr20800901a91.34.1757599267610; Thu, 11 Sep 2025
- 07:01:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="lCrz45r+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1757602866; bh=fi1iR/ffwue1j7XSq0mm/oJJFZ+PjkggwgXdeE39wKY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=lCrz45r+2+ud+IiRVNphqWKTzmx+UxO2zC7CdjKWvHNvxul9TJyIhWZ5kyiuNFwxwYsPVpL/6pJBZzIysOXiJTBtU+AyuJs/XnENLjnwne2YcNRD0Y75wfMiv1a41/2IX4/HsEhPH7dVYipqWTWD7T8bPbw/xrWp9wKRKSD5psRqv9SI6ADqkozFlCN5XLIGYZW+17NHhRDYZ1QqsdSR518vYh15Z9UrlJqAqO2rpkr1Rb3+0czwINZs2tegR9VO9t6n07OsJyU0uRbvZWNIm8kjQamE45PTHdkpC3/DUlCqr+dn1NQsWn30S06XwLQR5ODfFM1DP7f6DST4Jbi1FQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1757602866; bh=YVcaFXV6F5wQE9fdh3yZTlxWtuz12Fp+YJqDNPL+O25=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=b8CQcc25RbTeCV2tYX5MYv7sFdxW+lAIIrE2uHzs61x8U6p6lrdGRyPZngop0a+10lzcwiOsanc/uukBtgqg4r81nMpBWB5UQ90s6gUKkFCf6dup+TtrcHKiB7DHMISLbdmE+Inq1BsChYjIA1bSAqT20Ms9OVqzRauJNF5e4cY0HBg0Vmzu4tcZ6VU8LBTQvxL/UjWNQLTuJLaayRFzljpomdYjFz53T7bNCPpMOxt99eA7UBQAdr3wRfY5sP5YOwyFD8BPjExSSeiB2X5uIXD1Xph9VfS9/zfktc3wwHR/lQNXh1wlCN73s8mL5y2wZA80/yKEjVBGTBzZktxuMg==
+X-YMail-OSG: uvtzMIEVM1mYKua3wHcR8tNlnmqyKJFs0xAlwhlkbxnQ2oYzqkkgRAcHgM850SX
+ zQpyOPPue.XUntpfl.MB2RzusguquWYun06BkvmVk1_8p64fM0CZAb2SVqrlrWVXzQyph_bSggPA
+ 9QBj1HC8JaZI6wCVKo.eqbMp1K_.dLM..q2lMgG_fwfzQi9f1WZEY7uf0M6XZkJAejMbOu27KQH7
+ beRiv2np6XhxM6ibrXTQgohhcQWJE_8nDB3g.eAW3j873ZmcgT92D8alW.Ng65Bh6EPQBhZAMaHR
+ J6jhg5lpMtX0lTxjX41pTfy7bnqgAmRn0HFy48tvCBTiFAIhRmiqtmoG.h5Qo83JD9hsU8Joxo2_
+ d_lbOGCLlUSxwZDmhm7HR7lhdn2eBGua35P7vqnwxpmtxcna0QXS6yyBIQOxxSHnCs6yZ0jL2Bk4
+ XiADytd65UkTdJeovs6mFCZZPE1Xrj5ltZSfwqQ0ZgVZbgemNc9WEyKBSSWYVXuFJDtJ69FTklCQ
+ XQ.xUP_q60hzH8vCx5dcAwV.FkXCCjUOz38Q3SJBuxrnPGHej09.vKMr8xA4aPCg1nAu..LXeVra
+ R0rQp1hzze8D3HYaS122tsGvE.wAsi0KjDE6BcYL.mBYy_uWIGBZ7tEqSceyjT_28Tvgel54pMCy
+ AkIWIdLrszvhatx9HIDekmuLK0HV3XG.P1KP_6VHHtILDvu3ENateTyAG0TGKsEddaO7SKqwxJZ4
+ 5YIhCJuT3XULTZ0XCg5tJR7AcXSxvTWJilZoMhZKpdSv2ibt4trQqUkNjIP4ui2UDn7_RiA4Gjuv
+ GZcjKxVSVedG0Upw7LccWcmDIDJOrwsUaSeiD2Mb.A2W1.6XnnMxq8y6YwtNhK5de1NvSpvdIUcD
+ n_KIGqq7.fWuL47w0Wb6mzqGt4zbRUpytHwfIKbrZ7ImTj4n2J4wgpy3Ep6vuimwrZ2ZAP8OeOXG
+ AQPMntS2R6wR7slA0nV5gaFEibQz9K80wpTTDJ6Z7XSHI67YorL34FgbVT3Kd5KP1JDMkQpntPsF
+ yoCTF03Ffh1Dd6AfTK_f2wwmNCkOE.d4HzFVP_Qe00j8GQATNkYLw.A2bd2z1IPEuH_1v_XyyTB7
+ AGlKj8OFkJMv8B3AvW7096DK8pvEr45bJ5JCyGJ7CS8QJ4Bux7PLmJx64fUJYB.72LqzlOz0fcK6
+ wixI03KqayIsVLov30AGikjkUcKTx3q4Z8dzI85.yPDfIihKOPfMNMEHghLZ7LT6VpUOopY9rDog
+ 1c7zkSs_cOlBomeWrHQYJJKfu8y5UfQCURLYHNYBt.nuWlakevkbNmG.nKYD04T7e_olLXhtcs8A
+ wGgdunC8MOdjDuSjYhxmKZZsKTHZMN4igRlZ4gF9EDt2Og.ZERD7qtSSybovyPBBMfIsd5zJd41_
+ ao7LRM3B8tGpHBYPtPPP7S1jwU17GmDDgzo3FXHCg4BMOEh3G3iAcKCcOpCLylD7KN4nRumGoM.q
+ p84uP5ycmyhR.M66CkR9iUZTewmq2Iw36PfhkNgKqny6I6cRbBXq9ppM9OZTiCvX4.Wb4bFvEx53
+ xkyjmuX0Gdh4sSsP78CdK9aP_5F0FhMV3Iz5wxbFy9qv7xsAvX3oFTDSLanbRal4r54tG06lBHrZ
+ QbemUqJ6rmPKstzTqnPOdQpP5bIQLXMwiixVeO8ahyLDleDSTHcCqszlZvqDb4Wa.H6W.XrpgOJF
+ sUS.EBXohEfXNIBdrALPiXCgKrQFgg_pVs5aHRFG7KYvme.JSRlxcs5.4b64wUkhfXj6Nzo.C8SZ
+ WOtLgaCIzS86wwq4HXBqDgxB1UFU0_7.zzsxmsZuQ4PpHbiCUokvGFcyZ6ucXzAVYxcZQ7Nq4T3Z
+ uAw2X.ODwYPgwRjEbuxc50QFIfR2B6qfox_wR5Q6LLi6ps4UquZjcK4fru0j0BxzlJhYBQK5T2aZ
+ EKTnFR9VC5_shi7F4EOsDoMiswMUa8dJ2GKTiGs_821XAM43KS5wcbQUws7fCbni4ac6BHQDPels
+ GN0XnqS7cfL.OucrEe5E4hw8yz3KWpXYsRSF.GAOpzhw.opMGTEdFXQWCO0IfeZ2ZB8qOz6cZJZO
+ Jx9W6I24_ryZ4JEr8rs0a0nbz5JoL4GZ8JC43Y4xuCWrcTcPepyR1hQxUNQywKzBw1OiERMMJC2H
+ .6CYhrXMkG68jB136X7ET2dKH6HX4.9BoCTetw3v8URKTn1Canq90vGIa4k2K37yfqjxhQ_er6aw
+ SGzIOuIflOj4y8KJEfo4OBUZJKvBJNGvNL1cr322KxfGBFAHkgCjckseX7BNIyy_BMMjhJPnNcVw
+ fBa7iUz1W_NmVPCH5ZMY-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 3563e2cd-f754-4dcf-a41d-578910d893ab
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Thu, 11 Sep 2025 15:01:06 +0000
+Received: by hermes--production-gq1-7bfc77444d-5m7lw (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5829aeeacd8ee07d1aad2898c78498f3;
+          Thu, 11 Sep 2025 14:30:43 +0000 (UTC)
+Message-ID: <66295710-bb13-45e9-a87f-98b8aa6aa86a@schaufler-ca.com>
+Date: Thu, 11 Sep 2025 07:30:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903192426.215857-2-stephen.smalley.work@gmail.com> <CAEjxPJ4ctFLY=_AUaNso_a4XJ8AziRoebR2ExFss_s3qNnYhJA@mail.gmail.com>
-In-Reply-To: <CAEjxPJ4ctFLY=_AUaNso_a4XJ8AziRoebR2ExFss_s3qNnYhJA@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 11 Sep 2025 10:00:56 -0400
-X-Gm-Features: Ac12FXxWUUn29ZLHOZgrL2I0MAvmSseRHp90xpNMa3a1GNFASB75iSpoaKpc8lc
-Message-ID: <CAEjxPJ695zmnpiLLOHkLxt5HVPhFNRZ9Bu+o4khvFwFX3TLpVQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] lsm,selinux: introduce LSM_ATTR_UNSHARE and wire it
- up for SELinux
-To: selinux@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc: paul@paul-moore.com, omosnace@redhat.com, john.johansen@canonical.com, 
-	serge@hallyn.com, casey@schaufler-ca.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] security_dentry_init_security(): constify qstr
+ argument
+To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, brauner@kernel.org, jack@suse.cz,
+ neil@brown.name, linux-security-module@vger.kernel.org, dhowells@redhat.com,
+ linkinjeon@kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250911050149.GW31600@ZenIV>
+ <20250911050534.3116491-1-viro@zeniv.linux.org.uk>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250911050534.3116491-1-viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.24425 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Thu, Sep 4, 2025 at 10:41=E2=80=AFAM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
+On 9/10/2025 10:05 PM, Al Viro wrote:
+> Nothing outside of fs/dcache.c has any business modifying
+> dentry names; passing &dentry->d_name as an argument should
+> have that argument declared as a const pointer.
 >
-> On Wed, Sep 3, 2025 at 3:28=E2=80=AFPM Stephen Smalley
-> <stephen.smalley.work@gmail.com> wrote:
-> >
-> > In the hopes of nudging the conversation in [1] in a more focused
-> > direction with a goal of getting SELinux namespaces upstreamed, this
-> > RFC provides a starting point for a concrete discussion. This is RFC
-> > only and has only been build-tested thus far.
-> >
-> > This defines a new LSM_ATTR_UNSHARE attribute for the
-> > lsm_set_self_attr(2) system call and wires it up for SELinux to invoke
-> > the underlying function for unsharing the SELinux namespace. As with
-> > the selinuxfs interface, this immediately unshares the SELinux
-> > namespace of the current process just like an unshare(2) system call
-> > would do for other namespaces. I have not yet explored the
-> > alternatives of deferring the unshare to the next unshare(2),
-> > clone(2), or execve(2) call and would want to first confirm that doing
-> > so does not introduce any issues in the kernel or make it harder to
-> > integrate with existing container runtimes.
-> >
-> > Differences between this syscall interface and the selinuxfs interface
-> > that need discussion before moving forward:
-> >
-> > 1. The syscall interface does not currently check any Linux capability
-> > or DAC permissions, whereas the selinuxfs interface can only be set by
-> > uid-0 or CAP_DAC_OVERRIDE processes. We need to decide what if any
-> > capability or DAC check should apply to this syscall interface and if
-> > any, add the checks to either the LSM framework code or to the SELinux
-> > hook function.
-> >
-> > Pros: Checking a capability or DAC permissions prevents misuse of this
-> > interface by unprivileged processes, particularly on systems with
-> > policies that do not yet define any of the new SELinux permissions
-> > introduced for controlling this operation. This is a potential concern
-> > on Linux distributions that do not tightly coordinate kernel updates
-> > with policy updates (or where users may choose to deploy upstream
-> > kernels on their own), but not on Android.
-> >
-> > Cons: Checking a capability or DAC permissions requires any process
-> > that uses this facility to have the corresponding capability or
-> > permissions, which might otherwise be unnecessary and create
-> > additional risks. This is less likely if we use a capability already
-> > required by container runtimes and similar components that might
-> > leverage this facility for unsharing SELinux namespaces.
-> >
-> > 2. The syscall interface checks a new SELinux unshare_selinuxns
-> > permission in the process2 class between the task SID and itself,
-> > similar to other checks for setting process attributes. This means
-> > that:
-> >     allow domain self:process2 *; -or-
-> >     allow domain self:process2 ~anything-other-than-unshare_selinuxns; =
--or-
-> >     allow domain self:process2 unshare_selinuxns;
-> > would allow a process to unshare its SELinux namespace.
-> >
-> > The selinuxfs interface checks a new unshare permission in the
-> > security class between the task SID and the security initial SID,
-> > likewise similar to other checks for setting selinuxfs attributes.
-> > This means that:
-> >     allow domain security_t:security *; -or-
-> >     allow domain security_t:security ~anything-other-than-unshare; -or-
-> >     allow domain security_t:security unshare;
-> > would allow a process to unshare its SELinux namespace.
-> >
-> > Technically, the selinuxfs interface also currently requires open and
-> > write access to the selinuxfs node; hence:
-> >     allow domain security_t:file { open write };
-> > is also required for the selinuxfs interface.
-> >
-> > We need to decide what we want the SELinux check(s) to be for the
-> > syscall and whether it should be more like the former (process
-> > attributes) or more like the latter (security policy settings). Note
-> > that the permission name itself is unimportant here and only differs
-> > because it seemed less evident in the process2 class that we are
-> > talking about a SELinux namespace otherwise.
-> >
-> > Regardless, either form of allow rule can be prohibited in policies
-> > via neverallow rules on systems that enforce their usage
-> > (e.g. Android, not necessarily on Linux distributions).
-> >
-> > 3. The selinuxfs interface currently offers more functionality than I
-> > have implemented here for the sycall interface, including:
-> >
-> > a) the ability to read the selinuxfs node to see if your namespace has
-> > been unshared, which should be easily implementable via
-> > lsm_get_self_attr(2).  However, questions remain as to when that
-> > should return 1 versus 0 (currently returns 1 whenever your namespace
-> > is NOT the initial SELinux namespace, useful for the testsuite to
-> > detect it is in a child, but could instead be reset to 0 by a
-> > subsequent policy load to indicate completion of the setup of the
-> > namespace, thus hiding from child processes that they are in a child
-> > namespace once its policy has been loaded).
-> >
-> > b) the abilities to get and set the maximum number of SELinux
-> > namespaces (via a /sys/fs/selinux/maxns node) and to get and set the
-> > maximum depth for SELinux namespaces (via a /sys/fs/selinux/maxnsdepth
-> > node). These could be left in selinuxfs or migrated to some other LSM
-> > management APIs since they are global in scope, not per-process
-> > attributes.
-> >
-> > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-Gentle ping on this RFC, happy to update and re-submit whenever.
+For the Smack bit:
 
-> > ---
-> >  include/uapi/linux/lsm.h            | 1 +
-> >  security/selinux/hooks.c            | 8 ++++++++
-> >  security/selinux/include/classmap.h | 4 +++-
-> >  3 files changed, 12 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
-> > index 938593dfd5da..fb1b4a8aa639 100644
-> > --- a/include/uapi/linux/lsm.h
-> > +++ b/include/uapi/linux/lsm.h
-> > @@ -83,6 +83,7 @@ struct lsm_ctx {
-> >  #define LSM_ATTR_KEYCREATE     103
-> >  #define LSM_ATTR_PREV          104
-> >  #define LSM_ATTR_SOCKCREATE    105
-> > +#define LSM_ATTR_UNSHARE       106
-> >
-> >  /*
-> >   * LSM_FLAG_XXX definitions identify special handling instructions
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index c544b3e2fd5c..11b0b3c5b74a 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -6812,6 +6812,10 @@ static int selinux_lsm_setattr(u64 attr, void *v=
-alue, size_t size)
-> >                 error =3D avc_has_perm(state, mysid, mysid, SECCLASS_PR=
-OCESS,
-> >                                      PROCESS__SETCURRENT, NULL);
-> >                 break;
-> > +       case LSM_ATTR_UNSHARE:
-> > +               error =3D avc_has_perm(state, mysid, mysid, SECCLASS_PR=
-OCESS,
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+
+> ---
+>  include/linux/lsm_hook_defs.h | 2 +-
+>  include/linux/security.h      | 4 ++--
+>  security/security.c           | 2 +-
+>  security/selinux/hooks.c      | 2 +-
+>  security/smack/smack_lsm.c    | 2 +-
+>  5 files changed, 6 insertions(+), 6 deletions(-)
 >
-> Ignore the obvious typo here (should be SECCLASS_PROCESS2 above). Will
-> be fixed before submission. Otherwise, the RFC remains the same.
->
-> > +                                    PROCESS2__UNSHARE_SELINUXNS, NULL)=
-;
-> > +               break;
-> >         default:
-> >                 error =3D -EOPNOTSUPP;
-> >                 break;
-> > @@ -6923,6 +6927,10 @@ static int selinux_lsm_setattr(u64 attr, void *v=
-alue, size_t size)
-> >                 }
-> >
-> >                 tsec->sid =3D sid;
-> > +       } else if (attr =3D=3D LSM_ATTR_UNSHARE) {
-> > +               error =3D selinux_state_create(new);
-> > +               if (error)
-> > +                       goto abort_change;
-> >         } else {
-> >                 error =3D -EINVAL;
-> >                 goto abort_change;
-> > diff --git a/security/selinux/include/classmap.h b/security/selinux/inc=
-lude/classmap.h
-> > index be52ebb6b94a..07fe316308cd 100644
-> > --- a/security/selinux/include/classmap.h
-> > +++ b/security/selinux/include/classmap.h
-> > @@ -60,7 +60,9 @@ const struct security_class_mapping secclass_map[] =
-=3D {
-> >             "siginh",       "setrlimit",     "rlimitinh",   "dyntransit=
-ion",
-> >             "setcurrent",   "execmem",       "execstack",   "execheap",
-> >             "setkeycreate", "setsockcreate", "getrlimit",   NULL } },
-> > -       { "process2", { "nnp_transition", "nosuid_transition", NULL } }=
-,
-> > +       { "process2",
-> > +         { "nnp_transition", "nosuid_transition", "unshare_selinuxns",
-> > +           NULL } },
-> >         { "system",
-> >           { "ipc_info", "syslog_read", "syslog_mod", "syslog_console",
-> >             "module_request", "module_load", "firmware_load",
-> > --
-> > 2.51.0
-> >
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index fd11fffdd3c3..aa4d6ec9c98b 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -85,7 +85,7 @@ LSM_HOOK(int, -EOPNOTSUPP, dentry_init_security, struct dentry *dentry,
+>  	 int mode, const struct qstr *name, const char **xattr_name,
+>  	 struct lsm_context *cp)
+>  LSM_HOOK(int, 0, dentry_create_files_as, struct dentry *dentry, int mode,
+> -	 struct qstr *name, const struct cred *old, struct cred *new)
+> +	 const struct qstr *name, const struct cred *old, struct cred *new)
+>  
+>  #ifdef CONFIG_SECURITY_PATH
+>  LSM_HOOK(int, 0, path_unlink, const struct path *dir, struct dentry *dentry)
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 521bcb5b9717..3f694d3ebd70 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -391,7 +391,7 @@ int security_dentry_init_security(struct dentry *dentry, int mode,
+>  				  const char **xattr_name,
+>  				  struct lsm_context *lsmcxt);
+>  int security_dentry_create_files_as(struct dentry *dentry, int mode,
+> -					struct qstr *name,
+> +					const struct qstr *name,
+>  					const struct cred *old,
+>  					struct cred *new);
+>  int security_path_notify(const struct path *path, u64 mask,
+> @@ -871,7 +871,7 @@ static inline int security_dentry_init_security(struct dentry *dentry,
+>  }
+>  
+>  static inline int security_dentry_create_files_as(struct dentry *dentry,
+> -						  int mode, struct qstr *name,
+> +						  int mode, const struct qstr *name,
+>  						  const struct cred *old,
+>  						  struct cred *new)
+>  {
+> diff --git a/security/security.c b/security/security.c
+> index ad163f06bf7a..db2d75be87cc 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1775,7 +1775,7 @@ EXPORT_SYMBOL(security_dentry_init_security);
+>   * Return: Returns 0 on success, error on failure.
+>   */
+>  int security_dentry_create_files_as(struct dentry *dentry, int mode,
+> -				    struct qstr *name,
+> +				    const struct qstr *name,
+>  				    const struct cred *old, struct cred *new)
+>  {
+>  	return call_int_hook(dentry_create_files_as, dentry, mode,
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index c95a5874bf7d..58ce49954206 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2901,7 +2901,7 @@ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
+>  }
+>  
+>  static int selinux_dentry_create_files_as(struct dentry *dentry, int mode,
+> -					  struct qstr *name,
+> +					  const struct qstr *name,
+>  					  const struct cred *old,
+>  					  struct cred *new)
+>  {
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index fc340a6f0dde..5caa372ffbf3 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -4908,7 +4908,7 @@ static int smack_inode_copy_up_xattr(struct dentry *src, const char *name)
+>  }
+>  
+>  static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
+> -					struct qstr *name,
+> +					const struct qstr *name,
+>  					const struct cred *old,
+>  					struct cred *new)
+>  {
