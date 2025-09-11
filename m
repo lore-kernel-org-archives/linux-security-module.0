@@ -1,97 +1,126 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1081326E71C
-	for <linux-security-module@vger.kernel.org>; Thu, 11 Sep 2025 16:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B223201278
+	for <linux-security-module@vger.kernel.org>; Thu, 11 Sep 2025 19:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757609797; cv=none; b=Aij9mySkNm/Lfq31tTgTbX/FmvTdXC1LZa0Pe2zzYb9fR1rRejC/YJz/Z9mnQ2w1DAy738bVe62cNJ/gG/AZQ1XwQADpuAhxUKsk7e65QL7JgDVB0TJ/jEumwPzKPjvUmgrazuI3dYKBlwd1rnKwvPXGpPGgBdr3j4xzmXFF+G0=
+	t=1757619060; cv=none; b=houcuF2cwm8kLpNQWmvhdSEU0Cd9rzNRa9PAjl1qfjXkqBXGlseIvFkzYGLXDw0HizojKUb11lSpdpAvFio8lYudc6X4rY87abF+7dtGYcOprXkjDzOVzYimmKMD/9C+DLv6kJ+c3Y509DbwKosx0TmX7Ke/5FbSZmEGV99YwJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757609797; c=relaxed/simple;
-	bh=xBZRVz6PARR1TaFj3HxYN+PJibH+tkD4Ha4ojpsPTRk=;
+	s=arc-20240116; t=1757619060; c=relaxed/simple;
+	bh=gT+veZcytG/u8Ap5CoqKgtS9qIoTr1tFB9eg16I06Xk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EuUylVHIlq9Srz/sFxbdeDz4Q/40s7S9/31afcEu0pZYGjiiLrWuNEntOUvF4NQS5cvjYqjMfiyjX8nvXl/tgmmQbhn2WA+eqN+CIWkw60xAt9NakGHoTj0uZ58b9qngg6kTedh2nK0q+0xiQKyJ1fk7dhkWIk9oaNuRMReqPbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Ma5ZUBIu; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	 To:Cc:Content-Type; b=r+n4TF8qEnsfKmuq932Q9A+E8HI92eGz98OiaiIqFHxY55iXD4+i4HCU6EBNmxtvZFrC43XwWKChAD/ymIyff3bWAFY0RRC+QmmKHHhCL56KrThAZ/jqRh40I5uG7OGBV6kbALb6fjMgrVyYi/eWMgNDckTQf5HrmZ0uzc8S3MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fbltRT6s; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ma5ZUBIu"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad4f0so1614211a12.0
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Sep 2025 09:56:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fbltRT6s"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-32de2189729so491608a91.3
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Sep 2025 12:30:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1757609793; x=1758214593; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GPti7ycwxDijfbNVdZ7d+tzQdPTkPvICaHZpGK8FY2E=;
-        b=Ma5ZUBIutfkFbB323ldP8hGdEfD/5e8AMCKaSS6ZknS0otBjXaHITk7IXeZhB5Qbq0
-         /ohOYt05OLhW35B6VHJusEDBJa7Ugaxl3b4w3OtiKlpRlu6Ub6CxDXSWqW7IBEIifASo
-         WD0aJcqdDADhfRRjTSfWz+p6LBdWqLDPlrNQA=
+        d=paul-moore.com; s=google; t=1757619058; x=1758223858; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uGtUDAO6h1eIXkhwicA4JhceHGc31DeBpXZ9IJpT0x4=;
+        b=fbltRT6sESin07xB4YfQcYhbVgXkQ6fs7NbDjnk2LiOKQ37juhn1fq3K3OjDGgG+Jm
+         VxWIp1vGaOw9IzVDC9R1eRVZd5rEisBZGCcrMKdjfGf2il+scHOlDUoVX3rqH9rtRN5a
+         /FvLz3PLyHo7M6ZtzF3wVtIUxdlS3QRAvbV0XMYGyIdakh2Wy0wxyLr5ku0peIIewE8n
+         piPkE2wKY72Ky0UNrwFuifNBKuj+z2q/HkrcIG3f0WXh/afmy7me1+us1gGnNfT/aKuL
+         1M1A9G0wB2HPeSFlnO6Yl59M0WmB+Fq8ypvJ4HfPGclJmAGbGM0DDNT9WaVb08SxF29i
+         O6bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757609793; x=1758214593;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GPti7ycwxDijfbNVdZ7d+tzQdPTkPvICaHZpGK8FY2E=;
-        b=iOXnuGYFhoQmIDwn890ghggfaLYGUVxAaTTaK0rPtSCZR9fVHHVgKpflANTbWHBMfJ
-         xQQq3qlRYpI2ZddNrRIXaKfnm5yVYogwdQMHpp7qs+pyAWLvGi4tYMxwNz7H38DTsdnM
-         LZLFZmVcjspE/2bJ82Yggj5yLW+HXGwDxxlTOLjDS06GTlbNgyumDDdRO10tiH9KkjOh
-         cPaSI8dDiFhoNSMwj33Ev5k88axoeqo4eA6pk0hA67zwUcGcSQG9dDDU4VXzc8i9EmJ3
-         QIfCdljKg5SPpx23NdB4CGANfRIH1Ui3bLUbDh7j9vRzFI3a6xiOCbos+QyzthMMFgOu
-         EwRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgMXIfKVaQDNsU+q0Zbf1JfKPSpHpNtMGVuGKrCGyxla1kA0fs5/pFxGdYjklHmc7STUw8DNHf+4rzTcxlgAqM41EWsMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfD+uMuHvSw94DtR6EDIRElY/h37W+uMyP6za5Vnegvt4WBeE4
-	T1viClqh2O5sRcnCeaDbupH3ajr5CbdZ05KgXUPXIQFVOuomQSz0IUET03ljlSmm48L1MZ1J4DV
-	ww4Egw8k=
-X-Gm-Gg: ASbGncvpKjSfO+ElxXNQTHm9jOy62Rt0rOLmLvmAz7BPGNDpH01aXd0blssKlgfEaDw
-	QZahBc/sHmFSTuq8qFLN0+jGDeUrkYMChu9W5UbHuDC0dxcKFas59znLXgRcABay1sHz/ICEB2m
-	RPfM4zD0EDz+AOkRWHhTZ4fK1t88oV4bFb6Bbr4f7FWFB4MSdQ34jcEtWiGl8qNl2oqyG7Oukfv
-	10Mzsv23m2XNEVq3fhSVkqYSS4VBvWHjPcIIbV7eQOpKHjUfovRd4NB/0P7BDR3O5fXDxUEbCWP
-	70EgD4drOrN9vAzMKmSaPoOXc+BlZlr6NgAk/KRgTFnrMmrpAflhWYZ+gqdUAaOGWWIAMcZgf1Q
-	FxrGo00XryU1pBG2gDsxxBWIA9BmXXsUPVIvZ0LaMeexf/kD11k4hgM7LAAN0CjZ7afNc4DV+
-X-Google-Smtp-Source: AGHT+IH6cXlZPYykuuWXwYACRV9vy72H8TkoqM0LjStB6cormhTpS/ZJsqJVgsZeKcSJcaemaFl4RA==
-X-Received: by 2002:a17:906:6a1e:b0:b04:616c:d746 with SMTP id a640c23a62f3a-b04b14aca68mr2246011866b.25.1757609793258;
-        Thu, 11 Sep 2025 09:56:33 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b32f202dsm166341466b.84.2025.09.11.09.56.31
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 09:56:32 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b042cc3954fso178439666b.0
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Sep 2025 09:56:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWsrRdqoPWI5HTb5Nsp5uId14kinl3Jhlmk0T+m2XUAZ0hY0RadlomNyLNrivGsTFbXZ9aH+HDbWFwzLIROczmZxKHHUos=@vger.kernel.org
-X-Received: by 2002:a17:907:6088:b0:b04:dd2:6075 with SMTP id
- a640c23a62f3a-b04b170eacbmr1971744466b.49.1757609791574; Thu, 11 Sep 2025
- 09:56:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757619058; x=1758223858;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uGtUDAO6h1eIXkhwicA4JhceHGc31DeBpXZ9IJpT0x4=;
+        b=ocwGfdR5BX8wu6foiRgH1u3LsoDNRpcpAMzKtX2R8q6AO1zpKTFa/d3o+eZaAP+6Pt
+         XMPtBE5YERYScdwB+1HmqGXWn8/zktPwxm9La7Vu3jiorUbwueRQ5i9KqIUfyRxtjORW
+         sDS0u8+HCnI6QaU3biC5y/FSnlQNqugtfhCpKxvB2q66AeS+PrtmAB34oDYKZ1jP8fCy
+         wvn3hy4gxEoDr99le8v4wcFmFbjgyQikHXY5uNRrt7tpnM+QVfWWLBp4+RsBXSOozqx7
+         5XuL8dJg0g5xJaLR1IHQYm1er+WoPw/yl9fmjBkegzxay2+maeFsPmqAxfhlXIdBHiiZ
+         xEwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxDym4aE5lSIRwkL0aNri5c1832RwK+p++9s1NaOG5GKLsiQXErO4eXGd/eIFlqY+IV1ChZO2IdaDtk0/+CHURclGgX2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEixCiMqcSiSk96p5E/IVxxq4nOjU2FOBCSWyGeETXose+/jbo
+	vMhreYXUy3q/Snfy8Be/AvFJ/iBBVe4ZZP3w+jyA+rZdkV9EcUmiV6XJCqpXsjxt2JTbYMFmY+O
+	l+xx+47z/LIs3Q+w307o5yxuRUu/oyPiDqssSLAEo
+X-Gm-Gg: ASbGncu80b7cPi00a/1oU7Q/jVFyA4NT0K3A0CH/Dvr3fzMA6obeQsXIghYciAc52Jc
+	idNQfN6Y8TzXtHc2zVdY7fNFmuVJJaZz0uOCnn23NlJo8mNaeTYz2jeHzWh5m2f0SPJZl87ZRh5
+	Ustjz5lCjyt2zwNojUnajiWh1kl4FudUBDsen6LYxrasaK7Q/x2GHIGITxG2VjQZnY2N0/j5pzn
+	1wN/U/zYSjfF53Jow==
+X-Google-Smtp-Source: AGHT+IGiM8SZDeBlMdgXCmqMlNo0rydxM7+BodtgIzFFwXP5lqArAsvcjIDyN7+QlyX05fjuGGVM4Wx0dvThabROEUU=
+X-Received: by 2002:a17:90b:3c8c:b0:32b:df31:3dc2 with SMTP id
+ 98e67ed59e1d1-32de50f8e56mr274173a91.22.1757619058567; Thu, 11 Sep 2025
+ 12:30:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911050149.GW31600@ZenIV>
-In-Reply-To: <20250911050149.GW31600@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 11 Sep 2025 09:56:14 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh6HFD7d_phQS_rsYjQ9xRvXuNCyV=oGy26d6iYt6iiTg@mail.gmail.com>
-X-Gm-Features: Ac12FXxicQ4WAB4cvULD0gaIeOT7VeyW2uyyl8b6G93itM1wZRd7N6oDuOhRH6o
-Message-ID: <CAHk-=wh6HFD7d_phQS_rsYjQ9xRvXuNCyV=oGy26d6iYt6iiTg@mail.gmail.com>
-Subject: Re: [PATCHES] simple part of ->d_name stuff
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Jan Kara <jack@suse.cz>, NeilBrown <neil@brown.name>, linux-security-module@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Namjae Jeon <linkinjeon@kernel.org>
+References: <20250814225159.275901-36-paul@paul-moore.com> <20250814225159.275901-67-paul@paul-moore.com>
+ <CAHC9VhS3KdVO9n-dgk1qFzTae0i+Oab8atMmt0CAsMEm1D4v5w@mail.gmail.com>
+ <bd46c63ebb9eddfcdc8df92fe9f85473416ea8a0.camel@linux.ibm.com>
+ <CAHC9VhTJnQ3EggEXwbW5D8xOnb+Z_02yz-Dgb7QiAoArhw1ETg@mail.gmail.com> <9f1dd6d30193c82ff36b5665eadc1aec73736017.camel@linux.ibm.com>
+In-Reply-To: <9f1dd6d30193c82ff36b5665eadc1aec73736017.camel@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 11 Sep 2025 15:30:45 -0400
+X-Gm-Features: Ac12FXxLgHL87TsIr2nrJx5keTrwkJwtuEdQIoZFTtGyf79rfjMMQYYtFoEoiSw
+Message-ID: <CAHC9VhQT8X8UDt2ZbKhA8bVcaNj06sVyTLG0+WyevrTVFpJwtA@mail.gmail.com>
+Subject: Re: [PATCH v3 31/34] ima,evm: move initcalls to the LSM framework
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
+	John Johansen <john.johansen@canonical.com>, Fan Wu <wufan@kernel.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 10 Sept 2025 at 22:01, Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Mon, Sep 8, 2025 at 6:34=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wro=
+te:
+> On Sun, 2025-09-07 at 21:05 -0400, Paul Moore wrote:
+> > > The "unrelated to IMA/EVM" wording misses the point.  An exception wa=
+s made to
+> > > load the pre-boot keys onto the .platform keyring in order for IMA/EV=
+M to verify
+> > > the kexec kernel image appended signature.  This exception was subseq=
+uently
+> > > extended to verifying the pesigned kexec kernel image signature.  (Ot=
+her
+> > > subsystems are abusing the keys on the .platform keyring to verify ot=
+her
+> > > signatures.)
+> > >
+> > > Instead of saying "unrelated to IMA/EVM", how about saying something =
+along the
+> > > lines of "IMA has a dependency on the platform and machine keyrings, =
+but this
+> > > dependency isn't limited to IMA/EVM."
+> > >
+> > > Paul, this patch set doesn't apply to cleanly to Linus's tree.  What =
+is the base
+> > > commit?
+> >
+> > It would have been based on the lsm/dev branch since the LSM tree is
+> > the target, however, given the scope of the patchset and the fact that
+> > it has been several weeks since it was originally posted, I wouldn't
+> > be surprised it if needs some fuzzing when applied on top of lsm/dev
+> > too.
 >
->         So let's make sure that all functions we are passing
-> &dentry->d_name are taking const struct qstr * and replace
-> ->d_name with an anon union of struct qstr *__d_name and
-> const struct qstr *d_name.
+> Thanks, Paul.  I was able to apply the patches and run some regression te=
+sts.
 
-Ack, all these patches look ObviouslyCorrect(tm) to me, and seems a
-good improvement.
+Mimi, I know you already tagged Roberto's patch with a 'Reviewed-by'
+tag, but I wanted to follow up and see if you were comfortable
+converting that into an ACK, or if you wanted more time to review
+Roberto's patch?  No wrong answers, just trying to understand where
+you are at with this patch.
 
-Even if it won't catch the more involved cases that worry you more.
-
-             Linus
+--=20
+paul-moore.com
