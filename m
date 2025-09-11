@@ -1,34 +1,34 @@
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B451C54A9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E723E21A44C;
 	Thu, 11 Sep 2025 05:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757567138; cv=none; b=nRDbOf90k1VKH86vSBY9N/46ONQGG/g205nKWKv9IKTC4pjIxUgOE3bisKj1fJRO14sSd2DbGBPZsJQWKA4jj0muW0NITlPlRWgbkjE0wrjid5k731OqLWyDBzvyQ+5eCsg1ssIb9unj6Q7vvYzyYe1gwtSMQPE2cgpTWLaeGw4=
+	t=1757567139; cv=none; b=nUyGn4tzXEl3+3X55dvpMR1gpqa0Y2p+1ZeJAk08bH8M9v9pWAAG8qN4u6d99EJSgOi7vhfloWUYrsZlnk4/bTp3Hw5ut8xH36F3SVPmr47gZ3zFsugBFa0z0vT45GTOp+kXjWGFbi1wLjUVR9/Guws8eCt/4x852+u0wg9ZucQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757567138; c=relaxed/simple;
-	bh=PfBA80Cw7f4klse2KRBc5/cjmHQ/ueU2uDFOCP1i6MM=;
+	s=arc-20240116; t=1757567139; c=relaxed/simple;
+	bh=BzO7UduKHqPNy5QnzN/0UEzbNDHyeRykP1RBjmJbQCM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g7zjBH00KBsz18sbREh0Oln5r2X3d6SEoOS5U7mSvsfWxg2UZw6XWdTLXip/7e5AvLAJalPlpHpKrAe+IbtJBTHpOGxrVMXB3Auhlx+sHRrvzMysJrg8SnvLocgRqkuoT/B4u+7e7AH4A4u+X39n1MZqoxKjeo9YFctOdDT3C68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Efly0rxV; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=qbrj6cP6THBZkqErjf2mrwc4m58AXwpkdVmertrA5e2xmQfyWXiepBCQ5chkgakvzImJVM2Mk1Lc2D/AimB/qrvEu2yaLjRhxO9RmIXTqdLKN+UU5e4lP+z3ItpfDjeBU52edSBKK6Z8zKaX+c+RbueYfj2clpAY0Mm4wh2sHOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gXyaECvY; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Efly0rxV"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gXyaECvY"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=0aQiQQMRHudQ3Avpzp+/xw5XZKKw58fDSXyPEHl+RS4=; b=Efly0rxV7NJaoRjEltiZQ4a11x
-	aIl9ptP0xaV6kqvUCWbBIFHjlal5P9RbEw97Z1C9IfiFY2NN4V+qKZ924p8FxALj52dcwqRphSo6b
-	kgNr9GPqe7rtbZl+lFX6QN2ngO0eHfCjLK71G2Tb4OOg0mjvlI/+7voeP7Vzke+GjJjhGkEVmsRT2
-	MaoBrHRuZL4Qp6M9qhU0XsfdaVqi6N3YzGlsv4KbwR4kRd/quV7efxP9ctZMuY5ue2U9oZNEIRn8t
-	TIdmz8IC4t4vXvzevEr6Ce6q/JW/3D23VvCMqOfZ2VLh9A8+MudqnSM8aWTBQGnes6b/u3P5n1h1w
-	TOzFMGfg==;
+	bh=IhqV1U/WxPy1DF1aaAou7vHqrRXDTb+KWeD0D2KFlls=; b=gXyaECvY2QGmPnednI5Grrfy2U
+	In6pCC0dkko5oHu0QLDlL/cR5dRPjrg3ijPH+gmr1eUVvM+ldbNWVjY7JZ3rhH/nG96PGpcNqzYdL
+	JyoL3VBLxd6qi0jsd5467RKPQQcTzIphBnNQ9wyRHmcpDIg/UEvGbdK7AXd2DZMcDY08KsJRX6QLf
+	z5uT3hNT7uZLEPrNFj5z/Y2fUPvF9NYFiyg53AkhZTT1m0f7XQce628XHAWAxUsNC2OdCwda3zWIy
+	C6IdqFqqpkZiIuOTZrwjFZvmXFlhIontE4s2WvafAn3OoRXlCExvD86nABj5D30DiHg3sbPabgU/I
+	y52zz7nQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uwZV0-0000000D4kH-33kK;
-	Thu, 11 Sep 2025 05:05:34 +0000
+	id 1uwZV1-0000000D4kl-0zgW;
+	Thu, 11 Sep 2025 05:05:35 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: torvalds@linux-foundation.org,
@@ -38,9 +38,9 @@ Cc: torvalds@linux-foundation.org,
 	linux-security-module@vger.kernel.org,
 	dhowells@redhat.com,
 	linkinjeon@kernel.org
-Subject: [PATCH 2/6] exfat_find(): constify qstr argument
-Date: Thu, 11 Sep 2025 06:05:30 +0100
-Message-ID: <20250911050534.3116491-2-viro@zeniv.linux.org.uk>
+Subject: [PATCH 5/6] generic_ci_validate_strict_name(): constify name argument
+Date: Thu, 11 Sep 2025 06:05:33 +0100
+Message-ID: <20250911050534.3116491-5-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250911050534.3116491-1-viro@zeniv.linux.org.uk>
 References: <20250911050149.GW31600@ZenIV>
@@ -54,28 +54,35 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Nothing outside of fs/dcache.c has any business modifying
-dentry names; passing &dentry->d_name as an argument should
-have that argument declared as a const pointer.
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/exfat/namei.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/fs.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index f5f1c4e8a29f..c8388a2ec227 100644
---- a/fs/exfat/namei.c
-+++ b/fs/exfat/namei.c
-@@ -587,7 +587,7 @@ static int exfat_create(struct mnt_idmap *idmap, struct inode *dir,
- }
- 
- /* lookup a file */
--static int exfat_find(struct inode *dir, struct qstr *qname,
-+static int exfat_find(struct inode *dir, const struct qstr *qname,
- 		struct exfat_dir_entry *info)
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index d7ab4f96d705..6dcfc1c399ca 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3719,7 +3719,8 @@ int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
+  *   happens when a directory is casefolded and the filesystem is strict
+  *   about its encoding.
+  */
+-static inline bool generic_ci_validate_strict_name(struct inode *dir, struct qstr *name)
++static inline bool generic_ci_validate_strict_name(struct inode *dir,
++						   const struct qstr *name)
  {
- 	int ret, dentry, count;
+ 	if (!IS_CASEFOLDED(dir) || !sb_has_strict_encoding(dir->i_sb))
+ 		return true;
+@@ -3734,7 +3735,8 @@ static inline bool generic_ci_validate_strict_name(struct inode *dir, struct qst
+ 	return !utf8_validate(dir->i_sb->s_encoding, name);
+ }
+ #else
+-static inline bool generic_ci_validate_strict_name(struct inode *dir, struct qstr *name)
++static inline bool generic_ci_validate_strict_name(struct inode *dir,
++						   const struct qstr *name)
+ {
+ 	return true;
+ }
 -- 
 2.47.2
 
