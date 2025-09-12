@@ -1,172 +1,384 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BB5311C03;
-	Fri, 12 Sep 2025 16:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A23F31691E
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Sep 2025 18:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757695107; cv=none; b=XATH0OS2huGetySgg8tFARWUsp3XUxf1putWzw2nLIMfm3MHENrvYLbTi8A1Gly9j9V7DpvoUxvHD8Oq5omxBFY4lXOeUFk7b2EE5eRyPAgpMLL+qlA9E+5WITtnKLC9XFfWj1hQr9VFesMKj7BMLDdFV+UXtLDvoZvwVubCG3E=
+	t=1757701345; cv=none; b=D2aoFA70lFSlqMkU342VF/e9MbacqCTC/7le1H1lO1cwsHcFsMBd3cNyAlPeIvpTcR4vg0kfbIuJ31XCIw8Rq7clTOyAd977dQpmao++XvtdYI7iKHVuVw9eNRIKMJxmBrgSq/4Jltsdsc6o4sTVqDFcj9BV7PMHcTvPETWZE04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757695107; c=relaxed/simple;
-	bh=2RaPbc9jVOhVYH7V2C0vnTwGjblLI5tvoUlhHEkUM3A=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=tKAuHHzXHgwiZnIvyrGxFG8h2AanuQX3kBDT3lH+gIoxhrZ8JS2/Qq8EBJ1O4tQkc+Hx/tUynDCorcSx7dk3PlRTfJ8KV3GesEiMhSekjDggZ2+AA6Wkhu9DuBjXzvJo+YJ2/+ADDACcvGE5kgS7XIT57VvjJRM11gHC/EOToEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qa8AjvoY; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1757701345; c=relaxed/simple;
+	bh=A95BSOMh+Z2E+3jkk5SnGiX4n0qGagID0XREuBv4EA8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mioePPcLN3jyINRr94AGs3MwZKoLF+4XX7a0vK3EBf2dLxp63kJZ/9mG8hI5qu3Q7Nfq7ZlDhxcHPlEey9FElDDUXnsmATmFl9sZfzi/TJXE4mU4unwa9bf35ikNxYJnB5j+Jm6fLl2a8mr37YeD22KEzcatZqDDLwr5WuB01g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qu6dS2Ud; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qa8AjvoY"
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9LufK028539;
-	Fri, 12 Sep 2025 16:37:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=DI0p5X
-	VIyWC/Uc+yOWrpUqOI9NbAAOOCwcn10yjBar8=; b=qa8AjvoYRk23gmEWuY8FwH
-	Z67y1w7CokEz66O5EbQyL0NcwMYLFkhzqqPKeXkXuswubOI9e9R2N99FCZeAw7xY
-	LUJWVFY6DDA8llzrGlwPbSQlTqS8iL5SHZ1ncveGNDNERFP0Qgkguz56iYiHLbvt
-	jFu65P4lDQXV4RdC+UDrVcYlF5EV2lPCYn9pKBcetH4N/n0V08eCiSMKESANkUBw
-	68WMR0rJPV/aQYs0BRfiyLe+/xDwQR+bdieXqYIvLcEIdYvIc/t8n7U8ZUz9K/Da
-	fEnzr5JKaw12VjwpsulLYB84IrgASA699fId1sClUUNVVtMx0EyKNdSAwmrx7X/g
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490ukf0qhp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 16:37:21 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58CGbLGi018156;
-	Fri, 12 Sep 2025 16:37:21 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490ukf0qhh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 16:37:21 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58CDelSB007912;
-	Fri, 12 Sep 2025 16:37:20 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109q3vfv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 16:37:20 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58CGbJ1S51249614
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 12 Sep 2025 16:37:20 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CD82D5805A;
-	Fri, 12 Sep 2025 16:37:19 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DB3B558056;
-	Fri, 12 Sep 2025 16:37:18 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.159.184])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 12 Sep 2025 16:37:18 +0000 (GMT)
-Message-ID: <f9aceb873648bcc8ba6c07b9b9bd269800f03c14.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 31/34] ima,evm: move initcalls to the LSM framework
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>,
-        linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>,
-        Fan
- Wu	 <wufan@kernel.org>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?=
- <mic@digikod.net>,
-        =?ISO-8859-1?Q?G=FCnther?= Noack	 <gnoack@google.com>,
-        Kees Cook <kees@kernel.org>, Micah Morton	 <mortonm@chromium.org>,
-        Casey
- Schaufler <casey@schaufler-ca.com>,
-        Tetsuo Handa	
- <penguin-kernel@i-love.sakura.ne.jp>,
-        Nicolas Bouchinet	
- <nicolas.bouchinet@oss.cyber.gouv.fr>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>
-In-Reply-To: <CAHC9VhQT8X8UDt2ZbKhA8bVcaNj06sVyTLG0+WyevrTVFpJwtA@mail.gmail.com>
-References: <20250814225159.275901-36-paul@paul-moore.com>
-	 <20250814225159.275901-67-paul@paul-moore.com>
-	 <CAHC9VhS3KdVO9n-dgk1qFzTae0i+Oab8atMmt0CAsMEm1D4v5w@mail.gmail.com>
-	 <bd46c63ebb9eddfcdc8df92fe9f85473416ea8a0.camel@linux.ibm.com>
-	 <CAHC9VhTJnQ3EggEXwbW5D8xOnb+Z_02yz-Dgb7QiAoArhw1ETg@mail.gmail.com>
-	 <9f1dd6d30193c82ff36b5665eadc1aec73736017.camel@linux.ibm.com>
-	 <CAHC9VhQT8X8UDt2ZbKhA8bVcaNj06sVyTLG0+WyevrTVFpJwtA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 12 Sep 2025 12:37:18 -0400
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qu6dS2Ud"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17E92C4CEF4
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Sep 2025 18:22:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757701345;
+	bh=A95BSOMh+Z2E+3jkk5SnGiX4n0qGagID0XREuBv4EA8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Qu6dS2Ud55NPpA+ApaJI3UiVSflsMynL5dIcuzKepbkCNGurtVZgFpmpWdiImKYeg
+	 PadFrO8iriziLieQGY6xvXWLcuy0ZTPmZrwDjrf7se5gyqsab/tRzFKSpDy+n2nMMh
+	 CphNaDf+Fh30M2m5/jfsimhk1JB/JNMQbqXBLkWRdu4Cr0x57O4UelUniG6AfLUN4W
+	 WbaySJ4jTiRHbtSidevDmx4tBv48gk32Xw97mGGDO6Rcw36yrcsS66j9hpZkWIPTxq
+	 5ll9pq5zaTVbMS73lRMd7Jap1Acuge+7jGSZDFwsV5pFDDXeGrX9TGDpiZVn2o1jDL
+	 1iaqAw99pVCCA==
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45dcfecdc0fso21537065e9.1
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Sep 2025 11:22:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUDzMUL0tXy9qiuc8IYILHtV6A/7Ue2xMNbKRBK3H0Irct+RfTaMcj1Qprz9CP5rHmUBB0vJrAsfvGO1u3zAF9qVpXZUxA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1KUw0p2+g8vs9FFq8vYkrIvLe9uIj9m6AZuFqDjvtuS9mwKz7
+	tD/HhsDRnikUOi5uR7hdXpu5IV0/NWXbHzQf88boVNjVTLnuGyDRm4k4z8HPI9khzah+w74/yxA
+	08cBWCTspAPeCcsrR99qgL/aDXZVMD8FkXTa74VE8
+X-Google-Smtp-Source: AGHT+IGnEyqoE04KXY+aMSWG3ZWCLz6N3v5XSLFaVBnpNxiOAYJ8uYRyvIU1fMe+mR90i1wA9RcerEzLtAc536tk7Hk=
+X-Received: by 2002:a05:600c:3b85:b0:45d:e285:c4ec with SMTP id
+ 5b1f17b1804b1-45f216696c8mr34495905e9.4.1757701343523; Fri, 12 Sep 2025
+ 11:22:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDE5NSBTYWx0ZWRfX0IPeRwJI3Adi
- qjW66a4Pvc+8GFw75a2yOYGgWzU3ex911mTiCbMtlV3Fsb4wkZbu7sEfz9BZuLCJPcSya4Amx4d
- VdZqJ/tCu+pd5HSeFFb1cZq3TNMwMaBi+sYMvvPZ9zXA1mMi7y7NMB/S8oi+9xdwlfAqlYUFCO4
- sMaRea9nLXr0c3TdSKHbSxUOP88rkw6WIha9atHr2pewwholZm5ujJ3BhotwFY3WpOU/CWY6RR4
- oPahVjUNrjOnp1eq5yW04qNwbja2JuhYWnsRil8K5+kQgEuUy3iHj7k187GWUm7Y71TOauO1Bo1
- zHSh7r7e3qQ5tt9ak32AKiY7S9FJizzsMEv+Tg7J1f7qGwqAMTkcLaeKq3yAK9iEhMm1piGvwXB
- ELhuWfKx
-X-Proofpoint-ORIG-GUID: Yxh_EHnslaCun6acJXqbcBg6NjEz5PrK
-X-Proofpoint-GUID: vvOdsqKARsuCKDEWjnHCxq114P4DZJWX
-X-Authority-Analysis: v=2.4 cv=StCQ6OO0 c=1 sm=1 tr=0 ts=68c44c42 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=CT4C0UVHrSCr1UfN2mgA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_06,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 malwarescore=0 bulkscore=0 clxscore=1015 adultscore=0
- suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060195
+References: <20250813205526.2992911-1-kpsingh@kernel.org> <20250813205526.2992911-5-kpsingh@kernel.org>
+ <CAEf4BzbV0UtzrsGm3jbfTWJKRQyu2fqzpcKg_xG8R4+1uEMqnQ@mail.gmail.com>
+In-Reply-To: <CAEf4BzbV0UtzrsGm3jbfTWJKRQyu2fqzpcKg_xG8R4+1uEMqnQ@mail.gmail.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Fri, 12 Sep 2025 20:22:11 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ5s0+3GUvcY3=AZCdXhcqPYW+dP5UbSdi9Gnm2ntanChw@mail.gmail.com>
+X-Gm-Features: AS18NWC0TYGbjLn8IwDI2mxDXkE1eeDD68M_n-heY9egxJvCrn2DXrICx_wp7gE
+Message-ID: <CACYkzJ5s0+3GUvcY3=AZCdXhcqPYW+dP5UbSdi9Gnm2ntanChw@mail.gmail.com>
+Subject: Re: [PATCH v3 04/12] libbpf: Support exclusive map creation
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-09-11 at 15:30 -0400, Paul Moore wrote:
-> On Mon, Sep 8, 2025 at 6:34=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> w=
-rote:
-> > On Sun, 2025-09-07 at 21:05 -0400, Paul Moore wrote:
-> > > > The "unrelated to IMA/EVM" wording misses the point.  An exception =
-was made to
-> > > > load the pre-boot keys onto the .platform keyring in order for IMA/=
-EVM to verify
-> > > > the kexec kernel image appended signature.  This exception was subs=
-equently
-> > > > extended to verifying the pesigned kexec kernel image signature.  (=
-Other
-> > > > subsystems are abusing the keys on the .platform keyring to verify =
-other
-> > > > signatures.)
-> > > >=20
-> > > > Instead of saying "unrelated to IMA/EVM", how about saying somethin=
-g along the
-> > > > lines of "IMA has a dependency on the platform and machine keyrings=
-, but this
-> > > > dependency isn't limited to IMA/EVM."
-> > > >=20
-> > > > Paul, this patch set doesn't apply to cleanly to Linus's tree.  Wha=
-t is the base
-> > > > commit?
-> > >=20
-> > > It would have been based on the lsm/dev branch since the LSM tree is
-> > > the target, however, given the scope of the patchset and the fact tha=
-t
-> > > it has been several weeks since it was originally posted, I wouldn't
-> > > be surprised it if needs some fuzzing when applied on top of lsm/dev
-> > > too.
-> >=20
-> > Thanks, Paul.  I was able to apply the patches and run some regression =
-tests.
->=20
-> Mimi, I know you already tagged Roberto's patch with a 'Reviewed-by'
-> tag, but I wanted to follow up and see if you were comfortable
-> converting that into an ACK, or if you wanted more time to review
-> Roberto's patch?  No wrong answers, just trying to understand where
-> you are at with this patch.
+On Thu, Aug 14, 2025 at 8:46=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Wed, Aug 13, 2025 at 1:55=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
+te:
+> >
+> > Implement setters and getters that allow map to be registers as
+>
+> typo: registered
+>
+> > exclusive to the specified program. The registration should be done
+> > before the exclusive program is loaded.
+> >
+> > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > ---
+> >  tools/lib/bpf/bpf.c      |  4 ++-
+> >  tools/lib/bpf/bpf.h      |  4 ++-
+> >  tools/lib/bpf/libbpf.c   | 66 ++++++++++++++++++++++++++++++++++++++++
+> >  tools/lib/bpf/libbpf.h   | 18 +++++++++++
+> >  tools/lib/bpf/libbpf.map |  2 ++
+> >  5 files changed, 92 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
+> > index ab40dbf9f020..6a08a1559237 100644
+> > --- a/tools/lib/bpf/bpf.c
+> > +++ b/tools/lib/bpf/bpf.c
+> > @@ -172,7 +172,7 @@ int bpf_map_create(enum bpf_map_type map_type,
+> >                    __u32 max_entries,
+> >                    const struct bpf_map_create_opts *opts)
+> >  {
+> > -       const size_t attr_sz =3D offsetofend(union bpf_attr, map_token_=
+fd);
+> > +       const size_t attr_sz =3D offsetofend(union bpf_attr, excl_prog_=
+hash);
+> >         union bpf_attr attr;
+> >         int fd;
+> >
+> > @@ -203,6 +203,8 @@ int bpf_map_create(enum bpf_map_type map_type,
+> >         attr.map_ifindex =3D OPTS_GET(opts, map_ifindex, 0);
+> >
+> >         attr.map_token_fd =3D OPTS_GET(opts, token_fd, 0);
+> > +       attr.excl_prog_hash =3D ptr_to_u64(OPTS_GET(opts, excl_prog_has=
+h, NULL));
+> > +       attr.excl_prog_hash_size =3D OPTS_GET(opts, excl_prog_hash_size=
+, 0);
+> >
+> >         fd =3D sys_bpf_fd(BPF_MAP_CREATE, &attr, attr_sz);
+> >         return libbpf_err_errno(fd);
+> > diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
+> > index 7252150e7ad3..675a09bb7d2f 100644
+> > --- a/tools/lib/bpf/bpf.h
+> > +++ b/tools/lib/bpf/bpf.h
+> > @@ -54,9 +54,11 @@ struct bpf_map_create_opts {
+> >         __s32 value_type_btf_obj_fd;
+> >
+> >         __u32 token_fd;
+> > +       __u32 excl_prog_hash_size;
+>
+> leaving a gap here, can you please reorder and have hash first,
+> followed by size?
 
-Please don't convert the Reviewed-by tag quite yet to an Ack.  I'd really l=
-ike
-to review the entire patch set and do some additional testing.
+done
 
-thanks,
+>
+> > +       const void *excl_prog_hash;
+> >         size_t :0;
+> >  };
+> > -#define bpf_map_create_opts__last_field token_fd
+> > +#define bpf_map_create_opts__last_field excl_prog_hash
+> >
+> >  LIBBPF_API int bpf_map_create(enum bpf_map_type map_type,
+> >                               const char *map_name,
+> > diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> > index 0bb3d71dcd9f..ed3294f69271 100644
+> > --- a/tools/lib/bpf/libbpf.c
+> > +++ b/tools/lib/bpf/libbpf.c
+> > @@ -499,6 +499,7 @@ struct bpf_program {
+> >         __u32 line_info_rec_size;
+> >         __u32 line_info_cnt;
+> >         __u32 prog_flags;
+> > +       __u8  hash[SHA256_DIGEST_LENGTH];
+> >  };
+> >
+> >  struct bpf_struct_ops {
+> > @@ -578,6 +579,7 @@ struct bpf_map {
+> >         bool autocreate;
+> >         bool autoattach;
+> >         __u64 map_extra;
+> > +       struct bpf_program *excl_prog;
+> >  };
+> >
+> >  enum extern_type {
+> > @@ -4488,6 +4490,43 @@ bpf_object__section_to_libbpf_map_type(const str=
+uct bpf_object *obj, int shndx)
+> >         }
+> >  }
+> >
+> > +static int bpf_program__compute_hash(struct bpf_program *prog)
+>
+> nit: this is not an API, so please don't use double underscores.
+> Something like bpf_prog_compute_hash() should do.
 
-Mimi
+ack.
+
+>
+> > +{
+> > +       struct bpf_insn *purged;
+> > +       int i, err;
+> > +
+> > +       purged =3D calloc(1, BPF_INSN_SZ * prog->insns_cnt);
+>
+> we had some patch fixing similar argument misuse issue, so I'd rather
+> have calloc(prog->insns_cnt, BPF_INSN_SZ), if you don't mind
+>
+
+I don't mind :)
+
+> > +       if (!purged)
+> > +               return -ENOMEM;
+> > +
+> > +       /* If relocations have been done, the map_fd needs to be
+> > +        * discarded for the digest calculation.
+> > +        */
+> > +       for (i =3D 0; i < prog->insns_cnt; i++) {
+> > +               purged[i] =3D prog->insns[i];
+> > +               if (purged[i].code =3D=3D (BPF_LD | BPF_IMM | BPF_DW) &=
+&
+> > +                   (purged[i].src_reg =3D=3D BPF_PSEUDO_MAP_FD ||
+> > +                    purged[i].src_reg =3D=3D BPF_PSEUDO_MAP_VALUE)) {
+> > +                       purged[i].imm =3D 0;
+> > +                       i++;
+> > +                       if (i >=3D prog->insns_cnt ||
+> > +                           prog->insns[i].code !=3D 0 ||
+> > +                           prog->insns[i].dst_reg !=3D 0 ||
+> > +                           prog->insns[i].src_reg !=3D 0 ||
+> > +                           prog->insns[i].off !=3D 0) {
+> > +                               err =3D -EINVAL;
+> > +                               goto out;
+> > +                       }
+> > +                       purged[i] =3D prog->insns[i];
+> > +                       purged[i].imm =3D 0;
+> > +               }
+> > +       }
+> > +       err =3D libbpf_sha256(purged, prog->insns_cnt * sizeof(struct b=
+pf_insn), prog->hash, SHA256_DIGEST_LENGTH);
+>
+> too long, wrap before prog->hash?
+
+done
+
+>
+> > +out:
+> > +       free(purged);
+> > +       return err;
+> > +}
+> > +
+> >  static int bpf_program__record_reloc(struct bpf_program *prog,
+> >                                      struct reloc_desc *reloc_desc,
+> >                                      __u32 insn_idx, const char *sym_na=
+me,
+> > @@ -5227,6 +5266,18 @@ static int bpf_object__create_map(struct bpf_obj=
+ect *obj, struct bpf_map *map, b
+> >         create_attr.token_fd =3D obj->token_fd;
+> >         if (obj->token_fd)
+> >                 create_attr.map_flags |=3D BPF_F_TOKEN_FD;
+> > +       if (map->excl_prog) {
+> > +               if (map->excl_prog->obj->state =3D=3D OBJ_LOADED) {
+> > +                       pr_warn("exclusive program already loaded\n");
+> > +                       return libbpf_err(-EINVAL);
+> > +               }
+>
+> unnecessary check, maps are always created before programs, so if
+> map->excl_prog belongs to the same bpf_object (and it should), then we
+> implicitly have a guarantee it's not yet created. So please drop.
+
+Removed.
+
+>
+> > +               err =3D bpf_program__compute_hash(map->excl_prog);
+> > +               if (err)
+> > +                       return err;
+> > +
+> > +               create_attr.excl_prog_hash =3D map->excl_prog->hash;
+> > +               create_attr.excl_prog_hash_size =3D SHA256_DIGEST_LENGT=
+H;
+> > +       }
+> >
+> >         if (bpf_map__is_struct_ops(map)) {
+> >                 create_attr.btf_vmlinux_value_type_id =3D map->btf_vmli=
+nux_value_type_id;
+> > @@ -10517,6 +10568,21 @@ int bpf_map__set_inner_map_fd(struct bpf_map *=
+map, int fd)
+> >         return 0;
+> >  }
+> >
+> > +int bpf_map__set_exclusive_program(struct bpf_map *map, struct bpf_pro=
+gram *prog)
+> > +{
+> > +       if (map_is_created(map)) {
+> > +               pr_warn("exclusive programs must be set before map crea=
+tion\n");
+> > +               return libbpf_err(-EINVAL);
+> > +       }
+>
+> should we worry about someone providing a bpf_program that doesn't
+> belong to the same bpf_object that map belongs to? it's easy to check,
+> just compare map->obj and prog->obj
+
+Seems logical, added the check.
+
+> > +       map->excl_prog =3D prog;
+> > +       return 0;
+> > +}
+> > +
+> > +struct bpf_program *bpf_map__get_exclusive_program(struct bpf_map *map=
+)
+>
+> libbpf getters don't have "get_" prefix, so just bpf_map__exclusive_progr=
+am()
+
+updated.
+
+>
+> > +{
+> > +       return map->excl_prog;
+> > +}
+> > +
+> >  static struct bpf_map *
+> >  __bpf_map__iter(const struct bpf_map *m, const struct bpf_object *obj,=
+ int i)
+> >  {
+> > diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
+> > index 455a957cb702..ddaf58c8a298 100644
+> > --- a/tools/lib/bpf/libbpf.h
+> > +++ b/tools/lib/bpf/libbpf.h
+> > @@ -1266,7 +1266,25 @@ LIBBPF_API int bpf_map__lookup_and_delete_elem(c=
+onst struct bpf_map *map,
+> >   */
+> >  LIBBPF_API int bpf_map__get_next_key(const struct bpf_map *map,
+> >                                      const void *cur_key, void *next_ke=
+y, size_t key_sz);
+> > +/**
+> > + * @brief **bpf_map__set_exclusive_program()** sets map to be exclusiv=
+e to the
+> > + * to the specified program. The program must not be loaded yet.
+>
+> typo: "to the" duplicated
+
+fixed.
+
+>
+> Also, I think the more important restriction is that the map should
+> not have been created yet (so this has to be called between opening
+> and prepare/load steps, just like setting read-only global variables).
+> This by implication will mean that the program is not loaded either,
+> as we'll restrict bpf_program to be from the same bpf_object (which
+> you can mention as well for clarity).
+>
+
+How about?
+
+/**
+* @brief **bpf_map__set_exclusive_program()** sets a map to be exclusive to=
+ the
+* specified program. This must be called *before* the map is created.
+*
+* @param map BPF map to make exclusive.
+* @param prog BPF program to be the exclusive user of the map. Must belong
+* to the same bpf_object as the map.
+* @return 0 on success; a negative error code otherwise.
+*
+* This function must be called after the BPF object is opened but before
+* it is loaded. Once the object is loaded, only the specified program
+* will be able to access the map's contents.
+*/
+
+> > + * @param map BPF map to make exclusive.
+> > + * @param prog BPF program to be the exclusive user of the map.
+> > + * @return 0 on success; a negative error code otherwise.
+> > + *
+> > + * Once a map is made exclusive, only the specified program can access=
+ its
+> > + * contents.
+> > + */
+> > +LIBBPF_API int bpf_map__set_exclusive_program(struct bpf_map *map, str=
+uct bpf_program *prog);
+> >
+> > +/**
+> > + * @brief **bpf_map__get_exclusive_program()** returns the exclusive p=
+rogram
+> > + * that is registered with the map (if any).
+> > + * @param map BPF map to which the exclusive program is registered.
+> > + * @return the registered exclusive program.
+> > + */
+> > +LIBBPF_API struct bpf_program *bpf_map__get_exclusive_program(struct b=
+pf_map *map);
+> >  struct bpf_xdp_set_link_opts {
+> >         size_t sz;
+> >         int old_fd;
+> > diff --git a/tools/lib/bpf/libbpf.map b/tools/lib/bpf/libbpf.map
+> > index d7bd463e7017..a5c5d0f2db5c 100644
+> > --- a/tools/lib/bpf/libbpf.map
+> > +++ b/tools/lib/bpf/libbpf.map
+> > @@ -436,6 +436,8 @@ LIBBPF_1.6.0 {
+> >                 bpf_linker__add_buf;
+> >                 bpf_linker__add_fd;
+> >                 bpf_linker__new_fd;
+> > +               bpf_map__set_exclusive_program;
+> > +               bpf_map__get_exclusive_program;
+>
+> we are in LIBBPF_1.7.0 now, so please move
+
+done
+
+>
+> pw-bot: cr
+>
+>
+> >                 bpf_object__prepare;
+> >                 bpf_prog_stream_read;
+> >                 bpf_program__attach_cgroup_opts;
+> > --
+> > 2.43.0
+> >
