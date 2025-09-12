@@ -1,98 +1,139 @@
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C5D27B4F5
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Sep 2025 12:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A343043BE
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Sep 2025 13:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757679812; cv=none; b=VBzMOLG3CoJI7w4jqPaW05R7Nsh2QHEfm/uZt/JBbPT3DfmHULSWzMc9OL7Kmfh5OHO3Q10xHzPGeeGo1ZBW4Bmk2KKsr1+Ae9wrx5VXEtZpQk8mJVVmLOS5lqM+rkTFlyEM6CqUrRVdWt/awvgFj1GIdNZiAPzsMu1djcCSuiY=
+	t=1757684189; cv=none; b=KhdmjTqfPK73otYrGZb2k3thZIve28FVMrNEpWMgAp7hOfvrd/ui3b69RMbuMLckeE16/G/MQ1D2X6jVeXSIGTIFgX5dPouV2SQC/32dhTMsZfpbEvo2dHTyae7oKZKg8fkU0DPKzMEnGOAXVB4cTEq7GncojMSL+cWv/c1e1rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757679812; c=relaxed/simple;
-	bh=S1oPc2GKq8KfIf1Mc67HyoTZ7bK74Zl1+obV4SQ+uug=;
+	s=arc-20240116; t=1757684189; c=relaxed/simple;
+	bh=jxb95qOE2mXF19IXGEpad3j8R8SzT12JNa1YscswO98=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QJ7Hwdh9/dBiAvdsyIxSE57bTgVTrpOi6swEJFU+WFliXugq6lwMT8zt0uAg/UaxUCjTypkjTvAGU6WBEBzxPbAPPNbU8xbFEB9PvY/Yvw1IQJf61nqo3KyCRzWcryzV+RQdV65/FrZRhOcJGqac/c4zjWv502soHydPIMJ8EKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bR6UERgm; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=OsO/lKTwQwWwgdrWvKhAeFDSNLcvcUnch4IwRP7RAvLz8MIny1TT6vYvzwnn3X1ZuhsKChNo+gTqhKSW3EDAPjDHYQj/cfxSaz+1TW9vjagOEatZSAh7orxL8s/srlbGnC7ODgCsQTsW1N0VABWC9aMuHn5I7xoZRrmO3USsy+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDSjqNER; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bR6UERgm"
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-32b8919e7c7so2180686a91.2
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Sep 2025 05:23:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757679810; x=1758284610; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jk5aXXiLpcn48WsQx1TlS1mVz9lzg5cXcpwbqc7D6pY=;
-        b=bR6UERgmjAMexNiImuZhyEwUw3WBqda9OiKsKIEVWvuAAdBkGsQOGoPzEE07UD5RpD
-         XKmNq4+UHrVJvd+41k9KEBXhriwoGGkKJMnAIgTnm6I7mX/dETK1NI7s/Yv7JlGMT/d/
-         BG4UmiMqKfOkWuVBXgUtZNM/phJZJV3mWhf3aEXJ+nislxIOCvaNBts0lL+1xiJ5KWGK
-         1um7GAnb2YzziGHtK5YloVpZj5NczxsktMkObjz0piFBwTmK1CyLpEayUZwleGdTAclx
-         YYdBEoaFpFM6YUeMV3ABMCfAgOrSaBK9Ym96XqJ6ZOII2BbtGhQzhdzAmDMwXvBz9dnn
-         Cb2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757679810; x=1758284610;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jk5aXXiLpcn48WsQx1TlS1mVz9lzg5cXcpwbqc7D6pY=;
-        b=fci7UZ+63zfbkFYa0D7tMwr0WUnQ+1Lfu7t+bXPoVj1qbC6kQ2KX1APa4/N8QedrgP
-         xbk5KqJa6qSKFpyr/+l15gZHkqUq4XNQJbkJnD4ns4MFpymZZzzRS1C5iRmo6RXheXKR
-         Afj95bUCKKcO061euDR4aUUVbMDxYL/dj61TjTB5qLheL77B0MvpBOrjr1+5RX5+Nzd7
-         2VTbQikaBfmIld3k8tiNIuAClH/AAMgUeTiL7bEa0erQhLoG8qkkfFNgBH6EY8npis4f
-         6Q8492lL1BMOoxtYgAzhxDYJUG9k3yGEtfwT8Bdi2H9M2N6sIZbd00vqqP1Qka9JSyVX
-         09wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTBJom8EJVNGhEu54ezAeoS6uZNBsupFhoIyYf05yhrHhVQRCr39Ll2U7+dBnxpDCUPbjBDl9RdB5XqJQzGXXmHGQojA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIilQ2JWuIQEFslVvMUCYPaLhvFPB7jzWtyd/cnGJOtU1Dm3gE
-	GPyVaWyR2pc8Tk1D2wXFlgcYuTPheVrdW98i9rESxgvxboeVDpZz3M8Lhw1SWjKfurSDb9429rg
-	2cVdc+vtrVTgt/7e+SgaTxg4tL15R45g=
-X-Gm-Gg: ASbGnctu+ffbsFyVMA43ICnPNfoHIydQdeWZjTPaQhFjbep0x9Jonrfqa7LkHckdvt7
-	a+sMJr8VG6Wd1OjCIugxlF3eMAi5w5BSa108uNcO/fYseoUz6KHYkkhTqDCCQCN/abj7c3aTWZZ
-	iNo1IVzbHHTJe02ewSmGjgNfvwqiiMcbgAu4EHSiyUwPg9YyYw23T/UsE+tudlcUu/r6pXJVwB4
-	qG1adGAvDxKasYyKg==
-X-Google-Smtp-Source: AGHT+IFBVy+u+bLkmXvhEFMxbFJNA24xfTduD/XNxZHgH/x+lwo5j6oeXfmMzKMjq/3IeluMaxK7RTnFHu6Ollx7nHs=
-X-Received: by 2002:a17:90b:4c11:b0:32b:a6f6:9b7d with SMTP id
- 98e67ed59e1d1-32de4f8c83cmr3074071a91.26.1757679809658; Fri, 12 Sep 2025
- 05:23:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDSjqNER"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 261BBC113CF
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Sep 2025 13:36:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757684189;
+	bh=jxb95qOE2mXF19IXGEpad3j8R8SzT12JNa1YscswO98=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=WDSjqNERLXSIZ2PDePVCYCmuJz+04AYgU2cDsHJ5P/BV8oJZ3/A11EH7IIqODAd/B
+	 JLoneG9QApj4dQ5Lb61/ss+zPMLQnGkqqDy9kP3Em4rVhgDBN4BB9gLm5XDiEOYbyZ
+	 Gu2Ni3iX3xd/R1226TlncHDAcVx2+ROhPYqxB4eBXuWidqWSbU68WiCRtpP/Cmp21p
+	 4RbUnEL/bD4r2owJrXYgHoHIcSyyoX68G1sfqH/ZdXzHwZ1GKRjf9/FQkGQsL+N+3c
+	 vX7j2BNBqWhGPbcEk5/BYlSKNp82GR+tSubj7UKemc92LfMWdlPEvFfd4T7bOX8odV
+	 K85YdEq+d0f+A==
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45dd5e24d16so18410875e9.3
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Sep 2025 06:36:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUbDlEpbvSpkPEAKx77uWXVgkQEQf9M9k7Z95B/ymqy9qElGsH+fBiNcazJRZsgC9hseJpsG4A44IpW6/lVnh6oEUco/hs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymO+cFAattHaIZH9dn5W9eBvdw77Ib4IH5M5FUH0ocZbt86Gui
+	IxrOJ4ii3E61wJmLwQOBvo+eNtsUjmO+Rl9WwC9xU4TgzSndWK3oEeuzrf0eZKGMm+rBQ0bGg54
+	Nlk7f5Mfw+RS0d9Fro6MFKW8Nd5saxHaWvg9nhoVg
+X-Google-Smtp-Source: AGHT+IHexEguqXBinyBUy240Clj6Yjn2D+B3OU7jb9SSIhbcbMvjkwy89a4OJREtT69L9Gd9chSzVBxoNN20+qPEQlQ=
+X-Received: by 2002:a05:6000:22c1:b0:3e4:7de4:8b9c with SMTP id
+ ffacd0b85a97d-3e7657986ccmr2765314f8f.24.1757684187510; Fri, 12 Sep 2025
+ 06:36:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903192426.215857-2-stephen.smalley.work@gmail.com>
- <aMNVDOCjCBZZE8Kb@mail.hallyn.com> <CAHC9VhQYr_3WzG__RYs_mPtMqFCQz4wbrUnyGZeyKjCuEO93_Q@mail.gmail.com>
-In-Reply-To: <CAHC9VhQYr_3WzG__RYs_mPtMqFCQz4wbrUnyGZeyKjCuEO93_Q@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Fri, 12 Sep 2025 08:23:18 -0400
-X-Gm-Features: Ac12FXz-6en58JzIGhC-vVkEnTHC8_1RjiAqK1v46Cg3xAoUI9a_K7ffirB-Ed4
-Message-ID: <CAEjxPJ5K5Ki7uRa_aF=ULzHUChtbsBJX3nL3TZnL-Ak+G6kkaw@mail.gmail.com>
-Subject: Re: [RFC PATCH] lsm,selinux: introduce LSM_ATTR_UNSHARE and wire it
- up for SELinux
-To: Paul Moore <paul@paul-moore.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, selinux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, omosnace@redhat.com, 
-	john.johansen@canonical.com, casey@schaufler-ca.com
+References: <20250813205526.2992911-1-kpsingh@kernel.org> <20250813205526.2992911-7-kpsingh@kernel.org>
+ <CAEf4BzaXA9R4_tJtA6jsVc3im9LJWhzRGQoVyGjFnH89ohZbcw@mail.gmail.com>
+In-Reply-To: <CAEf4BzaXA9R4_tJtA6jsVc3im9LJWhzRGQoVyGjFnH89ohZbcw@mail.gmail.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Fri, 12 Sep 2025 15:36:16 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ51Nsig1-cg4-5FHcrcG-5W=+zcS9ZeWyYMTPbugCHFPQ@mail.gmail.com>
+X-Gm-Features: AS18NWDG7AAxfn7xnpcLLFBpmGX3IUjOCSZ2Ui_XXyyclWvG4yj2fIBfJJLiMMg
+Message-ID: <CACYkzJ51Nsig1-cg4-5FHcrcG-5W=+zcS9ZeWyYMTPbugCHFPQ@mail.gmail.com>
+Subject: Re: [PATCH v3 06/12] bpf: Return hashes of maps in BPF_OBJ_GET_INFO_BY_FD
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 11, 2025 at 9:48=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
+On Thu, Aug 14, 2025 at 8:46=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
 >
-> On Thu, Sep 11, 2025 at 7:02=E2=80=AFPM Serge E. Hallyn <serge@hallyn.com=
-> wrote:
-> > On Wed, Sep 03, 2025 at 03:24:26PM -0400, Stephen Smalley wrote:
-> > > In the hopes of nudging the conversation in [1] in a more focused
+> On Wed, Aug 13, 2025 at 1:55=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
+te:
 > >
-> > Hi Stephen,
+> > Currently only array maps are supported, but the implementation can be
+> > extended for other maps and objects. The hash is memoized only for
+> > exclusive and frozen maps as their content is stable until the exclusiv=
+e
+> > program modifies the map.
 > >
-> > what was [1] supposed to be here?  I can think of two possibilities,
-> > but I'm not seeing it inline...
+> > This is required  for BPF signing, enabling a trusted loader program to
+> > verify a map's integrity. The loader retrieves
+> > the map's runtime hash from the kernel and compares it against an
+> > expected hash computed at build time.
+> >
+> > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > ---
+> >  include/linux/bpf.h                           |  3 +++
+> >  include/uapi/linux/bpf.h                      |  2 ++
+> >  kernel/bpf/arraymap.c                         | 13 +++++++++++
+> >  kernel/bpf/syscall.c                          | 23 +++++++++++++++++++
+> >  tools/include/uapi/linux/bpf.h                |  2 ++
+> >  .../selftests/bpf/progs/verifier_map_ptr.c    |  7 ++++--
+> >  6 files changed, 48 insertions(+), 2 deletions(-)
+> >
 >
-> I'm guessing Stephen was talking about the "LSM namespacing API" thread:
+> [...]
 >
-> https://lore.kernel.org/linux-security-module/CAHC9VhRGMmhxbajwQNfGFy+ZFF=
-1uN=3DUEBjqQZQ4UBy7yds3eVQ@mail.gmail.com/
+> >  struct bpf_btf_info {
+> > diff --git a/tools/testing/selftests/bpf/progs/verifier_map_ptr.c b/too=
+ls/testing/selftests/bpf/progs/verifier_map_ptr.c
+> > index 11a079145966..e2767d27d8aa 100644
+> > --- a/tools/testing/selftests/bpf/progs/verifier_map_ptr.c
+> > +++ b/tools/testing/selftests/bpf/progs/verifier_map_ptr.c
+> > @@ -70,10 +70,13 @@ __naked void bpf_map_ptr_write_rejected(void)
+> >         : __clobber_all);
+> >  }
+> >
+> > +/* The first element of struct bpf_map is a SHA256 hash of 32 bytes, a=
+ccessing
+> > + * into this array is valid. The opts field is now at offset 33.
+> > + */
+>
+> Does hash have to be at the beginning of struct bpf_map? why not just
+> put it at the end and not have to adjust any tests?.. (which now will
+> fail on older kernel for no good reason, unless I miss something)
 
-Yes, that was the link I intended to include in my message.
-Most of that thread isn't necessary though to reviewing this RFC.
+It has to be on the top, see the explanation / the code we generate
+for verifying the hash it reads from the const_ptr_to_map.
+
+-  KP
+
+>
+>
+> >  SEC("socket")
+> >  __description("bpf_map_ptr: read non-existent field rejected")
+> >  __failure
+> > -__msg("cannot access ptr member ops with moff 0 in struct bpf_map with=
+ off 1 size 4")
+> > +__msg("cannot access ptr member ops with moff 32 in struct bpf_map wit=
+h off 33 size 4")
+> >  __failure_unpriv
+> >  __msg_unpriv("access is allowed only to CAP_PERFMON and CAP_SYS_ADMIN"=
+)
+> >  __flag(BPF_F_ANY_ALIGNMENT)
+> > @@ -82,7 +85,7 @@ __naked void read_non_existent_field_rejected(void)
+> >         asm volatile ("                                 \
+> >         r6 =3D 0;                                         \
+> >         r1 =3D %[map_array_48b] ll;                       \
+> > -       r6 =3D *(u32*)(r1 + 1);                           \
+> > +       r6 =3D *(u32*)(r1 + 33);                          \
+> >         r0 =3D 1;                                         \
+> >         exit;                                           \
+> >  "      :
+> > --
+> > 2.43.0
+> >
