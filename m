@@ -1,139 +1,172 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A343043BE
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Sep 2025 13:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BB5311C03;
+	Fri, 12 Sep 2025 16:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757684189; cv=none; b=KhdmjTqfPK73otYrGZb2k3thZIve28FVMrNEpWMgAp7hOfvrd/ui3b69RMbuMLckeE16/G/MQ1D2X6jVeXSIGTIFgX5dPouV2SQC/32dhTMsZfpbEvo2dHTyae7oKZKg8fkU0DPKzMEnGOAXVB4cTEq7GncojMSL+cWv/c1e1rQ=
+	t=1757695107; cv=none; b=XATH0OS2huGetySgg8tFARWUsp3XUxf1putWzw2nLIMfm3MHENrvYLbTi8A1Gly9j9V7DpvoUxvHD8Oq5omxBFY4lXOeUFk7b2EE5eRyPAgpMLL+qlA9E+5WITtnKLC9XFfWj1hQr9VFesMKj7BMLDdFV+UXtLDvoZvwVubCG3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757684189; c=relaxed/simple;
-	bh=jxb95qOE2mXF19IXGEpad3j8R8SzT12JNa1YscswO98=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OsO/lKTwQwWwgdrWvKhAeFDSNLcvcUnch4IwRP7RAvLz8MIny1TT6vYvzwnn3X1ZuhsKChNo+gTqhKSW3EDAPjDHYQj/cfxSaz+1TW9vjagOEatZSAh7orxL8s/srlbGnC7ODgCsQTsW1N0VABWC9aMuHn5I7xoZRrmO3USsy+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDSjqNER; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757695107; c=relaxed/simple;
+	bh=2RaPbc9jVOhVYH7V2C0vnTwGjblLI5tvoUlhHEkUM3A=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=tKAuHHzXHgwiZnIvyrGxFG8h2AanuQX3kBDT3lH+gIoxhrZ8JS2/Qq8EBJ1O4tQkc+Hx/tUynDCorcSx7dk3PlRTfJ8KV3GesEiMhSekjDggZ2+AA6Wkhu9DuBjXzvJo+YJ2/+ADDACcvGE5kgS7XIT57VvjJRM11gHC/EOToEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qa8AjvoY; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDSjqNER"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 261BBC113CF
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Sep 2025 13:36:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757684189;
-	bh=jxb95qOE2mXF19IXGEpad3j8R8SzT12JNa1YscswO98=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WDSjqNERLXSIZ2PDePVCYCmuJz+04AYgU2cDsHJ5P/BV8oJZ3/A11EH7IIqODAd/B
-	 JLoneG9QApj4dQ5Lb61/ss+zPMLQnGkqqDy9kP3Em4rVhgDBN4BB9gLm5XDiEOYbyZ
-	 Gu2Ni3iX3xd/R1226TlncHDAcVx2+ROhPYqxB4eBXuWidqWSbU68WiCRtpP/Cmp21p
-	 4RbUnEL/bD4r2owJrXYgHoHIcSyyoX68G1sfqH/ZdXzHwZ1GKRjf9/FQkGQsL+N+3c
-	 vX7j2BNBqWhGPbcEk5/BYlSKNp82GR+tSubj7UKemc92LfMWdlPEvFfd4T7bOX8odV
-	 K85YdEq+d0f+A==
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45dd5e24d16so18410875e9.3
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Sep 2025 06:36:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUbDlEpbvSpkPEAKx77uWXVgkQEQf9M9k7Z95B/ymqy9qElGsH+fBiNcazJRZsgC9hseJpsG4A44IpW6/lVnh6oEUco/hs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymO+cFAattHaIZH9dn5W9eBvdw77Ib4IH5M5FUH0ocZbt86Gui
-	IxrOJ4ii3E61wJmLwQOBvo+eNtsUjmO+Rl9WwC9xU4TgzSndWK3oEeuzrf0eZKGMm+rBQ0bGg54
-	Nlk7f5Mfw+RS0d9Fro6MFKW8Nd5saxHaWvg9nhoVg
-X-Google-Smtp-Source: AGHT+IHexEguqXBinyBUy240Clj6Yjn2D+B3OU7jb9SSIhbcbMvjkwy89a4OJREtT69L9Gd9chSzVBxoNN20+qPEQlQ=
-X-Received: by 2002:a05:6000:22c1:b0:3e4:7de4:8b9c with SMTP id
- ffacd0b85a97d-3e7657986ccmr2765314f8f.24.1757684187510; Fri, 12 Sep 2025
- 06:36:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qa8AjvoY"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9LufK028539;
+	Fri, 12 Sep 2025 16:37:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=DI0p5X
+	VIyWC/Uc+yOWrpUqOI9NbAAOOCwcn10yjBar8=; b=qa8AjvoYRk23gmEWuY8FwH
+	Z67y1w7CokEz66O5EbQyL0NcwMYLFkhzqqPKeXkXuswubOI9e9R2N99FCZeAw7xY
+	LUJWVFY6DDA8llzrGlwPbSQlTqS8iL5SHZ1ncveGNDNERFP0Qgkguz56iYiHLbvt
+	jFu65P4lDQXV4RdC+UDrVcYlF5EV2lPCYn9pKBcetH4N/n0V08eCiSMKESANkUBw
+	68WMR0rJPV/aQYs0BRfiyLe+/xDwQR+bdieXqYIvLcEIdYvIc/t8n7U8ZUz9K/Da
+	fEnzr5JKaw12VjwpsulLYB84IrgASA699fId1sClUUNVVtMx0EyKNdSAwmrx7X/g
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490ukf0qhp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 16:37:21 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58CGbLGi018156;
+	Fri, 12 Sep 2025 16:37:21 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490ukf0qhh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 16:37:21 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58CDelSB007912;
+	Fri, 12 Sep 2025 16:37:20 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109q3vfv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 16:37:20 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58CGbJ1S51249614
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 12 Sep 2025 16:37:20 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CD82D5805A;
+	Fri, 12 Sep 2025 16:37:19 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DB3B558056;
+	Fri, 12 Sep 2025 16:37:18 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.159.184])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 12 Sep 2025 16:37:18 +0000 (GMT)
+Message-ID: <f9aceb873648bcc8ba6c07b9b9bd269800f03c14.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 31/34] ima,evm: move initcalls to the LSM framework
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>,
+        Fan
+ Wu	 <wufan@kernel.org>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?=
+ <mic@digikod.net>,
+        =?ISO-8859-1?Q?G=FCnther?= Noack	 <gnoack@google.com>,
+        Kees Cook <kees@kernel.org>, Micah Morton	 <mortonm@chromium.org>,
+        Casey
+ Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa	
+ <penguin-kernel@i-love.sakura.ne.jp>,
+        Nicolas Bouchinet	
+ <nicolas.bouchinet@oss.cyber.gouv.fr>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <CAHC9VhQT8X8UDt2ZbKhA8bVcaNj06sVyTLG0+WyevrTVFpJwtA@mail.gmail.com>
+References: <20250814225159.275901-36-paul@paul-moore.com>
+	 <20250814225159.275901-67-paul@paul-moore.com>
+	 <CAHC9VhS3KdVO9n-dgk1qFzTae0i+Oab8atMmt0CAsMEm1D4v5w@mail.gmail.com>
+	 <bd46c63ebb9eddfcdc8df92fe9f85473416ea8a0.camel@linux.ibm.com>
+	 <CAHC9VhTJnQ3EggEXwbW5D8xOnb+Z_02yz-Dgb7QiAoArhw1ETg@mail.gmail.com>
+	 <9f1dd6d30193c82ff36b5665eadc1aec73736017.camel@linux.ibm.com>
+	 <CAHC9VhQT8X8UDt2ZbKhA8bVcaNj06sVyTLG0+WyevrTVFpJwtA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 12 Sep 2025 12:37:18 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813205526.2992911-1-kpsingh@kernel.org> <20250813205526.2992911-7-kpsingh@kernel.org>
- <CAEf4BzaXA9R4_tJtA6jsVc3im9LJWhzRGQoVyGjFnH89ohZbcw@mail.gmail.com>
-In-Reply-To: <CAEf4BzaXA9R4_tJtA6jsVc3im9LJWhzRGQoVyGjFnH89ohZbcw@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Fri, 12 Sep 2025 15:36:16 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ51Nsig1-cg4-5FHcrcG-5W=+zcS9ZeWyYMTPbugCHFPQ@mail.gmail.com>
-X-Gm-Features: AS18NWDG7AAxfn7xnpcLLFBpmGX3IUjOCSZ2Ui_XXyyclWvG4yj2fIBfJJLiMMg
-Message-ID: <CACYkzJ51Nsig1-cg4-5FHcrcG-5W=+zcS9ZeWyYMTPbugCHFPQ@mail.gmail.com>
-Subject: Re: [PATCH v3 06/12] bpf: Return hashes of maps in BPF_OBJ_GET_INFO_BY_FD
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDE5NSBTYWx0ZWRfX0IPeRwJI3Adi
+ qjW66a4Pvc+8GFw75a2yOYGgWzU3ex911mTiCbMtlV3Fsb4wkZbu7sEfz9BZuLCJPcSya4Amx4d
+ VdZqJ/tCu+pd5HSeFFb1cZq3TNMwMaBi+sYMvvPZ9zXA1mMi7y7NMB/S8oi+9xdwlfAqlYUFCO4
+ sMaRea9nLXr0c3TdSKHbSxUOP88rkw6WIha9atHr2pewwholZm5ujJ3BhotwFY3WpOU/CWY6RR4
+ oPahVjUNrjOnp1eq5yW04qNwbja2JuhYWnsRil8K5+kQgEuUy3iHj7k187GWUm7Y71TOauO1Bo1
+ zHSh7r7e3qQ5tt9ak32AKiY7S9FJizzsMEv+Tg7J1f7qGwqAMTkcLaeKq3yAK9iEhMm1piGvwXB
+ ELhuWfKx
+X-Proofpoint-ORIG-GUID: Yxh_EHnslaCun6acJXqbcBg6NjEz5PrK
+X-Proofpoint-GUID: vvOdsqKARsuCKDEWjnHCxq114P4DZJWX
+X-Authority-Analysis: v=2.4 cv=StCQ6OO0 c=1 sm=1 tr=0 ts=68c44c42 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=CT4C0UVHrSCr1UfN2mgA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_06,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 bulkscore=0 clxscore=1015 adultscore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060195
 
-On Thu, Aug 14, 2025 at 8:46=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Wed, Aug 13, 2025 at 1:55=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
-te:
-> >
-> > Currently only array maps are supported, but the implementation can be
-> > extended for other maps and objects. The hash is memoized only for
-> > exclusive and frozen maps as their content is stable until the exclusiv=
-e
-> > program modifies the map.
-> >
-> > This is required  for BPF signing, enabling a trusted loader program to
-> > verify a map's integrity. The loader retrieves
-> > the map's runtime hash from the kernel and compares it against an
-> > expected hash computed at build time.
-> >
-> > Signed-off-by: KP Singh <kpsingh@kernel.org>
-> > ---
-> >  include/linux/bpf.h                           |  3 +++
-> >  include/uapi/linux/bpf.h                      |  2 ++
-> >  kernel/bpf/arraymap.c                         | 13 +++++++++++
-> >  kernel/bpf/syscall.c                          | 23 +++++++++++++++++++
-> >  tools/include/uapi/linux/bpf.h                |  2 ++
-> >  .../selftests/bpf/progs/verifier_map_ptr.c    |  7 ++++--
-> >  6 files changed, 48 insertions(+), 2 deletions(-)
-> >
->
-> [...]
->
-> >  struct bpf_btf_info {
-> > diff --git a/tools/testing/selftests/bpf/progs/verifier_map_ptr.c b/too=
-ls/testing/selftests/bpf/progs/verifier_map_ptr.c
-> > index 11a079145966..e2767d27d8aa 100644
-> > --- a/tools/testing/selftests/bpf/progs/verifier_map_ptr.c
-> > +++ b/tools/testing/selftests/bpf/progs/verifier_map_ptr.c
-> > @@ -70,10 +70,13 @@ __naked void bpf_map_ptr_write_rejected(void)
-> >         : __clobber_all);
-> >  }
-> >
-> > +/* The first element of struct bpf_map is a SHA256 hash of 32 bytes, a=
-ccessing
-> > + * into this array is valid. The opts field is now at offset 33.
-> > + */
->
-> Does hash have to be at the beginning of struct bpf_map? why not just
-> put it at the end and not have to adjust any tests?.. (which now will
-> fail on older kernel for no good reason, unless I miss something)
+On Thu, 2025-09-11 at 15:30 -0400, Paul Moore wrote:
+> On Mon, Sep 8, 2025 at 6:34=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> w=
+rote:
+> > On Sun, 2025-09-07 at 21:05 -0400, Paul Moore wrote:
+> > > > The "unrelated to IMA/EVM" wording misses the point.  An exception =
+was made to
+> > > > load the pre-boot keys onto the .platform keyring in order for IMA/=
+EVM to verify
+> > > > the kexec kernel image appended signature.  This exception was subs=
+equently
+> > > > extended to verifying the pesigned kexec kernel image signature.  (=
+Other
+> > > > subsystems are abusing the keys on the .platform keyring to verify =
+other
+> > > > signatures.)
+> > > >=20
+> > > > Instead of saying "unrelated to IMA/EVM", how about saying somethin=
+g along the
+> > > > lines of "IMA has a dependency on the platform and machine keyrings=
+, but this
+> > > > dependency isn't limited to IMA/EVM."
+> > > >=20
+> > > > Paul, this patch set doesn't apply to cleanly to Linus's tree.  Wha=
+t is the base
+> > > > commit?
+> > >=20
+> > > It would have been based on the lsm/dev branch since the LSM tree is
+> > > the target, however, given the scope of the patchset and the fact tha=
+t
+> > > it has been several weeks since it was originally posted, I wouldn't
+> > > be surprised it if needs some fuzzing when applied on top of lsm/dev
+> > > too.
+> >=20
+> > Thanks, Paul.  I was able to apply the patches and run some regression =
+tests.
+>=20
+> Mimi, I know you already tagged Roberto's patch with a 'Reviewed-by'
+> tag, but I wanted to follow up and see if you were comfortable
+> converting that into an ACK, or if you wanted more time to review
+> Roberto's patch?  No wrong answers, just trying to understand where
+> you are at with this patch.
 
-It has to be on the top, see the explanation / the code we generate
-for verifying the hash it reads from the const_ptr_to_map.
+Please don't convert the Reviewed-by tag quite yet to an Ack.  I'd really l=
+ike
+to review the entire patch set and do some additional testing.
 
--  KP
+thanks,
 
->
->
-> >  SEC("socket")
-> >  __description("bpf_map_ptr: read non-existent field rejected")
-> >  __failure
-> > -__msg("cannot access ptr member ops with moff 0 in struct bpf_map with=
- off 1 size 4")
-> > +__msg("cannot access ptr member ops with moff 32 in struct bpf_map wit=
-h off 33 size 4")
-> >  __failure_unpriv
-> >  __msg_unpriv("access is allowed only to CAP_PERFMON and CAP_SYS_ADMIN"=
-)
-> >  __flag(BPF_F_ANY_ALIGNMENT)
-> > @@ -82,7 +85,7 @@ __naked void read_non_existent_field_rejected(void)
-> >         asm volatile ("                                 \
-> >         r6 =3D 0;                                         \
-> >         r1 =3D %[map_array_48b] ll;                       \
-> > -       r6 =3D *(u32*)(r1 + 1);                           \
-> > +       r6 =3D *(u32*)(r1 + 33);                          \
-> >         r0 =3D 1;                                         \
-> >         exit;                                           \
-> >  "      :
-> > --
-> > 2.43.0
-> >
+Mimi
