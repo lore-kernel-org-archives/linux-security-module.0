@@ -1,219 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6021DFD8F
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Sep 2025 22:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810BE288D6
+	for <linux-security-module@vger.kernel.org>; Sat, 13 Sep 2025 00:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757716147; cv=none; b=bXzZlBLCCDNOmXdHzhTdSw3wZli5S2Obg9w2mKO5y8UqrQc9N5V1RdxQMwCJyUEfSIQX4KS1jZK/511pNf96nEGXkOl0Rpg2OwIsEQ9sAs6mIQF6sOOFxcZa97WtLoIUjsIxudtHxqjT30GEbmvc1Km1AqXm4KMODLj1PTDedZQ=
+	t=1757723625; cv=none; b=m/qfhFL2HcpyMQ7ySmACdwhWTB4jVYeZO73P7KloJvs8qmjac2Z26g9hd/L7iNYYExQcKkIopDU+O6CEygYWzHOk1pmbf1MjI+ZI0/WkESE4gPzLCfMnFYh2Uo5igf3Q6i/umTmIYOibNjG2fR4GOtm5bfeeMMCG9pPiaw4IHqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757716147; c=relaxed/simple;
-	bh=5qc69/Di18NCapXBFuAPxOelwmT46G+iXd0AwmaqkgI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fhMCFYeG70DauA+Ys43paF2ptig65po+5avuyiMz/CgzkfeE7XdHKcbzMvHxwOTEfEfHe+WwMtfPgYHYdZvDxC3NRBimBuGt89wFZakSHihIEd0dsY81wfCXA7dPZJvTa4mikIRLVzz042bam8H8Z0JQ/m2FIsWjK8zR7iAC/Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKe+JCc3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757723625; c=relaxed/simple;
+	bh=6ixjMQGo+mF9rxxhZunX9VzR5bs0JXrtOuI72NkTM98=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=R5IWTEWXtQHuwjPYypnIi8/cs4mSsafpEU1tHVive1Wxl2liZ7np9UHckrDcXsv2DoBVFDNV+oYT3tkPGnEwJcyKGrpGpBg9qouVGaqAYb+AVi4NT7qXqqFqYawjHOlRFWwxLucAe8xTi1OnWgbozztwPZpM40zdIUVgnel43O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ggp4mBl/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKe+JCc3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0B50C4CEF9
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Sep 2025 22:29:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757716146;
-	bh=5qc69/Di18NCapXBFuAPxOelwmT46G+iXd0AwmaqkgI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VKe+JCc3O5on4PgwTM0YYivvRmH1CIbDNyfKABcAAp6c87zp+BABevCrHbTGBFkUB
-	 TE5aFi3eYzOYaP6/0CFQneM8+Rny32Wj2yxiVdRHY4I0IlSgqZb7EISkSSX99yI00N
-	 QmHl+M8B9QGnTl7PTRiKwAT8+AwJeA+qVFALyh3ykG7D+uP8HfQA8WIeRYARXuyiqa
-	 zUvfjqOSuTorO8YaW8eGNULrVEouwVvzHK5M96Gq3JMZSqXjhPBhRZF0MSaPMZopLs
-	 4eHFMuM4wteSipOQhK0RKFex8xOVt2HtdSx55GdVnuh687fG+N8Ghej/yrAar4G9Au
-	 6e/lurvc7Oo5w==
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3e7622483beso1303717f8f.3
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Sep 2025 15:29:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW7M44KJch66Kt2oWgGvZFNJCZ668MJVYz2DNUWOkTxtbHmWxQA3GGsQAY304lm8v9GQwIQ57bmgSw5BKr7kbgQVNNPZi8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybE9afIrLWoylIkoGHarUbcWXq2uNIlLLEKbbYd25SMzj8gFLm
-	UtAK5R96m7J1Ip9oxzkKUlTtriiQ0QxrJcqmpjuBngKirhC0lNjqNB9pYX5AQZo4m/cwyiPQG1B
-	T8+GjlZ5+XSJHWFoCyo8vwjfTfqanpskZqXQnLb98
-X-Google-Smtp-Source: AGHT+IFHVzz8UZN4jz5Xg0s+AyXjp00JIcZymdoa+3YOgbZlf46gyFqcn3aWBFiPO2IBHuT0zODyLpHkotScSHJ2AF4=
-X-Received: by 2002:a05:6000:2891:b0:3ce:db36:607f with SMTP id
- ffacd0b85a97d-3e765a04be2mr3619221f8f.37.1757716145394; Fri, 12 Sep 2025
- 15:29:05 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ggp4mBl/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757723619;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ncBfGy8EE17qYCVshxa8cc5ygoQQollWUOgPghVnN+8=;
+	b=Ggp4mBl/eGpVuJG+snCSL6z26drJnjTUm0xzQi0m+3unXzAr4d7bNp6S84CIJ1J1Ps8I9M
+	kllHDluNI+sUgcmtame5/seZoENBFDxfBOfwJ3in4A1emsg8Th+eNFua7QtSm3malkBwqI
+	w1wT48GHL6g7vPbJtuvoB/XKZ/fUqGY=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-45-eeljpTf3NwinSP5w1xGgoQ-1; Fri, 12 Sep 2025 20:33:34 -0400
+X-MC-Unique: eeljpTf3NwinSP5w1xGgoQ-1
+X-Mimecast-MFC-AGG-ID: eeljpTf3NwinSP5w1xGgoQ_1757723614
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b5f75c17a3so62884991cf.3
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Sep 2025 17:33:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757723614; x=1758328414;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ncBfGy8EE17qYCVshxa8cc5ygoQQollWUOgPghVnN+8=;
+        b=doH9mVnmtphkl9cImWSczItB3v7zlX8cL0f/JSlaDP7CrtLiZn4etXPJeBZBZ+DING
+         k67pBrCxC6cAOnBonAUZi646l3nHvVKDipeIFdOyWNbZ7QRCYUSZxeiRmMDZFs6IEcQc
+         PYKVAupffMApmZYNJrx4Drm7D0Tpti/H88QTVzwEZjG8iD4MijT1M1IMQU9caFri+FMr
+         3ilQuGVvFtXSJoD9cVy1ySL01//yA7ndN3faPxe8bw698tL/SnIjal+KexfZo9gpRz9z
+         9qABTHxtSXsS3XlRMRRUEyGhP8LOFJAHW/BB+OdW8ys4P4hTJQtP5yMTv0HSuNOmF/PQ
+         DxVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUghaTDaNBPOnzZyOP5Clq0O4kbmwWoAcnRpLzDFiogYwWezj6JdSWZ0zdxxPclDjgS+gp3otMrohgwQzG+uS/dv+3Tr9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8p0H16LYkGyMLWQjeM7vMT1lVL28052MeDIVruIBnIAxKGaRt
+	NY9qCT7s52ntryd5NFSmBD11Miw7GKNs8S/vqxHzJ9MSm9jCugx9StMWDJ/SssxaNy1Wxuz8hcZ
+	bAiUIK338iF/qwHTisquftKjIDUdfSE5hQVsrIN9O5x4VVAhtAEQLI9/qyRfX3nDLjTsv4k72yQ
+	r9Qg==
+X-Gm-Gg: ASbGnctrDTZ6gARDnlT4dScpuj1cL1Ua3rLbTz30g+yMT0DVnYeF6+E3bNO17ZJj079
+	WEvy0/rjOo8rBGNmGY5/E2KAd6BKQ/DxN9pQCMCZcRYMC1sVAdEGYE1er1/3YQuSoomvBu/AUtS
+	54pXjsSMPT4s1OtU1HgUPUTq8aLgxjtqa6b1wgMGgR7bQbC92Hm/c/5eX0yxqTMpG9q+OwdDwVQ
+	rw/MPtfAL58ZqwUbWlk7ZjbyYFZY522cRXdVB/b3YMlmQSRKo6anrezWxdZB2hkFvSyi8Jd9k+G
+	jXTTB7aNHI8HxnuL56WhKNlSipmBBHICM8tNteLznJ6z0N0cMhTHszRUiYJWKvwLpiAQImuS827
+	yFvwd+g8zaQ==
+X-Received: by 2002:a05:622a:1a05:b0:4b6:2f52:5342 with SMTP id d75a77b69052e-4b77d1ab3a1mr68076381cf.79.1757723614312;
+        Fri, 12 Sep 2025 17:33:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGRq8wbBNQnbSCZtG/tvewoa9dvMcBJkb7MXthP0yviRVZ6G/ctSPGgxUCMnelFEMNwo4BLAw==
+X-Received: by 2002:a05:622a:1a05:b0:4b6:2f52:5342 with SMTP id d75a77b69052e-4b77d1ab3a1mr68076091cf.79.1757723613947;
+        Fri, 12 Sep 2025 17:33:33 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b639b99de1sm31462791cf.8.2025.09.12.17.33.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 17:33:33 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <9d06c0d5-e20c-4069-adca-68a2c4cf6f4f@redhat.com>
+Date: Fri, 12 Sep 2025 20:33:31 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813205526.2992911-1-kpsingh@kernel.org> <689eef40.050a0220.e29e5.0010.GAE@google.com>
-In-Reply-To: <689eef40.050a0220.e29e5.0010.GAE@google.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Sat, 13 Sep 2025 00:28:54 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ4ObNwj6GpZ70Yri1OBmc2cQpZ2B2szURAJKP3q4S5xEQ@mail.gmail.com>
-X-Gm-Features: AS18NWCwPCezEK9cZ8eTHQ7VX79yav-Z1PyPoWyyaVpnt7JFGsdansoz2D25AxY
-Message-ID: <CACYkzJ4ObNwj6GpZ70Yri1OBmc2cQpZ2B2szURAJKP3q4S5xEQ@mail.gmail.com>
-Subject: Re: [syzbot ci] Re: Signed BPF programs
-To: syzbot ci <syzbot+cic1938c6466797c55@syzkaller.appspotmail.com>
-Cc: andrii@kernel.org, ast@kernel.org, bboscaccy@linux.microsoft.com, 
-	bpf@vger.kernel.org, daniel@iogearbox.net, kys@microsoft.com, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rcu: Remove redundant rcu_read_lock/unlock() in spin_lock
+ critical sections
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Waiman Long <llong@redhat.com>
+Cc: pengdonglin <dolinux.peng@gmail.com>, tj@kernel.org, tony.luck@intel.com,
+ jani.nikula@linux.intel.com, ap420073@gmail.com, jv@jvosburgh.net,
+ freude@linux.ibm.com, bcrl@kvack.org, trondmy@kernel.org, kees@kernel.org,
+ linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+ linux-nfs@vger.kernel.org, linux-aio@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ netdev@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ linux-acpi@vger.kernel.org, linux-s390@vger.kernel.org,
+ cgroups@vger.kernel.org, pengdonglin <pengdonglin@xiaomi.com>,
+ "Paul E . McKenney" <paulmck@kernel.org>
+References: <20250912065050.460718-1-dolinux.peng@gmail.com>
+ <6831b9fe-402f-40a6-84e6-b723dd006b90@redhat.com>
+ <20250912213531.7-YeRBeD@linutronix.de>
+In-Reply-To: <20250912213531.7-YeRBeD@linutronix.de>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: qZhKU29XrX5g1kNrEYtulxb5BOZBzWzYmC7M7pDNnnA_1757723614
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 10:26=E2=80=AFAM syzbot ci
-<syzbot+cic1938c6466797c55@syzkaller.appspotmail.com> wrote:
->
-> syzbot ci has tested the following series
->
-> [v3] Signed BPF programs
-> https://lore.kernel.org/all/20250813205526.2992911-1-kpsingh@kernel.org
-> * [PATCH v3 01/12] bpf: Update the bpf_prog_calc_tag to use SHA256
-> * [PATCH v3 02/12] bpf: Implement exclusive map creation
-> * [PATCH v3 03/12] libbpf: Implement SHA256 internal helper
-> * [PATCH v3 04/12] libbpf: Support exclusive map creation
-> * [PATCH v3 05/12] selftests/bpf: Add tests for exclusive maps
-> * [PATCH v3 06/12] bpf: Return hashes of maps in BPF_OBJ_GET_INFO_BY_FD
-> * [PATCH v3 07/12] bpf: Move the signature kfuncs to helpers.c
-> * [PATCH v3 08/12] bpf: Implement signature verification for BPF programs
-> * [PATCH v3 09/12] libbpf: Update light skeleton for signing
-> * [PATCH v3 10/12] libbpf: Embed and verify the metadata hash in the load=
-er
-> * [PATCH v3 11/12] bpftool: Add support for signing BPF programs
-> * [PATCH v3 12/12] selftests/bpf: Enable signature verification for some =
-lskel tests
->
-> and found the following issue:
-> general protection fault in bpf_verify_pkcs7_signature
->
-> Full report is available here:
-> https://ci.syzbot.org/series/67d9a289-da5c-4051-8c3c-cc32b6ccd77d
->
-> ***
->
-> general protection fault in bpf_verify_pkcs7_signature
->
-> tree:      bpf-next
-> URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/bpf/b=
-pf-next.git
-> base:      07866544e410e4c895a729971e4164861b41fad5
-> arch:      amd64
-> compiler:  Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~e=
-xp1~20250616065826.132), Debian LLD 20.1.7
-> config:    https://ci.syzbot.org/builds/1e87aafb-11dc-48f1-a980-c91551ba5=
-2de/config
-> C repro:   https://ci.syzbot.org/findings/0c329233-09a8-4e8b-9e6e-72f234d=
-d85ab/c_repro
-> syz repro: https://ci.syzbot.org/findings/0c329233-09a8-4e8b-9e6e-72f234d=
-d85ab/syz_repro
->
-> Oops: general protection fault, probably for non-canonical address 0xdfff=
-fc0000000001: 0000 [#1] SMP KASAN PTI
-> KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-> CPU: 1 UID: 0 PID: 6001 Comm: syz.0.17 Not tainted 6.17.0-rc1-syzkaller-0=
-0022-g07866544e410-dirty #0 PREEMPT(full)
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.=
-16.2-1 04/01/2014
-> RIP: 0010:bpf_verify_pkcs7_signature+0x31/0x190 kernel/bpf/helpers.c:3835
-> Code: 41 56 41 55 41 54 53 48 89 d3 49 89 f6 49 89 ff 48 bd 00 00 00 00 0=
-0 fc ff df e8 aa b0 e0 ff 4c 8d 63 08 4c 89 e0 48 c1 e8 03 <0f> b6 04 28 84=
- c0 0f 85 01 01 00 00 41 80 3c 24 00 74 3d 48 89 d8
-> RSP: 0018:ffffc90002f7fa08 EFLAGS: 00010202
-> RAX: 0000000000000001 RBX: 0000000000000000 RCX: ffff888020c51cc0
-> RDX: 0000000000000000 RSI: ffffc90002f7faa0 RDI: ffffc90002f7fac0
-> RBP: dffffc0000000000 R08: 0000000000000018 R09: ffffffff820b8a70
-> R10: ffffc90002f7fac0 R11: fffff520005eff5a R12: 0000000000000008
-> R13: 0000000000000010 R14: ffffc90002f7faa0 R15: ffffc90002f7fac0
-> FS:  00005555895fe500(0000) GS:ffff8881a3c1c000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000001b30b63fff CR3: 0000000028898000 CR4: 00000000000006f0
-> Call Trace:
->  <TASK>
->  bpf_prog_verify_signature+0x2da/0x3b0 kernel/bpf/syscall.c:2815
->  bpf_prog_load+0xcc4/0x19e0 kernel/bpf/syscall.c:2989
->  __sys_bpf+0x507/0x860 kernel/bpf/syscall.c:6116
->  __do_sys_bpf kernel/bpf/syscall.c:6226 [inline]
->  __se_sys_bpf kernel/bpf/syscall.c:6224 [inline]
->  __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6224
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f0a4558ebe9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
-7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fff940250b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-> RAX: ffffffffffffffda RBX: 00007f0a457b5fa0 RCX: 00007f0a4558ebe9
-> RDX: 00000000000000a8 RSI: 0000200000000140 RDI: 0000000000000005
-> RBP: 00007f0a45611e19 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f0a457b5fa0 R14: 00007f0a457b5fa0 R15: 0000000000000003
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:bpf_verify_pkcs7_signature+0x31/0x190 kernel/bpf/helpers.c:3835
-> Code: 41 56 41 55 41 54 53 48 89 d3 49 89 f6 49 89 ff 48 bd 00 00 00 00 0=
-0 fc ff df e8 aa b0 e0 ff 4c 8d 63 08 4c 89 e0 48 c1 e8 03 <0f> b6 04 28 84=
- c0 0f 85 01 01 00 00 41 80 3c 24 00 74 3d 48 89 d8
-> RSP: 0018:ffffc90002f7fa08 EFLAGS: 00010202
-> RAX: 0000000000000001 RBX: 0000000000000000 RCX: ffff888020c51cc0
-> RDX: 0000000000000000 RSI: ffffc90002f7faa0 RDI: ffffc90002f7fac0
-> RBP: dffffc0000000000 R08: 0000000000000018 R09: ffffffff820b8a70
-> R10: ffffc90002f7fac0 R11: fffff520005eff5a R12: 0000000000000008
-> R13: 0000000000000010 R14: ffffc90002f7faa0 R15: ffffc90002f7fac0
-> FS:  00005555895fe500(0000) GS:ffff8881a3c1c000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000001b30b63fff CR3: 0000000028898000 CR4: 00000000000006f0
-> ----------------
-> Code disassembly (best guess):
->    0:   41 56                   push   %r14
->    2:   41 55                   push   %r13
->    4:   41 54                   push   %r12
->    6:   53                      push   %rbx
->    7:   48 89 d3                mov    %rdx,%rbx
->    a:   49 89 f6                mov    %rsi,%r14
->    d:   49 89 ff                mov    %rdi,%r15
->   10:   48 bd 00 00 00 00 00    movabs $0xdffffc0000000000,%rbp
->   17:   fc ff df
->   1a:   e8 aa b0 e0 ff          call   0xffe0b0c9
->   1f:   4c 8d 63 08             lea    0x8(%rbx),%r12
->   23:   4c 89 e0                mov    %r12,%rax
->   26:   48 c1 e8 03             shr    $0x3,%rax
-> * 2a:   0f b6 04 28             movzbl (%rax,%rbp,1),%eax <-- trapping in=
-struction
->   2e:   84 c0                   test   %al,%al
->   30:   0f 85 01 01 00 00       jne    0x137
->   36:   41 80 3c 24 00          cmpb   $0x0,(%r12)
->   3b:   74 3d                   je     0x7a
->   3d:   48 89 d8                mov    %rbx,%rax
->
->
-> ***
->
-> If these findings have caused you to resend the series or submit a
-> separate fix, please add the following tag to your commit message:
-> Tested-by: syzbot@syzkaller.appspotmail.com
->
+On 9/12/25 5:35 PM, Sebastian Andrzej Siewior wrote:
+> On 2025-09-12 17:13:09 [-0400], Waiman Long wrote:
+>> On 9/12/25 2:50 AM, pengdonglin wrote:
+>>> From: pengdonglin <pengdonglin@xiaomi.com>
+>>>
+>>> When CONFIG_PREEMPT_RT is disabled, spin_lock*() operations implicitly
+>>> disable preemption, which provides RCU read-side protection. When
+>>> CONFIG_PREEMPT_RT is enabled, spin_lock*() implementations internally
+>>> manage RCU read-side critical sections.
+>> I have some doubt about your claim that disabling preemption provides RCU
+>> read-side protection. It is true for some flavors but probably not all. I do
+>> know that disabling interrupt will provide RCU read-side protection. So for
+>> spin_lock_irq*() calls, that is valid. I am not sure about spin_lock_bh(),
+>> maybe it applies there too. we need some RCU people to confirm.
+> The claim is valid since Paul merged the three flavours we had. Before
+> that preempt_disable() (and disabling irqs) would match
+> rcu_read_lock_sched(). rcu_read_lock() and rcu_read_lock_bh() were
+> different in terms of grace period and clean up.
+> So _now_ we could remove it if it makes things easier.
 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 596c0fa7fc90..d0d437f38a70 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2801,6 +2801,9 @@ static int bpf_prog_verify_signature(struct
-bpf_prog *prog, union bpf_attr *attr
-        else
-                key =3D bpf_lookup_user_key(attr->keyring_id, 0);
+Thanks for the clarification.
 
-+       if (!key)
-+               return -EINVAL;
-+
-        sig =3D kvmemdup_bpfptr(usig, attr->signature_size);
-        if (IS_ERR(sig)) {
-                bpf_key_put(key);
+In this case, I think the patch description should mention the commit 
+that unify the 3 RCU flavors to make sure that this patch won't be 
+accidentally backport'ed to an older kernel without the necessary 
+prerequisite commit(s).
 
-Thanks syzbot!
+Cheers,
+Longman
 
-- KP
-
-> ---
-> This report is generated by a bot. It may contain errors.
-> syzbot ci engineers can be reached at syzkaller@googlegroups.com.
