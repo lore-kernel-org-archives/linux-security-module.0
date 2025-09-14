@@ -1,119 +1,93 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9179F1E3DF2
-	for <linux-security-module@vger.kernel.org>; Sat, 13 Sep 2025 17:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4ADE571;
+	Sun, 14 Sep 2025 17:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757782874; cv=none; b=bzzJ3gTGor+BW59qR7PSO+NLPP0zweDBA5Nje1VqVYjneCqH1CN3bYCOA706nRBMySRX7CfoOMleD3tj7ihVysYMDlkFnC8v5ickOcGud+pMu8Um9bvaRhEVOvInR8OpFd6Zsn0UTRBwv1GS1YjFamIrgKmsmedRtg7f8SZ11U0=
+	t=1757870060; cv=none; b=Uq9vdCrXukm8No+7Mx+oPLTk/GXr1Kwaqs+8f6Hkymq2HIu5yUsQWlv2uYg/TFxRqjA3rdKVSSc+tR6cSO83qHV6dIDnBoao9mBD4JJAs5bHn/2FvnBVEqrxV40Xq5cbEaTNExfKwa+aGz/LvUp2RNuPIAbTUD2mrBLCDq7toH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757782874; c=relaxed/simple;
-	bh=fAl811+LJx+57xhD3ZDBRMsx59Zi632qqhWlpTaXmmQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=bUFJRMZ2DA0x3MLYO4C5/z1M5zlrIr1vnMs7l/2Uwz37DxGdQlt2tJypu3zUxIEkiGjmlI0yPL6A0SgdtB+I0V9qKkZk4yUAsjjFERO+/3aMiCw4r6m5HKosCgjw0bT5zUOrhlG4AHhS2Trn8uS/eb2KcS10wQas8y3HgYZ3qls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dvjll8GJ; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757870060; c=relaxed/simple;
+	bh=79hZ03aZ3ULIA5jNq7oCUuCVpZomDYMNWn6jgNL2fRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PS8ov+41UuVrdnoOzmIYZwqh5KBvL0/B6mX0BsDwiTXCsoJIifd9jJPNDw9KK68Wf1hFPe4XG+oLfiN1pALEw94d6gaCkDiDTCBmDOINoA6/gHl7ZtCE08SCevJRWRUCPKM4b1OrrHZjDDttc81OZIFqVflPJU18XKTMuvcqou4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gn8lK8zI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dvjll8GJ"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3e537dc30f7so1626098f8f.2
-        for <linux-security-module@vger.kernel.org>; Sat, 13 Sep 2025 10:01:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757782871; x=1758387671; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:date:cc:to:from
-         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=8jVrbxVggAGGjVPECN0iWVqlzdgucYLKcpcWurPyD3c=;
-        b=Dvjll8GJ0wnD0ppxn4LNP6U8prNscBJo1opMdLj3djyH6IZZ9qgnwIhswWC6Ij937R
-         N7HU3rDW05qtyUGzK2CUDClWIUiTUrmSQJQ64I03lv8uPdUs0iTf906qEYpLQP90er7h
-         QF0VoK2n1mvjPCmj7wx0J8xwenYCXEvkGAxKgsHXWAgVG2TNN4kXRcvyt2PdAeruftEe
-         yqrqi/SGPGgoyRj27+nRrwCDK53ZcfQ/n7lmq2uSTho6XJx/GbmRrjvgAN9EBT5pwFoI
-         FxGiHXQIxR1y9BJ2AK4nnfsh3tU/vTjg6+HEnyt6CBOQrscbTuYzZ4KZwTBK+R87IYSN
-         QkFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757782871; x=1758387671;
-        h=mime-version:user-agent:content-transfer-encoding:date:cc:to:from
-         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8jVrbxVggAGGjVPECN0iWVqlzdgucYLKcpcWurPyD3c=;
-        b=QD5mFds6+rq9yxi7gzqwn3wpHmlXbNy8zMUemDErQFViCv/jZMDuQRC4H1uyw7lo4v
-         6jOkbQoLeauiPQ1GCQsMMF8ac835zMU45tB3/2CzaxjY35gKtaWMmUpMU7Bf3b2wIy5S
-         l4ofCTAygq8kEj5QCK+OqbuPI67PimlmABp5tMm63ixcF7avaTwgWcpxLTp7J7fF8PMw
-         6wXju0GCJD1TW+LA6u4HjzB6IQThHTEaCagP2WlKfCkstqVMyv+J4vhy1MHRsjrlVT0F
-         Wv4bsAj4Ap2avkSDyeAMEAYo/dwGdUM63K+CG4Vx893J3p8r1K+jKi/0HI3yxVtcEJjc
-         r1BA==
-X-Gm-Message-State: AOJu0YzvHZEaFwwOjKpXfmakz/BKKfzHFhQ/8tNRlCONmXpBFKAFHjWO
-	l2xA4ZxWdBO/uygA4jAIrhFooEYYm5kLFS00qxnwnbNKFTXsefL0euWrwqlAJa2Qy50=
-X-Gm-Gg: ASbGnctBfWG0Bbt2EdHugj0rWpe3uJdaCATR2tewlU4mlEQefSSJchJ8ZUNddNO4yIP
-	6Zhfg+Lm/nzF0GLlWj5wRU7OfL2R5Fit1+4pYVJrZBEfH+5XYnrmUEW8gzNi99hAfIY5mhqTl4u
-	Jzqw+PCra9C46rUIQZta621HetA5GKphCASKbb4Xvy5u1WunOLlIhLz7N7Jqg3lgK9HVDBXrfxW
-	zhqC26WuVSdMtKOoJfrMd4ceC7udh/4r6zxQRdU9cCJwkU/kf7bHTcQ0bGkMV4P4F4KmgYS6S2q
-	QQOTzBJZAAXzItngPLEPKAHBbZzM5Y4Ymb1HUgNbPhgwxSWQDKucFeLiMGvx69gVkDVk/Fics4v
-	x8vOmlnMqPngfPB490I/lmuhOlWcs1Vr6JVwlyfCjGDvTvVhY6RIFF09rSyMKhzAWZPP6ZmC2s7
-	dQGuc=
-X-Google-Smtp-Source: AGHT+IHxuiEOQg1v7lYGNdadask14TKYGQh97aQt2avC5UpjAiAMPfP2BgCYtn/tTDqWMXPMlc9qqA==
-X-Received: by 2002:a05:6000:2510:b0:3e4:ea11:f7df with SMTP id ffacd0b85a97d-3e7659db441mr6402177f8f.40.1757782870686;
-        Sat, 13 Sep 2025 10:01:10 -0700 (PDT)
-Received: from [10.33.80.40] (mem-185.47.220.165.jmnet.cz. [185.47.220.165])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e80da7f335sm4379634f8f.8.2025.09.13.10.01.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 10:01:09 -0700 (PDT)
-Message-ID: <e5d594d0aee93da67a22a42d0e2b4e6e463ab894.camel@gmail.com>
-Subject: [bug report] [regression?] bpf lsm breaks /proc/*/attr/current with
- security= on commandline
-From: Filip Hejsek <filip.hejsek@gmail.com>
-To: linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-  James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	regressions@lists.linux.dev
-Date: Sat, 13 Sep 2025 19:01:08 +0200
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gn8lK8zI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0145C4CEF0;
+	Sun, 14 Sep 2025 17:14:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757870060;
+	bh=79hZ03aZ3ULIA5jNq7oCUuCVpZomDYMNWn6jgNL2fRE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Gn8lK8zITBNoujifAnN/YDL3jVvSwojtmH06N5sHIQ+vf93H/q66LbOKZ85V0oO69
+	 RTjfbVwbgi52WdYyfxW6MmXiMNb2HVJ5y6ARcH7pfVikMs9Rf7A6MVzD1DSNxAKFme
+	 Sa3iKOQHp6m3WxoRu+aqA4Uyce8QCQr7hwxeTq7M7HwHlxD6QG/1bN7CkbklRNakZ5
+	 laTJ61rpOj0gkvXRSCKCW80hIGNh0FnQxEgq9T2Kv1vQDkJgsPu2tvGSwoF22GLX+U
+	 P6AJfXjzIihiYFeHSwAyHRxV65CzfXA7PivWI+ESevcyfpfbgn+e3i7kbIwNlRYltw
+	 YYRjv6SW2Whjw==
+Date: Sun, 14 Sep 2025 20:14:16 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Paul Moore <paul@paul-moore.com>, David Howells <dhowells@redhat.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH] security: keys: use menuconfig for KEYS symbol
+Message-ID: <aMb36LPkJgM29P7-@kernel.org>
+References: <20250824222813.92300-1-rdunlap@infradead.org>
+ <aKzot67f7F3wtHs7@kernel.org>
+ <CAHC9VhQsVMKN6YyHFF81rPvxirtM7UwwAJSpOZdeybGCuO1c2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhQsVMKN6YyHFF81rPvxirtM7UwwAJSpOZdeybGCuO1c2g@mail.gmail.com>
 
-Hello,
+On Thu, Sep 11, 2025 at 04:34:15PM -0400, Paul Moore wrote:
+> On Mon, Aug 25, 2025 at 6:50 PM Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > On Sun, Aug 24, 2025 at 03:28:13PM -0700, Randy Dunlap wrote:
+> > > Give the KEYS kconfig symbol and its associated symbols a separate
+> > > menu space under Security options by using "menuconfig" instead of
+> > > "config".
+> > >
+> > > This also makes it easier to find the security and LSM options.
+> > >
+> > > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> > > ---
+> > > Cc: David Howells <dhowells@redhat.com>
+> > > Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> > > Cc: keyrings@vger.kernel.org
+> > > Cc: linux-security-module@vger.kernel.org
+> > > Cc: Paul Moore <paul@paul-moore.com>
+> > > Cc: James Morris <jmorris@namei.org>
+> > > Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> > >
+> > >  security/keys/Kconfig |   14 ++++++--------
+> > >  1 file changed, 6 insertions(+), 8 deletions(-)
+> 
+> ...
+> 
+> > I wote for this at least. Definitely an improvement:
+> >
+> > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> I'm guessing you're planning to take this patch Jarkko?
 
-TLDR: because of bpf lsm, putting security=3Dselinux on commandline
-      results in /proc/*/attr/current returning errors.
 
-When the legacy security=3D commandline option is used, the specified lsm
-is added to the end of the lsm list. For example, security=3Dapparmor
-results in the following order of security modules:
+I'm doing PRs early week to this can easily go to my queue
+(neither mind if David picks it).
 
-   capability,landlock,lockdown,yama,bpf,apparmor
+David?
 
-In particular, the bpf lsm will be ordered before the chosen major lsm.
+> 
+> -- 
+> paul-moore.com
 
-This causes reads and writes of /proc/*/attr/current to fail, because
-the bpf hook overrides the apparmor/selinux hook.
-
-As you can see in the code below, only the first registered hook is
-called (when reading attr/current, lsmid is 0):
-
-int security_getprocattr(struct task_struct *p, int lsmid, const char *name=
-,
-			 char **value)
-{
-	struct lsm_static_call *scall;
-
-	lsm_for_each_hook(scall, getprocattr) {
-		if (lsmid !=3D 0 && lsmid !=3D scall->hl->lsmid->id)
-			continue;
-		return scall->hl->hook.getprocattr(p, name, value);
-	}
-	return LSM_RET_DEFAULT(getprocattr);
-}
-
-Even though the bpf lsm doesn't allow attaching bpf programs to this
-hook, it still prevents the other hooks from being called.
-
-This is maybe a regression, because with the same commandline, reading
-from /proc/*/attr/current probably worked before the introduction of
-bpf lsm.
-
-Regards,
-Filip Hejsek
+BR, Jarkko
