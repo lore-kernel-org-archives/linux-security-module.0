@@ -1,221 +1,389 @@
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D6715E5DC;
-	Sun, 14 Sep 2025 21:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655551D7E4A;
+	Sun, 14 Sep 2025 21:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757885111; cv=none; b=ggn59VTv+huJJsgwcx6QNV0AJAsRSwokjHNEV2P7ldbNKnYu8MJxxtowigOWlvSnk2EezyrDamDIpQRW8NJW6y5x0uVAevqYR6YUBgTJweBuzWQ6NjFE8SLcPh8iQutuR+302HL+pf9ZIUQYpMpvFrt8kDG5PvIZAX9jayA+Xfw=
+	t=1757886713; cv=none; b=Z+5vdPEKF/GxASIB+ArtTjfk5zfZLwOP/EuG+umDLcGsSTN5R7n7IeX8YeKSw7KtdnTC4LnYDqLIp0oM2C1o1melB9pIZsFfCEz/RVjHxLTK5NgYSXXhBAAjTUIPOyBZNOqdusqcOMVZZ5XMf7tq1pGxf9eMULZBIdogSZwij80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757885111; c=relaxed/simple;
-	bh=R+3pfshVT1lSGsyaLxJi/4XIjqo6zl+0e/pcO0vSeLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=udrHuxoxF5MSzlT0rT1ANbPNbU+xB2kbY0IjhqDpSt45NhnXIQZePjbxjk8xyObpZHUt4f6+SflbeTX8KPAasR4LZ5XUGe5vYThKCzpYY1yOBbAsLLoPETGFGgI4bcBpiJuAwUDwzmFAgV667epKaDfUoAKyOelAjUxf9ZbSd7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=o4y5fW7x; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HrInNQFK; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1757886713; c=relaxed/simple;
+	bh=CZCKN7Rl8BRNeCzyusbUmwIbndX84/AWK3qQxmJrf3k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J6qRjeETyoVPkMB/chfdjhm4v7MD0Ghg10yeaVEIzUDY5OrGvuguCMpOtGsdSLpn5qbBC9aTHjgDkH1jE19XsxrCoYFoEZ8xD01bNUowv+2OwGSjFH2nmkFZRzL5qc756yh4qmrJHPdkfLKX/her2Cv9KrchelJEMlASK1hYUPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VB6uA7SM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="o4y5fW7x";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HrInNQFK"
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id 879EF1D00104;
-	Sun, 14 Sep 2025 17:25:07 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Sun, 14 Sep 2025 17:25:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1757885107;
-	 x=1757971507; bh=OXNfFITD0Z2WLNrlGuGJH8lsgEiqKtnk1fe1/UjtTYc=; b=
-	o4y5fW7xS7sTP3ASBxGhhpgq9O/cEq9HsybOPwgc3xgqzHAajds8Q2sJx9wwr6wt
-	d82xbiKdCO7TidoOgpoVQ0c0qNcC4c/IOYBCGU5B5vZiM3CyaEHc6BPFPerYyfg3
-	5dix6vXHRa0/ZcCri0HQTyu9x1pgcYqo3OT3bfkcEa0tkYfHLWZ2XkkMuiL8FSwK
-	lB6XkolL0zFY0PiFufsUPNNwKEzoXqc497aznopHmZLNWwLHRVGAWAC/DB+s+MlI
-	YXBSlE7/87h34/wvqrYDCSVkcOYB9lLqSaRourb6OUuorlfJHvUQtnzB1sJqVQHT
-	90ztsLiziAB2P4uv2N08zg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757885107; x=
-	1757971507; bh=OXNfFITD0Z2WLNrlGuGJH8lsgEiqKtnk1fe1/UjtTYc=; b=H
-	rInNQFKxJBTLKxNkU5H+OOI0ZqZiwIQ1YOi5lcEGx9zPW4keDGEZxebYRg0b1vx4
-	gpcvI3/jLUHybrZBBR0ysGhChSmbfh5SKRF/PEe+IARieXjbXDWjItrSxO8OL3Uh
-	iGMVwwf+khvkxDDuP8xNOc6aLhd4BQRQpbzwVg+zIIy8HUUnKYdjU1DZdBggn+p3
-	YvqKCl3J9n4UKk7SgkSMfpPUnchxYmCMiDP5SA+0zq58BLu17o0hfzVi8W07sjE4
-	KepWBxa04j43nhs8xeIAPBSO0hMosfzCJOKigAZ4EmFGiUEfwUz2Y+g7hhukPktt
-	tia2+lyVttTePGQYnfbUA==
-X-ME-Sender: <xms:sjLHaG5sxU8lbcviElxnwZQ3FOzZpv8fTbuCj-uOtw0i4c9iSbMHkg>
-    <xme:sjLHaPUiSctmGP-q5_9DwS29XyLnJYXF_yAvX3-d-ug-4QWGCNru41lnU9mt1QhJ-
-    wLKrCtiHvqhZbffVHQ>
-X-ME-Received: <xmr:sjLHaGgFk4fhxjSwwe0oYffE0xip4HUFZPETEZWQIWd7xeOQEbAtgMC3ddS0GN6O_W-w_pinzEdz4bV8S1sMW3QE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefheeklecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuuh
-    hsphgvtghtffhomhgrihhnucdlgeelmdenucfjughrpefkffggfgfuvfevfhfhjggtgfes
-    thekredttddvjeenucfhrhhomhepvfhinhhgmhgrohcuhggrnhhguceomhesmhgrohifth
-    hmrdhorhhgqeenucggtffrrghtthgvrhhnpeetueejjeelleduuefhvdeuhedvffeivdfh
-    teektdettdegudfhgeetfeelvedtffenucffohhmrghinhepghhithhhuhgsrdhiohenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrgho
-    fihtmhdrohhrghdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprh
-    gtphhtthhopegrshhmrgguvghushestghouggvfihrvggtkhdrohhrghdprhgtphhtthho
-    pehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepvghrihgtvhhhsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehluhgthhhosehiohhnkhhovhdrnhgvthdprhgtphht
-    thhopehlihhnuhigpghoshhssegtrhhuuggvsgihthgvrdgtohhmpdhrtghpthhtohepvh
-    elfhhssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepghhnohgrtghksehg
-    ohhoghhlvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoug
-    hulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhs
-    vgdrtgii
-X-ME-Proxy: <xmx:sjLHaHcw_y87jd_aWaVxIS4iQXfjlsQvBehUiZklvIeC05p7ZMhc3g>
-    <xmx:sjLHaN38yfXFqE7qp2EaBVYH-LKGE0tjg6S980NvxO3lWgZj2R4j9Q>
-    <xmx:sjLHaLoHfTjunrnBOVVyJ7QLZhqMmmTmOXjs8A94NM18-bSXzxcnew>
-    <xmx:sjLHaNhwUOjE2c3Fa3zLPXJzvTN3yJpnqNJdRAA7UskFN-YWgDjuZg>
-    <xmx:szLHaEUlPvC7f5808YY5K0Z7lk2hQ4nyu7bsuWsiao0nHnRNqPFRwcjF>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 14 Sep 2025 17:25:04 -0400 (EDT)
-Message-ID: <2acd6ae7-caf5-4fe7-8306-b92f5903d9c0@maowtm.org>
-Date: Sun, 14 Sep 2025 22:25:02 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VB6uA7SM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C77CFC4CEF0;
+	Sun, 14 Sep 2025 21:51:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757886712;
+	bh=CZCKN7Rl8BRNeCzyusbUmwIbndX84/AWK3qQxmJrf3k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VB6uA7SMB5JQA4vKdT/CBtMrQjb4SM5T7DPw8LiIB8FALBjZFScRRZljdQBQbIAxs
+	 bRJVvbHlmNljSpi90rONaAYsD2pwh+m3g2qYYzN+oEjp/5kwER+5/rdfkFJFJJpmqp
+	 jdTOrqKQiBMEzUZwYvQW89up+qSWMEewZNnzN2aqJ4NXkh18eIcPCn/KMXZck56txY
+	 ObUnK2QBtJwXYyOPOf+5uMNZ54Q3vmLHipZyLcRE96eHbeY0SqI5RiemUquvj9cuE5
+	 2h+16ze44a/ZD8PIMA3suqqM/n/xW2d/dDs1sv1XdoP886CzIyMAROsYa7uYIePVp3
+	 0f4U0LkJClcJA==
+From: KP Singh <kpsingh@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: bboscaccy@linux.microsoft.com,
+	paul@paul-moore.com,
+	kys@microsoft.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org
+Subject: [PATCH v4 00/12] Signed BPF programs
+Date: Sun, 14 Sep 2025 23:51:29 +0200
+Message-ID: <20250914215141.15144-1-kpsingh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
- qid)
-To: Dominique Martinet <asmadeus@codewreck.org>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
- Latchesar Ionkov <lucho@ionkov.net>,
- Christian Schoenebeck <linux_oss@crudebyte.com>, v9fs@lists.linux.dev,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
- Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
- Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- linux-fsdevel@vger.kernel.org
-References: <cover.1756935780.git.m@maowtm.org>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <cover.1756935780.git.m@maowtm.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Dominique and others,
+# v3 -> v4
 
-I had a chat with Mickaël earlier this week and some discussion following
-that, and we thought of a potential alternative to what I was proposing
-here that might work for Landlock: using the inode number (or more
-correctly, qid.path) directly as the keys for Landlock rules when
-accessing 9p files.  I'm not sure how sound this is from the perspective
-of 9pfs (there are pros and caveats), and I would like to gather some
-thoughts on this idea.
+* Dropped the use of session keyring by default from skeletons.
+* Andrii's feedback on exclusive map creation libbpf changes.
+* Cleaned up some more typos I found.
 
-Technically a 9pfs server is not supposed to return colliding qid.paths
-for different files.  In fact, according to [1], the qid must not be the
-same even for files which are deleted then recreated using the same name
-(whereas for e.g. ext4, inode number is reused if a file is deleted and
-recreated, possibly with a different name, in the same directory).
-However, this is in practice not the case for many actual 9pfs server
-implementations (thus the reason for this patch series in the first
-place).
+# v2 -> v3
 
-This is a bad problem for the 9pfs client in Linux as it can lead to data
-corruption if the wrong inode is used, but for Landlock, the only effect
-of this is allowing access to more files then the sandboxing application
-intended (and only in the presence of an "erroneous" 9pfs server).  Any
-other alternative, including this patch series, has the opposite risk -
-files that should be allowed might be denied (even if the server
-implementation is fully correct in terms of no reusing of qids).  In
-particular, this patch cannot correctly handle server-side renames of an
-allowed file, or rename of a directory with children in it from the client
-(although this might be solved, with the expense of adding more
-complicated code in the rename path to rewrite all the struct ino_paths).
+* Dropped unstable test where function can be inlined and only select few
+  LSKEL tests are using signing per Alexei's request
+* Some other feedback incorporated.
 
-In discussion with Mickaël he thought that it would be acceptable for
-Landlock to assume that the server is well-behaved, and Landlock could
-specialize for 9pfs to allow access if the qid matches what's previously
-seen when creating the Landlock ruleset (by using the qid as the key of
-the rule, instead of a pointer to the inode).
+#v1 -> v2
 
-There are, however, several immediate issues with this approach:
+* Addressed feedback on excl maps and their implementation
+* libbpf feedback
+* fixed s390x and other tests that were failing in the CI
+* using the kernel's sha256 API since it now uses acceleration if available
+* simple signing test case, this can be extended to inject a false SHA into
+  the loader
 
-1. The qid is 9pfs internal data, and we may need extra API for 9pfs to
-   expose this to Landlock.  On 64bit, this is easy as it's just the inode
-   number (offset by 2), which we can already get from the struct inode.
-   But perhaps on 32bit we need a way to expose the full 64bit server-sent
-   qid to Landlock (or other kernel subsystems), if we're going to do
-   this.
+BPF Signing has gone over multiple discussions in various conferences with the
+kernel and BPF community and the following patch series is a culmination
+of the current of discussion and signed BPF programs. Once signing is
+implemented, the next focus would be to implement the right security policies
+for all BPF use-cases (dynamically generated bpf programs, simple non CO-RE
+programs).
 
-2. Even though qids are supposed to be unique across the lifetime of a
-   filesystem (including deleted files), this is not the case even for
-   QEMU in multidevs=remap mode, when running on ext4, as tested on QEMU
-   10.1.0.  And thus in practice a Landlock ruleset would need to hold a
-   reference to the file to keep it open, so that the server will not
-   re-use the qid for other files (having a reference to the struct inode
-   alone doesn't seem to do that).
+Signing also paves the way for allowing unrivileged users to
+load vetted BPF programs and helps in adhering to the principle of least
+privlege by avoiding unnecessary elevation of privileges to CAP_BPF and
+CAP_SYS_ADMIN (ofcourse, with the appropriate security policy active).
 
-   Unfortunately, holding a dentry in Landlock prevents the filesystem
-   from being unmounted (causes WARNs), with no (proper) chance for
-   Landlock to release those dentries.  We might do it in
-   security_sb_umount, but then at that point it is not guaranteed that
-   the unmount will happen - perhaps we would need a new security_ hooks
-   in the umount path?
+A early version of this design was proposed in [1]:
 
-   Alternatively, I think if we could somehow tell 9pfs to keep a fid open
-   (until either the Landlock domain is closed, or the filesystem is
-   unmounted), it could also work.
+# General Idea: Trusted Hash Chain
 
-   I'm not sure what's the best way to do this, it seems like unless we
-   can get a new pre_umount / pre_sb_delete hook in which we can free
-   dentries, 9pfs would need to expose some new API, or alternatively, in
-   uncached mode, have the v9fs inode itself hold a (strong) reference to
-   the fid, so that if Landlock has a reference to the inode, the file is
-   kept open server-side.
+The key idea of the design is to use a signing algorithm that allows
+us to integrity-protect a number of future payloads, including their
+order, by creating a chain of trust.
 
-The advantage of doing this is that, for a server with reasonable
-behaviour, Landlock users would not get incorrect denials (i.e. things
-"just work"), while still maintaining security if the 9p server is
-"reasonable" (in particular, an application sandboxed under Landlock would
-not get access to unrelated files if it does not have a way to somehow get
-those files to be recreated with an allowed inode number), whereas the
-current patch has the problem with server side renames and directory
-renames (server or client side), and also can't deal with hard links.
+Consider that Alice needs to send messages M_1, M_2, ..., M_n to Bob.
+We define blocks of data such that:
 
-I'm not sure how attractive this solution is to various people here -
-Mickaël is happy with special-casing 9pfs in Landlock, and in fact he
-suggested this idea in the first place, but I think this has the potential
-to be quite complicated (but technically more correct).  It would also
-only work for Landlock, and if e.g. fsnotify wants to have the same
-behaviour, that would need its own changes too.
+    B_n = M_n || H(termination_marker)
 
-Apologies for the long-winded explanation, any thoughts on this?
+(Each block contains its corresponding message and the hash of the
+*next* block in the chain.)
+
+    B_{n-1} = M_{n-1} || H(B_n)
+    B_{n-2} = M_{n-2} || H(B_{n-1})
+
+  ...
+
+    B_2 = M_2 || H(B_3)
+    B_1 = M_1 || H(B_2)
+
+Alice does the following (e.g., on a build system where all payloads
+are available):
+
+  * Assembles the blocks B_1, B_2, ..., B_n.
+  * Calculates H(B_1) and signs it, yielding Sig(H(B_1)).
+
+Alice sends the following to Bob:
+
+    M_1, H(B_2), Sig(H(B_1))
+
+Bob receives this payload and does the following:
+
+    * Reconstructs B_1 as B_1' using the received M_1 and H(B_2)
+(i.e., B_1' = M_1 || H(B_2)).
+    * Recomputes H(B_1') and verifies the signature against the
+received Sig(H(B_1)).
+    * If the signature verifies, it establishes the integrity of M_1
+and H(B_2) (and transitively, the integrity of the entire chain). Bob
+now stores the verified H(B_2) until it receives the next message.
+    * When Bob receives M_2 (and H(B_3) if n > 2), it reconstructs
+B_2' (e.g., B_2' = M_2 || H(B_3), or if n=2, B_2' = M_2 ||
+H(termination_marker)). Bob then computes H(B_2') and compares it
+against the stored H(B_2) that was verified in the previous step.
+
+This process continues until the last block is received and verified.
+
+Now, applying this to the BPF signing use-case, we simplify to two messages:
+
+    M_1 = I_loader (the instructions of the loader program)
+    M_2 = M_metadata (the metadata for the loader program, passed in a
+map, which includes the programs to be loaded and other context)
+
+For this specific BPF case, we will directly sign a composite of the
+first message and the hash of the second. Let H_meta = H(M_metadata).
+The block to be signed is effectively:
+
+    B_signed = I_loader || H_meta
+
+The signature generated is Sig(B_signed).
+
+The process then follows a similar pattern to the Alice and Bob model,
+where the kernel (Bob) verifies I_loader and H_meta using the
+signature. Then, the trusted I_loader is responsible for verifying
+M_metadata against the trusted H_meta.
+
+From an implementation standpoint:
+
+# Build
+
+bpftool (or some other tool in a trusted build environment) knows
+about the metadata (M_metadata) and the loader program (I_loader). It
+first calculates H_meta = H(M_metadata). Then it constructs the object
+to be signed and computes the signature:
+
+    Sig(I_loader || H_meta)
+
+# Loader
+
+The loader program and the metadata are a hermetic representation of the source
+of the eBPF program, its maps and context. The loader program is generated by
+libbpf as a part of a standard API i.e. bpf_object__gen_loader.
+
+## Supply chain
+
+While users can use light skeletons as a convenient method to use signing
+support, they can directly use the loader program generation using libbpf
+(bpf_object__gen_loader) into their own trusted toolchains.
+
+libbpf, which has access to the program's instruction buffer is a key part of
+the TCB of the build environment
+
+An advanced threat model that does not intend to depend on libbpf (or any provenant
+userspace BPF libraries) due to supply chain risks despite it being developed
+in the kernel source and by the kernel community will require reimplmenting a
+lot of the core BPF userspace support (like instruction relocation, map handling).
+
+Such an advanced user would also need to integrate the generation of the loader
+into their toolchain.
+
+Given that many use-cases (e.g. Cilium) generate trusted BPF programs,
+trusted loaders are an inevitability and a requirement for signing support, a
+entrusting loader programs will be a fundamental requirement for an security
+policy.
+
+The initial instructions of the loader program verify the SHA256 hash
+of the metadata (M_metadata) that will be passed in a map. These instructions
+effectively embed the precomputed H_meta as immediate values.
+
+    ld_imm64 r1, const_ptr_to_map // insn[0].src_reg == BPF_PSEUDO_MAP_IDX
+    r2 = *(u64 *)(r1 + 0);
+    ld_imm64 r3, sha256_of_map_part1 // precomputed by bpf_object__gen_load/libbpf (H_meta_1)
+    if r2 != r3 goto out;
+
+    r2 = *(u64 *)(r1 + 8);
+    ld_imm64 r3, sha256_of_map_part2 // precomputed by bpf_object__gen_load/libbpf (H_meta_2)
+    if r2 != r3 goto out;
+
+    r2 = *(u64 *)(r1 + 16);
+    ld_imm64 r3, sha256_of_map_part3 // precomputed by bpf_object__gen_load/libbpf (H_meta_3)
+    if r2 != r3 goto out;
+
+    r2 = *(u64 *)(r1 + 24);
+    ld_imm64 r3, sha256_of_map_part4 // precomputed by bpf_object__gen_load/libbpf (H_meta_4)
+    if r2 != r3 goto out;
+    ...
+
+This implicitly makes the payload equivalent to the signed block (B_signed)
+
+    I_loader || H_meta
+
+bpftool then generates the signature of this I_loader payload (which
+now contains the expected H_meta) using a key and an identity:
+
+This signature is stored in bpf_attr, which is extended as follows for
+the BPF_PROG_LOAD command:
+
+    __aligned_u64 signature;
+    __u32 signature_size;
+    __u32 keyring_id;
+
+The reasons for a simpler UAPI is that it's more future proof (e.g.) with more
+stable instruction buffers, loader programs being directly into the compilers.
+A simple API also allows simple programs e.g. for networking that don't need
+loader programs to directly use signing.
+
+# Extending OBJ_GET_INFO_BY_FD for hashes
+
+OBJ_GET_INFO_BY_FD is used to get information about BPF objects (maps, programs, links) and
+returning the hash of the map is a natural extension of the UAPI as it can be
+helpful for debugging, fingerprinting etc.
+
+Currently, it's only implemented for BPF_MAP_TYPE_ARRAY. It can be trivially
+extended for BPF programs to return the complete SHA256 along with the tag.
+
+The SHA is stored in struct bpf_map for exclusive and frozen maps
+
+    struct bpf_map {
+    +   u64 sha[4];
+        const struct bpf_map_ops *ops;
+        struct bpf_map *inner_map_meta;
+    };
+
+## Exclusive BPF maps
+
+Exclusivity ensures that the map can only be used by a future BPF
+program whose SHA256 hash matches sha256_of_future_prog.
+
+First, bpf_prog_calc_tag() is updated to compute the SHA256 instead of
+SHA1, and this hash is stored in struct bpf_prog_aux:
+
+    @@ -1588,6 +1588,7 @@ struct bpf_prog_aux {
+         int cgroup_atype; /* enum cgroup_bpf_attach_type */
+         struct bpf_map *cgroup_storage[MAX_BPF_CGROUP_STORAGE_TYPE];
+         char name[BPF_OBJ_NAME_LEN];
+    +    u64 sha[4];
+         u64 (*bpf_exception_cb)(u64 cookie, u64 sp, u64 bp, u64, u64);
+         // ...
+    };
+
+An exclusive is created by passing an excl_prog_hash
+(and excl_prog_hash_size) in the BPF_MAP_CREATE command.
+When a BPF program is subsequently loaded and it attempts to use this map,
+the kernel will compare the program's own SHA256 hash against the one
+registered with the map, if matching, it will be added to prog->used_maps[].
+
+The program load will fail if the hashes do not match or if the map is
+already in use by another (non-matching) exclusive program.
+
+Exclusive maps ensure that no other BPF programs and compromise the intergity of
+the map post the signature verification.
+
+NOTE: Exclusive maps cannot be added as inner maps.
+
+# Light Skeleton Sequence (Userspace Example)
+
+	err = map_fd = skel_map_create(BPF_MAP_TYPE_ARRAY, "__loader.map",
+				       opts->excl_prog_hash,
+				       opts->excl_prog_hash_sz, 4,
+				       opts->data_sz, 1);
+	err = skel_map_update_elem(map_fd, &key, opts->data, 0);
+
+	err = skel_map_freeze(map_fd);
+
+	// Kernel computes the hash of the map.
+	err = skel_obj_get_info_by_fd(map_fd);
+
+	memset(&attr, 0, prog_load_attr_sz);
+	attr.prog_type = BPF_PROG_TYPE_SYSCALL;
+	attr.insns = (long) opts->insns;
+	attr.insn_cnt = opts->insns_sz / sizeof(struct bpf_insn);
+	attr.signature = (long) opts->signature;
+	attr.signature_size = opts->signature_sz;
+	attr.keyring_id = opts->keyring_id;
+	attr.license = (long) "Dual BSD/GPL";
+
+The kernel will:
+
+    * Compute the hash of the provided I_loader bytecode.
+    * Verify the signature against this computed hash.
+    * Check if the metadata map (now exclusive) is intended for this
+      program's hash.
+
+The signature check happens in BPF_PROG_LOAD before the security_bpf_prog
+LSM hook.
+
+This ensures that the loaded loader program (I_loader), including the
+embedded expected hash of the metadata (H_meta), is trusted.
+Since the loader program is now trusted, it can be entrusted to verify
+the actual metadata (M_metadata) read from the (now exclusive and
+frozen) map against the embedded (and trusted) H_meta. There is no
+Time-of-Check-Time-of-Use (TOCTOU) vulnerability here because:
+
+    * The signature covers the I_loader and its embedded H_meta.
+    * The metadata map M_metadata is frozen before the loader program is loaded
+      and associated with it.
+    * The map is made exclusive to the specific (signed and verified)
+      loader program.
+
+[1] https://lore.kernel.org/bpf/CACYkzJ6VQUExfyt0=-FmXz46GHJh3d=FXh5j4KfexcEFbHV-vg@mail.gmail.com/#t
 
 
-[1]: https://ericvh.github.io/9p-rfc/rfc9p2000.html#msgs
-     "If a file is deleted and recreated with the same name in the same
-     directory, the old and new path components of the qids should be
-     different."
+KP Singh (12):
+  bpf: Update the bpf_prog_calc_tag to use SHA256
+  bpf: Implement exclusive map creation
+  libbpf: Implement SHA256 internal helper
+  libbpf: Support exclusive map creation
+  selftests/bpf: Add tests for exclusive maps
+  bpf: Return hashes of maps in BPF_OBJ_GET_INFO_BY_FD
+  bpf: Move the signature kfuncs to helpers.c
+  bpf: Implement signature verification for BPF programs
+  libbpf: Update light skeleton for signing
+  libbpf: Embed and verify the metadata hash in the loader
+  bpftool: Add support for signing BPF programs
+  selftests/bpf: Enable signature verification for some lskel tests
 
----
+ crypto/asymmetric_keys/pkcs7_verify.c         |   1 +
+ include/linux/bpf.h                           |  42 +++-
+ include/linux/verification.h                  |   1 +
+ include/uapi/linux/bpf.h                      |  18 ++
+ kernel/bpf/Kconfig                            |   2 +-
+ kernel/bpf/arraymap.c                         |  13 ++
+ kernel/bpf/core.c                             |  13 +-
+ kernel/bpf/helpers.c                          | 166 ++++++++++++++
+ kernel/bpf/syscall.c                          |  99 +++++++-
+ kernel/bpf/verifier.c                         |   6 +
+ kernel/trace/bpf_trace.c                      | 183 ---------------
+ .../bpf/bpftool/Documentation/bpftool-gen.rst |  16 +-
+ .../bpftool/Documentation/bpftool-prog.rst    |  18 +-
+ tools/bpf/bpftool/Makefile                    |   6 +-
+ tools/bpf/bpftool/cgroup.c                    |   4 +
+ tools/bpf/bpftool/gen.c                       |  66 +++++-
+ tools/bpf/bpftool/main.c                      |  26 ++-
+ tools/bpf/bpftool/main.h                      |  11 +
+ tools/bpf/bpftool/prog.c                      |  27 ++-
+ tools/bpf/bpftool/sign.c                      | 212 ++++++++++++++++++
+ tools/include/uapi/linux/bpf.h                |  18 ++
+ tools/lib/bpf/bpf.c                           |   6 +-
+ tools/lib/bpf/bpf.h                           |   5 +-
+ tools/lib/bpf/bpf_gen_internal.h              |   2 +
+ tools/lib/bpf/gen_loader.c                    |  55 +++++
+ tools/lib/bpf/libbpf.c                        | 128 +++++++++++
+ tools/lib/bpf/libbpf.h                        |  25 ++-
+ tools/lib/bpf/libbpf.map                      |   3 +
+ tools/lib/bpf/libbpf_internal.h               |   4 +
+ tools/lib/bpf/skel_internal.h                 |  76 ++++++-
+ tools/testing/selftests/bpf/.gitignore        |   1 +
+ tools/testing/selftests/bpf/Makefile          |  35 ++-
+ .../selftests/bpf/prog_tests/atomics.c        |  10 +-
+ .../selftests/bpf/prog_tests/fentry_fexit.c   |  15 +-
+ .../selftests/bpf/prog_tests/fentry_test.c    |   9 +-
+ .../selftests/bpf/prog_tests/fexit_test.c     |   9 +-
+ .../selftests/bpf/prog_tests/map_excl.c       |  54 +++++
+ tools/testing/selftests/bpf/progs/map_excl.c  |  34 +++
+ .../selftests/bpf/progs/verifier_map_ptr.c    |   7 +-
+ tools/testing/selftests/bpf/test_progs.c      |  13 ++
+ .../testing/selftests/bpf/verify_sig_setup.sh |  11 +-
+ 41 files changed, 1216 insertions(+), 234 deletions(-)
+ create mode 100644 tools/bpf/bpftool/sign.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/map_excl.c
+ create mode 100644 tools/testing/selftests/bpf/progs/map_excl.c
 
-Note: Even with the above, there's another potential problem - QEMU does
-not, for some reason (I've not really investigated this very deeply, but
-it's observation from /proc/.../fd), keep a directory open when the guest
-has a fid to it.  This means that if a directory is deleted while we have
-an active Landlock rule on it, a new file or directory may get the same
-qid.  (However, at least this still correctly handles directory renames,
-and the only effect is Landlock allowing more files than intended in the
-presence of a buggy server.)
+-- 
+2.43.0
 
-(The Hyper-V 9p server, used by WSL, seems to have the same problem, and a
-bit worse since even client-side renames breaks opened dir fds on the
-WSL-to-Windows 9pfs (/mnt/c/...))
-
-(Another challenge is that Landlock would have to know when a file is on a
-9pfs in uncached mode - we probably don't need this behaviour for cached
-mode filesystems, as we assume no server changes in that case and the
-inode is reused already.  We can certainly determine the FS of a file, but
-not sure about specific 9pfs cache options)
