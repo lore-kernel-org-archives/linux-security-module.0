@@ -1,109 +1,89 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CC627461;
-	Mon, 15 Sep 2025 14:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D305F3431E9;
+	Mon, 15 Sep 2025 14:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757947257; cv=none; b=o893vUd9mG6COsQA2Z7Fd2JfzT28j/C+IMllAxh72F+t0ozY+f3mQ7VgjDIMBNKiH+DSUGBM2sr7IRX9dkdZQAGNKPCCRa91e4Xxb4gcY0TNTjsgzEr2sy4yNlAg2DBO4rrXJZ93mumpMXoixPU3StwnRtP9WyDvBJ1tDdXZZKU=
+	t=1757947843; cv=none; b=frURZPqZUgbDv4WXwEkuHjyh7vAFR/wWwdG38UdTE3T9821eflmnTPKlKz60v8EhyoB9FFxUn13UXwhEHRaBSVCob1cwL54q5NnR1nbgmqhX/hRpIOi9rDIYZm4tOBDM2R2mWSE97DjESRYPBeo+5pBLP3uknzsSME9nu9QX4aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757947257; c=relaxed/simple;
-	bh=x67mCxmqkj9+e9pzvDN8Tta0qPHWFpvcCgabamG1AWc=;
+	s=arc-20240116; t=1757947843; c=relaxed/simple;
+	bh=X7joDIQOhd4EYaEdt0UM/m+z3DLeB8OZMqEr8/8P3nw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M1YuLDuFYnYMhKhOW8vvPXidTn8COjP8bDvsfMC+QEtemcSZ0Cpr0juo862/4ivYAUuliSMHrUp/eOXoV05rwK+8lWnM6CF5/DpSaNl+B3B/h2h5wjc5z8Edo02Ty9tOkUaRDpKyteObeYuWE8zUZmOT6ZvE0N0Qrbg07b/AxAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kJqEilup; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u+YNkMxE; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kJqEilup";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u+YNkMxE"
-Date: Mon, 15 Sep 2025 16:40:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757947254;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lni+I3buozORHBU99Fb6S2L5ArlJnPvanU1k2nG+bqs=;
-	b=kJqEilupnjshBEyflsSxaQ1cYXo1HmvwEGZxE5Hry+3tMhFnVh3frgVMySXIVU3YA7sr/P
-	ZmzsU0E7Km8Wp9l5bZDkkyDgnPFZnbLtBPRK/3LI31uDYiDIGpPjLv9wsR2eeUTNRRAX//
-	dmNhtGH6hrZaFy0o25aqc/JiLREHt/y5ZcTdXzlyLdSjRzpWF1ajC/tWXeGrJKOz1r4JdJ
-	O+HZHd0cB6caRbdRPYpFuFCDeIfE27yuCYcWeSk2ELWrhiOAF7HeL/2G+EZODCQqXklj6A
-	WbRdcD38CnfevP/TM/aX4fpES3ouPOth51eerceMkkYhcApyFTE2c/6EC96NyA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757947254;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lni+I3buozORHBU99Fb6S2L5ArlJnPvanU1k2nG+bqs=;
-	b=u+YNkMxEXUeLN4I2gvc5y9anOucA/bETagP+D7VWVq55ed12wCZJ5YaxLNDq/vrnZRM5c4
-	1K1FhWVW76s3WjAg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: pengdonglin <dolinux.peng@gmail.com>
-Cc: tj@kernel.org, tony.luck@intel.com, jani.nikula@linux.intel.com,
-	ap420073@gmail.com, jv@jvosburgh.net, freude@linux.ibm.com,
-	bcrl@kvack.org, trondmy@kernel.org, longman@redhat.com,
-	kees@kernel.org, linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev, linux-nfs@vger.kernel.org,
-	linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org, linux-acpi@vger.kernel.org,
-	linux-s390@vger.kernel.org, cgroups@vger.kernel.org,
-	Hillf Danton <hdanton@sina.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	pengdonglin <pengdonglin@xiaomi.com>
-Subject: Re: [PATCH v2] rcu: Remove redundant rcu_read_lock/unlock() in
- spin_lock critical sections
-Message-ID: <20250915144052.VHYlgilw@linutronix.de>
-References: <20250915134729.1801557-1-dolinux.peng@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hWVioLxi3xw8GPw0XeFOkf93+x3nEx8QrMpE/tFiUuu0AP8TeyJ/IWVYE3HYBlLK2hWdKVdqwU5avQpVodcvA0dUrRtBowf2mOEeIQyc3Noa9CfgO15NujQdB4wGrSUoeLQRQOQExbf0doPTlA0rST0NHXRkIVcDKN8LFxmmmNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 04E63499; Mon, 15 Sep 2025 09:50:32 -0500 (CDT)
+Date: Mon, 15 Sep 2025 09:50:32 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
+	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgoettsche@seltendoof.de>,
+	linux-kernel@vger.kernel.org,
+	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH] pid: use ns_capable_noaudit() when determining net
+ sysctl permissions
+Message-ID: <aMgnuMB4ycJX5VdL@mail.hallyn.com>
+References: <20250910192605.16431-1-cgoettsche@seltendoof.de>
+ <23663be0b8dc2a435bcc46a3d52e9e19@paul-moore.com>
+ <aMNVoSM7PauOrCPF@mail.hallyn.com>
+ <aMR2EfsdxmIXIgTW@mail.hallyn.com>
+ <20250915-geldquelle-magie-eb9075a9764e@brauner>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250915134729.1801557-1-dolinux.peng@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250915-geldquelle-magie-eb9075a9764e@brauner>
 
-On 2025-09-15 21:47:29 [+0800], pengdonglin wrote:
-> From: pengdonglin <pengdonglin@xiaomi.com>
+On Mon, Sep 15, 2025 at 04:13:16PM +0200, Christian Brauner wrote:
+> On Fri, Sep 12, 2025 at 02:35:45PM -0500, Serge Hallyn wrote:
+> > On Thu, Sep 11, 2025 at 06:05:05PM -0500, Serge E. Hallyn wrote:
+> > > On Thu, Sep 11, 2025 at 04:46:20PM -0400, Paul Moore wrote:
+> > > > On Sep 10, 2025 =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de> wrote:
+> > > > > 
+> > > > > The capability check should not be audited since it is only being used
+> > > > > to determine the inode permissions. A failed check does not indicate a
+> > > > > violation of security policy but, when an LSM is enabled, a denial audit
+> > > > > message was being generated.
+> > > > > 
+> > > > > The denial audit message can either lead to the capability being
+> > > > > unnecessarily allowed in a security policy, or being silenced potentially
+> > > > > masking a legitimate capability check at a later point in time.
+> > > > > 
+> > > > > Similar to commit d6169b0206db ("net: Use ns_capable_noaudit() when
+> > > > > determining net sysctl permissions")
+> > > > > 
+> > > > > Fixes: 7863dcc72d0f ("pid: allow pid_max to be set per pid namespace")
+> > > > > CC: Christian Brauner <brauner@kernel.org>
+> > > > > CC: linux-security-module@vger.kernel.org
+> > > > > CC: selinux@vger.kernel.org
+> > > > > Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+> > > > > ---
+> > > > >  kernel/pid.c | 2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > Reviewed-by: Paul Moore <paul@paul-moore.com>
+> > > 
+> > > Thanks.
+> > > 
+> > > Acked-by: Serge Hallyn <serge@hallyn.com>
+> > > 
+> > > I'll queue this up in the capability tree, unless Christian wanted
+> > > it in his.
+> > > 
+> > > -serge
+> > 
+> > I've included this in git://git.kernel.org/pub/scm/linux/kernel/git/sergeh/linux.git#caps-next
 > 
-> Per Documentation/RCU/rcu_dereference.rst [1], since Linux 4.20's RCU
-> consolidation [2][3], RCU read-side critical sections include:
->   - Explicit rcu_read_lock()
->   - BH/interrupt/preemption-disabling regions
->   - Spinlock critical sections (including CONFIG_PREEMPT_RT kernels [4])
-> 
-> Thus, explicit rcu_read_lock()/unlock() calls within spin_lock*() regions are redundant.
-> This patch removes them, simplifying locking semantics while preserving RCU protection.
-> 
-> [1] https://elixir.bootlin.com/linux/v6.17-rc5/source/Documentation/RCU/rcu_dereference.rst#L407
-> [2] https://lore.kernel.org/lkml/20180829222021.GA29944@linux.vnet.ibm.com/
-> [3] https://lwn.net/Articles/777036/
-> [4] https://lore.kernel.org/lkml/6435833a-bdcb-4114-b29d-28b7f436d47d@paulmck-laptop/
+> What's easier for you? Just want me to stuff this in the pidfs pile?
 
-What about something like this:
-
-  Since commit a8bb74acd8efe ("rcu: Consolidate RCU-sched update-side
-  function definitions") there is no difference between rcu_read_lock(),
-  rcu_read_lock_bh() and rcu_read_lock_sched() in terms of RCU read
-  section and the relevant grace period. That means that spin_lock(),
-  which implies rcu_read_lock_sched(), also implies rcu_read_lock().
-
-  There is no need no explicitly start a RCU read section if one has
-  already been started implicitly by spin_lock().
-
-  Simplify the code and remove the inner rcu_read_lock() invocation.
-
-
-The description above should make it clear what:
-- the intention is
-- the proposed solution to it and why it is correct.
-
-You can't send a patch like this. You need to split it at the very least
-by subsystem. The networking bits need to follow to follow for instance
-   Documentation/process/maintainer-netdev.rst
-
-and so on.
-
-Sebastian
+Oh, sure - I can drop it from my tree, since it's the only thing in there
+right now.
