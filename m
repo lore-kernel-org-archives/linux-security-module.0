@@ -1,89 +1,107 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D305F3431E9;
-	Mon, 15 Sep 2025 14:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5D330C347;
+	Mon, 15 Sep 2025 14:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757947843; cv=none; b=frURZPqZUgbDv4WXwEkuHjyh7vAFR/wWwdG38UdTE3T9821eflmnTPKlKz60v8EhyoB9FFxUn13UXwhEHRaBSVCob1cwL54q5NnR1nbgmqhX/hRpIOi9rDIYZm4tOBDM2R2mWSE97DjESRYPBeo+5pBLP3uknzsSME9nu9QX4aI=
+	t=1757947860; cv=none; b=oTo81Yv37OSk7wemsYnEas/9VZZFexXU3n6B3qReSS9ZTMJO9aoE7cotdunnQcciB4CudFOBQjOblKtZRS9PKsx7znfhcNpD6wbSQynOUg8b/dU2uxFNBAGrt4dtNbKjtogZdQIepilTAqk6FO/3bjbo7cBs4g/I/u/ldako5go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757947843; c=relaxed/simple;
-	bh=X7joDIQOhd4EYaEdt0UM/m+z3DLeB8OZMqEr8/8P3nw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hWVioLxi3xw8GPw0XeFOkf93+x3nEx8QrMpE/tFiUuu0AP8TeyJ/IWVYE3HYBlLK2hWdKVdqwU5avQpVodcvA0dUrRtBowf2mOEeIQyc3Noa9CfgO15NujQdB4wGrSUoeLQRQOQExbf0doPTlA0rST0NHXRkIVcDKN8LFxmmmNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 04E63499; Mon, 15 Sep 2025 09:50:32 -0500 (CDT)
-Date: Mon, 15 Sep 2025 09:50:32 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
-	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgoettsche@seltendoof.de>,
-	linux-kernel@vger.kernel.org,
-	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH] pid: use ns_capable_noaudit() when determining net
- sysctl permissions
-Message-ID: <aMgnuMB4ycJX5VdL@mail.hallyn.com>
-References: <20250910192605.16431-1-cgoettsche@seltendoof.de>
- <23663be0b8dc2a435bcc46a3d52e9e19@paul-moore.com>
- <aMNVoSM7PauOrCPF@mail.hallyn.com>
- <aMR2EfsdxmIXIgTW@mail.hallyn.com>
- <20250915-geldquelle-magie-eb9075a9764e@brauner>
+	s=arc-20240116; t=1757947860; c=relaxed/simple;
+	bh=Y+PNaf1gaLlN/lJujMJdcSqSWuyrJH89S2pZODpFWD4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jhqZSqCT7u/M1ReOctdyqWzDBbg1Jnznh7dw6BFf4KxP5QZ2blrlmnhj/fy46NMcw3Ewr2pRZbswa/7/kdQsxMjQ7LIQgMhK9pl8o2dtqsqXhkSUGig/TFWBTNzy4ltH8/XFcEK4pfkMKNGOiHHGJ3zvrMozZBC6TGzi/bpc0hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=oRQlaXvX; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="oRQlaXvX"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=3jkOVW4UeMu2h/64thZ8lLTfUx9zG1iEi3pX48Qe014=; b=oRQlaXvXWcyVDew8Y8gV2aL6T/
+	y5yLg04UjWJK9x6QleWQskJJDo+YM7XdRKnxcTuuZq7Pti0i2PotnrCbc3RsPhnpG+fQ0z80pdygS
+	E4AafemYOUvKbFgO52FwVPp2JNAP8KK+uNX6S+zHOq+ZEaahXa9lMjxuxcHWHYmHyOJcEcLuLyrz1
+	ioLMZWpjU6pmA6Ss6mhz2MQRdxNtH5SBuCx0LI6vESbS06+1hPoL7DDFeMbYEYCbxgih0WmPKoXEN
+	6eq7lKzGl1HS8sLHAL82RFp25u/EyYg7ywSpAOSDYxV4s9yRDzaSpr3jHIhhpPAbwCnXMX5x+66Js
+	E3ZOypkPV03sTaGMpK21dNyjWGB+m6svP44N7JMjK565UM8I/hcV0aPXebCua7s+yjla5iAZqU0xt
+	XLaHeg1mNCOxVVNjVf287qSn33tizgOCPdpXVKhygn78frYkodPMFAJ8I+rrnemo3FA7WODnJeTnr
+	9uN7yapbLbwVgkZzgQrWNKGcEHNn42Y0uvz6IYc6yC0mMgzzu6WP66Ga6mK7a7tVwDZp+LPy/bun2
+	Z7LPZFaMC+6Vu1kJoI0dZELKSthhOVRs94Tn/uV7Vz5MbcVksMIc2u07vBjqID1+d2JDsvD3YBm2h
+	rrpApdtml982tzK59fgTDhh15buFGugooJ19hmIYs=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: Tingmao Wang <m@maowtm.org>, Dominique Martinet <asmadeus@codewreck.org>
+Cc: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>,
+ v9fs@lists.linux.dev, =?ISO-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+ linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
+ Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ linux-fsdevel@vger.kernel.org
+Subject:
+ Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to qid)
+Date: Mon, 15 Sep 2025 16:10:07 +0200
+Message-ID: <14530343.U1M6xoFM3Z@silver>
+In-Reply-To: <aMgMOnrAOrwQyVbp@codewreck.org>
+References:
+ <cover.1756935780.git.m@maowtm.org>
+ <2acd6ae7-caf5-4fe7-8306-b92f5903d9c0@maowtm.org>
+ <aMgMOnrAOrwQyVbp@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250915-geldquelle-magie-eb9075a9764e@brauner>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Sep 15, 2025 at 04:13:16PM +0200, Christian Brauner wrote:
-> On Fri, Sep 12, 2025 at 02:35:45PM -0500, Serge Hallyn wrote:
-> > On Thu, Sep 11, 2025 at 06:05:05PM -0500, Serge E. Hallyn wrote:
-> > > On Thu, Sep 11, 2025 at 04:46:20PM -0400, Paul Moore wrote:
-> > > > On Sep 10, 2025 =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de> wrote:
-> > > > > 
-> > > > > The capability check should not be audited since it is only being used
-> > > > > to determine the inode permissions. A failed check does not indicate a
-> > > > > violation of security policy but, when an LSM is enabled, a denial audit
-> > > > > message was being generated.
-> > > > > 
-> > > > > The denial audit message can either lead to the capability being
-> > > > > unnecessarily allowed in a security policy, or being silenced potentially
-> > > > > masking a legitimate capability check at a later point in time.
-> > > > > 
-> > > > > Similar to commit d6169b0206db ("net: Use ns_capable_noaudit() when
-> > > > > determining net sysctl permissions")
-> > > > > 
-> > > > > Fixes: 7863dcc72d0f ("pid: allow pid_max to be set per pid namespace")
-> > > > > CC: Christian Brauner <brauner@kernel.org>
-> > > > > CC: linux-security-module@vger.kernel.org
-> > > > > CC: selinux@vger.kernel.org
-> > > > > Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-> > > > > ---
-> > > > >  kernel/pid.c | 2 +-
-> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > Reviewed-by: Paul Moore <paul@paul-moore.com>
-> > > 
-> > > Thanks.
-> > > 
-> > > Acked-by: Serge Hallyn <serge@hallyn.com>
-> > > 
-> > > I'll queue this up in the capability tree, unless Christian wanted
-> > > it in his.
-> > > 
-> > > -serge
+On Monday, September 15, 2025 2:53:14 PM CEST Dominique Martinet wrote:
+[...]
+> > 1. The qid is 9pfs internal data, and we may need extra API for 9pfs to
 > > 
-> > I've included this in git://git.kernel.org/pub/scm/linux/kernel/git/sergeh/linux.git#caps-next
+> >    expose this to Landlock.  On 64bit, this is easy as it's just the inode
+> >    number (offset by 2), which we can already get from the struct inode.
+> >    But perhaps on 32bit we need a way to expose the full 64bit server-sent
+> >    qid to Landlock (or other kernel subsystems), if we're going to do
+> >    this.
 > 
-> What's easier for you? Just want me to stuff this in the pidfs pile?
+> I'm not sure how much effort we want to spend on 32bit: as far as I
+> know, if we have inode number collision on 32 bit we're already in
+> trouble (tools like tar will consider such files to be hardlink of each
+> other and happily skip reading data, producing corrupted archives);
+> this is not a happy state but I don't know how to do better in any
+> reasonable way, so we can probably keep a similar limitation for 32bit
+> and use inode number directly...
 
-Oh, sure - I can drop it from my tree, since it's the only thing in there
-right now.
+I agree, on 32-bit the game is lost.
+
+One way that would come to my mind though: exposing the full qid path as xattr 
+on 32-bit, e.g. via "system.9pfs_qid" or something like that.
+
+> > 2. Even though qids are supposed to be unique across the lifetime of a
+> > 
+> >    filesystem (including deleted files), this is not the case even for
+> >    QEMU in multidevs=remap mode, when running on ext4, as tested on QEMU
+> >    10.1.0.
+> 
+> I'm not familiar with the qid remap implementation in qemu, but I'm
+> curious in what case you hit that.
+> Deleting and recreating files? Or as you seem to say below the 'qid' is
+> "freed" when fd is closed qemu-side and re-used by later open of other
+> files?
+
+The inode remap algorithm in QEMU's 9p server was designed to prevent inode 
+number collisions of equally numbered inodes of *different* *devices* on host, 
+exposed to guest via the same 9p mount (which appears as only one 9pfs device 
+on guest). Basis for this however is still the underlying filesystem's inode 
+number on host.
+
+So yes, ext4 re-uses inode numbers of deleted files, and when that happens, a 
+new file appears with the same qid path as the previously deleted file with 
+QEMU.
+
+/Christian
+
+
