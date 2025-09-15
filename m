@@ -1,258 +1,177 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04502E63C;
-	Mon, 15 Sep 2025 21:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7450028E5F3;
+	Mon, 15 Sep 2025 23:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757970370; cv=none; b=V2vvrkCdhEzscfUcLb1J/5dvOYJ9LefzkzhX1Y9JVc9McZQJBShC77ZQJFPjJKP24tfPPk6q71juRvp6MV4IT4XYd6fkbOCZ3RANCg7ThC1UKpuSiyRY2jlUbWldqdnmWGwqDyYo4j7FTEjfCuVlFiswe00EfaoQnEPmsic5AOY=
+	t=1757979134; cv=none; b=jIZ7/yeoBqwfgUw4LEv+QjJ/YSHoZoEEEN31QjxSNH0B/2IU26Y+yYeoJL/X1PurzuQiPNuSwWe8+70i0VO7jJiwwHPLI7B+Yo474OZ25IobIWMDV7B6cs/gdQgQy7hYlxJzp5+97O90KArfopJ7bSqKOBtzPJlEchncjP7SM0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757970370; c=relaxed/simple;
-	bh=1rwaw35739SX89Wkk08mu+pzhLkhi0bNecALjoH1t/Q=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=dVmDyPE/EDbOqqyB8QUl8zT5RzEh2/pba0PQBazYrDv9QFVnXy57XjXnTE9JWZnzv3epzBPT8FsFaAKn/FXMmwMiLYAIn1px7OQhw4GhAX6/BCfCUmDiKe0jaIREtqC3vdS3kZBSwVFpe5yP0i1dApfER4D8jIsUNkudh0HlwEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eUgBvziW; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1757979134; c=relaxed/simple;
+	bh=WHU2CxZRa2g5EFKpbNfzwYfa90eDm6qyaP8bTKks+VQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=HJQBqnjTjJdOUi3Zus3fXK/GdDIGW3PgzL85Xg2mZHkwrTf7Y71N+lMgCLJ1tzniBvxUTd197AHsUod+eiurGpFcXEkWTRMSjr6/ySRSsSy50iet3K5sMddVOuMfcoLrcxdno462l+79KxtHNXtpgr/ltC5BbKJXau58jVP24RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=1ElrqUR1; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eUgBvziW"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FJrAH6031871;
-	Mon, 15 Sep 2025 21:05:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=HJvrD4
-	VvubL/x9qUwmwj1HrK7vnilKoknCRBtlJQsE4=; b=eUgBvziW2Tn+19QwxUMGxI
-	UEIDUhdAac2NjvOZSZg7bs+hI6oA4wx3X8+t5eMgcpdjbxGv1Uw4mYprqqM59lcn
-	9pmwApt2mQZv+HpqbpCqKDObzE2HRlq3upyPXMmRFTUPm8b7ex53Qz8Z32k8NnEg
-	YG82vM9TdYYoV9q+LIR9+ksRzkPtyxsKLivxUyY6f+sY8UVdz7T9HHiGAWAiW/+W
-	xuDT/0iFxFYt+CI4qFfO8Xz04prbDttD3vHwi1xZ7sKwMb0aI+R5H0R4KzrQnKEH
-	6HrXbScBhothwvoAfReVuMc/1W66abBv0SiIqu5rUWY8GL61Hf9qir4z4YPq85rg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 494x1tcr16-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 21:05:46 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58FL0ITt006584;
-	Mon, 15 Sep 2025 21:05:45 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 494x1tcr13-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 21:05:45 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58FHnk9t005963;
-	Mon, 15 Sep 2025 21:05:44 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 495jxu0mak-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 21:05:44 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58FL5iqO24052470
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 15 Sep 2025 21:05:44 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0860158050;
-	Mon, 15 Sep 2025 21:05:44 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ED0BD58054;
-	Mon, 15 Sep 2025 21:05:42 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.24.60])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 15 Sep 2025 21:05:42 +0000 (GMT)
-Message-ID: <40e9c7bd15d4ab8b71ac335b5d896ed39c61980c.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: setting security.ima to fix security.evm for a
- file with IMA signature
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: linux-integrity@vger.kernel.org, Roberto Sassu
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore	
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"	
- <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM"	
- <linux-security-module@vger.kernel.org>,
-        open list	
- <linux-kernel@vger.kernel.org>
-In-Reply-To: <r3himk4z2aiyqsjstlpnda4wafeo7i4oum3n2dbvnasmtep5ex@zqodcpjmyx5b>
-References: <20250909041954.1626914-1-coxu@redhat.com>
-	 <5aeecf1aa6eff8ae0ea0a9e95d5df79aee338b32.camel@linux.ibm.com>
-	 <r3himk4z2aiyqsjstlpnda4wafeo7i4oum3n2dbvnasmtep5ex@zqodcpjmyx5b>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 15 Sep 2025 17:05:42 -0400
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="1ElrqUR1"
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 1305A14C2D3;
+	Tue, 16 Sep 2025 01:32:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1757979129;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
+	bh=zoWYUdNi4Raj9EAnFQq01pnwxMPu7jm7FnNods9uys4=;
+	b=1ElrqUR1IuWPrWWofFu+WWUSwR/WsroYsLK3RMV2eMVtI7m+uqED1Pm9IPGlTPeeGg1Vj6
+	6wBFUHGTJylveAk80uFTFl4PAAqpuKn/tNKLv9pUMsXClpvTkQkUPwSW6oZz22DeTRWiSQ
+	U/zIFxYyj0XSYYvgE8dU/ucRU4AYXahXAyv67Vs74alHy98/Cuubhhd+ADwthAZ7IylTCE
+	tHgMrMpOIls7wARa88eukiJw0b1Ckf+707Viz3jM/UFMJSSaYQjPAKssMu6yu0DvMEsDJX
+	328cex7smJ0JPpAPylZ/KqurtGwiYo/BDzcgaMMrdFPDx0E3JE9kBV4kI+Yjrg==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 9511c87d;
+	Mon, 15 Sep 2025 23:32:04 +0000 (UTC)
+Date: Tue, 16 Sep 2025 08:31:49 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Tingmao Wang <m@maowtm.org>
+Cc: Christian Schoenebeck <linux_oss@crudebyte.com>,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Matthew Bobrowski <repnop@google.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
+ qid)
+Message-ID: <aMih5XYYrpP559de@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=OMsn3TaB c=1 sm=1 tr=0 ts=68c87faa cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=vUXcQdf43LBxS_wO:21 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8
- a=HqxqN70uwPQbf9qsMsIA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: Hb9tl43CgSe-KSuTfmjKazUmO_-C-evf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAwMSBTYWx0ZWRfX87li03ofpJF+
- HCHKhmuOAcBkaJZal5+daZ3wcs+uo6H0cV9S2VK+0NlxwIvqcPorXmzx0QBiY6dTx2G7jNTUh7+
- H+ZtILSU2LJ1D+1jx4VEBCXlGzYGLcfzOuGq6lJ3rjMH/DtXa7JlgE5DLULP7oFSi5Og0BWnWgI
- 9zAiDehp5phnU+Xmp1oioRh2PtwJj2Kx9r0MCXpvczDLPERvV3lm5KTAqrOiEk0z+t08HojiyUp
- RPCnsSdm0KEdwyoLoUH1g3OTdKdLSnme8Gf+EK0vRC5MWguSUPD6d56ecPEVvNRcMYnNvxeJtXe
- NCw4ZLUlLHpT9AnEuHzFvtQSxm9f4IBXevCsFTTb0ye1FleFclwDtH6ymMYEgFEjbiJdkmvwcZN
- GpdJ65/T
-X-Proofpoint-GUID: QSK9bfB-hjkujywSMo7Iqysud_JEJ5Vk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_08,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 spamscore=0 priorityscore=1501 adultscore=0
- impostorscore=0 clxscore=1015 malwarescore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130001
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <41d761e6-d826-4c29-b673-1fb2b0af77b9@maowtm.org>
 
-On Wed, 2025-09-10 at 09:20 +0800, Coiby Xu wrote:
-> On Tue, Sep 09, 2025 at 11:31:20AM -0400, Mimi Zohar wrote:
-> > On Tue, 2025-09-09 at 12:19 +0800, Coiby Xu wrote:
-> > > When both IMA and EVM fix modes are enabled, accessing a file with IM=
-A
-> > > signature won't cause security.evm to be fixed. But this doesn't happ=
-en
-> > > to a file with correct IMA hash already set because accessing it will
-> > > cause setting security.ima again which triggers fixing security.evm
-> > > thanks to security_inode_post_setxattr->evm_update_evmxattr.
-> > >=20
-> > > Let's use the same mechanism to fix security.evm for a file with IMA
-> > > signature.
-> > >=20
-> > > Signed-off-by: Coiby Xu <coxu@redhat.com>
-> >=20
-> > Agreed, re-writing the file signature stored as security.ima would forc=
-e
-> > security.evm to be updated.
-> >=20
-> > Unfortunately, I'm missing something. ima_appraise_measurement() first =
-verifies
-> > the existing security.evm xattr, before verifying the security.ima xatt=
-r.  If
-> > the EVM HMAC fails to verify, it immediately exits ima_appraise_measure=
-ment().
-> > security.ima in this case is never verified.
-> >=20
-> > This patch seems to address the case where the existing security.evm is=
- valid,
-> > but the file signature stored in security.ima is invalid.  (To get to t=
-he new
-> > code, the "status" flag is not INTEGRITY_PASS.)  Re-writing the same in=
-valid
-> > file signature would solve an invalid security.evm, but not an invalid =
-IMA file
-> > signature.  What am I missing?
->=20
-> Hi, Mimi,
->=20
-> Thanks for raising the question! This patch is to address the case where
-> IMA signature is already added but security.evm doesn't yet exist. So
-> EVM HMAC fails to verify but there is no exiting
-> ima_appraise_measurement immediately.
->=20
-> And you are right that re-writing an invalid IMA file won't fix an
-> invalid IMA file signature. And even when IMA signature is valid, the
-> verification may fail because the key is missing from .ima keyring. This
-> happens because we need to turn off secure boot to enable fix mode. As a
-> result, CA keys won't be loaded into .machine keyring. Btw, if I'm not
-> mistaken, current IMA code assumes we are not supposed to fix IMA file
-> signature.
-> >=20
-> > > ---
-> > >  security/integrity/ima/ima_appraise.c | 27 +++++++++++++++++++++----=
---
-> > >  1 file changed, 21 insertions(+), 6 deletions(-)
-> > >=20
-> > > diff --git a/security/integrity/ima/ima_appraise.c b/security/integri=
-ty/ima/ima_appraise.c
-> > > index f435eff4667f..18c3907c5e44 100644
-> > > --- a/security/integrity/ima/ima_appraise.c
-> > > +++ b/security/integrity/ima/ima_appraise.c
-> > > @@ -595,12 +595,27 @@ int ima_appraise_measurement(enum ima_hooks fun=
-c, struct ima_iint_cache *iint,
-> > >  		integrity_audit_msg(audit_msgno, inode, filename,
-> > >  				    op, cause, rc, 0);
-> > >  	} else if (status !=3D INTEGRITY_PASS) {
-> > > -		/* Fix mode, but don't replace file signatures. */
-> > > -		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig &&
-> > > -		    (!xattr_value ||
-> > > -		     xattr_value->type !=3D EVM_IMA_XATTR_DIGSIG)) {
-> > > -			if (!ima_fix_xattr(dentry, iint))
-> > > -				status =3D INTEGRITY_PASS;
-> > > +		/*
-> > > +		 * Fix mode, but don't replace file signatures.
-> > > +		 *
-> > > +		 * When EVM fix mode is also enabled, security.evm will be
-> > > +		 * fixed automatically when security.ima is set because of
-> > > +		 * security_inode_post_setxattr->evm_update_evmxattr.
-> > > +		 */
-> > > +		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig) {
-> > > +			if (!xattr_value ||
-> > > +			    xattr_value->type !=3D EVM_IMA_XATTR_DIGSIG) {
-> > > +				if (ima_fix_xattr(dentry, iint))
-> > > +					status =3D INTEGRITY_PASS;
-> > > +			} else if (xattr_value->type =3D=3D EVM_IMA_XATTR_DIGSIG &&
-> > > +				   evm_revalidate_status(XATTR_NAME_IMA)) {
-> > > +				if (!__vfs_setxattr_noperm(&nop_mnt_idmap,
-> > > +							   dentry,
-> > > +							   XATTR_NAME_IMA,
-> > > +							   xattr_value,
-> > > +							   xattr_len, 0))
-> > > +					status =3D INTEGRITY_PASS;
-> > > +			}
-> > >  		}
+(Thanks Christian, replying just once but your reply was helpful)
 
-Instead of re-writing the IMA signature without a clear explanation, define=
- a
-new EVM function named evm_fix_hmac() and add a call here in IMA. Only in E=
-VM
-fix mode would evm_fix_hmac() update the EVM hmac.
+Tingmao Wang wrote on Mon, Sep 15, 2025 at 02:44:44PM +0100:
+> > I'm fuzzy on the details but I don't see how inode pointers would be
+> > stable for other filesystems as well, what prevents
+> > e.g. vm.drop_caches=3 to drop these inodes on ext4?
+> 
+> Landlock holds a reference to the inode in the ruleset, so they shouldn't
+> be dropped.  On security_sb_delete Landlock will iput those inodes so they
+> won't cause issue with unmounting.  There is some special mechanism
+> ("landlock objects") to decouple the ruleset themselves from the actual
+> inodes, so that previously Landlocked things can keep running even after
+> the inode has disappeared as a result of unmounting.
 
-        } else if (status !=3D INTEGRITY_PASS) {                           =
-      =20
-                /*                                                         =
-    =20
-                 * IMA fix mode updates the IMA file hash, which triggers E=
-VM  =20
-                 * to update security.evm.  ....                           =
-   =20
-                 *                                                         =
-    =20
-                 * Similarly, trigger fixing EVM HMAC for IMA file signatur=
-es.=20
-                 */                                                        =
-    =20
-                if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig) {    =
-    =20
-                        if (!xattr_value ||                                =
-    =20
-                            xattr_value->type !=3D EVM_IMA_XATTR_DIGSIG) { =
-      =20
-                                if (ima_fix_xattr(dentry, iint))           =
-    =20
-                                        status =3D INTEGRITY_PASS;         =
-      =20
-                        } else if (status =3D=3D INTEGRITY_NOLABEL) {      =
-        =20
-                                evm_fix_hmac(dentry, XATTR_NAME_IMA, ....);=
-   =20
-                        }                                                  =
-    =20
-                }               =20
+Thank you for the explanation, that makes more sense.
+iirc even in cacheless mode 9p should keep inode arounds if there's an
+open fd somewhere
 
-> > >=20
-> > >  		/*
-> > >=20
-> > > base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-> >=20
->=20
+> > Although looking at the patches what 9p seems to need isn't a new stable
+> > handle, but "just" not allocating new inodes in iget5...
+> > This was attempted in 724a08450f74 ("fs/9p: simplify iget to remove
+> > unnecessary paths"), but later reverted in be2ca3825372 ("Revert "fs/9p:
+> > simplify iget to remove unnecessary paths"") because it broke too many
+> > users, but if you're comfortable with a new mount option for the lookup
+> > by path I think we could make a new option saying
+> > "yes_my_server_has_unique_qids"... Which I assume would work for
+> > landlock/fsnotify?
+> 
+> I noticed that, but assumed that simply reverting them without additional
+> work (such as tracking the string path) would be a no go given the reason
+> why they are reverted.
 
+Yes, just reverting and using that as default broke too much things, so
+this is unfortunately not acceptable... And 9p has no "negotiation"
+phase on mount to say "okay this is qemu with remap mode so we can do
+that" to enable to disable the behaviour automatically; which has been
+annoying in the past too.
+
+I understand you'd prefer something that works by default.
+
+> > I'm not sure how much effort we want to spend on 32bit: as far as I
+> > know, if we have inode number collision on 32 bit we're already in
+> > trouble (tools like tar will consider such files to be hardlink of each
+> > other and happily skip reading data, producing corrupted archives);
+> > this is not a happy state but I don't know how to do better in any
+> > reasonable way, so we can probably keep a similar limitation for 32bit
+> > and use inode number directly...
+> 
+> I think if 9pfs export a handle it can be the full 64bit qid.path on any
+> platform, right?
+
+yes, file handle can be an arbitrary size.
+
+> > I'm not familiar with the qid remap implementation in qemu, but I'm
+> > curious in what case you hit that.
+> > Deleting and recreating files? Or as you seem to say below the 'qid' is
+> > "freed" when fd is closed qemu-side and re-used by later open of other
+> > files?
+> 
+> I tried mounting a qemu-exported 9pfs backed on ext4, with
+> multidevs=remap, and created a file, used stat to note its inode number,
+> deleted the file, created another file (of the same OR different name),
+> and that new file will have the same inode number.
+> 
+> (If I don't delete the file, then a newly created file would of course
+> have a different ext4 inode number, and in that case QEMU exposes a
+> different qid)
+
+Ok so from Christian's reply this is just ext4 reusing the same inode..
+I briefly hinted at this above, but in this case ext4 will give the
+inode a different generation number (so the ext4 file handle will be
+different, and accessing the old one will get ESTALE); but that's not
+something qemu currently tracks and it'd be a bit of an overhaul...
+In theory qemu could hash mount_id + file handle to get a properly
+unique qid, if we need to improve that, but that'd be limited to root
+users (and to filesystems that support name_to_handle_at) so I don't
+think it's really appropriate either... hmm..
+
+(I also thought of checking if nlink is 0 when getting a new inode, but
+that's technically legimitate from /proc/x/fd opens so I don't think we
+can do that either)
+
+And then there's also all the servers that don't give unique qids at
+all, so we'll just get weird landlock/fsnotify behaviours for them if we
+go that way...
+
+-----------------
+
+Okay, you've convinced me something like path tracking seems more
+appropriate; I'll just struggle one last time first with a few more open
+questions:
+ - afaiu this (reusing inodes) work in cached mode because the dentry is
+kept around; I don't understand the vfs well enough but could the inodes
+hold its dentry and dentries hold their parent dentry alive somehow?
+So in cacheless mode, if you have a tree like this:
+a
+└── b
+    ├── c
+    └── d
+with c 'open' (or a reference held by landlock), then dentries for a/b/c
+would be kept, but d could be droppable?
+
+My understanding is that in cacheless mode we're dropping dentries
+aggressively so that things like readdir() are refreshed, but I'm
+thinking this should work even if we keep some dentries alive when their
+inode is held up.
+
+ - if that doesn't work (or is too complicated), I'm thinking tracking
+path is probably better than qid-based filtering based on what we
+discussed as it only affects uncached mode.. I'll need to spend some
+time testing but I think we can move forward with the current patchset
+rather than try something new.
+
+Thanks!
+-- 
+Dominique Martinet | Asmadeus
