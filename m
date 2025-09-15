@@ -1,42 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D5B1D9346;
-	Mon, 15 Sep 2025 12:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A8530DD05;
+	Mon, 15 Sep 2025 12:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757940312; cv=none; b=HXIy5yUPLD9N/k0F2X6ca20ZWbE1y2/kcY4XAgkLM+Z1bKYL6D19jk3bRU2aeSxkMK4krT3nFzr+NHKl24MDgyEyzxXrIbn95uum9eUhplZL95Pymcnp0T1arnjbMvgpqqPX2CpbpebP8b8PHRp5DgG8vDtsZPsuhZRJQyjO/l4=
+	t=1757940328; cv=none; b=mE28AEoqAbaYyScoXbozGLGiADye6EhFzIrb8c2CeiPChm1xpJ16UWERKrplBcTfGJcjApuF+1XT1Vh47AQjnVWzwMKS9ARlh6H/UAoANBz8h8d2N7TsVsuV3C9SwWEbJ2yOU6EWPqwh+ttiV5nXy+SWvKuMv+0Ujwb9MI7ij4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757940312; c=relaxed/simple;
-	bh=kyMjFuRZ7ilbA/M6ilOkRwjIWWsMOYeKQqX2RH4Ihr4=;
+	s=arc-20240116; t=1757940328; c=relaxed/simple;
+	bh=W4wMrt8Loi6Usy/3u3ShqmaZ/hjiBd1B9QeyBs3Pr2A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bPEyT40tsBnPXPgnXqhsA5Vquk+unkBHbTJIcSh2r+ptPEs0orrI2VTwVW3zNPilL9DADUWvpe8kQZMODpwqHkt/xK8mVglbbur60eDnEs9NsfmpE/AgGzynIMHwOKGoTTP1TzUbXljQpqctIVPgw2l99RpVQGe6huvxExZtTdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tJ3rXy/h; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=AkmyGEDndy4EhNHCb5w5xszeFrtd7bpoif6I24pP76qC+5ZrUln3XA38oW0OpH+g3+GGoGCqKloSqUCHU/SpRzzVRVZwrFp6UDW5qq23e/TwLOSMcqp7Pot2Td/r8ShsKmh0k9LxujmU6tnEx+eYeHKvYNXdbFjSXD3lf/iYXk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hx1DY5ft; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJ3rXy/h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16D62C4CEF1;
-	Mon, 15 Sep 2025 12:45:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hx1DY5ft"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E85EC4CEF1;
+	Mon, 15 Sep 2025 12:45:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757940312;
-	bh=kyMjFuRZ7ilbA/M6ilOkRwjIWWsMOYeKQqX2RH4Ihr4=;
+	s=k20201202; t=1757940327;
+	bh=W4wMrt8Loi6Usy/3u3ShqmaZ/hjiBd1B9QeyBs3Pr2A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tJ3rXy/hPTTyuiFdZp0laYU2SRioUGNs7/qxcntFAVGiC7csBim5a6TKdTTpammZc
-	 tzu4WiWicp+56KaVVjGcFPSTiCQx51PAnU0ju4xpEG3PCiLHilglT3VMvc0Phvmki+
-	 125iUabOFK7jdbm4/xOOHvKbm4aKc3kYPJLBL3ZoHXzDUVXuQfyJiD8Wq/LtUU1xbv
-	 f3AY9qjpM9BxOjz+kMFfh0+SGaKyxKbD9Ud7RAml050lY/9fwgjK/1qVN/TCrdpr0e
-	 rLB5f0u7yIJyyuFN7U9Tuh1QHHl0jpItDQv5O8bjcgX8gLrI32rEAvm/FnzXczrL82
-	 k6j+mF5RvkwkA==
-Date: Mon, 15 Sep 2025 14:45:07 +0200
+	b=hx1DY5ftgZM3+2fD+BxCzIAo3GOqGLXoqPHJ8p2n94Mk2XMY/x+7yu93G0HXYQhhZ
+	 govkFBFJyls8qG+tqAEvzwpa3MRQHvchVz7iNCZIdMB+DRTjJWsQtPefSGz8QZDuHE
+	 hNztRAu9Y9szHHSjQlmJgKt17kkdN+zDYwo6R9g4qoHRISiCCn8OVoq2iBe4j0UwBd
+	 7UB+xtYxutdYi01iLtiVBkFL80YzAJTKhjUFNs2t+pt3CIehdHHqZ3m40L03/YRr0E
+	 Etg48OdKQJDq/UP0ZUio7YUbNgeS1DNYfnXDHfnYmfth15AjJZ5uSu9kK/SDCW2UNe
+	 C33EeT/MDlxew==
+Date: Mon, 15 Sep 2025 14:45:22 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
 	jack@suse.cz, neil@brown.name, linux-security-module@vger.kernel.org, 
 	dhowells@redhat.com, linkinjeon@kernel.org
-Subject: Re: [PATCH 1/6] security_dentry_init_security(): constify qstr
- argument
-Message-ID: <20250915-mitdenken-nahrung-00c8cc586615@brauner>
+Subject: Re: [PATCH 2/6] exfat_find(): constify qstr argument
+Message-ID: <20250915-bislang-urteil-3073171a2052@brauner>
 References: <20250911050149.GW31600@ZenIV>
  <20250911050534.3116491-1-viro@zeniv.linux.org.uk>
+ <20250911050534.3116491-2-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -45,9 +45,9 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250911050534.3116491-1-viro@zeniv.linux.org.uk>
+In-Reply-To: <20250911050534.3116491-2-viro@zeniv.linux.org.uk>
 
-On Thu, Sep 11, 2025 at 06:05:29AM +0100, Al Viro wrote:
+On Thu, Sep 11, 2025 at 06:05:30AM +0100, Al Viro wrote:
 > Nothing outside of fs/dcache.c has any business modifying
 > dentry names; passing &dentry->d_name as an argument should
 > have that argument declared as a const pointer.
