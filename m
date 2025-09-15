@@ -1,70 +1,70 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378851FF1AD
-	for <linux-security-module@vger.kernel.org>; Mon, 15 Sep 2025 06:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159B519DF4F
+	for <linux-security-module@vger.kernel.org>; Mon, 15 Sep 2025 06:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757916320; cv=none; b=LOkRV4EGkoSWSiVNETxX174ShUpf2qzuIXjlmD49djc+kTNey6BuaIBbSQD1bnE//IN0O+/tQNl1Xtdm5OiNVytAvF/grhQDQ2QT6gVlAc/VdsE/59K+U1PhjZ2i04JHjnVDRol56Ux9Mru4ETBm/rRuTf/DQqcx1ucWc9zyVzI=
+	t=1757916619; cv=none; b=B6cUsgIUPO3fc1KvPOsrGQFxLOCKme13NPi1JG65mgYyFYQRqxqrfsNQN8AfW5z4jv3u2XEqLHw5T8LGGYwadtrmGtD2iJrK4ADNXHHJVR4zqcFhCLBFJomsdvBE8APzvnz4RkK2AqTiqaNzbt+p6ssSpytErW7TjX/B6gJqais=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757916320; c=relaxed/simple;
-	bh=FjnuknUKHafj9VjcTmGKowDO4oahvWxzLheWbZonOt4=;
+	s=arc-20240116; t=1757916619; c=relaxed/simple;
+	bh=hn/AO5Wc5PezQglXXzvuXeX5O2ZUagUhwm5XzDzqzz0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=tJVBGgmTm3py3U0YSyqswi9NH5zY04tsw+GJXrXHA934D+0djyti4gBNtxfpSv/+aPXTWXOQx3jAguuQkgIyyxymSJmiej1ZkOXkwYDZOjv8bF0WuIqAQ1ZuguMHVV6v+nNPqMV2qQEyeDt8tBDS3gxGHDCF9LUjSXkDeYPtAQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KUgFmsxP; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type:Content-Disposition; b=mcXr+9HQBS1k3291bQprbex2RtwI8/W5qjDzHfuHzlpdJ08DWPoO9oEj1KgJVWlpdRBp3SOMqt54LumNXK8FEUKx2YBPi/Vn0e3cNWwxdGwL2jo2hwEIuaaDZNKybOHNl3KXicirIfEGbtxipAiDojBDDcfXX4Tv+tMkuCERFz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FDZu4KSI; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KUgFmsxP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FDZu4KSI"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757916317;
+	s=mimecast20190719; t=1757916616;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=omBBC34VXd5M1CEthfLS/UAjyzULL/tObmzB8px4Cho=;
-	b=KUgFmsxPbGNPkbGtA/Ez6FMl1+i5IN50kJQCqdtg5twtLlgDPz31W4pmkHJv7dNibqq9WT
-	X79qOMXWph5c+ULQX6cT+/a4/ZYj0AhKxzJXsRbWgfkQSBqpRNBA7o9Ro1BU9r9PUPqc5G
-	fpr+yzYheA6RcWIx3eBSTaocUEiTNi4=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=JQLpe+khIHoCgKf3IFT4TfFBdedPAuIsgy8bFmFQ+Iw=;
+	b=FDZu4KSIx+7DitYOI9CXovl22k2hxG+gzb6gt4ooS/bApvsd2T2aZ+/dwaa5msKLkx/jH2
+	AWBxnpv50Io5lECuntl0y58RxHQKIZv3vx3/d817uZ+nTFtTJLgiSzxW6BxvI9g6Xc88Ev
+	sq/F52sTG/i4DbqCzDydNihfLKwKhrk=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-649-gI1d4KYTMAWa4WQCf1ZE1Q-1; Mon, 15 Sep 2025 02:05:15 -0400
-X-MC-Unique: gI1d4KYTMAWa4WQCf1ZE1Q-1
-X-Mimecast-MFC-AGG-ID: gI1d4KYTMAWa4WQCf1ZE1Q_1757916315
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-32df881dce2so2272266a91.2
-        for <linux-security-module@vger.kernel.org>; Sun, 14 Sep 2025 23:05:15 -0700 (PDT)
+ us-mta-513-5myhNjODOoOubbaG16qEag-1; Mon, 15 Sep 2025 02:10:15 -0400
+X-MC-Unique: 5myhNjODOoOubbaG16qEag-1
+X-Mimecast-MFC-AGG-ID: 5myhNjODOoOubbaG16qEag_1757916614
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-76e2eb787f2so3495414b3a.3
+        for <linux-security-module@vger.kernel.org>; Sun, 14 Sep 2025 23:10:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757916314; x=1758521114;
+        d=1e100.net; s=20230601; t=1757916614; x=1758521414;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=omBBC34VXd5M1CEthfLS/UAjyzULL/tObmzB8px4Cho=;
-        b=cNYTnKEWzhMuvJUJeUVwGddNRCcUsI7b66utwo5z0RklwC26T6zWasdNX7Q/sQTrNd
-         MD71LsBc+0VLeJiPo8a2B8fr4RetSVA9C+8FO3tzUfE9EAF8QY8o4hqoUwS8eBlGierN
-         6mjc9YfsHqyOflgTfAbcsKRqbKd8p+6GFgeQkuBOPfjlokU623ruFi27asuyzT0i2x3X
-         hm5HCUMVVjj44c0C/uSkJzKOR3Sln3Xu5EAEAy4rhn8cMRecSpPTvoxsYy9PR5VJgi3h
-         WdRs5zDgpd0UrSCxwT8Fu7MLcv5E3FCQmGN4063c3ImQg1azh3NAb6PVNbu88CVtKedL
-         7L1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUVnvpL0IfKmVpm7EUPvEReDEpJQnd9EgyAHtEskNgpGYLHMM5U3JBJG89U0nz5o266Hsnkp+Hp+VThgTZhZn9rbeaA8T0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye6nSd4wP3DlBfE+QguMkIqzfTT1GkqM8+sYK7xJaQYrtfRmuy
-	r9/cv/SJHccPCBTmeHAV4FNli6DudUgB9m2DATJcclJgy1UBpIxJCWrus3Q4Cl/CR3DYZMOx5qa
-	Ho1BSbCwvkQQEWPnbU4prmAH+7LnK65pg/uXvanxBTEwIHQ/daOhwS8cWHILPG1e82Z4e7LTOF5
-	FWOQ==
-X-Gm-Gg: ASbGncu7U3QAYc39kzvsbwzpLuKx0ZFiTRZhnEL5lJHrN0NNfKFhN4nMsoUzQNwVeZi
-	3v2T+fhWqYlQ0K9EhYaTdbUz9+LU+CqlfvRyxOdNTJIho9c8lI/GrWGNY7I0LpUKO0BEeSgJv6r
-	/lREwH1HPLxoXmJpr7RWScL2hyJZ+h7KJF9Pr+dH3fIkXhrTW7+DgLPg9IwaPAfsgdZJdOgFriL
-	Ae8XvLcGschuOLXrCv3U0Hrhvfnh5HmnN/gIUsWRfY+pQN1H7+FBG7XPECjcqcIk+8M1PIN0ml6
-	DBqmYmCatWr9H7ulmVp8QrhpNrzTbek=
-X-Received: by 2002:a17:903:37cd:b0:25b:f1f3:815f with SMTP id d9443c01a7336-25d2782cda6mr166987665ad.58.1757916314541;
-        Sun, 14 Sep 2025 23:05:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHNlG6tjmW8hOH++0qfJ78+vVgyjSBUaQc7oR1me/YHP9gwQwOcHBaCT0XwJ/bVU3GcEaMzkA==
-X-Received: by 2002:a17:903:37cd:b0:25b:f1f3:815f with SMTP id d9443c01a7336-25d2782cda6mr166987255ad.58.1757916314118;
-        Sun, 14 Sep 2025 23:05:14 -0700 (PDT)
+        bh=JQLpe+khIHoCgKf3IFT4TfFBdedPAuIsgy8bFmFQ+Iw=;
+        b=aHuLpjR+LTXFIgDdTWoujvaQvaM3OV/QCaUfWt85mFKQV1QDuSO9qavGqDRzCwzbCy
+         iMWsn5GM114JjCdSvj2/ob7ujSt9kP79q8qzWfDOQHn/gPT/sBBboE7pY6+X46cUESmt
+         bczgGYXD1b37KQKDHUq3L7S7e7IHfN6t5W50GLmWoPbuuiDkhdEkXn/nO1LImRK8qlaa
+         U/g2yD6/ChxHVrGL4souI9KxfkBzZkdE1zMLvKir/T+rwUk9pov+Xn1JxlZRor+VDHU+
+         gymSisAcBBS4LKeUhJ23VSAzJdmUXb4OEBv68cb7gN9fwy4ULwuy6oLuJXpfRsJNuXki
+         2nnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUwYAn/07BJuvQqROPQTdjJ8ctglYDiqceCRLfkhCA4rfDz0WlSREqpZmAm04om/wFY28h0eabRw+LFnOaH+GRkO18hjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycqCnRRdoi/CnY4yMTEuCZnBKrQmSl1NQy4yfw8BPOOQE58ALt
+	A236r74o+ou+qnpstK7rqeGjCYHngx9dzoqDVAFPavGrTI9hR9wCIXPhqeQnhRjOpJoY8LQDbD9
+	MaCk/hqqg/uPpwXqwrue2wQH9IaAUVnH3GqlG0TGzOvNLR2qACaKnSXBa3hePcoZ00drMXrQCyf
+	6C0g==
+X-Gm-Gg: ASbGnct97f26sh3cCMDjfPuB4X9ethN9obAONXvyGyrM9CJIp2MKvdmeq8vumd60ywD
+	Kg3qlJTzJTdZDT6YxlNDBhZWcAZOSbCRmsRnmkJ0w5Nk60GcwZGbU0dY4vDJONfSctbnZqiFGEu
+	jnysGfkPM56sNGo5XAZDh0cFXLv45tnjAyVai1XMSvMS8AZvgpLaNMmgIIUS6dnrB/j6dJJzrAh
+	UGy2czpkvBL6ff+Pb6pHiedFZ8KddcazxGST9bWyaJnC1gydDgDY8wwhdZ9UpuwDVZKmuUCj4G3
+	M3P9L8PvaApbKsA2xNStHRAyt3FnqFQ=
+X-Received: by 2002:a05:6a20:748d:b0:249:467e:ba57 with SMTP id adf61e73a8af0-2602a59a02amr14839204637.24.1757916614396;
+        Sun, 14 Sep 2025 23:10:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IECQRPiQitOqtajzh6bXpLG+V7zH9SLL0OR61z/8orLwVHwrBxRsiKGz8RZndsKYlzFa4Vdpw==
+X-Received: by 2002:a05:6a20:748d:b0:249:467e:ba57 with SMTP id adf61e73a8af0-2602a59a02amr14839189637.24.1757916614030;
+        Sun, 14 Sep 2025 23:10:14 -0700 (PDT)
 Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-264277e8bc2sm35628675ad.138.2025.09.14.23.05.12
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7760793bc77sm11823853b3a.4.2025.09.14.23.10.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 23:05:13 -0700 (PDT)
-Date: Mon, 15 Sep 2025 14:03:32 +0800
+        Sun, 14 Sep 2025 23:10:13 -0700 (PDT)
+Date: Mon, 15 Sep 2025 14:07:04 +0800
 From: Coiby Xu <coxu@redhat.com>
 To: Mimi Zohar <zohar@linux.ibm.com>
 Cc: linux-integrity@vger.kernel.org, 
@@ -72,178 +72,94 @@ Cc: linux-integrity@vger.kernel.org,
 	Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
 	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
 	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ima: don't clear IMA_DIGSIG flag when setting non-IMA
+Subject: Re: [PATCH] ima: don't clear IMA_DIGSIG flag when setting non-IMA
  xattr
-Message-ID: <asadtbf7itw2343rjwvqfdvhmofhu7k6n4vsos2lojt6gqtudv@l7cgdsfbuuku>
+Message-ID: <xy26wjlyha2m3jlcnowr74q4mv2vyr7xzm7zh2ab47osx5hffi@jhwihai3t4wb>
 References: <20250902042515.759750-1-coxu@redhat.com>
- <20250908105825.1573222-1-coxu@redhat.com>
- <7790048d4dc468792b428e80ceae7261a97a896d.camel@linux.ibm.com>
+ <d252b04934908e7e65a3299bfeffc282c7b0b12f.camel@linux.ibm.com>
+ <53wb5tzech2k4k25xy2heq7ohmp2elw2a7l4x3nfk6fajfydur@5thsinydau5x>
+ <13d7fcfecb06423294ae0553c9a561f4cc8faf67.camel@linux.ibm.com>
+ <9fb8781bfb9c9ae9dd0a1413e23cae20dcd7356a.camel@linux.ibm.com>
+ <wwcnoevou44eoe3ner4oegtdsdg46tlvwidu3ynobs7huac7ae@ljivg5ksohxv>
+ <6f2b7320b691669068dda110c29c25f8aae2f244.camel@linux.ibm.com>
+ <gw7xopwfzrp5qatwqa4n4i3miztbvbdolfaa2jxslb5pktc7fs@56r7n6feu55m>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <7790048d4dc468792b428e80ceae7261a97a896d.camel@linux.ibm.com>
+In-Reply-To: <gw7xopwfzrp5qatwqa4n4i3miztbvbdolfaa2jxslb5pktc7fs@56r7n6feu55m>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: VItEp1vc9FhKiNXGGHB1Pf9UwiRjwMxeULiXMZwWUx8_1757916315
+X-Mimecast-MFC-PROC-ID: 6fL8eD8OweQ3RhtDPnpG3awKfMlygrF6FlPdXdFLjhA_1757916614
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
 
-On Wed, Sep 10, 2025 at 08:21:03AM -0400, Mimi Zohar wrote:
->On Mon, 2025-09-08 at 18:58 +0800, Coiby Xu wrote:
->> Currently when both IMA and EVM are in fix mode, the IMA signature will
->> be reset to IMA hash if a program first stores IMA signature in
->> security.ima and then sets security.selinux for a file.
+On Mon, Sep 15, 2025 at 12:06:14PM +0800, Coiby Xu wrote:
+>On Wed, Sep 10, 2025 at 08:21:33AM -0400, Mimi Zohar wrote:
+>>On Wed, 2025-09-10 at 09:36 +0800, Coiby Xu wrote:
+>>>On Mon, Sep 08, 2025 at 04:58:05PM -0400, Mimi Zohar wrote:
+>>>> On Mon, 2025-09-08 at 10:53 -0400, Mimi Zohar wrote:
+>>>> > Hi Coiby,
+>>>> >
+>>>> > On Mon, 2025-09-08 at 19:12 +0800, Coiby Xu wrote:
+>>>> > > >
+>>>> > > > Even without an IMA appraise policy, the security xattrs are written out to the
+>>>> > > > filesystem, but the IMA_DIGSIG flag is not cached.
+>>>> > >
+>>>> > > It seems I miss some context for the above sentence. If no IMA policy is
+>>>> > > configured, no ima_iint_cache will be created. If you mean non-appraisal
+>>>> > > policy, will not caching IMA_DIGSIG flag cause any problem?
+>>>> >
+>>>> > Sorry.  What I was trying to say is that your test program illustrates the
+>>>> > problem both with or without any of the boot command line options as you
+>>>> > suggested - "ima_appraise=fix evm=fix ima_policy=appraise_tcb".  Writing some
+>>>> > other security xattr is a generic problem, whether the file is in policy or not,
+>>>> > whether IMA or EVM are in fix mode or not.  The rpm-plugin-ima should install
+>>>> > the IMA signature regardless.
+>>>>
+>>>> My mistake.  An appraise policy indeed needs to be defined for the file
+>>>> signature to be replaced with a file hash.
+>>>
+>>>Thanks for the clarification! rpm-plugin-ima does try to install IMA
+>>>signature as shown from the following strace output,
+>>
+>>Agreed. I was referring to the SELinux label, which would be installed for new
+>>files, but not necessarily re-installed on existing files.  The test program
+>>simplified testing.  Thank you.
 >
->The problem description should be generic.
+>My pleasure! Note reinstalling a package using dnf/rpm is equivalent to
+>installing a new package in terms of this issue. Because according to
+>the strace output and rpm's source code, when reinstalling a package,
+>the following steps happens, taking lnstat as an example,
 >
->-> and then writes some other security xattr for the file.
+>1. A temporary file "lnstat;68aee3f4" is created
+>2. Read the content from RPM and write it to lnstat;68aee3f4
+>3. Set file permission
+>4. Set security.ima by rpm-plugin-ima
+>5. Set security.selinux by rpm-plugin-selinux
+>6. Rename "lnstat;68aee3f4" to lnstat
+>
+>And here's the strace output,
+>
+>    # strace rpm --reinstall ip*.rpm
+>    openat(11, "lnstat;68aee3f4", O_WRONLY|O_CREAT|O_EXCL, 0200) = 12
+>    dup(12)                                 = 13
+>    write(13, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0'\0\0\0\0\0\0"..., 19256) = 19256
+>    close(13)                               = 0
+>    getuid()                                = 0
+>    fchown(12, 0, 0)                        = 0
+>    fchmod(12, 0755)                        = 0
+>    getuid()                                = 0
+>    utimensat(12, NULL, [{tv_sec=1734480000, tv_nsec=0} /* 2024-12-17T19:00:00-0500 */, {tv_sec=1734480000, tv_nsec=0} /* 2024-12-17T19:00:00-0500 */], 0) = 0
+>    fsetxattr(12, "security.ima", "\3\2\4\3232\4I\0f0d\0020O\231\341q\323Q\322\235\341\7\323\224\205\2104\24\241\331#"..., 111, 0) = 0
+>    fsetxattr(12, "security.selinux", "system_u:object_r:bin_t:s0", 27, 0) = 0
+>    close(12)                               = 0
+>    ...
+>    renameat(11, "lnstat;68aee3f4", 11, "lnstat") = 0
 
-Good advice! I've applied it to v3 with a slight change,
-"... then writes/removes some other security xattr" in v3,
-
-
->
->Start a new paragraph here for the example.
->> For example, on
->> Fedora, after booting the kernel with "ima_appraise=fix evm=fix
->> ima_policy=appraise_tcb" and installing rpm-plugin-ima, reinstalling a
->> package will not make good reference IMA signature generated. Instead
->> IMA hash is generated,
->>     # getfattr -m - -d -e hex /usr/bin/bash
->>     # file: usr/bin/bash
->>     security.ima=0x0404...
->>
->> This happens because when setting selinux.selinux, the IMA_DIGSIG flag
->> that had been set early was cleared. As a result, IMA hash is generated
->> when the file is closed.
->
->Start a new paragraph here, adding a sentence describing the solution to the
->problem. For example,
->
->Prevent replacing the IMA file signature with a file hash, by preventing the
->IMA_DIGSIG flag from being reset.
-
-Thanks for the suggestion, applied to v3.
-
->
->>
->> Here's a minimal C reproducer,
->>
->>     #include <stdio.h>
->>     #include <sys/xattr.h>
->>     #include <fcntl.h>
->>     #include <unistd.h>
->>     #include <string.h>
->>     #include <stdlib.h>
->>
->>     int main() {
->>         const char* file_path = "/usr/sbin/test_binary";
->>         const char* hex_string = "030204d33204490066306402304";
->>         int length = strlen(hex_string);
->>         char* ima_attr_value;
->>         int fd;
->>
->>         fd = open(file_path, O_WRONLY|O_CREAT|O_EXCL, 0644);
->>         if (fd == -1) {
->>             perror("Error opening file");
->>             return 1;
->>         }
->>
->>         ima_attr_value = (char*)malloc(length / 2 );
->>         for (int i = 0, j = 0; i < length; i += 2, j++) {
->>             sscanf(hex_string + i, "%2hhx", &ima_attr_value[j]);
->>         }
->>
->>         if (fsetxattr(fd, "security.ima", ima_attr_value, length/2, 0) == -1) {
->>             perror("Error setting extended attribute");
->>             close(fd);
->>             return 1;
->>         }
->>
->>         const char* selinux_value= "system_u:object_r:bin_t:s0";
->>         if (fsetxattr(fd, "security.selinux", selinux_value, strlen(selinux_value), 0) == -1) {
->>             perror("Error setting extended attribute");
->>             close(fd);
->>             return 1;
->>         }
->>
->>         close(fd);
->>
->>         return 0;
->>     }
->>
->> Signed-off-by: Coiby Xu <coxu@redhat.com>
->
->Thanks, Coiby.  The updated patch looks good.  Have you looked at the other
->calls to ima_reset_appraise_flags() to make sure they don't need to be adjusted?
-
-Great question! I've updated the other two places in v3 which can
-address two additional cases,
-- remove xattr like security.evm
-- set/remove ACL
-
-Note I tried to write a C program to set/remove ACL but somehow the C
-version of "setfacl -m u:test:r" always lead to "acl_set_fd: Invalid
-argument". I bypass this issue by setting system.posix_acl_access xattr
-directly. We can get the value by "getfattr -m system.posix_acl_access
--d -e hex" after "setfacl -m u:test:r /usr/sbin/test_binary".
-
->
->thanks,
->
->Mimi
->
->> ---
->>  security/integrity/ima/ima_appraise.c | 15 +++++++++++++--
->>  1 file changed, 13 insertions(+), 2 deletions(-)
->>
->> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
->> index f435eff4667f..4e4750ea41ad 100644
->> --- a/security/integrity/ima/ima_appraise.c
->> +++ b/security/integrity/ima/ima_appraise.c
->> @@ -694,6 +694,15 @@ static int ima_protect_xattr(struct dentry *dentry, const char *xattr_name,
->>  	return 0;
->>  }
->>
->> +/*
->> + * ima_reset_appraise_flags - reset ima_iint_cache flags
->> + *
->> + * @digsig: whether to clear/set IMA_DIGSIG flag, tristate values
->> + *          0: clear IMA_DIGSIG
->> + *          1: set IMA_DIGSIG
->> + *         -1: don't change IMA_DIGSIG
->> + *
->> + */
->>  static void ima_reset_appraise_flags(struct inode *inode, int digsig)
->>  {
->>  	struct ima_iint_cache *iint;
->> @@ -706,9 +715,9 @@ static void ima_reset_appraise_flags(struct inode *inode, int digsig)
->>  		return;
->>  	iint->measured_pcrs = 0;
->>  	set_bit(IMA_CHANGE_XATTR, &iint->atomic_flags);
->> -	if (digsig)
->> +	if (digsig == 1)
->>  		set_bit(IMA_DIGSIG, &iint->atomic_flags);
->> -	else
->> +	else if (digsig == 0)
->>  		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
->>  }
->>
->> @@ -794,6 +803,8 @@ static int ima_inode_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
->>  		digsig = (xvalue->type == EVM_IMA_XATTR_DIGSIG);
->>  	} else if (!strcmp(xattr_name, XATTR_NAME_EVM) && xattr_value_len > 0) {
->>  		digsig = (xvalue->type == EVM_XATTR_PORTABLE_DIGSIG);
->> +	} else {
->> +		digsig = -1;
->>  	}
->>  	if (result == 1 || evm_revalidate_status(xattr_name)) {
->>  		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
->
-
--- 
-Best regards,
-Coiby
+Btw, I realize my commit message that says the problem happens when reinstalling a
+package can be a bit misleading. So in v3, I rephrase it as 
+"... installing/reinstalling a package will not make good reference IMA generated"
 
