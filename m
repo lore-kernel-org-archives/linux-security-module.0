@@ -1,63 +1,63 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3CD242D6F
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Sep 2025 04:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6259B2E426A
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Sep 2025 04:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757998137; cv=none; b=NV88ZGp5JHEfgsHk7RMrW9eDIwEpb52/qhCA3GWNhU8Rjg4oopmJ7jlQuNEKAwYyMBbBoyzkTQduyIlZWLaE+vMK8effKvcxYZ7/JzQv9mYn2Ly4xPPQAYDhIQ6s7CVlhFnX/Tt/qHi0TbzaBVy24Cc6kzpcv4HkCoHfGgShTKQ=
+	t=1757998143; cv=none; b=UgTOxDZOtTsGXbnkd7Npe/ayfTRyxdBHevMfOzi1Rq0ZjkNdWiVUJbtnVxthfyxFGsU5NdeLg4pJbbT4iZg9LNGXlI5yirb3iHVr5/AjmZmBfhrtHEh9BlX69ZRe9osFXErYtvCEyVcuV+OvzBgB+Qr7TvguKZziP+yIlRdtoCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757998137; c=relaxed/simple;
-	bh=p5MwokYTH6tczJBsI6u40p8nW7EOrH93nmvNjBcj/D8=;
+	s=arc-20240116; t=1757998143; c=relaxed/simple;
+	bh=HguuC3cJW9LHrBXuF3iFTqdhADSKZ6I2ZWC/adsG6L4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QRQXAqXhW2PhFcP5L1EBgzyEU+3tDyG5HLLD3ThDLLtnIVS73xLekuTGsJR9msG3c5Anl6esHxzFSF5DM4hsxCvShOGGh/P3OkkI3kF1wUPuhZB+lv3MpaJmWbpqtowMMlVIcmkulDn5yue7JXpktLyeNkVkOE2MPGtOvikCPMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XCCFjF93; arc=none smtp.client-ip=209.85.214.181
+	 MIME-Version; b=YNEeYEq9mLLH8zRN+uBii1JNm2wnjSEh0M3DFFpUO+f9Y3/FNbGD3KJvrvya1r5V1N5NHuUZBOwTxF/Cb7TfkmWGRr8xEkh/IZcPAIp8x7gwQ5R8yLw+IFlkGKPE0iVSSIyzZT/wb/5BKbktiSf2xWz5FAraw7Yayxoq1k1r1Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SCefdEHH; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCCFjF93"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2570bf605b1so48699655ad.2
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Sep 2025 21:48:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SCefdEHH"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2570bf605b1so48700245ad.2
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Sep 2025 21:49:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757998134; x=1758602934; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757998141; x=1758602941; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+E/nxXHnOkpnquuQqI/t3YoOv7z+zhY+r7/SIcSNR5s=;
-        b=XCCFjF93gE03XoD5txrRGrVa2Cinpuf9dfznUDiyWczEqJ/NViO8aFYCASV/tcASm9
-         f5KFOsk5PZCVrn0wGqzSUFpGQfS2TXroxKwY3fjm5v8H0MZrmvPS3Gk4K4/flnFXJz9M
-         N61WImCcsaO7sx60jDVbpP99sDm3mPAR0JjjBMhWWqCwEhxevWM57VQoKx0jUAuys6Hg
-         BSa0+ecSoJQrp2zy0poaIzuSEu9xGk14EO1YJKRLVH06V0aibh7cAHh7R7d/mz+iRgA4
-         YlgOoTc5CRsv4uXdgCGLuCJsLNv7Nmpo4RhwTjSBaWgkf6NtdAf5g4bFqPqF54kAKrDj
-         Ni7A==
+        bh=y26N2MyOP2FIPMMMBT4JTn6kc4P01rdpdKyvYPEfOYc=;
+        b=SCefdEHHiZ8jZW6xYxJti7tA2y6Bt/GimNvdDYVlgmt2cdNVo7OAJcSr5LXKXEOZbf
+         UGGGRX1bIlzd25p9XFG3/AuL4AFo52i36GuOp66KC85Uy/XbHwdetBCk4RfB+CQtV8gG
+         bGB3fSsvylkjw0Qw4Syn2pjMO2oaoTpIVOMeW4ync7cEGsK5I0d5n9YApMb74KRv+vYB
+         BDsg0UVn1UNIr5Bvs8KUVv/ud5TILGiBsHgcv/yWZ1/CxUmiVCACSIprr/HVidhnRt5o
+         0KUolDW/QN7el5Pxc8O7RQcX/fWH9lLT4zQlNsvIDmOvD+BeCZn4n36z8iFAwSLI9O/A
+         kioQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757998134; x=1758602934;
+        d=1e100.net; s=20230601; t=1757998141; x=1758602941;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+E/nxXHnOkpnquuQqI/t3YoOv7z+zhY+r7/SIcSNR5s=;
-        b=C0y1Mv5EbNs1TZ+3q8pqQW1igFJNxxfzeJrFneD2DjZmD0CjJtHrMoXrLGIqBVQ18B
-         MzOTG+RRDrh5kns2e7axAFMzbWUeF/lvrHMpU5efMvm1TC95X4+w1bXP4o0LdlJ1Lltn
-         Cg2FpW/LveWJFacUyCnoFB948UPnPGqG2/MUBTRAAlphkqonEmtsr0I+SSOggNKQCLbT
-         NcSrs4U113C+WY11WotxqJJXXP9MmX0Sgj5fUBIKbpwhvg2L6kbB0D9Z13M+WVkquFKj
-         4IjTR0yFrxR807Cpe8GtR+J4uXfnq9R2fpKt5q4RSmO9IHfs5Hzs1ecveIb7lQqwLP2f
-         mmBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdIxDn+BGk8f5GoiDS7QvPRLoZimx0vHCrXDCE6xdFCljSv+fwCVSlV49aOF0nvheLD+Ldj8OLW82XeprMc+v0sasKh3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP9BKUomSqZ6SOnxpTz/mF/vMH4mQRCcRqpXaP/skjFnIO4SHK
-	V9Lnc0RkKPtDhaP2zvTFODeOLTJSfmVzmAaoj4ZsEOGLGSrhuhujgxRr
-X-Gm-Gg: ASbGncu5mXoQVzPsd1WwBoAreIB4Q0SR0ALQLE3BuWG/l8tMiNRQ5cCHjR2tmGbzIbh
-	Iz6/kwLNJ2/c1tsjLQ4kPKFRj2pC3U6H7boBJtYetoa63tEJYUDTQwyDng5vx0tT/6l/0RtZs9X
-	yqgsGnJwV/ZpevRa8MyYPTQUT2m6uaiZpvEeSn8Ht0yywiYcPQdioDAiV0zXT9xZcwFr9VuDgIJ
-	Z23CYV6tCSv0SrOsSI07QjA7ZlAeOdBdDepDbTdykcwptu/vtuGMvuhSgxxLxMv8vQh3k1Z/gE4
-	0vs6/YYFcqz8H38JzfwbbWXXEqwxWjyxI+24uKKToIk17mlDwnkphCdFsCgAVfZU8MxN2pwuJIg
-	RGTPBnFWelw01fizjYHT9iTZjBGsdud2GTSQ21BZrm24HFyPumw==
-X-Google-Smtp-Source: AGHT+IHsN0GBYzT4MMuIYjW4jOX+BASz3i1Lsko5ULcFSIEXx1CyBAF2xoChVB4z7RicwE9rHAP4nQ==
-X-Received: by 2002:a17:902:db02:b0:267:b357:9445 with SMTP id d9443c01a7336-267b35796d4mr43637625ad.28.1757998133829;
-        Mon, 15 Sep 2025 21:48:53 -0700 (PDT)
+        bh=y26N2MyOP2FIPMMMBT4JTn6kc4P01rdpdKyvYPEfOYc=;
+        b=pUKBsk2xYejFyquI2KqHCTqW9/QtOdEpgCezIwNVpQldHx8HyNhECJ6/SSbKD1OuMz
+         W5OaRldwzAbE2nVI0++gDdL7nPeEKzCM2YjN66Elhax3eouVtIf0dK0aX9wUnaPKnZEl
+         Yx/yEi0gb7PknvGzYbvbEKtykgQMWGfOdjoI50/1aNoaL/sc55ujr8l5k7Dc2Yw8abql
+         EGq+vAaUT1148VobZCDu4KR7kpt+gVEmjJyKktj//8keghJo9V0+b9uWc9QPnTG496ab
+         zCTTkyjmJm6aUCqm4AY5XQma/PrsuzXuUT5+D88kO9Ekt5WXAh2Fzr/2dDZ26sbXuubR
+         LW1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWV3+3fpM1xSbWEpyqHXTUdjRynJKOOzCf49cMGL+lNjt0PndUi3rpIL9Yp91kCVcDPb19IhdJPQFocYiW9XGB71l7UHCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI/nQUDH0g3AI29jxrbTnfW7cZAValGOdpdNS9QhXtBYEDKplV
+	ihUOzibwpIrduQw8yCzOf7tbj4ErKS2CAM5fX7NlDyPAkcMLLmgfOS+TtJnCxdzoZqU=
+X-Gm-Gg: ASbGnct6P2L1WnGxt0kitIrjW0tQYogJkbGe6beyadJJE5wy4obRd1RT3N9db72CFPp
+	HATTZY6plJ13ul6t1T/U2wTUQX1JLZvlKOdJf2V0r4kyV06b/DpP/EJ+Ydt2KlCMwT6+E/JnEHl
+	9vvOrWZC79QJ9qaFzTKxar1qy4Qc/uZGfVXKWxSgZJY2AjWiE15JrV703HQdiETetX3pQfmx43T
+	MS09eJcSPGQ2MqsIaIupyX9fvQo5t4kry1ijh2vmVK2qDM/QJHN0ay9qjSpE3fPk79S+WwiUMQd
+	hlhuTf58pJQZFB3FRr2uuhWJ89R1u0KA+db0KSfW4bFHLvKL7FcQa4lg2B2s2pW8cOMXTuhvloa
+	fxCDDBrtnRcaRQRcqXlJKJPjN3wkKFTHxtH+8Xt0=
+X-Google-Smtp-Source: AGHT+IEF8hyGYSwfpfRfNi45Ml5S5Z1xWLwd/+S+vouYcjrRAMMRr1JH2N5TAK8bBOVvYAZpMt3b8w==
+X-Received: by 2002:a17:903:ac3:b0:267:d772:f845 with SMTP id d9443c01a7336-267d772fcf1mr8896415ad.52.1757998140582;
+        Mon, 15 Sep 2025 21:49:00 -0700 (PDT)
 Received: from pengdl-pc.mioffice.cn ([43.224.245.249])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25ef09c77f8sm104600605ad.15.2025.09.15.21.48.47
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25ef09c77f8sm104600605ad.15.2025.09.15.21.48.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 21:48:53 -0700 (PDT)
+        Mon, 15 Sep 2025 21:49:00 -0700 (PDT)
 From: pengdonglin <dolinux.peng@gmail.com>
 To: tj@kernel.org,
 	tony.luck@intel.com,
@@ -85,10 +85,12 @@ Cc: bigeasy@linutronix.de,
 	linux-s390@vger.kernel.org,
 	cgroups@vger.kernel.org,
 	pengdonglin <dolinux.peng@gmail.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
 	pengdonglin <pengdonglin@xiaomi.com>
-Subject: [PATCH v3 06/14] ipc: Remove redundant rcu_read_lock/unlock() in spin_lock
-Date: Tue, 16 Sep 2025 12:47:27 +0800
-Message-Id: <20250916044735.2316171-7-dolinux.peng@gmail.com>
+Subject: [PATCH v3 07/14] yama: Remove redundant rcu_read_lock/unlock() in spin_lock
+Date: Tue, 16 Sep 2025 12:47:28 +0800
+Message-Id: <20250916044735.2316171-8-dolinux.peng@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250916044735.2316171-1-dolinux.peng@gmail.com>
 References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
@@ -113,71 +115,50 @@ been started implicitly by spin_lock().
 
 Simplify the code and remove the inner rcu_read_lock() invocation.
 
+Cc: Kees Cook <kees@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
 Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
 Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
 ---
- ipc/msg.c  | 1 -
- ipc/sem.c  | 1 -
- ipc/shm.c  | 1 -
- ipc/util.c | 2 --
- 4 files changed, 5 deletions(-)
+ security/yama/yama_lsm.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/ipc/msg.c b/ipc/msg.c
-index ee6af4fe52bf..1e579b57023f 100644
---- a/ipc/msg.c
-+++ b/ipc/msg.c
-@@ -179,7 +179,6 @@ static int newque(struct ipc_namespace *ns, struct ipc_params *params)
- 	}
+diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+index 3d064dd4e03f..60d38deb181b 100644
+--- a/security/yama/yama_lsm.c
++++ b/security/yama/yama_lsm.c
+@@ -117,14 +117,12 @@ static void yama_relation_cleanup(struct work_struct *work)
+ 	struct ptrace_relation *relation;
  
- 	ipc_unlock_object(&msq->q_perm);
--	rcu_read_unlock();
- 
- 	return msq->q_perm.id;
- }
-diff --git a/ipc/sem.c b/ipc/sem.c
-index a39cdc7bf88f..38ad57b2b558 100644
---- a/ipc/sem.c
-+++ b/ipc/sem.c
-@@ -579,7 +579,6 @@ static int newary(struct ipc_namespace *ns, struct ipc_params *params)
- 	ns->used_sems += nsems;
- 
- 	sem_unlock(sma, -1);
--	rcu_read_unlock();
- 
- 	return sma->sem_perm.id;
- }
-diff --git a/ipc/shm.c b/ipc/shm.c
-index a9310b6dbbc3..61fae1b6a18e 100644
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -795,7 +795,6 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
- 	error = shp->shm_perm.id;
- 
- 	ipc_unlock_object(&shp->shm_perm);
--	rcu_read_unlock();
- 	return error;
- 
- no_id:
-diff --git a/ipc/util.c b/ipc/util.c
-index cae60f11d9c2..1be691b5dcad 100644
---- a/ipc/util.c
-+++ b/ipc/util.c
-@@ -293,7 +293,6 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
- 	idr_preload(GFP_KERNEL);
- 
- 	spin_lock_init(&new->lock);
+ 	spin_lock(&ptracer_relations_lock);
 -	rcu_read_lock();
- 	spin_lock(&new->lock);
- 
- 	current_euid_egid(&euid, &egid);
-@@ -316,7 +315,6 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
- 	if (idx < 0) {
- 		new->deleted = true;
- 		spin_unlock(&new->lock);
--		rcu_read_unlock();
- 		return idx;
+ 	list_for_each_entry_rcu(relation, &ptracer_relations, node) {
+ 		if (relation->invalid) {
+ 			list_del_rcu(&relation->node);
+ 			kfree_rcu(relation, rcu);
+ 		}
  	}
+-	rcu_read_unlock();
+ 	spin_unlock(&ptracer_relations_lock);
+ }
  
+@@ -152,7 +150,6 @@ static int yama_ptracer_add(struct task_struct *tracer,
+ 	added->invalid = false;
+ 
+ 	spin_lock(&ptracer_relations_lock);
+-	rcu_read_lock();
+ 	list_for_each_entry_rcu(relation, &ptracer_relations, node) {
+ 		if (relation->invalid)
+ 			continue;
+@@ -166,7 +163,6 @@ static int yama_ptracer_add(struct task_struct *tracer,
+ 	list_add_rcu(&added->node, &ptracer_relations);
+ 
+ out:
+-	rcu_read_unlock();
+ 	spin_unlock(&ptracer_relations_lock);
+ 	return 0;
+ }
 -- 
 2.34.1
 
