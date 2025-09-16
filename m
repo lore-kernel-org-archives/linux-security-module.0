@@ -1,84 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EE72D063E;
-	Tue, 16 Sep 2025 18:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012532D0C97;
+	Tue, 16 Sep 2025 19:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758047837; cv=none; b=IWlL2MFCGeE58GZpKlO8ezY6zaCtdEkEs5Z+dCiYmjBENa2haMbNIz1WDHA0IyPbIy+rLZ4efHIQIqMbTL3f6dw3eklSTOIs+e4X7RkurJ0K/SgK9aAYuEpEb3T3cmhB46u+PSKFAniE2BGny1ud93vtnH/Xx2Zpv7DsEePH/B4=
+	t=1758050569; cv=none; b=C+t6RU7XI3cFltnGo19lscEPWSh2DaVYo3tsPJBxmushFKuVlu0RTn6ZzCcyuEk3AKyOVAbiDiKH6heL6z185hbFssq5IGW+fD4GLcz6mhCem7bewub/cO87XEzT3SiN5iJcjZwknLWdEaG3qX700ozMEfIh5cq/Vff7KW8jnX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758047837; c=relaxed/simple;
-	bh=uZNzYbnMobWY+QykZ4WTqTR72hqNvnvoYs9ygOwBweU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GKRaoU82xZhYipfpfGfvjZr6y8N4qLy61PF9Fs/e7SYNCPYwHCxIFv+Gci7PDs8Nb93byyXGqWPWEEeiwQqJOJOiQdICZONzpZEVKr2jrZUG/KKU0wL2DiDThFks+ubaK1et3Tg96a/7elawtc21ZlVz1ivOs2inKL+uPC1+8FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VfMXSqG/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758050569; c=relaxed/simple;
+	bh=+hTjV0r+hFzxfXNHAoEzKy6M6SdKYDya7qj68EXmr08=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gN/fHXrA+PiIPUfRihskXrineGmyxYKB5s+wuH65xU9h6bY5OLymvwgu8C/+G7muz9T7xOzCMnq8sus1XBOcOfMDQbT/fDZN2sBiHgWbld46nmoacnz3eytk/z+HcOJVeNOvTOOr04LAmgvqhkAr6MKzQx0zMtV+Dr8rrjctrkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=ioliamnH; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfMXSqG/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E135C4CEEB;
-	Tue, 16 Sep 2025 18:37:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758047836;
-	bh=uZNzYbnMobWY+QykZ4WTqTR72hqNvnvoYs9ygOwBweU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VfMXSqG/J8Ygsl2+/uZU1iHZZa3OW9+E+KPN8SZJpir7n+K8w4aiXm7xBqBfH34un
-	 d9Sqql4SQSGK9EwhWgUc0aDkpsYJOYQiz6Pq2GSnVfwdY+SVZBjoutHCLosYp0CiH1
-	 gcOeJOcKowSA4SBmMWh5iE01DEnn2aO2TQfhjHy5MUpRg9l393B8HtROeSNOXx7G3C
-	 Wlyssw55oFrb5N5s1MixBgRTutUavCoOI9MsJUOGso3HBjHZqkOlXqNIHX15ucg8Go
-	 xRj+Tkzqo/D+ogyQwh7VST52JMsEaNzN1f+QfgCZuleVNXwNsWkLeNmh1qFOOcMlb7
-	 FTmPb6kUpz7Aw==
-Date: Tue, 16 Sep 2025 08:37:15 -1000
-From: Tejun Heo <tj@kernel.org>
-To: pengdonglin <dolinux.peng@gmail.com>
-Cc: tony.luck@intel.com, jani.nikula@linux.intel.com, ap420073@gmail.com,
-	jv@jvosburgh.net, freude@linux.ibm.com, bcrl@kvack.org,
-	trondmy@kernel.org, longman@redhat.com, kees@kernel.org,
-	bigeasy@linutronix.de, hdanton@sina.com, paulmck@kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	linux-nfs@vger.kernel.org, linux-aio@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org, linux-wireless@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-s390@vger.kernel.org,
-	cgroups@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
-	pengdonglin <pengdonglin@xiaomi.com>
-Subject: Re: [PATCH v3 09/14] cgroup/cpuset: Remove redundant
- rcu_read_lock/unlock() in spin_lock
-Message-ID: <aMmuW8VhLbPRWwwx@slm.duckdns.org>
-References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
- <20250916044735.2316171-10-dolinux.peng@gmail.com>
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="ioliamnH"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=RChXoodl/EOTezUxp9EQblLqV8H2a0VIHON/1w3OQi8=; b=ioliamnH0b4jrW6hNdJYloxRkO
+	bbIV340awl9hMv1+DVR8IOhBYE+Ewc6jtzBUQegDDcCtUROBJT6deg0YarYAKqt+7RUCEMr4cPiwf
+	S8ORZmnkqurIqQld6YR0fmooe1+gR+MLEkeT1csKcIdLTNsge9Z2JyOlO9wh9S605GAz28BgGYUoL
+	4PCHNpbT/3ALNaIn2Yf+FtG05ESL1d7PngBo2VwZfAqp7aaprX5/LPUM1QcyZBheIdonqgNNYPzu+
+	AVCD6rqsLV/sYDD7R9ajOZLGdvlEh6CQ1E7jHg83sMBTlRw13ypYbFCBW9c/34yrf893JLUSym1mx
+	JCyfNsq68aQqX3KQVIq0i+bVvdC9szbM6jmif+xmOTKTiMJ4LULAUsc90dwW5BsVgPbIKY4VeC51r
+	mi4z4yTIMCsAtiAq/SO8RLHFv/0n+S9LUKmtsWDM0csbAI9zej3Q2xWkokBP88UXKJ8raAXlnsfAe
+	LN+VxqoeHUIy6XytXRElvXALAgtq8VXC+VhgfBokIgtHU8I/3ZtH3++kTczTz58yaoYf7LkjC5wZL
+	N9HHlfZfIxmxTuxpYd1jJXsWB1g0947AxcwxEeE/OTNBTCtXehCW52kTfbuGzjHz0sBki2rwvHA/A
+	2FN4lJkyL4WREaQ7LflcikN0WwccrBg5ybJkq2cNI=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: Dominique Martinet <asmadeus@codewreck.org>, Tingmao Wang <m@maowtm.org>
+Cc: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>,
+ v9fs@lists.linux.dev, =?ISO-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+ linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
+ Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ linux-fsdevel@vger.kernel.org
+Subject:
+ Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to qid)
+Date: Tue, 16 Sep 2025 21:22:29 +0200
+Message-ID: <3070012.VW4agfvzBM@silver>
+In-Reply-To: <a98c14f5-4b28-4f7b-86a2-94e3d66bbf26@maowtm.org>
+References:
+ <aMih5XYYrpP559de@codewreck.org> <aMlnpz7TrbXuL0mc@codewreck.org>
+ <a98c14f5-4b28-4f7b-86a2-94e3d66bbf26@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916044735.2316171-10-dolinux.peng@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-On Tue, Sep 16, 2025 at 12:47:30PM +0800, pengdonglin wrote:
-> From: pengdonglin <pengdonglin@xiaomi.com>
-> 
-> Since commit a8bb74acd8efe ("rcu: Consolidate RCU-sched update-side function definitions")
-> there is no difference between rcu_read_lock(), rcu_read_lock_bh() and
-> rcu_read_lock_sched() in terms of RCU read section and the relevant grace
-> period. That means that spin_lock(), which implies rcu_read_lock_sched(),
-> also implies rcu_read_lock().
-> 
-> There is no need no explicitly start a RCU read section if one has already
-> been started implicitly by spin_lock().
-> 
-> Simplify the code and remove the inner rcu_read_lock() invocation.
-> 
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Acked-by: Waiman Long <longman@redhat.com>
-> Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-> Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
+On Tuesday, September 16, 2025 4:01:40 PM CEST Tingmao Wang wrote:
+> On 9/16/25 14:35, Dominique Martinet wrote:
+> > Tingmao Wang wrote on Tue, Sep 16, 2025 at 01:44:27PM +0100:
+> >> [...]
+> >>=20
+> >> Note that in discussion with Micka=EBl (maintainer of Landlock) he
+> >> indicated
+> >> that he would be comfortable for Landlock to track a qid, instead of
+> >> holding a inode, specifically for 9pfs.
+> >=20
+> > Yes, I saw that, but what you pointed out about qid reuse make me
+> > somewhat uncomfortable with that direction -- you could allow a
+> > directory, delete it, create a new one somewhere else and if the
+> > underlying fs reuse the same inode number the rule would allow an
+> > intended directory instead so I'd rather not rely on qid for this
+> > either.
+> > But if you think that's not a problem in practice (because e.g. landlock
+> > would somehow detect the dir got deleted or another good reason it's not
+> > a problem) then I agree it's probably the simplest way forward
+> > implementation-wise.
+>=20
+> Sorry, I forgot to add that this idea would also involve Landlock holding
+> a reference to the fid (or dentry, but that's problematic due to breaking
+> unmount unless we can have a new hook) to keep the file open on the host
+> side so that the qid won't be reused (ignoring collisions caused by
+> different filesystems mounted under one 9pfs export when multidev mapping
+> is not enabled)
 
-Applied to cgroup/for-6.18.
+I see that you are proposing an option for your proposed qid based re-using=
+ of=20
+dentries. I don't think it should be on by default though, considering what=
+ we=20
+already discussed (e.g. inodes recycled by ext4, but also not all 9p server=
+s=20
+handling inode collisions).
 
-Thanks.
+> (There's the separate issue of QEMU not seemingly keeping a directory open
+> on the host when the guest has a fid to it tho.  I checked that if the dir
+> is renamed on the host side, any process in the guest that has a fd to it
+> (checked via cd in a shell) will not be able to use that fd to read it
+> anymore.  This also means that another directory might be created with the
+> same qid.path)
 
--- 
-tejun
+=46or all open FIDs QEMU retains a descriptor to the file/directory.
+
+Which 9p message do you see sent to server, Trename or Trenameat?
+
+Does this always happen to you or just sometimes, i.e. under heavy load?=20
+Because even though QEMU retains descriptors of open FIDs; when the QEMU=20
+process approaches host system's max. allowed number of open file descripto=
+rs=20
+then v9fs_reclaim_fd() [hw/9pfs/9p.c] is called, which closes some descript=
+ors=20
+of older FIDs to (at least) keep the QEMU process alive.
+
+BTW: to prevent these descriptor reclaims to happen too often, I plan to do=
+=20
+what many other files servers do: asking the host system on process start t=
+o=20
+increase the max. number of file descriptors.
+
+/Christian
+
+
