@@ -1,63 +1,63 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D86A2DF15B
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Sep 2025 04:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239F323C4ED
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Sep 2025 04:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757998123; cv=none; b=j08b5o10Z4AcV3zGD9xLIKL0QE1+DdYTlHp58Hy4ZO1kOxpmrRMvNFDHGx7qAdEssJFr7rbwmOTtfQkL6l9hn9kfGphSBKFv25Ns5r9EgaC5N2IXKKJQ5zIwvxWgN/gT4GebPkWCj3QGx7neqjWUPEZ9dDyyGkdf65WUSGJb5aQ=
+	t=1757998130; cv=none; b=qYwJEjaqkHB3hoZ/iiYNWn2SpkftNDYhMU3vF0BJc7Le9bx83Cmmbf5C9scJBXSR3/DL60sG66MVRwW3D7/fHvPxQThV9XkAvZQIDlPJZnWGSPdwmXAzVo2t84xXnasco5ugMgPlyw8Yb9D5aY70Y3TshIHIxiYHLSrIfRJmY/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757998123; c=relaxed/simple;
-	bh=Hm4NLUtLCw7Wzvkssx4JW3u0p75F9SUYO1JV5MhRUUM=;
+	s=arc-20240116; t=1757998130; c=relaxed/simple;
+	bh=McKpF5pbp0B08HxMwaOQh+77moGljXjpv9ExEqMvqrY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OcG80L/8uQk99kyS3+nDJd/3EWBVFBkm2bVZdCNQmqXeiPgRo+v4mB1PvmR2cW/bYo9HvO0mXnlE3kgy6ejNBm+2UhZG7mrdt8oL4N63VS1eni22bBc9994074w6j/vtG7yM8IA5ffr+s1Lr82JGi/KpL3vcQPqivZUd+MIHhxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QKyZvaPI; arc=none smtp.client-ip=209.85.214.170
+	 MIME-Version; b=Rm88mZT1MRAPs+XlSNxOuNjL1iyMdL7M/K901XidgSL+5ownMSpBlrG7fmSXJDcjN1rUmenVjUfmE3B4soxWEtFgyq3U6bbn+7xjhc1iTH1HX1PzhmhVkR9fDCzrivprsnbRPeeDB3hLLwOlQG6UKZW/c8MxYTFww/V5x1uFa7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iAsxqDJG; arc=none smtp.client-ip=209.85.215.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QKyZvaPI"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24457f581aeso49818055ad.0
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Sep 2025 21:48:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iAsxqDJG"
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b4d4881897cso3280141a12.0
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Sep 2025 21:48:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757998121; x=1758602921; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757998127; x=1758602927; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Xm+DpSE/kXVFYqhbqdQrPOPEWNbTRdYIBwHbzMQMXkY=;
-        b=QKyZvaPIVDM/Vpv2T4hnaFkdhAmHbw+v0O1IpLFtzRuLX/FL65xWVUPIMC9ztxn2RA
-         ozTswSrCVtPfLZmkfzBSMg2AduT72IAId2sTdAGHG4uhrBhNBCxXLxiF0SCKiwyDaPum
-         gMup5ejYfjKSMIFdvMykdpeor8qpqiLOJrEUZToKaz14PngK3rA9KdO72myiL4D4E5Ib
-         adSB/d/rVVOG4tWa3eIH98PaGav99JKZ9arAcseAJpw3rB58Chul1M6oYbO8ERgRkXbX
-         Q1oT69QidZy+bxqCTehceAVz7Y8UZgOcHvVxBIfqODoqXkT0xSBFDPOn9iWj4TE/ZfGK
-         AjZQ==
+        bh=KdSOTRlpcbSm77LoC5qTO7Qj2WXZD3913QNmAyohauk=;
+        b=iAsxqDJGyK6tvzTorEsVSUEuBJHI7lzp/5BEV9Wux96nvmddvYxeJQ1Pxvpd2zxtF/
+         odfGJC6i+MsiMQaqOK2xq8ZI0ARkBidTF5I5eqq1ZR8Qjn+DauG6LysiVeyKRFvX28EL
+         w6ZcpLJnXs6zocIW71x6zkcJ5+FAND5iyun6X1dBQ46MVXBvupNiU+xnLnPuRzi43J08
+         BA1c5fGxCyMnm79SP3kRQxMi+O6QScp7FJQkKJCIjiivp3mQfwQ1xz1JjfoSzAPM7acG
+         j6yJZpPiCXYc7n4vedVIAlccqhiIo5yA+omWiEO/NiWZlviC3u17B0o+jpKhtDTDqd64
+         n6Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757998121; x=1758602921;
+        d=1e100.net; s=20230601; t=1757998127; x=1758602927;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Xm+DpSE/kXVFYqhbqdQrPOPEWNbTRdYIBwHbzMQMXkY=;
-        b=LDjkMYbR6ZFunFMIyRZoZ2v3Ht25UwOISBz2+gSShY9YXYNzKZrfN/zLP0SXF8dOdX
-         CbMcSNIAecj2tsU3A85zK8DNqTQPb9S7EAcewJrj9WmA6O1BHzsIe9Ebimpx1HGFbHAz
-         HSrt2E0iDA+I/WnSb88FB1aXe1Sfg37R8L/YZDEamlwwGqtFyC2W236yVYzgN098SVD4
-         lCyBJfSXfeyMgi75YlhXyslsljH4ory7ryQK76FeGtyamqyom7q4UxJE3oG2gPR0cFNl
-         8aCAWcPjLonpksI01hldijwwLJ8KNF9qLFFeUfqdm08YUWm2qtzh3ulVQA6d8sW5Makl
-         TfKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIX/2S9zWDu/oVPk8qbu42RwHRv4HLPsywKhYmJFSYPvEWYvIk3lJ5a6/CvEoG6HmQ3khpnqGIZmlz0GRlvQPeIlOENOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywhr+1IfFJEJJQOZOe6eVrGyU/dYtszntJwaMH8nHE33asCl1F5
-	VsTe7uxsHnk+Ie7saBXcJc4eJqG5rsaSGbxOyL4YxG5EcLI36DZV0f9P
-X-Gm-Gg: ASbGncuNJ2FbXC7tixATfIUG3XKYFtK5wn/vHvRj4AcwI77mK+JPCjx8uIecq/z1+be
-	b6dIbEWDSRFWez2isEEe/DhDtrApW8CRrit5UZVrxSljGOA1f3NMRzLMO3CamljEra97JQ6cZG/
-	78PQ23m7GfmxDh4tLLIqpAk53nU9ZwZu9f3HULIhmdG5m7VXxCIkXiDwSIPCiHiiAj6EziJZ6oE
-	DlWjy+TToNPdmoxts/3AASnw2aCgVrVteCCvG+CZ5685S9RX1E8YNm3pj/WymTVOK4fssM5JY8x
-	QXhBVbzRVx9tTbRI0vyqnb8kTfnT79hauhcXaUhxiVUpohbSZZK3y9xNLd+iTMDi/iSZ+BxE2sJ
-	8yrbXArwlr46o9Kozr8fblNl2AoKbWitrgBuAeZcF6LZGOFbyVg==
-X-Google-Smtp-Source: AGHT+IFZafMscSK5thkkO6qp1JFhXaEzM4XqUKCSOF7a0iBvVAfuiUQIiiPw+R0HXGd/Rlng97VAjQ==
-X-Received: by 2002:a17:903:1a07:b0:267:a20c:fec0 with SMTP id d9443c01a7336-267a20d0722mr60340985ad.1.1757998120540;
-        Mon, 15 Sep 2025 21:48:40 -0700 (PDT)
+        bh=KdSOTRlpcbSm77LoC5qTO7Qj2WXZD3913QNmAyohauk=;
+        b=SfuhBhsImfzHl3t9nDq44D7aLSkw+WDNmYtWOVKFCGw8CX3WM0GDN4i9bmgJeSiQeO
+         4TeUE2lvkE7MIhGaRx+swQ/N390o1K84XFv66kIMu7TJAnfUuKOzhO+CpxDtMl0bYpnn
+         Z6RsfYme2lk+9lNYbqr8taRmtR2wcTTpSj9Lw2N7AXp1umzpk+9uTpOdEQKqt7wjKy7q
+         8mNnqgyON4FYAssxZX5nclwsTw0bxIVPZ5iLA1VSkGVpU4TEK78yf7ONVuKh+iqSCAMc
+         H7wX5r9jZzX81BJ9+o38WB7XIskJ6F/jbQfXqjNknp8XYDT8QRoKgiBV0KJEgpGoogeW
+         +I4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWD5S7nDu28vhLc8VKJ+QPKucLanBiZvz2GTnAdKHqHDmjX2cM5AidPmCAKUKxHCZtjNzEQubRL8P9t4iP6glGy5vF4OF0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7s5/CtBL4iLh2l82YNloOqIjeiog6Go2OeG8pTkXUl9Gcrn9e
+	w4S5gSD9TzSQ+RKOBlOgIwsSPH7yB25QPpaTJ1HwFkGotPfKhcuAoXZ9
+X-Gm-Gg: ASbGncv6BCPHgUCfrOjsDIdFz6GkwwtkzhrwV/+cbMeya2cPVQN/rjvK7ntdcLpEuJJ
+	qgj1NBwjr6ZENYWZFBrKZMUq6KopMGKS6SMqLj7PtL9ePSW7USUTuj3ZdpbKjBxWrGmQdKN7nw7
+	s0HA6IbJc7XYPnTQE1nAYTBFfNgQe+aGJtJvy9ulysjYBt+MX1aDM/RNUL0MBB2kwdnjc/Ee/AQ
+	IlEomI4q5YghmIr+c0vL5QJ2ygyFrTr+EpM1RDb3tY9nsXlk2Uh3o/PavbcIbDU9An+6WvpaUFx
+	8E2YiRMgfnD+5mUtt3SwgKrr77smNz6z9B57a4b81AezGw4g1jSZxtv2nWh9w5cqPVYXJ0Q0elI
+	cJBFIA0/3tMk8sc1tIGspHfKsifl2AgJ64+nC0jA=
+X-Google-Smtp-Source: AGHT+IGkIhcIMGh+oiZ/aDBZPsHwPAhQG69OhML0E/f2mr/YjQA5clLbS6Ua4uwzILjLJIA06eQ5gQ==
+X-Received: by 2002:a17:902:d2c4:b0:25e:5d83:2ddd with SMTP id d9443c01a7336-25e5d832fdcmr159755585ad.45.1757998127447;
+        Mon, 15 Sep 2025 21:48:47 -0700 (PDT)
 Received: from pengdl-pc.mioffice.cn ([43.224.245.249])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25ef09c77f8sm104600605ad.15.2025.09.15.21.48.34
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25ef09c77f8sm104600605ad.15.2025.09.15.21.48.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 21:48:39 -0700 (PDT)
+        Mon, 15 Sep 2025 21:48:46 -0700 (PDT)
 From: pengdonglin <dolinux.peng@gmail.com>
 To: tj@kernel.org,
 	tony.luck@intel.com,
@@ -85,11 +85,13 @@ Cc: bigeasy@linutronix.de,
 	linux-s390@vger.kernel.org,
 	cgroups@vger.kernel.org,
 	pengdonglin <dolinux.peng@gmail.com>,
-	Anna Schumaker <anna@kernel.org>,
+	Holger Dengler <dengler@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
 	pengdonglin <pengdonglin@xiaomi.com>
-Subject: [PATCH v3 04/14] nfs: Remove redundant rcu_read_lock/unlock() in spin_lock
-Date: Tue, 16 Sep 2025 12:47:25 +0800
-Message-Id: <20250916044735.2316171-5-dolinux.peng@gmail.com>
+Subject: [PATCH v3 05/14] s390/pkey: Remove redundant rcu_read_lock/unlock() in spin_lock
+Date: Tue, 16 Sep 2025 12:47:26 +0800
+Message-Id: <20250916044735.2316171-6-dolinux.peng@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250916044735.2316171-1-dolinux.peng@gmail.com>
 References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
@@ -114,167 +116,37 @@ been started implicitly by spin_lock().
 
 Simplify the code and remove the inner rcu_read_lock() invocation.
 
-Cc: Trond Myklebust <trondmy@kernel.org>
-Cc: Anna Schumaker <anna@kernel.org>
+Cc: Harald Freudenberger <freude@linux.ibm.com>
+Cc: Holger Dengler <dengler@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>
 Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
 Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
 ---
- fs/nfs/callback_proc.c |  2 --
- fs/nfs/nfs4state.c     |  2 --
- fs/nfs/pnfs.c          | 12 +-----------
- fs/nfs/pnfs_dev.c      |  4 ----
- 4 files changed, 1 insertion(+), 19 deletions(-)
+ drivers/s390/crypto/pkey_base.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/fs/nfs/callback_proc.c b/fs/nfs/callback_proc.c
-index 8397c43358bd..16144db39335 100644
---- a/fs/nfs/callback_proc.c
-+++ b/fs/nfs/callback_proc.c
-@@ -721,7 +721,6 @@ __be32 nfs4_callback_offload(void *data, void *dummy,
- 		return cpu_to_be32(NFS4ERR_DELAY);
+diff --git a/drivers/s390/crypto/pkey_base.c b/drivers/s390/crypto/pkey_base.c
+index b15741461a63..4c4a9feecccc 100644
+--- a/drivers/s390/crypto/pkey_base.c
++++ b/drivers/s390/crypto/pkey_base.c
+@@ -48,16 +48,13 @@ int pkey_handler_register(struct pkey_handler *handler)
  
- 	spin_lock(&cps->clp->cl_lock);
+ 	spin_lock(&handler_list_write_lock);
+ 
 -	rcu_read_lock();
- 	list_for_each_entry_rcu(server, &cps->clp->cl_superblocks,
- 				client_link) {
- 		list_for_each_entry(tmp_copy, &server->ss_copies, copies) {
-@@ -736,7 +735,6 @@ __be32 nfs4_callback_offload(void *data, void *dummy,
- 		}
- 	}
- out:
--	rcu_read_unlock();
- 	if (!found) {
- 		memcpy(&copy->stateid, &args->coa_stateid, NFS4_STATEID_SIZE);
- 		nfs4_copy_cb_args(copy, args);
-diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
-index 7612e977e80b..598229fc07ed 100644
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -241,13 +241,11 @@ const struct cred *nfs4_get_renew_cred(struct nfs_client *clp)
- 		goto out;
- 
- 	spin_lock(&clp->cl_lock);
--	rcu_read_lock();
- 	list_for_each_entry_rcu(server, &clp->cl_superblocks, client_link) {
- 		cred = nfs4_get_renew_cred_server_locked(server);
- 		if (cred != NULL)
- 			break;
- 	}
--	rcu_read_unlock();
- 	spin_unlock(&clp->cl_lock);
- 
- out:
-diff --git a/fs/nfs/pnfs.c b/fs/nfs/pnfs.c
-index a3135b5af7ee..650f86fa144a 100644
---- a/fs/nfs/pnfs.c
-+++ b/fs/nfs/pnfs.c
-@@ -838,13 +838,12 @@ pnfs_layout_add_bulk_destroy_list(struct inode *inode,
- 	return ret;
- }
- 
--/* Caller must hold rcu_read_lock and clp->cl_lock */
-+/* Caller must hold clp->cl_lock (implies rcu_read_lock) */
- static int
- pnfs_layout_bulk_destroy_byserver_locked(struct nfs_client *clp,
- 		struct nfs_server *server,
- 		struct list_head *layout_list)
- 	__must_hold(&clp->cl_lock)
--	__must_hold(RCU)
- {
- 	struct pnfs_layout_hdr *lo, *next;
- 	struct inode *inode;
-@@ -862,16 +861,13 @@ pnfs_layout_bulk_destroy_byserver_locked(struct nfs_client *clp,
- 			if (pnfs_layout_add_bulk_destroy_list(inode,
- 						layout_list))
- 				continue;
+ 	list_for_each_entry_rcu(h, &handler_list, list) {
+ 		if (h == handler) {
 -			rcu_read_unlock();
- 			spin_unlock(&clp->cl_lock);
- 			iput(inode);
- 		} else {
--			rcu_read_unlock();
- 			spin_unlock(&clp->cl_lock);
+ 			spin_unlock(&handler_list_write_lock);
+ 			module_put(handler->module);
+ 			return -EEXIST;
  		}
- 		nfs_sb_deactive(server->super);
- 		spin_lock(&clp->cl_lock);
--		rcu_read_lock();
- 		return -EAGAIN;
- 	}
- 	return 0;
-@@ -922,7 +918,6 @@ int pnfs_layout_destroy_byfsid(struct nfs_client *clp, struct nfs_fsid *fsid,
- 	LIST_HEAD(layout_list);
- 
- 	spin_lock(&clp->cl_lock);
--	rcu_read_lock();
- restart:
- 	list_for_each_entry_rcu(server, &clp->cl_superblocks, client_link) {
- 		if (memcmp(&server->fsid, fsid, sizeof(*fsid)) != 0)
-@@ -932,7 +927,6 @@ int pnfs_layout_destroy_byfsid(struct nfs_client *clp, struct nfs_fsid *fsid,
- 				&layout_list) != 0)
- 			goto restart;
  	}
 -	rcu_read_unlock();
- 	spin_unlock(&clp->cl_lock);
  
- 	return pnfs_layout_free_bulk_destroy_list(&layout_list, mode);
-@@ -944,14 +938,12 @@ static void pnfs_layout_build_destroy_list_byclient(struct nfs_client *clp,
- 	struct nfs_server *server;
- 
- 	spin_lock(&clp->cl_lock);
--	rcu_read_lock();
- restart:
- 	list_for_each_entry_rcu(server, &clp->cl_superblocks, client_link) {
- 		if (pnfs_layout_bulk_destroy_byserver_locked(clp, server,
- 							     list) != 0)
- 			goto restart;
- 	}
--	rcu_read_unlock();
- 	spin_unlock(&clp->cl_lock);
- }
- 
-@@ -990,7 +982,6 @@ static void pnfs_layout_build_recover_list_byclient(struct nfs_client *clp,
- 	struct nfs_server *server;
- 
- 	spin_lock(&clp->cl_lock);
--	rcu_read_lock();
- restart:
- 	list_for_each_entry_rcu(server, &clp->cl_superblocks, client_link) {
- 		if (!(server->caps & NFS_CAP_REBOOT_LAYOUTRETURN))
-@@ -999,7 +990,6 @@ static void pnfs_layout_build_recover_list_byclient(struct nfs_client *clp,
- 							     list) != 0)
- 			goto restart;
- 	}
--	rcu_read_unlock();
- 	spin_unlock(&clp->cl_lock);
- }
- 
-diff --git a/fs/nfs/pnfs_dev.c b/fs/nfs/pnfs_dev.c
-index bf0f2d67e96c..d19752ec1a95 100644
---- a/fs/nfs/pnfs_dev.c
-+++ b/fs/nfs/pnfs_dev.c
-@@ -231,9 +231,7 @@ nfs4_delete_deviceid(const struct pnfs_layoutdriver_type *ld,
- 	struct nfs4_deviceid_node *d;
- 
- 	spin_lock(&nfs4_deviceid_lock);
--	rcu_read_lock();
- 	d = _lookup_deviceid(ld, clp, id, nfs4_deviceid_hash(id));
--	rcu_read_unlock();
- 	if (!d) {
- 		spin_unlock(&nfs4_deviceid_lock);
- 		return;
-@@ -331,14 +329,12 @@ _deviceid_purge_client(const struct nfs_client *clp, long hash)
- 	HLIST_HEAD(tmp);
- 
- 	spin_lock(&nfs4_deviceid_lock);
--	rcu_read_lock();
- 	hlist_for_each_entry_rcu(d, &nfs4_deviceid_cache[hash], node)
- 		if (d->nfs_client == clp && atomic_read(&d->ref)) {
- 			hlist_del_init_rcu(&d->node);
- 			hlist_add_head(&d->tmpnode, &tmp);
- 			clear_bit(NFS_DEVICEID_NOCACHE, &d->flags);
- 		}
--	rcu_read_unlock();
- 	spin_unlock(&nfs4_deviceid_lock);
- 
- 	if (hlist_empty(&tmp))
+ 	list_add_rcu(&handler->list, &handler_list);
+ 	spin_unlock(&handler_list_write_lock);
 -- 
 2.34.1
 
