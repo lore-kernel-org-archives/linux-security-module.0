@@ -1,55 +1,51 @@
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1C93191A3;
-	Tue, 16 Sep 2025 13:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E167331A05B;
+	Tue, 16 Sep 2025 13:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758029765; cv=none; b=UtkqKrTVB5cdOZL9lmgBncCqn1hcUqtKDC+34qCtACkux/rq9Eip8DTSTJ5tXzEzKFY08Qkmt9uSiIfurfBXMC8sqAc/y8qXeZWtUpmkbyzbbBu+WkMLqDkwwSHFfXaBv6S/1S14XdBKGAzrxuCDQ6f8FaeTx+9qqUKHBN7jX6I=
+	t=1758030227; cv=none; b=gUMBmUw/KnD0efoJ5QchAANx0aklDD074eLQUis0hzUmVzSBlMxKdyTFn1J6aqeMQ7x8awMn5IdltApaurk/CVvAQUyTWcpwGdb54Ba31gjMfwQchVGADSoGNQDxzTeOr2roDX3OZZBiXx+NAh9OaWajmrZf0MOrBhpUStJhQqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758029765; c=relaxed/simple;
-	bh=nxPr6BROuKeid2asUHqylc5kE6izLAV55LFjfxk7V7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hLobXFdHh/hTtSbaEU5dJBaIFVYoKekuHqSjAV7u3ozFW9hAeq9KfvYPAKJsQJSi7oSQOLwMIJmNcY7YTW08dbgU7t54BIX5/9qDzxO9bd5Fpud7a9bIaCRgG7XJuTGp/+22oLd9baOX20amJ40VWJ34+uXr+eAiQrbt816kvMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=0TBepx7n; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+	s=arc-20240116; t=1758030227; c=relaxed/simple;
+	bh=4RPsniceCxTbDvIQYtXo7KbQrexVuJ3owhcslNfqKlE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X+p5EqNvAXV5g5/5RnN3/5/JLn/0FtQQOm3mQWhA3FV9wd++XNm8vunKAklSEAUmriuCoJHIjQb/zWklcgUwrMJT+5No+3+N0F62Or09/sJdjcE/GQcxUgiPmtpjDX4qtr7Zp2jLtMcd4/xp54FT9G+CGw6hqLOL9qr4qK6yoo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=aAgNAUG/; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="0TBepx7n"
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 7261F14C2D3;
-	Tue, 16 Sep 2025 15:35:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1758029756;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lJQV/xL2hmIUKXDSuzeF/Nwm/bBht4Qf4SUZQZ6+msY=;
-	b=0TBepx7n/S/c5Sq8+oJsksGNWfhB4aNwu00NfyFWcGS9i1/LhKGUjmpKAQU8wGSvaJA6HS
-	enIe247FPthCU76U4kscIarSZ3ro0VTGDprPkp1RfS7o5FhpHQypDM+/T/MD9doS/0neub
-	WGz1WOuMDF1LQaU6FQiOf6TVRSTlbhjKw9K9YKvoM4qHr0+GmTyGweaKDDPIGKkzmLSd0e
-	44xV372CW2+9Tjdy0kZyjes+MtT/aCOSKtEW/VWdj+2dxEkearky9U2F2W7LGOx4F94J5Z
-	PGiWQ8IzbM0ZWluN+RKH7dGoYBphNIEVUGgsL6M/TFyWL1PU+xAXGUC33MebPg==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id b149dc1f;
-	Tue, 16 Sep 2025 13:35:50 +0000 (UTC)
-Date: Tue, 16 Sep 2025 22:35:35 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Tingmao Wang <m@maowtm.org>
-Cc: Christian Schoenebeck <linux_oss@crudebyte.com>,
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
-	linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Matthew Bobrowski <repnop@google.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
- qid)
-Message-ID: <aMlnpz7TrbXuL0mc@codewreck.org>
-References: <aMih5XYYrpP559de@codewreck.org>
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="aAgNAUG/"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=7ImHOzG3mjGym1iYUJc4foIPK8/k8Yedk8oGlL7UsVY=; b=aAgNAUG/wunDgGVcWNxOFDQJaT
+	hx3bS58WhDpIWZeFUX9lLiCpL/r9ic212DUwcF2xi56C9CROL43qnc3M/fzM7G2Z05b1tpyGEhT28
+	SnRzs36jaMEa73sH1SEWyG6hkMd82Ofm+IkOHh5dCuo5phpBtkUJHEvrNc3NlmK1DV/J0gb0iLAQi
+	uSZ/PjEymNRBxrrl4NOCXCfjjSFdiHqOgWMMRXzNXWu8KGFE6w2xavO7Y4C7vQVaFCWpIY4mjAjFY
+	wps1U+SzvyEERlN7MJ8jjbl9HSpMekw/M8h3kyzpXaR9mDxnwtgUREZrNgnf3jfQlwd+TENJO5QQt
+	kh7V7o4CuEQDWSOoMgKN9ytrDZPLpOTPXgu6A1D4SIZBDexdJ/zw2CGXtX+u0tCNf4EiHHHdQytiy
+	hy77IDNIizcO8VDnkscPlFnkNMItyKyve7bk51G9Olfdi4P3Rt4xFO5dUQRW3adcfg2fHnkD+rDVb
+	m1LHPsSdUvnsOuphSd66/YLB4YD1o3h/j/8wblaaJWrAlgzuvz28lR1sVace45NV2q9ImcMmW3io+
+	kOeT/WF/x8o9nVnCEVW4h7uSipowuSoRZtSdizFnzQlMnTEblxABRPY0obZ1S1m6tS0Jc0I7WFjC0
+	de3JYIIiphuqBUy6aCrIO+jgMo5cdRbDUYlu4Bf3U=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: Dominique Martinet <asmadeus@codewreck.org>, Tingmao Wang <m@maowtm.org>
+Cc: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>,
+ v9fs@lists.linux.dev, =?ISO-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+ linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
+ Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ linux-fsdevel@vger.kernel.org
+Subject:
+ Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to qid)
+Date: Tue, 16 Sep 2025 15:43:33 +0200
+Message-ID: <16279923.yzM2DkEX5f@silver>
+In-Reply-To: <6502db0c-17ed-4644-a744-bb0553174541@maowtm.org>
+References:
+ <aMih5XYYrpP559de@codewreck.org>
  <6502db0c-17ed-4644-a744-bb0553174541@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -57,107 +53,50 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6502db0c-17ed-4644-a744-bb0553174541@maowtm.org>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Tingmao Wang wrote on Tue, Sep 16, 2025 at 01:44:27PM +0100:
-> > iirc even in cacheless mode 9p should keep inode arounds if there's an
-> > open fd somewhere
+On Tuesday, September 16, 2025 2:44:27 PM CEST Tingmao Wang wrote:
+> On 9/16/25 00:31, Dominique Martinet wrote:
+[...]
+> >> I tried mounting a qemu-exported 9pfs backed on ext4, with
+> >> multidevs=remap, and created a file, used stat to note its inode number,
+> >> deleted the file, created another file (of the same OR different name),
+> >> and that new file will have the same inode number.
+> >> 
+> >> (If I don't delete the file, then a newly created file would of course
+> >> have a different ext4 inode number, and in that case QEMU exposes a
+> >> different qid)
+> > 
+> > Ok so from Christian's reply this is just ext4 reusing the same inode..
+> > I briefly hinted at this above, but in this case ext4 will give the
+> > inode a different generation number (so the ext4 file handle will be
+> > different, and accessing the old one will get ESTALE); but that's not
+> > something qemu currently tracks and it'd be a bit of an overhaul...
+> > In theory qemu could hash mount_id + file handle to get a properly
+> > unique qid, if we need to improve that, but that'd be limited to root
+> > users (and to filesystems that support name_to_handle_at) so I don't
+> > think it's really appropriate either... hmm..
 > 
-> Yes, because there is a dentry that has a reference to it.  Similarly if
-> there is a Landlock rule referencing it, the inode will also be kept
-> around (but not the dentry, Landlock only references the inode).  The
-> problem is that when another application (that is being Landlocked)
-> accesses the file, 9pfs will create a new inode in uncached mode,
-> regardless of whether an existing inode exists.
-> [...]
-> Based on my understanding, I think this isn't really to do with whether
-> the dentry is around or not.  In cached mode, 9pfs will use iget5_locked
-> to look up an existing inode based on the qid, if one exists, and use
-> that, even if no cached dentry points to it.  However, in uncached mode,
-> currently if vfs asks 9pfs to find an inode (e.g. because the dentry is no
-> longer in cache), it always get a new one:
-> [...]
-> v9fs_qid_iget_dotl:
-> 	...
-> 	if (new)
-> 		test = v9fs_test_new_inode_dotl;
-> 	else
-> 		test = v9fs_test_inode_dotl;
-
-Right, if we get all the way to iget uncached mode will get a new inode,
-but if the file is opened (I tried `cat > foo` and `tail -f foo`) then
-re-opening cat will not issue a lookup at all -- v9fs_vfs_lookup() is
-not called in the first place.
-Likewise, in cached mode, just having the file in cache makes new open
-not call v9fs_vfs_lookup for that file (even if it's not currently
-open), so that `if (new)` is not actually what matters here afaiu.
-
-What's the condition to make it happen? Can we make that happen with
-landlock?
-
-In practice that'd make landlock partially negate cacheless mode, as
-we'd "pin" landlocked paths, but as long as readdirs aren't cached and
-other metadata is refreshed on e.g. stat() calls I think that's fine
-if we can make it happen.
-
-(That's a big if)
-
-> > So in cacheless mode, if you have a tree like this:
-> > a
-> > └── b
-> >     ├── c
-> >     └── d
-> > with c 'open' (or a reference held by landlock), then dentries for a/b/c
-> > would be kept, but d could be droppable?
+> Actually I think I forgot that there is also qid.version, which in the
+> case of a QEMU-exported 9pfs might just be the file modification time?  In
+> 9pfs currently we do reject a inode match if that version changed server
+> side in cached mode:
 > 
-> I think, based on my understanding, a child dentry does always have a
-> reference to its parent, and so parent won't be dropped before child, if
-> child dentry is alive.
-
-I'd be tempted to agree here
-
-> However holding a proper dentry reference in an
-> inode might be tricky as dentry holds the reference to its inode.
-
-Hmm, yeah, that's problematic.
-Could it be held in landlock and not by the inode?
-Just thinking out loud.
-
-> > My understanding is that in cacheless mode we're dropping dentries
-> > aggressively so that things like readdir() are refreshed, but I'm
-> > thinking this should work even if we keep some dentries alive when their
-> > inode is held up.
+> v9fs_test_inode_dotl:
+> 	/* compare qid details */
+> 	if (memcmp(&v9inode->qid.version,
+> 		   &st->qid.version, sizeof(v9inode->qid.version)))
+> 		return 0;
 > 
-> If we have some way of keeping the dentry alive (without introducing
-> circular reference problems) then I guess that would work and we don't
-> have to track paths ourselves.
+> (not tested whether QEMU correctly sets this version yet)
 
-Yes, that's the idea - the dentry basically already contain the path, so
-we wouldn't be reinventing the wheel...
+Define "correctly". ;-) QEMU sets it like this since 2010:
 
-> >  - if that doesn't work (or is too complicated), I'm thinking tracking
-> > path is probably better than qid-based filtering based on what we
-> > discussed as it only affects uncached mode.. I'll need to spend some
-> > time testing but I think we can move forward with the current patchset
-> > rather than try something new.
-> 
-> Note that in discussion with Mickaël (maintainer of Landlock) he indicated
-> that he would be comfortable for Landlock to track a qid, instead of
-> holding a inode, specifically for 9pfs.
+  qidp->version = stbuf->st_mtime ^ (stbuf->st_size << 8);
 
-Yes, I saw that, but what you pointed out about qid reuse make me
-somewhat uncomfortable with that direction -- you could allow a
-directory, delete it, create a new one somewhere else and if the
-underlying fs reuse the same inode number the rule would allow an
-intended directory instead so I'd rather not rely on qid for this
-either.
-But if you think that's not a problem in practice (because e.g. landlock
-would somehow detect the dir got deleted or another good reason it's not
-a problem) then I agree it's probably the simplest way forward
-implementation-wise.
+https://github.com/qemu/qemu/blob/190d5d7fd725ff754f94e8e0cbfb69f279c82b5d/hw/9pfs/9p.c#L1020
 
--- 
-Dominique Martinet | Asmadeus
+/Christian
+
+
