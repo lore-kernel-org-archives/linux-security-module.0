@@ -1,63 +1,63 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604812EFD86
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Sep 2025 04:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF812F1FDF
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Sep 2025 04:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757998183; cv=none; b=LZtodZjpu+EjMuHWvKoTVkfku0hw1gB15cnaqTUbewbyW3/VQiAg1RXRzXNHhnPB8Y2o4x7OUyYnIVXPHbrv5HwJVLy2O2deVZuXFL2ONIoklBqitvywzvlGhG4ddMESsNRkubRHRFtAucd+OYcI3sO9gPNkIUa2evNtjIvDxUA=
+	t=1757998191; cv=none; b=ePFf/IFTXX8Gd8+KR+TPuMF1wyJbGYz9wmpjNshCEebsRWmYO933spPcXpZaENeeYFJn+pP79ZTOZ4mTfrFisJ0bjbXQ7atiyQPRbY48PBsNpY5+CH4LUFTv6qWwDYF2oIbWmEfVkSpJuEPjpOQgaWjTyhxD/wYzqaKKEZnh1tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757998183; c=relaxed/simple;
-	bh=xZie7XPvdT38eYIBnvXACDOKlp4uDfFQ6p8xkwCAypA=;
+	s=arc-20240116; t=1757998191; c=relaxed/simple;
+	bh=slyVnZPzDDOXEcpF4QZOR3I7YB3yd3f7Gxtzb+FU87Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PHuMJjxWK9ny695BvM9PdEtj+Hsp6uOiGsH9NS8IZxcgBOr0UhsO4H2xqHhwnO+DwvuLr/d5lefIlO0t3wzfHg4MnTm8Kz/i1dFrePqkFZsCnn4BiTVii+afYa6YJgWJtmOosMnkrN/tPLg8jaWjeJHZO2PDCmxn011oBSk6OBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VRPVEEEM; arc=none smtp.client-ip=209.85.214.180
+	 MIME-Version; b=WpbSRmJ8LwMjm8SZE21makvqfyPvPI+9De98y9uyzxSJZJFllAIGcYrKcsDfivTtMmtPSHjOmy3q8aLVjxBKM/U/kU/3Ii/vpb/wZ5++DVQTwySLW5c4M0cT3X8/KxqG3FxFVejXhwf41cjslcQHBdOxfa19cysfQn5PHhMijT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JL+Xia8W; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRPVEEEM"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-26799bf6a2eso13907445ad.3
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Sep 2025 21:49:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JL+Xia8W"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-266fa7a0552so15568335ad.3
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Sep 2025 21:49:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757998181; x=1758602981; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757998187; x=1758602987; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6Tcedso9pzLAwLQitmBj+2+6wC4HZyTUiqHFeMdiOi8=;
-        b=VRPVEEEMyPFp1/apdgsdGcdVZa8RyIEDb4oi+MRkYBM99QFUqx8qesncXE5xPiXr4k
-         5EmQzzVM6ROAy9MD5JQWOsyeqzNpcJOOfhDFpvyiLSBzgAVmSV4PpvkG7J3oLLXh3T2t
-         aSGMxXUkZ/sTwLMVvwCxtrd/98Mzai0cB56bcT2QDXO9wehrl8U9zH9CWY9ycecU5qrW
-         lgZghkMXBNPhiPB0dDJ7sUurWKQUnVaHBn61VqMU8sFvJRgf6DYXbUA1UPvggaPVkZ2/
-         wEyAhf8NXX+w9nILAVNf9HZ/dItwjE6ImKe5EZYWjDrUvt9j68hAE0JwgxYdvG9auYLy
-         KGJw==
+        bh=OlYXyo2uZuFo7JhGyy9UUCXJlKeDR2CbpPIjqr5RgpE=;
+        b=JL+Xia8W4uyroTDLgoFXQGcvga86g7+1VEKz2roIDSxQwxKuGGI1kJw0E5mRvO2QSO
+         m/1WcvkXEpAacTm9jy5S7c5V4Dczrr3meBJOyddNip27HVCCCOgthvtb5FLtkxbvF41s
+         iGlUzzPGymDg3T5amMQJm6PDCBR7n+L0ahtyEay0NJYWIu7m2vFg6tr2ajT32yaanfBd
+         xDtJu+c4X/3CeTjTCyDCOh+jJ9IMVyUrOd4EWhGGuGTa3TWSp3+no8CtHQqAuwI3rWWA
+         BuIdQSsCM/Xgm1YsJeGbAazZkNWV/RcrZ3PBFtpntXLtYH4Vrd8FCoda8o0sXcMxI94o
+         +OOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757998181; x=1758602981;
+        d=1e100.net; s=20230601; t=1757998187; x=1758602987;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6Tcedso9pzLAwLQitmBj+2+6wC4HZyTUiqHFeMdiOi8=;
-        b=JWsfyTzmztaTByf+DGUqd7GUoaAl6svY7CBp8HayZ2zchIdkSIZHKO9v72Q19XsAG1
-         dBOjSKF7qigMd7ddLfL44AvHPsB2E9rPegkLTYJjmf2xnJtN7pv5sA3X6yrIkHGCUmSH
-         b28cg/vWnCLDRA7BGRsMjCZW2HjQ+Y+5T/ncLDKS4c/qAJGahuMSqnBbJtNumzORP/Qv
-         Cw/ijLL+DA4h9sZVcSGDETLtU2ijFX/TPpYRCUXEoIL9m+uXkUBP4PtVAxM3JE88dOKx
-         w9csylw3YghSljlG7WDKKrL/qO8DRIET1484WzarpB9zBt/D/u890JUszPnjPnt7CY/G
-         KYVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUswjFmtPSzyux3fx43Ro6i1Dbath9Z7pM/CzdZeDRZDkenj0hmhVZCK2c38rYitZDRyYdK66NaKiaG5WGedZaBsdOrmBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvwuOHUIw/eNMLTQTlaODIVHEkPBZKuy3WM6XboxyhHa8HIU9N
-	pMnGpccmJGVIMWvPwWxw5vOItzsok65/A7SFG8FdS/YtQG6VCH0Fa/31
-X-Gm-Gg: ASbGncsmXudoq7vtdEhCyxoKt3fHlRZV5gusASj34zF7BcHYZZqQ+4nRvyWCET6/R4M
-	Xazi4ZMwTg0ayz0IaM4Q0+K7rzPodqswuqAR3Ons8H+lTfkHbeR867IBi5DiK4eBU1zu9C85t+X
-	igzpFomOL7YyLC27KuksEpLjearcE/x2CBpkNLMf79GV+1C7kHoQWWau8ohETZuyZ4MPRy/HzSM
-	+LjFEK2yiCYAkNHyprA8sUMsf7A7fdCHNysgomaX7c+jyQlDin42QtRhxBW6XGwBO0NcPBa/B6f
-	Z9yqBfdbAOQcN6vKrSYx1wzfp1E1imcOXXDPr/4qx7k/PCNgibFHLuXeKXYn19Ca91WOKwHNR7+
-	dUb/CdN3GkKppQKsYaS+X+KSqfr8++P8CAxBxYx4=
-X-Google-Smtp-Source: AGHT+IEk/DXYOCMhugqpymqTGh+KMlTQeAIuikssxOXlHLYZS5SBPJrXDrKkOxyomJ+DECodEM8EoQ==
-X-Received: by 2002:a17:902:c40d:b0:251:a3b3:1580 with SMTP id d9443c01a7336-25d24cac4eemr191581215ad.6.1757998180587;
-        Mon, 15 Sep 2025 21:49:40 -0700 (PDT)
+        bh=OlYXyo2uZuFo7JhGyy9UUCXJlKeDR2CbpPIjqr5RgpE=;
+        b=DOma0ZfqG3l3XXjI7uuAazXX6DCFaJF4P6ryP+yc6gs0ts04kovQ0/dxpL3zA5lB+/
+         TfA2XoRTyJGpG1zFjjUTBYrEdAZKUum5cZZcsPfsoP1iMTSoxa0RQKbftC8t4u27G1gX
+         hU1HC5EkSyJ//IPOs/5OvZsVrEkeoE8JllX/SZ7/3+WDxq6MzZIEn26IAi9PdF0JUis0
+         4xuhHnlvCTsTsEMNYEwIC0GnvXENn7zzImg5LOeNUavIbF2Q0bBdz1n0dZEhxMBfdweX
+         SY4/UQo7RusiKfxf6ljAs0WvLYV3n2abTJKi5xzymqa/faP+FxtrD+VKROmdh5Udkob6
+         Ig7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUBU+NXiVxmEFv7tICV5T+lc7EjRDOFnhwjyitVG7seHTxEDzCw/DM52ZD83a1gyYKF0rcONGuwbngvt8QkL+uO86PXb6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFxRpEJgUJmLBt55WhyISF4tbwxTG5RYdrVuiyC/FfO12ylfs0
+	3RTnogsfbZCsQkS/WyKktPpcfTR1GWAlcdhpFUdlX2QxOniA1Xlzl0ud
+X-Gm-Gg: ASbGncvuSOkSZo9gwi7O2W5RDeKsGohSWRXq8an6duQ6nx2N0NCC3gw2pp0LHbdlA8B
+	hEY3/9BcR/0pRD/T50ZF/S3ueH8MSWGtJRkriuLfPwwl1FipvW8g2mzjKIrsGyuJZXp59paubeQ
+	cPfM+5xhuMjmVQh00vxJLHYupF0rRXX4d0RyNP7XsdqIJA1T84acXEfCMXzhIB0VhoXv0wBEIeB
+	ytvcXqEN68uimCNeSRadQ0jlfJKEjhM4RlPTn2HGmtV3S+yyZ8tF6c3F8cB8PuQMbaMB3QLH7bE
+	dV6c/5HZWkr5ox6uPXDa2dKrtSB3XInqXYhBnHMkUL8Fji1LD+zVWfnZJrn/ZCL+87odurxFMPY
+	P8IAnEMQT+GyUaYpuia8m5CyFv6RQAUEuM5gX99LekEfWCVT2Ng==
+X-Google-Smtp-Source: AGHT+IFV4zbzh4iycIfH4WDU92suC0bCanMglT0Ogl2GwpwL8kM68NHrYSygkh1AIkIcAzvJhqwslA==
+X-Received: by 2002:a17:903:2f4f:b0:24c:99bd:52bb with SMTP id d9443c01a7336-25d267641camr179941415ad.30.1757998187203;
+        Mon, 15 Sep 2025 21:49:47 -0700 (PDT)
 Received: from pengdl-pc.mioffice.cn ([43.224.245.249])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25ef09c77f8sm104600605ad.15.2025.09.15.21.49.34
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25ef09c77f8sm104600605ad.15.2025.09.15.21.49.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 21:49:40 -0700 (PDT)
+        Mon, 15 Sep 2025 21:49:46 -0700 (PDT)
 From: pengdonglin <dolinux.peng@gmail.com>
 To: tj@kernel.org,
 	tony.luck@intel.com,
@@ -85,12 +85,12 @@ Cc: bigeasy@linutronix.de,
 	linux-s390@vger.kernel.org,
 	cgroups@vger.kernel.org,
 	pengdonglin <dolinux.peng@gmail.com>,
-	Paolo Abeni <pabeni@redhat.com>,
+	"Toke" <toke@toke.dk>,
 	Jakub Kicinski <kuba@kernel.org>,
 	pengdonglin <pengdonglin@xiaomi.com>
-Subject: [PATCH v3 13/14] net: bonding: Remove redundant rcu_read_lock/unlock() in spin_lock
-Date: Tue, 16 Sep 2025 12:47:34 +0800
-Message-Id: <20250916044735.2316171-14-dolinux.peng@gmail.com>
+Subject: [PATCH v3 14/14] wifi: ath9k: Remove redundant rcu_read_lock/unlock() in spin_lock
+Date: Tue, 16 Sep 2025 12:47:35 +0800
+Message-Id: <20250916044735.2316171-15-dolinux.peng@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250916044735.2316171-1-dolinux.peng@gmail.com>
 References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
@@ -115,35 +115,34 @@ been started implicitly by spin_lock().
 
 Simplify the code and remove the inner rcu_read_lock() invocation.
 
-Cc: Jay Vosburgh <jv@jvosburgh.net>
-Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: "Toke" <toke@toke.dk>
 Cc: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
 Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
 ---
- drivers/net/bonding/bond_3ad.c | 2 --
+ drivers/net/wireless/ath/ath9k/xmit.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/bonding/bond_3ad.c b/drivers/net/bonding/bond_3ad.c
-index 4edc8e6b6b64..c53ea73f103a 100644
---- a/drivers/net/bonding/bond_3ad.c
-+++ b/drivers/net/bonding/bond_3ad.c
-@@ -2485,7 +2485,6 @@ void bond_3ad_state_machine_handler(struct work_struct *work)
- 	 * concurrently due to incoming LACPDU as well.
- 	 */
- 	spin_lock_bh(&bond->mode_lock);
+diff --git a/drivers/net/wireless/ath/ath9k/xmit.c b/drivers/net/wireless/ath/ath9k/xmit.c
+index 0ac9212e42f7..4a0f465aa2fe 100644
+--- a/drivers/net/wireless/ath/ath9k/xmit.c
++++ b/drivers/net/wireless/ath/ath9k/xmit.c
+@@ -1993,7 +1993,6 @@ void ath_txq_schedule(struct ath_softc *sc, struct ath_txq *txq)
+ 
+ 	ieee80211_txq_schedule_start(hw, txq->mac80211_qnum);
+ 	spin_lock_bh(&sc->chan_lock);
 -	rcu_read_lock();
  
- 	/* check if there are any slaves */
- 	if (!bond_has_slaves(bond))
-@@ -2537,7 +2536,6 @@ void bond_3ad_state_machine_handler(struct work_struct *work)
- 			break;
- 		}
+ 	if (sc->cur_chan->stopped)
+ 		goto out;
+@@ -2011,7 +2010,6 @@ void ath_txq_schedule(struct ath_softc *sc, struct ath_txq *txq)
  	}
--	rcu_read_unlock();
- 	spin_unlock_bh(&bond->mode_lock);
  
- 	if (update_slave_arr)
+ out:
+-	rcu_read_unlock();
+ 	spin_unlock_bh(&sc->chan_lock);
+ 	ieee80211_txq_schedule_end(hw, txq->mac80211_qnum);
+ }
 -- 
 2.34.1
 
