@@ -1,63 +1,63 @@
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239F323C4ED
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Sep 2025 04:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3CD242D6F
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Sep 2025 04:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757998130; cv=none; b=qYwJEjaqkHB3hoZ/iiYNWn2SpkftNDYhMU3vF0BJc7Le9bx83Cmmbf5C9scJBXSR3/DL60sG66MVRwW3D7/fHvPxQThV9XkAvZQIDlPJZnWGSPdwmXAzVo2t84xXnasco5ugMgPlyw8Yb9D5aY70Y3TshIHIxiYHLSrIfRJmY/8=
+	t=1757998137; cv=none; b=NV88ZGp5JHEfgsHk7RMrW9eDIwEpb52/qhCA3GWNhU8Rjg4oopmJ7jlQuNEKAwYyMBbBoyzkTQduyIlZWLaE+vMK8effKvcxYZ7/JzQv9mYn2Ly4xPPQAYDhIQ6s7CVlhFnX/Tt/qHi0TbzaBVy24Cc6kzpcv4HkCoHfGgShTKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757998130; c=relaxed/simple;
-	bh=McKpF5pbp0B08HxMwaOQh+77moGljXjpv9ExEqMvqrY=;
+	s=arc-20240116; t=1757998137; c=relaxed/simple;
+	bh=p5MwokYTH6tczJBsI6u40p8nW7EOrH93nmvNjBcj/D8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Rm88mZT1MRAPs+XlSNxOuNjL1iyMdL7M/K901XidgSL+5ownMSpBlrG7fmSXJDcjN1rUmenVjUfmE3B4soxWEtFgyq3U6bbn+7xjhc1iTH1HX1PzhmhVkR9fDCzrivprsnbRPeeDB3hLLwOlQG6UKZW/c8MxYTFww/V5x1uFa7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iAsxqDJG; arc=none smtp.client-ip=209.85.215.180
+	 MIME-Version; b=QRQXAqXhW2PhFcP5L1EBgzyEU+3tDyG5HLLD3ThDLLtnIVS73xLekuTGsJR9msG3c5Anl6esHxzFSF5DM4hsxCvShOGGh/P3OkkI3kF1wUPuhZB+lv3MpaJmWbpqtowMMlVIcmkulDn5yue7JXpktLyeNkVkOE2MPGtOvikCPMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XCCFjF93; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iAsxqDJG"
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b4d4881897cso3280141a12.0
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Sep 2025 21:48:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCCFjF93"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2570bf605b1so48699655ad.2
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Sep 2025 21:48:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757998127; x=1758602927; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757998134; x=1758602934; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KdSOTRlpcbSm77LoC5qTO7Qj2WXZD3913QNmAyohauk=;
-        b=iAsxqDJGyK6tvzTorEsVSUEuBJHI7lzp/5BEV9Wux96nvmddvYxeJQ1Pxvpd2zxtF/
-         odfGJC6i+MsiMQaqOK2xq8ZI0ARkBidTF5I5eqq1ZR8Qjn+DauG6LysiVeyKRFvX28EL
-         w6ZcpLJnXs6zocIW71x6zkcJ5+FAND5iyun6X1dBQ46MVXBvupNiU+xnLnPuRzi43J08
-         BA1c5fGxCyMnm79SP3kRQxMi+O6QScp7FJQkKJCIjiivp3mQfwQ1xz1JjfoSzAPM7acG
-         j6yJZpPiCXYc7n4vedVIAlccqhiIo5yA+omWiEO/NiWZlviC3u17B0o+jpKhtDTDqd64
-         n6Tw==
+        bh=+E/nxXHnOkpnquuQqI/t3YoOv7z+zhY+r7/SIcSNR5s=;
+        b=XCCFjF93gE03XoD5txrRGrVa2Cinpuf9dfznUDiyWczEqJ/NViO8aFYCASV/tcASm9
+         f5KFOsk5PZCVrn0wGqzSUFpGQfS2TXroxKwY3fjm5v8H0MZrmvPS3Gk4K4/flnFXJz9M
+         N61WImCcsaO7sx60jDVbpP99sDm3mPAR0JjjBMhWWqCwEhxevWM57VQoKx0jUAuys6Hg
+         BSa0+ecSoJQrp2zy0poaIzuSEu9xGk14EO1YJKRLVH06V0aibh7cAHh7R7d/mz+iRgA4
+         YlgOoTc5CRsv4uXdgCGLuCJsLNv7Nmpo4RhwTjSBaWgkf6NtdAf5g4bFqPqF54kAKrDj
+         Ni7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757998127; x=1758602927;
+        d=1e100.net; s=20230601; t=1757998134; x=1758602934;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KdSOTRlpcbSm77LoC5qTO7Qj2WXZD3913QNmAyohauk=;
-        b=SfuhBhsImfzHl3t9nDq44D7aLSkw+WDNmYtWOVKFCGw8CX3WM0GDN4i9bmgJeSiQeO
-         4TeUE2lvkE7MIhGaRx+swQ/N390o1K84XFv66kIMu7TJAnfUuKOzhO+CpxDtMl0bYpnn
-         Z6RsfYme2lk+9lNYbqr8taRmtR2wcTTpSj9Lw2N7AXp1umzpk+9uTpOdEQKqt7wjKy7q
-         8mNnqgyON4FYAssxZX5nclwsTw0bxIVPZ5iLA1VSkGVpU4TEK78yf7ONVuKh+iqSCAMc
-         H7wX5r9jZzX81BJ9+o38WB7XIskJ6F/jbQfXqjNknp8XYDT8QRoKgiBV0KJEgpGoogeW
-         +I4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWD5S7nDu28vhLc8VKJ+QPKucLanBiZvz2GTnAdKHqHDmjX2cM5AidPmCAKUKxHCZtjNzEQubRL8P9t4iP6glGy5vF4OF0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7s5/CtBL4iLh2l82YNloOqIjeiog6Go2OeG8pTkXUl9Gcrn9e
-	w4S5gSD9TzSQ+RKOBlOgIwsSPH7yB25QPpaTJ1HwFkGotPfKhcuAoXZ9
-X-Gm-Gg: ASbGncv6BCPHgUCfrOjsDIdFz6GkwwtkzhrwV/+cbMeya2cPVQN/rjvK7ntdcLpEuJJ
-	qgj1NBwjr6ZENYWZFBrKZMUq6KopMGKS6SMqLj7PtL9ePSW7USUTuj3ZdpbKjBxWrGmQdKN7nw7
-	s0HA6IbJc7XYPnTQE1nAYTBFfNgQe+aGJtJvy9ulysjYBt+MX1aDM/RNUL0MBB2kwdnjc/Ee/AQ
-	IlEomI4q5YghmIr+c0vL5QJ2ygyFrTr+EpM1RDb3tY9nsXlk2Uh3o/PavbcIbDU9An+6WvpaUFx
-	8E2YiRMgfnD+5mUtt3SwgKrr77smNz6z9B57a4b81AezGw4g1jSZxtv2nWh9w5cqPVYXJ0Q0elI
-	cJBFIA0/3tMk8sc1tIGspHfKsifl2AgJ64+nC0jA=
-X-Google-Smtp-Source: AGHT+IGkIhcIMGh+oiZ/aDBZPsHwPAhQG69OhML0E/f2mr/YjQA5clLbS6Ua4uwzILjLJIA06eQ5gQ==
-X-Received: by 2002:a17:902:d2c4:b0:25e:5d83:2ddd with SMTP id d9443c01a7336-25e5d832fdcmr159755585ad.45.1757998127447;
-        Mon, 15 Sep 2025 21:48:47 -0700 (PDT)
+        bh=+E/nxXHnOkpnquuQqI/t3YoOv7z+zhY+r7/SIcSNR5s=;
+        b=C0y1Mv5EbNs1TZ+3q8pqQW1igFJNxxfzeJrFneD2DjZmD0CjJtHrMoXrLGIqBVQ18B
+         MzOTG+RRDrh5kns2e7axAFMzbWUeF/lvrHMpU5efMvm1TC95X4+w1bXP4o0LdlJ1Lltn
+         Cg2FpW/LveWJFacUyCnoFB948UPnPGqG2/MUBTRAAlphkqonEmtsr0I+SSOggNKQCLbT
+         NcSrs4U113C+WY11WotxqJJXXP9MmX0Sgj5fUBIKbpwhvg2L6kbB0D9Z13M+WVkquFKj
+         4IjTR0yFrxR807Cpe8GtR+J4uXfnq9R2fpKt5q4RSmO9IHfs5Hzs1ecveIb7lQqwLP2f
+         mmBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdIxDn+BGk8f5GoiDS7QvPRLoZimx0vHCrXDCE6xdFCljSv+fwCVSlV49aOF0nvheLD+Ldj8OLW82XeprMc+v0sasKh3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP9BKUomSqZ6SOnxpTz/mF/vMH4mQRCcRqpXaP/skjFnIO4SHK
+	V9Lnc0RkKPtDhaP2zvTFODeOLTJSfmVzmAaoj4ZsEOGLGSrhuhujgxRr
+X-Gm-Gg: ASbGncu5mXoQVzPsd1WwBoAreIB4Q0SR0ALQLE3BuWG/l8tMiNRQ5cCHjR2tmGbzIbh
+	Iz6/kwLNJ2/c1tsjLQ4kPKFRj2pC3U6H7boBJtYetoa63tEJYUDTQwyDng5vx0tT/6l/0RtZs9X
+	yqgsGnJwV/ZpevRa8MyYPTQUT2m6uaiZpvEeSn8Ht0yywiYcPQdioDAiV0zXT9xZcwFr9VuDgIJ
+	Z23CYV6tCSv0SrOsSI07QjA7ZlAeOdBdDepDbTdykcwptu/vtuGMvuhSgxxLxMv8vQh3k1Z/gE4
+	0vs6/YYFcqz8H38JzfwbbWXXEqwxWjyxI+24uKKToIk17mlDwnkphCdFsCgAVfZU8MxN2pwuJIg
+	RGTPBnFWelw01fizjYHT9iTZjBGsdud2GTSQ21BZrm24HFyPumw==
+X-Google-Smtp-Source: AGHT+IHsN0GBYzT4MMuIYjW4jOX+BASz3i1Lsko5ULcFSIEXx1CyBAF2xoChVB4z7RicwE9rHAP4nQ==
+X-Received: by 2002:a17:902:db02:b0:267:b357:9445 with SMTP id d9443c01a7336-267b35796d4mr43637625ad.28.1757998133829;
+        Mon, 15 Sep 2025 21:48:53 -0700 (PDT)
 Received: from pengdl-pc.mioffice.cn ([43.224.245.249])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25ef09c77f8sm104600605ad.15.2025.09.15.21.48.40
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25ef09c77f8sm104600605ad.15.2025.09.15.21.48.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 21:48:46 -0700 (PDT)
+        Mon, 15 Sep 2025 21:48:53 -0700 (PDT)
 From: pengdonglin <dolinux.peng@gmail.com>
 To: tj@kernel.org,
 	tony.luck@intel.com,
@@ -85,13 +85,10 @@ Cc: bigeasy@linutronix.de,
 	linux-s390@vger.kernel.org,
 	cgroups@vger.kernel.org,
 	pengdonglin <dolinux.peng@gmail.com>,
-	Holger Dengler <dengler@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
 	pengdonglin <pengdonglin@xiaomi.com>
-Subject: [PATCH v3 05/14] s390/pkey: Remove redundant rcu_read_lock/unlock() in spin_lock
-Date: Tue, 16 Sep 2025 12:47:26 +0800
-Message-Id: <20250916044735.2316171-6-dolinux.peng@gmail.com>
+Subject: [PATCH v3 06/14] ipc: Remove redundant rcu_read_lock/unlock() in spin_lock
+Date: Tue, 16 Sep 2025 12:47:27 +0800
+Message-Id: <20250916044735.2316171-7-dolinux.peng@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250916044735.2316171-1-dolinux.peng@gmail.com>
 References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
@@ -116,37 +113,71 @@ been started implicitly by spin_lock().
 
 Simplify the code and remove the inner rcu_read_lock() invocation.
 
-Cc: Harald Freudenberger <freude@linux.ibm.com>
-Cc: Holger Dengler <dengler@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>
 Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
 Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
 ---
- drivers/s390/crypto/pkey_base.c | 3 ---
- 1 file changed, 3 deletions(-)
+ ipc/msg.c  | 1 -
+ ipc/sem.c  | 1 -
+ ipc/shm.c  | 1 -
+ ipc/util.c | 2 --
+ 4 files changed, 5 deletions(-)
 
-diff --git a/drivers/s390/crypto/pkey_base.c b/drivers/s390/crypto/pkey_base.c
-index b15741461a63..4c4a9feecccc 100644
---- a/drivers/s390/crypto/pkey_base.c
-+++ b/drivers/s390/crypto/pkey_base.c
-@@ -48,16 +48,13 @@ int pkey_handler_register(struct pkey_handler *handler)
- 
- 	spin_lock(&handler_list_write_lock);
- 
--	rcu_read_lock();
- 	list_for_each_entry_rcu(h, &handler_list, list) {
- 		if (h == handler) {
--			rcu_read_unlock();
- 			spin_unlock(&handler_list_write_lock);
- 			module_put(handler->module);
- 			return -EEXIST;
- 		}
+diff --git a/ipc/msg.c b/ipc/msg.c
+index ee6af4fe52bf..1e579b57023f 100644
+--- a/ipc/msg.c
++++ b/ipc/msg.c
+@@ -179,7 +179,6 @@ static int newque(struct ipc_namespace *ns, struct ipc_params *params)
  	}
+ 
+ 	ipc_unlock_object(&msq->q_perm);
 -	rcu_read_unlock();
  
- 	list_add_rcu(&handler->list, &handler_list);
- 	spin_unlock(&handler_list_write_lock);
+ 	return msq->q_perm.id;
+ }
+diff --git a/ipc/sem.c b/ipc/sem.c
+index a39cdc7bf88f..38ad57b2b558 100644
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -579,7 +579,6 @@ static int newary(struct ipc_namespace *ns, struct ipc_params *params)
+ 	ns->used_sems += nsems;
+ 
+ 	sem_unlock(sma, -1);
+-	rcu_read_unlock();
+ 
+ 	return sma->sem_perm.id;
+ }
+diff --git a/ipc/shm.c b/ipc/shm.c
+index a9310b6dbbc3..61fae1b6a18e 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -795,7 +795,6 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
+ 	error = shp->shm_perm.id;
+ 
+ 	ipc_unlock_object(&shp->shm_perm);
+-	rcu_read_unlock();
+ 	return error;
+ 
+ no_id:
+diff --git a/ipc/util.c b/ipc/util.c
+index cae60f11d9c2..1be691b5dcad 100644
+--- a/ipc/util.c
++++ b/ipc/util.c
+@@ -293,7 +293,6 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+ 	idr_preload(GFP_KERNEL);
+ 
+ 	spin_lock_init(&new->lock);
+-	rcu_read_lock();
+ 	spin_lock(&new->lock);
+ 
+ 	current_euid_egid(&euid, &egid);
+@@ -316,7 +315,6 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+ 	if (idx < 0) {
+ 		new->deleted = true;
+ 		spin_unlock(&new->lock);
+-		rcu_read_unlock();
+ 		return idx;
+ 	}
+ 
 -- 
 2.34.1
 
