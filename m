@@ -1,61 +1,63 @@
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8B726E6FB
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Sep 2025 04:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E802C21F5
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Sep 2025 04:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757998094; cv=none; b=MxL+Cee+zS+ajS0USIfm5CWWj/fcfwRQXXWTXT0Wm2RpSUy1h3bXst+aqkaD2GHNKSDGp8em5pay1x8GefJh3RC/HRK8Thb0/JzNCoCRCQTyDHAhoafRKFSDaNquPJyA1KIHvgLjKRxf071PAegc9/8mSPvGKxCBaJcNdrs8EzU=
+	t=1757998103; cv=none; b=RSIfXwjT1Gl7g3W/QW0Vz5BPkGJZKdWZv6wes0WwbW3vp2o2ISOMALZg1Ky39tM57Xsp0anyW33z3Ci8n7qqoz7VX2t1R8QXKSXG1nR2tZxpcQjV8nNRSnu6KgwhgErajhDtrcYXP6xv5i/BSmpnfFFIrHfIFZn7bvkF39lKxkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757998094; c=relaxed/simple;
-	bh=VmO2kvinS3A1vRaM0G0YEMkRq/84D/KeYXH2dYVRBxo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ARR2Bl//ofqV24Uz4/7+n9U+oRWeLS/qi39hJa9disxLw+COYUNxHlZs01K5BvbaCQ3UDz/3lGCsVqtUXb0HhjA3MydY5x0mJdtDz6uXABdkfQZXASGmbC91Mfgi6iyQqfutH/Bv/3tQc7dyGxogSQutJe1Rd33JmOoHRaKn9xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=isoHk3lp; arc=none smtp.client-ip=209.85.215.170
+	s=arc-20240116; t=1757998103; c=relaxed/simple;
+	bh=psJk8MWkw4yWUzhoGl6iC+/oKrIajPgKeNxYtGpbGJs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=F+iKbCKOq6mh+HJbFVUD3uXmmO6ttElmVAX8WBGjHNHaJ1Kxem/qXO47yM9eVRSScRMljPR0A7OWQNy2eQ7Y947efjVyTIJ24obJBtQzSAPa+4nrtFUYN6830QmEm1EOF1KyYFeOhAyUNfPGYqFvn8xUe9ZMURVFdKZyQRw7378=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UgiTKs98; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="isoHk3lp"
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b54a8c2eb5cso3983900a12.2
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Sep 2025 21:48:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UgiTKs98"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24c8ef94e5dso40142345ad.1
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Sep 2025 21:48:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757998091; x=1758602891; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MTEHvDm/IKR4tm1Bmr0HolxO+dzLmKu0Q858we1M/so=;
-        b=isoHk3lp/kmFTFnaHeJYBE80r7sNHEqVqjZ+45wb6IrmWrMuz2flgeColLovQOaDuf
-         NAUEFM9ecfmQSoQDeE3u58V7ghpBpdv4KxGtxqBh30vKMmepgvfCq+7U9/cFrLVukYUy
-         wCdIUGtwK53qcFRptBDC3bX9az7dK/Rm58f0Z7lcEN69v0Aq9ZW1Tla134rQD+4diuKQ
-         U1mOcz+P1CMlczkDX+mozr45Fo25Vl1zNXr8PZEeNHO2dwYuEZcfQruKhKuhy7ccFLfp
-         wjsvIEAE32onlHyrYQyak2+zcwEanV+eHJlD8AgPCiVP3AOf/bJjYCePLjhBDFEI6CeG
-         rMRQ==
+        d=gmail.com; s=20230601; t=1757998101; x=1758602901; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vOaEQ/7pID9TluLY7/w8zgk+8Z8ChedlXZfnOV6tq/0=;
+        b=UgiTKs98TYt0zah/UeSi4De4R5qcPuP9nE+oBFiDNrhtI0JRukYpwBGkrD1qMj8YZJ
+         zxAPGGH9qL2hIdPkF9Ps9Xnd7Jvxf/ZVlkbnd47UidqnLrPiaPttc/PPgcfGNO4KSZFH
+         MII8pjx2Ab32A8kOPiHi/IVq0+PdVSk9AH6nKylqP4ciHrUFZteDTLfbAAMcPsfOW9/9
+         SxBLWNNbByPGH2KJGO4I8tQi++oIv91NAcecNWvFFImMV/zfHb4u5kUEiUYwITx8m6l+
+         PbhcI71UPtGbN3T10jjL7ELy4EIjkaG/PtU6I9mrth/K43lLg7JX0O8z0A9pbbonH3JS
+         zeIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757998091; x=1758602891;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MTEHvDm/IKR4tm1Bmr0HolxO+dzLmKu0Q858we1M/so=;
-        b=q3iL82XumfnfWaf7xd/3hlfgbBWRjPEF7NlYseMHpUD+1p0tl5UPUNMpNKrLpmq3du
-         tYTHz7BVQFyedTpRhFZLsNSl+R0tzVltcjBkQWykfhvYjYF89LYBEm5hRLkQ16Kqx4UG
-         N7IjgwSRqjdeHc0iEpuT5PWndJRAak68qWEcPtaYnyVpzUHzAIl7q8b0uN7lCPHyXf+/
-         Xb4N5g0VAYQkSa78XnljazK1UguMUzOMtGXf7kZp4kc8ngBxObKjoHp75lE4lRxeY1ux
-         9unsSFD3kr4l0zkKmEmx8ivvgGaDoW1tLSq+FD5grraYB50jbn07eLDJInueUmRFse/3
-         irnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWulo0mwevoWuPrO46dE2SuVuy8e8q3BrjB70tR4l7GrP/soFxFWTgzyWEqAIu/59trTYPKTpJorL5arf+QUBOvAaMt3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBs/K3kd/Kz+ebUMR1diCmcpZKQjJLCVGvx7sB9cdul5gnK6X9
-	QAlansKnr07vgZOJLmFmB5rGAjBhAVuUcxMNr0oXP7gEkdnbYA499y69
-X-Gm-Gg: ASbGncseOFwIElUBnk8U++szYrix8EfY8thpwdFf5ZEiyngru8ruOLOHvoCxtC/0DRC
-	5f90xKax4zwd7d30rf3U7MA9T+Z5Tc47xEAtsoDjDil0zxSPVoDq24yXYd82Vc86DvKpPfAqxTl
-	izPxWwOnr72v4BLAhXwWs9zQAqWhVF1VWziGgENWx25Q3t9LvlHhJVHzn79+GBAo54rNYsxSGwP
-	ZPVRpImIPNoL+fHRvg/yzxkVZaQseam8BbWO14h13d9StbP1mJVkafAphC82K3LiB/K91D3x/z0
-	BYRcegX8rP9V7EI+ThC5baUWc+39xOGhZD9hBEYK/YWowLg6sHX3zY233VjG1qqCVFR/VvRdlh/
-	gxJDTRP7kGGQEDigL2k0lISlIE8Jfn7c9G6QR/Is=
-X-Google-Smtp-Source: AGHT+IEF2ZVvpNxJJFMqOknMo3Fo0PQL8lIHY8yKPy5AwqV+Fi26iyI0GpvDt9oGgKPIwk00E+AHOw==
-X-Received: by 2002:a17:902:e790:b0:267:95b2:9c0f with SMTP id d9443c01a7336-26795b29cb0mr59076565ad.28.1757998090662;
-        Mon, 15 Sep 2025 21:48:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757998101; x=1758602901;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vOaEQ/7pID9TluLY7/w8zgk+8Z8ChedlXZfnOV6tq/0=;
+        b=KA+ImHohyBO6/SwX6WALAWW7v4pc+dQyZUehxPRW/sEuLQghDWHa8fOuFJYIeyTaVI
+         hIe9tmXXN38yvwWajl1d5QVAjMfnrJQsjvd7x3R451VC8Nx+g3/tvk2/GNfi2UGC3TIX
+         x3z5HkYGrrXSfKZ14btkE7dae5YYGcTspOzDGeougIkonD18lP3oK7UwVE57TzezYWhQ
+         xOrRFomC2656X2M48/iACh59+88x63kgAtJBjs3cilk7g/xEZKfXsd9+VD30hmJ/S4nE
+         4MiokUKkmZF0SXn5T4WGjOU+Ks9jar6M8tMMt1WDgD6eo0q3u0EpCjELQnAQtHcKOTBo
+         tpwg==
+X-Forwarded-Encrypted: i=1; AJvYcCWsej2MkGD9GfyBnZ4WX7VpKRb/NQEX8pZk1PjK6nS7kXhfoabg5ZhiQFQ3s7zT2TDcgG0XtptACadAQCOP3cD5QDqqR70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVzOqiX7OS5XBohOBd/kq7VzU3BI74q75I62PFMGZOGLoIfAfo
+	acqr1Ex0+sr7nQIgrI6ELbu8/a6V7Hi52WcNPDn2ONW9EVApmQxUiIQt
+X-Gm-Gg: ASbGncvulLJBHGKlajs3heBKEPe+kGvSuWkfN+gTe23r5RG2BzNobS+DxfPPbU+f5vs
+	JM0C6Q9i3V3CAAucFq7EE3bYqyS9L8w+XSQly8M186GOCCxPPcurz9v4ziDyBTTQI4ud8Pce7UU
+	snyXTApJAxCDqQWpFgh7BB/a80hEvB6xxk0bOixm5Y46Is9vVgyzYrLrZMz7RxboPUpD+2M4O/+
+	OeuxiDaaBQ0BQqg9eAAla/wDN0gKpiqK2AtimEVnqMXf90xP8p4w0zA1IBu3xXfJgBacSXwMnPm
+	Di/O2MgavldIRHrVQHdKRJVWxgtQrbzMk3ctMSEUOnmtq3ubwYgIv+hw0O/1bP9W1ehhWKI8nvb
+	aVoNF/vAEfoqwup1S5kBZUjWDabMkyKPCW9tKSZ8=
+X-Google-Smtp-Source: AGHT+IFncLMpEiSXyRV3g2udd9oLTip5CIZ6fjiDS7nm0eY3IrUPzgwzagMuf9PJuGmIj5O4nns0xw==
+X-Received: by 2002:a17:903:2f87:b0:249:71f5:4e5a with SMTP id d9443c01a7336-267d161e3b9mr10726455ad.26.1757998100825;
+        Mon, 15 Sep 2025 21:48:20 -0700 (PDT)
 Received: from pengdl-pc.mioffice.cn ([43.224.245.249])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25ef09c77f8sm104600605ad.15.2025.09.15.21.48.04
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25ef09c77f8sm104600605ad.15.2025.09.15.21.48.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 21:48:09 -0700 (PDT)
+        Mon, 15 Sep 2025 21:48:20 -0700 (PDT)
 From: pengdonglin <dolinux.peng@gmail.com>
 To: tj@kernel.org,
 	tony.luck@intel.com,
@@ -82,11 +84,16 @@ Cc: bigeasy@linutronix.de,
 	linux-acpi@vger.kernel.org,
 	linux-s390@vger.kernel.org,
 	cgroups@vger.kernel.org,
-	pengdonglin <dolinux.peng@gmail.com>
-Subject: [PATCH v3 00/14] Remove redundant rcu_read_lock/unlock() in spin_lock
-Date: Tue, 16 Sep 2025 12:47:21 +0800
-Message-Id: <20250916044735.2316171-1-dolinux.peng@gmail.com>
+	pengdonglin <dolinux.peng@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	pengdonglin <pengdonglin@xiaomi.com>
+Subject: [PATCH v3 01/14] ACPI: APEI: Remove redundant rcu_read_lock/unlock() in spin_lock
+Date: Tue, 16 Sep 2025 12:47:22 +0800
+Message-Id: <20250916044735.2316171-2-dolinux.peng@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250916044735.2316171-1-dolinux.peng@gmail.com>
+References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -94,6 +101,8 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+
+From: pengdonglin <pengdonglin@xiaomi.com>
 
 Since commit a8bb74acd8efe ("rcu: Consolidate RCU-sched update-side function definitions")
 there is no difference between rcu_read_lock(), rcu_read_lock_bh() and
@@ -106,54 +115,32 @@ been started implicitly by spin_lock().
 
 Simplify the code and remove the inner rcu_read_lock() invocation.
 
-[1] https://elixir.bootlin.com/linux/v6.17-rc5/source/Documentation/RCU/rcu_dereference.rst#L407
-[2] https://lore.kernel.org/lkml/20180829222021.GA29944@linux.vnet.ibm.com/
-[3] https://lwn.net/Articles/777036/
-[4] https://lore.kernel.org/lkml/6435833a-bdcb-4114-b29d-28b7f436d47d@paulmck-laptop/
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Hanjun Guo <guohanjun@huawei.com>
+Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
+---
+ drivers/acpi/apei/ghes.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-pengdonglin (14):
-  ACPI: APEI: Remove redundant rcu_read_lock/unlock() in spin_lock
-  drm/i915/gt: Remove redundant rcu_read_lock/unlock() in spin_lock
-  fs: aio: Remove redundant rcu_read_lock/unlock() in spin_lock
-  nfs: Remove redundant rcu_read_lock/unlock() in spin_lock
-  s390/pkey: Remove redundant rcu_read_lock/unlock() in spin_lock
-  ipc: Remove redundant rcu_read_lock/unlock() in spin_lock
-  yama: Remove redundant rcu_read_lock/unlock() in spin_lock
-  cgroup: Remove redundant rcu_read_lock/unlock() in spin_lock
-  cgroup/cpuset: Remove redundant rcu_read_lock/unlock() in spin_lock
-  wifi: mac80211: Remove redundant rcu_read_lock/unlock() in spin_lock
-  net: ncsi: Remove redundant rcu_read_lock/unlock() in spin_lock
-  net: amt: Remove redundant rcu_read_lock/unlock() in spin_lock
-  net: bonding: Remove redundant rcu_read_lock/unlock() in spin_lock
-  wifi: ath9k: Remove redundant rcu_read_lock/unlock() in spin_lock
-
- drivers/acpi/apei/ghes.c                        |  2 --
- drivers/gpu/drm/i915/gt/intel_ring_submission.c |  2 --
- drivers/net/amt.c                               |  8 --------
- drivers/net/bonding/bond_3ad.c                  |  2 --
- drivers/net/wireless/ath/ath9k/xmit.c           |  2 --
- drivers/s390/crypto/pkey_base.c                 |  3 ---
- fs/aio.c                                        |  6 ++----
- fs/nfs/callback_proc.c                          |  2 --
- fs/nfs/nfs4state.c                              |  2 --
- fs/nfs/pnfs.c                                   | 12 +-----------
- fs/nfs/pnfs_dev.c                               |  4 ----
- ipc/msg.c                                       |  1 -
- ipc/sem.c                                       |  1 -
- ipc/shm.c                                       |  1 -
- ipc/util.c                                      |  2 --
- kernel/cgroup/cgroup.c                          |  2 --
- kernel/cgroup/cpuset.c                          |  6 ------
- kernel/cgroup/debug.c                           |  4 ----
- net/mac80211/cfg.c                              |  2 --
- net/mac80211/debugfs.c                          |  2 --
- net/mac80211/debugfs_netdev.c                   |  2 --
- net/mac80211/debugfs_sta.c                      |  2 --
- net/mac80211/sta_info.c                         |  2 --
- net/ncsi/ncsi-manage.c                          |  2 --
- security/yama/yama_lsm.c                        |  4 ----
- 25 files changed, 3 insertions(+), 75 deletions(-)
-
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index a0d54993edb3..97ee19f2cae0 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -1207,12 +1207,10 @@ static int ghes_notify_hed(struct notifier_block *this, unsigned long event,
+ 	int ret = NOTIFY_DONE;
+ 
+ 	spin_lock_irqsave(&ghes_notify_lock_irq, flags);
+-	rcu_read_lock();
+ 	list_for_each_entry_rcu(ghes, &ghes_hed, list) {
+ 		if (!ghes_proc(ghes))
+ 			ret = NOTIFY_OK;
+ 	}
+-	rcu_read_unlock();
+ 	spin_unlock_irqrestore(&ghes_notify_lock_irq, flags);
+ 
+ 	return ret;
 -- 
 2.34.1
 
