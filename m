@@ -1,113 +1,133 @@
-Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AF2314D20
-	for <linux-security-module@vger.kernel.org>; Wed, 17 Sep 2025 15:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778302F99BC
+	for <linux-security-module@vger.kernel.org>; Wed, 17 Sep 2025 18:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758124516; cv=none; b=d/tSHoiCvAcqRt+4ojJpNhDQxQgAlQVF7YCFVlx/fjc8WFD57ILxE3M829d004Vrt1DJ76NgNaHmus+PI+zITL8oTlUvVfNTeGgJVUcq4Z6YePmfo+4Uc1NexWC06PoBxSWksW4dG75rH+c5lakOdhQcCB9aA46sMM5VxoYRkLg=
+	t=1758132146; cv=none; b=qhplyQynFsx2P6RyxsWfidwSUhOKoFHMxUHgK995WkyLzS78yuojJQ++vJpDF9cdyjEbmq2JMV090omMSnnAas9qlwSMz5I4lo4/IhhfSMmEPgMnsddYQ9DaC+juxAO3XE8sx0FQaXlmuIw7GNqh6ekricIS+kKef0Nba5oIWos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758124516; c=relaxed/simple;
-	bh=hEeziQot0vBjqaii0OlztAOOx169xCFGd3aiQcDgMVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L8vM11V3HRZdc4Dg0SPZwbWXsAttUd7khfuYNQxf5EmyWltoJNDmLg4/DzWt1++BOmaIX3xJp1Bo7cz/sDw9uCafjzoq93vDqabB4AwWWL7KmxJHOIg+do4UeHTXHf4U3PIhDX67kmT9zmD6ZMkwnImAvclPVTmFCTaZVbZ2Go0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=y7dfMZII; arc=none smtp.client-ip=84.16.66.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1758132146; c=relaxed/simple;
+	bh=c45IjX5cJSPCE8t6J9t1ECSHcRcCXtq2ZmI6fywkbX0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T96qb7WCnpBVwXagUaiEZ8BsSQKGlR5VfnUSMg49cLZGbT+mZ8TxM0t2yXedDFQgVLN/wsyNAIkumfRkYTBd3OI+5FCtxAOUubmt/gtuyzK2uOmlEcRWZVLfOk69db42Ob73LJ4AnZAJUfIxi7VCnf+gi7Cp26WnfZiJN3boFsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VagvdSJ2; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="y7dfMZII"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cRhl72X5bzC9h;
-	Wed, 17 Sep 2025 17:00:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1758121203;
-	bh=rL7Wz/OzT+h4BNs1HqM2gnwP58YKoyxzpcyYZtg3OCc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=y7dfMZIIs/M7kUdhPB/zCQ3CtUyfYRCZ3SdMHWhiFUFPMETzMoLSqMCw3BwYtKu83
-	 db529S2qHb+Zbtzkl62qOoVb1xJmsBF1iO5Q2tyf7mtCg4RXqdl+mD6nUailw7BEg0
-	 f3XnWjetxQIRJjAhlr4jCd6YkklsdleOOC5KqXDE=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4cRhl60h5fzW6c;
-	Wed, 17 Sep 2025 17:00:02 +0200 (CEST)
-Date: Wed, 17 Sep 2025 17:00:00 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: Tingmao Wang <m@maowtm.org>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Eric Van Hensbergen <ericvh@kernel.org>, 
-	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
- qid)
-Message-ID: <20250917.Ung8aukeiz9i@digikod.net>
-References: <cover.1756935780.git.m@maowtm.org>
- <2acd6ae7-caf5-4fe7-8306-b92f5903d9c0@maowtm.org>
- <aMgMOnrAOrwQyVbp@codewreck.org>
- <14530343.U1M6xoFM3Z@silver>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VagvdSJ2"
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32e34f472d9so19819a91.3
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Sep 2025 11:02:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1758132143; x=1758736943; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BUM77tLsoDUjAibRwyKv5SQ08Xu0AqfeFVlC0hwSnKI=;
+        b=VagvdSJ2r9uFKGGeClrK15lB2EhNSeeQRQMrictJduqkXxj929ofT7snHx4BK6/r/Z
+         SFvz4Xqj62YLBkF9AN9Ruv3FZ1Fn0m9OaaJ+MfBa4dLynGUUUFDZK4jFJlPRTPsN1u7M
+         OXKScerVZPGmiX38s8bK0IzVXU1C6g1SHJb8Prcxg+lPbvkIrfftJ9Xi+NOH7aN0Rrb/
+         E88X2TTs4jvhY8hzCeL3KyYal3dwqzYVhXUbWeRyYl19UmzBMoDUj+h9fGngS6ZdQb/y
+         +W0n7z0lMWkG84oqL0+poSnd8RD99XI+/SZ3P7yuFMlPD+uefxa6H0o2xiBW9zSTQypW
+         0Jmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758132143; x=1758736943;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BUM77tLsoDUjAibRwyKv5SQ08Xu0AqfeFVlC0hwSnKI=;
+        b=ApgMeneaJ9oWxMtCbhx3wSkep7ZCKxFjaeQeM3s85zgGqHQGwq47Y4J7HqcT1FG00z
+         0QYYqa594NpWf+FaawToauLu/zm61OJSwp603XBFHCaK89X6GSgLc4cdTXDKMXmduM1S
+         XKRH/zWNp9V4M+dQHruGKGs+flsLtj2dPXmPbxACPem2vt2qpLEulz5o/SpwyDDIZeME
+         djlfP9y3j2GR1EAAoMPgyqVLUAz9bvQUlbdb2bQvQEPxjcrn+wmmXVyZNelj4Aj+KOPQ
+         Ozq7TIcXDjo+CP1eFZ0kIRq6EaxEAF0iy2uW+OeOtO6nm8UW5Sl+S83KwTwZ9H0xl0yO
+         Nc0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVJRZ+MNevHHcT/zVDpOOthLsHZ9vGwTYtQ6GaJX77qpLJTS7840G+MG3VhCczODm6cNNKIqFebpIY6aAFPXQuUF6NHwb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFuMtm0O2NV+EOZjqUh2ctyoB3GMffLGndko+wuwzJ87R5Arsf
+	j5TEztFKMY+j6Mq95wd9ThI7jGts+x4dYe+dC2fmbT8AW9pRaV1v8hbIBIIUqWOVDfp82Ex+1yw
+	fCzNVgYi1Nh0tAZvkWRmWX9DxpI2pYfwXTamj+kS2
+X-Gm-Gg: ASbGncu0uZSepsiFtl5JysY5W0e8YEANs4VdNdE3UC6oFcS8BRk5wBF3494rPhENoPc
+	mjqHZbemq3l1dVIjY/jCkIjrZwPUw8bTRK5WJzwWGgAwuo7c64G/82AwfuQsSqerpNzMMWbWWjv
+	auCtFR9Zch63fF4O/6/pnjX4dl3rwpKk5pzuf+XLTojYxPD3pTUEOr5+hTJstn+YmvhgRX3uhTI
+	1A7Vzg=
+X-Google-Smtp-Source: AGHT+IHS8hOdCDVgiuUdP/vRW/9oLFhnIxkpzATPwO934ELt+GqvfVJnYqe1LADwkFmuGaSy/4pUKM2P+XlmDtuGwHY=
+X-Received: by 2002:a17:90b:4a90:b0:32a:e706:b7b6 with SMTP id
+ 98e67ed59e1d1-32ee3ecfc30mr3766058a91.11.1758132142492; Wed, 17 Sep 2025
+ 11:02:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <14530343.U1M6xoFM3Z@silver>
-X-Infomaniak-Routing: alpha
+References: <202509171951.rXOi8Oez-lkp@intel.com>
+In-Reply-To: <202509171951.rXOi8Oez-lkp@intel.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 17 Sep 2025 14:02:09 -0400
+X-Gm-Features: AS18NWAYbfQp7PVjmPX7J13L8lVmlULdlb1F4ZsAfSLFrxqxS41iXrPrFiQ_TeQ
+Message-ID: <CAHC9VhSNoAP98XnBXz681-G-f08ycZULhTZRS6t37Lg1P6qUQA@mail.gmail.com>
+Subject: Re: [pcmoore-lsm:working-lsm_init_rework 40/41] security/lsm_init.c:516:undefined
+ reference to `securityfs_init'
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, Casey Schaufler <casey@schaufler-ca.com>, 
+	John Johansen <john.johhansen@canonical.com>, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 15, 2025 at 04:10:07PM +0200, Christian Schoenebeck wrote:
-> On Monday, September 15, 2025 2:53:14 PM CEST Dominique Martinet wrote:
-> [...]
-> > > 1. The qid is 9pfs internal data, and we may need extra API for 9pfs to
-> > > 
-> > >    expose this to Landlock.  On 64bit, this is easy as it's just the inode
-> > >    number (offset by 2), which we can already get from the struct inode.
-> > >    But perhaps on 32bit we need a way to expose the full 64bit server-sent
-> > >    qid to Landlock (or other kernel subsystems), if we're going to do
-> > >    this.
-> > 
-> > I'm not sure how much effort we want to spend on 32bit: as far as I
-> > know, if we have inode number collision on 32 bit we're already in
-> > trouble (tools like tar will consider such files to be hardlink of each
-> > other and happily skip reading data, producing corrupted archives);
-> > this is not a happy state but I don't know how to do better in any
-> > reasonable way, so we can probably keep a similar limitation for 32bit
-> > and use inode number directly...
-> 
-> I agree, on 32-bit the game is lost.
-> 
-> One way that would come to my mind though: exposing the full qid path as xattr 
-> on 32-bit, e.g. via "system.9pfs_qid" or something like that.
+On Wed, Sep 17, 2025 at 7:57=E2=80=AFAM kernel test robot <lkp@intel.com> w=
+rote:
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git w=
+orking-lsm_init_rework
+> head:   8ea7358ca612bb85eef9179ae746edeb5f1dc9ac
+> commit: bf19c9b17d8d2f27e2031822337e8d137b2c6224 [40/41] lsm: consolidate=
+ all of the LSM framework initcalls
+> config: x86_64-randconfig-003-20250917 (https://download.01.org/0day-ci/a=
+rchive/20250917/202509171951.rXOi8Oez-lkp@intel.com/config)
+> compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20250917/202509171951.rXOi8Oez-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202509171951.rXOi8Oez-lkp=
+@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+>    ld: security/lsm_init.o: in function `security_initcall_core':
+> >> security/lsm_init.c:516:(.init.text+0x101b): undefined reference to `s=
+ecurityfs_init'
+>
+>
+> vim +516 security/lsm_init.c
+>
+>    508
+>    509  /**
+>    510   * security_initcall_core - Run the LSM core initcalls
+>    511   */
+>    512  static int __init security_initcall_core(void)
+>    513  {
+>    514          int rc_sfs, rc_lsm;
+>    515
+>  > 516          rc_sfs =3D securityfs_init();
+>    517          rc_lsm =3D lsm_initcall(core);
+>    518
+>    519          return (rc_sfs ? rc_sfs : rc_lsm);
+>    520  }
+>    521  core_initcall(security_initcall_core);
+>    522
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
-Another way to always deal with 64-bit values, even on 32-bit
-architectures, would be to implement inode->i_op->getattr(), but that
-could have side effects for 9p users expecting the current behavior.
+Fixed in the lsm/working-lsm_init_rework branch in case anyone wants
+to take a look.  However, as the fix really doesn't have anything to
+do with the IMA/EVM patch, I'll wait to repost the patchset until Mimi
+has a chance to look at the IMA/EVM patch from Roberto.
 
-> 
-> > > 2. Even though qids are supposed to be unique across the lifetime of a
-> > > 
-> > >    filesystem (including deleted files), this is not the case even for
-> > >    QEMU in multidevs=remap mode, when running on ext4, as tested on QEMU
-> > >    10.1.0.
-> > 
-> > I'm not familiar with the qid remap implementation in qemu, but I'm
-> > curious in what case you hit that.
-> > Deleting and recreating files? Or as you seem to say below the 'qid' is
-> > "freed" when fd is closed qemu-side and re-used by later open of other
-> > files?
-> 
-> The inode remap algorithm in QEMU's 9p server was designed to prevent inode 
-> number collisions of equally numbered inodes of *different* *devices* on host, 
-> exposed to guest via the same 9p mount (which appears as only one 9pfs device 
-> on guest). Basis for this however is still the underlying filesystem's inode 
-> number on host.
-> 
-> So yes, ext4 re-uses inode numbers of deleted files, and when that happens, a 
-> new file appears with the same qid path as the previously deleted file with 
-> QEMU.
-> 
-> /Christian
-> 
-> 
-> 
+--=20
+paul-moore.com
