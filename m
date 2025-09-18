@@ -1,241 +1,171 @@
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE6A28504B
-	for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 14:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818A030C10C
+	for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 14:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758204469; cv=none; b=rNTsAkYt8gV4EZD8N62fXqg4TQm30Iz8EwkMwF+LyBPSzDfXsyqHN7muYatWW7TUXBzxC1pnrOVHDdeX9imVxyVSydFirNzFoo1XhLCXU9DqYG5i/yuOL6tpCI1AgjnFBMRSD1Dzd/vb1dYJ+cWOxkkrNBYLjnwd9hbb900+DjY=
+	t=1758204475; cv=none; b=ewPLYkMIz2ihLAgv0WUW6SrFD+zNBaKA8FoLtiegTc9le2x3Dr0zv28k4M6k4wYDt/wxAMJRqGPrRtyDZnDY/9mPs/l4LuYpcYAhPocR0jVj0mhNAxeVSA7lkaz6c0O3sBB04sxDxh+2RCWeyUEnyN5+8JsUg01RZgFQDJRi/mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758204469; c=relaxed/simple;
-	bh=PW5pU3SEtjuE0eKcxZzb4+iRfAaTqBLJ3Ef0QdqPyLY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nKKL0pxyJqDqibM3Qs2WUpgahBh6+PT8vPvVJZ54gkMxV8/pGHhu+q6L+LpGTMC4Ng6EEMx2N9dhH0cuE9Qr6Rt6iuJffC02v5zHywgvyN8F12Fveg5LavCFjxqVrWu7s+nEKr6qpSxeaPCI+ftu2tPI0c3/1H6/+6pdmd71To0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iDDZyalz; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758204475; c=relaxed/simple;
+	bh=KLL9YJXtSSSZ1Vd0/isQrxMphZZqXIjYKKJpaSBPKo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZkuFmo1AQcCdNW6ticJAPhrLUaPWCnelFO5qjX7TB6bmImun+dpHZjbfTUNmwgG6lH/Hm5ikcy9g6TUM/vSDcpRWoY/63692rs0/4NKMEbLe2TX9iwOR7qD6TixNWkH8ihEF+W/htenF1uVTlHzWo/Prepx8dlzlt6Pabm5sdNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=XtILx/zR; arc=none smtp.client-ip=84.16.66.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iDDZyalz"
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-796fe71deecso3009456d6.1
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 07:07:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758204466; x=1758809266; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yeQoas8PqpBGb7ryjr8a1ErU10km1dJJT/SCC9Pi2eY=;
-        b=iDDZyalzloq12R79TM6KvpZpbw0MSMqst3e3vNYTB6VxE4R1pHlY8e8NARpxM/SS3u
-         jaP+PcwyASAsr7dHVwgNX5eyoItGM2m9Rk4XLlQ4701WKrsEXbo6E/pakP5cjAuHkfBi
-         fUhxlAg8JWHJpXdJKnJLQI62XxHZFxwEg/YobR13solzfOM4vxugBqP2NKPFTIpbA+MD
-         c3jMbeeJooE12t7va8HhKygcvRjrMk1YHVqawYeQoKcqz6wX1NeA1wJAb5zmIWkfrYHA
-         JX/LcJc1SLcsbSeewfHnTfqR3Q1nR0dsiM04rA0Q4ZMzDn1BSlvVLZwqT1eaOg0Qhv7y
-         +/Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758204466; x=1758809266;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yeQoas8PqpBGb7ryjr8a1ErU10km1dJJT/SCC9Pi2eY=;
-        b=fdk1qqmeRM7x2Z0ymfJ5tvUtFZcuzsof0f/2RKMjFdy3VS7T2vY6N83YuXGQz2L48B
-         6nlOiYnOQNK5AIEreVd0D8/Lxhzha32LthlHno8QchmMwr+L3WJKoN5TUjjBiPUyN362
-         yjZYr5CZp8qSiO8Ej1OuFSTeUsFZxDBaZml+9z/pLgDt9AtH4+Ix2QQIQ8p1iDIUcoTl
-         UBbqI8EOzXboFCHoJMYp7EgsB1G5E6srB+voKcwHDvS1VGTlh7F2K4whAZNdwzkkrKut
-         sktpt6IQdB12yfXayIeEUwE0ruAHUcXr9Oj41328GqlwI23PXlmAGLM5d6l1l6WLIs4I
-         ArJA==
-X-Gm-Message-State: AOJu0Yz6aiCtRQEe7WnSiKKJqVQRa+Xu+r0jkN+bot6Rg8LLEJgdAr6q
-	YKftSkuviXFs5PG1h4d4panuTrZz6O3AAdlbm5IIgRRoBmTGA7P4az42aBoaFg==
-X-Gm-Gg: ASbGncvEvT8RJlc21FOgM7fVLehWTHETS/SZKcKqxMrRCR7Gx37q6TkjqZU5NUeXgL+
-	sdpzl+TT2LA4UetXgRsuP5aguz9Jx6qPatF3Y6AYbVS3yD2E91wtsPzAEqQrSAFLx9suL5B8e1t
-	IJ+oIzLmVVHfQim/i/48Gl7FhCxgNJvv7L4Q2Ds3moudTc7IFVMDQRL8AYFOMW93dha99Q7Caaz
-	oTLc4eXFCDVGNr3fCPZjkv1VJ73it0FEiqoZEXhZ29ICdsEdWWF3eofn2OVxkhsUYzMGqKwBgaD
-	XKvngvQx254JOR1yOsvn4eLHu32YHRKXGD3jgllXRSh3tNNFOYN/Ws/pCmo3ZKzdASd9WOyzlT+
-	G9Q0Hq9vXhT8sEYjH0T57wQsdyeKOCFuTV7s1XEkFaxhRrmd8q/anACzpKNxcuanm+QnqHhWhVA
-	oaZpeV6nIV5BJXz6+1m+wRRXYFHrapcJWB7zSlMsnG2Cz4
-X-Google-Smtp-Source: AGHT+IEZcqCaAlB8tDl4mwjmiNMogID/BslW1mNco0kIzZFTf7/53cEmy78iG0ikG4s6ab879K2XYQ==
-X-Received: by 2002:ad4:5ca2:0:b0:781:d761:5468 with SMTP id 6a1803df08f44-78eceb32ef8mr82820096d6.39.1758204455245;
-        Thu, 18 Sep 2025 07:07:35 -0700 (PDT)
-Received: from fedora.. (ec2-52-70-167-183.compute-1.amazonaws.com. [52.70.167.183])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-79347e50865sm13318066d6.33.2025.09.18.07.07.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 07:07:34 -0700 (PDT)
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-To: linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org
-Cc: paul@paul-moore.com,
-	omosnace@redhat.com,
-	john.johansen@canonical.com,
-	serge@hallyn.com,
-	casey@schaufler-ca.com,
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: [RFC PATCH v2] lsm,selinux: introduce LSM_ATTR_UNSHARE and wire it up for SELinux
-Date: Thu, 18 Sep 2025 09:59:05 -0400
-Message-ID: <20250918135904.9997-2-stephen.smalley.work@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="XtILx/zR"
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cSHXN2pvBznsr;
+	Thu, 18 Sep 2025 16:07:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1758204468;
+	bh=vVKOs9N1kLsZNFyRJ52LmCjCUC7Qes6mPkdcbujsc20=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XtILx/zREilfKNPvUphCInZ9NyXZCREZmkr3va/pK38KPQmvCT7r3aNiMvEe3g5yf
+	 NQIAWHYCLNkKeevf/KYc1jX1Dx0rSIPxw3s2V/1Zfwy+IIG7W8p/XGCS0XG8way6na
+	 kGyL8Mz14mNHZcAmfKn3Hcruo4Wpy6u5cICPdD/8=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4cSHXM4HPxzZ8T;
+	Thu, 18 Sep 2025 16:07:47 +0200 (CEST)
+Date: Thu, 18 Sep 2025 16:07:46 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Abhinav Saxena <xandfury@gmail.com>
+Cc: Fan Wu <wufan@kernel.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, llvm@lists.linux.dev, 
+	Daniel Verkamp <dverkamp@chromium.org>, Jeff Xu <jeffxu@chromium.org>
+Subject: Re: [PATCH RFC 2/4] landlock: implement memfd detection
+Message-ID: <20250918.kieghied1ahS@digikod.net>
+References: <20250719-memfd-exec-v1-0-0ef7feba5821@gmail.com>
+ <20250719-memfd-exec-v1-2-0ef7feba5821@gmail.com>
+ <CAKtyLkEJKLgO1GvpTNmW=DnRhrsiPXGgz9=F7oJXVQPLSocSeA@mail.gmail.com>
+ <87v7nj7p1d.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <87v7nj7p1d.fsf@gmail.com>
+X-Infomaniak-Routing: alpha
 
-RFC-only, will ultimately split the LSM-only changes to their own
-patch for submission. I have now tested this with the corresponding
-selinux userspace change that you can find at
-https://lore.kernel.org/selinux/20250918135118.9896-2-stephen.smalley.work@gmail.com/
-and also verified that my modified systemd-nspawn still works when
-starting containers with their own SELinux namespace.
+On Tue, Jul 22, 2025 at 03:56:38PM -0600, Abhinav Saxena wrote:
+> Fan Wu <wufan@kernel.org> writes:
+> 
+> > On Sat, Jul 19, 2025 at 4:13 AM Abhinav Saxena <xandfury@gmail.com> wrote:
+> >>
+> >> Add is_memfd_file() function to reliably detect memfd files by checking
+> >> for “memfd:” prefix in dentry names on shmem-backed files. This
+> >> distinguishes true memfd files from regular shmem files.
+> >>
+> >> Move domain_is_scoped() to domain.c for reuse across subsystems.
+> >> Add comprehensive kunit tests for memfd detection edge cases.
+> >>
+> >> Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
+> >> —
+> >>  security/landlock/domain.c |  67 +++++++++++++++
+> >>  security/landlock/domain.h |   4 +
+> >>  security/landlock/fs.c     | 210 +++++++++++++++++++++++++++++++++++++++++++++
+> >>  security/landlock/task.c   |  67 —————
+> >>  4 files changed, 281 insertions(+), 67 deletions(-)
+> >
+> > …
+> >
+> >>
+> >> +/**
+> >> + * is_memfd_file - Check if file was created via memfd_create()
+> >> + * @file: File to check
+> >> + *
+> >> + * Returns true if @file was created via memfd_create(), false otherwise.
+> >> + *
+> >> + * memfd files are shmem-backed files with “memfd:” prefix in their dentry name.
+> >> + * This is the definitive way to distinguish memfd files from regular shmem
+> >> + * files.
+> >> + */
+> >> +static bool is_memfd_file(struct file *file)
+> >> +{
+> >> +       const struct dentry *dentry;
+> >> +       const unsigned char *name;
+> >> +       size_t name_len;
+> >> +
+> >> +       /* Fast path: basic validation */
+> >> +       if (unlikely(!file))
+> >> +               return false;
+> >> +
+> >> +       /* Must be shmem-backed first - this is the cheapest definitive check */
+> >> +       if (!shmem_file(file))
+> >> +               return false;
 
-This defines a new LSM_ATTR_UNSHARE attribute for the
-lsm_set_self_attr(2) system call and wires it up for SELinux to invoke
-the underlying function for unsharing the SELinux namespace. As with
-the selinuxfs interface, this immediately unshares the SELinux
-namespace of the current process just like an unshare(2) system call
-would do for other namespaces. I have not yet explored the
-alternatives of deferring the unshare to the next unshare(2),
-clone(2), or execve(2) call and would want to first confirm that doing
-so does not introduce any issues in the kernel or make it harder to
-integrate with existing container runtimes.
+In which case a memfd would not be detected by this function?
+shmem_file_operations or hugetlbfs_file_operations are always set for
+memfd right?
 
-Differences between this syscall interface and the selinuxfs interface
-that need discussion before moving forward:
+We could export memfd_get_seals() to stay consistent over time.
 
-1. The syscall interface does not currently check any Linux capability
-or DAC permissions, whereas the selinuxfs interface can only be set by
-uid-0 or CAP_DAC_OVERRIDE processes. We need to decide what if any
-capability or DAC check should apply to this syscall interface and if
-any, add the checks to either the LSM framework code or to the SELinux
-hook function.
+> >> +
+> >> +#ifdef CONFIG_MEMFD_CREATE
+> >> +
+> >> +       /* Validate dentry and get name info */
+> >> +       dentry = file->f_path.dentry;
+> >> +       if (unlikely(!dentry))
+> >> +               return false;
+> >> +
+> >> +       name_len = dentry->d_name.len;
+> >> +       name = dentry->d_name.name;
+> >> +
+> >> +       /* memfd files always have “memfd:” prefix (6 characters) */
+> >> +       if (name_len < 6 || unlikely(!name))
+> >> +               return false;
+> >> +
+> >> +       /* Check for exact “memfd:” prefix */
+> >> +       return memcmp(name, “memfd:”, 6) == 0;
+> >> +#else
+> >> +       return false;
+> >> +#endif
+> >
+> > I was trying to do something similar early this year but didn’t hear
+> > feedback from the linux-mm folks.
+> > <https://lore.kernel.org/linux-security-module/20250129203932.22165-1-wufan@kernel.org/>
+> >
+> > I have considered this approach but didn’t use it. My concern is,
+> > potentially a malicious user can create a file in a shmem fs, e.g.
+> > tmpfs , with the “memfd:” prefix, which can be used to bypass security
+> > policy.
 
-Pros: Checking a capability or DAC permissions prevents misuse of this
-interface by unprivileged processes, particularly on systems with
-policies that do not yet define any of the new SELinux permissions
-introduced for controlling this operation. This is a potential concern
-on Linux distributions that do not tightly coordinate kernel updates
-with policy updates (or where users may choose to deploy upstream
-kernels on their own), but not on Android.
+In the case of Landlock that should not be a security issue but a
+compatibility issue, which is not better.
 
-Cons: Checking a capability or DAC permissions requires any process
-that uses this facility to have the corresponding capability or
-permissions, which might otherwise be unnecessary and create
-additional risks. This is less likely if we use a capability already
-required by container runtimes and similar components that might
-leverage this facility for unsharing SELinux namespaces.
+> > (Resending this message due to a misconfiguration with my email
+> > client. Apologies for any inconvenience.)
+> >
+> > -Fan
+> 
+> Hi Fan,
+> 
+> Thanks for your comments.
+> 
+> I agree that an LSM hook into memfd_create() would be a much better
+> solution. In the absence of such a function, do you think adding a
+> `d_unlinked(dentry)` check could serve as an additional verification?
+> 
+> I say things since I *think* that legitimate memfd files are always
+> unlinked while spoofed tmpfs files remain linked. I could be wrong
+> though.
 
-2. The syscall interface checks a new SELinux unshare_selinuxns
-permission in the process2 class between the task SID and itself,
-similar to other checks for setting process attributes. This means
-that:
-    allow domain self:process2 *; -or-
-    allow domain self:process2 ~anything-other-than-unshare_selinuxns; -or-
-    allow domain self:process2 unshare_selinuxns;
-would allow a process to unshare its SELinux namespace.
+We should just use the same checks used by the memfd-related
+syscalls/operations to detect such file.
 
-The selinuxfs interface checks a new unshare permission in the
-security class between the task SID and the security initial SID,
-likewise similar to other checks for setting selinuxfs attributes.
-This means that:
-    allow domain security_t:security *; -or-
-    allow domain security_t:security ~anything-other-than-unshare; -or-
-    allow domain security_t:security unshare;
-would allow a process to unshare its SELinux namespace.
-
-Technically, the selinuxfs interface also currently requires open and
-write access to the selinuxfs node; hence:
-    allow domain security_t:file { open write };
-is also required for the selinuxfs interface.
-
-We need to decide what we want the SELinux check(s) to be for the
-syscall and whether it should be more like the former (process
-attributes) or more like the latter (security policy settings). Note
-that the permission name itself is unimportant here and only differs
-because it seemed less evident in the process2 class that we are
-talking about a SELinux namespace otherwise.
-
-Regardless, either form of allow rule can be prohibited in policies
-via neverallow rules on systems that enforce their usage
-(e.g. Android, not necessarily on Linux distributions).
-
-3. The selinuxfs interface currently offers more functionality than I
-have implemented here for the sycall interface, including:
-
-a) the ability to read the selinuxfs node to see if your namespace has
-been unshared, which should be easily implementable via
-lsm_get_self_attr(2).  However, questions remain as to when that
-should return 1 versus 0 (currently returns 1 whenever your namespace
-is NOT the initial SELinux namespace, useful for the testsuite to
-detect it is in a child, but could instead be reset to 0 by a
-subsequent policy load to indicate completion of the setup of the
-namespace, thus hiding from child processes that they are in a child
-namespace once its policy has been loaded).
-
-b) the abilities to get and set the maximum number of SELinux
-namespaces (via a /sys/fs/selinux/maxns node) and to get and set the
-maximum depth for SELinux namespaces (via a /sys/fs/selinux/maxnsdepth
-node). These could be left in selinuxfs or migrated to some other LSM
-management APIs since they are global in scope, not per-process
-attributes.
-
-Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
----
-v2 fixes a typo (PROCESS->PROCESS2) and is now tested.
-
- include/uapi/linux/lsm.h            | 1 +
- security/selinux/hooks.c            | 8 ++++++++
- security/selinux/include/classmap.h | 4 +++-
- 3 files changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
-index 938593dfd5da..fb1b4a8aa639 100644
---- a/include/uapi/linux/lsm.h
-+++ b/include/uapi/linux/lsm.h
-@@ -83,6 +83,7 @@ struct lsm_ctx {
- #define LSM_ATTR_KEYCREATE	103
- #define LSM_ATTR_PREV		104
- #define LSM_ATTR_SOCKCREATE	105
-+#define LSM_ATTR_UNSHARE	106
- 
- /*
-  * LSM_FLAG_XXX definitions identify special handling instructions
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index f48483383d6e..1e34a16b7954 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6816,6 +6816,10 @@ static int selinux_lsm_setattr(u64 attr, void *value, size_t size)
- 		error = avc_has_perm(state, mysid, mysid, SECCLASS_PROCESS,
- 				     PROCESS__SETCURRENT, NULL);
- 		break;
-+	case LSM_ATTR_UNSHARE:
-+		error = avc_has_perm(state, mysid, mysid, SECCLASS_PROCESS2,
-+				     PROCESS2__UNSHARE_SELINUXNS, NULL);
-+		break;
- 	default:
- 		error = -EOPNOTSUPP;
- 		break;
-@@ -6927,6 +6931,10 @@ static int selinux_lsm_setattr(u64 attr, void *value, size_t size)
- 		}
- 
- 		tsec->sid = sid;
-+	} else if (attr == LSM_ATTR_UNSHARE) {
-+		error = selinux_state_create(new);
-+		if (error)
-+			goto abort_change;
- 	} else {
- 		error = -EINVAL;
- 		goto abort_change;
-diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-index be52ebb6b94a..07fe316308cd 100644
---- a/security/selinux/include/classmap.h
-+++ b/security/selinux/include/classmap.h
-@@ -60,7 +60,9 @@ const struct security_class_mapping secclass_map[] = {
- 	    "siginh",	    "setrlimit",     "rlimitinh",   "dyntransition",
- 	    "setcurrent",   "execmem",	     "execstack",   "execheap",
- 	    "setkeycreate", "setsockcreate", "getrlimit",   NULL } },
--	{ "process2", { "nnp_transition", "nosuid_transition", NULL } },
-+	{ "process2",
-+	  { "nnp_transition", "nosuid_transition", "unshare_selinuxns",
-+	    NULL } },
- 	{ "system",
- 	  { "ipc_info", "syslog_read", "syslog_mod", "syslog_console",
- 	    "module_request", "module_load", "firmware_load",
--- 
-2.50.1
+> 
+> In any case, we can test this approach using kprobes to validate
+> the behavior.
+> 
+> -Abhinav
 
