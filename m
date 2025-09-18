@@ -1,199 +1,322 @@
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE642FC016
-	for <linux-security-module@vger.kernel.org>; Wed, 17 Sep 2025 18:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C3034BA5A
+	for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 02:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758132146; cv=none; b=gBXlqQ0DPpnTcfcqi+jmaMZ0rkvOss3/bzwjZOYzSMuin3q1LtN77Fex9EZ6GVHo/qDnn79lTADLdQaXX2BWdmctV38xr6KxtRRrlHMmHsM6cZHNNbDaMjNRS8cdam6mjJuUTs6qDDdSPz1PzRX8iItZbsz2QVuOE89oldg1Dd0=
+	t=1758161080; cv=none; b=l7CTWlWp5k6emXIS14XXztFv0tCJiHG9haaFY3Hc7OmrvZ7O6XUHZaZIiZ1yorZsN8nK7U2MFImA3OL6AqmHpIBRzSnBeN0IjQrdvJDzesEHfnnC0VgJN1HcNwSvsBydWeDdmIMGpi9BEBsnmKLJ9rTq6NX6sk8rGJLniu0Lmzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758132146; c=relaxed/simple;
-	bh=UXFAbdLkx06vhXtJ2G9AYBOhckkAb0k5X9bYRyiDHNE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TlQQrHKcO8zhflGCABMXKRPptXNHpj52oOXzA40wZ+KkWPtj+kp9FHL2qUnb9yQPJOJHmM+3M5LVCkLNB8b+XwlYLfcXSJn3vNIxURq+J+DkvoA0ly7QTTdWQhA0s2j3ZoRtXU3QQj/+qqrn/jHG/ldcasXYbkkCChLiGR3SGW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dR9sCdL0; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1758161080; c=relaxed/simple;
+	bh=IKDvBc+x9Iwhb1lEpnYLCZyZRDaR1ojgTxoJq74Vzsk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Q4rmzJZB3vdj0RQ7Vupbj/QgLgRIAtYtnUnvrhpEgnY3lK5t6E943QykCx4RDI2kcusXKhnRRIvv2OyKnYM9cb2+7iaXMU7xd7Z7WyuXegWnZtWgWtVrWAiNhV2JmQMSSthLxLiDf+c5K/wGqqU9H6pVK3WYbZtaNVbk36848Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tweek.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oMKe8r1q; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tweek.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dR9sCdL0"
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32e34f472d9so19834a91.3
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Sep 2025 11:02:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oMKe8r1q"
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b54ad69f143so528281a12.1
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Sep 2025 19:04:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1758132144; x=1758736944; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1onfRQv25gQoZTEI++MVbVbx4XYqJDW3+flsFFULcl0=;
-        b=dR9sCdL0+Tnoyi4ZHFB2E8vwQwszv3hC6sUvFg/3Eg4C0gow2LWcqF0kB7x7gENsTI
-         KlDO+BRy3HygbWeii9bFeSL8JW24RKyJLzHpXR3JEHRH1trHUTZCD3gMBl0+jVOuJlLY
-         +/q1/T/wr7+Gsyu4VC4wor+rRUTRZwmW6y+Lgngh8B3Gm490CLeVLWzU4VCi+z6feLPV
-         6NeSdKY1ryIOvH8tVOBVZOSW6e4qGxx6DzxWXXP6UOrxVWxe+4VBMWH1Ma0jIbMfl/q2
-         0FHW1iEmUcVjvcfvtE+oZTr6uPhv1VYkNSIizXrcCO0txyvS5Gd+5obfrk3wVq6o+DXG
-         W9gA==
+        d=google.com; s=20230601; t=1758161078; x=1758765878; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pyki2P4YAjRDRPrSasQw3ooIaydaujpJ4Vt5rSyTrok=;
+        b=oMKe8r1qSk/C0i6+NS/4H275UxDaDP/BixTse/eMBz/hnm4Pp6Zo8RzG1IWsV7fs8Y
+         R98qYaUDjSOvJNC59u47gL0gsiVaGEWYX0G9naSFI/GlijpK4n9ztDYImGp47jEv3MDF
+         e4v2ZHeXqD/EUpaQAL/X34ejwCPTFja7SbxkugvQouJAYZf4ITrJHjGkz8qNL6iboOao
+         jVtBlDew41Mq38C1Qd0FIWnY6NYlvvBQOK2zy+bgS8qQdF1/ay799QRqQVk1Nf/esphD
+         eYHgM0E7Y122IjpO4h5IOvq2BPZ1CZVIurYHdoht3lhyDHe7fFnRnMwysreocQKX9rx/
+         V9XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758132144; x=1758736944;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1onfRQv25gQoZTEI++MVbVbx4XYqJDW3+flsFFULcl0=;
-        b=kvRTBNVy1Xj320SQjTW1gCQLFys8Rd+KYyzW5f86qQcr8YYDeJRMajwbf56NDUHXqL
-         61dLLYNoYfrpLNOcdimQfDZMddS3fEtv2Z5BimGO16mpjf1YurOV+xPx/j8H8rHsybH/
-         zzdz2qMMpYf0NaIVS+rXFt0Hnp75x28L4p77g6lEXHvEptD4IbCTH+dDb1UPBt6iKuzh
-         jhLX2Bp2Q8XqaxaPGTnfNRXe5j4XkBAMrx6IYd5kvedphHm1tmRO/nxqO2Tl8YHDsxFY
-         SfD8FwxJcQla53zUKKqVH9zV7BdE/xFYbHM9zYXpL/3WhzbEV5f13f5gLRNgCOwIzyQt
-         EsDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkTxqO0yqTCykg6jjsAd9AGYeRXW4KRMkZmW2oOglRLf9obwtAZwAKfd0nePBBrWEkowoMCYivh94RXXVPGM3R597gKT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGX5x3Fty0AgDn4BXRrp5/qMEQpWgJdhQ7YLDgc6BtgN91pPe1
-	14f5RyNwlwde9PpDtIIxDCcUgIeQm8yG5AZ6FCE6gJVQ1OVpRMvipg4LjIl7bhn2Z2J8rCTkR/M
-	BhvxmPvG/3qf9FMY3QUFol1etfJHsmRWYS3fdq/vt
-X-Gm-Gg: ASbGncssVni8U3seAkOEt7fo+4JP3tPFUXErzVoJPaNl7S2aAnoCWr2XVIJXAJFihFg
-	GJfcIiq5DEvwhnR4yNnLl2WYDGAaKwT2zRfHqF8fh/OKd2MS7OK/uqBrYuDbQdiXnA0gBR2BWBs
-	0axr3oK5Y0sES7ADsnRH3Fx38mSVMKp8Zx25B/D7Y+cMnufXg3bu7JMbzP88n8rY6ZrW+efCjGi
-	F1N48c=
-X-Google-Smtp-Source: AGHT+IH3FzNaRMr6v5HHYKxl6FL79CtPc6dSPmg86pYGY7CWig6xwjAHpbOHtWyEHP67xuH9CqUutSk6OOULuCW5dwE=
-X-Received: by 2002:a17:90b:5610:b0:32e:2c90:99a with SMTP id
- 98e67ed59e1d1-32ee3f7b2acmr3843173a91.35.1758132143486; Wed, 17 Sep 2025
- 11:02:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758161078; x=1758765878;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pyki2P4YAjRDRPrSasQw3ooIaydaujpJ4Vt5rSyTrok=;
+        b=DXpg4MMMbHedHrNiWFXamVTBDvTy56rQNT6jsGl7eRLXpV7KBB10fyCAuDW5xX2kPz
+         b94teh2OM/fFExBxj/O4J5ci2iylNuSg95tytbKtx3o8a/iiy288X5Xc1jeCuyfrXSK2
+         mdtN8jeLfDxCCtvM7odDisjE+6DL8nMGSbOFwfXQ+ZUCbpKt9XdUZ91AV3t7HKXeSR3W
+         H+x9HuJZ+gmBT5vPI6IKVCX4lMTUF7snXCKyyyVAzo2xcptc2epwxz3KngvzJDS45zvW
+         fyYlpUh3DBee53XvvvmXixONQfEwBhpvp+MDbJb0r849ELZ8sIVFON7QmR1Bt0nd29m7
+         ZCrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXw4rWTfoeS7UfOruMNcRbFxgKXHJcQiif0p/BNwgbR6TDGE9RHwCsQm/WRrHPIpOE2YJKKyXDeqEuT+m0rPXd9KKy9cLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKjOuLk7dSr4JHqLphgZMy5gPrmpSOKvZMUEINu6vcm7zmxvu6
+	DYBrdRRb6zk8gdAYpoUbQr9VYpjC1pG5W8L58W0qyMOUcG3gOuZiBBsHyv/4LP/QJjPcNi7bjWF
+	iLA==
+X-Google-Smtp-Source: AGHT+IHxV2URVmDihcD64Mgho9pAFtZ0ZIdyPKpVqKKXetRCviLw6jUHqPxALm75Usf2v2582qjAQpR26Q==
+X-Received: from pfbho3.prod.google.com ([2002:a05:6a00:8803:b0:776:169f:8da6])
+ (user=tweek job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:6a06:b0:24d:d206:699b
+ with SMTP id adf61e73a8af0-27ab34e85femr6141261637.41.1758161078245; Wed, 17
+ Sep 2025 19:04:38 -0700 (PDT)
+Date: Thu, 18 Sep 2025 12:04:34 +1000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <202509172014.2AWygxKf-lkp@intel.com>
-In-Reply-To: <202509172014.2AWygxKf-lkp@intel.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 17 Sep 2025 14:02:11 -0400
-X-Gm-Features: AS18NWA_y3uwajqyKaoXNoJdoLEqgja1icWNH35vSaHJkBjag0qIhDHgW_Z-m44
-Message-ID: <CAHC9VhS+8t_ZhKCmj62+HK8c9pFUF+5MyerykxPR+hvRZz7z-A@mail.gmail.com>
-Subject: Re: [pcmoore-lsm:working-lsm_init_rework 9/41] security/lsm_init.c:400:25:
- sparse: sparse: cast removes address space '__rcu' of expression
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, Kees Cook <kees@kernel.org>, 
-	John Johansen <john.johansen@canonical.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	linux-security-module@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <20250918020434.1612137-1-tweek@google.com>
+Subject: [PATCH v3] memfd,selinux: call security_inode_init_security_anon
+From: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>
+To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Hugh Dickins <hughd@google.com>, 
+	Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Isaac Manjarres <isaacmanjarres@google.com>
+Cc: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 9:00=E2=80=AFAM kernel test robot <lkp@intel.com> w=
-rote:
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git w=
-orking-lsm_init_rework
-> head:   8ea7358ca612bb85eef9179ae746edeb5f1dc9ac
-> commit: 9cb4dac58e465101fea4aa4f9169f1ea04149da8 [9/41] lsm: split the in=
-it code out into lsm_init.c
-> config: nios2-randconfig-r133-20250917 (https://download.01.org/0day-ci/a=
-rchive/20250917/202509172014.2AWygxKf-lkp@intel.com/config)
-> compiler: nios2-linux-gcc (GCC) 9.5.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20250917/202509172014.2AWygxKf-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202509172014.2AWygxKf-lkp=
-@intel.com/
->
-> sparse warnings: (new ones prefixed by >>)
-> >> security/lsm_init.c:400:25: sparse: sparse: cast removes address space=
- '__rcu' of expression
->
-> vim +/__rcu +400 security/lsm_init.c
->
->    348
->    349  static void __init ordered_lsm_init(void)
->    350  {
->    351          struct lsm_info **lsm;
->    352
->    353          if (chosen_lsm_order) {
->    354                  if (chosen_major_lsm) {
->    355                          pr_warn("security=3D%s is ignored because=
- it is superseded by lsm=3D%s\n",
->    356                                  chosen_major_lsm, chosen_lsm_orde=
-r);
->    357                          chosen_major_lsm =3D NULL;
->    358                  }
->    359                  ordered_lsm_parse(chosen_lsm_order, "cmdline");
->    360          } else
->    361                  ordered_lsm_parse(builtin_lsm_order, "builtin");
->    362
->    363          for (lsm =3D ordered_lsms; *lsm; lsm++)
->    364                  prepare_lsm(*lsm);
->    365
->    366          report_lsm_order();
->    367
->    368          init_debug("cred blob size       =3D %d\n", blob_sizes.lb=
-s_cred);
->    369          init_debug("file blob size       =3D %d\n", blob_sizes.lb=
-s_file);
->    370          init_debug("ib blob size         =3D %d\n", blob_sizes.lb=
-s_ib);
->    371          init_debug("inode blob size      =3D %d\n", blob_sizes.lb=
-s_inode);
->    372          init_debug("ipc blob size        =3D %d\n", blob_sizes.lb=
-s_ipc);
->    373  #ifdef CONFIG_KEYS
->    374          init_debug("key blob size        =3D %d\n", blob_sizes.lb=
-s_key);
->    375  #endif /* CONFIG_KEYS */
->    376          init_debug("msg_msg blob size    =3D %d\n", blob_sizes.lb=
-s_msg_msg);
->    377          init_debug("sock blob size       =3D %d\n", blob_sizes.lb=
-s_sock);
->    378          init_debug("superblock blob size =3D %d\n", blob_sizes.lb=
-s_superblock);
->    379          init_debug("perf event blob size =3D %d\n", blob_sizes.lb=
-s_perf_event);
->    380          init_debug("task blob size       =3D %d\n", blob_sizes.lb=
-s_task);
->    381          init_debug("tun device blob size =3D %d\n", blob_sizes.lb=
-s_tun_dev);
->    382          init_debug("xattr slots          =3D %d\n", blob_sizes.lb=
-s_xattr_count);
->    383          init_debug("bdev blob size       =3D %d\n", blob_sizes.lb=
-s_bdev);
->    384          init_debug("bpf map blob size    =3D %d\n", blob_sizes.lb=
-s_bpf_map);
->    385          init_debug("bpf prog blob size   =3D %d\n", blob_sizes.lb=
-s_bpf_prog);
->    386          init_debug("bpf token blob size  =3D %d\n", blob_sizes.lb=
-s_bpf_token);
->    387
->    388          /*
->    389           * Create any kmem_caches needed for blobs
->    390           */
->    391          if (blob_sizes.lbs_file)
->    392                  lsm_file_cache =3D kmem_cache_create("lsm_file_ca=
-che",
->    393                                                     blob_sizes.lbs=
-_file, 0,
->    394                                                     SLAB_PANIC, NU=
-LL);
->    395          if (blob_sizes.lbs_inode)
->    396                  lsm_inode_cache =3D kmem_cache_create("lsm_inode_=
-cache",
->    397                                                      blob_sizes.lb=
-s_inode, 0,
->    398                                                      SLAB_PANIC, N=
-ULL);
->    399
->  > 400          lsm_early_cred((struct cred *) current->cred);
->    401          lsm_early_task(current);
->    402          for (lsm =3D ordered_lsms; *lsm; lsm++)
->    403                  initialize_lsm(*lsm);
->    404  }
->    405
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+Prior to this change, no security hooks were called at the creation of a
+memfd file. It means that, for SELinux as an example, it will receive
+the default type of the filesystem that backs the in-memory inode. In
+most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
+be hugetlbfs. Both can be considered implementation details of memfd.
 
-Fixed in the lsm/working-lsm_init_rework branch in case anyone wants
-to take a look.  However, as the fix really doesn't have anything to
-do with the IMA/EVM patch, I'll wait to repost the patchset until Mimi
-has a chance to look at the IMA/EVM patch from Roberto.
+It also means that it is not possible to differentiate between a file
+coming from memfd_create and a file coming from a standard tmpfs mount
+point.
 
+Additionally, no permission is validated at creation, which differs from
+the similar memfd_secret syscall.
+
+Call security_inode_init_security_anon during creation. This ensures
+that the file is setup similarly to other anonymous inodes. On SELinux,
+it means that the file will receive the security context of its task.
+
+The ability to limit fexecve on memfd has been of interest to avoid
+potential pitfalls where /proc/self/exe or similar would be executed
+[1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
+similarly to the file class. These access vectors may not make sense for
+the existing "anon_inode" class. Therefore, define and assign a new
+class "memfd_file" to support such access vectors.
+
+Guard these changes behind a new policy capability named "memfd_class".
+
+[1] https://crbug.com/1305267
+[2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.com/
+
+Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
+---
+Changes since v2:
+- Add WARN_ON when using unexpected class. Return -EACCES instead=20
+  of -EPERM
+- Remove extra new line
+- Rebase on selinux/dev
+
+Changes since v1:
+- Move test of class earlier in selinux_bprm_creds_for_exec
+- Remove duplicate call to security_transition_sid
+
+Changes since RFC:
+- Remove enum argument, simply compare the anon inode name
+- Introduce a policy capability for compatility
+- Add validation of class in selinux_bprm_creds_for_exec
+ include/linux/memfd.h                      |  2 ++
+ mm/memfd.c                                 | 14 ++++++++++--
+ security/selinux/hooks.c                   | 26 +++++++++++++++++-----
+ security/selinux/include/classmap.h        |  2 ++
+ security/selinux/include/policycap.h       |  1 +
+ security/selinux/include/policycap_names.h |  1 +
+ security/selinux/include/security.h        |  5 +++++
+ 7 files changed, 44 insertions(+), 7 deletions(-)
+
+diff --git a/include/linux/memfd.h b/include/linux/memfd.h
+index 6f606d9573c3..cc74de3dbcfe 100644
+--- a/include/linux/memfd.h
++++ b/include/linux/memfd.h
+@@ -4,6 +4,8 @@
+=20
+ #include <linux/file.h>
+=20
++#define MEMFD_ANON_NAME "[memfd]"
++
+ #ifdef CONFIG_MEMFD_CREATE
+ extern long memfd_fcntl(struct file *file, unsigned int cmd, unsigned int =
+arg);
+ struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx);
+diff --git a/mm/memfd.c b/mm/memfd.c
+index bbe679895ef6..63b439eb402a 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -433,6 +433,8 @@ static struct file *alloc_file(const char *name, unsign=
+ed int flags)
+ {
+ 	unsigned int *file_seals;
+ 	struct file *file;
++	struct inode *inode;
++	int err =3D 0;
+=20
+ 	if (flags & MFD_HUGETLB) {
+ 		file =3D hugetlb_file_setup(name, 0, VM_NORESERVE,
+@@ -444,12 +446,20 @@ static struct file *alloc_file(const char *name, unsi=
+gned int flags)
+ 	}
+ 	if (IS_ERR(file))
+ 		return file;
++
++	inode =3D file_inode(file);
++	err =3D security_inode_init_security_anon(inode,
++			&QSTR(MEMFD_ANON_NAME), NULL);
++	if (err) {
++		fput(file);
++		file =3D ERR_PTR(err);
++		return file;
++	}
++
+ 	file->f_mode |=3D FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
+ 	file->f_flags |=3D O_LARGEFILE;
+=20
+ 	if (flags & MFD_NOEXEC_SEAL) {
+-		struct inode *inode =3D file_inode(file);
+-
+ 		inode->i_mode &=3D ~0111;
+ 		file_seals =3D memfd_file_seals_ptr(file);
+ 		if (file_seals) {
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 0e47b4bb8d40..2b685f9dd61d 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -93,6 +93,7 @@
+ #include <linux/fanotify.h>
+ #include <linux/io_uring/cmd.h>
+ #include <uapi/linux/lsm.h>
++#include <linux/memfd.h>
+=20
+ #include "avc.h"
+ #include "objsec.h"
+@@ -2319,6 +2320,10 @@ static int selinux_bprm_creds_for_exec(struct linux_=
+binprm *bprm)
+ 	new_tsec =3D selinux_cred(bprm->cred);
+ 	isec =3D inode_security(inode);
+=20
++	if (WARN_ON(isec->sclass !=3D SECCLASS_FILE &&
++		    isec->sclass !=3D SECCLASS_MEMFD_FILE))
++		return -EACCES;
++
+ 	/* Default to the current task SID. */
+ 	new_tsec->sid =3D old_tsec->sid;
+ 	new_tsec->osid =3D old_tsec->sid;
+@@ -2371,8 +2376,8 @@ static int selinux_bprm_creds_for_exec(struct linux_b=
+inprm *bprm)
+ 	ad.u.file =3D bprm->file;
+=20
+ 	if (new_tsec->sid =3D=3D old_tsec->sid) {
+-		rc =3D avc_has_perm(old_tsec->sid, isec->sid,
+-				  SECCLASS_FILE, FILE__EXECUTE_NO_TRANS, &ad);
++		rc =3D avc_has_perm(old_tsec->sid, isec->sid, isec->sclass,
++				  FILE__EXECUTE_NO_TRANS, &ad);
+ 		if (rc)
+ 			return rc;
+ 	} else {
+@@ -2382,8 +2387,8 @@ static int selinux_bprm_creds_for_exec(struct linux_b=
+inprm *bprm)
+ 		if (rc)
+ 			return rc;
+=20
+-		rc =3D avc_has_perm(new_tsec->sid, isec->sid,
+-				  SECCLASS_FILE, FILE__ENTRYPOINT, &ad);
++		rc =3D avc_has_perm(new_tsec->sid, isec->sid, isec->sclass,
++				  FILE__ENTRYPOINT, &ad);
+ 		if (rc)
+ 			return rc;
+=20
+@@ -2978,10 +2983,18 @@ static int selinux_inode_init_security_anon(struct =
+inode *inode,
+ 	struct common_audit_data ad;
+ 	struct inode_security_struct *isec;
+ 	int rc;
++	bool is_memfd =3D false;
+=20
+ 	if (unlikely(!selinux_initialized()))
+ 		return 0;
+=20
++	if (name !=3D NULL && name->name !=3D NULL &&
++	    !strcmp(name->name, MEMFD_ANON_NAME)) {
++		if (!selinux_policycap_memfd_class())
++			return 0;
++		is_memfd =3D true;
++	}
++
+ 	isec =3D selinux_inode(inode);
+=20
+ 	/*
+@@ -3001,7 +3014,10 @@ static int selinux_inode_init_security_anon(struct i=
+node *inode,
+ 		isec->sclass =3D context_isec->sclass;
+ 		isec->sid =3D context_isec->sid;
+ 	} else {
+-		isec->sclass =3D SECCLASS_ANON_INODE;
++		if (is_memfd)
++			isec->sclass =3D SECCLASS_MEMFD_FILE;
++		else
++			isec->sclass =3D SECCLASS_ANON_INODE;
+ 		rc =3D security_transition_sid(
+ 			sid, sid,
+ 			isec->sclass, name, &isec->sid);
+diff --git a/security/selinux/include/classmap.h b/security/selinux/include=
+/classmap.h
+index 5665aa5e7853..3ec85142771f 100644
+--- a/security/selinux/include/classmap.h
++++ b/security/selinux/include/classmap.h
+@@ -179,6 +179,8 @@ const struct security_class_mapping secclass_map[] =3D =
+{
+ 	{ "anon_inode", { COMMON_FILE_PERMS, NULL } },
+ 	{ "io_uring", { "override_creds", "sqpoll", "cmd", "allowed", NULL } },
+ 	{ "user_namespace", { "create", NULL } },
++	{ "memfd_file",
++	  { COMMON_FILE_PERMS, "execute_no_trans", "entrypoint", NULL } },
+ 	/* last one */ { NULL, {} }
+ };
+=20
+diff --git a/security/selinux/include/policycap.h b/security/selinux/includ=
+e/policycap.h
+index 135a969f873c..231d02227e59 100644
+--- a/security/selinux/include/policycap.h
++++ b/security/selinux/include/policycap.h
+@@ -18,6 +18,7 @@ enum {
+ 	POLICYDB_CAP_NETIF_WILDCARD,
+ 	POLICYDB_CAP_GENFS_SECLABEL_WILDCARD,
+ 	POLICYDB_CAP_FUNCTIONFS_SECLABEL,
++	POLICYDB_CAP_MEMFD_CLASS,
+ 	__POLICYDB_CAP_MAX
+ };
+ #define POLICYDB_CAP_MAX (__POLICYDB_CAP_MAX - 1)
+diff --git a/security/selinux/include/policycap_names.h b/security/selinux/=
+include/policycap_names.h
+index ff8882887651..454dab37bda3 100644
+--- a/security/selinux/include/policycap_names.h
++++ b/security/selinux/include/policycap_names.h
+@@ -21,6 +21,7 @@ const char *const selinux_policycap_names[__POLICYDB_CAP_=
+MAX] =3D {
+ 	"netif_wildcard",
+ 	"genfs_seclabel_wildcard",
+ 	"functionfs_seclabel",
++	"memfd_class",
+ };
+ /* clang-format on */
+=20
+diff --git a/security/selinux/include/security.h b/security/selinux/include=
+/security.h
+index 0f954a40d3fc..5d1dad8058b1 100644
+--- a/security/selinux/include/security.h
++++ b/security/selinux/include/security.h
+@@ -209,6 +209,11 @@ static inline bool selinux_policycap_functionfs_seclab=
+el(void)
+ 		selinux_state.policycap[POLICYDB_CAP_FUNCTIONFS_SECLABEL]);
+ }
+=20
++static inline bool selinux_policycap_memfd_class(void)
++{
++	return READ_ONCE(selinux_state.policycap[POLICYDB_CAP_MEMFD_CLASS]);
++}
++
+ struct selinux_policy_convert_data;
+=20
+ struct selinux_load_state {
 --=20
-paul-moore.com
+2.51.0.384.g4c02a37b29-goog
+
