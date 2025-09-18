@@ -1,110 +1,180 @@
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DBF304BDB
-	for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 14:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E912A1D63E4
+	for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 14:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758205896; cv=none; b=h6B8BGAGZNI68tDHo7/4ow3kW724e25/Nb0+7Qwo5/ZPeG8t3YVv7bjvs4EF3NIOTbHTIWkhWgHA6jsrWXo3FLqcS8L43+Bf8OuRBCApm187jMryDFU1ZqlsOMfre+aBLWc/2XGpK5RPH6+hV0gIiQKV1vB24DPiy4P5QTjYeFk=
+	t=1758206116; cv=none; b=EG5g1Em9oedVCsZtZ2WNq5BxD4sQotyP055gbEPqHL8JgF4OL7+8Db8J+sBPMeK5MUlOcz2J+hLDVLWVGXOW8TosiYt1UQLDqpyDegwzI44DwVoCU+38rcZVF7BUGns+XP7WCsBAiIutQSNC2EMvq9B11HjYqrMYGm/jqua+P7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758205896; c=relaxed/simple;
-	bh=myP/sybN2zsJVXA5VSxoEq1YkiH03BHAZFTkykC2GiI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q8QRf/PIZ0zbuevjjtJEFjR95Ux6qr0rzAdWd8vRWYYTQgtqWN0IMsweJVJqurb/0tu8GkuE/N8K5KX+PiDj+BJtQKKsxS1Hscwyv/bYbypfcrVvfyufueRxR0EFRMXw3PlClGs6dkamF0LGQu2SZcmVuesxR76n0/xRdpw+uEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XXTV8oTV; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1758206116; c=relaxed/simple;
+	bh=FCRVB1wlDI3dW1Z/iaYUprsVnwoOfpMuJlnofm2OPPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N15R8+tj4i4GDyNerwQ9K6GXEn1CbBHhRO7k2eG46usoGgTvqYAO5J3x8XgfBsJ7xgnEiYv/aYIWGW9yOGcHjY/s396mcmN9xOkz6zzaEm2jAkoYls/Gjq3hz7FP18C7Gt3/u8IY3Z5DhS3bOe8NDz2RePk+UOfQzZavXLKH1cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=YJF5GnDm; arc=none smtp.client-ip=45.157.188.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XXTV8oTV"
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-33067909400so584066a91.2
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 07:31:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758205893; x=1758810693; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=x7wpgOqV2jwxbf7nUbBy2XlSiAc50BZhVeubzU1uvBU=;
-        b=XXTV8oTVX6+S8cB3egbJOi+r52l5pS2nTdxLCu3XgCnMJElQ4K7ATWx1gTLCprfKUK
-         nQgtAKfeTNowQfoDA+TJVUvxACXAU5g7SX5/YuHWRmZd4uYmfwWBNM+X1oPelM98XG13
-         XDyNcDd8MYiEllydXIvpI+V4DL/nH6v+LS0ZeRsSRuS1fy0zk5Z58LJJ8tbrCvvqfhyH
-         +/geSbKkYMYURYnyK3n7BJ3l6rnJ3C9Ct5wTV9KT7Eid1PubGWPxkh+2qVqQwpSwVuGd
-         dPVlvuTmODDqH3aYI72ZNNRPOE64uPlp5llb0m10owIyJ6NTZVte2z7IXU1vhv4o/YBR
-         VLsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758205893; x=1758810693;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x7wpgOqV2jwxbf7nUbBy2XlSiAc50BZhVeubzU1uvBU=;
-        b=VZD8aoWXKmzCIdb3DYFtWSLvZvIkDw5qgpUc4pQcxA9/kKm876Dp+wnsFs0eVq57dP
-         g6nb2gRRdiv36sedQ0nfbF8ua4OJZeqeRllLcCNbYvcUZ54p0g7Hbky6PtZ8Xmts7+O8
-         MNAJgKgYMmm52Yu5ctMafbCPIKjT3aieSG59HOx6ANoMV60TXsYIJpiAZcEeuQRcPOqA
-         tCRX7p6iMrGuT01POX03V10U4ExnVTYKqAHpicE4OM0MVvaRx3NQ4a+PVCTyjyjKd9vE
-         Q85S3oDhQcQLcXARz1frCaaRlNZOqOBufVzkhdo9Z6/dQ84SclJBpFxSRP/ebIfqMRPc
-         gjyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWN+96OrmQ8usQklDNwoRy2uSUbYz0FVpIAVAZoAyyxUSRDghGy3n3bbX60BpMPf6GaQ954qUv5H5B3Fwq+WmxNB0Q+Tas=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXo54j2lFD4KQub/3DqPx0lOJskobCFzv8wy1qR2b5kNYe9s1M
-	X044mLgU2Tqp99DEf+TDpx+7CblBv5aYhCDlpbdG2jmc2G2UrOOzuGsgLBf03JDWeWy7TvJcDqi
-	fx31DLjDKY5xqqaNTwoCp5+rMqX8VgsQqmjnBoAVP
-X-Gm-Gg: ASbGncvMiMpE51Bk7Zyg2Dt0HbVsIzdDRBeJp+YyO6OIq8jW8V8jHYkCLhYL6gW01Wy
-	ce/SCJTR2se+laownWDEGMShkFFoqtslcWP7Xs9HGrifjgNYf7GYVap6+zMl53sGH5PSEJrsdJt
-	hOZlNWbcx14+GsbrPUeC1zxv074axANVnmqC+0XxQfh47+tw4rOmMYar3V6n5wRUJQ8eyuM07r+
-	mEVQ2D6pKVEnxGFlbsBwUR1EByL7vh7Z4+uMg6PiVSeKu7+4sROL98/9sXu6A==
-X-Google-Smtp-Source: AGHT+IHYGUcixIR/dwWsgGEgFB1TOwlgrZ0O4FlqafV2iJGSlcEq1KnUzPyMPrhTBrvu1VqtuDJ2xHHxKwyBuVmjxY4=
-X-Received: by 2002:a17:90a:e184:b0:32e:b2f8:8dc1 with SMTP id
- 98e67ed59e1d1-32ee3ee55c5mr7425841a91.10.1758205892532; Thu, 18 Sep 2025
- 07:31:32 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="YJF5GnDm"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cSHyH5DTNzX1Q;
+	Thu, 18 Sep 2025 16:26:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1758205607;
+	bh=OcUeUPn/Mw5NRnx4pirX6KM43pffa0yy++ANqSF11xs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YJF5GnDmn9rBcXXUHxSUV/y/+dyz2V0fnVeyDCkFZ05C+W6XbVU7vkuX2FYjaF7eH
+	 orN8PCnVznJPHqcu/v+VjcC0R6cFpeiEMeRaInTZfWdOapw9YERaBZVCKy9dPV5rLF
+	 V/t0zN2YYLw3ZMpUi6oGCx5CIEWpmIbxbxj8wpwc=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4cSHyD6mzgzbVh;
+	Thu, 18 Sep 2025 16:26:44 +0200 (CEST)
+Date: Thu, 18 Sep 2025 16:26:38 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Abhinav Saxena <xandfury@gmail.com>, Paul Moore <paul@paul-moore.com>
+Cc: Fan Wu <wufan@kernel.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	llvm@lists.linux.dev, Daniel Verkamp <dverkamp@chromium.org>, 
+	Jeff Xu <jeffxu@chromium.org>
+Subject: Re: [PATCH RFC 2/4] landlock: implement memfd detection
+Message-ID: <20250918.eXaiF5Ejoing@digikod.net>
+References: <20250719-memfd-exec-v1-0-0ef7feba5821@gmail.com>
+ <20250719-memfd-exec-v1-2-0ef7feba5821@gmail.com>
+ <CAKtyLkEJKLgO1GvpTNmW=DnRhrsiPXGgz9=F7oJXVQPLSocSeA@mail.gmail.com>
+ <87v7nj7p1d.fsf@gmail.com>
+ <20250918.kieghied1ahS@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918140451.1289454-1-elver@google.com> <20250918141511.GA30263@lst.de>
-In-Reply-To: <20250918141511.GA30263@lst.de>
-From: Marco Elver <elver@google.com>
-Date: Thu, 18 Sep 2025 16:30:55 +0200
-X-Gm-Features: AS18NWD0SUeFqGV9WlY2IdwTn_KEVlrUb6EWkUXQGUd586AZF2O57bI6Ojf1TCc
-Message-ID: <CANpmjNN8Vx5p+0xZAjHA4s6HaGaEdMf_u1c1jiOf=ZKqYYz9Nw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/35] Compiler-Based Capability- and Locking-Analysis
-To: Christoph Hellwig <hch@lst.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>, 
-	Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Josh Triplett <josh@joshtriplett.org>, 
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
-	Kentaro Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
-	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
-	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
-	llvm@lists.linux.dev, rcu@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250918.kieghied1ahS@digikod.net>
+X-Infomaniak-Routing: alpha
 
-On Thu, 18 Sept 2025 at 16:15, Christoph Hellwig <hch@lst.de> wrote:
->
-> On Thu, Sep 18, 2025 at 03:59:11PM +0200, Marco Elver wrote:
-> > A Clang version that supports `-Wthread-safety-pointer` and the new
-> > alias-analysis of capability pointers is required (from this version
-> > onwards):
-> >
-> >       https://github.com/llvm/llvm-project/commit/b4c98fcbe1504841203e610c351a3227f36c92a4 [3]
->
-> There's no chance to make say x86 pre-built binaries for that available?
+On Thu, Sep 18, 2025 at 04:07:48PM +0200, Mickaël Salaün wrote:
+> On Tue, Jul 22, 2025 at 03:56:38PM -0600, Abhinav Saxena wrote:
+> > Fan Wu <wufan@kernel.org> writes:
+> > 
+> > > On Sat, Jul 19, 2025 at 4:13 AM Abhinav Saxena <xandfury@gmail.com> wrote:
+> > >>
+> > >> Add is_memfd_file() function to reliably detect memfd files by checking
+> > >> for “memfd:” prefix in dentry names on shmem-backed files. This
+> > >> distinguishes true memfd files from regular shmem files.
+> > >>
+> > >> Move domain_is_scoped() to domain.c for reuse across subsystems.
+> > >> Add comprehensive kunit tests for memfd detection edge cases.
+> > >>
+> > >> Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
+> > >> —
+> > >>  security/landlock/domain.c |  67 +++++++++++++++
+> > >>  security/landlock/domain.h |   4 +
+> > >>  security/landlock/fs.c     | 210 +++++++++++++++++++++++++++++++++++++++++++++
+> > >>  security/landlock/task.c   |  67 —————
+> > >>  4 files changed, 281 insertions(+), 67 deletions(-)
+> > >
+> > > …
+> > >
+> > >>
+> > >> +/**
+> > >> + * is_memfd_file - Check if file was created via memfd_create()
+> > >> + * @file: File to check
+> > >> + *
+> > >> + * Returns true if @file was created via memfd_create(), false otherwise.
+> > >> + *
+> > >> + * memfd files are shmem-backed files with “memfd:” prefix in their dentry name.
+> > >> + * This is the definitive way to distinguish memfd files from regular shmem
+> > >> + * files.
+> > >> + */
+> > >> +static bool is_memfd_file(struct file *file)
+> > >> +{
+> > >> +       const struct dentry *dentry;
+> > >> +       const unsigned char *name;
+> > >> +       size_t name_len;
+> > >> +
+> > >> +       /* Fast path: basic validation */
+> > >> +       if (unlikely(!file))
+> > >> +               return false;
+> > >> +
+> > >> +       /* Must be shmem-backed first - this is the cheapest definitive check */
+> > >> +       if (!shmem_file(file))
+> > >> +               return false;
+> 
+> In which case a memfd would not be detected by this function?
+> shmem_file_operations or hugetlbfs_file_operations are always set for
+> memfd right?
+> 
+> We could export memfd_get_seals() to stay consistent over time.
+> 
+> > >> +
+> > >> +#ifdef CONFIG_MEMFD_CREATE
+> > >> +
+> > >> +       /* Validate dentry and get name info */
+> > >> +       dentry = file->f_path.dentry;
+> > >> +       if (unlikely(!dentry))
+> > >> +               return false;
+> > >> +
+> > >> +       name_len = dentry->d_name.len;
+> > >> +       name = dentry->d_name.name;
+> > >> +
+> > >> +       /* memfd files always have “memfd:” prefix (6 characters) */
+> > >> +       if (name_len < 6 || unlikely(!name))
+> > >> +               return false;
+> > >> +
+> > >> +       /* Check for exact “memfd:” prefix */
+> > >> +       return memcmp(name, “memfd:”, 6) == 0;
+> > >> +#else
+> > >> +       return false;
+> > >> +#endif
+> > >
+> > > I was trying to do something similar early this year but didn’t hear
+> > > feedback from the linux-mm folks.
+> > > <https://lore.kernel.org/linux-security-module/20250129203932.22165-1-wufan@kernel.org/>
+> > >
+> > > I have considered this approach but didn’t use it. My concern is,
+> > > potentially a malicious user can create a file in a shmem fs, e.g.
+> > > tmpfs , with the “memfd:” prefix, which can be used to bypass security
+> > > policy.
+> 
+> In the case of Landlock that should not be a security issue but a
+> compatibility issue, which is not better.
+> 
+> > > (Resending this message due to a misconfiguration with my email
+> > > client. Apologies for any inconvenience.)
+> > >
+> > > -Fan
+> > 
+> > Hi Fan,
+> > 
+> > Thanks for your comments.
+> > 
+> > I agree that an LSM hook into memfd_create() would be a much better
+> > solution. In the absence of such a function, do you think adding a
 
-Not officially, but I can try to build something to share if you prefer.
-Or a script that automatically pulls and builds clang for you - I have
-this old script I just updated to the above commit:
-https://gist.github.com/melver/fe8a5fd9e43e21fab569ee24fc9c6072
-Does that help?
+Hmm, we cannot use hook_file_alloc_security() to enforce restriction on
+memfd creation because the inode mode is set after this call by
+memfd.c:alloc_file().  So we should indeed add a new LSM hook.  That
+would also improve security checks on file creation for other file
+types.
+
+> > `d_unlinked(dentry)` check could serve as an additional verification?
+> > 
+> > I say things since I *think* that legitimate memfd files are always
+> > unlinked while spoofed tmpfs files remain linked. I could be wrong
+> > though.
+> 
+> We should just use the same checks used by the memfd-related
+> syscalls/operations to detect such file.
+> 
+> > 
+> > In any case, we can test this approach using kprobes to validate
+> > the behavior.
+> > 
+> > -Abhinav
+> 
