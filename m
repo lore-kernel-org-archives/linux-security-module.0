@@ -1,352 +1,442 @@
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897162FB62B
-	for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 13:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D21E2222BA
+	for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 14:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758201699; cv=none; b=JD2W5RuJ0lfM8Oj90yZxCpKZs2xBYNBhwdLR3S9PIuRTYO7cqdGXNAY/vFtXMQui2PjGcqsk7j6WMLdaay93SOHrK2ROrGhLXZbpjQKAVB46FOetB2Q+Ng9qYr1/YeCSQ/dgYdJqCg2plo9D4qyS42mc6PUCdBu5qgCZWIR+wfM=
+	t=1758204332; cv=none; b=dAuvocuyynf1RGbAVAt0Mr6CVA6CQKcHlkt52Jw1ClgDsk7OSDPuqJ7nI9AR7dP2IUDZrgRyF4/UME3wxD3EEHwMwx5CcqZT8dwHa0XJ4P8PzvTJ36/zpN4u4mOCZeKiMJaVM3cegXM0DCs8N+anLcrQttt8DABkLTTM1B7YIq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758201699; c=relaxed/simple;
-	bh=0j9dj3N0UkMkYMRznfeqZe26IOMGTLrjVtwgp/94ftE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I+iMG4SmNhuaE3sRoi9RlZqZqJgKdzCeFO3DmimtPs662lEU38MnJdFUeosS6zKmR7xbr8KAumw8mmtjYyAV6fSp8KAE8FwlHLSvXmC1h8F0mmQEqo4E6HBWigQs+4c/tI6tFBcUObGT4jXUK+ZOzIWzD0GIbhgYEwrV1JrNk1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FXInTZtW; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758204332; c=relaxed/simple;
+	bh=jvD6EbLu6C+1usQPR8tlA6aJATIG8Vj8v16gqqXIbxQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tDbMvZhfQ3JLD3WZKoZ2b91JGieV2nFu/gjCKx6faWFbX0f+ecSdJugZYm+3yC8sfradSScbCehs8LKQhfA57aXvOf1DFMwUs8SUFbRJawlIS8Kk37eMaVxITHCBLjb+S6majZysXKvXMeNaMjjHwrlxNI+tjvrDHroIaw0qZ5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FrOGpPeh; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elver.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FXInTZtW"
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3306d3ab2e4so590607a91.3
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 06:21:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FrOGpPeh"
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3eb536ac039so782765f8f.1
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 07:05:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758201697; x=1758806497; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uXxuG0XXZ2CUEkR517o9YLIawLxCf0z3nLMq0JlK2WM=;
-        b=FXInTZtWk9lNifOfcq3mUbyoCim2i1/72uOqSjB0jlhH4BL6PCE1Fcsi8Q174XenKC
-         fk4R32NwAU4UNelj5ufp2yzoB/igtQdwY6LVN/pdFBnam1y4rqhmTXMv3IcOZSKuzAxF
-         63Yqf1fGW0UlodCHZe1gdFSH0nLEi381U3zi37QnVvycweg55c0VbQK97LqmeVC5FRzW
-         dwRAupooBNS1UKY0v/2hhk0nSza4OT7v/6/WzPJgkHHMf+P3fstVPmBMP7lLc4IzY0iN
-         PAnyKcCf4FZGEC0kPnb4ZJXQpVtXexD2UTM30St+nje0QBDwrEW+tRPyXyh9yJFKExFl
-         ou5A==
+        d=google.com; s=20230601; t=1758204327; x=1758809127; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wxDWT9Jhe5/U9R8flrhyT53CUNqFwMWNSIwpcA9ZCHg=;
+        b=FrOGpPehSdf8EPA9O8jFjvH7oBHRCYP0bWtZ7uRVh7HtxvnbbI/kejSxCP2Rs7ET0g
+         3SbOf3vrvId+VKmpFldbbA1cv9Dv4+fuZroHQRaLWCDyzY2c9aWLntq8bd0YjOvAgM3z
+         3jqL2tzWIvKKP3YYyO1zWIFBeHeFXF7Ki2FfwkEne36UoMzoa8ZzB9r4P5PFZiDVMv8V
+         8odX3PURcN9fF2WVX3C/uPw4EVWasAhiw8QpFC8k+kskeoGwBf9qHM3qI0VQwbag1hV5
+         YWPzXK1dKW3mZc+Jqid1A2c+XOEduVxTAC47DpZUL0gIbOyLEXMtwl4e/rRe+31cODyl
+         KBkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758201697; x=1758806497;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uXxuG0XXZ2CUEkR517o9YLIawLxCf0z3nLMq0JlK2WM=;
-        b=NxGWA1hX/9DNVsUPcURZesiGjqFBd6X2kyAu12YZgJ0wEwedPooCAxOyXSISYl0SCb
-         qKv673snM2i0ICRiO77pe6dxrBzxHMiu8yHVIh1DHLm3zbaPjqNhiAP3gicGw/rMQWlb
-         nNecYmGej+1EiPtsRIp/jS/pNwbs2M3g7boC2x79+Bvw5a9IM1JchjpbMNfoF04TKHzD
-         MhD2H6RqeGxHslrk2uWAljhqMK4NagWDmgN1+HhTr12ECncIu4sCllRcMI0VB6k+g+SP
-         SVbb+Qzk+d0Fn5CnUFOHC89PZGThdLudcgU+CNbFuZLIO53bp8Ael+4ByXWuJT1Ar013
-         XAcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVklij5QviiOOAamcVk0IuSG5at9JVKzB7XGQbVmnJRNyHRsM6zwgNostkYyq0RzXn41aWUY6J99JXgNF0viqI5Xv2va6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSMMCdQQENHQWbiBZfvsLAjY9I+90iEA+oFznHEW2ktBvqGOHR
-	5KhRCxyLMVKFmV6S8ZMWzG1vWrLTXBbkiac1rGIs9h4XUiL/kb/myoX9TFnXuDVenalDc/16Qd9
-	973ruSG5QzGw890k32jHNg4SuTW9M8ACnlg==
-X-Gm-Gg: ASbGnctLLZiUnEX9T2YVoWtK7psah2d8keSYVfzNJOCfHY21GaZbmZfSEVgm3X5ol6v
-	RTNGE2VZ1vIl8EHwrcLDzwd6ldztcpuDlQrkjR3K62LEfYWDxn6lZUG5GxaLHs+rMIFpG4wRLlE
-	GMYWvqkZErEEUdVVPdlFJSKyAgXHO61N58/7E/sgMse7vCIU70OkHj5v35Qko2dmPyuzOLGbbFk
-	odKglSzfWBUxoIxcAwLKOlPgg==
-X-Google-Smtp-Source: AGHT+IEnjpkTWLCQa+CWj7BavA5ALvKGzVwQe85nvKFpYbfFsEBJjiEExOrH1PCFbaVN1zCXE1Rm7mKuObPQUoR+2TE=
-X-Received: by 2002:a17:90b:384f:b0:32e:59e7:c37f with SMTP id
- 98e67ed59e1d1-32ee3ef0cd6mr8705000a91.12.1758201696382; Thu, 18 Sep 2025
- 06:21:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758204327; x=1758809127;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wxDWT9Jhe5/U9R8flrhyT53CUNqFwMWNSIwpcA9ZCHg=;
+        b=XL6/FBrRf1wZrWMm9zC5IG9Ro0RDe9ntlKS41+1yWOhbmyrAGL7dBIwz3oPLP0rawU
+         sDZbieuBtC8n7jNEb80I8mvNpt77GoIahEd+eVBWumeaGitzl22D8KyqMxKHm9cijj9K
+         MwnVJi9S0rFKIFLs9Jr53azSoHozUseEbwoZaep4CKQJ2TkX60d+1rFMfJ3QbMN0TX05
+         dwpN3GECsBZMUteor631eZ5vTx0NneeZWst9B99s3IcPw6ar2AcKkeXKqd9fptokIn5B
+         Bv17gfmbQQBFYa1LelpeQ+v4GgeKM9mRwKhSLtt5ZTWnI08qEiO0L8B85FFT2A1pwqg6
+         VG8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWno2+kHH1dAyohh9Dwh6l4eL0wfbwyOwJM/g06E0NcmPZlaTeqJMn3hwa5swWTrTxhVSYIj+UosvYs1EsOqzmCzMuQ73Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyCmvzfoimsLSwmpWoqT3u/+XWGloCNBQUaVh8ZzHts/NaWqi/
+	DzdzSUBt0NC8B5V5Jg4DHOXiifwdVcXss+8VZ4wPEdC5Tc3MePhSxVnYQYHYN+fq2RUga0A7O9E
+	2Kw==
+X-Google-Smtp-Source: AGHT+IFy9SVTK9lkhhDe0k4MlUcY+fM8F7qwF5+lA1VEUPlhPe12zIpwiGbwOtlWJNddLkgwJGEEi7ziYQ==
+X-Received: from wrbcc12.prod.google.com ([2002:a5d:5c0c:0:b0:3ec:e0b7:7699])
+ (user=elver job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:2483:b0:3cd:ef83:a9a1
+ with SMTP id ffacd0b85a97d-3ecdf9c2666mr5663097f8f.20.1758204326802; Thu, 18
+ Sep 2025 07:05:26 -0700 (PDT)
+Date: Thu, 18 Sep 2025 15:59:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250918020434.1612137-1-tweek@google.com>
-In-Reply-To: <20250918020434.1612137-1-tweek@google.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 18 Sep 2025 09:21:25 -0400
-X-Gm-Features: AS18NWC6hAaYPr9mZDSCAKWisfn4LDvK8z5iTIGk5nKtO93zNOxjlf-1udEy7BM
-Message-ID: <CAEjxPJ6qe2WzikK64qH+iqeWd2BkTk+tgq1tMUf1u6H7UYrH1Q@mail.gmail.com>
-Subject: Re: [PATCH v3] memfd,selinux: call security_inode_init_security_anon
-To: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	Hugh Dickins <hughd@google.com>, Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Isaac Manjarres <isaacmanjarres@google.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-mm@kvack.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <20250918140451.1289454-1-elver@google.com>
+Subject: [PATCH v3 00/35] Compiler-Based Capability- and Locking-Analysis
+From: Marco Elver <elver@google.com>
+To: elver@google.com, Peter Zijlstra <peterz@infradead.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, Christoph Hellwig <hch@lst.de>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>, 
+	Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Josh Triplett <josh@joshtriplett.org>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Kentaro Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
+	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
+	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
+	llvm@lists.linux.dev, rcu@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 10:04=E2=80=AFPM Thi=C3=A9baud Weksteen <tweek@goog=
-le.com> wrote:
->
-> Prior to this change, no security hooks were called at the creation of a
-> memfd file. It means that, for SELinux as an example, it will receive
-> the default type of the filesystem that backs the in-memory inode. In
-> most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
-> be hugetlbfs. Both can be considered implementation details of memfd.
->
-> It also means that it is not possible to differentiate between a file
-> coming from memfd_create and a file coming from a standard tmpfs mount
-> point.
->
-> Additionally, no permission is validated at creation, which differs from
-> the similar memfd_secret syscall.
->
-> Call security_inode_init_security_anon during creation. This ensures
-> that the file is setup similarly to other anonymous inodes. On SELinux,
-> it means that the file will receive the security context of its task.
->
-> The ability to limit fexecve on memfd has been of interest to avoid
-> potential pitfalls where /proc/self/exe or similar would be executed
-> [1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
-> similarly to the file class. These access vectors may not make sense for
-> the existing "anon_inode" class. Therefore, define and assign a new
-> class "memfd_file" to support such access vectors.
->
-> Guard these changes behind a new policy capability named "memfd_class".
->
-> [1] https://crbug.com/1305267
-> [2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.com=
-/
->
-> Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
+Capability analysis is a C language extension, which enables statically
+checking that user-definable "capabilities" are acquired and released where
+required. An obvious application is lock-safety checking for the kernel's
+various synchronization primitives (each of which represents a "capability"),
+and checking that locking rules are not violated.
 
-Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+Clang originally called the feature "Thread Safety Analysis" [1], with
+some terminology still using the thread-safety-analysis-only names. This
+was later changed and the feature became more flexible, gaining the
+ability to define custom "capabilities". Its foundations can be found in
+"capability systems" [2], used to specify the permissibility of
+operations to depend on some capability being held (or not held).
 
-For testing, I reverted the previous revert of the memfd_class policy
-capability on selinux userspace, built and installed the modified
-libsepol, and then followed the instructions in the testsuite commit
-description.
-Also confirmed manual execution of the tests in both enforcing and
-permissive mode yields the expected behavior, and the WARN_ON() was
-not triggered.
+Because the feature is not just able to express capabilities related to
+synchronization primitives, the naming chosen for the kernel departs
+from Clang's initial "Thread Safety" nomenclature and refers to the
+feature as "Capability Analysis" to avoid confusion. The implementation
+still makes references to the older terminology in some places, such as
+`-Wthread-safety` being the warning enabled option that also still
+appears in diagnostic messages.
 
-> ---
-> Changes since v2:
-> - Add WARN_ON when using unexpected class. Return -EACCES instead
->   of -EPERM
-> - Remove extra new line
-> - Rebase on selinux/dev
->
-> Changes since v1:
-> - Move test of class earlier in selinux_bprm_creds_for_exec
-> - Remove duplicate call to security_transition_sid
->
-> Changes since RFC:
-> - Remove enum argument, simply compare the anon inode name
-> - Introduce a policy capability for compatility
-> - Add validation of class in selinux_bprm_creds_for_exec
->  include/linux/memfd.h                      |  2 ++
->  mm/memfd.c                                 | 14 ++++++++++--
->  security/selinux/hooks.c                   | 26 +++++++++++++++++-----
->  security/selinux/include/classmap.h        |  2 ++
->  security/selinux/include/policycap.h       |  1 +
->  security/selinux/include/policycap_names.h |  1 +
->  security/selinux/include/security.h        |  5 +++++
->  7 files changed, 44 insertions(+), 7 deletions(-)
->
-> diff --git a/include/linux/memfd.h b/include/linux/memfd.h
-> index 6f606d9573c3..cc74de3dbcfe 100644
-> --- a/include/linux/memfd.h
-> +++ b/include/linux/memfd.h
-> @@ -4,6 +4,8 @@
->
->  #include <linux/file.h>
->
-> +#define MEMFD_ANON_NAME "[memfd]"
-> +
->  #ifdef CONFIG_MEMFD_CREATE
->  extern long memfd_fcntl(struct file *file, unsigned int cmd, unsigned in=
-t arg);
->  struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx);
-> diff --git a/mm/memfd.c b/mm/memfd.c
-> index bbe679895ef6..63b439eb402a 100644
-> --- a/mm/memfd.c
-> +++ b/mm/memfd.c
-> @@ -433,6 +433,8 @@ static struct file *alloc_file(const char *name, unsi=
-gned int flags)
->  {
->         unsigned int *file_seals;
->         struct file *file;
-> +       struct inode *inode;
-> +       int err =3D 0;
->
->         if (flags & MFD_HUGETLB) {
->                 file =3D hugetlb_file_setup(name, 0, VM_NORESERVE,
-> @@ -444,12 +446,20 @@ static struct file *alloc_file(const char *name, un=
-signed int flags)
->         }
->         if (IS_ERR(file))
->                 return file;
-> +
-> +       inode =3D file_inode(file);
-> +       err =3D security_inode_init_security_anon(inode,
-> +                       &QSTR(MEMFD_ANON_NAME), NULL);
-> +       if (err) {
-> +               fput(file);
-> +               file =3D ERR_PTR(err);
-> +               return file;
-> +       }
-> +
->         file->f_mode |=3D FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
->         file->f_flags |=3D O_LARGEFILE;
->
->         if (flags & MFD_NOEXEC_SEAL) {
-> -               struct inode *inode =3D file_inode(file);
-> -
->                 inode->i_mode &=3D ~0111;
->                 file_seals =3D memfd_file_seals_ptr(file);
->                 if (file_seals) {
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 0e47b4bb8d40..2b685f9dd61d 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -93,6 +93,7 @@
->  #include <linux/fanotify.h>
->  #include <linux/io_uring/cmd.h>
->  #include <uapi/linux/lsm.h>
-> +#include <linux/memfd.h>
->
->  #include "avc.h"
->  #include "objsec.h"
-> @@ -2319,6 +2320,10 @@ static int selinux_bprm_creds_for_exec(struct linu=
-x_binprm *bprm)
->         new_tsec =3D selinux_cred(bprm->cred);
->         isec =3D inode_security(inode);
->
-> +       if (WARN_ON(isec->sclass !=3D SECCLASS_FILE &&
-> +                   isec->sclass !=3D SECCLASS_MEMFD_FILE))
-> +               return -EACCES;
-> +
->         /* Default to the current task SID. */
->         new_tsec->sid =3D old_tsec->sid;
->         new_tsec->osid =3D old_tsec->sid;
-> @@ -2371,8 +2376,8 @@ static int selinux_bprm_creds_for_exec(struct linux=
-_binprm *bprm)
->         ad.u.file =3D bprm->file;
->
->         if (new_tsec->sid =3D=3D old_tsec->sid) {
-> -               rc =3D avc_has_perm(old_tsec->sid, isec->sid,
-> -                                 SECCLASS_FILE, FILE__EXECUTE_NO_TRANS, =
-&ad);
-> +               rc =3D avc_has_perm(old_tsec->sid, isec->sid, isec->sclas=
-s,
-> +                                 FILE__EXECUTE_NO_TRANS, &ad);
->                 if (rc)
->                         return rc;
->         } else {
-> @@ -2382,8 +2387,8 @@ static int selinux_bprm_creds_for_exec(struct linux=
-_binprm *bprm)
->                 if (rc)
->                         return rc;
->
-> -               rc =3D avc_has_perm(new_tsec->sid, isec->sid,
-> -                                 SECCLASS_FILE, FILE__ENTRYPOINT, &ad);
-> +               rc =3D avc_has_perm(new_tsec->sid, isec->sid, isec->sclas=
-s,
-> +                                 FILE__ENTRYPOINT, &ad);
->                 if (rc)
->                         return rc;
->
-> @@ -2978,10 +2983,18 @@ static int selinux_inode_init_security_anon(struc=
-t inode *inode,
->         struct common_audit_data ad;
->         struct inode_security_struct *isec;
->         int rc;
-> +       bool is_memfd =3D false;
->
->         if (unlikely(!selinux_initialized()))
->                 return 0;
->
-> +       if (name !=3D NULL && name->name !=3D NULL &&
-> +           !strcmp(name->name, MEMFD_ANON_NAME)) {
-> +               if (!selinux_policycap_memfd_class())
-> +                       return 0;
-> +               is_memfd =3D true;
-> +       }
-> +
->         isec =3D selinux_inode(inode);
->
->         /*
-> @@ -3001,7 +3014,10 @@ static int selinux_inode_init_security_anon(struct=
- inode *inode,
->                 isec->sclass =3D context_isec->sclass;
->                 isec->sid =3D context_isec->sid;
->         } else {
-> -               isec->sclass =3D SECCLASS_ANON_INODE;
-> +               if (is_memfd)
-> +                       isec->sclass =3D SECCLASS_MEMFD_FILE;
-> +               else
-> +                       isec->sclass =3D SECCLASS_ANON_INODE;
->                 rc =3D security_transition_sid(
->                         sid, sid,
->                         isec->sclass, name, &isec->sid);
-> diff --git a/security/selinux/include/classmap.h b/security/selinux/inclu=
-de/classmap.h
-> index 5665aa5e7853..3ec85142771f 100644
-> --- a/security/selinux/include/classmap.h
-> +++ b/security/selinux/include/classmap.h
-> @@ -179,6 +179,8 @@ const struct security_class_mapping secclass_map[] =
-=3D {
->         { "anon_inode", { COMMON_FILE_PERMS, NULL } },
->         { "io_uring", { "override_creds", "sqpoll", "cmd", "allowed", NUL=
-L } },
->         { "user_namespace", { "create", NULL } },
-> +       { "memfd_file",
-> +         { COMMON_FILE_PERMS, "execute_no_trans", "entrypoint", NULL } }=
-,
->         /* last one */ { NULL, {} }
->  };
->
-> diff --git a/security/selinux/include/policycap.h b/security/selinux/incl=
-ude/policycap.h
-> index 135a969f873c..231d02227e59 100644
-> --- a/security/selinux/include/policycap.h
-> +++ b/security/selinux/include/policycap.h
-> @@ -18,6 +18,7 @@ enum {
->         POLICYDB_CAP_NETIF_WILDCARD,
->         POLICYDB_CAP_GENFS_SECLABEL_WILDCARD,
->         POLICYDB_CAP_FUNCTIONFS_SECLABEL,
-> +       POLICYDB_CAP_MEMFD_CLASS,
->         __POLICYDB_CAP_MAX
->  };
->  #define POLICYDB_CAP_MAX (__POLICYDB_CAP_MAX - 1)
-> diff --git a/security/selinux/include/policycap_names.h b/security/selinu=
-x/include/policycap_names.h
-> index ff8882887651..454dab37bda3 100644
-> --- a/security/selinux/include/policycap_names.h
-> +++ b/security/selinux/include/policycap_names.h
-> @@ -21,6 +21,7 @@ const char *const selinux_policycap_names[__POLICYDB_CA=
-P_MAX] =3D {
->         "netif_wildcard",
->         "genfs_seclabel_wildcard",
->         "functionfs_seclabel",
-> +       "memfd_class",
->  };
->  /* clang-format on */
->
-> diff --git a/security/selinux/include/security.h b/security/selinux/inclu=
-de/security.h
-> index 0f954a40d3fc..5d1dad8058b1 100644
-> --- a/security/selinux/include/security.h
-> +++ b/security/selinux/include/security.h
-> @@ -209,6 +209,11 @@ static inline bool selinux_policycap_functionfs_secl=
-abel(void)
->                 selinux_state.policycap[POLICYDB_CAP_FUNCTIONFS_SECLABEL]=
-);
->  }
->
-> +static inline bool selinux_policycap_memfd_class(void)
-> +{
-> +       return READ_ONCE(selinux_state.policycap[POLICYDB_CAP_MEMFD_CLASS=
-]);
-> +}
-> +
->  struct selinux_policy_convert_data;
->
->  struct selinux_load_state {
-> --
-> 2.51.0.384.g4c02a37b29-goog
->
+Enabling capability analysis can be seen as enabling a dialect of Linux
+C with a Capability System.
+
+Additional details can be found in the added kernel-doc documentation.
+An LWN article covered v2 of the series: https://lwn.net/Articles/1012990/
+
+ [1] https://clang.llvm.org/docs/ThreadSafetyAnalysis.html
+ [2] https://www.cs.cornell.edu/talc/papers/capabilities.pdf
+
+=== Development Approach ===
+
+Prior art exists in the form of Sparse's context tracking. Locking
+annotations on functions exist, so the concept of analyzing locking rules
+is not foreign to the kernel's codebase.
+
+However, Clang's analysis is more complete vs. Sparse's, with the
+typical trade-offs in static analysis: improved completeness is
+sacrificed for more possible false positives or additional annotations
+required by the programmer. Numerous options exist to disable or opt out
+certain code from analysis.
+
+This series initially aimed to retain compatibility with Sparse, which
+can provide tree-wide analysis of a subset of the capability analysis
+introduced, but it was later decided to drop Sparse compatibility. For
+the most part, the new (and old) keywords used for annotations remain
+the same, and many of the pre-existing annotations remain valid.
+
+One big question is how to enable this feature, given we end up with a
+new dialect of C -- 2 approaches have been considered:
+
+  A. Tree-wide all-or-nothing approach. This approach requires tree-wide
+     changes, adding annotations or selective opt-outs. Making additional
+     primitives capability-enabled increases churn, esp. where maintainers
+     are unaware of the feature's existence and how to use it.
+
+Because we can't change the programming language (even if from one C
+dialect to another) of the kernel overnight, a different approach might
+cause less friction.
+
+  B. A selective, incremental, and much less intrusive approach.
+     Maintainers of subsystems opt in their modules or directories into
+     "capability analysis" (via Makefile):
+  
+       CAPABILITY_ANALYSIS_foo.o := y	# foo.o only
+       CAPABILITY_ANALYSIS := y  	# all TUs
+  
+     Most (eventually all) synchronization primitives and more
+     capabilities (including ones that could track "irq disabled",
+     "preemption" disabled, etc.) could be supported.
+
+The approach taken by this series is B. This ensures that only
+subsystems where maintainers are willing to deal with any warnings are
+opted-in. Introducing the feature can be done incrementally, without
+large tree-wide changes and adding numerous opt-outs and annotations to
+the majority of code.
+
+  Note: Bart Van Assche concurrently worked on enabling -Wthread-safety:
+  https://lore.kernel.org/all/20250206175114.1974171-1-bvanassche@acm.org/
+  Bart's work has shown what it might take to go with approach A
+  (tree-wide, restricted to 'mutex' usage). This has shown that the
+  analysis finds real issues when applied to enough subsystems!  We hope
+  this serves as motivation to eventually enable the analysis in as many
+  subsystems as possible, particularly subsystems that are not as easily
+  tested by CI systems and test robots.
+
+=== Initial Uses ===
+
+With this initial series, the following synchronization primitives are
+supported: `raw_spinlock_t`, `spinlock_t`, `rwlock_t`, `mutex`,
+`seqlock_t`, `bit_spinlock`, RCU, SRCU (`srcu_struct`), `rw_semaphore`,
+`local_lock_t`, `ww_mutex`.
+
+To demonstrate use of the feature on real kernel code, the series also
+enables capability analysis for the following subsystems:
+
+	* kernel/kcov
+	* kernel/kcsan
+	* kernel/sched/
+	* lib/rhashtable
+	* lib/stackdepot
+	* mm/kfence
+	* security/tomoyo
+    	* crypto/
+
+The initial benefits are static detection of violations of locking
+rules. As more capabilities are added, we would see more static checking
+beyond what regular C can provide, all while remaining easy (read quick)
+to use via the Clang compiler.
+
+  Note: The kernel already provides dynamic analysis tools Lockdep and
+  KCSAN for lock-safety checking and data-race detection respectively.
+  Unlike those, Clang's capability analysis is a compile-time static
+  analysis with no runtime impact. The static analysis complements
+  existing dynamic analysis tools, as it may catch some issues before
+  even getting into a running kernel, but is *not* a replacement for
+  whole-kernel testing with the dynamic analysis tools enabled!
+
+=== Appendix ===
+
+A Clang version that supports `-Wthread-safety-pointer` and the new
+alias-analysis of capability pointers is required (from this version
+onwards):
+
+	https://github.com/llvm/llvm-project/commit/b4c98fcbe1504841203e610c351a3227f36c92a4 [3]
+
+This series is also available at this Git tree:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/melver/linux.git/log/?h=cap-analysis/dev
+
+=== Changelog ===
+
+v3:
+
+  - Bump min. Clang version to 22+ (unreleased), which now supports:
+
+	* re-entrancy via __attribute__((reentrant_capability));
+	* basic form of capability alias analysis [3] - which is the
+	  biggest improvement since v2.
+
+    This was the result of conclusions from this discussion:
+    https://lore.kernel.org/all/CANpmjNPquO=W1JAh1FNQb8pMQjgeZAKCPQUAd7qUg=5pjJ6x=Q@mail.gmail.com/
+
+  - Rename __asserts_cap/__assert_cap to __assumes_cap/__assume_cap.
+
+  - Switch to DECLARE_LOCK_GUARD_1_ATTRS().
+
+  - Add __acquire_ret and __acquire_shared_ret helper macros - can be
+    used to define function-like macros that return objects which
+    contains a held capabilities. Works now because of capability alias
+    analysis.
+
+  - Add capability_unsafe_alias() helper, where the analysis rightfully
+    points out we're doing strange things with aliases but we don't
+    care.
+
+  - Support multi-argument attributes.
+
+  - Enable for kernel/sched/{core,fair}.c, kernel/kcsan.
+  - Drop drivers/tty changes (revisit later).
+
+v2: https://lore.kernel.org/all/20250304092417.2873893-1-elver@google.com/
+
+  - Remove Sparse context tracking support - after the introduction of
+    Clang support, so that backports can skip removal of Sparse support.
+
+  - Remove __cond_lock() function-like helper.
+
+  - ww_mutex support.
+
+  - -Wthread-safety-addressof was reworked and committed in upstream
+    Clang as -Wthread-safety-pointer.
+
+  - Make __cond_acquires() and __cond_acquires_shared() take abstract
+    value, since compiler only cares about zero and non-zero.
+
+  - Rename __var_guarded_by to simply __guarded_by. Initially the idea
+    was to be explicit about if the variable itself or the pointed-to
+    data is guarded, but in the long-term, making this shorter might be
+    better.
+
+  - Likewise rename __ref_guarded_by to __pt_guarded_by.
+
+  - Introduce common header warning suppressions - this is a better
+    solution than guarding header inclusions with disable_ +
+    enable_capability_analysis(). Header suppressions are disabled when
+    selecting CONFIG_WARN_CAPABILITY_ANALYSIS_ALL=y. This bumps the
+    minimum Clang version required to 20+.
+
+  - Make the data_race() macro imply disabled capability analysis.
+    Writing capability_unsafe(data_race(..)) is unnecessarily verbose
+    and data_race() on its own already indicates something subtly unsafe
+    is happening.  This change was made after analysis of a finding in
+    security/tomoyo.
+
+  - Enable analysis in the following subsystems as additional examples
+    of larger subsystem. Where it was obvious, the __guarded_by
+    attribute was added to lock-guarded variables to improve coverage.
+
+    	* drivers/tty
+	* security/tomoyo
+    	* crypto/
+
+RFC v1: https://lore.kernel.org/lkml/20250206181711.1902989-1-elver@google.com
+
+Marco Elver (35):
+  compiler_types: Move lock checking attributes to
+    compiler-capability-analysis.h
+  compiler-capability-analysis: Add infrastructure for Clang's
+    capability analysis
+  compiler-capability-analysis: Add test stub
+  Documentation: Add documentation for Compiler-Based Capability
+    Analysis
+  checkpatch: Warn about capability_unsafe() without comment
+  cleanup: Basic compatibility with capability analysis
+  lockdep: Annotate lockdep assertions for capability analysis
+  locking/rwlock, spinlock: Support Clang's capability analysis
+  compiler-capability-analysis: Change __cond_acquires to take return
+    value
+  locking/mutex: Support Clang's capability analysis
+  locking/seqlock: Support Clang's capability analysis
+  bit_spinlock: Include missing <asm/processor.h>
+  bit_spinlock: Support Clang's capability analysis
+  rcu: Support Clang's capability analysis
+  srcu: Support Clang's capability analysis
+  kref: Add capability-analysis annotations
+  locking/rwsem: Support Clang's capability analysis
+  locking/local_lock: Include missing headers
+  locking/local_lock: Support Clang's capability analysis
+  locking/ww_mutex: Support Clang's capability analysis
+  debugfs: Make debugfs_cancellation a capability struct
+  compiler-capability-analysis: Remove Sparse support
+  compiler-capability-analysis: Remove __cond_lock() function-like
+    helper
+  compiler-capability-analysis: Introduce header suppressions
+  compiler: Let data_race() imply disabled capability analysis
+  MAINTAINERS: Add entry for Capability Analysis
+  kfence: Enable capability analysis
+  kcov: Enable capability analysis
+  kcsan: Enable capability analysis
+  stackdepot: Enable capability analysis
+  rhashtable: Enable capability analysis
+  printk: Move locking annotation to printk.c
+  security/tomoyo: Enable capability analysis
+  crypto: Enable capability analysis
+  sched: Enable capability analysis for core.c and fair.c
+
+ .../dev-tools/capability-analysis.rst         | 148 +++++
+ Documentation/dev-tools/index.rst             |   1 +
+ Documentation/dev-tools/sparse.rst            |  19 -
+ Documentation/mm/process_addrs.rst            |   6 +-
+ MAINTAINERS                                   |  11 +
+ Makefile                                      |   1 +
+ crypto/Makefile                               |   2 +
+ crypto/acompress.c                            |   6 +-
+ crypto/algapi.c                               |   2 +
+ crypto/api.c                                  |   1 +
+ crypto/crypto_engine.c                        |   2 +-
+ crypto/drbg.c                                 |   5 +
+ crypto/internal.h                             |   2 +-
+ crypto/proc.c                                 |   3 +
+ crypto/scompress.c                            |  24 +-
+ .../net/wireless/intel/iwlwifi/iwl-trans.c    |   4 +-
+ .../net/wireless/intel/iwlwifi/iwl-trans.h    |   6 +-
+ .../intel/iwlwifi/pcie/gen1_2/internal.h      |   5 +-
+ .../intel/iwlwifi/pcie/gen1_2/trans.c         |   4 +-
+ fs/dlm/lock.c                                 |   2 +-
+ include/crypto/internal/acompress.h           |   7 +-
+ include/crypto/internal/engine.h              |   2 +-
+ include/linux/bit_spinlock.h                  |  24 +-
+ include/linux/cleanup.h                       |  17 +
+ include/linux/compiler-capability-analysis.h  | 423 +++++++++++++
+ include/linux/compiler.h                      |   2 +
+ include/linux/compiler_types.h                |  18 +-
+ include/linux/console.h                       |   4 +-
+ include/linux/debugfs.h                       |  12 +-
+ include/linux/kref.h                          |   2 +
+ include/linux/list_bl.h                       |   2 +
+ include/linux/local_lock.h                    |  45 +-
+ include/linux/local_lock_internal.h           |  73 ++-
+ include/linux/lockdep.h                       |  12 +-
+ include/linux/mm.h                            |  33 +-
+ include/linux/mutex.h                         |  35 +-
+ include/linux/mutex_types.h                   |   4 +-
+ include/linux/rcupdate.h                      |  86 +--
+ include/linux/refcount.h                      |   6 +-
+ include/linux/rhashtable.h                    |  14 +-
+ include/linux/rwlock.h                        |  22 +-
+ include/linux/rwlock_api_smp.h                |  43 +-
+ include/linux/rwlock_rt.h                     |  44 +-
+ include/linux/rwlock_types.h                  |  10 +-
+ include/linux/rwsem.h                         |  66 +-
+ include/linux/sched.h                         |   6 +-
+ include/linux/sched/signal.h                  |  16 +-
+ include/linux/sched/task.h                    |   5 +-
+ include/linux/sched/wake_q.h                  |   3 +
+ include/linux/seqlock.h                       |  24 +
+ include/linux/seqlock_types.h                 |   5 +-
+ include/linux/spinlock.h                      |  89 ++-
+ include/linux/spinlock_api_smp.h              |  34 +-
+ include/linux/spinlock_api_up.h               | 112 +++-
+ include/linux/spinlock_rt.h                   |  37 +-
+ include/linux/spinlock_types.h                |  10 +-
+ include/linux/spinlock_types_raw.h            |   5 +-
+ include/linux/srcu.h                          |  60 +-
+ include/linux/srcutiny.h                      |   4 +
+ include/linux/srcutree.h                      |   6 +-
+ include/linux/ww_mutex.h                      |  22 +-
+ kernel/Makefile                               |   2 +
+ kernel/kcov.c                                 |  36 +-
+ kernel/kcsan/Makefile                         |   2 +
+ kernel/kcsan/report.c                         |  11 +-
+ kernel/printk/printk.c                        |   2 +
+ kernel/sched/Makefile                         |   3 +
+ kernel/sched/core.c                           |  89 ++-
+ kernel/sched/fair.c                           |   9 +-
+ kernel/sched/sched.h                          | 110 +++-
+ kernel/signal.c                               |   4 +-
+ kernel/time/posix-timers.c                    |  13 +-
+ lib/Kconfig.debug                             |  45 ++
+ lib/Makefile                                  |   6 +
+ lib/dec_and_lock.c                            |   8 +-
+ lib/rhashtable.c                              |   5 +-
+ lib/stackdepot.c                              |  20 +-
+ lib/test_capability-analysis.c                | 596 ++++++++++++++++++
+ mm/kfence/Makefile                            |   2 +
+ mm/kfence/core.c                              |  20 +-
+ mm/kfence/kfence.h                            |  14 +-
+ mm/kfence/report.c                            |   4 +-
+ mm/memory.c                                   |   4 +-
+ mm/pgtable-generic.c                          |  19 +-
+ net/ipv4/tcp_sigpool.c                        |   2 +-
+ scripts/Makefile.capability-analysis          |  11 +
+ scripts/Makefile.lib                          |  10 +
+ scripts/capability-analysis-suppression.txt   |  33 +
+ scripts/checkpatch.pl                         |   8 +
+ security/tomoyo/Makefile                      |   2 +
+ security/tomoyo/common.c                      |  52 +-
+ security/tomoyo/common.h                      |  77 +--
+ security/tomoyo/domain.c                      |   1 +
+ security/tomoyo/environ.c                     |   1 +
+ security/tomoyo/file.c                        |   5 +
+ security/tomoyo/gc.c                          |  28 +-
+ security/tomoyo/mount.c                       |   2 +
+ security/tomoyo/network.c                     |   3 +
+ tools/include/linux/compiler_types.h          |   2 -
+ 99 files changed, 2370 insertions(+), 589 deletions(-)
+ create mode 100644 Documentation/dev-tools/capability-analysis.rst
+ create mode 100644 include/linux/compiler-capability-analysis.h
+ create mode 100644 lib/test_capability-analysis.c
+ create mode 100644 scripts/Makefile.capability-analysis
+ create mode 100644 scripts/capability-analysis-suppression.txt
+
+-- 
+2.51.0.384.g4c02a37b29-goog
+
