@@ -1,96 +1,65 @@
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284092D63FF;
-	Thu, 18 Sep 2025 20:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0156E264A72;
+	Thu, 18 Sep 2025 20:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758227833; cv=none; b=tiDxDeFl/yy+KmiA8Wh9a7c7KJjQOt1TSdLZiZ0sxvaLJ3TJtOSDCqrFR5RFK2gDMYzZuHnVNYOpgfxObY4KLN+tS2dY7dvYb8UsqbzMeTpH9j7EKRAcd+VAqH+Aqhgtsni1o/Z05QEsr8unXo4B0DskdfveUXSQ7ElG3iL1FjQ=
+	t=1758228756; cv=none; b=fo0TmCk//WP1bxFTaATFuUziUwhKU7G2PyRca35SKCnqupux1dTNIHWbU/LvdNgQUfmipjvvsp5fgwY1yCSuDBRWOfffjwlB8xs0RPFetliKWlUEwnh+WXtTmVUzfKdOTpx0GcwtSwJXMvjQadBpRet63qPC8sgf6wpjEmL0yM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758227833; c=relaxed/simple;
-	bh=K4mBwSrBNcKyhAm8gbEHryo4PTBkpR7Q30/ZWeXHl1I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=V+UIXSbqTa16v04yCupiVXIUlIwsc1ePqF6QmiyG1QlhxnYlV7zG1a+Of9PDn8PfFKsuVjbBS2iSaDn56T2YZ3TD3VvKJbywK/2IgFPA9IfvAB5Ef8Ns/heq8pFizo9ZmRtJ7vwL8JmIuwVhJi8N/80y5Fk4fIrxoxxHAuuoyVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id 8E6D31604ED;
-	Thu, 18 Sep 2025 20:37:01 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf03.hostedemail.com (Postfix) with ESMTPA id 9D9BE6000D;
-	Thu, 18 Sep 2025 20:36:44 +0000 (UTC)
-Message-ID: <13389786a2a121c21a6f4940b4acf09fad53a3d9.camel@perches.com>
-Subject: Re: [PATCH v3 05/35] checkpatch: Warn about capability_unsafe()
- without comment
-From: Joe Perches <joe@perches.com>
-To: Marco Elver <elver@google.com>, Peter Zijlstra <peterz@infradead.org>, 
- Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>, Will
- Deacon <will@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck	
- <luc.vanoostenryck@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
- Alexander Potapenko	 <glider@google.com>, Arnd Bergmann <arnd@arndb.de>,
- Bart Van Assche	 <bvanassche@acm.org>, Bill Wendling <morbo@google.com>,
- Christoph Hellwig	 <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>, Eric
- Dumazet	 <edumazet@google.com>, Frederic Weisbecker <frederic@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Herbert Xu
- <herbert@gondor.apana.org.au>, Ian Rogers	 <irogers@google.com>, Jann Horn
- <jannh@google.com>, Joel Fernandes	 <joelagnelf@nvidia.com>, Jonathan
- Corbet <corbet@lwn.net>, Josh Triplett	 <josh@joshtriplett.org>, Justin
- Stitt <justinstitt@google.com>, Kees Cook	 <kees@kernel.org>, Kentaro
- Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn	 <lukas.bulwahn@gmail.com>,
- Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Miguel Ojeda <ojeda@kernel.org>, Nathan
- Chancellor	 <nathan@kernel.org>, Neeraj Upadhyay
- <neeraj.upadhyay@kernel.org>, Nick Desaulniers
- <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>,
- Tetsuo Handa	 <penguin-kernel@I-love.SAKURA.ne.jp>, Thomas Gleixner
- <tglx@linutronix.de>,  Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki
- <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
-	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
-	llvm@lists.linux.dev, rcu@vger.kernel.org
-Date: Thu, 18 Sep 2025 13:36:43 -0700
-In-Reply-To: <20250918140451.1289454-6-elver@google.com>
-References: <20250918140451.1289454-1-elver@google.com>
-	 <20250918140451.1289454-6-elver@google.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1758228756; c=relaxed/simple;
+	bh=ZkLGh94phtEema8WHbBi3csQqtKxGnStCf7APFvKzJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IijCFLCS5d5h1rWfXZ+nIIY/SmTQrXgtLCx7M6wmmiHMt3gL5Rw19i7IdH1BNfbfkYTVRnWZGchlvaiyQLMpKAT7f0G9h7TpMOXlkquYIRDTF/2+cVf4sjFPsUcmOzqw6xcdSNkeV5YnpaA4DB7qQhhOF2sKezpxOBVrDdzIjF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aVV2WfjC; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVV2WfjC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C96CC4CEE7;
+	Thu, 18 Sep 2025 20:52:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758228755;
+	bh=ZkLGh94phtEema8WHbBi3csQqtKxGnStCf7APFvKzJU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aVV2WfjC5H1gdj4iSWHYx271IJeBQTrxvJmiRDclZyHbaniBt9KROllyoJ9XucerC
+	 nWpb2S21nB6LeCdQjHbxhp16GVaVjXwXbPmRlm2NIAmPinOy6aeDzNhigfiQqDJCTf
+	 pU3s1u3xt0mGO/P9mDcEVmv8oZJO6xTBTGUpdWIJbPdh83gQ/YXPJnuLH6Eb3Dm5Je
+	 y78bCn/6uSd4nBMtJy1B5h4xydIouc0m+feX61ESKAphyetjGpVWyfGxAxv7FU+Qn/
+	 9bn2iI9fIr7zq83rNXunyOewOZyAMdN7m49optUtLZOPtFUZ+biJamhObLYAtyZgk+
+	 75pueFdQMlQEQ==
+Date: Thu, 18 Sep 2025 23:52:31 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Chris Fenner <cfenn@google.com>
+Cc: Jonathan McDowell <noodles@earth.li>, linux-integrity@vger.kernel.org,
+	stable@vger.kernel.or, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] tpm: Disable TPM2_TCG_HMAC by default
+Message-ID: <aMxxD1QvAgZyQkaM@kernel.org>
+References: <20250825203223.629515-1-jarkko@kernel.org>
+ <aMxV9fB0E72QQY2G@earth.li>
+ <aMxZlHn9bfa5LGEU@kernel.org>
+ <CAMigqh2gJ+ALqxb8RcNFENJg-Z0FfKE2DZjaGdOER7G3AGZvKg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 9D9BE6000D
-X-Stat-Signature: py53mcfac346e64tk9rcf8ugswnwrn9n
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1+Psz6mclmN7I07c5jPtb/CcemQyIEeoMA=
-X-HE-Tag: 1758227804-881299
-X-HE-Meta: U2FsdGVkX1+3ZResTrAAf9g9L6dJTCgmeXzyM4kYyOanBXCbxLPKLUzexU279fp4Uk1s32nIlGL7ALFntG4iQsakleJTeVRQim4oreS1teDe2c1v+Yr3chddZziKPoDc++AISXJQPhyq2w3G+YXN9VlSwrMnsmWf2JBDP+6EKscCwfkdUqEPS2c1jIOhGC9JFL5oLKZVp7yaxDYTVOVvcxJD81BMXbf5A4qGtQvLNkMWZnMoJtyHKmlojlv7i6K2T4g5I4c9AZ5UYsKsHO+RYQ2ZU++uSS7Q3j7El4OW8jbzA/Y7Pj1Sh8vbE9tWV5T5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMigqh2gJ+ALqxb8RcNFENJg-Z0FfKE2DZjaGdOER7G3AGZvKg@mail.gmail.com>
 
-On Thu, 2025-09-18 at 15:59 +0200, Marco Elver wrote:
-> Warn about applications of capability_unsafe() without a comment, to
-> encourage documenting the reasoning behind why it was deemed safe.
-[]
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> @@ -6717,6 +6717,14 @@ sub process {
->  			}
->  		}
-> =20
-> +# check for capability_unsafe without a comment.
-> +		if ($line =3D~ /\bcapability_unsafe\b/) {
-> +			if (!ctx_has_comment($first_line, $linenr)) {
-> +				WARN("CAPABILITY_UNSAFE",
-> +				     "capability_unsafe without comment\n" . $herecurr);
+On Thu, Sep 18, 2025 at 12:50:57PM -0700, Chris Fenner wrote:
+> Agreed, the feature needs some work in order to provide meaningful
+> security value, and disabling it by default facilitates that work.
+> 
+> Reviewed-By: Chris Fenner <cfenn@google.com>
 
-while most of these are using the same multi-line style
-I'd prefer combining and reducing indentation
+Thanks!
 
-		if ($line =3D~ /\bcapability_unsafe\b/ &&
-		    !ctx_has_comment($first_line, $linenr)) {
-			WARN(etc...
+BR, Jarkko
