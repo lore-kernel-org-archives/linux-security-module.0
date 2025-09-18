@@ -1,95 +1,126 @@
-Received: from sub0000529476.hmk-temp.com (mail.btob-mail.work [180.222.184.211])
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FEF2C028D
-	for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 18:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.222.184.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19603C465;
+	Thu, 18 Sep 2025 18:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758218749; cv=none; b=ot28ov/aPa9oVbkp6tkFDSqoIJ9nYpgymVwSvHZHTnsR3a46FFLWAYiSLlnXHVrj3Dl87igrZLceSK8UYMXt1k0R/duvEwcAsCj18Yjq8WGWmfsE88NOnXvd1OjbbA6pmtUVdapT/HXJGYnJFhCTmCS/VySELDRJ8x3mVqRjH6U=
+	t=1758221839; cv=none; b=G9SbmFJEvI94Vu0JAU37l7yrBgt4TJwwcmoCZG80dcyPtL9gVlzIwwI+JdShnHgABQ6RKESTfh+LNjmzQYhBgBhL3eLFomA/g4hVypr5OILubaNzscrGamk6vGGydncKa4ByYdplLUdrzKmg6YMMSjbpEzZE5hYxFvPtLtIjpgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758218749; c=relaxed/simple;
-	bh=XWhwz5XfX6dcp6E8MvIbZWFetA2FciHeSNylbn60qUY=;
-	h=From:To:Subject:Content-Type:Date:Message-ID; b=C62wwBr9FBYY093t7MpQnHF2nYJSYKkK+WpLUIGH8+yaDq8XF1BCyzpS5z8QwduHK3BAZJjSy1UXpiZVpaDwtdA889PvrHg4kuVYWM8u2xoYe1xNbNC85pAf71cTwyHtMHcOJmgzx/QBuXG+niAMrAB9JHb3dfmIl32ND4VLueE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=headmint.biz; spf=fail smtp.mailfrom=headmint.biz; arc=none smtp.client-ip=180.222.184.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=headmint.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=headmint.biz
-Received: (qmail 17755 invoked from network); 18 Sep 2025 19:39:57 +0900
-Received: from softbank060111101004.bbtec.net (HELO MailD-4) (60.111.101.4)
-  by mail.btob-mail.work with ESMTPSA (DHE-RSA-AES256-GCM-SHA384 encrypted, authenticated); 18 Sep 2025 19:39:57 +0900
-From: =?iso-2022-jp?B?GyRCJVglQyVJJV8lcyVIGyhC?= <info@headmint.biz>
-To: linux-security-module@vger.kernel.org
-Subject: =?iso-2022-jp?B?GyRCJCIkPyReQGxMZyROJGIkXyRbJDAkN0U5GyhCIA==?==?iso-2022-jp?B?GyRCPH0xV0AtRXkhPzM1TVc7cU5BGyhC?=
-X-Mailer: Mail Magic Professional Version 16
-Content-Type: text/plain;
-	charset=iso-2022-jp
-Date: Thu, 18 Sep 2025 20:41:43 +0900
-Message-ID: <202509182041430043.2CCF147C52FC43C9B23876A9A9B6EEBF@btob-mail.work>
+	s=arc-20240116; t=1758221839; c=relaxed/simple;
+	bh=n3lbOBSHHN6qjgd0ZGik8Gxu1EjlZkYg8FEfJYQxmjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jAQ3VI3Rz67TZNkXY0i1fzzKS7MFyhmGqZAgD675W/J8vdwrDj2/kjjDxSulwUqVTSrq+mkirXWTcQkp6zEUkvpb4iLH14O/KXeBX2EI30hQcDvuajQqobCeXBiwA0Rzp5oZjqShXoFabmK94xwPMgtQrYjJ1L6wi+Yt+fAiE+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=q4ZxZa03; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b="q4ZxZa03"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Dq+1iSG82r9yQIVHmumBoetFqjeDWLapJ2V4N8waYYE=; b=q4ZxZa03qHI68xQGdp1+HoucWC
+	A6UKcRRoF7upoBx+/JQDcOnmpTpM+Gei1qTcmgUadALtWTjpfnhzEAzVt/x7MW/pYZLd14Aq1LvrW
+	N0aDiWpJ0VKi8lOSIwAq4ngUjO1vknuFPaaCNjj6b86XUj1Pv7vaGObohPsiS1Xo+PlqNhCKtAemf
+	RvZcobPmZv6pLKkD8DB0nZmNXQDeMj5+YmQB13tVTxPaU4nmzrjcjOfH8LKguncAqW6GoDEpdjNkP
+	1/CCJsWoIb8Dvk7Nwdj1cpdAijA7x2xeZLqKwZRQW+ThWmXa1aAs46Y60v2xEpJ/E/a1aVVEExdWR
+	GDrxP/0Q==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1uzJoL-00Fya0-13;
+	Thu, 18 Sep 2025 19:56:53 +0100
+Date: Thu, 18 Sep 2025 19:56:53 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, stable@vger.kernel.or,
+	Chris Fenner <cfenn@google.com>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] tpm: Disable TPM2_TCG_HMAC by default
+Message-ID: <aMxV9fB0E72QQY2G@earth.li>
+References: <20250825203223.629515-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250825203223.629515-1-jarkko@kernel.org>
 
-お世話になります。
+On Mon, Aug 25, 2025 at 11:32:23PM +0300, Jarkko Sakkinen wrote:
+>After reading all the feedback, right now disabling the TPM2_TCG_HMAC
+>is the right call.
+>
+>Other views discussed:
+>
+>A. Having a kernel command-line parameter or refining the feature
+>   otherwise. This goes to the area of improvements.  E.g., one
+>   example is my own idea where the null key specific code would be
+>   replaced with a persistent handle parameter (which can be
+>   *unambigously* defined as part of attestation process when
+>   done correctly).
+>
+>B. Removing the code. I don't buy this because that is same as saying
+>   that HMAC encryption cannot work at all (if really nitpicking) in
+>   any form. Also I disagree on the view that the feature could not
+>   be refined to something more reasoable.
+>
+>Also, both A and B are worst options in terms of backporting.
+>
+>Thus, this is the best possible choice.
 
+I think this is reasonable; it's adding runtime overhead and not adding 
+enough benefit to be the default upstream.
 
-コンパクトにスタートできて手堅く収益をあげることのできる
-フランチャイズビジネスの事業概要資料をご案内申し上げます。
+Reviewed-By: Jonathan McDowell <noodles@earth.li>
 
+>Cc: stable@vger.kernel.or # v6.10+
+>Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
+>Suggested-by: Chris Fenner <cfenn@google.com>
+>Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+>---
+>PS. I did not post this last week because that would have been most
+>likely the most counter-productive action to taken. It's better
+>sometimes to take a bit of time to think (which can be seen that
+>I've given also more reasonable weight to my own eaerlier
+>proposals).
+>
+>I also accept further changes, if there is e.g., inconsistency
+>with TCG_TPM_HMAC setting or similar (obviously).
+>---
+> drivers/char/tpm/Kconfig | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+>index dddd702b2454..3e4684f6b4af 100644
+>--- a/drivers/char/tpm/Kconfig
+>+++ b/drivers/char/tpm/Kconfig
+>@@ -29,7 +29,7 @@ if TCG_TPM
+>
+> config TCG_TPM2_HMAC
+> 	bool "Use HMAC and encrypted transactions on the TPM bus"
+>-	default X86_64
+>+	default n
+> 	select CRYPTO_ECDH
+> 	select CRYPTO_LIB_AESCFB
+> 	select CRYPTO_LIB_SHA256
+>-- 
+>2.39.5
 
-　　　 小資本／小スペース／少人数の
-　　　　コンパクト・フランチャイズ
+J.
 
-　　　　　ドライヘッドスパ専門店
-　　　　　　 “ヘッドミント”
-
-　　　　　　　・収益モデル
-　　　　　　　・開業に必要な資金
-　　　　　　　・ロイヤリティ
-　　　　　　　・スケジュール　etc
-　　 　　 ↓　 FC事業概要資料 　↓
-  　 　 https://dryheadspa-hm.biz/fc/
-
-
-ドライヘッドスパとは　―――　水を使わないヘッドスパです。
-
-
-足つぼや耳つぼなど、専門のもみほぐし店がありますが
-ご紹介するサロンは「　頭に特化したもみほぐし店　」です。
-
-
-ドライヘッドスパというジャンルの認知度は、
-現時点ではそれほど高くありません。
-
-
-にも関わらず、私どもがフランチャイズ展開する“ヘッドミント”の
-店舗には月間450人以上の新規客が来店し、満席が続いています。
-
-
-これから先、認知度が高まることで
-爆発的に伸びるポテンシャルを秘めています。
-
-
-フランチャイズによる事業を展開していますので、
-新たな収益づくりをお考えの方は、まずは概要資料をご覧ください。
-
-
-　　　　　ドライヘッドスパ専門店
-　　　　　　　　ヘッドミント
-　　　
-　　 　　 ↓　 FC事業概要資料 　↓
-  　 　 https://dryheadspa-hm.biz/fc/
-
-
-よろしくお願いします。
-
-
-------------------------------------------
-　株式会社じむや
-　愛知県名古屋市中区大須3-26-41堀田ビル
-　TEL：052-263-4688
-------------------------------------------
-　本情報がご不要な方にはご迷惑をおかけし申し訳ございません。
-　メールマガジンの解除は、下記URLにて承っております。
-　 https://dryheadspa-hm.biz/mail/
-　お手数お掛けしますがよろしくお願いします。
+-- 
+] https://www.earth.li/~noodles/ []  Is this real - that's the first   [
+]  PGP/GPG Key @ the.earth.li    []    thing I think every morning.    [
+] via keyserver, web or email.   []                                    [
+] RSA: 4096/0x94FA372B2DA8B985   []                                    [
