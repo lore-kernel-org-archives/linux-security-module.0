@@ -1,94 +1,99 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D513F257435
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Sep 2025 02:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FC51E5B7B;
+	Fri, 19 Sep 2025 02:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758248386; cv=none; b=npTfOHbNiKprTsH6cE9OUouYzltyFWAmA0Wa0UW1PeKH7+tiIQY9kANjmVUn6fA7hBFnig55qSVUjCb4ddqDnrQ4il4x+S3fsWrS4yFPeonlAz0L+4QghumYbshULPf8Qj/GZn5PtAZmihLZcGZes6P9PY9U5kmmnKT5Cg0prvs=
+	t=1758248416; cv=none; b=kVBXg9zpha9ZlSiuihR/W/sSJBK7WdcKMLUUpWKNkhSHuHJzp6wZtKVu6vtr25XhVd98OqNQWKoNexwsZunYivz8/97q/wbO3X+2mBPMcVclVe14ARoFZDYFWaqkt4RJ82rqPf8DFPTM1IE8Fl2D6okLQjJzZo8kPQZ/f1uflHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758248386; c=relaxed/simple;
-	bh=emvmFV6gt4sH77fH9Bh1RItBSzfNP8I7enfoTm7bE2g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p9jxKttTSgfJ1Si5jgqVfWD+WzPIvZ6kJHUH29KRFf3miOJ2SiaWj0h6o05IAgqrg8ppUgUFAgOj65hwpws/obGV/b3bEaez1jVtobESxyh3w1CTt15eypOrVTjNbf2GaV8nSm7z1AeEObMvxdUrYOpgUYXi8lEdW5NsnG8/Ku0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I4E1cU+r; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758248416; c=relaxed/simple;
+	bh=2uObbcWUmo8NjRMQzjwBSKL6PklNbLsVTmd+zWVv0EE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=iHKii/is0ixqkE8Y8ry1qJ6xZrIn+dqUVetMJV0P/Qi/hRL/jyHVVhH2EgwEvjVTKAvVSh4tWKeTPHmZRDKnYDs2SV744DCpa9xvftFdG5/5jcVhrJGLLurpzbl9x9r8GpUymFixKJFQgRzQ02bVF7xv65RFr5giLoaAUkg8Tfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aVc36Ubp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I4E1cU+r"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso1165440f8f.3
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 19:19:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758248383; x=1758853183; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R8n7EY/AGGTtwI6KgYgIDwupIYQFTu+v14oHPas8+fk=;
-        b=I4E1cU+rI9Mz4D+xFTdxvD4GIv/38o4CGbRUYUvGfNkKMAP+A2faMdyPB5r5DGr1FP
-         2fz2u+zqyJ2zz1Zi4Q/fJEwk1XPihngOyNSoFgiwaSo81t/02E5LTXcrPjKyZhuDvV/H
-         3cUFUHs2y+JYO38R+/EcZewEgA8aBxgmNegnll1vuL3fNl3Uz3p8eR9JZIkDo9+pU1hJ
-         LN0kf7PXwbPEdwvqaVwcE7X+H4320RBVh3JH5ecZI60gKYmSTU48nTkM1A/0MMnPwAkt
-         VBxYP5dp1cRaLBZ4TcrHHMb+5vbwX50qQYYuLK30yJkVE4kN/CjDw8v2R2tH6A/knE93
-         0Z5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758248383; x=1758853183;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R8n7EY/AGGTtwI6KgYgIDwupIYQFTu+v14oHPas8+fk=;
-        b=tfB4iZXflAc6gHYLYrA2cBVbT1/LgYT6nJ/Bl6MgNRk0Cf8ITyBoSC0jXd99U0iNCz
-         PIIYztIvsvwiahcWkjKwhcZ7hdOYtpzxxMbzLKRldHkBWb5/1heVf+/gJtbDF/ZgQCTH
-         35bFy3XFOv4USRMswBitJBUe5Y/5/8sQRnRH6oQQjWYdxjdH3uZ7Dgu9mYawxkhSCN86
-         cC4YYEZ7LL4KmqehwQ4cChCl4nUvngWsrb/ME6/RSeH6nGekk2H4czrLVO8rfyqhMqrv
-         msoSjFSW3u7cLuHlx4XHKZ2EmkoEy/Th6ltbGnh4LjZU1R01ZaaTzGLIgpXVD0eYMnKZ
-         /ooA==
-X-Forwarded-Encrypted: i=1; AJvYcCXYfCfgEmwp4oubjcawB6k2kQXR82gS5vzj+8g1IWu6KGCqwIQI5xXoP7pA2EAJ7Vt0fQIGlxf3lKPufYkgrb+hKVJ7H18=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5OLDm0asfUfkY3zpQI0MwHQLTKuxrvAAri2AqReZakKXtI4w3
-	3MJIErMeZ2bJ5aWOXpXFU9QcdsqI8aFq0MVo1CTe+7myzHXk2xfYp+4cug1p/IhugB3GgCiVnRv
-	lNZeiuMmRtsXheQUlVd3gEQaGKrmjmbw=
-X-Gm-Gg: ASbGncvfom/KtDUGakBhXVPDZatm1EvESKS2rEL/lFGexo9tbiHjSLqkf2U2SJJdrTY
-	CBnMvwnVkN/nGjwV6XVEq7fJhcRDWn6CNackunJB6O64zQn/GjTxQ2Lb6s9rWKZFY0jwheNkkwW
-	wffhmPvPcyTkL+KtwNQMcSKo+wVHlW9S5rb0fWsgY5OTgbzwtovw3prlRwgmufOLqz64wEM5E1t
-	zaNmPq6K4TSK1LW7EvJtzgUcWvZmeUHvecfETuUBGukpOKmQzw7bWo=
-X-Google-Smtp-Source: AGHT+IFSIllND5LsmTREPu1Jp792g2q2mvMQXo40LGCv1dkyhPlNQC5E07prEnb0QS17ki7xd/BN+mS/CxsfwEqTolQ=
-X-Received: by 2002:a05:6000:2689:b0:3ee:1125:fb61 with SMTP id
- ffacd0b85a97d-3ee7c5529a4mr959660f8f.7.1758248382964; Thu, 18 Sep 2025
- 19:19:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVc36Ubp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32886C4CEE7;
+	Fri, 19 Sep 2025 02:20:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758248413;
+	bh=2uObbcWUmo8NjRMQzjwBSKL6PklNbLsVTmd+zWVv0EE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=aVc36UbpxQtLdFTEJOAhZVc1HbJMJpsuHiG+K07gnPzJ0+BlepJvJSaf1cbOOFEPl
+	 9FbGizWXG+HIBdlxl5h5x4xNwyrawPuf7/yoZSR+2j2aYDnnfLZXLrDz8SzzprPded
+	 ty+utITYPSYtzxk3ctO59KxrD043m8BcBLgcJH6f0Gt+Tiiz+xTbZ7cavh2XVYa3X3
+	 Ebx31p1aBJCWiJzsgDgi0R+bwl+IbNDa7DUVhBxJWYOOFN2xUww2zZr61N+I7X9nx9
+	 wJl93STEGc2XA6kRbDg07Z5drQiHQ9r75BnRM77sisEJDMrt0bm5PiLHH26GQiBec0
+	 eREgvVLb12Y7w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D9F39D0C20;
+	Fri, 19 Sep 2025 02:20:14 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250914215141.15144-1-kpsingh@kernel.org> <20250914215141.15144-2-kpsingh@kernel.org>
-In-Reply-To: <20250914215141.15144-2-kpsingh@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 18 Sep 2025 19:19:32 -0700
-X-Gm-Features: AS18NWA2D9XDvX4ildEjyo3VK1FVBBpLlviSn1PPafUMaIeLPTItIZ_4bwmvcoI
-Message-ID: <CAADnVQLo8udasPu_tWeffY88opzpxb2Xj9c2ppt1Lvz5VkRUvA@mail.gmail.com>
-Subject: Re: [PATCH v4 01/12] bpf: Update the bpf_prog_calc_tag to use SHA256
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v4 00/12] Signed BPF programs
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175824841300.3021819.875187543538843071.git-patchwork-notify@kernel.org>
+Date: Fri, 19 Sep 2025 02:20:13 +0000
+References: <20250914215141.15144-1-kpsingh@kernel.org>
+In-Reply-To: <20250914215141.15144-1-kpsingh@kernel.org>
 To: KP Singh <kpsingh@kernel.org>
-Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+ bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com,
+ ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
 
-On Sun, Sep 14, 2025 at 2:51=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
-:
->
->  int bpf_prog_calc_tag(struct bpf_prog *fp)
->  {
-> -       size_t size =3D bpf_prog_insn_size(fp);
-> -       u8 digest[SHA1_DIGEST_SIZE];
-> +       u32 insn_size =3D bpf_prog_insn_size(fp);
->         struct bpf_insn *dst;
->         bool was_ld_map;
-> -       u32 i;
-> +       int i, ret =3D 0;
+Hello:
 
-I undid all of the above extra noise and removed unnecessary 'ret'
-while applying the first 7 patches.
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
 
-Pls address comments and respin.
+On Sun, 14 Sep 2025 23:51:29 +0200 you wrote:
+> # v3 -> v4
+> 
+> * Dropped the use of session keyring by default from skeletons.
+> * Andrii's feedback on exclusive map creation libbpf changes.
+> * Cleaned up some more typos I found.
+> 
+> # v2 -> v3
+> 
+> [...]
+
+Here is the summary with links:
+  - [v4,01/12] bpf: Update the bpf_prog_calc_tag to use SHA256
+    (no matching commit)
+  - [v4,02/12] bpf: Implement exclusive map creation
+    https://git.kernel.org/bpf/bpf-next/c/baefdbdf6812
+  - [v4,03/12] libbpf: Implement SHA256 internal helper
+    https://git.kernel.org/bpf/bpf-next/c/c297fe3e9f99
+  - [v4,04/12] libbpf: Support exclusive map creation
+    https://git.kernel.org/bpf/bpf-next/c/567010a5478f
+  - [v4,05/12] selftests/bpf: Add tests for exclusive maps
+    https://git.kernel.org/bpf/bpf-next/c/6c850cbca82c
+  - [v4,06/12] bpf: Return hashes of maps in BPF_OBJ_GET_INFO_BY_FD
+    https://git.kernel.org/bpf/bpf-next/c/ea2e6467ac36
+  - [v4,07/12] bpf: Move the signature kfuncs to helpers.c
+    https://git.kernel.org/bpf/bpf-next/c/8cd189e414bb
+  - [v4,08/12] bpf: Implement signature verification for BPF programs
+    (no matching commit)
+  - [v4,09/12] libbpf: Update light skeleton for signing
+    (no matching commit)
+  - [v4,10/12] libbpf: Embed and verify the metadata hash in the loader
+    (no matching commit)
+  - [v4,11/12] bpftool: Add support for signing BPF programs
+    (no matching commit)
+  - [v4,12/12] selftests/bpf: Enable signature verification for some lskel tests
+    (no matching commit)
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
