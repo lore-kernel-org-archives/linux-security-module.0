@@ -1,42 +1,43 @@
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCE11F4C8C
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Sep 2025 16:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7877314A6E
+	for <linux-security-module@vger.kernel.org>; Fri, 19 Sep 2025 16:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758297805; cv=none; b=cPq5RX4jhTGcipcu3sBV1f8bB7vadB6iZh9r71MXuXIYmgZ+LqcXl+v2cN2EsCshn7Kgqa0slkXhW85whLeXntaXEI2MjrUxLbtjp5h2n1rwgqcfzP5AQE4BXAmpmy7jcPUhn8+nXob4It+i4KY3PjL5F7+hq93pw8qhc5WpTBg=
+	t=1758297864; cv=none; b=iLY//lkgeY4QnlR8IJq4iTSkMW96GJdJBwXioiRLcO5HnwLJTLvRDJDsivx/Gq1TqTXxf63lbhGBWg8TZ6I/yL5/WRE2HZgmwFjZ0qSqxhQc4UKlqtwr/qn6D2Bja6DOYDblyOtpVwpS77TiJCjjQgv5AJfy/SbDwTmfpoEK6fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758297805; c=relaxed/simple;
-	bh=E/1PKOBA0I+KmqiEls00IfmoHaJ8DsKuk2tbfqheKnw=;
+	s=arc-20240116; t=1758297864; c=relaxed/simple;
+	bh=hZYGdsofAarDHasY5NsztkYKqEGT6GUQoftq2uILlV8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hsPFKVRO4EPwBTmq6U6lenb70j+6cL+zhoql0ufzLVK+Cru02QXBoYf89pEOtbA+gaF4V+pecy7P1fu6zNTprEnK49i/POQyq0yzlIRwQVKFCTwViDKV1meDV8BrEMoyq9pU0c3CgyAbaqJCQAGwt09QBkaypMPajlyMJAkMi84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=RYulmSx7; arc=none smtp.client-ip=45.157.188.13
+	 Content-Type:Content-Disposition:In-Reply-To; b=TK+XVM+yYrYwhMwUmeux6oBd1qCCuOKOHZlxIb6kQ1CaCBLEjZyK6zj+3frOYtfns/f98Qno/DaiaoMdusTn1uOsA8Nbby+ylcPOxwgpFkVz1nvqkSMRRMbV89mDH6/qbwUYm0S7eySXHU2L1R/Bpxs4FkjdSKzRDwuubmAQl5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=JS8Lbo7A; arc=none smtp.client-ip=45.157.188.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="RYulmSx7"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cSy364g4dzWmg;
-	Fri, 19 Sep 2025 18:03:14 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="JS8Lbo7A"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cSy4F1JC3zFbH;
+	Fri, 19 Sep 2025 18:04:13 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1758297794;
-	bh=rPsv3B1EkRq7VqcmcbOD8rYsb2c/+B42C648hJleUkw=;
+	s=20191114; t=1758297853;
+	bh=cphbkaXht26hcXe2zinMwsltvQJ7Yuce57bNylp6aTU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RYulmSx7wm9qtVh5Cahnjo7pTMl3XEB3eGM2kup/njFKDJNdnZhyPvr4IRzIg7zl5
-	 jXHp1v4WewaZ3EBNgLbOIoBbwCxoDHiIqPp2tPPkqNDfZI81rlNCo6KRVblB4G9sA2
-	 08w+MlYcB/UQYxneioQZujfgniebARJsd0eGLPSk=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4cSy360dFfzqx;
-	Fri, 19 Sep 2025 18:03:14 +0200 (CEST)
-Date: Fri, 19 Sep 2025 18:03:13 +0200
+	b=JS8Lbo7AQsAK9TKeVlPqn5suRAX7nHtaceZJt+yy1yiRa9jjOl05XZlUd+o7Dkm7E
+	 +M5Jl7Tl92m1cdCFfaPOQcpz0OS/75pIePNPPD11gEeNEAHXX6dHshUXRNc6zYgvrg
+	 Q1SpRs0dPVZoZsMMlADsGENYWzyMgy+h2+rZfYZY=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4cSy4D4gCJzvjL;
+	Fri, 19 Sep 2025 18:04:12 +0200 (CEST)
+Date: Fri, 19 Sep 2025 18:04:11 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: Tingmao Wang <m@maowtm.org>
 Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
 	Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 4/6] landlock/audit: Fix wrong type usage
-Message-ID: <20250919.foh6Zea7ugie@digikod.net>
+Subject: Re: [RFC PATCH 5/6] landlock/access: Improve explanation on the
+ deny_masks_t
+Message-ID: <20250919.loh1Oor4busa@digikod.net>
 References: <cover.1757376311.git.m@maowtm.org>
- <ad6c155f38dda6ed31be1f1cbc6def6cdbd9769c.1757376311.git.m@maowtm.org>
+ <9253127a0386f53f84897f62a2beaa5aa5959360.1757376311.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -45,38 +46,43 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ad6c155f38dda6ed31be1f1cbc6def6cdbd9769c.1757376311.git.m@maowtm.org>
+In-Reply-To: <9253127a0386f53f84897f62a2beaa5aa5959360.1757376311.git.m@maowtm.org>
 X-Infomaniak-Routing: alpha
 
-On Tue, Sep 09, 2025 at 01:06:38AM +0100, Tingmao Wang wrote:
-> I think, based on my best understanding, that this type is likely a typo
-> (even though in the end both are u16)
+Looks good, I'll take it.
+
+On Tue, Sep 09, 2025 at 01:06:39AM +0100, Tingmao Wang wrote:
+> Not really related to this series, but just something which took me a
+> while to realize, and would probably be helpful as a comment.
+
+Please just describe the change in the main commit message and move this
+kind of explanation bellow a "---", just after your SoB.  This is useful
+for review and avoid unrelated information when picking a patch out of
+this context.
+
 > 
 > Signed-off-by: Tingmao Wang <m@maowtm.org>
-
-Indeed, good catch!
-
-You can add:
-
-Fixes: 2fc80c69df82 ("landlock: Log file-related denials")
-
 > ---
->  security/landlock/audit.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  security/landlock/access.h | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/security/landlock/audit.c b/security/landlock/audit.c
-> index 2b3edd1ab374..a67155c7f0c3 100644
-> --- a/security/landlock/audit.c
-> +++ b/security/landlock/audit.c
-> @@ -191,7 +191,7 @@ static size_t get_denied_layer(const struct landlock_ruleset *const domain,
->  	long youngest_layer = -1;
+> diff --git a/security/landlock/access.h b/security/landlock/access.h
+> index 7961c6630a2d..5e2285575479 100644
+> --- a/security/landlock/access.h
+> +++ b/security/landlock/access.h
+> @@ -67,8 +67,10 @@ typedef u16 layer_mask_t;
+>  static_assert(BITS_PER_TYPE(layer_mask_t) >= LANDLOCK_MAX_NUM_LAYERS);
 >  
->  	for_each_set_bit(access_bit, &access_req, layer_masks_size) {
-> -		const access_mask_t mask = (*layer_masks)[access_bit];
-> +		const layer_mask_t mask = (*layer_masks)[access_bit];
->  		long layer;
+>  /*
+> - * Tracks domains responsible of a denied access.  This is required to avoid
+> - * storing in each object the full layer_masks[] required by update_request().
+> + * Tracks domains responsible of a denied access, stored in the form of
+> + * two 4-bit layer numbers packed into a byte (one for each optional
+> + * access).  This is required to avoid storing in each object the full
+> + * layer_masks[] required by update_request().
+>   */
+>  typedef u8 deny_masks_t;
 >  
->  		if (!mask)
 > -- 
 > 2.51.0
 > 
