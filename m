@@ -1,156 +1,94 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC1D2E54D1
-	for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 21:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D513F257435
+	for <linux-security-module@vger.kernel.org>; Fri, 19 Sep 2025 02:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758232522; cv=none; b=sE9t8ofI7pel4p3rT6Vqy7hAY2rO7IiMLHCELi1cm56vwc00g1EW58+v7bLTNOHbMeJRALMKON+BHH4lnZfYtwOGA5ggLbS6GTITdTDBZ8If/yZjn6taziPPoPIqenvJodfbHbu+0MVzg1AEWoCZtu7k+I+wmD+1nXOqt+E8uOk=
+	t=1758248386; cv=none; b=npTfOHbNiKprTsH6cE9OUouYzltyFWAmA0Wa0UW1PeKH7+tiIQY9kANjmVUn6fA7hBFnig55qSVUjCb4ddqDnrQ4il4x+S3fsWrS4yFPeonlAz0L+4QghumYbshULPf8Qj/GZn5PtAZmihLZcGZes6P9PY9U5kmmnKT5Cg0prvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758232522; c=relaxed/simple;
-	bh=OBdCMGeWv7G/tkOmZiDbcUQKLH/CnWF06gVEbnVu89c=;
+	s=arc-20240116; t=1758248386; c=relaxed/simple;
+	bh=emvmFV6gt4sH77fH9Bh1RItBSzfNP8I7enfoTm7bE2g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tm9z5UfN3PCoUe0Y9XDw0vJ2JNM88WmnQwys5R6N4+FM6ZHC8CgdJICRKKC3BmfPlblgH/VJIHY48X0jebKPfcEi4KK29joBuEpTCMDsXvaQEohI8WEEnUhleBOxefIhpC4d9+4RndFAmz448A5mc24L0AiqI2TQeNuGnhbYj98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GmlkBUyR; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	 To:Cc:Content-Type; b=p9jxKttTSgfJ1Si5jgqVfWD+WzPIvZ6kJHUH29KRFf3miOJ2SiaWj0h6o05IAgqrg8ppUgUFAgOj65hwpws/obGV/b3bEaez1jVtobESxyh3w1CTt15eypOrVTjNbf2GaV8nSm7z1AeEObMvxdUrYOpgUYXi8lEdW5NsnG8/Ku0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I4E1cU+r; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GmlkBUyR"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-34fed7add35so10245731fa.2
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 14:55:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I4E1cU+r"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso1165440f8f.3
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 19:19:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1758232518; x=1758837318; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mLiszfQw8YctXWgw7Rv1CzeIAYsEhv/enJDimwborHo=;
-        b=GmlkBUyRb0gTiLKFqZtAZkR5rTnHOYrUSn5QxEVC+VpLrNAER/0oen4fur2Onl64+b
-         6dQBpkJj59bc/tXdEwE/eZ/dFMeCWgFQdWqWVcYZLaSwukO7OZivrldfacpK03RZt+G6
-         jea2nI/6Zh2Nt+4HU7fmoQAu30ri3K+OZL0VA=
+        d=gmail.com; s=20230601; t=1758248383; x=1758853183; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R8n7EY/AGGTtwI6KgYgIDwupIYQFTu+v14oHPas8+fk=;
+        b=I4E1cU+rI9Mz4D+xFTdxvD4GIv/38o4CGbRUYUvGfNkKMAP+A2faMdyPB5r5DGr1FP
+         2fz2u+zqyJ2zz1Zi4Q/fJEwk1XPihngOyNSoFgiwaSo81t/02E5LTXcrPjKyZhuDvV/H
+         3cUFUHs2y+JYO38R+/EcZewEgA8aBxgmNegnll1vuL3fNl3Uz3p8eR9JZIkDo9+pU1hJ
+         LN0kf7PXwbPEdwvqaVwcE7X+H4320RBVh3JH5ecZI60gKYmSTU48nTkM1A/0MMnPwAkt
+         VBxYP5dp1cRaLBZ4TcrHHMb+5vbwX50qQYYuLK30yJkVE4kN/CjDw8v2R2tH6A/knE93
+         0Z5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758232518; x=1758837318;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mLiszfQw8YctXWgw7Rv1CzeIAYsEhv/enJDimwborHo=;
-        b=wsLnhsIX65TDV9XkX7k4bJU264FytGTQjMDa8PwQQoZs5KT2xTLVJtplPviQBoFSEv
-         2j0ZOIY4xqalgEK8nnPDx+c28mEvFRQ/lrFHLvb0r3Ybl2hUtaJ3TGAsNdovm7hT2AVO
-         Q80CO8Fr11ln3NoUcFdrwsJqmtW7TffShJDc1Py1qIeLYJoKkthQtDW3htecuJ81rEsE
-         JEQsINGxtsoogiErYqojx9qwb5Qi/BfZBhS7gqq2bD9N7ykqOhqOzANGXrXtGSFxbhCJ
-         o0peVL6hib71Wf+IitJ+Y4908naMKK/MkzmY7z1JYk0dhUQFNJho1hgZtbXAhiVWNjHy
-         T3aA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZIBJtcP91fNKauxkyvD0jHpzDFdeLCQKw7CxFNoV9VwaAu8N2C+3NgZVWOW468sNUhplAmqVA9rmtT8+wEDI0T+boETo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNnp6OlnAtf4JVEMVlr62D8zK7WsOJp7O7PpxlcL/29Ui2/bOf
-	reU7Zh6jysWkE78R2M+jmo0JQZBkMJwFWq0KYmCUL4byBhT8yy5pMEYBLms8B3uhD1XLRLc+p89
-	+Yh91HTme0g==
-X-Gm-Gg: ASbGncvcuhPccqE9wcqECz5k6TNsKFlkiIl4Vhg3YFvWm1Tmrn26S6VkfU8+4FnEu8s
-	d1J6QMhX6omsYmuP5TLo3GxAwwDRvhHJoLupMHSkDQn1llbzCfEc0xFTkJU64lts6pVrYqH5V98
-	sQmkSOQPHiz9uX5C7IoW09FTm50xm5A8fsNUe7ZWN1+lJ5/ZOzg1W3H9Opmbar5hZCNbRTPyUtd
-	Np4brjR6ypdJU+9N0t4gtuEWOsWeL7EY6Le/4ww9WBiFbkhudssXNSMgthUitUOKKwozLfWv70q
-	r1snsBTnBpzZMYaCML9gNM6YKZ2rfb61OOjJOWqQZP4RTzRQDnmqJXkcKVbYspsOfOcMoqhsCT8
-	v+jKmGIsM6RwywnS1l2JRnQydRGlHO6/wQsFFBtg7UnVN7QcC7Y9mTM1jxx0e6ePJnsdCJ6nX+p
-	OHNHZj7B77nOaRtQU=
-X-Google-Smtp-Source: AGHT+IF1jKupcpPe6GVMGfbgM3aLVfXfPt7XterC8WClxQ0LZORiPRbzHf6wOBevDTa6RvfY2k5OZg==
-X-Received: by 2002:a05:651c:d:b0:336:94ec:5d16 with SMTP id 38308e7fff4ca-3641a11fa9dmr2117851fa.22.1758232517983;
-        Thu, 18 Sep 2025 14:55:17 -0700 (PDT)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-361a8f571b0sm8313411fa.39.2025.09.18.14.55.17
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Sep 2025 14:55:17 -0700 (PDT)
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5607a240c75so1525897e87.2
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Sep 2025 14:55:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXa0UfpouMjgr5wX+3oZ9PzqlOdt6ZLiEQTriAIDI8hU54sQXWpXyVKt0TYLjdh8MsR1w8t0AW4L0ZLsWCxqpz9teo2Las=@vger.kernel.org
-X-Received: by 2002:a17:906:dc89:b0:b0f:a22a:4c30 with SMTP id
- a640c23a62f3a-b24f5685fdemr62738866b.47.1758232077501; Thu, 18 Sep 2025
- 14:47:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758248383; x=1758853183;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R8n7EY/AGGTtwI6KgYgIDwupIYQFTu+v14oHPas8+fk=;
+        b=tfB4iZXflAc6gHYLYrA2cBVbT1/LgYT6nJ/Bl6MgNRk0Cf8ITyBoSC0jXd99U0iNCz
+         PIIYztIvsvwiahcWkjKwhcZ7hdOYtpzxxMbzLKRldHkBWb5/1heVf+/gJtbDF/ZgQCTH
+         35bFy3XFOv4USRMswBitJBUe5Y/5/8sQRnRH6oQQjWYdxjdH3uZ7Dgu9mYawxkhSCN86
+         cC4YYEZ7LL4KmqehwQ4cChCl4nUvngWsrb/ME6/RSeH6nGekk2H4czrLVO8rfyqhMqrv
+         msoSjFSW3u7cLuHlx4XHKZ2EmkoEy/Th6ltbGnh4LjZU1R01ZaaTzGLIgpXVD0eYMnKZ
+         /ooA==
+X-Forwarded-Encrypted: i=1; AJvYcCXYfCfgEmwp4oubjcawB6k2kQXR82gS5vzj+8g1IWu6KGCqwIQI5xXoP7pA2EAJ7Vt0fQIGlxf3lKPufYkgrb+hKVJ7H18=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5OLDm0asfUfkY3zpQI0MwHQLTKuxrvAAri2AqReZakKXtI4w3
+	3MJIErMeZ2bJ5aWOXpXFU9QcdsqI8aFq0MVo1CTe+7myzHXk2xfYp+4cug1p/IhugB3GgCiVnRv
+	lNZeiuMmRtsXheQUlVd3gEQaGKrmjmbw=
+X-Gm-Gg: ASbGncvfom/KtDUGakBhXVPDZatm1EvESKS2rEL/lFGexo9tbiHjSLqkf2U2SJJdrTY
+	CBnMvwnVkN/nGjwV6XVEq7fJhcRDWn6CNackunJB6O64zQn/GjTxQ2Lb6s9rWKZFY0jwheNkkwW
+	wffhmPvPcyTkL+KtwNQMcSKo+wVHlW9S5rb0fWsgY5OTgbzwtovw3prlRwgmufOLqz64wEM5E1t
+	zaNmPq6K4TSK1LW7EvJtzgUcWvZmeUHvecfETuUBGukpOKmQzw7bWo=
+X-Google-Smtp-Source: AGHT+IFSIllND5LsmTREPu1Jp792g2q2mvMQXo40LGCv1dkyhPlNQC5E07prEnb0QS17ki7xd/BN+mS/CxsfwEqTolQ=
+X-Received: by 2002:a05:6000:2689:b0:3ee:1125:fb61 with SMTP id
+ ffacd0b85a97d-3ee7c5529a4mr959660f8f.7.1758248382964; Thu, 18 Sep 2025
+ 19:19:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918140451.1289454-1-elver@google.com> <CAHk-=wgd-Wcp0GpYaQnU7S9ci+FvFmaNw1gm75mzf0ZWdNLxvw@mail.gmail.com>
- <aMx4-B_WAtX2aiKx@elver.google.com>
-In-Reply-To: <aMx4-B_WAtX2aiKx@elver.google.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 18 Sep 2025 14:47:41 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgQO7c0zc8_VwaVSzG3fEVFFcjWzVBKM4jYjv8UiD2dkg@mail.gmail.com>
-X-Gm-Features: AS18NWBxHuMwwtU-EoNbPFA3uJ1YRJkAKqdurj12n-PWNJgH6ecKwZ8QZrX3P28
-Message-ID: <CAHk-=wgQO7c0zc8_VwaVSzG3fEVFFcjWzVBKM4jYjv8UiD2dkg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/35] Compiler-Based Capability- and Locking-Analysis
-To: Marco Elver <elver@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, Christoph Hellwig <hch@lst.de>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>, 
-	Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Josh Triplett <josh@joshtriplett.org>, 
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
-	Kentaro Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
-	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
-	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
-	llvm@lists.linux.dev, rcu@vger.kernel.org
+References: <20250914215141.15144-1-kpsingh@kernel.org> <20250914215141.15144-2-kpsingh@kernel.org>
+In-Reply-To: <20250914215141.15144-2-kpsingh@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 18 Sep 2025 19:19:32 -0700
+X-Gm-Features: AS18NWA2D9XDvX4ildEjyo3VK1FVBBpLlviSn1PPafUMaIeLPTItIZ_4bwmvcoI
+Message-ID: <CAADnVQLo8udasPu_tWeffY88opzpxb2Xj9c2ppt1Lvz5VkRUvA@mail.gmail.com>
+Subject: Re: [PATCH v4 01/12] bpf: Update the bpf_prog_calc_tag to use SHA256
+To: KP Singh <kpsingh@kernel.org>
+Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 18 Sept 2025 at 14:26, Marco Elver <elver@google.com> wrote:
+On Sun, Sep 14, 2025 at 2:51=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
+:
 >
-> Fair points. "Context Analysis" makes sense, but it makes the thing
-> (e.g. lock) used to establish that context a little awkward to refer to
-> -- see half-baked attempt at reworking the documentation below.
+>  int bpf_prog_calc_tag(struct bpf_prog *fp)
+>  {
+> -       size_t size =3D bpf_prog_insn_size(fp);
+> -       u8 digest[SHA1_DIGEST_SIZE];
+> +       u32 insn_size =3D bpf_prog_insn_size(fp);
+>         struct bpf_insn *dst;
+>         bool was_ld_map;
+> -       u32 i;
+> +       int i, ret =3D 0;
 
-Yeah, I agree that some of that reads more than a bit oddly.
+I undid all of the above extra noise and removed unnecessary 'ret'
+while applying the first 7 patches.
 
-I wonder if we could talk about "context analysis", but then when
-discussing what is *held* for a particular context, call that a
-"context token" or something like that?
-
-But I don't mind your "Context guard" notion either. I'm not loving
-it, but it's not offensive to me either.
-
-Then the language would be feel fairly straightforward,
-
-Eg:
-
-> +Context analysis is a way to specify permissibility of operations to depend on
-> +contexts being held (or not held).
-
-That "contexts being held" sounds odd, but talking about "context
-markers", or "context tokens" would seem natural.
-
-An alternative would be to not talk about markers / tokens / guards at
-all, but simply about a context being *active*.
-
-IOW, instead of wording it like this:
-
-> +The set of contexts that are actually held by a given thread at a given point
-> +in program execution is a run-time concept.
-
-that talks about "being held", you could just state it in the sense of
-the "set of contexts being active", and that immediately reads fairly
-naturally, doesn't it?
-
-Because a context is a *state* you are in, it's not something you hold on to.
-
-The tokens - or whatever - would be only some internal implementation
-detail of how the compiler keeps track of which state is active, not
-the conceptual idea itself.
-
-So you name states, and you have functions to mark those context
-states as being entered or exited, but you don't really even have to
-talk about "holding" anything.
-
-No?
-
-               Linus
+Pls address comments and respin.
