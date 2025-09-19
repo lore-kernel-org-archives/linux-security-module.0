@@ -1,110 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BE42AD24;
-	Fri, 19 Sep 2025 07:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75AC52C11C7
+	for <linux-security-module@vger.kernel.org>; Fri, 19 Sep 2025 07:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758265563; cv=none; b=clfP/G8easvUyxCzjkLd92cxzAo3YsbL5d8ConE8+bwshxXCKm14TD4MAhGcxyTwMpfYB+tK+fl7W1926T2kKR1YqDpJzQxBx6zFK5aj4E5Zjxr6HlbenQPsky6GUcT5OZ4kheHaZR9BHm2JgQYlhSPESvhJ6URLNJAZTjyLGZE=
+	t=1758265567; cv=none; b=e1civ4yYlXYjrOXjrIkZzC6Yhq3+AVaWhjwvbR0Meou+auF1G36prXfATE2xTWnGiiAsBB1IFH4pAs/MJeqvQSbBaD5oDfg+6QvgAxNr0UO1D/RjLW8BIF2G8TxRpQukHcaGUQfqqWrO2tGPReaGxAB2g7P9LS3ovErYrV3xwdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758265563; c=relaxed/simple;
-	bh=84xYEim6RGfAM9GMFeYPBe7TSteWCcWYGwU+ojdGs4I=;
+	s=arc-20240116; t=1758265567; c=relaxed/simple;
+	bh=ItZKaGQl9It/js9gzPNXCsAEXczA+CYbzua9BHh+ovk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RbXQ/WuSTZtVTcko8Z3YBjIZOuDaMnATIJ8gwH82ifwNh9ZuBicigoZijaLjfgA4GLn9SbLYfXMBRzI1hnVZz6cvj+SA/NMMQK/zeVaTSbkleD2iJVBXKDdKOp+cpXAnV8XJ7vMvEEyOaE2/r+ekQYdlu+VBQ7uRArH356+QVGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JmufGwD5; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=gFxppYKBVuaqrFjNOM1Z/tfl49iSEwJY31yTktCq56jdEuwpi/pwfViLuPEwbl+z0yvrM3beBTYQZf9kImjl3UvURSI/mK65HtF/4AzAr+nw2e8UuhEyvfJXUAmxBAIdx2rTu116JZ5nYHVAZVLxG93hPd9Iwo8wtttM3AenUEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hCKo2pF/; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JmufGwD5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5CC2C4CEF0;
-	Fri, 19 Sep 2025 07:06:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758265563;
-	bh=84xYEim6RGfAM9GMFeYPBe7TSteWCcWYGwU+ojdGs4I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JmufGwD5PypHaIg8i3wpcHJPC50wiVPrtDYyubc0/WwoLRbHUgJKqEUHS0X6tZLpT
-	 T26t+cuEyKNCZ8JPhgqqfAsG6pte3U2Wmtaajn5c23NkI5XAodq9wwVzbooOMpPS9f
-	 r4jlLeDgujy3+FkvLgtHlrIiBrsOAOgn1zmJdb4wvIjLlGkxrzDGhabw4a5bgWxB8u
-	 A/GkkV6LYaUCkhP+wWCie11YTdPPAbxZySX9EGqDD7AHqXrAiUzeNVD876rhS5uI1b
-	 hgQ+mNzVRGEO347M350yUVwaMMbdMf8KJRjncSQW5sxowJjPzLJJ/V3twivN8qtXUN
-	 OEQOPGyRaywIQ==
-Date: Fri, 19 Sep 2025 10:05:58 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org,
-	=?iso-8859-1?Q?Fr=E9d=E9ric?= Jouen <fjouen@sealsq.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2] tpm: use a map for tpm2_calc_ordinal_duration()
-Message-ID: <aM0A1hceUC-RJdo8@kernel.org>
-References: <20250918193019.4018706-1-jarkko@kernel.org>
- <aMzSyCQks3NlMhPI@mail.hallyn.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hCKo2pF/"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ee1381b835so833763f8f.1
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Sep 2025 00:06:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758265564; x=1758870364; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/Klo+L3KBBL4ssbFZ2YOqJt7BcxJ8M+dYCfYzeUYYBY=;
+        b=hCKo2pF/F78auKEP48toZ9iiNufcpa9c36bPf4P6fwtH1zaEBgaQ/RUiLIQk92rhWc
+         B1LgQpeOqlgQlCfm8iif2jUa154KDKMvYQlSys5NZtt+K1jFjuxbzMGsfZi6gawxzMjn
+         PH1A3hFkQbnoa61/vfXUDV3CSh6jvceVmBuMfBRP49NRPxq7AcTmj8PJJt5FMoY07PFM
+         f45k7CojLt6eIQlQbuDN/fIh6vTw8m23VBVFZPh7tGbrilgmVh+/LguX/Dq/QoxcwGQt
+         4CRU8KcVWlbcPIAhwDzT0GR2qRk3ORkC5h6ualYsffvKdotgOB88M7c91H+ryPIHp9Um
+         Nvcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758265564; x=1758870364;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/Klo+L3KBBL4ssbFZ2YOqJt7BcxJ8M+dYCfYzeUYYBY=;
+        b=AtctJY5huFjPSmQCm0W6FyayiNm42EOSp64A2Vmh9szNfcMsxbEUEBDjfKvIokcfCd
+         6XrY8VadZzOA+3YYOLZmbgJSHiu9g9vPs7AhmSzNUTl6TQ2ZUsUUBWoAosrZlKXZ0nYO
+         sSmCHgcStmmW/TTBfjqoThAaBfMxDSQUK3eWUjSdHAoRJ6j/CGARq/CpxrLntfItp1GW
+         wV+sbSxJdagpy1K3yFrPTtJ1MOuthYoVP3gS2suMcKPiNZryVsOx4IqjJ+rNERT7Pbba
+         3AggRY99g6xAHY3FqM0K9eSpGf51F7kzauWMqFFtIc9UhZ8xIE7AULDY7X+KSJE6uT2n
+         mAqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHiQS/VX1dKG0yeORNsVnINhlCRF6pao7v0UFOOU4J0uLFbrsuoUtwbm1PxvQj+ricOpDiafFNkbfsiD7nOFvPZ8L3Rxg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyypjFrnNBdLdYvZmwNjSCVPPd+sIEoihDEAEZi9mLhW+/N46un
+	aZc2N2oJ2SpxlEwb4bXcE3B0SvfY5HOAGXYG2anz2pRE8WqSkZGRTuUrVoDXmVIMTw==
+X-Gm-Gg: ASbGncuBt1uJq9V03DL+OpnIM5NnXL+XRygePpf7jJG6FEmSvEjrFdSFazVJh53EEb/
+	6JTad+zpQWMFEagtxYsFEQ8QwHOWiwWyKOdlGlyZmbCFScZcNSPeQWJ/7STy8R/nTQ+Vbmz6KDW
+	E+MOCmE+J6G5DsXls86OrPGB3c7z6uKQiadkxE3IPYIkY0K0KLFtTm/ruqtXZAqNetm1CXLvcQm
+	t9CBVE0wBvq5rroMcrtE1H9KxBenkH8qRGKbAda8KGN+XhQnLcVcnLRBlv/zjzGKyixlDqTVeIb
+	jKxInv30NVpCPMTKaunY/qMzrDAoXFL/TZOb1kyoVTYdzHaBqiyaAYSUs1tA1iMBp0zE4kCKKXm
+	/FOg1i8zjNB4plYcoiFq50wTX7wNihBRJtC6cOS4pafe9eGH0pymw0Galpxg=
+X-Google-Smtp-Source: AGHT+IHPi1pgPaxjy0qFYAQQyA+9c6RpQAFZf3vA/UzVRkHTrs+JR5MqjC9zARfGu5kWXbLyHGkoeg==
+X-Received: by 2002:a05:6000:2c0b:b0:3ea:6680:8fcd with SMTP id ffacd0b85a97d-3ee7c925245mr1570227f8f.13.1758265563176;
+        Fri, 19 Sep 2025 00:06:03 -0700 (PDT)
+Received: from elver.google.com ([2a00:79e0:2834:9:1f7a:8520:7568:dac6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fbf1d35sm7200088f8f.55.2025.09.19.00.06.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 00:06:02 -0700 (PDT)
+Date: Fri, 19 Sep 2025 09:05:54 +0200
+From: Marco Elver <elver@google.com>
+To: syzbot ci <syzbot+ciac51bb7578ba7c59@syzkaller.appspotmail.com>
+Cc: arnd@arndb.de, boqun.feng@gmail.com, bvanassche@acm.org, corbet@lwn.net,
+	davem@davemloft.net, dvyukov@google.com, edumazet@google.com,
+	frederic@kernel.org, glider@google.com, gregkh@linuxfoundation.org,
+	hch@lst.de, herbert@gondor.apana.org.au, irogers@google.com,
+	jannh@google.com, joelagnelf@nvidia.com, josh@joshtriplett.org,
+	justinstitt@google.com, kasan-dev@googlegroups.com, kees@kernel.org,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	linux-sparse@vger.kernel.org, llvm@lists.linux.dev,
+	longman@redhat.com, luc.vanoostenryck@gmail.com,
+	lukas.bulwahn@gmail.com, mark.rutland@arm.com,
+	mathieu.desnoyers@efficios.com, mingo@kernel.org, mingo@redhat.com,
+	morbo@google.com, nathan@kernel.org, neeraj.upadhyay@kernel.org,
+	nick.desaulniers@gmail.com, ojeda@kernel.org, paulmck@kernel.org,
+	penguin-kernel@i-love.sakura.ne.jp, peterz@infradead.org,
+	rcu@vger.kernel.org, rostedt@goodmis.org, takedakn@nttdata.co.jp,
+	tglx@linutronix.de, tgraf@suug.ch, urezki@gmail.com,
+	will@kernel.org, syzbot@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot ci] Re: Compiler-Based Capability- and Locking-Analysis
+Message-ID: <aM0A0p4-3lwLeAWF@elver.google.com>
+References: <20250918140451.1289454-1-elver@google.com>
+ <68cc6067.a00a0220.37dadf.0003.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMzSyCQks3NlMhPI@mail.hallyn.com>
+In-Reply-To: <68cc6067.a00a0220.37dadf.0003.GAE@google.com>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-On Thu, Sep 18, 2025 at 10:49:28PM -0500, Serge E. Hallyn wrote:
-> On Thu, Sep 18, 2025 at 10:30:18PM +0300, Jarkko Sakkinen wrote:
-> > The current shenanigans for duration calculation introduce too much
-> > complexity for a trivial problem, and further the code is hard to patch and
-> > maintain.
-> > 
-> > Address these issues with a flat look-up table, which is easy to understand
-> > and patch. If leaf driver specific patching is required in future, it is
-> > easy enough to make a copy of this table during driver initialization and
-> > add the chip parameter back.
-> > 
-> > 'chip->duration' is retained for TPM 1.x.
-> > 
-> > As the first entry for this new behavior address TCG spec update mentioned
-> > in this issue:
-> > 
-> > https://github.com/raspberrypi/linux/issues/7054
-> > 
-> > Therefore, for TPM_SelfTest the duration is set to 3000 ms.
-> > 
-> > This does not categorize a as bug, given that this is introduced to the
-> > spec after the feature was originally made.
-> > 
-> > Cc: Frédéric Jouen <fjouen@sealsq.com>
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+On Thu, Sep 18, 2025 at 12:41PM -0700, syzbot ci wrote:
+> syzbot ci has tested the following series
 > 
-> fwiw (which shouldn't be much) looks good to me, but two questions,
-> one here and one below.
+> [v3] Compiler-Based Capability- and Locking-Analysis
+[...]
+> and found the following issue:
+> general protection fault in validate_page_before_insert
 > 
-> First, it looks like in the existing code it is possible for a tpm2
-> chip to set its own timeouts and then set the TPM_CHIP_FLAG_HAVE_TIMEOUTS
-> flag to avoid using the defaults, but I don't see anything using that
-> in-tree.  Is it possible that there are out of tree drivers that will be
-> sabotaged here?  Or am I misunderstanding that completely?
+> Full report is available here:
+> https://ci.syzbot.org/series/81182522-74c0-4494-bcf8-976133df7dc7
+> 
+> ***
+> 
+> general protection fault in validate_page_before_insert
 
-Good questions, and I can brief a bit about the context of the
-pre-existing art and this change.
+Thanks, syzbot ci!
 
-This complexity was formed in 2014 when I originally developed TPM2
-support and the only available testing plaform was early Intel PTT with
-a flakky version of TPM2 support (e.g., no localities).
+I messed up the type when moving kcov->area access inside the critical
+section. This is the fix:
 
-Since then we haven't had per leaf-driver divergence.
 
-Further, I think that this type of layout is actually a  better fit if
-we ever need to quirks for command durations for a particular device, as
-then we can migrate to "copy and patch" semantics i.e., have a copy of
-this map in the chip structure.
+    fixup! kcov: Enable capability analysis
 
-As per out-of-tree drivers, it's unfortunate reality of out-of-tree
-drivers :-) However, this will definitely add some extra work, when
-backporting fixes (not overwhelmingly much).
-
-BR, Jarkko
+diff --git a/kernel/kcov.c b/kernel/kcov.c
+index 1897c8ca6209..e81e3c0d01c6 100644
+--- a/kernel/kcov.c
++++ b/kernel/kcov.c
+@@ -497,7 +497,7 @@ static int kcov_mmap(struct file *filep, struct vm_area_struct *vma)
+ 	unsigned long size, off;
+ 	struct page *page;
+ 	unsigned long flags;
+-	unsigned long *area;
++	void *area;
+ 
+ 	spin_lock_irqsave(&kcov->lock, flags);
+ 	size = kcov->size * sizeof(unsigned long);
