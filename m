@@ -1,173 +1,136 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5C7231845
-	for <linux-security-module@vger.kernel.org>; Sat, 20 Sep 2025 06:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10FD61C01
+	for <linux-security-module@vger.kernel.org>; Sat, 20 Sep 2025 10:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758348633; cv=none; b=Xr/9JqT5TJzfcFCunGsQqVfTvZezSMyjjTXG8FS5XeBLJBZDXw+hXMKsMOI8feQ5aOiJFFZEY7HSQiSuHlaxAvNcl8euuAMIIfcpGTr3AuemEDUCA7qomU7SaHdI6u+jBe0yttmeuzkBKdFea34nH+NOBA+EKWJXAbuirEjIrHE=
+	t=1758363844; cv=none; b=XUEblot+UDJvwg5f4k05/m+qi15wRZ9U5Qy/2la6MF4tiBV5Kjqcy+pvRUc6iAQsJ8Bw3JnF+Xo4Q5SwMzqiMl/5nAvfse4RGM5SafTW8s67/LcuJyG91bibUyvWGusJjC4IEQ3QdAPS660N6r2E7Bf7F+Tvf9RXV7Xxmj56ghE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758348633; c=relaxed/simple;
-	bh=bo2Ndb5QdjF0C5RExvUQJNNOB01lRnxcWM4euD7xwfM=;
-	h=From:To:Cc:Subject:Date:References:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=reVAuQpqUMn0tfO6excD/cXwdLB656hJxEXVPoxSdFd6LVBjIjIC99n+JCVN/0K/+VIHD1XZDw+f1wlR75RPCc7axkWAXFEkjwVJ49AqTcvcHBfOsDKp0scT8QIaDiHTHuvwVu0mIBZfMiin4CfamzW8kAMKez/DZhwX0YqC+WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IR3NkpNt; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758363844; c=relaxed/simple;
+	bh=8iXqxhSdAkakZE+dXKkGUnoGkkyheEh1y2QTTcyyR7s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LBsjLozmqBp/DDxGQH03yKi/OMtAKkuPgSuv8rgNLNkDMpOy4KMD6mn7q7JqCbt0VaaPxOkI4Or+GXlHOLqJicvgUZYEDS0k3tmBrerPSVvxu+CRSvDPpre9skFbUq8IlPvY2rc4vZOU3vO9vnk5U+nFg1Q4uUlK0mI2kR97S88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2gQBCBgx; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IR3NkpNt"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-32e715cbad3so2905929a91.3
-        for <linux-security-module@vger.kernel.org>; Fri, 19 Sep 2025 23:10:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2gQBCBgx"
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-77f169d8153so888912b3a.3
+        for <linux-security-module@vger.kernel.org>; Sat, 20 Sep 2025 03:24:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758348631; x=1758953431; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:user-agent:references:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hou6AJPM8wejR725iDsnasOHuRSCpfZoVQThJpW/xQI=;
-        b=IR3NkpNtQB/0tFFNV7IqLAhjTEeFp4qIW9P/R3awtnebNRXrYR8+hPv0S6wByiRld9
-         GwgokRdQbDlHGKnmqmPLeEHe5hKx6lX9axiuiBooVxUUOjg28jwZPkFK4tD6TagCBNgs
-         AwbTRsLGauWgz1X+vcRDEfTtpkYaOav8t6cBv/biEqdFb2cpub0JRPe46AwtREeRpBU3
-         RlZAMBHiBgYfFzmg/xDjdaZHvEAqwr4ds3cIBM0nk5HrAkUssSdgkE1WOVbcODKRlr2G
-         JIbWWjBttrMcyJDGdldhqy8wi7IHArKIPHXvZ1NNEr0UT+TCRNjT0AMmq1+BfpUEJ2/j
-         /SLg==
+        d=google.com; s=20230601; t=1758363841; x=1758968641; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+hZhQHzO6iaBCv+wcIWwJCdyKEWcJ4Nfwc3KoJ0ZPEA=;
+        b=2gQBCBgxMSwu5AB2o+jkFTBAcijwtXwzg/RdQCHcsKaXBDvcjJBEtjbb59L9NQTMqW
+         +4KIoKH6AO8wRCb7goV1WcVnX2N2bcart2Omvg/Kqm5KFBOobRJPJ8NNA6IQL7vL7etK
+         BYgjhcThGprquHWXLLxvVznTq7aGbIgT+UYS4wYtPiTtDM9ZW4SvF4keMPfUj/rDgRR6
+         G+rtl7LYgu6D0JAiBtafGsEhSvUpGD9b0htdsLGQC9f5yY8ovG7vfPsPq6bUdBfh4tNY
+         Y9xn2nze+Ia56cqt94zGvidFt/2kHe0e1AZJfrEWx+hqBpvT41kMu6y121sexUc3sJl0
+         JBTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758348631; x=1758953431;
-        h=mime-version:message-id:in-reply-to:user-agent:references:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hou6AJPM8wejR725iDsnasOHuRSCpfZoVQThJpW/xQI=;
-        b=gs3HWl7FujT0t9pyC1h4G2j4Q7VYCxoXJZ75L8uinc2RoLYZOKPrvGMr8twePfIzvF
-         Hqf/0aKWkKK3FGLgfWt/xrcELkWc1+birpKtF7pElDrcMU6JBtQljBprFD7LUX3VIeZp
-         2NjcvaRt9Mjyjq0SuiwkgbiL3xEvtWpLVI/VHc30X+Ou8cWZ+rWBKIqNC/WbIHIUh5u/
-         r4ishLfiVgDpWrq7MsDdv9nnLlPiQaRmA71up5ZK4ZlzaawsHp10KNEjDbA4zR9rby8c
-         8VoySCM9E5hRSFPaSviIMtXFqQJcTcjmPrAId+rkSwUzcMGy5tG/doQ79ZPJx25hhU8e
-         5QAw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2AVq2Yoe3qYmbOapSdXJE80mkLUJbc80uff/TWpkp9VdkUHiXHN6nmF4zoobCuSzh+mWVrsK9SG+eQSecruxlLLBSnPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFBqR4EsUekQqUcIdzeOeEDI9amwFseq2NDo7jJxhLS3KEi0Qj
-	NAAjqCsBrpe6jURysBP18A6c9n7gbFixyGKV/y+3tE7ZSy5UUopE+Fpl
-X-Gm-Gg: ASbGncv6tRVo23x8B+uWLPhE13wgqD8X+HNVYiwTeOQitgMo1u5kDBBuDksE3SDgEvB
-	lR+//c816ywN6HUFd8xf4vXXcMgQaEVDwnONB8MLBoJh3brQ7KTobl5rQs5riXGzblMkDMg33Ql
-	Kok7RxTuwb97jgEUHvOzL8TXP0NXeoHKKchMCUsX8z5NUK8HpA6gIs895dG4aVMMoYuPjdE7byF
-	c37bZD69t4ojxDGUYp41dCPyag9c13W4cug7VWD5imXkEP5tW1a6lytey2Mn5l7XcTady8rpxoF
-	mlG4Kiva34UE13iTpeAYzWp4nL8b53KYv44tykOxTu7kEPJzaWNpcKEflNXQui9XiOCkEMRfA04
-	vsZIzg6pZuvbQ
-X-Google-Smtp-Source: AGHT+IH2YsbIL9bmM2wkE8sVKgdbADyeo6xeBPeiRV0b4d2jfA5VE26z/kBsRCKoBlEJw3bJUDuezg==
-X-Received: by 2002:a17:90b:52d0:b0:32e:d011:ea1c with SMTP id 98e67ed59e1d1-33097ffd1b2mr8090816a91.15.1758348630860;
-        Fri, 19 Sep 2025 23:10:30 -0700 (PDT)
-Received: from 1337 ([136.159.213.204])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b5531d90d1asm1179569a12.18.2025.09.19.23.10.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 23:10:30 -0700 (PDT)
-From: Abhinav Saxena <xandfury@gmail.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Jeff Xu <jeffxu@google.com>, jeffxu@chromium.org,
- skhan@linuxfoundation.org, keescook@chromium.org,
- akpm@linux-foundation.org, dmitry.torokhov@gmail.com,
- dverkamp@chromium.org, hughd@google.com, jorgelo@chromium.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, jannh@google.com, linux-hardening@vger.kernel.org,
- linux-security-module@vger.kernel.org, kernel test robot <lkp@intel.com>,
- =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BC?=
- =?utf-8?Q?nther?= Noack <gnoack@google.com>, Fan
- Wu <wufan@kernel.org>, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v7 6/6] mm/memfd: security hook for memfd_create
-Date: Fri, 19 Sep 2025 23:54:06 -0600
-References: <20221209160453.3246150-1-jeffxu@google.com>
- <20221209160453.3246150-7-jeffxu@google.com>
- <CAHC9VhRBMTQvnBdSwMbkOsk9eemYfvCmj9TRgxtMeuex4KLCPA@mail.gmail.com>
- <CALmYWFvrasXnshO01YGWRyC7qKk4o0G88yAgkgjO1YBumF5zeA@mail.gmail.com>
- <CAHC9VhQKsjiGv3Af0iqg_TLNzCvdTaLnhw+BRTF9OEtJg1hX7g@mail.gmail.com>
-User-agent: mu4e 1.10.8; emacs 30.2
-In-reply-to: <CAHC9VhQKsjiGv3Af0iqg_TLNzCvdTaLnhw+BRTF9OEtJg1hX7g@mail.gmail.com>
-Message-ID: <87o6r5ac2z.fsf@gmail.com>
+        d=1e100.net; s=20230601; t=1758363841; x=1758968641;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+hZhQHzO6iaBCv+wcIWwJCdyKEWcJ4Nfwc3KoJ0ZPEA=;
+        b=sY7Oq/HSXSHZsOXAoEzUXlKDElBgL/7ZCgk6EzqSApYG7IIkkFrUxMU3Kz3jeeBnKG
+         iQGTxWZuQfVJC3HCv0QM+NkrA36jMCJJq6/hPahn7548ZUU9yrrJDjhd35zovJ+JCeoR
+         pi+cCJTbzsMBxFIaGnHAoLOMVHUoQ9VTcL7vUcjgpknM0g8Rfr0iXJ4VyzN3k6k0RDsX
+         b4ja4+Gh5+1lIIxaklKlmf8x0rXxa/fnUMeuBdO6oIM4xPmSHMqd1vlr+X3Dd5sDg0yS
+         hKIMkG528pAwiQy5u8oK4ogbPpGpy9nbxTctCLk1+hGUb/7N6yT74JwrE/qtVHQRFdhf
+         J+NA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2mIqgiWRMxN2cJ5Sh23F2PkyfvRLUzBQGsc2U6tWfm9r9EcApQAATbzx4OvS3f2zUuSdSyLi7x9eHsQPDGeCHO12xcTQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHD3TKu+BJwiSovm/5L9sF8KHoQagfQvAhqLTeHmrsPqXEe0X5
+	2DxQnTNn+JFwLqefjB1DVE4LumuX4OtzEy7C+OgQWqdwScolIcWTOEtphFjZs8KZ1DEiYNUBJai
+	wnawEYFD3DvEQicchbHELIAY6D5Y3Dkhn2p6I3fFl
+X-Gm-Gg: ASbGncsCydj2ewJNX3/zcZso/2vrTfvfT+x7p/zudlIxTcaS7zlV5kvw/d7U+blDb7A
+	dVUUXDZ3AUtrthgsQsM581fsAw93iZ7sCPIZXdzKG3WQnnhx6hCoiNMWQ+H88Kejg+mw4awKsdB
+	dArng65x37VLzeQEpaOGems7VLKRByzOCI0e5VBEygkM4Msx7fFKYG56b0QQZVgWzzQwK+1YdG4
+	8elADYro9CgAoLlJGrPjyqInZV9JpV0suZ48g==
+X-Google-Smtp-Source: AGHT+IF1hPc3B6dX8ioPYAwTkyAHDxIYYc2DoRTSnEgCHR4nACV75/Lf01kjKhlKCzTUMHiS0p59fc36fJvtYjO83jE=
+X-Received: by 2002:a05:6a20:914d:b0:27b:dcba:a8f3 with SMTP id
+ adf61e73a8af0-2925f76be25mr8434118637.15.1758363841077; Sat, 20 Sep 2025
+ 03:24:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-=-="
+References: <20250918140451.1289454-1-elver@google.com> <20250918141511.GA30263@lst.de>
+ <20250918174555.GA3366400@ax162> <20250919140803.GA23745@lst.de>
+In-Reply-To: <20250919140803.GA23745@lst.de>
+From: Marco Elver <elver@google.com>
+Date: Sat, 20 Sep 2025 12:23:24 +0200
+X-Gm-Features: AS18NWAyC50-QQYD_wTUETPBlkphWLV8M7F-miEs8DZ-lOTnj5WEfB5uYr0Ax6s
+Message-ID: <CANpmjNO2b_3Q56kFLN3fAwxj0=pQo0K4CjwMJ9_gHj4c3bVVsg@mail.gmail.com>
+Subject: Re: [PATCH v3 00/35] Compiler-Based Capability- and Locking-Analysis
+To: Christoph Hellwig <hch@lst.de>
+Cc: Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>, 
+	Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Josh Triplett <josh@joshtriplett.org>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Kentaro Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
+	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
+	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Paul Moore <paul@paul-moore.com> writes:
-
-> On Tue, Dec 13, 2022 at 10:00 AM Jeff Xu <jeffxu@google.com> wrote:
->> On Fri, Dec 9, 2022 at 10:29 AM Paul Moore <paul@paul-moore.com> wrote:
->> > On Fri, Dec 9, 2022 at 11:05 AM <jeffxu@chromium.org> wrote:
->> > >
->> > > From: Jeff Xu <jeffxu@google.com>
->> > >
->> > > The new security_memfd_create allows lsm to check flags of
->> > > memfd_create.
->> > >
->> > > The security by default system (such as chromeos) can use this
->> > > to implement system wide lsm to allow only non-executable memfd
->> > > being created.
->> > >
->> > > Signed-off-by: Jeff Xu <jeffxu@google.com>
->> > > Reported-by: kernel test robot <lkp@intel.com>
->> > > =E2=80=94
->> > >  include/linux/lsm_hook_defs.h | 1 +
->> > >  include/linux/lsm_hooks.h     | 4 ++++
->> > >  include/linux/security.h      | 6 ++++++
->> > >  mm/memfd.c                    | 5 +++++
->> > >  security/security.c           | 5 +++++
->> > >  5 files changed, 21 insertions(+)
->> >
->> > We typically require at least one in-tree LSM implementation to
->> > accompany a new LSM hook.  Beyond simply providing proof that the hook
->> > has value, it helps provide a functional example both for reviewers as
->> > well as future LSM implementations.  Also, while the BPF LSM is
->> > definitely =E2=80=9Cin-tree=E2=80=9D, its nature is such that the actu=
-al
->> > implementation lives out-of-tree; something like SELinux, AppArmor,
->> > Smack, etc. are much more desirable from an in-tree example
->> > perspective.
->>
->> Thanks for the comments.
->> Would that be OK if I add a new LSM in the kernel  to block executable
->> memfd creation ?
+On Fri, 19 Sept 2025 at 16:08, Christoph Hellwig <hch@lst.de> wrote:
 >
-> If you would be proposing the LSM only to meet the requirement of
-> providing an in-tree LSM example, no that would definitely *not* be
-> okay.
+> On Thu, Sep 18, 2025 at 10:45:55AM -0700, Nathan Chancellor wrote:
+> > On Thu, Sep 18, 2025 at 04:15:11PM +0200, Christoph Hellwig wrote:
+> > > On Thu, Sep 18, 2025 at 03:59:11PM +0200, Marco Elver wrote:
+> > > > A Clang version that supports `-Wthread-safety-pointer` and the new
+> > > > alias-analysis of capability pointers is required (from this version
+> > > > onwards):
+> > > >
+> > > >   https://github.com/llvm/llvm-project/commit/b4c98fcbe1504841203e610c351a3227f36c92a4 [3]
+> > >
+> > > There's no chance to make say x86 pre-built binaries for that available?
+> >
+> > I can use my existing kernel.org LLVM [1] build infrastructure to
+> > generate prebuilt x86 binaries. Just give me a bit to build and upload
+> > them. You may not be the only developer or maintainer who may want to
+> > play with this.
 >
-> Proposing a new LSM involves documenting a meaningful security model,
-> implementing it, developing tests, going through a (likely multi-step)
-> review process, and finally accepting the long term maintenance
-> responsibilities of this new LSM.  If you are proposing a new LSM
-> because you feel the current LSMs do not provide a security model
-> which meets your needs, then yes, proposing a new LSM might be a good
-> idea.  However, if you are proposing a new LSM because you don=E2=80=99t =
-want
-> to learn how to add a new hook to an existing LSM, then I suspect you
-> are misguided/misinformed with the amount of work involved in
-> submitting a new LSM.
+> That did work, thanks.
 >
->> Alternatively,  it might be possible to add this into SELinux or
->> landlock, it will be a larger change.
+> I started to play around with that.  For the nvme code adding the
+> annotations was very simply, and I also started adding trivial
+> __guarded_by which instantly found issues.
 >
-> It will be a much smaller change than submitting a new LSM, and it
-> would have infinitely more value to the community than a throw-away
-> LSM where the only use-case is getting your code merged upstream.
+> For XFS it was a lot more work and I still see tons of compiler
+> warnings, which I'm not entirely sure how to address.  Right now I
+> see three major classes:
+>
+> 1) locks held over loop iterations like:
+>
+> fs/xfs/xfs_extent_busy.c:573:26: warning: expecting spinlock 'xfs_group_hold(busyp->group)..xg_busy_extents->eb_lock' to be held at start of each loop [-Wthread-safety-analysis]
+>   573 |                 struct xfs_group        *xg = xfs_group_hold(busyp->group);
+>       |                                               ^
+> fs/xfs/xfs_extent_busy.c:577:3: note: spinlock acquired here
+>   577 |                 spin_lock(&eb->eb_lock);
+>       |                 ^
+>
+> This is perfectly find code and needs some annotations, but I can't find
+> any good example.
 
-Hi Paul/everyone!
-
-I am not sure what is the latest here. But it seems both landlock[1] and
-IPE[2] have a use case for memfd_create(2) LSM hook.
-
-I would be happy to work on the use case for such a hook for landlock.
-
-CC=E2=80=99ing maintainers for both LSMs.
-
--Abhinav
-
-[1] - <https://lore.kernel.org/all/20250719-memfd-exec-v1-0-0ef7feba5821@gm=
-ail.com/>
-[2] - <https://lore.kernel.org/linux-security-module/20250129203932.22165-1=
--wufan@kernel.org/>
-
---=-=-=--
+This is an interesting one, and might be a bug in the alias analysis I
+recently implemented in Clang. I'll try to figure out a fix.
