@@ -1,107 +1,65 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503CC19F12D;
-	Sun, 21 Sep 2025 02:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925D13FB31;
+	Sun, 21 Sep 2025 07:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758420510; cv=none; b=a9+ZE70U3LOYBNpzBvTa/qLq6RDNDL1t9cLemVjM+CnM9fAd2LHQFe8qEpVPavBPSHA9qiLq3CvNuCAPYHeXhMhJUuj4lwPIu2kBaVcs4gMVX6AL1tGJ7RUlbjYfNyrKtU8siHRUzi8cv7btVTPyqYjAP7wDpj2OrrJqDVZSO2Y=
+	t=1758440220; cv=none; b=o2i0WkY7l98BNH+KigEoeQATR5K+qPOKQDks9o3Yz3c0k3uTEbZijliDlEzZGSAePgwnz1jAaBsO2p4gU8WRyJy+JyzpPzj+1ha2uCbsdyMXCsseNZ06AIm9UfpJbTcljWIl8cIhMOKKwdzjGPPpxN3AP/dSRuvE4phartavJD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758420510; c=relaxed/simple;
-	bh=4M8/GFhV3sFOzAP8bNuOQU4N9+FY30m8pjHxRtU9C9Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fyRJdbp2mK/Ly+513MMksFiIeK0fo+t2u2Ebri5CdUDhcJ4mQixGqiPso9snbQlQ4qXGsnXVRFliSYHvnEccKV9fUJ+p9DfSo93X/vgKb565L2S5dDsUXK2H6pd6nMQgZG/CLHdZ0IGmt4l4tJ6aH19y4vi9qg3is7rgj+b7Nm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bxNr7LHd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758440220; c=relaxed/simple;
+	bh=/E3C2COga/lhAJ68ZH59KbvFlrQtoaDi2hkv/5s4edA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XJ4sz8v1+n0q9McqhbWFPV1xj6C/QjIb6aUo4f1WUlL2iIZcAZsk2SyIJrRN5LM47N2s3uxDCZwmTkYUjHg5KKQmImFotE/U6/qN7qWX2l4I2bzNhCpbbETstxYKGwiPm/uEk2jb0uBA1fkegxz2kwP/wUa2IhvTgNa6OlKxBMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uletbFZm; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bxNr7LHd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A71A1C4CEF1;
-	Sun, 21 Sep 2025 02:08:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758420510;
-	bh=4M8/GFhV3sFOzAP8bNuOQU4N9+FY30m8pjHxRtU9C9Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bxNr7LHdeOwqPfE4X36y8+4ACSu05p095WDmar8fCw1Wh66SbZ9RGEaddfQJqw3+t
-	 Q6FCFpLf2gK+416Ym3njaz0gZAp2TQ+OBkGcix4tgaOUaTBDj+QXTYmc81//3e85p/
-	 g4ICJdVdUXSsTs2orMu6VS1QfukHjr55O7pasCjF18Zng6VwAA7G+t06EIviLAaBSP
-	 9NM6GsVHfR8tLGNk8ySaG1DDwZUGiczfUNbWRrcvW55iRmNEU8f1COttdkuDRwPlxX
-	 ZuZh77JJ4zpRVTO0A7axKVvX+jB4UTgqT2D7Yo5GXQ7sM1Y1Q+44k9LVGQrsb/5du2
-	 0RXFGKLCL8QKQ==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH v10 4/4] tpm_vpm_proxy: Use stack for TPM_CC_SET_LOCALITY
-Date: Sun, 21 Sep 2025 05:08:04 +0300
-Message-Id: <20250921020804.1088824-5-jarkko@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250921020804.1088824-1-jarkko@kernel.org>
-References: <20250921020804.1088824-1-jarkko@kernel.org>
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uletbFZm"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=JN4VxLUlUvS8osIIS5RdIG8Kr7QcOQ9Mak7eMcJ0O/0=; b=uletbFZmxXzVLwOsIrw/aJAQ4V
+	QcbG4+19/ScYoaqLqVkmM2hZFfB1KrgRMoz1OFp7D5ljdLwa6/pSrEr89eg81ZPEjyHSFBAj9QNbN
+	WNtxgTAxOpR/c76fEIKc4zsCe6LM6QOTWZ0emcSkn+SmCJd2EAte6ESq5MO/owsQgaNOpJHp9JwZJ
+	CYkZ1obm3KW15XMRJXUiu6ahb6pa9JK1cWWUrI7l+GMWEazj15GrijlmF6INw9cigzGR/6Zmq71b0
+	K4vHQq101IbmEzEFHQJSJWSDUXe1laTpxeHfTzV3mcs82AaIoFL9m9AXca03AWSLD/Gg7jdA95A7j
+	9dTU6BWg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v0Ecx-0000000CbvI-1i02;
+	Sun, 21 Sep 2025 07:36:55 +0000
+Date: Sun, 21 Sep 2025 08:36:55 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: John Johansen <john@apparmor.net>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: what's going on with aa_destroy_aafs() call in apparmor_init()?
+Message-ID: <20250921073655.GM39973@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+	Correct me if I'm wrong, but as far as I can tell apparmor_init()
+ends up being called from security_init(), which is called before the call
+of vfs_caches_init(), not to mention fs_initcall stuff.
 
-Use stack allocation for TPM_CC_SET_LOCALITY, as it has known fixed size.
+	If that's the case, what is this doing there?
+error:
+        aa_destroy_aafs();
+	AA_ERROR("Error creating AppArmor securityfs\n");
+	return error;
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
----
- drivers/char/tpm/tpm1-cmd.c       |  2 +-
- drivers/char/tpm/tpm_vtpm_proxy.c | 12 +++++-------
- 2 files changed, 6 insertions(+), 8 deletions(-)
+aa_create_aafs() is called via fs_initcall; moreover, it will bail out
+if called before apparmor_initialized has become true, so...
 
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 11c16ad9b2a7..433908cfb4a9 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -328,7 +328,7 @@ static int tpm1_startup(struct tpm_chip *chip)
- 	int rc;
- 
- 	dev_info(&chip->dev, "TPM_Startup\n");
--	tpm_buf_init(buf, TPM_BUF_INT_SIZE);
-+	tpm_buf_init(buf, TPM_BUF_MIN_SIZE);
- 	tpm_buf_reset(buf, TPM_TAG_RQU_COMMAND, TPM_ORD_STARTUP);
- 	tpm_buf_append_u16(buf, TPM_ST_CLEAR);
- 	rc = tpm_transmit_cmd(chip, buf, 0, "TPM_Startup");
-diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-index e5de14379eb2..0f1b1b67ed4e 100644
---- a/drivers/char/tpm/tpm_vtpm_proxy.c
-+++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-@@ -395,15 +395,13 @@ static bool vtpm_proxy_tpm_req_canceled(struct tpm_chip  *chip, u8 status)
- 
- static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
- {
--	int rc;
--	const struct tpm_header *header;
- 	struct proxy_dev *proxy_dev = dev_get_drvdata(&chip->dev);
-+	u8 buf_data[TPM_BUF_MIN_SIZE];
-+	struct tpm_buf *buf = (struct tpm_buf *)buf_data;
-+	const struct tpm_header *header;
-+	int rc;
- 
--	struct tpm_buf *buf __free(kfree) = kzalloc(PAGE_SIZE, GFP_KERNEL);
--	if (!buf)
--		return -ENOMEM;
--
--	tpm_buf_init(buf, TPM_BUF_MAX_SIZE);
-+	tpm_buf_init(buf, TPM_BUF_MIN_SIZE);
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
- 		tpm_buf_reset(buf, TPM2_ST_SESSIONS, TPM2_CC_SET_LOCALITY);
- 	else
--- 
-2.39.5
+While we are at it, what will happen if apparmor_init() succeeds, but
+aa_create_fs() fails afterwards?
 
+If nothing else, aa_null_path will be left {NULL, NULL}, which will
+immediately oops dentry_open() in aa_inherit_files()...
