@@ -1,320 +1,129 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609BE26E179
-	for <linux-security-module@vger.kernel.org>; Sun, 21 Sep 2025 11:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199391E51D;
+	Sun, 21 Sep 2025 12:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758454157; cv=none; b=aaVG6DNxp2vCQY/vYaUmY+eT2zPvrw3mjohhMXhu7unr9wbytE9Oi34zUGUXEMayfDhoK94DFeaMAEqJqUELiyyzsz/5gm/bj4U3dSoRqgV4NtkqXkToP6ww6ccxZp91iwEhj2VL7pKjE9F25gTbWhX612QSDmM0W30NnUS4bEk=
+	t=1758459277; cv=none; b=PVFTZjKcl9HJ25JvUtgaKlBY1FyZ0TQ9Z8wU4vLOYPf3JXHbAjIfWUDS+rfApfO2XyMUEd6SDbrrc63mb7unQZt5w2um1q3DTLohlaRhrh4C5/Lqor3EIqG9aa67q+3Kx50Bx5o7SCoHdeOPSTVvkdRz4uVBQsRyRtzBqaSt6VI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758454157; c=relaxed/simple;
-	bh=uDibAdQRgBiwZXDITBNi3RWiyJSVVC1L/p5Z7AtLlKE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AsytlyYvxS/pEJulH9HPKm/m+v0szXJT2WWvqAjfj7g0rr2Oi78c5DylGXAhSELwPGoVQ/g89aSmakAd3kt0y0mQB/OEbJYkpCvHUHycPHUlEi5xkgHegbXU2EYCF4xPjxWIKH0+i1y3xeSsHUiYTdiYX3TTiV+BMw1nsHRojgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddjRj9SI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758459277; c=relaxed/simple;
+	bh=jsUcLF3gj9QD/DeMLPoCgYNjJkokHF1gACOem3+AcJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sdNYojBwPYA7FVQtC1jMSP5rJw5rmR/yFIVlz8Tc9lwEDlsijbQlaGVTfVN7e9/8rtnAlSTHClVqKIN/SAPd3PbL3cZEZNhO9Pn2h6NZZ3TZ5/fEtYBKaHZgUsbS9Q8zHo3RbNLDCVDGJ0vK87a9mA/hL3f8e0YWWpwbKPuyPEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VCbQCv/I; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddjRj9SI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1813EC19425
-	for <linux-security-module@vger.kernel.org>; Sun, 21 Sep 2025 11:29:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCbQCv/I"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BC6AC4CEE7;
+	Sun, 21 Sep 2025 12:54:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758454157;
-	bh=uDibAdQRgBiwZXDITBNi3RWiyJSVVC1L/p5Z7AtLlKE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ddjRj9SIh0ytMcTqYjcl0iFhNcglp2IDGsV+fbsPIMsRgpjhGv4g6ZVIpmfidhap0
-	 ZflzUHm2B1HE2HrPglwelkTSD4cRlkK9Bp9PYjp1W9EYPZPC5s+gWVedHYj21Sxeuo
-	 K92BvdOCdDiPku2faFOns/mkedVOrwWvuEycHgYuToi9B0wbhVGY8YfnUTA575Yl1L
-	 cNFOngXU0V34iyRJpyO9lNMQl5vYmHneQC4ISRKF229i9/SBeG3ozlSPJHkMGgk/2d
-	 FWErYvgYxs80v7xrBWyCXOSbVRFeMgdoMwlT+VrpTBba+spDTpn+EuqSsy2+OlOjx0
-	 lbR7qbmRj1QJg==
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46b7580f09eso3420975e9.2
-        for <linux-security-module@vger.kernel.org>; Sun, 21 Sep 2025 04:29:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW2u/77UprRTvXs3rMXka5xbALfIP8Hgtkby9omfG6LjYMRk1GFDAac+7yKQxBpp63tznUuG4Iy+Ze3JLu7MoIppS7XbkI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhpHH1rS9JuPk+0WMfTrUeFBvkPudKgIcw0bYo+8dcLUrWIlY8
-	31f/4akKJKRSkumLG6FcNdno6MJhwBkaU/o0MXd7b/hPY7rYGGSdj9a4ef2Er3YQ3ETdGospPHF
-	Q2+O09mqrIYnZuhfI8+mFVuTRWRz8R5dTP5tRHbVn
-X-Google-Smtp-Source: AGHT+IGWilrVUSpy/R0BdsaxUqFxYw+xCd7rvy5kg15CgX6rtg9LAdSKHVt2GnAfxtQqmp7rxL3Uj9k6/HMT52ETNqU=
-X-Received: by 2002:a05:600c:c4a3:b0:45b:7b54:881 with SMTP id
- 5b1f17b1804b1-467ead67644mr69577125e9.1.1758454155468; Sun, 21 Sep 2025
- 04:29:15 -0700 (PDT)
+	s=k20201202; t=1758459276;
+	bh=jsUcLF3gj9QD/DeMLPoCgYNjJkokHF1gACOem3+AcJY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VCbQCv/IMTgEdAWfY2wBRtEqDBImw+HPC14iJ56JMHDX0vT66wZ8zk0jh/desx2YU
+	 Wx5ehRf3r8EdlPLq458A0x8FL0bqquQCZhUJiWV19/ru9dBBkYTDU5osQMubWRfT6B
+	 9l2Cgy+JfAu638gSzsqcuSiF00itOu1ZDCD6sutcp2LErgUJXIsFYcRlFlL1jpuJLK
+	 bePnI9DpZVitgRbPm2C2/92Of2a3XZ6hG0nC1mRCPv7AJI9onEtVa5QwFXPRsZFAlK
+	 s2Sot1vwrEkHVR3pxAQEqnolk4PKJfELOkYtYnVPCRV+sqVHFWTcRfTa54w7mmc5iU
+	 QyDSk/I+meGvQ==
+Date: Sun, 21 Sep 2025 15:54:32 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Stefano Garzarella <sgarzare@redhat.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, ross.philipson@oracle.com
+Subject: Re: [PATCH v10 0/4] tpm: robust stack allocations
+Message-ID: <aM_1iLAsl1wpkl6n@kernel.org>
+References: <20250921020804.1088824-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250914215141.15144-1-kpsingh@kernel.org> <20250914215141.15144-12-kpsingh@kernel.org>
- <1f98f82e-f15a-42d1-8975-e1cb6b66129f@kernel.org> <CACYkzJ7d2K=6TC1J_72WLT1bd7+kQE-4YHEdWtQDcfoAXZZd1w@mail.gmail.com>
- <CACYkzJ4iRrjCRYB-FyGc=2X8sCY_Ot+wtmpLpJz8oT0osCzXyA@mail.gmail.com>
-In-Reply-To: <CACYkzJ4iRrjCRYB-FyGc=2X8sCY_Ot+wtmpLpJz8oT0osCzXyA@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Sun, 21 Sep 2025 13:29:04 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ56zB8f7EaowwR+TfMZQe4pXKRGUyEEhgs+3hojfDAGoA@mail.gmail.com>
-X-Gm-Features: AS18NWCPNlMHCThwYg5ALw7a4S6XJbDFkImGCoT3OGt2C2FsAmvWkDZLzMSQE2k
-Message-ID: <CACYkzJ56zB8f7EaowwR+TfMZQe4pXKRGUyEEhgs+3hojfDAGoA@mail.gmail.com>
-Subject: Re: [PATCH v4 11/12] bpftool: Add support for signing BPF programs
-To: Quentin Monnet <qmo@kernel.org>
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	bboscaccy@linux.microsoft.com, paul@paul-moore.com, kys@microsoft.com, 
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250921020804.1088824-1-jarkko@kernel.org>
 
-On Sun, Sep 21, 2025 at 12:04=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrot=
-e:
->
-> On Sun, Sep 21, 2025 at 12:00=E2=80=AFPM KP Singh <kpsingh@kernel.org> wr=
-ote:
-> >
-> > On Thu, Sep 18, 2025 at 11:04=E2=80=AFPM Quentin Monnet <qmo@kernel.org=
-> wrote:
-> > >
-> > > 2025-09-14 23:51 UTC+0200 ~ KP Singh <kpsingh@kernel.org>
-> > > > Two modes of operation being added:
-> > > >
-> > > > Add two modes of operation:
-> > > >
-> > > > * For prog load, allow signing a program immediately before loading=
-. This
-> > > >   is essential for command-line testing and administration.
-> > > >
-> > > >       bpftool prog load -S -k <private_key> -i <identity_cert> fent=
-ry_test.bpf.o
-> > > >
-> > > > * For gen skeleton, embed a pre-generated signature into the C skel=
-eton
-> > > >   file. This supports the use of signed programs in compiled applic=
-ations.
-> > > >
-> > > >       bpftool gen skeleton -S -k <private_key> -i <identity_cert> f=
-entry_test.bpf.o
-> > > >
-> > > > Generation of the loader program and its metadata map is implemente=
-d in
-> > > > libbpf (bpf_obj__gen_loader). bpftool generates a skeleton that loa=
-ds
-> > > > the program and automates the required steps: freezing the map, cre=
-ating
-> > > > an exclusive map, loading, and running. Users can use standard libb=
-pf
-> > > > APIs directly or integrate loader program generation into their own
-> > > > toolchains.
-> > > >
-> > > > Signed-off-by: KP Singh <kpsingh@kernel.org>
-> > >
-> > >
-> > > Hi KP, thanks for this work! Apologies for the delay, I know I've mis=
-sed
-> > > v3 - and I still have some small nits from bpftool's side.
-> > >
-> > >
-> > > > ---
-> > > >  .../bpf/bpftool/Documentation/bpftool-gen.rst |  16 +-
-> > > >  .../bpftool/Documentation/bpftool-prog.rst    |  18 +-
-> > > >  tools/bpf/bpftool/Makefile                    |   6 +-
-> > > >  tools/bpf/bpftool/cgroup.c                    |   4 +
-> > > >  tools/bpf/bpftool/gen.c                       |  66 +++++-
-> > > >  tools/bpf/bpftool/main.c                      |  26 ++-
-> > > >  tools/bpf/bpftool/main.h                      |  11 +
-> > > >  tools/bpf/bpftool/prog.c                      |  27 ++-
-> > > >  tools/bpf/bpftool/sign.c                      | 212 ++++++++++++++=
-++++
-> > >
-> > >
-> > > We miss the bash completion update.
-> >
-> > I can send a separate follow up patch which we can review separately.
-> > I don't want to block the series of bugs / comments in
-> > bash-completion.
-> >
-> >
-> > >
-> > >
-> > > >  9 files changed, 373 insertions(+), 13 deletions(-)
-> > > >  create mode 100644 tools/bpf/bpftool/sign.c
-> > > >
-> > > > diff --git a/tools/bpf/bpftool/Documentation/bpftool-gen.rst b/tool=
-s/bpf/bpftool/Documentation/bpftool-gen.rst
-> > > > index ca860fd97d8d..cef469d758ed 100644
-> > > > --- a/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-> > > > +++ b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-> > > > @@ -16,7 +16,8 @@ SYNOPSIS
-> > > >
-> > > >  **bpftool** [*OPTIONS*] **gen** *COMMAND*
-> > > >
-> > > > -*OPTIONS* :=3D { |COMMON_OPTIONS| | { **-L** | **--use-loader** } =
-}
-> > > > +*OPTIONS* :=3D { |COMMON_OPTIONS| [ { **-L** | **--use-loader** } =
-]
-> > > > +[ { { **-S** | **--sign** } **-k** <private_key.pem> **-i** <certi=
-ficate.x509> } ] }}
-> > >
-> > >
-> > > Please don't remove the "|" separators. I understand we may use sever=
-al
-> > > of these options on the command line, but if we remove them this shou=
-ld
-> > > be done consistently over all documentation pages.
-> > >
-> > >
-> >
-> > I had asked you in:
-> >
-> > https://lore.kernel.org/bpf/CACYkzJ42L-w_eXyc1k+E7yK4DGC3xjdiwjBAznYJdX=
-Wzuq4-jA@mail.gmail.com/
-> >
-> > about what you expect in the SYNOPSIS as the current formatting is not
-> > correct for how the options are grouped but did not get a reply. It's
-> > easier if you just mention in your reply what's expected.
-> >
-> > for now, I changed my bits and made a single group for signing in [ ]
-> > but no | between these options. If this is not correct, let's follow
-> > up as a separate patch and not block on merging this.
-> >
-> > - *OPTIONS* :=3D { |COMMON_OPTIONS| | { **-L** | **--use-loader** } }
-> > + *OPTIONS* :=3D { |COMMON_OPTIONS| | { **-L** | **--use-loader** }
-> > + | [ { **-S** | **--sign** } { **-k** <private_key.pem> } { **-i**
-> > <certificate.x509> } ] }
-> >
->
-> Actually let's keep it consistent with what we print from the .c file:
->
-> *OPTIONS* :=3D { |COMMON_OPTIONS| |
-> { **-f** | **--bpffs** } | { **-m** | **--mapcompat** } | { **-n** |
-> **--nomount** } |
-> { **-L** | **--use-loader** } | [ { **-S** | **--sign** } **-k**
-> <private_key.pem> **-i** <certificate.x509> ] }
->
-> and
->
-> *OPTIONS* :=3D { |COMMON_OPTIONS| | { **-L** | **--use-loader** }
-> | [ { **-S** | **--sign** } **-k** <private_key.pem> **-i**
-> <certificate.x509> ] }
->
-> i.e a single group in [ ] without the | so that users know all these
-> are required and no { } on short options as you mentioned for *.c
-> lines.
->
-> - KP
->
-> >
-> > > >
-> > > >  *COMMAND* :=3D { **object** | **skeleton** | **help** }
-> > > >
-> > > > @@ -186,6 +187,19 @@ OPTIONS
-> > > >      skeleton). A light skeleton contains a loader eBPF program. It=
- does not use
-> > > >      the majority of the libbpf infrastructure, and does not need l=
-ibelf.
-> > > >
-> > > > +-S, --sign
-> > > > +    For skeletons, generate a signed skeleton. This option must be=
- used with
-> > > > +    **-k** and **-i**. Using this flag implicitly enables **--use-=
-loader**.
-> > > > +    See the "Signed Skeletons" section in the description of the
-> > > > +    **gen skeleton** command for more details.
-> > >
-> > >
-> > > 404: Section not found!
-> >
-> > Removing this.
-> >
-> > >
-> > >
-> > > > +
-> > > > +-k <private_key.pem>
-> > > > +    Path to the private key file in PEM format, required for signi=
-ng.
-> > > > +
-> > > > +-i <certificate.x509>
-> > > > +    Path to the X.509 certificate file in PEM or DER format, requi=
-red for
-> > > > +    signing.
-> > > > +
-> > > >  EXAMPLES
-> > > >  =3D=3D=3D=3D=3D=3D=3D=3D
-> > > >  **$ cat example1.bpf.c**
-> > > > diff --git a/tools/bpf/bpftool/Documentation/bpftool-prog.rst b/too=
-ls/bpf/bpftool/Documentation/bpftool-prog.rst
-> > > > index f69fd92df8d8..55b812761df2 100644
-> > > > --- a/tools/bpf/bpftool/Documentation/bpftool-prog.rst
-> > > > +++ b/tools/bpf/bpftool/Documentation/bpftool-prog.rst
-> > > > @@ -16,9 +16,9 @@ SYNOPSIS
-> > > >
-> > > >  **bpftool** [*OPTIONS*] **prog** *COMMAND*
-> > > >
-> > > > -*OPTIONS* :=3D { |COMMON_OPTIONS| |
-> > > > -{ **-f** | **--bpffs** } | { **-m** | **--mapcompat** } | { **-n**=
- | **--nomount** } |
-> > > > -{ **-L** | **--use-loader** } }
-> > > > +*OPTIONS* :=3D { |COMMON_OPTIONS| [ { **-f** | **--bpffs** } ] [ {=
- **-m** | **--mapcompat** } ]
-> > > > +[ { **-n** | **--nomount** } ] [ { **-L** | **--use-loader** } ]
-> > > > +[ { { **-S** | **--sign** } **-k** <private_key.pem> **-i** <certi=
-ficate.x509> } ] }
-> > >
-> > >
-> > > Same for "|" separators
-> >
-> > Done
-> >
-> > >
-> > >
-> > > >
-> > > >  *COMMANDS* :=3D
-> > > >  { **show** | **list** | **dump xlated** | **dump jited** | **pin**=
- | **load** |
-> > > > @@ -248,6 +248,18 @@ OPTIONS
-> > > >      creating the maps, and loading the programs (see **bpftool pro=
-g tracelog**
-> > > >      as a way to dump those messages).
-> > > >
-> > > > +-S, --sign
-> > > > +    Enable signing of the BPF program before loading. This option =
-must be
-> > > > +    used with **-k** and **-i**. Using this flag implicitly enable=
-s
-> > > > +    **--use-loader**.
-> > > > +
-> > > > +-k <private_key.pem>
-> > > > +    Path to the private key file in PEM format, required when sign=
-ing.
-> > > > +
-> > > > +-i <certificate.x509>
-> > > > +    Path to the X.509 certificate file in PEM or DER format, requi=
-red when
-> > > > +    signing.
-> > > > +
-> > > >  EXAMPLES
-> > > >  =3D=3D=3D=3D=3D=3D=3D=3D
-> > > >  **# bpftool prog show**
-> > >
-> > > > diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
-> > > > index 67a60114368f..694e61f1909e 100644
-> > > > --- a/tools/bpf/bpftool/gen.c
-> > > > +++ b/tools/bpf/bpftool/gen.c
-> > >
-> > > > @@ -1930,7 +1988,7 @@ static int do_help(int argc, char **argv)
-> > > >               "       %1$s %2$s help\n"
-> > > >               "\n"
-> > > >               "       " HELP_SPEC_OPTIONS " |\n"
-> > > > -             "                    {-L|--use-loader} }\n"
-> > > > +             "                    {-L|--use-loader} | [ {-S|--sign=
- } {-k} <private_key.pem> {-i} <certificate.x509> ]}\n"
-> > >
-> > >
-> > > Nit: No need for curly braces when you just have a short option name,
-> > > for "-k" and "-i".
+On Sun, Sep 21, 2025 at 05:08:00AM +0300, Jarkko Sakkinen wrote:
+> 1. These are previous changes to tpm_buf, which make stack allocations
+>    much more feasible than previously.
+> 2. Migrate low-hanging fruit to use stack allocations.
 
-I now remember why I added curly braces here, without them the test fails:
+I highly unlikely would put this to 6.18 PR. The first patch huge but at
+the same time it is still a "logical change". Splitting it would make it
+less understandable. It's also quite stable and the despite many
+changes, most of them are mechanical changes (some of them I've even
+done originally with an LLM called 'sed').
 
-kpsingh@kpsingh-genoa:~/projects/linux$ st
-kpsingh@kpsingh-genoa:~/projects/linux/tools/testing/selftests/bpf$
-./test_bpftool_synctypes.py
-Comparing /home/kpsingh/projects/linux/tools/bpf/bpftool/prog.c
-(do_help() OPTIONS) and
-/home/kpsingh/projects/linux/tools/bpf/bpftool/Documentation/bpftool-prog.r=
-st
-(OPTIONS): {'-i', '-k'}
+IMHO reason to split should not be based no size but exactly on logical
+steps.
 
-So, for now, I have put the curly braces so that the test passes.
+After these few quick rounds I take some time and work on tpm1/tpm2-cmd
+to make them follow a builder pattern. This helps e.g., TrenchBoot to
+accomplish their goals more easily as builders translate easily to
+early boot situations. In addition, making memory management more
+stack oriented usually tends to help with such situations.
+
+So the next thing for this patch set is to make things work with parse,
+build and transmission decoupled from each other, and it will be as
+substantial change as the first patch but can be split into smaller
+patches as it does not change the global economy.
+
+An example with tpm2_pcr_read:
+
+1. tpm2_build_pcr_read(), which takes pre-initialized
+   tpm_buf() and same parameter as today.
+2. tpm_transmit()
+3. tpm2_parse_pcr_read(), which takes resulting tpm_buf
+   and parses it to a struct, let's say tpm2_pcr_read_result.
+
+And similar decoupling is done for TPM 1 commands as they also need
+to translate between environments.
+
+Obviously outer facing tpm-interface.c API can still respond to old
+API calls for the time being.
+
+Other stuff:
+
+1. tpm_buf_* from include/linux/tpm.j migrate to include/linux/tpm_buf.h
+2. builders: tpm1_build.c, tpm2_build.c
+3. parsers: tpm1_parse.c, tpm2_parse.c
+
+Most likely at least at first landing some redundancy is required for
+Trenchboto and physical transmission path. By doing what I have
+described we can set a limit to the amount redunancy :-)
+
+> 
+> Jarkko Sakkinen (4):
+>   tpm: Make TPM buffer allocations more robust
+>   tpm, tpm1-cmd: Use stack for trivial cases
+>   tpm, tpm2-cmd: Use stack for trivial cases
+>   tpm_vpm_proxy: Use stack for TPM_CC_SET_LOCALITY
+> 
+>  drivers/char/tpm/tpm-buf.c                | 137 ++++++----
+>  drivers/char/tpm/tpm-dev-common.c         |   4 +-
+>  drivers/char/tpm/tpm-dev.h                |   2 +-
+>  drivers/char/tpm/tpm-interface.c          |   4 +-
+>  drivers/char/tpm/tpm-sysfs.c              |  20 +-
+>  drivers/char/tpm/tpm.h                    |   3 +-
+>  drivers/char/tpm/tpm1-cmd.c               | 151 +++++------
+>  drivers/char/tpm/tpm2-cmd.c               | 297 ++++++++++------------
+>  drivers/char/tpm/tpm2-sessions.c          | 121 +++++----
+>  drivers/char/tpm/tpm2-space.c             |  44 ++--
+>  drivers/char/tpm/tpm_tis_i2c.c            |   4 +-
+>  drivers/char/tpm/tpm_vtpm_proxy.c         |  34 +--
+>  include/linux/tpm.h                       |  28 +-
+>  security/keys/trusted-keys/trusted_tpm1.c |  34 ++-
+>  security/keys/trusted-keys/trusted_tpm2.c | 156 ++++++------
+>  15 files changed, 493 insertions(+), 546 deletions(-)
+> 
+> -- 
+> 2.39.5
+> 
+
+BR, Jarkko
