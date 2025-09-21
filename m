@@ -1,372 +1,245 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DCF1B4156;
-	Sun, 21 Sep 2025 16:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816AB15A848;
+	Sun, 21 Sep 2025 16:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758470503; cv=none; b=fzmIfamih033d2+CL7mK9aUUYnmIOZh6KHRmvsPl0Glt1a6AW03ETgUE5n24bk78egKmzhANF+wAcHIqRy/ZJTxF3HcAGENXL/zAFWwNPHsqYJzvNN6iZlTbUIQXT2rLybzR02ykEWcZwRAiDZoD0g0vwmWvBHfO9/7dLzeJRBc=
+	t=1758471897; cv=none; b=FkdJ85fuViA4VPNORG2mdP3juwm+7OHUBBfBdPyXDBrzFVY2YVz6+4P9zOnv8J/wekIMjtCt6QHZXiAG2+VGOMWwtByajPvovUGMvEt2mEd78AOwRPKP34yZROiR25DTdUsgDXr3Ai9bgdkG4fzHNQX7AijpP99gGII3fwA8J04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758470503; c=relaxed/simple;
-	bh=pQb3RwgC86+8bieGKn+WORSbUrrfSz5gKwb+kLvhqWo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CIqugTEneqhMfO1LD4uWXnADsUBLwmuUtFnxkPvS1y0VcoYjJ1PC9Fkjue/+zs+wdfkrqk6i0kMfE5AYqWEySDmWvyNi25B+nErs4gt6RdEY9rJL95kPbhxtL/lRkJox+22qG3FvrRWkRgryGvmrfCa58ZimHFnHISGtSUPn864=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RGbEHBCY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758471897; c=relaxed/simple;
+	bh=vofvVqIwEXXUJakzj5j7rwP9RPw89yZQ+UZ8CoeIav4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KowRh6tCI816XzceidM6KD1CocvVG3OTaSzphRISK1t6pIY32j3Kw23LMGhuko4WEcutI7KxkRSgElHmK79keA2J8z1nxxnutsEG3QujldLcjMp3ezJgqEwKWj15dE0YJc8gcIdoWmOZQFbsTqS4X0/u3FhF4Z51B4ECQjSL40Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=XKwnksBr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jkVD54yU; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RGbEHBCY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81D65C116B1;
-	Sun, 21 Sep 2025 16:01:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758470502;
-	bh=pQb3RwgC86+8bieGKn+WORSbUrrfSz5gKwb+kLvhqWo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RGbEHBCYZ95N00AeFc4NIUO8IT4x2xlavGwUIkxPDjG3TCGIclhQODPxda7zSspf2
-	 eeqxFmX6nWRMpiZTd22e4TsIQUGlqDMJ1bm+j+zf9b/QKtiOk/0nq9ql4sJ3X6ZNmt
-	 6Qgorf9Immx6KDpHOUx20HxoToTmZ4ctxkjUYQr/+Ut1tQgkvKjGPWOFHDIXLFCiBa
-	 +933Rrd0gluPMfJNuW2b9SuGjkofIAf8tLUOsH2nVFeona/Adn/TOlnDJnpStvzVso
-	 O3ZWN+i6In5zV9mb/BYrEGwr0JRRX0WMGi727ABPUvWDuDrJ9V3O6HdvKXa4C48+lX
-	 nIDiDMbPFxZNw==
-From: KP Singh <kpsingh@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: bboscaccy@linux.microsoft.com,
-	paul@paul-moore.com,
-	kys@microsoft.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	KP Singh <kpsingh@kernel.org>
-Subject: [PATCH bpf-next v7 5/5] selftests/bpf: Enable signature verification for some lskel tests
-Date: Sun, 21 Sep 2025 18:01:20 +0200
-Message-ID: <20250921160120.9711-6-kpsingh@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250921160120.9711-1-kpsingh@kernel.org>
-References: <20250921160120.9711-1-kpsingh@kernel.org>
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="XKwnksBr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jkVD54yU"
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id 4D4F41D000A9;
+	Sun, 21 Sep 2025 12:24:54 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Sun, 21 Sep 2025 12:24:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1758471894;
+	 x=1758558294; bh=4eL43QlVEchwrR99hYuuh9qOZvowspMF0C2vAQGQJF0=; b=
+	XKwnksBrWk2Sg12kuShfGuyNCaDOK+WTQf8peBwkmX4EbsHXzEOmdiPNDdHJ77s6
+	1Ki+veEMPWpAJJDLuSqYx9gLvjfNuZ5bKbgxXsL96clTisawHmweXNF0lReYefvf
+	/AHuDZs47I3Hf5FQ2AEbwqbEzDiqI6aKk0rADjPxi7WAdbVAehmZmsFw7wxGZY3X
+	XRGnReZ4QYjQ3FJQrXr7T6EX7R94CR6XRQWnP3Sm8ttNmD/Y5/1d5k7LLhpfGz12
+	QjechboMS1mZLd67xkxf+fwLe1n2qDv2mx/ybwr/Z1pnQDZpdRR7vG7DGMxub1QK
+	GUrpvFMxmY4O/SBIRWhttA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758471894; x=
+	1758558294; bh=4eL43QlVEchwrR99hYuuh9qOZvowspMF0C2vAQGQJF0=; b=j
+	kVD54yUn9RjtYkPscv8FdUaziPtbNHg5+gpT9q1wNiXcmY4U4A2wHyTmnuWJAhgJ
+	LcBYhDnYNhF/P+XoeFoO84Y1m0g3WVdcVvYYk9ErQMbHB578wY8wTUxEmlPQKWy9
+	jtDz/x1DUQVQx+0DIaMofFTuiemWsXrl6eLryx8vQVdP7kJMclZ/kuRFITZHO24p
+	OhRAsTAI6DVlxtzBhj/IoRZ9PQM/VVI5w1zOz5y4Z5Ys6Ufu+66os8SBUOMYZiK8
+	Cg1o6Sol75qUUZCM0mSTX+hxGjfprnSgJDg6FsnMU+ri4Z47K879qNWZLhG7bmsu
+	k5numXpZj342P8y1l/eDA==
+X-ME-Sender: <xms:1CbQaFCnR_Yxk0zFVAoaHV5voz_g3cB9o3IytAs3BWxGIF9LDxnugA>
+    <xme:1CbQaLYnP_VLvG-OKmcDZTllDieir_2sJxTxl41y1LegyY1QEendaGDU31h0FiUdY
+    RcZtqGNvnQ46iLFIIE>
+X-ME-Received: <xmr:1CbQaP_LDE0nTtYc2i_fO15GoOQ5GDRPfWuQMcR3p4ExrmK2akozsndg9yig1wpU33MWMjCpeC9DCizTvbepKuuj>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehheeggecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhinhhgmhgr
+    ohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeetie
+    evfeeifefgtdeikeegfeffteeiffetieeffeeiffekieekgeejlefhhefhhfenucffohhm
+    rghinhepghhithhlrggsrdgtohhmpdhmrghofihtmhdrohhrghenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdp
+    nhgspghrtghpthhtohepudehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlih
+    hnuhigpghoshhssegtrhhuuggvsgihthgvrdgtohhmpdhrtghpthhtohepmhhitgesughi
+    ghhikhhougdrnhgvthdprhgtphhtthhopegrshhmrgguvghushestghouggvfihrvggtkh
+    drohhrghdprhgtphhtthhopegvrhhitghvhheskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheplhhutghhohesihhonhhkohhvrdhnvghtpdhrtghpthhtohepvhelfhhssehlihhsth
+    hsrdhlihhnuhigrdguvghvpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtgho
+    mhdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrh
+    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgii
+X-ME-Proxy: <xmx:1CbQaHh9H5NveD9HuZPGMvD6y1U4RDzx3LjOeWxmVjTYc8Q0YrA4ng>
+    <xmx:1CbQaCh6SImBUq__lNR0gAwMUQKeAnCLFA6w1EIqk7zzPK2G4ixdVA>
+    <xmx:1CbQaN4OeFSgIS3eiw6DCDCO79_hJgGXCBsBe0kd2edELaBbg8IU9g>
+    <xmx:1CbQaEQUiN4mnmjj9TDmLkXoxq9EXvdV0pW_oVM2O4iuP13jFd1iSQ>
+    <xmx:1ibQaJgXPVXMmg1WWkLOp-MJphg3qYzsBpOMn3tZTW2uubpWQ_nRDaVF>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 21 Sep 2025 12:24:51 -0400 (EDT)
+Message-ID: <f1228978-dac0-4d1a-a820-5ac9562675d0@maowtm.org>
+Date: Sun, 21 Sep 2025 17:24:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
+ qid)
+To: Christian Schoenebeck <linux_oss@crudebyte.com>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Dominique Martinet <asmadeus@codewreck.org>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
+ Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org
+References: <aMih5XYYrpP559de@codewreck.org> <3070012.VW4agfvzBM@silver>
+ <f2c94b0a-2f1e-425a-bda1-f2d141acdede@maowtm.org> <3774641.iishnSSGpB@silver>
+ <20250917.Eip1ahj6neij@digikod.net>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <20250917.Eip1ahj6neij@digikod.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The test harness uses the verify_sig_setup.sh to generate the required
-key material for program signing.
+On 9/17/25 16:00, Mickaël Salaün wrote:
+> On Wed, Sep 17, 2025 at 11:52:35AM +0200, Christian Schoenebeck wrote:
+>> On Wednesday, September 17, 2025 1:59:21 AM CEST Tingmao Wang wrote:
+>>> On 9/16/25 20:22, Christian Schoenebeck wrote:
+>>>> On Tuesday, September 16, 2025 4:01:40 PM CEST Tingmao Wang wrote:
+>> [...]
+>>>> I see that you are proposing an option for your proposed qid based
+>>>> re-using of dentries. I don't think it should be on by default though,
+>>>> considering what we already discussed (e.g. inodes recycled by ext4, but
+>>>> also not all 9p servers handling inode collisions).
+>>>
+>>> Just to be clear, this approach (Landlock holding a fid reference, then
+>>> using the qid as a key to search for rules when a Landlocked process
+>>> accesses the previously remembered file, possibly after the file has been
+>>> moved on the server) would only be in Landlock, and would only affect
+>>> Landlock, not 9pfs (so not sure what you meant by "re-using of dentries").
+>>>
+>>> The idea behind holding a fid reference within Landlock is that, because
+>>> we have the file open, the inode would not get recycled in ext4, and thus
+>>> no other file will reuse the qid, until we close that reference (when the
+>>> Landlock domain terminates, or when the 9p filesystem is unmounted)
+>>
+>> So far I only had a glimpse on your kernel patches and had the impression that 
+>> they are changing behaviour for all users, since you are touching dentry 
+>> lookup.
+> 
+> I think we should not hold dentries because:
+> - they reference other dentries (i.e. a file hierarchy),
+> - they block umount and I'm convinced the VFS (and users) are not going
+>   to like long-lived dentries,
+> - Landlock and inotify don't need dentries, just inodes.
+> 
+> I'm wondering why fid are referenced by dentries instead of inodes.
+> 
+> The need for Landlock is to be able to match an inode with a previously
+> seen one.  Not all LSM hooks (nor VFS internals) always have access to
+> dentries, but they do have access to inodes.
+> 
+>>
+>>>> For all open FIDs QEMU retains a descriptor to the file/directory.
+>>>>
+>>>> Which 9p message do you see sent to server, Trename or Trenameat?
+>>>>
+>>>> Does this always happen to you or just sometimes, i.e. under heavy load?
+>>>
+>>> Always happen, see log: (no Trename since the rename is done on the host)
+>> [...]
+>>> Somehow if I rename in the guest, it all works, even though it's using the
+>>> same fid 2 (and it didn't ask QEMU to walk the new path)
+>>
+>> Got it. Even though QEMU *should* hold a file descriptor (or a DIR* stream, 
+> 
+> It's reasonable to assume that QEMU and other should hold opened fid In
+> practice, this might not always be the case, but let's move on and
+> consider that a 9p server bug.
+> 
+> Landlock and fanotify need some guarantees on opened files, and we
+> cannot consider every server bug.  For Landlock, inode may get an
+> "ephemeral tag" (with the Landlock object mechanism) to match previously
+> seen inodes.  In a perfect world, Landlock could keep a reference on 9p
+> inodes (as for other filesystems) and these inodes would always match
+> the same file.  In practice this is not the case, but the 9p client
+> requirements and the Landlock requirements are not exactly the same.
+> 
+> A 9p client (the kernel) wants to safely deal with duplicated qid, which
+> should not happen but still happen in practice as explained before.
+> On the other side, Landlock wants to not deny access to allowed files
+> (currently identified by their inodes), but I think it would be
+> reasonable to allow access theoretically denied (i.e. not allowed to be
+> precise, because of the denied by default mechanism) files because of a
+> 9p server bug mishandling qid (e.g. mapping them to recycled ext4
+> inodes).
+> 
+> All that to say that it looks reasonable for Landlock to trust the
+> filesystem, and by that I mean all its dependencies, including the 9p
+> server, to not have bugs.
+> 
+> Another advantage to rely on qid and server-side opened files is that we
+> get (in theory) the same semantic as when Landlock is used with local
+> filesystems (e.g. files moved on the server should still be correctly
+> identified by Landlock on the client).
+> 
+>> which should imply a file descriptor), there is still a path string stored at 
+>> V9fsFidState and that path being processed at some places, probably because 
+>> there are path based and FID based variants (e.g Trename vs. Trenameat). Maybe 
+>> that clashes somewhere, not sure. So I fear you would need to debug this.
+> 
+> Good to know that it is not a legitimate behavior for a 9p client.
 
-Generate key material for signing LSKEL some lskel programs and use
-xxd to convert the verification certificate into a C header file.
+So I did some quick debugging and realized that I had a wrong
+understanding of how fids relates to opened files on the host, under QEMU.
+It turns out that in QEMU's 9p server implementation, a fid does not
+actually correspond to any opened file descriptors - it merely represents
+a (string-based) path that QEMU stores internally.  It only opens the
+actual file if the client actually does an T(l)open, which is in fact
+separate from acquiring the fid with T(l)walk.  The reason why renaming
+file/dirs from the client doesn't break those fids is because QEMU will
+actually fix those paths when a rename request is processed - c.f.
+v9fs_fix_fid_paths [1].
 
-Finally, update the main test runner to load this
-certificate into the session keyring via the add_key() syscall before
-executing any tests. Use the session keyring in the tests with signed
-programs.
+It turns out that even if a guest process opens the file with O_PATH, that
+file descriptor does not cause an actual Topen, and therefore QEMU does
+not open the file on the host, and later on reopening that fd with another
+mode (via e.g. open("/proc/self/fd/...", O_RDONLY)) will fail if the file
+has moved on the host without QEMU's knowledge.  Also, openat will fail if
+provided with a dir fd that "points" to a moved directory, regardless of
+whether the fd is opened with O_PATH or not, since path walk in QEMU is
+completely string-based and does not actually issue openat on the host fs
+[2].
 
-Signed-off-by: KP Singh <kpsingh@kernel.org>
----
- tools/testing/selftests/bpf/.gitignore        |  1 +
- tools/testing/selftests/bpf/Makefile          | 35 ++++++++++++++++---
- .../selftests/bpf/prog_tests/atomics.c        | 10 ++++--
- .../selftests/bpf/prog_tests/fentry_fexit.c   | 15 ++++++--
- .../selftests/bpf/prog_tests/fentry_test.c    |  9 +++--
- .../selftests/bpf/prog_tests/fexit_test.c     |  9 +++--
- tools/testing/selftests/bpf/test_progs.c      | 13 +++++++
- .../testing/selftests/bpf/verify_sig_setup.sh | 11 ++++--
- 8 files changed, 89 insertions(+), 14 deletions(-)
+I'm not sure if this was is intentional in QEMU - it would seem to me that
+a fid should translate to a fd (maybe opened with just O_PATH) on the
+host, and path walks based on that fid should be done via openat with this
+fd, which will also "automatically" handle renames without QEMU needing to
+fixup the string paths?
 
-diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/selftests/bpf/.gitignore
-index 3d8378972d26..be1ee7ba7ce0 100644
---- a/tools/testing/selftests/bpf/.gitignore
-+++ b/tools/testing/selftests/bpf/.gitignore
-@@ -44,3 +44,4 @@ xdp_redirect_multi
- xdp_synproxy
- xdp_hw_metadata
- xdp_features
-+verification_cert.h
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 11d2a368db3e..0b6ee902bce5 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -496,15 +496,16 @@ LINKED_SKELS := test_static_linked.skel.h linked_funcs.skel.h		\
- 		test_subskeleton.skel.h test_subskeleton_lib.skel.h	\
- 		test_usdt.skel.h
- 
--LSKELS := fentry_test.c fexit_test.c fexit_sleep.c atomics.c 		\
--	trace_printk.c trace_vprintk.c map_ptr_kern.c 			\
-+LSKELS := fexit_sleep.c trace_printk.c trace_vprintk.c map_ptr_kern.c 	\
- 	core_kern.c core_kern_overflow.c test_ringbuf.c			\
- 	test_ringbuf_n.c test_ringbuf_map_key.c test_ringbuf_write.c
- 
-+LSKELS_SIGNED := fentry_test.c fexit_test.c atomics.c
-+
- # Generate both light skeleton and libbpf skeleton for these
- LSKELS_EXTRA := test_ksyms_module.c test_ksyms_weak.c kfunc_call_test.c \
- 	kfunc_call_test_subprog.c
--SKEL_BLACKLIST += $$(LSKELS)
-+SKEL_BLACKLIST += $$(LSKELS) $$(LSKELS_SIGNED)
- 
- test_static_linked.skel.h-deps := test_static_linked1.bpf.o test_static_linked2.bpf.o
- linked_funcs.skel.h-deps := linked_funcs1.bpf.o linked_funcs2.bpf.o
-@@ -535,6 +536,7 @@ HEADERS_FOR_BPF_OBJS := $(wildcard $(BPFDIR)/*.bpf.h)		\
- # $2 - test runner extra "flavor" (e.g., no_alu32, cpuv4, bpf_gcc, etc)
- define DEFINE_TEST_RUNNER
- 
-+LSKEL_SIGN := -S -k $(PRIVATE_KEY) -i $(VERIFICATION_CERT)
- TRUNNER_OUTPUT := $(OUTPUT)$(if $2,/)$2
- TRUNNER_BINARY := $1$(if $2,-)$2
- TRUNNER_TEST_OBJS := $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.test.o,	\
-@@ -550,6 +552,7 @@ TRUNNER_BPF_SKELS := $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.skel.h,	\
- 					       $$(TRUNNER_BPF_SRCS)))
- TRUNNER_BPF_LSKELS := $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.lskel.h, $$(LSKELS) $$(LSKELS_EXTRA))
- TRUNNER_BPF_SKELS_LINKED := $$(addprefix $$(TRUNNER_OUTPUT)/,$(LINKED_SKELS))
-+TRUNNER_BPF_LSKELS_SIGNED := $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.lskel.h, $$(LSKELS_SIGNED))
- TEST_GEN_FILES += $$(TRUNNER_BPF_OBJS)
- 
- # Evaluate rules now with extra TRUNNER_XXX variables above already defined
-@@ -604,6 +607,15 @@ $(TRUNNER_BPF_LSKELS): %.lskel.h: %.bpf.o $(BPFTOOL) | $(TRUNNER_OUTPUT)
- 	$(Q)$$(BPFTOOL) gen skeleton -L $$(<:.o=.llinked3.o) name $$(notdir $$(<:.bpf.o=_lskel)) > $$@
- 	$(Q)rm -f $$(<:.o=.llinked1.o) $$(<:.o=.llinked2.o) $$(<:.o=.llinked3.o)
- 
-+$(TRUNNER_BPF_LSKELS_SIGNED): %.lskel.h: %.bpf.o $(BPFTOOL) | $(TRUNNER_OUTPUT)
-+	$$(call msg,GEN-SKEL,$(TRUNNER_BINARY) (signed),$$@)
-+	$(Q)$$(BPFTOOL) gen object $$(<:.o=.llinked1.o) $$<
-+	$(Q)$$(BPFTOOL) gen object $$(<:.o=.llinked2.o) $$(<:.o=.llinked1.o)
-+	$(Q)$$(BPFTOOL) gen object $$(<:.o=.llinked3.o) $$(<:.o=.llinked2.o)
-+	$(Q)diff $$(<:.o=.llinked2.o) $$(<:.o=.llinked3.o)
-+	$(Q)$$(BPFTOOL) gen skeleton $(LSKEL_SIGN) $$(<:.o=.llinked3.o) name $$(notdir $$(<:.bpf.o=_lskel)) > $$@
-+	$(Q)rm -f $$(<:.o=.llinked1.o) $$(<:.o=.llinked2.o) $$(<:.o=.llinked3.o)
-+
- $(LINKED_BPF_OBJS): %: $(TRUNNER_OUTPUT)/%
- 
- # .SECONDEXPANSION here allows to correctly expand %-deps variables as prerequisites
-@@ -653,6 +665,7 @@ $(TRUNNER_TEST_OBJS:.o=.d): $(TRUNNER_OUTPUT)/%.test.d:			\
- 			    $(TRUNNER_EXTRA_HDRS)			\
- 			    $(TRUNNER_BPF_SKELS)			\
- 			    $(TRUNNER_BPF_LSKELS)			\
-+			    $(TRUNNER_BPF_LSKELS_SIGNED)		\
- 			    $(TRUNNER_BPF_SKELS_LINKED)			\
- 			    $$(BPFOBJ) | $(TRUNNER_OUTPUT)
- 
-@@ -667,6 +680,7 @@ $(foreach N,$(patsubst $(TRUNNER_OUTPUT)/%.o,%,$(TRUNNER_EXTRA_OBJS)),	\
- $(TRUNNER_EXTRA_OBJS): $(TRUNNER_OUTPUT)/%.o:				\
- 		       %.c						\
- 		       $(TRUNNER_EXTRA_HDRS)				\
-+		       $(VERIFY_SIG_HDR)				\
- 		       $(TRUNNER_TESTS_HDR)				\
- 		       $$(BPFOBJ) | $(TRUNNER_OUTPUT)
- 	$$(call msg,EXT-OBJ,$(TRUNNER_BINARY),$$@)
-@@ -697,6 +711,18 @@ $(OUTPUT)/$(TRUNNER_BINARY): $(TRUNNER_TEST_OBJS)			\
- 
- endef
- 
-+VERIFY_SIG_SETUP := $(CURDIR)/verify_sig_setup.sh
-+VERIFY_SIG_HDR := verification_cert.h
-+VERIFICATION_CERT   := $(BUILD_DIR)/signing_key.der
-+PRIVATE_KEY := $(BUILD_DIR)/signing_key.pem
-+
-+$(VERIFICATION_CERT) $(PRIVATE_KEY): $(VERIFY_SIG_SETUP)
-+	$(Q)mkdir -p $(BUILD_DIR)
-+	$(Q)$(VERIFY_SIG_SETUP) genkey $(BUILD_DIR)
-+
-+$(VERIFY_SIG_HDR): $(VERIFICATION_CERT)
-+	$(Q)xxd -i -n test_progs_verification_cert $< > $@
-+
- # Define test_progs test runner.
- TRUNNER_TESTS_DIR := prog_tests
- TRUNNER_BPF_PROGS_DIR := progs
-@@ -716,6 +742,7 @@ TRUNNER_EXTRA_SOURCES := test_progs.c		\
- 			 disasm.c		\
- 			 disasm_helpers.c	\
- 			 json_writer.c 		\
-+			 $(VERIFY_SIG_HDR)		\
- 			 flow_dissector_load.h	\
- 			 ip_check_defrag_frags.h
- TRUNNER_EXTRA_FILES := $(OUTPUT)/urandom_read				\
-@@ -725,7 +752,7 @@ TRUNNER_EXTRA_FILES := $(OUTPUT)/urandom_read				\
- 		       $(OUTPUT)/uprobe_multi				\
- 		       $(TEST_KMOD_TARGETS)				\
- 		       ima_setup.sh 					\
--		       verify_sig_setup.sh				\
-+		       $(VERIFY_SIG_SETUP)				\
- 		       $(wildcard progs/btf_dump_test_case_*.c)		\
- 		       $(wildcard progs/*.bpf.o)
- TRUNNER_BPF_BUILD_RULE := CLANG_BPF_BUILD_RULE
-diff --git a/tools/testing/selftests/bpf/prog_tests/atomics.c b/tools/testing/selftests/bpf/prog_tests/atomics.c
-index 13e101f370a1..92b5f378bfb8 100644
---- a/tools/testing/selftests/bpf/prog_tests/atomics.c
-+++ b/tools/testing/selftests/bpf/prog_tests/atomics.c
-@@ -165,11 +165,17 @@ static void test_xchg(struct atomics_lskel *skel)
- void test_atomics(void)
- {
- 	struct atomics_lskel *skel;
-+	int err;
- 
--	skel = atomics_lskel__open_and_load();
--	if (!ASSERT_OK_PTR(skel, "atomics skeleton load"))
-+	skel = atomics_lskel__open();
-+	if (!ASSERT_OK_PTR(skel, "atomics skeleton open"))
- 		return;
- 
-+	skel->keyring_id = KEY_SPEC_SESSION_KEYRING;
-+	err = atomics_lskel__load(skel);
-+	if (!ASSERT_OK(err, "atomics skeleton load"))
-+		goto cleanup;
-+
- 	if (skel->data->skip_tests) {
- 		printf("%s:SKIP:no ENABLE_ATOMICS_TESTS (missing Clang BPF atomics support)",
- 		       __func__);
-diff --git a/tools/testing/selftests/bpf/prog_tests/fentry_fexit.c b/tools/testing/selftests/bpf/prog_tests/fentry_fexit.c
-index 130f5b82d2e6..5ef1804e44df 100644
---- a/tools/testing/selftests/bpf/prog_tests/fentry_fexit.c
-+++ b/tools/testing/selftests/bpf/prog_tests/fentry_fexit.c
-@@ -12,13 +12,24 @@ void test_fentry_fexit(void)
- 	int err, prog_fd, i;
- 	LIBBPF_OPTS(bpf_test_run_opts, topts);
- 
--	fentry_skel = fentry_test_lskel__open_and_load();
-+	fentry_skel = fentry_test_lskel__open();
- 	if (!ASSERT_OK_PTR(fentry_skel, "fentry_skel_load"))
- 		goto close_prog;
--	fexit_skel = fexit_test_lskel__open_and_load();
-+
-+	fentry_skel->keyring_id	= KEY_SPEC_SESSION_KEYRING;
-+	err = fentry_test_lskel__load(fentry_skel);
-+	if (!ASSERT_OK(err, "fentry_skel_load"))
-+		goto close_prog;
-+
-+	fexit_skel = fexit_test_lskel__open();
- 	if (!ASSERT_OK_PTR(fexit_skel, "fexit_skel_load"))
- 		goto close_prog;
- 
-+	fexit_skel->keyring_id	= KEY_SPEC_SESSION_KEYRING;
-+	err = fexit_test_lskel__load(fexit_skel);
-+	if (!ASSERT_OK(err, "fexit_skel_load"))
-+		goto close_prog;
-+
- 	err = fentry_test_lskel__attach(fentry_skel);
- 	if (!ASSERT_OK(err, "fentry_attach"))
- 		goto close_prog;
-diff --git a/tools/testing/selftests/bpf/prog_tests/fentry_test.c b/tools/testing/selftests/bpf/prog_tests/fentry_test.c
-index aee1bc77a17f..ec882328eb59 100644
---- a/tools/testing/selftests/bpf/prog_tests/fentry_test.c
-+++ b/tools/testing/selftests/bpf/prog_tests/fentry_test.c
-@@ -43,8 +43,13 @@ static void fentry_test(void)
- 	struct fentry_test_lskel *fentry_skel = NULL;
- 	int err;
- 
--	fentry_skel = fentry_test_lskel__open_and_load();
--	if (!ASSERT_OK_PTR(fentry_skel, "fentry_skel_load"))
-+	fentry_skel = fentry_test_lskel__open();
-+	if (!ASSERT_OK_PTR(fentry_skel, "fentry_skel_open"))
-+		goto cleanup;
-+
-+	fentry_skel->keyring_id	= KEY_SPEC_SESSION_KEYRING;
-+	err = fentry_test_lskel__load(fentry_skel);
-+	if (!ASSERT_OK(err, "fentry_skel_load"))
- 		goto cleanup;
- 
- 	err = fentry_test_common(fentry_skel);
-diff --git a/tools/testing/selftests/bpf/prog_tests/fexit_test.c b/tools/testing/selftests/bpf/prog_tests/fexit_test.c
-index 1c13007e37dd..94eed753560c 100644
---- a/tools/testing/selftests/bpf/prog_tests/fexit_test.c
-+++ b/tools/testing/selftests/bpf/prog_tests/fexit_test.c
-@@ -43,8 +43,13 @@ static void fexit_test(void)
- 	struct fexit_test_lskel *fexit_skel = NULL;
- 	int err;
- 
--	fexit_skel = fexit_test_lskel__open_and_load();
--	if (!ASSERT_OK_PTR(fexit_skel, "fexit_skel_load"))
-+	fexit_skel = fexit_test_lskel__open();
-+	if (!ASSERT_OK_PTR(fexit_skel, "fexit_skel_open"))
-+		goto cleanup;
-+
-+	fexit_skel->keyring_id	= KEY_SPEC_SESSION_KEYRING;
-+	err = fexit_test_lskel__load(fexit_skel);
-+	if (!ASSERT_OK(err, "fexit_skel_load"))
- 		goto cleanup;
- 
- 	err = fexit_test_common(fexit_skel);
-diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/selftests/bpf/test_progs.c
-index 309d9d4a8ace..02a85dda30e6 100644
---- a/tools/testing/selftests/bpf/test_progs.c
-+++ b/tools/testing/selftests/bpf/test_progs.c
-@@ -14,12 +14,14 @@
- #include <netinet/in.h>
- #include <sys/select.h>
- #include <sys/socket.h>
-+#include <linux/keyctl.h>
- #include <sys/un.h>
- #include <bpf/btf.h>
- #include <time.h>
- #include "json_writer.h"
- 
- #include "network_helpers.h"
-+#include "verification_cert.h"
- 
- /* backtrace() and backtrace_symbols_fd() are glibc specific,
-  * use header file when glibc is available and provide stub
-@@ -1928,6 +1930,13 @@ static void free_test_states(void)
- 	}
- }
- 
-+static __u32 register_session_key(const char *key_data, size_t key_data_size)
-+{
-+	return syscall(__NR_add_key, "asymmetric", "libbpf_session_key",
-+			(const void *)key_data, key_data_size,
-+			KEY_SPEC_SESSION_KEYRING);
-+}
-+
- int main(int argc, char **argv)
- {
- 	static const struct argp argp = {
-@@ -1961,6 +1970,10 @@ int main(int argc, char **argv)
- 	/* Use libbpf 1.0 API mode */
- 	libbpf_set_strict_mode(LIBBPF_STRICT_ALL);
- 	libbpf_set_print(libbpf_print_fn);
-+	err = register_session_key((const char *)test_progs_verification_cert,
-+				   test_progs_verification_cert_len);
-+	if (err < 0)
-+		return err;
- 
- 	traffic_monitor_set_print(traffic_monitor_print_fn);
- 
-diff --git a/tools/testing/selftests/bpf/verify_sig_setup.sh b/tools/testing/selftests/bpf/verify_sig_setup.sh
-index f2cac42298ba..09179fb551f0 100755
---- a/tools/testing/selftests/bpf/verify_sig_setup.sh
-+++ b/tools/testing/selftests/bpf/verify_sig_setup.sh
-@@ -32,7 +32,7 @@ usage()
- 	exit 1
- }
- 
--setup()
-+genkey()
- {
- 	local tmp_dir="$1"
- 
-@@ -45,9 +45,14 @@ setup()
- 
- 	openssl x509 -in ${tmp_dir}/signing_key.pem -out \
- 		${tmp_dir}/signing_key.der -outform der
-+}
- 
--	key_id=$(cat ${tmp_dir}/signing_key.der | keyctl padd asymmetric ebpf_testing_key @s)
-+setup()
-+{
-+	local tmp_dir="$1"
- 
-+	genkey "${tmp_dir}"
-+	key_id=$(cat ${tmp_dir}/signing_key.der | keyctl padd asymmetric ebpf_testing_key @s)
- 	keyring_id=$(keyctl newring ebpf_testing_keyring @s)
- 	keyctl link $key_id $keyring_id
- }
-@@ -105,6 +110,8 @@ main()
- 
- 	if [[ "${action}" == "setup" ]]; then
- 		setup "${tmp_dir}"
-+	elif [[ "${action}" == "genkey" ]]; then
-+		genkey "${tmp_dir}"
- 	elif [[ "${action}" == "cleanup" ]]; then
- 		cleanup "${tmp_dir}"
- 	elif [[ "${action}" == "fsverity-create-sign" ]]; then
--- 
-2.43.0
+In any case, this probably means that even if Landlock were to hold a fid
+reference, and QEMU does qid remapping, that's still not enough to
+guarantees that we won't have a different, unrelated file ending up with
+the same qid, at least under ext4.
 
+I'm not sure what's the way forward - would Landlock need to actually
+"open" the files (or do something that will cause a Topen to be issued by
+v9fs)?  Alternatively if we believe this to be a QEMU issue, maybe
+Landlock don't need to work around it and should just hold fids (and use
+QIDs to key the rules) anyway despite server quirks like these.  This can
+perhaps then be fixed in QEMU?
+
+(I guess the fact that QEMU is doing path tracking in the first place does
+gives more precedent for justifying doing path tracking in v9fs as well,
+but maybe that's the wrong way to think about it)
+
+Test programs: openat.c [3], open_procselffd.c [4]
+
+
+[1]: https://gitlab.com/qemu-project/qemu/-/blob/44f51c1a3cf435daa82eb757740b59b1fd4fe71c/hw/9pfs/9p.c#L3403
+[2]: https://gitlab.com/qemu-project/qemu/-/blob/371a269ff8ce561c28e4fa03bb49e4940f990637/hw/9pfs/9p-local.c#L1243
+[3]: https://fileshare.maowtm.org/9pfs-landlock-fix/20250921/openat.c
+[4]: https://fileshare.maowtm.org/9pfs-landlock-fix/20250921/open_procselffd.c
