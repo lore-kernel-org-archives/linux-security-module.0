@@ -1,160 +1,171 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAC9280CFA;
-	Mon, 22 Sep 2025 11:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3B1304BDF
+	for <linux-security-module@vger.kernel.org>; Mon, 22 Sep 2025 12:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758541823; cv=none; b=YQtZCM8hedqHckMuNfG5UebyzYvR1n+xYE4miprVpCEzJyD0D8cc3mn5mueTB4rv7G/OawrHPatE6t27kfQJXJR/C66tiTcKJEbdNvV0JNPnBbrw+0EeZgmQsMVe5M71SyaUsYyABgeVL1qpbDfwvA1JsSZTKStiMfo7LsGf10M=
+	t=1758544459; cv=none; b=enWD88FkN8+pq56/rtyq0rD459JIEzrm+pttik79t3fUDlwEqUtI9F93QVi0ZNsA4BE4rRynHFhtG/BtrGa3DNwos+cvlW62zr19k9LyMFhi1izoe4tD9i6mOHDY9Y5XaO2YkQsyTavKZADvktFFq90GjDcmhb0YoPlVV05e8Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758541823; c=relaxed/simple;
-	bh=M4vWG+Jid2SxNiuuHydQTaCp6c30nOkRvRWQ7YmQsis=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bsSY8vUam6AmxTnH2tiXBGiUJhI5oDB4E0SkIBPx2T15ecQ6yq2x8Emh3rJBa7cEJy6B5CX42byi3r0OrL4zCKg4hXYEYaFrla2H4e5Vadd9tWQ/iNuJIGaVbrmo5hEEvbRCMBXSr3sbJVsj5n+zj1VSv71B2X1bmSp41YLD9PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mG8lB6bW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758544459; c=relaxed/simple;
+	bh=ys4IEoI+fdLVxLUuxJrPv2vA1+IDivHuaUVkT1Fa8W0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sDUWDj+/tD6H2NUObAjn8E7dS2XyWW075igNUeyeY3gCxViFX73myvhwmnRXYD2B102KSgU1/fKmXljKeCLydyndA3ug238XB8mDgPNSAuhR1Bpi6Y5RC32PEg0+jc2gMG5DcnDM2ILy3HL+1NqRPlrtAJ1ui6ALbUshF6yTONI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NnKWf3f9; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mG8lB6bW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CABAFC4CEF0;
-	Mon, 22 Sep 2025 11:50:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758541823;
-	bh=M4vWG+Jid2SxNiuuHydQTaCp6c30nOkRvRWQ7YmQsis=;
-	h=From:To:Cc:Subject:Date:From;
-	b=mG8lB6bWUBvbm/cp9s1RLUSdeIoySbwnwxXp2WoebgTOtuBlHyqlHsUEGTjg8rQue
-	 OnQ/VO5E/nfHdanxxI9WV2T3RceHlctyBuznScmZcn/z+nm/Na2f/rCF2X7CdtaPsj
-	 SuqDo3wTlSkVC8TN+zZQcEt0MPaUKn4J4saxH4WHXpn8211r4snoToH2AgeCJqZYQN
-	 Sqa5ZB1h2z4ohZHN9vJhwlEdpZaJcphvIFhLL+3Q0D9iX+3MU0JSopzZrsqh1F+0Eg
-	 ScphcNw4iTmf6FaM7HClitZvOrUQxbD504CnAHVdNxw6qxLpf0T2ji2OKZ0hJQh/BN
-	 17CiHf2eOu7nw==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH] tpm2-sessions: Remove unnecessary wrapper
-Date: Mon, 22 Sep 2025 14:50:09 +0300
-Message-Id: <20250922115009.3053664-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NnKWf3f9"
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3324523dfb2so1237450a91.0
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Sep 2025 05:34:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758544453; x=1759149253; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GNq/C59VuTgRCn+nlqpjLe4b5aVpPSyRTgdZcEzYFpA=;
+        b=NnKWf3f9JLbhDurAKtmSidZidQLjQDmIWh+dkaIsYa/dr6Ymul0jwcB94JBDpEIan+
+         PzuxSyqXjGbc+8N9tvXJh5MN+aYar/g4CZBRuuTlVAKQq5oMsA1ap6zjJT6oWLZLmvr5
+         KKkhYDYkBirLrmp0ZTGls6VGKDjesUzZksbbMTfibz5B8xgXgQL0wT9gRZxRUbowi6cT
+         MhptO8yyTVzP5sJaSddSAMbAn3lAxL0C4eH7frcttexo3ZAinW9hpHq7tm0kEtokp4Cg
+         rx3XZiwqEU8nHyHdmDj9R3tc3M36uyGN9Tpqpsq8qJSR20YxwjoDY5GohLiCQgNWV3yH
+         +UYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758544453; x=1759149253;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GNq/C59VuTgRCn+nlqpjLe4b5aVpPSyRTgdZcEzYFpA=;
+        b=TtQB/NLW8ZovE01895UERPvzRRDMfj/0d73JglrEFZRqnAE9lru3Fbdc8o7jT5FBmz
+         MTuqYrP5CME5U+pujxlSC+MlP4+f5cuSE1BFSZNcB1/QtHfvvjGWJmGJa3L186l6CrjZ
+         80F7FRPgNbJGNfBMfWgrlT37wTMRk7YUacbpLrA4Jw481CTEVJdW0bMwb5GWOrxx+Tjp
+         S/4SQbIwIC6p2ghq6Qff3s6s4dIFw47gjIQrwXl1CFH/Komgqk3oQKRrRoYGwUGHNUgc
+         lffGvMgrynaBC08Lljp77daWHiNBdZ7UwOnPkoXnPDy4s4qWabzP/SqjeLx07QlMTHWO
+         ZtwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMMOBCU0tsCtilU185HGZTX8Jdgk+awqTXulJhhB/RGBnZheyjJeG6NdQX9S1r2i7US0c07nIrZlSN4p+XYU3Ms2TteAc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygaR9XUHtP7jqS4iVlpT2xGFeRP+B/4+BLpEVgVLmE9HMp/tyz
+	qnP4Y9X1t4UZ7QJr4HAIyCWwll5OO7TrAI3ZB5SsyGaBhUAhsN5V6exLXV6JZC+B02u7EBRb0Lz
+	wNCPf5hgFH9BmhgpvavwYIe90s2GHmiY=
+X-Gm-Gg: ASbGnctHLoWynzR/YOeP5O6TzeZnVu0IlMcgVNBnZa4rlV2T18m/j3rY1uMk5swa08u
+	oWB0rw8OHkb8OH1Nabv0+zY1PdHHb7l8RWV/9DvhQ0iksfcXQDEsvvEPuYwWHp3n2QIUFvPxyJX
+	CAvDmVH/UJ4MV60xreOOzCbBwVQhjR12btAgrqxFDhjeyHh+BM+ViOcuOwLTMBc8SyTL5AXVqfO
+	hoyLEg=
+X-Google-Smtp-Source: AGHT+IEPnzETHfIgVe8rbYGpffEitkgUY5tbApm7qiaC9l5Nc8ofRpUyTQPO48qxBeA4pIWC06Mh2wcCe4/H5YFHFPg=
+X-Received: by 2002:a17:90b:3d0f:b0:32b:dfdb:b27f with SMTP id
+ 98e67ed59e1d1-33098246affmr18469898a91.17.1758544453556; Mon, 22 Sep 2025
+ 05:34:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250920074156.GK39973@ZenIV> <20250920074759.3564072-1-viro@zeniv.linux.org.uk>
+ <20250920074759.3564072-31-viro@zeniv.linux.org.uk> <CAHC9VhTRsQtncKx4bkbkSqVXpZyQLHbvKkcaVO-ss21Fq36r+Q@mail.gmail.com>
+ <20250921214110.GN39973@ZenIV> <CAHC9VhSJJ5YLXZbB-SvQket-PJCv81quM6XLrBDc7+erus-vhA@mail.gmail.com>
+In-Reply-To: <CAHC9VhSJJ5YLXZbB-SvQket-PJCv81quM6XLrBDc7+erus-vhA@mail.gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Mon, 22 Sep 2025 08:34:02 -0400
+X-Gm-Features: AS18NWDPYNiBNGWS7nxHqJa1sonTvXEysr_U_r4l4cLpOAIMmTBrwipP0XT2NVE
+Message-ID: <CAEjxPJ4Ez1oYXa4hEcSLSrO+ikLN0kgrWQc+2n2K7wWoy7a7pQ@mail.gmail.com>
+Subject: Re: [PATCH 31/39] convert selinuxfs
+To: Paul Moore <paul@paul-moore.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, selinux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
+	brauner@kernel.org, jack@suse.cz, kees@kernel.org, casey@schaufler-ca.com, 
+	linux-security-module@vger.kernel.org, john.johansen@canonical.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+On Sun, Sep 21, 2025 at 10:45=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+>
+> On Sun, Sep 21, 2025 at 5:41=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk>=
+ wrote:
+> > On Sun, Sep 21, 2025 at 04:44:28PM -0400, Paul Moore wrote:
+> > > > +       dput(dentry);
+> > > > +       return dentry;  // borrowed
+> > > >  }
+> > >
+> > > Prefer C style comments on their own line:
+> > >
+> > >   dput(dentry);
+> > >   /* borrowed dentry */
+> > >   return dentry;
+> >
+> > Umm...  IMO that's more of an annotation along the lines of "fallthru".=
+..
+>
+> Maybe, I still prefer the example provided above.  The heart wants
+> what the heart wants I guess.
+>
+> > > > @@ -2079,15 +2088,14 @@ static int sel_fill_super(struct super_bloc=
+k *sb, struct fs_context *fc)
+> > > >                 goto err;
+> > > >         }
+> > > >
+> > > > -       fsi->policycap_dir =3D sel_make_dir(sb->s_root, POLICYCAP_D=
+IR_NAME,
+> > > > +       dentry =3D sel_make_dir(sb->s_root, POLICYCAP_DIR_NAME,
+> > > >                                           &fsi->last_ino);
+> > >
+> > > I'd probably keep fsi->policycap_dir in this patch simply to limit th=
+e
+> > > scope of this patch to just the DCACHE_PERSISTENT related changes, bu=
+t
+> > > I'm not going to make a big fuss about that.
+> >
+> > Not hard to split that way.  Will do...
+>
+> Thanks.
+>
+> > BTW, an unrelated question: does userland care about selinuxfs /null be=
+ing
+> > called that (and being on selinuxfs, for that matter)?  Same for the
+> > apparmor's securityfs /apparmor/.null...
+>
+> That's an interesting question.  The kernel really only references it
+> in one place after creation, and as you've already seen, that's easily
+> changed.  It's more important that it can be uniquely labeled such
+> that most any process can open it, otherwise we run into problems when
+> trying to replace fds when another file that the process can't open.
+>
+> I'm adding the SELinux list to tap into the folks that play with
+> userland more than I do, but off the top of my head I can't think of
+> why userspace would need to do anything directly with
+> /sys/fs/selinux/null.  There are some comments in the userland code
+> about not being able to mount selinuxfs with MS_NODEV due to the null
+> device, but that's the only obvious thing I see while quickly
+> searching through the code tonight.
 
-Open code tpm_buf_append_hmac_session_opt() because it adds unnecessary
-disperancy to the call sites (and reduces the amount of code).
+Is there a reason why these patches weren't sent to selinux list in
+the first place?
+In any event, yes, Android userspace (in particular the Android init
+program) relies on /sys/fs/selinux/null at a point where /dev/null
+does not yet exist [1]. Hence, I don't believe we can drop it since it
+would break userspace.
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
----
- drivers/char/tpm/tpm2-cmd.c               | 14 +++++++++++---
- include/linux/tpm.h                       | 23 -----------------------
- security/keys/trusted-keys/trusted_tpm2.c | 12 ++++++++++--
- 3 files changed, 21 insertions(+), 28 deletions(-)
+[1] https://cs.android.com/search?q=3D%2Fsys%2Ffs%2Fselinux%2Fnull&sq=3D&ss=
+=3Dandroid%2Fplatform%2Fsuperproject%2Fmain
 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 7d77f6fbc152..89e6169add88 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -257,9 +257,17 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
- 
- 	do {
- 		tpm_buf_reset(&buf, TPM2_ST_SESSIONS, TPM2_CC_GET_RANDOM);
--		tpm_buf_append_hmac_session_opt(chip, &buf, TPM2_SA_ENCRYPT
--						| TPM2_SA_CONTINUE_SESSION,
--						NULL, 0);
-+		if (tpm2_chip_auth(chip)) {
-+			tpm_buf_append_hmac_session(chip, &buf,
-+						    TPM2_SA_ENCRYPT |
-+						    TPM2_SA_CONTINUE_SESSION,
-+						    NULL, 0);
-+		} else  {
-+			offset = buf.handles * 4 + TPM_HEADER_SIZE;
-+			head = (struct tpm_header *)buf.data;
-+			if (tpm_buf_length(&buf) == offset)
-+				head->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-+		}
- 		tpm_buf_append_u16(&buf, num_bytes);
- 		tpm_buf_fill_hmac_session(chip, &buf);
- 		err = tpm_transmit_cmd(chip, &buf,
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 667d290789ca..aaa407ddef21 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -534,29 +534,6 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
- 				 int passphraselen);
- void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf *buf,
- 			 u8 attributes, u8 *passphrase, int passphraselen);
--static inline void tpm_buf_append_hmac_session_opt(struct tpm_chip *chip,
--						   struct tpm_buf *buf,
--						   u8 attributes,
--						   u8 *passphrase,
--						   int passphraselen)
--{
--	struct tpm_header *head;
--	int offset;
--
--	if (tpm2_chip_auth(chip)) {
--		tpm_buf_append_hmac_session(chip, buf, attributes, passphrase, passphraselen);
--	} else  {
--		offset = buf->handles * 4 + TPM_HEADER_SIZE;
--		head = (struct tpm_header *)buf->data;
--
--		/*
--		 * If the only sessions are optional, the command tag must change to
--		 * TPM2_ST_NO_SESSIONS.
--		 */
--		if (tpm_buf_length(buf) == offset)
--			head->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
--	}
--}
- 
- #ifdef CONFIG_TCG_TPM2_HMAC
- 
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index e165b117bbca..c414a7006d78 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -482,8 +482,10 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 			   struct trusted_key_options *options,
- 			   u32 blob_handle)
- {
-+	struct tpm_header *head;
- 	struct tpm_buf buf;
- 	u16 data_len;
-+	int offset;
- 	u8 *data;
- 	int rc;
- 
-@@ -518,8 +520,14 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 		tpm2_buf_append_auth(&buf, options->policyhandle,
- 				     NULL /* nonce */, 0, 0,
- 				     options->blobauth, options->blobauth_len);
--		tpm_buf_append_hmac_session_opt(chip, &buf, TPM2_SA_ENCRYPT,
--						NULL, 0);
-+		if (tpm2_chip_auth(chip)) {
-+			tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_ENCRYPT, NULL, 0);
-+		} else  {
-+			offset = buf.handles * 4 + TPM_HEADER_SIZE;
-+			head = (struct tpm_header *)buf.data;
-+			if (tpm_buf_length(&buf) == offset)
-+				head->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-+		}
- 	}
- 
- 	tpm_buf_fill_hmac_session(chip, &buf);
--- 
-2.39.5
 
+>
+> > If nobody cares, I would rather add an internal-only filesystem with
+> > root being a character device (1,3) and whatever markings selinux et.al=
+.
+> > need for it.  With open_devnull(creds) provided for selinux,
+> > apparmor and whoever else wants to play with neutering descriptors
+> > on exec...
+>
+> With the ongoing efforts to push towards better support for multiple
+> simultaneous LSMs, we would likely need to make sure there each LSM
+> that currently has their own null device would continue to have their
+> own, otherwise we potentially run into permission conflicts between
+> LSMs where one could end up blocking another and then we're back to
+> not having a file to use as a replacement.  Not sure if that is what
+> you had in mind with your proposal, but just wanted to make sure that
+> was factored into the idea.
+>
+> --
+> paul-moore.com
+>
