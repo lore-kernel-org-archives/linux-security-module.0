@@ -1,197 +1,149 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5040F28AAE6
-	for <linux-security-module@vger.kernel.org>; Mon, 22 Sep 2025 09:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F01522F;
+	Mon, 22 Sep 2025 10:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758533617; cv=none; b=HGSTXpbFyNfvRiKhKXumalm9EZb8kery7rHsVoQMHQ9M7r6JmXbZdlzSY/u79oRpRoSoAldND9Gdwe8Qri797Ix07fdy7GyXC+GnvzheSF4QPNfRAFiSJoByTK/BF6zUHTSPoXyVR9rSM+uUJ7/m3w+FPc3fd6Ukv9h/2DlN0W4=
+	t=1758538439; cv=none; b=MC34lVTc+FGi4H+7SbdMXa3BAO8nRjTTmyHTsXDrYzewYbN1d0v8p3kAjjOSwS3LJJduvEcRgZaNrCN5JUTsyBPCzQ4t8FOw9R4/I0UCbB25HOyW9J3wAPiPtE0FPYDr+OwupBgCU6n2Z/xA7Ajp0C2z/vWh2iaM4fyAdUBqt4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758533617; c=relaxed/simple;
-	bh=uR7IyOLN2X3biDgABs/idhTRrUaMmnWVYyN/UzgtCKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gv0t3VogfL5i/wSDZfDso2HUyJ2R6wPiF9a7uOR06OUReCwWGq/mvLrw6HB8fVowX8UkpgTGYQ/hqWAilDI148xx1m6pMIj359ES8uaA3b2wYYxT4asc9MrJA2kRi1eCEuPYCu9HagZjLDaq9UnYSHLX9bDJhSKZqKoJfmNXuhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rtqRVKgw; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1758538439; c=relaxed/simple;
+	bh=vVm/rh4qZNO++H9SW3SoCc/GJbF845IniMlO6ufZtJA=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=TPsWUvr/relUp2ZpfBe/eNayY6l7y4h+NCM0X500zZCxz6oF6fgKLPNKwf0tT73nYR6qM3Pmyh4BNmUBxD71NSMDdOad7Ppkd6x62g5QBjNGyVfUQ97iSRjnrdCLLR3s6XmaKd4aR7vyofl4xEDG5WaAQDx6u0htZcPFL+e3EO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pHRVjbD6; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rtqRVKgw"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45f2c9799a3so30937375e9.0
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Sep 2025 02:33:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758533613; x=1759138413; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=89qPC2dMk40SQhoKG37yGCiQt/NY420sGfty0Meng0w=;
-        b=rtqRVKgwXVLDUPMcssfmWmAiw96i6zfxA/t2vqhdNA5YUqKeezt2pPCKNqVyuYTQE4
-         gVXMk/0hOTwX4zwKdwi3p146YZma2gcgaSCBW29dZqy7v7TEgm2EGs84QxoYNsAn1znb
-         slwzGELxqwII971SnlHT1bDj6nwjAKtx20WV+dXWzoBKLw4zi9u0z8u4f7HVH9w+TcqV
-         fk7//ZiYPMZISgktY4gCh/huytX2ZwLjvMMgStS6ETfULKiiydWXMY4YMns37F16PFVb
-         6hWHTbG4lZj71aB+/CtXTslBsPyT7fXYYYekfTbAhGw5cudJI4ZwVFn3PDSnYXowHJ5p
-         kIXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758533613; x=1759138413;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=89qPC2dMk40SQhoKG37yGCiQt/NY420sGfty0Meng0w=;
-        b=qKv/JwEqt9lyswcheK2T//0f49CoI/pXB/OEJt17n03ifPOgEiW9e3oGBlofTfuR1e
-         kLWM2M93aiopmHL+FGoEfYRUUyPJfrsGFbBT9u+XUWT2pNhXUYEO+SfogYr6bTlavIIp
-         oaWBVa4eVDXK7LF9fYKaGuakNAhfa3F/X2AR5GS1K1qmY4ZHvjrMDcfgIqGuiILRCeB9
-         hC9Bjjpccp3xUaG9Wk7laQ6HP1XMHajQvlCLAASd81PVQcIEImsRUyYOpdIHXDV3fAsb
-         WjyCLe6Saqzlaa/Kr1ooDEscz7rXd8GMW+D0BtIsq1nuPCAPul3o2iL+/dMVXLTHjzrD
-         mcQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoREZjy/FsHqDCMbs9k6m1CUQEujGG0RlGqvtN0WAXih8dKaCumaEXe7Bkh30O0uwMIQ+8f4E7jG2Qc5SVNFJTbD5jJnI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy124qY0zP+IBQDwt/N+8qPoesY/+ZBFiHz2ccfNVaWWLhw0EyW
-	QYC8k8DkRf2UP8tBpt4l30k031ocyAq9qRwb059+rwHqjipS+3FAzYDVCqP0PGFUpw==
-X-Gm-Gg: ASbGnctnJetfoI7hxwMyPC41wgQzUpRjKBjoisUtmExcey7BFTG0nq6z5MTeM1bAfLk
-	hmjI594D9ZkCbC/3bsFZBs1Sz2Xmo5aGxJ2a/6Uz0OZDJxJy4bNouU8tm2g/++yYhgWTVLjAFzV
-	9OP/m6IuFBbEROc4+9SvFYZjdFWyocpAZ3qGMDqY7KWTGpHf+oT+FK0pxeer/voTIpk58/e9ds8
-	mRZlQpAjPU3kNP2kWy4bd4u/i8uf7Mu7YgxpwLmpCR58QCcaSrOqLWirmG79OgpTiTg+96lut4P
-	cES6q/uhLuPU+IYTKyB5Lyc5FbL0On8MmUgMaLqiPSiFSazKWrIEUY0vKP77FRnDfTmpf9vMXvt
-	Rh2rLMgvbfyQ8RH73O6m43ABuH4VZLbFInYOH3c8rOwsJm5kXL5ZovEdDOUg=
-X-Google-Smtp-Source: AGHT+IEkoU9ognY1IS2/WNXTQHBehT3iG6jr+rUMfSA5BLARxzu2twytBIMtwJpeHRGrTnG81Cn1IQ==
-X-Received: by 2002:a05:600c:46c6:b0:45b:804a:a65e with SMTP id 5b1f17b1804b1-467ebbbff33mr123610355e9.28.1758533612329;
-        Mon, 22 Sep 2025 02:33:32 -0700 (PDT)
-Received: from elver.google.com ([2a00:79e0:2834:9:8fed:21ad:ce77:2e15])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46d1f3e1b03sm39713145e9.23.2025.09.22.02.33.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 02:33:31 -0700 (PDT)
-Date: Mon, 22 Sep 2025 11:33:23 +0200
-From: Marco Elver <elver@google.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
-	Bill Wendling <morbo@google.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
-	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	linux-sparse@vger.kernel.org, llvm@lists.linux.dev,
-	rcu@vger.kernel.org
-Subject: Re: [PATCH v3 00/35] Compiler-Based Capability- and Locking-Analysis
-Message-ID: <aNEX46WJh2IWhVUc@elver.google.com>
-References: <20250918140451.1289454-1-elver@google.com>
- <20250918141511.GA30263@lst.de>
- <20250918174555.GA3366400@ax162>
- <20250919140803.GA23745@lst.de>
- <20250919140954.GA24160@lst.de>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pHRVjbD6"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58M527x5006772;
+	Mon, 22 Sep 2025 10:52:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=0YCa5i
+	xq5n6J1YTb8a626BPv5bsn7LSdr5yPiOqA2tQ=; b=pHRVjbD6d58T6s9vFRMeuH
+	MjklQbzxjyZK1y2dPIIU2S9IvIC5fX0u1zXinmcxw5oPXUmtA6AvR6lG5mNEixmt
+	7poxwVX1idglU8QEsBp0Zu7s+o/k9BJWMgpDRdmi4Bypl72I4hLbty0B2oWuBj6I
+	sTrA0OZHOqVE8ta9IaTXboPWIlcXVR6nuJDVq9W7H4WltwlzTzYx7bKoeqcjx42T
+	EEjz28IkdQsujx2Lmob2J0c25FkjkRQJrtLberDM2xq1flftNj8E94aDKntM32N/
+	CIsloF0w1HU/U+KvsjBzQ63R9FrU8N51S9C5MW/j/95s3Er1QRl8I1FUkUhe2bjA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499jpk1ywu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Sep 2025 10:52:51 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58MAqpLR009215;
+	Mon, 22 Sep 2025 10:52:51 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499jpk1ywr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Sep 2025 10:52:51 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58MA5qeP030397;
+	Mon, 22 Sep 2025 10:52:50 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49a9a0we0b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Sep 2025 10:52:50 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58MAqnwI22086254
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 22 Sep 2025 10:52:50 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C37705805E;
+	Mon, 22 Sep 2025 10:52:49 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DA24958056;
+	Mon, 22 Sep 2025 10:52:48 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.106.79])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 22 Sep 2025 10:52:48 +0000 (GMT)
+Message-ID: <63cf73f5ed8ceda0d68df416c2ba18334e7a9b83.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 11/34] lsm: get rid of the lsm_names list and do
+ some cleanup
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>, Fan Wu <wufan@kernel.org>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?=	 <mic@digikod.net>,
+        =?ISO-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+        Kees Cook
+ <kees@kernel.org>, Micah Morton <mortonm@chromium.org>,
+        Casey Schaufler	
+ <casey@schaufler-ca.com>,
+        Tetsuo Handa
+ <penguin-kernel@i-love.sakura.ne.jp>,
+        Nicolas Bouchinet
+ <nicolas.bouchinet@oss.cyber.gouv.fr>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <CAHC9VhSOhaB86yEV0+2HWRc3oYgZmLX+Nz3ERbohGRHeroKThA@mail.gmail.com>
+References: <20250916220355.252592-36-paul@paul-moore.com>
+	 <20250916220355.252592-47-paul@paul-moore.com>
+	 <d514db2f7c1de9b6d9092ff2ad1ce4cdba286e83.camel@linux.ibm.com>
+	 <CAHC9VhSOhaB86yEV0+2HWRc3oYgZmLX+Nz3ERbohGRHeroKThA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 22 Sep 2025 06:52:48 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919140954.GA24160@lst.de>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=L50dQ/T8 c=1 sm=1 tr=0 ts=68d12a83 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=e1LNZ6x10KNBX6yl:21 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8
+ a=VnNF1IyMAAAA:8 a=xVhDTqbCAAAA:8 a=Yt5IGFHnr2jDG3FCesEA:9 a=QEXdDO2ut3YA:10
+ a=Xy2LUYiHjMsA:10 a=8uXwW3QgYZ0A:10 a=ZXulRonScM0A:10
+ a=GrmWmAYt4dzCMttCBZOh:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxMCBTYWx0ZWRfXyyDaNV6T7CaU
+ MMUmBJm3RcjcTh4NfEA4+GyUHcJqTa/VuvDeuMH5OqljMNIZVe0kyE5SLkFLoylGmkWdmWcxYzb
+ MJf8isLeikt9oPhJKxYV3YSkb5lC0wiJr9bCYgiwJivdf970qxGYY/luR7G9P34gp5GaGvg/Q9C
+ EDKzZKmZFisMhohOn8lDrYPXGRsecDZ0XHPmzDtkUPaTFD1C63Gc7m+g51VF/WSXI0ijtF/SZKj
+ jBKOd9IeCdQoJz0/1NLGgrkDIX3CLrgD/9v0KhmGfPb6wXc1F/ct0jQB0fvXSIiOXRwwgIbQAWS
+ BVmjphS/dJjE56FwVmFE+GNRCJLxdGFAWVjyY8EL7MOStmNlpC2UARvJUXqVMhhRojrA+Y2z2B6
+ GFVnYXwP
+X-Proofpoint-ORIG-GUID: tEhjr0P0ulCtjiWToiXabeOCCn-dvYUI
+X-Proofpoint-GUID: utIOu00GY_2fVWhAugXHLKw5UBb5_6OI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-22_01,2025-09-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
+ priorityscore=1501 suspectscore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200010
 
-On Fri, Sep 19, 2025 at 04:09PM +0200, Christoph Hellwig wrote:
-> On Fri, Sep 19, 2025 at 04:08:03PM +0200, Christoph Hellwig wrote:
-> > I started to play around with that.  For the nvme code adding the
-> > annotations was very simply, and I also started adding trivial
-> > __guarded_by which instantly found issues.
-> > 
-> > For XFS it was a lot more work and I still see tons of compiler
-> > warnings, which I'm not entirely sure how to address.  Right now I
-> > see three major classes:
-> 
-> And in case anyone cares, here are my patches for that:
-> 
-> https://git.infradead.org/?p=users/hch/misc.git;a=shortlog;h=refs/heads/cap-analysis
-> 
-> git://git.infradead.org/users/hch/misc.git cap-analysis
+On Sun, 2025-09-21 at 15:23 -0400, Paul Moore wrote:
+> On Fri, Sep 19, 2025 at 3:16=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> =
+wrote:
+> >=20
+> > On Tue, 2025-09-16 at 18:03 -0400, Paul Moore wrote:
+> > > The LSM currently has a lot of code to maintain a list of the current=
+ly
+> > > active LSMs in a human readable string, with the only user being the
+> > > "/sys/kernel/security/lsm" code.  Let's drop all of that code and
+> > > generate the string on first use and then cache it for subsequent use=
+.
+> > >=20
+> > > Signed-off-by: Paul Moore <paul@paul-moore.com>
+> >=20
+> > FYI, checkpatch.pl complains of unbalanced braces, otherwise
+>=20
+> Looks good to me?
+>=20
+> % stg export --stdout lsm-lsm_names_cleanup | ./scripts/checkpatch.pl -
+> total: 0 errors, 0 warnings, 139 lines checked
+>=20
+> Your patch has no obvious style problems and is ready for submission.
 
-I gave this a try, and with the below patch and the Clang fix [1],
-fs/xfs compiles cleanly. I think the fundamental limitation are the
-conditional locking wrappers. I suspect it's possible to do better than
-disabling the analysis here, by overapproximating the lock set taken
-(like you did elsewhere), so that at least the callers are checked, but
-when I tried it showed lots of callers need annotating as well, so I
-gave up at that point. Still, it might be better than no checking at
-all.
+Try adding "--strict", which enforces
+https://www.kernel.org/doc/html/v4.10/process/coding-style.html#placing-bra=
+ces-and-spaces
 
-[1] https://github.com/llvm/llvm-project/pull/159921
-
-Thanks,
- -- Marco
-
-
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index 9c39251961a3..f371a08e5d44 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -140,6 +140,7 @@ void
- xfs_ilock(
- 	xfs_inode_t		*ip,
- 	uint			lock_flags)
-+	__capability_unsafe(/* conditional locking */)
- {
- 	trace_xfs_ilock(ip, lock_flags, _RET_IP_);
- 
-@@ -183,6 +184,7 @@ int
- xfs_ilock_nowait(
- 	xfs_inode_t		*ip,
- 	uint			lock_flags)
-+	__capability_unsafe(/* conditional locking */)
- {
- 	trace_xfs_ilock_nowait(ip, lock_flags, _RET_IP_);
- 
-@@ -243,6 +245,7 @@ void
- xfs_iunlock(
- 	xfs_inode_t		*ip,
- 	uint			lock_flags)
-+	__capability_unsafe(/* conditional locking */)
- {
- 	xfs_lock_flags_assert(lock_flags);
- 
-@@ -272,6 +275,7 @@ void
- xfs_ilock_demote(
- 	xfs_inode_t		*ip,
- 	uint			lock_flags)
-+	__capability_unsafe(/* conditional locking */)
- {
- 	ASSERT(lock_flags & (XFS_IOLOCK_EXCL|XFS_MMAPLOCK_EXCL|XFS_ILOCK_EXCL));
- 	ASSERT((lock_flags &
-diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-index d9ac9521c203..9c4ec3aa8bf9 100644
---- a/fs/xfs/xfs_log.c
-+++ b/fs/xfs/xfs_log.c
-@@ -472,6 +472,7 @@ xfs_log_reserve(
- static void
- xlog_state_shutdown_callbacks(
- 	struct xlog		*log)
-+	__must_hold(&log->l_icloglock)
- {
- 	struct xlog_in_core	*iclog;
- 	LIST_HEAD(cb_list);
+Mimi
