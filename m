@@ -1,121 +1,106 @@
-Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CAE305E33;
-	Mon, 22 Sep 2025 17:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD136285C92
+	for <linux-security-module@vger.kernel.org>; Mon, 22 Sep 2025 19:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758561739; cv=none; b=R6e8Fhqgz1JYQ1glEZhl56Av1EFlbWCd0xkkqEldMivUHtfqzJUsXNGJG4xbkyvh9QKzwKdsBCOOqLf83gvE4itVv+/nUOOSmtC8OAD/SpsPk4XZa3bai0cpjcUNjpc4EzVZ83/n9peB/V905aPOyHpq50Z0H8zGPo4/MYB0N+U=
+	t=1758569422; cv=none; b=B5W2i/Ivf5CsOkrX9BK814TWN/OI9l4bcRGK6l1zjj4fkt4nV6/t09OeTKrkdZMoG2j5VbmvRFNTH8ANpsLaAAkVubdcpf4MCOBYM39a4NbHkt+WUgEV91OdVbAv8GFvC/5BPrfdwxRXSObLkAmo+0gDgKFM7qmVvfgduUwIFZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758561739; c=relaxed/simple;
-	bh=VN0yMScQ8pb/61s20XjaSKiW9Mzun4YWkxHCUCwd0Gc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BOR4YY7YppoVDp0EWEfk4fPx9BafX04JjTS3HZkkhB66bx/Z/OGMrX5WD1lkaHRYeh+1KNgVmbmvIv+bcP80iithPyW2tELdAd10p+qAmYfpNZgESuWHA1DaBH34x7lIqho2M9kJZvxDDzj2S82SlykWKGEr1vyB4X2c5XcfWOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=benboeckel.net; spf=pass smtp.mailfrom=benboeckel.net; dkim=pass (2048-bit key) header.d=benboeckel.net header.i=@benboeckel.net header.b=dspsx8At; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DkOyr9XC; arc=none smtp.client-ip=202.12.124.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=benboeckel.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=benboeckel.net
+	s=arc-20240116; t=1758569422; c=relaxed/simple;
+	bh=M55kfbiA5WNrGJ3r6EqFqgctDNfA8Xd3Z8+bi9BHwqY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TTLUxh5Mu9AXKNCeJn5NtB4rrr6lh2jKnjJ4AvwPiGZosKzOlaWB2EQqH7sIoQlMXi4OR2nvDgu5/9iqU/P8JLi1RAAiyGPP8aQqBs8UMHAtOGXf/hs+Wa7yVFEUvNT1m11VSpxkRfHdyWz0L2DXj9jBhy/bwGPL0qDddtKzYWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=a5L0TJsa; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=benboeckel.net header.i=@benboeckel.net header.b="dspsx8At";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DkOyr9XC"
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id BD0261D00232;
-	Mon, 22 Sep 2025 13:22:15 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Mon, 22 Sep 2025 13:22:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=benboeckel.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm3; t=1758561735;
-	 x=1758648135; bh=K8LjtBRRLWLzn/Sx28Fp4ytkbkynjN1owR8vzMqVA6E=; b=
-	dspsx8AtAyFXyefXTGJ4sjqIyY4LfhNOU+EEYgr+OmVPdxz+xaEfcoeBds6hURwo
-	tnCCMDWmhkyuOhKHKq2kPpJlknzTVJdBSHDrSwAFLnzeXlpthVyDRYKMknHSdltm
-	olRsCg++XOH6ocGn8NSJCTQNGY9Z0t+S5Uj22iYCyJp+X/IfGL/i7UfZisuR+g7L
-	YRmVI4BgjaIip6oQAitSU8SPjNVBBUWGxZlTIlHu5lu3x7PgbRSVoq2UI8HJviXc
-	6SQHx0t79b6R0xZ6ZSUD05/VRhLFFLz4woqymB+hqmbHOTyStEIvCFOl7aDKdKNn
-	vq0tfkSUtNYNrPxSkISEIw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1758561735; x=1758648135; bh=K8LjtBRRLWLzn/Sx28Fp4ytkbkyn
-	jN1owR8vzMqVA6E=; b=DkOyr9XCnn2hEyg4t2q2lgLtX0SZl21VY3bNu2KxCLrm
-	KX8cu3HobsPNkvexCMBTSNFKfkOsvTlHjMrsz3xl/csH86RIsTpvbpV/t1kGAnep
-	pwTlOJSBM4iu+m6a158InW/B6LK9SA3HBdsXEKWmb3evSiW4lrma0dpdx+1gOCDC
-	Y92kwzEqGzLf40sWoNFKw7GUqwIPDE5sw/o4g8MQ3zBMciA46hLCbtXDC2lHmBG+
-	R3yHdhCk6ZU8yo1I8dwS5kVcs+2A+aBGFa1bF4PJSNsN/FJ4pfZ5mATcPCr2BgRP
-	Lo5OsnjEAB5n9mxccvpP8siONFEbvxC/ac42zRmz+A==
-X-ME-Sender: <xms:xoXRaFnmkVF92qNKvTBHQ9iPteMpTnxZWfSbOnPBLPHolxlo1f-fcQ>
-    <xme:xoXRaLMeVN9iMefaWNPy6xGx5-_7I26c1V2FBMItnCQBLyX9hFxFj3bu_cHXXhPuN
-    caik4I1l9kZZn0IVlCi8LN3EBWt6MJrnOmKR2z5qQLnzuIKDyd3tXM>
-X-ME-Received: <xmr:xoXRaByEMN6cxitMggZyHrEPzfsLPyM3a6hprqzo-_Eb0e77rfwmruepwv4mcuJdR4JZksQAF87DG_CsepiNpb9tNxpP52KTbzk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehkeeggecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhrfhggtggujggfsehttdertddtreejnecuhfhrohhmpeeuvghnuceu
-    ohgvtghkvghluceomhgvsegsvghnsghovggtkhgvlhdrnhgvtheqnecuggftrfgrthhtvg
-    hrnhepudethefgfeduffefleffhfehjefgvdffhfelvdeukeduueeigeeujeeiffdvieeg
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgvse
-    gsvghnsghovggtkhgvlhdrnhgvthdpnhgspghrtghpthhtohepudegpdhmohguvgepshhm
-    thhpohhuthdprhgtphhtthhopehjrghrkhhkoheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheplhhinhhugidqihhnthgvghhrihhthiesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehjrghrkhhkohdrshgrkhhkihhnvghnsehophhinhhshihsrdgtohhmpd
-    hrtghpthhtohepphgvthgvrhhhuhgvfigvsehgmhigrdguvgdprhgtphhtthhopehjghhg
-    seiiihgvphgvrdgtrgdprhgtphhtthhopeguhhhofigvlhhlshesrhgvughhrghtrdgtoh
-    hmpdhrtghpthhtohepphgruhhlsehprghulhdqmhhoohhrvgdrtghomhdprhgtphhtthho
-    pehjmhhorhhrihhssehnrghmvghirdhorhhgpdhrtghpthhtohepshgvrhhgvgeshhgrlh
-    hlhihnrdgtohhm
-X-ME-Proxy: <xmx:xoXRaAuMkF7IXrFJh6e5fN5VJar92zm3cO6qvt01pTPDIKLxgBSsjw>
-    <xmx:xoXRaMaHrFk2VhMb8C44mXdZS8_mZSagw0H7JvZ4UUOtiM6x5i6jRQ>
-    <xmx:xoXRaH0mpEJa9wZFbSxS5SWNe1ETCw4dMBjbmsBdt1Kcq_rFHSZLLw>
-    <xmx:xoXRaGshmBzBkuIQBM42-f5I5ldP693bfcP0jqmTKHrW9-4Us9vHHg>
-    <xmx:x4XRaHS1-MM6ljfBrMOKe1CL1eAKp4rsLESzUtcuIrwLmtrr_9ug_Hp2>
-Feedback-ID: iffc1478b:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 22 Sep 2025 13:22:14 -0400 (EDT)
-Date: Mon, 22 Sep 2025 13:22:13 -0400
-From: Ben Boeckel <me@benboeckel.net>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 3/4] tpm2-sessions: Remove unnecessary wrapper
-Message-ID: <aNGFv-nGZF5chGIb@rotor>
-Reply-To: list.lkml.keyrings@me.benboeckel.net
-References: <20250922164318.3540792-1-jarkko@kernel.org>
- <20250922164318.3540792-4-jarkko@kernel.org>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="a5L0TJsa"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-62105d21297so8283571a12.0
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Sep 2025 12:30:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1758569419; x=1759174219; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cvdWOntfA4A2sQxeMILs61f9nOsNLek7agJHp14BnZw=;
+        b=a5L0TJsaSgtelL6PwfSc5g1RGH5xXQFmKj5F1lLBAeFsG69TsSvyMsSrFNtc2wPL2a
+         whvVf+1P6Xvn6utJdbFrhO8fyOhXDoBY2rlST9n/D0rmICcvUF5O1dzXv9inJoECHO9X
+         ilXyo8nEQz1QpOhlnDnQmz0lHxNKPiNHUrv4jk12thJRYG6FqJ7zCf790fiTUsUzjuZm
+         948+9zbPqmkPppmpcFykZDpX4SBd3I5vVjLb/gpoN1c2LoYLk5oBAjhEphmxQDiMnb7x
+         wAPV6rdtxYN3pr+QaE2TKzq0FR+A5G8hVdAolnBiI+qM7V/8LlkuDuBsTGO7sQfIcFTs
+         xrEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758569419; x=1759174219;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cvdWOntfA4A2sQxeMILs61f9nOsNLek7agJHp14BnZw=;
+        b=UXegwRISy8w6HBDHLFsxVY06bkJTKNwHT5X8qLPwIj8sH/mSvnfMpLD3gvjLkt7J4l
+         SIZELVTQnvrWgUQCMhbGAaY9jduJ5VewlWGtlYuUdynnCMuWHPTd4e533wvlXJA8sV29
+         VufyB9ZOLlV1D8Sd/n4mK+rDQjyCOV/ZqjeoD5BBop36gmUfTEnFXvfdxLymLUPTvS6X
+         bVvlxJxCo/EB0bnggp1D7DTu2CqNZLVahUCtSowN5pnMZSFZuvA3BBDLLofQXBEftCCF
+         iZvhaVQvYY+q6jl/AxHhd3y308nxin6puIWyuGVleizK4hTVDk3g0tpiOfJd8FfpPvLb
+         EY4w==
+X-Forwarded-Encrypted: i=1; AJvYcCX6QKwT9KW/1xJBSkg9o+B9CkQvPR3FCKX0fD4vKcCUUKPj581IyF7+gyp1WH7o2ChboRubLiGEZVWWrE9IvxWIeAKBsME=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/7sq/U0rDsdCW75FfQpihKl3K4+eU/1Ixbgf3ap3oLv9SkF0p
+	RJazY4oZ3P58oF3ON1yeKLQ7eNCP6QxAyKnnrbvk5Xnk+3hs11KbXnzFqx5sCZA0ILImq/PT7uI
+	aOcwfJkJHLlDeuqnK9Y472vjI/btrU2OT39/+ghyg
+X-Gm-Gg: ASbGncvipft9G9Q0Ik9xbJ1YxRt6v9laqkrrpHWi5psSLkd2XRCkRw1FvUjFPUNDMBi
+	I4+ujKCYCW1rzvLwKy3PhU0+pKCTuVVPD6CsSkyOKIHXO7yOcnvh2Yd4mt1BP6eQJIPQbkkYoBC
+	aMglU/SY3g5ZJeES9tsfsriCjTAjjpYgu5PhZgWTFiHJZlE6wGLZCovE4JBq2Huks+o33hb//Mb
+	QDKV8o=
+X-Google-Smtp-Source: AGHT+IEiBDSh+6Em5c+U4LmqyUVPf4J6sg4KEYshuli5NnK7h8jqw5N22Ih+dxfjqxwcfWjX8MHUInxueYuNHXzg6tw=
+X-Received: by 2002:a05:6402:5201:b0:633:7b1e:9aa3 with SMTP id
+ 4fb4d7f45d1cf-6337b1ea02fmr4563672a12.34.1758569418235; Mon, 22 Sep 2025
+ 12:30:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250922164318.3540792-4-jarkko@kernel.org>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+References: <20250918020434.1612137-1-tweek@google.com> <CAHC9VhSbWJ-8tj5BxSTxznGO8zraKRSE31a+tqdfMHB53ef-MQ@mail.gmail.com>
+ <CAEjxPJ5GidA9oT_fbKRe_nH1J3mER0ggM-dBW=Nuo765JDuQKg@mail.gmail.com>
+In-Reply-To: <CAEjxPJ5GidA9oT_fbKRe_nH1J3mER0ggM-dBW=Nuo765JDuQKg@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 22 Sep 2025 15:30:04 -0400
+X-Gm-Features: AS18NWA9HrHmx3YP496OglRtxh1AdycMtaqbc5LSlhUEUhu_PxKTgISVOm7uHlk
+Message-ID: <CAHC9VhS2TU2GWgfUOHerbfjyxb5QZMSMqLdQirjSdkUohR7opg@mail.gmail.com>
+Subject: Re: [PATCH v3] memfd,selinux: call security_inode_init_security_anon
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
+	Hugh Dickins <hughd@google.com>, James Morris <jmorris@namei.org>, 
+	Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Isaac Manjarres <isaacmanjarres@google.com>, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2025 at 19:43:16 +0300, Jarkko Sakkinen wrote:
-> From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
-> 
-> Open code tpm_buf_append_hmac_session_opt() because it adds unnecessary
-> disperancy to the call sites (and reduces the amount of code).
-  ^^^^^^^^^^
+On Mon, Sep 22, 2025 at 9:12=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> When would you recommend that I re-apply the corresponding userspace
+> patch to reserve this policy capability number for memfd_class?
+> After it is moved to selinux/dev? Understand that it isn't truly
+> reserved until it lands in a kernel.org kernel but would prefer to
+> reapply it sooner than that since there may be other policy capability
+> requests queueing up (e.g. bpf token) that should be done relative to
+> it. Can always revert it again if necessary, at least until another
+> userspace release is made (not sure on timeline for that).
 
-"discrepancy" as in "difference"? But that doesn't feel like the right
-usage either. Perhaps "unnecessary abstraction"? Also, open coding it
-reduces the amount of code, so some clarification to not read as
-something else that "it" (`tpm_buf_append_hmac_session_opt`) does would
-be clearer.
+When it comes to API issues like this, my standard answer is "tagged
+release from Linus" as it is the safest option, but you know that
+already.
 
-Thanks,
+The fuzzier answer is that unless something crazy happens, I'm likely
+going to move the patches, in order, from selinux/dev-staging into
+selinux/dev when the merge window closes.  This means that any
+policycap API additions for the next cycle are going to start with the
+memfd_class policycap, so it *should* be fairly safe to merge the
+userspace bits now, I just wouldn't do a userspace release with that
+API change until we see a tagged release from Linus.
 
---Ben
+--=20
+paul-moore.com
