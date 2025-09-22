@@ -1,182 +1,125 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A072125A33A
-	for <linux-security-module@vger.kernel.org>; Mon, 22 Sep 2025 21:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92AA28A3EF
+	for <linux-security-module@vger.kernel.org>; Mon, 22 Sep 2025 21:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758575546; cv=none; b=CQUrueb8AoSI50fffzOq8yxTSnjKwbUqIwxO6JWyZ+0N1xJSuyfznlI67KjBUfIQhxZTuSl7R/cEHnS875Sqez0p5yH/KgEzXix1TAtJTFo2S6TEsExAf14pbFoXJ6MdPZYp0hqNoUqMkd1KU8jhgxvZKiZPK3OpnfMv1E2lODo=
+	t=1758577989; cv=none; b=DfqS9noQUWD5fFazWUwVWAgh5PZon1VDpUMaKYuO6UzrocMClvvFe+0nU1TeXfqCusyjZKpK2jwOx1fpfJv9yEs64fb6xn8czL7EKFCj7kj9URg5B9V69WgiKhuwfOdSHJsBcwqW7jzgwf49U/gcKazbfUo9v8v59DwNhrGWT2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758575546; c=relaxed/simple;
-	bh=cjmOlabpDRHO6Vh0Y195fc83zAPlx04S+9ZsHcHhlaA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IGLVFsuunJcJJvJb0mED6Ov73dD8OSw5uk3KUiTQXuGUplL2+z/ympiIIKEnQcRD6Ks3OPSOszpxUj4CibkDnNXwPsbbzWYDu2Brxmb3l40Ev+uHrPhZ+IXBeFvk18fWTl/CeuwHGOL7HUAT0loBDzE0i6DLC87goTbUZQxdmjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=V2kwE56p; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1758577989; c=relaxed/simple;
+	bh=NrxcGV9SRKTH90U9r9TiQBRjMm9wgcBgK/JoZCvLbI8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nz+YJT9RSrCOCQ4IVkQQ6L2xGBlrUJlVxbNlyj11GbeR+DPZWy0Bn2eyFmvWxbm5eswArjRnkkWrki4ZHBhDPMg9ZopB2pzFqV8G4rxbraJLzpZgaA2EAgIh5LfsMtshloxdqFi0pk1X2n/6TfLPawKKiivBnSU2MX2M2AeqSa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MpKMTw3m; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="V2kwE56p"
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E47773F659
-	for <linux-security-module@vger.kernel.org>; Mon, 22 Sep 2025 21:12:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1758575530;
-	bh=elS6AM80OAc21lYSpfxCP2x/lAA3B3GyFLeOM2nq0so=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=V2kwE56pcaLX71mY/2ztPhm4W6DM5xOrgCaHS/wvY4yjwN+EvLUZvn35WTJQ6wybh
-	 yA3tbDS4nI7dhVlRId3r8b4JebqTJ0NM/hHhICH5QWKYDAlMKzrwnAcILjBdGrIVul
-	 uAAHHbeEdZhmwH3nWuaINr4vNJMQPGYzcNj5VOs9GwJsN5YyHXv+sBszjBP7zGt3sk
-	 cksG9imQeThpTO17K8sxcmY8UXShUnk1QYhJZiomMibzfxrCXlvCDY4SCaml/gMujS
-	 43i4V9NYG3a+9dplWXCxlPIUZSj4PODHdImrO3ZL3wSOOppWiK3XfExr++PIUxF/7v
-	 4MGfZT2kGQ6ow==
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-26983c4d708so47698205ad.3
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Sep 2025 14:12:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758575529; x=1759180329;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MpKMTw3m"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3306d3ab2e4so3864014a91.3
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Sep 2025 14:53:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1758577986; x=1759182786; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=elS6AM80OAc21lYSpfxCP2x/lAA3B3GyFLeOM2nq0so=;
-        b=jSa/KW8iMqqbX+xG85wWzYOe0cBWcQtOogmAXRLTFMOhR76XfCuEtRxsDztuhA8tVb
-         vrsADaG61gnpsKQTfT21QB1iyxqDB5wY1u9s7yv5lLJaf6lNBimeY2Tqh5pV2NSXYrJd
-         Rx8kpZaUdnBPTxc7vKKzHyGHEXG20VTZ3JieKmj7bKD5N9UbVEJXnIGrMbkVc+TSOjLs
-         pau6kYj3GZA+pcDthPJ/OVCI2Vgr9kk1DZSmLIojmIpS4brPc5WIFkgAlonoZOOoD8kw
-         BxPJjzd5YrYY+NMeIJFIqR+GHkbxMeapFm9jDv8av69I0bKYdtGgrp5IUb8bSmANtX7K
-         l88g==
-X-Forwarded-Encrypted: i=1; AJvYcCX1DQ+DjBke+xZzs5AwkmiybLSu9RGlwkjQilswbWgrUjQVIRnJEqB1uH9g22lgHvTeQSVxxO769vZdE1H0AqzDYa2G/Dw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvkMt9hbOKsctuN5wNA+Xk+peE0JNwhCd95A7bvHJWqgCMYf0w
-	7PfwbTIAcO9d7T1gaq8OBQ48TG1Zx33gCwAsSm1h2S4PZFJI28fcm5tTpxdRPgH0rY2VJLl39u4
-	2hLmAiOO2gSKlBXi6peYQZMffN4oQDCazC1nStEofB7mDYCRe4HPZALH7I+4N7dBMQ0tz8MR3R1
-	IKNAZSOk4G4QghIT3UcQ==
-X-Gm-Gg: ASbGnctL5ey4IYZ/j3kA4LewfJREdkWIQZsSrR2QLlBo9rLSJaQpCelrMijAaUjxa+S
-	jlHiAyxgoL8L7gx49eIqfkfNc+K7E4bCfPCDJ+Bo1Mufn755gO8G4rB6CY7IAFpJu6bZNpVjYzy
-	LbT0CTT8GTAMvb9MMNjmP9DXkC++PvIS2zuQUgQt6su7zcV/8LsYTCDnsKXYMUlpe2HMOdAgtZ7
-	+FDTJrXr+umbAqqNUi2O89SP68+7eTp82kaq9MiUn998U5+AW3gRqSCmqwV56Z6lOZ1g4RyZukE
-	/PKzjl86JLGcteDAmCkQFkmyxHK/BMhJRssw0y1OjBc7t2ZNamIbdg==
-X-Received: by 2002:a17:902:e88d:b0:269:9adf:839 with SMTP id d9443c01a7336-27cc20ffd3amr3125645ad.19.1758575528832;
-        Mon, 22 Sep 2025 14:12:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEtyDqrDs8nuevghsJxLkHgd1PxX+pXXVqz4XbqLerS2YUkBMk33hGOovnFcTFWM1ZnTVqkkg==
-X-Received: by 2002:a17:902:e88d:b0:269:9adf:839 with SMTP id d9443c01a7336-27cc20ffd3amr3125415ad.19.1758575528486;
-        Mon, 22 Sep 2025 14:12:08 -0700 (PDT)
-Received: from [192.168.192.85] ([50.47.129.42])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2698033a3e5sm142443335ad.126.2025.09.22.14.12.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 14:12:08 -0700 (PDT)
-Message-ID: <8e506303-f2a8-4efc-a1ee-1c1eb4110f0c@canonical.com>
-Date: Mon, 22 Sep 2025 14:12:07 -0700
+        bh=XBCpPhJ55NBZXeBegJaYDf1Vz3ukosPuvPoKyErH30U=;
+        b=MpKMTw3mB8cS+wLKmM8B/FN/L+1iE0pQQmRWOZVXGS4mSCm0K1pU1gDJEVuXtxVxXo
+         uuMqijoX2yPKTU1SBmZueh5b+sdLN7pZhuv3kLaRjZKGkXSOAC9C6ESuyUwF7clq173b
+         yJ5+EDg9rdkHiJpIiH2w8y83fZllQkrhUxph1nzJ6HHpN1IXyUdfWT5KaRdNq89s93H/
+         s4E3t3++vYp9s4hsJ7Gfua+d6FrHIhfJh5A1HbKlOc0yW2LG5bobwoUgQN7S0HOCniAv
+         j8qU/IC82212UsrQDCFGVWpN80TV1jKgkAsCMjorxmHvBUCWKKFn8l6dizk8iES8rIOW
+         zlOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758577986; x=1759182786;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XBCpPhJ55NBZXeBegJaYDf1Vz3ukosPuvPoKyErH30U=;
+        b=W8M22ixMHWvqot+S8/S90cCGy87h2Bp3pnkIHHXrmSphzQ65H1o2QFXi8RD30miLQD
+         tZawR8fthlP3X1H+1y0nO+WeVmiAId0hgDQRdnKhQq4VdG0MXVD9i7JgBpBs7vVmJemS
+         rATGP/odLQKIr+offq+9fHiXhcmiODYSsjRQSmq4ZJAW3ZeH7jfYnHL3MHcZw9trsEcN
+         VzWHfZbqY1yDlglNr6XFAzOaW++EEBj6WSotSw9Zi1dwkmrHeNZI0TedkrKj0IRAazMD
+         TSj9RKDScQLkyvG67aDD3uP3E7DnS77r2p60A2cZDQFUP1MammVYkFTf0EsFNwOogzOf
+         h/FQ==
+X-Gm-Message-State: AOJu0YwqaY5Or1gEsSYGjdRtwVuz4Z1VYuNQcTx1IzgoG3rVHf5TXXSV
+	j3qR2Rbkatfyllkt2bKDQra8el1b57KLK+iHsCIJKa6qtV3Y1/mCx2r2qanVUHgdIaj9Kyc5Rj0
+	f+QcL7AQ56vKWVimmwCrvgFnCxnlUXDI/VqxhzJMN
+X-Gm-Gg: ASbGncujTIbO7HNTUqEscmpruIY9PiQD1EzS1MRBXO061IXdwBFnod3/SzmpPqrk6Fx
+	0kLJva8d9TXyShM3Xai4s5anNI+yQh94ArEDt4JugaojOCZ/XGoUfsE1i+lSwVuU5+na2Wn4l/Q
+	0GpOc+tB3Wc0z3q561Ud2OHSwtwf24PFHsSS/QAWuYIkKkSIqags22k66NKKmL7Yikma6IJtHjh
+	rZIFOM=
+X-Google-Smtp-Source: AGHT+IEIQWA5rKW43P5Fcmt7zmtt/MYBDfabS+vBWJKdvNBhoSvEK2C+yUTl6EB3o0bQhS1oiKlOiaKg1oXWzn0OcwI=
+X-Received: by 2002:a17:90b:540f:b0:327:734a:ae7a with SMTP id
+ 98e67ed59e1d1-332a92da6ebmr455889a91.11.1758577986004; Mon, 22 Sep 2025
+ 14:53:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 31/39] convert selinuxfs
-To: Al Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>
-Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
- brauner@kernel.org, jack@suse.cz, kees@kernel.org, casey@schaufler-ca.com,
- linux-security-module@vger.kernel.org
-References: <20250920074156.GK39973@ZenIV>
- <20250920074759.3564072-1-viro@zeniv.linux.org.uk>
- <20250920074759.3564072-31-viro@zeniv.linux.org.uk>
- <CAHC9VhTRsQtncKx4bkbkSqVXpZyQLHbvKkcaVO-ss21Fq36r+Q@mail.gmail.com>
- <20250921214110.GN39973@ZenIV>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20250921214110.GN39973@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250916220355.252592-36-paul@paul-moore.com> <20250916220355.252592-47-paul@paul-moore.com>
+ <d514db2f7c1de9b6d9092ff2ad1ce4cdba286e83.camel@linux.ibm.com>
+ <CAHC9VhSOhaB86yEV0+2HWRc3oYgZmLX+Nz3ERbohGRHeroKThA@mail.gmail.com> <63cf73f5ed8ceda0d68df416c2ba18334e7a9b83.camel@linux.ibm.com>
+In-Reply-To: <63cf73f5ed8ceda0d68df416c2ba18334e7a9b83.camel@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 22 Sep 2025 17:52:54 -0400
+X-Gm-Features: AS18NWCouzv17lHS4hgSMPjWiUR_MwHmSY1fDXCtAlsYtCf1VWHhUgu34JpGZtw
+Message-ID: <CAHC9VhR94kuqcwP6DcdG+QpcruU8dMnP55CmTXiQ-k+u5yOT1Q@mail.gmail.com>
+Subject: Re: [PATCH v4 11/34] lsm: get rid of the lsm_names list and do some cleanup
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Fan Wu <wufan@kernel.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/21/25 14:41, Al Viro wrote:
-> On Sun, Sep 21, 2025 at 04:44:28PM -0400, Paul Moore wrote:
->>> +       dput(dentry);
->>> +       return dentry;  // borrowed
->>>   }
->>
->> Prefer C style comments on their own line:
->>
->>    dput(dentry);
->>    /* borrowed dentry */
->>    return dentry;
-> 
-> Umm...  IMO that's more of an annotation along the lines of "fallthru"...
-> 
->>> @@ -2079,15 +2088,14 @@ static int sel_fill_super(struct super_block *sb, struct fs_context *fc)
->>>                  goto err;
->>>          }
->>>
->>> -       fsi->policycap_dir = sel_make_dir(sb->s_root, POLICYCAP_DIR_NAME,
->>> +       dentry = sel_make_dir(sb->s_root, POLICYCAP_DIR_NAME,
->>>                                            &fsi->last_ino);
->>
->> I'd probably keep fsi->policycap_dir in this patch simply to limit the
->> scope of this patch to just the DCACHE_PERSISTENT related changes, but
->> I'm not going to make a big fuss about that.
-> 
-> Not hard to split that way.  Will do...
-> 
-> 
-> BTW, an unrelated question: does userland care about selinuxfs /null being
-> called that (and being on selinuxfs, for that matter)?  Same for the
-> apparmor's securityfs /apparmor/.null...
-> 
+On Mon, Sep 22, 2025 at 6:53=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+>
+> On Sun, 2025-09-21 at 15:23 -0400, Paul Moore wrote:
+> > On Fri, Sep 19, 2025 at 3:16=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com=
+> wrote:
+> > >
+> > > On Tue, 2025-09-16 at 18:03 -0400, Paul Moore wrote:
+> > > > The LSM currently has a lot of code to maintain a list of the curre=
+ntly
+> > > > active LSMs in a human readable string, with the only user being th=
+e
+> > > > "/sys/kernel/security/lsm" code.  Let's drop all of that code and
+> > > > generate the string on first use and then cache it for subsequent u=
+se.
+> > > >
+> > > > Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > >
+> > > FYI, checkpatch.pl complains of unbalanced braces, otherwise
+> >
+> > Looks good to me?
+> >
+> > % stg export --stdout lsm-lsm_names_cleanup | ./scripts/checkpatch.pl -
+> > total: 0 errors, 0 warnings, 139 lines checked
+> >
+> > Your patch has no obvious style problems and is ready for submission.
+>
+> Try adding "--strict", which enforces
+> https://www.kernel.org/doc/html/v4.10/process/coding-style.html#placing-b=
+races-and-spaces
 
-For apparmor the userspace doesn't care, ideally userspace wouldn't even
-see it exists.
+Ah, yes, sure.  FWIW, I view checkpatch's findings mostly as
+"advisory"; oftentimes it can help catch important things, other times
+I think it's kinda silly (and no, I don't have a list of each, so
+please don't ask).  I often tell people new to kernel development that
+it is generally better to follow checkpatch's suggestions if you are
+uncertain, however don't be surprised if a maintainer prefers
+something slightly different.
 
-> If nobody cares, I would rather add an internal-only filesystem with
-> root being a character device (1,3) and whatever markings selinux et.al.
-> need for it.  With open_devnull(creds) provided for selinux,
-> apparmor and whoever else wants to play with neutering descriptors
-> on exec...
+For those reasons I don't ever bother with the "strict" checkpatch mode.
 
-
-
+--=20
+paul-moore.com
