@@ -1,125 +1,144 @@
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92AA28A3EF
-	for <linux-security-module@vger.kernel.org>; Mon, 22 Sep 2025 21:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D1F243954
+	for <linux-security-module@vger.kernel.org>; Tue, 23 Sep 2025 01:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758577989; cv=none; b=DfqS9noQUWD5fFazWUwVWAgh5PZon1VDpUMaKYuO6UzrocMClvvFe+0nU1TeXfqCusyjZKpK2jwOx1fpfJv9yEs64fb6xn8czL7EKFCj7kj9URg5B9V69WgiKhuwfOdSHJsBcwqW7jzgwf49U/gcKazbfUo9v8v59DwNhrGWT2s=
+	t=1758590826; cv=none; b=WemnTJPpg9nhwFtKADC0Ly+KA6EUDCKNMLoLDXfdjOA3+G8vTTNFuPiJ/maWOO7pRpHsjwgxjQTm8tWwHCU0X/JAqmw4A77fNKT2wIN/6UXkLvzlbkIbg8zxzCrnkNvaexiRPnsSceK0ROWNlmhvamQcAALU+GoTd5yaLpU8/4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758577989; c=relaxed/simple;
-	bh=NrxcGV9SRKTH90U9r9TiQBRjMm9wgcBgK/JoZCvLbI8=;
+	s=arc-20240116; t=1758590826; c=relaxed/simple;
+	bh=/yTK6Wyn7S+cC9ZuMCyCbCLvMuzpeiKg15N/mIeh2Lg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nz+YJT9RSrCOCQ4IVkQQ6L2xGBlrUJlVxbNlyj11GbeR+DPZWy0Bn2eyFmvWxbm5eswArjRnkkWrki4ZHBhDPMg9ZopB2pzFqV8G4rxbraJLzpZgaA2EAgIh5LfsMtshloxdqFi0pk1X2n/6TfLPawKKiivBnSU2MX2M2AeqSa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MpKMTw3m; arc=none smtp.client-ip=209.85.216.48
+	 To:Cc:Content-Type; b=OwuAq3pUu9ROdkdOr33USho/dVSzdIf12VYhrGI9EQkrQnap2b8UNU4ocJnurLYq3agdhx4rqS3gDGiZhP2+9ZmTC8VwhuHDhcDq/zKbxQSQeLxyx7lPM9ywhbMSSnurz2hViryd4UYCjOsOxymIdJ50EOuOANdDCnBCOz6/Gxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CXP16esa; arc=none smtp.client-ip=209.85.215.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MpKMTw3m"
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3306d3ab2e4so3864014a91.3
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Sep 2025 14:53:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CXP16esa"
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b555ed30c1cso447063a12.1
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Sep 2025 18:27:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1758577986; x=1759182786; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1758590823; x=1759195623; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XBCpPhJ55NBZXeBegJaYDf1Vz3ukosPuvPoKyErH30U=;
-        b=MpKMTw3mB8cS+wLKmM8B/FN/L+1iE0pQQmRWOZVXGS4mSCm0K1pU1gDJEVuXtxVxXo
-         uuMqijoX2yPKTU1SBmZueh5b+sdLN7pZhuv3kLaRjZKGkXSOAC9C6ESuyUwF7clq173b
-         yJ5+EDg9rdkHiJpIiH2w8y83fZllQkrhUxph1nzJ6HHpN1IXyUdfWT5KaRdNq89s93H/
-         s4E3t3++vYp9s4hsJ7Gfua+d6FrHIhfJh5A1HbKlOc0yW2LG5bobwoUgQN7S0HOCniAv
-         j8qU/IC82212UsrQDCFGVWpN80TV1jKgkAsCMjorxmHvBUCWKKFn8l6dizk8iES8rIOW
-         zlOw==
+        bh=oqjdOORSGFD7FvIcZ0JXH7SgphifcM2Ag/xxYoTRY5A=;
+        b=CXP16esapDC7TdI8kWZFZ2uWezmbiNRclVtPGBK5sJ4dLhZwklPmvml47X3iRKMWlK
+         8/HXYnbvt0X00N9l5MbYFZIZSDQklNZ3d+p4pWStHoVaKfgiwi/HkQe+B+CzjXTt+HkI
+         ePcedy5G4KW4i8hT8yWKiNW3X005JPvVKK1L7WEYPfJJBIjplZZAQnCcaB7W2mb/wfzD
+         iJwzDPy38QrcGlpqjS/6C8sBt/YrLQTbGlPSDQTMYHbspOaPSWrMnhtzjWlJ0PzmNUC+
+         k1m3WaXQ0G0efOtTywNL0GOtx8Rb40ix0sfiITgWRvga9ZKlzibeNTdJxOK70FijLpVv
+         fmUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758577986; x=1759182786;
+        d=1e100.net; s=20230601; t=1758590823; x=1759195623;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XBCpPhJ55NBZXeBegJaYDf1Vz3ukosPuvPoKyErH30U=;
-        b=W8M22ixMHWvqot+S8/S90cCGy87h2Bp3pnkIHHXrmSphzQ65H1o2QFXi8RD30miLQD
-         tZawR8fthlP3X1H+1y0nO+WeVmiAId0hgDQRdnKhQq4VdG0MXVD9i7JgBpBs7vVmJemS
-         rATGP/odLQKIr+offq+9fHiXhcmiODYSsjRQSmq4ZJAW3ZeH7jfYnHL3MHcZw9trsEcN
-         VzWHfZbqY1yDlglNr6XFAzOaW++EEBj6WSotSw9Zi1dwkmrHeNZI0TedkrKj0IRAazMD
-         TSj9RKDScQLkyvG67aDD3uP3E7DnS77r2p60A2cZDQFUP1MammVYkFTf0EsFNwOogzOf
-         h/FQ==
-X-Gm-Message-State: AOJu0YwqaY5Or1gEsSYGjdRtwVuz4Z1VYuNQcTx1IzgoG3rVHf5TXXSV
-	j3qR2Rbkatfyllkt2bKDQra8el1b57KLK+iHsCIJKa6qtV3Y1/mCx2r2qanVUHgdIaj9Kyc5Rj0
-	f+QcL7AQ56vKWVimmwCrvgFnCxnlUXDI/VqxhzJMN
-X-Gm-Gg: ASbGncujTIbO7HNTUqEscmpruIY9PiQD1EzS1MRBXO061IXdwBFnod3/SzmpPqrk6Fx
-	0kLJva8d9TXyShM3Xai4s5anNI+yQh94ArEDt4JugaojOCZ/XGoUfsE1i+lSwVuU5+na2Wn4l/Q
-	0GpOc+tB3Wc0z3q561Ud2OHSwtwf24PFHsSS/QAWuYIkKkSIqags22k66NKKmL7Yikma6IJtHjh
-	rZIFOM=
-X-Google-Smtp-Source: AGHT+IEIQWA5rKW43P5Fcmt7zmtt/MYBDfabS+vBWJKdvNBhoSvEK2C+yUTl6EB3o0bQhS1oiKlOiaKg1oXWzn0OcwI=
-X-Received: by 2002:a17:90b:540f:b0:327:734a:ae7a with SMTP id
- 98e67ed59e1d1-332a92da6ebmr455889a91.11.1758577986004; Mon, 22 Sep 2025
- 14:53:06 -0700 (PDT)
+        bh=oqjdOORSGFD7FvIcZ0JXH7SgphifcM2Ag/xxYoTRY5A=;
+        b=Xw2EiplgpiTa8QgfeMiHkKNTIG68/u1hkHv+qllPdOC5HzviGpJUz35kBs5lBG/s2O
+         FnNS3Fb1hFQuf6jiJxHWusPNeWmMHHLob2d8/NjYtf3x57QUtZijSsNB07ASR8hT4Pk1
+         jl7hn1oWEUCwHO8WcAtF5hWDLhS+dL/zEy1ufmYo4QQKKmhOl4KQSOXAj2P2S/dhkp6D
+         hQhkY9iD8q+IA/Z5Hr8iU8t9xGtQ/0k6o7rvkcTku4tt7KMXoLjaagOe0LGANpuYEdx4
+         Ab/YjyvZjpu95wp/Ms4FSpzKTDhsyTTmrFBuxwRMIxUEBGNQDvZT9JwhW7KR/0ntsOw0
+         ZqVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMEcF4PVMaGK6uFLyV8kaYzJZbb881L7Nxmuxapm/kY/+jLLrnLNtHvmAi845DNGoeowqpG9ZVSnmMkEVj1xUCevqHb/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvqeqcaG4nISrXU9IzJwFfjQtfoWR6rBvXnm+plt9OOb5IfHxj
+	5N3PH7vD4E2Pcd0I/ecE31asQU5LkBZIk7rYTV8vspRb9di6V+a6QGsjW/ggLOAdknoEE2A3CBk
+	UE7CJy24FIbNi47vlzmmq6ILT3TrS5olAJi1fEG08
+X-Gm-Gg: ASbGncvb8Fw1F8OQvNYTaIdQ2Q4hhsjhK0r2RtTIzYdZcwyJgTpY9S2QC+IdlYZabD4
+	am0vwy+88nOquY0gBgH2xp7NMoCdWpmVicSMiEOl11eQNay6PlQSJNeT4e4i8ey3VEGMCXYO3YS
+	zqPhKQpotyC+Yj0WfJe+fnn+YibsQXyptWlF0OzBJI5/2b1MzDgyRiMVgDWiJJ+4dqKkNPBo/rW
+	cm0A/g=
+X-Google-Smtp-Source: AGHT+IEeSW9eXhOzqwgIxKu1Sg8gHX7O7Kl89y/+j8/ODZNSQZvRiiteecPHa8MK2WLwmvUISfs/IRuIn1g7SLY2SQw=
+X-Received: by 2002:a17:90b:1fd0:b0:32e:f1c:e778 with SMTP id
+ 98e67ed59e1d1-332a95445d8mr1090948a91.3.1758590822705; Mon, 22 Sep 2025
+ 18:27:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916220355.252592-36-paul@paul-moore.com> <20250916220355.252592-47-paul@paul-moore.com>
- <d514db2f7c1de9b6d9092ff2ad1ce4cdba286e83.camel@linux.ibm.com>
- <CAHC9VhSOhaB86yEV0+2HWRc3oYgZmLX+Nz3ERbohGRHeroKThA@mail.gmail.com> <63cf73f5ed8ceda0d68df416c2ba18334e7a9b83.camel@linux.ibm.com>
-In-Reply-To: <63cf73f5ed8ceda0d68df416c2ba18334e7a9b83.camel@linux.ibm.com>
+References: <20250921160120.9711-1-kpsingh@kernel.org>
+In-Reply-To: <20250921160120.9711-1-kpsingh@kernel.org>
 From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 22 Sep 2025 17:52:54 -0400
-X-Gm-Features: AS18NWCouzv17lHS4hgSMPjWiUR_MwHmSY1fDXCtAlsYtCf1VWHhUgu34JpGZtw
-Message-ID: <CAHC9VhR94kuqcwP6DcdG+QpcruU8dMnP55CmTXiQ-k+u5yOT1Q@mail.gmail.com>
-Subject: Re: [PATCH v4 11/34] lsm: get rid of the lsm_names list and do some cleanup
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Fan Wu <wufan@kernel.org>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>
+Date: Mon, 22 Sep 2025 21:26:49 -0400
+X-Gm-Features: AS18NWCpAdZ5ZGSx3Cngxh2izSuRjhhwIO5s13DS6QhO8MBfyMUCK-TS5SSShFM
+Message-ID: <CAHC9VhRSs=6rd7fwMGQ1Zyj5PX1aSGtxEMgoS4T4gzD3e7nv9g@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v7 0/5] Signed BPF programs
+To: KP Singh <kpsingh@kernel.org>, bboscaccy@linux.microsoft.com, ast@kernel.org
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kys@microsoft.com, daniel@iogearbox.net, andrii@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2025 at 6:53=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> wr=
-ote:
+On Sun, Sep 21, 2025 at 12:01=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrot=
+e:
 >
-> On Sun, 2025-09-21 at 15:23 -0400, Paul Moore wrote:
-> > On Fri, Sep 19, 2025 at 3:16=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com=
-> wrote:
-> > >
-> > > On Tue, 2025-09-16 at 18:03 -0400, Paul Moore wrote:
-> > > > The LSM currently has a lot of code to maintain a list of the curre=
-ntly
-> > > > active LSMs in a human readable string, with the only user being th=
-e
-> > > > "/sys/kernel/security/lsm" code.  Let's drop all of that code and
-> > > > generate the string on first use and then cache it for subsequent u=
-se.
-> > > >
-> > > > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > >
-> > > FYI, checkpatch.pl complains of unbalanced braces, otherwise
-> >
-> > Looks good to me?
-> >
-> > % stg export --stdout lsm-lsm_names_cleanup | ./scripts/checkpatch.pl -
-> > total: 0 errors, 0 warnings, 139 lines checked
-> >
-> > Your patch has no obvious style problems and is ready for submission.
->
-> Try adding "--strict", which enforces
-> https://www.kernel.org/doc/html/v4.10/process/coding-style.html#placing-b=
-races-and-spaces
+> BPF Signing has gone over multiple discussions in various conferences wit=
+h the
+> kernel and BPF community ...
 
-Ah, yes, sure.  FWIW, I view checkpatch's findings mostly as
-"advisory"; oftentimes it can help catch important things, other times
-I think it's kinda silly (and no, I don't have a list of each, so
-please don't ask).  I often tell people new to kernel development that
-it is generally better to follow checkpatch's suggestions if you are
-uncertain, however don't be surprised if a maintainer prefers
-something slightly different.
+In addition to the signature scheme KP has proposed, if we want to
+increase adoption of BPF to those who currently disable it due to
+strict code provenance and integrity concerns, we need to merge
+Blaise's optional signature scheme as described most recently in the
+patch posting linked below:
 
-For those reasons I don't ever bother with the "strict" checkpatch mode.
+https://lore.kernel.org/linux-security-module/20250909162345.569889-1-bbosc=
+accy@linux.microsoft.com/
+
+It is important to note that Blaise's patch allows both signature
+schemes to coexist together in the same kernel, allowing users to
+select which scheme to use on each program load, and enables the
+kernel to support policy to selectively enforce rules around which
+signature scheme is permitted for each load.
+
+While we've discussed this in the past, Blaise's signature scheme is
+important as it satisfies requirements that aren't otherwise met:
+
+* Both the lskel and original BPF program are verified for provenance
+and integrity prior to the security_bpf_prog_load() hook.  This allows
+LSMs, including BPF LSMs, to make access control decisions on the
+entirety of the verification, not just the verification of the lskel.
+For those users who have very strict security requirements which
+require analysis of the system's security policy as part of their
+vetting, this limits the scope of the BPF signature verification
+policy analysis to just the LSM's policy.  This approach is in keeping
+with most every other security significant operation in the kernel,
+and is also seen as a best practice, since it significantly simplifies
+the analysis of the system's security properties.  KP's signature
+scheme, while it does verify the original program, it offloads the
+digest verification of the original BPF program to the lskel.  Aside
+from breaking with most other kernel-based access control approaches,
+this means that analysis of only the LSM's policy is no longer
+sufficient, security officers must vet both the LSM's policy as well
+as the digest verification code in every lskel used on the system.
+
+* Verification of both the lskel and the original BPF program prior to
+the security_bpf_prog_load() hook also makes it possible for
+observability, measurement, and attestation focused LSMs to more
+easily audit, measure, and attest the verified lskel and original BPF,
+as all of the components have passed provenance and integrity
+verification while the measurements/digests still remain stable as
+none of the lskel based transforms have yet to take place.  Using KP's
+signature scheme this isn't quite possible as the original BPF program
+is verified during the execution of the lskel which potentially
+mutates the original BPF program.
+
+As an aside, Blaise's signature scheme also has the nice property that
+BPF ELF objects using Blaise's signature scheme are backwards
+compatible with existing kernels, allowing the signed BPF to be loaded
+on older kernels, albeit without signature verification for obvious
+reasons.  While this may not be important to some users, BPF ELF
+objects using KP's signature scheme will likely fail when loaded on
+older kernels.
+
+Taken individually, KP's and Blaise's signature schemes may not
+satisfy all of the use cases and requirements for BPF signing that
+have been discussed over the years, but I believe that the two schemes
+together can satisfy everyone's needs.
 
 --=20
 paul-moore.com
