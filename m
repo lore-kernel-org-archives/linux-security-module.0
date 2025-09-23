@@ -1,92 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DC3184;
-	Tue, 23 Sep 2025 14:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A7E2773EF;
+	Tue, 23 Sep 2025 17:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758638753; cv=none; b=Cc821TpBkI+5fxzaaU1yLlD2Em9vCS9ypU+Ar42WHdVpNgbmGs0Ug0mHGLdo2CZH3aMSWB32g2bJPctJGFtyx1X735fWtgD5wuAsKTyvKLw892hYyCwueq3TNAD7WDrrNGwdckHl3Cm0DcVz2Lnb6AjQjvKPtzQBT8pneRtMJtc=
+	t=1758647324; cv=none; b=Ci5KiR42xD4kvNgSzk1RSHHsoubkc/uVwdnrAHTnMfBJ3fFlH1RWHbJ1i04mGBwnlDdEIu6S+UAk39axcMUCv2bzU2v3rmCfsmqxpCJptLk/16j2ulC/pAWQ06mSHGreQ+CiilyBwS9uxnsq4HJj7raGoYSFQa6xcW7j8hp7E4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758638753; c=relaxed/simple;
-	bh=xSsvjTQQYdPgRsDd8KZtsWmFm6sZCjsNxzcTfLs/L58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LUekoo33LokhgZta8jq5S3gJUs2UrXeHHrX93lWRaP6RNpMwSEVhMYTQN1gap+GxWyMIMLaqfpa1GauGlhiSdRx0ba+Z0r+VhuS+aHD0CiI9roiFuKAqIsGiMRmSjf0CvH56d2ySb4SmRZS0Q3JKFk/3U3eEUsPlNiIZnvm3Jjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bFGxxdAy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758647324; c=relaxed/simple;
+	bh=xLARWBaT8G+i09gvi71ZwdreL3BTX6otN5oFqE7wWNQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QDACZViPLPE8AedorqHg0ykFVrXpk5oK1yky0eOV/Few2dBLl3OIGtIltehbll5KXCCcQApC5AX3xVEshbkARq298Ifn88llBhpXf1vhlvr/KovZ6Zigs0j7CRRhqpAzprOm3FzSYLQHpQH7KAtU9/Ot6yta+zwZY2DG5VGcdis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T5OXlZvS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bFGxxdAy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 240E2C113CF;
-	Tue, 23 Sep 2025 14:45:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T5OXlZvS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7618C4CEF5;
+	Tue, 23 Sep 2025 17:08:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758638752;
-	bh=xSsvjTQQYdPgRsDd8KZtsWmFm6sZCjsNxzcTfLs/L58=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bFGxxdAyuxfi0QzzqTdiW6NUIAmaSyYJZJh3mtFGKIyJj3wPzDqH0N9iLiHiMisJC
-	 16Wp5QS9Ru4wLxrtLX8sUncbdFiaC+PLn/md1M+wcHTeQ/xpJsy1BHcI4oUqsAl2Lu
-	 eSIFhXjvnMmgyPOKbLHwBN07NSPuJnFHDxosal6E5nFM1Hjsrk2GyZKHcm2AyCORB3
-	 SLHmrcVlxiobdygREwkNBhrMCWIG+u62NVu9tYLQTnc72MQR+7lmyN6nz81BENWO9J
-	 10jbGPrxyPIGXcpVodqdQ9pFsbiffX1rpKUTHFvzfxl40hv3t9jXLCMUdaP6LvL0zY
-	 TILXdCYSxx7yQ==
-Date: Tue, 23 Sep 2025 17:45:48 +0300
+	s=k20201202; t=1758647324;
+	bh=xLARWBaT8G+i09gvi71ZwdreL3BTX6otN5oFqE7wWNQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=T5OXlZvSVY/xEPCSoQ+QJE1hPnNuJxN1fduYKnarT7fjdXDzr60D/rjxx35Ytt2Z9
+	 vUQ0VIcdjVMm+5M1ja+qBZYEGHnR1oPYeBTIFqYHCav0BDB2QJDmGPeg3++O3Ij9tv
+	 HPyW06Xg+3d6IdATIt9DohJa8XDACIxcBTjMXnWzmOXpTsoL7SOEoeOkkjH5xdvY9A
+	 llA0g09sLnXmltmdCV3vfvpcfHN7cRZwAz6QgQwbNayFdDGLAadyuaEnEsWaNEtFVa
+	 OFY3ILNW4ZEN0MmArtUj7ZwuxdHyQMFucPSoq/H2tra7rJmw7WzF58P4OBnrgdxIOp
+	 5O98cdRRxLfcA==
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: list.lkml.keyrings@me.benboeckel.net
-Cc: linux-integrity@vger.kernel.org,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+To: linux-integrity@vger.kernel.org
+Cc: Stefano Garzarella <sgarzare@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
 	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 3/4] tpm2-sessions: Remove unnecessary wrapper
-Message-ID: <aNKynIx7sW9oxWoj@kernel.org>
-References: <20250922164318.3540792-1-jarkko@kernel.org>
- <20250922164318.3540792-4-jarkko@kernel.org>
- <aNGFv-nGZF5chGIb@rotor>
+	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v11 0/3] tpm: robust stack allocations
+Date: Tue, 23 Sep 2025 20:07:41 +0300
+Message-Id: <20250923170744.1749132-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNGFv-nGZF5chGIb@rotor>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 22, 2025 at 01:22:13PM -0400, Ben Boeckel wrote:
-> On Mon, Sep 22, 2025 at 19:43:16 +0300, Jarkko Sakkinen wrote:
-> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
-> > 
-> > Open code tpm_buf_append_hmac_session_opt() because it adds unnecessary
-> > disperancy to the call sites (and reduces the amount of code).
->   ^^^^^^^^^^
-> 
-> "discrepancy" as in "difference"? But that doesn't feel like the right
-> usage either. Perhaps "unnecessary abstraction"? Also, open coding it
-> reduces the amount of code, so some clarification to not read as
-> something else that "it" (`tpm_buf_append_hmac_session_opt`) does would
-> be clearer.
+1. These are previous changes to tpm_buf, which make stack allocations
+   much more feasible than previously.
+2. Migrate low-hanging fruit to use stack allocations.
+3. Re-orchestrate tpm_get_random().
 
-Fair points. I'll re-edit the commit message and try to address the
-issues you reported.
+Jarkko Sakkinen (3):
+  tpm: Make TPM buffer allocations more robust
+  tpm: Use TPM_MIN_BUF_SIZE in driver commands
+  tpm orchestrate tpm_get_random() in the function
 
-Intend of these changes is to essentially uncover the code paths so that
-we know how to wrap it up better than it is wrapped up right now. Also,
-they help to reveal possible regression paths. So while not functional 
-per se, they do serve a purpose.
+ drivers/char/tpm/tpm-buf.c                | 139 +++++----
+ drivers/char/tpm/tpm-dev-common.c         |   4 +-
+ drivers/char/tpm/tpm-dev.h                |   2 +-
+ drivers/char/tpm/tpm-interface.c          |  36 ++-
+ drivers/char/tpm/tpm-sysfs.c              |  20 +-
+ drivers/char/tpm/tpm.h                    |  16 +-
+ drivers/char/tpm/tpm1-cmd.c               | 177 +++++------
+ drivers/char/tpm/tpm2-cmd.c               | 349 +++++++++-------------
+ drivers/char/tpm/tpm2-sessions.c          | 127 ++++----
+ drivers/char/tpm/tpm2-space.c             |  44 ++-
+ drivers/char/tpm/tpm_tis_i2c.c            |   4 +-
+ drivers/char/tpm/tpm_vtpm_proxy.c         |  34 +--
+ include/linux/tpm.h                       |  28 +-
+ security/keys/trusted-keys/trusted_tpm1.c |  34 +--
+ security/keys/trusted-keys/trusted_tpm2.c | 156 +++++-----
+ 15 files changed, 556 insertions(+), 614 deletions(-)
 
-Once these fixes have been applied I'll start to look up the call
-patterns and try to find a model where essentially we can transform
-a TPM command to HMAC wrapped TPM command i.e., from tpm_buf to tpm_buf
-operation where both sides of the function are TPM commands.
+-- 
+2.39.5
 
-That way we can better selectively use the feature and it is easier
-to fixup up e.g., a persistent parent key because key generation is
-a huge bottleneck.
-
-> 
-> Thanks,
-> 
-> --Ben
