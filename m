@@ -1,277 +1,236 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4420513AD26
-	for <linux-security-module@vger.kernel.org>; Tue, 23 Sep 2025 02:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC3B1CD1E4;
+	Tue, 23 Sep 2025 08:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758594728; cv=none; b=b/XPlfmePiXywvpx3ibuHZmbqBvkDL4VQQiIAgnFtJiLB2wx1VaIlehLDdd1/5VSYenPX/m4DGPknXrHRZ2uhiZSsd//Ss9UYIeh2X94GtRImaCI02lKW+YxgMdvmaXu9vC1b/JxuP/pwvZ6jNWURV/mO7GcdvMTxWSfsbCA0Is=
+	t=1758616749; cv=none; b=qmly+Xwzloi6ld7/lCG3fodVk3PYOYFxJ7+vQv68h+FM6X7aiczvV1VY/vAv36vcXvLKrY9xTI2nnvy8yyucLgTixYDyUKD/G9Hd47V6t0ExvVhfpR1Uezrt/dAHubRV51OVpZqZqSvXLka8/SmpB9QQATaP+DjvueOP1DfeFmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758594728; c=relaxed/simple;
-	bh=XLwIDfXhdZcScLV4roIj1BAh5I9hJbDXT3j5KgnB7bY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=InZERGw5OA3HVPzYFCI5UJrC3XpU9uG8KQqY+D8ldtJtUWS18UpgaWiU8d6yEzrYwviQR7mSGH+BF1HTwpUelepEtCu8Tz6GOcPZvdadMw2gjj3PPU0rbIykj4Nu8k2GPV/zpLsOXxrxNjpScj8SBzXW1LEad8LyLOT0vHWshSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HL82p8Ab; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758616749; c=relaxed/simple;
+	bh=fIv8pEZLBHE7mFQUFDB5ovZLJPZ+5ryuc1FjJKdxEDE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f75/tj+bYZThE9fEMpH+7OU83EjHDDQ08JPiF6Cygkehh5VfvZGX/UJdJpYpJt0krkLds/a1enaTorrpPlWo8LnP+inj6vyPG4ijaflDWILou7L6CsPkXUbwDOKzoO4lzPrE/ZACe76iAtpmR5MuONPk/1kb7Oez8JnCZ8/fbtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uzZ8x08m; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HL82p8Ab"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3ee1381b835so3362556f8f.1
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Sep 2025 19:32:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758594724; x=1759199524; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uSm1C3xIMNqMaARGRlsuu14pK0WkBGuFOtJfwE/SmiU=;
-        b=HL82p8AberJdZzU99RwnkI08yaw5mlUixKgl+YQwApewmXFaQKSk8LgesI3PKume0U
-         RFYpVdyMsQz2H3DXHUtnhzp/MBTjJS4UYYBDXSm8CNS19fBZwBWQMYlv+M0ZbhJ3wxRB
-         oKGaKWi/nD7dZrfbTlz3y/1N/RLSvUM+BovpKYUSrSBc4w7IJETIgPmc1PFqi23hPd96
-         A1262dkB6HgGvYeTWHms+g/YB6jQEp5gkf/ttAovmMc1xmJMjzT0t4zxbal3vL5qogh0
-         R8T/35eAp6spi7lm/XJHzzy355EgAjwQTAiKuZ1LOnJOMPULehn5M7gGaCb06Saqf79E
-         Dgjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758594724; x=1759199524;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uSm1C3xIMNqMaARGRlsuu14pK0WkBGuFOtJfwE/SmiU=;
-        b=M96bx3HXrPnQIHPbktASRmTbZvJ6gEDdiIkduC4MVN+8PZby7sacAsOdT1cChgifJI
-         ep1KpFmfWww9QX0ODeXPGRRIFXuX8gi3s1b70gZt0ahbOcTwSW44nVxa1fMZnMqzbCwc
-         xqaHhVs4grJjtueZDNZAHDVAArclLiZWWl3CNprqxhs6iLWMUMrgmECJTBhc+H87A5eZ
-         kNn9lP+iLeOskuEAV/FRKr0Pg+bXxDbitbRQB2saOQIHSoDl/En79GwIkhK6qByawNA4
-         fAGL0IHz02XIKwnpfGd/dKOzb1PCFD7VVwO4H9i0pWgpc6QBB4zK8j22A4suq049LpI9
-         7jgA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6A0w6UD938tM6W3PzhfnGIgGU4xHb7Yqovy2qta8JpBSI0p3wJHW7VgFV+qo0hD9YHBf3kljRKV/ShgoOjDko5xghoro=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCwr9GpzdWDAVBONxNVYYVtXZQmmOTgR98aold57DTMblEhp3H
-	w/OGMiB3NMzaSbvZLWRA5yp8fxszp56+uS+p93HkeZO8l6lwOyUFEiQIqZHYmcvtxVtiPrld8f2
-	yQo8CsW7dHSJAc3F6+9/exLQ6asCzcKU=
-X-Gm-Gg: ASbGncu3TDfoMiTki0+GO7UFtBTOaxrah1zHaTQhT/E1qxnJzAqY9p2bUMkh84e24iX
-	O7xpvDk5QcAwwHx2/YIWjmmpCJxoAfVjbZdYnUbQBJoiH6fILz2+Io6d3WFGafqkddHabHr6BDh
-	AHnS1aZp+zfibiiJXV9FE0+qEdFuvQT/YWmxnOcPhzHPYC6sfQzDZlMYM1WlqDANs7fp+5ALscT
-	yryYnXPiTF0hsWprw4IpunkXf5sgdDj/sWbjfGf
-X-Google-Smtp-Source: AGHT+IGC5ugSM0+ruX9ahHjMhGD9q/ujlzpWpUcmjzVu7MjF8bUJE4lQuYAg/WNoRF0JvDivoxX+FzEfQHbYU6a5jd8=
-X-Received: by 2002:a5d:5f54:0:b0:400:4507:474 with SMTP id
- ffacd0b85a97d-405c5bd861cmr564612f8f.18.1758594724379; Mon, 22 Sep 2025
- 19:32:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uzZ8x08m"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68E15C4CEF5;
+	Tue, 23 Sep 2025 08:39:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758616748;
+	bh=fIv8pEZLBHE7mFQUFDB5ovZLJPZ+5ryuc1FjJKdxEDE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uzZ8x08mCxu30gmAHBfjbv3PFlKZ4gtzGKWcPD59zZ67KxgKLHJrp5O/Ov3TY04CC
+	 aTeQHu6WnSJyfLkE93Zrfedjg/UQviiz6bJ0ZM0kno3lROnX5BOw2u4dAGtH8ff68U
+	 S4JqBKzJmd3z5pWa226kZgx2INZSCrAAqbAvq6y8oOC/YVkGMyZLlfTa83+sJ2cZKp
+	 bUS3219Rh0HfPRr+iP7k8Uj4n8pfZgZ2IdpoKt4iM+gO9FNALcqWGpVxjv/B1YFlK+
+	 uHLO/raCiffPLQQ38NbUbxBmBQABQgJZpGyv7zOf3/UMbtbIsWGbXt3ARBpKXIX/t+
+	 Jf08jsv3lIf7g==
+Message-ID: <eea720eb-59d3-4836-8db1-6cd59406206c@kernel.org>
+Date: Tue, 23 Sep 2025 09:39:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250921160120.9711-1-kpsingh@kernel.org> <20250921160120.9711-5-kpsingh@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v7 4/5] bpftool: Add support for signing BPF
+ programs
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: KP Singh <kpsingh@kernel.org>, bpf <bpf@vger.kernel.org>,
+ LSM List <linux-security-module@vger.kernel.org>,
+ Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
+ Paul Moore <paul@paul-moore.com>, "K. Y. Srinivasan" <kys@microsoft.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>
+References: <20250921160120.9711-1-kpsingh@kernel.org>
+ <20250921160120.9711-5-kpsingh@kernel.org>
  <ee292661-0ffb-413e-be9c-eb21f5379688@kernel.org>
-In-Reply-To: <ee292661-0ffb-413e-be9c-eb21f5379688@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 22 Sep 2025 19:31:53 -0700
-X-Gm-Features: AS18NWBj_1tZdSxPOMlJ6h4rs0gk8W6ViM2Ui1g1kQuV_2g5MnnGomXTA_i-5wY
-Message-ID: <CAADnVQ+S1i5wcW3FK9=KhpTr8nxSBCNCvvZvWShDouTbWt9eig@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v7 4/5] bpftool: Add support for signing BPF programs
-To: Quentin Monnet <qmo@kernel.org>
-Cc: KP Singh <kpsingh@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, 
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ <CAADnVQ+S1i5wcW3FK9=KhpTr8nxSBCNCvvZvWShDouTbWt9eig@mail.gmail.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <CAADnVQ+S1i5wcW3FK9=KhpTr8nxSBCNCvvZvWShDouTbWt9eig@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 22, 2025 at 4:24=E2=80=AFAM Quentin Monnet <qmo@kernel.org> wro=
-te:
->
-> 2025-09-21 18:01 UTC+0200 ~ KP Singh <kpsingh@kernel.org>
-> > Two modes of operation being added:
-> >
-> > Add two modes of operation:
-> >
-> > * For prog load, allow signing a program immediately before loading. Th=
-is
-> >   is essential for command-line testing and administration.
-> >
-> >       bpftool prog load -S -k <private_key> -i <identity_cert> fentry_t=
-est.bpf.o
-> >
-> > * For gen skeleton, embed a pre-generated signature into the C skeleton
-> >   file. This supports the use of signed programs in compiled applicatio=
-ns.
-> >
-> >       bpftool gen skeleton -S -k <private_key> -i <identity_cert> fentr=
-y_test.bpf.o
-> >
-> > Generation of the loader program and its metadata map is implemented in
-> > libbpf (bpf_obj__gen_loader). bpftool generates a skeleton that loads
-> > the program and automates the required steps: freezing the map, creatin=
-g
-> > an exclusive map, loading, and running. Users can use standard libbpf
-> > APIs directly or integrate loader program generation into their own
-> > toolchains.
-> >
-> > Signed-off-by: KP Singh <kpsingh@kernel.org>
->
->
-> Acked-by: Quentin Monnet <qmo@kernel.org>
->
-> Thanks a lot!
->
->
-> > ---
-> >  .../bpf/bpftool/Documentation/bpftool-gen.rst |  13 +-
-> >  .../bpftool/Documentation/bpftool-prog.rst    |  14 +-
-> >  tools/bpf/bpftool/Makefile                    |   6 +-
-> >  tools/bpf/bpftool/cgroup.c                    |   4 +
-> >  tools/bpf/bpftool/gen.c                       |  68 +++++-
-> >  tools/bpf/bpftool/main.c                      |  26 ++-
-> >  tools/bpf/bpftool/main.h                      |  11 +
-> >  tools/bpf/bpftool/prog.c                      |  29 ++-
-> >  tools/bpf/bpftool/sign.c                      | 212 ++++++++++++++++++
-> >  9 files changed, 372 insertions(+), 11 deletions(-)
-> >  create mode 100644 tools/bpf/bpftool/sign.c
-> >
-> > diff --git a/tools/bpf/bpftool/Documentation/bpftool-gen.rst b/tools/bp=
-f/bpftool/Documentation/bpftool-gen.rst
-> > index ca860fd97d8d..d0a36f442db7 100644
-> > --- a/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-> > +++ b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-> > @@ -16,7 +16,7 @@ SYNOPSIS
-> >
-> >  **bpftool** [*OPTIONS*] **gen** *COMMAND*
-> >
-> > -*OPTIONS* :=3D { |COMMON_OPTIONS| | { **-L** | **--use-loader** } }
-> > +*OPTIONS* :=3D { |COMMON_OPTIONS| | { **-L** | **--use-loader** } | [ =
-{ **-S** | **--sign** } {**-k** <private_key.pem>} **-i** <certificate.x509=
-> ] }
-> >
-> >  *COMMAND* :=3D { **object** | **skeleton** | **help** }
-> >
-> > @@ -186,6 +186,17 @@ OPTIONS
-> >      skeleton). A light skeleton contains a loader eBPF program. It doe=
-s not use
-> >      the majority of the libbpf infrastructure, and does not need libel=
-f.
-> >
-> > +-S, --sign
-> > +    For skeletons, generate a signed skeleton. This option must be use=
-d with
-> > +    **-k** and **-i**. Using this flag implicitly enables **--use-load=
-er**.
-> > +
-> > +-k <private_key.pem>
-> > +    Path to the private key file in PEM format, required for signing.
-> > +
-> > +-i <certificate.x509>
-> > +    Path to the X.509 certificate file in PEM or DER format, required =
-for
-> > +    signing.
-> > +
-> >  EXAMPLES
-> >  =3D=3D=3D=3D=3D=3D=3D=3D
-> >  **$ cat example1.bpf.c**
-> > diff --git a/tools/bpf/bpftool/Documentation/bpftool-prog.rst b/tools/b=
-pf/bpftool/Documentation/bpftool-prog.rst
-> > index f69fd92df8d8..009633294b09 100644
-> > --- a/tools/bpf/bpftool/Documentation/bpftool-prog.rst
-> > +++ b/tools/bpf/bpftool/Documentation/bpftool-prog.rst
-> > @@ -18,7 +18,7 @@ SYNOPSIS
-> >
-> >  *OPTIONS* :=3D { |COMMON_OPTIONS| |
-> >  { **-f** | **--bpffs** } | { **-m** | **--mapcompat** } | { **-n** | *=
-*--nomount** } |
-> > -{ **-L** | **--use-loader** } }
-> > +{ **-L** | **--use-loader** } | [ { **-S** | **--sign** } **-k** <priv=
-ate_key.pem> **-i** <certificate.x509> ] }
->
->
-> Perfect, thank you!
->
->
-> >
-> >  *COMMANDS* :=3D
-> >  { **show** | **list** | **dump xlated** | **dump jited** | **pin** | *=
-*load** |
-> > @@ -248,6 +248,18 @@ OPTIONS
-> >      creating the maps, and loading the programs (see **bpftool prog tr=
-acelog**
-> >      as a way to dump those messages).
-> >
-> > +-S, --sign
-> > +    Enable signing of the BPF program before loading. This option must=
- be
-> > +    used with **-k** and **-i**. Using this flag implicitly enables
-> > +    **--use-loader**.
-> > +
-> > +-k <private_key.pem>
-> > +    Path to the private key file in PEM format, required when signing.
-> > +
-> > +-i <certificate.x509>
-> > +    Path to the X.509 certificate file in PEM or DER format, required =
-when
-> > +    signing.
-> > +
-> >  EXAMPLES
-> >  =3D=3D=3D=3D=3D=3D=3D=3D
-> >  **# bpftool prog show**
-> > diff --git a/tools/bpf/bpftool/Makefile b/tools/bpf/bpftool/Makefile
-> > index 9e9a5f006cd2..586d1b2595d1 100644
-> > --- a/tools/bpf/bpftool/Makefile
-> > +++ b/tools/bpf/bpftool/Makefile
-> > @@ -130,8 +130,8 @@ include $(FEATURES_DUMP)
-> >  endif
-> >  endif
-> >
-> > -LIBS =3D $(LIBBPF) -lelf -lz
-> > -LIBS_BOOTSTRAP =3D $(LIBBPF_BOOTSTRAP) -lelf -lz
-> > +LIBS =3D $(LIBBPF) -lelf -lz -lcrypto
-> > +LIBS_BOOTSTRAP =3D $(LIBBPF_BOOTSTRAP) -lelf -lz -lcrypto
-> >
-> >  ifeq ($(feature-libelf-zstd),1)
-> >  LIBS +=3D -lzstd
-> > @@ -194,7 +194,7 @@ endif
-> >
-> >  BPFTOOL_BOOTSTRAP :=3D $(BOOTSTRAP_OUTPUT)bpftool
-> >
-> > -BOOTSTRAP_OBJS =3D $(addprefix $(BOOTSTRAP_OUTPUT),main.o common.o jso=
-n_writer.o gen.o btf.o)
-> > +BOOTSTRAP_OBJS =3D $(addprefix $(BOOTSTRAP_OUTPUT),main.o common.o jso=
-n_writer.o gen.o btf.o sign.o)
-> >  $(BOOTSTRAP_OBJS): $(LIBBPF_BOOTSTRAP)
-> >
-> >  OBJS =3D $(patsubst %.c,$(OUTPUT)%.o,$(SRCS)) $(OUTPUT)disasm.o
-> > diff --git a/tools/bpf/bpftool/cgroup.c b/tools/bpf/bpftool/cgroup.c
-> > index 944ebe21a216..ec356deb27c9 100644
-> > --- a/tools/bpf/bpftool/cgroup.c
-> > +++ b/tools/bpf/bpftool/cgroup.c
-> > @@ -2,6 +2,10 @@
-> >  // Copyright (C) 2017 Facebook
-> >  // Author: Roman Gushchin <guro@fb.com>
-> >
-> > +#undef GCC_VERSION
-> > +#ifndef _GNU_SOURCE
-> > +#define _GNU_SOURCE
-> > +#endif
-> >  #define _XOPEN_SOURCE 500
-> >  #include <errno.h>
-> >  #include <fcntl.h>
-> > diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
-> > index 67a60114368f..993c7d9484a4 100644
-> > --- a/tools/bpf/bpftool/gen.c
-> > +++ b/tools/bpf/bpftool/gen.c
->
-> > @@ -1930,7 +1990,7 @@ static int do_help(int argc, char **argv)
-> >               "       %1$s %2$s help\n"
-> >               "\n"
-> >               "       " HELP_SPEC_OPTIONS " |\n"
-> > -             "                    {-L|--use-loader} }\n"
-> > +             "                    {-L|--use-loader} | [ {-S|--sign } {=
--k} <private_key.pem> {-i} <certificate.x509> ]}\n"
->
->
-> With regards to our discussion on v4 - Sorry, I had not realised
-> removing the braces would make the sync test fail. ACK for keeping them
-> until this is resolved in the test.
->
-> As for the bash completion, I agree this should not block this series.
-> Please make sure to follow-up with it. I think it should be as follows:
+2025-09-22 19:31 UTC-0700 ~ Alexei Starovoitov
+<alexei.starovoitov@gmail.com>
+> On Mon, Sep 22, 2025 at 4:24 AM Quentin Monnet <qmo@kernel.org> wrote:
+>>
+>> 2025-09-21 18:01 UTC+0200 ~ KP Singh <kpsingh@kernel.org>
+>>> Two modes of operation being added:
+>>>
+>>> Add two modes of operation:
+>>>
+>>> * For prog load, allow signing a program immediately before loading. This
+>>>   is essential for command-line testing and administration.
+>>>
+>>>       bpftool prog load -S -k <private_key> -i <identity_cert> fentry_test.bpf.o
+>>>
+>>> * For gen skeleton, embed a pre-generated signature into the C skeleton
+>>>   file. This supports the use of signed programs in compiled applications.
+>>>
+>>>       bpftool gen skeleton -S -k <private_key> -i <identity_cert> fentry_test.bpf.o
+>>>
+>>> Generation of the loader program and its metadata map is implemented in
+>>> libbpf (bpf_obj__gen_loader). bpftool generates a skeleton that loads
+>>> the program and automates the required steps: freezing the map, creating
+>>> an exclusive map, loading, and running. Users can use standard libbpf
+>>> APIs directly or integrate loader program generation into their own
+>>> toolchains.
+>>>
+>>> Signed-off-by: KP Singh <kpsingh@kernel.org>
+>>
+>>
+>> Acked-by: Quentin Monnet <qmo@kernel.org>
+>>
+>> Thanks a lot!
+>>
+>>
+>>> ---
+>>>  .../bpf/bpftool/Documentation/bpftool-gen.rst |  13 +-
+>>>  .../bpftool/Documentation/bpftool-prog.rst    |  14 +-
+>>>  tools/bpf/bpftool/Makefile                    |   6 +-
+>>>  tools/bpf/bpftool/cgroup.c                    |   4 +
+>>>  tools/bpf/bpftool/gen.c                       |  68 +++++-
+>>>  tools/bpf/bpftool/main.c                      |  26 ++-
+>>>  tools/bpf/bpftool/main.h                      |  11 +
+>>>  tools/bpf/bpftool/prog.c                      |  29 ++-
+>>>  tools/bpf/bpftool/sign.c                      | 212 ++++++++++++++++++
+>>>  9 files changed, 372 insertions(+), 11 deletions(-)
+>>>  create mode 100644 tools/bpf/bpftool/sign.c
+>>>
+>>> diff --git a/tools/bpf/bpftool/Documentation/bpftool-gen.rst b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+>>> index ca860fd97d8d..d0a36f442db7 100644
+>>> --- a/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+>>> +++ b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+>>> @@ -16,7 +16,7 @@ SYNOPSIS
+>>>
+>>>  **bpftool** [*OPTIONS*] **gen** *COMMAND*
+>>>
+>>> -*OPTIONS* := { |COMMON_OPTIONS| | { **-L** | **--use-loader** } }
+>>> +*OPTIONS* := { |COMMON_OPTIONS| | { **-L** | **--use-loader** } | [ { **-S** | **--sign** } {**-k** <private_key.pem>} **-i** <certificate.x509> ] }
+>>>
+>>>  *COMMAND* := { **object** | **skeleton** | **help** }
+>>>
+>>> @@ -186,6 +186,17 @@ OPTIONS
+>>>      skeleton). A light skeleton contains a loader eBPF program. It does not use
+>>>      the majority of the libbpf infrastructure, and does not need libelf.
+>>>
+>>> +-S, --sign
+>>> +    For skeletons, generate a signed skeleton. This option must be used with
+>>> +    **-k** and **-i**. Using this flag implicitly enables **--use-loader**.
+>>> +
+>>> +-k <private_key.pem>
+>>> +    Path to the private key file in PEM format, required for signing.
+>>> +
+>>> +-i <certificate.x509>
+>>> +    Path to the X.509 certificate file in PEM or DER format, required for
+>>> +    signing.
+>>> +
+>>>  EXAMPLES
+>>>  ========
+>>>  **$ cat example1.bpf.c**
+>>> diff --git a/tools/bpf/bpftool/Documentation/bpftool-prog.rst b/tools/bpf/bpftool/Documentation/bpftool-prog.rst
+>>> index f69fd92df8d8..009633294b09 100644
+>>> --- a/tools/bpf/bpftool/Documentation/bpftool-prog.rst
+>>> +++ b/tools/bpf/bpftool/Documentation/bpftool-prog.rst
+>>> @@ -18,7 +18,7 @@ SYNOPSIS
+>>>
+>>>  *OPTIONS* := { |COMMON_OPTIONS| |
+>>>  { **-f** | **--bpffs** } | { **-m** | **--mapcompat** } | { **-n** | **--nomount** } |
+>>> -{ **-L** | **--use-loader** } }
+>>> +{ **-L** | **--use-loader** } | [ { **-S** | **--sign** } **-k** <private_key.pem> **-i** <certificate.x509> ] }
+>>
+>>
+>> Perfect, thank you!
+>>
+>>
+>>>
+>>>  *COMMANDS* :=
+>>>  { **show** | **list** | **dump xlated** | **dump jited** | **pin** | **load** |
+>>> @@ -248,6 +248,18 @@ OPTIONS
+>>>      creating the maps, and loading the programs (see **bpftool prog tracelog**
+>>>      as a way to dump those messages).
+>>>
+>>> +-S, --sign
+>>> +    Enable signing of the BPF program before loading. This option must be
+>>> +    used with **-k** and **-i**. Using this flag implicitly enables
+>>> +    **--use-loader**.
+>>> +
+>>> +-k <private_key.pem>
+>>> +    Path to the private key file in PEM format, required when signing.
+>>> +
+>>> +-i <certificate.x509>
+>>> +    Path to the X.509 certificate file in PEM or DER format, required when
+>>> +    signing.
+>>> +
+>>>  EXAMPLES
+>>>  ========
+>>>  **# bpftool prog show**
+>>> diff --git a/tools/bpf/bpftool/Makefile b/tools/bpf/bpftool/Makefile
+>>> index 9e9a5f006cd2..586d1b2595d1 100644
+>>> --- a/tools/bpf/bpftool/Makefile
+>>> +++ b/tools/bpf/bpftool/Makefile
+>>> @@ -130,8 +130,8 @@ include $(FEATURES_DUMP)
+>>>  endif
+>>>  endif
+>>>
+>>> -LIBS = $(LIBBPF) -lelf -lz
+>>> -LIBS_BOOTSTRAP = $(LIBBPF_BOOTSTRAP) -lelf -lz
+>>> +LIBS = $(LIBBPF) -lelf -lz -lcrypto
+>>> +LIBS_BOOTSTRAP = $(LIBBPF_BOOTSTRAP) -lelf -lz -lcrypto
+>>>
+>>>  ifeq ($(feature-libelf-zstd),1)
+>>>  LIBS += -lzstd
+>>> @@ -194,7 +194,7 @@ endif
+>>>
+>>>  BPFTOOL_BOOTSTRAP := $(BOOTSTRAP_OUTPUT)bpftool
+>>>
+>>> -BOOTSTRAP_OBJS = $(addprefix $(BOOTSTRAP_OUTPUT),main.o common.o json_writer.o gen.o btf.o)
+>>> +BOOTSTRAP_OBJS = $(addprefix $(BOOTSTRAP_OUTPUT),main.o common.o json_writer.o gen.o btf.o sign.o)
+>>>  $(BOOTSTRAP_OBJS): $(LIBBPF_BOOTSTRAP)
+>>>
+>>>  OBJS = $(patsubst %.c,$(OUTPUT)%.o,$(SRCS)) $(OUTPUT)disasm.o
+>>> diff --git a/tools/bpf/bpftool/cgroup.c b/tools/bpf/bpftool/cgroup.c
+>>> index 944ebe21a216..ec356deb27c9 100644
+>>> --- a/tools/bpf/bpftool/cgroup.c
+>>> +++ b/tools/bpf/bpftool/cgroup.c
+>>> @@ -2,6 +2,10 @@
+>>>  // Copyright (C) 2017 Facebook
+>>>  // Author: Roman Gushchin <guro@fb.com>
+>>>
+>>> +#undef GCC_VERSION
+>>> +#ifndef _GNU_SOURCE
+>>> +#define _GNU_SOURCE
+>>> +#endif
+>>>  #define _XOPEN_SOURCE 500
+>>>  #include <errno.h>
+>>>  #include <fcntl.h>
+>>> diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
+>>> index 67a60114368f..993c7d9484a4 100644
+>>> --- a/tools/bpf/bpftool/gen.c
+>>> +++ b/tools/bpf/bpftool/gen.c
+>>
+>>> @@ -1930,7 +1990,7 @@ static int do_help(int argc, char **argv)
+>>>               "       %1$s %2$s help\n"
+>>>               "\n"
+>>>               "       " HELP_SPEC_OPTIONS " |\n"
+>>> -             "                    {-L|--use-loader} }\n"
+>>> +             "                    {-L|--use-loader} | [ {-S|--sign } {-k} <private_key.pem> {-i} <certificate.x509> ]}\n"
+>>
+>>
+>> With regards to our discussion on v4 - Sorry, I had not realised
+>> removing the braces would make the sync test fail. ACK for keeping them
+>> until this is resolved in the test.
+>>
+>> As for the bash completion, I agree this should not block this series.
+>> Please make sure to follow-up with it. I think it should be as follows:
+> 
+> Quentin,
+> since you wrote the patch can you send it ?
+> 
 
-Quentin,
-since you wrote the patch can you send it ?
+
+Sure, I will
