@@ -1,218 +1,158 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A730728504F;
-	Wed, 24 Sep 2025 08:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from the.earth.li (the.earth.li [93.93.131.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6DFC4502F;
+	Wed, 24 Sep 2025 08:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758702341; cv=none; b=lO6E58NnGNfFitytbWrlmcefoXS5VUuAGHd1dT24VwBA+4ybHepo8j7bONNQFEv8N1BQAT08/dBpRTpu0cSVTA8wgRKQgDuRWlV/OqANxGBy4An/t5Zf1QmwftGq7OMFXV46EUCjSCK09HtL10Ph3CR7Hl9ZYz9HzOrgglxmKmE=
+	t=1758702580; cv=none; b=iC633DRaHsz10VElmKJsTds1UYySUgAwOAqyzx1h/y/6GwM1zGEQzl3Ef6nKqzEuZtz+s9cY4hFENMVo9eulaiG0N7TUyKv0z8m8sr5Atd0e/rdNQxUB0uk9zoxu4m0Wrc8uyBCnfeDZ5jX+lcRR+pckD+7t2dJrcggqojXvCNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758702341; c=relaxed/simple;
-	bh=C9UfaUa1wI4TUrVddzmafn/v0AzLRR2mO0sv1bo1fj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BuVfHD1qtVBBuzM6g/OvmPBsUa93lch42Dx7w3fR3PwuDb/fxx1kI6+Nxso/wnEd9BbOn9NG1yT7srhgYKi2NlgAayKCR3WCofjWywaVfXZE/FlZjDhV6N4/SiwmB2DF7ZzyKvKShW0UIpe8JmZu2M1Hlkf1o4ni43i0GRfERYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 58O88gmH016319;
-	Wed, 24 Sep 2025 03:08:42 -0500
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 58O88fr8016318;
-	Wed, 24 Sep 2025 03:08:41 -0500
-Date: Wed, 24 Sep 2025 03:08:41 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        paul@paul-moore.com, omosnace@redhat.com, john.johansen@canonical.com,
-        serge@hallyn.com, casey@schaufler-ca.com
-Subject: Re: [RFC PATCH v2] lsm,selinux: introduce LSM_ATTR_UNSHARE and wire it up for SELinux
-Message-ID: <20250924080840.GA16185@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20250918135904.9997-2-stephen.smalley.work@gmail.com>
+	s=arc-20240116; t=1758702580; c=relaxed/simple;
+	bh=dMJayFRQXCbfy7iFRVB54b2syrkiy8nEueH3QbLILTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+j8eqgVC+QOPaPmBskXcnmHbakhJCEWoJZ25UTJN4yUp4AuZkLN808ur37V5qlUZuj/Epu1Tcj8exDxN8VE2+/wQQy/KAL603DrALtuuSWbYRAO6pB6UxAG2IrVe1kicTqZRNl9nZhec1Khc9SCmYjo2YiLqUeZubszf+tpeb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=DRwF2xRs; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b="DRwF2xRs"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=K1s/oBfOLj5oIgwltUdaNspTmj/kufa3O8CRtPGUkXY=; b=DRwF2xRsWH/dYQFn3bBeJahJaM
+	355/2JZAvH8ekwKFy9bMNLrZf5GL4hhAoodxeRmlF/BGAwvzLh6ANNSwXbUxNQ3WL2EFwJKOV6Kxl
+	yAqKANnNDidvIPWcvUy0zh3YqjOiMLW2ENu0sXZWl96BLh36kCgzC4pyTP77kn0OlS9LJLcUdDw+o
+	qolGoySAFCUNeamzY9zlFe1JaYliyUOGuHM6A8RKLFAWFttPqTMyt5/XZxjOsGjhE+UXS3zW7jhDY
+	6pqL8w0CjTtwQrcM42pqzORw8bfFDdC1UigDeuwZ+FEHT/wV0O4QzoGwx1bbZ5En/v7QqbpXn2BPq
+	RvEQy2bw==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1v1KsN-00EF72-22;
+	Wed, 24 Sep 2025 09:29:23 +0100
+Date: Wed, 24 Sep 2025 09:29:23 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] keys, trusted: Remove redundant helper
+Message-ID: <aNOr4_xLQ30iTRSe@earth.li>
+References: <20250922164318.3540792-1-jarkko@kernel.org>
+ <20250922164318.3540792-5-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20250918135904.9997-2-stephen.smalley.work@gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 24 Sep 2025 03:08:43 -0500 (CDT)
+In-Reply-To: <20250922164318.3540792-5-jarkko@kernel.org>
 
-On Thu, Sep 18, 2025 at 09:59:05AM -0400, Stephen Smalley wrote:
+On Mon, Sep 22, 2025 at 07:43:17PM +0300, Jarkko Sakkinen wrote:
+>From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+>
+>tpm2_buf_append_auth has only single call site and most of its parameters
+>are redundant. Open code it to the call site. Remove illegit FIXME comment
+>as there is no categorized bug and replace it with more sane comment about
+>implementation (i.e. "non-opionated inline comment").
+>
+>Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
 
-Good morning, I hope the week is going well for everyone.
+Seems like a reasonable cleanup.
 
-> RFC-only, will ultimately split the LSM-only changes to their own
-> patch for submission. I have now tested this with the corresponding
-> selinux userspace change that you can find at
-> https://lore.kernel.org/selinux/20250918135118.9896-2-stephen.smalley.work@gmail.com/
-> and also verified that my modified systemd-nspawn still works when
-> starting containers with their own SELinux namespace.
-> 
-> This defines a new LSM_ATTR_UNSHARE attribute for the
-> lsm_set_self_attr(2) system call and wires it up for SELinux to invoke
-> the underlying function for unsharing the SELinux namespace. As with
-> the selinuxfs interface, this immediately unshares the SELinux
-> namespace of the current process just like an unshare(2) system call
-> would do for other namespaces. I have not yet explored the
-> alternatives of deferring the unshare to the next unshare(2),
-> clone(2), or execve(2) call and would want to first confirm that doing
-> so does not introduce any issues in the kernel or make it harder to
-> integrate with existing container runtimes.
-> 
-> Differences between this syscall interface and the selinuxfs interface
-> that need discussion before moving forward:
-> 
-> 1. The syscall interface does not currently check any Linux capability
-> or DAC permissions, whereas the selinuxfs interface can only be set by
-> uid-0 or CAP_DAC_OVERRIDE processes. We need to decide what if any
-> capability or DAC check should apply to this syscall interface and if
-> any, add the checks to either the LSM framework code or to the SELinux
-> hook function.
-> 
-> Pros: Checking a capability or DAC permissions prevents misuse of this
-> interface by unprivileged processes, particularly on systems with
-> policies that do not yet define any of the new SELinux permissions
-> introduced for controlling this operation. This is a potential concern
-> on Linux distributions that do not tightly coordinate kernel updates
-> with policy updates (or where users may choose to deploy upstream
-> kernels on their own), but not on Android.
-> 
-> Cons: Checking a capability or DAC permissions requires any process
-> that uses this facility to have the corresponding capability or
-> permissions, which might otherwise be unnecessary and create
-> additional risks. This is less likely if we use a capability already
-> required by container runtimes and similar components that might
-> leverage this facility for unsharing SELinux namespaces.
-> 
-> 2. The syscall interface checks a new SELinux unshare_selinuxns
-> permission in the process2 class between the task SID and itself,
-> similar to other checks for setting process attributes. This means
-> that:
->     allow domain self:process2 *; -or-
->     allow domain self:process2 ~anything-other-than-unshare_selinuxns; -or-
->     allow domain self:process2 unshare_selinuxns;
-> would allow a process to unshare its SELinux namespace.
-> 
-> The selinuxfs interface checks a new unshare permission in the
-> security class between the task SID and the security initial SID,
-> likewise similar to other checks for setting selinuxfs attributes.
-> This means that:
->     allow domain security_t:security *; -or-
->     allow domain security_t:security ~anything-other-than-unshare; -or-
->     allow domain security_t:security unshare;
-> would allow a process to unshare its SELinux namespace.
-> 
-> Technically, the selinuxfs interface also currently requires open and
-> write access to the selinuxfs node; hence:
->     allow domain security_t:file { open write };
-> is also required for the selinuxfs interface.
-> 
-> We need to decide what we want the SELinux check(s) to be for the
-> syscall and whether it should be more like the former (process
-> attributes) or more like the latter (security policy settings). Note
-> that the permission name itself is unimportant here and only differs
-> because it seemed less evident in the process2 class that we are
-> talking about a SELinux namespace otherwise.
-> 
-> Regardless, either form of allow rule can be prohibited in policies
-> via neverallow rules on systems that enforce their usage
-> (e.g. Android, not necessarily on Linux distributions).
-> 
-> 3. The selinuxfs interface currently offers more functionality than I
-> have implemented here for the sycall interface, including:
-> 
-> a) the ability to read the selinuxfs node to see if your namespace has
-> been unshared, which should be easily implementable via
-> lsm_get_self_attr(2).  However, questions remain as to when that
-> should return 1 versus 0 (currently returns 1 whenever your namespace
-> is NOT the initial SELinux namespace, useful for the testsuite to
-> detect it is in a child, but could instead be reset to 0 by a
-> subsequent policy load to indicate completion of the setup of the
-> namespace, thus hiding from child processes that they are in a child
-> namespace once its policy has been loaded).
-> 
-> b) the abilities to get and set the maximum number of SELinux
-> namespaces (via a /sys/fs/selinux/maxns node) and to get and set the
-> maximum depth for SELinux namespaces (via a /sys/fs/selinux/maxnsdepth
-> node). These could be left in selinuxfs or migrated to some other LSM
-> management APIs since they are global in scope, not per-process
-> attributes.
+Reviewed-by: Jonathan McDowell <noodles@earth.li>
 
-We had a number of exchanges regarding LSM namespacing in the thread
-that Paul Moore started on this issue:
+>---
+> security/keys/trusted-keys/trusted_tpm2.c | 51 ++++-------------------
+> 1 file changed, 9 insertions(+), 42 deletions(-)
+>
+>diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+>index c414a7006d78..8e3b283a59b2 100644
+>--- a/security/keys/trusted-keys/trusted_tpm2.c
+>+++ b/security/keys/trusted-keys/trusted_tpm2.c
+>@@ -198,36 +198,6 @@ int tpm2_key_priv(void *context, size_t hdrlen,
+> 	return 0;
+> }
+>
+>-/**
+>- * tpm2_buf_append_auth() - append TPMS_AUTH_COMMAND to the buffer.
+>- *
+>- * @buf: an allocated tpm_buf instance
+>- * @session_handle: session handle
+>- * @nonce: the session nonce, may be NULL if not used
+>- * @nonce_len: the session nonce length, may be 0 if not used
+>- * @attributes: the session attributes
+>- * @hmac: the session HMAC or password, may be NULL if not used
+>- * @hmac_len: the session HMAC or password length, maybe 0 if not used
+>- */
+>-static void tpm2_buf_append_auth(struct tpm_buf *buf, u32 session_handle,
+>-				 const u8 *nonce, u16 nonce_len,
+>-				 u8 attributes,
+>-				 const u8 *hmac, u16 hmac_len)
+>-{
+>-	tpm_buf_append_u32(buf, 9 + nonce_len + hmac_len);
+>-	tpm_buf_append_u32(buf, session_handle);
+>-	tpm_buf_append_u16(buf, nonce_len);
+>-
+>-	if (nonce && nonce_len)
+>-		tpm_buf_append(buf, nonce, nonce_len);
+>-
+>-	tpm_buf_append_u8(buf, attributes);
+>-	tpm_buf_append_u16(buf, hmac_len);
+>-
+>-	if (hmac && hmac_len)
+>-		tpm_buf_append(buf, hmac, hmac_len);
+>-}
+>-
+> /**
+>  * tpm2_seal_trusted() - seal the payload of a trusted key
+>  *
+>@@ -507,19 +477,16 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+> 					    options->blobauth_len);
+> 	} else {
+> 		/*
+>-		 * FIXME: The policy session was generated outside the
+>-		 * kernel so we don't known the nonce and thus can't
+>-		 * calculate a HMAC on it.  Therefore, the user can
+>-		 * only really use TPM2_PolicyPassword and we must
+>-		 * send down the plain text password, which could be
+>-		 * intercepted.  We can still encrypt the returned
+>-		 * key, but that's small comfort since the interposer
+>-		 * could repeat our actions with the exfiltrated
+>-		 * password.
+>+		 * The policy session is generated outside the kernel, and thus
+>+		 * the password will end up being unencrypted on the bus, as
+>+		 * HMAC nonce cannot be calculated for it.
+> 		 */
+>-		tpm2_buf_append_auth(&buf, options->policyhandle,
+>-				     NULL /* nonce */, 0, 0,
+>-				     options->blobauth, options->blobauth_len);
+>+		tpm_buf_append_u32(&buf, 9 + options->blobauth_len);
+>+		tpm_buf_append_u32(&buf, options->policyhandle);
+>+		tpm_buf_append_u16(&buf, 0);
+>+		tpm_buf_append_u8(&buf, 0);
+>+		tpm_buf_append_u16(&buf, options->blobauth_len);
+>+		tpm_buf_append(&buf, options->blobauth, options->blobauth_len);
+> 		if (tpm2_chip_auth(chip)) {
+> 			tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_ENCRYPT, NULL, 0);
+> 		} else  {
+>-- 
+>2.39.5
+>
+>
 
-https://lore.kernel.org/linux-security-module/CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com/
+J.
 
-The one issue that seemed to achieve universal consensus was that
-every LSM was going to have different requirements for namespacing.
-
-At the risk of playing devil's advocate, this seems to raise the
-question as to whether or not there is a need to have a common API for
-requesting security namespace separation or leave the issue to LSM
-specific implementations.
-
-The primary rationale for some modicum of centralized infrastructure
-would seem to be to have a system call rather than an LSM specific
-pseudo-filesystem interface to control security namespaces.  Since
-creating a system call interface is going to lock the API in stone it
-would seem that we would want to get this right, or at least as
-generic as possibe.
-
-So some comments to that end.
-
-If we use the lsm_set_self_attr(2) system call as our approach, the
-namespace separation process needs to be split into two separate
-calls.  One to request the creation of a namespace and a second call
-to request that the process join the new namespace.
-
-This is required in order to support the ability for an orchestration
-process to load a policy or model and have it in place before the new
-namespace is allowed to enforce the policy or model.
-
-So we would need something like an LSM_ATTR_UNSHARE_INIT as well as
-the LSM_ATTR_UNSHARE attribute.
-
-So the model would be for a process to issue an LSM_ATTR_UNSHARE_INIT
-call to create the new security context namespace.  That namespace
-context can then be configured through either an LSM specific
-pseudo-filesystem interface or alternatively through additional calls
-to lsm_set_self_attr(2).
-
-Once the configuration process is complete, the process would be set
-free in its new namespace with the LSM_ATTR_UNSHARE attribute.
-
-Separating from a security policy namespace to a new namespace will be
-one of the most security sensitive operations that a system can
-execute.  As such it has to be gated by some type of security control.
-
-At a minimum this needs to be uid-0 or posession of CAP_MAC_ADMIN.
-Given the current LSM concept of stacking, there needs to be an LSM
-security hooks assigned, so as to give all of the LSM's an opportunity
-to accept or deny the attribute operations.
-
-For example, it would seem entirely reasonable that the lockdown LSM
-may want to deny the ability to create any departures from the current
-security configuration.
-
-Making this generic for any security namespace will require some
-additional plumbing, most notably the ability for any LSM to register
-for the ability to receive namespace event notifications.  If we
-create new security_task_secns_init() and
-security_task_secns_unshare() hooks we could use those as both
-notification and security control mechanisms.
-
-So lots of details to discuss but the above should be about the most
-generic implementation that can be leveraged by all of the LSM's.
-
-Comments/suggestion welcome.
-
-Have a good remainder of the week.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+-- 
+If a program is useful, it must be changed.
