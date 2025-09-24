@@ -1,291 +1,240 @@
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010023.outbound.protection.outlook.com [52.101.61.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362931FDD
-	for <linux-security-module@vger.kernel.org>; Wed, 24 Sep 2025 18:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758738728; cv=none; b=PrwqgKf+T1VDEMamgx6nYjLg6jF1fSZCGuDC5jTVgujYvyDz92LFQn342eD8YJI8gWHFWTRRi2yqRLVwpo5ouRRF87Ltbbthe3CfjMomuACzkBRurhsJVrWp2YmVEIOdkLPirbERa0nVkIU5Qg2nMIyPIrU9gK3VesQgn0635EU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758738728; c=relaxed/simple;
-	bh=Lb4q+lVPZphOzuD6MOvDiQNQpslhZLsZL8V9AQaBLhg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gZyTePneXBWIEv5k2ZjOqZYoGqMm7lZaWs1DLlKnpiSx2Uk6Bb8io86LwYlzgh4Fa1djE7DVE261jlyps9YDogm1X9my/ifyWLj4jKyC9JuOL7iRXLSJ7vbS9t08L6vfofDSvhIhJryX0wQBJ7flmYLqK+dDJgOjdKpQltWAUYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=MaryB8GE; arc=none smtp.client-ip=66.163.187.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDED32A3DE;
+	Wed, 24 Sep 2025 20:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.23
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758746127; cv=fail; b=RyvzePgdDbNqmn97J+zE/+qRUSJiKokRAi4lntvoV/pB8uInhEP6Cg+3FjlWVvs26S25ewkzxhss6N5LMS2WvHXjSrYzmLLvZpwtt73HFNfmoyUeQjuk0Bx8sKG7Vo8G1m3cGN4w/+SkovSEZSL71cbv7xnHRbh6jInLXWeSeko=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758746127; c=relaxed/simple;
+	bh=q+bD5SmhIL3qBSvQDac8JLl3an5Aa6v1Vy8SrRfxaOg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jFqpkpRcRRENrhOKc73IV/9sOWOImqlrRy0C24aMAKiOT0mzh9gktOpWBOzw8VcKFDwwBHPrdlJBeWnBoLFPiOY+s75G40Rxgkyg9JmTJAQUBncdaXjLxIFBkIKjJgRNH7sJF5KUMRBuanYf4j1RGYyVcOA3QIVDnqO4N2GFrTI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1RJUEe3G; arc=fail smtp.client-ip=52.101.61.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="MaryB8GE"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1758738725; bh=+NUBtN0Xnl93f5fxCIE1YYj5P8zbT4cUyq3B3IZmlxI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=MaryB8GEmHuqK938PBRhGEc9iJf0BKbmFHEWb1fweSdP0rhwQFm/aQY3VQgAMwodGi3zV3Y/kLwrD32+XHsC80As+taH8/ATenxBVunoDY90ikWhpv1PlIA1mSYDavumDrIrWrK3Od7dBMNWMmKMS4o54b+dw8Fzmq3p2wjHldhW204sLsmSUGfrY2qTyzcewLpNOcUILf4ifs0G03+YZI/Frrv4vaBB/iCY6P2QQCuJ4d5aYiZduiRPSAolX5f4Qk6U0bhv3E6jP/w3aoAZiLeuRgDsOM2I4fZsRM1EcMo6+b0sgPLepRLCf1tL6SKaBKgUSA+6YbJpYULgiZdK2Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1758738725; bh=bFoXqebJs9IGLY0SqiT3PXv+uTIalsQQAiE8w9I2JBv=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=nlI01NtRW7Sb5f+7lSUVCzoVuUEb7ZPHLv/1dvppWWWITGCNnxPGPwsv6zGHenSBBy4KZKSWzYTpkUfu8IzPqGkgxS53u2/VGIN4or2gPrFH4YByx48ZvoMzzO7NnzmY5ppgGfHS3GJUdsrjalZ0nF0Fap0SFcYpH4IRlvnFNr1nRljQCDiMRP/afTEFol6XFcE2Cx1IikAfG0asORvI3nWGWQWSWgmjmWuvImlBzzs+6LuAN6tjb/C+GrQHJvU3uh0fVxsW0xGflEZgJmADYYN6G45LdbfPFOaiSbtvXKPsDyMPwOb97vCpx8IJupYXpXNYqapJYQmVAX6zGSKvxg==
-X-YMail-OSG: AfuQRXUVM1nbm1Tezfpl5G_I6KgWpAeFrVczwhHwTqsH7AIrImKGeetvaFL.Ygj
- sTK1468b0xCx4KgVNugvHbUmk91fzQQ4kmLnMvIPTFn8jEXzdNIjRRuATR_hBitJZK7rI6yPX66M
- Ohw0kf1jgeul2tSwzOrAq2rfFEwUU3CD6TVs_2S21NsEE7nHZZr2REQMS3vInX_rfavhBdSeQZ5c
- hgQUkD85FYrX7sDbUSmrs0oXgiOxrf4Q4jfWL5GhO4ytJ17TJjt3pojywF8zZYUAYYU_pRHY440Z
- oPiVCxd7KoGQ8xbVo_bYqGy9g54LL_zWOSVqaU9rFdH65TMQMUGSpAnPeF1CKwdQ3r5gneeW304p
- lf8iQqAi.8_N4r._rhfZCZ3uCJEkED944b6k1eNws8h1VyMCQ6YHytpxhsGWTVTS7HF8P.gXodQS
- LKB0TIM.3G.nprS.qvnQPGCdqKz5zmRX.9PpXXfq.QnYis8wXqRppcoM3HYEHflZWkMGcE1nfRbh
- WmCcaR46YozmvRgmL97UYjCrAe8GGJpO5Vm5k486ycs_XY_yfJmBisFGE6va.D8Yj1vtnCcYp8nx
- rydLm37F19.PKDFLXYZd.sL69Nc_R5h1RoG8UrG9k4EXTQfnvbVZuDXmqO6nFM49OUfbLUpSG2U0
- _GW0rtpv_MmoibLmulMgngnKHqJ3qRFqYia5cE5HitPll9tZ.zkGXwEK.pjoxRJangsPppQnEkd0
- VV70t.IOPvMVuPIlGb1sVYgTjVlLNIFwoID1vi3uk9umpWStIwN9PSMZbbs1x_FuXzmay71TZONc
- pZrwxio7wIwrQ6dbbUI1td3XaFRIH1UC3asH9stF4ezLgE5W1NfxtEkCHa7Mino1u3nSoYwiCXrp
- L7w9rJQJDn.HNVDX_bBw9lxbJtlo5LEkNi8Tku9zPMFGmFzfmWNbWqIer3s9E2_OmcwAh2_P0egy
- 7BGs9zdLXLgKVsTfMxGQkKTZz.FkTNjoCxaM4orvnyZMvKCsM63IErfTrcAz_j8kXiXckLW8n1Ow
- Uc1fZzwL8Peg7nX6UZ9L41w5cvs8e8MOa_9IhpQVCbVuR4tdmUKesK7WFdI.1UbJkARi95Fwq.BC
- RRoPGdkOIjkwyLG6tHMUODLC_HcYgSR8pxe4J3Z14TuvwxhcJC6JrpTs8p.gJjKrR6Opf_FlX0C7
- oKM0pY9Yk7aIMi69FuqvGXBevIjgT6QtLp8TrmfGRodnu6FjHP9hl39oOvn2hVzxNF1suoR56Gb5
- sNq_4CpCL8OIGfE_uiJVpBXekYW25nuhsmYtTmxkLWnaGHO3u4eoUYpM5T9gPd2qUBq24kzS2Zcf
- tZ.ZX5tjykB_gt82ohqoXSbyZFJ.O0RypNLCMXaFW4akHenep4VPkvqvUOwFy4Q7UTvCWl5hjwB9
- V9p306h_NohnaOIgpuv2Toq01uhbjfuR2ojVdilC2kmMJyBhN2bFb6tQf.fCBsGM0FIX5Dq8Ketg
- 0Dk6hLtpVVeXKyCl4mo0rOkSGTmlg6ufnAjnHEwqxPc.TwO22NgL_H4Uwd6I3.KnFtjYzXLNZHiX
- Fkrl4jm.HIaY.EQxdv04zKxDg5VmYMZToPF4xBA_d2hmI1XnjkWw.a0iXLiXmiyl741h7snG6EML
- t7jLSBkGZpddCR7qymsqVXkDydiDMgvc6op4WxTyc6WWeG0MBSgoxbcWSvoyy8XRy1nGw6cDE7Lu
- igwkeGU9Fm8CuVbD4xfBBqb5ilwc3ZzFHhu_r8vaXd_t85PptRFaMdgS0OTI6miszizxLi6QDJtT
- ra493yjlZOg779JQ9qOCK04dy_3Xc1Zz9DoEKzgdm14EWbyXmmG3sbpU58YsM6Mu5Su7mORJR9by
- CwlO6VeKES1dRhw2f.tdCBOso6Hhxvjfg1M1xlz0J44Q4NO6T0vcvxk44L_8aE6vBgiHmf8GHT4v
- nR3ihc6y.ntZHvY2_TQI75uu6rzk_hoXUF5skuhplcorHzd7h02hU26KMw0Ztqzuwli06B0xS9Ky
- XGmroUT7wjIJ4joCkZlXh5sifiXHj_BiF1lKuc3D_sKeNYdbLMoA4.VAMLzZ8Hd1QhBuZPE4ZWF0
- JycAY86etDhQAxRgcjWr3usIyYTNi1lJDDdMBY2azR6hxApeVzdqMJGl597WpDLtyuoToWEn2Kkw
- Afwsz5XDvPkmP9GrY4zi7JZM_tF3PuGINf0ozcnq0p20K_fKKMS_2l1IdpXYKsEGpFYG2w9MNqbC
- sgJqBvPh3WW6HuD5XVfqPEdmdjz1apenmteXjgSPOjxp1.Lu8DJHm.QiiqrBtCCUSO2iVswi8pAG
- hcKEa_Ab7._FAVNk46ojWVg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 7dd892ba-8a0d-4f72-b3ff-b20eec388a20
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Wed, 24 Sep 2025 18:32:05 +0000
-Received: by hermes--production-gq1-6f9f7cb74b-f2wdk (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID fd1bd4b5e458fcf0f01d726c0b00a304;
-          Wed, 24 Sep 2025 18:11:47 +0000 (UTC)
-Message-ID: <7cb1818a-72ab-4e03-90c9-6195ccf5f249@schaufler-ca.com>
-Date: Wed, 24 Sep 2025 11:11:44 -0700
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1RJUEe3G"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wVt84lDl6Yjq5Qa1UTUN7JGeY489oJGgjIPHP/fp+001Q0+xpMg/ay/3Dxkq5LrvBPaoxzggg83euLbjN7KRqdQ+hh3HpXJfzRoepVQsTh91HeTuIdy8VYpGpBS1S/5yXS0KHi2oV99+qHxQwstdJ/2Z7YSXJq3M31TuQcy1B15/H6qDJnPyGxiu/85ij+x5ZYgISka4YghukGTJ5z6BPYSF/TS/7G+QKuPy4EIWOzA3zhm1ZBgh83QEEWwfrExrpwUzwIB+YwGwGS2N/bPXvDyAbyYm9gfN8wy6F0NXv2pDz+YhIwIiS3r1Gk3eEN+mWyIiSZDRr9VRH4wnqTzeJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=suh4C75ktQKXPgZ1yuZpuqhdixVMXh0SuYK+jegbXWI=;
+ b=Of88vWkIxB0v9qHIlvNtCXoWQvSYjgGy8qRkn0wZ0bvE7j6Qj9G4cokw7queE4YgF4Z8LQX4ILbHi6HKsmtf7mEWo0zbAdRjDGpPNp73zVS5xx3foGAhWRWOjYgdwEdXljsgQzI+AM/s5NXVkZa9ueGEdlfo9w+vsdW+E8s1iaSQaF391pHZsHO8Yr7jFeAcH22R+0UzxyWhh76ItKdBklSiLGKd2B4P4q0L8aXOOKofOaahDQkrR8td399HMoBCuwIBD1lu8oG4yKChJFss6X9elNO9md2CPCcHr17qWb2yXJme3PrQUAUhAPcbQ29CG2OolgfEzoY6ai8v8byCrw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=suh4C75ktQKXPgZ1yuZpuqhdixVMXh0SuYK+jegbXWI=;
+ b=1RJUEe3GdJNGQwsfmz3Eid8db/tmjSumgINLFfsQnm3hPAIAxlwX1lTaacbLQb/OfXnuAxhAo7DsW7R21ziysI7vFXyHqxuuN//XLyZ3my4cYmcYYerijT24ASpIEFwtw8uFQXAV9eVLnceRbGn5VAlZlb0+SqngSTCSAXmXC94=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL3PR12MB9049.namprd12.prod.outlook.com (2603:10b6:208:3b8::21)
+ by CY5PR12MB6202.namprd12.prod.outlook.com (2603:10b6:930:25::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
+ 2025 20:35:19 +0000
+Received: from BL3PR12MB9049.namprd12.prod.outlook.com
+ ([fe80::ae6a:9bdd:af5b:e9ad]) by BL3PR12MB9049.namprd12.prod.outlook.com
+ ([fe80::ae6a:9bdd:af5b:e9ad%5]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
+ 20:35:19 +0000
+Message-ID: <b4abbdfa-8a4e-4c2b-a979-f940fcab37aa@amd.com>
+Date: Wed, 24 Sep 2025 15:35:12 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH kvm-next V11 0/7] Add NUMA mempolicy support for KVM
+ guest-memfd
+To: David Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>,
+ willy@infradead.org, akpm@linux-foundation.org, pbonzini@redhat.com,
+ shuah@kernel.org, seanjc@google.com, vbabka@suse.cz
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com,
+ xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com,
+ josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com,
+ jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com,
+ joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
+ gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+ tabba@google.com, ackerleytng@google.com, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com,
+ vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
+ michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com,
+ Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com,
+ aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
+ jack@suse.cz, hch@infradead.org, cgzones@googlemail.com,
+ ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
+ chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
+ dan.j.williams@intel.com, gshan@redhat.com, jgowans@amazon.com,
+ pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com,
+ suzuki.poulose@arm.com, quic_eberman@quicinc.com,
+ linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-coco@lists.linux.dev
+References: <20250827175247.83322-2-shivankg@amd.com>
+ <1b01ebab-a43e-4344-ae38-50f0a031332f@redhat.com>
+Content-Language: en-US
+From: "Kalra, Ashish" <ashish.kalra@amd.com>
+In-Reply-To: <1b01ebab-a43e-4344-ae38-50f0a031332f@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1P222CA0058.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:2c1::9) To BL3PR12MB9049.namprd12.prod.outlook.com
+ (2603:10b6:208:3b8::21)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2] lsm,selinux: introduce LSM_ATTR_UNSHARE and wire
- it up for SELinux
-To: "Dr. Greg" <greg@enjellic.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
- paul@paul-moore.com, omosnace@redhat.com, john.johansen@canonical.com,
- serge@hallyn.com, Casey Schaufler <casey@schaufler-ca.com>
-References: <20250918135904.9997-2-stephen.smalley.work@gmail.com>
- <20250924080840.GA16185@wind.enjellic.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250924080840.GA16185@wind.enjellic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.24485 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR12MB9049:EE_|CY5PR12MB6202:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67873eba-aa38-473e-a5ab-08ddfba9e069
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Vm5Zek5iRFhtb3lHS3hSYktBbWt4SUlMeFRJZnFEc3pEdFhLaCtQdjZmT0Ru?=
+ =?utf-8?B?TXZCQ085QmpGNm1uRWdMMTFBOEFhd3Z6c0hqN1V4T1pKYk9Qb1pwdkZ6UWFk?=
+ =?utf-8?B?YlFQWnFwREVwRnUxY0pOTTZGZDJNUlJobFRrbTVhS2MyL3pNbjJtL1hueFV6?=
+ =?utf-8?B?MnNRL1VVejFhQ0lURVJkdmRaYm9OdHk0Mm8vdVVNZWFtbDRIdVUvL1Jwek1Y?=
+ =?utf-8?B?STJCZVNIS2JIOHNNL0Vxd1RESzhiUUNKeUtBQ2dUNU9xYk9UMS81ajdDZWhP?=
+ =?utf-8?B?NDdKOVRGRTNiakZYaEJ5bHNOTGdKUUJVbkNobENsaUNCMmtlYkRxWDJORkdz?=
+ =?utf-8?B?Vzk3M1FiZ3JKcGZmc3ZXWlBWUC9KYnoyU2hSeU01dVR3RlMrRjIvdWFJSXNx?=
+ =?utf-8?B?R1dhcDVOMjNVam03N3lyUG1jd2I1LzdHQjZyWWRHYnJxWFByM1V3TVVpU0pp?=
+ =?utf-8?B?aXBGaEhaUzFMNzI4S3dPMzB4ZjdsYktEaDJDNTNlaFhwUXo3WlJGSk1Xcmcr?=
+ =?utf-8?B?Z0hYU1k0SEQ0a0hJcXdMSk41d0RpTVNQNmpwOWNMN0h4UWY1OG1jMkJ4SUJ5?=
+ =?utf-8?B?M0JaZXZsejUxSnc2SGoyL1pYdjRsNkp5RDR5bDFZRU5iOVJyU3hYUVl2ZDhu?=
+ =?utf-8?B?ZmlRZmhJN3ZEazJnSVJvbnRyR1l4cUljWjVlVVNleGFSbnNWWG1zQytMb25B?=
+ =?utf-8?B?OGxpYkUwRXU3aTJEbndkSTZrQXgzREpUd0V6UE5ON2oyLytrMkpObnlSN2tk?=
+ =?utf-8?B?S2plcGFUZ3FSaTQ2VTMwdzlockhpTzFxUm8yR2NjV1F5RDNKZW5naGg1dERu?=
+ =?utf-8?B?cHZwZkhKd04zdGZMVjFTVXB6aXBvektRNk9iZ1N3NEZwczBJYis4dDgxWm9J?=
+ =?utf-8?B?Y3Myd0h5NnhBSVlMUHAxcTllRmtTY2tGVmhNYXFHd1Rad0tmVTR1ZDE3TEhz?=
+ =?utf-8?B?YTViNi92ME44dXA3alQyYmxZZTlTcmxlT1hUa1lwM3lkNllNQTlrMzQzdEJz?=
+ =?utf-8?B?cjQydjdlUXZzZzJBVWFkZFhZRFY5dGNKZUZCbFdZeDQ1ZVBieXFZWGt5Z2g3?=
+ =?utf-8?B?NEVzWi9QeW1IcnVZUldhQTJKVzhJQzZHSURPMzdXMlNNb2lpdENoSzVCS212?=
+ =?utf-8?B?YTl3aDd6Z092T3FiVXZuTXFWUlkyOUN1L2tZSFRmUjdkZWRnTTB3V3lmdFNB?=
+ =?utf-8?B?MHVLcjk5M01GVGNLbCt0bmJtU3BKaHVNLy9FVjVqVGM3R2NvcGRxeFFFb3Nl?=
+ =?utf-8?B?NW51ajNSZWNiTkN1ZmkvRk9yOW5FK2xOK29aYUJLeVlJMzVIbU5NaHlMN05P?=
+ =?utf-8?B?RGJPZkRsWWhCcVpKSGlvRmhBcjUzTHFDTE9pTlgvR3JXeWIwZnNseW15SHlY?=
+ =?utf-8?B?eG1oTWJFdE8xUmR5amd2Y0JNMlVlaHNnWnp2Y0drVVlvdkphcXNETXdmeUE3?=
+ =?utf-8?B?Vi9ET2VrK29nZFZJR215bmVTYzgrWS8zd3NndXhON3pZZ3E1c3FkYk9XS29w?=
+ =?utf-8?B?MFFmRUd0OC9yTGxPYk5EREdnUGtTN01tWFcyMkNwYXFhNnZmU3lhNC9NYWJG?=
+ =?utf-8?B?NklZUGRtUUVNREM3UnVlZUFjQTFUNS9XaFFFVGJyL3lTM0dHeXc4UVpzemJk?=
+ =?utf-8?B?aVdCMHdMRkczWlVZWTQxZTNjeTRYd0xlY1NXMk9Fb2tXa2h3RGlWVmpJSWR3?=
+ =?utf-8?B?NHVRZnBhWEJ0M3IrTHBxNzNVK01sdlJJSkFBNnJBNTdlbkphQU56Wm9tVE9r?=
+ =?utf-8?B?UHE3MWhUNzJlT3ZONVc2Z3BYOGJxcnBPNWVtclhybGJzZ3RRYUN3MGhMUWZP?=
+ =?utf-8?B?bzV3S0VWZ0Y5dURTVmpmT2FUcE5NdHVrRHVRcFlVOFQ1ZEl2UzFiY0JMbFJw?=
+ =?utf-8?B?ajBOWXdNM0NIc1BvMXFRalZrOG5RY1AzL1ZmVkREMFJzeTBnb09uUHozS0dY?=
+ =?utf-8?Q?Cd8iQK1pkUk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB9049.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cWduQjJnTzRLVjU5eVpGd0xUdVVWQzcwZk0vMEdsMWxVY010b1BMRnJkWXZk?=
+ =?utf-8?B?ZG8ycitFbnBZVERpQ2J4VjRqbjdpY2NmRXZKZjhEM1Q2MXBVekNFQ2ZkR2lP?=
+ =?utf-8?B?Yk9rYmRMQmdJOEdzb28zQUQwRGFxUVpaaUtnY0lDNHh2K014WFlyaGY4TFpP?=
+ =?utf-8?B?VU5Nc1FSbTcrMkNJdW5CUm16Yk54M2FseUZGclZFR1RGUXUveFFOZmVHcnBa?=
+ =?utf-8?B?NTg1NHI3TVJZbm1semh5Z0VSSGVnd1dHYTNjUnJ1OUdCS1FsSlU3d3FTK0tB?=
+ =?utf-8?B?OGJwM2JmbVZjOW1wZjFVOERuc2RMYzVVUm1Fb2MwZVE3bER0NjJrRVkwblhz?=
+ =?utf-8?B?ekpVaXZLdkx5SjhFcTdEL2tHZmU1UkE1VHNSdE5tcEJLVldwNS85M3BTcDhF?=
+ =?utf-8?B?T3F5UXJXMVRxbEp0c0c3ZG4zUnk5ZDA0U2QwMXIxQjhSNXk4ZDRxcjlEWXNV?=
+ =?utf-8?B?eUpGeERCSDNTVGorT09oNnZuMnh2ekwzckJjNHltS2VPWHZEbzEybk10S2pz?=
+ =?utf-8?B?R3lBTjM4Q0g3dU5KWkVUR0ZXU1RyNEpzUVhVZG5iUmY1OFVwaVBPV1d4Wm9V?=
+ =?utf-8?B?aFpTVThadktIK0d5VjVzS28vRDIzTUY5TENWaEx5N3FneFJWK05YNGdqRXQv?=
+ =?utf-8?B?bG1ydUk5amdHQVRadXpKbzFobFl0VCt3Umtrdks4eFcvTnJsa1ljL0k2UWp3?=
+ =?utf-8?B?L080L3FsVFEra0JuRlhWY3RUM0RmT2hCNVVzamFGOGJGZ1FydFhrMTVvQWRQ?=
+ =?utf-8?B?V01RV1Z4U1FLREN0cVJleHF3cG9WejN6QjhkZTFjMmtuYTlBWVg0UklsaWdM?=
+ =?utf-8?B?eFo4NjdqamJGSGRlNFlOSTlpbkVwbUlsKzFNYmNGQ0d4eUpvNmsyUVRXSFo0?=
+ =?utf-8?B?c2FHUFo3aHJXQzNXblBaUTBDY1ZlNi9xZ0VYV1h4alZRV1d2NzQvc01rbXBh?=
+ =?utf-8?B?NUF6L2FQV25QdXgrR1o5emFtKzZ6Mzc3M0M1TUU1akxhYms4S2hZVnBjUEJ0?=
+ =?utf-8?B?bUpJWDZTdHd2ZXVNb2NHcmhxbzU3UW1WZnUyR2pSN1YrSGhyckt2dTJZa3Zx?=
+ =?utf-8?B?bS9LTFBDdUVHNWJ0MEpKQkFxT01hTU1kcEFWcll3cmYrRnJhOFg1MjR5QWxB?=
+ =?utf-8?B?dXFPeTVFc3FiOXdDSzk5cDlkczM5T2dQTFl6YUM5Z1IrSEZ5N1JBZldob3FG?=
+ =?utf-8?B?UG15cCtvbXJjT3FzTnVFWW5CcklURXdpeGhud0RqTUIwaU8xbDd5RmZ3dk4v?=
+ =?utf-8?B?d2NXa0tkVFdKWEVLSUp2dGd5SS9kNmVnNFFLb2d2WExZNkNjM2s2TWdBcW1v?=
+ =?utf-8?B?MWxrMkxQSURlaHA5dlR1VWFaajRKZy9GTis5d05UOUpjeHVkbGwvMGt2SXpU?=
+ =?utf-8?B?eFowcWVuUkozTTNYOGFvay9ham0ybFBZWCtWUTNIMEh0OW9ZcFJjbnZrd0Vt?=
+ =?utf-8?B?clJXK296eEpwZ1NadW1vTE0xOVVWUG0xK0Joa3VpaTBhVC9UaXdpYVpVeEx3?=
+ =?utf-8?B?WUFMajY3WnduZFU3RGJNUHlBaU1KM2lmcUYvclV3VkZTSnE5VzlyZTV6dDA3?=
+ =?utf-8?B?ZERuYnozYVRzbEpqb2g0MkY5bUIzcC9lWWJvM21RZE5PckoraXNINThjV3E2?=
+ =?utf-8?B?dU02M3lNcXVOeXZNcWVDb2lRNnMxYjVla0tVQ3FRRTVSMlRiR2lkM0xpSktJ?=
+ =?utf-8?B?bHJpNGpsNzNRWHpPQUF4eUJYUktFZDZnR3lrYnQvUzJ5RzAwcS9hL01Hc29x?=
+ =?utf-8?B?TjlNd09BRnFtbWhmZU85Ym9sWHdMam1jWm5RRUZzL1RtcmZuUnpjdkd0QU5V?=
+ =?utf-8?B?VGhIUy9KMk9SMXFCRXByZU1aTFhUb3JsMnh1Yi9Vd3QvcjdiRm4vdW1mTDRi?=
+ =?utf-8?B?NTE0RFcvQVVuU0ZGOUt6RmJlUktlTVFjMWJSUjUyRU9yVnJWNlVNKyt2V1hs?=
+ =?utf-8?B?RThTUHRiWWorM2hRdmJGaGs2OENTWXZZNVA4aG1IYmxrUVpLdk5OYVdlNDhq?=
+ =?utf-8?B?Q2t1bElSNjJ6cXlwZ0x3NWc2WVd6OW1VTU5KSzhxWFJ5SjBpeFJtTVQ1L2h3?=
+ =?utf-8?B?cUt6R1JYMGFHWXJOTWRmNkZJUHIzY2ZyY085YUpkTDN4c21jNmtsb09LbUp2?=
+ =?utf-8?Q?ijPlpT+Il+LaYH0egt/5hcJhE?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67873eba-aa38-473e-a5ab-08ddfba9e069
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB9049.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 20:35:19.2546
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kCMTo9GysLar1J+9LclyPYzGP96O5SNYNpl7u87iacJi4hyw0At1cN/aJ00a+jZZgfH+dD7PnvBknB1WgEqj5w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6202
 
-On 9/24/2025 1:08 AM, Dr. Greg wrote:
-> On Thu, Sep 18, 2025 at 09:59:05AM -0400, Stephen Smalley wrote:
->
-> Good morning, I hope the week is going well for everyone.
->
->> RFC-only, will ultimately split the LSM-only changes to their own
->> patch for submission. I have now tested this with the corresponding
->> selinux userspace change that you can find at
->> https://lore.kernel.org/selinux/20250918135118.9896-2-stephen.smalley.work@gmail.com/
->> and also verified that my modified systemd-nspawn still works when
->> starting containers with their own SELinux namespace.
+Tested the patch series by auditing the actual userspace (HVA) mappings and seeing if the
+corresponding physical PFNs correspond to the expected NUMA node.
+
+Enabled QEMU's kvm_set_user_memory tracepoint to dump the HVA/guest_memfd/guest_memfd_offset/base GPA/size.
+This helped determine the HVAs and the memslot that QEMU registers with KVM via the kvm_set_user_memory_region() helper.
+
+After that dumped the PFNs getting mapped into the guest for a particular GPA via enabling the
+kvm_mmu_set_spte kernel trace events, performed the GPA->memslot->HVA mapping (via QEMU traces above) and then looked in 
+/proc/<qemu_pid>/numa_maps to validate the HVA is bound to the NUMA node associated with that memslot/guest_memfd.
+ 
+Additionally, looked up the PFN (from kernel traces) in /proc/zoneinfo to validate that the physical page belongs to the
+NUMA node associated with the memslot/guest_memfd.
+
+
+This testing/validation is based on the following trees:
+
+Host Kernel: 
+
+https://github.com/AMDESE/linux/commits/snp-hugetlb-v2-wip0/
+
+This tree is based on commit 27cb583e25d0 from David Hildenbrand's guestmemfd_preview tree
+(which already includes base mmap support) with Google's HugeTLB v2 patches rebased on top of those
+(which include both in-place conversion and hugetlb infrastructure), along with additional
+patches to enable in-place conversion and hugetlb for SNP.
+
+QEMU:
+
+https://github.com/AMDESE/qemu/commits/snp-hugetlb-dev-wip0/
+   
+QEMU command line used for testing/validation:
+
+qemu-system-x86_64 --enable-kvm -object sev-snp-guest,id=sev0,cbitpos=51,reduced-phys-bits=1,convert-in-place=true
+-object memory-backend-memfd,id=ram0,host-nodes=0,policy=bind,size=150000M,prealloc=false 
+-numa node,nodeid=0,memdev=ram0,cpus=0-31,cpus=64-95 
+-object memory-backend-memfd,id=ram1,host-nodes=1,policy=bind,size=150000M,prealloc=false
+-numa node,nodeid=1,memdev=ram1,cpus=32-63,cpus=96-127 
+
+(guest NUMA configuration mapped 1:1 to host NUMA configuration).
+
+Tested-by: Ashish Kalra <ashish.kalra@amd.com>
+
+Thanks,
+Ashish
+
+On 9/24/2025 1:19 PM, David Hildenbrand wrote:
+> On 27.08.25 19:52, Shivank Garg wrote:
+>> This series introduces NUMA-aware memory placement support for KVM guests
+>> with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
+>> that enabled host-mapping for guest_memfd memory [1] and can be applied
+>> directly applied on KVM tree [2] (branch kvm-next, base commit: a6ad5413,
+>> Merge branch 'guest-memfd-mmap' into HEAD)
 >>
->> This defines a new LSM_ATTR_UNSHARE attribute for the
->> lsm_set_self_attr(2) system call and wires it up for SELinux to invoke
->> the underlying function for unsharing the SELinux namespace. As with
->> the selinuxfs interface, this immediately unshares the SELinux
->> namespace of the current process just like an unshare(2) system call
->> would do for other namespaces. I have not yet explored the
->> alternatives of deferring the unshare to the next unshare(2),
->> clone(2), or execve(2) call and would want to first confirm that doing
->> so does not introduce any issues in the kernel or make it harder to
->> integrate with existing container runtimes.
->>
->> Differences between this syscall interface and the selinuxfs interface
->> that need discussion before moving forward:
->>
->> 1. The syscall interface does not currently check any Linux capability
->> or DAC permissions, whereas the selinuxfs interface can only be set by
->> uid-0 or CAP_DAC_OVERRIDE processes. We need to decide what if any
->> capability or DAC check should apply to this syscall interface and if
->> any, add the checks to either the LSM framework code or to the SELinux
->> hook function.
->>
->> Pros: Checking a capability or DAC permissions prevents misuse of this
->> interface by unprivileged processes, particularly on systems with
->> policies that do not yet define any of the new SELinux permissions
->> introduced for controlling this operation. This is a potential concern
->> on Linux distributions that do not tightly coordinate kernel updates
->> with policy updates (or where users may choose to deploy upstream
->> kernels on their own), but not on Android.
->>
->> Cons: Checking a capability or DAC permissions requires any process
->> that uses this facility to have the corresponding capability or
->> permissions, which might otherwise be unnecessary and create
->> additional risks. This is less likely if we use a capability already
->> required by container runtimes and similar components that might
->> leverage this facility for unsharing SELinux namespaces.
->>
->> 2. The syscall interface checks a new SELinux unshare_selinuxns
->> permission in the process2 class between the task SID and itself,
->> similar to other checks for setting process attributes. This means
->> that:
->>     allow domain self:process2 *; -or-
->>     allow domain self:process2 ~anything-other-than-unshare_selinuxns; -or-
->>     allow domain self:process2 unshare_selinuxns;
->> would allow a process to unshare its SELinux namespace.
->>
->> The selinuxfs interface checks a new unshare permission in the
->> security class between the task SID and the security initial SID,
->> likewise similar to other checks for setting selinuxfs attributes.
->> This means that:
->>     allow domain security_t:security *; -or-
->>     allow domain security_t:security ~anything-other-than-unshare; -or-
->>     allow domain security_t:security unshare;
->> would allow a process to unshare its SELinux namespace.
->>
->> Technically, the selinuxfs interface also currently requires open and
->> write access to the selinuxfs node; hence:
->>     allow domain security_t:file { open write };
->> is also required for the selinuxfs interface.
->>
->> We need to decide what we want the SELinux check(s) to be for the
->> syscall and whether it should be more like the former (process
->> attributes) or more like the latter (security policy settings). Note
->> that the permission name itself is unimportant here and only differs
->> because it seemed less evident in the process2 class that we are
->> talking about a SELinux namespace otherwise.
->>
->> Regardless, either form of allow rule can be prohibited in policies
->> via neverallow rules on systems that enforce their usage
->> (e.g. Android, not necessarily on Linux distributions).
->>
->> 3. The selinuxfs interface currently offers more functionality than I
->> have implemented here for the sycall interface, including:
->>
->> a) the ability to read the selinuxfs node to see if your namespace has
->> been unshared, which should be easily implementable via
->> lsm_get_self_attr(2).  However, questions remain as to when that
->> should return 1 versus 0 (currently returns 1 whenever your namespace
->> is NOT the initial SELinux namespace, useful for the testsuite to
->> detect it is in a child, but could instead be reset to 0 by a
->> subsequent policy load to indicate completion of the setup of the
->> namespace, thus hiding from child processes that they are in a child
->> namespace once its policy has been loaded).
->>
->> b) the abilities to get and set the maximum number of SELinux
->> namespaces (via a /sys/fs/selinux/maxns node) and to get and set the
->> maximum depth for SELinux namespaces (via a /sys/fs/selinux/maxnsdepth
->> node). These could be left in selinuxfs or migrated to some other LSM
->> management APIs since they are global in scope, not per-process
->> attributes.
-> We had a number of exchanges regarding LSM namespacing in the thread
-> that Paul Moore started on this issue:
->
-> https://lore.kernel.org/linux-security-module/CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com/
->
-> The one issue that seemed to achieve universal consensus was that
-> every LSM was going to have different requirements for namespacing.
->
-> At the risk of playing devil's advocate, this seems to raise the
-> question as to whether or not there is a need to have a common API for
-> requesting security namespace separation or leave the issue to LSM
-> specific implementations.
-
-It does raise the question. I, for one, would like to see the
-LSM infrastructure move toward being a bit more helpful regarding
-things that the various LSMs do that can be done commonly. One
-example of this is moving blob allocations out of the individual
-modules. Another is the introduction of lsm properties
-(struct lsm_prop) to replace the SELinux specific secid model.
-When there where five LSMs total, only two to be used at a time,
-leaving everything to the individual module was mildly tolerable.
-Today we see that there's a heap of waste in data management and
-duplicate code when even a base Fedora uses eight at a time.
-
-I don't see this as a matter of taste. I see this as a case where
-we can make the LSM infrastructure a little less chaotic.
-
-> The primary rationale for some modicum of centralized infrastructure
-> would seem to be to have a system call rather than an LSM specific
-> pseudo-filesystem interface to control security namespaces.  Since
-> creating a system call interface is going to lock the API in stone it
-> would seem that we would want to get this right, or at least as
-> generic as possibe.
-
-OK.
-
-> So some comments to that end.
->
-> If we use the lsm_set_self_attr(2) system call as our approach, the
-> namespace separation process needs to be split into two separate
-> calls.  One to request the creation of a namespace and a second call
-> to request that the process join the new namespace.
->
-> This is required in order to support the ability for an orchestration
-> process to load a policy or model and have it in place before the new
-> namespace is allowed to enforce the policy or model.
->
-> So we would need something like an LSM_ATTR_UNSHARE_INIT as well as
-> the LSM_ATTR_UNSHARE attribute.
-
-Stephen does not require this in his SELinux implementation.
-Nor did the abandoned Smack namespaces. On the other hand, I
-can see where a system with a dynamic security configuration
-such as yours might indeed need this.
-
-> So the model would be for a process to issue an LSM_ATTR_UNSHARE_INIT
-> call to create the new security context namespace.  That namespace
-> context can then be configured through either an LSM specific
-> pseudo-filesystem interface or alternatively through additional calls
-> to lsm_set_self_attr(2).
->
-> Once the configuration process is complete, the process would be set
-> free in its new namespace with the LSM_ATTR_UNSHARE attribute.
->
-> Separating from a security policy namespace to a new namespace will be
-> one of the most security sensitive operations that a system can
-> execute.  As such it has to be gated by some type of security control.
->
-> At a minimum this needs to be uid-0 or posession of CAP_MAC_ADMIN.
-> Given the current LSM concept of stacking, there needs to be an LSM
-> security hooks assigned, so as to give all of the LSM's an opportunity
-> to accept or deny the attribute operations.
-
-You've got paradigm conflict developing here. SELinux (for example)
-would prefer to make its own decisions regarding "security relevant"
-operations. Landlock, which is "unprivileged", ought to be able to
-perform its namespace operations without undue interference. While
-I generally think that all LSMs ought to integrate with capabilities,
-but I have to admit to the status quo.
-
-> For example, it would seem entirely reasonable that the lockdown LSM
-> may want to deny the ability to create any departures from the current
-> security configuration.
-
-Bluntly, that's not gonna happen. It would break Smack for one thing.
-
-> Making this generic for any security namespace will require some
-> additional plumbing, most notably the ability for any LSM to register
-> for the ability to receive namespace event notifications.  If we
-> create new security_task_secns_init() and
-> security_task_secns_unshare() hooks we could use those as both
-> notification and security control mechanisms.
->
-> So lots of details to discuss but the above should be about the most
-> generic implementation that can be leveraged by all of the LSM's.
->
-> Comments/suggestion welcome.
->
-> Have a good remainder of the week.
-
-If I must. :)
-
->
-> As always,
-> Dr. Greg
->
-> The Quixote Project - Flailing at the Travails of Cybersecurity
->               https://github.com/Quixote-Project
+> 
+> Heads-up: I'll queue this (incl. the replacement patch for #4 from the reply) and send it tomorrow as a PR against kvm/next to Paolo.
+> 
