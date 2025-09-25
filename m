@@ -1,195 +1,107 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A333054CB
-	for <linux-security-module@vger.kernel.org>; Thu, 25 Sep 2025 16:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6E930AAC6
+	for <linux-security-module@vger.kernel.org>; Thu, 25 Sep 2025 17:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758817544; cv=none; b=gTIG0nNDtl/s8tfH4XCGwn84zKfD0v24h+IkQANdNnt7zlq3INOFul9QDYjjSBPdlHF/p/7JEzjurkerkoJLF/3b6U1g81AgcPAWUj5Zeure9rK1pcyMuIde8w6kUW0TiDKe9voSySrvd6W6h4zDKOJh+mrcI30eL2dKY/GB6ig=
+	t=1758820346; cv=none; b=Zmxli9AbskoHuu1hp8cmQXKp0VOhdQZlwMkcIkOnhRnqayS3ZymF1kQNhl3cXOS3TPCUb5t17Hoe1bYocN4HClKpNanEZ+DHesyisEM6fu2wsAUxlPtbsFlMiJW/WVR8EcNhQuGO+6MRuuREIXPfbrnL/JZ3daxMGuni1Z9PsdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758817544; c=relaxed/simple;
-	bh=e2zTOUXdFrzwKW6u+2BZRJvKLeVeKwka9WRmiQrAMKE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gY4iBI57t0nmRDt4khTNGzujhIypzxopQ3q76iLsf5iE34MjVEHJ9N0dfo5iuZoFgNKl4F0SM0pYY0TZbzh8kEGgHdvFHXDtMOiiFQIlL8lW1sWiKfjItUTiALSEKwOnivyjsq13JImXkAwfQ5gUF+SN0c/JqfsVdZZecfBFjjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KPGQOCdC; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758820346; c=relaxed/simple;
+	bh=POEaOebGnfyU7xrEEfeUeJQyZ4WT+Sk2hD5ExGExKHY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=Pjzke0wm9mKFZ888VXLrlBru//IxINne55whRJd5L+EVJx9KKeXdtbTl9LoXYCMsF2ZBXgrwg8i/f7WPTe88lIyrWku0t6YE6du0kVatdL2VNiWO4spxBxRIwpZHFFkPpUTzEA61jpv5Amg/CC4VJZS3dWUpzDn247tfp6m38y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=dPnuYsSY; arc=none smtp.client-ip=66.163.187.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KPGQOCdC"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e2e363118so11917745e9.0
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Sep 2025 09:25:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758817541; x=1759422341; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sp90x0HI2604VafoUtGiosJXSBDN/QH7OATIlIgLDsg=;
-        b=KPGQOCdC5XPB1/J8eD/D2m2IQe9ey4w1pU0lFDgu0rBjbdlsLfTMCcW8gjxup3EE2d
-         vwGRuphi2MRe65mp4c6zCM5ooqfYNJWJl+jm03jOAuzAAQf3aRS5YMhmvPJzobwkev4D
-         ujytbH4Xd6O6hXctlcBK6KF62ZdfC13ozys4wdm0r8zBtLDBaZsqcDgCLZd+2DF05oc3
-         C82AGnfGksYADjMFOCk2MfC+HJ7C2D9vhEzmkTlJnGCluskTEPpuM7UV0A3H9ygKRdMS
-         S1f84YsVcBTeryfm35SuXmfDuEFO4wYv9erN4eylrXd4XGdWdCI6leP+jdBV3z99jk+f
-         +uBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758817541; x=1759422341;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sp90x0HI2604VafoUtGiosJXSBDN/QH7OATIlIgLDsg=;
-        b=gxu3Cj7dpZ5ByijXSaOABqdD0xr3XDzcti8XY1E9REczmP21u3Gmd7vD9dzghz0tvE
-         bzvQcCEfWGmoEx2c5XHmJuZ75wq9cPgavcLnXkP8oGb/af7tquw3IbHoBooXgzhTelNT
-         Gq/seJWC6p8nCP08f6iMlbqXmtXRzfvB6zl85TJSXwbhRt0Q8IvJ8Bikof+WyAJqOFTd
-         1ErJLJE2jwyONgCPRpQ97pQMW18Bdvi+epY+UjvlJK7NvanJ188jbAcvyUE3Ez/Byqwt
-         t7XJRN2iVZ1T0j/h64wkDfTubvsp8shdNhxPbHJpIG8jcsVlpCJtshxi5VmsgmDCf/Gb
-         phxA==
-X-Gm-Message-State: AOJu0Yw012DrcdcssV+VBmS1npQsheYnjGSmX8H7gnO+jb/65AoXMErB
-	YhhOH7I66skEtaQMH8vdR9NwuSFkiiZ9CZQJCJgp3QiKoQz1ufWN+T9n
-X-Gm-Gg: ASbGncu/cGFiwGgHXXHcI7sChhOcQfKzPlezIJNMj/07gGSuiw+sQMA1Wy1I3eT/gRN
-	Ywkt6Ff4p81noiXl9Vdg5mOT8bFv94joyWflUEfZ2USaI/LzKHVFi9CLgiOSoGVAXUV/cvl5XXB
-	damxTwlGsPB/pVkJMzrKlQMJpX7CHUTNIgrFM54UQFPJyXeB6NNWzr3yqn2WFqpZ7CyxXll+EZU
-	2Az21pHYgNm5nktkMbz9t7vpmIz0V+sFQmow3AnoPoI/CNJDgssn+UHq0aKVkT8gfRGPz2b/hlW
-	CTR+8E1VGGxrhZUkl89iUhraoYOogRHGCJ9eV7khtlrK9smXnbZzHXelta/n+3kql0IPl+YWq1F
-	lo/miDPckYGomaRPbqgBx/hlO/CYT3Jgfl6i03LChfP2tYnv2LunzKkMMfw==
-X-Google-Smtp-Source: AGHT+IE6mWeX6t2AH8HBB+UpOYdjBBRGFMRn/aYCb3judhabM8SWtsPgFs4uiI3dBuK0IPElmXVzNA==
-X-Received: by 2002:a05:6000:4387:b0:3ec:1fff:3b25 with SMTP id ffacd0b85a97d-40e3a2eef9emr4065514f8f.0.1758817541137;
-        Thu, 25 Sep 2025 09:25:41 -0700 (PDT)
-Received: from [10.33.80.40] (mem-185.47.220.165.jmnet.cz. [185.47.220.165])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fac4a5e41sm3950563f8f.0.2025.09.25.09.25.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 09:25:40 -0700 (PDT)
-Message-ID: <9df66167c205e341bd5896376e06950aa7bd7240.camel@gmail.com>
-Subject: Re: [bug report] [regression?] bpf lsm breaks /proc/*/attr/current
- with security= on commandline
-From: Filip Hejsek <filip.hejsek@gmail.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>,
-  "Serge E. Hallyn"	 <serge@hallyn.com>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	regressions@lists.linux.dev
-Date: Thu, 25 Sep 2025 18:25:39 +0200
-In-Reply-To: <CAHC9VhQ-c65UJS+dRaRFn_D=Sq++QXePTsCkN+cV5BVQEbf9fQ@mail.gmail.com>
-References: <e5d594d0aee93da67a22a42d0e2b4e6e463ab894.camel@gmail.com>
-	 <CAHC9VhRu=-J5xdKgYOJ1eqQ6EiMoEJ3M+cjDU8AHrts-=DoTvg@mail.gmail.com>
-	 <cd35aa283cf010188a3b0e318f2c16655224767c.camel@gmail.com>
-	 <CAHC9VhQ-c65UJS+dRaRFn_D=Sq++QXePTsCkN+cV5BVQEbf9fQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="dPnuYsSY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1758820343; bh=y9ObnkauxxzF+GwrtiPoK6/quMSS3mLdCQjJiReBCRs=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=dPnuYsSY9cc0PW6UGKLuAT5jSo9ONYrNdoCn09BGwgqNc/WJ1hA+AhkOaBWEzS1Bz2rcuxhHpB7QKHsOy8RSYk3N/0vgb+4D5jjGlq6b0Wc3wJyYINSmcbFKtISikyBPDlb5JTnXx+ATetLknK65XF/d0dkK/9wxzC9qsihtP+HseqgyK+DylIXozVoYJ/o9VJ2TNt8UKrGV4Sr+eKhdTyDZvUn0MkzUax5+svB64Rmj+MT9pekHYo9B8WKK7hRF8ShnTVcCwUFWQF/Sh6YuXYDLn7/rMvVYUqYZMvIPPjc0G4YFORjiKwAjB9D0oFBaJAq2PIMNK1zoHVO53iJ51Q==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1758820343; bh=aVIu5MVtEl5/5J53MGGA15HvRtSY/m+IOxwjK5sW2D8=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=Dwl3GI+OEUE81wwPJJ3HcTPQROvH1XY+GKcae3VmPjNa7mUBRMWuibJCeiyuFQE3dAX5tmodKvQ0YmSLHRHdFdBR4MovdiXvUX0QIT9TChYEnWZWystq/zIx/SfJdGSMDXHeKszrHxof/rmmPQgYh9sXQcFA9JT8KaWx7ms79OtzK9xY6/okwjILOZ9Jy0Y+kXvcAT/gFFrPBF+gH3UBl0Ed2ni+xH3bGXriEttlL0Y4ux6GZwS7WjFFQuz2pIWDiqy9LobW6JJMmu6oPl+r6cT+sQ3+U80iDr0azmhd/sgX0x591Z37RrIL/57K46c2wTGcM2d+UNGxxtIKX+KLdA==
+X-YMail-OSG: CmiiD3kVM1lF8nr6aByo9uKrSzwl5ndBGlwrglVaGB.BrMl3h3RmzxlmJ.okEzO
+ nZjVZ7RM._Jvji.sYoDuzWY9P5TXt4JuqLEo4.yOo5Kz36Fcl1Rhx9894fGrwLWhuFC4.HYDBU8x
+ 6CFIBeBE5Vd8cJt9TpThJrlMsKBRM5lmEeX3v9WzCR27KJpl5laS_ZTWWPHNyM1h7N8BEzS_s813
+ O3vN0FNrru6OjjZ4cj5KTcNAq79aQ6UTqEq0rNH3WBzGwxD6mjgMnc4LyswslyMlj3kh4NyaLrPR
+ _9nLNDt9vgGs5Ais1aK5vI_9knyjahzlNCQF5elpxKi.Y6rjxS71tSV9A5I9hZnSPYB0xuUppW0u
+ 4tXIKnDWGhEQM3H1VGJ8w0AJkYIeCNxNvqxch_.7A8kpAT4JdjXc1r4pbN9N1JY2veZuFbPhrBvh
+ JY6YT0spN7nBleg..q88V6y3lamaQefZPjTtF_ir5efJek0ktJKb3idUxwwlrRpMUMOgqP3lnLci
+ nSUOJO0.wGOjYyr5f9HMn1O4ZFKaMbWymBW8ZEz8VG3t9wnTG_vg8uLKdMRv4usaXkGmGdFFQaUu
+ VjKXsc2_xvf4hqtrD7EpLGnOQvDOWmt_6qTsuopc.5g7Y5_HAge9Rw0W4_.CGBI45egzTBDJILRm
+ vnE8HuSZIQR6hHawaHmbC.JnS7.r6F.QhPF4x3jWXn8bMLSOIklrHpjMCIGJVphurxPq1Ad5P6XM
+ Futq030Z0s1UPPt9OD3a9iHu0IX8zASeVlR1Se4hoIjWlehN0TBNHvkEmKXNSpmfhoQ5rQ07rllw
+ 7Srbw4syl6.cJakJWCyqxQKd.ECRIXFq6sidLNcH.gXH1AtukTBtU6RmAE_Q1nD4U.VZkrBHOd7P
+ P_w0_GOXctHXfq0teGFiiGbxak3kyGSaxEYTjrcrACLxvpzJlK70YxE5FQTwizYVa0CXsALo4MCt
+ 2Hxw9onBt0EKsfgvbhWPFAcTw06eQ6BMvEY7NRmoHzOcB1SxqHplhdz89siKjYHZMDSRM5zNnH1b
+ iTsOdFek3icaMKf7BzjVk3KpSvUxNyrlHMpVC8tn9UftupCc.Vq5b4cuRKk0Jp7OoGTlda5MVO.t
+ 57UPjxg3mQvNE1ijs1UxfjwR3RYiPFkCk9RPqqs4iZ7fiFlzZ3mV_E9U.MR0MYjKpjO1K_tlmyYI
+ y5cfq4V2bZuTbBDXcyrxhpDJtncU2Hh0TnMJUeJDMA2WqtFVW0K2UjR6pEb6q0FlbAxbhXGfP.eM
+ hIgRKm0Rn2camj0Ime4m5gjnrhOimbrc0faHRfaiBuF2aklfOVocWmS.sSRU2lO2UWDK_Nf0eQDI
+ 1qL.QLP31fjWALlm.3TRnbNHLwniAnqUt17k_SU.gBShUn7ErHT2zPmXaBFXoXojWNY1LCRFw8xs
+ dCXioZyqETT1vLWXTDesSV9BeoDLV_orXJE2iQh77vAcGnUFym2g1rneoe5zfoSpyKnws_1dMsix
+ PpkaJERfm6fJid3WIMi3SBxynp3xx6taM2M.b3SD.ID6YZeiidI5uZa22aXwvwAZkd3LXSaVPvys
+ UfoQKrOfRb.2xZW3BEtsDEvKM.juF5ACJYsm4IMdL8CEPToeLI.hs_XrvGN5AOyHnBAEMuQvG.cH
+ 2h9R8s2yKUmjGT8rqCWDf7iC9FmYPoe49bg3f0.gcXxQi8JFXP286aP4PkQX63LgKgreCGK1YHPX
+ CKhGgWQWrj28mm1JXhhRnqklgrrcODflS9ToMCgrwVb4_zDid9QzegN.AyN4l9JKF1Raia0b.280
+ RyWKOWGniPuX5NnKHnZyo_5JUXOAFERUCWDNSYMBCbDfESZfC7syGomHlDXgqs1SKeE7SnIRaPmx
+ DSJHg0FUwNWQ0HWOQsCi9p2MVW7MjurUafE5li4tfb3g5XKcIXXlTvxfDRF6RBEfmKaiSYB6B2kc
+ BsaFkTeg5sbymwyklgFydo0uZqiRbZBpnsj95ZnWDnedQVZwmDxAtYLqpq0x_pdoKs4M2WT.oGz2
+ xhC1zu_HH0De_kjTg7g2KbOO0asROk5ZDFaHLxDY_QEoLjkEjUUunUq_wHGnFOWSKumJjR.c3U12
+ q4TyH485nfXigywbtr1Ya87Q72Qdx6yQgOkOHFA1LvJ79yGGspPrBrFYUuNPbGX2nSfXaKy9n.Mr
+ XcoOw3Y8kAOFuzKWzearPpdhtGNQWRKs_CHvCiHvuHfJkjhpL.KFuvi2juvSwwpusfQGrWyZQbfI
+ aT10WbGePkIyD6hHBZCLPc2u3ReWUZMWMGSxJdBXYKpMg2JxMhiknq0qu2XNWkGm4MTXa2pihV73
+ 9O3PZLKu6DDQEYb82h3SG
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: a49fbdf7-9ef2-43a4-9495-e293cf104fcf
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Thu, 25 Sep 2025 17:12:23 +0000
+Received: by hermes--production-gq1-6f9f7cb74b-bmbkz (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6f3ba4c112cabb90c4068fa90708916c;
+          Thu, 25 Sep 2025 17:12:19 +0000 (UTC)
+From: Casey Schaufler <casey@schaufler-ca.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	eparis@redhat.com,
+	linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org,
+	serge@hallyn.com,
+	keescook@chromium.org,
+	john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com,
+	linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: [PATCH v2 0/2] LSM: Multiple LSM mount options
+Date: Thu, 25 Sep 2025 10:12:06 -0700
+Message-ID: <20250925171208.5997-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+References: <20250925171208.5997-1-casey.ref@schaufler-ca.com>
 
-On Thu, 2025-09-25 at 11:28 -0400, Paul Moore wrote:
-> On Thu, Sep 25, 2025 at 10:56=E2=80=AFAM Filip Hejsek <filip.hejsek@gmail=
-.com> wrote:
-> > On Wed, 2025-09-24 at 17:24 -0400, Paul Moore wrote:
-> > > On Sat, Sep 13, 2025 at 1:01=E2=80=AFPM Filip Hejsek <filip.hejsek@gm=
-ail.com> wrote:
-> > > >=20
-> > > > Hello,
-> > > >=20
-> > > > TLDR: because of bpf lsm, putting security=3Dselinux on commandline
-> > > >       results in /proc/*/attr/current returning errors.
-> > > >=20
-> > > > When the legacy security=3D commandline option is used, the specifi=
-ed lsm
-> > > > is added to the end of the lsm list. For example, security=3Dapparm=
-or
-> > > > results in the following order of security modules:
-> > > >=20
-> > > >    capability,landlock,lockdown,yama,bpf,apparmor
-> > > >=20
-> > > > In particular, the bpf lsm will be ordered before the chosen major =
-lsm.
-> > > >=20
-> > > > This causes reads and writes of /proc/*/attr/current to fail, becau=
-se
-> > > > the bpf hook overrides the apparmor/selinux hook.
-> > >=20
-> > > What kernel are you using?
-> >=20
-> > I'm using Arch Linux kernel, which is very close to mainline. I have
-> > also tested my own build from git sources (I used a stripped down
-> > config which I based on config from Arch). Example in QEMU:
-> >=20
-> > $ qemu-system-x86_64 -nodefaults -accel kvm -cpu host -smp cpus=3D2 -m =
-1G -display none -kernel ~/git/linux/arch/x86/boot/bzImage -initrd ./initra=
-mfs.img -serial mon:stdio -append 'console=3DttyS0 security=3Dselinux'
-> > :: mounting '' on real root
-> > mount: /new_root: no valid filesystem type specified.
-> > ERROR: Failed to mount '' on real root
-> > You are now being dropped into an emergency shell.
-> > sh: can't access tty; job control turned off
-> > [rootfs ~]# uname -a
-> > Linux archlinux 6.17.0-rc7-00020-gcec1e6e5d1ab #3 SMP PREEMPT_DYNAMIC T=
-hu Sep 25 16:28:02 CEST 2025 x86_64 GNU/Linux
-> > [rootfs ~]# mount -t securityfs securityfs /sys/kernel/security
-> > [rootfs ~]# cat /proc/cmdline
-> > console=3DttyS0 security=3Dselinux
-> > [rootfs ~]# cat /sys/kernel/security/lsm; echo
-> > capability,landlock,lockdown,yama,bpf,selinux
-> > [rootfs ~]# cat /proc/self/attr/current
-> > cat: read error: Invalid argument
-> >=20
-> > (Note: In this example, uname reports archlinux, but that's only
-> > because I based the config on Arch config, it's not actually an Arch
-> > kernel.)
-> >=20
-> > Maybe the different behavior is caused by a different config? You can
-> > find the Arch config at [1]. Based on Fedora package sources, I think
-> > their config has
-> >=20
-> >    CONFIG_LSM=3D"lockdown,yama,integrity,selinux,bpf,landlock,ipe"
-> >=20
-> > while the Arch config has
-> >=20
-> >    CONFIG_LSM=3D"landlock,lockdown,yama,integrity,bpf"
->=20
-> That's interesting, you're running a LSM that isn't normally run in
-> your distro and you're not properly initializing it (no policy load).
-> Both are acceptable, but you're definitely operating in the
-> corner-iest of corner cases ;)
->=20
-> I'd have to look at the relevant code, but I suspect that with
-> "selinux" missing from the CONFIG_LSM list and you manually specifying
-> it on the kernel command line with "security=3Dselinux" you are getting
-> it placed at the very end as opposed to what I saw (I have "selinux"
-> in my CONFIG_LSM list).  It's further complicated by the fact that the
-> procfs call into the LSM's security_getprocattr() hook is going to
-> pass a 0/zero into the hook as the @lsmid which means "first
-> available".
->=20
-> Considering that the "security=3D" parameter is a legacy option, I'd
-> encourage you to try the "lsm=3D" parameter (make sure you specify the
-> full list of LSMs you want, in order) to see if that works.
+Linux Security Module (LSM) that support mount options, currently SELinux
+and Smack, allocate their own data for those options. This patch set
+moves the handling of mount option data out of the individual LSMs and
+into the LSM infrastructure. This allows for multiple LSMs to support
+mount options at the same time.
 
-Yes, that works.
+https://github.com/cschaufler/lsm-stacking#mount-opts-6.17-rc6-v2
 
-The problem isn't that there wouldn't be any working configuration. The
-problem is that a userspace program (in my case CRIU) was broken and I
-had to spend time figuring out what the cause of the issue was. I'm not
-the only one who encountered this issue [1]. I know that at least
-Manjaro Linux used to ship a grub config with security=3Dapparmor at some
-point (and maybe still does). I no longer use Manjaro Linux, but I
-still had this parameter left in my grub config.
+v2: Significant rewrite to move allocations out of the LSMs.
 
-[1]: https://github.com/checkpoint-restore/criu/issues/2033
+Casey Schaufler (2):
+  LSM: Add mount opts blob size tracking
+  LSM: Infrastructure management of the mnt_opts security blob
 
-So in reporting this issue, I was just hoping to help future users
-avoid the same problem. If you think this is a waste of time, feel free
-to ignore this (and sorry I didn't make this clear in the first email).
+ include/linux/lsm_hooks.h         |  1 +
+ security/security.c               | 44 ++++++++++++++++++
+ security/selinux/hooks.c          | 76 ++++++++++---------------------
+ security/selinux/include/objsec.h |  8 ++++
+ security/smack/smack.h            |  8 ++++
+ security/smack/smack_lsm.c        | 45 +++++-------------
+ 6 files changed, 97 insertions(+), 85 deletions(-)
 
-Lastly, I will offer a few thoughts:
- * The fact that the security parameter can break programs like this is
-   highly non-obvious and undocumented.
- * The BPF LSM hook which causes this breakage is useless, because a
-   BPF program cannot be attached to it. I think it would make sense to
-   just remove it.
- * Switching to using /proc/*/attr/<lsm>/* solves the problem from the
-   userspace side. Unfortunately, selinux does not have its
-   subdirectory in attr.
+-- 
+2.51.0
 
-Kind regards,
-Filip Hejsek
