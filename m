@@ -1,90 +1,97 @@
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B253271A94
-	for <linux-security-module@vger.kernel.org>; Thu, 25 Sep 2025 13:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF5D274FC2
+	for <linux-security-module@vger.kernel.org>; Thu, 25 Sep 2025 13:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758807712; cv=none; b=UvqQXU7EppgqlHio+b3Ftv6FO9HwROYtR9sQXU8LSL8OUhXqnle73TJGTTf5K6tPC50Kl06HzqG/Y2uTOXNPa7LQs3YqgTbEBidFXPu8Dl6Vrbe6a4koPs5MdbbF3Zi9nc6NPEv0rEmNCgD5WykOq6O2E5FHnLpnkKol/3O8mYQ=
+	t=1758807899; cv=none; b=jM2jjg6s8aXB9Tq+mQfQuK8NvHPOPf1zJXqJbHmeEdpH2lYOrNd6ibsXtL4tWlBGbWZBbjFAhzM20Zj0VLajBTCifRTgINFFEgqQrxLmmSc6C9oA06OqxjdrGVGUjlNGK2Q2VEF4U9VRMPm/R0YOY3n4DGoX4iUga4N9zQfBIJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758807712; c=relaxed/simple;
-	bh=AY4CdJYGfM13VOROhcQg+Kh48EgBR5zHwAOZ2HsNQ/U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BaPC82RzJ4hj9JkfiwwnMVIVQx47K/29J4SdnaxGAz38/m5zSgveeNKitfDbhKGsXwSA8ebUsmwR0UoaAldlPbJyeEAL0p3ksjksj6+1haAiEiiTBrzYjIkXgCFUK8N1WaoQWQ12RPICrgDW6W2X5SVOatBX2opSoL/bzKl7SAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gk3EeibO; arc=none smtp.client-ip=209.85.216.74
+	s=arc-20240116; t=1758807899; c=relaxed/simple;
+	bh=Z0F6rvv+vHHHgqN2/7WrnWaBdoTfLfsx+4E1sr2dpYo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tIwlnq1m1dA580Q8eRa5tmqJDpM79as+4i3CJMNxRkWS31zeA69WqA4BdMmZ52GRf6662p7SNGGYW5JU6Ahff6E1jvcQXnBqoDo4dC8Hx/qoERB9ufW6u6Ai7Y8Erq+jW2cnOTHKgjZ5rwYXiJZHep+Y8ZDHuY3eqiqRVg/zEgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gwqrv2UA; arc=none smtp.client-ip=209.85.160.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gk3EeibO"
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32eaa47c7c8so980504a91.3
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Sep 2025 06:41:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gwqrv2UA"
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4cb6fea963dso370311cf.0
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Sep 2025 06:44:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758807710; x=1759412510; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dU4j5xINCBqy1Rj7i7G1Vfx3gRcoZTHMrIeb9JUSMNk=;
-        b=Gk3EeibO1ZMcFGAcEWPL5hFYtzingz6gXXVe/ASHILBBp8JIkEIsVYwd1ZaF9MvWfj
-         N4gYNQXa/1zVXGox0ZoGigvTO8b4AbkAjAtyoJuWvjvBeCOu09EyecPoNYG7uwsomFaJ
-         LLEqJBGoM6XzQOnYxn51VkO2k5kYRXiwuWpY2PBEqflI25GKMN+VodBGlZwmHtl1IGDI
-         w3C2T9OdU/mUgoR6xBhp10hzxlGCo6OElsXX3YEFfZtJoXN5xi9jUK9okgImyP4nP0bG
-         Rr2qUKGQnXlqelhxSVQAoVTKvRmMNgEQzM6LpEFtfu2McjZ6TgHrAqCQMS4Kd7mB2BGs
-         XoMQ==
+        d=google.com; s=20230601; t=1758807896; x=1759412696; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=N5TRZaIKsL5BDWNX1fB2oE8143OJVf1xWjoYHdxo8R0=;
+        b=Gwqrv2UA8Ax9RMydlVr9JpasaE19jt+Hwkk1c1vdYAnZtfqiEPHsQxMynF99pQG/IS
+         S8OZxZo7rqlTttZ3/KiyDoN0eF9CvW3U1Icncy+Vggtt5ITg3cvEEsINE3Bdw+YLiJwU
+         ZojJSpH0r+jF79v9bGTUMSEHIqlAHs1SqWv4KwDamrYyOyvJ5/Y+CRDgO6R6/M02lhWf
+         yoJjCmNGR924SUhz6cp0Tw82lX9eW9B3yhFYRk1nxobrOLdS0qBVgDRUn84dFLu3YqcN
+         UIXJRlB4/unDwbCsUBg7V+Mm9yc+pUkWa6oPuU2w03cAMTxNxJ4MXZtvPj58sDGwGO7S
+         /v5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758807710; x=1759412510;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dU4j5xINCBqy1Rj7i7G1Vfx3gRcoZTHMrIeb9JUSMNk=;
-        b=FKpnEYWoftHIpaCMGv4Y4L258mBnmLS9vi8pEvSWyML7uJ65tt/pvSipWXrj/2PSfq
-         SyA0GzE2ai1GUm0UjPvqOrqCzOp5jgfkPQA+FLVuJnNBmwP/1U6fo6sWtPDYsoik53as
-         0Pt1fqnVvgTql4bwUzjdr1Ff6NgSaGmoGrdnpbPjxKFZnVMUGqpZrGlZUe4tHsJOCQgh
-         K+/O37qIuqDLKvqg+3ZsCKh4jC68vAABGWiwCjr/jJ+lq8tS4q0ydPdIFKN1tFsWKNW3
-         93kZ97mdD/llmoo0XwlxFKdV4q5XZPx8sJssPYZEbIFSsDCBFXUtizUtm/9ORxFhr3Lq
-         9sRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQVOnLLUM9LXuGr148RiVoQ+mNlnZ/Vs4uI5rUQF+S4tXsaouT1xbApyZUM8FmggfLJTdynxEXEeZAMGgSYDubvv9XSQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPxC9qeJBN6aDAoakuwltAi3U7CmbmkFjNRqZKYEss6+7LfIwu
-	GHM0YptUzBGTA1dynzVINDVuYHz2l+sakoa0KQGtrrRKRIM84an2LE++kTlhhZyT+Byry96XDcT
-	n1U3xyg==
-X-Google-Smtp-Source: AGHT+IGEjcBsUTlo4/vVd9aOmfS85HeXK7VXkMsc2AM9X82gWAt19f8n9mk94PI8ByiZcVy2ayMJHM96hBY=
-X-Received: from pjbjx4.prod.google.com ([2002:a17:90b:46c4:b0:330:88c4:627])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c4a:b0:334:e020:2f16
- with SMTP id 98e67ed59e1d1-334e0202f83mr1618309a91.11.1758807709301; Thu, 25
- Sep 2025 06:41:49 -0700 (PDT)
-Date: Thu, 25 Sep 2025 06:41:42 -0700
-In-Reply-To: <b67dd7cd-2c1c-4566-badf-32082d8cd952@redhat.com>
+        d=1e100.net; s=20230601; t=1758807896; x=1759412696;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N5TRZaIKsL5BDWNX1fB2oE8143OJVf1xWjoYHdxo8R0=;
+        b=i/cvU83dB2I05nMBiebh3TnRMhiOTyfBJu7yCWAJlu5grXe7MHtoZd/qIc30WzLBag
+         WzM6MQ9yL2XgE6MiZ1/nz7+8tU22EesiHmeDFoXH6T/idpuT110Kvxh7qZ6p29BtwLUt
+         xDZvJmCZjRX0V+KwG40+pk+vWFHVusRjUWrGRstrQZ2Le9x1np5q7E1leDMs0BLcMsCe
+         IOkxBZEx/llZJ7sBfo6WKDAPxKO+4bUThUbgSvgXizXG6CWazxrVhA3BqKdneIS0oIiE
+         27/gv3JLFBZlw/hRzqyP24qpry9dfr/muzZnXPcQNgELdWoUVSYXkATxIhABz0zXPq9a
+         tqWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlzcryP5ctYd5QuTRII4G4iQJ5j4n5vKC6ov/rGwhWrr1Nn8e50MRWIH/t2FAZGw20q6/QCeIkWOSzCX3jqZB5lSPzWWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWozpH5rG7z0BT2A2i9A/Zj9nd8xWblV5kRioF/dAXihKTg5FY
+	oO8uVgw6BfgpRaoQXY6XflpRpeFjrF3wZl9++9Z3c3Vy0i1wjeZQ1YxzW6uyzYNj6qCoxfnI0af
+	Q1ObJqMDQlxY4XitEdTwWEjYZ/Zlk/CIb4B68pu+E
+X-Gm-Gg: ASbGnctw0rxTeUobhyiZLpPlkE1lDDMBuNOFPkzZZJfEXJlVjr1bjACqHGCuPUPBOSY
+	lKQ64VelRNMohqe0CTWka865g5IYflEPTZsJDhkYfKR1uxMpoBLlcFlfxKFGv0lp9jEX0KfyqLk
+	p0rx/r230/LTDDBamdexAQmhZPcBtDDM6z93EdDIAGJkkFHGl3p0VlPU8AnZLY7aB6lQu0z2gJL
+	iXe/Uz9FjC17dG9KWetWfZg1Q==
+X-Google-Smtp-Source: AGHT+IHMjlzJoU4go98o9OLI3ONqf4XSyVwqhgPkrMYYKQ3q5Z+I56IySJAtT5Z6pWwXAgA4n71MeTiHJXaU1zjAWA0=
+X-Received: by 2002:ac8:5996:0:b0:4b6:2d44:13c4 with SMTP id
+ d75a77b69052e-4da2f12a974mr6481551cf.10.1758807895145; Thu, 25 Sep 2025
+ 06:44:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-7-shivankg@amd.com>
  <diqztt1sbd2v.fsf@google.com> <aNSt9QT8dmpDK1eE@google.com>
  <dc6eb85f-87b6-43a1-b1f7-4727c0b834cc@amd.com> <b67dd7cd-2c1c-4566-badf-32082d8cd952@redhat.com>
-Message-ID: <aNVFrZDAkHmgNNci@google.com>
+ <aNVFrZDAkHmgNNci@google.com>
+In-Reply-To: <aNVFrZDAkHmgNNci@google.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Thu, 25 Sep 2025 14:44:18 +0100
+X-Gm-Features: AS18NWD8QPp_e9025CtzHt-1GmqDfc-4KC-skp25M5mSn0nTsRNLyfZiLblKLT4
+Message-ID: <CA+EHjTz=PnAOdjaPuHRnXE+CTUHCKVSnf-LA6bgwKpWbapy_0Q@mail.gmail.com>
 Subject: Re: [PATCH kvm-next V11 4/7] KVM: guest_memfd: Use guest mem inodes
  instead of anonymous inodes
-From: Sean Christopherson <seanjc@google.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>, willy@infradead.org, 
-	akpm@linux-foundation.org, pbonzini@redhat.com, shuah@kernel.org, 
-	vbabka@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com, 
-	xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, 
-	josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com, 
-	jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-	surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com, 
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
-	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
-	tabba@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	pvorel@suse.cz, bfoster@redhat.com, vannapurve@google.com, chao.gao@intel.com, 
-	bharata@amd.com, nikunj@amd.com, michael.day@amd.com, shdhiman@amd.com, 
-	yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, 
-	michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, 
-	peterx@redhat.com, jack@suse.cz, hch@infradead.org, cgzones@googlemail.com, 
-	ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com, 
-	dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com, 
-	jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
+To: Sean Christopherson <seanjc@google.com>
+Cc: David Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>, 
+	Ackerley Tng <ackerleytng@google.com>, willy@infradead.org, akpm@linux-foundation.org, 
+	pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, dsterba@suse.com, xiang@kernel.org, chao@kernel.org, 
+	jaegeuk@kernel.org, clm@fb.com, josef@toxicpanda.com, 
+	kent.overstreet@linux.dev, zbestahu@gmail.com, jefflexu@linux.alibaba.com, 
+	dhavale@google.com, lihongbo22@huawei.com, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
+	ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com, 
+	rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net, 
+	ying.huang@linux.alibaba.com, apopple@nvidia.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, 
+	vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, 
+	michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com, 
+	Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com, 
+	aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com, 
+	jack@suse.cz, hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
+	rientjes@google.com, roypat@amazon.co.uk, chao.p.peng@intel.com, 
+	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
+	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
+	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
 	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
 	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
 	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
@@ -92,20 +99,25 @@ Cc: Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>, will
 	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
 	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
 	linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 25, 2025, David Hildenbrand wrote:
-> On 25.09.25 13:44, Garg, Shivank wrote:
-> > On 9/25/2025 8:20 AM, Sean Christopherson wrote:
-> > I did functional testing and it works fine.
-> 
-> I can queue this instead. I guess I can reuse the patch description and add
-> Sean as author + add his SOB (if he agrees).
+On Thu, 25 Sept 2025 at 14:41, Sean Christopherson <seanjc@google.com> wrote:
+>
+> On Thu, Sep 25, 2025, David Hildenbrand wrote:
+> > On 25.09.25 13:44, Garg, Shivank wrote:
+> > > On 9/25/2025 8:20 AM, Sean Christopherson wrote:
+> > > I did functional testing and it works fine.
+> >
+> > I can queue this instead. I guess I can reuse the patch description and add
+> > Sean as author + add his SOB (if he agrees).
+>
+> Eh, Ackerley and Fuad did all the work.  If I had provided feedback earlier,
+> this would have been handled in a new version.  If they are ok with the changes,
+> I would prefer they remain co-authors.
 
-Eh, Ackerley and Fuad did all the work.  If I had provided feedback earlier,
-this would have been handled in a new version.  If they are ok with the changes,
-I would prefer they remain co-authors.
+These changes are ok by me.
+/fuad
 
-Regarding timing, how much do people care about getting this into 6.18 in
-particular?  AFAICT, this hasn't gotten any coverage in -next, which makes me a
-little nervous.
+> Regarding timing, how much do people care about getting this into 6.18 in
+> particular?  AFAICT, this hasn't gotten any coverage in -next, which makes me a
+> little nervous.
