@@ -1,173 +1,123 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAFB2E173B
-	for <linux-security-module@vger.kernel.org>; Thu, 25 Sep 2025 14:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83B62E22BC
+	for <linux-security-module@vger.kernel.org>; Thu, 25 Sep 2025 15:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758812220; cv=none; b=MaxmNX4h+Ypew3XUNDyZDOn8jLfvIbPd5MWS8rVNr4hoZl8xP+G8n+LYx1Hwyvl8JYmx/OdsQ5HR6p72idUQQPsDxmY9xzXGrO5kmYRvEoITFafCq5t4pLlur7950gPbnfFpzD+FenvRrSsEWB3o2AwzNSV0FwE3EDr1STtbKCs=
+	t=1758812809; cv=none; b=ZRH71w2o3UCa9HjQdjEhCed9r23ds9A/RysIinD5i1CmqEKzSKmmyBbNXZq9o6NrPVSYzDDdV9XSl0lCqyNVXH0exAKnwBVqX8pqWhbr0lGBrzhY6XtyVO+VfWctRSCXjhtrTgRtL1FZwabU04l7/gOVVuh/BnC+GACVi8JSZbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758812220; c=relaxed/simple;
-	bh=iXjdYy/Oe5sVP96M1v1HO37ho1pc8PIfeIRa6Jk7gsk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HnKqm0f/wkIVfeZ74mlDJruLwyJ3JvHW9HG4MCxTGP3EBHgbwoSn6NaSRMfdOhJPxTejhWxsRwBBZShCuIBLd5zSdAToUmK0PW6MI4qm0sIWbauJwoeHW1RM0guS52u+S1ZTp+lBfd/ZwgQgg6MyV+cLzVHLW6qlXD12c6g14cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hfiu3FKo; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758812809; c=relaxed/simple;
+	bh=0EpGH4MwDbcizlCggFCTnPr7IrP4J3CDCKfs8jvP9TY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ivsSwwP6fsCdMNRZcmkuOSV24OCOO9sJguAiAQQTc51iTGWvcYxa4TjKwr1poWeXGKPm3xuTT5iDuv8LBmgrmcs04QIN29zYtTmcPxLhxd6QsrFGBU2kdXElKIvfuJBFP+/mi6a9iDV/dSM/R7LF5blvY1pTaHRHJTmCPVw1e64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gol47kuJ; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hfiu3FKo"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45ddc7d5731so9241575e9.1
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Sep 2025 07:56:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gol47kuJ"
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-78105c10afdso742824b3a.1
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Sep 2025 08:06:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758812217; x=1759417017; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vQLgyQTTgUDea9nF4s1X9HICWryIv9j0DFy7IvOKWt0=;
-        b=hfiu3FKoJ0+bIORChplDlPZzuM2+HuuaqZoAvJA1CH6hy48Ts8+VvMEUjcvVHAusxX
-         sBTqceF1dmm13bGbmx6jAB2ZJZO36bE7c1Po6DvSJa4dsoAQqPBaZ5IBHQLXOxTeHTGK
-         4l6GAcwpCTzFHJfV8NXjDAmtVZVQSj5eIDFW+74DRzPo/F8kUuxxSyTUGHG9sKscMehg
-         thw1CtLyj7/vShcVFIYbb+kR84kshDsFHefOgKyFntSf+7pKS/FM2N70BZuHI07d8IiS
-         00jS8yTBdPnbguET0tHlwX0wX5t3tMAaZFjxX7aonbabNGlxIIRNvnOk4j17fgTErD8b
-         Hdrg==
+        d=google.com; s=20230601; t=1758812807; x=1759417607; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jh5MSqTLsjrp4fvoa9f2K3rue2zEjmwO4t9rR+bj9fI=;
+        b=gol47kuJ9acsLtfW2IwzLWuooJIDmQq9873ZhWoEj0JftEk9oLWpBQHhtr6z+kSE9S
+         0FEb//SunmT1U27blL0FfCErzAsfpWHhRBt72y8ofi6U3LYzhdRjOu4OZvDkXgwGvlRg
+         TIiMBVIlZwQKQpVM4W5NsB+uikjrtD0uprCYWZgH+uDrthU2nIw7XKcD13wiFZQvYEhf
+         jp6pdIANl8aTL/KS6flRmI0oWxkm4un0kP/vi4aWbqUcWpmkIuM/gN5EPJBTxMt91B9g
+         5xnee3VAsB5Wa8NoGCaei1vOP3W2RzwjY8lsSRJox9AVbyrVuuEfUONujYaouQAuDzKM
+         r05g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758812217; x=1759417017;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vQLgyQTTgUDea9nF4s1X9HICWryIv9j0DFy7IvOKWt0=;
-        b=i9aZs/R7egqZrAudCGkdSe9pKYm9bAOcOwsgS0da6v7N2b2rjFDmCM69ClP0sxdy57
-         mAOmrRRsThq2AYlrT0RkHqEoZnxWRVWgeX6T3UgCssBE3Ziv9Aj+h5txVHpxSDZY5LC4
-         8q+DUzf4hsV3X3C3vzU84XadKYmSaAZB/AvpPXYy4/o4XIaUECQ28aJbsTJNrt/pepp5
-         M56R5DeUTVUmeN3Pwpv5rNhyXJVG41DBWzxhMtW5WK8fZTdJ5giG/VorzOfXKbRByVED
-         jcb+8XBV1Z1iQ4Ap0poxHxVRJWpazC5vA0yvBJ3ayqeHDVPdTAA41U0OcsArof3jYK81
-         iUfw==
-X-Gm-Message-State: AOJu0Yxe5jSDXvtufV5Q5VhvV6r33G/jmWw7QP+OA4+MX9ymyYI8D24a
-	rg/IlAqLu7Y7PeGWhkS1yyJ2Sdm95bQyDecCvftG0LL8VH+Nx3kmGFUL
-X-Gm-Gg: ASbGncvDvN/yiVmQRNb2OwaPsjIyNfNfWBwJW/0P4kQkMf24bICElgiW6OcDY4EGuUr
-	Y+jkwJMMYE9UDgKpObTECn6UmHzBvNMUhPsels4TiQsk7HrwliehKbmlumao//CIcOxaoPIzyIm
-	LyhhoJOPGJKEJbAsGWOE64RRUGC9ItMTT6zcTOi5FDsNOY065wDsnvods+VQdTWtKiu50bjFFSk
-	BiyqUx6Wxplo3biAMH8yvetFbEWe3fnVnqmISDyDfs6FSfAmyxGnWZmp+6jYPGiX/nOjzbCd8Ta
-	mZ+WZIk4gvCNMQV40VBBJO8YgLe/hR3TquAuqWLWR3tDmgdXiVR/G5OdRi9I2RXVgLj9qBleYv7
-	HfUGNzWsdR0QK6nvZh9z7u6ogcHn5g2Xwm0JIaOJwTYoPTtRidvCSBPxv7Q==
-X-Google-Smtp-Source: AGHT+IEzGD5aTIxkgOT3hW9heRIa+e6bI+J2eP+kb7/6OWm0dTSB2R32Wm5QMktzASbLVZB/YT64hQ==
-X-Received: by 2002:a05:600c:1553:b0:46e:39e4:1721 with SMTP id 5b1f17b1804b1-46e39e41ae1mr1183735e9.12.1758812216424;
-        Thu, 25 Sep 2025 07:56:56 -0700 (PDT)
-Received: from [10.33.80.40] (mem-185.47.220.165.jmnet.cz. [185.47.220.165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33bede2csm36381395e9.17.2025.09.25.07.56.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 07:56:55 -0700 (PDT)
-Message-ID: <cd35aa283cf010188a3b0e318f2c16655224767c.camel@gmail.com>
-Subject: Re: [bug report] [regression?] bpf lsm breaks /proc/*/attr/current
- with security= on commandline
-From: Filip Hejsek <filip.hejsek@gmail.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>,
-  "Serge E. Hallyn"	 <serge@hallyn.com>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	regressions@lists.linux.dev
-Date: Thu, 25 Sep 2025 16:56:55 +0200
-In-Reply-To: <CAHC9VhRu=-J5xdKgYOJ1eqQ6EiMoEJ3M+cjDU8AHrts-=DoTvg@mail.gmail.com>
-References: <e5d594d0aee93da67a22a42d0e2b4e6e463ab894.camel@gmail.com>
-	 <CAHC9VhRu=-J5xdKgYOJ1eqQ6EiMoEJ3M+cjDU8AHrts-=DoTvg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+        d=1e100.net; s=20230601; t=1758812807; x=1759417607;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jh5MSqTLsjrp4fvoa9f2K3rue2zEjmwO4t9rR+bj9fI=;
+        b=w4dTUNwZkEzX+6eYnmzwZt8j1U3AH2k7n8OlPsi0LFfdg5oEnk0D/x+8bQ+5MTSMXr
+         zq+kmK0ICTNwCFxSrRzCi+LA6+4mFq1cGgWGqgoETYWqtX2GAyL4swZnlaGtMRGlASWI
+         qatjOP/4bLayh5kb2Lw00Lk6svcpW4evD38HPlVsg0XINCYusVtALGMJu5Dv7zVGCS0n
+         xC9Tqyk3WhRWUVSrL3isg2Gz7JVM1/dR/ZUg+12TEzDeFatvubz6JMaOXvafotFS8hYz
+         Fi53fTJqVrkQsMou4UgCect101yhJ811KR3rLDt6TO6H/FDuQuYLdupMFYgg/Ch2RbLV
+         9KNw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2kPkdYb31PQ3OTZ8Gdh/2FAv21kQHZRccjqtz9lDZm7RFjEAKkKY2LLE72FHgZQ5j7tDAxgFCr1swih8apQVTHNSd00s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTANDStPGOhBo7JV4P9yABJP4z83N6O3ZXrwnBqU+q3DUTkXUu
+	y0tkBrR+0L1TUvbfKenntyFHxl/NJqrjLZuvc+sULB47WYpqFVCDUarWKdFHusHu8zBsNTg1dxo
+	If4EpVw==
+X-Google-Smtp-Source: AGHT+IEVcWsyGM1w0GH1nNrshkk20Pnc8ghwxFB8MAUOFgcR14npidYwrEDITe3+YHWa4Mb/5XspEYhl1Ac=
+X-Received: from pga11.prod.google.com ([2002:a05:6a02:4f8b:b0:b4c:213a:e7aa])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3282:b0:262:1611:6528
+ with SMTP id adf61e73a8af0-2e7cdda0840mr4939471637.29.1758812806367; Thu, 25
+ Sep 2025 08:06:46 -0700 (PDT)
+Date: Thu, 25 Sep 2025 08:06:44 -0700
+In-Reply-To: <3a82a197-495f-40c3-ae1b-500453e3d1ec@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-7-shivankg@amd.com>
+ <diqztt1sbd2v.fsf@google.com> <aNSt9QT8dmpDK1eE@google.com>
+ <dc6eb85f-87b6-43a1-b1f7-4727c0b834cc@amd.com> <b67dd7cd-2c1c-4566-badf-32082d8cd952@redhat.com>
+ <aNVFrZDAkHmgNNci@google.com> <3a82a197-495f-40c3-ae1b-500453e3d1ec@redhat.com>
+Message-ID: <aNVahJkpJVVTVEkK@google.com>
+Subject: Re: [PATCH kvm-next V11 4/7] KVM: guest_memfd: Use guest mem inodes
+ instead of anonymous inodes
+From: Sean Christopherson <seanjc@google.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>, willy@infradead.org, 
+	akpm@linux-foundation.org, pbonzini@redhat.com, shuah@kernel.org, 
+	vbabka@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com, 
+	xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, 
+	josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com, 
+	jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
+	surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com, 
+	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
+	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
+	tabba@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	pvorel@suse.cz, bfoster@redhat.com, vannapurve@google.com, chao.gao@intel.com, 
+	bharata@amd.com, nikunj@amd.com, michael.day@amd.com, shdhiman@amd.com, 
+	yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, 
+	michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, 
+	peterx@redhat.com, jack@suse.cz, hch@infradead.org, cgzones@googlemail.com, 
+	ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com, 
+	dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com, 
+	jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
+	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-coco@lists.linux.dev
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, 2025-09-24 at 17:24 -0400, Paul Moore wrote:
-> On Sat, Sep 13, 2025 at 1:01=E2=80=AFPM Filip Hejsek <filip.hejsek@gmail.=
-com> wrote:
-> >=20
-> > Hello,
-> >=20
-> > TLDR: because of bpf lsm, putting security=3Dselinux on commandline
-> >       results in /proc/*/attr/current returning errors.
-> >=20
-> > When the legacy security=3D commandline option is used, the specified l=
-sm
-> > is added to the end of the lsm list. For example, security=3Dapparmor
-> > results in the following order of security modules:
-> >=20
-> >    capability,landlock,lockdown,yama,bpf,apparmor
-> >=20
-> > In particular, the bpf lsm will be ordered before the chosen major lsm.
-> >=20
-> > This causes reads and writes of /proc/*/attr/current to fail, because
-> > the bpf hook overrides the apparmor/selinux hook.
->=20
-> What kernel are you using?
+On Thu, Sep 25, 2025, David Hildenbrand wrote:
+> On 25.09.25 15:41, Sean Christopherson wrote:
+> > Regarding timing, how much do people care about getting this into 6.18 in
+> > particular?
+> 
+> I think it will be beneficial if we start getting stuff upstream. But
+> waiting a bit longer probably doesn't hurt.
+> 
+> > AFAICT, this hasn't gotten any coverage in -next, which makes me a
+> > little nervous.
+> 
+> Right.
+> 
+> If we agree, then Shivank can just respin a new version after the merge
+> window.
 
-I'm using Arch Linux kernel, which is very close to mainline. I have
-also tested my own build from git sources (I used a stripped down
-config which I based on config from Arch). Example in QEMU:
+Actually, if Shivank is ok with it, I'd be happy to post the next version(s).
+I'll be focusing on the in-place conversion support for the next 1-2 weeks, and
+have some (half-baked) refactoring changes to better leverage the inode support
+from this series.
 
-$ qemu-system-x86_64 -nodefaults -accel kvm -cpu host -smp cpus=3D2 -m 1G -=
-display none -kernel ~/git/linux/arch/x86/boot/bzImage -initrd ./initramfs.=
-img -serial mon:stdio -append 'console=3DttyS0 security=3Dselinux'
-:: mounting '' on real root
-mount: /new_root: no valid filesystem type specified.
-ERROR: Failed to mount '' on real root
-You are now being dropped into an emergency shell.
-sh: can't access tty; job control turned off
-[rootfs ~]# uname -a
-Linux archlinux 6.17.0-rc7-00020-gcec1e6e5d1ab #3 SMP PREEMPT_DYNAMIC Thu S=
-ep 25 16:28:02 CEST 2025 x86_64 GNU/Linux
-[rootfs ~]# mount -t securityfs securityfs /sys/kernel/security
-[rootfs ~]# cat /proc/cmdline
-console=3DttyS0 security=3Dselinux
-[rootfs ~]# cat /sys/kernel/security/lsm; echo
-capability,landlock,lockdown,yama,bpf,selinux
-[rootfs ~]# cat /proc/self/attr/current
-cat: read error: Invalid argument
-
-(Note: In this example, uname reports archlinux, but that's only
-because I based the config on Arch config, it's not actually an Arch
-kernel.)
-
-Maybe the different behavior is caused by a different config? You can
-find the Arch config at [1]. Based on Fedora package sources, I think
-their config has
-
-   CONFIG_LSM=3D"lockdown,yama,integrity,selinux,bpf,landlock,ipe"
-
-while the Arch config has
-
-   CONFIG_LSM=3D"landlock,lockdown,yama,integrity,bpf"
-
-.
-
-[1]: https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/raw/=
-main/config?ref_type=3Dheads
-
->   Things appear to work correctly on my
-> kernel that is tracking upstream (Fedora Rawhide + some unrelated
-> bits):
->=20
-> % uname -a
-> Linux dev-rawhide-1.lan 6.17.0-0.rc7.250923gd1ab3.57.1.secnext.fc44.x86_6=
-4 #1 SM
-> P PREEMPT_DYNAMIC Tue Sep 23 10:07:14 EDT 2025 x86_64 GNU/Linux
-> % cat /proc/cmdline
-> BOOT_IMAGE=3D(hd0,gpt4)/boot/vmlinuz-6.17.0-0.rc7.250923gd1ab3.57.1.secne=
-xt.fc44.x
-> 86_64 root=3DUUID=3D285029fa-4431-45e9-af1b-298ab0caf16a ro console=3Dtty=
-S0 mitigation
-> s=3Doff security=3Dselinux
-> % cat /sys/kernel/security/lsm; echo ""
-> lockdown,capability,yama,selinux,bpf,landlock,ipe,ima,evm
-> % id -Z
-> unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-> % cat /proc/self/attr/current; echo ""
-> unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
->=20
-> I even ran it against the LSM initialization rework that has been
-> proposed, but has not yet been accepted/merged, and that worked the
-> same as above.
->=20
-> Is this a distro kernel with a lot of "special" patches which aren't
-> present upstream?
+I can also plop the first three patches (the non-KVM changes) in a topic branch
+straightaway, but not feed it into -next until the merge window closes.  The 0-day
+bots scrapes kvm-x86, so that'd get us some early build-bot exposure, and we can
+stop bugging the non-KVM folks.  Then when the dust settles on the KVM changes,
+I can throw them into the same topic branch.
