@@ -1,74 +1,74 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839BE22A7F2
-	for <linux-security-module@vger.kernel.org>; Fri, 26 Sep 2025 07:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3632877EE
+	for <linux-security-module@vger.kernel.org>; Fri, 26 Sep 2025 07:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758871890; cv=none; b=LlAvLMq2lRS37IQmq6moh8lYjs0cCRJ/thBF3K+SOMP/4XLwHKmselDkEu+f6jrRzt7vMzRsDVF3Pn37/drFGwm7hsWqLagy4iEFl0aJbvx+ecyLD52i6R+37H5wM+R6T8Tc5h/+oipKxeImBHO5zj8ziBGHA14tVfKqGH6W314=
+	t=1758871965; cv=none; b=CuCfgM1McxR1gKIHtacQeE3Oy7/LxKstoZ3kuMg90TSFaMMqeEbFaMjRudvWIEa6nGSMb0Je44qvVN63idcfq2mnE4Me/AlkZJIYwgu21+oY4/wSAsaqyrCm1smK2MA3PQlWwyfd7AoqYkCbqpWMaIsfm52jiWh7PkNMrWsUvug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758871890; c=relaxed/simple;
-	bh=KufU9ZWO/kLUGrCXDHaZph7HljBItyQP4ERJy1huuTc=;
+	s=arc-20240116; t=1758871965; c=relaxed/simple;
+	bh=95cIlEvWWj/uZmzswSkexkoWlvLONx/96Ut9/9TQYtc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=som4MErXeRWu5QH8Q0DIjGyYm/Z4+XO/dDeKBPGLdWE7aK39KafX68EMN7F4OexurX1WiWaUfKAiKCfnl0JYLYsXpdgeBUefDpSRxwvzLP0r4+Qd2eOr9vw5SQHMjD2vqHE0muSRm2adIJsz9OJZbYGq9fIOYL3I4YJrDi0DsVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C6K6JIY9; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=cJz/cAnXff7EGXoRR9jnqvpc/wJErHnBBfxHjMlWsRbB5Dl55+2ZIrWiA3xZFM0hQeX5y614LN0w4WY7vQGp4CnsfWMhZwcFwPfTRAtUEQvxsm4G2y+M+SuEaxh3FPS95QM1nKryJN9zL862k8frJ3wJ9Eq24g3wHE/SDmvF28I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GBNJ/cRP; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C6K6JIY9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GBNJ/cRP"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758871887;
+	s=mimecast20190719; t=1758871963;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zN4peVxWL0zSknKb/nxU8BZxb2xqfgd1C45ub1DITH8=;
-	b=C6K6JIY9uJPtNjlhYFiJW74bil6xsRncDiBoNbtCMf/1OS8SQMkPMfZzoXGDoMRrKx5RR3
-	USu+P+thlLncZjbscdTukSFO1WYwCclQfJl8bJSpjHxwvkC9actWPNYx/af46x64IcFAVR
-	bnjc4v0rWDgdLOnz3dkIu6m1FXwaTI0=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=K7lJCWxVdcfCha/v9DrcwqFYgZ0VcwRUn4ecEZCiSv8=;
+	b=GBNJ/cRP6twcMPU7A+hI41diL4ZGUfc5iNAtmSI7Ij9oiJrbgKnjlUSI0fDlxAQ1ANnpcs
+	RX3SUTPNWR7E+ozXkyf0VE1xLP8zUQPDJUqMnQDMyZaww5XO/dmOBc8dNWpgvWd1MsuwwC
+	DcrunE3tUwZ2s1sMkrjFbVjPpLlIHgc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-300-0HdAZjB6MW6gAfRO-wJvYA-1; Fri, 26 Sep 2025 03:31:26 -0400
-X-MC-Unique: 0HdAZjB6MW6gAfRO-wJvYA-1
-X-Mimecast-MFC-AGG-ID: 0HdAZjB6MW6gAfRO-wJvYA_1758871885
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46b303f6c9cso13657835e9.2
-        for <linux-security-module@vger.kernel.org>; Fri, 26 Sep 2025 00:31:26 -0700 (PDT)
+ us-mta-284-Sur1aGhrPCqKvnvfs0PmDg-1; Fri, 26 Sep 2025 03:32:40 -0400
+X-MC-Unique: Sur1aGhrPCqKvnvfs0PmDg-1
+X-Mimecast-MFC-AGG-ID: Sur1aGhrPCqKvnvfs0PmDg_1758871958
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45de07b831dso11693115e9.1
+        for <linux-security-module@vger.kernel.org>; Fri, 26 Sep 2025 00:32:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758871885; x=1759476685;
+        d=1e100.net; s=20230601; t=1758871958; x=1759476758;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zN4peVxWL0zSknKb/nxU8BZxb2xqfgd1C45ub1DITH8=;
-        b=LpaOKyuu9pGBQefyrj3Yesp1FHgD/AVk4KXVhrTbFWJ/4KZzAHTxEuTEiV68VzOSQi
-         xL7HcYyl+l7L/jOuDXO7tvf6H9opASHaZUwOa77kX1s4sxy2+h3mYWTUcoPSulDWfUHC
-         xUQQTmatqab1fDeGegjWWRtrUnyo84wXi2KeYjHpo0W9TR8I2gUiRZRtYVH2NfzTJtyb
-         o3YIeqoZsFA0szMgglAo8illthqujLmCoLBT4bqqxX7dy/rNPT3Tnv8uRyMXnnHz4Rn5
-         F8s33nKQ9y6SG0QLn44sSGFTsq2VHdznX7s+hdcXmh7ejCw8RA0Yk2CJQK2MFCVAS/sr
-         Wu+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVyJ+/fiASXeuzVYE1xfgcg25zSHzfR8eI8UeMhk2GrAil0SOyyO0zTk316q5ddwzCPMR4gyZGuc33tBhxa5E6rtK1/iGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyue73l5gnjRwxc9gBAr5Iu5zfaDZ1YtxywJP+fbCDXDPIQUyJL
-	gnrWP87AyQTSf+NPH12B9uXYaVx90hS9/kG17lvb4J+5Y6QFHi7Mbs5IyUkoPTVtiEzLqleMaAF
-	pxtyAL0B8gixLxbuDBr6nq4mAvyY5+awvibVNohXMv6j9ELru1kRcpP8oxZqH5S+oLw97/fKg2U
-	Vebg==
-X-Gm-Gg: ASbGnctkkVpzJAvaA7eIuIuSr8eQXJdTXVnzomHUQAfmuAJ+EQnqtBHgorzQIrYieeS
-	JjICCEkrv+LlAbfgByJ676Gf6r5dCyRbScVxRIg/ad1tC2g3ANpaLKCAL3hTp2Igre1ZgbMu5ub
-	1sgKvCLCsXL9t9v+U5vBy/R2NK4niUMg00wjNwCYuGDiEkFdoW3rg82x9ERFpqrDCl7ww83bJZ9
-	x48B/zrL4IQuXE6Fi087GPF1tdDc4SHjj6ZBFtCuCT94TK+LTAtHeiCULD0tsOmmL0sX1CVV1WY
-	WzCXObTUyr8TmA5CoRMUifbZlahFZIGFDTKmzZNcu1aXHlKYPzPcgBy6tGqVpP8xDodewXgPplC
-	ryMe4ekofZrjgSriwB8QrzQKjhKWt7YUnMsmecVaNViP3SOwBeYXtJFM+eErSAPzh3gt9
-X-Received: by 2002:a05:600c:3ba9:b0:45d:d2d2:f081 with SMTP id 5b1f17b1804b1-46e329f9c61mr65568815e9.20.1758871884800;
-        Fri, 26 Sep 2025 00:31:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEdCFTWN0OMV/8re7i7X1C3LDq1oeLqj0b7w/lVtU1L4ASh3eR7s8IXfpyY0kZjgB5RF7jO9w==
-X-Received: by 2002:a05:600c:3ba9:b0:45d:d2d2:f081 with SMTP id 5b1f17b1804b1-46e329f9c61mr65567615e9.20.1758871884155;
-        Fri, 26 Sep 2025 00:31:24 -0700 (PDT)
+        bh=K7lJCWxVdcfCha/v9DrcwqFYgZ0VcwRUn4ecEZCiSv8=;
+        b=DKLJbiec4CeeGDE6V7r0ZOSPnkN+ge+fbxWNf3E/TrJGV7P0aRGfbuPJoR0tvkwnU5
+         Zdp9rbD0/wLnr3Dbx2mpiMpd0S4z+Q7sv+noFE4zCINN8y9dTVFvY4HH0KVrPrpS5aWM
+         Gxo7SKc5Kzvm3xyYHN8Jfi40NeipDpNKidkpDm7Q/HGlpIpAVUvyjQqMWjLXP7VEWYeK
+         4Wb1xb7QBN1EA2QiBaWHU1CavAK9xswZodwBpx46rznC5YyBb8DAjR5PhWtiyToOnaP1
+         tUk+ycav509BZB8lCtuxLdslmSLgq2VfMB8M27y5ePpFYY0vXYvMZCFYXpIob+Bnvd2j
+         wpnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3IMObkS2PLVdnPBY0hUxjcgzLk+be4e1ZcVv9uWPSzmS2E1vYUD6Rn/2mAN7+D5t0neeyelZ+CXfqhmk35C+o5Q6SdhU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzilVVTNrirdiNrgBbaWZx06bSPwR6DAYtC8kOmzkUIqqkfME1M
+	D93do6cK06WF54wTbsCVtkS06GmPrUG3zbnM2yJVnhdfe2H/5BbCF/rJu0PF+aifIrFQ2fmG3jM
+	e0iqe+ktNluibUtdk1NRDh39BNaFn9RiDW5Wtwu8q54t59dH+BDu44jop0QXfALqqewmofC+wK2
+	xsJw==
+X-Gm-Gg: ASbGncuoqxIx3sJsQH3INcKXz5UIA30ckGG/tNUDgIyv2SdsM6Y9mfZ6ijaxbbmDpiJ
+	4W4menIO3Ap0jzJAp0pG2GDXs2/uqxjh2KyOxJE9zWspO9yhLS2TIHAqMO3rDc1GwTo1s0p8pQ9
+	N8e4nxb3X8e3xD1h7dIlLeswrGRQd7ExiUZzTq0v5AiCDUpiJShDgKP0IiiE1FARSrJwb+9Cefw
+	LiUTG6U6z4tBqHMT8EMiZpC7o06JcCJyPH3x3mN0CEq/uK+kdfUFjcjF3NBZif3H6x7ANAuE5UA
+	+Qsec+dFjbPTXU+3PdVJTK9phXkyCMiZJzMywM9ZeZXS3AfqHdlYQk/JRNST89aDtDEMt8jN+OI
+	qmjIaVlzRzHZJ/gtTyJuW1DEIE83PfxWtn7EwKXl90WFU9panvcxZbRUcmLw907cFJ1pm
+X-Received: by 2002:a05:600c:a43:b0:46d:d949:daba with SMTP id 5b1f17b1804b1-46e329a7fe3mr62998485e9.4.1758871957407;
+        Fri, 26 Sep 2025 00:32:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtL4vBtb4UkKxYY+8AUu50LpG2eTQL/mEdtyu+TBsZgjy08g9xtyeO4upwKha/FYi9Pburtw==
+X-Received: by 2002:a05:600c:a43:b0:46d:d949:daba with SMTP id 5b1f17b1804b1-46e329a7fe3mr62997645e9.4.1758871956911;
+        Fri, 26 Sep 2025 00:32:36 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f34:c100:5d3c:50c0:398a:3ac9? (p200300d82f34c1005d3c50c0398a3ac9.dip0.t-ipconnect.de. [2003:d8:2f34:c100:5d3c:50c0:398a:3ac9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab61eecsm105756545e9.20.2025.09.26.00.31.20
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc72b0aeesm6112695f8f.49.2025.09.26.00.32.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Sep 2025 00:31:23 -0700 (PDT)
-Message-ID: <95ace421-36d2-48af-b527-7e799722eb17@redhat.com>
-Date: Fri, 26 Sep 2025 09:31:19 +0200
+        Fri, 26 Sep 2025 00:32:36 -0700 (PDT)
+Message-ID: <a127971f-d1e7-4fea-a16a-c2bae34b4ad3@redhat.com>
+Date: Fri, 26 Sep 2025 09:32:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -78,23 +78,23 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH kvm-next V11 7/7] KVM: guest_memfd: selftests: Add tests
  for mmap and NUMA policy support
-To: Sean Christopherson <seanjc@google.com>, Shivank Garg <shivankg@amd.com>
-Cc: willy@infradead.org, akpm@linux-foundation.org, pbonzini@redhat.com,
- shuah@kernel.org, vbabka@suse.cz, brauner@kernel.org,
- viro@zeniv.linux.org.uk, dsterba@suse.com, xiang@kernel.org,
- chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, josef@toxicpanda.com,
- kent.overstreet@linux.dev, zbestahu@gmail.com, jefflexu@linux.alibaba.com,
- dhavale@google.com, lihongbo22@huawei.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, rppt@kernel.org, surenb@google.com,
- mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com,
- joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
- gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com,
- tabba@google.com, ackerleytng@google.com, paul@paul-moore.com,
- jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com,
- vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
- michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com,
- Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com,
- aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
+To: Jason Gunthorpe <jgg@nvidia.com>, Sean Christopherson <seanjc@google.com>
+Cc: Shivank Garg <shivankg@amd.com>, willy@infradead.org,
+ akpm@linux-foundation.org, pbonzini@redhat.com, shuah@kernel.org,
+ vbabka@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk,
+ dsterba@suse.com, xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org,
+ clm@fb.com, josef@toxicpanda.com, kent.overstreet@linux.dev,
+ zbestahu@gmail.com, jefflexu@linux.alibaba.com, dhavale@google.com,
+ lihongbo22@huawei.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, ziy@nvidia.com,
+ matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
+ byungchul@sk.com, gourry@gourry.net, ying.huang@linux.alibaba.com,
+ apopple@nvidia.com, tabba@google.com, ackerleytng@google.com,
+ paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
+ bfoster@redhat.com, vannapurve@google.com, chao.gao@intel.com,
+ bharata@amd.com, nikunj@amd.com, michael.day@amd.com, shdhiman@amd.com,
+ yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
+ michael.roth@amd.com, aik@amd.com, kalyazin@amazon.com, peterx@redhat.com,
  jack@suse.cz, hch@infradead.org, cgzones@googlemail.com,
  ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
  chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
@@ -109,6 +109,7 @@ Cc: willy@infradead.org, akpm@linux-foundation.org, pbonzini@redhat.com,
  linux-coco@lists.linux.dev
 References: <20250827175247.83322-2-shivankg@amd.com>
  <20250827175247.83322-10-shivankg@amd.com> <aNW1l-Wdk6wrigM8@google.com>
+ <20250925230420.GC2617119@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -154,55 +155,34 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <aNW1l-Wdk6wrigM8@google.com>
+In-Reply-To: <20250925230420.GC2617119@nvidia.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: vFBCZpYva-hJY4yGpE0BOwksmZLACYgGQpqcBrY5Q2Q_1758871885
+X-Mimecast-MFC-PROC-ID: m5Ui5UMsdXsBJzP8Pz1zjW_-YdSHMizrwT4S0kAuTvo_1758871958
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 25.09.25 23:35, Sean Christopherson wrote:
-> On Wed, Aug 27, 2025, Shivank Garg wrote:
->> Add tests for NUMA memory policy binding and NUMA aware allocation in
->> guest_memfd. This extends the existing selftests by adding proper
->> validation for:
->> - KVM GMEM set_policy and get_policy() vm_ops functionality using
->>    mbind() and get_mempolicy()
->> - NUMA policy application before and after memory allocation
+On 26.09.25 01:04, Jason Gunthorpe wrote:
+> On Thu, Sep 25, 2025 at 02:35:19PM -0700, Sean Christopherson wrote:
+>>>   LDLIBS += -ldl
+>>> +LDLIBS += -lnuma
 >>
->> These tests help ensure NUMA support for guest_memfd works correctly.
->>
->> Signed-off-by: Shivank Garg <shivankg@amd.com>
->> ---
->>   tools/testing/selftests/kvm/Makefile.kvm      |   1 +
->>   .../testing/selftests/kvm/guest_memfd_test.c  | 121 ++++++++++++++++++
->>   2 files changed, 122 insertions(+)
->>
->> diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
->> index 90f03f00cb04..c46cef2a7cd7 100644
->> --- a/tools/testing/selftests/kvm/Makefile.kvm
->> +++ b/tools/testing/selftests/kvm/Makefile.kvm
->> @@ -275,6 +275,7 @@ pgste-option = $(call try-run, echo 'int main(void) { return 0; }' | \
->>   	$(CC) -Werror -Wl$(comma)--s390-pgste -x c - -o "$$TMP",-Wl$(comma)--s390-pgste)
->>   
->>   LDLIBS += -ldl
->> +LDLIBS += -lnuma
+>> Hrm, this is going to be very annoying.  I don't have libnuma-dev installed on
+>> any of my <too many> systems, and I doubt I'm alone.  Installing the package is
+>> trivial, but I'm a little wary of foisting that requirement on all KVM developers
+>> and build bots.
 > 
-> Hrm, this is going to be very annoying.  I don't have libnuma-dev installed on
-> any of my <too many> systems, and I doubt I'm alone.  Installing the package is
-> trivial, but I'm a little wary of foisting that requirement on all KVM developers
-> and build bots.
+> Wouldn't it be great if the kselftest build system used something like
+> meson and could work around these little issues without breaking the
+> whole build ? :(
 > 
-> I'd be especially curious what ARM and RISC-V think, as NUMA is likely a bit less
-> prevelant there.
+> Does anyone else think this?
+> 
+> Every time I try to build kselftsts I just ignore all the errors the
+> fly by because the one bit I wanted did build properly anyhow.
 
-We unconditionally use it in the mm tests for ksm and migration tests, 
-so it's not particularly odd to require it here as well.
-
-What we do with liburing in mm selftests is to detect presence at 
-compile time and essentially make the tests behave differently based on 
-availability (see check_config.sh).
+When I'm in a hurry I even do the same within mm selftests.
 
 -- 
 Cheers
