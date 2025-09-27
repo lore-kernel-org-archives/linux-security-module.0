@@ -1,164 +1,154 @@
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B8381ACA
-	for <linux-security-module@vger.kernel.org>; Sat, 27 Sep 2025 05:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D188819E968
+	for <linux-security-module@vger.kernel.org>; Sat, 27 Sep 2025 15:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758952072; cv=none; b=bCfGSZ7bFJGaQWgHG611XmbYXNXMQf2lwgRJ/CfrXFmLps+JCvtm8isSraakNh4MZHsLx3RnnrH26NjSwS0IaHpptB0OrLwqxvnJlqc3sh5fvKMkAuAtKQcd7vGPKhoN5IW02teVCXrY4eIkKAYunaPA5UVziHyj99kekAfN63E=
+	t=1758987837; cv=none; b=iMZ+66pMZXMgkcf1vtL3EpxPY6uH4a8naRVWi9sk8P38boXmgwlqD0rmBz5Aq8a74Gy26R+VTiPV1BysZksaC/0gUMv/eNvvvgwFREta9Sdo9VX9gi1WPX/YrR2XtJ/FeBbSWg395FkcFhy8xQT4ZhXcF2c7uSn8CNyBPcymbZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758952072; c=relaxed/simple;
-	bh=/A1XHfYqiL6m86d/twQMNE7yCNuB0WyY5f1thFLlGzU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=IWy0SsoPszFqbWhIxsoqi67VocRKq4Ar3eSxOaXlRYY/30eiMzt7FoelnEH1BmYylzSipWbpGs6Aqd1Nw56rQ/7LCyyiWY/IKnjKvJmZ7WU91N0zJuLO5KeU/E2cDSjV+cg2w62jGCmwllS9E1u8fhTETDd6+SZ4n0cU78At20c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-889b8d8b6b7so462801539f.1
-        for <linux-security-module@vger.kernel.org>; Fri, 26 Sep 2025 22:47:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758952070; x=1759556870;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S+sFNfH61oBTsVvfdy0ADyi6bsfNMI5oeFbdyvXP4cY=;
-        b=kHQadz7+TimXynixQtRFiNtsNaceMnCmQC0QwH2NiV6B6wA6fIXMS27ceZjTygIixa
-         EAVv0BaylDkSdgFjaAmRhyQJhF7Ul8eoEMo3WUS1rB1D1x8/ib7W4xDKHf6Kq61Z2wSV
-         ZgOjUCPEN5YHohuWzDLdP98AynPKfC3p6f3eo2NicIHtZCatFS63Zb95ulDsianwXEdq
-         U/wleCOHqwCqSUY1NFxE+gpndARu0qtFth0OAnw1XV4s45H8EbPsTJBkNPCiqXxr5bmZ
-         d+H204/KOTqho+JXNIlYfuhFFQ47Vy1HVJeUrCO4bv/P7oj8qHwsgoK2weOut2Jhimdo
-         2VlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKhKJSNmNyvMRPUIiqVX5XObYU9+tN1lOIpneoTKxwAmSOdcbLYZmCNrnbM/pU7ThhrE9Y/krbGaLeS094zx47Br47b7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo3CqlXzdaWDWrcKoNy3tCHbjbM7nvt1jitjbNGAlJOJJxNxGC
-	sgLDx+hlBk07dUzIbRZD6BkW3TnJriVI0nEtNJbRNt49ZNnnYgp/P7sdoTWWw5txzMCkediwSwp
-	BYF0DKT6a6jrkMjYRPTDRHMYwPRx02Xr7zvJQDU7jad5hJfntNvh3+lh/YyA=
-X-Google-Smtp-Source: AGHT+IF0bLvN1Dwx1fHUb16SHVoEGHd0AUYxhYgc+MSqPvVsgj217nsAlE5b4G9WpWqsBJcPBvwDqAYkxPUiNWu1XO4rNBhbQ3sP
+	s=arc-20240116; t=1758987837; c=relaxed/simple;
+	bh=jiYVZbGhzRTDrn5zSw/VZDsV2L3e+qahjATfG8AJLHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aPi+I+iHIuPV6HEVz+fZixUQlwYrI33LA7yHQGYBiAGOhZHrdAWgXF2td7wnk3KpsbqYCkFZIcaJj6UlshZjuPBiJD84Ndzc309TJWlV/Lcrg2Gg7J9Ahy+52X5pa+xHlnxpaQfm+U1dNo9l9MAHSHK/BXsFarCkAjufQ2m6LCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=t8fKRyV4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IHJ2C9Va; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="t8fKRyV4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IHJ2C9Va"
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfout.stl.internal (Postfix) with ESMTP id B23871D00182;
+	Sat, 27 Sep 2025 11:43:53 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Sat, 27 Sep 2025 11:43:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1758987833;
+	 x=1759074233; bh=riIiti5JRr/cUlls3gbXy3hCUYTVjs+qJIp38v/DYSA=; b=
+	t8fKRyV4KR+2XBrwU3In/L6SmxReSJlen/sBRZBtai4uSzEuJkJghopHA7EuNlJx
+	acfYLpttlac14KOaB+JIthjVssSimueALwwrmrhawYM8LlV9CNdzg3pGujerkN+A
+	N01crvO0pwLMudSDAAPRx3j7In0XZ80isCeK9yWTH/zhMlZaeSuIlb6L+5idf/zo
+	2phBnubhfOzn6Jbl6swsxQOyebRiq7yYDiqydYvqVJJOEobFNC+AhCVQgxlZQnO7
+	HZ4qU9bOK4V1bxY01JGxzbHnWeFh+6t+4I2PcCAS6nkeri59MBTP9f/M0Mh+hg73
+	57YuDSnBJk4X41L5sGok1A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1758987833; x=
+	1759074233; bh=riIiti5JRr/cUlls3gbXy3hCUYTVjs+qJIp38v/DYSA=; b=I
+	HJ2C9VaPgrEfm1Ob7F78rjeStkjztVSZzdcChJOTZUbr+s5N/f2vW1nQC5pEqCPn
+	oG/3G3r5RnPE2JMicIAsf9S8er2XERjBLHaTrM2xtqDYnkUbHSA3/m17y3VYqRX8
+	SDBK8GkNUJVdYgpZdwCmrzrOLLcHHT/sg1n8gUs4dgK1iv1Bt8pIKGAALalGg5bk
+	U5+Q0qEwwMH8s9cenAkowVV687hFvfAxfBvjxgTALl1yUVbolXgzCKxjtdl2AqcP
+	HL9mulLcTpetJ2mP7LjAvxPLRyX5j+Ye+HqHey7YgQq5kiqq7E4iaUc1ZTPfj/LG
+	CL5fcDVs1v899KYYgL+cA==
+X-ME-Sender: <xms:OQbYaDB6rESykWLlV54pPG5iFELrM8SfBF80cGZHqEZpAi68fWWOIw>
+    <xme:OQbYaAjnpdpLVQI2aPivTAuqoDgJR3GfjBKAuf2Rt4NWD_MxGUIDU65HhiuRDfkfC
+    mNI1OurjNPd-lefBLPBEgA8jTV2rjhPOcQKFsB5gIA5KtWPXs2Tyi0>
+X-ME-Received: <xmr:OQbYaDmcfn-ZRjNWJxuaOG2c4mYZSEW1i1YXLdi0PCmYdX7zWmC5Kc15a0HhQ2nuIw1yFDcI_g78ARYAzHSl2cg7>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejvdeigecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhinhhgmhgr
+    ohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeduke
+    evhfegvedvveeihedvvdeghfeglefgudegfeetvdekiefgledtheeggefhgfenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmh
+    drohhrghdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    ohepmhhitgesughighhikhhougdrnhgvthdprhgtphhtthhopehgnhhorggtkhesghhooh
+    hglhgvrdgtohhmpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohep
+    lhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdroh
+    hrgh
+X-ME-Proxy: <xmx:OQbYaErI71TP8oXcen5NSHLCZ_sAwyJY8rQpRgatM6bkI6Rx64-4iw>
+    <xmx:OQbYaEH5gxX2FWDPCHwoJ4_zCBOO6ES_B5pOro0HmwOqRquqFA3vKA>
+    <xmx:OQbYaIzUoy_4phqywZov6hrRGjP01zoWQechXPBlAjbFh-aDS_VAew>
+    <xmx:OQbYaBpbslpX894nz5La7cZJ6Mx4k5TKGebkcY4EL_Kfx9v_TX5cHw>
+    <xmx:OQbYaLgJGSRoqMZ-3KjQZK5hFPtasifoF-Lc5uviWj9eAUZ2GJhWyEN0>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 27 Sep 2025 11:43:51 -0400 (EDT)
+Message-ID: <090e272e-64b4-4c56-9928-0e0be0288e64@maowtm.org>
+Date: Sat, 27 Sep 2025 16:43:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1489:b0:425:7a75:1014 with SMTP id
- e9e14a558f8ab-425c2b1c47cmr105751285ab.12.1758952070125; Fri, 26 Sep 2025
- 22:47:50 -0700 (PDT)
-Date: Fri, 26 Sep 2025 22:47:50 -0700
-In-Reply-To: <20250926203111.1305999-1-bboscaccy@linux.microsoft.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d77a86.050a0220.25d7ab.0252.GAE@google.com>
-Subject: [syzbot ci] Re: BPF signature hash chains
-From: syzbot ci <syzbot+ci175b04b41cdfef4d@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bboscaccy@linux.microsoft.com, 
-	bpf@vger.kernel.org, daniel@iogearbox.net, 
-	james.bottomley@hansenpartnership.com, kpsingh@kernel.org, kys@microsoft.com, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	wufan@linux.microsoft.com
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/6] landlock: Add a place for flags to layer rules
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org
+References: <cover.1757376311.git.m@maowtm.org>
+ <841550c5d7bbc7ffcd74f85ee659caf1e29cff67.1757376311.git.m@maowtm.org>
+ <20250919.oanahnoon2Za@digikod.net>
+ <a43a9985-cf62-482b-9a2d-fce463ca69b0@maowtm.org>
+ <20250924.wu8Ieku8aiph@digikod.net>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <20250924.wu8Ieku8aiph@digikod.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-syzbot ci has tested the following series
+On 9/24/25 10:20, Mickaël Salaün wrote:
+> On Mon, Sep 22, 2025 at 12:52:19AM +0100, Tingmao Wang wrote:
+>> [...]
+>> "accumulative".  Therefore if this (different "quietness" for different
+>> access bits) becomes a strong need, we should probably consider some way
+>> of implementing it, rather than expecting a sandboxer to do this two-layer
+>> hack.  (But implementing this does have the potential to result in needing
+>> to have a (number of access bits) x (number of layers) matrix...)
+> 
+> Yes, that will indeed increase the size of rules, which is why I'm not
+> sure if it worth it.
 
-[v1] BPF signature hash chains
-https://lore.kernel.org/all/20250926203111.1305999-1-bboscaccy@linux.microsoft.com
-* [PATCH bpf-next 1/2] bpf: Add hash chain signature support for arbitrary maps
-* [PATCH bpf-next 2/2] selftests/bpf: Enable map verification for some lskel tests
+In addition to the size of each rule, another concern is that we would
+need another layer_mask_t[LANDLOCK_NUM_ACCESS_FS] matrix on the stack in
+order to correctly accumulate quiet bits when multiple access bits are
+requested, and the quiet bits are only set on some of them / spread out
+between different objects.  For example, for this 1 layer domain:
 
-and found the following issue:
-general protection fault in bpf_prog_verify_signature
+/         quiet: r
+  /etc    quiet: w
 
-Full report is available here:
-https://ci.syzbot.org/series/9d93d1cd-d2bd-4967-a631-f3e84ee6fb41
+request: /etc/file rw
+    # This should not audit log, but if we only keep one accumulated bit
+    # per layer, we would not be able to tell that all access bits are
+    # eventually "covered" by quiet flags.
 
-***
+The alternative approach you suggested below would get rid of this
+situation as well.
 
-general protection fault in bpf_prog_verify_signature
+> 
+> The alternative I was thinking about is to only increase the size of
+> struct landlock_ruleset (which would be negligible) to include sets of
+> quiet access rights.  A request to such access right *on* a quiet object
+> would never be logged.  I think this approach is flexible enough and
+> doesn't increase much the complexity.  This would also be useful to not
+> log access rights that don't have associated rules (e.g. scopes), and
+> then no identified objects.  To avoid the kind of hack you pointed out,
+> this feature should probably be part of this patch series though.  What
+> do you think?
 
-tree:      bpf-next
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/bpf/bpf-next.git
-base:      d43029ff7d1b7183dc0cf11b6cc2c12a0b810ad8
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/a6b64e3c-6f08-4a6d-b484-ece99910a3f0/config
-C repro:   https://ci.syzbot.org/findings/a6c59e03-c4f7-4752-8d4f-526ccf945b7c/c_repro
-syz repro: https://ci.syzbot.org/findings/a6c59e03-c4f7-4752-8d4f-526ccf945b7c/syz_repro
+This seems reasonable to me, especially if we don't think that having
+separate quiet access bit controls for each object would be a common need.
+Although if for some reason such control is needed, one might still be
+tempted to use the kind of two layer hack I mentioned.  Maybe some program
+would like to quiet reads globally but only quiet writes to /run...?
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc00020244a9: 0000 [#1] SMP KASAN PTI
-KASAN: probably user-memory-access in range [0x0000000010122548-0x000000001012254f]
-CPU: 1 UID: 0 PID: 6002 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:bpf_prog_verify_signature+0x610/0xc40 kernel/bpf/syscall.c:2873
-Code: f7 e8 04 73 52 00 4d 8b 2e 89 d8 25 ff ff ff 7f 48 8b 4c 24 10 4c 8d 34 81 4c 89 f0 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <0f> b6 04 08 84 c0 0f 85 c9 03 00 00 49 63 06 4c 8d 34 85 00 00 00
-RSP: 0018:ffffc90002bff920 EFLAGS: 00010206
-RAX: 00000000020244a9 RBX: 0000000004048956 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90002bffb30 R08: ffffffff8fa3b537 R09: 1ffffffff1f476a6
-R10: dffffc0000000000 R11: fffffbfff1f476a7 R12: 1ffff9200057ff34
-R13: 0000000000000000 R14: 000000001012254a R15: 0000000080000000
-FS:  0000555591f35500(0000) GS:ffff8881a3c11000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 000000011081a000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- bpf_prog_load+0xcc7/0x19e0 kernel/bpf/syscall.c:3072
- __sys_bpf+0x4ff/0x850 kernel/bpf/syscall.c:6199
- __do_sys_bpf kernel/bpf/syscall.c:6309 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:6307 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6307
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7feeb318ec29
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffd613f7e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007feeb33d5fa0 RCX: 00007feeb318ec29
-RDX: 00000000000000b9 RSI: 0000200000000100 RDI: 0000000000000005
-RBP: 00007feeb3211e41 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007feeb33d5fa0 R14: 00007feeb33d5fa0 R15: 0000000000000003
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bpf_prog_verify_signature+0x610/0xc40 kernel/bpf/syscall.c:2873
-Code: f7 e8 04 73 52 00 4d 8b 2e 89 d8 25 ff ff ff 7f 48 8b 4c 24 10 4c 8d 34 81 4c 89 f0 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <0f> b6 04 08 84 c0 0f 85 c9 03 00 00 49 63 06 4c 8d 34 85 00 00 00
-RSP: 0018:ffffc90002bff920 EFLAGS: 00010206
-RAX: 00000000020244a9 RBX: 0000000004048956 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90002bffb30 R08: ffffffff8fa3b537 R09: 1ffffffff1f476a6
-R10: dffffc0000000000 R11: fffffbfff1f476a7 R12: 1ffff9200057ff34
-R13: 0000000000000000 R14: 000000001012254a R15: 0000000080000000
-FS:  0000555591f35500(0000) GS:ffff8881a3c11000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 000000011081a000 CR4: 00000000000006f0
-----------------
-Code disassembly (best guess):
-   0:	f7 e8                	imul   %eax
-   2:	04 73                	add    $0x73,%al
-   4:	52                   	push   %rdx
-   5:	00 4d 8b             	add    %cl,-0x75(%rbp)
-   8:	2e 89 d8             	cs mov %ebx,%eax
-   b:	25 ff ff ff 7f       	and    $0x7fffffff,%eax
-  10:	48 8b 4c 24 10       	mov    0x10(%rsp),%rcx
-  15:	4c 8d 34 81          	lea    (%rcx,%rax,4),%r14
-  19:	4c 89 f0             	mov    %r14,%rax
-  1c:	48 c1 e8 03          	shr    $0x3,%rax
-  20:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
-  27:	fc ff df
-* 2a:	0f b6 04 08          	movzbl (%rax,%rcx,1),%eax <-- trapping instruction
-  2e:	84 c0                	test   %al,%al
-  30:	0f 85 c9 03 00 00    	jne    0x3ff
-  36:	49 63 06             	movslq (%r14),%rax
-  39:	4c                   	rex.WR
-  3a:	8d                   	.byte 0x8d
-  3b:	34 85                	xor    $0x85,%al
-  3d:	00 00                	add    %al,(%rax)
+But maybe later on when we get to have supervised domains, the supervisor
+can tell Landlock whether to audit log or not for individual denied
+requests, or do such logging itself, therefore offering fine-grained
+control without hacks, and could potentially be more flexible e.g. only
+log once per request per process, etc.
 
+I think the most obvious way to implement this is to add a field to struct
+landlock_ruleset_attr, and landlock_create_ruleset would use the passed in
+size to determine if the quiet access bits field should be read or not?
 
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+Also, do we want to consider calling this something else instead, like
+"suppress_audit"?
