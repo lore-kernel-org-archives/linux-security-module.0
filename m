@@ -1,224 +1,83 @@
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B021816A956
-	for <linux-security-module@vger.kernel.org>; Sat, 27 Sep 2025 19:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075F92367A0
+	for <linux-security-module@vger.kernel.org>; Sat, 27 Sep 2025 20:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759001998; cv=none; b=U7mHZwYpNdpJtyokDgyxtSsio1/m+TgjRtVDhUIWYi6W5emj8QgVx7FR+BIvF17bDmHPrAMIz28IF6E2iuvDzf2pt8fLsP2B41jDAhc2VeY5/X2xZlzRuES2An024WfuNTsAGLRul7ZWr4fqJLZr0qG1mq8V9rFCzJ21jadwXeo=
+	t=1759005814; cv=none; b=qrcZHe8nATeQEN4DAZ/2cuHSzAD5rxNaVeEOYV/AzVBW6PEAdhRyYZnyl4QtU3Fg0uRmqQzMsuAai3IeYFFAzDkHWUU8R7iGkciPYsntyPcc54Mpnwrc8zDJQDn34neYpXBQgvPk/MulpHwQebCyIuVfP/O3P2ofyovGelCCP4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759001998; c=relaxed/simple;
-	bh=zRBHicTB9sjA4dRaz3QW6V1ha1bk2Plwp329+JiC1TU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bEaLr/V6Bp7WQPWdsJAHxv7CEgOm8ZT3nBK4Z28Brmhl8KPscTyx5tuKB3MOGqaDQB777s/MSZY1Ohb/8XjZz714meJUzxBr6y9xvpYMJjk+48LHfPoX+CGh4JZfePxUpf+PWT17Nsy7pKSLkzVDExl3lEmuheh2VAMYKf0DXlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=z2M6YNCs; arc=none smtp.client-ip=84.16.66.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="z2M6YNCs"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cYwtD5xZkzXfY;
-	Sat, 27 Sep 2025 20:27:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1758997668;
-	bh=Mhj/EUax+KSAUv+ReFJsSboLBZB2tKC758FHqYfK114=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=z2M6YNCsF2RcPj4q1DUV+GroIYzLA7vqA/MgOruDRXbkE5h8OwZsKFRobsgMLA1Ed
-	 KGm0Gh6dn7yY6iXQEZSpGblkeLouuVFVOTwW5MOMVzIQtauHcYDmAS38Y225eD3k/2
-	 jG/EsSlyD+Ae/GE9ttUcxlWiXUaD+BS/cp3zzM3g=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4cYwtC2QQnz9N0;
-	Sat, 27 Sep 2025 20:27:47 +0200 (CEST)
-Date: Sat, 27 Sep 2025 20:27:44 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>, Greg Kurz <groug@kaod.org>
-Cc: Christian Schoenebeck <linux_oss@crudebyte.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Eric Van Hensbergen <ericvh@kernel.org>, 
-	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
- qid)
-Message-ID: <20250927.ahGhiiy0koo0@digikod.net>
-References: <aMih5XYYrpP559de@codewreck.org>
- <3070012.VW4agfvzBM@silver>
- <f2c94b0a-2f1e-425a-bda1-f2d141acdede@maowtm.org>
- <3774641.iishnSSGpB@silver>
- <20250917.Eip1ahj6neij@digikod.net>
- <f1228978-dac0-4d1a-a820-5ac9562675d0@maowtm.org>
+	s=arc-20240116; t=1759005814; c=relaxed/simple;
+	bh=7SkEe/zvyQysTDka38ynuqkbsVoHOJ2iyi9zBfiyT4o=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rBwHujIPktile5R99HYGPcZ0ysUHDBhPS1ZzJyB0tA2NLG4KYV2RQTgepOHWFTz8qdL/Gmc+9zc+5KEOubJ6BxOVWal6BjdoI0APK/C8zbgDE8BeMvAPtPe8auxPimjZ8Rli/UK+wQZ4j+qvocv93EjMaCV+BLNc/fEbOtExOlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-9228ed70eb7so17842239f.2
+        for <linux-security-module@vger.kernel.org>; Sat, 27 Sep 2025 13:43:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759005812; x=1759610612;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GXZUIJbPItwdz9/xAAErgDFB6Tn5IZZJ2tB/9ZZez0c=;
+        b=oOIUafeugFtv+/zu3NRRZriwPX0JsWBroSgYLDGAsJgTiGSw43uBu6s1xXlIdK7R8F
+         OdQdX7B0JSLO5xxwLRpS4Lv30LcHI7yP7qJrYmGH7PPS1uHIQCDbY9CMEzJDcAJWcXt0
+         AJD4exrEG1BTGoKkduotyUD4BbQJJvNed+i6HjVOlC0jEZiQMZGmGEi58rr0EoXmAyZw
+         rvoXrlz+bI5wQp12cKqHtl8WQzPB/np9UMQXPVl6IsRBfsfulXC3cqH74ZK+J2UZbzHD
+         /Bsl99dFB2p9RPQ9smfXW9I6nRgLExDpg3+gQjqsQPBRDzuWezqq3af4RkPtJd1rghyL
+         JIPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXG0zGlaNqgK0IK1cRvAakE56tH5TxOmJEZjPytZaRpsxZw00CgvKeV4tItp6ezW1Jm63Nz0zjjgg+jZlqV2aQ/x2yhj4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMPhtVrCa95I/ZJY+Zh7lg41g/mxWrle92klgpcmTVq1QmVOxo
+	Q6djFrcPyNl41sP+Dumv/c4ftVs62P7n8b4fxrTltiFKUBj9RYdH/uIsE5OJCmBFW+GBvlWFm6x
+	ZEo4jq3FAauk5cqRZ+8juEJBh7jk9gumnpOrfabCkahqbiCAzbmbui48NHLE=
+X-Google-Smtp-Source: AGHT+IENnQaf2eCJDj8lumKevT293Bl2t/ol4S17x7fpk04JZjuTuu/gb6/4XOruJmaCKea7MStdMPCvmOcPnawNJCjlNPGxmNwJ
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f1228978-dac0-4d1a-a820-5ac9562675d0@maowtm.org>
-X-Infomaniak-Routing: alpha
+X-Received: by 2002:a05:6e02:188d:b0:427:be36:2952 with SMTP id
+ e9e14a558f8ab-427be362c13mr90845285ab.4.1759005812238; Sat, 27 Sep 2025
+ 13:43:32 -0700 (PDT)
+Date: Sat, 27 Sep 2025 13:43:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d84c74.a00a0220.102ee.001d.GAE@google.com>
+Subject: [syzbot] Monthly lsm report (Sep 2025)
+From: syzbot <syzbot+list42e94670ec5498409de3@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Adding Greg Kurz too.
+Hello lsm maintainers/developers,
 
-On Sun, Sep 21, 2025 at 05:24:49PM +0100, Tingmao Wang wrote:
-> On 9/17/25 16:00, Mickaël Salaün wrote:
-> > On Wed, Sep 17, 2025 at 11:52:35AM +0200, Christian Schoenebeck wrote:
-> >> On Wednesday, September 17, 2025 1:59:21 AM CEST Tingmao Wang wrote:
-> >>> On 9/16/25 20:22, Christian Schoenebeck wrote:
-> >>>> On Tuesday, September 16, 2025 4:01:40 PM CEST Tingmao Wang wrote:
-> >> [...]
-> >>>> I see that you are proposing an option for your proposed qid based
-> >>>> re-using of dentries. I don't think it should be on by default though,
-> >>>> considering what we already discussed (e.g. inodes recycled by ext4, but
-> >>>> also not all 9p servers handling inode collisions).
-> >>>
-> >>> Just to be clear, this approach (Landlock holding a fid reference, then
-> >>> using the qid as a key to search for rules when a Landlocked process
-> >>> accesses the previously remembered file, possibly after the file has been
-> >>> moved on the server) would only be in Landlock, and would only affect
-> >>> Landlock, not 9pfs (so not sure what you meant by "re-using of dentries").
-> >>>
-> >>> The idea behind holding a fid reference within Landlock is that, because
-> >>> we have the file open, the inode would not get recycled in ext4, and thus
-> >>> no other file will reuse the qid, until we close that reference (when the
-> >>> Landlock domain terminates, or when the 9p filesystem is unmounted)
-> >>
-> >> So far I only had a glimpse on your kernel patches and had the impression that 
-> >> they are changing behaviour for all users, since you are touching dentry 
-> >> lookup.
-> > 
-> > I think we should not hold dentries because:
-> > - they reference other dentries (i.e. a file hierarchy),
-> > - they block umount and I'm convinced the VFS (and users) are not going
-> >   to like long-lived dentries,
-> > - Landlock and inotify don't need dentries, just inodes.
-> > 
-> > I'm wondering why fid are referenced by dentries instead of inodes.
-> > 
-> > The need for Landlock is to be able to match an inode with a previously
-> > seen one.  Not all LSM hooks (nor VFS internals) always have access to
-> > dentries, but they do have access to inodes.
-> > 
-> >>
-> >>>> For all open FIDs QEMU retains a descriptor to the file/directory.
-> >>>>
-> >>>> Which 9p message do you see sent to server, Trename or Trenameat?
-> >>>>
-> >>>> Does this always happen to you or just sometimes, i.e. under heavy load?
-> >>>
-> >>> Always happen, see log: (no Trename since the rename is done on the host)
-> >> [...]
-> >>> Somehow if I rename in the guest, it all works, even though it's using the
-> >>> same fid 2 (and it didn't ask QEMU to walk the new path)
-> >>
-> >> Got it. Even though QEMU *should* hold a file descriptor (or a DIR* stream, 
-> > 
-> > It's reasonable to assume that QEMU and other should hold opened fid In
-> > practice, this might not always be the case, but let's move on and
-> > consider that a 9p server bug.
-> > 
-> > Landlock and fanotify need some guarantees on opened files, and we
-> > cannot consider every server bug.  For Landlock, inode may get an
-> > "ephemeral tag" (with the Landlock object mechanism) to match previously
-> > seen inodes.  In a perfect world, Landlock could keep a reference on 9p
-> > inodes (as for other filesystems) and these inodes would always match
-> > the same file.  In practice this is not the case, but the 9p client
-> > requirements and the Landlock requirements are not exactly the same.
-> > 
-> > A 9p client (the kernel) wants to safely deal with duplicated qid, which
-> > should not happen but still happen in practice as explained before.
-> > On the other side, Landlock wants to not deny access to allowed files
-> > (currently identified by their inodes), but I think it would be
-> > reasonable to allow access theoretically denied (i.e. not allowed to be
-> > precise, because of the denied by default mechanism) files because of a
-> > 9p server bug mishandling qid (e.g. mapping them to recycled ext4
-> > inodes).
-> > 
-> > All that to say that it looks reasonable for Landlock to trust the
-> > filesystem, and by that I mean all its dependencies, including the 9p
-> > server, to not have bugs.
-> > 
-> > Another advantage to rely on qid and server-side opened files is that we
-> > get (in theory) the same semantic as when Landlock is used with local
-> > filesystems (e.g. files moved on the server should still be correctly
-> > identified by Landlock on the client).
-> > 
-> >> which should imply a file descriptor), there is still a path string stored at 
-> >> V9fsFidState and that path being processed at some places, probably because 
-> >> there are path based and FID based variants (e.g Trename vs. Trenameat). Maybe 
-> >> that clashes somewhere, not sure. So I fear you would need to debug this.
-> > 
-> > Good to know that it is not a legitimate behavior for a 9p client.
-> 
-> So I did some quick debugging and realized that I had a wrong
-> understanding of how fids relates to opened files on the host, under QEMU.
-> It turns out that in QEMU's 9p server implementation, a fid does not
-> actually correspond to any opened file descriptors - it merely represents
-> a (string-based) path that QEMU stores internally.  It only opens the
-> actual file if the client actually does an T(l)open, which is in fact
-> separate from acquiring the fid with T(l)walk.  The reason why renaming
-> file/dirs from the client doesn't break those fids is because QEMU will
-> actually fix those paths when a rename request is processed - c.f.
-> v9fs_fix_fid_paths [1].
-> 
-> It turns out that even if a guest process opens the file with O_PATH, that
-> file descriptor does not cause an actual Topen, and therefore QEMU does
-> not open the file on the host, and later on reopening that fd with another
-> mode (via e.g. open("/proc/self/fd/...", O_RDONLY)) will fail if the file
-> has moved on the host without QEMU's knowledge.  Also, openat will fail if
-> provided with a dir fd that "points" to a moved directory, regardless of
-> whether the fd is opened with O_PATH or not, since path walk in QEMU is
-> completely string-based and does not actually issue openat on the host fs
-> [2].
-> 
-> I'm not sure if this was is intentional in QEMU - it would seem to me that
-> a fid should translate to a fd (maybe opened with just O_PATH) on the
-> host, and path walks based on that fid should be done via openat with this
-> fd, which will also "automatically" handle renames without QEMU needing to
-> fixup the string paths?
+This is a 31-day syzbot report for the lsm subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/lsm
 
-I agree, it would make sense for QEMU to map fid to FD+O_PATH.  That
-would avoid the kind of issues you mentioned.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 6 issues are still open and 41 have already been fixed.
 
-Christian, Greg, what do you think?
+Some of the still happening issues:
 
-> 
-> In any case, this probably means that even if Landlock were to hold a fid
-> reference, and QEMU does qid remapping, that's still not enough to
-> guarantees that we won't have a different, unrelated file ending up with
-> the same qid, at least under ext4.
-> 
-> I'm not sure what's the way forward - would Landlock need to actually
-> "open" the files (or do something that will cause a Topen to be issued by
-> v9fs)?
+Ref Crashes Repro Title
+<1> 45      No    possible deadlock in process_measurement (5)
+                  https://syzkaller.appspot.com/bug?extid=6529afa25091aee8536c
+<2> 43      Yes   INFO: task hung in process_measurement (3)
+                  https://syzkaller.appspot.com/bug?extid=cb9e66807bcb882cd0c5
+<3> 13      Yes   INFO: task hung in ima_file_free (4)
+                  https://syzkaller.appspot.com/bug?extid=8036326eebe7d0140944
 
-> Alternatively if we believe this to be a QEMU issue, maybe
-> Landlock don't need to work around it and should just hold fids (and use
-> QIDs to key the rules) anyway despite server quirks like these.  This can
-> perhaps then be fixed in QEMU?
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Yes, I think it would make sense for Landlock to open and keep open a
-fid (and hopefully the related remote file).  However, the v9fs umount
-should be handled gracefully the same way Landlock tag inodes are
-handled.  This should come with a QEMU patch to fix the consistency
-issue.
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-> 
-> (I guess the fact that QEMU is doing path tracking in the first place does
-> gives more precedent for justifying doing path tracking in v9fs as well,
-> but maybe that's the wrong way to think about it)
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-Anyway, if QEMU does it, wouldn't it be the same for Landlock to just
-rely on fid?  If QEMU uses FD+O_PATH, then Landlock would work even for
-server-moved files.
-
-> 
-> Test programs: openat.c [3], open_procselffd.c [4]
-> 
-> 
-> [1]: https://gitlab.com/qemu-project/qemu/-/blob/44f51c1a3cf435daa82eb757740b59b1fd4fe71c/hw/9pfs/9p.c#L3403
-> [2]: https://gitlab.com/qemu-project/qemu/-/blob/371a269ff8ce561c28e4fa03bb49e4940f990637/hw/9pfs/9p-local.c#L1243
-> [3]: https://fileshare.maowtm.org/9pfs-landlock-fix/20250921/openat.c
-> [4]: https://fileshare.maowtm.org/9pfs-landlock-fix/20250921/open_procselffd.c
-> 
+You may send multiple commands in a single email message.
