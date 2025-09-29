@@ -1,103 +1,135 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38224220F2A;
-	Mon, 29 Sep 2025 08:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328A928466A;
+	Mon, 29 Sep 2025 09:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759135895; cv=none; b=jziqjSXcdbu8oXSJ5EQ+Vxd2nIaUPGW2FU1tQnyhzWODBUSix1pw0xY1S624uGZ8DyiiYrtPQhB8TBpUeUKdIAqSF8m/3VaFgem2c2cDdeKxU2mO5yGU9wkKcLE1B+D7goWKUb2BQp2xffH/81VLWe/1RJ3d5XCyTG8UqqK2M8M=
+	t=1759137958; cv=none; b=ZNBcjPUgJ0TVQqA28h+o0w3AnASWKBj+bs5SgBxiiawAIZ3QjyTuTA5wvbm8Z7sjpgLLajHwf0+bBkq7K/uOo47apLOiX7df48P1gXGSwvmfqIjk1S7hkTfIBRMMv2qHgi0IADro7oHhajX8V5u5hYv78lE5FT6gNtzZvGwAVE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759135895; c=relaxed/simple;
-	bh=4K4TmkR8D0817PhG03WQ6OaDXMyi5PCzE11ACzW4pio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s4LVSU9RhtIkefgFf5rF/BDXvTbyEjwKUQ0hy/lyM/HjiAGKu4HV1BH7aGQmz4XVThwuA8hpeh9pcB4/igH1oWZBbju1C6Bt05t0zAFr5SkOtQMioXXxHssQtSJRjnF0aEpc/awwclti3j6hfGLIZeZrs1Pb6MVKentgQLtKrn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBLqI/CP; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1759137958; c=relaxed/simple;
+	bh=5NSXHwAmHTN2RIz7pn4i8jJ6CQKzoJ5MskXvfH6ROts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DUZMBLyeYEz0eRZS50ZBnl9GYNkOA0xjrbK+ndbdyqeDq78D3j+xAWI8fbLumP2ZPbGliGceY4mtNku4jFL+DCmIPUksaIuuxvaj5crrpB/2mdsfeMirZy9cAsOnLS9j0sNyRl0PMHemFtsDWkr8aSfMQCuCZdPWFn+iIQJC19g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rkvlYptS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBLqI/CP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2C5DC4CEF5;
-	Mon, 29 Sep 2025 08:51:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkvlYptS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 218C8C4CEF4;
+	Mon, 29 Sep 2025 09:25:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759135894;
-	bh=4K4TmkR8D0817PhG03WQ6OaDXMyi5PCzE11ACzW4pio=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GBLqI/CPSfSqS29qRkjUYcnJIv3W4d9odwCIt69+0FO3W+PHN6Gy2/zxyPN4trPZj
-	 8lPHtKyW4loQbaW47AIfmi0ZOK1YgcpeXShufOTgwfxZ7uzmkoAhjITye/bLnCoFYV
-	 k+X0UQjGV6hWHEs9VbScD/PndmNnSBwAHl+4UrHmvCnkN4/5u0+NcgCsc3xvLMBblh
-	 ZLU7NBTT1JxnE1nzKBzXdjdfNEaN3XvBiwuUbLzmkNqTQz3RBSc/nQL4ojEqBkxiLl
-	 m0jMtVBRlkxvJQJsmXlw8xpUdR9iaHR7DLMJNStIgMtwQsiAiH6LZWIJrwga09oTTg
-	 wt8SdD+GTRFDg==
-Date: Mon, 29 Sep 2025 10:51:30 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: syzbot <syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	linux-security-module@vger.kernel.org, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: [syzbot] [fs?] BUG: sleeping function called from invalid
- context in hook_sb_delete
-Message-ID: <20250929-besuchen-ursachen-50b3f25ca435@brauner>
-References: <68d32659.a70a0220.4f78.0012.GAE@google.com>
- <fnxbqe3nlcptxqcs7tkt6qnacupkxu2xn4duwc6g6n2bk4tstb@hi2gl5cwishr>
+	s=k20201202; t=1759137957;
+	bh=5NSXHwAmHTN2RIz7pn4i8jJ6CQKzoJ5MskXvfH6ROts=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=rkvlYptSIM7qq4/NP3QajaglGReKJujuT+HH+d7y30N/hv2ZuAApCEsolRmcMYSvc
+	 z7jOQnfJ7002h33xDqNZ0Y6NKzDvcxNn7F4y6TYAFSG+2CD4bxGrTtM2KpI2F7TOTT
+	 IDR8WiIjY+G+1pgW6Qsk3drGhUQdrNfHPVTSVZ9VGuqH0lMFOIfivk8mJbF2Z0vl+o
+	 241tDwPr0nvxy1qmfN0Hu7dDxL0O1T3vuDFDnhznmfSg/I6RY0WvITD9DPTTYK5PzR
+	 Ts/IjLMUQu38wa8K1DyG5m39SaFrIBEVtqJ633lE2si8cz2vwMuhsdebKT/8mivhvc
+	 3Fjcu2x+gtj5w==
+Message-ID: <ab14f430-f4a7-4d5f-8062-8d2113cf8e0d@kernel.org>
+Date: Mon, 29 Sep 2025 10:25:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fnxbqe3nlcptxqcs7tkt6qnacupkxu2xn4duwc6g6n2bk4tstb@hi2gl5cwishr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 1/2] bpf: Add hash chain signature support for
+ arbitrary maps
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, bpf@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kpsingh@kernel.org,
+ paul@paul-moore.com, kys@microsoft.com, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org,
+ James.Bottomley@hansenpartnership.com, wufan@linux.microsoft.com
+References: <20250926203111.1305999-1-bboscaccy@linux.microsoft.com>
+ <20250926203111.1305999-2-bboscaccy@linux.microsoft.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <20250926203111.1305999-2-bboscaccy@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 24, 2025 at 01:05:03PM +0200, Jan Kara wrote:
-> Hello!
+2025-09-26 13:30 UTC-0700 ~ Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> This patch introduces hash chain support for signature verification of
+> arbitrary bpf map objects which was described here:
+> https://lore.kernel.org/linux-security-module/20250721211958.1881379-1-kpsingh@kernel.org/
 > 
-> Added Landlock guys to CC since this is a bug in Landlock.
+> The UAPI is extended to allow for in-kernel checking of maps passed in
+> via the fd_array. A hash chain is constructed from the maps, in order
+> specified by the signature_maps field. The hash chain is terminated
+> with the hash of the program itself.
 > 
-> On Tue 23-09-25 15:59:37, syzbot wrote:
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    ce7f1a983b07 Add linux-next specific files for 20250923
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=118724e2580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=1be6fa3d47bce66e
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=12479ae15958fc3f54ec
-> > compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1376e27c580000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=136e78e2580000
-> > 
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/c30be6f36c31/disk-ce7f1a98.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/ae9ea347d4d8/vmlinux-ce7f1a98.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/d59682a4f33c/bzImage-ce7f1a98.xz
-> > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
-> > 
-> > BUG: sleeping function called from invalid context at fs/inode.c:1928
+> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> ---
+>  include/uapi/linux/bpf.h                      |  6 ++
+>  kernel/bpf/syscall.c                          | 73 ++++++++++++++++++-
+>  .../bpf/bpftool/Documentation/bpftool-gen.rst |  7 +-
+>  tools/bpf/bpftool/gen.c                       | 27 ++++++-
+>  tools/bpf/bpftool/main.c                      |  9 ++-
+>  tools/bpf/bpftool/main.h                      |  1 +
+>  tools/bpf/bpftool/sign.c                      | 17 ++++-
+>  tools/include/uapi/linux/bpf.h                |  6 ++
+>  tools/lib/bpf/libbpf.h                        |  3 +-
+>  tools/lib/bpf/skel_internal.h                 |  6 +-
+>  10 files changed, 143 insertions(+), 12 deletions(-)
 > 
-> The first catch from the new might_sleep() annotations in iput().
-> 
-> > in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 6028, name: syz.0.17
-> > preempt_count: 1, expected: 0
-> > RCU nest depth: 0, expected: 0
-> > 2 locks held by syz.0.17/6028:
-> >  #0: ffff8880326bc0e0 (&type->s_umount_key#48){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
-> >  #0: ffff8880326bc0e0 (&type->s_umount_key#48){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
-> >  #0: ffff8880326bc0e0 (&type->s_umount_key#48){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
-> >  #1: ffff8880326bc998 (&s->s_inode_list_lock){+.+.}-{3:3}, at: spin_lock include/linux/spinlock.h:351 [inline]
-> >  #1: ffff8880326bc998 (&s->s_inode_list_lock){+.+.}-{3:3}, at: hook_sb_delete+0xae/0xbd0 security/landlock/fs.c:1405
-> > Preemption disabled at:
-> > [<0000000000000000>] 0x0
-> > CPU: 0 UID: 0 PID: 6028 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-> > Call Trace:
-> >  <TASK>
-> >  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
-> >  __might_resched+0x495/0x610 kernel/sched/core.c:8960
-> >  iput+0x2b/0xc50 fs/inode.c:1928
-> >  hook_sb_delete+0x6b5/0xbd0 security/landlock/fs.c:1468
-> 
-> Indeed looks like a bug because we can call iput() while holding
-> sb->s_inode_list_lock in one case in hook_sb_delete().
 
-Very nice that the annotations help finding this!
+[...]
+
+> diff --git a/tools/bpf/bpftool/Documentation/bpftool-gen.rst b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+> index d0a36f442db72..b632ab87adf20 100644
+> --- a/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+> +++ b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
+> @@ -16,7 +16,7 @@ SYNOPSIS
+>  
+>  **bpftool** [*OPTIONS*] **gen** *COMMAND*
+>  
+> -*OPTIONS* := { |COMMON_OPTIONS| | { **-L** | **--use-loader** } | [ { **-S** | **--sign** } {**-k** <private_key.pem>} **-i** <certificate.x509> ] }
+> +*OPTIONS* := { |COMMON_OPTIONS| | { **-L** | **--use-loader** } | [ { **-S** | **--sign** } { **-M** | **--sign-maps** } {**-k** <private_key.pem>} **-i** <certificate.x509> ] }
+>  
+>  *COMMAND* := { **object** | **skeleton** | **help** }
+>  
+> @@ -190,6 +190,11 @@ OPTIONS
+>      For skeletons, generate a signed skeleton. This option must be used with
+>      **-k** and **-i**. Using this flag implicitly enables **--use-loader**.
+>  
+> +-M --sign-maps
+> +    For skeletons, generate a signed skeleton that includes a hash chain for the
+> +    skeletons maps. This option must be used with **-k** and **-i**. Using this
+> +    flag implicitly enables **--use-loader** and **--sign**.
+> +
+
+
+Hi! Pardon my ignorance, I haven't followed all the details of the
+discussions around signing. Is there a use case for signing the programs
+only (using -S) without signing the maps (using -M)? Or should we
+consider collapsing maps signing under the existing -S option?
+
+If you do keep the new option, would you mind updating the bash
+completion file, please? Simply adding the long form like this:
+
+------
+
+diff --git i/tools/bpf/bpftool/bash-completion/bpftool w/tools/bpf/bpftool/bash-completion/bpftool
+index 53bcfeb1a76e..f8c217f09989 100644
+--- i/tools/bpf/bpftool/bash-completion/bpftool
++++ w/tools/bpf/bpftool/bash-completion/bpftool
+@@ -262,7 +262,7 @@ _bpftool()
+     # Deal with options
+     if [[ ${words[cword]} == -* ]]; then
+         local c='--version --json --pretty --bpffs --mapcompat --debug \
+-            --use-loader --base-btf --sign -i -k'
++            --use-loader --base-btf --sign --sign-maps -i -k'
+         COMPREPLY=( $( compgen -W "$c" -- "$cur" ) )
+         return 0
+     fi
+
+------
+
+Other than that, the changes for bpftool look OK from my side. I'd
+probably split the patch further into kernel/libbpf/bpftool changes, but
+that's your call.
+
+Thanks,
+Quentin
