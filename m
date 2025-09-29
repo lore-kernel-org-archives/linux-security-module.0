@@ -1,152 +1,104 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028CB19343B;
-	Mon, 29 Sep 2025 19:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0B82AD3E;
+	Mon, 29 Sep 2025 19:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759173462; cv=none; b=Ch/glLUZVIDGA6Yj518NEhPKlGHNrD2Yqbwt6z+gJsf6BEqPon09xha9Ml4HbhKy5Eht1ezlJQJPjTV6JdxW1dS6QHam9sV0x/P/FVvNwYGnAlJaKzxNbdJkOqrVVXe+rWUhhagPBb4mD81cB+E+sz7JXm6AfLhHNiiFW0/nRWo=
+	t=1759175324; cv=none; b=l8zFFz8f4RexKswGB0oxaI6c2Yj3tItBA+5TGnGdQHsx6eyqkyWfTkJE1eyx/J5qzYAOCl6rm/+q2ayMKrD7li6cbU82wTqD/ZN8QfGKYb1wND1DKr2JIFfyi4Dd/KVab7w88Au4Q5ExU72evlrp7GWGATeX8g8duBmv6Ggb5wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759173462; c=relaxed/simple;
-	bh=6tsZa/MERNesxGFOy+Dd6WFSrpVJ+4w+3pDW0q7INFo=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZvUnqZqbc1vrP3pd7acrNXBkLAlOm345AdkATyiZ8ituv5TjGKxNNtyYbUBnQYwypw5hZ2S/+RI6uJymSfiRYp6wfDJs0GpLEQjaOe+2trr+yt2Ju8Pu5GQuWGBsiiTVYeX3i8VVMpYq3lVnnbjryRvvc6a+/fB2yyfWg6gZgTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ZXp2VoDt; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1759175324; c=relaxed/simple;
+	bh=KaZuLuXbKnLngYj5nT4SK1tdl2bfPrc+kNBvAQVqmwc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KT5RnXg/QJBa+0yx4vILEiBefTIWeR4B/lGnuOA+wCVaQO5aRHvuBDjYclNzqGFHAUKpXv5H5iUD94U2sfOZV7lIOneW4OnrBBjnBOcCdOZf4mKh+8xQ1dgAQ09bzWQbDNFcITz3PaqQpl9GNGPFkD5cWc6FiAaUmPvAo2raPM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipzoyon1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ZXp2VoDt"
-Received: from narnia (unknown [13.88.17.9])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3DC6E2127313;
-	Mon, 29 Sep 2025 12:17:39 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3DC6E2127313
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1759173460;
-	bh=pW4imUcmU1Cp0sMaL/8GyVY1QQK6kUNt+BCT3yuw0+c=;
-	h=From:To:Subject:In-Reply-To:References:Date:From;
-	b=ZXp2VoDtNVJlfr9ZFHcMPUGvXuSThJq6Ss5HlEXjNn6Z1Y/8yphZd0PH7YrtbaL9P
-	 jyQHnXP6ejNoghx1twkMAWXteQzYGxbNWUcVEW2ocg/USJMLFpfmKcK/iun9LeifQi
-	 ecCY+7aesrAJw2K7xufAm5yER5oWWioqGh+RA3oo=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: Quentin Monnet <qmo@kernel.org>, bpf@vger.kernel.org,
- linux-security-module@vger.kernel.org, kpsingh@kernel.org,
- paul@paul-moore.com, kys@microsoft.com, ast@kernel.org,
- daniel@iogearbox.net, andrii@kernel.org,
- James.Bottomley@hansenpartnership.com, wufan@linux.microsoft.com
-Subject: Re: [PATCH bpf-next 1/2] bpf: Add hash chain signature support for
- arbitrary maps
-In-Reply-To: <ab14f430-f4a7-4d5f-8062-8d2113cf8e0d@kernel.org>
-References: <20250926203111.1305999-1-bboscaccy@linux.microsoft.com>
- <20250926203111.1305999-2-bboscaccy@linux.microsoft.com>
- <ab14f430-f4a7-4d5f-8062-8d2113cf8e0d@kernel.org>
-Date: Mon, 29 Sep 2025 12:17:37 -0700
-Message-ID: <874islysoe.fsf@microsoft.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipzoyon1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A69CDC4CEF4;
+	Mon, 29 Sep 2025 19:48:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759175324;
+	bh=KaZuLuXbKnLngYj5nT4SK1tdl2bfPrc+kNBvAQVqmwc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ipzoyon1RO3tVoc328MUec5mRuQKg+JSRYeb7eIfbwgXSiLUXZJ8OuzH4gPsNXhW7
+	 q7QY+yTRjwUw29oR1jG7kv2TwsIl8xMO/lw4FeN5GpjctV4lqqRfPGUxVDpuFhjvTi
+	 6xiPS4BaMI6C5zJY9Nv/mstyhf8lnyiv8PXqCMf1HGCe082Q6D3haAAbKRiwcGdzLz
+	 gqQQDDfA2tAAdM0rLEB9/JZZZbiZakMLwyOf7EZbg6pGCwol9xE/psWcFLkp+gC9jW
+	 NWvigNtgdcN7BU5b6eHw9uu58VafuhEo3pYT77BL3XbvPYJMlWMsZs990VLtKj3mcx
+	 ti5CwNxN/bByw==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: dpsmith@apertussolutions.com,
+	ross.philipson@oracle.com,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 00/10]  tpm: Decouple Trenchboot dependencies
+Date: Mon, 29 Sep 2025 22:48:22 +0300
+Message-Id: <20250929194832.2913286-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Quentin Monnet <qmo@kernel.org> writes:
+Overview
+========
 
-> 2025-09-26 13:30 UTC-0700 ~ Blaise Boscaccy <bboscaccy@linux.microsoft.com>
->> This patch introduces hash chain support for signature verification of
->> arbitrary bpf map objects which was described here:
->> https://lore.kernel.org/linux-security-module/20250721211958.1881379-1-kpsingh@kernel.org/
->> 
->> The UAPI is extended to allow for in-kernel checking of maps passed in
->> via the fd_array. A hash chain is constructed from the maps, in order
->> specified by the signature_maps field. The hash chain is terminated
->> with the hash of the program itself.
->> 
->> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
->> ---
->>  include/uapi/linux/bpf.h                      |  6 ++
->>  kernel/bpf/syscall.c                          | 73 ++++++++++++++++++-
->>  .../bpf/bpftool/Documentation/bpftool-gen.rst |  7 +-
->>  tools/bpf/bpftool/gen.c                       | 27 ++++++-
->>  tools/bpf/bpftool/main.c                      |  9 ++-
->>  tools/bpf/bpftool/main.h                      |  1 +
->>  tools/bpf/bpftool/sign.c                      | 17 ++++-
->>  tools/include/uapi/linux/bpf.h                |  6 ++
->>  tools/lib/bpf/libbpf.h                        |  3 +-
->>  tools/lib/bpf/skel_internal.h                 |  6 +-
->>  10 files changed, 143 insertions(+), 12 deletions(-)
->> 
->
-> [...]
->
->> diff --git a/tools/bpf/bpftool/Documentation/bpftool-gen.rst b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
->> index d0a36f442db72..b632ab87adf20 100644
->> --- a/tools/bpf/bpftool/Documentation/bpftool-gen.rst
->> +++ b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
->> @@ -16,7 +16,7 @@ SYNOPSIS
->>  
->>  **bpftool** [*OPTIONS*] **gen** *COMMAND*
->>  
->> -*OPTIONS* := { |COMMON_OPTIONS| | { **-L** | **--use-loader** } | [ { **-S** | **--sign** } {**-k** <private_key.pem>} **-i** <certificate.x509> ] }
->> +*OPTIONS* := { |COMMON_OPTIONS| | { **-L** | **--use-loader** } | [ { **-S** | **--sign** } { **-M** | **--sign-maps** } {**-k** <private_key.pem>} **-i** <certificate.x509> ] }
->>  
->>  *COMMAND* := { **object** | **skeleton** | **help** }
->>  
->> @@ -190,6 +190,11 @@ OPTIONS
->>      For skeletons, generate a signed skeleton. This option must be used with
->>      **-k** and **-i**. Using this flag implicitly enables **--use-loader**.
->>  
->> +-M --sign-maps
->> +    For skeletons, generate a signed skeleton that includes a hash chain for the
->> +    skeletons maps. This option must be used with **-k** and **-i**. Using this
->> +    flag implicitly enables **--use-loader** and **--sign**.
->> +
->
->
-> Hi! Pardon my ignorance, I haven't followed all the details of the
-> discussions around signing. Is there a use case for signing the programs
-> only (using -S) without signing the maps (using -M)? Or should we
-> consider collapsing maps signing under the existing -S option?
->
+Decouple TPM driver features relevant for Trenchboot and make tpm-buf
+robust and decoupled entity from the rest of driver. By doing this, code
+can be easily linked to the early boot code.
 
-Hi Quentin! Yes, there are some use cases where having both map signing
-and program signing doesn't make much sense. For the light-skeleton use
-case, where the map contains your actual program, it makes a lot of
-sense. For other more dynamic use cases, maps can contain dynamically
-generated user data or simply be providing program input and
-output. Signing of those maps wouldn't provide much benefit, or even be
-practical or possible in some scenarios. 
+Backlog
+=======
 
-> If you do keep the new option, would you mind updating the bash
-> completion file, please? Simply adding the long form like this:
->
+Parts of tpm_tis should separated and decouple from the driver code so that
+the slices of code can be compiled into early boot code. Since by other
+means the series already has most of the gaps filled it's better to resolve
+this issue before landing the series.
 
-> ------
->
-> diff --git i/tools/bpf/bpftool/bash-completion/bpftool w/tools/bpf/bpftool/bash-completion/bpftool
-> index 53bcfeb1a76e..f8c217f09989 100644
-> --- i/tools/bpf/bpftool/bash-completion/bpftool
-> +++ w/tools/bpf/bpftool/bash-completion/bpftool
-> @@ -262,7 +262,7 @@ _bpftool()
->      # Deal with options
->      if [[ ${words[cword]} == -* ]]; then
->          local c='--version --json --pretty --bpffs --mapcompat --debug \
-> -            --use-loader --base-btf --sign -i -k'
-> +            --use-loader --base-btf --sign --sign-maps -i -k'
->          COMPREPLY=( $( compgen -W "$c" -- "$cur" ) )
->          return 0
->      fi
->
-> ------
+v3:
+- I think 6.19 is a better goal for this and thus expanded the series to
+  be a generic Trenchboot enablers series. This version also consolidates
+  my two separate ongoing series.
+v2:
+- While including fixes from v1, this patch set has a refocus in order to
+  do minimal changes to make code base more compatible  Trenchboot.
 
-Of course. Thanks for the diff. I'll get that incorporated. 
+Jarkko Sakkinen (10):
+  tpm: Cap the number of PCR banks
+  tpm: Use -EPERM as fallback error code in tpm_ret_to_err
+  KEYS: trusted: Use tpm_ret_to_err() in trusted_tpm2
+  tpm2-sessions: Remove 'attributes' from tpm_buf_append_auth
+  tpm2-sessions: Umask tpm_buf_append_hmac_session()
+  KEYS: trusted: Open code tpm2_buf_append()
+  tpm-buf: check for corruption in  tpm_buf_append_handle()
+  tpm-buf: Remove chip parameter from tpm_buf_append_handle
+  tpm-buf: Build PCR extend commands
+  tpm-buf: Enable managed and stack allocations.
 
->
-> Other than that, the changes for bpftool look OK from my side. I'd
-> probably split the patch further into kernel/libbpf/bpftool changes, but
-> that's your call.
->
+ drivers/char/tpm/tpm-buf.c                | 208 +++++++++++----
+ drivers/char/tpm/tpm-chip.c               |  13 +-
+ drivers/char/tpm/tpm-sysfs.c              |  20 +-
+ drivers/char/tpm/tpm.h                    |   2 -
+ drivers/char/tpm/tpm1-cmd.c               | 179 +++++--------
+ drivers/char/tpm/tpm2-cmd.c               | 307 ++++++++++------------
+ drivers/char/tpm/tpm2-sessions.c          | 128 +++++----
+ drivers/char/tpm/tpm2-space.c             |  44 ++--
+ drivers/char/tpm/tpm_vtpm_proxy.c         |  30 +--
+ include/linux/tpm.h                       |  79 +++---
+ include/linux/tpm_command.h               |   5 +-
+ security/keys/trusted-keys/trusted_tpm1.c |  34 ++-
+ security/keys/trusted-keys/trusted_tpm2.c | 237 +++++++----------
+ 13 files changed, 621 insertions(+), 665 deletions(-)
 
-Sure, I'll get the userspace and kernel changes split out.
+-- 
+2.39.5
 
--blaise
-
-> Thanks,
-> Quentin
