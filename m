@@ -1,75 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08D523909F;
-	Mon, 29 Sep 2025 20:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E6917996;
+	Mon, 29 Sep 2025 21:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759176653; cv=none; b=g4qaGEogiPi6PmjxA7RJ1IZvy2KV1tl7paBwVa9OeGz4R+PiEagGsgnzxfyrtH4WAz5CgnlZLr/+L27PCJ4t9YBbCGT3HgetymZx5Nz11GWkX2SoCm3sdspO5pW321hsdpYtOout4j9/oU/kOtTavFuRaH4d79DysgttS0odlAo=
+	t=1759181729; cv=none; b=DXMPfJHFzq0JCd9uoy15BFMvNdz2up3+5hfhiW9YImuUgdE72htQzhf2zytOWQrQ1zKJ2qBQkPG+FgRiUuDrovgh4KTx21LqamLj+6CQRtXWqm5yuvJKkzdPJYKpeSYtbajEpvYOFdVaBy7GjJjImg+mWZheL5FinSRsMYDHZC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759176653; c=relaxed/simple;
-	bh=ntVVSRJe7xFB3ImV9tdZ7v/rIwVimpg1Y35zss1w76g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pj7OEAbuGw4bkZ17FYMY3QpHe2D/MatimCw1j/83xfxh56+ogO21IB/guoLyX11ROBAqyHcEgcGoXNn0cc9o8smWZJv/zAAyacaK4AsNKYVsjkrpBdxwIjl9hJBqDrMGE+HdGDn86g+gRwxl/q+kjEV+SWnhfJcotKt/1rojEx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLk01Vaj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1759181729; c=relaxed/simple;
+	bh=/1LF3ow2QXU6zaGZ/EHWPxaG61ocD+dLpIc5VbdHYmE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RBp/eE3Ev1RN7FM2sBAbuKSCD2x9caglb3rBMHi08Ro9o0MjPpr8gnHy0FnYNWR8nDeSIOiBT2Wbx6Fm5X8YmgkoNWmGq4dxRZpLuisUBaT5dU87jhiITfcF2XVy3yZwukDuih+SiRQB+OiKSSk/L3EA/yTpDKoux2tiSuhbC9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PdFUP21R; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLk01Vaj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19AB9C4CEF4;
-	Mon, 29 Sep 2025 20:10:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759176651;
-	bh=ntVVSRJe7xFB3ImV9tdZ7v/rIwVimpg1Y35zss1w76g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hLk01VajFHUHQlEfH1ihiHa5zIkdJA48mp128SNYfahQVKsS9Mu+mMWvXNuSDYa9i
-	 K6Ja88og/YUF8qW7XJz4SrmVJrPPwMlBM5Pdi8NXyv8jsEIuj5eReokY0BEJOko7SD
-	 8Nwg+vE+LPiEcUOcI0Tbl22umxhZROWGTUYjsonwukwMU2UA9EMjnnxlfUHQjVsxFS
-	 qt/265/fuDPyTLkZcYPXOed96+DEGxlmXJsTvU/4dBOnu5YVkWbKzN5rJTpDiNcaSD
-	 RL97Nv6CNojkuQTWpw6OhG786MJQWJAUzRROfIK8D4bhSaqIrgETSyyHgfFPrGIru7
-	 ed9Tvu2iIqBlQ==
-Date: Mon, 29 Sep 2025 23:10:47 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: dpsmith@apertussolutions.com, ross.philipson@oracle.com,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 00/10]  tpm: Decouple Trenchboot dependencies
-Message-ID: <aNrnxxPv6IuykrYH@kernel.org>
-References: <20250929194832.2913286-1-jarkko@kernel.org>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PdFUP21R"
+Received: from narnia.corp.microsoft.com (unknown [13.88.17.9])
+	by linux.microsoft.com (Postfix) with ESMTPSA id BABB42012C01;
+	Mon, 29 Sep 2025 14:35:25 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BABB42012C01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1759181726;
+	bh=kWBR9yq06L+BvTRJlnPjazfFPMVrVkQ0UlJCF9ARXBE=;
+	h=From:To:Subject:Date:From;
+	b=PdFUP21R5ZN1KTesluJoQO+W8VKBiAiuyi2lh2tpSFnNEY3LI68vfYJ6P7EOiowVZ
+	 CuK4COGIOTt0WpFNfpRbhsme25VWCAYtRG1t15xmvih2Pf4Pb7L3/zMgEILOVxWd9e
+	 t5EAh7tfUs8XkMdLe7fgQveg+U7pkK/HHnK6fl6w=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	kpsingh@kernel.org,
+	bboscaccy@linux.microsoft.com,
+	paul@paul-moore.com,
+	kys@microsoft.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	James.Bottomley@hansenpartnership.com,
+	wufan@linux.microsoft.com,
+	qmo@kernel.org
+Subject: [PATCH bpf-next v2 0/3] BPF signature hash chains
+Date: Mon, 29 Sep 2025 14:34:24 -0700
+Message-ID: <20250929213520.1821223-1-bboscaccy@linux.microsoft.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250929194832.2913286-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 29, 2025 at 10:48:22PM +0300, Jarkko Sakkinen wrote:
-> Overview
-> ========
-> 
-> Decouple TPM driver features relevant for Trenchboot and make tpm-buf
-> robust and decoupled entity from the rest of driver. By doing this, code
-> can be easily linked to the early boot code.
-> 
-> Backlog
-> =======
-> 
-> Parts of tpm_tis should separated and decouple from the driver code so that
-> the slices of code can be compiled into early boot code. Since by other
-> means the series already has most of the gaps filled it's better to resolve
-> this issue before landing the series.
+This patchset extends the currently proposed signature verification
+patchset
+https://lore.kernel.org/linux-security-module/20250813205526.2992911-1-kpsingh@kernel.org/
+with hash-chain functionality to verify the contents of arbitrary
+maps.
 
-I.e. goal is that redundancy is mostly in the glue not in replicated
-code that we want to fix regressions at one place.
+The currently proposed loader + map signature verification
+scheme—requested by Alexei and KP—is simple to implement and
+acceptable if users/admins are satisfied with it. However, verifying
+both the loader and the maps offers additional benefits beyond just
+verifying the loader:
 
-These patches address end-to-end efficient building and parsing of
-PCR extends with super-relaxed mm-requirements (stack will do), and
-tpm_tis is the final piece.
+1. Simplified Loader Logic: The lskel loader becomes simpler since it
+   doesn’t need to verify program maps—this is already handled by
+   bpf_check_signature().
 
-BR, Jarkko
+2. Security and Audit Integrity: A key advantage is that the LSM
+  (Linux Security Module) hook for authorizing BPF program loads can
+  operate after signature verification. This ensures:
+
+  * Access control decisions can be based on verified signature
+  * status.  Accurate system state measurement and logging.  Log
+  * events claiming a verified signature are fully truthful, avoiding
+  * misleading entries that only the loader was verified while the
+  * actual BPF program verification happens later without logging.
+
+This approach addresses concerns from users who require strict audit
+trails and verification guarantees, especially in security-sensitive
+environments.
+
+A working tree with this patchset is being maintained at
+https://github.com/blaiseboscaccy/linux/tree/bpf-hash-chains
+
+bpf CI tests passed as well
+https://github.com/kernel-patches/bpf/actions/runs/18110352925
+
+v2 -> v1:
+   - Fix regression found by syzkaller
+   - Add bash auto-complete support for new command line switch
+
+Blaise Boscaccy (3):
+  bpf: Add hash chain signature support for arbitrary maps
+  selftests/bpf: Enable map verification for some lskel tests
+  bpftool: Add support for signing program and map hash chains
+
+ include/uapi/linux/bpf.h                      |  6 ++
+ kernel/bpf/syscall.c                          | 73 ++++++++++++++++++-
+ .../bpf/bpftool/Documentation/bpftool-gen.rst |  7 +-
+ tools/bpf/bpftool/bash-completion/bpftool     |  2 +-
+ tools/bpf/bpftool/gen.c                       | 27 ++++++-
+ tools/bpf/bpftool/main.c                      |  9 ++-
+ tools/bpf/bpftool/main.h                      |  1 +
+ tools/bpf/bpftool/sign.c                      | 16 +++-
+ tools/include/uapi/linux/bpf.h                |  6 ++
+ tools/lib/bpf/libbpf.h                        |  3 +-
+ tools/lib/bpf/skel_internal.h                 |  6 +-
+ tools/testing/selftests/bpf/Makefile          | 18 ++++-
+ 12 files changed, 159 insertions(+), 15 deletions(-)
+
+-- 
+2.48.1
+
