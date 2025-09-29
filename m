@@ -1,125 +1,215 @@
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D223594C
-	for <linux-security-module@vger.kernel.org>; Sun, 28 Sep 2025 23:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE55335950;
+	Mon, 29 Sep 2025 03:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759103467; cv=none; b=b+Sr/SGDyEUQ9/BWk+A2E67KvgRnFIf336jH/D3VfBDdFfI68qwzzbRjatd2ApUaPeCWSpdKQ+QNOvzgAuanvKUq493brsjSij3+BEkitOSWqksSZGPbzda2hqkFfM7X/B6+lomrDV5k6NspQulf4YbUXxl5E7rRxs1RMD521HI=
+	t=1759117307; cv=none; b=MUIo4qaTlzAlcxtq/XdrB0AYWoT7ouJ/O8QRTdQOiiybmZe2evnEgt1bTC28eTRmCS45Kw5BNa5jZYsPPbtJ/PCqMt/Gvrdi22trnbUneX3roZcJK9e5zHdcx3U1ONBEN5H79bxufhFRNK2vuYulBuQg8UFLPMngBxS09QfmzdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759103467; c=relaxed/simple;
-	bh=mI93xh1CbdA/lGW0vSaBYqhivBqZ8PDOvC6RYjmX71Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HyKXrKv+envdEpydLoFmMuJOa9GvuJd390+oYqPH6zgga8LojRg2VkSRQex+RC+jz1hzdkcCO5NosGZME4xcumUuuJEw0oCrSXKJ/C5Rlg82uVYPtynHTGpp1qXdbmtgMuA9VYoMwqngn6y6D92xWj2lPCDB5Zb4wkUC+T5sqVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=AFnKM4ga; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wFn3Mo8R; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="AFnKM4ga";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wFn3Mo8R"
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 7CCD41400180;
-	Sun, 28 Sep 2025 19:51:01 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Sun, 28 Sep 2025 19:51:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm2; t=1759103461; x=1759189861; bh=KNYT+qDZvBJYx4AVDB/Uc
-	4MiSyan7R9Ct0ToqdRAy74=; b=AFnKM4gausA0Oy+UXH+MsPlhnwt5qI0i99WJS
-	AF0U7ApMecHHpBuOq4ritSua4wnygpYTbZ3yS1dUw2kGiMAMKCAq3V1BAUswBzhZ
-	hDSotZugc4BBUoRMnxnbpDDSow+aNp0SCoHnboB4cDYLyCdbfcB3f5QANean2t+9
-	1BsJ67bclM0CgXDpR2rbbtD/i5eyMwBZY0xKVHeVUN1o4kNV8Rx0vZxLEmjJRJAO
-	QJW48XUp10FrhXGr056e/+OHEGKnjYh4JyKxedcf6cw9nkJc72CinSDuAoIQ2JkR
-	G487mlPrJeczrBV6sHlYBpZhmZMtFMeDkrVyGgMIARSP80rNA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1759103461; x=1759189861; bh=KNYT+qDZvBJYx4AVDB/Uc4MiSyan7R9Ct0T
-	oqdRAy74=; b=wFn3Mo8RS8KYeqJSlOzOb/8EGaiOk0Gjg+zBg7ZsY/w6ghPHgNW
-	hCt9qR9jUF4fbGGnNzsFq23Z4hes9XU9CvIP3mlX+lqx342LkyoY7fb1mY9JRI9Z
-	dyH0QCZ/YxBtXZLZa4Xim7txjBLv4Tk8XQzOBNbAt+fkawA4T9jqluEuMoAfvX4f
-	7PdFCWSox1zcgBuvMF6Tn8K1ksI3arJ3c7Hj4F2a15/5sDN3IQvFJrVt6znrCmRM
-	G9mRAt3ujYngKb3zOX0Py6bxGqmUkCji//d8+XxhXdUWzFS/z+B9mqnlF6n+F2du
-	3glGiDFury3izgOeFz/njP42LzDq79TgiPQ==
-X-ME-Sender: <xms:5cnZaJlMDNjFEE-fi-Riyo2J6qfac1nB8rGiK5R7SXvdB5nhhdo2Ag>
-    <xme:5cnZaL3TSLhgn5nXX189CZxXWkcy9cLssvysIMM_Yynak0ZtuMdnFDILMkSjWh76W
-    4bCd6wEq8wGuru9yppdlimhro-53vBUC-odQTr9qqTFm7oul6cd7XA>
-X-ME-Received: <xmr:5cnZaEoDZGvjBOWAo41mCOvHIESb79nfl8HurrmFHdiDFw2_wec1Kg-1jyuEKx7Axm8g9m5XTKs9wC6vm8llso6FDMjMBjIMx3_xatLgWcmVadC74qudgDH9SA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejieeglecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefvihhnghhmrghoucgh
-    rghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepjeevtdekhf
-    evteejkeelgeelieehueeuteelfeetvdeiffeivefgkeeiieffveegnecuvehluhhsthgv
-    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgrohifthhmrdhorh
-    hgpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehm
-    ihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepmhesmhgrohifthhmrdhorhhgpd
-    hrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhn
-    uhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:5cnZaIfw4aF7CdpxmoNYAnHzSaaD66GtgMAWRW7GcyZ6bENEB68oWQ>
-    <xmx:5cnZaDrpAWeQK_PjgLEpyHCE9mvolGHk6RmkruN6Gip3WH8t4rgLKQ>
-    <xmx:5cnZaJG3aC86GzudJfDP9JNKLAAH-qOLC9D3ijVpON2llqrUMOgJGQ>
-    <xmx:5cnZaDuCGcQInPZNomXRAQ5dqh8TFONeBeni7hWAKP9cKUhWCq69JA>
-    <xmx:5cnZaHnItsztZUsbn9LNemzV6tdmjmh4H--HJ_1EQtUK10RFqWf3SCbh>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 28 Sep 2025 19:51:00 -0400 (EDT)
-From: Tingmao Wang <m@maowtm.org>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Tingmao Wang <m@maowtm.org>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH] Documentation/landlock: Make docs in cred.h and domain.h visible.
-Date: Mon, 29 Sep 2025 00:49:49 +0100
-Message-ID: <6050e764c2679cba01715653e5f1f4f17091d8f8.1759103277.git.m@maowtm.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759117307; c=relaxed/simple;
+	bh=edY+QVn4MIE8WuzJcqhZJ5eKNi8UDrmAaKSHz1D9QQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dq2pxDBoXdV551V61zp/vJ7Si/0m+Xd3hRZxZq7mqwYMm5UC05BLUr7UH6ZY2ezBD5YZdXnEAPCE2shO/dkxEm5M9RNthNFGQbP5/7yczYNt3STNBlxlVGQeZFZFuGXowe4xoYCF+NbuiBZ3+tcIkStNd9J7Ll5OfrC3fJlifNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 2C6A2783; Sun, 28 Sep 2025 22:35:40 -0500 (CDT)
+Date: Sun, 28 Sep 2025 22:35:40 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+	paul@paul-moore.com, omosnace@redhat.com,
+	john.johansen@canonical.com, serge@hallyn.com,
+	casey@schaufler-ca.com
+Subject: Re: [RFC PATCH v2] lsm,selinux: introduce LSM_ATTR_UNSHARE and wire
+ it up for SELinux
+Message-ID: <aNn+jOHt0ls+9dGl@mail.hallyn.com>
+References: <20250918135904.9997-2-stephen.smalley.work@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250918135904.9997-2-stephen.smalley.work@gmail.com>
 
-Currently even though the structures in these files have documentation,
-they are not shown in the "Landlock LSM: kernel documentation" page.
+On Thu, Sep 18, 2025 at 09:59:05AM -0400, Stephen Smalley wrote:
+> RFC-only, will ultimately split the LSM-only changes to their own
+> patch for submission. I have now tested this with the corresponding
+> selinux userspace change that you can find at
+> https://lore.kernel.org/selinux/20250918135118.9896-2-stephen.smalley.work@gmail.com/
+> and also verified that my modified systemd-nspawn still works when
+> starting containers with their own SELinux namespace.
+> 
+> This defines a new LSM_ATTR_UNSHARE attribute for the
+> lsm_set_self_attr(2) system call and wires it up for SELinux to invoke
+> the underlying function for unsharing the SELinux namespace. As with
+> the selinuxfs interface, this immediately unshares the SELinux
+> namespace of the current process just like an unshare(2) system call
+> would do for other namespaces. I have not yet explored the
+> alternatives of deferring the unshare to the next unshare(2),
+> clone(2), or execve(2) call and would want to first confirm that doing
+> so does not introduce any issues in the kernel or make it harder to
+> integrate with existing container runtimes.
 
-Signed-off-by: Tingmao Wang <m@maowtm.org>
----
- Documentation/security/landlock.rst | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Doing it immediately seems like the right thing to do.  So that
+the container runtime can keep the umount/remount of selinuxfs
+with the unshare, instead of having to defer that until after
+a later syscall.
 
-diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
-index e0fc54aff09e..5066f8c3091e 100644
---- a/Documentation/security/landlock.rst
-+++ b/Documentation/security/landlock.rst
-@@ -110,6 +110,12 @@ Filesystem
- .. kernel-doc:: security/landlock/fs.h
-     :identifiers:
- 
-+Process credential
-+------------------
-+
-+.. kernel-doc:: security/landlock/cred.h
-+    :identifiers:
-+
- Ruleset and domain
- ------------------
- 
-@@ -128,6 +134,9 @@ makes the reasoning much easier and helps avoid pitfalls.
- .. kernel-doc:: security/landlock/ruleset.h
-     :identifiers:
- 
-+.. kernel-doc:: security/landlock/domain.h
-+    :identifiers:
-+
- Additional documentation
- ========================
- 
+> Differences between this syscall interface and the selinuxfs interface
+> that need discussion before moving forward:
+> 
+> 1. The syscall interface does not currently check any Linux capability
+> or DAC permissions, whereas the selinuxfs interface can only be set by
+> uid-0 or CAP_DAC_OVERRIDE processes. We need to decide what if any
+> capability or DAC check should apply to this syscall interface and if
+> any, add the checks to either the LSM framework code or to the SELinux
+> hook function.
 
-base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
--- 
-2.51.0
+I think this should be done by the SELinux hook.  And I suspect you
+do want to require those privs, but I could be wrong.
 
+> Pros: Checking a capability or DAC permissions prevents misuse of this
+> interface by unprivileged processes, particularly on systems with
+> policies that do not yet define any of the new SELinux permissions
+> introduced for controlling this operation. This is a potential concern
+> on Linux distributions that do not tightly coordinate kernel updates
+> with policy updates (or where users may choose to deploy upstream
+> kernels on their own), but not on Android.
+
+Hm, that's an interesting problem.
+
+> Cons: Checking a capability or DAC permissions requires any process
+> that uses this facility to have the corresponding capability or
+> permissions, which might otherwise be unnecessary and create
+> additional risks. This is less likely if we use a capability already
+> required by container runtimes and similar components that might
+> leverage this facility for unsharing SELinux namespaces.
+> 
+> 2. The syscall interface checks a new SELinux unshare_selinuxns
+> permission in the process2 class between the task SID and itself,
+> similar to other checks for setting process attributes. This means
+> that:
+>     allow domain self:process2 *; -or-
+>     allow domain self:process2 ~anything-other-than-unshare_selinuxns; -or-
+>     allow domain self:process2 unshare_selinuxns;
+> would allow a process to unshare its SELinux namespace.
+> 
+> The selinuxfs interface checks a new unshare permission in the
+> security class between the task SID and the security initial SID,
+> likewise similar to other checks for setting selinuxfs attributes.
+> This means that:
+>     allow domain security_t:security *; -or-
+>     allow domain security_t:security ~anything-other-than-unshare; -or-
+>     allow domain security_t:security unshare;
+> would allow a process to unshare its SELinux namespace.
+> 
+> Technically, the selinuxfs interface also currently requires open and
+> write access to the selinuxfs node; hence:
+>     allow domain security_t:file { open write };
+> is also required for the selinuxfs interface.
+> 
+> We need to decide what we want the SELinux check(s) to be for the
+> syscall and whether it should be more like the former (process
+> attributes) or more like the latter (security policy settings). Note
+> that the permission name itself is unimportant here and only differs
+> because it seemed less evident in the process2 class that we are
+> talking about a SELinux namespace otherwise.
+> 
+> Regardless, either form of allow rule can be prohibited in policies
+> via neverallow rules on systems that enforce their usage
+> (e.g. Android, not necessarily on Linux distributions).
+> 
+> 3. The selinuxfs interface currently offers more functionality than I
+> have implemented here for the sycall interface, including:
+> 
+> a) the ability to read the selinuxfs node to see if your namespace has
+> been unshared, which should be easily implementable via
+> lsm_get_self_attr(2).  However, questions remain as to when that
+> should return 1 versus 0 (currently returns 1 whenever your namespace
+> is NOT the initial SELinux namespace, useful for the testsuite to
+> detect it is in a child, but could instead be reset to 0 by a
+> subsequent policy load to indicate completion of the setup of the
+> namespace, thus hiding from child processes that they are in a child
+> namespace once its policy has been loaded).
+
+maybe 'unshare' means that an unshare is in progress, and add an
+'unshared' which is incremented on every unshare (and never
+decremented) for use by the testsuite?
+
+> b) the abilities to get and set the maximum number of SELinux
+> namespaces (via a /sys/fs/selinux/maxns node) and to get and set the
+> maximum depth for SELinux namespaces (via a /sys/fs/selinux/maxnsdepth
+> node). These could be left in selinuxfs or migrated to some other LSM
+> management APIs since they are global in scope, not per-process
+> attributes.
+> 
+> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> ---
+> v2 fixes a typo (PROCESS->PROCESS2) and is now tested.
+> 
+>  include/uapi/linux/lsm.h            | 1 +
+>  security/selinux/hooks.c            | 8 ++++++++
+>  security/selinux/include/classmap.h | 4 +++-
+>  3 files changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
+> index 938593dfd5da..fb1b4a8aa639 100644
+> --- a/include/uapi/linux/lsm.h
+> +++ b/include/uapi/linux/lsm.h
+> @@ -83,6 +83,7 @@ struct lsm_ctx {
+>  #define LSM_ATTR_KEYCREATE	103
+>  #define LSM_ATTR_PREV		104
+>  #define LSM_ATTR_SOCKCREATE	105
+> +#define LSM_ATTR_UNSHARE	106
+>  
+>  /*
+>   * LSM_FLAG_XXX definitions identify special handling instructions
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index f48483383d6e..1e34a16b7954 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -6816,6 +6816,10 @@ static int selinux_lsm_setattr(u64 attr, void *value, size_t size)
+>  		error = avc_has_perm(state, mysid, mysid, SECCLASS_PROCESS,
+>  				     PROCESS__SETCURRENT, NULL);
+>  		break;
+> +	case LSM_ATTR_UNSHARE:
+> +		error = avc_has_perm(state, mysid, mysid, SECCLASS_PROCESS2,
+> +				     PROCESS2__UNSHARE_SELINUXNS, NULL);
+> +		break;
+>  	default:
+>  		error = -EOPNOTSUPP;
+>  		break;
+> @@ -6927,6 +6931,10 @@ static int selinux_lsm_setattr(u64 attr, void *value, size_t size)
+>  		}
+>  
+>  		tsec->sid = sid;
+> +	} else if (attr == LSM_ATTR_UNSHARE) {
+> +		error = selinux_state_create(new);
+> +		if (error)
+> +			goto abort_change;
+>  	} else {
+>  		error = -EINVAL;
+>  		goto abort_change;
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+> index be52ebb6b94a..07fe316308cd 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -60,7 +60,9 @@ const struct security_class_mapping secclass_map[] = {
+>  	    "siginh",	    "setrlimit",     "rlimitinh",   "dyntransition",
+>  	    "setcurrent",   "execmem",	     "execstack",   "execheap",
+>  	    "setkeycreate", "setsockcreate", "getrlimit",   NULL } },
+> -	{ "process2", { "nnp_transition", "nosuid_transition", NULL } },
+> +	{ "process2",
+> +	  { "nnp_transition", "nosuid_transition", "unshare_selinuxns",
+> +	    NULL } },
+>  	{ "system",
+>  	  { "ipc_info", "syslog_read", "syslog_mod", "syslog_console",
+>  	    "module_request", "module_load", "firmware_load",
+> -- 
+> 2.50.1
