@@ -1,157 +1,247 @@
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazolkn19013080.outbound.protection.outlook.com [52.103.33.80])
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80882853F1;
-	Tue, 30 Sep 2025 09:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.33.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759226234; cv=fail; b=VgKX1BDOglaN49sNZ1lC7+U688wO0kmBczGBzdr3ec6drOvXklIevf+z8Z9WEza9tjpceHkqf8jmeu8L48beZ5jpq7Ro6tsbL+A8jmyUzjoPucwqJE0Z+vLxdeYJjqGuvH07uwfUVB19OB2rvjdB7s3k7BwarLZzCwhJ50dtTwg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759226234; c=relaxed/simple;
-	bh=MlcV48drCrF91p+fYxmv7x7AZ7NElwp8c9ZnFmhxcwc=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=WV2IQILiAC4RFXtEpUQgsdu8H0AqcsIyFiNZrK3uBbmmLz745/X+ClYRPG/c1MAF7RbyYyF1WephIpzbVTAEju7NA/zdPJ0WMpjN1yFEwoRj2hNOB8mIfyQWARNb+rMuQUR+45K6Udow6qeruhwTvkKUpdX7DVd1OKW5iEuuxzg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=pa25DMFT; arc=fail smtp.client-ip=52.103.33.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F0C23BF83;
+	Tue, 30 Sep 2025 11:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759230588; cv=none; b=AF0TSr4U/E+fPswrvIeWEY9cGveAyiBflfbJ63JPkgB+UACoJDwDpMIf5YJzzbhLwdeWgQE1so+AbsYiuvLMoszfwcqBULeckzIKabAXUzyxbPREwOcUjxvMZLA9PdPeWhlqd8mMTHaqq3TzZP4UeTj3v/HOc6XenIKMBOrEZCI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759230588; c=relaxed/simple;
+	bh=+uM48FBNgAszSyWHgTOUgexeTYLwgEXzwU03YYcitSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aMpaksiV1MonKIoSBWIk278ebASIqTLS0j2iW4Xqfs658R5X5VKteO1e7JpyhmZjyUJv3WJ1dr+cHX5HskrX4WzRmAzYO/jwic4AunKEsIPc1UJTtNKKaV0K9pRE2xsQMc+E6u4ayKLCwg5WexL5c6gQW4PvhBeFyaJ0nZIRVTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=voJ6ybdW; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="pa25DMFT"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X6Cy6H4muorEj0Wxrskgzi13KGdoazaa65eqhl51aH/1oCrTgNBlXBz/zJ0xGcxcUWUlJx6jnoNEdxb43Z2SHds11dERR54qY6Agj1sLvR2svEQ5I0hEJBhAP8DDRi2WDFmnLn+icaSJqLLurDwVxF5+4VBjMtyyy4zMVw3kD60T9TpC02t9uJpED6TdNlYCaJ8vQ6opZbMEEIwHO4JDLA3LQ/OJ47liL6ecL2LnmTRtiFgC+jYj87V5xyr229L130Wu7Yo1lHbKGwvjN84CZp8//EKEC/wWRkQEGi89eTWUPW44EUbVA1Gg0TqxHm7q8Eta6ByhHMUzY6TNKfeqUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n9lQFLoS0N8Q++E76fA6tXTQUK33lLUbA3h4oT8sN6Q=;
- b=w2O5+3YuW5ONArpmEiWqLM9mLJpbpPmf1Y5ds1hKFnG23qbf/GWIsqSkLvWp+7zETAiIizZMhE4B9HKsDIM3rNAsiE8++kYnxy+pUUb0tPaW3vbpEXW6jiYfpKBGdRAotMfH2XyiTSJaDvnZ5ft68wtQjFNWADbjKSHEynLj4H3ma8V6FHmCTivSJTDsC3RNX2p7EbPdcWXGsqVU8X4uVkr+8EGzihFCL+3qgWbaHz3f/7dblyTWF1iGsRPHkX561Uv+Pc+okE6JlJeZZEUOxds4++l6LJrxH0aPl6WDJAs7nTEyTmYGm9FBDKFSWL4OU+453TfrgvKf+5PabTWHrQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n9lQFLoS0N8Q++E76fA6tXTQUK33lLUbA3h4oT8sN6Q=;
- b=pa25DMFTi6brVQC6MhAT9gaibqJ6Rl0NTulsTA5JamXSGcnq1xiKej/ZUTF5sp+g1Nrk8w4KsN7vHJXlh5OKe+YsLvWc5Z5yO6aIVL/rf+bqLjKfQoUuMpxgyqya+pzOrmn8EhfsTVSyquSg13SSAihgQnylLWIbCr/uw6gVvGFM3wHMkdzneNhIgZ02vglLkVzifKuaRG1eVZQtEPijsTSUiqQ3pxzsneXWatyKC4iY0hoAzzmZdjcOwpSZwo8BXg7cGL/GIZFngHS2fauRM4j6/xMqN9lA+lN0ii3NknTbuHScslgRlRIwcFO1ltGCwR4D8M/2K4js3PNx8BxAjw==
-Received: from VI1PR02MB3952.eurprd02.prod.outlook.com (2603:10a6:803:85::14)
- by DB9PR02MB8394.eurprd02.prod.outlook.com (2603:10a6:10:399::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
- 2025 09:57:09 +0000
-Received: from VI1PR02MB3952.eurprd02.prod.outlook.com
- ([fe80::60e5:4de0:ff18:2fb1]) by VI1PR02MB3952.eurprd02.prod.outlook.com
- ([fe80::60e5:4de0:ff18:2fb1%3]) with mapi id 15.20.9160.013; Tue, 30 Sep 2025
- 09:57:09 +0000
-From: David Binderman <dcb314@hotmail.com>
-To: "mic@digikod.net" <mic@digikod.net>, "gnoack@google.com"
-	<gnoack@google.com>, "shuah@kernel.org" <shuah@kernel.org>,
-	"linux-security-module@vger.kernel.org"
-	<linux-security-module@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: linux-6.17/tools/testing/selftests/landlock/fs_test.c:5631: Test for
- pointer < 0 ?
-Thread-Topic: linux-6.17/tools/testing/selftests/landlock/fs_test.c:5631: Test
- for pointer < 0 ?
-Thread-Index: AQHcMe9e3zKSXSb3ZkGRzpwSx6EO7w==
-Date: Tue, 30 Sep 2025 09:57:09 +0000
-Message-ID:
- <VI1PR02MB395245DCA7CA4B6DEA15F1ED9C1AA@VI1PR02MB3952.eurprd02.prod.outlook.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-GB
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: VI1PR02MB3952:EE_|DB9PR02MB8394:EE_
-x-ms-office365-filtering-correlation-id: f2859f4b-c13c-496b-1b1b-08de0007b88a
-x-ms-exchange-slblob-mailprops:
- gMiuAN0LASJErQlHnJTyv53e9/qVxipOC2B/vOl1oUuFWa1AWqHcIwS/OCqkqB/z2nfS7xtCT4M70wxPF4FJUju3zVHA6S6BT1uHFItDMTtMWNt72Ml6mRh5aNPaxfLWxPCDE3nUq3ZpDa1ysAlp69ex5NwM07qt0OWetN8LEknfVJA5w7Tgm12j0ifZ6LuiMpEDDNQk/POtWIFuzBSYpRofx105SQPD+lj78cn6qxAhxr/wx3sDyd9YARaSuvmjzsi4UTHLzoJsWaiZnKBPGY8ZsjGpKWLZLO0ETar/Gm8y7s2whEy0Ez6tO8OdV09v5aJhbs5MegeIr1XjOKGfx1oEq4A21kp6zmpVLBWXozWp8o29xOPi6qqbWsBcxCMreq1fimKcJ5jdlE4goff6UJt36ukwD6XRPwD5Tf0RNb21zil4a41jC7QAnNvD5E9sPxHxvQWvFQud/F7T5G/rZaffOnaUUmSobNlMWAyuolsKjj14yWQE0jYXogvAd8kJkElBCOX/v1htSc9tvk3SMuR63/+tUMP2D0BO7AaJkqQQJVHVjGBC6fKk6zqlzlbK8MRSAhyP7mEHBq/jYnF8RfllqCAo0H0yElQmxUu6ni/pRnCyLlepsMywQGeMu1BXqfRRMgyWz7TOJ9EYpwwP/qeipdKORzPrwxKFPImntNkV+eJ2BPWHxo80yjP6wya5xFOpqcjBC8xC9/xLFy9SvA==
-x-microsoft-antispam:
- BCL:0;ARA:14566002|12121999013|15080799012|461199028|31061999003|41001999006|15030799006|19110799012|8062599012|8060799015|40105399003|53005399003|440099028|3412199025|102099032|21999032;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?flLjrfyDflR+uohu6QG7mrjHv1SQ1laEZBV5W8CpXnldm8nYfZhdcZR1iW?=
- =?iso-8859-1?Q?nUSHco7UCkaSrBgvCs6vj1zOnzqu2FcTUGrayR1g68yZM1hPDwpE8Y93Qs?=
- =?iso-8859-1?Q?t5OExEJjvaFpQCRI9I34qDQkOik7zGt0yql73Xen/7CWQ96TQaOa+iWiRr?=
- =?iso-8859-1?Q?8TZUIOtE7zJnoI4thk96RX9oIcA3khw8IqMzPlBuzHdoW+Qx/DygPSO7xO?=
- =?iso-8859-1?Q?t5Kg/VphIYrNmXSu8pRSXdxIrFtB8qBaPlO7N04DQHAjQkiraGj3xREzXD?=
- =?iso-8859-1?Q?qXLv8aIGc37n6cOcWCxrvpG05z6rFojsupR5CKveQx+MOCSqhN1zxOZM92?=
- =?iso-8859-1?Q?hiS6s880jpknmBfk6I24pSu+D0tmgAxXDdv6QaVqX0+tqxKquoQtmZO9wj?=
- =?iso-8859-1?Q?HUwkUbm9g5sTtPEDWF4LKxqyiRz+gGdfkaziGOQsIyW9/qzuJhLNY+5ZDG?=
- =?iso-8859-1?Q?OeWzt2mFLcev90DGcMHQrrcy7NVvR7izMCNzJX2yszaWTprsTcvpv3mcNE?=
- =?iso-8859-1?Q?A2B9R3IG6IVkCEOJgLCICESr3257Q50fKUIdbyz19ZIugve21RVMz9wS3N?=
- =?iso-8859-1?Q?LB71vILI1KFoTxBlkrRhkZjbRF10wY+N5MOXYFJeRxr++p0ENvpH9v+lSi?=
- =?iso-8859-1?Q?G1HLsdThlVTWdxNvnOfdtXXv3Uc2eGQpZW3uDH2HeGyQ3UlLb+xlE/CXKv?=
- =?iso-8859-1?Q?kNeo3VsWB3WmUgZOG29Gm6b8XkmpjqRVPMMn8l3WbnzKRkRJIfx/wD0dNR?=
- =?iso-8859-1?Q?JEZurodHS83WS/uao4kaBxleJWuyNwFCZWlwG0aml6EDQB221zN+fZAhFW?=
- =?iso-8859-1?Q?pJr26WDukDext3P1FodWB15hIEHqehmfL1bQFLQ2D6ZQVld9IHcM6V30Xs?=
- =?iso-8859-1?Q?nYk2jgMg6G17oR0U944rCdJNyrOE4ixunCDatSAt0lQhIdWtwmjardTA8w?=
- =?iso-8859-1?Q?9vgneIU8Mj5sKbazAMtLU+tcN8beGSoUVN+aFmaQJyzHjhvx+w81vHkT/s?=
- =?iso-8859-1?Q?hPCSijoaZqo18qaGRdShcERR1hEMvLhmxkVu5lsFwthtHQbGxRee94pY67?=
- =?iso-8859-1?Q?lLNaSvFbqLiT2RChmbXOTRXAUyW1ebc8oezMLGZmNTOEPtkZtsPwoIxMmC?=
- =?iso-8859-1?Q?HiOkGaHOuOC0GfZsjf7zwQ9ZSbIhjFATes8znQs47MeeZcBLjSXVXSZ/5Y?=
- =?iso-8859-1?Q?haXI1tX6x+h4bD5rYWwgyyKs8S2W0ZUyNN/IrzqjV4wfmbZgcqn1rjeiBS?=
- =?iso-8859-1?Q?jFCIZ/Iz7clTK7RNhk1QAjYhj3OvkknsPsc2VR0jeA88gLV+dX1ZdHv9fR?=
- =?iso-8859-1?Q?t3b4tqmFniJbZKVrqPoONjuMkg=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?EzJe71Nu24u7uHAF5CP5eJv4zH0s3fRHt415WmP+nMegvUlJqRF9vDeqgr?=
- =?iso-8859-1?Q?pRBujFgylXkfBA6vdiP8KeW1/erx8Qz7/lD3OE6xncIZg59HufBEXenTrR?=
- =?iso-8859-1?Q?J6YbCzHyGNW8zanHTMEN7rWKzRwv/B734OyY5AVj62azucJbC3dXEf982W?=
- =?iso-8859-1?Q?KhhhcYZMQc7/ppQtX2XSeEn7sVys6sfWB6LpUTO6ITcx8gGaXJm+L0YqLD?=
- =?iso-8859-1?Q?oiw0MX0+J6jRR0n90YsH9e3HtdaQWxPrQafGQ58ZEuIN+C/1yi8KAe5VAP?=
- =?iso-8859-1?Q?Y/549Q0WujWE1pu41aoexSF8asMJYnZ/9EXKoQzqKZweEfqsoiX+FoXMeZ?=
- =?iso-8859-1?Q?ZssPZW/vpRUr+/t2PC4GthVFykXfO7qKkut9Cs1i30r0JChzDertvCXQwn?=
- =?iso-8859-1?Q?l2W2OJuj1fHJeor37rsc5iukjWkWE08tXYuHBq0CLPHSW27MAdYujn08mI?=
- =?iso-8859-1?Q?gSjA7jCmEpQ+o0ppwsrKwMvtsPpO4zxXpmU0WVF2+GR4CLR2STQv42/kQS?=
- =?iso-8859-1?Q?Mh8C0UYewlmZrAWHgrh0FdRmcYFHDr/41Fv9yZxUUXNuNwyowKGtYmW5fv?=
- =?iso-8859-1?Q?31KIO7yNwfan6aFSW+Wh09qpF2D/oJa+BOROcEDrwcyeWZs2no2fCdGZrd?=
- =?iso-8859-1?Q?QF1OOHucqeZ+i+pnxY3jRFcHW9l6B+UqhzA+k+MW2sbRW1zgAUwVhcOWjw?=
- =?iso-8859-1?Q?qK9npcl/rbLhlfCx8AWTTTSNrLOmkpm+BwQSBDxG0T0dIDA/W2EnUoMwED?=
- =?iso-8859-1?Q?ifrcaEl+7/c33O7N+wF0bTRQCEjY1EbQgNp3OaAAHHtXQPQIW1sNQUXZ0k?=
- =?iso-8859-1?Q?PRZyNhrJlmkNWpxwyfJlH44yhvrJZWjX9LRo8SByA6qq/Vj7Qp0csrzMnT?=
- =?iso-8859-1?Q?JVIXfe6DT0h96R6vpsRVJLrwJJ7bRDBGOksOstFcn3ftsC05x+6AIQIQk7?=
- =?iso-8859-1?Q?sqLTZXhmPBxSmcyC97M78dgr57D3f+/I0DizMqbb5COBYBIImWiCapsxUp?=
- =?iso-8859-1?Q?4VhAUgb5V8VCRpCeV2WyGOpP8/uwp/SthAYH+2AnGwGO39bi/Yc+wDFOQd?=
- =?iso-8859-1?Q?G903q9dSG2nRYdRz3pinbPYn5s0tweJW34LCB4yTpWVtpaGM39W/k3Zbg7?=
- =?iso-8859-1?Q?Y2JIOjP7WprOhIHGoGeaVVJGTnDoPRfTiLisXeK9Ajjfvsdm6Li4OXdlBJ?=
- =?iso-8859-1?Q?jHM014+bNv1ep8SAilXADbfqKWMRBWEYD48GhRS/kEqBMafy5cokGyOMMN?=
- =?iso-8859-1?Q?hQOBBOsFNZrUBh5wC1cA=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b="voJ6ybdW"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=gmYmDmPVGG6EDpdyOlVODOpmWPBaka9dH36EYjVQnao=; b=voJ6ybdWyIqRuHYMNfZmoGAXcI
+	RentZSrbjUnBa12IO6d9Vecm2/YtAIcRNdMogYglDJfDxAyUWG5U5VC6m5kOkPv8PJusUKeQuR4T7
+	baq/Co1F25DPvfdJyBwO9lRcO1ylgn4eB9rqfWZNX6d3tjQfhg90wfemSJFdyOAlQloJJqE9rXIm1
+	7Qx2ULA7sL29UEbTE1Iuhn7rYw4WwmxCWQoFCWg9D8dm7ydu8k2osUiA9Wyxompdzu9Nfm5E5/uKY
+	GpItQvVB56x3BPoPF1ESgLbgo3s5Kv3sdr7FxFmUXgIqEuwdV5UxrCWWmoFVDGq7Z2j4JORRMI+pD
+	FDvgVc4Q==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1v3YEN-006wrA-0F;
+	Tue, 30 Sep 2025 12:09:15 +0100
+Date: Tue, 30 Sep 2025 12:09:15 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, dpsmith@apertussolutions.com,
+	ross.philipson@oracle.com,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v3 01/10] tpm: Cap the number of PCR banks
+Message-ID: <aNu6W0GagfCliWTx@earth.li>
+References: <20250929194832.2913286-1-jarkko@kernel.org>
+ <20250929194832.2913286-2-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-5faa0.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR02MB3952.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2859f4b-c13c-496b-1b1b-08de0007b88a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2025 09:57:09.3517
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR02MB8394
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929194832.2913286-2-jarkko@kernel.org>
 
-Hello there,=0A=
-=0A=
-Static analyser cppcheck says:=0A=
-=0A=
-linux-6.17/tools/testing/selftests/landlock/fs_test.c:5631:23: style: A poi=
-nter can not be negative so it is either pointless or an error to check if =
-it is. [pointerLessThanZero]=0A=
-=0A=
-Source code is=0A=
-=0A=
-=A0 =A0 if (log_match_cursor < 0)=0A=
-=A0 =A0 =A0 =A0 return (long long)log_match_cursor;=0A=
-=0A=
-but=0A=
-=0A=
-    char *log_match_cursor =3D log_match;=0A=
-=0A=
-Suggest remove code.=0A=
-=0A=
-Regards=0A=
-=0A=
-David Binderman=0A=
+On Mon, Sep 29, 2025 at 10:48:23PM +0300, Jarkko Sakkinen wrote:
+> From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> 
+> tpm2_get_pcr_allocation() does not cap any upper limit for the number of
+> banks. Cap the limit to four banks so that out of bounds values coming
+> from external I/O cause on only limited harm.
+> 
+> Cc: Roberto Sassu <roberto.sassu@huawei.com>
+> Fixes: bcfff8384f6c ("tpm: dynamically allocate the allocated_banks array")
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> ---
+> v3:
+> - Wrote a more clear commit message.
+> - Fixed pr_err() message.
+> v2:
+> - A new patch.
+> ---
+>  drivers/char/tpm/tpm-chip.c | 13 +++++++++----
+>  drivers/char/tpm/tpm.h      |  1 -
+>  drivers/char/tpm/tpm1-cmd.c | 25 -------------------------
+>  drivers/char/tpm/tpm2-cmd.c |  8 +++-----
+>  include/linux/tpm.h         | 18 ++++++++----------
+>  5 files changed, 20 insertions(+), 45 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index 687f6d8cd601..9a6538f76f50 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -559,14 +559,19 @@ static int tpm_add_hwrng(struct tpm_chip *chip)
+>  
+>  static int tpm_get_pcr_allocation(struct tpm_chip *chip)
+>  {
+> -	int rc;
+> +	int rc = 0;
+>  
+>  	if (tpm_is_firmware_upgrade(chip))
+>  		return 0;
+>  
+> -	rc = (chip->flags & TPM_CHIP_FLAG_TPM2) ?
+> -	     tpm2_get_pcr_allocation(chip) :
+> -	     tpm1_get_pcr_allocation(chip);
+> +	if (!(chip->flags & TPM_CHIP_FLAG_TPM2)) {
+> +		chip->allocated_banks[0].alg_id = TPM_ALG_SHA1;
+> +		chip->allocated_banks[0].digest_size = hash_digest_size[HASH_ALGO_SHA1];
+> +		chip->allocated_banks[0].crypto_id = HASH_ALGO_SHA1;
+> +		chip->nr_allocated_banks = 1;
+> +	} else {
+> +		rc = tpm2_get_pcr_allocation(chip);
+> +	}
+>  
+>  	if (rc > 0)
+>  		return -ENODEV;
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 57ef8589f5f5..769fa6b00c54 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -252,7 +252,6 @@ int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
+>  ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+>  		    const char *desc, size_t min_cap_length);
+>  int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
+> -int tpm1_get_pcr_allocation(struct tpm_chip *chip);
+>  unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+>  int tpm_pm_suspend(struct device *dev);
+>  int tpm_pm_resume(struct device *dev);
+> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+> index cf64c7385105..5c49bdff33de 100644
+> --- a/drivers/char/tpm/tpm1-cmd.c
+> +++ b/drivers/char/tpm/tpm1-cmd.c
+> @@ -786,28 +786,3 @@ int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
+>  
+>  	return rc;
+>  }
+> -
+> -/**
+> - * tpm1_get_pcr_allocation() - initialize the allocated bank
+> - * @chip: TPM chip to use.
+> - *
+> - * The function initializes the SHA1 allocated bank to extend PCR
+> - *
+> - * Return:
+> - * * 0 on success,
+> - * * < 0 on error.
+> - */
+> -int tpm1_get_pcr_allocation(struct tpm_chip *chip)
+> -{
+> -	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
+> -					GFP_KERNEL);
+> -	if (!chip->allocated_banks)
+> -		return -ENOMEM;
+> -
+> -	chip->allocated_banks[0].alg_id = TPM_ALG_SHA1;
+> -	chip->allocated_banks[0].digest_size = hash_digest_size[HASH_ALGO_SHA1];
+> -	chip->allocated_banks[0].crypto_id = HASH_ALGO_SHA1;
+> -	chip->nr_allocated_banks = 1;
+> -
+> -	return 0;
+> -}
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 7d77f6fbc152..a7cddd4b5626 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -538,11 +538,9 @@ ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>  
+>  	nr_possible_banks = be32_to_cpup(
+>  		(__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
+> -
+> -	chip->allocated_banks = kcalloc(nr_possible_banks,
+> -					sizeof(*chip->allocated_banks),
+> -					GFP_KERNEL);
+> -	if (!chip->allocated_banks) {
+> +	if (nr_possible_banks > TPM2_MAX_BANKS) {
+> +		pr_err("tpm: unexpected number of banks: %u > %u",
+> +		       nr_possible_banks, TPM2_MAX_BANKS);
+>  		rc = -ENOMEM;
+>  		goto out;
+>  	}
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index 900c81a2bc41..fc7df87dfb9a 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -27,7 +27,12 @@
+>  #include <crypto/aes.h>
+>  
+>  #define TPM_DIGEST_SIZE 20	/* Max TPM v1.2 PCR size */
+> -#define TPM_MAX_DIGEST_SIZE SHA512_DIGEST_SIZE
+> +#define TPM_HEADER_SIZE		10
+> +
+> +#define TPM2_PLATFORM_PCR	24
+> +#define TPM2_PCR_SELECT_MIN	3
+
+By changing this to 3 we lose the fact it's related to TPM2_PLATFORM_PCR 
+- it's the number of bytes required to hold a bitmap with at least 
+ TPM2_PLATFORM_PCR entries. Can we at least have a comment about that 
+fact?
+
+> +#define TPM2_MAX_DIGEST_SIZE	SHA512_DIGEST_SIZE
+> +#define TPM2_MAX_BANKS		4
+
+Where does this max come from? It matches what I see with swtpm by 
+default (SHA1, SHA2-256, SHA2-384, SHA-512), so I haven't seen anything 
+that exceeds it myself.
+
+>  struct tpm_chip;
+>  struct trusted_key_payload;
+> @@ -69,7 +74,7 @@ enum tpm2_curves {
+>  
+>  struct tpm_digest {
+>  	u16 alg_id;
+> -	u8 digest[TPM_MAX_DIGEST_SIZE];
+> +	u8 digest[TPM2_MAX_DIGEST_SIZE];
+>  } __packed;
+>  
+>  struct tpm_bank_info {
+> @@ -190,7 +195,7 @@ struct tpm_chip {
+>  	unsigned int groups_cnt;
+>  
+>  	u32 nr_allocated_banks;
+> -	struct tpm_bank_info *allocated_banks;
+> +	struct tpm_bank_info allocated_banks[TPM2_MAX_BANKS];
+>  #ifdef CONFIG_ACPI
+>  	acpi_handle acpi_dev_handle;
+>  	char ppi_version[TPM_PPI_VERSION_LEN + 1];
+> @@ -217,13 +222,6 @@ struct tpm_chip {
+>  #endif
+>  };
+>  
+> -#define TPM_HEADER_SIZE		10
+> -
+> -enum tpm2_const {
+> -	TPM2_PLATFORM_PCR       =     24,
+> -	TPM2_PCR_SELECT_MIN     = ((TPM2_PLATFORM_PCR + 7) / 8),
+> -};
+> -
+>  enum tpm2_timeouts {
+>  	TPM2_TIMEOUT_A          =    750,
+>  	TPM2_TIMEOUT_B          =   4000,
+> -- 
+> 2.39.5
+> 
+> 
+
+J.
+
+-- 
+"How the f**k did you work that out?" -- Pythagoras
