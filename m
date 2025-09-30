@@ -1,158 +1,157 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazolkn19013080.outbound.protection.outlook.com [52.103.33.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF1C610B
-	for <linux-security-module@vger.kernel.org>; Tue, 30 Sep 2025 02:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759199720; cv=none; b=XwUmx2C67QxWzQTo+pTPB4XMOnOfou9rcKN0tnSG97EH/cBPCnXxAviDPMF8q1xri6pfd4k9qDUFJafYF4jcbZeiy3zf0YYYOXQggXzNP68zj5sj1tZBN3rrjoRLrrf4z9U6PQGREsQ6ddUeIFIUYPhT7Kj0/4xCy0WTbjebnyY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759199720; c=relaxed/simple;
-	bh=wJQGgVCMFj3J2tRZt+e5H18nK9hedKnUGtmvcZcCFLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=reZGO8Bh9EFHaI72sToUBoTWaQPBu9T+7jjtaImazrBIZHZ3GghMkTiQeu7aE08QgFtTDyoc0DfhNNok500tvT71P1Cfe57YYwfwTFhQwOUIUDHUY9na8bJAEtWDiTLcdLQZv02f9b8VhXjqu6CTQcsqajYMcey0+UlV4o0tLC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OpkN4hYz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80882853F1;
+	Tue, 30 Sep 2025 09:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.33.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759226234; cv=fail; b=VgKX1BDOglaN49sNZ1lC7+U688wO0kmBczGBzdr3ec6drOvXklIevf+z8Z9WEza9tjpceHkqf8jmeu8L48beZ5jpq7Ro6tsbL+A8jmyUzjoPucwqJE0Z+vLxdeYJjqGuvH07uwfUVB19OB2rvjdB7s3k7BwarLZzCwhJ50dtTwg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759226234; c=relaxed/simple;
+	bh=MlcV48drCrF91p+fYxmv7x7AZ7NElwp8c9ZnFmhxcwc=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=WV2IQILiAC4RFXtEpUQgsdu8H0AqcsIyFiNZrK3uBbmmLz745/X+ClYRPG/c1MAF7RbyYyF1WephIpzbVTAEju7NA/zdPJ0WMpjN1yFEwoRj2hNOB8mIfyQWARNb+rMuQUR+45K6Udow6qeruhwTvkKUpdX7DVd1OKW5iEuuxzg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=pa25DMFT; arc=fail smtp.client-ip=52.103.33.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OpkN4hYz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759199717;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=03NexLO5UHcDiL6BtGZCzs9TJxia4xSP+LO1xkJ8UJI=;
-	b=OpkN4hYz7vQomBRNL4cjZlCLqajEkUk78GOE5W9YcQEDE00HmArJjdQqyTFJvAuFTQWPB5
-	vXuxiOBmEYDQKku1ARCRqvaj3xs7QsjzdInvdnNYhrtEKCJshpgLIum6/rx6Do2ASs5AaO
-	hkK8/6B81uj+B24rR0mRC6PHT4G0B4w=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-680-obVEc0EbMqCMyp9PxPCrrg-1; Mon, 29 Sep 2025 22:35:15 -0400
-X-MC-Unique: obVEc0EbMqCMyp9PxPCrrg-1
-X-Mimecast-MFC-AGG-ID: obVEc0EbMqCMyp9PxPCrrg_1759199715
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7847cc45409so2071017b3a.3
-        for <linux-security-module@vger.kernel.org>; Mon, 29 Sep 2025 19:35:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759199714; x=1759804514;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=03NexLO5UHcDiL6BtGZCzs9TJxia4xSP+LO1xkJ8UJI=;
-        b=kL9uNoPOgx6W7f7LTB8tBL2RlbBXFk0UN0cUdr0AmEvkzVCCBPEegvofvAxgNRueKL
-         HzCwENnFBWOQAPYYv//nNmK5U8olCd3dJEcfem0kkB3dRIV10U3Bs6RvFWJ4wfWCu0+K
-         aPjcnEw0mKLe2xGadu9Cak3SXG13dVqO1J0+es5KeVl+OdKJhUtw3aWuQC6aKKfLRSc/
-         Yu+rwoaS/UDGZIwMOUeS1rxYTUaTo+AupRTh+5pz+2KXPHxrUgJkFwG7gMh3wCfF22Se
-         MuNqovIW6WLoMpm3hmPz5WJFsSgegAB4leeUAnlzrREUVLnZO7L4g2HD3hvZj2o35CIi
-         AfnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfSsgHflc+Z1IHdwXikG/udJd/QsaISQVUShLXrjsW2GKPoVDXUNQETrmHTPYix1ESYjYwibFrEncxslRDXTCp/b6DpWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwRbSVdmeYnL+mpD0CkYK66mU+XqLst8PkDkQdRWdktef4BIEi
-	8dGjViku5z1TItwCgk29L/lbQn951ZgYKQvtdxBMiGybDsmzN3BDaKYswk9yIFx5jyEWp1TFZKu
-	QZOqe7AJf1XnjWA2PZl3kSdhC4dLUIVFri5hRdUS5MAbfxpcRjZ2lXfNzl4ojeuZNO6oujsib7U
-	g+Ow==
-X-Gm-Gg: ASbGncu6/xfzhrwlFSMR5jqik7ZPZ9cYnFxlbw/caxA1B5MXDfEjdMxXi2MtgqsMgvM
-	fBkcDQ6sKihA0Pxo4McdwqqcyU60zSPgBhFmGil6z2oegg5ztph43dBQdeT/JKK2/+i6A1KNtXd
-	ONFt2QY1UX+82Hk2D6wt2Z6DPNTE4Ril95XS7KrSyuVVhIKnVQVm/LnIhdkXjuziQS0T/kSHzem
-	rkVWxX4c/mHlF9aq1qjkfJ7pP2HEbhxApY8EgY0byZlGKaGv+PXKA2CqQw4W6k70yDrUOua49jR
-	7+htA1IpFCKcJB2/atlcFX2k8s7A2FYdjG2e
-X-Received: by 2002:a05:6a00:2e2a:b0:781:22cf:b916 with SMTP id d2e1a72fcca58-78122cfbb2cmr10060859b3a.23.1759199714597;
-        Mon, 29 Sep 2025 19:35:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHk6lf5UdCs5HU9KjvZY3Dx8H8dMrpHuoGYVyn5iK1EraZ+Yd9xN0D7C0jcRRi5VYye/wwQ0w==
-X-Received: by 2002:a05:6a00:2e2a:b0:781:22cf:b916 with SMTP id d2e1a72fcca58-78122cfbb2cmr10060841b3a.23.1759199714246;
-        Mon, 29 Sep 2025 19:35:14 -0700 (PDT)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-781023edda8sm12356376b3a.43.2025.09.29.19.35.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 19:35:13 -0700 (PDT)
-Date: Tue, 30 Sep 2025 10:31:45 +0800
-From: Coiby Xu <coxu@redhat.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ima: setting security.ima to fix security.evm for a file
- with IMA signature
-Message-ID: <22ya7mhqv3fenf5olfa6nrtpj7ch6vbdhngiblhqaml3zlrbx4@fqf46sgckoay>
-References: <20250909041954.1626914-1-coxu@redhat.com>
- <5aeecf1aa6eff8ae0ea0a9e95d5df79aee338b32.camel@linux.ibm.com>
- <r3himk4z2aiyqsjstlpnda4wafeo7i4oum3n2dbvnasmtep5ex@zqodcpjmyx5b>
- <cbcbdb3e4aed17f387ae1d357906796551e2f470.camel@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="pa25DMFT"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X6Cy6H4muorEj0Wxrskgzi13KGdoazaa65eqhl51aH/1oCrTgNBlXBz/zJ0xGcxcUWUlJx6jnoNEdxb43Z2SHds11dERR54qY6Agj1sLvR2svEQ5I0hEJBhAP8DDRi2WDFmnLn+icaSJqLLurDwVxF5+4VBjMtyyy4zMVw3kD60T9TpC02t9uJpED6TdNlYCaJ8vQ6opZbMEEIwHO4JDLA3LQ/OJ47liL6ecL2LnmTRtiFgC+jYj87V5xyr229L130Wu7Yo1lHbKGwvjN84CZp8//EKEC/wWRkQEGi89eTWUPW44EUbVA1Gg0TqxHm7q8Eta6ByhHMUzY6TNKfeqUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n9lQFLoS0N8Q++E76fA6tXTQUK33lLUbA3h4oT8sN6Q=;
+ b=w2O5+3YuW5ONArpmEiWqLM9mLJpbpPmf1Y5ds1hKFnG23qbf/GWIsqSkLvWp+7zETAiIizZMhE4B9HKsDIM3rNAsiE8++kYnxy+pUUb0tPaW3vbpEXW6jiYfpKBGdRAotMfH2XyiTSJaDvnZ5ft68wtQjFNWADbjKSHEynLj4H3ma8V6FHmCTivSJTDsC3RNX2p7EbPdcWXGsqVU8X4uVkr+8EGzihFCL+3qgWbaHz3f/7dblyTWF1iGsRPHkX561Uv+Pc+okE6JlJeZZEUOxds4++l6LJrxH0aPl6WDJAs7nTEyTmYGm9FBDKFSWL4OU+453TfrgvKf+5PabTWHrQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n9lQFLoS0N8Q++E76fA6tXTQUK33lLUbA3h4oT8sN6Q=;
+ b=pa25DMFTi6brVQC6MhAT9gaibqJ6Rl0NTulsTA5JamXSGcnq1xiKej/ZUTF5sp+g1Nrk8w4KsN7vHJXlh5OKe+YsLvWc5Z5yO6aIVL/rf+bqLjKfQoUuMpxgyqya+pzOrmn8EhfsTVSyquSg13SSAihgQnylLWIbCr/uw6gVvGFM3wHMkdzneNhIgZ02vglLkVzifKuaRG1eVZQtEPijsTSUiqQ3pxzsneXWatyKC4iY0hoAzzmZdjcOwpSZwo8BXg7cGL/GIZFngHS2fauRM4j6/xMqN9lA+lN0ii3NknTbuHScslgRlRIwcFO1ltGCwR4D8M/2K4js3PNx8BxAjw==
+Received: from VI1PR02MB3952.eurprd02.prod.outlook.com (2603:10a6:803:85::14)
+ by DB9PR02MB8394.eurprd02.prod.outlook.com (2603:10a6:10:399::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
+ 2025 09:57:09 +0000
+Received: from VI1PR02MB3952.eurprd02.prod.outlook.com
+ ([fe80::60e5:4de0:ff18:2fb1]) by VI1PR02MB3952.eurprd02.prod.outlook.com
+ ([fe80::60e5:4de0:ff18:2fb1%3]) with mapi id 15.20.9160.013; Tue, 30 Sep 2025
+ 09:57:09 +0000
+From: David Binderman <dcb314@hotmail.com>
+To: "mic@digikod.net" <mic@digikod.net>, "gnoack@google.com"
+	<gnoack@google.com>, "shuah@kernel.org" <shuah@kernel.org>,
+	"linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: linux-6.17/tools/testing/selftests/landlock/fs_test.c:5631: Test for
+ pointer < 0 ?
+Thread-Topic: linux-6.17/tools/testing/selftests/landlock/fs_test.c:5631: Test
+ for pointer < 0 ?
+Thread-Index: AQHcMe9e3zKSXSb3ZkGRzpwSx6EO7w==
+Date: Tue, 30 Sep 2025 09:57:09 +0000
+Message-ID:
+ <VI1PR02MB395245DCA7CA4B6DEA15F1ED9C1AA@VI1PR02MB3952.eurprd02.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: VI1PR02MB3952:EE_|DB9PR02MB8394:EE_
+x-ms-office365-filtering-correlation-id: f2859f4b-c13c-496b-1b1b-08de0007b88a
+x-ms-exchange-slblob-mailprops:
+ gMiuAN0LASJErQlHnJTyv53e9/qVxipOC2B/vOl1oUuFWa1AWqHcIwS/OCqkqB/z2nfS7xtCT4M70wxPF4FJUju3zVHA6S6BT1uHFItDMTtMWNt72Ml6mRh5aNPaxfLWxPCDE3nUq3ZpDa1ysAlp69ex5NwM07qt0OWetN8LEknfVJA5w7Tgm12j0ifZ6LuiMpEDDNQk/POtWIFuzBSYpRofx105SQPD+lj78cn6qxAhxr/wx3sDyd9YARaSuvmjzsi4UTHLzoJsWaiZnKBPGY8ZsjGpKWLZLO0ETar/Gm8y7s2whEy0Ez6tO8OdV09v5aJhbs5MegeIr1XjOKGfx1oEq4A21kp6zmpVLBWXozWp8o29xOPi6qqbWsBcxCMreq1fimKcJ5jdlE4goff6UJt36ukwD6XRPwD5Tf0RNb21zil4a41jC7QAnNvD5E9sPxHxvQWvFQud/F7T5G/rZaffOnaUUmSobNlMWAyuolsKjj14yWQE0jYXogvAd8kJkElBCOX/v1htSc9tvk3SMuR63/+tUMP2D0BO7AaJkqQQJVHVjGBC6fKk6zqlzlbK8MRSAhyP7mEHBq/jYnF8RfllqCAo0H0yElQmxUu6ni/pRnCyLlepsMywQGeMu1BXqfRRMgyWz7TOJ9EYpwwP/qeipdKORzPrwxKFPImntNkV+eJ2BPWHxo80yjP6wya5xFOpqcjBC8xC9/xLFy9SvA==
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|12121999013|15080799012|461199028|31061999003|41001999006|15030799006|19110799012|8062599012|8060799015|40105399003|53005399003|440099028|3412199025|102099032|21999032;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?flLjrfyDflR+uohu6QG7mrjHv1SQ1laEZBV5W8CpXnldm8nYfZhdcZR1iW?=
+ =?iso-8859-1?Q?nUSHco7UCkaSrBgvCs6vj1zOnzqu2FcTUGrayR1g68yZM1hPDwpE8Y93Qs?=
+ =?iso-8859-1?Q?t5OExEJjvaFpQCRI9I34qDQkOik7zGt0yql73Xen/7CWQ96TQaOa+iWiRr?=
+ =?iso-8859-1?Q?8TZUIOtE7zJnoI4thk96RX9oIcA3khw8IqMzPlBuzHdoW+Qx/DygPSO7xO?=
+ =?iso-8859-1?Q?t5Kg/VphIYrNmXSu8pRSXdxIrFtB8qBaPlO7N04DQHAjQkiraGj3xREzXD?=
+ =?iso-8859-1?Q?qXLv8aIGc37n6cOcWCxrvpG05z6rFojsupR5CKveQx+MOCSqhN1zxOZM92?=
+ =?iso-8859-1?Q?hiS6s880jpknmBfk6I24pSu+D0tmgAxXDdv6QaVqX0+tqxKquoQtmZO9wj?=
+ =?iso-8859-1?Q?HUwkUbm9g5sTtPEDWF4LKxqyiRz+gGdfkaziGOQsIyW9/qzuJhLNY+5ZDG?=
+ =?iso-8859-1?Q?OeWzt2mFLcev90DGcMHQrrcy7NVvR7izMCNzJX2yszaWTprsTcvpv3mcNE?=
+ =?iso-8859-1?Q?A2B9R3IG6IVkCEOJgLCICESr3257Q50fKUIdbyz19ZIugve21RVMz9wS3N?=
+ =?iso-8859-1?Q?LB71vILI1KFoTxBlkrRhkZjbRF10wY+N5MOXYFJeRxr++p0ENvpH9v+lSi?=
+ =?iso-8859-1?Q?G1HLsdThlVTWdxNvnOfdtXXv3Uc2eGQpZW3uDH2HeGyQ3UlLb+xlE/CXKv?=
+ =?iso-8859-1?Q?kNeo3VsWB3WmUgZOG29Gm6b8XkmpjqRVPMMn8l3WbnzKRkRJIfx/wD0dNR?=
+ =?iso-8859-1?Q?JEZurodHS83WS/uao4kaBxleJWuyNwFCZWlwG0aml6EDQB221zN+fZAhFW?=
+ =?iso-8859-1?Q?pJr26WDukDext3P1FodWB15hIEHqehmfL1bQFLQ2D6ZQVld9IHcM6V30Xs?=
+ =?iso-8859-1?Q?nYk2jgMg6G17oR0U944rCdJNyrOE4ixunCDatSAt0lQhIdWtwmjardTA8w?=
+ =?iso-8859-1?Q?9vgneIU8Mj5sKbazAMtLU+tcN8beGSoUVN+aFmaQJyzHjhvx+w81vHkT/s?=
+ =?iso-8859-1?Q?hPCSijoaZqo18qaGRdShcERR1hEMvLhmxkVu5lsFwthtHQbGxRee94pY67?=
+ =?iso-8859-1?Q?lLNaSvFbqLiT2RChmbXOTRXAUyW1ebc8oezMLGZmNTOEPtkZtsPwoIxMmC?=
+ =?iso-8859-1?Q?HiOkGaHOuOC0GfZsjf7zwQ9ZSbIhjFATes8znQs47MeeZcBLjSXVXSZ/5Y?=
+ =?iso-8859-1?Q?haXI1tX6x+h4bD5rYWwgyyKs8S2W0ZUyNN/IrzqjV4wfmbZgcqn1rjeiBS?=
+ =?iso-8859-1?Q?jFCIZ/Iz7clTK7RNhk1QAjYhj3OvkknsPsc2VR0jeA88gLV+dX1ZdHv9fR?=
+ =?iso-8859-1?Q?t3b4tqmFniJbZKVrqPoONjuMkg=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?EzJe71Nu24u7uHAF5CP5eJv4zH0s3fRHt415WmP+nMegvUlJqRF9vDeqgr?=
+ =?iso-8859-1?Q?pRBujFgylXkfBA6vdiP8KeW1/erx8Qz7/lD3OE6xncIZg59HufBEXenTrR?=
+ =?iso-8859-1?Q?J6YbCzHyGNW8zanHTMEN7rWKzRwv/B734OyY5AVj62azucJbC3dXEf982W?=
+ =?iso-8859-1?Q?KhhhcYZMQc7/ppQtX2XSeEn7sVys6sfWB6LpUTO6ITcx8gGaXJm+L0YqLD?=
+ =?iso-8859-1?Q?oiw0MX0+J6jRR0n90YsH9e3HtdaQWxPrQafGQ58ZEuIN+C/1yi8KAe5VAP?=
+ =?iso-8859-1?Q?Y/549Q0WujWE1pu41aoexSF8asMJYnZ/9EXKoQzqKZweEfqsoiX+FoXMeZ?=
+ =?iso-8859-1?Q?ZssPZW/vpRUr+/t2PC4GthVFykXfO7qKkut9Cs1i30r0JChzDertvCXQwn?=
+ =?iso-8859-1?Q?l2W2OJuj1fHJeor37rsc5iukjWkWE08tXYuHBq0CLPHSW27MAdYujn08mI?=
+ =?iso-8859-1?Q?gSjA7jCmEpQ+o0ppwsrKwMvtsPpO4zxXpmU0WVF2+GR4CLR2STQv42/kQS?=
+ =?iso-8859-1?Q?Mh8C0UYewlmZrAWHgrh0FdRmcYFHDr/41Fv9yZxUUXNuNwyowKGtYmW5fv?=
+ =?iso-8859-1?Q?31KIO7yNwfan6aFSW+Wh09qpF2D/oJa+BOROcEDrwcyeWZs2no2fCdGZrd?=
+ =?iso-8859-1?Q?QF1OOHucqeZ+i+pnxY3jRFcHW9l6B+UqhzA+k+MW2sbRW1zgAUwVhcOWjw?=
+ =?iso-8859-1?Q?qK9npcl/rbLhlfCx8AWTTTSNrLOmkpm+BwQSBDxG0T0dIDA/W2EnUoMwED?=
+ =?iso-8859-1?Q?ifrcaEl+7/c33O7N+wF0bTRQCEjY1EbQgNp3OaAAHHtXQPQIW1sNQUXZ0k?=
+ =?iso-8859-1?Q?PRZyNhrJlmkNWpxwyfJlH44yhvrJZWjX9LRo8SByA6qq/Vj7Qp0csrzMnT?=
+ =?iso-8859-1?Q?JVIXfe6DT0h96R6vpsRVJLrwJJ7bRDBGOksOstFcn3ftsC05x+6AIQIQk7?=
+ =?iso-8859-1?Q?sqLTZXhmPBxSmcyC97M78dgr57D3f+/I0DizMqbb5COBYBIImWiCapsxUp?=
+ =?iso-8859-1?Q?4VhAUgb5V8VCRpCeV2WyGOpP8/uwp/SthAYH+2AnGwGO39bi/Yc+wDFOQd?=
+ =?iso-8859-1?Q?G903q9dSG2nRYdRz3pinbPYn5s0tweJW34LCB4yTpWVtpaGM39W/k3Zbg7?=
+ =?iso-8859-1?Q?Y2JIOjP7WprOhIHGoGeaVVJGTnDoPRfTiLisXeK9Ajjfvsdm6Li4OXdlBJ?=
+ =?iso-8859-1?Q?jHM014+bNv1ep8SAilXADbfqKWMRBWEYD48GhRS/kEqBMafy5cokGyOMMN?=
+ =?iso-8859-1?Q?hQOBBOsFNZrUBh5wC1cA=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <cbcbdb3e4aed17f387ae1d357906796551e2f470.camel@linux.ibm.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: nBSOxfAiB-QwaIoPbQv1Y1Kvli23eIk5giJLIhetegU_1759199715
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
+X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-5faa0.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR02MB3952.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2859f4b-c13c-496b-1b1b-08de0007b88a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2025 09:57:09.3517
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR02MB8394
 
-On Wed, Sep 10, 2025 at 07:15:19AM -0400, Mimi Zohar wrote:
->On Wed, 2025-09-10 at 09:20 +0800, Coiby Xu wrote:
->> On Tue, Sep 09, 2025 at 11:31:20AM -0400, Mimi Zohar wrote:
->> > On Tue, 2025-09-09 at 12:19 +0800, Coiby Xu wrote:
->> > > When both IMA and EVM fix modes are enabled, accessing a file with IMA
->> > > signature won't cause security.evm to be fixed. But this doesn't happen
->> > > to a file with correct IMA hash already set because accessing it will
->> > > cause setting security.ima again which triggers fixing security.evm
->> > > thanks to security_inode_post_setxattr->evm_update_evmxattr.
->> > >
->> > > Let's use the same mechanism to fix security.evm for a file with IMA
->> > > signature.
->> > >
->> > > Signed-off-by: Coiby Xu <coxu@redhat.com>
->> >
->> > Agreed, re-writing the file signature stored as security.ima would force
->> > security.evm to be updated.
->> >
->> > Unfortunately, I'm missing something. ima_appraise_measurement() first verifies
->> > the existing security.evm xattr, before verifying the security.ima xattr.  If
->> > the EVM HMAC fails to verify, it immediately exits ima_appraise_measurement().
->> > security.ima in this case is never verified.
->> >
->> > This patch seems to address the case where the existing security.evm is valid,
->> > but the file signature stored in security.ima is invalid.  (To get to the new
->> > code, the "status" flag is not INTEGRITY_PASS.)  Re-writing the same invalid
->> > file signature would solve an invalid security.evm, but not an invalid IMA file
->> > signature.  What am I missing?
->>
->> Hi, Mimi,
->>
->> Thanks for raising the question! This patch is to address the case where
->> IMA signature is already added but security.evm doesn't yet exist. So
->> EVM HMAC fails to verify but there is no exiting
->> ima_appraise_measurement immediately.
->>
->> And you are right that re-writing an invalid IMA file won't fix an
->> invalid IMA file signature. And even when IMA signature is valid, the
->> verification may fail because the key is missing from .ima keyring. This
->> happens because we need to turn off secure boot to enable fix mode. As a
->> result, CA keys won't be loaded into .machine keyring.
->
->> Btw, if I'm not
->> mistaken, current IMA code assumes we are not supposed to fix IMA file
->> signature.
->
->Right, unlike file hashes, new or the same file signature can be written, but
->cannot be "fixed" in the literal sense, as that would require calculating the
->file hash and signing it with a private key.
-
-Thanks for the confirmation! I also added some code comments to explain
-the IMA iint cache atomic_flags including IMA_DIGSIG in v2.
-
->
->This patch triggers "fixing" the EVM HMAC by re-writing the existing IMA file
->signature.  I assume the same result could be achieved by simply re-installing
->the file signature.  In both cases, the EVM HMAC key needs to exist and be
->loaded.
-
-
--- 
-Best regards,
-Coiby
-
+Hello there,=0A=
+=0A=
+Static analyser cppcheck says:=0A=
+=0A=
+linux-6.17/tools/testing/selftests/landlock/fs_test.c:5631:23: style: A poi=
+nter can not be negative so it is either pointless or an error to check if =
+it is. [pointerLessThanZero]=0A=
+=0A=
+Source code is=0A=
+=0A=
+=A0 =A0 if (log_match_cursor < 0)=0A=
+=A0 =A0 =A0 =A0 return (long long)log_match_cursor;=0A=
+=0A=
+but=0A=
+=0A=
+    char *log_match_cursor =3D log_match;=0A=
+=0A=
+Suggest remove code.=0A=
+=0A=
+Regards=0A=
+=0A=
+David Binderman=0A=
