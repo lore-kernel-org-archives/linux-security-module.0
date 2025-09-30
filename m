@@ -1,100 +1,116 @@
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917401F130B;
-	Tue, 30 Sep 2025 14:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41002FF16B
+	for <linux-security-module@vger.kernel.org>; Tue, 30 Sep 2025 15:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759241847; cv=none; b=sqtYK+4psImqHmYdqVaK0HMwkaQihGRrsjUhVtJPA/AR8Gv118MeKhZw3mxQCZj2b+xMErUy9AAmIpqSXl17exptcq6cokhKVAwr0/kvEhS9gmiMaucGkPLUgeHLrh9QtvCTUrKxG+vTOBK3NKP6a6DNn9nHgCoqPFzcgLlcock=
+	t=1759247309; cv=none; b=ln/nbkVaBHPXyc+LzwEBKSwbh9mnC7MDgr0L2GKWkw75bY/UiOsC3nnCUdzaI5DoqNOjjWWCFXaeYEmLYGKzSmgWJAfeuXjNdd4Ii3Y3PKkHAOXJzMkAQWaVn1tTYPqmAF/yfre9snZRDIlf7UQpBU4VgC3qKxWnx9WeZ9/JtsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759241847; c=relaxed/simple;
-	bh=X52jzvEdaHhj/kDojZhvUNfMXxpYzry+8StGkxPvcJ4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=noyLeXZ8ftQWBl6lF4e1E411Nb44PiY+DO1i9mVhqB3KkjMdD7vvPR7Wy60JLXInSN4oTPk7bxY1c7JwuN5QD+nZ6sUdK8ZK1bNQ/9KL5IAfdQsOpSNu8bKcmit4+olyBsqzR/YEp8xCzbOwfIX3vkYlxsmAPigUbgGiNImAeUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=gqVUjDUv; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+	s=arc-20240116; t=1759247309; c=relaxed/simple;
+	bh=5dk+SBRw24GnWlhj/fQ5DeJlOcYn8lBKeo22Opld+4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o+9sw4DZRe0L8psLaRDADEEFirptx2+x+JEp/ZxW1M+a7imo9q9VFRP7AnablQWw9FOy7PfLjzJpHbUFobaAsf3u0qJFV6/uzO9AY3C3MinbLhY7EgckQtIr2UcNl2MIgFtTkHCAZkuN+dctYroMP1eKqVIqD4WebfwMdg8Knu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WZfrcBfM; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="gqVUjDUv"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1759241843;
-	bh=X52jzvEdaHhj/kDojZhvUNfMXxpYzry+8StGkxPvcJ4=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=gqVUjDUvVGQ+4CEJFSbWPh8xgG8CplOxSdfmtictafAiPlbySmI6XbaKN34rBwLNp
-	 DiQc7Roe2S1JlAyIbBPjDxTzXsm4PygtiK8fIvvMaY4uvtLfGNVyqRlZg9mkslTCNl
-	 vpIWMUu1YNz4V7Y+LUd/OQOswsVrKRTzk9PUBXR8=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id BFCA71C02E9;
-	Tue, 30 Sep 2025 10:17:22 -0400 (EDT)
-Message-ID: <cf3fb265dd70a23d598fc3d68562b4be5355e7ae.camel@HansenPartnership.com>
-Subject: Re: [PATCH v3 01/10] tpm: Cap the number of PCR banks
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Jonathan McDowell <noodles@earth.li>
-Cc: linux-integrity@vger.kernel.org, dpsmith@apertussolutions.com, 
- ross.philipson@oracle.com, Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, Peter Huewe <peterhuewe@gmx.de>,
- Jason Gunthorpe <jgg@ziepe.ca>,  David Howells <dhowells@redhat.com>, Paul
- Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,  "Serge E.
- Hallyn" <serge@hallyn.com>, open list <linux-kernel@vger.kernel.org>, "open
- list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>, "open list:SECURITY
- SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Date: Tue, 30 Sep 2025 10:17:22 -0400
-In-Reply-To: <aNvO0ZsZz_jkmpoi@kernel.org>
-References: <20250929194832.2913286-1-jarkko@kernel.org>
-	 <20250929194832.2913286-2-jarkko@kernel.org> <aNu6W0GagfCliWTx@earth.li>
-	 <aNvO0ZsZz_jkmpoi@kernel.org>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WZfrcBfM"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b4539dddd99so167149066b.1
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Sep 2025 08:48:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1759247306; x=1759852106; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BBG0QiSMVhr1SLCtRL7FqkE9Hmi4p6uP4U2GxU0hK9c=;
+        b=WZfrcBfMs74gZSaxTIAIjQGx7r/uQVg4Aj79uF1mzjCNMKII7emQFYLA4fHh3/WYks
+         Tec9YVhNqipnlqFtMEB9rYM/PWILxieIFFKRIStLpWo3IVEhgsvLN/MQyuhgAKPgBker
+         UG49cB9lui80OeUYLHF/YYxXmvKZfJ/fcyKKQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759247306; x=1759852106;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BBG0QiSMVhr1SLCtRL7FqkE9Hmi4p6uP4U2GxU0hK9c=;
+        b=ebVSQbI2aIEHqLxT2MnUZUjqOOxHiFqFKVjOvg2slJ/Llt4CBqFRqFTpdVVSK30FB+
+         f398+FBEVd6pp+LBrgrZIKQs5S638ti6JH2UuqjpX+rAMBYCP8PP6PMPjz8rfR4PckxE
+         8MAQ4z4Z167cLHOrWV9eIA3kkhDFyohsiswPZHvpS4BmYQG0ZAAIwy0rmU3SIq/QxgD4
+         hI0GT1Pvz1mkZmqjRJvmuUrceEalrfVRSi7dx7FZe4Uix8quywwWTYbLY3Athd+EfhC4
+         8m2dLxgS8ZNPLj6OqUv6bxJybVBP5Jq0mZ+vO2Z99XhH6+Eiku68uXrQdQKffLnEFgQJ
+         0Zpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNJQurYLd2I1KP7Z0JM4ns+i0WNveqdGc1R7Vfg3MY2fG/CQbGoaA2ORohMmuQGLkWOfOoZbgWEeEIg0z64bYm9ppl+dQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5NXLkeaGHmY4qQsvJ8kmjYNGnuEsVDGaO31Sz41mNIDG2aDtD
+	YYFgVruruVs+68fWJFSw9F/R+VT7eWxcXPMqE8QjTAHaSQ97IXxm2/g4I94rM++ZoqrpGGmMlry
+	ObA1yQ5pJmA==
+X-Gm-Gg: ASbGncvmRyJXGK87zHtE3FPeVBFrw2bjSlJIwdks7shrgG/xSVuxSGhTY5IXWtPFHcW
+	jkxWmHO5adO2x257efopaDiLs4kIwscuNJ22DRHnS4HCFVWH3sYOaEf6TGePUqzl7+ygEvrqbOt
+	A9a1A67lUCiaPsFxKcqA8iFgyMvsSjIjlMW4ETG8VCFb7VFyv0DJMkW0QZhaE7/MijygsnfdX2u
+	SJdnHWHpVXGp+pXZC2uhRhaLYGUoyXKhsCtqYoo5XJe5S4Z9ZurkkREx33hGztJU4OyXKU2usDr
+	itDDtPObVTKnNL978zmdr0uZjatWF7QUOFoxIVmtA4sx6W/zDu20d+25ThZA9/4xWbXz6+bFglc
+	JRZpdNpb586sYRD6yZRiOgYdr12OYlhCgsf0rTsiE+5niOp23/7YXxKvqA21bEsWzYG7jDWpd1N
+	TjBQXlMfd5szwHqoTE2vUs
+X-Google-Smtp-Source: AGHT+IHdzKI7BZoGpWzWmnUma/zZS5WOa0kezjwPeVfwn7A6rUhyOcBNQbfWD02c6e44Tv+zbkBykw==
+X-Received: by 2002:a17:907:3c89:b0:b3c:42d4:1c67 with SMTP id a640c23a62f3a-b46e31e02afmr11362066b.23.1759247305749;
+        Tue, 30 Sep 2025 08:48:25 -0700 (PDT)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b353efa4c35sm1165067466b.26.2025.09.30.08.48.24
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 08:48:25 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b3da3b34950so461966966b.3
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Sep 2025 08:48:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXUfN/Ky5e2lzXdPS2EyqXWgUqa4U0I+4L5kVnQXGvGhD2I/ZQxtef2R1CLmsW0Oy2JhpxY0hiBczA7UHLeQBs6vLH3g28=@vger.kernel.org
+X-Received: by 2002:a17:907:da1:b0:b2d:9286:506d with SMTP id
+ a640c23a62f3a-b46e612bed0mr11449766b.38.1759247304449; Tue, 30 Sep 2025
+ 08:48:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <6edbd0e6dc79902981bf9a34e8d41128@paul-moore.com>
+In-Reply-To: <6edbd0e6dc79902981bf9a34e8d41128@paul-moore.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 30 Sep 2025 08:48:07 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgfeAjTNomdTU3gx308O+k5+3STqwBMSqrM7=D8CyEydQ@mail.gmail.com>
+X-Gm-Features: AS18NWDnegEfxl0-IfjBztjUvXWxvekoliLaNtqKY6s9U9XtFR6zj4hxzgx-h1A
+Message-ID: <CAHk-=wgfeAjTNomdTU3gx308O+k5+3STqwBMSqrM7=D8CyEydQ@mail.gmail.com>
+Subject: Re: [GIT PULL] selinux/selinux-pr-20250926
+To: Paul Moore <paul@paul-moore.com>
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2025-09-30 at 15:36 +0300, Jarkko Sakkinen wrote:
-> On Tue, Sep 30, 2025 at 12:09:15PM +0100, Jonathan McDowell wrote:
-> > On Mon, Sep 29, 2025 at 10:48:23PM +0300, Jarkko Sakkinen wrote:
-[...]
-> > > +#define TPM2_MAX_DIGEST_SIZE	SHA512_DIGEST_SIZE
-> > > +#define TPM2_MAX_BANKS		4
-> >=20
-> > Where does this max come from? It matches what I see with swtpm by=20
-> > default (SHA1, SHA2-256, SHA2-384, SHA-512), so I haven't seen
-> > anything that exceeds it myself.
->=20
-> I've never seen hardware TPM that would have more than one or two
-> banks. We can double it to leave some room. This was tested with
-> swtpm defaults.
+On Fri, 26 Sept 2025 at 20:07, Paul Moore <paul@paul-moore.com> wrote:
+>
+> - Remove our use of get_zeroed_page() in sel_read_bool()
+>
+>   Update sel_read_bool() to use a four byte stack buffer instead of a
+>   memory page fetched via get_zeroed_page(), and fix a memory in the
+>   process.
+>
+>   Needless to say we should have done this a long time ago, but it was
+>   in a very old chunk of code that "just worked" and I don't think
+>   anyone had taken a real look at it in many years.
 
-I've got a hardware TPM that comes with 3 banks by default (it's a
-chinese one which has sha1 sha256 and sm2).  swtpm isn't a good
-indicator because it's default allocation is rather pejorative (it
-disables sha1 whereas most field TPMs don't).
+Lol.
 
-However, if you look at how the reference implementation works, the
-user is allowed to define any number of banks they want, up to the
-number of supported hashes.  The only limitation being there can't be
->1 bank for the same hash.  Field TPM implementations are allowed to
-constrain this, but most don't.   The question you should be asking
-here is not how many banks does a particular implementation allow by
-default, but what's the maximum number a user could configure.
+... and when I looked at this, I went "scnprintf for a 4-byte buffer?"
 
-Regards,
+It uses
 
-James
+        len = scnprintf(buffer, sizeof(buffer), "%d %d", ..
 
+and I went "printing two numbers and just four bytes" before I noticed
+that they are just booleans and so 'len' always is just 3.
+
+It literally could have done
+
+        char buffer[] = { '0' + !a, ' ', '0' + !!b, 0 };
+
+instead, and I guess a compiler could do that transformation in a perfect world.
+
+But this isn't exactly performance-crticial, so nobody cares.
+
+                Linus
