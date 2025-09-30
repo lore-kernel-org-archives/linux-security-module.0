@@ -1,263 +1,261 @@
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8B025228B
-	for <linux-security-module@vger.kernel.org>; Tue, 30 Sep 2025 12:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D525E21D3E4
+	for <linux-security-module@vger.kernel.org>; Tue, 30 Sep 2025 12:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759235520; cv=none; b=YFmCR4MVuMxLNUAizIJMa3fFyTGaxFcFhCYcN94DbWtImcpWn6/QIZxKzJ0vpizANLxuJYqwEDZ2B/KjwLPBiDfSjHIliU8dDsQIRLNTQ9g2FB1td4m3rYKIymXPZHofuKQ8C6MNQ1Tp2o2sr0prSVUIuak5PTUt0Nm98yCZXUI=
+	t=1759235550; cv=none; b=cVZ1VSDoNNkibgPJmwcXxcDSSHzV1jiIbnAreleYSX09ekM4hwxUQNQpyLXzI4UqX6gaVsgp5ukyFjZpe0uC7gutkZsX7pT8XIHOZEwl4GY7Gi8anRWhp5G5aLFETd/7QWPrSvj5MIP34ocexzBzgSh92xW4e8kd6owGm4KaVVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759235520; c=relaxed/simple;
-	bh=zrNBAPbhmiQnUsjgu/rL9kusOKy4YihURGPUSO2uMGw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TfbHV/6JW92lf124nVHV43d51fkeyXQkwAqk7a2Mzcj6ogE5NwRrcEmFO1MUPiR2ql4WzWkw2wAGuXeXAcymuELvy9iQiPpQlTCrkrmH/UJik1evvWh6oS8H4BK7TVqSFgztkcVdSOUEDRgPjwkxa3mVeM5vp/UCfDCz/VWqllU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=FmwOs9dd; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+	s=arc-20240116; t=1759235550; c=relaxed/simple;
+	bh=fqp7acpuolAbT+AqZsCyM9aF2dPGekT7fdiy/ZKIgbM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M12I/xEwmT75DXP8QZSPQ85bvFyuvwwWGa/pBdRymaZ4PZInyvZLhC2ergMbboWYse1kmYpcnH/LQfy9ORQdymJ6SEZmqEaj1HnL+4BzjDsSlsnYBJFfu4x85gMzyqrPAJdtg3HZCgUJYWtdmXWpl0Kr6xjj+rjkTavtHqgouME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ie7ioacx; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="FmwOs9dd"
-From: Konstantin Andreev <andreev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1759235513;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6gbyQ95DIQAIGxuF13O+hhpNUZYlT3eYdIg1M/ClE7Q=;
-	b=FmwOs9ddnb1lSmnf8cfZjNxh2RSy+Pq0qcD+/KEikd8vDqORZgMuJRauT7YmPpOtvhAbAP
-	jzB9oHZfGLBen6psafblQI0+RlrkYpLOHoFnlqUmQTUP5XDGTTOq0C9/cqVb+R4y6Bbrxk
-	5PC9VRlYGbmpeiVlaGnWJO9p5zob9/w=
-To: casey@schaufler-ca.com
-Cc: linux-security-module@vger.kernel.org
-Subject: [PATCH] smack: /smack/doi: accept previously used values
-Date: Tue, 30 Sep 2025 15:31:53 +0300
-Message-ID: <20250930123153.138644-1-andreev@swemel.ru>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ie7ioacx"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-329a41dc2ebso4911357a91.3
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Sep 2025 05:32:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759235548; x=1759840348; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qOxJ/9lGpCQc8m0mg4MKRaSN/2MpGzGVeZfxYipVdUk=;
+        b=Ie7ioacxtx3vfzNwlpfTzKYxxZwi1DKq6nb+z24gx/ZcS8EXasQy+cmk1AWz4epB1/
+         gHPZeGAAzalbp2MGiJqHhP91Ugv0mgfMl2sBg4e/GQv/h82060FPqJ9zLGk0OiH1RAEh
+         zA3UT38rR0lnVZTiTK0aOSmYB/pgpmJ3gmI6jrx+7ZXIkZWGdcrP/j+fGn7EdYHg89MY
+         9nPmXXnGNFZJKAbeG/qQ/ziweFykfu7En9o8k2zOYpFov8S5l5B1zHAGONOc98ks4Cp9
+         V2i4/mKarzb15bqI2cV5ZtFRAeQZnVA7TlGV/2iHgMsoHmmLi9BQ79j8pQizPXpOjzv8
+         wLMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759235548; x=1759840348;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qOxJ/9lGpCQc8m0mg4MKRaSN/2MpGzGVeZfxYipVdUk=;
+        b=Qx5sgGNEKTY3KCjTj+ia6Mvk4muSNTvkFSIlqJ7Bq25ssCe3DxmOK4q51MWmxzKIhM
+         G4SVNJUoY6GJSBtPfptsb6vvHmGEFB6AMwNGIgga3yiGny12Uo9RWJ6g2JDN8/uNGGLw
+         3OAZfcevuwhH33ZtOXkbpfUK2xCeGQ29NBfj3fAVzwY4Fabp7zNQxWXxKY+PwdlJ58fE
+         DrIyZ1U9qK33z88WCz+daAPGceu2tShklov3zbhRa+E9CtEOE025XTzbBaoRNtf7CRYl
+         irwcbrB7uwfVu0F6psjJNHC5AZzq7sekYRTqNOs4PMLxDwmlvFsyddffNi9WSuCkChvf
+         gddQ==
+X-Gm-Message-State: AOJu0YxXdA98j0B5Zor6OnNCHf6VwAUJ6a1K4iRZ9+k616qBy0ygjtxQ
+	dVmiPKzRauVBcVyMUlIbMzsqMAyctppp0fx/0FRMAlkMn9aRVe3G5SAGAfc3ox0q+2KY9r44KmL
+	RmY680GofoJWNnYuFqHHVMjDpywg1VJxZuA==
+X-Gm-Gg: ASbGncvLfA4en4eG3VYiEC61FVz1mahPLfGeJ5HSOVDqT4GavzA73T94/bJWZguKXje
+	XHFvNnmK2F6oE8GL2gXgOSsSeF4CEWuoXn4HUx5WWYUuLseoUhuzW/iao1R4CCutn1kNdhV2/nb
+	SOaRMJpoZCJhsyXkp+xTI05jkvlb3zQqt6aiJpFhoaYOOxPh4FOLYhAq3BKOv0vHPFQM6Kv2mrZ
+	jneL3ClTgPPhkDc4u9yJchqOBX83Yo=
+X-Google-Smtp-Source: AGHT+IFplJlaTt+I8crzbv+2pr99EXB8kLNQeMnUmk07dqlDuJMgVWZw4bFNOx9SbY0ZC37nK92J//6698z+x2yk9kE=
+X-Received: by 2002:a17:90b:4a03:b0:327:9e88:7714 with SMTP id
+ 98e67ed59e1d1-3342a2dce52mr21882854a91.37.1759235545656; Tue, 30 Sep 2025
+ 05:32:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250918135904.9997-2-stephen.smalley.work@gmail.com>
+In-Reply-To: <20250918135904.9997-2-stephen.smalley.work@gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Tue, 30 Sep 2025 08:32:14 -0400
+X-Gm-Features: AS18NWCu90dopyu4ionTWRMmWXqDYurNX6BIW0jP_K3xZ6Ef0jQUJSAOXjKjgSc
+Message-ID: <CAEjxPJ4owvoGxP74KDQqtzHx-o2XtwNvcE-HLEWH31dh77BGNw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] lsm,selinux: introduce LSM_ATTR_UNSHARE and wire
+ it up for SELinux
+To: linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc: paul@paul-moore.com, omosnace@redhat.com, john.johansen@canonical.com, 
+	serge@hallyn.com, casey@schaufler-ca.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Writing to /smack/doi a value that has ever been
-written there in the past disables networking for
-non-ambient labels.
-E.g.
+On Thu, Sep 18, 2025 at 10:07=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> RFC-only, will ultimately split the LSM-only changes to their own
+> patch for submission. I have now tested this with the corresponding
+> selinux userspace change that you can find at
+> https://lore.kernel.org/selinux/20250918135118.9896-2-stephen.smalley.wor=
+k@gmail.com/
+> and also verified that my modified systemd-nspawn still works when
+> starting containers with their own SELinux namespace.
 
-    # cat /smack/doi
-    3
-    # netlabelctl -p cipso list
-    Configured CIPSO mappings (1)
-     DOI value : 3
-       mapping type : PASS_THROUGH
-    # netlabelctl -p map list
-    Configured NetLabel domain mappings (3)
-     domain: "_" (IPv4)
-       protocol: UNLABELED
-     domain: DEFAULT (IPv4)
-       protocol: CIPSO, DOI = 3
-     domain: DEFAULT (IPv6)
-       protocol: UNLABELED
+As it turns out, I had NOT tested this with my modified systemd-nspawn
+- it was picking up the wrong libselinux and fails if I used the one
+updated to call the lsm_set_self_attr() system call instead of the
+/sys/fs/selinux/unshare interface. This was due to systemd-nspawn
+setting seccomp filters prior to the point at which it was doing the
+unshare and lsm_set_self_attr() not being included in the allowlist. I
+fixed this by moving the selinux_unshare() call before setting the
+seccomp filters and that solved the problem. Updated systemd patches
+pushed to my systemd fork for anyone trying this themselves.
 
-    # cat /smack/ambient
-    _
-    # cat /proc/$$/attr/smack/current
-    _
-    # ping -c1 10.1.95.12
-    64 bytes from 10.1.95.12: icmp_seq=1 ttl=64 time=0.964 ms
-    # echo foo >/proc/$$/attr/smack/current
-    # ping -c1 10.1.95.12
-    64 bytes from 10.1.95.12: icmp_seq=1 ttl=64 time=0.956 ms
-    unknown option 86
 
-    # echo 4 >/smack/doi
-    # echo 3 >/smack/doi
-!>  [  214.050395] smk_cipso_doi:691 cipso add rc = -17
-    # echo 3 >/smack/doi
-!>  [  249.402261] smk_cipso_doi:678 remove rc = -2
-!>  [  249.402261] smk_cipso_doi:691 cipso add rc = -17
-
-    # ping -c1 10.1.95.12
-!!> ping: 10.1.95.12: Address family for hostname not supported
-
-    # echo _ >/proc/$$/attr/smack/current
-    # ping -c1 10.1.95.12
-    64 bytes from 10.1.95.12: icmp_seq=1 ttl=64 time=0.617 ms
-
-This happens because Smack keeps decommissioned DOIs,
-fails to re-add them, and consequently refuses to add
-the “default” domain map:
-
-    # netlabelctl -p cipso list
-    Configured CIPSO mappings (2)
-     DOI value : 3
-       mapping type : PASS_THROUGH
-     DOI value : 4
-       mapping type : PASS_THROUGH
-    # netlabelctl -p map list
-    Configured NetLabel domain mappings (2)
-     domain: "_" (IPv4)
-       protocol: UNLABELED
-!>  (no ipv4 map for default domain here)
-     domain: DEFAULT (IPv6)
-       protocol: UNLABELED
-
-Fix by clearing decommissioned DOI definitions and
-serializing concurrent DOI updates with a new lock.
-
-Also:
-- allow /smack/doi to live unconfigured, since
-  adding a map (netlbl_cfg_cipsov4_map_add) may fail.
-  CIPSO_V4_DOI_UNKNOWN(0) indicates the unconfigured DOI
-- add new DOI before removing the old default map,
-  so the old map remains if the add fails
-
-(2008-02-04, Casey Schaufler)
-Fixes: e114e473771c ("Smack: Simplified Mandatory Access Control Kernel")
-
-Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
----
-The patch is verified to work on top of "smack: /smack/doi must be > 0" patch.
-Link: https://lore.kernel.org/linux-security-module/20250930121602.138337-1-andreev@swemel.ru
-
- security/smack/smackfs.c | 71 +++++++++++++++++++++++++---------------
- 1 file changed, 45 insertions(+), 26 deletions(-)
-
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 316c2ea401e8..d27d9140dda2 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -70,6 +70,7 @@ enum smk_inos {
- static DEFINE_MUTEX(smack_cipso_lock);
- static DEFINE_MUTEX(smack_ambient_lock);
- static DEFINE_MUTEX(smk_net4addr_lock);
-+static DEFINE_MUTEX(smk_cipso_doi_lock);
- #if IS_ENABLED(CONFIG_IPV6)
- static DEFINE_MUTEX(smk_net6addr_lock);
- #endif /* CONFIG_IPV6 */
-@@ -141,7 +142,7 @@ struct smack_parsed_rule {
- 	int			smk_access2;
- };
- 
--static u32 smk_cipso_doi_value = SMACK_CIPSO_DOI_DEFAULT;
-+static u32 smk_cipso_doi_value = CIPSO_V4_DOI_UNKNOWN;
- 
- /*
-  * Values for parsing cipso rules
-@@ -663,43 +664,60 @@ static const struct file_operations smk_load_ops = {
- };
- 
- /**
-- * smk_cipso_doi - initialize the CIPSO domain
-+ * smk_cipso_doi - set netlabel maps
-+ * @ndoi: new value for our CIPSO DOI
-+ * @gfp_flags: kmalloc allocation context
-  */
--static void smk_cipso_doi(void)
-+static int
-+smk_cipso_doi(u32 ndoi, gfp_t gfp_flags)
- {
--	int rc;
-+	int rc = 0;
- 	struct cipso_v4_doi *doip;
- 	struct netlbl_audit nai;
- 
-+	mutex_lock(&smk_cipso_doi_lock);
-+
-+	if (smk_cipso_doi_value == ndoi)
-+		goto clr_doi_lock;
-+
- 	smk_netlabel_audit_set(&nai);
- 
--	rc = netlbl_cfg_map_del(NULL, PF_INET, NULL, NULL, &nai);
--	if (rc != 0)
--		printk(KERN_WARNING "%s:%d remove rc = %d\n",
--		       __func__, __LINE__, rc);
--
--	doip = kmalloc(sizeof(struct cipso_v4_doi), GFP_KERNEL | __GFP_NOFAIL);
-+	doip = kmalloc(sizeof(struct cipso_v4_doi), gfp_flags);
-+	if (!doip) {
-+		rc = -ENOMEM;
-+		goto clr_doi_lock;
-+	}
- 	doip->map.std = NULL;
--	doip->doi = smk_cipso_doi_value;
-+	doip->doi = ndoi;
- 	doip->type = CIPSO_V4_MAP_PASS;
- 	doip->tags[0] = CIPSO_V4_TAG_RBITMAP;
- 	for (rc = 1; rc < CIPSO_V4_TAG_MAXCNT; rc++)
- 		doip->tags[rc] = CIPSO_V4_TAG_INVALID;
- 
- 	rc = netlbl_cfg_cipsov4_add(doip, &nai);
--	if (rc != 0) {
--		printk(KERN_WARNING "%s:%d cipso add rc = %d\n",
--		       __func__, __LINE__, rc);
-+	if (rc) {
- 		kfree(doip);
--		return;
-+		goto clr_doi_lock;
- 	}
--	rc = netlbl_cfg_cipsov4_map_add(doip->doi, NULL, NULL, NULL, &nai);
--	if (rc != 0) {
--		printk(KERN_WARNING "%s:%d map add rc = %d\n",
--		       __func__, __LINE__, rc);
--		netlbl_cfg_cipsov4_del(doip->doi, &nai);
--		return;
-+
-+	if (smk_cipso_doi_value != CIPSO_V4_DOI_UNKNOWN) {
-+		rc = netlbl_cfg_map_del(NULL, PF_INET, NULL, NULL, &nai);
-+		if (rc && rc != -ENOENT)
-+			goto clr_ndoi_def;
-+
-+		netlbl_cfg_cipsov4_del(smk_cipso_doi_value, &nai);
- 	}
-+
-+	rc = netlbl_cfg_cipsov4_map_add(ndoi, NULL, NULL, NULL, &nai);
-+	if (rc) {
-+		smk_cipso_doi_value = CIPSO_V4_DOI_UNKNOWN; // no default map
-+clr_ndoi_def:	netlbl_cfg_cipsov4_del(ndoi, &nai);
-+	} else
-+		smk_cipso_doi_value = ndoi;
-+
-+clr_doi_lock:
-+	mutex_unlock(&smk_cipso_doi_lock);
-+	return rc;
- }
- 
- /**
-@@ -1599,11 +1617,8 @@ static ssize_t smk_write_doi(struct file *file, const char __user *buf,
- 
- 	if (u == CIPSO_V4_DOI_UNKNOWN || u > U32_MAX)
- 		return -EINVAL;
--	smk_cipso_doi_value = u;
- 
--	smk_cipso_doi();
--
--	return count;
-+	return smk_cipso_doi(u, GFP_KERNEL) ? : count;
- }
- 
- static const struct file_operations smk_doi_ops = {
-@@ -2984,6 +2999,7 @@ static int __init init_smk_fs(void)
- {
- 	int err;
- 	int rc;
-+	struct netlbl_audit nai;
- 
- 	if (smack_enabled == 0)
- 		return 0;
-@@ -3002,7 +3018,10 @@ static int __init init_smk_fs(void)
- 		}
- 	}
- 
--	smk_cipso_doi();
-+	smk_netlabel_audit_set(&nai);
-+	(void) netlbl_cfg_map_del(NULL, PF_INET, NULL, NULL, &nai);
-+	(void) smk_cipso_doi(SMACK_CIPSO_DOI_DEFAULT,
-+			     GFP_KERNEL | __GFP_NOFAIL);
- 	smk_unlbl_ambient(NULL);
- 
- 	rc = smack_populate_secattr(&smack_known_floor);
--- 
-2.43.0
-
+>
+> This defines a new LSM_ATTR_UNSHARE attribute for the
+> lsm_set_self_attr(2) system call and wires it up for SELinux to invoke
+> the underlying function for unsharing the SELinux namespace. As with
+> the selinuxfs interface, this immediately unshares the SELinux
+> namespace of the current process just like an unshare(2) system call
+> would do for other namespaces. I have not yet explored the
+> alternatives of deferring the unshare to the next unshare(2),
+> clone(2), or execve(2) call and would want to first confirm that doing
+> so does not introduce any issues in the kernel or make it harder to
+> integrate with existing container runtimes.
+>
+> Differences between this syscall interface and the selinuxfs interface
+> that need discussion before moving forward:
+>
+> 1. The syscall interface does not currently check any Linux capability
+> or DAC permissions, whereas the selinuxfs interface can only be set by
+> uid-0 or CAP_DAC_OVERRIDE processes. We need to decide what if any
+> capability or DAC check should apply to this syscall interface and if
+> any, add the checks to either the LSM framework code or to the SELinux
+> hook function.
+>
+> Pros: Checking a capability or DAC permissions prevents misuse of this
+> interface by unprivileged processes, particularly on systems with
+> policies that do not yet define any of the new SELinux permissions
+> introduced for controlling this operation. This is a potential concern
+> on Linux distributions that do not tightly coordinate kernel updates
+> with policy updates (or where users may choose to deploy upstream
+> kernels on their own), but not on Android.
+>
+> Cons: Checking a capability or DAC permissions requires any process
+> that uses this facility to have the corresponding capability or
+> permissions, which might otherwise be unnecessary and create
+> additional risks. This is less likely if we use a capability already
+> required by container runtimes and similar components that might
+> leverage this facility for unsharing SELinux namespaces.
+>
+> 2. The syscall interface checks a new SELinux unshare_selinuxns
+> permission in the process2 class between the task SID and itself,
+> similar to other checks for setting process attributes. This means
+> that:
+>     allow domain self:process2 *; -or-
+>     allow domain self:process2 ~anything-other-than-unshare_selinuxns; -o=
+r-
+>     allow domain self:process2 unshare_selinuxns;
+> would allow a process to unshare its SELinux namespace.
+>
+> The selinuxfs interface checks a new unshare permission in the
+> security class between the task SID and the security initial SID,
+> likewise similar to other checks for setting selinuxfs attributes.
+> This means that:
+>     allow domain security_t:security *; -or-
+>     allow domain security_t:security ~anything-other-than-unshare; -or-
+>     allow domain security_t:security unshare;
+> would allow a process to unshare its SELinux namespace.
+>
+> Technically, the selinuxfs interface also currently requires open and
+> write access to the selinuxfs node; hence:
+>     allow domain security_t:file { open write };
+> is also required for the selinuxfs interface.
+>
+> We need to decide what we want the SELinux check(s) to be for the
+> syscall and whether it should be more like the former (process
+> attributes) or more like the latter (security policy settings). Note
+> that the permission name itself is unimportant here and only differs
+> because it seemed less evident in the process2 class that we are
+> talking about a SELinux namespace otherwise.
+>
+> Regardless, either form of allow rule can be prohibited in policies
+> via neverallow rules on systems that enforce their usage
+> (e.g. Android, not necessarily on Linux distributions).
+>
+> 3. The selinuxfs interface currently offers more functionality than I
+> have implemented here for the sycall interface, including:
+>
+> a) the ability to read the selinuxfs node to see if your namespace has
+> been unshared, which should be easily implementable via
+> lsm_get_self_attr(2).  However, questions remain as to when that
+> should return 1 versus 0 (currently returns 1 whenever your namespace
+> is NOT the initial SELinux namespace, useful for the testsuite to
+> detect it is in a child, but could instead be reset to 0 by a
+> subsequent policy load to indicate completion of the setup of the
+> namespace, thus hiding from child processes that they are in a child
+> namespace once its policy has been loaded).
+>
+> b) the abilities to get and set the maximum number of SELinux
+> namespaces (via a /sys/fs/selinux/maxns node) and to get and set the
+> maximum depth for SELinux namespaces (via a /sys/fs/selinux/maxnsdepth
+> node). These could be left in selinuxfs or migrated to some other LSM
+> management APIs since they are global in scope, not per-process
+> attributes.
+>
+> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> ---
+> v2 fixes a typo (PROCESS->PROCESS2) and is now tested.
+>
+>  include/uapi/linux/lsm.h            | 1 +
+>  security/selinux/hooks.c            | 8 ++++++++
+>  security/selinux/include/classmap.h | 4 +++-
+>  3 files changed, 12 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
+> index 938593dfd5da..fb1b4a8aa639 100644
+> --- a/include/uapi/linux/lsm.h
+> +++ b/include/uapi/linux/lsm.h
+> @@ -83,6 +83,7 @@ struct lsm_ctx {
+>  #define LSM_ATTR_KEYCREATE     103
+>  #define LSM_ATTR_PREV          104
+>  #define LSM_ATTR_SOCKCREATE    105
+> +#define LSM_ATTR_UNSHARE       106
+>
+>  /*
+>   * LSM_FLAG_XXX definitions identify special handling instructions
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index f48483383d6e..1e34a16b7954 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -6816,6 +6816,10 @@ static int selinux_lsm_setattr(u64 attr, void *val=
+ue, size_t size)
+>                 error =3D avc_has_perm(state, mysid, mysid, SECCLASS_PROC=
+ESS,
+>                                      PROCESS__SETCURRENT, NULL);
+>                 break;
+> +       case LSM_ATTR_UNSHARE:
+> +               error =3D avc_has_perm(state, mysid, mysid, SECCLASS_PROC=
+ESS2,
+> +                                    PROCESS2__UNSHARE_SELINUXNS, NULL);
+> +               break;
+>         default:
+>                 error =3D -EOPNOTSUPP;
+>                 break;
+> @@ -6927,6 +6931,10 @@ static int selinux_lsm_setattr(u64 attr, void *val=
+ue, size_t size)
+>                 }
+>
+>                 tsec->sid =3D sid;
+> +       } else if (attr =3D=3D LSM_ATTR_UNSHARE) {
+> +               error =3D selinux_state_create(new);
+> +               if (error)
+> +                       goto abort_change;
+>         } else {
+>                 error =3D -EINVAL;
+>                 goto abort_change;
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/inclu=
+de/classmap.h
+> index be52ebb6b94a..07fe316308cd 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -60,7 +60,9 @@ const struct security_class_mapping secclass_map[] =3D =
+{
+>             "siginh",       "setrlimit",     "rlimitinh",   "dyntransitio=
+n",
+>             "setcurrent",   "execmem",       "execstack",   "execheap",
+>             "setkeycreate", "setsockcreate", "getrlimit",   NULL } },
+> -       { "process2", { "nnp_transition", "nosuid_transition", NULL } },
+> +       { "process2",
+> +         { "nnp_transition", "nosuid_transition", "unshare_selinuxns",
+> +           NULL } },
+>         { "system",
+>           { "ipc_info", "syslog_read", "syslog_mod", "syslog_console",
+>             "module_request", "module_load", "firmware_load",
+> --
+> 2.50.1
+>
