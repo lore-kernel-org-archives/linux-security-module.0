@@ -1,139 +1,190 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E872F7AD4
-	for <linux-security-module@vger.kernel.org>; Tue, 30 Sep 2025 12:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2C31B4236
+	for <linux-security-module@vger.kernel.org>; Tue, 30 Sep 2025 12:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759234296; cv=none; b=fBLbQXD+s9KXo4SBUoI5HjiPwYha+Z2Q+3n0F3ENSX5sjYPV1XaprhMdyNykEKWz5VRD02D78Q8M6o2m0hJ74LMgNge1ei/JPTTclNmXcV4AHJaoKEdhAdlE1VZqIoCUpJmDCaQlek/pa3bXoOEWBeuKas1DJOScC3h329wCO8E=
+	t=1759234368; cv=none; b=rjsEqT8zk05RQMiSyFZW/u2bQmlNXkMgD4vm8W/Q3E0YgLGBdw0pnvVbhKwR0VyTlWV/9+e0Ix5PH4E6DmGh0nF16LSOS9n7At7ULgAojhLAGFon/sd8W7y9MiicL/txLMNa7pfr1jAXx+mrIqrTVsQsXgVpMNrrK1nN0fvuXr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759234296; c=relaxed/simple;
-	bh=KD8kMWmVHWif/IAatoSGDNampJhPM/CNfGdxYnMKEMc=;
+	s=arc-20240116; t=1759234368; c=relaxed/simple;
+	bh=8hAe6inhz0E/QWnBDuNMlbdqmEfM/Hzecqaiue2MllA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=BK2AaAEjXN40t0YI5bL3llqXOy2a+320bxaZp733MjOoYyo+gww8MW1QchQT5D/r6GJerYDCPzKgr6awkDLL/0L8MKL/icT9HbqQ7sFfXOS5mDBuaLNOXCPulCs6x9ylUMZR2hsyXaMmf4wJcTlZFFIVT3l+WGcw50t8FNbk4Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=De2HCYpu; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type:Content-Disposition; b=XVrfT95I/qQHYcYP1WbRn+s4PgcFV88Dvs/TzqpLcIqXQU5QEq27HHPxX+CIOc5rxc5MTHSQvRBRXS+RddPIgEU0idt80Lf+fbKw7ygh28sLBXW+5UKILUiri9BCO4j8lZgbdxPfyZrp0BnQnnI4AVZ/old1A5Ql/FI7dVX2KFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A8uMshXc; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="De2HCYpu"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A8uMshXc"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759234294;
+	s=mimecast20190719; t=1759234365;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nYhlOTDpz0Sda3KEKTdInplw8rxwP1Ctg1XIqKxUWtw=;
-	b=De2HCYpuUgr7oGDomhsFLIVb/bTgI9y7RUJU/i1Ka7wxZDRBVgp+2u6cwvL3W4q1125hnW
-	jU0h4Zybm7jPPhUAEGe/PuhnOJ2I7GaodtVudxC5ecYUNL6CtD+ifhX8yGVVuIWTlwPUN9
-	6E87pKQgwyfu2t+Niqv8Q1+BNZBPEXA=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=CWIgSoKL3urKBOhTmtSOXc8Pl4O+FoLwxpjwzaySij8=;
+	b=A8uMshXcz+1FzFgrw+Y+2MiugZhHxwlMOt0KdUlpA9fT1Hje/CmdcqRGS5OYrQb+E7Wc7a
+	T/70IS/9RVEad53cwj2EUZ2b37itzts4eK3sKVYENaglaMXgSWZo4RuyT3TkHAQZvy1Yaw
+	NrvFg5BGdFQYmOQQlBST9uFZEfcttjc=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-664-PRkgNaoFN2ivzhbGm8ASKA-1; Tue, 30 Sep 2025 08:11:32 -0400
-X-MC-Unique: PRkgNaoFN2ivzhbGm8ASKA-1
-X-Mimecast-MFC-AGG-ID: PRkgNaoFN2ivzhbGm8ASKA_1759234291
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-634b661347bso5599968a12.3
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Sep 2025 05:11:32 -0700 (PDT)
+ us-mta-689-QvQQ_9hYMnCVfIA7iOCkew-1; Tue, 30 Sep 2025 08:12:44 -0400
+X-MC-Unique: QvQQ_9hYMnCVfIA7iOCkew-1
+X-Mimecast-MFC-AGG-ID: QvQQ_9hYMnCVfIA7iOCkew_1759234364
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b2f9dc3264bso783879866b.1
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Sep 2025 05:12:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759234291; x=1759839091;
+        d=1e100.net; s=20230601; t=1759234363; x=1759839163;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nYhlOTDpz0Sda3KEKTdInplw8rxwP1Ctg1XIqKxUWtw=;
-        b=gZevLrjFUPu+vfiuvAP4O6FrAUTE4Ri4fVHMAUbevnVCIfq1gr3JEHNfTg2Y5gKL+0
-         iAPfMhX2a0/Lw58gEHvevgXqmXF14u+GDX9A1Czpv+xOQuvC5KjmNH1DhxRrFDOc7urN
-         s00xsb8yf+g/Uk13NBfx6jOM37pTWPtZL6pNzWAyI7xL84AUMwzXrpSOF0KRmoCTa6TQ
-         ZNRUeWZq3r8+teY9jFo4yoKoFZ/F7cNHhoRGkM5/0C8xSOcdDRunQ2hsLGUC3vOEgDwR
-         ZQHlUtSaBEZ+5IAOrmia0lyS7EIXrAd1unnB2BK1xSU58h7INvLlw5t/ojqYT4yd+fLF
-         OGSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiigQPHeX0gqtNR+bbQ+dVPBX9NNm/oHhMOizWHNvGYejdbm6OAlUqz4Ure9aM3+hKe578r1ESAFMqy5ZlNPyHbY0n9f0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJc54p63XEgP39NTxXjs6GwM/cQ2+NGtagnh0MPDiqdxzFVrdm
-	4RQyxTHqjCQ8I1DxXn+7fbkktjgejWqGqckMUWmM/2Jm7/xTJvMdWIWo8tWBY40J9U2OvPQzjlk
-	Un9sd1CqXv1+HBysK38StjrZF4PUrPY3alzzLLm+JqOJs/6Ybrt1O2HcBJ0p79jKTTQh/1EEZ1h
-	+Scg==
-X-Gm-Gg: ASbGncuiw9RiEpxaiQ403mBFPliATEXJ1PWJm48WUZtcREeHjDwcGZ/8YT5Mw3qko3C
-	SbBOO+RnGwp8MmgACmjC7T2T/ZR+tW1wSUMVhxFeoMuyocCLgVKDsYZOAloTJeHHumi18kl9kkB
-	xZctv2Jsrm4Mf0qB9E0+hnaJYjwTezJnpb0scXoNbackqAksh9U3YEb/gdo0FuBnjBpD88j2njm
-	j3JlReYC5qA/FPFphZ1Fkcg+I6uly0fFkDjuvliUTiFAtFtR1Ffjmgr/Rg5cMv4lxKPmQ3h7w19
-	pVektLHlzay5yDvG5BjCqU4nqh7Fn7FBywO6HWet9TRLZZuDVL3ercSGfvtZpGIJtDM0uuoyUHO
-	XOgWL08piuC276hZK1vQGXA==
-X-Received: by 2002:a05:6402:3551:b0:636:23c2:e61f with SMTP id 4fb4d7f45d1cf-63623c2f2d5mr11899894a12.26.1759234291451;
-        Tue, 30 Sep 2025 05:11:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHpBFHlpi6h26vswLogB4lR1OKDkES+l20vuTxXnbWfysRnTRsji62rg1W2cZYzxCghNaMmAA==
-X-Received: by 2002:a05:6402:3551:b0:636:23c2:e61f with SMTP id 4fb4d7f45d1cf-63623c2f2d5mr11899850a12.26.1759234290960;
-        Tue, 30 Sep 2025 05:11:30 -0700 (PDT)
+        bh=CWIgSoKL3urKBOhTmtSOXc8Pl4O+FoLwxpjwzaySij8=;
+        b=K5Gbm13li0KWOimyaxZfGLfq2HPrnhgYdrrDyb3IX9gHMr5pvzy85c4NYhPwM2e9h4
+         m8bU1PnXkCXOvKYoCVdDe+hE6opqc3bkN2BX6dwjVNsI179WDaUaANXAaS988Sp4UTo5
+         7Da7S45bl4O9kqKlxs3a1HKsW/zg8B9nxXS6rKf8+TzGNK+P+z+uARYeCgRfGCUuFfOH
+         g6mIBfcfZxBbzSviGTpDxYYucoTdpggL5kPk/4ydVbyGV2GiG+/EPdbPzRs34SiZ1swo
+         jcRhWQ1UdmufwsVsteEktGObU3PibT44hGoI2/I5S1Ar9IYcdXYc45/z6a+D03G8LjX/
+         6uJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVF6l/l1GFDsRiwLKkdEvq5mV8cw9bTBh8q84miJy33gDWQ+rMQGrM5aIOfQVU7Dbj8NPTNIjdXmBWNptgJMG3RLn3JdEw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR4eY8MgLe6eRhTroq5F4l4t3J1tEe8xxQDnnDFyWKb9L5Ks1B
+	agXPJT2qCRnml1xlg1Eyj77uRzd2kJNc++XD/PJ4kM0q0mSKYNYCe5/Y6snel4iZOVOsD++MPek
+	l99nmjNfwotxbHZEBU6fkszkg93iv9Bcsn6siTcocthZ1uMCpr4aFUQryz6oVFURk7QflDShQeg
+	zDrw==
+X-Gm-Gg: ASbGncuU9rfzrJX66pM7BJpGsIp6s3yEo/JiLW/cl3r91fQGw3l+qeTSpvp6SgIdUEL
+	NuQQijZLdm8xtrSyfRza5IzYJ/DlUc91z5tSiQ1x4RujvHhiXaFd/12FO3wmpyR/LU/rCx9CKVM
+	eGQsBqTCFT0kzit3tVN73izlLiQHWynGmq1ZcgfgjzaJBx+ceF7MOXnMAxHQJFfpIA8W4kG6NIM
+	f2XxpCtoTdZ3SmzxJK8V0F4Bbjwfox5tZLCH59CxVbEjWk8na0Fa04Jz43nGNvAzI+5BDGSuBHM
+	KK1qCPSyfx1/BiIq0tqKFiBfltx26/jSrMnJyvlnJ2aXMN4oQmLs9MT4EIfCsza9BY+XzKjzXMb
+	v0xIv9eVPa8XYpKCA+n9s6A==
+X-Received: by 2002:a17:907:3c8f:b0:b04:36bb:545 with SMTP id a640c23a62f3a-b34bb12fc3dmr2371563366b.48.1759234363478;
+        Tue, 30 Sep 2025 05:12:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHCMW+GDcVwUnAC/efDdJR1OCcQoMagIWww3faxZxGxD2S8ezNsWbFnZUmUdO9qvxkKur0+NA==
+X-Received: by 2002:a17:907:3c8f:b0:b04:36bb:545 with SMTP id a640c23a62f3a-b34bb12fc3dmr2371558866b.48.1759234363046;
+        Tue, 30 Sep 2025 05:12:43 -0700 (PDT)
 Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634a3b02ccbsm9498953a12.45.2025.09.30.05.11.29
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634a3b05779sm9854125a12.49.2025.09.30.05.12.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 05:11:30 -0700 (PDT)
-Date: Tue, 30 Sep 2025 14:11:23 +0200
+        Tue, 30 Sep 2025 05:12:42 -0700 (PDT)
+Date: Tue, 30 Sep 2025 14:12:35 +0200
 From: Stefano Garzarella <sgarzare@redhat.com>
 To: Jarkko Sakkinen <jarkko@kernel.org>
 Cc: linux-integrity@vger.kernel.org, dpsmith@apertussolutions.com, 
 	ross.philipson@oracle.com, Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>, 
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
 	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
 	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	open list <linux-kernel@vger.kernel.org>, "open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v3 02/10] tpm: Use -EPERM as fallback error code in
- tpm_ret_to_err
-Message-ID: <hjay4b2lomj6k63tbnuk55q6mm4sdj2d7yycw64ybhu372l6bd@uqetr6ipbtg4>
+	James Bottomley <James.Bottomley@hansenpartnership.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>, 
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 03/10] KEYS: trusted: Use tpm_ret_to_err() in
+ trusted_tpm2
+Message-ID: <7icpto3rnm2f4u6zaxl4xy7zvar3q4hhpgelq2gnazszdkwc3m@5dtivkqs5xdg>
 References: <20250929194832.2913286-1-jarkko@kernel.org>
- <20250929194832.2913286-3-jarkko@kernel.org>
+ <20250929194832.2913286-4-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250929194832.2913286-3-jarkko@kernel.org>
+In-Reply-To: <20250929194832.2913286-4-jarkko@kernel.org>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: rceHXn97aytI3B9Web3W6v7UR6YCSnC9pDne7EzZ-3A_1759234291
+X-Mimecast-MFC-PROC-ID: dJBNzub9v7SGHUdyeibC0w5M2GclVxW4jnIgAQ0SlyQ_1759234364
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
 
-On Mon, Sep 29, 2025 at 10:48:24PM +0300, Jarkko Sakkinen wrote:
+On Mon, Sep 29, 2025 at 10:48:25PM +0300, Jarkko Sakkinen wrote:
 >From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
 >
->Using -EFAULT as the tpm_ret_to_err() fallback error code causes makes it
->incompatible on how trusted keys transmute TPM return codes.
->
->Change the fallback as -EPERM in order to gain compatibility with trusted
->keys. In addition, map TPM_RC_HASH to -EINVAL in order to be compatible
->with tpm2_seal_trusted() return values.
+>Use tpm_ret_to_err() to transmute TPM return codes in trusted_tpm2.
 >
 >Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
 >---
 >v3:
->- Removed fixes tag as it hardly categorizes as a bug fix.
+>- No changes.
 >v2:
->- Split trusted_tpm2 change to a separate patch.
+>- New patch split out from the fix.
 >---
-> include/linux/tpm.h | 4 +++-
-> 1 file changed, 3 insertions(+), 1 deletion(-)
+> security/keys/trusted-keys/trusted_tpm2.c | 26 ++++++-----------------
+> 1 file changed, 7 insertions(+), 19 deletions(-)
 
-LGTM now!
+Nice clean up!
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+Acked-by: Stefano Garzarella <sgarzare@redhat.com>
 
 >
->diff --git a/include/linux/tpm.h b/include/linux/tpm.h
->index fc7df87dfb9a..51846317d662 100644
->--- a/include/linux/tpm.h
->+++ b/include/linux/tpm.h
->@@ -453,8 +453,10 @@ static inline ssize_t tpm_ret_to_err(ssize_t ret)
-> 		return 0;
-> 	case TPM2_RC_SESSION_MEMORY:
-> 		return -ENOMEM;
->+	case TPM2_RC_HASH:
->+		return -EINVAL;
-> 	default:
->-		return -EFAULT;
->+		return -EPERM;
+>diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+>index 024be262702f..e165b117bbca 100644
+>--- a/security/keys/trusted-keys/trusted_tpm2.c
+>+++ b/security/keys/trusted-keys/trusted_tpm2.c
+>@@ -348,25 +348,19 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
 > 	}
+>
+> 	blob_len = tpm2_key_encode(payload, options, &buf.data[offset], blob_len);
+>+	if (blob_len < 0)
+>+		rc = blob_len;
+>
+> out:
+> 	tpm_buf_destroy(&sized);
+> 	tpm_buf_destroy(&buf);
+>
+>-	if (rc > 0) {
+>-		if (tpm2_rc_value(rc) == TPM2_RC_HASH)
+>-			rc = -EINVAL;
+>-		else
+>-			rc = -EPERM;
+>-	}
+>-	if (blob_len < 0)
+>-		rc = blob_len;
+>-	else
+>+	if (!rc)
+> 		payload->blob_len = blob_len;
+>
+> out_put:
+> 	tpm_put_ops(chip);
+>-	return rc;
+>+	return tpm_ret_to_err(rc);
 > }
 >
+> /**
+>@@ -468,10 +462,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+> 		kfree(blob);
+> 	tpm_buf_destroy(&buf);
+>
+>-	if (rc > 0)
+>-		rc = -EPERM;
+>-
+>-	return rc;
+>+	return tpm_ret_to_err(rc);
+> }
+>
+> /**
+>@@ -534,8 +525,6 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+> 	tpm_buf_fill_hmac_session(chip, &buf);
+> 	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
+> 	rc = tpm_buf_check_hmac_response(chip, &buf, rc);
+>-	if (rc > 0)
+>-		rc = -EPERM;
+>
+> 	if (!rc) {
+> 		data_len = be16_to_cpup(
+>@@ -568,7 +557,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+>
+> out:
+> 	tpm_buf_destroy(&buf);
+>-	return rc;
+>+	return tpm_ret_to_err(rc);
+> }
+>
+> /**
+>@@ -600,6 +589,5 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
+>
+> out:
+> 	tpm_put_ops(chip);
+>-
+>-	return rc;
+>+	return tpm_ret_to_err(rc);
+> }
 >-- 
 >2.39.5
 >
