@@ -1,325 +1,192 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30FF25784E;
-	Mon, 29 Sep 2025 21:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392A221B196
+	for <linux-security-module@vger.kernel.org>; Tue, 30 Sep 2025 02:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759181734; cv=none; b=s9QubE87SopVvyuz0dcKoHFcGVGx00Oso88lR6+eQWBqFafj9LhvuCPWUz1cPkheYXHerGr6qxb1X3j/tme4vgHbzE2bS7jiM5oemUEC5O+qwhhecnE7NkY6XBq45mJIHwbdkM2E1HnCKQ6Co4gYgOCxRr0QYc5bk6ln8oyFrrc=
+	t=1759199229; cv=none; b=ANuHCTs7u0TUKXkQBehhGw1P/94qa/Z7Exc+uNIcXN6kldkjjXUbd8e6Rm+kfpt3uKvufgRCSRkTabOaL8eFDZr4RRTZqmHbrhdQggL7Zwf50A8U6cdeyJol6FwtW5/a4q4mSwJyYScbrHhw0b4cR9ZLGvgp4123MtX0+CEBCPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759181734; c=relaxed/simple;
-	bh=1ogjZPfGvdRGMXeq4ltonFGtRcvbiN3n7hZPSjnGr38=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bj1qK778ABGsnyTYeFVkpqKZ+1mI3e7GqTHa4IWV20iaiBc91Ir94BsROW/ZVY7IXHezqzDKDn/UgEuMJUXOGboSoIoOYjLYHv0DnmDtg4ucfZVvknIeWR+5AborYQN3f6tGnfegJU6s9tt9vWurWy41UMpZrqUl8DAadgFZ3/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Hi8kKuxH; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1759199229; c=relaxed/simple;
+	bh=6RVM/NL0ZDYk67kJzkhFeoTVqrVSQZgDBYioTsdcFlc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:content-type; b=fJ7XNMJzhuZ6ybvcWGUtoRisFwCyqrLtX+zjoFWcM3GonL6UVzQMBDDWWL8VD2LQE2Kk8Z7dScMHzN25GAgcGDxcB9NUuuky3nQHXyccP0Ndx2+uQLyJZ6zRpzwoFEE3U7i7MJHftASC9f+FCdcNoZPtulwunqzWJDoQQzwEOb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VqCU4TAW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Hi8kKuxH"
-Received: from narnia.corp.microsoft.com (unknown [13.88.17.9])
-	by linux.microsoft.com (Postfix) with ESMTPSA id C488C201CEF2;
-	Mon, 29 Sep 2025 14:35:30 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C488C201CEF2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1759181731;
-	bh=NJ0pS0k7flc9QSKhJlzGKAkc9AjbiTcT+RfbRRrlyiM=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=Hi8kKuxHw6945GgKiu5a03+5o0xJrsHOQub47HARg7hisvRN2xtauNSqrw50vm+2H
-	 5bfRMMVCCHRGV/gArTxMFyXV6gOrAPDZvDNF0licCzmFjf3tqmEvDwrF5Gl22FBdsw
-	 2vhCaB9iWRX+PuBozY/wThtGEKTOZ/OEEdAeA3NQ=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: bpf@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	kpsingh@kernel.org,
-	bboscaccy@linux.microsoft.com,
-	paul@paul-moore.com,
-	kys@microsoft.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	James.Bottomley@hansenpartnership.com,
-	wufan@linux.microsoft.com,
-	qmo@kernel.org
-Subject: [PATCH bpf-next v2 3/3] bpftool: Add support for signing program and map hash chains
-Date: Mon, 29 Sep 2025 14:34:27 -0700
-Message-ID: <20250929213520.1821223-4-bboscaccy@linux.microsoft.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250929213520.1821223-1-bboscaccy@linux.microsoft.com>
-References: <20250929213520.1821223-1-bboscaccy@linux.microsoft.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VqCU4TAW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759199226;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=sg4kvyN9cH3Ka6BbQeKrM7RCNfTYVS9zo7EtNkElASs=;
+	b=VqCU4TAW2ivvlh9O5JaYgaG1qXZSeULbJSpUPAfqgwqOnh09IFUkEOlDvXNCbFl+v8zKEZ
+	EyUgXcrDfx7o2e7CrUAa4kfwI3gVMqKjtH+KX9YGOFqAWXEpJgnSrXsqH5xCsDYRshouPN
+	MWLSXbLStou/RXfz4dsikQQcN9pQHms=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-515-L7LW3hFYN0K2-1WysxOc1A-1; Mon, 29 Sep 2025 22:27:04 -0400
+X-MC-Unique: L7LW3hFYN0K2-1WysxOc1A-1
+X-Mimecast-MFC-AGG-ID: L7LW3hFYN0K2-1WysxOc1A_1759199223
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-286a252bfc2so21087095ad.1
+        for <linux-security-module@vger.kernel.org>; Mon, 29 Sep 2025 19:27:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759199223; x=1759804023;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sg4kvyN9cH3Ka6BbQeKrM7RCNfTYVS9zo7EtNkElASs=;
+        b=xFmzKmAfJFEjajP4uGdH+E92LkHvmJs3wkIQ9nOIvy3mz6Eb0U60bxHUeJvGwp0z5h
+         eeX/7QK0aPkY3V0gWuPofTj6ByRpgIea7ZuZyDSSGub5lzYAM18SaCtNpfaQnrUnb1iB
+         Fm8a6jpA93EWZ2fMoAlnx3F3VSJb00nD6n4q4Kdl66t2gAP8A9EADUzus/8lsWMiioiH
+         NmgDCCdyCPljGMFwsMFhdlM1F+p5fDxIq9XtcWFeq8yPhxCYqANMI7QnC3a97pzsHk8T
+         8WGqNMyaeqpIL4Pq788/PtEUbWFvDXcNcFriz1/lYFyC6GcFbf2dP1CbrTaoZV7gB85x
+         VWMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWr65ZS8ke/rMI4TyJfuWkXQ0X+72UDXFE1D+nQekiowq7+EtVPs5vuThSarNCbhpeGMULNZZBgVeDeaAwE7VLnd8GLeZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynfTN4uJ66MeweXIFcgQhN6v0Zd1LXU6eKrC/dtiDcrrBNGHsD
+	j21XmSYcp9Pp2Lz+Lqt8rcN044xh+XR0cS7jtjNP/qa+FwX2UzHDlfFrxAmUBL06mh3Yj2SsE8x
+	9M5EQGvlSO2MBf9/uz1Stj+MeqsRNwmcAOGsFmK40PRRi8sloGvyAC2JHszMetjBmxF+vdizYGx
+	9DWw==
+X-Gm-Gg: ASbGncu1GI9RBdBwXc1Qk8zlCUo6gOotwPriKysAg7zaehLDjg9/wIHJbq4n0XEXJbB
+	cc5iM2wm+3CT+NiY8kK7N/6EmrDhqBHxXE9S9w1i7cVNH+WgK9Z+Ym6+mtDqo9YxMZLhP/42KyV
+	1GkHdgsAkvDWvWjqMYGhtb2kPGjhfRopunCRO+lr7aUqa+U7WHMbck41A4vEs/Rfx3TjrkFKhpD
+	v7dhC9GU/bhf4xiGrFyyZh8qeyI2TYb/wW/wUisnxCxoma29C7AxRGFoqRny69i2u04/BZJ2eSS
+	V9UFb5fWs42iRnsiRsB4HKPUJ/apziCvpXky
+X-Received: by 2002:a17:903:2448:b0:278:f46b:d49c with SMTP id d9443c01a7336-28d16e88acamr27573265ad.9.1759199222957;
+        Mon, 29 Sep 2025 19:27:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGw7cypH/nZLG0Swdh9MGBzOSAdgylrCMgf2ZcGSHw42AyW3kmcjyYfNc4ncFIysi/zvSQhvg==
+X-Received: by 2002:a17:903:2448:b0:278:f46b:d49c with SMTP id d9443c01a7336-28d16e88acamr27572975ad.9.1759199222299;
+        Mon, 29 Sep 2025 19:27:02 -0700 (PDT)
+Received: from localhost ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed69bd869sm145301875ad.120.2025.09.29.19.27.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 19:27:02 -0700 (PDT)
+From: Coiby Xu <coxu@redhat.com>
+To: linux-integrity@vger.kernel.org,
+	Mimi Zohar <zohar@linux.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH v2 1/2] evm: fix security.evm for a file with IMA signature
+Date: Tue, 30 Sep 2025 10:26:56 +0800
+Message-ID: <20250930022658.4033410-1-coxu@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: Q5bVUHtItuOjlkwM02KQnL5FRQ_zzvjSB241ZiVgk_k_1759199223
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 
-Add a new mode of operation for program loading which supports the
-generation of signed hash chains for light skeletons, using the new
-signed map hash chain UAPI additions.
+When both IMA and EVM fix modes are enabled, accessing a file with IMA
+signature but missing EVM HMAC won't cause security.evm to be fixed.
 
-e.g bpftool prog load -S -M -k <private_key> -i <identity_cert> fentry_test.bpf.o
+Add a function evm_fix_hmac which will be explicitly called to fix EVM
+HMAC for this case.
 
-The -M or --sign-maps command line switch is introduced. It generates
-a hash chain such that:
-
-H(program, maps) = sha256(sha256(program), sha256(map[0]))
-
-Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Coiby Xu <coxu@redhat.com>
 ---
- .../bpf/bpftool/Documentation/bpftool-gen.rst |  7 ++++-
- tools/bpf/bpftool/bash-completion/bpftool     |  2 +-
- tools/bpf/bpftool/gen.c                       | 27 ++++++++++++++++++-
- tools/bpf/bpftool/main.c                      |  9 ++++++-
- tools/bpf/bpftool/main.h                      |  1 +
- tools/bpf/bpftool/sign.c                      | 16 ++++++++---
- tools/lib/bpf/libbpf.h                        |  3 ++-
- tools/lib/bpf/skel_internal.h                 |  6 ++++-
- 8 files changed, 62 insertions(+), 9 deletions(-)
+ include/linux/evm.h                   |  8 ++++++++
+ security/integrity/evm/evm_main.c     | 28 +++++++++++++++++++++++++++
+ security/integrity/ima/ima_appraise.c |  5 +++++
+ 3 files changed, 41 insertions(+)
 
-diff --git a/tools/bpf/bpftool/Documentation/bpftool-gen.rst b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-index d0a36f442db72..b632ab87adf20 100644
---- a/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-+++ b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-@@ -16,7 +16,7 @@ SYNOPSIS
- 
- **bpftool** [*OPTIONS*] **gen** *COMMAND*
- 
--*OPTIONS* := { |COMMON_OPTIONS| | { **-L** | **--use-loader** } | [ { **-S** | **--sign** } {**-k** <private_key.pem>} **-i** <certificate.x509> ] }
-+*OPTIONS* := { |COMMON_OPTIONS| | { **-L** | **--use-loader** } | [ { **-S** | **--sign** } { **-M** | **--sign-maps** } {**-k** <private_key.pem>} **-i** <certificate.x509> ] }
- 
- *COMMAND* := { **object** | **skeleton** | **help** }
- 
-@@ -190,6 +190,11 @@ OPTIONS
-     For skeletons, generate a signed skeleton. This option must be used with
-     **-k** and **-i**. Using this flag implicitly enables **--use-loader**.
- 
-+-M --sign-maps
-+    For skeletons, generate a signed skeleton that includes a hash chain for the
-+    skeletons maps. This option must be used with **-k** and **-i**. Using this
-+    flag implicitly enables **--use-loader** and **--sign**.
-+
- -k <private_key.pem>
-     Path to the private key file in PEM format, required for signing.
- 
-diff --git a/tools/bpf/bpftool/bash-completion/bpftool b/tools/bpf/bpftool/bash-completion/bpftool
-index 53bcfeb1a76e6..f8c217f09989c 100644
---- a/tools/bpf/bpftool/bash-completion/bpftool
-+++ b/tools/bpf/bpftool/bash-completion/bpftool
-@@ -262,7 +262,7 @@ _bpftool()
-     # Deal with options
-     if [[ ${words[cword]} == -* ]]; then
-         local c='--version --json --pretty --bpffs --mapcompat --debug \
--            --use-loader --base-btf --sign -i -k'
-+            --use-loader --base-btf --sign --sign-maps -i -k'
-         COMPREPLY=( $( compgen -W "$c" -- "$cur" ) )
-         return 0
-     fi
-diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
-index 993c7d9484a46..1c4278e2a662b 100644
---- a/tools/bpf/bpftool/gen.c
-+++ b/tools/bpf/bpftool/gen.c
-@@ -699,6 +699,9 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
- 	if (sign_progs)
- 		opts.gen_hash = true;
- 
-+	if (sign_maps)
-+		opts.sign_maps = true;
-+
- 	err = bpf_object__gen_loader(obj, &opts);
- 	if (err)
- 		return err;
-@@ -793,6 +796,8 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
- 	if (sign_progs) {
- 		sopts.insns = opts.insns;
- 		sopts.insns_sz = opts.insns_sz;
-+		sopts.data = opts.data;
-+		sopts.data_sz = opts.data_sz;
- 		sopts.excl_prog_hash = prog_sha;
- 		sopts.excl_prog_hash_sz = sizeof(prog_sha);
- 		sopts.signature = sig_buf;
-@@ -822,6 +827,13 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
- 		\n\
- 		\";\n");
- 
-+		if (sign_maps) {
-+			codegen("\
-+			\n\
-+				static const int opts_signature_maps[1] __attribute__((__aligned__(8))) = {0}; \n\
-+			");
-+		}
-+
- 		codegen("\
- 		\n\
- 			opts.signature = (void *)opts_sig;			\n\
-@@ -830,6 +842,19 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
- 			opts.excl_prog_hash_sz = sizeof(opts_excl_hash) - 1;	\n\
- 			opts.keyring_id = skel->keyring_id;			\n\
- 		");
-+		if (sign_maps) {
-+			codegen("\
-+			\n\
-+				opts.signature_maps = (void *)opts_signature_maps;	\n\
-+				opts.signature_maps_sz = 1; 				\n\
-+			");
-+		} else {
-+			codegen("\
-+			\n\
-+				opts.signature_maps = (void *)NULL;		\n\
-+				opts.signature_maps_sz = 0;			\n\
-+			");
-+		}
- 	}
- 
- 	codegen("\
-@@ -1990,7 +2015,7 @@ static int do_help(int argc, char **argv)
- 		"       %1$s %2$s help\n"
- 		"\n"
- 		"       " HELP_SPEC_OPTIONS " |\n"
--		"                    {-L|--use-loader} | [ {-S|--sign } {-k} <private_key.pem> {-i} <certificate.x509> ]}\n"
-+		"                    {-L|--use-loader} | [ {-S|--sign } {-M|--sign-maps } {-k} <private_key.pem> {-i} <certificate.x509> ]}\n"
- 		"",
- 		bin_name, "gen");
- 
-diff --git a/tools/bpf/bpftool/main.c b/tools/bpf/bpftool/main.c
-index a829a6a49037a..47b14dcbae4ee 100644
---- a/tools/bpf/bpftool/main.c
-+++ b/tools/bpf/bpftool/main.c
-@@ -34,6 +34,7 @@ bool use_loader;
- struct btf *base_btf;
- struct hashmap *refs_table;
- bool sign_progs;
-+bool sign_maps;
- const char *private_key_path;
- const char *cert_path;
- 
-@@ -452,6 +453,7 @@ int main(int argc, char **argv)
- 		{ "debug",	no_argument,	NULL,	'd' },
- 		{ "use-loader",	no_argument,	NULL,	'L' },
- 		{ "sign",	no_argument,	NULL,	'S' },
-+		{ "sign-maps",	no_argument,	NULL,	'M' },
- 		{ "base-btf",	required_argument, NULL, 'B' },
- 		{ 0 }
- 	};
-@@ -478,7 +480,7 @@ int main(int argc, char **argv)
- 	bin_name = "bpftool";
- 
- 	opterr = 0;
--	while ((opt = getopt_long(argc, argv, "VhpjfLmndSi:k:B:l",
-+	while ((opt = getopt_long(argc, argv, "VhpjfLmndSMi:k:B:l",
- 				  options, NULL)) >= 0) {
- 		switch (opt) {
- 		case 'V':
-@@ -528,6 +530,11 @@ int main(int argc, char **argv)
- 			sign_progs = true;
- 			use_loader = true;
- 			break;
-+		case 'M':
-+			sign_maps = true;
-+			sign_progs = true;
-+			use_loader = true;
-+			break;
- 		case 'k':
- 			private_key_path = optarg;
- 			break;
-diff --git a/tools/bpf/bpftool/main.h b/tools/bpf/bpftool/main.h
-index 1130299cede0b..d4e8b39d97746 100644
---- a/tools/bpf/bpftool/main.h
-+++ b/tools/bpf/bpftool/main.h
-@@ -92,6 +92,7 @@ extern bool use_loader;
- extern struct btf *base_btf;
- extern struct hashmap *refs_table;
- extern bool sign_progs;
-+extern bool sign_maps;
- extern const char *private_key_path;
- extern const char *cert_path;
- 
-diff --git a/tools/bpf/bpftool/sign.c b/tools/bpf/bpftool/sign.c
-index b34f74d210e9c..6338f0309cd91 100644
---- a/tools/bpf/bpftool/sign.c
-+++ b/tools/bpf/bpftool/sign.c
-@@ -23,6 +23,7 @@
- #include <errno.h>
- 
- #include <bpf/skel_internal.h>
-+#include <bpf/libbpf_internal.h>
- 
- #include "main.h"
- 
-@@ -130,8 +131,17 @@ int bpftool_prog_sign(struct bpf_load_and_run_opts *opts)
- 	long actual_sig_len = 0;
- 	X509 *x509 = NULL;
- 	int err = 0;
--
--	bd_in = BIO_new_mem_buf(opts->insns, opts->insns_sz);
-+	unsigned char hash[SHA256_DIGEST_LENGTH  * 2];
-+	unsigned char term[SHA256_DIGEST_LENGTH];
-+
-+	if (sign_maps) {
-+		libbpf_sha256(opts->insns, opts->insns_sz, hash);
-+		libbpf_sha256(opts->data, opts->data_sz, hash + SHA256_DIGEST_LENGTH);
-+		libbpf_sha256(hash, sizeof(hash), term);
-+		bd_in = BIO_new_mem_buf(term, sizeof(term));
-+	} else {
-+		bd_in = BIO_new_mem_buf(opts->insns, opts->insns_sz);
-+	}
- 	if (!bd_in) {
- 		err = -ENOMEM;
- 		goto cleanup;
-@@ -172,7 +182,7 @@ int bpftool_prog_sign(struct bpf_load_and_run_opts *opts)
- 	EVP_Digest(opts->insns, opts->insns_sz, opts->excl_prog_hash,
- 		   &opts->excl_prog_hash_sz, EVP_sha256(), NULL);
- 
--		bd_out = BIO_new(BIO_s_mem());
-+	bd_out = BIO_new(BIO_s_mem());
- 	if (!bd_out) {
- 		err = -ENOMEM;
- 		goto cleanup;
-diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
-index 5118d0a90e243..63946bdad41ad 100644
---- a/tools/lib/bpf/libbpf.h
-+++ b/tools/lib/bpf/libbpf.h
-@@ -1858,9 +1858,10 @@ struct gen_loader_opts {
- 	__u32 data_sz;
- 	__u32 insns_sz;
- 	bool gen_hash;
-+	bool sign_maps;
- };
- 
--#define gen_loader_opts__last_field gen_hash
-+#define gen_loader_opts__last_field sign_maps
- LIBBPF_API int bpf_object__gen_loader(struct bpf_object *obj,
- 				      struct gen_loader_opts *opts);
- 
-diff --git a/tools/lib/bpf/skel_internal.h b/tools/lib/bpf/skel_internal.h
-index 6a8f5c7a02eb9..11c2c19a5b2a4 100644
---- a/tools/lib/bpf/skel_internal.h
-+++ b/tools/lib/bpf/skel_internal.h
-@@ -74,6 +74,8 @@ struct bpf_load_and_run_opts {
- 	__s32 keyring_id;
- 	void *excl_prog_hash;
- 	__u32 excl_prog_hash_sz;
-+	const int *signature_maps;
-+	__u32 signature_maps_sz;
- };
- 
- long kern_sys_bpf(__u32 cmd, void *attr, __u32 attr_size);
-@@ -352,7 +354,7 @@ static inline int skel_map_freeze(int fd)
- 
- static inline int bpf_load_and_run(struct bpf_load_and_run_opts *opts)
+diff --git a/include/linux/evm.h b/include/linux/evm.h
+index ddece4a6b25d..913f4573b203 100644
+--- a/include/linux/evm.h
++++ b/include/linux/evm.h
+@@ -18,6 +18,8 @@ extern enum integrity_status evm_verifyxattr(struct dentry *dentry,
+ 					     const char *xattr_name,
+ 					     void *xattr_value,
+ 					     size_t xattr_value_len);
++int evm_fix_hmac(struct dentry *dentry, const char *xattr_name,
++		 const char *xattr_value, size_t xattr_value_len);
+ int evm_inode_init_security(struct inode *inode, struct inode *dir,
+ 			    const struct qstr *qstr, struct xattr *xattrs,
+ 			    int *xattr_count);
+@@ -51,6 +53,12 @@ static inline enum integrity_status evm_verifyxattr(struct dentry *dentry,
  {
--	const size_t prog_load_attr_sz = offsetofend(union bpf_attr, keyring_id);
-+	const size_t prog_load_attr_sz = offsetofend(union bpf_attr, signature_maps_size);
- 	const size_t test_run_attr_sz = offsetofend(union bpf_attr, test);
- 	int map_fd = -1, prog_fd = -1, key = 0, err;
- 	union bpf_attr attr;
-@@ -395,6 +397,8 @@ static inline int bpf_load_and_run(struct bpf_load_and_run_opts *opts)
- #ifndef __KERNEL__
- 	attr.signature = (long) opts->signature;
- 	attr.signature_size = opts->signature_sz;
-+	attr.signature_maps = (long) opts->signature_maps;
-+	attr.signature_maps_size = opts->signature_maps_sz;
- #else
- 	if (opts->signature || opts->signature_sz)
- 		pr_warn("signatures are not supported from bpf_preload\n");
+ 	return INTEGRITY_UNKNOWN;
+ }
++
++static inline int evm_fix_hmac(struct dentry *dentry, const char *xattr_name,
++			       const char *xattr_value, size_t xattr_value_len)
++{
++	return -EOPNOTSUPP;
++}
+ #endif
+ 
+ static inline int evm_inode_init_security(struct inode *inode, struct inode *dir,
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 0add782e73ba..1b3edc6d26e9 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -787,6 +787,34 @@ bool evm_revalidate_status(const char *xattr_name)
+ 	return true;
+ }
+ 
++/**
++ * evm_fix_hmac - Calculate the HMAC and add it to security.evm for fix mode
++ * @dentry: pointer to the affected dentry which doesn't yet have security.evm
++ *          xattr
++ * @xattr_name: pointer to the affected extended attribute name
++ * @xattr_value: pointer to the new extended attribute value
++ * @xattr_value_len: pointer to the new extended attribute value length
++ *
++ * Expects to be called with i_mutex locked.
++ *
++ * Return: 0 on success, -EPERM/-ENOMEM/-EOPNOTSUPP on failure
++ */
++int evm_fix_hmac(struct dentry *dentry, const char *xattr_name,
++		 const char *xattr_value, size_t xattr_value_len)
++
++{
++	if (!evm_fixmode || !evm_revalidate_status((xattr_name)))
++		return -EPERM;
++
++	if (!(evm_initialized & EVM_INIT_HMAC))
++		return -EPERM;
++
++	if (is_unsupported_hmac_fs(dentry))
++		return -EOPNOTSUPP;
++
++	return evm_update_evmxattr(dentry, xattr_name, xattr_value, xattr_value_len);
++}
++
+ /**
+  * evm_inode_post_setxattr - update 'security.evm' to reflect the changes
+  * @dentry: pointer to the affected dentry
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index f435eff4667f..f48ef5ec185e 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -601,6 +601,11 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+ 		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
+ 			if (!ima_fix_xattr(dentry, iint))
+ 				status = INTEGRITY_PASS;
++		} else if (status == INTEGRITY_NOLABEL) {
++			if (!evm_fix_hmac(dentry, XATTR_NAME_IMA,
++					  (const char *)xattr_value,
++					  xattr_len))
++				status = INTEGRITY_PASS;
+ 		}
+ 
+ 		/*
+
+base-commit: e129e479f2e444eaccd822717d418119d39d3d5c
 -- 
-2.48.1
+2.51.0
 
