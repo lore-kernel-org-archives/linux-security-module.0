@@ -1,222 +1,264 @@
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0A72581
-	for <linux-security-module@vger.kernel.org>; Wed,  1 Oct 2025 11:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEB52C029D
+	for <linux-security-module@vger.kernel.org>; Wed,  1 Oct 2025 11:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759317505; cv=none; b=FceF24Mr/epgXGgmuqu6/GTe0U/IShmJHE+1OLxpnMeIcQsA9iN6mOLzGdUGG++t/Pm26D7L1aQ3AKLeiZfv6TGIqLFP9CslIxH3mxQVAfjDO0Jxh0pb9qpOD+7nANfnE7hY8Bs7MkFBTJBDx6ZBLVuCYABdJmgzYs3dnYOJYIo=
+	t=1759317843; cv=none; b=IQ2nWFRHHo2gySkX6xe40i1DidHiwc0/tmOmN56Q1R4G3NYr8IGOBLktcKGE0ez2KYgGT7Ev6jkvPKrU6eW3u+HzDYuM2DtRcBkNEOtIYtMNT8bxG/5ZPSn/g2Pqo6xkfY9KVNnAK/aoO8N5E0v5BYaJlyvnhtd403Qg4F4sgu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759317505; c=relaxed/simple;
-	bh=qDHtHBAjT6olAmqY9c9q3GOFn5snN88dnre8E4YBSmg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cxfWadKBisQa3qbmaLLoKQ5lqa293U/EBHERvXiqUGIGfpeECGevbAYFvaFBlrtzyOG20S/BRVHhHpFfgc0P0JBxLgMgqgS6V+/w7HXdq+L/O8sB+JO8NAuMdSwNSTaqDZ+te+Oh2plkROlIL0uayzinL60tH0ByZC+dHSPcOvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HuPVtcEs; arc=none smtp.client-ip=209.85.128.73
+	s=arc-20240116; t=1759317843; c=relaxed/simple;
+	bh=GhWbJ5ZWYTKLzxeRunblMWoEPJVHZLGZhjjocjQ75Lc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mNdyE03rz6B6zGh5FqPeBPNNT6vu3SK3TSivmTkZ1ATDtQEGVmWL0VIIsuiKTXAa/mhr3ZAn1e+Cw+8Cnun/jioLB8ngI4Va8AeqX1kKLGWW5eXK/VQdr0kbfpFO8l4i4siL8W2RVs5tIcpKzjA+VMbwQ0jzYzLymZR+6qdGUv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JqDNO6Sf; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HuPVtcEs"
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e45899798so19891135e9.3
-        for <linux-security-module@vger.kernel.org>; Wed, 01 Oct 2025 04:18:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JqDNO6Sf"
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e44b9779eso23825125e9.1
+        for <linux-security-module@vger.kernel.org>; Wed, 01 Oct 2025 04:24:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759317502; x=1759922302; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6jjcpPPZxhp4X1YAEpre0Ds+RHO+MBfCZ9jsXgo1xuY=;
-        b=HuPVtcEsDcF3c7mWp43EV/vj6GELjcOZCTxUsuN3oIUcq7Z46VAfYERGezGFfrh8pY
-         oL7boVs230fm83GGSQroLkYtW4undVD4yw6TKfwgqbelwqcXcbFfTOSc7nPDprVb7CD9
-         6xHGSgZt1/8fB1h/iqFL1AhtgEMdwhCNLGgcMXztgjhdKnxzqkxU3LXjR2Caqf2QQ7LY
-         gy9mKVgDdOE4XY0FM983ktJHF1gI9//FoY/Hbx7BI806Jjbrv42efPwkCgkW5QW1ghGS
-         sPlkb+Fdvuh9OVRyW46LJFhhUg0kmexsRe8IOoo/1aS4XemthpGXL9eYzWxoYRvuVbi/
-         REyg==
+        d=google.com; s=20230601; t=1759317840; x=1759922640; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JSh7as3lMj8DzI7vIU1vOUtAQjSymdP+EFiYufzlS6Q=;
+        b=JqDNO6SfuFwWAjZUDvJE2Pdea7TpXKxl2dUA3onk2LvZ8seehAmU3wbj51bvu4f9q9
+         l/4IHyrBpO8hEk7CHSOMIOre0AqU5mFA5B1GmpdMcv8WgHesp6pBfRtYt7uEj6nqXCoM
+         NGbUlR7UIhWVs09Lzwk1jUy1uXQ1BqXlUzihunCZg6g2UD9rqBHFo9G74j+2c6yl1ty6
+         PST8R6IGh9w2zhRDYup+EE+cRCey2xDT7VXswDi8g2wcut2UwXWooP8MhOlsovukNv3Z
+         pudUYAgiqZstTML4cc2Q6BWZU3iiPELL0GIv04KEDYls81UTLhG/QAWJqLn+FNULCwPX
+         m32g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759317502; x=1759922302;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6jjcpPPZxhp4X1YAEpre0Ds+RHO+MBfCZ9jsXgo1xuY=;
-        b=Humx9V8ULlVaeXgpyPuc3enB+S07sww9dP7xVYZ/zWuC8KcQb0jDlTUeCJV2YnUEhU
-         qb9NUhnfLLylORA2FS3kyJXYqr6RufM7qTaK/OKxcGXZ9+C+SeNUxhnT/ukEmVFEu6ns
-         GoDFCYaMx8oliEnuPkhNi6y8LBc0o15YpK6vK2ixUqKNGKJDa8ASYHRdn6neXmy3VtnO
-         u3/n6ohlBNgbh2tBW7qDVCwiF4EuOmEsuoynRcTUz1/IHa2qIuDtKlqBNdu1Zk6cSq8p
-         YnnOyJfpV6i4IIfU8jjsDYzCAFUAfVOZcUC0UTTs+0E+1uSCDRBGqgpOET0hXH3p9Fef
-         t+Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3s7XulHJPvzC7nRnS2rMibLNTQkytf+m/IGnmBy1X/gkqS/Wb+FWGHOpyp67QJucmHW4/LG7ZP4j5WfmfEnCN64l39fQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBwqqIllBHHOR1jnioOBFDZdBds2H5n29JIq4yoOqJ+b4wIojk
-	hrHSCXw+2sUbAklxYDxo8MT7J5OC6AwhSbBy6wz2uxf9jRCtlhmBRMOFi33iyCgw1ry9oaiq9Sd
-	IUg8/jw==
-X-Google-Smtp-Source: AGHT+IEy5C8fAHrF74XqzSNx5uReeD9pjYfDjS/Qeqfqu0/E/Zhp/PKOPGqzmvww3krxtAxuEug6B1A7bGo=
-X-Received: from wmbgz11.prod.google.com ([2002:a05:600c:888b:b0:46e:54f3:6f51])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:8119:b0:46e:4883:27d
- with SMTP id 5b1f17b1804b1-46e6128617amr26740085e9.30.1759317502159; Wed, 01
- Oct 2025 04:18:22 -0700 (PDT)
-Date: Wed,  1 Oct 2025 13:18:07 +0200
-In-Reply-To: <20251001111807.18902-1-gnoack@google.com>
+        d=1e100.net; s=20230601; t=1759317840; x=1759922640;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JSh7as3lMj8DzI7vIU1vOUtAQjSymdP+EFiYufzlS6Q=;
+        b=BauqK3a3/sSRI+eGk4QD7RVy70/YRIre58j2td8jEWxuyMCEuGWOgiyaUfXmtdAq/c
+         XL+tcaBu2WdV6dZ6l/B1sZZnSDi2wBqIm85kkClx7hU+8WXQFKKOH4fXPb17dDMU2/va
+         fXpWzhAoFSroItWQxuCzkggCAxKNUrTSaKZsqDpFW7LGpPR6DH4qenU3p3u/aWc8fO7x
+         kSV2ealgPbFEjt6IMPwz8nmfm/e5WtHITZI01JgXwDOJSKpePbPMNUTMXs3lS7O/p9pD
+         yHKCW+TGdJDxHV8m7K2/rOXTOQh7IOEfNb4jKHgVDTRxOHJCKnY118K+fU1axQNP4BUU
+         vAeA==
+X-Gm-Message-State: AOJu0YyJaCH8E7OkVQzqS8AUTNeBXCIyxUImZ8hElby5L3W+seEx/UBv
+	NQvL7y9qYyBgIOrAjMXT0TbBEWg7PSagiTephYI/58xfsX2lLqcsIhbJv1kptIH5+GxXwHidE7Y
+	BanuppQ==
+X-Google-Smtp-Source: AGHT+IHfjI2rn84s0BjJyx9r1x6p7ykkI+QxDK2btyY9Lz5w/7Mfuk5IBe3+YfEG2HpXPW5kAf0rEBvi5bA=
+X-Received: from wmby11-n2.prod.google.com ([2002:a05:600c:c04b:20b0:459:dac7:4ea6])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:8b16:b0:45b:79fd:cb3d
+ with SMTP id 5b1f17b1804b1-46e612e6aefmr28175445e9.36.1759317839983; Wed, 01
+ Oct 2025 04:23:59 -0700 (PDT)
+Date: Wed,  1 Oct 2025 13:23:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251001111807.18902-1-gnoack@google.com>
 X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251001111807.18902-3-gnoack@google.com>
-Subject: [PATCH v2 2/2] landlock: selftests for LANDLOCK_RESTRICT_SELF_TSYNC
+Message-ID: <20251001111807.18902-1-gnoack@google.com>
+Subject: [PATCH v2 0/2] Landlock multithreaded enforcement
 From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To: "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
-Cc: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Tingmao Wang <m@maowtm.org>, 
-	Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, 
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Tingmao Wang <m@maowtm.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Exercise various scenarios where Landlock domains are enforced across
-all of a processes' threads.
+This patch set adds the LANDLOCK_RESTRICT_SELF_TSYNC flag to
+landlock_restrict_self().  With this flag, the passed Landlock ruleset
+will not only be applied to the calling thread, but to all threads
+which belong to the same process.
 
-Cc: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org
-Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
----
- tools/testing/selftests/landlock/base_test.c  |  6 +-
- tools/testing/selftests/landlock/tsync_test.c | 99 +++++++++++++++++++
- 2 files changed, 102 insertions(+), 3 deletions(-)
+Motivation
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+TL;DR: The libpsx/nptl(7) signal hack which we use in user space for
+multi-threaded Landlock enforcement is incompatible with Landlock's
+signal scoping support.  Landlock can restrict the use of signals
+across Landlock domains, but we need signals ourselves in user space
+in ways that are not permitted any more under these restrictions.
+
+Enabling Landlock proves to be difficult in processes that are already
+multi-threaded at the time of enforcement:
+
+* Enforcement in only one thread is usually a mistake because threads
+  do not normally have proper security boundaries between them.
+
+* Also, multithreading is unavoidable in some circumstances, such as
+  when using Landlock from a Go program.  Go programs are already
+  multithreaded by the time that they enter the "func main()".
+
+So far, the approach in Go[1] was to use libpsx[2].  This library
+implements the mechanism described in nptl(7) [3]: It keeps track of
+all threads with a linker hack and then makes all threads do the same
+syscall by registering a signal handler for them and invoking it.
+
+With commit 54a6e6bbf3be ("landlock: Add signal scoping"), Landlock
+gained the ability to restrict the use of signals across different
+Landlock domains.
+
+Landlock's signal scoping support is incompatible with the libpsx
+approach of enabling Landlock:
+
+(1) With libpsx, although all threads enforce the same ruleset object,
+    they technically do the operation separately and end up in
+    distinct Landlock domains.  This breaks signaling across threads
+    when using LANDLOCK_SCOPE_SIGNAL.
+
+(2) Cross-thread Signals are themselves needed to enforce further
+    nested Landlock domains across multiple threads.  So nested
+    Landlock policies become impossible there.
+
+In addition to Landlock itself, cross-thread signals are also needed
+for other seemingly-harmless API calls like the setuid(2) [4] and for
+the use of libcap (co-developed with libpsx), which have the same
+problem where the underlying syscall only applies to the calling
+thread.
+
+Implementation details
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Enforcement prerequisites
+-------------------------
+
+Normally, the prerequisite for enforcing a Landlock policy is to
+either have CAP_SYS_ADMIN or the no_new_privs flag.  With
+LANDLOCK_RESTRICT_SELF_TSYNC, the no_new_privs flag will automatically
+be applied for sibling threads if they don't already fulfill these
+requirements.
+
+Pseudo-signals
+--------------
+
+Landlock domains are stored in struct cred, and a task's struct cred
+can only be modified by the task itself [6].
+
+To make that work, we use task_work_add() to register a pseudo-signal
+for each of the affected threads.  At signal execution time, these
+tasks will coordinate to switch out their Landlock policy in lockstep
+with each other, guaranteeing all-or-nothing semantics.
+
+This implementation can be thought of as a kernel-side implementation
+of the userspace hack that glibc/NPTL use for setuid(2) [3] [4], and
+which libpsx implements for libcap [2].
+
+Finding all sibling threads
+---------------------------
+
+In order to avoid grabbing the global task_list_lock, we employ the
+scheme proposed by Jann Horn in [7]:
+
+1. Loop through the list of sibling threads
+2. Schedule a pseudo-signal for each and make each thread wait in the
+   pseudo-signal
+3. Go back to 1. and look for more sibling thread that we have not
+   seen yet
+
+Do this until no more new threads are found.  As all threads were
+waiting in their pseudo-signals, they can not spawn additional threads
+and we found them all.
+
+Coordination between tasks
+--------------------------
+
+As tasks run their pseudo-signal task work, they coordinate through
+the following completions:
+
+ - all_prepared (with counter num_preparing)
+=20
+   When done, all new sibling threads in the inner loop(!) of finding
+   new threads are now in their pseudo-signal handlers and have
+   prepared the struct cred object to commit (or written an error into
+   the shared "preparation_error").
+
+   The lifetime of all_prepared is only the inner loop of finding new
+   threads.
+
+ - ready_to_commit
+
+   When done, the outer loop of finding new threads is done and all
+   sibling threads have prepared their struct cred object.  Marked
+   completed by the calling thread.
+
+ - all_finished
+
+   When done, all sibling threads are done executing their
+   pseudo-signal handlers.
+
+Use of credentials API
+----------------------
+
+Under normal circumstances, sibling threads share the same struct cred
+object.  To avoid unnecessary duplication, if we find that a thread
+uses the same struct cred as the calling thread, we side-step the
+normal use of the credentials API [6] and place a pointer to that
+existing struct cred instead of creating a new one using
+prepare_creds() in the sibling thread.
+
+Noteworthy discussion points
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* We are side-stepping the normal credentials API [6], by re-wiring an
+  existing struct cred object instead of calling prepare_creds().
+
+  We can technically avoid it, but it would create unnecessary
+  duplicate struct cred objects in multithreaded scenarios.
+
+* I am slightly unhappy with the elaborate memory allocation scheme
+  that I built for the task work objects. Ideas are welcome.
+
+Change Log
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+v2:
+ - https://lore.kernel.org/all/20250221184417.27954-2-gnoack3000@gmail.com/
+ - Semantics:
+   - Threads implicitly set NO_NEW_PRIVS unless they have
+     CAP_SYS_ADMIN, to fulfill Landlock policy enforcement
+     prerequisites
+   - Landlock policy gets unconditionally overridden even if the
+     previously established Landlock domains in sibling threads were
+     diverging.
+ - Restructure discovery of all sibling threads, with the algorithm
+   proposed by Jann Horn [7]: Loop through threads multiple times, and
+   get them all stuck in the pseudo signal (task work), until no new
+   sibling threads show up.
+ - Use RCU lock when iterating over sibling threads.
+ - Override existing Landlock domains of other threads,
+   instead of applying a new Landlock policy on top
+ - Directly re-wire the struct cred for sibling threads,
+   instread of creating a new one with prepare_creds().
+ - Tests:
+   - Remove multi_threaded_failure test
+     (The only remaining failure case is ENOMEM,
+     there is no good way to provoke that in a selftest)
+   - Add test for success despite diverging Landlock domains.
+
+[1] https://github.com/landlock-lsm/go-landlock
+[2] https://sites.google.com/site/fullycapable/who-ordered-libpsx
+[3] https://man.gnoack.org/7/nptl
+[4] https://man.gnoack.org/2/setuid#VERSIONS
+[5] https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45=
+e6b8@google.com/
+[6] https://www.kernel.org/doc/html/latest/security/credentials.html
+[7] https://lore.kernel.org/all/CAG48ez0pWg3OTABfCKRk5sWrURM-HdJhQMcWedEppc=
+_z1rrVJw@mail.gmail.com/
+
+G=C3=BCnther Noack (2):
+  landlock: Multithreading support for landlock_restrict_self()
+  landlock: selftests for LANDLOCK_RESTRICT_SELF_TSYNC
+
+ include/uapi/linux/landlock.h                 |   4 +
+ security/landlock/cred.h                      |  12 +
+ security/landlock/limits.h                    |   2 +-
+ security/landlock/syscalls.c                  | 433 +++++++++++++++++-
+ tools/testing/selftests/landlock/base_test.c  |   6 +-
+ tools/testing/selftests/landlock/tsync_test.c |  99 ++++
+ 6 files changed, 550 insertions(+), 6 deletions(-)
  create mode 100644 tools/testing/selftests/landlock/tsync_test.c
 
-diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/s=
-elftests/landlock/base_test.c
-index 7b69002239d7..b9be6dcb7e8c 100644
---- a/tools/testing/selftests/landlock/base_test.c
-+++ b/tools/testing/selftests/landlock/base_test.c
-@@ -288,7 +288,7 @@ TEST(restrict_self_fd)
- 	EXPECT_EQ(EBADFD, errno);
- }
-=20
--TEST(restrict_self_fd_flags)
-+TEST(restrict_self_fd_logging_flags)
- {
- 	int fd;
-=20
-@@ -304,9 +304,9 @@ TEST(restrict_self_fd_flags)
- 	EXPECT_EQ(EBADFD, errno);
- }
-=20
--TEST(restrict_self_flags)
-+TEST(restrict_self_logging_flags)
- {
--	const __u32 last_flag =3D LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF;
-+	const __u32 last_flag =3D LANDLOCK_RESTRICT_SELF_TSYNC;
-=20
- 	/* Tests invalid flag combinations. */
-=20
-diff --git a/tools/testing/selftests/landlock/tsync_test.c b/tools/testing/=
-selftests/landlock/tsync_test.c
-new file mode 100644
-index 000000000000..356e20de352f
---- /dev/null
-+++ b/tools/testing/selftests/landlock/tsync_test.c
-@@ -0,0 +1,99 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Landlock tests - Enforcing the same restrictions across multiple thread=
-s
-+ *
-+ * Copyright =C2=A9 2025 G=C3=BCnther Noack <gnoack3000@gmail.com>
-+ */
-+
-+#define _GNU_SOURCE
-+#include <pthread.h>
-+#include <sys/prctl.h>
-+#include <linux/landlock.h>
-+
-+#include "common.h"
-+
-+/* create_ruleset - Create a simple ruleset FD common to all tests */
-+static int create_ruleset(struct __test_metadata *const _metadata)
-+{
-+	struct landlock_ruleset_attr ruleset_attr =3D {
-+		.handled_access_fs =3D (LANDLOCK_ACCESS_FS_WRITE_FILE |
-+				      LANDLOCK_ACCESS_FS_TRUNCATE),
-+	};
-+	const int ruleset_fd =3D
-+		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-+
-+	ASSERT_LE(0, ruleset_fd);
-+	return ruleset_fd;
-+}
-+
-+TEST(single_threaded_success)
-+{
-+	const int ruleset_fd =3D create_ruleset(_metadata);
-+
-+	disable_caps(_metadata);
-+
-+	ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
-+	ASSERT_EQ(0, landlock_restrict_self(ruleset_fd,
-+					    LANDLOCK_RESTRICT_SELF_TSYNC));
-+
-+	ASSERT_EQ(0, close(ruleset_fd));
-+}
-+
-+void *idle(void *data)
-+{
-+	while (true)
-+		sleep(1);
-+}
-+
-+TEST(multi_threaded_success)
-+{
-+	pthread_t t1, t2;
-+	const int ruleset_fd =3D create_ruleset(_metadata);
-+
-+	disable_caps(_metadata);
-+
-+	ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
-+
-+	ASSERT_EQ(0, pthread_create(&t1, NULL, idle, NULL));
-+	ASSERT_EQ(0, pthread_create(&t2, NULL, idle, NULL));
-+
-+	EXPECT_EQ(0, landlock_restrict_self(ruleset_fd,
-+					    LANDLOCK_RESTRICT_SELF_TSYNC));
-+
-+	ASSERT_EQ(0, pthread_cancel(t1));
-+	ASSERT_EQ(0, pthread_cancel(t2));
-+	ASSERT_EQ(0, pthread_join(t1, NULL));
-+	ASSERT_EQ(0, pthread_join(t2, NULL));
-+	ASSERT_EQ(0, close(ruleset_fd));
-+}
-+
-+TEST(multi_threaded_success_despite_diverging_domains)
-+{
-+	pthread_t t1, t2;
-+	const int ruleset_fd =3D create_ruleset(_metadata);
-+
-+	disable_caps(_metadata);
-+
-+	ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
-+
-+	ASSERT_EQ(0, pthread_create(&t1, NULL, idle, NULL));
-+	ASSERT_EQ(0, pthread_create(&t2, NULL, idle, NULL));
-+
-+	/*
-+	 * The main thread enforces a ruleset,
-+	 * thereby bringing the threads' Landlock domains out of sync.
-+	 */
-+	EXPECT_EQ(0, landlock_restrict_self(ruleset_fd, 0));
-+
-+	/* Still, TSYNC succeeds, bringing the threads in sync again. */
-+	EXPECT_EQ(0, landlock_restrict_self(ruleset_fd,
-+					    LANDLOCK_RESTRICT_SELF_TSYNC));
-+
-+	ASSERT_EQ(0, pthread_cancel(t1));
-+	ASSERT_EQ(0, pthread_cancel(t2));
-+	ASSERT_EQ(0, pthread_join(t1, NULL));
-+	ASSERT_EQ(0, pthread_join(t2, NULL));
-+	ASSERT_EQ(0, close(ruleset_fd));
-+}
-+
-+TEST_HARNESS_MAIN
 --=20
 2.51.0.618.g983fd99d29-goog
 
