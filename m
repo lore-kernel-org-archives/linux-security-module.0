@@ -1,190 +1,261 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CAB34BA2B
-	for <linux-security-module@vger.kernel.org>; Thu,  2 Oct 2025 13:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8533625B662;
+	Thu,  2 Oct 2025 17:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759412927; cv=none; b=AAWwSeY1Rsheymiv0qtDwV7Kb24/cpefYFfozW852PdE8vOMQt/qkOialA2/YV2FLpR/Uh+GAbOiU+cREUupTCH0G1bWBECyovgyRTIP0AYFDqtnK96XeOLTZIww9cYzFuqNrszp8BKQFwiReOFUz/PkYHLO4VFfswItTvqkkdo=
+	t=1759425517; cv=none; b=Bg6+aV3iBfG8LRJ4HVKKZXjHGiEwAMmSMhWhOf5GfJ1p1JPwnaMjXVYafZiFPlkFwNI8+i8HXR6McNx9RlcQpnjXJOzvoOtbB9Pz4PVbgxeTmxvlVrdqqDP3/kdAZAXhEjM3QvlGe5g0VdAg3sgP00fIHuf8k27VlYye7tiFxxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759412927; c=relaxed/simple;
-	bh=9Ff1IwWNy93oXu64Q4BiN1QZkpj+h3I9ouZGA9yoNJk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pT70nGyYc/o5NtwGvtpZIIspsJMGE9blPFsiTk4xwAc0Q0a3gbz1g9TvaPbwSAbJfgiCIyFdmqVY93ApgzSlq8FMh1eCrshdwOr9XugyS+1dss70mwZQdpllFN10ke2BV0YEzNTzbnQbM5CyA1xJ3vgvrF8MlMrFvjGN1554xI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HWYIx6hv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1759425517; c=relaxed/simple;
+	bh=02lOA8M4b99FTI12clEcVWJmZe9RgZyngHhaHKvYHnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NrifqvfNR8+K5ho7iz3h9Cc/G/cU0bFhp3/IZRStTnZJo42cOGS2VSbreqaf06ZGpBNk90nEU/w/IcHADBodPMKVAi3SOikx2qIaFsqEMy1JnVEGyqfYfUQQx8moSPbVgCdCkDsfCh/f4hAk5FS8AO+tQCz+ZqIK/kenEbKpQOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hHRZWhxS; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HWYIx6hv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE2CAC4CEFB
-	for <linux-security-module@vger.kernel.org>; Thu,  2 Oct 2025 13:48:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759412926;
-	bh=9Ff1IwWNy93oXu64Q4BiN1QZkpj+h3I9ouZGA9yoNJk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HWYIx6hv+6bv6+XSqF0VcT7RqGGvbPKi4HR2E6YnW+zeG4ZGZFdFWqUApKTzoDAFa
-	 t8InPyvdiFlaopiLoAZ0ezfnI7nh1fsrvRPdrmOpyvJcz0E2KhAPZstGYFYppIQeg+
-	 7mh08uqMDYP0xjdFwb3XiwmkEKJqDHBI2xodSdN9abJCpz6uBRHFFzjNaDvxQYW/Yk
-	 zLoEXKdY07ulP4phJW+B+nThS9KsEeZmdcEhuK69ht3t5L4ioTfAjmFdqTeBCZdJ4s
-	 7lUVKdvFGurmzMwt2UiWtadVLx5SxAMfUrC4Rb+KjlDssLYMx05i/czH+qbosrjLX8
-	 M2uxiu/Sjcadg==
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3f0134ccc0cso617451f8f.1
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Oct 2025 06:48:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWVJyZXQEKICwci9qDChKTugjrUiaOnak5h1Ktm5XwPt0wAl9oqelaLOttc+EsesTaQU+BBnDT/yIA8ceqC2bcdJg8AKMo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqMllGDEb0F1/xwJBl3gjvPKhPg7tL6PMzyFtx4QqEKF+cEuW0
-	CboAUojZGqcVYIwXSO6u4bqUxSN6eRMN9KLtkgh147VaVc0A6G4pxAdLecENs9NjxQT1s+QG8CV
-	Usdy5+9hDodYcrBaEliMhsCUJriz/T8FuCIYpIe6c
-X-Google-Smtp-Source: AGHT+IH1dN6IDmrUwxgIXsG+8PYYgV0rG7YIPLOGWpG/qZ3dQdD71//Cu/PMbo3C2ZiClVnk4i+mbNj3u2mLy9E2ZJw=
-X-Received: by 2002:a05:6000:2909:b0:411:3c14:3ac9 with SMTP id
- ffacd0b85a97d-42557820099mr4926287f8f.59.1759412925413; Thu, 02 Oct 2025
- 06:48:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hHRZWhxS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759425516; x=1790961516;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=02lOA8M4b99FTI12clEcVWJmZe9RgZyngHhaHKvYHnU=;
+  b=hHRZWhxSMFdeSpI9gzx0VBt635Jk63gJVimE0rQhP2/iXTVSrJjpF1bE
+   4DFUwwaXBHnqn4YiH3VRv8/NMiEVeTqTP52Cr0SSr35kolKRPeXNzwKpt
+   jUxeWaEQtDSj2eIX9LFgMpPVRiAGl/lALV3M/zQW6UBpUtkQOmulrvHzW
+   K3O9y9v1mbn2yQOi1Evb0u1sUWvliILqNSFSRaS/hYFmZkP8eSiuL1Ode
+   zOtGPQfy3leG3+jXyQvGIIgmN/hesI0+YGcrl4WJKM9JVpmwL8hzO7LsR
+   yRqLf6ZbWxbGYqV1RjS+yVyJ68g9Bg9Ers64aWKiz+Hs7qQ3aZbvJw0+O
+   A==;
+X-CSE-ConnectionGUID: Q81euc8LRn6dYuz/wmkk5w==
+X-CSE-MsgGUID: XrEWZX8kTD+iUeOWr59itw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="61878083"
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
+   d="scan'208";a="61878083"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 10:18:35 -0700
+X-CSE-ConnectionGUID: TBUpOEUBQpqe67YSZddDYQ==
+X-CSE-MsgGUID: TcQTY7GcSaOH1JblNzYj5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
+   d="scan'208";a="184282752"
+Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 02 Oct 2025 10:18:31 -0700
+Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v4Mwm-0003yt-1s;
+	Thu, 02 Oct 2025 17:18:28 +0000
+Date: Fri, 3 Oct 2025 01:17:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Karel Srot <ksrot@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ima: Fall back to default kernel module signature
+ verification
+Message-ID: <202510030029.VRKgik99-lkp@intel.com>
+References: <20250928030358.3873311-1-coxu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929213520.1821223-1-bboscaccy@linux.microsoft.com> <CAHC9VhTQ_DR=ANzoDBjcCtrimV7XcCZVUsANPt=TjcvM4d-vjg@mail.gmail.com>
-In-Reply-To: <CAHC9VhTQ_DR=ANzoDBjcCtrimV7XcCZVUsANPt=TjcvM4d-vjg@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Thu, 2 Oct 2025 15:48:34 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ4yG1d8ujZ8PVzsRr_PWpyr6goD9DezQTu8ydaf-skn6g@mail.gmail.com>
-X-Gm-Features: AS18NWDR2V32kHl6e06nyB7JdSmw2OjmHo0LVJsbfsChvLGWcEDxe_YY0pjHE_c
-Message-ID: <CACYkzJ4yG1d8ujZ8PVzsRr_PWpyr6goD9DezQTu8ydaf-skn6g@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 0/3] BPF signature hash chains
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, ast@kernel.org, 
-	james.bottomley@hansenpartnership.com, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kys@microsoft.com, 
-	daniel@iogearbox.net, andrii@kernel.org, wufan@linux.microsoft.com, 
-	qmo@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250928030358.3873311-1-coxu@redhat.com>
 
-On Wed, Oct 1, 2025 at 11:37=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
+Hi Coiby,
 
-[...]
+kernel test robot noticed the following build errors:
 
-> With the lack of engagement from the BPF devs, I'm now at the point
-> where I'm asking Linus to comment on the current situation around
+[auto build test ERROR on cec1e6e5d1ab33403b809f79cd20d6aff124ccfe]
 
-The lack of engagement is because Blaise has repeatedly sent patches
-and ignored maintainer feedback and continued pushing a broken
-approach. The community, in fact, prioritized the signing work to
-unblock your use-case.
+url:    https://github.com/intel-lab-lkp/linux/commits/Coiby-Xu/ima-Fall-back-to-default-kernel-module-signature-verification/20250928-110501
+base:   cec1e6e5d1ab33403b809f79cd20d6aff124ccfe
+patch link:    https://lore.kernel.org/r/20250928030358.3873311-1-coxu%40redhat.com
+patch subject: [PATCH] ima: Fall back to default kernel module signature verification
+config: i386-randconfig-012-20251002 (https://download.01.org/0day-ci/archive/20251003/202510030029.VRKgik99-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251003/202510030029.VRKgik99-lkp@intel.com/reproduce)
 
-> Blaise's patchset.  I recognize that Alexei and KP have a strong
-> affinity for the signature scheme implemented in KP's patchset, which
-> is fine, but if we are going to be serious about implementing BPF
-> signature verification that can be used by a number of different user
-> groups, we also need to support the signature scheme that Blaise is
-> proposing[6].
->
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510030029.VRKgik99-lkp@intel.com/
 
-Blaise's implementation fails on any modern BPF programs since
-programs use more than one map, BTF information and kernel functions.
+All errors (new ones prefixed by >>):
 
-> To make it clear at the start, Blaise's patchset does not change,
-> block, or otherwise prevent the BPF program signature scheme
-> implemented in KP's patchset.  Blaise intentionally designed his
-> patches such that the two signature schemes can coexist together in
+   ld: security/integrity/ima/ima_appraise.o: in function `ima_appraise_measurement':
+>> security/integrity/ima/ima_appraise.c:587:(.text+0xbbb): undefined reference to `set_module_sig_enforced'
 
-We cannot have multiple signature schemes, this is not the experience
-we want for BPF users.
 
-> the same kernel, allowing users to select which scheme to use on each
-> BPF program load, enabling the kernel to support policy to selectively
-> enforce rules around which signature scheme is permitted for each BPF
-> program load.
->
-> Blaise's patch implements an alternate BPF program signature scheme,
-> using the same basic concepts as KP's design (light skeletons, hash
-> chaining, etc.), but does so in such a way that the kernel verifies
-> all relevant parts of the BPF program load prior to calling the
-> security_bpf_prog_load() LSM hook.  KP's signature scheme only
-> verifies the light skeleton prior to calling the LSM hook and relies
+vim +587 security/integrity/ima/ima_appraise.c
 
-You are confusing a light skeleton from a loader program. Loader
-programs are independent of light skeletons.
+   483	
+   484	/*
+   485	 * ima_appraise_measurement - appraise file measurement
+   486	 *
+   487	 * Call evm_verifyxattr() to verify the integrity of 'security.ima'.
+   488	 * Assuming success, compare the xattr hash with the collected measurement.
+   489	 *
+   490	 * Return 0 on success, error code otherwise
+   491	 */
+   492	int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+   493				     struct file *file, const unsigned char *filename,
+   494				     struct evm_ima_xattr_data *xattr_value,
+   495				     int xattr_len, const struct modsig *modsig)
+   496	{
+   497		static const char op[] = "appraise_data";
+   498		int audit_msgno = AUDIT_INTEGRITY_DATA;
+   499		const char *cause = "unknown";
+   500		struct dentry *dentry = file_dentry(file);
+   501		struct inode *inode = d_backing_inode(dentry);
+   502		enum integrity_status status = INTEGRITY_UNKNOWN;
+   503		int rc = xattr_len;
+   504		bool try_modsig = iint->flags & IMA_MODSIG_ALLOWED && modsig;
+   505		bool enforce_module_sig = iint->flags & IMA_DIGSIG_REQUIRED && func == MODULE_CHECK;
+   506	
+   507		/* If not appraising a modsig or using default module verification, we need an xattr. */
+   508		if (!(inode->i_opflags & IOP_XATTR) && !try_modsig && !enforce_module_sig)
+   509			return INTEGRITY_UNKNOWN;
+   510	
+   511		/*
+   512		 * Unlike any of the other LSM hooks where the kernel enforces file
+   513		 * integrity, enforcing file integrity for the bprm_creds_for_exec()
+   514		 * LSM hook with the AT_EXECVE_CHECK flag is left up to the discretion
+   515		 * of the script interpreter(userspace). Differentiate kernel and
+   516		 * userspace enforced integrity audit messages.
+   517		 */
+   518		if (is_bprm_creds_for_exec(func, file))
+   519			audit_msgno = AUDIT_INTEGRITY_USERSPACE;
+   520	
+   521		/* If reading the xattr failed and there's no modsig or module verification, error out. */
+   522		if (rc <= 0 && !try_modsig && !enforce_module_sig) {
+   523			if (rc && rc != -ENODATA)
+   524				goto out;
+   525	
+   526			if (iint->flags & IMA_DIGSIG_REQUIRED) {
+   527				if (iint->flags & IMA_VERITY_REQUIRED)
+   528					cause = "verity-signature-required";
+   529				else
+   530					cause = "IMA-signature-required";
+   531			} else {
+   532				cause = "missing-hash";
+   533			}
+   534	
+   535			status = INTEGRITY_NOLABEL;
+   536			if (file->f_mode & FMODE_CREATED)
+   537				iint->flags |= IMA_NEW_FILE;
+   538			if ((iint->flags & IMA_NEW_FILE) &&
+   539			    (!(iint->flags & IMA_DIGSIG_REQUIRED) ||
+   540			     (inode->i_size == 0)))
+   541				status = INTEGRITY_PASS;
+   542			goto out;
+   543		}
+   544	
+   545		status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value,
+   546					 rc < 0 ? 0 : rc);
+   547		switch (status) {
+   548		case INTEGRITY_PASS:
+   549		case INTEGRITY_PASS_IMMUTABLE:
+   550		case INTEGRITY_UNKNOWN:
+   551			break;
+   552		case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
+   553			/* Fine to not have xattrs when using a modsig or default module verification. */
+   554			if (try_modsig || enforce_module_sig)
+   555				break;
+   556			fallthrough;
+   557		case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
+   558			cause = "missing-HMAC";
+   559			goto out;
+   560		case INTEGRITY_FAIL_IMMUTABLE:
+   561			set_bit(IMA_DIGSIG, &iint->atomic_flags);
+   562			cause = "invalid-fail-immutable";
+   563			goto out;
+   564		case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
+   565			cause = "invalid-HMAC";
+   566			goto out;
+   567		default:
+   568			WARN_ONCE(true, "Unexpected integrity status %d\n", status);
+   569		}
+   570	
+   571		if (xattr_value)
+   572			rc = xattr_verify(func, iint, xattr_value, xattr_len, &status,
+   573					  &cause);
+   574	
+   575		/*
+   576		 * If we have a modsig and either no imasig or the imasig's key isn't
+   577		 * known, then try verifying the modsig.
+   578		 */
+   579		if (try_modsig &&
+   580		    (!xattr_value || xattr_value->type == IMA_XATTR_DIGEST_NG ||
+   581		     rc == -ENOKEY))
+   582			rc = modsig_verify(func, modsig, &status, &cause);
+   583	
+   584		/* Fall back to default kernel module signature verification */
+   585		if (rc && enforce_module_sig) {
+   586			rc = 0;
+ > 587			set_module_sig_enforced();
+   588			/* CONFIG_MODULE_SIG may be disabled */
+   589			if (is_module_sig_enforced()) {
+   590				rc = 0;
+   591				status = INTEGRITY_PASS;
+   592				pr_debug("Fall back to default kernel module verification for %s\n", filename);
+   593			}
+   594		}
+   595	
+   596	out:
+   597		/*
+   598		 * File signatures on some filesystems can not be properly verified.
+   599		 * When such filesystems are mounted by an untrusted mounter or on a
+   600		 * system not willing to accept such a risk, fail the file signature
+   601		 * verification.
+   602		 */
+   603		if ((inode->i_sb->s_iflags & SB_I_IMA_UNVERIFIABLE_SIGNATURE) &&
+   604		    ((inode->i_sb->s_iflags & SB_I_UNTRUSTED_MOUNTER) ||
+   605		     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
+   606			status = INTEGRITY_FAIL;
+   607			cause = "unverifiable-signature";
+   608			integrity_audit_msg(audit_msgno, inode, filename,
+   609					    op, cause, rc, 0);
+   610		} else if (status != INTEGRITY_PASS) {
+   611			/* Fix mode, but don't replace file signatures. */
+   612			if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig &&
+   613			    (!xattr_value ||
+   614			     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
+   615				if (!ima_fix_xattr(dentry, iint))
+   616					status = INTEGRITY_PASS;
+   617			}
+   618	
+   619			/*
+   620			 * Permit new files with file/EVM portable signatures, but
+   621			 * without data.
+   622			 */
+   623			if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
+   624			    test_bit(IMA_DIGSIG, &iint->atomic_flags)) {
+   625				status = INTEGRITY_PASS;
+   626			}
+   627	
+   628			integrity_audit_msg(audit_msgno, inode, filename,
+   629					    op, cause, rc, 0);
+   630		} else {
+   631			ima_cache_flags(iint, func);
+   632		}
+   633	
+   634		ima_set_cache_status(iint, func, status);
+   635		return status;
+   636	}
+   637	
 
-> on the BPF code in the light skeleton to verify the original BPF
-> program.
->
-> Relying on a light skeleton to verify the BPF program means that any
-> verification failures in the light skeleton will be "lost" as there is
-> no way to convey an error code back to the user who is attempting the
-
-This is not correct, the error is propagated back if the loader program fai=
-ls.
-
-> BPF program load.  Blaise's approach to verifying the full signature
-> in the kernel, and not relying on the light skeleton for verification,
-> means that verification failures can be returned to the user; there
-> are no silent signature verification failures like one can experience
-> with KP's verification scheme.
->
-> KP's signature verification scheme is a two-part scheme with the
-> security_bpf_prog_load() LSM hook being called after the light
-> skeleton signature has been verified, but before the light skeleton
-> verifies the BPF program.  Aside from breaking with typical
-
-Again you mean, loader BPF program. Skeletons are just for
-convenience. You don't have to use them. libbpf provides an
-implementation to easily generate loader programs, but you don't have
-to use that either.
-
-> conventions around the placement of LSM hooks, this "halfway" approach
-> makes it difficult for LSMs to log anything about the signature status
-> of a BPF program being loaded, or use the signature status in any type
-> of access decision.  This is important for a number of user groups
-> that use LSM based security policies as a way to help reason about the
-> security properties of a system, as KP's scheme would require the
-> users to analyze the signature verification code in every BPF light
-> skeleton they authorize as well as the LSM policy in order to reason
-> about the security mechanisms involved in BPF program loading.
->
-> Blaise's signature scheme also has the nice property that BPF ELF
-> objects created using his scheme are backwards compatible with
-> existing released kernels that do not support any BPF signature
-> verification schemes, of course without any signature verification.
-> Loading a BPF ELF object using KP's signature scheme will likely fail
-> when loaded on existing released kernels.
-
-This does not make any sense. The ELF format and the way loaders like
-libbpf interpret it, has nothing to do with the kernel or UAPI.
-
-I had given detailed feedback to Blaise in
-https://lore.kernel.org/bpf/CACYkzJ6yNjFOTzC04uOuCmFn=3D+51_ie2tB9_x-u2xbcO=
-=3DyobTw@mail.gmail.com/
-mentions also why we don't want any additional UAPI.
-
-You keep mentioning having visibility  in the LSM code and I again
-ask, to implement what specific security policy and there is no clear
-answer? On a system where you would like to only allow signed BPF
-programs, you can purely deny any programs where the signature is not
-provided and this can be implemented today.
-
-Stable programs work as it is, programs that require runtime
-relocation work with loader programs. We don't want to add more UAPI
-as, in the future, it's quite possible that we can make the
-instruction buffer stable.
-
-- KP
-
->
-> [1] https://lore.kernel.org/linux-security-module/CAADnVQ+C2KNR1ryRtBGOZT=
-Nk961pF+30FnU9n3dt3QjaQu_N6Q@mail.gmail.com/
-> [2] https://lore.kernel.org/linux-security-module/CAHC9VhRjKV4AbSgqb4J_-x=
-hkWAp_VAcKDfLJ4GwhBNPOr+cvpg@mail.gmail.com/
-> [3] https://lore.kernel.org/linux-security-module/87sei58vy3.fsf@microsof=
-t.com/
-> [4] https://lore.kernel.org/linux-security-module/20250909162345.569889-2=
--bboscaccy@linux.microsoft.com/
-> [5] https://lore.kernel.org/linux-security-module/20250926203111.1305999-=
-1-bboscaccy@linux.microsoft.com/
-> [6] https://lore.kernel.org/linux-security-module/20250929213520.1821223-=
-1-bboscaccy@linux.microsoft.com/
->
-> --
-> paul-moore.com
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
