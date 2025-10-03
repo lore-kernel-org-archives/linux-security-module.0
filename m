@@ -1,139 +1,165 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5F329CE1;
-	Thu,  2 Oct 2025 20:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71542D6E7C
+	for <linux-security-module@vger.kernel.org>; Fri,  3 Oct 2025 02:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759435295; cv=none; b=b0b/97V2gAF8zLO+YUMEgCqKvHLVKlUILTYEWGN6BNqIzgUwlw1ySov3hHbAnTWXrUPYE4U3IFW3BnsWQLloAuqGNIrq8K3NH+zYHd5/4y/5PjBBfKQ7wD/8SeUFZ5GVtD5tyn/x2MvI2lCIBVvjT41cfUOnj8kwRg9TvvP259k=
+	t=1759458980; cv=none; b=gOhtlhitWAbbJBBeGoKt6R4RaE9GSyjN/C37O0voPeBJd77Sl9PWtmEQ8J/Kz5XrEyH2fvTzSkTvz9A5gCZg1mxZDndQTcWre3rDJQM7W4BC0xYNCXtQhwRAXLyUky8PSxDeLEULHBZTOhNPBvPM5y4RjAFEcLOohAV5A/cudMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759435295; c=relaxed/simple;
-	bh=j5/wsnm0ZL2eU5rOJpuLber2On3pdd7fhYcfRp/o0NU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jLgEO1YLjFGlJ4moaxGBSW125kKVHsaicJpL+L6rXiqcTcdOWcPrIPwid6E8g4ueGCxwOhPd1EiDyyhkbillkvcYnKk3BR3hvDzO76lRzPfQkvMdPakZ1/GwkdpVIx8mBwcxLQlZpn7cllFBIGlsuO4Z32nyz66ApM95lH+Uu2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ojrX/WZJ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1759458980; c=relaxed/simple;
+	bh=PDczC1UG00DKnp6JOz+u1xrR4XnhBXDaIWAvmub58IM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n9dMTDUWvg83bbRwSIH5mtINZca1ZeR8CCLcFW7CfKCKRKtVMb+GYgXf0XvodRwvDDmyuztGJ8hD9AIzBQwEhS8LS44WYL2bb14lFlYMGnXSCI3eDbrw7MN1SDr2xsdbM8I8213RvcxX8+ID+9vdsxzCW4Y8bvLYIwXU/L4PXbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=biJUscZv; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ojrX/WZJ"
-Received: from narnia (unknown [40.118.131.60])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 35EA4211B7BD;
-	Thu,  2 Oct 2025 13:01:32 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 35EA4211B7BD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1759435293;
-	bh=Udmkclfo3YBk1sYNXKqJn8vhYwLfj3OgpLdf2bcPKes=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ojrX/WZJtpEHhk0p9KnCT9mG1jZ5Qes+FSNM+IyP6gDehtpJO6algIlUHoXKGuSm+
-	 j18xq1ml8z9Mj9LwW+bRpkbpNEweZ0OJnxTyFc1D98xKIVud60vUBhynQWFuSsWw6n
-	 3VDM2uRj69PXKchgwKJnVSc5oIFIFQ4G1LBrFhPM=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: KP Singh <kpsingh@kernel.org>, Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, ast@kernel.org,
- james.bottomley@hansenpartnership.com, bpf@vger.kernel.org,
- linux-security-module@vger.kernel.org, kys@microsoft.com,
- daniel@iogearbox.net, andrii@kernel.org, wufan@linux.microsoft.com,
- qmo@kernel.org
-Subject: Re: [PATCH bpf-next v2 0/3] BPF signature hash chains
-In-Reply-To: <CACYkzJ4yG1d8ujZ8PVzsRr_PWpyr6goD9DezQTu8ydaf-skn6g@mail.gmail.com>
-References: <20250929213520.1821223-1-bboscaccy@linux.microsoft.com>
- <CAHC9VhTQ_DR=ANzoDBjcCtrimV7XcCZVUsANPt=TjcvM4d-vjg@mail.gmail.com>
- <CACYkzJ4yG1d8ujZ8PVzsRr_PWpyr6goD9DezQTu8ydaf-skn6g@mail.gmail.com>
-Date: Thu, 02 Oct 2025 13:01:30 -0700
-Message-ID: <871pnlysx1.fsf@microsoft.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="biJUscZv"
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32eb45ab7a0so1924690a91.0
+        for <linux-security-module@vger.kernel.org>; Thu, 02 Oct 2025 19:36:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1759458971; x=1760063771; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kbVUWWtfJTKo6/VAKXWaJ6AL71jAQxSRwAQukA729RI=;
+        b=biJUscZvvNIKJCpLzURZQ6r1QAkRcRwrelgv4SpiUdSQ9LBWpoWUCXRKrTQpVmJjMb
+         Iz0Pq6MiyENjlbFeywdBgvY9joRjgJgkvi0FJpSILzPwk6dPCMd4UTMxVikam82Ia437
+         QRnMMGkj/KbsZ4CL+DM3EZna36333F0f55EOeD+RtR8Rd6sFOoI++YWk7ZMNS2dGi+k1
+         ozVY03wm8/h7HTYFtEZrGRJtnvu+5xIXYzRp6KrPpt3qy59F/rKq+2BenX88qH35q0rO
+         mmq5UmjoUUjk1VISpdPUPaWKkIEGvGm2fXWwMUiK8s4dLK/P+1CW+NKLt7k3JBGodC9/
+         J0Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759458971; x=1760063771;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kbVUWWtfJTKo6/VAKXWaJ6AL71jAQxSRwAQukA729RI=;
+        b=ZEjOKTpnLrz0aEqCi7df2jz6mBHgP/EOyoH9ibNEjpC3BJ4TK+cTxcOmdQKdjHqSAE
+         /Z1AWYAbpI+TysEB4L62cxpi3n4fo/TbtPaTOS1ld4FlfpqMvbV8Sd2IZ9CmPz8ZVQTK
+         9xKGIZZRmQnPDLPNc2p6n5ZHp056Tn/dFF628/p7pZ18g8t/XenajUpmzpTRDmzGh3aP
+         YRKROZTQD1oFCosL2yRtLupOtyGzEnQyRJbQDz9CxTR3vAOiO0u418pnwSpbH27LGqcZ
+         KnzMoXFUNjOgkkpWyxd2aw4NettSoYNT1fkX6SDw6RNPeZTlou3WEC5ptMJEb+05HgAf
+         LkOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWbQUr8pIwud1W7LtkPSyuSgiYss+J8PoPCb+J+NH+8pPwPXLAx54140kxQGs5mfAPSc1F0yt2/FhxAIMIijAUXBQ/65/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbiCDIRIUUxvlXuPJwL2We4WXwcUYASUkeP0yBiqKkIbClaDvd
+	phtIvrcNDqQjpzMfHZ0L4OZu165acXgC6KTqbkoIPLWvEeUhZQsnazzqSBCJDExNH2QEEWj6TaJ
+	X6OH9/0L8BZu2l8DBgkcMqBPPx2VgLVjwFg3a2pkjq0NPlNeYlyqlZQ==
+X-Gm-Gg: ASbGncu+C6GdN9Q5LrAfEEBt5V/b++40YJJmfpIl3u6RBK6zlZgDqL3VMxiQ18qPCfp
+	3g/zR+JqSDzubHBiCx+AfDC9YRIgsGXA801BOL2s8M7s7bJD9plQhn+cKoCeyB4uAEJkA8te9h6
+	iQj1ynixeq7KP1Ss/8ldaY/M8+RFdGEKNi+nchWNYT3uBU5N4A82CNaESDcgR/5Jp806Sd3lhAu
+	/A4VuyffiNwZS+fs6MGmrhMFj8TILPcaf3OqebaCg==
+X-Google-Smtp-Source: AGHT+IGM7sxkAvHQCswLIRm1lmGJctyE4Z3LAYrg0SJpQyZKL7u/tjCU1lsl821OhhdvdwC72y4sBnfz78urQGkfowg=
+X-Received: by 2002:a17:90b:33d0:b0:329:e4d1:c20f with SMTP id
+ 98e67ed59e1d1-339c270272cmr1798927a91.9.1759458971129; Thu, 02 Oct 2025
+ 19:36:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250929213520.1821223-1-bboscaccy@linux.microsoft.com>
+ <CAHC9VhTQ_DR=ANzoDBjcCtrimV7XcCZVUsANPt=TjcvM4d-vjg@mail.gmail.com> <CACYkzJ4yG1d8ujZ8PVzsRr_PWpyr6goD9DezQTu8ydaf-skn6g@mail.gmail.com>
+In-Reply-To: <CACYkzJ4yG1d8ujZ8PVzsRr_PWpyr6goD9DezQTu8ydaf-skn6g@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 2 Oct 2025 22:35:59 -0400
+X-Gm-Features: AS18NWA5VOquYItqewfcLw0X1EfuA0hKyUTOPc-IPXqDwZgNXrJXoVU9Q8aukJc
+Message-ID: <CAHC9VhR2Ab8Rw8RBm9je9-Ss++wufstxh4fB3zrZXnBoZpSi_Q@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 0/3] BPF signature hash chains
+To: KP Singh <kpsingh@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, ast@kernel.org, 
+	james.bottomley@hansenpartnership.com, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kys@microsoft.com, 
+	daniel@iogearbox.net, andrii@kernel.org, wufan@linux.microsoft.com, 
+	qmo@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-KP Singh <kpsingh@kernel.org> writes:
-
+On Thu, Oct 2, 2025 at 9:48=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrote:
 > On Wed, Oct 1, 2025 at 11:37=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
 wrote:
->>
+> >
+> > With the lack of engagement from the BPF devs, I'm now at the point
+> > where I'm asking Linus to comment on the current situation around
 >
-> [...]
+> The lack of engagement is because Blaise has repeatedly sent patches
+> and ignored maintainer feedback and continued pushing a broken
+> approach.
+
+I'm sorry you feel that way, but that simply does not appear to be the
+case.  Looking at the archives from this year I see that Blase has
+proposed three different approaches[7][8][9] to verifying signed BPF
+programs, with each new approach a result of the feedback received.
+
+> The community, in fact, prioritized the signing work to unblock your use-=
+case.
+
+As mentioned previously, many times over, while your signature scheme
+may satisfy your own
+requirements, it does not provide a workable solution for use cases
+that have more stringent security requirements.  Blaise's latest
+approach, a small patch on top of your patchset, is an attempt to
+bridge that divide.
+
+> Blaise's implementation ...
+
+I think Blaise's response addressed your other comments rather well so
+I'll just skip over those points.
+
+> > To make it clear at the start, Blaise's patchset does not change,
+> > block, or otherwise prevent the BPF program signature scheme
+> > implemented in KP's patchset.  Blaise intentionally designed his
+> > patches such that the two signature schemes can coexist together in
 >
+> We cannot have multiple signature schemes, this is not the experience
+> we want for BPF users.
 
-[...]
+In a perfect world there would be a singular BPF signature scheme
+which would satisfy all the different use cases, but the sad reality
+is that your signature scheme which Alexei sent to Linus during this
+merge window falls short of that goal.  Blaise's patch is an attempt
+to provide a solution for the BPF use cases that are not sufficiently
+addressed by your signature scheme.
 
-I am confident that Paul will address your remaining points. However, I
-would like to clarify a few factual inaccuracies outlined below.
-
+> > Relying on a light skeleton to verify the BPF program means that any
+> > verification failures in the light skeleton will be "lost" as there is
+> > no way to convey an error code back to the user who is attempting the
 >
-> Blaise's implementation fails on any modern BPF programs since
-> programs use more than one map, BTF information and kernel functions.
->
+> This is not correct, the error is propagated back if the loader program f=
+ails.
 
-If you read the patch series you'd see that it supports verification of
-any number of maps. If you've identified an issue with map verification,
-please share the details and I=E2=80=99ll address it.
+The loader BPF program which verifies the original BPF program, stored
+as a map as part of the light skeleton, is not executed as part of the
+original bpf() syscall issued from userspace.  The loader BPF program,
+and its verification code, is executed during a subsequent call.  It
+is possible for the PKCS7 signature on the loader to pass, with the
+kernel reporting a successful program load, the LSM authorizing the
+load based on a good signature, and audit recording a successful
+signature verification yet the loader could still fail the integrity
+check on the original BPF program, leaving the system with a false
+positive on the BPF program load and a "questionable" audit trail.
 
-
-[...]
-
->> conventions around the placement of LSM hooks, this "halfway" approach
->> makes it difficult for LSMs to log anything about the signature status
->> of a BPF program being loaded, or use the signature status in any type
->> of access decision.  This is important for a number of user groups
->> that use LSM based security policies as a way to help reason about the
->> security properties of a system, as KP's scheme would require the
->> users to analyze the signature verification code in every BPF light
->> skeleton they authorize as well as the LSM policy in order to reason
->> about the security mechanisms involved in BPF program loading.
->>
->> Blaise's signature scheme also has the nice property that BPF ELF
->> objects created using his scheme are backwards compatible with
->> existing released kernels that do not support any BPF signature
->> verification schemes, of course without any signature verification.
->> Loading a BPF ELF object using KP's signature scheme will likely fail
->> when loaded on existing released kernels.
->
-> This does not make any sense. The ELF format and the way loaders like
-> libbpf interpret it, has nothing to do with the kernel or UAPI.
->
-
-We signed a program with your upstream tools and it failed to load on a
-vanilla kernel 6.16. The loader in your patchset is intepreting the
-first few fields of struct bpf_map as a byte array containing a sha256
-digest on older kernels.
-
--blaise
-
-
-> I had given detailed feedback to Blaise in
-> https://lore.kernel.org/bpf/CACYkzJ6yNjFOTzC04uOuCmFn=3D+51_ie2tB9_x-u2xb=
-cO=3DyobTw@mail.gmail.com/
-> mentions also why we don't want any additional UAPI.
->
 > You keep mentioning having visibility  in the LSM code and I again
 > ask, to implement what specific security policy and there is no clear
-> answer? On a system where you would like to only allow signed BPF
-> programs, you can purely deny any programs where the signature is not
-> provided and this can be implemented today.
->
-> Stable programs work as it is, programs that require runtime
-> relocation work with loader programs. We don't want to add more UAPI
-> as, in the future, it's quite possible that we can make the
-> instruction buffer stable.
->
-> - KP
->
->>
->> [1] https://lore.kernel.org/linux-security-module/CAADnVQ+C2KNR1ryRtBGOZ=
-TNk961pF+30FnU9n3dt3QjaQu_N6Q@mail.gmail.com/
->> [2] https://lore.kernel.org/linux-security-module/CAHC9VhRjKV4AbSgqb4J_-=
-xhkWAp_VAcKDfLJ4GwhBNPOr+cvpg@mail.gmail.com/
->> [3] https://lore.kernel.org/linux-security-module/87sei58vy3.fsf@microso=
-ft.com/
->> [4] https://lore.kernel.org/linux-security-module/20250909162345.569889-=
-2-bboscaccy@linux.microsoft.com/
->> [5] https://lore.kernel.org/linux-security-module/20250926203111.1305999=
--1-bboscaccy@linux.microsoft.com/
->> [6] https://lore.kernel.org/linux-security-module/20250929213520.1821223=
--1-bboscaccy@linux.microsoft.com/
->>
->> --
->> paul-moore.com
+> answer?
+
+No one policy can satisfy the different security requirements of all
+known users, simply look at all of the LSMs (including the BPF LSM)
+which support different security policies as a real world example of
+this.  Even the presence of the LSM framework as an abstract layer is
+an admission that no one policy, or model, solves all problems.
+Instead, the goal is to ensure we have mechanisms in place which are
+flexible enough to support a number of different policies and models.
+
+[7] https://lore.kernel.org/all/20250109214617.485144-1-bboscaccy@linux.mic=
+rosoft.com/
+[8] https://lore.kernel.org/linux-security-module/20250321164537.16719-1-bb=
+oscaccy@linux.microsoft.com/
+[9] https://lore.kernel.org/linux-security-module/87sei58vy3.fsf@microsoft.=
+com/
+
+--=20
+paul-moore.com
