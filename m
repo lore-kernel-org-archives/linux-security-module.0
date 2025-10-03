@@ -1,136 +1,163 @@
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBA02F0C61
-	for <linux-security-module@vger.kernel.org>; Fri,  3 Oct 2025 13:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6296028E571
+	for <linux-security-module@vger.kernel.org>; Fri,  3 Oct 2025 16:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759497819; cv=none; b=R3EzzUQZmC76BNbRgXb49S9lzSBqpaTnomHrN5eoEfUdNcPiU7AwZZuNIoXlRanqtwcCk8ZU03txZG5zNBKbZTSXpBxWNBcYfCms2F/Jv5RHtFeWEQpTyaVDUJSfqimnMbo0K9rsfQxeAqS0Q/geek4vTL0eTlBFobIbRV0ODwo=
+	t=1759508708; cv=none; b=Kyd8tfABkDlge3KcpiIWmNF1f6UQnnKuN6In1qaDoaxVVB7IMNG3JMmHMVHmWoCnPLrRj8DxFt3jhp8UeVJ5q2Hlw9eYP4KOtiMQ1tEKZIr5gUiqD1goNP66xHJtbt+/1whlZ6YPnzOgOBUBDqIRVmcvufFJH0b356Wbr+fIPY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759497819; c=relaxed/simple;
-	bh=mUKu6iaFo6a3CXPPygm6mszyYA3XUGGIY/VOgs7ytFc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HN5i+Qhi/9yO5ZB3XuKEiZDvMCmuS+1wEYqyO4fjBeSLWOzwF5FLQIaIMZwqrqL0FV1hPGjhvYZlBcZ1oxl+sE8Y3XyDQNvBDdq5S8B2+pOY596cjegdgc7i7wjXKp/ozUdx069eB9dCntHGsnYLkqSxw5UBqn5e4wRz6LFGzV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cxhv+hux; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1759508708; c=relaxed/simple;
+	bh=cnHKFDW3suOLqNZc/IzOJL+zwHa5UHgMn3MxBKRFyPc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qm598NQSUk0jj5MCeM80Vmbh5H3+6WRfHVdk8sm94AwPNDzdFB4mK/nqhmLa4O8ZMEyHsOx2LxNNppA86iUNJUVXEeDqbDiem11B7ScOQTlGmsD/igZNOMhn4UW0Jn4q/QsoPc5sC7o8ZgoOWdhT4Lw9gMUcJgnXYllKfcVNcR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EjeUCjps; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cxhv+hux"
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-856222505eeso263723285a.1
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Oct 2025 06:23:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759497817; x=1760102617; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UVLpi8gkovdhowq1w0/vej7n614rchYweWYGRZNN+Nw=;
-        b=Cxhv+hux4dWvEdJAt5n2+FNVxZY7o/xPXeUpPY+rtO0E9ohATiR/jgSA6pV0uaWFfa
-         rUDsboURqEvdN+uedsjgMXliAWomaDgTaIrNVt1wLE/8qXlXcaAA2UDC6KjJnIqARs4K
-         zzB5Z/Ddkurxu4xXqr+/Z3eKr5FXklFPQ64sM2v626iUg4wwMOYRYOkXzqoyVPmxs7GL
-         b9q2GfNvcXndbjzQP6YJxdNUm+98kGBeFdPpmhNQ6CrVdYURf919+/94F1kCFbPAYy7z
-         maroODg701e3kX0GdHsJf6RM1fO/UZjtr7v83RRJj0Vx/X7llq+HeNOcqNIod7oMVfP1
-         P9Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759497817; x=1760102617;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UVLpi8gkovdhowq1w0/vej7n614rchYweWYGRZNN+Nw=;
-        b=amN7g4Ht4Hk5eTe++KNKSCl5K5tnMau5gT9f21RTBRKC0vXfcXbW2NOLAytOsxTbFC
-         gpgY/2Mrr5xpI/JCdP7wOLr2o8mphmVZFKMoGmS4TaMuiYcC1NFDqvx4Cjyobl1XES0c
-         T9pqxuPAQ5/2lImZUmL7hab2FNR/ezsOZb/lbJjhsDCng6ElvAyLDHfZgR/Bd5PM36gU
-         RMxB8FOsZCgfYxBGlIkymmPWOXZ4TmuontS105pwI7NdINMak060aYxEA5B6ADVI5nki
-         vNRag4+IM+dN2plMe8DQGZdDMRC5Uc5mqtGz+hLcKp02nQk44wp2wlt2fsF54tGFmFIa
-         LpUA==
-X-Gm-Message-State: AOJu0YznIkDhuGQ4YofFl5H76ps5ZLzzVaMxazmWgf98CtXWjBT9kW3C
-	RuNMiEcs5BjjNa+3R+ac2jJZbMdbPq5uHQFXssySVNieFEjhh1I4q2V5YNRTgQ==
-X-Gm-Gg: ASbGncukfn/WMKjx2Z9tzrQAO8OTS0j+H/7u1D3JlPVe7PzM8X2KEDdFupsiTDnd1Py
-	ihhIXT0bfTcIhJH8dnw/aFIACBTVw1GYN/sAw91XMEAb2Sm/y8icQWVksEiGBp2G/grgHPv1hZE
-	tggr+iPARZRWb7ZaNI2Ed9qiKJTCsCEdYx7XPUvM212itH7iRbOVpPCueEXfPbOqT5oskdi36Eo
-	H++SpAaERfMYktKa7Z8ODFS7LkTuVnJGvf/xQVB2dESzO6Qfs/U/LpTcpk2q66Cr3q0o0rKwMvH
-	TXtPc8SwBpEmqV6Evi92q/iCuMPGzKhPRjKMaml2xHXmu4Rp1FoZJUdpwncDgQQAAp2P2ZHp000
-	kMQAU/5lRSlawaYqQ2sVmQrMss5LT/O8fN2M9BT7d26o2smJZTYybthLDcnE4AE3UsI6AgJ6fRz
-	llxL1HjFRLlfyak6FaYmSsuNhIc4dby81gOhI0/Bdb1VpqQT0WycdOpXhtUmGVb/JtZdV/dnOea
-	3M=
-X-Google-Smtp-Source: AGHT+IGhDylVij/2hFtWThbNacKt93dDCkbiRV1GswK9Qu5CPnTReRpxDkR2sjtI+NXbbfzvDtfG/A==
-X-Received: by 2002:a05:620a:28d0:b0:829:62ed:50a9 with SMTP id af79cd13be357-87a3720d3dfmr435160585a.20.1759497816926;
-        Fri, 03 Oct 2025 06:23:36 -0700 (PDT)
-Received: from fuse-fed34-svr.evoforge.org (ec2-52-70-167-183.compute-1.amazonaws.com. [52.70.167.183])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-877725550fcsm420727785a.21.2025.10.03.06.23.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 06:23:36 -0700 (PDT)
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-To: paul@paul-moore.com
-Cc: linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org,
-	john.johansen@canonical.com,
-	casey@schaufler-ca.com,
-	serge@hallyn.com,
-	corbet@lwn.net,
-	jmorris@namei.org,
-	linux-doc@vger.kernel.org,
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: [PATCH] include/uapi/linux/lsm.h,Documentation/userspace-api/lsm.rst: introduce LSM_ATTR_UNSHARE
-Date: Fri,  3 Oct 2025 09:20:01 -0400
-Message-ID: <20251003131959.23057-3-stephen.smalley.work@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EjeUCjps"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E57BBC4CEF5
+	for <linux-security-module@vger.kernel.org>; Fri,  3 Oct 2025 16:25:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759508707;
+	bh=cnHKFDW3suOLqNZc/IzOJL+zwHa5UHgMn3MxBKRFyPc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EjeUCjps2eOUK1cqsIq0ZlBHv+1goEFOaQYsvSz4dXcl2RFF6mvfQN7sWfOr14p83
+	 sYC8N8FukC53EWOiX+IwxKyZk/67b1wvGsTegLb24kqDcG0pIm2AWMEaXycZtB4h54
+	 IaPEv1GQxIVsj/FPrkqTLxb3B9PiEJw3fGfamFHp0hGFZVUZiPEd2+FcCAPWNmIoRT
+	 C0sMUw+aoXBpvLIs0+nkUjq32dCG3w3EyJRWPN1bGdlDlw7mI9ZxGM7eMhSXbOg70z
+	 Krf6RK+a9UD12GCwjnRCrgCTq/x1GB4YS+qoEdQZvetKnAuISYZ7twLP8YdzyIh2Oj
+	 v0SnWKC36kKqg==
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-421851bca51so1585798f8f.1
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Oct 2025 09:25:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVV1h5ecLpEiHhTQO1GQJYx5LkbqKkNEdmMosw3eQHpu5cKcXYIaSn1ZLZhkTnN1D3nvmjEubTdXByiF0wypQ1mT02F6fs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq963mYLTciHJPWiuepwkXxo+7Dpbol3EGZT6Mg5as2eYWp+el
+	85PERTuLUjR+88c/tz6ISCuhFOJAIV24QYs3m/VGu+zDxyU95/MRv9OILoFR0ZERB+mlyNDEvTC
+	iaoZKQVSLLDvtqYPtvkj9+NxxEdKrvt/otHG/oLzx
+X-Google-Smtp-Source: AGHT+IEf+2y5XnJz6llQY0r9BsEEqWNo/dQEiKY0GDpAMZQw53/BgzklJv33Ppp0ADo3opKjKmoNz0+U8rv1/ZF9bgI=
+X-Received: by 2002:a05:6000:2008:b0:3ec:dd26:6405 with SMTP id
+ ffacd0b85a97d-42567164de1mr2673305f8f.26.1759508706270; Fri, 03 Oct 2025
+ 09:25:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250929213520.1821223-1-bboscaccy@linux.microsoft.com>
+ <CAHC9VhTQ_DR=ANzoDBjcCtrimV7XcCZVUsANPt=TjcvM4d-vjg@mail.gmail.com>
+ <CACYkzJ4yG1d8ujZ8PVzsRr_PWpyr6goD9DezQTu8ydaf-skn6g@mail.gmail.com> <CAHC9VhR2Ab8Rw8RBm9je9-Ss++wufstxh4fB3zrZXnBoZpSi_Q@mail.gmail.com>
+In-Reply-To: <CAHC9VhR2Ab8Rw8RBm9je9-Ss++wufstxh4fB3zrZXnBoZpSi_Q@mail.gmail.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Fri, 3 Oct 2025 18:24:54 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ7u_wRyknFjhkzRxgpt29znoTWzz+ZMwmYEE-msc2GSUw@mail.gmail.com>
+X-Gm-Features: AS18NWCjxnmUM-_G-6QSCL0tJFnM-pNuX_ajVOVOKygGYunSF2O3H1eByT4oL_I
+Message-ID: <CACYkzJ7u_wRyknFjhkzRxgpt29znoTWzz+ZMwmYEE-msc2GSUw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 0/3] BPF signature hash chains
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, ast@kernel.org, 
+	james.bottomley@hansenpartnership.com, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kys@microsoft.com, 
+	daniel@iogearbox.net, andrii@kernel.org, wufan@linux.microsoft.com, 
+	qmo@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This defines a new LSM_ATTR_UNSHARE attribute for the
-lsm_set_self_attr(2) and lsm_get_self_attr(2) system calls. When
-passed to lsm_set_self_attr(2), the LSM-specific namespace for the
-specified LSM id is immediately unshared in a similar manner to the
-unshare(2) system call for other Linux namespaces. When passed to
-lsm_get_self_attr(2), the return value is a boolean (0 or 1) that
-indicates whether the LSM-specific namespace for the specified LSM id
-has been unshared and not yet fully initialized (e.g. no policy yet
-loaded).
+On Fri, Oct 3, 2025 at 4:36=E2=80=AFAM Paul Moore <paul@paul-moore.com> wro=
+te:
+>
+> On Thu, Oct 2, 2025 at 9:48=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrot=
+e:
+> > On Wed, Oct 1, 2025 at 11:37=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > >
+> > > With the lack of engagement from the BPF devs, I'm now at the point
+> > > where I'm asking Linus to comment on the current situation around
+> >
+> > The lack of engagement is because Blaise has repeatedly sent patches
+> > and ignored maintainer feedback and continued pushing a broken
+> > approach.
+>
+> I'm sorry you feel that way, but that simply does not appear to be the
+> case.  Looking at the archives from this year I see that Blase has
+> proposed three different approaches[7][8][9] to verifying signed BPF
+> programs, with each new approach a result of the feedback received.
+>
+> > The community, in fact, prioritized the signing work to unblock your us=
+e-case.
+>
+> As mentioned previously, many times over, while your signature scheme
+> may satisfy your own
+> requirements, it does not provide a workable solution for use cases
+> that have more stringent security requirements.  Blaise's latest
+> approach, a small patch on top of your patchset, is an attempt to
+> bridge that divide.
+>
+> > Blaise's implementation ...
+>
+> I think Blaise's response addressed your other comments rather well so
+> I'll just skip over those points.
+>
+> > > To make it clear at the start, Blaise's patchset does not change,
+> > > block, or otherwise prevent the BPF program signature scheme
+> > > implemented in KP's patchset.  Blaise intentionally designed his
+> > > patches such that the two signature schemes can coexist together in
+> >
+> > We cannot have multiple signature schemes, this is not the experience
+> > we want for BPF users.
+>
+> In a perfect world there would be a singular BPF signature scheme
+> which would satisfy all the different use cases, but the sad reality
+> is that your signature scheme which Alexei sent to Linus during this
+> merge window falls short of that goal.  Blaise's patch is an attempt
+> to provide a solution for the BPF use cases that are not sufficiently
+> addressed by your signature scheme.
 
-Link: https://lore.kernel.org/selinux/20250918135904.9997-2-stephen.smalley.work@gmail.com/
-Link: https://lore.kernel.org/selinux/CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com/
+I am failing to understand your security requirements.
 
-Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
----
- Documentation/userspace-api/lsm.rst | 9 +++++++++
- include/uapi/linux/lsm.h            | 1 +
- 2 files changed, 10 insertions(+)
+>
+> > > Relying on a light skeleton to verify the BPF program means that any
+> > > verification failures in the light skeleton will be "lost" as there i=
+s
+> > > no way to convey an error code back to the user who is attempting the
+> >
+> > This is not correct, the error is propagated back if the loader program=
+ fails.
+>
+> The loader BPF program which verifies the original BPF program, stored
+> as a map as part of the light skeleton, is not executed as part of the
+> original bpf() syscall issued from userspace.  The loader BPF program,
+> and its verification code, is executed during a subsequent call.  It
+> is possible for the PKCS7 signature on the loader to pass, with the
+> kernel reporting a successful program load, the LSM authorizing the
+> load based on a good signature, and audit recording a successful
+> signature verification yet the loader could still fail the integrity
+> check on the original BPF program, leaving the system with a false
+> positive on the BPF program load and a "questionable" audit trail.
+>
+> > You keep mentioning having visibility  in the LSM code and I again
+> > ask, to implement what specific security policy and there is no clear
+> > answer?
+>
+> No one policy can satisfy the different security requirements of all
+> known users, simply look at all of the LSMs (including the BPF LSM)
+> which support different security policies as a real world example of
+> this.  Even the presence of the LSM framework as an abstract layer is
+> an admission that no one policy, or model, solves all problems.
+> Instead, the goal is to ensure we have mechanisms in place which are
+> flexible enough to support a number of different policies and models.
 
-diff --git a/Documentation/userspace-api/lsm.rst b/Documentation/userspace-api/lsm.rst
-index a76da373841b..93638c1e275a 100644
---- a/Documentation/userspace-api/lsm.rst
-+++ b/Documentation/userspace-api/lsm.rst
-@@ -48,6 +48,15 @@ creating socket objects.
- The proc filesystem provides this value in ``/proc/self/attr/sockcreate``.
- This is supported by the SELinux security module.
- 
-+``LSM_ATTR_UNSHARE`` is used to unshare the LSM-specific namespace for
-+the process. When passed to ``lsm_set_self_attr(2)``, the LSM-specific
-+namespace for the specified LSM id is immediately unshared
-+in a similar manner to the ``unshare(2)`` system call for other
-+Linux namespaces. When passed to ``lsm_get_self_attr(2)``,
-+the return value is a boolean (0 or 1) that indicates whether the
-+LSM-specific namespace for the specified LSM id has been unshared
-+and not yet fully initialized (e.g. no policy yet loaded).
-+
- Kernel interface
- ================
- 
-diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
-index 938593dfd5da..fb1b4a8aa639 100644
---- a/include/uapi/linux/lsm.h
-+++ b/include/uapi/linux/lsm.h
-@@ -83,6 +83,7 @@ struct lsm_ctx {
- #define LSM_ATTR_KEYCREATE	103
- #define LSM_ATTR_PREV		104
- #define LSM_ATTR_SOCKCREATE	105
-+#define LSM_ATTR_UNSHARE	106
- 
- /*
-  * LSM_FLAG_XXX definitions identify special handling instructions
--- 
-2.51.0
+Please share concrete policies you would like to implement, this is very va=
+gue.
 
+- KP
+
+>
+> [7] https://lore.kernel.org/all/20250109214617.485144-1-bboscaccy@linux.m=
+icrosoft.com/
+> [8] https://lore.kernel.org/linux-security-module/20250321164537.16719-1-=
+bboscaccy@linux.microsoft.com/
+> [9] https://lore.kernel.org/linux-security-module/87sei58vy3.fsf@microsof=
+t.com/
+>
+> --
+> paul-moore.com
