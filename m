@@ -1,194 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7340718A6A5
-	for <linux-security-module@vger.kernel.org>; Fri,  3 Oct 2025 19:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10D91F4C8E
+	for <linux-security-module@vger.kernel.org>; Fri,  3 Oct 2025 19:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759518163; cv=none; b=DMqBJzD4Uw/WAbPnhS5S1qjUb4Y3Va8W4Jv/CONi/USEswCMerjyNeA3yAnSy+4ZcFUVIVHJQVi1lPdyrG35CXxD5ZukI/VCrMCLH7qe3dq77j+YtjCnjH9dDM8LHknCgpRKjJLp3JMmkqy5m6Ut0nmrZuWbHGEe0fKboYllFUU=
+	t=1759518704; cv=none; b=f/j/50emnhfDmTaicM8y4S49rOHMXNY/8RAXzcNf0qCVj3+/d/IKg0NXBh2ZT1K1sXGidBrMqkyyE4BxrrWOnvgcoc1vbhZL935Xfv6DvumjNavt1d1PraYkGtkfC1Ni2sQKN9LrRSR9H+ffymFi8MQ8mVFSeTci8xqlxUz/G98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759518163; c=relaxed/simple;
-	bh=aNvqNkT5Habi6s8YHYtkgT2tZNgOToqzldxt1NLJSy0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hpxDv0SOZg0Jlha2eqU3bqr3lYkGXY8PU9IVsQ+/H6rrC3LOEZiWzSkg+b12iVsFI/1dolxPnr8FjI7zVYhIhzwUfgL6t6/SAdFRFbs50bqfCUUZ/60vBmtVoexg3Uo7a6VwbXhmSTbH6LZDDoLBo7AXwd/xucKy0xSsivmSMf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Db1xH1E+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1759518704; c=relaxed/simple;
+	bh=qNhI4fozkv8fv/lAwki7sY08xD4XO8qRaqdADN66AB4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oQpJodwwdEbTI5Jt2OjvTjeYqvwq0XWVe1sNzOSQXhNbTQ+PSFtLO2I7OXfCEEI+zGYQK2UwUrd0MehPbNzs8PUsS3LJn6pw1Gfw5SmazSJ9AkQWuzLpG6lWojLUIf+58dpzrAFFOHqs8AYmcizAiv2ljd9Hxt3SXtZ1ltBX7SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OXBoJdwy; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Db1xH1E+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7929C16AAE
-	for <linux-security-module@vger.kernel.org>; Fri,  3 Oct 2025 19:02:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759518162;
-	bh=aNvqNkT5Habi6s8YHYtkgT2tZNgOToqzldxt1NLJSy0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Db1xH1E+8uzR9hXa2wHPZd7Io9zTjdrVJap3ibN4nch824G8VTdJoUQhN4FgkbIu2
-	 88896kJidX8r0wSismtnplUiOhwIGaOJ+7bskFpE1Ek2WyosNU4PmmXBoDQyiQh8rm
-	 GYhpSeh+qkkRHuWybDCJWtXAuwS4lZ4e5A7FNAdyV8XUuGGF04ukghA2LkgA9bVy7j
-	 5+t/fixSUv6iAeZxjd1j0cEcRoNT+cGv6aah7cT4gizBS8Tsw4J7iy2oO3nJdwCaCn
-	 uTKPepc2/xVrwwm/9gEdQlXwGcDaKzBFDn3JgwayQC7n1TL1afwWS7inmruB1iUikv
-	 g/7VJ8gC3KhCw==
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-41174604d88so1399512f8f.2
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Oct 2025 12:02:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWcMUvNdkPGPETGN8g44yBQ/QQcmwXYNs5xQQCHrT5pkT6EauYYvpGSGzn29TaFox6Himx73+qltO2OTvBb6v2Z1tVspXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo3cQItULRa/fEXKE5xvMftjfEstpjWPmuwpY9KsXypYG2SgTY
-	M04A1bpxA13TdJyoQGTL+890DDnne34Ykmmy7iovhjguOTdd35mL9t3FFNiznHDOpI9MqeFLRuV
-	zFPtLKHnVXZddiyE30QK/ovVwkt/5G5HfcjMyND1I
-X-Google-Smtp-Source: AGHT+IFjcoClIXjqWuHwPuFpTuc9prkzQ3jPOykGjzSm4s2ipT01a6z3ViHn1uMUhO1GIi4WAcYrA1/E0mXqa46FYIY=
-X-Received: by 2002:a05:6000:420a:b0:424:2275:63c7 with SMTP id
- ffacd0b85a97d-425671d6c24mr2621306f8f.56.1759518161289; Fri, 03 Oct 2025
- 12:02:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OXBoJdwy"
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4e06163d9e9so25796921cf.3
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Oct 2025 12:11:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759518698; x=1760123498; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ReEFQvzA0ptpzhP/wKLfBOmz+qA+6kGtcka0Y6onfCY=;
+        b=OXBoJdwyDlWMdK1a961ECoFByUwiUT/KLBKxv0ZtjHNl79yVg3pD52MVgzYGrFxHDW
+         Z6JM79wCZOVBQiJzeyW51aEd0/TYrZrL9knu0Zd/JJ0DQsyh8ERYoA8BQMqEC3BLG6X3
+         OA0LQbfq8VZTJz+xHi0Hxeq5049qSesodGqe0MafVHnvLe92A/Jldt+t01REwOib16Iw
+         gsk21g6aBUUfDYoHvxmvuoIqNbjb+JntzIxnSqY5noxz5V4wAJxrdoD4BmsHo7QOU0SH
+         cNamGwofGdUAwLx+GIQsSSbi1d+/CLRVTWpOlMeiDZ7kpBnfyuz3nzMs/xrKAkhYLSsc
+         hheA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759518698; x=1760123498;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ReEFQvzA0ptpzhP/wKLfBOmz+qA+6kGtcka0Y6onfCY=;
+        b=HCLAs98IWO8ZiETpYgBxIC/kgbWD+wMe0ccIgprv+db9B7rquu16+BWnX0GPvMB9E5
+         ztPJEAoRmlsvaEtdt71AorWNjM7Rjs6x/EFSUNZV+KdM6FuAueYW+Y6Dwnhft4x7SI8s
+         IK2IHEn/arn/tJ4+0uPU6VW4WluspnkokhynbzYOcG8hkV8Al4sPgZOjPVf3qWL21dfQ
+         2QrgIWhY3cp/PrDj2insWhSSx8Vsm67v2VllUrrYGnft/Z8pT10RTgcJuMyt1quIo/YN
+         oNHAx7lF6qt8cSgMyJNo01cMIswahsqBqzw58D0hCXvuSh78mlhUlxT6fmcdNnuawcRi
+         KymA==
+X-Gm-Message-State: AOJu0YwOKYGNEI6DlrKkDz0nmCDwOO6lM07ZpoTcmIi87d6UpDV5FU1j
+	OJ3tNdtOE0N+HxtGeq0Z3EaNQSnsNyqymtSGOhWSu/2IwIj8gnPe3dnR
+X-Gm-Gg: ASbGncsnjdKjZzFTe4Rk6D98hFp2BUr+pyf+4/HtTM4ONneMRaVsz7elwTq4B55s7uN
+	upWY8hLPqHn3/Cn21E8klWHUzUksyCoybDMN9Pg9IEZ5bmuAJ+7/3kgXH/LQEXktP0YfaA6mFhK
+	f+Uhxd+2PnIwM3j0GmrP9FyFOmF6GloZDNAlcD6xVLHxuWJfO9sL9b8pqbxoJWeEejEF0QNCG8y
+	wwd0lX4AYm84qPfeEmnX9HikZs7SYMM4UlSImzNG0vfiww/05WsuYNpM6l29zuoYDLEIdfbyXvF
+	vkQ5UXyTcPAfZdmdIXfoc0TEkZdK6/R9Ygq+qpSzE4Yz4GnUYzy9SRz96wzjk9mn50N7n0tsLES
+	YXoHOAXieG3s7DyLjXhD9gNOAZKhSkZxPvpy/lAOVegiTQA7ssN1GsrNtMETie8QqYHFmL0V2gw
+	Nut+UmZRRxJM0UoOKjEDl6P03qkJzqF5sk2mCe6VuSkD79q3ZA1a0mr3D7jQXVGluvnuNyN4ZJ8
+	1o=
+X-Google-Smtp-Source: AGHT+IEpaRGWG0AE0nbyt0iFzIe6GNXbyGNAl6pbmFlWyLhGrIG6sAvUMUV/AAhdpb0nTbdnc1CI9g==
+X-Received: by 2002:a05:622a:4d0e:b0:4dc:cb40:7078 with SMTP id d75a77b69052e-4e576a3c704mr59562151cf.19.1759518697529;
+        Fri, 03 Oct 2025 12:11:37 -0700 (PDT)
+Received: from fuse-fed34-svr.evoforge.org (ec2-52-70-167-183.compute-1.amazonaws.com. [52.70.167.183])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55c9e79f1sm44631881cf.28.2025.10.03.12.11.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 12:11:37 -0700 (PDT)
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+To: paul@paul-moore.com
+Cc: linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org,
+	john.johansen@canonical.com,
+	casey@schaufler-ca.com,
+	serge@hallyn.com,
+	corbet@lwn.net,
+	jmorris@namei.org,
+	linux-doc@vger.kernel.org,
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: [PATCH v2] lsm,uapi: introduce LSM_ATTR_UNSHARE
+Date: Fri,  3 Oct 2025 15:10:00 -0400
+Message-ID: <20251003190959.3288-2-stephen.smalley.work@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929213520.1821223-1-bboscaccy@linux.microsoft.com>
- <CAHC9VhTQ_DR=ANzoDBjcCtrimV7XcCZVUsANPt=TjcvM4d-vjg@mail.gmail.com>
- <CACYkzJ4yG1d8ujZ8PVzsRr_PWpyr6goD9DezQTu8ydaf-skn6g@mail.gmail.com>
- <871pnlysx1.fsf@microsoft.com> <CACYkzJ7F6ax2AcWNFxnAkyVb26Dr2mwdBnW=HFVFeJ1pC-BObg@mail.gmail.com>
- <87y0pryhs8.fsf@microsoft.com>
-In-Reply-To: <87y0pryhs8.fsf@microsoft.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Fri, 3 Oct 2025 21:02:30 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ6k_3DKKDh8Da87x5jAgP_En5T8VZ8DnYcZ3vJ9SGaUWA@mail.gmail.com>
-X-Gm-Features: AS18NWDhALx-hEC1gejjZQYikQhjyuRlw4Kb0VPtpbEyQGPJxHss_2jI1H56zH4
-Message-ID: <CACYkzJ6k_3DKKDh8Da87x5jAgP_En5T8VZ8DnYcZ3vJ9SGaUWA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 0/3] BPF signature hash chains
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: Paul Moore <paul@paul-moore.com>, Linus Torvalds <torvalds@linux-foundation.org>, ast@kernel.org, 
-	james.bottomley@hansenpartnership.com, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kys@microsoft.com, 
-	daniel@iogearbox.net, andrii@kernel.org, wufan@linux.microsoft.com, 
-	qmo@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 3, 2025 at 8:14=E2=80=AFPM Blaise Boscaccy
-<bboscaccy@linux.microsoft.com> wrote:
->
-> KP Singh <kpsingh@kernel.org> writes:
->
-> > On Thu, Oct 2, 2025 at 10:01=E2=80=AFPM Blaise Boscaccy
-> > <bboscaccy@linux.microsoft.com> wrote:
-> >>
-> >> KP Singh <kpsingh@kernel.org> writes:
+This defines a new LSM_ATTR_UNSHARE attribute for the
+lsm_set_self_attr(2) and lsm_get_self_attr(2) system calls. When
+passed to lsm_set_self_attr(2), the LSM-specific namespace for the
+specified LSM id is immediately unshared in a similar manner to the
+unshare(2) system call for other Linux namespaces. When passed to
+lsm_get_self_attr(2), ctx->ctx_len is set to 1 and ctx->ctx[0] is set
+to a boolean (0 or 1) that indicates whether the LSM-specific
+namespace for the specified LSM id has been unshared and not yet fully
+initialized (e.g. no policy yet loaded).
 
-[...]
+Link: https://lore.kernel.org/selinux/CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com/
 
-> >
-> > I am sorry but this does not work, the UAPI here is
-> >
-> > + /* Pointer to a buffer containing the maps used in the signature
-> > + * hash chain of the BPF program.
-> > + */
-> > + __aligned_u64   signature_maps;
-> > + /* Size of the signature maps buffer. */
-> > + __u32 signature_maps_size;
-> >
-> > This needs to be generically applicable and it's not, What happens if
-> > the program is not a loader program / when the instruction buffer is
-> > stable?
-> >
->
-> The map array is fully configurable by the signer. Signing any or all
-> maps is optional. If the instruction buffer is stable, the signer can
-> generate the signature without maps and the caller passes zero in
-> those fields.
->
-> > If you really want the property that all of the content is signed and
-> > verified within the kernel,
->
-> That's what code signing is.
+Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+---
+ Documentation/userspace-api/lsm.rst | 11 +++++++++++
+ include/uapi/linux/lsm.h            |  1 +
+ 2 files changed, 12 insertions(+)
 
-Sorry, this is wrong, allowing signed and trusted code to verify
-subsequent executions is established in security.
+diff --git a/Documentation/userspace-api/lsm.rst b/Documentation/userspace-api/lsm.rst
+index a76da373841b..1134629863cf 100644
+--- a/Documentation/userspace-api/lsm.rst
++++ b/Documentation/userspace-api/lsm.rst
+@@ -48,6 +48,17 @@ creating socket objects.
+ The proc filesystem provides this value in ``/proc/self/attr/sockcreate``.
+ This is supported by the SELinux security module.
+ 
++``LSM_ATTR_UNSHARE`` is used to unshare the LSM-specific namespace for
++the process.
++When passed to ``lsm_set_self_attr(2)``, the LSM-specific namespace
++for the specified LSM id is immediately unshared in a similar manner
++to the ``unshare(2)`` system call for other Linux namespaces. When
++passed to ``lsm_get_self_attr(2)``, ``ctx->ctx_len`` is set to ``1``
++and ``ctx->ctx[0]`` is set to a boolean (``0`` or ``1``) that
++indicates whether the LSM-specific namespace for the specified LSM id
++has been unshared and not yet fully initialized (e.g. no policy yet
++loaded).
++
+ Kernel interface
+ ================
+ 
+diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
+index 938593dfd5da..fb1b4a8aa639 100644
+--- a/include/uapi/linux/lsm.h
++++ b/include/uapi/linux/lsm.h
+@@ -83,6 +83,7 @@ struct lsm_ctx {
+ #define LSM_ATTR_KEYCREATE	103
+ #define LSM_ATTR_PREV		104
+ #define LSM_ATTR_SOCKCREATE	105
++#define LSM_ATTR_UNSHARE	106
+ 
+ /*
+  * LSM_FLAG_XXX definitions identify special handling instructions
+-- 
+2.51.0
 
-Also you folks keep saying you want in-kernel verification, the loader
-runs in the kernel, the same as any kernel code, so that requirement
-is met. What you want is the logic to be hard coded in the kernel and
-this goes against the BPF approach of flexibility.
-
->
-> > please explore approaches to make the
-> > instruction buffer stable or feel free to deny any programs that do
-> > relocations at load time for whatever "strict" security policy that
-> > you want to implement.
-> >
-> > Please stop pursuing this extension as it adds cruft to the UAPI
-> > that's too specific, encodes the hash chain in the kernel and we won't
-> > need in the future.
-> >
->
-> If your primary complaint at this point is UAPI bloat, we'd be happy to
-> rework the configurable hash-chain patch to use the existing signature
-> buffer provided in your patchset.
->
-> >> [...]
-> >>
-> >> >> conventions around the placement of LSM hooks, this "halfway" appro=
-ach
-> >> >> makes it difficult for LSMs to log anything about the signature sta=
-tus
-
-[...]
-
-> >>
-> >> We signed a program with your upstream tools and it failed to load on =
-a
-> >> vanilla kernel 6.16. The loader in your patchset is intepreting the
-> >> first few fields of struct bpf_map as a byte array containing a sha256
-> >> digest on older kernels.
-> >
-> > We can convert BPF_OBJ_GET_INFO_BY_FD to be called from loader
-> > programs to not rely on the struct field. and or libbbf can call
-> > BPF_OBJ_GET_INFO_BY_FD to check if map_get_hash is supported before it
-> > generates the hash check.
-> >
-> > You should not expect bpftool -S -k -i to work on older kernels but it
-> > should error out if the options are passed.
-> >
->
-> `bpftool gen` shouldn't have a priori knowledge of the target kernel
-> version.
-
-It can check whether the functionality is supported, it already does
-it in many other places. I will follow-up with a fix for this.
-
-- KP
-
->
-> -blaise
->
->
-> > - KP
-> >
-> >>
-> >> -blaise
-> >>
-> >>
-> >> > I had given detailed feedback to Blaise in
-> >> > https://lore.kernel.org/bpf/CACYkzJ6yNjFOTzC04uOuCmFn=3D+51_ie2tB9_x=
--u2xbcO=3DyobTw@mail.gmail.com/
-> >> > mentions also why we don't want any additional UAPI.
-> >> >
-> >> > You keep mentioning having visibility  in the LSM code and I again
-> >> > ask, to implement what specific security policy and there is no clea=
-r
-> >> > answer? On a system where you would like to only allow signed BPF
-> >> > programs, you can purely deny any programs where the signature is no=
-t
-> >> > provided and this can be implemented today.
-> >> >
-> >> > Stable programs work as it is, programs that require runtime
-> >> > relocation work with loader programs. We don't want to add more UAPI
-> >> > as, in the future, it's quite possible that we can make the
-> >> > instruction buffer stable.
-> >> >
-> >> > - KP
-> >> >
-> >> >>
-
-[...]
-
-> >> >> --
-> >> >> paul-moore.com
