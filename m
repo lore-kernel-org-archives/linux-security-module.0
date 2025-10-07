@@ -1,141 +1,224 @@
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DCD2E62B1;
-	Tue,  7 Oct 2025 16:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E78834BA5C
+	for <linux-security-module@vger.kernel.org>; Tue,  7 Oct 2025 17:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759855401; cv=none; b=FsCsxGGjCG/pGQShc4CPXhFWUe0DOX9tVsN9IKXb2QSm//Vn6ine/shgY5/JfiJiakhOEbJ8/hPrnMAqg5HWAMA/xPUJxlkRW8UnwCjolJS4O1OnCeBvH9fyR8IwZmolNm2J4u2GbdXUEH8U0sIbSCuoYzgmcRDsCt6zvDq+B3c=
+	t=1759856920; cv=none; b=IC9h6QWkJaabojmnnpZOXmLhb/9AIr132p8wclhQor6V8PcMGaR5qHNWXvLtN4BiePxbp5Uhy10f8G0Z7t+FyaR37RQs2KxDsZOrLI1TUB0Ab7M0PPd+S+uCb9bEHnrLyHgWr0PjkMRcLqTe2PnRSuTIX9gG9fel1SYs5n3cfQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759855401; c=relaxed/simple;
-	bh=Jaz+/BZCqVxcqYDoHpP9Kj5r/09VltHAJQYFTSMdr9w=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WAUfutVPSV7mddUpViSJwfkGGp5N2DLPAy9D+/7MZX4jTpVe7lqBadQhM6Ht7uMbx55+FyLFxLaF1PL0Xuuux8AFHvuRXWQtR4LmYH/29dbXSg7wtoOGqDBBmVV7PN3NipVGMH7nXB++CD0w/r0rKStYN6uz9ONYymoTxfiepWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=ILOV0jd0; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="ILOV0jd0"
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 597Fq39e3928046;
-	Tue, 7 Oct 2025 09:43:01 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=zzmjj3IqYxbJ3FZW9fNFsn2i9xeCEwlnVhm4zbtDAzM=; b=ILOV0jd093/R
-	stWNwcG9zUZp6axVUg4kEiL7ZqdBUpUAS6qz5I/+95Wez1qCgrXe4Jg4NSNCQMxz
-	ucR0wwo2WHKRnRHw2eMUcB58dzYbiNaQbqzY2ewst4wnx0BtuUOejb7DsrwEd33r
-	74HDKgln5EzvCicgML30oWveRqgkns03PuZDTomTMr+7gnuFN1irm0l5mAVrYnr4
-	bTHJKXgI2orb8d1TIcQxUfMjlxeQ9gQvVH6hSv2SARHeOai49gnqK3hxdnmNw4dG
-	N2eJyH0SQNy3KmMZ1086UgjA0QC7DK11XYXTmQt2WGUROKzaMclJp7+uBOziaGXo
-	pUZG6h/PkA==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 49mx0ebw21-4
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 07 Oct 2025 09:43:01 -0700 (PDT)
-Received: from devbig091.ldc1.facebook.com (2620:10d:c0a8:fe::f072) by
- mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Tue, 7 Oct 2025 16:42:34 +0000
-From: Chris Mason <clm@meta.com>
-To: KP Singh <kpsingh@kernel.org>
-CC: Chris Mason <clm@meta.com>, <bpf@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <bboscaccy@linux.microsoft.com>, <paul@paul-moore.com>,
-        <kys@microsoft.com>, <ast@kernel.org>, <daniel@iogearbox.net>,
-        <andrii@kernel.org>, <syzbot@syzkaller.appspotmail.com>
-Subject: Re: [PATCH bpf-next v7 1/5] bpf: Implement signature verification for BPF programs
-Date: Tue, 7 Oct 2025 09:42:10 -0700
-Message-ID: <20251007164217.1966541-1-clm@meta.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250921160120.9711-2-kpsingh@kernel.org>
-References:
+	s=arc-20240116; t=1759856920; c=relaxed/simple;
+	bh=mHg/lcZAg4bzBvAsvRX//PP45eEWLaRFZOv7QncEwsA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EaFzChysMiviueoi9WzkOhSaZ2Geiu/vjrnLGN5BLavdwRUt6BTwfGj6HLl179WRKofKm4txy/ju8zdJbGJrntW067m0bTJPbj7i90gNvMgb/F97Meumd9Tn4B9UEkmG7SLu+syUNRwZRoPpx122aRcTvazfZvwaewQzd6CyamQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-42f6639fb22so48630715ab.0
+        for <linux-security-module@vger.kernel.org>; Tue, 07 Oct 2025 10:08:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759856918; x=1760461718;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BwaF+8wKesGhhLt3G48mndVQcMV9tkM5le1+HU/JbcA=;
+        b=h84U9EfwRQBm5t734ieYxiwct2RjnRMWXpr2HcFDX9oi6R+EchsnkZ3ZEBbE9ONNLO
+         75Nn/4nFSt2/AWXT0zJ8wUb5ZKychDCpDRyR4sutyhDVb/6wQ3hBk3cdoKyyefeBsBQI
+         g8jFUP4dKvTuIZ480NtzX3J/MG2DsqlyN9XsE+xXHHlGbaaj0bgLZLQ87IW1Ue5u3hxF
+         8Wej1OsJDOnaHz0okoUZfJ3K3tAglJz6lXkgZzO14Bg/VZaDYkBR953iU2U647HBtS86
+         /p0hZH0EMEFdzvkfDiERhgJbR6mdF0CWtr/M0RUgFs5l8nyIL9XDfpCuEokVXhnOKwUA
+         ebjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4NedxCLqSpxK4B/y3Ds7q6wXHWGKkbgPfoBiUzu7wYjU0EvsHZxhJpxb9gN8K8cSQBKkjPlrq7KkIqCegMaMCJHNQsYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQpQZzffLlXzghsJkcMZWldPlNZfJX37DRS2RWj1ydTRzSwM24
+	qBTyY4YIk0U1AKRQ2Dcrj2ufSDtZGdZrxsewtcNLb9FEXJFy2xg34p75i1KYappH0mdg8e5xz/S
+	J7Tec9xbtrBzJHcER0O8RCkLa/LpGxdZmH/NYbXTI2qIzEhVr02kica/DPow=
+X-Google-Smtp-Source: AGHT+IGKGADES496kPG8zXKUj/TDnmWONV9xl4qZNsngOapTD95ggxb+DmOPtYvK4j1mzIr7rD8U2KI4LYQ4sERHbplE99f+QKeV
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 9lbpTvL3nYOlIO1UFZ3xafeUvuj14frt
-X-Authority-Analysis: v=2.4 cv=SoGdKfO0 c=1 sm=1 tr=0 ts=68e54315 cx=c_pps
- a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
- a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=kxiUpit_5B_PL5oZeFQA:9
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: 9lbpTvL3nYOlIO1UFZ3xafeUvuj14frt
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDEzMiBTYWx0ZWRfX9CNAHxvDFayD
- JyhwT8OrJByCG8/4WcUp70oj1VO65vQTDHoYW8ba2RPHtmeGJJ+HTsv1lw1pnOeyoNP2ePb4Fgh
- SJyOQ2nqFsTyTD5TDSoaNeNZTVKUNtvusdLdZOH7OUvS6e+w1UXKlvIwvC8/GWfzlfNhODe5b8o
- Yjb2fBWrMIPOW6p7YHPL/Sskg+so0S8X4wo1XuL5hi42BZ5UJ9Cs0NZ6oMkv3RIW5FbOBPMH6r8
- KylpuzGtrAXOQHZB7Xx34HjCfm0GDth16/ZllG3bP572E7VCq+C9A/MV+vU/+qzeUGemMmn3lj4
- juGxQTCyPzpuMQTEktLnnfo8iIazvTaJXFiYrg7l9HCCLL8z5CJD18DLUlzZCRJCCGd4KLe0ak/
- 8wk6TIGHgmCY4ImtqI27ZzpJ1b0VJg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-07_02,2025-10-06_01,2025-03-28_01
+X-Received: by 2002:a05:6e02:2704:b0:42e:712e:528c with SMTP id
+ e9e14a558f8ab-42f873df5bamr852345ab.19.1759856917663; Tue, 07 Oct 2025
+ 10:08:37 -0700 (PDT)
+Date: Tue, 07 Oct 2025 10:08:37 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e54915.a00a0220.298cc0.0480.GAE@google.com>
+Subject: [syzbot] [keyrings?] [lsm?] possible deadlock in keyring_clear (3)
+From: syzbot <syzbot+f55b043dacf43776b50c@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi KP,
+Hello,
 
-On Sun, 21 Sep 2025 18:01:16 +0200 KP Singh <kpsingh@kernel.org> wrote:
+syzbot found the following issue on:
 
-> This patch extends the BPF_PROG_LOAD command by adding three new fields
-> to `union bpf_attr` in the user-space API:
-> 
->   - signature: A pointer to the signature blob.
->   - signature_size: The size of the signature blob.
->   - keyring_id: The serial number of a loaded kernel keyring (e.g.,
->     the user or session keyring) containing the trusted public keys.
-> 
-> When a BPF program is loaded with a signature, the kernel:
-> 
-> 1.  Retrieves the trusted keyring using the provided `keyring_id`.
-> 2.  Verifies the supplied signature against the BPF program's
->     instruction buffer.
-> 3.  If the signature is valid and was generated by a key in the trusted
->     keyring, the program load proceeds.
-> 4.  If no signature is provided, the load proceeds as before, allowing
->     for backward compatibility. LSMs can chose to restrict unsigned
->     programs and implement a security policy.
-> 5.  If signature verification fails for any reason,
->     the program is not loaded.
-> 
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index cf7173b1bb83..8a3c3d26f6e2 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -39,6 +39,7 @@
->  #include <linux/tracepoint.h>
->  #include <linux/overflow.h>
->  #include <linux/cookie.h>
-> +#include <linux/verification.h>
->  
->  #include <net/netfilter/nf_bpf_link.h>
->  #include <net/netkit.h>
-> @@ -2785,8 +2786,44 @@ static bool is_perfmon_prog_type(enum bpf_prog_type prog_type)
->  	}
->  }
->  
-> +static int bpf_prog_verify_signature(struct bpf_prog *prog, union bpf_attr *attr,
-> +				     bool is_kernel)
-> +{
-> +	bpfptr_t usig = make_bpfptr(attr->signature, is_kernel);
-> +	struct bpf_dynptr_kern sig_ptr, insns_ptr;
-> +	struct bpf_key *key = NULL;
-> +	void *sig;
-> +	int err = 0;
-> +
-> +	if (system_keyring_id_check(attr->keyring_id) == 0)
-> +		key = bpf_lookup_system_key(attr->keyring_id);
-> +	else
-> +		key = bpf_lookup_user_key(attr->keyring_id, 0);
-> +
-> +	if (!key)
-> +		return -EINVAL;
-> +
-> +	sig = kvmemdup_bpfptr(usig, attr->signature_size);
+HEAD commit:    cbf33b8e0b36 Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1036c458580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1b4263e12240e6e1
+dashboard link: https://syzkaller.appspot.com/bug?extid=f55b043dacf43776b50c
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-Should there be some validation on signature_size?  It looks like we're
-giving vmalloc exactly what userland sent.
+Unfortunately, I don't have any reproducer for this issue yet.
 
--chris
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-cbf33b8e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/54786e46ef23/vmlinux-cbf33b8e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dd6f88ce083b/bzImage-cbf33b8e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f55b043dacf43776b50c@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+kswapd0/74 is trying to acquire lock:
+ffff8880420f4098 (&type->lock_class){+.+.}-{4:4}, at: keyring_clear+0xaf/0x240 security/keys/keyring.c:1658
+
+but task is already holding lock:
+ffffffff8de44f40 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:7015 [inline]
+ffffffff8de44f40 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0x951/0x2800 mm/vmscan.c:7389
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (fs_reclaim){+.+.}-{0:0}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       __fs_reclaim_acquire mm/page_alloc.c:4269 [inline]
+       fs_reclaim_acquire+0x72/0x100 mm/page_alloc.c:4283
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       slab_pre_alloc_hook mm/slub.c:4897 [inline]
+       slab_alloc_node mm/slub.c:5221 [inline]
+       __kmalloc_cache_noprof+0x40/0x6f0 mm/slub.c:5719
+       kmalloc_noprof include/linux/slab.h:957 [inline]
+       kzalloc_noprof include/linux/slab.h:1094 [inline]
+       assoc_array_insert+0x92/0x2f90 lib/assoc_array.c:980
+       __key_link_begin+0xd6/0x1f0 security/keys/keyring.c:1317
+       __key_create_or_update+0x41a/0xa30 security/keys/key.c:877
+       key_create_or_update+0x42/0x60 security/keys/key.c:1021
+       x509_load_certificate_list+0x145/0x280 crypto/asymmetric_keys/x509_loader.c:31
+       do_one_initcall+0x233/0x820 init/main.c:1283
+       do_initcall_level+0x104/0x190 init/main.c:1345
+       do_initcalls+0x59/0xa0 init/main.c:1361
+       kernel_init_freeable+0x334/0x4b0 init/main.c:1593
+       kernel_init+0x1d/0x1d0 init/main.c:1483
+       ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #0 (&type->lock_class){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
+       keyring_clear+0xaf/0x240 security/keys/keyring.c:1658
+       fscrypt_put_master_key+0xca/0x190 fs/crypto/keyring.c:80
+       put_crypt_info+0x26d/0x310 fs/crypto/keysetup.c:573
+       fscrypt_put_encryption_info+0xf6/0x140 fs/crypto/keysetup.c:787
+       ext4_clear_inode+0x170/0x2f0 fs/ext4/super.c:1527
+       ext4_evict_inode+0xa67/0xee0 fs/ext4/inode.c:321
+       evict+0x504/0x9c0 fs/inode.c:810
+       dispose_list fs/inode.c:852 [inline]
+       prune_icache_sb+0x21b/0x2c0 fs/inode.c:1000
+       super_cache_scan+0x39b/0x4b0 fs/super.c:224
+       do_shrink_slab+0x6ef/0x1110 mm/shrinker.c:437
+       shrink_slab_memcg mm/shrinker.c:550 [inline]
+       shrink_slab+0x7ef/0x10d0 mm/shrinker.c:628
+       shrink_one+0x28a/0x7c0 mm/vmscan.c:4955
+       shrink_many mm/vmscan.c:5016 [inline]
+       lru_gen_shrink_node mm/vmscan.c:5094 [inline]
+       shrink_node+0x315d/0x3780 mm/vmscan.c:6081
+       kswapd_shrink_node mm/vmscan.c:6941 [inline]
+       balance_pgdat mm/vmscan.c:7124 [inline]
+       kswapd+0x147c/0x2800 mm/vmscan.c:7389
+       kthread+0x70e/0x8a0 kernel/kthread.c:463
+       ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(&type->lock_class);
+                               lock(fs_reclaim);
+  lock(&type->lock_class);
+
+ *** DEADLOCK ***
+
+2 locks held by kswapd0/74:
+ #0: ffffffff8de44f40 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:7015 [inline]
+ #0: ffffffff8de44f40 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0x951/0x2800 mm/vmscan.c:7389
+ #1: ffff8880115840e0 (&type->s_umount_key#31){++++}-{4:4}, at: super_trylock_shared fs/super.c:562 [inline]
+ #1: ffff8880115840e0 (&type->s_umount_key#31){++++}-{4:4}, at: super_cache_scan+0x91/0x4b0 fs/super.c:197
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 74 Comm: kswapd0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
+ check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+ __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
+ keyring_clear+0xaf/0x240 security/keys/keyring.c:1658
+ fscrypt_put_master_key+0xca/0x190 fs/crypto/keyring.c:80
+ put_crypt_info+0x26d/0x310 fs/crypto/keysetup.c:573
+ fscrypt_put_encryption_info+0xf6/0x140 fs/crypto/keysetup.c:787
+ ext4_clear_inode+0x170/0x2f0 fs/ext4/super.c:1527
+ ext4_evict_inode+0xa67/0xee0 fs/ext4/inode.c:321
+ evict+0x504/0x9c0 fs/inode.c:810
+ dispose_list fs/inode.c:852 [inline]
+ prune_icache_sb+0x21b/0x2c0 fs/inode.c:1000
+ super_cache_scan+0x39b/0x4b0 fs/super.c:224
+ do_shrink_slab+0x6ef/0x1110 mm/shrinker.c:437
+ shrink_slab_memcg mm/shrinker.c:550 [inline]
+ shrink_slab+0x7ef/0x10d0 mm/shrinker.c:628
+ shrink_one+0x28a/0x7c0 mm/vmscan.c:4955
+ shrink_many mm/vmscan.c:5016 [inline]
+ lru_gen_shrink_node mm/vmscan.c:5094 [inline]
+ shrink_node+0x315d/0x3780 mm/vmscan.c:6081
+ kswapd_shrink_node mm/vmscan.c:6941 [inline]
+ balance_pgdat mm/vmscan.c:7124 [inline]
+ kswapd+0x147c/0x2800 mm/vmscan.c:7389
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
