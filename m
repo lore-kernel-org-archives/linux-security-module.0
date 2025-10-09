@@ -1,110 +1,258 @@
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD66E55A;
-	Thu,  9 Oct 2025 13:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DDF1A3029
+	for <linux-security-module@vger.kernel.org>; Thu,  9 Oct 2025 14:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760017924; cv=none; b=QfUE8WyubJcL/pBJ6eQ9JWQTyl8kFoixPolnDMbOsDbwgjtIGJgP6X3p51JKe6OcxOvxgWgArODdU1nqPXQgm1Xc8BG0OKCojEaMxkC9NCKP4lazE2rS0Cuz7RqE8PgeUBz22rhKWQ3EowlrtfD727Fj/U22HRzUBQd+wqBbyHE=
+	t=1760020462; cv=none; b=ugwfoKEbL/0vW+9z8+CbrTP8b8CXPNOUJTaTd0utS/TerCDVk6cgXVN8/zuitRzdvoO+RfENSqaFRQGtEuAVHt4GYQhFZ6B1/dqD1tfr+yzTFjA3JyUktXkDMXoqWrNV2J3JkSKNwUrPSusKgQ2H9+95/Vb0YjoQJ9rJxu1hIJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760017924; c=relaxed/simple;
-	bh=g+gtO1Y0rbKVDPZQb1EuxTIT83uou/9ujtInCMu3JKo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Cq7pxDsOC+kHI5ORr0w9MrNs3cfRlY7nMTulNjgoXgOtpBEUnOi0xMQoDA8wVRM8C8jZ7ze7If7NMGa9boXwLL3Qk/Nz7szS1TmSv55gmvfiaXBdDSC/2QmWvtAGHoQsT75xnth9rk2BPIR84u0pw8Ifh/BtvJVTtOYJTFrZrps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=KC4lvOVi; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+	s=arc-20240116; t=1760020462; c=relaxed/simple;
+	bh=YhAnblp4nQL4zjPI0NfQ41OC7Tedi+bBs5j0dG8UBn4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D+tExADidUCI4xqlUZfn+aClSSRz/RpMh+5A4+EKnz8+ustcKzQKMQOFcxpqvsg/2woSJHsNviAgdHrymz+j2eBp0W3YH2fLkRP0VMg42K+NoTUULUl6PwU5YyW90N5ZFWmWfrFWuyInVSeeDlht8Mv+bM8AkSVdvuQKyK5pF80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ky8tX54M; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="KC4lvOVi"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1760017919;
-	bh=g+gtO1Y0rbKVDPZQb1EuxTIT83uou/9ujtInCMu3JKo=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=KC4lvOViIATIlYtJypzduW4Vp5SYWjlfJ7AHQUl4GRV0f83NG4U3SN+5vPx9ySmic
-	 vIqjwLuDWNJ4f1K3ezZ4YiQoDRI4BOZOQV2DRR2BFZCAAe09RXjcutE8bQvfZ2a4fW
-	 xlAIIqkSqfFqSc3aWJbUKF87Mppd+52khtmywwrU=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 148DE1C01D1;
-	Thu, 09 Oct 2025 09:51:59 -0400 (EDT)
-Message-ID: <e60f6a07d00c1fd87b4509947e8738ecab9560b4.camel@HansenPartnership.com>
-Subject: Re: [PATCH] KEYS: encrypted: Use designated initializers for
- match_table_t structs
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
- Jarkko Sakkinen <jarkko@kernel.org>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 09 Oct 2025 09:51:58 -0400
-In-Reply-To: <93D80E9A-7CBC-40D1-BC21-7BC2BB465AC4@linux.dev>
-References: <20251009115817.368170-2-thorsten.blum@linux.dev>
-	 <9e7488652ab73d7c5c2f93ea3c68253a9f08cd82.camel@HansenPartnership.com>
-	 <93D80E9A-7CBC-40D1-BC21-7BC2BB465AC4@linux.dev>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ky8tX54M"
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3307de086d8so1049003a91.2
+        for <linux-security-module@vger.kernel.org>; Thu, 09 Oct 2025 07:34:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760020459; x=1760625259; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PXhOvAzmzc0GvVnS1tQnnQLU3R7CgJXBguM6XCQyMzM=;
+        b=Ky8tX54MtlfsYcpg7LgdV6bz4QGjPJKXgxsuF+YceMzWRjp7Ni6Ph6rnCWuTytzh+5
+         FPgfCoQtkR477qBhcn3D821p6Qxix/dsEcepFuY0MtQg86m5YaB7WJLCUDkttQcfEQ61
+         7tnYK4pUwM4ZBvRY2ecq5+c1UATQGUHkbPAcltuy0YxFiwluUmakoLe2gc4sdOYGG4t0
+         GqL9nSZQ8p21PK/w7iS0icYp+xfiGWOHWP1nb34+DjKxzsEimjRqJb/gnjLAHsmCUmjI
+         8ki1MDQpuSsS2c6d29GGQ/tQJMm5RHSf1hwg3kfgG9Y1ejvqAB9taapBuMRGk/CXLL9e
+         pfDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760020459; x=1760625259;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PXhOvAzmzc0GvVnS1tQnnQLU3R7CgJXBguM6XCQyMzM=;
+        b=lP9eTW/6I5DRJXhOohYEPTwozgMr/U/BeiSTfewJdQXPhtNsDiH88pSyliMWuTlTlD
+         sQhlFMtV2/csJKXWTPJKnCnuqd44PuucFNVD7/D2DYw5oyqlktbs+p8d+3kxqQwwaUcv
+         Ueay4IfbMDQ10PaOJJOwDkju35dZhaGY5VMXiiEZHCDCDJtTWhuJnpHKhemjJG97ZPlH
+         fApdBhetcbeZ5D24epI5Ug9zcmwdt8tnhsgg+RNrlSy1NATjIn+OgmlI09Hkm816x8iL
+         syvvpB6Lh/GXgGkITNY7cey+MvNX0rAvoVXtkNj5XOoM23ygM7vyw1uxHpM+fKQFODCx
+         Sueg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvb5wucUo3ttf5+J+SeDSQWChSstNt2zms6VKIps/A+FUyamSIkRjAhiltYhRYP/RdHBEuqk2WfOTOpGKtVH7YbPmFPzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKsZ5aM2OJEwlDnOqLsStI/gV9jLTqEVNXT3leXuH2D2hPNa4F
+	YStoW5qbAJbp7wjkHBBJG0yoj1I1xihVh/GGiKdxbm1WFazvNcYyX/hCA0zr5KjJinfx9w8Cd0x
+	FeG0NdUDGpOC/y5tjd82JjGP/9dSGpjKsPA==
+X-Gm-Gg: ASbGnctkfj86fwnZ92Tye4oecT7G/Ka/FeDSa95GrKT0zddhyxlmxcAOrzAwH8n3eAS
+	UMjdPwZvcp2uFkmfavpg9lfGMnL3G8gUTOmLS1euVCO/CgRapfcYclsa+6/QE+PUt/w2oFqr3g1
+	G/756s0SA7uKA7UHtWL9J1mdA8YuWYsLhZPuZ6T2jW7xw/vo9r0KbKG1dwXX557Eab7t7vs2IGM
+	F+GDaPxrPEAEux1YWsQXo6I4OIR8Bg=
+X-Google-Smtp-Source: AGHT+IE0FyTWJTq8nNxDIDVzLQpkTa20O70x0XEV4iCcmNbD7lkGlBsmUhjy2yWOzTbNZdjdShvAmvMqn4yGx1F3t+I=
+X-Received: by 2002:a17:90b:4d08:b0:335:2b15:7f46 with SMTP id
+ 98e67ed59e1d1-33b51386306mr9422330a91.21.1760020458863; Thu, 09 Oct 2025
+ 07:34:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251009134542.1529148-1-omosnace@redhat.com>
+In-Reply-To: <20251009134542.1529148-1-omosnace@redhat.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Thu, 9 Oct 2025 10:34:07 -0400
+X-Gm-Features: AS18NWCuXR1l9gjzn2FNttABJQiTYMBIHxdHz9LK52jfaS2yv93GQY95p1KmfV8
+Message-ID: <CAEjxPJ5FVGt0KR=wNmU=e_R5cD6T4K1VRabaZmDAWMd0ZNnPNA@mail.gmail.com>
+Subject: Re: [PATCH] nbd: override creds to kernel when calling sock_{send,recv}msg()
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
+	nbd@other.debian.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, Ming Lei <ming.lei@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-10-09 at 15:30 +0200, Thorsten Blum wrote:
-> On 9. Oct 2025, at 14:44, James Bottomley wrote:
-> > On Thu, 2025-10-09 at 13:58 +0200, Thorsten Blum wrote:
-> > > Use designated initializers for 'key_format_tokens' and
-> > > 'key_tokens' to allow struct fields to be reordered more easily
-> >=20
-> > How does it improve that?=C2=A0 The key,value pairs are surrounded by
-> > braces so we just cut and paste the lot anyway.
->=20
-> Using designated initializers (especially for global structs) allows
-> the fields of struct match_token from linux/parser.h to be reordered
-> or extended more easily, improving overall maintainability.
+On Thu, Oct 9, 2025 at 9:45=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.com=
+> wrote:
+>
+> sock_{send,recv}msg() internally calls security_socket_{send,recv}msg(),
+> which does security checks (e.g. SELinux) for socket access against the
+> current task. However, _sock_xmit() in drivers/block/nbd.c may be called
+> indirectly from a userspace syscall, where the NBD socket access would
+> be incorrectly checked against the calling userspace task (which simply
+> tries to read/write a file that happens to reside on an NBD device).
+>
+> To fix this, temporarily override creds to kernel ones before calling
+> the sock_*() functions. This allows the security modules to recognize
+> this as internal access by the kernel, which will normally be allowed.
+>
+> A way to trigger the issue is to do the following (on a system with
+> SELinux set to enforcing):
+>
+>     ### Create nbd device:
+>     truncate -s 256M /tmp/testfile
+>     nbd-server localhost:10809 /tmp/testfile
+>
+>     ### Connect to the nbd server:
+>     nbd-client localhost
+>
+>     ### Create mdraid array
+>     mdadm --create -l 1 -n 2 /dev/md/testarray /dev/nbd0 missing
+>
+>     ### Stop the array
+>     mdadm --stop /dev/md/testarray
+>
+>     ### Disconnect the nbd device
+>     nbd-client -d /dev/nbd0
+>
+>     ### Reconnect to nbd devices:
+>     nbd-client localhost
+>
+> After these steps, assuming the SELinux policy doesn't allow the
+> unexpected access pattern, errors will be visible on the kernel console:
+>
+> [   93.997980] nbd2: detected capacity change from 0 to 524288
+> [  100.314271] md/raid1:md126: active with 1 out of 2 mirrors
+> [  100.314301] md126: detected capacity change from 0 to 522240
+> [  100.317288] block nbd2: Send control failed (result -13)           <--=
+---
+> [  100.317306] block nbd2: Request send failed, requeueing            <--=
+---
+> [  100.318765] block nbd2: Receive control failed (result -32)        <--=
+---
+> [  100.318783] block nbd2: Dead connection, failed to find a fallback
+> [  100.318794] block nbd2: shutting down sockets
+> [  100.318802] I/O error, dev nbd2, sector 2048 op 0x0:(READ) flags 0x0 p=
+hys_seg 1 prio class 0
+> [  100.318817] Buffer I/O error on dev md126, logical block 0, async page=
+ read
+> [  100.322000] I/O error, dev nbd2, sector 2048 op 0x0:(READ) flags 0x0 p=
+hys_seg 1 prio class 0
+> [  100.322016] Buffer I/O error on dev md126, logical block 0, async page=
+ read
+> [  100.323244] I/O error, dev nbd2, sector 2048 op 0x0:(READ) flags 0x0 p=
+hys_seg 1 prio class 0
+> [  100.323253] Buffer I/O error on dev md126, logical block 0, async page=
+ read
+> [  100.324436] I/O error, dev nbd2, sector 2048 op 0x0:(READ) flags 0x0 p=
+hys_seg 1 prio class 0
+> [  100.324444] Buffer I/O error on dev md126, logical block 0, async page=
+ read
+> [  100.325621] I/O error, dev nbd2, sector 2048 op 0x0:(READ) flags 0x0 p=
+hys_seg 1 prio class 0
+> [  100.325630] Buffer I/O error on dev md126, logical block 0, async page=
+ read
+> [  100.326813] I/O error, dev nbd2, sector 2048 op 0x0:(READ) flags 0x0 p=
+hys_seg 1 prio class 0
+> [  100.326822] Buffer I/O error on dev md126, logical block 0, async page=
+ read
+> [  100.326834]  md126: unable to read partition table
+> [  100.329872] I/O error, dev nbd2, sector 0 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 0
+> [  100.329889] Buffer I/O error on dev nbd2, logical block 0, async page =
+read
+> [  100.331186] I/O error, dev nbd2, sector 0 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 0
+> [  100.331195] Buffer I/O error on dev nbd2, logical block 0, async page =
+read
+> [  100.332371] I/O error, dev nbd2, sector 0 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 0
+> [  100.332379] Buffer I/O error on dev nbd2, logical block 0, async page =
+read
+> [  100.333550] I/O error, dev nbd2, sector 0 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 0
+> [  100.333559] Buffer I/O error on dev nbd2, logical block 0, async page =
+read
+> [  100.334721]  nbd2: unable to read partition table
+> [  100.350993]  nbd2: unable to read partition table
+>
+> The corresponding SELinux denial on Fedora/RHEL will look like this
+> (assuming it's not silenced):
+> type=3DAVC msg=3Daudit(1758104872.510:116): avc:  denied  { write } for  =
+pid=3D1908 comm=3D"mdadm" laddr=3D::1 lport=3D32772 faddr=3D::1 fport=3D108=
+09 scontext=3Dsystem_u:system_r:mdadm_t:s0-s0:c0.c1023 tcontext=3Dunconfine=
+d_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 tclass=3Dtcp_socket permissive=
+=3D0
+>
+> Cc: Ming Lei <ming.lei@redhat.com>
+> Link: https://bugzilla.redhat.com/show_bug.cgi?id=3D2348878
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> ---
+>  drivers/block/nbd.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>
+> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+> index 6463d0e8d0cef..d50055c974a6b 100644
+> --- a/drivers/block/nbd.c
+> +++ b/drivers/block/nbd.c
+> @@ -52,6 +52,7 @@
+>  static DEFINE_IDR(nbd_index_idr);
+>  static DEFINE_MUTEX(nbd_index_mutex);
+>  static struct workqueue_struct *nbd_del_wq;
+> +static struct cred *nbd_cred;
+>  static int nbd_total_devices =3D 0;
+>
+>  struct nbd_sock {
+> @@ -554,6 +555,7 @@ static int __sock_xmit(struct nbd_device *nbd, struct=
+ socket *sock, int send,
+>         int result;
+>         struct msghdr msg =3D {} ;
+>         unsigned int noreclaim_flag;
+> +       const struct cred *old_cred;
+>
+>         if (unlikely(!sock)) {
+>                 dev_err_ratelimited(disk_to_dev(nbd->disk),
+> @@ -562,6 +564,8 @@ static int __sock_xmit(struct nbd_device *nbd, struct=
+ socket *sock, int send,
+>                 return -EINVAL;
+>         }
+>
+> +       old_cred =3D override_creds(nbd_cred);
+> +
+>         msg.msg_iter =3D *iter;
+>
+>         noreclaim_flag =3D memalloc_noreclaim_save();
+> @@ -586,6 +590,8 @@ static int __sock_xmit(struct nbd_device *nbd, struct=
+ socket *sock, int send,
+>
+>         memalloc_noreclaim_restore(noreclaim_flag);
+>
+> +       revert_creds(old_cred);
+> +
+>         return result;
+>  }
+>
+> @@ -2669,7 +2675,15 @@ static int __init nbd_init(void)
+>                 return -ENOMEM;
+>         }
+>
+> +       nbd_cred =3D prepare_kernel_cred(&init_task);
+> +       if (!nbd_cred) {
+> +               destroy_workqueue(nbd_del_wq);
+> +               unregister_blkdev(NBD_MAJOR, "nbd");
+> +               return -ENOMEM;
+> +       }
+> +
+>         if (genl_register_family(&nbd_genl_family)) {
+> +               put_cred(nbd_cred);
+>                 destroy_workqueue(nbd_del_wq);
+>                 unregister_blkdev(NBD_MAJOR, "nbd");
+>                 return -EINVAL;
+> @@ -2706,6 +2720,8 @@ static void __exit nbd_cleanup(void)
+>
+>         nbd_dbg_close();
+>
+> +       put_cred(nbd_cred);
+> +
 
-Why would we ever want to reorder them?  The reason the ordering is
-{token, parser} string is because that's the nicest order to read them
-in.
+Should this be done at the end, after the workqueue is destroyed?
 
->=20
-> > > and to improve readability.
-> >=20
-> > I don't think I agree with this when looking through the code,
-> > especially because this is the way it's done for *every* option in
-> > the entire key subsystem.=C2=A0 So firstly I really don't think it's
-> > helpful for only encrypted keys to be different from everything
-> > else and secondly when I read the code (as I often do to figure out
-> > what the options mean), the additional .token and .pattern just get
-> > in the way of what I'm looking for.
->=20
-> I just stumbled upon this and didn't check any other files.
-
-jejb@lingrow:~/git/linux> git grep 'match_table_t'|wc -l
-49
-
-I'll leave it as an exercise to you to figure out how many use the
-style you're proposing.
-
-There's definite advantage in uniformity and even if I accepted the
-readability argument, which I don't, it's too small a reason to churn
-nearly 50 files one at a time.
-
-Regards,
-
-James
-
+>         mutex_lock(&nbd_index_mutex);
+>         idr_for_each(&nbd_index_idr, &nbd_exit_cb, &del_list);
+>         mutex_unlock(&nbd_index_mutex);
+> --
+> 2.51.0
+>
+>
