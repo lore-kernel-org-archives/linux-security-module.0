@@ -1,107 +1,118 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B380023AE93
-	for <linux-security-module@vger.kernel.org>; Thu,  9 Oct 2025 18:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E406027145C
+	for <linux-security-module@vger.kernel.org>; Thu,  9 Oct 2025 20:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760036018; cv=none; b=qJM/dy7Ji5qL9N1A55h7Ltcglsc/vNT0+nvTTq+lscbmH5KF3SNa0/HU/E/F6ELhPSQxmaZB/P2sLamZcSJ0Km9J6gfEuNhqre1F/OIz54jxvWgVgt9TRVrG/QWaRQfPpJ0+0481c0bzNsBlWPylBd90GAhrYLDgPXgEtPOKjng=
+	t=1760042847; cv=none; b=X/n5WgRhsKv0eHD7Ob18PrHKEZcXtYNV+GLU3GDeO/Vz6Pstoegf+U+wuEgiHLmzOheZm3mK3oFuwMrYbRkWpoqDRDw+uDEA+mGvUNf+dXVHe+NB4lYQpxYxJC5py8gm7SGVNBkmLBM0x/wTStXL9+NV4d+0RXBP0kaBmwpxPbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760036018; c=relaxed/simple;
-	bh=1ac/fLFPsYRuSpEkij40k5Zmt1ThI8YAweN99K6QAss=;
+	s=arc-20240116; t=1760042847; c=relaxed/simple;
+	bh=q9saZzPxKQgNmhZe1nTPbgY4fDxl3Xft1oscVp8TQKk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k5Is6dAI/u8X3QTovbdlUCQVbAJJmCYHvQpYbB0jiN7sXw4+S13Xy2MWvZeUIJaIk0MKBHsaluuem0+2gMau5q56CnwLSTh5sx/rzZdYUz+HGul6Y4QKa3DvvuS5iHKO7JC3TRL3vejDwuBYHS9jALwbw+YNcRnPVgu0t7HTQ8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdN63dL5; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=l0CmGOxw+tEmG3OhYvouzvGQCBiNtQ0tDDCWOsON0AnPFSZOxPl9P9+jPcqO6yghMM8wj51agy4iW68evtjbs1WQY9av7/z1QPL4Pe8JDjkE1m2FOBlpF0eVZzD4lCq0NM7t5BX99+nU1kA4W7p3aiDNiSVxWzwZiiC3Blttk0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=V+HOenhW; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdN63dL5"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-33274fcf5c1so1534580a91.1
-        for <linux-security-module@vger.kernel.org>; Thu, 09 Oct 2025 11:53:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="V+HOenhW"
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-330631e534eso1617092a91.0
+        for <linux-security-module@vger.kernel.org>; Thu, 09 Oct 2025 13:47:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760036015; x=1760640815; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1760042845; x=1760647645; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B1Uzp5iLkP5Bv1fIK+1rV8CxjLbvYcFDDKRV4JvrlmM=;
-        b=QdN63dL5wPR0n/taPwv6oeKB/ueChxEfKvcz40tSBsgCljMJM0rR+/jxWX7mN0Ygbp
-         Y/FPUkFD0K1zBzk94PAG6RderRkAi7iQ3Tcb/11j4m6tP+hkzIBFEdibDKEmJy61C/Fm
-         xdatRxXMp79ahOMDpc9syoqlFYRR3UHLXsSTl7DTbiYLUFWdAobkOj1zz7Qd8l68LZET
-         4eoyqi9Zxz56lKVoHe9NLpYhtqjCcjfMGJ22buKmK/ZbIN5OsFhYjQmSrLzFzte4d02Y
-         ibgRvuVhS9ZKOtJldFa6jICte/nE8EUk2EKCrjuiRExC5iC0rzaQxda5gkdfoMjQxkwa
-         goZQ==
+        bh=z6K/zr+mhgRMW1dEHBSBrEj+cHx1AJJEsB7Xi5fFruA=;
+        b=V+HOenhW1D10V5BvnlJoRBteyJanDQugh+2TZIC6oFcES306iSSVzfX5s9RpcVKmNR
+         hgl4/uuiOMkTR89DAfok46sekE3MC/gAa49JNM4Y9S6eVDjgBi3peGlRkKvgmX4+Gugj
+         VGpnR6nqEdDK0TtvVLbmwDp+FYmaeH7ZAT4MshntwfTEsyFqTt/36k05RU7Awdcah5g3
+         zvjU8fPbtvGBOJXXIyGqQSYN2/HNQouVdtLTXcVFreEkmQL7E2eNQ53e7+qdMM8r8vNd
+         fDIExpxMWI3SvItzBwTTg0dSUZBktTAfwD0Bo/MT+6lwb6/FfhK9CvvJgDKObEapDKxm
+         cx+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760036015; x=1760640815;
+        d=1e100.net; s=20230601; t=1760042845; x=1760647645;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=B1Uzp5iLkP5Bv1fIK+1rV8CxjLbvYcFDDKRV4JvrlmM=;
-        b=QfLT80ceyEzOsBpQbyg1wom/hqjFsG95ZNM5rfoRalpI7k1b88rG5A0+no5T6mL5JB
-         QAuOlRK3G89Lmr2+D7dmZ+JGWxeTLDt5W7fJNmHqv90ZwEOanXE/oYZj8BzCqEoKa8f+
-         fegVT8U4TOryHmQz7oVUMu53xXSwq2BIHxz4uuOkgHBHZhiHQmKz1xZsmPI5QYr1WSwM
-         BFusCcJs5Smz0q4jipA8D/INZ9PvTvzhpeTjUOJ8uXgYTHMnVPgrLi5VdiAZYEUo4IS1
-         f9iidQP4/ogSc6iWF1kSWMkP2Hp26PCIffg1B2zMRtpmPowc/9nog44C9Cq5UO6+NoCQ
-         Cm+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX9miH7ORwfFZC2FQ45kaOOE00jhryfSapZbhl8wFevIStqQYrU2JoZ5K62YgZ5y3XpmiqK5J4747r+q1AK0tI1Tz7Jl04=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb4HvGrQdsSqh5ELOoZ1jPDSyI1kEXBGzS2Jguue6D8LxQzDup
-	QSKbLqQl6ufaSu/utZyfQamS7ho9d3HJSLFnRpqP2LlnLQWNIgMyuRrSNSo7MFt77Uzu3cR8iKa
-	VmdpoxiV6SC9q6fgxFwYci0bx83Ntc7k=
-X-Gm-Gg: ASbGncuWiu0t5E/ZrIWgxngXmd+twm8FRYpyu+7NbacJbqBLncYi2O0+/ZyO0XYKGrg
-	tSvxEjBURUEl4ZoYdgbZTSFXnCR1hrYXkHohRkYwz+RJMUlwLe3Tzst+mxfI9AMZKN8aWGA0pBw
-	bw3MDYUixy+8uOxuZne3W9d6u02L5YpbW7ZkCI5RBft/H5bkPNKZa1CkKsLe/Pk5BoXWaWb/NtL
-	HR9IgYIcEaDfXUB3kGWAoSvlszob7U=
-X-Google-Smtp-Source: AGHT+IEr6xYml/4oPWWPBOYMdsJawHFJTDIUl5AA78sk0QeeIlMy3jRJkuZ6KGVkF1uxh5CG/9S2tm6wzcvo7HYhJS4=
-X-Received: by 2002:a17:90b:1648:b0:32d:f352:f764 with SMTP id
- 98e67ed59e1d1-33b51105d58mr10655063a91.2.1760036015068; Thu, 09 Oct 2025
- 11:53:35 -0700 (PDT)
+        bh=z6K/zr+mhgRMW1dEHBSBrEj+cHx1AJJEsB7Xi5fFruA=;
+        b=E2QYCTvbli95PYK/d2vbBms+mFy83TtWkJqJJxbU45DhTTLoyePOnDqCGKnQlPDbtt
+         C37vn8/CBndecPM9JB/xrn2382V/pVaQ+K3UxMU1pelWkNigAihCkt45dDVsx2txRQ2S
+         LmCkPWHa7uRLslRg0+8lZiyoiSCGGo586qUpDp1upRA2o2fjMQtu8qE7Rb9tCK94exRB
+         YVWjtERC8Xk3WRRUPRXwFxbhoMy9lMmI3j6qdp0ZcVxYyqS2vPBHsePgJNXpa595jNw9
+         vhLpc6Vi1LJpTL5Ui2MelPurKrS6VHVCNeqay7CkO2XRY0laIZJiAZHc3dcxoy718OqK
+         8Nzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUVur/zUVSSrqSMLptEd/QMMp4fw7a9cg8ORhEhX4FUOFwDUOLhBwkmrEHZYSVflOE2EgrnOiK/r5F99wDLvR26FliAOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaJgNbgrnSYMZ1hOc9Nae3iHh6Wc25TgPzZx+labbkortJPWXR
+	aK4wNwlE3MA0QzhMi1Fv1kva4JGfH6UeTN/7dzf9rnd094mrn78bm1YABR31nRuMZrpElAeDwoD
+	HcQksub/8o8/tCBCG1TM7vcH9h+K2GYBqBF4Z4JV3
+X-Gm-Gg: ASbGncu8TPamrh6prkxYi0Z2dul5NZuy+eZsAeoxMa4trEuIiZFeikdZGwWFNW2GJKm
+	JO8MUsdOZ8E+CyCBOnYjhDjUCv2htn46PfeemI9OjY3nmnE9iN2oS3h0puG2GOyiIz6zEWv0Bk2
+	woTDl5Fcm6HK0sbqmrm1OgYYtIFmU1m4Qpk31VprqtG7ZJko6AIdAQscz+I1VaGaE+JaB6V3BGM
+	6YNl5RLOtgCqoraomexjUTpCJp8CjI=
+X-Google-Smtp-Source: AGHT+IHwcV2uuUwAl2OswF6usdNngeVHs1OU6Qv4WDIoDMFlQQoJQ6qMYB4lYZ4rU5CeU4FuempUIEnPg0uLmZuIgiE=
+X-Received: by 2002:a17:90b:1d8b:b0:332:793e:c2d1 with SMTP id
+ 98e67ed59e1d1-33b5139a37amr11731621a91.36.1760042845003; Thu, 09 Oct 2025
+ 13:47:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001215643.31465-1-casey@schaufler-ca.com> <20251001215643.31465-3-casey@schaufler-ca.com>
-In-Reply-To: <20251001215643.31465-3-casey@schaufler-ca.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 9 Oct 2025 14:53:24 -0400
-X-Gm-Features: AS18NWD9a_Fk68Lh5JrlS0gUk6gyIQxpz3GgsrNopdIM_qVpZUajo16zBkCmCyY
-Message-ID: <CAEjxPJ48PiZ5ZOZbZjka5YeiBxaWFsCufoGcY_jEztM+wtEUCA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] LSM: Allow reservation of netlabel
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org, 
-	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
-	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+References: <20250929213520.1821223-1-bboscaccy@linux.microsoft.com>
+ <CAHC9VhTQ_DR=ANzoDBjcCtrimV7XcCZVUsANPt=TjcvM4d-vjg@mail.gmail.com>
+ <CACYkzJ4yG1d8ujZ8PVzsRr_PWpyr6goD9DezQTu8ydaf-skn6g@mail.gmail.com>
+ <CAHC9VhR2Ab8Rw8RBm9je9-Ss++wufstxh4fB3zrZXnBoZpSi_Q@mail.gmail.com>
+ <CACYkzJ7u_wRyknFjhkzRxgpt29znoTWzz+ZMwmYEE-msc2GSUw@mail.gmail.com>
+ <CAHC9VhSDkwGgPfrBUh7EgBKEJj_JjnY68c0YAmuuLT_i--GskQ@mail.gmail.com> <CACYkzJ4mJ6eJBzTLgbPG9A6i_dN2e0B=1WNp6XkAr-WmaEyzkA@mail.gmail.com>
+In-Reply-To: <CACYkzJ4mJ6eJBzTLgbPG9A6i_dN2e0B=1WNp6XkAr-WmaEyzkA@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 9 Oct 2025 16:47:13 -0400
+X-Gm-Features: AS18NWArdmWPZMqLgFQiddXgH5voBO_n-fQZZPwVAAdYJ003C0ZIeYDQyt1C9GA
+Message-ID: <CAHC9VhRyG9ooMz6wVA17WKA9xkDy=UEPVkD4zOJf5mqrANMR9g@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 0/3] BPF signature hash chains
+To: ast@kernel.org, KP Singh <kpsingh@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, james.bottomley@hansenpartnership.com, 
+	bpf@vger.kernel.org, linux-security-module@vger.kernel.org, kys@microsoft.com, 
+	daniel@iogearbox.net, andrii@kernel.org, wufan@linux.microsoft.com, 
+	qmo@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 1, 2025 at 5:56=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
->
-> Allow LSMs to request exclusive access to the netlabel facility.
-> Provide mechanism for LSMs to determine if they have access to
-> netlabel. Update the current users of netlabel, SELinux and Smack,
-> to use and respect the exclusive use of netlabel.
->
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
+On Tue, Oct 7, 2025 at 9:53=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrote:
+> On Mon, Oct 6, 2025 at 5:08=E2=80=AFAM Paul Moore <paul@paul-moore.com> w=
+rote:
+> > On Fri, Oct 3, 2025 at 12:25=E2=80=AFPM KP Singh <kpsingh@kernel.org> w=
+rote:
+> > > On Fri, Oct 3, 2025 at 4:36=E2=80=AFAM Paul Moore <paul@paul-moore.co=
+m> wrote:
+> > > > On Thu, Oct 2, 2025 at 9:48=E2=80=AFAM KP Singh <kpsingh@kernel.org=
+> wrote:
+> > > > > On Wed, Oct 1, 2025 at 11:37=E2=80=AFPM Paul Moore <paul@paul-moo=
+re.com> wrote:
 
-> diff --git a/security/security.c b/security/security.c
-> index e59e3d403de6..9eca10844b56 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -289,6 +289,12 @@ static void __init lsm_set_blob_sizes(struct lsm_blo=
-b_sizes *needed)
->                 else
->                         blob_sizes.lbs_secmark =3D true;
->         }
-> +       if (needed->lbs_netlabel) {
-> +               if (blob_sizes.lbs_netlabel)
-> +                       needed->lbs_netlabel =3D false;
-> +               else
-> +                       blob_sizes.lbs_netlabel =3D true;
-> +
+...
 
-Same principle here - if a LSM wants to use netlabel, it may want to
-guarantee that it truly has exclusive access to it no matter what the
-LSM order is.
+> I feel we will keep going in circles on this and I will leave it up to
+> the maintainers to resolve this.
+
+Yes, I think we can all agree that the discussion has reached a point
+where both sides are simply repeating ourselves.
+
+I believe we've outlined why the code merged into Linus' tree during
+this merge window does not meet the BPF signature verification
+requirements of a number of different user groups, with Blaise
+proposing an addition to KP's code to satisfy those needs.  Further, I
+believe that either Blaise, James, or I have responded to all of KP's
+concerns regarding Blaise's patchset, and while KP may not be happy
+with those answers, no one has yet to offer an alternative solution to
+Blaise's patchset.
+
+With that in mind, I agree with KP that it's time for "the maintainers
+to resolve this".  Alexei, will you be merging Blaise's patchset and
+sending it up to Linus?
+
+--=20
+paul-moore.com
