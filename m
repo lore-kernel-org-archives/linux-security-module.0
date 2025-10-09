@@ -1,47 +1,71 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3200E2EC542;
-	Wed,  8 Oct 2025 11:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DC92D6E58
+	for <linux-security-module@vger.kernel.org>; Thu,  9 Oct 2025 11:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759924509; cv=none; b=PPH9bdEFNbaywqKsgIJfTwSejQJr+ur+5P6eN4hLTRh/t7BYTSJ945OtyrDZRCmRmm3bgLSUmD+LN1EucHAPT+9sF1Yh5QSEhoavaOQJU7GQ0dCGNqy5rFnS0inWWgjSUFTc26ScDI+v+nWaBD7NMYPfDGIOOdAM9sk9sKeCKKk=
+	t=1760008886; cv=none; b=TbLw74bMNkKDyGKS+isMU7+GLWHrrMqMv2GEM7x7vQXoOkunuBtZ4FFLMY++dJCygi4xhgTsgEfzy1cL+Wc1rBRZsKTUdCLB9nzSmojOYskH1iD5ym5AFph0mdKFW6ed38CHK9w1LalwTCwbuy4CzwKTQ8/RUV3ppFpx76tkaBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759924509; c=relaxed/simple;
-	bh=8TrVwN/q3Nk7L6pUZrAiLWRdDBPrOqJoGid4/qG/l4Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ivjGEPPco37agiTqX66Xwt1srzs5TTlAEbOOeb6gzMUH7jhiJ8MVXfyb5cNLT4MwXkMNF9ruTgT5ZKvVktnbebMqRVD0YX9nxw1s5crrij4tzZSGRlNI+5kW2z8f6AgSCLV6BEr8A6x9VggnXeZKPg9PkzArPbJ1EM/pIsbpRnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4chWCr5tnXzpSvj;
-	Wed,  8 Oct 2025 19:35:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 4367B1402DA;
-	Wed,  8 Oct 2025 19:36:15 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwCXsJKkTOZoNH9JAQ--.56566S2;
-	Wed, 08 Oct 2025 12:36:14 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
+	s=arc-20240116; t=1760008886; c=relaxed/simple;
+	bh=rC3SodaA/M9mz/H4DzKiXnOCoIPedmcHNAWPpkYqsxY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pfjrswzzXq9CV691mX9Lvi4qEtpm5//7dfhv9xL2EaKvjd158TyQVJ82DMQ+rIHtM53qle7NbrNq4XwUkvajEDJ+ybPaZrx+ZfLZGdLb2/WBHIAyzzfpSvkcnI8oiHPMCpCFmppZQ85yzQI0oiJ2LkFsxsl8t44Rbyv5BNStwoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wa7aai7b; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wa7aai7b"
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-781ea2cee3fso812000b3a.0
+        for <linux-security-module@vger.kernel.org>; Thu, 09 Oct 2025 04:21:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760008884; x=1760613684; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VO8SKvoV0MfIaQcTVSAq8u/FTUT1z6zd3ZxIoxWA74E=;
+        b=Wa7aai7bCeFKG3Luc7wgztqjDL+ECjIf/XkBZb/GjXUxiS8u88EHska3lZKZMh+Lcm
+         O2qoeUF9vp8DYHIpOcfaqOPNqWfHOpORPXMsybD9DMDmqyuzn/9ypgzpmCD3MJW1FN9P
+         P6mCL9CRSYodLSOtb7iA1Eho5wGUiB/MdVnvGPBLMiSAhVg7h8zp7ksSYtYP6YxWAqa2
+         SU4qOlT7bB1Gl3JSkvIRZ0wezRXgRzR+9Uoh8AsZJ51dFmGmhPNPHzqkJBd5/0/dXgio
+         BUV2Ksj2ODpZPxASByxynjrQ7LGWOG84vHOL8bVeQ3pgGzn98OQ0hSXZ41J/LzsCNiDZ
+         FC2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760008884; x=1760613684;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VO8SKvoV0MfIaQcTVSAq8u/FTUT1z6zd3ZxIoxWA74E=;
+        b=O5K0bXBdHQbZcTYcZdsORvkMKqMamsmbMBTgZQmAWNO/0d9Ij7g9QPIdjmqOUTGCwx
+         KSDfpcsDs1kWAmsmCqxXteZXWvBsAawTdZMLmrQdpNNfxiJDSUx2r5OkoEKv1A7YrPTk
+         n4wp2hf9kT7mki2pfjKUhh9vQD3WbOVK+00iFGlQkBkRrFpWD7s/jhWpul975iMKmREE
+         ZISMW3FKPj4PB8Im/yDDsWtTWwEeHH7SRr5BxQnas/Sv+IyUvN1dTnkwygFwJKBMogzw
+         p2LfrU0t9nYuLaUDJmcnl0MUVwc2wx4mztxiVLDXICxQ2n70y6SmIEG9VBNRpdBA3fZ3
+         EXrA==
+X-Gm-Message-State: AOJu0Yx27ZymD9MdOsIecfJXiLpzrQYvkcMJA4sBy37nezJM+o5iHY1Q
+	Q1Nv47QGSuBTK4L31RveI6jORzSbBzR/bm9owpLWVoWnVCB1WNg//D8T
+X-Gm-Gg: ASbGncumFdbORkOOBk5F+jMW5WGc4uq7HDRS6RLgwpt2cAW5LKJsPC8fQBvL2uUNMx5
+	uawWF6cqnNjlb9+SGPYDcswsEBHMy+CMJqL41IxBwLlFiU8hcbp6IuJDEba2EKgZgoisCER4cSb
+	AQTyXX+AelZ8IGN4GaphP8qJ0nY5d+TfQPZ4bOtUvqvV4L2qjcZwrd5E2XZR9CqFFtwJh1Teb6V
+	eBCaIxTNKfrhhQmPiwQflvQLV1p3XL4XQv03EYslX7rzWcFNPL2Ea3NsHLEbtrV4veJJo5nqGV7
+	Nt8lpElkuXRwNZln2/pbewI4AR0rBYfkQHWzK3W4OfHQb6otxnNQ6zyPE8xK55oYm4mmQJnh105
+	DfmmUCtM/hHwBHLVNZDJ9Hwv+uHfi
+X-Google-Smtp-Source: AGHT+IE+3elAzuUoBsMXH83emv2hz1iBTQWPEfVgKB6cy6cCNbyfaqhi5O90RkMxWr9ccb+clNTj3g==
+X-Received: by 2002:a05:6a00:891:b0:781:6ce1:998c with SMTP id d2e1a72fcca58-79387c1ae7bmr7146498b3a.30.1760008884432;
+        Thu, 09 Oct 2025 04:21:24 -0700 (PDT)
+Received: from ASUS ([2a09:bac1:5b40:28::3c4:7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-794e33f0495sm2619758b3a.76.2025.10.09.04.21.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 04:21:23 -0700 (PDT)
+From: Taimoor Zaeem <taimoorzaeem@gmail.com>
+To: casey@schaufler-ca.com,
 	paul@paul-moore.com,
 	jmorris@namei.org,
 	serge@hallyn.com
-Cc: linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	"Eric W . Biederman" <ebiederm@xmission.com>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Kees Cook <keescook@chromium.org>
-Subject: [PATCH] ima: Attach CREDS_CHECK IMA hook to bprm_creds_from_file LSM hook
-Date: Wed,  8 Oct 2025 13:35:03 +0200
-Message-ID: <20251008113503.2433343-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.43.0
+Cc: linux-security-module@vger.kernel.org,
+	Taimoor Zaeem <taimoorzaeem@gmail.com>
+Subject: [PATCH] security: smack: fix indentation in smack_access.c
+Date: Thu,  9 Oct 2025 16:20:55 +0500
+Message-ID: <20251009112055.142440-1-taimoorzaeem@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -49,147 +73,27 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwCXsJKkTOZoNH9JAQ--.56566S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxtFWxKw13JryxtryrXw4rAFb_yoW7tr1rpa
-	9agay5JrWDGF1xCr1fGa17ZF1Sk3yrJrW3WF9Ig3s5Zas8Ar10vrWaqFn0vFy5JryFy3Zr
-	t3ya9rW7Aa4qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-	xUF1v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAPBGjmC20DGgAAs4
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+Replace spaces in code indent with tab character.
 
-Since commit 56305aa9b6fa ("exec: Compute file based creds only once"), the
-credentials to be applied to the process after execution are not calculated
-anymore for each step of finding intermediate interpreters (including the
-final binary), but only after the final binary to be executed without
-interpreter has been found.
-
-In particular, that means that the bprm_check_security LSM hook will not
-see the updated cred->e[ug]id for the intermediate and for the final binary
-to be executed, since the function doing this task has been moved from
-prepare_binprm(), which calls the bprm_check_security hook, to
-bprm_creds_from_file().
-
-This breaks the IMA expectation for the CREDS_CHECK hook, introduced with
-commit d906c10d8a31 ("IMA: Support using new creds in appraisal policy"),
-which expects to evaluate "the credentials that will be committed when the
-new process is started". This is clearly not the case for the CREDS_CHECK
-IMA hook, which is attached to bprm_check_security.
-
-This issue does not affect systems which load a policy with the BPRM_CHECK
-hook with no other criteria, as is the case with the built-in "tcb" and/or
-"appraise_tcb" IMA policies. The "tcb" built-in policy measures all
-executions regardless of the new credentials, and the "appraise_tcb" policy
-is written in terms of the file owner, rather than IMA hooks.
-
-However, it does affect systems without a BPRM_CHECK policy rule or with a
-BPRM_CHECK policy rule that does not include what CREDS_CHECK evaluates. As
-an extreme example, taking a standalone rule like:
-
-measure func=CREDS_CHECK euid=0
-
-This will not measure for example sudo (because CREDS_CHECK still sees the
-bprm->cred->euid set to the regular user UID), but only the subsequent
-commands after the euid was applied to the children.
-
-Make set[ug]id programs measured/appraised again by splitting
-ima_bprm_check() in two separate hook implementations (CREDS_CHECK now
-being implemented by ima_creds_check()), and by attaching CREDS_CHECK to
-the bprm_creds_from_file LSM hook.
-
-The limitation of this approach is that CREDS_CHECK will not be invoked
-anymore for the intermediate interpreters, like it was before, but only for
-the final binary. This limitation can be removed only by reverting commit
-56305aa9b6fa ("exec: Compute file based creds only once").
-
-Link: https://github.com/linux-integrity/linux/issues/3
-Fixes: 56305aa9b6fa ("exec: Compute file based creds only once")
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Taimoor Zaeem <taimoorzaeem@gmail.com>
 ---
- security/integrity/ima/ima_main.c | 42 ++++++++++++++++++++++++-------
- 1 file changed, 33 insertions(+), 9 deletions(-)
+ security/smack/smack_access.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index cdd225f65a62..ebaebccfbe9a 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -573,18 +573,41 @@ static int ima_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
-  */
- static int ima_bprm_check(struct linux_binprm *bprm)
- {
--	int ret;
- 	struct lsm_prop prop;
- 
- 	security_current_getlsmprop_subj(&prop);
--	ret = process_measurement(bprm->file, current_cred(),
--				  &prop, NULL, 0, MAY_EXEC, BPRM_CHECK);
--	if (ret)
--		return ret;
--
--	security_cred_getlsmprop(bprm->cred, &prop);
--	return process_measurement(bprm->file, bprm->cred, &prop, NULL, 0,
--				   MAY_EXEC, CREDS_CHECK);
-+	return process_measurement(bprm->file, current_cred(),
-+				   &prop, NULL, 0, MAY_EXEC, BPRM_CHECK);
-+}
-+
-+/**
-+ * ima_creds_check - based on policy, collect/store measurement.
-+ * @bprm: contains the linux_binprm structure
-+ * @file: contains the file descriptor of the binary being executed
-+ *
-+ * The OS protects against an executable file, already open for write,
-+ * from being executed in deny_write_access() and an executable file,
-+ * already open for execute, from being modified in get_write_access().
-+ * So we can be certain that what we verify and measure here is actually
-+ * what is being executed.
-+ *
-+ * The difference from ima_bprm_check() is that ima_creds_check() is invoked
-+ * only after determining the final binary to be executed without interpreter,
-+ * and not when searching for intermediate binaries. The reason is that since
-+ * commit 56305aa9b6fab ("exec: Compute file based creds only once"), the
-+ * credentials to be applied to the process are calculated only at that stage
-+ * (bprm_creds_from_file security hook instead of bprm_check_security).
-+ *
-+ * On success return 0.  On integrity appraisal error, assuming the file
-+ * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
-+ */
-+static int ima_creds_check(struct linux_binprm *bprm, const struct file *file)
-+{
-+	struct lsm_prop prop;
-+
-+	security_current_getlsmprop_subj(&prop);
-+	return process_measurement((struct file *)file, bprm->cred, &prop, NULL,
-+				   0, MAY_EXEC, CREDS_CHECK);
+diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
+index 2e4a0cb22782..3cc0e00ca1ae 100644
+--- a/security/smack/smack_access.c
++++ b/security/smack/smack_access.c
+@@ -392,7 +392,7 @@ void smack_log(char *subject_label, char *object_label, int request,
  }
- 
- /**
-@@ -1242,6 +1265,7 @@ static int __init init_ima(void)
- static struct security_hook_list ima_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
- 	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
-+	LSM_HOOK_INIT(bprm_creds_from_file, ima_creds_check),
- 	LSM_HOOK_INIT(file_post_open, ima_file_check),
- 	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
- 	LSM_HOOK_INIT(file_release, ima_file_free),
+ #else /* #ifdef CONFIG_AUDIT */
+ void smack_log(char *subject_label, char *object_label, int request,
+-               int result, struct smk_audit_info *ad)
++	int result, struct smk_audit_info *ad)
+ {
+ }
+ #endif
 -- 
-2.43.0
+2.51.0
 
