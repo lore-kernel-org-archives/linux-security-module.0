@@ -1,80 +1,166 @@
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664E62749C5
-	for <linux-security-module@vger.kernel.org>; Thu,  9 Oct 2025 20:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D7B2836F
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 01:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760043365; cv=none; b=YOHFlDio0glCVDbS1ONY5o3o9OLhE2lUtcNuHimN/3r9IRUssy/oGO+RgGhZRD0cHUGdZZLao75NXQG1UsND8IX4QDtEB4lI6qqIwHqKwI+6h33w5VN/Lkunz+Hzcy3fQ+InyB5Rsn6yCmw+ZeOBPkT2TOe9o1JzzqrLiUChKjc=
+	t=1760058025; cv=none; b=hM2aGeoxfs1JGFd4un7gsMx0LpUAE0Iv23HdLpuB3aDGbttB/1whP/9k/c/I8lGwXqPoSLI38WT/tvuECn09oXz9sXXSCOWS6LXUj1TtbE7Wd8T37ADHPF1qFhGTJa3EeqSR2LiDRZsC2CMuV7EhatOAAnKyJHwhHxvxdcZp1JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760043365; c=relaxed/simple;
-	bh=GfmPq3HACCp8o8RV9X5r7hr9CR4rpOel1xO+LMrzOZk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=i7YAykXcbe5gPrp4xt14tQ7sXWWS6gN0GLaz6uVX0Y5qjEIkL5Rbvg89D+xcuWYX/BmkA91HIRZuHGqofnpb74gCLnG96dKfk5gx4Op1fk0EAMOkAlJEk4JDresUrKqhikrjf8ktrD2y7oDd0G39KzFUvSc6EGukRUG02Kr7t7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93bbd28b4f3so284232439f.1
-        for <linux-security-module@vger.kernel.org>; Thu, 09 Oct 2025 13:56:04 -0700 (PDT)
+	s=arc-20240116; t=1760058025; c=relaxed/simple;
+	bh=317f2O6jDI484oZyyZztwYrl/kBOO7FfdffIhWpwkXs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r3WUPU+IpKW2SHZKgMshgXbzllGhw/2+Fda1uKEkj+ymIMJALMTkbueCyIOny0cRxH4jDMF0Qv2+nJsjqN4DRM1WxG84W0SSDgpGNYgqni5e2nXQOtHoV0X1ci/Ho/NWoOOBnthaFrNlvsgNjtv0//gPCRdI8WQpC014DvdJzDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ex5RgLKS; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ex5RgLKS"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46f53f88e0bso9366195e9.1
+        for <linux-security-module@vger.kernel.org>; Thu, 09 Oct 2025 18:00:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760058022; x=1760662822; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sxyJBBM7Wb2g2o+uxozv3KN+nj4K7alQxAlD+QYyuwM=;
+        b=Ex5RgLKSG+FnvcMN6U7geBuaL6MFtQn88FJrV1h0n4AX3VqtGsucW/63V1j1OA6tD8
+         h4WbIw0z4KzEVbx3Ty7fCn4aVLHMY3MleyAaJuvvSapN2tJPD1cXSAPFQNbVoRlGWQ6H
+         um3bRyFBQWHz/WECgMzl+OE4/x9Xk5zICDxXjR+IVXYLxvFFztTuV2BysztMQmmIc+r/
+         u5dVfblGGu40uOUGyQnwI/2zQz78qkpuH256je7tHLdf6d1hk5T5uAph+4u2j74XW8Oq
+         gmnAl02VoBP0pn2xvqQa2p4la0HUMq15bIZlwy1rlb8bRlrsva7qRVgYkiZqKS6Ebwif
+         tf2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760043363; x=1760648163;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hksci9x2jx44nWzRfyFuUH4NBDU7N2pjE2NiMbKpeC0=;
-        b=a3yJz7clw+mYWx229/X89oYtXHiUppWSbTYzEG7u1xIE2XFOHTRsnIGDQzjhxE1FlK
-         d4wvdNvdSH+sUcSsluGYA6c50J0gPzChkPY1oEK45YZZoSJldLFSOzFXEJodI9K+V5kj
-         z6zvzz1erOYnHTCOPiFeLAroqlA9uQdyuqUcI0Mq9qJk4bQEc6ayhshvrp4BucdG0Pkx
-         P+JFc76TJbYguBDcZXVQXy0Dyi+KihK3MTdwT2o0nkQCouVCpOU2VCvJciIB0Y84ibsF
-         h8EyKqFF5TwHbwzgmeZIhShUrQQ59fdbVfRr05JEpe2x29KsStenXEBOia3iU6saQ5DK
-         38DA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWjHaS0w9DhdyfGbLRHjU+Oa3Q4rgZfFCMePkaGqpv7JIN6L9ydchdA8JOB2L28Xdl5x6jo6dBCOFCh+i4eg4xemMCVMo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKdQMaY0qjW51Js7RdvZ5fU6rsQmxevvUUqx/iP456MT1I8vwe
-	klaQT1Y4FdmXDNcPF9x7jTq+XW2wUt6SOInWbL0B1JhWmfsijGm/qTGtf6kMeknsM1L0XmHejUM
-	LNXayPKmEefApKgJeXfg2vZ2y7HKF3fIYHi2/gS6lNlOim8u8D8T/yeuRxq4=
-X-Google-Smtp-Source: AGHT+IFYtivfCGpqnWFo4z8EgycX5Hd412zY/vm1trt1fBFKxZT7ktTkYJX85FlbrPlwX8RsxqMKMjwyJRG58lCrZszYaKW0qsQH
+        d=1e100.net; s=20230601; t=1760058022; x=1760662822;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sxyJBBM7Wb2g2o+uxozv3KN+nj4K7alQxAlD+QYyuwM=;
+        b=VBsVxd9glmgdI1kH4Iupwghn/wafZGYAuCHx9FmJkP+WcDKoGwKQ6jw76u83/dMVV7
+         xQOBHPd2tv/AAAsVH7Ulo06uSICOVT+rP+LxGJS3whWIQl+JKGzyuJF6HMu9DO5clCUZ
+         JZsD+xadPRoZ8GL9CjTOiMABLhqvcHLVQiI8DfttfsHGOQud/B05QCOPMx28+UrplmAW
+         YzyzrhU7PFQdcVRdpkZqwmO4jPEqfw1XuDo87XrWXhkYASqVghmIRawN6Dyl8LuOnPOk
+         K4d3TQsqmWrCNaRvcqu/0tLXfGxCDwK8qCH93cWqY17/ssbd8cTgVu8QO/DZM8YVyuPn
+         LdFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXt471pVvyRcXY5hbue0gHdxc4xv/Z5zVrHCWO6MGaBrGGHrdy84Tsh10hhIaSedFnefe6nDV6qSXTqePcdG8s/k2ryTyI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQMXA61zSgPp49BAB5+0WNxzSxNEEqqEGl/NqMB9jjAXZOtmf2
+	uba8Y7nuwU8D4gQZ4gqE6XbdgbdPenPm+2BvUc3qg3b4SLyQtUsHFDeee8YZFq2F+zHeXLr35h+
+	tgLp37/AssbWP1ifCw8MmyUuLfQVy2Y0=
+X-Gm-Gg: ASbGncu0YyGjUjHD9wWlZBNXWxWHDs7nm9SbbKkBIJzXLbUzhpSkvmlGiJbWgOwyNFl
+	w5pUQsSmgR30OHreIPfe6TYKOTl8NPvu72hZl319ACgoH51f4jjMdsb3GjlbjoUWlMZhSVo1Nm6
+	PGbO5q7R+747qtx16qJ6xT24Ja65y7ha7r7SigJilywpxfJ1dm8DMPXzpMJB78Axwbt5rSv/VLj
+	1m4KV8hjosoZp7YJjWHTvpIvFZYprHvxmnOadx+aOVcIcvQD9qyseXfES7DUBbr
+X-Google-Smtp-Source: AGHT+IGHOXbu9ExQKzm/l1DEKOqTD/8UxKuS6Ty93Mbp7hCKUVTcpKX4fjWtxbXWTgUwyE1SxTqe6T4YIcrSaYww2Wo=
+X-Received: by 2002:a05:600c:4f08:b0:46e:3dcb:35b0 with SMTP id
+ 5b1f17b1804b1-46fa9a94553mr65215995e9.2.1760058021701; Thu, 09 Oct 2025
+ 18:00:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1652:b0:921:2f68:fa0 with SMTP id
- ca18e2360f4ac-93bd1851614mr1049241739f.2.1760043363452; Thu, 09 Oct 2025
- 13:56:03 -0700 (PDT)
-Date: Thu, 09 Oct 2025 13:56:03 -0700
-In-Reply-To: <68d32659.a70a0220.4f78.0012.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e82163.050a0220.3897dc.00a3.GAE@google.com>
-Subject: Re: [syzbot] [fs?] BUG: sleeping function called from invalid context
- in hook_sb_delete
-From: syzbot <syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com>
-To: brauner@kernel.org, eadavis@qq.com, gnoack@google.com, hdanton@sina.com, 
-	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, max.kellermann@ionos.com, 
-	mic@digikod.net, syzkaller-bugs@googlegroups.com, twuufnxlz@gmail.com, 
-	viro@zeniv.linux.org.uk
+References: <20250929213520.1821223-1-bboscaccy@linux.microsoft.com>
+ <CAHC9VhTQ_DR=ANzoDBjcCtrimV7XcCZVUsANPt=TjcvM4d-vjg@mail.gmail.com>
+ <CACYkzJ4yG1d8ujZ8PVzsRr_PWpyr6goD9DezQTu8ydaf-skn6g@mail.gmail.com>
+ <CAHC9VhR2Ab8Rw8RBm9je9-Ss++wufstxh4fB3zrZXnBoZpSi_Q@mail.gmail.com>
+ <CACYkzJ7u_wRyknFjhkzRxgpt29znoTWzz+ZMwmYEE-msc2GSUw@mail.gmail.com>
+ <CAHC9VhSDkwGgPfrBUh7EgBKEJj_JjnY68c0YAmuuLT_i--GskQ@mail.gmail.com>
+ <CACYkzJ4mJ6eJBzTLgbPG9A6i_dN2e0B=1WNp6XkAr-WmaEyzkA@mail.gmail.com> <CAHC9VhRyG9ooMz6wVA17WKA9xkDy=UEPVkD4zOJf5mqrANMR9g@mail.gmail.com>
+In-Reply-To: <CAHC9VhRyG9ooMz6wVA17WKA9xkDy=UEPVkD4zOJf5mqrANMR9g@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 9 Oct 2025 18:00:09 -0700
+X-Gm-Features: AS18NWBLhPrItqdGptxcz1segXT70AM46ED1AQ4HqEpfTXy8v7DngMLQAs6a3mo
+Message-ID: <CAADnVQLfyh=qby02AFe+MfJYr2sPExEU0YGCLV9jJk=cLoZoaA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 0/3] BPF signature hash chains
+To: Paul Moore <paul@paul-moore.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, KP Singh <kpsingh@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, 
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
+	James Bottomley <james.bottomley@hansenpartnership.com>, bpf <bpf@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, wufan@linux.microsoft.com, 
+	Quentin Monnet <qmo@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has bisected this issue to:
+On Thu, Oct 9, 2025 at 1:47=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
+>
+> On Tue, Oct 7, 2025 at 9:53=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrot=
+e:
+> > On Mon, Oct 6, 2025 at 5:08=E2=80=AFAM Paul Moore <paul@paul-moore.com>=
+ wrote:
+> > > On Fri, Oct 3, 2025 at 12:25=E2=80=AFPM KP Singh <kpsingh@kernel.org>=
+ wrote:
+> > > > On Fri, Oct 3, 2025 at 4:36=E2=80=AFAM Paul Moore <paul@paul-moore.=
+com> wrote:
+> > > > > On Thu, Oct 2, 2025 at 9:48=E2=80=AFAM KP Singh <kpsingh@kernel.o=
+rg> wrote:
+> > > > > > On Wed, Oct 1, 2025 at 11:37=E2=80=AFPM Paul Moore <paul@paul-m=
+oore.com> wrote:
+>
+> ...
+>
+> > I feel we will keep going in circles on this and I will leave it up to
+> > the maintainers to resolve this.
+>
+> Yes, I think we can all agree that the discussion has reached a point
+> where both sides are simply repeating ourselves.
+>
+> I believe we've outlined why the code merged into Linus' tree during
+> this merge window does not meet the BPF signature verification
+> requirements of a number of different user groups, with Blaise
+> proposing an addition to KP's code to satisfy those needs.  Further, I
+> believe that either Blaise, James, or I have responded to all of KP's
+> concerns regarding Blaise's patchset, and while KP may not be happy
+> with those answers, no one has yet to offer an alternative solution to
+> Blaise's patchset.
+>
+> With that in mind, I agree with KP that it's time for "the maintainers
+> to resolve this".  Alexei, will you be merging Blaise's patchset and
+> sending it up to Linus?
 
-commit 2ef435a872abc347dc0a92f1c213bb0af3cbf195
-Author: Max Kellermann <max.kellermann@ionos.com>
-Date:   Wed Sep 17 15:36:31 2025 +0000
+Nope. Both you and James did not understand what Blaise
+patch set is actually doing, and that followed the whole set of
+arguments and reasons that made no sense.
 
-    fs: add might_sleep() annotation to iput() and more
+James's concern is valid though:
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1092ba7c580000
-start commit:   7c3ba4249a36 Add linux-next specific files for 20251008
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1292ba7c580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1492ba7c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa7a95b14b1eaa
-dashboard link: https://syzkaller.appspot.com/bug?extid=12479ae15958fc3f54ec
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12280dcd980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111d852f980000
+> However, the rub for LSM
+> is that the verification of the program map by the loader happens
+> *after* the security_bpf_prog_load() hook has been called.
 
-Reported-by: syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
-Fixes: 2ef435a872ab ("fs: add might_sleep() annotation to iput() and more")
+I understand the discomfort, but that's what the kernel module loading
+process is doing as well, so you should be concerned with both.
+Since both are doing pretty much the same work.
+Both allocate and populate kernel memory with data.
+For kernel module it's bss, data, rodata.
+For bpf it's BTF, maps.
+Then the kernel applies relocations to .text against .data and against
+the kernel.
+bpf is doing the same. It applies relocation against maps, btf, kfuncs.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+The only difference here is that ko loading is done by
+kernel/module/main.c which is pretty complex on its own,
+since it's parsing ELF, symbols, etc
+While bpf loader is doing a fraction of that.
+It doesn't need to parse ELF. It's a dumb sequence of commands:
+load mapA, load mapB, apply relocation at off N to prog M.
+If bpf loader has a bug it will still be caught by the verifier,
+since it effectively runs multiple times. Once for loader prog,
+and then for each prog that loader wants to load.
+
+For kernel modules and for bpf we trust the build system to be correct.
+gcc, clang, linker, objtool, pahole, various scripts/* need to do the
+right thing for the kernel modules.
+In bpf case it's only libbpf that is trusted to produce
+valid loader bpf program for a set of bpf programs and maps.
+I share the discomfort that tools/lib/bpf/gen_loader.c
+is doing something that you don't understand,
+but, really, do you understand what gcc, clang, objtool are doing?
+You have to trust the build process otherwise it's all pointless.
+Malicious "gcc" can inject special code into a signed kernel module.
+Malicious "libbpf" can inject something into "loader prog",
+but again the verifier is still there even if "loader prog" is busted.
