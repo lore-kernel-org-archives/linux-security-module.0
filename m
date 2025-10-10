@@ -1,130 +1,228 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF302F7459
-	for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 14:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E56726E16E
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 15:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760108390; cv=none; b=GJ7rNlOi2ZMdxqZ8qQXDQjfRkfV7C+Rv8tnf9OcWNktARTHBD8dmQMJXhEY5aF7Vme5xI9KoUO277Ts00/9DVP06l0VrQ8eH65tVcreS9GhJWA/iYuqn9qdWzqEY5p0G3KR1mwR1757Vott8U7rhn5ul+kuHBWUy2hn5NKb4RC8=
+	t=1760108451; cv=none; b=RaydjqhHLgTa783T03eOYtGs0JRc3NN6ks9aohhXAk2D53Jk4QijZ+/qQ+B962EzZUxJFBFw+jpzaUX/qxnt/K4atitWf3/NnSLKbAACngKSD9BU+80G/adECimCszfhJ3jwGLe0yDLkB4Xc5rAsYBmamDT/Qpl+ht06Blyf6cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760108390; c=relaxed/simple;
-	bh=KD4eixvngpxKs37ysDRhAqXKK6Z9EeYjwRzv8uXJu2U=;
+	s=arc-20240116; t=1760108451; c=relaxed/simple;
+	bh=pp246uTerFZJog/e4hjFA9+XB/z68RB5I0evQ/CPXSw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M+CLrFighz/4WiDs/aCaOV54vc/MIkcjE9hEV0Lvack8VRRCyKLTv4pZUgzJX/J7pEM48sT39VKhtlDTHakRZ9Vd4bREfSgdhk3GkLvt8e3owBeTp+z77FTb+i3a2yTI10+mqoyoap63/9BPk1bfTrq3jK8RAobwkl7TimuxkHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=JCcPlXSW; arc=none smtp.client-ip=209.85.214.172
+	 To:Cc:Content-Type; b=EL09/nXUvkJNQcSE4qep8JRWc/ViTcxVuWGGCOEiC0UMfigoGk1Prewuk1yAkL0hShPGZAOC+LsmIzU/MKyNDYrG9PaSh1Prvcj98q5MuK2lBHbmNksAQ8EZJ/YFmQ72JSVs0ZMsIGXQukxSZlkB2X3jNYe0p+G6vAENkAPZfII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DxekZ+5s; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="JCcPlXSW"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-27eec33b737so32812195ad.1
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 07:59:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DxekZ+5s"
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-339d7c403b6so2324220a91.2
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 08:00:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1760108388; x=1760713188; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1760108449; x=1760713249; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B+0sjW+oV0t2BMqgCvuWpzJUVVCqY3LbFgfCiYx9Oq0=;
-        b=JCcPlXSWDH9a5m06VnHvoYfhVaiu5z+2LPT6lCbPZF4vfCfVuKfk7HuWMbOTAaheQQ
-         RWevaP0t/FLJ03okG+qa6I2B6yE6h37NUbSgcr9ZZw6ahBfDsJqfufX1M2qu9hTkvVFk
-         Lo/Yy1OM69mD1rxzcjVoS+iEcEGd/KfysTeD+Rd3/uQICKf1tjI1xO6TtHXJbuicQO+N
-         IImmDDweBiUcpXOoGLT5HR+1iqz+9lmJJayKKqYm34p9tYzcJm5RDh9sHr9EfFkSKckz
-         tvF1NYUxD3t8FFuFqGL5qR/8lGPNB+e5rgVQT4OBTIEfU96Yfp/Y0s4zDPIXaTaBA6gj
-         8jZw==
+        bh=PrnkWgVz/Z49/J8nG6GzbbPnjpZrG1a+SrZMq+zyDL0=;
+        b=DxekZ+5skgFkvqgU6WuwVzk9hY7rSewoNtCFzppYRPWjIxh5GzTEljyVUZH+zG0fUb
+         mNbSnfsT3gM61WkBPbG7ZSB2qr9hXH2nm6pJ+nTZePkudmQr78Iis9g3AQl3/h3pq8Dz
+         pSqLfqloidh1Ew1IkVMEYedvW52lZQQhic9EKnGoCnJ+oRiJeGw9FWkwQbguZY63hMU0
+         uaFPItLW5lnDXs9+HGt0kQpkc9hYwWPCeMP63rWssiRCaUsEqP6CLzXOUGVySQHr9tzH
+         Zd+L8scuSAAI7AQSwvqWMepbDCkuDpwimVCkpuozVbyOx5RkkEtolGqju/2cnJiTDqKZ
+         n3+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760108388; x=1760713188;
+        d=1e100.net; s=20230601; t=1760108449; x=1760713249;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=B+0sjW+oV0t2BMqgCvuWpzJUVVCqY3LbFgfCiYx9Oq0=;
-        b=EZbopkBKVzqReVeHDWD+neuPyqz0GvxwsC74te4hBzMPD/Ey20KFevXbJowl5kx21/
-         XqOykAhJ2h/9xBigBjuTpJazkFsONQxdlgJ9Aj5wgByA+q14jJ7Fpa6eyoo+W/x5zOqG
-         AVX/znOpI4Q98fJWDPNbt9+aMfoNZPcXPFImFDlaL066/VLuRONuffmtXzmc4fRBmXK3
-         JCI0h90oeRaUs89t+iwuMqPhFKIe37Nc1pDGMWqwDiBCS6aKsIjKwfpAsZvMF4g/LXtJ
-         kynfZ+TrvHgtrz9tykTVGuex4A9UOWuXjqT67UxFCzFUmXijpAIUJXVKkabCTIqnpcrC
-         6UEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZB1mPt+ys606/gFywBgISUXxvO/WcsuL9zaBi/J7N2JP0Q09z14eBKzBRrkMfCKv+4KnIt9ymvzArT2dlY04sCUm992k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbGagfsT2I+H/bJuLzmT5yOoYsRcasSV3nADPVcbE88iVU6YIL
-	pRufQyMtEQZKyoUuheaUAiBVxUa7Qa26dco1Ti7N8Qu5mNI0y9CI8pEOzoKukxchp/IhdHghyEA
-	hmhRXjU83Yw66j8XywRkpgbZdGt9u6yUB6tvz8AryzdJXsUx6a26jsQ==
-X-Gm-Gg: ASbGnctXMfXvmdZ4G/LKVyPLmWaxqekkhhSY1vD+CNHcXXqxv2X4onS6C1Ny2CsRm73
-	uaPx8lYlI5t3BlVBubrAlEY1i4ozNOg1T/R279VHvjMlZu5sIGN9K7IMotuY0r469P11gdBfw75
-	YuR00J6WKpeEoofq1EeRXMpKDBozfPa+NT3SjhRFr9dPX8PjlKOaFKhUMfamcrvUzSkj88kSGx7
-	idLNwAKks4DPMMNdCDdfM/c2A==
-X-Google-Smtp-Source: AGHT+IG9hy80Ik6+ARbIl3oz3A3KG5+fo5fGn6VPEI+bWA/pwCD/ahXTgPJG7kBipRJaOCzTwImphgjwuOgiPM9OpYY=
-X-Received: by 2002:a17:902:f602:b0:274:9dae:6a6d with SMTP id
- d9443c01a7336-290272c1a67mr159749285ad.34.1760108388086; Fri, 10 Oct 2025
- 07:59:48 -0700 (PDT)
+        bh=PrnkWgVz/Z49/J8nG6GzbbPnjpZrG1a+SrZMq+zyDL0=;
+        b=womOsPQcdvJKxT6ZabOsHkbEJKQcDlMbw47yx2u3SpOYoNMgM5Q9VetcIUVK9wq9ze
+         hcokbnDtqxRQghR5QXAJwB4FN24tmRhbzBR/RPxo449wlkcyS4i3N9hVXTr+HcshvSGA
+         3yZOCzZjCRU1MNkVM81TleRI2ZVXleW2FmzPQb30TNHciV1xRBUbyU5aijHL4NWEd+c5
+         OX3MpLIucT3yYt2YUVbvfy1iMIZlOJBGqULd5ZoaizJ+/OR7jzHPyEovFNMS1z0FIarr
+         sSSgiDP7vu25idBi/dfFXJwAK2pnRr1sqIPPhKZ9UkCmMrxoskPwApbrQSkt+S5fpy8B
+         OvtA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkSzy0EGAELDwzldvTI+5+o/DuQf7wsfHt1WlxJ/C9orrY2hbuyjHDa7785IxsfCEo/adXa8qAKdiVX0NPbbFTHlSjCXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1ATk/kZjitG8Jw2vkM1kNL6YReDiffJL2KaZHuowhsBokYeqo
+	vIyI10JLQ/ydXtajAtHqRzBR16N0E/dT7FWTLTZW4N4toxDw7uHjzNsam/d7+1/pND8Lu8pJSGb
+	hrf8TrtWIaInEgxv/P7mJ8O7hUtl5AJgkNj+fd8Dd
+X-Gm-Gg: ASbGncuJlI8ySzA5d3EHZqaAqs8TjYtXPtwn2EQZd+zsbQNFVDC/mwFGFSEdw101NnR
+	UTJrADX6q1IEIwFnRLsa2WoGGo32OUQxtDnbLsA97LQLgFJJorO4ETXZyXBR+Gi9gnPjh7rGhd2
+	C6p4cyvwsMJAI7pkZQqrdjiHkrPD3IklMmvgO3fOUVPJ4aOssjse+zgkNxgdFQq+3CK9GvjygWS
+	5lR2hZjXbmI82VSURTOtl191w==
+X-Google-Smtp-Source: AGHT+IHTYyhEFkKDD3X150o5MD7ZP8eFJxfaJJZoy46BgzM/dN96rHz0DqKMzJSZ8COyShPASIiBWoiLtZwKUFbGRtg=
+X-Received: by 2002:a17:90b:1d8b:b0:32b:355a:9de with SMTP id
+ 98e67ed59e1d1-33b513d005amr16427754a91.32.1760108448726; Fri, 10 Oct 2025
+ 08:00:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709080220.110947-1-maxime.belair@canonical.com>
- <20250709080220.110947-3-maxime.belair@canonical.com> <20250820.Ao3iquoshaiB@digikod.net>
- <0c7a19cb-d270-403f-9f97-354405aba746@schaufler-ca.com>
-In-Reply-To: <0c7a19cb-d270-403f-9f97-354405aba746@schaufler-ca.com>
+References: <20251010080900.1680512-1-omosnace@redhat.com>
+In-Reply-To: <20251010080900.1680512-1-omosnace@redhat.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 10 Oct 2025 10:59:36 -0400
-X-Gm-Features: AS18NWAVS7migS1jhRtb-IPHhnKptQlfKCCpqw55Hl-FAqPL4NSJFJGx8uS1S6s
-Message-ID: <CAHC9VhSXcqKF9KQ1+KanPqoTk=GRsOXs5dGNNnmTiK_BcMUV5A@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] lsm: introduce security_lsm_config_*_policy hooks
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>, 
-	linux-security-module@vger.kernel.org, john.johansen@canonical.com, 
-	jmorris@namei.org, serge@hallyn.com, kees@kernel.org, 
-	stephen.smalley.work@gmail.com, takedakn@nttdata.co.jp, 
-	penguin-kernel@i-love.sakura.ne.jp, song@kernel.org, rdunlap@infradead.org, 
-	linux-api@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-kernel@vger.kernel.org
+Date: Fri, 10 Oct 2025 11:00:37 -0400
+X-Gm-Features: AS18NWDk8nitfjQpo1v3aBdPKBaoi907QLUPlKp_SF-2hEkCLZTSq-1OKrB7XMM
+Message-ID: <CAHC9VhQxnTsZV=vjf1Wk5po16mLuKNPoi3UR-7gN6PxodncgxQ@mail.gmail.com>
+Subject: Re: [PATCH v2] nbd: override creds to kernel when calling sock_{send,recv}msg()
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
+	nbd@other.debian.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, Ming Lei <ming.lei@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 20, 2025 at 11:30=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
-a.com> wrote:
-> On 8/20/2025 7:21 AM, Micka=C3=ABl Sala=C3=BCn wrote:
-> > On Wed, Jul 09, 2025 at 10:00:55AM +0200, Maxime B=C3=A9lair wrote:
-> >> Define two new LSM hooks: security_lsm_config_self_policy and
-> >> security_lsm_config_system_policy and wire them into the corresponding
-> >> lsm_config_*_policy() syscalls so that LSMs can register a unified
-> >> interface for policy management. This initial, minimal implementation
-> >> only supports the LSM_POLICY_LOAD operation to limit changes.
-> >>
-> >> Signed-off-by: Maxime B=C3=A9lair <maxime.belair@canonical.com>
-> >> ---
-> >>  include/linux/lsm_hook_defs.h |  4 +++
-> >>  include/linux/security.h      | 20 ++++++++++++
-> >>  include/uapi/linux/lsm.h      |  8 +++++
-> >>  security/lsm_syscalls.c       | 17 ++++++++--
-> >>  security/security.c           | 60 ++++++++++++++++++++++++++++++++++=
-+
-> >>  5 files changed, 107 insertions(+), 2 deletions(-)
-
-...
-
-> >> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
-> >> index 938593dfd5da..2b9432a30cdc 100644
-> >> --- a/include/uapi/linux/lsm.h
-> >> +++ b/include/uapi/linux/lsm.h
-> >> @@ -90,4 +90,12 @@ struct lsm_ctx {
-> >>   */
-> >>  #define LSM_FLAG_SINGLE     0x0001
-> >>
-> >> +/*
-> >> + * LSM_POLICY_XXX definitions identify the different operations
-> >> + * to configure LSM policies
-> >> + */
-> >> +
-> >> +#define LSM_POLICY_UNDEF    0
-> >> +#define LSM_POLICY_LOAD             100
-> > Why the gap between 0 and 100?
+On Fri, Oct 10, 2025 at 4:09=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.co=
+m> wrote:
 >
-> It's conventional in LSM syscalls to start identifiers at 100.
-> No compelling reason other than to appease the LSM maintainer.
+> sock_{send,recv}msg() internally calls security_socket_{send,recv}msg(),
+> which does security checks (e.g. SELinux) for socket access against the
+> current task. However, _sock_xmit() in drivers/block/nbd.c may be called
+> indirectly from a userspace syscall, where the NBD socket access would
+> be incorrectly checked against the calling userspace task (which simply
+> tries to read/write a file that happens to reside on an NBD device).
+>
+> To fix this, temporarily override creds to kernel ones before calling
+> the sock_*() functions. This allows the security modules to recognize
+> this as internal access by the kernel, which will normally be allowed.
+>
+> A way to trigger the issue is to do the following (on a system with
+> SELinux set to enforcing):
+>
+>     ### Create nbd device:
+>     truncate -s 256M /tmp/testfile
+>     nbd-server localhost:10809 /tmp/testfile
+>
+>     ### Connect to the nbd server:
+>     nbd-client localhost
+>
+>     ### Create mdraid array
+>     mdadm --create -l 1 -n 2 /dev/md/testarray /dev/nbd0 missing
+>
+> After these steps, assuming the SELinux policy doesn't allow the
+> unexpected access pattern, errors will be visible on the kernel console:
+>
+> [  142.204243] nbd0: detected capacity change from 0 to 524288
+> [  165.189967] md: async del_gendisk mode will be removed in future, plea=
+se upgrade to mdadm-4.5+
+> [  165.252299] md/raid1:md127: active with 1 out of 2 mirrors
+> [  165.252725] md127: detected capacity change from 0 to 522240
+> [  165.255434] block nbd0: Send control failed (result -13)
+> [  165.255718] block nbd0: Request send failed, requeueing
+> [  165.256006] block nbd0: Dead connection, failed to find a fallback
+> [  165.256041] block nbd0: Receive control failed (result -32)
+> [  165.256423] block nbd0: shutting down sockets
+> [  165.257196] I/O error, dev nbd0, sector 2048 op 0x0:(READ) flags 0x0 p=
+hys_seg 1 prio class 2
+> [  165.257736] Buffer I/O error on dev md127, logical block 0, async page=
+ read
+> [  165.258263] I/O error, dev nbd0, sector 2048 op 0x0:(READ) flags 0x0 p=
+hys_seg 1 prio class 2
+> [  165.259376] Buffer I/O error on dev md127, logical block 0, async page=
+ read
+> [  165.259920] I/O error, dev nbd0, sector 2048 op 0x0:(READ) flags 0x0 p=
+hys_seg 1 prio class 2
+> [  165.260628] Buffer I/O error on dev md127, logical block 0, async page=
+ read
+> [  165.261661] ldm_validate_partition_table(): Disk read failed.
+> [  165.262108] I/O error, dev nbd0, sector 2048 op 0x0:(READ) flags 0x0 p=
+hys_seg 1 prio class 2
+> [  165.262769] Buffer I/O error on dev md127, logical block 0, async page=
+ read
+> [  165.263697] I/O error, dev nbd0, sector 2048 op 0x0:(READ) flags 0x0 p=
+hys_seg 1 prio class 2
+> [  165.264412] Buffer I/O error on dev md127, logical block 0, async page=
+ read
+> [  165.265412] I/O error, dev nbd0, sector 2048 op 0x0:(READ) flags 0x0 p=
+hys_seg 1 prio class 2
+> [  165.265872] Buffer I/O error on dev md127, logical block 0, async page=
+ read
+> [  165.266378] I/O error, dev nbd0, sector 2048 op 0x0:(READ) flags 0x0 p=
+hys_seg 1 prio class 2
+> [  165.267168] Buffer I/O error on dev md127, logical block 0, async page=
+ read
+> [  165.267564]  md127: unable to read partition table
+> [  165.269581] I/O error, dev nbd0, sector 0 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 2
+> [  165.269960] Buffer I/O error on dev nbd0, logical block 0, async page =
+read
+> [  165.270316] I/O error, dev nbd0, sector 0 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 2
+> [  165.270913] Buffer I/O error on dev nbd0, logical block 0, async page =
+read
+> [  165.271253] I/O error, dev nbd0, sector 0 op 0x0:(READ) flags 0x0 phys=
+_seg 1 prio class 2
+> [  165.271809] Buffer I/O error on dev nbd0, logical block 0, async page =
+read
+> [  165.272074] ldm_validate_partition_table(): Disk read failed.
+> [  165.272360]  nbd0: unable to read partition table
+> [  165.289004] ldm_validate_partition_table(): Disk read failed.
+> [  165.289614]  nbd0: unable to read partition table
+>
+> The corresponding SELinux denial on Fedora/RHEL will look like this
+> (assuming it's not silenced):
+> type=3DAVC msg=3Daudit(1758104872.510:116): avc:  denied  { write } for  =
+pid=3D1908 comm=3D"mdadm" laddr=3D::1 lport=3D32772 faddr=3D::1 fport=3D108=
+09 scontext=3Dsystem_u:system_r:mdadm_t:s0-s0:c0.c1023 tcontext=3Dunconfine=
+d_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 tclass=3Dtcp_socket permissive=
+=3D0
+>
+> The respective backtrace looks like this:
+> @security[mdadm, -13,
+>         handshake_exit+221615650
+>         handshake_exit+221615650
+>         handshake_exit+221616465
+>         security_socket_sendmsg+5
+>         sock_sendmsg+106
+>         handshake_exit+221616150
+>         sock_sendmsg+5
+>         __sock_xmit+162
+>         nbd_send_cmd+597
+>         nbd_handle_cmd+377
+>         nbd_queue_rq+63
+>         blk_mq_dispatch_rq_list+653
+>         __blk_mq_do_dispatch_sched+184
+>         __blk_mq_sched_dispatch_requests+333
+>         blk_mq_sched_dispatch_requests+38
+>         blk_mq_run_hw_queue+239
+>         blk_mq_dispatch_plug_list+382
+>         blk_mq_flush_plug_list.part.0+55
+>         __blk_flush_plug+241
+>         __submit_bio+353
+>         submit_bio_noacct_nocheck+364
+>         submit_bio_wait+84
+>         __blkdev_direct_IO_simple+232
+>         blkdev_read_iter+162
+>         vfs_read+591
+>         ksys_read+95
+>         do_syscall_64+92
+>         entry_SYSCALL_64_after_hwframe+120
+> ]: 1
+>
+> The issue has started to appear since commit 060406c61c7c ("block: add
+> plug while submitting IO").
+>
+> Cc: Ming Lei <ming.lei@redhat.com>
+> Link: https://bugzilla.redhat.com/show_bug.cgi?id=3D2348878
+> Fixes: 060406c61c7c ("block: add plug while submitting IO")
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> ---
+>
+> Changes in v2:
+>  * Move put_cred() after destroy_workqueue() in nbd_cleanup() to avoid a =
+UAF
+>  * Add some more details into the commit message
+>  * Add a Fixes: tag
+>
+> v1: https://lore.kernel.org/linux-block/20251009134542.1529148-1-omosnace=
+@redhat.com/
+>
+>  drivers/block/nbd.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 
-If you guys make me repeat all the reasons why, I'm going to get even
-crankier than usual :-P
+Acked-by: Paul Moore <paul@paul-moore.com>
 
 --=20
 paul-moore.com
