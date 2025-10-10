@@ -1,62 +1,62 @@
-Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D242F2F83CB
-	for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 15:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61D42F9982
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 15:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760109344; cv=none; b=A4yXwSXCSmfMfpd0Gyco5KltrJbw7iXnexQqlha6iVOqMjvT7xUVutqSaS+bYHzeUWpc9cbtLPlr2BqrqgozAeh9m/2ziR/rvJPTeHBOwqRx3MD5PScszeiF8Eq3Z1Dz87XT0XzG29iozrWjQhcMu6LgreMqqh4Z3wNdHCJ6V7E=
+	t=1760109797; cv=none; b=XVOLKznpmOt7ziSTsxMcynzj9DSX6fSjMEctXwzF0LMzhmdlH3QIgMFOKz+hmI6HsVRPGTa/PG0kAvKwOGEWKGNecmClaqEcEEbsi4xzpUR2Tz6JWqX6MBk8CrWr7f1pL7PP/cECgMmCOgMAcaP7xhTLDEsQ29CaRZEY6HIcklQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760109344; c=relaxed/simple;
-	bh=O7vJu4u6ys9inKro9P2h9NErr4/dr5wJFRq/c2zu5yk=;
+	s=arc-20240116; t=1760109797; c=relaxed/simple;
+	bh=EKFfg6RALBfqbr/dYy/1ZIEa31ZTm+KH8h51c1P/c8g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EjkKKxpT3vZPqZnyyYyohk4H+cSaOnQKPpm9shwMX9u6EnttQqmh1sRcidiqDIqA+Gj3varGFkf8NkB0jJMprrO+E/meW80QHW6NImln1tI2ea21ZPZytE5tQ3MW2vMNKJgS30dTrKNTPddGJdJv9skOldGA7d6wMWHH6LO4RdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=dpPycjBc; arc=none smtp.client-ip=66.163.186.211
+	 In-Reply-To:Content-Type; b=I1BW8Lffbwg9tlwjJay3DQT/w4NAmp0hSWZ27Y1tiYSBFYHlh4ci6tCTIu7aWOYx7RHzJtQGw/dHggMppFcqVzy8JJXuPQ+G/phjiLD7w16wzqpXUKkW2A5pE3cX/IZCy9qjjv3Nih8diH1F4rbh8G/oW6FnCah2jOTLEeskZ6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=aY7p5J8v; arc=none smtp.client-ip=66.163.187.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="dpPycjBc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760109342; bh=dRYAjFrXP3E1+9sZiWcQjvbUIK8Bm2BRi67VqMWynBE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=dpPycjBcgmQTx7hQAb3doSpGyMh0Y8Wx4MkTMOrwosZJjIXFmygZ8F7qWQ83vppRXBCFlsJXv0QfafFlNJlsx+LduGJZNUnkO8FEOrBpP4YN+I4PBR8Yi/naINcS9x11F/dMsCN4nuAt2vHS9uonmHQb8GVEMxlyOCC0WiCrBd0YPD1NbCN/vdGMjpT4s3uOgvBcUcOA+xiEurFtv+b3DyDpVbzVfCE7BHG9zGOCugJnQckZzhsZddyfKDPcTqtQAXKb7zvi1O1+r6MFHf5jU7gwPTeYb+xdNAdKNtnSNsd5n+qFzKRwqiHUGv96ETUia+QOn6yGDMPNhkaSemr9HA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760109342; bh=CMy7zU0hFZfi05XDI6EQ393Ll9F5DT12CZN1Tud9JHD=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=WmkzJdJUHRI/VOO2I0wZkZEnVLq3cwspKBPTiHllP45uijPBuYUVLGRALViNSzz/ZxKrq0gp24kbWbhApbfBVTNiEuGblRJ+9kYC8Y2yOOtYwZIkGdHGsI6edROtyLiXp700c39rRlhX84u73ekJzElRfWqCB8pF1MZmNRN7bqvdtXK2n/fb3rizR2ByTzvC/YGrmMDJHMXrl0fSXW/ILmCc2hsLBRyXHRUoevw1hSOsy3Ra2lYeQHXOt+iFwBa1k3zUHUXTPt7Qgo/itsQ72F1ecTnQepH31WS9SdyMbkAg8W0e+Ag4hNetYFVZ7CU0lZoqMMDgB8Ya4ZSx6fLNbg==
-X-YMail-OSG: HIc.fSkVM1k66w0Jv5kJJgbNBlZA48teX84CM_p9L_c3PGS6DkD.hQflVZ2kUWg
- 7kjNRT.fE_xmBAj5iRHJ.omX0_UCLX_ZnxSHGNWpnrZ4OHZriy9g_BlzQcCqZtjJHlfBrvsN8x2F
- eJOb3FZxqAji7FS4Q1a89kAkPpR16zNHiKugdnezMzOcKGotZdeyh_vocRM8CTTyFMWH6HPKHkav
- eN3_izwKAU3ZHS.kEv6nDdl57QNDaUsUSHtOjR8HS3zcvq3tENDBSszS_Fd66r6WDn9OrIK7Z4Em
- PZfSRXxNNgV7Bx27J62SVg7CUvJCPcV0XvgtIAMbbZpUf1DaDwwz.iQMKoQ6ou4Rusq9Pq_lhIlA
- hhgglocvH9jG2ZV_bVaeS39CdHOwOIrdAW.Pf37X.tlxcEJH1Vu4vgKPpaTQp78ksiID8d54sCCg
- I6V2Qb28qmQ5q5cict5mvGv5Cq0AjiTs8Si.Us6ry5UrPsr3tVVupLdtPuUtrnOTQh1QbevQ8Rj_
- piHCzZqibT8klGBLRxFSd3xbkRzHpZEF1BNgnG08xRZuQ6Mwc67LmHqxNOQZ3wqaSKHFF9ZseSyc
- QBu9DmKEKsgAGDmxWfk0dOeVITJVfRmcu_n168UB5EC3.lrPj_H9aD16RjIpJhd6nf4afF8X5zl4
- 8hd__CnAdOe2vfkMPflGFTyOfSUtg9g.DINohiLOQeywBgIdlyiQi_hYqE5NdFFQLgOaqSE3Wkjl
- TovBDrHR.kCJ99sAEcp.zeKKbUlB0GzmZTMwBHwmPGBln0cHhzT328zLV017yy7a8v2U86Omha2T
- SCpQRoEI0kqDHJIS0J2B1CQgx_nLgF4sXTzB9t2LSTcLWq4NZIcprtmEMtHQlgjB4kRIhSXtI1Yv
- Jp09bl.V7Y.u8R_ZxOuXrFU1OfFC8iXJeYcGwKeDksAgniM0O__U.SH8rTVVCVCHxhuD.YbPglMC
- qF.8fZcZrSPrPirGqeakp4WNeCfM8Bod1.vDGmFoD161rk4yldp78_xuzrCxtBHOCQTtNdxyDvFt
- BX8bmT87wiILbjhYf4OE9mhzC66MTgHnSbTIaGMO_WngnSW_V_gn0flR2PAlWOkY4_vSD.EJTGo4
- JCeOuq_LzV6n51R1qTOodvwEYnOnSg3mlQxZuJ5rXdv36syo3UzxAkCbDSpGFcjpzM1_pClLyqhI
- kZ4YWx6xQR66jmIIzOUrUOCVdeY9kk9KabPuxvfyAzqqFcN0AIAPoQEt5mgPqeI_1lg9_aUypNM5
- BFhTve6RBIAYb.odWj7xbKfcLvMikvGS57VeD1mE5GEEqIO8fQKLI3cpeHJTX2zdpXhCq3kTNvVD
- HgBZHKCsn1V2aqTkUzI3CWAIDE506uYfyXPVBPZDQ74q5yWbthC232eJLeDVJfMgU1wm_36_z.HO
- oiYjlKeGpgDcXli5Se6r4H3CcttSvze9sBZFU4Isu7.8hKg.lQsYzPLX4k0wFM2eMT_XuEjDI8_Z
- hGtOPQ9sHwLhEzrZsBT1Ij5_.FBWU1SxxeQV4CFNbJKc5wx369BvIeQhVRt1w4I3ZRgJ8dk9odge
- jBziedl3y5KRmOhF1FII7sF6mxUgdV5_1SyybzE59cCxNVRKM1rPdo3qu0Py35lDbe.0pjSPkuqP
- InklYXd93XTgtbPeESK08hGk9HJ1jSCp8O3fz467mCyEphPRkNfzw09B58lS8OQ6OksPQsoTggE9
- Qe0LsbXfr.fjBlZITf_51LmT3obUXHels.jp9ygWU9_BrTRrkyq0Ujp4oEtvrQQIIweJQCoJxNHc
- .RX8bwiF.vuv7o99btnxIbpIE3sL3BAy8O1OE6fcKPMuZurkKMBTSvWawl3IGdieTawf6Jf.iHBD
- dAwhb81e8sKjXSVGHODpca.uocTgwi3L_stOtZ5xXctdBCACRNh28jt4yRwQ5LqweSy4IeY1eZwu
- rphXJm3itU9BZIUkvPH1Ryk4WvDbR9QQfAks.8FNcVWSGfKRr9mhJJ26NZTMBf9F6GX5LClCc9Wg
- Qrf6F_gzUXpBg4LFusT189jR23rMh4DptWnB.CzyTyvjEEgJttvz4YlmhNbLTdbmt.C.KSFg8.6k
- bzdirp1oHo.3DZtygoH8Fh5qc1wuqzF2iSZoDprqKkJ4.c_ZOTjkhepvLpybSDerV4adTCXFRZP4
- MZi.893ef6N8FhiQ5_s8HSW2I5FOaxzZzokNe9G4wgBeboOBk4ETnAiH.WdIS5XUU11OqS9P_gYS
- OtkKC7sczAL8VitAIVRcJCSvYpVePXUbE_Rgb5M9tvP1TsYM.zILyCKbR6untwY5JxhSWAHsqNBc
- sN.cWSYo_3vaV1Dihzi51Wu9V
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="aY7p5J8v"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760109794; bh=exrgRP9yWskewPDovuD1lx7An8iyLfpIqXKSg/23pHE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=aY7p5J8var+y4VRomFVdGg1oDPbgZ9wyWG8GzhwJAocXXof8EY96NbFbsd+nm/DUfAynzhBTEpRloS3T3K7UDiNFMHHwYLUTwFRizBH5ZEoBLmzruXLCVGlYdgEXWJvIaPBRgZ63B0MBXIg8oEWWzErl5OAerBCTBNRCTurh4Nk8r4Rfhpk+GOr0VCRnimmRWMrM/J479PYD3mv7Ub9kDhmsvOHmnDvHBxyCm1JehfqpUv/hASv8M/8abWTPjCW1/OgrunGYUYswiLOyL1dACYuWBD8iq87WtEZQGgQMEM0oZGmHN60ggJolvz8zW7Y5v8M1UG0fS74kGB4Ot05BFw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760109794; bh=bBpTVRDZ6s+t5hTyftqw8TLEHCJTpPBsQXYLnzV4EH7=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=njL1l4NqbAHI14mjMisH1tB3+bRUUAaAQH3l3PEdvqyKwkwplUJ+1VHwVmcPoG1w6hFDlGO4uB4OMaootE8OX8s/NBED15i31cZBNr/SqvFLEGFMg1ez6EluCDfAqAoETRkYaK8rGfN93Mw0SB5x2OBU4skbcgp4nMEMCBy2ofch1Ye4gaNzSY059qamrr4k71pQ2pRrCd8NLQ/ts6lfuJcckHzRo/jqlU+NfUpBz9gEbBqO3aFjbRtbQlE5miKlDu4Szv/fIELgSwR00dJiNSFVQ9GUcU+PQy4b1ug34KEhr9GlmhRoFtJAdQXCYoGxxY9wfOKsVsRchCDtMO0Dbw==
+X-YMail-OSG: cL6KtFIVM1lfXtt4bQRphpWwax46JcSjKDBVNRw7150Q2IEsl6EeK3PNbUrDr4Y
+ satb4yJU91XLAq7bIoph.1AdhGYp2S2xdn8WPutZrU.U4dmPijAQFFCD39JSoIDniRKKAs1WnSV0
+ EgKHs6BdardFMlP.787mCnS.huVn6uDkX9PeIrMcg4jPPPhiQQeOl826g8ll1eJtEEjjgnJmIzZ.
+ MQEvEDPlYDlPH.eAsIVUIpWfTcKVjpW_nPYK9i3msRE4xPyg0tu5eVMfzhVXl9IP_5vQMX9.JO5V
+ 310PLTQJ759aZnOmG1RmJ7_wrYQ_8H0xRw57o_QGdZ2UknuL2jRHcrlz6k6lIH3b.hgqaEPVG8MF
+ .rVx5CkuHcI8BlYxLlXPkvajCPIIJcNqWamggEhc8DuHL0qAKfWjju9xg.ltHwLMjN7aElNyXo0d
+ .evxmutbrNZB9KNSMWqzR_U.0dGB5cTkdxU1HeofNVZPamchyVGSkHKonAw4MnoUAQpui6ICbej8
+ aRpl54mx1UevFxAKyzDcu8R2SgqaQnT8cfJlplsnM3tX7wnqYgxLBV08m3Nx4nMH1xPbGFRhExTb
+ SKHaYWo0hThfkHttMbTOHbb.4MQxpYvnymXlytRDJ43vo8QGW.iokW.Ag.0sMwK6vp8reLk_wjkf
+ y_D8r_6puIbXk3r_UO4SthoynJu34H7QqbrerK_QQW2MOKTZX90AHPwuqIVgfYgyRvxiebqOQpYC
+ 05lhWN9ggyh8LqrhXmsO3jFrblidcla8On5czSMW2zzFnMP5N5kMzdKgO7SA0hbXx78i_pimOLCK
+ 2L8QP9fWfgN5UJvkBWLmEflw.msJorifLpJEe20461QYmjgkn1ncc.SRvf2TT8Xe5Id1VjEXdzuX
+ Q1_kDsfQr9E0iK5CtqJmteFH0FulluEZzNijSWMjGcrZf0cRO523M0CCuHYsXLKopOOMPteq6q.6
+ NctEIPY2skiV0Piz_Xl1YFz82VeiJrdxWAX11b_5mSiPza.d9XAKtAzCP8TY.nWiM93Lf4WYCPmp
+ arr_2iyiGHmOz3S6OWC4o_2QD9z7UXMpHgjOHtoYkkozeq.SfJYDSsYhSUb7CNC72iC0XjgTYmlA
+ 3Hgzxti_vfe0p2LJeUjURLqzBJZA7ppkBIOvsSxBR3NaomNkJ3ZilG18VmQzUiwp.ZPJfLkplHcw
+ fAFVx9cEaE70984khDEIJaen_VMkxkcNhtGhdOJZlN6O.XOPMkl18oIhIeeUS3CfyxDE1jCg.D4h
+ x_.wNjuPdLGaA711bUryLV_ojFglT1L8eXYfRzCCLUDO_ywweGP93HSeVzrZIEx0D1ME6Qpo1lKz
+ sJSZBMLH0EWl65DWCpA52E5R1vgA_Y2sMOT9aidJnmlhCZOfLJk3W5PFKFCgKkGPfPm6l1TvDgzT
+ 68W.sH02cCgRPkD5H5CjPDaLudbfZvn.CHRoJsL4BWcih4xLmM1e0gQ6N7fEcrmgQkSvYs5WdMUB
+ OYTiugAHvH5uplA6Zg_cWSNdeNMffABRMJPjfJdyqMS.yMNX0uG.d7Rt6Sf.8eVtqMxZuNHv0rQ2
+ 2801kOARMNWtTFw4l0PsOXFLRgAp3kt1OuZL0xYL0b2kNSF5eSyVWNERfgOwsqGTmdahu2bFG8oG
+ isKQjRl_6Loii_tx9q_eItXPSBDaeL61WDv7RLT2x8XqCSWZVphIo_U44XK0wSvqg3tRz4kL1UF_
+ n.E3dc_ZbkOTdPVhRRS4MhZX47qB9nZFxZHKgM21ZLwUfcvNSDj2GQkA5e4liStiL6LwJiHN7Wce
+ pBpRtgIcbfdoAY74YJxQq0RKAizFiiLS2Flp.RxNMy1yoPLxMqYIQOp6eLvpbexNDIvhE4cjnfuW
+ PBufTDP6T7m.b2hoXY9YAGEHaABdDgBUk8nSmFXGNLMuJPFmSsIQc4ito0_KEnPlHvfNQzSFgWvp
+ R4bcsd1hKzDkf3SUjXnptu7Fk.6oq8oOtApqCMvOcl2MmCx4nF7bQkBGPhZ70OZ1.iSoO5T36HLN
+ tOGreDfRuOQQF.oQ9jwP8y_z9ytkcQxobaJqpvmPfmDqYSE2xs0jQ.a1JH3KyqYvZptT9In7I5_t
+ 5v1aSP1a_V_kd2xahC41z.5hkJq8se8CuWVOCXyMvVEwWsC80PljX.FHKy5KM_HkuWy6hvrYtiE_
+ DRjs3Rg5FOVPF38fZvRQJARI_Bo43maGPPTduSb4LQOpZjGL5FlctGsargLEfEXcLxx5Ra3R0ZwI
+ ZqG2cyQ0EwckNYADa98f1IZzNMvjOAKmxS5taEpUz_3fHQJ_rmNXjDK5DvarYZcD1cvy4Q9YEBrK
+ 1GiLkSL0VMlCMSnLH.T49ZHxdwWrM
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 397e9ee9-8051-4bd7-a384-f966a5b3db07
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Fri, 10 Oct 2025 15:15:42 +0000
-Received: by hermes--production-gq1-66b66ffd5-4kj8j (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5a3bbbe036446cce417e04accb83fa7c;
-          Fri, 10 Oct 2025 15:15:39 +0000 (UTC)
-Message-ID: <dcde4774-3852-455a-87be-6c9c0b7198e2@schaufler-ca.com>
-Date: Fri, 10 Oct 2025 08:15:37 -0700
+X-Sonic-ID: a8bafbc6-6119-4f04-80f2-7829a02a7d6e
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Fri, 10 Oct 2025 15:23:14 +0000
+Received: by hermes--production-gq1-66b66ffd5-n7h9b (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b69b2cbeeb508b65cf4776c6565eee92;
+          Fri, 10 Oct 2025 15:02:57 +0000 (UTC)
+Message-ID: <d091c8f1-798e-4b58-bed4-5f71478373c4@schaufler-ca.com>
+Date: Fri, 10 Oct 2025 08:02:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -64,168 +64,69 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/5] Smack: add support for lsm_config_self_policy and
- lsm_config_system_policy
-To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
- linux-security-module@vger.kernel.org
-Cc: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, mic@digikod.net, kees@kernel.org,
- stephen.smalley.work@gmail.com, takedakn@nttdata.co.jp,
- penguin-kernel@I-love.SAKURA.ne.jp, song@kernel.org, rdunlap@infradead.org,
- linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20251010132610.12001-1-maxime.belair@canonical.com>
- <20251010132610.12001-6-maxime.belair@canonical.com>
+Subject: Re: [PATCH 1/2] LSM: Exclusive secmark usage
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org,
+ jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20251001215643.31465-1-casey@schaufler-ca.com>
+ <20251001215643.31465-2-casey@schaufler-ca.com>
+ <CAEjxPJ7M4qySg+ZMujTqMQFSncWNbG21W+kpLzji6c4F+hyprA@mail.gmail.com>
 Content-Language: en-US
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20251010132610.12001-6-maxime.belair@canonical.com>
+In-Reply-To: <CAEjxPJ7M4qySg+ZMujTqMQFSncWNbG21W+kpLzji6c4F+hyprA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Mailer: WebService/1.1.24562 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 10/10/2025 6:25 AM, Maxime Bélair wrote:
-> Enable users to manage Smack policies through the new hooks
-> lsm_config_self_policy and lsm_config_system_policy.
->
-> lsm_config_self_policy allows adding Smack policies for the current cred.
-> For now it remains restricted to CAP_MAC_ADMIN.
->
-> lsm_config_system_policy allows adding globabl Smack policies. This is
-> restricted to CAP_MAC_ADMIN.
->
-> Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
 
-I will be reviewing these patches, but will not be able to do so
-until early November. I know how frustrating review delays can be,
-but it really can't be helped this time around. Thank you for your
-patience.
-
-> ---
->  security/smack/smack.h     |  8 +++++
->  security/smack/smack_lsm.c | 73 ++++++++++++++++++++++++++++++++++++++
->  security/smack/smackfs.c   |  2 +-
->  3 files changed, 82 insertions(+), 1 deletion(-)
+On 10/9/2025 11:49 AM, Stephen Smalley wrote:
+> On Wed, Oct 1, 2025 at 5:56 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> The network secmark can only be used by one security module
+>> at a time. Establish mechanism to identify to security modules
+> a mechanism to inform security modules?
 >
-> diff --git a/security/smack/smack.h b/security/smack/smack.h
-> index bf6a6ed3946c..3e3d30dfdcf7 100644
-> --- a/security/smack/smack.h
-> +++ b/security/smack/smack.h
-> @@ -275,6 +275,14 @@ struct smk_audit_info {
->  #endif
->  };
->  
-> +/*
-> + * This function is in smackfs.c
-> + */
-> +ssize_t smk_write_rules_list(struct file *file, const char __user *buf,
-> +			     size_t count, loff_t *ppos,
-> +			     struct list_head *rule_list,
-> +			     struct mutex *rule_lock, int format);
-> +
->  /*
->   * These functions are in smack_access.c
->   */
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 99833168604e..bf4bb2242768 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -5027,6 +5027,76 @@ static int smack_uring_cmd(struct io_uring_cmd *ioucmd)
->  
->  #endif /* CONFIG_IO_URING */
->  
-> +/**
-> + * smack_lsm_config_system_policy - Configure a system smack policy
-> + * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
-> + * @buf: User-supplied buffer in the form "<fmt><policy>"
-> + *        <fmt> is the 1-byte format of <policy>
-> + *        <policy> is the policy to load
-> + * @size: size of @buf
-> + * @flags: reserved for future use; must be zero
-> + *
-> + * Returns: number of written rules on success, negative value on error
-> + */
-> +static int smack_lsm_config_system_policy(u32 op, void __user *buf, size_t size,
-> +					  u32 flags)
-> +{
-> +	loff_t pos = 0;
-> +	u8 fmt;
-> +
-> +	if (op != LSM_POLICY_LOAD || flags)
-> +		return -EOPNOTSUPP;
-> +
-> +	if (size < 2)
-> +		return -EINVAL;
-> +
-> +	if (get_user(fmt, (uint8_t *)buf))
-> +		return -EFAULT;
-> +
-> +	return smk_write_rules_list(NULL, buf + 1, size - 1, &pos, NULL, NULL, fmt);
-> +}
-> +
-> +/**
-> + * smack_lsm_config_self_policy - Configure a smack policy for the current cred
-> + * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
-> + * @buf: User-supplied buffer in the form "<fmt><policy>"
-> + *        <fmt> is the 1-byte format of <policy>
-> + *        <policy> is the policy to load
-> + * @size: size of @buf
-> + * @flags: reserved for future use; must be zero
-> + *
-> + * Returns: number of written rules on success, negative value on error
-> + */
-> +static int smack_lsm_config_self_policy(u32 op, void __user *buf, size_t size,
-> +					u32 flags)
-> +{
-> +	loff_t pos = 0;
-> +	u8 fmt;
-> +	struct task_smack *tsp;
-> +
-> +	if (op != LSM_POLICY_LOAD || flags)
-> +		return -EOPNOTSUPP;
-> +
-> +	if (size < 2)
-> +		return -EINVAL;
-> +
-> +	if (get_user(fmt, (uint8_t *)buf))
-> +		return -EFAULT;
-> +	/**
-> +	 * smk_write_rules_list could be used to gain privileges.
-> +	 * This function is thus restricted to CAP_MAC_ADMIN.
-> +	 * TODO: Ensure that the new rule does not give extra privileges
-> +	 * before dropping this CAP_MAC_ADMIN check.
-> +	 */
-> +	if (!capable(CAP_MAC_ADMIN))
-> +		return -EPERM;
-> +
-> +
-> +	tsp = smack_cred(current_cred());
-> +	return smk_write_rules_list(NULL, buf + 1, size - 1, &pos, &tsp->smk_rules,
-> +				    &tsp->smk_rules_lock, fmt);
-> +}
-> +
->  struct lsm_blob_sizes smack_blob_sizes __ro_after_init = {
->  	.lbs_cred = sizeof(struct task_smack),
->  	.lbs_file = sizeof(struct smack_known *),
-> @@ -5203,6 +5273,9 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
->  	LSM_HOOK_INIT(uring_sqpoll, smack_uring_sqpoll),
->  	LSM_HOOK_INIT(uring_cmd, smack_uring_cmd),
->  #endif
-> +	LSM_HOOK_INIT(lsm_config_self_policy, smack_lsm_config_self_policy),
-> +	LSM_HOOK_INIT(lsm_config_system_policy, smack_lsm_config_system_policy),
-> +
->  };
->  
->  
-> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-> index 90a67e410808..ed1814588d56 100644
-> --- a/security/smack/smackfs.c
-> +++ b/security/smack/smackfs.c
-> @@ -441,7 +441,7 @@ static ssize_t smk_parse_long_rule(char *data, struct smack_parsed_rule *rule,
->   *	"subject<whitespace>object<whitespace>
->   *	 acc_enable<whitespace>acc_disable[<whitespace>...]"
->   */
-> -static ssize_t smk_write_rules_list(struct file *file, const char __user *buf,
-> +ssize_t smk_write_rules_list(struct file *file, const char __user *buf,
->  					size_t count, loff_t *ppos,
->  					struct list_head *rule_list,
->  					struct mutex *rule_lock, int format)
+>> whether they have access to the secmark. SELinux already
+>> incorparates mechanism, but it has to be added to Smack and
+> incorporates
+>
+>> AppArmor.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  include/linux/lsm_hooks.h        |  1 +
+>>  security/apparmor/include/net.h  |  5 +++++
+>>  security/apparmor/lsm.c          |  7 ++++---
+>>  security/security.c              |  6 ++++++
+>>  security/selinux/hooks.c         |  4 +++-
+>>  security/smack/smack.h           |  5 +++++
+>>  security/smack/smack_lsm.c       |  3 ++-
+>>  security/smack/smack_netfilter.c | 10 ++++++++--
+>>  8 files changed, 34 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/security/security.c b/security/security.c
+>> index ad163f06bf7a..e59e3d403de6 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -283,6 +283,12 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+>>         lsm_set_blob_size(&needed->lbs_xattr_count,
+>>                           &blob_sizes.lbs_xattr_count);
+>>         lsm_set_blob_size(&needed->lbs_bdev, &blob_sizes.lbs_bdev);
+>> +       if (needed->lbs_secmark) {
+>> +               if (blob_sizes.lbs_secmark)
+>> +                       needed->lbs_secmark = false;
+>> +               else
+>> +                       blob_sizes.lbs_secmark = true;
+>> +       }
+> So if I understand correctly, the first LSM to register with
+> lbs_secmark set wins.
+> Not sure that's a great idea - seemingly some LSMs may want to insist
+> that they get to use secmark regardless of registration order?
+
+But what if two LSMs insist on getting the secmark? The whole point
+is to make it possible to use multiple LSMs that what the feature at
+the same time. The limitation on a secmark being a u32 is a huge problem,
+and Paul has battled with the netdev people over it for years.
+
