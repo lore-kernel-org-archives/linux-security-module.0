@@ -1,109 +1,92 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0F94A02;
-	Fri, 10 Oct 2025 17:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FD22F25FD
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 18:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760118268; cv=none; b=EC+3l0KO+CyxNRxxs71ZaMdH5B4CqBn1pnpqIa+SYXGCJGRZRDx3WEbysAVcIohdxA01MIU7mppFby0zzHXzDmz+nL+AGBSxCplJ22HXjSbEM88Lcm3h6bCutlYMqqKSfdqz0s4Vw9SQIOiIlwEfhSq/Spf9k+UBeh/guj23KQ0=
+	t=1760119610; cv=none; b=Or4YhqCIUndncl+iPjoP2YKxF2C8Q45zQBZcnQV9YlTh1wngreov1+T/E22QV2KGh/EqH3pM5vq5TnE3OAfXcSvJo+82pkTR2kejwHEsiqeM7ONOn6Amq4KGUajMSpcG3lQQtD3KC6sfj8bFoudm61x3FqPmNCqmKernwBvdgdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760118268; c=relaxed/simple;
-	bh=3PeR2izhMa19wiqx88PVC2lv0vrPdYQcJNh0la8Hf1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RjpXBf2hUeWoGs7JwY5uvFfee8N2NGcSqz1oKepCWKX9qVDxm7A9GsNHs6Zp0c/gqj3cr20YPSa3EKOP6oVp1c+QY1Yp+vgmbdcu6u7c7PTaDOv6LFNYEwWEBmew8ELZxbAKk7wpr1xcIF0nH+MpUht7U08gFRgip1MAakIiDcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+LfjjeS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760119610; c=relaxed/simple;
+	bh=g6rAGjV2Nc5xVFKhlt4vH4nfZspBAllGy6FhsdVHNPw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G268uy2KlVa6v6gHf9jjQK1euBGmJIGoeQFH7rhusWL9w4lOW1g03+HNmZi2eqIl/t+8QHmVvxPEC0bd0a5mjRIrhPNG7Rr1LVUBFVxitxWBFzntGuqnv3b68TlsWg0sWohL7ODBdmDJUY7neZUDVYtaPOkqLbNuNdC4Zdcd+eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f4oMEfve; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+LfjjeS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C661C4CEF5;
-	Fri, 10 Oct 2025 17:44:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4oMEfve"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0912C19422
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 18:06:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760118267;
-	bh=3PeR2izhMa19wiqx88PVC2lv0vrPdYQcJNh0la8Hf1I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G+LfjjeSXdzVsa69Sw4hWqSZ3L2zHz2QTYvUcjz3hdzudl7yyvUGYLlnqQ0vklJsR
-	 fkuNrkfvhZcUJj5qKasiRKZ0v8TNA3bkDGqNM3i7FvzoVpERfUbSW2Db6BzuG0FoXi
-	 QLdY9KI8Yt27jeVKfH2LYOfSrzLtOKsgjfpqYG7Syh/qDhEcv1zRpu/oMMtK/LBE4j
-	 kbijnuQXLQSzJCRByowVYdLepQkbQgX90QDWTiAeB8Wb5XxRmORmB0hcCpHSESl+zl
-	 QpyAIdHFeyfkiuVds66D6A81XQ3L+QJP85QpkZn02GnFV4IfPSwRJ0jJ9jVT/QZRhH
-	 t+DdcuXCos/cQ==
-Date: Fri, 10 Oct 2025 20:44:24 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Kees Cook <kees@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-hardening@vger.kernel.org, linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] keys: Replace deprecated strncpy in
- ecryptfs_fill_auth_tok
-Message-ID: <aOlF-FPoLVqmo1qS@kernel.org>
-References: <20251010161340.458707-2-thorsten.blum@linux.dev>
+	s=k20201202; t=1760119609;
+	bh=g6rAGjV2Nc5xVFKhlt4vH4nfZspBAllGy6FhsdVHNPw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=f4oMEfve8o3X+V0a7MLiNB2N3+PG5WSRWXMVtUelwyksQh6FJUGzdC5V6lMU3xcrx
+	 Q2xh7YoOBEiR9XIEPeU6tUv385RYABTKVzZNYeXPSUjdJjOZsphsu563OaFfXRuwVi
+	 QP3Ci/I+++HevavFJIBUQgBlXpU+4LzItwl7Pd3TzIkf4lQzmWC8lVTT/01m5avjzv
+	 0WNZrJkeMMbyGPDSouqjaxqoa46gfJmOD9LpsROlZbnxWamu7z+iItYXLdC3SmrJfc
+	 1fpw5nlllO6QrPuNoeDUk6ko3Dkxcs7kqWd+isj2jHCSBrMHyZI6dvey2VXWQXhaka
+	 4wDIVXZeGfSmQ==
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-79390b83c7dso20675276d6.1
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 11:06:49 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yzpd16nj0RHpuUv35AKTOOWOSMrBOAJejZcsNWIlyYBnEX7KHlP
+	zkYAhNfG73y9MbhPAs8B0czf0CpLsCDtxOw4lv7iyPXP3txqycocJrttDxW8OYHiUAazQeZ7Aoq
+	ZNZKY4sWmv31lkn3psvO41iqK88vnmxg=
+X-Google-Smtp-Source: AGHT+IHRUJUAeJ5Je+YkDxQC/r6OXXbCSgJvVm1kGkEkaJIEhWHQvapqgQY+O5ZOx/oTWMHOfXFhHohJ7guwKL4YvOI=
+X-Received: by 2002:a05:6214:19cc:b0:795:67ac:ca5d with SMTP id
+ 6a1803df08f44-87b2109283cmr190852096d6.30.1760119607787; Fri, 10 Oct 2025
+ 11:06:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010161340.458707-2-thorsten.blum@linux.dev>
+References: <20251010132610.12001-1-maxime.belair@canonical.com> <20251010132610.12001-2-maxime.belair@canonical.com>
+In-Reply-To: <20251010132610.12001-2-maxime.belair@canonical.com>
+From: Song Liu <song@kernel.org>
+Date: Fri, 10 Oct 2025 11:06:36 -0700
+X-Gmail-Original-Message-ID: <CAHzjS_uBq8xGCSmHC_kBWi0j8DCdwsy4XtfkH2iH6NygCcChNw@mail.gmail.com>
+X-Gm-Features: AS18NWD0sroF_9UF1VNMCiu_x8h4vyhFWvp2MLYPnP6wYTvtieiio2L0R61pPKg
+Message-ID: <CAHzjS_uBq8xGCSmHC_kBWi0j8DCdwsy4XtfkH2iH6NygCcChNw@mail.gmail.com>
+Subject: Re: [PATCH v6 1/5] Wire up lsm_config_self_policy and
+ lsm_config_system_policy syscalls
+To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>
+Cc: linux-security-module@vger.kernel.org, john.johansen@canonical.com, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, mic@digikod.net, 
+	kees@kernel.org, stephen.smalley.work@gmail.com, casey@schaufler-ca.com, 
+	takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, song@kernel.org, 
+	rdunlap@infradead.org, linux-api@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 10, 2025 at 06:13:41PM +0200, Thorsten Blum wrote:
-> strncpy() is deprecated for NUL-terminated destination buffers; use
-> strscpy_pad() instead to retain the zero-padding behavior of strncpy().
-> 
-> strscpy_pad() automatically determines the size of the fixed-length
-> destination buffer via sizeof() when the optional size argument is
-> omitted, making an explicit size unnecessary.
-> 
-> In encrypted_init(), the source string 'key_desc' is validated by
-> valid_ecryptfs_desc() before calling ecryptfs_fill_auth_tok(), and is
-> therefore NUL-terminated and satisfies the __must_be_cstr() requirement
-> of strscpy_pad().
-> 
-> No functional changes.
+On Fri, Oct 10, 2025 at 6:27=E2=80=AFAM Maxime B=C3=A9lair
+<maxime.belair@canonical.com> wrote:
+[...]
+> --- a/security/lsm_syscalls.c
+> +++ b/security/lsm_syscalls.c
+> @@ -118,3 +118,15 @@ SYSCALL_DEFINE3(lsm_list_modules, u64 __user *, ids,=
+ u32 __user *, size,
+>
+>         return lsm_active_cnt;
+>  }
+> +
+> +SYSCALL_DEFINE6(lsm_config_self_policy, u32, lsm_id, u32, op, void __use=
+r *,
+> +               buf, u32 __user, size, u32, common_flags, u32, flags)
+> +{
+> +       return 0;
+> +}
+> +
+> +SYSCALL_DEFINE6(lsm_config_system_policy, u32, lsm_id, u32, op, void __u=
+ser *,
+> +               buf, u32 __user, size, u32, common_flags, u32, flags)
+> +{
+> +       return 0;
+> +}
 
-It's a functional change (for better!) because it transforms to safer
-semantics ;-) And yeah as years pass by commit messages like these
-have more value than code changes themselves (as far backtracking
-and bisecting is concerned).
+These two APIs look the same. Why not just keep one API and use
+one bit in the flag to differentiate "self" vs. "system"?
 
-So if you don't mind, I'll delete the very last one sentence paragraph,
-and with that
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-Thank you.
-
-> 
-> Link: https://github.com/KSPP/linux/issues/90
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
-> Changes in v2:
-> - Improve commit message as suggested by Jarkko and Kees
-> - Link to v1: https://lore.kernel.org/lkml/20251009180316.394708-3-thorsten.blum@linux.dev/
-> ---
->  security/keys/encrypted-keys/ecryptfs_format.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/security/keys/encrypted-keys/ecryptfs_format.c b/security/keys/encrypted-keys/ecryptfs_format.c
-> index 8fdd76105ce3..2fc6f3a66135 100644
-> --- a/security/keys/encrypted-keys/ecryptfs_format.c
-> +++ b/security/keys/encrypted-keys/ecryptfs_format.c
-> @@ -54,8 +54,7 @@ int ecryptfs_fill_auth_tok(struct ecryptfs_auth_tok *auth_tok,
->  	auth_tok->version = (((uint16_t)(major << 8) & 0xFF00)
->  			     | ((uint16_t)minor & 0x00FF));
->  	auth_tok->token_type = ECRYPTFS_PASSWORD;
-> -	strncpy((char *)auth_tok->token.password.signature, key_desc,
-> -		ECRYPTFS_PASSWORD_SIG_SIZE);
-> +	strscpy_pad(auth_tok->token.password.signature, key_desc);
->  	auth_tok->token.password.session_key_encryption_key_bytes =
->  		ECRYPTFS_MAX_KEY_BYTES;
->  	/*
-> -- 
-> 2.51.0
-> 
-
-BR, Jarkko
+Thanks,
+Song
