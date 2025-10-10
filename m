@@ -1,62 +1,62 @@
-Received: from sonic305-28.consmr.mail.ne1.yahoo.com (sonic305-28.consmr.mail.ne1.yahoo.com [66.163.185.154])
+Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5EC26A1B6
-	for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 21:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360AC302CA2
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 21:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760131444; cv=none; b=RtzyHKruYv2wApAK99RZd3Zub/aaOpk+dV74rNnUdbiBRzoSkwv6CpKJ62V7h3WsYc9m2jH1HOZ5EZqFP08OmwpvoQAkEEbU87chr3mc/N46Mx27lOUbLw2ZMc1dqtXACKqjRHty2u/I1bnA4nBIawv5rXZDX7v9nJ7TTds3j1Q=
+	t=1760131879; cv=none; b=e7CA+1sZhwv91d4srxfO3xScQUOB6/sfaWGVyqV27ct61WjUwDbNIFPIB+LkhRbenRMga71KJ/u/iRrhks0qL4hqXGazLZbx4efAQzi8ozXaGpZrUMFpWATC33XON+rUOndrY+WQe/ic5+k6x0QMMmeXN+WBSnVrOmdinQCslDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760131444; c=relaxed/simple;
-	bh=S72PbBKn/SIu/CGwvRLzgDVXz41qrj17EeC/J84/BlM=;
+	s=arc-20240116; t=1760131879; c=relaxed/simple;
+	bh=jm07cNqujmJsz6ETfN/ZaqZkj9ZOG1ZyWaAGnftTQOE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jrDjhosrAogPDMWZjQM70QXNE9xINrSiL+TWhpsj7a7xW1WukSWMNfKx9YSreJi9wW5tfl2q9rUM/dfCU5nn4MPfUeMmI9GTcq4jjMc2nTnFEqQGehYF5JN46pcTE8Lc1INx+fH38dVAfpFSRS/b00lvkBTWy+iZt62+N5qlCTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=lEmF6bYY; arc=none smtp.client-ip=66.163.185.154
+	 In-Reply-To:Content-Type; b=LrAPxaE8lUvHX9yCWV/hPbZlSYDJOH5BvsD+9Eae5e08n1LVB/5xQG2ScQnUKmrhokRGLw5NejbzB4suyzCwJel4LNj4nXPwTlj2DpgyCtX8jrEKdbYDhOrGXoJUO7ddRRkQaOk7cSchtZDry/4ejt0aSBK7hXzWfNueVAJH7fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=qxQ2t6mL; arc=none smtp.client-ip=66.163.186.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="lEmF6bYY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760131442; bh=JLliN1JG2MaC2THuh8kGrZkzyJ+IEx3Txs3LnmW6tKQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=lEmF6bYY6FSZXy1bGmfYfOIsqMqaj6Op31+nDlxUQ8VXFzGhuL4xgN8/lCc840/ic92jEIyXjDvhOi6GRyOdKFDnySfLgH12Yq/pL9hnF9W95IaWQTOtX3CKTl6yARPtP41XfpKT2R6OMCC6xJtCSwxRblwpuA+D7VV6ZDi3tFlGhobZ20pQ3hzEkytdpqT1LHs/OADZs0r6fUFqvdxSUAKzZYKumWUZjTxcpw/fkKTtGacSbNT16VUq4DASQLQ1qPokMMQR5XfEKVzZBaapEwwszBwbzKu7FvEmiKmaRw9/C7kUJZsgOG4xh+7nHkVtId3xEiv54/STOsOgRwLypQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760131442; bh=GMOI578hSCPICPKezTnq9pAYmtqve6bmOpuDV830XlI=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=K+Oas8xEAMBBw97Pt4W+jb7MX13y//BgqeareUY/CnuiUaBaW9nf9/l2UDPybbPI/5BjtDuCOS5S0o1W3xzGJqSdkBBanub7yrg6spcGNGJrJZBE2364/W6Je1ALpU54IOkFiZ+XHudJ7M5AucH4DmoOpd81/tbmw9eRfyYlkSfHSN2WZHxhrlpo1KKmmSnoZncEyim7AvUsWLXLZmnUNkC8v1mkBma6a0V3ldwq59G3VnY09Qvs89NOv38Mfe+lvHj9JKWKieiurvvu5SM5jMOcgRlVJAHwBhWvZhhtgAdlXQaaETrhru6I0dtiMGKZAzT3ivV4bgrNa66LAcEhKw==
-X-YMail-OSG: hj_K0qsVM1l92HVyJBxvE.yOYHHP8HsCY5icmN3yiVGbE01Wrt_SWYs17rA.P4q
- UgWYe2nMn_ENZ.4zeSchJVCw1BK6JfupH2g5qHa2CGLKfwOSYtyt5a3iAY8J.dLW6jjMw7mKWcId
- HLNoJvkBcleet8dYBsAvP1Zq2AvdNTuqmBhFeE2Z.fm5740wKcyq8x1RUTAurdJBZwW7dCY2aMLc
- mL_5_NTgf5i0qjieiEV91kOYM19zVRQCPGH7kMhVS7lsrhQtU_a3cg.mrkAvFtyNyMV10khHxphj
- F0mKITRqSg4DF168D_jZ6VXi5nAvJOinbWa4ZGjLxh49DPBtmwFZHtLJWA57q8EVRNWA9KqljyHt
- uELu3PzG1Y_p5FdRpq7P_hjKAfweTGTYuLtnq2If.2qQNY7gnmFL6I01kT0rkj5cLCCqhVkSuAVD
- hM6249wYb6.Q.j471twZ1.vfCzLTb.G0r1EJXH6fgekbHyYyN0b5ybILAuGvvQYRWsoaqdMYQSL1
- 6Yzd7cdk0oGc4OveyFRGX6lh1OuvcB7fYbIKh8CZNGRYtaEhyvrE1eK5NJGF8BxyTgezz1Pij4rE
- P75X6XFtU1KyQsuJgad74aX5b5CjgHmJ2Z06APr2Y6x83HxZilERseulj8ALvnPs1HxEkq6a0L5O
- HapQUB.IAtiMhUWJbPzhjWLelaoGfrExF0BsbA3Z8WjD24ePLO_hdx6MmF7PoWd655u.V2RPzpOE
- 2bkwAkYiJNFS4BF9rERzXU.sa0W7d1ThhJjl2eQSOYArMGNmmw3ThOrQ3aeCIOSQVhY1lcazTB2K
- cDQOqH0jJzaF4WMr8eOWby8ZFH.tZZGrINZsR7AYQBNGgUSxO4XH2cvJfuK0y21rbut4FNxTWM5v
- Qh3ozC7zwwrlj3SJlz24WNFCyF0gG0MLo.jxj8ecl8aDfe0cEWog8RZuSboLiEd7Y4Zx_CIaVCma
- hVao5wLtCrObvajoUNWQSFQVFBLg74I5adQvo53aJkBWbtqo1CaJQy4yhhzBZwaK5B32LNzeL3QX
- UVfoVCECcasaKE64iHuQaiJqUo2n3mJz3FTeYv7CggS0b1nbgGfRVzUIFN9St98_WxUMFBk_J5Q3
- pBTFGp05JD8K_x1qSdoO_cgIEttjgVo1ipB7GIB3lU2qgbNFOY43RmI99urHY2s.UhACjHWoWMZW
- F9Xsfyh3DFcSs6qmqLVHH1p.kqn44_E0mXVvPGhmERLwuh2mPl3q.NhgqhNAa8qqgQmW7WXhjxkk
- C7vL8Z3GIiun69185akGsa6uH7UpWqvvTUfa8ekQKtP4KxuqrXtC7pGJHS1bnyMfwofgevlZuOS.
- 6JNpLDqK_1u0ZVkWfYy4t03fQ6nFQiIf_bnjgcv51lZe6aXCU1gp5oaT86_AZLf.itv4JDPUUOtd
- AiDScIC.thYeAVVle1sc9gJclQUhy.I9nGiA_9kieHPo6yW0V0lWrekSRzo35QC1iPJ0Cr3625np
- 5B8HOXWEUp1Cl18EWmM2txQ8iK3h7IEOJrvL6mNvtB4qjHshNnW3PvqorCCjxrbMG7HVztBkax1i
- TzBoBertrMliR8ti_eGrE5ALcWFjgNmoaZh3T6ie5O73ldmlTv41IhlNJVY2oMxTH0lPdLt0rGjH
- hnure8H8tb..33FUrB1pKK3XOuBYtp4hBPjZcFuyRNuCbK9LCPG0LjhF_AJKiFAb0wxxHYF6OIXb
- C2i3iDTGOQNwljpoDII3T45TRZMUIqnA8DLZbLJ39dleONdSQoHpo8DQy7JVfzyn_0Do0GLrZNGC
- pJS352W.OBUFqJAsAQznyGUTH43miTUMAw81sEFjvITQmqWEPj5SAHkFp_wdNBas0oBQTSFszIFN
- YAY8kSSNQbiScafdRPnDk6FKaFzytLegpFvxfaO22gYg_aeypUWhZqdIzuq9_6h9U9fLLQEH2JUu
- wkTRkmdVLWm_FPdxUYfX85yxJGpJ8gNdgAamR.roTgso3k2DQPUF7i7W9kjZZg5p8PCvdwVIRRfE
- i1a7vFHtmH6jndvt199NFU6X01WpUwbYxm6XfsvyeLDWhJvSlMQeTvNSE5lcCVDFFCjtuMmiQm8z
- _P6952lyxHJWZsLjLxaO4zpNhBqLXQGHmKO2j2wGH9ABpUY7FXih6vFZ87TWF.kLViiOpfXJDpE_
- udg1SkJ1lPmTBMx4ZDiAC7BK0cevHLKHJFt6R2FgV_B1FjOzcD.w0bI1SImML8SLS9_5zF55Wc7U
- cV7AmPOYTJcsp5dLQzsoLF7uhtPLZ05ag7x_JEIZ.r5Tg3DZi0WfQrHGkiokOJS1oegdfKrFHPsH
- cRoweaY7N3S8WY1uzOHlwPa0d93U-
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qxQ2t6mL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760131877; bh=DLpuuXFqNbqtDCgdc3OpUNFxQzGQ43wi3kmUOA0+q64=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=qxQ2t6mL0PCt0Q4akU7mib9t+hPxU3fiWXsMO2l3OEHmCSJlTGyRpJgyohff89imJY3S7jyh7rX+PdanIMfjJuvm8KwoiYjQzBcl+La8YlKAvAfgxHmoUUHgWW32NNOI7+VpHQBga5ZaRif+8Qt4q2+Wb1DCFLg/FrSjsu7NJwxyFN85bRQL1Wz+tnLSymHvFVx0cPrCAe1tRpj5yZmnZlfEcaoQYLkZy3Esp/yh03cobFLWOA7MWgK7RusfpZnGWvX/9txee//Hd+FiMPv0pPPMstH3PSJZ7ezHs9nzzp8cWASInzaIH2HEJekK4zk96dEFkEtO2nDk4D4b/Dm+bw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1760131877; bh=f1WKCvVLXmrR6cPdVElrsC8Qh4HEh74jE/vihtiJAon=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=t6an9VJKtGCZSDiJ9zD9bvXu8ly4w3ZQpJRcPUkIqlp94RLEGMHcvJ2/NZBx+e1y1b0quOnYVW5a13e3k7VuvQrwTwRyJnJm1q82u8h05F/QHG5mQEAPy/TrWqC6L/RAYpplimoKF7JHHQTBq38olMEGYIzww91LOQUBycwqa7HC1mAKmxjUa3HS17Dqjbb5WxDAGk81813qB7d4tTjd9qk8DNT0Btccp/MfWqC/Cyc7ZWZmTE6INvNDB/UFwW1bf/NVXJAsGassS3YSx9LfhYgV6c2fHrfpxNHtUlMqjOu139R/aX4132tL11cOYDpKcZQsPf539iK68i/eHQBmcA==
+X-YMail-OSG: 4R.Id2cVM1lqqIxGsyOt7xiKCrc0.kZ.A5NMx1geX4kIovaTZzef9vXcAdUn0Lz
+ 4V.VJYH0W7IGwB85ebK5rNYnDxc4RKut4Ry6He2C54MUFnHRUxf0gcp6t1waOpUOcUsn.CsjFohb
+ HQnJXbpKrisaRT78sJgIC0aW9ss6ybQVolU0J5.MU0.3T7L7gjrjDt0HSI3nSPTNSuUdeDj.1ksh
+ HADxfWEUIy3iKJyG_rfs9a3Wh4uTCU6NDxIMRZPwR4yQr2lNqQRp.WLMkijWwDsGASQY.4cFOlBM
+ EfJfWE6ArkmiykiOGX8lqfVagVWSWgV_1hCq3sD0MOP5fmSDmXtTUQcAStNaBuDpwrPYMVApylaM
+ G0LvYVjp9jDcLewWGA0xQZGuLHFCW5uu9.m_IxJdPYgsR3rtjXLC3ImQEBtpJHRpabQ2IBYrdjS1
+ fOSOVbNHDBLzpdk.tHZG.pausk1v6_aMp2v2k4JVmC38M_mnl3LaVglIGQXEXjhW2BQYUmDZj17u
+ oCF3DYxDh.uguB2xwjG0PXQpzryJ1mN1dxaZitu1q89_vz0G1SmnMd0.TxfKlDOJNTBspwvZ7mUb
+ RqwuJznRwZLCb5mHF4_dFntgWfyAtzbr5VGrNOzod7zDsX7GUAOPksSxFe8kZmnrZQAvj.DQkDLg
+ x9UjCc0ZIaVO9y1mwcM28czLmB96UOZjhOsLuKiQRRfjFESREJps2CXBLYT9cn3zo7OHOjTNap98
+ un0vPk1HGF9RJkkQAQ86Cv5UKY7DAlplyiFWsuIak6KGxe1S0MapesiwBo3q3jQOJsDZrKs9KRqa
+ JUaDqHyvt_jkg5xg4z550cfEbMlh5Njkl6UiTxg8NmUXm3XaBlJoJULLdueAo2KavGWCtfE4VaEU
+ PfoidspaBMdWIAemm7Ynqm_sbAVOCrg9hKbaXgsDwvqIonFCwXYZEuONVmxzXRH4jGZQMIAkNXmx
+ zZ851v5gqnHDwPXqZ4B83_1acK4DJpVHGcpc9BVOwBGJfOn.4ategsoyyIwHmW9gpdh8cxkG7grS
+ 4p7Y_LrEh.3F2.Sf5PZtWyl2vMCVS.WO.Y_YyFNWpJfrWUs30md9M12wQjui_IzI760azrYTozi9
+ Kx6xBNM6aVADvgmwRCMj6U1UEV9snuvk0sLU11Q4cQPz4aPY_DwTRW4TAefH6OGYsDK9VCzHJkIG
+ 5vE7zFynCwV0d3rPirjvg6EkMQBmZQwh211ejJSo4pVVoL06V9dtwuZF_sozF.R6wXHABszApiDT
+ KyKoO4UP.tRQgLvRQRmIVUcV9L5OKeVo9EoAWqRpxstc61j0yCN1ss_tbJcyQTgXFv_o7lX1FF.A
+ CnVdF98TOB_zDU3VM0Np67kJxnGyMJXJXuqE1ZKMtGGOubqafDZXazGSBzL_7_16Fy0o1zGxrQuI
+ dgsyof7NJPcvt.xZFgYlrgkqtY.mG6okpY_7DKGVm.mAmaXK3ivJsqLJPewA6UMTMXk0IZWvdI2g
+ Vw5HITDrE9RizL_85qKe4eHeCTeUNHKA2nNIAad1maeXR9kwKS_AOU7VuSE4rUx8G4GrebKXUshD
+ 6swJWI6lgHMY8kCFzkMh.7I0TKAFuUzaCJTcIZzhHJgZjCLP5u0glwe9S6sIWx2ux6Uih8x_zSSz
+ WsrBlOO6CPUZXHtjMltTsoU6_Q7yBQkkLSFQdPn629ryCd1uy1_Nv.31r5GxCheIdjoEiod8dMRU
+ FtAQGfX3jYYjFNMTTn5Ph1gjj7jnW1coiqAvgGyOABL8v1pR98KsqsPUodbnsQ45AV8C1NcyNBcY
+ XVF5.F4GabUWZRUGGKH_5ZDgsFrmg62c8YEpeom47dKORkDXKSYhszyaEWMncsWfo2McptTDpRtl
+ KAvxF.g1mtBvlq02k_g49GhyL4aNvlScrwN3GrYgHxBYycxlKDRckWBWVpmmpVPId6QyIYSlXFhk
+ MLOkbWtscO5PEzppF4.JAyK6z9HGiO85zN1NcbgaDkd9xnCvsgkYss9mddLjn27HwGorM7WFP2gd
+ x7Rdr.by92xppzFRVur2jgcTkWJLJuC15QtYKotg6DJ3m_KgkOBa.7smlCDZR1XiNW1kdHUoom76
+ aZkBS5xbFMcOiIfdtMXC4t7hbJ2rx4PRRbH_MYrULaDH3LxZquIxS3b_0qExz_gJ0L309S67rWzU
+ kcqGRxj_h63dfhonCMN2Gg48mrH5gUioen35IX81Ev_175BZhTsI0U3Guc2sBmaGAhZ9XlZkaE4l
+ piz8Klhp1vCSf9zEaOVC7EkXl9_VIQX23cY.OaGesJL.xoBulR5DLVGTf2urB8gvqCm1_AczRkqA
+ K5iXqHLOONv2eAZ0_3Q--
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: edcc4e0f-3264-44a5-b08e-f1aa002d6f1b
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Fri, 10 Oct 2025 21:24:02 +0000
-Received: by hermes--production-gq1-66b66ffd5-xph5s (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 698bef460da1b112e1d4caa5f84dfae0;
-          Fri, 10 Oct 2025 21:13:52 +0000 (UTC)
-Message-ID: <950745ad-b818-475e-a8c9-fe0a9e82c609@schaufler-ca.com>
-Date: Fri, 10 Oct 2025 14:13:49 -0700
+X-Sonic-ID: aae4a878-c368-4734-8f1c-3e5ebf10e800
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Fri, 10 Oct 2025 21:31:17 +0000
+Received: by hermes--production-gq1-66b66ffd5-8qsph (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5ca4e18b572c15992d67a822f1821bda;
+          Fri, 10 Oct 2025 21:11:00 +0000 (UTC)
+Message-ID: <01879779-d529-40f2-8693-257cc598dcd7@schaufler-ca.com>
+Date: Fri, 10 Oct 2025 14:10:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -64,54 +64,80 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/5] Wire up lsm_config_self_policy and
- lsm_config_system_policy syscalls
-To: Song Liu <song@kernel.org>, =?UTF-8?Q?Maxime_B=C3=A9lair?=
- <maxime.belair@canonical.com>
-Cc: linux-security-module@vger.kernel.org, john.johansen@canonical.com,
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, mic@digikod.net,
- kees@kernel.org, stephen.smalley.work@gmail.com, takedakn@nttdata.co.jp,
- penguin-kernel@i-love.sakura.ne.jp, rdunlap@infradead.org,
- linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20251010132610.12001-1-maxime.belair@canonical.com>
- <20251010132610.12001-2-maxime.belair@canonical.com>
- <CAHzjS_uBq8xGCSmHC_kBWi0j8DCdwsy4XtfkH2iH6NygCcChNw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] LSM: Allow reservation of netlabel
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org,
+ jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20251001215643.31465-1-casey@schaufler-ca.com>
+ <20251001215643.31465-3-casey@schaufler-ca.com>
+ <CAEjxPJ48PiZ5ZOZbZjka5YeiBxaWFsCufoGcY_jEztM+wtEUCA@mail.gmail.com>
+ <ec89959d-c3a0-403d-bfb0-7405639eb0cf@schaufler-ca.com>
+ <CAEjxPJ5N+vGS4rhBJmCfoW+rUnjPm7TVAC9reRmu6YCaJWTO+Q@mail.gmail.com>
 Content-Language: en-US
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHzjS_uBq8xGCSmHC_kBWi0j8DCdwsy4XtfkH2iH6NygCcChNw@mail.gmail.com>
+In-Reply-To: <CAEjxPJ5N+vGS4rhBJmCfoW+rUnjPm7TVAC9reRmu6YCaJWTO+Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Mailer: WebService/1.1.24562 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 10/10/2025 11:06 AM, Song Liu wrote:
-> On Fri, Oct 10, 2025 at 6:27 AM Maxime Bélair
-> <maxime.belair@canonical.com> wrote:
-> [...]
->> --- a/security/lsm_syscalls.c
->> +++ b/security/lsm_syscalls.c
->> @@ -118,3 +118,15 @@ SYSCALL_DEFINE3(lsm_list_modules, u64 __user *, ids, u32 __user *, size,
+On 10/10/2025 12:53 PM, Stephen Smalley wrote:
+> On Fri, Oct 10, 2025 at 11:09 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 10/9/2025 11:53 AM, Stephen Smalley wrote:
+>>> On Wed, Oct 1, 2025 at 5:56 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> Allow LSMs to request exclusive access to the netlabel facility.
+>>>> Provide mechanism for LSMs to determine if they have access to
+>>>> netlabel. Update the current users of netlabel, SELinux and Smack,
+>>>> to use and respect the exclusive use of netlabel.
+>>>>
+>>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>>>> ---
+>>>> diff --git a/security/security.c b/security/security.c
+>>>> index e59e3d403de6..9eca10844b56 100644
+>>>> --- a/security/security.c
+>>>> +++ b/security/security.c
+>>>> @@ -289,6 +289,12 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+>>>>                 else
+>>>>                         blob_sizes.lbs_secmark = true;
+>>>>         }
+>>>> +       if (needed->lbs_netlabel) {
+>>>> +               if (blob_sizes.lbs_netlabel)
+>>>> +                       needed->lbs_netlabel = false;
+>>>> +               else
+>>>> +                       blob_sizes.lbs_netlabel = true;
+>>>> +
+>>> Same principle here - if a LSM wants to use netlabel, it may want to
+>>> guarantee that it truly has exclusive access to it no matter what the
+>>> LSM order is.
+>> And if SELinux and Smack both shout "I gotta have it!" who wins?
+>> Does the system fail to boot? Do you assign it to the first requestor,
+>> as this patch does explicitly?
 >>
->>         return lsm_active_cnt;
->>  }
->> +
->> +SYSCALL_DEFINE6(lsm_config_self_policy, u32, lsm_id, u32, op, void __user *,
->> +               buf, u32 __user, size, u32, common_flags, u32, flags)
->> +{
->> +       return 0;
->> +}
->> +
->> +SYSCALL_DEFINE6(lsm_config_system_policy, u32, lsm_id, u32, op, void __user *,
->> +               buf, u32 __user, size, u32, common_flags, u32, flags)
->> +{
->> +       return 0;
->> +}
-> These two APIs look the same. Why not just keep one API and use
-> one bit in the flag to differentiate "self" vs. "system"?
+>> If LSMs can't be equal in the eyes of the infrastructure, If one (e.g. SELinux)
+>> always gets its way regardless of the end user intent, I have a problem with
+>> the whole thing.
+> End user intent is unlikely to be expressed as a silent side effect of
+> LSM order.
 
-I think that's a valid point.
+But that's what we have now with the "first exclusive LSM" rule.
+And the patch doesn't have a "silent" side effect. An LSM is informed
+at initialization whether it can use secmarks. An LSM could even
+decide to use secmarks if it has been told not to. That would be wrong,
+and probably not upstream acceptable, but in security the wild and wacky
+happens all too often.
 
->
-> Thanks,
-> Song
->
+> If a security module supports its use without the use of secmark
+> and/or netlabel and the end user wants to assign one or both to
+> another security module, that's fine.
+
+That is what this patch implements.
+
+> But some security modules may not function correctly (or at all) if
+> secmark and/or netlabel are silently disabled on them, and the end
+> user needs a better way to express intent.
+
+I'm open to suggestions. Would boot options lsm.secmark and lsm.netlabel
+be sufficient to address your concern?
+
