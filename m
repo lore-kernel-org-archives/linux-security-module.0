@@ -1,257 +1,75 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86721DFD8F
-	for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 01:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBC3268C40
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 03:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760061402; cv=none; b=uW6nc5GJ0752BUiNrjJiYLRMHQjM/SvBeqPm6e2S7RX5ruRUehY9MNyELnz5gNHt6OLn+JQqv5cFiBk/WzWiA05gNFualLWcnc4dKX8tFlFYvZ/v9HEUkukw/yqK+eqdcwmVVfX661J9YWzwugnfTYFGQ1Zxwuh+IonVO4khqag=
+	t=1760067011; cv=none; b=mjbTRw32qLCZHuh4XaIsFx4d00q1c2ng3/3+eClpMgTK8rmWqt779WUK8nwz68jtvMxN0ALopyQWjyydZtHPNJMPptdlGVtjrGj4tTkDyGj7FDI2uuwgn+oq6hMJddEeK4L5fs27Np01lH37HzurkD/YkVpzLmv1tng/PzkowG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760061402; c=relaxed/simple;
-	bh=LRevt/H13EGmt70lVTN2G2yv65q7FAE2xt2NK+/La8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ScN208rGE/UIU9jjfJgL3C5/yQIVsXpO6mXcA3avGJz8H6+CAuCRZltkKLu5iXDpU+8jL0dSYtaSou9LqzD0o36eh0YP3Ax61fvm0gkJ1RiEQlKM75p1FE5R7XhFSFlI6Ng2XhhzL1fOz6MU7cxsv+tHie7BoC5klIt6DhaY1bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V9dfyJCP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1760067011; c=relaxed/simple;
+	bh=UwYI1Y9zzpkLWZonQKLPHrolSHjRGw+LY5fd58IPCws=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j2QSsZ8H04XKkKt/fIKQZerUUlQnTD5Jr6I7xdY4znFpGXlCwDOgARPNmW29Gr6EkfyrgBAf1zP7X+dTTDgSHhAf8F3vKmcGfEcqCDeIJ9jDexsETNXn8gMer0uVf/ovK47/uTCpi3aeEHecUcyKc2/yB5WEnbrUgKywUGdZD50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s1DA0GK1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V9dfyJCP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760061399;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i+bdFMFNHkgehS6lKRlgA09l/95HXfHVJeMjlkNtBsw=;
-	b=V9dfyJCPS7wSGz15CROSG7rMpI8fL09vfrx26BqDKxPvHqYJgzaaGmYRVmfyQTYiJdj+j7
-	vQNBuHdcCdj4559pZhdJMBQtBb6u1nNxwpxNTrm374XY6HRmuCnZC9yXbiLnnUGFa4g3aQ
-	mDaGRFIcqG1v5PYPL3s8NKWSWKbEFcE=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-519-9LsV7PeENVmDlC1RwhlQcg-1; Thu,
- 09 Oct 2025 21:56:37 -0400
-X-MC-Unique: 9LsV7PeENVmDlC1RwhlQcg-1
-X-Mimecast-MFC-AGG-ID: 9LsV7PeENVmDlC1RwhlQcg_1760061396
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AADF41956086;
-	Fri, 10 Oct 2025 01:56:35 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.13])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C05741955F22;
-	Fri, 10 Oct 2025 01:56:30 +0000 (UTC)
-Date: Fri, 10 Oct 2025 09:56:24 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org, nbd@other.debian.org,
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH] nbd: override creds to kernel when calling
- sock_{send,recv}msg()
-Message-ID: <aOhnyMtw0a0fqaNO@fedora>
-References: <20251009134542.1529148-1-omosnace@redhat.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1DA0GK1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8528C116B1
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 03:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760067010;
+	bh=UwYI1Y9zzpkLWZonQKLPHrolSHjRGw+LY5fd58IPCws=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=s1DA0GK1N26hb8WWnmFel9nQ94mCRxpbVVZwaFKl5XjMUFFzByJ9g3Zo4JCqloZEW
+	 nCA4RH+l5DfKPp4JIen49URYgB5IfMNC9l/TPyyE2Fblbe9Ajq1eT6GcW76aHmG54O
+	 baNhvQmTwMu4kxAXBm42ITWUEQHPHJ26aZvnDd62Yh7y8gkLZ2JE8b3Ofm0J9qa7mx
+	 Sgpw9n74QFA3bp6SXmFdiaIZux3gtMtAcqEkMPUX9kKf4+ZNBujXffq6w5S8TS2Ixx
+	 TmOPPO1varkTxBTEoq09b44izWYST7a8kB/IUfkmxz2rCCZ8H944W/BkNirMj/DSZV
+	 FYH1bLm+YRzKg==
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3306b83ebdaso1429475a91.3
+        for <linux-security-module@vger.kernel.org>; Thu, 09 Oct 2025 20:30:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVJUI8q9xzzfT+oL9HYluQ0dGNOdAM+RDvfL0StfXj1IOp4QSfUKSUSY5ex1bIpk29vX/yNPKr9wm20TJeOCiyauXXFAV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEaNsS8uLkPc15Uh2WhQoFCT7wWgOVJf/e9OuV3M0KPIShvsgf
+	Tv6zo4Tsz1/19XlATzIz5cRSzHiiumnJFN5OUEYSz84THxxEUq1uWuL2l5TCbwWSFxkTHVgbF5B
+	FAoyns/kDnw91asp2N1zPv3z6NRaWIVY=
+X-Google-Smtp-Source: AGHT+IFC8y1COauSn562LCbBBd6ugpsfjo0VIlf7hz5sw+24Aezq7s8KdouhQV3Zdib7V9MkZYqnVr9+gUZV0IfsSLY=
+X-Received: by 2002:a17:902:ef07:b0:288:5d07:8a8f with SMTP id
+ d9443c01a7336-2902724dc52mr130716075ad.24.1760067010423; Thu, 09 Oct 2025
+ 20:30:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009134542.1529148-1-omosnace@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20251009154525.31932-1-bp@kernel.org>
+In-Reply-To: <20251009154525.31932-1-bp@kernel.org>
+From: Fan Wu <wufan@kernel.org>
+Date: Thu, 9 Oct 2025 20:29:58 -0700
+X-Gmail-Original-Message-ID: <CAKtyLkGhdPgtXeCYpxO8p7YjQ8a7CUygUn63P-Aj71zsfP50wQ@mail.gmail.com>
+X-Gm-Features: AS18NWAKOC3o3IQbceKdyO39h8_ejvzlFqnWt_-WVj5xoNLtcyI_W2RGz9u1SM8
+Message-ID: <CAKtyLkGhdPgtXeCYpxO8p7YjQ8a7CUygUn63P-Aj71zsfP50wQ@mail.gmail.com>
+Subject: Re: [PATCH] ipe: Drop a duplicated CONFIG_ prefix in the ifdeffery
+To: Borislav Petkov <bp@kernel.org>
+Cc: Fan Wu <wufan@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-security-module@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	"Borislav Petkov (AMD)" <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 09, 2025 at 03:45:42PM +0200, Ondrej Mosnacek wrote:
-> sock_{send,recv}msg() internally calls security_socket_{send,recv}msg(),
-> which does security checks (e.g. SELinux) for socket access against the
-> current task. However, _sock_xmit() in drivers/block/nbd.c may be called
-> indirectly from a userspace syscall, where the NBD socket access would
-> be incorrectly checked against the calling userspace task (which simply
-> tries to read/write a file that happens to reside on an NBD device).
-> 
-> To fix this, temporarily override creds to kernel ones before calling
-> the sock_*() functions. This allows the security modules to recognize
-> this as internal access by the kernel, which will normally be allowed.
-> 
-> A way to trigger the issue is to do the following (on a system with
-> SELinux set to enforcing):
-> 
->     ### Create nbd device:
->     truncate -s 256M /tmp/testfile
->     nbd-server localhost:10809 /tmp/testfile
-> 
->     ### Connect to the nbd server:
->     nbd-client localhost
-> 
->     ### Create mdraid array
->     mdadm --create -l 1 -n 2 /dev/md/testarray /dev/nbd0 missing
+On Thu, Oct 9, 2025 at 8:45=E2=80=AFAM Borislav Petkov <bp@kernel.org> wrot=
+e:
+>
+> From: "Borislav Petkov (AMD)" <bp@alien8.de>
+>
+> Looks like it got added by mistake, perhaps editor auto-completion
+> artifact. Drop it.
+>
+> No functional changes.
+>
+> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
 
--EACCESS is triggered when reading data from mdadm process:
+Thanks, applied to ipe-next.
 
-@security[mdadm, -13,
-        handshake_exit+221615650
-        handshake_exit+221615650
-        handshake_exit+221616465
-        security_socket_sendmsg+5
-        sock_sendmsg+106
-        handshake_exit+221616150
-        sock_sendmsg+5
-        __sock_xmit+162
-        nbd_send_cmd+597
-        nbd_handle_cmd+377
-        nbd_queue_rq+63
-        blk_mq_dispatch_rq_list+653
-        __blk_mq_do_dispatch_sched+184
-        __blk_mq_sched_dispatch_requests+333
-        blk_mq_sched_dispatch_requests+38
-        blk_mq_run_hw_queue+239
-        blk_mq_dispatch_plug_list+382
-        blk_mq_flush_plug_list.part.0+55
-        __blk_flush_plug+241
-        __submit_bio+353
-        submit_bio_noacct_nocheck+364
-        submit_bio_wait+84
-        __blkdev_direct_IO_simple+232
-        blkdev_read_iter+162
-        vfs_read+591
-        ksys_read+95
-        do_syscall_64+92
-        entry_SYSCALL_64_after_hwframe+120
-]: 1
-
-The issue is started to expose since f1daaaf0c1fa ("block: add plug while submitting IO").
-
-> 
->     ### Stop the array
->     mdadm --stop /dev/md/testarray
-> 
->     ### Disconnect the nbd device
->     nbd-client -d /dev/nbd0
-> 
->     ### Reconnect to nbd devices:
->     nbd-client localhost
-
-The above steps don't matter actually.
-
-> 
-> After these steps, assuming the SELinux policy doesn't allow the
-> unexpected access pattern, errors will be visible on the kernel console:
-> 
-> [   93.997980] nbd2: detected capacity change from 0 to 524288
-> [  100.314271] md/raid1:md126: active with 1 out of 2 mirrors
-> [  100.314301] md126: detected capacity change from 0 to 522240
-> [  100.317288] block nbd2: Send control failed (result -13)           <-----
-> [  100.317306] block nbd2: Request send failed, requeueing            <-----
-> [  100.318765] block nbd2: Receive control failed (result -32)        <-----
-> [  100.318783] block nbd2: Dead connection, failed to find a fallback
-> [  100.318794] block nbd2: shutting down sockets
-> [  100.318802] I/O error, dev nbd2, sector 2048 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-> [  100.318817] Buffer I/O error on dev md126, logical block 0, async page read
-> [  100.322000] I/O error, dev nbd2, sector 2048 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-> [  100.322016] Buffer I/O error on dev md126, logical block 0, async page read
-> [  100.323244] I/O error, dev nbd2, sector 2048 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-> [  100.323253] Buffer I/O error on dev md126, logical block 0, async page read
-> [  100.324436] I/O error, dev nbd2, sector 2048 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-> [  100.324444] Buffer I/O error on dev md126, logical block 0, async page read
-> [  100.325621] I/O error, dev nbd2, sector 2048 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-> [  100.325630] Buffer I/O error on dev md126, logical block 0, async page read
-> [  100.326813] I/O error, dev nbd2, sector 2048 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-> [  100.326822] Buffer I/O error on dev md126, logical block 0, async page read
-> [  100.326834]  md126: unable to read partition table
-> [  100.329872] I/O error, dev nbd2, sector 0 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-> [  100.329889] Buffer I/O error on dev nbd2, logical block 0, async page read
-> [  100.331186] I/O error, dev nbd2, sector 0 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-> [  100.331195] Buffer I/O error on dev nbd2, logical block 0, async page read
-> [  100.332371] I/O error, dev nbd2, sector 0 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-> [  100.332379] Buffer I/O error on dev nbd2, logical block 0, async page read
-> [  100.333550] I/O error, dev nbd2, sector 0 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-> [  100.333559] Buffer I/O error on dev nbd2, logical block 0, async page read
-> [  100.334721]  nbd2: unable to read partition table
-> [  100.350993]  nbd2: unable to read partition table
-> 
-> The corresponding SELinux denial on Fedora/RHEL will look like this
-> (assuming it's not silenced):
-> type=AVC msg=audit(1758104872.510:116): avc:  denied  { write } for  pid=1908 comm="mdadm" laddr=::1 lport=32772 faddr=::1 fport=10809 scontext=system_u:system_r:mdadm_t:s0-s0:c0.c1023 tcontext=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 tclass=tcp_socket permissive=0
-> 
-> Cc: Ming Lei <ming.lei@redhat.com>
-> Link: https://bugzilla.redhat.com/show_bug.cgi?id=2348878
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->  drivers/block/nbd.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-> index 6463d0e8d0cef..d50055c974a6b 100644
-> --- a/drivers/block/nbd.c
-> +++ b/drivers/block/nbd.c
-> @@ -52,6 +52,7 @@
->  static DEFINE_IDR(nbd_index_idr);
->  static DEFINE_MUTEX(nbd_index_mutex);
->  static struct workqueue_struct *nbd_del_wq;
-> +static struct cred *nbd_cred;
->  static int nbd_total_devices = 0;
->  
->  struct nbd_sock {
-> @@ -554,6 +555,7 @@ static int __sock_xmit(struct nbd_device *nbd, struct socket *sock, int send,
->  	int result;
->  	struct msghdr msg = {} ;
->  	unsigned int noreclaim_flag;
-> +	const struct cred *old_cred;
->  
->  	if (unlikely(!sock)) {
->  		dev_err_ratelimited(disk_to_dev(nbd->disk),
-> @@ -562,6 +564,8 @@ static int __sock_xmit(struct nbd_device *nbd, struct socket *sock, int send,
->  		return -EINVAL;
->  	}
->  
-> +	old_cred = override_creds(nbd_cred);
-> +
->  	msg.msg_iter = *iter;
->  
->  	noreclaim_flag = memalloc_noreclaim_save();
-> @@ -586,6 +590,8 @@ static int __sock_xmit(struct nbd_device *nbd, struct socket *sock, int send,
->  
->  	memalloc_noreclaim_restore(noreclaim_flag);
->  
-> +	revert_creds(old_cred);
-> +
->  	return result;
->  }
->  
-> @@ -2669,7 +2675,15 @@ static int __init nbd_init(void)
->  		return -ENOMEM;
->  	}
->  
-> +	nbd_cred = prepare_kernel_cred(&init_task);
-> +	if (!nbd_cred) {
-> +		destroy_workqueue(nbd_del_wq);
-> +		unregister_blkdev(NBD_MAJOR, "nbd");
-> +		return -ENOMEM;
-> +	}
-> +
->  	if (genl_register_family(&nbd_genl_family)) {
-> +		put_cred(nbd_cred);
->  		destroy_workqueue(nbd_del_wq);
->  		unregister_blkdev(NBD_MAJOR, "nbd");
->  		return -EINVAL;
-> @@ -2706,6 +2720,8 @@ static void __exit nbd_cleanup(void)
->  
->  	nbd_dbg_close();
->  
-> +	put_cred(nbd_cred);
-> +
->  	mutex_lock(&nbd_index_mutex);
->  	idr_for_each(&nbd_index_idr, &nbd_exit_cb, &del_list);
->  	mutex_unlock(&nbd_index_mutex);
-
-Yeah, as commented by Stephen and Paul, put_cred() need to be moved after
-destroy_workqueue(nbd_del_wq) in which wq function nbd disk is removed and
-recv wq is destroyed.
-
-Otherwise, this patch looks fine from block layer viewpoint, and I verified
-that it does fix the -EACCESS failure for madadm to read from nbd.
-
-Thanks,
-Ming
-
+-Fan
