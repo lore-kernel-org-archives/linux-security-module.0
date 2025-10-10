@@ -1,140 +1,129 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E032FE571
-	for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 19:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C16930102A
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 19:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760125213; cv=none; b=lIqd3P+8zvgAtRxzdUvAuF+rpvK3XbiVl/W3HsNga0ncMVnMLOuq1cifgScpYiNNTp2/se7i/SoM6ordgvdVN2iSpfHSJINXlacF0WkKbaaz2Upu4QHRkAwBwAL8mLkPg5ETUfv1/EQOLRQwasdfc4Tn9d1GZOqN0bkTIxl99VA=
+	t=1760126016; cv=none; b=g4L5fd/nlegXt9QJD7R0fG0t5UMYb5b7wlh3aWgim17JrpXBtTJM+OF2j4m31C/ZqV9tq+KKgFxqi4uuVorlzsSQASM5gsCBnkM13uj8QWDq356huVnKV/jUCEnWtuHbKZSmLQfYk5yCtG6QOwtgdSMiEdCokHv5fg9FeUlX8XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760125213; c=relaxed/simple;
-	bh=hrUSn+ceAo+GDbSa1VXTf4EuSMfDG3/UBPjYHHpRlXA=;
+	s=arc-20240116; t=1760126016; c=relaxed/simple;
+	bh=N7gUJB6UefAW78mNbcInukbseR9n7I+KncrvoHMS0us=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jRKeVFLCpBFsICYo4EUPQKYejIdJhMBeABGRb5nphvNR3ZmX4Qi8G7or5We7XxAOhybVjVHx0nx8DNAfNP6VzLAY+pKxnTmgQafwQIZBxGUewAV2m6mMd+nH32CZwt6BbVD4xfdexJEOOGgNYTy6+yMIHD//RmnXQGQfPQplaVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fvH+mQlM; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=kUBxBWQ/wgSrAZP/hZ59m4h1ztZPqEkN3nLswSExhcfKSKwZ+aI37RqZbCZRnwQJMMgGjYF8OiyNSiu5Mh5dfENTL4HQLY3ZMDpHhxr9HsveD32FGyFfCKMSC7e9pbOUyjliAzrf0+PKrWWgG+iavXFi4ngx2bFquPQD3Lalgpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CZkN+2a4; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fvH+mQlM"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-269af38418aso29833815ad.1
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 12:40:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CZkN+2a4"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-33082c95fd0so3109318a91.1
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Oct 2025 12:53:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1760125210; x=1760730010; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760126014; x=1760730814; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1spZuaYn2ibXuyFhDGwY3YmGssLxNzwFenv1C1bnCyw=;
-        b=fvH+mQlMyodIhAHG0OiGgWTJreP4jDvCHhbQtIzqdrV/uRidTE3H4b7LH005Ce6aLo
-         PgWbPj/ejx04/0HcU7cEuwMJ1qOGNK8psjTjdoQ2gKdQlJGFd7hQlCXRHKvGrn1OBING
-         lE/qDIr/dqzBifMqcXS48eAfaU2DABLcYCoh8vmVjQSpOt9+mdZYTGthXuuwpKvFNXIu
-         D13Q72ge/T0BKNhV6wv2+2RcBg0PGawDf/y2ZxiCXWpDqGRm0gHS/EplPE6y09ouGntE
-         Kx5ziGAONnxZeKV56F6dm6cZtXydwjA3ET0f+pP+3DdW6BZs0MrfCEa9ejtPzvnCPcZl
-         LmrQ==
+        bh=qREn5zSA8jfbgBwqXnnzyX/we3/J+k2dWex/IpiZXwk=;
+        b=CZkN+2a4j4APsTh+333fKguoEeFYTlMxKq8Oo1hbXKr7S4ReNGjZTcvi25I8Ex+qEA
+         jw8aQztl80ETnSL7r6eB9fLADhlA3/C+kYMJiyAGt3sqKbXoTLkSvI4+s1PGB2g+iKtK
+         0EiwCQZyrYxUnzcAzyMh6RLrkR1G5LFkx6ig7H5r3T2u3TVjxGA4jkScl/CUfe/10lKw
+         9CCHJDAbZsn+31ZjA8z9go6zDafwdh91i09Qgz+YxIa5xDFUSDHyzpdDEgZ4QQcMdfYL
+         Hkmzao8FJzmUjOFE/x9Ij966DRMTEI8TxB7IvZF9oscUceq48ABHTDZNZl8JcNzAuqDE
+         hFnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760125210; x=1760730010;
+        d=1e100.net; s=20230601; t=1760126014; x=1760730814;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1spZuaYn2ibXuyFhDGwY3YmGssLxNzwFenv1C1bnCyw=;
-        b=cqefVdP38JbetkNN4tLjRdGZFTo6KnKbLl0wWVf9qXN43aLpNxa/rjANNs3y3lWGKm
-         kr1rKaO4+QXXPQ90Y6tKHirILAC81J7cYoDsbrXx365KGMJzfGSAwUjXTPSJWY+z83GW
-         FHHjCtf7hQpzDMmIx+tbZAyAD0vH/S6iHtYbGdhPlKt7yttS3X/zILHrCmOpDJ08QFw3
-         uprUFu8cIE2Uvxx1YjqsLgLsHsrzlFKaaBKOFMDq+D4iLmQZ6aL/v15Vc9kJY1OCMIsS
-         fbuLDRspU46a9qrHDGq/doH5in+UBeuTmZt44s+mW1pcITP/i+2jwciQe4Iadz+ooskJ
-         mIbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXV85tUP82a1swR1W7yytyGRpKlJlkNOPOFLqO8icsVkhttRB3jcGBlZNxSOFsJo7YxS64yG3qTpvWjo0dqejZh6O3BlEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1SzmqSiXzBIK1c1athOegePoJapqLqJeR+/JdF6s8PTpEK2Oi
-	y7INayBIUx2e9v9kyWSREzM58iMIvyblruYV6MaxKZI2SJsKDZHpm8sthSaoXckHeoFkuB8xaLr
-	3NGvgNDVjKHs5lWirokpVrzCf1RjLtpPU70cgNr5v
-X-Gm-Gg: ASbGncvjS8gmaPxlw3yxtv5Nndk1uwv8Jg38b4ZkyNnMYYx7RuSgPre7+C7xRjwNrB2
-	B/9jqAxcnkza0E55zpE0FYWcocOt6xQwFkoZ6ttiBL37hXnE6sSwoBK4LcM0w3Rp1xjkHUiAg5u
-	tkO6TkVUN22JvDP7rJ2341dWINCvoNk61RWqIlRhVSbdHFYjIHjuuhaya9oqA2uw/EvoXhxj8Yd
-	qTZGWyd5YTF6A6X2q99yFF2Uxv5kQCtb07A
-X-Google-Smtp-Source: AGHT+IH1v4yTYh9hFY+GZYHVajE4mnFPafvC6wr8o3AHmTWAx1ZS9PvQ3QIG9cYTfrwrKhnmpqBf4NbUq72+A7lGSng=
-X-Received: by 2002:a17:903:198b:b0:280:fe18:847b with SMTP id
- d9443c01a7336-290273ef0c1mr155175175ad.33.1760125210321; Fri, 10 Oct 2025
- 12:40:10 -0700 (PDT)
+        bh=qREn5zSA8jfbgBwqXnnzyX/we3/J+k2dWex/IpiZXwk=;
+        b=lLKcSXwTa+GioNZNFuwts/nsPbD2NujJds449WJ0UKeia2bxhLKw2qEmaFdjFqRYo0
+         ESl/mritTz+feTJmP4EsWleMh4g4ae4GJMi4afaCMWGxBY+HJI6GeFuPW1+fAeqCUf8l
+         atXges72JpSeFtZg9wRlqrmkf6ehnapaLcPXm4mn/XuNTz/+/Y3K/ERAb09oYAn19JTP
+         e4eyhFULTNSpVW5cL1CoRyoFeOoXvcEMT9vOjWpwRcR5o0lJpttWe8Y2JiXWTesFDX2I
+         iV4OrZ0WOtOr0hFiFOMxrUyRO5yAHbPE1f2wD31x4lwRxO044fatgb1wkVb0GjdEPmdH
+         IUqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJWZNQoTTS6hToUo8zCoKsAfICQy3zlbTdY+sgpojxzz76rclSMvVZ55rxvuD2rHi2qvrRxO4dRj7aSZEdGZX9tSqfvZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ2+ilfh1p163QPJHU8qpUqsUdf7CJxj5s/kqxekPXUpo1KdHA
+	gGp+McNzlK9teMTR8/R9q04joGSgrizWAs2W14YCl9jxevaQpz3nHv9QQigagx7WH+qR8pgGxiW
+	A9d+9GBtNY1kg8c8Fvmcjue7Pvw1J71w=
+X-Gm-Gg: ASbGncu7kUJAmP41fws4XUHUyJl9HB2OXPwA5J6BErJx1yV337f2ioKP1xrkBYQlWBs
+	WWkCWzhb9gj+Zwe7Zaq4a/6ErujUlbxpRPJdGHzv/OgfedL/EcICF4jv5L23HCXX1Ul0l8UNUUx
+	1z8GMi9DnhxVX9SdLZ0ZR7FrWFXqhuZZaW0ZlNazl30zMR4OWPdxt5QyLjIYIjBLDgHpwQ0Kzaw
+	PIaZAuyr6bYp1ITiPZvw/5+uQp718W6vX44
+X-Google-Smtp-Source: AGHT+IFz9AP73sRvYOkE9MyPCK7MNB3Y7fhi5pFDWGDyzMO++oyls7K5WL5aHFGzVG2njyYPIaL7D2b0DkmVxpndCr0=
+X-Received: by 2002:a17:90b:4d0e:b0:32b:d089:5c12 with SMTP id
+ 98e67ed59e1d1-33b513eaaabmr17825823a91.33.1760126014434; Fri, 10 Oct 2025
+ 12:53:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929213520.1821223-1-bboscaccy@linux.microsoft.com>
- <CAHC9VhTQ_DR=ANzoDBjcCtrimV7XcCZVUsANPt=TjcvM4d-vjg@mail.gmail.com>
- <CACYkzJ4yG1d8ujZ8PVzsRr_PWpyr6goD9DezQTu8ydaf-skn6g@mail.gmail.com>
- <CAHC9VhR2Ab8Rw8RBm9je9-Ss++wufstxh4fB3zrZXnBoZpSi_Q@mail.gmail.com>
- <CACYkzJ7u_wRyknFjhkzRxgpt29znoTWzz+ZMwmYEE-msc2GSUw@mail.gmail.com>
- <CAHC9VhSDkwGgPfrBUh7EgBKEJj_JjnY68c0YAmuuLT_i--GskQ@mail.gmail.com>
- <CACYkzJ4mJ6eJBzTLgbPG9A6i_dN2e0B=1WNp6XkAr-WmaEyzkA@mail.gmail.com>
- <CAHC9VhRyG9ooMz6wVA17WKA9xkDy=UEPVkD4zOJf5mqrANMR9g@mail.gmail.com>
- <CAADnVQLfyh=qby02AFe+MfJYr2sPExEU0YGCLV9jJk=cLoZoaA@mail.gmail.com> <88703f00d5b7a779728451008626efa45e42db3d.camel@HansenPartnership.com>
-In-Reply-To: <88703f00d5b7a779728451008626efa45e42db3d.camel@HansenPartnership.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 10 Oct 2025 15:39:58 -0400
-X-Gm-Features: AS18NWDiHVbVvupnRrZkUxOiLJEK77lzoTL3P5996ZGup2QQARPuOxF1njKIzL8
-Message-ID: <CAHC9VhTY=K6oQPgAHuj3rRm2+9sBwLvDjdZtM+cUfSeuiW8jMg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 0/3] BPF signature hash chains
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, bpf <bpf@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, wufan@linux.microsoft.com, 
-	Quentin Monnet <qmo@kernel.org>
+References: <20251001215643.31465-1-casey@schaufler-ca.com>
+ <20251001215643.31465-3-casey@schaufler-ca.com> <CAEjxPJ48PiZ5ZOZbZjka5YeiBxaWFsCufoGcY_jEztM+wtEUCA@mail.gmail.com>
+ <ec89959d-c3a0-403d-bfb0-7405639eb0cf@schaufler-ca.com>
+In-Reply-To: <ec89959d-c3a0-403d-bfb0-7405639eb0cf@schaufler-ca.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Fri, 10 Oct 2025 15:53:23 -0400
+X-Gm-Features: AS18NWAEPzo3JPjSpIHpxLuP9cGI0RMXW_8WdNQ9UmnQLyyl85BTRR5gTpK0B-Y
+Message-ID: <CAEjxPJ5N+vGS4rhBJmCfoW+rUnjPm7TVAC9reRmu6YCaJWTO+Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] LSM: Allow reservation of netlabel
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org, 
+	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
+	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 10, 2025 at 11:53=E2=80=AFAM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
-> On Thu, 2025-10-09 at 18:00 -0700, Alexei Starovoitov wrote:
-> [...]
-> > James's concern is valid though:
-> >
-> > > However, the rub for LSM is that the verification of the program
-> > > map by the loader happens *after* the security_bpf_prog_load() hook
-> > > has been called.
-> >
-> > I understand the discomfort, but that's what the kernel module
-> > loading process is doing as well, so you should be concerned with
-> > both. Since both are doing pretty much the same work.
+On Fri, Oct 10, 2025 at 11:09=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
 >
-> OK, so let me push on this one point because I don't agree with what
-> you say here.  The way kernel modules and eBPF load is not equivalent.
-> The kernel module signatures go over a relocateable elf binary which is
-> subsequently relocated after signature verification in the kernel by
-> the ELF loader.  You can regard the ELF loader as being equivalent to
-> the eBPF loader in terms of function, absolutely.  However for security
-> purposes the ELF loader is a trusted part of the kernel security
-> envelope and its integrity is part of the kernel integrity and we have
-> a this single trusted loader for every module.  In security terms
-> verification of the ELF object signature is sufficient to guarantee
-> integrity of the module because the integrity of the ELF loader is
-> already checked.
+> On 10/9/2025 11:53 AM, Stephen Smalley wrote:
+> > On Wed, Oct 1, 2025 at 5:56=E2=80=AFPM Casey Schaufler <casey@schaufler=
+-ca.com> wrote:
+> >> Allow LSMs to request exclusive access to the netlabel facility.
+> >> Provide mechanism for LSMs to determine if they have access to
+> >> netlabel. Update the current users of netlabel, SELinux and Smack,
+> >> to use and respect the exclusive use of netlabel.
+> >>
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> ---
+> >> diff --git a/security/security.c b/security/security.c
+> >> index e59e3d403de6..9eca10844b56 100644
+> >> --- a/security/security.c
+> >> +++ b/security/security.c
+> >> @@ -289,6 +289,12 @@ static void __init lsm_set_blob_sizes(struct lsm_=
+blob_sizes *needed)
+> >>                 else
+> >>                         blob_sizes.lbs_secmark =3D true;
+> >>         }
+> >> +       if (needed->lbs_netlabel) {
+> >> +               if (blob_sizes.lbs_netlabel)
+> >> +                       needed->lbs_netlabel =3D false;
+> >> +               else
+> >> +                       blob_sizes.lbs_netlabel =3D true;
+> >> +
+> > Same principle here - if a LSM wants to use netlabel, it may want to
+> > guarantee that it truly has exclusive access to it no matter what the
+> > LSM order is.
 >
-> The eBPF loader, by contrast, because it contains all the relocations,
-> is different for every eBPF light skeleton.  This means it's not a
-> trusted part of the kernel and has to be integrity checked as well.
-> Thus for eBPF, the integrity check must be over both the loader and the
-> program; integrity checking is not complete until the integrity of both
-> has been verified.  If you sign only the loader and embed the hash  of
-> the program into the loader that is a different way of doing things,
-> but the integrity check is not complete until the loader does the hash
-> verification which, as has been stated many times before, is *after*
-> the load LSM hook has run.
+> And if SELinux and Smack both shout "I gotta have it!" who wins?
+> Does the system fail to boot? Do you assign it to the first requestor,
+> as this patch does explicitly?
 >
-> There are two potential solutions to this: complete the integrity check
-> before running the load hook (Blaise's patch) or add a LSM hook to
-> collect the integrity information from the run of the loader.  Neither
-> of these is present in the scheme you put upstream.
+> If LSMs can't be equal in the eyes of the infrastructure, If one (e.g. SE=
+Linux)
+> always gets its way regardless of the end user intent, I have a problem w=
+ith
+> the whole thing.
 
-As a bit of background for those who weren't following the related
-threads earlier this year, the idea of an additional hook was
-discussed this spring and it was rejected by Alexei.
-
-https://lore.kernel.org/linux-security-module/CAADnVQ+wE5cGhy6tgmWgUwkNutue=
-Esrhh6UR8N2fzrZjt-vb4g@mail.gmail.com/
-
---=20
-paul-moore.com
+End user intent is unlikely to be expressed as a silent side effect of
+LSM order.
+If a security module supports its use without the use of secmark
+and/or netlabel and the end user wants to assign one or both to
+another security module, that's fine.
+But some security modules may not function correctly (or at all) if
+secmark and/or netlabel are silently disabled on them, and the end
+user needs a better way to express intent.
