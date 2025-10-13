@@ -1,112 +1,131 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B02629AB15;
-	Mon, 13 Oct 2025 17:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89BE2F1FC8
+	for <linux-security-module@vger.kernel.org>; Mon, 13 Oct 2025 20:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760375867; cv=none; b=Bp5l0Xd7urLlLV/pQ1moxPTj4b1kQwkWRZeR4fMKTk6sXKHnQTyTkGdo7lMM8ctKRqN2NlI3Y0zd5mT5ra1kVpFjwdKYk5nZ1yJykMuhmd+Nfs1B9aYLIpWbI0YsI45jOrvXU9+kfGhcdQALTKq9R1PrltTjgkUNZE2K9sqvi7w=
+	t=1760388949; cv=none; b=Dka2fNa0rEbVE0Yr6hEuZafVVQFaOI5wyRfsHJk72w/LFRNMXtV4bGSotyxNFa7/iQ2Y/Xp0almzeIw3i8BFvsmJEjYnNmB7+isuSZabKMSC6iqSDN2jUuQ7+J+io3D/EVji1gpp8tR1h3f8MIXhzMWMcnV3tuZnRH5ZN1df8m0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760375867; c=relaxed/simple;
-	bh=1o7vfzVg+O2k5uGA7m8xD7/nkzsuOXh0/XQRGfNcP1w=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=rUR7y5G6wMeJLdoEw1YhoauQ2hHWL6NLQcxf4oKbKr0lAjYUk4yOfkzhagb5oCr2MbPFcrs35xkh31m7143CjVC+5JT5kE5KT56oEKvrShmofcK2mZMtamd12EPaRY9YEEnVVhgRzEs98GZ7yJ5rQCYzkA9Gr0rHBpEsb2ga9L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HJixZkDP; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1760388949; c=relaxed/simple;
+	bh=gDYIsGZJNtpz85UGGORoVa634/GqJuKrEvq8/6pyYD8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EsioJH0IOc+GGVLHYIXirg+2Zp2CvpydiJZ1GHlh4UzTRSr9EUN5jePE30X0eYc/Izun5TY9xti+ybvQXYS0vpOTRIZxU9tm7UoyIy2rJEOTbF0mATscJxRZuDUJMXBCfiMYoTWNim/85JzTSNa68lTkRvBoWTyy8XRErzil7Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=O+UyanCS; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HJixZkDP"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DC9hlt021492;
-	Mon, 13 Oct 2025 17:17:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=1o7vfz
-	Vg+O2k5uGA7m8xD7/nkzsuOXh0/XQRGfNcP1w=; b=HJixZkDPgraMKVAWzWMjhr
-	OrtTYqbyxuIA3TYm7xrmNLCja/QD0gYPpR4C1D6xhFCf/J4cOvLPg42enYUufKHC
-	F+/d8HryRw/FZ/79f9ceCOgAAc0QneE9Oox75exAZ92H+4Usc9l1JITfOFpT3gNT
-	frI3rVVQfTG3x9DbQK71r+tJAb1VhrfzbDXBceZv1NN73I9NJ+AHJyFjO4HsIjr6
-	bUlwfDQdrb9xTNvfigD4myX0g0j9fLSuO9lkf7DqbGM56PVNUxoxCckScKpHhTz4
-	eix5emzwAIH7AqiDsRcD7/ANQlBqplXpqY/7XIHje7yqHFmqbVmIvOf7am4azXCw
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qey8j95p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 Oct 2025 17:17:19 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59DF4Xw1018372;
-	Mon, 13 Oct 2025 17:17:18 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49s3rf0kdh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 Oct 2025 17:17:18 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59DHHIap27919028
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 13 Oct 2025 17:17:18 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EC19358050;
-	Mon, 13 Oct 2025 17:17:17 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CD17558045;
-	Mon, 13 Oct 2025 17:17:16 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.176.159])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 13 Oct 2025 17:17:16 +0000 (GMT)
-Message-ID: <37ad10dadabf11ea2fe5c5492fc0c4f8d14dbeda.camel@linux.ibm.com>
-Subject: Re: [PATCH] keys: Remove redundant less-than-zero checks
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>,
-        David Howells
- <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>, Paul Moore
- <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"
- <serge@hallyn.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-In-Reply-To: <20251011144824.1257-2-thorsten.blum@linux.dev>
-References: <20251011144824.1257-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 13 Oct 2025 13:17:16 -0400
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="O+UyanCS"
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3324fdfd54cso4975351a91.0
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Oct 2025 13:55:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1760388947; x=1760993747; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3RDNpZAyhwqcckigDtVfOVuYTuSUKS3TRvIv4aY4DWs=;
+        b=O+UyanCSQFWA8QndFiHUonQfLD97F4UplMUx26OOxzdNUyK8VQWf+erRmFu7Dy3Sui
+         NHebMdt19I2HyRYe/0jAJtARWwHbtB/A+frLu1OpSwXZ3MG824LUv+XqQRU5wBmPRUTp
+         1Imz5QF5LGYz6OI52/86EenXOGn5h05YpnZWX99ODPlt4yZMXWc0PkyN/jWU3qatPuAq
+         I4IzHvAgy5PtvarhBHvXKHDfI9/qHRTtMR3k3Rhlj4EYWIjcjIcX2oZqW+kRHcpuDlO0
+         4IJrey4Y7Tf4rnQGDM79wXgYdKWlBymf4MCmwj8Wa/F/w8IGNGNGL3g1DXToqHxV+Bwh
+         Gt+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760388947; x=1760993747;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3RDNpZAyhwqcckigDtVfOVuYTuSUKS3TRvIv4aY4DWs=;
+        b=e7RTxhhDJHqc/AN02SB8Z7qFqUF3tINC6lLqMc6OvrFelvbBeHc0BJpcrBtEEwFtgf
+         BA/xQ0z2DdzwtxCOKahPHiDztoNsUpWWGmaynsmHbjRbHsGcMFhemx4EHwKaCK14crLt
+         KZe15WQ0i+sz43ZDW25XCwgCwBkd3iK7hGYSAG/ExCQyiE6vEy7Xt50CCB1L/bkMHfzX
+         G6PkFnH58N1/7N49rwY24i919VIH2KeIn+7ExYq0vmcoS+OWd43ydRa1O9IoqSrgPFuN
+         r4xm9XNAPCfolvVkEPTIansOzhqvRZ9q/Yw+CknwO+R0/XBBF45Sa8kW6iiisWYMcROy
+         0jTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWO1bzoTJD6c1/RAq9qLuAqeNwtIJjRDaQFBOFd+ZC0loDCGV9MrvabrW4HdPfUYjHDvEk7waXuKaGmDJ8A7UB1PJfv4C4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2H9+Er6Tskv+WYH8o3iqC6WI1O8/f+pFQZ+inIhaUMYuR1a68
+	AC7pCzLNO2lp1AT3boEqacBseDAond7B1fuwr4CGDEcJuPZyE0+Qx16/BeC0yE7i7D8p76GfTxP
+	Sr7RjRBN5akKaOahWZLnBSjq1C4CR+FWQ1eDTUb788+dkxgRvl1erjw==
+X-Gm-Gg: ASbGnctfTPIsbgj+uudv9jkTK1U0CDZ078u0neSnWMkKtPGhW0rOWsqJMqvVdjf1yX/
+	+09N5E4nKoSXKllvXm9swK+qfDUd0438aI0ar0isyDGDBQpbBXv528pAoCNnJ1XCHuwY4UCm+oW
+	LkduB/nP6+E7EsXgoDKm6oA9ZbdFLPEceRTfViH0N9z+x3k9B5t9noRUJKFrr7CFIMy9uc37dCm
+	rjShU14+IqPfepvxCFjRRbBTWkag9CBcPIuKOqKhKnpJ3Y=
+X-Google-Smtp-Source: AGHT+IFqAomyulxKG8LO+DgQFeLFDPy+KFQmqr2wqA7gA8PG1OfLl0aF1pmvG9L+PEXZ8/496jeCTHuT+POsXuT50tg=
+X-Received: by 2002:a17:90b:3ec4:b0:32e:51dd:46dd with SMTP id
+ 98e67ed59e1d1-33b5116b782mr32102690a91.16.1760388947138; Mon, 13 Oct 2025
+ 13:55:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: qdNTxGCkyxrS5rcDBi2RZf9HHFpZFwcD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxMSBTYWx0ZWRfXx9mdWTQVrL0B
- bzdqEl3JcXIqlsvt6480+7soduV1W+Qc6YquFgEK39PbOCTKEFOGy5Lx8vsMs28g5/DIP+znjoT
- 1MtrciXOErYm2h/TO8XXmKmOQWEZzpeKg8qNDEZLNqWOZtY5haFbb9C+j/cEccppayfcmsvJXCZ
- nZPskNhsaH1zpDgCHKydOVbqq8rbdSkFp5b+9Dj1MRTEDayKD2awij8QkGezwp7J0FUDieKszvx
- tHv4oXAboCdJLvccVStg2f3uRcy63G8utLTji2AQu4JUv5XVNeW7kohYj7wlViRMbcKPvdcx/lx
- Ev9l5/oZ7vkwzI5yDbvDAcZuDOesOqG3/yBntRIn9bNIhsltwEwnzIlj1EbCdfNH/br/SiISu32
- GsGA+buQIYOr8z6kVrFoXrn1g+kzmg==
-X-Proofpoint-GUID: qdNTxGCkyxrS5rcDBi2RZf9HHFpZFwcD
-X-Authority-Analysis: v=2.4 cv=QZ5rf8bv c=1 sm=1 tr=0 ts=68ed341f cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VnNF1IyMAAAA:8 a=RXRK5r3OJC2qLSDDhugA:9
- a=QEXdDO2ut3YA:10 a=vyftHvtinYYA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-13_06,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0
- spamscore=0 malwarescore=0 impostorscore=0 clxscore=1011 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110011
+References: <20250925171208.5997-1-casey@schaufler-ca.com> <20250925171208.5997-3-casey@schaufler-ca.com>
+ <CAEjxPJ4D7A4KDF9BfmRa9VvzcAHBkkrdKCvmGazuZUto5=qDuw@mail.gmail.com>
+In-Reply-To: <CAEjxPJ4D7A4KDF9BfmRa9VvzcAHBkkrdKCvmGazuZUto5=qDuw@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 13 Oct 2025 16:55:34 -0400
+X-Gm-Features: AS18NWDkJN7A1rvC66jbpLrd01lw_5s8wNzGOHMHaR2wj-KW1Eukad0lJzueb3o
+Message-ID: <CAHC9VhSRGyMuTYxP0nDpXv_MwvNqVsrBXcak84AGHj7ycDtu3A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] LSM: Infrastructure management of the mnt_opts
+ security blob
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, Ondrej Mosnacek <omosnace@redhat.com>, eparis@redhat.com, 
+	linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, linux-kernel@vger.kernel.org, 
+	selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 2025-10-11 at 16:48 +0200, Thorsten Blum wrote:
-> The local variables 'size_t datalen' are unsigned and cannot be less
-> than zero. Remove the redundant conditions.
->=20
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+On Thu, Oct 9, 2025 at 2:38=E2=80=AFPM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Thu, Sep 25, 2025 at 1:12=E2=80=AFPM Casey Schaufler <casey@schaufler-=
+ca.com> wrote:
+> >
+> > Move management of the mnt_opts->security blob out of the individual
+> > security modules and into the security infrastructure.  The modules
+> > tell the infrastructure how much space is required, and the space is
+> > allocated as required in the interfaces that use the blob.
+> >
+> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> > ---
+>
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index 4bba9d119713..1ccf880e4894 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -656,19 +651,13 @@ static int selinux_set_mnt_opts(struct super_bloc=
+k *sb,
+> >         mutex_lock(&sbsec->lock);
+> >
+> >         if (!selinux_initialized()) {
+> > -               if (!opts) {
+> > -                       /* Defer initialization until selinux_complete_=
+init,
+> > -                          after the initial policy is loaded and the s=
+ecurity
+> > -                          server is ready to handle calls. */
+> > -                       if (kern_flags & SECURITY_LSM_NATIVE_LABELS) {
+> > -                               sbsec->flags |=3D SE_SBNATIVE;
+> > -                               *set_kern_flags |=3D SECURITY_LSM_NATIV=
+E_LABELS;
+> > -                       }
+> > -                       goto out;
+> > +               /* Defer initialization until selinux_complete_init,
+> > +                  after the initial policy is loaded and the security
+> > +                  server is ready to handle calls. */
+> > +               if (kern_flags & SECURITY_LSM_NATIVE_LABELS) {
+> > +                       sbsec->flags |=3D SE_SBNATIVE;
+> > +                       *set_kern_flags |=3D SECURITY_LSM_NATIVE_LABELS=
+;
+>
+> This seemingly would produce a change in behavior for SELinux.
+> Previously we would only do this if there were no SELinux mount
+> options specified.
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+What Stephen said.  I think this is good work that needs to be done
+(thank you for doing it!), but we have to preserve existing behaviors.
 
+--=20
+paul-moore.com
