@@ -1,66 +1,66 @@
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E933D2FAC0B
-	for <linux-security-module@vger.kernel.org>; Tue, 14 Oct 2025 23:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B2C301483
+	for <linux-security-module@vger.kernel.org>; Tue, 14 Oct 2025 23:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760483577; cv=none; b=SZzXKp1ut9LiwOUkRqkHsL8mFsgRLHMLgSiDJOMdqvWPsKe/PC+zbrWnCzl6sHm4BvDSam7e6HKYIyyWHTAfFsR3q9cXRnLF+C6Pg3a+Rn+TeU9kC8pXfz9VKKyK9/00OLPU14veSvXmojoVVVg9pLsUdOHFmWSZy41nq1Fw11E=
+	t=1760483577; cv=none; b=MD+T/zCIrpeXL/5y6oqXEmytE9/p7ZX7FjR0GDeIv8OXGmxRwOPWuCs4GfPUw4u/qa1M3prkQ1tHZc+jywL4Nz/RZ/9zjfyEBE688BigMz0j8L7TWcu1B/gfmKEMfj+Mj3/zE5XeQf7lbOBUue2jz0Bk2BxYKEv3um0iK/54p5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760483577; c=relaxed/simple;
-	bh=pqapgx3SjFaiVLjTtl9ZYj2hBgm63UGXxUD3Vh5H9m0=;
+	bh=yBSQDIAerL1pP8jBEJSFDm/XqydoQBHKsJlKkV81ReI=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=sbeBUG1ZBWwzFjvAyxvxrge0xJsg6ihg0bXz+u7Eh8uxWN55Ycx0/r3wJ/tAMyb7wFqizikQVkUgnsLcAGE7TJ+HiZLhR1e0yodThY0arG4FjCYv/0PqjYHXX+6SBbIcVUxGbSoQ6VqARkB1tNwNNQNmTDeitI/jk6PssEE+Co0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MQaqD3U9; arc=none smtp.client-ip=209.85.222.181
+	 References:In-Reply-To; b=L4d6W+iZtkJoqYgY4kImvJm/8UXaRODmaOXrRI9f7mLahFGj8k8VQATSDmi65Rw/p+J0u6xS/2qdn0cOAfFDufOfIn9/Xv4yUgtoEQkqb9EgDFpVpmXrpHDrhoebPoCqr8kIs0GiFPVGuuoD2PT/w7fMqSCIhMHw/yG+qpUaoAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=N1jMtUhr; arc=none smtp.client-ip=209.85.222.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MQaqD3U9"
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-8593bcdd909so807417785a.3
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Oct 2025 16:12:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="N1jMtUhr"
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-883902b96c3so498923885a.1
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Oct 2025 16:12:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1760483573; x=1761088373; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1760483575; x=1761088375; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ps8OB349up+2JiXOOAUFOzgYyyG71oedxuIe/5L+TTI=;
-        b=MQaqD3U9+xOyUqIFdbpUou2sBimqG5nyiMeV/xmWu1Wl7qA+KnYmQesHKndJCEV0Jo
-         5/mgTsFavaip7r0VuFrXc00yS6oSo52I6WLPLd5j+3jompo7qqRcRWgco+qMdWYYnef4
-         S1kAcXAt2YK2o8nkSgfAVOvqnxvUXZSnADKYMM5A5etSeCgqA+WXx36KlmyeQhttfY1v
-         xppq5+CZmPQEsbYXVjzZW2OtFwewYo+z4qosKFf5TKDOu4mmMLPPCV8JeG4kdIdBIOz6
-         UvS6jY7MmxY1WceJAgfVt1Ung41gYynYSp33hREqSVO5USmj084Hbc8PDnoA4x7ShylE
-         4bag==
+        bh=3staXW51kCGZsXIYMV8mfgMCQKvW22Nmb5sYckB4owE=;
+        b=N1jMtUhrEsoqSqmuUt4dNAp2G91diUd+lxSNjM5PHpqvyt+msQmcGnTt8sMI+PzIB5
+         zzCchOTWn2kMn2zqx6sDRH0X9lZEGpQ5gcZta/w8esbx27at03sPyIxE1Dv3vK1URwqf
+         3mf9g2dDt3uMI3u3nAQs3WOaKlQgwUVDyR3ZQrzLeSEX9g/ngZI+7sIBub3GNgrYSVDn
+         nlHPI0/575JpkkQt7M7qb4IQr+lW/ULVNlN2xjN7wdZ/2WXU48A+FE4NT+qviSkLxz4t
+         ubNO21xBE4pteCCm3wm/5/ufpCajLYNUwkKl9lbzFY27+Q15CGDzJvSLvBGO24TuCgSF
+         hmxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760483573; x=1761088373;
+        d=1e100.net; s=20230601; t=1760483575; x=1761088375;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=ps8OB349up+2JiXOOAUFOzgYyyG71oedxuIe/5L+TTI=;
-        b=RHxiotjgorrjlt6dYFQbLoehm9Wn78fptIVHCk+HNdA+W+qJFCYHRE6BEdYMx2D9aJ
-         0u735e+XKzNt1t/M0F0AxVKnDCnsPM6eSUQVRf+XPOAHozcuPZmh/WE/oEYR0cLJi9fb
-         /gUFRqQmyejW4FJeYsTdjrWH2TLOd4AYFf31pLFx/cLbXw+tPDTm+s6ZTYwh3vJn7Rci
-         Rtp9eZ6MfqgVOJ0NUcK/7U9dz6wnL7meai/rGeqTp7WJxyMQ4oqgeOu8NreWFEKaDzEB
-         IuClOJxV0uvDfApZ8icBwhNW0yo1NwQaUMF8du0A11lFJGSLKMYoQtTq5M6CEtIyoP6X
-         hm+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXnBcoW6LXs6odVAPZVzWE5gXTBLFDcehQWHaoH1DC3lj8BkUpP9wtFxfK+pDkA5mJw/hpxn5QvcQp+yk+J089d2A4+VCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlzYe5yni8GCBMMkwW/VT6BcgaDBNxazNHCS2O8HpgsV1+8Dw/
-	SxGVAt+PNV3kOEZA3P6U8Ktw81U6qfqRtSAh915FDR0/5psTvitWTnd9m545/P7cgA==
-X-Gm-Gg: ASbGncsdX0I0Kj7tZWSj401/z6QXoq149uKFJn/7B3awgFrbN9w6cCe5FRIrKEIefW9
-	JJTYnvEA1rQlJjuHtx18h1fSJzsYmBiIX1tbD4li1B6Tiu2gIow/u+y4lN4MTrD10Ys4QynBRtn
-	fQRx55xFHwAJI0KGWmibeKlm8AckHNAqzZo4P2rOsMllyr/ZoUJQh79BL8PMjQfhOCBXpQuDyzx
-	4A6+Su0A8iK32LZg9hDGmMj/yONFEUNGFaKAS33rpJiGsUEmh92KdsPlT1iTcHd8I3ekCLZzZYD
-	PRwBSb430VpMd3iT3jJuTd2OdN6Q2k2I/hdLlsQ+7obppNoHXjN02PrvF7xuBMjD76KLwb/ijpi
-	CVlGCNi488kcRWsQa3xDGzUF0iiPe6a+s8jcsMd6h1Fqw5cuk1jhKgKeH99P8DEXyGyTaLNok7K
-	5RdNEM+KG6UgQ=
-X-Google-Smtp-Source: AGHT+IH2kJu3p5TXj14jePlOqpBlixzbhxeJPUr5Dl1KA11KjKhjkHDMYoCi0UavIwCqCbLXkHZG5A==
-X-Received: by 2002:a05:622a:1b1d:b0:4e3:16bd:3e16 with SMTP id d75a77b69052e-4e6ead5b614mr441408041cf.56.1760483572924;
-        Tue, 14 Oct 2025 16:12:52 -0700 (PDT)
+        bh=3staXW51kCGZsXIYMV8mfgMCQKvW22Nmb5sYckB4owE=;
+        b=BZ6mnCPz/LbCdOV3B90XISNqSs1+tty9UGWfMZ7aapSphLiLq4pIwXLIt/yaAubaRB
+         L+RVDT1AdlKZQp0yKpQI3idYThXUYdrl8fBKWCSaIf0AO2EQNmPoR3sukwUol1vr+pNN
+         nZXDJEVJcrYkwkh3LEVAFUTlHsfqJhtO9QWIIkekBu3Kw7ywCjNoy6k04uT+MvvRyv49
+         KPxDfV4xiysoFnyxRBR5tyq5kFLMAk6ongU6NP7rFfKsTyiFrOzlDu09+jqgJXiHYzeH
+         IaHT7dhZ55thcGa+36BqhoXeXs3F1WJUrZCkpH2Kcw6gikXoRzGRzxp0wAd+rXNo9vzc
+         ocyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZqi23pRhIBwmdbAJfcEhGbwpj//7TbPfCpsE271GQ7ccatZqo7eYenIb3DCncdOqr+8jFX++zgOh4e4iN1X46OGtIqhQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKESv8XqbvTk1/sqXnp3vczK7uwvOJSqfG6EAVUc7eeSN8RiVD
+	5ORVcw6fcVrkT9RntlKMcDs96RtLTVoQaNjPfHHuBDsNSp7EzUC/m9bkSbnqZ3reNw==
+X-Gm-Gg: ASbGnctn0laxbzhGo6VXKjpqvP+uHJHlMeBFYxkuVTrz2xafVbhCbx1MeBuDFuz/+G+
+	PyTEyP2iuxHeMvQXkjvFbSsNJekSA9mrmB+LjEX5ugsafDpsDlWELhCYh2Kfb7Qgv9TSEVOE4ka
+	/+AOtjI1Az2kDLBnLb45miD9tNDs+55JrLlx/6V48AgdsAZblA5Fuc6G5D5svIEHxUSsfre5mlv
+	7nBt1QlSCvWViJOaTStmNWUYihBJtKFvY3Bg6SBjm7vJMGjnF5bYyV4wYJMR0xtOkSrSFZKzUic
+	wVxU3y29s2QXFbP9WWv4TVuyTiZ0GbNxmdqffj703+bYdPoHjK+zTBE0JJfr/xYUukTQyCF0xhT
+	r26y2X44jUdVmo7MBmlbeShRhhGj+s1R/fZvRj4LBOVanjk5sCYhOEiKZrxlp7KkCmx2Vt/Yqfs
+	JCIq78VQ3D4kx6Lw8R23p/bA==
+X-Google-Smtp-Source: AGHT+IHQuFhiVAIzWYGxERI883rLNluCPfSroNYywP2IoanX/gCv8E91aVZJ/MsGoz8MOXeF3+6hyA==
+X-Received: by 2002:a05:622a:1989:b0:4ca:9c53:f1e8 with SMTP id d75a77b69052e-4e6ead793c4mr365706661cf.73.1760483574819;
+        Tue, 14 Oct 2025 16:12:54 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4e881c86dd0sm7554211cf.15.2025.10.14.16.12.51
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4e881d2c71csm7370921cf.43.2025.10.14.16.12.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 16:12:52 -0700 (PDT)
-Date: Tue, 14 Oct 2025 19:12:51 -0400
-Message-ID: <36f0c22554337b4d5551eabee2d86479@paul-moore.com>
+        Tue, 14 Oct 2025 16:12:53 -0700 (PDT)
+Date: Tue, 14 Oct 2025 19:12:53 -0400
+Message-ID: <b73ddac399f78e46ba753f6bea4fcbb5@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -73,90 +73,26 @@ X-Mailer: pstg-pwork:20251014_1821/pstg-lib:20251014_1132/pstg-pwork:20251014_18
 From: Paul Moore <paul@paul-moore.com>
 To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, eparis@redhat.com, linux-security-module@vger.kernel.org, audit@vger.kernel.org
 Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH RFC 7/15] Audit: Call only the first of the audit rule  hooks
-References: <20250621171851.5869-8-casey@schaufler-ca.com>
-In-Reply-To: <20250621171851.5869-8-casey@schaufler-ca.com>
+Subject: Re: [PATCH RFC 9/15] LSM: Add mount opts blob size tracking
+References: <20250621171851.5869-10-casey@schaufler-ca.com>
+In-Reply-To: <20250621171851.5869-10-casey@schaufler-ca.com>
 
 On Jun 21, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
 > 
-> The audit system is not (yet) capable for distinguishing
-> between audit rules specified for multiple security modules.
-> Call only the first registered of the audit rule hooks.
-> The order of registration, which can be specified with the
-> lsm= boot parameter, is hence an important consideration.
+> Add mount option data to the blob size accounting in anticipation
+> of using a shared mnt_opts blob.
 > 
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
->  security/security.c | 30 ++++++++++++++++++++++++++----
->  1 file changed, 26 insertions(+), 4 deletions(-)
-> 
-> diff --git a/security/security.c b/security/security.c
-> index 2286285f8aea..93d4ac39fe9f 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -5056,7 +5056,13 @@ void security_key_post_create_or_update(struct key *keyring, struct key *key,
->  int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule,
->  			     gfp_t gfp)
->  {
-> -	return call_int_hook(audit_rule_init, field, op, rulestr, lsmrule, gfp);
-> +	struct lsm_static_call *scall;
-> +
-> +	lsm_for_each_hook(scall, audit_rule_init) {
-> +		return scall->hl->hook.audit_rule_init(field, op, rulestr,
-> +						       lsmrule, gfp);
-> +	}
-> +	return LSM_RET_DEFAULT(audit_rule_init);
->  }
+>  include/linux/lsm_hooks.h  | 1 +
+>  security/lsm_init.c        | 2 ++
+>  security/selinux/hooks.c   | 1 +
+>  security/smack/smack_lsm.c | 1 +
+>  4 files changed, 5 insertions(+)
 
-Similar to the comments in patch 5/15, what would it look like to do the
-enforcement of this callback restriction at LSM registration time?
+We discussed this patch in a separate patchset, lore link below.
 
->  /**
-> @@ -5070,7 +5076,12 @@ int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule,
->   */
->  int security_audit_rule_known(struct audit_krule *krule)
->  {
-> -	return call_int_hook(audit_rule_known, krule);
-> +	struct lsm_static_call *scall;
-> +
-> +	lsm_for_each_hook(scall, audit_rule_known) {
-> +		return scall->hl->hook.audit_rule_known(krule);
-> +	}
-> +	return LSM_RET_DEFAULT(audit_rule_known);
->  }
->  
->  /**
-> @@ -5082,7 +5093,12 @@ int security_audit_rule_known(struct audit_krule *krule)
->   */
->  void security_audit_rule_free(void *lsmrule)
->  {
-> -	call_void_hook(audit_rule_free, lsmrule);
-> +	struct lsm_static_call *scall;
-> +
-> +	lsm_for_each_hook(scall, audit_rule_free) {
-> +		scall->hl->hook.audit_rule_free(lsmrule);
-> +		return;
-> +	}
->  }
->  
->  /**
-> @@ -5101,7 +5117,13 @@ void security_audit_rule_free(void *lsmrule)
->  int security_audit_rule_match(struct lsm_prop *prop, u32 field, u32 op,
->  			      void *lsmrule)
->  {
-> -	return call_int_hook(audit_rule_match, prop, field, op, lsmrule);
-> +	struct lsm_static_call *scall;
-> +
-> +	lsm_for_each_hook(scall, audit_rule_match) {
-> +		return scall->hl->hook.audit_rule_match(prop, field, op,
-> +							lsmrule);
-> +	}
-> +	return LSM_RET_DEFAULT(audit_rule_match);
->  }
->  #endif /* CONFIG_AUDIT */
->  
-> -- 
-> 2.47.0
+https://lore.kernel.org/linux-security-module/20250925171208.5997-1-casey@schaufler-ca.com/
 
 --
 paul-moore.com
