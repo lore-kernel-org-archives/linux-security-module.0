@@ -1,101 +1,128 @@
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C951494DB
-	for <linux-security-module@vger.kernel.org>; Wed, 15 Oct 2025 15:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7587530103F
+	for <linux-security-module@vger.kernel.org>; Wed, 15 Oct 2025 18:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760540488; cv=none; b=MucpEBtp+HX6grvUuz2Jl3dcitSyf21EQ2QTj0eIrpFsUCL2sID0j91w9TH8yedeM/94Sy2608ZgUV6crTQcLO7hd1l+ivE7O3fSlM+wI5CdZbuECX/WgS6ughAf1vZFHbXLm+EAj6j8P5BU9VG5n0I1vHKAh3b2g+dIaFGuz+A=
+	t=1760551559; cv=none; b=PyOi+dDCgUfk4ijEOGSfRlPG0X2e+yjq4Zq/oJ0EJBACEzXGxyH0o9kxYYepWUDrMzGhszMzLI+8k0g8PBcz6f0twsEiLawg/cDOcV7JClmpjpSEIA4jVyMe7z6sbJqyU5cVUk0HS0p3l910YxMqku1d01O+vzZSSgWvesOwk0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760540488; c=relaxed/simple;
-	bh=G0birDE2q0Wx2ehWlQiiugDzIYDcXtRCTqJYoPObZ4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZHlNCodrQBUV+nUe/Jx4gtXWPUDxk+bdBcDcm40VMzVa+PMYxLdcyvdcXnk23CgephkEBonsLM+V4zmtMte+dFsC38Ppcjpo1aWiMQ0bA+7i99Zx8xBsZ6wldYMouqUb6cPHbJJSIeFQuE0OQaRd8izBPESTmM2OQ+PfZVLFrVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bCf1x0+d; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1760551559; c=relaxed/simple;
+	bh=ozdKul5OP276A3h3Wjm2x2XarpQcUWp1UVCAyeuTdSY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=EY13QlapK3FKUhoa5euOvRGUiGbofUOcgj8rI1Ct69pZ6WHh/25lWa5ZEjOYfj3hOFx2Y3NL/8WDuhdmzsuHDluoqwFeMy+VU3/3jLID1e2Fq3JO6VOd8gjGkHJXXM4nERVu8XWnEnpJu0El9uAlXUfNkguxowOSSLokEe08fAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hiY5QYtE; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bCf1x0+d"
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-79ef9d1805fso1924569b3a.1
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Oct 2025 08:01:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hiY5QYtE"
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2904e9e0ef9so145739735ad.3
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Oct 2025 11:05:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1760540485; x=1761145285; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1V9E4k77kbYnPONFhSm3hUGtMMxA8VoH3u/N9nnK1kU=;
-        b=bCf1x0+dZS1LKiZLKMBTZJHz8U766asMJ4zA+RPmCgYt48vjA84WPlGprazPATQ/1X
-         6XP+Uaq99vQCp8g4H6K/15SMCBPO317+WNqopcFA9U1bfWtY/MMFN8wGyfVBYzVTFt0v
-         TJdnZdwYtz8lKgm0bqxjwlt4Bv4YaX8jO0YHoXgTJnHOGVDKI+0o5x5k4mQY1VV1TwzP
-         1PNudgALqnwX8TfZ85DSqeqRLjov80pnDgDrOwQaPMtmavtDsdBB30c5M9xJ9OOqLxRT
-         mHZqnn3R+dNQd7txAH9m0oTA+MIhj62Xju+9fLH/OhtsQa8WB2kYzEarAAt/uwWjdvBe
-         zN9Q==
+        d=google.com; s=20230601; t=1760551557; x=1761156357; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wj/ujD0eXtGvKYdVuuqLrx+hKA4SG0aPTcTudPvMU20=;
+        b=hiY5QYtEpveuJQ3GbSnBDDXz5b7tFq/FMKy0gFT20cj6giwmL8q4Mh0LFH56veNEYF
+         JGywApRFaF3M3jB/LxzaK5TYG3wiIPdyLA019g7yKN4nOQ5/e10ISsVrWEz7iperQzdV
+         oZX2RznS+iz83f0ymdb26UtOTr0XrQMcNh+WRgQMPZoGpNln5z+dSnS/rPq7YJkZCL7e
+         ClrlWThmjmQQxohicODRYSlyv33ENTwTqHqIBf1A1TBzcuisSBRbNV43V5lJudqs4xYC
+         S0dS5lG8OAygmR+OVmej7Qqp9sS98SLfTWn7dlNyPLpqViCGxu06AKz0VeOR5mKQtyCs
+         eS3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760540485; x=1761145285;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1V9E4k77kbYnPONFhSm3hUGtMMxA8VoH3u/N9nnK1kU=;
-        b=GXjqQgeB0P2Kyx/qmsF91p2SK2U4vbIX5+7KUEty8D3+TykMDyhX8GZr7eVcZJRsVc
-         AboND3wrJ4Qy1xlNBiBgilgXlEeeald89wxkpIjJsj1b08W7q8DMDBmc8DS6hxmFFr7Q
-         6wlqJ6D7FmDpBWNNnI7315DNk68hTiddxqXGPgUve2BTDOomO+a2YE2M7LSZYgEhLa4U
-         liFIuLYgVn3brT8dZiEOyjWGverGbRRzk/6y8dJAV0HbHS7Jhv6DX0hMDlyIorNTI8Ou
-         7A/0KflT8RmuwZ+ODpCoZ7Iv/h7XbDG42+zH0rxAkHsL3bAfz6asTwgbIR+wZNbPwRAj
-         MS/w==
-X-Gm-Message-State: AOJu0Yx8BeAa+zd0jkUzhxgefSZ1ji5UBr1B5w0uXa76oW0xdoXA4erT
-	sz6T1LEtfhGrOHze6SWlRSKgxbFXEXzSq4bBxv8/SgEQdRqSNrpzU91NahSY5hAI6L6pdhuR4NS
-	Ry/8IhUaux9omELAj1IPX973BE0zLF7xWXrS9oPKoT3WPH4Da5O7twg==
-X-Gm-Gg: ASbGnctynG28ewV9cM32AAbamfy5mZfnVy0Utz9GZxWDNJ5BK7qguRqZgkYLqybpQXT
-	L5Ya//wJ/uX2YmAIkaFM5sHOt/AalcY2WRyGEpF1LCyJoJXnOmhK0lLzz2rdj+cr+rd3EQHBkdg
-	ZlPFXWtvCYjxDdkSkX8UuN4c8OO2ieSWdF6wyuljYtIvUqboa4FWGsK5iyQe2KNFuPeIh9p0CZk
-	lShStl/LuimBBNkHwNsI4guZg==
-X-Google-Smtp-Source: AGHT+IEcSJTT3QGJrSGS2V+oktpVD++CsON/DFilv6mx8tFrdhhoGkkVRu2ouCGSDFmp3R6w8HchOl+Ts/xPSzJgOxw=
-X-Received: by 2002:a17:90b:1d87:b0:32e:a54a:be53 with SMTP id
- 98e67ed59e1d1-33b51119064mr41098159a91.16.1760540484938; Wed, 15 Oct 2025
- 08:01:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760551557; x=1761156357;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wj/ujD0eXtGvKYdVuuqLrx+hKA4SG0aPTcTudPvMU20=;
+        b=PxGsA5hNlA/AlOMDe++EznthSbol9/cvCV1IgTvD4rdo3RVvbQMMeoBk/PRp1MbzuY
+         E0S6QrZhHitYpUbinJq9Yxh+czWrK3KrJ0AjlLgF6sPxGJvkvZfHnfcTzOb0EXrhkM4O
+         KLTT7/azmYWryD5cV6HCjHcpGfP02RiM8VVY+x5R8SCzjIKw1pRBmfozXzlj5c9cthIR
+         6zhy6A3oz0hw7QVwu1nBTt38FwJ4bCJytEV/irRxL/4yXhwCX8YYRe9keXE6SpvT/743
+         AZJTf/I8f9BlDunDxWFCfyhG5iVonZZdPkiDFOQ36MI/35Gi0ckvZ5BjmACMKIPWERJ3
+         DqqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrNR4tU10hjvhxiPHMdfj+RF3DY0V4HUopyIzp2bBnaKs8y59d12MRoiGhgWpSu4nkLuXfnTWGuLi8kTJHkQiq8DGSO70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSi2dRHqsvfG/4BZ46fsAsh++jTVHeTrzpdnss6YL3o/zRyjUr
+	ToPb1oIMXkrC6+Lf3g+pFJJY6x6Uspq2fZVe/8/HiKrI5JKoTOvSm+kFHmd3nZaJJ6JjzXPi30q
+	lM2ZQpQ==
+X-Google-Smtp-Source: AGHT+IH/Mc5bux0nHPu+CkauZuwZIYiV046udmQ4p4yB6kgoXdVfplmR64sQJckJg1s2r9B+yaVqVDHEGb8=
+X-Received: from pjrv8.prod.google.com ([2002:a17:90a:bb88:b0:32e:b34b:92eb])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3d05:b0:26e:49e3:55f1
+ with SMTP id d9443c01a7336-29027373d9amr366930845ad.18.1760551555936; Wed, 15
+ Oct 2025 11:05:55 -0700 (PDT)
+Date: Wed, 15 Oct 2025 11:02:44 -0700
+In-Reply-To: <20250827175247.83322-2-shivankg@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250621171851.5869-2-casey@schaufler-ca.com> <846555fc86ec02df31f55935e747a71f@paul-moore.com>
- <1dad4179-d133-41ea-a76c-569a2f92fcbe@schaufler-ca.com>
-In-Reply-To: <1dad4179-d133-41ea-a76c-569a2f92fcbe@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 15 Oct 2025 11:01:12 -0400
-X-Gm-Features: AS18NWB9Oz_3T_T85artY79FMXfBuxAYWejmklwyW2nIclEFcaeckHr4bHl48PI
-Message-ID: <CAHC9VhS1hT0Bvf2qhLxyRGBOrKUfcCZVeWK=eRJWhqaCcX9yMA@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/15] Audit: Create audit_stamp structure
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250827175247.83322-2-shivankg@amd.com>
+X-Mailer: git-send-email 2.51.0.788.g6d19910ace-goog
+Message-ID: <176055105546.1527431.3611256810380818215.b4-ty@google.com>
+Subject: Re: [PATCH kvm-next V11 0/7] Add NUMA mempolicy support for KVM guest-memfd
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, willy@infradead.org, akpm@linux-foundation.org, 
+	david@redhat.com, pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, 
+	Shivank Garg <shivankg@amd.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com, 
+	xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, 
+	josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com, 
+	jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
+	surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com, 
+	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
+	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
+	tabba@google.com, ackerleytng@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, 
+	vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, 
+	michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com, 
+	Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com, 
+	aik@amd.com, kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, 
+	hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
+	rientjes@google.com, roypat@amazon.co.uk, chao.p.peng@intel.com, 
+	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
+	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
+	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
+	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-coco@lists.linux.dev, Jason Gunthorpe <jgg@ziepe.ca>
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Oct 15, 2025 at 1:20=E2=80=AFAM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
-> On 10/14/2025 4:12 PM, Paul Moore wrote:
-> > On Jun 21, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> Replace the timestamp and serial number pair used in audit records
-> >> with a structure containing the two elements.
-> >>
-> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> >> ---
-> >>  kernel/audit.c   | 17 +++++++++--------
-> >>  kernel/audit.h   | 13 +++++++++----
-> >>  kernel/auditsc.c | 22 +++++++++-------------
-> >>  3 files changed, 27 insertions(+), 25 deletions(-)
-> >
-> > Dropped as this patch was merged into Linus' tree during the v6.18
-> > merge window via another patchset.  To be clear, I generally don't have
-> > a problem with multiple patchsets including a few common patches, it
-> > helps prevent cross-dependencies between patchsets which is a good
-> > thing.
->
-> I'm off-grid for the rest of the month. Will respond to these many things
-> upon my return.
+On Wed, 27 Aug 2025 17:52:41 +0000, Shivank Garg wrote:
+> This series introduces NUMA-aware memory placement support for KVM guests
+> with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
+> that enabled host-mapping for guest_memfd memory [1] and can be applied
+> directly applied on KVM tree [2] (branch kvm-next, base commit: a6ad5413,
+> Merge branch 'guest-memfd-mmap' into HEAD)
+> 
+> == Background ==
+> KVM's guest-memfd memory backend currently lacks support for NUMA policy
+> enforcement, causing guest memory allocations to be distributed across host
+> nodes  according to kernel's default behavior, irrespective of any policy
+> specified by the VMM. This limitation arises because conventional userspace
+> NUMA control mechanisms like mbind(2) don't work since the memory isn't
+> directly mapped to userspace when allocations occur.
+> Fuad's work [1] provides the necessary mmap capability, and this series
+> leverages it to enable mbind(2).
+> 
+> [...]
 
-No worries, enjoy your time away and thanks for letting us know.
+Applied the non-KVM change to kvm-x86 gmem.  We're still tweaking and iterating
+on the KVM changes, but I fully expect them to land in 6.19.
 
---=20
-paul-moore.com
+Holler if you object to taking these through the kvm tree.
+
+[1/7] mm/filemap: Add NUMA mempolicy support to filemap_alloc_folio()
+      https://github.com/kvm-x86/linux/commit/601aa29f762f
+[2/7] mm/filemap: Extend __filemap_get_folio() to support NUMA memory policies
+      https://github.com/kvm-x86/linux/commit/2bb25703e5bd
+[3/7] mm/mempolicy: Export memory policy symbols
+      https://github.com/kvm-x86/linux/commit/e1b4cf7d6be3
+
+--
+https://github.com/kvm-x86/linux/tree/next
