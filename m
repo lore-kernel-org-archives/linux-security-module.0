@@ -1,128 +1,377 @@
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7587530103F
-	for <linux-security-module@vger.kernel.org>; Wed, 15 Oct 2025 18:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69231325499
+	for <linux-security-module@vger.kernel.org>; Wed, 15 Oct 2025 19:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760551559; cv=none; b=PyOi+dDCgUfk4ijEOGSfRlPG0X2e+yjq4Zq/oJ0EJBACEzXGxyH0o9kxYYepWUDrMzGhszMzLI+8k0g8PBcz6f0twsEiLawg/cDOcV7JClmpjpSEIA4jVyMe7z6sbJqyU5cVUk0HS0p3l910YxMqku1d01O+vzZSSgWvesOwk0Q=
+	t=1760555242; cv=none; b=JmVJWfg+N9GwtsgCKy5XO1lorYxz5FGcIrd3t5T6uExOMgaHl9o68uTcAox5WVWVjH3zoAlke7FQRvcMYraVUcRDJslBdZVqilLBjEABaQ9N6CTAYombKl7WqdEbnVshIj6yRXjYP3P+6zK987qoZH7xXw7zIp81w40N1u4kSwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760551559; c=relaxed/simple;
-	bh=ozdKul5OP276A3h3Wjm2x2XarpQcUWp1UVCAyeuTdSY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EY13QlapK3FKUhoa5euOvRGUiGbofUOcgj8rI1Ct69pZ6WHh/25lWa5ZEjOYfj3hOFx2Y3NL/8WDuhdmzsuHDluoqwFeMy+VU3/3jLID1e2Fq3JO6VOd8gjGkHJXXM4nERVu8XWnEnpJu0El9uAlXUfNkguxowOSSLokEe08fAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hiY5QYtE; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+	s=arc-20240116; t=1760555242; c=relaxed/simple;
+	bh=+c6YAe6mGL9vreHO47f4KCpcVEOVeXE9PfP84fj2y/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mXcWAjs8wsoTUwF2baKVOyyIy80iUIaztTNBN22E+V2kc9Sor5YCjC+dEHYOlaQg8HzAPQ+Tk/+5fhdPQQw0sbz/vE+DXv7zwDPj3lrm+czkiLutdAYtFNW+JLtf/uTk714KdK7XnkMXSFYU+FaAZ66EyG7nrInVVUirvKBuyeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0ckMwa42; arc=none smtp.client-ip=84.16.66.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hiY5QYtE"
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2904e9e0ef9so145739735ad.3
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Oct 2025 11:05:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760551557; x=1761156357; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wj/ujD0eXtGvKYdVuuqLrx+hKA4SG0aPTcTudPvMU20=;
-        b=hiY5QYtEpveuJQ3GbSnBDDXz5b7tFq/FMKy0gFT20cj6giwmL8q4Mh0LFH56veNEYF
-         JGywApRFaF3M3jB/LxzaK5TYG3wiIPdyLA019g7yKN4nOQ5/e10ISsVrWEz7iperQzdV
-         oZX2RznS+iz83f0ymdb26UtOTr0XrQMcNh+WRgQMPZoGpNln5z+dSnS/rPq7YJkZCL7e
-         ClrlWThmjmQQxohicODRYSlyv33ENTwTqHqIBf1A1TBzcuisSBRbNV43V5lJudqs4xYC
-         S0dS5lG8OAygmR+OVmej7Qqp9sS98SLfTWn7dlNyPLpqViCGxu06AKz0VeOR5mKQtyCs
-         eS3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760551557; x=1761156357;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wj/ujD0eXtGvKYdVuuqLrx+hKA4SG0aPTcTudPvMU20=;
-        b=PxGsA5hNlA/AlOMDe++EznthSbol9/cvCV1IgTvD4rdo3RVvbQMMeoBk/PRp1MbzuY
-         E0S6QrZhHitYpUbinJq9Yxh+czWrK3KrJ0AjlLgF6sPxGJvkvZfHnfcTzOb0EXrhkM4O
-         KLTT7/azmYWryD5cV6HCjHcpGfP02RiM8VVY+x5R8SCzjIKw1pRBmfozXzlj5c9cthIR
-         6zhy6A3oz0hw7QVwu1nBTt38FwJ4bCJytEV/irRxL/4yXhwCX8YYRe9keXE6SpvT/743
-         AZJTf/I8f9BlDunDxWFCfyhG5iVonZZdPkiDFOQ36MI/35Gi0ckvZ5BjmACMKIPWERJ3
-         DqqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrNR4tU10hjvhxiPHMdfj+RF3DY0V4HUopyIzp2bBnaKs8y59d12MRoiGhgWpSu4nkLuXfnTWGuLi8kTJHkQiq8DGSO70=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSi2dRHqsvfG/4BZ46fsAsh++jTVHeTrzpdnss6YL3o/zRyjUr
-	ToPb1oIMXkrC6+Lf3g+pFJJY6x6Uspq2fZVe/8/HiKrI5JKoTOvSm+kFHmd3nZaJJ6JjzXPi30q
-	lM2ZQpQ==
-X-Google-Smtp-Source: AGHT+IH/Mc5bux0nHPu+CkauZuwZIYiV046udmQ4p4yB6kgoXdVfplmR64sQJckJg1s2r9B+yaVqVDHEGb8=
-X-Received: from pjrv8.prod.google.com ([2002:a17:90a:bb88:b0:32e:b34b:92eb])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3d05:b0:26e:49e3:55f1
- with SMTP id d9443c01a7336-29027373d9amr366930845ad.18.1760551555936; Wed, 15
- Oct 2025 11:05:55 -0700 (PDT)
-Date: Wed, 15 Oct 2025 11:02:44 -0700
-In-Reply-To: <20250827175247.83322-2-shivankg@amd.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0ckMwa42"
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cn0vN03NbzQx3;
+	Wed, 15 Oct 2025 21:07:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1760555231;
+	bh=qKurJ9gGEoydVhoRUvxTfxDOya4OPcQQsi6tOBuiSl0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0ckMwa42aayGY/woGmm1PWgn3+MN+ESAFPaVNzWzjXYBRGfIujm8kLYKOkxClIPHf
+	 5K01GMQEG5QwtK7wdwr00uLguhlc+3tZrAtbu6fwIyPxkqPZK4v2+iIpeAmaP1BXRv
+	 MD4TOiNDPRSq0pHLV8ZjiDJxfCnpP0wHLb8VDVrQ=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4cn0vM32j6zRyg;
+	Wed, 15 Oct 2025 21:07:11 +0200 (CEST)
+Date: Wed, 15 Oct 2025 21:07:10 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] landlock: Add a place for flags to layer rules
+Message-ID: <20251015.ohliegae4Phi@digikod.net>
+References: <cover.1759686613.git.m@maowtm.org>
+ <feccc42da1c32b81e07ccd7387564d4bba8a06c1.1759686613.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827175247.83322-2-shivankg@amd.com>
-X-Mailer: git-send-email 2.51.0.788.g6d19910ace-goog
-Message-ID: <176055105546.1527431.3611256810380818215.b4-ty@google.com>
-Subject: Re: [PATCH kvm-next V11 0/7] Add NUMA mempolicy support for KVM guest-memfd
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, willy@infradead.org, akpm@linux-foundation.org, 
-	david@redhat.com, pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, 
-	Shivank Garg <shivankg@amd.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com, 
-	xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, 
-	josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com, 
-	jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-	surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com, 
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
-	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
-	tabba@google.com, ackerleytng@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, 
-	vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, 
-	michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com, 
-	Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com, 
-	aik@amd.com, kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, 
-	hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
-	rientjes@google.com, roypat@amazon.co.uk, chao.p.peng@intel.com, 
-	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
-	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
-	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
-	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
-	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-coco@lists.linux.dev, Jason Gunthorpe <jgg@ziepe.ca>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <feccc42da1c32b81e07ccd7387564d4bba8a06c1.1759686613.git.m@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On Wed, 27 Aug 2025 17:52:41 +0000, Shivank Garg wrote:
-> This series introduces NUMA-aware memory placement support for KVM guests
-> with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
-> that enabled host-mapping for guest_memfd memory [1] and can be applied
-> directly applied on KVM tree [2] (branch kvm-next, base commit: a6ad5413,
-> Merge branch 'guest-memfd-mmap' into HEAD)
+On Sun, Oct 05, 2025 at 06:55:24PM +0100, Tingmao Wang wrote:
+> To avoid unnecessarily increasing the size of struct landlock_layer, we
+> make the layer level a u8 and use the space to store the flags struct.
 > 
-> == Background ==
-> KVM's guest-memfd memory backend currently lacks support for NUMA policy
-> enforcement, causing guest memory allocations to be distributed across host
-> nodes  according to kernel's default behavior, irrespective of any policy
-> specified by the VMM. This limitation arises because conventional userspace
-> NUMA control mechanisms like mbind(2) don't work since the memory isn't
-> directly mapped to userspace when allocations occur.
-> Fuad's work [1] provides the necessary mmap capability, and this series
-> leverages it to enable mbind(2).
+> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> ---
 > 
-> [...]
+> Note: conflict with 9a868cdbe6 ("landlock: Fix handling of disconnected
+> directories") on mic/next but is not hard to fix - need to backup the
+> collected rule flags too.
+> 
+> Changes since v1:
+> - Comment changes
+> 
+>  security/landlock/fs.c      | 75 ++++++++++++++++++++++++-------------
+>  security/landlock/net.c     |  3 +-
+>  security/landlock/ruleset.c |  9 ++++-
+>  security/landlock/ruleset.h | 26 ++++++++++++-
+>  4 files changed, 82 insertions(+), 31 deletions(-)
+> 
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index c04f8879ad03..e7eaf55093e9 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -756,10 +756,12 @@ static bool is_access_to_paths_allowed(
+>  	const struct path *const path,
+>  	const access_mask_t access_request_parent1,
+>  	layer_mask_t (*const layer_masks_parent1)[LANDLOCK_NUM_ACCESS_FS],
+> +	struct collected_rule_flags *const rule_flags_parent1,
+>  	struct landlock_request *const log_request_parent1,
+>  	struct dentry *const dentry_child1,
+>  	const access_mask_t access_request_parent2,
+>  	layer_mask_t (*const layer_masks_parent2)[LANDLOCK_NUM_ACCESS_FS],
+> +	struct collected_rule_flags *const rule_flags_parent2,
+>  	struct landlock_request *const log_request_parent2,
+>  	struct dentry *const dentry_child2)
+>  {
+> @@ -810,22 +812,30 @@ static bool is_access_to_paths_allowed(
+>  	}
+>  
+>  	if (unlikely(dentry_child1)) {
+> +		/*
+> +		 * The rule_flags for child1 should have been included in
+> +		 * rule_flags_masks_parent1 already.  We do not bother about it
 
-Applied the non-KVM change to kvm-x86 gmem.  We're still tweaking and iterating
-on the KVM changes, but I fully expect them to land in 6.19.
+rule_flags_parent1
 
-Holler if you object to taking these through the kvm tree.
+> +		 * for domain check.
 
-[1/7] mm/filemap: Add NUMA mempolicy support to filemap_alloc_folio()
-      https://github.com/kvm-x86/linux/commit/601aa29f762f
-[2/7] mm/filemap: Extend __filemap_get_folio() to support NUMA memory policies
-      https://github.com/kvm-x86/linux/commit/2bb25703e5bd
-[3/7] mm/mempolicy: Export memory policy symbols
-      https://github.com/kvm-x86/linux/commit/e1b4cf7d6be3
+The main point about not setting rule_flags_parent* here and below is
+because the purpose of this few lines is to get the layer masks for the
+potential child dentries and compare them.  Please improve the comment
+with this explanation too.
 
---
-https://github.com/kvm-x86/linux/tree/next
+> +		 */
+>  		landlock_unmask_layers(
+>  			find_rule(domain, dentry_child1),
+>  			landlock_init_layer_masks(
+>  				domain, LANDLOCK_MASK_ACCESS_FS,
+>  				&_layer_masks_child1, LANDLOCK_KEY_INODE),
+> -			&_layer_masks_child1, ARRAY_SIZE(_layer_masks_child1));
+> +			&_layer_masks_child1, ARRAY_SIZE(_layer_masks_child1),
+> +			NULL);
+>  		layer_masks_child1 = &_layer_masks_child1;
+>  		child1_is_directory = d_is_dir(dentry_child1);
+>  	}
+>  	if (unlikely(dentry_child2)) {
+> +		/* See above comment for why NULL is passed as rule_flags_masks */
+>  		landlock_unmask_layers(
+>  			find_rule(domain, dentry_child2),
+>  			landlock_init_layer_masks(
+>  				domain, LANDLOCK_MASK_ACCESS_FS,
+>  				&_layer_masks_child2, LANDLOCK_KEY_INODE),
+> -			&_layer_masks_child2, ARRAY_SIZE(_layer_masks_child2));
+> +			&_layer_masks_child2, ARRAY_SIZE(_layer_masks_child2),
+> +			NULL);
+>  		layer_masks_child2 = &_layer_masks_child2;
+>  		child2_is_directory = d_is_dir(dentry_child2);
+>  	}
+> @@ -881,16 +891,18 @@ static bool is_access_to_paths_allowed(
+>  		}
+>  
+>  		rule = find_rule(domain, walker_path.dentry);
+> -		allowed_parent1 = allowed_parent1 ||
+> -				  landlock_unmask_layers(
+> -					  rule, access_masked_parent1,
+> -					  layer_masks_parent1,
+> -					  ARRAY_SIZE(*layer_masks_parent1));
+> -		allowed_parent2 = allowed_parent2 ||
+> -				  landlock_unmask_layers(
+> -					  rule, access_masked_parent2,
+> -					  layer_masks_parent2,
+> -					  ARRAY_SIZE(*layer_masks_parent2));
+> +		allowed_parent1 =
+> +			allowed_parent1 ||
+> +			landlock_unmask_layers(rule, access_masked_parent1,
+> +					       layer_masks_parent1,
+> +					       ARRAY_SIZE(*layer_masks_parent1),
+> +					       rule_flags_parent1);
+> +		allowed_parent2 =
+> +			allowed_parent2 ||
+> +			landlock_unmask_layers(rule, access_masked_parent2,
+> +					       layer_masks_parent2,
+> +					       ARRAY_SIZE(*layer_masks_parent2),
+> +					       rule_flags_parent2);
+>  
+>  		/* Stops when a rule from each layer grants access. */
+>  		if (allowed_parent1 && allowed_parent2)
+> @@ -958,6 +970,7 @@ static int current_check_access_path(const struct path *const path,
+>  	const struct landlock_cred_security *const subject =
+>  		landlock_get_applicable_subject(current_cred(), masks, NULL);
+>  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+> +	struct collected_rule_flags rule_flags = {};
+
+Why add it after the following variable?
+
+>  	struct landlock_request request = {};
+>  
+>  	if (!subject)
+> @@ -967,8 +980,8 @@ static int current_check_access_path(const struct path *const path,
+>  						   access_request, &layer_masks,
+>  						   LANDLOCK_KEY_INODE);
+>  	if (is_access_to_paths_allowed(subject->domain, path, access_request,
+> -				       &layer_masks, &request, NULL, 0, NULL,
+> -				       NULL, NULL))
+> +				       &layer_masks, &rule_flags, &request,
+> +				       NULL, 0, NULL, NULL, NULL, NULL))
+>  		return 0;
+>  
+>  	landlock_log_denial(subject, &request);
+> @@ -1032,7 +1045,8 @@ static access_mask_t maybe_remove(const struct dentry *const dentry)
+>  static bool collect_domain_accesses(
+>  	const struct landlock_ruleset *const domain,
+>  	const struct dentry *const mnt_root, struct dentry *dir,
+> -	layer_mask_t (*const layer_masks_dom)[LANDLOCK_NUM_ACCESS_FS])
+> +	layer_mask_t (*const layer_masks_dom)[LANDLOCK_NUM_ACCESS_FS],
+> +	struct collected_rule_flags *const rule_flags)
+>  {
+>  	unsigned long access_dom;
+>  	bool ret = false;
+> @@ -1051,9 +1065,9 @@ static bool collect_domain_accesses(
+>  		struct dentry *parent_dentry;
+>  
+>  		/* Gets all layers allowing all domain accesses. */
+> -		if (landlock_unmask_layers(find_rule(domain, dir), access_dom,
+> -					   layer_masks_dom,
+> -					   ARRAY_SIZE(*layer_masks_dom))) {
+> +		if (landlock_unmask_layers(
+> +			    find_rule(domain, dir), access_dom, layer_masks_dom,
+> +			    ARRAY_SIZE(*layer_masks_dom), rule_flags)) {
+>  			/*
+>  			 * Stops when all handled accesses are allowed by at
+>  			 * least one rule in each layer.
+> @@ -1140,6 +1154,8 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+>  	struct dentry *old_parent;
+>  	layer_mask_t layer_masks_parent1[LANDLOCK_NUM_ACCESS_FS] = {},
+>  		     layer_masks_parent2[LANDLOCK_NUM_ACCESS_FS] = {};
+> +	struct collected_rule_flags rule_flags_parent1 = {},
+> +				    rule_flags_parent2 = {};
+>  	struct landlock_request request1 = {}, request2 = {};
+>  
+>  	if (!subject)
+> @@ -1172,10 +1188,10 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+>  			subject->domain,
+>  			access_request_parent1 | access_request_parent2,
+>  			&layer_masks_parent1, LANDLOCK_KEY_INODE);
+> -		if (is_access_to_paths_allowed(subject->domain, new_dir,
+> -					       access_request_parent1,
+> -					       &layer_masks_parent1, &request1,
+> -					       NULL, 0, NULL, NULL, NULL))
+> +		if (is_access_to_paths_allowed(
+> +			    subject->domain, new_dir, access_request_parent1,
+> +			    &layer_masks_parent1, &rule_flags_parent1,
+> +			    &request1, NULL, 0, NULL, NULL, NULL, NULL))
+>  			return 0;
+>  
+>  		landlock_log_denial(subject, &request1);
+> @@ -1201,10 +1217,12 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+>  	/* new_dir->dentry is equal to new_dentry->d_parent */
+>  	allow_parent1 = collect_domain_accesses(subject->domain, mnt_dir.dentry,
+>  						old_parent,
+> -						&layer_masks_parent1);
+> +						&layer_masks_parent1,
+> +						&rule_flags_parent1);
+>  	allow_parent2 = collect_domain_accesses(subject->domain, mnt_dir.dentry,
+>  						new_dir->dentry,
+> -						&layer_masks_parent2);
+> +						&layer_masks_parent2,
+> +						&rule_flags_parent2);
+>  
+>  	if (allow_parent1 && allow_parent2)
+>  		return 0;
+> @@ -1217,8 +1235,9 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+>  	 */
+>  	if (is_access_to_paths_allowed(
+>  		    subject->domain, &mnt_dir, access_request_parent1,
+> -		    &layer_masks_parent1, &request1, old_dentry,
+> -		    access_request_parent2, &layer_masks_parent2, &request2,
+> +		    &layer_masks_parent1, &rule_flags_parent1, &request1,
+> +		    old_dentry, access_request_parent2, &layer_masks_parent2,
+> +		    &rule_flags_parent2, &request2,
+>  		    exchange ? new_dentry : NULL))
+>  		return 0;
+>  
+> @@ -1616,6 +1635,7 @@ static bool is_device(const struct file *const file)
+>  static int hook_file_open(struct file *const file)
+>  {
+>  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+> +	struct collected_rule_flags rule_flags = {};
+
+Ditto, please move after the other local variables.
+
+>  	access_mask_t open_access_request, full_access_request, allowed_access,
+>  		optional_access;
+>  	const struct landlock_cred_security *const subject =
+> @@ -1647,7 +1667,8 @@ static int hook_file_open(struct file *const file)
+>  		    landlock_init_layer_masks(subject->domain,
+>  					      full_access_request, &layer_masks,
+>  					      LANDLOCK_KEY_INODE),
+> -		    &layer_masks, &request, NULL, 0, NULL, NULL, NULL)) {
+> +		    &layer_masks, &rule_flags, &request, NULL, 0, NULL, NULL,
+> +		    NULL, NULL)) {
+>  		allowed_access = full_access_request;
+>  	} else {
+>  		unsigned long access_bit;
+> diff --git a/security/landlock/net.c b/security/landlock/net.c
+> index 1f3915a90a80..fc6369dffa51 100644
+> --- a/security/landlock/net.c
+> +++ b/security/landlock/net.c
+> @@ -48,6 +48,7 @@ static int current_check_access_socket(struct socket *const sock,
+>  {
+>  	__be16 port;
+>  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_NET] = {};
+> +	struct collected_rule_flags rule_flags = {};
+>  	const struct landlock_rule *rule;
+>  	struct landlock_id id = {
+>  		.type = LANDLOCK_KEY_NET_PORT,
+> @@ -179,7 +180,7 @@ static int current_check_access_socket(struct socket *const sock,
+>  						   access_request, &layer_masks,
+>  						   LANDLOCK_KEY_NET_PORT);
+>  	if (landlock_unmask_layers(rule, access_request, &layer_masks,
+> -				   ARRAY_SIZE(layer_masks)))
+> +				   ARRAY_SIZE(layer_masks), &rule_flags))
+>  		return 0;
+>  
+>  	audit_net.family = address->sa_family;
+> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> index ce7940efea51..3aa4e33ac95b 100644
+> --- a/security/landlock/ruleset.c
+> +++ b/security/landlock/ruleset.c
+> @@ -616,7 +616,8 @@ landlock_find_rule(const struct landlock_ruleset *const ruleset,
+>  bool landlock_unmask_layers(const struct landlock_rule *const rule,
+>  			    const access_mask_t access_request,
+>  			    layer_mask_t (*const layer_masks)[],
+> -			    const size_t masks_array_size)
+> +			    const size_t masks_array_size,
+> +			    struct collected_rule_flags *const rule_flags)
+>  {
+>  	size_t layer_level;
+>  
+> @@ -643,6 +644,12 @@ bool landlock_unmask_layers(const struct landlock_rule *const rule,
+>  		unsigned long access_bit;
+>  		bool is_empty;
+>  
+> +		if (rule_flags) {
+> +			/* Collect rule flags for each layer */
+> +			if (layer->flags.quiet)
+> +				rule_flags->quiet_masks |= layer_bit;
+> +		}
+> +
+>  		/*
+>  		 * Records in @layer_masks which layer grants access to each
+>  		 * requested access.
+> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> index 5da9a64f5af7..eeee287a9508 100644
+> --- a/security/landlock/ruleset.h
+> +++ b/security/landlock/ruleset.h
+> @@ -29,7 +29,18 @@ struct landlock_layer {
+>  	/**
+>  	 * @level: Position of this layer in the layer stack.
+>  	 */
+> -	u16 level;
+> +	u8 level;
+> +	/**
+> +	 * @flags: Bitfield for special flags attached to this rule.
+> +	 */
+> +	struct {
+> +		/**
+> +		 * @quiet: Suppresses denial audit logs for the object covered by
+> +		 * this rule in this domain.  For filesystem rules, this inherits
+> +		 * down the file hierarchy.
+> +		 */
+> +		bool quiet:1;
+> +	} flags;
+>  	/**
+>  	 * @access: Bitfield of allowed actions on the kernel object.  They are
+>  	 * relative to the object type (e.g. %LANDLOCK_ACTION_FS_READ).
+> @@ -37,6 +48,16 @@ struct landlock_layer {
+>  	access_mask_t access;
+>  };
+>  
+> +/**
+> + * struct collected_rule_flags - Hold accumulated flags for each layer
+> + */
+> +struct collected_rule_flags {
+> +	/**
+> +	 * @quiet_masks: Layers for which the quiet flag is effective.
+> +	 */
+> +	layer_mask_t quiet_masks;
+> +};
+> +
+>  /**
+>   * union landlock_key - Key of a ruleset's red-black tree
+>   */
+> @@ -304,7 +325,8 @@ landlock_get_scope_mask(const struct landlock_ruleset *const ruleset,
+>  bool landlock_unmask_layers(const struct landlock_rule *const rule,
+>  			    const access_mask_t access_request,
+>  			    layer_mask_t (*const layer_masks)[],
+> -			    const size_t masks_array_size);
+> +			    const size_t masks_array_size,
+> +			    struct collected_rule_flags *const rule_flags);
+>  
+>  access_mask_t
+>  landlock_init_layer_masks(const struct landlock_ruleset *const domain,
+> -- 
+> 2.51.0
+> 
