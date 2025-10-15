@@ -1,179 +1,164 @@
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC461624D5
-	for <linux-security-module@vger.kernel.org>; Wed, 15 Oct 2025 19:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A8227A461
+	for <linux-security-module@vger.kernel.org>; Wed, 15 Oct 2025 21:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760555756; cv=none; b=X5iu5ZgZPKpCUzmKzKiuYjLbADJiN3/LssAcB9RCztJcDKkdmyv9zJqk0jaY/wx47O8ejTjgufxWkJ76RXEaqP2t4ZAtJd/nfdI/EjJyL0pnY7pYT5tGQqQOa+3tuwROeFr8OzcPUuf8DXBfFkEsR2LbuCTp9m5zpjpaBMVjSRA=
+	t=1760564764; cv=none; b=aSaTT7OQC8KzPoH39/1KJHwB1VH+tcMSPwzcqJcpBQwq0eJtdaiO9RsWCf0VisvT+lfQpbgELGSuI4Bs3Y1qTzlWD49K8W+u5qJbd9+F5VrchV351nX6zmEcS9GiUCdpGTtvQeRF+RxWBtr3JFUbLvCS1Q0KxUYAo3IaHL3I2uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760555756; c=relaxed/simple;
-	bh=y+vg5TaQbM79SI9CONaFDZmnaifPeFmDvk0wvPMVM64=;
+	s=arc-20240116; t=1760564764; c=relaxed/simple;
+	bh=4aIc9dx+BqTIrEkxhdIkDUsdv2I7S3jqyih5WAzO4pU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kxkMWSdjGVjRjiAuApB4qZ6LU9JdPELszyDV69IoIUijn/QMH1vsly5wW/nkzvSLTEoopIuH6ANi5u5ATecz37w8SR1Z/AqDbtt83TmaiiWbXmIku7YumvsrqgJdXtq28SWMGeZGkaY/jKqGQ5NaEmMqCB6udLx7mjLqUsI2aqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=e/cYM99+; arc=none smtp.client-ip=185.125.25.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=mjiSjWey9r1XdwHYijncmzX0+8FcKQKbUQvEcSEUplf5Gesibwiz7MCCT3qYMC/0dM0NuZ/BDRGGbyeWvgpgM4ChoQOw9AsqbsMftyRhCUC4qQ9M9lrZ36PCf2CgJ1WFsNgZ49MOuqCgHnHAg3jUTNjJO+zY5h3j9s1qSuEFByk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=SO/erE3w; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="e/cYM99+"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cn0v12nKTzSJS;
-	Wed, 15 Oct 2025 21:06:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1760555213;
-	bh=C0f/xsFRAwWXnuN++o6H1vHIvfYxXQWcQGBhNInl0Hc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e/cYM99+mnyqW9vk0S+ppqrohMIf+MIKmiB19c+4EBq9nDbJxTZGJghpEJZPTeuhe
-	 SVTflFf1Jxg88Cx6XGABfLuw7X3RL/tRbOxJxrGLaZWHKU/KK8ME/1DWvyAmXJbRGb
-	 qx81cUmYW7Rsd+Y8SzYJQTgrrDsJqQA+iYLoMV+8=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4cn0v05w5MzSXv;
-	Wed, 15 Oct 2025 21:06:52 +0200 (CEST)
-Date: Wed, 15 Oct 2025 21:06:49 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Implement LANDLOCK_ADD_RULE_QUIET
-Message-ID: <20251015.Gaim1tieCesi@digikod.net>
-References: <cover.1759686613.git.m@maowtm.org>
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="SO/erE3w"
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-85ed0a1b35dso5189285a.2
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Oct 2025 14:46:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1760564762; x=1761169562; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L3FMg1FEv7ZUbFziIBjfrlMH5r4d6/IdcxKlJL9nOzQ=;
+        b=SO/erE3wHFHNuhgXeAZMBhu+vRvj7I6znm+CPL4BUW4goPdcy4g1QHzQL69WLJ2s8q
+         E9XIlB5UDV6XaLXR+adHFPpFzFQAPnRiZz6c1pVa3Vsf+/ObMAds6HiemfQpTm77nYiX
+         I6v+DY9WOXM1LxV1Fv/BRfRPH1bdCqOMm+9RClKU2i2IGD4sGuWvM/C120Vfy9E5poDt
+         k+j7Bgbt+84RvIqxSqPtJtsBhEKo8Y+qfc05eLBmKC6Etw8GH5T2DQp1zPzMIAxWDB06
+         +L7Y9jibEw/rFQ+iPZIo5d0xG27yM1nM0UtT98rjkS1AB30KI0SO5nAuyvgshUiJahfv
+         QRCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760564762; x=1761169562;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L3FMg1FEv7ZUbFziIBjfrlMH5r4d6/IdcxKlJL9nOzQ=;
+        b=cxbieqVNFsrL6uHZ+EMTJTv8d6nzgvjRE9ITOv9NgqyvG3l3OMm1tsow37+kMGIp5D
+         84J/OIisSuSSI508RsDvV2DE6s/NdUjuERGTkvhyQx0/5eZsgSvtBxLFg5S0I0t2QXL2
+         ucrKaNyN1IYR8Lw1uBWG4aepLumvNKhLwk8OgYlGc2tMFbEMGXnIBSbSWwNDd+ucTCsx
+         pBzzT+FAEZUM/q49lcJeOQ2H0f8wFJVMBcNWfx1ABgkipAzT5IRgRo3PPXfDOrmekj8s
+         jP6vIRDWqLYDyeAY77vI+Yrl6fDreFaTJcnI87WATX7iFRnt/eJPGv4s1WiTJ17AThRx
+         6ZFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXn7CyGOrtbGFaGWkfvG3qnLGL1Yj3qyvdLd+XgHEYx61TTcek/2pTMZxhdavG+HK4dINbw9QsB/a/gQJw5UISHfg+jquU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxixxdcmr5mNSQ4eFmpRrgqpgKT0sqZHTs9ZsQ2bBsyxSFahX/y
+	Rb4qIru5d9Z5yy2ZTlL8iUT3S4AvenRuTwIB+uKWk7Ycq5t7YGaxX46MsL2BkErqWfU=
+X-Gm-Gg: ASbGnct1Sk8nxOqJm5r/g5QpwJ6ekIoF3OHC4hkA2tDydBnJLv+sl72ngmGQxIrwV4E
+	dbpCZ3L3scYqyfdowyKgvDgZTzSN9UEsIJzcsRtq08MAs26qch/BSg0pHJGHNVAKIp1lc/KpzRk
+	tJGdD5wE55o8t4iL66/vIUCUv8SDy67jdxDdpAOnI19L4ATMO+3mF2nTbuko6s51cuW2qoXcfLC
+	yIRlnxBzzxvFEBk2v3qrGpIDvfxssGJWggnoXwME7+h3s3wP0I2774m7yzLwP1hbCIpCFP/nhOM
+	AM6cXsBpeTn43NvDozhyKFahR52cNXdU1f+meGvpefP4ueN9gyw2bLO7LOMUIOcCiWf8CxqF/8W
+	MSmW/RxGPorgmxB8KefBL1vHG44BqhYC5FJneilg5I26rIijLYlt7zEm2XLJVgImrVIG3wDboBz
+	3cCZ5cyVeyz5ne0Y5auyx2mfPDmLj/drae+pzmMNSTSuu4G3rnF7obFBv5sH77jsDlOqxFjg==
+X-Google-Smtp-Source: AGHT+IGFaJmIXEF9qOWREfnISohaPtcOawCiX32gOo0axLN0cRb3DCKNrFn66v9UE7KAPGfO0N4wTQ==
+X-Received: by 2002:a05:620a:1a02:b0:88e:86a3:98f1 with SMTP id af79cd13be357-88e86a39b78mr380325385a.45.1760564761659;
+        Wed, 15 Oct 2025 14:46:01 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-88f37e50ebasm56360985a.31.2025.10.15.14.45.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 14:46:00 -0700 (PDT)
+Date: Wed, 15 Oct 2025 17:45:57 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Shivank Garg <shivankg@amd.com>, jgowans@amazon.com, mhocko@suse.com,
+	jack@suse.cz, kvm@vger.kernel.org, david@redhat.com,
+	linux-btrfs@vger.kernel.org, aik@amd.com, papaluri@amd.com,
+	kalyazin@amazon.com, peterx@redhat.com, linux-mm@kvack.org,
+	clm@fb.com, ddutile@redhat.com, linux-kselftest@vger.kernel.org,
+	shdhiman@amd.com, gshan@redhat.com, ying.huang@linux.alibaba.com,
+	shuah@kernel.org, roypat@amazon.co.uk, matthew.brost@intel.com,
+	linux-coco@lists.linux.dev, zbestahu@gmail.com,
+	lorenzo.stoakes@oracle.com, linux-bcachefs@vger.kernel.org,
+	ira.weiny@intel.com, dhavale@google.com, jmorris@namei.org,
+	willy@infradead.org, hch@infradead.org, chao.gao@intel.com,
+	tabba@google.com, ziy@nvidia.com, rientjes@google.com,
+	yuzhao@google.com, xiang@kernel.org, nikunj@amd.com,
+	serge@hallyn.com, amit@infradead.org, thomas.lendacky@amd.com,
+	ashish.kalra@amd.com, chao.p.peng@intel.com, yan.y.zhao@intel.com,
+	byungchul@sk.com, michael.day@amd.com, Neeraj.Upadhyay@amd.com,
+	michael.roth@amd.com, bfoster@redhat.com, bharata@amd.com,
+	josef@toxicpanda.com, Liam.Howlett@oracle.com,
+	ackerleytng@google.com, dsterba@suse.com, viro@zeniv.linux.org.uk,
+	jefflexu@linux.alibaba.com, jaegeuk@kernel.org,
+	dan.j.williams@intel.com, surenb@google.com, vbabka@suse.cz,
+	paul@paul-moore.com, joshua.hahnjy@gmail.com, apopple@nvidia.com,
+	brauner@kernel.org, quic_eberman@quicinc.com, rakie.kim@sk.com,
+	cgzones@googlemail.com, pvorel@suse.cz,
+	linux-erofs@lists.ozlabs.org, kent.overstreet@linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net, pankaj.gupta@amd.com,
+	linux-security-module@vger.kernel.org, lihongbo22@huawei.com,
+	linux-fsdevel@vger.kernel.org, pbonzini@redhat.com,
+	akpm@linux-foundation.org, vannapurve@google.com,
+	suzuki.poulose@arm.com, rppt@kernel.org, jgg@nvidia.com
+Subject: Re: [f2fs-dev] [PATCH kvm-next V11 6/7] KVM: guest_memfd: Enforce
+ NUMA mempolicy using shared policy
+Message-ID: <aPAWFQyFLK4EKWVK@gourry-fedora-PF4VCD3F>
+References: <20250827175247.83322-2-shivankg@amd.com>
+ <20250827175247.83322-9-shivankg@amd.com>
+ <aNVQJqYLX17v-fsf@google.com>
+ <aNbrO7A7fSjb4W84@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1759686613.git.m@maowtm.org>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <aNbrO7A7fSjb4W84@google.com>
 
-This patch series is not simple but really good, thanks!  I mostly have
-nicking comments.  I'm looking forward the kselftests.
+On Fri, Sep 26, 2025 at 12:36:27PM -0700, Sean Christopherson via Linux-f2fs-devel wrote:
+> > 
+> > static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
+> > 					     unsigned long addr, pgoff_t *pgoff)
+> > {
+> > 	*pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
+> > 
+> > 	return __kvm_gmem_get_policy(GMEM_I(file_inode(vma->vm_file)), *pgoff);
+> 
+> Argh!!!!!  This breaks the selftest because do_get_mempolicy() very specifically
+> falls back to the default_policy, NOT to the current task's policy.  That is
+> *exactly* the type of subtle detail that needs to be commented, because there's
+> no way some random KVM developer is going to know that returning NULL here is
+> important with respect to get_mempolicy() ABI.
+> 
 
-On Sun, Oct 05, 2025 at 06:55:23PM +0100, Tingmao Wang wrote:
-> Hi,
-> 
-> This is the v2 of the "quiet flag" series, implementing the feature as
-> proposed in [1].
-> 
-> v1: https://lore.kernel.org/all/cover.1757376311.git.m@maowtm.org/
-> 
-> The quiet flag allows a sandboxer to suppress audit logs for uninteresting
-> denials.  The flag can be set on objects and inherits downward in the
-> filesystem hierarchy.  On a denial, the youngest denying layer's quiet
-> flag setting decides whether to audit.  The motivation for this feature is
-> to reduce audit noise, and also prepare for a future supervisor feature
-> which will use this bit to suppress supervisor notifications.
-> 
-> In this version, the most significant change is that we now have a quiet
-> access mask in the ruleset_attr, which gets eventually stored in the
-> hierarchy. This allows the user to specify which access should be affected
-> by quiet bits.  One can then, for example, make it such that read accesses
-> to certain files are not audited (but still denied), but all writes are
-> still audited, regardless of location.
-> 
-> This version also implements quiet support for optional accesses (truncate
-> and ioctl), scope denials (signal, abstract unix socket), addresses
-> suggestions from v1 review, and further enhances sandboxer to allow full
-> customization of which access to quiet.  Network and scope access quieting
-> are now also supported by the sandboxer via additional environment
-> variables.
-> 
-> I still haven't added any selftests yet but did some testing with
-> sandboxer.  I would like this to be reviewed as it stands, before
-> finishing up the tests which I will hopefully add in v3.
-> 
-> Patches removed since v1:
-> - landlock/access: Improve explanation on the deny_masks_t
-> 
-> Demo:
-> 
->     /# LL_FS_RO=/usr LL_FS_RW= LL_FORCE_LOG=1 LL_FS_QUIET=/dev:/tmp:/etc LL_FS_QUIET_ACCESS=r ./sandboxer bash
->     ...
->     audit: type=1423 audit(1759680175.562:195): domain=15bb25f6b blockers=fs.write_file,fs.read_file path="/dev/tty" dev="devtmpfs" ino=11
->     ^^^^^^^^
->     # note: because write is not quieted, we see the above line. blockers
->     # contains read as well since that's the originally requested access.
->     audit: type=1424 audit(1759680175.562:195): domain=15bb25f6b status=allocated mode=enforcing pid=616 uid=0 exe="/sandboxer" comm="sandboxer"
->     audit: type=1300 audit(1759680175.562:195): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c86113d1 a2=802 a3=0 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
->     audit: type=1327 audit(1759680175.562:195): proctitle="bash"
->     bash: cannot set terminal process group (605): Inappropriate ioctl for device
->     bash: no job control in this shell
->     bash: /etc/bash.bashrc: Permission denied
->     audit: type=1423 audit(1759680175.570:196): domain=15bb25f6b blockers=fs.read_file path="/.bash_history" dev="virtiofs" ino=36963
->     ^^^^^^^^
->     # read outside /dev:/tmp:/etc - not quieted
->     audit: type=1300 audit(1759680175.570:196): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c868e400 a2=0 a3=0 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
->     audit: type=1327 audit(1759680175.570:196): proctitle="bash"
->     audit: type=1423 audit(1759680175.570:197): domain=15bb25f6b blockers=fs.read_file path="/.bash_history" dev="virtiofs" ino=36963
->     audit: type=1300 audit(1759680175.570:197): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c868e400 a2=0 a3=0 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
->     audit: type=1327 audit(1759680175.570:197): proctitle="bash"
-> 
->     bash-5.2# head /etc/passwd
->     head: cannot open '/etc/passwd' for reading: Permission denied
->     ^^^^^^^^
->     # reads to /etc are quieted
-> 
->     bash-5.2# echo evil >> /etc/passwd
->     bash: /etc/passwd: Permission denied
->     audit: type=1423 audit(1759680227.030:198): domain=15bb25f6b blockers=fs.write_file path="/etc/passwd" dev="virtiofs" ino=790
->     ^^^^^^^^
->     # writes are not quieted
->     audit: type=1300 audit(1759680227.030:198): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c86ab030 a2=441 a3=1b6 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
->     audit: type=1327 audit(1759680227.030:198): proctitle="bash"
-> 
-> Design:
-> 
-> - The user can set the quiet flag for a layer on any part of the fs
->   hierarchy (whether it allows any access on it or not), and the flag
->   inherits down (no support for "cancelling" the inheritance of the flag
->   in specific subdirectories).
-> 
-> - The youngest layer that denies a request gets to decide whether the
->   denial is audited or not.  This means that a compromised binary, for
->   example, cannot "turn off" Landlock auditing when it tries to access
->   files, unless it denies access to the files itself.  There is some
->   debate to be had on whether, if a parent layer sets the quiet flag, but
->   the request is denied by a deeper layer, whether Landlock should still
->   audit anyway (since the rule author of the child layer likely did not
->   expect the denial, so it would be good diagnostic).  The current
->   approach is to ignore the quiet on the parent layer and audit anyway.
-> 
-> All existing kselftests pass.
-> 
-> [1]: https://github.com/landlock-lsm/linux/issues/44#issuecomment-2876500918
-> 
-> Kind regards,
-> Tingmao
-> 
-> Tingmao Wang (6):
->   landlock: Add a place for flags to layer rules
->   landlock: Add API support and docs for the quiet flags
->   landlock/audit: Check for quiet flag in landlock_log_denial
->   landlock/audit: Fix wrong type usage
->   samples/landlock: Add quiet flag support to sandboxer
->   Implement quiet for optional accesses
-> 
->  include/uapi/linux/landlock.h                |  64 +++++++++
->  samples/landlock/sandboxer.c                 | 133 +++++++++++++++++--
->  security/landlock/audit.c                    | 113 +++++++++++++---
->  security/landlock/audit.h                    |   4 +-
->  security/landlock/domain.c                   |  23 ++++
->  security/landlock/domain.h                   |  10 ++
->  security/landlock/fs.c                       | 103 ++++++++------
->  security/landlock/fs.h                       |  36 +++--
->  security/landlock/net.c                      |  11 +-
->  security/landlock/net.h                      |   3 +-
->  security/landlock/ruleset.c                  |  19 ++-
->  security/landlock/ruleset.h                  |  39 +++++-
->  security/landlock/syscalls.c                 |  72 +++++++---
->  security/landlock/task.c                     |  12 +-
->  tools/testing/selftests/landlock/base_test.c |   4 +-
->  15 files changed, 538 insertions(+), 108 deletions(-)
-> 
-> 
-> base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
-> -- 
-> 2.51.0
-> 
-> 
+Do_get_mempolicy was designed to be accessed by the syscall, not as an in-kernel ABI.
+
+get_task_policy also returns the default policy if there's nothing
+there, because that's what applies.
+
+I have dangerous questions:
+
+why is __kvm_gmem_get_policy using
+	mpol_shared_policy_lookup()
+instead of
+	get_vma_policy()
+
+get_vma_policy does this all for you
+
+struct mempolicy *get_vma_policy(struct vm_area_struct *vma,
+                                 unsigned long addr, int order, pgoff_t *ilx)
+{
+        struct mempolicy *pol;
+
+        pol = __get_vma_policy(vma, addr, ilx);
+        if (!pol)
+                pol = get_task_policy(current);
+        if (pol->mode == MPOL_INTERLEAVE ||
+            pol->mode == MPOL_WEIGHTED_INTERLEAVE) {
+                *ilx += vma->vm_pgoff >> order;
+                *ilx += (addr - vma->vm_start) >> (PAGE_SHIFT + order);
+        }
+        return pol;
+}
+
+Of course you still have the same issue: get_task_policy will return the
+default, because that's what applies.
+
+do_get_mempolicy just seems like the completely incorrect interface to
+be using here.
+
+~Gregory
