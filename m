@@ -1,316 +1,148 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C5C2FFF89;
-	Fri, 17 Oct 2025 17:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369B730596D
+	for <linux-security-module@vger.kernel.org>; Fri, 17 Oct 2025 18:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760723442; cv=none; b=W7GLe554XV53GSTyEHDAraLqBlimPMnzPpS/Vgy5L37ypjyLbWazcpby5hFGR8QZm0z3GtuWMFXApSKFqRzRNAbCygXVb7NHtLvkxusF8dimNdmG4AUP0rF9DCv/aW96PRZaHLOlirgA6iLmXLGLMUb0kLheOyxngPSTxJUMJT4=
+	t=1760724205; cv=none; b=Gk5oMXz0a0tCun87XTUomsKA3999D5N4KFq/SRUIKZMalM4gIanuMXTtHDJn2IK7qUcchXnPinHTJu27n8W4EIeuw2Xdgde2Pr+n4C57GfzzL8DCpFLgQNn2uXgQlZl/Xj+GRLe/5BltV4BNwUD57f856K0XTCROtYdnj4Tflvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760723442; c=relaxed/simple;
-	bh=H4v+J2vr1k8P5MVZuxRLmPaHX76Kp9nogLrI0kRIThw=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=m0eXGoKn7Vm/SXs3phl3qOWYMzsK16cuBqof9BXsXB/4dDe8ycRb3SLxK8i4hN6urPk6bgOTXGN2P1FVbfJmAm4f+WM3x3MOCciBXZecEOXFNKJg/MiuNyBypbhf3b64Of1ZcCXtGkoWDqg2WsxlHwrzroPhXCUUcGv4ASnI02I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=m3EWAfgn; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1760724205; c=relaxed/simple;
+	bh=hrY6WFUlSMAp+P2NK3uStCwS/x9y5KC5Ht/lCDtODdo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uOASjeti2eacL/wDqNW5s+Bw8OuH5VRLJyrMgwrQyFKekKn1SDJq0G7ZQYjvGVoulk7kbsGqWHJa1DF7kgrT0BC519lWWV0mfjW4CTH/KSLL/PRkA7FcOpyapCKjiKLtFpoag4p2UOQNKPgHQmb2WFjp7zAg2kTCriWzifAG9W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WP0zGgla; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="m3EWAfgn"
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59HAMW2c021074;
-	Fri, 17 Oct 2025 17:50:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ZUYslV
-	E9NtS8Zj7gTmakZPJadn5EsDRyOgc6VGfTm+0=; b=m3EWAfgnzMZd9yStrkUIjH
-	nPwhon1qzYFzQjIMTNHoodtDg1nRM1pg0kDvlClDCH8+cCBO7FtEU/Nzt4qEuXaD
-	mkwAxfHQ+SPqdecbSOccdWPBubkpHho07pBAk/p/E5I0ENPY4rvE4cOaJeL0aFoW
-	HLpVZZh22KkiselH2H6dwNSBtMrllXlL6+BP6MI+PFViTK1l4euD86Bssj/5YBy2
-	oURtoX4J+UbPTHOK2dco3SkkXE9DEGhzwFgBUG9eQp5pLSrvmhTio+dtiAHvxLjf
-	Edr/AUzYCq8yY12VV+D/I1iZtRze/WITZSRyP/Qzv56NRSu8F28xJCF/JbrE0g9A
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qew0jrgv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 Oct 2025 17:50:01 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59HHe3KL023113;
-	Fri, 17 Oct 2025 17:50:01 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qew0jrgq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 Oct 2025 17:50:00 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59HFCeCi016996;
-	Fri, 17 Oct 2025 17:50:00 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49r32kekgx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 Oct 2025 17:50:00 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59HHo0Wt51642754
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 17 Oct 2025 17:50:00 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DEA7758045;
-	Fri, 17 Oct 2025 17:49:59 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8D97058052;
-	Fri, 17 Oct 2025 17:49:58 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.50.185])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 17 Oct 2025 17:49:58 +0000 (GMT)
-Message-ID: <27bb0c218084f51eba07f041d0fffea8971865b9.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: Fall back to default kernel module signature
- verification
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: linux-integrity@vger.kernel.org,
-        Dmitry Torokhov
- <dmitry.torokhov@gmail.com>,
-        Karel Srot <ksrot@redhat.com>,
-        Roberto Sassu
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin	 <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"	 <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM"	 <linux-security-module@vger.kernel.org>,
-        open list	 <linux-kernel@vger.kernel.org>
-In-Reply-To: <5bzredottmp2tdm3uebzjfqjr6c7bwssqkrbdqvudruvzr764e@37j6ycjci2sk>
-References: <20250928030358.3873311-1-coxu@redhat.com>
-	 <896f4fb0c0146512a66daf0b4c1e033aca4bd6d4.camel@linux.ibm.com>
-	 <bcd1f7b48311aff55711cdff4a6cdbb72aae1d04.camel@linux.ibm.com>
-	 <xq7bgyg63xlbogcik2we26yr5uf62f6kj3qn7ooljmqaoccrix@kkmuhza5cfdr>
-	 <9d279fd3d7b3cbb2778183ec777d6b9da8a64b82.camel@linux.ibm.com>
-	 <5bzredottmp2tdm3uebzjfqjr6c7bwssqkrbdqvudruvzr764e@37j6ycjci2sk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 17 Oct 2025 13:49:58 -0400
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WP0zGgla"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-471131d6121so17675355e9.1
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Oct 2025 11:03:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760724201; x=1761329001; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6phIhVu+wctHAFPzvMGU++tpun4uAfFHZM4+TynflUg=;
+        b=WP0zGgla5g6nXTqEysISaGkeGoAZ0IJDfroqqJnpQicjyJ8v8GaGSHlwTTPfsMFcfq
+         NtXLbF07QVvLDS5wvGQ2yNrdRzz//3c1abFmTULtjGzC0DeInJKOqQ4uzw230NgV7lYG
+         wlB+QtLM3lsr22PZoIgbNAa2GRhkhUU/d+f+iSIBpF/6Nz89o8XhDHOZVr0kcN+remDT
+         YmCOqRJEATShsoY6AaH+vh9iywiIqmkYM/rzyAsbiaHznlnT+NkXnC5hG7vUgdpujonH
+         KNadQjydMXHrQ/AV6yjemldg1LS7tFXYmi6AHygxrpJNGqp2OqyQan0E/09z+3ar6r+v
+         3e7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760724201; x=1761329001;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6phIhVu+wctHAFPzvMGU++tpun4uAfFHZM4+TynflUg=;
+        b=ZgyRJuUZN5hC+6720LOZwczQdOY+sLyt+CLI6RLZjvaYVrAkPEnGVvDrKu5nkJuEf5
+         CHZNCtB67ZiM+2XiDWq/QBypSDY78Y2aunbIu34AIOR3wHbaURlvOAVXvKGjYt2AEDF7
+         3k2h0roYPinaTLRnO7RZ1HzG2CXRugupswukZJkfx41688Ml6bjkrp3HNpKG3JEBMc2g
+         qxMb5FKkO3T+6CYfEe9wam/sCA7BHSAT9jwmn5cnya1jn1dUf7PfBvHMpsvR0bkFFDG9
+         DpdFMn3/Ab1+O7aFuE2ptC0uK8osUhDO9SfLwnmzptSEvFQiHZzCEw9noB9HH18X93ja
+         jMsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWt/jec/sR2NISV18YxYK3MefuHYbbepi1VQN6DcC7bNFrG0lAllSIA3B1ojp2blw5PQR4QYTZjKpUcvNpuHU4wCxmxWWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOSGSNKagW6iZlMUpY1gUKDTTIFD6x7o/JLTMfbbVYoinBs7O/
+	vdN/WUGqnBH+XKLKfGg9RFRDrLj+4HOCWaFiieZH8PGyGOrcPw4fNjqLVs3tJWiWseJqULnPp+r
+	Jef3RWsA8NYprh7hbQwX+F33z6J3lgIs=
+X-Gm-Gg: ASbGncsj/WPLdkGKSzZNLl3fRY10FVB1xXA8N1ivLf42AH5Gc066ZthRE2BrzJqsHxT
+	02cD6mjWHKjNuJrBg+Tf2n6B5rdrJQO0SfbH6uUNPXf1ubybmyqmXkcJNLMxyTWfr23VhX2vHUj
+	5kREXCK3LZ7sq/tgye9hyTpfVqb6YXAKZWp3Iw/FUXGeT0aOwah0QEtjMCC1ply3K/lnEwHFQ+0
+	+HzIRJdWlNETrAI36fKGA7BP16Aw3OkNMVtUu2C9/pXYsHnt/T7FNfds3cO9KlHmwkTMlKE9oUr
+	TmPl2vK4WqXHiiXawU2LoaKjxVj5
+X-Google-Smtp-Source: AGHT+IGJaQwbB2fBnXd6ZLkKq7LnuwvgyHlRA8rakn6fMd9V7YGmmrX0Lu7ixfEkW836/PotQ0/f+4aOwx1Z1MqNIKM=
+X-Received: by 2002:a05:6000:2005:b0:427:9d7:86fe with SMTP id
+ ffacd0b85a97d-42709d7884cmr1427225f8f.49.1760724201366; Fri, 17 Oct 2025
+ 11:03:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: _WU9ULW3VlvgYks0zpzRnOg_u9IYSWqL
-X-Authority-Analysis: v=2.4 cv=eJkeTXp1 c=1 sm=1 tr=0 ts=68f281c9 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=NEAV23lmAAAA:8 a=20KFwNOVAAAA:8 a=GDQNn2IJJl9ZOXiabFkA:9
- a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNCBTYWx0ZWRfX8IeU7L9A2GDj
- 9rDeE+YztgrqFIUa5TpXEm6EmneDUQrP/V1/BHU5wo86o8aDgTnsE/HloCLPGr24/bepyQvBaPH
- 1hIkequcpVFk9JSgr/ZKr4A4bHzumLZ20fIXq7K9esrRJsBkNMaxdD1WunJCoQ9ENqW7gqbMD//
- JYXw9qdfbBOpOo+AeT0GbjeMX3lX36TC1/8C8bp2L6oWrOodM5TgQyeLrGxWRLiRPDBxOozA2s/
- x6jH34A2+99n+uDDVElAj66oTAu3LR35UsDkM1I7tzDCd4C5uJ0Tcz9mMDCvkJPPGBjJs10H/Fc
- c6fsGFGLkM924tbNlTtl9S2K2c6vGTjFkKbsdO/Fdlpzs20FMZ++kqXZBpVF/2Tdsp+F6KlN/dO
- bW8iYn+vS1lFUTQ6/FUHVHHgma0d2Q==
-X-Proofpoint-GUID: IjT5eJvhpczlThhxKduqWhQjNBOOX5oH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-17_06,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 impostorscore=0
- phishscore=0 malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110014
+References: <20250929213520.1821223-1-bboscaccy@linux.microsoft.com>
+ <CAHC9VhTQ_DR=ANzoDBjcCtrimV7XcCZVUsANPt=TjcvM4d-vjg@mail.gmail.com>
+ <CACYkzJ4yG1d8ujZ8PVzsRr_PWpyr6goD9DezQTu8ydaf-skn6g@mail.gmail.com>
+ <CAHC9VhR2Ab8Rw8RBm9je9-Ss++wufstxh4fB3zrZXnBoZpSi_Q@mail.gmail.com>
+ <CACYkzJ7u_wRyknFjhkzRxgpt29znoTWzz+ZMwmYEE-msc2GSUw@mail.gmail.com>
+ <CAHC9VhSDkwGgPfrBUh7EgBKEJj_JjnY68c0YAmuuLT_i--GskQ@mail.gmail.com>
+ <CACYkzJ4mJ6eJBzTLgbPG9A6i_dN2e0B=1WNp6XkAr-WmaEyzkA@mail.gmail.com>
+ <CAHC9VhRyG9ooMz6wVA17WKA9xkDy=UEPVkD4zOJf5mqrANMR9g@mail.gmail.com>
+ <CAADnVQLfyh=qby02AFe+MfJYr2sPExEU0YGCLV9jJk=cLoZoaA@mail.gmail.com>
+ <88703f00d5b7a779728451008626efa45e42db3d.camel@HansenPartnership.com>
+ <CAADnVQKdsF5_9Vb_J+z27y5Of3P6J3gPNZ=hXKFi=APm6AHX3w@mail.gmail.com>
+ <42bc677e031ed3df4f379cd3d6c9b3e1e8fadd87.camel@HansenPartnership.com>
+ <CAADnVQ+M+_zLaqmd6As0z95A5BwGR8n8oFto-X-i4BgMvuhrXQ@mail.gmail.com>
+ <fe538d3d723b161ee5354bb2de8e3a2ac7cf8255.camel@HansenPartnership.com>
+ <CAHC9VhSU0UCHW9ApHsVQLX9ar6jTEfAW4b4bBi5-fbbsOaashg@mail.gmail.com>
+ <CAHC9VhTvxgufmxHZFBd023xgkOyp9Cmq-hA-Gv8sJF1xYQBFSA@mail.gmail.com>
+ <CAADnVQJw_B-T6=TauUdyMLOxcfMDZ1hdHUFVnk59NmeWDBnEtw@mail.gmail.com> <CAHC9VhSRiZacAy=JTKgWnBDbycey37JRVC61373HERTEUFmxEA@mail.gmail.com>
+In-Reply-To: <CAHC9VhSRiZacAy=JTKgWnBDbycey37JRVC61373HERTEUFmxEA@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 17 Oct 2025 11:03:10 -0700
+X-Gm-Features: AS18NWCCLiWGJLnJ_CLP_EP0C_sJ8kkIi2XPHajafzJenryM_7J5G_fZ5zUSEDo
+Message-ID: <CAADnVQLRtfPrH6sffaPVyFP4Aib+e7uVVWLi7bb79d9TrHjHpQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 0/3] BPF signature hash chains
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Alexei Starovoitov <ast@kernel.org>, 
+	KP Singh <kpsingh@kernel.org>, Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
+	James Bottomley <james.bottomley@hansenpartnership.com>, bpf <bpf@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, wufan@linux.microsoft.com, 
+	Quentin Monnet <qmo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-10-17 at 11:19 +0800, Coiby Xu wrote:
-> On Thu, Oct 16, 2025 at 10:31:35PM -0400, Mimi Zohar wrote:
-> > On Thu, 2025-10-16 at 11:46 +0800, Coiby Xu wrote:
-> > > On Tue, Sep 30, 2025 at 04:28:14PM -0400, Mimi Zohar wrote:
-> > > > On Tue, 2025-09-30 at 09:57 -0400, Mimi Zohar wrote:
-> > > > > On Sun, 2025-09-28 at 11:03 +0800, Coiby Xu wrote:
-> > > > > > Currently, for any IMA policy that requires appraisal for kerne=
-l modules
-> > > > > > e.g. ima_policy=3Dsecure_boot, PowerPC architecture specific po=
-licy,
-> > > > > > booting will fail because IMA will reject a kernel module which=
- will
-> > > > > > be decompressed in the kernel space and then have its signature
-> > > > > > verified.
-> > > > > >=20
-> > > > > > This happens because when in-kernel module decompression
-> > > > > > (CONFIG_MODULE_DECOMPRESS) is enabled, kmod will use finit_modu=
-le
-> > > > > > syscall instead of init_module to load a module. And IMA mandat=
-es IMA
-> > > > > > xattr verification for finit_module unless appraise_type=3Dimas=
-ig|modsig
-> > > > > > is specified in the rule.  However currently initramfs doesn't =
-support
-> > > > > > xattr. And IMA rule "func=3DMODULE_CHECK appraise_type=3Dimasig=
-|modsig"
-> > > > > > doesn't work either because IMA will treat to-be-decompressed k=
-ernel
-> > > > > > module as not having module signature as it can't decompress ke=
-rnel
-> > > > > > module to check if signature exists.
-> > > > > >=20
-> > > > > > So fall back to default kernel module signature verification wh=
-en we have
-> > > > > > no way to verify IMA xattr.
-> > > > > >=20
-> > > > > > Reported-by: Karel Srot <ksrot@redhat.com>
-> > > > > > Signed-off-by: Coiby Xu <coxu@redhat.com>
-> > > > > > ---
-> > > > > > Another approach will be to make IMA decompress the kernel modu=
-le to
-> > > > > > check the signature. This requires refactoring kernel module co=
-de to
-> > > > > > make the in-kernel module decompressing feature modular and see=
-mingly
-> > > > > > more efforts are needed. A second disadvantage is it feels
-> > > > > > counter-intuitive to verify the same kernel module signature tw=
-ice. And
-> > > > > > we still need to make ima_policy=3Dsecure_boot allow verifying =
-appended
-> > > > > > module signature.
-> > > > > >=20
-> > > > > > Anyways, I'm open to suggestions and can try the latter approac=
-h if
-> > > > > > there are some benefits I'm not aware of or a better approach.
-> > > > >=20
-> > > > > Coiby, there are multiple issues being discussed here.  Before de=
-ciding on an
-> > > > > appropriate solution, let's frame the issues(s) properly.
-> > >=20
-> > > Hi Mimi,
-> > >=20
-> > > Thanks for listing and framing the issues! Sorry, it took me a while =
-to
-> > > go through your feedback as I also had a 8-day holiday.
-> > >=20
-> > > > >=20
-> > > > > 1. The finit_module syscall eventually calls init_module_from_fil=
-e() to read the
-> > > > > module into memory and then decompress it.  The problem is that t=
-he kernel
-> > > > > module signature verification occurs during the kernel_read_file(=
-), before the
-> > > > > kernel module is decompressed.  Thus, the appended kernel module =
-signature
-> > > > > cannot be verified.
-> > >=20
-> > > Since IMA only accesses a kernel module as a fd or struct file*, even=
- if
-> > > IMA hook is triggerd after kernel module is decompressed, IMA still
-> > > doesn't know the default verification has passed or can't access the
-> > > decompressed kernel buffer [2] to do the verification by itself.
-> > >=20
-> > > [2] https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linu=
-x.git/tree/kernel/module/main.c?h=3Dv6.17#n3689
-> > >=20
-> > > > >=20
-> > > > > 2. CPIO doesn't have xattr support. There were multiple attempts =
-at including
-> > > > > xattrs in CPIO, but none were upstreamed [1].  If file signatures=
- stored in
-> > > > > security.ima were available in the initramfs, then finit_module()=
- could verify
-> > > > > them, as opposed to the appended kernel module signature.
-> > >=20
-> > > Thanks you for pointing me to the work [1]. I'll take a more careful
-> > > look at [1]. I think CPIO supporting xattr can be a long-term solutio=
-n
-> > > and also close a important security gap.
-> > >=20
-> > > > >=20
-> > > > > 3. The issues described above are generic, not limited to Power. =
- When
-> > > > > CONFIG_MODULE_SIG is configured, the arch specific IMA policy rul=
-es do not
-> > > > > include an "appraise func=3DMODULE_CHECK".
-> > >=20
-> > > Yes, the issue is not limited to Power. And thanks for correcting me
-> > > that Power arch specific IMA policy rules don't have this problem! So=
-rry
-> > > I misread the code.
-> > >=20
-> > > > >=20
-> > > > > 4. Unlike the arch specific IMA policy rules, the built-in secure=
- boot IMA
-> > > > > policy, specified on the boot command line as "ima_policy=3Dsecur=
-e_boot", always
-> > > > > enforces the IMA signature stored in security.ima.
-> > > > >=20
-> > > > > Partial solutions without kernel changes:
-> > > > > - Enable CONFIG_MODULE_SIG  (Doesn't solve 4)
-> > > > > - Disable kernel module compression.
-> > > > >=20
-> > > > > Complete solution:
-> > > > > - Pick up and upstream Roberto Sassu's last version of initramfs =
-support [1].
-> > > > > - Somehow prevent kernel_read_file() from failing when the kernel=
-_read_file_id
-> > > > > enumeration is READING_MODULE and the kernel module is compressed=
-.  The change
-> > > > > might be limited to ima_post_read_file().
-> > > >=20
-> > > > or perhaps not totally.
-> > > >=20
-> > > > init_module_from_file() doesn't pass the flags variable to kernel_r=
-ead_file().
-> > > > You might want to consider defining a new kernel_read_file_id enume=
-ration named
-> > > > READING_COMPRESSED_MODULE.
-> > >=20
-> > > Thanks for suggesting the solutions! I like the solution of CPIO
-> > > supporting xattr but it seems it won't land in upstream soon. So I
-> > > prefer the last approach. I've implemented one [3] by defining a new
-> > > kernel_read_file_id enumeration, would you like me to post the patche=
-s
-> > > to the mailing list directly?
-> > >=20
-> > > [3] https://github.com/coiby/linux/tree/in_kernel_decompression_ima
-> >=20
-> > A few thoughts, before you post the patch.
->=20
-> Thank you for sharing your thoughts!
->=20
-> >=20
-> > 1. In the general case, the kernel module could be compressed, but with=
-out an
-> > appended signature.  The new code should only defer appended signature
-> > verification, if there isn't an xattr or appended signature.
->=20
-> I'll add these two condition checks, thanks!
->=20
-> >=20
-> > 2. Instead of defining an additional process_measurement() argument to =
-identify
-> > compressed kernel modules, to simplify the code it might be possible to=
- define a
-> > new "func" named COMPRESSED_MODULE_CHECK.
-> >=20
-> > +       [READING_COMPRESSED_MODULE] =3D MODULE_CHECK,  -> COMPRESSED_MO=
-DULE_CHECK
->=20
-> I also thought about this approach. But IMA rule maps kernel module
-> loading to MODULE_CHECK. If we define a new rule and ask users to use
-> this new rule, ima_policy=3Dsecure_boot still won't work.
+On Thu, Oct 16, 2025 at 6:36=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Thu, Oct 16, 2025 at 6:01=E2=80=AFPM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> > On Thu, Oct 16, 2025 at 1:51=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > > On Sun, Oct 12, 2025 at 10:12=E2=80=AFPM Paul Moore <paul@paul-moore.=
+com> wrote:
+> > > > On Sat, Oct 11, 2025 at 1:09=E2=80=AFPM James Bottomley
+> > > > <James.Bottomley@hansenpartnership.com> wrote:
+> > > > > On Sat, 2025-10-11 at 09:31 -0700, Alexei Starovoitov wrote:
+> > > > > > On Sat, Oct 11, 2025 at 7:52=E2=80=AFAM James Bottomley
+> > > > > > <James.Bottomley@hansenpartnership.com> wrote:
+> > > > > > >
+> > > > > > > It doesn't need to, once we check both the loader and the map=
+, the
+> > > > > > > integrity is verified and the loader can be trusted to run an=
+d
+> > > > > > > relocate the map into the bpf program
+> > > > > >
+> > > > > > You should read KP's cover letter again and then research trust=
+ed
+> > > > > > hash chains. Here is a quote from the first googled link:
+> > > > > >
+> > > > > > "A trusted hash chain is a cryptographic process used to verify=
+ the
+> > > > > > integrity and authenticity of data by creating a sequence of ha=
+sh
+> > > > > > values, where each hash is linked to the next".
+> > > > > >
+> > > > > > In addition KP's algorithm was vetted by various security teams=
+.
+> > > > > > There is nothing novel here. It's a classic algorithm used
+> > > > > > to verify integrity and that's what was implemented.
+> > > > >
+> > > > > Both KP and Blaise's patch sets are implementations of trusted ha=
+sh
+> > > > > chains.  The security argument isn't about whether the hash chain
+> > > > > algorithm works, it's about where, in relation to the LSM hook, t=
+he
+> > > > > hash chain verification completes.
+> >
+> > Not true. Blaise's patch is a trusted hash chain denial.
+>
+> It would be helpful if you could clarify what you mean by "trusted
+> hash chain denial" and how that differs from a "trusted hash chain".
 
-I don't have a problem with extending the "secure-boot" policy to support
-uncompressed kernel modules appended signatures, based on whether
-CONFIG_MODULE_SIG is enabled.  The new rule would be in addition to the exi=
-sting
-MODULE_CHECK rule.
-
->=20
-> >=20
-> > 3. =C2=A0The patch title "ima: Use default kernel module signature veri=
-fication for
-> > compressed ones" is a bit off.  It should be something along the lines =
-of "ima:
-> > defer compressed kernel module appended signature verification".
->=20
-> >=20
-> > 4. Simplify the patch description.
->=20
-> I'll rephrase the title and try simplifying it. Thanks!
-
-Thank you.
-
+Paul,
+This is getting ridiculous. You're arguing about the code that you
+don't understand. Stop this broken phone and let Blaise defend his code.
