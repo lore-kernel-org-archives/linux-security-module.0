@@ -1,64 +1,64 @@
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F8F354ADD
-	for <linux-security-module@vger.kernel.org>; Fri, 17 Oct 2025 20:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6ED8354AD9
+	for <linux-security-module@vger.kernel.org>; Fri, 17 Oct 2025 20:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760732939; cv=none; b=gI7qXK9HU/uanSiKDeO+iKuiXsU63awuufslF3MjOThPi3zCrjhgfrg6W0A5WExM9+/wJqiGGtcVX9lP16t3/RNIu3on/Zrx2s6Mfiy43Mfa29+08pBa58q8qF12zvuDrDtk/Ja9YDgXvmF2wUY36hVpSBMuH7PvoRGc1fMrpMA=
+	t=1760732941; cv=none; b=Lio1FOwm+HuW3lNd23RVr0IN8tUncrQJrWc6j9H5eiKCrMdeDOgHQbi0IgHQ1KkPrzk81Z4o5932QBNEF5zsLDzojPKxHrn1guXP7BI0g3qZUSysFOLt4fCJHdcW9OnV3WJmTrI1OUTTTRgjpaW5VswdLPUgZIp5zVNwoNYwnyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760732939; c=relaxed/simple;
-	bh=qdUnMpBaVn9BGNCw1u96yzFWHDjooLF/olbdGuAgc44=;
+	s=arc-20240116; t=1760732941; c=relaxed/simple;
+	bh=7aTUsiwmKbCtrKN7NSA7J0u40jUw9giIeb3/tzw9PT8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SfGPSRAuA6A71ZTBXswoWDWeFNQBP/9S3qNucJys9Law3nwB2uPtRsXNwCbY5DcNA7EEue1p6ANiADVpCdm56fsFzKHwPpjxpbcaaiai09aQSK9tRakxtFnWU6anTMwu7zUP8EPzyWrTUmSftEAA/0oFHBYOmO4dEVWPF0DOkAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YsmF28rt; arc=none smtp.client-ip=209.85.222.180
+	 MIME-Version; b=GBEQU2W17mqALZ320v2dHtw+lki4dydO3p69mtJ36Yx/jtfKsF7Bj572BSMeq985B9CEXg8EplQ6DcLsqs7PRrYYU1n0EcpnpB21zAx1lblGtD9sn/K7AJQZCXnM/pI8ZuN7Uy33K0fxNNQp3QFFmmVvOx/ookCeHgAMKLIqojg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DdrU1Ngo; arc=none smtp.client-ip=209.85.219.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YsmF28rt"
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-88e456972d5so444800085a.3
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Oct 2025 13:28:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DdrU1Ngo"
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-87c103928ffso34162006d6.1
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Oct 2025 13:28:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1760732936; x=1761337736; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1760732938; x=1761337738; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3gnyH9cbKjBW9gdzFmBf71O1ujrCNxqhuDpvD2UTHCA=;
-        b=YsmF28rtD/Loadb1Ibn1BWaS9s2Lo1BPts6rJMB55WRrKYGOS2mlqlc1kEjLjUzZX8
-         ksIagJcPr2d1DJxLhaqMzbSZUaGArWbvt+7e3kyYLOho8RsWByWaVoU2kzQZ4t56QcEe
-         Fcna7xZsOxEfwF3L6W6inHy5enLUAPZ80dTL930nrhqRnML3/Z+JEil48KALjd7y4SA4
-         8mVD3hObLCBZsDXVu7jBHA9n8S0e40YROt7czGPC1DtpP7zev/R058i5sFI5v5cKGf27
-         DUwZMHrmZXhwnl3Ld+RuxZGqXdbf3GpNrKtRFUgDj1sqkf1+h6xLPfPb7PPHPvsc/bZD
-         Gv3g==
+        bh=IY0/eEFyWb8IrrGhciepKwySm+/JCBsBlLdpn/6WSGo=;
+        b=DdrU1NgoXDrHlvHMZzXKGrpamuXPsU84JuuqG7ZJQNA/HrALC6/xXW/p58VAy8vVv7
+         bzQ3h4iNnLQ2TLTuZEjk0zcS12zUPqsV9sODoHOdjAK3As6NgHoQ3oviKj3SKOyBCPSr
+         AdLWRAZPi0ADO1t3N8JwxsLU5d5AU9IiX6M/+BRVU0YiGUZJzh3kirSrbu6WScysG2Uo
+         lX4Gr0nKBKNhE8gLBrQvapd/ochhuvHJivt7mWEG1N1GxG1m4A/Nx6WpjseDVt/3qnMe
+         YoXQFfrg7SS+TuBnqjjS1UUuUO5+i5ZlyDNfxdSYBYcj3g09xXBdBShF6P/oWugh+sJN
+         t3eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760732936; x=1761337736;
+        d=1e100.net; s=20230601; t=1760732938; x=1761337738;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3gnyH9cbKjBW9gdzFmBf71O1ujrCNxqhuDpvD2UTHCA=;
-        b=FfA7Bf0/sq6PqcwK6P9OKz+SIpAzgRTgwYxMryrpBl9APHUxLOfGkluhJ3x04uCrt9
-         9EEHeYkijMf0YNXHf9gJP/pT78g3CCcCHpCms7I8kGsrUH57t9DIhL/gjv63ByA9xIVU
-         fZ2fHkij4YYFogTD4y4rIeZiRsYbZuesarv0jzcCJXJbR2MT07+BYppdss6+tfykC6kE
-         xwdXZDJfiD4zUM02Qd1bi/b46SimSndwfgtKLu7zPy6mDdVJx+Mj3EMDejDTMeecfsWS
-         UhCQMUUcqVPV9rTbPm+SBVs3EK/fCAjzPRQqkkhsMDiK+vTnZgMnQRhGe0pk0i/iftKT
-         y9EA==
-X-Gm-Message-State: AOJu0YzKDN5JaT2/RTODTYb4iAANknGViVlhdlE/9uTS4QgMv/ZgAnkJ
-	8HENwQnKzuiDR3gsgVJTCbAlviHHfxug+6CR9M6HReITEoxpdk/2nJZ3OP1VA1jH0+RNLPQQlTa
-	7suTQLw==
-X-Gm-Gg: ASbGncsfXYvr/jHEsZkjXPj3hOzHjgakxNmo2YXcylrfrWOM8Er+RX2wCyY7pmdCPkE
-	VNczH7txfsiWFQvqASOjlF5a9n9wGSkFi1X1j/WFl4Qe+kWEO6DvnmbLswkV8Tnvk5xHGYdrYlv
-	XfUcTktksNQu81auWwsygx0p5otVnBnJOPXhkKDX6aluHcufrg0d8V6DNX9sAI0aEy3C2vQVHyC
-	3XkE2XiGPpD1R3SK3BulZJqieNchqTMOQJtuqMAndsYl8vlscj+E2e3E46y0X6kag2PGSr1pr2s
-	qO+A3rbWUYrvj80hBNc3wfiuHlWpDX/iq5zDNWi+rDj4P3MqVhOchI3WUk79Wp6AotMJQs14j2a
-	ZoYF2Mg/aCRDeZFSJ1K1JQDaWt4JJAzEVikC4N2sBtYVFlJrbxp8FGkkRumBDwOztaYXmFdjh/T
-	3+swx4yfSocG6ZPZRisVA+rmRkZjExAQi6vkycnGxnTzvVhFZVzDk0otYR
-X-Google-Smtp-Source: AGHT+IHQIBfcE+nIWOaxuE8TLpwMaeLiAUUd6n8/4MfK+EyLxPxrOWP5Phio26ynqjU/WCoGKSrodA==
-X-Received: by 2002:a05:620a:701c:b0:88f:561:d95b with SMTP id af79cd13be357-8906e2d0126mr717378085a.7.1760732935665;
-        Fri, 17 Oct 2025 13:28:55 -0700 (PDT)
+        bh=IY0/eEFyWb8IrrGhciepKwySm+/JCBsBlLdpn/6WSGo=;
+        b=TiU4nYvoBuzwJRa9HvKBVj6FvzGkRf8iUt7M0SmPqSogqtkQzBQBtqcL5JS979v/WU
+         FelfqKg14TC/AujHdrWdpBuMIUpkmaZQ/VGu+sJEZtHJO9Fn7fpxIPxd+uD9LzsaLZjy
+         dlabHQGKL+l9tbxoZhO/iDRiAmtgSjGUmMpGw9n+HMqkn4nE4gtwwe5bT2AINEjeLlWR
+         ecN0hp1e6jenw2Sv55ZiA4uyYevFXzemyQFZSPjgC1n/4MX2GYB820EtuIMawKVHHF0J
+         H8+BVaLp07yeJU8AM11ejQP+PFmBp8YDz2e6EMZ7r/6t5MHmHYRrpREm24sGvCpw9Xjv
+         iyrw==
+X-Gm-Message-State: AOJu0YyqYs1kyFgn/5M+HSuHPa1j5gfRZ9GhohWIf4PHPZd0K9ajRPq3
+	gy4xwEQAJqAWkw4jMkLzYYIvaDdZyA1HEJTG4lfSnJh1agIyYce8QUiCCZ8dRU9kMBlW5nExde0
+	3Pb5n6A==
+X-Gm-Gg: ASbGncsI0oNKku7stUp1zwk5nsByw5O5OXuwePvIYJ3wrd+CjZVx1Kgh4Y85zhZHU8N
+	/fB7r+nevkxRkPWldJ2/sGXXDw2Eck4LYG38uD+Xhsu4TI1yggY3Mm395OiqRPzdJXgvnwYJY39
+	uJiiPuG6e+o/i1fnjJ1iGb0PJdPieRBHDYDHFpGymAAA7cOA55HVWIgknv54REFfp/ePMb8osLO
+	vPh/LOan+LvM6Cya9lrnzmmQnbUO25ntNRtiW6MXdGMbAnXloyZgxb1gqZyJsGkBZpbKcOCmbGi
+	0XdlP+rXhOfPCB9vNt734+rmkfhLiwXbr2LTw7rJhX6Q9dPpZwwO7+xSXlc0IDaSdAnkXxhYKGO
+	W71MsBtN1dsfmVil0uqczZDKPlaIsY203matzaWkLYzoXO19cI7IrRYzUG4wpPWhsdZTEiQFN3O
+	lIdmzP42HH1BKqq5GkTnkJ0VcHGK3XVFoCR8NKi0SzDHlctg==
+X-Google-Smtp-Source: AGHT+IHpX8OibrpzYGCeP7eEksQpkDmvuQrBS0W9CNYbUeqDSF5apaXgTyG/9kswr9nLLCP39ZACyQ==
+X-Received: by 2002:a05:6214:1c81:b0:87c:f97:7acf with SMTP id 6a1803df08f44-87c20653c2emr68359206d6.62.1760732937757;
+        Fri, 17 Oct 2025 13:28:57 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-891cefba740sm39301785a.29.2025.10.17.13.28.54
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87d028b2ebfsm4746136d6.52.2025.10.17.13.28.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 13:28:54 -0700 (PDT)
+        Fri, 17 Oct 2025 13:28:56 -0700 (PDT)
 From: Paul Moore <paul@paul-moore.com>
 To: linux-security-module@vger.kernel.org,
 	linux-integrity@vger.kernel.org,
@@ -75,9 +75,9 @@ Cc: John Johansen <john.johansen@canonical.com>,
 	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
 	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
 	Xiu Jianfeng <xiujianfeng@huawei.com>
-Subject: [PATCH v5 06/34] lsm: integrate lsm_early_cred() and lsm_early_task() into caller
-Date: Fri, 17 Oct 2025 16:24:34 -0400
-Message-ID: <20251017202456.484010-42-paul@paul-moore.com>
+Subject: [PATCH v5 07/34] lsm: rename ordered_lsm_init() to lsm_init_ordered()
+Date: Fri, 17 Oct 2025 16:24:35 -0400
+Message-ID: <20251017202456.484010-43-paul@paul-moore.com>
 X-Mailer: git-send-email 2.51.1.dirty
 In-Reply-To: <20251017202456.484010-36-paul@paul-moore.com>
 References: <20251017202456.484010-36-paul@paul-moore.com>
@@ -87,75 +87,57 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2054; i=paul@paul-moore.com; h=from:subject; bh=qdUnMpBaVn9BGNCw1u96yzFWHDjooLF/olbdGuAgc44=; b=owEBbQKS/ZANAwAKAeog8tqXN4lzAcsmYgBo8qYoWn5623fTKZwAy24y+L8F9fHQE+JKWV8eX vDWwYgACKSJAjMEAAEKAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCaPKmKAAKCRDqIPLalzeJ c4lrD/9KkEaJZF4fWCcnp/FqSd1LGB3hjfs9oF/aj9gL6UMe78OILLDZYYLj1AaNi5ddVIehpuk 2QwBovxW8dPJUOAuujnj9kyx5pvAFb4mU6p5zXI5udSzngtIn2qbz9hSPoxQkj//JCazECkewVa uqVhRulE6PAC11DdyTPc1gwm92hqNldFEZimS6V6mB1C8OUnrLx/RmNJCoyskQQk8IdfzzKt+JX dPpvwireTCAwi3bD8o88Na8DqDrZrSoNp9Ai2UP3hBkS+goSSwkhoSa1VZ5+BaGFEo3WGjmBLPC doWkLCVX8xcI1y+VXx8y01jaIozJkjne1/ZdqiZFZ4oP127UCr7Yeftc/xDCDDU4SHWZIZnF83j b6nNhe8DixfGSIAOW6sUidXVxuWlmaGw5kJmP680JkNDs2sRBkWz6m2kjI6NV46ZXfFL8fH2rfk JsORpgVal5/YGiaL1dsaxKv/PIJGxQgjuj6xzfatoOu40gZPWJBbf315bVL18XquxhJohRnjjh3 euY8Rt7ovrUv7RQ5zI0afCwF8AwcBF7YLhgugns8Fw6xggfABFNu4U06YTPe750nE8JZca3UJZF rLnE036lEcSXsPjbCQpxGq0vA7MVMFHvbzFZ4PAHo9afwXeuhGc0Pwlnh1iV/dyT1Nl08dksWHG FWUeOhlI3ILIomA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1521; i=paul@paul-moore.com; h=from:subject; bh=7aTUsiwmKbCtrKN7NSA7J0u40jUw9giIeb3/tzw9PT8=; b=owEBbQKS/ZANAwAKAeog8tqXN4lzAcsmYgBo8qYsjQhmdV2HIqAthiIAMEJRnPP8jaTgLxGF9 gJpJjsQuZWJAjMEAAEKAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCaPKmLAAKCRDqIPLalzeJ c6AiEACMWFNEhx0T00DePaPtIEUwgBp9dYCSDcvq5zTTK28uyq5ClsSHb1Esx2ZYvl0thzml+uI xbAkHYGv2dm8d2QoJXwwHGs520cjczcWg8zssgwJbqFsN5kYonKm8OxFLR0eh49NSAfHmqfexD/ fikbV2a3oi+ru4ybkg1cFTDx4RDZ+A4CqDBij91Tvg6PNNCKij9FnbruNIbtKC3zO8H6vEdFhGM ogCmWORl6hTHMqeh+p6WskA0Vto+kVlBGRHuNSgxct0Djb3m2wWrHlbGQATKkfloLJ2/KIO7OCk cQ+PZ9oOzW6QtKFDWyz6fpQoyVrnTAo1CKJGgAP5KjKCZsSmGwMIsNWrfBUvoFpiikzXp2SEX2h RO7sAif+pZ8CoBcGEmVd+G9tgLu1+PwYJIcNQzMmET7M6xqIqHfT09mzXcsx0IzbrFIVo2GnyYr ueErq6vu0FxLGmf/xWQQAaKdZdMbdbApMnVFyHG1YpYJ/jvpC4WGVV/Vw6mPlQjWX2ysVG0Vxei OqOFvri7Quz+na0yA6bZPjuHDsGpz8A7u6NlZ82JmkGmS8vQ5bNG3dcNvkFBxv8BNtYchoV1GS+ Nbmc5Eqp8ndOLuu9YYuxC6Pneyn3KbEzwBXkxHTg0FgNwBDuv/5IVO/F/pcX9wmPNkRpJLysGWb BVuwJ/5ly57l4pA==
 X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
 Content-Transfer-Encoding: 8bit
 
-With only one caller of lsm_early_cred() and lsm_early_task(), insert
-the functions' code directly into the caller and ger rid of the two
-functions.
+The new name more closely fits the rest of the naming scheme in
+security/lsm_init.c.  This patch also adds a trivial comment block to
+the top of the function.
 
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: John Johansen <john.johhansen@canonical.com>
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
- security/lsm_init.c | 35 +++++------------------------------
- 1 file changed, 5 insertions(+), 30 deletions(-)
+ security/lsm_init.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/security/lsm_init.c b/security/lsm_init.c
-index 09afa7ad719e..8bb473aca113 100644
+index 8bb473aca113..9249d5f37ae9 100644
 --- a/security/lsm_init.c
 +++ b/security/lsm_init.c
-@@ -291,34 +291,6 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+@@ -291,7 +291,10 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
  	kfree(sep);
  }
  
--/**
-- * lsm_early_cred - during initialization allocate a composite cred blob
-- * @cred: the cred that needs a blob
-- *
-- * Allocate the cred blob for all the modules
-- */
--static void __init lsm_early_cred(struct cred *cred)
--{
--	int rc = lsm_cred_alloc(cred, GFP_KERNEL);
--
--	if (rc)
--		panic("%s: Early cred alloc failed.\n", __func__);
--}
--
--/**
-- * lsm_early_task - during initialization allocate a composite task blob
-- * @task: the task that needs a blob
-- *
-- * Allocate the task blob for all the modules
-- */
--static void __init lsm_early_task(struct task_struct *task)
--{
--	int rc = lsm_task_alloc(task);
--
--	if (rc)
--		panic("%s: Early task alloc failed.\n", __func__);
--}
--
- static void __init ordered_lsm_init(void)
+-static void __init ordered_lsm_init(void)
++/**
++ * lsm_init_ordered - Initialize the ordered LSMs
++ */
++static void __init lsm_init_ordered(void)
  {
  	unsigned int first = 0;
-@@ -382,8 +354,11 @@ static void __init ordered_lsm_init(void)
- 						    blob_sizes.lbs_inode, 0,
- 						    SLAB_PANIC, NULL);
+ 	struct lsm_info **lsm;
+@@ -342,9 +345,6 @@ static void __init ordered_lsm_init(void)
+ 	init_debug("bpf prog blob size   = %d\n", blob_sizes.lbs_bpf_prog);
+ 	init_debug("bpf token blob size  = %d\n", blob_sizes.lbs_bpf_token);
  
--	lsm_early_cred((struct cred *) current->cred);
--	lsm_early_task(current);
-+	if (lsm_cred_alloc((struct cred __rcu *)current->cred, GFP_KERNEL))
-+		panic("%s: early cred alloc failed.\n", __func__);
-+	if (lsm_task_alloc(current))
-+		panic("%s: early task alloc failed.\n", __func__);
-+
- 	lsm_order_for_each(lsm) {
- 		initialize_lsm(*lsm);
+-	/*
+-	 * Create any kmem_caches needed for blobs
+-	 */
+ 	if (blob_sizes.lbs_file)
+ 		lsm_file_cache = kmem_cache_create("lsm_file_cache",
+ 						   blob_sizes.lbs_file, 0,
+@@ -498,7 +498,7 @@ int __init security_init(void)
  	}
+ 
+ 	/* Load LSMs in specified order. */
+-	ordered_lsm_init();
++	lsm_init_ordered();
+ 
+ 	return 0;
+ }
 -- 
 2.51.1.dirty
 
