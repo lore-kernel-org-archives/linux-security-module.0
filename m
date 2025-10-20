@@ -1,203 +1,134 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A4E2F658A;
-	Mon, 20 Oct 2025 13:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A4926C384
+	for <linux-security-module@vger.kernel.org>; Mon, 20 Oct 2025 15:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760968672; cv=none; b=bl9wteIEacmeA0tjiYEDT9SHgJvJqH02/i6QKiDI/Af6fgme7sPk4O1XFd2cujbGf4kaT5o/b4HR+npHqbhmPDbL8t36GTAFsHGqaXD2Yt6oXE9/g0eU7E5hyVzQ2QDYz9ruTX4+AjBKcsxWycEi5asKcAXB4meh1rdqsIq2LTw=
+	t=1760975530; cv=none; b=oaEnk++PFhfpttIcawL7QZ+g2mSzp6AUiFutD++3xIjRK3HpkpncuBc7pic+noUEREa9hiio3XLF6forGrX0iIpQtiDfxv0+Y92hcBidjQPA1zN0jl/phzBrLfNQMn5EnoAwuPC/jDWDdCrpj+bUnxfDNsG2HqyL3xuYdH5Dzbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760968672; c=relaxed/simple;
-	bh=EfJewJKCqwkKnxiSznc8qcyZN1Vw2BXdpnDJWqxZO3M=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=DqmDXHHwjBv7htwrhnikRC4yHwy+wVqMOtFvPqauGLt85Kpn0AATG4KBCbrWx7eB3jmjeyH2GZrpjDx6FcNPVPtQ52C0jnKFtxNUNSszdrqjM8ZgcIkgdLG8vXpoYhXuZgUI8llEYLrnuHOOuio8Gg1Hc+nvOnCUGvzdVs1oHbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=g6ms8nni; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1760975530; c=relaxed/simple;
+	bh=nh7KmG91llH0eTJy2kGD6whEVv3qZowTvAaONNXWCzA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mC4+SvxI8YfoQMb2t4a/8nFX4JiV8AmwrJv967ARkVkqCcSVRV0k2MYiGaeV6IiN+ZquSO/Fe8BgpE6kt70lWPTT0Uik6WlxSyDHy/7UsTx3qWp2btB3jkTSiFu1l9BJFoz8WFR+8FjRJhWPO1lhhyzsPFsuN8QDVzRDDpNjZ2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VGgHkTUd; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="g6ms8nni"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59K5beXo018793;
-	Mon, 20 Oct 2025 13:57:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Yve0yJ
-	M7ZmdqGlpy1Xr7QhofFTNeb0RkHAzL/vklFHI=; b=g6ms8nnilt/ntpFu9cBDbx
-	l5dJ1Gn0NmeVVi7Ya+Jv1dcTPDGju6L+/UoAG8Obpq6buVgFZpKRfMD7HQNUOVPC
-	okN1iPRdGu35YdpQqqytbMgFy3sYTlqlsXjMkzNeNLoeFNeSV1JtGtXsEUqaeuGL
-	AfxObgAwwhV1j+Je80tIdsaREGPXYk5CZAdL/EQTULogJlnbUzM6XPmo4BViUnL5
-	u+4FJLmqPDInlTdCsLwrJbnhmqhu4n4GU+X1jXDMp0iWnpqL5cm4PABfXr28k0pl
-	8iTzHJc0Fnp4fw00tnkUvdTIy5R8x4H/ges1xn1ivVgSRod2WY23y315erzb9tNg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v326ht0x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 13:57:23 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59KDsrJg018280;
-	Mon, 20 Oct 2025 13:57:23 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v326ht0p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 13:57:22 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59KBggc4002926;
-	Mon, 20 Oct 2025 13:57:22 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqej5rnw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 Oct 2025 13:57:22 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59KDvLVq26935934
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 20 Oct 2025 13:57:21 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F2FFD58065;
-	Mon, 20 Oct 2025 13:57:20 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2F1745805D;
-	Mon, 20 Oct 2025 13:57:20 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.31.144])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 20 Oct 2025 13:57:20 +0000 (GMT)
-Message-ID: <497d1608572eec7d3d498967f0bae7d45023635b.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: Fall back to default kernel module signature
- verification
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, Coiby Xu
- <coxu@redhat.com>
-Cc: linux-integrity@vger.kernel.org,
-        Dmitry Torokhov
- <dmitry.torokhov@gmail.com>,
-        Karel Srot <ksrot@redhat.com>,
-        Roberto Sassu
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin	 <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"	 <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM"	 <linux-security-module@vger.kernel.org>,
-        open list	 <linux-kernel@vger.kernel.org>
-In-Reply-To: <1987088bb29971883d2b5c06a31c8114c729422c.camel@huaweicloud.com>
-References: <20250928030358.3873311-1-coxu@redhat.com>
-		 <896f4fb0c0146512a66daf0b4c1e033aca4bd6d4.camel@linux.ibm.com>
-		 <bcd1f7b48311aff55711cdff4a6cdbb72aae1d04.camel@linux.ibm.com>
-		 <xq7bgyg63xlbogcik2we26yr5uf62f6kj3qn7ooljmqaoccrix@kkmuhza5cfdr>
-		 <9d279fd3d7b3cbb2778183ec777d6b9da8a64b82.camel@linux.ibm.com>
-		 <5bzredottmp2tdm3uebzjfqjr6c7bwssqkrbdqvudruvzr764e@37j6ycjci2sk>
-		 <27bb0c218084f51eba07f041d0fffea8971865b9.camel@linux.ibm.com>
-		 <z6f4getlayaxaxvlxfxn2yvn5dvhrct64wke4uu2s3dfll3bqq@754bklrku55n>
-		 <559f6ebf4a19da321fffc2a3ca180dc3d6216a22.camel@linux.ibm.com>
-	 <1987088bb29971883d2b5c06a31c8114c729422c.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 20 Oct 2025 09:57:19 -0400
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VGgHkTUd"
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ec69d22b2so4155198a91.1
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Oct 2025 08:52:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760975527; x=1761580327; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YUxEjev6w4f1umuBxGfAcuaZR32QUUEbuSMBs3oceNE=;
+        b=VGgHkTUdhZTj02Irb7NYvhGZfItj+GtjPAlSpLrvrHnKkNp5OVt+BQ95EwoJZAfzHk
+         WB2D1/bKrttYimuybRv/06WxtsUw7I1J7SDDK+LDf8ME+notiictwNYi9EyFUk+M/cM9
+         KJ1LyTj3K5idElljaGq7GKrWUjQuiZVjTb6Yn/P7w94Vsqxct7svktYODSJSAkbau8I9
+         JuFHMUbNnOtBoyf+jtuDTo5/N7x3xD3znQUow0tEs+HY79iFFlj4Z8KdZIY2qL4EcrPE
+         SltyuRfv/PylxxFOT8lNfNnBT0GwzfTV0ll1VsMV4tZ69ZoEDZizWL9obNkRzJjRXpqw
+         2/0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760975527; x=1761580327;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YUxEjev6w4f1umuBxGfAcuaZR32QUUEbuSMBs3oceNE=;
+        b=FCSKoH6nWsa1t1p6SYgoqNbx31tDEN0sfl4OxsXyZpRaSc/RG439lNBGGvttZ7aotb
+         9I1QiqMVs/4/BOLP7Rs0t6CACn8uQmrmxYYel/JEhawOazaf2Kw9PbWO3abg++0WlqrX
+         o1vRPEeviZafUNkvT6Da9XFpQAwUz3C10umRCcOrEsuiWzgWtmp67Llwi5oPZsMiPAhs
+         Zkj1sBk7MyOxaAJTONJJbOG/m/llsQ6axLECXQ+o+oYyMuFQOlzJCd+Tj2/HRCRtypBY
+         aOorRrWgnIgGCB65se6I8UWU31z6nREMHv4MgCMt17n56YIWC0jIWwXB000EjVWJPu4G
+         TEKg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2JhLsSPZ6pcdFQ1Nc5+LJhwBmxfgNojYM5rHVAH7jTv62I9LOs0mUyUjgAl/KuCqBqIH/2U4wC/R0AAUXhWzgIn+L4Bo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA8OmtQYfTWMfIkcFBo9O8xfFAUCPVJMdKQomLvXA8NmlUGglT
+	3uojo9uqnyxjvW0sX0H9R+vtTvMywKYwAhTb1Tu+JzEiYEx2ucPQV6nAIrNqPYHYD7hahJTcAkL
+	ksJhkCw==
+X-Google-Smtp-Source: AGHT+IHcZobfkAMYLqgP+952/xufHk4lZqraqyIEs0BsZFGgLzowAsqRVArAQbVQNZgQWXn7bmNPNT9qaaI=
+X-Received: from pjbds19.prod.google.com ([2002:a17:90b:8d3:b0:33b:51fe:1a84])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4d85:b0:330:4a1d:223c
+ with SMTP id 98e67ed59e1d1-33bcf87f421mr15625676a91.15.1760975526813; Mon, 20
+ Oct 2025 08:52:06 -0700 (PDT)
+Date: Mon, 20 Oct 2025 08:52:05 -0700
+In-Reply-To: <176055105546.1527431.3611256810380818215.b4-ty@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=EJELElZC c=1 sm=1 tr=0 ts=68f63fc3 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=LYr_apTUxKL3MJBV5QwA:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX+N+qd4P3G6/q
- sye6RtQq++OVB4vJnqVJTGEAbRsIJTNsx/dfMwENh1/iO2IAGDyZbk552zaLA6uUtpsL/gRF8l0
- mu9rm92l7H7Yq7XmDDJh4NFbHF9Ho+MSxV7546aZHLHPLap2PIdEQ5Xpv+Iif/N6F9R2NeV+EKM
- E/WgNin4NeN3tDFvHsPmB71ugThzM9A8jnHazpUOHm2nvaIIE67J0Ngl3lvP0SdeoBgFD0BN/Sr
- YgEFyCGMyXMuCcT92Xev51b2pDmZq4pPSeHuTb4EgT3dE8kJcINpg73LCIUNATkgdSASQ4uwtVs
- otFsnZrBoZpxAW5ft1RTmbzGtqFbB1Lfh36L6qNGy37bJYTIQYofRAUY4k+UfE0AwsZvCqZ8hzU
- 5rHhGVP1JV6E7aijX3y88O3wi0QmBA==
-X-Proofpoint-GUID: VC6fmD9L6N0feWbC717oBjoqNRvXhHMg
-X-Proofpoint-ORIG-GUID: ppal_x6lshzEVmSX5bZg-TvOczGHsl-m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-20_04,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 spamscore=0
- malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+Mime-Version: 1.0
+References: <20250827175247.83322-2-shivankg@amd.com> <176055105546.1527431.3611256810380818215.b4-ty@google.com>
+Message-ID: <aPZapWWFGyqjA2e3@google.com>
+Subject: Re: [PATCH kvm-next V11 0/7] Add NUMA mempolicy support for KVM guest-memfd
+From: Sean Christopherson <seanjc@google.com>
+To: willy@infradead.org, akpm@linux-foundation.org, david@redhat.com, 
+	pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, 
+	Shivank Garg <shivankg@amd.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com, 
+	xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, 
+	josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com, 
+	jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
+	surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com, 
+	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
+	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
+	tabba@google.com, ackerleytng@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, 
+	vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, 
+	michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com, 
+	Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com, 
+	aik@amd.com, kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, 
+	hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
+	rientjes@google.com, roypat@amazon.co.uk, chao.p.peng@intel.com, 
+	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
+	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
+	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
+	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-coco@lists.linux.dev, Jason Gunthorpe <jgg@ziepe.ca>
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, 2025-10-20 at 14:45 +0200, Roberto Sassu wrote:
-> On Mon, 2025-10-20 at 08:21 -0400, Mimi Zohar wrote:
-> > On Sat, 2025-10-18 at 07:19 +0800, Coiby Xu wrote:
-> > > > > > 2. Instead of defining an additional process_measurement() argu=
-ment to identify
-> > > > > > compressed kernel modules, to simplify the code it might be pos=
-sible to define a
-> > > > > > new "func" named COMPRESSED_MODULE_CHECK.
-> > > > > >=20
-> > > > > > +       [READING_COMPRESSED_MODULE] =3D MODULE_CHECK,  -> COMPR=
-ESSED_MODULE_CHECK
-> > > > >=20
-> > > > > I also thought about this approach. But IMA rule maps kernel modu=
-le
-> > > > > loading to MODULE_CHECK. If we define a new rule and ask users to=
- use
-> > > > > this new rule, ima_policy=3Dsecure_boot still won't work.
-> > > >=20
-> > > > I don't have a problem with extending the "secure-boot" policy to s=
-upport
-> > > > uncompressed kernel modules appended signatures, based on whether
-> > > > CONFIG_MODULE_SIG is enabled.  The new rule would be in addition to=
- the existing
-> > > > MODULE_CHECK rule.
-> > >=20
-> > > I assume once the new rule get added, we can't remove it for userspac=
-e
-> > > backward compatibility, right? And with CPIO xattr supported, it seem=
-s
-> > > there is no need to keep this rule. So if this concern is valid, do y=
-ou
-> > > think we shall switch to another approach i.e. to make IMA support
-> > > verifying decompressed module and then make "secure-boot" to allow
-> > > appended module signature?
-> >=20
-> > Yes, once the rule is added, it wouldn't be removed.  As for "to make I=
-MA
-> > support verifying decompressed module", yes that might be a better solu=
-tion,
-> > than relying on "sig_enforce" being enabled. IMA already supports verif=
-ying the
-> > appended signatures.  A new IMA specific or LSM hook would need to be d=
-efined
-> > after module_decompress().
-> >=20
-> > Remember based on policy, IMA supports:
-> > 1. verifying the signature stored in security.ima xattr
-> > 2. verifying the appended signature (not for compressed kernel modules)
-> > 3. verifying both the xattr and appended signatures
-> > 4. none
-> >=20
-> > To prevent 3 - verifying both types of signatures, the IMA arch specifi=
-c policy
-> > rule only adds the "appraise func=3DMODULE_CHECK ..." rule if CONFIG_MO=
-DULE_SIG is
-> > NOT enabled.  Calling set_module_sig_enforced() from ima_appraise_measu=
-rement()
-> > to set sig_enforce could inadvertently result in requiring both the xat=
-tr and
-> > the appended signature kernel module verification.  To prevent this fro=
-m
-> > happening, "sig_enforce" should not be set, only verified in
-> > ima_appraise_measurement().
-> >=20
-> > >=20
-> > > Another thought is to make CPIO support xattr. Today I realize that
-> > > ima_policy=3Dsecure_boot can also cause failure of loading kdump kern=
-el.
-> > > So the issue this patch tries to resolves has much less impact than I
-> > > thought. Maybe we can wait until CPIO xattr support is ready? I'll he=
-lp
-> > > review and test Roberto's patches if this is the best way forward.
-> >=20
-> > I'm not sure of the status of the CPIO patch set.  Roberto?
->=20
-> I haven't had time to look at it recently. I can take the openEuler
-> version, address the remaining comments and repost.
+On Wed, Oct 15, 2025, Sean Christopherson wrote:
+> On Wed, 27 Aug 2025 17:52:41 +0000, Shivank Garg wrote:
+> > This series introduces NUMA-aware memory placement support for KVM guests
+> > with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
+> > that enabled host-mapping for guest_memfd memory [1] and can be applied
+> > directly applied on KVM tree [2] (branch kvm-next, base commit: a6ad5413,
+> > Merge branch 'guest-memfd-mmap' into HEAD)
+> > 
+> > == Background ==
+> > KVM's guest-memfd memory backend currently lacks support for NUMA policy
+> > enforcement, causing guest memory allocations to be distributed across host
+> > nodes  according to kernel's default behavior, irrespective of any policy
+> > specified by the VMM. This limitation arises because conventional userspace
+> > NUMA control mechanisms like mbind(2) don't work since the memory isn't
+> > directly mapped to userspace when allocations occur.
+> > Fuad's work [1] provides the necessary mmap capability, and this series
+> > leverages it to enable mbind(2).
+> > 
+> > [...]
+> 
+> Applied the non-KVM change to kvm-x86 gmem.  We're still tweaking and iterating
+> on the KVM changes, but I fully expect them to land in 6.19.
+> 
+> Holler if you object to taking these through the kvm tree.
+> 
+> [1/7] mm/filemap: Add NUMA mempolicy support to filemap_alloc_folio()
+>       https://github.com/kvm-x86/linux/commit/601aa29f762f
+> [2/7] mm/filemap: Extend __filemap_get_folio() to support NUMA memory policies
+>       https://github.com/kvm-x86/linux/commit/2bb25703e5bd
+> [3/7] mm/mempolicy: Export memory policy symbols
+>       https://github.com/kvm-x86/linux/commit/e1b4cf7d6be3
 
-Thank you!
+FYI, I rebased these onto 6.18-rc2 to avoid a silly merge.  New hashes:
+
+[1/3] mm/filemap: Add NUMA mempolicy support to filemap_alloc_folio()
+      https://github.com/kvm-x86/linux/commit/7f3779a3ac3e
+[2/3] mm/filemap: Extend __filemap_get_folio() to support NUMA memory policies
+      https://github.com/kvm-x86/linux/commit/16a542e22339
+[3/3] mm/mempolicy: Export memory policy symbols
+      https://github.com/kvm-x86/linux/commit/f634f10809ec
