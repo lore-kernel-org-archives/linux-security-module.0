@@ -1,59 +1,99 @@
-Received: from mail.taskera.pl (mail.taskera.pl [51.75.73.133])
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD97301472
-	for <linux-security-module@vger.kernel.org>; Wed, 22 Oct 2025 08:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.75.73.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D8E2F1FE6
+	for <linux-security-module@vger.kernel.org>; Wed, 22 Oct 2025 09:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761120698; cv=none; b=aMC4FaUlng93QbRRVrmAGdzbmaW/ZXPzE2seb7ZG92kjILCCGCxWIbsG8gcNJZb0d7UshnUCvihsTiUUZKAZmmYaNgGkq6Jr/nbFo4vEWKAWjy2+TC88NHskJv78WvhlhUGUMHiSgOj/9WIgiypyfeIDgmRWjbsLRCZYkVrhl4U=
+	t=1761125903; cv=none; b=WyLbUEp7uUjJb4nNgEBHl+x9+OC1awLgcW+FfDfngmZrMDNXWwP3vdQU3+B8Gabh+3GDZcbLUO5j7u8JOPdbWkpnJ8etysVSyLiyFFFHJzCe4lkGapSDFyPfmeANFokihAGmt5Dh6yQZYPwJVsNuU8yWNtVIh09LrH7LsaUXQXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761120698; c=relaxed/simple;
-	bh=LHmroAf0IX0JOjVUiIwqM4s8ghVxxktECxT6AQD+q2c=;
-	h=Message-ID:Date:From:To:Subject:MIME-Version:Content-Type; b=JN2ukOniWCU1CMQUgc0/oBSUeddGnLjdJ/rz4fqSlMHY53+u4tVvq7P6GFwIIXiIHvD35yPiFlhYtmnxljCnZ2aFClfIyT5dk6O1WtlZ+XMYPsgAgRQHtdPaT6hlrolIy50ZkBZthF344oYDE5tV27dd4j+CtIgWgbyJ2tcgAzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=taskera.pl; spf=pass smtp.mailfrom=taskera.pl; dkim=pass (2048-bit key) header.d=taskera.pl header.i=@taskera.pl header.b=FvriWvvv; arc=none smtp.client-ip=51.75.73.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=taskera.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=taskera.pl
+	s=arc-20240116; t=1761125903; c=relaxed/simple;
+	bh=bxynnY7gqNmOi/aTMvKArHOmse4FQvgr7PXwb1Utuw8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g486xljmSzA7nhfKxSaJrpZBkPiR5d9wiZhr0PMR7ff4pSQamPtqaSrT58H6SsEgLwYWRWgDdOdhap4eQtdUp+Hc3yf4tpSGJNuuj01Erw74JeGwmMyEEYID58QaHiqTbwnev9g5QmEj7Q3iA6zYn34gEkYVEl2wA/0cOi1Lxmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HhA/VdfW; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=taskera.pl header.i=@taskera.pl header.b="FvriWvvv"
-Received: by mail.taskera.pl (Postfix, from userid 1002)
-	id 6EDCE25CD2; Wed, 22 Oct 2025 10:11:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=taskera.pl; s=mail;
-	t=1761120694; bh=LHmroAf0IX0JOjVUiIwqM4s8ghVxxktECxT6AQD+q2c=;
-	h=Date:From:To:Subject:From;
-	b=FvriWvvvODAGPYwQGyOGQ8UkhNRiUJ9NZ5Q2RAk1mRjtIN1KK6ayh2AxrJeMB4/al
-	 9jEDSP/i0OSgDoZt/EZDPFoHFM2omeDMX+W+BaBeNvDk1tPoKf7TG+Mt0oBBpju8w6
-	 U3gbphVrTRw72hJkXi1jO2v9H3RM30JUPtGzWxjtGTfvQtk71zxe8rHFtA8MDpZsh6
-	 Na9hFn5J4nLO9TIwUeIzMjiKw+dj99NlUlHxzW/YFhKOOgAzG3mu4ydcdNXaCb58xy
-	 i7UjyiTZq2WfQ3JkaBu7L8OTRQ82LC05HaqTZ7gkaEsUYQCUQ3laljaOyH0g/wES3h
-	 1Ak152hggBlrg==
-Received: by mail.taskera.pl for <linux-security-module@vger.kernel.org>; Wed, 22 Oct 2025 08:11:10 GMT
-Message-ID: <20251022084500-0.1.e0.vvd9.0.14a2ko8i22@taskera.pl>
-Date: Wed, 22 Oct 2025 08:11:10 GMT
-From: "Eryk Wawrzyn" <eryk.wawrzyn@taskera.pl>
-To: <linux-security-module@vger.kernel.org>
-Subject: Zwrot
-X-Mailer: mail.taskera.pl
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HhA/VdfW"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761125889;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GL864tnGf0kR+752wc1z68vVTN9MWgo9+WclWIvl49M=;
+	b=HhA/VdfWsXl45uRI7qP2es2Ham6joM7ZolFWnwcD7e1znItUk8gOFMe+K5SsLXpCotZQpx
+	QJ3O2Z74hrxfl7cfYNffczU1LIJd6dUxYJA8chst6wXtWkH9QHsGm2QITJxhLaueoGaTBv
+	rIezv6bLD49+LYRFH5j7jP0/P/mr7ZM=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] apparmor: replace sprintf with snprintf in aa_new_learning_profile
+Date: Wed, 22 Oct 2025 11:37:18 +0200
+Message-ID: <20251022093718.206271-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Dzie=C5=84 dobry,
+Replace unbounded sprintf() calls with snprintf() to prevent potential
+buffer overflows in aa_new_learning_profile(). While the current code
+works correctly, snprintf() is safer and follows secure coding best
+practices.  No functional changes.
 
-kontaktuj=C4=99 si=C4=99 w imieniu kancelarii specjalizuj=C4=85cej si=C4=99=
- w zarz=C4=85dzaniu wierzytelno=C5=9Bciami.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ security/apparmor/policy.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-Od lat wspieramy firmy w odzyskiwaniu nale=C5=BCno=C5=9Bci. Prowadzimy ko=
-mpleksow=C4=85 obs=C5=82ug=C4=99 na etapach: przeds=C4=85dowym, s=C4=85do=
-wym i egzekucyjnym, dostosowuj=C4=85c dzia=C5=82ania do bran=C5=BCy Klien=
-ta.
+diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
+index 50d5345ff5cb..b09323867fea 100644
+--- a/security/apparmor/policy.c
++++ b/security/apparmor/policy.c
+@@ -697,24 +697,27 @@ struct aa_profile *aa_new_learning_profile(struct aa_profile *parent, bool hat,
+ 	struct aa_profile *p, *profile;
+ 	const char *bname;
+ 	char *name = NULL;
++	size_t name_sz;
+ 
+ 	AA_BUG(!parent);
+ 
+ 	if (base) {
+-		name = kmalloc(strlen(parent->base.hname) + 8 + strlen(base),
+-			       gfp);
++		name_sz = strlen(parent->base.hname) + 8 + strlen(base);
++		name = kmalloc(name_sz, gfp);
+ 		if (name) {
+-			sprintf(name, "%s//null-%s", parent->base.hname, base);
++			snprintf(name, name_sz, "%s//null-%s",
++				 parent->base.hname, base);
+ 			goto name;
+ 		}
+ 		/* fall through to try shorter uniq */
+ 	}
+ 
+-	name = kmalloc(strlen(parent->base.hname) + 2 + 7 + 8, gfp);
++	name_sz = strlen(parent->base.hname) + 2 + 7 + 8;
++	name = kmalloc(name_sz, gfp);
+ 	if (!name)
+ 		return NULL;
+-	sprintf(name, "%s//null-%x", parent->base.hname,
+-		atomic_inc_return(&parent->ns->uniq_null));
++	snprintf(name, name_sz, "%s//null-%x", parent->base.hname,
++		 atomic_inc_return(&parent->ns->uniq_null));
+ 
+ name:
+ 	/* lookup to see if this is a dup creation */
+-- 
+2.51.0
 
-Kiedy mo=C5=BCemy porozmawia=C4=87?
-
-
-Pozdrawiam
-Eryk Wawrzyn
