@@ -1,209 +1,176 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C4530BB97;
-	Fri, 24 Oct 2025 18:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0338E2F5339
+	for <linux-security-module@vger.kernel.org>; Fri, 24 Oct 2025 20:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761331763; cv=none; b=SJYy3NDatoyhJ6ZenpvDT9Use9JiKvanvjTUpnsqLsLGmO01/y7pMRixPRyjJRlTyWrgcpJArkfJH0JLm6l2nREPSPd7CLnYJ5NyTreZ4SNSmnbxc8k3NK+kVOEPCexUjBy0SLqItlLYRvKf0WlScwmGx6BQo0Uh12Sh8oyBM44=
+	t=1761337893; cv=none; b=AB99uke++fRVhc4XqK2ht55bmO4abBp5A4ypqdmpLsv9+ubxisMrH2/YzFCcUM4HR1gS0RKLA3RQMIpS+bi+/LxDdYc+d+WyUqIV08poSGJvBG8/YTDqqCLxWMDZDWW8Mt8JhajxJpuk1eCHamuBucKPMYLUHcvrnuXBrRxIMEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761331763; c=relaxed/simple;
-	bh=m2hG588lr+ZDX3+zgtXdvSd6rN2Scyj1sP9/47ZL4ak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DB3WPWLyN+Vv04nlzkPetLbcRCyXt2LIw4Ag2RG0HPGbk7DFb5EQ//jxxjGhYFfoq7wcFA170ZNoKEqnQzpwX0V7+NsDm4ttGIUzqoOAJc7CUVu3eM7CjhE9o3MwpEKFXpCsUmJ2+3CH+vTCHmCko3Kc7pBPGcxUr7JxOazYraw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=usTsn1SF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1761337893; c=relaxed/simple;
+	bh=YLsDVmBRFUzk4uFHLNXj50aYnzyO7d5mx0WZXJ2eLJQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LMIAPomDZ81+JC/erakP+0aoMyEOe/Sh/0CxNkf3rdELwnjlA1CjGMjnRbwMzmtQ38dR4RkbS6g78pCZrETPeKsAUhdDQ7jvUT/ezv3e67wPGX1hNHJaNSh5zYzJjpin09EVoTIRY2EFwDCnQEp9BbxeL8LnCuHrlbmzfyxp260=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hv0CJmW+; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="usTsn1SF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81733C4CEF1;
-	Fri, 24 Oct 2025 18:49:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761331762;
-	bh=m2hG588lr+ZDX3+zgtXdvSd6rN2Scyj1sP9/47ZL4ak=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=usTsn1SFVlCJOQ+Is77PDZ3TLouCjGUzC+AmY4KGYDTgrcueMfygC9pGeMlkZfoH1
-	 XKa7rppvvancXyU3cOdb8HVjRB3EjnDkl9Y2PzMZxeGW9KDKtnYfN2oFHCheJDmn13
-	 pVamjpD2VIfnsZGmIQZXvahckqfQD4ext2XkRue7X3RDbnulngQBmJKcdXWq1Fsddh
-	 3dF7ZsKHGWp0sqXhNm2stxxQ0uYlcgR47w6Q+1OwAezk22SMPHMkjbSi3xzIxgNHAO
-	 hX6B6zB68+Ib0oYH1CT6+N0U1JPDeDrUF6hy0opRypmFqP2nXIU+J3Q+92vXD12aQL
-	 aXsSCgWFhca3A==
-Date: Fri, 24 Oct 2025 21:49:17 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: linux-integrity@vger.kernel.org, keyring@vger.kernel.org,
-	dpsmith@apertussolutions.com, ross.philipson@oracle.com,
-	Jonathan McDowell <noodles@earth.li>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v6 10/10] tpm-buf: Enable managed and stack allocations.
-Message-ID: <aPvKLYMtXZeQnA5D@kernel.org>
-References: <20251018111725.3116386-1-jarkko@kernel.org>
- <20251018111725.3116386-11-jarkko@kernel.org>
- <yynqxoqux5whcbsnticikhwmupqh57xfbll5egzkn42kj7gkaf@s4kwxfmto5ia>
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hv0CJmW+"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b3e9d633b78so520183066b.1
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Oct 2025 13:31:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1761337889; x=1761942689; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BFuzQTMQA5rTZOkoXKW3L8u+HJJavRaRvHnpTIXo3kA=;
+        b=hv0CJmW++3eKf3G9Q/2DIKKT9njJRsLOp3vI4RnVQlRXR2IM/VUgTPFH98NCEzaVVD
+         pATzOaCw6ZZFoX9esHfYlbLMpA6CXBeYFRn7WHMOlx8yJ5OTj4NMTWMW3bz5viKGX5mV
+         KVrelyju+qY2/rlE408i/1niTzoYocyWQev5E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761337889; x=1761942689;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BFuzQTMQA5rTZOkoXKW3L8u+HJJavRaRvHnpTIXo3kA=;
+        b=snhy/O6HwwvurbSko9MU600SOxPJEVzv6QkM8iJ8PWknW1UjeyMv/Kamqy4YHwBPyo
+         kkUiAdc7H/eY8KhxdDi5l8LtB4EszQvhQP+v9WWwul49042EdreegU8xkUlpEt+VEK9a
+         vNQperVcQurSR4W1+g3rcbTRTY8fVzfMTHgp201CpLubFOF7oKhEGtX4CFfzUQN5XHr0
+         b0vlfAT5arKLvakR/6MSbS8WZbWbUz8zH3rSTqLOTpWbKTsQARai5TlybLtSA6U5tyoZ
+         2tIfpdDYYhb/jaXpAfmDdUBpvbUdV8Rqmc06wlBsDJ6RbtKHRy/rY8RmWgx1rmGEiVxM
+         fY0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVoqvC3Os94I/cIBCs7qE+pdQSli/bOPxSYC/326ZI2LLJaepVH5q5pp+q0wmSMXKRk8YkrIyx4l+PfahH/0F+u34dWV60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTMMCpgZcF8d5yepMHxsGsG4nAOrZ4YfSI0evu2yi9Qz3b+CEP
+	q5ynayf/85Pph+DERRZxroE2LhDXqtz0mXj0SR8Gy4kI5v/m3Cc50jb0rO3FdVEM8nsJ2lL0TxU
+	ICUpek5M=
+X-Gm-Gg: ASbGncut+UUU+q0S8hus+f1tju6a/raI9C7VDgzczlKB46vjgL2XHUN9LBVAm4ZftDF
+	RmvHPyjfqWgBbf/L49XLSi/Hn27ircN8KogupT9w3lbt4IELlnEkPCEJSxL8F0gYM5VzXZINOhY
+	c1wYITPzbaBGq2K1jv64B7/6GYaaRK7hyi0xfsRfsIBm2aPZnzsRtA8B9lchDykDCFV9f3JNJvi
+	/dTG7bZwS4vuLcS/xXQgHAUwupvf6msdhyVGe2j71P5mFttbeSyfcAtDPIReT0tN1SiCilAIVph
+	keCT52eSj/IRdbfh4Np09pZXXBHSPGjlcBbUPNJWmV5Gaego5nCTJ2ZZnx1Z9G3/sN/rPZgQhYQ
+	mTFOlfBCJmPWaZpCKV3X6qOOC4LGD9hmPSC23/N7D2ieLOV51yo2f35FL0XM3lYw8A+kUxSV7EG
+	NE+KcsyJy7aJ9+vTMl9dC9oe67Z8tSZi7H2hnXmaIGe3TiPxt897qx9HLS9MmN
+X-Google-Smtp-Source: AGHT+IGH/EN/oIcIHXZ06nLRFlVJx2sjZ6lcbgHt+sm7kE4fjlk5T//pKWgFdrVacbcbypF5COfE5A==
+X-Received: by 2002:a17:907:1c85:b0:b6d:263c:22e1 with SMTP id a640c23a62f3a-b6d6be49f8dmr455551866b.31.1761337888900;
+        Fri, 24 Oct 2025 13:31:28 -0700 (PDT)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d8548eda6sm10258166b.75.2025.10.24.13.31.27
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 13:31:27 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-634cef434beso6873887a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Oct 2025 13:31:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU7PS8+VdSwlrzPk8Is9/Lj0tE5Qa8oZ7qKhnLtbR8v9v/cVSTaL4OsLqqC8CtgYUL7zmMRV+r2z9lOO0QgIRzevoJtiY4=@vger.kernel.org
+X-Received: by 2002:a05:6402:3511:b0:63b:ec3c:ee32 with SMTP id
+ 4fb4d7f45d1cf-63e5eb18f2dmr3477528a12.11.1761337887233; Fri, 24 Oct 2025
+ 13:31:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yynqxoqux5whcbsnticikhwmupqh57xfbll5egzkn42kj7gkaf@s4kwxfmto5ia>
+References: <37fb8720-bee9-43b7-b0ff-0214a8ad33a2@kernel.dk>
+In-Reply-To: <37fb8720-bee9-43b7-b0ff-0214a8ad33a2@kernel.dk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 24 Oct 2025 13:31:11 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgZ9x+yxUB9sjete2s9KBiHnPm2+rcwiWNXhx-rpcKxcw@mail.gmail.com>
+X-Gm-Features: AWmQ_bk4uIZgtxqK_hz679cw5uXq-Z_oOrdasW-TDydWDYZqpoDShTeWLYqsq6s
+Message-ID: <CAHk-=wgZ9x+yxUB9sjete2s9KBiHnPm2+rcwiWNXhx-rpcKxcw@mail.gmail.com>
+Subject: Re: [GIT PULL] Block fixes for 6.18-rc3
+To: Jens Axboe <axboe@kernel.dk>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <sergeh@kernel.org>, Christian Brauner <brauner@kernel.org>
+Cc: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 20, 2025 at 11:04:51AM +0200, Stefano Garzarella wrote:
-> On Sat, Oct 18, 2025 at 02:17:25PM +0300, Jarkko Sakkinen wrote:
-> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
-> > 
-> > Decouple kzalloc from buffer creation, so that a managed allocation can be
-> > done trivially:
-> > 
-> > 	struct tpm_buf *buf __free(kfree) buf = kzalloc(TPM_BUFSIZE,
-> > 							GFP_KERNEL);
-> > 	if (!buf)
-> > 		return -ENOMEM;
-> > 	tpm_buf_init(buf, TPM_BUFSIZE);
-> > 
-> > Alternatively, stack allocations are also possible:
-> > 
-> > 	u8 buf_data[512];
-> > 	struct tpm_buf *buf = (struct tpm_buf *)buf_data;
-> > 	tpm_buf_init(buf, sizeof(buf_data));
-> > 
-> > Given that every single tpm_transmit_cmd() call site needs to be changed,
-> > place command names from TCG 1.2 and 2.0 specifications to the @dest
-> > parameter, which will e.g., help tracing bugs.
-> 
-> Perhaps my previous message fell through the cracks, but I still have a
-> couple of comments (perhaps trivial, sorry in that case) that have not been
-> answered about this patch:
+[ Adding LSM people. Also Christian, because he did the cred refcount
+cleanup with override_creds() and friends last year, and I'm
+suggesting taking that one step further ]
 
-I think what happened is that there was enough time that I forgot what
-I had or hadn't done :-) I'll address your comments.
+On Fri, 24 Oct 2025 at 06:58, Jens Axboe <axboe@kernel.dk> wrote:
+>
+> Ondrej Mosnacek (1):
+>       nbd: override creds to kernel when calling sock_{send,recv}msg()
 
-> 
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
-> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > ---
-> > v6
-> > - Update commit message.
-> > v5:
-> > - There was a spurious change in tpm2_seal_trusted() error
-> >  code handling introduce by this patch.
-> > v4:
-> > - Since every single tpm_transmit_cmd() call site needs to be
-> >  changed anyhow, use 'dest' parameter more structured and
-> >  actually useful way, and pick the string TCG 1.2 and 2.0
-> >  specifications.
-> > - tpm1-cmd: Remove useless rc declarations and repliace them
-> >  with trivial "return tpm_transmit_cmd" statement.
-> > - Reverted spurious changes in include/linux/tpm.h.
-> > - Use concisely TPM_BUFSIZE instead of PAGE_SIZE.
-> > v3:
-> > - A new patch from the earlier series with more scoped changes and
-> >  less abstract commit message.
-> > ---
-> > drivers/char/tpm/tpm-buf.c                | 122 +++++----
-> > drivers/char/tpm/tpm-sysfs.c              |  21 +-
-> > drivers/char/tpm/tpm.h                    |   1 -
-> > drivers/char/tpm/tpm1-cmd.c               | 162 +++++-------
-> > drivers/char/tpm/tpm2-cmd.c               | 299 ++++++++++------------
-> > drivers/char/tpm/tpm2-sessions.c          | 122 +++++----
-> > drivers/char/tpm/tpm2-space.c             |  44 ++--
-> > drivers/char/tpm/tpm_vtpm_proxy.c         |  30 +--
-> > include/linux/tpm.h                       |  18 +-
-> > security/keys/trusted-keys/trusted_tpm1.c |  34 ++-
-> > security/keys/trusted-keys/trusted_tpm2.c | 175 ++++++-------
-> > 11 files changed, 484 insertions(+), 544 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
-> > index 1b9dee0d0681..a3bf3c3d0c48 100644
-> > --- a/drivers/char/tpm/tpm-buf.c
-> > +++ b/drivers/char/tpm/tpm-buf.c
-> 
-> [...]
-> 
-> > @@ -92,6 +119,9 @@ EXPORT_SYMBOL_GPL(tpm_buf_destroy);
-> >  */
-> > u32 tpm_buf_length(struct tpm_buf *buf)
-> 
-> Should we update the return value to u16?
+I've pulled this, but looking at the patch, I note that more than half
+the patch - 75% to be exact - is just boilerplate for "I need to
+allocate the kernel cred and deal with error handling there".
 
-Ack.
+It literally has three lines of new actual useful code (two statements
+and one local variable declaration), and then nine lines of the "setup
+dance".
 
-> 
-> 
-> > {
-> > +	if (buf->flags & TPM_BUF_INVALID)
-> > +		return 0;
-> > +
-> > 	return buf->length;
-> > }
-> > EXPORT_SYMBOL_GPL(tpm_buf_length);
-> 
-> [...]
-> 
-> > diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-> > index 636acb66a4f6..3ac204a902de 100644
-> > --- a/security/keys/trusted-keys/trusted_tpm1.c
-> > +++ b/security/keys/trusted-keys/trusted_tpm1.c
-> > @@ -310,9 +310,8 @@ static int TSS_checkhmac2(unsigned char *buffer,
-> >  * For key specific tpm requests, we will generate and send our
-> >  * own TPM command packets using the drivers send function.
-> >  */
-> > -static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
-> > +static int trusted_tpm_send(void *cmd, size_t buflen)
-> > {
-> > -	struct tpm_buf buf;
-> > 	int rc;
-> > 
-> > 	if (!chip)
-> > @@ -322,15 +321,12 @@ static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
-> > 	if (rc)
-> > 		return rc;
-> > 
-> > -	buf.flags = 0;
-> > -	buf.length = buflen;
-> > -	buf.data = cmd;
-> > 	dump_tpm_buf(cmd);
-> > -	rc = tpm_transmit_cmd(chip, &buf, 4, "sending data");
-> > +	rc = tpm_transmit_cmd(chip, cmd, 4, "sending data");
-> 
-> Is it fine here to remove the intermediate tpm_buf ?
-> 
-> IIUC tpm_transmit_cmd() needs a tpm_buf, while here we are passing just
-> the "data", or in some way it's a nested tpm_buf?
+Which isn't wrong, but when the infrastructure boilerplate is three
+times more than the actual code, it makes me think we should maybe
+just get rid of the
 
-This does not look right at all. I'll fix it and add automated test
-suite for TPM 1.x to my standard test shenanigans so that I can
-continuously test its correctness [1]. It anyhow should have TPM 1.2
-tests (especially for trusted keys). As it becomes more rare
-accidental bugs could easily hover in.
+    my_kernel_cred = prepare_kernel_cred(&init_task);
 
-Thanks, this was really good catch. I'll address both bug and make
-sure that I don't do the same mistake twice :-)
+pattern for this use-case, and just let people use "init_cred"
+directly for things like this.
 
-> 
-> > 	dump_tpm_buf(cmd);
-> > 
-> > +	/* Convert TPM error to -EPERM. */
-> > 	if (rc > 0)
-> > -		/* TPM error */
-> > 		rc = -EPERM;
-> > 
-> > 	tpm_put_ops(chip);
-> 
-> Thanks,
-> Stefano
-> 
+Because that's essentially what that prepare_kernel_cred() thing
+returns, except it allocates a new copy of said thing, so now you have
+error handling and you have to free it after-the-fact.
 
-[1] https://codeberg.org/jarkko/linux-tpmdd-test
+And I'm not seeing that the extra error handling and freeing dance
+actually buys us anything at all.
 
-BR, Jarkko
+Now, some *other* users actually go on to change the creds: they want
+that prepare_kernel_cred() dance because they then actually do
+something else like using their own keyring or whatever (eg the NFS
+idmap code or some other filesystem stuff).
+
+So it's not like prepare_kernel_cred() is wrong, but in this kind of
+case where people just go "I'm a driver with hardware access, I want
+to do something with kernel privileges not user privileges", it
+actually seems counterproductive to have extra code just to complicate
+things.
+
+Now, my gut feel is that if we just let people use 'init_cred'
+directly, we should also make sure that it's always exposed as a
+'const struct cred' , but wouldn't that be a whole lot simpler and
+more straightforward?
+
+This is *not* the only use case of that.
+
+We now have at least four use-cases of this "raw kernel cred" pattern:
+core-dumping over unix domain socket, nbd, firmware loading and SCSI
+target all do this exact thing as far as I can tell.
+
+So  they all just want that bare kernel cred, and this interface then
+forces it to do extra work instead of just doing
+
+        old_cred = override_creds(&init_cred);
+        ...
+        revert_creds(old_cred);
+
+and it ends up being extra code for allocating and freeing that copy
+of a cred that we already *had* and could just have used directly.
+
+I did just check that making 'init_cred' be const
+
+  --- a/include/linux/init_task.h
+  +++ b/include/linux/init_task.h
+  @@ -28 +28 @@ extern struct nsproxy init_nsproxy;
+  -extern struct cred init_cred;
+  +extern const struct cred init_cred;
+  --- a/kernel/cred.c
+  +++ b/kernel/cred.c
+  @@ -44 +44 @@ static struct group_info init_groups = { .usage =
+REFCOUNT_INIT(2) };
+  -struct cred init_cred = {
+  +const struct cred init_cred = {
+
+seems to build just fine and would seem to be the right thing to do
+even if we *don't* expect people to use it. And override_creds() is
+perfectly happy with a
+
+Maybe there's some reason for that extra work that I'm not seeing and
+thinking of? But it all smells like make-believe work to me that
+probably has a historical reason for it, but doesn't seem to make a
+lot of sense any more.
+
+Hmm?
+
+               Linus
