@@ -1,59 +1,60 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1762FFFB2
-	for <linux-security-module@vger.kernel.org>; Fri, 24 Oct 2025 21:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B339306B3B
+	for <linux-security-module@vger.kernel.org>; Fri, 24 Oct 2025 21:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761340759; cv=none; b=WCwMQ99Ym0vTGVQkrEd4Gbjtya8YaqXNHzaRSK1gkCgqxjsCy+njexJw3CGGEaGaC4T3UOoZf27KXWjryEqXCRRjMpm+EIfYmNYkdijNOuJTgY/dg/nhMslOkzwUeQY46MyIegTanSSqdlEM1YWM1C8YwVMgFNOP3VenQ/1VQ4Y=
+	t=1761341431; cv=none; b=sZ+5xY5PK9AIXUO4Nd1cGqUjZiLMpm/x5rx8Byt12i3485zmIQw6gB8Qd9xbydVELx+q8bMeq2De1/1203A50O9ev7QFnH3l6/7uqSkIPrRRHmQWQ8BlBZrxK5dsUi7R/A5/RyczY0mk6SRT8s3Pn16dk93AVhrdQjYHxR+j3g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761340759; c=relaxed/simple;
-	bh=Q5/wEJ5gjWMJYpVKrI/TR93gpL8YjJvzBHdOx3GYBb4=;
+	s=arc-20240116; t=1761341431; c=relaxed/simple;
+	bh=6MBkEDdxnVG5HIz+RU52ThnAtl9OT03l4dcmuA7P9Do=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nob0Vrb7LJKwcYRgtPdO4f8ENS/depnMDkJFZghwOzxAwW/Tt1OKLCZrmkC95D68r/wC1AjGBm6Fr4NhfEGdnuFg0c8TOSf/ivlvzngsAq4NB5aDJ8G3CQGlav0RF2B8BsLThBMjXaX6za4UXvKUDe7eXU57AKUZj4sCBLK+44I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b1li+BXq; arc=none smtp.client-ip=209.85.208.47
+	 To:Cc:Content-Type; b=UQ/Rq/y3wQZjzNyxfXegy0ubgDLkj0wdlBVNmJs8ocwn3b2KfV4y495bAg2UZqUErqN3ggH7znqG2IE2AP3tjAGWakk7AUNhdAwq3zE2EuvUFvi/v3Ddm7K2ad+LlnaywzRLCIbTDnVMrUb5TVgvyHvWu8gwXMM+BemrzHJDkZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UnuBe41g; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b1li+BXq"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63c167b70f9so2948a12.0
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Oct 2025 14:19:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UnuBe41g"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-62faa04afd9so1065a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Oct 2025 14:30:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761340755; x=1761945555; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1761341428; x=1761946228; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ly9jwlM2gBwuCjx1Gq4+QRffP8sFGZ+fNZzj9gTQP4I=;
-        b=b1li+BXqDop7YChRoUhzFFCTpEMC35zs+cRXzZxlnt+SxAnMBmBhZfKVYWrlO/Oomf
-         bbmzFVf9Ae/sxeytknnfQGS7LJhsRqQHP30iISIxxszsh7hm6e6nOTdHH4obfnPEnBGL
-         BY1E6BkSXgMWZvYcmE3tk0+dQATIglAC1qONK9khHmmOTJqyb4Fc+3cRiqyWP2sL34kq
-         3UViUQZ/E2hwqVeGXvMfzsT4QbcilBrHTtgnS3tOLcDFThprjrF8mTrygDvlIL1DcXqN
-         xgUeDvsSm2khkdgAuYrlc9Vt3qluYUxIlJeLW+fkw6Jm1oK4Xt8pBHbBzobd/j3J2a0d
-         LIcw==
+        bh=ElgC1tw3RRavn/IPbPddkKii2OlmwZLUB7ZUHz+dn2U=;
+        b=UnuBe41gvdGZWpLSk/bBNlNOU1IpCaQsyi0U95shPh7FYZ0Bxb0d/vKnGum6xMFQkG
+         vxkd1sfH8vfOEgsqVGK2/4K1Ah8qaohJcbolDZcID5y64T+YMAL+ONxSk9RrVjT0VFdw
+         rTtQPRPhDYR5/M/oDPb5pzzAIE0DW6TOkuOOihsPPJScrYvdh39hWVMnt7fAP6gqFHa3
+         cOXq+g3SLoKn+LHm2LooD6PIimvUJ5dBPSegtOwuWTNDn8tqwh9JqTC59WWfvDKeoUUt
+         TAMVj/cCfXg/CZyJouLjNFS1xd4DJV/2C8KoFvGv9qI7xN1FoQikoKCOTgX1OcImh7yV
+         pJNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761340755; x=1761945555;
+        d=1e100.net; s=20230601; t=1761341428; x=1761946228;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ly9jwlM2gBwuCjx1Gq4+QRffP8sFGZ+fNZzj9gTQP4I=;
-        b=VUeLlvHPtp2RYj7UJX4H8e9CTbqxCs83h8r3FzHAu6ovVs/UGk+3tCaXM8iADtwLzu
-         Jcjm4adCcRKW4s9tBwrupee6nu7mNrB2nruF37ehmd7HUMM33rMGgHLEBq6W344Sey5H
-         ODow/mcIrlWeqOE1qkv0FibKsk1iQ1QqkpPmX2CDLU4eedgCpQsDxU2tOcTI9gQ7Ib1h
-         Vl0BvjqCLiJwnZkXoXLw2JeZRiofc5Rtjz0YhJT5fb0FhoazzkZYvN2Msh2GI/E2kcmq
-         Q0BQtFbBDEIleJRmXXFTRv88ewKgJ6jrMFE6EISX5uKSjY5SD6OBQXdXTayvfsRw/MTr
-         BPbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXj8I30ozrrGDZV5yNkt+D9KRH4uGx/Gh+4Wkv0lDYu213E/bdpS0t8C2F6rCi6dAVGu2eaHBBOENLmacPsUEcCcSVjlKo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg8883PjAFVGDa5got6FL7MwdJ8h7Q8iusV19jigyL+NLraACM
-	OefsdedttdGpwM+Jnr9j1hXXucpKd1g6DAYreMxy7c+aziqp1TP0l3m78UmzZpfFp0C/S/fE1UP
-	M3hihWDBPWd0E+NoZFZo5XnuPZFUZm9cgFhVAptVf
-X-Gm-Gg: ASbGnctR22+eJfuLQBXP5PXfyMHevyvrrpZVrBERCalXA7ZZM6oKYvDo9rGYklsVxSH
-	nUyFgKk+kqzwMiu10Z7y898AMsHs2LhuF4j7no3zy6FopaAK3zWAym1LjzGPNIcsexhSM7Juvmx
-	UjuPCTfwpkrLVPhD5PYpg42mNCOffzAkcibvAq4rCJe4zYXjNwsCN8kPYexYkEcbedjk3Y6be1S
-	De9hag9kywC/PL8PXIgPgn2u1phSXDE7fjlEXOVhzq8lN/NbFt/xsaaEC4UE/gWxmXRpg+pUE5W
-	QZzTiWF/4Yr1kyjnmjyxznn9
-X-Google-Smtp-Source: AGHT+IEFKid8zYGDaSNjwIcBXiL85n1AUyopsccaAfYyHZOO2wajKtjWA5rvEPsKxpOCOfZl264dYCly9KdVdf/oZ9Q=
-X-Received: by 2002:a50:9f08:0:b0:63e:d72:4cf with SMTP id 4fb4d7f45d1cf-63e7c0dad4dmr27348a12.2.1761340755363;
- Fri, 24 Oct 2025 14:19:15 -0700 (PDT)
+        bh=ElgC1tw3RRavn/IPbPddkKii2OlmwZLUB7ZUHz+dn2U=;
+        b=ZQOVhBT27eO2JzTWEB7lrLvF3BIJ2sB7YWEVu6VevpPtl6CJFAmT8865xlrHxqfrGV
+         wD9L3dcITo/DV7mdub3ZEogHThV7B5fx8B9wSiXFaNGHnWrehKR2RdS3Mgu/xxTF7QeW
+         zUS+h4/gAxPhS78FxOQcUoRiRCcHJwC4DloPmivrbsBbwHMuMPdPhoy9mopSdgJPq6dx
+         gtERJHWQmFjJTV5DYD0KYI8RqUiDnV+88DMXhSJZt09TD5WpMVmLLVa77vYsKQoRHgWV
+         bOpcgE741N27xhvkAAHtfQ+mhvyK8E/z4s4F+k5O5zAu0kBdT9buafAxsjQupRXtBZE8
+         24LA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtJdnzNQ5UeRqRIUb+MWNZJnWTMsFVjVSLZvIp/yklXrDq4GhDw4tphHlDzh8ma202MMoyLTcWTghzItlgStGD5KPwZbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrhv0oNxIGBFuvrE4p++JXnq66/MmUEHRecVKEOInyNopKpfIq
+	iJxIwjfQ9K9z+xkVXSu0texcXxghQnEm+rSUkmH8pkvVJNLbZl0qN4Hpmtipqjd+PrqbB1NVURP
+	H/wOy7q1sfO9oqyP9HxyBQG81zdqL3v8QzxXkscZd
+X-Gm-Gg: ASbGnctOtLg9vm5Mkzo6p/YZzG/kzTSZmpJzwz8R/64+JBXsz0rpluhpoys5+9Zlm4m
+	3mlAiMqnTCvozri11vdJ02zFfqki9Y+KXV4qJ0aF//HLgT56UIQQ+/o+nuTAmTrdLMCuVh6zCOJ
+	zvdKumxqtH14wSlBY7E508Cwh1NRAQzNQeywRy7U2dfWUjyA6X6OpY9PaiNpwYSglhG6M2U9+IO
+	oyMbVpjg12XaP8d487w4I5o/Tu1m8RsdOK1lXjigEmlYYuhpEqVj5UcfySvRyEpehQCvFIBE2AA
+	xOqFkIzCPmvECw==
+X-Google-Smtp-Source: AGHT+IF8hDpyD4vG3722BZFL565cvKXbEY+MJqYmbKpfICeZv6zAH1iX+Za0bQwy7opXd5m1eU6OBPH5eRUnIEVuIRo=
+X-Received: by 2002:aa7:d3c9:0:b0:634:909c:d3c with SMTP id
+ 4fb4d7f45d1cf-63e7c0d1030mr32113a12.2.1761341427556; Fri, 24 Oct 2025
+ 14:30:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -61,12 +62,12 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20251001111807.18902-1-gnoack@google.com> <20251001111807.18902-2-gnoack@google.com>
- <20251017.ohthoos9Ogha@digikod.net>
-In-Reply-To: <20251017.ohthoos9Ogha@digikod.net>
+ <20251020.fohbo6Iecahz@digikod.net>
+In-Reply-To: <20251020.fohbo6Iecahz@digikod.net>
 From: Jann Horn <jannh@google.com>
-Date: Fri, 24 Oct 2025 23:18:39 +0200
-X-Gm-Features: AWmQ_bntNWi01IQLkCw1gO5Qel7NIpgFGlAUcckkgMJExifS1kU8Ql4APtvWR9I
-Message-ID: <CAG48ez2KoF6hVSJwdPfUpN3oroMww6Mu1+-bsBSbO8C5f91P6Q@mail.gmail.com>
+Date: Fri, 24 Oct 2025 23:29:51 +0200
+X-Gm-Features: AWmQ_bns23WD6z04uY7yFltLR5vNyAsJwQyjKC6ZLLC02O0Gy7IbjRvRBNutmJs
+Message-ID: <CAG48ez3MxN524ge_sZeTwL0FEDASaSTb-gm1vPO8UwpijTeHqw@mail.gmail.com>
 Subject: Re: [PATCH v2 1/2] landlock: Multithreading support for landlock_restrict_self()
 To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
 Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
@@ -75,76 +76,40 @@ Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 17, 2025 at 5:04=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
+On Mon, Oct 20, 2025 at 10:12=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
 > On Wed, Oct 01, 2025 at 01:18:06PM +0200, G=C3=BCnther Noack wrote:
-> > +     /* If needed, establish enforcement prerequisites. */
-> > +     if (!ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN))
-> > +             task_set_no_new_privs(current);
->
-> We should always set PR_SET_NO_NEW_PRIVS if it is set on the calling
-> thread as done by seccomp.  We should just store the result of
-> task_no_new_privs() in tsync_shared_context and use it as condition here.
-> This should be explained in the documentation.
->
-> This also mean that if the calling thread has CAP_SYS_ADMIN but not
-> PR_SET_NO_NEW_PRIVS, then a sibling thread could not have CAP_SYS_ADMIN
-> nor PR_SET_NO_NEW_PRIVS.  This would be a risky state but mainly because
-> of the CAP_SYS_ADMIN inconsistency, not really the missing
-> PR_SET_NO_NEW_PRIVS.
-
-Agreed, it would be nice to have behavior that is consistent with seccomp.
-
-[...]
-> > +/*
-> > + * tsync_works_provide - provides a preallocated tsync_work for the gi=
-ven task
-> > + *
-> > + * This also stores a task pointer in the context and increments the r=
-eference
-> > + * count of the task.
-> > + *
-> > + * Returns:
-> > + *   A pointer to the preallocated context struct, with task filled in=
+> > +
+> > +             /*
+> > +              * Decrement num_preparing for current, to undo that we
+> > +              * initialized it to 1 at the beginning of the inner loop=
 .
-> > + *
-> > + *   NULL, if we ran out of preallocated context structs.
-> > + */
-> > +static struct tsync_work *tsync_works_provide(struct tsync_works *s,
-> > +                                           struct task_struct *task)
-> > +{
-> > +     struct tsync_work *ctx;
-> > +
-> > +     if (s->size >=3D s->capacity)
+> > +              */
+> > +             if (atomic_dec_return(&shared_ctx.num_preparing) > 0)
+> > +                     wait_for_completion(&shared_ctx.all_prepared);
+> > +     } while (found_more_threads &&
+> > +              !atomic_read(&shared_ctx.preparation_error));
 >
-> In which case can this happen?  Should we wrap this in a WARN_ON_ONCE()?
+> Is it safe to prevent inconsistencies wrt execve?  seccomp uses
+> cred_guard_mutex (new code should probably use exec_update_lock), why
+> should Landlock not do the same?
 
-No, this can legitimately happen if new sibling threads are created
-between the time we pre-allocate memory and the time we loop over them
-to call tsync_works_provide().
+We don't have to worry about interactions with execve because, unlike
+seccomp, we don't directly change properties of another running
+thread; we ask other threads to change their credentials _themselves_.
+From a locking context, restrict_one_thread() essentially runs in the
+same kind of context as a syscall, and doesn't need any more locking
+than the existing landlock_restrict_self().
 
-[...]
-> > +             return 0;
-> > +
-> > +     works =3D krealloc_array(s->works, new_capacity, sizeof(s->works[=
-0]),
-> > +                            flags);
-> > +     if (IS_ERR(works))
-> > +             return PTR_ERR(works);
-> > +
-> > +     s->works =3D works;
-> > +
-> > +     for (i =3D s->capacity; i < new_capacity; i++) {
-> > +             s->works[i] =3D kzalloc(sizeof(*s->works[i]), flags);
->
-> We should use a local variable to avoid storing an error code in
-> s->works[i] and potentially dereferencing it later (e.g. in
-> tsync_work_free).
->
-> Why can't we avoid this loop entirely and allocate a flat array with
-> only one call to krealloc_array()?  Why struct tsync_works->works needs
-> to be a pointer to a pointer?
+> Why shouldn't we lock sighand as well?
 
-Because pointers to some "struct tsync_work" items might already be in
-use as task work or such, so we can't move them to a different address
-anymore at this point.
+seccomp uses siglock for the following reasons:
+
+1. to protect against concurrent access to one thread's seccomp filter
+information from multiple threads; we don't do anything like that
+2. to protect the for_each_thread() loop; we use RCU for that (we
+could also use siglock but there's no reason to do that, and RCU is
+more lightweight than the siglock which requires disabling interrupts)
+3. to ensure that threads' seccomp states don't change between its two
+loops over other threads (seccomp_can_sync_threads() and
+seccomp_sync_threads()); we don't do anything like that
