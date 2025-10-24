@@ -1,193 +1,209 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AC91A3160;
-	Fri, 24 Oct 2025 15:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C4530BB97;
+	Fri, 24 Oct 2025 18:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761319024; cv=none; b=MNnwUYWn+26GbWBazItQ70BZkTMB17wEadzR+4spXWlkbklujFWrZ0JV4Jfd8CWBVp6NmwDrBsJzqeXaRy1P8HmpuALy7Jev5eS5Xd1RDBq296+hf+kU5U5AhZ88PSEIPfp0vHTYhRaZ23NGdFY7oilOg6chLxGKrfJgaffglLQ=
+	t=1761331763; cv=none; b=SJYy3NDatoyhJ6ZenpvDT9Use9JiKvanvjTUpnsqLsLGmO01/y7pMRixPRyjJRlTyWrgcpJArkfJH0JLm6l2nREPSPd7CLnYJ5NyTreZ4SNSmnbxc8k3NK+kVOEPCexUjBy0SLqItlLYRvKf0WlScwmGx6BQo0Uh12Sh8oyBM44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761319024; c=relaxed/simple;
-	bh=a6yvcST1bBb/gCzpwjJnJ0X2b8fRgFLFhOcgsKJKqJ4=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=j8wZuCxUzKHsREACULI8H+sr6OkadT9dCA0qu6ndgZNIDPBfsN5trSaV7/KVCZnZDfTf97VoZXdjo2M36A7+DObPcpQNGasovm734P/z5OI7LwW2Kqh/aVXaMwckCBIiFkzOOFyzEIi+qQNBz4dnbzQ62AosJXp1BwfLkqsMITc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eef6F1Re; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1761331763; c=relaxed/simple;
+	bh=m2hG588lr+ZDX3+zgtXdvSd6rN2Scyj1sP9/47ZL4ak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DB3WPWLyN+Vv04nlzkPetLbcRCyXt2LIw4Ag2RG0HPGbk7DFb5EQ//jxxjGhYFfoq7wcFA170ZNoKEqnQzpwX0V7+NsDm4ttGIUzqoOAJc7CUVu3eM7CjhE9o3MwpEKFXpCsUmJ2+3CH+vTCHmCko3Kc7pBPGcxUr7JxOazYraw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=usTsn1SF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eef6F1Re"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OA2nHd023244;
-	Fri, 24 Oct 2025 15:16:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=+qbRb2
-	zP2iNkMx37uViMBN1opWKnCEWdDRQ+ENovi7Q=; b=eef6F1ReviaqS6x+P2rDV2
-	7cxHsIGoi8bZbRIC4LQ4Y+qYtzP0UVPhY13mhd83YgnYLFOInE1FSYxkFmS6trKc
-	zozXNRvyf4h22+PqYKTYC8LQk3Pi8SuIGRuX475nWCTzIRJWJidyg9tSN+TkvR3q
-	/Yh3HdPAgTIquUES2NW0liutvvvL4+GQyFiU+EkBh6rTBD2EZCkt8ca0ciDmKm3P
-	zzOW5zVJrYhbFB3QD5em33md+uvBOHjrUHcqN9ipYZi51mJQxTxccq/IPgAyc2y+
-	fajIXIpdsxhf1gEgwmAVpTBJAxbc4vDtXWTxdSr6D9AOYqyZ2VVi1ii8Vydjr2CQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v3277yxh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Oct 2025 15:16:41 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59OFCbBl001704;
-	Fri, 24 Oct 2025 15:16:41 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v3277yxd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Oct 2025 15:16:41 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59OEAE0r024677;
-	Fri, 24 Oct 2025 15:16:39 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vpqkbkn2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Oct 2025 15:16:39 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59OFGdXJ24445550
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 Oct 2025 15:16:39 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 141B95805A;
-	Fri, 24 Oct 2025 15:16:39 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 36F5E58056;
-	Fri, 24 Oct 2025 15:16:38 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.52.106])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 24 Oct 2025 15:16:38 +0000 (GMT)
-Message-ID: <02d18fe0a0ca1223eec9af5c8e01739aa164bf32.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: Fall back to default kernel module signature
- verification
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: linux-integrity@vger.kernel.org,
-        Dmitry Torokhov
- <dmitry.torokhov@gmail.com>,
-        Karel Srot <ksrot@redhat.com>,
-        Roberto Sassu
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin	 <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"	 <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM"	 <linux-security-module@vger.kernel.org>,
-        open list	 <linux-kernel@vger.kernel.org>
-In-Reply-To: <559f6ebf4a19da321fffc2a3ca180dc3d6216a22.camel@linux.ibm.com>
-References: <20250928030358.3873311-1-coxu@redhat.com>
-		 <896f4fb0c0146512a66daf0b4c1e033aca4bd6d4.camel@linux.ibm.com>
-		 <bcd1f7b48311aff55711cdff4a6cdbb72aae1d04.camel@linux.ibm.com>
-		 <xq7bgyg63xlbogcik2we26yr5uf62f6kj3qn7ooljmqaoccrix@kkmuhza5cfdr>
-		 <9d279fd3d7b3cbb2778183ec777d6b9da8a64b82.camel@linux.ibm.com>
-		 <5bzredottmp2tdm3uebzjfqjr6c7bwssqkrbdqvudruvzr764e@37j6ycjci2sk>
-		 <27bb0c218084f51eba07f041d0fffea8971865b9.camel@linux.ibm.com>
-		 <z6f4getlayaxaxvlxfxn2yvn5dvhrct64wke4uu2s3dfll3bqq@754bklrku55n>
-	 <559f6ebf4a19da321fffc2a3ca180dc3d6216a22.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 24 Oct 2025 11:16:37 -0400
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="usTsn1SF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81733C4CEF1;
+	Fri, 24 Oct 2025 18:49:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761331762;
+	bh=m2hG588lr+ZDX3+zgtXdvSd6rN2Scyj1sP9/47ZL4ak=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=usTsn1SFVlCJOQ+Is77PDZ3TLouCjGUzC+AmY4KGYDTgrcueMfygC9pGeMlkZfoH1
+	 XKa7rppvvancXyU3cOdb8HVjRB3EjnDkl9Y2PzMZxeGW9KDKtnYfN2oFHCheJDmn13
+	 pVamjpD2VIfnsZGmIQZXvahckqfQD4ext2XkRue7X3RDbnulngQBmJKcdXWq1Fsddh
+	 3dF7ZsKHGWp0sqXhNm2stxxQ0uYlcgR47w6Q+1OwAezk22SMPHMkjbSi3xzIxgNHAO
+	 hX6B6zB68+Ib0oYH1CT6+N0U1JPDeDrUF6hy0opRypmFqP2nXIU+J3Q+92vXD12aQL
+	 aXsSCgWFhca3A==
+Date: Fri, 24 Oct 2025 21:49:17 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: linux-integrity@vger.kernel.org, keyring@vger.kernel.org,
+	dpsmith@apertussolutions.com, ross.philipson@oracle.com,
+	Jonathan McDowell <noodles@earth.li>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v6 10/10] tpm-buf: Enable managed and stack allocations.
+Message-ID: <aPvKLYMtXZeQnA5D@kernel.org>
+References: <20251018111725.3116386-1-jarkko@kernel.org>
+ <20251018111725.3116386-11-jarkko@kernel.org>
+ <yynqxoqux5whcbsnticikhwmupqh57xfbll5egzkn42kj7gkaf@s4kwxfmto5ia>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=EJELElZC c=1 sm=1 tr=0 ts=68fb9859 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=MBubdp0LbrEvKVWzv-8A:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXxy/SHljbe7p/
- /eIINUXje6u/3kxpqxLTUswIr7D4AvMOrpNPTn5Zo3gkVmHxvBhJsl4Qyom8pEZUCg0/4Vm20Wf
- yGkvad8Shx5J++NTNbdYO3Gs2SGfQV0KeopNhTvLh2l/KpF0Fm0T8DzgFoSei8r7NbB7AEYaCiB
- NLLQMDHIWV0gMgU5Dj0D0KM5ES8Bt6yDayKM3CFQ4ijroculpaDfxI+aQHwBIHPvGdLvd8sKD0q
- AA3bgofERJ8X7PtH4sHyCVVTAipUriyrqp3aOXP8x6kL+f8ml/OO3QBcBe+xhTgEVobvuOSkBAT
- qrfCtv4mTswu8OSRIg3vwh5lklfmpxMKJoEx5/NULyav3u4FsS/kLLqTRNfB//xwcYmbhQ6s9ad
- 3hC3LM9iXC0yney+yl2bVLNrWb+55w==
-X-Proofpoint-GUID: R2a3dFHlfxOJSA6AqXfrCWxjUQg7m828
-X-Proofpoint-ORIG-GUID: B-sxDXigq233DC-oBi2fpADgAA1faPpS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-24_02,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 spamscore=0
- malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yynqxoqux5whcbsnticikhwmupqh57xfbll5egzkn42kj7gkaf@s4kwxfmto5ia>
 
-On Mon, 2025-10-20 at 08:21 -0400, Mimi Zohar wrote:
-> On Sat, 2025-10-18 at 07:19 +0800, Coiby Xu wrote:
-> > > > > 2. Instead of defining an additional process_measurement() argume=
-nt to identify
-> > > > > compressed kernel modules, to simplify the code it might be possi=
-ble to define a
-> > > > > new "func" named COMPRESSED_MODULE_CHECK.
-> > > > >=20
-> > > > > +       [READING_COMPRESSED_MODULE] =3D MODULE_CHECK,  -> COMPRES=
-SED_MODULE_CHECK
-> > > >=20
-> > > > I also thought about this approach. But IMA rule maps kernel module
-> > > > loading to MODULE_CHECK. If we define a new rule and ask users to u=
-se
-> > > > this new rule, ima_policy=3Dsecure_boot still won't work.
-> > >=20
-> > > I don't have a problem with extending the "secure-boot" policy to sup=
-port
-> > > uncompressed kernel modules appended signatures, based on whether
-> > > CONFIG_MODULE_SIG is enabled.  The new rule would be in addition to t=
-he existing
-> > > MODULE_CHECK rule.
-> >=20
-> > I assume once the new rule get added, we can't remove it for userspace
-> > backward compatibility, right? And with CPIO xattr supported, it seems
-> > there is no need to keep this rule. So if this concern is valid, do you
-> > think we shall switch to another approach i.e. to make IMA support
-> > verifying decompressed module and then make "secure-boot" to allow
-> > appended module signature?
->=20
-> Yes, once the rule is added, it wouldn't be removed.  As for "to make IMA
-> support verifying decompressed module", yes that might be a better soluti=
-on,
-> than relying on "sig_enforce" being enabled. IMA already supports verifyi=
-ng the
-> appended signatures.  A new IMA specific or LSM hook would need to be def=
-ined
-> after module_decompress().
+On Mon, Oct 20, 2025 at 11:04:51AM +0200, Stefano Garzarella wrote:
+> On Sat, Oct 18, 2025 at 02:17:25PM +0300, Jarkko Sakkinen wrote:
+> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > 
+> > Decouple kzalloc from buffer creation, so that a managed allocation can be
+> > done trivially:
+> > 
+> > 	struct tpm_buf *buf __free(kfree) buf = kzalloc(TPM_BUFSIZE,
+> > 							GFP_KERNEL);
+> > 	if (!buf)
+> > 		return -ENOMEM;
+> > 	tpm_buf_init(buf, TPM_BUFSIZE);
+> > 
+> > Alternatively, stack allocations are also possible:
+> > 
+> > 	u8 buf_data[512];
+> > 	struct tpm_buf *buf = (struct tpm_buf *)buf_data;
+> > 	tpm_buf_init(buf, sizeof(buf_data));
+> > 
+> > Given that every single tpm_transmit_cmd() call site needs to be changed,
+> > place command names from TCG 1.2 and 2.0 specifications to the @dest
+> > parameter, which will e.g., help tracing bugs.
+> 
+> Perhaps my previous message fell through the cracks, but I still have a
+> couple of comments (perhaps trivial, sorry in that case) that have not been
+> answered about this patch:
 
-Looking at the code further,=C2=A0decompressing the kernel module in IMA is
-redundant.  Instead I think the best approach would be to:
-- define DECOMPRESSED_MODULE, in addition to COMPRESSED_MODULE.
+I think what happened is that there was enough time that I forgot what
+I had or hadn't done :-) I'll address your comments.
 
-id(COMPRESSED_MODULE, compressed-kernel-module) \
-id(DECOMPRESSED_MODULE, decompressed-kernel-module)    \
+> 
+> > 
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> > ---
+> > v6
+> > - Update commit message.
+> > v5:
+> > - There was a spurious change in tpm2_seal_trusted() error
+> >  code handling introduce by this patch.
+> > v4:
+> > - Since every single tpm_transmit_cmd() call site needs to be
+> >  changed anyhow, use 'dest' parameter more structured and
+> >  actually useful way, and pick the string TCG 1.2 and 2.0
+> >  specifications.
+> > - tpm1-cmd: Remove useless rc declarations and repliace them
+> >  with trivial "return tpm_transmit_cmd" statement.
+> > - Reverted spurious changes in include/linux/tpm.h.
+> > - Use concisely TPM_BUFSIZE instead of PAGE_SIZE.
+> > v3:
+> > - A new patch from the earlier series with more scoped changes and
+> >  less abstract commit message.
+> > ---
+> > drivers/char/tpm/tpm-buf.c                | 122 +++++----
+> > drivers/char/tpm/tpm-sysfs.c              |  21 +-
+> > drivers/char/tpm/tpm.h                    |   1 -
+> > drivers/char/tpm/tpm1-cmd.c               | 162 +++++-------
+> > drivers/char/tpm/tpm2-cmd.c               | 299 ++++++++++------------
+> > drivers/char/tpm/tpm2-sessions.c          | 122 +++++----
+> > drivers/char/tpm/tpm2-space.c             |  44 ++--
+> > drivers/char/tpm/tpm_vtpm_proxy.c         |  30 +--
+> > include/linux/tpm.h                       |  18 +-
+> > security/keys/trusted-keys/trusted_tpm1.c |  34 ++-
+> > security/keys/trusted-keys/trusted_tpm2.c | 175 ++++++-------
+> > 11 files changed, 484 insertions(+), 544 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
+> > index 1b9dee0d0681..a3bf3c3d0c48 100644
+> > --- a/drivers/char/tpm/tpm-buf.c
+> > +++ b/drivers/char/tpm/tpm-buf.c
+> 
+> [...]
+> 
+> > @@ -92,6 +119,9 @@ EXPORT_SYMBOL_GPL(tpm_buf_destroy);
+> >  */
+> > u32 tpm_buf_length(struct tpm_buf *buf)
+> 
+> Should we update the return value to u16?
 
-- instead of passing a boolean indicating whether the module is compressed,=
- pass
-the kernel_read_file_id enumeration to differentiate between the compressed=
- and
-decompressed module.
+Ack.
 
-- define a new IMA hook, probably LSM hook as well, named
-ima_decompressed_module().
+> 
+> 
+> > {
+> > +	if (buf->flags & TPM_BUF_INVALID)
+> > +		return 0;
+> > +
+> > 	return buf->length;
+> > }
+> > EXPORT_SYMBOL_GPL(tpm_buf_length);
+> 
+> [...]
+> 
+> > diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+> > index 636acb66a4f6..3ac204a902de 100644
+> > --- a/security/keys/trusted-keys/trusted_tpm1.c
+> > +++ b/security/keys/trusted-keys/trusted_tpm1.c
+> > @@ -310,9 +310,8 @@ static int TSS_checkhmac2(unsigned char *buffer,
+> >  * For key specific tpm requests, we will generate and send our
+> >  * own TPM command packets using the drivers send function.
+> >  */
+> > -static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
+> > +static int trusted_tpm_send(void *cmd, size_t buflen)
+> > {
+> > -	struct tpm_buf buf;
+> > 	int rc;
+> > 
+> > 	if (!chip)
+> > @@ -322,15 +321,12 @@ static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
+> > 	if (rc)
+> > 		return rc;
+> > 
+> > -	buf.flags = 0;
+> > -	buf.length = buflen;
+> > -	buf.data = cmd;
+> > 	dump_tpm_buf(cmd);
+> > -	rc = tpm_transmit_cmd(chip, &buf, 4, "sending data");
+> > +	rc = tpm_transmit_cmd(chip, cmd, 4, "sending data");
+> 
+> Is it fine here to remove the intermediate tpm_buf ?
+> 
+> IIUC tpm_transmit_cmd() needs a tpm_buf, while here we are passing just
+> the "data", or in some way it's a nested tpm_buf?
 
-- call the new ima_decompressed_module() from init_module_from_file()
-immediately after decompressing the kernel module.  Something along the lin=
-es
-of:
+This does not look right at all. I'll fix it and add automated test
+suite for TPM 1.x to my standard test shenanigans so that I can
+continuously test its correctness [1]. It anyhow should have TPM 1.2
+tests (especially for trusted keys). As it becomes more rare
+accidental bugs could easily hover in.
 
-err =3D ima_decompressed_module(f, (char *)info.hdr, info.len,
-                              READING_DECOMPRESSED_MODULE);
+Thanks, this was really good catch. I'll address both bug and make
+sure that I don't do the same mistake twice :-)
 
-For testing purposes to see the decompressed appended signature in the
-measurement list, modify the MODULE_CHECK measure rule to include "template=
-=3Dima-
-modsig" in ima_efi.c.
+> 
+> > 	dump_tpm_buf(cmd);
+> > 
+> > +	/* Convert TPM error to -EPERM. */
+> > 	if (rc > 0)
+> > -		/* TPM error */
+> > 		rc = -EPERM;
+> > 
+> > 	tpm_put_ops(chip);
+> 
+> Thanks,
+> Stefano
+> 
 
---=20
-Mimi
+[1] https://codeberg.org/jarkko/linux-tpmdd-test
 
+BR, Jarkko
