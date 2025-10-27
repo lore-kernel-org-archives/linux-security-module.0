@@ -1,93 +1,102 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CF74A00;
-	Mon, 27 Oct 2025 19:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B892C11FB;
+	Mon, 27 Oct 2025 20:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761594901; cv=none; b=YW0MrIAU1BISglhAjUjrxEnp27arOsLHcDlOJ5RxmX6skQyNOoAUzqcqzuUPCgEvusEcCYVs03OwMK3PtGUTBrlqQoWmTXUFjbx9WU8KIBnUIqjO9TqgAO5pVzOc6UkKUCU1bVcycY8yHe0G2iyZf8Oe1p8jmEwwi+h/701hC9o=
+	t=1761595484; cv=none; b=bGBOUK3ECeL0yiusWGU87Z5Tccav1AaCkbXcIRdrpFWE/sY4UBNeZVlCtf3ddOHytcfDWHdZeQ5mOgs+Nd+fKOKseCJqzImCOJ7vC6SAkC4wyb2Gpap1OmsK+IycbQAmmhefOIJqWSjYjtp0ev9hln7UdmFJM507rD25GywaLpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761594901; c=relaxed/simple;
-	bh=DG2vmndPjXqWsweCjoe61ED7B3TMjtN8Gp4+TXHtf2A=;
+	s=arc-20240116; t=1761595484; c=relaxed/simple;
+	bh=EnNKNaiHm5HxfSb4yNWmz72UgSxuTATcZtZuzLoFWrE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jt8nOBFL4IESvBTQIDqnV8bWVaRoU5iP4QaqRSg8ME9CJWZu+JTnGCZO6MtvRz468ndqw5pOtSQnTawRWw2pY4cZNygeZlJRPx0rzhDD+QvAe7nFGBONePKpwBxN6jPSKx9pymqOX4uUFe/tMFI256QZu9rYAIlb992n7p0/H64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEzUc52X; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=tMuyCQGD8/pAtzZotXrmNm4UvMoHyhEb5noeI+Hk3vmAIUtilBLYJboa/dPei6OaRKrjXQXpD+4NS6cZRJPhIbf/14qxdyil8RvLuOZuPQuE25+sXqi7OZEk27MF6GuwNrNQsu4/QGR/Vid6j59ErXM+joT3YyfRDrwQKVHHB0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o/jgZRkL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEzUc52X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF79DC4CEF1;
-	Mon, 27 Oct 2025 19:55:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/jgZRkL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A117AC4CEFD;
+	Mon, 27 Oct 2025 20:04:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761594901;
-	bh=DG2vmndPjXqWsweCjoe61ED7B3TMjtN8Gp4+TXHtf2A=;
+	s=k20201202; t=1761595484;
+	bh=EnNKNaiHm5HxfSb4yNWmz72UgSxuTATcZtZuzLoFWrE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NEzUc52XJNenKdw4wJYy5/EDDgad/uFgBENUwgymWsMNMjvQiIXVkryZT4byIUuNH
-	 HuqgRFGvHsReeoKYt5W4IGVw5WR8FQLbZ/rkt5aiyjxpSRG9NtIcDQMHmq4kUmvgGZ
-	 FCpupTHSPWVMuwRmfX/zimwLZcKBqxeCItCmzajFYsfmRSpRDVHmkflLdNoQsPZ4Jo
-	 oPteQ1BzIZA+TsSHn/cq4xGrxuw/jD9bSHRqNnVkYyyeMW5FpQbEQ9dY0SlpVsQpPP
-	 2tXLFxz8V006RhdZyaMrkjN7jULuOAkdTRNeBIRZ2RLnnX6/+FWMgMQeCz8aQIczuQ
-	 OphCsRYa8KfgA==
-Date: Mon, 27 Oct 2025 21:54:57 +0200
+	b=o/jgZRkL+95td/zRH3IvCLUPQZ8c6y871vYAogLjA/3AbE9qZ/3G8rkgJeA2x3CnX
+	 fZKDJ3CJwSenU29b4nDzSZi/Lv+xF4gtq8ovALvORfiXTL36horYYvDT34aevA/PIC
+	 7t8SesDf2tsko4Bhqv5vVyCr7IHdEPKnb71l0QFIAI6EHBzElixntecgtBfHiblF9o
+	 4jAcPiXfUXRwB+LrDzxe+sc1ppbtEH/J1b3T055gD1Y5vJ7DTOQHzLAfeoWnLuIQin
+	 m/2BpxY2gUDLpYesEpocbcYJG9vUnhOJBX49YSiinGvhXLdAsfwNpj/uQEO9mIe7rE
+	 O63wSH+L1bfxA==
+Date: Mon, 27 Oct 2025 22:04:40 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] keys: Remove unnecessary local variable from
- proc_keys_show
-Message-ID: <aP_OEQs2RcBNfn0M@kernel.org>
-References: <20251023143231.2086-2-thorsten.blum@linux.dev>
- <20251023143231.2086-4-thorsten.blum@linux.dev>
+To: Ye Bin <yebin@huaweicloud.com>
+Cc: a.fatoum@pengutronix.de, kernel@pengutronix.de,
+	James.Bottomley@hansenpartnership.com, zohar@linux.ibm.com,
+	dhowells@redhat.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	yebin10@huawei.com
+Subject: Re: [PATCH] KEYS: fix compilation warnings in the dump_options()
+ function
+Message-ID: <aP_QWHPHpGr-nUZD@kernel.org>
+References: <20251024061153.61470-1-yebin@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251023143231.2086-4-thorsten.blum@linux.dev>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251024061153.61470-1-yebin@huaweicloud.com>
 
-On Thu, Oct 23, 2025 at 04:32:33PM +0200, Thorsten Blum wrote:
-> The local variable 'rc' is only used to temporary store the result of
-> calling key_task_permission(). Use the result directly and remove the
-> local variable.
+On Fri, Oct 24, 2025 at 02:11:53PM +0800, Ye Bin wrote:
+> From: Ye Bin <yebin10@huawei.com>
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> There's issue as follows:
+> security/keys/trusted-keys/trusted_caam.c: In function ‘dump_options’:
+> security/keys/trusted-keys/trusted_caam.c:37:20: note: the ABI of passing struct with a flexible array member has changed in GCC 4.4
+>    37 | static inline void dump_options(struct caam_pkey_info pkey_info)
+>       |                    ^~~~~~~~~~~~
+> 
+> To solve the above problem, pass 'struct caam_pkey_info*' type parameter
+> to the dump_options() function.
+> 
+> Fixes: 9eb25ca6c973 ("KEYS: trusted: caam based protected key")
+> Signed-off-by: Ye Bin <yebin10@huawei.com>
 > ---
->  security/keys/proc.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  security/keys/trusted-keys/trusted_caam.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/security/keys/proc.c b/security/keys/proc.c
-> index 4f4e2c1824f1..39af57af2aad 100644
-> --- a/security/keys/proc.c
-> +++ b/security/keys/proc.c
-> @@ -160,7 +160,6 @@ static int proc_keys_show(struct seq_file *m, void *v)
->  	char xbuf[16];
->  	short state;
->  	u64 timo;
-> -	int rc;
+> diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
+> index 090099d1b04d..dd7a69bcf6a3 100644
+> --- a/security/keys/trusted-keys/trusted_caam.c
+> +++ b/security/keys/trusted-keys/trusted_caam.c
+> @@ -29,12 +29,12 @@ static const match_table_t key_tokens = {
+>  };
 >  
->  	struct keyring_search_context ctx = {
->  		.index_key		= key->index_key,
-> @@ -188,8 +187,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
->  	}
->  
->  	/* check whether the current task is allowed to view the key */
-> -	rc = key_task_permission(key_ref, ctx.cred, KEY_NEED_VIEW);
-> -	if (rc < 0)
-> +	if (key_task_permission(key_ref, ctx.cred, KEY_NEED_VIEW) < 0)
->  		return 0;
+>  #ifdef CAAM_DEBUG
+> -static inline void dump_options(struct caam_pkey_info pkey_info)
+> +static inline void dump_options(struct caam_pkey_info *pkey_info)
+>  {
+> -	pr_info("key encryption algo %d\n", pkey_info.key_enc_algo);
+> +	pr_info("key encryption algo %d\n", pkey_info->key_enc_algo);
+>  }
+>  #else
+> -static inline void dump_options(struct caam_pkey_info pkey_info)
+> +static inline void dump_options(struct caam_pkey_info *pkey_info)
+>  {
+>  }
+>  #endif
 
-I absolutely dislike combining return value check to the call.
+Please fix the broken design while at it:
 
-The old version documents that we ignore the return value, which
-is convoluted in the new version.
+1. Remove the ad-hoc compilation flag (i.e., CAAM_DEBUG).
+2. Substitute pr_info calls with pr_debug calls.
 
->  
->  	now = ktime_get_real_seconds();
-> -- 
-> 2.51.0
-> 
+Then you can turn then on and off either dynamically, or alternatively 
+from the kernel command-line [1].
+
+[1] https://www.kernel.org/doc/html/latest/admin-guide/dynamic-debug-howto.html
 
 BR, Jarkko
