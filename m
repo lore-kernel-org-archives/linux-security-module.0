@@ -1,107 +1,173 @@
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE413314DD;
-	Tue, 28 Oct 2025 13:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F06923D291
+	for <linux-security-module@vger.kernel.org>; Tue, 28 Oct 2025 15:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761657783; cv=none; b=JSZuWIGYucSZb/3bPFImWOrTEPXBQ4tW0HS5wh3JUoyXdXXON8YXI/OzI3XHrVXfxZc935B7iotlppnrylYK3nrcIsYUUGfJx5y7iGudA6788upChuMh7kTH4hwf82ZBqjeYHUN8/mLggdPuDEJovgg/CCusHz0/tNeyr1bnV80=
+	t=1761664709; cv=none; b=cWSrqspIMnm+WIIK4UFhtP+QQRkI9xOJyFWvy4UvXhfTTlSUfrDSnFIhOwx+SccgYAyMgk7LWLxhDM1ufY/dumtIoJZFtbhVWOPFucK2jVJScmCo3h92z3QT9Ruds1fF4TREFR0Yq7QpKYWJaj3G/bOi7UL39AQRJ2IPrwOqqD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761657783; c=relaxed/simple;
-	bh=xVKZGVqMEj0xdek51jF3cz28uC5ZI8sS3UZo6n7Q/4c=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=czebslnw+yWdXqfw/uwaKoLnE2aVbU+UsX0J8QXEWyxh/J3OwUcF0kybZ03bysRRKX+L3frtYcsAce/lW0tuIdWUeI2Alq/IFvmXajIsLxViBlr9FcQhJyMhnrapptf/c2XyZqdfhLIvXugb4CYquEUaPLOavGnilTCU8AEXR7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cwrf563d7zYQtnm;
-	Tue, 28 Oct 2025 21:22:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 0FFE11A0359;
-	Tue, 28 Oct 2025 21:22:57 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.50.87.132])
-	by APP2 (Coremail) with SMTP id Syh0CgBHnESuwwBpYnmgBw--.21541S4;
-	Tue, 28 Oct 2025 21:22:55 +0800 (CST)
-From: Ye Bin <yebin@huaweicloud.com>
-To: a.fatoum@pengutronix.de,
-	kernel@pengutronix.de,
-	James.Bottomley@HansenPartnership.com,
-	jarkko@kernel.org,
-	zohar@linux.ibm.com,
-	dhowells@redhat.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	yebin@huaweicloud.com,
-	yebin10@huawei.com
-Subject: [PATCH] KEYS: Remove the ad-hoc compilation flag CAAM_DEBUG
-Date: Tue, 28 Oct 2025 21:22:54 +0800
-Message-Id: <20251028132254.841715-1-yebin@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1761664709; c=relaxed/simple;
+	bh=F8e8WmGYtiSIz2ZPl4Tlwz5ZEbUBxeuWsXenRkSuRIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jnPtND6mbrnlA1FLi8hUvTYQG77BAHf8KtrXmRcoCcq42p0sVKEpvXL1tYnWW0cFympZbVjXlo7M40SNVEbF2k9xMcHE0FM5bnlXW+f5883tbXK+0f7BqySiSUZy6azMGdcwriBU04dVBMa2S50+PODyWbUCviwC2cKNA61BzCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aPgIESFU; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aPgIESFU"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-33bbc4e81dfso6547506a91.1
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Oct 2025 08:18:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1761664707; x=1762269507; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OyP7cdj89rMrrTPrjzZN0zWB9L8ktToD2ZCaFwPw6WM=;
+        b=aPgIESFULDDgUYkTMzXh1LVWLZXkfPhgmMC0b6JL04+T71TF8ZT5auySl1c1TC+gRs
+         OG6oHowTlgk8T7SzC/oeFOM1D9jNW68FrgJXrPTnleZf6ZVe+TdjYW0OhjqvwGuDP5sX
+         hQks2fRbRuaLcPDeBd45qRIzb/V8rtE9sIhZDgIGmTD6H77c90jLcU81CrBgc7o36j3X
+         Pds5HTbNrwbtUJbsQ48AHX3o2I6ke98XuwTvrqFeEdQfZ/1mY29GoedIt/erHpRp1RaL
+         CHfz08y6LpQ1OKI4g+ZdqzFYNmJF7FujXPmbMPdMrfibSFId4ofgfXcVWnWTCkBaUuPE
+         A4qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761664707; x=1762269507;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OyP7cdj89rMrrTPrjzZN0zWB9L8ktToD2ZCaFwPw6WM=;
+        b=VrgRxswMSm5YBXnNevMZ4Eh7q/IE/PHT2QJ4sC63NDUy97PcLnL8lVOTimE9jjBKOG
+         uVVK/MMtAQ35ZNN8a0wisR76xD9Vg3k+pQXXAFnaYJVrp2EgeHle0D9NvIbxIZpO4eMJ
+         hpFuF2Gj1DWv2dhusnfELf2iqdToiNG5dMTbK9o4pmSbkt30Dwn5OhWkEtCYT6CIHuMV
+         GSnFdSRgbYwH2m6coEDSxFuLX+9T746ydheLzjFrVYXO4MxVN0r9o6d1aW+2Q395KA63
+         xjYdPlRrC8pMurcEtSe3oLHK7EO63b7kNO8IWElFf/dfsKLn6iiy1dnK2YYHJPgDk+fm
+         6X8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ43BV7HzFv373zG15JaYCjpW+PQKWgE68+EFJap1t4ok6f+MXwq/0e506+xC4InvUBpceTCUGePn1z63uPUgspa1AkRo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNmYEYRXuORShI1DAgbyITq3NBA3jVuowJxxq+AhYw+eZs2zy5
+	h65EPutUlWz1sLLvdC/mVeJNYf/GenXpRQQhjLEdX8/KmBEKVedsOpb+T9+Tnn6CyHeylQpgnGn
+	5PJwYmZj/3m3yMru1Ez6+3Jz0vgh4DlWeMCiEi8ni
+X-Gm-Gg: ASbGncuPd2UmQ8LfLABDWfp4UIdlGQp3EoZ3e1msYeBsYIoVtb/MMV/VseKBA7rCRrf
+	5tIFsTmUx7lnZWpoC7mKUcHgMK5P6OrJJfp0rd0oJgi27wG16okbGZPHqqpxJP8oX35SRtSlFRn
+	LcwHL7eicVuWp6L7ODcvsV5kGwWFwMcxslhjiKlJwfCA4S4t/JYB96XuzhsQHYWeQn0JCwDbPA9
+	rv/sxc6alD/EFxE4Y1eAlhCosU+7yVqWkPTxBOsnEA37aacmPw8Pu1+SooSoAGEGhSlgKU=
+X-Google-Smtp-Source: AGHT+IGlNBZmXJK4qpsxQZzDRtVN03T2ZwyYcgh4TjwsGO4aVJnWhY7BZRGZ5o3S/2uKbp5fs3jAsBMy6IWDGwXqTfc=
+X-Received: by 2002:a17:90b:5825:b0:33e:30b2:d20 with SMTP id
+ 98e67ed59e1d1-34027c0528dmr4786413a91.33.1761664707233; Tue, 28 Oct 2025
+ 08:18:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBHnESuwwBpYnmgBw--.21541S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ar4DGw17AF1rGr1xAw45Awb_yoW8JFW3pa
-	n0kFyjgrW7KFyqg3yDCFWxCF13C3s8KFW7GrWqya42gFnrA34UJrWI9F43ur13ZFyxGryj
-	vayxZr1Fg3y293DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
+References: <20251025001022.1707437-1-song@kernel.org> <CAHC9VhTb2p3DL_knRgFyDv396BwH-KhwR0cBhqLQ-KdgcA1yLw@mail.gmail.com>
+ <CAPhsuW6O96aJbZptVY754tQ1-C_JtH8PwS1oZX6a1Tch7ehEkg@mail.gmail.com>
+ <CAHC9VhRzjkTSUPS9odXRruAuSNbv44Atxj2sreQgcVpDu5pL-Q@mail.gmail.com> <aQCE0WwGlOADI5xT@google.com>
+In-Reply-To: <aQCE0WwGlOADI5xT@google.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 28 Oct 2025 11:18:15 -0400
+X-Gm-Features: AWmQ_bmm4t5z9CNEiMIeS2ttD9ySj8RRIc6jeSHuj0OZ3k34EbYuCM5QR53_mCE
+Message-ID: <CAHC9VhRTN_PD9f4gNdwZFk2QjYZ3_Vc6Jfmircr2cS49CZ005A@mail.gmail.com>
+Subject: Re: [RFC bpf-next] lsm: bpf: Remove lsm_prop_bpf
+To: Matt Bobrowski <mattbobrowski@google.com>
+Cc: Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	casey@schaufler-ca.com, kpsingh@kernel.org, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org, john.johansen@canonical.com, 
+	eparis@redhat.com, audit@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ye Bin <yebin10@huawei.com>
+On Tue, Oct 28, 2025 at 4:54=E2=80=AFAM Matt Bobrowski <mattbobrowski@googl=
+e.com> wrote:
+> On Mon, Oct 27, 2025 at 09:50:11PM -0400, Paul Moore wrote:
+> > On Mon, Oct 27, 2025 at 6:45=E2=80=AFPM Song Liu <song@kernel.org> wrot=
+e:
+> > > On Mon, Oct 27, 2025 at 2:14=E2=80=AFPM Paul Moore <paul@paul-moore.c=
+om> wrote:
+> > > > On Fri, Oct 24, 2025 at 8:10=E2=80=AFPM Song Liu <song@kernel.org> =
+wrote:
+> > > > >
+> > > > > lsm_prop_bpf is not used in any code. Remove it.
+> > > > >
+> > > > > Signed-off-by: Song Liu <song@kernel.org>
+> > > > >
+> > > > > ---
+> > > > >
+> > > > > Or did I miss any user of it?
+> > > > > ---
+> > > > >  include/linux/lsm/bpf.h  | 16 ----------------
+> > > > >  include/linux/security.h |  2 --
+> > > > >  2 files changed, 18 deletions(-)
+> > > > >  delete mode 100644 include/linux/lsm/bpf.h
+> > > >
+> > > > You probably didn't miss any direct reference to lsm_prop_bpf, but =
+the
+> > > > data type you really should look for when deciding on this is
+> > > > lsm_prop.  There are a number of LSM hooks that operate on a lsm_pr=
+op
+> > > > struct instead of secid tokens, and without a lsm_prop_bpf
+> > > > struct/field in the lsm_prop struct a BPF LSM will be limited compa=
+red
+> > > > to other LSMs.  Perhaps that limitation is okay, but it is somethin=
+g
+> > >
+> > > I think audit is the only user of lsm_prop (via audit_names and
+> > > audit_context). For BPF based LSM or audit, I don't think we need
+> > > specific lsm_prop. If anything is needed, we can implement it with
+> > > task local storage or inode local storage.
+> > >
+> > > CC audit@ and Eric Paris for more comments on audit side.
+> >
+> > You might not want to wait on a comment from Eric :)
+> >
+> > > > that should be discussed; I see you've added KP to the To/CC line, =
+I
+> > > > would want to see an ACK from him before I merge anything removing
+> > > > lsm_prop_bpf.
+> > >
+> > > Matt Bobrowski is the co-maintainer of BPF LSM. I think we are OK
+> > > with his Reviewed-by?
+> >
+> > Good to know, I wasn't aware that Matt was also listed as a maintainer
+> > for the BPF LSM.  In that case as long as there is an ACK, not just a
+> > reviewed tag, I think that should be sufficient.
+>
+> ACK.
+>
+> > > > I haven't checked to see if the LSM hooks associated with a lsm_pro=
+p
+> > > > struct are currently allowed for a BPF LSM, but I would expect a pa=
+tch
+> > > > removing the lsm_prop_bpf struct/field to also disable those LSM ho=
+oks
+> > > > for BPF LSM use.
+> > >
+> > > I don't think we need to disable anything here. When lsm_prop was
+> > > first introduced in [1], nothing was added to handle BPF.
+> >
+> > If the BPF LSM isn't going to maintain any state in the lsm_prop
+> > struct, I'd rather see the associated LSM interfaces disabled from
+> > being used in a BPF LSM just so we don't run into odd expectations in
+> > the future.  Maybe they are already disabled, I haven't checked.
+>
+> Well, it doesn't ATM, but nothing goes to say that this will change in
+> the future. Until then though, I have no objections around removing
+> lsm_prop_bpf from lsm_prop as there's currently no infrastructure in
+> place allowing a BPF LSM to properly harness lsm_prop/lsm_prop_bpf. By
+> harness, I mean literaly using lsm_prop/lsm_prop_bpf as some form of
+> context storage mechanism.
+>
+> As for the disablement of the associated interfaces, I don't feel like
+> this warranted at this point? Doing so might break some out-of-tree
+> BPF LSM implementations, specifically those that might be using these
+> associated LSM interfaces purely for instrumentation purposes at this
+> point?
 
-Fix the broken design based on Jarkko Sakkinen's suggestions as follows:
+Okay, let's leave things as-is for right now.  The lsm_prop struct is
+an important part of those APIs, and if there is a need for those APIs
+in a BPF LSM then we should preserve all of the API, including the
+lsm_prop component.
 
-1. Remove the ad-hoc compilation flag (i.e., CAAM_DEBUG).
-2. Substitute pr_info calls with pr_debug calls.
-
-Closes: https://patchwork.kernel.org/project/linux-integrity/patch/20251024061153.61470-1-yebin@huaweicloud.com/
-Signed-off-by: Ye Bin <yebin10@huawei.com>
----
- security/keys/trusted-keys/trusted_caam.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
-index 601943ce0d60..c903ee7328ca 100644
---- a/security/keys/trusted-keys/trusted_caam.c
-+++ b/security/keys/trusted-keys/trusted_caam.c
-@@ -28,16 +28,10 @@ static const match_table_t key_tokens = {
- 	{opt_err, NULL}
- };
- 
--#ifdef CAAM_DEBUG
- static inline void dump_options(const struct caam_pkey_info *pkey_info)
- {
--	pr_info("key encryption algo %d\n", pkey_info->key_enc_algo);
-+	pr_debug("key encryption algo %d\n", pkey_info->key_enc_algo);
- }
--#else
--static inline void dump_options(const struct caam_pkey_info *pkey_info)
--{
--}
--#endif
- 
- static int get_pkey_options(char *c,
- 			    struct caam_pkey_info *pkey_info)
--- 
-2.34.1
-
+--=20
+paul-moore.com
