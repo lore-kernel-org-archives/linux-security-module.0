@@ -1,125 +1,126 @@
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from r9133.ps.combzmail.jp (r9133.ps.combzmail.jp [49.212.13.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15690F50F;
-	Tue, 28 Oct 2025 02:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E3E1DDA24
+	for <linux-security-module@vger.kernel.org>; Tue, 28 Oct 2025 05:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.212.13.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761619323; cv=none; b=fXDezob7U+ZtRPFih4VOH0r+DX65Iq+QirJozCwoo4ZzsNtEQh8GtTQ7MMRzM94F8P3zXULWkbFvFruu7Mpjy8QVoLK+t8eZLyIexDRk3BJ6v59M+mW0McyhPJi34B+bdxsQt4kH4hv3exC52OJxmW+O7sba43LPTgFB2iD9dlI=
+	t=1761629789; cv=none; b=jFQlhz+t3KLfa3kgsA6c8JaiThO2jc52UGFa7Ju8u3eNjl3ATxJ9I/jNy+JCK6KbFw0GsNCKGq0A5OazQy72qO/W1G5DPZW8SuUuYKUrcGpd/GVBjclJyCO4hf0gWFiFzhi1lOIM+9iewbeEDG80L3sjcne0QxUWD6CU9urQUD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761619323; c=relaxed/simple;
-	bh=KcFH18GmIKZGGZoTubLhxbTNRmUD+KGx5g5hz3E+Gmk=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Vf6guzOSd3IUp6CvnGiGkFb/f7BA8QEZnFsAqkTzwOzWyyXchHpkOjeQwHh+o5IJIo1LP5bYz8/loh5+LZ+UfCpKKQCSK2uSotq2K2Qr4am00ORo6eO5XmJSPHSjlP6w1Vu2/DZaNvBYl1hmQ6DSV5deuR6ssl2Tud+6wODTuOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cwZPL43CRzKHMMf;
-	Tue, 28 Oct 2025 10:40:54 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 98EDE1A018D;
-	Tue, 28 Oct 2025 10:41:50 +0800 (CST)
-Received: from [10.174.178.185] (unknown [10.174.178.185])
-	by APP2 (Coremail) with SMTP id Syh0CgBXrERsLQBp2dBtBw--.4806S3;
-	Tue, 28 Oct 2025 10:41:48 +0800 (CST)
-Subject: Re: [PATCH] KEYS: fix compilation warnings in the dump_options()
- function
-To: Jarkko Sakkinen <jarkko@kernel.org>
-References: <20251024061153.61470-1-yebin@huaweicloud.com>
- <aP_QWHPHpGr-nUZD@kernel.org>
-Cc: a.fatoum@pengutronix.de, kernel@pengutronix.de,
- James.Bottomley@hansenpartnership.com, zohar@linux.ibm.com,
- dhowells@redhat.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
- linux-security-module@vger.kernel.org, yebin10@huawei.com
-From: yebin <yebin@huaweicloud.com>
-Message-ID: <69002D6C.8050403@huaweicloud.com>
-Date: Tue, 28 Oct 2025 10:41:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.1.0
+	s=arc-20240116; t=1761629789; c=relaxed/simple;
+	bh=o3A7v4kMMbHvg5RU+QbHhF1eHCgCiTquvnwrBxm1rkI=;
+	h=To:From:Subject:Mime-Version:Content-Type:Message-Id:Date; b=nQDpsv9ABjJ+g89SwbGZiQodGQvyWa+YXIPqTFJDw/QjCp5hY0OqWsNH/IElH570Qpsc15e7AzrY9TLrpKjYpzctxvIrTLmvXnzhbEWxopS9ZTvT6I47hF8BGmFCUVX2DDg29bOg6s4k/wBLgewtMIuzHZWAzN9sNb1oQxpStzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=k-villageinc.jp; spf=pass smtp.mailfrom=magerr.combzmail.jp; arc=none smtp.client-ip=49.212.13.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=k-villageinc.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magerr.combzmail.jp
+Received: by r9133.ps.combzmail.jp (Postfix, from userid 99)
+	id 11C9186A9B; Tue, 28 Oct 2025 14:35:57 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9133.ps.combzmail.jp 11C9186A9B
+To: linux-security-module@vger.kernel.org
+From: =?ISO-2022-JP?B?GyRCM3Q8MDJxPFIbKEI=?= K Village<info@k-villageinc.jp>
+X-Ip: 656592954890474
+X-Ip-source: k85gj7ri48dnsax5u0p6gd
+Precedence: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+Subject: =?ISO-2022-JP?B?GyRCMk4hJiVAJXMlOUV5JE4lOSUvITwlazt2GyhC?=
+ =?ISO-2022-JP?B?GyRCNkgbKEIgRkMbJEJAYkxAMnEbKEI=?=
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <aP_QWHPHpGr-nUZD@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBXrERsLQBp2dBtBw--.4806S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF4kCr4rCrWfGF4fAFyDGFg_yoW8uFWxpa
-	15CFyj9FW8tF9Fg3yDGrZ7CF1ak398KFW7CwsxKa42gFnxJryUJFyj9F45ur13ZFyIgryj
-	vay8Zr1Yg39F9rJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUOBMKDUUUU
-X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Transfer-Encoding: 7bit
+X-MagazineId: rix5
+X-uId: 6763316643485966814650421007
+X-Sender: CombzMailSender
+X-Url: http://www.combzmail.jp/
+Message-Id: <20251028053619.11C9186A9B@r9133.ps.combzmail.jp>
+Date: Tue, 28 Oct 2025 14:35:57 +0900 (JST)
 
+$B!!(B
+$B!!$*@$OC$K$J$j$^$9!#(B
+$B!!(B
+$B!!?7$?$J;v6HE83+$r$*9M$($N7P1D<TMM$X!"(B
+$B!!MD;y$+$i3X@8!"<R2q?M!"%7%K%"$^$G(B
+$B!!I}9-$$@$Be$rBP>]$K$7$?%\%$%H%l!&%@%s%9%9%/!<%k;v6H$N(B
+$B!!%U%i%s%A%c%$%:%7%9%F%`@bL@2q$r$40FFb?=$7>e$2$^$9!#(B
 
+$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
+$B!!!!!!(B
+$B!!!!!!(B10$B7n(B30$BF|!JLZ!K(B13:00$B!A(B14:00
+$B!!!!!!(B11$B7n(B6$BF|!JLZ!K(B13:00$B!A(B14:00
+$B!!!!!!(B11$B7n(B8$BF|!JEZ!K(B13:00$B!A(B14:00
 
-On 2025/10/28 4:04, Jarkko Sakkinen wrote:
-> On Fri, Oct 24, 2025 at 02:11:53PM +0800, Ye Bin wrote:
->> From: Ye Bin <yebin10@huawei.com>
->>
->> There's issue as follows:
->> security/keys/trusted-keys/trusted_caam.c: In function ‘dump_options’:
->> security/keys/trusted-keys/trusted_caam.c:37:20: note: the ABI of passing struct with a flexible array member has changed in GCC 4.4
->>     37 | static inline void dump_options(struct caam_pkey_info pkey_info)
->>        |                    ^~~~~~~~~~~~
->>
->> To solve the above problem, pass 'struct caam_pkey_info*' type parameter
->> to the dump_options() function.
->>
->> Fixes: 9eb25ca6c973 ("KEYS: trusted: caam based protected key")
->> Signed-off-by: Ye Bin <yebin10@huawei.com>
->> ---
->>   security/keys/trusted-keys/trusted_caam.c | 10 +++++-----
->>   1 file changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
->> index 090099d1b04d..dd7a69bcf6a3 100644
->> --- a/security/keys/trusted-keys/trusted_caam.c
->> +++ b/security/keys/trusted-keys/trusted_caam.c
->> @@ -29,12 +29,12 @@ static const match_table_t key_tokens = {
->>   };
->>
->>   #ifdef CAAM_DEBUG
->> -static inline void dump_options(struct caam_pkey_info pkey_info)
->> +static inline void dump_options(struct caam_pkey_info *pkey_info)
->>   {
->> -	pr_info("key encryption algo %d\n", pkey_info.key_enc_algo);
->> +	pr_info("key encryption algo %d\n", pkey_info->key_enc_algo);
->>   }
->>   #else
->> -static inline void dump_options(struct caam_pkey_info pkey_info)
->> +static inline void dump_options(struct caam_pkey_info *pkey_info)
->>   {
->>   }
->>   #endif
->
-> Please fix the broken design while at it:
->
-> 1. Remove the ad-hoc compilation flag (i.e., CAAM_DEBUG).
-> 2. Substitute pr_info calls with pr_debug calls.
->
-Alright, I'll fix the two points you mentioned.
+$B!!"!!!%U%i%s%A%c%$%:@bL@2q(B
+$B!!!!!!MD;y$+$i3X@8!"<R2q?M!"%7%K%"$^$G!*(B
 
-> Then you can turn then on and off either dynamically, or alternatively
-> from the kernel command-line [1].
->
-> [1] https://www.kernel.org/doc/html/latest/admin-guide/dynamic-debug-howto.html
->
-> BR, Jarkko
->
+$B!!!!!!%\%$%H%l!&%@%s%9$N%^%s%D!<%^%s@)%9%/!<%k;v6H(B
+$B!!!!!!!H!!(BNAYUTAS$B!J%J%f%?%9!K!!!I(B
 
+$B!!"(!!%*!<%J!<MM$K%\%$%H%l$d6H3&CN<1$J$I$OITMW$G!"(B
+$B!!!!!!L$7P83$+$i3+6H$9$k$3$H$,$G$-$^$9!#(B
+
+$B!!"!!!>\:Y!u?=9~$O$3$A$i(B
+$B!!!!!!(Bhttps://nayutas-voice.biz/2500/
+
+$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
+
+------------------------------------------------
+
+$B!!(BNAYUTAS$B!J%J%f%?%9!K$O%\%$%H%l$r$O$8$a!"(B
+$B!!3Z4o$d%@%s%9!"%W%m%0%i%_%s%0!"F02hJT=8$J$I!"(B
+$B!!9%$-$J$3$H!&6=L#$,$"$k$3$H$rK\3JE*$K3X$Y$k(B
+$B!!40A4%^%s%D!<%^%s@)%l%C%9%s$N%9%/!<%k;v6H$G$9!#(B
+
+------------------------------------------------
+
+$B!!3X=,=N$N$h$&$K;R$I$b$d3X@8$N$_$,BP>]$K$J$k$N$G$O$J$/!"(B
+$B!!<R2q?M$d%7%K%"$b4^$a!"(B3$B:P!A(B80$B:P$NJ}$,@8EL$H$7$FDL$o$l$F$$$^$9!#(B
+
+$B!!<}1W%b%G%k$O!V@8EL?t!_7n3[<x6HNA!W$,Gd>e$K$J$k%5%V%9%/7?$G!"(B
+$B!!@8EL?t$,A}$($k$3$H$K$h$C$F!"Gd>e!&Mx1W$,3HBg$7$F$$$-$^$9!#(B
+
+$B!!9V;U$N:NMQ$d!"3+9;8e$N@8EL=85R$N3N$+$J%N%&%O%&$b$"$k$?$a!"%*!<%J!<MM$K(B
+$B!!%\%$%H%l$d6H3&CN<1$,L5$/$H$b!"L$7P83$+$i3+6H$9$k$3$H$,2DG=$G$9!#(B
+
+$B!!%U%i%s%A%c%$%:@bL@2q$r3+:E$$$?$7$^$9$N$G!"(B
+$B!!$46=L#$,$"$j$^$7$?$i$4;22C$/$@$5$$$^$;!#(B
+
+$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
+
+$B!!"#!!3+:EF|Dx(B
+$B!!!!!!(B10$B7n(B30$BF|!JLZ!K(B13:00$B!A(B14:00
+$B!!!!!!(B11$B7n(B6$BF|!JLZ!K(B13:00$B!A(B14:00
+$B!!!!!!(B11$B7n(B8$BF|!JEZ!K(B13:00$B!A(B14:00$B!!"(N>F|!"F1$8FbMF$G$9!#(B
+
+$B!!"#!!3+:EJ}<0(B
+$B!!!!!!!&%*%s%i%$%s3+:E(B
+
+$B!!"#!!%3%s%F%s%D(B
+$B!!!!!!!&F~2q<T?t$N?d0\(B
+$B!!!!!!!&%J%f%?%9$NFCD'$HA*$P$l$k(B3$B$D$NM}M3(B
+$B!!!!!!!&%U%i%s%A%c%$%:%7%9%F%`>\:Y(B
+$B!!!!!!!&3+6HHqMQNc!?<}1WNc(B
+
+$B!!"#!!<g:E(B
+$B!!!!!!!&3t<02q<R(B K Village$B!J%J%f%?%91?1DK\It!K(B
+
+$B!!"#!!Dj0w(B
+$B!!!!!!!&(B5$B<R!?3F2s(B
+
+$B!!"#!!;22CHq(B
+$B!!!!!!!&ITMW$G$9(B
+
+$B!!"#!!>\:Y!u?=9~$O$3$A$i(B
+$B!!!!!!(Bhttps://nayutas-voice.biz/2500/
+
+$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
+$BK\%a!<%k$,ITMW$NJ}$K$OBgJQ<:Ni$7$^$7$?!#(B
+$B:#8e$40FFb$,ITMW$J:]$O!"2<5-(BURL$B$K$FG[?.Dd;_$r>5$C$F$$$^$9!#(B
+https://nayutas-voice.biz/mail/
+$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
+$B3t<02q<R(B K Village$B!J%J%f%?%91?1DK\It!K(B
+$BEl5~ET?7=I6h@>?7=I(B2-4-1 $B?7=I(BNS$B%S%k(B7F
+$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
