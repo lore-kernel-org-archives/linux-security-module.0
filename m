@@ -1,45 +1,111 @@
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381E71AF0B6
-	for <linux-security-module@vger.kernel.org>; Wed, 29 Oct 2025 16:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D2B31BC96;
+	Wed, 29 Oct 2025 23:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761755547; cv=none; b=PAvQBwH+iVOzF4RXMpYN95kg7elj+BN46bb4+ymr2u66kGad9Zz2NZ+eYKaGGfoldU3sEnX333AZD/4eWtzmWPxoShwCSx1X5/EQE6V+7RMRH0mOCv6M5Et8OWyTQ7lcSp3ZceTcqUhmDKZKFDDpfYAbiUWrpB/DmLnQiLWchAM=
+	t=1761781475; cv=none; b=KOzLg0FCs1dL7UJFkRihYP8m6oV2jO/EUQ6I4KVA4Y8Lpgvqc9/3tcECapSRqK26/LsFrcHUyXBDZXdTrAGjC7K1jklTn8OeiJsfJgXLXahlqh1ZNWcoIJ+hWy8TOcW8ZTdysjrY0lybQ6V4HYPgQYnIVH9AHvbU0bxRaeEcEnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761755547; c=relaxed/simple;
-	bh=Ca7xEzFRwrwszkpl4txHQpXwetMMS+OAj7NM+yP3tuk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nc4rlGZ6tf+hjDpMwD8Lyu4CWYU9ikaKPjJuJnr6/gTSar5oDpZa8l3oLG3I3dTKWTfyARKVzazh0SR+/90Slz2XO+51LPY1k2IHkDGcNaecMpcCyi9/lOYoC0iV3mRFZlkKujwkkZV0AJChI07bvLJfnLCqsnFLVMIW1acXYn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Dsfb1GSa; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1761781475; c=relaxed/simple;
+	bh=w1kCxW1iy8c7ihHn/8+NGQc8R16rrkANmzgDW8z4SK8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sodaNFZAmJTLBnbyHbwkbewZV6SZLFlYP4ZNlrAkG8wdB3YBBNHv7lgLe5YjeUhlbigX9v6dkQ1AgUjxMdXOJW6mbod6+0xslwrnszmdNqYz7+Uvj3KjHeA5Ao22li/apQOm0HioiuLC1d8fFW4NHx/YFuWbya3REI1vdX3KSGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=GhjEouVc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FVJBB8ko; arc=none smtp.client-ip=202.12.124.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Dsfb1GSa"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761755543;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=GOAJ/2xYVpU7WKRC8hlYtRql72lR/1lCG+XFgyo4CmM=;
-	b=Dsfb1GSa8mB+EMKzo+G38eO/WnewpdrJhs1oiAo1Li435FydEB6Afj4u9H9uG0Oe569RrQ
-	BLD+KIslC0Z3QEForE0vzS4NojqugJLrS7SM43Sa3lV6u/qQ+QmKHY2AH5w1Xzx1qbNt09
-	/ZiesvcXOAgBy7p1GCXac+1orbPZuA0=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] KEYS: encrypted: Return early on allocation failure and drop goto
-Date: Wed, 29 Oct 2025 17:31:56 +0100
-Message-ID: <20251029163157.119000-1-thorsten.blum@linux.dev>
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="GhjEouVc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FVJBB8ko"
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailflow.stl.internal (Postfix) with ESMTP id 7E41A1300085;
+	Wed, 29 Oct 2025 19:44:31 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Wed, 29 Oct 2025 19:44:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
+	:subject:to:to; s=fm3; t=1761781471; x=1761788671; bh=3x5QrKJbAU
+	5RZlYDSzt8Tpga/kvzXZxC49Muc/R7QZE=; b=GhjEouVcRX5SJnd2xC8PpJrDd4
+	5gkLEdREwDoq8sl+DBfc/BmSP3BbU8Mna/yRQ0mJT+YerlIyKxQnHG9JNIdfdvWG
+	SEgIFc0Ia63eBD42oxiyZb0QhCz9o3xmVx7jBrsXRZ49p5n5OOlsWj0hSQbFvZeF
+	z5AqkgCSiUEnM/CNER15/xVrFQ90ZlFLCV40LolbJNPKakcnQHHX35eus1VgipNz
+	9mrDLPYpRiymWw5AnPf2k2bnhd7JdUrzezStmq3NbcceOpamzP50amLIRGUUtc2B
+	NQQQo5tUZY5nwh3gZyBpQY/zBR5ZdH71eGZNqzcpALYYSRkPCqHmOjsoY3pA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1761781471; x=1761788671; bh=3x5QrKJbAU5RZlYDSzt8Tpga/kvz
+	XZxC49Muc/R7QZE=; b=FVJBB8kohSZHiLJIbGPXBDlmftX29JM9LBAqg79dTWqk
+	yz1+x4bVzMixLyeUBD6UMAtReNbi/HZFEx46Wq6nfklVi17Cy2HK6aBAMR8ZX5NJ
+	r7/Uf2cBjw48pz8C6vmTnu0Q/8zEPGqjc0doo38FNUGDuD3FfJh72Mu6sRMeVYQp
+	Dv65nNKDg5/a2VSp3rxOwLbG3KmZl6lhfRoiCJkDROdMh7QUeHeeU6DWJRwt7UNn
+	LoItIfP1jQ3FLUiMoV4dzXKGdNizDLgTl4FqI5Ll5IBSQIyTOHMZXZd9jUSvHBaP
+	xpcmVAlz4RvT6v0XDGGxxzdoHjf9otwjESBsILdBQA==
+X-ME-Sender: <xms:3aYCacW0EklVbBr52odzgwMIFadqVZiY_9E7tudg5vTOUlukGR89QQ>
+    <xme:3aYCaTdYh1VR4XWnn3OEfjhVRMW9llb0r_xZdVgEPJBMwC0guDDC5CXJvsrDKgSU3
+    O7sPHab5vsYfOwx2ifIrmOdATuza71bDXE5CgYxiEzhilZdiA>
+X-ME-Received: <xmr:3aYCaROZCepQe3Hu21UI6QwqCD0nSkfSZsBAwHrWmKgYq6O-H3DBzXb5QvKORxj1yfDg4BDFbGwZ_wxSs6RKBleyvZEnJ0v1TFpLhCQQZgBx>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieehtdekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhephffvvefufffkofhrggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheurhho
+    fihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepge
+    etfeegtddtvdeigfegueevfeelleelgfejueefueektdelieeikeevtdelveelnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsgesoh
+    ifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgedupdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
+    hpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidquhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvghlrd
+    horhhg
+X-ME-Proxy: <xmx:3aYCadIU3g7PRNyg0QpRBi516BNZpWSYBI7wNvYksLhLN5HboYbfKg>
+    <xmx:3aYCaUi8yMV9Wi329iHBU0ZD5tJV3Inub4fLYJfrLtuvM8baE8Z65g>
+    <xmx:3aYCaTfdaKHZTaBO_Bu6_k6dJq0TTIMOZXGLZvFcx2pwEZqLY08rbw>
+    <xmx:3aYCaU7RSF_CkX0ckxw-AONs1hAD9ap10WIuJvbkwYEEi3Piz-5pGg>
+    <xmx:36YCaR9pl7VkHXdYi10atgXk7DONC_H6TEfCcxqFVlKz7Swud_TD-zUd>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 29 Oct 2025 19:44:19 -0400 (EDT)
+From: NeilBrown <neilb@ownmail.net>
+To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+	"Christian Brauner" <brauner@kernel.org>,
+	"Amir Goldstein" <amir73il@gmail.com>
+Cc: "Jan Kara" <jack@suse.cz>,	linux-fsdevel@vger.kernel.org,
+	Jeff Layton <jlayton@kernel.org>,	Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>,	David Howells <dhowells@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,	Tyler Hicks <code@tyhicks.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,	Chuck Lever <chuck.lever@oracle.com>,
+	Olga Kornievskaia <okorniev@redhat.com>,	Dai Ngo <Dai.Ngo@oracle.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,	Steve French <smfrench@gmail.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Carlos Maiolino <cem@kernel.org>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,	Mateusz Guzik <mjguzik@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,	linux-kernel@vger.kernel.org,
+	netfs@lists.linux.dev,	ecryptfs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,	linux-unionfs@vger.kernel.org,
+	linux-cifs@vger.kernel.org,	linux-xfs@vger.kernel.org,
+	apparmor@lists.ubuntu.com,	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: [PATCH v4 00/14] Create and use APIs to centralise locking for directory ops.
+Date: Thu, 30 Oct 2025 10:31:00 +1100
+Message-ID: <20251029234353.1321957-1-neilb@ownmail.net>
+X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
+Reply-To: NeilBrown <neil@brown.name>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -47,52 +113,54 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Return ERR_PTR(-ENOMEM) immediately if memory allocation fails, instead
-of using goto and returning a NULL pointer, and remove the now-unused
-'out' label.
+Hi all,
 
-At the call site, check 'ascii_buf' with IS_ERR() and propagate the
-error code returned by datablob_format().
+ this series is the next part of my effort to change directory-op
+ locking to allow multiple concurrent ops in a directory.  Ultimately we
+ will (in my plan) lock the target dentry(s) rather than the whole
+ parent directory.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- security/keys/encrypted-keys/encrypted.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ To help with changing the locking protocol, this series centralises
+ locking and lookup in some helpers.  The various helpers are introduced
+ and then used in the same patch - roughly one patch per helper though
+ with various exceptions.
 
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index be1f2118447c..25df00b7dbe9 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -276,7 +276,7 @@ static char *datablob_format(struct encrypted_key_payload *epayload,
- 
- 	ascii_buf = kmalloc(asciiblob_len + 1, GFP_KERNEL);
- 	if (!ascii_buf)
--		goto out;
-+		return ERR_PTR(-ENOMEM);
- 
- 	ascii_buf[asciiblob_len] = '\0';
- 
-@@ -288,7 +288,6 @@ static char *datablob_format(struct encrypted_key_payload *epayload,
- 	bufp = &ascii_buf[len];
- 	for (i = 0; i < (asciiblob_len - len) / 2; i++)
- 		bufp = hex_byte_pack(bufp, iv[i]);
--out:
- 	return ascii_buf;
- }
- 
-@@ -932,8 +931,8 @@ static long encrypted_read(const struct key *key, char *buffer,
- 		goto out;
- 
- 	ascii_buf = datablob_format(epayload, asciiblob_len);
--	if (!ascii_buf) {
--		ret = -ENOMEM;
-+	if (IS_ERR(ascii_buf)) {
-+		ret = PTR_ERR(ascii_buf);
- 		goto out;
- 	}
- 
--- 
-2.51.0
+ I haven't introduced these helpers into the various filesystems that
+ Al's tree-in-dcache series is changing.  That series introduces and
+ uses similar helpers tuned to the specific needs of that set of
+ filesystems.  Ultimately all the helpers will use the same backends
+ which can then be adjusted when it is time to change the locking
+ protocol.
 
+ One change that deserves highlighting is in patch 13 where vfs_mkdir()
+ is changed to unlock the parent on failure, as well as the current
+ behaviour of dput()ing the dentry on failure.  Once this change is in
+ place, the final step of both create and an remove sequences only
+ requires the target dentry, not the parent.  So e.g.  end_creating() is
+ only given the dentry (which may be IS_ERR() after vfs_mkdir()).  This
+ helps establish the pattern that it is the dentry that is being locked
+ and unlocked (the lock is currently held on dentry->d_parent->d_inode,
+ but that can change).
+
+ Please review the changes I've made to your respective code areas and
+ let us know of any problems.
+
+Thanks,
+NeilBrown
+
+
+ [PATCH v4 01/14] debugfs: rename end_creating() to
+ [PATCH v4 02/14] VFS: introduce start_dirop() and end_dirop()
+ [PATCH v4 03/14] VFS: tidy up do_unlinkat()
+ [PATCH v4 04/14] VFS/nfsd/cachefiles/ovl: add start_creating() and
+ [PATCH v4 05/14] VFS/nfsd/cachefiles/ovl: introduce start_removing()
+ [PATCH v4 06/14] VFS: introduce start_creating_noperm() and
+ [PATCH v4 07/14] VFS: introduce start_removing_dentry()
+ [PATCH v4 08/14] VFS: add start_creating_killable() and
+ [PATCH v4 09/14] VFS/nfsd/ovl: introduce start_renaming() and
+ [PATCH v4 10/14] VFS/ovl/smb: introduce start_renaming_dentry()
+ [PATCH v4 11/14] Add start_renaming_two_dentries()
+ [PATCH v4 12/14] ecryptfs: use new start_creating/start_removing APIs
+ [PATCH v4 13/14] VFS: change vfs_mkdir() to unlock on failure.
+ [PATCH v4 14/14] VFS: introduce end_creating_keep()
