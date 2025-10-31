@@ -1,30 +1,30 @@
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CEE33DEE9;
-	Fri, 31 Oct 2025 10:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBFF33F372;
+	Fri, 31 Oct 2025 10:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761905860; cv=none; b=cEvDm+CfvTKJHUZqAgeKbe0S0gxFwKUmZX+pDBSQGhqBsVyKqYvHXmvGuDV6rsvqqN+jPL5hY4auHylcN9fa9ln2ij0OzlDoYdG4cCjo9XpNkpPsvPjpym9yglZm4tNGcoTdDzsBouHxhH/xESInb3z3Lu67wYBAtLC31bgt+IY=
+	t=1761905861; cv=none; b=Bdx+oLmWqDAhqmjL5FaUy86PQlQ2Pn9sfgJorgGc+oWNBxU29oZZtEm6MJTgOj0K5lf8qiVRbqIe7flID08XzHyCR6iTuTPVF3yaI6EGofs2FV/1HafQ9nbAdh2imjqz1pZgpL2mq6WRZF6PcH/nydAfV5uLXVXgpVCQiITmDPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761905860; c=relaxed/simple;
-	bh=mjSIB+olvpp7FObVnTvKHPbXxA6lJeMkxi6084AFehU=;
+	s=arc-20240116; t=1761905861; c=relaxed/simple;
+	bh=npRj2RXUFZlU2cO9NMobnA7pSPSkczGeScDnUdo66G8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=msRyrV6beAOJz85z7nt6Y9cVPsYA5ONCL8NqRApTxXfV47HVJSZxuvJbKReSm1FhxyQXWcZqh0FmSAQBGO3dBz2rLpP4EO2ck+3G9rYzwKLnjS9AL6f+4kG9fe0Qcf9boP21nR07sptP7NdTpck2VhyBcHi5Cdai/RI51K94KpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=kozM7DMT; arc=none smtp.client-ip=13.77.154.182
+	 MIME-Version; b=p0j9phse1yqrjrTYeSYXWPFARjQl2AbuQELen/CBOjWu4toXf01vWMxq/o3rLgIeHkwEcaDBevb/LzUfgRqrK+X3Yi+eO4p00rBAbt/EKxQxlTs2prnz7wy4KCB+k0wZZ+hhJA9W9m8TB6Q4Qh44h9/0Br9nyVaVn8UavbTAOpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AUV6GpP4; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kozM7DMT"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AUV6GpP4"
 Received: from ubuntu.. (unknown [131.107.174.57])
-	by linux.microsoft.com (Postfix) with ESMTPSA id F06DB2113E8B;
-	Fri, 31 Oct 2025 03:17:37 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F06DB2113E8B
+	by linux.microsoft.com (Postfix) with ESMTPSA id 546FF211D8DC;
+	Fri, 31 Oct 2025 03:17:39 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 546FF211D8DC
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1761905858;
-	bh=cUV6jys3X/iTSDPCZX2fG0GthbKk6WZ9aSQJUJcwURs=;
+	s=default; t=1761905859;
+	bh=A2i5xH5KTXr40A99Hzhc/aUW5RD8StWwacVH2CbWm1A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kozM7DMT2Al7tgdti5bDgG5McWKhuhBsFYWgtoPWuZbEebuXLdU2Vf7x59+dFqKLF
-	 VZ5HWoRJd84WO6UFOBpDYBJoatUjpDb2+Di/kXCK7dCkW3TT4S2sueyYDkYHRwuoKq
-	 lGhKm3qJADkRtuvNDryakFzZU7WOS8i+wgVA5A9E=
+	b=AUV6GpP4wi+BZ6pCkO3IkX3Ete+4C82XNWOfvHit5bYS7zbXLGrMcldAffwtgvJ3U
+	 P16e5xmBPMs/Bwqhyys5JYXi96VqZYJiXiZFOFrpMBZ6wX9R2/g3ouFbsC7anpzpN9
+	 2UlSgivPwknyM4k1ShJXrKQVYXaK8WJeivuWjXo8=
 From: Yanzhu Huang <yanzhuhuang@linux.microsoft.com>
 To: wufan@kernel.org,
 	paul@paul-moore.com,
@@ -36,9 +36,9 @@ Cc: jmorris@namei.org,
 	linux-security-module@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] ipe: Add AT_EXECVE_CHECK support for script enforcement
-Date: Fri, 31 Oct 2025 10:16:59 +0000
-Message-ID: <20251031101700.694964-2-yanzhuhuang@linux.microsoft.com>
+Subject: [PATCH v2 2/2] ipe: Update documentation for script enforcement
+Date: Fri, 31 Oct 2025 10:17:00 +0000
+Message-ID: <20251031101700.694964-3-yanzhuhuang@linux.microsoft.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251031101700.694964-1-yanzhuhuang@linux.microsoft.com>
 References: <20251023233656.661344-1-yanzhuhuang@linux.microsoft.com>
@@ -51,113 +51,51 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch adds a new ipe_bprm_creds_for_exec() hook that integrates
-with the AT_EXECVE_CHECK mechanism. To enable script enforcement,
-interpreters need to incorporate the AT_EXECVE_CHECK flag when
-calling execveat() on script files before execuation.
-
-When a userspace interpreter calls execveat() with the AT_EXECVE_CHECK
-flag, this hook triggers IPE policy evaluation on the script file. The
-hook only triggers IPE when bprm->is_check is true, ensuring it's
-being called from an AT_EXECVE_CHECK context. It then builds an
-evaluation context for an IPE_OP_EXEC operation and invokes IPE policy.
-The kernel returns the policy decision to the interpreter, which can
-then decide whether to proceed with script execution.
-
-This extends IPE enforcement to indirectly executed scripts, permitting
-trusted scripts to execute while denying untrusted ones.
+This patch adds explanation of script enforcement mechanism in admin
+guide documentation. Describes how IPE supports integrity enforcement
+for indirectly executed scripts through the AT_EXECVE_CHECK flag, and
+how this differs from kernel enforcement for compiled executables.
 
 Signed-off-by: Yanzhu Huang <yanzhuhuang@linux.microsoft.com>
 ---
- security/ipe/audit.c |  1 +
- security/ipe/hooks.c | 27 +++++++++++++++++++++++++++
- security/ipe/hooks.h |  3 +++
- security/ipe/ipe.c   |  1 +
- 4 files changed, 32 insertions(+)
+ Documentation/admin-guide/LSM/ipe.rst | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/security/ipe/audit.c b/security/ipe/audit.c
-index de5fed62592e..3f0deeb54912 100644
---- a/security/ipe/audit.c
-+++ b/security/ipe/audit.c
-@@ -46,6 +46,7 @@ static const char *const audit_op_names[__IPE_OP_MAX + 1] = {
- 
- static const char *const audit_hook_names[__IPE_HOOK_MAX] = {
- 	"BPRM_CHECK",
-+	"BPRM_CREDS_FOR_EXEC",
- 	"MMAP",
- 	"MPROTECT",
- 	"KERNEL_READ",
-diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
-index d0323b81cd8f..32dd99abd4de 100644
---- a/security/ipe/hooks.c
-+++ b/security/ipe/hooks.c
-@@ -35,6 +35,33 @@ int ipe_bprm_check_security(struct linux_binprm *bprm)
- 	return ipe_evaluate_event(&ctx);
- }
- 
-+/**
-+ * ipe_bprm_creds_for_exec() - ipe security hook function for bprm creds check.
-+ * @bprm: Supplies a pointer to a linux_binprm structure to source the file
-+ *	  being evaluated.
-+ *
-+ * This LSM hook is called when userspace signals the kernel to check a file
-+ * for execution through the execveat syscall with the AT_EXECVE_CHECK flag.
-+ * The hook triggers IPE policy evaluation on the script file and returns
-+ * the policy decision to userspace. The userspace program receives the
-+ * return code and can decide whether to proceed with script execution.
-+ *
-+ * Return:
-+ * * %0		- Success
-+ * * %-EACCES	- Did not pass IPE policy
-+ */
-+int ipe_bprm_creds_for_exec(struct linux_binprm *bprm)
-+{
-+	struct ipe_eval_ctx ctx = IPE_EVAL_CTX_INIT;
+diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
+index dc7088451f9d..3f205d7dd533 100644
+--- a/Documentation/admin-guide/LSM/ipe.rst
++++ b/Documentation/admin-guide/LSM/ipe.rst
+@@ -95,7 +95,20 @@ languages when these scripts are invoked by passing these program files
+ to the interpreter. This is because the way interpreters execute these
+ files; the scripts themselves are not evaluated as executable code
+ through one of IPE's hooks, but they are merely text files that are read
+-(as opposed to compiled executables) [#interpreters]_.
++(as opposed to compiled executables). However, with the introduction of the
++``AT_EXECVE_CHECK`` flag (see `AT_EXECVE_CHECK <https://docs.kernel.org/userspace-api/check_exec.html#at-execve-check>`__),
++interpreters can use it to signal the kernel that a script file will be executed,
++and request the kernel to perform LSM security checks on it.
 +
-+	if (!bprm->is_check)
-+		return 0;
-+
-+	ipe_build_eval_ctx(&ctx, bprm->file, IPE_OP_EXEC,
-+			   IPE_HOOK_BPRM_CREDS_FOR_EXEC);
-+	return ipe_evaluate_event(&ctx);
-+}
-+
- /**
-  * ipe_mmap_file() - ipe security hook function for mmap check.
-  * @f: File being mmap'd. Can be NULL in the case of anonymous memory.
-diff --git a/security/ipe/hooks.h b/security/ipe/hooks.h
-index 38d4a387d039..07db37332740 100644
---- a/security/ipe/hooks.h
-+++ b/security/ipe/hooks.h
-@@ -13,6 +13,7 @@
++IPE's EXECUTE operation enforcement differs between compiled executables and
++interpreted scripts: For compiled executables, enforcement is triggered
++automatically by the kernel during ``execve()``, ``execveat()``, ``mmap()``
++and ``mprotect()`` syscalls when loading executable content. For interpreted
++scripts, enforcement requires explicit interpreter integration using
++``execveat()`` with ``AT_EXECVE_CHECK`` flag. Unlike exec syscalls that IPE
++intercepts during the execution process, this mechanism needs the interpreter
++to take the initiative, and existing interpreters won't be automatically
++supported unless the signal call is added.
  
- enum ipe_hook_type {
- 	IPE_HOOK_BPRM_CHECK = 0,
-+	IPE_HOOK_BPRM_CREDS_FOR_EXEC,
- 	IPE_HOOK_MMAP,
- 	IPE_HOOK_MPROTECT,
- 	IPE_HOOK_KERNEL_READ,
-@@ -24,6 +25,8 @@ enum ipe_hook_type {
+ Threat Model
+ ------------
+@@ -806,8 +819,6 @@ A:
  
- int ipe_bprm_check_security(struct linux_binprm *bprm);
+ .. [#digest_cache_lsm] https://lore.kernel.org/lkml/20240415142436.2545003-1-roberto.sassu@huaweicloud.com/
  
-+int ipe_bprm_creds_for_exec(struct linux_binprm *bprm);
-+
- int ipe_mmap_file(struct file *f, unsigned long reqprot, unsigned long prot,
- 		  unsigned long flags);
+-.. [#interpreters] There is `some interest in solving this issue <https://lore.kernel.org/lkml/20220321161557.495388-1-mic@digikod.net/>`_.
+-
+ .. [#devdoc] Please see :doc:`the design docs </security/ipe>` for more on
+              this topic.
  
-diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-index 4317134cb0da..845e3fd7a345 100644
---- a/security/ipe/ipe.c
-+++ b/security/ipe/ipe.c
-@@ -47,6 +47,7 @@ struct ipe_inode *ipe_inode(const struct inode *inode)
- 
- static struct security_hook_list ipe_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(bprm_check_security, ipe_bprm_check_security),
-+	LSM_HOOK_INIT(bprm_creds_for_exec, ipe_bprm_creds_for_exec),
- 	LSM_HOOK_INIT(mmap_file, ipe_mmap_file),
- 	LSM_HOOK_INIT(file_mprotect, ipe_file_mprotect),
- 	LSM_HOOK_INIT(kernel_read_file, ipe_kernel_read_file),
 -- 
 2.43.0
 
