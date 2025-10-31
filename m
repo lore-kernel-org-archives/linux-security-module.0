@@ -1,85 +1,126 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CBE343D72;
-	Fri, 31 Oct 2025 13:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04BB24290D
+	for <linux-security-module@vger.kernel.org>; Fri, 31 Oct 2025 15:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761915774; cv=none; b=BFEX8uGnnzwaBUGkEAn5dVhwJAzNRgeZeWNIxksGv6bGcsvkf8SzML4nvphxD6r/3938Qw1owj1fJHeyhC4/N7WiIKYf0seQZfQZW7oExplMkt1Zo4BsdfIpo3+2bUKVJr4OfDMhS4nqyCTDzpkbFP5XM/nhVtB+sTscTPkBqJU=
+	t=1761924195; cv=none; b=toGJHuIlT2FGVQ+AQEHI7w8vmfJeMFVt2EZ1FgtF1Ti7/tr1HN2khS5BpG98xrIX7HGEg68R3+pJ+SKe5PZf9i8s+nB9OSuHmD7xVMSVXEK8e94nOKSYGHwIX6f8e12AldZkpGzCSsZZ/5/Wq4Bt4JuSPSkAgcH29dDXrXCVX3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761915774; c=relaxed/simple;
-	bh=mklZt5beKYaXRJNTJk+YPWnwUtm8oIDoquLhqk3ZCpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bM6prQEiJ5Iv/ibFKyYyrgAvkAs3oB3+poWOO485YIhPMg3EwvJ9/kHQ1ajTcn05XFcFN8VlB8u7NX1N/J5Z5iPj3ZsnpHJFpY+8YMQ2IhJZcFFpBrxNrsHkyec8jdDLyKTqL5gmYqlbhvj9DaDKPJsepp8M47tzT36WjXww2DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id ABBBE54B; Fri, 31 Oct 2025 08:02:42 -0500 (CDT)
-Date: Fri, 31 Oct 2025 08:02:42 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] device_cgroup: Replace strcpy/sprintf in set_majmin
-Message-ID: <aQSzcp852yz/Ourm@mail.hallyn.com>
-References: <20251031110647.102728-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1761924195; c=relaxed/simple;
+	bh=QYXe75Yh+yZ09byLhDF9yhftthum4CDB51HUlIPkhPY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=tJGagm8CYm2mL1WuqChUZrVI7pAc61aVTftM3Pt0VtMn8DqWlYXz52VnfVVi8jAQ4vTT2NxseBRifWx+2HElsbtP5TdpBPB4tG37NiOMmgIXmAwtskK2ahmFeoqtjU1b6H+8dNBqzh00pRvgaHfZtUWGH/sSR6hb+IEg/b81Hns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jy6thDzO; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jy6thDzO"
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761924187;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=27IEgfUKPZeIksBqlF8l79OSzqASR8q8aE6o0IGyKhQ=;
+	b=jy6thDzOuar8GUGOiDze+whD6yp57TbQKhCV20GWb3oqRjTJgkuIpyqUb6k4Q0/cimTVN9
+	8/9mnYXCAWm1wTXVIdZmruoIn54vnQPAY/v2Ld6E6NtgGtWQivs8HlYlEFwT5VeId9BF36
+	hfgN6zx5VMWl9vzAfYApaxOub1SIcmQ=
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031110647.102728-2-thorsten.blum@linux.dev>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] device_cgroup: Replace strcpy/sprintf in set_majmin
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <20251031125916.3b0c8b22@pumpkin>
+Date: Fri, 31 Oct 2025 16:23:02 +0100
+Cc: Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FE3AAB5A-9AB9-49B6-BB67-FCB97CD5AF29@linux.dev>
+References: <20251031110647.102728-2-thorsten.blum@linux.dev>
+ <20251031125916.3b0c8b22@pumpkin>
+To: David Laight <david.laight.linux@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Oct 31, 2025 at 12:06:47PM +0100, Thorsten Blum wrote:
-> strcpy() is deprecated and sprintf() does not perform bounds checking
-> either. While the current code works correctly, strscpy() and snprintf()
-> are safer alternatives that follow secure coding best practices.
-> 
-> Link: https://github.com/KSPP/linux/issues/88
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  security/device_cgroup.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/device_cgroup.c b/security/device_cgroup.c
-> index dc4df7475081..a41f558f6fdd 100644
-> --- a/security/device_cgroup.c
-> +++ b/security/device_cgroup.c
-> @@ -273,9 +273,9 @@ static char type_to_char(short type)
->  static void set_majmin(char *str, unsigned m)
->  {
->  	if (m == ~0)
-> -		strcpy(str, "*");
-> +		strscpy(str, "*", MAJMINLEN);
+On 31. Oct 2025, at 13:59, David Laight wrote:
+> Even if ex->major can be ~0 there are much cleaner ways of writing =
+this code.
 
-I dunno, I'm not saying I would say no to this, but it does look
-a little ridiculous.  If it used some macro version which computes
-the length of str instead of typing in MAJMINLEN, that might be
-better.  But we're just as likely here to get MAJMINLEN out of
-sync with the length of strscpy as anything else happening, and
-all to copy over two bytes.
+Thanks for pointing this out. Looking at the bigger picture makes it
+clear that most of the code can actually be removed. What do you think
+of this change?
 
->  	else
-> -		sprintf(str, "%u", m);
-> +		snprintf(str, MAJMINLEN, "%u", m);
+Thanks,
+Thorsten
 
-Here, to me it always looks suspect to use snprintf without
-checking its return value, and in this case, if snprintf cuts
-off the value it is in fact a potential security issue, one
-which did not exist before this.
+diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+index a41f558f6fdd..cb845b1fad6b 100644
+--- a/security/device_cgroup.c
++++ b/security/device_cgroup.c
+@@ -244,7 +244,6 @@ static void devcgroup_css_free(struct =
+cgroup_subsys_state *css)
+#define DEVCG_DENY 2
+#define DEVCG_LIST 3
 
-So make up your mind: is it worth doing the length check or
-not?  If not, then this switch is uncalled for.  If so, then
-you should check the return value, else one day I may be able
-to whitelist a device which the admin didn't allow.
+-#define MAJMINLEN 13
+#define ACCLEN 4
 
->  }
->  
->  static int devcgroup_seq_show(struct seq_file *m, void *v)
-> -- 
-> 2.51.1
+static void set_access(char *acc, short access)
+@@ -270,19 +269,11 @@ static char type_to_char(short type)
+	return 'X';
+}
+
+-static void set_majmin(char *str, unsigned m)
+-{
+-	if (m =3D=3D ~0)
+-		strscpy(str, "*", MAJMINLEN);
+-	else
+-		snprintf(str, MAJMINLEN, "%u", m);
+-}
+-
+static int devcgroup_seq_show(struct seq_file *m, void *v)
+{
+	struct dev_cgroup *devcgroup =3D css_to_devcgroup(seq_css(m));
+	struct dev_exception_item *ex;
+-	char maj[MAJMINLEN], min[MAJMINLEN], acc[ACCLEN];
++	char acc[ACCLEN];
+
+	rcu_read_lock();
+	/*
+@@ -293,17 +284,12 @@ static int devcgroup_seq_show(struct seq_file *m, =
+void *v)
+	 */
+	if (devcgroup->behavior =3D=3D DEVCG_DEFAULT_ALLOW) {
+		set_access(acc, DEVCG_ACC_MASK);
+-		set_majmin(maj, ~0);
+-		set_majmin(min, ~0);
+-		seq_printf(m, "%c %s:%s %s\n", =
+type_to_char(DEVCG_DEV_ALL),
+-			   maj, min, acc);
++		seq_printf(m, "%c *:* %s\n", =
+type_to_char(DEVCG_DEV_ALL), acc);
+	} else {
+		list_for_each_entry_rcu(ex, &devcgroup->exceptions, =
+list) {
+			set_access(acc, ex->access);
+-			set_majmin(maj, ex->major);
+-			set_majmin(min, ex->minor);
+-			seq_printf(m, "%c %s:%s %s\n", =
+type_to_char(ex->type),
+-				   maj, min, acc);
++			seq_printf(m, "%c %u:%u %s\n", =
+type_to_char(ex->type),
++				   ex->major, ex->minor, acc);
+		}
+	}
+	rcu_read_unlock();
+
