@@ -1,165 +1,93 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D48B28C035;
-	Fri, 31 Oct 2025 23:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A4532ED3F
+	for <linux-security-module@vger.kernel.org>; Fri, 31 Oct 2025 23:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761953894; cv=none; b=ipPtPdbXe6PU4rFhdgrNvI4dRYYd/DFx+Bpf9xvOO85QqUUJqrBOZPIX91a/CL3CRL1rEFA+kXMn+bEHqyDGBPl4GuLMuOU60Q411a8IIHQDuEAceNY4KW/aorpjmmfZl/ov0lZ3ZwgnNfHoXArVnOQWQQsJhXuLckksDCYrUgA=
+	t=1761954618; cv=none; b=UladxviU6PTvbF2vq24ZhbdbTU0md0Ad1RAYUdpUH1AD+I5/NC4RfhtTPV0BO/A0yZwMmWiPBXXVMB2cjydjtdyi3KTmQ8bR11gcfJS/6p9X7JdM9WtehVXOunMJpX+dLrNyMXEkupVRzixAWJowyWmifXTQ4b5RdCynhv/15tQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761953894; c=relaxed/simple;
-	bh=ZZBwwZAqyH37jixgU+9Ikj79If/LNQFAF0IsdYlO+Us=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qbZFGIFj3kLZlPiHmMZCDESepa1Pp2+BRluEn5318F0TJmkEqi2XsrN5u0lDtkAiGBd8V2g0BA4mfjUMIysIxsyGjbOqvNRk+nbrwNPP/tDBzPO2+8cKW29k9+yaTtx1jBMh38nrHLvQiX+Uy6hWMZyuBPlybR5NSX5XBHxGz7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 30158C8C; Fri, 31 Oct 2025 18:38:08 -0500 (CDT)
-Date: Fri, 31 Oct 2025 18:38:08 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: David Laight <david.laight.linux@gmail.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] device_cgroup: Refactor devcgroup_seq_show to use
- seq_put* helpers
-Message-ID: <aQVIYI2vwvln2CJN@mail.hallyn.com>
-References: <20251031213915.211046-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1761954618; c=relaxed/simple;
+	bh=/2/ajoMcL0nJ8XaYHk8GNFJXrKDu+Fo31MBZehKtJwI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qx3HuH7ddR3cCzgWdxzfzZnPmQIF256LwvdLlXvBXqghxmhAn2ZlkioOwsKNsJLVaLfEUUN0RxmC487yCcy89gKFUNzK3XhpTqR43eQUk+oMEyz9aZI4wPv1+Pmoi8dux9nKiTDQTNGvPLOhYU77tiV3oLZJvXT3aiV9HyuZQq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dl1xHIOE; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dl1xHIOE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F92EC4CEFB
+	for <linux-security-module@vger.kernel.org>; Fri, 31 Oct 2025 23:50:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761954618;
+	bh=/2/ajoMcL0nJ8XaYHk8GNFJXrKDu+Fo31MBZehKtJwI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dl1xHIOEsevKwhp4hBvf7FnHJuHwUXF5tMIPL5VvdrN4G7KMwF/7tF791/hzsWb/d
+	 PhS11YZFfIXuxaX9as+Yjhfn0sKWN0qlpCUnOYxN3C+HXVPBe9cO17Eh3IX/8ELvuG
+	 hKdEA7KpgVd8d0xaE3G1Hf7f61Z/E2QBGPqVUfPtCauPIAUc5htcQXyHeQ+F1wbPcx
+	 Jxu2XWXLhAHXmaD+5kKvTPEvhPUyUTM6Y3ytzzTDSXy4MwyEtR2nmPUuRMviuZSXrr
+	 Buf6+sFXvuBHvESPq4iSyJKdcYeyV3JugAcAaBjOTaLO3cPgrQ/S6XyhTPkedZ2MAz
+	 1m7U+cKuzRlTQ==
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b6cdba2663dso2076889a12.2
+        for <linux-security-module@vger.kernel.org>; Fri, 31 Oct 2025 16:50:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX3eTAhOC4uGgu4/Gm84iR3kQLCI5j6edP2zg+QMFxDYKyM53VGvb2wgi/OeW72k7CVBh9p+WJbT3y7w3RhaIH8qQlXV2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx2btywuwX1InEOxj9RjgpV4OnPyZ/Lre+Mj/k9wZMOKen6dfG
+	CQVHW6qgQG5Cv/O9gt6yIxhJ5lF8qm/CadLLDrJEvcvz1+MYn6z+mit1vtVj+9oqBmJzz59Sjbv
+	4TIGzdqzsSTOOsQsKWZ6o3vCWN1pKRiU=
+X-Google-Smtp-Source: AGHT+IF/IzsfRTe4tVhaCIKS8r/3VLdW2aUi6RokBL0QcMpp8EEpsvKRse2CEt0IwBh6tkQ5GvlWCyM3+iFSoVFVEEU=
+X-Received: by 2002:a17:903:22c6:b0:295:5132:1a99 with SMTP id
+ d9443c01a7336-295513221b7mr16477645ad.44.1761954617741; Fri, 31 Oct 2025
+ 16:50:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031213915.211046-1-thorsten.blum@linux.dev>
+References: <20251023233656.661344-1-yanzhuhuang@linux.microsoft.com>
+ <20251031101700.694964-1-yanzhuhuang@linux.microsoft.com> <20251031101700.694964-3-yanzhuhuang@linux.microsoft.com>
+In-Reply-To: <20251031101700.694964-3-yanzhuhuang@linux.microsoft.com>
+From: Fan Wu <wufan@kernel.org>
+Date: Fri, 31 Oct 2025 16:50:10 -0700
+X-Gmail-Original-Message-ID: <CAKtyLkE_Jg3Sjw-HBKK1aZTwv2a6wM8BWpBZ5XK4aM-6e_rT5w@mail.gmail.com>
+X-Gm-Features: AWmQ_bkLeLDp6SONSBbYTeZsktbD5GFNx2gqFUxFKj5LrtAnbBK3sYoYIfVNLm0
+Message-ID: <CAKtyLkE_Jg3Sjw-HBKK1aZTwv2a6wM8BWpBZ5XK4aM-6e_rT5w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] ipe: Update documentation for script enforcement
+To: Yanzhu Huang <yanzhuhuang@linux.microsoft.com>
+Cc: wufan@kernel.org, paul@paul-moore.com, mic@digikod.net, jmorris@namei.org, 
+	serge@hallyn.com, corbet@lwn.net, linux-security-module@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 31, 2025 at 10:39:14PM +0100, Thorsten Blum wrote:
-> Replace set_access(), set_majmin(), and type_to_char() with new helpers
-> seq_putaccess(), seq_puttype(), and seq_putversion() that write directly
-> to 'seq_file'.
-> 
-> Simplify devcgroup_seq_show() by hard-coding "a *:* rwm", and use the
-> new seq_put* helper functions to list the exceptions otherwise.
-> 
-> This allows us to remove the intermediate string buffers while
-> maintaining the same functionality, including wildcard handling.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-
-Thank you, that is much  nicer.
-
-Acked-by: Serge Hallyn <serge@hallyn.com>
-
+On Fri, Oct 31, 2025 at 3:17=E2=80=AFAM Yanzhu Huang
+<yanzhuhuang@linux.microsoft.com> wrote:
+>
+> This patch adds explanation of script enforcement mechanism in admin
+> guide documentation. Describes how IPE supports integrity enforcement
+> for indirectly executed scripts through the AT_EXECVE_CHECK flag, and
+> how this differs from kernel enforcement for compiled executables.
+>
+> Signed-off-by: Yanzhu Huang <yanzhuhuang@linux.microsoft.com>
 > ---
-> Changes in v2:
-> - Add setq_put* helpers to modify seq_file directly (David)
-> - Update patch subject and description
-> - Link to v1: https://lore.kernel.org/lkml/20251031110647.102728-2-thorsten.blum@linux.dev/
-> ---
->  security/device_cgroup.c | 56 ++++++++++++++++++----------------------
->  1 file changed, 25 insertions(+), 31 deletions(-)
-> 
-> diff --git a/security/device_cgroup.c b/security/device_cgroup.c
-> index dc4df7475081..7fec575d32d6 100644
-> --- a/security/device_cgroup.c
-> +++ b/security/device_cgroup.c
-> @@ -244,45 +244,40 @@ static void devcgroup_css_free(struct cgroup_subsys_state *css)
->  #define DEVCG_DENY 2
->  #define DEVCG_LIST 3
->  
-> -#define MAJMINLEN 13
-> -#define ACCLEN 4
-> -
-> -static void set_access(char *acc, short access)
-> +static void seq_putaccess(struct seq_file *m, short access)
->  {
-> -	int idx = 0;
-> -	memset(acc, 0, ACCLEN);
->  	if (access & DEVCG_ACC_READ)
-> -		acc[idx++] = 'r';
-> +		seq_putc(m, 'r');
->  	if (access & DEVCG_ACC_WRITE)
-> -		acc[idx++] = 'w';
-> +		seq_putc(m, 'w');
->  	if (access & DEVCG_ACC_MKNOD)
-> -		acc[idx++] = 'm';
-> +		seq_putc(m, 'm');
->  }
->  
-> -static char type_to_char(short type)
-> +static void seq_puttype(struct seq_file *m, short type)
->  {
->  	if (type == DEVCG_DEV_ALL)
+>  Documentation/admin-guide/LSM/ipe.rst | 17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-=
+guide/LSM/ipe.rst
+> index dc7088451f9d..3f205d7dd533 100644
+> --- a/Documentation/admin-guide/LSM/ipe.rst
+> +++ b/Documentation/admin-guide/LSM/ipe.rst
+> @@ -95,7 +95,20 @@ languages when these scripts are invoked by passing th=
+ese program files
+>  to the interpreter. This is because the way interpreters execute these
+>  files; the scripts themselves are not evaluated as executable code
+>  through one of IPE's hooks, but they are merely text files that are read
+> -(as opposed to compiled executables) [#interpreters]_.
+> +(as opposed to compiled executables). However, with the introduction of =
+the
+> +``AT_EXECVE_CHECK`` flag (see `AT_EXECVE_CHECK <https://docs.kernel.org/=
+userspace-api/check_exec.html#at-execve-check>`__),
 
-I do think a switch would be easier to read here, but that's
-personal preference...
+Using url here might not be ideal, perhaps change it to
+:doc:`AT_EXECVE_CHECK </userspace-api/check_exec>`
 
-> -		return 'a';
-> -	if (type == DEVCG_DEV_CHAR)
-> -		return 'c';
-> -	if (type == DEVCG_DEV_BLOCK)
-> -		return 'b';
-> -	return 'X';
-> +		seq_putc(m, 'a');
-> +	else if (type == DEVCG_DEV_CHAR)
-> +		seq_putc(m, 'c');
-> +	else if (type == DEVCG_DEV_BLOCK)
-> +		seq_putc(m, 'b');
-> +	else
-> +		seq_putc(m, 'X');
->  }
->  
-> -static void set_majmin(char *str, unsigned m)
-> +static void seq_putversion(struct seq_file *m, unsigned int version)
->  {
-> -	if (m == ~0)
-> -		strcpy(str, "*");
-> +	if (version == ~0)
-> +		seq_putc(m, '*');
->  	else
-> -		sprintf(str, "%u", m);
-> +		seq_printf(m, "%u", version);
->  }
->  
->  static int devcgroup_seq_show(struct seq_file *m, void *v)
->  {
->  	struct dev_cgroup *devcgroup = css_to_devcgroup(seq_css(m));
->  	struct dev_exception_item *ex;
-> -	char maj[MAJMINLEN], min[MAJMINLEN], acc[ACCLEN];
->  
->  	rcu_read_lock();
->  	/*
-> @@ -292,18 +287,17 @@ static int devcgroup_seq_show(struct seq_file *m, void *v)
->  	 * This way, the file remains as a "whitelist of devices"
->  	 */
->  	if (devcgroup->behavior == DEVCG_DEFAULT_ALLOW) {
-> -		set_access(acc, DEVCG_ACC_MASK);
-> -		set_majmin(maj, ~0);
-> -		set_majmin(min, ~0);
-> -		seq_printf(m, "%c %s:%s %s\n", type_to_char(DEVCG_DEV_ALL),
-> -			   maj, min, acc);
-> +		seq_puts(m, "a *:* rwm\n");
->  	} else {
->  		list_for_each_entry_rcu(ex, &devcgroup->exceptions, list) {
-> -			set_access(acc, ex->access);
-> -			set_majmin(maj, ex->major);
-> -			set_majmin(min, ex->minor);
-> -			seq_printf(m, "%c %s:%s %s\n", type_to_char(ex->type),
-> -				   maj, min, acc);
-> +			seq_puttype(m, ex->type);
-> +			seq_putc(m, ' ');
-> +			seq_putversion(m, ex->major);
-> +			seq_putc(m, ':');
-> +			seq_putversion(m, ex->minor);
-> +			seq_putc(m, ' ');
-> +			seq_putaccess(m, ex->access);
-> +			seq_putc(m, '\n');
->  		}
->  	}
->  	rcu_read_unlock();
-> -- 
-> 2.51.1
+-Fan
