@@ -1,131 +1,188 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7404F175A5
-	for <linux-security-module@vger.kernel.org>; Fri, 31 Oct 2025 16:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05902FD67B
+	for <linux-security-module@vger.kernel.org>; Fri, 31 Oct 2025 16:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761928233; cv=none; b=ZkgBlMSwAliuFhc+TvQpjWfk3D0mnJOw8waAvrnRjD302RM2ku/TrZ0B+oLqXUprkAHBhpbwLDH6PJ4mEECDqC4HklzyrLy5I1dV43qY6IVTQLWQ5DL3x7q3NxdSQq5+/h4H9ZyppRwRdim4LTKGJkcEEQZQmanzmLQMBD3DPkE=
+	t=1761929662; cv=none; b=uvTT/nG3XkVVSVs2PHaA/0+nNl1BeWMd1OKEcUr+DTQaCji72LFDHi3T/CwbTgFGG4WyTU/V1Xh5uMK0XUj1P5YzaRTWSnSC9I1nm8gqEWabjo7tHBQwF3rkDOcu7jCXhsUwWlqXCZQR7t3LJN6sMZlEBDeg2TkmUseCA7tngDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761928233; c=relaxed/simple;
-	bh=fY4FiQOBHOZhR9CGYCZyVsyAJBH1cSuT7A9/k8YyMTM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rE996xy3RcTiXZ2QhLaoXLQOET2MkzxpDGiENm9iLNlgUb8GVol4MB6INDILqHIZeHOk60uvHrZCWM9o0FSZhLQf3Eqtyeyog9HwiKLA8pewfKgm2TQKgt5fb24y1WDjPFJFB+xNc4Mb7mSZQn3OQ4SZ2Llh6+sGpP7F2FwrSSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=aPJwoIOc; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1761929662; c=relaxed/simple;
+	bh=ic8R7PeSfgqiLUOO7h3/ggxGPF9WW8qd3pCh4Pyv/o0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cGa8n6HHDOZsjsnt5pp3giMaG9xH1H80BesLRqwCv0Tf+5z8Yb2rL5zonKLeoOPz6os0hzj2S0OUPd6Fq8MqQADx9av33je3nezKqMQGVzqQNCfHUvNpuyxFaruzTsD8wP+n4hjMqqtjZFlEnF67wGW/voSQl8SQhKGwzkHs+o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JYHWdcgP; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="aPJwoIOc"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63c489f1e6cso4578617a12.1
-        for <linux-security-module@vger.kernel.org>; Fri, 31 Oct 2025 09:30:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JYHWdcgP"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-474975af41dso18573015e9.2
+        for <linux-security-module@vger.kernel.org>; Fri, 31 Oct 2025 09:54:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1761928229; x=1762533029; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cDYNWSApLb0T0CEMAKuoBZ4CmprFjy5i/htqaeEinvs=;
-        b=aPJwoIOcWmzfqBOsTdGPZ4QG8FFXQC2tdPLMIo7CmkSWWG0Ow2vWNel7drc0bsl7l1
-         u6QfkYU5mVke8F18P+VPEfrNUE78lo3orrqm8n2p27EsO9z/o5GBCEgUuU92amM6AmQU
-         LBGUz9BZliJNxpk7HXql+qTko8EXpxHgNo+ZY=
+        d=gmail.com; s=20230601; t=1761929659; x=1762534459; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q/vCylrs+0tr4q3q6ZAFpBo+ranVb22GkyacwbW2xw4=;
+        b=JYHWdcgPCmH2iRM6bEUrof+ZjoGWLoyy8Xof68kJKJTfCwJC5XeqDeLxeAXk7zl4Dt
+         MbNzxIUPE9WoZiXB8w/geNbQz+GI5E8B6DEcl3F4ZmDKOvMul+FUIRfu3QESHRR+8jFb
+         w7orhtRA/6gziMhT/Yh/0i5/4ePQONjaGDw7ZvwM5l+wjUHDcljqr/AEgYVsxqIvCJ3N
+         HsG9XpX3NdAgrxLYUBjPl92U6oK5Aw+YG50Q1l06DKmMNEzfkBF3Zo0y0P67I561pMVy
+         3zvvs9ouP5+LKKtpohlirUyIw5xvMwK7KH9o31IiamV9w1OuQtqP51Y5RxoK78LcRvEN
+         WGOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761928229; x=1762533029;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cDYNWSApLb0T0CEMAKuoBZ4CmprFjy5i/htqaeEinvs=;
-        b=wMa+3b5ztFQiZnpYlTppOZDWFo5vH0QrPA/0qkv+oPaQfPmJBvDSScpP9htYa/GdAU
-         qeVbiIIZ1rl7g3q4elzJgbc9iO510OGxm8dpnnOFZ7ts5dbMoJKvreo3gOUbeq8+bpqh
-         OE1PzK6l/iRboGcp1mYIQ3NOZ0KR/yTtENfdl+7iKkKvzewhwmzsLBwdb7InyZ2U6Jx2
-         5bn3F5QRAdBI2C01TLT0hCmbugjYTp/6jZaFEeAKUstYRRmoWi7UU9Qg34iC8BpoA8M7
-         LcWPZpdJXV/x42gC/+PJftKVUiYEiLagblDPrfolQadz2kk7NSNzPIT1tVGrymLjU26X
-         sRxA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBl4GA1xz+kYT1FIGkZxnCjKPuf1UFcxwhbpwyQQsLwxqN7UN0EcSN7nyt1b1xH0X8JMdcChB4JlIyofzYj5Q70yqGhLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/X94CICBc/lHiEMr3P/SBB2ZQ+9n9xfUYE9t1YRC4I+Kz1MPU
-	IUZGFeQ8bIsiPcBDcr9ctNwIWRDtKfZq5rbDWdUPl8SHYskXD3wioYpwihLNOnIMcc4m8XLtm1o
-	bO5uYWHk=
-X-Gm-Gg: ASbGncu6+4JcddHxNvFXv+PGX+jMY4CSQc2nq0/yocfTnJa5uT5CtFrNwsumLO2XziT
-	4o+QYFPTu5lxvyoR8RUl8Cp4mBFOGHwuG1X1E+wtJeNRlBac+o8qFQ+qsuXJ/TYAPiVxK8SDk1o
-	2Nmx2+ImBQtFgb4+Q5ly5/TJbYHjxh3UUJyw4LDkGWpilP86H+S6Z6QZbb4TseQhj5lut2xdfEf
-	mZG484ZMSyy4D9cRoAeoASKS/JSt651OJovRXixU1+smbjBeFSUQDZyxHSVMEFlh/pFS3otXWAd
-	U0rQDzpXdzg7J7PMxL4n4gq1gswyX6+9o8KaMU0DOZ03ChOEYFu/1byvFcflER+OpnVdyyNbRfu
-	Rqm66+1Yd0/Ir2+iRt4a/pF28MRVuj9rSZ3oKrzMV5al7K1uQVYvk+IVmf34LepCTU0IMtrsrN/
-	SgEK0yUdqwYN7XLLJoqrGgluxCocAyEg7nlnePcevpMXyK+GAYdTt6ViYZgmBu
-X-Google-Smtp-Source: AGHT+IG0e3KO3Hjbo7XV0dNTjYXinBEJYzly4oyvR+o5aXcQJhqPns7kixpciObqmOjldjyFW2Ac9w==
-X-Received: by 2002:a05:6402:40c6:b0:634:11d7:f70c with SMTP id 4fb4d7f45d1cf-640752fd07dmr4072995a12.2.1761928229171;
-        Fri, 31 Oct 2025 09:30:29 -0700 (PDT)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6407b438536sm1987489a12.26.2025.10.31.09.30.27
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 09:30:28 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63bdfd73e6eso6777030a12.0
-        for <linux-security-module@vger.kernel.org>; Fri, 31 Oct 2025 09:30:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXUw3QOoLpOAOZYInkce8lY+5xgy+DYhFLiniC2moGxczrapxL6YISfKG5Pk5w6nywOzT+ILD9F47D6CXks/ew7O1VJgq8=@vger.kernel.org
-X-Received: by 2002:a50:9e6b:0:b0:633:14bb:dcb1 with SMTP id
- 4fb4d7f45d1cf-6405efcc93fmr4626276a12.11.1761928227242; Fri, 31 Oct 2025
- 09:30:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761929659; x=1762534459;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q/vCylrs+0tr4q3q6ZAFpBo+ranVb22GkyacwbW2xw4=;
+        b=XXlDkpsah1NYNMRpNoVAcjwAOAwl5kbcrldLa/8V/BaoRoIrbyD0WdbB/q3SxQpwJp
+         3Ettp/MQnQP8SR5bFPp/7U5uLDTIq0rQv6Fumh46k19jJKRlsCKbrjHxHOcQhX/33In3
+         53saJF4XCYHVHxDXGIJMmcvkEUnbbbtE8/KXGUATQvkIwrx7OcGNYr0F7CdAfgG5XADe
+         PtmZWiV0+jE+sedIUewZNt9JDHW+U5oCIozO2c6BVNCO/4SIEyyRs3BXxPpGPqgwftS6
+         JoFyDSgzckG8uKoZP8ng7ws+qiK0Fgl5PFao6MqTQoX3XbzMD+4A/OXJ6TUUvB4IE6UQ
+         fXOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWJCIWTQ6lT3M7aYG4G+dD934qH6PE+YJqKjgwHRyI7euenLdiomgkvARgjUSjQZEljAVgVE218JekwF4NXFJ1uFpQRQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ9HPa7Xg91lTI0ZvQ0wGzfm1w+kQDgCcNaHJOX6zT7EppO6vP
+	onQbH2PDSthkyrUhy+aeExSFDHZt9v3gfHptF4VKRHAxjfiCUz2pZOdf
+X-Gm-Gg: ASbGncvTGHsSX1hQHJBjPLHVHFHzxozWMMse07qWRFCALa0YoNQBgAoUtZ160Y1708L
+	+tLOuU/Vnj4OdDoSAsQt+zxEgxk8Zkmp4+LrtpOXOTIQGZnbs/7T4sXYx1lOwvDLKL7Ctd75N8a
+	UZyacDVlzeoA0HW6kBa5tInM0F3EAa7sZst+UGbMKmSiuSvLwrz/2kklDOVMBMU5HGQOov6i7xO
+	A5eUlXFZlPv0RpvXtg1rm0UGXAiQBX+uTynsVoinAJIA1cYO1KLH7E1Wubuh1zWT0FSk18Fm+uf
+	/bNVQKaeLs302Jg2YmtMdd2Iy/Nw3lwn3NXhNqV2QhJpldhYHMR1hF79x/dhCcsuGKiDLdR7DP2
+	eJ2ZqjdpVzqYDYkVUOtdIU8gOvftintc8eDYtb5OnZxA1Kc9SC7pV5xsYmPRHyBIrvq4w+BFP8E
+	gCXdCzJnnpIFkVXMMWg9ZQLznzXchw5S+F9OLJ++/NuQ==
+X-Google-Smtp-Source: AGHT+IHSI+zsuHw2dropePAurzOFarCziEZZIfwNC9vETGbIZ+nr86tqW6LFJQrkhJOWJLe3kxpBzw==
+X-Received: by 2002:a05:600c:699a:b0:477:1326:7b4b with SMTP id 5b1f17b1804b1-47730872322mr45079395e9.19.1761929658835;
+        Fri, 31 Oct 2025 09:54:18 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c13e03d0sm4564270f8f.26.2025.10.31.09.54.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 09:54:18 -0700 (PDT)
+Date: Fri, 31 Oct 2025 16:54:17 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] device_cgroup: Replace strcpy/sprintf in set_majmin
+Message-ID: <20251031165417.4490941a@pumpkin>
+In-Reply-To: <FE3AAB5A-9AB9-49B6-BB67-FCB97CD5AF29@linux.dev>
+References: <20251031110647.102728-2-thorsten.blum@linux.dev>
+	<20251031125916.3b0c8b22@pumpkin>
+	<FE3AAB5A-9AB9-49B6-BB67-FCB97CD5AF29@linux.dev>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <37fb8720-bee9-43b7-b0ff-0214a8ad33a2@kernel.dk>
- <CAHk-=wgZ9x+yxUB9sjete2s9KBiHnPm2+rcwiWNXhx-rpcKxcw@mail.gmail.com> <20251031-zerkratzen-privileg-77a7fb326e34@brauner>
-In-Reply-To: <20251031-zerkratzen-privileg-77a7fb326e34@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 31 Oct 2025 09:30:11 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg6+ngpnQsp0ic_5Ebhv5g=cVKVWjrJyRBQWBp4MDiJNQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bkyIQQlQkmgn3AWxbQRzVye-4t89_fz8JwOLmT7ueXhoF2H1ZGUGfxzOtU
-Message-ID: <CAHk-=wg6+ngpnQsp0ic_5Ebhv5g=cVKVWjrJyRBQWBp4MDiJNQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Block fixes for 6.18-rc3
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Paul Moore <paul@paul-moore.com>, 
-	Serge Hallyn <sergeh@kernel.org>, 
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, 31 Oct 2025 at 08:44, Christian Brauner <brauner@kernel.org> wrote:
->
-> Hm, two immediate observations before I go off and write the series.
->
-> (1) The thing is that init_cred would have to be exposed to modules via
->     EXPORT_SYMBOL() for this to work. It would be easier to just force
->     the use of init_task->cred instead.
+On Fri, 31 Oct 2025 16:23:02 +0100
+Thorsten Blum <thorsten.blum@linux.dev> wrote:
 
-Yea, I guess we already export that.
+> On 31. Oct 2025, at 13:59, David Laight wrote:
+> > Even if ex->major can be ~0 there are much cleaner ways of writing this code.  
+> 
+> Thanks for pointing this out. Looking at the bigger picture makes it
+> clear that most of the code can actually be removed. What do you think
+> of this change?
 
->     That pointer deref won't matter in the face of the allocations and
->     refcounts we wipe out with this. Then we should also move init_cred
->     to init/init_task.c and make it static const. Nobody really needs it
->     currently.
+That is sort of what I was thinking about, but it doesn't quite work.
 
-Well, I did the "does it compile ok" with it marked as 'const', but as
-mentioned, those 'struct cred' instances aren't *really* const, they
-are only pseudo-const things in that they are *marked* const so that
-nobody modifies them by mistake, but then the ref-counting will cast
-the constness away in order to update references.
+> 
+> Thanks,
+> Thorsten
+> 
+> diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+> index a41f558f6fdd..cb845b1fad6b 100644
+> --- a/security/device_cgroup.c
+> +++ b/security/device_cgroup.c
+> @@ -244,7 +244,6 @@ static void devcgroup_css_free(struct cgroup_subsys_state *css)
+> #define DEVCG_DENY 2
+> #define DEVCG_LIST 3
+> 
+> -#define MAJMINLEN 13
+> #define ACCLEN 4
+> 
+> static void set_access(char *acc, short access)
+> @@ -270,19 +269,11 @@ static char type_to_char(short type)
+> 	return 'X';
+> }
+> 
+> -static void set_majmin(char *str, unsigned m)
+> -{
+> -	if (m == ~0)
+> -		strscpy(str, "*", MAJMINLEN);
+> -	else
+> -		snprintf(str, MAJMINLEN, "%u", m);
+> -}
+> -
+> static int devcgroup_seq_show(struct seq_file *m, void *v)
+> {
+> 	struct dev_cgroup *devcgroup = css_to_devcgroup(seq_css(m));
+> 	struct dev_exception_item *ex;
+> -	char maj[MAJMINLEN], min[MAJMINLEN], acc[ACCLEN];
+> +	char acc[ACCLEN];
+> 
+> 	rcu_read_lock();
+> 	/*
+> @@ -293,17 +284,12 @@ static int devcgroup_seq_show(struct seq_file *m, void *v)
+> 	 */
+> 	if (devcgroup->behavior == DEVCG_DEFAULT_ALLOW) {
+> 		set_access(acc, DEVCG_ACC_MASK);
+> -		set_majmin(maj, ~0);
+> -		set_majmin(min, ~0);
+> -		seq_printf(m, "%c %s:%s %s\n", type_to_char(DEVCG_DEV_ALL),
+> -			   maj, min, acc);
+> +		seq_printf(m, "%c *:* %s\n", type_to_char(DEVCG_DEV_ALL), acc);
 
-So I don't think we can *actually* mark it "static const", because
-that will put the data structure in the const data section, and then
-the refcounting will trigger kernel page faults.
+type_to_char(DEVCG_DEV_ALL) is 'a' and this is the only place it happens,
+also acc is "rwm".
+So that could be:
+		seq_puts(m, "a *:* rwm\n");
 
-End result: I think we can indeed move it to init/init_task.c. And
-yes, we can and should make it static to that file, but not plain
-'const'.
+> 	} else {
+> 		list_for_each_entry_rcu(ex, &devcgroup->exceptions, list) {
+> 			set_access(acc, ex->access);
+> -			set_majmin(maj, ex->major);
+> -			set_majmin(min, ex->minor);
+> -			seq_printf(m, "%c %s:%s %s\n", type_to_char(ex->type),
+> -				   maj, min, acc);
+> +			seq_printf(m, "%c %u:%u %s\n", type_to_char(ex->type),
+> +				   ex->major, ex->minor, acc);
 
-If we expose it to others - but I think you're right that maybe it's
-not a good idea - we should *expose* it as a 'const' data structure.
+It looks like both ex->major and ex->minor can be ~0.
+(I'm not sure it makes any sense to have major == ~0 and minor != ~0).
+However this should be ok:
+			seq_putc(m, type_to_char(ex->type);
+			if (ex->major == ~0)
+				seq_puts(m, " *:");
+			else
+				seq_printf(m, " %u:", ex->major);
+			if (ex->minor == ~0)
+				seq_puts(m, "* ");
+			else
+				seq_printf(m, "%u ", ex->minor);
+			if (ex->access & DEVCG_ACC_READ)
+				seq_putc(m, 'r');
+			if (ex->access & DEVCG_ACC_WRITE)
+				seq_putc(m, 'w');
+			if (ex->access & DEV_ACC_MKNOD)
+				seq_putc(m. 'm');
+			seq_putc(m, '\n');
 
-But we should probably put it in some explicitly writable section (I
-was going to suggest marking it "__read_mostly", but it turns out some
-architectures #define that to be empty, so a "const __read_mosyly"
-data structure could still end up in a read-only section).
+A less intrusive change would be to pass 'm' the the set_xxx() functions
+and add the separators between the calls.
 
-> (2) I think the plain override_creds() would work but we can do better.
->     I envision we can leverage CLASS() to completely hide any access to
->     init_cred and force a scope with kernel creds.
+	David
 
-Ack.
 
-                  Linus
+> 		}
+> 	}
+> 	rcu_read_unlock();
+> 
+
