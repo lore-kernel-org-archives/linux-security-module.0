@@ -1,192 +1,215 @@
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C431DFE26
-	for <linux-security-module@vger.kernel.org>; Sat,  1 Nov 2025 17:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60841548C;
+	Sun,  2 Nov 2025 15:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762016448; cv=none; b=NduFxNGGC0lp6YTWbheV5PsGJ4Vdhm85wTDPzdqeJ0TxkdE4ry+DAMmG0uzldB7LX1Ono4bdtGyMTuVa7HxF9am+zj+zzRuUpoG9e4bvGYEKcc3dZAE+LWeAKAEhAhoCgkyeqQhae86OJb2bDb/D0Yrz0SyJz5xbB4ypPHeE7DQ=
+	t=1762095986; cv=none; b=k63Pq5+X/lZowsnk4MVyGSrKxXqJF4xI+dlji8oNv8n3hwtbsh4kQHsybdhJE8Pgh5Aw770HeuECv50jfBZolr/05p1z3+S9lxpu7/pPS0LYFrUMyTdfpkfaWrHDSuw+fbHN6X67P3V/0gZbCKo0jyj2RdgmDBe3vXLYS7zpcy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762016448; c=relaxed/simple;
-	bh=ZVKAtJQ7YxW2ydkUhmrqBw8xd9VSlPorpAYP+7y4b9s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J4PZ2gLkMBv2dh3WzWCobkPX9mIMzdMh+LPZLN7lOKLB3jX7fLL9HzLD4xKEeK+BXCp7Bf/0ReA6ZXEvnfK6Jaqc5kkI0AJU/ZK8C2VNUh4VtLrcFW7vXkoKLqWO0tjt93d0Fq1VT5EFaXMtDgUZ3mfuDQLEPuRkZ0snQLtSuJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VKSAlrvI; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1762095986; c=relaxed/simple;
+	bh=Y/TfvwRtylgp9+GXHTm/CQJvnFREbnd09gzaiGHxmqc=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=H2mB3gb9AYy+caAfHtF/vqc0hyz1W0L9LW3UiB+YPfVnCisD40PVtQ8lhL2snM6AdcIDlSINomXb4bJu/5wbSU1p9rsq8srkXgWaXKSAlfHSN2MLPMF9WKB+/6TA5mR9/M/TfLuHV1UTzSNhJ8EKDAtJjteeuInpw6iJqRtNW5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=quuh0PYl; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VKSAlrvI"
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b98a619f020so273461a12.2
-        for <linux-security-module@vger.kernel.org>; Sat, 01 Nov 2025 10:00:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1762016446; x=1762621246; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+bQwNAi66Xq10BeoG6s8poTPGkQCGKxfLLVH03d/lh0=;
-        b=VKSAlrvI6QIfiVCdoTdXr/VAuXZXB9Y4BgSD2dQXTtm7hT1GdYR/qiWdpv9oo4kx1d
-         TMzr8dnsGUZtf+DEYynrVkmIbsWxFu6rbMtZ2SLIWqHwQW1x8bidOIVPOnQd21q8vRxJ
-         +IJEDuV5Xt+ubp9yEWVH6TdmAoHwS5AkdTujd7A/NyvLT1ED6ydIcd2GrS9s44y9Az7m
-         5e4elTAX5TjJga0YjxFRKJ15Plr6p7MxvYzEzWk/+BkHJoWxabz/YbmEfoFDtp8bmk7M
-         OQ0K/htqI3qz6yaSYLNOmXmMROAvoOUHb6yW6WsXb39SXRw9mRjasznnaOMcO2tS1pZx
-         a8eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762016446; x=1762621246;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+bQwNAi66Xq10BeoG6s8poTPGkQCGKxfLLVH03d/lh0=;
-        b=qvhzbDwhYZGASi8yBcCw9dGZ8PfKVp11a/+64MoTKSDrLoY5zCpgV53umhqIXht5Ls
-         8Q8Nd02LrjsL7+GNyNqR8TlLWiYoBWL0Jv53CLVUeWch9tsZzGHWICjsSgYEjZwRQuuR
-         AKU4XBWpLD7O602FBL2okdDK227ZMdwUG+dcnXw7jRI/jSiQAosRaTmuL4hQlmLDwe2S
-         spd7P6ixC+A59quRvsWxOaVr8pRHVOB3c1RTFLR/T638cXxqnYd5xdSFsuNVPM9GDIfD
-         tiLQKFPS0Igs3YfH3RVfYPxbazBrVwKaPJzIF37MifzkOcTVBovJ0EoMItSyXZ8RI50E
-         B8Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4c9UB/5pU+4o6szK4PUgpFzw9r9G7EMkAJ1ETVUJs+Jk0s30Q8B0RoMva9SM9SIxZWBkS60W/FJzyzeBrEPKlpBIARlk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNkKNnnV+bJzZYXbYX/QoROZgLoF3dz4vMmjOJxdAPB2v64qx9
-	oJMebjcEImhvNkZZbRR7kQh2p5dxuqPHlIcO9fpc1sIyilvwIR2o24r36UewNFIehCi/j2WZlz+
-	tEJNHomWBfBQsfhz6RBXb2yXQTaOMHqY4cjrov74BBcbSJado8JYZNA==
-X-Gm-Gg: ASbGnctqlANEv60ir/3cxUelYlPvDI8HBNzhenhBlayeVYK+MV5DHpUuyeDGSY5GLg6
-	237GBGzMD6HyGyz+DT3sAuGZGzcM1kWu7/vFJ1IFveE8v/Z9c0+o6mMqcu0uqTZu8nhPWNThEF9
-	6PY5sGMQfwspaSvKD5G95o4Lc1540bvR2jzMVhyMpLrvr6xFdmEm1JF9IvQW5vtJz/47mXwjGR3
-	l92wSyo/B2n++EpLs/Fi7qhPxpe9ENpr9M4srqX/+XaC4cJjc65lVwzlNmRVXq9E7/e/3E=
-X-Google-Smtp-Source: AGHT+IEGxfHBAfIq6y58pVGnMEg/azCvX8aaX6JSItHLFd5Voo6bXcarfvoQmwX9lQYzeehfVz2aLCPmZPU47JHX8+U=
-X-Received: by 2002:a17:903:94e:b0:28b:4ca5:d522 with SMTP id
- d9443c01a7336-2951a496d09mr102011965ad.39.1762016445731; Sat, 01 Nov 2025
- 10:00:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="quuh0PYl"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A2EPjZE028667;
+	Sun, 2 Nov 2025 15:05:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=h2cIrY
+	DHldqHX54hilNkiCWkEgwobj3LhX7CjRgOYD0=; b=quuh0PYl9zREuvH8XUi8Dn
+	B+99B7xh1+sEEPZMLEusai9ahbcBdNZPBXr0aj3wRGWewi5xAYlOIKnjyMInEVur
+	aBQTdgU6gWXEWMVpfJ1P59/jImMi50NUfhslG5xVTRuCdfHRNDnOanyNjpr82HQZ
+	tTa3++szUC0cnriDBHY9Z4iRH2f5VsgZTFjLKZfxktU69cmqLYaNXlpczsoQkAjp
+	kVIjjFZq9xiI0i8aUqcAiGBjyTCKS3Kvqry3o194ZZY6pBWeoyDPqwD8FuT20hcg
+	ZaOGt2UvxS+wT1D5Mq4xfv6jiLByZFsvy1d95MLMDCmv2W/xhWybrl8LZ/WK7EMA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59vu3m6t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 02 Nov 2025 15:05:34 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A2F5XTJ032156;
+	Sun, 2 Nov 2025 15:05:33 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59vu3m6r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 02 Nov 2025 15:05:33 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A2DMGAu025557;
+	Sun, 2 Nov 2025 15:05:32 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5vhsa06a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 02 Nov 2025 15:05:32 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A2F5W8N29360534
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 2 Nov 2025 15:05:32 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4BAA458052;
+	Sun,  2 Nov 2025 15:05:32 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5B41D5805A;
+	Sun,  2 Nov 2025 15:05:31 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.190.185])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Sun,  2 Nov 2025 15:05:31 +0000 (GMT)
+Message-ID: <baa39fcd1b6b485f14b8f06dcd96b81359e6e491.camel@linux.ibm.com>
+Subject: Re: [PATCH v2] lsm,ima: new LSM hook
+ security_kernel_module_read_file to access decompressed kernel module
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Paul Moore <paul@paul-moore.com>, Coiby Xu <coxu@redhat.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Karel Srot <ksrot@redhat.com>, James Morris <jmorris@namei.org>,
+        "Serge E.
+ Hallyn" <serge@hallyn.com>,
+        Luis Chamberlain	 <mcgrof@kernel.org>,
+        Petr
+ Pavlu <petr.pavlu@suse.com>, Daniel Gomez	 <da.gomez@kernel.org>,
+        Sami
+ Tolvanen <samitolvanen@google.com>,
+        Roberto Sassu	
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        open list
+ <linux-kernel@vger.kernel.org>,
+        "open list:MODULE SUPPORT"
+ <linux-modules@vger.kernel.org>
+In-Reply-To: <CAHC9VhRBXkW+XuqhxJvEOYR_VMxFh4TRWUtXzZky=AG_nyBYEQ@mail.gmail.com>
+References: <20250928030358.3873311-1-coxu@redhat.com>
+	 <20251031074016.1975356-1-coxu@redhat.com>
+	 <CAHC9VhRBXkW+XuqhxJvEOYR_VMxFh4TRWUtXzZky=AG_nyBYEQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Sun, 02 Nov 2025 10:05:31 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031110647.102728-2-thorsten.blum@linux.dev>
- <20251031125916.3b0c8b22@pumpkin> <FE3AAB5A-9AB9-49B6-BB67-FCB97CD5AF29@linux.dev>
- <20251031165417.4490941a@pumpkin>
-In-Reply-To: <20251031165417.4490941a@pumpkin>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sat, 1 Nov 2025 13:00:34 -0400
-X-Gm-Features: AWmQ_blUrxe9-_hCXsnuI7mX--XQCm306FtUwVkeT5LISw4c3OmPPoz0yMf9Sxs
-Message-ID: <CAHC9VhQ3nhAjupyENXnZN0WXsbibjeA6OT6fCXOfXBjWaw0=6A@mail.gmail.com>
-Subject: Re: [PATCH] device_cgroup: Replace strcpy/sprintf in set_majmin
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 8Z-scviHlVf3LfftQtzRa1ejOqrrStl2
+X-Proofpoint-GUID: 1sVFZIHn9J8Fsgz4oTvi7QiHyty3gYwV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfX/vesfn6XpXpH
+ BT8hvqQ7DrQsMRqyL8s5nJklgVh9moDpraVbXYjBFu8QQDoIG5yKiN3CywwiOicE83H+7R6rRIJ
+ HV0iaWbEp7vW0jmFicb4UuGcanxIogdqb/5rLU1SdR3PMHI52P3zzJ118RXMGmA0jLMhDE6K7df
+ u/RpiyL8IMJLoWiinxRLYwudSJYkYJWy/OoqJL7yzfiLHHvxBgamgEQphLZnoKxPoUCNgBwBHxi
+ JO7aT3ZFLRlpDvyFZYfAwYDH10+BEQat680qptu2zfAZS/gZFJ0Ps/XxrMMn5kX20BeZkILyrv2
+ 030eSbBv7TKrNzG+HiDuTjiMdr9LbeUT1fg7+XsDgrlLM05B3FI/PNHgCV6/K7EgS19b6ck1AMu
+ sPdplNsJZPI1vbxe+3Um9MLhKku+Hw==
+X-Authority-Analysis: v=2.4 cv=U6qfzOru c=1 sm=1 tr=0 ts=6907733e cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8 a=CfLjOnkwlt8k9LrJmxEA:9
+ a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 impostorscore=0 spamscore=0 phishscore=0
+ clxscore=1011 malwarescore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511010021
 
-On Fri, Oct 31, 2025 at 12:54=E2=80=AFPM David Laight
-<david.laight.linux@gmail.com> wrote:
-> On Fri, 31 Oct 2025 16:23:02 +0100
-> Thorsten Blum <thorsten.blum@linux.dev> wrote:
->
-> > On 31. Oct 2025, at 13:59, David Laight wrote:
-> > > Even if ex->major can be ~0 there are much cleaner ways of writing th=
-is code.
-> >
-> > Thanks for pointing this out. Looking at the bigger picture makes it
-> > clear that most of the code can actually be removed. What do you think
-> > of this change?
->
-> That is sort of what I was thinking about, but it doesn't quite work.
->
-> >
-> > Thanks,
-> > Thorsten
-> >
-> > diff --git a/security/device_cgroup.c b/security/device_cgroup.c
-> > index a41f558f6fdd..cb845b1fad6b 100644
-> > --- a/security/device_cgroup.c
-> > +++ b/security/device_cgroup.c
-> > @@ -244,7 +244,6 @@ static void devcgroup_css_free(struct cgroup_subsys=
-_state *css)
-> > #define DEVCG_DENY 2
-> > #define DEVCG_LIST 3
-> >
-> > -#define MAJMINLEN 13
-> > #define ACCLEN 4
-> >
-> > static void set_access(char *acc, short access)
-> > @@ -270,19 +269,11 @@ static char type_to_char(short type)
-> >       return 'X';
-> > }
-> >
-> > -static void set_majmin(char *str, unsigned m)
-> > -{
-> > -     if (m =3D=3D ~0)
-> > -             strscpy(str, "*", MAJMINLEN);
-> > -     else
-> > -             snprintf(str, MAJMINLEN, "%u", m);
-> > -}
-> > -
-> > static int devcgroup_seq_show(struct seq_file *m, void *v)
-> > {
-> >       struct dev_cgroup *devcgroup =3D css_to_devcgroup(seq_css(m));
-> >       struct dev_exception_item *ex;
-> > -     char maj[MAJMINLEN], min[MAJMINLEN], acc[ACCLEN];
-> > +     char acc[ACCLEN];
-> >
-> >       rcu_read_lock();
-> >       /*
-> > @@ -293,17 +284,12 @@ static int devcgroup_seq_show(struct seq_file *m,=
- void *v)
-> >        */
-> >       if (devcgroup->behavior =3D=3D DEVCG_DEFAULT_ALLOW) {
-> >               set_access(acc, DEVCG_ACC_MASK);
-> > -             set_majmin(maj, ~0);
-> > -             set_majmin(min, ~0);
-> > -             seq_printf(m, "%c %s:%s %s\n", type_to_char(DEVCG_DEV_ALL=
-),
-> > -                        maj, min, acc);
-> > +             seq_printf(m, "%c *:* %s\n", type_to_char(DEVCG_DEV_ALL),=
- acc);
->
-> type_to_char(DEVCG_DEV_ALL) is 'a' and this is the only place it happens,
-> also acc is "rwm".
-> So that could be:
->                 seq_puts(m, "a *:* rwm\n");
->
-> >       } else {
-> >               list_for_each_entry_rcu(ex, &devcgroup->exceptions, list)=
- {
-> >                       set_access(acc, ex->access);
-> > -                     set_majmin(maj, ex->major);
-> > -                     set_majmin(min, ex->minor);
-> > -                     seq_printf(m, "%c %s:%s %s\n", type_to_char(ex->t=
-ype),
-> > -                                maj, min, acc);
-> > +                     seq_printf(m, "%c %u:%u %s\n", type_to_char(ex->t=
-ype),
-> > +                                ex->major, ex->minor, acc);
->
-> It looks like both ex->major and ex->minor can be ~0.
-> (I'm not sure it makes any sense to have major =3D=3D ~0 and minor !=3D ~=
-0).
-> However this should be ok:
->                         seq_putc(m, type_to_char(ex->type);
->                         if (ex->major =3D=3D ~0)
->                                 seq_puts(m, " *:");
->                         else
->                                 seq_printf(m, " %u:", ex->major);
->                         if (ex->minor =3D=3D ~0)
->                                 seq_puts(m, "* ");
->                         else
->                                 seq_printf(m, "%u ", ex->minor);
->                         if (ex->access & DEVCG_ACC_READ)
->                                 seq_putc(m, 'r');
->                         if (ex->access & DEVCG_ACC_WRITE)
->                                 seq_putc(m, 'w');
->                         if (ex->access & DEV_ACC_MKNOD)
->                                 seq_putc(m. 'm');
->                         seq_putc(m, '\n');
->
-> A less intrusive change would be to pass 'm' the the set_xxx() functions
-> and add the separators between the calls.
+On Sat, 2025-11-01 at 12:50 -0400, Paul Moore wrote:
+> On Fri, Oct 31, 2025 at 3:41=E2=80=AFAM Coiby Xu <coxu@redhat.com> wrote:
+> >=20
+> > Currently, when in-kernel module decompression (CONFIG_MODULE_DECOMPRES=
+S)
+> > is enabled, IMA has no way to verify the appended module signature as i=
+t
+> > can't decompress the module.
+> >=20
+> > Define a new LSM hook security_kernel_module_read_file which will be
+> > called after kernel module decompression is done so IMA can access the
+> > decompressed kernel module to verify the appended signature.
+> >=20
+> > Since IMA can access both xattr and appended kernel module signature
+> > with the new LSM hook, it no longer uses the security_kernel_post_read_=
+file
+> > LSM hook for kernel module loading.
+> >=20
+> > Before enabling in-kernel module decompression, a kernel module in
+> > initramfs can still be loaded with ima_policy=3Dsecure_boot. So adjust =
+the
+> > kernel module rule in secure_boot policy to allow either an IMA
+> > signature OR an appended signature i.e. to use
+> > "appraise func=3DMODULE_CHECK appraise_type=3Dimasig|modsig".
+> >=20
+> > Reported-by: Karel Srot <ksrot@redhat.com>
+> > Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> > Signed-off-by: Coiby Xu <coxu@redhat.com>
+> > ---
+> > v1: https://lore.kernel.org/linux-integrity/20250928030358.3873311-1-co=
+xu@redhat.com/
+> >=20
+> >  include/linux/lsm_hook_defs.h       |  2 ++
+> >  include/linux/security.h            |  7 +++++++
+> >  kernel/module/main.c                | 10 +++++++++-
+> >  security/integrity/ima/ima_main.c   | 26 ++++++++++++++++++++++++++
+> >  security/integrity/ima/ima_policy.c |  2 +-
+> >  security/security.c                 | 17 +++++++++++++++++
+> >  6 files changed, 62 insertions(+), 2 deletions(-)
+>=20
+> We don't really need a new LSM hook for this do we?  Can't we just
+> define a new file read type, e.g.  READING_MODULE_DECOMPRESS, and do
+> another call to security_kernel_post_read_file() after the module is
+> unpacked?  Something like the snippet below ...
 
-Yes, just pass the seq_file pointer up to set_majmin() and have it do
-the writes/puts directly.  Might as well rename if from set_majmin()
-to put_majmin() while you are at it.
+Yes, this is similar to my suggestion based on defining multiple enumeratio=
+ns:
+READING_MODULE, READING_COMPRESSED_MODULE, and READING_DECOMPRESSED_MODULE.=
+=20
+With this solution, IMA would need to make an exception in the post kernel
+module read for the READING_COMPRESSED_MODULE case, since the kernel module=
+ has
+not yet been decompressed.
 
---=20
-paul-moore.com
+Coiby suggested further simplification by moving the call later.  At which =
+point
+either there is or isn't an appended signature for non-compressed and
+decompressed kernel modules.
+
+As long as you don't have a problem calling the security_kernel_post_read_f=
+ile()
+hook again, could we move the call later and pass READING_MODULE_UNCOMPRESS=
+ED?
+
+>=20
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index c66b26184936..f127000d2e0a 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -3693,6 +3693,14 @@ static int init_module_from_file(struct file *f, c=
+onst ch
+> ar __user * uargs, int
+>                        mod_stat_add_long(len, &invalid_decompress_bytes);
+>                        return err;
+>                }
+> +
+> +               err =3D security_kernel_post_read_file(f,
+> +                                                    (char *)info.hdr, in=
+fo.len,
+> +                                                    READING_MODULE_DECOM=
+PRESS);
+> +               if (err) {
+> +                       mod_stat_inc(&failed_kreads);
+> +                       return err;
+> +               }
+>        } else {
+>                info.hdr =3D buf;
+>                info.len =3D len;
+
+=3D=3D defer security_kernel_post_read_file() call to here =3D=3D
+
+Mimi
