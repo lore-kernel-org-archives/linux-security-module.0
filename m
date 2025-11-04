@@ -1,188 +1,237 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from sonic315-26.consmr.mail.ne1.yahoo.com (sonic315-26.consmr.mail.ne1.yahoo.com [66.163.190.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7505F30277F
-	for <linux-security-module@vger.kernel.org>; Mon,  3 Nov 2025 11:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7A92580D1
+	for <linux-security-module@vger.kernel.org>; Tue,  4 Nov 2025 15:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762169991; cv=none; b=Ur9OqMqSqxI0c91UGs84WkjaKLWXDjEb2/clQVsLXTigNy7qAYqEYwzAcGSkvtn4ZmBDjoJ0obGLUjAR60xnWQ1HgkIJ50D9MFu5yZJs6zBzDTzbhc5NYC7NEnIxwUa1Qw/N37NXjPn4lDP8/3z5gN/tBlEMLqXKGrt6K23lrjk=
+	t=1762269741; cv=none; b=lxj861t4sHOnfH1Dex1PNhw1gM0FJV7Fdmi5lsa8d5sezsts6hO3ZPVucSmZ7SLDsjs8Gha7xkWTWOSxOm5uChmRK8IQM4OlhknohPcpSCkkWxvGOYdjl5GXnR4kUJFCubv5HsOU+N9waGEGK9A6wpCsMhkViEYq2UnnsZ53h9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762169991; c=relaxed/simple;
-	bh=p293SKf5o/p3baJzQjvB+/sLwGBM0lsd3WQD3vZfrVM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c2c4bP/2Pg3k5NCM/fTmWPJt4moSxqvlqB2VjRRYN8gM7vZW+wq+ukq88pX9p9W7WhqOHeqr/8Dxx/NQKXg7lH0ZHPh5GlPEB3sLbr7j5ggch93ppB2DjNJsAdTfq6wor+uzV3i5qiUOUtK80KkIkFN4Kno3EC8gQd6+VkV3bSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OhMvr4bA; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1762269741; c=relaxed/simple;
+	bh=cW8znymWPnQ9E2lv9ObI7kU+4qQxlmHzvnjHhqI8XLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ely/DXJsMXzsZ1mw/2dJq8rNcPV3TesnBMaJjIq8k+zsKunXMsoizVXOxP0BMNaWXsQUxgk5q56GRQSLvCRRlgKYPALE1hxxr1flOTFFBu4N4IwzeBFX1bt+mGFiL8CK61nBf4XfZutwoE5ojvrgwbc9YTTQBEwk/jFkOoWmhIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=cbz39J3o; arc=none smtp.client-ip=66.163.190.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhMvr4bA"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b991ddb06a9so885250a12.3
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Nov 2025 03:39:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762169989; x=1762774789; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/r08ApJzmACuZwLJWForR04uW0kQJLXeWuOH252Kn+k=;
-        b=OhMvr4bAQy/h3UdeYzBNYlB7S9TLCnITU+XoyEHhUgvbVhOHxAc69mtCMNTt7KCG1k
-         ZlJcyPhp7A9QbnVoVeupFS3U4cUbcrC9PHm+9uMWu8oEogWUAWfDwa1Z6HwX5HD2uKTY
-         00Sc+Ptxn7D8/g10WUyh3Sfoj9wCLxZ7tqNZo4eA9RTFjwxw9mW/omY/FQx0DjfhVQ++
-         uZBxBtvO+MW7WxvezPiZ970VG7tSAtSe6JBNUP9cWNtBvCV8BJujw/VOwfLVIa0fBioo
-         pknFdkzvsSGbH224yWE1FeEN3Xxzi4dXzCXcKSt+9PtcLI0nL8LYZ/p5u/dLsp6OZbe7
-         nrNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762169989; x=1762774789;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/r08ApJzmACuZwLJWForR04uW0kQJLXeWuOH252Kn+k=;
-        b=a7yt8ytsy/HnZY/ZT6KjOblxut/efXoayN9QvqOpNvyCwvYxTh8J66MHVM939yrHLd
-         VE2hX2cupCKm0h+VJn3nohAftLflR5zMldxnk2rBT/EXKFq6SFLPKN8JQ3o95LaUsjPT
-         BUH2DBEIeJ0R6JR/j88yYxXInZYlQ//W9ItTABquMyOJ/WBXl/6OaXAPnxOQIbjMqMJ0
-         IGxpFv12oL6X9EyNtNDDmu/4gd/TQUrwmHrU565aS42HLrpRlLnpx5+ncuHhAS8qwnuE
-         +JCwj453HUSSTMzh6HfkhtQ9qOS5jeXs3QO0UqGFae5YOuOiVFTGME4+k70hjyL/VbBy
-         pUQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTtU7LMlRSzvmPIxWs6ZVgm4tbogg6d6ucYrocOowH8opO2ohkyRAOKVhxCHkPk4AAkHXvU3CbGc82tWW+jaegclzNmDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAtYtIDzOxaERVdrzW2U30/qFIeNBEBDJi8qcoIh2az9BG8WKa
-	8rCO/oCsaRO785ufO5eVAkPA6kZzwM+RWV8gUD44oKw2e00ugjroiEVj
-X-Gm-Gg: ASbGncuZgM9+iR64nQ4WHVry/8jlt07duDK7RS/0qkfOakAEQgnSwjEMlKs0/ERjb4r
-	Iyxn38XgfeuKEg1AI2YG5oyN7t7Fz4nYdVQ7WIvjETzovgB71Uo/vd+XtNXNNhRhMHm7WH7gx8e
-	gsf8UnJsy2SfRY27AmqeettLMrAnf1Q6K+LsK7z5WIak/1AirBkFYFl6zOvqxulmCFZddNdRtXA
-	mKgLhHveb0uD2Bb9Ws9kllaoRtiumb/d/EeFvOziXNjDFy8Vg+HUQKllun/K3fEptY++meROvM4
-	O0YGwujcPT7sEcSFkR98X8f5QQ3oqu6H+Cb7cqetLgverfChHW0GLtfmIeQm4px3qA8usgeTEFZ
-	IpIk+vo8QDfGOY23FmyfT+QklI+DznMfsRZz73Nv+Iz6kd8JUfsF85pWq+FVka//GvbeplxBZ7u
-	zp
-X-Google-Smtp-Source: AGHT+IGVaoQkYMseij6RRLrsVDqj6D0bH7qiXKKA5WqNNjbqxLqG9f/9/U2SkMikJgtrNK8QszUkWQ==
-X-Received: by 2002:a17:902:d48b:b0:295:613f:3d6a with SMTP id d9443c01a7336-295613f4033mr92547815ad.29.1762169988522;
-        Mon, 03 Nov 2025 03:39:48 -0800 (PST)
-Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2959e5deea5sm46177175ad.37.2025.11.03.03.39.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 03:39:47 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 2D8A6420A685; Mon, 03 Nov 2025 18:39:44 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Security Module <linux-security-module@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Stuart Yoder <stuart.yoder@arm.com>
-Subject: [PATCH] security: sctp: Format type and permission checks tables
-Date: Mon,  3 Nov 2025 18:39:23 +0700
-Message-ID: <20251103113922.61232-2-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.51.2
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="cbz39J3o"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762269738; bh=G46ndWcyOHWFzhQ4Un6CADH/oAjGqm36Vlz0C+52OJ8=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=cbz39J3oT20/0UC/+UdViCZRG7CUtBM4FV6h3+2tuKHfpQimQzxAtGMc6FpzfH7UgKkltgnPHoEEh9lCDqVOtu/TcMzNHqx40yLxVXp1os24eaJbIzLOB8UHJa2rLaVxPbWUn+YKa58vkbfaaZzMsmGLpGzobUHRNx6zMODHwjajmGcIw5vm3NMpD4hRGSsnfJiNPkNoFBSn12ScJaCdDpx/SJCJ91U2ZNpYLhHBWVa1h5DHQeGtUXvETwUOFzPnjt8RkUomHVDF2FeeAfAKcV7jiZI30J9Qd118wYMhygpRB6o4peh5W6vtGOZ1Fq7IDtuXYmE3uG/wuGIMNY8cgA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762269738; bh=owHwIHgOPv8ZsxfHtAYIUzuFeR6rSoWzGzzSED6kM25=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=mal7arDhLJlAsjdkyYUcU0qk03umSfblTMWE8qY/Dgw6OXdodC7VP6JjBwDr63AX4xnK4RIdaGGpV8FPPMgbb8lzPSltofSXUUJt1QaxylxieS867rn1c5tqvHUvYHKai6GzN7JZMSGuabvNVfWtilLD4qd+MGz+sm6KRurwtW1MjQOhWHiJ6pHEyo1F4gs5hb2ojE2Lr0WZq0/ozCZ/haQtbglNAfBBX81AfiEajh/pK/fbcXHJX7PD2oAt1xbfapJctvT8Vy3iv13u6AxtLhwhptluaFcwVGzV71c7Y7CPSsmaf8Hg1Ufj+0nU9Q46yFYfw3OCJ1jIUT3Fama/qA==
+X-YMail-OSG: 3EpOxPsVM1mNUj.CKRL_wvcXMQ40.2IpkvgTsz30yBQk6cM6nkgb_yZTcCFDKD7
+ EB4fJPQFwbtLfNooyHM4GCKeGmhBo.49at.zeBAeDGv1KspCM3Gvr.AsLmywUI7T6xLxe1OAxlVW
+ _mK1WHntd8BMntDDOxTzJ.WFmmxkqMKvrkptk9WDOcAFgz407ixpDDMXNwymHR2AStDhznymDDg1
+ pdCfp1uZWQwRX1qb9jNSL7irEVcZUO8GNQHt6oOiEgK7odOs.6kYXKKlLm2ZU2cPOpslPRiiuBsf
+ TPrID8ObVBGfoedtbfem7h2PtCPPSXftQ6Lsv_IXuhLM3KGeBU9sxN_hTFvLJBApvs26SFOKq8Kz
+ AAo48U0DvBj26.hTXIZ2JD.mCYpR5IYdMxIxWZRN8ypC4smbSxCDsDm48U1Vf8Y4bqjc1dgnTp7G
+ 5Zz0PKMTIwBmx08UV77Xj7vF9.J4NXwsM5aTlWZsGIeO8G.CovaM9na1K5Du0DRkWZhFv6DZ.5dW
+ IAWrmBDI8mZcRg07CCtkq9Cpbf1Pn7HzWmYYbJ8x6Nd9hMkoGzpSZMnLB5Ey5e.263cQTL7A2sjC
+ Zwnnbqq8s__7tAaw5BCGuKnaTyoN0lslknw_oQMvnv5NicEAVXM5mmnDPwsD0q5YKcdyO.Nh5J8j
+ OGvQUYt_0rJ9HR0n.8JgP_G0ZxsP8BTuzAwlUNYRsLaZmyRzlnW4pT9omDeM0QBbYcgg9_xrI3hj
+ LljqEapvMRdF6jgIy0S.YU34cwP4tH6yU1mQ2YYd5dWyIDZ00bpSmvFCdlOjwNkm3HuGQdECuTBf
+ j1bDbvBvg7uYuG0ggvmMTf1RMUEiaUp2qbwfiomgBA.RSlpOjEyzOS0ghAs.wEMwcQ77EHWOnW3V
+ xxzX4PuN2lSilVSgZpQeP9l4YTgv67hju02hAA2yA9NJyHucJHy8A9eW2Yb6wIBjOGgWMm.1F5Hp
+ IN6q27q9QYVooBqGqbCGvAku0MLPzE0MCH7h6IGs2044VdVjvFg1jPtNzghNyEGcfRz1CqkMgOO.
+ EtXuKcvN38ZxPONL76YB0oVRlqkSw_5zbCmcXrk5FCe5_.bJXuxVUhzFTzKWil7NMrY7wnzoOr4H
+ rMW_qrh2jlvlC9z5AFl3Na2kVW2vTywdxRKkukl0cIsk27OZ6Xj.Nf5yPfgRFu16b.PdEUfuxzpj
+ kr5hlFBNptR48ShGuXWjC805J3RAtye_JjBNGeAmH9SyGPOij7t.xJN7YJW51eVY_aKCx89PeT_T
+ fzsa1WajS30Z.go_xkBwLI3cObvEaBcv6ZBSy7FEwJjb2LfWdHgRer.f7dKykeWOMcRQXR2METXf
+ 1oPJ9z8XO2SGYeQbjWAKfxIMczmxWgqaFU6RV0.cMhj2pum.9grSqu5J_1DEX3DgkIXjkmuHSAYk
+ FxwLOi1yhNNqiiN_umK.edMA1rEmsIUhNLIeGiW9fJOVsSbTqXo_EpbTHDdoovPEPFzH3WCe8Aoe
+ .IqMc5KT4CyIjg85Nb83xh30vIe1xSwRLxnKkfQjtffO5xjDHw_HMLHsd9GVOihkQd3_T3KlTQ.H
+ 7LHj3fWg3ZFvR0A6YmncHzCPVxoLlIv6tsYlxKRLoKe.A6yxEx_FUKsCWXO4URDUxdmnVswsSUuC
+ h7wlBApoQfOArchYDMjUQPH_RHvTB06O4I.gI0lk3AQdXpPwYs1MQN_vyfapRJN_iHjM1kiDCJfB
+ LoqhKnubK5aLkEsw31sj4lUkgJmAfoYjix4OP0_QEPtPkhWM.82MExaiY4yQxYvRb17H03rzYYoG
+ QzXISL0Vqpf5ECToPZXGR4VqFazESsilQWeojFhJ4vq41XIzrz.6qNpaRRzd3mZ4hy2QcmK9dkPg
+ HSNWomXqaK6mgB1_GgUXJHMq0k1ul57hxkVKHL1iJUdhRMPbkwi1Ubgu4CffF9aIqIAMzktELZzb
+ Ke.Ob2xykz1NGicoeqcBkw5yFslgY85KDym1ADkBgOViP1AEopoYm0boHGIkAYarMIOfhf.bvcEz
+ pfkSFNdXjfEkqKDiKf3Oy5uqpNy8RMEN1ZvaDsD02AUFTI2HrcIVMuDIODIZmwhrzCeoJlhJGf2P
+ qaD1Ogf.l5xSqmEVnpldHuQlcH7hmvMFZA9txhjR_oJ0Vz6yDbZc1sg9LB25kqtqQ_obaOr2R.zp
+ FUEmaczsHFHItG1dnWGmBBdfePvTJ3alDjkbGBQ2TqHaocq3jRW6Y_k_vd5IUdXlvuWhj8Ff9Nln
+ NxaQehjMVVkQqQJWhYzZxnTp3BIN257AZyi7Onc2OJaYV0hyv9WKQltMbyLVS7Lq.FfDt4Yrwjer
+ zq4P5EcID0imcD8vzbzonhugE4lyd
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 7d77c22d-a5a2-45c8-a786-651590860dcf
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Tue, 4 Nov 2025 15:22:18 +0000
+Received: by hermes--production-gq1-86c5846576-9kznp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b319eceaf085359051caa19a21ae3d2e;
+          Tue, 04 Nov 2025 14:41:44 +0000 (UTC)
+Message-ID: <5252d5ed-4e10-42c2-b0fd-071c04ce98f9@schaufler-ca.com>
+Date: Tue, 4 Nov 2025 06:41:42 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5303; i=bagasdotme@gmail.com; h=from:subject; bh=p293SKf5o/p3baJzQjvB+/sLwGBM0lsd3WQD3vZfrVM=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJkckw+cjnnzTlUswkzq8mK2iLyPfdOqpixwvT5l0t21Z sIMeu6vO0pZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjCRiGiG/+GCr42t+w63Mu1b JdnOVHY9bceC6P3T1+4r3qb1gH/Lt7eMDDPNlu044a1+RXZVf7RzsveVyYc0l83ZxcnU5LMq0PZ FEyMA
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 5/5] Smack: add support for lsm_config_self_policy and
+ lsm_config_system_policy
+To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
+ linux-security-module@vger.kernel.org
+Cc: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, mic@digikod.net, kees@kernel.org,
+ stephen.smalley.work@gmail.com, takedakn@nttdata.co.jp,
+ penguin-kernel@I-love.SAKURA.ne.jp, song@kernel.org, rdunlap@infradead.org,
+ linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
+ linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20251010132610.12001-1-maxime.belair@canonical.com>
+ <20251010132610.12001-6-maxime.belair@canonical.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20251010132610.12001-6-maxime.belair@canonical.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Use reST grid tables for both type and permission checks tables.
+On 10/10/2025 6:25 AM, Maxime Bélair wrote:
+> Enable users to manage Smack policies through the new hooks
+> lsm_config_self_policy and lsm_config_system_policy.
+>
+> lsm_config_self_policy allows adding Smack policies for the current cred.
+> For now it remains restricted to CAP_MAC_ADMIN.
+>
+> lsm_config_system_policy allows adding globabl Smack policies. This is
+> restricted to CAP_MAC_ADMIN.
+>
+> Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
 
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
-This patch is based on lsm tree.
+Apologies for the late review. I see that Paul has suggested the set
+wait until the LSM namespace discussions have moved forward.
 
- Documentation/security/SCTP.rst | 48 +++++++++++++++++++++------------
- 1 file changed, 31 insertions(+), 17 deletions(-)
+> ---
+>  security/smack/smack.h     |  8 +++++
+>  security/smack/smack_lsm.c | 73 ++++++++++++++++++++++++++++++++++++++
+>  security/smack/smackfs.c   |  2 +-
+>  3 files changed, 82 insertions(+), 1 deletion(-)
+>
+> diff --git a/security/smack/smack.h b/security/smack/smack.h
+> index bf6a6ed3946c..3e3d30dfdcf7 100644
+> --- a/security/smack/smack.h
+> +++ b/security/smack/smack.h
+> @@ -275,6 +275,14 @@ struct smk_audit_info {
+>  #endif
+>  };
+>  
+> +/*
+> + * This function is in smackfs.c
+> + */
+> +ssize_t smk_write_rules_list(struct file *file, const char __user *buf,
+> +			     size_t count, loff_t *ppos,
+> +			     struct list_head *rule_list,
+> +			     struct mutex *rule_lock, int format);
+> +
+>  /*
+>   * These functions are in smack_access.c
+>   */
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 99833168604e..bf4bb2242768 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -5027,6 +5027,76 @@ static int smack_uring_cmd(struct io_uring_cmd *ioucmd)
+>  
+>  #endif /* CONFIG_IO_URING */
+>  
+> +/**
+> + * smack_lsm_config_system_policy - Configure a system smack policy
 
-diff --git a/Documentation/security/SCTP.rst b/Documentation/security/SCTP.rst
-index 6d80d464ab6e7c..321bf6c8738970 100644
---- a/Documentation/security/SCTP.rst
-+++ b/Documentation/security/SCTP.rst
-@@ -46,24 +46,31 @@ Returns 0 on success, error on failure.
-                ipv4 or ipv6 address using sizeof(struct sockaddr_in) or
-                sizeof(struct sockaddr_in6).
- 
--  ------------------------------------------------------------------
--  |                     BIND Type Checks                           |
-+.. table:: BIND Type Checks
-+
-+  +----------------------------+-----------------------------------+
-   |       @optname             |         @address contains         |
--  |----------------------------|-----------------------------------|
-+  +============================+===================================+
-   | SCTP_SOCKOPT_BINDX_ADD     | One or more ipv4 / ipv6 addresses |
-+  +----------------------------+-----------------------------------+
-   | SCTP_PRIMARY_ADDR          | Single ipv4 or ipv6 address       |
-+  +----------------------------+-----------------------------------+
-   | SCTP_SET_PEER_PRIMARY_ADDR | Single ipv4 or ipv6 address       |
--  ------------------------------------------------------------------
-+  +----------------------------+-----------------------------------+
-+
-+.. table:: CONNECT Type Checks
- 
--  ------------------------------------------------------------------
--  |                   CONNECT Type Checks                          |
-+  +----------------------------+-----------------------------------+
-   |       @optname             |         @address contains         |
--  |----------------------------|-----------------------------------|
-+  +============================+===================================+
-   | SCTP_SOCKOPT_CONNECTX      | One or more ipv4 / ipv6 addresses |
-+  +----------------------------+-----------------------------------+
-   | SCTP_PARAM_ADD_IP          | One or more ipv4 / ipv6 addresses |
-+  +----------------------------+-----------------------------------+
-   | SCTP_SENDMSG_CONNECT       | Single ipv4 or ipv6 address       |
-+  +----------------------------+-----------------------------------+
-   | SCTP_PARAM_SET_PRIMARY     | Single ipv4 or ipv6 address       |
--  ------------------------------------------------------------------
-+  +----------------------------+-----------------------------------+
- 
- A summary of the ``@optname`` entries is as follows::
- 
-@@ -228,26 +235,33 @@ The security module performs the following operations:
- security_sctp_bind_connect()
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- Checks permissions required for ipv4/ipv6 addresses based on the ``@optname``
--as follows::
-+as follows:
- 
--  ------------------------------------------------------------------
--  |                   BIND Permission Checks                       |
-+.. table:: BIND Permission Checks
-+
-+  +----------------------------+-----------------------------------+
-   |       @optname             |         @address contains         |
--  |----------------------------|-----------------------------------|
-+  +============================+===================================+
-   | SCTP_SOCKOPT_BINDX_ADD     | One or more ipv4 / ipv6 addresses |
-+  +----------------------------+-----------------------------------+
-   | SCTP_PRIMARY_ADDR          | Single ipv4 or ipv6 address       |
-+  +----------------------------+-----------------------------------+
-   | SCTP_SET_PEER_PRIMARY_ADDR | Single ipv4 or ipv6 address       |
--  ------------------------------------------------------------------
-+  +----------------------------+-----------------------------------+
-+
-+.. table:: CONNECT Permission Checks
- 
--  ------------------------------------------------------------------
--  |                 CONNECT Permission Checks                      |
-+  +----------------------------+-----------------------------------+
-   |       @optname             |         @address contains         |
--  |----------------------------|-----------------------------------|
-+  +============================+===================================+
-   | SCTP_SOCKOPT_CONNECTX      | One or more ipv4 / ipv6 addresses |
-+  +----------------------------+-----------------------------------+
-   | SCTP_PARAM_ADD_IP          | One or more ipv4 / ipv6 addresses |
-+  +----------------------------+-----------------------------------+
-   | SCTP_SENDMSG_CONNECT       | Single ipv4 or ipv6 address       |
-+  +----------------------------+-----------------------------------+
-   | SCTP_PARAM_SET_PRIMARY     | Single ipv4 or ipv6 address       |
--  ------------------------------------------------------------------
-+  +----------------------------+-----------------------------------+
- 
- 
- `SCTP LSM Support`_ gives a summary of the ``@optname``
+Smack prefers to say "rule set" instead of "policy". Smack policy
+doesn't change, but the allowed exceptions to the policy (rules)
+are mutable.
 
-base-commit: dfa024bc3f67a97e1a975dd66b83af8b3845eb19
--- 
-An old man doll... just what I always wanted! - Clara
+> + * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
+> + * @buf: User-supplied buffer in the form "<fmt><policy>"
+> + *        <fmt> is the 1-byte format of <policy>
+> + *        <policy> is the policy to load
+> + * @size: size of @buf
+> + * @flags: reserved for future use; must be zero
+> + *
+> + * Returns: number of written rules on success, negative value on error
+> + */
+> +static int smack_lsm_config_system_policy(u32 op, void __user *buf, size_t size,
+> +					  u32 flags)
+> +{
+> +	loff_t pos = 0;
+> +	u8 fmt;
+> +
+> +	if (op != LSM_POLICY_LOAD || flags)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (size < 2)
+> +		return -EINVAL;
 
+There should be a max check as well.
+
+> +
+> +	if (get_user(fmt, (uint8_t *)buf))
+> +		return -EFAULT;
+> +
+> +	return smk_write_rules_list(NULL, buf + 1, size - 1, &pos, NULL, NULL, fmt);
+> +}
+> +
+> +/**
+> + * smack_lsm_config_self_policy - Configure a smack policy for the current cred
+> + * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
+> + * @buf: User-supplied buffer in the form "<fmt><policy>"
+> + *        <fmt> is the 1-byte format of <policy>
+> + *        <policy> is the policy to load
+> + * @size: size of @buf
+> + * @flags: reserved for future use; must be zero
+> + *
+> + * Returns: number of written rules on success, negative value on error
+> + */
+> +static int smack_lsm_config_self_policy(u32 op, void __user *buf, size_t size,
+> +					u32 flags)
+> +{
+> +	loff_t pos = 0;
+> +	u8 fmt;
+> +	struct task_smack *tsp;
+> +
+> +	if (op != LSM_POLICY_LOAD || flags)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (size < 2)
+> +		return -EINVAL;
+> +
+> +	if (get_user(fmt, (uint8_t *)buf))
+> +		return -EFAULT;
+> +	/**
+> +	 * smk_write_rules_list could be used to gain privileges.
+> +	 * This function is thus restricted to CAP_MAC_ADMIN.
+> +	 * TODO: Ensure that the new rule does not give extra privileges
+> +	 * before dropping this CAP_MAC_ADMIN check.
+> +	 */
+> +	if (!capable(CAP_MAC_ADMIN))
+> +		return -EPERM;
+> +
+> +
+> +	tsp = smack_cred(current_cred());
+> +	return smk_write_rules_list(NULL, buf + 1, size - 1, &pos, &tsp->smk_rules,
+> +				    &tsp->smk_rules_lock, fmt);
+> +}
+> +
+>  struct lsm_blob_sizes smack_blob_sizes __ro_after_init = {
+>  	.lbs_cred = sizeof(struct task_smack),
+>  	.lbs_file = sizeof(struct smack_known *),
+> @@ -5203,6 +5273,9 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
+>  	LSM_HOOK_INIT(uring_sqpoll, smack_uring_sqpoll),
+>  	LSM_HOOK_INIT(uring_cmd, smack_uring_cmd),
+>  #endif
+> +	LSM_HOOK_INIT(lsm_config_self_policy, smack_lsm_config_self_policy),
+> +	LSM_HOOK_INIT(lsm_config_system_policy, smack_lsm_config_system_policy),
+> +
+>  };
+>  
+>  
+> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+> index 90a67e410808..ed1814588d56 100644
+> --- a/security/smack/smackfs.c
+> +++ b/security/smack/smackfs.c
+> @@ -441,7 +441,7 @@ static ssize_t smk_parse_long_rule(char *data, struct smack_parsed_rule *rule,
+>   *	"subject<whitespace>object<whitespace>
+>   *	 acc_enable<whitespace>acc_disable[<whitespace>...]"
+>   */
+> -static ssize_t smk_write_rules_list(struct file *file, const char __user *buf,
+> +ssize_t smk_write_rules_list(struct file *file, const char __user *buf,
+>  					size_t count, loff_t *ppos,
+>  					struct list_head *rule_list,
+>  					struct mutex *rule_lock, int format)
