@@ -1,369 +1,439 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3388E17993;
-	Wed,  5 Nov 2025 20:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E472D7DC0
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Nov 2025 20:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762375679; cv=none; b=OlYpYNRhVGgsMLW5L2Meh3KldktxPci9P7OT+1aW6OYAnz4VnmYbgYWvcwpOjhFzy06va4SlHArw0CphSU9HuoVHwoNR+9RqeboheiURc1DR5oT8mt5lp147bD2sJDTRf8dqSCLfmiJXMH6HWtmAC1hu5eHJ4KkOdpR6uno+f3E=
+	t=1762376167; cv=none; b=RBdIvBOF/7Dkj1BNUIC4h35uJ/nbynAt7bQhDPmyGIEGvWNnow/C0fBXUSiIEdFJOdYZIuBSIDfJAAjKUm/uqV/DFfrxarGUpI81QXG1isTZx+291O5F6LcDm4IEhf7CT0mD7+Ogk419zBu6rlCJoRs4JDmJzgLdj3QjjZOT8z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762375679; c=relaxed/simple;
-	bh=0TYl3AZvZEI/AkAGjZ6giIv2/6S5nXZsOrWvVJnEDBs=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=BpVUJvjB9J8L0xkq68pPhX6SsTp1bdHMxM7O33o1eTlz2dsTRu8lyTJaeFTy3FVaMOsy6z4kbkQjoWP4G/y0rNJqWAWSywoJd+TaQ0VVZ54aYTN3hezr62YKNS9A2hdp2BHU5gOL6b4oXytkLb7AyeERZtKeQliesDJu/uuUlrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LrBvm8C9; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LrBvm8C9"
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5FsMQ7030815;
-	Wed, 5 Nov 2025 20:47:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=kUZr3O
-	ADl2t4OXiwaArYRj8Lg0CEqw+z2RxxKoklc10=; b=LrBvm8C9vHOD99MFZ2xgzY
-	8yWrDNiGZ9D3YOSz1z02cJ+mrHQueApRsDd1fGVliQ8DT2s2aoz5MK9Nh85iZN7J
-	nrAezjZIVRDUUuQiwixZ2o+GYgBYaKF/ZwgTKukNuzU2LUHFU8NRA66TbqUJ36Db
-	0GlmTH0KJJVukG3ZPyyR98Rn3qENG1zaBx74/D+Uw6cBr3NTKDO7xi9HbEsX6PMX
-	jn/O9QIJlq6D2WyLHHAADWE6eSc6/8dZTqL4O7nMAg1tDtlFtUu+M9IA5FBs9cop
-	aatmtL8fErSajsp8oiZEqcnBdMgxqENd0jKngNH+NEAMfMrF0nE27w3/m7WcrXgw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59v232e5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Nov 2025 20:47:41 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A5KfaFE012630;
-	Wed, 5 Nov 2025 20:47:40 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59v232dj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Nov 2025 20:47:40 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5HvxEl025556;
-	Wed, 5 Nov 2025 20:47:28 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5vhstb5c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Nov 2025 20:47:28 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A5KlRbR27001450
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 5 Nov 2025 20:47:27 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CF34E58058;
-	Wed,  5 Nov 2025 20:47:27 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 43D0858059;
-	Wed,  5 Nov 2025 20:47:26 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.187.69])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  5 Nov 2025 20:47:26 +0000 (GMT)
-Message-ID: <84a0e1785c7f0ff816b3246be49012092ae12126.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] lsm,ima: new LSM hook
- security_kernel_module_read_file to access decompressed kernel module
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>, Paul Moore <paul@paul-moore.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Karel Srot <ksrot@redhat.com>, James Morris <jmorris@namei.org>,
-        "Serge E.
- Hallyn" <serge@hallyn.com>,
-        Luis Chamberlain	 <mcgrof@kernel.org>,
-        Petr
- Pavlu <petr.pavlu@suse.com>, Daniel Gomez	 <da.gomez@kernel.org>,
-        Sami
- Tolvanen <samitolvanen@google.com>,
-        Roberto Sassu	
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        open list
- <linux-kernel@vger.kernel.org>,
-        "open list:MODULE SUPPORT"
- <linux-modules@vger.kernel.org>
-In-Reply-To: <fftfj4o3kqxmfu3hb655xczqcddoeqjv55llsnwkrdu5isdm4z@6sqe3k24a6kk>
-References: <20250928030358.3873311-1-coxu@redhat.com>
-	 <20251031074016.1975356-1-coxu@redhat.com>
-	 <CAHC9VhRBXkW+XuqhxJvEOYR_VMxFh4TRWUtXzZky=AG_nyBYEQ@mail.gmail.com>
-	 <baa39fcd1b6b485f14b8f06dcd96b81359e6e491.camel@linux.ibm.com>
-	 <CAHC9VhToe-VNqbh6TY2iYnRvqTHRfQjnHYSRWYgt8K7NcLKMdg@mail.gmail.com>
-	 <fftfj4o3kqxmfu3hb655xczqcddoeqjv55llsnwkrdu5isdm4z@6sqe3k24a6kk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 05 Nov 2025 15:47:25 -0500
+	s=arc-20240116; t=1762376167; c=relaxed/simple;
+	bh=hzBpjQv+o/DTCWMu5DBoc+BvgEjP1zhwMOs2yiBIAgw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qOVNrei4ZZiQ0v0IDpjZM4/f+vaNFQtAK6FGp7/biG20OMpARaJ5m2LLBcjpE87cbabqxYoafg9UHwU0RKNHEHeeRzdaTrxj+ip0TOZdu0HOCFZRaSQrQlzMr5BpQg0lqKqXe333/ZXto/1IvkeFNvI19347EExDulO4pjkXwHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-433270dad0dso3022465ab.0
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Nov 2025 12:56:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762376163; x=1762980963;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V3ADeQpiOp638EHQGkX4nAhqUuOM9S519pNeKBgwEtw=;
+        b=lPd/aW4ONgQQeL+lgTmBTD1glzdptKkDOdATFDjtRGIooNDCuLDRj4gQe7bQwgKjHt
+         Df2strIqMdGD99h1jMUGYPHpNaQ4oDteeWOjv46vM3MqcfokM9MLcGK1kqNuRE67ZeXy
+         E5memJRLza4ZFVwaA0taZGQHyCJqnfTYZiJ/1DWLmZPrdJdYabzTfLxekOX4pdZC5SXx
+         K4WPV/aZqrG0moGlnMsKpZagGIxAJKXlIqpJspGC4/rWV8NAOyR8EyWuJIvbT6Uv6D0B
+         27WaAoNW4ePURiRytRZLzwJhmNDH22oIVmRbhKX7bEbPzjWfD7ftIdY9j5d9sEiWG+7g
+         I8Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBo9y5IsOdcBlRB7TYnX65vdKiYITAeOW/N9h8WhJ4bFXd859d+G2zf5hkxSUWmdzl0EFD7BSBv91S551vl8J5cwIJfb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8DVS1SZyXa+s5EN2eLfaflXKmI2i2k/sOuGDlYytj4lqoadOq
+	CUG4izhCO5iDqs5x2rQcA09QQwOCSzN64kxkSlDp/F+voccTX77E67xYU1pyV3hmu4SqUsJ722g
+	gh8VgdB1a7DFkCChE+r6JiRmfE/gVdi3wW75KH2jZ9ItKXW/2oVNRHPM8Bq8=
+X-Google-Smtp-Source: AGHT+IGiah7ThoXyNFEfYoip3cikOQAREySwBKaKQy+xzpkpiT14araBKpr4synk9JGzeisDrHn24NyjFVbKiWAi6riZ4lBN93Af
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: bLKHmUeFUral6ZPVEZVjuKVkO_ooWOAU
-X-Proofpoint-ORIG-GUID: _26o0JY9VQtY3hxer9tcSuh1jF9L0cgh
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfX1V8n0MHdB8tw
- 1vnFVl4U1zZNO7q6Q7lvxKM6OzkxWuA8yyaM/+LQecpgqiQqMp+S8NN6+VYlQQCdZmS0mF343Tl
- SDRiUBaK0uOiD5093P+X5fVHBwSqtpZ5VEsOpPoDJDXKRh/bEU8DblB+6j1QDLfG8fauWYmWn/+
- 1+bkqhOgyJs9aNQHTMHer1nHe3Td6KXbqcyOwEjgYt/tNGR5mFJd+80+P1/W2HIoR4isAGHv+3n
- s/TGuq/g4h6ugExNlMJ2IussKNQ+n+HsJ1LOu2/8f71ewfaymMdlw8dHowPMnDzBeit2MkKtTfa
- R5y4Ct1dph0oAdfSrTJ4zSgjsuAPH6pF9xL4wxb8I8i4nAxKKPiflmE2RwcFiNOW2FbSGWJDQdT
- nfwnJEVzA7jNrQWJuemPuBYHxxYMxw==
-X-Authority-Analysis: v=2.4 cv=H8HWAuYi c=1 sm=1 tr=0 ts=690bb7ed cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=NEAV23lmAAAA:8 a=VnNF1IyMAAAA:8
- a=guW0fOh7C9lSObWThwYA:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_08,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
- impostorscore=0 clxscore=1015 bulkscore=0 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010021
+X-Received: by 2002:a05:6e02:2503:b0:433:2d7d:b8d8 with SMTP id
+ e9e14a558f8ab-4334ee298ecmr13672955ab.1.1762376163425; Wed, 05 Nov 2025
+ 12:56:03 -0800 (PST)
+Date: Wed, 05 Nov 2025 12:56:03 -0800
+In-Reply-To: <20251105193800.2340868-1-mic@digikod.net>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690bb9e3.050a0220.3d0d33.009d.GAE@google.com>
+Subject: Re: [syzbot] [fs?] BUG: sleeping function called from invalid context
+ in hook_sb_delete
+From: syzbot <syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com>
+To: brauner@kernel.org, eadavis@qq.com, gnoack@google.com, hdanton@sina.com, 
+	jack@suse.cz, jannh@google.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	m@maowtm.org, max.kellermann@ionos.com, mic@digikod.net, mjguzik@gmail.com, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2025-11-05 at 08:18 +0800, Coiby Xu wrote:
-> On Sun, Nov 02, 2025 at 10:43:04AM -0500, Paul Moore wrote:
-> > On Sun, Nov 2, 2025 at 10:06=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com=
-> wrote:
-> > > On Sat, 2025-11-01 at 12:50 -0400, Paul Moore wrote:
-> > > > On Fri, Oct 31, 2025 at 3:41=E2=80=AFAM Coiby Xu <coxu@redhat.com> =
-wrote:
-> > > > >=20
-> > > > > Currently, when in-kernel module decompression (CONFIG_MODULE_DEC=
-OMPRESS)
-> > > > > is enabled, IMA has no way to verify the appended module signatur=
-e as it
-> > > > > can't decompress the module.
-> > > > >=20
-> > > > > Define a new LSM hook security_kernel_module_read_file which will=
- be
-> > > > > called after kernel module decompression is done so IMA can acces=
-s the
-> > > > > decompressed kernel module to verify the appended signature.
-> > > > >=20
-> > > > > Since IMA can access both xattr and appended kernel module signat=
-ure
-> > > > > with the new LSM hook, it no longer uses the security_kernel_post=
-_read_file
-> > > > > LSM hook for kernel module loading.
-> > > > >=20
-> > > > > Before enabling in-kernel module decompression, a kernel module i=
-n
-> > > > > initramfs can still be loaded with ima_policy=3Dsecure_boot. So a=
-djust the
-> > > > > kernel module rule in secure_boot policy to allow either an IMA
-> > > > > signature OR an appended signature i.e. to use
-> > > > > "appraise func=3DMODULE_CHECK appraise_type=3Dimasig|modsig".
-> > > > >=20
-> > > > > Reported-by: Karel Srot <ksrot@redhat.com>
-> > > > > Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > > > Signed-off-by: Coiby Xu <coxu@redhat.com>
-> > > > > ---
-> > > > > v1: https://lore.kernel.org/linux-integrity/20250928030358.387331=
-1-1-coxu@redhat.com/
-> > > > >=20
-> > > > >  include/linux/lsm_hook_defs.h       |  2 ++
-> > > > >  include/linux/security.h            |  7 +++++++
-> > > > >  kernel/module/main.c                | 10 +++++++++-
-> > > > >  security/integrity/ima/ima_main.c   | 26 +++++++++++++++++++++++=
-+++
-> > > > >  security/integrity/ima/ima_policy.c |  2 +-
-> > > > >  security/security.c                 | 17 +++++++++++++++++
-> > > > >  6 files changed, 62 insertions(+), 2 deletions(-)
-> > > >=20
-> > > > We don't really need a new LSM hook for this do we?  Can't we just
-> > > > define a new file read type, e.g.  READING_MODULE_DECOMPRESS, and d=
-o
-> > > > another call to security_kernel_post_read_file() after the module i=
-s
-> > > > unpacked?  Something like the snippet below ...
-> > >=20
-> > > Yes, this is similar to my suggestion based on defining multiple enum=
-erations:
-> > > READING_MODULE, READING_COMPRESSED_MODULE, and READING_DECOMPRESSED_M=
-ODULE.
-> > > With this solution, IMA would need to make an exception in the post k=
-ernel
-> > > module read for the READING_COMPRESSED_MODULE case, since the kernel =
-module has
-> > > not yet been decompressed.
-> > >=20
-> > > Coiby suggested further simplification by moving the call later.  At =
-which point
-> > > either there is or isn't an appended signature for non-compressed and
-> > > decompressed kernel modules.
-> > >=20
-> > > As long as you don't have a problem calling the security_kernel_post_=
-read_file()
-> > > hook again, could we move the call later and pass READING_MODULE_UNCO=
-MPRESSED?
-> >=20
-> > It isn't clear from these comments if you are talking about moving
-> > only the second security_kernel_post_read_file() call that was
-> > proposed for init_module_from_file() to later in the function, leaving
-> > the call in kernel_read_file() intact, or something else?
->=20
-> Hi Paul and Mimi,
->=20
-> Thanks for sharing your feedback! Yes, you are right, there is no need
-> for a new LSM hook. Actually by not introducing a new LSM hook, we can
-> have a much simpler solution!
->=20
-> >=20
-> > I think we want to leave the hook calls in kernel_read_file() intact,
-> > in which case I'm not certain what advantage there is in moving the
-> > security_kernel_post_read_file() call to a location where it is called
-> > in init_module_from_file() regardless of if the module is compressed
-> > or not.  In the uncompressed case you are calling the hook twice for
-> > no real benefit?  It may be helpful to submit a patch with your
-> > proposal as a patch can be worth a thousand words ;)
-> >=20
-> >=20
-> > > > diff --git a/kernel/module/main.c b/kernel/module/main.c
-> > > > index c66b26184936..f127000d2e0a 100644
-> > > > --- a/kernel/module/main.c
-> > > > +++ b/kernel/module/main.c
-> > > > @@ -3693,6 +3693,14 @@ static int init_module_from_file(struct file=
- *f, const ch
-> > > > ar __user * uargs, int
-> > > >                        mod_stat_add_long(len, &invalid_decompress_b=
-ytes);
-> > > >                        return err;
-> > > >                }
-> > > > +
-> > > > +               err =3D security_kernel_post_read_file(f,
-> > > > +                                                    (char *)info.h=
-dr, info.len,
-> > > > +                                                    READING_MODULE=
-_DECOMPRESS);
-> > > > +               if (err) {
-> > > > +                       mod_stat_inc(&failed_kreads);
-> > > > +                       return err;
-> > > > +               }
-> > > >        } else {
-> > > >                info.hdr =3D buf;
-> > > >                info.len =3D len;
-> > >=20
-> > > =3D=3D defer security_kernel_post_read_file() call to here =3D=3D
->=20
-> By moving security_kernel_post_read_file, I think what Mimi means is to
-> move security_kernel_post_read_file in init_module_from_file() to later
-> in the function,
->=20
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index c66b261849362a..66725e53fef0c1 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -3678,6 +3678,7 @@ static int init_module_from_file(struct file *f, co=
-nst char __user * uargs, int
->   	struct load_info info =3D { };
->   	void *buf =3D NULL;
->   	int len;
-> +	int err;
->  =20
->   	len =3D kernel_read_file(f, 0, &buf, INT_MAX, NULL, READING_MODULE);
->   	if (len < 0) {
-> @@ -3686,7 +3687,7 @@ static int init_module_from_file(struct file *f, co=
-nst char __user * uargs, int
->   	}
->  =20
->   	if (flags & MODULE_INIT_COMPRESSED_FILE) {
-> -		int err =3D module_decompress(&info, buf, len);
-> +		err =3D module_decompress(&info, buf, len);
->   		vfree(buf); /* compressed data is no longer needed */
->   		if (err) {
->   			mod_stat_inc(&failed_decompress);
-> @@ -3698,6 +3699,14 @@ static int init_module_from_file(struct file *f, c=
-onst char __user * uargs, int
->   		info.len =3D len;
->   	}
->  =20
-> +	err =3D security_kernel_post_read_file(f, (char *)info.hdr, info.len,
-> +					     READING_MODULE);
-> +	if (err) {
-> +		mod_stat_inc(&failed_kreads);
-> +		free_copy(&info, flags);
-> +		return err;
-> +	}
-> +
->   	return load_module(&info, uargs, flags);
->   }
->=20
-> If we only call security_kernel_post_read_file the 2nd time for a
-> decompressed kernel module, IMA won't be sure what to do when
-> security_kernel_post_read_file is called for the 1st time because it
-> can't distinguish between a compressed module with appended signature or
-> a uncompressed module without appended signature. If it permits 1st
-> calling security_kernel_post_read_file, a uncompressed module without
-> appended signature can be loaded. If it doesn't permit 1st calling
-> security_kernel_post_read_file, there is no change to call
-> security_kernel_post_read_file again for decompressed module.
->=20
-> And you are right, there is no need to call
-> security_kernel_post_read_file twice. And from the perspective of IMA,
-> it simplifies reasoning if it is guaranteed that IMA will always access
-> uncompressed kernel module regardless regardless of its original
-> compression state.=20
->=20
-> So I think a better solution is to stop calling
-> security_kernel_post_read_file in kernel_read_file for READING_MODULE.
-> This can also avoiding introducing an unnecessary
-> READING_MODULE_UNCOMPRESSED/READING_COMPRESSED_MODULE enumeration and
-> can make the solution even simpler,
->=20
-> diff --git a/fs/kernel_read_file.c b/fs/kernel_read_file.c
-> index de32c95d823dbd..7c78e84def6ec7 100644
-> --- a/fs/kernel_read_file.c
-> +++ b/fs/kernel_read_file.c
-> @@ -107,7 +107,12 @@ ssize_t kernel_read_file(struct file *file, loff_t o=
-ffset, void **buf,
->   			goto out_free;
->   		}
->  =20
-> -		ret =3D security_kernel_post_read_file(file, *buf, i_size, id);
-> +		/*
-> +		 * security_kernel_post_read_file will be called later after
-> +		 * a read kernel module is truly decompressed
-> +		 */
-> +		if (id !=3D READING_MODULE)
-> +			ret =3D security_kernel_post_read_file(file, *buf, i_size, id);
->   	}
->=20
-> Btw, I notice IMA is the only user of security_kernel_post_read_file so
-> this change won't affect other LSMs. For a full patch, please visit
-> https://github.com/coiby/linux/commit/558d85779ab5d794874749ecfae0e48b890=
-bf3e0.patch
->=20
-> If there are concerns that I'm unaware of and a new
-> READING_MODULE_UNCOMPRESSED/READING_COMPRESSED_MODULE enumeration is
-> necessary, here's another patch
-> https://github.com/coiby/linux/commit/cdd40317b6070f48ec871c6a89428084f38=
-ca083.patch
+Hello,
 
-Hi Coiby,
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Based on the conversation with Paul, there is no reason to remove the exist=
-ing
-security_kernel_post_read_file() call.
+f
+[  104.167925][ T5820]  ? clear_bhb_loop+0x60/0xb0
+[  104.167948][ T5820]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  104.167967][ T5820] RIP: 0033:0x7f9a9fef16c5
+[  104.167983][ T5820] Code: Unable to access opcode bytes at 0x7f9a9fef169=
+b.
+[  104.167993][ T5820] RSP: 002b:00007fff0fc3e0f8 EFLAGS: 00000246 ORIG_RAX=
+: 00000000000000e7
+[  104.168021][ T5820] RAX: ffffffffffffffda RBX: 00005583ec761b10 RCX: 000=
+07f9a9fef16c5
+[  104.168036][ T5820] RDX: 00000000000000e7 RSI: fffffffffffffe68 RDI: 000=
+0000000000000
+[  104.168048][ T5820] RBP: 00005583ec738910 R08: 0000000000000000 R09: 000=
+0000000000000
+[  104.168060][ T5820] R10: 0000000000000000 R11: 0000000000000246 R12: 000=
+0000000000000
+[  104.168071][ T5820] R13: 00007fff0fc3e140 R14: 0000000000000000 R15: 000=
+0000000000000
+[  104.168101][ T5820]  </TASK>
+2025/11/05 20:54:56 parsed 1 programs
+[  105.509351][ T5829] BUG: sleeping function called from invalid context a=
+t fs/inode.c:1920
+[  105.518601][ T5829] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pi=
+d: 5829, name: syz-execprog
+[  105.528439][ T5829] preempt_count: 1, expected: 0
+[  105.533521][ T5829] RCU nest depth: 0, expected: 0
+[  105.538811][ T5829] 1 lock held by syz-execprog/5829:
+[  105.544194][ T5829]  #0: ffff88807e6f68d8 (&sb->s_type->i_lock_key#9){+.=
++.}-{3:3}, at: iput+0x2db/0x1050
+[  105.554222][ T5829] Preemption disabled at:
+[  105.554232][ T5829] [<0000000000000000>] 0x0
+[  105.564065][ T5829] CPU: 0 UID: 0 PID: 5829 Comm: syz-execprog Tainted: =
+G        W           syzkaller #0 PREEMPT(full)=20
+[  105.564091][ T5829] Tainted: [W]=3DWARN
+[  105.564096][ T5829] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 10/02/2025
+[  105.564105][ T5829] Call Trace:
+[  105.564114][ T5829]  <TASK>
+[  105.564121][ T5829]  dump_stack_lvl+0x189/0x250
+[  105.564144][ T5829]  ? __pfx_dump_stack_lvl+0x10/0x10
+[  105.564160][ T5829]  ? __pfx__printk+0x10/0x10
+[  105.564176][ T5829]  ? call_rcu+0x6ff/0x9c0
+[  105.564197][ T5829]  ? print_lock_name+0xde/0x100
+[  105.564218][ T5829]  __might_resched+0x495/0x610
+[  105.564241][ T5829]  ? __pfx___might_resched+0x10/0x10
+[  105.564258][ T5829]  ? do_raw_spin_lock+0x121/0x290
+[  105.564286][ T5829]  ? __pfx_do_raw_spin_lock+0x10/0x10
+[  105.564320][ T5829]  iput+0x741/0x1050
+[  105.564352][ T5829]  __dentry_kill+0x209/0x660
+[  105.564371][ T5829]  ? dput+0x37/0x2b0
+[  105.564389][ T5829]  dput+0x19f/0x2b0
+[  105.564406][ T5829]  __fput+0x68e/0xa70
+[  105.564431][ T5829]  fput_close_sync+0x113/0x220
+[  105.564450][ T5829]  ? __pfx_fput_close_sync+0x10/0x10
+[  105.564470][ T5829]  ? do_raw_spin_unlock+0x122/0x240
+[  105.564495][ T5829]  __x64_sys_close+0x7f/0x110
+[  105.564517][ T5829]  do_syscall_64+0xfa/0xfa0
+[  105.564541][ T5829]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  105.564558][ T5829]  ? clear_bhb_loop+0x60/0xb0
+[  105.564577][ T5829]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  105.564593][ T5829] RIP: 0033:0x40dd0e
+[  105.564610][ T5829] Code: 24 28 44 8b 44 24 2c e9 70 ff ff ff cc cc cc c=
+c cc cc cc cc cc cc cc cc cc cc cc cc 49 89 f2 48 89 fa 48 89 ce 48 89 df 0=
+f 05 <48> 3d 01 f0 ff ff 76 15 48 f7 d8 48 89 c1 48 c7 c0 ff ff ff ff 48
+[  105.564625][ T5829] RSP: 002b:000000c002db1760 EFLAGS: 00000212 ORIG_RAX=
+: 0000000000000003
+[  105.564688][ T5829] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000=
+000000040dd0e
+[  105.564701][ T5829] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000=
+0000000000003
+[  105.564711][ T5829] RBP: 000000c002db17a0 R08: 0000000000000000 R09: 000=
+0000000000000
+[  105.564723][ T5829] R10: 0000000000000000 R11: 0000000000000212 R12: 000=
+000c002db18c0
+[  105.564735][ T5829] R13: 00000000000007ff R14: 000000c000002380 R15: 000=
+000c0008937c0
+[  105.564765][ T5829]  </TASK>
+[  107.337546][ T5837] BUG: sleeping function called from invalid context a=
+t fs/inode.c:1920
+[  107.347227][ T5837] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pi=
+d: 5837, name: dhcpcd
+[  107.356267][ T5837] preempt_count: 1, expected: 0
+[  107.361915][ T5837] RCU nest depth: 0, expected: 0
+[  107.367125][ T5837] 1 lock held by dhcpcd/5837:
+[  107.373083][ T5837]  #0: ffff88807e6fa3d8 (&sb->s_type->i_lock_key#9){+.=
++.}-{3:3}, at: iput+0x2db/0x1050
+[  107.384068][ T5837] Preemption disabled at:
+[  107.384082][ T5837] [<0000000000000000>] 0x0
+[  107.393377][ T5837] CPU: 1 UID: 0 PID: 5837 Comm: dhcpcd Tainted: G     =
+   W           syzkaller #0 PREEMPT(full)=20
+[  107.393403][ T5837] Tainted: [W]=3DWARN
+[  107.393408][ T5837] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 10/02/2025
+[  107.393417][ T5837] Call Trace:
+[  107.393424][ T5837]  <TASK>
+[  107.393430][ T5837]  dump_stack_lvl+0x189/0x250
+[  107.393456][ T5837]  ? __pfx_dump_stack_lvl+0x10/0x10
+[  107.393480][ T5837]  ? __pfx__printk+0x10/0x10
+[  107.393503][ T5837]  ? print_lock_name+0xde/0x100
+[  107.393526][ T5837]  __might_resched+0x495/0x610
+[  107.393553][ T5837]  ? __pfx___might_resched+0x10/0x10
+[  107.393570][ T5837]  ? do_raw_spin_lock+0x121/0x290
+[  107.393597][ T5837]  ? __pfx_do_raw_spin_lock+0x10/0x10
+[  107.393632][ T5837]  iput+0x741/0x1050
+[  107.393662][ T5837]  __dentry_kill+0x209/0x660
+[  107.393681][ T5837]  ? dput+0x37/0x2b0
+[  107.393699][ T5837]  dput+0x19f/0x2b0
+[  107.393717][ T5837]  __fput+0x68e/0xa70
+[  107.393749][ T5837]  fput_close_sync+0x113/0x220
+[  107.393768][ T5837]  ? __pfx_fput_close_sync+0x10/0x10
+[  107.393790][ T5837]  ? do_raw_spin_unlock+0x122/0x240
+[  107.393819][ T5837]  __x64_sys_close+0x7f/0x110
+[  107.393843][ T5837]  do_syscall_64+0xfa/0xfa0
+[  107.393871][ T5837]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  107.393890][ T5837]  ? clear_bhb_loop+0x60/0xb0
+[  107.393915][ T5837]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  107.393933][ T5837] RIP: 0033:0x7fc58c16c407
+[  107.393950][ T5837] Code: 48 89 fa 4c 89 df e8 38 aa 00 00 8b 93 08 03 0=
+0 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0=
+f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[  107.393968][ T5837] RSP: 002b:00007ffc1197cc80 EFLAGS: 00000202 ORIG_RAX=
+: 0000000000000003
+[  107.393988][ T5837] RAX: ffffffffffffffda RBX: 00007fc58c0e2740 RCX: 000=
+07fc58c16c407
+[  107.394002][ T5837] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000=
+0000000000003
+[  107.394014][ T5837] RBP: 000055fc7ab074b0 R08: 0000000000000000 R09: 000=
+0000000000000
+[  107.394026][ T5837] R10: 0000000000000000 R11: 0000000000000202 R12: 000=
+0000000000000
+[  107.394038][ T5837] R13: 000055fc83902290 R14: 0000000000000000 R15: 000=
+055fc7ab1cac0
+[  107.394071][ T5837]  </TASK>
+[  108.750656][ T5835] cgroup: Unknown subsys name 'net'
+[  108.759273][ T5835] BUG: sleeping function called from invalid context a=
+t fs/inode.c:1920
+[  108.769492][ T5835] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pi=
+d: 5835, name: syz-executor
+[  108.782190][ T5835] preempt_count: 1, expected: 0
+[  108.787683][ T5835] RCU nest depth: 0, expected: 0
+[  108.792976][ T5835] 2 locks held by syz-executor/5835:
+[  108.799370][ T5835]  #0: ffff8880340e80e0 (&type->s_umount_key#44){+.+.}=
+-{4:4}, at: deactivate_super+0xa9/0xe0
+[  108.811870][ T5835]  #1: ffff888077e41970 (&sb->s_type->i_lock_key#33){+=
+.+.}-{3:3}, at: iput+0x2db/0x1050
+[  108.822811][ T5835] Preemption disabled at:
+[  108.822824][ T5835] [<0000000000000000>] 0x0
+[  108.833460][ T5835] CPU: 1 UID: 0 PID: 5835 Comm: syz-executor Tainted: =
+G        W           syzkaller #0 PREEMPT(full)=20
+[  108.833488][ T5835] Tainted: [W]=3DWARN
+[  108.833493][ T5835] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 10/02/2025
+[  108.833502][ T5835] Call Trace:
+[  108.833508][ T5835]  <TASK>
+[  108.833515][ T5835]  dump_stack_lvl+0x189/0x250
+[  108.833542][ T5835]  ? __pfx_dump_stack_lvl+0x10/0x10
+[  108.833561][ T5835]  ? __pfx__printk+0x10/0x10
+[  108.833580][ T5835]  ? print_lock_name+0xde/0x100
+[  108.833601][ T5835]  __might_resched+0x495/0x610
+[  108.833625][ T5835]  ? __pfx___might_resched+0x10/0x10
+[  108.833642][ T5835]  ? do_raw_spin_lock+0x121/0x290
+[  108.833666][ T5835]  ? __pfx_do_raw_spin_lock+0x10/0x10
+[  108.833699][ T5835]  iput+0x741/0x1050
+[  108.833731][ T5835]  __dentry_kill+0x209/0x660
+[  108.833751][ T5835]  ? dput+0x37/0x2b0
+[  108.833770][ T5835]  dput+0x19f/0x2b0
+[  108.833789][ T5835]  shrink_dcache_for_umount+0xa0/0x170
+[  108.833815][ T5835]  generic_shutdown_super+0x67/0x2c0
+[  108.833843][ T5835]  kill_anon_super+0x3b/0x70
+[  108.833868][ T5835]  kernfs_kill_sb+0x161/0x180
+[  108.833895][ T5835]  deactivate_locked_super+0xbc/0x130
+[  108.833920][ T5835]  cleanup_mnt+0x425/0x4c0
+[  108.833943][ T5835]  ? lockdep_hardirqs_on+0x9c/0x150
+[  108.833970][ T5835]  task_work_run+0x1d4/0x260
+[  108.833998][ T5835]  ? __pfx_task_work_run+0x10/0x10
+[  108.834027][ T5835]  ? exit_to_user_mode_loop+0x55/0x4f0
+[  108.834058][ T5835]  exit_to_user_mode_loop+0xff/0x4f0
+[  108.834084][ T5835]  ? rcu_is_watching+0x15/0xb0
+[  108.834109][ T5835]  do_syscall_64+0x2e9/0xfa0
+[  108.834135][ T5835]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  108.834152][ T5835]  ? clear_bhb_loop+0x60/0xb0
+[  108.834175][ T5835]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  108.834192][ T5835] RIP: 0033:0x7f2c235901f7
+[  108.834208][ T5835] Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1=
+f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0=
+f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
+[  108.834224][ T5835] RSP: 002b:00007ffeee90f4f8 EFLAGS: 00000246 ORIG_RAX=
+: 00000000000000a6
+[  108.834244][ T5835] RAX: 0000000000000000 RBX: 00007ffeee90f5f0 RCX: 000=
+07f2c235901f7
+[  108.834256][ T5835] RDX: 00007f2c23623d15 RSI: 0000000000000000 RDI: 000=
+07f2c236125ca
+[  108.834266][ T5835] RBP: 00007f2c236125ca R08: 00007f2c236128ae R09: 000=
+0000000000000
+[  108.834277][ T5835] R10: 0000000000000000 R11: 0000000000000246 R12: 000=
+07f2c23612844
+[  108.834287][ T5835] R13: 00007f2c23623d15 R14: 00007ffeee90f608 R15: 000=
+07ffeee90f500
+[  108.834313][ T5835]  </TASK>
+[  109.214905][ T5835] cgroup: Unknown subsys name 'cpuset'
+[  109.226104][ T5835] cgroup: Unknown subsys name 'rlimit'
+[  110.666383][ T5835] Adding 124996k swap on ./swap-file.  Priority:0 exte=
+nts:1 across:124996k=20
+[  110.845546][ T5195] BUG: sleeping function called from invalid context a=
+t fs/inode.c:1920
+[  110.854984][ T5195] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pi=
+d: 5195, name: udevd
+[  110.865089][ T5195] preempt_count: 1, expected: 0
+[  110.870130][ T5195] RCU nest depth: 0, expected: 0
+[  110.875858][ T5195] 2 locks held by udevd/5195:
+[  110.881834][ T5195]  #0: ffff88802feb6420 (sb_writers#5){.+.+}-{0:0}, at=
+: mnt_want_write+0x41/0x90
+[  110.893073][ T5195]  #1: ffff8880306928e8 (&sb->s_type->i_lock_key){+.+.=
+}-{3:3}, at: iput+0x2db/0x1050
+[  110.903490][ T5195] Preemption disabled at:
+[  110.903505][ T5195] [<0000000000000000>] 0x0
+[  110.912829][ T5195] CPU: 1 UID: 0 PID: 5195 Comm: udevd Tainted: G      =
+  W           syzkaller #0 PREEMPT(full)=20
+[  110.912861][ T5195] Tainted: [W]=3DWARN
+[  110.912867][ T5195] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 10/02/2025
+[  110.912878][ T5195] Call Trace:
+[  110.912886][ T5195]  <TASK>
+[  110.912894][ T5195]  dump_stack_lvl+0x189/0x250
+[  110.912924][ T5195]  ? __pfx_dump_stack_lvl+0x10/0x10
+[  110.912946][ T5195]  ? __pfx__printk+0x10/0x10
+[  110.912969][ T5195]  ? print_lock_name+0xde/0x100
+[  110.912994][ T5195]  __might_resched+0x495/0x610
+[  110.913020][ T5195]  ? __pfx___might_resched+0x10/0x10
+[  110.913036][ T5195]  ? do_raw_spin_lock+0x121/0x290
+[  110.913063][ T5195]  ? __pfx_do_raw_spin_lock+0x10/0x10
+[  110.913095][ T5195]  iput+0x741/0x1050
+[  110.913122][ T5195]  do_unlinkat+0x39f/0x560
+[  110.913155][ T5195]  ? __pfx_do_unlinkat+0x10/0x10
+[  110.913182][ T5195]  ? strncpy_from_user+0x150/0x2c0
+[  110.913209][ T5195]  ? getname_flags+0x1e5/0x540
+[  110.913232][ T5195]  __x64_sys_unlink+0x47/0x50
+[  110.913267][ T5195]  do_syscall_64+0xfa/0xfa0
+[  110.913295][ T5195]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  110.913313][ T5195]  ? clear_bhb_loop+0x60/0xb0
+[  110.913335][ T5195]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  110.913354][ T5195] RIP: 0033:0x7f9a9ff15937
+[  110.913371][ T5195] Code: 00 00 e9 a9 fd ff ff 66 2e 0f 1f 84 00 00 00 0=
+0 00 66 90 b8 5f 00 00 00 0f 05 c3 0f 1f 84 00 00 00 00 00 b8 57 00 00 00 0=
+f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 8b 15 91 b4 0d 00 f7 d8 64 89 02 b8
+[  110.913387][ T5195] RSP: 002b:00007fff0fc3e2a8 EFLAGS: 00000202 ORIG_RAX=
+: 0000000000000057
+[  110.913408][ T5195] RAX: ffffffffffffffda RBX: 0000000000000bb8 RCX: 000=
+07f9a9ff15937
+[  110.913422][ T5195] RDX: ffffffffffffffff RSI: 000000000000000b RDI: 000=
+05583c5bc802e
+[  110.913434][ T5195] RBP: 0000000000000000 R08: 0000000000000000 R09: 000=
+0000000000000
+[  110.913445][ T5195] R10: 0000000000000000 R11: 0000000000000202 R12: 000=
+0000000000000
+[  110.913456][ T5195] R13: 00005583c5be3100 R14: 0000000000000000 R15: 000=
+0000000000000
+[  110.913486][ T5195]  </TASK>
 
-The changes are similar to the 2nd link, but a bit different.
-- Define a single enumeration named READING_MODULE_COMPRESSED.
 
-- In module/main.c add a new security_kernel_post_read_file() call immediat=
-ely
-after decompressing the kernel module.  Like a previous version of this pat=
-ch,
-call kernel_read_file() with either READING_MODULE or READING_MODULE_COMPRE=
-SSED
-based on MODULE_INIT_COMPRESSED_FILE.
+syzkaller build log:
+go env (err=3D<nil>)
+AR=3D'ar'
+CC=3D'gcc'
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_ENABLED=3D'1'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+CXX=3D'g++'
+GCCGO=3D'gccgo'
+GO111MODULE=3D'auto'
+GOAMD64=3D'v1'
+GOARCH=3D'amd64'
+GOAUTH=3D'netrc'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOCACHEPROG=3D''
+GODEBUG=3D''
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFIPS140=3D'off'
+GOFLAGS=3D''
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build2124321294=3D/tmp/go-build -gno-record-gc=
+c-switches'
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMOD=3D'/syzkaller/jobs/linux/gopath/src/github.com/google/syzkaller/go.mo=
+d'
+GOMODCACHE=3D'/syzkaller/jobs/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTELEMETRY=3D'local'
+GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.24.4'
+GOWORK=3D''
+PKG_CONFIG=3D'pkg-config'
 
-- In ima_post_read_file() defer verifying the signature when the enumeratio=
-n is
-READING_MODULE_COMPRESSED.  (No need for a new function ima_read_kernel_mod=
-ule.)
+git status (err=3D<nil>)
+HEAD detached at 7e2882b3269
+nothing to commit, working tree clean
 
-thanks,
 
-Mimi
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' -ldflags=3D"-s -w -X github.com/google/syzkaller/pr=
+og.GitRevision=3D7e2882b32698b70f3149aee00c41e3d2d941dca3 -X github.com/goo=
+gle/syzkaller/prog.gitRevisionDate=3D20251007-152513"  ./sys/syz-sysgen | g=
+rep -q false || go install -ldflags=3D"-s -w -X github.com/google/syzkaller=
+/prog.GitRevision=3D7e2882b32698b70f3149aee00c41e3d2d941dca3 -X github.com/=
+google/syzkaller/prog.gitRevisionDate=3D20251007-152513"  ./sys/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build -ldflags=3D"-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D7e2882b32698b70f3149aee00c41e3d2d941dca3 -X g=
+ithub.com/google/syzkaller/prog.gitRevisionDate=3D20251007-152513"  -o ./bi=
+n/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
+_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"7e2882b32698b70f3149aee00c41e3d2d9=
+41dca3\"
+/usr/bin/ld: /tmp/ccT2jI60.o: in function `Connection::Connect(char const*,=
+ char const*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
+./tools/check-syzos.sh 2>/dev/null
+
+
+Error text is too large and was truncated, full error text is at:
+https://syzkaller.appspot.com/x/error.txt?x=3D11651084580000
+
+
+Tested on:
+
+commit:         84d39fb9 Add linux-next specific files for 20251105
+git tree:       linux-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dbebc0cb9c2989b8=
+1
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D12479ae15958fc3f5=
+4ec
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-=
+1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D139f532f9800=
+00
+
