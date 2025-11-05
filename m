@@ -1,135 +1,126 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC90344026
-	for <linux-security-module@vger.kernel.org>; Wed,  5 Nov 2025 19:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0453446A6
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Nov 2025 19:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762372272; cv=none; b=phKk91uqFTBDlggkSiDbhyFsbVDHHV3ya2rtJ93ZQYkxfT4kzrMbWDoRzPK+LIXUnf7Q0OvycFbAnhTAFsL84Y9yeEIeX7G+2frIj4kli9GIv+6h/NsIJE3N50BkRnu8rGub7XpE4VYJOngkmQ1rViSvYHGEQG0VQO22jFCA86c=
+	t=1762372652; cv=none; b=TaUpF8lRasDTyFalcb5lHsGsBdnZt7NLXRxhUQ6moVyIIli9WwZaOxetaUqPFyizhaDZ5lzQJlIyAhZaA73Ige6SE8gM70TAkN+HUIQOef2YNsWcjthsuPuDsfETAlbZkBI0C8Fgqs4D/fVpwei4dDxEW+j3+bOz6+5teOSuCxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762372272; c=relaxed/simple;
-	bh=Pk0Npog8sZ0LZeV37QkwTxusJxsZmgGiGMBvOdfNujQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZmiV8wvCsfhgb0Xd5Sh8b2poBdHVP/7Ks7r2QMpTxswsVpUhv+SHsWA88vsCfhpt997mAmdsvf+l6m+yN+KBHs6rAu2q/51XnscwEJ9VmZyfoXZBr1TZBZQhxOqRIHmOyytjkIlpMzs7LZ6jnw8X12Rv9IrirSzAXnAm7/Yiuk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=leotC6aN; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1762372652; c=relaxed/simple;
+	bh=d+6GABhhX6qdFUQptsJgpAYN/PEEUyC1RmNUJoTW+vs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sVudlZV5s/i/6S2log6GOaJO69wml5McjymdesfyDbslgH8PeeSf+SAWAcwk5cj5/w6tCLaOovMDsjZWYtYgsDG2QVfw/gLiMBhwfyDYIYMSoZJKvVomeuAQJKvYk63BoVO/klkaAzI6DS7Di8p+z4hTL4TWQd8FV7nb8mnsFCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=loqbXXje; arc=none smtp.client-ip=45.157.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="leotC6aN"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-640b06fa959so246463a12.3
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Nov 2025 11:51:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762372269; x=1762977069; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N+1+3F9krAd0V9GErIF2j9xx69fWENxgr7H3lgTY8x0=;
-        b=leotC6aN6vEloWA7tmbborXez8PnXDaxka3MR1SfiqyvPp+h5RfFY/zfXVq4Sv+3tS
-         d5XGKRJ0uVv22z7cRryqGsIxwmel/fscwVPvTpybXOTzCtfYbWZSMidCW+osHutl7Zq1
-         IkVFcQXaG1WRp6WRze0v7xLlDCUNHFJPKgUidX/h3wU1PsoZKHS7v8JhcUZ52iRhqHjx
-         mGAZbRa+59ULkFyMdRoFOt6Q/689U7+Nm9gGY3X7z03eFpmpsJlx5TwU6jALel+HZh2O
-         YnlpUACAoyqNCw1TZastfEdE/Ezh9kaEtGp6zoE6lo6UYL0X3qH8B438orRkHnZydymD
-         cYHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762372269; x=1762977069;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N+1+3F9krAd0V9GErIF2j9xx69fWENxgr7H3lgTY8x0=;
-        b=HQc2O86DqyzIS2aeJL2jmg1b7dv393Y6y1sFg+YIC/P9uJ46fYHNQpjEPu5flUnCVO
-         hA/FrMeei2PQ/q4o1h1ctulEJEhD4htJLIeKJ0XWKNclb7/8qzSizGdn6SRMC9TAJ9Ln
-         ySG03liP8px4JX0CalC1oWFWn0MllTiqCzoY8oiJMigBIbA5kY5DOFPlyFfwQENE/qev
-         jpOZTcPxeyzSyD1xgY7PlpK1pITFzGbVq8zddkuQF/TX3P5jFYisFMvsARjvt+ye9Spe
-         NnP+lUUeBpyOcgC2OiILKexsI3TwG5lFo3L8SPBSxgnhsbGRszm/aq8QpguKdlL9f++0
-         fgsA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+5SZVR42SiIyzr9CASWp8DgEgfs3p14miMsa9Qp+U4vUM7zmCIHWPHuHDKnXUuodH1UC+lfP2DL4C8qhH3Y8gAz+NIH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP+wJ6dQBC/aB2gJUm92AMb0unI9Z1Ad1UArh0IjjdMV34EF/D
-	OMQKAiQ/GQcl4lZo47rmc1+mDLRjj600j1HTVZhe4rZFBfizAVdy7PC780PWx7RbdDgXdETojFJ
-	75A21nZTWsJr6pnGHuLFFX8P9IeiblG8=
-X-Gm-Gg: ASbGncvjQxCcqVFNDJ6whwq4IwJvw31g42/Nmw32Fab1LSDxZU8s8r2oU4ICRpNO17N
-	K/PWNDhuE50pYm/OBr6pMevn+oM4KWhVoSPcq7m8AIPWjAgmmhKsYul4nbDl7Wjo6rSNLDKDnpS
-	CyNDkd8007+C7zhu/Fw0eanPyLDthuyQczV0Top4u76YtKid+aveBGu6bKV4p3Px1TtpJN6Tgtz
-	tHxtZH1nMUDlDlX0Su0eNphOc22Cxhi19owiU9DUpo3AxX8IbK56rgE0Ql3b6xs9xrKXuV5Dgnp
-	gGy8kB/p0EX+Kio=
-X-Google-Smtp-Source: AGHT+IGw6uruJ9ZEI48AgrBdkQ6+Y4KI/t3qaGHgTl6iUqNZaRX9HqUFuxhME6r39mMz7B0UJDlRLhanlWqFyjj6ElI=
-X-Received: by 2002:a05:6402:4007:b0:640:f041:c7c6 with SMTP id
- 4fb4d7f45d1cf-64105a3ea6emr4012523a12.21.1762372264805; Wed, 05 Nov 2025
- 11:51:04 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="loqbXXje"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4d1wbK4GJDzYdd;
+	Wed,  5 Nov 2025 20:38:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1762371485;
+	bh=SFTb5KCy/2+7VKIrPK8845ifDCLgH0t8yJLtdcU3XV4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=loqbXXjeH7j9Xa8aBCgUPRba7a/Z9bjphSoAfexT86YOJHHirNZJbeeQ3PO/wzBkq
+	 sUWI/LfMJqhKOOTn12m7HZS+Clb+C4y8aYbM9IAfvaNyghxTXafT5M5ehx+SBbVH5n
+	 H3P3AShAS4VG5etaRKEySGCuTW1PTN5lMSGYB9iI=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4d1wbJ3bdRz6tY;
+	Wed,  5 Nov 2025 20:38:04 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Christian Brauner <brauner@kernel.org>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Edward Adam Davis <eadavis@qq.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Hillf Danton <hdanton@sina.com>,
+	Jan Kara <jack@suse.cz>,
+	Jann Horn <jannh@google.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Max Kellermann <max.kellermann@ionos.com>,
+	Tingmao Wang <m@maowtm.org>,
+	syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
+Subject: [PATCH v1] fs: Move might_sleep() annotation to iput_final()
+Date: Wed,  5 Nov 2025 20:37:59 +0100
+Message-ID: <20251105193800.2340868-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251105193800.2340868-1-mic@digikod.net>
-In-Reply-To: <20251105193800.2340868-1-mic@digikod.net>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 5 Nov 2025 20:50:52 +0100
-X-Gm-Features: AWmQ_bmf-MJjucXoTdZsQJpswia7qMghXA6jxfB57WcztYQemJGt9Ps6MJInHsU
-Message-ID: <CAGudoHEvnTCxK-c9yistxN5ZjFjh5x3REoW4XxmiRAXNEDeyPQ@mail.gmail.com>
-Subject: Re: [PATCH v1] fs: Move might_sleep() annotation to iput_final()
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
-	Edward Adam Davis <eadavis@qq.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Hillf Danton <hdanton@sina.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Max Kellermann <max.kellermann@ionos.com>, Tingmao Wang <m@maowtm.org>, 
-	syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Wed, Nov 5, 2025 at 8:38=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
->
-> iput() don't directly call any sleepable code but mostly checks flags
-> and decrement a reference counter before calling iput_final() and then
-> evict().
->
-> Some code might call iput() with guarantees that iput_final() will not
-> be called.  This is the case for Landlock's hook_sb_delete() where the
-> inode counter must de decremented while holding it with another
-> reference, see comment above the first iput() call.
->
-> Move the new might_sleep() call from iput() to iput_final().  The
-> alternative would be to manually decrement the counter without calling
-> iput(), but it doesn't seem right.
->
+iput() don't directly call any sleepable code but mostly checks flags
+and decrement a reference counter before calling iput_final() and then
+evict().
 
-This would mostly defeat the point of the original change.
+Some code might call iput() with guarantees that iput_final() will not
+be called.  This is the case for Landlock's hook_sb_delete() where the
+inode counter must de decremented while holding it with another
+reference, see comment above the first iput() call.
 
-Instead, if you have a consumer which *guarantees* this is not the
-last reference, the vfs layer can provide a helper which acts
-accordingly.
+Move the new might_sleep() call from iput() to iput_final().  The
+alternative would be to manually decrement the counter without calling
+iput(), but it doesn't seem right.
 
-Something like this (untested):
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Edward Adam Davis <eadavis@qq.com>
+Cc: Günther Noack <gnoack@google.com>
+Cc: Hillf Danton <hdanton@sina.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Jann Horn <jannh@google.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Max Kellermann <max.kellermann@ionos.com>
+Cc: Tingmao Wang <m@maowtm.org>
+Reported-by: syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/68d32659.a70a0220.4f78.0012.GAE@google.com/
+Fixes: 2ef435a872ab ("fs: add might_sleep() annotation to iput() and more")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+
+From hook_sb_delete():
+
+	/*
+	 * At this point, we own the ihold() reference that was
+	 * originally set up by get_inode_object() and the
+	 * __iget() reference that we just set in this loop
+	 * walk.  Therefore the following call to iput() will
+	 * not sleep nor drop the inode because there is now at
+	 * least two references to it.
+	 */
+	iput(inode);
+
+#syz test
+
+---
+ fs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 diff --git a/fs/inode.c b/fs/inode.c
-index 84f539497857..a3ece9b4b6ef 100644
+index 84f539497857..64120cb21e8b 100644
 --- a/fs/inode.c
 +++ b/fs/inode.c
-@@ -2011,6 +2011,15 @@ void iput(struct inode *inode)
- }
- EXPORT_SYMBOL(iput);
+@@ -1917,6 +1917,7 @@ static void iput_final(struct inode *inode)
+ 	const struct super_operations *op = inode->i_sb->s_op;
+ 	int drop;
+ 
++	might_sleep();
+ 	WARN_ON(inode_state_read(inode) & I_NEW);
+ 	VFS_BUG_ON_INODE(atomic_read(&inode->i_count) != 0, inode);
+ 
+@@ -1969,7 +1970,6 @@ static void iput_final(struct inode *inode)
+  */
+ void iput(struct inode *inode)
+ {
+-	might_sleep();
+ 	if (unlikely(!inode))
+ 		return;
+ 
+-- 
+2.51.0
 
-+void iput_not_last(struct inode *inode)
-+{
-+       VFS_BUG_ON_INODE(inode_state_read_once(inode) & I_CLEAR, inode);
-+       VFS_BUG_ON_INODE(atomic_read(&inode->i_count) < 2, inode);
-+
-+       WARN_ON(atomic_sub_return(1, &inode->i_count) =3D=3D 0);
-+}
-+EXPORT_SYMBOL(iput_not_last);
-+
- #ifdef CONFIG_BLOCK
- /**
-  *     bmap    - find a block number in a file
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 41c855ef0594..8181a0d0e2ac 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2909,6 +2909,7 @@ extern int current_umask(void);
-
- extern void ihold(struct inode * inode);
- extern void iput(struct inode *);
-+void iput_not_last(struct inode *);
- int inode_update_timestamps(struct inode *inode, int flags);
- int generic_update_time(struct inode *, int);
