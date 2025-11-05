@@ -1,188 +1,157 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A92333BBDC
-	for <linux-security-module@vger.kernel.org>; Wed,  5 Nov 2025 15:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07ED2609D6
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Nov 2025 18:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762357339; cv=none; b=Ey+2Ij8ZRMkkAME/uny3NWYYdF/EbQEnFutsFePerKIixtl5k5j9yj9+WgQv+54krvH6Wgywxdnv7LFTXS0zjeu/kE9F25v7vFSKJ2WMzicSka++P7T3Fk9Dyq2DzbuOQT/Z1D+AU9WrzaJfewJJzHLnF4U7ClYRNT58bil8gy4=
+	t=1762365640; cv=none; b=IdRm7fP24aUrZgx04/pf60vLPua2yOtVbb6JlKhlj3DmH4ryf4BTTzVgSlVg75V0D/E7LnOgb6M3mS9Lzs0AWZMqV2fPk0PMU81DppL+4TQ/7nbP8v4lB2T3ILjr+5KEKrG1xP0lvAighmeZleiRdzSt9JXzKLFOVD4A2JzaVzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762357339; c=relaxed/simple;
-	bh=Iba7LH/Bs8qFsrpJypki6edNxDKATUSsuPANrTlNJQ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K8WPkH8K+ixoCjU+FPxDtjjbX1emohwjrGhq1CC55OUG2NnAIYKGy4xGCZOPbH9ryQOwyDdevCt9GljU07txy7WNj32qJKFArPvenKNGYXTfZtBuJo+vl8DFdOyst9kdLh37DAuNUZc+vr32sZV+FrXhybxguHfS1zVlrni09VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NaXLpIL/; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1762365640; c=relaxed/simple;
+	bh=5BbBznXQTow1KHJnCYxzJ0cp7oC/SzTbNF06vLrk3hY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WraP2exzGYNC20E8UkXoPN5+sAAviAs4dAiWXG2Pg2MkgY1CUvjT8/2gfWwGg2vaApIKweEgtWY6oFzqX0reJS75Fejjp45eQwEaVlDDK5mNkM1BRny9p6uQrF+DIeLCqKA5aQdqv8/iBI2dU6Cm5cDA4NTHSvOIBuFNyVREbsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jbfRITeL; arc=none smtp.client-ip=74.125.224.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NaXLpIL/"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-27d3540a43fso69345615ad.3
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Nov 2025 07:42:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jbfRITeL"
+Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-63f74b43db8so144145d50.3
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Nov 2025 10:00:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1762357337; x=1762962137; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H32OZm73A90v3osjPzr+/wU/KyfXBz0Q5coNZvD4LuY=;
-        b=NaXLpIL/zrLoL3Er2MxzYSkoT7QM/u0WS/f5teKMA4ll2lSfpq/1Eodpucp/gmBYlM
-         UVDwwxunEGM9GsR5ON7K8Hh1Irjnqu2XM58JpbOMyC7M4NiLhW+3MluzY1KC5vSpMF/m
-         sTP8HKxPjJDlWO+rS+hvOnGoWQ/nsyFOaBWKh6KfqOhpkNo9hO+ucd2q+ghlubbBqo0Y
-         +7EhabB+DQCrSgH6Z3xlO29bcB67ogvZJLrATWbf1WEQhwmSGFnCsMRjGmgTvPbLAC/C
-         o4/EfL7/pIHboOWORoQgyz7skwuwDY0bJE1XPoIb0uoA49VeyQy+FRQJEhWEe0eWMK+B
-         +tZg==
+        d=gmail.com; s=20230601; t=1762365638; x=1762970438; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OJq7BTsG2XzZic/SgC5UxGpcf1RJzc4L7T51KtvfLyo=;
+        b=jbfRITeLfkC3jyllh5vFvmEBS413uLHtHuwrVEmofRwjophmGmMeQoPxoO68IQLnZH
+         Dq7BG5hcaLDUxNeJ6ZtirRiXUG3y8Nh9f96lXp6urCH9dL9nsGC7FQNOts5xunBzbwne
+         4qObNYnH3SonpeY5RcqvuI5WnksXZWVMX1xbasdftx32QrsJj1x9yNl9YS1OR4bX6TTN
+         CXyBjb96T4NWYcDCuKmJoX22Hf1H+EYBWWeLe9TmC/EtipNrTOx7r8Mo31HmnJbm1a7p
+         CLyTgZzNCCpYXlJt7ItsoCpmF8S22k3RISX9f2ZXEtsUAL65U6YAffGOKWaCd1zPfeYO
+         6Qfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762357337; x=1762962137;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H32OZm73A90v3osjPzr+/wU/KyfXBz0Q5coNZvD4LuY=;
-        b=Z+LngY4Di/+kQxmYndCQI365MGehz1K3dfP4TDe6VkqxXagV3qEslSJ/Fl8sa/f2Lz
-         5CriHV/HBAoogVH7agQfP3kzafPIvBphIp4fdaLgBqm20VTk8VckFuG+guzyetZfSRTX
-         pad7RxgsApZ1gSMIyH/1mRD71vSOrsBaKo0kb9yPpOZXh/Ky77svttL1v0PCviqMllgv
-         Ok8fZKHfCrdzCwjhR0mkn+fx2DooPBGwmXKLuOD+B+FSN5hCHb2Q4uLJqllKMxtfitxJ
-         gNgfueZbUYX8/Jeqq/5YzVIj6FonFp/IQOxQ14IdXOz/pbjlBYI23nfo+VxSdYea17FD
-         gGxA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2W5z32liX+Z3jdc7oGUvC9j8sRjf0qY98+7YJQ+KqTbEtYkSJ9auU+ZvNl9m16u9uSDY2EOcFUcaSOUBhqMg+z+aqVuc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxiPAitWwvudUS/v6/qMiKr3sRyCKgsJz8rHGpHIFmmvtI6YzL
-	Br8o13MnMfv43fG+Oa7Pin2ur1J0ow82f85esAgSDPTQL+3H3NovwDRBKEawPmHxD8x1F3y9EuY
-	bQNyFw2QXTducNI1SDz0G3/D2T7qwW9hUlH1IBdYB
-X-Gm-Gg: ASbGncvRS3e7zSbW1B4P4one/HlV4lxdloE/Wmptkk6eHmN2bBjdz4sidSbA6FP13Fw
-	5VQuWkIhqnLeATYQPJx33d6USjNwToqQbrrC4Y/dkT0BMtxrYOVdwF1v9Gzv+6xHYtJl57PMQTr
-	Q8ZXp/gMIKRU+KD5xO43u4xL/n8TgMgOF1Sdq3/9aktBedTO/RvGZGr6oQevmKWgI+Z209Ok4/f
-	mfVQa466zJXwhfIob4zqY7QgXLe9gm37OGWDrgeFAo9kY3mG2FNF4+e5wi9
-X-Google-Smtp-Source: AGHT+IGd/j4s18IFElpzZGFgP4ETfYaHvFGNh7TpktX+wcy4cq6aEqn3mplaYtty5v4Q54o05/rNfTw5Wcf3twZ5Giw=
-X-Received: by 2002:a17:902:ef49:b0:295:4620:3e18 with SMTP id
- d9443c01a7336-2962ad2b255mr61501535ad.24.1762357337298; Wed, 05 Nov 2025
- 07:42:17 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762365638; x=1762970438;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OJq7BTsG2XzZic/SgC5UxGpcf1RJzc4L7T51KtvfLyo=;
+        b=Vl7LRDceGxgN0i7gS/7vIO/K1i1XPC+WR0QjHcR+nNX7BOcin7vpGaZLrF0WY2Dch3
+         HhOZNcOJFAszFtFPoT64reA/XDYbuU3/SER2RWvdv8blm9294n+3aZfsA2p+AuUhJLU1
+         UQXEXAC9hsXI+CdZ37CtzrctchV4Zlfb14abtYYMNv4nR9Ow3r32HaNsjIrSQPZpMtbU
+         FAFHP+K5NJISlhe4yVvfhx5jJqClrfXtYhhQf7Otd/6x/vnlQiTpw9DAp6vKZBBzWbQb
+         GR++j1ddEgfj5HWFod3diq2oa8f0L5hEYBNi/JtJ3z2I/Jq/a5eCnPh15GPHHeO7FhCo
+         4iJg==
+X-Gm-Message-State: AOJu0YzhXfTn0o108rc1VnGzCwBfPSFASfumh5lUYCdFWGMyLXvoSIVD
+	RvvytypmXQE74uVNreugxk3nzJf/INOaH25VoXrSVfRgPH22tSX3xCB741VIUGgu
+X-Gm-Gg: ASbGncv6qfkv94UQp4/AO2ywCTmq7XetiPC+y7x5Uc2UGSs9QK5SivHkBksu4gt7C0l
+	k+yH05DZL4Qa8CZ7tyP403qtEkNMMuLT+HEyI/3DTcVZ/IOXxcO17EWoDKyRkVK90/uiB2fF1Gp
+	aaEFaFzOCJ2Hhn5j9WumJLPPLzt5ww5xpGAQCfJSHqUgPSP8vLzI5nXYkymoiESQOvf3txmhl/I
+	gB0s1Trr+2UfjqulhOpXzTnE/pkle6qjO4yu/Ra0F2kcEd70n62EBz2FY0nHlbTl5YklSO9HmqE
+	2WXHJtelb3oQUGw9eW0wrmnJ84kpyAna5Bm8IlsXY1Ct2SODMMvqWR3PZzg8sFiWCgNnWZfgOsq
+	2Xzprh5daO1zN52qa5sERNABPwcnFVol06IDga8u5HICFMY1WOPdtD6yU3XDFmMz8mqG/q/EFXy
+	l4/kduBXlOC4z5WVY5ZWqaAQCDzNh10c4C2AAv20u30vBn9NY0P7fvH0Vu0u7/08CY/IKJnR8=
+X-Google-Smtp-Source: AGHT+IHJhb83m7DePL2YikfAstr8Qv2+gLKMyO8Ssfa/CA6JOslz59L+9lICNzIwodNBtzjfEIsKbQ==
+X-Received: by 2002:a05:690e:c43:b0:63f:b18a:7819 with SMTP id 956f58d0204a3-63fd34c5224mr3432199d50.23.1762365637458;
+        Wed, 05 Nov 2025 10:00:37 -0800 (PST)
+Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-787b13faf56sm756657b3.19.2025.11.05.10.00.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 10:00:37 -0800 (PST)
+From: Justin Suess <utilityemal77@gmail.com>
+To: linux-security-module@vger.kernel.org
+Cc: Tingmao Wang <m@maowtm.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Jan Kara <jack@suse.cz>,
+	Abhinav Saxena <xandfury@gmail.com>,
+	Justin Suess <utilityemal77@gmail.com>
+Subject: [PATCH 0/3] Implement LANDLOCK_ADD_RULE_NO_INHERIT
+Date: Wed,  5 Nov 2025 13:00:16 -0500
+Message-ID: <20251105180019.1432367-1-utilityemal77@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928030358.3873311-1-coxu@redhat.com> <20251031074016.1975356-1-coxu@redhat.com>
- <CAHC9VhRBXkW+XuqhxJvEOYR_VMxFh4TRWUtXzZky=AG_nyBYEQ@mail.gmail.com>
- <baa39fcd1b6b485f14b8f06dcd96b81359e6e491.camel@linux.ibm.com>
- <CAHC9VhToe-VNqbh6TY2iYnRvqTHRfQjnHYSRWYgt8K7NcLKMdg@mail.gmail.com>
- <fftfj4o3kqxmfu3hb655xczqcddoeqjv55llsnwkrdu5isdm4z@6sqe3k24a6kk>
- <CAHC9VhRGwXvhU64Nk5jdmtPfrt9bbkzpLVqS0LRbtN3Q3HhnCw@mail.gmail.com> <0c7e94a436a3742003e5e1155a48480d8307a9c7.camel@linux.ibm.com>
-In-Reply-To: <0c7e94a436a3742003e5e1155a48480d8307a9c7.camel@linux.ibm.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 5 Nov 2025 10:42:05 -0500
-X-Gm-Features: AWmQ_bk9pEteWi73RS9euB226vzsor-YYmPiiJS9QGZvrRveM1VMwnJqW9ds-64
-Message-ID: <CAHC9VhS6xWvu5TjjS4MRGFEWxdAhg-Xsf6L+=K0k8U+fgiAtTQ@mail.gmail.com>
-Subject: Re: [PATCH v2] lsm,ima: new LSM hook security_kernel_module_read_file
- to access decompressed kernel module
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Karel Srot <ksrot@redhat.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:MODULE SUPPORT" <linux-modules@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 5, 2025 at 9:07=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> wro=
-te:
-> On Tue, 2025-11-04 at 21:47 -0500, Paul Moore wrote:
-> > Assuming I'm understanding the problem correctly, I think you're
-> > making this harder than it needs to be.  I believe something like this
-> > should solve the problem without having to add more conditionals
-> > around the hooks in kernel_read_file(), and limiting the multiple
-> > security_kernel_post_read_file() calls to just the compressed case ...
-> > and honestly in each of the _post_read_file() calls in the compressed
-> > case, the buffer contents have changed so it somewhat makes sense.
->
-> > Given the code below, IMA could simply ignore the
-> > READING_MODULE_COMPRESSED case (or whatever it is the IMA needs to do
-> > in that case) and focus on the READING_MODULE case as it does today.
-> > I expect the associated IMA patch would be both trivial and small.
-> >
-> > diff --git a/kernel/module/main.c b/kernel/module/main.c
-> > index c66b26184936..b435c498ec01 100644
-> > --- a/kernel/module/main.c
-> > +++ b/kernel/module/main.c
-> > @@ -3675,17 +3675,19 @@ static int idempotent_wait_for_completion(struc=
-t idempot
-> > ent *u)
-> >
-> > static int init_module_from_file(struct file *f, const char __user * ua=
-rgs, int
-> > flags)
-> > {
-> > +       bool compressed =3D !!(flags & MODULE_INIT_COMPRESSED_FILE);
-> >        struct load_info info =3D { };
-> >        void *buf =3D NULL;
-> >        int len;
-> >
-> > -       len =3D kernel_read_file(f, 0, &buf, INT_MAX, NULL, READING_MOD=
-ULE);
-> > +       len =3D kernel_read_file(f, 0, &buf, INT_MAX, NULL,
-> > +                              compressed ? READING_MODULE_COMPRESSED :=
- READING_
-> > MODULE);
-> >        if (len < 0) {
-> >                mod_stat_inc(&failed_kreads);
-> >                return len;
-> >        }
-> >
-> > -       if (flags & MODULE_INIT_COMPRESSED_FILE) {
-> > +       if (compressed) {
-> >                int err =3D module_decompress(&info, buf, len);
-> >                vfree(buf); /* compressed data is no longer needed */
-> >                if (err) {
-> > @@ -3693,6 +3695,14 @@ static int init_module_from_file(struct file *f,=
- const ch
-> > ar __user * uargs, int
-> >                        mod_stat_add_long(len, &invalid_decompress_bytes=
-);
-> >                        return err;
-> >                }
-> > +
-> > +               err =3D security_kernel_post_read_file(f,
-> > +                                                    (char *)info.hdr, =
-info.len,
-> > +                                                    READING_MODULE);
->
-> Without changing the enumeration here, IMA would not be able to different=
-iate
-> the first call to security_kernel_post_read_file() and this one.  The fir=
-st call
-> would result in unnecessary error messages.
+Hi,
 
-Given the patch snippet above, in the case where an uncompressed
-module is passed into init_module_from_file() there would be the
-following checks, in this order:
+This patch builds on version 3 of the the "quiet flag" series by Tingmao Wang.
 
- * kernel_read_file()
- -> security_kernel_read_file(READING_MODULE)
- -> security_kernel_post_read_file(READING_MODULE)
- * init_module_from_file()
- -> NONE
+v3: https://lore.kernel.org/linux-security-module/cover.1761511023.git.m@maowtm.org/
 
-... this should be the same as the current behavior.
+It implements a new flag that prevents inheriting access rights from parent
+objects within a single landlock layer. This is useful for policies
+where a parent directory requires looser access grants that its
+children.
 
-In the case where a compressed module is passed into
-init_module_from_file() there would be the following checks, in this
-order:
+For example, within a single ruleset / layer, given:
+    /a = rw
+    /a/b = ro
 
- * kernel_read_file()
- -> security_kernel_read_file(READING_MODULE_COMPRESSED)
- -> security_kernel_post_read_file(READING_MODULE_COMPRESSED)
- * init_module_from_file()
- -> security_kernel_post_read_file(READING_MODULE)
+Under the current featureset, /a/b recieves rw permissions because it
+inherits the w permission from /a
 
-... the two differences being that the hook calls in
-kernel_read_file() use the READING_MODULE_COMPRESSED id, which seems
-appropriate as the data passed to the hook is the compressed
-representation, and the additional _post_read_file() hook call in
-init_module_from_file() using the READING_MODULE id, as the data
-passed to the hook is now uncompressed.  Not only should IMA be able
-to easily differentiate between the two _post_read_file() calls, but
-it should have access to both the compressed and uncompressed data.
+To solve this, I add a new flag LANDLOCK_RULE_ADD_NO_INHERIT which
+suppresses parent permissions.
 
---=20
-paul-moore.com
+For example:
+    /a = rw
+    /a/b = ro + LANDLOCK_RULE_ADD_NO_INHERIT
+
+This grants /a/b only read permissions.
+
+Design:
+- When this flag is added to a rule, the landlock_unmask_layers function will 
+  track encounters of this flag in the rule_flags as it traverses up the fs tree.
+  When this flag is encountered, the access grants of the current rule will be allowed, 
+  but further access grants by rules within that layer will be suppressed.
+- Access grants made by rules in other layers will continue until the access requirements are satisfied.
+
+Demo:
+~ # LL_FS_RW="/" LL_FS_RO="" LL_FS_RO_NO_INHERIT="/tmp" landlock-sandboxer touch fi
+    Executing the sandboxed command...
+    ~ # ls
+    bin   dev   etc   fi    init  proc  root  sbin  sys   tmp   usr
+    ~ # LL_FS_RW="/" LL_FS_RO="" LL_FS_RO_NO_INHERIT="/tmp" landlock-sandboxer touch /tmp/fi
+    Executing the sandboxed command...
+    touch: /tmp/fi: Permission denied
+    ~ # LL_FS_RW="/" LL_FS_RO="" LL_FS_RO_NO_INHERIT="/tmp" landlock-sandboxer sh
+    Executing the sandboxed command...
+    sh: can't access tty; job control turned off
+    ~ # cd tmp
+    /tmp # LL_FS_RW="/" LL_FS_RO="" LL_FS_RO_NO_INHERIT="/tmp" landlock-sandboxer ls
+    Executing the sandboxed command...
+    /tmp # LL_FS_RW="/" LL_FS_RO="" LL_FS_RO_NO_INHERIT="/tmp" landlock-sandboxer touch fifi
+    Executing the sandboxed command...
+    touch: fifi: Permission denied
+    /tmp # LL_FS_RW="/" LL_FS_RO=""  landlock-sandboxer touch fifi
+    Executing the sandboxed command...
+    touch: fifi: Permission denied
+    /tmp #
+
+This is my first patch/contribution to the LSM subsystem (and the linux
+kernel as a whole), so any feedback and corrections on mailing list
+ettiquite would be appreciated. 
+
+Very Respectfully,
+Justin Suess
+
+Justin Suess (3):
+  landlock: Add flag to supress access rule inheritence within a layer
+  samples/landlock: Add no inherit support to sandboxer
+  selftests/landlock: Add test for new no inherit flag
+
+ include/uapi/linux/landlock.h              |  9 ++++
+ samples/landlock/sandboxer.c               | 39 ++++++++++++----
+ security/landlock/ruleset.c                |  8 ++++
+ security/landlock/ruleset.h                | 10 ++++
+ security/landlock/syscalls.c               |  3 +-
+ tools/testing/selftests/landlock/fs_test.c | 53 +++++++++++++++++-----
+ 6 files changed, 99 insertions(+), 23 deletions(-)
+
+base-commit: 77903de728f2a1ef40a31a3babf861b8fbf9530f
+--
+2.51.0
+
