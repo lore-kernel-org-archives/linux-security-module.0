@@ -1,259 +1,188 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4296200127
-	for <linux-security-module@vger.kernel.org>; Wed,  5 Nov 2025 14:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A92333BBDC
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Nov 2025 15:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762353241; cv=none; b=ow2zQwe/Fs6IuYP+oclqGPPXZEVx3q4aAh87SwXQX8A9KX4gEYfV24EbFf4jG/MPa0xoYVIz6IGUAPnXZvOoP7fjwov1y0w6M4nHRBh3TJtdLqNtpeW4CE7R5qKzISlpYvDe5pSsZ+C2j2Z37dlRz+ltmhpX87A3Az8SalCHCGE=
+	t=1762357339; cv=none; b=Ey+2Ij8ZRMkkAME/uny3NWYYdF/EbQEnFutsFePerKIixtl5k5j9yj9+WgQv+54krvH6Wgywxdnv7LFTXS0zjeu/kE9F25v7vFSKJ2WMzicSka++P7T3Fk9Dyq2DzbuOQT/Z1D+AU9WrzaJfewJJzHLnF4U7ClYRNT58bil8gy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762353241; c=relaxed/simple;
-	bh=KFCBX1MYnJq2fTO13szb1kI/C2Hc+wr41HxRFWuqHhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XDsA4heoAfVI+HiauurCGdnak7V+EvbPr/wUBRhjt+0dxipTUFIaUextb76FCQUmTbuqnhqzh8qGAzg3T5RK9dV6KehLgdSnpESXOJEhnMR05HGJQMVk4oeMzraHlbzso5C5uoputU/OXY5gAY6jRQ1yj4wTBsMF8l0q9SNoEao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hiQjTgvU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1762357339; c=relaxed/simple;
+	bh=Iba7LH/Bs8qFsrpJypki6edNxDKATUSsuPANrTlNJQ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K8WPkH8K+ixoCjU+FPxDtjjbX1emohwjrGhq1CC55OUG2NnAIYKGy4xGCZOPbH9ryQOwyDdevCt9GljU07txy7WNj32qJKFArPvenKNGYXTfZtBuJo+vl8DFdOyst9kdLh37DAuNUZc+vr32sZV+FrXhybxguHfS1zVlrni09VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NaXLpIL/; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hiQjTgvU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762353239;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ElYGIlkPKzTybpsHtstaGauKroEiTfyK75ipBsehUhk=;
-	b=hiQjTgvUcKKC/ubKDN4U5yCnqsqirhO0T905sdr2cskiSruNkolGSEoSU8wusboX2irCdT
-	0u+/f7zuqyvfB4JlZuvUE2Y/oS3aQA3O3UnDg2c7wQsn+stgtZwZFskeFz/snQN8SHuSgO
-	8itfpeMiXXinflyrmfI4Ax8SMlI+spo=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-631-ONJ9TyxoOGyURfFJlmVhEg-1; Wed,
- 05 Nov 2025 09:33:57 -0500
-X-MC-Unique: ONJ9TyxoOGyURfFJlmVhEg-1
-X-Mimecast-MFC-AGG-ID: ONJ9TyxoOGyURfFJlmVhEg_1762353232
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7691519560A1;
-	Wed,  5 Nov 2025 14:33:48 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.124])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5DEDA180049F;
-	Wed,  5 Nov 2025 14:33:28 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  5 Nov 2025 15:32:31 +0100 (CET)
-Date: Wed, 5 Nov 2025 15:32:10 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Adrian Reber <areber@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	tiozhang <tiozhang@didiglobal.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	YueHaibing <yuehaibing@huawei.com>,
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
-	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	David Windsor <dwindsor@gmail.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Hans Liljestrand <ishkamiel@gmail.com>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
-Message-ID: <20251105143210.GA25535@redhat.com>
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NaXLpIL/"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-27d3540a43fso69345615ad.3
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Nov 2025 07:42:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1762357337; x=1762962137; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H32OZm73A90v3osjPzr+/wU/KyfXBz0Q5coNZvD4LuY=;
+        b=NaXLpIL/zrLoL3Er2MxzYSkoT7QM/u0WS/f5teKMA4ll2lSfpq/1Eodpucp/gmBYlM
+         UVDwwxunEGM9GsR5ON7K8Hh1Irjnqu2XM58JpbOMyC7M4NiLhW+3MluzY1KC5vSpMF/m
+         sTP8HKxPjJDlWO+rS+hvOnGoWQ/nsyFOaBWKh6KfqOhpkNo9hO+ucd2q+ghlubbBqo0Y
+         +7EhabB+DQCrSgH6Z3xlO29bcB67ogvZJLrATWbf1WEQhwmSGFnCsMRjGmgTvPbLAC/C
+         o4/EfL7/pIHboOWORoQgyz7skwuwDY0bJE1XPoIb0uoA49VeyQy+FRQJEhWEe0eWMK+B
+         +tZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762357337; x=1762962137;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H32OZm73A90v3osjPzr+/wU/KyfXBz0Q5coNZvD4LuY=;
+        b=Z+LngY4Di/+kQxmYndCQI365MGehz1K3dfP4TDe6VkqxXagV3qEslSJ/Fl8sa/f2Lz
+         5CriHV/HBAoogVH7agQfP3kzafPIvBphIp4fdaLgBqm20VTk8VckFuG+guzyetZfSRTX
+         pad7RxgsApZ1gSMIyH/1mRD71vSOrsBaKo0kb9yPpOZXh/Ky77svttL1v0PCviqMllgv
+         Ok8fZKHfCrdzCwjhR0mkn+fx2DooPBGwmXKLuOD+B+FSN5hCHb2Q4uLJqllKMxtfitxJ
+         gNgfueZbUYX8/Jeqq/5YzVIj6FonFp/IQOxQ14IdXOz/pbjlBYI23nfo+VxSdYea17FD
+         gGxA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2W5z32liX+Z3jdc7oGUvC9j8sRjf0qY98+7YJQ+KqTbEtYkSJ9auU+ZvNl9m16u9uSDY2EOcFUcaSOUBhqMg+z+aqVuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxiPAitWwvudUS/v6/qMiKr3sRyCKgsJz8rHGpHIFmmvtI6YzL
+	Br8o13MnMfv43fG+Oa7Pin2ur1J0ow82f85esAgSDPTQL+3H3NovwDRBKEawPmHxD8x1F3y9EuY
+	bQNyFw2QXTducNI1SDz0G3/D2T7qwW9hUlH1IBdYB
+X-Gm-Gg: ASbGncvRS3e7zSbW1B4P4one/HlV4lxdloE/Wmptkk6eHmN2bBjdz4sidSbA6FP13Fw
+	5VQuWkIhqnLeATYQPJx33d6USjNwToqQbrrC4Y/dkT0BMtxrYOVdwF1v9Gzv+6xHYtJl57PMQTr
+	Q8ZXp/gMIKRU+KD5xO43u4xL/n8TgMgOF1Sdq3/9aktBedTO/RvGZGr6oQevmKWgI+Z209Ok4/f
+	mfVQa466zJXwhfIob4zqY7QgXLe9gm37OGWDrgeFAo9kY3mG2FNF4+e5wi9
+X-Google-Smtp-Source: AGHT+IGd/j4s18IFElpzZGFgP4ETfYaHvFGNh7TpktX+wcy4cq6aEqn3mplaYtty5v4Q54o05/rNfTw5Wcf3twZ5Giw=
+X-Received: by 2002:a17:902:ef49:b0:295:4620:3e18 with SMTP id
+ d9443c01a7336-2962ad2b255mr61501535ad.24.1762357337298; Wed, 05 Nov 2025
+ 07:42:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+References: <20250928030358.3873311-1-coxu@redhat.com> <20251031074016.1975356-1-coxu@redhat.com>
+ <CAHC9VhRBXkW+XuqhxJvEOYR_VMxFh4TRWUtXzZky=AG_nyBYEQ@mail.gmail.com>
+ <baa39fcd1b6b485f14b8f06dcd96b81359e6e491.camel@linux.ibm.com>
+ <CAHC9VhToe-VNqbh6TY2iYnRvqTHRfQjnHYSRWYgt8K7NcLKMdg@mail.gmail.com>
+ <fftfj4o3kqxmfu3hb655xczqcddoeqjv55llsnwkrdu5isdm4z@6sqe3k24a6kk>
+ <CAHC9VhRGwXvhU64Nk5jdmtPfrt9bbkzpLVqS0LRbtN3Q3HhnCw@mail.gmail.com> <0c7e94a436a3742003e5e1155a48480d8307a9c7.camel@linux.ibm.com>
+In-Reply-To: <0c7e94a436a3742003e5e1155a48480d8307a9c7.camel@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 5 Nov 2025 10:42:05 -0500
+X-Gm-Features: AWmQ_bk9pEteWi73RS9euB226vzsor-YYmPiiJS9QGZvrRveM1VMwnJqW9ds-64
+Message-ID: <CAHC9VhS6xWvu5TjjS4MRGFEWxdAhg-Xsf6L+=K0k8U+fgiAtTQ@mail.gmail.com>
+Subject: Re: [PATCH v2] lsm,ima: new LSM hook security_kernel_module_read_file
+ to access decompressed kernel module
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Karel Srot <ksrot@redhat.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:MODULE SUPPORT" <linux-modules@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I am still thinking about another approach, will write another email.
-But let me take a closer look at your patch.
-
-First of all, can you split it? See below.
-
-On 08/21, Bernd Edlinger wrote:
+On Wed, Nov 5, 2025 at 9:07=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> wro=
+te:
+> On Tue, 2025-11-04 at 21:47 -0500, Paul Moore wrote:
+> > Assuming I'm understanding the problem correctly, I think you're
+> > making this harder than it needs to be.  I believe something like this
+> > should solve the problem without having to add more conditionals
+> > around the hooks in kernel_read_file(), and limiting the multiple
+> > security_kernel_post_read_file() calls to just the compressed case ...
+> > and honestly in each of the _post_read_file() calls in the compressed
+> > case, the buffer contents have changed so it somewhat makes sense.
 >
-> -static int de_thread(struct task_struct *tsk)
-> +static int de_thread(struct task_struct *tsk, struct linux_binprm *bprm)
->  {
->  	struct signal_struct *sig = tsk->signal;
->  	struct sighand_struct *oldsighand = tsk->sighand;
->  	spinlock_t *lock = &oldsighand->siglock;
-> +	struct task_struct *t;
-> +	bool unsafe_execve_in_progress = false;
+> > Given the code below, IMA could simply ignore the
+> > READING_MODULE_COMPRESSED case (or whatever it is the IMA needs to do
+> > in that case) and focus on the READING_MODULE case as it does today.
+> > I expect the associated IMA patch would be both trivial and small.
+> >
+> > diff --git a/kernel/module/main.c b/kernel/module/main.c
+> > index c66b26184936..b435c498ec01 100644
+> > --- a/kernel/module/main.c
+> > +++ b/kernel/module/main.c
+> > @@ -3675,17 +3675,19 @@ static int idempotent_wait_for_completion(struc=
+t idempot
+> > ent *u)
+> >
+> > static int init_module_from_file(struct file *f, const char __user * ua=
+rgs, int
+> > flags)
+> > {
+> > +       bool compressed =3D !!(flags & MODULE_INIT_COMPRESSED_FILE);
+> >        struct load_info info =3D { };
+> >        void *buf =3D NULL;
+> >        int len;
+> >
+> > -       len =3D kernel_read_file(f, 0, &buf, INT_MAX, NULL, READING_MOD=
+ULE);
+> > +       len =3D kernel_read_file(f, 0, &buf, INT_MAX, NULL,
+> > +                              compressed ? READING_MODULE_COMPRESSED :=
+ READING_
+> > MODULE);
+> >        if (len < 0) {
+> >                mod_stat_inc(&failed_kreads);
+> >                return len;
+> >        }
+> >
+> > -       if (flags & MODULE_INIT_COMPRESSED_FILE) {
+> > +       if (compressed) {
+> >                int err =3D module_decompress(&info, buf, len);
+> >                vfree(buf); /* compressed data is no longer needed */
+> >                if (err) {
+> > @@ -3693,6 +3695,14 @@ static int init_module_from_file(struct file *f,=
+ const ch
+> > ar __user * uargs, int
+> >                        mod_stat_add_long(len, &invalid_decompress_bytes=
+);
+> >                        return err;
+> >                }
+> > +
+> > +               err =3D security_kernel_post_read_file(f,
+> > +                                                    (char *)info.hdr, =
+info.len,
+> > +                                                    READING_MODULE);
 >
->  	if (thread_group_empty(tsk))
->  		goto no_thread_group;
-> @@ -932,6 +934,19 @@ static int de_thread(struct task_struct *tsk)
->  	if (!thread_group_leader(tsk))
->  		sig->notify_count--;
->
-> +	for_other_threads(tsk, t) {
-> +		if (unlikely(t->ptrace)
-> +		    && (t != tsk->group_leader || !t->exit_state))
-> +			unsafe_execve_in_progress = true;
+> Without changing the enumeration here, IMA would not be able to different=
+iate
+> the first call to security_kernel_post_read_file() and this one.  The fir=
+st call
+> would result in unnecessary error messages.
 
-you can add "break" into the "if ()" block...
+Given the patch snippet above, in the case where an uncompressed
+module is passed into init_module_from_file() there would be the
+following checks, in this order:
 
-But this is minor. Why do we need "bool unsafe_execve_in_progress" ?
-If this patch is correct, de_thread() can drop/reacquire cred_guard_mutex
-unconditionally.
+ * kernel_read_file()
+ -> security_kernel_read_file(READING_MODULE)
+ -> security_kernel_post_read_file(READING_MODULE)
+ * init_module_from_file()
+ -> NONE
 
-If you really think it makes sense, please make another patch with the
-changelog.
+... this should be the same as the current behavior.
 
-I'd certainly prefer to avoid this boolean at least for the start. If nothing
-else to catch the potential problems earlier.
+In the case where a compressed module is passed into
+init_module_from_file() there would be the following checks, in this
+order:
 
-> +	if (unlikely(unsafe_execve_in_progress)) {
-> +		spin_unlock_irq(lock);
-> +		sig->exec_bprm = bprm;
-> +		mutex_unlock(&sig->cred_guard_mutex);
-> +		spin_lock_irq(lock);
+ * kernel_read_file()
+ -> security_kernel_read_file(READING_MODULE_COMPRESSED)
+ -> security_kernel_post_read_file(READING_MODULE_COMPRESSED)
+ * init_module_from_file()
+ -> security_kernel_post_read_file(READING_MODULE)
 
-I don't think spin_unlock_irq() + spin_lock_irq() makes any sense...
+... the two differences being that the hook calls in
+kernel_read_file() use the READING_MODULE_COMPRESSED id, which seems
+appropriate as the data passed to the hook is the compressed
+representation, and the additional _post_read_file() hook call in
+init_module_from_file() using the READING_MODULE id, as the data
+passed to the hook is now uncompressed.  Not only should IMA be able
+to easily differentiate between the two _post_read_file() calls, but
+it should have access to both the compressed and uncompressed data.
 
-> @@ -1114,13 +1139,31 @@ int begin_new_exec(struct linux_binprm * bprm)
->  	 */
->  	trace_sched_prepare_exec(current, bprm);
->
-> +	/* If the binary is not readable then enforce mm->dumpable=0 */
-> +	would_dump(bprm, bprm->file);
-> +	if (bprm->have_execfd)
-> +		would_dump(bprm, bprm->executable);
-> +
-> +	/*
-> +	 * Figure out dumpability. Note that this checking only of current
-> +	 * is wrong, but userspace depends on it. This should be testing
-> +	 * bprm->secureexec instead.
-> +	 */
-> +	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
-> +	    is_dumpability_changed(current_cred(), bprm->cred) ||
-> +	    !(uid_eq(current_euid(), current_uid()) &&
-> +	      gid_eq(current_egid(), current_gid())))
-> +		set_dumpable(bprm->mm, suid_dumpable);
-> +	else
-> +		set_dumpable(bprm->mm, SUID_DUMP_USER);
-> +
-
-OK, we need to do this before de_thread() drops cred_guard_mutex.
-But imo this too should be done in a separate patch, the changelog should
-explain this change.
-
-> @@ -1361,6 +1387,11 @@ static int prepare_bprm_creds(struct linux_binprm *bprm)
->  	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
->  		return -ERESTARTNOINTR;
->
-> +	if (unlikely(current->signal->exec_bprm)) {
-> +		mutex_unlock(&current->signal->cred_guard_mutex);
-> +		return -ERESTARTNOINTR;
-> +	}
-
-OK, if signal->exec_bprm != NULL, then current is already killed. But
-proc_pid_attr_write() and ptrace_traceme() do the same. So how about
-something like
-
-	int lock_current_cgm(void)
-	{
-		if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
-			return -ERESTARTNOINTR;
-
-		if (!current->signal->group_exec_task)
-			return 0;
-
-		WARN_ON(!fatal_signal_pending(current));
-		mutex_unlock(&current->signal->cred_guard_mutex);
-		return -ERESTARTNOINTR;
-	}
-
-?
-
-Note that it checks ->group_exec_task, not ->exec_bprm. So this change can
-come in a separate patch too, but I won't insist.
-
-> @@ -453,6 +454,28 @@ static int ptrace_attach(struct task_struct *task, long request,
->  				return retval;
->  		}
->
-> +		if (unlikely(task == task->signal->group_exec_task)) {
-> +			retval = down_write_killable(&task->signal->exec_update_lock);
-> +			if (retval)
-> +				return retval;
-> +
-> +			scoped_guard (task_lock, task) {
-> +				struct linux_binprm *bprm = task->signal->exec_bprm;
-> +				const struct cred __rcu *old_cred = task->real_cred;
-> +				struct mm_struct *old_mm = task->mm;
-> +
-> +				rcu_assign_pointer(task->real_cred, bprm->cred);
-> +				task->mm = bprm->mm;
-> +				retval = __ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS);
-> +				rcu_assign_pointer(task->real_cred, old_cred);
-> +				task->mm = old_mm;
-> +			}
-
-This is the most problematic change which I can't review...
-
-Firstly, it changes task->mm/real_cred for __ptrace_may_access() and this
-looks dangerous to me.
-
-Say, current_is_single_threaded() called by another CLONE_VM process can
-miss group_exec_task and falsely return true. Probably not that bad, in
-this case old_mm should go away soon, but still...
-
-And I don't know if this can fool the users of task_cred_xxx/__task_cred
-somehow.
-
-Or. check_unsafe_exec() sets LSM_UNSAFE_PTRACE if ptrace. Is it safe to
-ptrace the execing task after that? I have no idea what the security hooks
-can do...
-
-Again, can't review this part.
-
-Oleg.
-
+--=20
+paul-moore.com
