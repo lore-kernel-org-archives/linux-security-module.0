@@ -1,100 +1,110 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8822F6168;
-	Wed,  5 Nov 2025 23:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CAB1CAA6C
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Nov 2025 23:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762385196; cv=none; b=urFC16uiQaPi5VLRjONOAVNS58wMPON/WjXHvFe2Zyd1lDPtA9FuGL+WLySmr6Yd9Sat4QDIELeLX5Ct9UYUvAdD6JqQLYvAxll9saMylaYsZxuJ/Rdvgn11wRlMbGBmYBEN/mS30QfhpaRBhByoFD9BHyuVgluYHAM7hawBhhQ=
+	t=1762385981; cv=none; b=ZGzsokAKiqPNNiPRQy6FkY6L6qva/uj/fD+/90QMrk1MqThqRO2JN+ptk8d8MI+Uz5Ud94f5/0c1mZ6CcX8/x/Kza7lItL91+/e18+WrG9t7aojuUXB70Sq/WHioak8UDTotzeiSmr+FdCCLbIsPSS3Q2Rz1jww5WHMMTi5yRWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762385196; c=relaxed/simple;
-	bh=XUj1itDk6Fs0j99eYL38hRxsBNXp/8pzC7yr7UeJNt0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MOjuP7EnLs1dOZEQ8qmHd8qV1z8FtIYApHPwcU6kzWH8585+TA48Ix+bdZFm6gxeMZOOPlALOQSEGPG5deY0bqMAkirTthnmUTML2ytulW8mx1kIBr8qnXs5MBGvc8mwiR6LbESOyVKTi0W9K9cWDWPIUOWdW1S1QuJ1/6sd78k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=cO0u/46g; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1762385981; c=relaxed/simple;
+	bh=ad87AQM7onhmSNUoaSc+pJLxvG5glvi5RpIzF5Cyhsc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KC3dLfMMputt1ubrF9IUGstehposnmMJYeMkKOTUvGM/pxnENb0WUEAlwjgass0WfClRY5WYxugcPtC0H9sYw4JunLe7aMBrG6LmPLkhMxTj9dU0PHT7b5FUnP7gFBOtqWrXYqKI2UDCiET4oU4L9vKPRSWDUNelfkX+ynu0V8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CVIsoozy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="cO0u/46g"
-Received: from ubuntu.. (unknown [131.107.174.57])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 511A4211FEAA;
-	Wed,  5 Nov 2025 15:26:34 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 511A4211FEAA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762385194;
-	bh=y4yWSZvpXNw96xLFnutJZ9rJo+5mrC89tk8wZFQYBRs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cO0u/46gO55dJ8/vvpzeezdWQATL1HPM3hhvs5t5cw9mQnUfDkdHhBGU+hztGI5bP
-	 GsmHlRtWlsXu0+4FrIN4ByBt6Wme0Bz7hAhniqpn9r6MgaB3tgeFwNBlSywJTujkPt
-	 d+yoINO9RhKfzsNyKkJbgPGY7Qr71pkQGmABloi0=
-From: Yanzhu Huang <yanzhuhuang@linux.microsoft.com>
-To: wufan@kernel.org,
-	paul@paul-moore.com,
-	mic@digikod.net
-Cc: jmorris@namei.org,
-	serge@hallyn.com,
-	corbet@lwn.net,
-	yanzhuhuang@linux.microsoft.com,
-	linux-security-module@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] ipe: Update documentation for script enforcement
-Date: Wed,  5 Nov 2025 23:26:15 +0000
-Message-ID: <20251105232615.720861-3-yanzhuhuang@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251105232615.720861-1-yanzhuhuang@linux.microsoft.com>
-References: <20251105232615.720861-1-yanzhuhuang@linux.microsoft.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CVIsoozy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15E47C19422
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Nov 2025 23:39:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762385981;
+	bh=ad87AQM7onhmSNUoaSc+pJLxvG5glvi5RpIzF5Cyhsc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CVIsoozyuSjlfoAXmbCPqRSbT8mHch2MetbvDTJp/fS6qdf+Yv4ICD3sbi5HkLG78
+	 ZiWBelrjYvGUxQrNHf3Ysr43RYbqZIEUHJxu0SGbr3QxDTmckm7T45BoTfl4C3LFhX
+	 bNJ2isvx3zN2C7ZCsqsLB1eJRYb99MFf5Z2+of2YZiNxxNSP6Pvh2odbEZWZQghGcU
+	 44YmuaWYdOD4ySJ9yyvbBYRkVwGPgx9NEyYXglJbnLzg8ykkRzk6D1rhHYxik3WgGQ
+	 3z4EcnR2RU2jYi8Mf3amDA+pzDRcEU+c3Ot/xxMvWC0NNdlORUtLx9YfNBZx5K7loM
+	 AaMfBM+Dp08eQ==
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7a1603a098eso265956b3a.1
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Nov 2025 15:39:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW/lZQa3fKSLIN00tNsCkFvR6oWg2z/8f/Yh73kJrH4A2XF+DhExvhgety0uRQ+xyfd9HLkEo15ONXl9tK36nrDlagRYiE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg/5YHRf4HkgcdoXDeQUhxAcR89phWcjElXzmewnw+SnAXBP8g
+	ZhCgw1krVkLI5nbRb3a7s2kC5wUVALSa0APyDLbjgPKEeY5esAgGmi91rxx10rFkY9WwK70xG9Q
+	Za4gUMXtJleOJ8Fndf0a5kIQaJyTsJgA=
+X-Google-Smtp-Source: AGHT+IGFgsWp44LDzpMdW8c/K6LA75pMzm1Rzpqpggg6Q6IM8gZfErETvOdNjrRzM710JJF02+xjkLyL0Hw+OKJTdmY=
+X-Received: by 2002:a05:6a20:6a0f:b0:2d9:c2:5ce4 with SMTP id
+ adf61e73a8af0-34f840138bcmr6089035637.7.1762385980658; Wed, 05 Nov 2025
+ 15:39:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251105232615.720861-1-yanzhuhuang@linux.microsoft.com>
+In-Reply-To: <20251105232615.720861-1-yanzhuhuang@linux.microsoft.com>
+From: Fan Wu <wufan@kernel.org>
+Date: Wed, 5 Nov 2025 15:39:28 -0800
+X-Gmail-Original-Message-ID: <CAKtyLkHfW=cOryV9T4D=RA9-C=cea5DcH9U8jMn8OKAS30PHzA@mail.gmail.com>
+X-Gm-Features: AWmQ_bmNXGHrdDJc6hWNgp1g05sL-4GIVDgJ77DbOJ69D4xJTHR2sRKHobb2cpo
+Message-ID: <CAKtyLkHfW=cOryV9T4D=RA9-C=cea5DcH9U8jMn8OKAS30PHzA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] ipe: add script enforcement mechanism with AT_EXECVE_CHECK
+To: Yanzhu Huang <yanzhuhuang@linux.microsoft.com>
+Cc: wufan@kernel.org, paul@paul-moore.com, mic@digikod.net, jmorris@namei.org, 
+	serge@hallyn.com, corbet@lwn.net, linux-security-module@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds explanation of script enforcement mechanism in admin
-guide documentation. Describes how IPE supports integrity enforcement
-for indirectly executed scripts through the AT_EXECVE_CHECK flag, and
-how this differs from kernel enforcement for compiled executables.
+On Wed, Nov 5, 2025 at 3:26=E2=80=AFPM Yanzhu Huang
+<yanzhuhuang@linux.microsoft.com> wrote:
+>
+> Indirect file execution through interpreters (e.g. python script.py, sh
+> script.sh) should have integrity policy enforced by IPE based on the
+> rules. Currently, IPE can only enforce policy on the interpreter binary
+> itself, but has no visibility into the scripts that the interpreter
+> executes.
+>
+> Overview
+> --------
+>
+> This patch series introduces script enforcement for IPE, allowing integri=
+ty
+> evaluation of indirectly executed scripts through the AT_EXECVE_CHECK fla=
+g.
+>
+> Patch 1 adds the core implementation with ipe_bprm_creds_for_exec() hook
+> that integrates with the AT_EXECVE_CHECK mechanism.
+>
+> Patch 2 updates admin guide documentation to explain the script enforceme=
+nt
+> mechanism.
+>
+> The IPE test suite has been updated to include script enforcement tests:
+> https://github.com/microsoft/ipe/pull/6
+>
+> Changes since v2:
+> - update AT_EXECVE_CHECK reference
+>
+> Changes since v1:
+> - update the interpreters reference
+>
+> Yanzhu Huang (2):
+>   ipe: Add AT_EXECVE_CHECK support for script enforcement
+>   ipe: Update documentation for script enforcement
+>
+>  Documentation/admin-guide/LSM/ipe.rst | 17 ++++++++++++++---
+>  security/ipe/audit.c                  |  1 +
+>  security/ipe/hooks.c                  | 27 +++++++++++++++++++++++++++
+>  security/ipe/hooks.h                  |  3 +++
+>  security/ipe/ipe.c                    |  1 +
+>  5 files changed, 46 insertions(+), 3 deletions(-)
+>
+> --
+> 2.43.0
+>
 
-Signed-off-by: Yanzhu Huang <yanzhuhuang@linux.microsoft.com>
----
- Documentation/admin-guide/LSM/ipe.rst | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+Thanks, applied to ipe/next.
 
-diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
-index dc7088451f9d..a756d8158531 100644
---- a/Documentation/admin-guide/LSM/ipe.rst
-+++ b/Documentation/admin-guide/LSM/ipe.rst
-@@ -95,7 +95,20 @@ languages when these scripts are invoked by passing these program files
- to the interpreter. This is because the way interpreters execute these
- files; the scripts themselves are not evaluated as executable code
- through one of IPE's hooks, but they are merely text files that are read
--(as opposed to compiled executables) [#interpreters]_.
-+(as opposed to compiled executables). However, with the introduction of the
-+``AT_EXECVE_CHECK`` flag (:doc:`AT_EXECVE_CHECK </userspace-api/check_exec>`),
-+interpreters can use it to signal the kernel that a script file will be executed,
-+and request the kernel to perform LSM security checks on it.
-+
-+IPE's EXECUTE operation enforcement differs between compiled executables and
-+interpreted scripts: For compiled executables, enforcement is triggered
-+automatically by the kernel during ``execve()``, ``execveat()``, ``mmap()``
-+and ``mprotect()`` syscalls when loading executable content. For interpreted
-+scripts, enforcement requires explicit interpreter integration using
-+``execveat()`` with ``AT_EXECVE_CHECK`` flag. Unlike exec syscalls that IPE
-+intercepts during the execution process, this mechanism needs the interpreter
-+to take the initiative, and existing interpreters won't be automatically
-+supported unless the signal call is added.
- 
- Threat Model
- ------------
-@@ -806,8 +819,6 @@ A:
- 
- .. [#digest_cache_lsm] https://lore.kernel.org/lkml/20240415142436.2545003-1-roberto.sassu@huaweicloud.com/
- 
--.. [#interpreters] There is `some interest in solving this issue <https://lore.kernel.org/lkml/20220321161557.495388-1-mic@digikod.net/>`_.
--
- .. [#devdoc] Please see :doc:`the design docs </security/ipe>` for more on
-              this topic.
- 
--- 
-2.43.0
-
+-Fan
