@@ -1,212 +1,135 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEA52C15B0
-	for <linux-security-module@vger.kernel.org>; Wed,  5 Nov 2025 18:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC90344026
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Nov 2025 19:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762365646; cv=none; b=AWQz2N8LMQmXXPFEqbtZsFej0iZ+kLGEuETB0h/KcTcX0fsrCdsMBoQmYP/nIgZLiQyDZq47E//2rvzkKXKo4/uiB6xhrXFf2J97uz+FfgTQLfcgKWslXd5sGl2GwbXr/BhDlduOughZVXznNz9pYZn2bYtZFFdskmpGeRQZsIE=
+	t=1762372272; cv=none; b=phKk91uqFTBDlggkSiDbhyFsbVDHHV3ya2rtJ93ZQYkxfT4kzrMbWDoRzPK+LIXUnf7Q0OvycFbAnhTAFsL84Y9yeEIeX7G+2frIj4kli9GIv+6h/NsIJE3N50BkRnu8rGub7XpE4VYJOngkmQ1rViSvYHGEQG0VQO22jFCA86c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762365646; c=relaxed/simple;
-	bh=uxML2mtj7bU6IUhRinLu2ot7esY7OHheOUnb3HCN5Xw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z4K58FNg5Q15CLAvnTfJqrIhWBIVXypXx+I7zyE0RadBmBX0O7Ol9UTwyqjO8mfQ8/enOV9YtiS6XhrgZDb8ar10kCyzb8MHKG/AWHXYSYdOnfxwVqX27pUVY+9ott1MIbhI/XM08iVoxRT4rXTwtkOQQO+rX1NZm+tBQz4O+HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpMDcQGm; arc=none smtp.client-ip=209.85.128.178
+	s=arc-20240116; t=1762372272; c=relaxed/simple;
+	bh=Pk0Npog8sZ0LZeV37QkwTxusJxsZmgGiGMBvOdfNujQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZmiV8wvCsfhgb0Xd5Sh8b2poBdHVP/7Ks7r2QMpTxswsVpUhv+SHsWA88vsCfhpt997mAmdsvf+l6m+yN+KBHs6rAu2q/51XnscwEJ9VmZyfoXZBr1TZBZQhxOqRIHmOyytjkIlpMzs7LZ6jnw8X12Rv9IrirSzAXnAm7/Yiuk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=leotC6aN; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpMDcQGm"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-7866e9e62e1so508947b3.2
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Nov 2025 10:00:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="leotC6aN"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-640b06fa959so246463a12.3
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Nov 2025 11:51:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762365644; x=1762970444; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762372269; x=1762977069; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h8Jf6SZa3CPC8rNbW49bQ1Pq4+WIXfIt59Z2zSwN8II=;
-        b=bpMDcQGmU7n8viq3VuUzvSVTUcgJhrXudENIGFLwnx7tfEAAMBsfRgN4kugp/7SnhP
-         dGR29tyrOVQ1+ovdsVkEWWrj34/zjoHZk8qAZPXsd5slNbsLbhEmhEYVK/XSO/5v/JWq
-         HiZSnf0n9+G90zx0uFBA6KozmGrCusI86q+sKhvzgmbz88H/Eu0Jhxt2vYXB57rL0FXS
-         wIcfkI+4DIozajtFtx1B5aToUhzHiX5SmhSTvd/14Sme60pPb2WTa8N5wsVSPO3wVpSa
-         nyatWDKLjrtUWR3Y+j8mZk8KL+GEbOknSNhJUPOBFhbqkthjUyn7hnAk2hyxYCNPXurk
-         4VCg==
+        bh=N+1+3F9krAd0V9GErIF2j9xx69fWENxgr7H3lgTY8x0=;
+        b=leotC6aN6vEloWA7tmbborXez8PnXDaxka3MR1SfiqyvPp+h5RfFY/zfXVq4Sv+3tS
+         d5XGKRJ0uVv22z7cRryqGsIxwmel/fscwVPvTpybXOTzCtfYbWZSMidCW+osHutl7Zq1
+         IkVFcQXaG1WRp6WRze0v7xLlDCUNHFJPKgUidX/h3wU1PsoZKHS7v8JhcUZ52iRhqHjx
+         mGAZbRa+59ULkFyMdRoFOt6Q/689U7+Nm9gGY3X7z03eFpmpsJlx5TwU6jALel+HZh2O
+         YnlpUACAoyqNCw1TZastfEdE/Ezh9kaEtGp6zoE6lo6UYL0X3qH8B438orRkHnZydymD
+         cYHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762365644; x=1762970444;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1762372269; x=1762977069;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h8Jf6SZa3CPC8rNbW49bQ1Pq4+WIXfIt59Z2zSwN8II=;
-        b=w7vGh9VH/nziYJ3nFVCWS0OZd3XN5Nx6Kru7hwfbEO3TN6ejL3U/Zrl+JAskMBc5Bl
-         vi0mM6XvZYJ8HXNbDnpJ7hE4uaiWPL+onzdZGkonttMH+BVirj1UpIqq6Ge13ARVSmT4
-         LfL/sh4rKfny1x+QoMfoMShiO/hnTqFWAibC1uVqnXyeZv8u1JQC9XkMrrT0svxyW+73
-         Mkmw3DTnpkP+XeagF7jAbsFLPzb4kUG1awxblmoMjS1GEr5i+QVFZ+vTVP6Zdgpk01Ph
-         EpCSYLbI2BBQxipLKR7BE2M2NcSDRHVwtnBdSCA56176d0WG7TPOuxsepUh9UN03yJS1
-         CzEQ==
-X-Gm-Message-State: AOJu0YwAnLl16qHQbUxotHgq+aAkIl5h+b5Ad1MFzo4Cf9QnDQWJslhf
-	sK9YIZhVSkKkC3ZReLgQWGU+l9sUliMT0ul2g2rsopDFypyOq77yZe6fl+K9AKaC
-X-Gm-Gg: ASbGncsEK3JGudYYkXXZkoZ5YkzrIqYTsCWJ/jmRZWQlYFHjG1n+NOZ2LgV2rVvl8t4
-	gc+efB8ftqsFaTIs4TnR199E33Vzd20fY8unOlzxm6TEKwLjl0ZINW3pAA9OtYXKp3+N5DGNkaC
-	w278pVBYz3j/K1I4dz+UWPY9UpCuRRXhfTrhC5P6EdVLtW+77g+RlLBKNkaDoxhMNsrhUHBE6e7
-	jmH9AMvrvfbDIAQ8nh7ivLSSAgcawOJtnMyE4bT0Q84yWsVKDwANgvfPPKpxWA7HzVrPFvPfd/Q
-	waXk38f0CDZDQekFima6BXlrU+lnvcWA4vN+Jf7gJqQxdmlmoZSB4Jel5yggDm+3QbfeZHGNMIf
-	PyCmtLgiSrS6YsTOg/1/QFVKt82QzWIjlhY8RB6l55wAoFiimLstHCbPLjfQB2KITjy1XEK6SXp
-	YCXwFJ5tpb7wFXR7y+PvSjc37KRu1Gt8Ja7LNWLKv+3m8juxaw2Q==
-X-Google-Smtp-Source: AGHT+IFhsq81n0mEabB32EErsDvAxsRTb7gi8r7rntelcOT6Mx7z50VMZ5TqqoVXi1XM1YLxGNYkqw==
-X-Received: by 2002:a0d:e785:0:b0:786:393c:5f1f with SMTP id 00721157ae682-786a41051d4mr30745787b3.12.1762365643718;
-        Wed, 05 Nov 2025 10:00:43 -0800 (PST)
-Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-787b13faf56sm756657b3.19.2025.11.05.10.00.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 10:00:43 -0800 (PST)
-From: Justin Suess <utilityemal77@gmail.com>
-To: linux-security-module@vger.kernel.org
-Cc: Tingmao Wang <m@maowtm.org>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Jan Kara <jack@suse.cz>,
-	Abhinav Saxena <xandfury@gmail.com>,
-	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH 3/3] selftests/landlock: Add test for new no inherit flag
-Date: Wed,  5 Nov 2025 13:00:19 -0500
-Message-ID: <20251105180019.1432367-4-utilityemal77@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251105180019.1432367-1-utilityemal77@gmail.com>
-References: <20251105180019.1432367-1-utilityemal77@gmail.com>
+        bh=N+1+3F9krAd0V9GErIF2j9xx69fWENxgr7H3lgTY8x0=;
+        b=HQc2O86DqyzIS2aeJL2jmg1b7dv393Y6y1sFg+YIC/P9uJ46fYHNQpjEPu5flUnCVO
+         hA/FrMeei2PQ/q4o1h1ctulEJEhD4htJLIeKJ0XWKNclb7/8qzSizGdn6SRMC9TAJ9Ln
+         ySG03liP8px4JX0CalC1oWFWn0MllTiqCzoY8oiJMigBIbA5kY5DOFPlyFfwQENE/qev
+         jpOZTcPxeyzSyD1xgY7PlpK1pITFzGbVq8zddkuQF/TX3P5jFYisFMvsARjvt+ye9Spe
+         NnP+lUUeBpyOcgC2OiILKexsI3TwG5lFo3L8SPBSxgnhsbGRszm/aq8QpguKdlL9f++0
+         fgsA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+5SZVR42SiIyzr9CASWp8DgEgfs3p14miMsa9Qp+U4vUM7zmCIHWPHuHDKnXUuodH1UC+lfP2DL4C8qhH3Y8gAz+NIH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP+wJ6dQBC/aB2gJUm92AMb0unI9Z1Ad1UArh0IjjdMV34EF/D
+	OMQKAiQ/GQcl4lZo47rmc1+mDLRjj600j1HTVZhe4rZFBfizAVdy7PC780PWx7RbdDgXdETojFJ
+	75A21nZTWsJr6pnGHuLFFX8P9IeiblG8=
+X-Gm-Gg: ASbGncvjQxCcqVFNDJ6whwq4IwJvw31g42/Nmw32Fab1LSDxZU8s8r2oU4ICRpNO17N
+	K/PWNDhuE50pYm/OBr6pMevn+oM4KWhVoSPcq7m8AIPWjAgmmhKsYul4nbDl7Wjo6rSNLDKDnpS
+	CyNDkd8007+C7zhu/Fw0eanPyLDthuyQczV0Top4u76YtKid+aveBGu6bKV4p3Px1TtpJN6Tgtz
+	tHxtZH1nMUDlDlX0Su0eNphOc22Cxhi19owiU9DUpo3AxX8IbK56rgE0Ql3b6xs9xrKXuV5Dgnp
+	gGy8kB/p0EX+Kio=
+X-Google-Smtp-Source: AGHT+IGw6uruJ9ZEI48AgrBdkQ6+Y4KI/t3qaGHgTl6iUqNZaRX9HqUFuxhME6r39mMz7B0UJDlRLhanlWqFyjj6ElI=
+X-Received: by 2002:a05:6402:4007:b0:640:f041:c7c6 with SMTP id
+ 4fb4d7f45d1cf-64105a3ea6emr4012523a12.21.1762372264805; Wed, 05 Nov 2025
+ 11:51:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251105193800.2340868-1-mic@digikod.net>
+In-Reply-To: <20251105193800.2340868-1-mic@digikod.net>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 5 Nov 2025 20:50:52 +0100
+X-Gm-Features: AWmQ_bmf-MJjucXoTdZsQJpswia7qMghXA6jxfB57WcztYQemJGt9Ps6MJInHsU
+Message-ID: <CAGudoHEvnTCxK-c9yistxN5ZjFjh5x3REoW4XxmiRAXNEDeyPQ@mail.gmail.com>
+Subject: Re: [PATCH v1] fs: Move might_sleep() annotation to iput_final()
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, linux-security-module@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
+	Edward Adam Davis <eadavis@qq.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Hillf Danton <hdanton@sina.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Max Kellermann <max.kellermann@ionos.com>, Tingmao Wang <m@maowtm.org>, 
+	syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Adds tests for the new no inherit flag, validating the expected
-supression of permission inheritence within a layer. Also updates
-the add_path_beneath function to take a __u32 (instead of bool quiet)
-for the flags, since LANDLOCK_ADD_RULE_QUIET isn't the only
-flag anymore.
+On Wed, Nov 5, 2025 at 8:38=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
+>
+> iput() don't directly call any sleepable code but mostly checks flags
+> and decrement a reference counter before calling iput_final() and then
+> evict().
+>
+> Some code might call iput() with guarantees that iput_final() will not
+> be called.  This is the case for Landlock's hook_sb_delete() where the
+> inode counter must de decremented while holding it with another
+> reference, see comment above the first iput() call.
+>
+> Move the new might_sleep() call from iput() to iput_final().  The
+> alternative would be to manually decrement the counter without calling
+> iput(), but it doesn't seem right.
+>
 
-Signed-off-by: Justin Suess <utilityemal77@gmail.com>
----
- tools/testing/selftests/landlock/fs_test.c | 53 +++++++++++++++++-----
- 1 file changed, 41 insertions(+), 12 deletions(-)
+This would mostly defeat the point of the original change.
 
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index d4819ff44230..a7ebe4ec1b5a 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -717,16 +717,12 @@ TEST_F_FORK(layout1, rule_with_unhandled_access)
+Instead, if you have a consumer which *guarantees* this is not the
+last reference, the vfs layer can provide a helper which acts
+accordingly.
+
+Something like this (untested):
+diff --git a/fs/inode.c b/fs/inode.c
+index 84f539497857..a3ece9b4b6ef 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2011,6 +2011,15 @@ void iput(struct inode *inode)
  }
+ EXPORT_SYMBOL(iput);
 
- static void add_path_beneath(struct __test_metadata *const _metadata,
--			     const int ruleset_fd, const __u64 allowed_access,
--			     const char *const path, bool quiet)
-+			 const int ruleset_fd, const __u64 allowed_access,
-+			 const char *const path, __u32 flags)
- {
- 	struct landlock_path_beneath_attr path_beneath = {
- 		.allowed_access = allowed_access,
- 	};
--	__u32 flags = 0;
--
--	if (quiet)
--		flags |= LANDLOCK_ADD_RULE_QUIET;
-
- 	path_beneath.parent_fd = open(path, O_PATH | O_CLOEXEC);
- 	ASSERT_LE(0, path_beneath.parent_fd)
-@@ -790,7 +786,7 @@ static int create_ruleset(struct __test_metadata *const _metadata,
- 			continue;
-
- 		add_path_beneath(_metadata, ruleset_fd, rules[i].access,
--				 rules[i].path, false);
-+				 rules[i].path, 0);
- 	}
- 	return ruleset_fd;
- }
-@@ -1368,7 +1364,7 @@ TEST_F_FORK(layout1, inherit_subset)
- 	 * ANDed with the previous ones.
- 	 */
- 	add_path_beneath(_metadata, ruleset_fd, LANDLOCK_ACCESS_FS_WRITE_FILE,
--			 dir_s1d2, false);
-+			 dir_s1d2, 0);
- 	/*
- 	 * According to ruleset_fd, dir_s1d2 should now have the
- 	 * LANDLOCK_ACCESS_FS_READ_FILE and LANDLOCK_ACCESS_FS_WRITE_FILE
-@@ -1400,7 +1396,7 @@ TEST_F_FORK(layout1, inherit_subset)
- 	 * Try to get more privileges by adding new access rights to the parent
- 	 * directory: dir_s1d1.
- 	 */
--	add_path_beneath(_metadata, ruleset_fd, ACCESS_RW, dir_s1d1, false);
-+	add_path_beneath(_metadata, ruleset_fd, ACCESS_RW, dir_s1d1, 0);
- 	enforce_ruleset(_metadata, ruleset_fd);
-
- 	/* Same tests and results as above. */
-@@ -1423,7 +1419,7 @@ TEST_F_FORK(layout1, inherit_subset)
- 	 * that there was no rule tied to it before.
- 	 */
- 	add_path_beneath(_metadata, ruleset_fd, LANDLOCK_ACCESS_FS_WRITE_FILE,
--			 dir_s1d3, false);
-+			 dir_s1d3, 0);
- 	enforce_ruleset(_metadata, ruleset_fd);
- 	ASSERT_EQ(0, close(ruleset_fd));
-
-@@ -1476,7 +1472,7 @@ TEST_F_FORK(layout1, inherit_superset)
- 	add_path_beneath(_metadata, ruleset_fd,
- 			 LANDLOCK_ACCESS_FS_READ_FILE |
- 				 LANDLOCK_ACCESS_FS_READ_DIR,
--			 dir_s1d2, false);
-+			 dir_s1d2, 0);
- 	enforce_ruleset(_metadata, ruleset_fd);
- 	ASSERT_EQ(0, close(ruleset_fd));
-
-@@ -1488,6 +1484,39 @@ TEST_F_FORK(layout1, inherit_superset)
- 	ASSERT_EQ(0, test_open(file1_s1d3, O_RDONLY));
- }
-
-+TEST_F_FORK(layout1, inherit_no_inherit_flag)
++void iput_not_last(struct inode *inode)
 +{
-+	struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_fs = ACCESS_RW,
-+	};
-+	int ruleset_fd;
++       VFS_BUG_ON_INODE(inode_state_read_once(inode) & I_CLEAR, inode);
++       VFS_BUG_ON_INODE(atomic_read(&inode->i_count) < 2, inode);
 +
-+	ruleset_fd =
-+		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-+	ASSERT_LE(0, ruleset_fd);
-+
-+	add_path_beneath(_metadata, ruleset_fd, ACCESS_RW, dir_s1d1, 0);
-+	add_path_beneath(_metadata, ruleset_fd, ACCESS_RO, dir_s1d2,
-+			       LANDLOCK_ADD_RULE_NO_INHERIT);
-+
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
-+
-+	/* Parent directory still grants write access to its direct children. */
-+	EXPECT_EQ(0, test_open(dir_s1d1, O_RDONLY | O_DIRECTORY));
-+	EXPECT_EQ(0, test_open(file1_s1d1, O_WRONLY));
-+
-+	/* dir_s1d2 gets only its explicit read-only access rights. */
-+	EXPECT_EQ(0, test_open(dir_s1d2, O_RDONLY | O_DIRECTORY));
-+	EXPECT_EQ(0, test_open(file1_s1d2, O_RDONLY));
-+	EXPECT_EQ(EACCES, test_open(file1_s1d2, O_WRONLY));
-+
-+	/* Descendants of dir_s1d2 inherit the reduced access mask. */
-+	EXPECT_EQ(0, test_open(dir_s1d3, O_RDONLY | O_DIRECTORY));
-+	EXPECT_EQ(0, test_open(file1_s1d3, O_RDONLY));
-+	EXPECT_EQ(EACCES, test_open(file1_s1d3, O_WRONLY));
++       WARN_ON(atomic_sub_return(1, &inode->i_count) =3D=3D 0);
 +}
++EXPORT_SYMBOL(iput_not_last);
 +
- TEST_F_FORK(layout0, max_layers)
- {
- 	int i, err;
-@@ -7647,7 +7676,7 @@ static int apply_a_layer(struct __test_metadata *const _metadata,
- 			continue;
+ #ifdef CONFIG_BLOCK
+ /**
+  *     bmap    - find a block number in a file
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 41c855ef0594..8181a0d0e2ac 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2909,6 +2909,7 @@ extern int current_umask(void);
 
- 		add_path_beneath(_metadata, rs_fd, r->access, r->path,
--				 r->quiet);
-+				 r->quiet ? LANDLOCK_ADD_RULE_QUIET : 0);
- 	}
-
- 	ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
---
-2.51.0
-
+ extern void ihold(struct inode * inode);
+ extern void iput(struct inode *);
++void iput_not_last(struct inode *);
+ int inode_update_timestamps(struct inode *inode, int flags);
+ int generic_update_time(struct inode *, int);
