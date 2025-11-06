@@ -1,98 +1,256 @@
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E513B308F25
-	for <linux-security-module@vger.kernel.org>; Thu,  6 Nov 2025 08:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AAAF309EED
+	for <linux-security-module@vger.kernel.org>; Thu,  6 Nov 2025 09:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762419150; cv=none; b=HvZtlhND/IzJxmPNbu2iT63qBwe9hhCqYSviJtstNgqWmtY8n3/oFYjiGHOn/dW17m+St7vVIsncTQLkpMvEvcoYXf3UZejU5N2BNiAY8dWHiM05/vsQERLSgxaz6Rl0jvVixm1+bqU/4m5uCB5PXxbVq3akF9kuLpZedainRTs=
+	t=1762419770; cv=none; b=UWNZcQYDXMZI+lgPJ0Ir/SNBmOw8YI6KhZoiY+Cl/RIihtwt6WPSizBTWATo9RQmetHUH4TaFD8y6h2mnoNwaH4JNRANJd65u85BDkxno26D9swiw4xsQ2j73fcd/WoEawrE7EqxFekR6p69gcKKiQ9pjPDbh5ntO+tSsasaQHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762419150; c=relaxed/simple;
-	bh=JeeGduUL6bWDAecqsw7jXtrhy0rUfGVWJXThQknPHYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cYR8lkC87YIn72s+JCZKwYxrLQzB108VxX4jVkIU4V3tKVK1hJlmj4CjAgvU1NFeIM4Yp/ucqLl4ERatfmHPHhfTDSi5qEiPXFxJrjHT/AQFFrJgJ2jR0SDQSBnZC27ghUSOWCIvfQIPahvWzpf2xQcwvy0IA6wlr6cAenUf8EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=X30Bk2PF; arc=none smtp.client-ip=45.157.188.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="X30Bk2PF"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4d2G465h95zj7h;
-	Thu,  6 Nov 2025 09:45:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1762418742;
-	bh=JfNO0M5lh5psROFvDuYOwWJ0xb+D1+8vDp/FH+1rqVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X30Bk2PFMYipzWJ7/aD0f3Ym/BAnhmLFkPYEUVdne23t2s1Ir9+joBlwp6Di9JEbZ
-	 sBEf7MkKQLVN1DVNZxQcI/ZzArZrdlEHEYKIPMH+ppOjVk1//SHGRXQr3kAK60lyjL
-	 9KbnjgYprlQj+JEmTkgx0EXqV6fDKy1YiQ+QNKrc=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4d2G455C1YzlQr;
-	Thu,  6 Nov 2025 09:45:41 +0100 (CET)
-Date: Thu, 6 Nov 2025 09:45:40 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
-Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, eadavis@qq.com, gnoack@google.com, jack@suse.cz, 
-	jannh@google.com, max.kellermann@ionos.com, m@maowtm.org, 
-	syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com, Hillf Danton <hdanton@sina.com>
-Subject: Re: [PATCH 2/2] landlock: fix splats from iput() after it started
- calling might_sleep()
-Message-ID: <20251106.ahm0loS4ceic@digikod.net>
-References: <20251105212025.807549-1-mjguzik@gmail.com>
- <20251105212025.807549-2-mjguzik@gmail.com>
+	s=arc-20240116; t=1762419770; c=relaxed/simple;
+	bh=Rr7rNnPEzbOTdtYIuAcXQ36F1YEIBKRcDnXlgES33XM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=B1ycaDhShrZJAGY7Q8yyzJE4Vr9KdT//coR2BUoovoZsCjEXf+09vhOeRYdygsgiwEd0sk/vsHibJrSbMCYSbehhIit48q4mF786BrpjtJ2RxrJv0wai4AhrUJH0Mo42jAare5yrz0vRMMYLQNNKD6M1K5dIIUibBkdRN2TK9/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4331d49b5b3so4274905ab.0
+        for <linux-security-module@vger.kernel.org>; Thu, 06 Nov 2025 01:02:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762419767; x=1763024567;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r8E0+ouzlVdoTElswHiPK8yFC6riJLd5SyKVj4+Fe4w=;
+        b=rOh+I0jSWedTxoEnV10UENlBkwbVBiwKnvJwvPZTzYeFlIGIDf1sjMOs6SRIEneTy+
+         TQ4aqU+7SMUxrNdvvzVM2jZbVssW3q60DnCjefpeyOvFFd5be3MahBtKtmT56VSm2k6e
+         t8tagcovspBZnYwt+2q2HJ9lePjv2vlYL4mC02yXsIpHeN0adjSWyUmHkSW3jsQtjVYL
+         IoAmuJzvp8yQAvPxWigVFtMohf3BwF4sZ9gc6QsNGLxjY77m9F/aDJ+gd7mSlcorytNb
+         8qROSX09SCLak2QjctywTon0r1ISM7UAinucJz+2rgRkNvoY1VTPhQX4CN9cOigDuZ4J
+         ZN5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW1r8nvVSwrBOg7ehtTanRA9f8n2/1c6QSXu9CQimk3szUQmfSFdzbQ0jllbRi8bsCXPMvZmfKUzOGtdL68LPfvBNQXl18=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzretRo2u/E+fClA/TmIK9hgiyGUt0lTZshwtX+pKi1o0H/ruGz
+	RqzdslpwAyLS3ubHDcAyIJ+5EDYLPRW6nXON5eQbohDP4FHAf9OyKu3jJOi9DdbbJis40qeUhoz
+	8WI+NOUdatNC2UEnFQ4PSwPDCIZy08CFjcwaljFVoq3Lmt3aQo0XoyuB+1u4=
+X-Google-Smtp-Source: AGHT+IG2+XO9mtVu991pXvlz+VZb8KzNDnm0wvskVW9qOHFFxk5SFup8IMdJP1K43vqqIYpPzRVA5JUpKoQ5O6f2XWPv7TKHUvKc
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251105212025.807549-2-mjguzik@gmail.com>
-X-Infomaniak-Routing: alpha
+X-Received: by 2002:a05:6e02:330e:b0:430:c90d:10ae with SMTP id
+ e9e14a558f8ab-433407dfcc7mr95789415ab.32.1762419767538; Thu, 06 Nov 2025
+ 01:02:47 -0800 (PST)
+Date: Thu, 06 Nov 2025 01:02:47 -0800
+In-Reply-To: <20251106005333.956321-1-neilb@ownmail.net>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690c6437.050a0220.baf87.0083.GAE@google.com>
+Subject: [syzbot ci] Re: Create and use APIs to centralise locking for
+ directory ops.
+From: syzbot ci <syzbot+ci853f3070c3383748@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, brauner@kernel.org, cem@kernel.org, 
+	chuck.lever@oracle.com, clm@fb.com, code@tyhicks.com, dai.ngo@oracle.com, 
+	dakr@kernel.org, dhowells@redhat.com, djwong@kernel.org, dsterba@suse.com, 
+	ecryptfs@vger.kernel.org, gregkh@linuxfoundation.org, jack@suse.cz, 
+	jlayton@kernel.org, jmorris@namei.org, john.johansen@canonical.com, 
+	linkinjeon@kernel.org, linux-cifs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	lorenzo.stoakes@oracle.com, miklos@szeredi.hu, mjguzik@gmail.com, 
+	neilb@ownmail.net, netfs@lists.linux.dev, okorniev@redhat.com, 
+	omosnace@redhat.com, paul@paul-moore.com, rafael@kernel.org, 
+	selinux@vger.kernel.org, senozhatsky@chromium.org, serge@hallyn.com, 
+	smfrench@gmail.com, stefanb@linux.ibm.com, stephen.smalley.work@gmail.com, 
+	viro@zeniv.linux.org.uk
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 05, 2025 at 10:20:25PM +0100, Mateusz Guzik wrote:
-> At this point it is guaranteed this is not the last reference.
-> 
-> However, a recent addition of might_sleep() at top of iput() started
-> generating false-positives as it was executing for all values.
-> 
-> Remedy the problem by using the newly introduced iput_not_last().
-> 
-> Reported-by: syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/68d32659.a70a0220.4f78.0012.GAE@google.com/
-> Fixes: 2ef435a872ab ("fs: add might_sleep() annotation to iput() and more")
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+syzbot ci has tested the following series
 
-Reviewed-by: Mickaël Salaün <mic@digikod.net>
+[v5] Create and use APIs to centralise locking for directory ops.
+https://lore.kernel.org/all/20251106005333.956321-1-neilb@ownmail.net
+* [PATCH v5 01/14] debugfs: rename end_creating() to debugfs_end_creating()
+* [PATCH v5 02/14] VFS: introduce start_dirop() and end_dirop()
+* [PATCH v5 03/14] VFS: tidy up do_unlinkat()
+* [PATCH v5 04/14] VFS/nfsd/cachefiles/ovl: add start_creating() and end_creating()
+* [PATCH v5 05/14] VFS/nfsd/cachefiles/ovl: introduce start_removing() and end_removing()
+* [PATCH v5 06/14] VFS: introduce start_creating_noperm() and start_removing_noperm()
+* [PATCH v5 07/14] VFS: introduce start_removing_dentry()
+* [PATCH v5 08/14] VFS: add start_creating_killable() and start_removing_killable()
+* [PATCH v5 09/14] VFS/nfsd/ovl: introduce start_renaming() and end_renaming()
+* [PATCH v5 10/14] VFS/ovl/smb: introduce start_renaming_dentry()
+* [PATCH v5 11/14] Add start_renaming_two_dentries()
+* [PATCH v5 12/14] ecryptfs: use new start_creating/start_removing APIs
+* [PATCH v5 13/14] VFS: change vfs_mkdir() to unlock on failure.
+* [PATCH v5 14/14] VFS: introduce end_creating_keep()
 
-Thanks!
+and found the following issues:
+* WARNING: lock held when returning to user space in start_creating
+* possible deadlock in mnt_want_write
 
-> ---
->  security/landlock/fs.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 0bade2c5aa1d..d9c12b993fa7 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -1335,11 +1335,10 @@ static void hook_sb_delete(struct super_block *const sb)
->  			 * At this point, we own the ihold() reference that was
->  			 * originally set up by get_inode_object() and the
->  			 * __iget() reference that we just set in this loop
-> -			 * walk.  Therefore the following call to iput() will
-> -			 * not sleep nor drop the inode because there is now at
-> -			 * least two references to it.
-> +			 * walk.  Therefore there are at least two references
-> +			 * on the inode.
->  			 */
-> -			iput(inode);
-> +			iput_not_last(inode);
->  		} else {
->  			spin_unlock(&object->lock);
->  			rcu_read_unlock();
-> -- 
-> 2.48.1
-> 
-> 
+Full report is available here:
+https://ci.syzbot.org/series/4f406e4d-6aba-457a-b9c1-21f4407176a0
+
+***
+
+WARNING: lock held when returning to user space in start_creating
+
+tree:      torvalds
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
+base:      6146a0f1dfae5d37442a9ddcba012add260bceb0
+arch:      amd64
+compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+config:    https://ci.syzbot.org/builds/49013fb4-56ed-423c-8e15-252d65d5c1b4/config
+C repro:   https://ci.syzbot.org/findings/403597e5-81d3-4a9e-8d43-cf15c00b3265/c_repro
+syz repro: https://ci.syzbot.org/findings/403597e5-81d3-4a9e-8d43-cf15c00b3265/syz_repro
+
+UDF-fs: INFO Mounting volume 'LinuxUDF', timestamp 2022/11/22 14:59 (1000)
+overlayfs: upper fs needs to support d_type.
+overlayfs: upper fs does not support tmpfile.
+================================================
+WARNING: lock held when returning to user space!
+syzkaller #0 Not tainted
+------------------------------------------------
+syz.0.17/5964 is leaving the kernel with locks still held!
+1 lock held by syz.0.17/5964:
+ #0: ffff888119a282a0 (&type->i_mutex_dir_key#8/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1025 [inline]
+ #0: ffff888119a282a0 (&type->i_mutex_dir_key#8/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2794 [inline]
+ #0: ffff888119a282a0 (&type->i_mutex_dir_key#8/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2805 [inline]
+ #0: ffff888119a282a0 (&type->i_mutex_dir_key#8/1){+.+.}-{4:4}, at: start_creating+0xbe/0x100 fs/namei.c:3261
+
+
+***
+
+possible deadlock in mnt_want_write
+
+tree:      torvalds
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
+base:      6146a0f1dfae5d37442a9ddcba012add260bceb0
+arch:      amd64
+compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+config:    https://ci.syzbot.org/builds/49013fb4-56ed-423c-8e15-252d65d5c1b4/config
+syz repro: https://ci.syzbot.org/findings/7d1f626d-9979-4c5b-b36b-5616a983b0ac/syz_repro
+
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz.0.17/6011 is trying to acquire lock:
+ffff88810943c420
+ (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:508
+
+but task is already holding lock:
+ffff888169f40940 (&type->i_mutex_dir_key#5/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1025 [inline]
+ffff888169f40940 (&type->i_mutex_dir_key#5/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2794 [inline]
+ffff888169f40940 (&type->i_mutex_dir_key#5/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2805 [inline]
+ffff888169f40940 (&type->i_mutex_dir_key#5/1){+.+.}-{4:4}, at: start_creating+0xbe/0x100 fs/namei.c:3261
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&type->i_mutex_dir_key#5/1){+.+.}-{4:4}:
+       reacquire_held_locks+0x127/0x1d0 kernel/locking/lockdep.c:5385
+       __lock_release kernel/locking/lockdep.c:5574 [inline]
+       lock_release+0x1b4/0x3e0 kernel/locking/lockdep.c:5889
+       up_write+0x2d/0x420 kernel/locking/rwsem.c:1642
+       inode_unlock include/linux/fs.h:990 [inline]
+       end_dirop fs/namei.c:2818 [inline]
+       end_creating include/linux/namei.h:125 [inline]
+       vfs_mkdir+0x111/0x570 fs/namei.c:5037
+       do_mkdirat+0x247/0x5e0 fs/namei.c:5058
+       __do_sys_mkdir fs/namei.c:5080 [inline]
+       __se_sys_mkdir fs/namei.c:5078 [inline]
+       __x64_sys_mkdir+0x6c/0x80 fs/namei.c:5078
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (sb_writers#12){.+.+}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       percpu_down_read_internal include/linux/percpu-rwsem.h:53 [inline]
+       percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
+       __sb_start_write include/linux/fs.h:1916 [inline]
+       sb_start_write+0x4d/0x1c0 include/linux/fs.h:2052
+       mnt_want_write+0x41/0x90 fs/namespace.c:508
+       filename_create+0x14f/0x360 fs/namei.c:4785
+       do_mkdirat+0x32c/0x5e0 fs/namei.c:5050
+       __do_sys_mkdir fs/namei.c:5080 [inline]
+       __se_sys_mkdir fs/namei.c:5078 [inline]
+       __x64_sys_mkdir+0x6c/0x80 fs/namei.c:5078
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&type->i_mutex_dir_key#5/1);
+                               lock(sb_writers#12);
+                               lock(&type->i_mutex_dir_key#5/1);
+  rlock(sb_writers#12);
+
+ *** DEADLOCK ***
+
+1 lock held by syz.0.17/6011:
+ #0: ffff888169f40940 (&type->i_mutex_dir_key#5/1){+.+.}-{4:4}, at: inode_lock_nested include/linux/fs.h:1025 [inline]
+ #0: ffff888169f40940 (&type->i_mutex_dir_key#5/1){+.+.}-{4:4}, at: __start_dirop fs/namei.c:2794 [inline]
+ #0: ffff888169f40940 (&type->i_mutex_dir_key#5/1){+.+.}-{4:4}, at: start_dirop fs/namei.c:2805 [inline]
+ #0: ffff888169f40940 (&type->i_mutex_dir_key#5/1){+.+.}-{4:4}, at: start_creating+0xbe/0x100 fs/namei.c:3261
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 6011 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
+ check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+ __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ percpu_down_read_internal include/linux/percpu-rwsem.h:53 [inline]
+ percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
+ __sb_start_write include/linux/fs.h:1916 [inline]
+ sb_start_write+0x4d/0x1c0 include/linux/fs.h:2052
+ mnt_want_write+0x41/0x90 fs/namespace.c:508
+ filename_create+0x14f/0x360 fs/namei.c:4785
+ do_mkdirat+0x32c/0x5e0 fs/namei.c:5050
+ __do_sys_mkdir fs/namei.c:5080 [inline]
+ __se_sys_mkdir fs/namei.c:5078 [inline]
+ __x64_sys_mkdir+0x6c/0x80 fs/namei.c:5078
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fdc9a98efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fdc9b79b038 EFLAGS: 00000246 ORIG_RAX: 0000000000000053
+RAX: ffffffffffffffda RBX: 00007fdc9abe5fa0 RCX: 00007fdc9a98efc9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00002000000008c0
+RBP: 00007fdc9aa11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fdc9abe6038 R14: 00007fdc9abe5fa0 R15: 00007ffe4d481c38
+ </TASK>
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
