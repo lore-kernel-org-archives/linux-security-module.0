@@ -1,103 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002A122E3E9
-	for <linux-security-module@vger.kernel.org>; Thu,  6 Nov 2025 01:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E513B308F25
+	for <linux-security-module@vger.kernel.org>; Thu,  6 Nov 2025 08:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762394177; cv=none; b=MMp32u2phlKCjnfv35QcgS85eVoDgvmYHwxbKKsCZAN5upe3JsAA0J+WxOY8YZjdaDSDnqiXJPAO7HeVpKqA8faSu/C0Fr2l+hw6+d84Bn26DhtJFn1wZWba9gsl6hPheR/yW2aF+V3zCOAz8l9eR0YzgXIhjRfrjW7A20YX07I=
+	t=1762419150; cv=none; b=HvZtlhND/IzJxmPNbu2iT63qBwe9hhCqYSviJtstNgqWmtY8n3/oFYjiGHOn/dW17m+St7vVIsncTQLkpMvEvcoYXf3UZejU5N2BNiAY8dWHiM05/vsQERLSgxaz6Rl0jvVixm1+bqU/4m5uCB5PXxbVq3akF9kuLpZedainRTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762394177; c=relaxed/simple;
-	bh=Lwi+HBW6NI9Zzpj1VH4WGk4UsyyneW2Nkp2PQ1aZCJk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y77pCON2zAAEACEo3rKxrtJccGT0UO/ix5BDkjWuxlAlNs5YG9EgFLwXFqX8B5l5/vvk8GZJ9qtvFYrm18decsT2vRuK5bYfnkN9JQPbi0At9M832BVo8USLsU4VfYsdcItBFO0BgPNxex8K/A0dqtaXD8ydZ+O+lwGvLABHs0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFAezk7b; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762419150; c=relaxed/simple;
+	bh=JeeGduUL6bWDAecqsw7jXtrhy0rUfGVWJXThQknPHYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cYR8lkC87YIn72s+JCZKwYxrLQzB108VxX4jVkIU4V3tKVK1hJlmj4CjAgvU1NFeIM4Yp/ucqLl4ERatfmHPHhfTDSi5qEiPXFxJrjHT/AQFFrJgJ2jR0SDQSBnZC27ghUSOWCIvfQIPahvWzpf2xQcwvy0IA6wlr6cAenUf8EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=X30Bk2PF; arc=none smtp.client-ip=45.157.188.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFAezk7b"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B492AC19424
-	for <linux-security-module@vger.kernel.org>; Thu,  6 Nov 2025 01:56:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762394176;
-	bh=Lwi+HBW6NI9Zzpj1VH4WGk4UsyyneW2Nkp2PQ1aZCJk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jFAezk7bFkzOnpSyKtu/v/0eMNhdxWRoH1Mwm+NPQd0YUkK/tMK3Xje0KPEp81c7F
-	 XsYqd64+4G4K6CK9dfdMN/Z1hEHdawN/kdcYTQpiQJNwk3yQk9hwx698TPLcTPbwHG
-	 9d1vTFv8sBziGLxYtWQkJlP8ajLZZPGjPgJwGOEblng3QHZLv+j2LuQ7XwG0n4UzUa
-	 TeLk3tNQzrVyW2ycOtHn/XQuZy0wN+sNSPL/5bTh4MhmvKJf/kjYvRSb0HQxZv2cu0
-	 WKGGnfm/9o/+LHPHYI4upH6AjvoBfTgVVnEcnXfaY3ZSsDJpK48OI5cAmZcxGbRqbW
-	 EJvb0sm9iPvDA==
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6409e985505so631295a12.2
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Nov 2025 17:56:16 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXmOiQOJPuO2attpDQ9DcYhG2C/mwRmy1tfymg/nV57JVYyT06QPCl820qysnwGJmWmNiePBFknAuDzULktmF0c+P+PVnY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLR92DodZbCxO01Nfszy/KcNDkW0L46jXs/sh3JPtaVzgQks2z
-	mWVdLBxL4qeBMoKQlLt2NidsNah4KKWR3626krM5lkDWPmsYBfVp4AcM81rLrYow1Grrq+I1vgP
-	kAFIDdN7lfLVX1K906swolqNOEtO/DrI=
-X-Google-Smtp-Source: AGHT+IGRWQr/yMix2KC9FWBoMcuBXJI8axGaVe0Q7R1p9lozVUkvmiwrl4KtXQgDBkKGB2LM0O8foBaqARcRluikU3E=
-X-Received: by 2002:a05:6402:51d1:b0:63c:2d72:56e3 with SMTP id
- 4fb4d7f45d1cf-64105a5d549mr4682456a12.23.1762394174672; Wed, 05 Nov 2025
- 17:56:14 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="X30Bk2PF"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4d2G465h95zj7h;
+	Thu,  6 Nov 2025 09:45:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1762418742;
+	bh=JfNO0M5lh5psROFvDuYOwWJ0xb+D1+8vDp/FH+1rqVk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X30Bk2PFMYipzWJ7/aD0f3Ym/BAnhmLFkPYEUVdne23t2s1Ir9+joBlwp6Di9JEbZ
+	 sBEf7MkKQLVN1DVNZxQcI/ZzArZrdlEHEYKIPMH+ppOjVk1//SHGRXQr3kAK60lyjL
+	 9KbnjgYprlQj+JEmTkgx0EXqV6fDKy1YiQ+QNKrc=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4d2G455C1YzlQr;
+	Thu,  6 Nov 2025 09:45:41 +0100 (CET)
+Date: Thu, 6 Nov 2025 09:45:40 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
+Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, eadavis@qq.com, gnoack@google.com, jack@suse.cz, 
+	jannh@google.com, max.kellermann@ionos.com, m@maowtm.org, 
+	syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com, Hillf Danton <hdanton@sina.com>
+Subject: Re: [PATCH 2/2] landlock: fix splats from iput() after it started
+ calling might_sleep()
+Message-ID: <20251106.ahm0loS4ceic@digikod.net>
+References: <20251105212025.807549-1-mjguzik@gmail.com>
+ <20251105212025.807549-2-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106005333.956321-1-neilb@ownmail.net> <20251106005333.956321-8-neilb@ownmail.net>
-In-Reply-To: <20251106005333.956321-8-neilb@ownmail.net>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 6 Nov 2025 10:56:01 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8noOKEPEBDKSFa4FLFsHH3oCKRM58Tq+PTmTG5yjyDdw@mail.gmail.com>
-X-Gm-Features: AWmQ_blmBmQhx0SfF_RJrLZwQ93tMKfLranVnNF6NMqPQEMSGUPWm6n05JxFEa0
-Message-ID: <CAKYAXd8noOKEPEBDKSFa4FLFsHH3oCKRM58Tq+PTmTG5yjyDdw@mail.gmail.com>
-Subject: Re: [PATCH v5 07/14] VFS: introduce start_removing_dentry()
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Jeff Layton <jlayton@kernel.org>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
-	David Howells <dhowells@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Chuck Lever <chuck.lever@oracle.com>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
-	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Carlos Maiolino <cem@kernel.org>, John Johansen <john.johansen@canonical.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251105212025.807549-2-mjguzik@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, Nov 6, 2025 at 9:55=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
->
-> From: NeilBrown <neil@brown.name>
->
-> start_removing_dentry() is similar to start_removing() but instead of
-> providing a name for lookup, the target dentry is given.
->
-> start_removing_dentry() checks that the dentry is still hashed and in
-> the parent, and if so it locks and increases the refcount so that
-> end_removing() can be used to finish the operation.
->
-> This is used in cachefiles, overlayfs, smb/server, and apparmor.
->
-> There will be other users including ecryptfs.
->
-> As start_removing_dentry() takes an extra reference to the dentry (to be
-> put by end_removing()), there is no need to explicitly take an extra
-> reference to stop d_delete() from using dentry_unlink_inode() to negate
-> the dentry - as in cachefiles_delete_object(), and ksmbd_vfs_unlink().
->
-> cachefiles_bury_object() now gets an extra ref to the victim, which is
-> drops.  As it includes the needed end_removing() calls, the caller
-> doesn't need them.
->
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: NeilBrown <neil@brown.name>
-For ksmbd part,
-Reviewed-by: Namjae Jeon <linkinjeon@kernel.org>
+On Wed, Nov 05, 2025 at 10:20:25PM +0100, Mateusz Guzik wrote:
+> At this point it is guaranteed this is not the last reference.
+> 
+> However, a recent addition of might_sleep() at top of iput() started
+> generating false-positives as it was executing for all values.
+> 
+> Remedy the problem by using the newly introduced iput_not_last().
+> 
+> Reported-by: syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/68d32659.a70a0220.4f78.0012.GAE@google.com/
+> Fixes: 2ef435a872ab ("fs: add might_sleep() annotation to iput() and more")
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+
+Reviewed-by: Mickaël Salaün <mic@digikod.net>
+
 Thanks!
+
+> ---
+>  security/landlock/fs.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 0bade2c5aa1d..d9c12b993fa7 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -1335,11 +1335,10 @@ static void hook_sb_delete(struct super_block *const sb)
+>  			 * At this point, we own the ihold() reference that was
+>  			 * originally set up by get_inode_object() and the
+>  			 * __iget() reference that we just set in this loop
+> -			 * walk.  Therefore the following call to iput() will
+> -			 * not sleep nor drop the inode because there is now at
+> -			 * least two references to it.
+> +			 * walk.  Therefore there are at least two references
+> +			 * on the inode.
+>  			 */
+> -			iput(inode);
+> +			iput_not_last(inode);
+>  		} else {
+>  			spin_unlock(&object->lock);
+>  			rcu_read_unlock();
+> -- 
+> 2.48.1
+> 
+> 
