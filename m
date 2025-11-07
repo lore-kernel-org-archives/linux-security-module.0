@@ -1,202 +1,259 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D4323EAAE;
-	Thu,  6 Nov 2025 22:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D152303CB2;
+	Fri,  7 Nov 2025 06:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762467369; cv=none; b=Key3+CKfq2tFvKFOQvJZFvbiyoCPmMf3nRvYRulKMsGnRl52mLPSnwyRzaOO61qKqo3d0ylCWJ0EfO9XlwJLZEB+GPQGG3p5f2MBn6WZtiRUY0I+k6Vv0aVmMhZSZbnZamiQac1irP5/5PE5jB4fIhs+mGVv7dqGUQ1ZGF9FnTk=
+	t=1762498489; cv=none; b=H13pPxysvZFxNjoNV+I5Ao7m8qgbY/TLgzDFTdoHb+B1tYsYaEijCnY6J6c9+0pLc42/jfxeBtWLUrQ9KvbcdCqwAPvRGpsmZHFYom7Lkcmc7uf3DNpejbCrIA4JElpibxpw6SXbCoSaC5FOCtMIe7/+X5Abyc8LgCgsmSeL4SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762467369; c=relaxed/simple;
-	bh=ZIk+AfMZgAYMOTCCjanRLeMZrq0PnmwmS8zTdHALF7Q=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=TgkPCY4OrzsPnav3G9S9taHg82oIsJhrWQorTIO2tsRnlBZh81DRFN6quvMw5ike8hVf2ISczETFhxxouDpzoiTNPwx+jt5g+vJfG1kuz3U0gj/iMd8uGwV66GdQqB0yECazutkN8I7/V2D4deVNIFZsjUsjDu3YI/xdpcrK2/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZI9UJQ8x; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1762498489; c=relaxed/simple;
+	bh=FvfOLjkE80+gbQn+a4An0EOfPXdtb1kZNcilFuT/WU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r+NmHYpOnz3F3pHUKZxe3dY+e31XbmpH3cannZ9VGD6EHbwyqSLQfNwmD2Y3afB6KdtqSNbmVpwgmMz22/B1MJS0BK9/aCK74T/vTrRv+YE+PF/en8PWlnFzVU+ZaglApnz+sE06iv7ZWNxJ3R+VNTjRnpLyi899HZvdOapvtXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SrvFP0Ho; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZI9UJQ8x"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6Gd0Go028252;
-	Thu, 6 Nov 2025 22:15:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=SiPPBV
-	1cKgzYnuAXoEe9S7za3I6Ag2LuDK3mBAh6v2c=; b=ZI9UJQ8xkEowH1xZwMTkeH
-	s4orfbGA1qB1DbcGbpIRSfARKmTd3LkeFN9wJFRo+HwCi+DNvN+YE4QY2zkXAeO7
-	kn2LZAUy2ZwCG3hdW/Z3ySTg09op+JqHEBWpoJ/5JnMSpK+6ybVNsw/U1c3NGu0Q
-	BEGvHXc5EdCxVdQgbzOPYIDOWOyOHZ8hoNiGJYBjr3z9y5+VKlAva7mqSwwlXZXB
-	2exp2zBFuH6j4CcQsCO2du/YNf8BPPk+lG7l9Dx4RkywLw7Xc7uUejfDPcmD6u01
-	PxPMNFri0NWuXuxhdfK7cybqODNZAs09L1qvWM64dhVw1GY1glbPYiTKfnuNGceQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59q99qur-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Nov 2025 22:15:38 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A6MFcAE022146;
-	Thu, 6 Nov 2025 22:15:38 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59q99qum-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Nov 2025 22:15:38 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6IdLFM009822;
-	Thu, 6 Nov 2025 22:15:36 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5x1kqpx3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Nov 2025 22:15:36 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A6MFZuu29164178
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 6 Nov 2025 22:15:36 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D275658053;
-	Thu,  6 Nov 2025 22:15:35 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4D6D158043;
-	Thu,  6 Nov 2025 22:15:34 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.50.42])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  6 Nov 2025 22:15:34 +0000 (GMT)
-Message-ID: <b9eb78105115a00731b3677a5f3a39d5dde4d2ec.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] lsm,ima: new LSM hook
- security_kernel_module_read_file to access decompressed kernel module
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Srot <ksrot@redhat.com>,
-        James
- Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Luis
- Chamberlain	 <mcgrof@kernel.org>,
-        Petr Pavlu <petr.pavlu@suse.com>, Daniel
- Gomez	 <da.gomez@kernel.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Roberto Sassu	 <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:MODULE SUPPORT"
- <linux-modules@vger.kernel.org>
-In-Reply-To: <d24wnmefebnheerigmh6ts5yskkutz726l6a2f6g5s3s5fhhrv@osaactobwb5g>
-References: <20250928030358.3873311-1-coxu@redhat.com>
-	 <20251031074016.1975356-1-coxu@redhat.com>
-	 <CAHC9VhRBXkW+XuqhxJvEOYR_VMxFh4TRWUtXzZky=AG_nyBYEQ@mail.gmail.com>
-	 <baa39fcd1b6b485f14b8f06dcd96b81359e6e491.camel@linux.ibm.com>
-	 <CAHC9VhToe-VNqbh6TY2iYnRvqTHRfQjnHYSRWYgt8K7NcLKMdg@mail.gmail.com>
-	 <fftfj4o3kqxmfu3hb655xczqcddoeqjv55llsnwkrdu5isdm4z@6sqe3k24a6kk>
-	 <84a0e1785c7f0ff816b3246be49012092ae12126.camel@linux.ibm.com>
-	 <d24wnmefebnheerigmh6ts5yskkutz726l6a2f6g5s3s5fhhrv@osaactobwb5g>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 06 Nov 2025 17:15:33 -0500
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SrvFP0Ho"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762498488; x=1794034488;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FvfOLjkE80+gbQn+a4An0EOfPXdtb1kZNcilFuT/WU8=;
+  b=SrvFP0HoJ2slZ06K8jZ3+D/Yc9FsOJG0dN4gb/wtf6unstFtJ6uwP79i
+   SsY7yJCGlduLiW9vj7/Sr2bQa/0ObCm6YCgAw13Rp7h/2KzDS/wOb3bms
+   YbFZ6qZ4otIJo7SbbACk89WMumm1+fgMasO5uf67XCNe3FnY5o5cjXUr2
+   bX4djGEc2L0gip66EKxL9bJvt93yROU56GopvwSttL8HD6DN9Y+F2QK6j
+   qhBd1quDLHp7bZP9R0Y0USXVo1kUbHrdgYU9/12g25QE+ek6C4xiZ0rrQ
+   IWIun2y/G8OkhaVNWvDjDyHVdynxeo+Z0JbrpRbHzdB753L4YfqYl9NQ7
+   g==;
+X-CSE-ConnectionGUID: 2sgf08x/QMCGRvnwSJeuwA==
+X-CSE-MsgGUID: gEyI/e7ESeeL6yO+8OcdHg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="64683787"
+X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
+   d="scan'208";a="64683787"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 22:54:47 -0800
+X-CSE-ConnectionGUID: OdIrGuoIStGBxEkimjt+eg==
+X-CSE-MsgGUID: bZw+Z6vgQDyvp9cvISrUzA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
+   d="scan'208";a="225226832"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 06 Nov 2025 22:54:44 -0800
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vHGMr-000Uoj-1l;
+	Fri, 07 Nov 2025 06:54:41 +0000
+Date: Fri, 7 Nov 2025 14:54:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tahera Fahimi <taherafahimi@linux.microsoft.com>, zohar@linux.ibm.com,
+	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	code@tyhicks.com
+Cc: oe-kbuild-all@lists.linux.dev,
+	Tahera Fahimi <taherafahimi@linux.microsoft.com>
+Subject: Re: [Patch V1] ima: avoid duplicate policy rules insertions
+Message-ID: <202511071406.hU1UdCKh-lkp@intel.com>
+References: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=StmdKfO0 c=1 sm=1 tr=0 ts=690d1e0a cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=NEAV23lmAAAA:8 a=hO0pNDKWLz_cAJWU_XQA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: 2TcC7SZcOWEAivhxNgOLpr4EkIUjPptU
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAxOCBTYWx0ZWRfX7dnqnmt6YAZs
- 6vIe70aDIPD3i5Vz/yAe1lGDTPhsoeJFv4LKWysYZcaqB5AhZ0LpuOdbYqvShctUCJ1NU/miBxp
- V7tTIyHWxKxfH11I+HI5VpNCtFMOKcI+kAoc+gMOlbdf1sVDtgEsGsTOY9mGv1yX5FFbPNqH01A
- W6Z6l0FaXeBvhksyzAACTWu/Co2I5lwNY1AWvYG6IpNZGndY4j9VLLmCD8tkWek5cBtCdkwJpUP
- dhb7ET6FBhySgLKqVqFvduSKPXcVd5hNFfcByYDJza/5xkz4wMCvd8qMiIuZickBI49+sgdDRAQ
- 9XPglZ/3FXQgdX3tPDTapAykC0CWXUF5FEzRmbF4Ek3euo4KMdwVlwW/v9ceQWT6V7QyLoOnwT7
- 6KtuygcfsqsqGNBMG/JnJxDFYqpBkA==
-X-Proofpoint-GUID: 2sSP0p4LOwrW01N-WrnspT1BYGzsKbWK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_04,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 suspectscore=0 phishscore=0 impostorscore=0 priorityscore=1501
- malwarescore=0 clxscore=1015 adultscore=0 bulkscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010018
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
 
-On Thu, 2025-11-06 at 21:29 +0800, Coiby Xu wrote:
-> On Wed, Nov 05, 2025 at 03:47:25PM -0500, Mimi Zohar wrote:
-> > On Wed, 2025-11-05 at 08:18 +0800, Coiby Xu wrote:
-> [...]
-> >=20
-> > Hi Coiby,
-> >=20
-> > Based on the conversation with Paul, there is no reason to remove the e=
-xisting
-> > security_kernel_post_read_file() call.
-> >=20
-> > The changes are similar to the 2nd link, but a bit different.
-> > - Define a single enumeration named READING_MODULE_COMPRESSED.
-> >=20
-> > - In module/main.c add a new security_kernel_post_read_file() call imme=
-diately
-> > after decompressing the kernel module.  Like a previous version of this=
- patch,
-> > call kernel_read_file() with either READING_MODULE or READING_MODULE_CO=
-MPRESSED
-> > based on MODULE_INIT_COMPRESSED_FILE.
-> >=20
-> > - In ima_post_read_file() defer verifying the signature when the enumer=
-ation is
-> > READING_MODULE_COMPRESSED.  (No need for a new function ima_read_kernel=
-_module.)
->=20
-> Hi Mimi,
->=20
-> Thanks for summarizing your conversation with Paul! I can confirm Paul's
-> approach works
-> https://github.com/coiby/linux/tree/in_kernel_decompression_ima_no_lsm_ho=
-ok_paul
->=20
-> While testing the patch today, I realized there is another
-> issue/challenge introduced by in-kernel module decompression. IMA
-> appraisal is to verify the digest of compressed kernel module but
-> currently the passed buffer is uncompressed module. When IMA uses
-> uncompressed module data to calculate the digest, xattr signature
-> verification will fail. If we always make IMA read the original kernel
-> module data again to calculate the digest, does it look like a
-> quick-and-dirty fix? If we can assume people won't load kernel module so
-> often, the performance impact is negligible. Otherwise we may have to
-> introduce a new LSM hook so IMA can access uncompressed and original
-> module data one time.
+Hi Tahera,
 
-ima_collect_measurement() stores the file hash info in the iint and uses th=
-at
-information to verify the signature as stored in the security xattr.=20
-Decompressing the kernel module shouldn't affect the xattr signature
-verification.
+kernel test robot noticed the following build warnings:
 
-The patch with a few minor changes looks good:
+[auto build test WARNING on zohar-integrity/next-integrity]
+[also build test WARNING on linus/master v6.18-rc4 next-20251107]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-- READDING_MODULE_CHECK -> READING_MODULE_CHECK
-- Fix the enumeration name in ima_main.c
-- scripts/checkpatch.pl code/comment line length has been relaxed to 100 ch=
-ars,
-but the section "Breaking long lines and strings" in
-Documentation/process/coding-style.rst still recommends 80 characters.
+url:    https://github.com/intel-lab-lkp/linux/commits/Tahera-Fahimi/ima-avoid-duplicate-policy-rules-insertions/20251107-021615
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+patch link:    https://lore.kernel.org/r/20251106181404.3429710-1-taherafahimi%40linux.microsoft.com
+patch subject: [Patch V1] ima: avoid duplicate policy rules insertions
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20251107/202511071406.hU1UdCKh-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251107/202511071406.hU1UdCKh-lkp@intel.com/reproduce)
 
-There are cases where it is necessary to go over the 80 char line limit for
-readability, but in general both Roberto and I prefer, as much as possible,=
- to
-limit the line length to 80 char.  To detect where/when the line limit is
-greater than 80 chars, use the scripts/checkpatch.pl "--max-line-length=3D8=
-0"
-option.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511071406.hU1UdCKh-lkp@intel.com/
 
-After fixing the patch, please post it to linux-integrity mailing list.
+All warnings (new ones prefixed by >>):
 
---=20
-thanks,
+   security/integrity/ima/ima_policy.c: In function 'template_has_field':
+>> security/integrity/ima/ima_policy.c:1958:13: warning: unused variable 'j' [-Wunused-variable]
+    1958 |         int j;
+         |             ^
+--
+>> Warning: security/integrity/ima/ima_policy.c:2078 function parameter 'new_rule' not described in 'ima_rule_exists'
 
-Mimi
+
+vim +/j +1958 security/integrity/ima/ima_policy.c
+
+  1955	
+  1956	static bool template_has_field(const char *field_id, const struct ima_template_desc *template2)
+  1957	{
+> 1958		int j;
+  1959	
+  1960		for (int j = 0; j < template2->num_fields; j++)
+  1961			if (strcmp(field_id, template2->fields[j]->field_id) == 0)
+  1962				return true;
+  1963	
+  1964		return false;
+  1965	}
+  1966	
+  1967	static bool keyring_has_item(const char *item, const struct ima_rule_opt_list *keyrings)
+  1968	{
+  1969		int j;
+  1970	
+  1971		for (j = 0; j < keyrings->count; j++) {
+  1972			if (strcmp(item, keyrings->items[j]) == 0)
+  1973				return true;
+  1974		}
+  1975		return false;
+  1976	}
+  1977	
+  1978	static bool labels_has_item(const char *item, const struct ima_rule_opt_list *labels)
+  1979	{
+  1980		int j;
+  1981	
+  1982		for (j = 0; j < labels->count; j++) {
+  1983			if (strcmp(item, labels->items[j]) == 0)
+  1984				return true;
+  1985		}
+  1986		return false;
+  1987	}
+  1988	
+  1989	static bool ima_rules_equal(const struct ima_rule_entry *rule1, const struct ima_rule_entry *rule2)
+  1990	{
+  1991		int i;
+  1992	
+  1993		if (rule1->flags != rule2->flags)
+  1994			return false;
+  1995	
+  1996		if (rule1->action != rule2->action)
+  1997			return false;
+  1998	
+  1999		if (((rule1->flags & IMA_FUNC) && rule1->func != rule2->func) ||
+  2000		    ((rule1->flags & (IMA_MASK | IMA_INMASK)) && rule1->mask != rule2->mask) ||
+  2001		    ((rule1->flags & IMA_FSMAGIC) && rule1->fsmagic != rule2->fsmagic) ||
+  2002		    ((rule1->flags & IMA_FSUUID) && !uuid_equal(&rule1->fsuuid, &rule2->fsuuid)) ||
+  2003		    ((rule1->flags & IMA_UID) && !uid_eq(rule1->uid, rule2->uid)) ||
+  2004		    ((rule1->flags & IMA_GID) && !gid_eq(rule1->gid, rule2->gid)) ||
+  2005		    ((rule1->flags & IMA_FOWNER) && !uid_eq(rule1->fowner, rule2->fowner)) ||
+  2006		    ((rule1->flags & IMA_FGROUP) && !gid_eq(rule1->fgroup, rule2->fgroup)) ||
+  2007		    ((rule1->flags & IMA_FSNAME) && (strcmp(rule1->fsname, rule2->fsname) != 0)) ||
+  2008		    ((rule1->flags & IMA_PCR) && rule1->pcr != rule2->pcr) ||
+  2009		    ((rule1->flags & IMA_VALIDATE_ALGOS) &&
+  2010		      rule1->allowed_algos != rule2->allowed_algos) ||
+  2011		    ((rule1->flags & IMA_EUID) && !uid_eq(rule1->uid, rule2->uid)) ||
+  2012		    ((rule1->flags & IMA_EGID) && !gid_eq(rule1->gid, rule2->gid)))
+  2013			return false;
+  2014	
+  2015		if (!rule1->template && !rule2->template) {
+  2016			;
+  2017		} else if (!rule1->template || !rule2->template) {
+  2018			return false;
+  2019		} else if (rule1->template->num_fields != rule2->template->num_fields) {
+  2020			return false;
+  2021		} else if (rule1->template->num_fields != 0) {
+  2022			for (i = 0; i < rule1->template->num_fields; i++) {
+  2023				if (!template_has_field(rule1->template->fields[i]->field_id,
+  2024							rule2->template))
+  2025					return false;
+  2026			}
+  2027		}
+  2028	
+  2029		if (rule1->flags & IMA_KEYRINGS) {
+  2030			if (!rule1->keyrings && !rule2->keyrings) {
+  2031				;
+  2032			} else if (!rule1->keyrings || !rule2->keyrings) {
+  2033				return false;
+  2034			} else if (rule1->keyrings->count != rule2->keyrings->count) {
+  2035				return false;
+  2036			} else if (rule1->keyrings->count != 0) {
+  2037				for (i = 0; i < rule1->keyrings->count; i++) {
+  2038					if (!keyring_has_item(rule1->keyrings->items[i], rule2->keyrings))
+  2039						return false;
+  2040				}
+  2041			}
+  2042		}
+  2043	
+  2044		if (rule1->flags & IMA_LABEL) {
+  2045			if (!rule1->label && !rule2->label) {
+  2046				;
+  2047			} else if (!rule1->label || !rule2->label) {
+  2048				return false;
+  2049			} else if (rule1->label->count != rule2->label->count) {
+  2050				return false;
+  2051			} else if (rule1->label->count != 0) {
+  2052				for (i = 0; i < rule1->label->count; i++) {
+  2053					if (!labels_has_item(rule1->label->items[i], rule2->label))
+  2054						return false;
+  2055				}
+  2056			}
+  2057		}
+  2058	
+  2059		for (i = 0; i < MAX_LSM_RULES; i++) {
+  2060			if (!rule1->lsm[i].rule && !rule2->lsm[i].rule)
+  2061				continue;
+  2062	
+  2063			if (!rule1->lsm[i].rule || !rule2->lsm[i].rule)
+  2064				return false;
+  2065	
+  2066			if (strcmp(rule1->lsm[i].args_p, rule2->lsm[i].args_p) != 0)
+  2067				return false;
+  2068		}
+  2069	
+  2070		return true;
+  2071	}
+  2072	
+  2073	/**
+  2074	 * ima_rule_exists - check if a rule already exists in the policy
+  2075	 *
+  2076	 * Checking both the active policy and the temporary rules list.
+  2077	 */
+> 2078	static bool ima_rule_exists(struct ima_rule_entry *new_rule)
+  2079	{
+  2080		struct ima_rule_entry *entry;
+  2081		struct list_head *ima_rules_tmp;
+  2082	
+  2083		if (!list_empty(&ima_temp_rules)) {
+  2084			list_for_each_entry(entry, &ima_temp_rules, list) {
+  2085				if (ima_rules_equal(entry, new_rule))
+  2086					return true;
+  2087			}
+  2088		}
+  2089	
+  2090		rcu_read_lock();
+  2091		ima_rules_tmp = rcu_dereference(ima_rules);
+  2092		list_for_each_entry_rcu(entry, ima_rules_tmp, list) {
+  2093			if (ima_rules_equal(entry, new_rule)) {
+  2094				rcu_read_unlock();
+  2095				return true;
+  2096			}
+  2097		}
+  2098		rcu_read_unlock();
+  2099	
+  2100		return false;
+  2101	}
+  2102	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
