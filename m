@@ -1,154 +1,282 @@
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B9A279DB3
-	for <linux-security-module@vger.kernel.org>; Fri,  7 Nov 2025 07:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86793F9FB;
+	Fri,  7 Nov 2025 10:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762500690; cv=none; b=BqO9yyPNFYnK3fboALRxyGXVBGB4Q056WDEQ6Un6mINU8Pu9M3+7i89mdHHNl9IZb1rWXSoAjbJnsQEGQnlUiipnRsCF9Pr090LGM4fB/Oh1FliOcHJR5pHf6AAZLriLwbmLY28DJhbHI5YL+i3f2mnv+nTctalQbiO0AaL0XKo=
+	t=1762509645; cv=none; b=EyWkjEQB7AFu6tscxWkIGkpF1nV21fUY3bRg0gYMt+v8eNv5XqHWDx1nLQ9EBH21r0Y53gYdBXqanS06kSfrcdzA5fBHLewfVbVlhe0R376/nnEIW/PLoxj654ShHjPlV9F7YJmgWirU0cJLueM95X/ABBhDGBxzVHBDS9n5K4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762500690; c=relaxed/simple;
-	bh=hmBQunOCM5ZmhF1k490t04BJn11l0BugsBMHywhEaok=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WdIsO+x/yPyaJ8iI5ZFLKI4poX1PwOsTJhbUPgBcurb2fpjf3razv0amZoymHpEKafHPaeyiHMog+8ungfBLklNGUOYRPFxljV5k8gvbEEiiLI74CTuGjWcPrxPg6qpfZ/9Op9sEAx8xybOwyUqQtcy66tBaYahRLOI/YERpYm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-93e7f4f7bb1so37091539f.3
-        for <linux-security-module@vger.kernel.org>; Thu, 06 Nov 2025 23:31:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762500688; x=1763105488;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DC5whZ6xjAg9orncDEXG9Mf4Zikpjttx0BkeAU8vHTQ=;
-        b=Hh3uRqV5O/Xpzedob+RkSPJZM4ZuiI57PxrM88Z67uHiBGpTJYEAg6jBUTQLv/zrIj
-         5lhRcSEswQeyDIbwiUfFVfiz2tZ2DJkYozgRSR/1Hp35pMsynh1mfropMk1vusUvF113
-         ibVIn6H0772xChSWf/a+l2gMbx6bXak713r3KJlQe6V0/0e2RPvCVLUZFomJVDxqRSjd
-         zhT0CFepHlg1sAmn8pgzJYPm3DtmaRLcr1dMXLp+KPwKGskanVvs9EhYhvEN/M3K6KCn
-         uCPch5Ivu0qa/dqVQu4Ts1OvaOg/pg+mq/sgBc1pgC8jFrnEug8sxv+7+SkB7a0JQBIx
-         DekQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1TqiWN1lebs6OsgDTt9glHcBd4zeMwEnVT+WsrDZ1T+aNUcwU3AgaGhNkiICUJ9PWjFlEz4VQFUVOEI0/9W7cryzvx0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP05K3aWnkjezua7C7AbHElAEgah3ZoQvsqNAcwBnJ2hCNFZ7U
-	OhSSvTO/HpQSfo/ouYGPPDNRXa3chFuaBZAAw/t5OLo9NDahU0rnx1V77kiKboIRRKEsXzTDS0b
-	NlZT+AEPKCqblS0c9z9EY1k2aAXnWY5edvHYAzbQjSh5768UNy5bzTb9DfOA=
-X-Google-Smtp-Source: AGHT+IF1mWmFU+QuzP+6G0raJVSuUbhvWf35rIhwvg/7kKBEsHrx+TEWgqipXwdks6Tvvg+v62pf8jfuYyIcJq7AP3kS3CRjzES2
+	s=arc-20240116; t=1762509645; c=relaxed/simple;
+	bh=DoOEZ//JAKl69/9mRcBMtVOZdn+ipyFZM4RcriXgrWI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OTjuvbJhIRo5Vie3aS+u6XjQdIOC0G6+R3IYtWwRBZYEI8NM/dHyAqwgflK90On0MuG52gahU4/zjVcaW2dwHTK3j312LiiVnueMchtqzSaa3n+psPNltGPjYD1Bjici++BaYYprVFs+WnR8L/DQQn93XZhBhrn4Bhh8dWCNGFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4d2vJG465nzpSvg;
+	Fri,  7 Nov 2025 17:43:26 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 54C51140276;
+	Fri,  7 Nov 2025 17:44:25 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwAnmHVvvw1pxl2qAQ--.20817S2;
+	Fri, 07 Nov 2025 10:44:24 +0100 (CET)
+Message-ID: <1cc67c25a141aef8982840898a6e7397cbdf10d9.camel@huaweicloud.com>
+Subject: Re: [Patch V1] ima: avoid duplicate policy rules insertions
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Tahera Fahimi <taherafahimi@linux.microsoft.com>, zohar@linux.ibm.com, 
+ roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com,  paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com,  linux-integrity@vger.kernel.org,
+ linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ code@tyhicks.com
+Cc: Lennart Poettering <mzxreary@0pointer.de>
+Date: Fri, 07 Nov 2025 10:44:12 +0100
+In-Reply-To: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
+References: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a64:b0:433:290f:c201 with SMTP id
- e9e14a558f8ab-4335f3d0389mr32665345ab.11.1762500687581; Thu, 06 Nov 2025
- 23:31:27 -0800 (PST)
-Date: Thu, 06 Nov 2025 23:31:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690da04f.a70a0220.22f260.0027.GAE@google.com>
-Subject: [syzbot] [fs?] WARNING in destroy_super_work
-From: syzbot <syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com>
-To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
-	anna-maria@linutronix.de, bpf@vger.kernel.org, brauner@kernel.org, 
-	bsegall@google.com, cgroups@vger.kernel.org, david@redhat.com, 
-	dietmar.eggemann@arm.com, frederic@kernel.org, hannes@cmpxchg.org, 
-	jack@suse.cz, jsavitz@redhat.com, juri.lelli@redhat.com, kees@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, 
-	mingo@redhat.com, mjguzik@gmail.com, mkoutny@suse.com, oleg@redhat.com, 
-	paul@paul-moore.com, peterz@infradead.org, rostedt@goodmis.org, 
-	rppt@kernel.org, sergeh@kernel.org, surenb@google.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, tj@kernel.org, 
-	vbabka@suse.cz, vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, 
-	vschneid@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+X-CM-TRANSID:LxC2BwAnmHVvvw1pxl2qAQ--.20817S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3JrWDGr4kGF18urW7Kr17Wrg_yoWxJr1xpa
+	98KFy3CFyFvrZ7JFsrX3WrWws0yrnxt3W8JFW7C34vywn8Zr1UGw45Grya9F4rtr13Wrn2
+	qF15Krs09w1jgFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBGkNTvkDcAAAsg
 
-Hello,
+On Thu, 2025-11-06 at 18:14 +0000, Tahera Fahimi wrote:
+> Prevent redundant IMA policy rules by checking for duplicates before inse=
+rtion. This ensures that
+> rules are not re-added when userspace is restarted (using systemd-soft-re=
+boot) without a full system
+> reboot. ima_rule_exists() detects duplicates in both temporary and active=
+ rule lists.
 
-syzbot found the following issue on:
++ Lennart
 
-HEAD commit:    982312090977 Add linux-next specific files for 20251103
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17b2932f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=43cc0e31558cb527
-dashboard link: https://syzkaller.appspot.com/bug?extid=1957b26299cf3ff7890c
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1347817c580000
+Hi Tahera
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/40058f8a830c/disk-98231209.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1d7f42e8639f/vmlinux-98231209.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d8bb0284f393/bzImage-98231209.xz
-
-The issue was bisected to:
-
-commit 3c9820d5c64aeaadea7ffe3a6bb99d019a5ff46a
-Author: Christian Brauner <brauner@kernel.org>
-Date:   Wed Oct 29 12:20:24 2025 +0000
-
-    ns: add active reference count
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=101e9bcd980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=121e9bcd980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=141e9bcd980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com
-Fixes: 3c9820d5c64a ("ns: add active reference count")
-
-------------[ cut here ]------------
-WARNING: ./include/linux/ns_common.h:229 at __ns_ref_put include/linux/ns_common.h:229 [inline], CPU#0: kworker/0:6/6108
-WARNING: ./include/linux/ns_common.h:229 at put_user_ns include/linux/user_namespace.h:189 [inline], CPU#0: kworker/0:6/6108
-WARNING: ./include/linux/ns_common.h:229 at destroy_super_work+0x15c/0x1a0 fs/super.c:280, CPU#0: kworker/0:6/6108
-Modules linked in:
-CPU: 0 UID: 0 PID: 6108 Comm: kworker/0:6 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Workqueue: events destroy_super_work
-RIP: 0010:__ns_ref_put include/linux/ns_common.h:229 [inline]
-RIP: 0010:put_user_ns include/linux/user_namespace.h:189 [inline]
-RIP: 0010:destroy_super_work+0x15c/0x1a0 fs/super.c:280
-Code: 90 63 ff 48 81 c3 a8 fc ff ff 48 89 df e8 ec 90 63 ff 4c 89 f7 5b 41 5c 41 5d 41 5e 41 5f 5d e9 8a 91 e1 ff e8 45 df 86 ff 90 <0f> 0b 90 e9 6d ff ff ff e8 37 df 86 ff 4c 89 e7 be 03 00 00 00 e8
-RSP: 0018:ffffc900030d7a48 EFLAGS: 00010293
-RAX: ffffffff823a294b RBX: ffff88805639c898 RCX: ffff88802ab59e80
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
-RBP: 0000000000000004 R08: ffff88807477565b R09: 1ffff1100e8eeacb
-R10: dffffc0000000000 R11: ffffed100e8eeacc R12: ffff888074775658
-R13: dffffc0000000000 R14: ffff88805639c000 R15: ffff8880747754c8
-FS:  0000000000000000(0000) GS:ffff888125eda000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c008044000 CR3: 0000000077ad4000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- process_one_work+0x94a/0x15d0 kernel/workqueue.c:3267
- process_scheduled_works kernel/workqueue.c:3350 [inline]
- worker_thread+0x9b0/0xee0 kernel/workqueue.c:3431
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x52d/0xa70 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+thanks for the patch!
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Wouldn't be better to enhance systemd-soft-reboot to not send the same
+IMA policy again?
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Thanks
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Roberto
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> Signed-off-by: Tahera Fahimi <taherafahimi@linux.microsoft.com>
+> ---
+>  security/integrity/ima/ima_policy.c | 157 +++++++++++++++++++++++++++-
+>  1 file changed, 156 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima=
+/ima_policy.c
+> index 164d62832f8ec..3dd902101dbda 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -1953,6 +1953,153 @@ static int ima_parse_rule(char *rule, struct ima_=
+rule_entry *entry)
+>  	return result;
+>  }
+> =20
+> +static bool template_has_field(const char *field_id, const struct ima_te=
+mplate_desc *template2)
+> +{
+> +	int j;
+> +
+> +	for (int j =3D 0; j < template2->num_fields; j++)
+> +		if (strcmp(field_id, template2->fields[j]->field_id) =3D=3D 0)
+> +			return true;
+> +
+> +	return false;
+> +}
+> +
+> +static bool keyring_has_item(const char *item, const struct ima_rule_opt=
+_list *keyrings)
+> +{
+> +	int j;
+> +
+> +	for (j =3D 0; j < keyrings->count; j++) {
+> +		if (strcmp(item, keyrings->items[j]) =3D=3D 0)
+> +			return true;
+> +	}
+> +	return false;
+> +}
+> +
+> +static bool labels_has_item(const char *item, const struct ima_rule_opt_=
+list *labels)
+> +{
+> +	int j;
+> +
+> +	for (j =3D 0; j < labels->count; j++) {
+> +		if (strcmp(item, labels->items[j]) =3D=3D 0)
+> +			return true;
+> +	}
+> +	return false;
+> +}
+> +
+> +static bool ima_rules_equal(const struct ima_rule_entry *rule1, const st=
+ruct ima_rule_entry *rule2)
+> +{
+> +	int i;
+> +
+> +	if (rule1->flags !=3D rule2->flags)
+> +		return false;
+> +
+> +	if (rule1->action !=3D rule2->action)
+> +		return false;
+> +
+> +	if (((rule1->flags & IMA_FUNC) && rule1->func !=3D rule2->func) ||
+> +	    ((rule1->flags & (IMA_MASK | IMA_INMASK)) && rule1->mask !=3D rule2=
+->mask) ||
+> +	    ((rule1->flags & IMA_FSMAGIC) && rule1->fsmagic !=3D rule2->fsmagic=
+) ||
+> +	    ((rule1->flags & IMA_FSUUID) && !uuid_equal(&rule1->fsuuid, &rule2-=
+>fsuuid)) ||
+> +	    ((rule1->flags & IMA_UID) && !uid_eq(rule1->uid, rule2->uid)) ||
+> +	    ((rule1->flags & IMA_GID) && !gid_eq(rule1->gid, rule2->gid)) ||
+> +	    ((rule1->flags & IMA_FOWNER) && !uid_eq(rule1->fowner, rule2->fowne=
+r)) ||
+> +	    ((rule1->flags & IMA_FGROUP) && !gid_eq(rule1->fgroup, rule2->fgrou=
+p)) ||
+> +	    ((rule1->flags & IMA_FSNAME) && (strcmp(rule1->fsname, rule2->fsnam=
+e) !=3D 0)) ||
+> +	    ((rule1->flags & IMA_PCR) && rule1->pcr !=3D rule2->pcr) ||
+> +	    ((rule1->flags & IMA_VALIDATE_ALGOS) &&
+> +	      rule1->allowed_algos !=3D rule2->allowed_algos) ||
+> +	    ((rule1->flags & IMA_EUID) && !uid_eq(rule1->uid, rule2->uid)) ||
+> +	    ((rule1->flags & IMA_EGID) && !gid_eq(rule1->gid, rule2->gid)))
+> +		return false;
+> +
+> +	if (!rule1->template && !rule2->template) {
+> +		;
+> +	} else if (!rule1->template || !rule2->template) {
+> +		return false;
+> +	} else if (rule1->template->num_fields !=3D rule2->template->num_fields=
+) {
+> +		return false;
+> +	} else if (rule1->template->num_fields !=3D 0) {
+> +		for (i =3D 0; i < rule1->template->num_fields; i++) {
+> +			if (!template_has_field(rule1->template->fields[i]->field_id,
+> +						rule2->template))
+> +				return false;
+> +		}
+> +	}
+> +
+> +	if (rule1->flags & IMA_KEYRINGS) {
+> +		if (!rule1->keyrings && !rule2->keyrings) {
+> +			;
+> +		} else if (!rule1->keyrings || !rule2->keyrings) {
+> +			return false;
+> +		} else if (rule1->keyrings->count !=3D rule2->keyrings->count) {
+> +			return false;
+> +		} else if (rule1->keyrings->count !=3D 0) {
+> +			for (i =3D 0; i < rule1->keyrings->count; i++) {
+> +				if (!keyring_has_item(rule1->keyrings->items[i], rule2->keyrings))
+> +					return false;
+> +			}
+> +		}
+> +	}
+> +
+> +	if (rule1->flags & IMA_LABEL) {
+> +		if (!rule1->label && !rule2->label) {
+> +			;
+> +		} else if (!rule1->label || !rule2->label) {
+> +			return false;
+> +		} else if (rule1->label->count !=3D rule2->label->count) {
+> +			return false;
+> +		} else if (rule1->label->count !=3D 0) {
+> +			for (i =3D 0; i < rule1->label->count; i++) {
+> +				if (!labels_has_item(rule1->label->items[i], rule2->label))
+> +					return false;
+> +			}
+> +		}
+> +	}
+> +
+> +	for (i =3D 0; i < MAX_LSM_RULES; i++) {
+> +		if (!rule1->lsm[i].rule && !rule2->lsm[i].rule)
+> +			continue;
+> +
+> +		if (!rule1->lsm[i].rule || !rule2->lsm[i].rule)
+> +			return false;
+> +
+> +		if (strcmp(rule1->lsm[i].args_p, rule2->lsm[i].args_p) !=3D 0)
+> +			return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +/**
+> + * ima_rule_exists - check if a rule already exists in the policy
+> + *
+> + * Checking both the active policy and the temporary rules list.
+> + */
+> +static bool ima_rule_exists(struct ima_rule_entry *new_rule)
+> +{
+> +	struct ima_rule_entry *entry;
+> +	struct list_head *ima_rules_tmp;
+> +
+> +	if (!list_empty(&ima_temp_rules)) {
+> +		list_for_each_entry(entry, &ima_temp_rules, list) {
+> +			if (ima_rules_equal(entry, new_rule))
+> +				return true;
+> +		}
+> +	}
+> +
+> +	rcu_read_lock();
+> +	ima_rules_tmp =3D rcu_dereference(ima_rules);
+> +	list_for_each_entry_rcu(entry, ima_rules_tmp, list) {
+> +		if (ima_rules_equal(entry, new_rule)) {
+> +			rcu_read_unlock();
+> +			return true;
+> +		}
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	return false;
+> +}
+> +
+>  /**
+>   * ima_parse_add_rule - add a rule to ima_policy_rules
+>   * @rule: ima measurement policy rule
+> @@ -1993,7 +2140,15 @@ ssize_t ima_parse_add_rule(char *rule)
+>  		return result;
+>  	}
+> =20
+> -	list_add_tail(&entry->list, &ima_temp_rules);
+> +	if (!ima_rule_exists(entry)) {
+> +		list_add_tail(&entry->list, &ima_temp_rules);
+> +	} else {
+> +		result =3D -EEXIST;
+> +		ima_free_rule(entry);
+> +		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL,
+> +				    NULL, op, "duplicate-policy", result,
+> +				    audit_info);
+> +	}
+> =20
+>  	return len;
+>  }
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
