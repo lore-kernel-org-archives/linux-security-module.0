@@ -1,144 +1,85 @@
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
+Received: from gardel.0pointer.net (gardel.0pointer.net [85.214.157.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69AC1E51EE;
-	Fri,  7 Nov 2025 10:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.166
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762511039; cv=pass; b=PIxBnUXUxGDleI8IkqIDKEVtVEFDZWs7tUE5ZJGRsjJoHjfWPGI7MY2Xpm16TTHsSlV3kVUVFpumXZ4TwSsQxCn1d4oQB7QAt6JnE1ca9QBiTueDjrOLhKKJvKGubD+PvOtO79Bb+8jD9/paykLmFtmFA7T5YIO22kny9Gg/t00=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762511039; c=relaxed/simple;
-	bh=IfvDo4DJe7UiNB3LGseK57aJdtQyepnmkpfrGIgJmqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JgaGsw8oZ57duyx0KQZlJ5g3K0gQbdkSNiUDUBky88dtbraOBvj/gyBAiyJ5WTo4sy/9j/jjNIxgEusb7psPxfUyuBT0nJ8p9aAQcH3cyKVu6XcU3pyPZRzI9UL/qfT7THNcvsT9J59rckiFCdhSBGV8XdsSCbD/Q6swlLkJkuM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de; spf=none smtp.mailfrom=chronox.de; dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b=GLewI4R3; dkim=permerror (0-bit key) header.d=chronox.de header.i=@chronox.de header.b=5/2WW30r; arc=pass smtp.client-ip=81.169.146.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chronox.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="GLewI4R3";
-	dkim=permerror (0-bit key) header.d=chronox.de header.i=@chronox.de header.b="5/2WW30r"
-ARC-Seal: i=1; a=rsa-sha256; t=1762511028; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=WSeKpbqRA32meDqqfKW/ORlMun85BL1twqUu1y85rsAhXWyY1KYvmTZYRVo82Y0XA3
-    6jv/DGLSoEinkXr658eqYUU4B1fCnV/KCXqXjtiROFMdiqBZzddbuwYANkWZyokacsa2
-    pydkzy0jh9YIfeW5PsjqAr0OFeBW5wTNI4/P54K7T6UEEdG2OU8l9mGNmEyKsCgRlu5m
-    sC2oJ7ZX0PwN5/rUoG6a3yhKw/HApmGZjGPIABYIqn2hTS1tqYVU2rcvPe160DDvMy4K
-    7QupM1WpESsE/Fl4GS5t2CPPm9u1LHQ72sxMPDozuhV522NbO5z4IYxUtyjXZfEijmDV
-    OkXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1762511028;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=IfvDo4DJe7UiNB3LGseK57aJdtQyepnmkpfrGIgJmqo=;
-    b=Ez0gm3GOcB2gjfv3NDznTRXPM99Y8g9U+Fi8lVH1zc6b3fD8rYxjtrVv1IMPN2aJ8r
-    kinMhJ68hA2dnIWWQvSzGeKLnBoSFtIMYYICLn2xxA5yl6QoGh1bW7oDBWrkK9VlslG3
-    wwQQ4nGbiq6TgWHY+MfT7C+KQ7purwGqEdBocsOGNlew6SiivNuVAFxCW3HjCHGZO009
-    JsCvH1T959YrmYr0B4zHHTZ6j57uttIL2M4JdlLsIZ+++kPd4Qmvox3GI+wozTBQeyLV
-    L2vJ/Q5GW0+AXZi15jSJ3KgwMN+331Qayih+9ZXBh6OIWLngH4RUFzvf8rO0u441WGpw
-    xF3A==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1762511028;
-    s=strato-dkim-0002; d=chronox.de;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=IfvDo4DJe7UiNB3LGseK57aJdtQyepnmkpfrGIgJmqo=;
-    b=GLewI4R3yTbYgXfczGE7AmPhjvr6QGNbEzKiRa7E60fnGMh8wsyBdRiwtAbmh8W7WF
-    FhhvZphdMEPrI1Otf0xIaUUaST9A38fsn3gMOwcHL5mHvzlXq6IAzwJp0jPdvfbif7xs
-    WtKhvboSsmBnPZAJlqfbkPlxSmzVgQWQiavbWFEjlk8d2cPX6/YgSJoZhuVDblwkxRDF
-    LwNiv88+wgyIOMwGn5ec0aXt6Hkow5IVHFMZ1qEqO4ynH7qZDIzVabdUhxCwLV3aXmvn
-    LN1Gsm+YNPXbe8KFtntm4XgSz1e3CCWKCwPkRhr2ZX3XallLmbQGa/+tH0wIH/TsYmoV
-    YNAg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1762511028;
-    s=strato-dkim-0003; d=chronox.de;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=IfvDo4DJe7UiNB3LGseK57aJdtQyepnmkpfrGIgJmqo=;
-    b=5/2WW30rYplD9tb1hPieiFCvpVFLWwvGcnQpXmAsjAHqiW/lpH5r/5Larq5QBgL9lh
-    lgmZFjUM7CQt/Lg9O2Bg==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzHHXDYJPSfOH7S"
-Received: from tauon.localnet
-    by smtp.strato.de (RZmta 54.0.0 DYNA|AUTH)
-    with ESMTPSA id fd5b701A7ANk3FS
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Fri, 7 Nov 2025 11:23:46 +0100 (CET)
-From: Stephan Mueller <smueller@chronox.de>
-To: Stefan Berger <stefanb@linux.ibm.com>, David Howells <dhowells@redhat.com>
-Cc: dhowells@redhat.com, Simo Sorce <simo@redhat.com>,
- James Bottomley <James.Bottomley@hansenpartnership.com>,
- Ignat Korchagin <ignat@cloudflare.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, torvalds@linux-foundation.org,
- Paul Moore <paul@paul-moore.com>, Lukas Wunner <lukas@wunner.de>,
- Clemens Lang <cllang@redhat.com>, David Bohannon <dbohanno@redhat.com>,
- Roberto Sassu <roberto.sassu@huawei.com>, keyrings@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: Module signing and post-quantum crypto public key algorithms
-Date: Fri, 07 Nov 2025 11:23:46 +0100
-Message-ID: <3917048.kQq0lBPeGt@tauon>
-In-Reply-To: <61528.1762509829@warthog.procyon.org.uk>
-References:
- <53e81761-47e1-400e-933d-0a53018c9cab@linux.ibm.com>
- <3d650cc9ff07462e5c55cc3d9c0da72a3f2c5df2.camel@redhat.com>
- <61528.1762509829@warthog.procyon.org.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15092FFF9D;
+	Fri,  7 Nov 2025 11:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.157.71
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762513590; cv=none; b=AK/7wf3nZBrAvR4ICMYHqCLS+pKxEiJ6925Zyiv0PLCSTeFS3HRoc/gbpkJ9kPfpqgxMN7MfXujp3dD41Ilg7vNCNdCEN4DuqK1vm1qMNLSmEsP36j46IGhLWMRQS4OKW5da7oNX1HQfMHdQvhtybxSQQQTVtDUeZFQzyQOsAuM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762513590; c=relaxed/simple;
+	bh=Ddn9+v5tDzKJaLK8Xu0fX61QUW0yU0QBxparbvZ+5y0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X9qxRaSkdgnb6r1HlmOrliQg5aD5Hqpf4/DS2topFSi2j+Sc1lgqckzu99hLtttU3iGp89uOmlJIIUG29haDZ6GJHkmCkbqNUu1ADE4V4WZx0ZBAUFZREbAjG8HScgfumk6e7LWZTuxXWBViVU2xcB6uvROzxLAvjnbTT9MhD6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de; spf=pass smtp.mailfrom=0pointer.de; arc=none smtp.client-ip=85.214.157.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0pointer.de
+Received: from gardel-login.0pointer.net (gardel-mail [85.214.157.71])
+	by gardel.0pointer.net (Postfix) with ESMTP id 4A903E80C89;
+	Fri, 07 Nov 2025 11:56:24 +0100 (CET)
+Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
+	id D6672160170; Fri, 07 Nov 2025 11:56:23 +0100 (CET)
+Date: Fri, 7 Nov 2025 11:56:23 +0100
+From: Lennart Poettering <mzxreary@0pointer.de>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Tahera Fahimi <taherafahimi@linux.microsoft.com>, zohar@linux.ibm.com,
+	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	code@tyhicks.com
+Subject: Re: [Patch V1] ima: avoid duplicate policy rules insertions
+Message-ID: <aQ3QV03_PtB4qg32@gardel-login>
+References: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
+ <1cc67c25a141aef8982840898a6e7397cbdf10d9.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1cc67c25a141aef8982840898a6e7397cbdf10d9.camel@huaweicloud.com>
 
-Am Freitag, 7. November 2025, 11:03:49 Mitteleurop=C3=A4ische Normalzeit sc=
-hrieb=20
-David Howells:
+On Fr, 07.11.25 10:44, Roberto Sassu (roberto.sassu@huaweicloud.com) wrote:
 
-Hi David,
+> On Thu, 2025-11-06 at 18:14 +0000, Tahera Fahimi wrote:
+> > Prevent redundant IMA policy rules by checking for duplicates before insertion. This ensures that
+> > rules are not re-added when userspace is restarted (using systemd-soft-reboot) without a full system
+> > reboot. ima_rule_exists() detects duplicates in both temporary and active rule lists.
+>
+> + Lennart
+>
+> Hi Tahera
+>
+> thanks for the patch!
+>
+> Wouldn't be better to enhance systemd-soft-reboot to not send the same
+> IMA policy again?
 
-> Stefan Berger <stefanb@linux.ibm.com> wrote:
-> > On 6/16/25 1:27 PM, Simo Sorce wrote:
-> > > Of course we can decide to hedge *all bets* and move to a composed
-> > > signature (both a classic and a PQ one), in which case I would suggest
-> > > looking into signatures that use ML-DSA-87 + Ed448 or ML-DSA-87 + P-5=
-21
-> > > ,ideally disjoint, with a kernel policy that can decide which (or bot=
-h)
-> > > needs to be valid/checked so that the policy can be changed quickly v=
-ia
-> > > configuration if any of the signature is broken.
-> >=20
-> > FYI: based on this implementation of ML-DSA-44/65/87
-> >=20
-> > https://github.com/IBM/mlca/tree/main/qsc/crystals
->=20
-> The problem with that is that the Apache-2 licence is incompatible with
-> GPLv2. Now, it might be possible to persuade IBM to dual-license their
-> code.
+the soft-reboot logic doesn't load the IMA policy. It's just that
+soft-reboot means we reexec PID1: the old pid1 gets replaced by the
+new one. And that new PID1 then initializes as it usually would, and
+loads security policies again. It currently has support for selinux
+policies, ima, ipe, smack.
 
-The code used as a basis for the current approach (leancrypto.org) offers=20
-hybrids with ED25519 and ED448) including the X.509/PKCS7 support.
+These policies are supposed to *replace* whatever was loaded
+before. Looking at our IMA logic, this doesn't happen right now
+though, it just adds stuff:
 
-However, please note that the X.509 specification for storing hybrid public=
-=20
-keys is not yet completed and there is still some work on the draft IETF=20
-standard [1].
+https://github.com/systemd/systemd/blob/main/src/core/ima-setup.c
 
-Side note: the leancrypto code base uses the Linux kernel X.509/PKCS7 parse=
-r=20
-code where the relevant handler functions (see [2]) could be relatively=20
-quickly transplanted into the kernel if needed.
+Is there a way to replace the old IMA policy with the new, with the
+current IMA userspace interface? If so, we should probably make use of
+that in systemd, and replace the policy that way. Or in other words:
+under the assumption that one can flush out the old IMA policy and
+replace it with a new one, I think this should be fixed in systemd,
+not the kernel. (of there's no api for flushing out the old
+policy/replacing it with the new, then of course we need something
+like that in the kernel first).
 
-[1] https://lamps-wg.github.io/draft-composite-sigs/draft-ietf-lamps-pq-com=
-posite-sigs.html
+My understanding of IMA is kinda limited though. I just know what we
+do in our codebase.
 
-[2] https://github.com/smuellerDD/leancrypto/blob/master/asn1/src/
-x509_cert_parser.c
-
-Ciao
-Stephan
-
-
+Lennart
