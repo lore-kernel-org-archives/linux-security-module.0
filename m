@@ -1,107 +1,119 @@
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37D122FDEC
-	for <linux-security-module@vger.kernel.org>; Sun,  9 Nov 2025 21:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B8F26CE02
+	for <linux-security-module@vger.kernel.org>; Sun,  9 Nov 2025 21:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762723790; cv=none; b=KhvTdK3GqTodB9OSyXxPSMyr0VihF7tFFXAw0ygm2yThVf81HGjBvxBOnKYPMzv7f9Un1aXMiFpBQBrzZosOmx6Wv1Ur3viyktsZAhhOAoptywC5zZijyMrUpl67UUZd2liwE9OW9Najui9hjK63IqXJOBYXG1/TbNJSVpmAkqk=
+	t=1762725168; cv=none; b=Pd1bf/qf6DxYkjbo4dpdpkvvg1/kOZr/VsGLWot+iTI8lwQq+CwWXzw+tZMnpL7SEflZgguaORjlIFViX41INJugS5dYHmyK3V2ETPDc/DvJsLKNNtHhp7r+Me39AXP/hxhhglSNsv4WWTWFDg0aYOHAL1A8AfgaNXpLu3jeF+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762723790; c=relaxed/simple;
-	bh=JrigkIGSgV9JIr0Y27hJlw0LIABya4VUB00KUecvaio=;
+	s=arc-20240116; t=1762725168; c=relaxed/simple;
+	bh=KSSGO7Agzs+7TYQ7KKqeAnwYaZ28KPMxXbYzy0PaAEY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YS1EC7R7e8U/pVR95tayYD2mnpqI8spQWABimP/hvIPlV04f1Dd0wqbC8YpZBoNWKONFRZFz4o7t+hfXS2Vxpb/2LlpnpQPr8UL00ESTxVut/c7fjmBDBzXM1taHxqO0rGDAZc0mg5GZ+ZGeNw9mjKmV/GoEJzL1I71yLb9CSlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=OxWIsBJo; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=qBT0MOcAH5X1BUxXqR1B6CtDsAsW5dHT7OiTSwbSDHo0+LIiiFn+wMqE1fi5iw7NKBEbFU9rakzEf9OLCrwUAH44GNUKA1t6wVCgG0YwYFskadrZpNNiR+gTF9Pq8GaTLK2IaxWgGQ0RLc1y0CS/Pf9nPiUiIzfgOR6Sl7SoQqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ob6C8J68; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="OxWIsBJo"
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7b22ffa2a88so707199b3a.1
-        for <linux-security-module@vger.kernel.org>; Sun, 09 Nov 2025 13:29:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ob6C8J68"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b70bee93dc4so316879966b.3
+        for <linux-security-module@vger.kernel.org>; Sun, 09 Nov 2025 13:52:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1762723787; x=1763328587; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762725165; x=1763329965; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lCpmNG4HaDD27+nahLSdV0GLwVqvHMVSI5yLttqUzTY=;
-        b=OxWIsBJoHlvIzNzd6IBOGvRRz1c6QKTV/yvr2GLR+QUqgtJ9lKPa87KsZdupWerixO
-         zVrvXaXpNv9HhdHCHEqmcaCqWaLVyy8+a/wYXhNlXxjBjbjAGr7s1IXDEuYILfM8FoiR
-         DyiRINY5kpwHTiYKX9BX2RjG/Sf42BTQOpBIht6DFy/24wBr3LVkFIA58/zHODe58506
-         w729xa9HYmR1XD6B+DI50BvgBlgNzNe6A2eW5eUWSlIr1EwVzak3aH1r8fp/XdtvJjqZ
-         DJsjepZjcE+bekhrdPH60KmoR9/nylo1JSj0pIDaH+fFfKaEcs1NxA9ELandcxh/s6Xc
-         jZpg==
+        bh=vVwXJXq3xWo7DohhoxXnTI8foqK4xMVIwL9L7OpKE7Y=;
+        b=Ob6C8J68SNMi/2OZe8EwvYd25JSvqSB+LCZoiIFFsUR4M2y4YXkyEGfGl+ivoYjzRf
+         CMM6br0Xn0Hi7m728FeV+cLK0/OuwSp7mKqLWix5KKfryH2MgfX0ahulqujg2inrF3WH
+         9GQRjipsCKjjnOk+fIggsJZqYZ2d7CJ8IfJj+rYvlPqq7uE+JX93TOcGp8CyLQe+8t1O
+         xE/AIK1LuVj0rexDvh48Z86TByqgRMYFL4FAvAVnDWoGSbaeMgJp5OHptSjK2NZJc5qy
+         MQNrFOElc73Fkn+/WwkQif5TFqtlpzw61LiiQpK/2ciWCmdJBYcnPMwuUigGeFuclXRh
+         K4yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762723787; x=1763328587;
+        d=1e100.net; s=20230601; t=1762725165; x=1763329965;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=lCpmNG4HaDD27+nahLSdV0GLwVqvHMVSI5yLttqUzTY=;
-        b=McNN2i/xXHcqFpuOzkc7CBkzoXB2nXyEQfyxTgifFZykl1QobMTgO+F859VIyahECC
-         B+xBfzM2GakGkzCkUdt9XzTjtAeOymVdNwpJ6KUFfCq2Sfml2Ojka7jf6sNXW5kJHz6i
-         7wTZFqdbP9/MXoerEWJQd3o5gCa8ajSDcD1st3lQe6T1Xcbzkf+k8ffr+JNrieuBfr59
-         LSZ/LCNh28JikapLks/Be/iMExr/Wbaf5Vfci6ewR+P4wA5yP35eWhrR+g8SJTDpnMmE
-         +iUe+kDn87n4GMQZcH9j00ct/tDK943HADMTxQuDXKc/Vk/vymNhBnz+P2y8itLHDuyc
-         F/pg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJqEbfy9TZvbRnkl4utsrTaizPv826Ep5C6LCf9kbrXC37CCj3VYAwUcEToAOu/t6SLKicMAZwQ73aLX5AvGxTfsI+uf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpkJXnEHiz2Ii6uENaDJb4e1YxZW3y9BYei5mAmltG5rfxHYYN
-	Dr0fn4KM0s/nE0hcved9PGv6chwLaqkBTsaMn7bxh4NXk8BEOsuhwYVEPqZl9uEOoBe7bL6xrhS
-	A5VkMAGdlaznJx2MpCtFSrCzenfYRLvAAp5oQhVJI
-X-Gm-Gg: ASbGncvlCcSvu1HmteihB0hHSKLJNdi/iCxQYLgBrzjLTCxh96cvTbql0MLYCtX0Me5
-	+YIj6RKe5AP28jHTmXKza/v9XRVCsCEFb9nX1zpKRyKuJN2lpeL9IuAvmeogJ9e+D/lBAYVhMEF
-	rjtheazCp/qhgLwppQlxukkaW9eG6XoZaf49/mxdhGBjgxAiO1QbH7U336oipCx1U67yOkGufK9
-	SNdCIuQpY0IovBwqUko4FyK7UwLqm08DglPhlft9oRDFD88WUuONtNP5uCUEaW/61DSgak=
-X-Google-Smtp-Source: AGHT+IHQURL9arEF85Xkv8L1+bVtKSsyFyQE9v4YKONDepS09vRsAyNwdyCGR5zutC8ImL3+GPy9CjT7M/xiyteZdi4=
-X-Received: by 2002:a17:90b:4c07:b0:341:abdc:8ea2 with SMTP id
- 98e67ed59e1d1-3436cd0f053mr7880146a91.37.1762723787291; Sun, 09 Nov 2025
- 13:29:47 -0800 (PST)
+        bh=vVwXJXq3xWo7DohhoxXnTI8foqK4xMVIwL9L7OpKE7Y=;
+        b=tUp768fRKA++HVyTy267L7zrUNrEK8botGM5R0AGP2mDZ1zQuyN1Fw5KqblP3TIKdM
+         D6zfuEzczONrii6Y4yyH74TJQZYy/RwQqM38IH5QAJ/3rXRiTkt56xWYiY5R9lbdOulU
+         WUfKvPLri2uG3YuP0ruNVb7E+cYxj5oECfx5rdH6BT8gBJ4Rj9Xp60BP94vyMmFeOR0z
+         omDcot/MC4ZKhZycd0ci3JC6S6evP/RF1DASMukLvuKRqozBbLXHciV22wAVbn2cElck
+         Bkmif79zNVsPergPE09pui0nYN7qE66y9yPs4DAUW8woY7y6rHeulWe24DCL0S0k21cB
+         rHZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ+k94FXoqmPTYkGqmKPYEpCNgLtNP+1p3lFHjrorCPtMkdrgFIhGzZLo/iAzsPfLOSi9LbiNIn2M4SNODJ5C7Zjd74xk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqbAfVTGHQasOP+ALrSxq6w/aZ91uBFD9ChRKnVzlOa33eBX5e
+	D41nd6dMb07jJ1mZMzLcKEPXZ9jDDyqVcbU4fVF52fHi5fdT7Fdna4qMnYplXZyMiAjTfdcbjan
+	lhgFfJCwOencVs00aMgd4GpmkcjhwpR8=
+X-Gm-Gg: ASbGnct/2cDANsTIYng0LkKXg5QutwvtQGBcfXIveDQs2dsqeRf7TFeBEVhU2XRSlR3
+	BlzuZJ5xuOlaQ2iGyX0dxSuIk/AYSkElzqjTt+0HOgkL8q6sbWtjZ2iJwLhgaLMV+paH7+lL+H+
+	XBQwyqoygmGS86YY4V/TjGeZ7+e43piejuqqxJr/XmjPm4vEsvtno/Gn9zWXWMMC1MNo0/pf834
+	R9oilBeKW+5WWK+bkcbOQVurV6SLGhLnru1iPi10Rlk7WsRXM2vSDhTU6TaqMic8pGSbj2SwRIL
+	SUrUlw6LVbpWypLIrJVB8oJQRw==
+X-Google-Smtp-Source: AGHT+IGm2zklAUKqRRTqPY7KSD4Xj1sW03y/dnI40dOTMnRkZJwmNoipuG5q4hPL908aTtcn44Mm7+NVMASEDBRVfMU=
+X-Received: by 2002:a17:906:730e:b0:b71:1420:334a with SMTP id
+ a640c23a62f3a-b72e028a620mr608665966b.13.1762725165049; Sun, 09 Nov 2025
+ 13:52:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251109192940.1334775-1-mjguzik@gmail.com>
-In-Reply-To: <20251109192940.1334775-1-mjguzik@gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sun, 9 Nov 2025 16:29:35 -0500
-X-Gm-Features: AWmQ_blvWeHspBMm4bMAdUMJG2fZcKCHI3qaL-nFDjha9t3_WwcCVdZIlbe5Ro8
-Message-ID: <CAHC9VhRCvoXrUESCjbxz5Bcxjq8GXLj4GvSoXq+sukdP1cuXNg@mail.gmail.com>
+References: <20251109192940.1334775-1-mjguzik@gmail.com> <CAHC9VhRCvoXrUESCjbxz5Bcxjq8GXLj4GvSoXq+sukdP1cuXNg@mail.gmail.com>
+In-Reply-To: <CAHC9VhRCvoXrUESCjbxz5Bcxjq8GXLj4GvSoXq+sukdP1cuXNg@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Sun, 9 Nov 2025 22:52:32 +0100
+X-Gm-Features: AWmQ_bk0b4hawYzyDXb9sgQUMhe7v79BweJw0OhxRSsIbcnHE0pse_GzfiY6jM8
+Message-ID: <CAGudoHHhLPTktY7tORrJFagxC8xgwM5UzWgrPHsnkGwihBfQmQ@mail.gmail.com>
 Subject: Re: [PATCH] security: provide an inlined static branch for security_inode_permission()
-To: Mateusz Guzik <mjguzik@gmail.com>
+To: Paul Moore <paul@paul-moore.com>
 Cc: casey@schaufler-ca.com, keescook@chromium.org, song@kernel.org, 
 	andrii@kernel.org, kpsingh@kernel.org, linux-security-module@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 9, 2025 at 2:29=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> wr=
+On Sun, Nov 9, 2025 at 10:29=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
 ote:
 >
-> The routine is executing for every path component during name resolution =
-in
-> vfs and shows up on the profile to the tune of 2% of CPU time in my
-> tests.
+> On Sun, Nov 9, 2025 at 2:29=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> =
+wrote:
+> >
+> > The routine is executing for every path component during name resolutio=
+n in
+> > vfs and shows up on the profile to the tune of 2% of CPU time in my
+> > tests.
+> >
+> > The only LSMs which install hoooks there are selinux and smack, meaning
+> > most installs don't have it and this ends up being a call to do nothing=
+.
 >
-> The only LSMs which install hoooks there are selinux and smack, meaning
-> most installs don't have it and this ends up being a call to do nothing.
+> Unless you have a reputable survey or analysis to back up claims like
+> this, please refrain from making comments like these in commit
+> messages.  I can't speak to Smack's adoption numbers, but last I
+> looked in 2023, and considering only Android since numbers were easy
+> to source, SELinux was deployed in enforcing mode on over 3 billion
+> systems.  Of course I don't have numbers handy for *all* Linux
+> systems, and there are some numbers that simply are never going to be
+> public, but given the +3 billion Android systems alone, I think there
+> is a very real likelihood that there are more systems running SELinux
+> than those that are not.
+>
 
-Unless you have a reputable survey or analysis to back up claims like
-this, please refrain from making comments like these in commit
-messages.  I can't speak to Smack's adoption numbers, but last I
-looked in 2023, and considering only Android since numbers were easy
-to source, SELinux was deployed in enforcing mode on over 3 billion
-systems.  Of course I don't have numbers handy for *all* Linux
-systems, and there are some numbers that simply are never going to be
-public, but given the +3 billion Android systems alone, I think there
-is a very real likelihood that there are more systems running SELinux
-than those that are not.
+Fair, I was mostly thinking stuff like Ubuntu. Phone stuff is not on my rad=
+ar.
 
-> While perhaps a more generic mechanism covering all hoooks would be
-> preferred, I implemented a bare minimum version which gets out of the
-> way for my needs.
+> > While perhaps a more generic mechanism covering all hoooks would be
+> > preferred, I implemented a bare minimum version which gets out of the
+> > way for my needs.
+>
+> I'd much rather see a generalized solution than hacks for a small
+> number of hooks.
+>
 
-I'd much rather see a generalized solution than hacks for a small
-number of hooks.
+I'll ponder about this.
 
---=20
-paul-moore.com
+> --
+> paul-moore.com
