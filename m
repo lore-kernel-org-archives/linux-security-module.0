@@ -1,98 +1,94 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE80D261588
-	for <linux-security-module@vger.kernel.org>; Sat,  8 Nov 2025 07:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2C81E2614;
+	Sun,  9 Nov 2025 04:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762588033; cv=none; b=OD6EECWol0jSUeqaVhbG43L9Pvfv/H646ItS7RO96hvOH4wfERrqRQU0quTo22/HGPDLvGKkGwO5dpk4cTT1O8APDuvALA1Rb+bzs7EZU9cH3M1vTuzhF9DSOq0LsfDYmG/Wpw4iWj2M7eId78qlHre0LcM6lvc4Dof0TYegsvc=
+	t=1762663471; cv=none; b=qoth25vPjsG7Em/9sw+C3sCgc7aPbTW7rfCREMvzhoeKgs4ysnRGFJEPz89LFyyCpf9/kxGNLA8xf3UytkSrqhoQw839JiX3SAVNTNg4e+K0c//Qew5ZctFeMxSxLxjcQP3tEwrhNqkSCYoQbzOC/7ooSmQW5GN2VN2kaCV3x1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762588033; c=relaxed/simple;
-	bh=vjl5287hLRl4njUWMlv0qb8EzZ29/CVnyQo9ZCMLklI=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=sXxeBQITUc879e0M98VVU1af0tdIZETBtbo/ckAwDWAPp+MLuAUEck6L/T91mSNOO83AgHH0tOsiM5Vl/W6kkcFmVbhw4gA15/WG3zEUh0rp6ejke90IUsmol83+48GORzcPwSfLiCKd7gyqg8eD8rs33IulYTUaJatXGjMGrg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ON8Cu2fL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1762663471; c=relaxed/simple;
+	bh=dSCMVlxgbRxcltCVOS9fSnz1bcEq369Ld7O2nD6fddw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m/T7yUQYWg/I+tly7O1JRIVU0unbn5rmLfdJM+GzNfrvIJk4Ja47kjX7hr79TegdB2EnO5Ux98zvw5aT55wTQfRDxwgZ+SUMbuKjCGkeYwpLbGdWjCUBG/VtBa1N9xYi67Ot8RXuafNDZIT78zeYF66Dw21+rc13E2yN7aAe9+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CfkeOS4/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ON8Cu2fL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762588029;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LuKEqEw6DZ48I+qyPJwUdxthKmamUkZDEAoTdVuzEGw=;
-	b=ON8Cu2fL2oDMuB21Sa+NoTiQn3/zunTdtkw0CCtTmK9C0MhB1BoM2B7kzSVSuYavSMcGM1
-	IirRgMcAmTzKzLgTsxENiB3wtnh7t87CFjL/B+6APi7RPgdyo3imoyk0iND0Nv5PlNdri9
-	PT/VOhdhkbxTbjyyQxI+HQFk3RJyNvs=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-672-c5kGRIReN4S2LGPD9BPeHQ-1; Sat,
- 08 Nov 2025 02:47:06 -0500
-X-MC-Unique: c5kGRIReN4S2LGPD9BPeHQ-1
-X-Mimecast-MFC-AGG-ID: c5kGRIReN4S2LGPD9BPeHQ_1762588024
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 486751800650;
-	Sat,  8 Nov 2025 07:47:03 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.6])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 99900180087C;
-	Sat,  8 Nov 2025 07:46:56 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <IA4PR84MB4011FE5ABA934DEF08F1A263ABC3A@IA4PR84MB4011.NAMPRD84.PROD.OUTLOOK.COM>
-References: <IA4PR84MB4011FE5ABA934DEF08F1A263ABC3A@IA4PR84MB4011.NAMPRD84.PROD.OUTLOOK.COM> <501216.1749826470@warthog.procyon.org.uk> <CALrw=nGkM9V12y7dB8y84UHKnroregUwiLBrtn5Xyf3k4pREsg@mail.gmail.com> <de070353cc7ef2cd6ad68f899f3244917030c39b.camel@redhat.com> <3081793dc1d846dccef07984520fc544f709ca84.camel@HansenPartnership.com> <7ad6d5f61d6cd602241966476252599800c6a304.camel@redhat.com> <69775877d04b8ee9f072adfd2c595187997e59fb.camel@HansenPartnership.com> <3d650cc9ff07462e5c55cc3d9c0da72a3f2c5df2.camel@redhat.com>
-To: "Elliott, Robert (Servers)" <elliott@hpe.com>
-Cc: dhowells@redhat.com, Simo Sorce <simo@redhat.com>,
-    James Bottomley <James.Bottomley@HansenPartnership.com>,
-    Ignat Korchagin <ignat@cloudflare.com>,
-    Herbert Xu <herbert@gondor.apana.org.au>,
-    Stephan Mueller <smueller@chronox.de>,
-    "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-    Paul Moore <paul@paul-moore.com>, "Lukas
- Wunner" <lukas@wunner.de>,
-    Clemens Lang <cllang@redhat.com>,
-    David Bohannon <dbohanno@redhat.com>,
-    Roberto Sassu <roberto.sassu@huawei.com>,
-    "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-    "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-    "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Module signing and post-quantum crypto public key algorithms
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CfkeOS4/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60905C4CEFB;
+	Sun,  9 Nov 2025 04:44:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762663470;
+	bh=dSCMVlxgbRxcltCVOS9fSnz1bcEq369Ld7O2nD6fddw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CfkeOS4/JtxImUwSj1soiduL4+DZleZRSeCAwhCyUPXYStMv+GFxlSibW3TERsP+w
+	 f2Vby8JhBlrpQMLi30S3EhFRG6RFMJPhB7wYk8X+tLbmUixXqnUVllzsocTseQqegM
+	 YGAjgZsOuPw/2z5KFxycHyGW1yd1lhT0aT1PRY9eDVdGTJCm81tUzgsLO8Bih5CGDZ
+	 dzKqvEfiYoa7V88ADhHs6/EjiPPZgt9A+pwP7ByOgArIYG3JrMjUmdIlRMhht9b10J
+	 z2oZtl+00nIAReL+DxLKKygweSdVMxBXck4Zy+CEs7LHD9ehc+d4Roy4BeGHMfc8H4
+	 /MgzLlqee7Xxg==
+Date: Sun, 9 Nov 2025 06:44:27 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Ye Bin <yebin@huaweicloud.com>
+Cc: a.fatoum@pengutronix.de, kernel@pengutronix.de,
+	James.Bottomley@hansenpartnership.com, zohar@linux.ibm.com,
+	dhowells@redhat.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	yebin10@huawei.com
+Subject: Re: [PATCH] KEYS: Remove the ad-hoc compilation flag CAAM_DEBUG
+Message-ID: <aRAcK_eBtt5MajSh@kernel.org>
+References: <20251028132254.841715-1-yebin@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <534144.1762588015.1@warthog.procyon.org.uk>
-Date: Sat, 08 Nov 2025 07:46:55 +0000
-Message-ID: <534145.1762588015@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028132254.841715-1-yebin@huaweicloud.com>
 
-Elliott, Robert (Servers) <elliott@hpe.com> wrote:
+On Tue, Oct 28, 2025 at 09:22:54PM +0800, Ye Bin wrote:
+> From: Ye Bin <yebin10@huawei.com>
+> 
+> Fix the broken design based on Jarkko Sakkinen's suggestions as follows:
+> 
+> 1. Remove the ad-hoc compilation flag (i.e., CAAM_DEBUG).
+> 2. Substitute pr_info calls with pr_debug calls.
+> 
+> Closes: https://patchwork.kernel.org/project/linux-integrity/patch/20251024061153.61470-1-yebin@huaweicloud.com/
+> Signed-off-by: Ye Bin <yebin10@huawei.com>
+> ---
+>  security/keys/trusted-keys/trusted_caam.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
+> index 601943ce0d60..c903ee7328ca 100644
+> --- a/security/keys/trusted-keys/trusted_caam.c
+> +++ b/security/keys/trusted-keys/trusted_caam.c
+> @@ -28,16 +28,10 @@ static const match_table_t key_tokens = {
+>  	{opt_err, NULL}
+>  };
+>  
+> -#ifdef CAAM_DEBUG
+>  static inline void dump_options(const struct caam_pkey_info *pkey_info)
+>  {
+> -	pr_info("key encryption algo %d\n", pkey_info->key_enc_algo);
+> +	pr_debug("key encryption algo %d\n", pkey_info->key_enc_algo);
+>  }
+> -#else
+> -static inline void dump_options(const struct caam_pkey_info *pkey_info)
+> -{
+> -}
+> -#endif
+>  
+>  static int get_pkey_options(char *c,
+>  			    struct caam_pkey_info *pkey_info)
+> -- 
+> 2.34.1
+> 
 
-> The traditional signature would use whatever algorithm is used today.
-> Legacy verifiers would only check that.
 
-Would there be any legacy verifiers?  Kernel modules are generally tied to the
-kernel version for which they were compiled.  Granted there are things like
-the wifi regulatory stuff that are also signed.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-But note also, PKCS#7 supports multiple independent signatures in a single
-object.  The kernel will handle this already.  At least one signature must be
-verifiable and none must be blacklisted.
-
-I assume that the main aim of using a composite algorithm is to share the
-result of the content hash - but in this case only the authenticatedAttributes
-are going to be hashed for the signature, and that's relatively small.
-
-David
-
+BR, Jarkko
