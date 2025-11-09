@@ -1,157 +1,174 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3CB2FFDF1
-	for <linux-security-module@vger.kernel.org>; Sun,  9 Nov 2025 17:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71ACDF59
+	for <linux-security-module@vger.kernel.org>; Sun,  9 Nov 2025 19:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762708612; cv=none; b=DQN/V3OCFXPtka0Mkkmld7iSq4eUPYES1JM/o+9LG3ItS+JJRY8VI1EGUClUyBhH0R+Fy29KlE5Fdyv5DSHJKbDo08ZEe0McQ8XAbsUD1uYW0NWicceygpmILRTMRW6/Lt3Yduob4H8+sEiDAjXQiYJe09tOaS9fKRlbMrZVICg=
+	t=1762716600; cv=none; b=nQMacunYUkPhjUyxNTDeJ98TjnFNgJATX7HjYsw8U6m26HQzcRSw695/5t8/S4fdVIs/HI/IXq9wR1w0QQuaxKqvkhZvoLkWN7VVVNrPn8QxnoB4cMe7QklWoh8YXw0eNNhgR6lXHoEOf+hMs7fDgICIpfoBh3O93WaKguQb4jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762708612; c=relaxed/simple;
-	bh=TEHCsYmNR3I9xmM/WSR88FgTxB0Xly9HoUofVNoZx/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=Gk2NW/RJVkWJiCniwBzK7Ks7g7xOitWg7TVfSRS+rHUiCsxVU4lUtUTZEgMR+YYjlfHtUKFzFeP9IVsQVlOL0h8qnXX+on+9ocr7fBRG8GtqF2KaLWbAQyB4qbUG+C4RBJLbiWvPsE+KAnIxEbLsXdgnU4Ry5ndffbbsK/mfYSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xmt3VRPX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1762716600; c=relaxed/simple;
+	bh=2Xst/vWZRQfIbFdvs6RQj0nxTxusEJwKIpWE4GcmOGc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a/ofxngnwaNNstrnCi7O3k3MTn8d/8xQ+1b9+g0VOtxAJyPWteILM0PWC2SmcVV0SsgRioBt5hE9JyG7zl3kpt1rWD0eNJLHZwF1mAeZTdj52fQ18+izYNbVtiP1i2//yonroRNlrf/NF+xfasHQ77imJoFY5yyYV8eElOiuu6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KAhCqmCT; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xmt3VRPX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762708606;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=De3qwJZddIJhWbGGVbrDOYNQpF2Q/objdb0xufnPYfw=;
-	b=Xmt3VRPXRPQFSWRMIA0OGT7bU7fGwteaIQtSmGaQOD5NG/xZl+utTjUyyZIPGcKwIeVivV
-	OKWJbZ/hMvRNFd03Br6MJm4B4RmAikdLZPVccGWdi2ZrZeE4U4VQAjjeHp+KEjKNmI2hcT
-	QjUYL1cd5o8pbr8DPjTuNtNmVjMB2u8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-ANk-ycV6MAKj28LtBM7TUg-1; Sun,
- 09 Nov 2025 12:16:45 -0500
-X-MC-Unique: ANk-ycV6MAKj28LtBM7TUg-1
-X-Mimecast-MFC-AGG-ID: ANk-ycV6MAKj28LtBM7TUg_1762708604
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3CB141800342;
-	Sun,  9 Nov 2025 17:16:44 +0000 (UTC)
-Received: from fedora (unknown [10.44.32.53])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3C7C919560A7;
-	Sun,  9 Nov 2025 17:16:19 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  9 Nov 2025 18:16:42 +0100 (CET)
-Date: Sun, 9 Nov 2025 18:16:17 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Dmitry Levin <ldv@strace.io>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Adrian Reber <areber@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KAhCqmCT"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b7277324054so328172466b.0
+        for <linux-security-module@vger.kernel.org>; Sun, 09 Nov 2025 11:29:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762716597; x=1763321397; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U9X0WSsklw9i3/zTUnlpZxBFFs2Scnh3bG/4KsrRLjU=;
+        b=KAhCqmCTYGO/XrxJpcJLJf2qXtmrbPP/ePbuHImOxqyqTzIq4zjUZYcEr00k39f8aD
+         6kfWj5XSRBt7RiEpY0j9+ZL2Sjxeve6SwazpfZ/jugXbMIGXtFl01smiDpTZhJrgmMYm
+         sIMQUt3Ba0otyvsHgyJ8Q4qynvUe2eTmxwwSNSQmNxpdaYM5UVwMhmAsuAySQqfiM5ro
+         1b+zzM2Ej8wnbq5JF4cV7+IVDTs5BBIooQ/7AO041vFOtG5h6GMo/IsIAvWBp3Hhq9a0
+         mxt0YPBcKzaPLME1eS/YE6yZ9Qqa89cXUAICLDxVVlRFpBfJEF+jYkUbN9HU245hLaf4
+         fSPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762716597; x=1763321397;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U9X0WSsklw9i3/zTUnlpZxBFFs2Scnh3bG/4KsrRLjU=;
+        b=jnVhwjfif43ILgsmYn6U2KhVjvhtEhUzbJmWZ0RNwlVSBEaCAuLLssA63CphHeHvad
+         j1jewZ6wfntmDYHcujA6mjEFpZml+F/K98gUeEECtPXg1I8ogl2jwS0QcXlNfBK83Gzh
+         J2uGwjXSU7+94BaUqnrJ57oki0mJ5+fuAr7bkSkUxTowtY/oLOpVF60Nh65u/NiyE2hc
+         sMQphc+P2SiUpY+FE+800Skd/A2Esc+laG3N6Hu2Fgz4Ny3+nt1k2aZ/pxolZSnfLNuP
+         vAbwdoAWJG4UNvrEuAYQaQPILKyJ64I1SDwQ5E0iSaRdFaxiH8R2cAM4+dTtkPKOdWSV
+         eN3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUnPkv4SpaC/6l9/W5OTLkZdjK3eW9qAZmDa+D29xGCDb1iXKQivbvWUaHF4xzOwJare22P/BLjlF42KrLW4DiBYh1Q8+s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuoIPnVZXlIGiYK7YcQXxdcnfY3Ouo40z9XccqTDmb4sTV3Z6N
+	8ubAwOPJxSXg/+rx5iPJ7+Hm+NluK5EWs9smjkIw5y8j4vO20f/0OqGx
+X-Gm-Gg: ASbGncv3hVuMfP743uO0cAvPDNm8RuhxWdLux9y6bBz+WIncOGpUK2G+VwRI5vsiGMn
+	rTiH5OA4+Tuup7fJnkLWr3EKkvof32ITJLt6h0u4+FnigljZeI3UfkoJmdz90SjQsxBNHEcQ2Cd
+	0sp/7t781ot+A9LuUovaVkf00DIL5NG6K5wLzsHqLyiejwQt8h1YqQpG8ng4VjqFZ8V1Cm4iVg2
+	jT46pYOS9FH4obq30VqZV1mgpMbXBxl/Xlv3nHHlv6ztRN7KzWu1BttSbr5bv5rlgL9VJU3cjqv
+	iQLeot8ECzaj1Jn2bStOy2vQW0dy56pyylAwi+bVzZ7jcH8e/bOlOz97ioL1VWzpV/vTwZpG5WT
+	9J5Rkf9YMiGhSujGzmMZlrT4BeG+DG+hf/wHRLU4qt2XNwCOMls96q75vW+j87SHMfoILfXEQrC
+	agbsw2/RK0glbGaW0fwn411M1iIhtj891wNCAX+ltY5wxMshMA
+X-Google-Smtp-Source: AGHT+IHrgd/WaAUKtJjIV/YzPSmxInsoQ/OLnSUWlueNzR2NdCIJDhR+EncK1yoDmkljcZI8G1o0Fg==
+X-Received: by 2002:a17:907:54e:b0:b72:ff9b:c68d with SMTP id a640c23a62f3a-b72ff9bca10mr145772966b.57.1762716597051;
+        Sun, 09 Nov 2025 11:29:57 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf9be2eesm875278766b.63.2025.11.09.11.29.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Nov 2025 11:29:56 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: paul@paul-moore.com
+Cc: casey@schaufler-ca.com,
+	keescook@chromium.org,
+	song@kernel.org,
+	andrii@kernel.org,
+	kpsingh@kernel.org,
 	linux-security-module@vger.kernel.org,
-	tiozhang <tiozhang@didiglobal.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	YueHaibing <yuehaibing@huawei.com>,
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
-	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	David Windsor <dwindsor@gmail.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Hans Liljestrand <ishkamiel@gmail.com>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>,
-	Eric Dumazet <edumazet@google.com>
-Subject: [RFC PATCH 3/3] ptrace: ensure PTRACE_EVENT_EXIT won't stop if the
- tracee is killed by exec
-Message-ID: <aRDMYSuEV82irPmA@redhat.com>
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <aRDL3HOB21pMVMWC@redhat.com>
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] security: provide an inlined static branch for security_inode_permission()
+Date: Sun,  9 Nov 2025 20:29:40 +0100
+Message-ID: <20251109192940.1334775-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aRDL3HOB21pMVMWC@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: D_j700EqJbqzdHBwcSeZt39kk9VYFZSw7hFKt6hc1YU_1762708604
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-The previous patch fixed the deadlock when mt-exec waits for debugger
-which should reap a zombie thread, but we can hit the same problem if
-the killed sub-thread stops in ptrace_event(PTRACE_EVENT_EXIT). Change
-ptrace_stop() to check signal->group_exit_task.
+The routine is executing for every path component during name resolution in
+vfs and shows up on the profile to the tune of 2% of CPU time in my
+tests.
 
-This is a user-visible change. But hopefully it can't break anything.
-Note that the semantics of PTRACE_EVENT_EXIT was never really defined,
-it depends on /dev/random. Just for example, currently a sub-thread
-killed by exec will stop, but if it exits on its own and races with
-exec it will not stop, so nobody can rely on PTRACE_EVENT_EXIT anyway.
+The only LSMs which install hoooks there are selinux and smack, meaning
+most installs don't have it and this ends up being a call to do nothing.
 
-We really need to finally define what PTRACE_EVENT_EXIT should actually
-do, but this needs other changes.
+While perhaps a more generic mechanism covering all hoooks would be
+preferred, I implemented a bare minimum version which gets out of the
+way for my needs.
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- kernel/signal.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/security.h | 11 ++++++++++-
+ security/security.c      | 12 ++++++++++--
+ 2 files changed, 20 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 334212044940..59f61e07905b 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2376,6 +2376,10 @@ static int ptrace_stop(int exit_code, int why, unsigned long message,
- 	if (!current->ptrace || __fatal_signal_pending(current))
- 		return exit_code;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 92ac3f27b973..0ce1d73167ed 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -68,6 +68,8 @@ struct watch;
+ struct watch_notification;
+ struct lsm_ctx;
  
-+	/* de_thread() -> wait_for_notify_count() waits for us */
-+	if (current->signal->group_exec_task)
-+		return exit_code;
++DECLARE_STATIC_KEY_FALSE(security_inode_permission_has_hooks);
 +
- 	set_special_state(TASK_TRACED);
- 	current->jobctl |= JOBCTL_TRACED;
+ /* Default (no) options for the capable function */
+ #define CAP_OPT_NONE 0x0
+ /* If capable should audit the security request */
+@@ -421,7 +423,14 @@ int security_inode_rename(struct inode *old_dir, struct dentry *old_dentry,
+ int security_inode_readlink(struct dentry *dentry);
+ int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
+ 			       bool rcu);
+-int security_inode_permission(struct inode *inode, int mask);
++int __security_inode_permission(struct inode *inode, int mask);
++static inline int security_inode_permission(struct inode *inode, int mask)
++{
++	if (static_branch_unlikely(&security_inode_permission_has_hooks))
++		return __security_inode_permission(inode, mask);
++	return 0;
++}
++
+ int security_inode_setattr(struct mnt_idmap *idmap,
+ 			   struct dentry *dentry, struct iattr *attr);
+ void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+diff --git a/security/security.c b/security/security.c
+index 4d3c03a4524c..e879f034a77c 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -51,6 +51,8 @@ do {						\
  
+ #define LSM_DEFINE_UNROLL(M, ...) UNROLL(MAX_LSM_COUNT, M, __VA_ARGS__)
+ 
++DEFINE_STATIC_KEY_FALSE(security_inode_permission_has_hooks);
++
+ /*
+  * These are descriptions of the reasons that can be passed to the
+  * security_locked_down() LSM hook. Placing this array here allows
+@@ -639,6 +641,12 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+ 		lsm_static_call_init(&hooks[i]);
+ 	}
+ 
++	if (static_key_enabled(&static_calls_table.inode_permission->active->key)) {
++		if (!static_key_enabled(&security_inode_permission_has_hooks.key)) {
++			static_branch_enable(&security_inode_permission_has_hooks);
++		}
++	}
++
+ 	/*
+ 	 * Don't try to append during early_security_init(), we'll come back
+ 	 * and fix this up afterwards.
+@@ -2343,7 +2351,7 @@ int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
+ }
+ 
+ /**
+- * security_inode_permission() - Check if accessing an inode is allowed
++ * __security_inode_permission() - Check if accessing an inode is allowed
+  * @inode: inode
+  * @mask: access mask
+  *
+@@ -2356,7 +2364,7 @@ int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_inode_permission(struct inode *inode, int mask)
++int __security_inode_permission(struct inode *inode, int mask)
+ {
+ 	if (unlikely(IS_PRIVATE(inode)))
+ 		return 0;
 -- 
-2.25.1.362.g51ebf55
-
+2.48.1
 
