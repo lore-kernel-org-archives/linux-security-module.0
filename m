@@ -1,83 +1,137 @@
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4A12FB60E
-	for <linux-security-module@vger.kernel.org>; Sun,  9 Nov 2025 14:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1917322836C
+	for <linux-security-module@vger.kernel.org>; Sun,  9 Nov 2025 17:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762697464; cv=none; b=NA/1meGJxbH+6mStgfgX+uD6F9bBFT1ectll8hi5rJapEas/1pyT0hCtZb7383gQ2Vik3YP6dCOJ/BjzpgqSThMA6tHVOSEvvXUwBI0WeKW4zi2GSAp7EYcH/RAdxei/XDw3E/0Mo7oq8rzrXbIYRfs8ozSfN7S0JdQRXiLG/Hk=
+	t=1762708475; cv=none; b=pd6tpGfqY7ufgefihlwcQ8r0lEB0tl5ekAxCgD+X45voIrz2ZpMzCGEjg7LFg+XfycfhdVx15e5TvWRXTSQg3YAQgqsKP7zOKg/fEperzs2qnh1VYfpjAGtVUB56rIi+UPSfS1izRv6s28FxDu/eKIjXEUD+odP5OYI/MyTmiKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762697464; c=relaxed/simple;
-	bh=y6Dy/w1K3XpX2uFUEe+rBJFRb32lSDcExJhalbXQ5aU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rKW72P7BUeF5iSvHfbFumOOALrmlY97VyhoM7XHQAy8vYq2VhXBQPv/tHRwdfW3wnHu+PKWd636pb5r7F93CpFy4cRRBSNADXcT/ywOGf6V33iURbM0rnsV2BdvjYHDl2dQAQZfaIrpVlZVb4P0NnvCTX5OBMdZzTuxojKGBfy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-945c705df24so191190139f.0
-        for <linux-security-module@vger.kernel.org>; Sun, 09 Nov 2025 06:11:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762697462; x=1763302262;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m02kWE5lhyrzZgApWthbB6kQBtAUB+gmZPn3Dt1ZsD4=;
-        b=BWFEQHhjVQIciPdQ9+sAE1prWTlQc8bhZNnqGyqfdAFETPqbU+BlxNJ/eX7dRglu1n
-         HCVvbgYjdWLO6FfKEjBQ10ZJM3xczXZDXPSl/BpCA0dR6seHiTBM3yU5CFeyZtXwsN60
-         fMRbiJZN+79gdaYGg0Khbm2eH/wRviMwqUMK9Jz9pUfEIzqb7x4+Hq8wNj3KdWLtuMrk
-         RhAQl6kttE0cnALj4t34f9GPoGBgEIIO2B5bpO8ISmXFSZnD3nC2HmqzBqV04wIgOlNe
-         VEH7RCOCBhnSI4o5RzqYUtqqEDLkQbYbG/SgpGIMo/cdRm2K6RM+4PveTTXANSpoR1On
-         yOYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOOi9gl36TpOp9UjLpjZDycxt2ORBZt7QXwht6qB/7D5JKaexummLCDRPY+oEJo8JOMiNW/IbpLSaUvYnRkXWvMhWqy28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEpz6Bd+sX/ASLBWF1kg5kOWk1aohRLWkNyH3icu3+/hBpCPFY
-	FI1OmWcIZ0muDtlKzk1W4EYx1P10bMZuNqOTgzu9vcPp+CHXHzojEzFPlvwQenDK3EkRDXOHk2M
-	ZBOiUOFlRB4xam71kpc4n6tUopKEwFZ8PnirzLzfjCIbqosDhgL4qY3FIEpY=
-X-Google-Smtp-Source: AGHT+IEw+SyBMcsmvsru2ydmWiAer57ckBKlQAwl2f1WWyRnepHiN7uVkkXdan4vghsxm/ZOPYzm213l8SerzWDt7Il3Poc2ozLJ
+	s=arc-20240116; t=1762708475; c=relaxed/simple;
+	bh=X8iXuBDLNyavzveN+u0clYIy8dEtP8NarhPdel67RD4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 In-Reply-To:Content-Type:Content-Disposition; b=EzTErj55Mbz9xL2gxPKS15oG9yJMLhWlt0TgbQISgayC9Jkj19sc68f+wgATuhWiliyQUtxT3ZTVFNF9/Al8gFYu+MIPYqFwtqj/yWz0IyzCXtfVzgC+N/qtQqKWHOiGPetutpCxhBRKF+4Ss22T2VyxUa96/Qpx2th690oXvHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=THatMZNy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="THatMZNy"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762708472;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F5HpPOlX4A+IDC0iS/hUD8BvRwzAlkYdd4UARWjCrtI=;
+	b=THatMZNy56w7IlMc6jGpqXEuKHNYm/pPvCC2045wc6ll/1OOERJX+4+FVsbZeAGxQVivvf
+	94SXwfWvJSX5aRNAQOfjMR/vPViq3dlRRAtkg29D6YIGvqYiAF9T1G9wa+9eGZnu/GCTA9
+	4sqJsbA1QDWzi4EQFxE3v0dwyhmO9dU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-22-urEjOo_RN3iK77_WM-03lw-1; Sun,
+ 09 Nov 2025 12:14:28 -0500
+X-MC-Unique: urEjOo_RN3iK77_WM-03lw-1
+X-Mimecast-MFC-AGG-ID: urEjOo_RN3iK77_WM-03lw_1762708467
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1E835195608A;
+	Sun,  9 Nov 2025 17:14:27 +0000 (UTC)
+Received: from fedora (unknown [10.44.32.53])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6443730001B9;
+	Sun,  9 Nov 2025 17:14:06 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun,  9 Nov 2025 18:14:26 +0100 (CET)
+Date: Sun, 9 Nov 2025 18:14:04 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Dmitry Levin <ldv@strace.io>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Adrian Reber <areber@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	tiozhang <tiozhang@didiglobal.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	YueHaibing <yuehaibing@huawei.com>,
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
+	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	David Windsor <dwindsor@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hans Liljestrand <ishkamiel@gmail.com>,
+	Penglei Jiang <superman.xpt@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>,
+	Eric Dumazet <edumazet@google.com>
+Subject: [RFC PATCH 0/3] mt-exec: fix deadlock with ptrace_attach()
+Message-ID: <aRDL3HOB21pMVMWC@redhat.com>
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4417:20b0:433:7d0b:b377 with SMTP id
- e9e14a558f8ab-4337d0bb530mr14752975ab.15.1762697462239; Sun, 09 Nov 2025
- 06:11:02 -0800 (PST)
-Date: Sun, 09 Nov 2025 06:11:02 -0800
-In-Reply-To: <20251109-lesung-erkaufen-476f6fb00b1b@brauner>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6910a0f6.a70a0220.22f260.00b8.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in destroy_super_work
-From: syzbot <syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, anna-maria@linutronix.de, bpf@vger.kernel.org, 
-	brauner@kernel.org, bsegall@google.com, cgroups@vger.kernel.org, 
-	david@redhat.com, dietmar.eggemann@arm.com, frederic@kernel.org, 
-	hannes@cmpxchg.org, jack@suse.cz, jsavitz@redhat.com, juri.lelli@redhat.com, 
-	kees@kernel.org, liam.howlett@oracle.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com, 
-	mgorman@suse.de, mhocko@suse.com, mingo@redhat.com, mjguzik@gmail.com, 
-	mkoutny@suse.com, oleg@redhat.com, paul@paul-moore.com, peterz@infradead.org, 
-	rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, surenb@google.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, tj@kernel.org, 
-	vbabka@suse.cz, vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, 
-	vschneid@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: HzdY8GBI4GCxuXRH5WHh4cFAYaUnB6gUfc1wfLZ4wfA_1762708467
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+Not for inclusion yet. 2/2 is untested, incomplete, possibly buggy.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+But could you review at least the intent? Do you see any problem with
+this approach?
 
-Reported-by: syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com
-Tested-by: syzbot+1957b26299cf3ff7890c@syzkaller.appspotmail.com
+This problem is very, very old. It seems that nobody can suggest a
+simple/clean fix...
 
-Tested on:
+Oleg.
+---
 
-commit:         241462cd ns: fixes for namespace iteration and active ..
-git tree:       https://github.com/brauner/linux.git namespace-6.19.fixes
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e1517c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f1b1a45727d1f117
-dashboard link: https://syzkaller.appspot.com/bug?extid=1957b26299cf3ff7890c
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+ fs/binfmt_elf.c         |   4 +-
+ fs/binfmt_elf_fdpic.c   |   4 +-
+ fs/binfmt_flat.c        |   4 +-
+ fs/exec.c               | 142 +++++++++++++++++++++++-------------------------
+ include/linux/binfmts.h |   2 +-
+ kernel/exit.c           |   9 +--
+ kernel/signal.c         |   6 +-
+ 7 files changed, 87 insertions(+), 84 deletions(-)
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
