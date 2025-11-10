@@ -1,73 +1,120 @@
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0644267B15
-	for <linux-security-module@vger.kernel.org>; Mon, 10 Nov 2025 10:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA923054C2
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Nov 2025 10:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762769345; cv=none; b=LmXWae8OmnwCDXKq9Mo4ILU9APdGVL3gA1SIBfR46JUxgpWAkR2aR2XqLAksNyHDzCyLQVysUy45KFUoV7sGHCHBa3QVHO9aB3SS8fOrrjQikG1SzQihgVhX7cHifmuE6k+ThvhsVi8RaHVVH3oBBt++xoBo6+zuWqV2/BsGUCk=
+	t=1762772303; cv=none; b=dh8JncsycZsbTkomzFjw3P824twKPUpTLnfUDKEBtsvCdPLL+raDvXbbqfDcmCkaZ5lNgSotjDmIbPsJjz9TGHFupjegpGxww6XuUFwiZl6i2GTJNdQwYRa+6Fhv3CCRjI9rDIJutJ3pt9ukJsLMAw8FzURtO1HszsSudgFAVhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762769345; c=relaxed/simple;
-	bh=zFAcacTaxgVY+nkDsQEaiKvwk5rOtVVTi/qxNz978hY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=M0tY3FddpZoIeZh9wD9lqC3zKtTqUQsdTDNnoNkF68zkzFH/74rVbe/XPHT6XNgQRMyf3NgrJpSqSebw618mb89WWC9gcJBdBQvh60N9MXg7H5ROTMrj50jiig+GfNmFBSwbx226XbivZfFn9zpNK1YQxWfsrlCEMgZ3u8gxm5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-433689014feso18033975ab.1
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Nov 2025 02:09:03 -0800 (PST)
+	s=arc-20240116; t=1762772303; c=relaxed/simple;
+	bh=2U4KaUAelMziEmY2ShfzM/dox45MOEZL+6xWWn9Wxas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MVP/pTwZpUHlaks5InS/vl6BO82eWMldepd5hawzuyHfvO6yxBP0rNOzoh/JuK53EglAiRgkGIoyDO8TIYte83yH9rf0lHLj5jEpBE/y8DL2nzNXV/xSKcA+VBKP9HPD13JQUp8pzkEp2ybJzYVCnqsRb7KxbZ4F112dPEm3KEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NTcqSOx7; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NTcqSOx7"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-37a56a475e8so29838621fa.3
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Nov 2025 02:58:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762772300; x=1763377100; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5cQtUBYgJJUDzd/kGspKY/MZmhkbZxSeoEQPwDEqgRs=;
+        b=NTcqSOx7ig9H2EIc158DWbLgS07sNYRKpJfCyIdI4ilhKtbi3USxe7AusiqhwLy/lz
+         s9IoLfSktAalSXpMeDil/3umKjgSx13p66KaU6kMidfBkpF0Tpdy6Q3WN5/H0ZWcqBpj
+         eV7okqZsfqxG3qI5031IOur+LbphMQzKbw3I4SwwT8rPmMdWiu5yxZxmbM2RtZ24ljY6
+         pLerxSAmTuKINtn8SY7iOWpOFoABU8ZJs4FPJL8xE/fS1kj5UWZjHdqZmj4tMotWe/5T
+         PM3FzRxkGiHp1ucmmNV7VoJ+OqqFZ48eFc7c+ZYzM5T95gJdzL779itiMaCqaMlnVu+5
+         BW+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762769343; x=1763374143;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6uY+EM8i3DZwvN2wGbaARDs/Dgvk4ylCN2HCgZAGvvk=;
-        b=uGMt5JtUYO1bqB+APu8Js/j4Mnj+VQWZMZ2GeJzTPiZbBZ41tyCog2Bt3qZAtKEBwk
-         JQ6LcGf/nXSc18xeisCpO7+XuXB/HUwT0WIwiJbILUdyPGtMdclh/kmPPCRgaDn6STEf
-         67qML2I9C3BISp0y2KkPbrfGk4spJi3LdiRI5119ofQBTq9NtfytiKV+2gqy0/ZL1DGC
-         AM7qLxul0N8EbRP89QRtWn4gbN46ZreEbvjtwmOPiBGvNtnGtiUqGoGEW4Casw9lVe5s
-         V2+PP6Xe2u7fNieYtZxGZE1GP4Z4bl0aFtS/vFysRe32krGp/ie6Rte9OoE/iGVQKNNb
-         0a/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWIVrSD9zQNmOBg8eDqAv7HbdvgZJFwI4/1sCcrEvPuhePpGzdlr/SXUqaPcHCLoUaXItNqJ9WCSjoiZ9iJgvRq+FH+lko=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0AcFiCSmqOR8pSCcpy0f+3PIaq4oqfwDpVfi814gfG7b0ZU0X
-	65sjoKH2GjpWOpwshwEi9hyiNXQ6hJYfF8OjNLu/d7Z33OiUGYPKZexmiuOrQFv4lCC1fJFRmGx
-	DhJrb5Rdn410Tg5klbvFfZSKlSPDnFYYC/igv+yGMwrHEo2nAuNotyv/rv7w=
-X-Google-Smtp-Source: AGHT+IEC5+mGY0Xr1vqRvkCTPSHWrdzVoW0gyIb+l1PlDK52bcDj3mJeKthrwCwcyT9+HpfbFYmRyBqlkI40h/19RzmapLzIzguH
+        d=1e100.net; s=20230601; t=1762772300; x=1763377100;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5cQtUBYgJJUDzd/kGspKY/MZmhkbZxSeoEQPwDEqgRs=;
+        b=iPOPw/UZJEZkBgy7mv092nJIj6anyX5ej9cECLVLxa609Z5b+aGXWptOqgEKGlD3Aj
+         OREJnZcFyKW40HWgYtE5XGdCR9qNiOoBvQiJhKD+vokyHX8qDTykmA1Wh1gqmxj0g10p
+         lY8iNWVT9YmVYTNbWbtFRW94xRBXJ4VzFFMGNpS+A63g4FtOmQpsMrgEN15su1oipn4O
+         aFQuMSv8RzHiItT5UrbxH0Qb2H1B91uuSfHwqqw/GmzxSl+0jrCjShbNRXttx/jDqGeS
+         DJigw/KbF76LjX6ooGss39QLEM7vBcKgrkeWiRatDbr1aeZU7J2DGk8H1DoTedwAKieS
+         gyqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+2KASk4aiycAeAWRuCYQuaGtVtlO7Oi4SfVgLnApT6dA2EEFtXZfDNX0dyz7tAd/pn7WASWC/l9qFEiA4GShsTqm0pMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypCPW/VXlwT6V9UZLVV6fBU0SvTPko4MsCCbmuA/FSeUnGgAve
+	7+fX4sFE6fFwN/E6PIjYZUPGjz7CNPi9Q73+WWBElf4tMdgbns56w3f0
+X-Gm-Gg: ASbGncvKFKqiaoH7JNwsITtRp62xDg92wVQw4ceYIdcAFb48dtLnlZu8MLKxn/dSM4Z
+	H5FERi6yCWqBlQNEiCOdHIN7OhNU4XcVHqyumvUpY9pO+DyEJw8sf2R3lZQ8vBAcPCvrjWU6qBe
+	Bon+eA12g2+KVx54dkB0fttUtCYfvojhMC6joV0G/kBCZKDJ/Iey+cyeskzun9vLToRj5E/+S9i
+	RAoFt48A17nzju8V9MW/EO2uzQOzfloxKKmNKb/fmOuIZKEKjR6EiRdXoUKFCzOTDHPfsNNQGzJ
+	v3xPvtuRRXx8AVBO89uCb/xneoI2+Jg0eat23NAPdbDVmc2k0TXW7DxrKYEGIOVSABVidN43BRO
+	tWQmDGYBmbKlgivDQRBVVRhy5y231GYmWrwMymDoM7iELUKUX1ruzqwOhbTf2Y2wxdMA5ePcO9g
+	3xCcGTVdiMagvp
+X-Google-Smtp-Source: AGHT+IF7uc05YKR1RuoI0CoWlX07D9z81TzLgbg2o88xiS2GWX+oFbp3ZEM1dvWDPFPIbk1p56pL9Q==
+X-Received: by 2002:a2e:7206:0:b0:378:df5b:fbac with SMTP id 38308e7fff4ca-37a7b30c374mr15069891fa.38.1762772299942;
+        Mon, 10 Nov 2025 02:58:19 -0800 (PST)
+Received: from grain.localdomain ([5.18.255.97])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37a5f0ee40csm34451431fa.43.2025.11.10.02.58.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 02:58:19 -0800 (PST)
+Received: by grain.localdomain (Postfix, from userid 1000)
+	id 691DA5A0033; Mon, 10 Nov 2025 13:58:18 +0300 (MSK)
+Date: Mon, 10 Nov 2025 13:58:18 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH 2/3] exec: don't wait for zombie threads with
+ cred_guard_mutex held
+Message-ID: <aRHFSrTxYSOkFic7@grain>
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <aRDL3HOB21pMVMWC@redhat.com>
+ <aRDMNWx-69fL_gf-@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a41:b0:433:7ec4:4b7b with SMTP id
- e9e14a558f8ab-4337ec45086mr42790115ab.22.1762769343095; Mon, 10 Nov 2025
- 02:09:03 -0800 (PST)
-Date: Mon, 10 Nov 2025 02:09:03 -0800
-In-Reply-To: <20251110-hufen-klang-9cf8ec9dda59@brauner>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6911b9bf.a70a0220.22f260.00de.GAE@google.com>
-Subject: Re: [syzbot] [lsm?] WARNING in put_cred_rcu
-From: syzbot <syzbot+553c4078ab14e3cf3358@syzkaller.appspotmail.com>
-To: brauner@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, luto@kernel.org, peterz@infradead.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRDMNWx-69fL_gf-@redhat.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Hello,
+On Sun, Nov 09, 2025 at 06:15:33PM +0100, Oleg Nesterov wrote:
+..
+> static int kill_sub_threads(struct task_struct *tsk)
+> {
+>  	struct signal_struct *sig = tsk->signal;
+> 	int err = -EINTR;
+> 
+> 	read_lock(&tasklist_lock);
+> 	spin_lock_irq(&tsk->sighand->siglock);
+> 	if (!((sig->flags & SIGNAL_GROUP_EXIT) || sig->group_exec_task)) {
+> 		sig->group_exec_task = tsk;
+> 		sig->notify_count = -zap_other_threads(tsk);
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hi Oleg! I somehow manage to miss a moment -- why negative result here?
 
-Reported-by: syzbot+553c4078ab14e3cf3358@syzkaller.appspotmail.com
-Tested-by: syzbot+553c4078ab14e3cf3358@syzkaller.appspotmail.com
+> 		err = 0;
+> 	}
+> 	spin_unlock_irq(&tsk->sighand->siglock);
+> 	read_unlock(&tasklist_lock);
+> 
+> 	return err;
+> }
 
-Tested on:
+p.s. i've dropped long CC but left ML intact)
 
-commit:         80156be0 ns: fixes for namespace iteration and active ..
-git tree:       https://github.com/brauner/linux.git work.namespace-6.19.fixes
-console output: https://syzkaller.appspot.com/x/log.txt?x=17fc5412580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e31f5f45f87b6763
-dashboard link: https://syzkaller.appspot.com/bug?extid=553c4078ab14e3cf3358
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+	Cyrill
