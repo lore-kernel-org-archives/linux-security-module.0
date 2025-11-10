@@ -1,121 +1,176 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AAE3161AB
-	for <linux-security-module@vger.kernel.org>; Mon, 10 Nov 2025 15:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F6B2848A7
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Nov 2025 16:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762787360; cv=none; b=hs6rg/lRJ/KVsKnj+LORK4TXNCErIYzEog6HHG194yBtfwMsAJ9JVwj/mgHatAKrLJL2ABl4cp3/zKRiRHKsz11k6WJf4xHV72m4rK0JsG1xGH0T3rm9vdVy4C+L0NTRlMgTNuF3Pgt6PwbVWWoxL5siwjPam2RUciNXRkhA01w=
+	t=1762790952; cv=none; b=IzKC5FWTAJpQHL+pstrFQ+P+gmPrtP6G8ABf+bEBRTRvTnJczmhIAMwIhd/hAqKT631rSPNcnrdtzYDDGLWaun6hHM/o05VCHSdA5w+0FCncy3hMzmMtUUYlRxpmoA9pLU8YdG2xU3Y4jqgTIzYPcnzXrPh2TUHSLJxTtwo/CM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762787360; c=relaxed/simple;
-	bh=qnxD5yqdHCGfNv6Q9JjQaq1bz41qRKrFjjBvpZZcU4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=URg7AtLTcYM0Dp76CbfqMHeiOdFv8bMnPyG31F2at4oI0Ne28eZzyt6O70IIESHaC3D8pe75GPLPYrIai2DUKL/klHbCmK0IXvyDKArWvCxQW8/sAXH37PIIHAik+d5wDtzG3p+A9LTs3gntf3ZRuH9taZdFlVQkTiUkgBiRvos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FA4YPBK3; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1762790952; c=relaxed/simple;
+	bh=OKZOzwPNbZ0eA/RzD6GT+kbo2DW/QUWT3Vl/4pt9v6g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JiwKgSHQEF73kOO9dmrILHlUsd/bCektTGGEAS7Phte/PdB+OubmFyYW7SlGyCe/NVv+ioZUIrBvEzQwZZllq3+3+HjnrOWbJBkmkNkrgN69QUPeQEb01dqlhlPF6JffhI/DQg+N+gCRFNH9Q8foNlF1vwG/ia84SH+2yLFaN0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cns/P4eR; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FA4YPBK3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762787356;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wGjo2w5ITfWj64+3hzmyM5KO59pK1AXWwf9AfiwSZdk=;
-	b=FA4YPBK3yBsZaADyM6NM+l5io5YsGBIYG48u5ZLMF2eMkVLUFFy1gyIkC8t0M8eRF/wTHs
-	Ou04uiwbMWEL3947EjsOwwD3OA6xe70bHMQByrOQS4BT6NVsqkNGUUdgh+YfmBeqB5d3NV
-	JnPkIB77HIIakV57lesSDvOIQrxaCbw=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-649-qUFs8U_0NA-Z5BLaeSXOpA-1; Mon,
- 10 Nov 2025 10:09:13 -0500
-X-MC-Unique: qUFs8U_0NA-Z5BLaeSXOpA-1
-X-Mimecast-MFC-AGG-ID: qUFs8U_0NA-Z5BLaeSXOpA_1762787352
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0959E180067A;
-	Mon, 10 Nov 2025 15:09:10 +0000 (UTC)
-Received: from fedora (unknown [10.44.33.158])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 96D4E30044E1;
-	Mon, 10 Nov 2025 15:09:07 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 10 Nov 2025 16:09:09 +0100 (CET)
-Date: Mon, 10 Nov 2025 16:09:05 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Cyrill Gorcunov <gorcunov@gmail.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 2/3] exec: don't wait for zombie threads with
- cred_guard_mutex held
-Message-ID: <aRIAEYH2iLLN-Fjg@redhat.com>
-References: <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <aRDL3HOB21pMVMWC@redhat.com>
- <aRDMNWx-69fL_gf-@redhat.com>
- <aRHFSrTxYSOkFic7@grain>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cns/P4eR"
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b5a631b9c82so2602336a12.1
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Nov 2025 08:09:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762790949; x=1763395749; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s031glNNGPLU3pRhUQF/ls9Tz5E2v6rbM7VrNj/wX3k=;
+        b=Cns/P4eRZdvAKqqYulMy3O1Se0Q8vGE+7/KHmQttIzBeZCAOQ3gDDvSz3+XnUlGKlA
+         ppSKeNsijOTb87pYJLJ5k50or0OD1zAuKx/P/eWX4037TVlQqVFL7riJfGpFR9PAw+yw
+         i35r/J2t++VuZnABkylXNQyFo7vmT/bIkC+03kUsYMfoOuA7srfNplO+MWMCLOUdocys
+         kRK/1v7Xiv6BFDNMUQPEYULvJr7NvgOzNoNfsVhFwskwuZScbX19Hu9fVDnvws6rf1/r
+         DA+gIfmMJ73YHlRbfF1hWRILx2jnva0+aojFy/GW3Cs+8rmIhzmtKqGnwi/roZpbzNmm
+         7H8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762790949; x=1763395749;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=s031glNNGPLU3pRhUQF/ls9Tz5E2v6rbM7VrNj/wX3k=;
+        b=bp2AisbpgdGWaToYYNZVhIhwTQIRFz9xTDHkEHI26Z629gx+/pNMeUA9qz8+mRVaLm
+         hjU27Rt+YBEpDLJ/S/YsctouOo+EZvwOQYfOpOCEBlU+dDcyNeL+ay+v5ssXpmH348b+
+         a7nCC3B2usz275LGRRpp1PyeN/jC3KcPKrZFCxNKUpovU2GBb6HbWYlxClOcXeG02Hph
+         ZAWCfoaQdqtjSkZUouuLz+LNyYqMIbIXSCen8wHkV25FgcSu51zgRGZVgNYjvPS2/86t
+         sEMUAgSIldNDcKpp9N03OV3Mlo/U3UmOeKFFAtXVC/TgQZ3vwBpW6pFCR5lLUQZ+Wj1s
+         OLqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhVQwRaaJw3Otordr7hnRZu6FZBMk05sdSUBdib4Wft0btONNpjQ9vT+oDLxjOKw/gJ1ZuY0fz+O6nmIdIi3EOhEQVU6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTtnSjw1KdX56PrAFjeTSRmjdqPfGguyQilkpfEZDy4mK3LQNr
+	qUnx4VSGUHYGzFEPDcLZXcD5Zh3c33E5MiimFmah3uEI42v1KSC6JTIlyBcOW1ItUGWRapnLE4/
+	m/QVZcc34luB71SPY7XtzBSpwr01hzvc=
+X-Gm-Gg: ASbGncvO0FKLBsqpzlM8zDc/xlJMIIqnMe35hIAH4xq1cH4LnFroCz+cGl1JXDwIQa0
+	0InSHQRg1UASX51S7gVDvTdGKEUHS2QDQwmE+1kyCskmaZdFoXHw0eJ1hBYNcIVAUxDkbUWD+TA
+	xxENjBWaoeE5ubohU0npO5tZNiV/Sr2un2Mlu1OgyuovUsbJsW951wM6Bhy5yQofIDz+tvdm2PE
+	fnYJxDndI4ycoFJIcIebEo9ReBb+ZgwhW/uCmt9QIYvHo2DU5N1f9TKoimo1oKyOoeHP2o=
+X-Google-Smtp-Source: AGHT+IHOYPI89bvNijFudu8ipuYpe33+VB7nbqJZeXEdLg498kOVR3mmjHBZOcylAlfsBqli+DO2uzjCmhEfT9se4Vs=
+X-Received: by 2002:a17:902:fc4f:b0:298:2237:a2eb with SMTP id
+ d9443c01a7336-2982237a409mr51261425ad.16.1762790948766; Mon, 10 Nov 2025
+ 08:09:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRHFSrTxYSOkFic7@grain>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20251106005333.956321-1-neilb@ownmail.net> <20251106005333.956321-12-neilb@ownmail.net>
+In-Reply-To: <20251106005333.956321-12-neilb@ownmail.net>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Mon, 10 Nov 2025 11:08:57 -0500
+X-Gm-Features: AWmQ_bnsQdAKOPc2sWsQJTL6A89EPTloA4MsBf1tbsCjlSWDuuet8e3lOwk-mCw
+Message-ID: <CAEjxPJ528Ou4dvRwHo+kXjWreGicda8BOXkQRvq3vMED6JQKOQ@mail.gmail.com>
+Subject: Re: [PATCH v5 11/14] Add start_renaming_two_dentries()
+To: NeilBrown <neil@brown.name>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	Jeff Layton <jlayton@kernel.org>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
+	David Howells <dhowells@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Chuck Lever <chuck.lever@oracle.com>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>, 
+	John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Stefan Berger <stefanb@linux.ibm.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
+	ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Cyrill,
-
-On 11/10, Cyrill Gorcunov wrote:
+On Wed, Nov 5, 2025 at 7:56=E2=80=AFPM NeilBrown <neilb@ownmail.net> wrote:
 >
-> On Sun, Nov 09, 2025 at 06:15:33PM +0100, Oleg Nesterov wrote:
-> ..
-> > static int kill_sub_threads(struct task_struct *tsk)
-> > {
-> >  	struct signal_struct *sig = tsk->signal;
-> > 	int err = -EINTR;
-> >
-> > 	read_lock(&tasklist_lock);
-> > 	spin_lock_irq(&tsk->sighand->siglock);
-> > 	if (!((sig->flags & SIGNAL_GROUP_EXIT) || sig->group_exec_task)) {
-> > 		sig->group_exec_task = tsk;
-> > 		sig->notify_count = -zap_other_threads(tsk);
+> From: NeilBrown <neil@brown.name>
 >
-> Hi Oleg! I somehow manage to miss a moment -- why negative result here?
+> A few callers want to lock for a rename and already have both dentries.
+> Also debugfs does want to perform a lookup but doesn't want permission
+> checking, so start_renaming_dentry() cannot be used.
+>
+> This patch introduces start_renaming_two_dentries() which is given both
+> dentries.  debugfs performs one lookup itself.  As it will only continue
+> with a negative dentry and as those cannot be renamed or unlinked, it is
+> safe to do the lookup before getting the rename locks.
+>
+> overlayfs uses start_renaming_two_dentries() in three places and  selinux
+> uses it twice in sel_make_policy_nodes().
+>
+> In sel_make_policy_nodes() we now lock for rename twice instead of just
+> once so the combined operation is no longer atomic w.r.t the parent
+> directory locks.  As selinux_state.policy_mutex is held across the whole
+> operation this does open up any interesting races.
+>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: NeilBrown <neil@brown.name>
+>
+> ---
+> changes since v3:
+>  added missing assignment to rd.mnt_idmap in ovl_cleanup_and_whiteout
+> ---
 
-You know, initially I wrote
+> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> index 232e087bce3e..a224ef9bb831 100644
+> --- a/security/selinux/selinuxfs.c
+> +++ b/security/selinux/selinuxfs.c
+> @@ -539,22 +540,30 @@ static int sel_make_policy_nodes(struct selinux_fs_=
+info *fsi,
+>         if (ret)
+>                 goto out;
+>
+> -       lock_rename(tmp_parent, fsi->sb->s_root);
+> +       rd.old_parent =3D tmp_parent;
+> +       rd.new_parent =3D fsi->sb->s_root;
+>
+>         /* booleans */
+> -       d_exchange(tmp_bool_dir, fsi->bool_dir);
+> +       ret =3D start_renaming_two_dentries(&rd, tmp_bool_dir, fsi->bool_=
+dir);
+> +       if (!ret) {
+> +               d_exchange(tmp_bool_dir, fsi->bool_dir);
 
-		sig->notify_count = 0 - zap_other_threads(tsk);
+I would recommend an immediate goto out if ret !=3D 0; we don't want to
+silently fall through and possibly reset ret on the next
+start_renaming_two_dentries() call, thereby ultimately returning 0 to
+the caller and acting as if nothing bad happened.
 
-to make it clear that this is not a typo ;)
-
-
-This is for exit_notify() which does
-
-	/* mt-exec, de_thread() -> wait_for_notify_count() */
-	if (tsk->signal->notify_count < 0 && !++tsk->signal->notify_count)
-		wake_up_process(tsk->signal->group_exec_task);
-
-Then setup_new_exec() sets notify_count > 0 for __exit_signal() which does
-
-	/* mt-exec, setup_new_exec() -> wait_for_notify_count() */
-	if (sig->notify_count > 0 && !--sig->notify_count)
-		wake_up_process(sig->group_exec_task);
-
-Yes this needs more comments and (with or without this patch) cleanups.
-Note that exit_notify() and __exit_signal() already (before this patch)
-use ->notify_count almost the same way, just exit_notify() assumes that
-notify_count < 0 means the !thread_group_leader() case in de_thread().
-
-Oleg.
-
+>
+> -       swap(fsi->bool_num, bool_num);
+> -       swap(fsi->bool_pending_names, bool_names);
+> -       swap(fsi->bool_pending_values, bool_values);
+> +               swap(fsi->bool_num, bool_num);
+> +               swap(fsi->bool_pending_names, bool_names);
+> +               swap(fsi->bool_pending_values, bool_values);
+>
+> -       fsi->bool_dir =3D tmp_bool_dir;
+> +               fsi->bool_dir =3D tmp_bool_dir;
+> +               end_renaming(&rd);
+> +       }
+>
+>         /* classes */
+> -       d_exchange(tmp_class_dir, fsi->class_dir);
+> -       fsi->class_dir =3D tmp_class_dir;
+> +       ret =3D start_renaming_two_dentries(&rd, tmp_class_dir, fsi->clas=
+s_dir);
+> +       if (ret =3D=3D 0) {
+> +               d_exchange(tmp_class_dir, fsi->class_dir);
+> +               fsi->class_dir =3D tmp_class_dir;
+>
+> -       unlock_rename(tmp_parent, fsi->sb->s_root);
+> +               end_renaming(&rd);
+> +       }
+>
+>  out:
+>         sel_remove_old_bool_data(bool_num, bool_names, bool_values);
+> --
+> 2.50.0.107.gf914562f5916.dirty
+>
