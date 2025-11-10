@@ -1,70 +1,73 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC502EBDEB;
-	Mon, 10 Nov 2025 08:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0644267B15
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Nov 2025 10:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762764308; cv=none; b=Anyqjx+Ks3PU6Bj7LF6RSpsGAszAl0BgyjmfvsT3UOOZT/f3dhUgm8sPRtBHdB9k5ClgwVvor+kyiCkD8hmEDmua+mJpKFlXQATZqnJP5vs2YOoLVnKSgEygUeU2NyweOo0N6ZiYP6SFRaOOPVF8IRTjpG5SA/ulk2nLHGEXuyw=
+	t=1762769345; cv=none; b=LmXWae8OmnwCDXKq9Mo4ILU9APdGVL3gA1SIBfR46JUxgpWAkR2aR2XqLAksNyHDzCyLQVysUy45KFUoV7sGHCHBa3QVHO9aB3SS8fOrrjQikG1SzQihgVhX7cHifmuE6k+ThvhsVi8RaHVVH3oBBt++xoBo6+zuWqV2/BsGUCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762764308; c=relaxed/simple;
-	bh=g2a0vGTvGldA8i5v9Mt5hb7o4lxuAAGirkRFTeAXyAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K6mvxBAmySfY+5EtMUHV0I/JJOHngxSRRAJiAZjzN1C650bzxJH4eU1HpvNZ096MBbQpXBk16ZBz9hJ4OXN7lN/6iT7i3eDEugtREw8vmxBpyPm9MLfSTB5AfwGCMXltNWhQ5uxPzPta8P3UxFSyxHjXN07x6K9dbz60piwR2QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TCsDn5Q0; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TCsDn5Q0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED5F4C4CEFB;
-	Mon, 10 Nov 2025 08:45:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762764308;
-	bh=g2a0vGTvGldA8i5v9Mt5hb7o4lxuAAGirkRFTeAXyAo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TCsDn5Q0tvBi5ln80ZSRIeQXFoKObYPhgw98a0bVXizLp7nFrowHC2D5UOHNpRXlX
-	 9HTfT4anyd6ZxCeACG8KRxV0iFYU7GsYUQoZoOz4mUxaNfB6J+m+PdbmtewBjXOFaz
-	 nmCas9paaU0O4fNQVOXqGPjxYYNfRysIQTKnJxU689aAyahbNdm4CLeHXiGHuPW8bF
-	 RZvB601F6t/B8soXHWQwrn3OUGtk20s95IOn7jTQTIG3SlqIX3rq29NN7GbJe87o+a
-	 fi3A3vCQ5nsO84WVYzWngYuSkz1ONZQGBgTqKGlTilDtIaQyqDynAhYNjd4mpFKUYK
-	 U9IMUxTsg536A==
-Date: Mon, 10 Nov 2025 09:45:02 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: syzbot <syzbot+553c4078ab14e3cf3358@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	luto@kernel.org, peterz@infradead.org, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de
-Subject: Re: [syzbot] [lsm?] WARNING in put_cred_rcu
-Message-ID: <20251110-hufen-klang-9cf8ec9dda59@brauner>
-References: <690dfca7.a70a0220.22f260.004d.GAE@google.com>
+	s=arc-20240116; t=1762769345; c=relaxed/simple;
+	bh=zFAcacTaxgVY+nkDsQEaiKvwk5rOtVVTi/qxNz978hY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=M0tY3FddpZoIeZh9wD9lqC3zKtTqUQsdTDNnoNkF68zkzFH/74rVbe/XPHT6XNgQRMyf3NgrJpSqSebw618mb89WWC9gcJBdBQvh60N9MXg7H5ROTMrj50jiig+GfNmFBSwbx226XbivZfFn9zpNK1YQxWfsrlCEMgZ3u8gxm5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-433689014feso18033975ab.1
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Nov 2025 02:09:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762769343; x=1763374143;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6uY+EM8i3DZwvN2wGbaARDs/Dgvk4ylCN2HCgZAGvvk=;
+        b=uGMt5JtUYO1bqB+APu8Js/j4Mnj+VQWZMZ2GeJzTPiZbBZ41tyCog2Bt3qZAtKEBwk
+         JQ6LcGf/nXSc18xeisCpO7+XuXB/HUwT0WIwiJbILUdyPGtMdclh/kmPPCRgaDn6STEf
+         67qML2I9C3BISp0y2KkPbrfGk4spJi3LdiRI5119ofQBTq9NtfytiKV+2gqy0/ZL1DGC
+         AM7qLxul0N8EbRP89QRtWn4gbN46ZreEbvjtwmOPiBGvNtnGtiUqGoGEW4Casw9lVe5s
+         V2+PP6Xe2u7fNieYtZxGZE1GP4Z4bl0aFtS/vFysRe32krGp/ie6Rte9OoE/iGVQKNNb
+         0a/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWIVrSD9zQNmOBg8eDqAv7HbdvgZJFwI4/1sCcrEvPuhePpGzdlr/SXUqaPcHCLoUaXItNqJ9WCSjoiZ9iJgvRq+FH+lko=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0AcFiCSmqOR8pSCcpy0f+3PIaq4oqfwDpVfi814gfG7b0ZU0X
+	65sjoKH2GjpWOpwshwEi9hyiNXQ6hJYfF8OjNLu/d7Z33OiUGYPKZexmiuOrQFv4lCC1fJFRmGx
+	DhJrb5Rdn410Tg5klbvFfZSKlSPDnFYYC/igv+yGMwrHEo2nAuNotyv/rv7w=
+X-Google-Smtp-Source: AGHT+IEC5+mGY0Xr1vqRvkCTPSHWrdzVoW0gyIb+l1PlDK52bcDj3mJeKthrwCwcyT9+HpfbFYmRyBqlkI40h/19RzmapLzIzguH
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <690dfca7.a70a0220.22f260.004d.GAE@google.com>
+X-Received: by 2002:a05:6e02:1a41:b0:433:7ec4:4b7b with SMTP id
+ e9e14a558f8ab-4337ec45086mr42790115ab.22.1762769343095; Mon, 10 Nov 2025
+ 02:09:03 -0800 (PST)
+Date: Mon, 10 Nov 2025 02:09:03 -0800
+In-Reply-To: <20251110-hufen-klang-9cf8ec9dda59@brauner>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6911b9bf.a70a0220.22f260.00de.GAE@google.com>
+Subject: Re: [syzbot] [lsm?] WARNING in put_cred_rcu
+From: syzbot <syzbot+553c4078ab14e3cf3358@syzkaller.appspotmail.com>
+To: brauner@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, luto@kernel.org, peterz@infradead.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 07, 2025 at 06:05:27AM -0800, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    17490bd0527f Add linux-next specific files for 20251104
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16c09bcd980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=9995c0d2611ab121
-> dashboard link: https://syzkaller.appspot.com/bug?extid=553c4078ab14e3cf3358
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1500a532580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12e0a114580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/a4d318147846/disk-17490bd0.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/86641a470170/vmlinux-17490bd0.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/35c008a540c8/bzImage-17490bd0.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+553c4078ab14e3cf3358@syzkaller.appspotmail.com
+Hello,
 
-#syz test: https://github.com/brauner/linux.git work.namespace-6.19.fixes
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-by: syzbot+553c4078ab14e3cf3358@syzkaller.appspotmail.com
+Tested-by: syzbot+553c4078ab14e3cf3358@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         80156be0 ns: fixes for namespace iteration and active ..
+git tree:       https://github.com/brauner/linux.git work.namespace-6.19.fixes
+console output: https://syzkaller.appspot.com/x/log.txt?x=17fc5412580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e31f5f45f87b6763
+dashboard link: https://syzkaller.appspot.com/bug?extid=553c4078ab14e3cf3358
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
