@@ -1,284 +1,191 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA2A303A14
-	for <linux-security-module@vger.kernel.org>; Mon, 10 Nov 2025 14:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE4B23BD1B
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Nov 2025 14:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762785474; cv=none; b=Jx1K0zsvzutKGaxjzKtM5Mj7uZeacgEmaHOSAUs7OefeEerW69dFRcVUF2zGFf8XzFP/6xcHF4GfCuslSTQzOoyJWYnkzibLrQobxKanlfWEOXeVj5oCIokETLROgJovA6g9uyuJAoBR10fVm8kY2cNluKPpxVpmDn/vvVvJ/HE=
+	t=1762786058; cv=none; b=qEtKZCjA8zcGfzDG9eDoE35MCSg1PdhEezJwIeq6VxXiB6WONnpzwiOdSwJVisckEij2I8htF0MTSWuK1/AXJ+vK0xDr2SdYp6vBkd+63IvL7BYAbficgskXoQ1JsToP7WneXG+mKDXOxIQmIn1+Nx9BNauT1lWwg80+BDXelqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762785474; c=relaxed/simple;
-	bh=j9W6mR1nSLLoY/o7TRhp+EtDj01g2jfhAY+2KL+HIIg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dUWKSF5s75veEbVoVjkPwwUNuSbIbMZLAsz8vz3ZK0vp6p8gEKIhk1hXT2yHUGLP3D8UGgPs7fMdOeuDWiDQKOa2vUOec5rBuDPVcji2l8WGKhpcVoKatJb7LNT3pT37NCU1iat78NUhBNiU/jsBpTPN0Uumsx9lMSFns8S3fxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ktzdP2w4; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1762786058; c=relaxed/simple;
+	bh=dgdLTnC9OagC7TcCvigEKRgst8vGqHZqM0+amuk2YAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 In-Reply-To:Content-Type:Content-Disposition; b=i2kIHhGHjfitmBx+7BMMSydTgDxd5/pQhC3g0u/TvQ0Uh2uxh24ej3f80rv39RbKM3+A2RcVSn/dwnzOqqaVgqhZFJZ8e/PlwO0b0Fjo3WzjkAReu7taC9Pf2/geAfdKlKqNVEa1YFZECm4XxLATlNRdIs8fQMxAh9+LQhXhAeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fYAKSjks; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ktzdP2w4"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-298145fe27eso13723315ad.1
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Nov 2025 06:37:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762785472; x=1763390272; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=W95TLkiz0fBF9QeEMsYG7RnrM7ocxkZkSz+UtJe4oVA=;
-        b=ktzdP2w4nyH45+CLo0ZKzuNZSTKFvuopMF9JziV+E+Oy/Ui+lVuwqB2Qv6cFeS4M8O
-         KkJcGGAjABmQ/h8+24w3kn7tkdzZtVdyjqhGmHWm6ue2B7AY+oZCCkU0NY719YSCWtWO
-         oRIbm7vjjuDbGNo5aeQRdzU+1Pqsa5RWBKFkDMQbjpi6cZ+HhiQt1Zl5rFAJOnoe7hGX
-         2kt4CS27+QAi4GY4LzZhJ6Ce7dco0TOF51wpNX5e+mf7b5GN8Qn7eB9jXX8K4h9LnhMn
-         1g0VobL+fn3hZ6nAkUzumygAyKweDwX4nK+KOEiEcYZnK7wI+a4amYtPVVOvq5l9Iawh
-         6W4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762785472; x=1763390272;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W95TLkiz0fBF9QeEMsYG7RnrM7ocxkZkSz+UtJe4oVA=;
-        b=CfEtZa4kb6GruGyypaBxJ4vM24apeRj/Cc2X3aQaCK6eccDh2o36jfuXzXEk4VuAUA
-         f83eYXSC5BORfArfqmGxq/S6XHTGy65bAAUKOK3ZwUXcGv9IfB0O1xd8DFrBF68shqR5
-         QmUQYRJiwagDaCPaHMbfQ857QevRSUZcW9dVezVtq1DERYmog6y6bTrxlI0cFDWMBMpE
-         zhdpOT5OXMm5asII0HTDXOn/sSM/2piq9l8z4YC+nkPRCXAHJrKsBteLV/SNxe2NtGob
-         P88PG0tta8mYbz3G852iN6I4+LzLBJbDdvODDFbwM2BOEaplDeij4BPZeXatJQBdstSF
-         eTeA==
-X-Gm-Message-State: AOJu0YxqsoHKQVL2KXM8mIiDOiIEkJ+JzGT8u41uR5qATqxYV4taYHlL
-	I8d67md7RZDZk3/c8CnfN5PAcfGykgnmxn6oxDnSY+vyDpLiSctLQrcL
-X-Gm-Gg: ASbGnctJBgPzW0ADY0B2Gujdl15ZsaJ80vxlEWXLMpvSXDbJO0EToVKk2kXKkaXj027
-	gvDJT/twnCWkvZ2gqvCeHpysV0s9swjgp6/6tDRGsi1xZKDNdDVBkgTg5l2En8wvq8MURN6RemN
-	jeVQap3n/xBz8o3O+62jdXnnYmiA4eIq/AM+e1SYKuJsrS0NMotox3AAp/y35es6ZR+Rlm0hgis
-	gUonE5EELXJONslHqcAR692EPW2IPRDf9H1GJpJEVreF4/2reQELzVPAmoh3devsk61XghpeE1G
-	EZd5VwVetPcgOzog893GAn+N3TUjf2p4IpH6hVMT9b/iCqlb/XALrLdxL7Z4vsinvXz4BLsg5sC
-	gxDKqM6Y6qS8ixxZnOVO/5/hvSa116yHP09Wnq3CUcQqOR2TdTUPfSjCIWbIJNkrd8VkxI6vJmL
-	4oX1M5FpvZvqh52U9IZBJqAMe8telY8vRZZvhGyW4ixxHeSlkCCAgADSqY7APQXu9XTWY=
-X-Google-Smtp-Source: AGHT+IGxw1dtMjLMgPWeoxTBjJbiGNI5QXhcVtgUFuK/x/r1bmfa9tqNF3NtpZlQ+wAeJu3yb8oynA==
-X-Received: by 2002:a17:902:ecc5:b0:295:565b:c691 with SMTP id d9443c01a7336-297e5629152mr123128585ad.17.1762785472179;
-        Mon, 10 Nov 2025 06:37:52 -0800 (PST)
-Received: from kailas.hsd1.or.comcast.net ([2601:1c2:982:6040:67c:16ff:fee7:1184])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-296509682casm148113295ad.22.2025.11.10.06.37.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 06:37:51 -0800 (PST)
-From: Ryan Foster <foster.ryan.r@gmail.com>
-To: selinux@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	serge@hallyn.com,
-	paul@paul-moore.com,
-	Ryan Foster <foster.ryan.r@gmail.com>
-Subject: [PATCH] security: Add KUnit tests for rootid_owns_currentns()
-Date: Mon, 10 Nov 2025 06:37:48 -0800
-Message-ID: <20251110143748.4144288-1-foster.ryan.r@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fYAKSjks"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762786055;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uIeb35oP9Vs/R5h7VhglPZyEdkMXH/upLLEanGBOeTA=;
+	b=fYAKSjksLVRvyR+v72WCpxJO8Y5ZUZYjNAEMevW7nc8arfWb/Jn6a1ZK6BMqQybS8ThV79
+	osZi6P7XNIvAu64PHhFuNQrsSFry7B4DFI7MmfeZQW4WqhZe78UsHlLvOHyDk8PZWZ6UL4
+	8VLhStkWdX1AbZ0jgl9M7i2PVuZMi/Q=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-245-r5kAmO5VN7e3Tk3cUTNS9A-1; Mon,
+ 10 Nov 2025 09:47:29 -0500
+X-MC-Unique: r5kAmO5VN7e3Tk3cUTNS9A-1
+X-Mimecast-MFC-AGG-ID: r5kAmO5VN7e3Tk3cUTNS9A_1762786048
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2CA9B19560A7;
+	Mon, 10 Nov 2025 14:47:28 +0000 (UTC)
+Received: from fedora (unknown [10.44.33.158])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 787811800451;
+	Mon, 10 Nov 2025 14:47:08 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 10 Nov 2025 15:47:27 +0100 (CET)
+Date: Mon, 10 Nov 2025 15:47:06 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Dmitry Levin <ldv@strace.io>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Adrian Reber <areber@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	tiozhang <tiozhang@didiglobal.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	YueHaibing <yuehaibing@huawei.com>,
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
+	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	David Windsor <dwindsor@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hans Liljestrand <ishkamiel@gmail.com>,
+	Penglei Jiang <superman.xpt@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [RFC PATCH 0/3] mt-exec: fix deadlock with ptrace_attach()
+Message-ID: <aRH66lGd-OT4O68C@redhat.com>
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <aRDL3HOB21pMVMWC@redhat.com>
+ <GV2PPF74270EBEE83C2CA09B945BC954FA3E4CEA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <GV2PPF74270EBEE83C2CA09B945BC954FA3E4CEA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 6F3lueXhmfkdYi5Mgo-ieunQh0RLHBNJKnPylgCR7no_1762786048
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The rootid_owns_currentns() function in security/commoncap.c is a
-security-critical function used to determine if a root ID from a
-parent namespace owns the current namespace. This function is used
-in multiple security-critical paths:
+Hi Bernd,
 
-1. cap_inode_getsecurity() - file capability retrieval
-2. get_vfs_caps_from_disk() - file capability loading during exec
+On 11/10, Bernd Edlinger wrote:
+>
+> When the debugger wants to attach the de_thread the debug-user access rights are
+> checked against the current user and additionally against the new user credentials.
+> This I did by quickly switching the user credenitals to the next user and back again,
+> under the cred_guard_mutex, which should make that safe.
 
-Despite its security-critical nature, this function had no test
-coverage. This patch adds KUnit tests to verify the function's
-behavior in various scenarios:
+Let me repeat, I can't really comment this part, I don't know if it is
+actually safe. But the very fact your patch changes ->mm and ->cred of
+the execing task in ptrace_attach() makes me worry... At least I think
+you should update or remove this comment in begin_new_exec:
 
-- Root ID in init namespace (positive case)
-- Invalid vfsuid (negative case)
-- Non-root UID (negative case)
+	/*
+	 * cred_guard_mutex must be held at least to this point to prevent
+	 * ptrace_attach() from altering our determination of the task's
+	 * credentials; any time after this it may be unlocked.
+	 */
+	security_bprm_committed_creds(bprm);
 
-The function is made testable by exporting it when
-CONFIG_SECURITY_COMMONCAP_KUNIT_TEST is enabled, while maintaining
-static visibility in production builds.
+> So at this time I have only one request for you.
+> Could you please try out how the test case in my patch behaves with your fix?
 
-This follows the pattern established by other security subsystems
-(IPE, Landlock) for KUnit testing.
+The new TEST(attach2) added by your patch fails as expected, see 3/3.
 
-Signed-off-by: Ryan Foster <foster.ryan.r@gmail.com>
----
- security/Kconfig          |  17 ++++++
- security/Makefile         |   1 +
- security/commoncap.c      |   5 ++
- security/commoncap_test.c | 109 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 132 insertions(+)
- create mode 100644 security/commoncap_test.c
+   128  static long thread2_tid;
+   129  static void *thread2(void *arg)
+   130  {
+   131          thread2_tid = syscall(__NR_gettid);
+   132          sleep(2);
+   133          execlp("false", "false", NULL);
+   134          return NULL;
+   135  }
+   136
+   137  TEST(attach2)
+   138  {
+   139          int s, k, pid = fork();
+   140
+   141          if (!pid) {
+   142                  pthread_t pt;
+   143
+   144                  pthread_create(&pt, NULL, thread2, NULL);
+   145                  pthread_join(pt, NULL);
+   146                  return;
+   147          }
+   148
+   149          sleep(1);
+   150          k = ptrace(PTRACE_ATTACH, pid, 0L, 0L);
+   151          ASSERT_EQ(k, 0);
+   152          k = waitpid(-1, &s, 0);
+   153          ASSERT_EQ(k, pid);
+   154          ASSERT_EQ(WIFSTOPPED(s), 1);
+   155          ASSERT_EQ(WSTOPSIG(s), SIGSTOP);
+   156          k = ptrace(PTRACE_SETOPTIONS, pid, 0L, PTRACE_O_TRACEEXIT);
+   157          ASSERT_EQ(k, 0);
+   158          thread2_tid = ptrace(PTRACE_PEEKDATA, pid, &thread2_tid, 0L);
+   159          ASSERT_NE(thread2_tid, -1);
+   160          ASSERT_NE(thread2_tid, 0);
+   161          ASSERT_NE(thread2_tid, pid);
+   162          k = waitpid(-1, &s, WNOHANG);
+   163          ASSERT_EQ(k, 0);
+   164          sleep(2);
+   165          /* deadlock may happen here */
+   166          k = ptrace(PTRACE_ATTACH, thread2_tid, 0L, 0L);
 
-diff --git a/security/Kconfig b/security/Kconfig
-index 285f284dfcac..c7b3f42ef875 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -284,6 +284,23 @@ config LSM
- 
- 	  If unsure, leave this as the default.
- 
-+config SECURITY_COMMONCAP_KUNIT_TEST
-+	bool "Build KUnit tests for commoncap" if !KUNIT_ALL_TESTS
-+	depends on KUNIT=y
-+	default KUNIT_ALL_TESTS
-+	help
-+	  This builds the commoncap KUnit tests.
-+
-+	  KUnit tests run during boot and output the results to the debug log
-+	  in TAP format (https://testanything.org/). Only useful for kernel devs
-+	  running KUnit test harness and are not for inclusion into a
-+	  production build.
-+
-+	  For more information on KUnit and unit tests in general please refer
-+	  to the KUnit documentation in Documentation/dev-tools/kunit/.
-+
-+	  If unsure, say N.
-+
- source "security/Kconfig.hardening"
- 
- endmenu
-diff --git a/security/Makefile b/security/Makefile
-index 22ff4c8bd8ce..5b1285fde552 100644
---- a/security/Makefile
-+++ b/security/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_KEYS)			+= keys/
- 
- # always enable default capabilities
- obj-y					+= commoncap.o
-+obj-$(CONFIG_SECURITY_COMMONCAP_KUNIT_TEST)	+= commoncap_test.o
- obj-$(CONFIG_SECURITY) 			+= lsm_syscalls.o
- obj-$(CONFIG_MMU)			+= min_addr.o
- 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 6bd4adeb4795..4d0e014ce7cd 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -358,7 +358,12 @@ int cap_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry)
- 	return error;
- }
- 
-+#ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
-+bool rootid_owns_currentns(vfsuid_t rootvfsuid);
-+bool rootid_owns_currentns(vfsuid_t rootvfsuid)
-+#else
- static bool rootid_owns_currentns(vfsuid_t rootvfsuid)
-+#endif
- {
- 	struct user_namespace *ns;
- 	kuid_t kroot;
-diff --git a/security/commoncap_test.c b/security/commoncap_test.c
-new file mode 100644
-index 000000000000..9757d433d314
---- /dev/null
-+++ b/security/commoncap_test.c
-@@ -0,0 +1,109 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * KUnit tests for commoncap.c security functions
-+ *
-+ * Tests for security-critical functions in the capability subsystem,
-+ * particularly namespace-related capability checks.
-+ */
-+
-+#include <kunit/test.h>
-+#include <linux/user_namespace.h>
-+#include <linux/uidgid.h>
-+#include <linux/module.h>
-+
-+/* We need to include the actual vfsuid_t definition but avoid the problematic
-+ * inline functions in mnt_idmapping.h. Include just the type definitions.
-+ */
-+#include <linux/types.h>
-+
-+/* Forward declare the minimal types we need - match the actual kernel definitions */
-+struct mnt_idmap;
-+typedef struct {
-+	uid_t val;
-+} vfsuid_t;
-+
-+/* Minimal macros we need - match kernel definitions from mnt_idmapping.h */
-+static inline uid_t __vfsuid_val(vfsuid_t uid)
-+{
-+	return uid.val;
-+}
-+
-+#define VFSUIDT_INIT(val) ((vfsuid_t){ __kuid_val(val) })
-+#define INVALID_VFSUID VFSUIDT_INIT(INVALID_UID)
-+
-+#ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
-+
-+/* Forward declaration - function is exported when KUNIT_TEST is enabled */
-+extern bool rootid_owns_currentns(vfsuid_t rootvfsuid);
-+
-+/**
-+ * test_rootid_owns_currentns_init_ns - Test rootid_owns_currentns with init ns
-+ *
-+ * Verifies that a root ID in the init namespace correctly owns the current
-+ * namespace when running in init_user_ns.
-+ */
-+static void test_rootid_owns_currentns_init_ns(struct kunit *test)
-+{
-+	vfsuid_t root_vfsuid;
-+	kuid_t root_kuid;
-+
-+	/* Create a root UID in init namespace */
-+	root_kuid = KUIDT_INIT(0);
-+	root_vfsuid = VFSUIDT_INIT(root_kuid);
-+
-+	/* In init namespace, root should own current namespace */
-+	KUNIT_EXPECT_TRUE(test, rootid_owns_currentns(root_vfsuid));
-+}
-+
-+/**
-+ * test_rootid_owns_currentns_invalid - Test rootid_owns_currentns with invalid vfsuid
-+ *
-+ * Verifies that an invalid vfsuid correctly returns false.
-+ */
-+static void test_rootid_owns_currentns_invalid(struct kunit *test)
-+{
-+	vfsuid_t invalid_vfsuid;
-+
-+	/* Use the predefined invalid vfsuid */
-+	invalid_vfsuid = INVALID_VFSUID;
-+
-+	/* Invalid vfsuid should return false */
-+	KUNIT_EXPECT_FALSE(test, rootid_owns_currentns(invalid_vfsuid));
-+}
-+
-+/**
-+ * test_rootid_owns_currentns_nonroot - Test rootid_owns_currentns with non-root UID
-+ *
-+ * Verifies that a non-root UID correctly returns false.
-+ */
-+static void test_rootid_owns_currentns_nonroot(struct kunit *test)
-+{
-+	vfsuid_t nonroot_vfsuid;
-+	kuid_t nonroot_kuid;
-+
-+	/* Create a non-root UID */
-+	nonroot_kuid = KUIDT_INIT(1000);
-+	nonroot_vfsuid = VFSUIDT_INIT(nonroot_kuid);
-+
-+	/* Non-root UID should return false */
-+	KUNIT_EXPECT_FALSE(test, rootid_owns_currentns(nonroot_vfsuid));
-+}
-+
-+static struct kunit_case commoncap_test_cases[] = {
-+	KUNIT_CASE(test_rootid_owns_currentns_init_ns),
-+	KUNIT_CASE(test_rootid_owns_currentns_invalid),
-+	KUNIT_CASE(test_rootid_owns_currentns_nonroot),
-+	{}
-+};
-+
-+static struct kunit_suite commoncap_test_suite = {
-+	.name = "commoncap",
-+	.test_cases = commoncap_test_cases,
-+};
-+
-+kunit_test_suite(commoncap_test_suite);
-+
-+MODULE_LICENSE("GPL");
-+
-+#endif /* CONFIG_SECURITY_COMMONCAP_KUNIT_TEST */
-+
--- 
-2.43.0
+PTRACE_ATTACH fails.
+
+thread2() kills the old leader, takes it pid, execlp() succeeds.
+
+Oleg.
 
