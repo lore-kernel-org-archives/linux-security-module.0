@@ -1,100 +1,59 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE4B23BD1B
-	for <linux-security-module@vger.kernel.org>; Mon, 10 Nov 2025 14:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AAE3161AB
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Nov 2025 15:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762786058; cv=none; b=qEtKZCjA8zcGfzDG9eDoE35MCSg1PdhEezJwIeq6VxXiB6WONnpzwiOdSwJVisckEij2I8htF0MTSWuK1/AXJ+vK0xDr2SdYp6vBkd+63IvL7BYAbficgskXoQ1JsToP7WneXG+mKDXOxIQmIn1+Nx9BNauT1lWwg80+BDXelqM=
+	t=1762787360; cv=none; b=hs6rg/lRJ/KVsKnj+LORK4TXNCErIYzEog6HHG194yBtfwMsAJ9JVwj/mgHatAKrLJL2ABl4cp3/zKRiRHKsz11k6WJf4xHV72m4rK0JsG1xGH0T3rm9vdVy4C+L0NTRlMgTNuF3Pgt6PwbVWWoxL5siwjPam2RUciNXRkhA01w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762786058; c=relaxed/simple;
-	bh=dgdLTnC9OagC7TcCvigEKRgst8vGqHZqM0+amuk2YAo=;
+	s=arc-20240116; t=1762787360; c=relaxed/simple;
+	bh=qnxD5yqdHCGfNv6Q9JjQaq1bz41qRKrFjjBvpZZcU4I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=i2kIHhGHjfitmBx+7BMMSydTgDxd5/pQhC3g0u/TvQ0Uh2uxh24ej3f80rv39RbKM3+A2RcVSn/dwnzOqqaVgqhZFJZ8e/PlwO0b0Fjo3WzjkAReu7taC9Pf2/geAfdKlKqNVEa1YFZECm4XxLATlNRdIs8fQMxAh9+LQhXhAeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fYAKSjks; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=URg7AtLTcYM0Dp76CbfqMHeiOdFv8bMnPyG31F2at4oI0Ne28eZzyt6O70IIESHaC3D8pe75GPLPYrIai2DUKL/klHbCmK0IXvyDKArWvCxQW8/sAXH37PIIHAik+d5wDtzG3p+A9LTs3gntf3ZRuH9taZdFlVQkTiUkgBiRvos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FA4YPBK3; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fYAKSjks"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FA4YPBK3"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762786055;
+	s=mimecast20190719; t=1762787356;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uIeb35oP9Vs/R5h7VhglPZyEdkMXH/upLLEanGBOeTA=;
-	b=fYAKSjksLVRvyR+v72WCpxJO8Y5ZUZYjNAEMevW7nc8arfWb/Jn6a1ZK6BMqQybS8ThV79
-	osZi6P7XNIvAu64PHhFuNQrsSFry7B4DFI7MmfeZQW4WqhZe78UsHlLvOHyDk8PZWZ6UL4
-	8VLhStkWdX1AbZ0jgl9M7i2PVuZMi/Q=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=wGjo2w5ITfWj64+3hzmyM5KO59pK1AXWwf9AfiwSZdk=;
+	b=FA4YPBK3yBsZaADyM6NM+l5io5YsGBIYG48u5ZLMF2eMkVLUFFy1gyIkC8t0M8eRF/wTHs
+	Ou04uiwbMWEL3947EjsOwwD3OA6xe70bHMQByrOQS4BT6NVsqkNGUUdgh+YfmBeqB5d3NV
+	JnPkIB77HIIakV57lesSDvOIQrxaCbw=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-245-r5kAmO5VN7e3Tk3cUTNS9A-1; Mon,
- 10 Nov 2025 09:47:29 -0500
-X-MC-Unique: r5kAmO5VN7e3Tk3cUTNS9A-1
-X-Mimecast-MFC-AGG-ID: r5kAmO5VN7e3Tk3cUTNS9A_1762786048
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-649-qUFs8U_0NA-Z5BLaeSXOpA-1; Mon,
+ 10 Nov 2025 10:09:13 -0500
+X-MC-Unique: qUFs8U_0NA-Z5BLaeSXOpA-1
+X-Mimecast-MFC-AGG-ID: qUFs8U_0NA-Z5BLaeSXOpA_1762787352
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2CA9B19560A7;
-	Mon, 10 Nov 2025 14:47:28 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0959E180067A;
+	Mon, 10 Nov 2025 15:09:10 +0000 (UTC)
 Received: from fedora (unknown [10.44.33.158])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 787811800451;
-	Mon, 10 Nov 2025 14:47:08 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 96D4E30044E1;
+	Mon, 10 Nov 2025 15:09:07 +0000 (UTC)
 Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 10 Nov 2025 15:47:27 +0100 (CET)
-Date: Mon, 10 Nov 2025 15:47:06 +0100
+	oleg@redhat.com; Mon, 10 Nov 2025 16:09:09 +0100 (CET)
+Date: Mon, 10 Nov 2025 16:09:05 +0100
 From: Oleg Nesterov <oleg@redhat.com>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Dmitry Levin <ldv@strace.io>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Adrian Reber <areber@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+To: Cyrill Gorcunov <gorcunov@gmail.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	tiozhang <tiozhang@didiglobal.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	YueHaibing <yuehaibing@huawei.com>,
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
-	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	David Windsor <dwindsor@gmail.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Hans Liljestrand <ishkamiel@gmail.com>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [RFC PATCH 0/3] mt-exec: fix deadlock with ptrace_attach()
-Message-ID: <aRH66lGd-OT4O68C@redhat.com>
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH 2/3] exec: don't wait for zombie threads with
+ cred_guard_mutex held
+Message-ID: <aRIAEYH2iLLN-Fjg@redhat.com>
+References: <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
  <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
  <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
  <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
@@ -102,90 +61,61 @@ References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.
  <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
  <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
  <aRDL3HOB21pMVMWC@redhat.com>
- <GV2PPF74270EBEE83C2CA09B945BC954FA3E4CEA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <aRDMNWx-69fL_gf-@redhat.com>
+ <aRHFSrTxYSOkFic7@grain>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <GV2PPF74270EBEE83C2CA09B945BC954FA3E4CEA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 6F3lueXhmfkdYi5Mgo-ieunQh0RLHBNJKnPylgCR7no_1762786048
-X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <aRHFSrTxYSOkFic7@grain>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Bernd,
+Hi Cyrill,
 
-On 11/10, Bernd Edlinger wrote:
+On 11/10, Cyrill Gorcunov wrote:
 >
-> When the debugger wants to attach the de_thread the debug-user access rights are
-> checked against the current user and additionally against the new user credentials.
-> This I did by quickly switching the user credenitals to the next user and back again,
-> under the cred_guard_mutex, which should make that safe.
+> On Sun, Nov 09, 2025 at 06:15:33PM +0100, Oleg Nesterov wrote:
+> ..
+> > static int kill_sub_threads(struct task_struct *tsk)
+> > {
+> >  	struct signal_struct *sig = tsk->signal;
+> > 	int err = -EINTR;
+> >
+> > 	read_lock(&tasklist_lock);
+> > 	spin_lock_irq(&tsk->sighand->siglock);
+> > 	if (!((sig->flags & SIGNAL_GROUP_EXIT) || sig->group_exec_task)) {
+> > 		sig->group_exec_task = tsk;
+> > 		sig->notify_count = -zap_other_threads(tsk);
+>
+> Hi Oleg! I somehow manage to miss a moment -- why negative result here?
 
-Let me repeat, I can't really comment this part, I don't know if it is
-actually safe. But the very fact your patch changes ->mm and ->cred of
-the execing task in ptrace_attach() makes me worry... At least I think
-you should update or remove this comment in begin_new_exec:
+You know, initially I wrote
 
-	/*
-	 * cred_guard_mutex must be held at least to this point to prevent
-	 * ptrace_attach() from altering our determination of the task's
-	 * credentials; any time after this it may be unlocked.
-	 */
-	security_bprm_committed_creds(bprm);
+		sig->notify_count = 0 - zap_other_threads(tsk);
 
-> So at this time I have only one request for you.
-> Could you please try out how the test case in my patch behaves with your fix?
+to make it clear that this is not a typo ;)
 
-The new TEST(attach2) added by your patch fails as expected, see 3/3.
 
-   128  static long thread2_tid;
-   129  static void *thread2(void *arg)
-   130  {
-   131          thread2_tid = syscall(__NR_gettid);
-   132          sleep(2);
-   133          execlp("false", "false", NULL);
-   134          return NULL;
-   135  }
-   136
-   137  TEST(attach2)
-   138  {
-   139          int s, k, pid = fork();
-   140
-   141          if (!pid) {
-   142                  pthread_t pt;
-   143
-   144                  pthread_create(&pt, NULL, thread2, NULL);
-   145                  pthread_join(pt, NULL);
-   146                  return;
-   147          }
-   148
-   149          sleep(1);
-   150          k = ptrace(PTRACE_ATTACH, pid, 0L, 0L);
-   151          ASSERT_EQ(k, 0);
-   152          k = waitpid(-1, &s, 0);
-   153          ASSERT_EQ(k, pid);
-   154          ASSERT_EQ(WIFSTOPPED(s), 1);
-   155          ASSERT_EQ(WSTOPSIG(s), SIGSTOP);
-   156          k = ptrace(PTRACE_SETOPTIONS, pid, 0L, PTRACE_O_TRACEEXIT);
-   157          ASSERT_EQ(k, 0);
-   158          thread2_tid = ptrace(PTRACE_PEEKDATA, pid, &thread2_tid, 0L);
-   159          ASSERT_NE(thread2_tid, -1);
-   160          ASSERT_NE(thread2_tid, 0);
-   161          ASSERT_NE(thread2_tid, pid);
-   162          k = waitpid(-1, &s, WNOHANG);
-   163          ASSERT_EQ(k, 0);
-   164          sleep(2);
-   165          /* deadlock may happen here */
-   166          k = ptrace(PTRACE_ATTACH, thread2_tid, 0L, 0L);
+This is for exit_notify() which does
 
-PTRACE_ATTACH fails.
+	/* mt-exec, de_thread() -> wait_for_notify_count() */
+	if (tsk->signal->notify_count < 0 && !++tsk->signal->notify_count)
+		wake_up_process(tsk->signal->group_exec_task);
 
-thread2() kills the old leader, takes it pid, execlp() succeeds.
+Then setup_new_exec() sets notify_count > 0 for __exit_signal() which does
+
+	/* mt-exec, setup_new_exec() -> wait_for_notify_count() */
+	if (sig->notify_count > 0 && !--sig->notify_count)
+		wake_up_process(sig->group_exec_task);
+
+Yes this needs more comments and (with or without this patch) cleanups.
+Note that exit_notify() and __exit_signal() already (before this patch)
+use ->notify_count almost the same way, just exit_notify() assumes that
+notify_count < 0 means the !thread_group_leader() case in de_thread().
 
 Oleg.
 
