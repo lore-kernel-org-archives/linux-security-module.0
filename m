@@ -1,112 +1,74 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E10A2F5A22
-	for <linux-security-module@vger.kernel.org>; Tue, 11 Nov 2025 14:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4253587C3;
+	Tue, 11 Nov 2025 15:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762870201; cv=none; b=JPY+p08rdxUVG+s6H5KRng3f3C/DI1HFskOB70r/ch1M65USACH62Q70VYJNDic+EJ3xM+AI7dqxpcQW3to+Kw2KNVimjEl4SQ7B85q2WXaTTNmvNp2WapeUho/f/419F0Pz7IUcvoc55oMs3tuYfJ5X7YvXTAGmaqZIrBWecEM=
+	t=1762873632; cv=none; b=qNzC/J/utZJDUZw6kxK5O42C0jVNpF0ohbc3uNhnzrT7VTQU3KX8u2C5Gk4zCrTzpy8750Nh633Jyv4ipe9RckbkMYw/DinnEEQg+l3iYSFeo7bzNWGwAYKFsxpqrlCIPtjIgGlry2+Q48Tgvn7QH19DwHikBwA43BKiAuY/EmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762870201; c=relaxed/simple;
-	bh=L8iD7ISPG2fGHbO2n2GzUqN8VPD4vbOEio6K+3ptYII=;
+	s=arc-20240116; t=1762873632; c=relaxed/simple;
+	bh=rlHZcBpWe3kzEeAH+SDvCuLpDVeld7J3UBzo44DCVEc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gdTaNUD5Ly1WEDNp2YO4oQmlVhYLpyDefsG3OiBZ5lNfDa6F5l25zIG3wbxaPn07TIHSAaAX6/13J+KCnXX0C7/DW8cO88mxMJJVCKHqJE77woOMdGx/BQE+gl+bp7AEtOOZYIQe8ntUt23FFE+XXQj2NaJPDauHIJyPzwR+oYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vxe2Nkse; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=kEvn7qjOrcceraEpZXaKuSkeDqQ3VrrwyZJjt+Jov/ZcylB8mKQmcxtvAvGQMPQFMXY0Wrfzt5dZ7tSp050L/Ya9mOZ9HUd6gaylKdS3+gX3vMHFC1bh8IrWSOQTy4r+fH7N6fI0AtlEuxy9ysAA3+houV3XZZ/jroTZnDHFjmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ekN5/IS1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vxe2Nkse"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762870199;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z0jAePqN6TOEf6jTJjCEwq53g6vGvq/lRpJXMiEpVl8=;
-	b=Vxe2NksecVIYaKSVqROG2Ehyvt7X+lS6i8Iae+gfZAdcO0zvQ2ti4AsbjTT6oEd/ReGfv+
-	97oc0/E/9NwSEut+WqH9WXjBhIX/Onn7//ZdwQA4qBm4I7lYqVGyZttElDxoan/PbWwES+
-	pRG619APxaYuqsdfP/1JoefA8egyg0c=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-650-vw-lvJJNOaevRjFJJf1SIA-1; Tue,
- 11 Nov 2025 09:09:55 -0500
-X-MC-Unique: vw-lvJJNOaevRjFJJf1SIA-1
-X-Mimecast-MFC-AGG-ID: vw-lvJJNOaevRjFJJf1SIA_1762870193
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8E8DA195607F;
-	Tue, 11 Nov 2025 14:09:53 +0000 (UTC)
-Received: from fedora (unknown [10.44.33.247])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 19CF31800576;
-	Tue, 11 Nov 2025 14:09:50 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 11 Nov 2025 15:09:53 +0100 (CET)
-Date: Tue, 11 Nov 2025 15:09:49 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Cyrill Gorcunov <gorcunov@gmail.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 2/3] exec: don't wait for zombie threads with
- cred_guard_mutex held
-Message-ID: <aRNDrfjKQJpPNIUo@redhat.com>
-References: <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <aRDL3HOB21pMVMWC@redhat.com>
- <aRDMNWx-69fL_gf-@redhat.com>
- <aRHFSrTxYSOkFic7@grain>
- <aRIAEYH2iLLN-Fjg@redhat.com>
- <aRJd8Z-DrYrjRt4r@grain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ekN5/IS1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9EE2C16AAE;
+	Tue, 11 Nov 2025 15:07:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762873631;
+	bh=rlHZcBpWe3kzEeAH+SDvCuLpDVeld7J3UBzo44DCVEc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ekN5/IS1XAQbOzF2fQaQfGveWiZCAkhBeJC2SZvd/KKW4qzfDu8ocWpq1Xi44C8cy
+	 h1qRz3zGTxdOoQu2fnDBWjCcaI3/VayjGrPKrrX7yFC40tzISd1iRjI0i/VoYY0x/B
+	 f0KOG/wd98OA+6ZNo/tAhCVTFEC2/Yrm5LztmEW1sC3ZdT7YF/LnQ64ArE/1xOSIcj
+	 a7OJyas5ld/LqP4WYoNpMFJYoELz5PYlEG1I5AFwzk+wOQryFMdBBwJLPkGSlAMn9H
+	 sUPzn202D71ve+4Y3hYe4FHlAW/K0zW7VsbKv+U23LlqYOWruYR5sdjRGJFVlLRUhC
+	 5bOAaWmfyIVvA==
+Date: Tue, 11 Nov 2025 16:07:02 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, bpf@vger.kernel.org, bsegall@google.com, 
+	david@redhat.com, dietmar.eggemann@arm.com, jack@suse.cz, jsavitz@redhat.com, 
+	juri.lelli@redhat.com, kartikey406@gmail.com, kees@kernel.org, liam.howlett@oracle.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, 
+	mingo@redhat.com, mjguzik@gmail.com, oleg@redhat.com, paul@paul-moore.com, 
+	peterz@infradead.org, rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, 
+	surenb@google.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz, 
+	vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, vschneid@redhat.com
+Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_put
+Message-ID: <20251111-gaspipeline-getippt-9b19b62f89d2@brauner>
+References: <20251111-covern-deklamieren-ee89b7b4e502@brauner>
+ <69133407.a70a0220.22f260.0138.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aRJd8Z-DrYrjRt4r@grain>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <69133407.a70a0220.22f260.0138.GAE@google.com>
 
-On 11/11, Cyrill Gorcunov wrote:
->
-> Anyway while looking into patch I got wonder why
->
-> +static int wait_for_notify_count(struct task_struct *tsk)
-> +{
-> +	for (;;) {
-> +			return -EINTR;
-> +		set_current_state(TASK_KILLABLE);
-> +		if (!tsk->signal->notify_count)
-> +			break;
->
-> We have no any barrier here in fetching @notify_count? I mean updating
-> this value is done under locks (spin or read/write) in turn condition
-> test is a raw one. Not a big deal since set_current_state() and schedule()
+On Tue, Nov 11, 2025 at 05:03:03AM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> WARNING in __ns_ref_active_put
 
-Yes, so I think that, correctness-wise, this doesn't need additional barriers.
+#syz test: https://github.com/brauner/linux.git namespace-6.19
 
-> but I've
-> been a bit confused that we don't use some read_once here or something.
+Groan, forgot the actual important bit after the cleanup:
 
-Yes, this needs READ_ONCE() to avoid the warnings from KCSAN. And in fact
-this code was written with READ_ONCE() but I removed it before sending this
-RFC.
-
-I was going to do this later. I always forget how KCSAN works, IIUC I also
-need to add WRITE_ONCE() into exit_notify() and __exit_signal() to make
-KCSAN happy, even if ->notify_count is always updated under the lock.
-
-Same for the "if (me->signal->group_exec_task == me)" check in begin_new_exec().
-
-Right now I would like to know if this RFC (approach) makes any sense,
-especially because 3/3 adds a user-visible change.
-
-Oleg.
+  * Called from unshare. Unshare all the namespaces part of nsproxy.
+  * On success, returns the new nsproxy.
+@@ -338,7 +313,7 @@ static void put_nsset(struct nsset *nsset)
+        if (nsset->fs && (flags & CLONE_NEWNS) && (flags & ~CLONE_NEWNS))
+                free_fs_struct(nsset->fs);
+        if (nsset->nsproxy)
+-               free_nsproxy(nsset->nsproxy);
++               nsproxy_free(nsset->nsproxy);
+ }
 
