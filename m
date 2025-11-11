@@ -1,82 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE00252904;
-	Tue, 11 Nov 2025 11:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D793559D9
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Nov 2025 11:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762861589; cv=none; b=dAztAunCCK8SXEjbrRrWGZTDOUbK/DCiqgjdCJPerCzTpzWXqH+HZ5CdJHvEwN1DrNBe9Sl3NwA3JDgQ55I0dzZ8wLFBAqhaoRuUCKKxHvhalDSQfWc22hE4w2Mb3VLct0a1Vn4YQueyAbtumisHmBdfwa+QYkO5IGKII1WKt/I=
+	t=1762862048; cv=none; b=G4kO6XloGtMocNEWdCXAncsQcxDKIJwux8nPTRjElqdB32/6voZr0weOxOoNpEMOw3qIs0Pu7Zk8yIqYCLLDL4KzYi0DX3hialnKB7d2FpVSOFOlvxPVaeIMYF3vFUwd7GnnZgyaO4YJMZza2MfhjzkslY7SQz/E1hpuCBC/zqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762861589; c=relaxed/simple;
-	bh=kzGd0t16keZQLp1SKkjVyEBBXkKF8aj2R550ABn6Dqc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EtEcUDKgYB8YhTSOTxxEy0Q8CFMdHzV+N/4pJN4DsKtwiOqdFHNWP/Hlww7MVeVkLeLknNEXckHvNf/8jn4a25yEkKK6sryaB+F61hQ6xcfGHYYZn3Lpct3H9lz5xRV86XlWMf/57UFgS6z/AhK+62Myhk6J78ULl9QjYaf3sDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NUuU+Oon; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762862048; c=relaxed/simple;
+	bh=ToY4TL4/qwontWIUOqwnL6q60lEkQZbsmA8tTEk2d8I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qt8uHD8KRz+iJhRHUILEKKVoj8Sjt+OheKolnD27+vi3yGT9pp8FC2c9VDxDOW11gxXIThyrqUSntGr8wJJkg4iXnKQodqzMHCPdSk8r9ZZdnbrpvZnBaULxgYTJmsqq1d6IKww2ZqoWbQTsxigp1sw45v4E1GoDwEnn3xKFBoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bV84svQT; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NUuU+Oon"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EFEEC4CEF7;
-	Tue, 11 Nov 2025 11:46:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762861589;
-	bh=kzGd0t16keZQLp1SKkjVyEBBXkKF8aj2R550ABn6Dqc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NUuU+OonWudRKa2CYq8IqDXxenOAqb54+6/1IRp5B3gGdYreV6M+DjYXFJlZj+Ce6
-	 JuVgwOZBaOr1cTWKmxLc3StqgKTMKHDGWetcTFuDHBWhl+pHWAj+rfeC0tOfN+fhQm
-	 gvwUe3uaR8o+5oKUHM2adcTJOybuG/cD6rJNU2bG+5aMJJycjXIwAsvLtOXJqxGKAs
-	 WhNG0Ad4tImKT3gkMYdI7TW+WYZvv7UZS3UddWFws6LmU5YfV6iNvfA4R7TAIlPtce
-	 +V/JkBq1w9rk5r51kbXm243A7MInOPh/UrqcFSqO0ExWF/8Ww+Tb1LIzTd/1Eg+WZ0
-	 mW8KSQ/wZjuRQ==
-From: Christian Brauner <brauner@kernel.org>
-To: mic@digikod.net,
-	Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	eadavis@qq.com,
-	gnoack@google.com,
-	jack@suse.cz,
-	jannh@google.com,
-	max.kellermann@ionos.com,
-	m@maowtm.org,
-	syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
-Subject: Re: [PATCH 1/2] fs: add iput_not_last()
-Date: Tue, 11 Nov 2025 12:46:21 +0100
-Message-ID: <20251111-fluss-vokabel-7be060af7f11@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251105212025.807549-1-mjguzik@gmail.com>
-References: <20251105212025.807549-1-mjguzik@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bV84svQT"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6419b7b4b80so2941431a12.2
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Nov 2025 03:54:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762862046; x=1763466846; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ToY4TL4/qwontWIUOqwnL6q60lEkQZbsmA8tTEk2d8I=;
+        b=bV84svQTQU/24WPRQv3bWGaHxAB/W8QYfqeEp+4TZv0Iq3Lyuf0vJn/4HfQcX0w6q3
+         o47YmmdkiL3NVAufzQdXx4NWPkWJypzmDNyTZM0yoPgzoAB51amiCD6toscbME9d3wtX
+         prqktJBoNqZ/fxYm3FeHhoxJSMkR/d9p4W0qHDMCL/s6hY9taWfrIRysVP/MVyOQ0U7X
+         tBid9NpCbc/ELbjI0jQaQ91XqdoPmhqDyv7qhpFG7zgKUiRXjEXkndgI7rCcZ+kUTvao
+         4adGm/mu8po/4Ty6FcZTIRhCEx/Vbr1C/glyNDShUFM1b+tbPaoYdeDgeV8X5r3ihYkE
+         CcRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762862046; x=1763466846;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ToY4TL4/qwontWIUOqwnL6q60lEkQZbsmA8tTEk2d8I=;
+        b=OvRke/m61h4MURGEdC0ZQnhosuDKq5HIUeZeoFxxuUP9buBUajQiiR7KVohtEioc0N
+         aLWhLkGM5cwS7GLsq0z8ARCmdsFmfFHSo4DA2da9hI3pTJeWPamCFK8/GVzDjKsgaMD8
+         eelZRIS+jVbp/lFjhK0qWtsVFnShJNpUhix5Ej1hu0uaHHPIDDcK+d1Dvmq/yQM2yKjD
+         4o3SqA9hPxXTfrMpqtHczUKGgp4zvValbdNYlLzPFVe2Kpwws81CEkglqUh6cVJysHUf
+         XMVV3dkNyKsRtKfkI48TVMNT2bJX43KJEM1mtqPcc8hoeOm2kbDmxTsFjC9NRwB7SV01
+         ArEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgUKqsUhw6pyhktLzkR+smM9WhslMD5LDSAkqcR51YiJSriXmRIwJ43oYSQcEPepLzqgiJxP8nvp+N6tn9mKsz86qjxXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuDA7PHe+8u2ta9ENLoWrk7cbk2WWKoFf9N+5lKEHGOHBbuzaK
+	qV2bWRIihJixRxALcP6rkhXfHyR57y82KpShZ6WvdsSf2qlckpYeBWpGJPi4JcYD4aj8Xihipah
+	oAaFKdgCHPAld6b0lD8/UGW3VOfEFe5o=
+X-Gm-Gg: ASbGncsgFIfmZk6Y42LuygRZ040h39vpQUEhnY7DZtdw8Rua4as8D2UCuRf16TWgEhj
+	0v5vorwiK3Cs6f4+CqFrVuIMBS6eoEa1rD8Q95b13Ngsrwne45RD9KQlq543zIgbdSgj6QqKnQH
+	doJPCBD5IfhGNYQLYK4kgCrELFiW7SbC7BBOYaSa2U2tnd8COmxrEFMKuIoFiFFdcFPjWUYoE8J
+	loM+cn1OQ+CQXMXxy3vmWGtV/cubV1J29SSQAqPFCWtdKzAfMyYkC1NnkGk8Gaxr1eYISuaWJ0f
+	cRCVVBwqZKgisvMALLLafwiHHA==
+X-Google-Smtp-Source: AGHT+IFTSzzFA3Sig6SUf+l63ywNKbdgVu6wEW6YjQvjoB9NpZdnt04WO700x9EFuZ49zyQsyzAGcOCZY6qw9HwoW9A=
+X-Received: by 2002:a17:907:6e8f:b0:b6f:9da9:4b46 with SMTP id
+ a640c23a62f3a-b72e056cc6dmr1243184266b.43.1762862045550; Tue, 11 Nov 2025
+ 03:54:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=949; i=brauner@kernel.org; h=from:subject:message-id; bh=kzGd0t16keZQLp1SKkjVyEBBXkKF8aj2R550ABn6Dqc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQKK/FvCJhyV1Y4zHmC/OojRk/FdQQczrYLLUqYkHnpv WzBe4vFHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPJW8/wv9xiibkr51dHu59X TPyzWnQvmD6rd3zrvT3qZdDh5R83XGP47x99/eCNPV/+Ox94lXb+zHaV7c2JJdIcvK87ljDEG6s ycQIA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20251105212025.807549-1-mjguzik@gmail.com> <20251111-fluss-vokabel-7be060af7f11@brauner>
+In-Reply-To: <20251111-fluss-vokabel-7be060af7f11@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 11 Nov 2025 12:53:53 +0100
+X-Gm-Features: AWmQ_bmk0-blwk1PQ_lsyim7xX9U0NCT0sSRyAgQiFcSJIzJoe4wx-mIvQrdsdc
+Message-ID: <CAGudoHF_9_7cEgwtX=huvSf1q-FF0gSwTn2imXHmszYoa2xPZA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs: add iput_not_last()
+To: Christian Brauner <brauner@kernel.org>
+Cc: mic@digikod.net, linux-security-module@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, eadavis@qq.com, 
+	gnoack@google.com, jack@suse.cz, jannh@google.com, max.kellermann@ionos.com, 
+	m@maowtm.org, syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 05 Nov 2025 22:20:24 +0100, Mateusz Guzik wrote:
-> 
+On Tue, Nov 11, 2025 at 12:46=E2=80=AFPM Christian Brauner <brauner@kernel.=
+org> wrote:
+>
+> On Wed, 05 Nov 2025 22:20:24 +0100, Mateusz Guzik wrote:
+> >
+>
+>
+> Applied to the vfs-6.19.inode branch of the vfs/vfs.git tree.
+> Patches in the vfs-6.19.inode branch should appear in linux-next soon.
+>
 
-
-Applied to the vfs-6.19.inode branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.inode branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.inode
-
-[1/2] fs: add iput_not_last()
-      https://git.kernel.org/vfs/vfs/c/a1cece5d8881
-[2/2] landlock: fix splats from iput() after it started calling might_sleep()
-      https://git.kernel.org/vfs/vfs/c/9638e5c3b673
+That might_sleep in iput is already in master slated for 6.18, so this
+should land in vfs.fixes instead.
