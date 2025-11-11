@@ -1,107 +1,256 @@
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B73217D6
-	for <linux-security-module@vger.kernel.org>; Tue, 11 Nov 2025 00:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254EB5227;
+	Tue, 11 Nov 2025 00:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762819947; cv=none; b=PIa9ldO8OT89/1pIi2gp3jptXOrA1SM9TQqhkuSftyFnnVnEC53vE5t10QXTap/AHNy3oYcJ+mpLZqDf90DgTiABTbyRFohez0tQXYe3P/MORuenp9rRkDUE+S5s9laREArS62DuIyP9P8Kn8aCmAHMFOy3xAhy7o88SPLaxL2Q=
+	t=1762821631; cv=none; b=Cu0p/9mnC06Xs7Jlm6+rEdOVVIPmox/hzbvVzj2VGcuJKk0FAJfuXZMCMx6m0Y0qrTLS7mvbOgHIHgaDefrVf20Uegb0sfj6LWNsrfMw4Ny3XDF2LsbJdT0yrfbns1tpyHEMV5ExYRMRY1lsD2h3rY/K4o+B5uLw7UXRdKR3N3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762819947; c=relaxed/simple;
-	bh=40COxiieaHqw7+ui24NSWgLnvMT1wpUASlkNw1A/gos=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o3WKPufhu40RwW2KAjgVE05U/5WODSIVJbw6YpkmfoncDrNX6S+biP/OUwW9bPOjv/2gFWneKsRuzWgmPxB8kr3OAANDflE5TiyUoUzXh58s0G4puaFGbqdjsag98OjWa/U03KScrgt622y2btl7/vC4ne9olRWmKsDtjQ11mxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=B6DDQaN0; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="B6DDQaN0"
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3436d6bdce8so3130550a91.3
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Nov 2025 16:12:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1762819946; x=1763424746; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xuW6q1y8DG7tuVTrZRJrDQaASYmc2YGPYqwUbsMWjj0=;
-        b=B6DDQaN0HLMlNds9B8k5HAbOixH1tfBoHsho0CUKe6JSQTw1ZCp0Dg+c7DtSBecQI/
-         A29R93oya5G28sUCAJCv0xYBjc7JGltpj+T8PkTNcPPXc5LF/6rqvo5BQFe2aIRBGNez
-         c69HaD3sP+za5FpD7jDiz7/DHt1uFkWv/V6v39giK+dCDLGwdsU1aFGeFBznHCxPNKr7
-         5sdeMx398HQ8hnyX+TLYR3MnsPUKBqfps2ftzIcGnS3JPVe7PZaB6eEJ+rSnTsmfSagd
-         XbptjrhKAONy1GdnOGO3fbqZjd62vPkjXWvslsJ7HqjZHyoRsxYi2pSzH3dNy/dty7pu
-         zsqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762819946; x=1763424746;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xuW6q1y8DG7tuVTrZRJrDQaASYmc2YGPYqwUbsMWjj0=;
-        b=I8NI3EUovEDSMcd4wCCFr0K0uKXNb9gu5znElhdPMmaTZnuklY4SuEx2U9rvJ5ic6S
-         UAICG1KYqT1y5ndPAiPTrI9dY/qB/ilPc1Gpwht8o8bpMAsBBSR22oNpWLmAWFsTMhJ7
-         E90FZt0yCUg4L7XABqDAPIi6f3e4x+2Ok93Sh+UuyGDnj48RdKJG6aaeK6j2XK8wDrro
-         yx0YT70jH8Dmj7vMgWvPhmz2n+5VtHBADlc52rU0cUgXXv3qjv6da/tmWY1OFTIdr/r4
-         fEyu5FL3RExEXYYrfLEU3HN+XGVz1QBEs8b8TAkgdz3XZ/9Z9Y+qhUbCU0/tA+vlhLwZ
-         g5Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCVW9F4x0z64iYK7Qbw9EJKENuQu4zddCc8vhA2DSIa1W9bwfJNqe/GKUEq62bBsjx6RcwSxFEGr3HPIPH8+TN5UVPAk9vY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpxDJMQ40GVS1J7capWzWnf38lqHm9wsLNq2CkOimo2fPmQ6jo
-	6/uFegJ98pBmSbF3FcxepkEIg1KS8wzL5l81yklmZWkaNXZVPGNDwy6qX2ztst0oPDofRZ7wJ/+
-	dxJZVpSmy0Nm1T7mY3rNqqhH4BrwZnXuL8O4oWSF9
-X-Gm-Gg: ASbGncvZhVapoFySx4xUEhW483wYkzUc5rEKv6k/9YO0SDaqwNmXi32GUEGZymYzeOh
-	tWwy5lyZgB2FoFbhnwq3BheD4d/vz2vdV/n2EtTraMz7NZ+liYO4ff+jK4qEP1gRif4WGrzmjHF
-	bSR8PFmB+0mbwODrQCcmow5FiVt1cnhZXMU2y2aMx9wgjlTDWfh1PAqEwCA0JOkCS2yx3MmOGd+
-	+1g21sT7/ZuyXvY1U2zEBeGw5KRsRdFa8k1U2N3uEvBqMRPhVXRbk3aIsvY5/W0Jxgvsow=
-X-Google-Smtp-Source: AGHT+IFuEHxUGZemG3Lw6GJyJiLKC7kdvwsDE7oXb+eCceHLIabTEdGFPXVSAMyPTApNPiB9m/aWUBtr2KPwWIdbru0=
-X-Received: by 2002:a17:90b:2d8b:b0:341:88c9:6eb2 with SMTP id
- 98e67ed59e1d1-3436cb7be69mr12345464a91.1.1762819945887; Mon, 10 Nov 2025
- 16:12:25 -0800 (PST)
+	s=arc-20240116; t=1762821631; c=relaxed/simple;
+	bh=VcdPLs3EB//q4aR6+ynLP7yXQxBJC2aRhBa0wVKo43g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fRmwWFmUZss48mhrW7L1hAH1o4hCRMPdtWjflywnWD/EnzG4Mk9jm4NahvEnfj5RCFt0tZAfZZPj6VgtVVmJDK6WZIvGgw2bPfuGzkvc9+Z8FIaXb8ezvXQl42l5My964e0GtB1DM79PRvdHWjS+/OpW49PoQSQNGV2yt5LYdOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 519EE160B; Mon, 10 Nov 2025 18:33:29 -0600 (CST)
+Date: Mon, 10 Nov 2025 18:33:29 -0600
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Ryan Foster <foster.ryan.r@gmail.com>
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, serge@hallyn.com, paul@paul-moore.com
+Subject: Re: [PATCH] security: Add KUnit tests for rootid_owns_currentns()
+Message-ID: <aRKEWVse2AzperzG@mail.hallyn.com>
+References: <20251110143748.4144288-1-foster.ryan.r@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHtS328bOsw=7u0sN8P0F7Mj2xo6HCQLVkZXMBwp3rqTrAY-eQ@mail.gmail.com>
- <CAHC9VhQw2yXuwhVSZERXiOREXzuO7aU=LTUiL1go6v5m5sx3Mg@mail.gmail.com>
-In-Reply-To: <CAHC9VhQw2yXuwhVSZERXiOREXzuO7aU=LTUiL1go6v5m5sx3Mg@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 10 Nov 2025 19:12:13 -0500
-X-Gm-Features: AWmQ_bmyscMBSBBrJRMsIWWyFRwgwIczbA-GW_VHcdp0Jr7CgCsNi7kMSHpcKbQ
-Message-ID: <CAHC9VhSEopz-LppHfNrvKk0KjuoQy-E8Q2_tAteBKrxhJ3Vd_w@mail.gmail.com>
-Subject: Re: [PATCH] security: Add KUnit tests for rootid_owns_currentns()
-To: ryan foster <foster.ryan.r@gmail.com>
-Cc: kunit-dev@googlegroups.com, serge@hallyn.com, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110143748.4144288-1-foster.ryan.r@gmail.com>
 
-This time with the proper LSM list address.
+On Mon, Nov 10, 2025 at 06:37:48AM -0800, Ryan Foster wrote:
+> The rootid_owns_currentns() function in security/commoncap.c is a
+> security-critical function used to determine if a root ID from a
+> parent namespace owns the current namespace. This function is used
+> in multiple security-critical paths:
+> 
+> 1. cap_inode_getsecurity() - file capability retrieval
+> 2. get_vfs_caps_from_disk() - file capability loading during exec
+> 
+> Despite its security-critical nature, this function had no test
+> coverage. This patch adds KUnit tests to verify the function's
+> behavior in various scenarios:
+> 
+> - Root ID in init namespace (positive case)
+> - Invalid vfsuid (negative case)
+> - Non-root UID (negative case)
 
-On Mon, Nov 10, 2025 at 6:17=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Sun, Nov 9, 2025 at 8:13=E2=80=AFPM ryan foster <foster.ryan.r@gmail.c=
-om> wrote:
-> >
-> >    Please review this patch that adds KUnit tests for
-> >    rootid_owns_currentns() function in security/commoncap.c
->
-> Hi Ryan,
->
-> In case you haven't already seen this, it would be a good idea to read
-> the doc below on how to submit patches to the upstream Linux kernel
-> lists.  For example, sending patches as attachment is frowned upon as
-> it is difficult to properly review patches that way.
->
-> * https://docs.kernel.org/process/submitting-patches.html
->
-> If you are having difficulty configuring git to send email, you may
-> want to look at the "b4" tool, doc link below.  One of its primary
-> goals is to make it easier for people to post kernel patches for
-> review.
->
-> https://b4.docs.kernel.org/en/latest
->
-> Good luck!
+I'd be more excited about this if it tested the actual
+functionality.
 
---=20
-paul-moore.com
+The rootid_owns_currentns() could be split so that it calls
+a (static if not testing) inline rootid_owns_userns(), and
+then you test the latter.  Then create a few user namespaces
+with different values for the namespace's uid 0, and make
+sure rootid_owns_userns(testns, testuid) behaves correctly.
+
+Actually, this function should probably be renamed.
+"rootid_owns_currentns()" is not correct.  It should just be
+"uid_owns_currentns()".
+
+> The function is made testable by exporting it when
+> CONFIG_SECURITY_COMMONCAP_KUNIT_TEST is enabled, while maintaining
+> static visibility in production builds.
+> 
+> This follows the pattern established by other security subsystems
+> (IPE, Landlock) for KUnit testing.
+> 
+> Signed-off-by: Ryan Foster <foster.ryan.r@gmail.com>
+> ---
+>  security/Kconfig          |  17 ++++++
+>  security/Makefile         |   1 +
+>  security/commoncap.c      |   5 ++
+>  security/commoncap_test.c | 109 ++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 132 insertions(+)
+>  create mode 100644 security/commoncap_test.c
+> 
+> diff --git a/security/Kconfig b/security/Kconfig
+> index 285f284dfcac..c7b3f42ef875 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -284,6 +284,23 @@ config LSM
+>  
+>  	  If unsure, leave this as the default.
+>  
+> +config SECURITY_COMMONCAP_KUNIT_TEST
+> +	bool "Build KUnit tests for commoncap" if !KUNIT_ALL_TESTS
+> +	depends on KUNIT=y
+> +	default KUNIT_ALL_TESTS
+> +	help
+> +	  This builds the commoncap KUnit tests.
+> +
+> +	  KUnit tests run during boot and output the results to the debug log
+> +	  in TAP format (https://testanything.org/). Only useful for kernel devs
+> +	  running KUnit test harness and are not for inclusion into a
+> +	  production build.
+> +
+> +	  For more information on KUnit and unit tests in general please refer
+> +	  to the KUnit documentation in Documentation/dev-tools/kunit/.
+> +
+> +	  If unsure, say N.
+> +
+>  source "security/Kconfig.hardening"
+>  
+>  endmenu
+> diff --git a/security/Makefile b/security/Makefile
+> index 22ff4c8bd8ce..5b1285fde552 100644
+> --- a/security/Makefile
+> +++ b/security/Makefile
+> @@ -7,6 +7,7 @@ obj-$(CONFIG_KEYS)			+= keys/
+>  
+>  # always enable default capabilities
+>  obj-y					+= commoncap.o
+> +obj-$(CONFIG_SECURITY_COMMONCAP_KUNIT_TEST)	+= commoncap_test.o
+>  obj-$(CONFIG_SECURITY) 			+= lsm_syscalls.o
+>  obj-$(CONFIG_MMU)			+= min_addr.o
+>  
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 6bd4adeb4795..4d0e014ce7cd 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -358,7 +358,12 @@ int cap_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry)
+>  	return error;
+>  }
+>  
+> +#ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
+> +bool rootid_owns_currentns(vfsuid_t rootvfsuid);
+> +bool rootid_owns_currentns(vfsuid_t rootvfsuid)
+> +#else
+>  static bool rootid_owns_currentns(vfsuid_t rootvfsuid)
+> +#endif
+>  {
+>  	struct user_namespace *ns;
+>  	kuid_t kroot;
+> diff --git a/security/commoncap_test.c b/security/commoncap_test.c
+> new file mode 100644
+> index 000000000000..9757d433d314
+> --- /dev/null
+> +++ b/security/commoncap_test.c
+> @@ -0,0 +1,109 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * KUnit tests for commoncap.c security functions
+> + *
+> + * Tests for security-critical functions in the capability subsystem,
+> + * particularly namespace-related capability checks.
+> + */
+> +
+> +#include <kunit/test.h>
+> +#include <linux/user_namespace.h>
+> +#include <linux/uidgid.h>
+> +#include <linux/module.h>
+> +
+> +/* We need to include the actual vfsuid_t definition but avoid the problematic
+> + * inline functions in mnt_idmapping.h. Include just the type definitions.
+> + */
+> +#include <linux/types.h>
+> +
+> +/* Forward declare the minimal types we need - match the actual kernel definitions */
+> +struct mnt_idmap;
+> +typedef struct {
+> +	uid_t val;
+> +} vfsuid_t;
+> +
+> +/* Minimal macros we need - match kernel definitions from mnt_idmapping.h */
+> +static inline uid_t __vfsuid_val(vfsuid_t uid)
+> +{
+> +	return uid.val;
+> +}
+> +
+> +#define VFSUIDT_INIT(val) ((vfsuid_t){ __kuid_val(val) })
+> +#define INVALID_VFSUID VFSUIDT_INIT(INVALID_UID)
+> +
+> +#ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
+> +
+> +/* Forward declaration - function is exported when KUNIT_TEST is enabled */
+> +extern bool rootid_owns_currentns(vfsuid_t rootvfsuid);
+> +
+> +/**
+> + * test_rootid_owns_currentns_init_ns - Test rootid_owns_currentns with init ns
+> + *
+> + * Verifies that a root ID in the init namespace correctly owns the current
+> + * namespace when running in init_user_ns.
+> + */
+> +static void test_rootid_owns_currentns_init_ns(struct kunit *test)
+> +{
+> +	vfsuid_t root_vfsuid;
+> +	kuid_t root_kuid;
+> +
+> +	/* Create a root UID in init namespace */
+> +	root_kuid = KUIDT_INIT(0);
+> +	root_vfsuid = VFSUIDT_INIT(root_kuid);
+> +
+> +	/* In init namespace, root should own current namespace */
+> +	KUNIT_EXPECT_TRUE(test, rootid_owns_currentns(root_vfsuid));
+> +}
+> +
+> +/**
+> + * test_rootid_owns_currentns_invalid - Test rootid_owns_currentns with invalid vfsuid
+> + *
+> + * Verifies that an invalid vfsuid correctly returns false.
+> + */
+> +static void test_rootid_owns_currentns_invalid(struct kunit *test)
+> +{
+> +	vfsuid_t invalid_vfsuid;
+> +
+> +	/* Use the predefined invalid vfsuid */
+> +	invalid_vfsuid = INVALID_VFSUID;
+> +
+> +	/* Invalid vfsuid should return false */
+> +	KUNIT_EXPECT_FALSE(test, rootid_owns_currentns(invalid_vfsuid));
+> +}
+> +
+> +/**
+> + * test_rootid_owns_currentns_nonroot - Test rootid_owns_currentns with non-root UID
+> + *
+> + * Verifies that a non-root UID correctly returns false.
+> + */
+> +static void test_rootid_owns_currentns_nonroot(struct kunit *test)
+> +{
+> +	vfsuid_t nonroot_vfsuid;
+> +	kuid_t nonroot_kuid;
+> +
+> +	/* Create a non-root UID */
+> +	nonroot_kuid = KUIDT_INIT(1000);
+> +	nonroot_vfsuid = VFSUIDT_INIT(nonroot_kuid);
+> +
+> +	/* Non-root UID should return false */
+> +	KUNIT_EXPECT_FALSE(test, rootid_owns_currentns(nonroot_vfsuid));
+> +}
+> +
+> +static struct kunit_case commoncap_test_cases[] = {
+> +	KUNIT_CASE(test_rootid_owns_currentns_init_ns),
+> +	KUNIT_CASE(test_rootid_owns_currentns_invalid),
+> +	KUNIT_CASE(test_rootid_owns_currentns_nonroot),
+> +	{}
+> +};
+> +
+> +static struct kunit_suite commoncap_test_suite = {
+> +	.name = "commoncap",
+> +	.test_cases = commoncap_test_cases,
+> +};
+> +
+> +kunit_test_suite(commoncap_test_suite);
+> +
+> +MODULE_LICENSE("GPL");
+> +
+> +#endif /* CONFIG_SECURITY_COMMONCAP_KUNIT_TEST */
+> +
+> -- 
+> 2.43.0
