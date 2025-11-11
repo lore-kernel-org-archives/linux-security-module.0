@@ -1,71 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E72E2EDD72;
-	Tue, 11 Nov 2025 09:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A1435950;
+	Tue, 11 Nov 2025 09:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762852933; cv=none; b=H+kZANSjTbztwhag3Jq/FnuVwkZ8f77Tk6SNHX6JxN2MpAYlXefW8gEgpmVX+AeU+5felhayazQo8PuORLF6TGPkdWX6T7t89oxCnBYjCgjlxtTheT+fZZKvMh/S4yaKW43tichbnUxFg2GWgMeepqhU6yt25ouABgD0qIOqk1c=
+	t=1762853074; cv=none; b=S0Uj1OoWYry2MRJPJ0uXJqamDPlXaC+UsvJnddrz3eYpFA7GVBkOGIQMefFSR2GNmJYVP9YDWE5rGhqfxFJnd7WKmVGCKXdcIanJHSEAAQ0Cl+xo789nnTkhjoyPQN3a3Mp2Hp9yIkXADPdXj4j0Bn7ZGfcptLT81wQ/jv2HIHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762852933; c=relaxed/simple;
-	bh=YKxB1Tk0c8PA5NVe6KSLcg4q1RUhiINUvY7b/ZMmRUw=;
+	s=arc-20240116; t=1762853074; c=relaxed/simple;
+	bh=oqo4ODlyQOZAF+e8zvIC1WyiLILrt4nXl7b8zNXWo44=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qg+iqOb2Hbu/X4vfTdGV4HbZTyn6Ut0aPCXzCYA/4IXG2FoAcipgv6G782KoAmvgdZS1MQc7zHeGfVRsU4gjv8RPXI/NFjX41cbFln4B+YFFc2+n2zmKVinCaRNLfw0msQ0Xz04OJjuT6RGk/QbSWlVwMK/2iXLGm6AMBf9YFsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iq/i8hPW; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=nbjlwnuRwKtDgMH8PZ6PY+Wr1Ip5BO86OvlOx+hNo8PzQcZ46sf1SgzMU0+k5/LokwF85rgFF0A+0YG+JHfgMVLpzvRW7c7WtoRIiw8txbFR4FecqGc8reuyskzy8pjSKkZe2yjmldsheFnUB2TwEbQRA/SRT1IMgVHuB2Chi8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b4F6wrYi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iq/i8hPW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45B43C19422;
-	Tue, 11 Nov 2025 09:22:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b4F6wrYi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A841C116B1;
+	Tue, 11 Nov 2025 09:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762852932;
-	bh=YKxB1Tk0c8PA5NVe6KSLcg4q1RUhiINUvY7b/ZMmRUw=;
+	s=k20201202; t=1762853074;
+	bh=oqo4ODlyQOZAF+e8zvIC1WyiLILrt4nXl7b8zNXWo44=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Iq/i8hPWgHTwu435PI+UGZlLN/X3lyfBrrm+1OwNKieirVMDPmDCkCaFA5KX+Cpoo
-	 jCY0uq+bKxbfSS/6qRug9ACZVWvSIG2hb05Nfywkq6thFqPc80S2JztzaJqBCtX5TK
-	 6ankYgSWSaELPVPWooj+5cT1eMoRBXuIxw8R7wm0f3aC08zRAHgGqQPhTXlh+50TBr
-	 zxjneSB775FAK9WKt6FxPW2yAZcqlXQ0OEYW8MPlkyO1msbbTBkJLfLsWoPQX0KMwY
-	 2kPRjg5gUXXR3fF2VCX329Z0qynUJi5o5aKfiv7nNQoaN9iGP9xwUFoDOYr6HTaRw8
-	 daoW/qmbnCCrQ==
-Date: Tue, 11 Nov 2025 10:21:58 +0100
+	b=b4F6wrYigF74u/gM39t5dR4yPM/K39Os3h41DM2HEnQyd7F3uIzD8A3fxAuLwXaFk
+	 Xr0ugeiA8A+oQ7qOVe0xZvkVcmuX5W7EnOj5B/UEG+VJsA+cxjdU5LxoMnQwH01aAF
+	 uQR1i6zpFgV5/1sf/LPS6F2MeS82TASh9CPIwSv+Mo60ws8nZrTolhCqULZXDJ/Inp
+	 WNLVu3MijLSIvYeNENkBYXsmFW0fdmcbbcdaBhDUx4nCfby2JC34XSIJby6UGuj8CN
+	 uSm04F6slHTJtqvCdO2jkOoESqNVSjsmw7pLJat+5mO2wMbErWhjv4xacl5iobdWP9
+	 fu6Hj1x4bETrQ==
+Date: Tue, 11 Nov 2025 10:24:24 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Bernd Edlinger <bernd.edlinger@hotmail.de>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Alexey Dobriyan <adobriyan@gmail.com>, 
-	Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>, 
-	Will Drewry <wad@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>, 
-	James Morris <jamorris@linux.microsoft.com>, Randy Dunlap <rdunlap@infradead.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>, Adrian Reber <areber@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>, 
-	Alexei Starovoitov <ast@kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, tiozhang <tiozhang@didiglobal.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Paulo Alcantara (SUSE)" <pc@manguebit.com>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Frederic Weisbecker <frederic@kernel.org>, 
-	YueHaibing <yuehaibing@huawei.com>, Paul Moore <paul@paul-moore.com>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>, 
-	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, 
-	David Hildenbrand <david@redhat.com>, Dave Chinner <dchinner@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Elena Reshetova <elena.reshetova@intel.com>, 
-	David Windsor <dwindsor@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, "Joel Fernandes (Google)" <joel@joelfernandes.org>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Hans Liljestrand <ishkamiel@gmail.com>, 
-	Penglei Jiang <superman.xpt@gmail.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Adrian Ratiu <adrian.ratiu@collabora.com>, Ingo Molnar <mingo@kernel.org>, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Cyrill Gorcunov <gorcunov@gmail.com>, 
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
-Message-ID: <20251111-ankreiden-augen-eadcf9bbdfaa@brauner>
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <20251105143210.GA25535@redhat.com>
+To: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>
+Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
+	bpf@vger.kernel.org, bsegall@google.com, david@redhat.com, dietmar.eggemann@arm.com, 
+	jack@suse.cz, jsavitz@redhat.com, juri.lelli@redhat.com, kartikey406@gmail.com, 
+	kees@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, mingo@redhat.com, 
+	mjguzik@gmail.com, oleg@redhat.com, paul@paul-moore.com, peterz@infradead.org, 
+	rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, surenb@google.com, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz, vincent.guittot@linaro.org, 
+	viro@zeniv.linux.org.uk, vschneid@redhat.com
+Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_put
+Message-ID: <20251111-lausbub-wieweit-76ec521875b2@brauner>
+References: <690bfb9e.050a0220.2e3c35.0013.GAE@google.com>
+ <69104fa2.a70a0220.22f260.00a5.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -74,159 +51,30 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251105143210.GA25535@redhat.com>
+In-Reply-To: <69104fa2.a70a0220.22f260.00a5.GAE@google.com>
 
-On Wed, Nov 05, 2025 at 03:32:10PM +0100, Oleg Nesterov wrote:
-> I am still thinking about another approach, will write another email.
-> But let me take a closer look at your patch.
+On Sun, Nov 09, 2025 at 12:24:02AM -0800, syzbot wrote:
+> syzbot has bisected this issue to:
 > 
-> First of all, can you split it? See below.
+> commit 3a18f809184bc5a1cfad7cde5b8b026e2ff61587
+> Author: Christian Brauner <brauner@kernel.org>
+> Date:   Wed Oct 29 12:20:24 2025 +0000
 > 
-> On 08/21, Bernd Edlinger wrote:
-> >
-> > -static int de_thread(struct task_struct *tsk)
-> > +static int de_thread(struct task_struct *tsk, struct linux_binprm *bprm)
-> >  {
-> >  	struct signal_struct *sig = tsk->signal;
-> >  	struct sighand_struct *oldsighand = tsk->sighand;
-> >  	spinlock_t *lock = &oldsighand->siglock;
-> > +	struct task_struct *t;
-> > +	bool unsafe_execve_in_progress = false;
-> >
-> >  	if (thread_group_empty(tsk))
-> >  		goto no_thread_group;
-> > @@ -932,6 +934,19 @@ static int de_thread(struct task_struct *tsk)
-> >  	if (!thread_group_leader(tsk))
-> >  		sig->notify_count--;
-> >
-> > +	for_other_threads(tsk, t) {
-> > +		if (unlikely(t->ptrace)
-> > +		    && (t != tsk->group_leader || !t->exit_state))
-> > +			unsafe_execve_in_progress = true;
+>     ns: add active reference count
 > 
-> you can add "break" into the "if ()" block...
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11a350b4580000
+> start commit:   9c0826a5d9aa Add linux-next specific files for 20251107
+> git tree:       linux-next
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=13a350b4580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15a350b4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f2ebeee52bf052b8
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0b2e79f91ff6579bfa5b
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1639d084580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1625aa92580000
 > 
-> But this is minor. Why do we need "bool unsafe_execve_in_progress" ?
-> If this patch is correct, de_thread() can drop/reacquire cred_guard_mutex
-> unconditionally.
+> Reported-by: syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
+> Fixes: 3a18f809184b ("ns: add active reference count")
 > 
-> If you really think it makes sense, please make another patch with the
-> changelog.
-> 
-> I'd certainly prefer to avoid this boolean at least for the start. If nothing
-> else to catch the potential problems earlier.
-> 
-> > +	if (unlikely(unsafe_execve_in_progress)) {
-> > +		spin_unlock_irq(lock);
-> > +		sig->exec_bprm = bprm;
-> > +		mutex_unlock(&sig->cred_guard_mutex);
-> > +		spin_lock_irq(lock);
-> 
-> I don't think spin_unlock_irq() + spin_lock_irq() makes any sense...
-> 
-> > @@ -1114,13 +1139,31 @@ int begin_new_exec(struct linux_binprm * bprm)
-> >  	 */
-> >  	trace_sched_prepare_exec(current, bprm);
-> >
-> > +	/* If the binary is not readable then enforce mm->dumpable=0 */
-> > +	would_dump(bprm, bprm->file);
-> > +	if (bprm->have_execfd)
-> > +		would_dump(bprm, bprm->executable);
-> > +
-> > +	/*
-> > +	 * Figure out dumpability. Note that this checking only of current
-> > +	 * is wrong, but userspace depends on it. This should be testing
-> > +	 * bprm->secureexec instead.
-> > +	 */
-> > +	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
-> > +	    is_dumpability_changed(current_cred(), bprm->cred) ||
-> > +	    !(uid_eq(current_euid(), current_uid()) &&
-> > +	      gid_eq(current_egid(), current_gid())))
-> > +		set_dumpable(bprm->mm, suid_dumpable);
-> > +	else
-> > +		set_dumpable(bprm->mm, SUID_DUMP_USER);
-> > +
-> 
-> OK, we need to do this before de_thread() drops cred_guard_mutex.
-> But imo this too should be done in a separate patch, the changelog should
-> explain this change.
-> 
-> > @@ -1361,6 +1387,11 @@ static int prepare_bprm_creds(struct linux_binprm *bprm)
-> >  	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
-> >  		return -ERESTARTNOINTR;
-> >
-> > +	if (unlikely(current->signal->exec_bprm)) {
-> > +		mutex_unlock(&current->signal->cred_guard_mutex);
-> > +		return -ERESTARTNOINTR;
-> > +	}
-> 
-> OK, if signal->exec_bprm != NULL, then current is already killed. But
-> proc_pid_attr_write() and ptrace_traceme() do the same. So how about
-> something like
-> 
-> 	int lock_current_cgm(void)
-> 	{
-> 		if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
-> 			return -ERESTARTNOINTR;
-> 
-> 		if (!current->signal->group_exec_task)
-> 			return 0;
-> 
-> 		WARN_ON(!fatal_signal_pending(current));
-> 		mutex_unlock(&current->signal->cred_guard_mutex);
-> 		return -ERESTARTNOINTR;
-> 	}
-> 
-> ?
-> 
-> Note that it checks ->group_exec_task, not ->exec_bprm. So this change can
-> come in a separate patch too, but I won't insist.
-> 
-> > @@ -453,6 +454,28 @@ static int ptrace_attach(struct task_struct *task, long request,
-> >  				return retval;
-> >  		}
-> >
-> > +		if (unlikely(task == task->signal->group_exec_task)) {
-> > +			retval = down_write_killable(&task->signal->exec_update_lock);
-> > +			if (retval)
-> > +				return retval;
-> > +
-> > +			scoped_guard (task_lock, task) {
-> > +				struct linux_binprm *bprm = task->signal->exec_bprm;
-> > +				const struct cred __rcu *old_cred = task->real_cred;
-> > +				struct mm_struct *old_mm = task->mm;
-> > +
-> > +				rcu_assign_pointer(task->real_cred, bprm->cred);
-> > +				task->mm = bprm->mm;
-> > +				retval = __ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS);
-> > +				rcu_assign_pointer(task->real_cred, old_cred);
-> > +				task->mm = old_mm;
-> > +			}
-> 
-> This is the most problematic change which I can't review...
-> 
-> Firstly, it changes task->mm/real_cred for __ptrace_may_access() and this
-> looks dangerous to me.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Yeah, that is not ok. This is effectively override_creds for real_cred
-and that is not a pattern I want to see us establish at all! Temporary
-credential overrides for the subjective credentials is already terrible
-but at least we have the explicit split between real_cred and cred
-expressely for that. So no, that's not an acceptable solution.
-
-> 
-> Say, current_is_single_threaded() called by another CLONE_VM process can
-> miss group_exec_task and falsely return true. Probably not that bad, in
-> this case old_mm should go away soon, but still...
-> 
-> And I don't know if this can fool the users of task_cred_xxx/__task_cred
-> somehow.
-> 
-> Or. check_unsafe_exec() sets LSM_UNSAFE_PTRACE if ptrace. Is it safe to
-> ptrace the execing task after that? I have no idea what the security hooks
-> can do...
-> 
-> Again, can't review this part.
-> 
-> Oleg.
-> 
+#syz test: https://github.com/brauner/linux.git namespace-6.19
