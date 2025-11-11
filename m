@@ -1,115 +1,139 @@
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F94731BC82
-	for <linux-security-module@vger.kernel.org>; Tue, 11 Nov 2025 13:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECC9331200
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Nov 2025 13:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762866185; cv=none; b=e7o3VI5NgKd5EIms7lykXPbQjgQb7htVgC4ixJK0yfQVvpqFEsx4/GbmyqbVjVPDd+7sM577kpc29NQjXOa6QZvVT4OYQFyW1IQf6DTJNerHlM8pSNoy2zy4kZxO8azUX1kF7JxEpiLtcLNeOwP2+96lspqDjx2BFmIiZ/1vyqs=
+	t=1762866784; cv=none; b=U4lpu6jiuJTdjNFhP3Td38HVhLmM8e4yu0UTbkdr9nUQjupm/xPyaGbmq60etPRKsR0gmGWXWOZORWgMI1k2hZjFCfK256BEuUk/0N4gkr866Z4vpzP50Q93PpQgzuUSjabxwcd+C6C+joC95gbmLfoPTFpSebLM7RcuyHiMB/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762866185; c=relaxed/simple;
-	bh=Vt1k5EQoPqh3Nrp0Bhb6ewVSEmyuqnxy7cXy4xH/yLA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DAfOAwtvXe15f5YBJdAft5DPw+sG7erU2AxiE6OFMNwn9CRN3ZT8dg0j9dnGxeXGShl1Iypg6Olw06F1O7VnN7xi1dqCKaCvLH41CKujJm5PxCo5htnzPx1fKjfMAg3Ok/SJAqEo3cFvbDYCT6I1YIoTwbcapCmq2NekH12zSHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4337e3aca0cso30464365ab.1
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Nov 2025 05:03:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762866183; x=1763470983;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CGB/TAKZOcKtrhPxjpEL/9Rt1n53HiPGQxYzu5TTEyA=;
-        b=qJtOgfWtGiCBWeKT2cXvmXxZ336cDnsTUr94v4EAVuCvqZqbR85G+DlRJSDkW1bpHw
-         /REm7zEWbAjRHm6V8/G2rCDIW4vvLluoxvoyKTFKU/e7xs+gpKcchCrmTI7j/anSrwhJ
-         8blFMf++uHBwfR5LrxyrzO6FVRwcsLf2MJd3wWuu35xzl2TQyeEhvYUo3pBj9HZ+bikB
-         W/MSQWO3VcETcHM4zTBi/iOwSYRxqeWOWs4EeaRvPAjfJdNdi0U2MSbgDpnfOxcHuKpc
-         m9uDqLUkMSbRc+5kXecOfj+L2oxBVdiAQpHZukNNsxuFI/N0O9Gzgm7GY7xNpxz/W0bu
-         hOxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeFf1VvhZ2fRN8U4WIfExYOnbQmaEMMh2Ajk82w4k6HPzGIn0ajGv7Kvy8wVkAzH09nFuA6Nh50oXeUy01NJpiL77hAqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLsQ8J3S9SSlb83JM1JCgyPDayhiX5LK2IFB1yU9PCWwjxQtzo
-	IKp8ocSMZgFXRxii0xIJUnrFkNLNn7c3bMHN/2iAM58ZkRqyIe78efsSdELulOC9NkQ2/sO8tKN
-	y5aht2icGpSD6sKNIy8qHRfkNCO7iSCMX1mumvuAFXv4qMIYWVNkB3Qfz27Q=
-X-Google-Smtp-Source: AGHT+IEpTzA/3NqtQbsss3Bt9ogTGA39GU8M8pGLRnvPzS3lXufcYtJkf55mtmGcYxBah4LCmhDhp2qV1vWIUjAYrBjwalX4qAqr
+	s=arc-20240116; t=1762866784; c=relaxed/simple;
+	bh=ZQiYZa+UMJ28kPPzr7A5LUc/D3pE1z5z0fBFkzoygMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uZ7u3drOzLgnuKmTVowzW00ZTwV7P9zpC+vOanT70u+wujfxEejTd2M6PEK2rVMAmLLK32GB/6Vtj/aD1kusd0qNQVpLpqxZA1bubhuBy9alXayBLv/hohNOzZSvPbTra0/mAm2XiaQy7n3DUBKSEEVu0RT7f7zcJKZ19BJqCKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c+04zC9Z; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c+04zC9Z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762866781;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZQiYZa+UMJ28kPPzr7A5LUc/D3pE1z5z0fBFkzoygMc=;
+	b=c+04zC9ZOO6OLOs5wNimEpdBH5ApdqsFP6XaF+fBNdYSOIZg3/pLjxtp3IlKZjmZlSThAD
+	xL0g3Twlw+gsJE6XOdkW0W5iKTZSd23/IETiutiaUoXDSzh+Ned7XZ193tDz6km/xb2Crv
+	f5jan7XBN/7b60Ld/eACl88UJ58GQrc=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-593-9-RmVw9LOWG7O6AoUjelsw-1; Tue,
+ 11 Nov 2025 08:12:59 -0500
+X-MC-Unique: 9-RmVw9LOWG7O6AoUjelsw-1
+X-Mimecast-MFC-AGG-ID: 9-RmVw9LOWG7O6AoUjelsw_1762866773
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 440D51956061;
+	Tue, 11 Nov 2025 13:12:50 +0000 (UTC)
+Received: from fedora (unknown [10.44.33.58])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6E9631800872;
+	Tue, 11 Nov 2025 13:12:30 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 11 Nov 2025 14:12:49 +0100 (CET)
+Date: Tue, 11 Nov 2025 14:12:28 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Adrian Reber <areber@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	tiozhang <tiozhang@didiglobal.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	YueHaibing <yuehaibing@huawei.com>,
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
+	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	David Windsor <dwindsor@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hans Liljestrand <ishkamiel@gmail.com>,
+	Penglei Jiang <superman.xpt@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
+Message-ID: <aRM2POTDTxEzeF2F@redhat.com>
+References: <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <20251105143210.GA25535@redhat.com>
+ <20251111-ankreiden-augen-eadcf9bbdfaa@brauner>
+ <GV2PPF74270EBEEDCF80CEE0F08891ED37BE4CFA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2408:b0:433:29c3:c512 with SMTP id
- e9e14a558f8ab-43367e2d24emr143895815ab.21.1762866183264; Tue, 11 Nov 2025
- 05:03:03 -0800 (PST)
-Date: Tue, 11 Nov 2025 05:03:03 -0800
-In-Reply-To: <20251111-covern-deklamieren-ee89b7b4e502@brauner>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69133407.a70a0220.22f260.0138.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_put
-From: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, bpf@vger.kernel.org, brauner@kernel.org, 
-	bsegall@google.com, david@redhat.com, dietmar.eggemann@arm.com, jack@suse.cz, 
-	jsavitz@redhat.com, juri.lelli@redhat.com, kartikey406@gmail.com, 
-	kees@kernel.org, liam.howlett@oracle.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com, 
-	mgorman@suse.de, mhocko@suse.com, mingo@redhat.com, mjguzik@gmail.com, 
-	oleg@redhat.com, paul@paul-moore.com, peterz@infradead.org, 
-	rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, surenb@google.com, 
-	syzkaller-bugs@googlegroups.com, vbabka@suse.cz, vincent.guittot@linaro.org, 
-	viro@zeniv.linux.org.uk, vschneid@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <GV2PPF74270EBEEDCF80CEE0F08891ED37BE4CFA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hello,
+On 11/11, Bernd Edlinger wrote:
+>
+> On 11/11/25 10:21, Christian Brauner wrote:
+> > On Wed, Nov 05, 2025 at 03:32:10PM +0100, Oleg Nesterov wrote:
+> >>
+> >> This is the most problematic change which I can't review...
+> >>
+> >> Firstly, it changes task->mm/real_cred for __ptrace_may_access() and this
+> >> looks dangerous to me.
+> >
+> > Yeah, that is not ok. This is effectively override_creds for real_cred
+> > and that is not a pattern I want to see us establish at all! Temporary
+> > credential overrides for the subjective credentials is already terrible
+> > but at least we have the explicit split between real_cred and cred
+> > expressely for that. So no, that's not an acceptable solution.
+> >
+>
+> Well when this is absolutely not acceptable then I would have to change
+> all security engines to be aware of the current and the new credentials.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in __ns_ref_active_put
+Hmm... even if we find another way to avoid the deadlock? Say, the patches
+I sent...
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6581 at kernel/nscommon.c:171 __ns_ref_active_put+0x3d7/0x450 kernel/nscommon.c:171
-Modules linked in:
-CPU: 0 UID: 0 PID: 6581 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:__ns_ref_active_put+0x3d7/0x450 kernel/nscommon.c:171
-Code: 4d 8b 3e e9 1b fd ff ff e8 76 62 32 00 90 0f 0b 90 e9 29 fd ff ff e8 68 62 32 00 90 0f 0b 90 e9 59 fd ff ff e8 5a 62 32 00 90 <0f> 0b 90 e9 72 ff ff ff e8 4c 62 32 00 90 0f 0b 90 e9 64 ff ff ff
-RSP: 0018:ffffc9000238fd68 EFLAGS: 00010293
-RAX: ffffffff818e5946 RBX: 00000000ffffffff RCX: ffff8880302ebc80
-RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 0000000000000000
-RBP: ffffc9000238fe00 R08: ffff888078968c2b R09: 1ffff1100f12d185
-R10: dffffc0000000000 R11: ffffed100f12d186 R12: dffffc0000000000
-R13: 1ffff1100f12d184 R14: ffff888078968c20 R15: ffff888078968c28
-FS:  00007efc0fd536c0(0000) GS:ffff888125cf3000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b33263fff CR3: 0000000030876000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- nsproxy_ns_active_put+0x4a/0x200 fs/nsfs.c:701
- free_nsproxy kernel/nsproxy.c:80 [inline]
- put_nsset kernel/nsproxy.c:316 [inline]
- __do_sys_setns kernel/nsproxy.c:-1 [inline]
- __se_sys_setns+0x1349/0x1b60 kernel/nsproxy.c:534
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7efc0ef90ef7
-Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 34 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007efc0fd52fd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000134
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007efc0ef90ef7
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000000000c9
-RBP: 00007efc0f011f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007efc0f1e6038 R14: 00007efc0f1e5fa0 R15: 00007fff5692b648
- </TASK>
+Oleg.
 
-
-Tested on:
-
-commit:         cc719c88 nsproxy: fix free_nsproxy() and simplify crea..
-git tree:       https://github.com/brauner/linux.git namespace-6.19
-console output: https://syzkaller.appspot.com/x/log.txt?x=1613f17c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=59952e73920025e4
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b2e79f91ff6579bfa5b
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-
-Note: no patches were applied.
