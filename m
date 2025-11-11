@@ -1,65 +1,146 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A563587DD;
-	Tue, 11 Nov 2025 11:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D671D63C2;
+	Tue, 11 Nov 2025 11:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762861091; cv=none; b=Mwwq/flb8tsP3OhebVdx7obxD9Vzb8MFl2QucUPdnm/P65l7hIKTEyO9tjqhuEYqdziAByDQGctP1Ye33vmnY31WZm8dl6WFxneGrlqhhApJ0e1k++wzf6IGb9lR7/hdOM80SP5iO18uC7pGMUdbOwjfb0ENofZlIaGm/KxJRWc=
+	t=1762861236; cv=none; b=kQu38c9CJ7hBgQgKH5Eh/+kz9CxAFMyjjQuJYx+jLEGfJEWCSgWT4a6ehHpP4pBx2h8H4U8ZRSzZPwik5NuuC1ApXRA7S0dIbvL0qiT/pq/ndx1SsbuEczz28dcKga1f+DNZEL4VPqbp5sPAPivZxzZYMu0xW09+vgyIslGykWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762861091; c=relaxed/simple;
-	bh=S5ADycSWwbo0oJWVKz2x3KxEOZjqckRPgZDiM27t/rQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V1pQD+hm21pM7vUw7yfrfdaYCi+fu2CEtrzEpWgQvteLBr/LbJcWs5b5UeNS6bhbg18Dd1T9HpUfObjyiaDZ5CvGcaFmq4buzE3HCRSp+qtPpu1dGvCeyJuR1h+QsASyU5h7Lz8Y23AujoH8N0Xqb6Ak2zW7IOmQSgMuU9Y+FKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pehIauIK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762861236; c=relaxed/simple;
+	bh=hR91vdwpSfpmbKbLu2l5eJHLKqT5dbj+LrLS8yyS+a8=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=lEG/jfSO2kHSb7PLN5xa5Yk+hvGDc/LeaSq9K6PcyNveD0LbwOZge5fYY/7eKtgCVh+/pHyeEmqW6aPPUpS9Aq2+/iUmanY81NdK4qTt/Lx0Fey296rbT0IOFJLENV0/TlTyE0wfocNsnlaHO5T9lnI0QCXx85ItK8LOFYD4lc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JkwyYsJA; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pehIauIK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F297C16AAE;
-	Tue, 11 Nov 2025 11:38:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762861091;
-	bh=S5ADycSWwbo0oJWVKz2x3KxEOZjqckRPgZDiM27t/rQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pehIauIKsvbG2Zaq34KTP+At5gcHBNcZbQobMUyuKcOxAdDZQDOP354dlL4pEJ7fp
-	 gaCiwaZldy/pbEG/0s4HzQKCYKX32zOmCuPXvsyun5gS9Gm/POQumZkf2tNu4rbfWj
-	 KDwHoMeUsKpfTUr2/bStcGQ3mTOrbx6apq2IT/axS/bTLCdTuoNHUMxH8KZVbwyKCy
-	 bvLApif2hwTDRRBDOhHt6BTci3bIiuYHkhBCWaMksEE3/Gtd41qx2NIiQQTkXwQtVD
-	 F6N1w0xfHL708CF80dEG1rkteHA7tKb+HsilhNtknYFOSPkJBmvsMam0SDsdewC9mC
-	 +cmbb9FXIrilQ==
-Date: Tue, 11 Nov 2025 12:38:01 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, bpf@vger.kernel.org, bsegall@google.com, 
-	david@redhat.com, dietmar.eggemann@arm.com, jack@suse.cz, jsavitz@redhat.com, 
-	juri.lelli@redhat.com, kartikey406@gmail.com, kees@kernel.org, liam.howlett@oracle.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, 
-	mingo@redhat.com, mjguzik@gmail.com, oleg@redhat.com, paul@paul-moore.com, 
-	peterz@infradead.org, rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, 
-	surenb@google.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz, 
-	vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, vschneid@redhat.com
-Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_put
-Message-ID: <20251111-covern-deklamieren-ee89b7b4e502@brauner>
-References: <20251111-anbraten-suggerieren-da8ca707af2c@brauner>
- <691317ab.a70a0220.22f260.0135.GAE@google.com>
- <20251111-dozent-losgefahren-0a3a086b293e@brauner>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JkwyYsJA"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB2xXUJ023600;
+	Tue, 11 Nov 2025 11:40:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=8ie7IM
+	GwHdNKCBVnPOW7BNm7UFdHOm5GlpkqJRFNifY=; b=JkwyYsJAS+pUgrTx0Md3Nz
+	xFewumww2vYdaQoDrmPnHHeY2KZXK/EoMJ9rmUUS0HgfffvZ+mbL9ObpGtYhfpDf
+	iPPjGCPCSUuGG1IOHKfIQKR0CqaNhWTtQbJRPUxbLulB/nuN7cnx18wfrCKUsgb9
+	UCLlN/gVdVNEH1OG2cgIIqDHsn14za/6yIHQfqfEqNC2raGumlMXQgA822i+M0AF
+	VePJXFukS8UXy3Qv0IDCyf4+2OfQ216GpzedIosbioR6JGA+8QAJ60DE25DbyC/b
+	QXUnI9uumDD+Z4VezVNRJ+pPxBDVmz1rr+VQwXIbiYRIwvAgdva2wVYACm/rWkYA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5tjtm3m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Nov 2025 11:40:09 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5ABBe98B001479;
+	Tue, 11 Nov 2025 11:40:09 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5tjtm3h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Nov 2025 11:40:09 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB9ehkM008193;
+	Tue, 11 Nov 2025 11:40:08 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aah6mth9h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Nov 2025 11:40:08 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ABBe8oU53412136
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Nov 2025 11:40:08 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2901E58054;
+	Tue, 11 Nov 2025 11:40:08 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1397F58045;
+	Tue, 11 Nov 2025 11:40:07 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.139.215])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 11 Nov 2025 11:40:06 +0000 (GMT)
+Message-ID: <16c73b4e0761a1622770102d1d48982fe9ae86ac.camel@linux.ibm.com>
+Subject: Re: [Patch V1] ima: avoid duplicate policy rules insertions
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Tahera Fahimi <taherafahimi@linux.microsoft.com>, roberto.sassu@huawei.com,
+        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, code@tyhicks.com
+Cc: Lennart Poettering <mzxreary@0pointer.de>
+In-Reply-To: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
+References: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 11 Nov 2025 06:40:06 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251111-dozent-losgefahren-0a3a086b293e@brauner>
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Y3HENMEAaKwFjPzQZBz4-AHpwTJjDbBO
+X-Proofpoint-ORIG-GUID: BrrJooCEo-ClC07HzSrPnYFuIOCppHAW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA5OSBTYWx0ZWRfX9934H9BHLfYy
+ tu2xJ5e7hh7EFtIkfFcb7YB2vIHcut/CdsHlnYZYU4PN6MInxdifu2FDx/algA2fmDpepUNn+xY
+ gG/HCJDiVXIRUJmpVBaW5NbmUjOiJyh9M08V2mAPhyhinxV6Zsbka54LMINNpUCvZNd7mlw4J21
+ QHkMJq3iwcMzywjXUjoE6Ml1C/qVUN92+mthb4n5G0iEfPJ8oJpD2hQ2gjYg8hi03g+AkdYnGIT
+ XBmILK0sAGb1Zsq3nLk4k0U8FIoMrCsdM7WTBMKBfoRMjUL1EMoI1UzM8lC2wZVRceKGcE9GMtG
+ vwHq98DyDFtzIGVJPWQhPM/fQRZFrcN7XK9ZDWhr7YZPEJjYHweBLUw9sLK/1M2URfNz/T2D3KY
+ nveQpq5Yeq7DwyqvjlOeedrzjO2dSg==
+X-Authority-Analysis: v=2.4 cv=V6xwEOni c=1 sm=1 tr=0 ts=69132099 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=yMhMjlubAAAA:8 a=Te6HIuTWUB4XkS3UWhoA:9 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 lowpriorityscore=0 adultscore=0 malwarescore=0 impostorscore=0
+ suspectscore=0 priorityscore=1501 phishscore=0 bulkscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080099
 
-On Tue, Nov 11, 2025 at 12:23:18PM +0100, Christian Brauner wrote:
-> On Tue, Nov 11, 2025 at 03:02:03AM -0800, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot tried to test the proposed patch but the build/boot failed:
-> 
-> I think that's unrelated. Anyway, I managed to point this to the wrong
-> branch. I'll send another test request in a bit.
+[Cc'ing Lennart Poettering]
 
-#syz test: https://github.com/brauner/linux.git namespace-6.19
+On Thu, 2025-11-06 at 18:14 +0000, Tahera Fahimi wrote:
+> Prevent redundant IMA policy rules by checking for duplicates before inse=
+rtion. This ensures that
+> rules are not re-added when userspace is restarted (using systemd-soft-re=
+boot) without a full system
+> reboot. ima_rule_exists() detects duplicates in both temporary and active=
+ rule lists.
+>=20
+> Signed-off-by: Tahera Fahimi <taherafahimi@linux.microsoft.com>
+
+Sorry for the delay in responding ...
+
+Before trying to fix the "problem", let's try to understand it first.  At l=
+east
+on my test system (-rc5), kexec is working as designed.  On boot, systemd
+replaces the existing builtin IMA policy with a custom IMA policy.  The arc=
+h
+specific policies are not affected, as they are persistent.  On a soft rebo=
+ot
+(kexec), the IMA custom policy is re-loaded as expected.
+
+To verify the above behavior, extend the IMA policy before the soft reboot.=
+=20
+Notice after the soft reboot that the original custom IMA policy is loaded =
+and
+not the extended IMA policy.  Roberto, if there is a problem with this beha=
+vior,
+we'll discuss it independently of this proposed patch.
+
+The question is why are you seeing duplicate IMA policy rules?  What is spe=
+cial
+about your environment?
+
+--=20
+thanks,
+
+Mimi
