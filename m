@@ -1,96 +1,85 @@
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7D334253C
-	for <linux-security-module@vger.kernel.org>; Wed, 12 Nov 2025 17:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BAAF3451DB
+	for <linux-security-module@vger.kernel.org>; Wed, 12 Nov 2025 17:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762967084; cv=none; b=cj1ioOl3Wu2z0j+XmiFofS9kHTdTvkmmACu7S1dWDTJ7afkbhbgGdzhN1hsz2D3lV97cAKKfMcLQhSdTeQmxC7mMuqklUxJM4Ux9aLmmAjptCpkMROApKJV/d+Tcudes7bbMxw3zUBINGpUs8lUOt/F8yNZIpHH/eVk5SC+R3Xo=
+	t=1762968419; cv=none; b=OH60+UQcdayauvt7saxqfcBJpQf2NxSj6a555wAktXuF/Nnvo99rFKG4YgMfJ+GSHinuYXttB6SNmi8v6EzW5ZPEHwun5md1smepXUmN6ufzJgqtbSDIkepkXh0J12fZjyZTuhQnJz4+oSjNlfThHyCQttjIopXqqeVyna4AHoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762967084; c=relaxed/simple;
-	bh=pJcqMPl3DNfgRBHZpDA71N51LBtY4aTf2vCLAL2jWLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=olcerbel8W+ZlHU2Pe+Sosb7g3BqWARsv/CUaHau2ilnqUB/zdFj+ndgCyyWVvBGVuUhDPgrTCi0ZhDmWQpwGgIK7zYPt9d4bh82SIfVU6fZJjkqJSBw9X31J7/J/VCM0bPRsEOAjd1LoLopSFLDpOvgJomjmL24NckcjxGkRxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=vLPpFQgM; arc=none smtp.client-ip=83.166.143.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1762968419; c=relaxed/simple;
+	bh=Vww80A/tmPmtlGgln5DXCkTxy836HcNmtk+7zPO6H60=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ccu2ymf+TlY0n0yLQxbyHsvJh/7VYjit58EV16yfke5GQfrhwzQgF4O0+jUv2UCVyt0d1RIjhg8J2WuOxFdYT4hNzHCIApDnb2j7WJjTUpKfotJeqMb8Hi6MPcox1wPPkc3qUgzfbX1H2O/tRZdBUeZ2CgvoXuKtAwHmOHdJ12Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QUUHmyd/; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="vLPpFQgM"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4d68rv03GbzPvF;
-	Wed, 12 Nov 2025 18:04:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1762967070;
-	bh=8wHegL/s+r0XTkiTt++F4YZb9EEoyywfISncobLyDeU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vLPpFQgMfgSuP9WkIqdCGfeQHjvF17SBS/B1KLtE0Rl+sKJ5az/wNp22tUs36+mFQ
-	 fl88QmAjZc/lq2PINmXSmBXcVKv+NkEfN7mA3go0HrQ0UeyWEwop4ODjGBgoqkKBFh
-	 R11tFXBezaeZuppCK7qYX7s2buYgbk7NREK9mjko=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4d68rt4Dc3zR9V;
-	Wed, 12 Nov 2025 18:04:30 +0100 (CET)
-Date: Wed, 12 Nov 2025 18:04:29 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] Documentation/landlock: Make docs in cred.h and domain.h
- visible.
-Message-ID: <20251112.Ohd2daighuuc@digikod.net>
-References: <6050e764c2679cba01715653e5f1f4f17091d8f8.1759103277.git.m@maowtm.org>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QUUHmyd/"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762968415;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Vw+aWUqyEnl9n5yqdS3oYeHCoeQauABP394dxgMfzUY=;
+	b=QUUHmyd/5tAWR0FQBPuySPzvW6XNgvqHZl9b3SVLUqO8EHK/+PXRDMguZxRrWREUTg0Jhh
+	YvGDEGdGs7tbrNCClAIvmFwjYs25UafE4BpKmtlh/7fcz6EvIiC4GqWDWl1FiSdg37DcY7
+	zfXhsuXVgCfBNppzt4++EjI+TjU0MhU=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] keys: Replace memcpy with strscpy in proc_keys_show
+Date: Wed, 12 Nov 2025 18:26:21 +0100
+Message-ID: <20251112172620.4254-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6050e764c2679cba01715653e5f1f4f17091d8f8.1759103277.git.m@maowtm.org>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 29, 2025 at 12:49:49AM +0100, Tingmao Wang wrote:
-> Currently even though the structures in these files have documentation,
-> they are not shown in the "Landlock LSM: kernel documentation" page.
-> 
-> Signed-off-by: Tingmao Wang <m@maowtm.org>
+Use strscpy() to copy strings into the fixed-size buffer 'xbuf' instead
+of hardcoding the number of bytes to copy. This improves maintainability
+and ensures the buffer is always NUL-terminated.
 
-Thanks! I'll merge this patch in -next.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ security/keys/proc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/security/keys/proc.c b/security/keys/proc.c
+index 4f4e2c1824f1..1d380766f45d 100644
+--- a/security/keys/proc.c
++++ b/security/keys/proc.c
+@@ -10,6 +10,7 @@
+ #include <linux/fs.h>
+ #include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
++#include <linux/string.h>
+ #include <asm/errno.h>
+ #include "internal.h"
+ 
+@@ -199,9 +200,9 @@ static int proc_keys_show(struct seq_file *m, void *v)
+ 	/* come up with a suitable timeout value */
+ 	expiry = READ_ONCE(key->expiry);
+ 	if (expiry == TIME64_MAX) {
+-		memcpy(xbuf, "perm", 5);
++		strscpy(xbuf, "perm");
+ 	} else if (now >= expiry) {
+-		memcpy(xbuf, "expd", 5);
++		strscpy(xbuf, "expd");
+ 	} else {
+ 		timo = expiry - now;
+ 
+-- 
+2.51.0
 
-> ---
->  Documentation/security/landlock.rst | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
-> index e0fc54aff09e..5066f8c3091e 100644
-> --- a/Documentation/security/landlock.rst
-> +++ b/Documentation/security/landlock.rst
-> @@ -110,6 +110,12 @@ Filesystem
->  .. kernel-doc:: security/landlock/fs.h
->      :identifiers:
->  
-> +Process credential
-> +------------------
-> +
-> +.. kernel-doc:: security/landlock/cred.h
-> +    :identifiers:
-> +
->  Ruleset and domain
->  ------------------
->  
-> @@ -128,6 +134,9 @@ makes the reasoning much easier and helps avoid pitfalls.
->  .. kernel-doc:: security/landlock/ruleset.h
->      :identifiers:
->  
-> +.. kernel-doc:: security/landlock/domain.h
-> +    :identifiers:
-> +
->  Additional documentation
->  ========================
->  
-> 
-> base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
-> -- 
-> 2.51.0
-> 
-> 
