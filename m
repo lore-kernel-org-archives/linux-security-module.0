@@ -1,41 +1,42 @@
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6322D73B0
-	for <linux-security-module@vger.kernel.org>; Wed, 12 Nov 2025 17:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7D334253C
+	for <linux-security-module@vger.kernel.org>; Wed, 12 Nov 2025 17:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762967010; cv=none; b=MrFBzgmAm6vyJWJUPbWUi1fIf9MCNRwfoR+BhxefzLga1PxGpMed+dBboSG8KE+OsoA/6g9D58uhQ4Cp4tAFdn1zE2/Z9D0ksjOBzD71TEIC2ETSbHLaHIKTUAyrXtoHIaCD3j0JzZgLK4JFPJWl1R004UBFnOD+yHaM/wu6yJg=
+	t=1762967084; cv=none; b=cj1ioOl3Wu2z0j+XmiFofS9kHTdTvkmmACu7S1dWDTJ7afkbhbgGdzhN1hsz2D3lV97cAKKfMcLQhSdTeQmxC7mMuqklUxJM4Ux9aLmmAjptCpkMROApKJV/d+Tcudes7bbMxw3zUBINGpUs8lUOt/F8yNZIpHH/eVk5SC+R3Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762967010; c=relaxed/simple;
-	bh=bzl9kw1v55JrzNj39zOlh/CGfRCrVUPdAF2Xs788tD4=;
+	s=arc-20240116; t=1762967084; c=relaxed/simple;
+	bh=pJcqMPl3DNfgRBHZpDA71N51LBtY4aTf2vCLAL2jWLw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cc5zqjctOSO/WPvqDg62IOTRvovvm2qMlyA+lipjyvB1RV7y2DJ3UEMC7lnFbBmuOeBkrFHGoqZMgpx7VTmCMnig41HDbXzAVwVYWaULz8GKQKTSpUKNpyHDw+LbuvQT1pNgazVvQW6VVCdHhAa7tx423zp8BLWGa2WRUDL7vqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=OQABuwGA; arc=none smtp.client-ip=45.157.188.11
+	 Content-Type:Content-Disposition:In-Reply-To; b=olcerbel8W+ZlHU2Pe+Sosb7g3BqWARsv/CUaHau2ilnqUB/zdFj+ndgCyyWVvBGVuUhDPgrTCi0ZhDmWQpwGgIK7zYPt9d4bh82SIfVU6fZJjkqJSBw9X31J7/J/VCM0bPRsEOAjd1LoLopSFLDpOvgJomjmL24NckcjxGkRxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=vLPpFQgM; arc=none smtp.client-ip=83.166.143.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="OQABuwGA"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4d68qR09JRz12vm;
-	Wed, 12 Nov 2025 18:03:15 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="vLPpFQgM"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4d68rv03GbzPvF;
+	Wed, 12 Nov 2025 18:04:31 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1762966994;
-	bh=7ide/Co3o20IJteqMoG6hAIdrj7+9V+hrcgIeeRx/KQ=;
+	s=20191114; t=1762967070;
+	bh=8wHegL/s+r0XTkiTt++F4YZb9EEoyywfISncobLyDeU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OQABuwGAGjQXWh2YtLbLtj0qE/avciU8gP/AE3B09Cwef6wAWvsaOHW9a9SDmON9V
-	 LBAzugADm5hUJe2pOmogDKTCAvYBud/hI16ID6uJKDwAtDgZEv8CBqcWYZ7So1bZ6E
-	 RaTs4u+JdX0vnuf7E5/xwcLIZ2BAZCkpi7p9LLVw=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4d68qQ3sH7zKgr;
-	Wed, 12 Nov 2025 18:03:14 +0100 (CET)
-Date: Wed, 12 Nov 2025 18:03:13 +0100
+	b=vLPpFQgMfgSuP9WkIqdCGfeQHjvF17SBS/B1KLtE0Rl+sKJ5az/wNp22tUs36+mFQ
+	 fl88QmAjZc/lq2PINmXSmBXcVKv+NkEfN7mA3go0HrQ0UeyWEwop4ODjGBgoqkKBFh
+	 R11tFXBezaeZuppCK7qYX7s2buYgbk7NREK9mjko=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4d68rt4Dc3zR9V;
+	Wed, 12 Nov 2025 18:04:30 +0100 (CET)
+Date: Wed, 12 Nov 2025 18:04:29 +0100
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Matthieu Buffet <matthieu@buffet.re>
+To: Tingmao Wang <m@maowtm.org>
 Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
 	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] selftests/landlock: Fix makefile header list
-Message-ID: <20251112.viiboowaiNg5@digikod.net>
-References: <20251027011440.1838514-1-matthieu@buffet.re>
+Subject: Re: [PATCH] Documentation/landlock: Make docs in cred.h and domain.h
+ visible.
+Message-ID: <20251112.Ohd2daighuuc@digikod.net>
+References: <6050e764c2679cba01715653e5f1f4f17091d8f8.1759103277.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -44,47 +45,52 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251027011440.1838514-1-matthieu@buffet.re>
+In-Reply-To: <6050e764c2679cba01715653e5f1f4f17091d8f8.1759103277.git.m@maowtm.org>
 X-Infomaniak-Routing: alpha
 
-On Mon, Oct 27, 2025 at 02:14:40AM +0100, Matthieu Buffet wrote:
-> Make all headers part of make's dependencies computations.
-> Otherwise, updating audit.h, common.h, scoped_base_variants.h,
-> scoped_common.h, scoped_multiple_domain_variants.h, or wrappers.h,
-> re-running make and running selftests could lead to testing stale headers.
+On Mon, Sep 29, 2025 at 12:49:49AM +0100, Tingmao Wang wrote:
+> Currently even though the structures in these files have documentation,
+> they are not shown in the "Landlock LSM: kernel documentation" page.
 > 
-> Fixes: 6a500b22971c ("selftests/landlock: Add tests for audit flags and domain IDs")
-> Fixes: fefcf0f7cf47 ("selftests/landlock: Test abstract UNIX socket scoping")
-> Fixes: 5147779d5e1b ("selftests/landlock: Add wrappers.h")
-> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
-> ---
-> I was troubleshooting why some auditing selftests kept failing at random
-> (recvfrom() sometimes returning EAGAIN in audit_recv()). I did not
-> troubleshoot it yet, but I did find this first step while trying to edit
-> audit.h in vain:
+> Signed-off-by: Tingmao Wang <m@maowtm.org>
 
 Thanks! I'll merge this patch in -next.
 
+
+> ---
+>  Documentation/security/landlock.rst | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
->  tools/testing/selftests/landlock/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
+> index e0fc54aff09e..5066f8c3091e 100644
+> --- a/Documentation/security/landlock.rst
+> +++ b/Documentation/security/landlock.rst
+> @@ -110,6 +110,12 @@ Filesystem
+>  .. kernel-doc:: security/landlock/fs.h
+>      :identifiers:
+>  
+> +Process credential
+> +------------------
+> +
+> +.. kernel-doc:: security/landlock/cred.h
+> +    :identifiers:
+> +
+>  Ruleset and domain
+>  ------------------
+>  
+> @@ -128,6 +134,9 @@ makes the reasoning much easier and helps avoid pitfalls.
+>  .. kernel-doc:: security/landlock/ruleset.h
+>      :identifiers:
+>  
+> +.. kernel-doc:: security/landlock/domain.h
+> +    :identifiers:
+> +
+>  Additional documentation
+>  ========================
+>  
 > 
-> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
-> index a3f449914bf9..044b83bde16e 100644
-> --- a/tools/testing/selftests/landlock/Makefile
-> +++ b/tools/testing/selftests/landlock/Makefile
-> @@ -4,7 +4,7 @@
->  
->  CFLAGS += -Wall -O2 $(KHDR_INCLUDES)
->  
-> -LOCAL_HDRS += common.h
-> +LOCAL_HDRS += $(wildcard *.h)
->  
->  src_test := $(wildcard *_test.c)
->  
-> 
-> base-commit: 6dde339a3df80a57ac3d780d8cfc14d9262e2acd
+> base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
 > -- 
-> 2.47.2
+> 2.51.0
 > 
 > 
