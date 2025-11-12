@@ -1,150 +1,127 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E822FD7DD
-	for <linux-security-module@vger.kernel.org>; Wed, 12 Nov 2025 09:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4583A31281C
+	for <linux-security-module@vger.kernel.org>; Wed, 12 Nov 2025 12:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762941167; cv=none; b=A/REnexsX5STSz8dcwggIxQTe2oD5XaKF+5HvK1cJNDoJD2Mg8KBI9L998BvFj16hvopDO9gW8+VjwclAbO2LIVHIFCE35nACTwZtdkArkRyYmMcG2yUmAPf4J46lCUyQIsUlnoztzUKxgZNutbPHG/u4MsuU5R3nmj2kT5gl4U=
+	t=1762949249; cv=none; b=Nb+4goZBOvEuvnM3XlyHW3zcWZzob2ph6wqp5CQyTu6KH35eJ7Hv30+44c9XvLmlJQwkDQfSEMF9EH5ANsYdM1TJTdmXeXkyBfeOYL430J7j+1BWr9AOspauu2E4lN4sWgA9wL9+WWtgXF3Oo8e9DDwm0pyZsLnB9jdaVc48N4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762941167; c=relaxed/simple;
-	bh=qieoI6be/NucVGDXoIOFCAFq9yqK2SgJwSK5f9zar58=;
+	s=arc-20240116; t=1762949249; c=relaxed/simple;
+	bh=rmaw8uxqe2EYzaqnQYDzGZ3+OW1penkChF7AR/TE5b4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HM672U+WrYjyrEL3lAR26Jfd6LQISIdEGezH9N/Cs7SrJ1nTDoNfBUCrNLSosl+Q9e/aKGZiRr/2SXWBRwaOcJ3kRR9+qAMcf2N7TdZ498LVaSMABjPcjBcG0JDMpkaYcqBIzwfV9Qx3cfTJwug4PGHosIt0/9IKva6XhwGso8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jHC5P0Qo; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=to6P1llTilxekUYkaMz0UvWzAnMFJpv3JxJhbeIs1ncXMiMlLSfhNeGoHVoza09SLCb/2qYSq4lmFgl7sg6KjYp0wpaNSM+FQ6gTSJZny3xyOHuHmBJpQbpvD21QnkGTKjOPr0lMHjBaBwj3nXogf8puMI+SpCNCssHnUUgfimc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T+MVu7u+; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jHC5P0Qo"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762941165;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NhHDG/RYOkgjp1iTZiVveFurISFNmM/HJtxHwxRJDf8=;
-	b=jHC5P0Qo7BGewtgftBuIwUr08CRZ5+mux0AE1ZdEZUill+MfHitOHsDL6vGeysQMwQCpBs
-	6gt9g0XvfbJ+eLzNMtcWM6brn9UnMyH6ELCPNAScGJ2s7U/d/OrJOigOYYPz0Ump6/BrmD
-	2VDEZ1t9y2RvwfNGipRdtnf4sEdp6Xc=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-151-thKX29d8MDyDCSuebjYMpA-1; Wed,
- 12 Nov 2025 04:52:43 -0500
-X-MC-Unique: thKX29d8MDyDCSuebjYMpA-1
-X-Mimecast-MFC-AGG-ID: thKX29d8MDyDCSuebjYMpA_1762941158
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9FED31800650;
-	Wed, 12 Nov 2025 09:52:35 +0000 (UTC)
-Received: from fedora (unknown [10.44.34.114])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8BECE1800451;
-	Wed, 12 Nov 2025 09:52:14 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 12 Nov 2025 10:52:35 +0100 (CET)
-Date: Wed, 12 Nov 2025 10:52:13 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Adrian Reber <areber@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	tiozhang <tiozhang@didiglobal.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	YueHaibing <yuehaibing@huawei.com>,
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
-	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	David Windsor <dwindsor@gmail.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Hans Liljestrand <ishkamiel@gmail.com>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
-Message-ID: <aRRYzb2FxHzpKhms@redhat.com>
-References: <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <20251105143210.GA25535@redhat.com>
- <20251111-ankreiden-augen-eadcf9bbdfaa@brauner>
- <GV2PPF74270EBEEDCF80CEE0F08891ED37BE4CFA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <aRM2POTDTxEzeF2F@redhat.com>
- <GV2PPF74270EBEE16FE36CF873C5C2309A9E4CFA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T+MVu7u+"
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-8a479c772cfso56160985a.0
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Nov 2025 04:07:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762949247; x=1763554047; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rmaw8uxqe2EYzaqnQYDzGZ3+OW1penkChF7AR/TE5b4=;
+        b=T+MVu7u+UMAI2WUUFd26WraGC3lDj+PRQi2AtwiJHtXKAwu1kEpZPZSu6z+EUkqOs1
+         qSaAIasPEs+R566KAGP8osjfuHmYYt1bFp/IwTD1kYnqZnTdQEbaByFBTqIwEX4BVCyN
+         fAdbirMizZlUnAPug4aVfKiPvVbCFT2Vwhw/zGe2HruhjLiYyZuFk1em7/O77p8LwrEr
+         rt7Y4Op7k026U3WWlZDyfwx7pq7N/c/Qt6tSRA0RR8TdtblGDTTZBzvmvcq4e2l3Txjc
+         Cu2X7tTxYPXSYkPGbScgGBWsIikHWZtpo0Wd0jjjs3Cc9e2qrNl1yB6GwJjlGgt6hUsU
+         pgVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762949247; x=1763554047;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rmaw8uxqe2EYzaqnQYDzGZ3+OW1penkChF7AR/TE5b4=;
+        b=rO9oYFlMgrfmBNQ6VkH4pWEXWJOyOcB8gCyOq/Y0CPgsGB9AQCsbwocbPtTOPBj6QP
+         JlTMuB6W864q8fbfwGZMmf6gnXZnOJOrXlbxIzWYlnEW+Iz75+683T5FyxBltgkH83q1
+         K55rkeGmsRrFbR34v0/UULFNyL2US7OTMw/G4WaqeJB97jhqr1bFfCYXzd5P+EhHeHIX
+         FOHV8ANPPTEG2Gk+DkDEHGHA3qtD3hGcz57tDik7VCAvNkndaVv/hpngOWHPjKDGR5yy
+         atfhBHIL2JA9Y7neXtZ3EPfwtO71QotCnm12kUn/BojDp4S1trwgP/i/GSQQqSPg17WS
+         BpjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSmOaHIL/eqp+du/ogTxDZvi8osAzS0mZ0MBCI56UvtBbv/xW/u0hXZhUxdPuiBJfdNqtNuWlKvDvmNYc2Sb0rQI84Rrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHdbxxcrjvbqp7dCFdCESYgS2NC14kOOXvTsSXN4xVWFRY48K8
+	+hOa0t/upR9qulWUSC5CjzZeFNndrmgSkMVHBp9FFoiENLgvwhAROWc8
+X-Gm-Gg: ASbGncuDeVH6L3EruowI4xsq5PHgSr9UVSLfeS9GVN/rjoG69L7E+2v/ryD807+g1Y8
+	ulwETkL5S7egJCVtgQJrHe9PbRv6lr5P61K41vioIbCo1O9j6m3OllaG5AxmiH9sWJiFmxs1Ji8
+	DoREpg3TIrRWHqXOsXtXXtTunoRNTvfbtipI9/BZS499FyXqDzQ3+AYi6eYg9EYutYJkbb9VtAP
+	F+1PO33Dpwp9afrJkDgpjCrHmwieiBHGezm+a/qc/+U9ZGq60wKMro2wVLC/z4INKXnLfL/7mhe
+	jRBI78JBlDErIKLCAB18+AC+n/uNVC8ldZqbimpRrMEVBvf7RZiIgbnrw/oDNFB16bkNzjiNNfQ
+	QsXB3guzKZSqf9Mwkr1Pcpi5ZkmR0TwpSzTUMP8K6fhidZuP6H/OXCX0rNn6mj0/jaNFyM6zWWF
+	r/
+X-Google-Smtp-Source: AGHT+IHodS+pTxbKK//f1GSMGDWXc+XiJHZj4dNVP6EykXSirX90SEf7NOQJlws/+WQMWWTXQYW47w==
+X-Received: by 2002:a05:622a:19aa:b0:4ec:f403:3019 with SMTP id d75a77b69052e-4eddbc82c32mr34381541cf.21.1762949247017;
+        Wed, 12 Nov 2025 04:07:27 -0800 (PST)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eda7116927sm80703501cf.13.2025.11.12.04.07.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 04:07:24 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 87BE14209E71; Wed, 12 Nov 2025 19:07:17 +0700 (WIB)
+Date: Wed, 12 Nov 2025 19:07:17 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Security Module <linux-security-module@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>, Kees Cook <kees@kernel.org>,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	Stuart Yoder <stuart.yoder@arm.com>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] security: sctp: Format type and permission checks tables
+Message-ID: <aRR4daS-XsAFLkfe@archie.me>
+References: <20251103113922.61232-2-bagasdotme@gmail.com>
+ <aRKgyvrTxldlTv9t@archie.me>
+ <CAHC9VhQeghqosexgOQO3==poNwsf_6mNiOqkUTUOdYnzRYzKmQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kaEZR4YZ+xgx6+Vu"
 Content-Disposition: inline
-In-Reply-To: <GV2PPF74270EBEE16FE36CF873C5C2309A9E4CFA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <CAHC9VhQeghqosexgOQO3==poNwsf_6mNiOqkUTUOdYnzRYzKmQ@mail.gmail.com>
 
-On 11/11, Bernd Edlinger wrote:
->
-> On 11/11/25 14:12, Oleg Nesterov wrote:
-> > On 11/11, Bernd Edlinger wrote:
-> >>
-> >> Well when this is absolutely not acceptable then I would have to change
-> >> all security engines to be aware of the current and the new credentials.
+
+--kaEZR4YZ+xgx6+Vu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Nov 11, 2025 at 07:50:56PM -0500, Paul Moore wrote:
+> On Mon, Nov 10, 2025 at 9:35=E2=80=AFPM Bagas Sanjaya <bagasdotme@gmail.c=
+om> wrote:
 > >
-> > Hmm... even if we find another way to avoid the deadlock? Say, the patches
-> > I sent...
+> > On Mon, Nov 03, 2025 at 06:39:23PM +0700, Bagas Sanjaya wrote:
+> > > Use reST grid tables for both type and permission checks tables.
 > >
->
-> Maybe, but it looks almost too simple ;-)
->
->    164          sleep(2);
->    165          /* deadlock may happen here */
->    166          k = ptrace(PTRACE_ATTACH, thread2_tid, 0L, 0L);
->
-> what happens if you change the test expectation here, that the
-> ptrace may fail instead of succeed?
->
-> What signals does the debugger receive after that point?
-> Is the debugger notified that the debugged process continues,
-> has the same PID, and is no longer ptraced?
+> > review ping
+>=20
+> You don't need to 'ping' for a review, your patch is in my review
+> queue, but code changes take priority at this point in the dev cycle
+> as I'm okay with merging documentation changes fairly late.
 
-Ah, but this is another thing... OK, you dislike 3/3 and I have to agree.
+OK, thanks!
 
-Yes, de_thread() silently untraces/reaps the old leader and after 3/3 debugger
-can't rely on PTRACE_EVENT_EXIT, so unless the debugger has already attached to
-all sub-threads (at least to execing thread) it looks as if the leader was just
-untraced somehow.
+--=20
+An old man doll... just what I always wanted! - Clara
 
-OK, this is probably too bad, we need another solution...
+--kaEZR4YZ+xgx6+Vu
+Content-Type: application/pgp-signature; name=signature.asc
 
-Oleg.
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaRR4bgAKCRD2uYlJVVFO
+o9V7AQDHOga8MTEGHoVGvfFH7x5J65YayPNmGzE8rkS1swU6tAD+PMbAFNdlVCkb
+PuY83h41Kn/NdSbZDx6xQS5WY2RdmgY=
+=fNJb
+-----END PGP SIGNATURE-----
+
+--kaEZR4YZ+xgx6+Vu--
