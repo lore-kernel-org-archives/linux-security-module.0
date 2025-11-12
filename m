@@ -1,107 +1,79 @@
-Received: from r9220.ps.combzmail.jp (r9220.ps.combzmail.jp [160.16.65.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp20.cstnet.cn [159.226.251.20])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA27343AA6
-	for <linux-security-module@vger.kernel.org>; Wed, 12 Nov 2025 02:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.16.65.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8480335CBDC;
+	Wed, 12 Nov 2025 02:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762914078; cv=none; b=XQ6h5yIiVqg+DpnY1IWsR80e1XGECzs6SYL/9wSgUFKgMU8XOM5goCOrS/W88UiIKFhgA3RvdGxPxcnH3rFtQblLszqzhdZa5BaPygI9T84TW6pwh4oEPkRChqzszkZpZjhB2gvoxYYW7Lk67rBF8sN7c8hoULHOabqfYwM1MWs=
+	t=1762914924; cv=none; b=UUtgWhsziUeZwd0IAz8KbNGYaO3obBOCNYVtuJ/rHhJJ5Om4HHzb5itfELElTmWSXFnZrx1HtNrS7EDTEgqL/lrQlaS2EW0i9ecCJxeP8cv7tikMN4WsJ0q7s7mtcKCjmbZ8EGv4llyqxJfWxmQd/bbqhTD60L7+GqiSs5rD2IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762914078; c=relaxed/simple;
-	bh=okEnYFBMjoPo+i4RQRYTcj/jfvTJ/HRJDOaMy79sJMw=;
-	h=To:From:Subject:Mime-Version:Content-Type:Message-Id:Date; b=iPIQQhYMFcIX1GFEwgLK/8N558Nz7zzENYV197t7K66+iB7pOK888KwWkE4HMX31ezPbq0dgLA9NTCVvbsAeFAwPHKlGWy9ssb5Uu6OVD4LAF05MuszPJtkpkyyaNwjvR2dRZckzqklP9TavgU1ODAkxGpD5DWnmvHHHVSvhc9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fc-session.jp; spf=pass smtp.mailfrom=magerr.combzmail.jp; arc=none smtp.client-ip=160.16.65.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fc-session.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magerr.combzmail.jp
-Received: by r9220.ps.combzmail.jp (Postfix, from userid 99)
-	id 9C360C1944; Wed, 12 Nov 2025 11:04:56 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9220.ps.combzmail.jp 9C360C1944
-To: linux-security-module@vger.kernel.org
-From: =?ISO-2022-JP?B?GyRCNjUwaSVVJWklcyVBJWMlJCU6JTslXyVKITw7dkwzNkkbKEI=?= <info@fc-session.jp>
-X-Ip: 844922637757646
-X-Ip-source: k85gj7ra48dnsa5pu0p6gd
-Precedence: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCPi87UjI9JE9ESSQkSXchIzwhQCRCZSROGyhC?=
- =?ISO-2022-JP?B?GyRCNjUwaSVTJTglTSU5GyhC?=
+	s=arc-20240116; t=1762914924; c=relaxed/simple;
+	bh=VxJJx/bbFAlIloG/4NggwqEeBLSrxY79FnW5QIt8fFc=;
+	h=Date:From:To:Cc:Subject:Content-Type:MIME-Version:Message-ID; b=f32V2t1+PaJ+Wu+nMC4pNvpY0ks7s1DU+4ggA0P+opaIsAYZCUYKcLltNPHgzskhs7PCPeia8XGsKtBlsi1LZDLm3wqti1w/5KsQxQywDGRrJEHrQx16DWKCG4Bpm0s2DyTEclYLwDsL9zPRK2u2x1bMYcL9VBy3WqEIELYOzLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mails.ucas.ac.cn; spf=pass smtp.mailfrom=mails.ucas.ac.cn; arc=none smtp.client-ip=159.226.251.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mails.ucas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mails.ucas.ac.cn
+Received: from xujiakai24$mails.ucas.ac.cn ( [210.73.43.101] ) by
+ ajax-webmail-APP-10 (Coremail) ; Wed, 12 Nov 2025 10:35:17 +0800
+ (GMT+08:00)
+Date: Wed, 12 Nov 2025 10:35:17 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?6K645L2z5Yev?= <xujiakai24@mails.ucas.ac.cn>
+To: linux-kernel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	"Serge E. Hallyn" <serge@hallyn.com>
+Subject: [BUG] landlock: sleeping function called from invalid context in
+ hook_sb_delete()
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.1-cmXT5 build
+ 20240627(e6c6db66) Copyright (c) 2002-2025 www.mailtech.cn cnic.cn
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Transfer-Encoding: 7bit
-X-MagazineId: ra5p
-X-uId: 6763325040485967654270211002
-X-Sender: CombzMailSender
-X-Url: http://www.combzmail.jp/
-Message-Id: <20251112020847.9C360C1944@r9220.ps.combzmail.jp>
-Date: Wed, 12 Nov 2025 11:04:56 +0900 (JST)
+MIME-Version: 1.0
+Message-ID: <20dd8187.9d18.19a75eadc43.Coremail.xujiakai24@mails.ucas.ac.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:tACowAAH8Odl8hNpfAMBAA--.9475W
+X-CM-SenderInfo: 50xmxthndljko6pdxz3voxutnvoduhdfq/1tbiCQ4EE2kT1NWAjwA
+	Ask
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-　
-　いつもお世話になります。
-　
-　少子化が進む中で、多くの企業が 「教育市場は縮小する」 と考えています。
-　
-　しかし実際には、一人あたりの教育支出は年々微増しており、
-　教育業界はむしろ堅調に成長を続けています。
-　
-　今回は、地域貢献と収益性を両立できる
-　次世代型の教育事業をテーマに、
-　
-　新規事業での収益づくりをお考えの法人様向けに
-　オンライン説明会を開催いたします。
-
-　11月18日（火）16：00〜17：00　オンライン開催
-----------------------------------------------------------
-
-　　　　　◆フランチャイズ事業　WEB説明会◆
-
-　　　　　“プログラミング教育×個別指導”
-
-　　　　　 不況に強く、少子化でも成長する
-　　　　　　　 ハイブリッド型の教育事業
-
-　　　　　　　　　▼  視聴予約 ▼
-　　　　　　 https://wam-edu-fc.jp/wam2/
-
-　  　　　　　　　◆　ご案内事業　◆
-　　　　　　　　　　 個別指導 WAM
-
-　　　　　　　　　◇　　 提供 　　◇
-　　　　　　　  エイチ・エム・グループ
-
-----------------------------------------------------------
-
-　『少子化なのに、教育事業？』と思うかもしれませんが、
-　実は子ども一人にかける教育費の増加に伴い、市場は成長し続けています。
-
-　また、教育費は不況時でも削減されにくいため
-　コロナ下でも大きく落ち込むことなく底堅さを見せました。
-
-　幼児教育無償化などの国策もあり、今後も教育投資の増加が予想されます。
-
-　そこでご紹介するのが、「プログラミング×個別指導」の
-　ハイブリッド教育事業です。
-
-　プログラミングは小学校で必修化されたため、保護者の関心も高まっています。
-
-　本事業のスタートは業界未経験・社員１名で可能です。
-　新たな事業収益づくりをお考えの方は、是非ご参加ください。
-
-
-　11月18日（火）16：00〜17：00　オンライン開催
-　▼  視聴予約はこちら
-　https://wam-edu-fc.jp/wam2/
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-　教育事業FCセミナー事務局
-　電話：0120-891-893
-　住所：東京都中央区銀座7-13-6
-―――――――――――――――――――――――――――――――
-　本メールのご不要な方には大変ご迷惑をおかけいたしました。
-　今後ご案内が不要な方は下記URLよりお手続きをお願いいたします。
-　┗　https://wam-edu-fc.jp/mail/
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SGVsbG8sClRoaXMgaXNzdWUgb2NjdXJzIHdoZW4gdW5tb3VudGluZyBhIHRtcGZzIGZpbGVzeXN0
+ZW0gdGhhdCBoYXMgcHJldmlvdXNseSBiZWVuIGFkZGVkIHRvIGEgTGFuZGxvY2sgcGF0aC1iZW5l
+YXRoIHJ1bGUuCkR1cmluZyB0aGlzIG9wZXJhdGlvbiwgdGhlIGtlcm5lbCByZXBvcnRzIGEg4oCc
+c2xlZXBpbmcgZnVuY3Rpb24gY2FsbGVkIGZyb20gaW52YWxpZCBjb250ZXh04oCdIGJ1ZyBpbiBo
+b29rX3NiX2RlbGV0ZSgpIChzZWN1cml0eS9sYW5kbG9jay9mcy5jKS4KCgpUaGlzIGJ1ZyB3YXMg
+aW5pdGlhbGx5IGRpc2NvdmVyZWQgb24gdGhlIExpbnV4IHJpc2N2IGJyYW5jaCB2aWEgYSBmdXp6
+aW5nIGZyYW1ld29yay4KSXQgd2FzIGxhdGVyIGNvbmZpcm1lZCByZXByb2R1Y2libGUgb24gTGlu
+dXggbWFpbmxpbmUgdjYuMTgtcmM1ICh4ODYpLgpUaGUgdGVzdGVkIGtlcm5lbCBzb3VyY2UsIGNv
+bmZpZ3VyYXRpb24sIGFuZCByZWxhdGVkIG1hdGVyaWFscyBhcmUgcHJvdmlkZWQgYmVsb3c6CiAg
+S2VybmVsIHNvdXJjZTogaHR0cHM6Ly9naXQua2VybmVsLm9yZy90b3J2YWxkcy90L2xpbnV4LTYu
+MTgtcmM1LnRhci5neiAgCiAgQ29uZmlnIGZpbGU6IGh0dHBzOi8vZ2l0aHViLmNvbS9qMWFrYWkv
+S0NvbmZpZ0Z1enpfYnVnL2Jsb2IvbWFpbi9yZXBvcnQvMGM4NDRkNWY3YmNmMGFjMjFlZjRlZDg1
+NDU5Njc2YWIyNjRlOGI2Yi8uY29uZmlnICAKICBSZXByb2R1Y2VyIHNvdXJjZTogaHR0cHM6Ly9n
+aXRodWIuY29tL2oxYWthaS9LQ29uZmlnRnV6el9idWcvYmxvYi9tYWluL3JlcG9ydC8wYzg0NGQ1
+ZjdiY2YwYWMyMWVmNGVkODU0NTk2NzZhYjI2NGU4YjZiL3JlcHJvLmNwcm9nICAKICBHQ0MgY29t
+cGlsZXIgaW5mbzogaHR0cHM6Ly9naXRodWIuY29tL2oxYWthaS9LQ29uZmlnRnV6el9idWcvYmxv
+Yi9tYWluL3JlcG9ydC8wYzg0NGQ1ZjdiY2YwYWMyMWVmNGVkODU0NTk2NzZhYjI2NGU4YjZiL2dj
+Yy5pbmZvICAKICBLZXJuZWwgbG9nIChkbWVzZyk6IGh0dHBzOi8vZ2l0aHViLmNvbS9qMWFrYWkv
+S0NvbmZpZ0Z1enpfYnVnL2Jsb2IvbWFpbi9yZXBvcnQvMGM4NDRkNWY3YmNmMGFjMjFlZjRlZDg1
+NDU5Njc2YWIyNjRlOGI2Yi9kbWVzZy5pbmZvICAKICBBZGRpdGlvbmFsIHJpc2N2IGZ1enppbmcg
+Y29udGV4dCAocmVwb3J0MCwgZXRjLik6IGh0dHBzOi8vZ2l0aHViLmNvbS9qMWFrYWkvS0NvbmZp
+Z0Z1enpfYnVnL3RyZWUvbWFpbi9yZXBvcnQvMGM4NDRkNWY3YmNmMGFjMjFlZjRlZDg1NDU5Njc2
+YWIyNjRlOGI2YgoKClRoZSBjYWxsIHRyYWNlIGluZGljYXRlcyB0aGF0IGhvb2tfc2JfZGVsZXRl
+KCkgaG9sZHMgc19pbm9kZV9saXN0X2xvY2sgKGEgc3BpbmxvY2spIHdoaWxlIGludm9raW5nIG9w
+ZXJhdGlvbnMgdGhhdCBtYXkgZXZlbnR1YWxseSBjYWxsIGlwdXQoKSwgd2hpY2ggY2FuIHNsZWVw
+LgpUaGlzIHZpb2xhdGVzIHRoZSBsb2NraW5nIGNvbnRleHQgZXhwZWN0YXRpb25zIGFuZCB0cmln
+Z2VycyBfX21pZ2h0X3NsZWVwKCkgd2FybmluZ3MuClRoZSBpc3N1ZSBzZWVtcyB0byBiZSByZWxh
+dGVkIHRvIGhvdyBMYW5kbG9jayBoYW5kbGVzIHN1cGVyYmxvY2sgY2xlYW51cCBkdXJpbmcgc2Vj
+dXJpdHlfc2JfZGVsZXRlKCkuCgoKSeKAmW0gY3VycmVudGx5IG9ubHkgcmVwb3J0aW5nIHRoaXMg
+aXNzdWUgdG8gdGhlIGNvbW11bml0eTsgdGhlIGV4YWN0IGZpeCB3aWxsIGxpa2VseSBuZWVkIHRv
+IGJlIGNvbmZpcm1lZCBhbmQgaW1wbGVtZW50ZWQgYnkgdGhlIExhbmRsb2NrIGFuZCBmaWxlc3lz
+dGVtIG1haW50YWluZXJzLg==
