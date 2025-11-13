@@ -1,190 +1,360 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25082292B54
-	for <linux-security-module@vger.kernel.org>; Thu, 13 Nov 2025 04:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210CF26CE25
+	for <linux-security-module@vger.kernel.org>; Thu, 13 Nov 2025 11:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763007015; cv=none; b=iHOo48HG5c6RS+i31NjcfJiMu4tY6pgoPwLlGdPxEg/FqvctZc7M7uYpP/7QmrH7HESLfWeu/aY3HOkapevIjLLqc700MA+DuxewHvAjj0bam8+LQSisCQ/Cl4m/QRlgXqm0ydFuF/Vulo+1QPG0Al0gHzq0kcMNQAQa6tQN/DI=
+	t=1763032788; cv=none; b=jTXZ6oGa3EqoRiYRXe7w+9L+hG6mrB6+yFbo9nP1V9mzdYVNniHbZaVGeiMO0qtsIzQp/fHPy/a5059qrwmW5egLE0iBXki+1N4Os6KD6g6lMPZs3XORg0SlxBVR3lyowrZP3D3nT2NH6f5yVgIK38OCYiUgiqNZK+X4gLATJig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763007015; c=relaxed/simple;
-	bh=zdLHuuMTe46EsyhV/bM1eTvKdfpTyHz80agisPFVCuo=;
+	s=arc-20240116; t=1763032788; c=relaxed/simple;
+	bh=3rFO83tVJVFEQkZ468DFpQrekAqbDzV1/0JoUWHKE0c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=IhreZrr9qAvDho2iVEV4ggqG6FF7vOA25kcPbqtqSby0Kzz9t3xp4qF4d27HvygxjmY0d8OqCViVTdQS4QFGUTaAXeo443NBeFX80YXsMEiJXTCTy4LSG+6/5l5ZRB5BYkn5mEFF1wWi1vYWpeWa/q6faQXv7Mx96AYjJUHXuds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ONFqss4Y; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=iKfjYyLaQMLlqcqGY6EpVUn8RzkBVgVdadSy29aFXA6QKF1vz/g3F1bRjt+znVcIlIvy+ooMBI4Lirc/Z+ZLmKxNLkSVb/RT5e3Z9HtGdMC+HFj0mVNXk2+hwKnCGie6wQ1Y+p9XgXyddbhOhk/UD+ded030VBVaq3ah2QxnKN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tEx0PXpS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LOUAPU0D; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TPAANJvU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IMDALd4J; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ONFqss4Y"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1763007012;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tEx0PXpS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LOUAPU0D";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TPAANJvU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IMDALd4J"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B45DC21281;
+	Thu, 13 Nov 2025 11:19:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763032782; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nZIBY6eCn23Q+siVmn68NakRPUJnSr/kT+giBlXwV0A=;
-	b=ONFqss4Y51ggrkixTkO8qvRO+ew6h3w04uOzuXBsA/2cle2QODcCs1XXg+AWVFjBK8YU6v
-	ZxL8bGmHIxZAYoPggwm7EWSxQ1IE0SjTxMm/j2NG+U/Ybc/pBlUrKMbiJSBqzKLPz+4e6V
-	ZwYUh/wFx1bhXaGqFGdBCe/WzUIICDQ=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-554-h75S2DNTP4iZd5LjamyRDA-1; Wed, 12 Nov 2025 23:10:11 -0500
-X-MC-Unique: h75S2DNTP4iZd5LjamyRDA-1
-X-Mimecast-MFC-AGG-ID: h75S2DNTP4iZd5LjamyRDA_1763007011
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-bc349a8a3easo331063a12.0
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Nov 2025 20:10:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763007010; x=1763611810;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nZIBY6eCn23Q+siVmn68NakRPUJnSr/kT+giBlXwV0A=;
-        b=l97+0usM61ih1SRg4t68ajNqj5k2qLrIXWH3BCy1mwhrHh4/W7RKSjR/e1owoYOQNV
-         Uc/WPPT0ZJ8N0vgaelnRiqGXNavA4iEg3f382TefAsYOuTV+jqRb03LhtaWlT0NAMLyK
-         +3Z6KklkmA+2XYP9diJFWJe4u+w5zKuCkQPPPCr61nl+A45AHO7L1Hyf6VM2w3ES7cnJ
-         Ou+Bgu9xnaEmSalC/fkCw0EqXyVhD9xRnYWSBVMD2E7cEwVIv283jNHW+YU32h5B0O5a
-         Bx2Y+3lI7Z8VUZCE9+ju8BNfpqMr8Leag/4pTfYQYCox1bJJ8gQoi3Fdu0LOPjeKvaln
-         B4WA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiRL+BVASxFonh3eOfqkBuvgrBk0Z/ddHHg4f5tNVnD8TA9eJmrqWXHJa4GQuZXmookDntSE11AaSpVrGjppsj/+eEGDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/e/j2kkNvXwPqqFolyI+/gztYukoFnOW4Z4oSi/d38wYfStwT
-	3yuQ1a/VjVW5BFUQ33uqkKGgqJ5VlmVqRAIHIItG3wJwMgz3q0+t/yiP2occRmUj+jRo+Wb79dn
-	T+FGiC14icOQIsF4xJTIZI9qrlCgkctyobGhD/dqK2OtiNzYMC4kqqfPxroRnFwNBewJKYMzp8J
-	e5yA==
-X-Gm-Gg: ASbGncuoMKMbV8R2qMAup1egFxzxRTb4yvZ12Yj087TAoOLxsLs97wv/9ODgJOBL3iK
-	cDrI1cYhQyJGB1dgAXf3ZvCDXl1zSZnA8JWNqoGENC7fB5xUy9ECNYm62FAHa5OAnq2HEhHUR0i
-	AhGFP8MeMnHFlcw/KmiL/l+CWeDSCQB5lfKQ/qliyM6jTvbVKkfgDTbXL/r3clZPY8nT4fhlqGW
-	avd2XwitFjuvJq15HKWXbay8SfdHSnQsQeawpSj/wwDIGo+RSPW/TUBO9W8xBB2pUet+KLg2YDb
-	30UqCp4qiLxjPvSQS2iVGwumyBBd1K++4vn/ATWJuMJrRaAdo6GVlac9O4mjypXNgA==
-X-Received: by 2002:a17:903:4b04:b0:298:529b:8956 with SMTP id d9443c01a7336-298529b8bd1mr54723665ad.56.1763007010485;
-        Wed, 12 Nov 2025 20:10:10 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFWDwN+5E+tsPmc61Ky6R88DQMezRVeNlZMFO+j6cmwW//kMzz/cF3f2/ywvf8oGJ38G1y9PQ==
-X-Received: by 2002:a17:903:4b04:b0:298:529b:8956 with SMTP id d9443c01a7336-298529b8bd1mr54723255ad.56.1763007009881;
-        Wed, 12 Nov 2025 20:10:09 -0800 (PST)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2346dasm8193665ad.7.2025.11.12.20.10.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 20:10:09 -0800 (PST)
-Date: Thu, 13 Nov 2025 12:06:02 +0800
-From: Coiby Xu <coxu@redhat.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Paul Moore <paul@paul-moore.com>, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Karel Srot <ksrot@redhat.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@kernel.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	open list <linux-kernel@vger.kernel.org>, "open list:MODULE SUPPORT" <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v2] lsm,ima: new LSM hook
- security_kernel_module_read_file to access decompressed kernel module
-Message-ID: <42qcfcxxlmwphctzvji76hy5tycfabiiv5u6zw6lgg2p3e2jwv@fp4g2y7ecf2y>
-References: <20250928030358.3873311-1-coxu@redhat.com>
- <20251031074016.1975356-1-coxu@redhat.com>
- <CAHC9VhRBXkW+XuqhxJvEOYR_VMxFh4TRWUtXzZky=AG_nyBYEQ@mail.gmail.com>
- <baa39fcd1b6b485f14b8f06dcd96b81359e6e491.camel@linux.ibm.com>
- <CAHC9VhToe-VNqbh6TY2iYnRvqTHRfQjnHYSRWYgt8K7NcLKMdg@mail.gmail.com>
- <fftfj4o3kqxmfu3hb655xczqcddoeqjv55llsnwkrdu5isdm4z@6sqe3k24a6kk>
- <84a0e1785c7f0ff816b3246be49012092ae12126.camel@linux.ibm.com>
- <d24wnmefebnheerigmh6ts5yskkutz726l6a2f6g5s3s5fhhrv@osaactobwb5g>
- <b9eb78105115a00731b3677a5f3a39d5dde4d2ec.camel@linux.ibm.com>
- <0dfec96bf98b1c18d51bf40f4329c3ede48a9f32.camel@linux.ibm.com>
+	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
+	b=tEx0PXpSR9fC2UvG0u7MJFp2BSlhdeqm6tfjJPlZS4pzGQmOwabgT+ii7BsgRYsefYOMF3
+	VvsJYx6JmgiNnIkc2NCbUzK9WMs4Iesgm99E+qFwo8H8q29+lEmIo9rS5V2MjR+2UAS7Qp
+	XFnzrWjacC8RlMPSp7qTqHvuw+qVCws=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763032782;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
+	b=LOUAPU0DI5ldL7amV9RP5y5ZRcrOsqlJWe+yGqm+w1F5fGBdUOw3+MjMsiQwLq6RLZlsah
+	z1b+3BWuTShjlLBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=TPAANJvU;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=IMDALd4J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763032780; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
+	b=TPAANJvULtvZbKY9kTlFDj3fHaqwcTQ7QSHepORPj1SmGNXAVQl+h4cThVAzOE6Yl7BCLK
+	P+mNsKLJnjLZvTwsl3qRAtpBElJ625a6hag5mPaMbQZLS4fmnximef6W0ci53Jrf6gupH/
+	2n45l6UZt9TFhva3h8X/wtCXAWukFSU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763032780;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
+	b=IMDALd4JeMlPI9Mxv0/hWb4imPPdPuOJsIg/iIEqAN8lny7MqpgtZO9x5EjyCnO6vYkjJ5
+	0uFVDgatEsam+WBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A65493EA61;
+	Thu, 13 Nov 2025 11:19:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2zOKKMy+FWnVYgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 13 Nov 2025 11:19:40 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 63A30A0976; Thu, 13 Nov 2025 12:19:40 +0100 (CET)
+Date: Thu, 13 Nov 2025 12:19:40 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>, 
+	akpm@linux-foundation.org, bpf@vger.kernel.org, bsegall@google.com, david@redhat.com, 
+	dietmar.eggemann@arm.com, jack@suse.cz, jsavitz@redhat.com, juri.lelli@redhat.com, 
+	kartikey406@gmail.com, kees@kernel.org, liam.howlett@oracle.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, 
+	mingo@redhat.com, mjguzik@gmail.com, oleg@redhat.com, paul@paul-moore.com, 
+	peterz@infradead.org, rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, 
+	surenb@google.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz, 
+	vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, vschneid@redhat.com, 
+	syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
+Subject: Re: [PATCH] nsproxy: fix free_nsproxy() and simplify
+ create_new_namespaces()
+Message-ID: <3yjawi3c72ieiss7ivefckuua55e2yvo55z4m4ykp2pzw2snpa@ym34e3d7cnoi>
+References: <691360cc.a70a0220.22f260.013e.GAE@google.com>
+ <20251111-sakralbau-guthaben-7dcc277d337f@brauner>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <0dfec96bf98b1c18d51bf40f4329c3ede48a9f32.camel@linux.ibm.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: g9uJInnaVYIM1JrDXt5q7CEf5CnBg2Wv32TF6_Csj5Q_1763007011
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20251111-sakralbau-guthaben-7dcc277d337f@brauner>
+X-Rspamd-Queue-Id: B45DC21281
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[35];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:email,suse.cz:dkim,appspotmail.com:email];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[syzkaller.appspotmail.com,linux-foundation.org,vger.kernel.org,google.com,redhat.com,arm.com,suse.cz,gmail.com,kernel.org,oracle.com,kvack.org,suse.de,suse.com,paul-moore.com,infradead.org,goodmis.org,googlegroups.com,linaro.org,zeniv.linux.org.uk];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,appspotmail.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TAGGED_RCPT(0.00)[0a8655a80e189278487e,0b2e79f91ff6579bfa5b];
+	R_RATELIMIT(0.00)[to_ip_from(RLuhuubkxd663ptcywq6p8zkwd)];
+	MISSING_XM_UA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -2.51
+X-Spam-Level: 
 
-On Fri, Nov 07, 2025 at 02:28:13PM -0500, Mimi Zohar wrote:
->On Thu, 2025-11-06 at 17:15 -0500, Mimi Zohar wrote:
->> On Thu, 2025-11-06 at 21:29 +0800, Coiby Xu wrote:
->> > On Wed, Nov 05, 2025 at 03:47:25PM -0500, Mimi Zohar wrote:
->> > > On Wed, 2025-11-05 at 08:18 +0800, Coiby Xu wrote:
->> > [...]
->> > >
->> > > Hi Coiby,
->> > >
->> > > Based on the conversation with Paul, there is no reason to remove the existing
->> > > security_kernel_post_read_file() call.
->> > >
->> > > The changes are similar to the 2nd link, but a bit different.
->> > > - Define a single enumeration named READING_MODULE_COMPRESSED.
->> > >
->> > > - In module/main.c add a new security_kernel_post_read_file() call immediately
->> > > after decompressing the kernel module.  Like a previous version of this patch,
->> > > call kernel_read_file() with either READING_MODULE or READING_MODULE_COMPRESSED
->> > > based on MODULE_INIT_COMPRESSED_FILE.
->> > >
->> > > - In ima_post_read_file() defer verifying the signature when the enumeration is
->> > > READING_MODULE_COMPRESSED.  (No need for a new function ima_read_kernel_module.)
->> >
->> > Hi Mimi,
->> >
->> > Thanks for summarizing your conversation with Paul! I can confirm Paul's
->> > approach works
->> > https://github.com/coiby/linux/tree/in_kernel_decompression_ima_no_lsm_hook_paul
->> >
->> > While testing the patch today, I realized there is another
->> > issue/challenge introduced by in-kernel module decompression. IMA
->> > appraisal is to verify the digest of compressed kernel module but
->> > currently the passed buffer is uncompressed module. When IMA uses
->> > uncompressed module data to calculate the digest, xattr signature
->> > verification will fail. If we always make IMA read the original kernel
->> > module data again to calculate the digest, does it look like a
->> > quick-and-dirty fix? If we can assume people won't load kernel module so
->> > often, the performance impact is negligible. Otherwise we may have to
->> > introduce a new LSM hook so IMA can access uncompressed and original
->> > module data one time.
->>
->> ima_collect_measurement() stores the file hash info in the iint and uses that
->> information to verify the signature as stored in the security xattr.
->> Decompressing the kernel module shouldn't affect the xattr signature
->> verification.
->
->In the case when the compressed kernel module hasn't previously been measured or
->appraised before loading the kernel module, we need to "collect" the file data
->hash on READING_MODULE_COMPRESSED, but defer appraising/measuring it.
->
->An alternative to your suggestion of re-reading the original kernel module data
->to calculate the digest or defining a new hook, would be to define "collect" as
->a new "action" and pass the kernel_read_file_id enumeration to
->process_measurement().  IMA_COLLECTED already exists.  Only IMA_COLLECT would
->need to be defined.  The new collect "action" should be limited to
->func=MODULE_CHECK.
->
->The downside of this alternative is that it requires a new collect rule:
->collect func=MODULE_CHECK mask=MAY_READ uid=0
->appraise func=MODULE_CHECK appraise_type=imasig|modsig
+On Tue 11-11-25 22:29:44, Christian Brauner wrote:
+> Make it possible to handle NULL being passed to the reference count
+> helpers instead of forcing the caller to handle this. Afterwards we can
+> nicely allow a cleanup guard to handle nsproxy freeing.
+> 
+> Active reference count handling is not done in nsproxy_free() but rather
+> in free_nsproxy() as nsproxy_free() is also called from setns() failure
+> paths where a new nsproxy has been prepared but has not been marked as
+> active via switch_task_namespaces().
+> 
+> Fixes: 3c9820d5c64a ("ns: add active reference count")
+> Reported-by: syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
+> Reported-by: syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
+> Link: https://lore.kernel.org/690bfb9e.050a0220.2e3c35.0013.GAE@google.com
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Thank for suggesting an alternative! I've implemented the idea in
-https://github.com/coiby/linux/tree/in_kernel_decompression_ima_collect
+I believe having free_nsproxy() and nsproxy_free() functions with
+the same signature and slightly different semantics is making things too
+easy to get wrong. Maybe call free_nsproxy() say deactivate_nsproxy()?
 
-Note besides a new collect rule, another change is needed. Currently,
-process_measurement only accepts enum ima_hooks thus it can't tell if
-it's READING_MODULE_COMPRESSED so to only do collect action. So I
-create a fake MODULE_COMPRESSED_CHECK func.
+Otherwise the patch looks correct to me. Feel free to add:
 
-And for the idea of re-reading the original kernel module data, it has
-been implemented in 
-https://github.com/coiby/linux/tree/in_kernel_decompression_ima_no_lsm_hook_paul
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Both branches have applied your requested three changes including
-respecting the 80 char line limit. Additionally, I made a change to the
-IPE LSM because of the new READING_MODULE_COMPRESSED kernel_read_file_id
-enumerate.
+								Honza
 
-After comparing the two implementations, personally I prefer re-reading
-the original kernel module data because the change is smaller and it's
-more user-friendly. But if there are other reasons I don't know, I'll
-post the patches of the new collect action approach to the mailing list.
-
-
+> ---
+>  include/linux/ns_common.h |  11 ++--
+>  kernel/nsproxy.c          | 107 +++++++++++++++-----------------------
+>  2 files changed, 48 insertions(+), 70 deletions(-)
+> 
+> diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
+> index 136f6a322e53..825f5865bfc5 100644
+> --- a/include/linux/ns_common.h
+> +++ b/include/linux/ns_common.h
+> @@ -114,11 +114,14 @@ static __always_inline __must_check bool __ns_ref_dec_and_lock(struct ns_common
+>  }
+>  
+>  #define ns_ref_read(__ns) __ns_ref_read(to_ns_common((__ns)))
+> -#define ns_ref_inc(__ns) __ns_ref_inc(to_ns_common((__ns)))
+> -#define ns_ref_get(__ns) __ns_ref_get(to_ns_common((__ns)))
+> -#define ns_ref_put(__ns) __ns_ref_put(to_ns_common((__ns)))
+> +#define ns_ref_inc(__ns) \
+> +	do { if (__ns) __ns_ref_inc(to_ns_common((__ns))); } while (0)
+> +#define ns_ref_get(__ns) \
+> +	((__ns) ? __ns_ref_get(to_ns_common((__ns))) : false)
+> +#define ns_ref_put(__ns) \
+> +	((__ns) ? __ns_ref_put(to_ns_common((__ns))) : false)
+>  #define ns_ref_put_and_lock(__ns, __ns_lock) \
+> -	__ns_ref_dec_and_lock(to_ns_common((__ns)), __ns_lock)
+> +	((__ns) ? __ns_ref_dec_and_lock(to_ns_common((__ns)), __ns_lock) : false)
+>  
+>  #define ns_ref_active_read(__ns) \
+>  	((__ns) ? __ns_ref_active_read(to_ns_common(__ns)) : 0)
+> diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+> index 94c2cfe0afa1..2c94452dc793 100644
+> --- a/kernel/nsproxy.c
+> +++ b/kernel/nsproxy.c
+> @@ -60,6 +60,27 @@ static inline struct nsproxy *create_nsproxy(void)
+>  	return nsproxy;
+>  }
+>  
+> +static inline void nsproxy_free(struct nsproxy *ns)
+> +{
+> +	put_mnt_ns(ns->mnt_ns);
+> +	put_uts_ns(ns->uts_ns);
+> +	put_ipc_ns(ns->ipc_ns);
+> +	put_pid_ns(ns->pid_ns_for_children);
+> +	put_time_ns(ns->time_ns);
+> +	put_time_ns(ns->time_ns_for_children);
+> +	put_cgroup_ns(ns->cgroup_ns);
+> +	put_net(ns->net_ns);
+> +	kmem_cache_free(nsproxy_cachep, ns);
+> +}
+> +
+> +DEFINE_FREE(nsproxy_free, struct nsproxy *, if (_T) nsproxy_free(_T))
+> +
+> +void free_nsproxy(struct nsproxy *ns)
+> +{
+> +	nsproxy_ns_active_put(ns);
+> +	nsproxy_free(ns);
+> +}
+> +
+>  /*
+>   * Create new nsproxy and all of its the associated namespaces.
+>   * Return the newly created nsproxy.  Do not attach this to the task,
+> @@ -69,76 +90,45 @@ static struct nsproxy *create_new_namespaces(u64 flags,
+>  	struct task_struct *tsk, struct user_namespace *user_ns,
+>  	struct fs_struct *new_fs)
+>  {
+> -	struct nsproxy *new_nsp;
+> -	int err;
+> +	struct nsproxy *new_nsp __free(nsproxy_free) = NULL;
+>  
+>  	new_nsp = create_nsproxy();
+>  	if (!new_nsp)
+>  		return ERR_PTR(-ENOMEM);
+>  
+>  	new_nsp->mnt_ns = copy_mnt_ns(flags, tsk->nsproxy->mnt_ns, user_ns, new_fs);
+> -	if (IS_ERR(new_nsp->mnt_ns)) {
+> -		err = PTR_ERR(new_nsp->mnt_ns);
+> -		goto out_ns;
+> -	}
+> +	if (IS_ERR(new_nsp->mnt_ns))
+> +		return ERR_CAST(new_nsp->mnt_ns);
+>  
+>  	new_nsp->uts_ns = copy_utsname(flags, user_ns, tsk->nsproxy->uts_ns);
+> -	if (IS_ERR(new_nsp->uts_ns)) {
+> -		err = PTR_ERR(new_nsp->uts_ns);
+> -		goto out_uts;
+> -	}
+> +	if (IS_ERR(new_nsp->uts_ns))
+> +		return ERR_CAST(new_nsp->uts_ns);
+>  
+>  	new_nsp->ipc_ns = copy_ipcs(flags, user_ns, tsk->nsproxy->ipc_ns);
+> -	if (IS_ERR(new_nsp->ipc_ns)) {
+> -		err = PTR_ERR(new_nsp->ipc_ns);
+> -		goto out_ipc;
+> -	}
+> +	if (IS_ERR(new_nsp->ipc_ns))
+> +		return ERR_CAST(new_nsp->ipc_ns);
+>  
+> -	new_nsp->pid_ns_for_children =
+> -		copy_pid_ns(flags, user_ns, tsk->nsproxy->pid_ns_for_children);
+> -	if (IS_ERR(new_nsp->pid_ns_for_children)) {
+> -		err = PTR_ERR(new_nsp->pid_ns_for_children);
+> -		goto out_pid;
+> -	}
+> +	new_nsp->pid_ns_for_children = copy_pid_ns(flags, user_ns,
+> +						   tsk->nsproxy->pid_ns_for_children);
+> +	if (IS_ERR(new_nsp->pid_ns_for_children))
+> +		return ERR_CAST(new_nsp->pid_ns_for_children);
+>  
+>  	new_nsp->cgroup_ns = copy_cgroup_ns(flags, user_ns,
+>  					    tsk->nsproxy->cgroup_ns);
+> -	if (IS_ERR(new_nsp->cgroup_ns)) {
+> -		err = PTR_ERR(new_nsp->cgroup_ns);
+> -		goto out_cgroup;
+> -	}
+> +	if (IS_ERR(new_nsp->cgroup_ns))
+> +		return ERR_CAST(new_nsp->cgroup_ns);
+>  
+>  	new_nsp->net_ns = copy_net_ns(flags, user_ns, tsk->nsproxy->net_ns);
+> -	if (IS_ERR(new_nsp->net_ns)) {
+> -		err = PTR_ERR(new_nsp->net_ns);
+> -		goto out_net;
+> -	}
+> +	if (IS_ERR(new_nsp->net_ns))
+> +		return ERR_CAST(new_nsp->net_ns);
+>  
+>  	new_nsp->time_ns_for_children = copy_time_ns(flags, user_ns,
+> -					tsk->nsproxy->time_ns_for_children);
+> -	if (IS_ERR(new_nsp->time_ns_for_children)) {
+> -		err = PTR_ERR(new_nsp->time_ns_for_children);
+> -		goto out_time;
+> -	}
+> +						     tsk->nsproxy->time_ns_for_children);
+> +	if (IS_ERR(new_nsp->time_ns_for_children))
+> +		return ERR_CAST(new_nsp->time_ns_for_children);
+>  	new_nsp->time_ns = get_time_ns(tsk->nsproxy->time_ns);
+>  
+> -	return new_nsp;
+> -
+> -out_time:
+> -	put_net(new_nsp->net_ns);
+> -out_net:
+> -	put_cgroup_ns(new_nsp->cgroup_ns);
+> -out_cgroup:
+> -	put_pid_ns(new_nsp->pid_ns_for_children);
+> -out_pid:
+> -	put_ipc_ns(new_nsp->ipc_ns);
+> -out_ipc:
+> -	put_uts_ns(new_nsp->uts_ns);
+> -out_uts:
+> -	put_mnt_ns(new_nsp->mnt_ns);
+> -out_ns:
+> -	kmem_cache_free(nsproxy_cachep, new_nsp);
+> -	return ERR_PTR(err);
+> +	return no_free_ptr(new_nsp);
+>  }
+>  
+>  /*
+> @@ -185,21 +175,6 @@ int copy_namespaces(u64 flags, struct task_struct *tsk)
+>  	return 0;
+>  }
+>  
+> -void free_nsproxy(struct nsproxy *ns)
+> -{
+> -	nsproxy_ns_active_put(ns);
+> -
+> -	put_mnt_ns(ns->mnt_ns);
+> -	put_uts_ns(ns->uts_ns);
+> -	put_ipc_ns(ns->ipc_ns);
+> -	put_pid_ns(ns->pid_ns_for_children);
+> -	put_time_ns(ns->time_ns);
+> -	put_time_ns(ns->time_ns_for_children);
+> -	put_cgroup_ns(ns->cgroup_ns);
+> -	put_net(ns->net_ns);
+> -	kmem_cache_free(nsproxy_cachep, ns);
+> -}
+> -
+>  /*
+>   * Called from unshare. Unshare all the namespaces part of nsproxy.
+>   * On success, returns the new nsproxy.
+> @@ -338,7 +313,7 @@ static void put_nsset(struct nsset *nsset)
+>  	if (nsset->fs && (flags & CLONE_NEWNS) && (flags & ~CLONE_NEWNS))
+>  		free_fs_struct(nsset->fs);
+>  	if (nsset->nsproxy)
+> -		free_nsproxy(nsset->nsproxy);
+> +		nsproxy_free(nsset->nsproxy);
+>  }
+>  
+>  static int prepare_nsset(unsigned flags, struct nsset *nsset)
+> -- 
+> 2.47.3
+> 
 -- 
-Best regards,
-Coiby
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
