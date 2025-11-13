@@ -1,360 +1,319 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210CF26CE25
-	for <linux-security-module@vger.kernel.org>; Thu, 13 Nov 2025 11:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAE335979
+	for <linux-security-module@vger.kernel.org>; Thu, 13 Nov 2025 12:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763032788; cv=none; b=jTXZ6oGa3EqoRiYRXe7w+9L+hG6mrB6+yFbo9nP1V9mzdYVNniHbZaVGeiMO0qtsIzQp/fHPy/a5059qrwmW5egLE0iBXki+1N4Os6KD6g6lMPZs3XORg0SlxBVR3lyowrZP3D3nT2NH6f5yVgIK38OCYiUgiqNZK+X4gLATJig=
+	t=1763037388; cv=none; b=CwGi5z2puhtGgsAT/xvAFUHfJa2NN2lDLHBg/JOCAsEUposcXDYoRy5PjmpeTKtLQ/mm1hnhdx5EU5J9B76wOTvs1cL9h2/pQWEGoPRjSlsgE7hEHF7+kluDo260zPomMAcM5Mq6ODlpON2XIyzF/PrKEPoeyr7MItvwbDdrvT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763032788; c=relaxed/simple;
-	bh=3rFO83tVJVFEQkZ468DFpQrekAqbDzV1/0JoUWHKE0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iKfjYyLaQMLlqcqGY6EpVUn8RzkBVgVdadSy29aFXA6QKF1vz/g3F1bRjt+znVcIlIvy+ooMBI4Lirc/Z+ZLmKxNLkSVb/RT5e3Z9HtGdMC+HFj0mVNXk2+hwKnCGie6wQ1Y+p9XgXyddbhOhk/UD+ded030VBVaq3ah2QxnKN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tEx0PXpS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LOUAPU0D; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TPAANJvU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IMDALd4J; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1763037388; c=relaxed/simple;
+	bh=iYa2pSqioF7B8XWL5Ss+RCS1XEfdt969u2D4uLTK2vI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pBhg8gUIcEzbeakJzczDVjMx0sV4kTIJQpD7nhG02BxonY9Cyqsu1nPMtoOhqqliDquVE1yAhAcqL2E8C/HoetRWVUgH8zvyy7SRZuYDYr/gvoo3C7UOdDhT3emtO0Zr2h3vrs6R6Ms5WVE6PQ+tYTFT3a7ztWy6/nf4Yu+uiFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ufKrdPb9; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tEx0PXpS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LOUAPU0D";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TPAANJvU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IMDALd4J"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B45DC21281;
-	Thu, 13 Nov 2025 11:19:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763032782; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
-	b=tEx0PXpSR9fC2UvG0u7MJFp2BSlhdeqm6tfjJPlZS4pzGQmOwabgT+ii7BsgRYsefYOMF3
-	VvsJYx6JmgiNnIkc2NCbUzK9WMs4Iesgm99E+qFwo8H8q29+lEmIo9rS5V2MjR+2UAS7Qp
-	XFnzrWjacC8RlMPSp7qTqHvuw+qVCws=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763032782;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
-	b=LOUAPU0DI5ldL7amV9RP5y5ZRcrOsqlJWe+yGqm+w1F5fGBdUOw3+MjMsiQwLq6RLZlsah
-	z1b+3BWuTShjlLBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=TPAANJvU;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=IMDALd4J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763032780; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
-	b=TPAANJvULtvZbKY9kTlFDj3fHaqwcTQ7QSHepORPj1SmGNXAVQl+h4cThVAzOE6Yl7BCLK
-	P+mNsKLJnjLZvTwsl3qRAtpBElJ625a6hag5mPaMbQZLS4fmnximef6W0ci53Jrf6gupH/
-	2n45l6UZt9TFhva3h8X/wtCXAWukFSU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763032780;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
-	b=IMDALd4JeMlPI9Mxv0/hWb4imPPdPuOJsIg/iIEqAN8lny7MqpgtZO9x5EjyCnO6vYkjJ5
-	0uFVDgatEsam+WBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A65493EA61;
-	Thu, 13 Nov 2025 11:19:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2zOKKMy+FWnVYgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 13 Nov 2025 11:19:40 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 63A30A0976; Thu, 13 Nov 2025 12:19:40 +0100 (CET)
-Date: Thu, 13 Nov 2025 12:19:40 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, bpf@vger.kernel.org, bsegall@google.com, david@redhat.com, 
-	dietmar.eggemann@arm.com, jack@suse.cz, jsavitz@redhat.com, juri.lelli@redhat.com, 
-	kartikey406@gmail.com, kees@kernel.org, liam.howlett@oracle.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, 
-	mingo@redhat.com, mjguzik@gmail.com, oleg@redhat.com, paul@paul-moore.com, 
-	peterz@infradead.org, rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, 
-	surenb@google.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz, 
-	vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, vschneid@redhat.com, 
-	syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
-Subject: Re: [PATCH] nsproxy: fix free_nsproxy() and simplify
- create_new_namespaces()
-Message-ID: <3yjawi3c72ieiss7ivefckuua55e2yvo55z4m4ykp2pzw2snpa@ym34e3d7cnoi>
-References: <691360cc.a70a0220.22f260.013e.GAE@google.com>
- <20251111-sakralbau-guthaben-7dcc277d337f@brauner>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ufKrdPb9"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1763037374;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KoBKWl39EE2wFhwypg7av72nIGegH3D6zDPQiV1LF+U=;
+	b=ufKrdPb9RTPJkEREhMaQAGAnJyVu4ejBpdt3lqgtnFtp2kFQhNgS+sG1kqLnHdkhV4Nd9h
+	Al+XKwPHwW/NbrtCR836WdyPFSc7HNbCoyIMFWymLYjDHOhs1d3qmQGdqhrwgATb8XPoiM
+	n/s4SoCC2sfQKOV11gbueTVB/VelZkM=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] KEYS: encrypted: Use pr_fmt()
+Date: Thu, 13 Nov 2025 13:35:44 +0100
+Message-ID: <20251113123544.11287-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111-sakralbau-guthaben-7dcc277d337f@brauner>
-X-Rspamd-Queue-Id: B45DC21281
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[35];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:email,suse.cz:dkim,appspotmail.com:email];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[syzkaller.appspotmail.com,linux-foundation.org,vger.kernel.org,google.com,redhat.com,arm.com,suse.cz,gmail.com,kernel.org,oracle.com,kvack.org,suse.de,suse.com,paul-moore.com,infradead.org,goodmis.org,googlegroups.com,linaro.org,zeniv.linux.org.uk];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,appspotmail.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	TAGGED_RCPT(0.00)[0a8655a80e189278487e,0b2e79f91ff6579bfa5b];
-	R_RATELIMIT(0.00)[to_ip_from(RLuhuubkxd663ptcywq6p8zkwd)];
-	MISSING_XM_UA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -2.51
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue 11-11-25 22:29:44, Christian Brauner wrote:
-> Make it possible to handle NULL being passed to the reference count
-> helpers instead of forcing the caller to handle this. Afterwards we can
-> nicely allow a cleanup guard to handle nsproxy freeing.
-> 
-> Active reference count handling is not done in nsproxy_free() but rather
-> in free_nsproxy() as nsproxy_free() is also called from setns() failure
-> paths where a new nsproxy has been prepared but has not been marked as
-> active via switch_task_namespaces().
-> 
-> Fixes: 3c9820d5c64a ("ns: add active reference count")
-> Reported-by: syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
-> Reported-by: syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
-> Link: https://lore.kernel.org/690bfb9e.050a0220.2e3c35.0013.GAE@google.com
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+Use pr_fmt() to automatically prefix all pr_<level>() log messages with
+"encrypted_key: " and remove all manually added prefixes.
 
-I believe having free_nsproxy() and nsproxy_free() functions with
-the same signature and slightly different semantics is making things too
-easy to get wrong. Maybe call free_nsproxy() say deactivate_nsproxy()?
+Reformat the code accordingly and avoid line breaks in log messages.
 
-Otherwise the patch looks correct to me. Feel free to add:
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ security/keys/encrypted-keys/encrypted.c | 74 +++++++++++-------------
+ security/keys/encrypted-keys/encrypted.h |  2 +-
+ 2 files changed, 35 insertions(+), 41 deletions(-)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  include/linux/ns_common.h |  11 ++--
->  kernel/nsproxy.c          | 107 +++++++++++++++-----------------------
->  2 files changed, 48 insertions(+), 70 deletions(-)
-> 
-> diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
-> index 136f6a322e53..825f5865bfc5 100644
-> --- a/include/linux/ns_common.h
-> +++ b/include/linux/ns_common.h
-> @@ -114,11 +114,14 @@ static __always_inline __must_check bool __ns_ref_dec_and_lock(struct ns_common
->  }
->  
->  #define ns_ref_read(__ns) __ns_ref_read(to_ns_common((__ns)))
-> -#define ns_ref_inc(__ns) __ns_ref_inc(to_ns_common((__ns)))
-> -#define ns_ref_get(__ns) __ns_ref_get(to_ns_common((__ns)))
-> -#define ns_ref_put(__ns) __ns_ref_put(to_ns_common((__ns)))
-> +#define ns_ref_inc(__ns) \
-> +	do { if (__ns) __ns_ref_inc(to_ns_common((__ns))); } while (0)
-> +#define ns_ref_get(__ns) \
-> +	((__ns) ? __ns_ref_get(to_ns_common((__ns))) : false)
-> +#define ns_ref_put(__ns) \
-> +	((__ns) ? __ns_ref_put(to_ns_common((__ns))) : false)
->  #define ns_ref_put_and_lock(__ns, __ns_lock) \
-> -	__ns_ref_dec_and_lock(to_ns_common((__ns)), __ns_lock)
-> +	((__ns) ? __ns_ref_dec_and_lock(to_ns_common((__ns)), __ns_lock) : false)
->  
->  #define ns_ref_active_read(__ns) \
->  	((__ns) ? __ns_ref_active_read(to_ns_common(__ns)) : 0)
-> diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
-> index 94c2cfe0afa1..2c94452dc793 100644
-> --- a/kernel/nsproxy.c
-> +++ b/kernel/nsproxy.c
-> @@ -60,6 +60,27 @@ static inline struct nsproxy *create_nsproxy(void)
->  	return nsproxy;
->  }
->  
-> +static inline void nsproxy_free(struct nsproxy *ns)
-> +{
-> +	put_mnt_ns(ns->mnt_ns);
-> +	put_uts_ns(ns->uts_ns);
-> +	put_ipc_ns(ns->ipc_ns);
-> +	put_pid_ns(ns->pid_ns_for_children);
-> +	put_time_ns(ns->time_ns);
-> +	put_time_ns(ns->time_ns_for_children);
-> +	put_cgroup_ns(ns->cgroup_ns);
-> +	put_net(ns->net_ns);
-> +	kmem_cache_free(nsproxy_cachep, ns);
-> +}
-> +
-> +DEFINE_FREE(nsproxy_free, struct nsproxy *, if (_T) nsproxy_free(_T))
-> +
-> +void free_nsproxy(struct nsproxy *ns)
-> +{
-> +	nsproxy_ns_active_put(ns);
-> +	nsproxy_free(ns);
-> +}
-> +
->  /*
->   * Create new nsproxy and all of its the associated namespaces.
->   * Return the newly created nsproxy.  Do not attach this to the task,
-> @@ -69,76 +90,45 @@ static struct nsproxy *create_new_namespaces(u64 flags,
->  	struct task_struct *tsk, struct user_namespace *user_ns,
->  	struct fs_struct *new_fs)
->  {
-> -	struct nsproxy *new_nsp;
-> -	int err;
-> +	struct nsproxy *new_nsp __free(nsproxy_free) = NULL;
->  
->  	new_nsp = create_nsproxy();
->  	if (!new_nsp)
->  		return ERR_PTR(-ENOMEM);
->  
->  	new_nsp->mnt_ns = copy_mnt_ns(flags, tsk->nsproxy->mnt_ns, user_ns, new_fs);
-> -	if (IS_ERR(new_nsp->mnt_ns)) {
-> -		err = PTR_ERR(new_nsp->mnt_ns);
-> -		goto out_ns;
-> -	}
-> +	if (IS_ERR(new_nsp->mnt_ns))
-> +		return ERR_CAST(new_nsp->mnt_ns);
->  
->  	new_nsp->uts_ns = copy_utsname(flags, user_ns, tsk->nsproxy->uts_ns);
-> -	if (IS_ERR(new_nsp->uts_ns)) {
-> -		err = PTR_ERR(new_nsp->uts_ns);
-> -		goto out_uts;
-> -	}
-> +	if (IS_ERR(new_nsp->uts_ns))
-> +		return ERR_CAST(new_nsp->uts_ns);
->  
->  	new_nsp->ipc_ns = copy_ipcs(flags, user_ns, tsk->nsproxy->ipc_ns);
-> -	if (IS_ERR(new_nsp->ipc_ns)) {
-> -		err = PTR_ERR(new_nsp->ipc_ns);
-> -		goto out_ipc;
-> -	}
-> +	if (IS_ERR(new_nsp->ipc_ns))
-> +		return ERR_CAST(new_nsp->ipc_ns);
->  
-> -	new_nsp->pid_ns_for_children =
-> -		copy_pid_ns(flags, user_ns, tsk->nsproxy->pid_ns_for_children);
-> -	if (IS_ERR(new_nsp->pid_ns_for_children)) {
-> -		err = PTR_ERR(new_nsp->pid_ns_for_children);
-> -		goto out_pid;
-> -	}
-> +	new_nsp->pid_ns_for_children = copy_pid_ns(flags, user_ns,
-> +						   tsk->nsproxy->pid_ns_for_children);
-> +	if (IS_ERR(new_nsp->pid_ns_for_children))
-> +		return ERR_CAST(new_nsp->pid_ns_for_children);
->  
->  	new_nsp->cgroup_ns = copy_cgroup_ns(flags, user_ns,
->  					    tsk->nsproxy->cgroup_ns);
-> -	if (IS_ERR(new_nsp->cgroup_ns)) {
-> -		err = PTR_ERR(new_nsp->cgroup_ns);
-> -		goto out_cgroup;
-> -	}
-> +	if (IS_ERR(new_nsp->cgroup_ns))
-> +		return ERR_CAST(new_nsp->cgroup_ns);
->  
->  	new_nsp->net_ns = copy_net_ns(flags, user_ns, tsk->nsproxy->net_ns);
-> -	if (IS_ERR(new_nsp->net_ns)) {
-> -		err = PTR_ERR(new_nsp->net_ns);
-> -		goto out_net;
-> -	}
-> +	if (IS_ERR(new_nsp->net_ns))
-> +		return ERR_CAST(new_nsp->net_ns);
->  
->  	new_nsp->time_ns_for_children = copy_time_ns(flags, user_ns,
-> -					tsk->nsproxy->time_ns_for_children);
-> -	if (IS_ERR(new_nsp->time_ns_for_children)) {
-> -		err = PTR_ERR(new_nsp->time_ns_for_children);
-> -		goto out_time;
-> -	}
-> +						     tsk->nsproxy->time_ns_for_children);
-> +	if (IS_ERR(new_nsp->time_ns_for_children))
-> +		return ERR_CAST(new_nsp->time_ns_for_children);
->  	new_nsp->time_ns = get_time_ns(tsk->nsproxy->time_ns);
->  
-> -	return new_nsp;
-> -
-> -out_time:
-> -	put_net(new_nsp->net_ns);
-> -out_net:
-> -	put_cgroup_ns(new_nsp->cgroup_ns);
-> -out_cgroup:
-> -	put_pid_ns(new_nsp->pid_ns_for_children);
-> -out_pid:
-> -	put_ipc_ns(new_nsp->ipc_ns);
-> -out_ipc:
-> -	put_uts_ns(new_nsp->uts_ns);
-> -out_uts:
-> -	put_mnt_ns(new_nsp->mnt_ns);
-> -out_ns:
-> -	kmem_cache_free(nsproxy_cachep, new_nsp);
-> -	return ERR_PTR(err);
-> +	return no_free_ptr(new_nsp);
->  }
->  
->  /*
-> @@ -185,21 +175,6 @@ int copy_namespaces(u64 flags, struct task_struct *tsk)
->  	return 0;
->  }
->  
-> -void free_nsproxy(struct nsproxy *ns)
-> -{
-> -	nsproxy_ns_active_put(ns);
-> -
-> -	put_mnt_ns(ns->mnt_ns);
-> -	put_uts_ns(ns->uts_ns);
-> -	put_ipc_ns(ns->ipc_ns);
-> -	put_pid_ns(ns->pid_ns_for_children);
-> -	put_time_ns(ns->time_ns);
-> -	put_time_ns(ns->time_ns_for_children);
-> -	put_cgroup_ns(ns->cgroup_ns);
-> -	put_net(ns->net_ns);
-> -	kmem_cache_free(nsproxy_cachep, ns);
-> -}
-> -
->  /*
->   * Called from unshare. Unshare all the namespaces part of nsproxy.
->   * On success, returns the new nsproxy.
-> @@ -338,7 +313,7 @@ static void put_nsset(struct nsset *nsset)
->  	if (nsset->fs && (flags & CLONE_NEWNS) && (flags & ~CLONE_NEWNS))
->  		free_fs_struct(nsset->fs);
->  	if (nsset->nsproxy)
-> -		free_nsproxy(nsset->nsproxy);
-> +		nsproxy_free(nsset->nsproxy);
->  }
->  
->  static int prepare_nsset(unsigned flags, struct nsset *nsset)
-> -- 
-> 2.47.3
-> 
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index 513c09e2b01c..a8e8bf949b4b 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -11,6 +11,8 @@
+  * See Documentation/security/keys/trusted-encrypted.rst
+  */
+ 
++#define pr_fmt(fmt) "encrypted_key: " fmt
++
+ #include <linux/uaccess.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+@@ -84,8 +86,7 @@ static int aes_get_sizes(void)
+ 
+ 	tfm = crypto_alloc_skcipher(blkcipher_alg, 0, CRYPTO_ALG_ASYNC);
+ 	if (IS_ERR(tfm)) {
+-		pr_err("encrypted_key: failed to alloc_cipher (%ld)\n",
+-		       PTR_ERR(tfm));
++		pr_err("failed to alloc_cipher (%ld)\n", PTR_ERR(tfm));
+ 		return PTR_ERR(tfm);
+ 	}
+ 	ivsize = crypto_skcipher_ivsize(tfm);
+@@ -106,15 +107,14 @@ static int valid_ecryptfs_desc(const char *ecryptfs_desc)
+ 	int i;
+ 
+ 	if (strlen(ecryptfs_desc) != KEY_ECRYPTFS_DESC_LEN) {
+-		pr_err("encrypted_key: key description must be %d hexadecimal "
+-		       "characters long\n", KEY_ECRYPTFS_DESC_LEN);
++		pr_err("key description must be %d hexadecimal characters long\n",
++		       KEY_ECRYPTFS_DESC_LEN);
+ 		return -EINVAL;
+ 	}
+ 
+ 	for (i = 0; i < KEY_ECRYPTFS_DESC_LEN; i++) {
+ 		if (!isxdigit(ecryptfs_desc[i])) {
+-			pr_err("encrypted_key: key description must contain "
+-			       "only hexadecimal characters\n");
++			pr_err("key description must contain only hexadecimal characters\n");
+ 			return -EINVAL;
+ 		}
+ 	}
+@@ -180,7 +180,7 @@ static int datablob_parse(char *datablob, const char **format,
+ 
+ 	keyword = strsep(&datablob, " \t");
+ 	if (!keyword) {
+-		pr_info("encrypted_key: insufficient parameters specified\n");
++		pr_info("insufficient parameters specified\n");
+ 		return ret;
+ 	}
+ 	key_cmd = match_token(keyword, key_tokens, args);
+@@ -188,7 +188,7 @@ static int datablob_parse(char *datablob, const char **format,
+ 	/* Get optional format: default | ecryptfs */
+ 	p = strsep(&datablob, " \t");
+ 	if (!p) {
+-		pr_err("encrypted_key: insufficient parameters specified\n");
++		pr_err("insufficient parameters specified\n");
+ 		return ret;
+ 	}
+ 
+@@ -206,20 +206,20 @@ static int datablob_parse(char *datablob, const char **format,
+ 	}
+ 
+ 	if (!*master_desc) {
+-		pr_info("encrypted_key: master key parameter is missing\n");
++		pr_info("master key parameter is missing\n");
+ 		goto out;
+ 	}
+ 
+ 	if (valid_master_desc(*master_desc, NULL) < 0) {
+-		pr_info("encrypted_key: master key parameter \'%s\' "
+-			"is invalid\n", *master_desc);
++		pr_info("master key parameter \'%s\' is invalid\n",
++			*master_desc);
+ 		goto out;
+ 	}
+ 
+ 	if (decrypted_datalen) {
+ 		*decrypted_datalen = strsep(&datablob, " \t");
+ 		if (!*decrypted_datalen) {
+-			pr_info("encrypted_key: keylen parameter is missing\n");
++			pr_info("keylen parameter is missing\n");
+ 			goto out;
+ 		}
+ 	}
+@@ -227,8 +227,8 @@ static int datablob_parse(char *datablob, const char **format,
+ 	switch (key_cmd) {
+ 	case Opt_new:
+ 		if (!decrypted_datalen) {
+-			pr_info("encrypted_key: keyword \'%s\' not allowed "
+-				"when called from .update method\n", keyword);
++			pr_info("keyword \'%s\' not allowed when called from .update method\n",
++				keyword);
+ 			break;
+ 		}
+ 		*decrypted_data = strsep(&datablob, " \t");
+@@ -236,29 +236,27 @@ static int datablob_parse(char *datablob, const char **format,
+ 		break;
+ 	case Opt_load:
+ 		if (!decrypted_datalen) {
+-			pr_info("encrypted_key: keyword \'%s\' not allowed "
+-				"when called from .update method\n", keyword);
++			pr_info("keyword \'%s\' not allowed when called from .update method\n",
++				keyword);
+ 			break;
+ 		}
+ 		*hex_encoded_iv = strsep(&datablob, " \t");
+ 		if (!*hex_encoded_iv) {
+-			pr_info("encrypted_key: hex blob is missing\n");
++			pr_info("hex blob is missing\n");
+ 			break;
+ 		}
+ 		ret = 0;
+ 		break;
+ 	case Opt_update:
+ 		if (decrypted_datalen) {
+-			pr_info("encrypted_key: keyword \'%s\' not allowed "
+-				"when called from .instantiate method\n",
++			pr_info("keyword \'%s\' not allowed when called from .instantiate method\n",
+ 				keyword);
+ 			break;
+ 		}
+ 		ret = 0;
+ 		break;
+ 	case Opt_err:
+-		pr_info("encrypted_key: keyword \'%s\' not recognized\n",
+-			keyword);
++		pr_info("keyword \'%s\' not recognized\n", keyword);
+ 		break;
+ 	}
+ out:
+@@ -362,22 +360,21 @@ static struct skcipher_request *init_skcipher_req(const u8 *key,
+ 
+ 	tfm = crypto_alloc_skcipher(blkcipher_alg, 0, CRYPTO_ALG_ASYNC);
+ 	if (IS_ERR(tfm)) {
+-		pr_err("encrypted_key: failed to load %s transform (%ld)\n",
+-		       blkcipher_alg, PTR_ERR(tfm));
++		pr_err("failed to load %s transform (%ld)\n", blkcipher_alg,
++		       PTR_ERR(tfm));
+ 		return ERR_CAST(tfm);
+ 	}
+ 
+ 	ret = crypto_skcipher_setkey(tfm, key, key_len);
+ 	if (ret < 0) {
+-		pr_err("encrypted_key: failed to setkey (%d)\n", ret);
++		pr_err("failed to setkey (%d)\n", ret);
+ 		crypto_free_skcipher(tfm);
+ 		return ERR_PTR(ret);
+ 	}
+ 
+ 	req = skcipher_request_alloc(tfm, GFP_KERNEL);
+ 	if (!req) {
+-		pr_err("encrypted_key: failed to allocate request for %s\n",
+-		       blkcipher_alg);
++		pr_err("failed to allocate request for %s\n", blkcipher_alg);
+ 		crypto_free_skcipher(tfm);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+@@ -406,13 +403,10 @@ static struct key *request_master_key(struct encrypted_key_payload *epayload,
+ 
+ 	if (IS_ERR(mkey)) {
+ 		int ret = PTR_ERR(mkey);
+-
+ 		if (ret == -ENOTSUPP)
+-			pr_info("encrypted_key: key %s not supported",
+-				epayload->master_desc);
++			pr_info("key %s not supported", epayload->master_desc);
+ 		else
+-			pr_info("encrypted_key: key %s not found",
+-				epayload->master_desc);
++			pr_info("key %s not found", epayload->master_desc);
+ 		goto out;
+ 	}
+ 
+@@ -457,7 +451,7 @@ static int derived_key_encrypt(struct encrypted_key_payload *epayload,
+ 	skcipher_request_free(req);
+ 	crypto_free_skcipher(tfm);
+ 	if (ret < 0)
+-		pr_err("encrypted_key: failed to encrypt (%d)\n", ret);
++		pr_err("failed to encrypt (%d)\n", ret);
+ 	else
+ 		dump_encrypted_data(epayload, encrypted_datalen);
+ out:
+@@ -596,16 +590,16 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
+ 
+ 	if (decrypted_data) {
+ 		if (!user_decrypted_data) {
+-			pr_err("encrypted key: instantiation of keys using provided decrypted data is disabled since CONFIG_USER_DECRYPTED_DATA is set to false\n");
++			pr_err("instantiation of keys using provided decrypted data is disabled since CONFIG_USER_DECRYPTED_DATA is set to false\n");
+ 			return ERR_PTR(-EINVAL);
+ 		}
+ 		if (strlen(decrypted_data) != decrypted_datalen * 2) {
+-			pr_err("encrypted key: decrypted data provided does not match decrypted data length provided\n");
++			pr_err("decrypted data provided does not match decrypted data length provided\n");
+ 			return ERR_PTR(-EINVAL);
+ 		}
+ 		for (i = 0; i < strlen(decrypted_data); i++) {
+ 			if (!isxdigit(decrypted_data[i])) {
+-				pr_err("encrypted key: decrypted data provided must contain only hexadecimal characters\n");
++				pr_err("decrypted data provided must contain only hexadecimal characters\n");
+ 				return ERR_PTR(-EINVAL);
+ 			}
+ 		}
+@@ -614,7 +608,7 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
+ 	if (format) {
+ 		if (!strcmp(format, key_format_ecryptfs)) {
+ 			if (dlen != ECRYPTFS_MAX_KEY_BYTES) {
+-				pr_err("encrypted_key: keylen for the ecryptfs format must be equal to %d bytes\n",
++				pr_err("keylen for the ecryptfs format must be equal to %d bytes\n",
+ 					ECRYPTFS_MAX_KEY_BYTES);
+ 				return ERR_PTR(-EINVAL);
+ 			}
+@@ -622,8 +616,8 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
+ 			payload_datalen = sizeof(struct ecryptfs_auth_tok);
+ 		} else if (!strcmp(format, key_format_enc32)) {
+ 			if (decrypted_datalen != KEY_ENC32_PAYLOAD_LEN) {
+-				pr_err("encrypted_key: enc32 key payload incorrect length: %d\n",
+-						decrypted_datalen);
++				pr_err("enc32 key payload incorrect length: %d\n",
++					decrypted_datalen);
+ 				return ERR_PTR(-EINVAL);
+ 			}
+ 		}
+@@ -689,7 +683,7 @@ static int encrypted_key_decrypt(struct encrypted_key_payload *epayload,
+ 
+ 	ret = datablob_hmac_verify(epayload, format, master_key, master_keylen);
+ 	if (ret < 0) {
+-		pr_err("encrypted_key: bad hmac (%d)\n", ret);
++		pr_err("bad hmac (%d)\n", ret);
+ 		goto out;
+ 	}
+ 
+@@ -699,7 +693,7 @@ static int encrypted_key_decrypt(struct encrypted_key_payload *epayload,
+ 
+ 	ret = derived_key_decrypt(epayload, derived_key, sizeof derived_key);
+ 	if (ret < 0)
+-		pr_err("encrypted_key: failed to decrypt key (%d)\n", ret);
++		pr_err("failed to decrypt key (%d)\n", ret);
+ out:
+ 	up_read(&mkey->sem);
+ 	key_put(mkey);
+diff --git a/security/keys/encrypted-keys/encrypted.h b/security/keys/encrypted-keys/encrypted.h
+index 1809995db452..7b05c66bafa6 100644
+--- a/security/keys/encrypted-keys/encrypted.h
++++ b/security/keys/encrypted-keys/encrypted.h
+@@ -41,7 +41,7 @@ static inline void dump_hmac(const char *str, const u8 *digest,
+ 			     unsigned int hmac_size)
+ {
+ 	if (str)
+-		pr_info("encrypted_key: %s", str);
++		pr_info("%s", str);
+ 	print_hex_dump(KERN_ERR, "hmac: ", DUMP_PREFIX_NONE, 32, 1, digest,
+ 		       hmac_size, 0);
+ }
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.51.1
+
