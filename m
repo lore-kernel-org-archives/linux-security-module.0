@@ -1,95 +1,79 @@
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840A82BF015;
-	Fri, 14 Nov 2025 10:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04274BA3D;
+	Fri, 14 Nov 2025 12:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763116265; cv=none; b=LXbyzzXckkrM555d8fUXWL8Pp189iY7e79Xv5qjruyb6L5rcTkdEDw81tMVNsXYu1s722CWVvA7J+nt9AHA7EU18ppAjUu49Rh+nteux6grON3Or5ziSrrKwO08PEtANCgSZvp3eko3/RIRM7DdLysLTFZTEhZTQpXQjo2Y8l9o=
+	t=1763123092; cv=none; b=M2u5i/QIENyB9GgQz58g43qoBJYxuGR9Wday9Gv0wvi8f0WZTvQxcITPn7qfGLS77BP7dA421w146Tiv77mPFc3t2R2EWcwL/5M5YtZFNOa5nDjT77fjMZvc2jMjo/WPzgjL6FACfmlgqGKX8rp6wx0ZKMKpWOXO35iuqYBZ1Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763116265; c=relaxed/simple;
-	bh=wN3/8RgeZcaLwmHshZdOIoQfrJtLJQkqD+OboamYqfk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=NX0dFFtOh3S930VaC6kMlOolpBpTZYDvOmJFH0rr43AwEooHUF4Bi8rdnmJERV4Ug0vuhiYc7Ihss5ni8SmaI2VliIiiVAa/TnoezjEVjlg86jjlqhm5ESz3nV+w9WWzFULofxi/kfLCAWxmUN5jpSdEoBERCiqjNnOFGJSDVDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QaPy5p1e; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1763123092; c=relaxed/simple;
+	bh=+mBDMZqOqXyj1nw2FoUq3hfj9Pq1+bVG+kNKFkCOjGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uncm53JlyQI3sC0uNQ/siFO2d34jb51g2OdTsNckO1Up3EqgIVPiq51Rw7opVrd3tCYaVTwmhhztHrU3GnXRiYbYz/zdXXB3od0WLMH/2xoNY6jnSyTZgN/L9OFbk5Bk8NhCYQZokI84gmzPfKqH+1zM0EaReMHFKhJ91cos8ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L88J3kMN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QaPy5p1e"
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1763116250;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z2qM6eDrcKqDXJMkFJ1xGKhxIyX3KERDuEZB9kx7Z/8=;
-	b=QaPy5p1ej8Xeg/mO/iCLz7Sizp3OiTY2mvGzJ3e6YRghD7lBDmnIbrYQht8Q8/T5NPcgBJ
-	8nkYkN1iatcMTB46IIcN+PcDS4MfI95juqw7Y6Uw2X203K0YPbeey4XHxncDuA82BLcba/
-	gqYixPF2QxRQKZ+89J191m0wlrUe8K4=
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L88J3kMN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B678C4AF09;
+	Fri, 14 Nov 2025 12:24:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763123091;
+	bh=+mBDMZqOqXyj1nw2FoUq3hfj9Pq1+bVG+kNKFkCOjGM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L88J3kMNXclmlVXvSCh0nwJz3MI/z//UToTodAyB8+hSlNnkgXmt679fqapIropxt
+	 TUKtETf1WbcWvQE6SEEa+vxb91ma9o4EiZV0RToOZ4Ov5mPY5b43+Ubt0LW1+fDwfU
+	 tLqEQIv5BoWbspBjSFZbeubTeip6wzBqqXljdlL33QtlYekrXKtmNVKynge7yPqMts
+	 +QLPN90oTnvZgsDNursj4MM6EYHj2IB3cRa5vnPrY6LbfG/BgI4m2zsEsMemyRtNPJ
+	 ymiv896FRZ1UahmIF3bSUq4VROCfN8SABYT93BJyBU6UnvuYE29zdU0f92GFitE8Zk
+	 L1O4gixSsAR3g==
+Date: Fri, 14 Nov 2025 13:24:41 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: NeilBrown <neil@brown.name>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	Jeff Layton <jlayton@kernel.org>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
+	David Howells <dhowells@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Chuck Lever <chuck.lever@oracle.com>, Olga Kornievskaia <okorniev@redhat.com>, 
+	Dai Ngo <Dai.Ngo@oracle.com>, Namjae Jeon <linkinjeon@kernel.org>, 
+	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Carlos Maiolino <cem@kernel.org>, John Johansen <john.johansen@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Stefan Berger <stefanb@linux.ibm.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
+	ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org
+Subject: Re: [PATCH v6 00/15] Create and use APIs to centralise locking for
+ directory ops
+Message-ID: <20251114-baden-banknoten-96fb107f79d7@brauner>
+References: <20251113002050.676694-1-neilb@ownmail.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v2] KEYS: encrypted: Replace deprecated strcpy and improve
- get_derived_key
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <20251114093445.0ec74428@pumpkin>
-Date: Fri, 14 Nov 2025 11:30:15 +0100
-Cc: Eric Biggers <ebiggers@kernel.org>,
- Mimi Zohar <zohar@linux.ibm.com>,
- David Howells <dhowells@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- linux-hardening@vger.kernel.org,
- linux-integrity@vger.kernel.org,
- keyrings@vger.kernel.org,
- linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <9F9F1AD7-135E-43F4-9A46-BD5A60DA0921@linux.dev>
-References: <20251113215546.136145-1-thorsten.blum@linux.dev>
- <20251114093445.0ec74428@pumpkin>
-To: David Laight <david.laight.linux@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251113002050.676694-1-neilb@ownmail.net>
 
-Hi David,
+On Thu, Nov 13, 2025 at 11:18:23AM +1100, NeilBrown wrote:
+> Following is a new version of this series:
+>  - fixed a bug found by syzbot
+>  - cleanup suggested by Stephen Smalley
+>  - added patch for missing updates in smb/server - thanks Jeff Layton
 
-On 14. Nov 2025, at 10:34, David Laight wrote:
-> On Thu, 13 Nov 2025 22:55:45 +0100
-> Thorsten Blum <thorsten.blum@linux.dev> wrote:
->=20
->> strcpy() is deprecated; use the safer strscpy() and use its return
->> value, the number of bytes copied, instead of calling strlen() on the
->> destination buffer again. String truncation can be ignored since
->> 'derived_buf' is guaranteed to be large enough.
->>=20
->> Link: https://github.com/KSPP/linux/issues/88
->> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
->> ---
->> [...]
->=20
-> I'm not sure this is an improvement, but has this code ever been =
-correct?
-> The buffer passed to sha256 is either:
-> 	"AUTH_KEY"'\0'master_key
-> or
-> 	"ENC_KEY"'\0'master_key
-> For short master_key the buffer is HASH_SIZE bytes and padded with =
-zeros (ok).
-> However for long master_key the length is calculated using "AUTH_KEY" =
-so
-> there is an additional trailing '\0' in the "ENC_KEY" case.
+The codeflow right now is very very gnarly in a lot of places which
+obviously isn't your fault. But start_creating() and end_creating()
+would very naturally lend themselves to be CLASS() guards.
 
-I removed the trailing '\0' in v1, but since Eric pointed out that it
-changes the sha256 hash, I reverted it in v2.
-
-Thanks,
-Thorsten
-
+Unrelated: I'm very inclined to slap a patch on top that renames
+start_creating()/end_creating() and start_dirop()/end_dirop() to
+vfs_start_creating()/vfs_end_creating() and
+vfs_start_dirop()/vfs_end_dirop(). After all they are VFS level
+maintained helpers and I try to be consistent with the naming in the
+codebase making it very easy to grep.
