@@ -1,142 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27CB70814;
-	Fri, 14 Nov 2025 12:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4710313E30
+	for <linux-security-module@vger.kernel.org>; Fri, 14 Nov 2025 13:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763123260; cv=none; b=MrapQir0vxYTQ7urk51LiIUig6K64u+GRFar/XVQKqyB0JYtsa98ypgtrXhxRvZ7M+21TNGtwvqiHCUpTD2DQoLrNtYwxweYQFczYx5CCL71r9Kt+rZS1ahaPGxaCvcZF1M6s3sQdKekQrMHEEbfUI7nFmlxQRZY2azcmlviilQ=
+	t=1763126561; cv=none; b=SPXJnYDjtS9rCeZTlR2kGCIjTb1sdPrZFdCJcOuszB/5vWSYghYS+RFtAsDBmH25NZRbDq6geXWxKfn9xaavto9901crQWMT4+zFuXEXl1p8eJ5glb2kVEDrwjrDRKFAwS45i6NavqjUy2QiJ01DvDTIwhTvIaI8DvWpB2aJp1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763123260; c=relaxed/simple;
-	bh=QtW3pIcizzKexpU9fz3Mn6XhYVCJ0IvGG+fMc/v2tu8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YevJXSFr07KUWIZyS4/18AbmE2fkEqIdp9jM0M8ZKPDWi88m2hOr+YgwXrDMfdW1u4Cot5aaMN7uMLvB9Ei0F2jNgdJCxVvfByyNaeNlbibsSb7C5Lw23t3t3On/r59LU6q2q3ugOO0Ynps6gUEE/K+X7rJzYzU5+1JkPEifMNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FMQD5HcG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763126561; c=relaxed/simple;
+	bh=FuZEuvQ3jmbwZpx7rFiCevGNtHp2p1kTZ05rKerm0EM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nkfYUzYa0eNvO+C/6puu0IGEDzqUPSPKUlDWlJyAoet7cZmmTyqHH6UAZPEv4EOy2ixiUxOJ0N71KRjNPLsaTGgqEQzhaWmaVbpIR8/3WJLFye0A32Y7v1h7ydjOyq/xVhqDDQPfvGsKAruI8oHjAzWrihfxhavS3F8fxLLQU6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E7ddOafH; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FMQD5HcG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44684C4CEF1;
-	Fri, 14 Nov 2025 12:27:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763123259;
-	bh=QtW3pIcizzKexpU9fz3Mn6XhYVCJ0IvGG+fMc/v2tu8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FMQD5HcG1ffTWXT8Xo2OKDgOSP+sIJvH7CZn7AJBTrq0c7/YiBKxn7agHnwyzQHyr
-	 cGq9QLldky/rXqNJTecpRl63snIhwj0yMx2RfY9LOyFToZRKxUOzos8LrUwLQbEwos
-	 wO78E3u2todLW/YXRHsaxHppzJgMdENH4klpYWJSGxoNsnk0r93uBQ3QpevldKX40U
-	 eB/Suk11cWJqUxrq+uTS5IdSVBom+9Q+WQbGUtvsX4eK1zVfu3DPrjjnkQdz/XlRxa
-	 EPDcoZc3bR/HHBhyB9buCIGkgU4n6ajy5oBPPhyEcnGv79EiNFL/etbevd3L/I9VKU
-	 Lh2B6zgqwL5xg==
-From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neilb@ownmail.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	Jeff Layton <jlayton@kernel.org>,
-	Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>,
-	David Howells <dhowells@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Tyler Hicks <code@tyhicks.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <smfrench@gmail.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	netfs@lists.linux.dev,
-	ecryptfs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v6 00/15] Create and use APIs to centralise locking for directory ops.
-Date: Fri, 14 Nov 2025 13:27:18 +0100
-Message-ID: <20251114-zweifach-schrebergarten-a49fa00bcfc5@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251113002050.676694-1-neilb@ownmail.net>
-References: <20251113002050.676694-1-neilb@ownmail.net>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E7ddOafH"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-340c39ee02dso1760696a91.1
+        for <linux-security-module@vger.kernel.org>; Fri, 14 Nov 2025 05:22:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1763126558; x=1763731358; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FuZEuvQ3jmbwZpx7rFiCevGNtHp2p1kTZ05rKerm0EM=;
+        b=E7ddOafHhPb5QWq24mSAuEe9DZvtfFj7qtODwlLawtQJlmpFk8W7Y8n3jwAVPsBt5c
+         1oTez8GmZCPnOyL6Yisc8QnrkRygZTvGDY/WskDu5UqsRZZsPP6Yo8VP0/Y+xHHWpL8o
+         BoA+QIE42S66eKhoUszplz+w92NtwTHBXHodQzFTDFRPYAFjBlk60RgryU3cbP0H8KfN
+         +alh7Q0ojcALPBF8As9eN6Z4mc142KmZp/gBOPYw0B7T3QfvQIouSaoFc5fcZ2oPhWGI
+         qj0xfhASDSe2CXxZuP4SRE+GUMzHdPF3utwvbNQ2J4nmYXzzoA2sWraJlPVeHJhOotB4
+         jXTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763126558; x=1763731358;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FuZEuvQ3jmbwZpx7rFiCevGNtHp2p1kTZ05rKerm0EM=;
+        b=VIbMGSiq6ROj4aJhJ/q7WjD1Q+Oddah3VYLSjPQZtt82spee7P5n5EW5tcSSG9UCkQ
+         H9kbJLSOAYTDnmDmXlR1W/VYJq8wqQFE+hMTQ8VwlhM5vGqp99USOFRSljQMWKiOObu7
+         TnqDjwuyJUYO+ZmWcnLMacEUWpzvNriS8y50VqqDhNL63He1RKlH3h3VwMb6IWerZc69
+         Q6Tj/lxF3RdEbIBvpDEK8lllO01ndC1CSIOb4ONfeUbvh1kPdxxQQE24mQSVNp8d/0Dp
+         Hq/qaqUV8ROJQb+jQhfbyAkU0g1vd0B2pxu/wWF7WaYcK9OmaOdUdRqn5tVlUs1PlTvz
+         zBNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEDewdUWJM3uQEHdtDz1mw9IgcQtBa1Pny7f+zyno3jEaEPM0cYStXLweQoGQQdGmR4zF2K2Aj2/U9OUOE3QlSzl/a4QU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV/Mqf993yMdoNcPZzWNTxMN3hOx4q5ufg/WPorsH1DZVZ6gAt
+	PaekQLUABpGxC3C1970Vg+QcxRlpCwtdxf7O3Qe6sMss1eZB0tGG0D9er9bRry4LTZCoCMfTi6G
+	k7klOAGTaSbs3+CL3HHVZlz82VSN25566hy2JjUJX
+X-Gm-Gg: ASbGncv14qHJbYsVYGSGQjTAk69Ks2ycs4GGPpUvRX+8v2AgOuzdeWnfApw7QFXyOf3
+	9BMp3ZkT62VVDvUXfGZhLjyiEuLAReB23Cie7B3HLnzddHZ/kcmWwKeyEKP8cElJQilvl3+qnVL
+	kXEdQ5QQSkAMcTumE2WR70MLu/wFppbZTVkvEZhOEgPhrBXMVCQIKN6eX5Apse47jZ/agjOXksF
+	2iZfLvyRZrjxTBy7lUBuGzDfp2ITMVyFEi1w5VouAXGKYlbvjiD0Tyj3nOD9m0KUfqh/P/8Ablx
+	yF5oCFCcYrqZLXtZ8drh9twBSEXB1HJSktCv
+X-Google-Smtp-Source: AGHT+IHRKhpP3vzCADgRzmvW5BbtF22FP7gG7Gcfgimn7ZOifR3jME27ZrJCzM+Xqri+6sVXI0f8t3/Rxc2hYDVrt54=
+X-Received: by 2002:a05:7022:6288:b0:119:e56c:189d with SMTP id
+ a92af1059eb24-11b40f9ed09mr1186107c88.5.1763126557688; Fri, 14 Nov 2025
+ 05:22:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2736; i=brauner@kernel.org; h=from:subject:message-id; bh=QtW3pIcizzKexpU9fz3Mn6XhYVCJ0IvGG+fMc/v2tu8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKK+g9CNad3XLpuvKKDY8aeY7vMktbWx69Sdl+3Uc3g /dHlb4JdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwkhI3hf4CaY3qJwLfFDDf3 TWQR9nlwdocQW/NbFtsr0uenrXzbYsPIsGvJZNG119cwTFzxXv3QEi7ZQ3HpLrnxWa980lrmieT 84gMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20250918140451.1289454-1-elver@google.com> <CAHk-=wgd-Wcp0GpYaQnU7S9ci+FvFmaNw1gm75mzf0ZWdNLxvw@mail.gmail.com>
+ <aMx4-B_WAtX2aiKx@elver.google.com> <CAHk-=wgQO7c0zc8_VwaVSzG3fEVFFcjWzVBKM4jYjv8UiD2dkg@mail.gmail.com>
+ <aM0eAk12fWsr9ZnV@elver.google.com> <CANpmjNNoKiFEW2VfGM7rdak7O8__U3S+Esub9yM=9Tq=02d_ag@mail.gmail.com>
+ <20251114043812.GC2566209@ax162>
+In-Reply-To: <20251114043812.GC2566209@ax162>
+From: Marco Elver <elver@google.com>
+Date: Fri, 14 Nov 2025 14:22:01 +0100
+X-Gm-Features: AWmQ_blyYEkItbzeXoq8SnAQp2jhwPLGdi6tZz7V3PtwgmJC3W4HiUeTEvac_zI
+Message-ID: <CANpmjNPniOK9K6q2sx7KRrxckeAdCyVnTi4qwLqoFoYzYb7L2Q@mail.gmail.com>
+Subject: Re: [PATCH v3 00/35] Compiler-Based Capability- and Locking-Analysis
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, Christoph Hellwig <hch@lst.de>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>, 
+	Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Josh Triplett <josh@joshtriplett.org>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Kentaro Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
+	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
+	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 13 Nov 2025 11:18:23 +1100, NeilBrown wrote:
-> Following is a new version of this series:
->  - fixed a bug found by syzbot
->  - cleanup suggested by Stephen Smalley
->  - added patch for missing updates in smb/server - thanks Jeff Layton
->  - various s-o-b
-> 
-> 
-> [...]
+On Fri, 14 Nov 2025 at 05:38, Nathan Chancellor <nathan@kernel.org> wrote:
+> On Thu, Nov 13, 2025 at 03:30:08PM +0100, Marco Elver wrote:
+> > On Fri, 19 Sept 2025 at 11:10, Marco Elver <elver@google.com> wrote:
+> > [..]
+> > > I went with "context guard" to refer to the objects themselves, as that
+> > > doesn't look too odd. It does match the concept of "guard" in
+> > > <linux/cleanup.h>.
+> > >
+> > > See second attempt below.
+> > [..]
+> >
+> > I finally got around baking this into a renamed series, that now calls
+> > it "Context Analysis" - here's a preview:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/melver/linux.git/log/?h=ctx-analysis/dev
+> >
+> > As for when we should give this v4 another try: I'm 50/50 on sending
+> > this now vs. waiting for final Clang 22 to be released (~March 2026).
+> >
+> > Preferences?
+>
+> For the record, I can continue to upload clang snapshots for testing and
+> validating this plus the sooner this hits a tree that goes into -next,
+> the sooner the ClangBuiltLinux infrastructure can start testing it. I
+> assume there will not need to be many compiler side fixes but if
 
-Applied to the vfs-6.19.directory.locking branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.directory.locking branch should appear in linux-next soon.
+I hope so ... Famous last words. ;-)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+> __counted_by has shown us anything, it is that getting this stuff
+> deployed and into the hands of people who want to use it is the only
+> real way to find corner cases to address. No strong objection from me if
+> you want to wait for clang-22 to actually be released though for more
+> access.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Thanks, Nathan - having ClangBuiltLinux infra help test would be very helpful.
+Unless I hear otherwise, I can send v4 next week for review - in case
+of a v5 I will wait until ~March (as that coincides with Clang 22
+release, and for lack of time on my end between Jan and March).
+Could also skip the subsystem-enablement patches for now; only the
+patches until the MAINTAINERS patch are the bare minimum, the rest can
+be taken later by individual maintainers.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.directory.locking
-
-[01/15] debugfs: rename end_creating() to debugfs_end_creating()
-        https://git.kernel.org/vfs/vfs/c/8b45b9a88233
-[02/15] VFS: introduce start_dirop() and end_dirop()
-        https://git.kernel.org/vfs/vfs/c/4037d966f034
-[03/15] VFS: tidy up do_unlinkat()
-        https://git.kernel.org/vfs/vfs/c/3661a7887462
-[04/15] VFS/nfsd/cachefiles/ovl: add start_creating() and end_creating()
-        https://git.kernel.org/vfs/vfs/c/7ab96df840e6
-[05/15] VFS/nfsd/cachefiles/ovl: introduce start_removing() and end_removing()
-        https://git.kernel.org/vfs/vfs/c/bd6ede8a06e8
-[06/15] VFS: introduce start_creating_noperm() and start_removing_noperm()
-        https://git.kernel.org/vfs/vfs/c/c9ba789dad15
-[07/15] smb/server: use end_removing_noperm for for target of smb2_create_link()
-        https://git.kernel.org/vfs/vfs/c/1ead2213dd7d
-[08/15] VFS: introduce start_removing_dentry()
-        https://git.kernel.org/vfs/vfs/c/7bb1eb45e43c
-[09/15] VFS: add start_creating_killable() and start_removing_killable()
-        https://git.kernel.org/vfs/vfs/c/ff7c4ea11a05
-[10/15] VFS/nfsd/ovl: introduce start_renaming() and end_renaming()
-        https://git.kernel.org/vfs/vfs/c/5c8752729970
-[11/15] VFS/ovl/smb: introduce start_renaming_dentry()
-        https://git.kernel.org/vfs/vfs/c/ac50950ca143
-[12/15] Add start_renaming_two_dentries()
-        https://git.kernel.org/vfs/vfs/c/833d2b3a072f
-[13/15] ecryptfs: use new start_creating/start_removing APIs
-        https://git.kernel.org/vfs/vfs/c/f046fbb4d81d
-[14/15] VFS: change vfs_mkdir() to unlock on failure.
-        https://git.kernel.org/vfs/vfs/c/fe497f0759e0
-[15/15] VFS: introduce end_creating_keep()
-        https://git.kernel.org/vfs/vfs/c/cf296b294c3b
+Thanks,
+-- Marco
