@@ -1,81 +1,284 @@
-Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2108E32B9AE;
-	Mon, 17 Nov 2025 11:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.95.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F8F32AAD5
+	for <linux-security-module@vger.kernel.org>; Mon, 17 Nov 2025 15:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763380036; cv=none; b=rf5bzaKX71raR0x7fYUM64t9uaw3DKYKeN5+/NjDd6eAGhugBM/tc0L9gpgvt336FsBf3dNnbEf8dDqsNKsSApXexbyzIJPK3bWHmpSk9Znfgt36c0DHNTnkFRqfsHY8RJ6DtZ/sItN0o09Y/njoczSME3OIwlW1dy8ToTz9J94=
+	t=1763391734; cv=none; b=txBC+0sBC4mlZDtNorn7Rh136Lp1xYPWl5pEPy7awUYEVb3APcNu8vnx62oytIHFBRP6xl95k8UAZWRtDvVdTa/oKkrm2zVIgYjidCHUmKL4uDzYh+ieRcLXOhdooxZYXvAwVtBymlvHbPuLrnp14iJdzjr5rKx6VLioo7f+Uy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763380036; c=relaxed/simple;
-	bh=18AThoJ1F5XQlVvAYjRYKKUnjnNDdRj8jhe5/a7p0Ss=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fihHClnSu06lbwCCo62Xbt7+OoD3hFTTQQ4IH+bL2cCx4bpESFf/+pz7KtIOHyDNKGPnXwpXHHQM/+U2N9TvX+L8pi48mBLRnwGi+m/W0w3bR7AJnVZgOJ0CM9W/sKP5OfbZUONM9VCprJH3eJUuh1OarZKtHTcWBMG7XOcrWwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk; spf=pass smtp.mailfrom=toke.dk; dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b=OER8VvtA; arc=none smtp.client-ip=45.145.95.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toke.dk
+	s=arc-20240116; t=1763391734; c=relaxed/simple;
+	bh=V6fHlz8HT9iaeRZe6Hts1U21hfu7/7IRpYz4JuQDFPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BcY1po8mEvl76TYCCr6SSfaz6DupBy4SR4X4m6hIMs5TuSgxHw2gJcDH1yGvHMBW+II8bIgB5eEg88KSWvLQy0biXUgNMBlcDrhAnjk8OYx70nU9iaYd7BWmUipJFQu2BJPn3FL1Xp6nLehI4zQPV6lo261AT36OEyZCqjAoxW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O8Uk5Qor; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="OER8VvtA"
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
-	t=1763380031; bh=18AThoJ1F5XQlVvAYjRYKKUnjnNDdRj8jhe5/a7p0Ss=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=OER8VvtAWTP0L0fklHIXgvMbFN6jQ42q7ikGcR7PT1lfcpE+sk1vaFPlgwmYfxh2u
-	 Pq0y/kJUlVETtENUzSDWBD29nZ2oAwTrefvL8GaBT/YWNG1U5Mjq4+u8N2zaMvWGEW
-	 D0+efZ3KilUrlzGa4RTfgyZqCWS8ZZBaKN5UMhTzrzKUnNddCaSBPAq9WMvcT+Ds69
-	 3092p0XYV87EDLK8QwERXg2JcshEZMZcTB0vts1w1Xkp4t6mwezRfsELFuLCBJODqY
-	 ihba2OAwwWb9Fs/T1FQnHaijPFLuUVe/E+WYicL9bzWdCRfMuTnCXAFDCbIwAZWgF0
-	 sOcUAGdTe3FmA==
-To: pengdonglin <dolinux.peng@gmail.com>, tj@kernel.org,
- tony.luck@intel.com, jani.nikula@linux.intel.com, ap420073@gmail.com,
- jv@jvosburgh.net, freude@linux.ibm.com, bcrl@kvack.org,
- trondmy@kernel.org, longman@redhat.com, kees@kernel.org
-Cc: bigeasy@linutronix.de, hdanton@sina.com, paulmck@kernel.org,
- linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
- linux-nfs@vger.kernel.org, linux-aio@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
- netdev@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- linux-wireless@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-s390@vger.kernel.org, cgroups@vger.kernel.org, pengdonglin
- <dolinux.peng@gmail.com>, Jakub Kicinski <kuba@kernel.org>, pengdonglin
- <pengdonglin@xiaomi.com>
-Subject: Re: [PATCH v3 14/14] wifi: ath9k: Remove redundant
- rcu_read_lock/unlock() in spin_lock
-In-Reply-To: <20250916044735.2316171-15-dolinux.peng@gmail.com>
-References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
- <20250916044735.2316171-15-dolinux.peng@gmail.com>
-Date: Mon, 17 Nov 2025 12:47:07 +0100
-X-Clacks-Overhead: GNU Terry Pratchett
-Message-ID: <87fracop8k.fsf@toke.dk>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O8Uk5Qor"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763391731;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s+H138e7y6HCsaCtaTqIGyoW1ghuauULhTt5/nDa2Fg=;
+	b=O8Uk5QorvG5pV1XemtBCcQrYnwjTyYSDDiSYc4D+gB6JI77fZUeJRe+uuSSz9zW1lKlGAh
+	sHj04DEc8aet+ueqvWh2KGE+36CuPhQqHkZM+K6W5Lhuq4O1F+m+1AooKlt5y/sKJfX2oT
+	Re7HvAEoTprsrG0a6uFs6BOViIRx8WQ=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-499-EAqHuR5uO7aiC1gWSDGuug-1; Mon,
+ 17 Nov 2025 10:02:09 -0500
+X-MC-Unique: EAqHuR5uO7aiC1gWSDGuug-1
+X-Mimecast-MFC-AGG-ID: EAqHuR5uO7aiC1gWSDGuug_1763391715
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 63997180123A;
+	Mon, 17 Nov 2025 15:01:53 +0000 (UTC)
+Received: from fedora (unknown [10.44.32.40])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E78D13003776;
+	Mon, 17 Nov 2025 15:01:34 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 17 Nov 2025 16:01:52 +0100 (CET)
+Date: Mon, 17 Nov 2025 16:01:33 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Adrian Reber <areber@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	tiozhang <tiozhang@didiglobal.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	YueHaibing <yuehaibing@huawei.com>,
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
+	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	David Windsor <dwindsor@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hans Liljestrand <ishkamiel@gmail.com>,
+	Penglei Jiang <superman.xpt@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
+Message-ID: <aRs4zYDhddBQFiXZ@redhat.com>
+References: <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <20251105143210.GA25535@redhat.com>
+ <20251111-ankreiden-augen-eadcf9bbdfaa@brauner>
+ <GV2PPF74270EBEE4FE6E639B899D01D8870E4C9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <GV2PPF74270EBEE4FE6E639B899D01D8870E4C9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-pengdonglin <dolinux.peng@gmail.com> writes:
+On 11/17, Bernd Edlinger wrote:
+>
+> On 11/11/25 10:21, Christian Brauner wrote:
+> > On Wed, Nov 05, 2025 at 03:32:10PM +0100, Oleg Nesterov wrote:
+>
+> >> But this is minor. Why do we need "bool unsafe_execve_in_progress" ?
+> >> If this patch is correct, de_thread() can drop/reacquire cred_guard_mutex
+> >> unconditionally.
+> >>
+>
+> I would not like to drop the mutex when no absolutely necessary for performance reasons.
 
-> From: pengdonglin <pengdonglin@xiaomi.com>
->
-> Since commit a8bb74acd8efe ("rcu: Consolidate RCU-sched update-side funct=
-ion definitions")
-> there is no difference between rcu_read_lock(), rcu_read_lock_bh() and
-> rcu_read_lock_sched() in terms of RCU read section and the relevant grace
-> period. That means that spin_lock(), which implies rcu_read_lock_sched(),
-> also implies rcu_read_lock().
->
-> There is no need no explicitly start a RCU read section if one has already
-> been started implicitly by spin_lock().
->
-> Simplify the code and remove the inner rcu_read_lock() invocation.
->
-> Cc: "Toke" <toke@toke.dk>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-> Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
+OK, I won't insist... But I don't really understand how this can help to
+improve the performance. If nothing else, this adds another for_other_threads()
+loop.
 
-Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk>
+And again, the unsafe_execve_in_progress == T case is unlikely. I'm afraid this
+case (de_thread() without cred_guard_mutex) won't have enough testing.
+
+In any case, why you dislike the suggestion to add this unsafe_execve_in_progress
+logic in a separate patch?
+
+> >>> +	if (unlikely(unsafe_execve_in_progress)) {
+> >>> +		spin_unlock_irq(lock);
+> >>> +		sig->exec_bprm = bprm;
+> >>> +		mutex_unlock(&sig->cred_guard_mutex);
+> >>> +		spin_lock_irq(lock);
+> >>
+> >> I don't think spin_unlock_irq() + spin_lock_irq() makes any sense...
+> >>
+>
+> Since the spin lock was acquired while holding the mutex, both should be
+> unlocked in reverse sequence and the spin lock re-acquired after releasing
+> the mutex.
+
+Why?
+
+> I'd expect the scheduler to do a task switch after the cred_guard_mutex is
+> unlocked, at least in the RT-linux variant, while the spin lock is not yet
+> unlocked.
+
+I must have missed something, but I still don't understand why this would
+be wrong...
+
+> >>> @@ -1114,13 +1139,31 @@ int begin_new_exec(struct linux_binprm * bprm)
+> >>>  	 */
+> >>>  	trace_sched_prepare_exec(current, bprm);
+> >>>
+> >>> +	/* If the binary is not readable then enforce mm->dumpable=0 */
+> >>> +	would_dump(bprm, bprm->file);
+> >>> +	if (bprm->have_execfd)
+> >>> +		would_dump(bprm, bprm->executable);
+> >>> +
+> >>> +	/*
+> >>> +	 * Figure out dumpability. Note that this checking only of current
+> >>> +	 * is wrong, but userspace depends on it. This should be testing
+> >>> +	 * bprm->secureexec instead.
+> >>> +	 */
+> >>> +	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
+> >>> +	    is_dumpability_changed(current_cred(), bprm->cred) ||
+> >>> +	    !(uid_eq(current_euid(), current_uid()) &&
+> >>> +	      gid_eq(current_egid(), current_gid())))
+> >>> +		set_dumpable(bprm->mm, suid_dumpable);
+> >>> +	else
+> >>> +		set_dumpable(bprm->mm, SUID_DUMP_USER);
+> >>> +
+> >>
+> >> OK, we need to do this before de_thread() drops cred_guard_mutex.
+> >> But imo this too should be done in a separate patch, the changelog should
+> >> explain this change.
+> >>
+>
+> The dumpability need to be determined before de_thread, because ptrace_may_access
+> needs this information to determine if the tracer is allowed to ptrace. That is
+> part of the core of the patch, it would not work without that.
+
+Yes,
+
+> I will add more comments to make that more easy to understand.
+
+But again, why this change can't come in a separate patch? Before the patch which
+drops cred_guard_mutex in de_thread().
+
+> >> 	int lock_current_cgm(void)
+> >> 	{
+> >> 		if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
+> >> 			return -ERESTARTNOINTR;
+> >>
+> >> 		if (!current->signal->group_exec_task)
+> >> 			return 0;
+> >>
+> >> 		WARN_ON(!fatal_signal_pending(current));
+> >> 		mutex_unlock(&current->signal->cred_guard_mutex);
+> >> 		return -ERESTARTNOINTR;
+> >> 	}
+> >>
+> >> ?
+> >>
+>
+> Some use mutex_lock_interruptible and some use mutex_lock_killable here,
+> so it wont work for all of them.  I would not consider this a new kind
+> of dead-lock free mutex, but just an open-coded state machine, handling
+> the state that the tasks have whild de_thread is running.
+
+OK. and we don't have mutex_lock_state(). I think that all users could
+use mutex_lock_killable(), but you are right anyway, and this is minor.
+
+> >> Note that it checks ->group_exec_task, not ->exec_bprm. So this change can
+> >> come in a separate patch too, but I won't insist.
+
+Yes. Although this is minor too ;)
+
+> >> This is the most problematic change which I can't review...
+> >>
+> >> Firstly, it changes task->mm/real_cred for __ptrace_may_access() and this
+> >> looks dangerous to me.
+> >
+> > Yeah, that is not ok. This is effectively override_creds for real_cred
+> > and that is not a pattern I want to see us establish at all! Temporary
+> > credential overrides for the subjective credentials is already terrible
+> > but at least we have the explicit split between real_cred and cred
+> > expressely for that. So no, that's not an acceptable solution.
+> >
+>
+> Okay I understand your point.
+> I did this originally just to avoid to have to change the interface to all
+> the security engines, but instead I could add a flag PTRACE_MODE_BPRMCREDS to
+> the ptrace_may_access which must be handled in all security engines, to use
+> child->signal->exec_bprm->creds instead of __task_cred(child).
+
+Can't comment... I don't understand your idea, but this is my fault. I guess
+this needs more changes, in particular __ptrace_may_access_mm_cred(), but
+most probably I misunderstood your idea.
+
+>
+> >> Or. check_unsafe_exec() sets LSM_UNSAFE_PTRACE if ptrace. Is it safe to
+> >> ptrace the execing task after that? I have no idea what the security hooks
+> >> can do...
+>
+> That means the tracee is already ptraced before the execve, and SUID-bits
+> do not work as usual, and are more or less ignored.  But in this patch
+> the tracee is not yet ptraced.
+
+Well. I meant that if LSM_UNSAFE_PTRACE is not set, then currently (say)
+security_bprm_committing_creds() has all rights to assume that the execing
+task is not ptraced. Yes, I don't see any potential problem right now, but
+still.
+
+And just in case... Lets look at this code
+
+	+                               rcu_assign_pointer(task->real_cred, bprm->cred);
+	+                               task->mm = bprm->mm;
+	+                               retval = __ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS);
+	+                               rcu_assign_pointer(task->real_cred, old_cred);
+	+                               task->mm = old_mm;
+
+again.
+
+This is mostly theoretical, but what if begin_new_exec() fails after de_thread()
+and before exec_mmap() and/or commit_creds(bprm->cred) ? In this case the execing
+thread will report SIGSEGV to debugger which can (say) read old_mm.
+
+No?
+
+I am starting to think that ptrace_attach() should simply fail with -EWOULDBLOCK
+if it detects "unsafe_execve_in_progress" ... And perhaps this is what you already
+tried to do in the past, I can't recall :/
+
+Oleg.
 
