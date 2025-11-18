@@ -1,133 +1,100 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21F03546E7;
-	Tue, 18 Nov 2025 14:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DF7368285
+	for <linux-security-module@vger.kernel.org>; Tue, 18 Nov 2025 15:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763475423; cv=none; b=dEPr3GPailmoNvW3KWmhUAOcWiJMiwRnmED73F02KYz1Fq53U87cU1Tov61NB51QYnt6JO7ayDa/3elj81W+gu7I4VGLwWiTS07aiHpP0znKm4pYNrb0doDoQMj/JHOhbnCwAUIHRjCusNO2HMVwPR522S8FLoc1J50yyehkkVE=
+	t=1763480842; cv=none; b=i9gZEe9lGzznXw2pKwQYYWjJaJ7E7oFMExeGkfrys0l9c/bNFaZt5OtGYHfEuVeMz+kZhQ9zga876+bVQtjzdAAjKYJUNrDEYEWfMcQBquCf6KqCNiuOPr6BZujN+CwXAKsh4BJTMbeTPUretbM84JTYxr+9sHBJ9PqmLnS05pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763475423; c=relaxed/simple;
-	bh=XFPbK1QualsnUGJsByYYFNsWe9rOHvb4jSlX1SDesFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AaIrfX+hsouNj1B6YuWM2/qEsXt3A1TpXcjt05DmjnUvrfYHcA5FG0d/tD/FZQ9N2pbpMGxgoGFgyma0bAd4xieJMjlaud/Lb30JbTA4tOqIgazOCz3p4vBc+LUwOjoT2kJ3+p+pX2n0hpiknl7DANnrJAQ2Wtz6LauNqu7qWfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id C1A73758; Tue, 18 Nov 2025 08:16:52 -0600 (CST)
-Date: Tue, 18 Nov 2025 08:16:52 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-	linux-security-module@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>,
-	Ryan Foster <foster.ryan.r@gmail.com>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH] Clarify the rootid_owns_currentns
-Message-ID: <aRx/1MvvBqu5MhKv@mail.hallyn.com>
-References: <aRegH8P4cPlzzlX9@mail.hallyn.com>
+	s=arc-20240116; t=1763480842; c=relaxed/simple;
+	bh=8CQCmidGdPkc2b/tZmkROHBO9f7ZOzfmG4di24uwWVI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kHvHxrYpibB/HdKMyzBjpj2HLb/dkzOI1RONo5kqlKACP1eVklLgZKm7PIklYLGkCTzgfUNRh1EF0AhFCewl0hPUs7BHdXkfqVMfGsjOlAIJQgJYdtakDtSjuxQ1rycoh0GYYNn5INvrxqLREtdMGiyUg+OYzfddw7lM92pb+Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=f+V8oOoi; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="f+V8oOoi"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-299d40b0845so44683735ad.3
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Nov 2025 07:47:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1763480839; x=1764085639; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I04v2N1nzI9o6E2ZzcTjSlfjZjbOjQHTpl7HKOLq/9o=;
+        b=f+V8oOoijvub9kXVkLhPrcl1KBHf3evs1LhlfKhYLYTmmmTkRlv5zxbDL+TzHVqdrG
+         Pq5qrxWBK9RPIqDTz099DiQXjRETaWW/EFegWQ/YGEfYKwuHXA8TFmIzhVrYRihGzGtD
+         NgovPhpz9eOjpSVle8F+InS34RLtAayAtaHXxlt/3sRhSOto1WkcAGoW6uelT1ajJZgO
+         mUTUwQ3ekflaUzAftJHcEHn8LQvaFaAePvT8EETAfUmZroH4AfOFVZRM/LN2c2MKk3IO
+         bO1NotiiifqdNemacQNZsGb+igu1Yo9yHyOZJruqU5USU+HwttvYjK5Z0dj8R045gEUI
+         PGWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763480839; x=1764085639;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=I04v2N1nzI9o6E2ZzcTjSlfjZjbOjQHTpl7HKOLq/9o=;
+        b=Us6sixug0UYKZWfp5u2t2nMjqYa/sUlve2LYSMGUISdMvrdgyKUezrbGtD9HqnSitM
+         YecW3NPo4h7Or633ooKg7hq6b5ZQpuJci5amPw4pCSEFZ1eem/zxqYzg3oGtSLr+6Dz8
+         BCfSdLanJdNZl9vJPuojhSz781+TtNKJ+OCKT/tWa2aHgy13SyMXwyPIDS16MHcy32JF
+         8NHyfxeq1Fy36fJXZFQfXcIViSwemiDzV4XmX7yRYkftdEron3VzEFWhiK2v45myToMV
+         SgyOKju0fDMDf2mFBttTAvZF8Bn7Gn3x0SC+K3fhJ8a8HhhULT/pVdeSZMIRTzjM3inI
+         96pw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNs1329C9fA2wwWI3zRU8j4xfkmuen5aH06vzxkphJS6o0mQFrQdawdX9AULbuulRiepWqeeDQeUvpgrPCBE+rNg0FKkY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuwJJ7Y+pbg74WJ3/ykszmRnVVAE/ZrADxo/72+valsmVyAlLZ
+	x9wJw4e4SwAcI5aKyYR2/KuAoR8xpFbWCONiXbMyldydOqBZXJ0lO3J6qp9J4vysk1759n6kZdR
+	zJ35KR51h8JSuMoyCcd7zk6rbrBp2TSu3ByP1G8lC
+X-Gm-Gg: ASbGnct9LEYHFsm8ENdO5/nFH8GLfXp65lqkDgPeXydXq7bZynDa/UWdq4Ptp+JnVEG
+	IGx2NopfeTf74iXMbCWLNddT/HEFPUxvneBR951BFLCzOTRTB+PQsbNS/8gxSR38ku9F6WEeQ/P
+	grOgXWA+h/nOXdjp/30VARQGxS144aMwQWp41D+1kiFCaFfUfM0+wv6BP6BMow/h6IRwiHFkiwY
+	Hnat3UuErs6eazoz4lKfjZHcM8RkCA4hsN9mGla1LesfLpOjGjlBUo1YwcoSrFFPqRm+h6hfJeB
+	3eLQrg==
+X-Google-Smtp-Source: AGHT+IEvgFXlL2DsS+aYCNAbX23FZ2Eku3IbWa1uZyiKXdLu+8y0gB8DpM0LkB8g4IdougIX4ixY5jGOUHP/wszkXH8=
+X-Received: by 2002:a17:902:d607:b0:295:34ba:7afa with SMTP id
+ d9443c01a7336-2986a7524d7mr200384905ad.43.1763480839493; Tue, 18 Nov 2025
+ 07:47:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRegH8P4cPlzzlX9@mail.hallyn.com>
+References: <aRegH8P4cPlzzlX9@mail.hallyn.com> <aRx/1MvvBqu5MhKv@mail.hallyn.com>
+In-Reply-To: <aRx/1MvvBqu5MhKv@mail.hallyn.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 18 Nov 2025 10:47:06 -0500
+X-Gm-Features: AWmQ_bl-rI09S5jbfOXl0N9IHhgOj5J7kiACv5E0eqfRv6DzNnvZ4n1T26vt5m8
+Message-ID: <CAHC9VhQu7gSVO-QZFE_iaCB0qBqB3surdHQo4Vg71zc890uEhA@mail.gmail.com>
+Subject: Re: [PATCH] Clarify the rootid_owns_currentns
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, linux-security-module@vger.kernel.org, 
+	Ryan Foster <foster.ryan.r@gmail.com>, Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 14, 2025 at 03:33:19PM -0600, Serge E. Hallyn wrote:
-> Split most of the rootid_owns_currentns() functionality
-> into a more generic rootid_owns_ns() function which
-> will be easier to write tests for.
-> 
-> Rename the functions and variables to make clear that
-> the ids being tested could be any uid.
-> 
-> Signed-off-by: Serge Hallyn <serge@hallyn.com>
-> CC: Ryan Foster <foster.ryan.r@gmail.com>
-> CC: Christian Brauner <brauner@kernel.org>
+On Tue, Nov 18, 2025 at 9:16=E2=80=AFAM Serge E. Hallyn <serge@hallyn.com> =
+wrote:
+> On Fri, Nov 14, 2025 at 03:33:19PM -0600, Serge E. Hallyn wrote:
+> > Split most of the rootid_owns_currentns() functionality
+> > into a more generic rootid_owns_ns() function which
+> > will be easier to write tests for.
+> >
+> > Rename the functions and variables to make clear that
+> > the ids being tested could be any uid.
+> >
+> > Signed-off-by: Serge Hallyn <serge@hallyn.com>
+> > CC: Ryan Foster <foster.ryan.r@gmail.com>
+> > CC: Christian Brauner <brauner@kernel.org>
+>
+> Paul, Christian, let me know if you have any objections, else I will
+> queue this up in caps-next.
 
-Paul, Christian, let me know if you have any objections, else I will
-queue this up in caps-next.
+Seems reasonable to me, but it would be good to fix the parameter doc
+bug that the kernel test robot identified.  I suspect it is just the
+extra vertical comment space between the top one line summary and the
+parameter list.
 
-Ryan, based on this you would be able to do more useful unit ktests:
-you could create some simple user namespaces with mappings which do
-or do not have uid 0 in ns mapped to the kuid you are querying.
-
-> ---
->  security/commoncap.c | 35 +++++++++++++++++++++++------------
->  1 file changed, 23 insertions(+), 12 deletions(-)
-> 
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 6bd4adeb4795..8a81fdc12cbe 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -358,17 +358,18 @@ int cap_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry)
->  	return error;
->  }
->  
-> -static bool rootid_owns_currentns(vfsuid_t rootvfsuid)
-> +/**
-> + * kuid_root_in_ns - check whether the given kuid is root in the given ns
-> + *
-> + * @kuid - the kuid to be tested
-> + * @ns - the user namespace to test against
-> + *
-> + * Returns true if @kuid represents the root user in @ns, false otherwise.
-> + */
-> +static bool kuid_root_in_ns(kuid_t kuid, struct user_namespace *ns)
->  {
-> -	struct user_namespace *ns;
-> -	kuid_t kroot;
-> -
-> -	if (!vfsuid_valid(rootvfsuid))
-> -		return false;
-> -
-> -	kroot = vfsuid_into_kuid(rootvfsuid);
-> -	for (ns = current_user_ns();; ns = ns->parent) {
-> -		if (from_kuid(ns, kroot) == 0)
-> +	for (;; ns = ns->parent) {
-> +		if (from_kuid(ns, kuid) == 0)
->  			return true;
->  		if (ns == &init_user_ns)
->  			break;
-> @@ -377,6 +378,16 @@ static bool rootid_owns_currentns(vfsuid_t rootvfsuid)
->  	return false;
->  }
->  
-> +static bool vfsuid_root_in_currentns(vfsuid_t vfsuid)
-> +{
-> +	kuid_t kuid;
-> +
-> +	if (!vfsuid_valid(vfsuid))
-> +		return false;
-> +	kuid = vfsuid_into_kuid(vfsuid);
-> +	return kuid_root_in_ns(kuid, current_user_ns());
-> +}
-> +
->  static __u32 sansflags(__u32 m)
->  {
->  	return m & ~VFS_CAP_FLAGS_EFFECTIVE;
-> @@ -481,7 +492,7 @@ int cap_inode_getsecurity(struct mnt_idmap *idmap,
->  		goto out_free;
->  	}
->  
-> -	if (!rootid_owns_currentns(vfsroot)) {
-> +	if (!vfsuid_root_in_currentns(vfsroot)) {
->  		size = -EOVERFLOW;
->  		goto out_free;
->  	}
-> @@ -722,7 +733,7 @@ int get_vfs_caps_from_disk(struct mnt_idmap *idmap,
->  	/* Limit the caps to the mounter of the filesystem
->  	 * or the more limited uid specified in the xattr.
->  	 */
-> -	if (!rootid_owns_currentns(rootvfsuid))
-> +	if (!vfsuid_root_in_currentns(rootvfsuid))
->  		return -ENODATA;
->  
->  	cpu_caps->permitted.val = le32_to_cpu(caps->data[0].permitted);
-> -- 
-> 2.34.1
-> 
+--=20
+paul-moore.com
