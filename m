@@ -1,111 +1,107 @@
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773F72F3629;
-	Tue, 18 Nov 2025 09:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4595D2DA76F;
+	Tue, 18 Nov 2025 11:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763456704; cv=none; b=RdVS+Z1UgKHi5QyeNMWEhBDtoHn9tdhGN3Zp+LF1V0C5KujY53XBAzV0ycrtMvZGNLCgiJIaG423brm6AbbWd2/jPSz6QZyWpKvI7OmuFCOFTK1E2rUdJArSOXsPVi/s/FFaP2Jp5lgUH/AB5Aqtiy5EYNJi7xeLj8tnlOC+39c=
+	t=1763464182; cv=none; b=ijQr+JX95zBytmI/brNbtbbrZxfVywwTzYvGRQWq95NZSQqRfz13h+VSpbEMLUCxS67w7LURvY21cv/y16cx6XslB0YDRHvAiKY0cx0StL/lmoaftxoT1S/MQ322+9mXmZIkUGG3HB2BrwIIDuUkX6SGyplh3M5SINc8XEys9+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763456704; c=relaxed/simple;
-	bh=oTAojCy2hPmMHzAOkdawD6DewsGfTCJ/o0W46KMtvLY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qcpoLMiT/kwIDwpYmXu0dEA+m2NYx0oqr6su80N3WD37If08bgWV90gL+dYKhgxLTLhWDjYMzxRbiTVDbKX9BTTK/vLsJWyORKbuO7sXfMCMmtVs1mc6SctuJeUa1e2JSxpI+wIkmv060w4GBfdH7XBZqPxAQ/Nn3YqKnMpEQRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=DXZPaFNT; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+	s=arc-20240116; t=1763464182; c=relaxed/simple;
+	bh=uTZCne4q7hwhSlgv1c+tdl662JBPe/6Bs63dHG+VGn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VaXLJx+E8qR8VyhxaYUeLlACr7elMSyQ3VcmSH/olswAbRF3iG5T2I+WytF/sOWcl0HnxX4gUtLwkRPN83u/XDdiU7qWiJstK8QdFqLQFsGz4FcvM8PtSlQdx0xNJv1mOYIybAxgeaukRzggJ8HKfppHbo+9Jd5ezfg+zId60C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qvoG7miv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="DXZPaFNT"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=c6fa7QJOnz8NJQgzl17rpisybY7idNpQfEsxCy9RvJA=; t=1763456701;
-	x=1764061501; b=DXZPaFNTn+2Ijv7S0IREQIk/fpA3PR3eHZQdbPQ5ZGWAxR6XtuBMWcWEGTZBe
-	DejYubSO88qqqXpubumoeUwJrJDXYULWfCX0QK2KHaZrj9ziV87/9s3emu9/nX5F60SInxpwf9nEY
-	tMomDXKi7MzT2cvY9pFM8P6gKopGb7wI54xOdMaEbJpdhgbjYc9ERvLOle/gdNksaYYkhN02k4Myo
-	repANiStpYRCfBFkKR/WhnrgH/d9JWCPJO5iyh8rVeNJtFZENW4Hvh98EagHOfE47LMDHxnp4aFS0
-	vLcf94GXh0KP+HEYGv1PiZuU+vcjV5/EZQbNA6t6BDgowE0MnA==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1vLHdz-000000028Hv-1ifL; Tue, 18 Nov 2025 10:04:59 +0100
-Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1vLHdz-00000002TfY-0osH; Tue, 18 Nov 2025 10:04:59 +0100
-Message-ID: <bc21bee14ca44077ae9323bfc251ad12390fa841.camel@physik.fu-berlin.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qvoG7miv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D01B2C19423;
+	Tue, 18 Nov 2025 11:09:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763464180;
+	bh=uTZCne4q7hwhSlgv1c+tdl662JBPe/6Bs63dHG+VGn8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qvoG7mivf2kJkwmtym8zMHqi7e89PlF5arfm49N0GmQLqaUruTynb26uFaGxDhSkq
+	 YMv3qEUbRR34tGb9YTL2bCBmtjdLIBp4Bs+M3j0BrTW7CZZcRYFUJKCY3KlXZReqeP
+	 XNQcuhk++UMY7EkMGnnIsq3eEkY3ciDpZbSfqngdalzoEn3DV6Mi0RrmpX5Isf6cOc
+	 rkOe2Bmvx0+M5m11kUgqK2KlbsKDQJkQEp7kx5oHXDr8Mnfht8GgoA73oin5mMBZnv
+	 /VM6UHwqnqNDPACAK7oskmxT+xQSqfawUsXZc0lgXcuDxSgn71P+APkJSnI/zvSuyb
+	 ynkLeM1EK7yAw==
+Date: Tue, 18 Nov 2025 12:09:35 +0100
+From: Helge Deller <deller@kernel.org>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com,
+	John Johansen <john.johansen@canonical.com>,
+	linux-security-module@vger.kernel.org, Helge Deller <deller@gmx.de>
 Subject: Re: [PATCH 0/2] apparmor unaligned memory fixes
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: deller@kernel.org, linux-kernel@vger.kernel.org,
- apparmor@lists.ubuntu.com,  John Johansen <john.johansen@canonical.com>,
- linux-security-module@vger.kernel.org
-Cc: Helge Deller <deller@gmx.de>
-Date: Tue, 18 Nov 2025 10:04:58 +0100
-In-Reply-To: <20250531150822.135803-1-deller@kernel.org>
+Message-ID: <aRxT78fdN5v2Ajyl@p100>
 References: <20250531150822.135803-1-deller@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 
+ <bc21bee14ca44077ae9323bfc251ad12390fa841.camel@physik.fu-berlin.de>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bc21bee14ca44077ae9323bfc251ad12390fa841.camel@physik.fu-berlin.de>
 
-Hi Helge,
+Hi Adrian,
 
-On Sat, 2025-05-31 at 17:08 +0200, deller@kernel.org wrote:
-> From: Helge Deller <deller@gmx.de>
->=20
-> Two patches which fix unaligned memory accesses in apparmor.
-> Both triggered on the parisc platform, which is much more
-> memory alignment sensitive and will report violations.
-> Please check and apply.
->=20
-> Helge
->=20
-> Helge Deller (2):
->   apparmor: Fix 8-byte alignment for initial dfa blob streams
->   apparmor: Fix unaligned memory accesses in KUnit test
->=20
->  security/apparmor/lsm.c                | 4 ++--
->  security/apparmor/policy_unpack_test.c | 6 ++++--
->  2 files changed, 6 insertions(+), 4 deletions(-)
-
-Thanks for looking into this!
-
-Unfortunately, the problem still persists on SPARC even with v6.18-rc6:
-
-[   76.209476] Kernel unaligned access at TPC[8dabfc] aa_dfa_unpack+0x3c/0x=
-6e0
-[   76.301115] Kernel unaligned access at TPC[8dac0c] aa_dfa_unpack+0x4c/0x=
-6e0
-[   76.392697] Kernel unaligned access at TPC[8dacf0] aa_dfa_unpack+0x130/0=
-x6e0
-[   76.485440] Kernel unaligned access at TPC[8dacf0] aa_dfa_unpack+0x130/0=
-x6e0
-[   76.578179] Kernel unaligned access at TPC[8dacf0] aa_dfa_unpack+0x130/0=
-x6e0
-
-I have documented the problem here [1].
-
-So, I suspect that your fix is incomplete.
-
-Adrian
-
+* John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>:
+> On Sat, 2025-05-31 at 17:08 +0200, deller@kernel.org wrote:
+> > From: Helge Deller <deller@gmx.de>
+> > 
+> > Two patches which fix unaligned memory accesses in apparmor.
+> > Both triggered on the parisc platform, which is much more
+> > memory alignment sensitive and will report violations.
+> > Please check and apply.
+> > 
+> > Helge
+> > 
+> > Helge Deller (2):
+> >   apparmor: Fix 8-byte alignment for initial dfa blob streams
+> >   apparmor: Fix unaligned memory accesses in KUnit test
+> > 
+> >  security/apparmor/lsm.c                | 4 ++--
+> >  security/apparmor/policy_unpack_test.c | 6 ++++--
+> >  2 files changed, 6 insertions(+), 4 deletions(-)
+> 
+> Thanks for looking into this!
+> 
+> Unfortunately, the problem still persists on SPARC even with v6.18-rc6:
+> 
+> [   76.209476] Kernel unaligned access at TPC[8dabfc] aa_dfa_unpack+0x3c/0x6e0
+> [   76.301115] Kernel unaligned access at TPC[8dac0c] aa_dfa_unpack+0x4c/0x6e0
+> [   76.392697] Kernel unaligned access at TPC[8dacf0] aa_dfa_unpack+0x130/0x6e0
+> [   76.485440] Kernel unaligned access at TPC[8dacf0] aa_dfa_unpack+0x130/0x6e0
+> [   76.578179] Kernel unaligned access at TPC[8dacf0] aa_dfa_unpack+0x130/0x6e0
+> 
+> I have documented the problem here [1].
 > [1] https://github.com/sparclinux/issues/issues/30
+> 
+> So, I suspect that your fix is incomplete.
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+My patch fixed two call sites, but I suspect you see another call site which
+hasn't been fixed yet.
+
+Can you try attached patch? It might indicate the caller of the function and
+maybe prints the struct name/address which isn't aligned.
+
+Helge
+
+
+diff --git a/security/apparmor/match.c b/security/apparmor/match.c
+index c5a91600842a..b477430c07eb 100644
+--- a/security/apparmor/match.c
++++ b/security/apparmor/match.c
+@@ -313,6 +313,9 @@ struct aa_dfa *aa_dfa_unpack(void *blob, size_t size, int flags)
+ 	if (size < sizeof(struct table_set_header))
+ 		goto fail;
+ 
++	if (WARN_ON(((unsigned long)data) & (BITS_PER_LONG/8 - 1)))
++		pr_warn("dfa blob stream %pS not aligned.\n", data);
++
+ 	if (ntohl(*(__be32 *) data) != YYTH_MAGIC)
+ 		goto fail;
+ 
