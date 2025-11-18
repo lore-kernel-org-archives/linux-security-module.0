@@ -1,81 +1,111 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FC32FE063;
-	Tue, 18 Nov 2025 07:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773F72F3629;
+	Tue, 18 Nov 2025 09:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763450695; cv=none; b=m6d7nErSryawtU4OMg61UuZ5dVBB4BqglwWDQ4aWtftze9QBSaC5OLU99549EKImMtKffHE39JHwhKDtQwN1aXR/+LrTpm17SHEC4yyR0WEPe72sAFFt+mVjFHpK05EsCqWA3E6rqxUPDH5QF0mg4RdbkXhJv6BFNFCW4qk33UY=
+	t=1763456704; cv=none; b=RdVS+Z1UgKHi5QyeNMWEhBDtoHn9tdhGN3Zp+LF1V0C5KujY53XBAzV0ycrtMvZGNLCgiJIaG423brm6AbbWd2/jPSz6QZyWpKvI7OmuFCOFTK1E2rUdJArSOXsPVi/s/FFaP2Jp5lgUH/AB5Aqtiy5EYNJi7xeLj8tnlOC+39c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763450695; c=relaxed/simple;
-	bh=jrjinFXbeDbMX2dy8EHh/ldqeCkJ7jxk4YEibZJS9Kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HoH1G0nO4PkeQnDKqBZDFO7sglur6hklTh6YiCKWNo2w62HZr7mf24LA5uRQXZBMfjHcz9q1XVSrbPQfx0UdXh96kD/8kdajyV3rM0X9DRRGhJMXBOJxTUA8nvxARGQbTJbjxUZLTQh2hVO9jM44/zcEnd5WhdprF+DpU7996LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=24QE6ZMl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HemVkTlf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1763456704; c=relaxed/simple;
+	bh=oTAojCy2hPmMHzAOkdawD6DewsGfTCJ/o0W46KMtvLY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qcpoLMiT/kwIDwpYmXu0dEA+m2NYx0oqr6su80N3WD37If08bgWV90gL+dYKhgxLTLhWDjYMzxRbiTVDbKX9BTTK/vLsJWyORKbuO7sXfMCMmtVs1mc6SctuJeUa1e2JSxpI+wIkmv060w4GBfdH7XBZqPxAQ/Nn3YqKnMpEQRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=DXZPaFNT; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="24QE6ZMl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HemVkTlf"
-Date: Tue, 18 Nov 2025 08:24:49 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1763450691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I9vA6V+bN9GTdLdJJnTr5BmlcMkR802o3dcmS/oJ4PA=;
-	b=24QE6ZMlr+aPw0mCJ5+WZU96Ur1bJED22ECyuR3qc6mknaLzxVccN1eBwGOEHnhDPXViIi
-	vYgzPxjYImC932JHg5SRA4a/U7iRiyXlufjgEKN4WCeGZs0vyBoTiY57FYZhIlaLZIjOYL
-	+alp7QvobezEF44LShBi4xm5QwByUm+lr5oir3v42WJgDcsNA1jjMRsN3D7i9qQlM6SH/w
-	Q7jKWbml/XlgMaWqRO6CbEuEcKtaMflllcFEPJbOfhRueQ9ruRBPn/TM+ku3PXkSxlYXiS
-	tZlF7YYrv2qXgzM7t0CdOvC+IbV/y+85xI811fdS8iBRo5Im02eMP11MJthBmA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1763450691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I9vA6V+bN9GTdLdJJnTr5BmlcMkR802o3dcmS/oJ4PA=;
-	b=HemVkTlfIKjmIexQaIi7tETka6Ixoo5dyRx/jz0Qu6Db6AH88jYgFE/IZlIzrJ2xfOoL2m
-	0DLyByvQHHJXBSDA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: pengdonglin <dolinux.peng@gmail.com>
-Cc: tj@kernel.org, tony.luck@intel.com, jani.nikula@linux.intel.com,
-	ap420073@gmail.com, jv@jvosburgh.net, freude@linux.ibm.com,
-	bcrl@kvack.org, trondmy@kernel.org, longman@redhat.com,
-	kees@kernel.org, hdanton@sina.com, paulmck@kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	linux-nfs@vger.kernel.org, linux-aio@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org, linux-wireless@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-s390@vger.kernel.org,
-	cgroups@vger.kernel.org
-Subject: Re: [PATCH v3 00/14] Remove redundant rcu_read_lock/unlock() in
- spin_lock
-Message-ID: <20251118072449.PFe_yjOF@linutronix.de>
-References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="DXZPaFNT"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=c6fa7QJOnz8NJQgzl17rpisybY7idNpQfEsxCy9RvJA=; t=1763456701;
+	x=1764061501; b=DXZPaFNTn+2Ijv7S0IREQIk/fpA3PR3eHZQdbPQ5ZGWAxR6XtuBMWcWEGTZBe
+	DejYubSO88qqqXpubumoeUwJrJDXYULWfCX0QK2KHaZrj9ziV87/9s3emu9/nX5F60SInxpwf9nEY
+	tMomDXKi7MzT2cvY9pFM8P6gKopGb7wI54xOdMaEbJpdhgbjYc9ERvLOle/gdNksaYYkhN02k4Myo
+	repANiStpYRCfBFkKR/WhnrgH/d9JWCPJO5iyh8rVeNJtFZENW4Hvh98EagHOfE47LMDHxnp4aFS0
+	vLcf94GXh0KP+HEYGv1PiZuU+vcjV5/EZQbNA6t6BDgowE0MnA==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1vLHdz-000000028Hv-1ifL; Tue, 18 Nov 2025 10:04:59 +0100
+Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1vLHdz-00000002TfY-0osH; Tue, 18 Nov 2025 10:04:59 +0100
+Message-ID: <bc21bee14ca44077ae9323bfc251ad12390fa841.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 0/2] apparmor unaligned memory fixes
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: deller@kernel.org, linux-kernel@vger.kernel.org,
+ apparmor@lists.ubuntu.com,  John Johansen <john.johansen@canonical.com>,
+ linux-security-module@vger.kernel.org
+Cc: Helge Deller <deller@gmx.de>
+Date: Tue, 18 Nov 2025 10:04:58 +0100
+In-Reply-To: <20250531150822.135803-1-deller@kernel.org>
+References: <20250531150822.135803-1-deller@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250916044735.2316171-1-dolinux.peng@gmail.com>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On 2025-09-16 12:47:21 [+0800], pengdonglin wrote:
-Hi,
+Hi Helge,
 
-> There is no need no explicitly start a RCU read section if one has already
-> been started implicitly by spin_lock().
-> 
-> Simplify the code and remove the inner rcu_read_lock() invocation.
+On Sat, 2025-05-31 at 17:08 +0200, deller@kernel.org wrote:
+> From: Helge Deller <deller@gmx.de>
+>=20
+> Two patches which fix unaligned memory accesses in apparmor.
+> Both triggered on the parisc platform, which is much more
+> memory alignment sensitive and will report violations.
+> Please check and apply.
+>=20
+> Helge
+>=20
+> Helge Deller (2):
+>   apparmor: Fix 8-byte alignment for initial dfa blob streams
+>   apparmor: Fix unaligned memory accesses in KUnit test
+>=20
+>  security/apparmor/lsm.c                | 4 ++--
+>  security/apparmor/policy_unpack_test.c | 6 ++++--
+>  2 files changed, 6 insertions(+), 4 deletions(-)
 
-I'm not going argue if this is a good or not but: If you intend to get
-this merged I suggest you rebase your series (or what is left since I
-think a few patches got merged) on top of current tree and resend them
-individually targeting the relevant tree/ list. Otherwise everyone might
-think someone else is in charge of this big series.
+Thanks for looking into this!
 
-Sebastian
+Unfortunately, the problem still persists on SPARC even with v6.18-rc6:
+
+[   76.209476] Kernel unaligned access at TPC[8dabfc] aa_dfa_unpack+0x3c/0x=
+6e0
+[   76.301115] Kernel unaligned access at TPC[8dac0c] aa_dfa_unpack+0x4c/0x=
+6e0
+[   76.392697] Kernel unaligned access at TPC[8dacf0] aa_dfa_unpack+0x130/0=
+x6e0
+[   76.485440] Kernel unaligned access at TPC[8dacf0] aa_dfa_unpack+0x130/0=
+x6e0
+[   76.578179] Kernel unaligned access at TPC[8dacf0] aa_dfa_unpack+0x130/0=
+x6e0
+
+I have documented the problem here [1].
+
+So, I suspect that your fix is incomplete.
+
+Adrian
+
+> [1] https://github.com/sparclinux/issues/issues/30
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
