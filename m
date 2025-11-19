@@ -1,106 +1,145 @@
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E907820DD75
-	for <linux-security-module@vger.kernel.org>; Wed, 19 Nov 2025 15:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D952E368280;
+	Wed, 19 Nov 2025 15:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763566614; cv=none; b=Wgr7GKJ4knjlwdz6qpkiPwxoEvzwndeFy46aM5lhK69etf7jmcfZEZVZJN2EHT1Xs+fhCdZqgJQf2L9i3Cp68sAY4fFUMwr3UfIG/v19NoFRyOqGRAUWeeRKsVf1LPjE1V9dpz58/qKlhEpoljZUfcZ2yy6gYOpM+UYYgaSKOUA=
+	t=1763567325; cv=none; b=iKb83G2tbB2gg1T28TeFpGi0C7MVlBs0SQpEPQyI6vrqBpZqS8NgAB2Q+/hdknKAOrNiSq8/YZFrVGXwq+MosWI6Beq0EwhtzT5HbIwTPbz7MquzFV0TwdqD8rlSdX4lr9dSzZYoMTqus5t1FtIXS/WNv8PsWPYA5pvcnCR9AIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763566614; c=relaxed/simple;
-	bh=N2xMZeEI9JjPU3/uvR9ELU7litr6QQ8ip7uuV9Vjbug=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=LjPMDXIBFNKQMotBH0+s67X379r3Axbcb2D5pkO52CQ4bRZdvhJQ3RoIwkwoUhhpXHFPUcYVmwZdGEdqztXjVGGGn6AQiK5LauuGOeY2tMdha+Cr6rParsYzPQwJr/3Kp15iFwDEgyx8j0I6WlgVh1U5tpbOpm79WWfuFuh0YbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NytC/nZP; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1763567325; c=relaxed/simple;
+	bh=MStiUWaHLnkFbuKIFe0Os1WT6o/77tkLZdxBURkti9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEiQS3e/IFaHszi1Hjs6WxaCqGzHdFiFj5XkZ4l6F717c+pzGN8xS2MPjcr3A3BYRaf5o+gTsyF47UquIkdre21dUnkN9SjLo0br5VY0hovjxfctY+U4FT4NlHBAGC621j97TP3dDLN8QDdoY1Kba0hxncFuuFcnWo301Uo1j2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VRh9ulT9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XK8cAQQ9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NytC/nZP"
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-8b220ddc189so839141785a.0
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Nov 2025 07:36:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1763566611; x=1764171411; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mLR4UfqUvV1TY2S4l3Lb/dVz8s2mFGGIh2zq8vbLpz8=;
-        b=NytC/nZPiZwzWXz2JvVYvCjkC99rxXx775yLEJzW8VFQ7c53X8dttF0BCXRNjYeZIh
-         eXourl+ZOgejpwaoqo+QAqydezt/wonIccbBtZs88hJefvuieOTZ9amCqhL+r9qynUg4
-         nKPejpiT+YGvGZmTM7eWmklsIjUzYYTRsJ/XSfB1j1ovrPniKT4qSGZhzru7DqrpoSE7
-         8GXlH/C+LFQB9CTKZSO/HL3FNRzqVx6uhhuVTPbSPFI+JQ0V0aobIwkTRBnXzUeQVFRJ
-         FpsF6Ly2km5SJgCSy1wr8ocifYOmpLrNSFjhsqmpzNqY0RKV1uN09trzwbp4kzOipFZP
-         /trg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763566611; x=1764171411;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mLR4UfqUvV1TY2S4l3Lb/dVz8s2mFGGIh2zq8vbLpz8=;
-        b=l0plBIHDXIzRCDTC2+499EfjmKmZFaN7If1FlVjR/bJiaM3dDKH/f3z25vsjgzFvQX
-         DqN/iPi/jjObEqSzlIMbDDllX/X3XQ4lhhUgOlanDreUx6W1JhkQRDOMAY53qA2fBpsL
-         WN+ShZkMundAMTctkG2PXCKI5jV2Jsh046+UIILpFr2vWfobwEGUGwFYvwPCZnjBdQqa
-         ziwTkqfhQtTdc5GNpwROjhMolsRqThDaOyubVSsKj9MlZXm7oA9nKaQy9NYnYOcuYYYB
-         6HIBGRaHZMPnm6pjtFvGH5tAjX42iHZ9ERxAatDAinQhsxtqc4E9icxS4oofI4TjEzgY
-         7jYg==
-X-Gm-Message-State: AOJu0Ywnufu4vE90qoS6BRU/W04mGX+33t8Hg/Bo66RQGnWOvQvFhfko
-	MRgry7sLrInm98nhBfASGxpRjfvEcJCchKuGElpwG1dl0o90xk31YVMYgP58QliK/L9/OoByVEg
-	85IA=
-X-Gm-Gg: ASbGncvUg+tS9JbaQhfjxCnXero55FMGA2qSF8jZf8TPqO9C6E2AkE+e9T+zF3Pt3vo
-	njIW+qRLRRVH2B/UHKvSIb4suj4iioD4Q6A28uxplUil0w7IbY+Z2EEEWDTyHvKqjlHlHw6Y2gr
-	VVi5qLbz1AUmyY/kn/cqVMELg17MtvpsGDR/gqojpwMK9rF6aOIjSoGbc7dYP47EgfZpXENPUPa
-	J33K9EJSL5ASnyv6dw0Mya7Yi4UH9o/D/tOsHN+qzEk2qFNHRw/YlIG1zcCZzKxwMTjOMpCJ4mE
-	IdnOizClNsNsFw2cxZ+NGS2qwbyxjrOnxMHNRXW8dHtX0JlkEQQfYrCLfZZHLNxShzG9CPytblh
-	bf9Ft/H3JTPX0/SRt1oKCFuvrnTtc0p64aviXzkB/1Okm4jYBwgoY22m8tqw13ybh9GdgguPVIf
-	621NUsR3tOEULWi4sWLZExoGMR450dJ6pMd6MpPGhcDVX4T4h433+W0a/6
-X-Google-Smtp-Source: AGHT+IEblDMzniqLjUHwMLprOJbPQ7pWRken9lEdMpvGAacJsfKzsLZymb3iYcHGkKmp3cQpIy7PDQ==
-X-Received: by 2002:a05:620a:298a:b0:8b2:efb6:5d07 with SMTP id af79cd13be357-8b2efb660femr1332286385a.48.1763566611402;
-        Wed, 19 Nov 2025 07:36:51 -0800 (PST)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2aee9e519sm1456951985a.5.2025.11.19.07.36.50
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Nov 2025 07:36:50 -0800 (PST)
-From: Paul Moore <paul@paul-moore.com>
-To: linux-security-module@vger.kernel.org
-Subject: [PATCH v2] lsm: use unrcu_pointer() for current->cred in security_init()
-Date: Wed, 19 Nov 2025 10:36:37 -0500
-Message-ID: <20251119153636.15243-2-paul@paul-moore.com>
-X-Mailer: git-send-email 2.52.0
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VRh9ulT9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XK8cAQQ9"
+Date: Wed, 19 Nov 2025 16:48:34 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1763567317;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dQnlE2n5aekx+v6zObGqphQStw7ib6XRN1BfScwnLic=;
+	b=VRh9ulT9FxvWXw7qMNvg+9uqEbxMCDbNhTdu0TX5v8Jes0ESbXArTw+TvOAvrxRS9JJ2HV
+	JXYinsWrLLUTIDhNkVDo8fLhscZVlJtULXtH2F8ss4EgU+hPaS3aGl1MektltakP3CN5AS
+	MR+m66XxqYw6tAt0DewTszz+Lq+yBh+ZO9bCCdD5EgizYN/0aHF3aHdNeVAqNlAE1p0xnH
+	anshj0nr96xb7MViJ6sK/AT50w5MEHipWVDn3a7naUaCV36XkpcXZRam5SR1Ldaz6/+zlK
+	edwu9fTV5jAk4FXDjYH0+qekDRokeOz/zYC1UIQt1SZJHvgDN8NzzGqdt45AMw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1763567317;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dQnlE2n5aekx+v6zObGqphQStw7ib6XRN1BfScwnLic=;
+	b=XK8cAQQ9othT6G++4p2Pn+74xeBwkh0bSY/TQQSgsoPxSMehVrp8KtnZXI7Biuir2r6hnA
+	WYH4a8uF8T6ihmBw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Fabian =?utf-8?Q?Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>,
+	Arnout Engelen <arnout@bzzt.net>,
+	Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>,
+	Christian Heusel <christian@heusel.eu>,
+	=?utf-8?B?Q8OianU=?= Mihai-Drosi <mcaju95@gmail.com>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v3 0/9] module: Introduce hash-based integrity checking
+Message-ID: <20251119154834.A-tQsLzh@linutronix.de>
+References: <20250429-module-hashes-v3-0-00e9258def9e@weissschuh.net>
+ <f1dca9daa01d0d2432c12ecabede3fa1389b1d29.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1075; i=paul@paul-moore.com; h=from:subject; bh=N2xMZeEI9JjPU3/uvR9ELU7litr6QQ8ip7uuV9Vjbug=; b=owEBbQKS/ZANAwAKAeog8tqXN4lzAcsmYgBpHeQE4u5DvSvDIuCUo8s4GWBo/4g/VYb6ir8Ih WV73HFZl6WJAjMEAAEKAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCaR3kBAAKCRDqIPLalzeJ c8UTD/9Yf9J6+AjczXeqVq6KI9u5NqfvNYWnI12LRkcKPSSdtApAnDzkqW3NQXp3xBA7BGFuApR 9rJLQyyR5DBRS5oROX3XKeDd85rGynGlVwHy2yDxAxsES4JnPLcpSU4Wv6EbhBCsDGCxo3JTIja XJ+K8WN2yjJHmJd5Qa6t78A+QrMtdRAlbS8TUCFSgtQGGYufOavguaXfFDdbAXOulEcmlTwISVG t8gHrXe87s08TczqDa5n56Ym4ZIPq8iDLVo6eaa+aSjz+zK1XtSWVOzx/bmdyZUvpqC2OxoNJ2C lnxQg7CIYrzVOQWuJ5BIJWNibc9b1FDa41RkudXEkEdEqj+QmugFV1ZGwNFny4JWmM1nBBceTQh 6ptRTYLxKtRYX9hnr8YVYy8FwWGeMNxLPE2EzDFBYd4+CYS7wBB18tj1hveGLnfHBffS5qrKd24 fJQAvfnZqRQWD0Vcxvr48Txh0kTA9AaG+yfeFaMP5sy/bXVqwDHTwEHqer5PZX3sFkpGq2mTd02 nmd2nwFE70eI6yEVGu5xnVg4Hc5BPOylt1NYJfNLehmJIDigagiVa7DdJkwR09sp5lZ8YXBTU3o HrctBnj1GsVeAMppgT8pkvLZjLuEPBss99pAzv9tasN5BYZNePR5afV9l8TL4z2SZ6y/AKjqLKV OCd11l63006TLBg==
-X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <f1dca9daa01d0d2432c12ecabede3fa1389b1d29.camel@HansenPartnership.com>
 
-We need to directly allocate the cred's LSM state for the initial task
-when we initialize the LSM framework.  Unfortunately, this results in a
-RCU related type mismatch, use the unrcu_pointer() macro to handle this
-a bit more elegantly.
+On 2025-04-29 10:05:04 [-0400], James Bottomley wrote:
+> On Tue, 2025-04-29 at 15:04 +0200, Thomas Wei=C3=9Fschuh wrote:
+> > The current signature-based module integrity checking has some
+> > drawbacks in combination with reproducible builds:
+> > Either the module signing key is generated at build time, which makes
+> > the build unreproducible,
+>=20
+> I don't believe it does: as long as you know what the key was, which
+> you can get from the kernel keyring, you can exactly reproduce the core
+> build (it's a public key after all and really equivalent to built in
+> configuration).  Is the fact that you have to boot the kernel to get
+> the key the problem?  In which case we could insist it be shipped in
+> the kernel packaging.
 
-The explicit type casting still remains as we need to work around the
-constification of current->cred in this particular case.
+The kernel itself is signed. This is not a problem because distros have
+the "unsigned" package which is used for comparison.
+The modules are signed by an ephemeral key which is created at build
+time. This is where the problem starts:
+- the public key is embedded into the kernel. Extracting it with tooling
+  is possible (or it is part of the kernel package). Adding this key
+  into the build process while rebuilding the kernel should work.
+  This will however alter the build process and is not *the* original
+  one, which was used to build the image.
 
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- security/lsm_init.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+- the private key remains unknown which means the modules can not be
+  signed. The rebuilding would need to get past this limitation and the
+  logic must not be affected by this "change". Then the modules need to
+  be stripped of their signature for the comparison.
 
-diff --git a/security/lsm_init.c b/security/lsm_init.c
-index 6bb67d41ce52..05bd52e6b1f2 100644
---- a/security/lsm_init.c
-+++ b/security/lsm_init.c
-@@ -467,7 +467,8 @@ int __init security_init(void)
- 						    blob_sizes.lbs_inode, 0,
- 						    SLAB_PANIC, NULL);
- 
--	if (lsm_cred_alloc((struct cred __rcu *)current->cred, GFP_KERNEL))
-+	if (lsm_cred_alloc((struct cred *)unrcu_pointer(current->cred),
-+			   GFP_KERNEL))
- 		panic("early LSM cred alloc failed\n");
- 	if (lsm_task_alloc(current))
- 		panic("early LSM task alloc failed\n");
--- 
-2.52.0
+Doing all this requires additional handling/ tooling on the "validation"
+infrastructure. This infrastructure works currently without special
+care.
+Adding special care will not build the package exactly like it has been
+built originally _and_ the results need to be interpreted (as in we
+remove this signature and do this and now it is fine).
 
+Adding hashes of each module into the kernel image looks like a
+reasonable thing to do. I don't see any downsides to this. Yes, you are
+limited to the modules available at build time but this is also the case
+today with the ephemeral key. It is meant for distros not for individual
+developers testing their code.
+
+With this change it is possible to build a kernel and its modules and
+put the result in an archive such as tar/ deb/ rpm. You can build the
+package _again_ following exactly the same steps as you did before and
+the result will be the identical archive.
+Bit by bit.
+No need for interpreting the results, stripping signatures or altering
+the build process.
+
+I fully agree with this approach. I don't like the big hash array but I
+have an idea how to optimize that part. So I don't see a problem in the
+long term.
+
+> Regards,
+>=20
+> James
+
+Sebastian
