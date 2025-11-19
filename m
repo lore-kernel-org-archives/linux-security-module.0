@@ -1,153 +1,122 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E759E33C195;
-	Wed, 19 Nov 2025 15:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0114C2E92B4
+	for <linux-security-module@vger.kernel.org>; Wed, 19 Nov 2025 15:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763566200; cv=none; b=juTSktJ0lBhbm3Iskwc7/hVg8zNf1KvJCqkQBL5EijcQj2/pV48+lVBMb/aMrl98lgnaJWhFil5SqM43uPQgm5PWNqAkq1tYiPU4eJlSmX8ijO+/qSVf3rrupEyPrFkMklM3CUysiBVVE5c2+wQXuR99oYTFPn67UhYZ6riwCDw=
+	t=1763566577; cv=none; b=bjUayDsbXPIZffGRfAxnVMzTjqd2mi2z+r8R2RcVTvmn9S4z+n+rhi9D2Icr1jWCBBpnRd8Wwz2sPqwYoe4MSTxV+e/GKJ4GyWNslAU2wlKbbjxC25v9uONW+SX5RDSWWDATfm/tdckJKjEQRdw9rXNnK5AgbLMieVxN1oGyYMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763566200; c=relaxed/simple;
-	bh=9+bfJz/6I8aRoScteWrYNqbPnvWMzfdijiEhQ43E8TU=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=LvqCWCpiqb06PJqjQNVRuOUi/lv97AnswIyzj6yi76eFMlj3veN1zeO0GZpk6+eoW+N0+emqPw1G5RkBUCkhA11JO2uaWrppPcsoFnZtFVVXZRemHaUvY7LUCjwaF8mfeMqMzQI/WkAmkQgvyKri2roQDlc9GVSokCkpbndYOAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VXwgIrj2; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1763566577; c=relaxed/simple;
+	bh=YJBOl5xRvHqehH+NZ2dFOyjFzGyhE3+Cz/8LYxg8Ldw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qfnNasoSF/SA3Ppxfje3eXk68A0aIRqQsUJlywm8aCxWzHthaHBLuiEboKNZ2BrbqcCfJeMsLGaIqf3U6oFW03ZFqDo8SBbLDfAA+fu2g0gaoBRP/jJoujqNA3gUCmds9AQqT15r4sBH00ZoOJ06bVymcYok8mHdEO0FMXtJuqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=V3rtJTCr; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VXwgIrj2"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AJ8SExl010859;
-	Wed, 19 Nov 2025 15:29:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=1aRhZa
-	7snvOM5oWKF8QoQlfa7Ar0YPQolGsuf2AHAsc=; b=VXwgIrj2v5Skg0G1txBtnx
-	gLrKZU1XrCXgiUDAU4pPv/REIQd+GOZTiSUnowhZAxA7rwXkxWA3IWHMMG4K6MPj
-	dolJmtcw0F56dwDtBEXGVs8qsfosKHfkLrn9lGgl5BPFqirUnPjzgrMTm+S+TWfa
-	ZS2apo5uaL6cg75mRHLmUU9mkollHtVfC75NkW0W9iqO10haFMkTUKNJkn2Nce+b
-	P41ITs1DIcT18SIwSN6QEY9FYtxuYsIwFdcUJzeDK/Xc2ClP7yAATgXozFQEv3Bk
-	AHIROz71zeTBS7RTpnbRf1VXas4zMpqlpYCXlcHfphHD/PUScXXrP5vfIT+qVC3g
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aejk1h9x9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Nov 2025 15:29:18 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AJFTFdZ028527;
-	Wed, 19 Nov 2025 15:29:18 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aejk1h9x7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Nov 2025 15:29:18 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AJEY4Ww010448;
-	Wed, 19 Nov 2025 15:29:17 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4af3us9h9u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Nov 2025 15:29:17 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AJFTG3223855624
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Nov 2025 15:29:16 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CD2A558043;
-	Wed, 19 Nov 2025 15:29:16 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A935A58055;
-	Wed, 19 Nov 2025 15:29:15 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.42.2])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 19 Nov 2025 15:29:15 +0000 (GMT)
-Message-ID: <b4b89006e56e0d1c02e503ea3c2f2ec3a0856b04.camel@linux.ibm.com>
-Subject: Re: [PATCH v4] ima: Access decompressed kernel module to verify
- appended signature
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
-Cc: Karel Srot <ksrot@redhat.com>, Paul Moore <paul@paul-moore.com>,
-        Luis
- Chamberlain <mcgrof@kernel.org>,
-        Petr Pavlu <petr.pavlu@suse.com>, Daniel
- Gomez <da.gomez@kernel.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin	
- <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
-        Fan
- Wu <wufan@kernel.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        open list	
- <linux-kernel@vger.kernel.org>,
-        "open list:MODULE SUPPORT"	
- <linux-modules@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM"	
- <linux-security-module@vger.kernel.org>,
-        "open list:SELINUX SECURITY
- MODULE"	 <selinux@vger.kernel.org>
-In-Reply-To: <20251119140326.787451-1-coxu@redhat.com>
-References: <20251031074016.1975356-1-coxu@redhat.com>
-	 <20251119140326.787451-1-coxu@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 19 Nov 2025 10:29:15 -0500
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="V3rtJTCr"
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3418ac74bffso4949187a91.1
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Nov 2025 07:36:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1763566575; x=1764171375; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o2/OWrT07JXUDJL9bCVK36i5AOlvLM/LAZfeF097gg4=;
+        b=V3rtJTCrYCom7BvzeT49RRu00m2+A8n4l36jZl6elM1YgbiEIn/94h3MSc10vHrXgP
+         8XzPZZeoj+3VjNBmKMiNv/kh1AfBPaKqvBVdnu6FvKp2w/C6HxbzR5mGP6iTN0DLFUjP
+         76ej+kJp4/n7Rgz2ZmdxW9655MydoVsWba5gzPiDoGO5eKYcGz51eRbn2axFOmYEOZOo
+         RKwwpal/HX3aD7O+kYihcU2VXmNpOOro2ujV5XIEyjEj4vkzL4FdkzrpOA07oNtuQpAg
+         JXaeLppOBeomFqXZqbI65/FEISxZ4QdNFcLFOwhmwMoMbMPqe0OGaOW9TNSHUsvASKxH
+         HiYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763566575; x=1764171375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=o2/OWrT07JXUDJL9bCVK36i5AOlvLM/LAZfeF097gg4=;
+        b=fmSoJPacjjlo8UZqBqoSZqce/iXddeF8YFdmw7zaIkNatMLD10nM+80wf2R1/8IStL
+         jX/NUVN4aVhDenjAzz7Jz0l9Xp1xzEnqxcv6r+kAX2O1BXX+Y27Od7s2yNnHmVGeMZ55
+         arLu++rahTvsjbVvxkY5GBkKnSJjOvHRGj+0GHxapc4VnC/wNSUDG7SGAuFf65QTk26j
+         RUhJnR6oN1Xysut+qvJdcxhk+6DD5FO1k8q78/Ta8dgeqdM9g4b8k6bsXL0InRfvXK/y
+         wZ3xmgjB5hl7NXPYUHKOWX/Cqo0b6FsSkkXzEeMmhfWrcHlNMpxHfhGQEjFCNxL+MYW9
+         9smg==
+X-Gm-Message-State: AOJu0YzcqxzGnycuku3GKtSmjJIosY6LaziKE3OawDzI1W6Deqp4M82h
+	ovIFsUYNOyFcVOFYnHNdjmQ/VOg3tsea3mTIceaTofRalPciOiXGDxzPlNnhQk4QQ13hSabuGqc
+	FYnBd0in50tvJuxOC5yh8THo48h7y/rAM57kcKhXsZ6MBltSi7WY=
+X-Gm-Gg: ASbGnctnk+CshUX9y7eyCGch136HruKI8L/wG84NxTIr/a2RgNXIFAvnI7/yfaEtYpW
+	9I4QzKGBaEAPkvhM0BgMuzckmHm2NmmgM/QjyteLYXhQ+xHTvRo3zx1882gVDsxaiGVCTTseNIa
+	hYJR1LsbCYB2lra50iUOLTsUCvtfvGbWZfqKOBN4Jo4y6JfWoGyKcCiFdcyDp1Yi8OZrPzw+j6B
+	snr8dPoDOjElSfO1So2k92Zx2mC1mnaf7hODvlP4AaPs1AoNwagslDP2m7egP6jTqeTFEe5vm/7
+	iLR0ZA==
+X-Google-Smtp-Source: AGHT+IE+Lw7NVKt974dQGQXPOsuYgAgSmDKH0otXSQYdmLQW2lBCvzoNCYm5ypzQlzwbDOpOjGYDfR1o79+lpf7T5UE=
+X-Received: by 2002:a17:90b:1dc9:b0:343:7714:4caa with SMTP id
+ 98e67ed59e1d1-343f9e92175mr20767519a91.3.1763566575109; Wed, 19 Nov 2025
+ 07:36:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=C/nkCAP+ c=1 sm=1 tr=0 ts=691de24f cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=sWKEhP36mHoA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8 a=xVhDTqbCAAAA:8
- a=TJo3RIopB0RH3hlNab8A:9 a=QEXdDO2ut3YA:10 a=GrmWmAYt4dzCMttCBZOh:22
-X-Proofpoint-GUID: 1Aacmr1lel3MWLuiEaRqdV5WAhY95P6C
-X-Proofpoint-ORIG-GUID: Tz2BsdnjY_28B6-MXgTzcSUCq8Xp729G
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE1MDAzMiBTYWx0ZWRfXxUozr5/BEu6D
- 4uHt7aRLp8Nr9REH58s1B1cvJZVsinX18ju3wwKTsH8afes+ylqDPCqNauHUndTJx0TvOCD2riw
- EXn4AY1in877S5dsXJKP7ApNL7FqhmFzm6gEVPJ6VgFQ8lfyihpLgZAfi1JipH0sKtKYkoxfO7E
- +8pHXaA4dYB6yo9UuMiQeCDUWBmqHVp4zTertDYAfuM29BQBSxX8z36DhiJZNUFh5nYdFGiFduk
- cEqcC8mj9PteL/I5up2CjYzb7s0zCIjc0diLqLxgjovhan9mhdoAsAulr1ay7AWcNFORhUB+qg2
- XDf54QGV9AY3G/uhztJlSCMYv6y27tuNNGkIcutS4DLiQTUds2nzKK0pODoQKtkPqpmdNNOZ1b1
- cb+yrg+dIOZXnknFoipTYEYhnqwsVw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-19_04,2025-11-18_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 spamscore=0 impostorscore=0 bulkscore=0
- malwarescore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511150032
+References: <20251119002808.444259-2-paul@paul-moore.com> <5508241d-7c8f-4caa-a62e-3d8eb2426b55@huaweicloud.com>
+In-Reply-To: <5508241d-7c8f-4caa-a62e-3d8eb2426b55@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 19 Nov 2025 10:36:03 -0500
+X-Gm-Features: AWmQ_bmnE60jrar6oz0-B29x_za0YuX--TyQ4iQueNk1kRPhIJS-E58w5vPnt1s
+Message-ID: <CAHC9VhTe9BgD0LouhDsd-eviehKHmaF=q+mvxabNGmHUOMJMVg@mail.gmail.com>
+Subject: Re: [PATCH] lsm: use unrcu_pointer() for current->cred in security_init()
+To: Xiujianfeng <xiujianfeng@huaweicloud.com>
+Cc: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2025-11-19 at 22:03 +0800, Coiby Xu wrote:
-> Currently, when in-kernel module decompression (CONFIG_MODULE_DECOMPRESS)
-> is enabled, IMA has no way to verify the appended module signature as it
-> can't decompress the module.
->=20
-> Define a new kernel_read_file_id enumerate READING_MODULE_COMPRESSED so
-> IMA can calculate the compressed kernel module data hash on
-> READING_MODULE_COMPRESSED and defer appraising/measuring it until on
-> READING_MODULE when the module has been decompressed.
->=20
-> Before enabling in-kernel module decompression, a kernel module in
-> initramfs can still be loaded with ima_policy=3Dsecure_boot. So adjust th=
-e
-> kernel module rule in secure_boot policy to allow either an IMA
-> signature OR an appended signature i.e. to use
-> "appraise func=3DMODULE_CHECK appraise_type=3Dimasig|modsig".
->=20
-> Reported-by: Karel Srot <ksrot@redhat.com>
-> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> Suggested-by: Paul Moore <paul@paul-moore.com>
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
+On Tue, Nov 18, 2025 at 10:49=E2=80=AFPM Xiujianfeng
+<xiujianfeng@huaweicloud.com> wrote:
+> On 11/19/2025 8:28 AM, Paul Moore wrote:
+> > We need to directly allocate the cred's LSM state for the initial task
+> > when we initialize the LSM framework.  Unfortunately, this results in a
+> > RCU related type mismatch, use the unrcu_pointer() macro to handle this
+> > a bit more elegantly.
+> >
+> > The explicit type casting still remains as we need to work around the
+> > constification of current->cred in this particular case.
+> >
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > ---
+> >   security/lsm_init.c | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/security/lsm_init.c b/security/lsm_init.c
+> > index 6bb67d41ce52..4dec9199e4c2 100644
+> > --- a/security/lsm_init.c
+> > +++ b/security/lsm_init.c
+> > @@ -467,7 +467,8 @@ int __init security_init(void)
+> >                                                   blob_sizes.lbs_inode,=
+ 0,
+> >                                                   SLAB_PANIC, NULL);
+> >
+> > -     if (lsm_cred_alloc((struct cred __rcu *)current->cred, GFP_KERNEL=
+))
+> > +     if (lsm_cred_alloc(unrcu_pointer((struct cred __rcu *)current->cr=
+ed),
+> > +                        GFP_KERNEL))
+>
+> Since the casting from const to non-const is inevitable, why not
+> directly cast it to (struct cred *)?
 
-Thanks, Coiby!  The patch is now queued in next-integrity.
+I like having the call to the unrcu_pointer() macro as it helps bring
+attention to this corner case should things change in the task_struct,
+however, I do think you have a point about moving the cast to *after*
+the unrcu_pointer() call as we could so a simpler "(struct cred *)"
+cast.
+
+v2 coming shortly.
+
+> >               panic("early LSM cred alloc failed\n");
+> >       if (lsm_task_alloc(current))
+> >               panic("early LSM task alloc failed\n");
 
 --=20
-Mimi
+paul-moore.com
