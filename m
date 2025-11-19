@@ -1,59 +1,97 @@
-Received: from mail.novencio.pl (mail.novencio.pl [162.19.155.164])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FDC3314CC
-	for <linux-security-module@vger.kernel.org>; Wed, 19 Nov 2025 09:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.19.155.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6295351FDE;
+	Wed, 19 Nov 2025 11:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763542923; cv=none; b=moCiOba3raf+6URK5rTydJWjyGAfEYYesnpM7/IZmZkUlZYPOhB5lcYT0FV2AskK1M4dNSbaBMHr6Qcj8MaJ1u7KJazgZHCY3n9hGAVKTcbj5UGMDOZYdwR+hHsFIlKWapnCU4saHvJWO/TqjF6zOw3qKtS8wjOLQWNL6w2duwQ=
+	t=1763551266; cv=none; b=Iqbb6fRIino9O6WtwIgaDTiqZoQs+ncHgNOTNbf6tlChBNAazLrIUMp5xw7GzLN13bC+GZkznC5DvfQuWEDV6jqUslB47ja9Rd6txg+8Dinj8dwFucaaCq5BfkSGBo22PELlPOJLEXWANUKTl17EoYVXA/+0MpFBydtcWRrNIho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763542923; c=relaxed/simple;
-	bh=fIh67CnJs35z4uTVN1yEzBZIG1sWJSjOc8Phu/rB5ug=;
-	h=Message-ID:Date:From:To:Subject:MIME-Version:Content-Type; b=lBsw/VcICB6SNk2HDrLWiTirxYBgGvfBkrwmGyH98rfVW2DSxsZwFedPNt2s7fEEbvcpOcDLHM00IGRn8xoWrhRdGmfIUbcuHPqVa77GAcajAhA/IiuKx8PPOp3eNs9UIY3GUwz5Bcy0+IeA90k3U+p23xBxpijpM46GVBs3X4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=novencio.pl; spf=pass smtp.mailfrom=novencio.pl; dkim=pass (2048-bit key) header.d=novencio.pl header.i=@novencio.pl header.b=QSptemfj; arc=none smtp.client-ip=162.19.155.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=novencio.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=novencio.pl
+	s=arc-20240116; t=1763551266; c=relaxed/simple;
+	bh=wUSBlZZ9YDio7KtZN+X06BL6FGFKBS5aTCskRkM16k8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o6UtBXukTqsSg1ZGSFVDw+F67+FIcD3tAPfv3Qn8Yz8TqJTCBTnbNEKgCFelPc9nZvkeFXgauHKppLcmtJ7qwOh34sAcJwFaXkgVf38vHE/r2FHVyqQS+qT+wXo3uc8gjRYiG1QHc79ffmzdewOxjHQL1BFbslLqyUMa2hSBAvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JwIBFnys; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PaAcT0Pa; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=novencio.pl header.i=@novencio.pl header.b="QSptemfj"
-Received: by mail.novencio.pl (Postfix, from userid 1002)
-	id B50DB24DFA; Wed, 19 Nov 2025 09:01:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novencio.pl; s=mail;
-	t=1763542919; bh=fIh67CnJs35z4uTVN1yEzBZIG1sWJSjOc8Phu/rB5ug=;
-	h=Date:From:To:Subject:From;
-	b=QSptemfjLdgWYxTiNa7Fgr2irOJ5LqeFnUFqLzaRy8BvIxXJV4aKsgFK9kqybQuNH
-	 UsMZMX81OBbSFRqtsPsXe3nvzMk4ldM4JqMafSOouQuaGX10mTVLsDSX0DoFZwqgtk
-	 5ptpU/xVUTyEDaDJHVcqaz90BfNL6vl+UkYhgwTGS9TMiL/mteKrLlE1Mxb6uSqM3U
-	 dXQ0F0OQa3yf3ggMzjaOXvbLS+YeaPD/iJkGWGlhTu4L+9Hm3D6WOcYxGGAgxqhuMr
-	 hZd1jTw11CO/V9S/OiMBdi3MWRvili/H+/A/TzgDHOsXyNGOSxZzEMZyLfCodZNuK9
-	 RwoEs7mXuruew==
-Received: by mail.novencio.pl for <linux-security-module@vger.kernel.org>; Wed, 19 Nov 2025 09:01:03 GMT
-Message-ID: <20251119074742-0.1.5y.z4hc.0.1c6j8jk4pd@novencio.pl>
-Date: Wed, 19 Nov 2025 09:01:03 GMT
-From: "Marek Poradecki" <marek.poradecki@novencio.pl>
-To: <linux-security-module@vger.kernel.org>
-Subject: =?UTF-8?Q?Wiadomo=C5=9B=C4=87_z_ksi=C4=99gowo=C5=9Bci?=
-X-Mailer: mail.novencio.pl
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JwIBFnys";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PaAcT0Pa"
+Date: Wed, 19 Nov 2025 12:20:55 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1763551257;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wUSBlZZ9YDio7KtZN+X06BL6FGFKBS5aTCskRkM16k8=;
+	b=JwIBFnysf2LFLEtQg0xbgBLVccfduk/drgzvy4AakLpJLS1rDRyQ3SzGNJg3IqMxpjwJlF
+	cJrockj9vsQL4Rudtcco4j++0lF0oIiyoJs3cMm0ClblnX8RsGH/ozyLeD57cKb8+aSSJA
+	QI9lVHLOUmernjmTs12vttLTxWC+aCvD6dUgyV5Kjfq3bliqCoXkbvquz3cuHyK0cs9QMH
+	YMMKDLmCGd5XtftYaZeXwOfc8qiUI6pUaSfM6z2O3TCfhMLq5vQPTSpyC606DZEbtIpXr0
+	7C9H0dgS3L9wYZ1tvhxQJHgIS2xnolt2VlX39CkSU6ia9+iUQslt8YQZYkLMHg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1763551257;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wUSBlZZ9YDio7KtZN+X06BL6FGFKBS5aTCskRkM16k8=;
+	b=PaAcT0Pa0I47odYk/hl8N5o9JPaoc9DwKGKLs5RMYXX+0Dgn5BKBKHZSE3snhCH4dps8hX
+	5JRbzpviPWRRL3Dw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Fabian =?utf-8?Q?Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>,
+	Arnout Engelen <arnout@bzzt.net>,
+	Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>,
+	Christian Heusel <christian@heusel.eu>,
+	=?utf-8?B?Q8OianU=?= Mihai-Drosi <mcaju95@gmail.com>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v3 7/9] module: Move lockdown check into generic module
+ loader
+Message-ID: <20251119112055.W1l5FOxc@linutronix.de>
+References: <20250429-module-hashes-v3-0-00e9258def9e@weissschuh.net>
+ <20250429-module-hashes-v3-7-00e9258def9e@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250429-module-hashes-v3-7-00e9258def9e@weissschuh.net>
 
-Dzie=C5=84 dobry,
+On 2025-04-29 15:04:34 [+0200], Thomas Wei=C3=9Fschuh wrote:
+> The lockdown check buried in module_sig_check() will not compose well
+> with the introduction of hash-based module validation.
 
-pomagamy przedsi=C4=99biorcom wprowadzi=C4=87 model wymiany walut, kt=C3=B3=
-ry minimalizuje wahania koszt=C3=B3w przy rozliczeniach mi=C4=99dzynarodo=
-wych.
+An explanation of why would be nice.=20
 
-Kiedyv mo=C5=BCemy um=C3=B3wi=C4=87 si=C4=99 na 15-minutow=C4=85 rozmow=C4=
-=99, aby zaprezentowa=C4=87, jak taki model m=C3=B3g=C5=82by dzia=C5=82a=C4=
-=87 w Pa=C5=84stwa firmie - z gwarancj=C4=85 indywidualnych kurs=C3=B3w i=
- pe=C5=82nym uproszczeniem p=C5=82atno=C5=9Bci? Prosz=C4=99 o propozycj=C4=
-=99 dogodnego terminu.
+> Move it into module_integrity_check() which will work better.
+>=20
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
 
-
-Pozdrawiam
-Marek Poradecki
+Sebastian
