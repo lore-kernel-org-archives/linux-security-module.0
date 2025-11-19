@@ -1,158 +1,106 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3B0F9C0;
-	Wed, 19 Nov 2025 00:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97131205E02
+	for <linux-security-module@vger.kernel.org>; Wed, 19 Nov 2025 00:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763510706; cv=none; b=QUGU7xAP4YIs9473ClPP4CxH8+jJyZdourmo3uwauWGPqhTzM4sevCAI0LC0RotrTyDPkPE/1xGyYclUGswoRTh4lsx6PD6iJiEsDrADGSJlMNogEQ575zKEoulB49Sb7RE6KsJYWhrmfo73Nwys3rBAlGMcOl+rH6oAYYj1rLM=
+	t=1763512102; cv=none; b=oPEi3ghVsdS6AE/PLtaFIvtfi0vR6If5JczgRZUkakijOrt+yZy/c513PslgYjI7mZrQIU1aFBDlZqow/ajSLVr576+Wve4qHgqnPYEye0X4dWzSCQoW81I3j+1DQx366UFrkv+CaMbKsMn93jxeX5ydn/IHLxhI7d5tuURaQCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763510706; c=relaxed/simple;
-	bh=UNZ9ICjSP+rM+UyQ5Ef84eRN3B7Pn3YzaRJMOY7Kqho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=See79XysYtR8x349Fm5LyDO5a80LGRESTmwCrspgcvgsq8JoMHqulTshDTcg1tcTEeTd3lt/UuLY42Rtyg82NxZIiclZZm3wDWKn2I5WW8Z7eRc/AR9nBPeGHVqg7f33CpS19nb3lzR+ru7foPzgnlwp4eUZ3IpxzEI1umDyHbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 23B1F43C; Tue, 18 Nov 2025 18:05:00 -0600 (CST)
-Date: Tue, 18 Nov 2025 18:05:00 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>,
-	lkml <linux-kernel@vger.kernel.org>,
-	linux-security-module@vger.kernel.org,
-	Ryan Foster <foster.ryan.r@gmail.com>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH] Clarify the rootid_owns_currentns
-Message-ID: <aR0JrOvDxDKZPELd@mail.hallyn.com>
-References: <aRegH8P4cPlzzlX9@mail.hallyn.com>
- <aRx/1MvvBqu5MhKv@mail.hallyn.com>
- <CAHC9VhQu7gSVO-QZFE_iaCB0qBqB3surdHQo4Vg71zc890uEhA@mail.gmail.com>
+	s=arc-20240116; t=1763512102; c=relaxed/simple;
+	bh=UHNeHKsjnGv3GUrebcmCEp1NCtwEbwc7XQ5JqmGof6E=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=F55zwP1oLhI89Sxd+/jEJuACA4Brqe6RFcGX1haWmE0HcafZFb0AVnTk8m9fkrnhE7tT7OypGXYeFyTbI24raiJ2CxAdu9VOhj38nQ+KdDsqubIJ+GnAO5PYGh566tW8TnLgn/q16qJh4xl9YpUo/Xb2j9SLwUs60k9vCT5TU9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XhUfIhLz; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XhUfIhLz"
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4edb7c8232aso86807841cf.3
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Nov 2025 16:28:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1763512099; x=1764116899; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aOkVC78XrCcFuuLei5X9Ir4tyHmhf+JwmI5FeOT2e0s=;
+        b=XhUfIhLziPhpMFCmM4i+OF4/NWEnKePEqARzyh/1GfhdfaB/q+UQkGsF8WEKt4xxs5
+         EbJ/aWaV5clYcf2NGDn1SgncqfJB7pOCil3MEFcSb+ahih4RU6rBwtvyAwI4e91AjxKF
+         O56IjYqFMwkiZlxuei6PqiGjRi+A73duKF0iiB8qCR+ISJ+PGDsmKHUHyEnnv7Em8bGF
+         1q7DNdU6BuQkQ0FbFq98Tk065xcZ44PAcHWXER8S3bbHfr/74zgOqhr0DVm6EUZxm6QM
+         j2rYK5lFzkO1Ag1FjZM/mgy0T9U8raPleetnlr0iRSCMk34SpDZwHwNZgstu/cN4XU5V
+         +AsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763512099; x=1764116899;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aOkVC78XrCcFuuLei5X9Ir4tyHmhf+JwmI5FeOT2e0s=;
+        b=muvhe8LyZ/D56Lpu6TsSaYwrNofx/+7bu0S8HDdWoHLI+iocF5n1VLiig1Eh38D7SZ
+         sZq5ydTBiwTPamJyroFpR/gV/gLa9QlBRn+YTQUT0vj5HTYXhLMl8dq5yI0WJFKUmWzf
+         7L2haa1OavcYb9FVZhIhZZTmiwng02o1W59L1J1kmv7zCNxbatl+E4Z7xnanx7aCTe13
+         ZlAYOGC4Jd5JM+UwDDYG7pcGB4iLvBvwUIxS932M4RDuxOV8Fqy/ENzYcDHYPutG/fe1
+         xl7ZQ2Ybc/dHaC5ZFuQVQKi7qxlSLJriGJYoKH9rITijNb6lKFWM/PfOlOVeawy2WQY1
+         D2RA==
+X-Gm-Message-State: AOJu0YyQlvegcMNjNR2ocf4f9nlRZMhINgsfOejdJps1Wy6bcb28YtUG
+	4j+yLcdm+tcMGWI5L/6Iyca+rdktb31jhaNZA52FHUanb3RY0NdhBkB4SXxZYd/u0G8dsW1gQBA
+	UGeA=
+X-Gm-Gg: ASbGncvRg1QGf0YIL2t7WnpA5nn2HPvQs1LEx40FPEmV9cHYzGcKy3z6Y764RYnp53G
+	kWgblgxjWFftVqdnKOGCbdXxuBAcmG2TycxD0urtSQrKpE9vZw9fSpjV05L+K1wd0tt4Owdc2xB
+	6QC26LLdc2o3bxSdpTcIveGyy/FwYgto20Jvw+XGvNy8YVE35rMDc7utlx4ykcWQwj+Vs6rO6xI
+	0GbVElpUWL5KegXF+qAGUKfX377mlfvuYGfa+4pZrlnVxvXOqKqwW6QGwjc5UREvareq5RU8r0x
+	+3Qctj05P4SADMj5YzVuT17e5SK7IQdVPtxSsfst0KnxIWpz+XU6IyQqvYkLERUX/IsBHoghabG
+	liDwebmVS5FV1oJ9mOFZYXivaV4j0sdLSvIdS9lN31SFpyDS5bpylAZUzCASmCrL7//ozl/awq4
+	LNjUEix1dChrxbyylZIVl47YrVpGEdzi2px/w5CwptvlptLmWK/Uuoq1pLcHUAFrlQI6o=
+X-Google-Smtp-Source: AGHT+IHk4iO6R1OfYk6YUl2JKfc0qCqXN8LONWT0w50ZscwAo0JgeSEi9AtUKu0w2va2FCPPamkEAA==
+X-Received: by 2002:a05:622a:130f:b0:4ed:b25e:a721 with SMTP id d75a77b69052e-4edf21609femr236796051cf.78.1763512098665;
+        Tue, 18 Nov 2025 16:28:18 -0800 (PST)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ee16389879sm70539011cf.24.2025.11.18.16.28.17
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Nov 2025 16:28:18 -0800 (PST)
+From: Paul Moore <paul@paul-moore.com>
+To: linux-security-module@vger.kernel.org
+Subject: [PATCH] lsm: use unrcu_pointer() for current->cred in security_init()
+Date: Tue, 18 Nov 2025 19:28:09 -0500
+Message-ID: <20251119002808.444259-2-paul@paul-moore.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1081; i=paul@paul-moore.com; h=from:subject; bh=UHNeHKsjnGv3GUrebcmCEp1NCtwEbwc7XQ5JqmGof6E=; b=owEBbQKS/ZANAwAKAeog8tqXN4lzAcsmYgBpHQ8YIbUKI7vVIL7SbAaXAZ0ck6kSPYyz/JYk1 4nfvDFDt6GJAjMEAAEKAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCaR0PGAAKCRDqIPLalzeJ c57zEAC7nQ+ztq6Bgz30P1FxNE/AqTvT0/z7y7KtAKyO80gerESf1S06Lelc8EZ7ep+1itr8mKd drDfHhZ0XT8wdRmeWbuO8OhNYNJ+23mUP+fmDh5q6mzaEw675b00vAdp+n7bO4NchPoJzk1cyJg 7xg6xrG+G0E5DMah2yQZckVdcjNJkJ2rg8WvcNw34G9sBVQErr/vCwC1HE8Sue/cMWBa63qbS07 f/bZqL1Jt1NFwt5KTo3Pn9dTNYJ8GgagYseMv7jbdl+w236hmmmKlKrgATuA0hY7YmY1PfDOdkX i1OP9hXwcIImlofGVgbl8/p8UMMaToVsQJfRW4DodNVQVBC+DmWawJOkCvw6pt0Dqjuw3acO3AJ huvAKXtgFkhMr4bpi5rjsSmwoofD6PBr7YdVHYlo0PgY9g9HmH6J9jJswvLIja3HJuLzY//lCNR Sgg+75x1pvFpjp3BUYCS6d7hVq/5fT5DCM+/uVD/OfyQ80+FnVi9uxAoUCa2V0HPj/zVdRNyuPI eljtvypJNG7QjOwfMrHdxGgV1bipG/P+zOWuGefv2RH7wEOWgRBbijXYOcXvqBP9AoovwxG9IwN hcSXEU8Rfkp5BQihAkpJI+kQi0xlpztyOoQiGefdvT4vOvh2aaJs3fANXWy9FnPX9el3eSmRqD1 1PduSJJdWax1FZA==
+X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhQu7gSVO-QZFE_iaCB0qBqB3surdHQo4Vg71zc890uEhA@mail.gmail.com>
 
-On Tue, Nov 18, 2025 at 10:47:06AM -0500, Paul Moore wrote:
-> On Tue, Nov 18, 2025 at 9:16 AM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > On Fri, Nov 14, 2025 at 03:33:19PM -0600, Serge E. Hallyn wrote:
-> > > Split most of the rootid_owns_currentns() functionality
-> > > into a more generic rootid_owns_ns() function which
-> > > will be easier to write tests for.
-> > >
-> > > Rename the functions and variables to make clear that
-> > > the ids being tested could be any uid.
-> > >
-> > > Signed-off-by: Serge Hallyn <serge@hallyn.com>
-> > > CC: Ryan Foster <foster.ryan.r@gmail.com>
-> > > CC: Christian Brauner <brauner@kernel.org>
-> >
-> > Paul, Christian, let me know if you have any objections, else I will
-> > queue this up in caps-next.
-> 
-> Seems reasonable to me, but it would be good to fix the parameter doc
-> bug that the kernel test robot identified.  I suspect it is just the
-> extra vertical comment space between the top one line summary and the
-> parameter list.
+We need to directly allocate the cred's LSM state for the initial task
+when we initialize the LSM framework.  Unfortunately, this results in a
+RCU related type mismatch, use the unrcu_pointer() macro to handle this
+a bit more elegantly.
 
-Actually I think it was probably the use of - instead of : after the
-parameter name, but I went ahead and changed both, thanks.
+The explicit type casting still remains as we need to work around the
+constification of current->cred in this particular case.
 
-Pushed the below patch for linux-next.
-
-Subject: [PATCH 1/1] Clarify the rootid_owns_currentns
-
-Split most of the rootid_owns_currentns() functionality
-into a more generic rootid_owns_ns() function which
-will be easier to write tests for.
-
-Rename the functions and variables to make clear that
-the ids being tested could be any uid.
-
-Signed-off-by: Serge Hallyn <serge@hallyn.com>
-CC: Ryan Foster <foster.ryan.r@gmail.com>
-CC: Christian Brauner <brauner@kernel.org>
-
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
-v2: change the function parameter documentation to mollify the bot.
----
- security/commoncap.c | 34 ++++++++++++++++++++++------------
- 1 file changed, 22 insertions(+), 12 deletions(-)
+ security/lsm_init.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 6bd4adeb4795..496e054c5d37 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -358,17 +358,17 @@ int cap_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry)
- 	return error;
- }
+diff --git a/security/lsm_init.c b/security/lsm_init.c
+index 6bb67d41ce52..4dec9199e4c2 100644
+--- a/security/lsm_init.c
++++ b/security/lsm_init.c
+@@ -467,7 +467,8 @@ int __init security_init(void)
+ 						    blob_sizes.lbs_inode, 0,
+ 						    SLAB_PANIC, NULL);
  
--static bool rootid_owns_currentns(vfsuid_t rootvfsuid)
-+/**
-+ * kuid_root_in_ns - check whether the given kuid is root in the given ns
-+ * @kuid: the kuid to be tested
-+ * @ns: the user namespace to test against
-+ *
-+ * Returns true if @kuid represents the root user in @ns, false otherwise.
-+ */
-+static bool kuid_root_in_ns(kuid_t kuid, struct user_namespace *ns)
- {
--	struct user_namespace *ns;
--	kuid_t kroot;
--
--	if (!vfsuid_valid(rootvfsuid))
--		return false;
--
--	kroot = vfsuid_into_kuid(rootvfsuid);
--	for (ns = current_user_ns();; ns = ns->parent) {
--		if (from_kuid(ns, kroot) == 0)
-+	for (;; ns = ns->parent) {
-+		if (from_kuid(ns, kuid) == 0)
- 			return true;
- 		if (ns == &init_user_ns)
- 			break;
-@@ -377,6 +377,16 @@ static bool rootid_owns_currentns(vfsuid_t rootvfsuid)
- 	return false;
- }
- 
-+static bool vfsuid_root_in_currentns(vfsuid_t vfsuid)
-+{
-+	kuid_t kuid;
-+
-+	if (!vfsuid_valid(vfsuid))
-+		return false;
-+	kuid = vfsuid_into_kuid(vfsuid);
-+	return kuid_root_in_ns(kuid, current_user_ns());
-+}
-+
- static __u32 sansflags(__u32 m)
- {
- 	return m & ~VFS_CAP_FLAGS_EFFECTIVE;
-@@ -481,7 +491,7 @@ int cap_inode_getsecurity(struct mnt_idmap *idmap,
- 		goto out_free;
- 	}
- 
--	if (!rootid_owns_currentns(vfsroot)) {
-+	if (!vfsuid_root_in_currentns(vfsroot)) {
- 		size = -EOVERFLOW;
- 		goto out_free;
- 	}
-@@ -722,7 +732,7 @@ int get_vfs_caps_from_disk(struct mnt_idmap *idmap,
- 	/* Limit the caps to the mounter of the filesystem
- 	 * or the more limited uid specified in the xattr.
- 	 */
--	if (!rootid_owns_currentns(rootvfsuid))
-+	if (!vfsuid_root_in_currentns(rootvfsuid))
- 		return -ENODATA;
- 
- 	cpu_caps->permitted.val = le32_to_cpu(caps->data[0].permitted);
+-	if (lsm_cred_alloc((struct cred __rcu *)current->cred, GFP_KERNEL))
++	if (lsm_cred_alloc(unrcu_pointer((struct cred __rcu *)current->cred),
++			   GFP_KERNEL))
+ 		panic("early LSM cred alloc failed\n");
+ 	if (lsm_task_alloc(current))
+ 		panic("early LSM task alloc failed\n");
 -- 
-2.34.1
+2.52.0
 
