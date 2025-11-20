@@ -1,193 +1,169 @@
-Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719B7363C6F
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 22:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C8B2D5957;
+	Thu, 20 Nov 2025 22:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763677453; cv=none; b=dz6GFIhzWr4oSLm7h5mN6On+7c8f9GOyClCHVwQzWrM/02lks73eqULIyQcX+8NT9cZlwC46S7vvhakfMAhB8TxXniYPmCcfwKjarafkL4c2/PMIi7pCjLGvpZpoD2aG1OkzhiXN35RZnBkFOZ2UNgaPFbbyp4QO0zbWU3qiTiI=
+	t=1763679540; cv=none; b=JeHGdJ5jjVbFECb+RzgDAh72dcwhLLbGcU0xw0h05ju+KT0gypax/FYIJyz/TEV5s3tU/JhkWwnDWm4ri+ojjFsSG8h8XrfpBhQ7V1f1wpql9U5SE9It+B/BcKVJGsxR3Ub071tNNzJ51wXjnwKAEfiVP9P1BijTQDvpN0qhjH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763677453; c=relaxed/simple;
-	bh=QbCWV7gAquXGhA+abOJbZ6aQK+fnWr5uuin4ZvfEuyg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EMPJUV1ChBoeRwdiLfG75gClMNwKj3ORgOI7CiFmdcQBqLgSaYtLTzV9oDFwQcl31okAvCl/qK+f33mQjCZZsKRmm7XmB8lhk8alF/KecZlWkgB256JtHEU9Ozb0gCsRaqe8P87jhWjbgWe6gGuO1D544cl3eoBaEGgisDdEQ7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CKBv79Dz; arc=none smtp.client-ip=74.125.224.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1763679540; c=relaxed/simple;
+	bh=6varjGVoghbrxaJNTd9/vs6UCISW7yj5NXv8Kb8iGcA=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=VExZMbfnG2s3X/q0Di2jiAmlU0JOA4uy4RbBYI/teIg2zIsk66OWMyBkAu50rHLCVaazOQISJjabk2QcG6Tugaf9qBbcOTq5nODlmzkCDDMvYn03N3tdVKJD9+8iEDkIbSJyXtVwZbVkQHbWrnC4JlN75slSAuD6mceRmaQ8ehc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DAYH/jnb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CKBv79Dz"
-Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-642fcb38f35so719724d50.1
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 14:24:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763677449; x=1764282249; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mMyaQZDKoox9ul4SZyXwK1m/8meWAecvOqgWgJ0YW/s=;
-        b=CKBv79DzxI2KcXW9eZ3Rz2KLQy5jlBKl0+cYt/vP6j6E0YNxnXItDJEE4JcNqtszWc
-         mJTPLserfSTwXWfb3jC6G303tzPSuxHPuUHzw2NNlezVNL805E2WAZeyHhvmGk0Ms0yd
-         2eGMA3f3VQrRX3Jt9twfhKAA66wiYlmjuXtBGKiazwy7GqDHIGT/mbGESP2gNXsCeVWt
-         kJ3pu18MOdn+M2vFdTb7vG4tS47lN468X5BkypYi1gd88wjzbzcPJ0Bz+y3CF3QNrqrt
-         Q6/HkMpjPxCC1tCFztD6+Mg8Gs1ffmjFZOmoVS1XGj5uzpsSfz1bl50VyDupmAmWCcOQ
-         cfqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763677449; x=1764282249;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=mMyaQZDKoox9ul4SZyXwK1m/8meWAecvOqgWgJ0YW/s=;
-        b=OApt85Hd0VEQuDnkv7Rr7cVfDOQ69/qDx8QJyKijvA0nzAqj3t0GwToqXD4Z4wUugP
-         psGtpvyY2n9JGlyHydY3dx3ihv93Fgh8SyyE+0XFm0isOmGbxNHzZD4JfWObiRKmTlC6
-         Wvj2PyBsNEafWeKr5wT8SjKNi5igVcot7YncyWrgp9UZQ+4QZcqOO2PnPTyobpyCAsBR
-         qY/s5gY1tBu3mnjJPW8z9x47W/duGvSdw6JJEjCfa70xSOj2hHToBS77SKshBFxbtHyW
-         xm0Hx4XuZSUnYIdL5/j/GUmnXNUdcDRLh/Hjf9J6bs6inBqRZlk44Un/1RnqeajEo4DW
-         YPzQ==
-X-Gm-Message-State: AOJu0YyqcIbSbuElZYOVBYIvNuGSL0nvCH+2aMBEpKWYFqWLtFaTEv5K
-	zX0DhB9Gr/jnB6DkB7bESxe1y6dCXv6v3kyOLlFIcWlRlrc7ffFn6lPnajJJmDaaqJ1cVQ==
-X-Gm-Gg: ASbGnctbyH8Y1u2jpT61FfJHx4XjZd+ba+vNZV98vhyxr3N54+c1eA3bX8HOTSTVyQ2
-	kDrYjjen9ITsKVJ4l4Epd3oBcCWVYBa1ABADKAoNM9D3/OExMfoXfpDA6FifTrnsACrnBzM5Zyg
-	eEeSvsPjOtGFc9x+fJXdgDt55JKkXlqhdh3UdyNVuO8anTO5iNoi4F9fwoBFZpcaBs0vT7gRAYG
-	+qZcwr4uBeyt4f8R15+mMDrWFY4BYu1lrfZB5jduEJTZx2qWjaunsC7cckVbaRL/AMHJkONdjaG
-	yOZno+K3+Bi16jehD7d6up2gyhcJDNdbb2MuKMSE1/weRFpMoynWDzHo39hN1Pgr75O/ClBQsX+
-	sNnNGEapSnhnDQqkfud3NvxIylyuCS0RuQlq+Y2CuIcTOvsUIZfGaDtooFFSQvoaoKK2rJty8fF
-	/bfhpU1RJeJ55uD9SCACnMrHvM9EweeOsTM+c1L2DL6alRRBOPKXxPd0PdjwOD
-X-Google-Smtp-Source: AGHT+IFzPeJsz3hgkZze8yg+P6fY3PwFLDGInznCKYTeKOZlxGg0frTwao8eUzxMmLt0Fl7N0aZReA==
-X-Received: by 2002:a05:690e:108a:b0:640:dda6:e96e with SMTP id 956f58d0204a3-64302a73768mr7043d50.36.1763677449230;
-        Thu, 20 Nov 2025 14:24:09 -0800 (PST)
-Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78a7993cedesm10954757b3.41.2025.11.20.14.24.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Nov 2025 14:24:08 -0800 (PST)
-From: Justin Suess <utilityemal77@gmail.com>
-To: linux-security-module@vger.kernel.org
-Cc: Tingmao Wang <m@maowtm.org>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Jan Kara <jack@suse.cz>,
-	Abhinav Saxena <xandfury@gmail.com>,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH 6/6] landlock: Implement KUnit test for LANDLOCK_ADD_RULE_NO_INHERIT
-Date: Thu, 20 Nov 2025 17:23:46 -0500
-Message-ID: <20251120222346.1157004-7-utilityemal77@gmail.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251120222346.1157004-1-utilityemal77@gmail.com>
-References: <20251120222346.1157004-1-utilityemal77@gmail.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DAYH/jnb"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AKCdFYA008180;
+	Thu, 20 Nov 2025 22:58:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=X8ESIu
+	xGa0urWInKm/jtDHCZjCajdpBZ+uDD8wnQTg4=; b=DAYH/jnbRGKje5HiUigWfe
+	sUwDwRWQv7rM9rei4G6SuTDZ2rJFbDET4FOxcErH3+ORJlFZQUcWztlg4nn7AYb1
+	ypIqlVEMhKt7TmxODDn+PkWkuyRMqBa5D/6HsPPDyPXIVME+9v9pH+s3ZsUNratf
+	CWvdo+bhkKBNTNVocQ6cLPwwkuSPVDCFHv6BMFZQbr+13re7MnrtKsnlQXvafJcU
+	4QxpUqEIwCTwocCce+AREBT/roI7dGv0Be/kfT+4jIGJJnh/+dhXvQRR1G1FNQdd
+	s+vs33jKiG7sLrKX22Om5A2ExMATIpQWzIMu8C1qelNVVf4g6+S8+K3Qejoh72xA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aejmsym68-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Nov 2025 22:58:45 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AKMpF0p013951;
+	Thu, 20 Nov 2025 22:58:44 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aejmsym65-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Nov 2025 22:58:44 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AKKufLi017319;
+	Thu, 20 Nov 2025 22:58:43 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4af6j20uaj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Nov 2025 22:58:43 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AKMwhp725821894
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Nov 2025 22:58:43 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1AB235805D;
+	Thu, 20 Nov 2025 22:58:43 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5754258052;
+	Thu, 20 Nov 2025 22:58:42 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.96.173])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 20 Nov 2025 22:58:42 +0000 (GMT)
+Message-ID: <629289c119a1a71d8d7a1208ec3676e006d4d527.camel@linux.ibm.com>
+Subject: Re: [RFC v1 0/1] Implement IMA Event Log Trimming
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Anirudh Venkataramanan <anirudhve@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin	
+ <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul
+ Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E .
+ Hallyn"	 <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Steven
+ Chen	 <chenste@linux.microsoft.com>,
+        Gregory Lumen
+ <gregorylumen@linux.microsoft.com>,
+        Lakshmi Ramasubramanian
+ <nramas@linux.microsoft.com>,
+        Sush Shringarputale
+ <sushring@linux.microsoft.com>
+In-Reply-To: <20251119213359.39397-1-anirudhve@linux.microsoft.com>
+References: <20251119213359.39397-1-anirudhve@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 20 Nov 2025 17:58:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ITM2na6PgFhDrri4SEYnAYiHq9Hs-drS
+X-Authority-Analysis: v=2.4 cv=Rv3I7SmK c=1 sm=1 tr=0 ts=691f9d25 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=CL4gKq6V0-V22j3Sb8oA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: rMqzK7i88w7fsMUXseNT49kMFkZQffkB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE1MDAzMiBTYWx0ZWRfX0z+UvLXbqoZV
+ X3JIH7hqM3G6B54iM3Bhwa94PimxPKKSpqM2YspiTx5t/x9wLACMXRIzOg0cImK2uKwgGWUw/9O
+ ALkYX/REeoKPCi+/bOOA8FPIfURbkalBJ5tgsYwuWl9Ig6COs09ajcYtKVOHqOd3w4Ze9Qe31r3
+ Gko27jZWFoJ4ZUzh8R4pSZwpIlxKpamfH6hRCC09u1bhXwGh5VRkTpcHg+Udlb3TC+2kvSOGMFi
+ SBYiuIUcKOx6HAo5itRJYhZTF+VDCz5+9FlQORQ8SFb/9tAg6zkYFE5fG7ikqDcUOw0FFRHZ05q
+ 9+9gdOall9ammx1bXLDIT2VeTSqmVlUe4jn3ppogAAa3dEUdpsPf1uqtCVt0OkkxMQZMCwRCToz
+ bH5WAb/EP0ebmbjtSDwQ2bsCuD7Cqw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-20_09,2025-11-20_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 clxscore=1011 phishscore=0 priorityscore=1501
+ spamscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511150032
 
-Add a unit test for rule_flag collection, ensuring that access masks are properly
-propagated with the flags.
+On Wed, 2025-11-19 at 13:33 -0800, Anirudh Venkataramanan wrote:
+>=20
+>=20
+>  2. The kernel uses the userspace supplied PCR values to trim the IMA
+>     measurements list at a specific point, and so these are referred to a=
+s
+>     "trim-to PCR values" in this context.
+>=20
+>     Note that the kernel doesn't really understand what these userspace
+>     provided PCR values mean or what IMA event they correspond to, and so
+>     it does its own IMA event replay till either the replayed PCR values
+>     match with the userspace provided ones, or it runs out of events.
+>=20
+>     If a match is found, the kernel can proceed with trimming the IMA
+>     measurements list. This is done in two steps, to keep locking context
+>     minimal.
+>=20
+>     step 1: Find and return the list entry (as a count from head) of exac=
+t
+>             match. This does not lock the measurements list mutex, ensuri=
+ng
+>             new events can be appended to the log.
+>=20
+>     step 2: Lock the measurements list mutex and trim the measurements li=
+st
+>             at the previously identified list entry.
+>=20
+>    If the trim is successful, the trim-to PCR values are saved as "starti=
+ng
+>    PCR values". The next time userspace wants to replay the IMA event log=
+,
+>    it will use the starting PCR values as the base for the IMA event log
+>    replay.
 
-Signed-off-by: Justin Suess <utilityemal77@gmail.com>
----
- security/landlock/ruleset.c | 85 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
+Depending on the IMA policy, the IMA measurement list may contain integrity
+violations, such as "ToM/ToU" (Time of Measurement/Time of Use) or "open-
+writer". Either the userspace supplied PCR values will not match any measur=
+ement
+record or the PCR values will be "fixed" to match the well known violation =
+hash
+value extended into the TPM.  Depending on how the userspace PCR values wil=
+l
+subsequently be used, saving the "fixed" PCR values could result in whitewa=
+shing
+the integrity of the measurement list.
 
-diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-index 5d190d6779da..c407ec264207 100644
---- a/security/landlock/ruleset.c
-+++ b/security/landlock/ruleset.c
-@@ -22,6 +22,7 @@
- #include <linux/spinlock.h>
- #include <linux/workqueue.h>
- #include <uapi/linux/landlock.h>
-+#include <kunit/test.h>
- 
- #include "access.h"
- #include "audit.h"
-@@ -835,3 +836,87 @@ landlock_init_layer_masks(const struct landlock_ruleset *const domain,
- 	}
- 	return handled_accesses;
- }
-+
-+#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
-+
-+static void test_unmask_layers_no_inherit(struct kunit *const test)
-+{
-+	struct landlock_rule *rule;
-+	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS];
-+	struct collected_rule_flags rule_flags;
-+	const access_mask_t access_request = BIT_ULL(0) | BIT_ULL(1);
-+	const layer_mask_t layers_initialized = BIT_ULL(0) | BIT_ULL(1);
-+	size_t i;
-+
-+	rule = kzalloc(struct_size(rule, layers, 2), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, rule);
-+
-+	rule->num_layers = 2;
-+
-+	/* Layer 1: allows access 0, no_inherit */
-+	rule->layers[0].level = 1;
-+	rule->layers[0].access = BIT_ULL(0);
-+	rule->layers[0].flags.no_inherit = 1;
-+
-+	/* Layer 2: allows access 1 */
-+	rule->layers[1].level = 2;
-+	rule->layers[1].access = BIT_ULL(1);
-+
-+	/* Case 1: No rule_flags provided (should behave normally) */
-+	for (i = 0; i < ARRAY_SIZE(layer_masks); i++)
-+		layer_masks[i] = layers_initialized;
-+
-+	landlock_unmask_layers(rule, access_request, &layer_masks,
-+			       ARRAY_SIZE(layer_masks), NULL);
-+
-+	/* Access 0 should be unmasked by layer 1 */
-+	KUNIT_EXPECT_EQ(test, layer_masks[0], layers_initialized & ~BIT_ULL(0));
-+	/* Access 1 should be unmasked by layer 2 */
-+	KUNIT_EXPECT_EQ(test, layer_masks[1], layers_initialized & ~BIT_ULL(1));
-+
-+	/* Case 2: rule_flags provided, no existing no_inherit_masks */
-+	for (i = 0; i < ARRAY_SIZE(layer_masks); i++)
-+		layer_masks[i] = layers_initialized;
-+	memset(&rule_flags, 0, sizeof(rule_flags));
-+
-+	landlock_unmask_layers(rule, access_request, &layer_masks,
-+			       ARRAY_SIZE(layer_masks), &rule_flags);
-+
-+	/* Access 0 should be unmasked by layer 1 */
-+	KUNIT_EXPECT_EQ(test, layer_masks[0], layers_initialized & ~BIT_ULL(0));
-+	/* Access 1 should be unmasked by layer 2 */
-+	KUNIT_EXPECT_EQ(test, layer_masks[1], layers_initialized & ~BIT_ULL(1));
-+
-+	/* rule_flags should collect no_inherit from layer 1 */
-+	KUNIT_EXPECT_EQ(test, rule_flags.no_inherit_masks, (layer_mask_t)BIT_ULL(0));
-+
-+	/* Case 3: rule_flags provided, layer 1 is masked by no_inherit_masks */
-+	for (i = 0; i < ARRAY_SIZE(layer_masks); i++)
-+		layer_masks[i] = layers_initialized;
-+	memset(&rule_flags, 0, sizeof(rule_flags));
-+	rule_flags.no_inherit_masks = BIT_ULL(0); /* Mask layer 1 */
-+
-+	landlock_unmask_layers(rule, access_request, &layer_masks,
-+			       ARRAY_SIZE(layer_masks), &rule_flags);
-+
-+	/* Access 0 should NOT be unmasked by layer 1 because it is skipped */
-+	KUNIT_EXPECT_EQ(test, layer_masks[0], layers_initialized);
-+	/* Access 1 should be unmasked by layer 2 */
-+	KUNIT_EXPECT_EQ(test, layer_masks[1], layers_initialized & ~BIT_ULL(1));
-+
-+	kfree(rule);
-+}
-+
-+static struct kunit_case ruleset_test_cases[] = {
-+	KUNIT_CASE(test_unmask_layers_no_inherit),
-+	{}
-+};
-+
-+static struct kunit_suite ruleset_test_suite = {
-+	.name = "landlock_ruleset",
-+	.test_cases = ruleset_test_cases,
-+};
-+
-+kunit_test_suite(ruleset_test_suite);
-+
-+#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
--- 
-2.51.2
+--=20
+thanks,
 
+Mimi
