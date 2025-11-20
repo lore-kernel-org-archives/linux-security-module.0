@@ -1,55 +1,57 @@
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC7C358D36
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 15:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC8035FF76
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 15:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763651584; cv=none; b=s/e7zMMeSx9vz7LtbXBbrGki+G0fkfgntBG4J7CkWA4cyZ2sZ/FNCa/DXKtpnEeknO2WUwh5gAHhWZIe3BbkdA8YjV18gJgEjECpxoj6apUYLdsByasgisQvCsAakXGCo0HWrsVpRfrWS0FmnpW8n9+DIrXjlPw7kzCJLQqCaXM=
+	t=1763651588; cv=none; b=nieL4xvZawTJVrrP08r0rMfEfWxpFlYm/3l63bfzfRMUnUDffI6yTOxZLtlbsh0DziNDKaBpQOnF2eI9XmOYbKTJVOx1nbu3vLQ3/LuSEaCQidu9KLGjw48oIKnZq/YjWbTyuzU4PjfgjwE6cBAuurIxPF/cUjk/G8ZFPlDq1wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763651584; c=relaxed/simple;
-	bh=RUzla79vcrCNAl+iG6eEDpRpuL0clf23CJSIoLake0Q=;
+	s=arc-20240116; t=1763651588; c=relaxed/simple;
+	bh=07zfwwibr87pzthwGbH+0Y0kGO/abbdb5ZEhTTNkhyA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cGwUWAB5ZHQwh784kbOeSeDtLQad9AnQgm4CpKvuD0Mn82l98yMlkC4EhCMWESRlSTChOeiT9ZMEuyLW5aCiT5MF3w/XalgzhaDb5r8j1JY1hxIglNMlrfORQFNkrYXbXEM2Yy7t+aCQTzyDjm8xm1QG0qM0J/USwsCevX92bIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4jFiN0I4; arc=none smtp.client-ip=209.85.221.73
+	 To:Cc:Content-Type; b=LPv+Cjcr7cc+N4+0DH5BB0/Eedi2HvIO2EYTQFvVgqKtHbZjzTMxlSsnKzbfDlh8o53cHpQiWEiOjXI9GaaxSfE4W08W6jo08pG8+A2RcgEtTm5k5PRXCtlgKKGNPDSfW6vyHFSt3DSIjjpjYbUkh1H6205Jr7gkc81a+Da1bDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ltyF7FvA; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elver.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4jFiN0I4"
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-40cfb98eddbso1026668f8f.0
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 07:12:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ltyF7FvA"
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4779b3749a8so8950675e9.1
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 07:13:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763651564; x=1764256364; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yHFmEO19z4F9SK7KsUWIWORciiNuVWc+Iq1/rw+dtQM=;
-        b=4jFiN0I4tgBBGzcViuvesL6eyi3Dy0x70l86wjyv7RQPBbRk0ttxmcunaVrX6EEflN
-         Jd7S71q4ir9QWkbX/H9/658Q1grc/cyFbxt3g7owNdaGGWPhia4Z6gQPn8ivsxQHW4no
-         J+91U23X3NGNj0nraeO0PY5Z7dSFiwX05EGaHKE8d5G03X5Mt3qwiRjBuwHnAxK+B9DC
-         tUrG89xhGaPZoSN0Ukv5D0UkG7DEKJyvUe1ZvUiaOH6ZuMXQLtcZtHLexCHkKHEycPA0
-         D/W08FMNczqX+eWcHtBUPJO2B9dYbEeXSuqIeIdhbq6afaop1YDTpV595+ptbns7tviV
-         D1jw==
+        d=google.com; s=20230601; t=1763651580; x=1764256380; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LTo30xRtk3dNAYk+WcMlGzrXIDi8Fd3AcvMY0oMy4/o=;
+        b=ltyF7FvAG6OgN0LcS78W84ax541CxFrE8utJs/0/ke8m5aqrP3352ZUx86FV0kzR7V
+         fw1zF84Bl+Svig7h1nusl1SdfpLU8dcT+sRfvUGgdusSVeBhup9jElD6ai63ieXyS/n6
+         OLNtDua3PdYcVbaGxA3XV/RfRMPjGWoeGj8Pyh5p3WcHL7kU0g2WigB1evg/biaKQURV
+         58WrJ+g7zffVX05xtUxITBZgThTY3tQeyFl3E+XlBQMfjPCOUw5SbPfxuduIMD2JITqn
+         5g3M5vRFEXx5FZABV6HGefW8grmNTWyoV11BAaOHracqUN4DkX2/tEwrEzMlAJocRn8b
+         JyYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763651564; x=1764256364;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yHFmEO19z4F9SK7KsUWIWORciiNuVWc+Iq1/rw+dtQM=;
-        b=Cq+7tE7WygyUhW6ew45cNRm67JG0ZC/RorBcMSwgU5wnWij5OtsfRCTyCCLmg22Oae
-         yggdMLXLqzw2gX6b1eeC3Od4972f9TMTMqMRH8aqBkILoHGRLC7QX/H1/aC+vAOiPFRp
-         PoTtXZSoEaVps/oRT0Pie+zEjB1VkxUL5UDMLqOBJdVwTW1RBmQeJzftmnoztNPdhKdY
-         HVjD+qCugFzgfG1mds/2RFLg+x6Xft552U7H1T6jxTGvVBOZNSEArvkqOZ6D9t8mbswR
-         sWErKt5108pteb8nLxCMZJJZLRyXCV48kc8iXKqp50QMzIn+kCP4eVNhthE4+M7YL62F
-         4TSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdtvk4OtRsNE7mFljfPSMiFgmxeCzd6ggHEeckVfF7igGrvvH2F5GVz52Vx4pP3Y91q33+dbjwal3hNhZzB1AAN4Gu8Qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDZD6It7CDdF7+zyWcWNu55vrV+pLOxGFB9eYV/4o1SFxolhKE
-	RfhApIx4je05M2FOiAfT4ZrnPA3OG6bAgdNoJQohRgIHVsfjLM/Zk8NIFn4qpDfjN3N3NF4D/2d
-	CTg==
-X-Google-Smtp-Source: AGHT+IEuTifEbUhdvE5i/Y5rsgIqB9EBfMLOeSF1GbDDxdQ2epjvOMdY+jN5N2aF7xQEE8cxTJX0dndqmg==
-X-Received: from wroy10.prod.google.com ([2002:adf:f14a:0:b0:42b:39b8:85b7])
- (user=elver job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:200c:b0:429:b963:cdd5
- with SMTP id ffacd0b85a97d-42cba63e2c0mr3368120f8f.5.1763651564018; Thu, 20
- Nov 2025 07:12:44 -0800 (PST)
-Date: Thu, 20 Nov 2025 16:09:40 +0100
+        d=1e100.net; s=20230601; t=1763651580; x=1764256380;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LTo30xRtk3dNAYk+WcMlGzrXIDi8Fd3AcvMY0oMy4/o=;
+        b=pEg44aH0x78nwnpvlZPLcDsO0Z2FWCQFyGlx8p0LyzD73J0+c2zz40PluyORuLsZhh
+         qAsc0YBvBAROT/307oG0tjqjjzxOshz26iSmO53srmWS3aC0NUxVbU41okPEh9PA7iam
+         tt9jaQgVTT+eXMjECuE9Mg+ObflhBJpRG+1DV8ReoQcjm3XhWAztBgrrrwd/RdssZiHn
+         a1Lx/FnkWUaNgQgJrCH4e7sF2r37V6IJzjqEW75UTEJonkgIckSex7nj7E+VjywdXX/S
+         pICybub2ZCrm91rRVZ0Ov5PqvnwJo7SseGmT8i0lzMTLnsp44ftyk5c6eyihIl8nogiO
+         e26Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVBBnyX+KgfK3a5X7AQ/oix8iGIIYXCEOVvtz1eCALopkjni/YpUHfJbvxkHtkvAMZ/OKE6V4nvzoVe9q3wcG2vAxXWSWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/ZyUFGNHI3+QVYEAWTNs0Ek/sQwg+ucSfoMMNmKeBnVaI5M2c
+	wznFxi/9WlIGF3ag1Dkzl6YCRbJs3A9qOAyGe0PoMJtgcj6jfztDoggjURoZhxswwaTHxJVeL83
+	r9Q==
+X-Google-Smtp-Source: AGHT+IFrGgNPktKG3H23bhC9w6XQyJEAaYXs0SazZ2yQkYIVJL1b09kjJ5fLN+jez2xgS5LZ8SbpXS+XSg==
+X-Received: from wmqo14.prod.google.com ([2002:a05:600c:4fce:b0:46e:1e57:dbd6])
+ (user=elver job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:4ec6:b0:46e:32dd:1b1a
+ with SMTP id 5b1f17b1804b1-477babc1fcfmr26767175e9.7.1763651580311; Thu, 20
+ Nov 2025 07:13:00 -0800 (PST)
+Date: Thu, 20 Nov 2025 16:09:43 +0100
 In-Reply-To: <20251120151033.3840508-7-elver@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -59,8 +61,8 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251120145835.3833031-2-elver@google.com> <20251120151033.3840508-7-elver@google.com>
 X-Mailer: git-send-email 2.52.0.rc1.455.g30608eb744-goog
-Message-ID: <20251120151033.3840508-16-elver@google.com>
-Subject: [PATCH v4 15/35] srcu: Support Clang's context analysis
+Message-ID: <20251120151033.3840508-19-elver@google.com>
+Subject: [PATCH v4 18/35] locking/local_lock: Include missing headers
 From: Marco Elver <elver@google.com>
 To: elver@google.com, Peter Zijlstra <peterz@infradead.org>, 
 	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>
@@ -86,364 +88,49 @@ Cc: "David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenry
 	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
 	linux-wireless@vger.kernel.org, llvm@lists.linux.dev, rcu@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for Clang's context analysis for SRCU.
+Including <linux/local_lock.h> into an empty TU will result in the
+compiler complaining:
+
+./include/linux/local_lock.h: In function =E2=80=98class_local_lock_irqsave=
+_constructor=E2=80=99:
+./include/linux/local_lock_internal.h:95:17: error: implicit declaration of=
+ function =E2=80=98local_irq_save=E2=80=99; <...>
+   95 |                 local_irq_save(flags);                          \
+      |                 ^~~~~~~~~~~~~~
+
+As well as (some architectures only, such as 'sh'):
+
+./include/linux/local_lock_internal.h: In function =E2=80=98local_lock_acqu=
+ire=E2=80=99:
+./include/linux/local_lock_internal.h:33:20: error: =E2=80=98current=E2=80=
+=99 undeclared (first use in this function)
+   33 |         l->owner =3D current;
+
+Include missing headers to allow including local_lock.h where the
+required headers are not otherwise included.
 
 Signed-off-by: Marco Elver <elver@google.com>
 ---
-v4:
-* Rename capability -> context analysis.
+ include/linux/local_lock_internal.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-v3:
-* Switch to DECLARE_LOCK_GUARD_1_ATTRS() (suggested by Peter)
-* Support SRCU being reentrant.
----
- Documentation/dev-tools/context-analysis.rst |  2 +-
- include/linux/srcu.h                         | 64 +++++++++++++-------
- include/linux/srcutiny.h                     |  4 ++
- include/linux/srcutree.h                     |  6 +-
- lib/test_context-analysis.c                  | 24 ++++++++
- 5 files changed, 77 insertions(+), 23 deletions(-)
-
-diff --git a/Documentation/dev-tools/context-analysis.rst b/Documentation/dev-tools/context-analysis.rst
-index 05164804a92a..59fc8e4cc203 100644
---- a/Documentation/dev-tools/context-analysis.rst
-+++ b/Documentation/dev-tools/context-analysis.rst
-@@ -81,7 +81,7 @@ Supported Kernel Primitives
- 
- Currently the following synchronization primitives are supported:
- `raw_spinlock_t`, `spinlock_t`, `rwlock_t`, `mutex`, `seqlock_t`,
--`bit_spinlock`, RCU.
-+`bit_spinlock`, RCU, SRCU (`srcu_struct`).
- 
- For context guards with an initialization function (e.g., `spin_lock_init()`),
- calling this function before initializing any guarded members or globals
-diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index ada65b58bc4c..a0e2b8187100 100644
---- a/include/linux/srcu.h
-+++ b/include/linux/srcu.h
-@@ -21,7 +21,7 @@
- #include <linux/workqueue.h>
- #include <linux/rcu_segcblist.h>
- 
--struct srcu_struct;
-+context_guard_struct(srcu_struct, __reentrant_ctx_guard);
- 
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- 
-@@ -53,7 +53,7 @@ int init_srcu_struct(struct srcu_struct *ssp);
- #define SRCU_READ_FLAVOR_SLOWGP	SRCU_READ_FLAVOR_FAST
- 						// Flavors requiring synchronize_rcu()
- 						// instead of smp_mb().
--void __srcu_read_unlock(struct srcu_struct *ssp, int idx) __releases(ssp);
-+void __srcu_read_unlock(struct srcu_struct *ssp, int idx) __releases_shared(ssp);
- 
- #ifdef CONFIG_TINY_SRCU
- #include <linux/srcutiny.h>
-@@ -107,14 +107,16 @@ static inline bool same_state_synchronize_srcu(unsigned long oldstate1, unsigned
- }
- 
- #ifdef CONFIG_NEED_SRCU_NMI_SAFE
--int __srcu_read_lock_nmisafe(struct srcu_struct *ssp) __acquires(ssp);
--void __srcu_read_unlock_nmisafe(struct srcu_struct *ssp, int idx) __releases(ssp);
-+int __srcu_read_lock_nmisafe(struct srcu_struct *ssp) __acquires_shared(ssp);
-+void __srcu_read_unlock_nmisafe(struct srcu_struct *ssp, int idx) __releases_shared(ssp);
- #else
- static inline int __srcu_read_lock_nmisafe(struct srcu_struct *ssp)
-+	__acquires_shared(ssp)
- {
- 	return __srcu_read_lock(ssp);
- }
- static inline void __srcu_read_unlock_nmisafe(struct srcu_struct *ssp, int idx)
-+	__releases_shared(ssp)
- {
- 	__srcu_read_unlock(ssp, idx);
- }
-@@ -186,6 +188,14 @@ static inline int srcu_read_lock_held(const struct srcu_struct *ssp)
- 
- #endif /* #else #ifdef CONFIG_DEBUG_LOCK_ALLOC */
- 
-+/*
-+ * No-op helper to denote that ssp must be held. Because SRCU-protected pointers
-+ * should still be marked with __rcu_guarded, and we do not want to mark them
-+ * with __guarded_by(ssp) as it would complicate annotations for writers, we
-+ * choose the following strategy: srcu_dereference_check() calls this helper
-+ * that checks that the passed ssp is held, and then fake-acquires 'RCU'.
-+ */
-+static inline void __srcu_read_lock_must_hold(const struct srcu_struct *ssp) __must_hold_shared(ssp) { }
- 
- /**
-  * srcu_dereference_check - fetch SRCU-protected pointer for later dereferencing
-@@ -199,9 +209,15 @@ static inline int srcu_read_lock_held(const struct srcu_struct *ssp)
-  * to 1.  The @c argument will normally be a logical expression containing
-  * lockdep_is_held() calls.
-  */
--#define srcu_dereference_check(p, ssp, c) \
--	__rcu_dereference_check((p), __UNIQUE_ID(rcu), \
--				(c) || srcu_read_lock_held(ssp), __rcu)
-+#define srcu_dereference_check(p, ssp, c)					\
-+({										\
-+	__srcu_read_lock_must_hold(ssp);					\
-+	__acquire_shared_ctx_guard(RCU);					\
-+	__auto_type __v = __rcu_dereference_check((p), __UNIQUE_ID(rcu),	\
-+				(c) || srcu_read_lock_held(ssp), __rcu);	\
-+	__release_shared_ctx_guard(RCU);					\
-+	__v;									\
-+})
- 
- /**
-  * srcu_dereference - fetch SRCU-protected pointer for later dereferencing
-@@ -244,7 +260,8 @@ static inline int srcu_read_lock_held(const struct srcu_struct *ssp)
-  * invoke srcu_read_unlock() from one task and the matching srcu_read_lock()
-  * from another.
-  */
--static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp)
-+static inline int srcu_read_lock(struct srcu_struct *ssp)
-+	__acquires_shared(ssp)
- {
- 	int retval;
- 
-@@ -271,7 +288,8 @@ static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp)
-  * where RCU is watching, that is, from contexts where it would be legal
-  * to invoke rcu_read_lock().  Otherwise, lockdep will complain.
-  */
--static inline struct srcu_ctr __percpu *srcu_read_lock_fast(struct srcu_struct *ssp) __acquires(ssp)
-+static inline struct srcu_ctr __percpu *srcu_read_lock_fast(struct srcu_struct *ssp) __acquires_shared(ssp)
-+	__acquires_shared(ssp)
- {
- 	struct srcu_ctr __percpu *retval;
- 
-@@ -287,7 +305,7 @@ static inline struct srcu_ctr __percpu *srcu_read_lock_fast(struct srcu_struct *
-  * See srcu_read_lock_fast() for more information.
-  */
- static inline struct srcu_ctr __percpu *srcu_read_lock_fast_notrace(struct srcu_struct *ssp)
--	__acquires(ssp)
-+	__acquires_shared(ssp)
- {
- 	struct srcu_ctr __percpu *retval;
- 
-@@ -307,7 +325,7 @@ static inline struct srcu_ctr __percpu *srcu_read_lock_fast_notrace(struct srcu_
-  * The same srcu_struct may be used concurrently by srcu_down_read_fast()
-  * and srcu_read_lock_fast().
-  */
--static inline struct srcu_ctr __percpu *srcu_down_read_fast(struct srcu_struct *ssp) __acquires(ssp)
-+static inline struct srcu_ctr __percpu *srcu_down_read_fast(struct srcu_struct *ssp) __acquires_shared(ssp)
- {
- 	WARN_ON_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && in_nmi());
- 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_down_read_fast().");
-@@ -326,7 +344,8 @@ static inline struct srcu_ctr __percpu *srcu_down_read_fast(struct srcu_struct *
-  * then none of the other flavors may be used, whether before, during,
-  * or after.
-  */
--static inline int srcu_read_lock_nmisafe(struct srcu_struct *ssp) __acquires(ssp)
-+static inline int srcu_read_lock_nmisafe(struct srcu_struct *ssp)
-+	__acquires_shared(ssp)
- {
- 	int retval;
- 
-@@ -338,7 +357,8 @@ static inline int srcu_read_lock_nmisafe(struct srcu_struct *ssp) __acquires(ssp
- 
- /* Used by tracing, cannot be traced and cannot invoke lockdep. */
- static inline notrace int
--srcu_read_lock_notrace(struct srcu_struct *ssp) __acquires(ssp)
-+srcu_read_lock_notrace(struct srcu_struct *ssp)
-+	__acquires_shared(ssp)
- {
- 	int retval;
- 
-@@ -369,7 +389,8 @@ srcu_read_lock_notrace(struct srcu_struct *ssp) __acquires(ssp)
-  * which calls to down_read() may be nested.  The same srcu_struct may be
-  * used concurrently by srcu_down_read() and srcu_read_lock().
-  */
--static inline int srcu_down_read(struct srcu_struct *ssp) __acquires(ssp)
-+static inline int srcu_down_read(struct srcu_struct *ssp)
-+	__acquires_shared(ssp)
- {
- 	WARN_ON_ONCE(in_nmi());
- 	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
-@@ -384,7 +405,7 @@ static inline int srcu_down_read(struct srcu_struct *ssp) __acquires(ssp)
-  * Exit an SRCU read-side critical section.
-  */
- static inline void srcu_read_unlock(struct srcu_struct *ssp, int idx)
--	__releases(ssp)
-+	__releases_shared(ssp)
- {
- 	WARN_ON_ONCE(idx & ~0x1);
- 	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
-@@ -400,7 +421,7 @@ static inline void srcu_read_unlock(struct srcu_struct *ssp, int idx)
-  * Exit a light-weight SRCU read-side critical section.
-  */
- static inline void srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_ctr __percpu *scp)
--	__releases(ssp)
-+	__releases_shared(ssp)
- {
- 	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_FAST);
- 	srcu_lock_release(&ssp->dep_map);
-@@ -413,7 +434,7 @@ static inline void srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_ct
-  * See srcu_read_unlock_fast() for more information.
-  */
- static inline void srcu_read_unlock_fast_notrace(struct srcu_struct *ssp,
--						 struct srcu_ctr __percpu *scp) __releases(ssp)
-+						 struct srcu_ctr __percpu *scp) __releases_shared(ssp)
- {
- 	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_FAST);
- 	__srcu_read_unlock_fast(ssp, scp);
-@@ -428,7 +449,7 @@ static inline void srcu_read_unlock_fast_notrace(struct srcu_struct *ssp,
-  * the same context as the maching srcu_down_read_fast().
-  */
- static inline void srcu_up_read_fast(struct srcu_struct *ssp, struct srcu_ctr __percpu *scp)
--	__releases(ssp)
-+	__releases_shared(ssp)
- {
- 	WARN_ON_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && in_nmi());
- 	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_FAST);
-@@ -444,7 +465,7 @@ static inline void srcu_up_read_fast(struct srcu_struct *ssp, struct srcu_ctr __
-  * Exit an SRCU read-side critical section, but in an NMI-safe manner.
-  */
- static inline void srcu_read_unlock_nmisafe(struct srcu_struct *ssp, int idx)
--	__releases(ssp)
-+	__releases_shared(ssp)
- {
- 	WARN_ON_ONCE(idx & ~0x1);
- 	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NMI);
-@@ -454,7 +475,7 @@ static inline void srcu_read_unlock_nmisafe(struct srcu_struct *ssp, int idx)
- 
- /* Used by tracing, cannot be traced and cannot call lockdep. */
- static inline notrace void
--srcu_read_unlock_notrace(struct srcu_struct *ssp, int idx) __releases(ssp)
-+srcu_read_unlock_notrace(struct srcu_struct *ssp, int idx) __releases_shared(ssp)
- {
- 	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
- 	__srcu_read_unlock(ssp, idx);
-@@ -469,7 +490,7 @@ srcu_read_unlock_notrace(struct srcu_struct *ssp, int idx) __releases(ssp)
-  * the same context as the maching srcu_down_read().
-  */
- static inline void srcu_up_read(struct srcu_struct *ssp, int idx)
--	__releases(ssp)
-+	__releases_shared(ssp)
- {
- 	WARN_ON_ONCE(idx & ~0x1);
- 	WARN_ON_ONCE(in_nmi());
-@@ -509,6 +530,7 @@ DEFINE_LOCK_GUARD_1(srcu, struct srcu_struct,
- 		    _T->idx = srcu_read_lock(_T->lock),
- 		    srcu_read_unlock(_T->lock, _T->idx),
- 		    int idx)
-+DECLARE_LOCK_GUARD_1_ATTRS(srcu, __assumes_ctx_guard(_T), /* */)
- 
- DEFINE_LOCK_GUARD_1(srcu_fast, struct srcu_struct,
- 		    _T->scp = srcu_read_lock_fast(_T->lock),
-diff --git a/include/linux/srcutiny.h b/include/linux/srcutiny.h
-index 51ce25f07930..c194b3c7c43b 100644
---- a/include/linux/srcutiny.h
-+++ b/include/linux/srcutiny.h
-@@ -61,6 +61,7 @@ void synchronize_srcu(struct srcu_struct *ssp);
-  * index that must be passed to the matching srcu_read_unlock().
-  */
- static inline int __srcu_read_lock(struct srcu_struct *ssp)
-+	__acquires_shared(ssp)
- {
- 	int idx;
- 
-@@ -68,6 +69,7 @@ static inline int __srcu_read_lock(struct srcu_struct *ssp)
- 	idx = ((READ_ONCE(ssp->srcu_idx) + 1) & 0x2) >> 1;
- 	WRITE_ONCE(ssp->srcu_lock_nesting[idx], READ_ONCE(ssp->srcu_lock_nesting[idx]) + 1);
- 	preempt_enable();
-+	__acquire_shared(ssp);
- 	return idx;
- }
- 
-@@ -84,11 +86,13 @@ static inline struct srcu_ctr __percpu *__srcu_ctr_to_ptr(struct srcu_struct *ss
- }
- 
- static inline struct srcu_ctr __percpu *__srcu_read_lock_fast(struct srcu_struct *ssp)
-+	__acquires_shared(ssp)
- {
- 	return __srcu_ctr_to_ptr(ssp, __srcu_read_lock(ssp));
- }
- 
- static inline void __srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_ctr __percpu *scp)
-+	__releases_shared(ssp)
- {
- 	__srcu_read_unlock(ssp, __srcu_ptr_to_ctr(ssp, scp));
- }
-diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
-index 42098e0fa0b7..4bfd80f55043 100644
---- a/include/linux/srcutree.h
-+++ b/include/linux/srcutree.h
-@@ -207,7 +207,7 @@ struct srcu_struct {
- #define DEFINE_SRCU(name)		__DEFINE_SRCU(name, /* not static */)
- #define DEFINE_STATIC_SRCU(name)	__DEFINE_SRCU(name, static)
- 
--int __srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp);
-+int __srcu_read_lock(struct srcu_struct *ssp) __acquires_shared(ssp);
- void synchronize_srcu_expedited(struct srcu_struct *ssp);
- void srcu_barrier(struct srcu_struct *ssp);
- void srcu_torture_stats_print(struct srcu_struct *ssp, char *tt, char *tf);
-@@ -259,6 +259,7 @@ static inline struct srcu_ctr __percpu *__srcu_ctr_to_ptr(struct srcu_struct *ss
-  * implementations of this_cpu_inc().
-  */
- static inline struct srcu_ctr __percpu notrace *__srcu_read_lock_fast(struct srcu_struct *ssp)
-+	__acquires_shared(ssp)
- {
- 	struct srcu_ctr __percpu *scp = READ_ONCE(ssp->srcu_ctrp);
- 
-@@ -267,6 +268,7 @@ static inline struct srcu_ctr __percpu notrace *__srcu_read_lock_fast(struct src
- 	else
- 		atomic_long_inc(raw_cpu_ptr(&scp->srcu_locks));  // Y, and implicit RCU reader.
- 	barrier(); /* Avoid leaking the critical section. */
-+	__acquire_shared(ssp);
- 	return scp;
- }
- 
-@@ -281,7 +283,9 @@ static inline struct srcu_ctr __percpu notrace *__srcu_read_lock_fast(struct src
-  */
- static inline void notrace
- __srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_ctr __percpu *scp)
-+	__releases_shared(ssp)
- {
-+	__release_shared(ssp);
- 	barrier();  /* Avoid leaking the critical section. */
- 	if (!IS_ENABLED(CONFIG_NEED_SRCU_NMI_SAFE))
- 		this_cpu_inc(scp->srcu_unlocks.counter);  // Z, and implicit RCU reader.
-diff --git a/lib/test_context-analysis.c b/lib/test_context-analysis.c
-index f18b7252646d..bd75b5ade8ff 100644
---- a/lib/test_context-analysis.c
-+++ b/lib/test_context-analysis.c
-@@ -10,6 +10,7 @@
- #include <linux/rcupdate.h>
- #include <linux/seqlock.h>
- #include <linux/spinlock.h>
-+#include <linux/srcu.h>
- 
- /*
-  * Test that helper macros work as expected.
-@@ -362,3 +363,26 @@ static void __used test_rcu_assert_variants(void)
- 	lockdep_assert_in_rcu_read_lock_sched();
- 	wants_rcu_held_sched();
- }
-+
-+struct test_srcu_data {
-+	struct srcu_struct srcu;
-+	long __rcu_guarded *data;
-+};
-+
-+static void __used test_srcu(struct test_srcu_data *d)
-+{
-+	init_srcu_struct(&d->srcu);
-+
-+	int idx = srcu_read_lock(&d->srcu);
-+	long *data = srcu_dereference(d->data, &d->srcu);
-+	(void)data;
-+	srcu_read_unlock(&d->srcu, idx);
-+
-+	rcu_assign_pointer(d->data, NULL);
-+}
-+
-+static void __used test_srcu_guard(struct test_srcu_data *d)
-+{
-+	guard(srcu)(&d->srcu);
-+	(void)srcu_dereference(d->data, &d->srcu);
-+}
--- 
+diff --git a/include/linux/local_lock_internal.h b/include/linux/local_lock=
+_internal.h
+index a4dc479157b5..9f6cb32f04b0 100644
+--- a/include/linux/local_lock_internal.h
++++ b/include/linux/local_lock_internal.h
+@@ -4,7 +4,9 @@
+ #endif
+=20
+ #include <linux/percpu-defs.h>
++#include <linux/irqflags.h>
+ #include <linux/lockdep.h>
++#include <asm/current.h>
+=20
+ #ifndef CONFIG_PREEMPT_RT
+=20
+--=20
 2.52.0.rc1.455.g30608eb744-goog
 
