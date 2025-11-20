@@ -1,159 +1,133 @@
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12F2224249
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 09:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF73828371;
+	Thu, 20 Nov 2025 09:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763630811; cv=none; b=oHgMQoWCd0Gvaycb9myn1xzM48DJn+xmN0VU8g0REoij0f6V5WXHeMr7b+WIOsxw6/keoSGgVpMqB2FVkem6ZIA6St5zCpcZyqPiSPyhQRHzG/uyIct8Yv5fjIjxw2mpvxDlPT6MmJX/j7AOg3su5uf/XPqR8/Llun52yEM3F0A=
+	t=1763631436; cv=none; b=UjcmUKGhGdYEqq5ExB5jWtiScV772JqFNbHiMLWnUafNWU+A6erq2u9f/N0d6Z4ZjU/PZyTmclIBec7CnI+kil79auMzscIQvdZPe9BVlsmo3gqQRj/pAOcBLgQy8iKDKpK5mzuFoIV39eGKeBVLXEq2OFw7h5ravF/v6GgYmTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763630811; c=relaxed/simple;
-	bh=FGbe2QJ35IWC87sUETNWg6RlVC1TZZq96naSHX+aXm0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rT7iQvW9ofIhB8vAztReYpRP9l2dWl4+9uFlsIzwXO0zNSrSjDAB3yYZ8VBz0kZl2uf9mK7glS/JpQgYxwTsC08OBrKJkMl+4hT0Fdz0T3AUIqz7hVUr+fqfMzOeU7qFrtTJGQi89RDc7cb+8dIWAQDLKCHkNEGkF5tWWFYocl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nqvvyLJD; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nqvvyLJD"
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-880499b2bc7so5593166d6.3
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 01:26:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763630809; x=1764235609; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5rNfEEw4vHnSGPrrOqGBlUEcYjNEIn+vm1yCxi49VeY=;
-        b=nqvvyLJDLW0qQ5AVPBd5aPNl6w+dvbzoam2rRdhW/5YMaM30PkjHOn3r46xXjXcnDn
-         TXdNSiEIANVJhEuwCHEee2VNw77kTiSy7snpP3paqh+acUZga0ZHr5ZpJcB9Xc4l1+ef
-         I5b38RJjxb1giKsZvCcUB2qXeT78Zq+EqvU1RUuzam7x30BjDY0eGp/o9QADxqYSZ5lQ
-         BZEGaVNCxu6Rz5IOe1FQW4vRFMNIYsy32rynCsjfo5QVziAn86sltsVEzYJq4XnDGRN3
-         MWGu5k3lYJeJ97jmW99MPQQl8tPOeDCLGRMSvUgnBLixhBlJVx8cUlkK46YXXHpDr3y6
-         4dhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763630809; x=1764235609;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5rNfEEw4vHnSGPrrOqGBlUEcYjNEIn+vm1yCxi49VeY=;
-        b=Cj/bnbChrdZr7T4Aw7f1jeoisrG8wHwSYuKkh36/TisYAWRJJaQ4kmzyvi+tu5fzu9
-         EsoG4jPopGvaUGYC034bfX25ps1yC6p7VRHJAh1TP2Jk5cWA4oNQW9fQxJjxw7ElC+8D
-         5fTHzchQMvIfeyvsE04er++8JTQqDdReXTHfJYJXziMIF+/M4lYsSqrJ7AJ9sIqdilvB
-         p4jg68mtn8YRtt/KY6oUyTcRSJGUHAJ3rxFcsDjD9OrMjkUtRVVITcrIhVowUEQD7SbR
-         qMTtDPHw4Off+mKnX7l8LhOpvIF5k/EfPLzBXvtpRK7quZL580j9zAyW7cj7dj6nYrQa
-         g+aw==
-X-Gm-Message-State: AOJu0Yz6X3cLwm6eAbxzgWbBDwqGeTaIZ1PFnt5bAES1pwxUeAIgu00O
-	NcbmPhFzh/xpxCFV9MqlkzZ4hxLh9fM+rLrZTZJDBnR85RTLLOabjqtv
-X-Gm-Gg: ASbGncuxC2NngDis4TBd/V2WRyQCVoPoLT2dLKm/lBn+3lFu66D4aVX8hiWWHNa9IW/
-	orp0fwobwVGhfgatHOloCPOcbY9ztz5FVHxqTba2NQbgIo0irnM1WGiUQAbWSnfwz/agK4gNMsE
-	3SXvsaY7KYOn0Lp5ZNSaol+ug9DPLOg9Sbm5crGUb6hJDRsJOVgOXui/3r4Qh+BWLxD/UPNSWf0
-	OYOESzuo9+1LQT73JKOPC/bwbSNtY09VCoqKLTCn8ETSZ5WgG1sa8mST2RfnHoXszk6CpW2ot6m
-	zKKTI+TaIFIbgvxTUzbj8pjsh7XKbyTuOHpddmmryXAbk/XHerx0PO0Qw2B3UHI630HxdAtIcve
-	lR1zgcZpWOMCQs52fhWbfv9mAJG27WOfQPN3ELEP5+BcNY9LHNWT0joqw+Yfj6QMqXSeQecd360
-	LYnx6LbtA8K1XdjhLF6NvyeR7dYLODWxWYdZtKE2lHNw==
-X-Google-Smtp-Source: AGHT+IErijzjvVB6QHM2SddkkZKIVjIoxlhrkbOqhzMQX/h3ZCJn9AHYFiv/1s4Xuegx61VoNALOKw==
-X-Received: by 2002:a05:6214:4903:b0:880:5279:98e9 with SMTP id 6a1803df08f44-8846e131c85mr33483786d6.40.1763630808772;
-        Thu, 20 Nov 2025 01:26:48 -0800 (PST)
-Received: from daniel-desktop3.localnet ([204.48.92.24])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8846e54c9b9sm13611896d6.28.2025.11.20.01.26.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Nov 2025 01:26:48 -0800 (PST)
-From: Daniel Tang <danielzgtg.opensource@gmail.com>
-To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
- Xiu Jianfeng <xiujianfeng@huawei.com>, Paul Moore <paul@paul-moore.com>,
- Xiujianfeng <xiujianfeng@huaweicloud.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- Nathan Lynch <nathanl@linux.ibm.com>, Matthew Garrett <mjg59@google.com>,
- Kees Cook <keescook@chromium.org>, David Howells <dhowells@redhat.com>,
- James Morris <jmorris@namei.org>
-Subject: Re: [PATCH v2] lockdown: Only log restrictions once
-Date: Thu, 20 Nov 2025 04:26:45 -0500
-Message-ID: <7645139.4DdEvYhyI6@daniel-desktop3>
-In-Reply-To: <2f4a1af8-adc6-4cbc-813f-4cc8e9bc75ae@huaweicloud.com>
-References:
- <3641397.L58v44csPz@daniel-desktop3> <1961790.USuA9gRusQ@daniel-desktop3>
- <2f4a1af8-adc6-4cbc-813f-4cc8e9bc75ae@huaweicloud.com>
+	s=arc-20240116; t=1763631436; c=relaxed/simple;
+	bh=d31uDCXXqy9xuzRREMT6Ql8sqkwaqv+EWCSURIxI5ks=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EO4tZ18G7k6ggqkchB9ngVEJJPljleIcV42iy487e7HSDfozNyWQrfIJ7pn4COq+67o6I4AKEPdyHnbkz97Es8IMToqR53Z30fkuBtywQcEvMRBWGl81QBrWsosV5il2L6CbVGx5/qgXTyQjMkQ4OIZtuSNfnjx27fkAYC2QCzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4dBt590XNCzvRhh;
+	Thu, 20 Nov 2025 17:16:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 29AA81402DB;
+	Thu, 20 Nov 2025 17:17:39 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwC3Q4uq3B5pOAq+AA--.32260S2;
+	Thu, 20 Nov 2025 10:17:38 +0100 (CET)
+Message-ID: <834970a158dd6518cda174754a5b10ea9eb2fe9b.camel@huaweicloud.com>
+Subject: Re: [PATCH -next] ima: Handle error code returned by
+ ima_filter_rule_match()
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Zhao Yipeng <zhaoyipeng5@huawei.com>, zohar@linux.ibm.com, 
+ roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com
+Cc: lujialin4@huawei.com, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 20 Nov 2025 10:17:27 +0100
+In-Reply-To: <20251120071805.1604864-1-zhaoyipeng5@huawei.com>
+References: <20251120071805.1604864-1-zhaoyipeng5@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+X-CM-TRANSID:LxC2BwC3Q4uq3B5pOAq+AA--.32260S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tryfKFW3Cr47CF43WFWfZrb_yoW5JFWrpa
+	sY9a45Ar1vgFy09F4xCFy2qayF9F4jqwnrX3s5GasF9asxZr109r1rtw15urn8GrWYkryr
+	tFWj93yYyw1qv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Jr0_Gr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBGkeebEFEQAAs8
 
-On Thursday, 20 November 2025, 02:37:56 EST Xiujianfeng <xiujianfeng@huawei=
-cloud.com> wrote:
-> Is it possible to adjust the printk_ratelimit & printk_ratelimit_burst
-> in /proc/sys/kernel/ to reduce the logs in your scenario?
+On Thu, 2025-11-20 at 15:18 +0800, Zhao Yipeng wrote:
+> In ima_match_rules(), if ima_filter_rule_match() returns -ENOENT due to
+> the rule being NULL, the function incorrectly skips the 'if (!rc)' check
+> and sets 'result =3D true'. The LSM rule is considered a match, causing
+> extra files to be measured by IMA.
+>=20
+> This issue can be reproduced in the following scenario:
+> After unloading the SELinux policy module via 'semodule -d', if an IMA
+> measurement is triggered before ima_lsm_rules is updated,
+> in ima_match_rules(), the first call to ima_filter_rule_match() returns
+> -ESTALE. This causes the code to enter the 'if (rc =3D=3D -ESTALE &&
+> !rule_reinitialized)' block, perform ima_lsm_copy_rule() and retry. In
+> ima_lsm_copy_rule(), since the SELinux module has been removed, the rule
+> becomes NULL, and the second call to ima_filter_rule_match() returns
+> -ENOENT. This bypasses the 'if (!rc)' check and results in a false match.
+>=20
+> Call trace:
+>   selinux_audit_rule_match+0x310/0x3b8
+>   security_audit_rule_match+0x60/0xa0
+>   ima_match_rules+0x2e4/0x4a0
+>   ima_match_policy+0x9c/0x1e8
+>   ima_get_action+0x48/0x60
+>   process_measurement+0xf8/0xa98
+>   ima_bprm_check+0x98/0xd8
+>   security_bprm_check+0x5c/0x78
+>   search_binary_handler+0x6c/0x318
+>   exec_binprm+0x58/0x1b8
+>   bprm_execve+0xb8/0x130
+>   do_execveat_common.isra.0+0x1a8/0x258
+>   __arm64_sys_execve+0x48/0x68
+>   invoke_syscall+0x50/0x128
+>   el0_svc_common.constprop.0+0xc8/0xf0
+>   do_el0_svc+0x24/0x38
+>   el0_svc+0x44/0x200
+>   el0t_64_sync_handler+0x100/0x130
+>   el0t_64_sync+0x3c8/0x3d0
+>=20
+> Fix this by changing 'if (!rc)' to 'if (rc <=3D 0)' to ensure that error
+> codes like -ENOENT do not bypass the check and accidentally result in a
+> successful match.
 
-It's not working. Watching the console after setting the sysctl and
-repeatedly clicking org.freedesktop.login1.Manager.CanSuspend in
-qdbusviewer (simulating what the lockscreen does), I see:
+Thanks, it makes sense.
 
-```console
-root@daniel-desktop3:~# uname -a
-Linux daniel-desktop3 6.17.0-6-generic #6-Ubuntu SMP PREEMPT_DYNAMIC Tue Oc=
-t  7 13:34:17 UTC 2025 x86_64 GNU/Linux
-root@daniel-desktop3:~# sysctl kernel.printk_ratelimit_burst=3D1
-kernel.printk_ratelimit_burst =3D 1
-root@daniel-desktop3:~# sysctl kernel.printk_ratelimit=3D999999
-kernel.printk_ratelimit =3D 999999
-root@daniel-desktop3:~# dmesg -W
-[14385.334698] lockdown_is_locked_down: 3 callbacks suppressed
-[14385.334701] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14385.614738] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14385.878857] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14386.166744] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14386.454771] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14386.750900] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14387.038795] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14387.334770] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14387.622696] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14387.926763] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14390.366582] lockdown_is_locked_down: 7 callbacks suppressed
-[14390.366585] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14390.798744] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14391.118802] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14391.422728] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14391.742754] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14392.046735] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14392.350745] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14392.654992] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14392.974797] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-[14393.270741] Lockdown: systemd-logind: hibernation is restricted; see man=
- kernel_lockdown.7
-```
+Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-At my desk, I lock my screen every 5 hours. In public, I might lock my
-screen every 1 minute, 5 minute, or 15 *minutes*. printk_ratelimit
-seems to be targeted towards things that happen every N *seconds*.
+Roberto
 
-> logs here serve a purpose similar to auditing. Based on this, I think
-> this change will meaningfully degrade the quality of the logs, making it
-> hard for users to find out what happens when lockdown is active=EF=BC=8C
-> especially after a long time running.
-
-=46or v3 in December, I'm thinking of adding a code path to special-case
-*reads* from /sys/power/state. What do you think?
-
+> Fixes: 4af4662fa4a9d ("integrity: IMA policy")
+> Signed-off-by: Zhao Yipeng <zhaoyipeng5@huawei.com>
+> ---
+>  security/integrity/ima/ima_policy.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima=
+/ima_policy.c
+> index 128fab897930..db6d55af5a80 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -674,7 +674,7 @@ static bool ima_match_rules(struct ima_rule_entry *ru=
+le,
+>  				goto retry;
+>  			}
+>  		}
+> -		if (!rc) {
+> +		if (rc <=3D 0) {
+>  			result =3D false;
+>  			goto out;
+>  		}
 
