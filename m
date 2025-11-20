@@ -1,55 +1,55 @@
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1095364EB2
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 15:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B6235A937
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 15:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763651651; cv=none; b=pAQwTDIxjeffKQodQKGzYOtSr9UKh8qFxvA0fDvmsiUMR5TS/LUyRFs5sqWetMIIMFx5KEmbBbE6LCH9h0/MoFipw5sCBa4EBI6Nx3+UTSOF8V3vnkVgQslg/tl8t5i9YxokUjfMbmBlNfSdN3f2wgf+nf8A5g5lAKcnu8TTwRI=
+	t=1763651660; cv=none; b=kBL+QufNpJrlhEo2nRLI84Rm65Pg9YmiyhxKko8jLKgvc0qtWaX1HSXqAQIkoTf9lYX5OrQrJMCJjYpMiBYF3j7ugwckyQeemhKbWQsDAJm1AzgOZB0D0ojvKK11p4eQMlxyxgnl1hQIrjYG7rbebHKFZ/fEl0Hds+5uKxaHXPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763651651; c=relaxed/simple;
-	bh=3Y89mJHosRaENaLb5tk2xkCy/Hd7qH1R9BEoKf0fV0w=;
+	s=arc-20240116; t=1763651660; c=relaxed/simple;
+	bh=VbJWJQZmBX4+csAoT1yUNldmDqG40I0IsN6jc/COgn4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=R1cg1Yfwd04sQ6SFy69dUAfhZjlM+Cj2tTcGV16y5W1lxeg2K+vqzwwaOyLfvnlcrcv5ADeFHSK1v2SvlE1UZLfeHz/sFVBjbsFyvkzGX86B2MLaHUZGEYPWtK4IHo8yS6u2+DhrIXZy9PHUi55gQPIhzEXQEfEFK1DsJWrWAp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TvAPmE33; arc=none smtp.client-ip=209.85.218.73
+	 To:Cc:Content-Type; b=dNSf/VbiONwKhjOE0+dLrgQUJVvzmS1zqYBYbf7/avBAvsFEjC16wlEXTiAOEh4bgps3S+VoacuiHkC1c5Sc/rQ8axt1QpAm/qzNnIrOi8WNlYVQjn4oOEisBHYYkuehBfQdNh7QqUyyix/gwb9TtAHCbbG+gJBAXeQP4sdSYSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GrdudiZa; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elver.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TvAPmE33"
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b736eca894fso79415166b.1
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 07:13:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GrdudiZa"
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4779da35d27so12450725e9.3
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 07:13:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763651608; x=1764256408; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1763651628; x=1764256428; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kN628sGqwThlti0A3ZPE5fg7KLj/Ov6I/vXTKugeedg=;
-        b=TvAPmE33jm22PVBm0hD8dEQlO4JMJXndCs/Q4k0zmCtQqGcjEc9PdQ7e+sEFlhmejG
-         iaTZ7d7sFgGbWDwsNFCE35vdj9rPdKP30GFS+OHa3ASmsya7nbDGvR1Y//qSOy9+d4Qs
-         Etk+3JmiZszDDwl8P1j/nCw0FBXCmw29GSXc9mQsetQjFDc3/V36e1/kQ4Ih5TgpqY34
-         UmWMR51LuUWvnHxvt8cRbBbSGchrnp6sv2tlqo3hfte8ZKSRn0ANDoSiEv0PZSvc7X0k
-         i+F1WdcqigX0rX9VY2ZRmAPSWEOj19sNLzVcWExiJRDoTYQMjt0UH83C6EZrQ9Op6IQg
-         5S5A==
+        bh=aJMOXRb0WgY3NkQlI/hPCIKlELlXVsKWBZcrKDKyFiM=;
+        b=GrdudiZaHvxb1ceX1CbrJeUQy6v+6Dja9fYK1GVBTfp5tDyfaWLBbkziOkp+4OATq1
+         vkzOMCn6UePQO6uF7yU5m6ZnAhoKEv2rMbK+rglsDKVfZbp41FKRInaOgg7L/m4X/X71
+         Qf7xw3ntI0rHCD7XRphR/0WgM1uXvmlbL2VpvsT6Nrgu8ameafysrzxZG0JZfyyJNH1E
+         WAMMz9z+y1jAt0MlLwb5NJjxq9Dz+Un6zFFOfHmd96Vee0Z964+CrgaG8kiDlaAyoUyT
+         jAzyYckkjya33dwP+UsD4A7XOTYa0KkswBE5ypf+yGk9uFGH0UmoVdLerP9WXZx8D/m2
+         UMow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763651608; x=1764256408;
+        d=1e100.net; s=20230601; t=1763651628; x=1764256428;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kN628sGqwThlti0A3ZPE5fg7KLj/Ov6I/vXTKugeedg=;
-        b=CcNqlh0650KpEt7tMyE4kW93VKuKVVzMW90xW2MNebPKhVxjmuJQ3oOtBKwgeliCy2
-         sTNPSdUGwncs7g6aaii/v+b6XFZCLBoUjZmPQoVRxGJz3ea5pN562FTMGOjAbK6sVaJ+
-         ygmY3y+Nu63cCFd4zFh9vNURlH2P7qZt9zojzI2Jv1ysnIdOfj4ou5TmIJZEUpQYyXbj
-         2Y9IGVkwgiWUSLDONsy+QwIvVO5S9EdCaIG+7c0QfddYLjDgxBj7Zh7efxFKN6wOnLWC
-         M+D9INKY8NN0A3RMqyUcSKY9M10cc9vRdhJwrF6y2omJf7J2yCkpoSY4mXOTUgHOtg5i
-         2ueg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9aCS2HkawYUCGQt3gWpSKUBzK2jMVMlwd+39mfduUPx0eBqKPnjobbLdSAgd8OAbldNPwEtTr7v3Voknx5X7fAOMhO8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8ZWOqGrCooFUOtZbTQgSrMJmakF6JjCeXufp7AFp1UeUzhSCE
-	f03fMT7U9VN9J0Tb0a7bJqbTFrQvPqOUO9FBJZ/9FfIOYrHvKn3GepC6dmga3L2EOUkuDewiu8k
-	vpg==
-X-Google-Smtp-Source: AGHT+IGPQ40L++aTOvA8JIRy1kdoYShFPO1YhmYJSO3OkON5NZw8EMACaSNJB6l90jTWpiXg4l2yJf3kSw==
-X-Received: from ejcwe11.prod.google.com ([2002:a17:907:d64b:b0:b72:63c8:2878])
- (user=elver job=prod-delivery.src-stubby-dispatcher) by 2002:a17:906:6a0d:b0:b76:23b0:7d6f
- with SMTP id a640c23a62f3a-b76554a515bmr362722666b.56.1763651608428; Thu, 20
- Nov 2025 07:13:28 -0800 (PST)
-Date: Thu, 20 Nov 2025 16:09:50 +0100
+        bh=aJMOXRb0WgY3NkQlI/hPCIKlELlXVsKWBZcrKDKyFiM=;
+        b=hGi8fv7twdrwe7LAijmynAkjMkguHbtjbAIG3d30TXfLfVlYGuqrX7OPSL/PDSZXwO
+         qah1/D92BxluY17blGrPROr1UiDE9OWMZa9dv6vqiOpGH4VGkuIc7U0lhORhBAxheSCz
+         XdSbc/v3cjXpaMbzT2oCow1HH5an8S0CotwC7EW+odXVJnaiyz51Pw/Y7IcQJyB5StA1
+         NaHwO2WFjr343wFnO23e9TJLNIbSMMPh7Ieh/qkhnEBMZWuV6CC296qdEyTstZH9OJ6u
+         /vOE2+rPDTwb3oFjMtV7YNoZfUAcB/ZO1cUIIKOjYi2nhEFH/47XIp9LxHX385XtUwUJ
+         QOfw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6OssWnQ7xlpEBvOcWSln+OhLXR15nM284b4ZYPpeXryEcsiggfqxDCUjywzfFDIKuKVBTOL+EhAKFdv+nlCTkfLiXYP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZhtIi7PQ6H4Wilsn/Fvi5gDSJYsLJKmdd8dRhzDZbpPaUCbFN
+	0s+ByFBDtb0KWIGumsT5+eFjvIHTfu3oRtvXmI1KFgRIUaBl8JO/BHX8EZ29UViFeaMW0mN6lXW
+	9kQ==
+X-Google-Smtp-Source: AGHT+IFOmV1c9L2LvdRR9E5a5WseLoVuoNabSykiYJeUUPoV60hKtqkuL5rUoQ3b9gFsGSgiTWOm153hKQ==
+X-Received: from wmpi31.prod.google.com ([2002:a05:600c:4b1f:b0:477:55c0:6392])
+ (user=elver job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:4f49:b0:477:7991:5d1e
+ with SMTP id 5b1f17b1804b1-477b8a9fd96mr32224715e9.25.1763651627745; Thu, 20
+ Nov 2025 07:13:47 -0800 (PST)
+Date: Thu, 20 Nov 2025 16:09:55 +0100
 In-Reply-To: <20251120151033.3840508-7-elver@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -59,8 +59,8 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251120145835.3833031-2-elver@google.com> <20251120151033.3840508-7-elver@google.com>
 X-Mailer: git-send-email 2.52.0.rc1.455.g30608eb744-goog
-Message-ID: <20251120151033.3840508-26-elver@google.com>
-Subject: [PATCH v4 25/35] compiler: Let data_race() imply disabled context analysis
+Message-ID: <20251120151033.3840508-31-elver@google.com>
+Subject: [PATCH v4 30/35] stackdepot: Enable context analysis
 From: Marco Elver <elver@google.com>
 To: elver@google.com, Peter Zijlstra <peterz@infradead.org>, 
 	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>
@@ -87,14 +87,7 @@ Cc: "David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenry
 	linux-wireless@vger.kernel.org, llvm@lists.linux.dev, rcu@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Many patterns that involve data-racy accesses often deliberately ignore
-normal synchronization rules to avoid taking a lock.
-
-If we have a lock-guarded variable on which we do a lock-less data-racy
-access, rather than having to write context_unsafe(data_race(..)),
-simply make the data_race(..) macro imply context-unsafety. The
-data_race() macro already denotes the intent that something subtly
-unsafe is about to happen, so it should be clear enough as-is.
+Enable context analysis for stackdepot.
 
 Signed-off-by: Marco Elver <elver@google.com>
 ---
@@ -102,39 +95,118 @@ v4:
 * Rename capability -> context analysis.
 
 v2:
-* New patch.
+* Remove disable/enable_context_analysis() around headers.
 ---
- include/linux/compiler.h    | 2 ++
- lib/test_context-analysis.c | 2 ++
- 2 files changed, 4 insertions(+)
+ lib/Makefile     |  1 +
+ lib/stackdepot.c | 20 ++++++++++++++------
+ 2 files changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 5b45ea7dff3e..8ad1d4fd14e3 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -186,7 +186,9 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
- #define data_race(expr)							\
- ({									\
- 	__kcsan_disable_current();					\
-+	disable_context_analysis();					\
- 	__auto_type __v = (expr);					\
-+	enable_context_analysis();					\
- 	__kcsan_enable_current();					\
- 	__v;								\
- })
-diff --git a/lib/test_context-analysis.c b/lib/test_context-analysis.c
-index 522769c9586d..4612025a1065 100644
---- a/lib/test_context-analysis.c
-+++ b/lib/test_context-analysis.c
-@@ -92,6 +92,8 @@ static void __used test_raw_spinlock_trylock_extra(struct test_raw_spinlock_data
+diff --git a/lib/Makefile b/lib/Makefile
+index 59ed5f881bcb..2e983f37d173 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -248,6 +248,7 @@ obj-$(CONFIG_POLYNOMIAL) += polynomial.o
+ # Prevent the compiler from calling builtins like memcmp() or bcmp() from this
+ # file.
+ CFLAGS_stackdepot.o += -fno-builtin
++CONTEXT_ANALYSIS_stackdepot.o := y
+ obj-$(CONFIG_STACKDEPOT) += stackdepot.o
+ KASAN_SANITIZE_stackdepot.o := n
+ # In particular, instrumenting stackdepot.c with KMSAN will result in infinite
+diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+index de0b0025af2b..166f50ad8391 100644
+--- a/lib/stackdepot.c
++++ b/lib/stackdepot.c
+@@ -61,18 +61,18 @@ static unsigned int stack_bucket_number_order;
+ /* Hash mask for indexing the table. */
+ static unsigned int stack_hash_mask;
+ 
++/* The lock must be held when performing pool or freelist modifications. */
++static DEFINE_RAW_SPINLOCK(pool_lock);
+ /* Array of memory regions that store stack records. */
+-static void **stack_pools;
++static void **stack_pools __pt_guarded_by(&pool_lock);
+ /* Newly allocated pool that is not yet added to stack_pools. */
+ static void *new_pool;
+ /* Number of pools in stack_pools. */
+ static int pools_num;
+ /* Offset to the unused space in the currently used pool. */
+-static size_t pool_offset = DEPOT_POOL_SIZE;
++static size_t pool_offset __guarded_by(&pool_lock) = DEPOT_POOL_SIZE;
+ /* Freelist of stack records within stack_pools. */
+-static LIST_HEAD(free_stacks);
+-/* The lock must be held when performing pool or freelist modifications. */
+-static DEFINE_RAW_SPINLOCK(pool_lock);
++static __guarded_by(&pool_lock) LIST_HEAD(free_stacks);
+ 
+ /* Statistics counters for debugfs. */
+ enum depot_counter_id {
+@@ -291,6 +291,7 @@ EXPORT_SYMBOL_GPL(stack_depot_init);
+  * Initializes new stack pool, and updates the list of pools.
+  */
+ static bool depot_init_pool(void **prealloc)
++	__must_hold(&pool_lock)
+ {
+ 	lockdep_assert_held(&pool_lock);
+ 
+@@ -338,6 +339,7 @@ static bool depot_init_pool(void **prealloc)
+ 
+ /* Keeps the preallocated memory to be used for a new stack depot pool. */
+ static void depot_keep_new_pool(void **prealloc)
++	__must_hold(&pool_lock)
+ {
+ 	lockdep_assert_held(&pool_lock);
+ 
+@@ -357,6 +359,7 @@ static void depot_keep_new_pool(void **prealloc)
+  * the current pre-allocation.
+  */
+ static struct stack_record *depot_pop_free_pool(void **prealloc, size_t size)
++	__must_hold(&pool_lock)
+ {
+ 	struct stack_record *stack;
+ 	void *current_pool;
+@@ -391,6 +394,7 @@ static struct stack_record *depot_pop_free_pool(void **prealloc, size_t size)
+ 
+ /* Try to find next free usable entry from the freelist. */
+ static struct stack_record *depot_pop_free(void)
++	__must_hold(&pool_lock)
+ {
+ 	struct stack_record *stack;
+ 
+@@ -428,6 +432,7 @@ static inline size_t depot_stack_record_size(struct stack_record *s, unsigned in
+ /* Allocates a new stack in a stack depot pool. */
+ static struct stack_record *
+ depot_alloc_stack(unsigned long *entries, unsigned int nr_entries, u32 hash, depot_flags_t flags, void **prealloc)
++	__must_hold(&pool_lock)
+ {
+ 	struct stack_record *stack = NULL;
+ 	size_t record_size;
+@@ -486,6 +491,7 @@ depot_alloc_stack(unsigned long *entries, unsigned int nr_entries, u32 hash, dep
+ }
+ 
+ static struct stack_record *depot_fetch_stack(depot_stack_handle_t handle)
++	__must_not_hold(&pool_lock)
+ {
+ 	const int pools_num_cached = READ_ONCE(pools_num);
+ 	union handle_parts parts = { .handle = handle };
+@@ -502,7 +508,8 @@ static struct stack_record *depot_fetch_stack(depot_stack_handle_t handle)
+ 		return NULL;
+ 	}
+ 
+-	pool = stack_pools[pool_index];
++	/* @pool_index either valid, or user passed in corrupted value. */
++	pool = context_unsafe(stack_pools[pool_index]);
+ 	if (WARN_ON(!pool))
+ 		return NULL;
+ 
+@@ -515,6 +522,7 @@ static struct stack_record *depot_fetch_stack(depot_stack_handle_t handle)
+ 
+ /* Links stack into the freelist. */
+ static void depot_free_stack(struct stack_record *stack)
++	__must_not_hold(&pool_lock)
  {
  	unsigned long flags;
  
-+	data_race(d->counter++); /* no warning */
-+
- 	if (raw_spin_trylock_irq(&d->lock)) {
- 		d->counter++;
- 		raw_spin_unlock_irq(&d->lock);
 -- 
 2.52.0.rc1.455.g30608eb744-goog
 
