@@ -1,63 +1,63 @@
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8564334C811
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 22:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5270B36213E
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 22:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763677448; cv=none; b=LY1HA6Jw+6M5ChBR7hKf4iA/TCILCd24zk73RnJiRjS1H40yEAbgsPGYmyTAgi0fE3jQTEQ3W9tBbhTGVjHlu2fABFI1BZz/o2qYLEHugI0+21yAkfrmnPxyapYhQc1HQdSUnAYtSG+hCSGPxUMHWul9SR5xIduTnTLFoBikDU8=
+	t=1763677450; cv=none; b=dm5I+I1NxUuoA+XUcTLPAxozlGy2Up/kIH7u+CE2mcggOFyxncmN1qmdtrBIakVn/FlkLIU+AA14Na6Vix7TAvwv9qvH+Zhd15KxeNUgaVObifZM2eMMOFwi9xtdYmhtN/4WGQB/awa2ZWjQyyuUbVIeoZoJzipTVWIgB82txyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763677448; c=relaxed/simple;
-	bh=iz9YMgP4N+cbRQdtk6q0XTOtdCFg/51B2rqe+13rRQ8=;
+	s=arc-20240116; t=1763677450; c=relaxed/simple;
+	bh=Xhh+O3luqRxdN555Ci/bpIFEKRq2QjbwtvhK2ln/jkE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z+ZVkUNINR+bf7HrEp48xAWetFs/PbdvFwKBYWNJV872KCLNCceofCc9BNoC2SxQ8K+Vi+DvQbgtAapWFYMMCGNl+Kihh3QKWv30pYywx4+PjEDw9piFcfdp+1/u5GxNECbvuJi/03U7OANSz50EPt0O/MdOaWzUlwR03VDaWeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QTCh35Dl; arc=none smtp.client-ip=209.85.128.173
+	 MIME-Version; b=h78oNdGQ31dvJJqwg1FRXl35ilcQs3cMMrBdowBg7YsnJWhG6srP8korW05gBGG+rxhbklrgZQgZ3X9YVycs42I2b1HShdljjzP7qqD9rtdKHkubSG4ixaxhGG2pEKBScV1bV065cc/2A4ZTPjIzlMdHpWp4T0ofjWw++nEny1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jInfo/n1; arc=none smtp.client-ip=209.85.128.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QTCh35Dl"
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-789524e6719so19842887b3.1
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 14:24:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jInfo/n1"
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-787eb2d8663so22668417b3.0
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 14:24:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763677443; x=1764282243; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763677445; x=1764282245; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NciS2ikFl6u2GUPwa6tJUCwoUTqA9UOzQBDu265f5KY=;
-        b=QTCh35DlkE4AcihdwgqBNvdaPqubtuoEypbgj6ZwILDMR6FYRu9yFlVYgiCsCGd4wo
-         6BxBtLoB4UP+QkNMgikFaf+Tzaj9gpsotF2gPbESQ+A8Ye19fCqe12hvnCUaj4tyWE+z
-         0Qx+dkYPjk+0FRWPlpVZ4OAwoVGkqpHLSW24N5iTWiO+lJ+a+6sleqBSVXvaQX0CYEZk
-         B7fipe+qYHYIaLDHGlAtOJ/Pe3OYGyIPEshS1EF2fetPZeg6Q91z0ZLqYF6vRUxWDNIr
-         SvOMl+7gzJ/3qRiZ688j6sQpx5XK4nTYEC4vq5ipAQ3T5LVna6BVncXlMy2UsLWhpmN8
-         g2Xw==
+        bh=2KNqWIBAx3zm8pyAs1G8s4JgD0/xDNLSye/8Ec9iBgg=;
+        b=jInfo/n1NrrwkGd8115W0UYHfwvrgV8HJbh1wHHT3F8/fEj3d5jKfaNdjE0VdN4Ax0
+         dwT0DqTUiEdxdkdkwvatoro4l7rx+GSqCf3CrOBcCVLNoYXNketMaDUu7k/0YvcQQJJ1
+         BtDug3J3gtllz2o/Tx5QAEhT3a6OcGgEnfK6+PbtIfRYeLsXSbeBMpFb8D88DgCbj9if
+         vQqwCYN6tUv2zAd+fLp9OB2oRdy0Dq2mMpaTSjCvIysEPj+8Y65Q51LoiYtL8xJKhaon
+         OPBHsMXZIYMN8q33ybTx/TmVn0htPO8P3PhX4dR1iUIYjAPnkVqenY2C00rLsJPc0ib3
+         qD0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763677443; x=1764282243;
+        d=1e100.net; s=20230601; t=1763677445; x=1764282245;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=NciS2ikFl6u2GUPwa6tJUCwoUTqA9UOzQBDu265f5KY=;
-        b=Q2PYx6V3/PMVIdnCCin5nUH8xbGmySUWO8uP3FlwPXMYUL8YTr4bDzSCq88QZdw3qi
-         bozEBqBlVR5CTYF3MIOVWMRZPptw1DvomfTQyxNInKd2UYTJdNb4nolnZEnVZaPDepYc
-         wPNNlBnWEUpL0W3TdffzSJymptiWi/Kih5yza+lPCKLR2jZsFzc1azBcq6TiQHT52c3D
-         UJ126pmyIAHfHQ0KOt5McmHcNpMksJynpqR/YUBlcTd0OivHh0/5O7pF5XYwHcDga4T/
-         IiqCxET3FOKiKc7e7DcIELbWVZbo3JzisPMmxfTwNOWsU5p7/gmdHeD22tgbZ3joP0pn
-         X0kA==
-X-Gm-Message-State: AOJu0Yyq71VkOfZSkTSurWu35rylu7n+2q6gSQ4AbhxIzrE9GLvg/pS6
-	NyST9qVrj4vXJuUH3uRQca06m1VhA3H2muT1AyizovvotVRzhpZYxPtur2f39K7+GhrgTQ==
-X-Gm-Gg: ASbGncu46u0dulqN+KwJlNTZ5cjxjXPrHfmmA7Ps3j6VlxD+ktapplHzY5m+yu3thkr
-	VwD9Hv3s52rHdmB9wEKkCKZzu3XRNfoAh+Ik74InwJQpXxDzc4qnNUk2ZsCKVWqABjkaaO2FtI7
-	OBsgYfs7YgIaHtKqhE08xrN6T3EAYao5N7uthpI211Sy7Zf/EF2qmGAHE21aq3lH+pHthRydSJ9
-	knuvKE4JwY5OgccdNLxHIPXY91e0O/7T5feCWAbCXd0ROV/Oc7w7+w804FnJN9TplprpPh0URh/
-	xsI5BFGJL7pyttPsyQtnRNVjb8iAaPnDAGbUXh431VwCCgRn4nG3XflD9nKNqo8etwX6tZfRzEV
-	yMRDhDKGdDnnvEX+iLCMn0g5ZcMFApnwaU9jDrtBCxGcgc4wJ6kMEurRDUac3aQKErdmCeh1XKM
-	LPsKsHU5a3H5HfBSlfLPArx226S3xGItrOegJ7poXnvO+/IHzfXPwPZ3J1rKo9
-X-Google-Smtp-Source: AGHT+IFuDPDIfa7fNKtMBzET/+ke8UW54hj0IuzsV7ZDy7nTRrW5A5I35mQalHVUTTIwknVvLlp1Vg==
-X-Received: by 2002:a05:690c:d90:b0:787:e779:9ef8 with SMTP id 00721157ae682-78a7bb5a576mr35330267b3.16.1763677443408;
-        Thu, 20 Nov 2025 14:24:03 -0800 (PST)
+        bh=2KNqWIBAx3zm8pyAs1G8s4JgD0/xDNLSye/8Ec9iBgg=;
+        b=ZRM5N3dCNC3OVW+E0cozMpyeKM2FBvasgRnoDFbx5Pkwl4x4dbPOAgC6G7fncssnqG
+         mmznxxPg/7Oh9GIi7xYay/dEgMtANq4t2AJNGML3avci6YThHf7nCQXNZX/wr5Fcic3r
+         09ZQ+EKXsMOy5LYptiJ9kh3L+OlWrklK23hTokR93p6CwIfHPPFdEnYLtq60g+oIzSyX
+         u9jDd03qQmzsISajti1+Lkrx7GFDSBiVvGvtzjpQiDpM1nNiT/OnUdGP4wYaGkjSGsf3
+         BLobQxATuoL6cT0yKk8x0xjtkwuj7RrqM5/h8GqE7IRYqIG16kBeDYUZGSMjz94ahSF2
+         Pi3g==
+X-Gm-Message-State: AOJu0Ywh47/UI0jZ7on9+Y+2gCQSTQeHXDsUPqd069+76q3xOAJiNhCK
+	bKRqi+DU9z46J6Dul2SV6wNQmMk73uNsEKywk/zWcn1uXSHVln9gTc6mbCoDQh22SAXWDA==
+X-Gm-Gg: ASbGncvHTal70RXAljt3mbDGtP8AVZ+m0EdGeU62uXa3xnbMeBuwiyR1DZ1SJpiOix3
+	r4tbo2ivyy6EqItsjE4Y/esFrTq1i/xUmUz9pSWEdbdrYkF7XqHGnYsoMAFz7XvcF3MtzLOI05r
+	JZaBpkTHE1LRasurbUEB+PrmTJ9PX0oTvY8GShtFjP9aI2gaqSYDuT9KZQU8HhMFqow5Vo2tAIp
+	UKkqNY7sanoKi8oDVA2Z/KS150tIlrtLYvFUL1kK+TdxJDgT27oIJlpnzYiktAVplLI7fLo2reT
+	MfJweajzQ2bQ8RN+e1uwDcZDag/zK5FC/0QzZuF20fIulrV4l7cv4lwstzDLWDGqNXvSpzkVzit
+	4DDkR7YFYHbsOxD8/TRzqKACX2gvtKWAF1wWXm3LN/6fcqMc+SHsTSqVSHP39QXl04XcTsiQN5X
+	WXBQVD1SHdhtmdWgibDbW698W4eQun4xNCqSS2oKr/5sUyTyn0DzqHd7QUqyLrvzHtV41FXHs=
+X-Google-Smtp-Source: AGHT+IGGPhP0BBgm1PkUCfDQmu6p1XtJrgy4Xh/bM8c4UMC6WpDaPyyCcd1ZgzeDuOSzb3qWXWBY3w==
+X-Received: by 2002:a05:690c:360e:b0:786:898d:4a8c with SMTP id 00721157ae682-78a8abaf69emr2263127b3.24.1763677444908;
+        Thu, 20 Nov 2025 14:24:04 -0800 (PST)
 Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78a7993cedesm10954757b3.41.2025.11.20.14.24.02
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78a7993cedesm10954757b3.41.2025.11.20.14.24.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Nov 2025 14:24:03 -0800 (PST)
+        Thu, 20 Nov 2025 14:24:04 -0800 (PST)
 From: Justin Suess <utilityemal77@gmail.com>
 To: linux-security-module@vger.kernel.org
 Cc: Tingmao Wang <m@maowtm.org>,
@@ -66,9 +66,9 @@ Cc: Tingmao Wang <m@maowtm.org>,
 	Abhinav Saxena <xandfury@gmail.com>,
 	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH 2/6] landlock: Implement LANDLOCK_ADD_RULE_NO_INHERIT userspace api
-Date: Thu, 20 Nov 2025 17:23:42 -0500
-Message-ID: <20251120222346.1157004-3-utilityemal77@gmail.com>
+Subject: [PATCH 3/6] samples/landlock: Add LANDLOCK_ADD_RULE_NO_INHERIT to landlock-sandboxer
+Date: Thu, 20 Nov 2025 17:23:43 -0500
+Message-ID: <20251120222346.1157004-4-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20251120222346.1157004-1-utilityemal77@gmail.com>
 References: <20251120222346.1157004-1-utilityemal77@gmail.com>
@@ -80,55 +80,107 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implements the syscall side flag handling and kernel api headers for the
-LANDLOCK_ADD_RULE_NO_INHERIT flag.
+Adds support to landlock-sandboxer with environment variables LL_FS_RO_NO_INHERIT
+and LL_FS_RW_NO_INHERIT. These create the same rulesets as their non-no inherit varients,
+plus the LANDLOCK_ADD_RULE_NO_INHERIT flag.
 
 Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 ---
- include/uapi/linux/landlock.h | 9 +++++++++
- security/landlock/syscalls.c  | 5 ++++-
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ samples/landlock/sandboxer.c | 39 +++++++++++++++++++++++++++---------
+ 1 file changed, 29 insertions(+), 10 deletions(-)
 
-diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-index 50f0806b7e33..d9daef551d96 100644
---- a/include/uapi/linux/landlock.h
-+++ b/include/uapi/linux/landlock.h
-@@ -127,10 +127,19 @@ struct landlock_ruleset_attr {
-  *     allowed_access in the passed in rule_attr.  When this flag is
-  *     present, the caller is also allowed to pass in an empty
-  *     allowed_access.
-+ * %LANDLOCK_ADD_RULE_NO_INHERIT
-+ *     When this flag is set while adding a rule to a ruleset, the rule
-+ *     will not inherit allowed accesses from rules on parent objects
-+ *     within the same layer. (currently only applies to filesystem objects)
-+ *     By default, Landlock rules added to a ruleset inherit allowed accesses
-+ *     from parent objects, meaning that if a parent directory has been granted
-+ *     certain access rights, those rights will also apply to its child objects.
-+ *     This flag prevents such inheritance for the specific rule being added.
-  */
+diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+index 2d8e3e94b77b..2b40b2df83b4 100644
+--- a/samples/landlock/sandboxer.c
++++ b/samples/landlock/sandboxer.c
+@@ -58,6 +58,8 @@ static inline int landlock_restrict_self(const int ruleset_fd,
  
- /* clang-format off */
- #define LANDLOCK_ADD_RULE_QUIET			(1U << 0)
-+#define LANDLOCK_ADD_RULE_NO_INHERIT		(1U << 1)
+ #define ENV_FS_RO_NAME "LL_FS_RO"
+ #define ENV_FS_RW_NAME "LL_FS_RW"
++#define ENV_FS_RO_NO_INHERIT_NAME "LL_FS_RO_NO_INHERIT"
++#define ENV_FS_RW_NO_INHERIT_NAME "LL_FS_RW_NO_INHERIT"
+ #define ENV_FS_QUIET_NAME "LL_FS_QUIET"
+ #define ENV_FS_QUIET_ACCESS_NAME "LL_FS_QUIET_ACCESS"
+ #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
+@@ -121,7 +123,8 @@ static int parse_path(char *env_path, const char ***const path_list)
  /* clang-format on */
  
- /**
-diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-index 93396bfc1500..200287a34895 100644
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -463,7 +463,10 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
- 	if (!is_initialized())
- 		return -EOPNOTSUPP;
+ static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
+-			       const __u64 allowed_access, bool quiet)
++		       const __u64 allowed_access,
++		       __u32 add_rule_flags, bool mandatory)
+ {
+ 	int num_paths, i, ret = 1;
+ 	char *env_path_name;
+@@ -132,9 +135,13 @@ static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
  
--	if (flags && flags != LANDLOCK_ADD_RULE_QUIET)
-+	if (flags && flags & ~(LANDLOCK_ADD_RULE_QUIET | LANDLOCK_ADD_RULE_NO_INHERIT))
-+		return -EINVAL;
-+	if ((flags & LANDLOCK_ADD_RULE_NO_INHERIT) &&
-+	    rule_type != LANDLOCK_RULE_PATH_BENEATH)
- 		return -EINVAL;
+ 	env_path_name = getenv(env_var);
+ 	if (!env_path_name) {
+-		/* Prevents users to forget a setting. */
+-		fprintf(stderr, "Missing environment variable %s\n", env_var);
+-		return 1;
++		if (mandatory) {
++			/* Prevents users to forget a setting. */
++			fprintf(stderr, "Missing environment variable %s\n",
++				env_var);
++			return 1;
++		}
++		return 0;
+ 	}
+ 	env_path_name = strdup(env_path_name);
+ 	unsetenv(env_var);
+@@ -171,8 +178,7 @@ static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
+ 		if (!S_ISDIR(statbuf.st_mode))
+ 			path_beneath.allowed_access &= ACCESS_FILE;
+ 		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
+-				      &path_beneath,
+-				      quiet ? LANDLOCK_ADD_RULE_QUIET : 0)) {
++			      &path_beneath, add_rule_flags)) {
+ 			fprintf(stderr,
+ 				"Failed to update the ruleset with \"%s\": %s\n",
+ 				path_list[i], strerror(errno));
+@@ -375,6 +381,8 @@ static const char help[] =
+ 	"Optional settings (when not set, their associated access check "
+ 	"is always allowed, which is different from an empty string which "
+ 	"means an empty list):\n"
++	"* " ENV_FS_RO_NO_INHERIT_NAME ": read-only paths without rule inheritance\n"
++	"* " ENV_FS_RW_NO_INHERIT_NAME ": read-write paths without rule inheritance\n"
+ 	"* " ENV_TCP_BIND_NAME ": ports allowed to bind (server)\n"
+ 	"* " ENV_TCP_CONNECT_NAME ": ports allowed to connect (client)\n"
+ 	"* " ENV_SCOPED_NAME ": actions denied on the outside of the landlock domain\n"
+@@ -596,17 +604,28 @@ int main(const int argc, char *const argv[], char *const *const envp)
+ 	}
  
- 	/* Gets and checks the ruleset. */
+ 	if (populate_ruleset_fs(ENV_FS_RO_NAME, ruleset_fd, access_fs_ro,
+-				false)) {
++			0, true)) {
+ 		goto err_close_ruleset;
+ 	}
+ 	if (populate_ruleset_fs(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw,
+-				false)) {
++			0, true)) {
++		goto err_close_ruleset;
++	}
++	/* Optional no-inherit rules mirror the regular read-only/read-write sets. */
++	if (populate_ruleset_fs(ENV_FS_RO_NO_INHERIT_NAME, ruleset_fd,
++			access_fs_ro, LANDLOCK_ADD_RULE_NO_INHERIT,
++			false)) {
++		goto err_close_ruleset;
++	}
++	if (populate_ruleset_fs(ENV_FS_RW_NO_INHERIT_NAME, ruleset_fd,
++			access_fs_rw, LANDLOCK_ADD_RULE_NO_INHERIT,
++			false)) {
+ 		goto err_close_ruleset;
+ 	}
+ 	/* Don't require this env to be present. */
+-	if (quiet_supported && getenv(ENV_FS_QUIET_NAME)) {
++	if (quiet_supported) {
+ 		if (populate_ruleset_fs(ENV_FS_QUIET_NAME, ruleset_fd, 0,
+-					true)) {
++				LANDLOCK_ADD_RULE_QUIET, false)) {
+ 			goto err_close_ruleset;
+ 		}
+ 	}
 -- 
 2.51.2
 
