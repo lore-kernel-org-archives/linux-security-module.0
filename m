@@ -1,55 +1,55 @@
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CC93590A4
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 15:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A343624BB
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 15:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763651602; cv=none; b=rkxt/vXgHAZTBXHR6mk386nVeCGBRiMJKl9LmDNrQW+fIrprprw+J5Qn+J00yvckkYvrOT/yRcgt8MtwoK5St/+6RF2CEnQtMscSvODnO4aQ0kci6Zpp4hFFp+x2mQkWqWsWLiSXVk6m50O8SRCNSSmXFlEgRqg1LLFU35ZdfyU=
+	t=1763651612; cv=none; b=FxLZvgscfXMKZ2upaKFxjOhOdeS+lo5ekw8A3A9jSlSjHDSkYXZi1ubJg7V1m0CZxqZhch+KQpouW+IFLB5u2wxj5VFS0M0NwpV/yQLERb8lYPDP7KM+PS5cA4rVCrVbcu46LjDkkIFNoxrMMqvcPFyN4x7yPAukzCa8GQer7yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763651602; c=relaxed/simple;
-	bh=r7WIw2CSAQ4tWG1OZ75salml9To1eme5D14M43qpmeA=;
+	s=arc-20240116; t=1763651612; c=relaxed/simple;
+	bh=ns3DYUnt32Y6bCDTYyQa3OW5L2DdvIEspeWXpXn2KHo=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=N+wFYATpA7kru3eRBzbQQ8L2eIT6UKRCCQunEDnpShMJjy+xjBsy9ZB9+/fdrozg35mJDmeixTQFpXAGEEHZvM4HWChSUqeMPMlYwri544mUS+tujz7noeC6jrXRMKy2qvhyt6h3qJxst+v1zWg6mEY5opOBPUUg6pSAgJ3NiDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TU1wZaLk; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=Dn82ijFvoaqIYAfTxR31jZcI8LPwJeD6NPzM3pvHy3LMxzG4EoEL+Cit2de1lKJa1BSbTs21xMBpcn2ywgMpZbOrauElLWN2zT8eKWRpqdAmPabpDbyWzJnWrVS7uNh41QMlQzryv7twz9KCrdo0iY7R9L3D4pTzFC4Lj9ZbgQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0dO1Ccd0; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elver.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TU1wZaLk"
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4779da35d27so12433515e9.3
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 07:12:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0dO1Ccd0"
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-47754e6bddbso6990255e9.3
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 07:13:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763651570; x=1764256370; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1763651589; x=1764256389; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nc/agqhZHpBZo5pQd3t3SIT1Qnduk/rx/3xksUJM3vo=;
-        b=TU1wZaLkkk2G1q9LQREJlVbVMI6JtqLtTgFkFu3ulLlanMpcjX3GU1YkH62Y0+IN24
-         XilWWeiLu5/isiU2ohDC5wyT/hVf1MykPj0KVcetQu3KgkJjZqTxGdWuCvbAfm5J0dFK
-         JGg/kggFiraLVc0J7CloN+MRuC8/+RpsDNzk5vHRqQJ+KWC0b4wD0StZL62XEBl2NTeX
-         jOB1kj6Was6xhvCocEUR3j1IOxvLrQqEBRweUt5h8SRKzKu7cyJAJSXcmzaKolj0u9rm
-         5C3rG47FFViXAoN0wPcgpwKclKC+P64BArs43xsL/J7rnR7JPFaAOR9bPYsMgYKhFMVY
-         I3rw==
+        bh=dkmPbZNSmdMyreEK/bsAoZcLQrwuNTqttZsMG2m8BsQ=;
+        b=0dO1Ccd0uJ/ZJS2hfhlQvOCsbdQC2SmcFpXJFWP4I+2Umsdcm8eu+gMjwryEsoO0h8
+         DuOHypvAJzqW+Fin5GVnirvXARBKffpayBYbTRVcwVB1gZbX7nJopk8IKeG+vcbx7gxP
+         VYdNa/xSGmw9pA/V+2g9BuhDaxM+p+fkwzwigluPZZzwbiUxBgekbXbu7pwo4mKWe6kT
+         C5aKr1InLyaev3wu2cVQvfvElUAqzotnAwkog89cTOaWnVUbqcGo6rvxh+0uQNC9EEjm
+         epUdA1SjOf93NAk+EQ4ux0Vt7RXwhwUzkyCZBj/KUS1zDnqTVV+bibAneLdz3UNGMp8m
+         WdPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763651570; x=1764256370;
+        d=1e100.net; s=20230601; t=1763651589; x=1764256389;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nc/agqhZHpBZo5pQd3t3SIT1Qnduk/rx/3xksUJM3vo=;
-        b=JuPezHwO/W+YOtxtoXiXWohfRR7kZJCYKxtLJX1CPE8dFOAxk9BQp4FKYuklneHsWq
-         dQNhH5you+LBgDUk9alKaxZp84nsrOjVHXTgT7ILRZnOLw+MxTpfjsDRtvObqVdwNwFm
-         dV2nIdAM2EIXQInbVXC5Ig+6EIoiNxkyuFoENS+QQfJcGfYVZrgjKnvJEwuT0fILJOrJ
-         o9R7WkVdBEgoffoJY2M+NM9jGruNyhb30rwJRNKezYMg4dldf7rDs5SklM70sl68T4cc
-         a+/voJmQ14Noyv7RRJK/N65VzgZ0nQ6b+5qqg80AEncbGtv7+2xdMgxLOtvFPrH8Sffe
-         1y1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWEB2+4vCXZzMZ7W2ahujMafUXnq+t5n0TUA+8X2134nQxGw+HRqlNQkxLlSdRP95O+myg0XvIzq2cxJFLWX/VN8SNBcg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJwe8r9NDOBZVfWQ/f0a/h05Uak+e5+nQJO4xvYHb8YFUfUTf1
-	DxGH95/VOUuJ1FXjOAMkk8pHpPF5aRiPXBjJc8hjViJsLT8x1PA4aSxOkcWkw9XNmfYHOz4fGrb
-	IIQ==
-X-Google-Smtp-Source: AGHT+IEEaNMCstTJqOLR6fdO3p0rd5Vx9GNO1jJ07YubqwQoWR7BvLPGZfMoQILzZHDOemuyFlxyBYdKgQ==
-X-Received: from wmd10.prod.google.com ([2002:a05:600c:604a:b0:477:9c68:bd6])
- (user=elver job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3590:b0:46e:761b:e7ff
- with SMTP id 5b1f17b1804b1-477b8c92773mr32595725e9.28.1763651569512; Thu, 20
- Nov 2025 07:12:49 -0800 (PST)
-Date: Thu, 20 Nov 2025 16:09:41 +0100
+        bh=dkmPbZNSmdMyreEK/bsAoZcLQrwuNTqttZsMG2m8BsQ=;
+        b=hg7nqGcVGxNSa+gQrgGIcNKaD6qzIw1I7siar48Z0QyZp5p4UhYlJxN0zQ7JuB0T6b
+         MnMWiO4xpMMVCNX4qGOr1NgyT5Xh1MIFeUZ5x4/EDAkIQXElFYnLw/spfwQUnDcwlP2n
+         oYTj6Ge8IA+3OB8rJ51voc+Ydc7Vt9lMidLRXof4jev80o2rsSksxo9hif64c+12RCmT
+         7kUWF+S7JbYjGaGTdH8Scnq8fjuNEKue11oqN9RhllEKuiftIa7dKBPe4QeRpykz8s4h
+         BU8DKrz3gfC2KxDd2x46C5HaaV4zRhpIKPpF33PeLcCIDiiCrgCax/+nOm6vxHlEsnQl
+         cLAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSvfPyVAaNujgCskSkIdQilveEG94Yt4d/nU8Pc9VFvRL9vUIRQYHGAaZbxy1hHA9USqWRubP4WeOs9Ed/R8UFomzVqxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8dSqM4lDqCrkZ/Ehr4L6sKuOKXsbCULe4S3u3t7RxEovKcpFv
+	AW9sspZj9Alehbld+i7PV4qzUuUEcLPexYxfeT1+50cUZjCuazcwYEMjX+VfKrm4Rr6kzjd7Urf
+	p5g==
+X-Google-Smtp-Source: AGHT+IGjVSl0FdI0t6xZXRZ+yy/GRkabtVizenWIxxXTwOEj/5OduqGLfCIaX9FytZisvT/Qka2tQFBDyw==
+X-Received: from wmbbd8.prod.google.com ([2002:a05:600c:1f08:b0:470:fd92:351d])
+ (user=elver job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1987:b0:45d:d97c:236c
+ with SMTP id 5b1f17b1804b1-477b8a8a5damr33381975e9.21.1763651588400; Thu, 20
+ Nov 2025 07:13:08 -0800 (PST)
+Date: Thu, 20 Nov 2025 16:09:45 +0100
 In-Reply-To: <20251120151033.3840508-7-elver@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -59,8 +59,8 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251120145835.3833031-2-elver@google.com> <20251120151033.3840508-7-elver@google.com>
 X-Mailer: git-send-email 2.52.0.rc1.455.g30608eb744-goog
-Message-ID: <20251120151033.3840508-17-elver@google.com>
-Subject: [PATCH v4 16/35] kref: Add context-analysis annotations
+Message-ID: <20251120151033.3840508-21-elver@google.com>
+Subject: [PATCH v4 20/35] locking/ww_mutex: Support Clang's context analysis
 From: Marco Elver <elver@google.com>
 To: elver@google.com, Peter Zijlstra <peterz@infradead.org>, 
 	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>
@@ -87,33 +87,239 @@ Cc: "David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenry
 	linux-wireless@vger.kernel.org, llvm@lists.linux.dev, rcu@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Mark functions that conditionally acquire the passed lock.
+Add support for Clang's context analysis for ww_mutex.
+
+The programming model for ww_mutex is subtly more complex than other
+locking primitives when using ww_acquire_ctx. Encoding the respective
+pre-conditions for ww_mutex lock/unlock based on ww_acquire_ctx state
+using Clang's context analysis makes incorrect use of the API harder.
 
 Signed-off-by: Marco Elver <elver@google.com>
 ---
- include/linux/kref.h | 2 ++
- 1 file changed, 2 insertions(+)
+v4:
+* Rename capability -> context analysis.
 
-diff --git a/include/linux/kref.h b/include/linux/kref.h
-index 88e82ab1367c..9bc6abe57572 100644
---- a/include/linux/kref.h
-+++ b/include/linux/kref.h
-@@ -81,6 +81,7 @@ static inline int kref_put(struct kref *kref, void (*release)(struct kref *kref)
- static inline int kref_put_mutex(struct kref *kref,
- 				 void (*release)(struct kref *kref),
- 				 struct mutex *mutex)
-+	__cond_acquires(true, mutex)
+v3:
+* __assert -> __assume rename
+
+v2:
+* New patch.
+---
+ Documentation/dev-tools/context-analysis.rst |  3 +-
+ include/linux/ww_mutex.h                     | 22 +++++--
+ lib/test_context-analysis.c                  | 69 ++++++++++++++++++++
+ 3 files changed, 87 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/dev-tools/context-analysis.rst b/Documentation/dev-tools/context-analysis.rst
+index 8737de63a707..2936666651f3 100644
+--- a/Documentation/dev-tools/context-analysis.rst
++++ b/Documentation/dev-tools/context-analysis.rst
+@@ -81,7 +81,8 @@ Supported Kernel Primitives
+ 
+ Currently the following synchronization primitives are supported:
+ `raw_spinlock_t`, `spinlock_t`, `rwlock_t`, `mutex`, `seqlock_t`,
+-`bit_spinlock`, RCU, SRCU (`srcu_struct`), `rw_semaphore`, `local_lock_t`.
++`bit_spinlock`, RCU, SRCU (`srcu_struct`), `rw_semaphore`, `local_lock_t`,
++`ww_mutex`.
+ 
+ For context guards with an initialization function (e.g., `spin_lock_init()`),
+ calling this function before initializing any guarded members or globals
+diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
+index 45ff6f7a872b..f6253e8ba9af 100644
+--- a/include/linux/ww_mutex.h
++++ b/include/linux/ww_mutex.h
+@@ -44,7 +44,7 @@ struct ww_class {
+ 	unsigned int is_wait_die;
+ };
+ 
+-struct ww_mutex {
++context_guard_struct(ww_mutex) {
+ 	struct WW_MUTEX_BASE base;
+ 	struct ww_acquire_ctx *ctx;
+ #ifdef DEBUG_WW_MUTEXES
+@@ -52,7 +52,7 @@ struct ww_mutex {
+ #endif
+ };
+ 
+-struct ww_acquire_ctx {
++context_guard_struct(ww_acquire_ctx) {
+ 	struct task_struct *task;
+ 	unsigned long stamp;
+ 	unsigned int acquired;
+@@ -107,6 +107,7 @@ struct ww_acquire_ctx {
+  */
+ static inline void ww_mutex_init(struct ww_mutex *lock,
+ 				 struct ww_class *ww_class)
++	__assumes_ctx_guard(lock)
  {
- 	if (refcount_dec_and_mutex_lock(&kref->refcount, mutex)) {
- 		release(kref);
-@@ -102,6 +103,7 @@ static inline int kref_put_mutex(struct kref *kref,
- static inline int kref_put_lock(struct kref *kref,
- 				void (*release)(struct kref *kref),
- 				spinlock_t *lock)
-+	__cond_acquires(true, lock)
+ 	ww_mutex_base_init(&lock->base, ww_class->mutex_name, &ww_class->mutex_key);
+ 	lock->ctx = NULL;
+@@ -141,6 +142,7 @@ static inline void ww_mutex_init(struct ww_mutex *lock,
+  */
+ static inline void ww_acquire_init(struct ww_acquire_ctx *ctx,
+ 				   struct ww_class *ww_class)
++	__acquires(ctx) __no_context_analysis
  {
- 	if (refcount_dec_and_lock(&kref->refcount, lock)) {
- 		release(kref);
+ 	ctx->task = current;
+ 	ctx->stamp = atomic_long_inc_return_relaxed(&ww_class->stamp);
+@@ -179,6 +181,7 @@ static inline void ww_acquire_init(struct ww_acquire_ctx *ctx,
+  * data structures.
+  */
+ static inline void ww_acquire_done(struct ww_acquire_ctx *ctx)
++	__releases(ctx) __acquires_shared(ctx) __no_context_analysis
+ {
+ #ifdef DEBUG_WW_MUTEXES
+ 	lockdep_assert_held(ctx);
+@@ -196,6 +199,7 @@ static inline void ww_acquire_done(struct ww_acquire_ctx *ctx)
+  * mutexes have been released with ww_mutex_unlock.
+  */
+ static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
++	__releases_shared(ctx) __no_context_analysis
+ {
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ 	mutex_release(&ctx->first_lock_dep_map, _THIS_IP_);
+@@ -245,7 +249,8 @@ static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
+  *
+  * A mutex acquired with this function must be released with ww_mutex_unlock.
+  */
+-extern int /* __must_check */ ww_mutex_lock(struct ww_mutex *lock, struct ww_acquire_ctx *ctx);
++extern int /* __must_check */ ww_mutex_lock(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
++	__cond_acquires(0, lock) __must_hold(ctx);
+ 
+ /**
+  * ww_mutex_lock_interruptible - acquire the w/w mutex, interruptible
+@@ -278,7 +283,8 @@ extern int /* __must_check */ ww_mutex_lock(struct ww_mutex *lock, struct ww_acq
+  * A mutex acquired with this function must be released with ww_mutex_unlock.
+  */
+ extern int __must_check ww_mutex_lock_interruptible(struct ww_mutex *lock,
+-						    struct ww_acquire_ctx *ctx);
++						    struct ww_acquire_ctx *ctx)
++	__cond_acquires(0, lock) __must_hold(ctx);
+ 
+ /**
+  * ww_mutex_lock_slow - slowpath acquiring of the w/w mutex
+@@ -305,6 +311,7 @@ extern int __must_check ww_mutex_lock_interruptible(struct ww_mutex *lock,
+  */
+ static inline void
+ ww_mutex_lock_slow(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
++	__acquires(lock) __must_hold(ctx) __no_context_analysis
+ {
+ 	int ret;
+ #ifdef DEBUG_WW_MUTEXES
+@@ -342,6 +349,7 @@ ww_mutex_lock_slow(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
+ static inline int __must_check
+ ww_mutex_lock_slow_interruptible(struct ww_mutex *lock,
+ 				 struct ww_acquire_ctx *ctx)
++	__cond_acquires(0, lock) __must_hold(ctx)
+ {
+ #ifdef DEBUG_WW_MUTEXES
+ 	DEBUG_LOCKS_WARN_ON(!ctx->contending_lock);
+@@ -349,10 +357,11 @@ ww_mutex_lock_slow_interruptible(struct ww_mutex *lock,
+ 	return ww_mutex_lock_interruptible(lock, ctx);
+ }
+ 
+-extern void ww_mutex_unlock(struct ww_mutex *lock);
++extern void ww_mutex_unlock(struct ww_mutex *lock) __releases(lock);
+ 
+ extern int __must_check ww_mutex_trylock(struct ww_mutex *lock,
+-					 struct ww_acquire_ctx *ctx);
++					 struct ww_acquire_ctx *ctx)
++	__cond_acquires(true, lock) __must_hold(ctx);
+ 
+ /***
+  * ww_mutex_destroy - mark a w/w mutex unusable
+@@ -363,6 +372,7 @@ extern int __must_check ww_mutex_trylock(struct ww_mutex *lock,
+  * this function is called.
+  */
+ static inline void ww_mutex_destroy(struct ww_mutex *lock)
++	__must_not_hold(lock)
+ {
+ #ifndef CONFIG_PREEMPT_RT
+ 	mutex_destroy(&lock->base);
+diff --git a/lib/test_context-analysis.c b/lib/test_context-analysis.c
+index 74eca21f7aaa..522769c9586d 100644
+--- a/lib/test_context-analysis.c
++++ b/lib/test_context-analysis.c
+@@ -14,6 +14,7 @@
+ #include <linux/seqlock.h>
+ #include <linux/spinlock.h>
+ #include <linux/srcu.h>
++#include <linux/ww_mutex.h>
+ 
+ /*
+  * Test that helper macros work as expected.
+@@ -523,3 +524,71 @@ static void __used test_local_trylock(void)
+ 		local_unlock(&test_local_trylock_data.lock);
+ 	}
+ }
++
++static DEFINE_WD_CLASS(ww_class);
++
++struct test_ww_mutex_data {
++	struct ww_mutex mtx;
++	int counter __guarded_by(&mtx);
++};
++
++static void __used test_ww_mutex_init(struct test_ww_mutex_data *d)
++{
++	ww_mutex_init(&d->mtx, &ww_class);
++	d->counter = 0;
++}
++
++static void __used test_ww_mutex_lock_noctx(struct test_ww_mutex_data *d)
++{
++	if (!ww_mutex_lock(&d->mtx, NULL)) {
++		d->counter++;
++		ww_mutex_unlock(&d->mtx);
++	}
++
++	if (!ww_mutex_lock_interruptible(&d->mtx, NULL)) {
++		d->counter++;
++		ww_mutex_unlock(&d->mtx);
++	}
++
++	if (ww_mutex_trylock(&d->mtx, NULL)) {
++		d->counter++;
++		ww_mutex_unlock(&d->mtx);
++	}
++
++	ww_mutex_lock_slow(&d->mtx, NULL);
++	d->counter++;
++	ww_mutex_unlock(&d->mtx);
++
++	ww_mutex_destroy(&d->mtx);
++}
++
++static void __used test_ww_mutex_lock_ctx(struct test_ww_mutex_data *d)
++{
++	struct ww_acquire_ctx ctx;
++
++	ww_acquire_init(&ctx, &ww_class);
++
++	if (!ww_mutex_lock(&d->mtx, &ctx)) {
++		d->counter++;
++		ww_mutex_unlock(&d->mtx);
++	}
++
++	if (!ww_mutex_lock_interruptible(&d->mtx, &ctx)) {
++		d->counter++;
++		ww_mutex_unlock(&d->mtx);
++	}
++
++	if (ww_mutex_trylock(&d->mtx, &ctx)) {
++		d->counter++;
++		ww_mutex_unlock(&d->mtx);
++	}
++
++	ww_mutex_lock_slow(&d->mtx, &ctx);
++	d->counter++;
++	ww_mutex_unlock(&d->mtx);
++
++	ww_acquire_done(&ctx);
++	ww_acquire_fini(&ctx);
++
++	ww_mutex_destroy(&d->mtx);
++}
 -- 
 2.52.0.rc1.455.g30608eb744-goog
 
