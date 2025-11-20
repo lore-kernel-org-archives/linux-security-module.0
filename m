@@ -1,168 +1,272 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9C42773E6;
-	Thu, 20 Nov 2025 15:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EED2231827
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 15:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763653209; cv=none; b=Gpht1Wll+W4iXElKi3snfRV8Xq7ca0YKbX2F72LGQ4QysjdiRIcUsbAD70GwOIcfr8bBFNuo62KJ65empaSc+dt1oRg2MhfCVbnJILCu9oBjpt8sKRaIlPBuAOL6Sftn1TMPxgE09EXXlRtGYzRFUp4VFEXKrAFnRModu4wf0Ks=
+	t=1763653951; cv=none; b=pjVekye36ct7dm5Lli9eX0hAaMHXlmkk4ofgcRhoOu5Ch1wcpkKZtx99HWJWh20ZJp3yId2xiQ2ZpP4uFF+tyrrlTw8KBqgd2BbpsxuTK30Tf/0MyuHJKkzVZTtjiqc6ckCpWuaa8MPOuHmQp1fbgltzDQ63Iyf5QZGxPmGSZ28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763653209; c=relaxed/simple;
-	bh=XDAyAEci4/N6LxfoiJFw04BNQW2HE9TmENDL0opohHw=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=ol8ij/B2CRY0VYvTmmKuLbF1gv0GeUeHNarRrhJHGWR3/KXk++RUi5knecoOf+guxBJVNu8pnnZqaZ5HYR+TGOmkU2BShTLM/SP5B4k6WPje3xzvzkMSYkLRv/BigFsCuox6Ank7FW+CCcdKvjTOfgE4YyIbVnkQ+B0UCUJnCD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=afGi3yXH; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1763653951; c=relaxed/simple;
+	bh=ikZZTlmcvvgaeRuhpKBwP55qPBNe+u4ZLfVXPYvtcZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZer2iAkPmE3Thf+05iMVPFDfPdEQZD3uSqJiPalrwty+uZw1fMeq8wQMDZ+uEwMIMZ6cUeEdHAYAy8P4Q0PRGTTDTUoySPGzJfPAIMd12cJRwe82Yp+15l+FDtKvl1gQtH3CR3eWKC/I7YsKDOMw3NzwqGNWKw8F3al9uQwCrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FygshPq5; arc=none smtp.client-ip=84.16.66.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="afGi3yXH"
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AKCVGgT004022;
-	Thu, 20 Nov 2025 15:39:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=cRR0o2
-	N2FBm3wf13KB7hlFlLM/YGfjnr7VgEdvhnT3M=; b=afGi3yXHAkBS67ptTT5Dg6
-	KIOjThGgHhZeAafvndSwyWNVbFIz8YqdpF2WPuk5AqPD2kh9v4PWB+u3o/oZvJSa
-	EI0XG2KFFVLeFkFcAAhMUgVEOrxTP5ppd6Mf/yBrCesOJdg4jCitrmyqskrCL/gY
-	fzOjwj8ME6UFz4Z71wVk30B4G3uQEgw7F9MmOFkjFCeSwNvro4RMEvfwv3q5SNJl
-	z81+9iPaBTD2k8hAl7VC+g5DnUgxXDQXjDMKlBnPlTxN6mkMKJ9+8nCjY2L42nV1
-	Q/+EVe+unmluKFVm51/6HgRUQlC3hDhOvvhUK3OmC0AyGpab9k8Yjxse00VOFv7w
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aejju5rk6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Nov 2025 15:39:35 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AKFdZEk015036;
-	Thu, 20 Nov 2025 15:39:35 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aejju5rk3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Nov 2025 15:39:35 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AKEc0ue017326;
-	Thu, 20 Nov 2025 15:39:34 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4af6j1xuqg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Nov 2025 15:39:34 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AKFdXAd39781040
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Nov 2025 15:39:33 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7C78D58054;
-	Thu, 20 Nov 2025 15:39:33 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6417C58052;
-	Thu, 20 Nov 2025 15:39:32 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.44.232])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 20 Nov 2025 15:39:32 +0000 (GMT)
-Message-ID: <9f593c5f5882e8ed0d807376eefd4530462741d3.camel@linux.ibm.com>
-Subject: Re: [Patch V1] ima: avoid duplicate policy rules insertions
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Tahera Fahimi <taherafahimi@linux.microsoft.com>, roberto.sassu@huawei.com,
-        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, code@tyhicks.com
-Cc: Lennart Poettering <mzxreary@0pointer.de>
-In-Reply-To: <16c73b4e0761a1622770102d1d48982fe9ae86ac.camel@linux.ibm.com>
-References: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
-	 <16c73b4e0761a1622770102d1d48982fe9ae86ac.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 20 Nov 2025 10:39:31 -0500
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FygshPq5"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dC2fJ0JsMzlg6;
+	Thu, 20 Nov 2025 16:42:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1763653335;
+	bh=bK5R4FWeryYY7Dzvx1ZNaz58dfr5FQOYKvQc4SGZ4YM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FygshPq5IlSlaXB1OLnU88u1OtCo/xcWUxfMvs71UOoduLLFVoXOeHiyDK+tRMw0l
+	 hu+p5NjGJ+xoeATGrs1fPTBCGdZ4sUGKHCE0B7eOrmuKt04DyNFr6rYj+MuoAJEM++
+	 c0Ct4rf06JBSY1HTX38a+2Zi8SuATscH9CjsvXO4=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dC2fG24dwzXmx;
+	Thu, 20 Nov 2025 16:42:14 +0100 (CET)
+Date: Thu, 20 Nov 2025 16:42:13 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Abhinav Saxena <xandfury@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	llvm@lists.linux.dev, Daniel Verkamp <dverkamp@chromium.org>, 
+	Jeff Xu <jeffxu@chromium.org>, =?utf-8?B?VGhpw6liYXVk?= Weksteen <tweek@google.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: Re: [PATCH RFC 0/4] landlock: add LANDLOCK_SCOPE_MEMFD_EXEC execution
+Message-ID: <20251120.KuoC9rol6aht@digikod.net>
+References: <20250719-memfd-exec-v1-0-0ef7feba5821@gmail.com>
+ <20250918.io7too8ain7A@digikod.net>
+ <878qhy2lch.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: NRgJbhtNLeCAqPbRYsjw6qnS0Phsok9N
-X-Proofpoint-ORIG-GUID: nZXzqB3Y4K6G6ifu_Acve7niwZA4FPVj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE1MDAzMiBTYWx0ZWRfX8a5s9pbUlcZ6
- P6eFxLQnYNUA7vLcZv6dCc5EFSvHDHPdLFbQpkUdYww2ie29VM1KNR48l1zZZnRPiAZ41x6rUIO
- 8HdyHXYLqgl9EqT6iL+rT/+9byUIB40loZU/flQaZf0VRNN6bVwR5l9P4v7p+E+2viVW+UuVMF6
- MeJZrk/bSTXvERQXe+VNKXtd2u98jky+QFQRvlb0WfEXk0EyKbYYjx0xceJbkePL7g4sr8aSqAg
- Ksu17MIfkR99bWuYXVDhuOkohcteGautJAaGqZt/zwAIcZ71ceU8Az2UMiZi/HY9r0RZ5GioA6m
- kbMQ17VEzB9RpIYUxwxgNpTBrbDIqhayOX8QOUzuv78D7zZ3lmCSaFTJy8xykp4dPqR4V6R5ia2
- L3jCzOAD2H74QzCiJHZtmpvTBPvQ6Q==
-X-Authority-Analysis: v=2.4 cv=SvOdKfO0 c=1 sm=1 tr=0 ts=691f3637 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=yMhMjlubAAAA:8 a=ecaSOxdSUfGXkan3tZ8A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-20_05,2025-11-20_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 spamscore=0 clxscore=1015
- suspectscore=0 phishscore=0 adultscore=0 bulkscore=0 impostorscore=0
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511150032
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <878qhy2lch.fsf@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Tue, 2025-11-11 at 06:40 -0500, Mimi Zohar wrote:
-> [Cc'ing Lennart Poettering]
->=20
-> On Thu, 2025-11-06 at 18:14 +0000, Tahera Fahimi wrote:
-> > Prevent redundant IMA policy rules by checking for duplicates before in=
-sertion. This ensures that
-> > rules are not re-added when userspace is restarted (using systemd-soft-=
-reboot) without a full system
-> > reboot. ima_rule_exists() detects duplicates in both temporary and acti=
-ve rule lists.
-> >=20
-> > Signed-off-by: Tahera Fahimi <taherafahimi@linux.microsoft.com>
->=20
-> Sorry for the delay in responding ...
->=20
-> Before trying to fix the "problem", let's try to understand it first.  At=
- least
-> on my test system (-rc5), kexec is working as designed.  On boot, systemd
-> replaces the existing builtin IMA policy with a custom IMA policy.  The a=
-rch
-> specific policies are not affected, as they are persistent.  On a soft re=
-boot
-> (kexec), the IMA custom policy is re-loaded as expected.
->=20
-> To verify the above behavior, extend the IMA policy before the soft reboo=
-t.=20
-> Notice after the soft reboot that the original custom IMA policy is loade=
-d and
-> not the extended IMA policy.  Roberto, if there is a problem with this be=
-havior,
-> we'll discuss it independently of this proposed patch.
->=20
-> The question is why are you seeing duplicate IMA policy rules?  What is s=
-pecial
-> about your environment?
+On Sun, Sep 28, 2025 at 05:37:02PM -0600, Abhinav Saxena wrote:
+> Thanks for the detailed reply Mickaël!
+> 
+> Mickaël Salaün <mic@digikod.net> writes:
+> 
+> > Thanks for this patch series Abhinav!  The code looks good overall, but
+> > we should clarify the design.  Sorry for the delayed response, it is on
+> > my radar now.
 
-I'm now able to reproduce what you're seeing by executing "systemctl soft-
-reboot".  After each soft-reboot the custom IMA policy rules are re-loaded =
-and
-appended to the existing IMA policy.  As Roberto mentioned, there is no opt=
-ion
-to replace the existing custom IMA policy rules with a new custom policy. W=
-e
-might consider doing so in the future, but for now the onus for not re-load=
-ing
-the custom IMA policy should not be on IMA, but on systemd.
+Please feel free to ping me after two weeks without answer, I might miss
+some emails.
 
-Reading the same securityfs policy file used for loading the IMA policy wil=
-l
-return the current IMA policy. systemd could detect whether the existing IM=
-A
-policy contains the custom policy rules, before actually loading them.  The=
-re's
-no reason for adding this functionality in the kernel.
+> >
+> > CCing Jeff and Daniel
+> >
+> > On Sat, Jul 19, 2025 at 05:13:10AM -0600, Abhinav Saxena wrote:
+> >> This patch series introduces LANDLOCK_SCOPE_MEMFD_EXEC, a new Landlock
+> >> scoping mechanism that restricts execution of anonymous memory file
+> >> descriptors (memfd) created via memfd_create(2). This addresses security
+> >> gaps where processes can bypass W^X policies and execute arbitrary code
+> >> through anonymous memory objects.
+> >> 
+> >> Fixes: <https://github.com/landlock-lsm/linux/issues/37>
+> >> 
+> >> SECURITY PROBLEM
+> >> `=============='
+> >> 
+> >> Current Landlock filesystem restrictions do not cover memfd objects,
+> >> allowing processes to:
+> >> 
+> >> 1. Read-to-execute bypass: Create writable memfd, inject code,
+> >>    then execute via mmap(PROT_EXEC) or direct execve()
+> >> 2. Anonymous execution: Execute code without touching the filesystem via
+> >>    execve(“/proc/self/fd/N”) where N is a memfd descriptor
+> >
+> >> 3. Cross-domain access violations: Pass memfd between processes to
+> >>    bypass domain restrictions
+> >
+> > Landlock only restricts access at open time, which is a useful property.
+> > This enables to create more restricted sandboxes but still get access to
+> > outside resources via trusted processes.  If the process passing the FDs
+> > is not trusted, the sandboxed process could just ask to execute
+> > arbitrary code outside the sandbox anyway.
+> >
+> > However, the Landlock scopes are designed to block IPC from within a
+> > sandbox to outside the sandbox.  We could have a new scope to forbid a
+> > sandbox process to receive or inherit file descriptors, but that would
+> > be a different and generic feature.  For compatibility reasons, this
+> > might not be easy to implement and I think there are more important
+> > features to implement before that.
+> >
+> > Thinking more about it, restricting memfd should not be a “scoped” flag
+> > because the semantic is not the same, but we should have a new ruleset
+> > property instead, something like “ruleset.denied” with a related
+> > LANDLOCK_DENY_EXECUTE_MEMFD flag.  This flag will only have an impact on
+> > newly created memfd from a sandboxed process with this restriction at
+> > creation time. This could be implemented with hook_file_alloc_security()
+> > by checking if the file is indeed a memfd and checking inode->i_mode for
+> > executability bits (which would imply MFD_NOEXEC_SEAL).
+> >
+> 
+> Thanks for the clarification! So if I understood correctly we are
+> proposing adding a `denied` field to the `landlock_ruleset_attr` struct
+> 
+> struct landlock_ruleset_attr {
+>     __u64 handled_access_fs;
+>     __u64 handled_access_net;
+>     __u64 scoped;
+>     __u64 denied;              /* New field */
+> };
+> 
+> which allows memfd_create() to be allowed by default unless
+> LANDLOCK_DENY_EXECUTE_MEMFD bit is set.
 
---=20
-thanks,
+Yes
 
-Mimi
+> Also it seems Thiébaud
+> Weksteen’s patch[1] will land, and maybe we can use
+> security_inode_init_security_anon instead? What do you think?
+
+Definitely, and this patch is now merged in -next.
+
+> 
+> Apologies for my ignorance, do we have to wait till his patch has
+> landed into Linus’s tree?
+
+As long as you explain this dependency in the commit message and point
+to the patch (as a comment, after a "---" line), we're good.
+
+> 
+> >> 
+> >> These scenarios can occur in sandboxed environments where filesystem
+> >> access is restricted but memfd creation remains possible.
+> >> 
+> >> IMPLEMENTATION
+> >> `============'
+> >> 
+> >> The implementation adds hierarchical execution control through domain
+> >> scoping:
+> >> 
+> >> Core Components:
+> >> - is_memfd_file(): Reliable memfd detection via “memfd:” dentry prefix
+> >> - domain_is_scoped(): Cross-domain hierarchy checking (moved to domain.c)
+> >> - LSM hooks: mmap_file, file_mprotect, bprm_creds_for_exec
+> >> - Creation-time restrictions: hook_file_alloc_security
+> >> 
+> >> Security Matrix:
+> >> Execution decisions follow domain hierarchy rules preventing both
+> >> same-domain bypass attempts and cross-domain access violations while
+> >> preserving legitimate hierarchical access patterns.
+> >> 
+> >> Domain Hierarchy with LANDLOCK_SCOPE_MEMFD_EXEC:
+> >> `============================================='
+> >> 
+> >> Root (no domain) - No restrictions
+> >>   |
+> >>   +– Domain A [SCOPE_MEMFD_EXEC] Layer 1
+> >>   |     +– memfd_A (tagged with Domain A as creator)
+> >>   |     |
+> >>   |     +– Domain A1 (child) [NO SCOPE] Layer 2
+> >>   |     |     +– Inherits Layer 1 restrictions from parent
+> >>   |     |     +– memfd_A1 (can create, inherits restrictions)
+> >>   |     |     +– Domain A1a [SCOPE_MEMFD_EXEC] Layer 3
+> >>   |     |           +– memfd_A1a (tagged with Domain A1a)
+> >>   |     |
+> >>   |     +– Domain A2 (child) [SCOPE_MEMFD_EXEC] Layer 2
+> >>   |           +– memfd_A2 (tagged with Domain A2 as creator)
+> >>   |           +– CANNOT access memfd_A1 (different subtree)
+> >>   |
+> >>   +– Domain B [SCOPE_MEMFD_EXEC] Layer 1
+> >>         +– memfd_B (tagged with Domain B as creator)
+> >>         +– CANNOT access ANY memfd from Domain A subtree
+> >> 
+> >> Execution Decision Matrix:
+> >> `======================'
+> >> Executor->  |  A  | A1 | A1a | A2 | B  | Root
+> >> Creator     |     |    |     |    |    |
+> >> ————|—–|—-|—–|—-|—-|—–
+> >> Domain A    |  X  | X  | X   | X  | X  |  Y
+> >> Domain A1   |  Y  | X  | X   | X  | X  |  Y
+> >> Domain A1a  |  Y  | Y  | X   | X  | X  |  Y
+> >> Domain A2   |  Y  | X  | X   | X  | X  |  Y
+> >> Domain B    |  X  | X  | X   | X  | X  |  Y
+> >> Root        |  Y  | Y  | Y   | Y  | Y  |  Y
+> >> 
+> >> Legend: Y = Execution allowed, X = Execution denied
+> >
+> > Because checks should not be related to scopes, this will be much
+> > simpler.
+> >
+> >> 
+> >> Scenarios Covered:
+> >> - Direct mmap(PROT_EXEC) on memfd files
+> >> - Two-stage mmap(PROT_READ) + mprotect(PROT_EXEC) bypass attempts
+> >> - execve("/proc/self/fd/N") anonymous execution
+> >> - execveat() and fexecve() file descriptor execution
+> >> - Cross-process memfd inheritance and IPC passing
+> >> 
+> >> TESTING
+> >> `====='
+> >> 
+> >> All patches have been validated with:
+> >> - scripts/checkpatch.pl –strict (clean)
+> >> - Selftests covering same-domain restrictions, cross-domain 
+> >>   hierarchy enforcement, and regular file isolation
+> >> - KUnit tests for memfd detection edge cases
+> >
+> > Thanks for all these tests!
+> >
+> >> 
+> >> DISCLAIMER
+> >> `========'
+> >> 
+> >> My understanding of Landlock scoping semantics may be limited, but this
+> >> implementation reflects my current understanding based on available
+> >> documentation and code analysis. I welcome feedback and corrections
+> >> regarding the scoping logic and domain hierarchy enforcement.
+> >> 
+> >> Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
+> >> —
+> >> Abhinav Saxena (4):
+> >>       landlock: add LANDLOCK_SCOPE_MEMFD_EXEC scope
+> >>       landlock: implement memfd detection
+> >>       landlock: add memfd exec LSM hooks and scoping
+> >>       selftests/landlock: add memfd execution tests
+> >> 
+> >>  include/uapi/linux/landlock.h                      |   5 +
+> >>  security/landlock/.kunitconfig                     |   1 +
+> >>  security/landlock/audit.c                          |   4 +
+> >>  security/landlock/audit.h                          |   1 +
+> >>  security/landlock/cred.c                           |  14 -
+> >>  security/landlock/domain.c                         |  67 ++++
+> >>  security/landlock/domain.h                         |   4 +
+> >>  security/landlock/fs.c                             | 405 ++++++++++++++++++++-
+> >>  security/landlock/limits.h                         |   2 +-
+> >>  security/landlock/task.c                           |  67 —-
+> >>  …/selftests/landlock/scoped_memfd_exec_test.c    | 325 +++++++++++++++++
+> >>  11 files changed, 812 insertions(+), 83 deletions(-)
+> >> —
+> >> base-commit: 5b74b2eff1eeefe43584e5b7b348c8cd3b723d38
+> >> change-id: 20250716-memfd-exec-ac0d582018c3
+> >> 
+> >> Best regards,
+> >> – 
+> >> Abhinav Saxena <xandfury@gmail.com>
+> >> 
+> >> 
+> 
+> Best,
+> Abhinav
+> 
+> [1] - <https://lore.kernel.org/all/20250918020434.1612137-1-tweek@google.com/>
 
