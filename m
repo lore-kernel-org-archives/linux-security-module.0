@@ -1,100 +1,120 @@
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F83186A
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 00:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F4C227E83
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Nov 2025 01:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763597436; cv=none; b=dkrsB7TmlAHebcuRy3pyvZCUwA0SZuOC3jdpddNoSem8NGqNn43sS17cityvLJblzFuKT8r3x0DCdFmT6NrJNDFj/uJLmG/Fx2rv+NYknWkHahr27vCOVw1w+Pxc61vDvtEkwyHLJm6+ULZSDdbxu1URllXl7pzZ7r5HLCK1FXg=
+	t=1763602758; cv=none; b=UOBT3MQk35WLSaKKuTa4MMdQQ5pYBIHGslKFGOhU41QUzs0SP67kph7w9ifOpHj8utq4IRF+uB/PxpB2ucBGCEegvZbtIksGUDbEcpy9k2AHvf9YqREc0B4nJR1Zwku3p/pO7o5cV2RzZbCYvHlLRBdt/uf0Gd+4YBjkp0mRmVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763597436; c=relaxed/simple;
-	bh=jAmQQxE42lgPR8xKS7YR4608nhEwFUcNxWyX+c6LnJk=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=n5bQcfgi2F7u8qs90gtWNarjRNKK7Jsws36tW5T66+sA21oH0GFV8k7weI/ZXIirH8Quj8fKJymfinJfsNBwIH5+K+GyaCwmc8XHEfmSmMIivTwINeClIHVr1mh0BCQFSO2Lg5hK9trlFwoH5Iid6zL15X1Q+oRO/WtV5YiXKMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YkKi++Nr; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1763602758; c=relaxed/simple;
+	bh=Dd+oYCoNpPVqRLegm/T2EqO+kP3OTwZSVHn0wUKym+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jSq4dV86U+KlyeaDE1E3kOmFhtMS24WISE7Y6IBxOcuz/6F7mANLrYj0ow3gdcajpe2UhB2A07bduRvXdnrGK1/7/hU3UXaQzTkS9H2+ptjczbEgShhWN4X8twFzKGMF24NcId+qE9yQEUVoQeHHNAk0M0eaNZGh29qZoGT43u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UjQ6vZAC; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YkKi++Nr"
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-880503ab181so3150096d6.2
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Nov 2025 16:10:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UjQ6vZAC"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-297ef378069so3417715ad.3
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Nov 2025 17:39:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1763597433; x=1764202233; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XrSe3R2YH0X0AwQPGyj7bOMAqS8/uA2AQXo6L2I2k4M=;
-        b=YkKi++NrcdV6Sn6iCV32XTB+2PPM5EcMYw5jy4BulZ2pZrh46S4XG/4yr5uls6pb0K
-         uO/3pANaARsmye4xBwovTIaAxs1mR4CrcjxILKGjlDbO1x+8UYuVqpMKUAa8tKkU7I/w
-         JmSgkr4jTDZYu2rv7ouEzP9GW28siJzHuKDa4jsgmU1N9eXnzlrJl4bMVcKA2hisGGso
-         v7+kLwM5OCUhub/OQL1kaJc8bqbGDD3Uxd/yrxMiE5gIOUzbrpCucPpwJhSYZ+u+Zj0z
-         I9Jnz9M06j3Rux5sQ6770T9wrF6N4TNdj6UfM+0hDku4H6zu6hskbd+79Xlfaxbu82L7
-         fvjg==
+        d=gmail.com; s=20230601; t=1763602757; x=1764207557; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dd+oYCoNpPVqRLegm/T2EqO+kP3OTwZSVHn0wUKym+s=;
+        b=UjQ6vZACQSa4i8ObmummS1XC6urON8aa5AddPVztIBD+NsclPjBQHVYhvTdfHOe93p
+         rObUOhXUd/yiLy+kyam1iAfhIXLN5tIpRoEvJZnFZLuFDKXJ+X8Lrw+BcxXpqmDjLoSt
+         uUqnz/L78KTQdzlXJSERfdRweMUrQIRUid+59hirZX588pxx+xZtXzA0Dvek3SlD/oIF
+         3m88Dyn6/bJChBHR4FpQXOXpAuNZLjDZWeyhfHcqkKaIgvetws4+ZPgpiQo2m75s1bGu
+         zqPwDby35+xGMJayFbq0SjOuVFY3bk9wyqnHt6kzbOuGowLz7+O0wVbfcE8u6VgYDmsH
+         DDaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763597433; x=1764202233;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1763602757; x=1764207557;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XrSe3R2YH0X0AwQPGyj7bOMAqS8/uA2AQXo6L2I2k4M=;
-        b=bbQ+pvnoUc8aSSDSHHRCnjU2zc+Qapk2xYL5BDCEWvLncokcKVXzQl1cj0kxPwsTvk
-         B7uHeyVJiMTlEgfdTsh3yn9uzk2acgfShysijxlssffgZDFIWGqBEsvAtS8NOQ0V1x22
-         ubKPEWBIVPPSDzHgehfKO9csq1p9Z5KnHrdQ3hLqJBpzK4N51+7Nobxd1TwCnx15s3TZ
-         3NCSPfHbjE5CKbg3Hf8XpT6hkmCZFcv2iRu6PAf0IlbEBmykCpMHGHeZOGTdV7JXmqXo
-         U8ED0vQNVPojjbZB8xGv2G8i7SWx2GG2vF2JbhLXiQ3F5pqeoo8MnIKxSAqsCc4U0+6B
-         xEAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwWlURZYEnSKkYbIL5ZbeTqhBHpM9OwbalyXLwLPBei/RGvQurvuL64WoUj2eNMQ3NPeUXvlUfQMbmjYB00Gm70OgXjGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy35Yy+tSOdy6AN4unvd7iOYIRj/T+tWiTvWJOlcdzr7IXRzhHZ
-	gAOFha8QMQTo25CEuih/+Mevu2Gf8+dMh4OzJQY+KnAJ95HbYkfY1WkSFaTn0n3U0g==
-X-Gm-Gg: ASbGncu/Rr+qzSY/HItiX5SLrzkalOY6zSxq+HXmILS/629RDP3jLK+4MBixDnvLN8L
-	K1KDyU3AfMjDroe++IzUnN8aYttkRH9mvR19bNPHKGq6CUUXMAMKaUlefT4UsLTr/dsB53Bgl0G
-	U0HVRkPEVqVtPWodsftapZv5XsJsAOocvVopFkH6sI48yx0tqfynL9nBpsLa8/xvhiFih75scAq
-	cyMAXxUb5XSHQXENJe3DjFEDYH/re5vNTXzCYrGNmEDFkmAmqYKYPXzybOfPTt4vZPoVzCiKrj9
-	UjSmrcf3RSeLCcRmr4YzHFtARmiZRgb4+O64CTqTCRrMMOQokjTmJapzxdc5bofMMQxRQaVTaOS
-	6ymtFmxU2Cf39XYXB/95oJ8f4e4VQvYLUYyNAVni++TZJHx8DrmSfNOb0Jbu/R/PWOhwo87Oo40
-	kDggoR4YBfP/TkNVjul+Ks8AUkR/HZHPQ0TQp6Bmm6+rX5B4gkPJ6gm/m48vdEc+cch3c=
-X-Google-Smtp-Source: AGHT+IFfdIdtxbRdfiU0y9sic5iWHSCSHBEO5Ssm+TOKBS6seiq2ElAwNyhFeF/v+WvRHWw9bpibSA==
-X-Received: by 2002:a05:6214:4a04:b0:80b:11b7:2109 with SMTP id 6a1803df08f44-8846ee349c2mr11790136d6.41.1763597433258;
-        Wed, 19 Nov 2025 16:10:33 -0800 (PST)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8846e469825sm6110426d6.15.2025.11.19.16.10.32
+        bh=Dd+oYCoNpPVqRLegm/T2EqO+kP3OTwZSVHn0wUKym+s=;
+        b=mvw56QdD9UWEz+MoMLeMohD0bGFgKZ000Kq/vWW3BI2iD3suSwyztl15fD1YITfK7y
+         R+mJoF09HbiwUWqNIALdg7yNbuLoQCNSQUxGSpsqGHBryt5ro8hXU5++6oZym/eZkWW7
+         3so7Xo6sY4mFtYU4J7VIGIEps6PG9kVkeBeP1FQklOKSEnsnYr/TXfTfvMfjv7qJSdI9
+         eTdYqhYrV/PrkroCBDM6QxXUXZRW/8TMulIv0h+SSxF32xMcBaaCH4ZAbvAHAW4aEjAT
+         CFL/rDOJdvpzDdBfOi4CXyE/BCuNO+WjJIQ0z6i6Yul2KGn1jKmZ5G5ntS+TzpC4keB0
+         l3xA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvPHPfgq6hW9n3bhzkKJ8X68dp0JuoVgPTaKsf1CBumZu1mAFqHMUCs5tC3fomYF8kbp2jZqOeDt7bF7YlYsd4PehFly4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUBC6gZNRyG70B/jduAOFpmgVwtGvUsaBLjCexWPSZ/y0SgJKU
+	Egu7+P7N2UqGfODHhKSPd6h3ydYK+0rnbj6eAxLOyuuQTuxjFbP7mvh8
+X-Gm-Gg: ASbGnctOsiBdmqrLjbWvIwGbBgYLv8CohO5RKp7LzO3+8pWY4jWDfAllXTzciNBuncu
+	1oEtJnDEWc9UUKJ3P3VrtFSWW/qpkZ1O1tdQJWNfervfPjip8DdPUfCLPYor978KU6R/WDE+4wa
+	sqG6e+9tGl0vNKv2osyMMeXfWyAPgoayBp3ZjerXpFNy/gLNjslMOubOlqwbVTY7K9C8Bm/DrMq
+	rDyretmUZ3OykLnt4dca7r9Fjx9kQUQLiSRhv6dE7saRJ2w8jwph9dGfMvRI+iNEVd10BTScAEE
+	YpeYDsvQcyJcL42N5I8LOZ6lqJBwSR7NPyx+VJ0Vc6hjbxkXAnbhI8UaKBFXYz+mrCnHaEfWxxW
+	LN0KHlLWKiMUB/1sKSiTxYOm7obLdhjlZApJaIsC3C2mzXqg38O47LikgTVn+cmY+3SGMAzOJ2f
+	1O8uOklRmgfuboJFu8F3//AQ==
+X-Google-Smtp-Source: AGHT+IFzPepFO8+6WktR0iMdc7Km/cWXFw1wrHBNUJBW6cjwzPTXcCih+h4/2LHYE11DndYuW9VcSA==
+X-Received: by 2002:a17:903:183:b0:295:8dbb:b3cd with SMTP id d9443c01a7336-29b5b08d6dfmr16925365ad.27.1763602756517;
+        Wed, 19 Nov 2025 17:39:16 -0800 (PST)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29b5b2b82a5sm7171265ad.97.2025.11.19.17.39.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Nov 2025 16:10:32 -0800 (PST)
-Date: Wed, 19 Nov 2025 19:10:31 -0500
-Message-ID: <d5efca7df0d2e12ad9d6f3d35afa2828@paul-moore.com>
+        Wed, 19 Nov 2025 17:39:15 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id D4A3C41117C4; Thu, 20 Nov 2025 08:39:08 +0700 (WIB)
+Date: Thu, 20 Nov 2025 08:39:08 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Paul Moore <paul@paul-moore.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Security Module <linux-security-module@vger.kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>, Kees Cook <kees@kernel.org>,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	Stuart Yoder <stuart.yoder@arm.com>
+Subject: Re: [PATCH] security: sctp: Format type and permission checks tables
+Message-ID: <aR5xPJEiqyE0HHL8@archie.me>
+References: <20251103113922.61232-2-bagasdotme@gmail.com>
+ <d5efca7df0d2e12ad9d6f3d35afa2828@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20251119_1905/pstg-lib:20251119_1905/pstg-pwork:20251119_1905
-From: Paul Moore <paul@paul-moore.com>
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Documentation <linux-doc@vger.kernel.org>, Linux Security Module <linux-security-module@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Jarkko Sakkinen <jarkko@kernel.org>, Christian Brauner <brauner@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>, Jeff Layton <jlayton@kernel.org>, Kees Cook <kees@kernel.org>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Stuart Yoder <stuart.yoder@arm.com>
-Subject: Re: [PATCH] security: sctp: Format type and permission checks tables
-References: <20251103113922.61232-2-bagasdotme@gmail.com>
-In-Reply-To: <20251103113922.61232-2-bagasdotme@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UWjdjlnL/fJW9B81"
+Content-Disposition: inline
+In-Reply-To: <d5efca7df0d2e12ad9d6f3d35afa2828@paul-moore.com>
 
-On Nov  3, 2025 Bagas Sanjaya <bagasdotme@gmail.com> wrote:
-> 
-> Use reST grid tables for both type and permission checks tables.
-> 
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
-> This patch is based on lsm tree.
-> 
->  Documentation/security/SCTP.rst | 48 +++++++++++++++++++++------------
->  1 file changed, 31 insertions(+), 17 deletions(-)
 
-I rendered the patched file to HTML, and given that large portions of
-the file are still rendered as monospaced preformatted text, the new
-table rendering looks a bit out of place.
+--UWjdjlnL/fJW9B81
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Let's stick with the existing table format until the entire document
-is converted to something that is at least as constitent and
-aesthetically pleasing as the current revision.
+On Wed, Nov 19, 2025 at 07:10:31PM -0500, Paul Moore wrote:
+> I rendered the patched file to HTML, and given that large portions of
+> the file are still rendered as monospaced preformatted text, the new
+> table rendering looks a bit out of place.
+>=20
+> Let's stick with the existing table format until the entire document
+> is converted to something that is at least as constitent and
+> aesthetically pleasing as the current revision.
 
---
-paul-moore.com
+OK, thanks!
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--UWjdjlnL/fJW9B81
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaR5xNAAKCRD2uYlJVVFO
+o+P2AP9xfIKlhl2FqVJ5HkygiJ6f4Fc9WTDEhr8DjcPe7uodsgEA4Qvh1NLz3P2H
+4gxCnsF8uOShQicH0Pfbh98nbaBE6g0=
+=/3zw
+-----END PGP SIGNATURE-----
+
+--UWjdjlnL/fJW9B81--
