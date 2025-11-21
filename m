@@ -1,211 +1,153 @@
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6331C3C11
-	for <linux-security-module@vger.kernel.org>; Fri, 21 Nov 2025 15:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE72277CBF;
+	Fri, 21 Nov 2025 15:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763738846; cv=none; b=gJPDmFtfL18Iwjoe/ugltjAXfbKRg4Qy9uz1C5FaDvJ37fyfQJ91A35o5WcqPhtL51IwRnhIVsb7AeDlQiv1lhIMZdwSVm4ZOHZrw5q521SXcUC7QrarSWi6pMQkFQviGS3TksajOsf56zxUmXwd0lE4QLOajnXFn4HC9sDL2yE=
+	t=1763739503; cv=none; b=diRvASY7aKgVel53FJ2kYrmwoCygNuCTbQ2u+VZbUI78WuoNfJ70F3tv/El+chCjzLApHjWCwuCsgdkosqmxovHUogs1OncnCGiiowb97TnGTW3UpORnlsWvvdgFxDbAWzCTto3qosdvcTudLGArnvTZPi6mOqvLDI/g3amwQxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763738846; c=relaxed/simple;
-	bh=wozHYT8X3Go7QZizvM9EchtH7cFQNpJPUgxXXFYlOic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gL5T5n2a+dbPegqRaD74h+XwVGHm93dV+g91RRulZZrSuSaq9FMiISQUVA8GvTJ7dqF7T9eV/JqcAg6yPTvhQVpP0wqPhPyHj4oHiX01NnuN5peH2qmwQy6VSbIZ5ZH/UQvVgA7zHUbKrGy6FgXd8LXuHCe8XIKxI2yrkcSJGbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=D1ZQ+qvz; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1763739503; c=relaxed/simple;
+	bh=4hdIvqlYYwOST62CezvgRrxud4tyBrXo/4O5lrgugx4=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=c19DrnxkDaS6OJ5XXhe4gmzOxlK1zPSeJFlVuzvHASvhjOPN8xJI2+XJSsLQ3bn240X9C+703KUuMtJ4RMK6LVdA62VRdVm4qAkHB9B0XsHaF/y4NG/nL7ouJO0fqtl7SM6gP2vlx/IvqWEx456zlLkeULgwgO9xYe4IjcOPWJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iG08a2oP; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="D1ZQ+qvz"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dCfGS3Y48zBhf;
-	Fri, 21 Nov 2025 16:27:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1763738832;
-	bh=xYU7kl7ZheKufs0kccogjPTv96FtNRoFfzOgTeBUW58=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D1ZQ+qvzTt2Ui96F8LPOczeL8Rs1iyvFpW/+zIBHKb5QoE0iNHqC5bUl2wcizrTLz
-	 1QUZd86snqSCoOl8O6PSlJ8LNUMfvEsMviDz27bfqUXTLBYbf84VK65as5izu2GF3Z
-	 dLDF294shhqHni4ZfOpGdEzkAPsH809YBfcUCXcs=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4dCfGR1JSNzCkq;
-	Fri, 21 Nov 2025 16:27:11 +0100 (CET)
-Date: Fri, 21 Nov 2025 16:27:02 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Justin Suess <utilityemal77@gmail.com>, Jan Kara <jack@suse.cz>, Abhinav Saxena <xandfury@gmail.com>, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v4 02/10] landlock: Add API support and docs for the
- quiet flags
-Message-ID: <20251120.Sae4geish0ei@digikod.net>
-References: <cover.1763330228.git.m@maowtm.org>
- <cd79fcf71e6d38ab4280c0de2500fa5f6b06cd9d.1763330228.git.m@maowtm.org>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iG08a2oP"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ALE7U9M013975;
+	Fri, 21 Nov 2025 15:38:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=9uvpeu
+	gAJT+jvnOmxXNuodJVl4KxJHP+fjJPjqvut5A=; b=iG08a2oPhBjrDeTjRDrpkH
+	Sk6lnHyyS5PIfYh6R9KEVd0mjDG9WZbYJHC0gN0vznmx+ZOE+ZjDaLG02cXIdfXR
+	LNioa3Z6PH2MyPKMsJ/0YdOjCJwSk12thVGYj+KFLmBF9HMBuKpQH5e2H3kLJg2I
+	GfW5E1UOxO/pI+mfyPShhHlEkDpL02/S7UcDt2oqwgTmtgrwA5oiwo5wHlZ6QQge
+	cfwM+qnuCE13AIfNUnlXy7ZfFrmDBsRIWOrsi/bwHIeN3g1VHn+UcuqP/bsFXs5B
+	Lq7mMuIzwrPkJYkzmftynzWOWX0Q7sk1sUZh1pSSYYxvIXeWwzqZUfpFpjcgmc6w
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aejgxb74v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Nov 2025 15:38:07 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5ALFWQEK025505;
+	Fri, 21 Nov 2025 15:38:07 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aejgxb74s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Nov 2025 15:38:07 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5ALCH8CE022354;
+	Fri, 21 Nov 2025 15:38:06 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4af4uncxx0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Nov 2025 15:38:06 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ALFc5AH23921214
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Nov 2025 15:38:05 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BC73B58062;
+	Fri, 21 Nov 2025 15:38:05 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3C00D5805E;
+	Fri, 21 Nov 2025 15:38:05 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.152.207])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 21 Nov 2025 15:38:05 +0000 (GMT)
+Message-ID: <c846d6966822b3822a4386c8fc36e658139ac427.camel@linux.ibm.com>
+Subject: Re: [PATCH -next] ima: Handle error code returned by
+ ima_filter_rule_match()
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Zhao Yipeng <zhaoyipeng5@huawei.com>, roberto.sassu@huawei.com,
+        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com
+Cc: lujialin4@huawei.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20251120071805.1604864-1-zhaoyipeng5@huawei.com>
+References: <20251120071805.1604864-1-zhaoyipeng5@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 21 Nov 2025 10:38:04 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cd79fcf71e6d38ab4280c0de2500fa5f6b06cd9d.1763330228.git.m@maowtm.org>
-X-Infomaniak-Routing: alpha
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: x5-8fcud3X9kdQsyEkM351qSSQhWEzV_
+X-Authority-Analysis: v=2.4 cv=YqwChoYX c=1 sm=1 tr=0 ts=6920875f cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=i0EeH86SAAAA:8 a=R9X4wcUyAwSOqeJDW9UA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: NQU1QvnrC6qYe-nw630ft6alrzbjeudf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE1MDAzMiBTYWx0ZWRfX9XszSELlgbrl
+ bAWFlimLpFTasUvRRldJJPpTkiGEIirNGd8CV2A3/u/0vWT5CVNCR0hIg53JjuIxozPPOZucCCq
+ He0Qpuq4oKvMpOHDsi7VNlBDNlh7vOOvgwrbvCNpCuIpyHfFnKHcGrYwoQSa8++8+wMGL15BO1U
+ 55oGTCyIzOgJNnVlptcg2GVHzfp3YEDygLjlXVoszomaEduJpVa6N2HYLIoUdB4iNcVzuXFV6g0
+ MnhkOTEAW1Wku8CreVZCpZ0qe+MQCEr1y4cXXtl30HuOXIrJfzZnXHNuyIATLeNZYZB+haCFdcn
+ fUwucR6EJi7t6QsjrRJCE059v7yAfRjefZEcQqvkLi7JI3jAacpEbrS50Tv2GOb+xcXmyjVtF+N
+ JS8zVUzBqjM+1PvrvUyBjQcBmjEAbw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-21_04,2025-11-21_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 lowpriorityscore=0 malwarescore=0
+ clxscore=1011 adultscore=0 bulkscore=0 phishscore=0 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511150032
 
-On Sun, Nov 16, 2025 at 09:59:32PM +0000, Tingmao Wang wrote:
-> Adds the UAPI for the quiet flags feature (but not the implementation
-> yet).
-> 
-> According to pahole, even after adding the struct access_masks quiet_masks
-> in struct landlock_hierarchy, the u32 log_* bitfield still only has a size
-> of 2 bytes, so there's minimal wasted space.
-> 
-> Signed-off-by: Tingmao Wang <m@maowtm.org>
-> ---
-> 
-> Changes since v3:
-> - Minor update to this commit message.
-> - Fix minor formatting
-> 
-> Changes since v2:
-> - Updated docs from Mickaël's suggestions.
-> 
-> Changes since v1:
-> - Per suggestion, added support for quieting only certain access bits,
->   controlled by extra quiet_access_* fields in the ruleset_attr.
-> - Added docs for the extra fields and made updates to doc changes in v1.
->   In particular, call out that the effect of LANDLOCK_ADD_RULE_QUIET is
->   independent from the access bits passed in rule_attr
-> - landlock_add_rule will return -EINVAL when LANDLOCK_ADD_RULE_QUIET is
->   used but the ruleset does not have any quiet access bits set for the
->   given rule type.
-> - ABI version bump to v8
-> - Syntactic and comment changes per suggestion.
-> 
->  include/uapi/linux/landlock.h                | 64 +++++++++++++++++
->  security/landlock/domain.h                   |  5 ++
->  security/landlock/fs.c                       |  4 +-
->  security/landlock/fs.h                       |  2 +-
->  security/landlock/net.c                      |  5 +-
->  security/landlock/net.h                      |  3 +-
->  security/landlock/ruleset.c                  | 10 ++-
->  security/landlock/ruleset.h                  |  8 ++-
->  security/landlock/syscalls.c                 | 72 +++++++++++++++-----
->  tools/testing/selftests/landlock/base_test.c |  4 +-
->  10 files changed, 150 insertions(+), 27 deletions(-)
-> 
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index f030adc462ee..50f0806b7e33 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -32,6 +32,19 @@
->   * *handle* a wide range or all access rights that they know about at build time
->   * (and that they have tested with a kernel that supported them all).
->   *
-> + * @quiet_access_fs and @quiet_access_net are bitmasks of actions for
-> + * which a denial by this layer will not trigger an audit log if the
-> + * corresponding object (or its children, for filesystem rules) is marked
-> + * with the "quiet" bit via %LANDLOCK_ADD_RULE_QUIET, even if logging
-> + * would normally take place per landlock_restrict_self() flags.
-> + * quiet_scoped is similar, except that it does not require marking any
-> + * objects as quiet - if the ruleset is created with any bits set in
-> + * quiet_scoped, then denial of such scoped resources will not trigger any
-> + * log.  These 3 fields are available since Landlock ABI version 8.
-> + *
-> + * @quiet_access_fs, @quiet_access_net and @quiet_scoped must be a subset
-> + * of @handled_access_fs, @handled_access_net and @scoped respectively.
-> + *
->   * This structure can grow in future Landlock versions.
->   */
->  struct landlock_ruleset_attr {
-> @@ -51,6 +64,24 @@ struct landlock_ruleset_attr {
->  	 * resources (e.g. IPCs).
->  	 */
->  	__u64 scoped;
-> +
-> +	/* Since ABI 8: */
-> +
-> +	/**
-> +	 * @quiet_access_fs: Bitmask of filesystem actions which should not be
-> +	 * audit logged if per-object quiet flag is set.
-> +	 */
-> +	__u64 quiet_access_fs;
-> +	/**
-> +	 * @quiet_access_net: Bitmask of network actions which should not be
-> +	 * audit logged if per-object quiet flag is set.
-> +	 */
-> +	__u64 quiet_access_net;
-> +	/**
-> +	 * @quiet_scoped: Bitmask of scoped actions which should not be audit
-> +	 * logged.
-> +	 */
-> +	__u64 quiet_scoped;
->  };
->  
->  /**
-> @@ -69,6 +100,39 @@ struct landlock_ruleset_attr {
->  #define LANDLOCK_CREATE_RULESET_ERRATA			(1U << 1)
->  /* clang-format on */
->  
-> +/**
-> + * DOC: landlock_add_rule_flags
-> + *
-> + * **Flags**
-> + *
-> + * %LANDLOCK_ADD_RULE_QUIET
-> + *     Together with the quiet_* fields in struct landlock_ruleset_attr,
-> + *     this flag controls whether Landlock will log audit messages when
-> + *     access to the objects covered by this rule is denied by this layer.
-> + *
-> + *     If audit logging is enabled, when Landlock denies an access, it will
-> + *     suppress the audit log if all of the following are true:
-> + *
-> + *     - This layer is the innermost layer that denied the access;
+On Thu, 2025-11-20 at 15:18 +0800, Zhao Yipeng wrote:
+> In ima_match_rules(), if ima_filter_rule_match() returns -ENOENT due to
+> the rule being NULL, the function incorrectly skips the 'if (!rc)' check
+> and sets 'result =3D true'. The LSM rule is considered a match, causing
+> extra files to be measured by IMA.
+>=20
+> This issue can be reproduced in the following scenario:
+> After unloading the SELinux policy module via 'semodule -d', if an IMA
+> measurement is triggered before ima_lsm_rules is updated,
+> in ima_match_rules(), the first call to ima_filter_rule_match() returns
+> -ESTALE. This causes the code to enter the 'if (rc =3D=3D -ESTALE &&
+> !rule_reinitialized)' block, perform ima_lsm_copy_rule() and retry. In
+> ima_lsm_copy_rule(), since the SELinux module has been removed, the rule
+> becomes NULL, and the second call to ima_filter_rule_match() returns
+> -ENOENT. This bypasses the 'if (!rc)' check and results in a false match.
+>=20
+> Call trace:
+>   selinux_audit_rule_match+0x310/0x3b8
+>   security_audit_rule_match+0x60/0xa0
+>   ima_match_rules+0x2e4/0x4a0
+>   ima_match_policy+0x9c/0x1e8
+>   ima_get_action+0x48/0x60
+>   process_measurement+0xf8/0xa98
+>   ima_bprm_check+0x98/0xd8
+>   security_bprm_check+0x5c/0x78
+>   search_binary_handler+0x6c/0x318
+>   exec_binprm+0x58/0x1b8
+>   bprm_execve+0xb8/0x130
+>   do_execveat_common.isra.0+0x1a8/0x258
+>   __arm64_sys_execve+0x48/0x68
+>   invoke_syscall+0x50/0x128
+>   el0_svc_common.constprop.0+0xc8/0xf0
+>   do_el0_svc+0x24/0x38
+>   el0_svc+0x44/0x200
+>   el0t_64_sync_handler+0x100/0x130
+>   el0t_64_sync+0x3c8/0x3d0
+>=20
+> Fix this by changing 'if (!rc)' to 'if (rc <=3D 0)' to ensure that error
+> codes like -ENOENT do not bypass the check and accidentally result in a
+> successful match.
+>=20
+> Fixes: 4af4662fa4a9d ("integrity: IMA policy")
+> Signed-off-by: Zhao Yipeng <zhaoyipeng5@huawei.com>
 
-Because these items follows ":" they should not start with a capital
-letter (e.g. "- this layer ...").
+Thank you. The patch is now queued in next-integrity.
 
-> + *     - All requested accesses are part of the quiet_* fields in the
-> + *       related struct landlock_ruleset_attr;
-
-This should be updated to reflect my comment in the next patch about
-landlock_log_denial().
-
-> + *     - The object (or one of its parents, for filesystem rules) is
-> + *       marked as "quiet" via %LANDLOCK_ADD_RULE_QUIET.
-> + *
-> + *     Because logging is only suppressed by a layer if the layer denies
-> + *     access, a sandboxed program cannot use this flag to "hide" access
-> + *     denials, without denying itself the access in the first place.
-> + *
-> + *     The effect of this flag does not depend on the value of
-> + *     allowed_access in the passed in rule_attr.  When this flag is
-> + *     present, the caller is also allowed to pass in an empty
-> + *     allowed_access.
-> + */
-> +
-> +/* clang-format off */
-> +#define LANDLOCK_ADD_RULE_QUIET			(1U << 0)
-> +/* clang-format on */
-> +
->  /**
->   * DOC: landlock_restrict_self_flags
->   *
-> diff --git a/security/landlock/domain.h b/security/landlock/domain.h
-> index 7fb70b25f85a..aadbf53505c0 100644
-> --- a/security/landlock/domain.h
-> +++ b/security/landlock/domain.h
-> @@ -114,6 +114,11 @@ struct landlock_hierarchy {
->  		 * %LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON.  Set to false by default.
->  		 */
->  		log_new_exec : 1;
-> +	/**
-> +	 * @quiet_masks: Bitmasks of access that should be quieted (i.e. not
-> +	 * logged) if the related object is marked as quiet.
-> +	 */
-> +	struct access_masks quiet_masks;
-
-Please update the above @work_free doc.
-
->  #endif /* CONFIG_AUDIT */
->  };
->  
+Mimi
