@@ -1,313 +1,211 @@
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazolkn19013081.outbound.protection.outlook.com [52.103.51.81])
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443E933D6CB;
-	Fri, 21 Nov 2025 11:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.51.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763724417; cv=fail; b=QyyS4ex7NXn2ZKL9Qrpy+FgKWOmkyhbDE5xtVeGwhHDcIFEWJpCXujrColA5lLRt+TKY1/avpifgqD9zXlWKIzJFEaTJb7rYOU8akNIds1fIVbrqm6JmoaXZ6IRj8OckXR4c6PZv6b6TdpIXwkCJkWbEPiNNqv/LnQfJAiE1uw8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763724417; c=relaxed/simple;
-	bh=UlX0HMaktNUa2WVV3ewylg+AsbUpF+CFRaVIj9+O4lA=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=FWPz/praTgeT4awIXC0Yqkn+IbFbIP1Nn0+i9QPR0K1RgqODUZst4g0qZnOseV4bKS8O6p3UTvDKtlipDiDbI4SAwu4pnIu+0Z4RhT9Prh66AY2ekMkjte3HYJf3e/lRFkpYeTemhtB1ubJmhJU0u3Z1UhgPhRwIoVGglNrHoOM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.de; spf=pass smtp.mailfrom=hotmail.de; dkim=pass (2048-bit key) header.d=HOTMAIL.DE header.i=@HOTMAIL.DE header.b=XQgmvGC8; arc=fail smtp.client-ip=52.103.51.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6331C3C11
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Nov 2025 15:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763738846; cv=none; b=gJPDmFtfL18Iwjoe/ugltjAXfbKRg4Qy9uz1C5FaDvJ37fyfQJ91A35o5WcqPhtL51IwRnhIVsb7AeDlQiv1lhIMZdwSVm4ZOHZrw5q521SXcUC7QrarSWi6pMQkFQviGS3TksajOsf56zxUmXwd0lE4QLOajnXFn4HC9sDL2yE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763738846; c=relaxed/simple;
+	bh=wozHYT8X3Go7QZizvM9EchtH7cFQNpJPUgxXXFYlOic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gL5T5n2a+dbPegqRaD74h+XwVGHm93dV+g91RRulZZrSuSaq9FMiISQUVA8GvTJ7dqF7T9eV/JqcAg6yPTvhQVpP0wqPhPyHj4oHiX01NnuN5peH2qmwQy6VSbIZ5ZH/UQvVgA7zHUbKrGy6FgXd8LXuHCe8XIKxI2yrkcSJGbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=D1ZQ+qvz; arc=none smtp.client-ip=185.125.25.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=HOTMAIL.DE header.i=@HOTMAIL.DE header.b="XQgmvGC8"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HUY0INT/pDPmKHQgiWeynXhIpPhN5PPAC9JWqI+R/Fqt4AF1IaKGEpgSHalSz74oMCK+Q4vdGFZ8b+St4NYJLCot4ojmaYXyzzH6Dh0/jlh6tygLJFcfkEMD9TNDQbcw3c45hhkJQf+pLhHljI9AciSfMizwB4BsM2KgsQ2CeHnWiKQIAp9RCbCOq4GPB93PEnrNDPuiJrzN4pQib5clYb55Q1MK4JrKaHaBTv8HxBmIdiCsy9pQiERm5rUy+d0FBMLQRLeU99MbZedwlViIuxdKcMr8MFqA7SZQUEueNOr5hue1Zef+J2Vh8yvkeJgCPBZC7wlZTa05g0IHEsUbNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u9JbpQ65D/TNfcoH4iR2VrremkZhuKTi+gKg/P60g44=;
- b=XS9AOtvBOe1tgLejo07h+ys2ihfaaiOtlstrCjt2z3Efjnln/hiWaEwSYYYIDGYJIM3YFcIiNdE3hMquO9JhvP96Vgzaw4yC/pfLAsTML7GtYe9p2gehp+b77V5IobbrApwOVjmIpqmbt3zDxxQ5/ZYyaQHzw1JTdPDMQTZAtRENzKMMb6HmxX15xOaqNTkqZsOkroDI5BAJtH80K/hyNotyqsnZEQz4KbVSB1KmfKNK3STMi3jtkZjEu2pN0O+52xeUFlmTdvo76M1YF3c1W8hSS89VU7gQXpUKnHEnEND2MPqGmIBlFW4NcLJJNqo9y4irKiySO8S+p4a8NXXajA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=HOTMAIL.DE;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u9JbpQ65D/TNfcoH4iR2VrremkZhuKTi+gKg/P60g44=;
- b=XQgmvGC87oQNDHgeVubqpbDG4duV6v4BXsvLuSYQpnpQwLr1pYI0e3CGeUN66zH9yGbRelMg3JAEJg8RoT5OTMplYtEp/N14x1iHSFhtZ3f7h/q4CbmUcWGsGOsMEEDlbe3/NrAMjW1Cz90jmB0EWWxgItSyx2v9fUAsAevumrJvDsZh0tzqUAzP3GCZqSw28F4u5nO6VM8XRIEWMvfpiAnn5f7dPcolb5KImYA5h9wkocVfexE2M1NPXiur53V9inqy/INa6L5qq8GqBsCmvlIU5ogre8BX4C7vnOjbwFIL181hCa+Md6PSflEGBoERmWSLtDOACd2scZUO5WTNcQ==
-Received: from GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:158:401::8d4) by GVX0PF97A28093C.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:158:401::7d8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.10; Fri, 21 Nov
- 2025 11:26:51 +0000
-Received: from GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- ([fe80::dde:411d:b5f2:49]) by GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- ([fe80::dde:411d:b5f2:49%8]) with mapi id 15.20.9343.009; Fri, 21 Nov 2025
- 11:26:51 +0000
-Message-ID:
- <GV2PPF74270EBEED0840E45459881C0EDD4E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-Date: Fri, 21 Nov 2025 12:26:48 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH] exec: Move cred computation under exec_update_lock
-Content-Language: en-US
-From: Bernd Edlinger <bernd.edlinger@hotmail.de>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Alexey Dobriyan <adobriyan@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
- Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
- Will Drewry <wad@chromium.org>, Christian Brauner <brauner@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>,
- Serge Hallyn <serge@hallyn.com>, James Morris
- <jamorris@linux.microsoft.com>, Randy Dunlap <rdunlap@infradead.org>,
- Suren Baghdasaryan <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>,
- Helge Deller <deller@gmx.de>, Adrian Reber <areber@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
- Alexei Starovoitov <ast@kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- linux-security-module@vger.kernel.org, tiozhang <tiozhang@didiglobal.com>,
- Luis Chamberlain <mcgrof@kernel.org>,
- "Paulo Alcantara (SUSE)" <pc@manguebit.com>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Frederic Weisbecker <frederic@kernel.org>, YueHaibing
- <yuehaibing@huawei.com>, Paul Moore <paul@paul-moore.com>,
- Aleksa Sarai <cyphar@cyphar.com>, Stefan Roesch <shr@devkernel.io>,
- Chao Yu <chao@kernel.org>, xu xin <xu.xin16@zte.com.cn>,
- Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
- David Hildenbrand <david@redhat.com>, Dave Chinner <dchinner@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Elena Reshetova <elena.reshetova@intel.com>,
- David Windsor <dwindsor@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>,
- Ard Biesheuvel <ardb@kernel.org>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Hans Liljestrand <ishkamiel@gmail.com>,
- Penglei Jiang <superman.xpt@gmail.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Adrian Ratiu <adrian.ratiu@collabora.com>, Ingo Molnar <mingo@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Cyrill Gorcunov <gorcunov@gmail.com>, Eric Dumazet <edumazet@google.com>
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <87tsyozqdu.fsf@email.froward.int.ebiederm.org>
- <87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
- <87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
- <87a50gxo0i.fsf@email.froward.int.ebiederm.org>
- <GV2PPF74270EBEEAD4CACA124C05BE1CE45E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <87o6ovx38h.fsf@email.froward.int.ebiederm.org>
- <GV2PPF74270EBEEFA106F4EF26B087ED898E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-In-Reply-To: <GV2PPF74270EBEEFA106F4EF26B087ED898E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0152.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:98::19) To GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:158:401::8d4)
-X-Microsoft-Original-Message-ID:
- <8d8912d7-ca7d-455f-81e4-8b9a638a9e94@hotmail.de>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="D1ZQ+qvz"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dCfGS3Y48zBhf;
+	Fri, 21 Nov 2025 16:27:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1763738832;
+	bh=xYU7kl7ZheKufs0kccogjPTv96FtNRoFfzOgTeBUW58=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D1ZQ+qvzTt2Ui96F8LPOczeL8Rs1iyvFpW/+zIBHKb5QoE0iNHqC5bUl2wcizrTLz
+	 1QUZd86snqSCoOl8O6PSlJ8LNUMfvEsMviDz27bfqUXTLBYbf84VK65as5izu2GF3Z
+	 dLDF294shhqHni4ZfOpGdEzkAPsH809YBfcUCXcs=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4dCfGR1JSNzCkq;
+	Fri, 21 Nov 2025 16:27:11 +0100 (CET)
+Date: Fri, 21 Nov 2025 16:27:02 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Justin Suess <utilityemal77@gmail.com>, Jan Kara <jack@suse.cz>, Abhinav Saxena <xandfury@gmail.com>, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v4 02/10] landlock: Add API support and docs for the
+ quiet flags
+Message-ID: <20251120.Sae4geish0ei@digikod.net>
+References: <cover.1763330228.git.m@maowtm.org>
+ <cd79fcf71e6d38ab4280c0de2500fa5f6b06cd9d.1763330228.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PPF74270EBEE:EE_|GVX0PF97A28093C:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b7cf753-2140-4035-c00f-08de28f0dd77
-X-MS-Exchange-SLBlob-MailProps:
-	Cq7lScuPrnqtIWTVy3iGwCmLGPV7Nste/Lq1zjGdPB5r7j/0FYwBqL/3N4zb96/DYVaWA/Hzpqdd3zc1gHszSs4PcKFfAvDXV0PZNqeltmYtCj8ye1LAlGqzSoGWj2fQ5vH/OW069pPReLFXR6mSgfToi7LwHV+VYv1jAcNuOAkIXkJAlARapV6LxybXljbg3qcp0FqMRDuRT/By7LA5jLijc38xzV1v8avmO9lK6f/D3oU6mWlSuOyLwKjj5e1cvjQxiQbBtaAN731Z9euKAq53s892biTywb7qbDgXvLcJSGdLQGo+EFiRzs44VZq6fzppKAqpCi7gAK80qpYvPK6nPbK1449kJCTEI7HdaHRdEFYJfilQI/9MdVWkLANoYdYl45G+7tc3Nx4bIDn0wimQ3oGDwmcJzTgei2infYHSLHDWtDnfZzTsKaMtkPuAaPK5T5CbBMjt/aZ8FUeiX0+usWgcYj3izEL7kWvCR6qU71uT/Eg+YJZDKDQzEjS3hbNv0CGu6XcylgtahqhZtF51MmstpfNTxcw5fZ3oTCcN4tWNso+MB+A0KNLG8qqYE+yXoadIE17uKuKHIU8UW9kzay5Z5FH8SGJxtls7IX66LVNdOa7Sybj/0KHM8fuHykrAsQIlwm7ZBXtFWkcF/uxIBEuwmmHjrWnTex9m4J84EJIWcX3lVf4txs4Vzf4H9tAQP9kqY7hoPJXgA2D6+A8qmZhJFyOTjR4x29AT1XHVOhvr4XgdaaXRZtyloIsHWnhIazrIo0s=
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|19110799012|41001999006|21061999006|23021999003|8060799015|12121999013|15080799012|51005399006|461199028|5072599009|6090799003|40105399003|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RDZnTnFLSXREd1dHVlRrUTdsbDRTVnZDTnQzWEVoTm16RGZOalBxVkN2MkhJ?=
- =?utf-8?B?VzU0OGp3MDlpcWlHeFJUM1FYa1BGUm9mVDV3SkFLWWxjTVNvR2o0Z0piTW41?=
- =?utf-8?B?Uy9tWUlrV3hIUzRYRjNTNnA3R3pXMzJFUUhCWDNuamgxY3BzZ1drQmhqY3ds?=
- =?utf-8?B?c1ZHSE9OWlRRazh0Q2VGaGphWG0vUjdOam1YUGs4LzdSYW1odzlhK0tpZldx?=
- =?utf-8?B?Z0ZSNjdEcGlTT2Q4Y2RNdDNtV3BYUjFsZE55NUlKb3BLdDNKQ3gxeUx2aHZz?=
- =?utf-8?B?SmlqdXVmRmsvL3FTYTZTV0t6M1RGdndKNmpodXpqZmplZUJadzRoNGR1SnJG?=
- =?utf-8?B?ZS9RYkJIY21ENUR4WU5iTXY2bjMveGxkenNFQzJCdmgvbTU5R2FYd0lUdnJ4?=
- =?utf-8?B?c0FMNDlNQzRJN1EwS2VQNTlnQVI2bjdQS3NQSWJTQ3B6a3U5dnlRZGhjMmEr?=
- =?utf-8?B?YkpxYmVueHQ4VlJtd2JYbitPYkRGNElVc3pTSk16KzJUYkZkRHZ0c090dVhw?=
- =?utf-8?B?L3dXYTM2YllhMUVFRlZqam9NcmhBdEMza1FkQzB0NVpwaDEvMjNadkNpeEJh?=
- =?utf-8?B?TjI2ZzhaRkNxNXRZOExMTjZkQ3NkZ2Z1N3p2QmJFUWlxZkw1eTR0NU8rT3NF?=
- =?utf-8?B?N1BoUFBGQzdYaHcrTm5DWmZJT2Y5RC9hck5EVWtId3UrdzNnb2F3dzZPV3pD?=
- =?utf-8?B?NmVMbk5kcnI5UlNielZBSDF1UXpFTkZzYUQ0L3RqOVhtdHRyYnBaQyt0ZFM5?=
- =?utf-8?B?blJ6N2JrbjhWLzlwL3YydjZ5SkYzRlhhUTNjSkpnUjVBRFIrcnM3eEhZZDBE?=
- =?utf-8?B?alVtN1N0YXc3bC85MnFZMG4vNHh5TUJRVHE1TWpEY0xyVERBeWx4NXBMU2hW?=
- =?utf-8?B?WTE1SXVPZEFyMFAwNzcwZVdtU1IrMGFWMEE4UGFXYlJFVFhNVlZCZGEwbXUv?=
- =?utf-8?B?MTBRb3FiQTBnYnlUWlY5MjdsWHdwYjZSZjR1SzZuRmYwTWgzcUpoRDF3WkZS?=
- =?utf-8?B?MzQzUkg3MjE5bVZORTkxTXAwN25tK2FBYko5VnV5VE12TW01SHN5TlhmbnNk?=
- =?utf-8?B?Sk4yc3NObS96d1JRL3Y5UCt6dXUxQXRZWWUyNndpeFZtZENMY1NPd3hNNGhn?=
- =?utf-8?B?bEl6NjVBUVM5UGdUYjZqME1PS05iRzQ3TGIvdUE2dWp5M1RoNVJ3YktPbnRV?=
- =?utf-8?B?UVNNb3RzYmwremw3cjBmcjJxYktOZm0yZVdQWkhvMWNuZ0I3TExFNFpTRkFo?=
- =?utf-8?B?N3JxZ0owdTlxMS9sTDJqbldrV3BBYkVTOWxWVEcvZ2NuQWRtbVBqcDR4V3l2?=
- =?utf-8?B?OTBPdmthdTVEN1h1dFQ5QVBremxobnk4SXVZWVplRFBZWHQ2NGxoTjNRL2JU?=
- =?utf-8?B?a2FTMkh6dWVUNCsvNVk2d1VZb2RObkt6bmhwdEcxVjhrUjdMYjRlVXFDUE40?=
- =?utf-8?B?OFRqNVYyTmY5QTU5QXdEck5OUXhHZDhFamNpTmhxOWNDT2RWamx5dTJacGlu?=
- =?utf-8?B?KzFFK1YvRXgrZjJBaXhpNzdTM3NURUpqcEMxOHY4MzdDM1JlMUpBUXlReGpZ?=
- =?utf-8?B?dndpdzgzQkZqUXlSUVR6ZlcxV250bjA4RTZMK1VBM29NS2dsMXVBcXljdGZD?=
- =?utf-8?B?UzlTVmVRdlJwNldtVjZ2bXVZRUMyRXNXNDQ1bnVwRmFnd1RBTWV1KzZWUndm?=
- =?utf-8?B?SG9XbW1PczRjSkU2NUs3SEFJWmE0a2VJK0xiZmpwcVVXZnYzTFZMVWpHKzBm?=
- =?utf-8?Q?JwtW5DX8P0hESSxEkxjEleToyjYcTy9NU2Ic2Jh?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RVZZMEtOUEdUSWZGd2pqNFd4STVnTjU1WDVGWFNGZHpwWndjMGJxbER3T0U2?=
- =?utf-8?B?TWRRMDZ3QUx4WXNwYkladzJoZnZCNEtWM0RSaGhpVTR2N01WaGdzNzNJcmYx?=
- =?utf-8?B?dDJPQzRidG95N0hTVngyNkh6Z3ArY1QwdmphS1VVVGt2WDdqQmo1UlRINmts?=
- =?utf-8?B?NmdoMk0rc0JCNGxVVEVYUVBjdFFpU0VBaGVrc3FXaE5CRDVlakV3bm1Nd2FS?=
- =?utf-8?B?cnZrem5HUVRrUDRQVE1jdTNTTm1tWnp6MHBBYXB2L3lXQWQxSFE5QmJTRjg4?=
- =?utf-8?B?ZEtlVUdCcDZkdFJUUUo3aUlDdHZab08zNHllMVlTQ2ZvODJWT0NsY3lXL1p5?=
- =?utf-8?B?akhYVjNDL0QyNFBmN2hhTUVMb0xtYU16bmt0WXBpaE1ibEN3TXQ2enRhS1pV?=
- =?utf-8?B?UXE3R0xxcGR2V04wWjlKYWlmaG5CU0ZwRjFIaEo0NGRUN0NaUGthMm9YSWR6?=
- =?utf-8?B?QzZYWkdKL25Tc2taMHp2Mk1TbnF4Y2pDNitYMXBVc2hlZUg0eGEvakZOSWd5?=
- =?utf-8?B?d25GMW9yckI3S0FDMVh1U0ZJTHJtdGNiRHU1ekZkZFYzUWF4UzJFdFVNMmVr?=
- =?utf-8?B?ZHRlVUlYSU9vaTZjREtIT0VxY1B2bENaYVVJNWtlMDlkaEE3eVJSdE8ySHhM?=
- =?utf-8?B?cWJOSjlrWTVGelFOeThGSjJRUCtnSTkweUhpN0xuTnVINXFFOGIvRERpcUho?=
- =?utf-8?B?TS9PSmpsenZtSmdKUm1ycUZka2JOWEpZVlR6YkNOOGFzNFcvNHFsUUtJcTBt?=
- =?utf-8?B?OHlWQnlXdHRJUTJsT1dZMVZKRGExNWc2SUJ5bzRzRlVBa0xKVnd1RFQzRkNU?=
- =?utf-8?B?Q1FOMmJoQ3FWTkx3NkRqanFtdnJWQ0drcXdRdEsvbjkxSmprU0Z5MFYxdDNE?=
- =?utf-8?B?RzlrMjhXQitYRVNKaWEwaGNkV3pnNlJwREhMSDZDV1ZpRlRBci9mRzJuSldx?=
- =?utf-8?B?c0g5b1BuMjNlbkJ4K1lkKzFjbENvaEczejNPc0k5YW5vVzJOMHA1RTYzaUZR?=
- =?utf-8?B?U3N5ZDNtZlF2U0NieVpzbDB4RGtiSEYzZm1YNnY4SW83UUFvVGI3NU02ZEFy?=
- =?utf-8?B?ZmhoSzRpcURVRytNVGoyckF0T3lEcmRycXdTa0k1ejBmUWkvRERIZHpZWlRu?=
- =?utf-8?B?ZWZJdWFOL0tNVERiOEJPS29iblk1cE5jRUdIeXRQN0NTcVpIdlJOMThCQjZ1?=
- =?utf-8?B?ZlJXR1JwOTMxQkwzWE1zSzRWWTNteWpHbWE4bEhNZzdRQXA0RlV1SjFCaUZQ?=
- =?utf-8?B?aUtiYjk4OTRobVBSY0dhcmlRZFV3Vy9TcW4wQmtlUDhySG1tRW0yZzVzTkIz?=
- =?utf-8?B?QjlCNDV3S2dlQVVIUkVldlRKcGRDZTVETENEa2ZFOWdDUlYvMW5YMTF4SnJq?=
- =?utf-8?B?NjRLSHY4Q0xwc0dhS2ZaQkIvSEg1QTROUFMvalVhOWJFbGVFN2d2cGdRVFdR?=
- =?utf-8?B?NXdBcmR2dkVHdjIwL0FPVU9rUUtaZCtZUkpWRW50WGtqWDdoaklVTTdCemFz?=
- =?utf-8?B?L2puMzBTUlh2OGx0U2NYOVhZdWpaY094bS9KSy81ckcvck9VQ0RXYXlSV1Ex?=
- =?utf-8?B?WWhxWWNVa20wS0ViV3FaMUFQR2dmR1dmeGdQZU9FdnNHaGgzUkd1Uy9vWFVw?=
- =?utf-8?B?MVUrS2FwTHE3NC9DMUU2L0xQMTdRb3BqRU82TkFXZFJtdHZhM25hWm9QT2Z5?=
- =?utf-8?B?RHZqN01LZm1VN0x5YzgzNTFFU2FWUU1qOGpwajJhWkplVS9KMjhFYmREcG1J?=
- =?utf-8?Q?RYCAdsvXaFEBHOPK7nxYc1bYfuez69VCZ6i77hQ?=
-X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-87dd8.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b7cf753-2140-4035-c00f-08de28f0dd77
-X-MS-Exchange-CrossTenant-AuthSource: GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2025 11:26:50.9820
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVX0PF97A28093C
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cd79fcf71e6d38ab4280c0de2500fa5f6b06cd9d.1763330228.git.m@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On 11/21/25 10:35, Bernd Edlinger wrote:
-> On 11/21/25 08:18, Eric W. Biederman wrote:
->> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
->>
->>> Hi Eric,
->>>
->>> thanks for you valuable input on the topic.
->>>
->>> On 11/21/25 00:50, Eric W. Biederman wrote:
->>>> "Eric W. Biederman" <ebiederm@xmission.com> writes:
->>>>
->>>>> Instead of computing the new cred before we pass the point of no
->>>>> return compute the new cred just before we use it.
->>>>>
->>>>> This allows the removal of fs_struct->in_exec and cred_guard_mutex.
->>>>>
->>>>> I am not certain why we wanted to compute the cred for the new
->>>>> executable so early.  Perhaps I missed something but I did not see any
->>>>> common errors being signaled.   So I don't think we loose anything by
->>>>> computing the new cred later.
->>>>
->>>> I should add that the permission checks happen in open_exec,
->>>> everything that follows credential wise is just about representing in
->>>> struct cred the credentials the new executable will have.
->>>>
->>>> So I am really at a loss why we have had this complicated way of
->>>> computing of computed the credentials all of these years full of
->>>> time of check to time of use problems.
->>>>
->>>
->>> Well, I think I see a problem with your patch:
->>>
->>> When the security engine gets the LSM_UNSAFE_PTRACE flag, it might
->>> e.g. return -EPERM in bprm_creds_for_exec in the apparmor, selinux
->>> or the smack security engines at least.  Previously that callback
->>> was called before the point of no return, and the return code should
->>> be returned as a return code the the caller of execve.  But if we move
->>> that check after the point of no return, the caller will get killed
->>> due to the failed security check.
->>>
->>> Or did I miss something?
->>
->> I think we definitely need to document this change in behavior.  I would
->> call ending the exec with SIGSEGV vs -EPERM a quality of implementation
->> issue.  The exec is failing one way or the other so I don't see it as a
->> correctness issue.
->>
->> In the case of ptrace in general I think it is a bug if the mere act of
->> debugging a program changes it's behavior.  So which buggy behavior
->> should we prefer?  SIGSEGV where it is totally clear that the behavior
->> has changed or -EPERM and ask the debugged program to handle it.
->> I lean towards SIGSEGV because then it is clear the code should not
->> handle it.
->>
->> In the case of LSM_UNSAFE_NO_NEW_PRIVS I believe the preferred way to
->> handle unexpected things happening is to terminate the application.
->>
->> In the case of LSM_UNSAFE_SHARE -EPERM might be better.  I don't know
->> of any good uses of any good uses of sys_clone(CLONE_FS ...) outside
->> of CLONE_THREAD.
->>
->>
->> Plus all of these things are only considerations if we are exec'ing a
->> program that transitions to a different set of credentials.  Something
->> that happens but is quite rare itself.
->>
->> In practice I don't expect there is anything that depends on the exact
->> behavior of what happens when exec'ing a suid executable to gain
->> privileges when ptraced.   The closes I can imagine is upstart and
->> I think upstart ran as root when ptracing other programs so there is no
->> gaining of privilege and thus no reason for a security module to
->> complain.
->>
->> Who knows I could be wrong, and someone could actually care.  Which is
->> hy I think we should document it.>>
+On Sun, Nov 16, 2025 at 09:59:32PM +0000, Tingmao Wang wrote:
+> Adds the UAPI for the quiet flags feature (but not the implementation
+> yet).
 > 
+> According to pahole, even after adding the struct access_masks quiet_masks
+> in struct landlock_hierarchy, the u32 log_* bitfield still only has a size
+> of 2 bytes, so there's minimal wasted space.
 > 
-> Well, I dont know for sure, but the security engine could deny the execution
-> for any reason, not only because of being ptraced.
-> Maybe there can be a policy which denies user X to execute e.g. any suid programs.
+> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> ---
 > 
+> Changes since v3:
+> - Minor update to this commit message.
+> - Fix minor formatting
 > 
-> Bernd.
+> Changes since v2:
+> - Updated docs from Mickaël's suggestions.
 > 
+> Changes since v1:
+> - Per suggestion, added support for quieting only certain access bits,
+>   controlled by extra quiet_access_* fields in the ruleset_attr.
+> - Added docs for the extra fields and made updates to doc changes in v1.
+>   In particular, call out that the effect of LANDLOCK_ADD_RULE_QUIET is
+>   independent from the access bits passed in rule_attr
+> - landlock_add_rule will return -EINVAL when LANDLOCK_ADD_RULE_QUIET is
+>   used but the ruleset does not have any quiet access bits set for the
+>   given rule type.
+> - ABI version bump to v8
+> - Syntactic and comment changes per suggestion.
+> 
+>  include/uapi/linux/landlock.h                | 64 +++++++++++++++++
+>  security/landlock/domain.h                   |  5 ++
+>  security/landlock/fs.c                       |  4 +-
+>  security/landlock/fs.h                       |  2 +-
+>  security/landlock/net.c                      |  5 +-
+>  security/landlock/net.h                      |  3 +-
+>  security/landlock/ruleset.c                  | 10 ++-
+>  security/landlock/ruleset.h                  |  8 ++-
+>  security/landlock/syscalls.c                 | 72 +++++++++++++++-----
+>  tools/testing/selftests/landlock/base_test.c |  4 +-
+>  10 files changed, 150 insertions(+), 27 deletions(-)
+> 
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index f030adc462ee..50f0806b7e33 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -32,6 +32,19 @@
+>   * *handle* a wide range or all access rights that they know about at build time
+>   * (and that they have tested with a kernel that supported them all).
+>   *
+> + * @quiet_access_fs and @quiet_access_net are bitmasks of actions for
+> + * which a denial by this layer will not trigger an audit log if the
+> + * corresponding object (or its children, for filesystem rules) is marked
+> + * with the "quiet" bit via %LANDLOCK_ADD_RULE_QUIET, even if logging
+> + * would normally take place per landlock_restrict_self() flags.
+> + * quiet_scoped is similar, except that it does not require marking any
+> + * objects as quiet - if the ruleset is created with any bits set in
+> + * quiet_scoped, then denial of such scoped resources will not trigger any
+> + * log.  These 3 fields are available since Landlock ABI version 8.
+> + *
+> + * @quiet_access_fs, @quiet_access_net and @quiet_scoped must be a subset
+> + * of @handled_access_fs, @handled_access_net and @scoped respectively.
+> + *
+>   * This structure can grow in future Landlock versions.
+>   */
+>  struct landlock_ruleset_attr {
+> @@ -51,6 +64,24 @@ struct landlock_ruleset_attr {
+>  	 * resources (e.g. IPCs).
+>  	 */
+>  	__u64 scoped;
+> +
+> +	/* Since ABI 8: */
+> +
+> +	/**
+> +	 * @quiet_access_fs: Bitmask of filesystem actions which should not be
+> +	 * audit logged if per-object quiet flag is set.
+> +	 */
+> +	__u64 quiet_access_fs;
+> +	/**
+> +	 * @quiet_access_net: Bitmask of network actions which should not be
+> +	 * audit logged if per-object quiet flag is set.
+> +	 */
+> +	__u64 quiet_access_net;
+> +	/**
+> +	 * @quiet_scoped: Bitmask of scoped actions which should not be audit
+> +	 * logged.
+> +	 */
+> +	__u64 quiet_scoped;
+>  };
+>  
+>  /**
+> @@ -69,6 +100,39 @@ struct landlock_ruleset_attr {
+>  #define LANDLOCK_CREATE_RULESET_ERRATA			(1U << 1)
+>  /* clang-format on */
+>  
+> +/**
+> + * DOC: landlock_add_rule_flags
+> + *
+> + * **Flags**
+> + *
+> + * %LANDLOCK_ADD_RULE_QUIET
+> + *     Together with the quiet_* fields in struct landlock_ruleset_attr,
+> + *     this flag controls whether Landlock will log audit messages when
+> + *     access to the objects covered by this rule is denied by this layer.
+> + *
+> + *     If audit logging is enabled, when Landlock denies an access, it will
+> + *     suppress the audit log if all of the following are true:
+> + *
+> + *     - This layer is the innermost layer that denied the access;
 
-Hmm, funny..
+Because these items follows ":" they should not start with a capital
+letter (e.g. "- this layer ...").
 
-I installed this patch on top of
+> + *     - All requested accesses are part of the quiet_* fields in the
+> + *       related struct landlock_ruleset_attr;
 
-commit fd95357fd8c6778ac7dea6c57a19b8b182b6e91f (HEAD -> master, origin/master, origin/HEAD)
-Merge: c966813ea120 7b6216baae75
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu Nov 20 11:04:37 2025 -0800
+This should be updated to reflect my comment in the next patch about
+landlock_log_denial().
 
-but it does panic when I try to boot:
+> + *     - The object (or one of its parents, for filesystem rules) is
+> + *       marked as "quiet" via %LANDLOCK_ADD_RULE_QUIET.
+> + *
+> + *     Because logging is only suppressed by a layer if the layer denies
+> + *     access, a sandboxed program cannot use this flag to "hide" access
+> + *     denials, without denying itself the access in the first place.
+> + *
+> + *     The effect of this flag does not depend on the value of
+> + *     allowed_access in the passed in rule_attr.  When this flag is
+> + *     present, the caller is also allowed to pass in an empty
+> + *     allowed_access.
+> + */
+> +
+> +/* clang-format off */
+> +#define LANDLOCK_ADD_RULE_QUIET			(1U << 0)
+> +/* clang-format on */
+> +
+>  /**
+>   * DOC: landlock_restrict_self_flags
+>   *
+> diff --git a/security/landlock/domain.h b/security/landlock/domain.h
+> index 7fb70b25f85a..aadbf53505c0 100644
+> --- a/security/landlock/domain.h
+> +++ b/security/landlock/domain.h
+> @@ -114,6 +114,11 @@ struct landlock_hierarchy {
+>  		 * %LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON.  Set to false by default.
+>  		 */
+>  		log_new_exec : 1;
+> +	/**
+> +	 * @quiet_masks: Bitmasks of access that should be quieted (i.e. not
+> +	 * logged) if the related object is marked as quiet.
+> +	 */
+> +	struct access_masks quiet_masks;
 
-[  0.870539]     TERM=1inux
-[  0.870573] Starting init: /bin/sh exists but couldn't execute it (error -14) 0.8705751 Kernel panic- not syncing: No working init found. Try passing i mit= option to kernel. See Linux Documentation/admin-guide/init.rst for guidance
-[  0.870577] CPU: UID: 0 PID: 1 Comm: sh Not tainted 6.18.0-rc6+ #1 PREEMPT(voluntary)
-[  0.870579] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBo x 12/01/2006
-[  0.870580] Call Trace:
-[  0.870590]  <TASK>
-[  0.870592]  vpanic+0x36d/0x380
-[  0.870607]  ? __pfx_kernel_init+0x10/0x10
-[  0.870615]  panic+0x5b/0x60
-[  0.870617]  kernel_init+0x17d/0x1c0
-[  0.870623]  ret_from_fork+0x124/0x150
-[  0.870625}  ? __pfx_kernel_init+0x10/0x10
-[  0.870627]  ret_from_fork_asm+0x1a/0x30
-[  0.870632]  </TASK>
-[  0.8706631 Kernel Offset: 0x3a800000 from Oxffffffff81000000 (relocation ran ge: 0xffffffff80000000-0xffffffffbfffffff)
-[  0.880034] ---[ end Kernel panic - not syncing: No working init found. Try passing init option to kernel. See Linux Documentation/admin-guide/init.rst for guidance. 1---`
+Please update the above @work_free doc.
 
-
-Is that a known problem?
-
-Bernd.
-
+>  #endif /* CONFIG_AUDIT */
+>  };
+>  
