@@ -1,365 +1,247 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB4B25334B;
-	Fri, 21 Nov 2025 19:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9852D8367;
+	Fri, 21 Nov 2025 19:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763752406; cv=none; b=bVum+/NW8S7tEWHtZ/hHAM+4Ya+GTB4wLPbrU3evJrbY2B1LA5/qzigTbof8/T2zFVyJMyQkr3Unom68JOVIfNQlx4ztRpCO5IljmGYQ/yyX4m2REE+pxakZPXp08Vn+2WnNKwv0iZZLTc+jNIaI26FV+cCR2mRmFqa9ZypAqQU=
+	t=1763752820; cv=none; b=QvpB7+hPiS630JGDi1vvwcrtT9CL5/mq2ZdYP6PyaXT7C1E4UOdXtydkHg4rBBBNF7YgBCAK/v2UN2GrhDsc3Zol7OWhtAs3ZTViTcX012BDXK7EtpaGzwrewwhVgzunS/XspurT8b8JtekPzMOMWnFKbTyO4e18PlLptIeoKi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763752406; c=relaxed/simple;
-	bh=oMpkdV/F67SlPK3dILmfMTsyYab3OdshdHQ95AVKtmE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CmKaKD0U7QEn9homii5KwURKDoRUEbYw2yQizzAeVbl6JdaInYiZ31HJIj/vTjU4jnrKwb2T4JBiHLHgm9mp+ppRusdGR1qds0oZzknHtXA/sJI5MPsIYe/D0MrWgyGXALmCyu5haVJ+SCSIiojZ+d+sCJZa014pHtak2UyLGds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=J0AfYHWt; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="J0AfYHWt"
-Received: from [100.65.232.236] (unknown [20.236.10.120])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 1F54C2120702;
-	Fri, 21 Nov 2025 11:13:22 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1F54C2120702
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1763752402;
-	bh=PyWREj6CmooOdtxayAxYR2wMPsxJdXeYh8HnDvBb5Mw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=J0AfYHWtP0IlKinYDG00WNqVSOZ8Uv/4BHyElJwi3w81b3ejGcNz8kUBYvygfRG6X
-	 jvYHIypqWDf6e6ciPky6shzi7rqEvtOABrzRVPCUdToKTegAjX1SoM+JJ5FSJh/YL6
-	 g/aWRm8wSenap7V64dZkRl/zhwPLG85f05C+MINs=
-Message-ID: <a77e9609-f6bd-4e6d-88be-5422f780b496@linux.microsoft.com>
-Date: Fri, 21 Nov 2025 11:13:20 -0800
+	s=arc-20240116; t=1763752820; c=relaxed/simple;
+	bh=JTxhSWA6jxw9e4SLyOt7ueqSOQ+RMIIFCViCtct749k=;
+	h=From:To:Cc:In-Reply-To:References:Date:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=CYwahzyNfyUz1iuvheaRsCQa0yk6gOEA7fpzyB3v5hPX3wZ0ddUEfiiaywoRPTBAOdC8lRIki1GvrMhLuiqUPjDFG56FF2dIJ7ln3cjG6hAaluBOU0TZ+LK471ihbWhssrhvsGp7RR3U5NK9mMxiUIJ3kdcjcP856xwiBubp4L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:56436)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1vMWfr-00EM7W-Dy; Fri, 21 Nov 2025 12:20:03 -0700
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:50660 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1vMWfp-000k4P-Vv; Fri, 21 Nov 2025 12:20:03 -0700
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,  Alexey Dobriyan
+ <adobriyan@gmail.com>,  Oleg Nesterov <oleg@redhat.com>,  Kees Cook
+ <kees@kernel.org>,  Andy Lutomirski <luto@amacapital.net>,  Will Drewry
+ <wad@chromium.org>,  Christian Brauner <brauner@kernel.org>,  Andrew
+ Morton <akpm@linux-foundation.org>,  Michal Hocko <mhocko@suse.com>,
+  Serge Hallyn <serge@hallyn.com>,  James Morris
+ <jamorris@linux.microsoft.com>,  Randy Dunlap <rdunlap@infradead.org>,
+  Suren Baghdasaryan <surenb@google.com>,  Yafang Shao
+ <laoar.shao@gmail.com>,  Helge Deller <deller@gmx.de>,  Adrian Reber
+ <areber@redhat.com>,  Thomas Gleixner <tglx@linutronix.de>,  Jens Axboe
+ <axboe@kernel.dk>,  Alexei Starovoitov <ast@kernel.org>,
+  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
+  linux-security-module@vger.kernel.org,  tiozhang
+ <tiozhang@didiglobal.com>,  Luis Chamberlain <mcgrof@kernel.org>,  "Paulo
+ Alcantara (SUSE)" <pc@manguebit.com>,  Sergey Senozhatsky
+ <senozhatsky@chromium.org>,  Frederic Weisbecker <frederic@kernel.org>,
+  YueHaibing <yuehaibing@huawei.com>,  Paul Moore <paul@paul-moore.com>,
+  Aleksa Sarai <cyphar@cyphar.com>,  Stefan Roesch <shr@devkernel.io>,
+  Chao Yu <chao@kernel.org>,  xu xin <xu.xin16@zte.com.cn>,  Jeff Layton
+ <jlayton@kernel.org>,  Jan Kara <jack@suse.cz>,  David Hildenbrand
+ <david@redhat.com>,  Dave Chinner <dchinner@redhat.com>,  Shuah Khan
+ <shuah@kernel.org>,  Elena Reshetova <elena.reshetova@intel.com>,  David
+ Windsor <dwindsor@gmail.com>,  Mateusz Guzik <mjguzik@gmail.com>,  Ard
+ Biesheuvel <ardb@kernel.org>,  "Joel Fernandes (Google)"
+ <joel@joelfernandes.org>,  "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>,  Hans Liljestrand <ishkamiel@gmail.com>,  Penglei
+ Jiang <superman.xpt@gmail.com>,  Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>,  Adrian Ratiu <adrian.ratiu@collabora.com>,
+  Ingo Molnar <mingo@kernel.org>,  "Peter Zijlstra (Intel)"
+ <peterz@infradead.org>,  Cyrill Gorcunov <gorcunov@gmail.com>,  Eric
+ Dumazet <edumazet@google.com>
+In-Reply-To: <GV2PPF74270EBEED0840E45459881C0EDD4E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	(Bernd Edlinger's message of "Fri, 21 Nov 2025 12:26:48 +0100")
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+	<AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	<AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	<AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	<GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	<GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	<GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	<87tsyozqdu.fsf@email.froward.int.ebiederm.org>
+	<87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
+	<87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
+	<87a50gxo0i.fsf@email.froward.int.ebiederm.org>
+	<GV2PPF74270EBEEAD4CACA124C05BE1CE45E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	<87o6ovx38h.fsf@email.froward.int.ebiederm.org>
+	<GV2PPF74270EBEEFA106F4EF26B087ED898E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	<GV2PPF74270EBEED0840E45459881C0EDD4E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+Date: Fri, 21 Nov 2025 13:19:55 -0600
+Message-ID: <87ikf3w5us.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v1 0/1] Implement IMA Event Log Trimming
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
- linux-integrity@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
- <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>,
- linux-security-module@vger.kernel.org,
- Steven Chen <chenste@linux.microsoft.com>,
- Gregory Lumen <gregorylumen@linux.microsoft.com>,
- Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
- Sush Shringarputale <sushring@linux.microsoft.com>
-References: <20251119213359.39397-1-anirudhve@linux.microsoft.com>
- <7722dff4e68ef5fb7f39bd732a8a77422bad5549.camel@huaweicloud.com>
-Content-Language: en-US
-From: Anirudh Venkataramanan <anirudhve@linux.microsoft.com>
-In-Reply-To: <7722dff4e68ef5fb7f39bd732a8a77422bad5549.camel@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1vMWfp-000k4P-Vv;;;mid=<87ikf3w5us.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX18mnrD+bsi9GaqPd61WTLqlIJTub8z3bTo=
+X-Spam-Level: ****
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.1 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  1.5 TR_Symld_Words too many words that have symbols inside
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  1.0 XM_B_Phish_Phrases Commonly used Phishing Phrases
+	*  1.0 XM_B_SpammyTLD Contains uncommon/spammy TLD
+	*  0.0 TR_XM_PhishingBody Phishing flag in body of message
+	*  1.5 XM_B_SpammyTLD3 Phishing rule with uncommon/spammy TLD Combo
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ****;Bernd Edlinger <bernd.edlinger@hotmail.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 871 ms - load_scoreonly_sql: 0.05 (0.0%),
+	signal_user_changed: 11 (1.2%), b_tie_ro: 9 (1.1%), parse: 1.97 (0.2%),
+	 extract_message_metadata: 32 (3.7%), get_uri_detail_list: 6 (0.7%),
+	tests_pri_-2000: 48 (5.5%), tests_pri_-1000: 11 (1.3%),
+	tests_pri_-950: 1.33 (0.2%), tests_pri_-900: 1.19 (0.1%),
+	tests_pri_-90: 124 (14.3%), check_bayes: 123 (14.1%), b_tokenize: 23
+	(2.7%), b_tok_get_all: 17 (1.9%), b_comp_prob: 4.6 (0.5%),
+	b_tok_touch_all: 73 (8.4%), b_finish: 0.89 (0.1%), tests_pri_0: 619
+	(71.1%), check_dkim_signature: 0.63 (0.1%), check_dkim_adsp: 2.4
+	(0.3%), poll_dns_idle: 0.67 (0.1%), tests_pri_10: 3.1 (0.4%),
+	tests_pri_500: 13 (1.5%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC][PATCH] exec: Move cred computation under exec_update_lock
+X-SA-Exim-Connect-IP: 166.70.13.51
+X-SA-Exim-Rcpt-To: too long (recipient list exceeded maximum allowed size of 512 bytes)
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
-On 11/20/2025 3:02 AM, Roberto Sassu wrote:
-> On Wed, 2025-11-19 at 13:33 -0800, Anirudh Venkataramanan wrote:
->> ==========================================================================
->>> A. Introduction                                                        |
->> ==========================================================================
->>
->> IMA events are kept in kernel memory and preserved across kexec soft
->> reboots. This can lead to increased kernel memory usage over time,
->> especially with aggressive IMA policies that measure everything. To reduce
->> memory pressure, it becomes necessary to discard IMA events but given that
->> IMA events are extended into PCRs in the TPM, just discarding events will
->> break the PCR extension chain, making future verification of the IMA event
->> log impossible.
->>
->> This patch series proposes a method to discard IMA events while keeping the
->> log verifiable. While reducing memory pressure is the primary objective,
->> the second order benefit of trimming the IMA log is that IMA log verifiers
->> (local userspace daemon or a remote cloud service) can process smaller IMA
->> logs on a rolling basis, thus avoiding re-verification of previously
->> verified events.
-> 
-> Hi Anirudh
+Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
 
-Hi Roberto,
+> On 11/21/25 10:35, Bernd Edlinger wrote:
+>> On 11/21/25 08:18, Eric W. Biederman wrote:
+>>> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+>>>
+>>>> Hi Eric,
+>>>>
+>>>> thanks for you valuable input on the topic.
+>>>>
+>>>> On 11/21/25 00:50, Eric W. Biederman wrote:
+>>>>> "Eric W. Biederman" <ebiederm@xmission.com> writes:
+>>>>>
+>>>>>> Instead of computing the new cred before we pass the point of no
+>>>>>> return compute the new cred just before we use it.
+>>>>>>
+>>>>>> This allows the removal of fs_struct->in_exec and cred_guard_mutex.
+>>>>>>
+>>>>>> I am not certain why we wanted to compute the cred for the new
+>>>>>> executable so early.  Perhaps I missed something but I did not see any
+>>>>>> common errors being signaled.   So I don't think we loose anything by
+>>>>>> computing the new cred later.
+>>>>>
+>>>>> I should add that the permission checks happen in open_exec,
+>>>>> everything that follows credential wise is just about representing in
+>>>>> struct cred the credentials the new executable will have.
+>>>>>
+>>>>> So I am really at a loss why we have had this complicated way of
+>>>>> computing of computed the credentials all of these years full of
+>>>>> time of check to time of use problems.
+>>>>>
+>>>>
+>>>> Well, I think I see a problem with your patch:
+>>>>
+>>>> When the security engine gets the LSM_UNSAFE_PTRACE flag, it might
+>>>> e.g. return -EPERM in bprm_creds_for_exec in the apparmor, selinux
+>>>> or the smack security engines at least.  Previously that callback
+>>>> was called before the point of no return, and the return code should
+>>>> be returned as a return code the the caller of execve.  But if we move
+>>>> that check after the point of no return, the caller will get killed
+>>>> due to the failed security check.
+>>>>
+>>>> Or did I miss something?
+>>>
+>>> I think we definitely need to document this change in behavior.  I would
+>>> call ending the exec with SIGSEGV vs -EPERM a quality of implementation
+>>> issue.  The exec is failing one way or the other so I don't see it as a
+>>> correctness issue.
+>>>
+>>> In the case of ptrace in general I think it is a bug if the mere act of
+>>> debugging a program changes it's behavior.  So which buggy behavior
+>>> should we prefer?  SIGSEGV where it is totally clear that the behavior
+>>> has changed or -EPERM and ask the debugged program to handle it.
+>>> I lean towards SIGSEGV because then it is clear the code should not
+>>> handle it.
+>>>
+>>> In the case of LSM_UNSAFE_NO_NEW_PRIVS I believe the preferred way to
+>>> handle unexpected things happening is to terminate the application.
+>>>
+>>> In the case of LSM_UNSAFE_SHARE -EPERM might be better.  I don't know
+>>> of any good uses of any good uses of sys_clone(CLONE_FS ...) outside
+>>> of CLONE_THREAD.
+>>>
+>>>
+>>> Plus all of these things are only considerations if we are exec'ing a
+>>> program that transitions to a different set of credentials.  Something
+>>> that happens but is quite rare itself.
+>>>
+>>> In practice I don't expect there is anything that depends on the exact
+>>> behavior of what happens when exec'ing a suid executable to gain
+>>> privileges when ptraced.   The closes I can imagine is upstart and
+>>> I think upstart ran as root when ptracing other programs so there is no
+>>> gaining of privilege and thus no reason for a security module to
+>>> complain.
+>>>
+>>> Who knows I could be wrong, and someone could actually care.  Which is
+>>> hy I think we should document it.>>
+>> 
+>> 
+>> Well, I dont know for sure, but the security engine could deny the execution
+>> for any reason, not only because of being ptraced.
+>> Maybe there can be a policy which denies user X to execute e.g. any suid programs.
+>> 
+>> 
+>> Bernd.
+>> 
+>
+> Hmm, funny..
+>
+> I installed this patch on top of
+>
+> commit fd95357fd8c6778ac7dea6c57a19b8b182b6e91f (HEAD -> master, origin/master, origin/HEAD)
+> Merge: c966813ea120 7b6216baae75
+> Author: Linus Torvalds <torvalds@linux-foundation.org>
+> Date:   Thu Nov 20 11:04:37 2025 -0800
+>
+> but it does panic when I try to boot:
+>
+> [  0.870539]     TERM=1inux
+> [  0.870573] Starting init: /bin/sh exists but couldn't execute it (error -14) 0.8705751 Kernel panic- not syncing: No working init found. Try passing i mit= option to kernel. See Linux Documentation/admin-guide/init.rst for guidance
+> [  0.870577] CPU: UID: 0 PID: 1 Comm: sh Not tainted 6.18.0-rc6+ #1 PREEMPT(voluntary)
+> [  0.870579] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBo x 12/01/2006
+> [  0.870580] Call Trace:
+> [  0.870590]  <TASK>
+> [  0.870592]  vpanic+0x36d/0x380
+> [  0.870607]  ? __pfx_kernel_init+0x10/0x10
+> [  0.870615]  panic+0x5b/0x60
+> [  0.870617]  kernel_init+0x17d/0x1c0
+> [  0.870623]  ret_from_fork+0x124/0x150
+> [  0.870625}  ? __pfx_kernel_init+0x10/0x10
+> [  0.870627]  ret_from_fork_asm+0x1a/0x30
+> [  0.870632]  </TASK>
+> [  0.8706631 Kernel Offset: 0x3a800000 from Oxffffffff81000000 (relocation ran ge: 0xffffffff80000000-0xffffffffbfffffff)
+> [  0.880034] ---[ end Kernel panic - not syncing: No working init found. Try passing init option to kernel. See Linux Documentation/admin-guide/init.rst for guidance. 1---`
+>
+>
+> Is that a known problem?
 
-Thanks for the feedback! Few questions below.
+Nope.  It looks like the code needs a little bit bug fixing testing.
 
-> 
-> I will rephrase this paragraph, to be sure that I understood it
-> correctly.
-> 
-> You are proposing a method to trim the measurement list and, at the
-> same time, to keep the measurement list verifiable after trimming. The
-> way you would like to achieve that is to keep the verification state in
-> the kernel in the form of PCR values.
-> 
-> Those values mean what verifiers have already verified. Thus, for the
-> next verification attempt, verifiers take the current PCR values as
-> starting values, replay the truncated IMA measurement list, and again
-> you match with the current PCR values and you trim until that point.
-> 
-> So the benefit of this proposal is that you keep the verification of
-> the IMA measurement list self-contained by using the last verification
-> state (PCR starting value) and the truncated IMA measurement list as
-> the inputs of your verification.
+I will take see about taking a look.
 
-Your understanding as described above is correct.
-
-> 
-> Let me reiterate on the trusted computing principles IMA relies on for
-> providing the evidence about a system's integrity.
-> 
-> Unless you are at the beginning of the measurement chain, where the
-> Root of Trust for Measurement (RTM) is trusted by assumption, the
-> measurements done by a component can be trusted because that component
-> was already measured by the previous component in the boot chain,
-> before it had any chance to corrupt the system.
-> 
-> In the context of IMA, IMA can be trusted to make new measurements
-> because it measures every file before those files could cause any harm
-> to the system. So, potentially IMA and the kernel can be corrupted by
-> any file.
-> 
-> What you are proposing would not work, because you are placing trust in
-> an input (the PCR starting value) that can be manipulated at any time
-> by a corrupted kernel, before you had the chance to detect such
-> corruption.
-
-If starting PCR values can be corrupted, the IMA measurements list can 
-also be corrupted, right?
-
-More generally, what integrity guarantees can be provided (if any) if 
-the kernel itself is corrupted?
-
-> 
-> Let me describe a scenario where I could take advantage of such
-> weakness. After the first measurement list trim, I perform an attack on
-> the system such that it corrupts the kernel. IMA added a new entry in
-> the measurement list, which would reveal the attack.
-> 
-> But, since I have control of the kernel, I conveniently update the PCR
-> starting value to replay the new measurement entry, and remove the
-> measurement entry from the measurement list.
-> 
-> Now, from the perspective of the user space verifiers everything is
-> fine, the truncated IMA measurement list is clean, no attack, and the
-> current PCR values match by replaying the new PCR starting value with
-> the remaining of the IMA measurement list.
-
-Wouldn't the verifier detect the attack when it sees that its 
-recalculated PCR values don't match up to the PCR digest in the TPM quote?
-
-> 
-> So, in my opinion the kernel should just offer the ability to trim the
-> measurement list, and a remote verifier should be responsible to verify
-> the measurement list, without relying on anything from the system being
-> evaluated.
-> 
-> Sure, the remote verifier can verify just the trimmed IMA measurement
-> list, but the remote verifier must solely rely on state information
-> maintained internally.
-> 
-> Roberto
-> 
->> The method has other advantages too:
->>
->>   1. It provides a userspace interface that can be used to precisely control
->>      trim point, allowing for trim points to be optionally aligned with
->>      userspace IMA event log validation.
->>
->>   2. It ensures that all necessary information required for continued IMA
->>      log validation is made available via the userspace interface at all
->>      times.
->>
->>   3. It provides a simple mechanism for userspace applications to determine
->>      if the event log has been unexpectedly trimmed.
->>
->>   4. The duration for which the IMA Measurement list mutex must be held (for
->>      trimming) is minimal.
->>
->> ==========================================================================
->>> B. Solution                                                            |
->> ==========================================================================
->>
->> --------------------------------------------------------------------------
->>> B.1 Overview                                                           |
->> --------------------------------------------------------------------------
->>
->> The kernel trims the IMA event log based on PCR values supplied by userspace.
->> The core principles leveraged are as follows:
->>
->>   - Given an IMA event log, PCR values for each IMA event can be obtained by
->>     recalulating the PCR extension for each event. Thus processing N events
->>     from the start will yield PCR values as of event N. This is referred to
->>     as "IMA event log replay".
->>
->>   - To get the PCR value for event N + 1, only the PCR value as of event N
->>     is needed. If this can be known, events till and including N can be
->>     safely purged.
->>
->> Putting it all together, we get the following userspace + kernel flow:
->>
->>   1. A userspace application replays the IMA event log to generate PCR
->>      values and then triggers a trim by providing these values to the kernel
->>      (by writing to a pseudo file).
->>
->>      Optionally, the userspace application may verify these PCR values
->>      against the corresponding TPM quote, and trigger trimming only if
->>      the calculated PCR values match up to the expectations in the quote's
->>      PCR digest.
->>
->>   2. The kernel uses the userspace supplied PCR values to trim the IMA
->>      measurements list at a specific point, and so these are referred to as
->>      "trim-to PCR values" in this context.
->>
->>      Note that the kernel doesn't really understand what these userspace
->>      provided PCR values mean or what IMA event they correspond to, and so
->>      it does its own IMA event replay till either the replayed PCR values
->>      match with the userspace provided ones, or it runs out of events.
->>
->>      If a match is found, the kernel can proceed with trimming the IMA
->>      measurements list. This is done in two steps, to keep locking context
->>      minimal.
->>
->>      step 1: Find and return the list entry (as a count from head) of exact
->>              match. This does not lock the measurements list mutex, ensuring
->>              new events can be appended to the log.
->>
->>      step 2: Lock the measurements list mutex and trim the measurements list
->>              at the previously identified list entry.
->>
->>     If the trim is successful, the trim-to PCR values are saved as "starting
->>     PCR values". The next time userspace wants to replay the IMA event log,
->>     it will use the starting PCR values as the base for the IMA event log
->>     replay.
->>
->> --------------------------------------------------------------------------
->>> B.2 Kernel Interfaces                                                  |
->> --------------------------------------------------------------------------
->>
->> A new configfs pseudo file /sys/kernel/config/ima/pcrs that supports the
->> following operations is exposed.
->>
->>    read: returns starting PCR values stored in the kernel (within IMA
->>          specifically).
->>
->>   write: writes trim-to PCR values to trigger trimming. If trimming is
->>          successful, trim-to PCR values are stored as starting PCR values.
->>          requires root privileges.
->>
->> --------------------------------------------------------------------------
->>> B.3 Walk-through with a real example                                   |
->> --------------------------------------------------------------------------
->>
->> This is a real example from a test run.
->>
->> Suppose this IMA policy is deployed:
->>
->>    measure func=FILE_CHECK mask=MAY_READ pcr=10
->>    measure func=FILE_CHECK mask=MAY_WRITE pcr=11
->>
->> When the policy is deployed, a zero digest starting PCR value will be set
->> for each PCR used. If the TPM supports multiple hashbanks, there will be
->> one starting PCR value per PCR, per TPM hashbank. This can be seen in the
->> following hexdump:
->>
->> $ sudo hexdump -vC /sys/kernel/config/ima/pcrs
->> 00000000  70 63 72 31 30 3a 73 68  61 31 3a 00 00 00 00 00  |pcr10:sha1:.....|
->> 00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 70  |...............p|
->> 00000020  63 72 31 31 3a 73 68 61  31 3a 00 00 00 00 00 00  |cr11:sha1:......|
->> 00000030  00 00 00 00 00 00 00 00  00 00 00 00 00 00 70 63  |..............pc|
->> 00000040  72 31 30 3a 73 68 61 32  35 36 3a 00 00 00 00 00  |r10:sha256:.....|
->> 00000050  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
->> 00000060  00 00 00 00 00 00 00 00  00 00 00 70 63 72 31 31  |...........pcr11|
->> 00000070  3a 73 68 61 32 35 36 3a  00 00 00 00 00 00 00 00  |:sha256:........|
->> 00000080  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
->> 00000090  00 00 00 00 00 00 00 00  70 63 72 31 30 3a 73 68  |........pcr10:sh|
->> 000000a0  61 33 38 34 3a 00 00 00  00 00 00 00 00 00 00 00  |a384:...........|
->> 000000b0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
->> 000000c0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
->> 000000d0  00 00 00 00 00 70 63 72  31 31 3a 73 68 61 33 38  |.....pcr11:sha38|
->> 000000e0  34 3a 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |4:..............|
->> 000000f0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
->> 00000100  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
->> 00000110  00 00                                             |..|
->> 00000112
->>
->> Let's say that a userspace utility replays the IMA event log, and triggers
->> trimming by writing the following PCR values (i.e. trim-to PCR values) to the
->> pseudo file:
->>
->> pcr10:sha256:8268782906555cf3aefc179f815c878527dd4e67eaa836572ebabab31977922c
->> pcr11:sha256:4c7f31927183eacb53d51d95b0162916fd3fca51a8d1efc6dde3805eb891fe41
->>
->> The trim is successful,
->>
->> 1. Some number of entries from the measurements log will disappear. This
->>     can be verified by reading out the ASCII or binary IMA measurements
->>     file.
->>
->> 2. The trim-to PCR values are saved as starting PCR values. This can be
->>     verified by reading out the pseudo file again as shown below. Note that
->>     even through only sha256 PCR values were written, the kernel populated
->>     sha1 and sha384 starting values as well.
->>
->> $ sudo hexdump -vC /sys/kernel/config/ima/pcrs
->>
->> 00000000  70 63 72 31 30 3a 73 68  61 31 3a c4 7f 9d 00 68  |pcr10:sha1:....h|
->> 00000010  e4 86 71 bf bc ae f0 10  12 ff 68 e2 9e 74 e4 70  |..q.......h..t.p|
->> 00000020  63 72 31 31 3a 73 68 61  31 3a 90 d7 17 ac 60 4d  |cr11:sha1:....`M|
->> 00000030  c8 25 ce 77 7d 9d 94 cf  44 7b b2 2e 2e e2 70 63  |.%.w}...D{....pc|
->> 00000040  72 31 30 3a 73 68 61 32  35 36 3a 82 68 78 29 06  |r10:sha256:.hx).|
->> 00000050  55 5c f3 ae fc 17 9f 81  5c 87 85 27 dd 4e 67 ea  |U\......\..'.Ng.|
->> 00000060  a8 36 57 2e ba ba b3 19  77 92 2c 70 63 72 31 31  |.6W.....w.,pcr11|
->> 00000070  3a 73 68 61 32 35 36 3a  4c 7f 31 92 71 83 ea cb  |:sha256:L.1.q...|
->> 00000080  53 d5 1d 95 b0 16 29 16  fd 3f ca 51 a8 d1 ef c6  |S.....)..?.Q....|
->> 00000090  dd e3 80 5e b8 91 fe 41  70 63 72 31 30 3a 73 68  |...^...Apcr10:sh|
->> 000000a0  61 33 38 34 3a 8e d6 12  18 b1 d6 cd 95 16 98 33  |a384:..........3|
->> 000000b0  2b 7d a2 d6 d9 05 c7 e8  5b 15 b0 91 c5 fc 23 d1  |+}......[.....#.|
->> 000000c0  f9 a8 8d 60 50 5c e9 64  5f d7 b3 b2 f1 9c 90 0a  |...`P\.d_.......|
->> 000000d0  45 53 5d b2 57 70 63 72  31 31 3a 73 68 61 33 38  |ES].Wpcr11:sha38|
->> 000000e0  34 3a 25 fc 21 28 31 5a  f7 c6 fb 0f 40 c9 06 e6  |4:%.!(1Z....@...|
->> 000000f0  c5 da ed 20 61 a1 03 54  4f 67 18 88 82 0f 48 d1  |... a..TOg....H.|
->> 00000100  2f e0 3d 36 46 5e 94 a4  88 51 f8 91 39 7e e5 97  |/.=6F^...Q..9~..|
->> 00000110  2c c5                                             |,.|
->> 00000112
->>
->> --------------------------------------------------------------------------
->>> C. Footnotes                                                           |
->> --------------------------------------------------------------------------
->>
->> 1. The 'pcrs' pseudo file is currently part of configfs. This was due to
->>     some early internal feedback in a different context. This can as well be
->>     in securityfs with the rest of the IMA pseudo files.
->>
->> 2. PCR values are never read out of the TPM at any point. All PCR values
->>     used are derived from IMA event log replay.
->>
->> 3. Code is "RFC quality". Refinements can be made if the method is accepted.
->>
->> 4. For functional validation, base kernel version was 6.17 stable, with the
->>     most recent tested version being 6.17.8.
->>
->> 5. Code has been validated to some degree using a python-based internal test
->>     tool. This can be published if there is community interest.
->>
->> Steven Chen (1):
->>    ima: Implement IMA event log trimming
->>
->>   drivers/Kconfig                       |   2 +
->>   drivers/Makefile                      |   1 +
->>   drivers/ima/Kconfig                   |  13 +
->>   drivers/ima/Makefile                  |   2 +
->>   drivers/ima/ima_config_pcrs.c         | 291 ++++++++++++++++++
->>   include/linux/ima.h                   |  27 ++
->>   security/integrity/ima/Makefile       |   4 +
->>   security/integrity/ima/ima.h          |   8 +
->>   security/integrity/ima/ima_init.c     |  44 +++
->>   security/integrity/ima/ima_log_trim.c | 421 ++++++++++++++++++++++++++
->>   security/integrity/ima/ima_policy.c   |   7 +-
->>   security/integrity/ima/ima_queue.c    |   5 +-
->>   12 files changed, 821 insertions(+), 4 deletions(-)
->>   create mode 100644 drivers/ima/Kconfig
->>   create mode 100644 drivers/ima/Makefile
->>   create mode 100644 drivers/ima/ima_config_pcrs.c
->>   create mode 100644 security/integrity/ima/ima_log_trim.c
->>
-> 
-
+Eric
