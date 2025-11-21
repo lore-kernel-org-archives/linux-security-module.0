@@ -1,538 +1,365 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0C41DE4F6
-	for <linux-security-module@vger.kernel.org>; Fri, 21 Nov 2025 17:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB4B25334B;
+	Fri, 21 Nov 2025 19:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763747311; cv=none; b=sECGA3579XHCMFlxNwNdN3TPGkjQ7hcpPMzq7njZ0W4GbpJj2yGGIcfMIBCXB7oXxPA8YWBBNo8OysAtZ+tZP2E4+g2Qw2/yF30fp4YyQJY3kEePqowj00ygvVfmqFGouFckMfrFSB4cb9MHYTtheM5CU1dAGgVzGHNzOc67/1o=
+	t=1763752406; cv=none; b=bVum+/NW8S7tEWHtZ/hHAM+4Ya+GTB4wLPbrU3evJrbY2B1LA5/qzigTbof8/T2zFVyJMyQkr3Unom68JOVIfNQlx4ztRpCO5IljmGYQ/yyX4m2REE+pxakZPXp08Vn+2WnNKwv0iZZLTc+jNIaI26FV+cCR2mRmFqa9ZypAqQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763747311; c=relaxed/simple;
-	bh=NULRrJfiaMcji9y13f7iXvuyBqCUp2oDsalvWoh3bn0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JF0+KYhDZDSDMRETFWMKBwN6sUpJp7mw2VM79MSLC9vWYj5NfNVFPdH683yBbXKDdEG/gGXvkLO0hYgIHy5VNystXyjbf2Rf2RLKILzB9dYe6vBdzuWa4J2mY2uvLn+54dg+kEh/ACSkKg1iZddXSSGwKerpCKnhsVD1nCfn2vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EpVXDH3C; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1763752406; c=relaxed/simple;
+	bh=oMpkdV/F67SlPK3dILmfMTsyYab3OdshdHQ95AVKtmE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CmKaKD0U7QEn9homii5KwURKDoRUEbYw2yQizzAeVbl6JdaInYiZ31HJIj/vTjU4jnrKwb2T4JBiHLHgm9mp+ppRusdGR1qds0oZzknHtXA/sJI5MPsIYe/D0MrWgyGXALmCyu5haVJ+SCSIiojZ+d+sCJZa014pHtak2UyLGds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=J0AfYHWt; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EpVXDH3C"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-297e264528aso26773835ad.2
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Nov 2025 09:48:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763747309; x=1764352109; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+eQqmO4BmDMVoeWkR2e76r309EUpKcaBoghmCD5rl1o=;
-        b=EpVXDH3CV3zSKy/SD4xkshO49uWo+D9Fl6csh0Qk5T+zXLy3NmXachmnNzaKB0ZEzL
-         uqHFzGIsTY8L5IA43ugePj5vd4ucghVqnB0ZnBCMH3BZ42MX4QRaEDkOQLpo3qZ9pN6b
-         UI9OO1JMFejZ60I2RaTH5Okau/dusWA9XX9g5JZn4XeaMRNHujaHwvtiy7Y2PuaN+W1+
-         7gQOSiebTbjOueYLLAlO4Nn4EZrk4pMXOhT9yueClA/KyD9FjaDx0QpW56sIln141gut
-         FO2yxgbK/Mp1SsG+xERMx/K4yHe2hkvjoVBzp1dr4E0jTUilYzCE8KLYsKGJlmJ7X3N/
-         IFDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763747309; x=1764352109;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+eQqmO4BmDMVoeWkR2e76r309EUpKcaBoghmCD5rl1o=;
-        b=h8Ovjyy8BCKETfWJ0aQbXJz7Y7qr1ksQfabDrnilJG32EcUCrOa0r4k9+HwSiDBu+p
-         KqUypC8X+5kmE6XsBPvO6Nz2EQ7TNQSX842GFypoYJuStor+FaVEZjpXbuGy0MX5sdAh
-         V+1ffeoN8mTCwVZYM9CCljv8aUCVRo27so8GBKOgQXEAtzWyzs9uzZSL1NV1mKKWQjwH
-         d4DN6rfeEuaii4g8bVFezmONczWUgDeMPefY4fHbpclsgqYClRFrxSvtwTQofhedRHZU
-         2WD2o7hpQUaFeDL/F3iPzihk0gr2FnEkMjfiqMYCTZcEQQKQ539jSFBVhn4EzRR17D30
-         cgMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWu95z20XvfGBBwuaVH3Lh03nrW/9QKYRYlCqrM97AiPz4QrFc1eiNFFKLHgIX9R2guRiw7t1CbvOY1FfpEILwi1fx7kFI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4aNdNCKlzyhP4ldNqr/+he6hWyslzQTpIFa8iUfpwh6w2KCUX
-	RvKrWhd2dyfopCX8BQkxr4BxnpTaoEsti16VvhJMQqWsiCljSl9fc3PF
-X-Gm-Gg: ASbGncuRqGiu40H5qaHLzKZbi7MKnaVTy3zh1NTDZaiZwybPXGFgt4MzN4p6G3PppTT
-	QZwrkuo3VR9eVQx9M3S4B02cHg1EXJS3vtb/HlV8AmN/lNeovQFZR3YDmT0wCWnRPk64kKe6+vJ
-	m7XbKFnblovi3hSwaFlFoHv1TYW28oIQbuVqVsjnemPEaZoz9Mu2dpcF9RjldxjfF5palKDunOA
-	5udBPBQznDfJIon+88t1FjHFKUJ6xnkNQEoG7e24ZjNZlEP3+H+4oCSkIkCBU+N9oJRKPjSwSKA
-	GkfALxYVitQl9U7r2FCGsnNqjIh1VkzCgoeBBlkdig2aYaUWF+1TSUG67JLhSEnRZwinIivwGWY
-	54WtuolBv21QCWOBsq0tBasxpQ/vKok0GO+e/NJmU4gOjYoJ8xniAI/I5pInYpF5Fkzwvow4vqu
-	fN5MH07JMBP3vaODFiEJ+BQUalEkAWlddUb2pnmEk3cE7+c4YVwguYZLr6pTFipposhXNC
-X-Google-Smtp-Source: AGHT+IEnbLYDdEUSfyjfVgKDClXEpb/AwJhU3QHKe6oiaOxiArgSFmxpyTyY9U4LCCnzyNTQxqCNqw==
-X-Received: by 2002:a17:903:1a2f:b0:274:3db8:e755 with SMTP id d9443c01a7336-29b6bf3b833mr43051295ad.30.1763747308753;
-        Fri, 21 Nov 2025 09:48:28 -0800 (PST)
-Received: from kailas.hsd1.or.comcast.net ([2601:1c2:982:6040:d03b:3305:c447:d166])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29b5b25e0f0sm61261185ad.46.2025.11.21.09.48.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Nov 2025 09:48:27 -0800 (PST)
-From: Ryan Foster <foster.ryan.r@gmail.com>
-To: serge@hallyn.com,
-	paul@paul-moore.com,
-	linux-security-module@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ryan Foster <foster.ryan.r@gmail.com>
-Subject: [PATCH v2] security: Rename functions and add namespace mapping tests
-Date: Fri, 21 Nov 2025 09:48:26 -0800
-Message-ID: <20251121174826.190381-1-foster.ryan.r@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251110143748.4144288-1-foster.ryan.r@gmail.com>
-References: <20251110143748.4144288-1-foster.ryan.r@gmail.com>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="J0AfYHWt"
+Received: from [100.65.232.236] (unknown [20.236.10.120])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 1F54C2120702;
+	Fri, 21 Nov 2025 11:13:22 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1F54C2120702
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1763752402;
+	bh=PyWREj6CmooOdtxayAxYR2wMPsxJdXeYh8HnDvBb5Mw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=J0AfYHWtP0IlKinYDG00WNqVSOZ8Uv/4BHyElJwi3w81b3ejGcNz8kUBYvygfRG6X
+	 jvYHIypqWDf6e6ciPky6shzi7rqEvtOABrzRVPCUdToKTegAjX1SoM+JJ5FSJh/YL6
+	 g/aWRm8wSenap7V64dZkRl/zhwPLG85f05C+MINs=
+Message-ID: <a77e9609-f6bd-4e6d-88be-5422f780b496@linux.microsoft.com>
+Date: Fri, 21 Nov 2025 11:13:20 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v1 0/1] Implement IMA Event Log Trimming
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+ linux-integrity@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
+ <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>,
+ linux-security-module@vger.kernel.org,
+ Steven Chen <chenste@linux.microsoft.com>,
+ Gregory Lumen <gregorylumen@linux.microsoft.com>,
+ Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+ Sush Shringarputale <sushring@linux.microsoft.com>
+References: <20251119213359.39397-1-anirudhve@linux.microsoft.com>
+ <7722dff4e68ef5fb7f39bd732a8a77422bad5549.camel@huaweicloud.com>
+Content-Language: en-US
+From: Anirudh Venkataramanan <anirudhve@linux.microsoft.com>
+In-Reply-To: <7722dff4e68ef5fb7f39bd732a8a77422bad5549.camel@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Rename rootid_owns_currentns() to uid_owns_currentns() and
-rootid_owns_userns() to uid_owns_ns() for clarity, as the function checks
-any UID, not just root. Update all call sites accordingly.
+On 11/20/2025 3:02 AM, Roberto Sassu wrote:
+> On Wed, 2025-11-19 at 13:33 -0800, Anirudh Venkataramanan wrote:
+>> ==========================================================================
+>>> A. Introduction                                                        |
+>> ==========================================================================
+>>
+>> IMA events are kept in kernel memory and preserved across kexec soft
+>> reboots. This can lead to increased kernel memory usage over time,
+>> especially with aggressive IMA policies that measure everything. To reduce
+>> memory pressure, it becomes necessary to discard IMA events but given that
+>> IMA events are extended into PCRs in the TPM, just discarding events will
+>> break the PCR extension chain, making future verification of the IMA event
+>> log impossible.
+>>
+>> This patch series proposes a method to discard IMA events while keeping the
+>> log verifiable. While reducing memory pressure is the primary objective,
+>> the second order benefit of trimming the IMA log is that IMA log verifiers
+>> (local userspace daemon or a remote cloud service) can process smaller IMA
+>> logs on a rolling basis, thus avoiding re-verification of previously
+>> verified events.
+> 
+> Hi Anirudh
 
-Add tests that create actual user namespaces with different UID mappings
-to verify namespace traversal logic. The tests create namespaces where
-uid 0 maps to different kuids (e.g., kuid 1000, 2000) and verify that
-uid_owns_ns() correctly identifies ownership based on the namespace
-hierarchy traversal.
+Hi Roberto,
 
-This addresses feedback to use clearer function naming and test actual
-namespace functionality with real user namespace creation and mappings,
-rather than just basic input validation.
----
- security/commoncap.c      |  26 ++--
- security/commoncap_test.c | 286 ++++++++++++++++++++++++++++++++------
- 2 files changed, 254 insertions(+), 58 deletions(-)
+Thanks for the feedback! Few questions below.
 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 15d8147a34c4..cca291df9551 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -359,16 +359,16 @@ int cap_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry)
- }
- 
- #ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
--bool rootid_owns_userns(struct user_namespace *ns, kuid_t kroot);
--bool rootid_owns_userns(struct user_namespace *ns, kuid_t kroot)
-+bool uid_owns_ns(struct user_namespace *ns, kuid_t kuid);
-+bool uid_owns_ns(struct user_namespace *ns, kuid_t kuid)
- #else
--static bool rootid_owns_userns(struct user_namespace *ns, kuid_t kroot)
-+static bool uid_owns_ns(struct user_namespace *ns, kuid_t kuid)
- #endif
- {
- 	struct user_namespace *iter;
- 
- 	for (iter = ns;; iter = iter->parent) {
--		if (from_kuid(iter, kroot) == 0)
-+		if (from_kuid(iter, kuid) == 0)
- 			return true;
- 		if (iter == &init_user_ns)
- 			break;
-@@ -378,19 +378,19 @@ static bool rootid_owns_userns(struct user_namespace *ns, kuid_t kroot)
- }
- 
- #ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
--bool rootid_owns_currentns(vfsuid_t rootvfsuid);
--bool rootid_owns_currentns(vfsuid_t rootvfsuid)
-+bool uid_owns_currentns(vfsuid_t vfsuid);
-+bool uid_owns_currentns(vfsuid_t vfsuid)
- #else
--static bool rootid_owns_currentns(vfsuid_t rootvfsuid)
-+static bool uid_owns_currentns(vfsuid_t vfsuid)
- #endif
- {
--	kuid_t kroot;
-+	kuid_t kuid;
- 
--	if (!vfsuid_valid(rootvfsuid))
-+	if (!vfsuid_valid(vfsuid))
- 		return false;
- 
--	kroot = vfsuid_into_kuid(rootvfsuid);
--	return rootid_owns_userns(current_user_ns(), kroot);
-+	kuid = vfsuid_into_kuid(vfsuid);
-+	return uid_owns_ns(current_user_ns(), kuid);
- }
- 
- static __u32 sansflags(__u32 m)
-@@ -497,7 +497,7 @@ int cap_inode_getsecurity(struct mnt_idmap *idmap,
- 		goto out_free;
- 	}
- 
--	if (!rootid_owns_currentns(vfsroot)) {
-+	if (!uid_owns_currentns(vfsroot)) {
- 		size = -EOVERFLOW;
- 		goto out_free;
- 	}
-@@ -738,7 +738,7 @@ int get_vfs_caps_from_disk(struct mnt_idmap *idmap,
- 	/* Limit the caps to the mounter of the filesystem
- 	 * or the more limited uid specified in the xattr.
- 	 */
--	if (!rootid_owns_currentns(rootvfsuid))
-+	if (!uid_owns_currentns(rootvfsuid))
- 		return -ENODATA;
- 
- 	cpu_caps->permitted.val = le32_to_cpu(caps->data[0].permitted);
-diff --git a/security/commoncap_test.c b/security/commoncap_test.c
-index 962aa899455d..7f066dc0df5d 100644
---- a/security/commoncap_test.c
-+++ b/security/commoncap_test.c
-@@ -10,6 +10,8 @@
- #include <linux/user_namespace.h>
- #include <linux/uidgid.h>
- #include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/refcount.h>
- 
- /* Forward declare types and functions we need from mnt_idmapping.h
-  * We avoid including the full header because it contains inline functions
-@@ -50,38 +52,38 @@ static inline kuid_t vfsuid_into_kuid(vfsuid_t vfsuid)
- #ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
- 
- /* Forward declarations - functions are exported when KUNIT_TEST is enabled */
--extern bool rootid_owns_userns(struct user_namespace *ns, kuid_t kroot);
--extern bool rootid_owns_currentns(vfsuid_t rootvfsuid);
-+extern bool uid_owns_ns(struct user_namespace *ns, kuid_t kuid);
-+extern bool uid_owns_currentns(vfsuid_t vfsuid);
- 
- /**
-- * test_rootid_owns_currentns_init_ns - Test rootid_owns_currentns with init ns
-+ * test_uid_owns_currentns_init_ns - Test uid_owns_currentns with init ns
-  *
-- * Verifies that a root ID in the init namespace correctly owns the current
-+ * Verifies that UID 0 in the init namespace correctly owns the current
-  * namespace when running in init_user_ns.
-  *
-  * @test: KUnit test context
-  */
--static void test_rootid_owns_currentns_init_ns(struct kunit *test)
-+static void test_uid_owns_currentns_init_ns(struct kunit *test)
- {
--	vfsuid_t root_vfsuid;
--	kuid_t root_kuid;
-+	vfsuid_t vfsuid;
-+	kuid_t kuid;
- 
--	/* Create a root UID in init namespace */
--	root_kuid = KUIDT_INIT(0);
--	root_vfsuid = VFSUIDT_INIT(root_kuid);
-+	/* Create UID 0 in init namespace */
-+	kuid = KUIDT_INIT(0);
-+	vfsuid = VFSUIDT_INIT(kuid);
- 
--	/* In init namespace, root should own current namespace */
--	KUNIT_EXPECT_TRUE(test, rootid_owns_currentns(root_vfsuid));
-+	/* In init namespace, UID 0 should own current namespace */
-+	KUNIT_EXPECT_TRUE(test, uid_owns_currentns(vfsuid));
- }
- 
- /**
-- * test_rootid_owns_currentns_invalid - Test rootid_owns_currentns with invalid vfsuid
-+ * test_uid_owns_currentns_invalid - Test uid_owns_currentns with invalid vfsuid
-  *
-  * Verifies that an invalid vfsuid correctly returns false.
-  *
-  * @test: KUnit test context
-  */
--static void test_rootid_owns_currentns_invalid(struct kunit *test)
-+static void test_uid_owns_currentns_invalid(struct kunit *test)
- {
- 	vfsuid_t invalid_vfsuid;
- 
-@@ -89,74 +91,268 @@ static void test_rootid_owns_currentns_invalid(struct kunit *test)
- 	invalid_vfsuid = INVALID_VFSUID;
- 
- 	/* Invalid vfsuid should return false */
--	KUNIT_EXPECT_FALSE(test, rootid_owns_currentns(invalid_vfsuid));
-+	KUNIT_EXPECT_FALSE(test, uid_owns_currentns(invalid_vfsuid));
- }
- 
- /**
-- * test_rootid_owns_currentns_nonroot - Test rootid_owns_currentns with non-root UID
-+ * test_uid_owns_currentns_nonzero - Test uid_owns_currentns with non-zero UID
-  *
-- * Verifies that a non-root UID correctly returns false.
-+ * Verifies that a non-zero UID correctly returns false.
-  *
-  * @test: KUnit test context
-  */
--static void test_rootid_owns_currentns_nonroot(struct kunit *test)
-+static void test_uid_owns_currentns_nonzero(struct kunit *test)
- {
--	vfsuid_t nonroot_vfsuid;
--	kuid_t nonroot_kuid;
-+	vfsuid_t vfsuid;
-+	kuid_t kuid;
- 
--	/* Create a non-root UID */
--	nonroot_kuid = KUIDT_INIT(1000);
--	nonroot_vfsuid = VFSUIDT_INIT(nonroot_kuid);
-+	/* Create a non-zero UID */
-+	kuid = KUIDT_INIT(1000);
-+	vfsuid = VFSUIDT_INIT(kuid);
- 
--	/* Non-root UID should return false */
--	KUNIT_EXPECT_FALSE(test, rootid_owns_currentns(nonroot_vfsuid));
-+	/* Non-zero UID should return false */
-+	KUNIT_EXPECT_FALSE(test, uid_owns_currentns(vfsuid));
- }
- 
- /**
-- * test_rootid_owns_userns_init_ns - Test rootid_owns_userns with init namespace
-+ * test_uid_owns_ns_init_ns_uid0 - Test uid_owns_ns with init namespace and UID 0
-  *
-- * Verifies that rootid_owns_userns correctly identifies root UID in init namespace.
-- * This tests the core namespace traversal logic.
-+ * Verifies that uid_owns_ns correctly identifies UID 0 in init namespace.
-+ * This tests the core namespace traversal logic. In init namespace, UID 0
-+ * maps to itself, so it should own the namespace.
-  *
-  * @test: KUnit test context
-  */
--static void test_rootid_owns_userns_init_ns(struct kunit *test)
-+static void test_uid_owns_ns_init_ns_uid0(struct kunit *test)
- {
--	kuid_t root_kuid;
-+	kuid_t kuid;
- 	struct user_namespace *init_ns;
- 
--	root_kuid = KUIDT_INIT(0);
-+	kuid = KUIDT_INIT(0);
- 	init_ns = &init_user_ns;
- 
--	/* Root UID should own init namespace */
--	KUNIT_EXPECT_TRUE(test, rootid_owns_userns(init_ns, root_kuid));
-+	/* UID 0 should own init namespace */
-+	KUNIT_EXPECT_TRUE(test, uid_owns_ns(init_ns, kuid));
- }
- 
- /**
-- * test_rootid_owns_userns_nonroot - Test rootid_owns_userns with non-root UID
-+ * test_uid_owns_ns_init_ns_nonzero - Test uid_owns_ns with init namespace and non-zero UID
-  *
-- * Verifies that rootid_owns_userns correctly rejects non-root UIDs.
-+ * Verifies that uid_owns_ns correctly rejects non-zero UIDs in init namespace.
-+ * Only UID 0 should own a namespace.
-  *
-  * @test: KUnit test context
-  */
--static void test_rootid_owns_userns_nonroot(struct kunit *test)
-+static void test_uid_owns_ns_init_ns_nonzero(struct kunit *test)
- {
--	kuid_t nonroot_kuid;
-+	kuid_t kuid;
- 	struct user_namespace *init_ns;
- 
--	nonroot_kuid = KUIDT_INIT(1000);
-+	kuid = KUIDT_INIT(1000);
- 	init_ns = &init_user_ns;
- 
--	/* Non-root UID should not own namespace */
--	KUNIT_EXPECT_FALSE(test, rootid_owns_userns(init_ns, nonroot_kuid));
-+	/* Non-zero UID should not own namespace */
-+	KUNIT_EXPECT_FALSE(test, uid_owns_ns(init_ns, kuid));
-+}
-+
-+/**
-+ * test_uid_owns_ns_init_ns_various_uids - Test uid_owns_ns with various UIDs
-+ *
-+ * Verifies that uid_owns_ns correctly identifies only UID 0 as owning
-+ * the namespace, regardless of the UID value tested.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_uid_owns_ns_init_ns_various_uids(struct kunit *test)
-+{
-+	struct user_namespace *init_ns;
-+	kuid_t kuid;
-+
-+	init_ns = &init_user_ns;
-+
-+	/* UID 0 should own the namespace */
-+	kuid = KUIDT_INIT(0);
-+	KUNIT_EXPECT_TRUE(test, uid_owns_ns(init_ns, kuid));
-+
-+	/* Other UIDs should not own the namespace */
-+	kuid = KUIDT_INIT(1);
-+	KUNIT_EXPECT_FALSE(test, uid_owns_ns(init_ns, kuid));
-+
-+	kuid = KUIDT_INIT(1000);
-+	KUNIT_EXPECT_FALSE(test, uid_owns_ns(init_ns, kuid));
-+
-+	kuid = KUIDT_INIT(65534);
-+	KUNIT_EXPECT_FALSE(test, uid_owns_ns(init_ns, kuid));
-+}
-+
-+/**
-+ * create_test_user_ns_with_mapping - Create a test user namespace with uid mapping
-+ *
-+ * Creates a minimal user namespace for testing where uid 0 in the namespace
-+ * maps to the specified kuid in the parent namespace.
-+ *
-+ * The mapping semantics:
-+ * - first: uid in this namespace (0)
-+ * - lower_first: kuid in parent namespace (mapped_kuid)
-+ * - count: range size (1)
-+ *
-+ * This means: from_kuid(ns, mapped_kuid) will return 0
-+ * because map_id_up looks for kuid in [lower_first, lower_first+count)
-+ * and returns first + (kuid - lower_first) = 0 + (mapped_kuid - mapped_kuid) = 0
-+ *
-+ * @test: KUnit test context
-+ * @parent_ns: Parent user namespace
-+ * @mapped_kuid: The kuid that uid 0 in the new namespace maps to
-+ *
-+ * Returns: The new user namespace, or NULL on failure
-+ */
-+static struct user_namespace *create_test_user_ns_with_mapping(struct kunit *test,
-+								struct user_namespace *parent_ns,
-+								kuid_t mapped_kuid)
-+{
-+	struct user_namespace *ns;
-+	struct uid_gid_extent extent;
-+
-+	/* Allocate a test namespace - use kzalloc to zero all fields */
-+	ns = kunit_kzalloc(test, sizeof(*ns), GFP_KERNEL);
-+	if (!ns)
-+		return NULL;
-+
-+	/* Initialize basic namespace structure fields */
-+	ns->parent = parent_ns;
-+	ns->level = parent_ns ? parent_ns->level + 1 : 0;
-+	ns->owner = mapped_kuid;
-+	ns->group = KGIDT_INIT(0);
-+
-+	/* Initialize ns_common structure */
-+	refcount_set(&ns->ns.__ns_ref, 1);
-+
-+	/* Set up uid mapping: uid 0 in this namespace maps to mapped_kuid in parent
-+	 * Format: first (uid in ns) : lower_first (kuid in parent) : count
-+	 * So: uid 0 in ns -> kuid mapped_kuid in parent
-+	 * This means from_kuid(ns, mapped_kuid) returns 0
-+	 */
-+	extent.first = 0;                              /* uid 0 in this namespace */
-+	extent.lower_first = __kuid_val(mapped_kuid);  /* maps to this kuid in parent */
-+	extent.count = 1;
-+
-+	ns->uid_map.extent[0] = extent;
-+	ns->uid_map.nr_extents = 1;
-+
-+	/* Set up gid mapping: gid 0 maps to gid 0 in parent (simplified) */
-+	extent.first = 0;
-+	extent.lower_first = 0;
-+	extent.count = 1;
-+
-+	ns->gid_map.extent[0] = extent;
-+	ns->gid_map.nr_extents = 1;
-+
-+	return ns;
-+}
-+
-+/**
-+ * test_uid_owns_ns_with_mapping - Test uid_owns_ns with namespace where uid 0
-+ *				   maps to different kuid
-+ *
-+ * Creates a user namespace where uid 0 maps to kuid 1000 in the parent namespace.
-+ * Verifies that uid_owns_ns correctly identifies kuid 1000 as owning the namespace.
-+ *
-+ * Note: uid_owns_ns walks up the namespace hierarchy, so it checks the current
-+ * namespace first, then parent, then parent's parent, etc. So:
-+ * - kuid 1000 owns test_ns because from_kuid(test_ns, 1000) == 0
-+ * - kuid 0 also owns test_ns because from_kuid(init_user_ns, 0) == 0
-+ *   (checked in parent)
-+ *
-+ * This tests the actual functionality as requested: creating namespaces with
-+ * different values for the namespace's uid 0.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_uid_owns_ns_with_mapping(struct kunit *test)
-+{
-+	struct user_namespace *test_ns;
-+	struct user_namespace *parent_ns;
-+	kuid_t mapped_kuid, other_kuid;
-+
-+	parent_ns = &init_user_ns;
-+	mapped_kuid = KUIDT_INIT(1000);  /* uid 0 in test_ns maps to kuid 1000 */
-+	other_kuid = KUIDT_INIT(2000);   /* This should not own the namespace */
-+
-+	/* Create test namespace where uid 0 maps to kuid 1000 */
-+	test_ns = create_test_user_ns_with_mapping(test, parent_ns, mapped_kuid);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, test_ns);
-+
-+	/* kuid 1000 should own the namespace (because uid 0 in test_ns maps to it) */
-+	KUNIT_EXPECT_TRUE(test, uid_owns_ns(test_ns, mapped_kuid));
-+
-+	/* kuid 0 also owns the namespace because it maps to 0 in init_user_ns (parent) */
-+	KUNIT_EXPECT_TRUE(test, uid_owns_ns(test_ns, KUIDT_INIT(0)));
-+
-+	/* Other kuids that don't map to 0 in test_ns or any parent should not own */
-+	KUNIT_EXPECT_FALSE(test, uid_owns_ns(test_ns, other_kuid));
-+	KUNIT_EXPECT_FALSE(test, uid_owns_ns(test_ns, KUIDT_INIT(500)));
-+}
-+
-+/**
-+ * test_uid_owns_ns_with_different_mappings - Test with multiple namespaces
-+ *					      having different mappings
-+ *
-+ * Creates multiple test namespaces with different uid 0 mappings to verify
-+ * the function correctly identifies ownership based on the mapping.
-+ *
-+ * Since uid_owns_ns walks up the hierarchy, kuids that map to 0 in init_user_ns
-+ * (like kuid 0) will own all namespaces. But we can still verify that the
-+ * specific mapped kuids own their respective namespaces.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_uid_owns_ns_with_different_mappings(struct kunit *test)
-+{
-+	struct user_namespace *ns1, *ns2, *ns3;
-+	struct user_namespace *parent_ns;
-+
-+	parent_ns = &init_user_ns;
-+
-+	/* Namespace 1: uid 0 maps to kuid 1000 */
-+	ns1 = create_test_user_ns_with_mapping(test, parent_ns, KUIDT_INIT(1000));
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns1);
-+	/* kuid 1000 owns ns1 because it maps to uid 0 in ns1 */
-+	KUNIT_EXPECT_TRUE(test, uid_owns_ns(ns1, KUIDT_INIT(1000)));
-+	/* kuid 0 also owns ns1 because it maps to 0 in init_user_ns (parent) */
-+	KUNIT_EXPECT_TRUE(test, uid_owns_ns(ns1, KUIDT_INIT(0)));
-+	/* kuid 2000 doesn't map to 0 in ns1 or any parent */
-+	KUNIT_EXPECT_FALSE(test, uid_owns_ns(ns1, KUIDT_INIT(2000)));
-+
-+	/* Namespace 2: uid 0 maps to kuid 2000 */
-+	ns2 = create_test_user_ns_with_mapping(test, parent_ns, KUIDT_INIT(2000));
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns2);
-+	/* kuid 2000 owns ns2 because it maps to uid 0 in ns2 */
-+	KUNIT_EXPECT_TRUE(test, uid_owns_ns(ns2, KUIDT_INIT(2000)));
-+	/* kuid 0 also owns ns2 because it maps to 0 in init_user_ns (parent) */
-+	KUNIT_EXPECT_TRUE(test, uid_owns_ns(ns2, KUIDT_INIT(0)));
-+	/* kuid 1000 doesn't map to 0 in ns2 or any parent */
-+	KUNIT_EXPECT_FALSE(test, uid_owns_ns(ns2, KUIDT_INIT(1000)));
-+
-+	/* Namespace 3: uid 0 maps to kuid 0 (identity mapping) */
-+	ns3 = create_test_user_ns_with_mapping(test, parent_ns, KUIDT_INIT(0));
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns3);
-+	/* kuid 0 owns ns3 because it maps to uid 0 in ns3 */
-+	KUNIT_EXPECT_TRUE(test, uid_owns_ns(ns3, KUIDT_INIT(0)));
-+	/* kuid 1000 doesn't map to 0 in ns3 or any parent */
-+	KUNIT_EXPECT_FALSE(test, uid_owns_ns(ns3, KUIDT_INIT(1000)));
-+	/* kuid 2000 doesn't map to 0 in ns3 or any parent */
-+	KUNIT_EXPECT_FALSE(test, uid_owns_ns(ns3, KUIDT_INIT(2000)));
- }
- 
- static struct kunit_case commoncap_test_cases[] = {
--	KUNIT_CASE(test_rootid_owns_currentns_init_ns),
--	KUNIT_CASE(test_rootid_owns_currentns_invalid),
--	KUNIT_CASE(test_rootid_owns_currentns_nonroot),
--	KUNIT_CASE(test_rootid_owns_userns_init_ns),
--	KUNIT_CASE(test_rootid_owns_userns_nonroot),
-+	KUNIT_CASE(test_uid_owns_currentns_init_ns),
-+	KUNIT_CASE(test_uid_owns_currentns_invalid),
-+	KUNIT_CASE(test_uid_owns_currentns_nonzero),
-+	KUNIT_CASE(test_uid_owns_ns_init_ns_uid0),
-+	KUNIT_CASE(test_uid_owns_ns_init_ns_nonzero),
-+	KUNIT_CASE(test_uid_owns_ns_init_ns_various_uids),
-+	KUNIT_CASE(test_uid_owns_ns_with_mapping),
-+	KUNIT_CASE(test_uid_owns_ns_with_different_mappings),
- 	{}
- };
- 
--- 
-2.43.0
+> 
+> I will rephrase this paragraph, to be sure that I understood it
+> correctly.
+> 
+> You are proposing a method to trim the measurement list and, at the
+> same time, to keep the measurement list verifiable after trimming. The
+> way you would like to achieve that is to keep the verification state in
+> the kernel in the form of PCR values.
+> 
+> Those values mean what verifiers have already verified. Thus, for the
+> next verification attempt, verifiers take the current PCR values as
+> starting values, replay the truncated IMA measurement list, and again
+> you match with the current PCR values and you trim until that point.
+> 
+> So the benefit of this proposal is that you keep the verification of
+> the IMA measurement list self-contained by using the last verification
+> state (PCR starting value) and the truncated IMA measurement list as
+> the inputs of your verification.
+
+Your understanding as described above is correct.
+
+> 
+> Let me reiterate on the trusted computing principles IMA relies on for
+> providing the evidence about a system's integrity.
+> 
+> Unless you are at the beginning of the measurement chain, where the
+> Root of Trust for Measurement (RTM) is trusted by assumption, the
+> measurements done by a component can be trusted because that component
+> was already measured by the previous component in the boot chain,
+> before it had any chance to corrupt the system.
+> 
+> In the context of IMA, IMA can be trusted to make new measurements
+> because it measures every file before those files could cause any harm
+> to the system. So, potentially IMA and the kernel can be corrupted by
+> any file.
+> 
+> What you are proposing would not work, because you are placing trust in
+> an input (the PCR starting value) that can be manipulated at any time
+> by a corrupted kernel, before you had the chance to detect such
+> corruption.
+
+If starting PCR values can be corrupted, the IMA measurements list can 
+also be corrupted, right?
+
+More generally, what integrity guarantees can be provided (if any) if 
+the kernel itself is corrupted?
+
+> 
+> Let me describe a scenario where I could take advantage of such
+> weakness. After the first measurement list trim, I perform an attack on
+> the system such that it corrupts the kernel. IMA added a new entry in
+> the measurement list, which would reveal the attack.
+> 
+> But, since I have control of the kernel, I conveniently update the PCR
+> starting value to replay the new measurement entry, and remove the
+> measurement entry from the measurement list.
+> 
+> Now, from the perspective of the user space verifiers everything is
+> fine, the truncated IMA measurement list is clean, no attack, and the
+> current PCR values match by replaying the new PCR starting value with
+> the remaining of the IMA measurement list.
+
+Wouldn't the verifier detect the attack when it sees that its 
+recalculated PCR values don't match up to the PCR digest in the TPM quote?
+
+> 
+> So, in my opinion the kernel should just offer the ability to trim the
+> measurement list, and a remote verifier should be responsible to verify
+> the measurement list, without relying on anything from the system being
+> evaluated.
+> 
+> Sure, the remote verifier can verify just the trimmed IMA measurement
+> list, but the remote verifier must solely rely on state information
+> maintained internally.
+> 
+> Roberto
+> 
+>> The method has other advantages too:
+>>
+>>   1. It provides a userspace interface that can be used to precisely control
+>>      trim point, allowing for trim points to be optionally aligned with
+>>      userspace IMA event log validation.
+>>
+>>   2. It ensures that all necessary information required for continued IMA
+>>      log validation is made available via the userspace interface at all
+>>      times.
+>>
+>>   3. It provides a simple mechanism for userspace applications to determine
+>>      if the event log has been unexpectedly trimmed.
+>>
+>>   4. The duration for which the IMA Measurement list mutex must be held (for
+>>      trimming) is minimal.
+>>
+>> ==========================================================================
+>>> B. Solution                                                            |
+>> ==========================================================================
+>>
+>> --------------------------------------------------------------------------
+>>> B.1 Overview                                                           |
+>> --------------------------------------------------------------------------
+>>
+>> The kernel trims the IMA event log based on PCR values supplied by userspace.
+>> The core principles leveraged are as follows:
+>>
+>>   - Given an IMA event log, PCR values for each IMA event can be obtained by
+>>     recalulating the PCR extension for each event. Thus processing N events
+>>     from the start will yield PCR values as of event N. This is referred to
+>>     as "IMA event log replay".
+>>
+>>   - To get the PCR value for event N + 1, only the PCR value as of event N
+>>     is needed. If this can be known, events till and including N can be
+>>     safely purged.
+>>
+>> Putting it all together, we get the following userspace + kernel flow:
+>>
+>>   1. A userspace application replays the IMA event log to generate PCR
+>>      values and then triggers a trim by providing these values to the kernel
+>>      (by writing to a pseudo file).
+>>
+>>      Optionally, the userspace application may verify these PCR values
+>>      against the corresponding TPM quote, and trigger trimming only if
+>>      the calculated PCR values match up to the expectations in the quote's
+>>      PCR digest.
+>>
+>>   2. The kernel uses the userspace supplied PCR values to trim the IMA
+>>      measurements list at a specific point, and so these are referred to as
+>>      "trim-to PCR values" in this context.
+>>
+>>      Note that the kernel doesn't really understand what these userspace
+>>      provided PCR values mean or what IMA event they correspond to, and so
+>>      it does its own IMA event replay till either the replayed PCR values
+>>      match with the userspace provided ones, or it runs out of events.
+>>
+>>      If a match is found, the kernel can proceed with trimming the IMA
+>>      measurements list. This is done in two steps, to keep locking context
+>>      minimal.
+>>
+>>      step 1: Find and return the list entry (as a count from head) of exact
+>>              match. This does not lock the measurements list mutex, ensuring
+>>              new events can be appended to the log.
+>>
+>>      step 2: Lock the measurements list mutex and trim the measurements list
+>>              at the previously identified list entry.
+>>
+>>     If the trim is successful, the trim-to PCR values are saved as "starting
+>>     PCR values". The next time userspace wants to replay the IMA event log,
+>>     it will use the starting PCR values as the base for the IMA event log
+>>     replay.
+>>
+>> --------------------------------------------------------------------------
+>>> B.2 Kernel Interfaces                                                  |
+>> --------------------------------------------------------------------------
+>>
+>> A new configfs pseudo file /sys/kernel/config/ima/pcrs that supports the
+>> following operations is exposed.
+>>
+>>    read: returns starting PCR values stored in the kernel (within IMA
+>>          specifically).
+>>
+>>   write: writes trim-to PCR values to trigger trimming. If trimming is
+>>          successful, trim-to PCR values are stored as starting PCR values.
+>>          requires root privileges.
+>>
+>> --------------------------------------------------------------------------
+>>> B.3 Walk-through with a real example                                   |
+>> --------------------------------------------------------------------------
+>>
+>> This is a real example from a test run.
+>>
+>> Suppose this IMA policy is deployed:
+>>
+>>    measure func=FILE_CHECK mask=MAY_READ pcr=10
+>>    measure func=FILE_CHECK mask=MAY_WRITE pcr=11
+>>
+>> When the policy is deployed, a zero digest starting PCR value will be set
+>> for each PCR used. If the TPM supports multiple hashbanks, there will be
+>> one starting PCR value per PCR, per TPM hashbank. This can be seen in the
+>> following hexdump:
+>>
+>> $ sudo hexdump -vC /sys/kernel/config/ima/pcrs
+>> 00000000  70 63 72 31 30 3a 73 68  61 31 3a 00 00 00 00 00  |pcr10:sha1:.....|
+>> 00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 70  |...............p|
+>> 00000020  63 72 31 31 3a 73 68 61  31 3a 00 00 00 00 00 00  |cr11:sha1:......|
+>> 00000030  00 00 00 00 00 00 00 00  00 00 00 00 00 00 70 63  |..............pc|
+>> 00000040  72 31 30 3a 73 68 61 32  35 36 3a 00 00 00 00 00  |r10:sha256:.....|
+>> 00000050  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+>> 00000060  00 00 00 00 00 00 00 00  00 00 00 70 63 72 31 31  |...........pcr11|
+>> 00000070  3a 73 68 61 32 35 36 3a  00 00 00 00 00 00 00 00  |:sha256:........|
+>> 00000080  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+>> 00000090  00 00 00 00 00 00 00 00  70 63 72 31 30 3a 73 68  |........pcr10:sh|
+>> 000000a0  61 33 38 34 3a 00 00 00  00 00 00 00 00 00 00 00  |a384:...........|
+>> 000000b0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+>> 000000c0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+>> 000000d0  00 00 00 00 00 70 63 72  31 31 3a 73 68 61 33 38  |.....pcr11:sha38|
+>> 000000e0  34 3a 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |4:..............|
+>> 000000f0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+>> 00000100  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+>> 00000110  00 00                                             |..|
+>> 00000112
+>>
+>> Let's say that a userspace utility replays the IMA event log, and triggers
+>> trimming by writing the following PCR values (i.e. trim-to PCR values) to the
+>> pseudo file:
+>>
+>> pcr10:sha256:8268782906555cf3aefc179f815c878527dd4e67eaa836572ebabab31977922c
+>> pcr11:sha256:4c7f31927183eacb53d51d95b0162916fd3fca51a8d1efc6dde3805eb891fe41
+>>
+>> The trim is successful,
+>>
+>> 1. Some number of entries from the measurements log will disappear. This
+>>     can be verified by reading out the ASCII or binary IMA measurements
+>>     file.
+>>
+>> 2. The trim-to PCR values are saved as starting PCR values. This can be
+>>     verified by reading out the pseudo file again as shown below. Note that
+>>     even through only sha256 PCR values were written, the kernel populated
+>>     sha1 and sha384 starting values as well.
+>>
+>> $ sudo hexdump -vC /sys/kernel/config/ima/pcrs
+>>
+>> 00000000  70 63 72 31 30 3a 73 68  61 31 3a c4 7f 9d 00 68  |pcr10:sha1:....h|
+>> 00000010  e4 86 71 bf bc ae f0 10  12 ff 68 e2 9e 74 e4 70  |..q.......h..t.p|
+>> 00000020  63 72 31 31 3a 73 68 61  31 3a 90 d7 17 ac 60 4d  |cr11:sha1:....`M|
+>> 00000030  c8 25 ce 77 7d 9d 94 cf  44 7b b2 2e 2e e2 70 63  |.%.w}...D{....pc|
+>> 00000040  72 31 30 3a 73 68 61 32  35 36 3a 82 68 78 29 06  |r10:sha256:.hx).|
+>> 00000050  55 5c f3 ae fc 17 9f 81  5c 87 85 27 dd 4e 67 ea  |U\......\..'.Ng.|
+>> 00000060  a8 36 57 2e ba ba b3 19  77 92 2c 70 63 72 31 31  |.6W.....w.,pcr11|
+>> 00000070  3a 73 68 61 32 35 36 3a  4c 7f 31 92 71 83 ea cb  |:sha256:L.1.q...|
+>> 00000080  53 d5 1d 95 b0 16 29 16  fd 3f ca 51 a8 d1 ef c6  |S.....)..?.Q....|
+>> 00000090  dd e3 80 5e b8 91 fe 41  70 63 72 31 30 3a 73 68  |...^...Apcr10:sh|
+>> 000000a0  61 33 38 34 3a 8e d6 12  18 b1 d6 cd 95 16 98 33  |a384:..........3|
+>> 000000b0  2b 7d a2 d6 d9 05 c7 e8  5b 15 b0 91 c5 fc 23 d1  |+}......[.....#.|
+>> 000000c0  f9 a8 8d 60 50 5c e9 64  5f d7 b3 b2 f1 9c 90 0a  |...`P\.d_.......|
+>> 000000d0  45 53 5d b2 57 70 63 72  31 31 3a 73 68 61 33 38  |ES].Wpcr11:sha38|
+>> 000000e0  34 3a 25 fc 21 28 31 5a  f7 c6 fb 0f 40 c9 06 e6  |4:%.!(1Z....@...|
+>> 000000f0  c5 da ed 20 61 a1 03 54  4f 67 18 88 82 0f 48 d1  |... a..TOg....H.|
+>> 00000100  2f e0 3d 36 46 5e 94 a4  88 51 f8 91 39 7e e5 97  |/.=6F^...Q..9~..|
+>> 00000110  2c c5                                             |,.|
+>> 00000112
+>>
+>> --------------------------------------------------------------------------
+>>> C. Footnotes                                                           |
+>> --------------------------------------------------------------------------
+>>
+>> 1. The 'pcrs' pseudo file is currently part of configfs. This was due to
+>>     some early internal feedback in a different context. This can as well be
+>>     in securityfs with the rest of the IMA pseudo files.
+>>
+>> 2. PCR values are never read out of the TPM at any point. All PCR values
+>>     used are derived from IMA event log replay.
+>>
+>> 3. Code is "RFC quality". Refinements can be made if the method is accepted.
+>>
+>> 4. For functional validation, base kernel version was 6.17 stable, with the
+>>     most recent tested version being 6.17.8.
+>>
+>> 5. Code has been validated to some degree using a python-based internal test
+>>     tool. This can be published if there is community interest.
+>>
+>> Steven Chen (1):
+>>    ima: Implement IMA event log trimming
+>>
+>>   drivers/Kconfig                       |   2 +
+>>   drivers/Makefile                      |   1 +
+>>   drivers/ima/Kconfig                   |  13 +
+>>   drivers/ima/Makefile                  |   2 +
+>>   drivers/ima/ima_config_pcrs.c         | 291 ++++++++++++++++++
+>>   include/linux/ima.h                   |  27 ++
+>>   security/integrity/ima/Makefile       |   4 +
+>>   security/integrity/ima/ima.h          |   8 +
+>>   security/integrity/ima/ima_init.c     |  44 +++
+>>   security/integrity/ima/ima_log_trim.c | 421 ++++++++++++++++++++++++++
+>>   security/integrity/ima/ima_policy.c   |   7 +-
+>>   security/integrity/ima/ima_queue.c    |   5 +-
+>>   12 files changed, 821 insertions(+), 4 deletions(-)
+>>   create mode 100644 drivers/ima/Kconfig
+>>   create mode 100644 drivers/ima/Makefile
+>>   create mode 100644 drivers/ima/ima_config_pcrs.c
+>>   create mode 100644 security/integrity/ima/ima_log_trim.c
+>>
+> 
 
