@@ -1,298 +1,165 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FB928FFE7
-	for <linux-security-module@vger.kernel.org>; Fri, 21 Nov 2025 23:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F96CA5A
+	for <linux-security-module@vger.kernel.org>; Sat, 22 Nov 2025 10:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763766438; cv=none; b=F4TZtsn282RJIadrpgTD3lmQ6VRCuh99qdbc9A/yCNbclQq1JJcZSoLFPlwu0SA7+6OzPqqMu+xC3iwsp3aoElAdhtzIhB8l4f7ptLzywOMgH7SawL8XtQL826zsdVciHl9BmLJ9Araoz061vd5DpspP2Iik2jGmZWrR3IoJwSA=
+	t=1763806567; cv=none; b=Lumizqw1lRbQVI1ibI4rjP2hodk73fz82Hnq+Oe+y6o18rjfipavQblz9qJtXGjzgh3Q2/Tsatv0sM04heYhD/K/eqY8juVzuO0Fl4r2y9aZbotwVlG1GM/8pEAiJHgsWHTMA3t8bIQO7k236f/SHiSYN8hH3LIZ8MxZnxP3mNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763766438; c=relaxed/simple;
-	bh=VDL6/Wkzo+nHYBUJmIFWZKGy/WAbBJD7BKdCRJT3tcI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QoTr3vn/nt6pGUuT4UUgJdoKaKsMMaCxAC/mMNszymxjTWtJHWnp6DSnJ29JQ4HYFGoV/GGCPEeTCt1EVizaGjoOwVw71JCi8p76/dgeexUIJHF7HmBwuSrL8uybkojOS4oa5yXLa2JX1Bi0EXxJZ8kCZ1V18E723K+YOwyW8A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=B5S/vbXt; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1763806567; c=relaxed/simple;
+	bh=okpyZGlEFjEuEDFNYuruZwkefkPmV4EIGxCGt77K1j4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=An92Wor9Xbx8Zvqlc35J+sRvBGPpVuaI7V9E/zIml9hb6dmJ4m/ZiAF6bldoxEZ4yI3bJgEd0auJe0o/wa4j81H8jbRZb1oIPFm7nPvtfAwEJ/Ekr6zJyVB7VfNNJjQ2BbLOb6YwZxi5I4rDZsp4IPw7V1ghgkBKAFTxXhAmJ2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eiNkRK7F; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="B5S/vbXt"
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com [209.85.128.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9C9D13F950
-	for <linux-security-module@vger.kernel.org>; Fri, 21 Nov 2025 23:07:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1763766430;
-	bh=mURGdZgdGyl5h9hsbUzCtRvDVWH4yABOB0i1o0xgZtw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=B5S/vbXtLJu20ym2qcsqSyWf1AE+c9Sn8f14SkORNVbAld3d+NENV3l5gvxaJ5EeB
-	 BnX5XgPTZqoxv+3JVBH2XZ8n8+GnnVSCFKRFGxX+b4/jnlFlgkaLF1ynes606R7HD5
-	 630tGb7x5PuEtfTbSxqidGhetRlzfQ4hSwNSkiW3RSKXCaM/DTktFgAKzX3l+4xsuu
-	 aTRx2kKq5MDvLn848zM2h2v83K+KVXLlBguV1MufranEcuDbNF0zmwqYFySJKUxCid
-	 DQIMNRNU5nURUcfqf0QAsG+Uxtnih0QwgQlqTzN8oFkwQaZWHSwL3uOQMvsJnus6Yr
-	 3GWnLgISnEV+xmMmol6kzKpO8QIK1nQKKDP6L4HNgRMAWi1mIvnC+JpbdKFXyysLlS
-	 TwP1XyYuScJH1HMvLCX46P1UXBGDLqV/n+SXAVgDdkjilvgfVDv/Dml3npyHPVjn1d
-	 PbSfqku52Zf77Xw8gu1/sxJy1djR2QGu7h1OgxKL7OhadA+M5mr7nHxKwX73U5Ldsy
-	 FAozW5Kupk4lohlvhq6TWpmQms5s4jYDHlv5JWYuuEyEPl9ymD84YNPizstwq+a0lo
-	 GSipoI3A175kQ9lze2RLj8sbFPouAGhSk+fwSaqq1mo41Rc5ScR8L6BPDjahkK6LsZ
-	 pQD5N2K6KNwMcliX3v0YQWCc=
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-787f7261b62so52107557b3.0
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Nov 2025 15:07:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eiNkRK7F"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b737c6c13e1so515484666b.3
+        for <linux-security-module@vger.kernel.org>; Sat, 22 Nov 2025 02:16:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763806563; x=1764411363; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mS/vz1rW7oaq1ahBZ3rleu8uUoiOnYHPIRfP3oM2Z9Q=;
+        b=eiNkRK7FWVQQ4EFDGPfIPJkC8lovp7vBYF/9D8EplMpXmMyibk0T1MjtegsoC2UPrl
+         KpOrI2dRYkx8o7MmTvZiurG2k2MK3qPG3QzU4k71AAgU6yckiRV2R6FXtmiGvRYvHkll
+         R9KjbSsjV2f3rx2nC3lHAAT2GGo7oG5ojlbeJ8HVTEK8/2qR/2TozhBL5nB0VA4rrXfF
+         tu6Q33YDZN2VhkoevrlSxD/kN21wuSgXXXzNgGELpDggjNmswQDgH20wD+7CJzNy/E61
+         NdiCVgCZ6FlE9Sbj9EMfrjbdBcvAqBHbQF20DHZO5tzsaSr9zjwN1hjAezc/7dVaY0P4
+         8/EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763766429; x=1764371229;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=mURGdZgdGyl5h9hsbUzCtRvDVWH4yABOB0i1o0xgZtw=;
-        b=bN4PLkgVXpA34znJRzoNGKwpHwQrG9UtXKNzN+g7ceubzTe2ftPQ1yNdhg6MnkJDpP
-         gCnGpfIzvQBI8nKq1ghiSkfE9abm15Zjn+Ir9DhFBQtCrHB+t8lzIpD5z1xKGiTKIpAJ
-         +o9jpPpBazLpsgyt6e1zXCaK48bEUeNlsP+ziWukdEfAu7tTHvmlfb/MIKk8OOEyKHYi
-         bQ3ImtqLyUFv1ulHg0WLUU1Qnq78PA5y/TiswxAJcpTMbqkT8LkO7f8s19N1OxY2CAT3
-         c6lbkYVAoaaaprnHvMW3wMgXWV9iTvv/Y1DATnXFkXWRpnFmoDgNEge+hrP9s3lqtFhB
-         nJqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWbNrZXD92z6vxczbs5LDsoPDJ64aCbv7Ypo2XrEh3jiExAUidg2UQWWG7DO8o8LCvWcKhJoFnsG7cCP2zSqLic/pNByEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8EV+ZSWpFysGHayxsDaKspDmKiYZqZazTfsatFQgVD0PGiPnK
-	nnnJdJdVmE/OyjfsmgBpTqGhWbeickmeTZzp8rnPMgUmaxEyf+laWdQPWzRuf1UMRMqUkYwuR83
-	j+aOg0JfWVBmECe2BqTQTxBKwAwcHY2zc1ClupaYhYV1tp66yeobont4A8BWcYzhUb8xP60eIQp
-	aO2tK1BYQ0fEeAyeRDmXsAHLyKhQEfC0fEmNRs0o3VWRDN0utCRIuOCrdscpBMVdg4BfJm
-X-Gm-Gg: ASbGncu+T1CnBgyDfd12gkubliwdvYq2GF3dY9B3wFaCPYM/vpvsmzqZ6aq1imb9pPB
-	1Nc8s3GmUF6tayJYlh52l9b2466HMZ5O5ch+PXBy/3YRoFNnXlNSNebU4rOzHYn1/FBpAlw8B0+
-	83eDpkHt0VpFy7PHk2PcC0SzXgWZqmJLAjrZ7/2mYIQaGxGrNDDKMPceHm1elVksUvQA==
-X-Received: by 2002:a53:b10a:0:b0:63f:c019:23bc with SMTP id 956f58d0204a3-642f8e30acamr6393271d50.27.1763766428806;
-        Fri, 21 Nov 2025 15:07:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGNbsczd5MfsDryDTrdB8miQHCP9n6FhmNbRk59/WbSb6lt9I6iTtdnnpp053CuQIcThR+YHVO/xZ+HKm10C6g=
-X-Received: by 2002:a53:b10a:0:b0:63f:c019:23bc with SMTP id
- 956f58d0204a3-642f8e30acamr6393202d50.27.1763766428362; Fri, 21 Nov 2025
- 15:07:08 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763806563; x=1764411363;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mS/vz1rW7oaq1ahBZ3rleu8uUoiOnYHPIRfP3oM2Z9Q=;
+        b=LhJQ8yqYZAxDDKZ+IQgLc/JN/GpVlNlj2E9UPi/4tgK/7jpA6ccbkKyBYrhC38DYSG
+         wLtUmRCPRiF9Zao3rxfz25v06NPB4BShxyDANd+mtMg7JX4r8skzwi6q1Zzcx8qFnPt8
+         +Doy4MMqOrCRH0arUtGPZiKx2iii1ryj/mGG6nHjzKkjzggoL7LpEgyjt6m1ARvrKKv2
+         ji4BsQI//lwfSVZt5QTGj2aqSx9gl6NfQUlWN8RZYWxBJvUV+qWtP4htRjKqezQiVaX8
+         Rzj5+arFCIIoqqUM4CZOxt5SzLKGZIrvWFWDNJqQZAIkCarXCP0v0ZDHGAekrj0TPMhk
+         TFXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWqSJgUcalXXyvylRXr9PnlXn5UO5KPfB+gKkaJOjvp25nmjO9Tv49PGVWzhcti32JA543nmnTvKXlvaWEqijNubtWlRZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwchKR2tH73NrBkTtnmezFN002D6Z0TOSaAoq4VbhrwOsYLGKu7
+	boywpaJEAJVZjei1QbJfQvg6qOugUL0m1VAFz/rXrk9GPWOAHcnK3pmn/lyoKX4V
+X-Gm-Gg: ASbGnctwbRcoD9/z6aUyn5ld0nGkLJr02IlZjc0/1s+rA2coN4uTX5aB7ABDr0jIYnY
+	P3RQtWuypzE4agUuSR7JGKsuXLOC2J5ZOylwogcQmjqAwQNjfo6Hk7TLYsMocoO6CICSXKRRsIh
+	39LfuUxlthXSuIGhR2Eb/i36/6TUKxVQh4Jy2vCsQ7+ylN6VphZzQiVVM5t/uNJrKOh10lQVy7d
+	aNu14fH3ayLMauaAUHgHmv57ETO7XR5sjvMmJui4OGFyWYGTJCmOAsE4k0STj3QKzPZIYDuTjTP
+	FTeFA5NJTbq64KGH5MRKOzeHNMu7Rrj3W/tCI+Y0SJMuVon7OSDoiw13k5U9NUQPs16/9H6PD8T
+	mf/TqYFmPOWvR+Trd7Dwe9S3R7GZmPWxUQLGTPKRiwt8KC4iG7MH1LCeGQX3weXKYoLVF2Hdl3q
+	L9yXhs37EBINpnhlMBsTsmKbUE+dB/D96I6YME
+X-Google-Smtp-Source: AGHT+IFvc6Tdcl0gKFGge7EMecimqjBsOE5KfFFBnMOWlWkZjJiEqjTrnAEKRSLZBoXUKpD+VYqOVw==
+X-Received: by 2002:a17:907:1c26:b0:b70:5aa6:1535 with SMTP id a640c23a62f3a-b767157138dmr624288566b.18.1763806562727;
+        Sat, 22 Nov 2025 02:16:02 -0800 (PST)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7654ff3962sm698791966b.50.2025.11.22.02.16.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Nov 2025 02:16:02 -0800 (PST)
+Date: Sat, 22 Nov 2025 11:16:00 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: mic@digikod.net, gnoack@google.com, willemdebruijn.kernel@gmail.com,
+	matthieu@buffet.re, linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	yusongping@huawei.com, artem.kuzin@huawei.com,
+	konstantin.meskhidze@huawei.com
+Subject: Re: [RFC PATCH v4 12/19] selftests/landlock: Test socketpair(2)
+ restriction
+Message-ID: <20251122.4795c4c3bb03@gnoack.org>
+References: <20251118134639.3314803-1-ivanov.mikhail1@huawei-partners.com>
+ <20251118134639.3314803-13-ivanov.mikhail1@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <87tsyozqdu.fsf@email.froward.int.ebiederm.org> <87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
- <87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org> <87a50gxo0i.fsf@email.froward.int.ebiederm.org>
- <GV2PPF74270EBEEAD4CACA124C05BE1CE45E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <87o6ovx38h.fsf@email.froward.int.ebiederm.org> <GV2PPF74270EBEEFA106F4EF26B087ED898E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEED0840E45459881C0EDD4E4D5A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <87ikf3w5us.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <87ikf3w5us.fsf@email.froward.int.ebiederm.org>
-From: Ryan Lee <ryan.lee@canonical.com>
-Date: Fri, 21 Nov 2025 15:06:57 -0800
-X-Gm-Features: AWmQ_bl4fHuqSO33WuXiPW9zqHuMd1nfWUHzCuIgifbxs4kTz1ezfJlXQS9fZjo
-Message-ID: <CAKCV-6sH03G2xuZrhqEMExx-AAKPZgQ7Z1BnDgV5HimFVGCWwg@mail.gmail.com>
-Subject: Re: [RFC][PATCH] exec: Move cred computation under exec_update_lock
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Bernd Edlinger <bernd.edlinger@hotmail.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Alexey Dobriyan <adobriyan@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Kees Cook <kees@kernel.org>, 
-	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
-	Christian Brauner <brauner@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>, 
-	James Morris <jamorris@linux.microsoft.com>, Randy Dunlap <rdunlap@infradead.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>, 
-	Adrian Reber <areber@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>, 
-	Alexei Starovoitov <ast@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	tiozhang <tiozhang@didiglobal.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Frederic Weisbecker <frederic@kernel.org>, YueHaibing <yuehaibing@huawei.com>, 
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>, xu xin <xu.xin16@zte.com.cn>, 
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>, 
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Elena Reshetova <elena.reshetova@intel.com>, David Windsor <dwindsor@gmail.com>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Hans Liljestrand <ishkamiel@gmail.com>, Penglei Jiang <superman.xpt@gmail.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Adrian Ratiu <adrian.ratiu@collabora.com>, 
-	Ingo Molnar <mingo@kernel.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
-	Cyrill Gorcunov <gorcunov@gmail.com>, Eric Dumazet <edumazet@google.com>, 
-	apparmor <apparmor@lists.ubuntu.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251118134639.3314803-13-ivanov.mikhail1@huawei-partners.com>
 
-On Fri, Nov 21, 2025 at 11:20=E2=80=AFAM Eric W. Biederman
-<ebiederm@xmission.com> wrote:
->
-> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
->
-> > On 11/21/25 10:35, Bernd Edlinger wrote:
-> >> On 11/21/25 08:18, Eric W. Biederman wrote:
-> >>> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
-> >>>
-> >>>> Hi Eric,
-> >>>>
-> >>>> thanks for you valuable input on the topic.
-> >>>>
-> >>>> On 11/21/25 00:50, Eric W. Biederman wrote:
-> >>>>> "Eric W. Biederman" <ebiederm@xmission.com> writes:
-> >>>>>
-> >>>>>> Instead of computing the new cred before we pass the point of no
-> >>>>>> return compute the new cred just before we use it.
-> >>>>>>
-> >>>>>> This allows the removal of fs_struct->in_exec and cred_guard_mutex=
-.
-> >>>>>>
-> >>>>>> I am not certain why we wanted to compute the cred for the new
-> >>>>>> executable so early.  Perhaps I missed something but I did not see=
- any
-> >>>>>> common errors being signaled.   So I don't think we loose anything=
- by
-> >>>>>> computing the new cred later.
-> >>>>>
-> >>>>> I should add that the permission checks happen in open_exec,
-> >>>>> everything that follows credential wise is just about representing =
-in
-> >>>>> struct cred the credentials the new executable will have.
-> >>>>>
-> >>>>> So I am really at a loss why we have had this complicated way of
-> >>>>> computing of computed the credentials all of these years full of
-> >>>>> time of check to time of use problems.
-> >>>>>
-> >>>>
-> >>>> Well, I think I see a problem with your patch:
-> >>>>
-> >>>> When the security engine gets the LSM_UNSAFE_PTRACE flag, it might
-> >>>> e.g. return -EPERM in bprm_creds_for_exec in the apparmor, selinux
-> >>>> or the smack security engines at least.  Previously that callback
-> >>>> was called before the point of no return, and the return code should
-> >>>> be returned as a return code the the caller of execve.  But if we mo=
-ve
-> >>>> that check after the point of no return, the caller will get killed
-> >>>> due to the failed security check.
-> >>>>
-> >>>> Or did I miss something?
-> >>>
-> >>> I think we definitely need to document this change in behavior.  I wo=
-uld
-> >>> call ending the exec with SIGSEGV vs -EPERM a quality of implementati=
-on
-> >>> issue.  The exec is failing one way or the other so I don't see it as=
- a
-> >>> correctness issue.
-> >>>
-> >>> In the case of ptrace in general I think it is a bug if the mere act =
-of
-> >>> debugging a program changes it's behavior.  So which buggy behavior
-> >>> should we prefer?  SIGSEGV where it is totally clear that the behavio=
-r
-> >>> has changed or -EPERM and ask the debugged program to handle it.
-> >>> I lean towards SIGSEGV because then it is clear the code should not
-> >>> handle it.
-> >>>
-> >>> In the case of LSM_UNSAFE_NO_NEW_PRIVS I believe the preferred way to
-> >>> handle unexpected things happening is to terminate the application.
-> >>>
-> >>> In the case of LSM_UNSAFE_SHARE -EPERM might be better.  I don't know
-> >>> of any good uses of any good uses of sys_clone(CLONE_FS ...) outside
-> >>> of CLONE_THREAD.
-> >>>
-> >>>
-> >>> Plus all of these things are only considerations if we are exec'ing a
-> >>> program that transitions to a different set of credentials.  Somethin=
-g
-> >>> that happens but is quite rare itself.
+On Tue, Nov 18, 2025 at 09:46:32PM +0800, Mikhail Ivanov wrote:
+> diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/testing/selftests/landlock/socket_test.c
+> index e22e10edb103..d1a004c2e0f5 100644
+> --- a/tools/testing/selftests/landlock/socket_test.c
+> +++ b/tools/testing/selftests/landlock/socket_test.c
+> @@ -866,4 +866,59 @@ TEST_F(tcp_protocol, alias_restriction)
+>  	}
+>  }
+>  
+> +static int test_socketpair(int family, int type, int protocol)
+> +{
+> +	int fds[2];
+> +	int err;
+> +
+> +	err = socketpair(family, type | SOCK_CLOEXEC, protocol, fds);
+> +	if (err)
+> +		return errno;
+> +	/*
+> +	 * Mixing error codes from close(2) and socketpair(2) should not lead to
+> +	 * any (access type) confusion for this test.
+> +	 */
+> +	if (close(fds[0]) != 0)
+> +		return errno;
+> +	if (close(fds[1]) != 0)
+> +		return errno;
 
-AppArmor's exec rules rely heavily on transitioning to different creds
-on exec. For example, an AppArmor policy like
+Very minor nit: the function leaks an FD if it returns early after the
+first close() call failed.  (Highly unlikely to happen though.)
 
-profile example_1 /usr/bin/example_1 {
-    /usr/bin/example_2 Px -> example_2_profile,
-    /usr/bin/example_3 Px,
-}
+> +	return 0;
+> +}
+> +
+> +TEST_F(mini, socketpair)
+> +{
+> +	const struct landlock_ruleset_attr ruleset_attr = {
+> +		.handled_access_socket = LANDLOCK_ACCESS_SOCKET_CREATE,
+> +	};
+> +	const struct landlock_socket_attr unix_socket_create = {
+> +		.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+> +		.family = AF_UNIX,
+> +		.type = SOCK_STREAM,
+> +		.protocol = 0,
+> +	};
+> +	int ruleset_fd;
+> +
+> +	/* Tries to create socket when ruleset is not established. */
+> +	ASSERT_EQ(0, test_socketpair(AF_UNIX, SOCK_STREAM, 0));
+> +	ruleset_fd =
+> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+> +	ASSERT_LE(0, ruleset_fd);
+> +
+> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_SOCKET,
+> +				       &unix_socket_create, 0));
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	ASSERT_EQ(0, close(ruleset_fd));
+> +
+> +	/* Tries to create socket when protocol is allowed */
+> +	EXPECT_EQ(0, test_socketpair(AF_UNIX, SOCK_STREAM, 0));
+> +
+> +	ruleset_fd =
+> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
 
-will allow binary example_1 to execute binaries example_2 and
-example_3, launching those processes under a different confinement
-(example_2_profile and a profile that attaches to /usr/bin/example_3,
-respectively). We will need to look into how much this patch (or a
-corresponding change in behavior) would affect our use case, but
-confinement transitions (where the confinement information is stored
-as an LSM blob on the cred struct) are extremely common in a system
-that uses AppArmor as an LSM.
+You may want to check that landlock_create_ruleset() succeeded here:
 
-> >>>
-> >>> In practice I don't expect there is anything that depends on the exac=
-t
-> >>> behavior of what happens when exec'ing a suid executable to gain
-> >>> privileges when ptraced.   The closes I can imagine is upstart and
-> >>> I think upstart ran as root when ptracing other programs so there is =
-no
-> >>> gaining of privilege and thus no reason for a security module to
-> >>> complain.
-> >>>
-> >>> Who knows I could be wrong, and someone could actually care.  Which i=
-s
-> >>> hy I think we should document it.>>
-> >>
-> >>
-> >> Well, I dont know for sure, but the security engine could deny the exe=
-cution
-> >> for any reason, not only because of being ptraced.
-> >> Maybe there can be a policy which denies user X to execute e.g. any su=
-id programs.
-> >>
-> >>
-> >> Bernd.
-> >>
-> >
-> > Hmm, funny..
-> >
-> > I installed this patch on top of
-> >
-> > commit fd95357fd8c6778ac7dea6c57a19b8b182b6e91f (HEAD -> master, origin=
-/master, origin/HEAD)
-> > Merge: c966813ea120 7b6216baae75
-> > Author: Linus Torvalds <torvalds@linux-foundation.org>
-> > Date:   Thu Nov 20 11:04:37 2025 -0800
-> >
-> > but it does panic when I try to boot:
-> >
-> > [  0.870539]     TERM=3D1inux
-> > [  0.870573] Starting init: /bin/sh exists but couldn't execute it (err=
-or -14) 0.8705751 Kernel panic- not syncing: No working init found. Try pas=
-sing i mit=3D option to kernel. See Linux Documentation/admin-guide/init.rs=
-t for guidance
-> > [  0.870577] CPU: UID: 0 PID: 1 Comm: sh Not tainted 6.18.0-rc6+ #1 PRE=
-EMPT(voluntary)
-> > [  0.870579] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS Vi=
-rtualBo x 12/01/2006
-> > [  0.870580] Call Trace:
-> > [  0.870590]  <TASK>
-> > [  0.870592]  vpanic+0x36d/0x380
-> > [  0.870607]  ? __pfx_kernel_init+0x10/0x10
-> > [  0.870615]  panic+0x5b/0x60
-> > [  0.870617]  kernel_init+0x17d/0x1c0
-> > [  0.870623]  ret_from_fork+0x124/0x150
-> > [  0.870625}  ? __pfx_kernel_init+0x10/0x10
-> > [  0.870627]  ret_from_fork_asm+0x1a/0x30
-> > [  0.870632]  </TASK>
-> > [  0.8706631 Kernel Offset: 0x3a800000 from Oxffffffff81000000 (relocat=
-ion ran ge: 0xffffffff80000000-0xffffffffbfffffff)
-> > [  0.880034] ---[ end Kernel panic - not syncing: No working init found=
-. Try passing init option to kernel. See Linux Documentation/admin-guide/in=
-it.rst for guidance. 1---`
-> >
-> >
-> > Is that a known problem?
->
-> Nope.  It looks like the code needs a little bit bug fixing testing.
->
-> I will take see about taking a look.
->
-> Eric
->
+ASSERT_LE(0, ruleset_fd)
 
-I've also CC'ed the AppArmor mailing list on this patch to facilitate
-discussion if, upon further investigation, this patch would require
-changes or cause other problems on the AppArmor side.
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	ASSERT_EQ(0, close(ruleset_fd));
+> +
+> +	/* Tries to create socket when protocol is restricted. */
+> +	EXPECT_EQ(EACCES, test_socketpair(AF_UNIX, SOCK_STREAM, 0));
+> +}
+> +
+>  TEST_HARNESS_MAIN
+> -- 
+> 2.34.1
+> 
+
+Otherwise, looks good.
+–Günther
