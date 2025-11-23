@@ -1,64 +1,64 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03B919C546
-	for <linux-security-module@vger.kernel.org>; Sun, 23 Nov 2025 16:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3A41DDDD
+	for <linux-security-module@vger.kernel.org>; Sun, 23 Nov 2025 17:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763916194; cv=none; b=SMCaXnpf8w0oukj8AHg8VeUk88UeA7WooYYk7jlD9UvgfyOVQBQapPTSpOnQgBR3oSEenNUQpRNYWrvvDjW+a94+UHxG2NzJi418aBuBvc+Sr8YjzLS0RgPwtxsSkz3ny84LWY9hh53vD/ZNgaQWj7Q/pgUkbVLi+we3N+yBa/Q=
+	t=1763917268; cv=none; b=a5R3lszhH7HOjGOIinzBr+mZfYHQmSsKf6qkdIcy+HcZKyg6W22W/R60YSWHw4WPnQoz5tOAWtF4GdDohwy5QyXEOym/MQntzUESnSZ21kYpKKfSv4w1DFaXbkZC+WEzmsWX0gJRLBUex8B1AlxxlqQ1gUluJ2OE0X/2VyHPxes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763916194; c=relaxed/simple;
-	bh=yD8J2olIKgPHe37dofjigV9VmdZgEFl+iE9bgQC2sco=;
+	s=arc-20240116; t=1763917268; c=relaxed/simple;
+	bh=tTuTPMkQUvj3LIrqtt5k2SYuwliP8i2ksSZa10Ghr8Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ItKvdUnrQcH6xhTIbjjk6u5NAqg+dBntlSqJy3GaFVuhtTMeHWvCYQ7R84BnhK7KBTfhNsCG03DKBXBxqSB3TheYp1o/h41cFe0NIlBvAlvZJtyNdwgsLcHs8vasqVygj7RGXW0n5peqUD1A01XsCRRwFpcTErRSIQkxhIkzmqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fq5amoP5; arc=none smtp.client-ip=209.85.128.175
+	 MIME-Version; b=VcvvlimH2cjhAFAZ0SrQonQluIjCSUplBV4FriXgH34S90e5v+LcHB4Hj50vI97AqYSIUH+SYdEb5DWoOqPtO9KDSKUnL3MEoUN2vhA1kbADf1HllrxXFvPT7FKXWBC8pAl98dveY9ZQ47DHjZHli4yVamfWdfRU+PYlrEqGuwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zu5A3K7N; arc=none smtp.client-ip=209.85.128.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fq5amoP5"
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-786943affbaso25373587b3.0
-        for <linux-security-module@vger.kernel.org>; Sun, 23 Nov 2025 08:43:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zu5A3K7N"
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-78aa49cde3dso2381637b3.1
+        for <linux-security-module@vger.kernel.org>; Sun, 23 Nov 2025 09:01:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763916191; x=1764520991; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763917265; x=1764522065; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fN0yUJGuN6tfDMta/3VKFoDULumIxwwcMff04lMaDho=;
-        b=Fq5amoP5pyA45+FTBBW8Ta35yMzv3CI6hPfNcZZftGhQOt4MH1PrSG4y/H0UMIGa/l
-         OGe+t2ZatwhDm5HvLOn7CeXof7oqj/dyrVyKEGCR1wpepdMsAaQmNzz09tHEGlhnbVSr
-         xMbWJzmFiCf+NFZjgc4CLrwWLufzHdzxNVQOTGplfCwywxB87bnLmKMAdxI+2oUH35xK
-         bgPfssgdaf0sgiMx9lYEWrCy9osN6GfQ1n9FyAU3JzEpQ8nmFq5Uo5xi1s8WCwPyAyTd
-         6zDTwLSqDLqxXGPYVAwivtnbvHIsJa5zHcfIVizussogqLHNoYT+53oRHEqVx66c3Xwv
-         GVyg==
+        bh=mX3oz0rhdPBQoFled+ozAJuxvtRMqIdDm0DrYDvd4n4=;
+        b=Zu5A3K7NKw9Xa84wC+7WOep/M9YkT3rNGXZJDJZE/cnRmgxsIvPXbKbqMMK56L7ydW
+         aWTDsq5XYclGAdiCY7Ti4i8f19OwCYaAQAVoe67Rc9+2YyAQYdr2Ug2om5LrdC1lOgN5
+         DlY8tzgD9PErSuC11Z+yXr0eAkMvvU7FO4d/r5slidmLMhPgBF3y9+AesWf6cuSWVgAp
+         mJ+GfCRvJeX8txC4JR6pGXQ552GbDlNWK9F0dYUBAIlZi/rpp6dxYlHRY8CMDtq809H1
+         qR72QHPTGqqH11y3BDcaA3P2NsdPmej6zj+ufEl77KddSBbo/Ps/dgctJlBUnfqkyeKP
+         Jswg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763916191; x=1764520991;
+        d=1e100.net; s=20230601; t=1763917265; x=1764522065;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=fN0yUJGuN6tfDMta/3VKFoDULumIxwwcMff04lMaDho=;
-        b=iU6n3hjdiCI1gtcAHTqvHbL/mN64GQos9pZHv5IeD9KgEUgMAZ/OX5wmIHw4TlciAo
-         r+30rPLzOGe8g0tiYahl1pBfoe1Ac2RvEPyjQoT87rxewVfLJpQKplOgdOYgjcmO4g72
-         bVzSV0tIo/4lAwttbLL1wH35FzBUVW9EAzIxJxdJs6fm1iUN6yr9UmENMFQ4eGxsJqyU
-         8pa5fRy9Y4G+GRD4GdF2/DhiGPcQmBYcjNHR107hiicgG+QkZ1JAp6OdcQ7RjSY81tQw
-         4qgsBNUHEaLOPxhc3Q/W7up0N+cXw0qD0VtFPCT8Gqp86uPYx9O7eTi908OB+9XM5ITl
-         j+7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUJvqvpg+NbL7fd1I0tmOOgEgpyhhLDi/F8VHkcm2y9jd24LsK3kcW6uFd+uh3239jNnEZ5SdGt8L1NY/e6i4XkZuy936I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysfcdxhpFsVKyqbRxSIpA5Sg6MhhlyaKtpjNzHVICXIL4pBBQ7
-	T6wHlM5Gsl/IAH+abDOVa3vD5c9xB7A+5IFnRUEYHRUTKR5VhQ62tmbqWyYbTs508eA=
-X-Gm-Gg: ASbGnctaiVIzo60h3E8Mv1LFf+chNvLZEol3OmNtTtcQrpbh0ZLYQOZNo26i9p2k2BO
-	gZyrxNhg2QCSeLwckH+osC8wZ/N8vjttqF2ETJbCq86Wa3+mehZGlRPE2WGmC3D5jxL2mYsDHbj
-	AP7C7bywTxDrj4ykxTtD+Fzu/OfeGNkDHB3ycqgMBzEf1h/iRWjo2OHxngpeq1fhul4KfN2lAUs
-	3hh+GPwW7kDTdeHJae6IbMF/xpaYsHh65nB/8O+tccine2w0p2SiWkYfqIWwAuzhoBLx/yjCrMM
-	8m7jhP3T3o6GooqS4LGVbVrSxDEFNRQxJBTG4uExsK0f7oXw3wciryorkzZnU6N3V7v2qmFWj4i
-	4srwQlnuXq8Z6iwmi/ObakqDrZLAGBblix2gVQoJHt8BuxjaNV0K7oskxoPQVdVLTvh4JRxZaML
-	RMSkRTaRYJNqCTkHh8cEKgz0Kqa2qixv98eltRBK3Em3iBUYRC98KOb1G6z0Mx
-X-Google-Smtp-Source: AGHT+IFPSJpEoAd3hZVMxH6yI9UvB0MGpOv+SvctGIpuf98ABtgPl48Qs8Pv1GTFJzy3SdDP1XTd/A==
-X-Received: by 2002:a05:690c:a85:b0:786:56ec:e3cf with SMTP id 00721157ae682-78a8b5754famr67556707b3.61.1763916191557;
-        Sun, 23 Nov 2025 08:43:11 -0800 (PST)
+        bh=mX3oz0rhdPBQoFled+ozAJuxvtRMqIdDm0DrYDvd4n4=;
+        b=UAmnO5QOSbVeG5yKUlTCMBjr36gV3Jt+qEC+jTSABa9lnbv+idoNd78obP/1p86gcj
+         xboF7uiiBzWMr/EpQXDIO+gcP7agOXGSVY1SFRNzgInK8N9nSvwGeTBnyraudz2JjO25
+         lBCq6ehmh+ATlxObUQ4pWs52o9IUio0ZNi22twEHA63kmPXvcD2TrHD00BUWT/bg5cio
+         khXriA2m8GRZJ9hJp9DvDudMsMFPkjBW0W+iDftzme6XeP/kLA+xdJy7PQjXafg8OxC+
+         ZuH8fxb4Uzmf592Qf7Y4REfXmrglmZxlUPzP+zPMvpnvVxBlUiizE8G4BIlfMgR3kpWD
+         RWrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwLvV/a4utFvcIkjX1FyUvhvQqQzQcINQ2I61FEyJXlF3I7gDA2vd6B0sMOdEJgIQY1dPH2cKCbWxncXUUOLV9T1kuoWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxcvo0w2oBOJxh06MJQlqovFWbZoBgP/txXM7y57M6PDmeVGJBq
+	MyCkgEtcB7vRBRw6d/+0JBxdki/by6OyJA02btcpqzuELx1fPQIOZkbIEk6dqBsPZbU=
+X-Gm-Gg: ASbGncu1oSmXJNyOfpNVl7dOgtrVvLei2K+8i35BKl2DZZucUFl0Tot4sR+s0a1GybR
+	PMO3pxKog0wMbrvF1seTm4kYfOwx2f1sxMUTWBS23GUA2iXSLZlRl6chjah9ui9t2VOIf8THQK7
+	Uz2yXys2WtFau+T77TxDoVmgKjPWB+NG6acDry6iY21Spn5gSeORI3a2uNEe+i2qYUTglefpzwg
+	iA5D0OW0+uj8ReNnS9O2v5GAMd6FoePysf3tO4Yuz3RDtmjTorn3WE0GleJeOaEl4WnXfY6b+/+
+	VPp4rH/SZ9KaiEUqQ6M4ELRKkRZzzfT4f73aNid4x/gFQaVvenV7WUd/BR1B67nigZyQEyl5sVM
+	Zy4FmQu4pSJ8bPQPb8rZzbiHZdKE0VJtDSiLVJOr+O59wWP6ONYnaqA049FYzSuv7I8kQ/ciGfi
+	h+GOiBAsMdOMpALylrv34L3G+RK6GnY5jQeKWeWBlfdhScBF0lfGPMwOk6lSTw2fc4Oe6rvPo=
+X-Google-Smtp-Source: AGHT+IG3xCMtLQ4WupMTNJrAVZbMFwjDtRzSLxUx8KqP9BDEsXUWShN/L3zuzWS91gTOKAIsESzwfg==
+X-Received: by 2002:a05:690c:b83:b0:731:1bc7:7830 with SMTP id 00721157ae682-78a8b491ff3mr68864567b3.23.1763917265334;
+        Sun, 23 Nov 2025 09:01:05 -0800 (PST)
 Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78a7993cc25sm36004917b3.44.2025.11.23.08.43.10
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78a7993e2d6sm36143777b3.39.2025.11.23.09.01.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Nov 2025 08:43:11 -0800 (PST)
+        Sun, 23 Nov 2025 09:01:05 -0800 (PST)
 From: Justin Suess <utilityemal77@gmail.com>
 To: m@maowtm.org
 Cc: gnoack@google.com,
@@ -67,12 +67,12 @@ Cc: gnoack@google.com,
 	mic@digikod.net,
 	utilityemal77@gmail.com,
 	xandfury@gmail.com
-Subject: Re: [PATCH 5/6] landlock: Fix compilation error for kunit tests when CONFIG_AUDIT is disabled.
-Date: Sun, 23 Nov 2025 11:43:07 -0500
-Message-ID: <20251123164307.2639763-1-utilityemal77@gmail.com>
+Subject: Re: [PATCH v4 00/10] Implement LANDLOCK_ADD_RULE_QUIET
+Date: Sun, 23 Nov 2025 12:01:03 -0500
+Message-ID: <20251123170103.2640561-1-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.51.2
-In-Reply-To: <baa3449e-e238-4caa-a16e-c252016bf480@maowtm.org>
-References: <baa3449e-e238-4caa-a16e-c252016bf480@maowtm.org>
+In-Reply-To: <5c0de8ee7e00aff1aceb3a80f5af162eeaaa06db.1763330228.git.m@maowtm.org>
+References: <5c0de8ee7e00aff1aceb3a80f5af162eeaaa06db.1763330228.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -81,22 +81,35 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-No problem it was an easy fix. I'll reply directly to your patch in the
-future, I'm still figuring out mailing list development and kernel
-development workflows.
+I had a question in regards to the quiet flag in how it 
+should interact with my proposed flag LANDLOCK_ADD_RULE_NO_INHERIT.
 
-I do realize now I have some behaviors in this series that impact the 
-quiet flag that I want your input on. I'll add those as replies to 
-your patch series as well. 
+Should this flag block inheritence of the LANDLOCK_ADD_RULE_QUIET flag?
+It seems to me it should block inheritence of this flag, so you can
+create more fine grained audit-suppression rules.
 
-I plan to keep rebasing this patch off the quiet flag series as you release
-new versions. I also plan to introduce some selftests combining the two flags
-and ensuring they interact with eachother as expected.
+So for example you could quiet logs on /a/b with the exception of /a/b/c
+by setting LANDLOCK_ADD_RULE_NO_INHERIT on /a/b/c.
 
-The next version of this patch is going to include some big refactorings
-(most likely removing the xarrays) and fix some edge cases I discovered.
+If so, as we add more flags, should this be a general policy that
+LANDLOCK_ADD_RULE_NO_INHERIT blocks access right inheritence AND flag
+inheritence? With the obvious exception of LANDLOCK_ADD_RULE_NO_INHERIT
+itself.
 
-King Regards,
+Alternatives could be a new flag to control whether NO_INHERIT also
+suppresses flag inheritence.
 
+Or simply having LANDLOCK_ADD_RULE_NO_INHERIT continue to only apply to
+access masks. 
+
+The latest version of LANDLOCK_ADD_RULE_NO_INHERIT is below for
+convienence.
+
+v3:
+https://lore.kernel.org/linux-security-module/20251120222346.1157004-1-utilityemal77@gmail.com/T/#t
+
+Kind Regards,
 Justin Suess
+
+
 
