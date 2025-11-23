@@ -1,105 +1,213 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFEA14F125;
-	Sun, 23 Nov 2025 17:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1C921D3EC
+	for <linux-security-module@vger.kernel.org>; Sun, 23 Nov 2025 18:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763917860; cv=none; b=K++/V/Ye4GGVMMVI7ch5SinaBQhunRrEKTwRMDur3QU1zyTRoLcqB3Emh9i2fEyBiGG7lfa8vfhEOl2Wr/vFks8NoQvdI+ykzmKf8W52C92HqLXJzSFP0cuJEvQjnjGysONQAlfgUyFSqJFNdH02yxRMuyLgOVcoUb24qn+tSc8=
+	t=1763922776; cv=none; b=LU8LKB9wymp93slSP0z7Irb1BhJD2IV2qU9YAePvBxrOeFNDP7q+3Krzyo6d0slU7qMDf/mwJX9qMPeHFWSxhGCAS6Auevwh4EK5K2w/YmMhujBBVUuznjcY7fLGO3y62dADpbfFabDYz/rq2ID7pZ95WDvCbekzL07j182BCv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763917860; c=relaxed/simple;
-	bh=1TvV2CIHODDVvcsCFmEG146E5nX65wm9DJeM5XXQwW8=;
+	s=arc-20240116; t=1763922776; c=relaxed/simple;
+	bh=q0o3WkXxgcPcxa+rbl7GKvJDyOx0UbOChtTaJCarZFI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IyQw9rNx7Y83G9VuO8fNSOybgs1V6SSB1o2n2QAXsv+7Gc9tPvHD3YGy4/+kpJuhNrnrktc+uwsEljtsO+lRz3JfK2QMFP2CuWG67pZEaqa3Qpf9Qn0uhGhIeKtxybS0F4zI4I8mwZbjD9ip+dd6tC2uCcTOb79B/1Iixf9wJU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wo8WQpA6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H8a+b7E4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	 Content-Type:Content-Disposition:In-Reply-To; b=rmJAhUvl65NZRnoBu1iyW7A4KWU1oTmwM5UQs6d4J9TSALZ9vbha0DG4yE5ShM8yehlf9APQodM9mfLWrg25f39W5f9acp08vb1jpkXRAzhnG/TQjm3Q36ry76jbKtjIw2LnPixHMaLM23/qozncb2qYlfPabtU6Ob5HyMgGqPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RSHbOW6y; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wo8WQpA6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H8a+b7E4"
-Date: Sun, 23 Nov 2025 18:10:54 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1763917856;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RSHbOW6y"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763922773;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1TvV2CIHODDVvcsCFmEG146E5nX65wm9DJeM5XXQwW8=;
-	b=wo8WQpA6NfO5oq1yU5MNIxMljtmOFymvIKwf+z4UpWIwlmWK66C9CioLMyGAOPzFA0j76x
-	feTDuA2whfyAklcQwWO/kFWvgwWMGymo+2py2F9m0snFPcsiGb2px0IjJZXqcGHrvur9VH
-	JltI0wdrt+vgV2fQLaCE9TaaYnJ1sEPv3Xcrqp0ibg+AnJOIAG+nn4YMVG874FGgvxpo2n
-	MJMTZztLqBmS37z8mUn6XD5/rXrSl5JNZ15qQTziNCOzq622/JthL+xDeTbEIH+I9kWOCg
-	JKL5L5uhHGwBitxvsz2++MsIcD4j/XrNx79t/M05VLbd8rdWlYJFtlifZn2GHw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1763917856;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1TvV2CIHODDVvcsCFmEG146E5nX65wm9DJeM5XXQwW8=;
-	b=H8a+b7E4pwlDvJgRrStalE/DblBpY6KGjVhb8qJAv2yo/f7vbjkwGdH54cVGXBkqaDHNNk
-	EznfI2lT8cZDOYBA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Fabian =?utf-8?Q?Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>,
-	Arnout Engelen <arnout@bzzt.net>,
-	Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>,
-	Christian Heusel <christian@heusel.eu>,
-	=?utf-8?B?Q8OianU=?= Mihai-Drosi <mcaju95@gmail.com>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v3 7/9] module: Move lockdown check into generic module
- loader
-Message-ID: <20251123171054.wnPvVQrF@linutronix.de>
-References: <20250429-module-hashes-v3-0-00e9258def9e@weissschuh.net>
- <20250429-module-hashes-v3-7-00e9258def9e@weissschuh.net>
- <20251119112055.W1l5FOxc@linutronix.de>
- <CAHC9VhTuf1u4B3uybZxdojcmz5sFG+_JHUCC=C0N=9gFDmurHg@mail.gmail.com>
+	bh=36l7iu5Eghp8LjDFDIIU/eYWC2BgI9ey1UwqfIFE8Gg=;
+	b=RSHbOW6y9J+qfl4v4NOO/a0eQIGD2vGwqOj/C241mDnJjIzmqTmacv6PwV8RC193L2lDg+
+	yYC5TzGYumJktxSpNdeWhLume5mNDuBZ+666P0SomTkAxWrPqBCkQA0bm04bZTBIiFTcmE
+	zCxpY/+9OqOLSGICOaHNrJrG5vMToaU=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-478-ZAFeV0m9P-uQ-1se1ue-Gg-1; Sun,
+ 23 Nov 2025 13:32:50 -0500
+X-MC-Unique: ZAFeV0m9P-uQ-1se1ue-Gg-1
+X-Mimecast-MFC-AGG-ID: ZAFeV0m9P-uQ-1se1ue-Gg_1763922765
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CA33419560B5;
+	Sun, 23 Nov 2025 18:32:42 +0000 (UTC)
+Received: from fedora (unknown [10.44.32.8])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id CB9B4180057F;
+	Sun, 23 Nov 2025 18:32:22 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun, 23 Nov 2025 19:32:42 +0100 (CET)
+Date: Sun, 23 Nov 2025 19:32:21 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Adrian Reber <areber@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	tiozhang <tiozhang@didiglobal.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	YueHaibing <yuehaibing@huawei.com>,
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
+	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	David Windsor <dwindsor@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hans Liljestrand <ishkamiel@gmail.com>,
+	Penglei Jiang <superman.xpt@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
+Message-ID: <aSNTNZxiQ0txISJx@redhat.com>
+References: <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <20251105143210.GA25535@redhat.com>
+ <20251111-ankreiden-augen-eadcf9bbdfaa@brauner>
+ <GV2PPF74270EBEE4FE6E639B899D01D8870E4C9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <aRs4zYDhddBQFiXZ@redhat.com>
+ <GV2PPF74270EBEE6F59267B0E9F28F536D0E4C9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAHC9VhTuf1u4B3uybZxdojcmz5sFG+_JHUCC=C0N=9gFDmurHg@mail.gmail.com>
+In-Reply-To: <GV2PPF74270EBEE6F59267B0E9F28F536D0E4C9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On 2025-11-19 14:55:47 [-0500], Paul Moore wrote:
-> On Wed, Nov 19, 2025 at 6:20=E2=80=AFAM Sebastian Andrzej Siewior
-> <bigeasy@linutronix.de> wrote:
-> > On 2025-04-29 15:04:34 [+0200], Thomas Wei=C3=9Fschuh wrote:
-> > > The lockdown check buried in module_sig_check() will not compose well
-> > > with the introduction of hash-based module validation.
+Hi Bernd,
+
+sorry for delay, I am on PTO, didn't read emails this week...
+
+On 11/17, Bernd Edlinger wrote:
+>
+> On 11/17/25 16:01, Oleg Nesterov wrote:
+> > On 11/17, Bernd Edlinger wrote:
+> >>
+> >> On 11/11/25 10:21, Christian Brauner wrote:
+> >>> On Wed, Nov 05, 2025 at 03:32:10PM +0100, Oleg Nesterov wrote:
+> >>
+> >>>> But this is minor. Why do we need "bool unsafe_execve_in_progress" ?
+> >>>> If this patch is correct, de_thread() can drop/reacquire cred_guard_mutex
+> >>>> unconditionally.
+> >>>>
+> >>
+> >> I would not like to drop the mutex when no absolutely necessary for performance reasons.
 > >
-> > An explanation of why would be nice.
->=20
-> /me shrugs
->=20
-> I thought the explanation was sufficient.
+> > OK, I won't insist... But I don't really understand how this can help to
+> > improve the performance. If nothing else, this adds another for_other_threads()
+> > loop.
+> >
+>
+> If no dead-lock is possible it is better to complete the de_thread without
+> releasing the mutex.  For the debugger it is also the better experience,
+> no matter when the ptrace_attack happens it will succeed rather quickly either
+> before the execve or after the execve.
 
-Okay. So if it is just me and everyone is well aware then okay.
+I still disagree, I still don't understand the "performance reasons", but since I can't
+convince you I won't really argue.
 
-Sebastian
+> >>>>> +	if (unlikely(unsafe_execve_in_progress)) {
+> >>>>> +		spin_unlock_irq(lock);
+> >>>>> +		sig->exec_bprm = bprm;
+> >>>>> +		mutex_unlock(&sig->cred_guard_mutex);
+> >>>>> +		spin_lock_irq(lock);
+> >>>>
+> >>>> I don't think spin_unlock_irq() + spin_lock_irq() makes any sense...
+> >>>>
+> >>
+> >> Since the spin lock was acquired while holding the mutex, both should be
+> >> unlocked in reverse sequence and the spin lock re-acquired after releasing
+> >> the mutex.
+> >
+> > Why?
+> >
+>
+> It is generally more safe when each thread acquires its mutexes in order and
+> releases them in reverse order.
+> Consider this:
+> Thread A:
+> holds spin_lock_irq(siglock);
+> does mutes_unlock(cred_guard_mutex); with irq disabled.
+> task switch happens to Thread B which has irq enabled.
+> and is waiting for cred_guard_mutex.
+> Thrad B:
+> does mutex_lock(cred_guard_mutex);
+> but is interrupted this point and the interrupt handler I executes
+> now iterrupt handler I wants to take siglock and is blocked,
+> because the system one single CPU core.
+
+I don't follow. Do you mean PREEMPT_RT ?
+
+If yes. In this case spin_lock_irq() is rt_spin_lock() which doesn't disable irqs,
+it does rt_lock_lock() (takes rt_mutex) + migrate_disable().
+
+I do think that spin/mutex/whatever_unlock() is always safe. In any order, and
+regardless of RT.
+
+> > And just in case... Lets look at this code
+> >
+> > 	+                               rcu_assign_pointer(task->real_cred, bprm->cred);
+> > 	+                               task->mm = bprm->mm;
+> > 	+                               retval = __ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS);
+> > 	+                               rcu_assign_pointer(task->real_cred, old_cred);
+> > 	+                               task->mm = old_mm;
+> >
+> > again.
+> >
+> > This is mostly theoretical, but what if begin_new_exec() fails after de_thread()
+> > and before exec_mmap() and/or commit_creds(bprm->cred) ? In this case the execing
+> > thread will report SIGSEGV to debugger which can (say) read old_mm.
+> >
+> > No?
+> >
+>
+> Yes, and that is the reason why the debugger has to prove the possession of access rights
+> to the process before the execve which are necessary in case exeve fails, yes the debugger
+> may inspect the result, and as well the debugger's access rights must be also sufficient
+> to ptrace the process after execve succeeds, moreover the debugged process shall stop
+> right at the first instruction where the new process starts.
+
+Not sure I understand... OK, I see that you sent V18, and in this version ptrace_attach()
+calls __ptrace_may_access() twice, so IIUC ptrace_attach() can only succeed if the debugger
+has rights to trace the execing thread both before and after exec...
+
+Oleg.
+
