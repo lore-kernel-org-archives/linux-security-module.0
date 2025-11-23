@@ -1,76 +1,78 @@
 Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0354E46BF
-	for <linux-security-module@vger.kernel.org>; Sun, 23 Nov 2025 21:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1309746BF
+	for <linux-security-module@vger.kernel.org>; Sun, 23 Nov 2025 21:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763931740; cv=none; b=Z2L4LDpi5oFsOH4GkoempnI1h0SJNgYarwrto0dVsJp+nkqyL63jTE1dujkYydm2srOFag7LjuViPte/K5QdmmuZW5cLAYRynjbi3SsrzrMwz99wz0opatwsplE3GQ9XUuMAdSx0vITCjhjhXJjao9D4YKdkZSRe12tT0aEgJoE=
+	t=1763931759; cv=none; b=bW+3gFoM3YBZAWoKHE6OqBVPgk7TBGXHakbXo3QAcjs8fU4tSEyjFYmsAurSbFBURmQ0cyF8sI5lC3MaYpXUrM+BxvOoKiP+wF0LShCsht7I31Cf91vRos1dn5AEBPuaYBv7iL9syb2BMTI3mjhskYbbA7w1foS+xvL7cVeKPUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763931740; c=relaxed/simple;
-	bh=Xy67yy9l6tggBPqL5ihPQjQmdwarG+GvbshWr/K0isc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BzHFLiVe0DtRe0cyKIkhG7ysif3ACOK4Qrr4NPV4jkY8FCyVPiOzgTst3sTT5+6VoCnaW05pdhRz68wt14XuxBY5svdYX7Am91YWSUc2Po3MljebNHhr5q5snJmJg92j40WGpFEwjJyGlWc9JNcbRPSaBN3ZsvlCK4iKNV3mWSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=MywgvAQM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=yQPPmCGk; arc=none smtp.client-ip=103.168.172.150
+	s=arc-20240116; t=1763931759; c=relaxed/simple;
+	bh=rJNWtwNmKMqSZCz2pOcztxpGfNDilgDA6TkNz4iLYYk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VoVQwjGzqQLsI7l16SiDspMRsexxVIhQEMzfkDXcndcCo2u440XbCB1cYKU8Q/SZhhn5zSJvhitwW9CTiGmkMkpbj6uBswyDEkdMRNMixVGIB7XwTf/BEZCJ5wIJcKyLFFFOikvxVRAlNgAdKqDGCdTP2rNUap6I3RbqzMGSu2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=FAhCBaZn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TeGSmGwp; arc=none smtp.client-ip=103.168.172.150
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="MywgvAQM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yQPPmCGk"
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfout.phl.internal (Postfix) with ESMTP id 01DABEC01D7;
-	Sun, 23 Nov 2025 16:02:17 -0500 (EST)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="FAhCBaZn";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TeGSmGwp"
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 4220BEC01D7;
+	Sun, 23 Nov 2025 16:02:36 -0500 (EST)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Sun, 23 Nov 2025 16:02:17 -0500
+  by phl-compute-01.internal (MEProxy); Sun, 23 Nov 2025 16:02:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm3; t=1763931736; x=1764018136; bh=l7
-	96J+yPn3ZjaAL6t3UY9kqLuhj6mBi+zqjdFHBbou8=; b=MywgvAQM2EIpcAwsru
-	Za8Jg+hTQwb+IYPBgkfmmxOOB1Ak8/C55NVmeaot18YNM6RM0d8mDkVJfWSiRznI
-	mYQ5bqGFCF5GZPu2jiGXhvFV/ftgeXuSiyAHY8UU58cj4okL4eyghzbIua/dswqS
-	0q/EE73Dc6O7njpBB6Mqz4UcDJgT0RQJa7mlEemXlXFUOmsAT2pNWMED2rLBIOvn
-	6LqGOIIT8N/OCxx77v41j336HsIn2YfOaurcG+CiYvw3z5JWRQZ6niH/gFwuZaNp
-	v4G/rTXZvRqMulMuIBsH5OSB3yNZPRbA9XooUr3vGp+xwecIzfHG5iLiWJMxvkWV
-	43cA==
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1763931756; x=
+	1764018156; bh=cNEEhmtyHTKZ2oyQfnzzdyRiyg9FG56Amx5PhNPH1LU=; b=F
+	AhCBaZntHSJCiVynpoE5t5yTflfAEyMaI1Ow79+9betw0IOmeaqtNxojRRlTMR5F
+	YRAdQ7iEuQajA2YLkPao5V2mNXk3R0KojaK2lP/cdIviF2dT69p8GxFzbB6uV86c
+	iy0ufL/OyXU7is2YOpWObxLE5rCUreXTCE3VS0ns0LpDTikFJzJxDFO4FFVr9jDe
+	Hq2HwiS+Yd1Uo1yzBsDBOartTUs3fO5vohmn23tKS8zCTd5gb6cOgs4QqjfP0CEn
+	lk9eUrvz/2RhKziMV9xoVNeU7Dpf6Ubiy+e63VmV2XgtDHBhIIVG7c1xqavc8B6+
+	0/je51xmUbbN0tt0A1RTg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1763931736; x=1764018136; bh=l796J+yPn3ZjaAL6t3UY9kqLuhj6
-	mBi+zqjdFHBbou8=; b=yQPPmCGk9FwDNaOrV4cjHHWRH0axQ3KOdEFUzVINs/zX
-	mSZqI8nSo7qRiaqonMO8mea6JN1xOLAv8q9aybcKpQqfo4SZHtwrGamaIpzGO9JU
-	Gz/VBcfEVUmknuwmbTaszaQr3qRTuxhTqDvNc/OLJpoIZa3gUutqOFbJ6ZpFDhXp
-	pBZf60AX51W3VFhaTdE/+q/LAWzTW9Hd6cgFrHr6HGx/EQQl4v3vNleSorKdGwBX
-	6HLgbBsrl+XTHduv99sWCpwT1TebS52w1Gz83n+9ssBREkMlcuJRkIJOztDgQ0Hp
-	2lrHUK4Gqa8nUxKutQSz1XSy5I7l7NUDTB+4fb0GjA==
-X-ME-Sender: <xms:WHYjads59ZxHsBJsN62nkDZbQBUjW9xu2m8yZPildol0P80VPIZuwQ>
-    <xme:WHYjaYtoFmUCO-LOXA383F8Mr7CYsAgt837um12jHjQ4KTQaNmXwGnICi2egHxTxt
-    4QMbQwHNDRQe-2rIg-iU-fdBbqG5yiLk_8nyDMfYn9XGm_hhBSstYs>
-X-ME-Received: <xmr:WHYjaTBB3wGs5Y5KNLLfq1iXRnjGTo9hHQ1k7WoGDCdFK9q_ceSAsZI8dQEQQ7MDRhSd>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvfeeijeegucetufdoteggodetrf
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm3; t=1763931756; x=1764018156; bh=c
+	NEEhmtyHTKZ2oyQfnzzdyRiyg9FG56Amx5PhNPH1LU=; b=TeGSmGwp/JUBzjzMT
+	KfZNQ3dPebOWLO96ULDZioOcGnKvSGZMPSoNcFcDCUEKQVKOUsde/q8ctsptFbDv
+	lDNtluq/AZ+Kx2OP2PEAY8adVlOP78wS/dHg7nQrJQ7TdLCSfT+lU7jDvD26VAZl
+	6+tB6XcxXfx0B4+1y3tyYpVXE+BnWg6Z32KkPmYQ93akf9BynGiG4dnWUm6wFyY/
+	bvQuQjXfznIfaXRGniiGRITdtsLmQ5fk3WVb/NqJrv+uuIByNJ7RsdWx6JW4rLGp
+	T6dZNdso1tKU07TQdU3m92cbB7nMuC0AVGqZoaSC/EOnWzwJky67wcsMIOKFe4Fk
+	q8r7A==
+X-ME-Sender: <xms:a3YjaV0L84KrCVrj8tsw3CvBZglE1YXxUWsSecnEDkwfKqbiGN8tKw>
+    <xme:a3YjaeVoOzzvKyMmkgrs_v6MFdluDyrWBcbwwcFs2nJ1i8VXUk2RIuZLZy_VzWm3N
+    2q-J8NKxtqFVEp_V0OmNbSqFJNsbIMn-3_y-W8OUcmZEOPKYkI41zI>
+X-ME-Received: <xmr:a3YjaYJD6TlR5X_H2qkau5TXQfZwc4KuizCjyGf5Ao2hXcTRt57BfyPSmW0qJ0yUAZW_>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvfeeijeehucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpefvihhnghhmrgho
-    ucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepudeuge
-    etteefuedttdelffefueduveehheejieduieevveejiedtheekkeefjedunecuffhomhgr
-    ihhnpehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhn
-    sggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihgtse
-    guihhgihhkohgurdhnvghtpdhrtghpthhtohepmhesmhgrohifthhmrdhorhhgpdhrtghp
-    thhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthhopehuthhilhhith
-    ihvghmrghljeejsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhgrtghksehsuhhsvgdr
-    tgiipdhrtghpthhtohepgigrnhgufhhurhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    eplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrgh
-X-ME-Proxy: <xmx:WHYjaaNPj6dFI3eC26IZe_VmUSPJSgbfLnuSSJS2zRYOeKoP3tp_5A>
-    <xmx:WHYjacwuiiVZRzcDktnnmbM5QkY9O2KEf4BW9pILNmt3k_npN6Hj8Q>
-    <xmx:WHYjaaWUPoB7sSmx6n0XiKiwcTEyMep1w4GihDC0S3_W4lKXZVJKKw>
-    <xmx:WHYjaePjJ2ZzBgBrYsdEnbQughUdccdgWw0Fzi4ChcMTRNgdoLU52w>
-    <xmx:WHYjaV8a3x9f1eOMMGjaJ2fN4zYnwbcOsYzsSxi5ONdI8CfTPbkPRrod>
+    gurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepvfhinhhgmhgr
+    ohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeeihf
+    dvvdfhvdfffeetveefheefgedtvdeufeegkeeiveehuddvgfffieelueekueenucffohhm
+    rghinheptgholhhlvggtthgvuggprhhulhgvpghflhgrghhsrdhsvggtuhhrihhthienuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrgho
+    fihtmhdrohhrghdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepmhhitgesughighhikhhougdrnhgvthdprhgtphhtthhopehmsehmrghofiht
+    mhdrohhrghdprhgtphhtthhopehgnhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpth
+    htohepuhhtihhlihhthigvmhgrlhejjeesghhmrghilhdrtghomhdprhgtphhtthhopehj
+    rggtkhesshhushgvrdgtiidprhgtphhtthhopeigrghnughfuhhrhiesghhmrghilhdrtg
+    homhdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgv
+    rhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:a3YjaY34f8G0HPBJTJ4ZE7JufCetZC2Ml5IltFGEBsPkKe_w_zqfaw>
+    <xmx:a3YjaW5WfAwDIXx9tWxCI7fu1d-0xrkY3KjFgsP7xVdvLu0c3_CS0w>
+    <xmx:a3YjaZ8ATWq_GugOQPyeJsc61Wk6Legg8mzvx8YwhIjKbtMmAHCl1g>
+    <xmx:a3YjaVV5xll4VZ5syxAeO17o_GIhRqMEa0ii8aLodjV2uPbd-Xs6MQ>
+    <xmx:bHYjaZk6eoBv9tIPpX1RUl_0WSTkhLrj-XGl26u78_BQDcAIOdw1DJHy>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 23 Nov 2025 16:02:15 -0500 (EST)
+ 23 Nov 2025 16:02:33 -0500 (EST)
 From: Tingmao Wang <m@maowtm.org>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: Tingmao Wang <m@maowtm.org>,
@@ -79,171 +81,323 @@ Cc: Tingmao Wang <m@maowtm.org>,
 	Jan Kara <jack@suse.cz>,
 	Abhinav Saxena <xandfury@gmail.com>,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v5 00/10] Implement LANDLOCK_ADD_RULE_QUIET
-Date: Sun, 23 Nov 2025 20:57:36 +0000
-Message-ID: <cover.1763931318.git.m@maowtm.org>
+Subject: [PATCH v5 01/10] landlock: Add a place for flags to layer rules
+Date: Sun, 23 Nov 2025 20:57:37 +0000
+Message-ID: <cebbc90d5a6bbfa38c6c6e4e770cb2eae399466e.1763931318.git.m@maowtm.org>
 X-Mailer: git-send-email 2.52.0
+In-Reply-To: <cover.1763931318.git.m@maowtm.org>
+References: <cover.1763931318.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
+To avoid unnecessarily increasing the size of struct landlock_layer, we
+make the layer level a u8 and use the space to store the flags struct.
 
-This is the v5 of the "quiet flag" series, implementing the feature as
-proposed in [1].
+Cc: Justin Suess <utilityemal77@gmail.com>
+Signed-off-by: Tingmao Wang <m@maowtm.org>
+---
 
-v4: https://lore.kernel.org/all/cover.1763330228.git.m@maowtm.org/
-v3: https://lore.kernel.org/all/cover.1761511023.git.m@maowtm.org/
-v2: https://lore.kernel.org/all/cover.1759686613.git.m@maowtm.org/
-v1: https://lore.kernel.org/all/cover.1757376311.git.m@maowtm.org/
+Changes in v5:
+- Move rule_flags into landlock_request.  This lets us get rid of the
+  extra parameters to is_access_to_paths_allowed (and later on,
+  landlock_log_denial), and thus less code changes.
 
-v4..v5 addresses review feedbacks, most significantly:
-  - reduces code changes by pushing rule_flags into landlock_request.
-  - adding test cases for two layers handling different access bits.
+Changes in v3:
+- Comment changes, move local variables, simplify if branch
 
-v3..v4 is a one-character formatting change, plus more tests.
+Changes in v2:
+- Comment changes
+- Rebased to include disconnected directory handling changes on mic/next
+  and add backing up of collected_rule_flags.
 
-We now have 5 patches for the selftest - I'm happy to squash it into one
-depending on preference (and happy for Mickaël to do the squash if no
-other feedback):
-- selftests/landlock: Replace hard-coded 16 with a constant
-- selftests/landlock: add tests for quiet flag with fs rules
-- selftests/landlock: add tests for quiet flag with net rules
-- selftests/landlock: Add tests for quiet flag with scope
-- selftests/landlock: Add tests for invalid use of quiet flag
+ security/landlock/audit.h   |  2 ++
+ security/landlock/fs.c      | 71 +++++++++++++++++++++++++++----------
+ security/landlock/net.c     |  3 +-
+ security/landlock/ruleset.c |  7 +++-
+ security/landlock/ruleset.h | 26 ++++++++++++--
+ 5 files changed, 86 insertions(+), 23 deletions(-)
 
-v2..v3:
-Not much has changed in the actual functionality except various comment,
-typing, asserts and general style fixes based on feedback.  The major new
-thing here is tests (a bit of KUnit squashed into the optional access
-commit, a lot of selftests especially in fs_tests.c).
-
-The added fs_tests should exercise code path for optional and non-optional
-access, renames, and mountpoint and disconnected directory handling.  I
-will add the above missing bits to v4.
-
-Removed:
-- "Implement quiet for optional accesses"
-    (squashed into "landlock: Suppress logging when quiet flag is present")
-
-
-Old feature summary below:
-
-The quiet flag allows a sandboxer to suppress audit logs for uninteresting
-denials.  The flag can be set on objects and inherits downward in the
-filesystem hierarchy.  On a denial, the youngest denying layer's quiet
-flag setting decides whether to audit.  The motivation for this feature is
-to reduce audit noise, and also prepare for a future supervisor feature
-which will use this bit to suppress supervisor notifications.
-
-This patch introduces a new quiet access mask in the ruleset_attr, which
-gets eventually stored in the hierarchy. This allows the user to specify
-which access should be affected by quiet bits.  One can then, for example,
-make it such that read accesses to certain files are not audited (but
-still denied), but all writes are still audited, regardless of location.
-
-The sandboxer is extended to show example usage of this feature,
-supporting quieting filesystem, network and scope accesses.
-
-Demo:
-
-    /# LL_FS_RO=/usr LL_FS_RW= LL_FORCE_LOG=1 LL_FS_QUIET=/dev:/tmp:/etc LL_FS_QUIET_ACCESS=r ./sandboxer bash
-    ...
-    audit: type=1423 audit(1759680175.562:195): domain=15bb25f6b blockers=fs.write_file,fs.read_file path="/dev/tty" dev="devtmpfs" ino=11
-    ^^^^^^^^
-    # note: because write is not quieted, we see the above line. blockers
-    # contains read as well since that's the originally requested access.
-    audit: type=1424 audit(1759680175.562:195): domain=15bb25f6b status=allocated mode=enforcing pid=616 uid=0 exe="/sandboxer" comm="sandboxer"
-    audit: type=1300 audit(1759680175.562:195): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c86113d1 a2=802 a3=0 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
-    audit: type=1327 audit(1759680175.562:195): proctitle="bash"
-    bash: cannot set terminal process group (605): Inappropriate ioctl for device
-    bash: no job control in this shell
-    bash: /etc/bash.bashrc: Permission denied
-    audit: type=1423 audit(1759680175.570:196): domain=15bb25f6b blockers=fs.read_file path="/.bash_history" dev="virtiofs" ino=36963
-    ^^^^^^^^
-    # read outside /dev:/tmp:/etc - not quieted
-    audit: type=1300 audit(1759680175.570:196): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c868e400 a2=0 a3=0 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
-    audit: type=1327 audit(1759680175.570:196): proctitle="bash"
-    audit: type=1423 audit(1759680175.570:197): domain=15bb25f6b blockers=fs.read_file path="/.bash_history" dev="virtiofs" ino=36963
-    audit: type=1300 audit(1759680175.570:197): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c868e400 a2=0 a3=0 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
-    audit: type=1327 audit(1759680175.570:197): proctitle="bash"
-
-    bash-5.2# head /etc/passwd
-    head: cannot open '/etc/passwd' for reading: Permission denied
-    ^^^^^^^^
-    # reads to /etc are quieted
-
-    bash-5.2# echo evil >> /etc/passwd
-    bash: /etc/passwd: Permission denied
-    audit: type=1423 audit(1759680227.030:198): domain=15bb25f6b blockers=fs.write_file path="/etc/passwd" dev="virtiofs" ino=790
-    ^^^^^^^^
-    # writes are not quieted
-    audit: type=1300 audit(1759680227.030:198): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c86ab030 a2=441 a3=1b6 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
-    audit: type=1327 audit(1759680227.030:198): proctitle="bash"
-
-Design:
-
-- The user can set the quiet flag for a layer on any part of the fs
-  hierarchy (whether it allows any access on it or not), and the flag
-  inherits down (no support for "cancelling" the inheritance of the flag
-  in specific subdirectories).
-
-- The youngest layer that denies a request gets to decide whether the
-  denial is audited or not.  This means that a compromised binary, for
-  example, cannot "turn off" Landlock auditing when it tries to access
-  files, unless it denies access to the files itself.  There is some
-  debate to be had on whether, if a parent layer sets the quiet flag, but
-  the request is denied by a deeper layer, whether Landlock should still
-  audit anyway (since the rule author of the child layer likely did not
-  expect the denial, so it would be good diagnostic).  The current
-  approach is to ignore the quiet on the parent layer and audit anyway.
-
-[1]: https://github.com/landlock-lsm/linux/issues/44#issuecomment-2876500918
-
-Kind regards,
-Tingmao
-
-Tingmao Wang (10):
-  landlock: Add a place for flags to layer rules
-  landlock: Add API support and docs for the quiet flags
-  landlock: Suppress logging when quiet flag is present
-  landlock: Fix wrong type usage
-  samples/landlock: Add quiet flag support to sandboxer
-  selftests/landlock: Replace hard-coded 16 with a constant
-  selftests/landlock: add tests for quiet flag with fs rules
-  selftests/landlock: add tests for quiet flag with net rules
-  selftests/landlock: Add tests for quiet flag with scope
-  selftests/landlock: Add tests for invalid use of quiet flag
-
- include/uapi/linux/landlock.h                 |   64 +
- samples/landlock/sandboxer.c                  |  133 +-
- security/landlock/access.h                    |    5 +
- security/landlock/audit.c                     |  259 +-
- security/landlock/audit.h                     |    3 +
- security/landlock/domain.c                    |   33 +
- security/landlock/domain.h                    |   10 +
- security/landlock/fs.c                        |  104 +-
- security/landlock/fs.h                        |   19 +-
- security/landlock/net.c                       |   10 +-
- security/landlock/net.h                       |    5 +-
- security/landlock/ruleset.c                   |   19 +-
- security/landlock/ruleset.h                   |   38 +-
- security/landlock/syscalls.c                  |   72 +-
- tools/testing/selftests/landlock/audit_test.c |   27 +-
- tools/testing/selftests/landlock/base_test.c  |   61 +-
- tools/testing/selftests/landlock/common.h     |    2 +
- tools/testing/selftests/landlock/fs_test.c    | 2464 ++++++++++++++++-
- tools/testing/selftests/landlock/net_test.c   |  121 +-
- .../landlock/scoped_abstract_unix_test.c      |   77 +-
- 20 files changed, 3403 insertions(+), 123 deletions(-)
-
-
-base-commit: d724c6f85e80a23ed46b7ebc6e38b527c09d64f5
+diff --git a/security/landlock/audit.h b/security/landlock/audit.h
+index 92428b7fc4d8..d66c6d936438 100644
+--- a/security/landlock/audit.h
++++ b/security/landlock/audit.h
+@@ -49,6 +49,8 @@ struct landlock_request {
+ 	/* Required fields for requests with deny masks. */
+ 	const access_mask_t all_existing_optional_access;
+ 	deny_masks_t deny_masks;
++
++	struct collected_rule_flags rule_flags;
+ };
+ 
+ #ifdef CONFIG_AUDIT
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index b33d8ac239c1..58dba2f7c6cd 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -775,6 +775,9 @@ static bool is_access_to_paths_allowed(
+ 		_layer_masks_parent2_bkp[LANDLOCK_NUM_ACCESS_FS];
+ 	layer_mask_t(*layer_masks_child1)[LANDLOCK_NUM_ACCESS_FS] = NULL,
+ 	(*layer_masks_child2)[LANDLOCK_NUM_ACCESS_FS] = NULL;
++	struct collected_rule_flags *rule_flags_parent1 = &log_request_parent1->rule_flags;
++	struct collected_rule_flags *rule_flags_parent2 = &log_request_parent2->rule_flags;
++	struct collected_rule_flags _rule_flag_parent1_bkp, _rule_flag_parent2_bkp;
+ 
+ 	if (!access_request_parent1 && !access_request_parent2)
+ 		return true;
+@@ -800,6 +803,8 @@ static bool is_access_to_paths_allowed(
+ 		 */
+ 		memcpy(&_layer_masks_parent2_bkp, layer_masks_parent2,
+ 		       sizeof(_layer_masks_parent2_bkp));
++		memcpy(&_rule_flag_parent2_bkp, rule_flags_parent2,
++		       sizeof(_rule_flag_parent2_bkp));
+ 		allowed_parent2 = is_layer_masks_allowed(layer_masks_parent2);
+ 
+ 		/*
+@@ -826,26 +831,38 @@ static bool is_access_to_paths_allowed(
+ 	 */
+ 	memcpy(&_layer_masks_parent1_bkp, layer_masks_parent1,
+ 	       sizeof(_layer_masks_parent1_bkp));
++	memcpy(&_rule_flag_parent1_bkp, rule_flags_parent1,
++	       sizeof(_rule_flag_parent1_bkp));
+ 	allowed_parent1 = is_layer_masks_allowed(layer_masks_parent1);
+ 	is_dom_check_bkp = is_dom_check;
+ 
+ 	if (unlikely(dentry_child1)) {
++		/*
++		 * Get the layer masks for the child dentries for use by domain
++		 * check later.  The rule_flags for child1 should have been
++		 * included in rule_flags_parent1 already (cf.
++		 * collect_domain_accesses), and is not relevant for domain check,
++		 * so we don't have to pass it to landlock_unmask_layers.
++		 */
+ 		landlock_unmask_layers(
+ 			find_rule(domain, dentry_child1),
+ 			landlock_init_layer_masks(
+ 				domain, LANDLOCK_MASK_ACCESS_FS,
+ 				&_layer_masks_child1, LANDLOCK_KEY_INODE),
+-			&_layer_masks_child1, ARRAY_SIZE(_layer_masks_child1));
++			&_layer_masks_child1, ARRAY_SIZE(_layer_masks_child1),
++			NULL);
+ 		layer_masks_child1 = &_layer_masks_child1;
+ 		child1_is_directory = d_is_dir(dentry_child1);
+ 	}
+ 	if (unlikely(dentry_child2)) {
++		/* See above comment for why NULL is passed as rule_flags_masks. */
+ 		landlock_unmask_layers(
+ 			find_rule(domain, dentry_child2),
+ 			landlock_init_layer_masks(
+ 				domain, LANDLOCK_MASK_ACCESS_FS,
+ 				&_layer_masks_child2, LANDLOCK_KEY_INODE),
+-			&_layer_masks_child2, ARRAY_SIZE(_layer_masks_child2));
++			&_layer_masks_child2, ARRAY_SIZE(_layer_masks_child2),
++			NULL);
+ 		layer_masks_child2 = &_layer_masks_child2;
+ 		child2_is_directory = d_is_dir(dentry_child2);
+ 	}
+@@ -901,16 +918,18 @@ static bool is_access_to_paths_allowed(
+ 			       NULL :
+ 			       find_rule(domain, walker_path.dentry);
+ 
+-		allowed_parent1 = allowed_parent1 ||
+-				  landlock_unmask_layers(
+-					  rule, access_masked_parent1,
+-					  layer_masks_parent1,
+-					  ARRAY_SIZE(*layer_masks_parent1));
+-		allowed_parent2 = allowed_parent2 ||
+-				  landlock_unmask_layers(
+-					  rule, access_masked_parent2,
+-					  layer_masks_parent2,
+-					  ARRAY_SIZE(*layer_masks_parent2));
++		allowed_parent1 =
++			allowed_parent1 ||
++			landlock_unmask_layers(rule, access_masked_parent1,
++					       layer_masks_parent1,
++					       ARRAY_SIZE(*layer_masks_parent1),
++					       rule_flags_parent1);
++		allowed_parent2 =
++			allowed_parent2 ||
++			landlock_unmask_layers(rule, access_masked_parent2,
++					       layer_masks_parent2,
++					       ARRAY_SIZE(*layer_masks_parent2),
++					       rule_flags_parent2);
+ 
+ 		/* Stops when a rule from each layer grants access. */
+ 		if (allowed_parent1 && allowed_parent2) {
+@@ -947,10 +966,16 @@ static bool is_access_to_paths_allowed(
+ 				memcpy(&_layer_masks_parent1_bkp,
+ 				       layer_masks_parent1,
+ 				       sizeof(_layer_masks_parent1_bkp));
++				memcpy(&_rule_flag_parent1_bkp,
++				       rule_flags_parent1,
++				       sizeof(_rule_flag_parent1_bkp));
+ 				if (layer_masks_parent2) {
+ 					memcpy(&_layer_masks_parent2_bkp,
+ 					       layer_masks_parent2,
+ 					       sizeof(_layer_masks_parent2_bkp));
++					memcpy(&_rule_flag_parent2_bkp,
++					       rule_flags_parent2,
++					       sizeof(_rule_flag_parent2_bkp));
+ 					is_dom_check_bkp = is_dom_check;
+ 				}
+ 
+@@ -999,11 +1024,15 @@ static bool is_access_to_paths_allowed(
+ 		 */
+ 		memcpy(layer_masks_parent1, &_layer_masks_parent1_bkp,
+ 		       sizeof(_layer_masks_parent1_bkp));
++		memcpy(rule_flags_parent1, &_rule_flag_parent1_bkp,
++		       sizeof(_rule_flag_parent1_bkp));
+ 		allowed_parent1 =
+ 			is_layer_masks_allowed(&_layer_masks_parent1_bkp);
+ 		if (layer_masks_parent2) {
+ 			memcpy(layer_masks_parent2, &_layer_masks_parent2_bkp,
+ 			       sizeof(_layer_masks_parent2_bkp));
++			memcpy(rule_flags_parent2, &_rule_flag_parent2_bkp,
++			       sizeof(_rule_flag_parent2_bkp));
+ 			allowed_parent2 = is_layer_masks_allowed(
+ 				&_layer_masks_parent2_bkp);
+ 
+@@ -1139,7 +1168,8 @@ static access_mask_t maybe_remove(const struct dentry *const dentry)
+ static bool collect_domain_accesses(
+ 	const struct landlock_ruleset *const domain,
+ 	const struct path *const mnt_dir, struct dentry *dir,
+-	layer_mask_t (*const layer_masks_dom)[LANDLOCK_NUM_ACCESS_FS])
++	layer_mask_t (*const layer_masks_dom)[LANDLOCK_NUM_ACCESS_FS],
++	struct collected_rule_flags *const rule_flags)
+ {
+ 	access_mask_t access_dom;
+ 	bool ret = false;
+@@ -1158,9 +1188,9 @@ static bool collect_domain_accesses(
+ 		struct dentry *parent_dentry;
+ 
+ 		/* Gets all layers allowing all domain accesses. */
+-		if (landlock_unmask_layers(find_rule(domain, dir), access_dom,
+-					   layer_masks_dom,
+-					   ARRAY_SIZE(*layer_masks_dom))) {
++		if (landlock_unmask_layers(
++			    find_rule(domain, dir), access_dom, layer_masks_dom,
++			    ARRAY_SIZE(*layer_masks_dom), rule_flags)) {
+ 			/*
+ 			 * Before allowing this side of the access request, checks that the
+ 			 * walk was not in a disconnected directory.
+@@ -1327,11 +1357,14 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+ 						      old_dentry->d_parent;
+ 
+ 	/* new_dir->dentry is equal to new_dentry->d_parent */
+-	allow_parent1 = collect_domain_accesses(
+-		subject->domain, &mnt_dir, old_parent, &layer_masks_parent1);
++	allow_parent1 = collect_domain_accesses(subject->domain, &mnt_dir,
++						old_parent,
++						&layer_masks_parent1,
++						&request1.rule_flags);
+ 	allow_parent2 = collect_domain_accesses(subject->domain, &mnt_dir,
+ 						new_dir->dentry,
+-						&layer_masks_parent2);
++						&layer_masks_parent2,
++						&request2.rule_flags);
+ 	if (allow_parent1 && allow_parent2)
+ 		return 0;
+ 
+diff --git a/security/landlock/net.c b/security/landlock/net.c
+index 1f3915a90a80..fc6369dffa51 100644
+--- a/security/landlock/net.c
++++ b/security/landlock/net.c
+@@ -48,6 +48,7 @@ static int current_check_access_socket(struct socket *const sock,
+ {
+ 	__be16 port;
+ 	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_NET] = {};
++	struct collected_rule_flags rule_flags = {};
+ 	const struct landlock_rule *rule;
+ 	struct landlock_id id = {
+ 		.type = LANDLOCK_KEY_NET_PORT,
+@@ -179,7 +180,7 @@ static int current_check_access_socket(struct socket *const sock,
+ 						   access_request, &layer_masks,
+ 						   LANDLOCK_KEY_NET_PORT);
+ 	if (landlock_unmask_layers(rule, access_request, &layer_masks,
+-				   ARRAY_SIZE(layer_masks)))
++				   ARRAY_SIZE(layer_masks), &rule_flags))
+ 		return 0;
+ 
+ 	audit_net.family = address->sa_family;
+diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+index dfcdc19ea268..81cdf87d1c79 100644
+--- a/security/landlock/ruleset.c
++++ b/security/landlock/ruleset.c
+@@ -624,7 +624,8 @@ landlock_find_rule(const struct landlock_ruleset *const ruleset,
+ bool landlock_unmask_layers(const struct landlock_rule *const rule,
+ 			    const access_mask_t access_request,
+ 			    layer_mask_t (*const layer_masks)[],
+-			    const size_t masks_array_size)
++			    const size_t masks_array_size,
++			    struct collected_rule_flags *const rule_flags)
+ {
+ 	size_t layer_level;
+ 
+@@ -651,6 +652,10 @@ bool landlock_unmask_layers(const struct landlock_rule *const rule,
+ 		unsigned long access_bit;
+ 		bool is_empty;
+ 
++		/* Collect rule flags for each layer. */
++		if (rule_flags && layer->flags.quiet)
++			rule_flags->quiet_masks |= layer_bit;
++
+ 		/*
+ 		 * Records in @layer_masks which layer grants access to each requested
+ 		 * access: bit cleared if the related layer grants access.
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index 1a78cba662b2..9790c60c0c00 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -29,7 +29,18 @@ struct landlock_layer {
+ 	/**
+ 	 * @level: Position of this layer in the layer stack.  Starts from 1.
+ 	 */
+-	u16 level;
++	u8 level;
++	/**
++	 * @flags: Bitfield for special flags attached to this rule.
++	 */
++	struct {
++		/**
++		 * @quiet: Suppresses denial audit logs for the object covered by
++		 * this rule in this domain.  For filesystem rules, this inherits
++		 * down the file hierarchy.
++		 */
++		bool quiet:1;
++	} flags;
+ 	/**
+ 	 * @access: Bitfield of allowed actions on the kernel object.  They are
+ 	 * relative to the object type (e.g. %LANDLOCK_ACTION_FS_READ).
+@@ -37,6 +48,16 @@ struct landlock_layer {
+ 	access_mask_t access;
+ };
+ 
++/**
++ * struct collected_rule_flags - Hold accumulated flags for each layer.
++ */
++struct collected_rule_flags {
++	/**
++	 * @quiet_masks: Layers for which the quiet flag is effective.
++	 */
++	layer_mask_t quiet_masks;
++};
++
+ /**
+  * union landlock_key - Key of a ruleset's red-black tree
+  */
+@@ -304,7 +325,8 @@ landlock_get_scope_mask(const struct landlock_ruleset *const ruleset,
+ bool landlock_unmask_layers(const struct landlock_rule *const rule,
+ 			    const access_mask_t access_request,
+ 			    layer_mask_t (*const layer_masks)[],
+-			    const size_t masks_array_size);
++			    const size_t masks_array_size,
++			    struct collected_rule_flags *const rule_flags);
+ 
+ access_mask_t
+ landlock_init_layer_masks(const struct landlock_ruleset *const domain,
 -- 
 2.52.0
-
