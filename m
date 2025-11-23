@@ -1,144 +1,183 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3981552FD
-	for <linux-security-module@vger.kernel.org>; Sun, 23 Nov 2025 18:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB9436D4F0
+	for <linux-security-module@vger.kernel.org>; Sun, 23 Nov 2025 21:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763923973; cv=none; b=gP6UmfDuTNcEBxduBF4ZjDROMUBpjTTk+cLgfi/GJHz88TPucB0xcBSzc2ZBVxtiV3GI7TQWLNjeUKBnWuJ9ioXmKuFungwfzs7I7WNLR2uZpHroep63VNltPEIhCahmvoSKR9aPRWCe9bDVn2zPeO3i07Rve/wwCB5NoFA9F7g=
+	t=1763931622; cv=none; b=XAydRGAVErfqeJE5i4cATXmGF/lKIwhJdjO2OZf5Qo+Z8j4o6D2U7eWSbMg2m/2V0yXq5u+edZ9qzhvR57VfGQHeuZbcNQ2i8NCv9GdwwI1/mrP6RlHE4m3yDUTWA+BaVPe3LM6yglAfDw5VAEF/i5WvNSnOotC6Imz9SZ0a/1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763923973; c=relaxed/simple;
-	bh=zMI/uUxdGqoTLXglneizXg85ZqwmhQ1CImBk1AOYyEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YxNSv6sjFIiIOjzrupV1RHZMWdmG0QnVKB/mH3Vl6VFfkz2TRpnETL+V3tbitjQ2cetfwp2h61tAOyVS+2A4zuI0AXCAh4vhzCFrFKDfFeNxuph4ljSwhKHFCiYkw1cKPIJBkbRV3fA+cRPX5OaFgHCJxJHCVC+d9mEWXDKpcZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ewz4rxe5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1763931622; c=relaxed/simple;
+	bh=9FyvjfkT7Qtnnufmm/AEmald98UNxiyDjvz+/RWMmBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NL5ycYlxV+3DWiMKexph5cJtdWR9+P1IgwxQs2UAcAPvKzBO9hND3k9G9k6q5PyP60L6PWkdZbN5onXpttndjOsmtJNseIlCPgKK2NAqFJcazRAUpzeIF8xLtHSt1yjl0cmREhcWkCCxQenU+DbufQAubw8csOrpbiGMKsCuc8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=LqMr/5+A; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OSdDGvbf; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ewz4rxe5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1763923970;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ujJPTxD9bpRdC30uSmxe6b2EMxZkMuLoEavNYh4TQJ0=;
-	b=Ewz4rxe5FL6sKGMF8l85eZTAgY+Br3eZr03L+8sBJTTijiTvaGf2Z5OCxX2IZMKqYqCym4
-	ExQBgWqfGNODfxtRPfLbBP3jpYTN91aOw4hxh9S3zrfiNAOWZzMGLxAsq52Ut/ciiOhisW
-	uD6qlAOtG5b7yi2fTvNpyTDAunC6ePQ=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-390-bNUrHqDOMnaEBK-yTndlnQ-1; Sun,
- 23 Nov 2025 13:52:46 -0500
-X-MC-Unique: bNUrHqDOMnaEBK-yTndlnQ-1
-X-Mimecast-MFC-AGG-ID: bNUrHqDOMnaEBK-yTndlnQ_1763923962
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F86D1800451;
-	Sun, 23 Nov 2025 18:52:39 +0000 (UTC)
-Received: from fedora (unknown [10.44.32.8])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id BD6E219560A7;
-	Sun, 23 Nov 2025 18:52:21 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 23 Nov 2025 19:52:39 +0100 (CET)
-Date: Sun, 23 Nov 2025 19:52:20 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Bernd Edlinger <bernd.edlinger@hotmail.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
-	Adrian Reber <areber@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	tiozhang <tiozhang@didiglobal.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	YueHaibing <yuehaibing@huawei.com>,
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
-	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	David Windsor <dwindsor@gmail.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Hans Liljestrand <ishkamiel@gmail.com>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [RFC][PATCH] exec: Move cred computation under exec_update_lock
-Message-ID: <aSNX5B9a5iSjJcM1@redhat.com>
-References: <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <87tsyozqdu.fsf@email.froward.int.ebiederm.org>
- <87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
- <87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="LqMr/5+A";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OSdDGvbf"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 65AFA1400176;
+	Sun, 23 Nov 2025 16:00:18 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Sun, 23 Nov 2025 16:00:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1763931618;
+	 x=1764018018; bh=tgxstepQHm0Nnw5/mB+ZuN5dxA1UAFKMljjC1zj6I/k=; b=
+	LqMr/5+A+OmcDcQZu8jnMvvWgiZCtiBF2aj91QnyV6w2lsC/YnnI4bUncoI08ix3
+	HfyrEDo9eGzp2EBSWGrmBfakQEw8I6qs5cosg31b7tC9ln7GHJwxbuvLjCLfKnEQ
+	zKZPjtYiML8uihbuE0dgTui8owZvHz/xkK7is8BOLrJ3128dk6EiXjZ3pwfCJgoN
+	SjTDPhWsIsc81kZMHm8eNGYJMJO+wn8L7nWAjoM9Kxljsft0Oy1Uk/Ni+0w1pzDL
+	+MAH6az5wSHYZuu7OvDz31jF/5duz+zpf6jJGWAB+++/td6nAh6H/Fw5HHgj2PBS
+	c9f0D8g1EeyDwLWSrruwtg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763931618; x=
+	1764018018; bh=tgxstepQHm0Nnw5/mB+ZuN5dxA1UAFKMljjC1zj6I/k=; b=O
+	SdDGvbfahkbzxVnXWVoJv5pgeoh0xIB6twqZRXtrUIoiGiafOBhT0pB2Lc3OmDFz
+	j5+YilUEJ5fKGOYARFckNfsgICVy/D1L+q9JsgdwxIz+2AfkMWD5bzOk9BI9X4D2
+	RBSQdOgpySlBLhd0xty71nGHfk9LAv9eTMwRstcb3ilKyRe6FdN+uVskHRt01pg/
+	SSQPNOnDvetBqxFmVJ4W5AHmIDcOJIJt+hrbxvlDLAtZSUSPKTsF9O+MLLOa9TvN
+	lBqGYtL6TjZMuaFw8MbjWbky7ps29hd3mAmsaKQqtlj4qxPEZgu1demdahbgUA29
+	Gp6uTijccMKvYAI3hjiKw==
+X-ME-Sender: <xms:4XUjaaCcVpGx84HpmYjtKtxGZasl6wDOEhHN6LAZgKP7O2qXeev3QA>
+    <xme:4XUjaYOxic0hhwEhTuq6W02x9-X0nGPC_C-YHA_A1QT5lHayRPEUb6pXLpc37ifk0
+    g0_aEi3rYUKWxCCAREDvngG0_FIeAMgNjFAnXFurSbsh4HFdpkplPI>
+X-ME-Received: <xmr:4XUjaXaho8Dnh8VKIoCKotX5ChgJO46Jag2stKo-TlomdktC5eDrVBFByFSyGElVGIa-F101WS5GmUaVVw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvfeeijeehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefvihhnghhm
+    rghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepud
+    ekvefhgeevvdevieehvddvgefhgeelgfdugeeftedvkeeigfeltdehgeeghffgnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgrohifth
+    hmrdhorhhgpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghksehgoh
+    hoghhlvgdrtghomhdprhgtphhtthhopehuthhilhhithihvghmrghljeejsehgmhgrihhl
+    rdgtohhmpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepgigrnh
+    gufhhurhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqshgvtghurhhi
+    thihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:4XUjafsycRnkAdNsAquPofUrz5U_vyVHauRPESfPuLotr4aYtFyqNg>
+    <xmx:4XUjaRMG2pht3GuXaLxrlF3l_OHTQ-9xdfw1nxmaHfYA7vLKneBR5A>
+    <xmx:4XUjae7G_Zj_cuQx57OfXCfdTsiCSpMlDHu_POdj3hKUdNSVyziv3g>
+    <xmx:4XUjafT9N_r0dZL7JWIjtXw5Q7OLsHl_pRExdfZpIUaEXwH7tmNpOQ>
+    <xmx:4nUjaTEgFEGwzRkmp_BxGNLljRPkj2zWpRWmix92BpYSO0KKXJg6Uxp9>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 23 Nov 2025 16:00:16 -0500 (EST)
+Message-ID: <c79c1f19-7592-4533-95da-2299f99a697d@maowtm.org>
+Date: Sun, 23 Nov 2025 21:00:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/10] landlock: Add API support and docs for the quiet
+ flags
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Justin Suess <utilityemal77@gmail.com>, Jan Kara <jack@suse.cz>,
+ Abhinav Saxena <xandfury@gmail.com>, linux-security-module@vger.kernel.org
+References: <cover.1763330228.git.m@maowtm.org>
+ <cd79fcf71e6d38ab4280c0de2500fa5f6b06cd9d.1763330228.git.m@maowtm.org>
+ <20251120.Sae4geish0ei@digikod.net>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <20251120.Sae4geish0ei@digikod.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Eric,
-
-sorry for delay, I am on PTO, didn't read emails this week...
-
-On 11/20, Eric W. Biederman wrote:
+On 11/21/25 15:27, Mickaël Salaün wrote:
+> On Sun, Nov 16, 2025 at 09:59:32PM +0000, Tingmao Wang wrote:
+>> [...]
+>> @@ -69,6 +100,39 @@ struct landlock_ruleset_attr {
+>>  #define LANDLOCK_CREATE_RULESET_ERRATA			(1U << 1)
+>>  /* clang-format on */
+>>
+>> +/**
+>> + * DOC: landlock_add_rule_flags
+>> + *
+>> + * **Flags**
+>> + *
+>> + * %LANDLOCK_ADD_RULE_QUIET
+>> + *     Together with the quiet_* fields in struct landlock_ruleset_attr,
+>> + *     this flag controls whether Landlock will log audit messages when
+>> + *     access to the objects covered by this rule is denied by this layer.
+>> + *
+>> + *     If audit logging is enabled, when Landlock denies an access, it will
+>> + *     suppress the audit log if all of the following are true:
+>> + *
+>> + *     - This layer is the innermost layer that denied the access;
 >
-> Instead of computing the new cred before we pass the point of no
-> return compute the new cred just before we use it.
+> Because these items follows ":" they should not start with a capital
+> letter (e.g. "- this layer ...").
 >
-> This allows the removal of fs_struct->in_exec and cred_guard_mutex.
+>> + *     - All requested accesses are part of the quiet_* fields in the
+>> + *       related struct landlock_ruleset_attr;
 >
-> I am not certain why we wanted to compute the cred for the new
-> executable so early.  Perhaps I missed something but I did not see any
-> common errors being signaled.   So I don't think we loose anything by
-> computing the new cred later.
+> This should be updated to reflect my comment in the next patch about
+> landlock_log_denial().
+
+Not sure I completely understand what needs to be changed - are you
+suggesting clarifying that only the accesses denied by this layer (which
+naturally has to be handled by this layer) needs to be in quiet_*?  So
+basically:
+
+ *     - all accesses denied by this layer are part of the quiet_* fields
+ *       in the related struct landlock_ruleset_attr;
+
+or something else?
+
+Note that quiet_* already has to be a subset of handled_access_*.
+
 >
-> We gain a lot.
+>> + *     - The object (or one of its parents, for filesystem rules) is
+>> + *       marked as "quiet" via %LANDLOCK_ADD_RULE_QUIET.
+>> + *
+>> + *     Because logging is only suppressed by a layer if the layer denies
+>> + *     access, a sandboxed program cannot use this flag to "hide" access
+>> + *     denials, without denying itself the access in the first place.
+>> + *
+>> + *     The effect of this flag does not depend on the value of
+>> + *     allowed_access in the passed in rule_attr.  When this flag is
+>> + *     present, the caller is also allowed to pass in an empty
+>> + *     allowed_access.
+>> + */
+>> +
+>> +/* clang-format off */
+>> +#define LANDLOCK_ADD_RULE_QUIET			(1U << 0)
+>> +/* clang-format on */
+>> +
+>>  /**
+>>   * DOC: landlock_restrict_self_flags
+>>   *
+>> diff --git a/security/landlock/domain.h b/security/landlock/domain.h
+>> index 7fb70b25f85a..aadbf53505c0 100644
+>> --- a/security/landlock/domain.h
+>> +++ b/security/landlock/domain.h
+>> @@ -114,6 +114,11 @@ struct landlock_hierarchy {
+>>  		 * %LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON.  Set to false by default.
+>>  		 */
+>>  		log_new_exec : 1;
+>> +	/**
+>> +	 * @quiet_masks: Bitmasks of access that should be quieted (i.e. not
+>> +	 * logged) if the related object is marked as quiet.
+>> +	 */
+>> +	struct access_masks quiet_masks;
+>
+> Please update the above @work_free doc.
 
-Yes. I LIKE your approach after a quick glance. And I swear, I thought about
-it too ;)
+I assume you meant the one in struct landlock_ruleset, not here.  Will update.
 
-But is it correct? I don't know. I'll try to actually read your patch next
-week (I am on PTO untill the end of November), but I am not sure I can
-provide a valuable feedback.
-
-One "obvious" problem is that, after this patch, the execing process can crash
-in a case when currently exec() returns an error...
-
-Oleg.
-
+>
+>>  #endif /* CONFIG_AUDIT */
+>>  };
+>>
