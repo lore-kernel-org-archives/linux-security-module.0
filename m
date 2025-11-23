@@ -1,77 +1,77 @@
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4861E46BF
-	for <linux-security-module@vger.kernel.org>; Sun, 23 Nov 2025 21:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF40E25EFAE
+	for <linux-security-module@vger.kernel.org>; Sun, 23 Nov 2025 21:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763931763; cv=none; b=F+J38/O1ZNpnNwFwqlaumHcf/desWOe8txJYBwMug1gchnr20hoeqTXAj3kjuedPbPK7ZABgnYgGyB2XeM/BNVamVWAg5+hJUbi3cbQwXlp/puANXxaXmbaUbVkhmZi7UKJDrKVdCYCDbXW1F50JevXzCime7oAKuTZXbcJImKQ=
+	t=1763931764; cv=none; b=a+grrIrgPafTwd/2LdyryvX6VmVyS8VI0LT/ADqVj9tpFbKLzklj+I52GGmL+/IxhFNfHB6htWq7VFdm5X+YyNUlNRBTGVGWgRXGqUwauT+6cu/8zfuJ3xR+OmPkrkAISlC7WNx4IVEwC0ifoAX7POcpjFQ7FnTMG/h/bk6o4k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763931763; c=relaxed/simple;
-	bh=uFSR1Khr00T0JsEqHyaT/uC1RLqo54LXfD/JQsrBnJA=;
+	s=arc-20240116; t=1763931764; c=relaxed/simple;
+	bh=LPSYOt6p9RsF0wjBKMFXHs1jhLQAlKqyLmg69yELv14=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D6ZDmNEyPdbabA+8uUdnFO4AJFKcfN5CkQ0cD63eSPkSi4yD8V7WTxyxpFED2za0gpxuFaPVss6Q0KZV/Q0AkE9uZNqejuWCzSqsi4ooMkbtJQGaOBYxOYjPQr1z/vAl8QPx28u9vAC5pP/bnh0YmBdxskQN/SwCzADf6zypJY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=SpsgO8US; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RLJfZBIi; arc=none smtp.client-ip=103.168.172.150
+	 MIME-Version; b=VtfukMTS2hM80cNwNbv7sDSxmH3o8cyGvfpXPTv3EkmbP6dUMwIyFgDnP0RNk0UtyFAEjBO2W3C4dUoyqoVzOVRVOKT6+eK9Uh5GQhTnmfXqTwkGAOxc7A1HJG4+ETcuNbppGS37db+3HNr6V8gVZLshTwjj/3C987eakuQp6yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=TZItqEwO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VQI1PgdX; arc=none smtp.client-ip=103.168.172.153
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="SpsgO8US";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RLJfZBIi"
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6ED81EC01B1;
-	Sun, 23 Nov 2025 16:02:40 -0500 (EST)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="TZItqEwO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VQI1PgdX"
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 0484914000CA;
+	Sun, 23 Nov 2025 16:02:42 -0500 (EST)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Sun, 23 Nov 2025 16:02:40 -0500
+  by phl-compute-05.internal (MEProxy); Sun, 23 Nov 2025 16:02:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1763931760;
-	 x=1764018160; bh=QXQ3Q4jsceJ0LZirxud2ucDHELuepdCPuxYpb1TMuMo=; b=
-	SpsgO8USXd9ekXmyNGyBLMMjpBaRudtU/7+HXR+jKE9oFBO6NmQ7PdVhjoITQPlt
-	AetYnJXndTUkZ695Hg5NEqqyIxorxlDzhSy7DFx1KsJmvOzWeqvQK8v+x6hqYOR5
-	BFOitkUCM7OU4ifvAov5ui7Zvy/EXdoYDmQWf2d28KsSTMqySh+zZ0OcNz0OYYkh
-	CVeGxF6z7ynvKukSZlSGzzG01iqPVQdFgDC7j8sfm9sVqeld64Aj5OVKgGVS9MjD
-	6Io+S130//uAk1IJlFeIsfgD3yfX/WrJvOpIA1h1VFtbtAGYpTKHnDQs4QlgePiR
-	BXxVBVo0LFMV6s5+QxIyVg==
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1763931762; x=
+	1764018162; bh=5Rclm6fHE9Yy7fKk3zzq0qe7YAwRr2cxst08JAbJY9I=; b=T
+	ZItqEwObCb0ZKpItp4xB1eNcK2KYHrI3FrFia4jQxGPcbfXQs+F7dvG+5E9E2aKh
+	HEduCCDzVKn6uiKyq3fW/M3sxK8FLDxbNv6ZVe57P7vmFUY5ZLK4B/G3ugk4pAlb
+	SY32Crrg0pY10MoFKWQtf0POuR4t2T3RlTPKiG1odXHClQmNn81bk8dYiKv6rM9h
+	0aWLwx8SGblIHTMD7KutLU9EX4QMk9r6S5GfvkrZPYjCVCSxv8AP1Qfhafe4ZUN8
+	U4JX02rz+XXIiVY4Lr7tEvXMXnzgy8q3Nu5ED9lF8Rwy1VPlMDG60jn/fDH735iK
+	3P3MVsXPL5M8prqR0kolQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763931760; x=
-	1764018160; bh=QXQ3Q4jsceJ0LZirxud2ucDHELuepdCPuxYpb1TMuMo=; b=R
-	LJfZBIi91AiLpz53EhB8nCuSyYIaY4srfISbmSVP4q62lXjiGsk9BSgGyjM6EUlX
-	UwaLghKtnZN/gWydfy+TKXxXmxoFSpbgqFSQDGaPjpwxKuZApkXVk5rbXhzKhaGY
-	5iWluQ2ZuVQ+KgMvtgLPuJwgJ9Oaip+EVmeQa33/jzLbrrjVQDxEVbCP1ow6A9DO
-	+uXKMxd4wlUZebIg5HCJZK9zACc4c3idiMIzZsDJpNOhzq+myn/1XkBrb2BAzSQ4
-	R2kk3iLLkQWBjkhTeVT2kx2D6iF8i9hyGBr1mnfDkh5KpTqcMP7LwmTPkhCWnOVU
-	vPfq2O5YQE8hUWmKnIv8A==
-X-ME-Sender: <xms:cHYjaaUQD4zZfIKQzLx_Gn_8ZqbJioVXpVRucihJhVHybuwQ-JRztg>
-    <xme:cHYjaY1YSJgaThZIqBZzHwjBMq3TbBnLei225tMdbtiuFniq_xm05bTFIHT7-W6Bi
-    1TDk0dl1ybv2gzI0uxjJMPkkPyniGtbE3zsC3AW60U7O07yM-DtEjC8>
-X-ME-Received: <xmr:cHYjaQo-nKlSJOV3J5v7H5NwZoVSSAOfmTDKDdxFLZMhxF-5OlCtqCV4faYmUeU1es-B>
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm3; t=1763931762; x=1764018162; bh=5
+	Rclm6fHE9Yy7fKk3zzq0qe7YAwRr2cxst08JAbJY9I=; b=VQI1PgdXOA+i3y4fS
+	6BrC2yPzMjFOYXoujVXGmDAxyEAjNDne4p+b4VQLQS1olYdK5CgFDM5iC7UZCzl3
+	WhF/gmog3hY0GaP+pQMtGuGhzQkOZA04omVCBwwfkUQonL3DZiVoML+eKpqSXMcR
+	MX1DE7cG+vsUBRpAQHSr5zH34ehgndOatsfI+b+ILdernBEhBQvCJ8Xb6hs9C6zG
+	V4QeE9n/komAvc9g4aVYovZAtSpgwRMhl/eYLumcJm1FNg2rBHWGE2PrlzNIQbm4
+	LoXgMWcuK2vcP5u/biz8jMyEwb+dB6WfQIBpeuorUKoz5jWl5b/bYS1XvDNo9Jvd
+	QTL5g==
+X-ME-Sender: <xms:cXYjac7X1MQZILCz2hFl51oWDbS8Bfv7NN6Nw3gxnEnJaPiuJySomw>
+    <xme:cXYjaQL7OJ2JssllWz2MakdToBNor7JMH4Q6hN1Hp2IFZHl1XhSDgSzkorHs3HGq3
+    Oy9uIn0yWeZEhAEiTJOkt1I5mmmQXc5XoDe6xs5adfWKTYR9oso_kc>
+X-ME-Received: <xmr:cXYjaduH4i_IEBo5yY1BHFWe-rf5nWUGyvMiN6GtATSk7AQ9iHlFnO7T0EaTmss7jLr_>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvfeeijeehucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpefvihhnghhm
-    rghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepie
-    evueeutdfhheehteeuieetgeefgfevhffgfefhleeiudffjefhheelteevffejnecuffho
-    mhgrihhnpegrtggtvghsshgpmhgrshhkshdrnhgvthenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghr
-    tghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhitgesughigh
-    hikhhougdrnhgvthdprhgtphhtthhopehmsehmrghofihtmhdrohhrghdprhgtphhtthho
-    pehgnhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepuhhtihhlihhthigvmh
-    grlhejjeesghhmrghilhdrtghomhdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidp
-    rhgtphhtthhopeigrghnughfuhhrhiesghhmrghilhdrtghomhdprhgtphhtthhopehlih
-    hnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:cHYjaXXUKgNucGb2tP_Xf1hFoH4GVYe8MuAOfs03Y8LbLb_2Xx977A>
-    <xmx:cHYjaTZorm1YBBnB3N9qJCgbk4-3KWH1w7P9Z4EPIUZitp7lvp-MUQ>
-    <xmx:cHYjacdC-Jwln_uylNqILjCUE79XDfJx2eeQmAeZ5ojD1zLBePXcbA>
-    <xmx:cHYjaV2UAXf3LBqvBmdMysT1ObodnnoVrR864yTJ_Uxy7hLMwXxLdQ>
-    <xmx:cHYjaRMJiODpPZzEaO-n9YNOsTwayQW5uACbLwv2SoyQxRKX_khxPF8v>
+    gurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepvfhinhhgmhgr
+    ohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeeuud
+    dthefhhefhvdejteevvddvteefffegteetueegueeljeefueekjeetieeuleenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmh
+    drohhrghdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    ohepmhhitgesughighhikhhougdrnhgvthdprhgtphhtthhopehmsehmrghofihtmhdroh
+    hrghdprhgtphhtthhopehgnhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohep
+    uhhtihhlihhthigvmhgrlhejjeesghhmrghilhdrtghomhdprhgtphhtthhopehjrggtkh
+    esshhushgvrdgtiidprhgtphhtthhopeigrghnughfuhhrhiesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:cXYjaXIIFqBBk265vGKzYBjKS-C6BGm-dpWab_8_HWZbo78twWj_tg>
+    <xmx:cXYjae_YxOFsrqktI_4UOCeQKaIYtMZRXuD5ZVuztFOKQe8cmrtU8g>
+    <xmx:cXYjaYx3WIyKlp1WP03d1HEd61P0YB5mu1VKJj-bdaoHDj08lseZcw>
+    <xmx:cXYjaT4K_U3XA0rpKkpNVd6E0tutc2i7b8a1dcndL2SifRs-tEfCkQ>
+    <xmx:cXYjaabhg9g3XM0zAHS6FbueDWT4Kda25FyQ9byzlGj2KyJPJjB0F83q>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 23 Nov 2025 16:02:39 -0500 (EST)
+ 23 Nov 2025 16:02:40 -0500 (EST)
 From: Tingmao Wang <m@maowtm.org>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: Tingmao Wang <m@maowtm.org>,
@@ -80,9 +80,9 @@ Cc: Tingmao Wang <m@maowtm.org>,
 	Jan Kara <jack@suse.cz>,
 	Abhinav Saxena <xandfury@gmail.com>,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v5 03/10] landlock: Suppress logging when quiet flag is present
-Date: Sun, 23 Nov 2025 20:57:39 +0000
-Message-ID: <e07c546e5b2988c0799e98b6501cb9d6a93360a6.1763931318.git.m@maowtm.org>
+Subject: [PATCH v5 04/10] landlock: Fix wrong type usage
+Date: Sun, 23 Nov 2025 20:57:40 +0000
+Message-ID: <7e27007239d0b82ba7fb1ffcb13e286e63e25803.1763931318.git.m@maowtm.org>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1763931318.git.m@maowtm.org>
 References: <cover.1763931318.git.m@maowtm.org>
@@ -92,625 +92,33 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The quietness behaviour is as documented in the previous patch.
-
-For optional accesses, since the existing deny_masks can only store 2x4bit
-of layer index, with no way to represent "no layer", we need to either
-expand it or have another field to correctly handle quieting of those.
-This commit uses the latter approach - we add another field to store which
-optional access (of the 2) are covered by quiet rules in their respective
-layers as stored in deny_masks.
-
-We can avoid making struct landlock_file_security larger by converting the
-existing fown_layer to a 4bit field.  This commit does that, and adds test
-to ensure that it is large enough for LANDLOCK_MAX_NUM_LAYERS-1.
+I think, based on my best understanding, that this type is likely a typo
+(even though in the end both are u16)
 
 Signed-off-by: Tingmao Wang <m@maowtm.org>
+Fixes: 2fc80c69df82 ("landlock: Log file-related denials")
 ---
 
-Changes in v5:
-- Update code style and comment in get_layer_from_deny_masks() and
-  landlock_log_denial()
-- Now that rule_flags is moved into landlock_request, this version removes
-  the extra parameter for landlock_log_denial and gets rid of
-  no_rule_flags, simplifying some code.
-- Fix build failure without CONFIG_AUDIT (reported by Justin Suess)
-
-Changes in v3:
-- Renamed patch title from "Check for quiet flag in landlock_log_denial"
-  to this given the growth.
-- Moved quiet bit check after domain_exec check
-- Rename, style and comment fixes suggested by Mickaël.
-- Squashed patch 6/6 from v2 "Implement quiet for optional accesses" into
-  this one.  Changes to that below:
-- Refactor the quiet flag setting in get_layer_from_deny_masks() to be
-  more clear.
-- Add KUnit tests
-- Fix comments, add WARN_ON_ONCE, use __const_hweight64() as suggested by
-  review
-- Move build_check_file_security to fs.c
-- Use a typedef for quiet_optional_accesses, add static_assert, and
-  improve docs on landlock_get_quiet_optional_accesses.
-
 Changes in v2:
-- Supports the new quiet access masks.
-- Support quieting scope requests (but not ptrace and attempted mounting
-  for now)
+- Added Fixes tag
 
- security/landlock/access.h |   5 +
- security/landlock/audit.c  | 257 +++++++++++++++++++++++++++++++++++--
- security/landlock/audit.h  |   1 +
- security/landlock/domain.c |  33 +++++
- security/landlock/domain.h |   5 +
- security/landlock/fs.c     |  29 +++++
- security/landlock/fs.h     |  17 ++-
- security/landlock/net.c    |   2 +-
- 8 files changed, 327 insertions(+), 22 deletions(-)
+ security/landlock/audit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/landlock/access.h b/security/landlock/access.h
-index 7961c6630a2d..db47edc88afa 100644
---- a/security/landlock/access.h
-+++ b/security/landlock/access.h
-@@ -97,4 +97,9 @@ landlock_upgrade_handled_access_masks(struct access_masks access_masks)
- 	return access_masks;
- }
- 
-+/* A bitmask that is large enough to hold set of optional accesses. */
-+typedef u8 optional_access_t;
-+static_assert(BITS_PER_TYPE(optional_access_t) >=
-+	      HWEIGHT(_LANDLOCK_ACCESS_FS_OPTIONAL));
-+
- #endif /* _SECURITY_LANDLOCK_ACCESS_H */
 diff --git a/security/landlock/audit.c b/security/landlock/audit.c
-index c52d079cdb77..1a9d3f4e3369 100644
+index 1a9d3f4e3369..d51563712325 100644
 --- a/security/landlock/audit.c
 +++ b/security/landlock/audit.c
-@@ -273,7 +273,8 @@ static void test_get_denied_layer(struct kunit *const test)
- static size_t
- get_layer_from_deny_masks(access_mask_t *const access_request,
- 			  const access_mask_t all_existing_optional_access,
--			  const deny_masks_t deny_masks)
-+			  const deny_masks_t deny_masks,
-+			  u8 quiet_optional_accesses, bool *quiet)
- {
- 	const unsigned long access_opt = all_existing_optional_access;
- 	const unsigned long access_req = *access_request;
-@@ -281,6 +282,7 @@ get_layer_from_deny_masks(access_mask_t *const access_request,
- 	size_t youngest_layer = 0;
- 	size_t access_index = 0;
- 	unsigned long access_bit;
-+	bool should_quiet = false;
+@@ -191,7 +191,7 @@ static size_t get_denied_layer(const struct landlock_ruleset *const domain,
+ 	long youngest_layer = -1;
  
- 	/* This will require change with new object types. */
- 	WARN_ON_ONCE(access_opt != _LANDLOCK_ACCESS_FS_OPTIONAL);
-@@ -291,18 +293,29 @@ get_layer_from_deny_masks(access_mask_t *const access_request,
- 			const size_t layer =
- 				(deny_masks >> (access_index * 4)) &
- 				(LANDLOCK_MAX_NUM_LAYERS - 1);
-+			const bool layer_has_quiet =
-+				!!(quiet_optional_accesses & BIT(access_index));
+ 	for_each_set_bit(access_bit, &access_req, layer_masks_size) {
+-		const access_mask_t mask = (*layer_masks)[access_bit];
++		const layer_mask_t mask = (*layer_masks)[access_bit];
+ 		long layer;
  
- 			if (layer > youngest_layer) {
- 				youngest_layer = layer;
- 				missing = BIT(access_bit);
-+				should_quiet = layer_has_quiet;
- 			} else if (layer == youngest_layer) {
- 				missing |= BIT(access_bit);
-+				/*
-+				 * Whether the layer has rules with quiet flag covering
-+				 * the file accessed does not depend on the access, and so
-+				 * the following WARN_ON_ONCE() should not fail.
-+				 */
-+				WARN_ON_ONCE(should_quiet && !layer_has_quiet);
-+				should_quiet = layer_has_quiet;
- 			}
- 		}
- 		access_index++;
- 	}
- 
- 	*access_request = missing;
-+	*quiet = should_quiet;
- 	return youngest_layer;
- }
- 
-@@ -312,42 +325,188 @@ static void test_get_layer_from_deny_masks(struct kunit *const test)
- {
- 	deny_masks_t deny_mask;
- 	access_mask_t access;
-+	u8 quiet_optional_accesses;
-+	bool quiet;
- 
- 	/* truncate:0 ioctl_dev:2 */
- 	deny_mask = 0x20;
-+	quiet_optional_accesses = 0;
- 
- 	access = LANDLOCK_ACCESS_FS_TRUNCATE;
- 	KUNIT_EXPECT_EQ(test, 0,
--			get_layer_from_deny_masks(&access,
--						  _LANDLOCK_ACCESS_FS_OPTIONAL,
--						  deny_mask));
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
- 	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_TRUNCATE);
-+	KUNIT_EXPECT_EQ(test, quiet, false);
-+
-+	access = LANDLOCK_ACCESS_FS_IOCTL_DEV;
-+	KUNIT_EXPECT_EQ(test, 2,
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
-+	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_IOCTL_DEV);
-+	KUNIT_EXPECT_EQ(test, quiet, false);
-+
-+	access = LANDLOCK_ACCESS_FS_TRUNCATE | LANDLOCK_ACCESS_FS_IOCTL_DEV;
-+	KUNIT_EXPECT_EQ(test, 2,
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
-+	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_IOCTL_DEV);
-+	KUNIT_EXPECT_EQ(test, quiet, false);
-+
-+	/* layer denying truncate: quiet, ioctl: not quiet */
-+	quiet_optional_accesses = 0b01;
-+
-+	access = LANDLOCK_ACCESS_FS_TRUNCATE;
-+	KUNIT_EXPECT_EQ(test, 0,
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
-+	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_TRUNCATE);
-+	KUNIT_EXPECT_EQ(test, quiet, true);
-+
-+	access = LANDLOCK_ACCESS_FS_IOCTL_DEV;
-+	KUNIT_EXPECT_EQ(test, 2,
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
-+	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_IOCTL_DEV);
-+	KUNIT_EXPECT_EQ(test, quiet, false);
-+
-+	access = LANDLOCK_ACCESS_FS_TRUNCATE | LANDLOCK_ACCESS_FS_IOCTL_DEV;
-+	KUNIT_EXPECT_EQ(test, 2,
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
-+	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_IOCTL_DEV);
-+	KUNIT_EXPECT_EQ(test, quiet, false);
-+
-+	/* Reverse order - truncate:2 ioctl_dev:0 */
-+	deny_mask = 0x02;
-+	quiet_optional_accesses = 0;
-+
-+	access = LANDLOCK_ACCESS_FS_TRUNCATE;
-+	KUNIT_EXPECT_EQ(test, 2,
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
-+	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_TRUNCATE);
-+	KUNIT_EXPECT_EQ(test, quiet, false);
-+
-+	access = LANDLOCK_ACCESS_FS_IOCTL_DEV;
-+	KUNIT_EXPECT_EQ(test, 0,
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
-+	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_IOCTL_DEV);
-+	KUNIT_EXPECT_EQ(test, quiet, false);
-+
-+	access = LANDLOCK_ACCESS_FS_TRUNCATE | LANDLOCK_ACCESS_FS_IOCTL_DEV;
-+	KUNIT_EXPECT_EQ(test, 2,
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
-+	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_TRUNCATE);
-+	KUNIT_EXPECT_EQ(test, quiet, false);
-+
-+	/* layer denying truncate: quiet, ioctl: not quiet */
-+	quiet_optional_accesses = 0b01;
-+
-+	access = LANDLOCK_ACCESS_FS_TRUNCATE;
-+	KUNIT_EXPECT_EQ(test, 2,
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
-+	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_TRUNCATE);
-+	KUNIT_EXPECT_EQ(test, quiet, true);
-+
-+	access = LANDLOCK_ACCESS_FS_IOCTL_DEV;
-+	KUNIT_EXPECT_EQ(test, 0,
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
-+	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_IOCTL_DEV);
-+	KUNIT_EXPECT_EQ(test, quiet, false);
- 
- 	access = LANDLOCK_ACCESS_FS_TRUNCATE | LANDLOCK_ACCESS_FS_IOCTL_DEV;
- 	KUNIT_EXPECT_EQ(test, 2,
--			get_layer_from_deny_masks(&access,
--						  _LANDLOCK_ACCESS_FS_OPTIONAL,
--						  deny_mask));
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
-+	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_TRUNCATE);
-+	KUNIT_EXPECT_EQ(test, quiet, true);
-+
-+	/* layer denying truncate: not quiet, ioctl: quiet */
-+	quiet_optional_accesses = 0b10;
-+
-+	access = LANDLOCK_ACCESS_FS_TRUNCATE;
-+	KUNIT_EXPECT_EQ(test, 2,
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
-+	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_TRUNCATE);
-+	KUNIT_EXPECT_EQ(test, quiet, false);
-+
-+	access = LANDLOCK_ACCESS_FS_IOCTL_DEV;
-+	KUNIT_EXPECT_EQ(test, 0,
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
- 	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_IOCTL_DEV);
-+	KUNIT_EXPECT_EQ(test, quiet, true);
-+
-+	access = LANDLOCK_ACCESS_FS_TRUNCATE | LANDLOCK_ACCESS_FS_IOCTL_DEV;
-+	KUNIT_EXPECT_EQ(test, 2,
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
-+	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_TRUNCATE);
-+	KUNIT_EXPECT_EQ(test, quiet, false);
- 
- 	/* truncate:15 ioctl_dev:15 */
- 	deny_mask = 0xff;
-+	quiet_optional_accesses = 0;
-+
-+	access = LANDLOCK_ACCESS_FS_TRUNCATE;
-+	KUNIT_EXPECT_EQ(test, 15,
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
-+	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_TRUNCATE);
-+	KUNIT_EXPECT_EQ(test, quiet, false);
-+
-+	access = LANDLOCK_ACCESS_FS_TRUNCATE | LANDLOCK_ACCESS_FS_IOCTL_DEV;
-+	KUNIT_EXPECT_EQ(test, 15,
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
-+	KUNIT_EXPECT_EQ(test, access,
-+			LANDLOCK_ACCESS_FS_TRUNCATE |
-+				LANDLOCK_ACCESS_FS_IOCTL_DEV);
-+	KUNIT_EXPECT_EQ(test, quiet, false);
-+
-+	/* Both quiet (same layer so quietness must be the same) */
-+	quiet_optional_accesses = 0b11;
- 
- 	access = LANDLOCK_ACCESS_FS_TRUNCATE;
- 	KUNIT_EXPECT_EQ(test, 15,
--			get_layer_from_deny_masks(&access,
--						  _LANDLOCK_ACCESS_FS_OPTIONAL,
--						  deny_mask));
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
- 	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_TRUNCATE);
-+	KUNIT_EXPECT_EQ(test, quiet, true);
- 
- 	access = LANDLOCK_ACCESS_FS_TRUNCATE | LANDLOCK_ACCESS_FS_IOCTL_DEV;
- 	KUNIT_EXPECT_EQ(test, 15,
--			get_layer_from_deny_masks(&access,
--						  _LANDLOCK_ACCESS_FS_OPTIONAL,
--						  deny_mask));
-+			get_layer_from_deny_masks(
-+				&access, _LANDLOCK_ACCESS_FS_OPTIONAL,
-+				deny_mask, quiet_optional_accesses, &quiet));
- 	KUNIT_EXPECT_EQ(test, access,
- 			LANDLOCK_ACCESS_FS_TRUNCATE |
- 				LANDLOCK_ACCESS_FS_IOCTL_DEV);
-+	KUNIT_EXPECT_EQ(test, quiet, true);
- }
- 
- #endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
-@@ -381,11 +540,29 @@ static bool is_valid_request(const struct landlock_request *const request)
- 	return true;
- }
- 
-+static access_mask_t
-+pick_access_mask_for_request_type(const enum landlock_request_type type,
-+				  const struct access_masks access_masks)
-+{
-+	switch (type) {
-+	case LANDLOCK_REQUEST_FS_ACCESS:
-+		return access_masks.fs;
-+	case LANDLOCK_REQUEST_NET_ACCESS:
-+		return access_masks.net;
-+	default:
-+		WARN_ONCE(1, "Invalid request type %d passed to %s", type,
-+			  __func__);
-+		return 0;
-+	}
-+}
-+
- /**
-  * landlock_log_denial - Create audit records related to a denial
-  *
-  * @subject: The Landlock subject's credential denying an action.
-  * @request: Detail of the user space request.
-+ * @rule_flags: The flags for the matched rule, or no_rule_flags (zero) if
-+ * this is a scope request (no particular object involved).
-  */
- void landlock_log_denial(const struct landlock_cred_security *const subject,
- 			 const struct landlock_request *const request)
-@@ -394,6 +571,7 @@ void landlock_log_denial(const struct landlock_cred_security *const subject,
- 	struct landlock_hierarchy *youngest_denied;
- 	size_t youngest_layer;
- 	access_mask_t missing;
-+	bool object_quiet_flag = false, quiet_applicable_to_access = false;
- 
- 	if (WARN_ON_ONCE(!subject || !subject->domain ||
- 			 !subject->domain->hierarchy || !request))
-@@ -409,10 +587,14 @@ void landlock_log_denial(const struct landlock_cred_security *const subject,
- 			youngest_layer = get_denied_layer(
- 				subject->domain, &missing, request->layer_masks,
- 				request->layer_masks_size);
-+			object_quiet_flag = !!(request->rule_flags.quiet_masks &
-+					       BIT(youngest_layer));
- 		} else {
- 			youngest_layer = get_layer_from_deny_masks(
- 				&missing, request->all_existing_optional_access,
--				request->deny_masks);
-+				request->deny_masks,
-+				request->quiet_optional_accesses,
-+				&object_quiet_flag);
- 		}
- 		youngest_denied =
- 			get_hierarchy(subject->domain, youngest_layer);
-@@ -447,6 +629,53 @@ void landlock_log_denial(const struct landlock_cred_security *const subject,
- 			return;
- 	}
- 
-+	/*
-+	 * Checks if the object is marked quiet by the layer that denied the
-+	 * request.  If it's a different layer that marked it as quiet, but
-+	 * that layer is not the one that denied the request, we should still
-+	 * audit log the denial.
-+	 */
-+	if (object_quiet_flag) {
-+		/*
-+		 * We now check if the denied requests are all covered by the
-+		 * layer's quiet access bits.
-+		 */
-+		const access_mask_t quiet_mask =
-+			pick_access_mask_for_request_type(
-+				request->type, youngest_denied->quiet_masks);
-+
-+		quiet_applicable_to_access = (quiet_mask & missing) == missing;
-+	} else {
-+		/*
-+		 * Either the object is not quiet, or this is a scope request.  We
-+		 * check request->type to distinguish between the two cases.
-+		 */
-+		const access_mask_t quiet_mask =
-+			youngest_denied->quiet_masks.scope;
-+
-+		switch (request->type) {
-+		case LANDLOCK_REQUEST_SCOPE_SIGNAL:
-+			quiet_applicable_to_access =
-+				!!(quiet_mask & LANDLOCK_SCOPE_SIGNAL);
-+			break;
-+		case LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET:
-+			quiet_applicable_to_access =
-+				!!(quiet_mask &
-+				   LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
-+			break;
-+		/*
-+		 * Leave LANDLOCK_REQUEST_PTRACE and
-+		 * LANDLOCK_REQUEST_FS_CHANGE_TOPOLOGY unhandled for now - they are
-+		 * never quiet.
-+		 */
-+		default:
-+			break;
-+		}
-+	}
-+
-+	if (quiet_applicable_to_access)
-+		return;
-+
- 	/* Uses consistent allocation flags wrt common_lsm_audit(). */
- 	ab = audit_log_start(audit_context(), GFP_ATOMIC | __GFP_NOWARN,
- 			     AUDIT_LANDLOCK_ACCESS);
-diff --git a/security/landlock/audit.h b/security/landlock/audit.h
-index d66c6d936438..f0647ee6052c 100644
---- a/security/landlock/audit.h
-+++ b/security/landlock/audit.h
-@@ -49,6 +49,7 @@ struct landlock_request {
- 	/* Required fields for requests with deny masks. */
- 	const access_mask_t all_existing_optional_access;
- 	deny_masks_t deny_masks;
-+	u8 quiet_optional_accesses;
- 
- 	struct collected_rule_flags rule_flags;
- };
-diff --git a/security/landlock/domain.c b/security/landlock/domain.c
-index a647b68e8d06..8caf07250328 100644
---- a/security/landlock/domain.c
-+++ b/security/landlock/domain.c
-@@ -212,6 +212,39 @@ landlock_get_deny_masks(const access_mask_t all_existing_optional_access,
- 	return deny_masks;
- }
- 
-+/**
-+ * landlock_get_quiet_optional_accesses - Get optional accesses which are
-+ * "covered" by quiet rule flags.
-+ *
-+ * Returns a bitmask of which optional access are denied by layers for
-+ * which rule_flags.quiet_masks has the corresponding bit set.
-+ */
-+optional_access_t landlock_get_quiet_optional_accesses(
-+	const access_mask_t all_existing_optional_access,
-+	const deny_masks_t deny_masks,
-+	const struct collected_rule_flags rule_flags)
-+{
-+	const unsigned long access_opt = all_existing_optional_access;
-+	size_t access_index = 0;
-+	unsigned long access_bit;
-+	optional_access_t quiet_optional_accesses = 0;
-+
-+	/* This will require change with new object types. */
-+	WARN_ON_ONCE(access_opt != _LANDLOCK_ACCESS_FS_OPTIONAL);
-+
-+	for_each_set_bit(access_bit, &access_opt,
-+			 BITS_PER_TYPE(access_mask_t)) {
-+		const u8 layer = (deny_masks >> (access_index * 4)) &
-+				 (LANDLOCK_MAX_NUM_LAYERS - 1);
-+		const bool is_quiet = !!(rule_flags.quiet_masks & BIT(layer));
-+
-+		if (is_quiet)
-+			quiet_optional_accesses |= BIT(access_index);
-+		access_index++;
-+	}
-+	return quiet_optional_accesses;
-+}
-+
- #ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
- 
- static void test_landlock_get_deny_masks(struct kunit *const test)
-diff --git a/security/landlock/domain.h b/security/landlock/domain.h
-index aadbf53505c0..ea487315580a 100644
---- a/security/landlock/domain.h
-+++ b/security/landlock/domain.h
-@@ -130,6 +130,11 @@ landlock_get_deny_masks(const access_mask_t all_existing_optional_access,
- 			const layer_mask_t (*const layer_masks)[],
- 			size_t layer_masks_size);
- 
-+optional_access_t landlock_get_quiet_optional_accesses(
-+	const access_mask_t all_existing_optional_access,
-+	const deny_masks_t deny_masks,
-+	const struct collected_rule_flags rule_flags);
-+
- int landlock_init_hierarchy_log(struct landlock_hierarchy *const hierarchy);
- 
- static inline void
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index bf45a7f9e1d7..29f10da32141 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -1750,8 +1750,31 @@ get_required_file_open_access(const struct file *const file)
- 	return access;
- }
- 
-+static void build_check_file_security(void)
-+{
-+#ifdef CONFIG_AUDIT
-+	const struct landlock_file_security file_sec = {
-+		.quiet_optional_accesses = ~0,
-+		.fown_layer = ~0,
-+	};
-+
-+	/*
-+	 * Make sure quiet_optional_accesses has enough bits to cover all
-+	 * optional accesses.  The use of __const_hweight64() rather than
-+	 * HWEIGHT() is due to GCC erroring about non-constants in
-+	 * BUILD_BUG_ON call when using the latter, and the use of the 64bit
-+	 * version is for future-proofing.
-+	 */
-+	BUILD_BUG_ON(__const_hweight64((u64)file_sec.quiet_optional_accesses) <
-+		     __const_hweight64(_LANDLOCK_ACCESS_FS_OPTIONAL));
-+	/* Makes sure all layers can be identified. */
-+	BUILD_BUG_ON(file_sec.fown_layer < LANDLOCK_MAX_NUM_LAYERS - 1);
-+#endif /* CONFIG_AUDIT */
-+}
-+
- static int hook_file_alloc_security(struct file *const file)
- {
-+	build_check_file_security();
- 	/*
- 	 * Grants all access rights, even if most of them are not checked later
- 	 * on. It is more consistent.
-@@ -1835,6 +1858,10 @@ static int hook_file_open(struct file *const file)
- 	landlock_file(file)->deny_masks = landlock_get_deny_masks(
- 		_LANDLOCK_ACCESS_FS_OPTIONAL, optional_access, &layer_masks,
- 		ARRAY_SIZE(layer_masks));
-+	landlock_file(file)->quiet_optional_accesses =
-+		landlock_get_quiet_optional_accesses(
-+			_LANDLOCK_ACCESS_FS_OPTIONAL,
-+			landlock_file(file)->deny_masks, request.rule_flags);
- #endif /* CONFIG_AUDIT */
- 
- 	if ((open_access_request & allowed_access) == open_access_request)
-@@ -1871,6 +1898,7 @@ static int hook_file_truncate(struct file *const file)
- 		.access = LANDLOCK_ACCESS_FS_TRUNCATE,
- #ifdef CONFIG_AUDIT
- 		.deny_masks = landlock_file(file)->deny_masks,
-+		.quiet_optional_accesses = landlock_file(file)->quiet_optional_accesses,
- #endif /* CONFIG_AUDIT */
- 	});
- 	return -EACCES;
-@@ -1910,6 +1938,7 @@ static int hook_file_ioctl_common(const struct file *const file,
- 		.access = LANDLOCK_ACCESS_FS_IOCTL_DEV,
- #ifdef CONFIG_AUDIT
- 		.deny_masks = landlock_file(file)->deny_masks,
-+		.quiet_optional_accesses = landlock_file(file)->quiet_optional_accesses,
- #endif /* CONFIG_AUDIT */
- 	});
- 	return -EACCES;
-diff --git a/security/landlock/fs.h b/security/landlock/fs.h
-index cb7e654933ac..ac6e50216f87 100644
---- a/security/landlock/fs.h
-+++ b/security/landlock/fs.h
-@@ -63,11 +63,20 @@ struct landlock_file_security {
- 	 * _LANDLOCK_ACCESS_FS_OPTIONAL).
- 	 */
- 	deny_masks_t deny_masks;
-+	/**
-+	 * @quiet_optional_accesses: Stores which optional accesses are
-+	 * covered by quiet rules within the layer referred to in deny_masks,
-+	 * one access per bit.  Does not take into account whether the quiet
-+	 * access bits are actually set in the layer's corresponding
-+	 * landlock_hierarchy.
-+	 */
-+	optional_access_t quiet_optional_accesses
-+		: HWEIGHT(_LANDLOCK_ACCESS_FS_OPTIONAL);
- 	/**
- 	 * @fown_layer: Layer level of @fown_subject->domain with
- 	 * LANDLOCK_SCOPE_SIGNAL.
- 	 */
--	u8 fown_layer;
-+	u8 fown_layer:4;
- #endif /* CONFIG_AUDIT */
- 
- 	/**
-@@ -82,12 +91,6 @@ struct landlock_file_security {
- 
- #ifdef CONFIG_AUDIT
- 
--/* Makes sure all layers can be identified. */
--/* clang-format off */
--static_assert((typeof_member(struct landlock_file_security, fown_layer))~0 >=
--	      LANDLOCK_MAX_NUM_LAYERS);
--/* clang-format off */
--
- #endif /* CONFIG_AUDIT */
- 
- /**
-diff --git a/security/landlock/net.c b/security/landlock/net.c
-index bddbe93d69fd..a3a90a4de70a 100644
---- a/security/landlock/net.c
-+++ b/security/landlock/net.c
-@@ -193,7 +193,7 @@ static int current_check_access_socket(struct socket *const sock,
- 				    .access = access_request,
- 				    .layer_masks = &layer_masks,
- 				    .layer_masks_size = ARRAY_SIZE(layer_masks),
--			    });
-+				    .rule_flags = rule_flags });
- 	return -EACCES;
- }
- 
+ 		if (!mask)
 -- 
 2.52.0
