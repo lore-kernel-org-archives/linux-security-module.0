@@ -1,205 +1,507 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE31324B17;
-	Tue, 25 Nov 2025 15:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB16DF49;
+	Tue, 25 Nov 2025 15:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764083473; cv=none; b=hPRHL9Bg5tMrRcKnrzssYPp2gHipZFe6xufxNEcnXB0MUao89g48VFcxCA8wx4vLS7d78mbPpp9kTg7069Pu5jLELG2lfOS46p86gXKoDIRPke7WBqOXe9HwbpAi3BeYu9d8/uB3sXTpLPuqq+0J3ZB6fhQQMdQjRL22QJfRBhY=
+	t=1764083736; cv=none; b=AFB7HNokQAcIC/mKiGUeUxnEY1hUqE2g3TayGnigx8OHEBxo6lhTEcjG7N7lW2zFNXNqQQMyoGTO3ooss+ebRR3nvJk9Z3e1wSBwz4u12jaEzvxe8EPrMBZdzvLc1G9k/k3HQo2ySyEPCEr/YJupXgdvUHAdEoeAt3i9+adOxLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764083473; c=relaxed/simple;
-	bh=Gvzy+GG131VoXDqWVUu7DGYA/eTcJ0iyIo3aA8r2e1Q=;
+	s=arc-20240116; t=1764083736; c=relaxed/simple;
+	bh=xm8XfFt/2MCX1Wlyfe3XO+I0z1ZIxS1YJ4qLW9GfGIU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KdXfhplyhuej58UtNN2v7uwv35fPSVpD44W6J3/ntsAxdkYMtSbSCGACFOtwY5kz5udlTvrzmoHr63uHZOjAoBtgDa3tloogHuUYfU5JElgwXKyy8g6qzImem5JsCTDQ3+vNBWuDXAfXozwNklUsPrHvodoUwr97zH2Ny3YLelA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8/rT5rE; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8/rT5rE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11004C116B1;
-	Tue, 25 Nov 2025 15:11:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764083471;
-	bh=Gvzy+GG131VoXDqWVUu7DGYA/eTcJ0iyIo3aA8r2e1Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J8/rT5rE/ljoxffISLB7vsl+xjZUMOG1krv1T6H4Agz6YAE9UyQ5K61sm3B/SeAF2
-	 v6kJQEIsp6N0atYBTBjLogJp5JM5Lx3H522z01zXyD9Hb4aZJ2qV7HtCx4Dz8cpI8D
-	 ZNb20DdQqMfC1f27naL5JlfrGpYfsSVs7vP2gjLyylXa9jLVjRNLZoU2AjIA3E/cCq
-	 YtEkY+Ea0XMI+Nau8SSNQYFu/1HUIiloZeHWtGLyTJlXi2Km7IyTJO8lLlFdWzyko0
-	 v6WvN2s3eOxm3i+zQFzcu2R5L7tIRfCkLc0pwGpPH58Udj4G3Epcb015Uoygs8rRYM
-	 G2FZFBpHH6IGw==
-Date: Tue, 25 Nov 2025 16:11:07 +0100
-From: Helge Deller <deller@kernel.org>
-To: John Johansen <john.johansen@canonical.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-	linux-parisc@vger.kernel.org
-Subject: Re: [PATCH 0/2] apparmor unaligned memory fixes
-Message-ID: <aSXHCyH_rS-c5BgP@p100>
-References: <20250531150822.135803-1-deller@kernel.org>
- <bc21bee14ca44077ae9323bfc251ad12390fa841.camel@physik.fu-berlin.de>
- <aRxT78fdN5v2Ajyl@p100>
- <90513f85cc8d060ebccd3972cc7709e4b6f13f34.camel@physik.fu-berlin.de>
- <be9c143d-1d5e-4c5b-9078-4a7804489258@gmx.de>
- <ba3d5651-fa68-4bb5-84aa-35576044e7b0@canonical.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pgQmmGFtNudSK6dNIkXSaH14twywFvEU2dEx4GOb7YXjQSyHKJn4BM7KhXGPaBReCkrkLhHDTAiNwxas1D2FGhbbwa/rAmFwKwPZlrfa4U2IuBX3wq++RChqTr6QGfzEb1HRK5ATffw5cSilj65N5YclPy5qOFzjPP2SLHHzPks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id EEDE4C1C; Tue, 25 Nov 2025 09:15:23 -0600 (CST)
+Date: Tue, 25 Nov 2025 09:15:23 -0600
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Ryan Foster <foster.ryan.r@gmail.com>
+Cc: serge@hallyn.com, paul@paul-moore.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] security: Rename functions and add namespace mapping
+ tests
+Message-ID: <aSXICxT6u0Rx1FhW@mail.hallyn.com>
+References: <20251110143748.4144288-1-foster.ryan.r@gmail.com>
+ <20251121174826.190381-1-foster.ryan.r@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ba3d5651-fa68-4bb5-84aa-35576044e7b0@canonical.com>
+In-Reply-To: <20251121174826.190381-1-foster.ryan.r@gmail.com>
 
-* John Johansen <john.johansen@canonical.com>:
-> On 11/18/25 04:49, Helge Deller wrote:
-> > Hi Adrian,
-> > 
-> > On 11/18/25 12:43, John Paul Adrian Glaubitz wrote:
-> > > On Tue, 2025-11-18 at 12:09 +0100, Helge Deller wrote:
-> > > > My patch fixed two call sites, but I suspect you see another call site which
-> > > > hasn't been fixed yet.
-> > > > 
-> > > > Can you try attached patch? It might indicate the caller of the function and
-> > > > maybe prints the struct name/address which isn't aligned.
-> > > > 
-> > > > Helge
-> > > > 
-> > > > 
-> > > > diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-> > > > index c5a91600842a..b477430c07eb 100644
-> > > > --- a/security/apparmor/match.c
-> > > > +++ b/security/apparmor/match.c
-> > > > @@ -313,6 +313,9 @@ struct aa_dfa *aa_dfa_unpack(void *blob, size_t size, int flags)
-> > > >       if (size < sizeof(struct table_set_header))
-> > > >           goto fail;
-> > > > +    if (WARN_ON(((unsigned long)data) & (BITS_PER_LONG/8 - 1)))
-> > > > +        pr_warn("dfa blob stream %pS not aligned.\n", data);
-> > > > +
-> > > >       if (ntohl(*(__be32 *) data) != YYTH_MAGIC)
-> > > >           goto fail;
-> > > 
-> > > Here is the relevant output with the patch applied:
-> > > 
-> > > [   73.840639] ------------[ cut here ]------------
-> > > [   73.901376] WARNING: CPU: 0 PID: 341 at security/apparmor/match.c:316 aa_dfa_unpack+0x6cc/0x720
-> > > [   74.015867] Modules linked in: binfmt_misc evdev flash sg drm drm_panel_orientation_quirks backlight i2c_core configfs nfnetlink autofs4 ext4 crc16 mbcache jbd2 hid_generic usbhid sr_mod hid cdrom
-> > > sd_mod ata_generic ohci_pci ehci_pci ehci_hcd ohci_hcd pata_ali libata sym53c8xx scsi_transport_spi tg3 scsi_mod usbcore libphy scsi_common mdio_bus usb_common
-> > > [   74.428977] CPU: 0 UID: 0 PID: 341 Comm: apparmor_parser Not tainted 6.18.0-rc6+ #9 NONE
-> > > [   74.536543] Call Trace:
-> > > [   74.568561] [<0000000000434c24>] dump_stack+0x8/0x18
-> > > [   74.633757] [<0000000000476438>] __warn+0xd8/0x100
-> > > [   74.696664] [<00000000004296d4>] warn_slowpath_fmt+0x34/0x74
-> > > [   74.771006] [<00000000008db28c>] aa_dfa_unpack+0x6cc/0x720
-> > > [   74.843062] [<00000000008e643c>] unpack_pdb+0xbc/0x7e0
-> > > [   74.910545] [<00000000008e7740>] unpack_profile+0xbe0/0x1300
-> > > [   74.984888] [<00000000008e82e0>] aa_unpack+0xe0/0x6a0
-> > > [   75.051226] [<00000000008e3ec4>] aa_replace_profiles+0x64/0x1160
-> > > [   75.130144] [<00000000008d4d90>] policy_update+0xf0/0x280
-> > > [   75.201057] [<00000000008d4fc8>] profile_replace+0xa8/0x100
-> > > [   75.274258] [<0000000000766bd0>] vfs_write+0x90/0x420
-> > > [   75.340594] [<00000000007670cc>] ksys_write+0x4c/0xe0
-> > > [   75.406932] [<0000000000767174>] sys_write+0x14/0x40
-> > > [   75.472126] [<0000000000406174>] linux_sparc_syscall+0x34/0x44
-> > > [   75.548802] ---[ end trace 0000000000000000 ]---
-> > > [   75.609503] dfa blob stream 0xfff0000008926b96 not aligned.
-> > > [   75.682695] Kernel unaligned access at TPC[8db2a8] aa_dfa_unpack+0x6e8/0x720
-> > 
-> > The non-8-byte-aligned address (0xfff0000008926b96) is coming from userspace
-> > (via the write syscall).
-> > Some apparmor userspace tool writes into the apparmor ".replace" virtual file with
-> > a source address which is not correctly aligned.
+On Fri, Nov 21, 2025 at 09:48:26AM -0800, Ryan Foster wrote:
+> Rename rootid_owns_currentns() to uid_owns_currentns() and
+> rootid_owns_userns() to uid_owns_ns() for clarity, as the function checks
+> any UID, not just root. Update all call sites accordingly.
 > 
-> the userpace buffer passed to write(2) has to be aligned? Its certainly nice if it
-> is but the userspace tooling hasn't been treating it as aligned. With that said,
-> the dfa should be padded to be aligned. So this tripping in the dfa is a bug,
-> and there really should be some validation to catch it.
+> Add tests that create actual user namespaces with different UID mappings
+> to verify namespace traversal logic. The tests create namespaces where
+> uid 0 maps to different kuids (e.g., kuid 1000, 2000) and verify that
+> uid_owns_ns() correctly identifies ownership based on the namespace
+> hierarchy traversal.
 > 
-> > You should be able to debug/find the problematic code with strace from userspace.
-> > Maybe someone with apparmor knowledge here on the list has an idea?
-> > 
-> This is likely an unaligned 2nd profile, being split out and loaded separately
-> from the rest of the container. Basically the loader for some reason (there
-> are a few different possible reasons) is poking into the container format and
-> pulling out the profile at some offset, this gets loaded to the kernel but
-> it would seem that its causing an issue with the dfa alignment within the container,
-> which should be aligned to the original container.
+> This addresses feedback to use clearer function naming and test actual
+> namespace functionality with real user namespace creation and mappings,
+> rather than just basic input validation.
 
+Hi Ryan,
 
-Regarding this:
+did you see https://lore.kernel.org/all/aR0JrOvDxDKZPELd@mail.hallyn.com ?
 
-> Kernel side, we are going to need to add some extra verification checks, it should
-> be catching this, as unaligned as part of the unpack. Userspace side, we will have
-> to verify my guess and fix the loader.
+That is now in linux-next, and should be merged into 6.19 when that window
+opens.  So please base your patch on that (so you can drop your uid_owns_ns()
+renames).
 
-I wonder if loading those tables are really time critical?
-If not, maybe just making the kernel aware that the tables might be unaligned
-can help, e.g. with the following (untested) patch.
-Adrian, maybe you want to test?
+I haven't looked closely at the tests, but at a cursory glance this is what
+I had in mind, thanks!  I'll look more closely when you send next version.
 
-------------------------
-
-[PATCH] Allow apparmor to handle unaligned dfa tables
-
-The dfa tables can originate from kernel or userspace and 8-byte alignment
-isn't always guaranteed and as such may trigger unaligned memory accesses
-on various architectures.
-Work around it by using the get_unaligned_xx() helpers.
-
-Signed-off-by: Helge Deller <deller@gmx.de>
-
-diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-index c5a91600842a..26e82ba879d4 100644
---- a/security/apparmor/match.c
-+++ b/security/apparmor/match.c
-@@ -15,6 +15,7 @@
- #include <linux/vmalloc.h>
- #include <linux/err.h>
- #include <linux/kref.h>
-+#include <linux/unaligned.h>
- 
- #include "include/lib.h"
- #include "include/match.h"
-@@ -42,11 +43,11 @@ static struct table_header *unpack_table(char *blob, size_t bsize)
- 	/* loaded td_id's start at 1, subtract 1 now to avoid doing
- 	 * it every time we use td_id as an index
- 	 */
--	th.td_id = be16_to_cpu(*(__be16 *) (blob)) - 1;
-+	th.td_id = get_unaligned_be16(blob) - 1;
- 	if (th.td_id > YYTD_ID_MAX)
- 		goto out;
--	th.td_flags = be16_to_cpu(*(__be16 *) (blob + 2));
--	th.td_lolen = be32_to_cpu(*(__be32 *) (blob + 8));
-+	th.td_flags = get_unaligned_be16(blob + 2);
-+	th.td_lolen = get_unaligned_be32(blob + 8);
- 	blob += sizeof(struct table_header);
- 
- 	if (!(th.td_flags == YYTD_DATA16 || th.td_flags == YYTD_DATA32 ||
-@@ -313,14 +314,14 @@ struct aa_dfa *aa_dfa_unpack(void *blob, size_t size, int flags)
- 	if (size < sizeof(struct table_set_header))
- 		goto fail;
- 
--	if (ntohl(*(__be32 *) data) != YYTH_MAGIC)
-+	if (get_unaligned_be32(data) != YYTH_MAGIC)
- 		goto fail;
- 
--	hsize = ntohl(*(__be32 *) (data + 4));
-+	hsize = get_unaligned_be32(data + 4);
- 	if (size < hsize)
- 		goto fail;
- 
--	dfa->flags = ntohs(*(__be16 *) (data + 12));
-+	dfa->flags = get_unaligned_be16(data + 12);
- 	if (dfa->flags & ~(YYTH_FLAGS))
- 		goto fail;
- 
-@@ -329,7 +330,7 @@ struct aa_dfa *aa_dfa_unpack(void *blob, size_t size, int flags)
- 	 * if (dfa->flags & YYTH_FLAGS_OOB_TRANS) {
- 	 *	if (hsize < 16 + 4)
- 	 *		goto fail;
--	 *	dfa->max_oob = ntol(*(__be32 *) (data + 16));
-+	 *	dfa->max_oob = get_unaligned_be32(data + 16);
- 	 *	if (dfa->max <= MAX_OOB_SUPPORTED) {
- 	 *		pr_err("AppArmor DFA OOB greater than supported\n");
- 	 *		goto fail;
+> ---
+>  security/commoncap.c      |  26 ++--
+>  security/commoncap_test.c | 286 ++++++++++++++++++++++++++++++++------
+>  2 files changed, 254 insertions(+), 58 deletions(-)
+> 
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 15d8147a34c4..cca291df9551 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -359,16 +359,16 @@ int cap_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry)
+>  }
+>  
+>  #ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
+> -bool rootid_owns_userns(struct user_namespace *ns, kuid_t kroot);
+> -bool rootid_owns_userns(struct user_namespace *ns, kuid_t kroot)
+> +bool uid_owns_ns(struct user_namespace *ns, kuid_t kuid);
+> +bool uid_owns_ns(struct user_namespace *ns, kuid_t kuid)
+>  #else
+> -static bool rootid_owns_userns(struct user_namespace *ns, kuid_t kroot)
+> +static bool uid_owns_ns(struct user_namespace *ns, kuid_t kuid)
+>  #endif
+>  {
+>  	struct user_namespace *iter;
+>  
+>  	for (iter = ns;; iter = iter->parent) {
+> -		if (from_kuid(iter, kroot) == 0)
+> +		if (from_kuid(iter, kuid) == 0)
+>  			return true;
+>  		if (iter == &init_user_ns)
+>  			break;
+> @@ -378,19 +378,19 @@ static bool rootid_owns_userns(struct user_namespace *ns, kuid_t kroot)
+>  }
+>  
+>  #ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
+> -bool rootid_owns_currentns(vfsuid_t rootvfsuid);
+> -bool rootid_owns_currentns(vfsuid_t rootvfsuid)
+> +bool uid_owns_currentns(vfsuid_t vfsuid);
+> +bool uid_owns_currentns(vfsuid_t vfsuid)
+>  #else
+> -static bool rootid_owns_currentns(vfsuid_t rootvfsuid)
+> +static bool uid_owns_currentns(vfsuid_t vfsuid)
+>  #endif
+>  {
+> -	kuid_t kroot;
+> +	kuid_t kuid;
+>  
+> -	if (!vfsuid_valid(rootvfsuid))
+> +	if (!vfsuid_valid(vfsuid))
+>  		return false;
+>  
+> -	kroot = vfsuid_into_kuid(rootvfsuid);
+> -	return rootid_owns_userns(current_user_ns(), kroot);
+> +	kuid = vfsuid_into_kuid(vfsuid);
+> +	return uid_owns_ns(current_user_ns(), kuid);
+>  }
+>  
+>  static __u32 sansflags(__u32 m)
+> @@ -497,7 +497,7 @@ int cap_inode_getsecurity(struct mnt_idmap *idmap,
+>  		goto out_free;
+>  	}
+>  
+> -	if (!rootid_owns_currentns(vfsroot)) {
+> +	if (!uid_owns_currentns(vfsroot)) {
+>  		size = -EOVERFLOW;
+>  		goto out_free;
+>  	}
+> @@ -738,7 +738,7 @@ int get_vfs_caps_from_disk(struct mnt_idmap *idmap,
+>  	/* Limit the caps to the mounter of the filesystem
+>  	 * or the more limited uid specified in the xattr.
+>  	 */
+> -	if (!rootid_owns_currentns(rootvfsuid))
+> +	if (!uid_owns_currentns(rootvfsuid))
+>  		return -ENODATA;
+>  
+>  	cpu_caps->permitted.val = le32_to_cpu(caps->data[0].permitted);
+> diff --git a/security/commoncap_test.c b/security/commoncap_test.c
+> index 962aa899455d..7f066dc0df5d 100644
+> --- a/security/commoncap_test.c
+> +++ b/security/commoncap_test.c
+> @@ -10,6 +10,8 @@
+>  #include <linux/user_namespace.h>
+>  #include <linux/uidgid.h>
+>  #include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/refcount.h>
+>  
+>  /* Forward declare types and functions we need from mnt_idmapping.h
+>   * We avoid including the full header because it contains inline functions
+> @@ -50,38 +52,38 @@ static inline kuid_t vfsuid_into_kuid(vfsuid_t vfsuid)
+>  #ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
+>  
+>  /* Forward declarations - functions are exported when KUNIT_TEST is enabled */
+> -extern bool rootid_owns_userns(struct user_namespace *ns, kuid_t kroot);
+> -extern bool rootid_owns_currentns(vfsuid_t rootvfsuid);
+> +extern bool uid_owns_ns(struct user_namespace *ns, kuid_t kuid);
+> +extern bool uid_owns_currentns(vfsuid_t vfsuid);
+>  
+>  /**
+> - * test_rootid_owns_currentns_init_ns - Test rootid_owns_currentns with init ns
+> + * test_uid_owns_currentns_init_ns - Test uid_owns_currentns with init ns
+>   *
+> - * Verifies that a root ID in the init namespace correctly owns the current
+> + * Verifies that UID 0 in the init namespace correctly owns the current
+>   * namespace when running in init_user_ns.
+>   *
+>   * @test: KUnit test context
+>   */
+> -static void test_rootid_owns_currentns_init_ns(struct kunit *test)
+> +static void test_uid_owns_currentns_init_ns(struct kunit *test)
+>  {
+> -	vfsuid_t root_vfsuid;
+> -	kuid_t root_kuid;
+> +	vfsuid_t vfsuid;
+> +	kuid_t kuid;
+>  
+> -	/* Create a root UID in init namespace */
+> -	root_kuid = KUIDT_INIT(0);
+> -	root_vfsuid = VFSUIDT_INIT(root_kuid);
+> +	/* Create UID 0 in init namespace */
+> +	kuid = KUIDT_INIT(0);
+> +	vfsuid = VFSUIDT_INIT(kuid);
+>  
+> -	/* In init namespace, root should own current namespace */
+> -	KUNIT_EXPECT_TRUE(test, rootid_owns_currentns(root_vfsuid));
+> +	/* In init namespace, UID 0 should own current namespace */
+> +	KUNIT_EXPECT_TRUE(test, uid_owns_currentns(vfsuid));
+>  }
+>  
+>  /**
+> - * test_rootid_owns_currentns_invalid - Test rootid_owns_currentns with invalid vfsuid
+> + * test_uid_owns_currentns_invalid - Test uid_owns_currentns with invalid vfsuid
+>   *
+>   * Verifies that an invalid vfsuid correctly returns false.
+>   *
+>   * @test: KUnit test context
+>   */
+> -static void test_rootid_owns_currentns_invalid(struct kunit *test)
+> +static void test_uid_owns_currentns_invalid(struct kunit *test)
+>  {
+>  	vfsuid_t invalid_vfsuid;
+>  
+> @@ -89,74 +91,268 @@ static void test_rootid_owns_currentns_invalid(struct kunit *test)
+>  	invalid_vfsuid = INVALID_VFSUID;
+>  
+>  	/* Invalid vfsuid should return false */
+> -	KUNIT_EXPECT_FALSE(test, rootid_owns_currentns(invalid_vfsuid));
+> +	KUNIT_EXPECT_FALSE(test, uid_owns_currentns(invalid_vfsuid));
+>  }
+>  
+>  /**
+> - * test_rootid_owns_currentns_nonroot - Test rootid_owns_currentns with non-root UID
+> + * test_uid_owns_currentns_nonzero - Test uid_owns_currentns with non-zero UID
+>   *
+> - * Verifies that a non-root UID correctly returns false.
+> + * Verifies that a non-zero UID correctly returns false.
+>   *
+>   * @test: KUnit test context
+>   */
+> -static void test_rootid_owns_currentns_nonroot(struct kunit *test)
+> +static void test_uid_owns_currentns_nonzero(struct kunit *test)
+>  {
+> -	vfsuid_t nonroot_vfsuid;
+> -	kuid_t nonroot_kuid;
+> +	vfsuid_t vfsuid;
+> +	kuid_t kuid;
+>  
+> -	/* Create a non-root UID */
+> -	nonroot_kuid = KUIDT_INIT(1000);
+> -	nonroot_vfsuid = VFSUIDT_INIT(nonroot_kuid);
+> +	/* Create a non-zero UID */
+> +	kuid = KUIDT_INIT(1000);
+> +	vfsuid = VFSUIDT_INIT(kuid);
+>  
+> -	/* Non-root UID should return false */
+> -	KUNIT_EXPECT_FALSE(test, rootid_owns_currentns(nonroot_vfsuid));
+> +	/* Non-zero UID should return false */
+> +	KUNIT_EXPECT_FALSE(test, uid_owns_currentns(vfsuid));
+>  }
+>  
+>  /**
+> - * test_rootid_owns_userns_init_ns - Test rootid_owns_userns with init namespace
+> + * test_uid_owns_ns_init_ns_uid0 - Test uid_owns_ns with init namespace and UID 0
+>   *
+> - * Verifies that rootid_owns_userns correctly identifies root UID in init namespace.
+> - * This tests the core namespace traversal logic.
+> + * Verifies that uid_owns_ns correctly identifies UID 0 in init namespace.
+> + * This tests the core namespace traversal logic. In init namespace, UID 0
+> + * maps to itself, so it should own the namespace.
+>   *
+>   * @test: KUnit test context
+>   */
+> -static void test_rootid_owns_userns_init_ns(struct kunit *test)
+> +static void test_uid_owns_ns_init_ns_uid0(struct kunit *test)
+>  {
+> -	kuid_t root_kuid;
+> +	kuid_t kuid;
+>  	struct user_namespace *init_ns;
+>  
+> -	root_kuid = KUIDT_INIT(0);
+> +	kuid = KUIDT_INIT(0);
+>  	init_ns = &init_user_ns;
+>  
+> -	/* Root UID should own init namespace */
+> -	KUNIT_EXPECT_TRUE(test, rootid_owns_userns(init_ns, root_kuid));
+> +	/* UID 0 should own init namespace */
+> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(init_ns, kuid));
+>  }
+>  
+>  /**
+> - * test_rootid_owns_userns_nonroot - Test rootid_owns_userns with non-root UID
+> + * test_uid_owns_ns_init_ns_nonzero - Test uid_owns_ns with init namespace and non-zero UID
+>   *
+> - * Verifies that rootid_owns_userns correctly rejects non-root UIDs.
+> + * Verifies that uid_owns_ns correctly rejects non-zero UIDs in init namespace.
+> + * Only UID 0 should own a namespace.
+>   *
+>   * @test: KUnit test context
+>   */
+> -static void test_rootid_owns_userns_nonroot(struct kunit *test)
+> +static void test_uid_owns_ns_init_ns_nonzero(struct kunit *test)
+>  {
+> -	kuid_t nonroot_kuid;
+> +	kuid_t kuid;
+>  	struct user_namespace *init_ns;
+>  
+> -	nonroot_kuid = KUIDT_INIT(1000);
+> +	kuid = KUIDT_INIT(1000);
+>  	init_ns = &init_user_ns;
+>  
+> -	/* Non-root UID should not own namespace */
+> -	KUNIT_EXPECT_FALSE(test, rootid_owns_userns(init_ns, nonroot_kuid));
+> +	/* Non-zero UID should not own namespace */
+> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(init_ns, kuid));
+> +}
+> +
+> +/**
+> + * test_uid_owns_ns_init_ns_various_uids - Test uid_owns_ns with various UIDs
+> + *
+> + * Verifies that uid_owns_ns correctly identifies only UID 0 as owning
+> + * the namespace, regardless of the UID value tested.
+> + *
+> + * @test: KUnit test context
+> + */
+> +static void test_uid_owns_ns_init_ns_various_uids(struct kunit *test)
+> +{
+> +	struct user_namespace *init_ns;
+> +	kuid_t kuid;
+> +
+> +	init_ns = &init_user_ns;
+> +
+> +	/* UID 0 should own the namespace */
+> +	kuid = KUIDT_INIT(0);
+> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(init_ns, kuid));
+> +
+> +	/* Other UIDs should not own the namespace */
+> +	kuid = KUIDT_INIT(1);
+> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(init_ns, kuid));
+> +
+> +	kuid = KUIDT_INIT(1000);
+> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(init_ns, kuid));
+> +
+> +	kuid = KUIDT_INIT(65534);
+> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(init_ns, kuid));
+> +}
+> +
+> +/**
+> + * create_test_user_ns_with_mapping - Create a test user namespace with uid mapping
+> + *
+> + * Creates a minimal user namespace for testing where uid 0 in the namespace
+> + * maps to the specified kuid in the parent namespace.
+> + *
+> + * The mapping semantics:
+> + * - first: uid in this namespace (0)
+> + * - lower_first: kuid in parent namespace (mapped_kuid)
+> + * - count: range size (1)
+> + *
+> + * This means: from_kuid(ns, mapped_kuid) will return 0
+> + * because map_id_up looks for kuid in [lower_first, lower_first+count)
+> + * and returns first + (kuid - lower_first) = 0 + (mapped_kuid - mapped_kuid) = 0
+> + *
+> + * @test: KUnit test context
+> + * @parent_ns: Parent user namespace
+> + * @mapped_kuid: The kuid that uid 0 in the new namespace maps to
+> + *
+> + * Returns: The new user namespace, or NULL on failure
+> + */
+> +static struct user_namespace *create_test_user_ns_with_mapping(struct kunit *test,
+> +								struct user_namespace *parent_ns,
+> +								kuid_t mapped_kuid)
+> +{
+> +	struct user_namespace *ns;
+> +	struct uid_gid_extent extent;
+> +
+> +	/* Allocate a test namespace - use kzalloc to zero all fields */
+> +	ns = kunit_kzalloc(test, sizeof(*ns), GFP_KERNEL);
+> +	if (!ns)
+> +		return NULL;
+> +
+> +	/* Initialize basic namespace structure fields */
+> +	ns->parent = parent_ns;
+> +	ns->level = parent_ns ? parent_ns->level + 1 : 0;
+> +	ns->owner = mapped_kuid;
+> +	ns->group = KGIDT_INIT(0);
+> +
+> +	/* Initialize ns_common structure */
+> +	refcount_set(&ns->ns.__ns_ref, 1);
+> +
+> +	/* Set up uid mapping: uid 0 in this namespace maps to mapped_kuid in parent
+> +	 * Format: first (uid in ns) : lower_first (kuid in parent) : count
+> +	 * So: uid 0 in ns -> kuid mapped_kuid in parent
+> +	 * This means from_kuid(ns, mapped_kuid) returns 0
+> +	 */
+> +	extent.first = 0;                              /* uid 0 in this namespace */
+> +	extent.lower_first = __kuid_val(mapped_kuid);  /* maps to this kuid in parent */
+> +	extent.count = 1;
+> +
+> +	ns->uid_map.extent[0] = extent;
+> +	ns->uid_map.nr_extents = 1;
+> +
+> +	/* Set up gid mapping: gid 0 maps to gid 0 in parent (simplified) */
+> +	extent.first = 0;
+> +	extent.lower_first = 0;
+> +	extent.count = 1;
+> +
+> +	ns->gid_map.extent[0] = extent;
+> +	ns->gid_map.nr_extents = 1;
+> +
+> +	return ns;
+> +}
+> +
+> +/**
+> + * test_uid_owns_ns_with_mapping - Test uid_owns_ns with namespace where uid 0
+> + *				   maps to different kuid
+> + *
+> + * Creates a user namespace where uid 0 maps to kuid 1000 in the parent namespace.
+> + * Verifies that uid_owns_ns correctly identifies kuid 1000 as owning the namespace.
+> + *
+> + * Note: uid_owns_ns walks up the namespace hierarchy, so it checks the current
+> + * namespace first, then parent, then parent's parent, etc. So:
+> + * - kuid 1000 owns test_ns because from_kuid(test_ns, 1000) == 0
+> + * - kuid 0 also owns test_ns because from_kuid(init_user_ns, 0) == 0
+> + *   (checked in parent)
+> + *
+> + * This tests the actual functionality as requested: creating namespaces with
+> + * different values for the namespace's uid 0.
+> + *
+> + * @test: KUnit test context
+> + */
+> +static void test_uid_owns_ns_with_mapping(struct kunit *test)
+> +{
+> +	struct user_namespace *test_ns;
+> +	struct user_namespace *parent_ns;
+> +	kuid_t mapped_kuid, other_kuid;
+> +
+> +	parent_ns = &init_user_ns;
+> +	mapped_kuid = KUIDT_INIT(1000);  /* uid 0 in test_ns maps to kuid 1000 */
+> +	other_kuid = KUIDT_INIT(2000);   /* This should not own the namespace */
+> +
+> +	/* Create test namespace where uid 0 maps to kuid 1000 */
+> +	test_ns = create_test_user_ns_with_mapping(test, parent_ns, mapped_kuid);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, test_ns);
+> +
+> +	/* kuid 1000 should own the namespace (because uid 0 in test_ns maps to it) */
+> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(test_ns, mapped_kuid));
+> +
+> +	/* kuid 0 also owns the namespace because it maps to 0 in init_user_ns (parent) */
+> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(test_ns, KUIDT_INIT(0)));
+> +
+> +	/* Other kuids that don't map to 0 in test_ns or any parent should not own */
+> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(test_ns, other_kuid));
+> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(test_ns, KUIDT_INIT(500)));
+> +}
+> +
+> +/**
+> + * test_uid_owns_ns_with_different_mappings - Test with multiple namespaces
+> + *					      having different mappings
+> + *
+> + * Creates multiple test namespaces with different uid 0 mappings to verify
+> + * the function correctly identifies ownership based on the mapping.
+> + *
+> + * Since uid_owns_ns walks up the hierarchy, kuids that map to 0 in init_user_ns
+> + * (like kuid 0) will own all namespaces. But we can still verify that the
+> + * specific mapped kuids own their respective namespaces.
+> + *
+> + * @test: KUnit test context
+> + */
+> +static void test_uid_owns_ns_with_different_mappings(struct kunit *test)
+> +{
+> +	struct user_namespace *ns1, *ns2, *ns3;
+> +	struct user_namespace *parent_ns;
+> +
+> +	parent_ns = &init_user_ns;
+> +
+> +	/* Namespace 1: uid 0 maps to kuid 1000 */
+> +	ns1 = create_test_user_ns_with_mapping(test, parent_ns, KUIDT_INIT(1000));
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns1);
+> +	/* kuid 1000 owns ns1 because it maps to uid 0 in ns1 */
+> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(ns1, KUIDT_INIT(1000)));
+> +	/* kuid 0 also owns ns1 because it maps to 0 in init_user_ns (parent) */
+> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(ns1, KUIDT_INIT(0)));
+> +	/* kuid 2000 doesn't map to 0 in ns1 or any parent */
+> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(ns1, KUIDT_INIT(2000)));
+> +
+> +	/* Namespace 2: uid 0 maps to kuid 2000 */
+> +	ns2 = create_test_user_ns_with_mapping(test, parent_ns, KUIDT_INIT(2000));
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns2);
+> +	/* kuid 2000 owns ns2 because it maps to uid 0 in ns2 */
+> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(ns2, KUIDT_INIT(2000)));
+> +	/* kuid 0 also owns ns2 because it maps to 0 in init_user_ns (parent) */
+> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(ns2, KUIDT_INIT(0)));
+> +	/* kuid 1000 doesn't map to 0 in ns2 or any parent */
+> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(ns2, KUIDT_INIT(1000)));
+> +
+> +	/* Namespace 3: uid 0 maps to kuid 0 (identity mapping) */
+> +	ns3 = create_test_user_ns_with_mapping(test, parent_ns, KUIDT_INIT(0));
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns3);
+> +	/* kuid 0 owns ns3 because it maps to uid 0 in ns3 */
+> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(ns3, KUIDT_INIT(0)));
+> +	/* kuid 1000 doesn't map to 0 in ns3 or any parent */
+> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(ns3, KUIDT_INIT(1000)));
+> +	/* kuid 2000 doesn't map to 0 in ns3 or any parent */
+> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(ns3, KUIDT_INIT(2000)));
+>  }
+>  
+>  static struct kunit_case commoncap_test_cases[] = {
+> -	KUNIT_CASE(test_rootid_owns_currentns_init_ns),
+> -	KUNIT_CASE(test_rootid_owns_currentns_invalid),
+> -	KUNIT_CASE(test_rootid_owns_currentns_nonroot),
+> -	KUNIT_CASE(test_rootid_owns_userns_init_ns),
+> -	KUNIT_CASE(test_rootid_owns_userns_nonroot),
+> +	KUNIT_CASE(test_uid_owns_currentns_init_ns),
+> +	KUNIT_CASE(test_uid_owns_currentns_invalid),
+> +	KUNIT_CASE(test_uid_owns_currentns_nonzero),
+> +	KUNIT_CASE(test_uid_owns_ns_init_ns_uid0),
+> +	KUNIT_CASE(test_uid_owns_ns_init_ns_nonzero),
+> +	KUNIT_CASE(test_uid_owns_ns_init_ns_various_uids),
+> +	KUNIT_CASE(test_uid_owns_ns_with_mapping),
+> +	KUNIT_CASE(test_uid_owns_ns_with_different_mappings),
+>  	{}
+>  };
+>  
+> -- 
+> 2.43.0
