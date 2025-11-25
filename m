@@ -1,507 +1,292 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazolkn19011025.outbound.protection.outlook.com [52.103.39.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB16DF49;
-	Tue, 25 Nov 2025 15:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764083736; cv=none; b=AFB7HNokQAcIC/mKiGUeUxnEY1hUqE2g3TayGnigx8OHEBxo6lhTEcjG7N7lW2zFNXNqQQMyoGTO3ooss+ebRR3nvJk9Z3e1wSBwz4u12jaEzvxe8EPrMBZdzvLc1G9k/k3HQo2ySyEPCEr/YJupXgdvUHAdEoeAt3i9+adOxLk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764083736; c=relaxed/simple;
-	bh=xm8XfFt/2MCX1Wlyfe3XO+I0z1ZIxS1YJ4qLW9GfGIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pgQmmGFtNudSK6dNIkXSaH14twywFvEU2dEx4GOb7YXjQSyHKJn4BM7KhXGPaBReCkrkLhHDTAiNwxas1D2FGhbbwa/rAmFwKwPZlrfa4U2IuBX3wq++RChqTr6QGfzEb1HRK5ATffw5cSilj65N5YclPy5qOFzjPP2SLHHzPks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id EEDE4C1C; Tue, 25 Nov 2025 09:15:23 -0600 (CST)
-Date: Tue, 25 Nov 2025 09:15:23 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Ryan Foster <foster.ryan.r@gmail.com>
-Cc: serge@hallyn.com, paul@paul-moore.com,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] security: Rename functions and add namespace mapping
- tests
-Message-ID: <aSXICxT6u0Rx1FhW@mail.hallyn.com>
-References: <20251110143748.4144288-1-foster.ryan.r@gmail.com>
- <20251121174826.190381-1-foster.ryan.r@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A535220E023;
+	Tue, 25 Nov 2025 16:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.39.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764087556; cv=fail; b=BZBt4oOwovzj5vwApGjOh8OmXM9elWmmhioU3JBCmJvg66XlZ+u8N3vhelptkHNcCuIzgG3wauQ9O/IK9/j9xIioxem1x+MMe5gR9rkegPQ3cCh1lgh0Ng4ZwWmbFr6EgSxQ1Eek4J3MNaO1GHdNWg7VkgywXhXiRjSg7Rjf0mY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764087556; c=relaxed/simple;
+	bh=zzz/0GkVB3cOrdmctlmZJ2/5fALnX3tJQQ6F5nbSmcE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=cNSoAEyL+cbNF5AUILyi5ZroaSVd53FakgdSMRY0ePL/GyZRykxQLYdTpyYm+FR3Hiv4uKKIYiTu50ceU/vxo4BRWrkXqgmX5iZDlfmikP8vToA/+w7AIjLy3ZYW4YfZp6+MmXIRzJFOHTnTJSWEJoA7LXzLZQsqxkYNEUD067A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.de; spf=pass smtp.mailfrom=hotmail.de; dkim=pass (2048-bit key) header.d=HOTMAIL.DE header.i=@HOTMAIL.DE header.b=KUDQhs2A; arc=fail smtp.client-ip=52.103.39.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=HOTMAIL.DE header.i=@HOTMAIL.DE header.b="KUDQhs2A"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Bb6AwI8bwxG4IJM/RBuupPVCowbRP3m6WTvuXTOgX8D6ON7gXTC8G5/zpOKApU39WuCz30ub+rTqHns20Q9/kAXy4oFbQqcuw5X240FvBJsu6a9vNDi/HqxG0nXGOhKTHsnGUt7SVIel/enUVdxHMOUm4/od4OZ5lyGtk6VDNzWVKKlxrL8uGOJABIN4fX+bBNI6zXG1pmqZUBJhE6CsETg7kYoavh+stCpaBzTruJGIgGKRv3ekJKxG20ltqAfhovGh3G1bk549nfKMBDbPIdPw5jFGH5kw6lVHXJQ+jJo1Ok+ZOjcWXu2CEfqUY2hiOUBGbDPxXyiotbWDZSBDlA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JmUIK5/RvAIOyCFMKm/J5TQJjxPy1iCkZWdssuoOcME=;
+ b=bPetmXX3rGT4gzKvC0g/IB/W3Ap3ZuoFXcw6RSd3XHSeg4lq4dL0hqLTljG+iif1WiX2tcatMUfjs87FsNFFTIphyD3RZL1eUb7UDofxoWPrB9VEAnMdeHug6UuJ9ZGP/EhFAzgapjiy6fc6eWFbFIiB6tuKgy5c+7MAr3QBw/TCRECAbuxJKd5Rupji4isN9f9yzKJkAm5PezfHOwC+sHcVfDauOIOVmSNNlFp7+wtNUkUrykymb6zSOEEi530MXfIZCsT0r/dZvRHmF3ceXfLE5l+i0Ms42KclcgDqoEwvcnLljh8WXW1sa8FjLkJYXwh4Vh3w6mjvJ8K/5cBRdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=HOTMAIL.DE;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JmUIK5/RvAIOyCFMKm/J5TQJjxPy1iCkZWdssuoOcME=;
+ b=KUDQhs2AKoH3GJ+YbV63xewsdDfdDsSrVChEY4SQ7zMCnw86iDdpTeDKxJ+NS5Eh/oK1PIePI/MRBMfp6e9C/jbp0mK7wzWGMtQkEUYSGetHg86vnxUYSEQBfL5n2D9zbMmh/G1rI2gLquvJzzVbb66h7vwg6iUHi9vOILI4ATvBzxNskL0FkpTUR6CCvoK+EV9ks3MV9ko6Hd99BJlbU4f0c5EoP2G3lLUyEkyX1tJfXUIjqVFXwE6VLhEwfW4w+YMWcKj6mwLhcv+eYt4FJO2smpgz2gz3HE8K1iBa98mu0o0X1PzJ20EWZwz32GjZlfmmo14Sw5GgpYFjkFD4Cw==
+Received: from GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:158:401::8d4) by AM8P195MB0884.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:1e8::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.11; Tue, 25 Nov
+ 2025 16:19:09 +0000
+Received: from GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
+ ([fe80::dde:411d:b5f2:49]) by GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
+ ([fe80::dde:411d:b5f2:49%8]) with mapi id 15.20.9343.011; Tue, 25 Nov 2025
+ 16:19:09 +0000
+Message-ID:
+ <GV2PPF74270EBEE63737C12FBE0B07D6DDAE4D1A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+Date: Tue, 25 Nov 2025 17:19:09 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH] exec: Move cred computation under exec_update_lock
+To: "Eric W. Biederman" <ebiederm@xmission.com>,
+ Oleg Nesterov <oleg@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
+ Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
+ Christian Brauner <brauner@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>,
+ Serge Hallyn <serge@hallyn.com>, James Morris
+ <jamorris@linux.microsoft.com>, Randy Dunlap <rdunlap@infradead.org>,
+ Suren Baghdasaryan <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>,
+ Helge Deller <deller@gmx.de>, Adrian Reber <areber@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+ Alexei Starovoitov <ast@kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+ linux-security-module@vger.kernel.org, tiozhang <tiozhang@didiglobal.com>,
+ Luis Chamberlain <mcgrof@kernel.org>,
+ "Paulo Alcantara (SUSE)" <pc@manguebit.com>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Frederic Weisbecker <frederic@kernel.org>, YueHaibing
+ <yuehaibing@huawei.com>, Paul Moore <paul@paul-moore.com>,
+ Aleksa Sarai <cyphar@cyphar.com>, Stefan Roesch <shr@devkernel.io>,
+ Chao Yu <chao@kernel.org>, xu xin <xu.xin16@zte.com.cn>,
+ Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
+ David Hildenbrand <david@redhat.com>, Dave Chinner <dchinner@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Elena Reshetova <elena.reshetova@intel.com>,
+ David Windsor <dwindsor@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>,
+ Ard Biesheuvel <ardb@kernel.org>,
+ "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Hans Liljestrand <ishkamiel@gmail.com>,
+ Penglei Jiang <superman.xpt@gmail.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Adrian Ratiu <adrian.ratiu@collabora.com>, Ingo Molnar <mingo@kernel.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Cyrill Gorcunov <gorcunov@gmail.com>, Eric Dumazet <edumazet@google.com>
+References: <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <87tsyozqdu.fsf@email.froward.int.ebiederm.org>
+ <87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
+ <87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
+ <aSNX5B9a5iSjJcM1@redhat.com> <87tsykuyf7.fsf@email.froward.int.ebiederm.org>
+Content-Language: en-US
+From: Bernd Edlinger <bernd.edlinger@hotmail.de>
+In-Reply-To: <87tsykuyf7.fsf@email.froward.int.ebiederm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0018.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c9::10) To GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:158:401::8d4)
+X-Microsoft-Original-Message-ID:
+ <c45f65ea-b311-47da-a6af-e8f86aa6832c@hotmail.de>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251121174826.190381-1-foster.ryan.r@gmail.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PPF74270EBEE:EE_|AM8P195MB0884:EE_
+X-MS-Office365-Filtering-Correlation-Id: 231c8fe9-cb76-4157-dbfa-08de2c3e5c74
+X-MS-Exchange-SLBlob-MailProps:
+	Cq7lScuPrnqyXd+wC6mISbAMXYCOP4i7hB6VdtoeT/HvoizDWFL+912+f0b08x9xU8UqPxbv5wBy8+h2LmeonS08Zc0M0PFIwW0PoRbs3Vkitr8oX/wvUD0JT/kvqzfkwqxSqpjhq4O+HGLFZLCYZ/IT2e9KiwjLAhvz/9p/e/niID0lewj8hVETnvf0ZAb+2jLwUf7RX6P6Da3fexUDw7ddnu2GqBsAdx7z/50XCxdybCQziR/ZJ/wxx/rQfaGJPFW1Ie7gJnC5+hWl/bMOLNHtndq3hZ4Ea7dG4Xuifglw9fU5BKuP/sS/fQGxKvFxLE2mPYeVe8k4fYQjtJD/JWPYxJy7hTfN4ResatTHuF5xXbkTWPGBZWdHL344sqqrWSbo8RaeVk0bDsHpmXgYGWBYIgB0K2KdeHuVvbdQ3Tya6TJtfMdZU0BwpPzXmbCUzcHry+GBsp/48AGLLQ//wlYRjGAiTYBSd6/F5TYKjbsNc3OWj/MF8N2956YS2wTortt7ZDz0nUygBixEQVWo5Uf8PmGJ7w8gblrbv7Zt14Y2DSFnZL9dJGMF4LfMiSZz8PzRWaAeTfm4lsZ3EPRwNRHmb9rsXnUsrlg23VZw9N5P3Nr9crTyE5xMfHyrWchl790K2enrCZt+J/lFmGzBXKgfmD388yNWNC/uJ1xEwjtglNVyn1P+dsfcigPm3zTJmAzcaPVrym5nzDSqbMqhoJTKKFIC9JZ3c1Rl2UPfKYCvNCe0ESXBT489WKJ7H+sDQW2wNJkv2C4=
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|41001999006|15080799012|461199028|23021999003|19110799012|21061999006|12121999013|8060799015|5072599009|51005399006|6090799003|40105399003|440099028|3412199025;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OWwrS2tmejBGcWhZcmphU1RlaTUwUFBrMlZ3ZzZ1RUxXaDBxSnBxZzgxdDhC?=
+ =?utf-8?B?U01QRlZhN2ZnYlh0Vk04QkFXM0Nnb1dFN1FHMkd4Zi9FUEhXMGltZXcrZ2No?=
+ =?utf-8?B?eVZZdmEzRXRGcGRHUWFxckpYVzN4N25OTHY5N281YUdBOHNhdjJncExBaktG?=
+ =?utf-8?B?dlFCZ0tZMlVUL1EyU0NRNmJDaWZZbDJwQXRoVk01em9zbDVCQ2F6c3NkbGt6?=
+ =?utf-8?B?cEFHTHdKRlczNUoxTkw2cXRUM3VGNzF4VDlPSWJuVFBTSERNN0xQZngxcWNn?=
+ =?utf-8?B?ekk3VUtNMkt4UkowMjhxSzlhY1M5OTRadVRRVlJOTnZQdlpqN3l3NXdvWitI?=
+ =?utf-8?B?WXZtVE5xZXVza2RnSUg1aGtLVFEva29sZjlBMnRpaHJSK2U0TitiVXdlQTlL?=
+ =?utf-8?B?SXR3c3EwRzNOMWZBQ0FGMlJTQnNackF3L3I1WVg0S0FxVkJsb1RiMVlYOWcz?=
+ =?utf-8?B?TjNrMnlOVDgxaFJtcFZ4M2JjUVl3cU1GanErbEVlQmlQZzBIZk9EVS9LQ1l2?=
+ =?utf-8?B?VkwyNlB6SHY1bExPWGlybms5Sloxcmh5cTNPMWlJY1YwSVRmN1l6ekJwbHpC?=
+ =?utf-8?B?V3k1eXBad2w4WlNZWDhCZmpid1ZFcEg4dFF3bTQ3UmYrYU9KbHFIcGFwaFdG?=
+ =?utf-8?B?aWRjR1ZtSFNIazhzKzEyVUdkTkgwNDhTVWJCTzd5VTVYRzBZQjNzZVAwUjRI?=
+ =?utf-8?B?ZE9Ca20yOWQrQVhMdDJ1R0hsZXBtNmw3THFkVUtaTjMvVFA1S0lIZjdWVjcy?=
+ =?utf-8?B?VktxWWZJTEVTNEdLcmhhaGwrN2lEekdLR1k4YkVTR3VDSjlObjNkc05neHoz?=
+ =?utf-8?B?Vk55QThhQXI2WHNweXRwWldab1FYdWZwYjNiQmJweEx5UGlvUnN3WFJJZlhp?=
+ =?utf-8?B?dFhrRXAybXlWTTAxWGVvT2Y1WFQ4M0ZzM3pIbGNvK0pteWRab1RKZU04bEh1?=
+ =?utf-8?B?RzBpR3JFMWZ5Q05vMGJGM3pHMzZRS0lueDdvN2crMkprQUhnNEgyeFNOR1hu?=
+ =?utf-8?B?b1hDRW5KQjg2WnJsbHE1TnF0UGk2SU1EM2srdzdIQTUvaHlKTWRINW51alZL?=
+ =?utf-8?B?WXZTMk9CT0hjVTBSdmp4bS9qQlBXY2NkakdjbXRYU0QwOFpYM21taGRjY0Nz?=
+ =?utf-8?B?L1I5d1ZvSTVMMTBJOUZkeHVyYjVqVndZN05jcDBpZ3hzOHRNc3NLSEw4SW9z?=
+ =?utf-8?B?ZGw0dUo3UmNGK0ZJVUpJZ3RMUFpaeXBSM3ZkZHlkMWhhVmVLblZBU3M2cEc0?=
+ =?utf-8?B?RktPblJXZjBPTzN5bmZkWXVTbEdrOGg1dkphbnFFTjNiaVE2V0ZaR21RTzUy?=
+ =?utf-8?B?TDdiYUF0WXo2VVkzQ0J4cnVhWVJiVDVBdlVubjRoazA4ODU1dUp5QXYzVXZY?=
+ =?utf-8?B?MDd4S20vZU1ZR0lPYm9zaE5RNm1EVFdBc3N5WXZnd1d4N09MODJmV1hkbDBL?=
+ =?utf-8?B?VEhFZUh4bjNwWTNrWVEwcDdsK2UvTnZCakxZQzBET0U0aUQxTDFXRE1YM1Vq?=
+ =?utf-8?B?bmRsdFNoektVejQwZENJK2VtNUhKMFBacC9od3JzcEhMSThTTDJVcXkzUC83?=
+ =?utf-8?B?K21xaUY2SzdsYlpZb254aXhlYmc5emY2V0Z4WXNQblJrQ2JSbUVPRG1Ra1FM?=
+ =?utf-8?B?bU1UNEIyMmVLNXZwRllGdGxHZnpiS2x2NGVjSTZjRnpzU1ZRSjhJTVRhWmlI?=
+ =?utf-8?B?UFFqeEQ1Z2kydGV4TkFxSWlBVXBZSGFqbkEzTmkzOUJiOVU5ZE9FaE43Rk93?=
+ =?utf-8?Q?VbSaWAEE4kgPrd8vbw=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QVh2MlZxd1pwYytCa011M0NDaldIUFVwM1FENjdtZTlDTitUWDRrTzZKWnNx?=
+ =?utf-8?B?R3hMdEljQTZlUk9UNE5GSHNJbEh3OVJzZSs5bHhVYVNQZ2JBSE5WTDhEZlJH?=
+ =?utf-8?B?QngzOEh5TnZuaGZIRUxBVzlEdnJXQkxheVQvNzJkaDc1MUdQZUV2S2VoTTlF?=
+ =?utf-8?B?N0x4ZW43Q3pqL3hsSmY2VS9ISis5ektMVFdoTFIzN2UrR0Z3RFprZXZHYmtV?=
+ =?utf-8?B?UDJ0SnZrZUg0Vk1DaGZCV3BETVlwcFB0TVQxWFRCTU13eThmWmNlTWZpdG42?=
+ =?utf-8?B?M2JhY1NvMDZDYU5PcmxtYklVWHlEa1FOdnJzRFJpMERscndQVVlBSmdKK2Ja?=
+ =?utf-8?B?czE2aDJyMHdVbUV4NVBtUWEzcFAraFlyWTJ6MTlsQmpWdC85cEE0eGh2ZVBh?=
+ =?utf-8?B?SjRrUS9iTGh4MTJwWUE4WnRkeWI3RXNZcEdSNW9Ncmt6MG1hU3R4c2JzTTZl?=
+ =?utf-8?B?SDVXbEQrZFo5K244UEZCbVlQMENFYTlBaU1Wc1p4b202N2pINTlWa3lnZGVw?=
+ =?utf-8?B?amZyS2FaKzM2NjJCdjJMWkNCMVNMWUNvWTNUVjllTVF0Ym8yaVJ3RklacGRU?=
+ =?utf-8?B?Y0R4cnZ6eExkaXlzemFYWlNRYnNsV2VxaWJ6YkZ3N01pSXM4M01WOUpsV1Vs?=
+ =?utf-8?B?NUt1NU5CVEFCUkNxTEh6bmdTd1FCMTExa3pKdUM4VnVKdWcxbnI2c3BDdC9N?=
+ =?utf-8?B?SXh4c1hIK016cmxIL25vSUFjRUJzWERmaC94ZER1bEI0ajY5U05iQjBhWitQ?=
+ =?utf-8?B?WDRiUVZIVU1NUzcrc0dma2psQzkrMnFHSTczL3ZneDB5eHZEV005eExON3F3?=
+ =?utf-8?B?N0Y4MTFlUnNDcVBLSEtDRGc4NEk2M0hldnV0Z0x4eWRYUGcveFdyVDk2d0VD?=
+ =?utf-8?B?R2Z1ZWdhTEdFSE8yYzBBWmc2clRZR1Ird042NkhYa1JTelV4OVcrcjZKQmFk?=
+ =?utf-8?B?R3hsMDdibGduRGVTaXZGL3hBaHhIeSs2eDVHbDJuSzY4cmpyVlZBbGNQc0hn?=
+ =?utf-8?B?SmFCMGQzSDFkSk1YVW5uUkYzUVFwaVovaXlLMWwrcmw3YXJndjllbmU0OWdU?=
+ =?utf-8?B?cDVLT2t5TU9EWmRQYXhlMnp1QzNLMU1oVUJaT2Jwdi9Ob0x0ZUxuSkJrbjdw?=
+ =?utf-8?B?U3NOU1VKaVlkeFd4dDhzZm5FVnMvb0JMM0tickg2Um54c1RSNmNHRFJTNXUz?=
+ =?utf-8?B?T09vZXNtTCsyR2hEVEx2Z2o5Y0tvK0d4YVA5eTdqeG03Z1E0ZHhSNEc3aCtw?=
+ =?utf-8?B?SGlBMUpDM0VHZ0hPUGVLdGxhRmZEcWFjNjcwRmpJVHpGRVllVFhQOG9iM1pK?=
+ =?utf-8?B?dWo1UkFScUVkMFVTbCtXUlJlcWdQT3NZVTBHT0Z2RzFIbDFuZ2EwYUZ0Ym1r?=
+ =?utf-8?B?OUJRT1pNaXpzYUlOUnFaMDN3OHRGaHFzVUptQkRreitGS05TMk5iNWtGMEsv?=
+ =?utf-8?B?QmhEdVhibURiVFZoVGZSUDN0RVJrYVJ0bUVtK3RCa3l1dk03MnpEbklXbzJH?=
+ =?utf-8?B?OWlaYkdJdExwTUtqN3pJc3I3N2Yya095dnEzOXA1Nm5udXBKdHNDOWU2Y0lL?=
+ =?utf-8?B?SkkrL01EN1A0eGZnc0IvN2thV0RDZXhCRWlZUTR0UytrQWZDM0NKZXRWZ08x?=
+ =?utf-8?B?R1FpeFJqRkNPZStZUjg2bmZtWkJIUHkyRkZxZ1MxbU41N3A1Y3hmM2JpUkRi?=
+ =?utf-8?B?L3FPN0dnRlBabi9zVzh1QkRvdGF3Tk5GNDRNejBrZjB1T2p4ekZRYWVuUWNn?=
+ =?utf-8?Q?QqJ4L7xYKmIl5R9UILSFkbNh2e8Z5uYCFYp8DhO?=
+X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-87dd8.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 231c8fe9-cb76-4157-dbfa-08de2c3e5c74
+X-MS-Exchange-CrossTenant-AuthSource: GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2025 16:19:09.1410
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8P195MB0884
 
-On Fri, Nov 21, 2025 at 09:48:26AM -0800, Ryan Foster wrote:
-> Rename rootid_owns_currentns() to uid_owns_currentns() and
-> rootid_owns_userns() to uid_owns_ns() for clarity, as the function checks
-> any UID, not just root. Update all call sites accordingly.
+On 11/24/25 00:22, Eric W. Biederman wrote:
+> Oleg Nesterov <oleg@redhat.com> writes:
 > 
-> Add tests that create actual user namespaces with different UID mappings
-> to verify namespace traversal logic. The tests create namespaces where
-> uid 0 maps to different kuids (e.g., kuid 1000, 2000) and verify that
-> uid_owns_ns() correctly identifies ownership based on the namespace
-> hierarchy traversal.
+>> Eric,
+>>
+>> sorry for delay, I am on PTO, didn't read emails this week...
+>>
+>> On 11/20, Eric W. Biederman wrote:
+>>>
+>>> Instead of computing the new cred before we pass the point of no
+>>> return compute the new cred just before we use it.
+>>>
+>>> This allows the removal of fs_struct->in_exec and cred_guard_mutex.
+>>>
+>>> I am not certain why we wanted to compute the cred for the new
+>>> executable so early.  Perhaps I missed something but I did not see any
+>>> common errors being signaled.   So I don't think we loose anything by
+>>> computing the new cred later.
+>>>
+>>> We gain a lot.
+>>
+>> Yes. I LIKE your approach after a quick glance. And I swear, I thought about
+>> it too ;)
+>>
+>> But is it correct? I don't know. I'll try to actually read your patch next
+>> week (I am on PTO untill the end of November), but I am not sure I can
+>> provide a valuable feedback.
+>>
+>> One "obvious" problem is that, after this patch, the execing process can crash
+>> in a case when currently exec() returns an error...
 > 
-> This addresses feedback to use clearer function naming and test actual
-> namespace functionality with real user namespace creation and mappings,
-> rather than just basic input validation.
-
-Hi Ryan,
-
-did you see https://lore.kernel.org/all/aR0JrOvDxDKZPELd@mail.hallyn.com ?
-
-That is now in linux-next, and should be merged into 6.19 when that window
-opens.  So please base your patch on that (so you can drop your uid_owns_ns()
-renames).
-
-I haven't looked closely at the tests, but at a cursory glance this is what
-I had in mind, thanks!  I'll look more closely when you send next version.
-
-> ---
->  security/commoncap.c      |  26 ++--
->  security/commoncap_test.c | 286 ++++++++++++++++++++++++++++++++------
->  2 files changed, 254 insertions(+), 58 deletions(-)
+> Yes.
 > 
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 15d8147a34c4..cca291df9551 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -359,16 +359,16 @@ int cap_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry)
->  }
->  
->  #ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
-> -bool rootid_owns_userns(struct user_namespace *ns, kuid_t kroot);
-> -bool rootid_owns_userns(struct user_namespace *ns, kuid_t kroot)
-> +bool uid_owns_ns(struct user_namespace *ns, kuid_t kuid);
-> +bool uid_owns_ns(struct user_namespace *ns, kuid_t kuid)
->  #else
-> -static bool rootid_owns_userns(struct user_namespace *ns, kuid_t kroot)
-> +static bool uid_owns_ns(struct user_namespace *ns, kuid_t kuid)
->  #endif
->  {
->  	struct user_namespace *iter;
->  
->  	for (iter = ns;; iter = iter->parent) {
-> -		if (from_kuid(iter, kroot) == 0)
-> +		if (from_kuid(iter, kuid) == 0)
->  			return true;
->  		if (iter == &init_user_ns)
->  			break;
-> @@ -378,19 +378,19 @@ static bool rootid_owns_userns(struct user_namespace *ns, kuid_t kroot)
->  }
->  
->  #ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
-> -bool rootid_owns_currentns(vfsuid_t rootvfsuid);
-> -bool rootid_owns_currentns(vfsuid_t rootvfsuid)
-> +bool uid_owns_currentns(vfsuid_t vfsuid);
-> +bool uid_owns_currentns(vfsuid_t vfsuid)
->  #else
-> -static bool rootid_owns_currentns(vfsuid_t rootvfsuid)
-> +static bool uid_owns_currentns(vfsuid_t vfsuid)
->  #endif
->  {
-> -	kuid_t kroot;
-> +	kuid_t kuid;
->  
-> -	if (!vfsuid_valid(rootvfsuid))
-> +	if (!vfsuid_valid(vfsuid))
->  		return false;
->  
-> -	kroot = vfsuid_into_kuid(rootvfsuid);
-> -	return rootid_owns_userns(current_user_ns(), kroot);
-> +	kuid = vfsuid_into_kuid(vfsuid);
-> +	return uid_owns_ns(current_user_ns(), kuid);
->  }
->  
->  static __u32 sansflags(__u32 m)
-> @@ -497,7 +497,7 @@ int cap_inode_getsecurity(struct mnt_idmap *idmap,
->  		goto out_free;
->  	}
->  
-> -	if (!rootid_owns_currentns(vfsroot)) {
-> +	if (!uid_owns_currentns(vfsroot)) {
->  		size = -EOVERFLOW;
->  		goto out_free;
->  	}
-> @@ -738,7 +738,7 @@ int get_vfs_caps_from_disk(struct mnt_idmap *idmap,
->  	/* Limit the caps to the mounter of the filesystem
->  	 * or the more limited uid specified in the xattr.
+> I have been testing and looking at it, and I have found a few issues,
+> and I am trying to see if I can resolve them.
+> 
+> The good news is that with the advent of AT_EXECVE_CHECK we have a
+> really clear API boundary between errors that must be diagnosed
+> and errors of happenstance like running out of memory.
+> 
+> The bad news is that the implementation of AT_EXECVE_CHECK seems to been
+> rather hackish especially with respect to security_bprm_creds_for_exec.
+> 
+> What I am hoping for is to get the 3 causes of errors of brpm->unsafe
+> ( LSM_UNSAFE_SHARE, LSM_UNSAFE_PTRACE, and LSM_UNSAFE_NO_NEW_PRIVS )
+> handled cleanly outside of the cred_guard_mutex, and simply
+> retested when it is time to build the credentials of the new process.
+> 
+> In practice that should get the same failures modes as we have now
+> but it would get SIGSEGV in rare instances where things changed
+> during exec.  That feels acceptable.
+> 
+> 
+> 
+> I thought of one other approach that might be enough to put the issue to
+> bed if cleaning up exec is too much work.  We could have ptrace_attach
+> use a trylock and fail when it doesn't succeed.  That would solve the
+> worst of the symptoms.
+> 
+> I think this would be a complete patch:
+> 
+> diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+> index 75a84efad40f..5dd2144e5789 100644
+> --- a/kernel/ptrace.c
+> +++ b/kernel/ptrace.c
+> @@ -444,7 +444,7 @@ static int ptrace_attach(struct task_struct *task, long request,
+>  	 * SUID, SGID and LSM creds get determined differently
+>  	 * under ptrace.
 >  	 */
-> -	if (!rootid_owns_currentns(rootvfsuid))
-> +	if (!uid_owns_currentns(rootvfsuid))
->  		return -ENODATA;
+> -	scoped_cond_guard (mutex_intr, return -ERESTARTNOINTR,
+> +	scoped_cond_guard (mutex_try, return -EAGAIN,
+>  			   &task->signal->cred_guard_mutex) {
 >  
->  	cpu_caps->permitted.val = le32_to_cpu(caps->data[0].permitted);
-> diff --git a/security/commoncap_test.c b/security/commoncap_test.c
-> index 962aa899455d..7f066dc0df5d 100644
-> --- a/security/commoncap_test.c
-> +++ b/security/commoncap_test.c
-> @@ -10,6 +10,8 @@
->  #include <linux/user_namespace.h>
->  #include <linux/uidgid.h>
->  #include <linux/module.h>
-> +#include <linux/slab.h>
-> +#include <linux/refcount.h>
->  
->  /* Forward declare types and functions we need from mnt_idmapping.h
->   * We avoid including the full header because it contains inline functions
-> @@ -50,38 +52,38 @@ static inline kuid_t vfsuid_into_kuid(vfsuid_t vfsuid)
->  #ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
->  
->  /* Forward declarations - functions are exported when KUNIT_TEST is enabled */
-> -extern bool rootid_owns_userns(struct user_namespace *ns, kuid_t kroot);
-> -extern bool rootid_owns_currentns(vfsuid_t rootvfsuid);
-> +extern bool uid_owns_ns(struct user_namespace *ns, kuid_t kuid);
-> +extern bool uid_owns_currentns(vfsuid_t vfsuid);
->  
->  /**
-> - * test_rootid_owns_currentns_init_ns - Test rootid_owns_currentns with init ns
-> + * test_uid_owns_currentns_init_ns - Test uid_owns_currentns with init ns
->   *
-> - * Verifies that a root ID in the init namespace correctly owns the current
-> + * Verifies that UID 0 in the init namespace correctly owns the current
->   * namespace when running in init_user_ns.
->   *
->   * @test: KUnit test context
->   */
-> -static void test_rootid_owns_currentns_init_ns(struct kunit *test)
-> +static void test_uid_owns_currentns_init_ns(struct kunit *test)
->  {
-> -	vfsuid_t root_vfsuid;
-> -	kuid_t root_kuid;
-> +	vfsuid_t vfsuid;
-> +	kuid_t kuid;
->  
-> -	/* Create a root UID in init namespace */
-> -	root_kuid = KUIDT_INIT(0);
-> -	root_vfsuid = VFSUIDT_INIT(root_kuid);
-> +	/* Create UID 0 in init namespace */
-> +	kuid = KUIDT_INIT(0);
-> +	vfsuid = VFSUIDT_INIT(kuid);
->  
-> -	/* In init namespace, root should own current namespace */
-> -	KUNIT_EXPECT_TRUE(test, rootid_owns_currentns(root_vfsuid));
-> +	/* In init namespace, UID 0 should own current namespace */
-> +	KUNIT_EXPECT_TRUE(test, uid_owns_currentns(vfsuid));
->  }
->  
->  /**
-> - * test_rootid_owns_currentns_invalid - Test rootid_owns_currentns with invalid vfsuid
-> + * test_uid_owns_currentns_invalid - Test uid_owns_currentns with invalid vfsuid
->   *
->   * Verifies that an invalid vfsuid correctly returns false.
->   *
->   * @test: KUnit test context
->   */
-> -static void test_rootid_owns_currentns_invalid(struct kunit *test)
-> +static void test_uid_owns_currentns_invalid(struct kunit *test)
->  {
->  	vfsuid_t invalid_vfsuid;
->  
-> @@ -89,74 +91,268 @@ static void test_rootid_owns_currentns_invalid(struct kunit *test)
->  	invalid_vfsuid = INVALID_VFSUID;
->  
->  	/* Invalid vfsuid should return false */
-> -	KUNIT_EXPECT_FALSE(test, rootid_owns_currentns(invalid_vfsuid));
-> +	KUNIT_EXPECT_FALSE(test, uid_owns_currentns(invalid_vfsuid));
->  }
->  
->  /**
-> - * test_rootid_owns_currentns_nonroot - Test rootid_owns_currentns with non-root UID
-> + * test_uid_owns_currentns_nonzero - Test uid_owns_currentns with non-zero UID
->   *
-> - * Verifies that a non-root UID correctly returns false.
-> + * Verifies that a non-zero UID correctly returns false.
->   *
->   * @test: KUnit test context
->   */
-> -static void test_rootid_owns_currentns_nonroot(struct kunit *test)
-> +static void test_uid_owns_currentns_nonzero(struct kunit *test)
->  {
-> -	vfsuid_t nonroot_vfsuid;
-> -	kuid_t nonroot_kuid;
-> +	vfsuid_t vfsuid;
-> +	kuid_t kuid;
->  
-> -	/* Create a non-root UID */
-> -	nonroot_kuid = KUIDT_INIT(1000);
-> -	nonroot_vfsuid = VFSUIDT_INIT(nonroot_kuid);
-> +	/* Create a non-zero UID */
-> +	kuid = KUIDT_INIT(1000);
-> +	vfsuid = VFSUIDT_INIT(kuid);
->  
-> -	/* Non-root UID should return false */
-> -	KUNIT_EXPECT_FALSE(test, rootid_owns_currentns(nonroot_vfsuid));
-> +	/* Non-zero UID should return false */
-> +	KUNIT_EXPECT_FALSE(test, uid_owns_currentns(vfsuid));
->  }
->  
->  /**
-> - * test_rootid_owns_userns_init_ns - Test rootid_owns_userns with init namespace
-> + * test_uid_owns_ns_init_ns_uid0 - Test uid_owns_ns with init namespace and UID 0
->   *
-> - * Verifies that rootid_owns_userns correctly identifies root UID in init namespace.
-> - * This tests the core namespace traversal logic.
-> + * Verifies that uid_owns_ns correctly identifies UID 0 in init namespace.
-> + * This tests the core namespace traversal logic. In init namespace, UID 0
-> + * maps to itself, so it should own the namespace.
->   *
->   * @test: KUnit test context
->   */
-> -static void test_rootid_owns_userns_init_ns(struct kunit *test)
-> +static void test_uid_owns_ns_init_ns_uid0(struct kunit *test)
->  {
-> -	kuid_t root_kuid;
-> +	kuid_t kuid;
->  	struct user_namespace *init_ns;
->  
-> -	root_kuid = KUIDT_INIT(0);
-> +	kuid = KUIDT_INIT(0);
->  	init_ns = &init_user_ns;
->  
-> -	/* Root UID should own init namespace */
-> -	KUNIT_EXPECT_TRUE(test, rootid_owns_userns(init_ns, root_kuid));
-> +	/* UID 0 should own init namespace */
-> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(init_ns, kuid));
->  }
->  
->  /**
-> - * test_rootid_owns_userns_nonroot - Test rootid_owns_userns with non-root UID
-> + * test_uid_owns_ns_init_ns_nonzero - Test uid_owns_ns with init namespace and non-zero UID
->   *
-> - * Verifies that rootid_owns_userns correctly rejects non-root UIDs.
-> + * Verifies that uid_owns_ns correctly rejects non-zero UIDs in init namespace.
-> + * Only UID 0 should own a namespace.
->   *
->   * @test: KUnit test context
->   */
-> -static void test_rootid_owns_userns_nonroot(struct kunit *test)
-> +static void test_uid_owns_ns_init_ns_nonzero(struct kunit *test)
->  {
-> -	kuid_t nonroot_kuid;
-> +	kuid_t kuid;
->  	struct user_namespace *init_ns;
->  
-> -	nonroot_kuid = KUIDT_INIT(1000);
-> +	kuid = KUIDT_INIT(1000);
->  	init_ns = &init_user_ns;
->  
-> -	/* Non-root UID should not own namespace */
-> -	KUNIT_EXPECT_FALSE(test, rootid_owns_userns(init_ns, nonroot_kuid));
-> +	/* Non-zero UID should not own namespace */
-> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(init_ns, kuid));
-> +}
-> +
-> +/**
-> + * test_uid_owns_ns_init_ns_various_uids - Test uid_owns_ns with various UIDs
-> + *
-> + * Verifies that uid_owns_ns correctly identifies only UID 0 as owning
-> + * the namespace, regardless of the UID value tested.
-> + *
-> + * @test: KUnit test context
-> + */
-> +static void test_uid_owns_ns_init_ns_various_uids(struct kunit *test)
-> +{
-> +	struct user_namespace *init_ns;
-> +	kuid_t kuid;
-> +
-> +	init_ns = &init_user_ns;
-> +
-> +	/* UID 0 should own the namespace */
-> +	kuid = KUIDT_INIT(0);
-> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(init_ns, kuid));
-> +
-> +	/* Other UIDs should not own the namespace */
-> +	kuid = KUIDT_INIT(1);
-> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(init_ns, kuid));
-> +
-> +	kuid = KUIDT_INIT(1000);
-> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(init_ns, kuid));
-> +
-> +	kuid = KUIDT_INIT(65534);
-> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(init_ns, kuid));
-> +}
-> +
-> +/**
-> + * create_test_user_ns_with_mapping - Create a test user namespace with uid mapping
-> + *
-> + * Creates a minimal user namespace for testing where uid 0 in the namespace
-> + * maps to the specified kuid in the parent namespace.
-> + *
-> + * The mapping semantics:
-> + * - first: uid in this namespace (0)
-> + * - lower_first: kuid in parent namespace (mapped_kuid)
-> + * - count: range size (1)
-> + *
-> + * This means: from_kuid(ns, mapped_kuid) will return 0
-> + * because map_id_up looks for kuid in [lower_first, lower_first+count)
-> + * and returns first + (kuid - lower_first) = 0 + (mapped_kuid - mapped_kuid) = 0
-> + *
-> + * @test: KUnit test context
-> + * @parent_ns: Parent user namespace
-> + * @mapped_kuid: The kuid that uid 0 in the new namespace maps to
-> + *
-> + * Returns: The new user namespace, or NULL on failure
-> + */
-> +static struct user_namespace *create_test_user_ns_with_mapping(struct kunit *test,
-> +								struct user_namespace *parent_ns,
-> +								kuid_t mapped_kuid)
-> +{
-> +	struct user_namespace *ns;
-> +	struct uid_gid_extent extent;
-> +
-> +	/* Allocate a test namespace - use kzalloc to zero all fields */
-> +	ns = kunit_kzalloc(test, sizeof(*ns), GFP_KERNEL);
-> +	if (!ns)
-> +		return NULL;
-> +
-> +	/* Initialize basic namespace structure fields */
-> +	ns->parent = parent_ns;
-> +	ns->level = parent_ns ? parent_ns->level + 1 : 0;
-> +	ns->owner = mapped_kuid;
-> +	ns->group = KGIDT_INIT(0);
-> +
-> +	/* Initialize ns_common structure */
-> +	refcount_set(&ns->ns.__ns_ref, 1);
-> +
-> +	/* Set up uid mapping: uid 0 in this namespace maps to mapped_kuid in parent
-> +	 * Format: first (uid in ns) : lower_first (kuid in parent) : count
-> +	 * So: uid 0 in ns -> kuid mapped_kuid in parent
-> +	 * This means from_kuid(ns, mapped_kuid) returns 0
-> +	 */
-> +	extent.first = 0;                              /* uid 0 in this namespace */
-> +	extent.lower_first = __kuid_val(mapped_kuid);  /* maps to this kuid in parent */
-> +	extent.count = 1;
-> +
-> +	ns->uid_map.extent[0] = extent;
-> +	ns->uid_map.nr_extents = 1;
-> +
-> +	/* Set up gid mapping: gid 0 maps to gid 0 in parent (simplified) */
-> +	extent.first = 0;
-> +	extent.lower_first = 0;
-> +	extent.count = 1;
-> +
-> +	ns->gid_map.extent[0] = extent;
-> +	ns->gid_map.nr_extents = 1;
-> +
-> +	return ns;
-> +}
-> +
-> +/**
-> + * test_uid_owns_ns_with_mapping - Test uid_owns_ns with namespace where uid 0
-> + *				   maps to different kuid
-> + *
-> + * Creates a user namespace where uid 0 maps to kuid 1000 in the parent namespace.
-> + * Verifies that uid_owns_ns correctly identifies kuid 1000 as owning the namespace.
-> + *
-> + * Note: uid_owns_ns walks up the namespace hierarchy, so it checks the current
-> + * namespace first, then parent, then parent's parent, etc. So:
-> + * - kuid 1000 owns test_ns because from_kuid(test_ns, 1000) == 0
-> + * - kuid 0 also owns test_ns because from_kuid(init_user_ns, 0) == 0
-> + *   (checked in parent)
-> + *
-> + * This tests the actual functionality as requested: creating namespaces with
-> + * different values for the namespace's uid 0.
-> + *
-> + * @test: KUnit test context
-> + */
-> +static void test_uid_owns_ns_with_mapping(struct kunit *test)
-> +{
-> +	struct user_namespace *test_ns;
-> +	struct user_namespace *parent_ns;
-> +	kuid_t mapped_kuid, other_kuid;
-> +
-> +	parent_ns = &init_user_ns;
-> +	mapped_kuid = KUIDT_INIT(1000);  /* uid 0 in test_ns maps to kuid 1000 */
-> +	other_kuid = KUIDT_INIT(2000);   /* This should not own the namespace */
-> +
-> +	/* Create test namespace where uid 0 maps to kuid 1000 */
-> +	test_ns = create_test_user_ns_with_mapping(test, parent_ns, mapped_kuid);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, test_ns);
-> +
-> +	/* kuid 1000 should own the namespace (because uid 0 in test_ns maps to it) */
-> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(test_ns, mapped_kuid));
-> +
-> +	/* kuid 0 also owns the namespace because it maps to 0 in init_user_ns (parent) */
-> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(test_ns, KUIDT_INIT(0)));
-> +
-> +	/* Other kuids that don't map to 0 in test_ns or any parent should not own */
-> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(test_ns, other_kuid));
-> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(test_ns, KUIDT_INIT(500)));
-> +}
-> +
-> +/**
-> + * test_uid_owns_ns_with_different_mappings - Test with multiple namespaces
-> + *					      having different mappings
-> + *
-> + * Creates multiple test namespaces with different uid 0 mappings to verify
-> + * the function correctly identifies ownership based on the mapping.
-> + *
-> + * Since uid_owns_ns walks up the hierarchy, kuids that map to 0 in init_user_ns
-> + * (like kuid 0) will own all namespaces. But we can still verify that the
-> + * specific mapped kuids own their respective namespaces.
-> + *
-> + * @test: KUnit test context
-> + */
-> +static void test_uid_owns_ns_with_different_mappings(struct kunit *test)
-> +{
-> +	struct user_namespace *ns1, *ns2, *ns3;
-> +	struct user_namespace *parent_ns;
-> +
-> +	parent_ns = &init_user_ns;
-> +
-> +	/* Namespace 1: uid 0 maps to kuid 1000 */
-> +	ns1 = create_test_user_ns_with_mapping(test, parent_ns, KUIDT_INIT(1000));
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns1);
-> +	/* kuid 1000 owns ns1 because it maps to uid 0 in ns1 */
-> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(ns1, KUIDT_INIT(1000)));
-> +	/* kuid 0 also owns ns1 because it maps to 0 in init_user_ns (parent) */
-> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(ns1, KUIDT_INIT(0)));
-> +	/* kuid 2000 doesn't map to 0 in ns1 or any parent */
-> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(ns1, KUIDT_INIT(2000)));
-> +
-> +	/* Namespace 2: uid 0 maps to kuid 2000 */
-> +	ns2 = create_test_user_ns_with_mapping(test, parent_ns, KUIDT_INIT(2000));
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns2);
-> +	/* kuid 2000 owns ns2 because it maps to uid 0 in ns2 */
-> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(ns2, KUIDT_INIT(2000)));
-> +	/* kuid 0 also owns ns2 because it maps to 0 in init_user_ns (parent) */
-> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(ns2, KUIDT_INIT(0)));
-> +	/* kuid 1000 doesn't map to 0 in ns2 or any parent */
-> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(ns2, KUIDT_INIT(1000)));
-> +
-> +	/* Namespace 3: uid 0 maps to kuid 0 (identity mapping) */
-> +	ns3 = create_test_user_ns_with_mapping(test, parent_ns, KUIDT_INIT(0));
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns3);
-> +	/* kuid 0 owns ns3 because it maps to uid 0 in ns3 */
-> +	KUNIT_EXPECT_TRUE(test, uid_owns_ns(ns3, KUIDT_INIT(0)));
-> +	/* kuid 1000 doesn't map to 0 in ns3 or any parent */
-> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(ns3, KUIDT_INIT(1000)));
-> +	/* kuid 2000 doesn't map to 0 in ns3 or any parent */
-> +	KUNIT_EXPECT_FALSE(test, uid_owns_ns(ns3, KUIDT_INIT(2000)));
->  }
->  
->  static struct kunit_case commoncap_test_cases[] = {
-> -	KUNIT_CASE(test_rootid_owns_currentns_init_ns),
-> -	KUNIT_CASE(test_rootid_owns_currentns_invalid),
-> -	KUNIT_CASE(test_rootid_owns_currentns_nonroot),
-> -	KUNIT_CASE(test_rootid_owns_userns_init_ns),
-> -	KUNIT_CASE(test_rootid_owns_userns_nonroot),
-> +	KUNIT_CASE(test_uid_owns_currentns_init_ns),
-> +	KUNIT_CASE(test_uid_owns_currentns_invalid),
-> +	KUNIT_CASE(test_uid_owns_currentns_nonzero),
-> +	KUNIT_CASE(test_uid_owns_ns_init_ns_uid0),
-> +	KUNIT_CASE(test_uid_owns_ns_init_ns_nonzero),
-> +	KUNIT_CASE(test_uid_owns_ns_init_ns_various_uids),
-> +	KUNIT_CASE(test_uid_owns_ns_with_mapping),
-> +	KUNIT_CASE(test_uid_owns_ns_with_different_mappings),
->  	{}
->  };
->  
-> -- 
-> 2.43.0
+>  		scoped_guard (task_lock, task) {
+
+This is very similar to my initial attempt of fixing the problem, as you
+can see the test expectaion of the currently failing test in vmattach.c
+is that ptrace(PTRACE_ATTACH, pid, 0L, 0L) returns -1 with errno = EAGAIN.
+
+The disadvantage of that approach was, that it is a user-visible API-change,
+but also that the debugger does not know when to retry the PTRACE_ATTACH,
+in worst case it will go into an endless loop not knowing that a waitpid
+and/or PTRACE_CONT is necessary to unblock the traced process.
+
+But The main reason why I preferred the overlapping lifetime of the current
+and the new credentials, is that the tracee can escape the PTRACE_ATTACH
+if it is very short-lived, and indeed I had to cheat a little to make the
+test case function TEST(attach) pass reliably:
+
+The traced process does execlp("sleep", "sleep", "2", NULL);
+
+If it did execlp("true", "true", NULL); like the first test case, it would
+have failed randomly, because the debugger could not attach quickly enoguh,
+and IMHO the expectaion of the debugger is probably to be able to stop the
+new process at the first instruction after the execve.
+
+
+Bernd.
+
