@@ -1,96 +1,132 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B66733A008;
-	Wed, 26 Nov 2025 17:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A668F48;
+	Wed, 26 Nov 2025 17:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764177263; cv=none; b=uYKCJ1fhNZvAdulvx7XoCiStDxNcdWcyLoC9L3pwMFfAzfWkuj+BnKpNZCSjHrIiCB5vPdayGqLYVZKMZy+wcaByHYAUNuAZ1+rCG6Wq/7pVBnaD18+3iN+pjmff001w883Mc50MswCYNTllZHKfhYJuhiEzCiWdjo6LxSHGhrE=
+	t=1764178018; cv=none; b=NT8/usosLmqB/ZLAaRwAKTa1ced+HqIRcjUeyY/7F7gFsGOipGI+sx0Zom8Ew9u8cqqbtcD+ln7XzjZ/vLBn/1q3uZ70iW/tsH/m2Wphe2rCITaass57hcEkn6V5Xcg7Q05iPYEAo47fMwWMg8DMDe4QB1WmdeUSG0jt811hJvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764177263; c=relaxed/simple;
-	bh=+GFsOaKbBnJD6LH6GD2KtqnN1pVQGiQU0ZkcYuK3pDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gwpoYFke7GPdNQq1Nsq66bJNPNSZp/3BHvdUGenuXw9FA+QEOWzNQh/kVpO8+pTzXssoM8U9qKDplqSHMjAtxT47pgferLcVvjG58ulj5fxmA4/xnzfQ2WSjyzv+FYFo4Jw2+xmeIglID4tSdwLb1srFvrRyaN0YaOYSdEklLN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CPA3AV+A; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1764178018; c=relaxed/simple;
+	bh=/NeEx7MRlBM/17vZ0G6HKWUd0ZqZPBRi9xVQWjI1GD8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OHW6dh1aAWpReXfTCLMfFw1ZOja9OafHfkkFkAQ69MUmyJlT5JdJmcs8Luvh6qQUWSvA8RiHiuPTdc+6u0w/F0CyK+Pb1qOn/RFeNqQKe00N5cq8JWD1FRQ0OtxS1Sr3fRnSERHXtOqocXrR4L8fhWDIfEXjYbX3VHy/3ZjS/7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=Sb2AU+iU; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CPA3AV+A"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1764177261; x=1795713261;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+GFsOaKbBnJD6LH6GD2KtqnN1pVQGiQU0ZkcYuK3pDs=;
-  b=CPA3AV+AeffXSJVIu5WkSmeCcxspnRtIDEIeVpbLKIQsWgb0nmrP+4Nw
-   3LKc/aXUaDtx1bPvncwSx6ndtaqBnBHFvDWaQ21J3ZjskSacKobomHhOP
-   xlEO0sNn87TnlReGD8gUt1Hy4JxO/JcZaiUdKlGj0LcaH/JVnSDUkWgim
-   XannMNn83NWQP6oqN53zTsSES7iSUjPLvCi6vPe0rlyBleeM9+OURH/Hk
-   MXC6/V3kAoalVVqWrsDuuKTS3JdrYvolTrXjZn4lTKuecYBa4DMFe8hZY
-   c7gla9ZpsI0qCZMCIK90+PNR7EutgQQSmL2S0AyZelpEQUAn6bw4AtdlD
-   Q==;
-X-CSE-ConnectionGUID: S5ZS0Iv5QXiWulVoit+mhg==
-X-CSE-MsgGUID: UFVpAV0rRw+bR/pTldAp+Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11625"; a="65408981"
-X-IronPort-AV: E=Sophos;i="6.20,228,1758610800"; 
-   d="scan'208";a="65408981"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2025 09:14:20 -0800
-X-CSE-ConnectionGUID: sFgbCYpAT0KNK4WS8uC2ag==
-X-CSE-MsgGUID: zU1DriBfQcy6mno888NnDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,228,1758610800"; 
-   d="scan'208";a="192628515"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa007.fm.intel.com with ESMTP; 26 Nov 2025 09:14:18 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 8FCA6A0; Wed, 26 Nov 2025 18:14:16 +0100 (CET)
-Date: Wed, 26 Nov 2025 18:14:16 +0100
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: KP Singh <kpsingh@kernel.org>
-Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-	ast@kernel.org, paul@paul-moore.com, casey@schaufler-ca.com,
-	andrii@kernel.org, keescook@chromium.org, daniel@iogearbox.net,
-	renauld@google.com, revest@chromium.org, song@kernel.org,
-	linux@roeck-us.net, Kui-Feng Lee <sinquersw@gmail.com>,
-	John Johansen <john.johansen@canonical.com>
-Subject: Re: [PATCH v15 3/4] lsm: count the LSMs enabled at compile time
-Message-ID: <aSc1aAdOeSuuoKTH@black.igk.intel.com>
-References: <20240816154307.3031838-1-kpsingh@kernel.org>
- <20240816154307.3031838-4-kpsingh@kernel.org>
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="Sb2AU+iU"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=SY5HCvTJvykBu+1rnX4LhTUEPrefpAqk5BUwRggKC/8=; t=1764178015;
+	x=1764782815; b=Sb2AU+iUGAsSnR8L7LD1MFwIf01pEdDkLoAr2En5YZqLXE9nbzc6MmUwv3K/M
+	5dJY5tQpAz8zSj9dpjBLnFXKUCjAnzTe8u7AS6F/6p00NmEJKlfUU2Dc7c0o141XvI1qLG0LafCR4
+	0Q1lCgj6b0RanmEgQxvAciEfG6+NYCUmsJMGBMHuuuJn2Cefj+dgpwGfFGw9/42m/UjQq2ozBHHdm
+	W4y9ChYb/NeUw08jubZddSqwuhe6z7oYPLXs7koAqOgINOapkMcJkpTyEUNZW292GymYPjP1LouLD
+	ys29kdv9FkVi/0oFewYSoI6HSwIr/NGPvqzDQmJ/ELaG3iD5bg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.99)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1vOJI4-00000002qgL-3rYf; Wed, 26 Nov 2025 18:26:52 +0100
+Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.99)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1vOJI4-00000003SYo-2i6X; Wed, 26 Nov 2025 18:26:52 +0100
+Message-ID: <85864bcfa48fe341c655ebcd4c7d53ae1e0c1d74.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 0/2] apparmor unaligned memory fixes
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Helge Deller <deller@gmx.de>, Helge Deller <deller@kernel.org>, John
+ Johansen <john.johansen@canonical.com>, david laight
+ <david.laight@runbox.com>
+Cc: linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-security-module@vger.kernel.org, linux-parisc@vger.kernel.org
+Date: Wed, 26 Nov 2025 18:26:51 +0100
+In-Reply-To: <0d03ddb9-d01f-435e-a57c-fbea32844b66@gmx.de>
+References: <aRxT78fdN5v2Ajyl@p100>
+	 <90513f85cc8d060ebccd3972cc7709e4b6f13f34.camel@physik.fu-berlin.de>
+	 <be9c143d-1d5e-4c5b-9078-4a7804489258@gmx.de>
+	 <ba3d5651-fa68-4bb5-84aa-35576044e7b0@canonical.com>
+	 <aSXHCyH_rS-c5BgP@p100>
+	 <e88c32c2-fb18-4f3e-9ec2-a749695aaf0a@canonical.com>
+	 <c192140a-0575-41e9-8895-6c8257ce4682@gmx.de>
+	 <d35010b3-7d07-488c-b5a4-a13380d0ef7c@canonical.com>
+	 <20251126104444.29002552@pumpkin>
+	 <4034ad19-8e09-440c-a042-a66a488c048b@gmx.de> <aSblGNyoSV4LfKji@carbonx1>
+	 <78f1ff26f06c0e61d71c1a7f05a7c03c4ec03bef.camel@physik.fu-berlin.de>
+	 <0d03ddb9-d01f-435e-a57c-fbea32844b66@gmx.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240816154307.3031838-4-kpsingh@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Fri, Aug 16, 2024 at 05:43:06PM +0200, KP Singh wrote:
-> These macros are a clever trick to determine a count of the number of
-> LSMs that are enabled in the config to ascertain the maximum number of
-> static calls that need to be configured per LSM hook.
-> 
-> Without this one would need to generate static calls for the total
-> number of LSMs in the kernel (even if they are not compiled) times the
-> number of LSM hooks which ends up being quite wasteful.
+Hi Helge,
 
-...
+On Wed, 2025-11-26 at 17:58 +0100, Helge Deller wrote:
+> On 11/26/25 17:16, John Paul Adrian Glaubitz wrote:
+> > Hi Helge,
+> >=20
+> > On Wed, 2025-11-26 at 12:31 +0100, Helge Deller wrote:
+> > > Like this (untested!) patch:
+> > >=20
+> > > [PATCH] apparmor: Optimize table creation from possibly unaligned mem=
+ory
+> > >=20
+> > > Source blob may come from userspace and might be unaligned.
+> > > Try to optize the copying process by avoiding unaligned memory access=
+es.
+> > >=20
+> > > Signed-off-by: Helge Deller <deller@gmx.de>
+> > >=20
+> > > diff --git a/security/apparmor/include/match.h b/security/apparmor/in=
+clude/match.h
+> > > index 1fbe82f5021b..225df6495c84 100644
+> > > --- a/security/apparmor/include/match.h
+> > > +++ b/security/apparmor/include/match.h
+> > > @@ -111,9 +111,14 @@ struct aa_dfa {
+> > >   		typeof(LEN) __i; \
+> > >   		TTYPE *__t =3D (TTYPE *) TABLE; \
+> > >   		BTYPE *__b =3D (BTYPE *) BLOB; \
+> > > -		for (__i =3D 0; __i < LEN; __i++) { \
+> > > -			__t[__i] =3D NTOHX(__b[__i]); \
+> > > -		} \
+> > > +		BUILD_BUG_ON(sizeof(TTYPE) !=3D sizeof(BTYPE)); \
+> > > +		/* copy to naturally aligned table address */ \
+> > > +		memcpy(__t, __b, (LEN) * sizeof(BTYPE)); \
+> > > +		/* convert from big-endian if necessary */ \
+> > > +		if (!IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) \
+> > > +			for (__i =3D 0; __i < LEN; __i++, __t++) { \
+> > > +				*__t =3D NTOHX(*__t); \
+> > > +			} \
+> > >   	} while (0)
+> > >  =20
+> > >   static inline size_t table_size(size_t len, size_t el_size)
+> >=20
+> > So, is this patch supposed to replace all the other proposed patches?
+>=20
+> It just replaces the patch from John.
+> But please test the v2 patch I sent instead...
 
-> -/* This counts to 12. Any more, it will return 13th argument. */
-> -#define __COUNT_ARGS(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _n, X...) _n
-> -#define COUNT_ARGS(X...) __COUNT_ARGS(, ##X, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-> +/* This counts to 15. Any more, it will return 16th argument. */
-> +#define __COUNT_ARGS(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _n, X...) _n
-> +#define COUNT_ARGS(X...) __COUNT_ARGS(, ##X, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+OK, so we need your previous patch that I already tested and your v2 of Joh=
+n's patch?
 
-You forgot to update _12 in the upper comment.
+Adrian
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
