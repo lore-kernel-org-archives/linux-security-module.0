@@ -1,117 +1,105 @@
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC51633DEFB;
-	Wed, 26 Nov 2025 16:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C61C33D6C6
+	for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 16:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764173818; cv=none; b=Yb9zxUjlyKruCGwdU277JXC7TP+tU0xg6k8rGtKNbmhnuYxszltBrb5ZUfc8Yr7k26rxglNL1ExkMQJGIL6rydBUyW2Bsn06I/yrnpNj4ITd4qN8YWDSeYKNBXprA46Kt0c1wFyGGHdzZSNRzHw0oXQBH2wpl9LtaAZuJDjyUeI=
+	t=1764174395; cv=none; b=nXpRJMwpVZAA+uMZGYwjHniJVM5zOJvKSZ8sA3SMlrVP/iyq+N9LRcfXemPKVJey/TLQO2jUEI/5D6T/LSPzYiw/wSOSH8vvTHa8CpT1N9Ur5IIMJkbqq6ddFyRu+v3ratw72da1ePz5EQYZmDXDvCqadDyTWTxoBbESbK9025g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764173818; c=relaxed/simple;
-	bh=d6VNhLTe1+Oa92Zbu01t/4n0Ts7L/x84LlI2FKV34n4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cZc74L2OhyFKGXSMIzmUCW+ojOZjMQAjPNmGE2TLk05lJ/w19m6bYgBXZNMzuPnwqc6fbZpSu4H2efIoPNQpWrSlK1TtdXpTgAYsjdrnNS7mDM3xcYqbTDU3+B3FbA4dmtbV2fB81VL9DX37Vi0vdXnk+rxv65zZO1qpQyvFf/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=NNp61llQ; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+	s=arc-20240116; t=1764174395; c=relaxed/simple;
+	bh=jEvdo6gKY+lqSu1jKQnysC3M9EpwI1JXUVi+g/V6/N0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DYQUBfkrKQg5e2wSy/3+IgLR9p5VG6UyvnpimvXTWcHbWB+S5bigSLfh6QMCkmBMjXa9cbXczZb7aGycSLDVXCIQdfu5C43a7xaZ2WMce5mBH/MV1rUYBe/1fbJr1afhibDk21ep+Iz12Quo6ymeu+IZ3MmzosCDzGtDciNzFTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LkNxR37v; arc=none smtp.client-ip=74.125.224.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="NNp61llQ"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=Gg5/D68mHg67K6ACJ/qySf1Tuf5DCYbgvIMuPbJ81jA=; t=1764173815;
-	x=1764778615; b=NNp61llQJXmVcnB18DmfKEaixczruOBSZ22opegkR4LNJWKXJ+pwakcpyTYGE
-	9++NeeHi9+MAcvwBhGnt6KmvcmrShgclvZXIS6wNE5PWbyN8zkA9joBb/SAIJKFZS0sox2kOzTDFa
-	ba79ImGbVJc29sSm15EY1uI5c0wnK+bo7CD4GrXwPSjdO+zGv1V9xnVYuYDKqCKfKBwEdONrQCart
-	8Go3B4mv0ltHJtCZfwbZ9spLYddkYXUP6siV+cegjo1yaJyL17UMp64R0p6QkprACjJFgiPFJ5JEk
-	TsEmeD8+I/iNfvAY1NhmXZKyYyZYgtRTJnjHl0L6tz6cPhi5BQ==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.99)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1vOICL-00000002PRw-0ZHl; Wed, 26 Nov 2025 17:16:53 +0100
-Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.99)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1vOICK-00000003I3Z-3pko; Wed, 26 Nov 2025 17:16:53 +0100
-Message-ID: <78f1ff26f06c0e61d71c1a7f05a7c03c4ec03bef.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 0/2] apparmor unaligned memory fixes
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Helge Deller <deller@kernel.org>, John Johansen
-	 <john.johansen@canonical.com>, david laight <david.laight@runbox.com>
-Cc: linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, linux-parisc@vger.kernel.org
-Date: Wed, 26 Nov 2025 17:16:52 +0100
-In-Reply-To: <aSblGNyoSV4LfKji@carbonx1>
-References: <aRxT78fdN5v2Ajyl@p100>
-	 <90513f85cc8d060ebccd3972cc7709e4b6f13f34.camel@physik.fu-berlin.de>
-	 <be9c143d-1d5e-4c5b-9078-4a7804489258@gmx.de>
-	 <ba3d5651-fa68-4bb5-84aa-35576044e7b0@canonical.com>
-	 <aSXHCyH_rS-c5BgP@p100>
-	 <e88c32c2-fb18-4f3e-9ec2-a749695aaf0a@canonical.com>
-	 <c192140a-0575-41e9-8895-6c8257ce4682@gmx.de>
-	 <d35010b3-7d07-488c-b5a4-a13380d0ef7c@canonical.com>
-	 <20251126104444.29002552@pumpkin>
-	 <4034ad19-8e09-440c-a042-a66a488c048b@gmx.de> <aSblGNyoSV4LfKji@carbonx1>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LkNxR37v"
+Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-640f88b8613so5290201d50.2
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 08:26:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764174391; x=1764779191; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JWq71R8F89CBnC8WmwA1EzCTc1XCidtoDUDRx3TJSqo=;
+        b=LkNxR37vLdhknii/m95/EW9gSuatnuTntyl6jquphPCK6Q6zKEE9nJy9IL808inRiO
+         wBghammvZDrEXeoKsEclEHHCuoSqTzrnc3oah9dYQ9WeM+8J7mJJdgBStF+bsdv8DGF1
+         3+nSiyR5uxbGgEhoiszLdfO9ZRNih6frg+olG+LMmopmfXNFUZuJRsNSaFLPmi/13sYP
+         h8ihDnqUklPEWIdPbkG75QEeU8fKO0A6KaHOGW6xhC411wmgmeljDy9TtIWgXLomVWKO
+         SZ07Z3Kd3PbvvoC7FAoORHHmDZytauik1wJV0HLlwE0N2kK5T9v4+LSw41n6jZawbaFq
+         PGgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764174391; x=1764779191;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JWq71R8F89CBnC8WmwA1EzCTc1XCidtoDUDRx3TJSqo=;
+        b=QoP1jLL8PVbflDIF18/Jpxctxii65v7DoPh3hcZDt3l6YuYcLtUeByCHVB6SB8/+V3
+         EsGP2Lt/1AI/tE/L2qWpdR7C/EqpbZpl97Iahtl+/Ebb9vikXSAocMbWkdHrAe2jxzly
+         9Wc3wUoVl8elD40gt+pB35TbIjxYoih2AcbexCdGjBpach/+J1MQb7pnKhl/Nu87dwiy
+         NkrFhgFR+vybKSat4DRspBdb1jRgotIBStav2l4LSfeTVDXhBhchp/s1IQglvgxqaXVk
+         97BxSqo+u1QGQfrk2+NeYisBhEwEFT4f5km8JPve5L1Y3uDWIXs+eHe9yqC6IRr/ByJH
+         CCrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbqbeMSHtNhy9PwJCH1DKXC72mngusRV2hf6wNUZu0RDwAxx1d4q6tpx+1HSea6lUsmzIdAAsN9bKyRj/NtrIiAWSBJGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgackADkUUC4fMFEPO1gfKwU/9ntc9myLAAl9Z7Li5CAU1X0Y4
+	wI173HgJpnhxCPhjakurmqMNvCZq7wjVxq3JunKOHl8T02tSiCOp+El9
+X-Gm-Gg: ASbGncteLoSn6ob9wVvzB5sJ7fxfWuxUUfpxtnL7vwR5xq5kdsSbiSENvltjG1ngALo
+	u+LMYsh5MdYtkrIceCqH5Gl8Ec8i8k2gpvXyXXbgaJTMfqPlFKxLfcOdVN7d/2ct+u34MiTfmC7
+	cO6dJQHrtX64hcXrdOla8sCZfFDN4lI0rwOUmenBdA2U/xyhENi03AgQOFOr+Abvspsb8PUfEK8
+	K1MWZvvgu4k3t12m8jo0Ocx04Uxu0TSitC+/VUJoi0nrK9pHhqdK2bdo5CFJTEFbbJIczoTZqni
+	KxqKggm0N3gBTx5e9p49OoHv0+h2177gDSSt6fvHMzPugIqPeUgLnhsJdc5CrvxcN2Jyu7d0m9o
+	WTvXDdaKRTNaFGozjycsx5wQE3d9iAceRxwXPmXDfMF6l6yoyqvL5tly74ljNKY9dVBy+aypc5j
+	+G1Mwq4/GvoGksnzqSKnhe+uo17JtGYYeKw/NgJSHjIHoanjLql0tNOHhYTrg7
+X-Google-Smtp-Source: AGHT+IHqdR1XUOjvu5ZEeUdJuA9AFEqybX3ty6k+1BTNg1oezm3beq/ek5v7gWZjmBLQZxevACo0NA==
+X-Received: by 2002:a05:690e:301:b0:63f:a2ff:b1d2 with SMTP id 956f58d0204a3-64302ac1912mr10453618d50.42.1764174390800;
+        Wed, 26 Nov 2025 08:26:30 -0800 (PST)
+Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78a79925caasm67447217b3.29.2025.11.26.08.26.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Nov 2025 08:26:30 -0800 (PST)
+From: Justin Suess <utilityemal77@gmail.com>
+To: utilityemal77@gmail.com
+Cc: gnoack@google.com,
+	jack@suse.cz,
+	linux-security-module@vger.kernel.org,
+	m@maowtm.org,
+	mic@digikod.net,
+	xandfury@gmail.com
+Subject: Re: [PATCH v3 5/5] landlock: landlock: Implement KUnit test for LANDLOCK_ADD_RULE_NO_INHERIT
+Date: Wed, 26 Nov 2025 11:26:17 -0500
+Message-ID: <20251126162617.3848825-1-utilityemal77@gmail.com>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20251126122039.3832162-7-utilityemal77@gmail.com>
+References: <20251126122039.3832162-7-utilityemal77@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Transfer-Encoding: 8bit
 
-Hi Helge,
+Hi,
 
-On Wed, 2025-11-26 at 12:31 +0100, Helge Deller wrote:
-> Like this (untested!) patch:
->=20
-> [PATCH] apparmor: Optimize table creation from possibly unaligned memory
->=20
-> Source blob may come from userspace and might be unaligned.
-> Try to optize the copying process by avoiding unaligned memory accesses.
->=20
-> Signed-off-by: Helge Deller <deller@gmx.de>
->=20
-> diff --git a/security/apparmor/include/match.h b/security/apparmor/includ=
-e/match.h
-> index 1fbe82f5021b..225df6495c84 100644
-> --- a/security/apparmor/include/match.h
-> +++ b/security/apparmor/include/match.h
-> @@ -111,9 +111,14 @@ struct aa_dfa {
->  		typeof(LEN) __i; \
->  		TTYPE *__t =3D (TTYPE *) TABLE; \
->  		BTYPE *__b =3D (BTYPE *) BLOB; \
-> -		for (__i =3D 0; __i < LEN; __i++) { \
-> -			__t[__i] =3D NTOHX(__b[__i]); \
-> -		} \
-> +		BUILD_BUG_ON(sizeof(TTYPE) !=3D sizeof(BTYPE)); \
-> +		/* copy to naturally aligned table address */ \
-> +		memcpy(__t, __b, (LEN) * sizeof(BTYPE)); \
-> +		/* convert from big-endian if necessary */ \
-> +		if (!IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) \
-> +			for (__i =3D 0; __i < LEN; __i++, __t++) { \
-> +				*__t =3D NTOHX(*__t); \
-> +			} \
->  	} while (0)
-> =20
->  static inline size_t table_size(size_t len, size_t el_size)
+Apologies. Thi is a duplicate of the above patch
+v3 5/5 I sent accidentally.
 
-So, is this patch supposed to replace all the other proposed patches?
+I forgot to clear the old .patch file from my directory after I changed the
+commit message, and didn't catch it when doing git send-email.
 
-Adrian
+The contents are identical, I just changed the commit message from
+a typo.
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+"landlock: landlock: Implement KUnit test for LANDLOCK_ADD_RULE_NO_INHERIT"
+(typo)
+to 
+"landlock: Implement KUnit test for LANDLOCK_ADD_RULE_NO_INHERIT"
+(correct commit message)
+
+Please ignore this duplicate. I promise to be more careful in the
+future.
+
+Regards,
+Justin Suess
