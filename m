@@ -1,63 +1,63 @@
-Received: from mail-yx1-f52.google.com (mail-yx1-f52.google.com [74.125.224.52])
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DDA26ED5F
-	for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 12:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B702325707
+	for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 12:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764159668; cv=none; b=ZBfw2Dpo9pIJ2dbFk/VPagddycwWMPZJi9iFv8Rrv545O8nAXPsgJMRYnodFWO2XLvEJjQi+3JO7NzQt2SSZOGELFC9YtU/yG5CSr9iqIONSylDJG5b0a7OGIvjfs5Xj4DkOpk/SEMwbsbbs+42qabnqSLKEE6qGqRoGWQItmPU=
+	t=1764159669; cv=none; b=SIVYoHm9sz7Qm+pzzfxsSrjxv0KcvW/NbEg33fxvK+zcaWDLd8JqMqEZByDhTdYzUcn4mPL7aaQvIR8ek+pri8/nVFSJ8tyfmGOJwFdrZpXw082zis9V6yJlNZJGXluZE5GS8vUTb/XXyxh+vcjCfR+kGoQosVMnpVnCSR0cmk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764159668; c=relaxed/simple;
-	bh=ItFn/XuGrJOWTowD0M/S3tbzP91i7irJnSwOIBK1gyc=;
+	s=arc-20240116; t=1764159669; c=relaxed/simple;
+	bh=HDmmr1IPRNMCl6NXH7ebTWR3pZr+9YvInNSeMIAy9SQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AiKMjB56gMHkKX87nnQcdu7vuvWPFTNf2ez9T9RUr0651tR/cakQ/JnWpDnLL7AQ6d3dfwlHF+qejy6I5i70JQ7ibVKkUbfRy/7vzowCJtUa30vvmHscwq86Cs6LU3lBwi3GIaLh5qbNWRwE8OlQzL8RFu7DdjBBCHhJdrceeFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=knTUyRKs; arc=none smtp.client-ip=74.125.224.52
+	 MIME-Version; b=m0fRb4D/NA9JWfCd9oN1Q+foCGkl8G5mo8Om6NBVFKaCyvRf2BhhRt3h1joSd8V+1usJ97nmPCD/Yh0UDN7YnJrH5C6XLSgWxm4BjD+3XB42QMVyYl6LMZLLTDIprOXxZHsss5mDm0iG7bFSoY7DMuQwQByD++4G7E/fBEafOGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dyUuvDJY; arc=none smtp.client-ip=74.125.224.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knTUyRKs"
-Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-641e4744e59so6929889d50.2
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 04:21:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dyUuvDJY"
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-640f2c9ccbdso5445430d50.1
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 04:21:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764159662; x=1764764462; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1764159666; x=1764764466; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ClUZeXLkHIzjOz+gIerE1H1yDZXEfvYWg406WJpW1DA=;
-        b=knTUyRKsZNHQbUen5Lvd1dUxNZmmlTqiUCc8VN+PxgXBCQctqb/BsDikabAoPTZNJa
-         o99wBK1wKCaJQFOlkZ1sv9/o86NbsSowijS92eRFPr2MdgbQ8Fd5XQ2+m0hjACDbPz/O
-         iR7LMPBklMDHeB+1NhahxMSmPmrbZs1vfmfD4CvSzV+7WOPVvcYq3iIOmYw7PL9l0YlF
-         IJ7XLnU+SlIv1m0TSNQNvI80JnDwEKWAFoFNT166WTxBv+dOq/b/raObXUc0aDGOVCb8
-         SR5ujh00o5mIARbPd+05HUGGe8LxElK6KMjP6bJgkneHRYTwB9YNgzpdq2i+sMmVyb7k
-         6a7w==
+        bh=axhRyg/ZXVYRS6JssWrRfipxfSrH7rpq/tWdb8+j4Vs=;
+        b=dyUuvDJYUtaDpxChgb9PhWayMB59qUjL1nzfY4lqKvka3VFcB3UNwiz1qp6GK0GCVy
+         wnAYpPFojZ9GZNn434YpgC5cx9mFpjUfmV3+Dc9dJB3hdSb25Y62qaIe9l5NuLaqDft6
+         VA93rUZaBfdy43PCkD+ow6qU0LKkALgbxqC/seOI4+tQvPyWspYyY5QYbGq7HuLWaLh0
+         IYYvzxvo3i/meZctDjbUku02GDiEvmVHb/TeHlEWWo/j92LB7rWEcKAc9U6s5pVrNX0k
+         rctCkdako5q3Q2Lt3jgBLf6wTKQJYxnB00AKZ8OvD3+HbnDDdKz9k+ODZTgXaGoM1oN1
+         ZZQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764159662; x=1764764462;
+        d=1e100.net; s=20230601; t=1764159666; x=1764764466;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=ClUZeXLkHIzjOz+gIerE1H1yDZXEfvYWg406WJpW1DA=;
-        b=U8VwqmHkrYDTWflWYUATKnC2/zv+i4o/C7/B8HrthVQRyjj7YIu99Tp9dfIdH8ePvC
-         j7rAiKRmYLM4XBcxe5zTNnp5sjhk4dI2RVnn1Rw2/ACiwfvnWMbuSvLRtVxp5LVFth5K
-         KS20qy8c1LFKBBDN4puMAoPefByX/LZsxgUxEv6GZvfRDjT0zTR9uAzYh3y1fZd36kzG
-         0NncdlKcuiLPyxKnyt4e7ZdjI8Q2fNxcE+6QYkbTxzrjiKrGTfcN4RWrYun73WLxfQRV
-         Qt/6UhOfgqxfwiqxCy6hIH7opHJKUZNLGTLesbgbJOUs22J4h8WFqqDsKVc6qvEMHtpX
-         G92g==
-X-Gm-Message-State: AOJu0YyQwfRvYUvemmiLoInEieQfQmLctoQYu3BYTaezz9Lw+DyRR2uV
-	P2Zlerc/TgezR5stCouke8hLm0E5fS17xu7wa9NreVJjBtNVTU1jDSBmnE1cYwa9
-X-Gm-Gg: ASbGncvwMLGlHPkaruOeAEkMw/zgl5/WkjFG12D+IXfWSFPOSIdUpDCtNziLYK7k9Ba
-	3MULMGpFWjFOfxqhK+ENEGC7VZp0TO9X/jJrLtQxVN+RCHVy9LXwE9+hFIyHuKWLVH4ELn8tAlp
-	1wKDOTAQ37i4E9yZeynbrIfVa7L0FZ7n5ole+2qeL2knDLKXBI4Eby8Ej/jEQD/A3z0Qpv2Ukgq
-	Fvtpk+H3daKNDxeXMVVIMHTz1BemqoHkcEF11l53x5cjDwHhZgi0MFBv6TvZPinV+DirNir+2Mp
-	7ehecmItbYbf1BGMxozXnW5Tu/xk7TPeKZ00awzk7e5KzUmWs9uq/QrbGsbhDdA/fKBeNfCIFGM
-	fMZpd1a643fbRKbwLNRrNJ2VetNXT1mk9dDz9WqSeRkzeUGpHFrc5IFi4cev8h9lHswH7O2HHS3
-	S8L7CMFTgIQvzHD1wtsX3h94x9ocO0tTRZDVL+RhWYV7OnAMSWa9xsmnNjQTM9D/XsjhExzvY=
-X-Google-Smtp-Source: AGHT+IFtoZ6Cm0TAmEmXEaeEYDixRDeOYu1wX+LGel0YT2AcGHj2B1swxIobMRjXMm7iHozT9NdWdA==
-X-Received: by 2002:a05:690c:3388:b0:78a:6e23:2542 with SMTP id 00721157ae682-78a8b5288a9mr148114747b3.35.1764159662491;
-        Wed, 26 Nov 2025 04:21:02 -0800 (PST)
+        bh=axhRyg/ZXVYRS6JssWrRfipxfSrH7rpq/tWdb8+j4Vs=;
+        b=xLnv4QaNH3zTSCqTabpRo8BG83scw1BPvzKwC/qNgbogZoFOGBy9X5jvqOtfCtfBmp
+         mym7WLUgwUh3Pkg8a50Q4Faidimoi0J7dv60G+Bf4fZmjANDBDuvyIqnpy3au9h/qxK4
+         22CpIFYIXvTMUbL/9711qUVb0ifWzkeusDanuOtHSzzbemuCSfyMHgyGkQjgkXotVeEX
+         aqJslRhtlocvJ6YKJnbpf7wa9viDry4GU+bDLS+rpgobee5ct6rhqBRcPcFeXfoTRpzB
+         j3z7XqqGwNFeH+/cqb//kUfpOWP11esznaPICNUvLzwzTd7lKH9GI4UXRsmpew8vo7mm
+         4Qzg==
+X-Gm-Message-State: AOJu0YxP7h43fBt9S1Obl8dD6JrOD5m5476TjHfP4L5tDt15bRL6DtUR
+	R6MR8PgzMhtgsv4IEBNauorr6ZHN+XkIRUZRSAQWS1sBo5ByHbYvjTJSjUaSH77x
+X-Gm-Gg: ASbGncszJCe1OReHGNlQYLMdkgcRxVS7Tr4sOd0/pVONpfEISePIrQZyIXnf2FQJQlG
+	mVLwuvDl/SLyPMlQPPqIoyBhPTY2WJXIpwRccJnuHyLQVcXGDNfEo6XuaIA2f59nCU/Z3rilJX1
+	3/iU+YYFmRH9nMW3xU3w+AgUHvphxNS+a68A7Su22tRtfKBrWkGdAuL4PghpiZaJlyS05Mhd+VP
+	nWmOBZuBw0pYF9et4FSTcMB7FoS4FjMlNOz1/nXvEdvK5DmlaJDYvzraPZp+63WCpDq4oTnU/CW
+	yMQ/d+76fBDyjQ33ccOOfbDtUTejSAcz9Boe3US2BIhz/vs4AjdAnQKhsQM7se7NqYNJh0LOgW6
+	vatypM6qZfaAAL2SSHZ1HfdhJN//vRfCMmmWElpZtctpVSxBlJ4G2mj7BR4MNdODw1L1OFSIRbb
+	RUGE0zKH4Gykd41gpmA/OciE3rbgS8GvK+Jc76ZbkdaKZJOXktjkIhy8oLpIgK
+X-Google-Smtp-Source: AGHT+IGHutL7Okds73W5vGqcCqBVHlgihDGeEuuQKl90iC1/lAQyOqyW45mVIbUWVaM9o53xWWvJ5A==
+X-Received: by 2002:a05:690e:2ca:b0:640:dd25:d84 with SMTP id 956f58d0204a3-64329399769mr3183937d50.47.1764159666196;
+        Wed, 26 Nov 2025 04:21:06 -0800 (PST)
 Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78a7992799dsm66318057b3.33.2025.11.26.04.21.01
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78a7992799dsm66318057b3.33.2025.11.26.04.21.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Nov 2025 04:21:02 -0800 (PST)
+        Wed, 26 Nov 2025 04:21:05 -0800 (PST)
 From: Justin Suess <utilityemal77@gmail.com>
 To: linux-security-module@vger.kernel.org
 Cc: Tingmao Wang <m@maowtm.org>,
@@ -66,9 +66,9 @@ Cc: Tingmao Wang <m@maowtm.org>,
 	Abhinav Saxena <xandfury@gmail.com>,
 	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH v3 2/5] landlock: Implement LANDLOCK_ADD_RULE_NO_INHERIT userspace api
-Date: Wed, 26 Nov 2025 07:20:35 -0500
-Message-ID: <20251126122039.3832162-3-utilityemal77@gmail.com>
+Subject: [PATCH v3 5/5] landlock: Implement KUnit test for LANDLOCK_ADD_RULE_NO_INHERIT
+Date: Wed, 26 Nov 2025 07:20:38 -0500
+Message-ID: <20251126122039.3832162-6-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251126122039.3832162-1-utilityemal77@gmail.com>
 References: <20251126122039.3832162-1-utilityemal77@gmail.com>
@@ -80,107 +80,125 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implements the syscall side flag handling and kernel api headers for the
-LANDLOCK_ADD_RULE_NO_INHERIT flag.
+Add a unit test for rule_flag collection, ensuring that access masks
+are properly propagated with the flags.
 
-v2..v3 changes:
+changes v2..v3:
 
-  * Extended documentation for flag inheritance suppression on
-    LANDLOCK_ADD_RULE_NO_INHERIT.
-  * Extended the flag validation rules in the syscall.
-  * Added mention of no inherit in empty rules in add_rule_path_beneath
-    as per Tingmao Wang's suggestion.
-  * Added check for useless no-inherit flag in networking rules.
+   * Removing erroneously misplaced code and placed in the proper
+     patch.
 
 Signed-off-by: Justin Suess <utilityemal77@gmail.com>
----
- include/uapi/linux/landlock.h | 29 +++++++++++++++++++++++++++++
- security/landlock/syscalls.c  | 14 +++++++++++---
- 2 files changed, 40 insertions(+), 3 deletions(-)
 
-diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-index d4f47d20361a..cf5c8068f513 100644
---- a/include/uapi/linux/landlock.h
-+++ b/include/uapi/linux/landlock.h
-@@ -127,10 +127,39 @@ struct landlock_ruleset_attr {
-  *     allowed_access in the passed in rule_attr.  When this flag is
-  *     present, the caller is also allowed to pass in an empty
-  *     allowed_access.
-+ * %LANDLOCK_ADD_RULE_NO_INHERIT
-+ *     When set on a rule being added to a ruleset, this flag disables the
-+ *     inheritance of access rights and flags from parent objects.
-+ *
-+ *     This flag currently applies only to filesystem rules.  Adding it to
-+ *     non-filesystem rules wil return -EINVAL, unless future extensions
-+ *     of Landlock define other hierarchical object types.
-+ *
-+ *     By default, Landlock filesystem rules inherit allowed accesses from
-+ *     ancestor directories: if a parent directory grants certain rights,
-+ *     those rights also apply to its children.  A rule marked with
-+ *     LANDLOCK_ADD_RULE_NO_INHERIT stops this propagation at the directory
-+ *     covered by the rule.  Descendants of that directory continue to inherit
-+ *     normally unless they also have rules using this flag.
-+ *
-+ *     If a regular file is marked with this flag, it will not inherit any
-+ *     access rights from its parent directories; only the accesses explicitly
-+ *     allowed by the rule will apply to that file.
-+ *
-+ *     This flag also enforces parent-directory restrictions: rename, rmdir,
-+ *     link, and other operations that would change the directory's immediate
-+ *     parent subtree are denied up to the mount point.  This prevents
-+ *     sandboxed processes from manipulating the filesystem hierarchy to evade
-+ *     restrictions (e.g., via sandbox-restart attacks).
-+ *
-+ *     In addition, this flag blocks the inheritance of rule-layer flags
-+ *     (such as the quiet flag) from parent directories to the object covered
-+ *     by this rule.
-  */
+	build.log
+---
+ security/landlock/ruleset.c | 89 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
+
+diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+index f7b6a48bbf39..0e0de8b20dc4 100644
+--- a/security/landlock/ruleset.c
++++ b/security/landlock/ruleset.c
+@@ -22,6 +22,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/workqueue.h>
+ #include <uapi/linux/landlock.h>
++#include <kunit/test.h>
  
- /* clang-format off */
- #define LANDLOCK_ADD_RULE_QUIET			(1U << 0)
-+#define LANDLOCK_ADD_RULE_NO_INHERIT		(1U << 1)
- /* clang-format on */
- 
- /**
-diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-index 93396bfc1500..1ea9bf95ef61 100644
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -352,7 +352,7 @@ static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
- 	/*
- 	 * Informs about useless rule: empty allowed_access (i.e. deny rules)
- 	 * are ignored in path walks.  However, the rule is not useless if it
--	 * is there to hold a quiet flag
-+	 * is there to hold a quiet or no inherit flag.
- 	 */
- 	if (!flags && !path_beneath_attr.allowed_access)
- 		return -ENOMSG;
-@@ -407,6 +407,10 @@ static int add_rule_net_port(struct landlock_ruleset *ruleset,
- 	if (flags & LANDLOCK_ADD_RULE_QUIET && !ruleset->quiet_masks.net)
- 		return -EINVAL;
- 
-+	/* No inherit is always useless for this scope */
-+	if (flags & LANDLOCK_ADD_RULE_NO_INHERIT)
-+		return -EINVAL;
+ #include "access.h"
+ #include "audit.h"
+@@ -774,3 +775,91 @@ landlock_init_layer_masks(const struct landlock_ruleset *const domain,
+ 	}
+ 	return handled_accesses;
+ }
 +
- 	/* Denies inserting a rule with port greater than 65535. */
- 	if (net_port_attr.port > U16_MAX)
- 		return -EINVAL;
-@@ -462,8 +466,12 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
- 
- 	if (!is_initialized())
- 		return -EOPNOTSUPP;
--
--	if (flags && flags != LANDLOCK_ADD_RULE_QUIET)
-+	/* Checks flag existence */
-+	if (flags && flags & ~(LANDLOCK_ADD_RULE_QUIET | LANDLOCK_ADD_RULE_NO_INHERIT))
-+		return -EINVAL;
-+	/* No inherit may only apply on path_beneath rules. */
-+	if ((flags & LANDLOCK_ADD_RULE_NO_INHERIT) &&
-+	    rule_type != LANDLOCK_RULE_PATH_BENEATH)
- 		return -EINVAL;
- 
- 	/* Gets and checks the ruleset. */
++#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
++
++/**
++ * test_unmask_layers_no_inherit - Test landlock_unmask_layers() with no_inherit
++ * @rule_flags: Pointer to collected_rule_flags structure to track flags.
++ */
++static void test_unmask_layers_no_inherit(struct kunit *const test)
++{
++	struct landlock_rule *rule;
++	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS];
++	struct collected_rule_flags rule_flags;
++	const access_mask_t access_request = BIT_ULL(0) | BIT_ULL(1);
++	const layer_mask_t layers_initialized = BIT_ULL(0) | BIT_ULL(1);
++	size_t i;
++
++	rule = kzalloc(struct_size(rule, layers, 2), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_NULL(test, rule);
++
++	rule->num_layers = 2;
++
++	/* Layer 1: allows access 0, no_inherit */
++	rule->layers[0].level = 1;
++	rule->layers[0].access = BIT_ULL(0);
++	rule->layers[0].flags.no_inherit = 1;
++
++	/* Layer 2: allows access 1 */
++	rule->layers[1].level = 2;
++	rule->layers[1].access = BIT_ULL(1);
++
++	/* Case 1: No rule_flags provided (should behave normally) */
++	for (i = 0; i < ARRAY_SIZE(layer_masks); i++)
++		layer_masks[i] = layers_initialized;
++
++	landlock_unmask_layers(rule, access_request, &layer_masks,
++			       ARRAY_SIZE(layer_masks), NULL);
++
++	/* Access 0 should be unmasked by layer 1 */
++	KUNIT_EXPECT_EQ(test, layer_masks[0], layers_initialized & ~BIT_ULL(0));
++	/* Access 1 should be unmasked by layer 2 */
++	KUNIT_EXPECT_EQ(test, layer_masks[1], layers_initialized & ~BIT_ULL(1));
++
++	/* Case 2: rule_flags provided, no existing no_inherit_masks */
++	for (i = 0; i < ARRAY_SIZE(layer_masks); i++)
++		layer_masks[i] = layers_initialized;
++	memset(&rule_flags, 0, sizeof(rule_flags));
++
++	landlock_unmask_layers(rule, access_request, &layer_masks,
++			       ARRAY_SIZE(layer_masks), &rule_flags);
++
++	/* Access 0 should be unmasked by layer 1 */
++	KUNIT_EXPECT_EQ(test, layer_masks[0], layers_initialized & ~BIT_ULL(0));
++	/* Access 1 should be unmasked by layer 2 */
++	KUNIT_EXPECT_EQ(test, layer_masks[1], layers_initialized & ~BIT_ULL(1));
++
++	/* rule_flags should collect no_inherit from layer 1 */
++	KUNIT_EXPECT_EQ(test, rule_flags.no_inherit_masks, (layer_mask_t)BIT_ULL(0));
++
++	/* Case 3: rule_flags provided, layer 1 is masked by no_inherit_masks */
++	for (i = 0; i < ARRAY_SIZE(layer_masks); i++)
++		layer_masks[i] = layers_initialized;
++	memset(&rule_flags, 0, sizeof(rule_flags));
++	rule_flags.no_inherit_masks = BIT_ULL(0); /* Mask layer 1 */
++
++	landlock_unmask_layers(rule, access_request, &layer_masks,
++			       ARRAY_SIZE(layer_masks), &rule_flags);
++
++	/* Access 0 should NOT be unmasked by layer 1 because it is skipped */
++	KUNIT_EXPECT_EQ(test, layer_masks[0], layers_initialized);
++	/* Access 1 should be unmasked by layer 2 */
++	KUNIT_EXPECT_EQ(test, layer_masks[1], layers_initialized & ~BIT_ULL(1));
++
++	kfree(rule);
++}
++
++static struct kunit_case ruleset_test_cases[] = {
++	KUNIT_CASE(test_unmask_layers_no_inherit),
++	{}
++};
++
++static struct kunit_suite ruleset_test_suite = {
++	.name = "landlock_ruleset",
++	.test_cases = ruleset_test_cases,
++};
++
++kunit_test_suite(ruleset_test_suite);
++
++#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
 -- 
 2.51.0
 
