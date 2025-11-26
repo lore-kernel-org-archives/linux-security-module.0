@@ -1,45 +1,45 @@
 Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49AB28852B;
-	Wed, 26 Nov 2025 07:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE88D28152A;
+	Wed, 26 Nov 2025 07:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764142089; cv=none; b=SbmRhwFclZ3V7tX0+sbv9MrlJe9XgPHjuAtDW6Eb0hEPTb51+0OL6aSB27LZEiYvyKiatQy5YTOcRiuCoOD+Ry8PLBuT+lBz7XqWymAiiaYoESE0r9B2OFCESgMt+O/JpY3CZPcHyJE4klXf+flL70gw0QGswE6COfwGbWfq7Zw=
+	t=1764143532; cv=none; b=gnPq74D/0jBVWufG0ZlIwaQsLSd/ob+xEK7lZ2tzH7XotQSWa2AYAftnsGPSpy6OgOrKsRPX9C7d0yB0j8gKFWFfKXY4OwccAcp2qQ880tVLOtvUSCZ6GdGbh910pd2iGVzIrGaNP9L5y7KTrtezrefp/0vNbz4kN1CU5F31Py0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764142089; c=relaxed/simple;
-	bh=RuZQZx2lWPUdQDgVWSZx3jHHBp6J4l3QjYM6oU8ZD7U=;
+	s=arc-20240116; t=1764143532; c=relaxed/simple;
+	bh=zJ3fIhZLVkNv2EY4lqEVkB1jMjC7shgowqQfXQLVzmo=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jXOqKOphZBCoyJqQ4fGi92jB3i1dqZIfvhEAZ3GzlCZOXuRU3YoExy/+YzEgaoLVfU4o3oCW1iUjhyoQwsLmfFpXus4QBDBGsPcrjTBnitQYOAtDWN3d4bmf92tLWCpakL3MZ218/ztuC0GAs2CcnoQLgB5d0g1GYNxxe+rEfts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=g57Ydpoi; arc=none smtp.client-ip=130.133.4.66
+	 Content-Type:MIME-Version; b=sYhnBUTqnpCwtVfsqUwH5VMg/NLqLjmnTqRabLEJ9SeT6kT1f+zCstM4t7MyvAYOeUI7ajB8DqyZ0IpUlL/68b8bSai2zztxWfi5MuVIxUPbn2W/Eso8TtjPZCNrK2VdpOkfTJC+Q2xawzO2pqoskJ02YaHNezH+tOK1b0ito/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=ocLJ63mj; arc=none smtp.client-ip=130.133.4.66
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="g57Ydpoi"
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="ocLJ63mj"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
 	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
 	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
 	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=BbRar5ALRK9J3A5yU5VFUuIOPYE6KvC6jWD+BX5+PGA=; t=1764142085;
-	x=1764746885; b=g57Ydpoi4rRqhBm9R42rdJDu98m6MghFvdVwUXnxqy4Hntofgy+AF27FDPZK8
-	ZK+zx4mHF7AeyDDwmdn4tGA+Pt+5kosmtYqCGm26haSHhOtEUMmIh1vYcUA7auNRt5Br1UsUvrA7v
-	zX1rWZO7LDrf5pA2B1A5bLKKFCyr6ctWivppbvTURvuIecaP9/XhA38EXsSGWNkYLw2nBLGfoUMOM
-	aYcpTisweKjVaZXtXJxZQ3diy9SzRfgOIjJYMxgvsm3DVBtnLUwRgiCxO5YdIHNpZq3LdWQe+/KfI
-	JZPZSjHbuw7VRmkxVUYiF/29iPNNMAcymyC282MQix5xxy0fZg==;
+	References; bh=ESKQjQsauXnAhWqFvMKIHtVXQ0piXgBraZ576m4aBZo=; t=1764143529;
+	x=1764748329; b=ocLJ63mjG4pTKRDrEQp/utfj2bwVBlFOYaWB6NhV1/YP7kcOVjAiJmBeRaQru
+	SJ9BTfRL1Zh8h98qdX7APRuMEHXHXzKn8lO53Cmdtf/OLV3BINqLj4Usel+/epKXx64xwDYZl11HR
+	7ye6Gqjy4r5ORE4eUoTyl4bVrc/7m6Ze9WYwxna7n0soBNI7v7PT48K57wbtWx8VAvS97wjjOufeS
+	Du0HXHcutFXhuo/EMEbm6tYTQLBZ9nBnZ4QE0x6UrEWZxxBhhHrIAqsNRCqWPqDgsJ/LEWbdrKkMn
+	Q71rC6bbfrjXv8gd6ckyU3l1ZM/4R5vdg95HLJeOk6wWWmCBVg==;
 Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
           by outpost.zedat.fu-berlin.de (Exim 4.99)
           with esmtps (TLS1.3)
           tls TLS_AES_256_GCM_SHA384
           (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1vO9wU-00000002dUX-1dZ4; Wed, 26 Nov 2025 08:27:58 +0100
+          id 1vOAJp-00000002oDL-2kwS; Wed, 26 Nov 2025 08:52:05 +0100
 Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
           by inpost2.zedat.fu-berlin.de (Exim 4.99)
           with esmtpsa (TLS1.3)
           tls TLS_AES_256_GCM_SHA384
           (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1vO9wU-00000001VMY-0gGN; Wed, 26 Nov 2025 08:27:58 +0100
-Message-ID: <70e2ea005b090c8b3747c6724a19e6d697f5c9e8.camel@physik.fu-berlin.de>
+          id 1vOAJp-00000001aEr-1oEF; Wed, 26 Nov 2025 08:52:05 +0100
+Message-ID: <78ebb7db92ada9078b419b241d92722f6fc20864.camel@physik.fu-berlin.de>
 Subject: Re: [PATCH 0/2] apparmor unaligned memory fixes
 From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 To: Helge Deller <deller@kernel.org>, John Johansen
@@ -47,7 +47,7 @@ To: Helge Deller <deller@kernel.org>, John Johansen
 Cc: Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org, 
 	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
 	linux-parisc@vger.kernel.org
-Date: Wed, 26 Nov 2025 08:27:56 +0100
+Date: Wed, 26 Nov 2025 08:52:04 +0100
 In-Reply-To: <aSXHCyH_rS-c5BgP@p100>
 References: <20250531150822.135803-1-deller@kernel.org>
 	 <bc21bee14ca44077ae9323bfc251ad12390fa841.camel@physik.fu-berlin.de>
@@ -84,9 +84,7 @@ e will have
 gned
 > can help, e.g. with the following (untested) patch.
 > Adrian, maybe you want to test?
-
-Yes, I'll test that one.
-
+>=20
 > ------------------------
 >=20
 > [PATCH] Allow apparmor to handle unaligned dfa tables
@@ -157,6 +155,88 @@ e, int flags)
 >  	 *	if (dfa->max <=3D MAX_OOB_SUPPORTED) {
 >  	 *		pr_err("AppArmor DFA OOB greater than supported\n");
 >  	 *		goto fail;
+
+I can confirm that this fixes the unaligned access warnings.
+
+Without the patch:
+
+[   72.073526] audit: type=3D1400 audit(1764145307.711:2): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D"1password" pi=
+d=3D292 comm=3D"apparmor_parser"
+[   72.413269] audit: type=3D1400 audit(1764145308.051:3): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D"Discord" pid=
+=3D294 comm=3D"apparmor_parser"
+[   72.645135] audit: type=3D1400 audit(1764145308.283:4): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D4D6F6E676F4442=
+20436F6D70617373 pid=3D296 comm=3D"apparmor_parser"
+[   72.901297] audit: type=3D1400 audit(1764145308.539:5): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D"QtWebEnginePr=
+ocess" pid=3D297 comm=3D"apparmor_parser"
+[   73.245252] audit: type=3D1400 audit(1764145308.879:6): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D"Xorg" pid=3D2=
+98 comm=3D"apparmor_parser"
+[   73.468571] audit: type=3D1400 audit(1764145309.107:7): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D"balena-etcher=
+" pid=3D299 comm=3D"apparmor_parser"
+[   73.688642] audit: type=3D1400 audit(1764145309.327:8): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D"brave" pid=3D=
+300 comm=3D"apparmor_parser"
+[   73.897068] audit: type=3D1400 audit(1764145309.531:9): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D"buildah" pid=
+=3D301 comm=3D"apparmor_parser"
+[   74.104434] audit: type=3D1400 audit(1764145309.739:10): apparmor=3D"STA=
+TUS" operation=3D"profile_load" profile=3D"unconfined" name=3D"busybox" pid=
+=3D302 comm=3D"apparmor_parser"
+[   74.313359] audit: type=3D1400 audit(1764145309.951:11): apparmor=3D"STA=
+TUS" operation=3D"profile_load" profile=3D"unconfined" name=3D"cam" pid=3D3=
+03 comm=3D"apparmor_parser"
+[   74.808437] Kernel unaligned access at TPC[8dabdc] aa_dfa_unpack+0x3c/0x=
+6e0
+[   74.900032] Kernel unaligned access at TPC[8dabec] aa_dfa_unpack+0x4c/0x=
+6e0
+[   74.991608] Kernel unaligned access at TPC[8dacd0] aa_dfa_unpack+0x130/0=
+x6e0
+[   75.084339] Kernel unaligned access at TPC[8dacd0] aa_dfa_unpack+0x130/0=
+x6e0
+[   75.176997] Kernel unaligned access at TPC[8dacd0] aa_dfa_unpack+0x130/0=
+x6e0
+
+With the patch:
+
+[   78.058157] audit: type=3D1400 audit(1764145018.691:2): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D"1password" pi=
+d=3D294 comm=3D"apparmor_parser"
+[   78.294742] audit: type=3D1400 audit(1764145018.927:3): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D"Discord" pid=
+=3D295 comm=3D"apparmor_parser"
+[   78.516989] audit: type=3D1400 audit(1764145019.127:4): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D4D6F6E676F4442=
+20436F6D70617373 pid=3D297 comm=3D"apparmor_parser"
+[   78.748842] audit: type=3D1400 audit(1764145019.379:5): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D"QtWebEnginePr=
+ocess" pid=3D298 comm=3D"apparmor_parser"
+[   79.101544] audit: type=3D1400 audit(1764145019.731:6): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D"Xorg" pid=3D2=
+99 comm=3D"apparmor_parser"
+[   79.335655] audit: type=3D1400 audit(1764145019.967:7): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D"balena-etcher=
+" pid=3D300 comm=3D"apparmor_parser"
+[   79.559475] audit: type=3D1400 audit(1764145020.191:8): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D"brave" pid=3D=
+301 comm=3D"apparmor_parser"
+[   79.768389] audit: type=3D1400 audit(1764145020.399:9): apparmor=3D"STAT=
+US" operation=3D"profile_load" profile=3D"unconfined" name=3D"buildah" pid=
+=3D302 comm=3D"apparmor_parser"
+[   79.974008] audit: type=3D1400 audit(1764145020.607:10): apparmor=3D"STA=
+TUS" operation=3D"profile_load" profile=3D"unconfined" name=3D"busybox" pid=
+=3D303 comm=3D"apparmor_parser"
+[   80.194378] audit: type=3D1400 audit(1764145020.827:11): apparmor=3D"STA=
+TUS" operation=3D"profile_load" profile=3D"unconfined" name=3D"cam" pid=3D3=
+04 comm=3D"apparmor_parser"
+
+So, it seems your approach works as expected.
+
+Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 
 Adrian
 
