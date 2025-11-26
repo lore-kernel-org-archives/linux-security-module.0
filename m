@@ -1,63 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE2229E110;
-	Wed, 26 Nov 2025 19:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC47313557;
+	Wed, 26 Nov 2025 20:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764186297; cv=none; b=Qp897cdq63ixeizqe1Yto4/w+q6Ja4cu7E44GJEjYv/GN2ShjmHPJwadN55EPAsV7yX5kNSr40dDs3yQl1i4FMK27ZpLwrOGJprcREb6h60rcHfZfi5Yto1q/sHu8TWoI+mtw89Jk8XRxB8BDA4k5m7vRmsqByKqZKAfHvh62tM=
+	t=1764188110; cv=none; b=lvWvCSx7mvSpCijAYVknLmm09jrf9nDP6q2PvWFcVx8LADNUrGyCSojCE+wQBUsAPUtNw5iYt42T/HpqxVes8bT7V99aSlzIgOYNyX+uwA4PQYKNfYHlnCA8MUuFGzcbv52xKh/Wpd6nTJ/2eGxegxGSdoL4yE/e7kgDlhVdeW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764186297; c=relaxed/simple;
-	bh=CAgoLkcKGmrNOaExZbEqf5/GTNcLuZBZHX4JOfOxTaI=;
+	s=arc-20240116; t=1764188110; c=relaxed/simple;
+	bh=lGalWdKdj7sgPvEF0tMHB26XJTqmC+jY3n19/VWB7KY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jj4EujSThoyytRFNxq2kv9g3hbRuEaanP0gkQ9u++oAYpc5ClVhAULoOT60rakGMfEohMV0NJLgIaV2gL72gJ0XuY8IK13nCtEj0QSGRaU+gURPjN2zMMhM+m8ENHglAZsP8dnKunei1/JWS/FafS7pAM3tRonSmn4PZVvRiUdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AqwtSScF; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xia60mp1XqajLBgvCTlT9gcxE9nZ8yYwFni2399qTG9V8VbwCU37YIp8KHDUaX2YwAl963r33/K26O3j+BzBZEfnnPD2ijSBqGLmMayi3GbODqgtHBkPmsehKDzHV4AaIha5HSs2dOruv1OHraGqfz9i1fOWcD1zQ8PvwFo/ntM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GaKjUfqB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AqwtSScF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1764186296; x=1795722296;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CAgoLkcKGmrNOaExZbEqf5/GTNcLuZBZHX4JOfOxTaI=;
-  b=AqwtSScFc/yLFWWOm1O5HmstAdVKLX7B7Mhl9lqQKJp9Xkw+AKxDpHPv
-   r83GQgdLHl4KXRhuQF2umg8v9n3xZopEC9GsiV7zadvREZbiSbE0T6AO+
-   y4yzoVu8eERm4jwTUGEf7mbwYAU8XVjsUVsLDl6yEKyp2zXuVjR/zVqZS
-   aFqumaSGGVGJXKPPR74HOAiCUsOOSDsdniy+/eqzEZ3DFyeCnr6qhbLfy
-   74Bx6mxY3T+yQOU92hpCZYN8jcHTvB/RHGjiZAwcYQALTA+1PxAOVGErY
-   qYaZJ2xLhu35ORxKH/eK/y19mSvm/3s84+mUKkNHSTzJtgq8p8Z/WXByg
-   Q==;
-X-CSE-ConnectionGUID: Dq3G1t1qQ9qDQAg7/XD6bg==
-X-CSE-MsgGUID: 1LY1p81UTrWlc+N7yc1Rng==
-X-IronPort-AV: E=McAfee;i="6800,10657,11625"; a="66194208"
-X-IronPort-AV: E=Sophos;i="6.20,229,1758610800"; 
-   d="scan'208";a="66194208"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2025 11:44:55 -0800
-X-CSE-ConnectionGUID: AWoYAO75SFGhOfLf8MVRmw==
-X-CSE-MsgGUID: Kw0A2qbPR1S27QQJKt5ntw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,229,1758610800"; 
-   d="scan'208";a="192285019"
-Received: from rvuia-mobl.ger.corp.intel.com (HELO localhost) ([10.245.245.89])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2025 11:44:51 -0800
-Date: Wed, 26 Nov 2025 21:44:48 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: KP Singh <kpsingh@kernel.org>, linux-security-module@vger.kernel.org,
-	bpf@vger.kernel.org, ast@kernel.org, casey@schaufler-ca.com,
-	andrii@kernel.org, keescook@chromium.org, daniel@iogearbox.net,
-	renauld@google.com, revest@chromium.org, song@kernel.org,
-	linux@roeck-us.net, Kui-Feng Lee <sinquersw@gmail.com>,
-	John Johansen <john.johansen@canonical.com>
-Subject: Re: [PATCH v15 3/4] lsm: count the LSMs enabled at compile time
-Message-ID: <aSdYsPvRhVwvLoHU@smile.fi.intel.com>
-References: <20240816154307.3031838-1-kpsingh@kernel.org>
- <20240816154307.3031838-4-kpsingh@kernel.org>
- <aSc1aAdOeSuuoKTH@black.igk.intel.com>
- <19ac18b9e00.2843.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GaKjUfqB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76A29C4CEF7;
+	Wed, 26 Nov 2025 20:15:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764188109;
+	bh=lGalWdKdj7sgPvEF0tMHB26XJTqmC+jY3n19/VWB7KY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GaKjUfqBLdCE3XVLZp8E1zn88awwnw5bGw7CzDUn3rm57kKkE6LuYgeuzYA8iqGfy
+	 vGhOF3wIdxd4cOeYBhVqn5rZboNTpXnMBc+eolQDU6wplrLNyKF0QZMDr2C1vSyyPW
+	 2VxEwxkeLNyiHaQ6f6MAnfMz0DJjZ11TMwiDn+Nh4xlTYRQ94RcVS98ffRHOM4/kE5
+	 N5RSg4VppsLqY81VZLYeCfQMta3t98QdJPK9QfQQaVwJY5J6g6cWNw8k9JyJh2m2U0
+	 1+XVde2Yb/MeBhQHhgwBV0MKc6DOQy6k/2Qu3srFwSO41cSWr+CDjsxwItvQ55xkt9
+	 Ehn/KJ9LSiHSQ==
+Date: Wed, 26 Nov 2025 21:15:04 +0100
+From: Helge Deller <deller@kernel.org>
+To: John Johansen <john.johansen@canonical.com>
+Cc: david laight <david.laight@runbox.com>, Helge Deller <deller@gmx.de>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org, linux-parisc@vger.kernel.org
+Subject: Re: [PATCH 0/2] apparmor unaligned memory fixes
+Message-ID: <aSdfyGv2T88T5FEu@carbonx1>
+References: <ba3d5651-fa68-4bb5-84aa-35576044e7b0@canonical.com>
+ <aSXHCyH_rS-c5BgP@p100>
+ <e88c32c2-fb18-4f3e-9ec2-a749695aaf0a@canonical.com>
+ <c192140a-0575-41e9-8895-6c8257ce4682@gmx.de>
+ <d35010b3-7d07-488c-b5a4-a13380d0ef7c@canonical.com>
+ <20251126104444.29002552@pumpkin>
+ <4034ad19-8e09-440c-a042-a66a488c048b@gmx.de>
+ <20251126142201.27e23076@pumpkin>
+ <aScY13MEBATreotz@carbonx1>
+ <f5637038-9661-47fe-ba69-e461760ac975@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -66,38 +53,202 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <19ac18b9e00.2843.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <f5637038-9661-47fe-ba69-e461760ac975@canonical.com>
 
-On Wed, Nov 26, 2025 at 02:02:24PM -0500, Paul Moore wrote:
-> On November 26, 2025 12:14:21 PM Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
-> > On Fri, Aug 16, 2024 at 05:43:06PM +0200, KP Singh wrote:
-
-...
-
-> > > -/* This counts to 12. Any more, it will return 13th argument. */
-> > > -#define __COUNT_ARGS(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10,
-> > > _11, _12, _n, X...) _n
-> > > -#define COUNT_ARGS(X...) __COUNT_ARGS(, ##X, 12, 11, 10, 9, 8, 7,
-> > > 6, 5, 4, 3, 2, 1, 0)
-> > > +/* This counts to 15. Any more, it will return 16th argument. */
-> > > +#define __COUNT_ARGS(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10,
-> > > _11, _12, _13, _14, _15, _n, X...) _n
-> > > +#define COUNT_ARGS(X...) __COUNT_ARGS(, ##X, 15, 14, 13, 12, 11,
-> > > 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+* John Johansen <john.johansen@canonical.com>:
+> On 11/26/25 07:12, Helge Deller wrote:
+> > * david laight <david.laight@runbox.com>:
+> > > On Wed, 26 Nov 2025 12:03:03 +0100
+> > > Helge Deller <deller@gmx.de> wrote:
+> > > 
+> > > > On 11/26/25 11:44, david laight wrote:
+> > > ...
+> > > > > > diff --git a/security/apparmor/match.c b/security/apparmor/match.c
+> > > > > > index 26e82ba879d44..3dcc342337aca 100644
+> > > > > > --- a/security/apparmor/match.c
+> > > > > > +++ b/security/apparmor/match.c
+> > > > > > @@ -71,10 +71,10 @@ static struct table_header *unpack_table(char *blob, size_t bsize)
+> > > > > >     				     u8, u8, byte_to_byte);
+> > > > > 
+> > > > > Is that that just memcpy() ?
+> > > > 
+> > > > No, it's memcpy() only on big-endian machines.
+> > > 
+> > > You've misread the quoting...
+> > > The 'data8' case that was only half there is a memcpy().
+> > > 
+> > > > On little-endian machines it converts from big-endian
+> > > > 16/32-bit ints to little-endian 16/32-bit ints.
+> > > > 
+> > > > But I see some potential for optimization here:
+> > > > a) on big-endian machines just use memcpy()
+> > > 
+> > > true
+> > > 
+> > > > b) on little-endian machines use memcpy() to copy from possibly-unaligned
+> > > >      memory to then known-to-be-aligned destination. Then use a loop with
+> > > >      be32_to_cpu() instead of get_unaligned_xx() as it's faster.
+> > > 
+> > > There is a function that does a loop byteswap of a buffer - no reason
+> > > to re-invent it.
 > > 
-> > You forgot to update _12 in the upper comment.
+> > I assumed there must be something, but I did not see it. Which one?
+> > 
+> > > But I doubt it is always (if ever) faster to do a copy and then byteswap.
+> > > The loop control and extra memory accesses kill performance.
+> > 
+> > Yes, you are probably right.
+> > 
+> > > Not that I've seen a fast get_unaligned() - I don't think gcc or clang
+> > > generate optimal code - For LE I think it is something like:
+> > > 	low = *(addr & ~3);
+> > > 	high = *((addr + 3) & ~3);
+> > > 	shift = (addr & 3) * 8;
+> > > 	value = low << shift | high >> (32 - shift);
+> > > Note that it is only 2 aligned memory reads - even for 64bit.
+> > 
+> > Ok, then maybe we should keep it simple like this patch:
+> > 
+> > [PATCH v2] apparmor: Optimize table creation from possibly unaligned memory
+> > 
+> > Source blob may come from userspace and might be unaligned.
+> > Try to optize the copying process by avoiding unaligned memory accesses.
+> > 
+> > Signed-off-by: Helge Deller <deller@gmx.de>
+> > 
+> > diff --git a/security/apparmor/include/match.h b/security/apparmor/include/match.h
+> > index 1fbe82f5021b..386da2023d50 100644
+> > --- a/security/apparmor/include/match.h
+> > +++ b/security/apparmor/include/match.h
+> > @@ -104,16 +104,20 @@ struct aa_dfa {
+> >   	struct table_header *tables[YYTD_ID_TSIZE];
+> >   };
+> > -#define byte_to_byte(X) (X)
+> > +#define byte_to_byte(X) (*(X))
+> >   #define UNPACK_ARRAY(TABLE, BLOB, LEN, TTYPE, BTYPE, NTOHX)	\
+> >   	do { \
+> >   		typeof(LEN) __i; \
+> >   		TTYPE *__t = (TTYPE *) TABLE; \
+> >   		BTYPE *__b = (BTYPE *) BLOB; \
+> > -		for (__i = 0; __i < LEN; __i++) { \
+> > -			__t[__i] = NTOHX(__b[__i]); \
+> > -		} \
+> > +		BUILD_BUG_ON(sizeof(TTYPE) != sizeof(BTYPE)); \
+> > +		if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN) || sizeof(BTYPE) == 1) \
+> > +			memcpy(__t, __b, (LEN) * sizeof(BTYPE)); \
+> > +		else /* copy & convert convert from big-endian */ \
+> > +			for (__i = 0; __i < LEN; __i++) { \
+> > +				__t[__i] = NTOHX(&__b[__i]); \
+> > +			} \
+> >   	} while (0)
+> >   static inline size_t table_size(size_t len, size_t el_size)
+> > diff --git a/security/apparmor/match.c b/security/apparmor/match.c
+> > index c5a91600842a..13e2f6873329 100644
+> > --- a/security/apparmor/match.c
+> > +++ b/security/apparmor/match.c
+> > @@ -15,6 +15,7 @@
+> >   #include <linux/vmalloc.h>
+> >   #include <linux/err.h>
+> >   #include <linux/kref.h>
+> > +#include <linux/unaligned.h>
+> >   #include "include/lib.h"
+> >   #include "include/match.h"
+> > @@ -70,10 +71,10 @@ static struct table_header *unpack_table(char *blob, size_t bsize)
+> >   				     u8, u8, byte_to_byte);
+> >   		else if (th.td_flags == YYTD_DATA16)
+> >   			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
+> > -				     u16, __be16, be16_to_cpu);
+> > +				     u16, __be16, get_unaligned_be16);
+> >   		else if (th.td_flags == YYTD_DATA32)
+> >   			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
+> > -				     u32, __be32, be32_to_cpu);
+> > +				     u32, __be32, get_unaligned_be32);
+> >   		else
+> >   			goto fail;
+> >   		/* if table was vmalloced make sure the page tables are synced
 > 
-> Do you plan to send a patch to fix this?
+> I think we can make one more tweak, in just not using UNPACK_ARRAY at all for the byte case
+> ie.
+> 
+> diff --git a/security/apparmor/match.c b/security/apparmor/match.c
+> index 26e82ba879d44..389202560675c 100644
+> --- a/security/apparmor/match.c
+> +++ b/security/apparmor/match.c
+> @@ -67,8 +67,7 @@ static struct table_header *unpack_table(char *blob, size_t bsize)
+>  		table->td_flags = th.td_flags;
+>  		table->td_lolen = th.td_lolen;
+>  		if (th.td_flags == YYTD_DATA8)
+> -			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
+> -				     u8, u8, byte_to_byte);
+> +			memcp(table->td_data, blob, th.td_lolen);
 
-Not really. Too lazy to write a commit message for it.
-Appreciate if you or the initial author or somebody else
-can do that.
-
--- 
-With Best Regards,
-Andy Shevchenko
+True.
+Then byte_to_byte() can go away in match.h as well.
+So, here is a (untested) v3:
 
 
+[PATCH v3] apparmor: Optimize table creation from possibly unaligned memory
+
+Source blob may come from userspace and might be unaligned.
+Try to optize the copying process by avoiding unaligned memory accesses.
+
+Signed-off-by: Helge Deller <deller@gmx.de>
+
+diff --git a/security/apparmor/include/match.h b/security/apparmor/include/match.h
+index 1fbe82f5021b..19e72b3e8f49 100644
+--- a/security/apparmor/include/match.h
++++ b/security/apparmor/include/match.h
+@@ -104,16 +104,18 @@ struct aa_dfa {
+ 	struct table_header *tables[YYTD_ID_TSIZE];
+ };
+ 
+-#define byte_to_byte(X) (X)
+-
+ #define UNPACK_ARRAY(TABLE, BLOB, LEN, TTYPE, BTYPE, NTOHX)	\
+ 	do { \
+ 		typeof(LEN) __i; \
+ 		TTYPE *__t = (TTYPE *) TABLE; \
+ 		BTYPE *__b = (BTYPE *) BLOB; \
+-		for (__i = 0; __i < LEN; __i++) { \
+-			__t[__i] = NTOHX(__b[__i]); \
+-		} \
++		BUILD_BUG_ON(sizeof(TTYPE) != sizeof(BTYPE)); \
++		if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) \
++			memcpy(__t, __b, (LEN) * sizeof(BTYPE)); \
++		else /* copy & convert convert from big-endian */ \
++			for (__i = 0; __i < LEN; __i++) { \
++				__t[__i] = NTOHX(&__b[__i]); \
++			} \
+ 	} while (0)
+ 
+ static inline size_t table_size(size_t len, size_t el_size)
+diff --git a/security/apparmor/match.c b/security/apparmor/match.c
+index c5a91600842a..1e32c8ba14ae 100644
+--- a/security/apparmor/match.c
++++ b/security/apparmor/match.c
+@@ -15,6 +15,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/err.h>
+ #include <linux/kref.h>
++#include <linux/unaligned.h>
+ 
+ #include "include/lib.h"
+ #include "include/match.h"
+@@ -66,14 +67,13 @@ static struct table_header *unpack_table(char *blob, size_t bsize)
+ 		table->td_flags = th.td_flags;
+ 		table->td_lolen = th.td_lolen;
+ 		if (th.td_flags == YYTD_DATA8)
+-			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
+-				     u8, u8, byte_to_byte);
++			memcpy(table->td_data, blob, th.td_lolen);
+ 		else if (th.td_flags == YYTD_DATA16)
+ 			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
+-				     u16, __be16, be16_to_cpu);
++				     u16, __be16, get_unaligned_be16);
+ 		else if (th.td_flags == YYTD_DATA32)
+ 			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
+-				     u32, __be32, be32_to_cpu);
++				     u32, __be32, get_unaligned_be32);
+ 		else
+ 			goto fail;
+ 		/* if table was vmalloced make sure the page tables are synced
