@@ -1,171 +1,276 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474B62FF676;
-	Wed, 26 Nov 2025 15:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC1218A921
+	for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 15:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764169950; cv=none; b=U+UhvvyHFNEgDVqOot7KuSfhRxm4cUYe3Ug8ShTBuWdUlfv/0euGJOViVd6PtPyoCX4CD4lABHWKVHhfkQXeO+R9txzdZdbxc55LDgVHeXUoRfJcgpWRVDxG+IIjDRFsxvcd+LHhGWovzJmDkLPwTymPw+qG1gU2L20pnI6E3CE=
+	t=1764171169; cv=none; b=KIlzZjgX5jbLhEO+yrbpA5ZrbUPpPVXOZ55Wtn4fKFqKYa6FSscM1UfMcaBN+/OiXuZRXWfl0QHC0pWCnb80O1UdQyOeiEjlxNMXEztN9U8jsln8+RFCerPWE4r6bUHqwsIj0UU01skyiwSokUxlVtnQiyJg9yAvQUuTZBd0eM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764169950; c=relaxed/simple;
-	bh=A31ZEtB8hXgwmnRmCuYTs0YXUNocajsrU+V31FS5PcQ=;
+	s=arc-20240116; t=1764171169; c=relaxed/simple;
+	bh=VGKaVfICgJGHSKSeBv12nWC1fPNr9vGasFo7XthZ8Gg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IWVD3neXR1AG4cRySF90pcZGse/coFKGF8L/JndwbSRzDlwnRLU1gY/qf8Q7R7yRAowUhTfmHXWKkJjC4OmCYJi1kpNetaJKVp05IUQyFgZ4aa+t9DelNlIbm5HK60AtLhn780MwvWRmUx4cWErCB3MWXn/G9xmgCWnELaaYIlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BymReTMg; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=oApKCTyzGpGDE0gpI2bn6E/VIIGkBDPxzqvVmPYaD5QYlFovGm81EeSjY2h7svd57TWFNCkNmwmV8FaSOLgiqR4O28N4vVmWImQsn2bRX+j/YDqO7M0iifJ8w97LBSmtmXFuxUq1lR7Iw6S6RnPeW2rqriyTaR2+AXL+nDs6VJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=NONAjYmo; arc=none smtp.client-ip=185.125.25.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BymReTMg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 468F9C4CEF7;
-	Wed, 26 Nov 2025 15:12:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764169949;
-	bh=A31ZEtB8hXgwmnRmCuYTs0YXUNocajsrU+V31FS5PcQ=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="NONAjYmo"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dGk8L0j0yzWhJ;
+	Wed, 26 Nov 2025 16:32:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1764171153;
+	bh=yyZSmgbUtBmbNW8C1z7X+aSYcQgfxQDBTlBVle5b2G4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BymReTMgbvFervNxB8f5k+j8RwfG6V71WiKCc0ukKREmcVSt/35mtWiBqV4bRcgso
-	 Zd5qN7TYdy4CkHaoA73q92T8eIQrX89FkTEt7iM0wU0gOuWqwz/nTn3l2Zh7zxdvi2
-	 oq38RpQSAEuwBYGPre2TFhLKY8EUYVP83x9yl6KP3XDc1Ty2vh+M6W6K4H8f07k+rx
-	 fTEejYRkb+pZvlz0J9BdZnbf7ufgEsLYKtwqk5uMDdWMHhMfjOV7knTA7VTXLuZqFE
-	 nVUZ8KW/UMSGXSNQIbJDAOiUWcG+7RUnSvNHuKKqVHksGmmFJX7GVCYNt5e/SpUat5
-	 pxombUnx+2/og==
-Date: Wed, 26 Nov 2025 16:12:23 +0100
-From: Helge Deller <deller@kernel.org>
-To: david laight <david.laight@runbox.com>
-Cc: Helge Deller <deller@gmx.de>,
-	John Johansen <john.johansen@canonical.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org, linux-parisc@vger.kernel.org
-Subject: Re: [PATCH 0/2] apparmor unaligned memory fixes
-Message-ID: <aScY13MEBATreotz@carbonx1>
-References: <90513f85cc8d060ebccd3972cc7709e4b6f13f34.camel@physik.fu-berlin.de>
- <be9c143d-1d5e-4c5b-9078-4a7804489258@gmx.de>
- <ba3d5651-fa68-4bb5-84aa-35576044e7b0@canonical.com>
- <aSXHCyH_rS-c5BgP@p100>
- <e88c32c2-fb18-4f3e-9ec2-a749695aaf0a@canonical.com>
- <c192140a-0575-41e9-8895-6c8257ce4682@gmx.de>
- <d35010b3-7d07-488c-b5a4-a13380d0ef7c@canonical.com>
- <20251126104444.29002552@pumpkin>
- <4034ad19-8e09-440c-a042-a66a488c048b@gmx.de>
- <20251126142201.27e23076@pumpkin>
+	b=NONAjYmoKbD868tPV1HcXeRpuQLHvXNBNf7CMVt2ZE1QaJesDSw+pfcVhYx8TEEPw
+	 t6dyXYWHst5uuhsBgiD64z4/VwiX/YtynzTEdmAnk5Jf3pwN7K/rMRATdqWx6JbJKh
+	 9VIofC4ZZZobR78EQqVZBpmzwAwxypb87QSJBHQs=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4dGk8K1dpZz2Kw;
+	Wed, 26 Nov 2025 16:32:33 +0100 (CET)
+Date: Wed, 26 Nov 2025 16:32:32 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Jann Horn <jannh@google.com>, John Johansen <john.johansen@canonical.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Ben Scarlato <akhna@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Daniel Burgener <dburgener@linux.microsoft.com>, 
+	Jeff Xu <jeffxu@google.com>, NeilBrown <neil@brown.name>, Paul Moore <paul@paul-moore.com>, 
+	Ryan Sullivan <rysulliv@redhat.com>, Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Abhinav Saxena <xandfury@gmail.com>
+Subject: Re: [PATCH v3 2/4] landlock: Fix handling of disconnected directories
+Message-ID: <20251125.woxo4hooGaid@digikod.net>
+References: <20250719104204.545188-1-mic@digikod.net>
+ <20250719104204.545188-3-mic@digikod.net>
+ <18425339-1f4b-4d98-8400-1decef26eda7@maowtm.org>
+ <20250723.vouso1Kievao@digikod.net>
+ <b0f46246-f2c5-42ca-93ce-0d629702a987@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251126142201.27e23076@pumpkin>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b0f46246-f2c5-42ca-93ce-0d629702a987@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-* david laight <david.laight@runbox.com>:
-> On Wed, 26 Nov 2025 12:03:03 +0100
-> Helge Deller <deller@gmx.de> wrote:
-> 
-> > On 11/26/25 11:44, david laight wrote:
-> ...   
-> > >> diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-> > >> index 26e82ba879d44..3dcc342337aca 100644
-> > >> --- a/security/apparmor/match.c
-> > >> +++ b/security/apparmor/match.c
-> > >> @@ -71,10 +71,10 @@ static struct table_header *unpack_table(char *blob, size_t bsize)
-> > >>    				     u8, u8, byte_to_byte);  
-> > > 
-> > > Is that that just memcpy() ?  
+On Mon, Jul 28, 2025 at 01:13:10AM +0100, Tingmao Wang wrote:
+> On 7/23/25 22:01, Mickaël Salaün wrote:
+> > On Tue, Jul 22, 2025 at 07:04:02PM +0100, Tingmao Wang wrote:
+> >> On 7/19/25 11:42, Mickaël Salaün wrote:
+> >>> [...]
+> >>> @@ -784,12 +787,18 @@ static bool is_access_to_paths_allowed(
+> >>>  	if (WARN_ON_ONCE(!layer_masks_parent1))
+> >>>  		return false;
+> >>>  
+> >>> -	allowed_parent1 = is_layer_masks_allowed(layer_masks_parent1);
+> >>> -
+> >>>  	if (unlikely(layer_masks_parent2)) {
+> >>>  		if (WARN_ON_ONCE(!dentry_child1))
+> >>>  			return false;
+> >>>  
+> >>> +		/*
+> >>> +		 * Creates a backup of the initial layer masks to be able to restore
+> >>> +		 * them if we find out that we were walking a disconnected directory,
+> >>> +		 * which would make the collected access rights inconsistent (cf.
+> >>> +		 * reset_to_mount_root).
+> >>> +		 */
+> >>
+> >> This comment is duplicate with the one below, is this intentional?
+> >>
+> >>> [...]
+> >>
+> >> On the other hand, I'm still a bit uncertain about the domain check
+> >> semantics.  While it would not cause a rename to be allowed if it is
+> >> otherwise not allowed by any rules on or above the mountpoint, this gets a
+> >> bit weird if we have a situation where renames are allowed on the
+> >> mountpoint or everywhere, but not read/writes, however read/writes are
+> >> allowed directly on a file, but the dir containing that file gets
+> >> disconnected so the sandboxed application can't read or write to it.
+> >> (Maybe someone would set up such a policy where renames are allowed,
+> >> expecting Landlock to always prevent renames where additional permissions
+> >> would be exposed?)
+> >>
+> >> In the above situation, if the file is then moved to a connected
+> >> directory, it will become readable/writable again.
 > > 
-> > No, it's memcpy() only on big-endian machines.
+> > We can generalize this issue to not only the end file but any component
+> > of the path: disconnected directories.  In fact, the main issue is the
+> > potential inconsistency of access checks over time (e.g. between two
+> > renames).  This could be exploited to bypass the security checks done
+> > for FS_REFER.
 > 
-> You've misread the quoting...
-> The 'data8' case that was only half there is a memcpy().
+> Hi Mickaël,
 > 
-> > On little-endian machines it converts from big-endian
-> > 16/32-bit ints to little-endian 16/32-bit ints.
+> (replying to this one even though I've read the further replies, since I
+> don't have anything to address there)
+> 
+> I spent some time thinking about how this could be exploited and I can see
+> one concrete situation where disconnected directories can be taken
+> advantaged of, which is when an application has rename access across the
+> "source" of a bind mount, as well as some place outside of it, but only
+> has read/write access on certain subdirs of it, in which case it can use
+> this to move files under the bind mount that it does not have access to,
+> to a place where it has, by first making the target destination
+> disconnected, then connecting it back:
+> 
+> 	/ # mkdir bind_src bind_dst outside
+> 	/ # mount --bind bind_src bind_dst
+> 	/ # mkdir -p bind_src/d1
+> 	/ # echo secret > /bind_src/foo
+> 	/ # LL_FS_RO=/usr:/bin:/lib:/etc LL_FS_RW=/bind_src/d1:/outside LL_FS_CREATE_DELETE_REFER=/ /sandboxer bash
+> 		## (sandboxer patched with ability to add just create/delete/refer
+> 		    rule on a path - maybe we can add this to the sandboxer but
+> 		    call it something like LL_FS_DIR_RW?)
+> 	Executing the sandboxed command...
+> 	/ # cat /bind_src/foo /bind_dst/foo
+> 	cat: /bind_src/foo: Permission denied
+> 	cat: /bind_dst/foo: Permission denied
+> 	/ # cd /bind_dst/d1
+> 	/bind_dst/d1 # mv -v /bind_src/d1 /outside
+> 	renamed '/bind_src/d1' -> '/outside/d1'
+> 	/bind_dst/d1 # ls ..
+> 	ls: cannot access '..': No such file or directory
+> 	/bind_dst/d1 # mv -v /bind_dst/foo .
+> 	renamed '/bind_dst/foo' -> './foo'
+> 	/bind_dst/d1 # mv -v /outside/d1 /bind_src/d1
+> 	renamed '/outside/d1' -> '/bind_src/d1'
+> 	/bind_dst/d1 # cat foo
+> 	secret
+
+Good catch! This is definitely an issue.
+
+> 
+> (I think this is probably not an issue with the existing Landlock code, as
+> the application would need to have rules outside the bind mount in order
+> for Landlock to not see it when the directory is disconnected, but in that
+> case it already has access to the target file anyway due to hierarchy
+> inheritance)
+> 
+> The other way I can think of where this inconsistency could be taken
+> advantaged of is for regaining access to a file within a disconnected
+> directory that the application originally had access to (basically the
+> situation I wrote about earlier), but that is arguably a less worrisome
+> case and your option 1 would make access in this case allowed anyway.  So
+> far I can't think of any other way an application could use this to gain
+> access it didn't have on the file before.
+> 
 > > 
-> > But I see some potential for optimization here:
-> > a) on big-endian machines just use memcpy()
+> > I see two solutions:
+> > 
+> > 1. *Always* walk down to the IS_ROOT directory, and then jump to the
+> >    mount point.  This makes it possible to have consistent access checks
+> >    for renames and open/use.  The first downside is that that would
+> >    change the current behavior for bind mounts that could get more
+> >    access rights (if the policy explicitly sets rights for the hidden
+> >    directories).  The second downside is that we'll do more walk.
+> > 
+> > 2. Return -EACCES (or -ENOENT) for actions involving disconnected
+> >    directories, or renames of disconnected opened files.  This second
+> >    solution is simpler and safer but completely disables the use of
+> >    disconnected directories and the rename of disconnected files for
+> >    sandboxed processes.
 > 
-> true
+> I think -ENOENT might be confusing if the disconnection is accidentally
+> triggered (e.g. due to a bug, race etc) (I guess given that ".." doesn't
+> work in disconnected dirs, nobody should be setting them up deliberately,
+> so maybe any situation where a disconnected directory exists is always a
+> bug, or at least a temporary race?), but on the other hand VFS already
+> returns -ENOENT for ".." when in disconnected directories so maybe it's
+> OK, as long as this is clarified in the doc, I guess.
 > 
-> > b) on little-endian machines use memcpy() to copy from possibly-unaligned
-> >     memory to then known-to-be-aligned destination. Then use a loop with
-> >     be32_to_cpu() instead of get_unaligned_xx() as it's faster.
+> Also by "rename" I assume we're implicitly including links as well (and
+> since one couldn't rename an opened file just from the fd anyway, any
+> rename would be for files underneath).
 > 
-> There is a function that does a loop byteswap of a buffer - no reason
-> to re-invent it.
+> > 
+> > It would be much better to be able to handle opened directories as
+> > (object) capabilities, but that is not currently possible because of the
+> > way paths are handled by the VFS and LSM hooks.
+> > 
+> > Tingmao, Günther, Jann, what do you think?
+> 
+> I wonder if there is a third option where we do option 1, but only for
+> disconnected dirs, so basically for any disconnected directories Landlock
+> would allow rules either on the path from the target to its fs root, or on
+> the path from its mountpoint to the real root.  In addition, domain check
+> for rename/links would be stricter, in that it would make sure there are
+> no rules granting more access on the destination than the source even if
+> those rules are "hidden" beneath the mountpoint, so that even if the
+> destination later become disconnected access is not widened.
+> 
+> While this does leaves inconsistency since now some "hidden" rules would
+> be applied only in the disconnected case, maybe this could still be a
+> better option since it prevents accidentally widening access checks in the
+> common case, especially for existing code (after all, currently Landlock
+> does not apply those "hidden" rules, and if an application can't move the
+> files into a disconnected directory, for example because write access are
+> not granted to any bind mounted places, or because it only has access to
+> the mount destination but not the source (achievable by putting the rule
+> above the mountpoint, and in that case it can't move a dir outside the
+> mount so it will always be connected), it will not be able to surface
+> them).
+> 
+> One could argue that a reasonable policy is not supposed to have rules on
+> those "hidden" directories in the first place, but in that case whether or
+> not we do this extra walk to fs root for the non-disconnected case makes
+> no difference.
+> 
+> The advantage of this option is also that we don't increase the
+> performance overhead for the non-disconnected case which is the vast
+> majority of cases (and this perf benefit might be significant since we're
+> likely not backporting any ref-less pathwalk).  Also, while I'm not sure
+> whether this option or option 1 has any difference in terms of backporting
+> difficulty, I think option 1 is a more significant change compared to
+> this, and maybe in the future if we do get to have opened directory
+> capabilities, keeping the changes introduced by the current "workaround"
+> small would be better?  This would probably also make it easier to adopt
+> Song's path iterator too.
+> 
+> If we do this, then we would probably have a warning in e.g.
+> Documentation/userspace-api/landlock.rst about the fact that Landlock will
+> do this walk to the fs root if the directory is disconnected (either
+> caused by the sandboxed application or by other means).
 
-I assumed there must be something, but I did not see it. Which one?
+Thinking more about this, I think this third option is the best
+approach.  In theory, for a direct access (i.e. not a rename/link), it
+may grant more access on disconnected directories because the collected
+access rights are the union of N hierarchies, but each of these
+hierarchies are defined by the security policy which explicitly allows
+such access.  This means that in practice these access rights should
+already be granted when independently accessing the target file N times
+through these N hierarchies.  This approach also improves guarantees
+about not widening access rights with rename/link, and it only impacts
+access to disconnected directories.  This will also simplify backports
+and reduce merge conflicts.
 
-> But I doubt it is always (if ever) faster to do a copy and then byteswap.
-> The loop control and extra memory accesses kill performance.
+The main downside is about the inconsistency with access to a connected
+directory, but access to disconnected directories is already
+inconsistent anyway and the VFS cannot do much about this case.
 
-Yes, you are probably right.
+I'll send a new version today.
 
-> Not that I've seen a fast get_unaligned() - I don't think gcc or clang
-> generate optimal code - For LE I think it is something like:
-> 	low = *(addr & ~3);
-> 	high = *((addr + 3) & ~3);
-> 	shift = (addr & 3) * 8;
-> 	value = low << shift | high >> (32 - shift);
-> Note that it is only 2 aligned memory reads - even for 64bit.
-
-Ok, then maybe we should keep it simple like this patch:
-
-[PATCH v2] apparmor: Optimize table creation from possibly unaligned memory
-
-Source blob may come from userspace and might be unaligned.
-Try to optize the copying process by avoiding unaligned memory accesses.
-
-Signed-off-by: Helge Deller <deller@gmx.de>
-
-diff --git a/security/apparmor/include/match.h b/security/apparmor/include/match.h
-index 1fbe82f5021b..386da2023d50 100644
---- a/security/apparmor/include/match.h
-+++ b/security/apparmor/include/match.h
-@@ -104,16 +104,20 @@ struct aa_dfa {
- 	struct table_header *tables[YYTD_ID_TSIZE];
- };
- 
--#define byte_to_byte(X) (X)
-+#define byte_to_byte(X) (*(X))
- 
- #define UNPACK_ARRAY(TABLE, BLOB, LEN, TTYPE, BTYPE, NTOHX)	\
- 	do { \
- 		typeof(LEN) __i; \
- 		TTYPE *__t = (TTYPE *) TABLE; \
- 		BTYPE *__b = (BTYPE *) BLOB; \
--		for (__i = 0; __i < LEN; __i++) { \
--			__t[__i] = NTOHX(__b[__i]); \
--		} \
-+		BUILD_BUG_ON(sizeof(TTYPE) != sizeof(BTYPE)); \
-+		if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN) || sizeof(BTYPE) == 1) \
-+			memcpy(__t, __b, (LEN) * sizeof(BTYPE)); \
-+		else /* copy & convert convert from big-endian */ \
-+			for (__i = 0; __i < LEN; __i++) { \
-+				__t[__i] = NTOHX(&__b[__i]); \
-+			} \
- 	} while (0)
- 
- static inline size_t table_size(size_t len, size_t el_size)
-diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-index c5a91600842a..13e2f6873329 100644
---- a/security/apparmor/match.c
-+++ b/security/apparmor/match.c
-@@ -15,6 +15,7 @@
- #include <linux/vmalloc.h>
- #include <linux/err.h>
- #include <linux/kref.h>
-+#include <linux/unaligned.h>
- 
- #include "include/lib.h"
- #include "include/match.h"
-@@ -70,10 +71,10 @@ static struct table_header *unpack_table(char *blob, size_t bsize)
- 				     u8, u8, byte_to_byte);
- 		else if (th.td_flags == YYTD_DATA16)
- 			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
--				     u16, __be16, be16_to_cpu);
-+				     u16, __be16, get_unaligned_be16);
- 		else if (th.td_flags == YYTD_DATA32)
- 			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
--				     u32, __be32, be32_to_cpu);
-+				     u32, __be32, get_unaligned_be32);
- 		else
- 			goto fail;
- 		/* if table was vmalloced make sure the page tables are synced
+> 
+> Just thoughts and suggestions tho, my opinions aren't very strong, and I
+> probably don't have a good grasp of how Landlock is currently used in
+> practice.
+> 
+> Best,
+> Tingmao
+> 
+> > 
+> > It looks like AppArmor also denies access to disconnected path in some
+> > cases, but it tries to reconstruct the path for known internal
+> > filesystems, and it seems to specifically handle the case of chroot.  I
+> > don't know when PATH_CONNECT_PATH is set though.
+> > 
+> > John, could you please clarify how disconnected directories and files
+> > are handled by AppArmor?
+> > 
+> >>
+> >> Here is an example test, using the layout1_bind fixture for flexibility
+> >> [...]
+> 
