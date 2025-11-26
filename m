@@ -1,78 +1,42 @@
-Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C61C33D6C6
-	for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 16:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75A733A70E
+	for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 16:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764174395; cv=none; b=nXpRJMwpVZAA+uMZGYwjHniJVM5zOJvKSZ8sA3SMlrVP/iyq+N9LRcfXemPKVJey/TLQO2jUEI/5D6T/LSPzYiw/wSOSH8vvTHa8CpT1N9Ur5IIMJkbqq6ddFyRu+v3ratw72da1ePz5EQYZmDXDvCqadDyTWTxoBbESbK9025g=
+	t=1764176260; cv=none; b=f5i7kif085RW77XYnavx6A9rhMzet16h/sLc0FTI2fuNJsxIiSlz8fzi0LpDKuwctKQzmI0VuAipPBe90hMoLqm8JFaTkxbc9WssB0mGs8LBGNuPy645B9EVfFIZdkTTaUQ50IvLm6IR/U6cPOQFJfLdJ8kyDkbOEtKQK0TfH4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764174395; c=relaxed/simple;
-	bh=jEvdo6gKY+lqSu1jKQnysC3M9EpwI1JXUVi+g/V6/N0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DYQUBfkrKQg5e2wSy/3+IgLR9p5VG6UyvnpimvXTWcHbWB+S5bigSLfh6QMCkmBMjXa9cbXczZb7aGycSLDVXCIQdfu5C43a7xaZ2WMce5mBH/MV1rUYBe/1fbJr1afhibDk21ep+Iz12Quo6ymeu+IZ3MmzosCDzGtDciNzFTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LkNxR37v; arc=none smtp.client-ip=74.125.224.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1764176260; c=relaxed/simple;
+	bh=GxfP3X2HTJj6rxIz7ApFYXdc2WNV3Mv2VIfhSQeEEX8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=axsIcRdjQ6Ef7slB0GKHJpG69l+QVjbc6Vg1IX1H5B5Km66r9sNv4wRXzjuiVZHLAAJjMWIwFQT/yKFmDhnZilSy67IagsQvKyzuCBjFBYNhLtX8iCj+87M0SCWPPb+0vQZHkUPcruvKDU/np111y/vLq9p935clhXQ14pUxW54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hDk+rp0f; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LkNxR37v"
-Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-640f88b8613so5290201d50.2
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 08:26:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764174391; x=1764779191; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JWq71R8F89CBnC8WmwA1EzCTc1XCidtoDUDRx3TJSqo=;
-        b=LkNxR37vLdhknii/m95/EW9gSuatnuTntyl6jquphPCK6Q6zKEE9nJy9IL808inRiO
-         wBghammvZDrEXeoKsEclEHHCuoSqTzrnc3oah9dYQ9WeM+8J7mJJdgBStF+bsdv8DGF1
-         3+nSiyR5uxbGgEhoiszLdfO9ZRNih6frg+olG+LMmopmfXNFUZuJRsNSaFLPmi/13sYP
-         h8ihDnqUklPEWIdPbkG75QEeU8fKO0A6KaHOGW6xhC411wmgmeljDy9TtIWgXLomVWKO
-         SZ07Z3Kd3PbvvoC7FAoORHHmDZytauik1wJV0HLlwE0N2kK5T9v4+LSw41n6jZawbaFq
-         PGgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764174391; x=1764779191;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JWq71R8F89CBnC8WmwA1EzCTc1XCidtoDUDRx3TJSqo=;
-        b=QoP1jLL8PVbflDIF18/Jpxctxii65v7DoPh3hcZDt3l6YuYcLtUeByCHVB6SB8/+V3
-         EsGP2Lt/1AI/tE/L2qWpdR7C/EqpbZpl97Iahtl+/Ebb9vikXSAocMbWkdHrAe2jxzly
-         9Wc3wUoVl8elD40gt+pB35TbIjxYoih2AcbexCdGjBpach/+J1MQb7pnKhl/Nu87dwiy
-         NkrFhgFR+vybKSat4DRspBdb1jRgotIBStav2l4LSfeTVDXhBhchp/s1IQglvgxqaXVk
-         97BxSqo+u1QGQfrk2+NeYisBhEwEFT4f5km8JPve5L1Y3uDWIXs+eHe9yqC6IRr/ByJH
-         CCrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbqbeMSHtNhy9PwJCH1DKXC72mngusRV2hf6wNUZu0RDwAxx1d4q6tpx+1HSea6lUsmzIdAAsN9bKyRj/NtrIiAWSBJGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgackADkUUC4fMFEPO1gfKwU/9ntc9myLAAl9Z7Li5CAU1X0Y4
-	wI173HgJpnhxCPhjakurmqMNvCZq7wjVxq3JunKOHl8T02tSiCOp+El9
-X-Gm-Gg: ASbGncteLoSn6ob9wVvzB5sJ7fxfWuxUUfpxtnL7vwR5xq5kdsSbiSENvltjG1ngALo
-	u+LMYsh5MdYtkrIceCqH5Gl8Ec8i8k2gpvXyXXbgaJTMfqPlFKxLfcOdVN7d/2ct+u34MiTfmC7
-	cO6dJQHrtX64hcXrdOla8sCZfFDN4lI0rwOUmenBdA2U/xyhENi03AgQOFOr+Abvspsb8PUfEK8
-	K1MWZvvgu4k3t12m8jo0Ocx04Uxu0TSitC+/VUJoi0nrK9pHhqdK2bdo5CFJTEFbbJIczoTZqni
-	KxqKggm0N3gBTx5e9p49OoHv0+h2177gDSSt6fvHMzPugIqPeUgLnhsJdc5CrvxcN2Jyu7d0m9o
-	WTvXDdaKRTNaFGozjycsx5wQE3d9iAceRxwXPmXDfMF6l6yoyqvL5tly74ljNKY9dVBy+aypc5j
-	+G1Mwq4/GvoGksnzqSKnhe+uo17JtGYYeKw/NgJSHjIHoanjLql0tNOHhYTrg7
-X-Google-Smtp-Source: AGHT+IHqdR1XUOjvu5ZEeUdJuA9AFEqybX3ty6k+1BTNg1oezm3beq/ek5v7gWZjmBLQZxevACo0NA==
-X-Received: by 2002:a05:690e:301:b0:63f:a2ff:b1d2 with SMTP id 956f58d0204a3-64302ac1912mr10453618d50.42.1764174390800;
-        Wed, 26 Nov 2025 08:26:30 -0800 (PST)
-Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78a79925caasm67447217b3.29.2025.11.26.08.26.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Nov 2025 08:26:30 -0800 (PST)
-From: Justin Suess <utilityemal77@gmail.com>
-To: utilityemal77@gmail.com
-Cc: gnoack@google.com,
-	jack@suse.cz,
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hDk+rp0f"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1764176255;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1V6dVMRPdO6zxApdjSC0yLAiD/k0sxeV6A4unld8xk4=;
+	b=hDk+rp0fKD+kzjxKeI+SqW9wKBFQLKbYUes9OqhT3qTqeiwkAPYt03Kd521DjWRfSjAgCk
+	W4ziClrMpl5ALfsrX8ghBDIz0T6hdqfKY06W+sbXqiI0fS6boP6aROuF7ZmtaKoQ9EeP5+
+	lonSA75Qop8tuXnT9TzL1Fww8ygOx04=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	apparmor@lists.ubuntu.com,
 	linux-security-module@vger.kernel.org,
-	m@maowtm.org,
-	mic@digikod.net,
-	xandfury@gmail.com
-Subject: Re: [PATCH v3 5/5] landlock: landlock: Implement KUnit test for LANDLOCK_ADD_RULE_NO_INHERIT
-Date: Wed, 26 Nov 2025 11:26:17 -0500
-Message-ID: <20251126162617.3848825-1-utilityemal77@gmail.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251126122039.3832162-7-utilityemal77@gmail.com>
-References: <20251126122039.3832162-7-utilityemal77@gmail.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] apparmor: Replace deprecated strcpy with memcpy in gen_symlink_name
+Date: Wed, 26 Nov 2025 17:57:01 +0100
+Message-ID: <20251126165701.97158-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -80,26 +44,51 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+strcpy() is deprecated; use memcpy() instead. Unlike strcpy(), memcpy()
+does not copy the NUL terminator from the source string, which would be
+overwritten anyway on every iteration when using strcpy(). snprintf()
+then ensures that 'char *s' is NUL-terminated.
 
-Apologies. Thi is a duplicate of the above patch
-v3 5/5 I sent accidentally.
+Replace the hard-coded path length to remove the magic number 6, and add
+a comment explaining the extra 11 bytes.
 
-I forgot to clear the old .patch file from my directory after I changed the
-commit message, and didn't catch it when doing git send-email.
+Link: https://github.com/KSPP/linux/issues/88
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ security/apparmor/apparmorfs.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-The contents are identical, I just changed the commit message from
-a typo.
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 391a586d0557..4b2752200ce2 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -1602,16 +1602,20 @@ static char *gen_symlink_name(int depth, const char *dirname, const char *fname)
+ {
+ 	char *buffer, *s;
+ 	int error;
+-	int size = depth * 6 + strlen(dirname) + strlen(fname) + 11;
++	const char *path = "../../";
++	size_t path_len = strlen(path);
++	int size;
+ 
++	/* Extra 11 bytes: "raw_data" (9) + two slashes "//" (2) */
++	size = depth * path_len + strlen(dirname) + strlen(fname) + 11;
+ 	s = buffer = kmalloc(size, GFP_KERNEL);
+ 	if (!buffer)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	for (; depth > 0; depth--) {
+-		strcpy(s, "../../");
+-		s += 6;
+-		size -= 6;
++		memcpy(s, path, path_len);
++		s += path_len;
++		size -= path_len;
+ 	}
+ 
+ 	error = snprintf(s, size, "raw_data/%s/%s", dirname, fname);
+-- 
+2.51.1
 
-"landlock: landlock: Implement KUnit test for LANDLOCK_ADD_RULE_NO_INHERIT"
-(typo)
-to 
-"landlock: Implement KUnit test for LANDLOCK_ADD_RULE_NO_INHERIT"
-(correct commit message)
-
-Please ignore this duplicate. I promise to be more careful in the
-future.
-
-Regards,
-Justin Suess
