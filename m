@@ -1,276 +1,117 @@
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC1218A921
-	for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 15:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC51633DEFB;
+	Wed, 26 Nov 2025 16:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764171169; cv=none; b=KIlzZjgX5jbLhEO+yrbpA5ZrbUPpPVXOZ55Wtn4fKFqKYa6FSscM1UfMcaBN+/OiXuZRXWfl0QHC0pWCnb80O1UdQyOeiEjlxNMXEztN9U8jsln8+RFCerPWE4r6bUHqwsIj0UU01skyiwSokUxlVtnQiyJg9yAvQUuTZBd0eM4=
+	t=1764173818; cv=none; b=Yb9zxUjlyKruCGwdU277JXC7TP+tU0xg6k8rGtKNbmhnuYxszltBrb5ZUfc8Yr7k26rxglNL1ExkMQJGIL6rydBUyW2Bsn06I/yrnpNj4ITd4qN8YWDSeYKNBXprA46Kt0c1wFyGGHdzZSNRzHw0oXQBH2wpl9LtaAZuJDjyUeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764171169; c=relaxed/simple;
-	bh=VGKaVfICgJGHSKSeBv12nWC1fPNr9vGasFo7XthZ8Gg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oApKCTyzGpGDE0gpI2bn6E/VIIGkBDPxzqvVmPYaD5QYlFovGm81EeSjY2h7svd57TWFNCkNmwmV8FaSOLgiqR4O28N4vVmWImQsn2bRX+j/YDqO7M0iifJ8w97LBSmtmXFuxUq1lR7Iw6S6RnPeW2rqriyTaR2+AXL+nDs6VJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=NONAjYmo; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1764173818; c=relaxed/simple;
+	bh=d6VNhLTe1+Oa92Zbu01t/4n0Ts7L/x84LlI2FKV34n4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cZc74L2OhyFKGXSMIzmUCW+ojOZjMQAjPNmGE2TLk05lJ/w19m6bYgBXZNMzuPnwqc6fbZpSu4H2efIoPNQpWrSlK1TtdXpTgAYsjdrnNS7mDM3xcYqbTDU3+B3FbA4dmtbV2fB81VL9DX37Vi0vdXnk+rxv65zZO1qpQyvFf/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=NNp61llQ; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="NONAjYmo"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dGk8L0j0yzWhJ;
-	Wed, 26 Nov 2025 16:32:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1764171153;
-	bh=yyZSmgbUtBmbNW8C1z7X+aSYcQgfxQDBTlBVle5b2G4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NONAjYmoKbD868tPV1HcXeRpuQLHvXNBNf7CMVt2ZE1QaJesDSw+pfcVhYx8TEEPw
-	 t6dyXYWHst5uuhsBgiD64z4/VwiX/YtynzTEdmAnk5Jf3pwN7K/rMRATdqWx6JbJKh
-	 9VIofC4ZZZobR78EQqVZBpmzwAwxypb87QSJBHQs=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4dGk8K1dpZz2Kw;
-	Wed, 26 Nov 2025 16:32:33 +0100 (CET)
-Date: Wed, 26 Nov 2025 16:32:32 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Jann Horn <jannh@google.com>, John Johansen <john.johansen@canonical.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Ben Scarlato <akhna@google.com>, 
-	Christian Brauner <brauner@kernel.org>, Daniel Burgener <dburgener@linux.microsoft.com>, 
-	Jeff Xu <jeffxu@google.com>, NeilBrown <neil@brown.name>, Paul Moore <paul@paul-moore.com>, 
-	Ryan Sullivan <rysulliv@redhat.com>, Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Abhinav Saxena <xandfury@gmail.com>
-Subject: Re: [PATCH v3 2/4] landlock: Fix handling of disconnected directories
-Message-ID: <20251125.woxo4hooGaid@digikod.net>
-References: <20250719104204.545188-1-mic@digikod.net>
- <20250719104204.545188-3-mic@digikod.net>
- <18425339-1f4b-4d98-8400-1decef26eda7@maowtm.org>
- <20250723.vouso1Kievao@digikod.net>
- <b0f46246-f2c5-42ca-93ce-0d629702a987@maowtm.org>
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="NNp61llQ"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=Gg5/D68mHg67K6ACJ/qySf1Tuf5DCYbgvIMuPbJ81jA=; t=1764173815;
+	x=1764778615; b=NNp61llQJXmVcnB18DmfKEaixczruOBSZ22opegkR4LNJWKXJ+pwakcpyTYGE
+	9++NeeHi9+MAcvwBhGnt6KmvcmrShgclvZXIS6wNE5PWbyN8zkA9joBb/SAIJKFZS0sox2kOzTDFa
+	ba79ImGbVJc29sSm15EY1uI5c0wnK+bo7CD4GrXwPSjdO+zGv1V9xnVYuYDKqCKfKBwEdONrQCart
+	8Go3B4mv0ltHJtCZfwbZ9spLYddkYXUP6siV+cegjo1yaJyL17UMp64R0p6QkprACjJFgiPFJ5JEk
+	TsEmeD8+I/iNfvAY1NhmXZKyYyZYgtRTJnjHl0L6tz6cPhi5BQ==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.99)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1vOICL-00000002PRw-0ZHl; Wed, 26 Nov 2025 17:16:53 +0100
+Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.99)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1vOICK-00000003I3Z-3pko; Wed, 26 Nov 2025 17:16:53 +0100
+Message-ID: <78f1ff26f06c0e61d71c1a7f05a7c03c4ec03bef.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 0/2] apparmor unaligned memory fixes
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Helge Deller <deller@kernel.org>, John Johansen
+	 <john.johansen@canonical.com>, david laight <david.laight@runbox.com>
+Cc: linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-security-module@vger.kernel.org, linux-parisc@vger.kernel.org
+Date: Wed, 26 Nov 2025 17:16:52 +0100
+In-Reply-To: <aSblGNyoSV4LfKji@carbonx1>
+References: <aRxT78fdN5v2Ajyl@p100>
+	 <90513f85cc8d060ebccd3972cc7709e4b6f13f34.camel@physik.fu-berlin.de>
+	 <be9c143d-1d5e-4c5b-9078-4a7804489258@gmx.de>
+	 <ba3d5651-fa68-4bb5-84aa-35576044e7b0@canonical.com>
+	 <aSXHCyH_rS-c5BgP@p100>
+	 <e88c32c2-fb18-4f3e-9ec2-a749695aaf0a@canonical.com>
+	 <c192140a-0575-41e9-8895-6c8257ce4682@gmx.de>
+	 <d35010b3-7d07-488c-b5a4-a13380d0ef7c@canonical.com>
+	 <20251126104444.29002552@pumpkin>
+	 <4034ad19-8e09-440c-a042-a66a488c048b@gmx.de> <aSblGNyoSV4LfKji@carbonx1>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b0f46246-f2c5-42ca-93ce-0d629702a987@maowtm.org>
-X-Infomaniak-Routing: alpha
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Mon, Jul 28, 2025 at 01:13:10AM +0100, Tingmao Wang wrote:
-> On 7/23/25 22:01, Mickaël Salaün wrote:
-> > On Tue, Jul 22, 2025 at 07:04:02PM +0100, Tingmao Wang wrote:
-> >> On 7/19/25 11:42, Mickaël Salaün wrote:
-> >>> [...]
-> >>> @@ -784,12 +787,18 @@ static bool is_access_to_paths_allowed(
-> >>>  	if (WARN_ON_ONCE(!layer_masks_parent1))
-> >>>  		return false;
-> >>>  
-> >>> -	allowed_parent1 = is_layer_masks_allowed(layer_masks_parent1);
-> >>> -
-> >>>  	if (unlikely(layer_masks_parent2)) {
-> >>>  		if (WARN_ON_ONCE(!dentry_child1))
-> >>>  			return false;
-> >>>  
-> >>> +		/*
-> >>> +		 * Creates a backup of the initial layer masks to be able to restore
-> >>> +		 * them if we find out that we were walking a disconnected directory,
-> >>> +		 * which would make the collected access rights inconsistent (cf.
-> >>> +		 * reset_to_mount_root).
-> >>> +		 */
-> >>
-> >> This comment is duplicate with the one below, is this intentional?
-> >>
-> >>> [...]
-> >>
-> >> On the other hand, I'm still a bit uncertain about the domain check
-> >> semantics.  While it would not cause a rename to be allowed if it is
-> >> otherwise not allowed by any rules on or above the mountpoint, this gets a
-> >> bit weird if we have a situation where renames are allowed on the
-> >> mountpoint or everywhere, but not read/writes, however read/writes are
-> >> allowed directly on a file, but the dir containing that file gets
-> >> disconnected so the sandboxed application can't read or write to it.
-> >> (Maybe someone would set up such a policy where renames are allowed,
-> >> expecting Landlock to always prevent renames where additional permissions
-> >> would be exposed?)
-> >>
-> >> In the above situation, if the file is then moved to a connected
-> >> directory, it will become readable/writable again.
-> > 
-> > We can generalize this issue to not only the end file but any component
-> > of the path: disconnected directories.  In fact, the main issue is the
-> > potential inconsistency of access checks over time (e.g. between two
-> > renames).  This could be exploited to bypass the security checks done
-> > for FS_REFER.
-> 
-> Hi Mickaël,
-> 
-> (replying to this one even though I've read the further replies, since I
-> don't have anything to address there)
-> 
-> I spent some time thinking about how this could be exploited and I can see
-> one concrete situation where disconnected directories can be taken
-> advantaged of, which is when an application has rename access across the
-> "source" of a bind mount, as well as some place outside of it, but only
-> has read/write access on certain subdirs of it, in which case it can use
-> this to move files under the bind mount that it does not have access to,
-> to a place where it has, by first making the target destination
-> disconnected, then connecting it back:
-> 
-> 	/ # mkdir bind_src bind_dst outside
-> 	/ # mount --bind bind_src bind_dst
-> 	/ # mkdir -p bind_src/d1
-> 	/ # echo secret > /bind_src/foo
-> 	/ # LL_FS_RO=/usr:/bin:/lib:/etc LL_FS_RW=/bind_src/d1:/outside LL_FS_CREATE_DELETE_REFER=/ /sandboxer bash
-> 		## (sandboxer patched with ability to add just create/delete/refer
-> 		    rule on a path - maybe we can add this to the sandboxer but
-> 		    call it something like LL_FS_DIR_RW?)
-> 	Executing the sandboxed command...
-> 	/ # cat /bind_src/foo /bind_dst/foo
-> 	cat: /bind_src/foo: Permission denied
-> 	cat: /bind_dst/foo: Permission denied
-> 	/ # cd /bind_dst/d1
-> 	/bind_dst/d1 # mv -v /bind_src/d1 /outside
-> 	renamed '/bind_src/d1' -> '/outside/d1'
-> 	/bind_dst/d1 # ls ..
-> 	ls: cannot access '..': No such file or directory
-> 	/bind_dst/d1 # mv -v /bind_dst/foo .
-> 	renamed '/bind_dst/foo' -> './foo'
-> 	/bind_dst/d1 # mv -v /outside/d1 /bind_src/d1
-> 	renamed '/outside/d1' -> '/bind_src/d1'
-> 	/bind_dst/d1 # cat foo
-> 	secret
+Hi Helge,
 
-Good catch! This is definitely an issue.
+On Wed, 2025-11-26 at 12:31 +0100, Helge Deller wrote:
+> Like this (untested!) patch:
+>=20
+> [PATCH] apparmor: Optimize table creation from possibly unaligned memory
+>=20
+> Source blob may come from userspace and might be unaligned.
+> Try to optize the copying process by avoiding unaligned memory accesses.
+>=20
+> Signed-off-by: Helge Deller <deller@gmx.de>
+>=20
+> diff --git a/security/apparmor/include/match.h b/security/apparmor/includ=
+e/match.h
+> index 1fbe82f5021b..225df6495c84 100644
+> --- a/security/apparmor/include/match.h
+> +++ b/security/apparmor/include/match.h
+> @@ -111,9 +111,14 @@ struct aa_dfa {
+>  		typeof(LEN) __i; \
+>  		TTYPE *__t =3D (TTYPE *) TABLE; \
+>  		BTYPE *__b =3D (BTYPE *) BLOB; \
+> -		for (__i =3D 0; __i < LEN; __i++) { \
+> -			__t[__i] =3D NTOHX(__b[__i]); \
+> -		} \
+> +		BUILD_BUG_ON(sizeof(TTYPE) !=3D sizeof(BTYPE)); \
+> +		/* copy to naturally aligned table address */ \
+> +		memcpy(__t, __b, (LEN) * sizeof(BTYPE)); \
+> +		/* convert from big-endian if necessary */ \
+> +		if (!IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) \
+> +			for (__i =3D 0; __i < LEN; __i++, __t++) { \
+> +				*__t =3D NTOHX(*__t); \
+> +			} \
+>  	} while (0)
+> =20
+>  static inline size_t table_size(size_t len, size_t el_size)
 
-> 
-> (I think this is probably not an issue with the existing Landlock code, as
-> the application would need to have rules outside the bind mount in order
-> for Landlock to not see it when the directory is disconnected, but in that
-> case it already has access to the target file anyway due to hierarchy
-> inheritance)
-> 
-> The other way I can think of where this inconsistency could be taken
-> advantaged of is for regaining access to a file within a disconnected
-> directory that the application originally had access to (basically the
-> situation I wrote about earlier), but that is arguably a less worrisome
-> case and your option 1 would make access in this case allowed anyway.  So
-> far I can't think of any other way an application could use this to gain
-> access it didn't have on the file before.
-> 
-> > 
-> > I see two solutions:
-> > 
-> > 1. *Always* walk down to the IS_ROOT directory, and then jump to the
-> >    mount point.  This makes it possible to have consistent access checks
-> >    for renames and open/use.  The first downside is that that would
-> >    change the current behavior for bind mounts that could get more
-> >    access rights (if the policy explicitly sets rights for the hidden
-> >    directories).  The second downside is that we'll do more walk.
-> > 
-> > 2. Return -EACCES (or -ENOENT) for actions involving disconnected
-> >    directories, or renames of disconnected opened files.  This second
-> >    solution is simpler and safer but completely disables the use of
-> >    disconnected directories and the rename of disconnected files for
-> >    sandboxed processes.
-> 
-> I think -ENOENT might be confusing if the disconnection is accidentally
-> triggered (e.g. due to a bug, race etc) (I guess given that ".." doesn't
-> work in disconnected dirs, nobody should be setting them up deliberately,
-> so maybe any situation where a disconnected directory exists is always a
-> bug, or at least a temporary race?), but on the other hand VFS already
-> returns -ENOENT for ".." when in disconnected directories so maybe it's
-> OK, as long as this is clarified in the doc, I guess.
-> 
-> Also by "rename" I assume we're implicitly including links as well (and
-> since one couldn't rename an opened file just from the fd anyway, any
-> rename would be for files underneath).
-> 
-> > 
-> > It would be much better to be able to handle opened directories as
-> > (object) capabilities, but that is not currently possible because of the
-> > way paths are handled by the VFS and LSM hooks.
-> > 
-> > Tingmao, Günther, Jann, what do you think?
-> 
-> I wonder if there is a third option where we do option 1, but only for
-> disconnected dirs, so basically for any disconnected directories Landlock
-> would allow rules either on the path from the target to its fs root, or on
-> the path from its mountpoint to the real root.  In addition, domain check
-> for rename/links would be stricter, in that it would make sure there are
-> no rules granting more access on the destination than the source even if
-> those rules are "hidden" beneath the mountpoint, so that even if the
-> destination later become disconnected access is not widened.
-> 
-> While this does leaves inconsistency since now some "hidden" rules would
-> be applied only in the disconnected case, maybe this could still be a
-> better option since it prevents accidentally widening access checks in the
-> common case, especially for existing code (after all, currently Landlock
-> does not apply those "hidden" rules, and if an application can't move the
-> files into a disconnected directory, for example because write access are
-> not granted to any bind mounted places, or because it only has access to
-> the mount destination but not the source (achievable by putting the rule
-> above the mountpoint, and in that case it can't move a dir outside the
-> mount so it will always be connected), it will not be able to surface
-> them).
-> 
-> One could argue that a reasonable policy is not supposed to have rules on
-> those "hidden" directories in the first place, but in that case whether or
-> not we do this extra walk to fs root for the non-disconnected case makes
-> no difference.
-> 
-> The advantage of this option is also that we don't increase the
-> performance overhead for the non-disconnected case which is the vast
-> majority of cases (and this perf benefit might be significant since we're
-> likely not backporting any ref-less pathwalk).  Also, while I'm not sure
-> whether this option or option 1 has any difference in terms of backporting
-> difficulty, I think option 1 is a more significant change compared to
-> this, and maybe in the future if we do get to have opened directory
-> capabilities, keeping the changes introduced by the current "workaround"
-> small would be better?  This would probably also make it easier to adopt
-> Song's path iterator too.
-> 
-> If we do this, then we would probably have a warning in e.g.
-> Documentation/userspace-api/landlock.rst about the fact that Landlock will
-> do this walk to the fs root if the directory is disconnected (either
-> caused by the sandboxed application or by other means).
+So, is this patch supposed to replace all the other proposed patches?
 
-Thinking more about this, I think this third option is the best
-approach.  In theory, for a direct access (i.e. not a rename/link), it
-may grant more access on disconnected directories because the collected
-access rights are the union of N hierarchies, but each of these
-hierarchies are defined by the security policy which explicitly allows
-such access.  This means that in practice these access rights should
-already be granted when independently accessing the target file N times
-through these N hierarchies.  This approach also improves guarantees
-about not widening access rights with rename/link, and it only impacts
-access to disconnected directories.  This will also simplify backports
-and reduce merge conflicts.
+Adrian
 
-The main downside is about the inconsistency with access to a connected
-directory, but access to disconnected directories is already
-inconsistent anyway and the VFS cannot do much about this case.
-
-I'll send a new version today.
-
-> 
-> Just thoughts and suggestions tho, my opinions aren't very strong, and I
-> probably don't have a good grasp of how Landlock is currently used in
-> practice.
-> 
-> Best,
-> Tingmao
-> 
-> > 
-> > It looks like AppArmor also denies access to disconnected path in some
-> > cases, but it tries to reconstruct the path for known internal
-> > filesystems, and it seems to specifically handle the case of chroot.  I
-> > don't know when PATH_CONNECT_PATH is set though.
-> > 
-> > John, could you please clarify how disconnected directories and files
-> > are handled by AppArmor?
-> > 
-> >>
-> >> Here is an example test, using the layout1_bind fixture for flexibility
-> >> [...]
-> 
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
