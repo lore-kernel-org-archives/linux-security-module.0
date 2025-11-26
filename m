@@ -1,113 +1,288 @@
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E1F30E0D1
-	for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 19:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE81720DD72
+	for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 19:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764183751; cv=none; b=mvFWeaDpmklL4W5oPnc3EJ1HvJVdewPM22lqSqMoWAfsh/WRKccZu20+vNQbBY5gbyzgaRlY2QvxkYSAsUdf0k2VW0PL6FGoYnp5tNkerva7/Z/lRdMxrpgWNK0ZBXkkhcKAMtl+W5V08YAf1sx+RARbTVIQrBAgPUA+r2RXH34=
+	t=1764184334; cv=none; b=jnQ5SaCKzb5H8z2VPHyGvRuMlRXNxkWaIU2whdyxgaeddCzIAno0ysQzVTQrsC3BL8MEslnXhtSp2YWsLMIklwf3sXfvjfYaSgVvIF998RCGEbmyX6uOxqTVB/+K2+4UVP/Cu3B3Y39FS/HNDtCOr2ahMs50xyeoYnlRbQXebXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764183751; c=relaxed/simple;
-	bh=W1PUpo6dWXK0rPdCvTUaH9XRtZaF3K1p0u1nxp3Pq1s=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=EyymG/nCrA7csHQzjRbt/bVea0/o0PWalHwe259p0jt5Ch3LiOGnuz/n6TFTO7LBPwKtyyOg8PgXtSsnzina8Zy/BPMGxO/p/obaWxbzQdY2yIgfMtoa20SdVM7/nC6hDlkVR9mjjaSPfbgt7exO1Bkw5Sy1y/wysxdrwJ94BTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TsysUKWx; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1764184334; c=relaxed/simple;
+	bh=MYPmJeeroH1wQfrkLQY++QSq2PrHtXpQnolG186cJ6Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eQY0pEBMSdJnSr6aKEP2u9zh6/iiCKlI+F6+ICetTNkt5u2qk71I7hCMpiFpxRBrU/dzA31ZT8k5c/YQlc/oGmCIMb+lpGK2DKtju54pCD83X3a9hMg1LRJ3Sg+XNkuDuRCETl11+j89skTc5Kovu4Exm8LyVpEFGQJDUVx7IPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=yPL4pWf2; arc=none smtp.client-ip=45.157.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TsysUKWx"
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-882390f7952so660206d6.3
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 11:02:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1764183748; x=1764788548; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gYB8Y0KQsN9puq6yo3Lr/wYaKvJwald/f9jogb6pOMg=;
-        b=TsysUKWxdUJupq6YIixEQOu5+96IpeBQLyLS6BRCZDgWwlkBBlmOheu+3iL9Ma8CjA
-         uE/JV6FAt9R4h1XMqqBR8exmPTq4vfJn6uVj/vk56TKyN2ibAK1vI6gheOwkn2UMRk2F
-         iMSH+wOZr4RAxw+s3SbgBL5g96AALO7TbLlQCoLtwv+zDsHGcO23N0yZcci2wwU/hdv5
-         paQ+czesmKNWEyq3IL62nI3FsUNTLxw3BQOVQ4dEhb4nz63jLrH4sIHxY/4mhsK844WD
-         +A12cVzXFOw696BRkWdl6iS0Zu+Pi+fHirCzE3JzOePJnYUwBQCXWy5m3Hb7FtWSzv6k
-         cEVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764183749; x=1764788549;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gYB8Y0KQsN9puq6yo3Lr/wYaKvJwald/f9jogb6pOMg=;
-        b=M0NzUV8cjTMWOgcdUXBfwDDRPJ7GuGsgmsUdZoF06Ef4ioPykFXcXanegx/P8R/bmC
-         mwUkwC9lJV14KaBQIuye+B1Nm1lmqzjKHrbgUYciZ/BkNbqaaFNpp+wehl1N90WlXQRl
-         a8Igj/2qDqntkeiLXV5WUvdjqt6gipGOtQmyowyxt5P0QCN8aWQdjyZgL/viYuvLJ++1
-         XuxSP33oEN+S9kT+NRP1BddbG3Qub/vqqjDEdxs+pY1Gs7OMGlE7JS4QeXDOu8JTnkN8
-         N+whf7bkWmWKInb9K/NGVb0dHRsOi7H4PjAYYJONcmCAbnzX/k1EkaftkQo0y+EAQuMf
-         4uzw==
-X-Gm-Message-State: AOJu0Ywfn0KG+btuYJtHSs3OkhzZeusfhU++NczbcKyVCJ2/RDzMhbz+
-	Cw6w+6+3zo09Pio8JTONPGQuS6TW3JTCj7jhdEqJxl8MRTkGpeBc3vUHaHkjk5Q9Kg==
-X-Gm-Gg: ASbGncue4j3RPz7P6k/05SSu6A7LUAt38Nk1B2NsoQz9GXfDoH9NxLS/AzSmkBKVev3
-	O8tNobqS1OG7uhYkLkgDAkhgtkSDmBTimPK+cYiol8uJULOPsPpYDTUZKGKKv1vXN8rwWaXVebi
-	cp/Ya6WhyMhOVFxlaq0WmuBD0b8IgdykbjCESQczcHR/uNWgqhghbb4QvbI93FlTIqNXv5AuIfn
-	LhYIo580lrYsv8Fbnsy+atBO97WwZz3aZUrU02wIjHzK7Dtec2hQ5+6QH3D5bOIlpQjnzUtdP+t
-	rqDstBrlxzEg/+uAUNOBxr3JYsCnmmWsKkYEBMbK3XiBD5+PCGVR6Alf3vZFi9ylKVDzaUNT3Wh
-	ptN0b8f6Nu5C+N9DvGfhtQm596Wz2PODI8ligKuqZ3yXndUpdIoFFY5CAhHlWD3r5Z5WwdAKf0R
-	UvRVHjYmFcnRPaCSPwBA==
-X-Google-Smtp-Source: AGHT+IG8T4/wT7NJfYIQjI3dUrJmKBQ4SCJzyLCvci3Qg5iPaR/OrqDzMTS7pfIutp287vkMY/auVQ==
-X-Received: by 2002:a05:6214:c84:b0:87c:a721:42f1 with SMTP id 6a1803df08f44-8847c535a4emr274443916d6.52.1764183747209;
-        Wed, 26 Nov 2025 11:02:27 -0800 (PST)
-Received: from [10.75.85.60] ([99.56.174.99])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8846e573338sm155075726d6.38.2025.11.26.11.02.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Nov 2025 11:02:25 -0800 (PST)
-From: Paul Moore <paul@paul-moore.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>, KP Singh <kpsingh@kernel.org>
-CC: <linux-security-module@vger.kernel.org>, <bpf@vger.kernel.org>, <ast@kernel.org>, <casey@schaufler-ca.com>, <andrii@kernel.org>, <keescook@chromium.org>, <daniel@iogearbox.net>, <renauld@google.com>, <revest@chromium.org>, <song@kernel.org>, <linux@roeck-us.net>, "Kui-Feng Lee" <sinquersw@gmail.com>, John Johansen <john.johansen@canonical.com>
-Date: Wed, 26 Nov 2025 14:02:24 -0500
-Message-ID: <19ac18b9e00.2843.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <aSc1aAdOeSuuoKTH@black.igk.intel.com>
-References: <20240816154307.3031838-1-kpsingh@kernel.org>
- <20240816154307.3031838-4-kpsingh@kernel.org>
- <aSc1aAdOeSuuoKTH@black.igk.intel.com>
-User-Agent: AquaMail/1.55.2 (build: 105502562)
-Subject: Re: [PATCH v15 3/4] lsm: count the LSMs enabled at compile time
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="yPL4pWf2"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dGq1c5qHBzHK8;
+	Wed, 26 Nov 2025 20:12:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1764184324;
+	bh=VFG8VPI6FEZ/uZQxne4bvpIfCSnmW2ZvyjgWVbvOfaU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=yPL4pWf2FEVgf9sgIkddOTyLzr4Hj+LxOuimRLC5BAJz/zrOD8kcTCyXaRgzEbGrO
+	 T5o13AZy/ukdfbgKVF/1rnhHKVP/GhbbyB+bLWtOtgs0E4HM/A027Ebd6aYoCt34xi
+	 5Bl1jv+ju5H808K+/haU7ofD36Y0Fed6R/5Rntxw=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4dGq1c1kXDzt22;
+	Wed, 26 Nov 2025 20:12:04 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Tingmao Wang <m@maowtm.org>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Ben Scarlato <akhna@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Justin Suess <utilityemal77@gmail.com>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Song Liu <song@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v4 1/4] landlock: Fix handling of disconnected directories
+Date: Wed, 26 Nov 2025 20:11:54 +0100
+Message-ID: <20251126191159.3530363-2-mic@digikod.net>
+In-Reply-To: <20251126191159.3530363-1-mic@digikod.net>
+References: <20251126191159.3530363-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On November 26, 2025 12:14:21 PM Andy Shevchenko 
-<andriy.shevchenko@intel.com> wrote:
-> On Fri, Aug 16, 2024 at 05:43:06PM +0200, KP Singh wrote:
->> These macros are a clever trick to determine a count of the number of
->> LSMs that are enabled in the config to ascertain the maximum number of
->> static calls that need to be configured per LSM hook.
->>
->> Without this one would need to generate static calls for the total
->> number of LSMs in the kernel (even if they are not compiled) times the
->> number of LSM hooks which ends up being quite wasteful.
->
-> ...
->
->> -/* This counts to 12. Any more, it will return 13th argument. */
->> -#define __COUNT_ARGS(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, 
->> _12, _n, X...) _n
->> -#define COUNT_ARGS(X...) __COUNT_ARGS(, ##X, 12, 11, 10, 9, 8, 7, 6, 5, 4, 
->> 3, 2, 1, 0)
->> +/* This counts to 15. Any more, it will return 16th argument. */
->> +#define __COUNT_ARGS(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, 
->> _12, _13, _14, _15, _n, X...) _n
->> +#define COUNT_ARGS(X...) __COUNT_ARGS(, ##X, 15, 14, 13, 12, 11, 10, 9, 8, 
->> 7, 6, 5, 4, 3, 2, 1, 0)
->
-> You forgot to update _12 in the upper comment.
+Disconnected files or directories can appear when they are visible and
+opened from a bind mount, but have been renamed or moved from the source
+of the bind mount in a way that makes them inaccessible from the mount
+point (i.e. out of scope).
 
-Do you plan to send a patch to fix this?
+Previously, access rights tied to files or directories opened through a
+disconnected directory were collected by walking the related hierarchy
+down to the root of the filesystem, without taking into account the
+mount point because it couldn't be found. This could lead to
+inconsistent access results, potential access right widening, and
+hard-to-debug renames, especially since such paths cannot be printed.
 
---
-paul-moore.com
+For a sandboxed task to create a disconnected directory, it needs to
+have write access (i.e. FS_MAKE_REG, FS_REMOVE_FILE, and FS_REFER) to
+the underlying source of the bind mount, and read access to the related
+mount point.   Because a sandboxed task cannot acquire more access
+rights than those defined by its Landlock domain, this could lead to
+inconsistent access rights due to missing permissions that should be
+inherited from the mount point hierarchy, while inheriting permissions
+from the filesystem hierarchy hidden by this mount point instead.
 
+Landlock now handles files and directories opened from disconnected
+directories by taking into account the filesystem hierarchy when the
+mount point is not found in the hierarchy walk, and also always taking
+into account the mount point from which these disconnected directories
+were opened.  This ensures that a rename is not allowed if it would
+widen access rights [1].
 
+The rationale is that, even if disconnected hierarchies might not be
+visible or accessible to a sandboxed task, relying on the collected
+access rights from them improves the guarantee that access rights will
+not be widened during a rename because of the access right comparison
+between the source and the destination (see LANDLOCK_ACCESS_FS_REFER).
+It may look like this would grant more access on disconnected files and
+directories, but the security policies are always enforced for all the
+evaluated hierarchies.  This new behavior should be less surprising to
+users and safer from an access control perspective.
+
+Remove a wrong WARN_ON_ONCE() canary in collect_domain_accesses() and
+fix the related comment.
+
+Because opened files have their access rights stored in the related file
+security properties, there is no impact for disconnected or unlinked
+files.
+
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Günther Noack <gnoack@google.com>
+Cc: Song Liu <song@kernel.org>
+Reported-by: Tingmao Wang <m@maowtm.org>
+Closes: https://lore.kernel.org/r/027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org
+Closes: https://lore.kernel.org/r/09b24128f86973a6022e6aa8338945fcfb9a33e4.1749925391.git.m@maowtm.org
+Fixes: b91c3e4ea756 ("landlock: Add support for file reparenting with LANDLOCK_ACCESS_FS_REFER")
+Fixes: cb2c7d1a1776 ("landlock: Support filesystem access-control")
+Link: https://lore.kernel.org/r/b0f46246-f2c5-42ca-93ce-0d629702a987@maowtm.org [1]
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+
+Changes since v3:
+- Simplify the approach by checking both the filesystem hierarchy and
+  the mount point hierarchy for disconnected directories.  Remove the
+  related snapshot mechanism. See [1].
+- Update erratum.
+- Do not expose path_connected() anymore, and remove related Acked-by.
+
+Changes since v2:
+- Fix domain check mode reset, spotted by Tingmao.  Replace a
+  conditional branch (when all accesses are granted) by only looking for
+  a rule when needed.  This simplifies code and remove a call to
+  path_connected().  Add a new is_dom_check_bkp to safely handle race
+  conditions and move initial backup for layer_masks_parent1.
+- Fix layer masks parent backup initialization, spotted by Tingmao.
+- Add more comments, suggested by Tingmao.
+- Reformat erratum.
+
+Changes since v1:
+- Remove useless else branch in is_access_to_paths_allowed().
+- Update commit message and squash "landlock: Remove warning in
+  collect_domain_accesses()":
+  https://lore.kernel.org/r/20250618134734.1673254-1-mic@digikod.net
+- Remove "extern" for path_connected() in fs.h, requested by Christian.
+- Add Acked-by Christian.
+- Fix docstring and improve doc for collect_domain_accesses().
+- Remove path_connected() check for the real root.
+- Fix allowed_parent* resets to be consistent with their initial values
+  infered from the evaluated domain.
+- Add Landlock erratum.
+
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Günther Noack <gnoack@google.com>
+Cc: Song Liu <song@kernel.org>
+Reported-by: Tingmao Wang <m@maowtm.org>
+Closes: https://lore.kernel.org/r/027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org
+Closes: https://lore.kernel.org/r/09b24128f86973a6022e6aa8338945fcfb9a33e4.1749925391.git.m@maowtm.org
+Fixes: b91c3e4ea756 ("landlock: Add support for file reparenting with LANDLOCK_ACCESS_FS_REFER")
+Fixes: cb2c7d1a1776 ("landlock: Support filesystem access-control")
+Link: https://lore.kernel.org/r/b0f46246-f2c5-42ca-93ce-0d629702a987@maowtm.org [1]
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+
+Changes since v3:
+- Simplify the approach by checking both the filesystem hierarchy and
+  the mount point hierarchy for disconnected directories.  Remove the
+  related snapshot mechanism. See [1].
+- Do not expose path_connected() anymore.
+
+Changes since v2:
+- Fix domain check mode reset, spotted by Tingmao.  Replace a
+  conditional branch (when all accesses are granted) by only looking for
+  a rule when needed.  This simplifies code and remove a call to
+  path_connected().  Add a new is_dom_check_bkp to safely handle race
+  conditions and move initial backup for layer_masks_parent1.
+- Fix layer masks parent backup initialization, spotted by Tingmao.
+- Add more comments, suggested by Tingmao.
+- Reformat erratum.
+
+Changes since v1:
+- Remove useless else branch in is_access_to_paths_allowed().
+- Update commit message and squash "landlock: Remove warning in
+  collect_domain_accesses()":
+  https://lore.kernel.org/r/20250618134734.1673254-1-mic@digikod.net
+- Remove "extern" for path_connected() in fs.h, requested by Christian.
+- Add Acked-by Christian.
+- Fix docstring and improve doc for collect_domain_accesses().
+- Remove path_connected() check for the real root.
+- Fix allowed_parent* resets to be consistent with their initial values
+  infered from the evaluated domain.
+- Add Landlock erratum.
+---
+ security/landlock/errata/abi-1.h | 16 +++++++++++++
+ security/landlock/fs.c           | 40 ++++++++++++++++++++++----------
+ 2 files changed, 44 insertions(+), 12 deletions(-)
+ create mode 100644 security/landlock/errata/abi-1.h
+
+diff --git a/security/landlock/errata/abi-1.h b/security/landlock/errata/abi-1.h
+new file mode 100644
+index 000000000000..e8a2bff2e5b6
+--- /dev/null
++++ b/security/landlock/errata/abi-1.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++
++/**
++ * DOC: erratum_3
++ *
++ * Erratum 3: Disconnected directory handling
++ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++ *
++ * This fix addresses an issue with disconnected directories that occur when a
++ * directory is moved outside the scope of a bind mount.  The change ensures
++ * that evaluated access rights include both those from the disconnected file
++ * hierarchy down to its filesystem root and those from the related mount point
++ * hierarchy.  This prevents access right widening through rename or link
++ * actions.
++ */
++LANDLOCK_ERRATUM(3)
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index d9c12b993fa7..26d5c274a4c9 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -909,21 +909,31 @@ static bool is_access_to_paths_allowed(
+ 				break;
+ 			}
+ 		}
++
+ 		if (unlikely(IS_ROOT(walker_path.dentry))) {
+-			/*
+-			 * Stops at disconnected root directories.  Only allows
+-			 * access to internal filesystems (e.g. nsfs, which is
+-			 * reachable through /proc/<pid>/ns/<namespace>).
+-			 */
+-			if (walker_path.mnt->mnt_flags & MNT_INTERNAL) {
++			if (likely(walker_path.mnt->mnt_flags & MNT_INTERNAL)) {
++				/*
++				 * Stops and allows access when reaching disconnected root
++				 * directories that are part of internal filesystems (e.g. nsfs,
++				 * which is reachable through /proc/<pid>/ns/<namespace>).
++				 */
+ 				allowed_parent1 = true;
+ 				allowed_parent2 = true;
++				break;
+ 			}
+-			break;
++
++			/*
++			 * We reached a disconnected root directory from a bind mount.
++			 * Let's continue the walk with the current mount root.
++			 */
++			dput(walker_path.dentry);
++			walker_path.dentry = walker_path.mnt->mnt_root;
++			dget(walker_path.dentry);
++		} else {
++			parent_dentry = dget_parent(walker_path.dentry);
++			dput(walker_path.dentry);
++			walker_path.dentry = parent_dentry;
+ 		}
+-		parent_dentry = dget_parent(walker_path.dentry);
+-		dput(walker_path.dentry);
+-		walker_path.dentry = parent_dentry;
+ 	}
+ 	path_put(&walker_path);
+ 
+@@ -1021,6 +1031,9 @@ static access_mask_t maybe_remove(const struct dentry *const dentry)
+  * file.  While walking from @dir to @mnt_root, we record all the domain's
+  * allowed accesses in @layer_masks_dom.
+  *
++ * Because of disconnected directories, this walk may not reach @mnt_dir.  In
++ * this case, the walk will continue to @mnt_dir after this call.
++ *
+  * This is similar to is_access_to_paths_allowed() but much simpler because it
+  * only handles walking on the same mount point and only checks one set of
+  * accesses.
+@@ -1062,8 +1075,11 @@ static bool collect_domain_accesses(
+ 			break;
+ 		}
+ 
+-		/* We should not reach a root other than @mnt_root. */
+-		if (dir == mnt_root || WARN_ON_ONCE(IS_ROOT(dir)))
++		/*
++		 * Stops at the mount point or the filesystem root for a disconnected
++		 * directory.
++		 */
++		if (dir == mnt_root || unlikely(IS_ROOT(dir)))
+ 			break;
+ 
+ 		parent_dentry = dget_parent(dir);
+-- 
+2.51.0
 
