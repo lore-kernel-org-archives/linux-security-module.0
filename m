@@ -1,425 +1,198 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389891DB551;
-	Thu, 27 Nov 2025 00:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB151D63E4
+	for <linux-security-module@vger.kernel.org>; Thu, 27 Nov 2025 01:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764204660; cv=none; b=PJrCwfJYB+Y3XvCBPdqCEflF/LpvCy+p0BnfgE+y6NDc/amqm11lZ4Ay92DZz9Vm/+nzqQe0AWJ25md2oxBDQhRFMRUmpoOcs8njVGOQdXF2mAw68aVYLngtsc5tCMWmVKdOwzphR2Fl4d6DOfZUJe5MYh2tRjx5zJt7gJVLSlA=
+	t=1764207186; cv=none; b=DGteOqqYTDOIGDvE2I2/XJRr0mhVQ0qVOI6bnr9Ajawmtp/sCqgi6oHD9fPOfJ4JLGAFk+rieyuUy8gNkHoqaSwhL1Ak46PIoIOxdoGa8kcUuRIoqBnpzYRNgiWDT5qG/EQfU6ay+gtgFno1kHQchhTgUGsGd7aT4KsTi4SouxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764204660; c=relaxed/simple;
-	bh=qoSQa1plkMFsI2f6c/GpGmV68F+RuDQPN2OoZpdusEw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jLtwNmrX3vVFPMel8SAaq4nlHAlLmiggrABACtqIaV6OG11R5JRi6t0gjc0iNXnG2Xa2vgiu6Bqc68hHxtLFcCa7cOYzs1jWuGURtnC9OEtiTuDOghqdkWPIDM8Gd6nmenlxA2KJKE3Ka1TDWy98Tw5NDP3lukHtaAgXRKOqfw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gdfYHNaM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764207186; c=relaxed/simple;
+	bh=zG7eICmpLh1P0r32EvKYSVB1di/mnaIvX7NKk/VKS5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dzREQorIfF73jsaBoJ7yp6oqiLUxYNXaxvRAYdBJW7sRQCPeWyx8P1nUGnPl7n8lROiWi8tM/M4iJOMcDch0cvnWfKUeJVWvY4GKgCW7SnKU/Zy3a73+kTSRj7G0IE82Q9Vf4st4IlE5c0hv2B25m4MjrtxxxRAY6JLAqeTusRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=KSznulbO; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdfYHNaM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B7E5C4CEF7;
-	Thu, 27 Nov 2025 00:50:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764204660;
-	bh=qoSQa1plkMFsI2f6c/GpGmV68F+RuDQPN2OoZpdusEw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gdfYHNaM4hM0sN+qVi8Y9wSn4Z8yTg2CA2d/EJrOL7rNxf5vwDXHfBuPFPqnK9fBf
-	 R3ylc/ZxBJmWTICzunKEB4TU6rWzexD2CCpEcySTORCX3xENxKTGcRRjatlL5izlGC
-	 mc4emAo5hhOYbpfYctgNOi4klLL4HXoWmpckDYak4miAYl3rOqG8asn3EJpzhWW3JW
-	 +HvBaqLEo83dZPdpbEWZAZKsWx2bc/V80jqn7jczMb7WZj3miqMbMwInC57aExRfL/
-	 MQ/klD/wBdEoe0a2q+cKM50c5jNkT2MTmebCHkqEWB7G/BtwgVwcu7pT1x3Ad2v8Hv
-	 SxmXP3n3T51aQ==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	kernel-team@meta.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH bpf-next 3/3] selftests/bpf: Add tests for bpf_kern_path kfunc
-Date: Wed, 26 Nov 2025 16:50:11 -0800
-Message-ID: <20251127005011.1872209-8-song@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251127005011.1872209-1-song@kernel.org>
-References: <20251127005011.1872209-1-song@kernel.org>
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="KSznulbO"
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 14C213FB7C
+	for <linux-security-module@vger.kernel.org>; Thu, 27 Nov 2025 01:33:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1764207180;
+	bh=bHVUgP8TVtYbK/RH59jYqEOFLp2rfeRbE8F3eHfE2h8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=KSznulbO5R7CwtFn1aVVyZ+zM7sLofTkFM9Myb9JIpUwKooyUKLYieBUasZ2Ab7mp
+	 UTmfKWKg0Hx5ZMNHG5OU6MIynkbfccW2IV6hjvVdRzXFRVVEGs8MFomuhbPIXxQdLq
+	 ykEjuARYZxeZ8A+sC0do10w/gG9KLxiBK0XI2/02CncDn0m0WEZemUx57fDpD8Z45r
+	 HiwTXk+W6l4DIb/0X6KUd7RUDD/em2sILeHlYSJHF0KcK5npGTJ8Q/t41SOXyowdOF
+	 nUOLwA81oceAMePyGOTjs36xlXqkNaRb/YV0ZuZprIGIhKnJi1voXQlzRrCf1ERe/m
+	 vLRUfvAHbQ5XqoJ17DkJAsPKuz5kQfB1PYQOZx9XxnXGPiex6g9utjG+4zPl7bpe4H
+	 CFrbEPFZ7aX+E+vr6l6wqoZBB/Op3pk0kPbdIjWgMhLZ/m760eXzBTUckJ6C1IZKbK
+	 TTmvtDjM7R7JWWDAW5tviKWUlKi2ZGaEa5EqF+H7u8MPgZCIr1jjZJP7ZgY0Bbv3wT
+	 OCGwBAiBYplD9GfG5pVUUA1HxTAW+JMjR3zy9E0HpJ/+GkmRsWB6R5mWDOh9nPsTXI
+	 0VGAa71wUCtgdYIln7ZTo9HrTmzTke62oYmkEqzFLI6vkvCqf04yUkUhjWNiR5Gse+
+	 2yr/U/lB1NlOQ8iSVysv48VI=
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-bbcf3bd4c8fso235645a12.0
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 17:33:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764207178; x=1764811978;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bHVUgP8TVtYbK/RH59jYqEOFLp2rfeRbE8F3eHfE2h8=;
+        b=XjOEMfacpZqCKQqm2gtOY3G851Fe/L5uVqMiwZ0sZBVWL2r1ybB0E8/MGXTGadZpbu
+         SeXHAuTQwvI67tn5k5yruY9NuFmQygbp68bhSs8X+G7gW6SsW7tmj+awz52jQ3OeDMXz
+         U+e8OSe1SgdP6IKz5XvNwOYway1VLzoGbK2RWtCBiFBBy62l1d5XAD8lhJS/PkweLmGj
+         NLYF7jvgVr9BrBGtl8aKGLaqDwQGm+Abb1qDwQyDqnMoY+3ncwXzYc8SBJKOqPPk6ed2
+         67+YuiK8mFHSnlpRXl1i75MNPiup/eX1FEn7h4cTIZ4fzvgOrzOkkdLb5uVT/+xhnZHx
+         KgFA==
+X-Forwarded-Encrypted: i=1; AJvYcCU90phLxyTF97JPzL5+xmvGgnwxPggEtinSpaMZfleu6X5SUjr3xLVQnbJhT8BMu2f9nJ0VGbBdQJ40c78TMOq6C2AUrp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCA56aDWwq6CDepmDJXFu5JrnWf+3ZE4A/uqiX4z6F76LIxVnP
+	c+RXmMBVV06tjXBjZ4akbBbtbTqV2qGUd+Xbvh4vlKgGuncgg/nthKVBHRTzrPKzhQGJjVirdIj
+	ZifrzAgWg7jcLDJbQsX/CeI78cVlUap/9TfrQuAB+CgDYMRVKnMnjpi/Y1ofgK6pYUikRKwqxlM
+	sKnmOKLyMraXGMm80Xb3jED4/DLdmA
+X-Gm-Gg: ASbGncto+Yf8hyxlrqwjIBlb0Q+Qxk6r5SFsHapLYBxbbzWDG/wnc61kuiKZFptbLFw
+	3Hh3xie5ovT9SwsccogVSjrV14+XzjstmOG7BOoiKzPziQrBrU4FexvN2Zq38r5Yo/JI9OF3RLZ
+	z7m1o7PgbGlgKofQyOisBPwIOLOPp+2j+NTVtgxswLhG0DA5oF+IG1HwdbhYJb9wjZ6lFIycv+H
+	Wr74OGxT1RTt9lmVOkZBK81ZWP16lL47UjWh2K5xU2M53PiWF0VcM0NnXTSXRWYR8IMW2/qOw3U
+	/IFwNX1HVmt8ZRcMRuE1DUGwT12zwRClYiWjXslf9+bfE7dgpU02KB/mSmtzl6OjzXEMrBlLgiF
+	nHKN2Xn0dzVLzBW6d1+aeaoAR
+X-Received: by 2002:a05:6a20:734a:b0:348:b6af:5023 with SMTP id adf61e73a8af0-3613e3c4f74mr32471019637.10.1764207178381;
+        Wed, 26 Nov 2025 17:32:58 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF9poROxMcqJmE/ZSFgYiynf+n9P/aaj4L9EtwLq9gxjSC4Men5EwCCzbfLvhQxV0VS86hawg==
+X-Received: by 2002:a05:6a20:734a:b0:348:b6af:5023 with SMTP id adf61e73a8af0-3613e3c4f74mr32470984637.10.1764207177997;
+        Wed, 26 Nov 2025 17:32:57 -0800 (PST)
+Received: from [192.168.192.85] ([50.47.129.42])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-be509d58e47sm86462a12.31.2025.11.26.17.32.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Nov 2025 17:32:57 -0800 (PST)
+Message-ID: <1da23c89-dc2c-41cb-8260-098deb8ae917@canonical.com>
+Date: Wed, 26 Nov 2025 17:32:56 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] apparmor: Replace deprecated strcpy with memcpy in
+ gen_symlink_name
+To: Thorsten Blum <thorsten.blum@linux.dev>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>
+Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251126165701.97158-2-thorsten.blum@linux.dev>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20251126165701.97158-2-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add comprehensive selftests for the new bpf_kern_path and bpf_path_put
-kfuncs:
+On 11/26/25 08:57, Thorsten Blum wrote:
+> strcpy() is deprecated; use memcpy() instead. Unlike strcpy(), memcpy()
+> does not copy the NUL terminator from the source string, which would be
+> overwritten anyway on every iteration when using strcpy(). snprintf()
+> then ensures that 'char *s' is NUL-terminated.
+> 
+> Replace the hard-coded path length to remove the magic number 6, and add
+> a comment explaining the extra 11 bytes.
+> 
+> Link: https://github.com/KSPP/linux/issues/88
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-1. Functional tests (prog_tests/kern_path.c, progs/test_kern_path.c):
-   - test_kern_path_basic: Tests successful path resolution using
-     /proc/self/exe and validates the resolved path with bpf_path_d_path
-   - test_kern_path_sb_mount: Tests bpf_kern_path with dynamic input
-     from LSM hook parameter (dev_name from sb_mount), demonstrating
-     real-world usage where BPF programs resolve paths from hook args
+hey Thorsten,
 
-2. Verifier success tests (progs/verifier_kern_path.c):
-   - kern_path_success: Proper acquire -> use -> release pattern
-   - kern_path_multiple_paths: Multiple concurrent path acquisitions
+sorry I have actually pulled these in, and tested them. I didn't send out
+the acks yet because I have another patch that I was waiting on a proper
+signed-off-by: on.
 
-3. Verifier failure tests (progs/verifier_kern_path_fail.c):
-   - kern_path_unreleased: Resource leak detection
-   - path_put_unacquired: Releasing unacquired path
-   - path_use_after_put: Use-after-free detection
-   - double_path_put: Double-free detection
-   - kern_path_non_lsm: Program type restrictions (LSM only)
-   - kern_path_non_const_str: reject none const string
+I am going to have to pull that one so I can push. I'll add acks now but
+the push isn't going to happen for a few hours.
 
-These tests verify both the functionality of the kfuncs and that the
-verifier properly enforces acquire/release semantics to prevent
-resource leaks.
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- .../testing/selftests/bpf/bpf_experimental.h  |  4 +
- .../selftests/bpf/prog_tests/kern_path.c      | 82 ++++++++++++++++
- .../selftests/bpf/progs/test_kern_path.c      | 56 +++++++++++
- .../selftests/bpf/progs/verifier_kern_path.c  | 52 ++++++++++
- .../bpf/progs/verifier_kern_path_fail.c       | 97 +++++++++++++++++++
- 5 files changed, 291 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/kern_path.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_kern_path.c
- create mode 100644 tools/testing/selftests/bpf/progs/verifier_kern_path.c
- create mode 100644 tools/testing/selftests/bpf/progs/verifier_kern_path_fail.c
+>   security/apparmor/apparmorfs.c | 12 ++++++++----
+>   1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+> index 391a586d0557..4b2752200ce2 100644
+> --- a/security/apparmor/apparmorfs.c
+> +++ b/security/apparmor/apparmorfs.c
+> @@ -1602,16 +1602,20 @@ static char *gen_symlink_name(int depth, const char *dirname, const char *fname)
+>   {
+>   	char *buffer, *s;
+>   	int error;
+> -	int size = depth * 6 + strlen(dirname) + strlen(fname) + 11;
+> +	const char *path = "../../";
+> +	size_t path_len = strlen(path);
+> +	int size;
+>   
+> +	/* Extra 11 bytes: "raw_data" (9) + two slashes "//" (2) */
+> +	size = depth * path_len + strlen(dirname) + strlen(fname) + 11;
+>   	s = buffer = kmalloc(size, GFP_KERNEL);
+>   	if (!buffer)
+>   		return ERR_PTR(-ENOMEM);
+>   
+>   	for (; depth > 0; depth--) {
+> -		strcpy(s, "../../");
+> -		s += 6;
+> -		size -= 6;
+> +		memcpy(s, path, path_len);
+> +		s += path_len;
+> +		size -= path_len;
+>   	}
+>   
+>   	error = snprintf(s, size, "raw_data/%s/%s", dirname, fname);
 
-diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
-index 2cd9165c7348..c512c9a14752 100644
---- a/tools/testing/selftests/bpf/bpf_experimental.h
-+++ b/tools/testing/selftests/bpf/bpf_experimental.h
-@@ -221,6 +221,10 @@ extern void bpf_put_file(struct file *file) __ksym;
-  */
- extern int bpf_path_d_path(const struct path *path, char *buf, size_t buf__sz) __ksym;
- 
-+extern struct path *bpf_kern_path(const char *pathname, unsigned int flags) __ksym;
-+extern void bpf_path_put(struct path *path) __ksym;
-+extern int bpf_path_d_path(const struct path *path, char *buf, size_t buf__sz) __ksym;
-+
- /* This macro must be used to mark the exception callback corresponding to the
-  * main program. For example:
-  *
-diff --git a/tools/testing/selftests/bpf/prog_tests/kern_path.c b/tools/testing/selftests/bpf/prog_tests/kern_path.c
-new file mode 100644
-index 000000000000..f4cdfe202a26
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/kern_path.c
-@@ -0,0 +1,82 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. */
-+
-+#include <test_progs.h>
-+#include <sys/mount.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <errno.h>
-+
-+#include "test_kern_path.skel.h"
-+#include "verifier_kern_path.skel.h"
-+#include "verifier_kern_path_fail.skel.h"
-+
-+static void __test_kern_path(void (*trigger)(void))
-+{
-+	struct test_kern_path *skel;
-+	int err;
-+
-+	skel = test_kern_path__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "test_kern_path__open_and_load"))
-+		return;
-+
-+	skel->bss->monitored_pid = getpid();
-+
-+	err = test_kern_path__attach(skel);
-+	if (!ASSERT_OK(err, "test_kern_path__attach"))
-+		goto cleanup;
-+
-+	trigger();
-+
-+	/* Verify the bpf_path_d_path worked */
-+	ASSERT_GT(skel->bss->path_len, 0, "path_len > 0");
-+
-+cleanup:
-+	test_kern_path__destroy(skel);
-+}
-+
-+static void trigger_file_open(void)
-+{
-+	int fd;
-+
-+	fd = open("/dev/null", O_RDONLY);
-+	if (!ASSERT_OK_FD(fd, "open /dev/null"))
-+		return;
-+	close(fd);
-+}
-+
-+static void trigger_sb_mount(void)
-+{
-+	char tmpdir[] = "/tmp/bpf_kern_path_test_XXXXXX";
-+	int err;
-+
-+	if (!ASSERT_OK_PTR(mkdtemp(tmpdir), "mkdtemp"))
-+		return;
-+
-+	err = mount("/tmp", tmpdir, NULL, MS_BIND, NULL);
-+	if (!ASSERT_OK(err, "bind mount"))
-+		goto rmdir;
-+
-+	umount(tmpdir);
-+rmdir:
-+	rmdir(tmpdir);
-+}
-+
-+void test_kern_path(void)
-+{
-+	if (test__start_subtest("file_open"))
-+		__test_kern_path(trigger_file_open);
-+
-+	if (test__start_subtest("sb_mount"))
-+		__test_kern_path(trigger_sb_mount);
-+}
-+
-+void test_verifier_kern_path(void)
-+{
-+	RUN_TESTS(verifier_kern_path);
-+}
-+
-+void test_verifier_kern_path_fail(void)
-+{
-+	RUN_TESTS(verifier_kern_path_fail);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_kern_path.c b/tools/testing/selftests/bpf/progs/test_kern_path.c
-new file mode 100644
-index 000000000000..e9186a1aa990
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_kern_path.c
-@@ -0,0 +1,56 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_tracing.h>
-+#include "bpf_misc.h"
-+#include "bpf_experimental.h"
-+
-+#define MAX_PATH_LEN 256
-+
-+char buf[MAX_PATH_LEN];
-+int path_len = 0;
-+u32 monitored_pid = 0;
-+
-+SEC("lsm.s/file_open")
-+int BPF_PROG(test_kern_path_basic, struct file *file)
-+{
-+	struct path *p;
-+	int ret;
-+
-+	if (bpf_get_current_pid_tgid() >> 32 != monitored_pid)
-+		return 0;
-+
-+	p = bpf_kern_path("/proc/self/exe", 0);
-+	if (p) {
-+		ret = bpf_path_d_path(p, buf, MAX_PATH_LEN);
-+		if (ret > 0)
-+			path_len = ret;
-+		bpf_path_put(p);
-+	}
-+
-+	return 0;
-+}
-+
-+SEC("lsm.s/sb_mount")
-+int BPF_PROG(test_kern_path_from_sb_mount, const char *dev_name, const struct path *path,
-+	     const char *type, unsigned long flags, void *data)
-+{
-+	struct path *p;
-+	int ret;
-+
-+	if (bpf_get_current_pid_tgid() >> 32 != monitored_pid)
-+		return 0;
-+
-+	p = bpf_kern_path(dev_name, 0);
-+	if (p) {
-+		ret = bpf_path_d_path(p, buf, MAX_PATH_LEN);
-+		if (ret > 0)
-+			path_len = ret;
-+		bpf_path_put(p);
-+	}
-+
-+	return 0;
-+}
-+
-+char _license[] SEC("license") = "GPL";
-diff --git a/tools/testing/selftests/bpf/progs/verifier_kern_path.c b/tools/testing/selftests/bpf/progs/verifier_kern_path.c
-new file mode 100644
-index 000000000000..0e6ccf640b64
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/verifier_kern_path.c
-@@ -0,0 +1,52 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. */
-+
-+#include <vmlinux.h>
-+#include <bpf/bpf_tracing.h>
-+#include <linux/limits.h>
-+#include "bpf_misc.h"
-+#include "bpf_experimental.h"
-+
-+static char buf[PATH_MAX];
-+
-+SEC("lsm.s/file_open")
-+__success
-+int BPF_PROG(kern_path_success)
-+{
-+	struct path *p;
-+
-+	p = bpf_kern_path("/proc/self/exe", 0);
-+	if (!p)
-+		return 0;
-+
-+	bpf_path_d_path(p, buf, sizeof(buf));
-+
-+	bpf_path_put(p);
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__success
-+int BPF_PROG(kern_path_multiple_paths)
-+{
-+	struct path *p1, *p2;
-+
-+	p1 = bpf_kern_path("/proc/self/exe", 0);
-+	if (!p1)
-+		return 0;
-+
-+	p2 = bpf_kern_path("/proc/self/cwd", 0);
-+	if (!p2) {
-+		bpf_path_put(p1);
-+		return 0;
-+	}
-+
-+	bpf_path_d_path(p1, buf, sizeof(buf));
-+	bpf_path_d_path(p2, buf, sizeof(buf));
-+
-+	bpf_path_put(p2);
-+	bpf_path_put(p1);
-+	return 0;
-+}
-+
-+char _license[] SEC("license") = "GPL";
-diff --git a/tools/testing/selftests/bpf/progs/verifier_kern_path_fail.c b/tools/testing/selftests/bpf/progs/verifier_kern_path_fail.c
-new file mode 100644
-index 000000000000..520c227af5ca
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/verifier_kern_path_fail.c
-@@ -0,0 +1,97 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. */
-+
-+#include <vmlinux.h>
-+#include <bpf/bpf_tracing.h>
-+#include <linux/limits.h>
-+#include "bpf_misc.h"
-+#include "bpf_experimental.h"
-+
-+static char buf[PATH_MAX];
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("Unreleased reference")
-+int BPF_PROG(kern_path_unreleased)
-+{
-+	struct path *p;
-+
-+	p = bpf_kern_path("/proc/self/exe", 0);
-+	if (!p)
-+		return 0;
-+
-+	/* Acquired but never released - should fail verification */
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("pointer type STRUCT path must point to scalar, or struct with scalar")
-+int BPF_PROG(path_put_unacquired)
-+{
-+	struct path p = {};
-+
-+	/* Can't release an unacquired path - should fail verification */
-+	bpf_path_put(&p);
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("pointer type STRUCT path must point to scalar, or struct with scalar")
-+int BPF_PROG(path_use_after_put, struct file *file)
-+{
-+	struct path *p;
-+
-+	p = bpf_kern_path("/proc/self/exe", 0);
-+	if (!p)
-+		return 0;
-+
-+	bpf_path_put(p);
-+
-+	/* Using path after put - should fail verification */
-+	bpf_path_d_path(p, buf, sizeof(buf));
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("pointer type STRUCT path must point to scalar, or struct with scalar")
-+int BPF_PROG(double_path_put)
-+{
-+	struct path *p;
-+
-+	p = bpf_kern_path("/proc/self/exe", 0);
-+	if (!p)
-+		return 0;
-+
-+	bpf_path_put(p);
-+	/* Double put - should fail verification */
-+	bpf_path_put(p);
-+	return 0;
-+}
-+
-+SEC("fentry/vfs_open")
-+__failure __msg("calling kernel function bpf_kern_path is not allowed")
-+int BPF_PROG(kern_path_non_lsm)
-+{
-+	struct path *p;
-+
-+	/* Calling bpf_kern_path() from a non-LSM BPF program isn't permitted */
-+	p = bpf_kern_path("/proc/self/exe", 0);
-+	if (p)
-+		bpf_path_put(p);
-+	return 0;
-+}
-+
-+SEC("lsm.s/sb_eat_lsm_opts")
-+__failure __msg("arg#0 doesn't point to a const string")
-+int BPF_PROG(kern_path_non_const_str, char *options, void **mnt_opts)
-+{
-+	struct path *p;
-+
-+	/* Calling bpf_kern_path() from a with non-const string isn't permitted */
-+	p = bpf_kern_path(options, 0);
-+	if (p)
-+		bpf_path_put(p);
-+	return 0;
-+}
-+
-+
-+char _license[] SEC("license") = "GPL";
--- 
-2.47.3
 
