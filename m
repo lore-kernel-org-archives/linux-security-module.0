@@ -1,192 +1,198 @@
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C8E27FD5B;
-	Thu, 27 Nov 2025 09:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF253161BC;
+	Thu, 27 Nov 2025 09:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764236633; cv=none; b=tBLpGKY6hRWXnP7/aVkJZgzMmu0rNb8E6DMWEZfdK4mtQU38eJ/FTnhK93whlyZelUTyjbA4lPHA0/zaU/HbL2784s/fxfwkzms/HEvkwJceuxcULoKqspHNu6EQnA3/OgSSeNRgjgQw50G8OWQlKL127XtynjbkNcXKtATuyNE=
+	t=1764236738; cv=none; b=fCLUglum1fpeRlJe9apG1jun2g4XgmV2YjS9D1zQ/whP8lK5sT2fgF7p9FoeG2x+XZr2Jw/2RJcHEGaNuj3iF/mjEdCVqHw1q7bcZuy6Odk3gj12KsZFl7tyaa74nJkX528sMvVvMfEspcJY1s8UdNLPe5loqwZIivaxk65oGo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764236633; c=relaxed/simple;
-	bh=a1qtHw3JWF870YtUbOaSDyzYHiouP1W81shdNJE1slI=;
+	s=arc-20240116; t=1764236738; c=relaxed/simple;
+	bh=3d42s9z7GkRr/vqBKA99DThFXorNi/IoyPuPaGLcxYs=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IKnd4BVbV9E9bXD8qGM1ETmIBlHqPxEGygWR3/wURXKTJRYqzol8fg2qhv7j2hSPOaSuh2vnsKGbCChu8mGfTp5Bb7eIzJz6DrS/WCfcv4vkIC6MS9DpYHJlSRL7EyzSNU9X+KAMF9vhhbK6Y4r5nZfuaBxlP2TZjDYKPDBdoJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=Mtk2Tx3q; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="Mtk2Tx3q"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=AdX4qKkVkW6+sLO3CN5WYI3tQ8n47arC7Ub7yVZSTu4=; t=1764236629;
-	x=1764841429; b=Mtk2Tx3qRtGA5K6ukcQ3bdU/rRSeqOWbVCJmQzjRY7Pmq5voQaUjZJJQgudsg
-	DqFv1XO19XZ7DpUbqSIJR94lt0b47xLgfiM7T+QzG3mxs2n8vx/ltf86LYBpML/C4kd9yZKqcJ3W4
-	1Y7mtZzDPWK81660pT9cD4Ah9561dy+XjoUzkwJEkqsxdh9Wgoeq9k49G9r5X4IsIbFmXsPjvI4+x
-	YT2s/2qJpNY6M9LpJ6Y0gs0JayCr/Z8GyKZNbhc3w1cNKJMtrSE01qBnPWF01P76W36o8iLgxx6ZO
-	yi2HfXHeSohWfu3hCoIpWglWYGDwwQvgNwhQnBEqEzdkNJEgag==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.99)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1vOYXS-00000002b7W-3jNy; Thu, 27 Nov 2025 10:43:46 +0100
-Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.99)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1vOYXS-00000001LGB-2k8m; Thu, 27 Nov 2025 10:43:46 +0100
-Message-ID: <d5c3d7329b6727bae537b118449ca2d5ad70e50e.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 0/2] apparmor unaligned memory fixes
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Helge Deller <deller@kernel.org>, John Johansen
-	 <john.johansen@canonical.com>
-Cc: david laight <david.laight@runbox.com>, Helge Deller <deller@gmx.de>, 
-	linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, linux-parisc@vger.kernel.org
-Date: Thu, 27 Nov 2025 10:43:45 +0100
-In-Reply-To: <6d80f9bc5fd6d91ed2451d140227b866d6273af4.camel@physik.fu-berlin.de>
-References: <ba3d5651-fa68-4bb5-84aa-35576044e7b0@canonical.com>
-		 <aSXHCyH_rS-c5BgP@p100>
-		 <e88c32c2-fb18-4f3e-9ec2-a749695aaf0a@canonical.com>
-		 <c192140a-0575-41e9-8895-6c8257ce4682@gmx.de>
-		 <d35010b3-7d07-488c-b5a4-a13380d0ef7c@canonical.com>
-		 <20251126104444.29002552@pumpkin>
-		 <4034ad19-8e09-440c-a042-a66a488c048b@gmx.de>
-		 <20251126142201.27e23076@pumpkin> <aScY13MEBATreotz@carbonx1>
-		 <f5637038-9661-47fe-ba69-e461760ac975@canonical.com>
-		 <aSdfyGv2T88T5FEu@carbonx1>
-	 <6d80f9bc5fd6d91ed2451d140227b866d6273af4.camel@physik.fu-berlin.de>
+	 Content-Type:MIME-Version; b=kwVeEfobLXTqkuRYURpRzo21hFXWSpeigyiOCVdePj2LPLGmDtFqSf4R2Ia66iGTOiqaPZcZyoXuwkW4otsLelNilBi4PlaOtvDhlSwcVAE438vRQcYgMkdDlWrseOxXs2tZuNCmrj2c1xffNJIQyqCENHtnmxSFGFtBMFXO6Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4dHBMl4wkczpTkF;
+	Thu, 27 Nov 2025 17:44:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 91AB414022F;
+	Thu, 27 Nov 2025 17:45:26 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwBHfSGsHShpgdAoAQ--.4984S2;
+	Thu, 27 Nov 2025 10:45:26 +0100 (CET)
+Message-ID: <3f85e98e2e4ef6a0de4fe4f6c2093791def1e30b.camel@huaweicloud.com>
+Subject: Re: [RFC v1 0/1] Implement IMA Event Log Trimming
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Gregory Lumen <gregorylumen@linux.microsoft.com>
+Cc: Anirudh Venkataramanan <anirudhve@linux.microsoft.com>, 
+ linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, Roberto
+ Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>,  Eric Snowberg <eric.snowberg@oracle.com>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,  "Serge
+ E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org,
+ Steven Chen <chenste@linux.microsoft.com>, Lakshmi Ramasubramanian
+ <nramas@linux.microsoft.com>, Sush Shringarputale
+ <sushring@linux.microsoft.com>
+Date: Thu, 27 Nov 2025 10:45:13 +0100
+In-Reply-To: <bbafa611-3a6c-5cf8-631c-20f72f651d9@linux.microsoft.com>
+References: <20251119213359.39397-1-anirudhve@linux.microsoft.com>
+	  <7722dff4e68ef5fb7f39bd732a8a77422bad5549.camel@huaweicloud.com>
+	  <a77e9609-f6bd-4e6d-88be-5422f780b496@linux.microsoft.com>
+	 <1e5a3b427fe2783e57e88ca14630f5e38e01fac5.camel@huaweicloud.com>
+	 <bbafa611-3a6c-5cf8-631c-20f72f651d9@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+X-CM-TRANSID:GxC2BwBHfSGsHShpgdAoAQ--.4984S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF1kWry8WF4DKryxGryUJrb_yoWrKw48pF
+	WSgw4fKF4DJa43Gr1kCa1xZryF9395J34Utrn5K34rZ3y5GFykKw15K3yYqFyfCrWkZryj
+	vr4avr9xuayDZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAFBGkntCQE6gAAsz
 
-Hi Helge,
-
-
-On Thu, 2025-11-27 at 10:25 +0100, John Paul Adrian Glaubitz wrote:
-> Hi Helge,
+On Wed, 2025-11-26 at 15:40 -0800, Gregory Lumen wrote:
+> Greetings Roberto,
 >=20
-> On Wed, 2025-11-26 at 21:15 +0100, Helge Deller wrote:
-> > So, here is a (untested) v3:
-> >=20
-> >=20
-> > [PATCH v3] apparmor: Optimize table creation from possibly unaligned me=
-mory
-> >=20
-> > Source blob may come from userspace and might be unaligned.
-> > Try to optize the copying process by avoiding unaligned memory accesses=
-.
-> >=20
-> > Signed-off-by: Helge Deller <deller@gmx.de>
-> >=20
-> > diff --git a/security/apparmor/include/match.h b/security/apparmor/incl=
-ude/match.h
-> > index 1fbe82f5021b..19e72b3e8f49 100644
-> > --- a/security/apparmor/include/match.h
-> > +++ b/security/apparmor/include/match.h
-> > @@ -104,16 +104,18 @@ struct aa_dfa {
-> >  	struct table_header *tables[YYTD_ID_TSIZE];
-> >  };
-> > =20
-> > -#define byte_to_byte(X) (X)
-> > -
-> >  #define UNPACK_ARRAY(TABLE, BLOB, LEN, TTYPE, BTYPE, NTOHX)	\
-> >  	do { \
-> >  		typeof(LEN) __i; \
-> >  		TTYPE *__t =3D (TTYPE *) TABLE; \
-> >  		BTYPE *__b =3D (BTYPE *) BLOB; \
-> > -		for (__i =3D 0; __i < LEN; __i++) { \
-> > -			__t[__i] =3D NTOHX(__b[__i]); \
-> > -		} \
-> > +		BUILD_BUG_ON(sizeof(TTYPE) !=3D sizeof(BTYPE)); \
-> > +		if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) \
-> > +			memcpy(__t, __b, (LEN) * sizeof(BTYPE)); \
-> > +		else /* copy & convert convert from big-endian */ \
-> > +			for (__i =3D 0; __i < LEN; __i++) { \
-> > +				__t[__i] =3D NTOHX(&__b[__i]); \
-> > +			} \
-> >  	} while (0)
-> > =20
-> >  static inline size_t table_size(size_t len, size_t el_size)
-> > diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-> > index c5a91600842a..1e32c8ba14ae 100644
-> > --- a/security/apparmor/match.c
-> > +++ b/security/apparmor/match.c
-> > @@ -15,6 +15,7 @@
-> >  #include <linux/vmalloc.h>
-> >  #include <linux/err.h>
-> >  #include <linux/kref.h>
-> > +#include <linux/unaligned.h>
-> > =20
-> >  #include "include/lib.h"
-> >  #include "include/match.h"
-> > @@ -66,14 +67,13 @@ static struct table_header *unpack_table(char *blob=
-, size_t bsize)
-> >  		table->td_flags =3D th.td_flags;
-> >  		table->td_lolen =3D th.td_lolen;
-> >  		if (th.td_flags =3D=3D YYTD_DATA8)
-> > -			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
-> > -				     u8, u8, byte_to_byte);
-> > +			memcpy(table->td_data, blob, th.td_lolen);
-> >  		else if (th.td_flags =3D=3D YYTD_DATA16)
-> >  			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
-> > -				     u16, __be16, be16_to_cpu);
-> > +				     u16, __be16, get_unaligned_be16);
-> >  		else if (th.td_flags =3D=3D YYTD_DATA32)
-> >  			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
-> > -				     u32, __be32, be32_to_cpu);
-> > +				     u32, __be32, get_unaligned_be32);
-> >  		else
-> >  			goto fail;
-> >  		/* if table was vmalloced make sure the page tables are synced
+> If I may chime in a bit:
 >=20
-> This one does not apply:
+> > The only way to make the verification of measurements list snapshots
+> > work is that the verification state is stored outside the system to
+> > evaluate (which can be assumed to be trusted), so that you are sure
+> > that the system is not advancing the PCR starting value by itself.
 >=20
-> glaubitz@node54:/data/home/glaubitz/linux> git am ../20251125_app_armor_u=
-nalign_2nd.mbx
-> Applying: apparmor unaligned memory fixes
-> error: patch failed: security/apparmor/match.c:15
-> error: security/apparmor/match.c: patch does not apply
-> Patch failed at 0001 apparmor unaligned memory fixes
-> hint: Use 'git am --show-current-patch=3Ddiff' to see the failed patch
-> hint: When you have resolved this problem, run "git am --continue".
-> hint: If you prefer to skip this patch, run "git am --skip" instead.
-> hint: To restore the original branch and stop patching, run "git am --abo=
-rt".
-> hint: Disable this message with "git config set advice.mergeConflict fals=
-e"
-> glaubitz@node54:/data/home/glaubitz/linux>
+> You are correct; to make the described approach work, an external source=
+=20
+> of trust is required in order to detect unexpected or unauthorized=20
+> trimming of the event log (for example, by signing the trim-to PCR values=
+=20
+> from the previous verification/attestation cycle). This should be true=
+=20
+> regardless of the mechanism of trimming. More generally, I will go so far=
+=20
+> as to suggest that any attempt to attest the integrity of a system using=
+=20
+> IMA will likely fall into one of two general approaches: either the entir=
+e=20
+> IMA event log is retained (either in kernel or user space) from boot and=
+=20
+> claims of system integrity are built by validating and examining the=20
+> entire log for signs of tampering, or an external source of trust is=20
+> introduced to allow incremental validation and examination of the log.=
+=20
+> Other more innovative approaches may exist, but we make no such claims.
+>=20
+> I will also say that it should be possible to implement either approach t=
+o=20
+> attestation (retaining the entire log, or relying on an external source o=
+f=20
+> trust) with any sane implementation for IMA log trimming.
+>=20
+> As for our proposed implementation, storing the starting PCR values in th=
+e=20
+> kernel preserving the ability for any arbitrary user space entity to=20
+> validate the retained portion of the IMA event log against the TPM PCRs a=
+t=20
+> any time, without requiring awareness of other user space mechanisms=20
+> implemented by other entities that may be initiating IMA trimming=20
+> operations. My personal sense is that this capability is worth preserving=
+,=20
+> but it is entirely possible the general consensus is that the value=20
+> offered does not balance against the additional technical complexity when=
+=20
+> compared to simpler alternatives (discussed in a moment). To stress the=
+=20
+> point, this capability would only enable validation of the integrity of=
+=20
+> the retained portion of the event log and its continuity with the PCRs,=
+=20
+> and could not be used to make any claims as to the overall integrity of=
+=20
+> the system since, as you observed, an attacker who has successfully=20
+> compromised the system could simply trim the event log in order to discar=
+d=20
+> evidence of the compromise.
 
-The patch alone applies, i.e without your previous patch, but it does not f=
-ix the problem:
+Hi Gregory
 
-[   73.961582] Kernel unaligned access at TPC[8dabdc] aa_dfa_unpack+0x3c/0x=
-6e0
-[   74.053195] Kernel unaligned access at TPC[8dabec] aa_dfa_unpack+0x4c/0x=
-6e0
-[   74.144814] Kernel unaligned access at TPC[8dacd0] aa_dfa_unpack+0x130/0=
-x6e0
-[   74.237538] Kernel unaligned access at TPC[8dacd0] aa_dfa_unpack+0x130/0=
-x6e0
-[   74.330296] Kernel unaligned access at TPC[8dacd0] aa_dfa_unpack+0x130/0=
-x6e0
+all you said can be implemented by maintaining the PCR starting value
+outside the system, in a trusted entity. This would allow the
+functionality you are hoping for to validate the retained portion of
+the measurement list.
 
-Adrian
+Keeping the PCR starting value in the kernel has the potential of
+misleading users that this is an information they can rely on. I would
+rather prefer to not run in such risk.
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+> If the ability to validate the retained portion of the IMA event log is=
+=20
+> not worth designing for, we could instead go with a simpler "Trim-to-N"=
+=20
+> approach, where the user space interface allows for the specification of=
+=20
+> an absolute index into the IMA log to be used as the trim position (as=
+=20
+> opposed to using calculated PCR values to indicate trim position in our=
+=20
+> current proposal). To protect against unexpected behavior in the event of=
+=20
+
+From implementation point of view, it looks much simpler to me to
+specify N relative to the current measurement list.
+
+> concurrent trims, index counting would need to be fixed (hence absolute)=
+=20
+> such that index 0 would always refer to the very first entry written=20
+> during boot, even if that entry has already been trimmed, with the number=
+=20
+> of trimmed entries (and thus starting index of the retained log) exposed=
+=20
+> to use space via a pseudo-file.
+
+In my draft patch [1] (still need to support trimming N entries instead
+of the full measurement list), the risk of concurrent trims does not
+exist because opening of the snapshot interface is exclusive (no one
+else can request trimming concurrently).
+
+If a more elaborated contention of remote attestation agent is
+required, that could be done at user space level. I'm hoping to keep in
+the kernel only the minimum code necessary for the remote attestation
+to work.
+
+Roberto
+
+[1] https://github.com/robertosassu/linux/commit/b0bd002b6caa9d5d4f4d0db2a0=
+41b1fd91f33f8a
+
+> With such a trim approach, it should be possible to implement either=20
+> general attestation approach: retaining the entire log (copy the log to=
+=20
+> user space, then trim the copied entries), or relying on an external=20
+> source of trust (quote, determine the log index corresponding to the quot=
+e=20
+> plus PCRs, trim, then securely store the trim position/starting PCRs for=
+=20
+> future cycles).
+>=20
+> -Gregory Lumen
+
