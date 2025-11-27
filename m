@@ -1,161 +1,321 @@
-Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B87223BD06;
-	Thu, 27 Nov 2025 11:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE1732E151
+	for <linux-security-module@vger.kernel.org>; Thu, 27 Nov 2025 11:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764241909; cv=none; b=SvzTXwdWFYZrtPnsGFT+IktpOo8uPRIlqyvnkNERx7kzf7aU2jg2NP+pLKwkxPUmKITlZcOyv66TZLrwIyv03gg0Ms2Vi9BILAdLnnWi71YUpDQ2CcUIV5MSrdZ6gKBZ10hdfyaS2AEP0YputqTQClLbiynWYjJMs8Y3vWzwtJ0=
+	t=1764244319; cv=none; b=koGozkwmk212ng2qmyPV+LIjym7sMzK2uMV8WvprbT5rFWQ4daIDplRAPTBZ42RQOYBR/poUKJiVqV2PjoqrWgQPCzuX571g5Iz0o9VPx2L9KunZcfbqhoho+ZuW2wC+NlJRaL0KlQmlJ7o/W4FZbAAEDtkg2PhAty08wgoz2cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764241909; c=relaxed/simple;
-	bh=GbIDAT9rtj7UlTcfXk6NmMiPhN0t9jJouRITwhbuniQ=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=fAjqoGyAp9J3imr3YX+bTtZO8yFfHgOICh6l6dkC7WNIc8ANqrBpYTkcW0T6ICDK2mX8x9RlQ92VvvZvu3nkKH7FtqpkvBR4gkDpD84Oosl33Y5r8cDgTFwjqhH0Xi9EG1Ou8FvdY9yQ8Cs/ZXvzadDdufcyqaHoM+LM2P/59wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=c+VxFWOo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YK6ML7HD; arc=none smtp.client-ip=202.12.124.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+	s=arc-20240116; t=1764244319; c=relaxed/simple;
+	bh=Ibiq39Spw/2TkphUzkLn5lBBF48sI+yEQwo/1o+13e4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=asaa4orrQJtvcszG7+z2f5VPau9DIueghjDl3yaG9tq7vzZplelyRC2N57uHEoRVj1WQ7ma4tFsKLrKQHTUQIDQnAB1OQoZ1iQ3zy6J0PqKVRQ7IZ9UObH6Tr5Ixhj4RCJr+DFPeuabZ7qhXcDqU033/riCw6TK2aSfpQDvo+fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=auxaI1CO; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="c+VxFWOo";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YK6ML7HD"
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailflow.stl.internal (Postfix) with ESMTP id E54531300112;
-	Thu, 27 Nov 2025 06:11:45 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Thu, 27 Nov 2025 06:11:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
-	1764241905; x=1764249105; bh=m1kV6hlzxb2O2XlqHGM1BPPCpFOnIPzOUy0
-	n7fZKnGU=; b=c+VxFWOo9uq1DK4cCUXO6NBeE5V6mjiuePKe7uq7i7Uzw+e5z1r
-	KSIFI9qcaqcHz/n4M2JGC1ShKl/MbAFLeZ5Gkz2dElDfo78nIMMAzxNeatPtEK9e
-	Ru07vJE9mRlHzolsNc6YCOBgflzvX8LDXidjAqnXlE38xqoVzFriH4DNrf2ruGli
-	heSyikJBEqbjPgZS6+el63Q1N05e2qxh4QAGs1ZfrzHXS7yCHKjO1lQEOkmReEhx
-	qnzUYADGoVR0mdu9DH1ddnFcsMreV9GoBSAI6qINupHzYFkPg0j5YH5S3fkJCJTp
-	FrDhzYk2BwjOPy5YmiyxBPmHIMvYQb6zYWA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764241905; x=
-	1764249105; bh=m1kV6hlzxb2O2XlqHGM1BPPCpFOnIPzOUy0n7fZKnGU=; b=Y
-	K6ML7HDTpTVp9PjUPBfoTqh+u1zoLmFqmw+hkFRFq+N9YuLOKVRydNumSmfQAYgx
-	OAttLjP+MFjq5RGkd91Hsq1Qcr44B8QVwobJrDtMl5UulnzgmDvIeua0pUppOct1
-	22Hh23EtIDNgAw6sEMv/72llJaTe/P8BT5wbDKTpu7rR9nT1jj5Z/uUAWxmrcbAy
-	V/h1oahiRy9rLpbiThxDQ+oIi8S+8z6uK9W6qpNro9kteF6xAi8wW7pXkY8pEIxL
-	mzXa3JvSnawJshJHoyvNpEsRSBSqP/ndEheTdpqPjD3QX1ywhnT1v/sxGhBhdxEW
-	zJ9oWyeEY/D8XM1NtqTaw==
-X-ME-Sender: <xms:8TEoabu7JYFYMUfT7S8_I5--Lo9rbrFJdwoaNpvJDL9YrWnILVfvgQ>
-    <xme:8TEoaRi_IAui-deAtJacilhZHHf4PFcDfB7m1UWRGkdliewWwXHx4qEADYj6VQBh7
-    Qhd33fJ6UAMn6BXa5LXo7PE8unF5m36jwIvdlqBrbZforJtLg>
-X-ME-Received: <xmr:8TEoabwy5w0jZKY1rlGFdR9h2JuLLKcSlLcY3KhHiDFqYSQUh_uGJMNO0XTo5J1Em-XAiAWPRrsI0FwLL4oUHwxhQtwrO4uben-LiXPBsZkx>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgeejtdekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epvdeuteelkeejkeevteetvedtkeegleduieeftdeftefgtddtleejgfelgfevffeinecu
-    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofihnmhgrihhlrdhnvghtpdhnsggp
-    rhgtphhtthhopeegtddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvhhirhhose
-    iivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehsvghlihhnuhigsehv
-    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqgihfshesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhunhhiohhnfhhssehv
-    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvtghurhhith
-    ihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
-    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
-    gidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
-    hnuhigqdgtihhfshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:8TEoaX4jhOU-RJfrf3t1xEcR-lNfjS28e99wANWzbIhtgXOc8tvlQQ>
-    <xmx:8TEoadfn3ihxo_f2JsQabXyhrsPX7Ty6n2NXo-mzGemtFZUciGdvkw>
-    <xmx:8TEoafruRCtJU5PoM56axqXYQfY267HfKJE3cT5se9N7bV25X2ebug>
-    <xmx:8TEoaR1xv1E0dscVlFpB4htOxcDXJkE0QaT7-sPWv8fjNCO-_Nn03g>
-    <xmx:8TEoacuIUsW2XK9lNoDW8FFI-jSTzwnKCqQ_3XoqxqRE8twj9TVgjbxl>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 27 Nov 2025 06:11:35 -0500 (EST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="auxaI1CO"
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4779d8fd4ecso3897355e9.1
+        for <linux-security-module@vger.kernel.org>; Thu, 27 Nov 2025 03:51:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1764244315; x=1764849115; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=x/mHrxzgYd5kzUKlF23m4G1W+UJuIrn3WS+EoGUuOAc=;
+        b=auxaI1COW8o9YP4w6s+zv2TTcCIBeYkcI3l+p94Jn03zUdrJN1O2wmEe9Z0Zm8YAxs
+         62F4HO2PB04PZsgS/0Mpi2UC6KT+SQS0p0H0IhqLmC6DbwCJmBwK+5PUe3lIupFaJLuV
+         mlux3Hz9P+VQytAdK/nuzPY26Ijm7c/BQ1TyFjSdveIdEJHAiOKUbB9XTg/XOLzBmcR2
+         PPCgYswIY1PEy7VFiD/tKexsNIKpQ9LF8TIS4qFGLxn897pRUaL+2WnDhmEX3gh1oS3j
+         5qnc/F+bW5tMvqfnwixw1oLXyAS/p8F2QmQ2wWOQZ/5N7RbR7fp1yyzlAb1S3x7IDVSp
+         AMig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764244315; x=1764849115;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x/mHrxzgYd5kzUKlF23m4G1W+UJuIrn3WS+EoGUuOAc=;
+        b=mn4/ybUshyyYYXCoAJerhR9wlVzfCiHhBzMU9a/Eq9nFXrxt1n6H2MreFwHvI1bYkR
+         Q1yeFIcCuv9j6yBHzm55egZQoo/3mMEOdOdE4c2GBZiGWe+vXbiL+VWobEdAmCElpPo0
+         kgrFCm3bUib44GqPDwMH0i8yxpoqk7LLJI7fnrEC9cP2PsLCUx83FKN2NbqpYefzorjL
+         VmD0syqk4SegAqgf52oSqsmjZqFB84KohcBHWsJze65aXSD38vbFuYw48RWOzmexC0WJ
+         bSMsWBoSPAzbPwZKS5aRFWShZMJKJxq3iCUG3tuKSI4+3+w2fewnVG6RRmYFuDt25mcw
+         2WAA==
+X-Gm-Message-State: AOJu0YzHS7HBd7juJU7WflNGD457vIAQYnnvWkVxLkJZ6xSTpKIR73ds
+	ddBPvXgVR1VNbwJrzKCAFsYAtDVb0LXddsdCYPcPQYqLRZkBZXh/ZD37+ozM+RuJ5M6npgm5R8s
+	26mMi0ehs7W5U14TDUrTKBn0u+vDbkveeOjVvb8hzWzuXtBrtYVv/wp6YMikIPrlMcZ3Vc3ld4U
+	HLsyxuR/Lo7IIXkw9pfX9zQRnWxUzjQonyAoUEBhI3HwUBZT7sCZeB0drl
+X-Google-Smtp-Source: AGHT+IEJvqcNF/FAKE0zslsGN1Rj1jfMyvy7XBtOPJvGh8Tv1BNvlWiFptDR5p+fKrjuXAmRAFFRDPB3aUY=
+X-Received: from wmkz4.prod.google.com ([2002:a7b:c7c4:0:b0:477:a6e8:797a])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3549:b0:477:9fa0:7495
+ with SMTP id 5b1f17b1804b1-477c053069fmr225876585e9.14.1764244314788; Thu, 27
+ Nov 2025 03:51:54 -0800 (PST)
+Date: Thu, 27 Nov 2025 12:51:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Christian Brauner" <brauner@kernel.org>
-Cc: "Jeff Layton" <jlayton@kernel.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Amir Goldstein" <amir73il@gmail.com>, "Jan Kara" <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org, "Chris Mason" <clm@fb.com>,
- "David Sterba" <dsterba@suse.com>, "David Howells" <dhowells@redhat.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "Danilo Krummrich" <dakr@kernel.org>, "Tyler Hicks" <code@tyhicks.com>,
- "Miklos Szeredi" <miklos@szeredi.hu>,
- "Chuck Lever" <chuck.lever@oracle.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>,
- "Dai Ngo" <Dai.Ngo@oracle.com>, "Namjae Jeon" <linkinjeon@kernel.org>,
- "Steve French" <smfrench@gmail.com>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- "Carlos Maiolino" <cem@kernel.org>,
- "John Johansen" <john.johansen@canonical.com>,
- "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Stephen Smalley" <stephen.smalley.work@gmail.com>,
- "Ondrej Mosnacek" <omosnace@redhat.com>,
- "Mateusz Guzik" <mjguzik@gmail.com>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Stefan Berger" <stefanb@linux.ibm.com>,
- "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
- netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
- linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v6 00/15] Create and use APIs to centralise locking for
- directory ops
-In-reply-to: <20251114-liedgut-eidesstattlich-8c116178202f@brauner>
-References: <20251113002050.676694-1-neilb@ownmail.net>,
- <20251114-baden-banknoten-96fb107f79d7@brauner>,
- <20251114-liedgut-eidesstattlich-8c116178202f@brauner>
-Date: Thu, 27 Nov 2025 22:11:33 +1100
-Message-id: <176424189349.634289.4480398011245842622@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.52.0.177.g9f829587af-goog
+Message-ID: <20251127115136.3064948-1-gnoack@google.com>
+Subject: [PATCH v3 0/3] Landlock multithreaded enforcement
+From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+To: linux-security-module@vger.kernel.org, 
+	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
+Cc: Jann Horn <jannh@google.com>, Serge Hallyn <sergeh@kernel.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Tingmao Wang <m@maowtm.org>, 
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 15 Nov 2025, Christian Brauner wrote:
-> On Fri, Nov 14, 2025 at 01:24:41PM +0100, Christian Brauner wrote:
-> > On Thu, Nov 13, 2025 at 11:18:23AM +1100, NeilBrown wrote:
-> > > Following is a new version of this series:
-> > >  - fixed a bug found by syzbot
-> > >  - cleanup suggested by Stephen Smalley
-> > >  - added patch for missing updates in smb/server - thanks Jeff Layton
-> >=20
-> > The codeflow right now is very very gnarly in a lot of places which
-> > obviously isn't your fault. But start_creating() and end_creating()
-> > would very naturally lend themselves to be CLASS() guards.
-> >=20
-> > Unrelated: I'm very inclined to slap a patch on top that renames
-> > start_creating()/end_creating() and start_dirop()/end_dirop() to
-> > vfs_start_creating()/vfs_end_creating() and
-> > vfs_start_dirop()/vfs_end_dirop(). After all they are VFS level
-> > maintained helpers and I try to be consistent with the naming in the
-> > codebase making it very easy to grep.
->=20
-> @Neil, @Jeff, could you please look at:
-> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=3Dvfs.all
->=20
-> and specifically at the merge conflict resolution I did for:
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=3Dvfs=
-.all&id=3Df28c9935f78bffe6fee62f7fb9f6c5af7e30d9b2
->=20
-> and tell me whether it all looks sane?
->=20
+This patch set adds the LANDLOCK_RESTRICT_SELF_TSYNC flag to
+landlock_restrict_self().  With this flag, the passed Landlock ruleset
+will not only be applied to the calling thread, but to all threads
+which belong to the same process.
 
-That merge is a7b062be95fed490d1dcd350d3b5657f243d7d4f today, and I
-agree with Jeff that it looks good.
+Motivation
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-Thanks,
-NeilBrown
+TL;DR: The libpsx/nptl(7) signal hack which we use in user space for
+multi-threaded Landlock enforcement is incompatible with Landlock's
+signal scoping support.  Landlock can restrict the use of signals
+across Landlock domains, but we need signals ourselves in user space
+in ways that are not permitted any more under these restrictions.
+
+Enabling Landlock proves to be difficult in processes that are already
+multi-threaded at the time of enforcement:
+
+* Enforcement in only one thread is usually a mistake because threads
+  do not normally have proper security boundaries between them.
+
+* Also, multithreading is unavoidable in some circumstances, such as
+  when using Landlock from a Go program.  Go programs are already
+  multithreaded by the time that they enter the "func main()".
+
+So far, the approach in Go[1] was to use libpsx[2].  This library
+implements the mechanism described in nptl(7) [3]: It keeps track of
+all threads with a linker hack and then makes all threads do the same
+syscall by registering a signal handler for them and invoking it.
+
+With commit 54a6e6bbf3be ("landlock: Add signal scoping"), Landlock
+gained the ability to restrict the use of signals across different
+Landlock domains.
+
+Landlock's signal scoping support is incompatible with the libpsx
+approach of enabling Landlock:
+
+(1) With libpsx, although all threads enforce the same ruleset object,
+    they technically do the operation separately and end up in
+    distinct Landlock domains.  This breaks signaling across threads
+    when using LANDLOCK_SCOPE_SIGNAL.
+
+(2) Cross-thread Signals are themselves needed to enforce further
+    nested Landlock domains across multiple threads.  So nested
+    Landlock policies become impossible there.
+
+In addition to Landlock itself, cross-thread signals are also needed
+for other seemingly-harmless API calls like the setuid(2) [4] and for
+the use of libcap (co-developed with libpsx), which have the same
+problem where the underlying syscall only applies to the calling
+thread.
+
+Implementation details
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Enforcement prerequisites
+-------------------------
+
+Normally, the prerequisite for enforcing a Landlock policy is to
+either have CAP_SYS_ADMIN or the no_new_privs flag.  With
+LANDLOCK_RESTRICT_SELF_TSYNC, the no_new_privs flag will automatically
+be applied for sibling threads if the caller had it.
+
+These prerequisites and the "TSYNC" behavior work the same as for
+Seccomp and its SECCOMP_FILTER_FLAG_TSYNC flag.
+
+Pseudo-signals
+--------------
+
+Landlock domains are stored in struct cred, and a task's struct cred
+can only be modified by the task itself [6].
+
+To make that work, we use task_work_add() to register a pseudo-signal
+for each of the affected threads.  At signal execution time, these
+tasks will coordinate to switch out their Landlock policy in lockstep
+with each other, guaranteeing all-or-nothing semantics.
+
+This implementation can be thought of as a kernel-side implementation
+of the userspace hack that glibc/NPTL use for setuid(2) [3] [4], and
+which libpsx implements for libcap [2].
+
+Finding all sibling threads
+---------------------------
+
+In order to avoid grabbing the global task_list_lock, we employ the
+scheme proposed by Jann Horn in [7]:
+
+1. Loop through the list of sibling threads
+2. Schedule a pseudo-signal for each and make each thread wait in the
+   pseudo-signal
+3. Go back to 1. and look for more sibling thread that we have not
+   seen yet
+
+Do this until no more new threads are found.  As all threads were
+waiting in their pseudo-signals, they can not spawn additional threads
+and we found them all.
+
+Coordination between tasks
+--------------------------
+
+As tasks run their pseudo-signal task work, they coordinate through
+the following completions:
+
+ - all_prepared (with counter num_preparing)
+=20
+   When done, all new sibling threads in the inner loop(!) of finding
+   new threads are now in their pseudo-signal handlers and have
+   prepared the struct cred object to commit (or written an error into
+   the shared "preparation_error").
+
+   The lifetime of all_prepared is only the inner loop of finding new
+   threads.
+
+ - ready_to_commit
+
+   When done, the outer loop of finding new threads is done and all
+   sibling threads have prepared their struct cred object.  Marked
+   completed by the calling thread.
+
+ - all_finished
+
+   When done, all sibling threads are done executing their
+   pseudo-signal handlers.
+
+Use of credentials API
+----------------------
+
+Under normal circumstances, sibling threads share the same struct cred
+object.  To avoid unnecessary duplication, if we find that a thread
+uses the same struct cred as the calling thread, we side-step the
+normal use of the credentials API [6] and place a pointer to that
+existing struct cred instead of creating a new one using
+prepare_creds() in the sibling thread.
+
+Noteworthy discussion points
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* We are side-stepping the normal credentials API [6], by re-wiring an
+  existing struct cred object instead of calling prepare_creds().
+
+  We can technically avoid it, but it would create unnecessary
+  duplicate struct cred objects in multithreaded scenarios.
+
+Change Log
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+v3:
+ - bigger organizational changes
+   - move tsync logic into own file
+   - tsync: extract count_additional_threads() and
+     schedule_task_work()
+ - code style
+   - restrict_one_thread, syscalls.c: use err instead of res (mic)
+   - restrict_one_thread: inline current_cred variable
+   - restrict_one_thread: add comment to shortcut logic (mic)
+   - rsync_works helpers: use size_t i for loop vars
+   - landlock_cred_copy: skip redundant NULL checks
+   - function name: s,tsync_works_free,tsync_works_release, (mic)
+   - tsync_works_grow_by: kzalloc into a temporary variable for
+     clarity (mic)
+   - tsync_works_contains_task: make struct task_works const
+ - bugs
+   - handle kmalloc family failures correctly (jannh)
+   - tsync_works_release: check task NULL ptr before put
+   - s/put_task_struct_rcu_user/put_task_struct/ (jannh)
+ - concurrency bugs
+   - schedule_task_work: do not return error when encountering exiting
+     tasks This can happen during normal operation, we should not
+     error due to it (jannh)
+   - landlock_restrict_sibling_threads: make current hold the
+     num_unfinished/all_finished barrier (more robust, jannh)
+   - un-wedge the deadlock using wait_for_completion_interruptible
+     (jannh) See "testing" below and discussion in
+     https://lore.kernel.org/all/CAG48ez1oS9kANZBq1bt+D76MX03DPHAFp76GJt7z5=
+yx-Na1VLQ@mail.gmail.com/
+ - logic
+   - tsync_works_grow_by(): grow to size+n, not capacity+n
+   - tsync_works_grow_by(): add overflow check for capacity increase
+   - landlock_restrict_self(): make TSYNC and LOG flags work together
+   - set no_new_privs in the same way as seccomp,
+     whenever the calling thread had it
+ - testing
+   - add test where multiple threads call landlock_restrict_self()
+     concurrently
+   - test that no_new_privs is implicitly enabled for sibling threads
+ - bump ABI version to v8
+ - documentation improvements
+   - document ABI v8
+   - move flag documentation into the landlock.h header
+   - comment: Explain why we do not need sighand->siglock or
+     cred_guard_mutex
+   - various comment improvements
+   - reminder above struct landlock_cred_security about updating
+     landlock_cred_copy on changes
+
+v2:
+ - https://lore.kernel.org/all/20250221184417.27954-2-gnoack3000@gmail.com/
+ - Semantics:
+   - Threads implicitly set NO_NEW_PRIVS unless they have
+     CAP_SYS_ADMIN, to fulfill Landlock policy enforcement
+     prerequisites
+   - Landlock policy gets unconditionally overridden even if the
+     previously established Landlock domains in sibling threads were
+     diverging.
+ - Restructure discovery of all sibling threads, with the algorithm
+   proposed by Jann Horn [7]: Loop through threads multiple times, and
+   get them all stuck in the pseudo signal (task work), until no new
+   sibling threads show up.
+ - Use RCU lock when iterating over sibling threads.
+ - Override existing Landlock domains of other threads,
+   instead of applying a new Landlock policy on top
+ - Directly re-wire the struct cred for sibling threads,
+   instread of creating a new one with prepare_creds().
+ - Tests:
+   - Remove multi_threaded_failure test
+     (The only remaining failure case is ENOMEM,
+     there is no good way to provoke that in a selftest)
+   - Add test for success despite diverging Landlock domains.
+
+[1] https://github.com/landlock-lsm/go-landlock
+[2] https://sites.google.com/site/fullycapable/who-ordered-libpsx
+[3] https://man.gnoack.org/7/nptl
+[4] https://man.gnoack.org/2/setuid#VERSIONS
+[5] https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45=
+e6b8@google.com/
+[6] https://www.kernel.org/doc/html/latest/security/credentials.html
+[7] https://lore.kernel.org/all/CAG48ez0pWg3OTABfCKRk5sWrURM-HdJhQMcWedEppc=
+_z1rrVJw@mail.gmail.com/
+
+G=C3=BCnther Noack (3):
+  landlock: Multithreading support for landlock_restrict_self()
+  landlock: selftests for LANDLOCK_RESTRICT_SELF_TSYNC
+  landlock: Document LANDLOCK_RESTRICT_SELF_TSYNC
+
+ Documentation/userspace-api/landlock.rst      |   8 +
+ include/uapi/linux/landlock.h                 |  13 +
+ security/landlock/Makefile                    |   2 +-
+ security/landlock/cred.h                      |  12 +
+ security/landlock/limits.h                    |   2 +-
+ security/landlock/syscalls.c                  |  66 ++-
+ security/landlock/tsync.c                     | 555 ++++++++++++++++++
+ security/landlock/tsync.h                     |  16 +
+ tools/testing/selftests/landlock/base_test.c  |   8 +-
+ tools/testing/selftests/landlock/tsync_test.c | 161 +++++
+ 10 files changed, 810 insertions(+), 33 deletions(-)
+ create mode 100644 security/landlock/tsync.c
+ create mode 100644 security/landlock/tsync.h
+ create mode 100644 tools/testing/selftests/landlock/tsync_test.c
+
+--=20
+2.52.0.177.g9f829587af-goog
+
