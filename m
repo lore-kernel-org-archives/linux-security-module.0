@@ -1,115 +1,201 @@
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D0432E73D
-	for <linux-security-module@vger.kernel.org>; Thu, 27 Nov 2025 11:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADA323ABA7;
+	Thu, 27 Nov 2025 13:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764244333; cv=none; b=R0owVjVmjAhnnubNJ2VkcQrCHv565Q4KDbaGA3qYGBteO9ApNfv3wAGQ23EOjQFDGj7UJtQ553KwdmNXXcl06U4Usnsa8BITBMlx9YLtCu8b9yzzhvOveqNbx3tX+u2/tdnQh3RVFIvPFCdLLavZo68o88wnTK8Ue+KbF0wbnQ0=
+	t=1764251708; cv=none; b=ml1iowV1c72zdIJtE3h+IlnYM2rL4fusDejeuWmm53M8tp1rtEBb4q4KF4X6AF0OQXU9ErjVoqNmTYIPEz0reFwpX574vs+Lb4DAB3bgBbEY4TNe9OSeoDy29Ecj0c+yZvchqMqEyhIzTHc+7C5Hsf/eiCcvfgOIpQH2FpqEKeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764244333; c=relaxed/simple;
-	bh=E4+VOev7ntVInLoGUgu0QvL2Aj12H2FR+DYid1rY8Xo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mkXwlPgkl4Ytf8FYC3r+VCggfOoK5QqKNLgRbJdDwIBrNS/PmT5ouz91yYgBwup9F4Ee5B955ZtYLuIJTqSZcMhUYhFHfHmTp2BCPj0bg65OokzEdOju6EUGQsNyYHzeMvN6fBQC2G+DmPghXpjEm6RlrlmUQhZFDNrRRdqEyn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NhPr6d2K; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1764251708; c=relaxed/simple;
+	bh=pjCSvHbYvZBMbNTLOUJC3jUgL86Z43wzJv9uin55E5o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eIykxLcTpma7FSgHC5qyHAQZzGwSJpzfuVtxCBm1hR7QMLuH+6f9lh0XAaK+Fy+8Jfz8/3UQnUoyhOORy3Lex9+RcAV9CYT2SfyP3mTyDeHqt9WDGuhHaROyWjxq86Zpojtx8Ci9OLiPT3+qEo0DgolVcfutH5w9Z/UwCR17HUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VYmC2LJa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NhPr6d2K"
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4779b3749a8so5968475e9.1
-        for <linux-security-module@vger.kernel.org>; Thu, 27 Nov 2025 03:52:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1764244330; x=1764849130; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gJ2dEwNUNH5jUyUdNyD7xKzQwfzrE23av1HE0ybWK9M=;
-        b=NhPr6d2KPhnTiybn7OMHFCkM7GFt86FYuAv4giMlbJR/yI9luseG5WaV4JDLQ+JihQ
-         db1byWbrcddDH9hXKN0/Olzpcoy3TUH9izx8UeF4tybBVECyzYIzB+UgUjxsrKyYSA5S
-         JGlD2I2XrKFnmIho4O9Ph6Ts8MWptBnBsWY7c1dB7xeIdpcWlVr35fDSc9+tg1ZqZ0TI
-         iXMj35yYErbFHEC/8c67kHb1EmEvL9XBbIIfln8JUSgQV7qyK+90yqxJRC+TIwDzzfqz
-         RwW+cXC049DlRrl3kLmZPUr0jJ0DL8BCJrxuaJEZWrcahqujmNB1yznTrT0EshIb7LJO
-         vlMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764244330; x=1764849130;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gJ2dEwNUNH5jUyUdNyD7xKzQwfzrE23av1HE0ybWK9M=;
-        b=sIi3bSaxzCKXoC8fU9a91d3jzeU+AY5PNOXmgm2ySIotxCCNKv5BZBuEbpfMBmaCdV
-         HIT0k4UzqCuu/ig3+8lMNYc+BI/agGfxxZV9rcI+t1v8R+w/6vRRjiVSuLhKKyXaW/lE
-         tmNXG2Mzcc+FzECoVBXdlxuPuXgcpacrinypmjeh4+J+W5H93lK+xcg4XVARcco69QoE
-         0Q+zWvBPkfz0QtZSOfMjS09iHviYqDoc8pjjuLXETnDumysdX5Ok/Slpm0sZ2nC/Hk+e
-         xLqhfh/w9tosromHnLf4DiEO/0X4qRfVdzT9PVH8rLa/6PW1pSRIfU481ZF9PmvZv2B8
-         REdA==
-X-Gm-Message-State: AOJu0Yyc2NK7dUBJL+cyHn4jldEcYExVZU31MiUPkP7/SSpJroK5tnJl
-	gwYrlraiYsU5lmOUF8HR6MYuoiu4p+vo0XiMCC/BO3A4ytxV+nOYHlr3jQHxkp9umXbXZZaZ2ej
-	vj+H8XzpLnQO4ukSmcVM4zGXhVqbpg0C3ImQLyZnnXXikL3K9PP98m05eTsp8Au21QwTOQfppHC
-	NpQuQqj937QK/K8b+yuGKPubVdoHRqfo5sLgoB/Athhi0E8JaLKvKgxbr3
-X-Google-Smtp-Source: AGHT+IG62YFzLrPtCp19ADtvM0nr6L2CBSYK870AQMIvmx0QMCOBardW75Fs1G4sxjHevz0Hk3e5cuK0qcQ=
-X-Received: from wmco13.prod.google.com ([2002:a05:600c:a30d:b0:477:9d88:de6d])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3b09:b0:477:a3f9:fda5
- with SMTP id 5b1f17b1804b1-477c016e425mr179615445e9.9.1764244330632; Thu, 27
- Nov 2025 03:52:10 -0800 (PST)
-Date: Thu, 27 Nov 2025 12:51:36 +0100
-In-Reply-To: <20251127115136.3064948-1-gnoack@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYmC2LJa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7CC9C4CEF8;
+	Thu, 27 Nov 2025 13:55:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764251708;
+	bh=pjCSvHbYvZBMbNTLOUJC3jUgL86Z43wzJv9uin55E5o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=VYmC2LJa5R/XZRm3FcRUSlkL8ULHVhW+hQi5wqXDeaBOxvYU/qPs+wsMVqwYVKwOq
+	 5e9caTlAGbBx/FiW8hl39ukOfIjPIKuraAp0uo3o+DpbWNZv/x+JxclT/VA5AWsaNm
+	 AM0vWdAh/XGW3NsurTjBDWHE+FqxkZKQZ9QTJJin3ZC4XsM9M4qeYaZw6DdChWwWZI
+	 HKLTpFP9y6eNUBMF/MAVkFd4GW27RBY0PVXNwqyUbu0qAd+AVEHtJ3YOh7pMGuwCMy
+	 dvYaHNIeh8Crg04dsHoaLEpUhinAxVfPUXhkUetHY4lN2wFVu0ksbyRD3Dz1XFMQ+H
+	 73FP3J6+Zijug==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: ross.philipson@oracle.com,
+	Jonathan McDowell <noodles@earth.li>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v7 03/11] KEYS: trusted: remove redundant instance of tpm2_hash_map
+Date: Thu, 27 Nov 2025 15:54:35 +0200
+Message-ID: <20251127135445.2141241-4-jarkko@kernel.org>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20251127135445.2141241-1-jarkko@kernel.org>
+References: <20251127135445.2141241-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251127115136.3064948-1-gnoack@google.com>
-X-Mailer: git-send-email 2.52.0.177.g9f829587af-goog
-Message-ID: <20251127115136.3064948-4-gnoack@google.com>
-Subject: [PATCH v3 3/3] landlock: Document LANDLOCK_RESTRICT_SELF_TSYNC
-From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-To: linux-security-module@vger.kernel.org, 
-	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
-Cc: Jann Horn <jannh@google.com>, Serge Hallyn <sergeh@kernel.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Tingmao Wang <m@maowtm.org>, 
-	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, "Andrew G. Morgan" <morgan@kernel.org>, 
-	John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Add documentation for LANDLOCK_RESTRICT_SELF_TSYNC.  It does not need to go
-into the main example, but it has a section in the ABI compatibility notes.
-In the HTML rendering, the main reference is the system call documentation,
-which is included from the landlock.h header file.
+Trusted keys duplicates tpm2_hash_map from TPM driver internals. Implement
+and export `tpm2_find_hash_alg()` in order to address this glitch, and
+replace redundant code block with a call this new function.
 
-Cc: Andrew G. Morgan <morgan@kernel.org>
-Cc: John Johansen <john.johansen@canonical.com>
-Cc: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org
-Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- Documentation/userspace-api/landlock.rst | 8 ++++++++
- 1 file changed, 8 insertions(+)
+v7:
+- A new patch.
+---
+ drivers/char/tpm/tpm2-cmd.c               | 19 +++++++++++++++--
+ include/linux/tpm.h                       |  7 ++-----
+ security/keys/trusted-keys/trusted_tpm2.c | 25 +++++------------------
+ 3 files changed, 24 insertions(+), 27 deletions(-)
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/users=
-pace-api/landlock.rst
-index 1d0c2c15c22e..f1251da9877c 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -604,6 +604,14 @@ Landlock audit events with the ``LANDLOCK_RESTRICT_SEL=
-F_LOG_SAME_EXEC_OFF``,
- sys_landlock_restrict_self().  See Documentation/admin-guide/LSM/landlock.=
-rst
- for more details on audit.
-=20
-+Thread synchronization (ABI < 8)
-+--------------------------------
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 97501c567c34..1393bfbeca64 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -18,7 +18,10 @@ static bool disable_pcr_integrity;
+ module_param(disable_pcr_integrity, bool, 0444);
+ MODULE_PARM_DESC(disable_pcr_integrity, "Disable integrity protection of TPM2_PCR_Extend");
+ 
+-static struct tpm2_hash tpm2_hash_map[] = {
++static struct {
++	unsigned int crypto_id;
++	unsigned int alg_id;
++} tpm2_hash_map[] = {
+ 	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
+ 	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+ 	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
+@@ -26,6 +29,18 @@ static struct tpm2_hash tpm2_hash_map[] = {
+ 	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
+ };
+ 
++int tpm2_find_hash_alg(unsigned int crypto_id)
++{
++	int i;
 +
-+Starting with the Landlock ABI version 8, it is now possible to
-+enforce Landlock rulesets across all threads of the calling process
-+using the ``LANDLOCK_RESTRICT_SELF_TSYNC`` flag passed to
-+sys_landlock_restrict_self().
++	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++)
++		if (crypto_id == tpm2_hash_map[i].crypto_id)
++			return tpm2_hash_map[i].alg_id;
 +
- .. _kernel_support:
-=20
- Kernel support
---=20
-2.52.0.177.g9f829587af-goog
++	return -EINVAL;
++}
++EXPORT_SYMBOL_GPL(tpm2_find_hash_alg);
++
+ int tpm2_get_timeouts(struct tpm_chip *chip)
+ {
+ 	chip->timeout_a = msecs_to_jiffies(TPM2_TIMEOUT_A);
+@@ -490,7 +505,7 @@ static int tpm2_init_bank_info(struct tpm_chip *chip, u32 bank_index)
+ 	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
+ 		enum hash_algo crypto_algo = tpm2_hash_map[i].crypto_id;
+ 
+-		if (bank->alg_id != tpm2_hash_map[i].tpm_id)
++		if (bank->alg_id != tpm2_hash_map[i].alg_id)
+ 			continue;
+ 
+ 		bank->digest_size = hash_digest_size[crypto_algo];
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 0e9e043f728c..e5fc7b73de2d 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -410,11 +410,6 @@ enum tpm2_session_attributes {
+ 	TPM2_SA_AUDIT			= BIT(7),
+ };
+ 
+-struct tpm2_hash {
+-	unsigned int crypto_id;
+-	unsigned int tpm_id;
+-};
+-
+ int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal);
+ void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal);
+ int tpm_buf_init_sized(struct tpm_buf *buf);
+@@ -465,6 +460,7 @@ static inline ssize_t tpm_ret_to_err(ssize_t ret)
+ 
+ #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+ 
++unsigned int tpm2_alg_to_crypto_id(unsigned int alg_id);
+ extern int tpm_is_tpm2(struct tpm_chip *chip);
+ extern __must_check int tpm_try_get_ops(struct tpm_chip *chip);
+ extern void tpm_put_ops(struct tpm_chip *chip);
+@@ -477,6 +473,7 @@ extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+ extern int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t max);
+ extern struct tpm_chip *tpm_default_chip(void);
+ void tpm2_flush_context(struct tpm_chip *chip, u32 handle);
++int tpm2_find_hash_alg(unsigned int crypto_id);
+ 
+ static inline void tpm_buf_append_empty_auth(struct tpm_buf *buf, u32 handle)
+ {
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 024be262702f..3205732fb4b7 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -18,14 +18,6 @@
+ 
+ #include "tpm2key.asn1.h"
+ 
+-static struct tpm2_hash tpm2_hash_map[] = {
+-	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
+-	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+-	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
+-	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
+-	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
+-};
+-
+ static u32 tpm2key_oid[] = { 2, 23, 133, 10, 1, 5 };
+ 
+ static int tpm2_key_encode(struct trusted_key_payload *payload,
+@@ -244,24 +236,17 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 	off_t offset = TPM_HEADER_SIZE;
+ 	struct tpm_buf buf, sized;
+ 	int blob_len = 0;
+-	u32 hash;
++	int hash;
+ 	u32 flags;
+-	int i;
+ 	int rc;
+ 
+-	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
+-		if (options->hash == tpm2_hash_map[i].crypto_id) {
+-			hash = tpm2_hash_map[i].tpm_id;
+-			break;
+-		}
+-	}
+-
+-	if (i == ARRAY_SIZE(tpm2_hash_map))
+-		return -EINVAL;
+-
+ 	if (!options->keyhandle)
+ 		return -EINVAL;
+ 
++	hash = tpm2_find_hash_alg(options->hash);
++	if (hash)
++		return hash;
++
+ 	rc = tpm_try_get_ops(chip);
+ 	if (rc)
+ 		return rc;
+-- 
+2.52.0
 
