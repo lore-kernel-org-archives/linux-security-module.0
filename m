@@ -1,173 +1,212 @@
-Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9328A33892C
-	for <linux-security-module@vger.kernel.org>; Thu, 27 Nov 2025 16:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891232D6E5C;
+	Thu, 27 Nov 2025 17:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764262655; cv=none; b=LLAf1BI2zNSS2JHxOsJLt/qLhF65/Y9tzisB+UwSkG+KDCITu3CGAu0Nu8tK5anHftAAqvQ67HH4FGokfQuJpodMnDnzTe1IuYrjDEfZm9YjAK6MjgedR7EhwyZB0b6PTOEKntEA8nE6ybCR4D7Sc0M0yqBiBclpKIzpYlLFrhA=
+	t=1764265575; cv=none; b=Rvoyf5KUNmpJ1IEtePhXQrj8ZmThu3P5mSj0zu4ldaT6BaFwyDgNK2yuCySdrCZTmOgYRRK4d5TTNSwq2RlJKoIu87N5i8UUg2ARj03btX1+iWFPXKWWcqptKaGFyuaXK/lcb1D2hMyt6R0mT6vTr5Z3FJl5WxYUKQJY8wVvrxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764262655; c=relaxed/simple;
-	bh=yKfoAhUeNlemorcYxw4yL14VYNrcxGWoQXtJzYJZsZA=;
+	s=arc-20240116; t=1764265575; c=relaxed/simple;
+	bh=I447F3im92CkiC4QnAuGz/QXkpu56lpsbIDxx+gs1so=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7gYW1zL5IAURmvBMYPzEEvlklBflWnUpua1+JmK4z+W/OkCEqNn14W3QnL7Z3/OS02zT+oUY6j08P3SLi0gG/WJcZSzfSc28No4AgU+6twb3BH/eyzd9Lrd4G2eyGPTb80CWu/bQ13LWwL4zc4fwFoNlIiZ+nfoHxfVrZomZZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=nF4qk+Fn; arc=none smtp.client-ip=84.16.66.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ee4gIEeuDD37ffHGeLb9zTOoTlyyUdMsFHMyN9gff95uS05QJGl/ex9NjsZJQezMpRowyF7ZNeIKkU7Xrh3wm5yqAOwGv5aoBTTinopb2sSJFix0Xfj/hfAdWnYvOBgEvWh3CGc/eo0xWSsouLzmcqcLwnDFM5bB+XlwLXQ96f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=agMNamLv; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="nF4qk+Fn"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dHMqZ1YhfzGWS;
-	Thu, 27 Nov 2025 17:50:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1764262218;
-	bh=/joIQd3Z2tdeV5NEK5aDhgrlOaIXqRbtYcvTxLNMBZk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nF4qk+FnK9epBbjtFGhWFceXUdPA6r1gfu2cwUbFI0wMA2r8o6GPk/MAHr9njetj7
-	 qWfss5FPqbYnxoIn0mZf4D4vGCJFUcFVVGAdLToxx9EvLdOZepFv+HCMXvhJuhVEe7
-	 jNZp6NkfaI90eNFmxXlnPeudnghUDwnFoOU06c60=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4dHMqY0ZfpzXkx;
-	Thu, 27 Nov 2025 17:50:16 +0100 (CET)
-Date: Thu, 27 Nov 2025 17:49:45 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Tingmao Wang <m@maowtm.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Ben Scarlato <akhna@google.com>, 
-	Christian Brauner <brauner@kernel.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Justin Suess <utilityemal77@gmail.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Paul Moore <paul@paul-moore.com>, Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
-	Matthieu Buffet <matthieu@buffet.re>, NeilBrown <neil@brown.name>
-Subject: Re: [PATCH v4 4/4] selftests/landlock: Add disconnected leafs and
- branch test suites
-Message-ID: <20251127.Zoogohsei6ie@digikod.net>
-References: <20251126191159.3530363-1-mic@digikod.net>
- <20251126191159.3530363-5-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b="agMNamLv"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=QrKycfT9IfRwE/BOnl/WKSFo6N/MNlM3l+vogwvl0FQ=; b=agMNamLvk284WO4eJj5MpOF3EV
+	Wy18iThzqhanalbLfI5nMdWP2DkyomLLtARvOpBnH1XJvN/X5Vlz5MIaJx6f2nMd/Mn9JEOdqNCx5
+	8XWRsacaS+GGHXMt2gV8J0r8BWbY4vSzJonT0wYizLee5XA6ibIKJUadYymGnaWJRB9FMieki7w50
+	m+UVn7Si27h1/3d9dUFqrkPpKYETfX12d4vRfAfKZzvUS4TzYaQ7EavcBMxX76llhVlQQws3iHpfl
+	SP1xienMbRMmSxO0mNDt2OKwt31eb8HAuEOZR8Y0iK0GdGwTbsRT+c6QBLdnCetdhwh5Pid+6B2Kn
+	U2NTXvHg==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1vOg43-003SKZ-2s;
+	Thu, 27 Nov 2025 17:45:55 +0000
+Date: Thu, 27 Nov 2025 17:45:55 +0000
+From: Jonathan McDowell <noodles@earth.li>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, ross.philipson@oracle.com,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v7 03/11] KEYS: trusted: remove redundant instance of
+ tpm2_hash_map
+Message-ID: <aSiOU7G1DEf-5-1a@earth.li>
+References: <20251127135445.2141241-1-jarkko@kernel.org>
+ <20251127135445.2141241-4-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251126191159.3530363-5-mic@digikod.net>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20251127135445.2141241-4-jarkko@kernel.org>
 
-On Wed, Nov 26, 2025 at 08:11:57PM +0100, Mickaël Salaün wrote:
-> Test disconnected directories with two test suites and 31 variants to
-> cover the main corner cases.
-> 
-> These tests are complementary to the previous commit.
-> 
-> Add test_renameat() and test_exchangeat() helpers.
-> 
-> Test coverage for security/landlock is 92.1% of 1927 lines according to
-> LLVM 20.
-> 
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Song Liu <song@kernel.org>
-> Cc: Tingmao Wang <m@maowtm.org>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> ---
-> 
-> Changes since v3:
-> - Update tests to reflect the new approach:
->   * layout4_disconnected_leafs.s1d41_s1d42_disconnected: allow all
->   * layout4_disconnected_leafs.s3d1_s4d1_new_parent: allow all
->   * layout4_disconnected_leafs.f1_f2_f3: allow read
->   * layout5_disconnected_branch.s2d3_mount1_dst_parent: allow all
->   * layout5_disconnected_branch.s4d1_rename_parent: allow all
-> - Update test coverage.
-> 
-> Changes since v2:
-> - Update test coverage.
-> 
-> Changes since v1:
-> - Rename layout4_disconnected to layout4_disconnected_leafs.
-> - Fix variable names.
-> - Add layout5_disconnected_branch test suite with 19 variants to cover
->   potential implementation issues.
-> ---
->  tools/testing/selftests/landlock/fs_test.c | 912 +++++++++++++++++++++
->  1 file changed, 912 insertions(+)
+On Thu, Nov 27, 2025 at 03:54:35PM +0200, Jarkko Sakkinen wrote:
+>Trusted keys duplicates tpm2_hash_map from TPM driver internals. Implement
+>and export `tpm2_find_hash_alg()` in order to address this glitch, and
+>replace redundant code block with a call this new function.
+>
+>Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+>---
+>v7:
+>- A new patch.
+>---
+> drivers/char/tpm/tpm2-cmd.c               | 19 +++++++++++++++--
+> include/linux/tpm.h                       |  7 ++-----
+> security/keys/trusted-keys/trusted_tpm2.c | 25 +++++------------------
+> 3 files changed, 24 insertions(+), 27 deletions(-)
+>
+>diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+>index 97501c567c34..1393bfbeca64 100644
+>--- a/drivers/char/tpm/tpm2-cmd.c
+>+++ b/drivers/char/tpm/tpm2-cmd.c
+>@@ -18,7 +18,10 @@ static bool disable_pcr_integrity;
+> module_param(disable_pcr_integrity, bool, 0444);
+> MODULE_PARM_DESC(disable_pcr_integrity, "Disable integrity protection of TPM2_PCR_Extend");
+>
+>-static struct tpm2_hash tpm2_hash_map[] = {
+>+static struct {
+>+	unsigned int crypto_id;
+>+	unsigned int alg_id;
+>+} tpm2_hash_map[] = {
+> 	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
+> 	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+> 	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
+>@@ -26,6 +29,18 @@ static struct tpm2_hash tpm2_hash_map[] = {
+> 	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
+> };
+>
+>+int tpm2_find_hash_alg(unsigned int crypto_id)
+>+{
+>+	int i;
+>+
+>+	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++)
+>+		if (crypto_id == tpm2_hash_map[i].crypto_id)
+>+			return tpm2_hash_map[i].alg_id;
+>+
+>+	return -EINVAL;
+>+}
+>+EXPORT_SYMBOL_GPL(tpm2_find_hash_alg);
+>+
+> int tpm2_get_timeouts(struct tpm_chip *chip)
+> {
+> 	chip->timeout_a = msecs_to_jiffies(TPM2_TIMEOUT_A);
+>@@ -490,7 +505,7 @@ static int tpm2_init_bank_info(struct tpm_chip *chip, u32 bank_index)
+> 	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
+> 		enum hash_algo crypto_algo = tpm2_hash_map[i].crypto_id;
+>
+>-		if (bank->alg_id != tpm2_hash_map[i].tpm_id)
+>+		if (bank->alg_id != tpm2_hash_map[i].alg_id)
+> 			continue;
+>
+> 		bank->digest_size = hash_digest_size[crypto_algo];
+>diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+>index 0e9e043f728c..e5fc7b73de2d 100644
+>--- a/include/linux/tpm.h
+>+++ b/include/linux/tpm.h
+>@@ -410,11 +410,6 @@ enum tpm2_session_attributes {
+> 	TPM2_SA_AUDIT			= BIT(7),
+> };
+>
+>-struct tpm2_hash {
+>-	unsigned int crypto_id;
+>-	unsigned int tpm_id;
+>-};
+>-
+> int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal);
+> void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal);
+> int tpm_buf_init_sized(struct tpm_buf *buf);
+>@@ -465,6 +460,7 @@ static inline ssize_t tpm_ret_to_err(ssize_t ret)
+>
+> #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+>
+>+unsigned int tpm2_alg_to_crypto_id(unsigned int alg_id);
+> extern int tpm_is_tpm2(struct tpm_chip *chip);
+> extern __must_check int tpm_try_get_ops(struct tpm_chip *chip);
+> extern void tpm_put_ops(struct tpm_chip *chip);
 
-> +/*
-> + * layout5_disconnected_branch before rename:
-> + *
-> + * tmp
-> + * ├── s1d1
-> + * │   └── s1d2 [source of the first bind mount]
-> + * │       └── s1d3
-> + * │           ├── s1d41
-> + * │           │   ├── f1
-> + * │           │   └── f2
-> + * │           └── s1d42
-> + * │               ├── f3
-> + * │               └── f4
-> + * ├── s2d1
-> + * │   └── s2d2 [source of the second bind mount]
-> + * │       └── s2d3
-> + * │           └── s2d4 [first s1d2 bind mount]
-> + * │               └── s1d3
-> + * │                   ├── s1d41
-> + * │                   │   ├── f1
-> + * │                   │   └── f2
-> + * │                   └── s1d42
-> + * │                       ├── f3
-> + * │                       └── f4
-> + * ├── s3d1
-> + * │   └── s3d2 [second s2d2 bind mount]
-> + * │       └── s2d3
-> + * │           └── s2d4 [first s1d2 bind mount]
-> + * │               └── s1d3
-> + * │                   ├── s1d41
-> + * │                   │   ├── f1
-> + * │                   │   └── f2
-> + * │                   └── s1d42
-> + * │                       ├── f3
-> + * │                       └── f4
-> + * └── s4d1
-> + *
-> + * After rename:
-> + *
-> + * tmp
-> + * ├── s1d1
-> + * │   └── s1d2 [source of the first bind mount]
-> + * │       └── s1d3
-> + * │           ├── s1d41
-> + * │           │   ├── f1
-> + * │           │   └── f2
-> + * │           └── s1d42
-> + * │               ├── f3
-> + * │               └── f4
-> + * ├── s2d1
-> + * │   └── s2d2 [source of the second bind mount]
-> + * ├── s3d1
-> + * │   └── s3d2 [second s2d2 bind mount]
-> + * └── s4d1
-> + *     └── s2d3 [renamed here]
-> + *         └── s2d4 [first s1d2 bind mount]
-> + *             └── s1d3
-> + *                 ├── s1d41
-> + *                 │   ├── f1
-> + *                 │   └── f2
-> + *                 └── s1d42
-> + *                     ├── f3
-> + *                     └── f4
-> + *
-> + * Decision path: s1d3 -> s1d2 -> s2d2 -> s3d1 -> tmp
-> + * s2d3 is ignored, as well as the directories under the mount points.
+This looks like an errant chunk? I can't see tpm2_alg_to_crypto_id 
+defined or used?
 
-I didn't update this comment, here is the new one:
+>@@ -477,6 +473,7 @@ extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+> extern int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t max);
+> extern struct tpm_chip *tpm_default_chip(void);
+> void tpm2_flush_context(struct tpm_chip *chip, u32 handle);
+>+int tpm2_find_hash_alg(unsigned int crypto_id);
+>
+> static inline void tpm_buf_append_empty_auth(struct tpm_buf *buf, u32 handle)
+> {
+>diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+>index 024be262702f..3205732fb4b7 100644
+>--- a/security/keys/trusted-keys/trusted_tpm2.c
+>+++ b/security/keys/trusted-keys/trusted_tpm2.c
+>@@ -18,14 +18,6 @@
+>
+> #include "tpm2key.asn1.h"
+>
+>-static struct tpm2_hash tpm2_hash_map[] = {
+>-	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
+>-	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+>-	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
+>-	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
+>-	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
+>-};
+>-
+> static u32 tpm2key_oid[] = { 2, 23, 133, 10, 1, 5 };
+>
+> static int tpm2_key_encode(struct trusted_key_payload *payload,
+>@@ -244,24 +236,17 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> 	off_t offset = TPM_HEADER_SIZE;
+> 	struct tpm_buf buf, sized;
+> 	int blob_len = 0;
+>-	u32 hash;
+>+	int hash;
+> 	u32 flags;
+>-	int i;
+> 	int rc;
+>
+>-	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
+>-		if (options->hash == tpm2_hash_map[i].crypto_id) {
+>-			hash = tpm2_hash_map[i].tpm_id;
+>-			break;
+>-		}
+>-	}
+>-
+>-	if (i == ARRAY_SIZE(tpm2_hash_map))
+>-		return -EINVAL;
+>-
+> 	if (!options->keyhandle)
+> 		return -EINVAL;
+>
+>+	hash = tpm2_find_hash_alg(options->hash);
+>+	if (hash)
+>+		return hash;
+>+
+> 	rc = tpm_try_get_ops(chip);
+> 	if (rc)
+> 		return rc;
+>-- 
+>2.52.0
 
- * Decision path for access from the s3d1/s3d2/s2d3/s2d4/s1d3 file descriptor:
- *   1. first bind mount:   s1d3 -> s1d2
- *   2. second bind mount:    s2d3
- *   3. tmp mount:              s4d1 -> tmp [disconnected branch]
- *   4. second bind mount:        s2d2
- *   5. tmp mount:                  s3d1 -> tmp
- *   6. parent mounts:                [...] -> /
- *
- * The s4d1 directory is evaluated even if it is not in the s2d2 mount.
+J.
+
+-- 
+Design a system any fool can use, and only a fool will want to use it.
