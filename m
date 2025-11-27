@@ -1,49 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C672579C8;
-	Thu, 27 Nov 2025 19:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66FF23EABB;
+	Thu, 27 Nov 2025 19:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764270224; cv=none; b=YDMMxt4TgLgzYZNNNXgEuqJPeO39MBNn+YkYJzJSltfSkzVcRlFGjbwt7dTMNspysJ5BSMRU1Rgjjyc/YM8fAbzuJZEOc+6bwlwmRmaP1H0WLpbP5ScQdiQOo3WrOE3tNp42pGJHc4YhCI3kHg0v6HSiqQZYDn/pS4SuxywCvgM=
+	t=1764270449; cv=none; b=lKZU1mRiNI8nsZoaW1lArrmRoVKjf1whHY29WpGCS6d6jtEmFlliqnxJqG+XlKSkgm5U8hnDQ6lme55TuwR4+rtWv0xQwUIritbVyCPH+gSwRHKRVe77BNtKoPxkKRE7kvonCzC7V2u+TvlztmGiuUFHju2MAKDgJ5htEIu0gxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764270224; c=relaxed/simple;
-	bh=oidtEZmruJt/+exvZ2yslfyHeuSoyqZt42PrNSDtmJA=;
+	s=arc-20240116; t=1764270449; c=relaxed/simple;
+	bh=ibJyM056T8UZwla7AY/4UvkPMuimmJY3SdHg2ySi9xA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lj/Gz7zcHYi9YOWDiw99fhDRYfacDKVm4n7FyaIVya6AU276OXpWe9hG6c7Dkzigy0JXJmF9DR5vgmLFgCLFFnGwPHRZA9/VlFYwpN27toeoKkvhhtwv/FCAZx6fZfyHXDnmvpoZuV/nQkkeFuFzgnh6DhbQiu4ZRc0NJax8/a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+xdh4hN; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cb3wjpleTuTLaP9Yn6qWtKECF3AelvhBESs21vTD5fwZdMb2UEr8CbNm419HFsxkXp1zYBe+NHvHyrepQXHNoEtrla371ZJMv8/fGvGM875qoSI8tD2O2BNoe8JQ7f12MGePUa+ZzWHUaZU0QNIXBpmPcwe7Rq55gEFCbFQ5buU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R6bCagyt; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+xdh4hN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB205C4CEF8;
-	Thu, 27 Nov 2025 19:03:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764270224;
-	bh=oidtEZmruJt/+exvZ2yslfyHeuSoyqZt42PrNSDtmJA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d+xdh4hNU9vh/OBFqpkdl5mSz1DqXyTny7tYfhRb7lxQEaJfjJeymj8NQz71L2v2q
-	 0JoM4D56gBlRwA4UUsdaZRPk+ljgTHZdryrhSjfhaAogfJfuxh8/gvpTobcDx18GuM
-	 Dulusr2PqzFPHxtYs72+VOu9IuhdPfXqdNK8ZFxqAmD6m2wfKOT17u5RN5LC6TcSHh
-	 pz4vI5vU1I7/W8IzBZP/fm1ueov3phqc+5wHTV0BPgtyawgcpkfZhUDKbhy4LzFlx5
-	 C5G6/e0/rgzHITl9C7xPlXhcwno3n07RCZKiFVoTK9g+eguaQaQr3nfHXjzWlGomZn
-	 nSnijSJgBfrLA==
-Date: Thu, 27 Nov 2025 21:03:39 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Jonathan McDowell <noodles@earth.li>
-Cc: linux-integrity@vger.kernel.org, ross.philipson@oracle.com,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v7 03/11] KEYS: trusted: remove redundant instance of
- tpm2_hash_map
-Message-ID: <aSigiwtumAKrJB5j@kernel.org>
-References: <20251127135445.2141241-1-jarkko@kernel.org>
- <20251127135445.2141241-4-jarkko@kernel.org>
- <aSiOU7G1DEf-5-1a@earth.li>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R6bCagyt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1764270448; x=1795806448;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ibJyM056T8UZwla7AY/4UvkPMuimmJY3SdHg2ySi9xA=;
+  b=R6bCagytV3qBNZwwBV9i57IR0yc+WtwmZV8WdEsixrk6zEhVyNWzdukd
+   8mcgg60Lm66AXDCthC2uw6lqxC4GiielNHWQ/M9h9G4EVO4mnT4jOeVDr
+   wGfNK2Q1ihgeZBltyKsIJnI7Ar2OUP6MUmwauVs9QGmBXJfT3YET20mm+
+   DPoUk3YZMsXe7R0tfK7psOWK2+inbUsY3rb2Nl+7hdKsug/TE8Q2fopvj
+   18FT0DncVZomMiUHQtsaKyj9xTcRIocv5H8iEs6fWr03ZuKVL/vk8mGCA
+   HI8a1ptTj1fbKmKrIsQ4rwK2oobTKa/wY8aDJT0NjetDv63VNWLcxuV74
+   g==;
+X-CSE-ConnectionGUID: deBUZqSkRBu4y0xMVcn+XQ==
+X-CSE-MsgGUID: uT0VXC+ZTX+I7lJYTYm+JA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11626"; a="66480997"
+X-IronPort-AV: E=Sophos;i="6.20,231,1758610800"; 
+   d="scan'208";a="66480997"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2025 11:07:27 -0800
+X-CSE-ConnectionGUID: XhDSF54NSwaFX6MQUt1kLA==
+X-CSE-MsgGUID: RTFps8NmSXCsxd4DiTWq4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,231,1758610800"; 
+   d="scan'208";a="192550326"
+Received: from lkp-server01.sh.intel.com (HELO 4664bbef4914) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 27 Nov 2025 11:07:23 -0800
+Received: from kbuild by 4664bbef4914 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vOhKr-000000005Xp-2RXc;
+	Thu, 27 Nov 2025 19:07:21 +0000
+Date: Fri, 28 Nov 2025 03:07:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, kernel-team@meta.com,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	Song Liu <song@kernel.org>
+Subject: Re: [PATCH bpf-next 1/3] bpf: Allow const char * from LSM hooks as
+ kfunc const string arguments
+Message-ID: <202511280214.sckLyHDU-lkp@intel.com>
+References: <20251127005011.1872209-6-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -52,162 +69,59 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aSiOU7G1DEf-5-1a@earth.li>
+In-Reply-To: <20251127005011.1872209-6-song@kernel.org>
 
-On Thu, Nov 27, 2025 at 05:45:55PM +0000, Jonathan McDowell wrote:
-> On Thu, Nov 27, 2025 at 03:54:35PM +0200, Jarkko Sakkinen wrote:
-> > Trusted keys duplicates tpm2_hash_map from TPM driver internals. Implement
-> > and export `tpm2_find_hash_alg()` in order to address this glitch, and
-> > replace redundant code block with a call this new function.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > ---
-> > v7:
-> > - A new patch.
-> > ---
-> > drivers/char/tpm/tpm2-cmd.c               | 19 +++++++++++++++--
-> > include/linux/tpm.h                       |  7 ++-----
-> > security/keys/trusted-keys/trusted_tpm2.c | 25 +++++------------------
-> > 3 files changed, 24 insertions(+), 27 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> > index 97501c567c34..1393bfbeca64 100644
-> > --- a/drivers/char/tpm/tpm2-cmd.c
-> > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > @@ -18,7 +18,10 @@ static bool disable_pcr_integrity;
-> > module_param(disable_pcr_integrity, bool, 0444);
-> > MODULE_PARM_DESC(disable_pcr_integrity, "Disable integrity protection of TPM2_PCR_Extend");
-> > 
-> > -static struct tpm2_hash tpm2_hash_map[] = {
-> > +static struct {
-> > +	unsigned int crypto_id;
-> > +	unsigned int alg_id;
-> > +} tpm2_hash_map[] = {
-> > 	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
-> > 	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
-> > 	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
-> > @@ -26,6 +29,18 @@ static struct tpm2_hash tpm2_hash_map[] = {
-> > 	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
-> > };
-> > 
-> > +int tpm2_find_hash_alg(unsigned int crypto_id)
-> > +{
-> > +	int i;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++)
-> > +		if (crypto_id == tpm2_hash_map[i].crypto_id)
-> > +			return tpm2_hash_map[i].alg_id;
-> > +
-> > +	return -EINVAL;
-> > +}
-> > +EXPORT_SYMBOL_GPL(tpm2_find_hash_alg);
-> > +
-> > int tpm2_get_timeouts(struct tpm_chip *chip)
-> > {
-> > 	chip->timeout_a = msecs_to_jiffies(TPM2_TIMEOUT_A);
-> > @@ -490,7 +505,7 @@ static int tpm2_init_bank_info(struct tpm_chip *chip, u32 bank_index)
-> > 	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
-> > 		enum hash_algo crypto_algo = tpm2_hash_map[i].crypto_id;
-> > 
-> > -		if (bank->alg_id != tpm2_hash_map[i].tpm_id)
-> > +		if (bank->alg_id != tpm2_hash_map[i].alg_id)
-> > 			continue;
-> > 
-> > 		bank->digest_size = hash_digest_size[crypto_algo];
-> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> > index 0e9e043f728c..e5fc7b73de2d 100644
-> > --- a/include/linux/tpm.h
-> > +++ b/include/linux/tpm.h
-> > @@ -410,11 +410,6 @@ enum tpm2_session_attributes {
-> > 	TPM2_SA_AUDIT			= BIT(7),
-> > };
-> > 
-> > -struct tpm2_hash {
-> > -	unsigned int crypto_id;
-> > -	unsigned int tpm_id;
-> > -};
-> > -
-> > int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal);
-> > void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal);
-> > int tpm_buf_init_sized(struct tpm_buf *buf);
-> > @@ -465,6 +460,7 @@ static inline ssize_t tpm_ret_to_err(ssize_t ret)
-> > 
-> > #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
-> > 
-> > +unsigned int tpm2_alg_to_crypto_id(unsigned int alg_id);
-> > extern int tpm_is_tpm2(struct tpm_chip *chip);
-> > extern __must_check int tpm_try_get_ops(struct tpm_chip *chip);
-> > extern void tpm_put_ops(struct tpm_chip *chip);
-> 
-> This looks like an errant chunk? I can't see tpm2_alg_to_crypto_id defined
-> or used?
+Hi Song,
 
-It is! Thanks, will remove.
+kernel test robot noticed the following build warnings:
 
-> 
-> > @@ -477,6 +473,7 @@ extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
-> > extern int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t max);
-> > extern struct tpm_chip *tpm_default_chip(void);
-> > void tpm2_flush_context(struct tpm_chip *chip, u32 handle);
-> > +int tpm2_find_hash_alg(unsigned int crypto_id);
-> > 
-> > static inline void tpm_buf_append_empty_auth(struct tpm_buf *buf, u32 handle)
-> > {
-> > diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-> > index 024be262702f..3205732fb4b7 100644
-> > --- a/security/keys/trusted-keys/trusted_tpm2.c
-> > +++ b/security/keys/trusted-keys/trusted_tpm2.c
-> > @@ -18,14 +18,6 @@
-> > 
-> > #include "tpm2key.asn1.h"
-> > 
-> > -static struct tpm2_hash tpm2_hash_map[] = {
-> > -	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
-> > -	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
-> > -	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
-> > -	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
-> > -	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
-> > -};
-> > -
-> > static u32 tpm2key_oid[] = { 2, 23, 133, 10, 1, 5 };
-> > 
-> > static int tpm2_key_encode(struct trusted_key_payload *payload,
-> > @@ -244,24 +236,17 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
-> > 	off_t offset = TPM_HEADER_SIZE;
-> > 	struct tpm_buf buf, sized;
-> > 	int blob_len = 0;
-> > -	u32 hash;
-> > +	int hash;
-> > 	u32 flags;
-> > -	int i;
-> > 	int rc;
-> > 
-> > -	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
-> > -		if (options->hash == tpm2_hash_map[i].crypto_id) {
-> > -			hash = tpm2_hash_map[i].tpm_id;
-> > -			break;
-> > -		}
-> > -	}
-> > -
-> > -	if (i == ARRAY_SIZE(tpm2_hash_map))
-> > -		return -EINVAL;
-> > -
-> > 	if (!options->keyhandle)
-> > 		return -EINVAL;
-> > 
-> > +	hash = tpm2_find_hash_alg(options->hash);
-> > +	if (hash)
-> > +		return hash;
-> > +
-> > 	rc = tpm_try_get_ops(chip);
-> > 	if (rc)
-> > 		return rc;
-> > -- 
-> > 2.52.0
-> 
-> J.
-> 
-> -- 
-> Design a system any fool can use, and only a fool will want to use it.
+[auto build test WARNING on bpf-next/master]
 
-BR, Jarkko
+url:    https://github.com/intel-lab-lkp/linux/commits/Song-Liu/bpf-Allow-const-char-from-LSM-hooks-as-kfunc-const-string-arguments/20251127-125352
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20251127005011.1872209-6-song%40kernel.org
+patch subject: [PATCH bpf-next 1/3] bpf: Allow const char * from LSM hooks as kfunc const string arguments
+config: loongarch-randconfig-001-20251127 (https://download.01.org/0day-ci/archive/20251128/202511280214.sckLyHDU-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project b3428bb966f1de8aa48375ffee0eba04ede133b7)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251128/202511280214.sckLyHDU-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511280214.sckLyHDU-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> kernel/bpf/verifier.c:9655:14: warning: unused variable 'tname' [-Wunused-variable]
+    9655 |         const char *tname;
+         |                     ^~~~~
+   1 warning generated.
+
+
+vim +/tname +9655 kernel/bpf/verifier.c
+
+  9649	
+  9650	/* Check for const string passed in as input to the bpf program. */
+  9651	static int check_reg_const_str_arg(struct bpf_reg_state *reg)
+  9652	{
+  9653		const struct btf *btf;
+  9654		const struct btf_type *t;
+> 9655		const char *tname;
+  9656	
+  9657		if (base_type(reg->type) != PTR_TO_BTF_ID)
+  9658			return -EINVAL;
+  9659	
+  9660		btf = reg->btf;
+  9661		t = btf_type_by_id(btf, reg->btf_id);
+  9662		if (!t)
+  9663			return -EINVAL;
+  9664	
+  9665		if (btf_type_is_const_char_ptr(btf, t))
+  9666			return 0;
+  9667		return -EINVAL;
+  9668	}
+  9669	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
