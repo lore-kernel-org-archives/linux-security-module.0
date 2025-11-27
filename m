@@ -1,80 +1,80 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818421A9FAB
-	for <linux-security-module@vger.kernel.org>; Thu, 27 Nov 2025 01:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C121E1E16
+	for <linux-security-module@vger.kernel.org>; Thu, 27 Nov 2025 01:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764207218; cv=none; b=iVVlALqYCNfWnU2gNEfvQEST+fkKo+qwssFXxO96j8b58rggaqeFLEBWJXpBHi0oznG2++BqSYtwHBjbxfC+kWYOTYUabXa2DHF4i8FaZrfKW2CS121ygui/jY5rwdyfv58RfKCUrBmtm4YVa+5pPc3075oe+4D7MaKJPqSM2IY=
+	t=1764207251; cv=none; b=LjlXPe3Moidp5GmovwErG2SOxr1w+GKIMdPKhsy6Rq3W8g9XDEmGIK5yayRTgnCoAcAgJNrLc90sx5esxWivf1/6YQk93HMCBw64Gvb8mrA/FmDUC6MfAoJsnjBXwWmQYjJoZaCyxNiksLdexq4MhwhZajHa4897HMf3A+pHSQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764207218; c=relaxed/simple;
-	bh=6hRnfwCsh3hm9wICLVK0h5rEEW0i2J03Tl1MTO88/+w=;
+	s=arc-20240116; t=1764207251; c=relaxed/simple;
+	bh=uQ5fzJJhHfa+TyGMDQSqzkJTNZFkQj8Lv7c69Kq7kjk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DLI18sYfY6cs/4j4zE18mfrdYbBPEuRQFFg3Op2A7ABXSXdOSSd3Vje/cqfHCph7zloqSkQlgwS108gcwUFHxlS79P2PXpkYnHaJrbhoYl+/MCYd+HVNqP/Fgbsem38mVms9LCFv9BdJJf2frfjuDHwnlihEXGSDxJUPGpl77rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=jnomzRyU; arc=none smtp.client-ip=185.125.188.122
+	 In-Reply-To:Content-Type; b=fN2/P8A7WN+H6aLs1l01RRu5LdQuxgLid4AtZZOnYhU/DvnzdVa0EzJCUuDq3AwtUl6MCvbjMtXVW+pvfE2iRst8YPARngXJOAsVwVch4MMjj+D0U1tZy3kCgYclGwN7uzX2WLi5MoTmRNhPSuz2eTxwvlAL6KXWGCX5J/Cj7d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=GpOPb7l4; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="jnomzRyU"
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="GpOPb7l4"
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 64A3D40F18
-	for <linux-security-module@vger.kernel.org>; Thu, 27 Nov 2025 01:33:34 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 089483F941
+	for <linux-security-module@vger.kernel.org>; Thu, 27 Nov 2025 01:34:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1764207214;
-	bh=w1WNEsEOXQyU5I7NFYOe1wob1k7a/n93rnsmBECbBUA=;
+	s=20251003; t=1764207248;
+	bh=TRKfXOlkmwqNMgnglxoR4XVNauUDD3kM3GM5CwFK/jE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=jnomzRyUdnXZnmo0PTxOb513s6O2egAlLadiJ+zENWoOeqkmma38DSICPRio7r29k
-	 gz0ZMxkUR+X5EPcguAcONsLlGZhZQcfP91J94yl7rpoHuOyB/99jHacn6kphrky93/
-	 /Vs7JPWg/2DP9fkFsee2khCiBseq54d2lYAV4gJSUfQhr4At9Do7uTggopZEZ9NoQK
-	 uzjnUEh3peiUc4I7qeMSvKTTVFJBWCM3v3ZH5z+jjeBQUtyljgXDyYXLxD1+VjQ2pw
-	 rl1yyserGjrp5SxmiRqfD5pQPaNkAO6cC8JRxl5RqwbvTLhRpFHyqg3tMawowmjr3x
-	 4boZapD2z4bkZvpXkwazW8F9xOia8vuqgXwToGD4/6U2AyVAFcjJ6crMtkRpf5Muzr
-	 ZEYMmNdnbXGEzhVHooBhAjCtviM7nkk7++UpQG9RSgAcUy4JtRTfMohQjj++OS9wqi
-	 v1nbn3KMkSbw632ecJFzFEhqogpVwLwAjOsLJ9R1sMJj40rmp3OIpb93Eq5ckAgZU1
-	 DA8rwpIBZDvvuBX4Yn3UulgbaTR00ahkoBO16w205WaLjxsO9YBbt/+4b2R3lrLtnK
-	 AYzChpgFtEb4szf9LSvZJZPA7muSfhnfhL0WxJls6L/gWwwcwD7ogCISHg3HS+kGE1
-	 BfYJU7R5f+fyapbnMxheeOVo=
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-298535ef0ccso3692485ad.3
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 17:33:34 -0800 (PST)
+	b=GpOPb7l4x+Qs5hYOyETPp37jbcvrJUV9thke49W6FR5g8vXT8Bq7HhZ3Zgi7x30qB
+	 g8DNZlsalqGACglNvUmIxnXdaW0GV1TaoSQS6hlJH0IDQS67/SVnaB/+lgGHWcbjnd
+	 p6zVbfEcwV526kbz7TmUzNGcvpnP0mms02FIk/t+APvBF4hEMrJAe4reiCCp8xRrPL
+	 lCE1aCffagKSpDNYvI+Cco7sT29f42TZP8uDh/qygTRslGs7NxzbnM9VMBs/Xh22bo
+	 cDQLWdF1V+3MNyLkFAiii/R9dVP0Exy5IN/D8FIBMEf9eGQNcUZoKazIKNbozzYUYI
+	 dXtReNPLXMzWa7aAKjKH0d77yHdEoUIv5ofza+oKGG8mO2/Ur0we02xgwqP9b2xn23
+	 qbNyOjNb3Y4PO5abprn06yvJcHwJERsuRBbYbBGXm7zqJu0uutxvT7DXRf27SLxmIF
+	 UfdtEWaoQKCFDvuT1lp3cMnY6f4vNORXPjXOhdMKetOzmM+BHD0hJYOAxAwGEaFDoe
+	 TO30wF7eK1z3lzWnjcH8/3kI8wwTuRwquT5gO1jeQKWTamIo+RXC6dIXRrACf7y9Tc
+	 4WApqtY0GreaWV8ow3LOkBWP1lXwUaRDsp0W7Gux2cWhJ8CFQ55kgNkWXTFkh9+ssn
+	 hfwyZqwxThZYdRAQjqxaRhe8=
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-34740cc80d5so552560a91.0
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 17:34:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764207212; x=1764812012;
+        d=1e100.net; s=20230601; t=1764207246; x=1764812046;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w1WNEsEOXQyU5I7NFYOe1wob1k7a/n93rnsmBECbBUA=;
-        b=Lga/GIVKu4aeUMd8q0J8ZI/DNw9I04SfVU441BnqEUrfV64uzRvMByFW1CX8hxl7r9
-         8URjEogOYMy6NXfKSD2sn/F7KMFeaaqeR6t/O66TmfY1Qkn2dM1rLDJu/TSFCc4eEl7G
-         ZAdP0VBq6P8jeFWAYknzur38FBg/hHJLift3oRxVGeGjal0L18PcAshbXwtNaZ65Xv7I
-         +lQB2wf+yZhI55HmO5mjq0Fk2/SGJp1tnu7O1qK/SqrvoknKfU/XUssTgO9M6OXbxRW+
-         RFq5sULLLbuzta5njRkHWP9/ADwT6g6vN1i6VhySEoAoBZBggjfPzOuT1uBiAZ14CPKZ
-         qMmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPUfY1nXuTBSrhpMg/83RhAbAsZ2q3vmZIZjfjTezYc4hnGhD4uzTcdWvKvkqbTahYgqiJ9aafI/ZnMKqkh5AdFWdwMKM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJU32ZhU50ROSNzXfXNjbFx+haZnUNofbU/YOm64udYy/UhkS6
-	BgHjlq9Q4Q35HozVTzt9dt/c2ZwaImGVEeYjJkdlapczyVwN5IzJSBK0l91qJU6eDlhEu5BTbtp
-	G4qX+AGvAaXiay9ZPGdjFnxLYsqDhxiKwvNdL/YYy9j8FxIETDeKyegYLgXHT+7SBGTOqdpXQKl
-	6TqMXTkNx5oWDo25EflQ==
-X-Gm-Gg: ASbGncu6wujBEpD25huTial71VmMaQTijb60Mq/OUgDNMsOw/+VWyRZbDCUUjadA4i5
-	6oyJr55s8LNAJaddqwgODTuS53whHhujTbAp6GtCdWhb64IY+g4lJVNVOA6rBJgL2qH9tYowf/9
-	F3CcFkDBzqxNFbsOJK5KEqkXJdrG/Kq9+kwbjzIRCIFdj5m1gncYnpwhCLae9MmDLhktIDCuKzd
-	HT1NkLpcvR9G1Bgp3c4H1MZMEJ79u6zrnEWwNRsQtHeu1Vl+JqRk4kOgr+HjJwhG4R1NKcRTtkh
-	NfjAja+5qNNcnNF7iQ4a2dN7iumSrOrGNv3mx0Xc487BC+uC3doU2f3BLfRjNar1YabKphpLuWn
-	TuUoCa1DUz1NPUVTBFI5SmN0X
-X-Received: by 2002:a17:903:90c:b0:295:54cb:a8df with SMTP id d9443c01a7336-29bab160a4amr86858815ad.36.1764207212681;
-        Wed, 26 Nov 2025 17:33:32 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGlGuhRGgdpoYL6MEbEVDBJWRcjdLBA9zSDy8IX0iEmr5D08qy2ccENoEiBbRJ8CCWPELi0jA==
-X-Received: by 2002:a17:903:90c:b0:295:54cb:a8df with SMTP id d9443c01a7336-29bab160a4amr86858595ad.36.1764207212335;
-        Wed, 26 Nov 2025 17:33:32 -0800 (PST)
+        bh=TRKfXOlkmwqNMgnglxoR4XVNauUDD3kM3GM5CwFK/jE=;
+        b=WJOK+b/wpvhMH6OiSOKCpijRN3tg3i9Npvrjmiy7R3/houTrYKawkf0wUynPETRCgO
+         aYSxnlYE9Jny8U4O4DS7BpLUORwqqDSYasR9FeuIGPlNY2HaghPvW8ZunEqaXfa5qGru
+         i/CCEhFbnu3M5YiwlcP96NYv2saZSR80AiYRVPU1ykywGadK4l9MQOGxsdd11X2Z1m84
+         NO+N8aascq11ZPlVkqMphbYBluPR79c+Vz7DY7jff3iZcXzRUdXUj6s/qWoqTTEQOiZL
+         wkKCk0skL8fT+/O7pRdVZhmuxiY6hs/+msrKX+qpg4A33Uo2iOmllOVJvD1eJTcCuy96
+         wrwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTvC+hCvhuB/jCy+7g2979LJO/gqeisWt4D9zwyukmycWRNXUe9H2uG2XeXD4y4+YjFjIKeVpF4vFX3yBcMDgN8d4Elxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyExTyf71s0jASpsxs+nTF2jDzQTuuWnY3qUvCdr6a4zDf5OL2
+	Mdrvb4exUL+xparBcut9+THLVFxJb4GhAWPFHoZxdeqhdMBt1ki86ADQlyko6zTIUQObv+VT/qC
+	fNV6yiDpWPgdVfJXFz+wYnNbcn8kMvO3006cJR9sU7KxY3bxWboS47vCOlQSRgsQjOIV4P8LRDZ
+	L2Z4PtV44rN7I038cGGA==
+X-Gm-Gg: ASbGncvbhDDvHrQyk3Bdry9EEwZHjn9vyuHDfUMN5+bYo9I7k37Cm9sl+hYS3DZNGd4
+	peuPBr8gkBmkJDv+iq72yrdiGN8wXlU2hXXkQBoyC57GwKqqBeca0jgPEEdRkYkl2sKY60t5fgh
+	m3XyiLvX1qJq+y3RX58Z6AUjqohEEPYHLw7pvbHri1pdSP2bN6LKz3k7sH5h6p+igNEV92WYkVX
+	XLJqMpI0hwyvkExjrusXom0pkpkgmQhxQIvK0uxGlBKRVQW9my+u/xAUFrZIKKKpUqCrQv7tIR0
+	aMENiLDmdTD+IdGkb3x1rxOZDVArIfz1KIHtHhCnt1TxR+LIt4ZDNCY7nUNYnnmt1ceZjlHTCpN
+	9Ix1BYRCCc34GUOkH6HgPVqRV
+X-Received: by 2002:a17:90b:4c48:b0:32e:5d87:8abc with SMTP id 98e67ed59e1d1-34733f3f6d5mr18438366a91.36.1764207246553;
+        Wed, 26 Nov 2025 17:34:06 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEnJZaIInZT52MCGIw+E2FRhO95wkEz5Pp9AmAdLIMmkYiGQZYS09ZQ458I/EYl5otmbG76iA==
+X-Received: by 2002:a17:90b:4c48:b0:32e:5d87:8abc with SMTP id 98e67ed59e1d1-34733f3f6d5mr18438351a91.36.1764207246214;
+        Wed, 26 Nov 2025 17:34:06 -0800 (PST)
 Received: from [192.168.192.85] ([50.47.129.42])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-29b5b107edesm207043365ad.5.2025.11.26.17.33.30
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-3476a59e4afsm3828879a91.10.2025.11.26.17.34.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Nov 2025 17:33:30 -0800 (PST)
-Message-ID: <72b1d078-7283-45a7-9709-ee899af09bdb@canonical.com>
-Date: Wed, 26 Nov 2025 17:33:30 -0800
+        Wed, 26 Nov 2025 17:34:05 -0800 (PST)
+Message-ID: <4e34cddb-2d21-4c2c-bf9d-a377ba55ddb1@canonical.com>
+Date: Wed, 26 Nov 2025 17:34:04 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -82,14 +82,14 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] apparmor: Replace sprintf/strcpy with
- scnprintf/strscpy in aa_policy_init
+Subject: Re: [PATCH RESEND] apparmor: replace sprintf with snprintf in
+ aa_new_learning_profile
 To: Thorsten Blum <thorsten.blum@linux.dev>, Paul Moore
  <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
  "Serge E. Hallyn" <serge@hallyn.com>
 Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20251122115549.448042-3-thorsten.blum@linux.dev>
+References: <20251122115446.447925-1-thorsten.blum@linux.dev>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -135,59 +135,64 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20251122115549.448042-3-thorsten.blum@linux.dev>
+In-Reply-To: <20251122115446.447925-1-thorsten.blum@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/22/25 03:55, Thorsten Blum wrote:
-> strcpy() is deprecated and sprintf() does not perform bounds checking
-> either. Although an overflow is unlikely, it's better to proactively
-> avoid it by using the safer strscpy() and scnprintf(), respectively.
+On 11/22/25 03:54, Thorsten Blum wrote:
+> Replace unbounded sprintf() calls with snprintf() to prevent potential
+> buffer overflows in aa_new_learning_profile(). While the current code
+> works correctly, snprintf() is safer and follows secure coding best
+> practices.  No functional changes.
 > 
-> Additionally, unify memory allocation for 'hname' to simplify and
-> improve aa_policy_init().
-> 
-> Link: https://github.com/KSPP/linux/issues/88
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
 > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
 I have pulled this into my tree
 
+
 Acked-by: John Johansen <john.johansen@canonical.com>
 
 > ---
->   security/apparmor/lib.c | 16 +++++++---------
->   1 file changed, 7 insertions(+), 9 deletions(-)
+>   security/apparmor/policy.c | 15 +++++++++------
+>   1 file changed, 9 insertions(+), 6 deletions(-)
 > 
-> diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-> index 82dbb97ad406..acf7f5189bec 100644
-> --- a/security/apparmor/lib.c
-> +++ b/security/apparmor/lib.c
-> @@ -478,19 +478,17 @@ bool aa_policy_init(struct aa_policy *policy, const char *prefix,
->   		    const char *name, gfp_t gfp)
->   {
->   	char *hname;
-> +	size_t hname_sz;
+> diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
+> index 50d5345ff5cb..b09323867fea 100644
+> --- a/security/apparmor/policy.c
+> +++ b/security/apparmor/policy.c
+> @@ -697,24 +697,27 @@ struct aa_profile *aa_new_learning_profile(struct aa_profile *parent, bool hat,
+>   	struct aa_profile *p, *profile;
+>   	const char *bname;
+>   	char *name = NULL;
+> +	size_t name_sz;
 >   
-> +	hname_sz = (prefix ? strlen(prefix) + 2 : 0) + strlen(name) + 1;
->   	/* freed by policy_free */
-> -	if (prefix) {
-> -		hname = aa_str_alloc(strlen(prefix) + strlen(name) + 3, gfp);
-> -		if (hname)
-> -			sprintf(hname, "%s//%s", prefix, name);
-> -	} else {
-> -		hname = aa_str_alloc(strlen(name) + 1, gfp);
-> -		if (hname)
-> -			strcpy(hname, name);
-> -	}
-> +	hname = aa_str_alloc(hname_sz, gfp);
->   	if (!hname)
->   		return false;
-> +	if (prefix)
-> +		scnprintf(hname, hname_sz, "%s//%s", prefix, name);
-> +	else
-> +		strscpy(hname, name, hname_sz);
->   	policy->hname = hname;
->   	/* base.name is a substring of fqname */
->   	policy->name = basename(policy->hname);
+>   	AA_BUG(!parent);
+>   
+>   	if (base) {
+> -		name = kmalloc(strlen(parent->base.hname) + 8 + strlen(base),
+> -			       gfp);
+> +		name_sz = strlen(parent->base.hname) + 8 + strlen(base);
+> +		name = kmalloc(name_sz, gfp);
+>   		if (name) {
+> -			sprintf(name, "%s//null-%s", parent->base.hname, base);
+> +			snprintf(name, name_sz, "%s//null-%s",
+> +				 parent->base.hname, base);
+>   			goto name;
+>   		}
+>   		/* fall through to try shorter uniq */
+>   	}
+>   
+> -	name = kmalloc(strlen(parent->base.hname) + 2 + 7 + 8, gfp);
+> +	name_sz = strlen(parent->base.hname) + 2 + 7 + 8;
+> +	name = kmalloc(name_sz, gfp);
+>   	if (!name)
+>   		return NULL;
+> -	sprintf(name, "%s//null-%x", parent->base.hname,
+> -		atomic_inc_return(&parent->ns->uniq_null));
+> +	snprintf(name, name_sz, "%s//null-%x", parent->base.hname,
+> +		 atomic_inc_return(&parent->ns->uniq_null));
+>   
+>   name:
+>   	/* lookup to see if this is a dup creation */
+
 
