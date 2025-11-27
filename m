@@ -1,171 +1,502 @@
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B64432AADB;
-	Thu, 27 Nov 2025 09:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98689239594
+	for <linux-security-module@vger.kernel.org>; Thu, 27 Nov 2025 09:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764235530; cv=none; b=P7+Qe9XTVwwaHE69jg7ySAS0XqfKK3c/RteQM9yimvifa5gR07LfvTHB3DMtWHgHxfUnYKIowluOP/UbUFTwf+F9OErb+1MoQhrbrnpKx+V5y93ZQHVuoh5ABI0M8A1FNw4vGc5b9LNS/8p+cFRNnobQVA3hnSOBonAUVB8xG4g=
+	t=1764235953; cv=none; b=GJ1T1dXH/m/C6Sv4MYWPdiNwTufEwnIIMjpNtSSU62ro7fA8BbntkfN7QygcBgtqULqi8X8Cv/oQT4Ukm2B+JGQSz90UzuT5yJdjU6bGWmWIzv3Q9nKdCPAgP33h/6eeDiVU7B+d+rscrR9ku2lDDkr0x+w5tPuD7INAzFLoTUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764235530; c=relaxed/simple;
-	bh=rXYyPdoUYUr42ufc6SJtbDfSp7m9ldasK7a8ppOEV1I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gEM7NxsO2iATOgwHhTEQNIsInK1wKAAVvpwVQEBmERTgX0J9z7WvR3peO+hdrBr8ViNe37OE5LSdtcrPgycuTw6r2h1nRGPONbWZp8AOjmEHgD+86SbAWvjmsoF26V3jLh5Hj/JrMDmOsIH2G6xyMsv9NiNpf8Imudd93zd2zo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=LxpT3RA2; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+	s=arc-20240116; t=1764235953; c=relaxed/simple;
+	bh=RI3VU7VYrjiIOXvXuGiOqx69AzvlJvzHHtiR11n/r1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BxmWulC+6Ik04+l7Z6fB1nWoZUIRRBtTQ/sVOrQzPIOp0VHvymOV+TSdYpGHITEbg3vVKMjXJcexmwQoupaNY97oRmVsdwCWP3bkmU183Oizn0Tvda/6S5uXuPU4nVV3LMBNkD/FQ1Xj2948eYvrf2f9ThAS3X80GQTi6mEMGGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GWJ2Vqep; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="LxpT3RA2"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=i42dTfiGDnlPRdQ/xPGyaB6FM4LqJLuJS/OfgBUfGtY=; t=1764235526;
-	x=1764840326; b=LxpT3RA2cCnBdSxQ9JX7ZdtXVentefeqfIuI5Mu1i53Sq8mY8JyLi71tLZFsB
-	PIMUHE/+hoyJdykqds6kPPXnaDcCb7l8CoSb2I8nNtRHtvxHK4C+Vo3nX/6pIWzxLwWCfNHa/aj4y
-	bq/C1zoqUYhRAZrnmRmNDBZUrUWiW8cjXVDUorXXYPDMeq3tqTDmgx0gmpM/8uTQypKVQKkwdmBfc
-	u9u/l27qGrmFu9Bv7HvdBMXTy5NBizUTcLx6kIiO+einpFR4Ew38asy2LmfTkNbZQiysfkWns45JJ
-	YXWI2UVxmvCXj12MTW5b19edKiihcNW2ZVwN0oVLiOU8FBUGKA==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.99)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1vOYFa-00000002SzL-1BUq; Thu, 27 Nov 2025 10:25:18 +0100
-Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.99)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1vOYFa-00000001ITL-0FZh; Thu, 27 Nov 2025 10:25:18 +0100
-Message-ID: <6d80f9bc5fd6d91ed2451d140227b866d6273af4.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 0/2] apparmor unaligned memory fixes
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Helge Deller <deller@kernel.org>, John Johansen
-	 <john.johansen@canonical.com>
-Cc: david laight <david.laight@runbox.com>, Helge Deller <deller@gmx.de>, 
-	linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, linux-parisc@vger.kernel.org
-Date: Thu, 27 Nov 2025 10:25:17 +0100
-In-Reply-To: <aSdfyGv2T88T5FEu@carbonx1>
-References: <ba3d5651-fa68-4bb5-84aa-35576044e7b0@canonical.com>
-	 <aSXHCyH_rS-c5BgP@p100>
-	 <e88c32c2-fb18-4f3e-9ec2-a749695aaf0a@canonical.com>
-	 <c192140a-0575-41e9-8895-6c8257ce4682@gmx.de>
-	 <d35010b3-7d07-488c-b5a4-a13380d0ef7c@canonical.com>
-	 <20251126104444.29002552@pumpkin>
-	 <4034ad19-8e09-440c-a042-a66a488c048b@gmx.de>
-	 <20251126142201.27e23076@pumpkin> <aScY13MEBATreotz@carbonx1>
-	 <f5637038-9661-47fe-ba69-e461760ac975@canonical.com>
-	 <aSdfyGv2T88T5FEu@carbonx1>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GWJ2Vqep"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-42bb288c1bfso356055f8f.2
+        for <linux-security-module@vger.kernel.org>; Thu, 27 Nov 2025 01:32:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1764235950; x=1764840750; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=b9ZdYOKn63iPj+OVfDR0OHnLILRSq1T0QnS+z/qxeF4=;
+        b=GWJ2Vqep4LUzI7cAGVHHA689cPpTHgQHckaKI4pYVesAT9HX7UZTr2W79K5FdSjzk0
+         s8AD9jYQpHg4Z6+loebVQMBj1MRFw5DcjjVc7yCeFwYCizsrXgTft9mANKKKZ6obYgWt
+         SkMG6P2VarMqD1mRr8nQh/9x/HKlaW/yxH5Jtu2IzQ6XqIgdQs3sdXBlzz0FObxJh58l
+         LG/doXMbqY1pdNMeciTgzRDUrmBesH9fhqSxJtKpkMEc8JnGFtylcaXGH/23yKgCAk+o
+         /j1pQpEP7S1nZmGmzGh59xnw0puZ6nP48558bBtZGZhXViNShHQPyrs5M8fA4NM7OtAU
+         REdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764235950; x=1764840750;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b9ZdYOKn63iPj+OVfDR0OHnLILRSq1T0QnS+z/qxeF4=;
+        b=fy6X5oGYt6ZIrRfUJRVZ2MEuem876llXRCRwwZRdYOaqzsAV+CVz4Ycio7yYnagUXz
+         8z0A27lWnzvE8k9uZheNsHSnAQFMtWcn3zHdCV99/s4OfUxgnmS9rdn5ZV3nZ6GWnrYs
+         iAc8hKeCX1zJppXWIZcgZupRU9npiK+4F+2Jg4JN2tUytRAUTgGhjim4nGP/fNO4IKOg
+         DRIKkAtcoJxWsyLuQdvYAkf28l+JiKMLUddPVJsU31xbwe/LVj+acvRyl73op3alO62K
+         KJWlqSeS8VjxRe+VTJoI6e6OLnYruZo5vWxBtsDjIUT2L88gcdRs2880RkLXVRWNsXuw
+         l80Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUSYAZ2geYw2Fb45BNtqyocfbC6RlPRst6rSlKy+Oc//x+9ou2CKjcXetjwivtlkxauEdAGeUs1cRmGFj+Yybp8Y3txMPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMcvQJttxD3GeQ+NneTzKQiSpVzBat8G1rn6l7IvaVE1LVqRL4
+	/ZBT/rlVBsbNvhmDN4msjtJwkui8vTIkolfIex9z7uFKhPkLEM1ghH7kmqERJ/OiEw==
+X-Gm-Gg: ASbGncuwxdz773LyB2njY95mTBbCIEK5h7pGEi8aCUC7vNBv8PoxySuuSUi77JT8cVP
+	jj0eFAdfkcyw2kliDOnnCXqp6kPz47xCZuyQTl6L79+OjWbNhnPKDJ+nKYTW7+2Gv1ftTcpF8eU
+	Bl2xrPlYcVYMRfIwtXj89ooyRgTqUmZ3llm58vWOJIIWBci+uebQ7Qt1e0jDJdtx5UKwErhnfeL
+	NXgHqgnvxK/DDI3unFxkphnhPB+HOZQEtUEC8pAvJhwexHrl+PdnroFZe/5PsIOpx6mzwMW92YV
+	IYUiZI6OgHy9LQpOiuz6NfY3Z75vKpl3cdRQmnVvag/+3asWRlHEpGugw707rt41mrg+HlsyU7l
+	TFS/MSzyBiQQJSp6UkqugLTWyJ0eGJ/nm07+Sd92etycTyyJjSc9/d/U5ndx+jtwXjiONT4T2sP
+	/FvDAVtQXbXdt6e8dZ2fpF3OzOiT/7wMa5IhjjgcFIXA==
+X-Google-Smtp-Source: AGHT+IFurgxVemYzJu4yXCQInFC8HyYfJXdwq8km6GSVnaH7DrzI+QU5tbez3w6AOHJFQ7z0a80lyQ==
+X-Received: by 2002:a05:6000:40dd:b0:42b:39fb:e87f with SMTP id ffacd0b85a97d-42e0f350357mr10591359f8f.49.1764235949604;
+        Thu, 27 Nov 2025 01:32:29 -0800 (PST)
+Received: from google.com ([2a00:79e0:288a:8:2372:89e8:ec59:7515])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42e1c5d6064sm2495137f8f.13.2025.11.27.01.32.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Nov 2025 01:32:26 -0800 (PST)
+Date: Thu, 27 Nov 2025 10:32:21 +0100
+From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Jann Horn <jannh@google.com>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Tingmao Wang <m@maowtm.org>, Paul Moore <paul@paul-moore.com>,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] landlock: Multithreading support for
+ landlock_restrict_self()
+Message-ID: <aSgapXYd_Kbtw9ZB@google.com>
+References: <20251001111807.18902-1-gnoack@google.com>
+ <20251001111807.18902-2-gnoack@google.com>
+ <20251017.ohthoos9Ogha@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251017.ohthoos9Ogha@digikod.net>
 
-Hi Helge,
+Hello!
 
-On Wed, 2025-11-26 at 21:15 +0100, Helge Deller wrote:
-> So, here is a (untested) v3:
->=20
->=20
-> [PATCH v3] apparmor: Optimize table creation from possibly unaligned memo=
-ry
->=20
-> Source blob may come from userspace and might be unaligned.
-> Try to optize the copying process by avoiding unaligned memory accesses.
->=20
-> Signed-off-by: Helge Deller <deller@gmx.de>
->=20
-> diff --git a/security/apparmor/include/match.h b/security/apparmor/includ=
-e/match.h
-> index 1fbe82f5021b..19e72b3e8f49 100644
-> --- a/security/apparmor/include/match.h
-> +++ b/security/apparmor/include/match.h
-> @@ -104,16 +104,18 @@ struct aa_dfa {
->  	struct table_header *tables[YYTD_ID_TSIZE];
->  };
-> =20
-> -#define byte_to_byte(X) (X)
-> -
->  #define UNPACK_ARRAY(TABLE, BLOB, LEN, TTYPE, BTYPE, NTOHX)	\
->  	do { \
->  		typeof(LEN) __i; \
->  		TTYPE *__t =3D (TTYPE *) TABLE; \
->  		BTYPE *__b =3D (BTYPE *) BLOB; \
-> -		for (__i =3D 0; __i < LEN; __i++) { \
-> -			__t[__i] =3D NTOHX(__b[__i]); \
-> -		} \
-> +		BUILD_BUG_ON(sizeof(TTYPE) !=3D sizeof(BTYPE)); \
-> +		if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) \
-> +			memcpy(__t, __b, (LEN) * sizeof(BTYPE)); \
-> +		else /* copy & convert convert from big-endian */ \
-> +			for (__i =3D 0; __i < LEN; __i++) { \
-> +				__t[__i] =3D NTOHX(&__b[__i]); \
-> +			} \
->  	} while (0)
-> =20
->  static inline size_t table_size(size_t len, size_t el_size)
-> diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-> index c5a91600842a..1e32c8ba14ae 100644
-> --- a/security/apparmor/match.c
-> +++ b/security/apparmor/match.c
-> @@ -15,6 +15,7 @@
->  #include <linux/vmalloc.h>
->  #include <linux/err.h>
->  #include <linux/kref.h>
-> +#include <linux/unaligned.h>
-> =20
->  #include "include/lib.h"
->  #include "include/match.h"
-> @@ -66,14 +67,13 @@ static struct table_header *unpack_table(char *blob, =
-size_t bsize)
->  		table->td_flags =3D th.td_flags;
->  		table->td_lolen =3D th.td_lolen;
->  		if (th.td_flags =3D=3D YYTD_DATA8)
-> -			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
-> -				     u8, u8, byte_to_byte);
-> +			memcpy(table->td_data, blob, th.td_lolen);
->  		else if (th.td_flags =3D=3D YYTD_DATA16)
->  			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
-> -				     u16, __be16, be16_to_cpu);
-> +				     u16, __be16, get_unaligned_be16);
->  		else if (th.td_flags =3D=3D YYTD_DATA32)
->  			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
-> -				     u32, __be32, be32_to_cpu);
-> +				     u32, __be32, get_unaligned_be32);
->  		else
->  			goto fail;
->  		/* if table was vmalloced make sure the page tables are synced
+Thank you for the review!  It has taken a while, but now V3 is almost
+ready and I have the answers to these questions.
 
-This one does not apply:
+On Fri, Oct 17, 2025 at 05:04:23PM +0200, Mickaël Salaün wrote:
+> On Wed, Oct 01, 2025 at 01:18:06PM +0200, Günther Noack wrote:
+> > Introduce the LANDLOCK_RESTRICT_SELF_TSYNC flag.  With this flag, a
+> > given Landlock ruleset is applied to all threads of the calling
+> > process, instead of only the current one.
+> > 
+> > Without this flag, multithreaded userspace programs currently resort
+> > to using the nptl(7)/libpsx hack for multithreaded policy enforcement,
+> > which is also used by libcap and for setuid(2).  Using this scheme,
+> > the threads of a process enforce the same Landlock ruleset, but the
+> > resulting Landlock domains are still separate, which makes a
+> > difference for Landlock's "scoped" access rights, where the domain
+> > identity and nesting is used.  As a result, when using
+> > LANLDOCK_SCOPE_SIGNAL, signaling between sibling threads stops
+> > working.  This is a problem for programming languages and frameworks
+> > which are inherently multithreaded (e.g. Go).
+> 
+> Having different Landlock domains also means that we get different
+> domains ID, and the audit logs might confuse users.
 
-glaubitz@node54:/data/home/glaubitz/linux> git am ../20251125_app_armor_una=
-lign_2nd.mbx
-Applying: apparmor unaligned memory fixes
-error: patch failed: security/apparmor/match.c:15
-error: security/apparmor/match.c: patch does not apply
-Patch failed at 0001 apparmor unaligned memory fixes
-hint: Use 'git am --show-current-patch=3Ddiff' to see the failed patch
-hint: When you have resolved this problem, run "git am --continue".
-hint: If you prefer to skip this patch, run "git am --skip" instead.
-hint: To restore the original branch and stop patching, run "git am --abort=
-".
-hint: Disable this message with "git config set advice.mergeConflict false"
-glaubitz@node54:/data/home/glaubitz/linux>
+True, I added that to the commit message.
 
-Adrian
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+> > Cc: Mickaël Salaün <mic@digikod.net>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Cc: linux-security-module@vger.kernel.org
+> > Suggested-by: Jann Horn <jannh@google.com>
+> > Signed-off-by: Günther Noack <gnoack@google.com>
+> > ---
+> >  include/uapi/linux/landlock.h |   4 +
+> >  security/landlock/cred.h      |  12 +
+> >  security/landlock/limits.h    |   2 +-
+> >  security/landlock/syscalls.c  | 433 +++++++++++++++++++++++++++++++++-
+> 
+> You can move most of this code to a new tsync.c file.
+
+Done.
+
+
+> > --- a/include/uapi/linux/landlock.h
+> > +++ b/include/uapi/linux/landlock.h
+> > @@ -117,11 +117,15 @@ struct landlock_ruleset_attr {
+> >   *     future nested domains, not the one being created. It can also be used
+> >   *     with a @ruleset_fd value of -1 to mute subdomain logs without creating a
+> >   *     domain.
+> > + *
+> > + * %LANDLOCK_RESTRICT_SELF_TSYNC
+> > + *    Apply the given ruleset atomically to all threads of the current process.
+> 
+> Please bump the Landlock ABI version and update the doc.
+
+Done.
+
+Docs: I added flag description to the landlock.h header so that it
+appears in the documentation for the system call, and added an entry
+to the section where we describe the differences between the ABI
+versions.
+
+
+> > diff --git a/security/landlock/cred.h b/security/landlock/cred.h
+> > index c82fe63ec598..eb28eeade760 100644
+> > --- a/security/landlock/cred.h
+> > +++ b/security/landlock/cred.h
+> > @@ -65,6 +65,18 @@ landlock_cred(const struct cred *cred)
+> >  	return cred->security + landlock_blob_sizes.lbs_cred;
+> >  }
+> >  
+> > +static inline void landlock_cred_copy(struct landlock_cred_security *dst,
+> > +				      const struct landlock_cred_security *src)
+> > +{
+> 
+> You can simplify by removing the domain checks which are already done by
+> landlock_put/get_ruleset().
+> 
+> > +	if (dst->domain)
+> > +		landlock_put_ruleset(dst->domain);
+> > +
+> > +	*dst = *src;
+> > +
+> > +	if (dst->domain)
+> > +		landlock_get_ruleset(src->domain);
+
+Done.
+
+
+> > +/*
+> > + * restrict_one_thread - update a thread's Landlock domain in lockstep with the
+> > + * other threads in the same process
+> > + *
+> > + * When this is run, the same function gets run in all other threads in the same
+> > + * process (except for the calling thread which called landlock_restrict_self).
+> > + * The concurrently running invocations of restrict_one_thread coordinate
+> > + * through the shared ctx object to do their work in lockstep to implement
+> > + * all-or-nothing semantics for enforcing the new Landlock domain.
+> > + *
+> > + * Afterwards, depending on the presence of an error, all threads either commit
+> > + * or abort the prepared credentials.  The commit operation can not fail any more.
+> > + */
+> > +static void restrict_one_thread(struct tsync_shared_context *ctx)
+> > +{
+> > +	int res;
+> 
+> For consistency with existing code, please use "err" instead of "res".
+
+Done.
+
+> > +	struct cred *cred = NULL;
+> > +	const struct cred *current_cred = current_cred();
+> 
+> No need for this variable.
+
+Done.
+
+> > +
+> > +	if (current_cred == ctx->old_cred) {
+> > +		/*
+> > +		 * As a shortcut, switch out old_cred with new_cred, if
+> > +		 * possible.
+> > +		 *
+> > +		 * Note: We are intentionally dropping the const qualifier here,
+> > +		 * because it is required by commit_creds() and abort_creds().
+> > +		 */
+> > +		cred = (struct cred *)get_cred(ctx->new_cred);
+> 
+> Good.  You can extend the comment to explain that this optimization
+> avoid creating new credentials in most cases, and then save memory.
+
+Sounds good, I extended that comment a bit.
+
+
+> > +	} else {
+> > +		/* Else, prepare new creds and populate them. */
+> > +		cred = prepare_creds();
+> > +
+> > +		if (!cred) {
+> > +			atomic_set(&ctx->preparation_error, -ENOMEM);
+> > +
+> > +			/*
+> > +			 * Even on error, we need to adhere to the protocol and
+> > +			 * coordinate with concurrently running invocations.
+> > +			 */
+> > +			if (atomic_dec_return(&ctx->num_preparing) == 0)
+> > +				complete_all(&ctx->all_prepared);
+> > +
+> > +			goto out;
+> > +		}
+> > +
+> > +		landlock_cred_copy(landlock_cred(cred),
+> > +				   landlock_cred(ctx->new_cred));
+> > +	}
+> > +
+> > +	/*
+> > +	 * Barrier: Wait until all threads are done preparing.
+> > +	 * After this point, we can have no more failures.
+> > +	 */
+> > +	if (atomic_dec_return(&ctx->num_preparing) == 0)
+> > +		complete_all(&ctx->all_prepared);
+> > +
+> > +	/*
+> > +	 * Wait for signal from calling thread that it's safe to read the
+> > +	 * preparation error now and we are ready to commit (or abort).
+> > +	 */
+> > +	wait_for_completion(&ctx->ready_to_commit);
+> > +
+> > +	/* Abort the commit if any of the other threads had an error. */
+> > +	res = atomic_read(&ctx->preparation_error);
+> > +	if (res) {
+> > +		abort_creds(cred);
+> > +		goto out;
+> > +	}
+> > +
+> > +	/* If needed, establish enforcement prerequisites. */
+> > +	if (!ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN))
+> > +		task_set_no_new_privs(current);
+> 
+> We should always set PR_SET_NO_NEW_PRIVS if it is set on the calling
+> thread as done by seccomp.  We should just store the result of
+> task_no_new_privs() in tsync_shared_context and use it as condition here.
+> This should be explained in the documentation.
+> 
+> This also mean that if the calling thread has CAP_SYS_ADMIN but not
+> PR_SET_NO_NEW_PRIVS, then a sibling thread could not have CAP_SYS_ADMIN
+> nor PR_SET_NO_NEW_PRIVS.  This would be a risky state but mainly because
+> of the CAP_SYS_ADMIN inconsistency, not really the missing
+> PR_SET_NO_NEW_PRIVS.
+
+OK, done.  In line with seccomp now, where the logic is (pseudocode):
+
+  if (task_no_new_privs(caller))
+      task_set_no_new_privs(current);
+
+As you are saying as well, the situation where the caller has
+CAP_SYS_ADMIN but not PR_SET_NO_NEW_PRIVS results in sibling threads
+that will also end up without PR_SET_NO_NEW_PRIVS.  But this is also
+consistent with Seccomp.
+
+
+> > +
+> > +	commit_creds(cred);
+> > +
+> > +out:
+> > +	/* Notify the calling thread once all threads are done */
+> > +	if (atomic_dec_return(&ctx->num_unfinished) == 0)
+> > +		complete_all(&ctx->all_finished);
+> > +}
+> > +
+> > +/*
+> > + * restrict_one_thread_callback - task_work callback for restricting a thread
+> > + *
+> > + * Calls restrict_one_thread with the struct landlock_shared_tsync_context.
+> > + */
+> > +static void restrict_one_thread_callback(struct callback_head *work)
+> > +{
+> > +	struct tsync_work *ctx = container_of(work, struct tsync_work, work);
+> > +
+> > +	restrict_one_thread(ctx->shared_ctx);
+> > +}
+> > +
+> > +/*
+> > + * struct tsync_works - a growable array of per-task contexts
+> > + *
+> > + * The zero-initialized struct represents the empty array.
+> > + */
+> > +struct tsync_works {
+> > +	struct tsync_work **works;
+> > +	size_t size;
+> > +	size_t capacity;
+> > +};
+> > +
+> > +/*
+> > + * tsync_works_provide - provides a preallocated tsync_work for the given task
+> > + *
+> > + * This also stores a task pointer in the context and increments the reference
+> > + * count of the task.
+> > + *
+> > + * Returns:
+> > + *   A pointer to the preallocated context struct, with task filled in.
+> > + *
+> > + *   NULL, if we ran out of preallocated context structs.
+> > + */
+> > +static struct tsync_work *tsync_works_provide(struct tsync_works *s,
+> > +					      struct task_struct *task)
+> > +{
+> > +	struct tsync_work *ctx;
+> > +
+> > +	if (s->size >= s->capacity)
+> 
+> In which case can this happen?  Should we wrap this in a WARN_ON_ONCE()?
+
+As Jann also said in his reply, it can happen if the number of
+existing threads differs between the first for_each_thread() loop
+where we count the threads and the second for_each_thread() loop where
+we fill the allocated slots in the array.  If it happens, we deal with
+it by doing an additional loop to discover new threads.
+
+
+> > +		return NULL;
+> > +
+> > +	ctx = s->works[s->size];
+> > +	s->size++;
+> > +
+> > +	ctx->task = get_task_struct(task);
+> > +	return ctx;
+> > +}
+> > +
+> > +/*
+> > + * tsync_works_grow_by - preallocates space for n more contexts in s
+> > + *
+> > + * Returns:
+> > + *   -ENOMEM if the (re)allocation fails
+> > + *   0       if the allocation succeeds, partially succeeds, or no reallocation was needed
+> > + */
+> > +static int tsync_works_grow_by(struct tsync_works *s, size_t n, gfp_t flags)
+> > +{
+> > +	int i;
+> 
+> size_t i;
+
+Done.
+
+
+> > +	size_t new_capacity = s->capacity + n;
+> 
+> > +	struct tsync_work **works;
+> > +
+> > +	if (new_capacity <= s->capacity)
+> 
+> This integer overflow check should return an error instead.
+
+Oh, this was not meant to check overflow, actually.
+
+As Jann is remarking in [1], what should really have happened here is
+that the capacity should have been increased to s->size + n instead of
+s->capacity + n a few lines above.  With that logic, it also makes
+more sense to check whether the new capacity is below-or-equal the old
+capacity, as it can legitimately happen in cases where the previously
+allocated size was not used up in its entirety.  In that case, it is
+possible that we already have sufficient space for the additional n
+items, and it is reasonable to return 0 in that case.  (The semantics
+of the function are "make sure that I have enough space for n
+additional items", and that is fulfilled without error.)
+
+[1] http://lore.kernel.org/all/CAG48ez1oS9kANZBq1bt+D76MX03DPHAFp76GJt7z5yx-Na1VLQ@mail.gmail.com
+
+I did add an overflow check as well, for good measure (it's
+practically for free).
+
+> 
+> > +		return 0;
+> > +
+> > +	works = krealloc_array(s->works, new_capacity, sizeof(s->works[0]),
+> > +			       flags);
+> > +	if (IS_ERR(works))
+> > +		return PTR_ERR(works);
+> > +
+> > +	s->works = works;
+> > +
+> > +	for (i = s->capacity; i < new_capacity; i++) {
+> > +		s->works[i] = kzalloc(sizeof(*s->works[i]), flags);
+> 
+> We should use a local variable to avoid storing an error code in
+> s->works[i] and potentially dereferencing it later (e.g. in
+> tsync_work_free).
+
+As Jann also pointed out in the other mail, this was a mistake -
+kzalloc returns NULL on failure, not an error code. (Fixed)
+
+I extracted a local variable anyway, it's a bit clearer to read.
+
+
+> Why can't we avoid this loop entirely and allocate a flat array with
+> only one call to krealloc_array()?  Why struct tsync_works->works needs
+> to be a pointer to a pointer?
+
+We pass out pointers to the struct tsync_work elements when calling
+task_work_add(), and these pointers are used by the task_work logic
+and by our own implementation of that task_work,
+restrict_one_thread_callback().  If these elements were directly in
+the array, realloc would move them to new locations and these pointers
+would then point into freed memory.
+
+Discussed by Jann in [2] as well.
+
+[2] https://lore.kernel.org/all/CAG48ez2KoF6hVSJwdPfUpN3oroMww6Mu1+-bsBSbO8C5f91P6Q@mail.gmail.com/
+
+If we were to take a very close look at all the affected code, we
+could potentially convince ourselves that we can discard these objects
+after the all_prepared point, but this all seems like a brittle coding
+pattern that would go against normal conventions and could break in a
+future version. (e.g. when task_work_run() would invoke
+"work->func(work)", the memory behind that "work" pointer would get
+freed halfway throughout that invocation.  It seems a bit brittle.)
+I'd prefer to not base our code correctness on such complicated
+assumptions about other corners of the code.
+
+
+> > +		if (IS_ERR(s->works[i])) {
+> > +			/*
+> > +			 * Leave the object in a consistent state,
+> > +			 * but return an error.
+> > +			 */
+> > +			s->capacity = i;
+> > +			return PTR_ERR(s->works[i]);
+> > +		}
+> > +	}
+> > +	s->capacity = new_capacity;
+> > +	return 0;
+> > +}
+> > +
+> > +/*
+> > + * tsync_works_contains - checks for presence of task in s
+> > + */
+> > +static bool tsync_works_contains_task(struct tsync_works *s,
+> > +				      struct task_struct *task)
+> > +{
+> > +	size_t i;
+> > +
+> > +	for (i = 0; i < s->size; i++)
+> > +		if (s->works[i]->task == task)
+> > +			return true;
+> > +	return false;
+> > +}
+> > +
+> > +/*
+> > + * tsync_works_free - free memory held by s and drop all task references
+> > + */
+> > +static void tsync_works_free(struct tsync_works *s)
+> 
+> tsync_works_put() would be more appropriate since this function doesn't
+> free s.
+
+put() is usually a reference count decrement, and we don't do that either.
+After a bit of thinking, I settled on tsync_works_release(), which is
+a slightly more generic wording that does not sound like a refcount.
+
+
+> > @@ -566,5 +987,13 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+> >  	new_llcred->domain_exec |= BIT(new_dom->num_layers - 1);
+> >  #endif /* CONFIG_AUDIT */
+> >  
+> > +	if (flags & LANDLOCK_RESTRICT_SELF_TSYNC) {
+> > +		res = restrict_sibling_threads(current_cred(), new_cred);
+> > +		if (res != 0) {
+> 
+> if (!err) {
+
+Done.
+
+(Corrected it in another place in landlock_restrict_sibling_threads() as well)
+
+
+—Günther
