@@ -1,198 +1,171 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C121E1E16
-	for <linux-security-module@vger.kernel.org>; Thu, 27 Nov 2025 01:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B64432AADB;
+	Thu, 27 Nov 2025 09:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764207251; cv=none; b=LjlXPe3Moidp5GmovwErG2SOxr1w+GKIMdPKhsy6Rq3W8g9XDEmGIK5yayRTgnCoAcAgJNrLc90sx5esxWivf1/6YQk93HMCBw64Gvb8mrA/FmDUC6MfAoJsnjBXwWmQYjJoZaCyxNiksLdexq4MhwhZajHa4897HMf3A+pHSQo=
+	t=1764235530; cv=none; b=P7+Qe9XTVwwaHE69jg7ySAS0XqfKK3c/RteQM9yimvifa5gR07LfvTHB3DMtWHgHxfUnYKIowluOP/UbUFTwf+F9OErb+1MoQhrbrnpKx+V5y93ZQHVuoh5ABI0M8A1FNw4vGc5b9LNS/8p+cFRNnobQVA3hnSOBonAUVB8xG4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764207251; c=relaxed/simple;
-	bh=uQ5fzJJhHfa+TyGMDQSqzkJTNZFkQj8Lv7c69Kq7kjk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fN2/P8A7WN+H6aLs1l01RRu5LdQuxgLid4AtZZOnYhU/DvnzdVa0EzJCUuDq3AwtUl6MCvbjMtXVW+pvfE2iRst8YPARngXJOAsVwVch4MMjj+D0U1tZy3kCgYclGwN7uzX2WLi5MoTmRNhPSuz2eTxwvlAL6KXWGCX5J/Cj7d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=GpOPb7l4; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1764235530; c=relaxed/simple;
+	bh=rXYyPdoUYUr42ufc6SJtbDfSp7m9ldasK7a8ppOEV1I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gEM7NxsO2iATOgwHhTEQNIsInK1wKAAVvpwVQEBmERTgX0J9z7WvR3peO+hdrBr8ViNe37OE5LSdtcrPgycuTw6r2h1nRGPONbWZp8AOjmEHgD+86SbAWvjmsoF26V3jLh5Hj/JrMDmOsIH2G6xyMsv9NiNpf8Imudd93zd2zo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=LxpT3RA2; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="GpOPb7l4"
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 089483F941
-	for <linux-security-module@vger.kernel.org>; Thu, 27 Nov 2025 01:34:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1764207248;
-	bh=TRKfXOlkmwqNMgnglxoR4XVNauUDD3kM3GM5CwFK/jE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=GpOPb7l4x+Qs5hYOyETPp37jbcvrJUV9thke49W6FR5g8vXT8Bq7HhZ3Zgi7x30qB
-	 g8DNZlsalqGACglNvUmIxnXdaW0GV1TaoSQS6hlJH0IDQS67/SVnaB/+lgGHWcbjnd
-	 p6zVbfEcwV526kbz7TmUzNGcvpnP0mms02FIk/t+APvBF4hEMrJAe4reiCCp8xRrPL
-	 lCE1aCffagKSpDNYvI+Cco7sT29f42TZP8uDh/qygTRslGs7NxzbnM9VMBs/Xh22bo
-	 cDQLWdF1V+3MNyLkFAiii/R9dVP0Exy5IN/D8FIBMEf9eGQNcUZoKazIKNbozzYUYI
-	 dXtReNPLXMzWa7aAKjKH0d77yHdEoUIv5ofza+oKGG8mO2/Ur0we02xgwqP9b2xn23
-	 qbNyOjNb3Y4PO5abprn06yvJcHwJERsuRBbYbBGXm7zqJu0uutxvT7DXRf27SLxmIF
-	 UfdtEWaoQKCFDvuT1lp3cMnY6f4vNORXPjXOhdMKetOzmM+BHD0hJYOAxAwGEaFDoe
-	 TO30wF7eK1z3lzWnjcH8/3kI8wwTuRwquT5gO1jeQKWTamIo+RXC6dIXRrACf7y9Tc
-	 4WApqtY0GreaWV8ow3LOkBWP1lXwUaRDsp0W7Gux2cWhJ8CFQ55kgNkWXTFkh9+ssn
-	 hfwyZqwxThZYdRAQjqxaRhe8=
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-34740cc80d5so552560a91.0
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Nov 2025 17:34:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764207246; x=1764812046;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TRKfXOlkmwqNMgnglxoR4XVNauUDD3kM3GM5CwFK/jE=;
-        b=WJOK+b/wpvhMH6OiSOKCpijRN3tg3i9Npvrjmiy7R3/houTrYKawkf0wUynPETRCgO
-         aYSxnlYE9Jny8U4O4DS7BpLUORwqqDSYasR9FeuIGPlNY2HaghPvW8ZunEqaXfa5qGru
-         i/CCEhFbnu3M5YiwlcP96NYv2saZSR80AiYRVPU1ykywGadK4l9MQOGxsdd11X2Z1m84
-         NO+N8aascq11ZPlVkqMphbYBluPR79c+Vz7DY7jff3iZcXzRUdXUj6s/qWoqTTEQOiZL
-         wkKCk0skL8fT+/O7pRdVZhmuxiY6hs/+msrKX+qpg4A33Uo2iOmllOVJvD1eJTcCuy96
-         wrwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTvC+hCvhuB/jCy+7g2979LJO/gqeisWt4D9zwyukmycWRNXUe9H2uG2XeXD4y4+YjFjIKeVpF4vFX3yBcMDgN8d4Elxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyExTyf71s0jASpsxs+nTF2jDzQTuuWnY3qUvCdr6a4zDf5OL2
-	Mdrvb4exUL+xparBcut9+THLVFxJb4GhAWPFHoZxdeqhdMBt1ki86ADQlyko6zTIUQObv+VT/qC
-	fNV6yiDpWPgdVfJXFz+wYnNbcn8kMvO3006cJR9sU7KxY3bxWboS47vCOlQSRgsQjOIV4P8LRDZ
-	L2Z4PtV44rN7I038cGGA==
-X-Gm-Gg: ASbGncvbhDDvHrQyk3Bdry9EEwZHjn9vyuHDfUMN5+bYo9I7k37Cm9sl+hYS3DZNGd4
-	peuPBr8gkBmkJDv+iq72yrdiGN8wXlU2hXXkQBoyC57GwKqqBeca0jgPEEdRkYkl2sKY60t5fgh
-	m3XyiLvX1qJq+y3RX58Z6AUjqohEEPYHLw7pvbHri1pdSP2bN6LKz3k7sH5h6p+igNEV92WYkVX
-	XLJqMpI0hwyvkExjrusXom0pkpkgmQhxQIvK0uxGlBKRVQW9my+u/xAUFrZIKKKpUqCrQv7tIR0
-	aMENiLDmdTD+IdGkb3x1rxOZDVArIfz1KIHtHhCnt1TxR+LIt4ZDNCY7nUNYnnmt1ceZjlHTCpN
-	9Ix1BYRCCc34GUOkH6HgPVqRV
-X-Received: by 2002:a17:90b:4c48:b0:32e:5d87:8abc with SMTP id 98e67ed59e1d1-34733f3f6d5mr18438366a91.36.1764207246553;
-        Wed, 26 Nov 2025 17:34:06 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEnJZaIInZT52MCGIw+E2FRhO95wkEz5Pp9AmAdLIMmkYiGQZYS09ZQ458I/EYl5otmbG76iA==
-X-Received: by 2002:a17:90b:4c48:b0:32e:5d87:8abc with SMTP id 98e67ed59e1d1-34733f3f6d5mr18438351a91.36.1764207246214;
-        Wed, 26 Nov 2025 17:34:06 -0800 (PST)
-Received: from [192.168.192.85] ([50.47.129.42])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-3476a59e4afsm3828879a91.10.2025.11.26.17.34.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Nov 2025 17:34:05 -0800 (PST)
-Message-ID: <4e34cddb-2d21-4c2c-bf9d-a377ba55ddb1@canonical.com>
-Date: Wed, 26 Nov 2025 17:34:04 -0800
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="LxpT3RA2"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=i42dTfiGDnlPRdQ/xPGyaB6FM4LqJLuJS/OfgBUfGtY=; t=1764235526;
+	x=1764840326; b=LxpT3RA2cCnBdSxQ9JX7ZdtXVentefeqfIuI5Mu1i53Sq8mY8JyLi71tLZFsB
+	PIMUHE/+hoyJdykqds6kPPXnaDcCb7l8CoSb2I8nNtRHtvxHK4C+Vo3nX/6pIWzxLwWCfNHa/aj4y
+	bq/C1zoqUYhRAZrnmRmNDBZUrUWiW8cjXVDUorXXYPDMeq3tqTDmgx0gmpM/8uTQypKVQKkwdmBfc
+	u9u/l27qGrmFu9Bv7HvdBMXTy5NBizUTcLx6kIiO+einpFR4Ew38asy2LmfTkNbZQiysfkWns45JJ
+	YXWI2UVxmvCXj12MTW5b19edKiihcNW2ZVwN0oVLiOU8FBUGKA==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.99)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1vOYFa-00000002SzL-1BUq; Thu, 27 Nov 2025 10:25:18 +0100
+Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.99)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1vOYFa-00000001ITL-0FZh; Thu, 27 Nov 2025 10:25:18 +0100
+Message-ID: <6d80f9bc5fd6d91ed2451d140227b866d6273af4.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 0/2] apparmor unaligned memory fixes
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Helge Deller <deller@kernel.org>, John Johansen
+	 <john.johansen@canonical.com>
+Cc: david laight <david.laight@runbox.com>, Helge Deller <deller@gmx.de>, 
+	linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-security-module@vger.kernel.org, linux-parisc@vger.kernel.org
+Date: Thu, 27 Nov 2025 10:25:17 +0100
+In-Reply-To: <aSdfyGv2T88T5FEu@carbonx1>
+References: <ba3d5651-fa68-4bb5-84aa-35576044e7b0@canonical.com>
+	 <aSXHCyH_rS-c5BgP@p100>
+	 <e88c32c2-fb18-4f3e-9ec2-a749695aaf0a@canonical.com>
+	 <c192140a-0575-41e9-8895-6c8257ce4682@gmx.de>
+	 <d35010b3-7d07-488c-b5a4-a13380d0ef7c@canonical.com>
+	 <20251126104444.29002552@pumpkin>
+	 <4034ad19-8e09-440c-a042-a66a488c048b@gmx.de>
+	 <20251126142201.27e23076@pumpkin> <aScY13MEBATreotz@carbonx1>
+	 <f5637038-9661-47fe-ba69-e461760ac975@canonical.com>
+	 <aSdfyGv2T88T5FEu@carbonx1>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] apparmor: replace sprintf with snprintf in
- aa_new_learning_profile
-To: Thorsten Blum <thorsten.blum@linux.dev>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>
-Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251122115446.447925-1-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20251122115446.447925-1-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On 11/22/25 03:54, Thorsten Blum wrote:
-> Replace unbounded sprintf() calls with snprintf() to prevent potential
-> buffer overflows in aa_new_learning_profile(). While the current code
-> works correctly, snprintf() is safer and follows secure coding best
-> practices.  No functional changes.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Hi Helge,
 
-I have pulled this into my tree
+On Wed, 2025-11-26 at 21:15 +0100, Helge Deller wrote:
+> So, here is a (untested) v3:
+>=20
+>=20
+> [PATCH v3] apparmor: Optimize table creation from possibly unaligned memo=
+ry
+>=20
+> Source blob may come from userspace and might be unaligned.
+> Try to optize the copying process by avoiding unaligned memory accesses.
+>=20
+> Signed-off-by: Helge Deller <deller@gmx.de>
+>=20
+> diff --git a/security/apparmor/include/match.h b/security/apparmor/includ=
+e/match.h
+> index 1fbe82f5021b..19e72b3e8f49 100644
+> --- a/security/apparmor/include/match.h
+> +++ b/security/apparmor/include/match.h
+> @@ -104,16 +104,18 @@ struct aa_dfa {
+>  	struct table_header *tables[YYTD_ID_TSIZE];
+>  };
+> =20
+> -#define byte_to_byte(X) (X)
+> -
+>  #define UNPACK_ARRAY(TABLE, BLOB, LEN, TTYPE, BTYPE, NTOHX)	\
+>  	do { \
+>  		typeof(LEN) __i; \
+>  		TTYPE *__t =3D (TTYPE *) TABLE; \
+>  		BTYPE *__b =3D (BTYPE *) BLOB; \
+> -		for (__i =3D 0; __i < LEN; __i++) { \
+> -			__t[__i] =3D NTOHX(__b[__i]); \
+> -		} \
+> +		BUILD_BUG_ON(sizeof(TTYPE) !=3D sizeof(BTYPE)); \
+> +		if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) \
+> +			memcpy(__t, __b, (LEN) * sizeof(BTYPE)); \
+> +		else /* copy & convert convert from big-endian */ \
+> +			for (__i =3D 0; __i < LEN; __i++) { \
+> +				__t[__i] =3D NTOHX(&__b[__i]); \
+> +			} \
+>  	} while (0)
+> =20
+>  static inline size_t table_size(size_t len, size_t el_size)
+> diff --git a/security/apparmor/match.c b/security/apparmor/match.c
+> index c5a91600842a..1e32c8ba14ae 100644
+> --- a/security/apparmor/match.c
+> +++ b/security/apparmor/match.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/vmalloc.h>
+>  #include <linux/err.h>
+>  #include <linux/kref.h>
+> +#include <linux/unaligned.h>
+> =20
+>  #include "include/lib.h"
+>  #include "include/match.h"
+> @@ -66,14 +67,13 @@ static struct table_header *unpack_table(char *blob, =
+size_t bsize)
+>  		table->td_flags =3D th.td_flags;
+>  		table->td_lolen =3D th.td_lolen;
+>  		if (th.td_flags =3D=3D YYTD_DATA8)
+> -			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
+> -				     u8, u8, byte_to_byte);
+> +			memcpy(table->td_data, blob, th.td_lolen);
+>  		else if (th.td_flags =3D=3D YYTD_DATA16)
+>  			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
+> -				     u16, __be16, be16_to_cpu);
+> +				     u16, __be16, get_unaligned_be16);
+>  		else if (th.td_flags =3D=3D YYTD_DATA32)
+>  			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
+> -				     u32, __be32, be32_to_cpu);
+> +				     u32, __be32, get_unaligned_be32);
+>  		else
+>  			goto fail;
+>  		/* if table was vmalloced make sure the page tables are synced
 
+This one does not apply:
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+glaubitz@node54:/data/home/glaubitz/linux> git am ../20251125_app_armor_una=
+lign_2nd.mbx
+Applying: apparmor unaligned memory fixes
+error: patch failed: security/apparmor/match.c:15
+error: security/apparmor/match.c: patch does not apply
+Patch failed at 0001 apparmor unaligned memory fixes
+hint: Use 'git am --show-current-patch=3Ddiff' to see the failed patch
+hint: When you have resolved this problem, run "git am --continue".
+hint: If you prefer to skip this patch, run "git am --skip" instead.
+hint: To restore the original branch and stop patching, run "git am --abort=
+".
+hint: Disable this message with "git config set advice.mergeConflict false"
+glaubitz@node54:/data/home/glaubitz/linux>
 
-> ---
->   security/apparmor/policy.c | 15 +++++++++------
->   1 file changed, 9 insertions(+), 6 deletions(-)
-> 
-> diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-> index 50d5345ff5cb..b09323867fea 100644
-> --- a/security/apparmor/policy.c
-> +++ b/security/apparmor/policy.c
-> @@ -697,24 +697,27 @@ struct aa_profile *aa_new_learning_profile(struct aa_profile *parent, bool hat,
->   	struct aa_profile *p, *profile;
->   	const char *bname;
->   	char *name = NULL;
-> +	size_t name_sz;
->   
->   	AA_BUG(!parent);
->   
->   	if (base) {
-> -		name = kmalloc(strlen(parent->base.hname) + 8 + strlen(base),
-> -			       gfp);
-> +		name_sz = strlen(parent->base.hname) + 8 + strlen(base);
-> +		name = kmalloc(name_sz, gfp);
->   		if (name) {
-> -			sprintf(name, "%s//null-%s", parent->base.hname, base);
-> +			snprintf(name, name_sz, "%s//null-%s",
-> +				 parent->base.hname, base);
->   			goto name;
->   		}
->   		/* fall through to try shorter uniq */
->   	}
->   
-> -	name = kmalloc(strlen(parent->base.hname) + 2 + 7 + 8, gfp);
-> +	name_sz = strlen(parent->base.hname) + 2 + 7 + 8;
-> +	name = kmalloc(name_sz, gfp);
->   	if (!name)
->   		return NULL;
-> -	sprintf(name, "%s//null-%x", parent->base.hname,
-> -		atomic_inc_return(&parent->ns->uniq_null));
-> +	snprintf(name, name_sz, "%s//null-%x", parent->base.hname,
-> +		 atomic_inc_return(&parent->ns->uniq_null));
->   
->   name:
->   	/* lookup to see if this is a dup creation */
+Adrian
 
-
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
