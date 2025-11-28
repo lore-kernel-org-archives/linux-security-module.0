@@ -1,33 +1,32 @@
-Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED85323909F
-	for <linux-security-module@vger.kernel.org>; Fri, 28 Nov 2025 17:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB882C235E
+	for <linux-security-module@vger.kernel.org>; Fri, 28 Nov 2025 17:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764350542; cv=none; b=j6cwyY9g5rYrZR708oTpFrCY3JEjcGp7t6+tANCJ1he1h8ArxrCbX2k5HNpJYjdzpnfnes0V5BGeZcveYWa8lfjgXmEAxngQz9c5t/TOTCqXdQgb1dsG5Sm8vVIMHEO/QN7aviOw8kLfGERJEboTL+LFYEDS6rs7sI4XYwTkZrk=
+	t=1764350543; cv=none; b=XmjrJ2vtCQFKBJlQ9whCk0PzscUWY0r9+pWrOhi/StXTf7Ec0QjKfJnAWQHpygt6JDTgq8sDvON3Uvs8don+hVVvYfVhpLuBxVJcecyc3WvyVReoOM9HVes7+Xymj/hYy+2u8lRO8HZX5Vxh421UBUYgrnKFuORERqXHJoUZE+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764350542; c=relaxed/simple;
-	bh=xGRWzfi6OomS4A0NUW4uy2x1s9MRKsRQMvAUKeXLLPM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K5hqBTUvGVeTitxsGGbJCsPolnsgLOuA80/uw14r9BQ0OjVeDJzqSoqnv6KyF2wHVm7bINxbWonHSYHjk2QukgH8bB4kP8eI7XbBKvJYQIJMB4jQwcb2az0fKihPi5T2U/akysZ76Fr4z7Gr8lueY4C1r+a48nHFkKQs5Jb1tq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZjY8lCW4; arc=none smtp.client-ip=83.166.143.170
+	s=arc-20240116; t=1764350543; c=relaxed/simple;
+	bh=P6UIVr2CNd4ad7Fu1upHIBzuTPQC7fing/byQ1HTTrc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aMQbQVRJOQK2HR4ki005zpupQsOUhkmFMLo90760WnjZ0O9qmo+ZnVey8hC12QKkhMBGswm37i9h3/U73Xp4sYTzaUSzDfq2mZ5SULRNHTggwh8b69DyMUECeURqYM2pI9kYNS5/6RTyArhESUrfbH7FSLeNzwwgwfiXmXKyggE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=RGQoObzu; arc=none smtp.client-ip=83.166.143.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZjY8lCW4"
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dJ0V108xxzgNQ;
-	Fri, 28 Nov 2025 18:22:17 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="RGQoObzu"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dJ0Tw4jyCz5Dj;
+	Fri, 28 Nov 2025 18:22:12 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1764350536;
-	bh=AQzYQXVKZ1Xwn32sFO4q9nNhRSWpJGJEZVMQRyxyORo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZjY8lCW4OZvBXVNLqPiPEavnmq8FPeOmnXYG+FWXwBGAsIxX2UVvyiohIH/5WUEb3
-	 q50Uvwd84gz+LLD7blL0MMBOsiGH1b9YMvs6hDDrZ2xztIM9tYGTeJqsMgSp15dbZn
-	 FHLIVFj6iR6Y7+Xk6Ky6bvR/8A6cqubM1a4wTM5I=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dJ0V02W2Cz1S3;
-	Fri, 28 Nov 2025 18:22:16 +0100 (CET)
+	s=20191114; t=1764350532;
+	bh=iaAABCSbs4TYzo2GswVcvmxZzq7Ib83Nu4YA+H9Sx3o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RGQoObzuNjoGHzARj+mFO5BRVuoUsij/20wM9sLmHM+ptWQANMtx3C4f9OLyshK8L
+	 Ve9JcRlRNgkzVREHQ52l79/g9Jf7h4rHtVvUPL10MqEzu6THg6BmP5p/73VLJzPESa
+	 6QsOfZcrBrfbAC6kFL934GFXrCO4NopynzG5oiS0=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dJ0Tv5hpgz3tl;
+	Fri, 28 Nov 2025 18:22:11 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	Tingmao Wang <m@maowtm.org>
@@ -46,11 +45,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	Song Liu <song@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v5 2/4] landlock: Improve variable scope
-Date: Fri, 28 Nov 2025 18:21:57 +0100
-Message-ID: <20251128172200.760753-3-mic@digikod.net>
-In-Reply-To: <20251128172200.760753-1-mic@digikod.net>
-References: <20251128172200.760753-1-mic@digikod.net>
+Subject: [PATCH v5 0/4] Landlock: Disconnected directory handling
+Date: Fri, 28 Nov 2025 18:21:55 +0100
+Message-ID: <20251128172200.760753-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -61,43 +58,38 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-This is now possible thanks to the disconnected directory fix.
+Hi,
 
-Cc: Günther Noack <gnoack@google.com>
-Cc: Song Liu <song@kernel.org>
-Cc: Tingmao Wang <m@maowtm.org>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
----
+This patch series fixes and test Landlock's handling of disconnected
+directories.
 
-Changes since v3:
-- New patch extracted from the previous one.
----
- security/landlock/fs.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+This fifth version improve a comment and add more tests.
 
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index a2ed0e76938a..8998fa4ca5f0 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -837,7 +837,6 @@ static bool is_access_to_paths_allowed(
- 	 * restriction.
- 	 */
- 	while (true) {
--		struct dentry *parent_dentry;
- 		const struct landlock_rule *rule;
- 
- 		/*
-@@ -930,7 +929,9 @@ static bool is_access_to_paths_allowed(
- 			walker_path.dentry = walker_path.mnt->mnt_root;
- 			dget(walker_path.dentry);
- 		} else {
--			parent_dentry = dget_parent(walker_path.dentry);
-+			struct dentry *const parent_dentry =
-+				dget_parent(walker_path.dentry);
-+
- 			dput(walker_path.dentry);
- 			walker_path.dentry = parent_dentry;
- 		}
+This approach is not perfect but it is the best we found:
+https://lore.kernel.org/r/20251128.oht7Aic8nu9d@digikod.net
+
+Previous versions:
+v4: https://lore.kernel.org/r/20251126191159.3530363-1-mic@digikod.net
+v3: https://lore.kernel.org/r/20250719104204.545188-1-mic@digikod.net
+v2: https://lore.kernel.org/r/20250711191938.2007175-1-mic@digikod.net
+v1: https://lore.kernel.org/r/20250701183812.3201231-1-mic@digikod.net
+
+Regards,
+
+Mickaël Salaün (3):
+  landlock: Fix handling of disconnected directories
+  landlock: Improve variable scope
+  selftests/landlock: Add disconnected leafs and branch test suites
+
+Tingmao Wang (1):
+  selftests/landlock: Add tests for access through disconnected paths
+
+ security/landlock/errata/abi-1.h           |   16 +
+ security/landlock/fs.c                     |   43 +-
+ tools/testing/selftests/landlock/fs_test.c | 1474 +++++++++++++++++++-
+ 3 files changed, 1512 insertions(+), 21 deletions(-)
+ create mode 100644 security/landlock/errata/abi-1.h
+
 -- 
 2.51.0
 
