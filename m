@@ -1,147 +1,103 @@
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEC3284889
-	for <linux-security-module@vger.kernel.org>; Fri, 28 Nov 2025 17:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED85323909F
+	for <linux-security-module@vger.kernel.org>; Fri, 28 Nov 2025 17:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764349357; cv=none; b=ha1iSD8i77m53kCW+rUsYL2rzrd1mm5Frs68mUmZiP6WDQtQ1ksxWRHIo0RLXHi7lRcFb9qzdTHc3TulkAibY3bOoDEO57mRwCYq85gmCYvVteU9GMsQe+Yw6f82Gz/uFWmJUkOe/TMn2VmwkF8HgQmTAQn+ZY0VdGrjnvWu9i4=
+	t=1764350542; cv=none; b=j6cwyY9g5rYrZR708oTpFrCY3JEjcGp7t6+tANCJ1he1h8ArxrCbX2k5HNpJYjdzpnfnes0V5BGeZcveYWa8lfjgXmEAxngQz9c5t/TOTCqXdQgb1dsG5Sm8vVIMHEO/QN7aviOw8kLfGERJEboTL+LFYEDS6rs7sI4XYwTkZrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764349357; c=relaxed/simple;
-	bh=5a/KZrW0A9GQei5mM0R5P2xPq0Ot8BgBWZpdHRpIRH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aSnffFHzTIzd1jl/YDa0TuGMc2R6ABhvkSfmi9sHDvH6grlreN4iBeLSXwPDbr1eiR4fqsNOj1ozvzmY+aR1HVMkojskOBNgHuWoo+kVBux1FhgtARk+8Vcr+Co+fCnUIwcbLRDJQ7w2xlv4DCcLsfRpqbOs1x19rPn+Iv+Uw+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=jt6Llu3a; arc=none smtp.client-ip=185.125.25.14
+	s=arc-20240116; t=1764350542; c=relaxed/simple;
+	bh=xGRWzfi6OomS4A0NUW4uy2x1s9MRKsRQMvAUKeXLLPM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K5hqBTUvGVeTitxsGGbJCsPolnsgLOuA80/uw14r9BQ0OjVeDJzqSoqnv6KyF2wHVm7bINxbWonHSYHjk2QukgH8bB4kP8eI7XbBKvJYQIJMB4jQwcb2az0fKihPi5T2U/akysZ76Fr4z7Gr8lueY4C1r+a48nHFkKQs5Jb1tq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZjY8lCW4; arc=none smtp.client-ip=83.166.143.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="jt6Llu3a"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dHzwj6RxkzRgw;
-	Fri, 28 Nov 2025 17:56:53 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZjY8lCW4"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dJ0V108xxzgNQ;
+	Fri, 28 Nov 2025 18:22:17 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1764349010;
-	bh=TIpd7YF1NtXKZclZu6eTYoVD0AdCSNp5YWfa6nAMZ20=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jt6Llu3akl54ddEx8Bwglt1lMVV+uWolhvalHwqVIYJ3bgKp4rYmZkErAEEk6ljx3
-	 Z6SqrkaJwx77VESFX+HrCqxrX3LfmB6dYyeHwJvUQlYZPQTFm8KOSMEI+CPygnoHD7
-	 WxvVwaWR4M2uejr8Mx1mfuidwHjuoTBGNbywdEpE=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dHzwd2kqsz1BPK;
-	Fri, 28 Nov 2025 17:56:49 +0100 (CET)
-Date: Fri, 28 Nov 2025 17:56:39 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Ben Scarlato <akhna@google.com>, 
-	Christian Brauner <brauner@kernel.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Justin Suess <utilityemal77@gmail.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Paul Moore <paul@paul-moore.com>, Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	s=20191114; t=1764350536;
+	bh=AQzYQXVKZ1Xwn32sFO4q9nNhRSWpJGJEZVMQRyxyORo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZjY8lCW4OZvBXVNLqPiPEavnmq8FPeOmnXYG+FWXwBGAsIxX2UVvyiohIH/5WUEb3
+	 q50Uvwd84gz+LLD7blL0MMBOsiGH1b9YMvs6hDDrZ2xztIM9tYGTeJqsMgSp15dbZn
+	 FHLIVFj6iR6Y7+Xk6Ky6bvR/8A6cqubM1a4wTM5I=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dJ0V02W2Cz1S3;
+	Fri, 28 Nov 2025 18:22:16 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Tingmao Wang <m@maowtm.org>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Ben Scarlato <akhna@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Justin Suess <utilityemal77@gmail.com>,
+	Matthieu Buffet <matthieu@buffet.re>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	NeilBrown <neil@brown.name>,
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+	Paul Moore <paul@paul-moore.com>,
+	Song Liu <song@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] landlock: Fix handling of disconnected directories
-Message-ID: <20251128.oht7Aic8nu9d@digikod.net>
-References: <20251126191159.3530363-1-mic@digikod.net>
- <20251126191159.3530363-2-mic@digikod.net>
- <adf1f57c-8f8e-45a9-922c-4e08899bf14a@maowtm.org>
+Subject: [PATCH v5 2/4] landlock: Improve variable scope
+Date: Fri, 28 Nov 2025 18:21:57 +0100
+Message-ID: <20251128172200.760753-3-mic@digikod.net>
+In-Reply-To: <20251128172200.760753-1-mic@digikod.net>
+References: <20251128172200.760753-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <adf1f57c-8f8e-45a9-922c-4e08899bf14a@maowtm.org>
 X-Infomaniak-Routing: alpha
 
-On Fri, Nov 28, 2025 at 01:45:29AM +0000, Tingmao Wang wrote:
-> Hi Mickaël,
-> 
-> I think this implementation makes sense - to me this feels better than
-> ignoring rules between the leaf and the mount when disconnected, given the
-> interaction with domain checks.  This approach is also simpler in code.
-> 
-> However, there is one caveat which, while requiring a slightly problematic
-> policy to happen in the first place, might still be a bit surprising: if,
-> for some reason, there are rules "hidden" in the "real" parent of a (bind)
-> mounted dir, a sandboxed program that is able to cause directories to be
-> disconnected (for example, because there are more bind mounts within the
-> bind mount, and the program has enough rename access (but not read/write))
-> may be able to "surface" those rules and "gain access" (requires the
-> existance of the already questionable "hidden" rule):
+This is now possible thanks to the disconnected directory fix.
 
-The crux of the issue is indeed the policy.
+Cc: Günther Noack <gnoack@google.com>
+Cc: Song Liu <song@kernel.org>
+Cc: Tingmao Wang <m@maowtm.org>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
 
-> 
->   root@g3ef6e4434e3a-dirty /# mkdir -p /hidden/bind1_src /bind1_dst
->   /# cd hidden
->   /hidden# mount --bind bind1_src /bind1_dst
->   /hidden# mkdir -p bind1_src/bind2_src/dir bind1_src/bind2_dst
->   /hidden# mount --bind /bind1_dst/bind2_src /bind1_dst/bind2_dst
->   /hidden# echo secret > bind1_src/bind2_src/dir/secret
->   /hidden# ls -la /bind1_dst/bind2_dst/dir/secret 
->   -rw-r--r-- 1 root root 7 Nov 28 00:49 /bind1_dst/bind2_dst/dir/secret
->   /hidden# mount -t tmpfs none /hidden
->   /hidden# ls .
->   bind1_src/
->   /hidden# ls /hidden
->   /hidden# LL_FS_RO=/usr:/bin:/lib:/etc:. LL_FS_RW= LL_FS_CREATE_DELETE_REFER=./bind1_src /sandboxer bash
->                                         ^ this attaches a read rule to a "invisible" dir
->   Executing the sandboxed command...
->   /hidden# cd /
->   /# ls /hidden
->   ls: cannot open directory '/hidden': Permission denied
->   /# cd /bind1_dst/bind2_dst/dir       
->   /bind1_dst/bind2_dst/dir# cat secret
->   cat: secret: Permission denied
->   /bind1_dst/bind2_dst/dir# mv -v /bind1_dst/bind2_src/dir /bind1_dst/outside
->   renamed '/bind1_dst/bind2_src/dir' -> '/bind1_dst/outside'
->   /bind1_dst/bind2_dst/dir# ls ..
->   ls: cannot access '..': No such file or directory
->   /bind1_dst/bind2_dst/dir# cat secret
->   secret
+Changes since v3:
+- New patch extracted from the previous one.
+---
+ security/landlock/fs.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-This is valid, but in this case access to secret is explicitly allowed
-by the policy, even if the related path is no longer reachable.
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index a2ed0e76938a..8998fa4ca5f0 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -837,7 +837,6 @@ static bool is_access_to_paths_allowed(
+ 	 * restriction.
+ 	 */
+ 	while (true) {
+-		struct dentry *parent_dentry;
+ 		const struct landlock_rule *rule;
+ 
+ 		/*
+@@ -930,7 +929,9 @@ static bool is_access_to_paths_allowed(
+ 			walker_path.dentry = walker_path.mnt->mnt_root;
+ 			dget(walker_path.dentry);
+ 		} else {
+-			parent_dentry = dget_parent(walker_path.dentry);
++			struct dentry *const parent_dentry =
++				dget_parent(walker_path.dentry);
++
+ 			dput(walker_path.dentry);
+ 			walker_path.dentry = parent_dentry;
+ 		}
+-- 
+2.51.0
 
-> 
-> Earlier I was thinking we could make domain check for rename/links
-> stricter, in that it would make sure there are no rules granting more
-> access on the destination than what's granted by the "visible" rules on
-> the source even if those rules are "hidden" within the fs above the
-> mountpoint.  This way, the application would not be able to move the
-> source's parent to cause a disconnection in the first place.  However, I'm
-> not sure if this is worth the complication (e.g. in the case of exchange
-> rename, source is also the destination, and so this check needs to also
-> check that there are no "hidden" rules on the source that grants more access
-> than the "visible" rules on the destination).
-> 
-> I see another approach to mitigate this - we can disallow (return with
-> -EXDEV probably) rename/links altogether when the destination (and also
-> source if exchange) contains "hidden" rules that grants more access than
-> the "visible" rules.  However this approach would break backward
-> compatibility if a sandboxer or Landlock-enlightened application creates
-> such problematic policies (most likely unknowingly).
-> 
-> Stepping back a bit, I also think it is reasonable to leave this issue as
-> is and not mitigate it (maybe warn about it in some way in the docs),
-> given that this can only happen if the policy is already weird (if the
-> intention is to protect some file, setting an allow access rule on its
-> parent, even if that parent is "hidden", is questionable).
-
-I agree.
-
-> 
-> Not sure which is best, but even with this issue this patch is probably
-> still an improvement over the existing behavior (i.e. the one currently in
-> mainline, where if the path is disconnected, the "hidden" rules are used
-> and any "normal" rules from mnt_parent and above are ignored).
-> 
-> Reviewed-by: Tingmao Wang <m@maowtm.org>
-
-Thanks for the deep analysis!
-
-> 
-> Kind regards,
-> Tingmao
-> 
