@@ -1,133 +1,147 @@
-Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC722765DF
-	for <linux-security-module@vger.kernel.org>; Fri, 28 Nov 2025 15:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEC3284889
+	for <linux-security-module@vger.kernel.org>; Fri, 28 Nov 2025 17:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764345259; cv=none; b=WDBqy8IMceai7vHoByLpD/P+9dDp3+XcZ2H1/nTlRQwtHVRzd5yJhKtm5boXz5WzCsbFQpUYyTlq7t5Sk27pmhcdSDXj3cTFu/G/wn6iwbm5Z4nl+faAqPoqAe8fotaXHv8ukDN2aQTUcz6hnT9u9kFPDGF9Cj/4VOaKdSQXwto=
+	t=1764349357; cv=none; b=ha1iSD8i77m53kCW+rUsYL2rzrd1mm5Frs68mUmZiP6WDQtQ1ksxWRHIo0RLXHi7lRcFb9qzdTHc3TulkAibY3bOoDEO57mRwCYq85gmCYvVteU9GMsQe+Yw6f82Gz/uFWmJUkOe/TMn2VmwkF8HgQmTAQn+ZY0VdGrjnvWu9i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764345259; c=relaxed/simple;
-	bh=XxbQfkUQ9ZzhHAmJ/tKoNMQL/f0sMlxZ/PUI2WholUk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EaaVfvmfoAxRrXLsRdUiYb+bNgWWaWaU5OsQZE2fWw3xnbj5woDr9kmQ/1IA3wG/TvzrDDs2k7kAljEk4jV06nqYvtJBpCrnty+Pj0h8Yd2Mfpbc0ittkJkjMhRWUYPx0dEiAE7VwCzXHiYo3pTkTijAP0efjmiIvb5/aCOIw7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F93R8YcG; arc=none smtp.client-ip=74.125.224.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1764349357; c=relaxed/simple;
+	bh=5a/KZrW0A9GQei5mM0R5P2xPq0Ot8BgBWZpdHRpIRH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aSnffFHzTIzd1jl/YDa0TuGMc2R6ABhvkSfmi9sHDvH6grlreN4iBeLSXwPDbr1eiR4fqsNOj1ozvzmY+aR1HVMkojskOBNgHuWoo+kVBux1FhgtARk+8Vcr+Co+fCnUIwcbLRDJQ7w2xlv4DCcLsfRpqbOs1x19rPn+Iv+Uw+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=jt6Llu3a; arc=none smtp.client-ip=185.125.25.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F93R8YcG"
-Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-6420dc2e5feso1622867d50.3
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Nov 2025 07:54:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764345256; x=1764950056; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TaPqRVslZ3qKOfsoCfdpNZY5ZgvluHl8z1VcpxZbHcA=;
-        b=F93R8YcGO97LJb2pY8col6JCJFbvrpgcrkSZEsO+jez12zsm3f4Pq2mMzoJotT2FPH
-         c5B2evQk05UpTSxMcv+zgWpJxJaxSTeldM+u0deaJk0HbvD12mQ/f0EGEqV37hk6TppR
-         G+3B5i+wQESITmzE3EM1fNVc4/WF8n/lKyfnAi2G7xIaPcQhVp0ZjnbbKQaPtU0UuRNa
-         damXX17Yjmago5cstnTyqSl8N19qhASpP1TDEAP1BSjzYSfFQ4KGUtB2w7JMU7+oDOWY
-         /414F/kLJu1BJeuQXM6zZOP/VbcqrkV6gz5qgbIezyA4x/2cU3t1m8kVhfL0I7r8kiSv
-         hGzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764345256; x=1764950056;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=TaPqRVslZ3qKOfsoCfdpNZY5ZgvluHl8z1VcpxZbHcA=;
-        b=NRt8qFVIg8HntFDzDtQ/MOsvTDL0ExDdce4nL44SHjoeFR7Ww2GNWorIcB4BSqADEi
-         DFKHnnayHw22TFM0oQBMnzSE+b+xcF095eKq/SWw7fMm+gN2LX810+GIFtKm9elJRj6r
-         z66sexMSZtvgD3i81NRVpaKcpzOGj7T/IntR26Hlz/Q9NnJqOkelfO/q3dybHy84ToQP
-         F6AbjC66XeCEHvyC3m7eNuMIIxYymE+Zg+dQWGciGCUiv0X1m27ggw1pjrMTZe6UMy7j
-         IVjDKnr4dML+I6d8lZliHPbsV9YQWxNXwu6s00FjAGjCMGq7hW1QxjX4O71ZNg9lGQuN
-         6NJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWarpyabqlbqttpKOStF4kAksghqSmeD3srQAgLBj8Xd00lmvoxftp9fILSf0Eu4nnYY1fDoA0k0SbPoYgA7K0xMAq5Eg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOVwzhaS/UeZO8cn0oeGv5LIHFQZ4ByALGy08iWHNnG1Xub2kz
-	j3LXuVPYSYV0jbw/U7GXZtbGSdVLAoPIq2mD9FKwIs8qtxakvbIvbFgOUrEgGiB/
-X-Gm-Gg: ASbGnctg6dBZYzOd0FFc3stdNqlMtzYtI4C5hyMBHuzB1aAYjoMkuBu71HsW/VYdoHf
-	v9fMCd677oZaB2OaJKeo/XVSvQYYMzXNi3/1/5qnmVM6pxiJLWfybH9/mCoZ1HhxPR0qdlfm7nP
-	Y8c7Q3X+fvPpJP1Taxy1m1dgucmzp6jgo6S6jrsYSfsfqq7/1Lp4IBMTSDJtiEZ2B12/lBwLl2v
-	nSZQEVDEIJfyqqpt+26P757t26WLe03plo6XIuX7dtx+TTOCHDG/KRAs8GvQ9io+EQx1iS3tfxD
-	7hGUVmuplKqMjlUSiZzCd24TRZOAgsJ2ltSVbm5E6WwCmPE1LjRK5rXUTnBOay8a/jUtlDesqmz
-	Kr9m6bppRD60Q1CP6RjY0WG4lBihWxdEJe5wLPuDX0WcWSl0avgo8XY1/x/CoKObY6rKDYQh16X
-	BQhAEABoEtS7laUy/ErCQTw8HeM93npvbleRlstPoeoOmUNfLkciiqQ08Xi1PX
-X-Google-Smtp-Source: AGHT+IHVcGRGViCOB60s529sCLJK603yeIWwyTMfHydroS3WxDrRzYia8xPB+c14imZgVSXPc+qM3w==
-X-Received: by 2002:a05:690e:1288:b0:643:55d:7526 with SMTP id 956f58d0204a3-643055d7647mr20485526d50.7.1764345255933;
-        Fri, 28 Nov 2025 07:54:15 -0800 (PST)
-Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78ad1029137sm16065077b3.39.2025.11.28.07.54.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Nov 2025 07:54:15 -0800 (PST)
-From: Justin Suess <utilityemal77@gmail.com>
-To: utilityemal77@gmail.com
-Cc: gnoack@google.com,
-	jack@suse.cz,
-	linux-security-module@vger.kernel.org,
-	m@maowtm.org,
-	mic@digikod.net,
-	xandfury@gmail.com
-Subject: Re: [PATCH v3 1/5] landlock: Implement LANDLOCK_ADD_RULE_NO_INHERIT
-Date: Fri, 28 Nov 2025 10:53:39 -0500
-Message-ID: <20251128155339.3873841-1-utilityemal77@gmail.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251126122039.3832162-2-utilityemal77@gmail.com>
-References: <20251126122039.3832162-2-utilityemal77@gmail.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="jt6Llu3a"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dHzwj6RxkzRgw;
+	Fri, 28 Nov 2025 17:56:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1764349010;
+	bh=TIpd7YF1NtXKZclZu6eTYoVD0AdCSNp5YWfa6nAMZ20=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jt6Llu3akl54ddEx8Bwglt1lMVV+uWolhvalHwqVIYJ3bgKp4rYmZkErAEEk6ljx3
+	 Z6SqrkaJwx77VESFX+HrCqxrX3LfmB6dYyeHwJvUQlYZPQTFm8KOSMEI+CPygnoHD7
+	 WxvVwaWR4M2uejr8Mx1mfuidwHjuoTBGNbywdEpE=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dHzwd2kqsz1BPK;
+	Fri, 28 Nov 2025 17:56:49 +0100 (CET)
+Date: Fri, 28 Nov 2025 17:56:39 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Ben Scarlato <akhna@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Justin Suess <utilityemal77@gmail.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Paul Moore <paul@paul-moore.com>, Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] landlock: Fix handling of disconnected directories
+Message-ID: <20251128.oht7Aic8nu9d@digikod.net>
+References: <20251126191159.3530363-1-mic@digikod.net>
+ <20251126191159.3530363-2-mic@digikod.net>
+ <adf1f57c-8f8e-45a9-922c-4e08899bf14a@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <adf1f57c-8f8e-45a9-922c-4e08899bf14a@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-This is the core part of the patch series I was unsure about.
+On Fri, Nov 28, 2025 at 01:45:29AM +0000, Tingmao Wang wrote:
+> Hi Mickaël,
+> 
+> I think this implementation makes sense - to me this feels better than
+> ignoring rules between the leaf and the mount when disconnected, given the
+> interaction with domain checks.  This approach is also simpler in code.
+> 
+> However, there is one caveat which, while requiring a slightly problematic
+> policy to happen in the first place, might still be a bit surprising: if,
+> for some reason, there are rules "hidden" in the "real" parent of a (bind)
+> mounted dir, a sandboxed program that is able to cause directories to be
+> disconnected (for example, because there are more bind mounts within the
+> bind mount, and the program has enough rename access (but not read/write))
+> may be able to "surface" those rules and "gain access" (requires the
+> existance of the already questionable "hidden" rule):
 
-Here when a rule tagged with LANDLOCK_ADD_RULE_NO_INHERIT is 
-inserted, "blank" dentry rules (meaning rules with no access grants), 
-are inserted along with the original rule on each parent of the 
-original rule up to the root (but only for inodes without existing 
-rules). These are then (by the mark_no_inherit_ancestors call) tagged 
-with the has no inherit descendent marker (has_no_inherit_desc). This 
-is used to provide the parent directory protections. 
+The crux of the issue is indeed the policy.
 
-The purpose of these blank rules is to ensure when we do a 
-find_rule() on any of the LANDLOCK_ADD_RULE_NO_INHERIT tagged rule's 
-parents, we will immediately know we have to disallow topology 
-changes on that inode to enforce the parent directory protections 
-described in the cover letter.
+> 
+>   root@g3ef6e4434e3a-dirty /# mkdir -p /hidden/bind1_src /bind1_dst
+>   /# cd hidden
+>   /hidden# mount --bind bind1_src /bind1_dst
+>   /hidden# mkdir -p bind1_src/bind2_src/dir bind1_src/bind2_dst
+>   /hidden# mount --bind /bind1_dst/bind2_src /bind1_dst/bind2_dst
+>   /hidden# echo secret > bind1_src/bind2_src/dir/secret
+>   /hidden# ls -la /bind1_dst/bind2_dst/dir/secret 
+>   -rw-r--r-- 1 root root 7 Nov 28 00:49 /bind1_dst/bind2_dst/dir/secret
+>   /hidden# mount -t tmpfs none /hidden
+>   /hidden# ls .
+>   bind1_src/
+>   /hidden# ls /hidden
+>   /hidden# LL_FS_RO=/usr:/bin:/lib:/etc:. LL_FS_RW= LL_FS_CREATE_DELETE_REFER=./bind1_src /sandboxer bash
+>                                         ^ this attaches a read rule to a "invisible" dir
+>   Executing the sandboxed command...
+>   /hidden# cd /
+>   /# ls /hidden
+>   ls: cannot open directory '/hidden': Permission denied
+>   /# cd /bind1_dst/bind2_dst/dir       
+>   /bind1_dst/bind2_dst/dir# cat secret
+>   cat: secret: Permission denied
+>   /bind1_dst/bind2_dst/dir# mv -v /bind1_dst/bind2_src/dir /bind1_dst/outside
+>   renamed '/bind1_dst/bind2_src/dir' -> '/bind1_dst/outside'
+>   /bind1_dst/bind2_dst/dir# ls ..
+>   ls: cannot access '..': No such file or directory
+>   /bind1_dst/bind2_dst/dir# cat secret
+>   secret
 
-This lets us perform the check for these protections in O(log(n)) 
-consistent with the red black tree's insertion time. The insertion 
-penalty for this is O(depth * log(n)), but this is done only at 
-ruleset creation time. That is somewhat more acceptable in my 
-opinion. 
+This is valid, but in this case access to secret is explicitly allowed
+by the policy, even if the related path is no longer reachable.
 
-Additionally I suspect keeping all the rule tracking logic in one 
-data structure helps with cache locality and decreases bugs from not 
-keeping the rules in sync with a seperate structure. It also reduces 
-the LOC and complexity somewhat. 
+> 
+> Earlier I was thinking we could make domain check for rename/links
+> stricter, in that it would make sure there are no rules granting more
+> access on the destination than what's granted by the "visible" rules on
+> the source even if those rules are "hidden" within the fs above the
+> mountpoint.  This way, the application would not be able to move the
+> source's parent to cause a disconnection in the first place.  However, I'm
+> not sure if this is worth the complication (e.g. in the case of exchange
+> rename, source is also the destination, and so this check needs to also
+> check that there are no "hidden" rules on the source that grants more access
+> than the "visible" rules on the destination).
+> 
+> I see another approach to mitigate this - we can disallow (return with
+> -EXDEV probably) rename/links altogether when the destination (and also
+> source if exchange) contains "hidden" rules that grants more access than
+> the "visible" rules.  However this approach would break backward
+> compatibility if a sandboxer or Landlock-enlightened application creates
+> such problematic policies (most likely unknowingly).
+> 
+> Stepping back a bit, I also think it is reasonable to leave this issue as
+> is and not mitigate it (maybe warn about it in some way in the docs),
+> given that this can only happen if the policy is already weird (if the
+> intention is to protect some file, setting an allow access rule on its
+> parent, even if that parent is "hidden", is questionable).
 
-The previous v2 of this patch used a complex (and buggy I found after 
-running the v3 test suite on it) xarray to track this. The check for 
-parent directory protections was O(n) and insertion was O(n * depth). 
+I agree.
 
-My questions for reviewers:
+> 
+> Not sure which is best, but even with this issue this patch is probably
+> still an improvement over the existing behavior (i.e. the one currently in
+> mainline, where if the path is disconnected, the "hidden" rules are used
+> and any "normal" rules from mnt_parent and above are ignored).
+> 
+> Reviewed-by: Tingmao Wang <m@maowtm.org>
 
-  * Is it acceptable in this case for landlock to automatically and 
-silently insert rules that the user didn't explicity declare?
+Thanks for the deep analysis!
 
-  * Should these protections instead be implemented in a seperate 
-data structure?
-
-  * Is the performance cost for the current  implementation 
-acceptable? 
-
-Normal landlock insertion and checking is O(log(n)). For rules with 
-this tag, checking is still O(log(n)) but insertion is O(depth * 
-log(n)). 
-
-Kind Regards,
-
-Justin Suess
-
+> 
+> Kind regards,
+> Tingmao
+> 
