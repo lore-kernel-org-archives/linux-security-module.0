@@ -1,288 +1,123 @@
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazolkn19013086.outbound.protection.outlook.com [52.103.46.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic307-15.consmr.mail.ne1.yahoo.com (sonic307-15.consmr.mail.ne1.yahoo.com [66.163.190.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AA136B;
-	Sat, 29 Nov 2025 15:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.46.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764428820; cv=fail; b=aej+GrIUaekf2fh6VXK0dkdrjNOMdeQCt4zVUhUq+b2NUsLmVOuAC0kRDA5zX9QEgbHAOgzgsl+RP8eDZaGTllWLxrJEDwBC6bc20FBy2KIxuYhYtBMbqLH3dpzLfLV97pTcnFKIn07DTjmE/mlV/vj1URfjwl6zI13odsPGtG0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764428820; c=relaxed/simple;
-	bh=0JhR4Iq6n4Rw9RQo6j3qbS5Yj/dBV/F6VMhZCNKW1MA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Swfogy662TvHOxDAAcZJs6MYUwm/LktT8wcQYI+u3n202pZPpWb79Tl27U5yrmKQP+J1cWNTd5VqehNIGHgLq9ynKg1Yg6P8/Zns/mcWrm4/FBUVUtMocEjkJ2V2/89oQtI7vIYi9X/fxuoFHTSh6RqiuvjCaWpmjrrHOUwvOjQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.de; spf=pass smtp.mailfrom=hotmail.de; dkim=pass (2048-bit key) header.d=HOTMAIL.DE header.i=@HOTMAIL.DE header.b=L9Veg0zn; arc=fail smtp.client-ip=52.103.46.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C616221D9E
+	for <linux-security-module@vger.kernel.org>; Sat, 29 Nov 2025 20:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.38
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764449710; cv=none; b=JC/r/qMD6ZSCxlX376TG3v3siH8y7sS8aP2PUHgDglK7OU9WW2mEyIdn+zypUXFwrO8yDXBprNdI4jdzeI+VqGUItcOILq412lEhFRHEQ/G0dBEyLHlYsw9tOLpswQErq7p8Ogy9cZ7qnYn/BYgQ/4oVgN4NdFqB8s5hSVm34hY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764449710; c=relaxed/simple;
+	bh=LRFz9PLAHDBWeq4L7G9tgDdfgWDQrZBQ++ivlsNtPFQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type:
+	 References; b=hNLz5VO8Wm4hxD2a+aGfYvsZT6tmCwSm5dzjS9e7KjfLdsG3mSyMlrI+WmwBNvhuw0a2HGyfjFlTi0LPldEc9xZQU0RqI+KRg2QuoPCimG0l0FwuTkty7zMKljQEECqaNo6oq2VI4bkJvQvnBT2DPcX7jwF1MQnyBhkdmSVska0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=PRGjYmaF; arc=none smtp.client-ip=66.163.190.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=HOTMAIL.DE header.i=@HOTMAIL.DE header.b="L9Veg0zn"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lProhl2XBLltTZbxxF8dswgCX5HjdjiBWgcygBojhbzWgtpRZ7HBaFFxPmF5e9bqkBwy7QRtdBUTM44XEVD+FnmUTsmbDQO8SNHjNlS95hC0u1aVXdCYxVKN8a9xnO/s8I/pfnzyFO2l3lFaGFE7i6kfDNdbFwhPaxOV7iY6DXiqFUJPHRah+872hc5mYUVSKw7mbnFcanLZbKBo5WHAWH0wQ6xQtkXEUrDBWGkK944P69xTvWYZDM+MALb26ZoGfj16wkskqxYKVcRG0Ju4OA0bMcEKogjwikFDdi2VcF4TfwYOnyr9+Tbyvb++PEmRrWpXW3I7RTWdBWU6y+/46Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FD/Akzqzu0nThG7Tk3GM5jB/WuJ8kjgjB5LxtcVF1Ms=;
- b=GHYUqMZX9C8GTl2Iu9ygFvXcb/ikJDSKUNwNBLJCX8rdHVefKnc/UGVy6rLoKk8q5TWLZnpeq+jGq4rg8zvt84T1hwMs0E4RK6OkJ3t/NsbMauHWHLrEGQURjn/1FeMw3/xgSRPSq9NAn0Qmfjr8sBBnGzLGUyCmJqC1arZk9ZWvGRYtu5iea/z5jX/wmLtu+vQ6kJN2e/kT0CoF6FfEXxOpNSKmFYQpBCCIKO83nY5M+iQ1ZWPNd1FXZDgHu7QCFIG4GB7JE1XdkXP8U3m1H8TPTbqPnFNkNuCjxzFOLkk4wOVnpiTkuqMhvFGVypr04hN6Fqh2CLkoWOH8FFhnPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=HOTMAIL.DE;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FD/Akzqzu0nThG7Tk3GM5jB/WuJ8kjgjB5LxtcVF1Ms=;
- b=L9Veg0znfBf/WerHwl4oj1Ju2uxBnv53RZJIq8FRffcifTso8cccOwhXx7wliBtpdinkpInOBqtWHB/nwWv//Ty3UMtz6t4qxRobxfZAHhqwZBhrTceuFtf0R2m5UqtBEkKYe8K+nWf6sQ/WVN2io9PJs2g34mZ182caS8UENhAdcMTJm06YNBstARpq2zQMe45J2oDHAYdnYusxjcGqJ1NvFg46wXRb4cR6WXcX9XvZkL3UxC94qc8qucB8Eu8h7rSoB18Z+cKxBKT9Y5LxKnvaH1yqB3SLYnuXpqYgUNMcuwL/vq0R+P2kCVrNm8OjVMRsZhaxfOtTnBxoolwzKw==
-Received: from GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:158:401::8d4) by DU7PPF6D5AD81E5.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:18:3::bd6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.17; Sat, 29 Nov
- 2025 15:06:54 +0000
-Received: from GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- ([fe80::dde:411d:b5f2:49]) by GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- ([fe80::dde:411d:b5f2:49%8]) with mapi id 15.20.9366.012; Sat, 29 Nov 2025
- 15:06:54 +0000
-Message-ID:
- <GV2PPF74270EBEEDD43083BE45C6E26F674E4DDA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-Date: Sat, 29 Nov 2025 16:06:57 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
- Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
- Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>,
- Serge Hallyn <serge@hallyn.com>, James Morris
- <jamorris@linux.microsoft.com>, Randy Dunlap <rdunlap@infradead.org>,
- Suren Baghdasaryan <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>,
- Helge Deller <deller@gmx.de>, "Eric W. Biederman" <ebiederm@xmission.com>,
- Adrian Reber <areber@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Jens Axboe <axboe@kernel.dk>, Alexei Starovoitov <ast@kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- linux-security-module@vger.kernel.org, tiozhang <tiozhang@didiglobal.com>,
- Luis Chamberlain <mcgrof@kernel.org>,
- "Paulo Alcantara (SUSE)" <pc@manguebit.com>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Frederic Weisbecker <frederic@kernel.org>, YueHaibing
- <yuehaibing@huawei.com>, Paul Moore <paul@paul-moore.com>,
- Aleksa Sarai <cyphar@cyphar.com>, Stefan Roesch <shr@devkernel.io>,
- Chao Yu <chao@kernel.org>, xu xin <xu.xin16@zte.com.cn>,
- Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
- David Hildenbrand <david@redhat.com>, Dave Chinner <dchinner@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Elena Reshetova <elena.reshetova@intel.com>,
- David Windsor <dwindsor@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>,
- Ard Biesheuvel <ardb@kernel.org>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Hans Liljestrand <ishkamiel@gmail.com>,
- Penglei Jiang <superman.xpt@gmail.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Adrian Ratiu <adrian.ratiu@collabora.com>, Ingo Molnar <mingo@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Cyrill Gorcunov <gorcunov@gmail.com>, Eric Dumazet <edumazet@google.com>
-References: <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <20251105143210.GA25535@redhat.com>
- <20251111-ankreiden-augen-eadcf9bbdfaa@brauner>
- <GV2PPF74270EBEE4FE6E639B899D01D8870E4C9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <aRs4zYDhddBQFiXZ@redhat.com>
- <GV2PPF74270EBEE6F59267B0E9F28F536D0E4C9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <aSNTNZxiQ0txISJx@redhat.com>
-Content-Language: en-US
-From: Bernd Edlinger <bernd.edlinger@hotmail.de>
-In-Reply-To: <aSNTNZxiQ0txISJx@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0099.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cb::17) To GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:158:401::8d4)
-X-Microsoft-Original-Message-ID:
- <d016b2fe-4640-4c15-8350-9eebfa067d3c@hotmail.de>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PRGjYmaF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1764449706; bh=qBsgsU5MdN1caXpcdclp4HwVHLKvhRcW4JUsJACicic=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=PRGjYmaFmprtgIhIDfCRa2dMO1kmVKBhPwlqasdU0nYk38LPWQXjASLMVgrFlbRpC56ebulpybazdBoPFfeHk9X85MHndtwHjwthaTMZujzFIa1Ln32gL2ZrXJ3s4qIUVNQdxMcHDnvyfmv5tB5RryvV4PYWP7oUixZbHr+AZgJaevdouD87lhQJ+OyomAKh9/ogp09hHhgkCidY/FWyCspAEGYwz3LtKRV1pVaV/GQrygrrrQO7nR/vxJpkG43ardhNlBkW+zdkmIv/9iIVEy/5f+cEFHb5/uDFD3EMddWfL4+r4FZgxTD2DVPKDYpKMNRVLTYz+0saXcHmAC/sCQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1764449706; bh=h+3OKbaPNqahulzSPziaK5HRbWRMC+eBsGouAcba7hE=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=rCn1hJ7RL/TW9vr+Zu/LYsdC18w4y33ou189BhA039Up18kIqgG2vlmhq1jnmquohEaveXBAvLtKr56fn4alEbg6h9WoFgMfWvO03M2pJ2uxWwnPAn0DwjEKNDThYXp77EGblv4qET49ZWR9WcsYeYXvHY0QiFqzF8BNsxQqfNQv4mmMS3yMiLKrWii4zwYrZ47aVxiv0ofeUKFHuR4US+0J57fHQsG+gQcvl+Yswd5tqWpgAAHBsGQUmJBuy82NBqGjM0mKXOs8jZdM1VqnX3Qfem48sCPKllL9i88kJ3Vsfa6oiGJ5NK+CDQErsAelVw/ZsJtfhfajzZslSXD/8Q==
+X-YMail-OSG: vt2aB4EVM1lIP0qOtOya8UR2Hb2PuvhN0uDRUwcmtD25A6a2q0dTMX2ORgodbTq
+ We6xODzuuDw1Ey4S0oHy1T2DIRFJ7xRlcOlLTnKamaz6TRpbtG2Z8fK6qWiSQttQ.3Sn6KevcKT9
+ uIAX2B5bSboaFb6hlP2jrYQ_plxFBIB8UkHXgWPkmBFXeg3LO9VrM.SZMLXhExxznixeAMn3fZad
+ 9pfBwGndf.e512l7lTcP1WG9CEu2cCSaGRMuCi3d7zYqgE4NFS7SV2SQAGbi6fwleLooh8A9Boak
+ xhtCpAvTg8eCg8f3.uCVpgGpTPxKWNvcfFPmgV54lZvfTMxk4b2ZQ5.IYlKx9_fk_6a4s1Y4PYKa
+ PROl1jovsH3J.k4gNoT188yje5fqeTOhaPZR3ksXI5wMSDCIM2.vyRryjJfnZ6uIE44fLBuJf56J
+ WAppuRanWsAXVndrRWmeVo7cgEjkaEPmaDfmpb44g_B4UhQwQliku47DY7xeDPtHAUMOd7lPyo5y
+ BGwfFylLQbU5PcZAOpEYm02T.XS85zMKFV_Z6.dCNjLjSXBZ8tZ8Cm.kwr3jOBRC231pPbPFW34i
+ MHgilOoM3RCthfzHLXAFpcvG59tcobjHSDhQoiwvMky87fao20jTjQXLPuOg57iHHZFi93rzP7FD
+ EUAgz_aHMHkBwBlGzFE2K7EaCUrJmrvsWbR.Uyr01X1I7xgyTdld5i2x0swTdzYT86mw9QXOq1eE
+ SFBsnfnSND3WEYRePFL3q5DvrOE_UV165_N7ofzWEoY0UeGtrYkaVxv0xrhLdH3rEXgA9ulXqldP
+ zMx4oSU0XsSTldslkKnZCfBok0QkB94O1EfE1xc9MDgN0Z2gUax1hyHxpPVbQ.MDqW.JZdFousem
+ U.fr7iMgbcdSPzyonnlO47sAk.K_jtIseQgamuJsXiMJ3xDKvS3paDnsswIxf829QuEnLWGwTEsg
+ kZ4LP56EchLji4P8hsOxsyRlBje.zdCsWsT4XYVazzNXQnKij1s253a9zeER0k7HdHZdX7NIUwRt
+ ua1Csg1Bropau8SHCtKVGIOIh8lOqOAeP6UVC_Sz0vzoRggGCmm9_5RknvQLjU9Svx8i8IdxaXg7
+ twtLSMukKlBiAP9nmuDjWzEpIpVA0Hlhc1_jquf_aeMXsUhk29yhXjK0TF.AkhsvBX61M9w5ERi0
+ 1_TrIVGgClBYYKs0lwWnbjRAa4gd2oFJ.V.PzbWrEO2ODW_3YiOq2dAs2dMtqqDhJiyxcsnFtnMR
+ Afn7cbJ.6FA3EbjM7KYN37whMCn4S.YzigGjgZAFUL4pcBvuoMzXz2.qIQzKVrI.XLNjkFPdvk3t
+ pUbziCWXOrcvlOJ8ZB9GDhlMozOWTZKtuw7zhVujsDiRJ5YzXMML3qCgKTS.hfNBo5Rx2DhAzIqk
+ KJyP0D5Uxl7MVBpN8fVRLftVdME78YZi339AFrqYwEzhk65qy1so_wvhkQTgpWDKwoccdr8Gfzju
+ XZuwNH08Olaj5zyRo_RHljblLRMegE6eicQonyhsbxicAZt4UFw4zIgEhDi8tylrcPUDe1RuNs.x
+ 5c57bPApdFyJMvc6HJ6UXf3cAlW19pH0pZ_tE.0VjITdaam2mmIIE35hqIQvdlXfIXI3nC0G8Giu
+ vPkm0yPMzXtdCnOUW6ycXV8YPQbXZphwTN_rZAAa9qdfjL.WUOmcgYSDV_Ug4fuuePyxvh.ZvfU4
+ 2vE01LCZTGLPzFoiZ0gpcO_5k1xtnYIixygTjn9v1TCxlv_OwOS5PD0dJs8MTN1alc9bPP7DPPhj
+ vdrYDZj5lRUclvsDOO91v8wmqjF7Q6rAPYCaI9i1lkUBOld.YzUvqbSSlmS4IzrHY22SeRFZxvjJ
+ odM_Vf25AJKrhda_BIyBTVRrQjHcYyqcPco_kDs9CVhCZUFcta4F7VBCoO3BWsndQZexlejHis_n
+ 4LHCQZNPiHiDlat4AdEL4XG4_frtt970Og93ybfvyTiqbHggliG0zSldvsM2TqmXaDJFM4m1H4gy
+ oEyK5OLdnQqxNvyrivgwfZSQZ3Xe.qjdzmRtps7Z15WWOgo4d0bABAQ1IygKj6RR0YrEtgB8mv3a
+ LPO5pZagQBr3JyiLCwltDKAuuJwjJXBYD7.644Jofk5PcIT8lygW41FPqho6bMkZzb29OLA1SU6s
+ LULJC6jFC4iVTyMp5WXcdBP1i4_1P7Be3zEyQhQLLY8ePwfNH9fjNH9Vxaa6JOZ6ed13.pduPaFT
+ GfiQTJssYxaKMzKgcuz8LPXXRgX_umNFLthNlMNHHT2BxnhK_O1SoR6P5eN9Rq2NNiTQXS7cTFlo
+ I61JGNLz0NHVMnPj0zGg-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: c37b914d-b9a4-4a3e-940f-fc7cdfce89b9
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Sat, 29 Nov 2025 20:55:06 +0000
+Received: by hermes--production-gq1-fdb64d996-m7z2b (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b6b41b48273e4c24e8b515e737c55b5b;
+          Sat, 29 Nov 2025 20:24:40 +0000 (UTC)
+Message-ID: <80229bac-c3d9-4c99-9cca-dade23ef7421@schaufler-ca.com>
+Date: Sat, 29 Nov 2025 12:24:38 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PPF74270EBEE:EE_|DU7PPF6D5AD81E5:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7aa02119-ea85-4a83-0e8b-08de2f58ee86
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|15080799012|23021999003|19110799012|8060799015|51005399006|5072599009|6090799003|40105399003|440099028|3412199025;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U1Rhd3NxZFozclkxSkViYWJRZmEzVUR2Z2M2OUEyN3pkclVuRzdLWFhZS0RH?=
- =?utf-8?B?V2dHaFNibGZ0QVpETkdER1lINEswMk1zZWowWmR5YjZxcTVCVEIvTkYyaDJR?=
- =?utf-8?B?WkYyTFdpYjF2dFFpODlJcGp1RjlKckZFekUxU3VhZTUwUHIvM0dKbkRiZnVO?=
- =?utf-8?B?QWloakdQRjJkSkpORGp6N3VEVFltRWkyQ1VhVTlIVDVnYUlnUWV0ZFRSaXBv?=
- =?utf-8?B?bzArZ1dxZjlNWWcvQmhvajFOckhHWitFeHVjRWd4T2lTSnlFQzkyMEdjWDJF?=
- =?utf-8?B?UmdEMUxaV1ZoOVRSZnVPS0xIUWNRbnJHa1A1VGI5ajRzZDlyV205VHh6VFZR?=
- =?utf-8?B?OUlwZTQ0c1h4L1k0U1JMZDNFN1lNanZSUnNsbitFdnFPbnUrUnRIN3dWenUx?=
- =?utf-8?B?UEx0T3ladFBwZWlxRlpxVzQxWWgrRmxMNTlHZm4xOTFBM0JBMG9ySE9kM3gx?=
- =?utf-8?B?SW9yaU5kd3VtWkp6aGFteHFTdUdOdlljRHlmZkk4QTZwMGhVdTdjbFF2SUJk?=
- =?utf-8?B?WllJMGgra1I5WXdxK0MxWUVmM2MzTVFFbkh1MThGRzBLaFluMjZLVjhUVjVY?=
- =?utf-8?B?VWtSWGNGNW0zK3l1cXJKWmNwL2E2aDhYR1UvSVNlVFVVUHphZU9yOGlZOERx?=
- =?utf-8?B?OW9RQzdwTXA5UnRDRjNsazlWWVdHenk4Z2xqZGRobWJWTTBFeHdZcExOTWNN?=
- =?utf-8?B?RzZNaFBSa1dHbWJ6T2hOWVZtd3ZYS3hvV1QwZjU0Z25aNGRMbTV6YnhHeXBF?=
- =?utf-8?B?eU5uMUxsWnhxUFJSWDZpc0E5Y09CZDBOY05MRGRaOG4zS2xnZ1N6bTRCdWxL?=
- =?utf-8?B?Y1pwSER4a0lPYmhTZDErYXNjanJaamFmY2N1Rmc0SzY1UXl4ZGZvejVsZlVV?=
- =?utf-8?B?K2c0czRNempFeFQ0QnNnZWdvM3h6YUhETjc4d2xSYnBEZHZHbXNwMEVVUHFN?=
- =?utf-8?B?NVVUQlZUQW5jTmNNSXFpdGVBTG92K2g1ZHpVc3c0UmdqM25PMC85NGNtd2Fm?=
- =?utf-8?B?VTdKd2hnQllNUlZNa0tqeWpCYVJzdGZwZzJhUHhGajVlWXNxVFgxMXVXVFZV?=
- =?utf-8?B?VGlOb3lvK2hUTU1uSkVRbU1HWTVVa2tLTGl3dk9CV2s0L09Meks4WTZHS2Nl?=
- =?utf-8?B?bUNyYVkwazJRazB3WTJLdk13TExRZDN0UDU0dmtvZEd5VW1mRHFkbk9XdnBG?=
- =?utf-8?B?Q3h5MXhXdExZbURxNi8rVnFseU1IZ25uS25WcEx4bm4wN2xaK1VtZlRjYi95?=
- =?utf-8?B?STgyMHltSStQbCtqdnFja0JyVCtHRHFVWERza0RMalpSWldWWStFYzI0WVRG?=
- =?utf-8?B?TlBtRTdmM2hNQ2FVUHNhUXE5SytLVDYyT3RMSHVLS3ZmMVRCMlMvQ3hUZEpJ?=
- =?utf-8?B?bm9aYm5CS3FnV2dqbDlHWUJxTnAwY295dFkvUXIvS0RmRXdscUxLSFAvV3Ro?=
- =?utf-8?B?TUhVZXhPMUswcUovTVR4UmFEZS80OW55NTVjSG14RTE5dW5CUU4xbDIwTTk5?=
- =?utf-8?B?NitRT1VoVTNteWM5SlFqR3NhSks0UmRUaFBtMWliSXVrSUJBTXhGVno2S1Nu?=
- =?utf-8?B?Sjh2TVpLSEk1a1pSdTRSSGdjb3pqbVdSUnhHTUk0aFFKVWtsZ0RINm5sZ09h?=
- =?utf-8?B?dmlSU29ESi9veHc5V0VkUDlKbi9kWnc9PQ==?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dzY1RVJiMlNHWVkrRy9QOGt3WTBxNkVFcGF6cHFJa2VncWorc0VSL1llQmhW?=
- =?utf-8?B?STVFL1Ruci8yNEU4N25pSTdkTXZtei9mbmg5Y0lteHQ2UEJqOUtBQTRYcTF0?=
- =?utf-8?B?NjhDWHRGZnAzYnRoVTlTaUo0QTE0b1hTZktVQTVJQkp4Mk1nUW16VmlMNThh?=
- =?utf-8?B?dDJ5UkNPcWhkc0FhTVpqQXNrcnEvZGFMRnZPNllwVHBGVTVLRDN1WFZmTTlz?=
- =?utf-8?B?WWpnanBCR3QyZ2l4RnNyQW00UmRqL0pxMmtIa1o0QlRlVUxtYzlmMDI0K3ZX?=
- =?utf-8?B?dnJzT0JRMkZKVkszMGJQOGh3WWJSNzkrVUNjckM4eVoyODhOTDJvdUdHNVYv?=
- =?utf-8?B?K0sxS09OVmFhaGFsM1pqT1JZV0JNQTlVbVVrM0hCT1FmSUMzRm5Nb3FHZVJ2?=
- =?utf-8?B?cUVZY0xreHNjNGpSRWNlQnFlaEZSNWlsNldCaEUybnE0aFc3dHd3K1dUdmdD?=
- =?utf-8?B?dzZpSEpMT1ZzczYvMVhnNHNLRnJKa1UyVERLKzhvZG9Mc24zMlNsc250UnMv?=
- =?utf-8?B?dnpTc1BSVlJXL09sWWkycjNvRzV0d2xyR2FPOHhVL0toT1FhbmR2WnhvSGZt?=
- =?utf-8?B?U0hldnZkS2dEdHFVRnIzYmpRQ2dOVll6RHlaZ2prbmpsREltYjJIOUEzU1Jo?=
- =?utf-8?B?MWI0OGZpZ0syVk0rcXpycmlObWZlbzlkS1FXSnZsaVYyRFo3OFI4Y3R4cWp2?=
- =?utf-8?B?Y3VzK0VEQU9xZmZOeVBFK2x2eXVOaTBIaEt5azhsSFR5b2dNUFVhRlA1VE03?=
- =?utf-8?B?b29KSDJvcnI5NjZqMUhxOTR1NzFpVWg5VWhjOGlLOE5KTTR0azN2V0hOaUNE?=
- =?utf-8?B?djB0YmVBYlRUdmEvQ0NBL0Z2eUd3SmJXUW51L3EzQ0ZwZWMya0dpQ1puQkE0?=
- =?utf-8?B?cXA0YUR6em5sa0JQUHRJMHk0bWFKWjYwNG4yc28zWVd4cmhRK2NORHBJQjdL?=
- =?utf-8?B?RzlWMWgrOC9xUnlvUEVqNjNtcFVFc3BhNXNBdHNqZklRTnhRakJMQkgxTkpB?=
- =?utf-8?B?ZnZNY1M0NTFzS2NST0hyLzlqRURhUkhtZXRDNUIvTVFmNTNwSmhKSmRJblFv?=
- =?utf-8?B?RTdkNnZXMTBMVkJrQXNUYlM4ZzVPVVluVms3elViWm5iampYd2VPMWo3UGQz?=
- =?utf-8?B?K2dBQzFZQkFybTB3UUV5bFRJeWZZdHhKS3BkYUZ3cHZnNWt4NFZPMU1xUm1L?=
- =?utf-8?B?eDJ6ajF5RUtlQWFOeDVJY3ZSSi9sc2JDNXdjZDdBYWJ6a0o5T2MvK0pXSyth?=
- =?utf-8?B?cXVraEl4ODdFZ2hFVmVpV2ZDZ0RnaEtzWWtSSEt6SnBQYUhGTzB2MWM1Q2JE?=
- =?utf-8?B?eE1wZE0vNWhqSm52b2NiTEFCeVRrT3dSTkJ0TTJSTlZVLytmNGlJd29INHk3?=
- =?utf-8?B?V3ppTGxacWZrbjlyaEhDcWFDQVA3WVd0RFN5TS8yZ09yY3B6WGJIM3Z5aldj?=
- =?utf-8?B?eUw4M0dNRDBFNlE2RHp0ZW1LSWp0Wk1YVG5GamowQnBSNFZWc3hZTFl0KzhJ?=
- =?utf-8?B?TFdoU2NFY28vYUJMMlp2SUtjOWJhN01hL0RnSGhoZm9oS1hWaXAwWWk0ZVNW?=
- =?utf-8?B?ZTBLdFVRR2dKSlJHczZFcW9BaGxsUnV2aGpWZC8xSDZnaWJvTE1UR1oyanMz?=
- =?utf-8?B?RWY2UjIwcFFCRFVHVVY0MXVxNlpPNWtQb1laQmRBTFVvbUJVY0I5eHdYUFMz?=
- =?utf-8?B?dm1iRVNnOXA1angrT3UwZDVLM1dWUG1obzBOOCt6d3cxeTJZOGl1bEUrbmFV?=
- =?utf-8?Q?3Ttcpt32ll3nW8eRiOu/+7t2EmW+CRYxU6p6ka3?=
-X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-87dd8.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7aa02119-ea85-4a83-0e8b-08de2f58ee86
-X-MS-Exchange-CrossTenant-AuthSource: GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2025 15:06:54.2302
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU7PPF6D5AD81E5
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LSM List <linux-security-module@vger.kernel.org>,
+ Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ Konstantin Andreev <andreev@swemel.ru>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Subject: [GIT PULL] Smack patches for 6.19
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <80229bac-c3d9-4c99-9cca-dade23ef7421.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.24794 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 11/23/25 19:32, Oleg Nesterov wrote:
-> Hi Bernd,
-> 
-> sorry for delay, I am on PTO, didn't read emails this week...
-> 
-> On 11/17, Bernd Edlinger wrote:
->>
->> On 11/17/25 16:01, Oleg Nesterov wrote:
->>> On 11/17, Bernd Edlinger wrote:
->>>>
->>>> On 11/11/25 10:21, Christian Brauner wrote:
->>>>> On Wed, Nov 05, 2025 at 03:32:10PM +0100, Oleg Nesterov wrote:
->>>>
->>>>>> But this is minor. Why do we need "bool unsafe_execve_in_progress" ?
->>>>>> If this patch is correct, de_thread() can drop/reacquire cred_guard_mutex
->>>>>> unconditionally.
->>>>>>
->>>>
->>>> I would not like to drop the mutex when no absolutely necessary for performance reasons.
->>>
->>> OK, I won't insist... But I don't really understand how this can help to
->>> improve the performance. If nothing else, this adds another for_other_threads()
->>> loop.
->>>
->>
->> If no dead-lock is possible it is better to complete the de_thread without
->> releasing the mutex.  For the debugger it is also the better experience,
->> no matter when the ptrace_attack happens it will succeed rather quickly either
->> before the execve or after the execve.
-> 
-> I still disagree, I still don't understand the "performance reasons", but since I can't
-> convince you I won't really argue.
-> 
->>>>>>> +	if (unlikely(unsafe_execve_in_progress)) {
->>>>>>> +		spin_unlock_irq(lock);
->>>>>>> +		sig->exec_bprm = bprm;
->>>>>>> +		mutex_unlock(&sig->cred_guard_mutex);
->>>>>>> +		spin_lock_irq(lock);
->>>>>>
->>>>>> I don't think spin_unlock_irq() + spin_lock_irq() makes any sense...
->>>>>>
->>>>
->>>> Since the spin lock was acquired while holding the mutex, both should be
->>>> unlocked in reverse sequence and the spin lock re-acquired after releasing
->>>> the mutex.
->>>
->>> Why?
->>>
->>
->> It is generally more safe when each thread acquires its mutexes in order and
->> releases them in reverse order.
->> Consider this:
->> Thread A:
->> holds spin_lock_irq(siglock);
->> does mutes_unlock(cred_guard_mutex); with irq disabled.
->> task switch happens to Thread B which has irq enabled.
->> and is waiting for cred_guard_mutex.
->> Thrad B:
->> does mutex_lock(cred_guard_mutex);
->> but is interrupted this point and the interrupt handler I executes
->> now iterrupt handler I wants to take siglock and is blocked,
->> because the system one single CPU core.
-> 
-> I don't follow. Do you mean PREEMPT_RT ?
-> 
-> If yes. In this case spin_lock_irq() is rt_spin_lock() which doesn't disable irqs,
-> it does rt_lock_lock() (takes rt_mutex) + migrate_disable().
-> 
-> I do think that spin/mutex/whatever_unlock() is always safe. In any order, and
-> regardless of RT.
-> 
+Hello Linus,
 
-Well, based on my experience with other embedded real-time O/S-es, I would
-expect that something named spin_lock_irq locks the task-specific IRQ, and
-prevents task switches due to time-slicing, while something called
-mutes_unlock may cause an explicit task switch, when another task is waiting
-for the mutex.
+Here is the Smack pull request for v6.19.
 
-It is hard to follow how linux implements that spin_lock_irq exactly, but
-to me it looks like it is done this way:
+It fairly large as Smack pulls go. There are fixes for several
+cases where labels are treated inconsistently when imported
+from user space. The assignment of extended attributes has
+been cleaned up. There are also some documentation improvements.
 
-include/linux/spinlock_api_smp.h:static inline void __raw_spin_lock_irq(raw_spinlock_t *lock)
-include/linux/spinlock_api_smp.h-{
-include/linux/spinlock_api_smp.h-       local_irq_disable();
-include/linux/spinlock_api_smp.h-       preempt_disable();
-include/linux/spinlock_api_smp.h-       spin_acquire(&lock->dep_map, 0, 0, _RET_IP_);
-include/linux/spinlock_api_smp.h-       LOCK_CONTENDED(lock, do_raw_spin_trylock, do_raw_spin_lock);
-include/linux/spinlock_api_smp.h-}
+The following changes since commit e04c78d86a9699d136910cfc0bdcf01087e3267e:
 
-so an explicit task switch while locka_irq_disable looks
-very dangerous to me.  Do you know other places where such
-a code pattern is used?
+  Linux 6.16-rc2 (2025-06-15 13:49:41 -0700)
 
-I do just ask, because a close look at those might reveal
-some serious bugs, WDYT?
+are available in the Git repository at:
 
+  https://github.com/cschaufler/smack-next tags/Smack-for-6.19
 
-Thanks
-Bernd.
+for you to fetch changes up to 29c701f90b9341f1f9c1854a9c22b71c2318457d:
+
+  Smack: function parameter 'gfp' not described (2025-11-11 12:00:18 -0800)
+
+----------------------------------------------------------------
+Patches for 6.19
+
+----------------------------------------------------------------
+Casey Schaufler (1):
+      Smack: function parameter 'gfp' not described
+
+Konstantin Andreev (8):
+      smack: deduplicate "does access rule request transmutation"
+      smack: fix bug: SMACK64TRANSMUTE set on non-directory
+      smack: deduplicate xattr setting in smack_inode_init_security()
+      smack: always "instantiate" inode in smack_inode_init_security()
+      smack: fix bug: invalid label of unix socket file
+      smack: fix bug: unprivileged task can create labels
+      smack: fix bug: setting task label silently ignores input garbage
+      smack: fix kernel-doc warnings for smk_import_valid_label()
+
+ Documentation/admin-guide/LSM/Smack.rst |  16 +-
+ security/smack/smack.h                  |   3 +
+ security/smack/smack_access.c           |  96 ++++++++---
+ security/smack/smack_lsm.c              | 279 +++++++++++++++++++++-----------
+ 4 files changed, 275 insertions(+), 119 deletions(-)
 
