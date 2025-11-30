@@ -1,80 +1,145 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21005190473;
-	Sat, 29 Nov 2025 21:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5D9A930
+	for <linux-security-module@vger.kernel.org>; Sun, 30 Nov 2025 00:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764450594; cv=none; b=ddWSwkkDnGDs1iKPRLzcX5KIEDMhhcZ8tmVxQYXupsOkluYGLZz63KmJ/orvM/K3eN68upe3iN7US+oZEOWFob9KHwIyCnf5tdPkKnmKr9TDoTCZfeBNyEcXGOtvM6gdwm0tQX8o1x4ZBpQUvrjBHTbtagAriCaNOpHWG9/K0VM=
+	t=1764460896; cv=none; b=RLHDC3vXVhi8WUCtTyQVht3iZlimwghZcOOai1a8Qu7Fg0lxeaFRGH42O/WpithABr+qEvJsDUOXaE/lT4PgyhcELlV2YNVrkA2kbLG8QY/P5dTsjfrqM6+021cQeeeF/RIRUayNSsix4KVjb3vymUn7NSlqUh6rQs3qytKcDQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764450594; c=relaxed/simple;
-	bh=KfJe3IriiswbX5eyTTFTkyFyP3ZCsV/eRNW1Zl5dKAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=D+mWZJWZ8YY0otJ4hc58D9EjJrdVFFIWfxOZ+lVHUKOAzFEm71Y8T2LBB59swvxzL02czMdcOr3kFnHDp+vyRsP0OSyITZ+rs+j99H3ZREc4kVvy0JUmEvNgv5/dM40LAAl7TUrMepD+5aEkGsXOwRfYy21QaNwoM01q9mjh+NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihSv94jt; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764460896; c=relaxed/simple;
+	bh=LSJ70a7sqpVfPbtWx1NwHyhEjI0E0jggLRDHw6XUKNY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AmlODYUYqYTWAVwfDQ1GHMLHaCf4tRWXoYRPwWPfGlvDVUl4Vc4bE8xXAUQhw2EmCr9lnd9v95RPqxX65GvOg868jiLbYoSlhyFcHfpNljrSJk/bgFqQVQSo5I2lsWwuwuoyTZ0ppiJEpzcI4pBHkZhPeHKI3NWXYB6Ub5TIbCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=cTTUT3M1; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihSv94jt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F117C4CEF7;
-	Sat, 29 Nov 2025 21:09:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764450593;
-	bh=KfJe3IriiswbX5eyTTFTkyFyP3ZCsV/eRNW1Zl5dKAM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ihSv94jtlpgmvVsLrwOuPV+1zE2vC1mXQUZBlTCiu3psxYjzRK8JqFz3LAD59PnH8
-	 jpWPEVr0FSclBomWqxhOfIt/2OgRB+SLAYwe5WdwREIp1dbFoUAe6zqIcnJ2o1D6EL
-	 W74YHRNsabkUG1M4liBb3rkv1kwTKHwCnAYG3zU322xmlHO7E8TV45V5BVtwPVnXG+
-	 rSTLeKw5y++bK+PUNjzbhnEJe3xkycS0Wv9owj2Z5HpQ5YPrk6+KQnTQ30ko7dQpyY
-	 q6/LVh6rB+sPXLXeORc+feSrfB+D2YOW3o7O21ApOni0Yhp4vRVXjLjAZqULcIR3nO
-	 Xc7lQ9xyUCZqQ==
-Date: Sat, 29 Nov 2025 23:09:48 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Howells <dhowells@redhat.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [GIT PULL] KEYS: trusted: keys-trusted-next-rc1
-Message-ID: <aSthHCovbsDZANsa@kernel.org>
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="cTTUT3M1"
+Message-ID: <6713ea38-b583-4c86-b74a-bea55652851d@packett.cool>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1764460882;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=srEr3LoKq1Czaq8I5z3/A4FoFBjqxOV0LMrfiR1/IRI=;
+	b=cTTUT3M1OgZOXf9KsjND5eMtqvOa5Da+1AeeP4jR0sw0vC4IDg5Xa7CSv88SWqP6ld8c4U
+	feLTIFGjsHi46wUcXcnZnBNFYyUA+k4gt6/btlcqIgvR4xvfo97KEbgbLW8O6jDXdJrKlx
+	N47LnE5fWNIgP4vLf6QeSzk7h8hxo+Mf0b3ed+iyBgZDt5MyHgOMDd1kv+b3MkRIf/97oF
+	Xk4+Fm9asGPOO/UHvFRyAPJkp7+BxqbSkXxGSQ7XQCxe3dquat/XoNWuSDCvFSrDBacD6P
+	XPihqavrhekC6KevGwsdpq2omOGhg4neyyNLaEyfIuqzGpoqSCNpP7XeImwedA==
+Date: Sat, 29 Nov 2025 21:01:05 -0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: aerc {{version}}
+Subject: Re: [PATCH v6 06/15] VFS: introduce start_creating_noperm() and
+ start_removing_noperm()
+To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+ Jeff Layton <jlayton@kernel.org>, Chris Mason <clm@fb.com>,
+ David Sterba <dsterba@suse.com>, David Howells <dhowells@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ Chuck Lever <chuck.lever@oracle.com>, Olga Kornievskaia
+ <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Carlos Maiolino <cem@kernel.org>, John Johansen
+ <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Stefan Berger <stefanb@linux.ibm.com>, "Darrick J. Wong"
+ <djwong@kernel.org>, linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
+ ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+ selinux@vger.kernel.org
+References: <20251113002050.676694-1-neilb@ownmail.net>
+ <20251113002050.676694-7-neilb@ownmail.net>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Val Packett <val@packett.cool>
+In-Reply-To: <20251113002050.676694-7-neilb@ownmail.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-The following changes since commit e1afacb68573c3cd0a3785c6b0508876cd3423bc:
-
-  Merge tag 'ceph-for-6.18-rc8' of https://github.com/ceph/ceph-client (2025-11-27 11:11:03 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/keys-trusted-next-rc1
-
-for you to fetch changes up to 62cd5d480b9762ce70d720a81fa5b373052ae05f:
-
-  KEYS: trusted: Fix a memory leak in tpm2_load_cmd (2025-11-29 22:57:30 +0200)
-
-----------------------------------------------------------------
 Hi,
 
-This pull request includes couple of updates for trusted keys:
+On 11/12/25 9:18 PM, NeilBrown wrote:
+> From: NeilBrown <neil@brown.name>
+>
+> xfs, fuse, ipc/mqueue need variants of start_creating or start_removing
+> which do not check permissions.
+> This patch adds _noperm versions of these functions.
+> [..]
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 316922d5dd13..a0d5b302bcc2 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -1397,27 +1397,25 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc, u64 parent_nodeid,
+>   	if (!parent)
+>   		return -ENOENT;
+>   
+> -	inode_lock_nested(parent, I_MUTEX_PARENT);
+>   	if (!S_ISDIR(parent->i_mode))
+> -		goto unlock;
+> +		goto put_parent;
+>   
+>   	err = -ENOENT;
+>   	dir = d_find_alias(parent);
+>   	if (!dir)
+> -		goto unlock;
+> +		goto put_parent;
+>   
+> -	name->hash = full_name_hash(dir, name->name, name->len);
+> -	entry = d_lookup(dir, name);
+> +	entry = start_removing_noperm(dir, name);
+>   	dput(dir);
+> -	if (!entry)
+> -		goto unlock;
+> +	if (IS_ERR(entry))
+> +		goto put_parent;
 
-1. Remove duplicate 'tpm2_hash_map' and use the one in the drive via new
-   function 'tpm2_find_hash_alg'.
-2. Fix a memory leak on failure paths of 'tpm2_load_cmd'.
+This broke xdg-document-portal (and potentially other FUSE filesystems) 
+by introducing a massive deadlock.
 
-BR, Jarkko
+❯ doas cat /proc/40751/stack # main thread
+[<0>] __fuse_simple_request+0x37c/0x5c0 [fuse]
+[<0>] fuse_lookup_name+0x12c/0x2a0 [fuse]
+[<0>] fuse_lookup+0x9c/0x1e8 [fuse]
+[<0>] lookup_one_qstr_excl+0xd4/0x160
+[<0>] start_removing_noperm+0x5c/0x90
+[<0>] fuse_reverse_inval_entry+0x64/0x1e0 [fuse]
+[<0>] fuse_dev_do_write+0x13a8/0x16a8 [fuse]
+[<0>] fuse_dev_write+0x64/0xa8 [fuse]
+[<0>] do_iter_readv_writev+0x170/0x1d0
+[<0>] vfs_writev+0x100/0x2d0
+[<0>] do_writev+0x88/0x130
 
-----------------------------------------------------------------
-Jarkko Sakkinen (2):
-      KEYS: trusted: Replace a redundant instance of tpm2_hash_map
-      KEYS: trusted: Fix a memory leak in tpm2_load_cmd
+d_lookup which was previously used here —from what I could understand by 
+reading it— is cache-only and does not call into the FS's lookup at all.
 
- drivers/char/tpm/tpm2-cmd.c               | 14 +++++++++++++-
- include/linux/tpm.h                       |  1 +
- security/keys/trusted-keys/trusted_tpm2.c | 29 ++++++++---------------------
- 3 files changed, 22 insertions(+), 22 deletions(-)
+This new start_removing_noperm calls start_dirop which calls 
+lookup_one_qstr_excl which according to its own comment is the "one and 
+only case when ->lookup() gets called on non in-lookup dentries". Well, 
+->lookup() is the request back to the userspace FUSE server.. but the 
+FUSE server is waiting for the write() to the FUSE device that invokes 
+this operation to return! We cannot reenter the FUSE server 
+from fuse_reverse_inval_entry.
+
+x-d-p issue link: https://github.com/flatpak/xdg-desktop-portal/issues/1871
+
+Reverting the fuse/dir.c changes has fixed that for me.
+
+Thanks,
+~val
+
