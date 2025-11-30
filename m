@@ -1,71 +1,47 @@
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B6D18FDDB;
-	Sun, 30 Nov 2025 00:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E2C1AAE13;
+	Sun, 30 Nov 2025 04:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764461961; cv=none; b=s5fcQmbNb6WvjOpnmNj6SB8SfSlfeQL3K0t48l1wjsVmXXfxKQMKV1zxrhj+DhG8vIJhX7IuRkxklyJyLmLaOrvugkFKoPyW4Bfdf0XA9WIZpLA1BUKSmA6R5WXM/vvhcFwuDJWGsCjMpRVXW+O2i7chgTzD6FZMRui8L/jxcT8=
+	t=1764476634; cv=none; b=omYCaLBIayAITznrB/YL7lDRoMNx3fDs2a1LfYY5HtvtdIswlmHywQGstYGsIStASSuT208gXxZeIsHReZHIQqDlRu/I+4IM6+osK/doBb9a3JZvX9znpodsb74t2vWShVj9ylUt2BTZCsvQLbJssRQQT7iV5yE0QWQdHMH7/Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764461961; c=relaxed/simple;
-	bh=HFGaExAsqMAWO5sUzUnvqPSfrdycmZcM33Wu9Kesduw=;
+	s=arc-20240116; t=1764476634; c=relaxed/simple;
+	bh=hnR5Dz0QikR5HczIuSiGehBOvUQvy0paTIbwbsOVlIo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FPrDELIEkD6ArhiPm02HBkqAE17SLcV8YOdra5ZlgTg7aJ2++rOiJ74rWMctKHOfNC9U9Lg42jqupQnm+fDQmoFObBra3NS4yd6UYYzr7ZVLUqsbEAt9OIup7jECajtxkaKZtaI4g/pFgibONVoRk3ldUo4MmZqW0emL1YGfXnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=P0lI00AM; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=iv0r3QI0C4bwNoqBSnE83zWme8/2gFDMmHeSCIULDjEFMg9ThYegRHtE+ujPDSaLyNeEoPn0/uGAuXA8/XVWU9cn8Ze0tHYs5xgTgSZsv4IBuKxOxLzAjHJUf3PPaTWSL1VNTwcAHchmJR3jT19IUshLJTPBOqmONnSALiBDgCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=eKKTxaA2; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="P0lI00AM"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="eKKTxaA2"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/QciF8G+P9yAIBwI/Xv/gYc2UTZnSkqo4skR1MpMD7w=; b=P0lI00AMxhFts2RFB74Z0P96Sh
-	E8woe6RG9A+6J5H20ey0imQtCJMcy5U1TWTK7Iu1T2P7EuNyuA7oTrbFVjxkqfviAnpZeISCqG7U4
-	ZcYBq1rW6Xg4/XpVHZAI+OGOmKpBc2nwqfLCACY0TWVOoLR2+2suf458IULSa7HTAvPGyQFApiC+u
-	c22Uhl84dnaPOo+ZMjL2AfJHrHbHY9RgSC8ELZXYIGm/SvU5zD7wC2K3d3ASdk0vxK9inq/WokTWB
-	IvBl34Sx+XRhxeumVN/fwUK8HaXStoRMX9DU6QKNZadt4O1WJtGTCI+NxgS2dVYQLr7PO3FK6v76S
-	fLoFcoLw==;
+	bh=C90osfOQN3ODna9AT6v7fUkP7V1+3pgvvE8/tqbHiCQ=; b=eKKTxaA2+V0HCHPyaG83vtSHbs
+	08rCqXx+oZh/p7ZPjH6eSe7RZPWLY9W9fJvE5NdyW1wUbFXVUJ1qGkHHlATfdIMVDp3Vf4QAalXh5
+	mJcwm6zBMo5z0sclEoGvDjkpASAHlSc7Gx4NfNOCsTZXyWoFxtm/PMPQCnh0lyLVzyq2jtkOh3dU8
+	q7RYkg53i0NVDxyNOBAZL34gL8y8IZAx8F3xlSYCmgYCAUZS9BIGpP3hfpRiTMB9itl+995pnvS13
+	fDc0OM8+y4xwFaSs+YML1rx1RYZ2mnXvV5mDpvlSsIiMe7+xg+QVeo0awOCuW28IgaXxeGiM/YHMI
+	xa//LhQg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vPV9q-000000097kZ-20ez;
-	Sun, 30 Nov 2025 00:19:18 +0000
-Date: Sun, 30 Nov 2025 00:19:18 +0000
+	id 1vPYyb-0000000Dy0n-1Le3;
+	Sun, 30 Nov 2025 04:23:57 +0000
+Date: Sun, 30 Nov 2025 04:23:57 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
-To: Val Packett <val@packett.cool>
-Cc: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	David Howells <dhowells@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <smfrench@gmail.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
-	netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v6 06/15] VFS: introduce start_creating_noperm() and
- start_removing_noperm()
-Message-ID: <20251130001918.GM3538@ZenIV>
-References: <20251113002050.676694-1-neilb@ownmail.net>
- <20251113002050.676694-7-neilb@ownmail.net>
- <6713ea38-b583-4c86-b74a-bea55652851d@packett.cool>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, kernel-team@meta.com,
+	brauner@kernel.org, jack@suse.cz, paul@paul-moore.com,
+	jmorris@namei.org, serge@hallyn.com
+Subject: Re: [PATCH bpf-next 2/3] bpf: Add bpf_kern_path and bpf_path_put
+ kfuncs
+Message-ID: <20251130042357.GP3538@ZenIV>
+References: <20251127005011.1872209-1-song@kernel.org>
+ <20251127005011.1872209-3-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -74,44 +50,35 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6713ea38-b583-4c86-b74a-bea55652851d@packett.cool>
+In-Reply-To: <20251127005011.1872209-3-song@kernel.org>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sat, Nov 29, 2025 at 09:01:05PM -0300, Val Packett wrote:
-
-> > diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> > index 316922d5dd13..a0d5b302bcc2 100644
-> > --- a/fs/fuse/dir.c
-> > +++ b/fs/fuse/dir.c
-> > @@ -1397,27 +1397,25 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc, u64 parent_nodeid,
-> >   	if (!parent)
-> >   		return -ENOENT;
-> > -	inode_lock_nested(parent, I_MUTEX_PARENT);
-> >   	if (!S_ISDIR(parent->i_mode))
-> > -		goto unlock;
-> > +		goto put_parent;
-> >   	err = -ENOENT;
-> >   	dir = d_find_alias(parent);
-> >   	if (!dir)
-> > -		goto unlock;
-> > +		goto put_parent;
-> > -	name->hash = full_name_hash(dir, name->name, name->len);
-> > -	entry = d_lookup(dir, name);
-> > +	entry = start_removing_noperm(dir, name);
-> >   	dput(dir);
-> > -	if (!entry)
-> > -		goto unlock;
-> > +	if (IS_ERR(entry))
-> > +		goto put_parent;
+On Wed, Nov 26, 2025 at 04:50:06PM -0800, Song Liu wrote:
+> Add two new kfuncs to fs/bpf_fs_kfuncs.c that wrap kern_path() for use
+> by BPF LSM programs:
 > 
-> This broke xdg-document-portal (and potentially other FUSE filesystems) by
-> introducing a massive deadlock.
+> bpf_kern_path():
+> - Resolves a pathname string to a struct path
 
-ACK.  That chunk needs to be reverted - this is *not* "remove an object by
-parent and name", it's "invalidate stuff under that parent with this
-first name component" and I would like to understand what FUSE_EXPIRE_ONLY
-thing is about.
+> These kfuncs enable BPF LSM programs to resolve pathnames provided by
+> hook arguments (e.g., dev_name from sb_mount) and validate or inspect
+> the resolved paths. The verifier enforces proper resource management
+> through acquire/release tracking.
 
-Miklos, could you give some details on that thing?  This chunk definitely
-needs to go, the question is what that code is trying to do other than
-d_invalidate()...
+Oh, *brilliant*.  Thank you for giving a wonderful example of the reasons
+why this is fundamentally worthless.
+
+OK, your "BPF LSM" has been called and it got that dev_name.  You decide
+that you want to know what it resolves to (which, BTW, requries a really
+non-trivial amount of parsing other arguments - just to figure out whether
+it *is* a pathname of some sort).  Thanks to your shiny new kfuncs you
+can do that!  You are a proud holder of mount/dentry pair.  You stare at
+those and decide whether it's OK to go on.  Then you... drop that pair
+and let mount(2) proceed towards the point where it will (if you parsed
+the arguments correctly) repeat that pathname resolution and get a mount/dentry
+pair of its own, that may very well be different from what you've got the
+first time around.
+
+Your primitive is a walking TOCTOU bug - it's impossible to use safely.
+
+NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
