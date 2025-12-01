@@ -1,62 +1,194 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AD331A056;
-	Mon,  1 Dec 2025 14:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A170431B837
+	for <linux-security-module@vger.kernel.org>; Mon,  1 Dec 2025 15:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764598944; cv=none; b=EwS8GhSVOwWUABjRColz8Z3WJOb4rrObk8tnlH/l95ieIMjKGsrj1MkxC6UnKV9Fv1G2f0HEI3VJ4bHX128RUuxlGDyFFCVXcot/rLGeZeWwZ31bbbD7Wgg8Dyf/KNT//WfkoV42sxUm05bDzDq/17awLwoMvgVRBjgmg64iFxQ=
+	t=1764602034; cv=none; b=SlSQqSBBz81E8vzf6FnIW9mNSjZFrW4E3L3Evb0eKNLbuY735MPht+13i4MjKjja+wiUJgrZFaIwQxfxrVVOZn/U8HQPe8c0G2pH4bFSPLlr9iy5hTLBjJ4RQHtn+QpcPeuE1GIBIGmpVOlUTGTOAZfiRAWjf7WHpbywc4iOrbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764598944; c=relaxed/simple;
-	bh=2KeGtMXVZHlxNThqpiYLW1mH7HyjDvMrYi8LoPNr32A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T9ttdfyvYOFiI+itlK/n5gFmPZC6ryZfBJEn0DZ0lnmZTZ9cSXqIAZD1Lbjw86/ARq/lrfnQJ6L24aHRszdtxVxupz89WcFo/1Tl5e+Vq+SVS0ch1uMwGiypAK9UpoO1sS6o+v8C2Wxw+/LHYfKl7ci04PHTsLaY9VctgCXtJLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 5B1EM6P1050770;
-	Mon, 1 Dec 2025 23:22:06 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 5B1EM0VG050737
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 1 Dec 2025 23:22:06 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <effd6559-8083-4967-91a2-5b47f035dcda@I-love.SAKURA.ne.jp>
-Date: Mon, 1 Dec 2025 23:21:58 +0900
+	s=arc-20240116; t=1764602034; c=relaxed/simple;
+	bh=VJPmfJ+OuSFtUO2JO+y5K63j1ImkklCStE4dlXCI8Ig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UdGJISBtNwn1QN8A4fDK3eNwglfn8YmYbLbl5qNifDiBJsXZ4bsyVjwrzGD1n5xqOYBDsnnc/uJ0mlUFx5DW3SWMJKbHYuixC1EFPJVeU0wRV97phYftGu3nxOnOHH49kRcjT6KWcTA5vOTG1eZKAtejogMG5W7iqR2tYHhL83Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JlTuHP39; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JlTuHP39"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764602031;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f/tlyVzi6SvS7uRQ6J4iLF5XFx5rEXURTZnzpIQU4oM=;
+	b=JlTuHP39fl6SYvuvv4vfwwRZAffWTgOKQPv6f8YqPtTVCQiHKAbA+cuS34dfNuakpwFlvo
+	1FE9VsqkrERI3o/9Y8FNI935Rm+lpccnqcSzY+hv/k9ZX+FXgLnTQiZaQ2VLfUGyIl36nP
+	4MimdINC1OuVyaDl1Ia2DbAZDWymmGY=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-385-MtAWk9dRM6CenYT9ryiugA-1; Mon,
+ 01 Dec 2025 10:13:46 -0500
+X-MC-Unique: MtAWk9dRM6CenYT9ryiugA-1
+X-Mimecast-MFC-AGG-ID: MtAWk9dRM6CenYT9ryiugA_1764602020
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A590F1956050;
+	Mon,  1 Dec 2025 15:13:39 +0000 (UTC)
+Received: from fedora (unknown [10.45.224.36])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id CE22B195608E;
+	Mon,  1 Dec 2025 15:13:20 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon,  1 Dec 2025 16:13:39 +0100 (CET)
+Date: Mon, 1 Dec 2025 16:13:19 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Adrian Reber <areber@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	tiozhang <tiozhang@didiglobal.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	YueHaibing <yuehaibing@huawei.com>,
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
+	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	David Windsor <dwindsor@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hans Liljestrand <ishkamiel@gmail.com>,
+	Penglei Jiang <superman.xpt@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
+Message-ID: <aS2wj3j5qfoWDt2p@redhat.com>
+References: <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <20251105143210.GA25535@redhat.com>
+ <20251111-ankreiden-augen-eadcf9bbdfaa@brauner>
+ <GV2PPF74270EBEE4FE6E639B899D01D8870E4C9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <aRs4zYDhddBQFiXZ@redhat.com>
+ <GV2PPF74270EBEE6F59267B0E9F28F536D0E4C9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <aSNTNZxiQ0txISJx@redhat.com>
+ <GV2PPF74270EBEEDD43083BE45C6E26F674E4DDA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tomoyo: Use local kmap in tomoyo_dump_page()
-To: Davidlohr Bueso <dave@stgolabs.net>, takedakn@nttdata.co.jp
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251128222747.2174688-1-dave@stgolabs.net>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20251128222747.2174688-1-dave@stgolabs.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav305.rs.sakura.ne.jp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <GV2PPF74270EBEEDD43083BE45C6E26F674E4DDA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 2025/11/29 7:27, Davidlohr Bueso wrote:
-> Replace the now deprecated kmap_atomic() with kmap_local_page().
-> 
-> The memcpy does not need atomic semantics, and the removed comment
-> is now stale - this patch now makes it in sync again. Last but not
-> least, highmem is going to be removed[0].
-> 
-> [0] https://lore.kernel.org/all/4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com/
-> 
-> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
+On 11/29, Bernd Edlinger wrote:
+>
+> On 11/23/25 19:32, Oleg Nesterov wrote:
+> > I don't follow. Do you mean PREEMPT_RT ?
+> >
+> > If yes. In this case spin_lock_irq() is rt_spin_lock() which doesn't disable irqs,
+> > it does rt_lock_lock() (takes rt_mutex) + migrate_disable().
+> >
+> > I do think that spin/mutex/whatever_unlock() is always safe. In any order, and
+> > regardless of RT.
+> >
+>
+> It is hard to follow how linux implements that spin_lock_irq exactly,
 
-Thank you. Applied.
+Yes ;)
 
-https://sourceforge.net/p/tomoyo/tomoyo.git/ci/a9ea3a2e081d29350b7a3c0731729efbc70458b8/
+> but
+> to me it looks like it is done this way:
+>
+> include/linux/spinlock_api_smp.h:static inline void __raw_spin_lock_irq(raw_spinlock_t *lock)
+> include/linux/spinlock_api_smp.h-{
+> include/linux/spinlock_api_smp.h-       local_irq_disable();
+> include/linux/spinlock_api_smp.h-       preempt_disable();
+> include/linux/spinlock_api_smp.h-       spin_acquire(&lock->dep_map, 0, 0, _RET_IP_);
+> include/linux/spinlock_api_smp.h-       LOCK_CONTENDED(lock, do_raw_spin_trylock, do_raw_spin_lock);
+> include/linux/spinlock_api_smp.h-}
+
+Again, I will assume you mean RT.
+
+In this case spinlock_t and raw_spinlock_t are not the same thing.
+
+include/linux/spinlock_types.h:
+
+	typedef struct spinlock {
+		struct rt_mutex_base	lock;
+	#ifdef CONFIG_DEBUG_LOCK_ALLOC
+		struct lockdep_map	dep_map;
+	#endif
+	} spinlock_t;
+
+include/linux/spinlock_rt.h:
+
+	static __always_inline void spin_lock_irq(spinlock_t *lock)
+	{
+		rt_spin_lock(lock);
+	}
+
+rt_spin_lock() doesn't disable irqs, it takes "rt_mutex_base lock" and
+disables migration.
+
+
+> so an explicit task switch while locka_irq_disable looks
+> very dangerous to me.
+
+raw_spin_lock_irq() disables irqs/preemption regardless of RT, task switch
+is not possible.
+
+> Do you know other places where such
+> a code pattern is used?
+
+For example, double_lock_irq(). See task_numa_group(),
+
+	double_lock_irq(&my_grp->lock, &grp->lock);
+
+	....
+
+	spin_unlock(&my_grp->lock);
+	spin_unlock_irq(&grp->lock);
+
+this can unlock the locks in reverse order.
+
+I am sure there are more examples.
+
+> I do just ask, because a close look at those might reveal
+> some serious bugs, WDYT?
+
+See above, I don't understand your concerns...
+
+Oleg.
 
