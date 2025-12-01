@@ -1,206 +1,190 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012015.outbound.protection.outlook.com [52.101.53.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A343AC15
-	for <linux-security-module@vger.kernel.org>; Mon,  1 Dec 2025 03:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764559230; cv=none; b=L+7CUy2AkGJN2I1xp5b/QODYs6mZUiGvNkjE81PhkqFEscTPD0MKQQPtdxT0a8bcHzBPHIs93cyizaF+9HtJBaJJwIH3k0yBc3xl3KqenBVRQ0GzoOYqX7Kj1ekRHOEPHXhFvdjsD50h9UjXkfPPWoWKGv0uUo8Djyxm+ate9aQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764559230; c=relaxed/simple;
-	bh=Vb9WroDq0864t5M9Kfx9rMxovILlwh8aLsQ3w4hqx98=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=ZW3uGTUMHtLxwtY0viEGyKtfETvKQtsPJrcQ23XQUuJokZHci7IEWWBETfDBe2nEqU/VM8jFSAETtIFQLg0ClOlpSgypjy52JTGLW/McMQyZftzJNNhgQZ5fTqSNAAy/EE11nvbHRhKAOFIo20DUA85WjVIoAGXS8QQxIRUxtsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dlq2UzK9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23AC13FEE;
+	Mon,  1 Dec 2025 03:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764560403; cv=fail; b=hrnog1pgUkudpe64KoHmLl2WfNV1w8bs1fpBU0rY9+6ipv0aLO/lSB6mZmY3AZ9FXrZsTPIaAOuSn+ULuZtcYpoll6syKL/3TuauhowYmP0O2b88Ehn+dsndHDYo0af0jE+gpcQ+I3LnA1IWlGTk47rM599MgUggMpIqyZxValI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764560403; c=relaxed/simple;
+	bh=fVK7vMKzPFr+UyrmH4gZTOeSgN0awdN2/7mpSHUwuMI=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=g3ohDlCiYWbzfuSX4MgRmdwrL5XUuMZu+4jCqAU8Yg5qAf8nuOvT9BtDDwzqe9kU8sYSM4RjZN3ZEjiDKBn9fpWc681U4Dt15h6sOOZBsl6qsaO9OwXciEleNuZ+yDj3+aIrDNxSZLrSC4Zpo1YkT4ly/s633X8470n0Q7oZBFM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=a+84LJeE; arc=fail smtp.client-ip=52.101.53.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dlq2UzK9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764559228;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tXqJZcWcz9ZC2ozfLNEA1toKq3+LmZ/LDwDkCPxnFBE=;
-	b=Dlq2UzK9P8qnXwgslnxNefBKGI62TqzVNrOZ4Wqwv7afPFlPYXMY300+WTsq2nzn0j+jm+
-	J84jc3BYjHIs+bMvIqlgcoEpc2qJaGq7UEZndfhR3uxJ7By4hdiuM2cjRlbC6Mc7iB9FsG
-	vuBfihuPpLouJTVgf0VXev07U4+9E60=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-685-2_AwwqS3Nc2mFVJVJLaVMA-1; Sun, 30 Nov 2025 22:20:24 -0500
-X-MC-Unique: 2_AwwqS3Nc2mFVJVJLaVMA-1
-X-Mimecast-MFC-AGG-ID: 2_AwwqS3Nc2mFVJVJLaVMA_1764559224
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7aa148105a2so3177497b3a.1
-        for <linux-security-module@vger.kernel.org>; Sun, 30 Nov 2025 19:20:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764559223; x=1765164023;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tXqJZcWcz9ZC2ozfLNEA1toKq3+LmZ/LDwDkCPxnFBE=;
-        b=IP1dulyCPvTwZbj+46k832atRp39/qJ1Mizj7SoV+Lf/D3uTnTGkB6XHnfZGHCzaIn
-         ECE1MmrTmCZpGFj74n9M2Ue4mPv/PV+KWfBrK7DbtOF1vKWX7z0AM2MycZoKzAEv/epf
-         QOkrt7RQCQ9sA5cLu7XKf1zdJqmO+AIQILoPO3Mp7C3P1oeOfljll6PpbLwYfln+/mtq
-         vPzc5Gc75pFG15GQn7HI/HCIlAHcToPbdKR0K1jjGTPbmeZo780JLoh3pM5ZOdR70YLj
-         ZrLAHz0q/Mq0tVYB2TCWeUewGN7FnFmO3Ld+qQJuloqsps5T0xELFYnoEnP3GIaL4cwH
-         rv7g==
-X-Forwarded-Encrypted: i=1; AJvYcCV8gzroPrtnQLcw45u8mzQ1nBI7MOt6zFqA8Ui4wFZ0IuSukjwGxAsR5nJiuaE/wlnhWFCMdWl4mnsudnBNLImx+K3GruI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa3s1PBHJWk/0/YOy7PsnFTweNgGNMIiBNIY63WjM+P3/1DYx6
-	1t2xgzLqS0J6n7FJ1yu8Y0kcrg6YReiBR2NP4xa34ZdAzYy2N67mssW8NtIzKEY7IoKnVSvgawE
-	xwh/of51kU/R28QQeUwmW/6VDwZFJA2n8/zgUjG7vWAkPyYZihWSPvz6oJCOJM9q5zxaQLPJw6Q
-	Z3fQ==
-X-Gm-Gg: ASbGncu1PIpHtH2a5mJhfKStmDO4C5lGcSEZ2R4XPqOdAcemFy6YGpsmU+Mk7TvhvGM
-	UuDp0VKuG0PYlL9NZhd4uoVOuPJ/sFv5l3x2m6CKdUgSxrlkkJXTT4K+HAaV5Gp2MBmUImGD2sM
-	sWXV4HtpmLJLHC0/YrNXj1YFaLDaA6AElNsafv3QjKtk6tsBEZE6/yuU4ePrT0W3PvAOvT/lVDO
-	uRq1G90dTzMcJE8TU4jAasjUPvzt1FtrZ82AgMbprXlld8dG1SggR85XPjqk1NB5j8tdNea51Yy
-	Qy+2oujrELvM9WKBenk92Veri2/n774/51x6TMKrtZZAaBqpj5ZmCukzV+ZMPr9js8GtXfsEFmj
-	+
-X-Received: by 2002:a05:6a20:9151:b0:35f:6e12:186f with SMTP id adf61e73a8af0-3637db4bbb2mr25840190637.23.1764559223412;
-        Sun, 30 Nov 2025 19:20:23 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE9CuPuZntzrNRAc04pPvyHRQQFm4CPQPSh2uI+CpI/gCSssPYukObheQILQqmBeE4dtx5swQ==
-X-Received: by 2002:a05:6a20:9151:b0:35f:6e12:186f with SMTP id adf61e73a8af0-3637db4bbb2mr25840133637.23.1764559222769;
-        Sun, 30 Nov 2025 19:20:22 -0800 (PST)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7d15fc08bd1sm11621013b3a.63.2025.11.30.19.20.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Nov 2025 19:20:22 -0800 (PST)
-Date: Mon, 1 Dec 2025 11:15:32 +0800
-From: Coiby Xu <coxu@redhat.com>
-To: linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] evm: fix security.evm for a file with IMA
- signature
-Message-ID: <7jzx432acnp7mrma7om5ccvrc3ucvm5psscst62bcl5t5yklh7@yxhcvmrgbgli>
-References: <20250930022658.4033410-1-coxu@redhat.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="a+84LJeE"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vB8o9uwEDjstXNAxQacAZIBhm1fMVBjWdbUWjDLyQPjGjlvsUaUc49xAkIPFQ+/f6wzu1PgmFyq3TQacLh6Hz+OL/IWGmzW+I7GJxB7rgvcfoY58RrKlfd6RF6ZNk+v2+34JsRoua+ReTdB2IHfmAwj3s+8U8KdwnnCIAiizh2l1JSUnkm7XnAQXUU2fUNa5+fzkcegMD/5z3HSrBVH9GZDpvPrIqQpPZO/uXxbj0jvA5Ikax3dqOofOJ4+SY/P/Ru3sI7fkTYhLCeu3GpaUEafZOLE2chH5y4f/1mrlL4oL7BoOC3HSKku725PjTuZi3qvlV2e0Mrp+gprmEeBO+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WRJNRkgV1GuU1ymfJqzpJkcfSJVIprB0vf9tjlytSxU=;
+ b=pJMAy5rD91BwIsofsbrj/Oyzqw6XMOP2KSdP95+IPVAB9NqVg0pVpnSkfTJrBacZoOE7MQMxgeOziCEybePD7vKpdRLNskhrLQV99sDXcY/DjLYSGBoEt5IFPFSBL07CaNXAvtZYu79qCjchrXnnFqBQ+kMyHYzzFjrZU+C6sxaEEe2FYowQ6AEh4AWdlbYaBxZXtSHpu+X17jDsw7AtcjOmdW/V/RN2+8EvHykgOb7kTTOrE0Fb9s9coHJMissg2QFdB2B4Q8FP5VP32Q+TxRAVOYM1T9f/+3jniHTFwMccNAXDdzaOksKmOct5bYSnlut6b6ib2Y+NeJDaasiSbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WRJNRkgV1GuU1ymfJqzpJkcfSJVIprB0vf9tjlytSxU=;
+ b=a+84LJeEqGOuAEFbr6wmv2dNV0ulJuM0s2qvEktfyJAG5uyqo2xnOaHMIFjEOmtD6nc/SMq+N5z8dNVLuLENqWXJhBGf5G7HMqlndex2TS+/Xt14BZeYb59G745ypZAhmPyIHeEiEZ3L1q67yTJahUEatprCG/Yr5vZfJ4ij3W6tuV1RNzIV+IZ3a5+jfu3iNJgeXY4yKEfuZkk6eDW8alHHKcGQxCuQeprDkF1gZ8hKxbHHflHKz2nqn5br+UqiaIn1B5XxfbsZeBIZqvhfbb81nhil53u+jnVxgmZxzUV2b21mQZ8Jzt+HQqBquR6MbWou4rO0AhKpshzxptFUqA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by LV5PR12MB9777.namprd12.prod.outlook.com (2603:10b6:408:2b7::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.17; Mon, 1 Dec
+ 2025 03:39:58 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9366.012; Mon, 1 Dec 2025
+ 03:39:58 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 01 Dec 2025 12:39:54 +0900
+Message-Id: <DEMKGE8GI716.EVHQMIKCKQKX@nvidia.com>
+Cc: <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+ <lossin@kernel.org>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
+ <tmgross@umich.edu>, <dakr@kernel.org>,
+ <linux-security-module@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rust: security: use `pin_init::zeroed()` for LSM
+ context initialization
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Atharv Dubey" <atharvd440@gmail.com>, <paul@paul-moore.com>,
+ <jmorris@namei.org>, <serge@hallyn.com>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251129135657.36144-1-atharvd440@gmail.com>
+In-Reply-To: <20251129135657.36144-1-atharvd440@gmail.com>
+X-ClientProxiedBy: TYCP286CA0019.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:263::13) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250930022658.4033410-1-coxu@redhat.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: dGCXVN8TKSBC9vrokUKs-p4e6psjRzBWLz5H6fIQKRM_1764559224
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|LV5PR12MB9777:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67bdcb81-5367-4d7a-1af6-08de308b4c9d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|1800799024|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NHNVRjdFSjBLbzNGbmtSSWl2emJORG53QnhHc0p6U2pJTzFiZG1Nb0htbllu?=
+ =?utf-8?B?UVZ5NnpVUTVNM2VBUzlLcU5ZSVhHZnJyZkc3NFVuWmdSdnlBRDFuL1dYekVN?=
+ =?utf-8?B?bW40c0taYmxOMjIxQ3V5MWRDMFRaNFF4OG13SHh3UDhJNW85YUlQVUlud2gz?=
+ =?utf-8?B?ckN6MEdyV1kwVWpEVVdXZFIxZzlSemhCSi9UNnMzREZ5ZWdGQ0xKbE1uQUZF?=
+ =?utf-8?B?ZG5lSDRkdFlxZHNlTlJYMGJ3eGtxZmNKaFMxZmZrbEMvcU1TQ0pRZmtJb3RX?=
+ =?utf-8?B?T2JybDJUVVJnZlBHU1VvS3gyekVhamVhNzFIU3FzNUdmYlQ0SllPY1NySVlR?=
+ =?utf-8?B?QVFZY1BGWTVCQkdpQkZUUVlxVFRSdUxMSmpmUGl3VFlWNXozaW1ScWkxOW0w?=
+ =?utf-8?B?RmpkRVR4R2hwVFNyekZsTnNWcCtwVE1aUWw1S0ZHVGZVR3pKQlZCTjJlSWho?=
+ =?utf-8?B?cnJGUmJGK3VmcEg1bTFvMnVkb3VHSUdBSzNzUStUSGNya0NhSUdFTDlFUDd4?=
+ =?utf-8?B?QUpUTndmWDZaV2VXOTZRb21MaDU0NFZlU0lQL1NSVjcyQkRvei9KTEZjb1U4?=
+ =?utf-8?B?NVEySFp4OFlybUhDZ1h4aHEvQ3Z3SzE3QzhVcjYybFNUZmtpNHVLS2U3YUlD?=
+ =?utf-8?B?bG5LdFRoTTRPcUc3RmJVTFBIN3FURkp1ZjRVcXZGbUQ1cmJLMy96RFFSQmlO?=
+ =?utf-8?B?bHllclUwbDFZSWdEMGFBd0xvQXlCNVZTYVNVTnNYeS9JRkxZaDNRVEpnYmFM?=
+ =?utf-8?B?amZpRjQxaW5UZDJxV2FuMDNMYUdqek5hbXFyWWowZXkzaUNGbFplU2RxVGtR?=
+ =?utf-8?B?M3RtYnNwcTh3NXRsZDYvV29TQkJkU052OGZhQ0E4R2tFSEZxZnk0NmhwalpP?=
+ =?utf-8?B?NTZiV05nV2NBOERQOWR3Z2VRTEFiSmxsb1haSjJwQVJkcjB2Zm51dXRzVjVP?=
+ =?utf-8?B?bHlxZTRpWkNESnVwQjF1N0VuUkY2L20reHdEVjZWZzZiRnpRRlNQYXhMM2E2?=
+ =?utf-8?B?elVHQ3dOaHp3YkNvV3FpVVFpZFl5c0FlZ2hGNnArV0JLK2JTSXR6aGhBdENL?=
+ =?utf-8?B?cFpGTE1JWGplNERKc1pMcmdyQndabTNlTjA4RWpLaWlTMCtNVkhVRWo3YlBz?=
+ =?utf-8?B?cy9tTlFFU2JLYlZtQUE2bXhzYkRQL0hhRVEyTm40Z1JBdmhnUnBYa3pWYXB3?=
+ =?utf-8?B?MkNBcy9lbnRScHBvUE85Nk05TnJJU3VuYzZhZ2RPQk45WHVJMEZVaHVPV2xs?=
+ =?utf-8?B?dU8xMGdaTXQyZUhuS1lFR2pPY3ZmdElSVzFJYkN3UmVDcTQ4b0JQM2E5MjJI?=
+ =?utf-8?B?eG4wVmk5eG1uOVhvbWYwd3kzbVprR29HS3ArcmNiNi9iZDIzSEdNWVVIcFg1?=
+ =?utf-8?B?cTBxcFFVREdqemRuQmFyaitmMHhmRjJWazN4OEtqemRwM1ZiQllMTnAvYWds?=
+ =?utf-8?B?emNaVzBycUdUN3J3QVFSYU54ZE1YV1hYa2pWOTJiTmZkdkhyLzlVaUd1VmFw?=
+ =?utf-8?B?WFVJZHZ1eHdldWE0bzZYbVcyWU9ULytjM05BY2hXeTRkaW40QVRTWkRwY3RG?=
+ =?utf-8?B?b0NXd0sxV3ZXbDUycGVOcEYwcE5hdDllV3FJdFJRblZ1Y1ZVYUw3WVhzTmNO?=
+ =?utf-8?B?SkpaUG9ZbStJR0dMdHZTdjVBWXI2eXBFRVYzRUJ2NmdDOHRhMnhNYWUxYjE5?=
+ =?utf-8?B?c29hUDlMTkVEb0c2cHpNdDlUMzVYMk1zMjN5OEo5b25XRDFHL1p1a3A4TVhR?=
+ =?utf-8?B?UlF3UnhPT0RkeHlQSXdLYllpR0I5OGgwOTB0TVBKeEphalJsOEdWV0FkY0Y1?=
+ =?utf-8?B?TVdPSVZHSHJ0WitoVVdvaXc0Qnl3amZwcVRsRXVCcjI5KytrcTBGMGRoR3NY?=
+ =?utf-8?B?VzI0d3dwYmZ6Zk8yWHZwMlVscHlQSVJ4TExzL0wvRGcvdmxtL1VTR2c1S3B2?=
+ =?utf-8?B?WE1UemYvSlRGelNGWDZYd2VOMEYxSHI2TXBrUkNBTitnVHlLaFVhWExwM0Zw?=
+ =?utf-8?B?WTR5V0YxajNRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NXN3Q1lzSlZDYitqR1lxRzRtbko2cEdEU3JPb1RQR1BLcmVSUEpaRXhwcUJk?=
+ =?utf-8?B?WEVMS002YW85UG0yRTIxV3RkdUcrN2xxb0JkNzBSN0FSdGQ0Nk9ZMnh5VExi?=
+ =?utf-8?B?aDF3Um94UllRZTU2V1RIcC9sQUFHanEza0VuTmZQWEpEd0srUlNaWVU0ek9q?=
+ =?utf-8?B?R0FmKzdQUVZ6a1pyYnRyT1J3b1NHZHJCNkxEUWRWODdKT3FaSGp3TnF5dElG?=
+ =?utf-8?B?N011RFowaG9PM2JIQVphNDk1YjZrbmhld2YwZ1hmbW00dTFpM2tReXBIdnZ4?=
+ =?utf-8?B?UUMwWFUzQXQvTlhKOENOT1FUdzZTUjFPQTIwN1NhU1VkaTd3SVNBOElLRFla?=
+ =?utf-8?B?K0FsWnZrVGRqckFTNG1kT0MwRXdQMTFlK3dHRjNiN3lYaW9Ta2V6aTJFTzdq?=
+ =?utf-8?B?aU42aUVRc2VCcUpJR0lQOVNuODlsRjJJT1Y5WnNtRytodXZjTnE0RmFad1JK?=
+ =?utf-8?B?WFBIVGIwYVMxb0R1VXQrbkhFUnM1MlRCaHd2MG11QWVCZlBCYyt6STRNdmgy?=
+ =?utf-8?B?UHpITkJJc21WQ3Z6U1diWmF3aklJckFsQzE1OXFuaDArenZ1STg3VC96Smlw?=
+ =?utf-8?B?aTk3ZEZhVW02eS9Tek9LRnRiYkplSEpUSTdteXc0d3Y2Vk9QYlh4b2lDRVNY?=
+ =?utf-8?B?YlV5WXV1c0ZVMk1MQVVWbEpNZmp4cmRGa01RcW5mcVljTTY3YWpHK1F4NEM3?=
+ =?utf-8?B?YkEza1VKRktVd3ZrQ3dXNWxKYm8vUGh1cUNsOURCc3JtWmtCSFRtcWo3dDhp?=
+ =?utf-8?B?YUlBaDluK2hkb0h5aXp5cXlIT2ZZd3VOYTVtZktJNy8zOTh3WEpWeVdHNDdX?=
+ =?utf-8?B?SVhUbGQxN3AycVZmV2FnV09EK2VMSGszR2JTcEhBWjhjRndMR2tLRVVCMjNt?=
+ =?utf-8?B?T2VtNm5xU2VocEozN0I4WmhFZUpWU3dZU25IbUpjTzNOMWRjYW8wZDAzTVVq?=
+ =?utf-8?B?WU5WaVdBOHR0cHRHUnRQWjUxSUNlSis1dDJRdEhHRGxLWDRabUVrRTFUZk9C?=
+ =?utf-8?B?S1RBTS9CcFdYUUZoTWZtUnJyUGVjRnBvSjhPelA5dTdUMVNrNmpXRWtQN3RN?=
+ =?utf-8?B?OG90MVFkKzVlTGVDMVRXV3p1VXBXb1MxaWhQNURLMUVEU2U5UXdmZmhMeWg2?=
+ =?utf-8?B?SUJQNkJtOFdXRHplajExVkhxdnNHSnV1SlVJM0g5cGc3RC9QVmNmS2YvQVIr?=
+ =?utf-8?B?T2dWQXYweTlyaHA5dE1xZW9hYzJFUVpkVDQrWWdkSUU4SjU0RnJOYWpVRy85?=
+ =?utf-8?B?NVdVRFdSYm5pemlKUGs4MjdvQ29rbWZtN045YmFJcWMxUldPK0ZkUnMyNGRR?=
+ =?utf-8?B?MFVUWVlxbFdobmZNU29yTm5ZUnl0ZE9XVnV0QmRBZWtxTVY0VGhaTmpMMmo3?=
+ =?utf-8?B?dXQvK2N2UGVGWVg0d3ZvOGxrUzdMa3R1SWpXUTJYWGJReEt6RUhobEd6cC9U?=
+ =?utf-8?B?Rk8yeFhEZUFkSDVJK29OMkxwVVJxT1VWa0dUaUxyODk2ODRSRHZGZFZ5L2U0?=
+ =?utf-8?B?WS93ajBycW01UVRad1ZOVWdjbVpGS2tycDZ5UUZHbXN4cFdWZEM4MllFTnN6?=
+ =?utf-8?B?Rm5iUkVqYUFsZSt5QTdPM1lneG9TdjV3WWZJQUlEanMvak9wZHAvUGRmVThz?=
+ =?utf-8?B?UU9iSUgxNjYzRzNkaEVoK0FqbHdVcUoxL2Qza2JTeitHdFg3a1VDZUh0Tm9U?=
+ =?utf-8?B?Z2VnVUdlSElPNjBHTEExT3ZNQmpGeGhQSVAyOVFyc0k3S1ptZGZIT01uSmxR?=
+ =?utf-8?B?UVlZUGRyWU96QXpyclRBRkxxQmR3UGNFbnlBME1ULzAxK1pmZHNuQVkyWGJt?=
+ =?utf-8?B?OFJXdW1SVjMwenZtNng2MHVIYXFUK0llV3BTTUZnVGlSOVBmaUloQ3FGbFJa?=
+ =?utf-8?B?aHcrOTdQWHpWY3JiYnR6OHljZHVpQUFicUp2OUc4SUcydGVnbThGRHN2eW9M?=
+ =?utf-8?B?SytyYzBxeWhmODBMR3VBOFlhRzJLR0RnMUxtRTVsUm5Ya2hZd2pKWW83bzdR?=
+ =?utf-8?B?LzRHSWtlbll6UC8wSlBNTUN2bzl1azRDa1JZTlpGaUZoWDdMY3JHY2U4a0ZP?=
+ =?utf-8?B?YzFaOFk4WGdpM2t1QVFwcmg2a05nZDMzLytVT2NoMUkzaDhEY3lJUWRCRC9F?=
+ =?utf-8?B?OU9zMFViKzgzdUJ3M1BhaXZPQXViUVJVZ1JNUlhXbWE4YmtUcHc3VjlTSis5?=
+ =?utf-8?Q?DPHoI+SVUn98S/PCFVnJNsPrYXD3Ltlhfp9hXRV7z1Uy?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67bdcb81-5367-4d7a-1af6-08de308b4c9d
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Dec 2025 03:39:58.7808
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DOHMtERWRUSRjl8bfuInBJ9lSbbFmiGG9a2Y9xZ62da2uemyY3qQyXqYhi180C/k/GiLL5IyhHJanrNhRFyMzw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV5PR12MB9777
 
+On Sat Nov 29, 2025 at 10:56 PM JST, Atharv Dubey wrote:
+> Replace the previous `unsafe { core::mem::zeroed() }` initialization of
+> `bindings::lsm_context` with `pin_init::zeroed()`.
+>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1189
+> Signed-off-by: Atharv Dubey <atharvd440@gmail.com>
+> ---
+>  rust/kernel/security.rs | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/rust/kernel/security.rs b/rust/kernel/security.rs
+> index 9d271695265f..4dc3eba6ce84 100644
+> --- a/rust/kernel/security.rs
+> +++ b/rust/kernel/security.rs
+> @@ -62,8 +62,7 @@ impl SecurityCtx {
+>      /// Get the security context given its id.
+>      #[inline]
+>      pub fn from_secid(secid: u32) -> Result<Self> {
+> -        // SAFETY: `struct lsm_context` can be initialized to all zeros.
+> -        let mut ctx: bindings::lsm_context =3D unsafe { core::mem::zeroe=
+d() };
+> +        let mut ctx: bindings::lsm_context =3D pin_init::zeroed();
 
-On Tue, Sep 30, 2025 at 10:26:56AM +0800, Coiby Xu wrote:
->When both IMA and EVM fix modes are enabled, accessing a file with IMA
->signature but missing EVM HMAC won't cause security.evm to be fixed.
->
->Add a function evm_fix_hmac which will be explicitly called to fix EVM
->HMAC for this case.
->
->Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
->Signed-off-by: Coiby Xu <coxu@redhat.com>
->---
-> include/linux/evm.h                   |  8 ++++++++
-> security/integrity/evm/evm_main.c     | 28 +++++++++++++++++++++++++++
-> security/integrity/ima/ima_appraise.c |  5 +++++
-> 3 files changed, 41 insertions(+)
->
->diff --git a/include/linux/evm.h b/include/linux/evm.h
->index ddece4a6b25d..913f4573b203 100644
->--- a/include/linux/evm.h
->+++ b/include/linux/evm.h
->@@ -18,6 +18,8 @@ extern enum integrity_status evm_verifyxattr(struct dentry *dentry,
-> 					     const char *xattr_name,
-> 					     void *xattr_value,
-> 					     size_t xattr_value_len);
->+int evm_fix_hmac(struct dentry *dentry, const char *xattr_name,
->+		 const char *xattr_value, size_t xattr_value_len);
-> int evm_inode_init_security(struct inode *inode, struct inode *dir,
-> 			    const struct qstr *qstr, struct xattr *xattrs,
-> 			    int *xattr_count);
->@@ -51,6 +53,12 @@ static inline enum integrity_status evm_verifyxattr(struct dentry *dentry,
-> {
-> 	return INTEGRITY_UNKNOWN;
-> }
->+
->+static inline int evm_fix_hmac(struct dentry *dentry, const char *xattr_name,
->+			       const char *xattr_value, size_t xattr_value_len)
->+{
->+	return -EOPNOTSUPP;
->+}
-> #endif
->
-> static inline int evm_inode_init_security(struct inode *inode, struct inode *dir,
->diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
->index 0add782e73ba..1b3edc6d26e9 100644
->--- a/security/integrity/evm/evm_main.c
->+++ b/security/integrity/evm/evm_main.c
->@@ -787,6 +787,34 @@ bool evm_revalidate_status(const char *xattr_name)
-> 	return true;
-> }
->
->+/**
->+ * evm_fix_hmac - Calculate the HMAC and add it to security.evm for fix mode
->+ * @dentry: pointer to the affected dentry which doesn't yet have security.evm
->+ *          xattr
->+ * @xattr_name: pointer to the affected extended attribute name
->+ * @xattr_value: pointer to the new extended attribute value
->+ * @xattr_value_len: pointer to the new extended attribute value length
->+ *
->+ * Expects to be called with i_mutex locked.
->+ *
->+ * Return: 0 on success, -EPERM/-ENOMEM/-EOPNOTSUPP on failure
->+ */
->+int evm_fix_hmac(struct dentry *dentry, const char *xattr_name,
->+		 const char *xattr_value, size_t xattr_value_len)
->+
->+{
->+	if (!evm_fixmode || !evm_revalidate_status((xattr_name)))
->+		return -EPERM;
->+
->+	if (!(evm_initialized & EVM_INIT_HMAC))
->+		return -EPERM;
->+
->+	if (is_unsupported_hmac_fs(dentry))
->+		return -EOPNOTSUPP;
->+
->+	return evm_update_evmxattr(dentry, xattr_name, xattr_value, xattr_value_len);
->+}
->+
-> /**
->  * evm_inode_post_setxattr - update 'security.evm' to reflect the changes
->  * @dentry: pointer to the affected dentry
->diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
->index f435eff4667f..f48ef5ec185e 100644
->--- a/security/integrity/ima/ima_appraise.c
->+++ b/security/integrity/ima/ima_appraise.c
->@@ -601,6 +601,11 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
-> 		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
-> 			if (!ima_fix_xattr(dentry, iint))
-> 				status = INTEGRITY_PASS;
->+		} else if (status == INTEGRITY_NOLABEL) {
->+			if (!evm_fix_hmac(dentry, XATTR_NAME_IMA,
->+					  (const char *)xattr_value,
->+					  xattr_len))
->+				status = INTEGRITY_PASS;
-> 		}
->
-> 		/*
->
->base-commit: e129e479f2e444eaccd822717d418119d39d3d5c
->-- 
->2.51.0
->
-
-Hi Mimi,
-
-I think this patch set just fell off the radar. Can you take a look at
-it when time permits? Thanks! Btw, the patch set is still applicable to
-current next-integrity tree Linus and main tree.
-
-
--- 
-Best regards,
-Coiby
-
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
