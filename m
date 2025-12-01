@@ -1,118 +1,159 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14555192B75
-	for <linux-security-module@vger.kernel.org>; Mon,  1 Dec 2025 17:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8656221CC4F;
+	Mon,  1 Dec 2025 17:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764608965; cv=none; b=m4FsDGjh1dHlVcCtFDznLowCEqGtvrPvnfQTpZLqJwbxVv32whXEtLn0iUN3GPe2t+D9c94YKqWRLD8zKo7wd3J1UVwNSMurBW1g6UmV59UnUlDOwsYICQpo7vtHaoPZM0WUf3B5ST4i9+a9m8nYPCt7KrcRzczWCiQMB4lnHyo=
+	t=1764610960; cv=none; b=PzMdGgEOsJi8gKnMha7JZvhB8O5Ur5h32BytPt8rSvi2nFDgQWp60FY9b0HOMpUlDRLe7ardWS8PVaroDC8ZdNJJ1vlN4Vpdy0IH+4/9cJWChcezUQ0UKzJxfmuG5g3A1L9oylQkkZowHb6jha0a/QC2sYlROGmLGn5wPCS3U34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764608965; c=relaxed/simple;
-	bh=iBbiUzvYi/ln13SU4XKUqRn4bX9H63vGL1eyD6pfsfo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O2MxSN+bT0TvQtDIo5MPyLC4+YEiUkTIH9LV+PrJpt132l/Qq9Pak5Uw5ENkSIPKq9RxoLixUG0Qg6YYppjLzA/H4a2vS8jbVGeC7W8SajKla+A1cL/BiGqfDpfF6x3nMF2Qvb0wJTPk4Xgzu0/8Pxl3x8FHsnMUf2QBauq9T54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HC15yTDF; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1764610960; c=relaxed/simple;
+	bh=15JvH6JyAOdfU2dbA0LcnPWilh0Np9iZya+hi+M2l48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JHKPHoovvGzPlJKHE0Q3oyQX+SVSskDaOW/a7R+oW0/oZzYxIu84e8KFRybs3LJAF1Ih5/xveBYOHV21eFmLEiXfpRWUaBzxLpf04xKO/B6Yym1L81oFX2Gc9HemnAw08DjRI5uyHKQxceKVP1YhtSGfYkoMxWhdee7DlZbdc0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PHeTay+N; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HC15yTDF"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-297cf964774so7212445ad.2
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Dec 2025 09:09:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764608963; x=1765213763; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=10oqy7XG0ziR1jN7iIJoYu4N7Sm/NTHUpb4SiggOXnk=;
-        b=HC15yTDFMPAT0Lb1MqdcRSii4KackGdOk4+mnSLFKvQu0v3nYYM0yymTsluA866K0g
-         4wPZylYTIdvo1CrxrAEL4ajRaxaaWzButBecL9BjilU3/dhFAtW+rojUu8vCC6Yl5zsX
-         BLsenFBgxhaHLFtQuVHpJO+eFAvHVAHZKnAM6STfeELlh3+kopFlC9AJHQmfN9YvaXOK
-         EYX5i08LaZ1RO10SUaY6TrqF+SiwDI4iUDzElt/WUX6WEqCTYSCqHWt2H58UcW3HLowI
-         DTiRX73GhsiFHjfZHTHaRofvWJxqezdVthpcMV7iFihXwXRktd+rLkQb82BU8QLr12Jk
-         /EMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764608963; x=1765213763;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=10oqy7XG0ziR1jN7iIJoYu4N7Sm/NTHUpb4SiggOXnk=;
-        b=trhkUID2pQfn318c3/VFgX4GDCyWDpCWqpAZro19pl9opylC2Fc5fAFhG/o+1kabU7
-         cVjKDWfG0/hNIuKOC60aSKHTgkyME8I75Di3XlojAUJwfgacLxVQj5MVuvgMZaAFoqVF
-         Nph0BuePfj+nSeOVuEdhd3aObIAoCHsv42FREtSJKjv1JWqxJnuK/6gnbmb0v2x6OqSl
-         BX5CADgu8Jbi3GrVSWFLarRYwMpgDrQKUjjAhvzC+oUg7UcAQQxV8yJKTs2MRUSIy9m2
-         rwoD2tA2NI7rWSJK1KnEjOYsNDZY7mgGQIvnieS/H8dsHKIjb0BRrvz2Uh5WEdxXsQUg
-         guzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWb3EKLkRkxs7Slp3Hz62aMmJQyTqY3KZD01E2PuJTNQ5njRBxVzRojAOL9Ny7TxC9iB1u2MW/tGcKu7H7ZEvfI4sXOjx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXb2V+al+Jip791ZkTOoT3u8z1CNGJ75zNb7dv4LeiLdj/GAEH
-	7MXu3kFXmEVrA3KmkSIoO/LuIMDDSxynS5vCuDnQMNUROuIKfzKLtmaI4jjtXYsVFQL1L4oS7uu
-	cMwxCmsbQ2s3pLZpjRoH/5hZOBQCgXN0=
-X-Gm-Gg: ASbGncu/lPrERZ1ZrsgdNhu/M6kmpFauj3hGqRWMLjyOUMujWeJ24XWemhK6qcRF5hC
-	GuM8iuGS/Yp/YhDPQMlfN0kMXy2L+/QVb9pzK18rAiLCf4JVtnKz9dQ4wB5eeWYUs6PUouK+GPS
-	tk6kN8TGmLDQ4rWlAUhB2qr6uc4cblnnnL/JZXmi8tY8ewwgYiAXD3iNdpcb1ekt3XWq/YYuy5L
-	1FYFWBVvAUf40PnBe/ezgS/5MZsj2rCUUmgwv9T87EWSaGo9/d3eHsBpxrNnt7DWXuHN/pN0gNr
-	tddrGCvCFTEXdGwfYOM2dOucbsNe8jhvxkgWJV9EI5biFAPhA5mVcaqsLib+/wNZknoOmRGvrjl
-	VMcoXGgVfnY6FOQ==
-X-Google-Smtp-Source: AGHT+IF1YPYGD/E+eDHxFkwlvTUf8jqG51M5LA+tdLWxMqHx4a8yCVti7p4nga92l9CsKYM8VN2f66dz5zEFbxtTTgc=
-X-Received: by 2002:a05:7301:e24:b0:2a4:3593:2c07 with SMTP id
- 5a478bee46e88-2a7243ec7b9mr21959223eec.0.1764608963077; Mon, 01 Dec 2025
- 09:09:23 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PHeTay+N"
+Received: from [10.17.64.147] (unknown [131.107.1.211])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 7A6812012085;
+	Mon,  1 Dec 2025 09:42:37 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7A6812012085
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1764610957;
+	bh=15JvH6JyAOdfU2dbA0LcnPWilh0Np9iZya+hi+M2l48=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PHeTay+NT3vQVhzAmGxWFzrTgRWdo++4FNdGGW9zOtnQic/EXhpPlog189FX4O0cX
+	 Au2rdy3lWjfPmrNXH4usdXBDY7fhGJ/9liv/6k1khvJ5spgtK60aVyiUYKe7rnXcJ8
+	 OLJfdS2wLGx5AC1g7NBNWHtfiNTmJFERfRN9+Ylo=
+Message-ID: <2e7b89ae-2fac-45a6-928a-094a2d972c91@linux.microsoft.com>
+Date: Mon, 1 Dec 2025 09:42:38 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251117-unique-ref-v13-0-b5b243df1250@pm.me> <20251117-unique-ref-v13-4-b5b243df1250@pm.me>
- <A5A7C4C9-1504-439C-B4FF-C28482AF7444@collabora.com> <aS1slBD1t-Y_K-aC@mango>
-In-Reply-To: <aS1slBD1t-Y_K-aC@mango>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 1 Dec 2025 18:09:10 +0100
-X-Gm-Features: AWmQ_bnmy3Os7dUuxEXbA4TScnRqySjzLSX-NOnwmbpPdF9z2OcK2znpi-34sDw
-Message-ID: <CANiq72=mZXc5+fMzsdTRupUsmsuLdsx=GZucn2MNoCTLAT1qkw@mail.gmail.com>
-Subject: Re: [PATCH v13 4/4] rust: Add `OwnableRefCounted`
-To: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Leon Romanovsky <leon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
-	Asahi Lina <lina+kernel@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v1 0/1] Implement IMA Event Log Trimming
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+ Gregory Lumen <gregorylumen@linux.microsoft.com>
+Cc: Anirudh Venkataramanan <anirudhve@linux.microsoft.com>,
+ linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>,
+ linux-security-module@vger.kernel.org,
+ Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+ Sush Shringarputale <sushring@linux.microsoft.com>
+References: <20251119213359.39397-1-anirudhve@linux.microsoft.com>
+ <7722dff4e68ef5fb7f39bd732a8a77422bad5549.camel@huaweicloud.com>
+ <a77e9609-f6bd-4e6d-88be-5422f780b496@linux.microsoft.com>
+ <1e5a3b427fe2783e57e88ca14630f5e38e01fac5.camel@huaweicloud.com>
+ <bbafa611-3a6c-5cf8-631c-20f72f651d9@linux.microsoft.com>
+ <3f85e98e2e4ef6a0de4fe4f6c2093791def1e30b.camel@huaweicloud.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <3f85e98e2e4ef6a0de4fe4f6c2093791def1e30b.camel@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 1, 2025 at 11:23=E2=80=AFAM Oliver Mangold <oliver.mangold@pm.m=
-e> wrote:
+On 11/27/2025 1:45 AM, Roberto Sassu wrote:
+> On Wed, 2025-11-26 at 15:40 -0800, Gregory Lumen wrote:
+>> Greetings Roberto,
+>>
+>> If I may chime in a bit:
+>>
+>>> The only way to make the verification of measurements list snapshots
+>>> work is that the verification state is stored outside the system to
+>>> evaluate (which can be assumed to be trusted), so that you are sure
+>>> that the system is not advancing the PCR starting value by itself.
+>> You are correct; to make the described approach work, an external source
+>> of trust is required in order to detect unexpected or unauthorized
+>> trimming of the event log (for example, by signing the trim-to PCR values
+>> from the previous verification/attestation cycle). This should be true
+>> regardless of the mechanism of trimming. More generally, I will go so far
+>> as to suggest that any attempt to attest the integrity of a system using
+>> IMA will likely fall into one of two general approaches: either the entire
+>> IMA event log is retained (either in kernel or user space) from boot and
+>> claims of system integrity are built by validating and examining the
+>> entire log for signs of tampering, or an external source of trust is
+>> introduced to allow incremental validation and examination of the log.
+>> Other more innovative approaches may exist, but we make no such claims.
+>>
+>> I will also say that it should be possible to implement either approach to
+>> attestation (retaining the entire log, or relying on an external source of
+>> trust) with any sane implementation for IMA log trimming.
+>>
+>> As for our proposed implementation, storing the starting PCR values in the
+>> kernel preserving the ability for any arbitrary user space entity to
+>> validate the retained portion of the IMA event log against the TPM PCRs at
+>> any time, without requiring awareness of other user space mechanisms
+>> implemented by other entities that may be initiating IMA trimming
+>> operations. My personal sense is that this capability is worth preserving,
+>> but it is entirely possible the general consensus is that the value
+>> offered does not balance against the additional technical complexity when
+>> compared to simpler alternatives (discussed in a moment). To stress the
+>> point, this capability would only enable validation of the integrity of
+>> the retained portion of the event log and its continuity with the PCRs,
+>> and could not be used to make any claims as to the overall integrity of
+>> the system since, as you observed, an attacker who has successfully
+>> compromised the system could simply trim the event log in order to discard
+>> evidence of the compromise.
+> Hi Gregory
 >
-> Ah, yes, rustfmt must I done that, and I missed it. Will fix.
+> all you said can be implemented by maintaining the PCR starting value
+> outside the system, in a trusted entity. This would allow the
+> functionality you are hoping for to validate the retained portion of
+> the measurement list.
+>
+> Keeping the PCR starting value in the kernel has the potential of
+> misleading users that this is an information they can rely on. I would
+> rather prefer to not run in such risk.
+>
+>> If the ability to validate the retained portion of the IMA event log is
+>> not worth designing for, we could instead go with a simpler "Trim-to-N"
+>> approach, where the user space interface allows for the specification of
+>> an absolute index into the IMA log to be used as the trim position (as
+>> opposed to using calculated PCR values to indicate trim position in our
+>> current proposal). To protect against unexpected behavior in the event of
+> >From implementation point of view, it looks much simpler to me to
+> specify N relative to the current measurement list.
 
-Strange -- if you noticed a case where `rustfmt` wasn't idempotent,
-please let us (and upstream) know about it.
+Hi Roberto,
 
-> Not sure what you mean by fictional function. Do you mean a non-existent
-> function? We want to compile this code as a unit test.
+I will send "trim N entries" patch out this week.
 
-Typically that means either using a (hidden on rendering) function
-that wraps the code and returns a `Result` or directly a doctest that
-returns one (better, when applicable). Please check other tests for
-lines like
+Regards,
 
-    /// # Ok::<(), Error>(())
+Steven
 
-I hope that helps!
+>> concurrent trims, index counting would need to be fixed (hence absolute)
+>> such that index 0 would always refer to the very first entry written
+>> during boot, even if that entry has already been trimmed, with the number
+>> of trimmed entries (and thus starting index of the retained log) exposed
+>> to use space via a pseudo-file.
+> In my draft patch [1] (still need to support trimming N entries instead
+> of the full measurement list), the risk of concurrent trims does not
+> exist because opening of the snapshot interface is exclusive (no one
+> else can request trimming concurrently).
+>
+> If a more elaborated contention of remote attestation agent is
+> required, that could be done at user space level. I'm hoping to keep in
+> the kernel only the minimum code necessary for the remote attestation
+> to work.
+>
+> Roberto
+>
+> [1] https://github.com/robertosassu/linux/commit/b0bd002b6caa9d5d4f4d0db2a041b1fd91f33f8a
+>
+>> With such a trim approach, it should be possible to implement either
+>> general attestation approach: retaining the entire log (copy the log to
+>> user space, then trim the copied entries), or relying on an external
+>> source of trust (quote, determine the log index corresponding to the quote
+>> plus PCRs, trim, then securely store the trim position/starting PCRs for
+>> future cycles).
+>>
+>> -Gregory Lumen
 
-Cheers,
-Miguel
+
