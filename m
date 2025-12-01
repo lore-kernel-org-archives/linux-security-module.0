@@ -1,129 +1,175 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F662877E9
-	for <linux-security-module@vger.kernel.org>; Mon,  1 Dec 2025 07:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9EC2C0291
+	for <linux-security-module@vger.kernel.org>; Mon,  1 Dec 2025 08:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764574364; cv=none; b=mf5hVHm07yXhvsAAxeLIrxcZ5PSUrzB8wcgKoZmSVal7i8eChNnf1kraipbNVFcxUXk0eUB9GDq2Y38P9zyVRFKyPZmxlfPEX4VAXYk+DePJBjnIewlU+IM4ZDet678zEHPiMn9s6v0h4OMV2/+2BTiG4B7g9tDezv2fRTgzSVE=
+	t=1764577391; cv=none; b=mtktEmNUm8yz9VQdv8Kd256HqHYQ9etVWoZumAT1t9Dh63a6Z9eDuMGVEVE+MOPiL7p9Zap5sjZDEOUrmdKlX2LAqewogv9YSBA1MFFFV9Z61DN7LL4HlsLSzWkTMXEPXmGdU8GzD2Cvj11YViu+xsPoyA9WloNK5VlsA15FwiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764574364; c=relaxed/simple;
-	bh=2HcB0rmeLO9c2p/95fKpiNCYvyMjRskFUOWSbUC6AiU=;
+	s=arc-20240116; t=1764577391; c=relaxed/simple;
+	bh=TrlI8KF/qCeVsAfOA6ACvSSTJoCfx71xxH3YdpjqFy0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gsbLdBF42/VvU/JkVHRieRv9Si18EsWGccer4XGteo5MnM+tRM4oWOdmIIanGOcVGSLRi5+jk2pKWoxAFsmqii9N9u9FfM5MnQ77Kj7tBwyMCHTOW6thGoLhY6Tq9/hx7RhOh++pttgn/uJOgL9lXRdFGwhhFZt3SqHDU13Pi0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AeUR40Qv; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=mw2nahuz2JP0R5Y/gWNkJfwPubCznSF4GqC2D9MXpwGOuTndL/Tnm9v8vP+23uUA3B0SY3In70jcnC0oMD9U97VSgsTB/jIV9ri6lzdcFAnUbXcVlAMS8gs315BVnLvxDyzCHME+2a0tn0Lsj95O0nwp8Sz9nnociFWm5EICfr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jYChTdbZ; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AeUR40Qv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0FB4C4AF09
-	for <linux-security-module@vger.kernel.org>; Mon,  1 Dec 2025 07:32:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764574363;
-	bh=2HcB0rmeLO9c2p/95fKpiNCYvyMjRskFUOWSbUC6AiU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AeUR40QvAL/O3HkvK1hjGZdFkNezLR8UrMSDV6vVUOgAZCfgmXbXKgsBm3s0ql+TT
-	 rmOyXs4MNHeMI31imeda9RdRFKJ5FeeQTcBXVD/xOV9wJlmGR/PSqSVtS0XhM2+jLF
-	 g2Ox5zDSGtv4U6aFp3+qR/A1brHsfYl9kN+UPXpkfW6Og3bChq0x35aY96SRBF+OnG
-	 D4+6tqRLoH3G+hNXlTrVdqgqsKcL6G2FjmSOYeLUhWl/YC8roD9FgDoHCFFNwj1pvn
-	 FeZnr+uRPnZwzaQJ9xi7obeMAhyhnQhvoGeDecO0WHtn26kTRLrvHrDvh8Boc/Tn/C
-	 bfqlnphLAAzFA==
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-8b2d32b9777so489245585a.2
-        for <linux-security-module@vger.kernel.org>; Sun, 30 Nov 2025 23:32:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUKNn8tnckf2DCujvhYk3FNSyWRTVsWE/35ZaiL8P+6PzLwCk0pYa/5Rz1BaAB4CXNbriQLw7rIplwzWXFUogeVHIIEw7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi5IsuNcyXZCzWTySKmrO00WovzQoiyd/64+BFfJBzriUyTvak
-	0YhVmmJoxPB6+8+GaLYdsgmeXBumme01tz5QZ7KY2p+F0kcifINxb+xIr6dl0j7HRWiJgTPK3nX
-	kQ20Mme1jl/X6NLn2zmDaxyWPgDcBsdw=
-X-Google-Smtp-Source: AGHT+IFglr+eAJ6/kpiLpwoQ4bMfZ9GpJBhTlxQ0IjIkbOlY5rRNSu1dxm2OscHjOPnfjbC59lRnQV3K560qMn+WRYw=
-X-Received: by 2002:a05:620a:199b:b0:8b1:426d:2b87 with SMTP id
- af79cd13be357-8b33d22a4damr4793296685a.21.1764574362574; Sun, 30 Nov 2025
- 23:32:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYChTdbZ"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-64162c04f90so7353128a12.0
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Dec 2025 00:23:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764577387; x=1765182187; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+UDNGf4W59vxX6MyDgWfRD0V6LCN4sc0r1Qgyk2LJH4=;
+        b=jYChTdbZ5OUD1+vaubSuu+HN5tydPki6kg8b6tc8pSohrpj81F4D9Uj+76RsdVV6TO
+         cps70XcuOHZHLoQXHb+3DE5vQOdeGq2zQE5RzPvNbO0nBJbrmrOiZHjKK0Ft7k5FVzDt
+         jG0aveXq+1ZG/2DkFXvzWOia9SnlN2wVRv560vjuprSo+e4B2ugFdxbJYgY5PA7ifnit
+         sj0m0v9V+nsiySi8ujx0BxeOSGvVLhjJyYbZ5mDZT3iMbO+F7m+rnpz0yA1lnbBB3UrL
+         eoPWZcYstP/FS0S6Y+++ywzAqYXjdGm5QrqK4Zmhupc77lTvXJpREzA6b8DCIvxPwww6
+         GeLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764577387; x=1765182187;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=+UDNGf4W59vxX6MyDgWfRD0V6LCN4sc0r1Qgyk2LJH4=;
+        b=JUJn43mpqj4UDZ18pk6c786RosGgPJqjFyGoF2NMOyXIc7xPs7BZ/f4sL3BYUPfej0
+         BnldphSMvxDrDo3i4iqjOD26c2LStEARhrET4GYySFPZ0+4gPGmTZ2hc5lp56ybJwyEQ
+         3imh/NT4UY/tp/J91vkrAcWgIlMHTLVM3w8M6RCa6IdfqFHAvxm40UTKsAZcFH8ktuGe
+         BQkqSlHcyid/8qajQg3RnPfg8x+5jjorfOTN4GRfsXIg5CSLwoeAESlrEO1z+kPpwQBz
+         g7GMYiBg4N+SFrOM/dTTm5/uNw/EmYndYXHLCR8NLk2guywdrBQEHqBYYnUcMwWpnwYG
+         ntCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhL/m7q3qrMRx6AkVn85aqKWyV37h4OfhLTqoYNEZW5ZlM03gAC1xV6FBEMekNQZbQha0MBp3Tsg3yWrNg7Tbv3tVNjIE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXqzjzCQTcNycTL+f1A4CZVZShu5xwbquFlGRrZAgU/5V1mdKF
+	cOpSn8+ZCzmK3L1LI760hwgLqh7BwbB2ySO3+JFwzGhEFJV3y9csoaybTtnVrQMn4tJ3Rm2Vhlb
+	yqfw6OheWhqHSsFYcml0os3duSQNzgrw=
+X-Gm-Gg: ASbGncsKHikPwmvDQXZOI8rIeEEE8v+O2bfyi8NF3tqMdZByhDND223gCgM0PmWjJqX
+	QFBku0UVNawXnd1gKGIKDeOExza+hajvKlJfzZDYTprXU15UZehNM87s/HqExcFNdd1qIFsZCjy
+	w6h6nqbfRHV4AQRYiAhDCnwlpUJPR6DkRmDpQvbVZdYv76UH6AGW42R9gKKmjQVLRtUsLHSL5/E
+	Ke8P3Xz3uy6S9KUBQ8DVZIZC7t7NlFsoxnUXHpguZlEg3/flcLa1dSsG2IV0bp/FA3GMcyVLv4Q
+	6tuHwz0zlDd9e7+SuvpYawPeH4k9
+X-Google-Smtp-Source: AGHT+IHj59Fq162Q+xUifGgiokcU6h4xrAjviadpNqTh31A0WmXmIZVxJbhdYoPX7MCvx0GXwNcf5jp7tW359myAd7I=
+X-Received: by 2002:a05:6402:4388:b0:645:cd33:7db5 with SMTP id
+ 4fb4d7f45d1cf-645cd337dd5mr21497896a12.24.1764577387055; Mon, 01 Dec 2025
+ 00:23:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251127005011.1872209-1-song@kernel.org> <20251127005011.1872209-3-song@kernel.org>
- <20251130042357.GP3538@ZenIV> <CAPhsuW69nUeMf+89vwsBrwo4sv3P8xOypSfhafEu12HJKqAb+w@mail.gmail.com>
- <20251130064609.GR3538@ZenIV>
-In-Reply-To: <20251130064609.GR3538@ZenIV>
-From: Song Liu <song@kernel.org>
-Date: Sun, 30 Nov 2025 23:32:30 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW671wnZTzqAPUGH6Qic0Gw70B0t3Z7oLV82+-zvERyP-g@mail.gmail.com>
-X-Gm-Features: AWmQ_bmPQ3Cm1vwPQQahNc4xHN3w1dYaZYDEgTSAIdzpu6R6JPMJ3tN6rcRFOrc
-Message-ID: <CAPhsuW671wnZTzqAPUGH6Qic0Gw70B0t3Z7oLV82+-zvERyP-g@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 2/3] bpf: Add bpf_kern_path and bpf_path_put kfuncs
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org, kernel-team@meta.com, brauner@kernel.org, jack@suse.cz, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	Shervin Oloumi <enlightened@chromium.org>
+References: <20251113002050.676694-1-neilb@ownmail.net> <20251113002050.676694-7-neilb@ownmail.net>
+ <6713ea38-b583-4c86-b74a-bea55652851d@packett.cool> <176454037897.634289.3566631742434963788@noble.neil.brown.name>
+In-Reply-To: <176454037897.634289.3566631742434963788@noble.neil.brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 1 Dec 2025 09:22:54 +0100
+X-Gm-Features: AWmQ_bkmbCFj52T5piKawt5MYU4Qwo914sia_qtE6Q0yvLfrgb4Ycc6nfs_K2NQ
+Message-ID: <CAOQ4uxjihcBxJzckbJis8hGcWO61QKhiqeGH+hDkTUkDhu23Ww@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix conversion of fuse_reverse_inval_entry() to start_removing()
+To: NeilBrown <neil@brown.name>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Val Packett <val@packett.cool>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	Jeff Layton <jlayton@kernel.org>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
+	David Howells <dhowells@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Chuck Lever <chuck.lever@oracle.com>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>, 
+	John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Stefan Berger <stefanb@linux.ibm.com>, "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, 
+	netfs@lists.linux.dev, ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 29, 2025 at 10:46=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> =
-wrote:
+On Sun, Nov 30, 2025 at 11:06=E2=80=AFPM NeilBrown <neilb@ownmail.net> wrot=
+e:
 >
-> On Sat, Nov 29, 2025 at 09:57:43PM -0800, Song Liu wrote:
 >
-> > > Your primitive is a walking TOCTOU bug - it's impossible to use safel=
-y.
-> >
-> > Good point. AFAICT, the sample TOCTOU bug applies to other LSMs that
-> > care about dev_name in sb_mount, namely, aa_bind_mount() for apparmor
-> > and tomoyo_mount_acl() for tomoyo.
+> From: NeilBrown <neil@brown.name>
 >
-> sb_mount needs to be taken out of its misery; it makes very little sense
-> and it's certainly rife with TOCTOU issues.
+> The recent conversion of fuse_reverse_inval_entry() to use
+> start_removing() was wrong.
+> As Val Packett points out the original code did not call ->lookup
+> while the new code does.  This can lead to a deadlock.
 >
-> What to replace it with is an interesting question, especially considerin=
-g
-> how easy it is to bypass the damn thing with fsopen(), open_tree() and fr=
-iends.
+> Rather than using full_name_hash() and d_lookup() as the old code
+> did, we can use try_lookup_noperm() which combines these.  Then
+> the result can be given to start_removing_dentry() to get the required
+> locks for removal.  We then double check that the name hasn't
+> changed.
 >
-> It certainly won't be a single hook; multiplexing thing aside, if
-> you look at e.g. loopback you'll see that there are two separate
-> operations involved - one is cloning a tree (that's where dev_name is
-> parsed in old API; the corresponding spot in the new one is open_tree()
-> with OPEN_TREE_CLONE in flags) and another - attaching that tree to
-> destination (move_mount(2) in the new API).
-
-We currently have security_move_mount(), security_sb_remount(), and
-security_sb_kern_mount(), so most things are somewhat covered.
-
-> The former is "what", the latter - "where".  And in open_tree()/move_moun=
-t()
-> it literally could be done by different processes - there's no problem
-> with open_tree() in one process, passing the resulting descriptor to
-> another process that will attach it.
-
-For open_tree, security_file_open() can cover the "what" part of it.
-
+> As 'dir' needs to be used several times now, we load the dput() until
+> the end, and initialise to NULL so dput() is always safe.
 >
-> Any checks you do sb_mount (or in your mount_loopback) would have
-> to have equivalent counterparts in those, or you get an easy way to
-> bypass them.
+> Reported-by: Val Packett <val@packett.cool>
+> Closes: https://lore.kernel.org/all/6713ea38-b583-4c86-b74a-bea55652851d@=
+packett.cool
+> Fixes: c9ba789dad15 ("VFS: introduce start_creating_noperm() and start_re=
+moving_noperm()")
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  fs/fuse/dir.c | 23 ++++++++++++++++-------
+>  1 file changed, 16 insertions(+), 7 deletions(-)
 >
-> That's a very unpleasant can of worms; if you want to open it, be my
-> guest, but I would seriously suggest doing that after the end of merge
-> window - and going over the existing LSMs to see what they are trying to
-> do in that area before starting that thread.
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index a0d5b302bcc2..8384fa96cf53 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -1390,8 +1390,8 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc, =
+u64 parent_nodeid,
+>  {
+>         int err =3D -ENOTDIR;
+>         struct inode *parent;
+> -       struct dentry *dir;
+> -       struct dentry *entry;
+> +       struct dentry *dir =3D NULL;
+> +       struct dentry *entry =3D NULL;
+>
+>         parent =3D fuse_ilookup(fc, parent_nodeid, NULL);
+>         if (!parent)
+> @@ -1404,11 +1404,19 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc=
+, u64 parent_nodeid,
+>         dir =3D d_find_alias(parent);
+>         if (!dir)
+>                 goto put_parent;
+> -
+> -       entry =3D start_removing_noperm(dir, name);
+> -       dput(dir);
+> -       if (IS_ERR(entry))
+> -               goto put_parent;
+> +       while (!entry) {
+> +               struct dentry *child =3D try_lookup_noperm(name, dir);
+> +               if (!child || IS_ERR(child))
+> +                       goto put_parent;
+> +               entry =3D start_removing_dentry(dir, child);
+> +               dput(child);
+> +               if (IS_ERR(entry))
+> +                       goto put_parent;
+> +               if (!d_same_name(entry, dir, name)) {
+> +                       end_removing(entry);
+> +                       entry =3D NULL;
+> +               }
+> +       }
 
-I very much support fixing it properly, and I don't plan to rush into a
-half broken workaround. I am not very optimistic about whether
-we can bring everyone to the same page, but I think it is worth a try.
+Can you explain why it is so important to use
+start_removing_dentry() around shrink_dcache_parent()?
 
-> And yes, that's an example
-> of the reasons why I'm very sceptical about out-of-tree modules in
-> that area - with API in that state, we have no realistic way to promise
-> any kind of stability, with obvious consequences for everyone we can't
-> even see.
+Is there a problem with reverting the change in this function
+instead of accomodating start_removing_dentry()?
 
-I am not sure what you mean by "with API in that state". Which API
-sets are you talking about: the LSM hooks, the BPF kfuncs in
-bpf_fs_kfuncs.c, or all the exported symbols that are available to in-tree
-and out-of-tree LSMs? And how would you suggest we make these
-APIs into a better state?
+I don't think there is a point in optimizing parallel dir operations
+with FUSE server cache invalidation, but maybe I am missing
+something.
 
 Thanks,
-Song
+Amir.
