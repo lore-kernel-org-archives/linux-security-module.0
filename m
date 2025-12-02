@@ -1,138 +1,121 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA682749E4
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Dec 2025 08:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EEED191F91
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Dec 2025 08:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764664655; cv=none; b=swluf1vMUlLD0SFOsyki2CAZPkf/R3s1eGfF+UxF1JMlJJ2OvXDAG3q4aEJEuZ6D19s3dJfnv0ZdnOhxMSvVTlOV1DtyncqzdgzMlhXK2AD1/tDjC6hYmKGELe/tZr/T/n8r6a7Oe56T9TCyzRwKnws6I8EAJcbqHlQJ3doNQno=
+	t=1764665216; cv=none; b=q68qBGaQb9usPu1jnUuUcI5do2+ld6j35MhZVbsKI+qCWpem4oD/Z/zrmWcJPCD1GlMtSf4bY8Z0vcqTlO2DGTodS74PsZcKpnJXfRbJ1v3qIlGDjaM/BR0luIPJOex2RuiQdH2XwLWgHhw1JW4mMz042fLGG7phZV5UnXRyf0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764664655; c=relaxed/simple;
-	bh=zaJCg3XWm1SVImp4EQCH8h8sEN9SuEEETVGf8pKib7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aE6yUors1K+wEqmqeT7h+CFuEHNJyfij3Y+XQkxfC5EUTeRmArENP00pdQIWXI3YzLFgTA5lLE2NYUR6y1oTQyE9xGjw8bldCWk8JjLy/GrlYgskgr6xyf9AbfMyi3MgRhRxu2dKs+G/VidR299FgP7NDe9Avez746C1akrJ7ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IsjMdwtD; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1764665216; c=relaxed/simple;
+	bh=qcpxFQirLzafdSnNIq92XhuOn+HzWCu4AcZ2SW0UjqI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t4BtovtT16OSWETXotPi2ZIS7lixpGiMSlwqLsp45WyqcvfhSweKr0cXqz/Cw49yQshYAhueM5Sx6N9flD6dD+ko2corIGOYQTfwtqL2WY5sBA95x8LXUY82BF81FL13uTKJaSWyp8AKD4J+jGSR8lpj0vlGHPZQ8WnFL/MQx4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=bbbrFs6+; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IsjMdwtD"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-477a2ab455fso58130735e9.3
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Dec 2025 00:37:32 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="bbbrFs6+"
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4ee0ce50b95so53517051cf.0
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Dec 2025 00:46:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1764664651; x=1765269451; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tiOzr1mAqhgqqFJOGWenNhzB/hstykGyBlKIr47rH1g=;
-        b=IsjMdwtDY6GVWnmmJ9s0b4w+YatlICnloO1BJoVGs8wUs8cdxNiEz4fXDxN3LEEKDX
-         KKGUSXz/rTR09+5FoFdkvMOF2Lnb01baewdde6fu5XcwJbOa+Y90OMiBQLtlt+nH8Li1
-         x0csTKDGmbwq1oaWtRRL0jHJ5tTOG3WV0uguAdygVCo/cOepfmgXFnh7kK3t8mUmOIfU
-         NtuTdJjtQHZvt6EVMB/jStDMdhq0jkviSP6sHnfothCzsYSvxwampayoIdhiSNxolahm
-         o1+5yC4HnrduNQO/HUDqobc6P8NOA97NHuxgQvfM0kB8NlY/dTxSMtbwLHBZXRP0Jg3S
-         ki8Q==
+        d=szeredi.hu; s=google; t=1764665213; x=1765270013; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dxvySic7ZCI3Kve7CCt8lN1Lme0d3OPvrFfTikR164w=;
+        b=bbbrFs6+5vw0v4zASrPuLyid+iafPWKvHeYf/XOZ4RlTfrAcYHZVAdk6e+pk3VUvT5
+         48D6eTBCgo/3krpFsqeWdnF8GCD9YaUPsH9bnVDmtOnvHdlmeiRQ7K1+nPucKysf1DKV
+         mmqSSKGrjMO7aaGrUT4vdZIAqeiNk+895+LjE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764664651; x=1765269451;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tiOzr1mAqhgqqFJOGWenNhzB/hstykGyBlKIr47rH1g=;
-        b=CHa4+D0cE7IvYEPZwIJiArrcO77eeU2UUVlWu/71+D3DYRdgYavcqNa1En3/l8edo8
-         KQe2/j51UL3QTdkVijFaILKny7zzDTRe0u4+nJzt/KMga9Gx964KImbuOpBk4XsQ2ny6
-         x64Cctv2ihqxTijdKOVDTWc9hV+2IqX1HZ8OQUZPCgOk1ZneI5JuOBmM+Ltij3mMN0ay
-         R6dYMcNVhQUvwzJwBAX05XJCnZRSLwH1bSYlnjBmlT0fqDROooV8uK+JtuK5+t12eaaE
-         jrLUQoX3rDagl29TeFW/ac3f+2U0+Ke4LqAcMXQC+SbuDLLh2lrJdoc/Ascj3T6ej17b
-         YTjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHNxwp1dp7lX67Lt+71IayZnVXzCEgTFFMqMkrM0lrOQeX7/2x3+QlGCXRXjW4GNDmwd/I/G3fhNHrXl1X0tt2ICs8BzY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5Oo+iYyaNuniqXQ95wSqtJmnAAKswMIN91498D0MXZdXEinRY
-	9a7NT9KTIQQCKdrYfqVhXLHZin5ZcC8UH0sPJhoA7AHPhrK5zNsd7kyXYuDo/+eSqCxMIVka47k
-	LabTzYA==
-X-Gm-Gg: ASbGncvhp4iYsW6z9SSHAM5907rXr5tMKyF+z1LjROXQLTXee07xUItpVtalXdMIgHe
-	5CLpKPgqzoni6Cf50gA249SiGkKhc21rISbRZ2HPN6o8s8zhlw08w22azb7u/cB2/qqWUFQ5lM6
-	oI+mZQyQQohwmF60xQyaYNI3pK3ohraJ3urMC3hVA3sT5aikNlMKK5yO2vbes3FeJn7v0Odi0mN
-	5HQzaG4m87am2pzy+86LgCZJlOoroyjDjDg/Rses6tjjtX7bv9HDM6kReHsl5/Z3aGbbQF5tB4/
-	fwk5jHyeIv2gTqUSpsohrqqcp3ztQbPnpj5y4n/ZDAkh5tTvkp7eQeMgmenLOBqSTPGWCtGRIFc
-	IhQcHTMV7Ah+RREQP/fX4hGyO/jR5WYr8djVX3Cr3J0m5cQM4G+mYkmurDAoosSh10o7gIUB37r
-	f9J7s5dcFS7fEFUNgNYeJ2It1wBBQ2HEx5bmgu0XGlmQ==
-X-Google-Smtp-Source: AGHT+IE1yDUQZE+ox9F03r1q9Z2lPPQoMTnnFh0xcNqfuw6zmy2Y4NQhNMtqu3t3mAbGrXIEjqiGcA==
-X-Received: by 2002:a05:600c:46cd:b0:475:dc5c:3a89 with SMTP id 5b1f17b1804b1-477c1136b7fmr403421225e9.34.1764664651340;
-        Tue, 02 Dec 2025 00:37:31 -0800 (PST)
-Received: from google.com ([2a00:79e0:288a:8:fce2:2a7e:3f0f:dfcb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47926ed22ffsm12747825e9.0.2025.12.02.00.37.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Dec 2025 00:37:30 -0800 (PST)
-Date: Tue, 2 Dec 2025 09:37:24 +0100
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: Matthieu Buffet <matthieu@buffet.re>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] selftests/landlock: Remove invalid unix socket bind()
-Message-ID: <aS6lMPTlUo9bWYEG@google.com>
-References: <20251201003631.190817-1-matthieu@buffet.re>
+        d=1e100.net; s=20230601; t=1764665213; x=1765270013;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dxvySic7ZCI3Kve7CCt8lN1Lme0d3OPvrFfTikR164w=;
+        b=H4JdYLeRq4KAh7Q2CKZpptGHRq+ehznPyWiBxKRXXHo0TE2/Y36+RT+0cUY6AfkYEV
+         j8CYykn6e9XiNpEOdGVTaibPROatkN57MNh9pyhZSKFVFA6kgYaKZEvhDHxOZE+HcyCM
+         n07i3zjhqWWbW6nBnrwdBW0/dUAI3w8k11dHpLQ8T2ApEaxgfExSkdBUKXHICEAOot0L
+         bOXVhNVKT7YhmmOap6ZrOV28IHK0ocY8OqCZTPc3/gUnp47qt+eXtT9kPTLwuFaPebgv
+         Va3hiN5x++q8UlRLHwX4iWnqwsmG+Eg1j7u3s0qQwmysUmKRmZLO4NYQ+5AdoEKCohC4
+         WihA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+MJpaVgzti4BneVJ8m+V87XxEoLMWW6QNLiywU9pRdvTtdBpCI0WUkiAuhj16vk9MoGdDwfO+DrlEpM+sLhasarOXKGM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI99rmWEQOD8vCrt5xasePxkVukPd0c9q/+4bts+E14U4W9Kmy
+	v6ePcalXy4yk/am6zgEB2xNkbT80I6W9Zbo2mVC3T9MuQ1ASaqxqXyhnjkx3w3s05tbhTnoRkIq
+	weVViF5QUgROayO8iy1nBFYe2+VgnaDVLrxcI1h/sbA==
+X-Gm-Gg: ASbGnctz9HP7ejAOOus5wLNCmCSqNTNiQfwvwWvzj4ReOy/qzJbiij6LOdXPVlVTNI+
+	b9nrw01x3A8N7RBn66uao6OKUG9HvfkUG/ohFsRCRapC78kjSvrrBwjfZ/F5aEGpD0W/AdWK1eD
+	GFgzjJG8f55Po24G9FRWhnVHq/Z9AOW2ABm5O8d9IBTmmldvWy4ZL8cJwqTWvXfCNIlf8J94Bgu
+	op/F/KwIjebLF+yMA4m+L8DU0GNWrJW4zwG/X6UBIPtO9RIaiqG0RnvpJuEmqWZGdjSOw==
+X-Google-Smtp-Source: AGHT+IEmdgKRfEJt7lhW9JewHKYA/V5LXGRt+5HoCO1i6voev0VJmL65LKUm+BLjfUqBCpppRBhIODxs9MlwVlA6duw=
+X-Received: by 2002:ac8:7dc2:0:b0:4ee:1f69:fdeb with SMTP id
+ d75a77b69052e-4f0088dcc91mr26981181cf.11.1764665212783; Tue, 02 Dec 2025
+ 00:46:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251201003631.190817-1-matthieu@buffet.re>
+References: <20251113002050.676694-1-neilb@ownmail.net> <20251113002050.676694-7-neilb@ownmail.net>
+ <6713ea38-b583-4c86-b74a-bea55652851d@packett.cool> <176454037897.634289.3566631742434963788@noble.neil.brown.name>
+ <CAOQ4uxjihcBxJzckbJis8hGcWO61QKhiqeGH+hDkTUkDhu23Ww@mail.gmail.com>
+ <20251201083324.GA3538@ZenIV> <CAJfpegs+o01jgY76WsGnk9j41LS5V0JQSk--d6xsJJp4VjTh8Q@mail.gmail.com>
+ <20251201170813.GH3538@ZenIV>
+In-Reply-To: <20251201170813.GH3538@ZenIV>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 2 Dec 2025 09:46:41 +0100
+X-Gm-Features: AWmQ_blWv82I_AJ0z54S1o3oAiX82VQ2RDfse7yanE0u3ZklpA9ZzlQdeqtb1vo
+Message-ID: <CAJfpegtJDJL7T0-Uj664xOm4N2e6fyJp_XwFecHX_9e9ipUyEw@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix conversion of fuse_reverse_inval_entry() to start_removing()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Amir Goldstein <amir73il@gmail.com>, NeilBrown <neil@brown.name>, 
+	Christian Brauner <brauner@kernel.org>, Val Packett <val@packett.cool>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, David Howells <dhowells@redhat.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>, Chuck Lever <chuck.lever@oracle.com>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>, 
+	John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Stefan Berger <stefanb@linux.ibm.com>, "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, 
+	netfs@lists.linux.dev, ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello!
+On Mon, 1 Dec 2025 at 18:08, Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-On Mon, Dec 01, 2025 at 01:36:31AM +0100, Matthieu Buffet wrote:
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index eee814e09dd7..7d378bdf3bce 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -4391,9 +4391,6 @@ TEST_F_FORK(layout1, named_unix_domain_socket_ioctl)
->  	cli_fd = socket(AF_UNIX, SOCK_STREAM, 0);
->  	ASSERT_LE(0, cli_fd);
->  
-> -	size = offsetof(struct sockaddr_un, sun_path) + strlen(cli_un.sun_path);
-> -	ASSERT_EQ(0, bind(cli_fd, (struct sockaddr *)&cli_un, size));
-> -
->  	bzero(&cli_un, sizeof(cli_un));
->  	cli_un.sun_family = AF_UNIX;
->  	strncpy(cli_un.sun_path, path, sizeof(cli_un.sun_path));
-> 
-> base-commit: 54f9baf537b0a091adad860ec92e3e18e0a0754c
-> -- 
-> 2.47.3
-> 
+> Then as far as VFS is concerned, it's an equivalent of "we'd done
+> a dcache lookup and revalidate told us to bugger off", which does
+> *not* need locking the parent - the same sequence can very well
+> happen without touching any inode locks.
 
-Reviewed-by: Günther Noack <gnoack@google.com>
+Okay.
 
-It looks like I must have fumbled with the copy&paste in that test,
-this bind() call does not make sense in the place where it is and is
-not necessary for the test.  Apologies for that and thank you for
-spotting this!
+> IOW, from the point of view of locking protocol changes that's not
+> a removal at all.
+>
+> Or do you need them serialized for fuse-internal purposes?
 
+Not as far as I can see. As to any fuse filesystem being reliant on
+this behavior, I think that's unlikely, though it's sort of documented
+in the libfuse APIs as:
 
-Optional: In hindsight, I think it would be nice to simplify the way
-that we calculate the address length here.  I probably mis-read
-unix(7) at the time, where a similar formula is used (but with a
-"+1").  Re-reading it, it seems that just passing sizeof(cli_un) as
-the address length would have been the simpler and less error prone
-solution:
+ * To avoid a deadlock this function must not be called in the
+ * execution path of a related filesystem operation or within any code
+ * that could hold a lock that could be needed to execute such an
+ * operation. As of kernel 4.18, a "related operation" is a lookup(),
+ * symlink(), mknod(), mkdir(), unlink(), rename(), link() or create()
+ * request for the parent, and a setattr(), unlink(), rmdir(),
+ * rename(), setxattr(), removexattr(), readdir() or readdirplus()
+ * request for the inode itself.
 
-From unix(7) (emphasis mine):
-
-    The addrlen argument that describes the enclosing sockaddr_un
-    structure should have a value of at least:
-
-        offsetof(struct sockaddr_un, sun_path)+strlen(addr.sun_path)+1
-
-    or, more simply, addrlen **can be specified as sizeof(struct
-    sockaddr_un).**
-
-So, I believe that all the places where we calculate the size in this
-function can just disappear and we can directly use sizeof(cli_un) and
-sizeof(srv_un) in the bind() and connect() calls instead.
-
-(Let me know whether you want to do it in this change, otherwise I am
-also happy to send a follow-up fix.)
+Why the locking was added in the first place?  Oversight, probably.
 
 Thanks,
-—Günther
+Miklos
