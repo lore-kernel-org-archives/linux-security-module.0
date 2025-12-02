@@ -1,129 +1,277 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900361A262A;
-	Tue,  2 Dec 2025 17:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46C62DECB0
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Dec 2025 19:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764695432; cv=none; b=rzTjuqjK0mVA03NOChLSgRq2opbMFKVEc/1+6Vg4mwX60VGoXd5RcstTg2tJ/w5wk8edKAISstvqNzPnnDyOdC7bUq0q6mtKXfeKwaGZ6BmOmhLG2cDTuYlfpczefhgR8ehe5UNvY8WxzwHUbviKHIPbnY88yqRPJX7ggsLJ3rg=
+	t=1764704273; cv=none; b=YMxZpgfmVNnWOjG1SHZ7p+EPiEOq3n2T8lCxZsM2XYeZzOOfejikr15uV0VFPgGbVRWju/bnDe1fLNlXfUEsmj/3U6nIIDn+MJZpDoqfV7KjVtf9zUvDmi7t7Q0JC0dT92LgdqkFKCCUPUYCi03vgfQFx+L2VztLkJDyf0O7MAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764695432; c=relaxed/simple;
-	bh=NKQDEFMMODK2a944Kwz5haNjyNIE6BcnNhcuSTSX1mU=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=X8uhexiuoxLwKKGhBJ0prNfQO1CuJrktxwdgjt8cdD6Q/7F4zoC6UNYg+7bqUmzjrQv0NwlhdLlWji6Al6NuV7QONuYs0W7+1gpx6MgGd5toyo5bcaMGf1evCfF3UyeyHMbaVLDkdEho0DbWfG2YOXSTM+q6v/U2xEnal1/oa7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rvQ2BJFA; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1764704273; c=relaxed/simple;
+	bh=W8ZblEwgjuL8jZJ36a/bhPpyurnqnpzkgPSqnenEdCA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cA36V9Bn7P+ogqS1CSU7iyrOBjfhWw+357padHjPD6ZlZlrBs8q3fv/xSUxRi/YRXDnBbJSoS/3DO0v3Ag+fbGieWSwkLCsG4nVma760KB6EIIRv3y3VtOGodR62YsvQyWQKhtJihU4vOuGMUdX4iyW3WcDmbaNpbAS6pJcOH+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kip3Lc9z; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rvQ2BJFA"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5B2B8dHp009614;
-	Tue, 2 Dec 2025 17:10:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=/NdiMw
-	+URNfDRJcuHIyYSq+jAprVETK7YEXzBTH1eC0=; b=rvQ2BJFATUYbF01XiXFa9H
-	43Vo6NXF5mG8fp7zU+NOajs5FZdrPL78pzVQ1uxlRW33xZWpheyMkQLizFR7D1pQ
-	YLdwMidBV52QVH+wr+fAPCvPF4UJy0d9Qp/mxcfgYOGjCA1yW9YVWy/Pu5ybgbwj
-	CbEbK3ZHqntPuu3AyUXwmC8VCryEfyY0svgHpUrj0lMEFiWFkTX5hPCHD4Cu2NBy
-	6J5pafalbCsi9b0r7T0HNYjgCxkjoPTawUkOSbnyq3Hd61SRsPoxDZU7EbvuPW/k
-	TCiMjmFYYEq3ugaV7w5aI5esKqeUJZNUFQWcVaPYMFjkqKJPjIUt1k1Yj8c7XD+Q
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aqrj9pagb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Dec 2025 17:10:09 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5B2H2o3b011428;
-	Tue, 2 Dec 2025 17:10:09 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aqrj9pag6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Dec 2025 17:10:09 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5B2ENuSk010284;
-	Tue, 2 Dec 2025 17:10:08 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4arcnk5hpr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Dec 2025 17:10:08 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5B2HA7YL19005962
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 2 Dec 2025 17:10:07 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A2FF758054;
-	Tue,  2 Dec 2025 17:10:07 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 96F7758045;
-	Tue,  2 Dec 2025 17:10:06 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.56.35])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  2 Dec 2025 17:10:06 +0000 (GMT)
-Message-ID: <87246cfef670c9a63e1c1a20ec1c259290b317bf.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 1/2] evm: fix security.evm for a file with IMA
- signature
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
-Cc: Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin	
- <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul
- Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E.
- Hallyn"	 <serge@hallyn.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-In-Reply-To: <7jzx432acnp7mrma7om5ccvrc3ucvm5psscst62bcl5t5yklh7@yxhcvmrgbgli>
-References: <20250930022658.4033410-1-coxu@redhat.com>
-	 <7jzx432acnp7mrma7om5ccvrc3ucvm5psscst62bcl5t5yklh7@yxhcvmrgbgli>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 02 Dec 2025 12:10:03 -0500
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kip3Lc9z"
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-42e2e50cfaeso2032293f8f.3
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Dec 2025 11:37:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1764704269; x=1765309069; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zhJ/66bq3Dhg0Aw+wAsmTfNgUiWxLNmyfbE+xmpzX9c=;
+        b=kip3Lc9zeKn8FFLlcaLuTFCWl9jrb34d6WKCg5JjmA0h723skcbKHQg7jkZ5BvxMPk
+         eAnzgDz6VzBUQpP7AiwHo0AxoJ1OrhaEDQbGZimYGWXRn0iFUOQVQtLCHV/KNfmcEWW/
+         SfhWDoN8raJAy4VlVWYQ7ThW3/CF36+yY5aoZoYfubUHdrdSDlFoE7AobKrJg81uuH1W
+         GZbiktG0oOguoOj8ocECp5unUNyMaGNIRe/0OMH3FFCCWFXNq9uiPlBPpU3tyx0kaJpj
+         aflM5LXo8+OCIeJSStj4CBmCRU6SlhtMB4Owdj0apaUU781s8fIMTFAKLDg71IeXjr67
+         wweA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764704269; x=1765309069;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zhJ/66bq3Dhg0Aw+wAsmTfNgUiWxLNmyfbE+xmpzX9c=;
+        b=K041xGMWZHW73J0BUh1jOXPWo3QD9FhhCnFfv6KBlme678a+Jd5aZ1sSCA4BYmafxL
+         I+1zei7hBOB0me+Cp4XQlVqRRZsPBaDYxGA1m/DiBCBl7OmcMER0pcQ/zL1bqHiFiDn0
+         emUjlV8SobrpLkfLTGXoKiYmpY+kyz0rfPJnh447vV/lazMh7qHuFkFX8TLF/vo3Jv1I
+         PncQ66LJNOjXLcrGaFZI5QRI2xldePB4hxZTkWE+voFje5jOFC8TEI6hHNazzcQ1INr0
+         cF+vqtRiLQlGMW+H1pDfOp/d+oplWSxTZG/s2dj7i9E5Pg1TfXKOXfoNXo5NE1Mfvflc
+         2GOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIDIWakwuRXnbNEZDHIpWlnPgZjQ0K5EWA7EaRfAstLPp1mYKiBnaCvQbKW259IasPE7ptAewJNwNn10QKZfTzoSPjLFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxygjtW7nq2UarkgSRbHiQBs7kUceRsGlo52HYWsa6lu+1kWf6b
+	uYr9a3UE6iIoGgxbP+9JFdfHTU5BL0cM95R+gisE68Pj47kMOcTtOUNOsKvH0/pVU+s2ovxVig6
+	vfmQirmWLAXrUsbeoGw==
+X-Google-Smtp-Source: AGHT+IHLoORxJFIMnvNaTR7esNyOMYjh5IgIdqpmM1jiNlaGB5DkF31Koo1mWN1Y6iCnVsE9Qgyw7dzDpU2Msvk=
+X-Received: from wruh15.prod.google.com ([2002:a5d:688f:0:b0:42b:3951:1b])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:288b:b0:425:73c9:7159 with SMTP id ffacd0b85a97d-42e0f344080mr31795438f8f.33.1764704268795;
+ Tue, 02 Dec 2025 11:37:48 -0800 (PST)
+Date: Tue, 02 Dec 2025 19:37:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: uqGx-OL1xjCmu34IsQ3SdXYZZJTO3cAA
-X-Proofpoint-ORIG-GUID: Wrk1xLvSVFpaHXQ0deIoDRywGRxjUQFf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTI5MDAyMCBTYWx0ZWRfX1Or1l71O6eI3
- ikHc1qo7Nhfbfw7whJPL85sz2bQA2LtWaPu4RU+Ffl+wbnXXBP8N9L+i7a3Gp6ocuwflgKfSlrO
- ne/ObXKio7F8ULK1AJtIuU+bIJPOxvfvWpFxHG6/gtoEWs3u0rZ7Dfr+wXrpZtTWzNp3ayKIvHo
- rq6yI6N/fsQwycR+jnfFU708xq0+ISBK79cQQsg785uqqmBPbXT0SVdKh6Nw/l8xN1M3vH8sn7N
- qqfxd13TRTjuznRWqYLDipT1uuX3Mpl2JeLA7p1T9w3jRqYMucH5nGZDCFIGRBPBUXUiZZ4bx8/
- pQaUvaIuVwuIxSYEVkTgoNf9taMFSRBWjWpZvYxj4xERjRpj+5jZwMWUWzcif52t4olp0hz7YHL
- yfdxNKrqueUBGeAmM4jaqv5YykB/Ww==
-X-Authority-Analysis: v=2.4 cv=dYGNHHXe c=1 sm=1 tr=0 ts=692f1d71 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=NhNiMazW0HjkleIlhl0A:9 a=QEXdDO2ut3YA:10 a=QYH75iMubAgA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-01_01,2025-11-27_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 suspectscore=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511290020
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAPU/L2kC/x2MSwqAMAwFryJZG2iVUvEq4sJPagNSJVURxLsb3
+ AwMzHsPZBKmDG3xgNDFmbekYssCpjikhZBndahM5awCZwqcCOXMB0ZadxIMfnS1bWxtjAcd7qL N/Z92/ft+At1vUmQAAAA=
+X-Change-Id: 20251202-define-rust-helper-f7b531813007
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7075; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=W8ZblEwgjuL8jZJ36a/bhPpyurnqnpzkgPSqnenEdCA=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpL0AAbiS38ffQuRjq4nMNsCbAsC2Z0/xEFskYI
+ a7cs/y+HK6JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaS9AAAAKCRAEWL7uWMY5
+ RljtD/0fz1OjaXVHkkiWZGm1MTTTeoRD7MZeZtSJpWwEp10zfQcriF9Tz7TiY8DRVjupa7ieL6W
+ K+QIimSfxkf0pF+U85RZt8x5R0zrrPA7a0r4Czw2u898rjuZSvXB9rsMsd8s49K2iNGlMl8no4n
+ 8dLlxYWEysWLhXoCLey0TdCeJgWmZWEtLRFaN6a3PtKGsKPj5IDQPwWCgiJcyBf9skYFC8xnLoN
+ myrtxskJJ3xSky7n1TIOas7ooGu8EP6L1qP0CCGnHx3PR9GtRbSahp4lABH8jI74mWyxI75KaqA
+ e9yf1n+e6sDD4Miar5xu7Waav7mh4Wlvpm+FSeBd0t7yox6QRDaIfb300TNnYzo1UMbkA4TsjSu
+ jitafYyHMfHqSaZ8Hw25YynM0XiSR4dLFJXhzu6X6CIEFlbZbNx++pCQngoNk0Iidbvfmj1MwRy
+ JBZM2bXi/bb6e6iBnyXdGbM+VMwGo9ik6yIiLbuEi0MdhQ1SQbz9kEaJXP2rfRSiJxCIobwXnwA
+ zcbWzlULfAo1IcQ75R/0IuuuYUNlgfzaNl2x/c5ODo5ZVsxdgIMF9rF1905CYwuTY0YH222qCZ0
+ fao/NDvnvYrOIhSBHgNknvBcn+HM6CoE2Hycm48/DGMTeSqNxcbw9tlPWj5SJ+DhS/1mHLW0MMy +rvrgaUoICXqdBg==
+X-Mailer: b4 0.14.2
+Message-ID: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
+Subject: [PATCH 00/46] Allow inlining C helpers into Rust when using LTO
+From: Alice Ryhl <aliceryhl@google.com>
+To: rust-for-linux@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Elle Rhumsaa <elle@weathered-steel.dev>, Carlos Llamas <cmllamas@google.com>, 
+	Yury Norov <yury.norov@gmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	linux-block@vger.kernel.org, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	Benno Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
+	linux-security-module@vger.kernel.org, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Lyude Paul <lyude@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Jason Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrew Ballance <andrewjballance@gmail.com>, maple-tree@lists.infradead.org, 
+	linux-mm@kvack.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Uladzislau Rezki <urezki@gmail.com>, Vitaly Wool <vitaly.wool@konsulko.se>, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	"=?utf-8?q?Krzysztof_Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, linux-pci@vger.kernel.org, 
+	Remo Senekowitsch <remo@buenzli.dev>, "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org, 
+	Will Deacon <will@kernel.org>, Fiona Behrens <me@kloenk.dev>, Gary Guo <gary@garyguo.net>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Alexandre Courbot <acourbot@nvidia.com>, Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@gentwo.org>, 
+	David Rientjes <rientjes@google.com>, Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>, 
+	Mitchell Levy <levymitchell0@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, linux-usb@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, Tamir Duberstein <tamird@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, 2025-12-01 at 11:15 +0800, Coiby Xu wrote:
-> Hi Mimi,
->=20
-> I think this patch set just fell off the radar. Can you take a look at
-> it when time permits? Thanks! Btw, the patch set is still applicable to
-> current next-integrity tree Linus and main tree.
+This patch series adds __rust_helper to every single rust helper. The
+patches do not depend on each other, so maintainers please go ahead and
+pick up any patches relevant to your subsystem! Or provide your Acked-by
+so that Miguel can pick them up.
 
-Hi Coiby.  I haven't forgotten about this patch, but would prefer upstreami=
-ng it
-together with another EVM change.  I'm really sorry about the delay.
+These changes were generated by adding __rust_helper and running
+ClangFormat. Unrelated formatting changes were removed manually.
 
---=20
-thanks,
+Why is __rust_helper needed?
+============================
 
-Mimi
+Currently, C helpers cannot be inlined into Rust even when using LTO
+because LLVM detects slightly different options on the codegen units.
+
+* LLVM doesn't want to inline functions compiled with
+  `-fno-delete-null-pointer-checks` with code compiled without. The C
+  CGUs all have this enabled and Rust CGUs don't. Inlining is okay since
+  this is one of the hardening features that does not change the ABI,
+  and we shouldn't have null pointer dereferences in these helpers.
+
+* LLVM doesn't want to inline functions with different list of builtins. C
+  side has `-fno-builtin-wcslen`; `wcslen` is not a Rust builtin, so
+  they should be compatible, but LLVM does not perform inlining due to
+  attributes mismatch.
+
+* clang and Rust doesn't have the exact target string. Clang generates
+  `+cmov,+cx8,+fxsr` but Rust doesn't enable them (in fact, Rust will
+  complain if `-Ctarget-feature=+cmov,+cx8,+fxsr` is used). x86-64
+  always enable these features, so they are in fact the same target
+  string, but LLVM doesn't understand this and so inlining is inhibited.
+  This can be bypassed with `--ignore-tti-inline-compatible`, but this
+  is a hidden option.
+
+(This analysis was written by Gary Guo.)
+
+How is this fixed?
+==================
+
+To fix this we need to add __always_inline to all helpers when compiling
+with LTO. However, it should not be added when running bindgen as
+bindgen will ignore functions marked inline. To achieve this, we are
+using a #define called __rust_helper that is defined differently
+depending on whether bindgen is running or not.
+
+Note that __rust_helper is currently always #defined to nothing.
+Changing it to __always_inline will happen separately in another patch
+series.
+
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Alice Ryhl (46):
+      rust: auxiliary: add __rust_helper to helpers
+      rust: barrier: add __rust_helper to helpers
+      rust: binder: add __rust_helper to helpers
+      rust: bitmap: add __rust_helper to helpers
+      rust: bitops: add __rust_helper to helpers
+      rust: blk: add __rust_helper to helpers
+      rust: bug: add __rust_helper to helpers
+      rust: clk: add __rust_helper to helpers
+      rust: completion: add __rust_helper to helpers
+      rust: cpu: add __rust_helper to helpers
+      rust: cpufreq: add __rust_helper to helpers
+      rust: cpumask: add __rust_helper to helpers
+      rust: cred: add __rust_helper to helpers
+      rust: device: add __rust_helper to helpers
+      rust: dma: add __rust_helper to helpers
+      rust: drm: add __rust_helper to helpers
+      rust: err: add __rust_helper to helpers
+      rust: fs: add __rust_helper to helpers
+      rust: io: add __rust_helper to helpers
+      rust: irq: add __rust_helper to helpers
+      rust: jump_label: add __rust_helper to helpers
+      rust: kunit: add __rust_helper to helpers
+      rust: maple_tree: add __rust_helper to helpers
+      rust: mm: add __rust_helper to helpers
+      rust: of: add __rust_helper to helpers
+      rust: pci: add __rust_helper to helpers
+      rust: pid_namespace: add __rust_helper to helpers
+      rust: platform: add __rust_helper to helpers
+      rust: poll: add __rust_helper to helpers
+      rust: processor: add __rust_helper to helpers
+      rust: property: add __rust_helper to helpers
+      rust: rbtree: add __rust_helper to helpers
+      rust: rcu: add __rust_helper to helpers
+      rust: refcount: add __rust_helper to helpers
+      rust: regulator: add __rust_helper to helpers
+      rust: scatterlist: add __rust_helper to helpers
+      rust: security: add __rust_helper to helpers
+      rust: slab: add __rust_helper to helpers
+      rust: sync: add __rust_helper to helpers
+      rust: task: add __rust_helper to helpers
+      rust: time: add __rust_helper to helpers
+      rust: uaccess: add __rust_helper to helpers
+      rust: usb: add __rust_helper to helpers
+      rust: wait: add __rust_helper to helpers
+      rust: workqueue: add __rust_helper to helpers
+      rust: xarray: add __rust_helper to helpers
+
+ rust/helpers/auxiliary.c     |  6 +++--
+ rust/helpers/barrier.c       |  6 ++---
+ rust/helpers/binder.c        | 13 ++++-----
+ rust/helpers/bitmap.c        |  6 +++--
+ rust/helpers/bitops.c        | 11 +++++---
+ rust/helpers/blk.c           |  4 +--
+ rust/helpers/bug.c           |  4 +--
+ rust/helpers/build_bug.c     |  2 +-
+ rust/helpers/clk.c           | 24 +++++++++--------
+ rust/helpers/completion.c    |  2 +-
+ rust/helpers/cpu.c           |  2 +-
+ rust/helpers/cpufreq.c       |  3 ++-
+ rust/helpers/cpumask.c       | 32 +++++++++++++---------
+ rust/helpers/cred.c          |  4 +--
+ rust/helpers/device.c        | 16 +++++------
+ rust/helpers/dma.c           | 15 ++++++-----
+ rust/helpers/drm.c           |  7 ++---
+ rust/helpers/err.c           |  6 ++---
+ rust/helpers/fs.c            |  2 +-
+ rust/helpers/io.c            | 64 +++++++++++++++++++++++---------------------
+ rust/helpers/irq.c           |  6 +++--
+ rust/helpers/jump_label.c    |  2 +-
+ rust/helpers/kunit.c         |  2 +-
+ rust/helpers/maple_tree.c    |  3 ++-
+ rust/helpers/mm.c            | 20 +++++++-------
+ rust/helpers/mutex.c         | 13 ++++-----
+ rust/helpers/of.c            |  2 +-
+ rust/helpers/page.c          |  9 ++++---
+ rust/helpers/pci.c           | 13 +++++----
+ rust/helpers/pid_namespace.c |  8 +++---
+ rust/helpers/platform.c      |  2 +-
+ rust/helpers/poll.c          |  5 ++--
+ rust/helpers/processor.c     |  2 +-
+ rust/helpers/property.c      |  2 +-
+ rust/helpers/rbtree.c        |  5 ++--
+ rust/helpers/rcu.c           |  4 +--
+ rust/helpers/refcount.c      | 10 +++----
+ rust/helpers/regulator.c     | 24 ++++++++++-------
+ rust/helpers/scatterlist.c   | 12 +++++----
+ rust/helpers/security.c      | 26 ++++++++++--------
+ rust/helpers/signal.c        |  2 +-
+ rust/helpers/slab.c          | 14 +++++-----
+ rust/helpers/spinlock.c      | 13 ++++-----
+ rust/helpers/sync.c          |  4 +--
+ rust/helpers/task.c          | 24 ++++++++---------
+ rust/helpers/time.c          | 12 ++++-----
+ rust/helpers/uaccess.c       |  8 +++---
+ rust/helpers/usb.c           |  3 ++-
+ rust/helpers/vmalloc.c       |  7 ++---
+ rust/helpers/wait.c          |  2 +-
+ rust/helpers/workqueue.c     |  8 +++---
+ rust/helpers/xarray.c        | 10 +++----
+ 52 files changed, 280 insertions(+), 226 deletions(-)
+---
+base-commit: 54e3eae855629702c566bd2e130d9f40e7f35bde
+change-id: 20251202-define-rust-helper-f7b531813007
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
