@@ -1,235 +1,1117 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E762FB62A
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Dec 2025 20:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FF3281503
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Dec 2025 21:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764792121; cv=none; b=cEurb2rw9I4RakOtfvJaALpGLQvX5BqIXeHcwhqC82ISlohJPzSthw5U9+nrwOdGgdVGio4D7ULZWnKsRlg3QiD8NBvMO6x8sASWxcob1FPdAeVKgVW0LLyAa5xApSVauoJwzE0Zz3ILxadWhLhfIxms6MWr1L0Gw6yFkviMv28=
+	t=1764796358; cv=none; b=bp7FZhkX2iADBC3GpIK6rUQWzMPpEbKADZacmUmENCg1/ecqbmAfzBv74zrvKgpvLEz0xMtdPd4ZIoZ7s0LFtR3hAVEQspl9a5Sg2zukiSMg9MYJ1+6I5jCWSibOJPTZz1ebnqMLgKqWSZeFKPW51Ep1CA8KxXWC9b4Urkeljxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764792121; c=relaxed/simple;
-	bh=hbRxPzrFs0+hdOQNG7cizB6rmMqCryN13XBu971WWrc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CN117u2IPbQPvgted9dqr34m68zSV+6Qa9UrnDB6uXSJslLTeqbybG0gQXOMrKBxxoONHLlGv7/r+i2gLYRtIWkIIiK9aRHbz86lULSRq1dhR+7lBkVu1+Lafg+/lGGmm+8HPoIwTYes5vm34tXu8G4bPdkoB36HqhnLJORQjCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gua5w8vu; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1764796358; c=relaxed/simple;
+	bh=WUPKxYRqiXwYjenggofNIgwSDLjgld8FvLTAkUAb26g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FfAQHEo5OffIxOtf2YMeTOVo4rJlhmHgjx03hNZMggj9Xruzi8xP2gFzmE4tUjDNkT2a7EWltKd1zrq7jrAMXFrYzBb65CWcCCDOpNngbLQirlJc4ObNiMhB50MEv209oKFq48CcwRQgGCYN4UxuvC99UpPACEGGBRRduf40U8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=o1nSDfjt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=buEhejNI; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gua5w8vu"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2981f9ce15cso2107785ad.1
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Dec 2025 12:01:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764792116; x=1765396916; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lWaqHaC4GF2GSiscDP1QV02fWUrsKcrNYOyAr5e3bj4=;
-        b=Gua5w8vuNJ0CIFuzPH5VMXH+Unqz3dxMkoqGogUFBB+/hM9CqQmuyIED5ze48QVDC7
-         F6xjoTrULY5M7EqT+AJZD0hvqAMNJ+PRrlr6Inntq3kBJ++u/tLReaA3IV1lS0zOemH2
-         b98G4f/j+wrWww+ymeJ+M9jZJuFujJi2Tl+6K8JwPFpHPssQKU0/P5lu18EXGIWaXATB
-         PSH2hLh2kN6uZUfSCgb3MtXCNtgVXfbIPyMVI7dOhDuHYJZig8JspbUyPrEoE7Hexahz
-         pKg0AU3P0vZH0gGCXzCJosTJIMSFqKCpf1JnHfZyKwIgNEpRufT8Jeldhz1ihTYtv/QT
-         dB2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764792116; x=1765396916;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=lWaqHaC4GF2GSiscDP1QV02fWUrsKcrNYOyAr5e3bj4=;
-        b=BKhhORUJO724hC3yQnExKplrEN4XnrNwMYFDK6xD66G1S6i/9krr5CFmYyRQ1iDlHE
-         870rl+PbSZ2tjVh1R0m/p4zj23n5jHRTRCgB7rDkR1PKBnM1AkJArgEtF6cglypOgU0F
-         Y/VZuSZTlQ9YKkHdkOw4gEF32eO16jY+y9VyplFifyXtesIvCf2vZjNm9DOt5PfLtyVU
-         mCVtQDrFh+mg3Qi/AQpOIB+MGOUueuSnPXGb62Go+jviyKH5inNFfuYMeisRMXitq1tB
-         0J77BAfxQmTsvymGAH2Md3GHHXAcIDZM0eawKjsq4Re1eoGk1sCXXbbW2pkgY0TbISBB
-         aCQg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3V6vJ6k/IFFTYJldrBMviojltXB2HgHHCViJwH+EbB+iA8W/KCvFzgyKBfO0S0ZtX4tLJjsaRWNPs5fIMQRvliR1KEkE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2WV7PYLO2yhEu7z4faU+liclJ84bAeQilEihMZPwEo3V2PiwH
-	jN9iyYZvOt6Ze2lzmNkyIsjp/eI1B8lZ0eWC+ymJm3qkzuZZPZJbAtqyjQmnvbSDuSSavl7UrPW
-	9Q8gr73odA7QyE2fzkkaH1DIsvv0gtt0=
-X-Gm-Gg: ASbGncs5O2hW+Wdb7aEmjIchS4ylMoZQzvR55SqUI/bjr2UBDZFObbHMOujCwVfn17i
-	iyi5hAJKo8FSEqLVhgo0P5H+La8cbbmvQhtMwYil8yVFa9PwjA9yQM3GM3Bu9wCIUiQYqWmxYOA
-	wW3Vz22AubXucJt/PH2YGUCCIRCIapd8U3L8B3A/pFLAJZZ6LDMZXcu1BzifzbjLU8JDip0/qaS
-	KeuCX/wYXFbcNe7oMUzhKrnjVmYvhFVSvSlSqKtARdTKWar46CW2j3Hb86PjC7U1/ukTCc=
-X-Google-Smtp-Source: AGHT+IFMW2zvGnUfsXUU0ZfhpGZCjO/uFcPG/fkXmof4XTwIGBBP8YMgombNXaZ4eGJxAoBe7L60wBZMW3zl1igUF10=
-X-Received: by 2002:a17:903:1aec:b0:298:485d:556b with SMTP id
- d9443c01a7336-29d6833a74fmr38470125ad.5.1764792116164; Wed, 03 Dec 2025
- 12:01:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="o1nSDfjt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="buEhejNI"
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id 4C108EC004C;
+	Wed,  3 Dec 2025 16:12:34 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Wed, 03 Dec 2025 16:12:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1764796354;
+	 x=1764882754; bh=q0bWjXLEKUu/pOasUPVrhXBtw3XOmv1IscEkN2ldbIQ=; b=
+	o1nSDfjtuc4lt12wYMwbZ0ZCtz+sUz9N9R+xmeWKYIikvkalAllA3t4ratidSGB7
+	2nzbCJJhvy3eKda4xYDlyWp7rN9wpWYquTsnbM6VLwE4JH62/GFhKJfPQShzSeEp
+	r3wWahyepzm2WdE7p3QJlX6T0qd7zAK9YPeAVvTE6ehr9Fh56Yoomlic+PKFF7N1
+	SVxHaGSSDf0ARFNsgL8exlYRYWou1ZL+iPzPfpjkpEjS67srpUMwCNifoHhEvq41
+	gRK7sBOBlJrlZVOmVnFSf9L6WRrArZ1FZbnkGZuixDk/Cpejv4LLhf2XI/KDrC/r
+	xbVIrk4n8b0FJF8WUVRh4g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764796354; x=
+	1764882754; bh=q0bWjXLEKUu/pOasUPVrhXBtw3XOmv1IscEkN2ldbIQ=; b=b
+	uEhejNIv0kQkTKrl8d6l6HVqoCP4byGSeIM8dkloYzfq7neDMW9dOHOCC9RAjSOh
+	P29PrrTzA33EuBfBOZQaGf8P8P+LWyr6qtEMfq/FGX+BgsIV0HiKHqjIh352wu4a
+	Hg4AoRXiSJdCNAn5GCi6e7y6TMV/bG3v0QndG8OT9KOUGIF5ze2CmnyElh0JClg2
+	npcys5kkz8rQhtw5slRi+ZYVgT7kZlWfBE9yV0rd71t/QMaFYnc7B3w7/K+djka2
+	lSM/kc51Ll49a6AkLO77cEHBp933UbefTxBuR7b0Ji/mH6p9ek3VGxVLDtiEa849
+	nvip/DKqGOtFB+kSSzT/g==
+X-ME-Sender: <xms:wacwaT9OfHL2E54HfIux_ha244tgd35D37MYI51HpIdCMBa1LCLFPg>
+    <xme:wacwaTYsvyicXxoSW28Rwgo3k4g-LQaSCz7d3TEBj_IIk_JAiv40F1qQg3fXZszZY
+    2DyUI19ecC8VQdVKhNJY-0OAJV8CJmNQHvc_GlsnGIC6sdeb0omJdU>
+X-ME-Received: <xmr:wacwaa2xqflQHI6SJtuQe1KWMRKcfNd_1SsXHuBEQWG97rCA9b5mTT0Ln3rgUPnOaGOF31oTuUySsgxHNQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefkeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefvihhnghhmrgho
+    ucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepudekve
+    fhgeevvdevieehvddvgefhgeelgfdugeeftedvkeeigfeltdehgeeghffgnecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgrohifthhmrd
+    horhhgpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthho
+    pehuthhilhhithihvghmrghljeejsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinh
+    hugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehgnhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepjhgrtg
+    hksehsuhhsvgdrtgiipdhrtghpthhtohepgigrnhgufhhurhihsehgmhgrihhlrdgtohhm
+    pdhrtghpthhtohepmhhitgesughighhikhhougdrnhgvth
+X-ME-Proxy: <xmx:wacwaWaES3hzFFrEMER2C0vvmyz24QZJkApsiCU5CtDOxmuVop3H8w>
+    <xmx:wacwaaLSmPkqpAL5RCQ145idABGfS4ImY8ntNRHLC6PbCGp5g3aNUA>
+    <xmx:wacwadFZ18viyDoPdOcX_GwQbs-I-MXvuPT-mlLemuC5OUDO1RBYlw>
+    <xmx:wacwaZt6F14Urssi9iHGhUpCLsRWGB9GCLRFW9-xKsQ8kQJHWT8dIg>
+    <xmx:wqcwaVDEqZCToOZnp9H4Vpr3n4ywWqBeOcMT9xLhWc64hMptpdBOQ9pu>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 3 Dec 2025 16:12:32 -0500 (EST)
+Message-ID: <c314e302-d4ca-4a39-81ba-d4a1e21b9391@maowtm.org>
+Date: Wed, 3 Dec 2025 21:12:29 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
- <CAHC9VhQfrMe7EY3_bvW6PcLdaW7tPMgv6WZuePxd1RrbhyZv-g@mail.gmail.com>
- <CAHC9VhQyDX+NgWipgm5DGMewfVTBe3DkLbe_AANRiuAj40bA1w@mail.gmail.com>
- <6797b694-6c40-4806-9541-05ce6a0b07fc@oracle.com> <CAHC9VhQsK_XpJ-bbt6AXM4fk30huhrPvvMSEuHHTPb=eJZwoUA@mail.gmail.com>
- <CAHC9VhQnR6TKzzzpE9XQqiFivV0ECbVx7GH+1fQmz917-MAhsw@mail.gmail.com>
- <CAEjxPJ7_7_Uru3dwXzNLSj5GdBTzdPDQr5RwXtdjvDv9GjmVAQ@mail.gmail.com>
- <CAHC9VhQDHTNkrB4YuNoafM0bhAav=CP5Ux6ZZGY9+WF0+0_9ww@mail.gmail.com> <CAEjxPJ6e8z__=MP5NfdUxkOMQ=EnUFSjWFofP4YPwHqK=Ki5nw@mail.gmail.com>
-In-Reply-To: <CAEjxPJ6e8z__=MP5NfdUxkOMQ=EnUFSjWFofP4YPwHqK=Ki5nw@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Wed, 3 Dec 2025 15:01:45 -0500
-X-Gm-Features: AWmQ_bmK8IWF69Ya7Il-q1NU_c222p9dRgleuYlQl2p8kptbZYlJgZKkfKVtZaM
-Message-ID: <CAEjxPJ4T4srp91xsfbVd357Fhwb6Mx_3RGxCHT8Tnk_zk38m+g@mail.gmail.com>
-Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity()
- interface
-To: Paul Moore <paul@paul-moore.com>
-Cc: Anna Schumaker <anna.schumaker@oracle.com>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Simon Horman <horms@kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] landlock: Implement LANDLOCK_ADD_RULE_NO_INHERIT
+To: Justin Suess <utilityemal77@gmail.com>,
+ linux-security-module@vger.kernel.org
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Jan Kara <jack@suse.cz>, Abhinav Saxena <xandfury@gmail.com>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+References: <20251126122039.3832162-1-utilityemal77@gmail.com>
+ <20251126122039.3832162-2-utilityemal77@gmail.com>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <20251126122039.3832162-2-utilityemal77@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 3, 2025 at 1:08=E2=80=AFPM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
+Hi!
+
+I've done a "partial" review of this series (with most of the attention on
+this patch).  Aside from the comments below, I think we might need to
+think a bit more about the implications of things like hard links and bind
+mounts, which makes the notion of "parent" non-trivial (as Mickaël also
+pointed out on the GitHub thread).  However, I think it should mostly be
+good.  My first pass of reasoning for bind mounts are:
+
+A deny rule does not prevent access through a bind mount if the bind mount
+points deep into the denied hierarchy (not to the denied dentry itself),
+but does protect it if the bind mount points to the denied dentry itself
+or its parent.  Therefore, to properly protect a directory that contains
+children that might possibly be bind mounted to, a sandboxer just has to
+attach deny rules to that directory, plus any bind mounts pointing toward
+anything in it, which seems like a reasonable ask given that the sandboxed
+application cannot make mounts itself.
+
+Hopefully this review turns out to be useful :)
+
+On 11/26/25 12:20, Justin Suess wrote:
+> Implements a flag to prevent access grant inheritance within the filesystem hierarchy
+> for landlock rules.
 >
-> On Wed, Dec 3, 2025 at 10:55=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
-wrote:
-> >
-> > On Wed, Dec 3, 2025 at 10:35=E2=80=AFAM Stephen Smalley
-> > <stephen.smalley.work@gmail.com> wrote:
-> > > On Wed, Jul 23, 2025 at 10:10=E2=80=AFPM Paul Moore <paul@paul-moore.=
-com> wrote:
-> > > > On Thu, Jun 19, 2025 at 5:18=E2=80=AFPM Paul Moore <paul@paul-moore=
-.com> wrote:
-> > > > > On Tue, May 27, 2025 at 5:03=E2=80=AFPM Anna Schumaker
-> > > > > <anna.schumaker@oracle.com> wrote:
-> > > > > > On 5/20/25 5:31 PM, Paul Moore wrote:
-> > > > > > > On Tue, Apr 29, 2025 at 7:34=E2=80=AFPM Paul Moore <paul@paul=
--moore.com> wrote:
-> > > > > > >> On Mon, Apr 28, 2025 at 4:15=E2=80=AFPM Stephen Smalley
-> > > > > > >> <stephen.smalley.work@gmail.com> wrote:
-> > > > > > >>>
-> > > > > > >>> Update the security_inode_listsecurity() interface to allow
-> > > > > > >>> use of the xattr_list_one() helper and update the hook
-> > > > > > >>> implementations.
-> > > > > > >>>
-> > > > > > >>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1=
--stephen.smalley.work@gmail.com/
-> > > > > > >>>
-> > > > > > >>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.=
-com>
-> > > > > > >>> ---
-> > > > > > >>> This patch is relative to the one linked above, which in th=
-eory is on
-> > > > > > >>> vfs.fixes but doesn't appear to have been pushed when I loo=
-ked.
-> > > > > > >>>
-> > > > > > >>>  fs/nfs/nfs4proc.c             | 10 ++++++----
-> > > > > > >>>  fs/xattr.c                    | 19 +++++++------------
-> > > > > > >>>  include/linux/lsm_hook_defs.h |  4 ++--
-> > > > > > >>>  include/linux/security.h      |  5 +++--
-> > > > > > >>>  net/socket.c                  | 17 +++++++----------
-> > > > > > >>>  security/security.c           | 16 ++++++++--------
-> > > > > > >>>  security/selinux/hooks.c      | 10 +++-------
-> > > > > > >>>  security/smack/smack_lsm.c    | 13 ++++---------
-> > > > > > >>>  8 files changed, 40 insertions(+), 54 deletions(-)
-> > > > > > >>
-> > > > > > >> Thanks Stephen.  Once we get ACKs from the NFS, netdev, and =
-Smack
-> > > > > > >> folks I can pull this into the LSM tree.
-> > > > > > >
-> > > > > > > Gentle ping for Trond, Anna, Jakub, and Casey ... can I get s=
-ome ACKs
-> > > > > > > on this patch?  It's a little late for the upcoming merge win=
-dow, but
-> > > > > > > I'd like to merge this via the LSM tree after the merge windo=
-w closes.
-> > > > > >
-> > > > > > For the NFS change:
-> > > > > >     Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
-> > > > >
-> > > > > Hi Anna,
-> > > > >
-> > > > > Thanks for reviewing the patch.  Unfortunately when merging the p=
-atch
-> > > > > today and fixing up some merge conflicts I bumped into an odd cas=
-e in
-> > > > > the NFS space and I wanted to check with you on how you would lik=
-e to
-> > > > > resolve it.
-> > > > >
-> > > > > Commit 243fea134633 ("NFSv4.2: fix listxattr to return selinux
-> > > > > security label")[1] adds a direct call to
-> > > > > security_inode_listsecurity() in nfs4_listxattr(), despite the
-> > > > > existing nfs4_listxattr_nfs4_label() call which calls into the sa=
-me
-> > > > > LSM hook, although that call is conditional on the server support=
-ing
-> > > > > NFS_CAP_SECURITY_LABEL.  Based on a quick search, it appears the =
-only
-> > > > > caller for nfs4_listxattr_nfs4_label() is nfs4_listxattr() so I'm
-> > > > > wondering if there isn't some room for improvement here.
-> > > > >
-> > > > > I think there are two obvious options, and I'm curious about your
-> > > > > thoughts on which of these you would prefer, or if there is anoth=
-er
-> > > > > third option that you would like to see merged.
-> > > > >
-> > > > > Option #1:
-> > > > > Essentially back out commit 243fea134633, removing the direct LSM=
- call
-> > > > > in nfs4_listxattr() and relying on the nfs4_listxattr_nfs4_label(=
-) for
-> > > > > the LSM/SELinux xattrs.  I think we would want to remove the
-> > > > > NFS_CAP_SECURITY_LABEL check and build nfs4_listxattr_nfs4_label(=
-)
-> > > > > regardless of CONFIG_NFS_V4_SECURITY_LABEL.
-> > > > >
-> > > > > Option #2:
-> > > > > Remove nfs4_listxattr_nfs4_label() entirely and keep the direct L=
-SM
-> > > > > call in nfs4_listxattr(), with the required changes for this patc=
-h.
-> > > > >
-> > > > > Thoughts?
-> > > > >
-> > > > > [1] https://lore.kernel.org/all/20250425180921.86702-1-okorniev@r=
-edhat.com/
-> > > >
-> > > > A gentle ping on the question above for the NFS folks.  If I don't
-> > > > hear anything I'll hack up something and send it out for review, bu=
-t I
-> > > > thought it would nice if we could sort out the proper fix first.
-> > >
-> > > Raising this thread back up again to see if the NFS folks have a
-> > > preference on option #1 or #2 above, or
-> > > something else altogether. Should returning of the security.selinux
-> > > xattr name from listxattr() be dependent on
-> > > NFS_CAP_SECURITY_LABEL being set by the server and should it be
-> > > dependent on CONFIG_NFS_V4_SECURITY_LABEL?
-> >
-> > Thanks for bringing this back up Stephen, it would be good to get this =
-resolved.
+> If a landlock rule on an inode has this flag, any access grants on parent inodes will be
+> ignored. Moreover, operations that involve altering the direct parent tree of the subject with
+
+I feel like the wording "direct parent tree" is a bit unclear - I think
+what you meant is "altering the parent of the subject or its ancestors",
+right?
+
+> LANDLOCK_ADD_RULE_NO_INHERIT will be denied up to the mountpoint.
+
+Tbh I'm not entirely clear on why we only deny rename of parents up to the
+mountpoint.
+
 >
-> On second look, I realized that commit 243fea134633 ("NFSv4.2: fix
-> listxattr to return selinux security label") was likely motivated by
-> the same issue as commit 8b0ba61df5a1c44e2b3cf6 ("fs/xattr.c: fix
-> simple_xattr_list to always include security.* xattrs"), i.e. the
-> coreutils change that switched ls -Z from unconditionally calling
-> getxattr("security.selinux") (via libselinux getfilecon(3)) to only
-> doing so if listxattr() returns the "security.selinux" xattr name.
-> Hence, we want the call to security_inode_listsecurity() to be
-> unconditional, which favors option #2. My only residual question
-> though is that commit 243fea134633 put the call _after_ fetching the
-> user.* xattr names, whereas the nfs4_listxattr_nfs4_label() returns it
-> _before_ any user.* xattrs are appended. I'd be inclined to move up
-> the security_inode_listsecurity() call to replace the
-> nfs4_listxattr_nfs4_label() call along with option #2.
+> Additionally (new in v3) parent flag inheritance is blocked by this flag, allowing fine
+> grained access control over LANDLOCK_ADD_RULE_QUIET.
+>
+> For example, if /a/b/c/ = read only + LANDLOCK_ADD_RULE_NO_INHERIT and / = read write, writes to
+> files in /a/b/c will be denied. Moreover, moving /a to /bad, removing /a/b/c, or creating links to
+> /a will be prohibited.
+>
+> And if / has LANDLOCK_ADD_RULE_QUIET, /a/b/c will still audit (handled)
+> accesses. This is because LANDLOCK_ADD_RULE_NO_INHERIT also
+> suppresses flag inheritance from parent objects.
+>
+> The parent directory restrictions mitigate sandbox-restart attacks. For example, if a sandboxed program
+> is able to move a LANDLOCK_ADD_RULE_NO_INHERIT restricted directory, upon sandbox restart, the policy
+> applied naively on the same filenames would be invalid. Preventing these operations mitigates these attacks.
+>
+> v2..v3 changes:
+>
+>   * Parent directory topology protections now work by lazily
+>     inserting blank rules on parent inodes if they do not
+>     exist. This replaces the previous xarray implementation
+>     with simplified logic.
+>   * Added an optimization to skip further processing if all layers collected
+>     no inherit.
+>   * Added support to block flag inheritance.
+>
+> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+> ---
+>  security/landlock/audit.c   |   4 +-
+>  security/landlock/domain.c  |   4 +-
+>  security/landlock/fs.c      | 592 +++++++++++++++++++++++++++++++++++-
+>  security/landlock/ruleset.c |  27 +-
+>  security/landlock/ruleset.h |  36 ++-
+>  5 files changed, 645 insertions(+), 18 deletions(-)
+>
+> diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+> index d51563712325..4da97dd6985c 100644
+> --- a/security/landlock/audit.c
+> +++ b/security/landlock/audit.c
+> @@ -588,7 +588,9 @@ void landlock_log_denial(const struct landlock_cred_security *const subject,
+>  				subject->domain, &missing, request->layer_masks,
+>  				request->layer_masks_size);
+>  			object_quiet_flag = !!(request->rule_flags.quiet_masks &
+> -					       BIT(youngest_layer));
+> +				       BIT(youngest_layer)) &&
+> +				!(request->rule_flags.blocked_flag_masks &
+> +				  BIT(youngest_layer));
+>  		} else {
+>  			youngest_layer = get_layer_from_deny_masks(
+>  				&missing, request->all_existing_optional_access,
+> diff --git a/security/landlock/domain.c b/security/landlock/domain.c
+> index 8caf07250328..5bd83865c87d 100644
+> --- a/security/landlock/domain.c
+> +++ b/security/landlock/domain.c
+> @@ -236,7 +236,9 @@ optional_access_t landlock_get_quiet_optional_accesses(
+>  			 BITS_PER_TYPE(access_mask_t)) {
+>  		const u8 layer = (deny_masks >> (access_index * 4)) &
+>  				 (LANDLOCK_MAX_NUM_LAYERS - 1);
+> -		const bool is_quiet = !!(rule_flags.quiet_masks & BIT(layer));
+> +		const layer_mask_t layer_bit = BIT(layer);
+> +		const bool is_quiet = !!(rule_flags.quiet_masks & layer_bit) &&
+> +				  !(rule_flags.blocked_flag_masks & layer_bit);
+>
+>  		if (is_quiet)
+>  			quiet_optional_accesses |= BIT(access_index);
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 29f10da32141..0a5c73f18f26 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -317,6 +317,206 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+>  	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+>  /* clang-format on */
+>
+> +static const struct landlock_rule *find_rule(const struct landlock_ruleset *const domain,
+> +					     const struct dentry *const dentry);
+> +
+> +/**
+> + * landlock_domain_layers_mask - Build a mask covering all layers of a domain
+> + * @domain: The ruleset (domain) to inspect.
+> + *
+> + * Return a layer mask with a 1 bit for each existing layer of @domain.
+> + * If @domain has no layers 0 is returned.  If the number of layers is
+> + * greater than or equal to the number of bits in layer_mask_t, all bits
+> + * are set.
+> + */
+> +static layer_mask_t landlock_domain_layers_mask(const struct landlock_ruleset
+> +						*const domain)
+> +{
+> +	if (!domain || !domain->num_layers)
+> +		return 0;
+> +
+> +	if (domain->num_layers >= sizeof(layer_mask_t) * BITS_PER_BYTE)
+> +		return (layer_mask_t)~0ULL;
+> +
+> +	return GENMASK_ULL(domain->num_layers - 1, 0);
+> +}
+> +
+> +/**
+> + * rule_blocks_all_layers_no_inherit - check whether a rule disables inheritance
+> + * @domain_layers_mask: Mask describing the domain's active layers.
+> + * @rule: Rule to inspect.
+> + *
+> + * Return true if every layer present in @rule has its no_inherit flag set
+> + * and the set of layers covered by the rule equals @domain_layers_mask.
+> + * This indicates that the rule prevents inheritance on all layers of the
+> + * domain and thus further walking for inheritance checks can stop.
+> + */
+> +static bool rule_blocks_all_layers_no_inherit(const layer_mask_t domain_layers_mask,
+> +					      const struct landlock_rule *const rule)
+> +{
+> +	layer_mask_t rule_layers = 0;
+> +	u32 layer_index;
+> +
+> +	if (!domain_layers_mask || !rule)
+> +		return false;
+> +
+> +	for (layer_index = 0; layer_index < rule->num_layers; layer_index++) {
+> +		const struct landlock_layer *const layer =
+> +			&rule->layers[layer_index];
+> +		const layer_mask_t layer_bit = BIT_ULL(layer->level - 1);
+> +
+> +		if (!layer->flags.no_inherit)
+> +			return false;
+> +
+> +		rule_layers |= layer_bit;
+> +	}
+> +
+> +	return rule_layers && rule_layers == domain_layers_mask;
+> +}
+> +
+> +/**
+> + * landlock_collect_no_inherit_layers - Collects layers with no_inherit flags
+> + */
 
-I've made an attempt to unify the two security_inode_listsecurity()
-hook calls in the nfs4 code into a single, unconditional call from
-nfs4_listxattr(), which can be found here:
-https://lore.kernel.org/selinux/20251203195728.8592-1-stephen.smalley.work@=
-gmail.com/T/#u
+Note likely misplaced comment here
 
-If this is deemed acceptable by the NFS folks, then I can re-base this
-patch on top of that one.
+> +/**
+> + * landlock_collect_no_inherit_layers - collect effective no_inherit layers
+> + * @ruleset: Ruleset to consult.
+> + * @dentry: Dentry used as a starting point for the upward walk.
+> + *
+> + * Walk upwards from @dentry and return a layer mask containing the layers
+> + * for which either a rule on the visited dentry has the no_inherit flag set
+> + * or where an ancestor was previously marked as having a descendant with
+> + * a no_inherit rule.  The search prefers the closest matching dentry and
+> + * stops once any relevant layer bits are found or the root is reached.
+> + *
+> + * Returns a layer_mask_t where each set bit corresponds to a layer with an
+> + * effective no_inherit influence for @dentry.  Returns 0 if none apply or if
+> + * inputs are invalid.
+> + */
+> +static layer_mask_t landlock_collect_no_inherit_layers(const struct landlock_ruleset
+> +						       *const ruleset,
+> +						       struct dentry *const dentry)
+> +{
+> +	struct dentry *cursor, *parent;
+> +	layer_mask_t layers = 0;
+> +	bool include_descendants = true;
+> +
+> +	if (!ruleset || !dentry || d_is_negative(dentry))
+> +		return 0;
+> +
+> +	cursor = dget(dentry);
+> +	while (true) {
+> +		const struct landlock_rule *rule;
+> +		u32 layer_index;
+> +
+> +		rule = find_rule(ruleset, cursor);
+> +		if (rule) {
+> +			for (layer_index = 0; layer_index < rule->num_layers; layer_index++) {
+> +				const struct landlock_layer *layer = &rule->layers[layer_index];
+> +
+> +				if (layer->flags.no_inherit ||
+> +				    (include_descendants &&
+> +				     layer->flags.has_no_inherit_descendant))
+> +					layers |= BIT_ULL((layer->level ?
+> +						layer->level : layer_index + 1) - 1);
+> +			}
+> +		}
+> +
+> +		if (layers) {
+> +			dput(cursor);
+> +			return layers;
+> +		}
+> +
+> +		if (IS_ROOT(cursor)) {
+> +			dput(cursor);
+> +			break;
+> +		}
+> +
+> +		parent = dget_parent(cursor);
+> +		dput(cursor);
+> +		if (!parent)
+> +			break;
+> +
+> +		cursor = parent;
+> +		include_descendants = false;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int mark_no_inherit_ancestors(struct landlock_ruleset *ruleset,
+> +				     struct dentry *dentry,
+> +				     layer_mask_t descendant_layers);
+
+Wouldn't you be able to avoid this declaration by moving the definition
+for ensure_rule_for_dentry and mark_no_inherit_ancestors up a bit, before
+mask_no_inherit_descendant_layers?
+
+> +
+> +/**
+> + * mask_no_inherit_descendant_layers - apply descendant no_inherit masking
+> + * @domain: The ruleset (domain) to consult.
+> + * @dentry: The dentry whose descendants are considered.
+> + * @child_layers: Layers present on the child that may be subject to masking.
+> + * @access_request: Accesses being requested (bitmask).
+> + * @layer_masks: Per-access layer masks to be modified in-place.
+> + * @rule_flags: Collected flags which will be updated accordingly.
+> + *
+> + * If descendant dentries have no_inherit, clear that
+> + * layer's bit from @layer_masks. Also updates @rule_flags to reflect
+> + * which layers were blocked.  Returns true if any of the @layer_masks were
+> + * modified, false otherwise.
+> + */
+> +static bool mask_no_inherit_descendant_layers(const struct landlock_ruleset
+> +					      *const domain,
+> +					      struct dentry *const dentry,
+> +					      layer_mask_t child_layers,
+> +					      const access_mask_t access_request,
+> +					      layer_mask_t
+> +					      (*const layer_masks)
+> +					      [LANDLOCK_NUM_ACCESS_FS],
+> +					      struct collected_rule_flags
+> +					      *const rule_flags)
+> +{
+> +	layer_mask_t descendant_layers;
+> +	const unsigned long access_req = access_request;
+> +	unsigned long access_bit;
+> +	bool changed = false;
+> +
+> +	if (!access_request || !layer_masks || !rule_flags || !dentry)
+> +		return false;
+> +	if (d_is_negative(dentry))
+> +		return false;
+> +
+> +	descendant_layers = landlock_collect_no_inherit_layers(domain, dentry);
+> +	{
+> +		layer_mask_t shared_layers = descendant_layers & child_layers;
+> +
+> +		if (shared_layers) {
+> +			rule_flags->no_inherit_masks |= shared_layers;
+> +			rule_flags->no_inherit_desc_masks |= shared_layers;
+> +			rule_flags->blocked_flag_masks |= shared_layers;
+> +		}
+> +	}
+> +	descendant_layers &= ~child_layers;
+> +	descendant_layers &= ~rule_flags->no_inherit_masks;
+> +	if (!descendant_layers)
+> +		return false;
+> +
+> +	rule_flags->blocked_flag_masks |= descendant_layers;
+> +
+> +	for_each_set_bit(access_bit, &access_req,
+> +			 ARRAY_SIZE(*layer_masks)) {
+> +		layer_mask_t *const layer_mask = &(*layer_masks)[access_bit];
+> +
+> +		if (*layer_mask & descendant_layers) {
+> +			*layer_mask &= ~descendant_layers;
+> +			changed = true;
+> +		}
+> +	}
+> +
+> +	if (!changed)
+> +		return false;
+> +
+> +	rule_flags->no_inherit_masks |= descendant_layers;
+> +	rule_flags->no_inherit_desc_masks |= descendant_layers;
+> +
+> +	return true;
+> +}
+> +
+>  /*
+>   * @path: Should have been checked by get_path_from_fd().
+>   */
+> @@ -325,12 +525,13 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+>  			    access_mask_t access_rights, const int flags)
+>  {
+>  	int err;
+> +	const bool is_dir = d_is_dir(path->dentry);
+>  	struct landlock_id id = {
+>  		.type = LANDLOCK_KEY_INODE,
+>  	};
+>
+>  	/* Files only get access rights that make sense. */
+> -	if (!d_is_dir(path->dentry) &&
+> +	if (!is_dir &&
+>  	    (access_rights | ACCESS_FILE) != ACCESS_FILE)
+>  		return -EINVAL;
+>  	if (WARN_ON_ONCE(ruleset->num_layers != 1))
+> @@ -344,13 +545,43 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+>  		return PTR_ERR(id.key.object);
+>  	mutex_lock(&ruleset->lock);
+>  	err = landlock_insert_rule(ruleset, id, access_rights, flags);
+> +	if (!err && (flags & LANDLOCK_ADD_RULE_NO_INHERIT)) {
+> +		const struct landlock_rule *rule;
+> +		layer_mask_t descendant_layers = 0;
+> +		u32 layer_index;
+> +
+> +		rule = find_rule(ruleset, path->dentry);
+> +		if (rule) {
+> +			for (layer_index = 0; layer_index < rule->num_layers; layer_index++) {
+
+This function is only called to add rules to an "unmerged" ruleset, which
+will always only have one layer.  So probably this can just be a
+
+	err = landlock_insert_rule(ruleset, id, access_rights, flags);
+	if (err)
+		goto out_unlock;
+	if (flags & LANDLOCK_ADD_RULE_NO_INHERIT) {
+		err = mark_no_inherit_ancestors(ruleset, path->dentry);
+		if (err)
+			goto out_unlock;
+	}
+
+And for a similar reason, you don't have to do a for(layer_index) in
+mark_no_inherit_ancestors either.  (Basically I think you would just set
+rule->layers[0].flags.has_no_inherit_descendant to true)
+
+It might be helpful to validate / document this reasoning by adding
+WARN_ONCE(rule->num_layers != 1, "unmerged rulesets should only have one
+layer") either here or in mark_no_inherit_ancestors.
+
+> +				const struct landlock_layer *layer =
+> +					&rule->layers[layer_index];
+> +
+> +				if (layer->flags.no_inherit ||
+> +				    layer->flags.has_no_inherit_descendant)
+> +					descendant_layers |=
+> +						BIT_ULL((layer->level ?
+> +							 layer->level : layer_index + 1) - 1);
+> +			}
+> +			if (descendant_layers) {
+> +				err = mark_no_inherit_ancestors(ruleset, path->dentry,
+> +								descendant_layers);
+> +				if (err)
+> +					goto out_unlock;
+> +			}
+> +		}
+> +	}
+>  	mutex_unlock(&ruleset->lock);
+> +out:
+>  	/*
+>  	 * No need to check for an error because landlock_insert_rule()
+>  	 * increments the refcount for the new object if needed.
+>  	 */
+>  	landlock_put_object(id.key.object);
+>  	return err;
+> +
+> +out_unlock:
+> +	mutex_unlock(&ruleset->lock);
+> +	goto out;
+>  }
+>
+>  /* Access-control management */
+> @@ -382,6 +613,134 @@ find_rule(const struct landlock_ruleset *const domain,
+>  	return rule;
+>  }
+>
+> +/**
+> + * ensure_rule_for_dentry - ensure a ruleset contains a rule entry for dentry,
+> + * inserting a blank rule if needed.
+> + * @ruleset: Ruleset to modify/inspect.  Caller must hold @ruleset->lock.
+> + * @dentry: Dentry to ensure a rule exists for.
+> + *
+> + * If no rule is currently associated with @dentry, insert an empty rule
+> + * (with zero access) tied to the backing inode.  Returns a pointer to the
+> + * rule associated with @dentry on success, NULL when @dentry is negative, or
+> + * an ERR_PTR()-encoded error if the rule cannot be created.
+> + *
+> + * This is useful for LANDLOCK_ADD_RULE_NO_INHERIT processing, where a rule
+> + * may need to be created for an ancestor dentry that does not yet have one
+> + * to properly track no_inherit flags.
+> + *
+> + * The flags are set to zero if a rule is newly created, and the caller
+> + * is responsible for setting them appropriately.
+> + *
+> + * The returned rule pointer's lifetime is tied to @ruleset.
+> + */
+> +static const struct landlock_rule *
+> +ensure_rule_for_dentry(struct landlock_ruleset *const ruleset,
+> +		       struct dentry *const dentry)
+> +{
+> +	struct landlock_id id = {
+> +		.type = LANDLOCK_KEY_INODE,
+> +	};
+> +	const struct landlock_rule *rule;
+> +	int err;
+> +
+> +	if (!ruleset || !dentry || d_is_negative(dentry))
+> +		return NULL;
+> +
+> +	lockdep_assert_held(&ruleset->lock);
+> +
+> +	rule = find_rule(ruleset, dentry);
+> +	if (rule)
+> +		return rule;
+> +
+> +	id.key.object = get_inode_object(d_backing_inode(dentry));
+> +	if (IS_ERR(id.key.object))
+> +		return ERR_CAST(id.key.object);
+> +
+> +	err = landlock_insert_rule(ruleset, id, 0, 0);
+> +	landlock_put_object(id.key.object);
+> +	if (err)
+> +		return ERR_PTR(err);
+> +
+> +	rule = find_rule(ruleset, dentry);
+> +	return rule ? rule : ERR_PTR(-ENOENT);
+
+I feel like this deserves a WARN_ON_ONCE(!rule) before this line - we
+don't really expect to not find a rule right after adding it.
+
+On the other hand, the only reason why we need to re-lookup the rule seems
+to be because landlock_insert_rule() does not return the newly added rule.
+We could change it to do so, and not have to do this extra lookup.
+
+This also nicely solves the constness issue - landlock_insert_rule could
+return the mutable pointer.
+
+> +}
+> +
+> +/**
+> + * mark_no_inherit_ancestors - mark ancestors as having no_inherit descendants
+> + * @ruleset: Ruleset to modify.  Caller must hold @ruleset->lock.
+> + * @dentry: Dentry representing the descendant that carries no_inherit bits.
+> + * @descendant_layers: Mask of layers from the descendant that should be
+> + *                     advertised to ancestors via has_no_inherit_descendant.
+> + *
+> + * Walks upward from @dentry and ensures that any ancestor rule contains the
+> + * has_no_inherit_descendant marker for the specified @descendant_layers so
+> + * parent lookups can quickly detect descendant no_inherit influence.
+> + *
+> + * Returns 0 on success or a negative errno if ancestor bookkeeping fails.
+> + */
+> +static int mark_no_inherit_ancestors(struct landlock_ruleset *ruleset,
+> +				     struct dentry *dentry,
+> +				     layer_mask_t descendant_layers)
+> +{
+> +	struct dentry *cursor;
+> +	u32 layer_index;
+> +	int err = 0;
+> +
+> +	if (!ruleset || !dentry || !descendant_layers)
+> +		return -EINVAL;
+> +
+> +	lockdep_assert_held(&ruleset->lock);
+> +
+> +	cursor = dget(dentry);
+> +	while (cursor) {
+> +		struct dentry *parent;
+> +
+> +		if (IS_ROOT(cursor)) {
+> +			dput(cursor);
+> +			break;
+> +		}
+> +
+> +		parent = dget_parent(cursor);
+> +		dput(cursor);
+> +		if (!parent)
+> +			break;
+> +
+> +		if (!d_is_negative(parent)) {
+
+My understanding is that if the child is not negative (which is required
+for us to actually get here), as long as we always have a reference to it,
+none of its parents should be negative as well.  This should probably be a
+WARN_ON_ONCE(d_is_negative(parent)).
+
+I think some of the other d_is_negative() checks in this patch also have a
+similar argument (i.e. turn into WARN_ON_ONCE or be removed if not
+necessary), but I've not looked at them all.
+
+> +			const struct landlock_rule *rule;
+> +			/* Ensures a rule exists for the parent dentry,
+> +			 * inserting a blank one if needed
+> +			 */
+> +			rule = ensure_rule_for_dentry(ruleset, parent);
+> +			if (IS_ERR(rule)) {
+> +				err = PTR_ERR(rule);
+> +				dput(parent);
+> +				cursor = NULL;
+> +				break;
+> +			}
+> +			if (rule) {
+> +				struct landlock_rule *mutable_rule =
+> +					(struct landlock_rule *)rule;
+> +
+> +				for (layer_index = 0;
+> +				     layer_index < mutable_rule->num_layers;
+> +				     layer_index++) {
+> +					struct landlock_layer *layer =
+> +						&mutable_rule->layers[layer_index];
+> +					layer_mask_t layer_bit =
+> +						BIT_ULL((layer->level ?
+> +							layer->level : layer_index + 1) - 1);
+> +
+> +					if (descendant_layers & layer_bit)
+> +						layer->flags.has_no_inherit_descendant = true;
+> +				}
+> +			}
+> +		}
+> +
+> +		cursor = parent;
+> +	}
+> +	return err;
+> +}
+> +
+>  /*
+>   * Allows access to pseudo filesystems that will never be mountable (e.g.
+>   * sockfs, pipefs), but can still be reachable through
+> @@ -764,6 +1123,8 @@ static bool is_access_to_paths_allowed(
+>  	struct landlock_request *const log_request_parent2,
+>  	struct dentry *const dentry_child2)
+>  {
+> +	const layer_mask_t domain_layers_mask =
+> +		landlock_domain_layers_mask(domain);
+>  	bool allowed_parent1 = false, allowed_parent2 = false, is_dom_check,
+>  	     is_dom_check_bkp, child1_is_directory = true,
+>  	     child2_is_directory = true;
+> @@ -778,6 +1139,13 @@ static bool is_access_to_paths_allowed(
+>  	struct collected_rule_flags *rule_flags_parent1 = &log_request_parent1->rule_flags;
+>  	struct collected_rule_flags *rule_flags_parent2 = &log_request_parent2->rule_flags;
+>  	struct collected_rule_flags _rule_flag_parent1_bkp, _rule_flag_parent2_bkp;
+> +	layer_mask_t child1_layers = 0;
+> +	layer_mask_t child2_layers = 0;
+> +
+> +	if (dentry_child1)
+> +		child1_layers = landlock_collect_no_inherit_layers(domain, dentry_child1);
+> +	if (dentry_child2)
+> +		child2_layers = landlock_collect_no_inherit_layers(domain, dentry_child2);
+>
+>  	if (!access_request_parent1 && !access_request_parent2)
+>  		return true;
+> @@ -931,6 +1299,10 @@ static bool is_access_to_paths_allowed(
+>  					       ARRAY_SIZE(*layer_masks_parent2),
+>  					       rule_flags_parent2);
+>
+> +		if (rule &&
+> +		    rule_blocks_all_layers_no_inherit(domain_layers_mask, rule))
+> +			break;
+> +
+>  		/* Stops when a rule from each layer grants access. */
+>  		if (allowed_parent1 && allowed_parent2) {
+>  			/*
+> @@ -976,8 +1348,13 @@ static bool is_access_to_paths_allowed(
+>  					memcpy(&_rule_flag_parent2_bkp,
+>  					       rule_flags_parent2,
+>  					       sizeof(_rule_flag_parent2_bkp));
+> -					is_dom_check_bkp = is_dom_check;
+>  				}
+> +				is_dom_check_bkp = is_dom_check;
+> +				child1_layers = landlock_collect_no_inherit_layers(domain,
+> +										   walker_path
+> +										   .dentry);
+> +				if (layer_masks_parent2)
+> +					child2_layers = child1_layers;
+>
+>  				/* Ignores hidden mount points. */
+>  				goto jump_up;
+> @@ -1001,15 +1378,50 @@ static bool is_access_to_paths_allowed(
+>  				break;
+>  			}
+>
+> -			/*
+> -			 * We reached a disconnected root directory from a bind mount, and
+> -			 * we need to reset the walk to the current mount root.
+> -			 */
+> -			goto reset_to_mount_root;
+> -		}
+> -		parent_dentry = dget_parent(walker_path.dentry);
+> -		dput(walker_path.dentry);
+> -		walker_path.dentry = parent_dentry;
+> +		/*
+> +		 * We reached a disconnected root directory from a bind mount, and
+> +		 * we need to reset the walk to the current mount root.
+> +		 */
+
+Accidental change of indentation?
+
+> +		goto reset_to_mount_root;
+> +	}
+> +	if (likely(!d_is_negative(walker_path.dentry))) {
+> +		child1_layers = landlock_collect_no_inherit_layers(domain,
+> +								   walker_path.dentry);
+> +		if (layer_masks_parent2)
+> +			child2_layers = child1_layers;
+> +	} else {
+> +		child1_layers = 0;
+> +		if (layer_masks_parent2)
+> +			child2_layers = 0;
+> +	}
+> +	parent_dentry = dget_parent(walker_path.dentry);
+> +	dput(walker_path.dentry);
+> +	walker_path.dentry = parent_dentry;
+> +	/*
+> +	 * Apply descendant no-inherit masking now that we've moved to the
+> +	 * parent. This ensures the parent respects any no-inherit rules from
+> +	 * the child we just left. Only applies to refer operations (rename/link).
+> +	 */
+> +	if (unlikely(layer_masks_parent2)) {
+> +		if (mask_no_inherit_descendant_layers(domain, walker_path.dentry,
+> +						      child1_layers,
+> +						      access_masked_parent1,
+> +						      layer_masks_parent1,
+> +						      rule_flags_parent1))
+> +			allowed_parent1 =
+> +				allowed_parent1 ||
+> +				is_layer_masks_allowed(layer_masks_parent1);
+> +
+> +		if (rule_flags_parent2 &&
+> +		    mask_no_inherit_descendant_layers(domain, walker_path.dentry,
+> +						      child2_layers,
+> +						      access_masked_parent2,
+> +						      layer_masks_parent2,
+> +						      rule_flags_parent2))
+> +			allowed_parent2 =
+> +				allowed_parent2 ||
+> +				is_layer_masks_allowed(layer_masks_parent2);
+> +	}
+
+Maybe I'm missing something, but I can't tell what's the purpose of this
+block, or in fact what mask_no_inherit_descendant_layers and
+landlock_collect_no_inherit_layers is for.  The doc comment for
+mask_no_inherit_descendant_layers seems to suggest that it's supposed to
+walk descendents, but landlock_collect_no_inherit_layers is actually
+walking ancestors.  Removing these checks doesn't seem to break any tests,
+and sandboxer still seems to work as expected wrt. no_inherit rules and
+denial of renaming denied dentries and its parents.
+
+Note that the special "reverting" style disconnected directory handling
+has been removed in Mickaël's next branch (i.e. the "backup" logic is
+removed), which should hopefully simplify reasoning about this.
+
+>  		continue;
+>
+>  reset_to_mount_root:
+> @@ -1057,6 +1469,10 @@ static bool is_access_to_paths_allowed(
+>  		dput(walker_path.dentry);
+>  		walker_path.dentry = walker_path.mnt->mnt_root;
+>  		dget(walker_path.dentry);
+> +		child1_layers = landlock_collect_no_inherit_layers(domain,
+> +								   walker_path.dentry);
+> +		if (layer_masks_parent2)
+> +			child2_layers = child1_layers;
+>  	}
+>  	path_put(&walker_path);
+>
+> @@ -1172,6 +1588,8 @@ static bool collect_domain_accesses(
+>  	struct collected_rule_flags *const rule_flags)
+>  {
+>  	access_mask_t access_dom;
+> +	const layer_mask_t domain_layers_mask =
+> +		landlock_domain_layers_mask(domain);
+>  	bool ret = false;
+>
+>  	if (WARN_ON_ONCE(!domain || !mnt_dir || !dir || !layer_masks_dom))
+> @@ -1187,9 +1605,11 @@ static bool collect_domain_accesses(
+>  	while (true) {
+>  		struct dentry *parent_dentry;
+>
+> +		const struct landlock_rule *rule = find_rule(domain, dir);
+> +
+>  		/* Gets all layers allowing all domain accesses. */
+>  		if (landlock_unmask_layers(
+> -			    find_rule(domain, dir), access_dom, layer_masks_dom,
+> +			    rule, access_dom, layer_masks_dom,
+>  			    ARRAY_SIZE(*layer_masks_dom), rule_flags)) {
+>  			/*
+>  			 * Before allowing this side of the access request, checks that the
+> @@ -1206,6 +1626,10 @@ static bool collect_domain_accesses(
+>  			break;
+>  		}
+>
+> +		if (rule &&
+> +		    rule_blocks_all_layers_no_inherit(domain_layers_mask, rule))
+> +			break;
+> +
+>  		/* Stops at the mount point. */
+>  		if (dir == mnt_dir->dentry)
+>  			break;
+> @@ -1232,6 +1656,121 @@ static bool collect_domain_accesses(
+>  	return ret;
+>  }
+>
+> +/**
+> + * collect_topology_sealed_layers - collect layers sealed against topology changes
+> + * @domain: Ruleset to consult.
+> + * @dentry: Starting dentry for the upward walk.
+> + * @override_layers: Optional out parameter filled with layers that are
+> + *                   present on ancestors but considered overrides (not
+> + *                   sealing the topology for descendants).
+> + *
+> + * Walk upwards from @dentry and return a mask of layers where either the
+> + * visited dentry contains a no_inherit rule or ancestors were previously
+> + * marked as having a descendant with no_inherit.  @override_layers, if not
+> + * NULL, is filled with layers that would normally be overridden by more
+> + * specific descendant rules.
+> + *
+> + * Returns a layer mask where set bits indicate layers that are "sealed"
+> + * (topology changes like rename/rmdir are denied) for the subtree rooted at
+> + * @dentry.
+> + *
+> + * Useful for LANDLOCK_ADD_RULE_NO_INHERIT parent directory enforcement to ensure
+> + * that topology changes do not violate the no_inherit constraints.
+> + */
+> +static layer_mask_t
+> +collect_topology_sealed_layers(const struct landlock_ruleset *const domain,
+> +			       struct dentry *dentry,
+> +			       layer_mask_t *const override_layers)
+> +{
+> +	struct dentry *cursor, *parent;
+> +	bool include_descendants = true;
+> +	layer_mask_t sealed_layers = 0;
+> +
+> +	if (override_layers)
+> +		*override_layers = 0;
+> +
+> +	if (!domain || !dentry || d_is_negative(dentry))
+> +		return 0;
+> +
+> +	cursor = dget(dentry);
+> +	while (cursor) {
+> +		const struct landlock_rule *rule;
+> +		u32 layer_index;
+> +
+> +		rule = find_rule(domain, cursor);
+> +		if (rule) {
+> +			for (layer_index = 0; layer_index < rule->num_layers;
+> +			     layer_index++) {
+> +				const struct landlock_layer *layer =
+> +					&rule->layers[layer_index];
+> +				const int level = layer->level ? layer->level :
+> +								 layer_index + 1;
+
+Wouldn't layer->level always be >= 1 here?  Using layer_index doesn't make
+sense since layer_index is just the index that the struct landlock_layer
+happened to be in that rule's array.
+
+> +				layer_mask_t layer_bit = BIT_ULL(level - 1);
+> +
+> +				if (include_descendants &&
+> +				    (layer->flags.no_inherit ||
+> +				     layer->flags.has_no_inherit_descendant)) {
+> +					sealed_layers |= layer_bit;
+> +				} else if (override_layers) {
+> +					*override_layers |= layer_bit;
+> +				}
+> +			}
+> +		}
+> +
+> +		if (sealed_layers || IS_ROOT(cursor))
+> +			break;
+> +
+> +		parent = dget_parent(cursor);
+> +		dput(cursor);
+> +		if (!parent)
+> +			return sealed_layers;
+> +
+> +		cursor = parent;
+> +		include_descendants = false;
+> +	}
+> +	dput(cursor);
+> +	return sealed_layers;
+> +}
+> +
+> +/**
+> + * deny_no_inherit_topology_change - deny topology changes on sealed layers
+> + * @subject: Subject performing the operation (contains the domain).
+> + * @dentry: Dentry that is the target of the topology modification.
+> + *
+> + * Checks whether any domain layers are sealed against topology changes at
+> + * @dentry (via collect_topology_sealed_layers).  If so, emit an audit record
+> + * and return -EACCES.  Otherwise return 0.
+> + */
+> +static int deny_no_inherit_topology_change(const struct landlock_cred_security
+> +					   *subject,
+> +					   struct dentry *dentry)
+> +{
+> +	layer_mask_t sealed_layers;
+> +	layer_mask_t override_layers;
+> +	unsigned long layer_index;
+> +
+> +	if (!subject || !dentry || d_is_negative(dentry))
+> +		return 0;
+> +	sealed_layers = collect_topology_sealed_layers(subject->domain,
+> +						       dentry, &override_layers);
+> +	sealed_layers &= ~override_layers;
+> +
+> +	if (!sealed_layers)
+> +		return 0;
+> +
+> +	layer_index = __ffs((unsigned long)sealed_layers);
+> +	landlock_log_denial(subject, &(struct landlock_request) {
+> +		.type = LANDLOCK_REQUEST_FS_CHANGE_TOPOLOGY,
+> +		.audit = {
+> +			.type = LSM_AUDIT_DATA_DENTRY,
+> +			.u.dentry = dentry,
+> +		},
+> +		.layer_plus_one = layer_index + 1,
+> +	});
+> +
+> +	return -EACCES;
+> +}
+> +
+>  /**
+>   * current_check_refer_path - Check if a rename or link action is allowed
+>   *
+> @@ -1316,6 +1855,16 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+>  	access_request_parent2 =
+>  		get_mode_access(d_backing_inode(old_dentry)->i_mode);
+>  	if (removable) {
+> +		int err;
+> +
+> +		err = deny_no_inherit_topology_change(subject, old_dentry);
+> +		if (err)
+> +			return err;
+> +		if (exchange) {
+> +			err = deny_no_inherit_topology_change(subject, new_dentry);
+> +			if (err)
+> +				return err;
+> +		}
+>  		access_request_parent1 |= maybe_remove(old_dentry);
+>  		access_request_parent2 |= maybe_remove(new_dentry);
+>  	}
+> @@ -1707,12 +2256,31 @@ static int hook_path_symlink(const struct path *const dir,
+>  static int hook_path_unlink(const struct path *const dir,
+>  			    struct dentry *const dentry)
+>  {
+> +	const struct landlock_cred_security *const subject =
+> +		landlock_get_applicable_subject(current_cred(), any_fs, NULL);
+> +	int err;
+> +
+> +	if (subject) {
+> +		err = deny_no_inherit_topology_change(subject, dentry);
+> +		if (err)
+> +			return err;
+> +	}
+>  	return current_check_access_path(dir, LANDLOCK_ACCESS_FS_REMOVE_FILE);
+>  }
+>
+>  static int hook_path_rmdir(const struct path *const dir,
+>  			   struct dentry *const dentry)
+>  {
+> +	const struct landlock_cred_security *const subject =
+> +		landlock_get_applicable_subject(current_cred(), any_fs, NULL);
+> +	int err;
+> +
+> +	if (subject) {
+> +		err = deny_no_inherit_topology_change(subject, dentry);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+>  	return current_check_access_path(dir, LANDLOCK_ACCESS_FS_REMOVE_DIR);
+>  }
+>
+> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> index 750a444e1983..f7b6a48bbf39 100644
+> --- a/security/landlock/ruleset.c
+> +++ b/security/landlock/ruleset.c
+> @@ -255,8 +255,13 @@ static int insert_rule(struct landlock_ruleset *const ruleset,
+>  				return -EINVAL;
+>  			if (WARN_ON_ONCE(this->layers[0].level != 0))
+>  				return -EINVAL;
+> +			/* Merge the flags into the rules */
+>  			this->layers[0].access |= (*layers)[0].access;
+>  			this->layers[0].flags.quiet |= (*layers)[0].flags.quiet;
+> +			this->layers[0].flags.no_inherit |=
+> +				(*layers)[0].flags.no_inherit;
+> +			this->layers[0].flags.has_no_inherit_descendant |=
+> +				(*layers)[0].flags.has_no_inherit_descendant;
+>  			return 0;
+>  		}
+>
+> @@ -315,7 +320,10 @@ int landlock_insert_rule(struct landlock_ruleset *const ruleset,
+>  		.level = 0,
+>  		.flags = {
+>  			.quiet = !!(flags & LANDLOCK_ADD_RULE_QUIET),
+> -		},
+> +			.no_inherit = !!(flags & LANDLOCK_ADD_RULE_NO_INHERIT),
+> +			.has_no_inherit_descendant =
+> +				!!(flags & LANDLOCK_ADD_RULE_NO_INHERIT),
+> +		}
+>  	} };
+>
+>  	build_check_layer();
+> @@ -662,9 +670,22 @@ bool landlock_unmask_layers(const struct landlock_rule *const rule,
+>  		unsigned long access_bit;
+>  		bool is_empty;
+>
+> -		/* Collect rule flags for each layer. */
+> -		if (rule_flags && layer->flags.quiet)
+> +		/* Skip layers that already have no inherit flags. */
+> +		if (rule_flags &&
+> +		    (rule_flags->no_inherit_masks & layer_bit))
+> +			continue;
+> +
+> +		/* Collect rule flags for each layer.
+> +		 * We block flag inheritance if needed
+> +		 * because of a no_inherit rule.
+> +		 */
+> +		if (rule_flags && layer->flags.quiet &&
+> +		    !(rule_flags->blocked_flag_masks & layer_bit))
+
+I don't quite understand the purpose of blocked_flag_masks - wouldn't the
+"continue;" above naturally prevent flag inheritance?
+
+>  			rule_flags->quiet_masks |= layer_bit;
+> +		if (rule_flags && layer->flags.no_inherit)
+> +			rule_flags->no_inherit_masks |= layer_bit;
+> +		if (rule_flags && layer->flags.has_no_inherit_descendant)
+> +			rule_flags->no_inherit_desc_masks |= layer_bit;
+>
+>  		/*
+>  		 * Records in @layer_masks which layer grants access to each requested
+> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> index eb60db646422..8b46ab14e995 100644
+> --- a/security/landlock/ruleset.h
+> +++ b/security/landlock/ruleset.h
+> @@ -40,6 +40,21 @@ struct landlock_layer {
+>  		 * down the file hierarchy.
+>  		 */
+>  		bool quiet:1;
+> +		/**
+> +		 * @no_inherit: Prevents this rule from being inherited by
+> +		 * descendant directories in the filesystem layer.  Only used
+> +		 * for filesystem rules.
+> +		 */
+> +		bool no_inherit:1;
+> +		/**
+> +		 * @has_no_inherit_descendant: Marker to indicate that this layer
+> +		 * has at least one descendant directory with a rule having the
+> +		 * no_inherit flag.  Only used for filesystem rules.
+> +		 * This "flag" is not set by the user, but by Landlock on
+> +		 * parent directories of rules when the child rule has
+> +		 * a rule with the no_inherit flag.
+> +		 */
+> +		bool has_no_inherit_descendant:1;
+>  	} flags;
+>  	/**
+>  	 * @access: Bitfield of allowed actions on the kernel object.  They are
+> @@ -49,13 +64,32 @@ struct landlock_layer {
+>  };
+>
+>  /**
+> - * struct collected_rule_flags - Hold accumulated flags for each layer.
+> + * struct collected_rule_flags - Hold accumulated flags and their markers for each layer.
+>   */
+>  struct collected_rule_flags {
+>  	/**
+>  	 * @quiet_masks: Layers for which the quiet flag is effective.
+>  	 */
+>  	layer_mask_t quiet_masks;
+> +	/**
+> +	 * @no_inherit_masks: Layers for which the no_inherit flag is effective.
+> +	 */
+> +	layer_mask_t no_inherit_masks;
+> +	/**
+> +	 * @no_inherit_desc_masks: Layers for which the
+> +	 * has_no_inherit_descendant tag is effective.
+> +	 * This is not a flag itself, but a marker set on ancestors
+> +	 * of rules with the no_inherit flag to deny topology changes
+> +	 * in the direct parent path.
+> +	 */
+> +	layer_mask_t no_inherit_desc_masks;
+> +	/**
+> +	 * @blocked_flag_masks: Layers where flag inheritance must be blocked
+> +	 * because of a no_inherit rule. This is not a flag itself, but a marker
+> +	 * for layers that have their flags blocked due to no_inherit rule
+> +	 * propagation.
+> +	 */
+> +	layer_mask_t blocked_flag_masks;
+>  };
+>
+>  /**
