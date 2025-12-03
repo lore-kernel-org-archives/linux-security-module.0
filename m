@@ -1,78 +1,62 @@
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic305-28.consmr.mail.ne1.yahoo.com (sonic305-28.consmr.mail.ne1.yahoo.com [66.163.185.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC032C0283
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Dec 2025 21:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52DA322DC1
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Dec 2025 21:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764796413; cv=none; b=pj1dDIV9mWV3J/qC6+V9eLtiAjx3zqmE5Bu/39paYRvW3uQw/sixF1csa3mtvLB7lp4IN85dQGZ867kRa0olYN29izbOqL/xjWXnU/w7litw6iD4qWv63XerERExoxoElxgj4gZZ1LN0pM00t3tk5tnVdZ91mqSVHhySWkcRvoI=
+	t=1764798804; cv=none; b=IIDwZCvIGO63AN69iX0HEyr1umrI7ZdHOihSr9oYKVTkMijZ1Y5FPP1M19SVJs25TxvwGK9nrNJf4IZdpuHL2pqq6fXW/4ep43AgocA0z2S9SodIz71F/qh+U9TB/mlnsdrC5brc4kjEhXhLgbl8/vb8b2CMz0nWOBvuB5wyIJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764796413; c=relaxed/simple;
-	bh=0vZgYNt8PnHDX7UamoY0vj/ITqoz17oQ0D5RTlObVuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AmXwnzQXhQ8Bl7MTc33o09KOJrFUXfcMVpoAK/3Tv/SLF1eAp1xefHYGVK6qaC+ccUfO5/KZXd/D+fMIANx/T1ATGf/EU0JFu2Z4yCUb3rO6ZkMvg0KOvC0tvO28oX7R+/LmlZIQsSqvvDwEm2MD0jli33c6h43Zgoa4v/GDnHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=lSfFn8YS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Jn97IMH/; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1764798804; c=relaxed/simple;
+	bh=zKrugURZRPn7whQW2IIEmAugbQcKC61BcxEZrPBs+NE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type:
+	 References; b=Rr3b6ODYvD3teyfiDQLlR8/LTikKc6U/AgrTTSUrnBQOBz8sC65O//2LbrNO6CPksvqC/kaJVSKI49Rw0nsTx520kvAfoQFTGiia9dxCOr9LhJjDS8YSGQ4zxOIJTi1S9xrncDbTrHovMWk3E3vf58TYxXV7WEgMKwISYbOYB7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=RJX4eWKI; arc=none smtp.client-ip=66.163.185.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="lSfFn8YS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Jn97IMH/"
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id 36382EC05AA;
-	Wed,  3 Dec 2025 16:13:30 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Wed, 03 Dec 2025 16:13:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1764796410;
-	 x=1764882810; bh=jegMKPR/hZRGTsKtpnTfvnf6LyySKSjKpuL7VCm4eto=; b=
-	lSfFn8YSJ8ew/Mk85FepyJVBJPbkf6EOgkejTVc8cvgbInXlhB2YM6a0WT1zW6js
-	887gsuMDliOkBPRbndEgQ+/ld25xUbFJRBOzXxwI6edkWUNQ+rICJOJOy4TGdXhx
-	w8bNXD7Pa5rZJsKolF6WgNvxr3iz9Jf5MrlV6H9uWDnvXkknOCxSi/nVjNnaMSNE
-	7NVbo3C0EtaOKNAkYrIzqVUusFMCohLmdHzOzpqS+/6J5y2R7P6dEE2sMToyWyT5
-	AUk1HuaU3uJVt/aKjexqU9psEPB5b9lAcAnyGCCiN49kjziBVZYWAKQ3s1X9hvZh
-	q15xL74e3cSsWC1eIlK65Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764796410; x=
-	1764882810; bh=jegMKPR/hZRGTsKtpnTfvnf6LyySKSjKpuL7VCm4eto=; b=J
-	n97IMH/4V8hH1pbqQHzqfPmLmOSCho68zfmRceB7f86EVcUbdgy7xyYqkZFEHn4J
-	BimLHz9ckwwqteWkqmgsvUEJ6e+qcDhw2JHwF9/RtMQ2y6hzYFz9yfC4deW1R6tr
-	1EE5vqIeUNLzugbCu4w/Rp2t1C6kmDHeud1EqK4isNpyv3ATQSNViW87VN6xkzwG
-	TZQXYXydaUu3KiS9NvUOzZtX7v4FcqoP+iVJ6Yg3WYx4c5+xs8KYC6Ou0GUUwQGg
-	KFCsttvrWvfJlGF+TuTOtz35YRzwYryXLVEv6jlf39xk9KrAZm9FzZxn4PKnauOu
-	MD/Iy9gmRXwSUEUsgcprQ==
-X-ME-Sender: <xms:-qcwaQenIu-9fnFPruZxVKfvZ1wSD_6_ztnderoxKqREnEZqp2T9FA>
-    <xme:-qcwaV6ptvdn4ON18bkoLjAwJBqQoR7vvLK9c4G0lpAnbHi8xw_vSAdNmU-GwiYrP
-    GJja0bDSLb-vFjS36OMmrUSgny7xugLpOK4GvZODRvZGzWyGc8a7w>
-X-ME-Received: <xmr:-qcwabXrW4RsTM3ABsyRnYtRYVXK78ytRhQiUOYerw10rbnblO_Hh0xmyEqPOYX8LVz0jAMb52R5iYGLoA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefkeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    epkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefvihhnghhmrgho
-    ucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepfedvhe
-    eluedthfelgfevvdfgkeelgfelkeegtddvhedvgfdtfeeilefhudetgfdunecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgrohifthhmrd
-    horhhgpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthho
-    pehuthhilhhithihvghmrghljeejsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinh
-    hugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtg
-    hksehgohhoghhlvgdrtghomhdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgt
-    phhtthhopeigrghnughfuhhrhiesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:-qcwac5psRUz-K_menQkckPEQQpyLDgMGuH3Ac8hoHlv16NsCajYLA>
-    <xmx:-qcwaerv9jUh3lHA_TnmqPn6wSuQJcUNBoRWISubsWceTFBLXYjvJQ>
-    <xmx:-qcwaXmBmHxJwaZvB0If8G0iNWS2dqGkzctMLTyvpNpAnJkp35jtUA>
-    <xmx:-qcwaSNN1mjdS9IupuOKCHVNXJiQpC8e-_DIYdV8VyeSM9N8UVpyOw>
-    <xmx:-qcwaRgpEovFZlEXRVV91iCcZNLTnnHzaxEZXesAXDRVZR97uMO1YuGj>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Dec 2025 16:13:29 -0500 (EST)
-Message-ID: <664b4f51-afaa-4dbf-a83f-95a2167eeedb@maowtm.org>
-Date: Wed, 3 Dec 2025 21:13:28 +0000
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="RJX4eWKI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1764798796; bh=zKrugURZRPn7whQW2IIEmAugbQcKC61BcxEZrPBs+NE=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=RJX4eWKIyNmf2B+t1TlFUOxQmanpFqqXH2JRwPpFoNdvowQWOFpjcysdu40nWH6ABIrdHHkuRVGyEDRABAqqrcmj1uXWbInGESYMmu2WfMpZTYkzMfehCTj+uE8NAcl53pVErBju3QhhJH2njagCsysz3O0XzW0E0Sx4wa2MaLkoFI9c1rFTnO2sDgzVpF54LFV5SAQuvYJm2e9/NOv5/WmDPPW2wPCqXqDegxInKaR6nAFiQ+CQmUcRTqTtMQCvyPKAdytPc+CKmjX0V/QqTrzFSLgQX+/pNaxxjyizQeobr8mQvY133C+rUd85UeypWKiQ5zuhOHTnJVAk50M8cA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1764798796; bh=WTGlvZGWQzNggzHWTP7mfHvLQY6AYy0yWyg0qNDRqo5=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=R/OC9hPrXFCQnBvLkar6qiTvZtj0IU00XjBphfF2TPhh1yWc3SK+F3U72SU2Ztkel7Z8IUkMcL2XSM6Gmi5ilWKWcen73mX7/Pk2UQd9fqyTlTFqtzfbXNZJYXAOC6f0SnkvowyfVFzdKUsaT+aJqTKwAqRSpKysWNpD2ETncndOeumxh8PhF371vGvYvgnYZJ1RyNiAI8AbziL9u/ovM0FuxGKLndZHeojPfu+9B8A5BgSnxsEHcJ9tK95yvnJGFulXLFLjC0RPgcK0G1LFe+y3wWgQ7PFuPmbA/ZPPJSVMW/z+uy0xK63011iGqlhC01vcDNU4QcPeJdExZ27WMA==
+X-YMail-OSG: xzcR16YVM1l2r3t0DPHZuhf65mOHk0bNjig2G4Ppxru6oXOa3dak5WZpfepEe16
+ vnshnlBlSuis5JmV1yyppq1QZCCZSdOIUlr3N7UYnsH1KZXvyEYRDOm9WhwK0fGmsBnKu40wapQA
+ jeZy3JlnnbYBhb321ZNch0Hrg0I3beXD2Gok5xqvyVJQFU0H2_V8ElOJ8414W9_HxqphWGnlQtLU
+ YmLiWGc0EIZHwkIVVY.tfHgWJZuT8xH9F8J3MD5uasNCAMIPtXFbO2dLLFR6.K_wXcksXDKog6rO
+ xss0LhGw1jxABRbsnJN8xcUjwcXYlIMU.kUGEswggPm_deZALtnHlRlBVNH18GoKtcnCYC5kcgyy
+ _qldcyqWGmtCZQDIlyW9CiJk0B8KgpQqihryswve2WZ88Mlilf72oPUsWop74RHGwXj3PE2bcATA
+ 2z9B8vLCGFq0oXU2otcg3.38PCv2rACV6CGKX3rQPKFQfCjrfSPBiae3IEwniIVPJX5XAraPm1rB
+ PCkfEvs8Y7i_9s.1wSrERDD.GTLFn1jv8G922GZuuw.Y7dotvThRJEpvJ7dIHkfVfWWpGbEMHVqy
+ TouRNLxFSGDOdiyAbaI1myvc0jMXKBH5iozZTR0RxI_w0_gU6FTmp8Xkh2J8FGzfR.46uq.TM9ZF
+ AOtiixNqKIn7DVz6DGrB22h6ykQC95OiEBp6GKHExKYz8FxDotiNxuKjpgvHLv_yqfEQgVRgsZRa
+ WKPleAMNxTTSHDpTZzRAUR8lQTvnJy4fpeAwW2uLvX5ZoXro6iO.uel1LakIc0wP5vCwpINQXJ4n
+ 4l7Xuk.tjYl73p2cx1uDpezzBVE8INg6LKZ6rfFDhUldQnehp7SpIcfvKB37kWC4c.nSLGWS32At
+ uwUU5KctaRog4dHNz2eCUg4hFsLcEcE5nN1pOsIWnMpi3uDixm7L50b6JRuPJW8gGA1mTd4j7js3
+ ZejIatkkX0kUq.g66uMxuB8w2m5ZmL1VSwEYzoNrC4mGhfM2ttfsyJkC02hdXg4qQFFotUZO1DA6
+ P4u0MPErs1c3GKZGql3xkQepAG.wnqZ5.UBq3UMp2_OC1lmo4TH7pltbeXpzhhqb40vRR7Yulofr
+ Y6_Eaxn1t98_VPVfVq3K_Ol4hnbFwnhGNbA0uFXblxdf568nO_5oV8ZO8AH6ylV585nHmyK0vDXA
+ 6P21e2g.QtvOBSRJ8U.J2PdMaJGqlqR4636bDebQxXzrnSFwFxhiTUvW_mh39cCWqwFLo4SYKue3
+ ie.4gNMhpHsz2g0G7.Dmscl2yBj8Ip.0sL2XY2W9KbRnoOsKvkVt6imrQBV577TgLeNV4yKAIUBv
+ Lh.zW2oPtqdewTorTC_9k6Ro0p204N9PZw39yYvHhpZqP0h2eBRxa.QSdi6OESqpR2jewlKGdXZZ
+ 3_0Rkc0BUNvGkdQmE2XMhnuJcOaPT7qaZ1Y4oUVntBG.XWRq4XKuExl3JCZ7mspDRw5UIJ9nFOHD
+ l5.zQsoeN0FyuhvAptOE4lM.QxHHok6RZs6jU6t0lJTwqEu1KP1hlwBuBcJJI1NLHsd.ejcLrtxq
+ B3IBZz_AIG.xkVZrhBVFlQUZuFnmQd8TC1hOIvkZVr22o8vprUKAfiOH6a6z7tB3gdVyZDKui25f
+ OJO6HUTyb174prxglGkx5jq_cX.KrNnCawAuEqyTu7RI13z1Ni5z421bsbsQkldEqMuFe0CBT2w7
+ occp25SXNGNhjhZFLQwAxIHOv9U_G2TiH3aKwvVy.XLNkj3KZvr6DDkXR6kSqdRSIPM890eC4_.f
+ _ZTslclzia2syNxIumfa8P5VjRuEHI1_UDTAi2Ov6Cr1guQsKU7vp3x9PFviWBErxZ2vpnPYdcXx
+ uuBR3vOOxPvIbKofGgWyN7i0icVtCPsYQs9TMOdGcTWDr8opX.F4SldzLuD4I1SiKhWL4VRIl9Mr
+ 89FACDn.A0cZARMbGAUOkxKhVbksKGoyeAcfAKtMURX0EaxuUk61vYmFuga1MxA46cfelsNuoJbA
+ SjIvShSIDCrI4T_LkOdWdZLsbPol2imz92nIVewzukueZ2yOOmibjedG0dapvO7Znd_ysbrX2naQ
+ 4VDo3WWYm8qyS1XGgO70K2Lxym_bj6d9nrTfJdPn.bp_ATa01RE7DhrlYBwl894Bswy7yLoN56Y7
+ Vp2GxFaSTtsM8YE.J7HSP6xtTAZBsg_dHlgDNSPxleA8Vlnc.cwtoh4jnNqhu1HFfC7PeiInLChw
+ SKk6cwl620sRWsNYFdJxBhS0vN1AcCgcQ4Em2zkzEf5OH6IjAVLG.VVYsbM.EoL3TBkToVSUOH71
+ VL9JK
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: d9712815-5925-4f55-b6be-a69180cc3166
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Wed, 3 Dec 2025 21:53:16 +0000
+Received: by hermes--production-gq1-fdb64d996-j67dx (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 76d7dc38f9359a00d8772e98ba4ff629;
+          Wed, 03 Dec 2025 21:32:57 +0000 (UTC)
+Message-ID: <cb4293da-41dc-4586-adca-2859944905dc@schaufler-ca.com>
+Date: Wed, 3 Dec 2025 13:32:55 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -80,141 +64,21 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] samples/landlock: Add LANDLOCK_ADD_RULE_NO_INHERIT
- to landlock-sandboxer
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: linux-security-module@vger.kernel.org, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?=
- =?UTF-8?Q?n?= <mic@digikod.net>, =?UTF-8?Q?G=C3=BCnther_Noack?=
- <gnoack@google.com>, Jan Kara <jack@suse.cz>,
- Abhinav Saxena <xandfury@gmail.com>
-References: <20251126122039.3832162-1-utilityemal77@gmail.com>
- <20251126122039.3832162-4-utilityemal77@gmail.com>
 Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20251126122039.3832162-4-utilityemal77@gmail.com>
+To: LSM List <linux-security-module@vger.kernel.org>
+Cc: SElinux list <selinux@vger.kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Subject: set_security_override_from_ctx()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+References: <cb4293da-41dc-4586-adca-2859944905dc.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.24794 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 11/26/25 12:20, Justin Suess wrote:
-> Adds support to landlock-sandboxer with environment variables LL_FS_RO_NO_INHERIT
-> and LL_FS_RW_NO_INHERIT. These create the same rulesets as their non-no inherit variants,
-> plus the LANDLOCK_ADD_RULE_NO_INHERIT flag.
-> 
-> v2..v3 changes:
-> 
->   * Minor formatting fixes
-> 
-> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-> ---
->  samples/landlock/sandboxer.c | 37 +++++++++++++++++++++++++++---------
->  1 file changed, 28 insertions(+), 9 deletions(-)
-> 
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index 2d8e3e94b77b..6f6bfc4e5110 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-> @@ -58,6 +58,8 @@ static inline int landlock_restrict_self(const int ruleset_fd,
->  
->  #define ENV_FS_RO_NAME "LL_FS_RO"
->  #define ENV_FS_RW_NAME "LL_FS_RW"
-> +#define ENV_FS_RO_NO_INHERIT_NAME "LL_FS_RO_NO_INHERIT"
-> +#define ENV_FS_RW_NO_INHERIT_NAME "LL_FS_RW_NO_INHERIT"
->  #define ENV_FS_QUIET_NAME "LL_FS_QUIET"
->  #define ENV_FS_QUIET_ACCESS_NAME "LL_FS_QUIET_ACCESS"
->  #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
-> @@ -121,7 +123,8 @@ static int parse_path(char *env_path, const char ***const path_list)
->  /* clang-format on */
->  
->  static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
-> -			       const __u64 allowed_access, bool quiet)
-> +		       const __u64 allowed_access,
-> +		       __u32 add_rule_flags, bool mandatory)
->  {
->  	int num_paths, i, ret = 1;
->  	char *env_path_name;
-> @@ -132,9 +135,13 @@ static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
->  
->  	env_path_name = getenv(env_var);
->  	if (!env_path_name) {
-> -		/* Prevents users to forget a setting. */
-> -		fprintf(stderr, "Missing environment variable %s\n", env_var);
-> -		return 1;
-> +		if (mandatory) {
-> +			/* Prevents from forgetting to set necessary env vars. */
-> +			fprintf(stderr, "Missing environment variable %s\n",
-> +				env_var);
-> +			return 1;
-> +		}
-> +		return 0;
->  	}
->  	env_path_name = strdup(env_path_name);
->  	unsetenv(env_var);
-> @@ -171,8 +178,7 @@ static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
->  		if (!S_ISDIR(statbuf.st_mode))
->  			path_beneath.allowed_access &= ACCESS_FILE;
->  		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
-> -				      &path_beneath,
-> -				      quiet ? LANDLOCK_ADD_RULE_QUIET : 0)) {
-> +			      &path_beneath, add_rule_flags)) {
->  			fprintf(stderr,
->  				"Failed to update the ruleset with \"%s\": %s\n",
->  				path_list[i], strerror(errno));
-> @@ -375,6 +381,8 @@ static const char help[] =
->  	"Optional settings (when not set, their associated access check "
->  	"is always allowed, which is different from an empty string which "
->  	"means an empty list):\n"
-> +	"* " ENV_FS_RO_NO_INHERIT_NAME ": read-only paths without rule inheritance\n"
-> +	"* " ENV_FS_RW_NO_INHERIT_NAME ": read-write paths without rule inheritance\n"
+While trying to ensure sanity in security context processing I
+discovered set_security_override_from_ctx(), which is not used anywhere
+in the upstream kernel. Does anyone here know what its purpose is? I
+would very much like to remove it, but of course wouldn't want to break
+anything important.
 
-Would it make more sense to just have one LL_FS_NO_INHERIT env rule, that
-will attach the "no inherit" flag without necessarily adding any access?
-
->  	"* " ENV_TCP_BIND_NAME ": ports allowed to bind (server)\n"
->  	"* " ENV_TCP_CONNECT_NAME ": ports allowed to connect (client)\n"
->  	"* " ENV_SCOPED_NAME ": actions denied on the outside of the landlock domain\n"
-> @@ -596,17 +604,28 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  	}
->  
->  	if (populate_ruleset_fs(ENV_FS_RO_NAME, ruleset_fd, access_fs_ro,
-> -				false)) {
-> +			0, true)) {
->  		goto err_close_ruleset;
->  	}
->  	if (populate_ruleset_fs(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw,
-> +			0, true)) {
-> +		goto err_close_ruleset;
-> +	}
-> +	/* Optional no-inherit rules mirror the regular read-only/read-write sets. */
-> +	if (populate_ruleset_fs(ENV_FS_RO_NO_INHERIT_NAME, ruleset_fd,
-> +				access_fs_ro, LANDLOCK_ADD_RULE_NO_INHERIT,
-> +				false)) {
-> +		goto err_close_ruleset;
-> +	}
-> +	if (populate_ruleset_fs(ENV_FS_RW_NO_INHERIT_NAME, ruleset_fd,
-> +				access_fs_rw, LANDLOCK_ADD_RULE_NO_INHERIT,
-
-These need to be under an ABI version check like the quiet one - this
-sandboxer is designed to "downgrade" what it tries to do gracefully if
-running on older kernel.
-
-However, there is an argument that maybe if deny rules aren't supported in
-the current running kernel, it should just refuse to run the program at
-all, otherwise by running the sandboxed program without the deny rules it
-might expose the user to risks they might mitigate via some other means.
-But in that case we should still have a better error message when running
-on an older kernel than "Failed to update the ruleset with ...: Invalid
-argument"
-
->  				false)) {
->  		goto err_close_ruleset;
->  	}
->  	/* Don't require this env to be present. */
-> -	if (quiet_supported && getenv(ENV_FS_QUIET_NAME)) {
-> +	if (quiet_supported) {
->  		if (populate_ruleset_fs(ENV_FS_QUIET_NAME, ruleset_fd, 0,
-> -					true)) {
-> +				LANDLOCK_ADD_RULE_QUIET, false)) {
->  			goto err_close_ruleset;
->  		}
->  	}
 
