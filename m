@@ -1,354 +1,183 @@
-Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021134.outbound.protection.outlook.com [52.101.95.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38471B4138;
-	Wed,  3 Dec 2025 14:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.95.134
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764772399; cv=fail; b=IlKXHpYVJdTlUWUu2aNASkS+Yn69cXspKm2DNkZTZwtTXUurdzfyNk9ASNtZofhr6j0ycuvrJdSTB2OZjzM8GRdQJ5VFMARtFRuJhmdmIqPAn9Qp0ZYvWaOQh+CwQ4EifzZdA7v0q9cNl7Ol9XYj/c5rCX6nCa5lDkKNgdHfAA4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764772399; c=relaxed/simple;
-	bh=Wm8MElo016nhSo3mUSKUKVFY2V+ylObZq3Ju+Xr9jps=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bC12zsRnphuSwMYh05PQyQuDbkhjKJOh3O1UXPi7xStG4s1vv4898WOcJALYMfXBnOE8J6NGF1AaGxCPvc+33wj0rHeYAyh/LikEBgCRzt3BxJ0Elj8SpA7KLfFPLnIRPounm90aRLqFkC9Qz2tWqGrt+Frvxn6sPwZPKmKcdQU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=Tyn55U87; arc=fail smtp.client-ip=52.101.95.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF9E3090C6
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Dec 2025 15:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764776142; cv=none; b=nB7fxxHLmkFJaZVpVgEiwKqElhcg9t+5HnWmkaMKFIzwl4fnE9F50niz20r9gUtG3E7wibJ3m1kXPC2D7vYq6iOSFaBDglF3GR0WCJ81F9rLKxUteHqRd5lFOR95Ac5xr/aYFwaIDwmxO0tcmK92BUrpHwgv2Vhfrk4vO/wTPdA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764776142; c=relaxed/simple;
+	bh=w4A2UegXwtOrwBEh5yC+6bOraNmFEGQzXJlFijVxv7k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XeNC4nDPUe9P1xGtKfORWTez6EHtJsD/WjuFJ740zn5vZ60ow4qipLbyWCXWj5YYrUQ6q4AAmQJUSUiHKU4IQPy/dOKNE3G5qzBaDFsYWukJaFI9y5s4POJ4yh6NJWe3Milaz/AjlwRpSgX+mADsAJa9uqNHMGvaw9HDW0xehLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ACDBrCvr; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="Tyn55U87"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d0NRSwTvEeKriBepoRDW0oZuBWNjB3DjmrWZxWY8u/WPCAy534KeVfvRM/hc0g1UJTz2Id5c6WgXF5611vSThi0pmsUBXRBDccmB8GMkjgOF+yqz3artUAGHIA8SL7mSDgoJixQ7eDKt1z0dlFvmD0giLkko3Y8N28+6VU9PwrdSJm2HsPjxPgDucnnrZyaes7PXlncNa+zV6JF82hRHl2XhH9ixfE6playjXvNL9ufF63OeX6IuBdd/f8mRKqYkrngdDUUp1e/2dUCADEmJduE575v8/mt8AuaZhVPfclANeTgG4lbk6TH3O0zwpCqfVWAnNrqdT3Ywow57T3njWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2RNJy5g75k/yH+/lmInzQToBBwILHLfxTZooVLuZbII=;
- b=RKM7MqlXOaAbuXGzcON7Qdzp7Yn7BDimSRmSiJO3rYK1U0UpyVAMUsxM88AymboiA0DOzr545g5s+pdvBaouspH7yovRD6ucqhOzj/dByxJ3wmZl8/hbbXOAy2/eGX/ZAsiiCCLVPQruEhl+nEJoAFo/LXy8h3eXpWiI8z8ngo/FVXvqH2d7krKVsMHF79mevKhs2gavGf92DTL3Ejx/c1YY5H6UHMW2erSJQG5BhUFyKOpOd84n+SxzwuVciHwHJRL57/TLQhS5a4Oyup974jMYKTEeQ0e1WTEJYTfanQLv4aGV+BtbovEceHZWJ8ivFgKgvCSX+L0XN+yEXsOagw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2RNJy5g75k/yH+/lmInzQToBBwILHLfxTZooVLuZbII=;
- b=Tyn55U87HhpyiSZD1z91h3YYk7GKFDNY7KVMgjq7DKAsXfs0MgFTTuZ6ZpGLI2W0MHkeXHaoSHsfhOulphpVNH8RyOW3LwfeL3T6JtFj68s+nkWDe8wEsX8wl/gHGDIwUTB7LWohZB5HnGKhzHOze/HTBh0/7fshmFgQCyCUoMU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by LOYP265MB1840.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:e2::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.17; Wed, 3 Dec
- 2025 14:33:12 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%6]) with mapi id 15.20.9388.003; Wed, 3 Dec 2025
- 14:33:12 +0000
-Date: Wed, 3 Dec 2025 14:33:05 +0000
-From: Gary Guo <gary@garyguo.net>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman
- <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon
- Romanovsky <leon@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Boqun
- Feng <boqun.feng@gmail.com>, Elle Rhumsaa <elle@weathered-steel.dev>,
- Carlos Llamas <cmllamas@google.com>, Yury Norov <yury.norov@gmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>, linux-block@vger.kernel.org,
- FUJITA Tomonori <fujita.tomonori@gmail.com>, Miguel Ojeda
- <ojeda@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, Benno Lossin
- <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar
- <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, Paul Moore
- <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>,
- linux-security-module@vger.kernel.org, Daniel Almeida
- <daniel.almeida@collabora.com>, Abdiel Janulgue
- <abdiel.janulgue@gmail.com>, Robin Murphy <robin.murphy@arm.com>, Lyude
- Paul <lyude@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, Jason
- Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, Ard
- Biesheuvel <ardb@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>,
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
- linux-kselftest@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Ballance
- <andrewjballance@gmail.com>, maple-tree@lists.infradead.org,
- linux-mm@kvack.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>, Vitaly Wool <vitaly.wool@konsulko.se>,
- Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
- devicetree@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, "Krzysztof
- =?UTF-8?B?V2lsY3p5xYRza2k=?=" <kwilczynski@kernel.org>,
- linux-pci@vger.kernel.org, Remo Senekowitsch <remo@buenzli.dev>, "Paul E.
- McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org, Will Deacon
- <will@kernel.org>, Fiona Behrens <me@kloenk.dev>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alexandre Courbot
- <acourbot@nvidia.com>, Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter
- <cl@gentwo.org>, David Rientjes <rientjes@google.com>, Ingo Molnar
- <mingo@redhat.com>, Waiman Long <longman@redhat.com>, Mitchell Levy
- <levymitchell0@gmail.com>, Frederic Weisbecker <frederic@kernel.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>, John Stultz
- <jstultz@google.com>, linux-usb@vger.kernel.org, Tejun Heo <tj@kernel.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>, Matthew Wilcox
- <willy@infradead.org>, Tamir Duberstein <tamird@gmail.com>
-Subject: Re: [PATCH 00/46] Allow inlining C helpers into Rust when using LTO
-Message-ID: <20251203143305.591cd0da.gary@garyguo.net>
-In-Reply-To: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
-References: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0061.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2af::7) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ACDBrCvr"
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3436a97f092so8766488a91.3
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Dec 2025 07:35:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764776140; x=1765380940; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QGbO2/2t1gFhYYme3zOuFfWPsTzKJnXlmoRT6R7R7HQ=;
+        b=ACDBrCvrdOub/paqt3Lhc2vov+K9R1lUYZN3tqC+Cdw668Opp/8Xzdxo2QRO9Tlhaj
+         JPbsmmXEfOrWuasIoR/U+/gsXqMLRoRzdY7McjkeQlrsPlKCQ+hQBf5Ip4ILCMY3qk9C
+         AB6Sjf55UZcC6TAVZtm/ZJqEVEhoY6nmICfaULXsEjePQTDAB0x8qQFVsaOpPomnI70r
+         iS0TPerUKqu+URC1Jr+CUVSzavw8T3oNR6ULLWO2bfED9m/LlqRRvUtAVMrpuRyYjW9U
+         d7uhzgOYVn7YfKGtvjwwW5aoAilGZ9exAg5suTjdapATv700dADSP3d1rqGWJXZdIUq2
+         rKhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764776140; x=1765380940;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=QGbO2/2t1gFhYYme3zOuFfWPsTzKJnXlmoRT6R7R7HQ=;
+        b=xShwY0nOWrBT5sHPN3r2TWot3C9K2cxV4emSvZD+jz9QeCRnkbwHj4zUJ3O2SZbmnJ
+         KVuErRFnOhdwnSuQyChYJCuV1ApqbroUcoj9qfz0pQ5sGoB8qk0hNULb7aqrnLz20Xlt
+         QA1wCBXAZ9XuVmdTf04AzGWr0U3rHqrfhW4Brn2zDHElyO7zohyWDLmrPDyPlBU8tsE1
+         3KG2DA1/QJsIrKAjz5gss5V86pr/UXLdyCA0iynVkxIJ9OWk15P6esCU+fv7LUVnJJm5
+         XDMUMzRIFKIlL4mFgFVTcXsMUaKtvthmWuyl1AWYM4J1JWsNs7cUw+e1/JvofYU57Qxo
+         PVrw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRCXIHKtBnZ6YblJqTW9TcM47O+DZ9Jiy9ju3wuO2qG60EUQZwL/KW2l+s8vlRCdLXau3Inr9SxiqfPCxeYvxNrb9L8lM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4ehgvefsrC02HzHzZu43QpvVzq5X+RqZ9a+zS1qVR3G8rcf5O
+	GuPf3VgtuIChC1hN6s9tIuhX5xHxTIfPb9AICW0Ba9h1u3/cibmWXJQh5YAxbGxtPGAL4Zm8hn7
+	WG5j2SLr29LGMf+nfT9UYk8CUjXWUnXw=
+X-Gm-Gg: ASbGncvhAZU7kqcwOTW71ZpPJNiHJBDoT2evZh01k3hODDGkAXTW47DZ5ho7oLHnpJz
+	bvdKSlnm8AXYsJXWqhXYyG6WcBUyK5rHa3Ld1Fr/5qQY1/bEOd7A8odGXJ01qUxNXTdBPmqgVBd
+	3aJX3o4T0JAdrOUsFzgtRNkxgObMnnl14WtC4Wx9pltD5jidnpcDmjJMtw/LPa+3oUo1/C6DRo+
+	qdJaHusay79x1mMo47qJlEQ5K3wh1CiSEuj/m+Ze6xUH98d56izhiEhTQ0W+URp4YzmHdc=
+X-Google-Smtp-Source: AGHT+IEn9vxknosINeRwqaUkMbRpVbYZ9rAaqqFNWjUkmEIFHUcEtIIP4pCogGv3nNhRP3bv8J9Bo8pWrUn/qzHHVX0=
+X-Received: by 2002:a17:90b:1c09:b0:336:9dcf:ed14 with SMTP id
+ 98e67ed59e1d1-349127f9576mr3362218a91.23.1764776139904; Wed, 03 Dec 2025
+ 07:35:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LOYP265MB1840:EE_
-X-MS-Office365-Filtering-Correlation-Id: acbf5439-7581-44f6-714b-08de3278e331
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|10070799003|1800799024|366016|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?UJrfARac/ujsBb15GuVEoZR5AGfjo7H+g4EF39E9aORarwyuQssx/c5Vdw5p?=
- =?us-ascii?Q?fKve5noEhpOOBMp7d7JqUdZ6jDTY8lM/9hZ5iDZDBk87t3l2P6O1knClbiYX?=
- =?us-ascii?Q?x4AKfn1ZQcD0EF3Sl8zWmhs6s/Oleq062DbkKOHjwCeafOOMBTPDXVfzdMWN?=
- =?us-ascii?Q?N2UQUuoWNj+ll9MypGDWtSWckNq9ioOgx9YCVcrkyW81xGa3RKgrhuvmgWN6?=
- =?us-ascii?Q?dx5NkaviRcAbkhir5pbztXiBRdRtlOYNoqnKzSAozz7T0r142W++KjuVbjUf?=
- =?us-ascii?Q?zyRaHLHgb+Vg/VVtRc1e6+Qimsl9z19727igH8Ae3NJlnyTUQ86Bk/uKC6Aj?=
- =?us-ascii?Q?2bf/sWYZKBMACJDWD+o/mHwnbaOSOvRoOc8PZzwerxo9ESVsuCsjwtowFi32?=
- =?us-ascii?Q?Tg9gjs2tuSkdI2FphxopmKuSSTBg6QhYqUlE7bFWK4A9x1S6ak0oS8W2bm0Y?=
- =?us-ascii?Q?2AfXo7egN6WQ0Wh0tvZ+hAVadsLN+AubY1Litp9sMWmVOUsmApBk28P6YED0?=
- =?us-ascii?Q?6RbSIFzVwslTnPo6uYeAAGJzCMIrmUo/kv8D6waH1C/ACNPKXQPTin/p8Fio?=
- =?us-ascii?Q?1/EJixEv1oE6q0/mefPk+4BATdi4OZkjFHPiDv+gyGZoMNwiJ85lW8hTyVNy?=
- =?us-ascii?Q?+gScMEzHzzKG2PLyfoXbwf2dSQLdI6lDU4Vu6+5oFL5D9n7KdJTp/044esCb?=
- =?us-ascii?Q?ZHJZ/MoYX9DvdJFv8QBplLBZidivOGvhN2eujFY/cD+/7euWh62eTxbls+hb?=
- =?us-ascii?Q?8QI76//QRSnGShpH3itFaRvoJiSN4bJ+TAyth7N/fWPLRofamQZiaJOmYF06?=
- =?us-ascii?Q?4JxkMQ4N43mnFwGGNfqU1DbpqvWYveX70jeHOsYeeTfTPP8szfO8i5rJX0/B?=
- =?us-ascii?Q?Mz9gty5w0avCcsB2ymksw7qa4GsI0LHK10gVTSXiP3J1LsX1JfQ38hjwACcX?=
- =?us-ascii?Q?Cgmv7kykfc8xaKkpNndqiSbiUDk73fkXWAQjmZJnhiwnQmGHwKtJhQjVNT2B?=
- =?us-ascii?Q?/gK2GwO81H4WT3pz7nZeuMd87fbbgxfHDa9lxvpTCAI0dTab553n4ByY4Puw?=
- =?us-ascii?Q?hPvIf3cbTEVx+C9QT3vRRps65l18rJ1hhW1ADKK2MWUn5Wb9AxRZ7gel5I3I?=
- =?us-ascii?Q?qrj5gcDJEUq8es6wmxfX8+nmxAn3zu0hv14PEO6QtJPwcOIQd1+GhDk8+7fo?=
- =?us-ascii?Q?GTVOUMBIxxxH1lV9NkaxJ+Oqo8esZcLO50H/mUCZ9+NkcTSssNwbN49LI1xu?=
- =?us-ascii?Q?J2+GGMIwIfC7YCNCtKNLKUdAU9cTLzdYyJd0cfLeui6SJG1DeUSrIMjQvW3J?=
- =?us-ascii?Q?kvD1g/PIT8X8cvOV62qZ9Uc5GGRLY59M3NBF6NozC4kme9qwg4PvfmeFtUHY?=
- =?us-ascii?Q?/u7vKQOBSqweg2EdL20aezhS7uaW/jWiJyQbsc3JrqQ/1h6U7zCHAJ7uzFb2?=
- =?us-ascii?Q?yJf6N14z5Cs6Hq2ZNwOVLFk7ilJ/zzED?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(1800799024)(366016)(7416014)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?aSDALWRyH6rBkXxsbpB4Y/5XOm/Bce5/DXVBbWJ1n6Di3wnox2Ngvn9vQCAI?=
- =?us-ascii?Q?Y5A/5vENvJ8dX4qzav8O/ktGU6eMGd7Qqy/lcczgT3Z7awwxz1K8KNrGzY/O?=
- =?us-ascii?Q?5rDSyN7Eg1OeQ71nEL2zwTHEIBySAxYpeubVrfL87ampUcDzdbCvjSPMBN5i?=
- =?us-ascii?Q?m6IT2Snr7COf6DDaS0U8dBOI3jzYi262nJRmAZagEheMDb0//hONUIkgJll0?=
- =?us-ascii?Q?S3GYzqydR1DmgQ7QrkzfTOXhS9qrBylxJzETHgrOiHBHi2K0IHlPAI6kFcEU?=
- =?us-ascii?Q?0AkeoLqnIEot8pHEsdJzul3hdEBY0XYcw0uFpfHIqdW0QvOhkXVO1znF2DuN?=
- =?us-ascii?Q?stnxBj68oP7UrXprCATa8v9x831lUCLaAWfNTPzBdzlfMsxXnjg3zqis06V3?=
- =?us-ascii?Q?rLTkqzG1d6uEdj7Cq2TsFKm2rHji1B1dMSO0+c5Bdw9uG73cawkyenwW52PN?=
- =?us-ascii?Q?iYaXyEe5QItQ2rTjSung3fkLhAl5STLqDZrpYcQSO7ZCBzgtsk57Bs6AWpNj?=
- =?us-ascii?Q?Jlm+srnD05VHUMvTbE6bMxoAIHzoYBW9XQ1NHYl9uwtZv9Nc+/l72qlDz73E?=
- =?us-ascii?Q?21znhRhYmszGDJjMw+5SmMzXFEga7X3OvVrBBAT90vH5M6rC4B4L94LBCtYb?=
- =?us-ascii?Q?ff5hJxMRPN6LmYFgSiHBPcH54/Lq+aAmcVPFtQVa9wXeVz64u1q99G4tOzjF?=
- =?us-ascii?Q?YF+LY1Bu8mxizc2MeS+/VSLBVuJ2ur60t2FTe3p8QCJB8+anw/F8y9D8wZDZ?=
- =?us-ascii?Q?AlaU1dO6xsM+d0OKTzH1g5i+LRc7fu/WguQbCIMuPxwIpk3hsq2L/etVDTYG?=
- =?us-ascii?Q?j1DRe9RM+1m0B6rGCojtvH0Z/y88WYKsrVrNcU0b5VbIW4mIr7eHyOy/RaG9?=
- =?us-ascii?Q?+5VTE/7wBNSFfAGU/+HDhIWJeW4lsV0z7X+hgsaD53VpCSqfbb2FFF23WGra?=
- =?us-ascii?Q?bksKZt8s2Q1O5WlSDPH1v5qGLp4OwXgW6rGx8Hv3L+xAW5g70fUoehS56HXk?=
- =?us-ascii?Q?sVRpSY47BDZAKaABAjA0qaNhzf0o4yM0PF0Dx2jemfUAqiN/PApQij0Ah6U5?=
- =?us-ascii?Q?kq8T6+ERfhm6cw+Aob4ejY0jLb8R7SSvueKnag4yKWLUlQVtrnRCexkmtUsz?=
- =?us-ascii?Q?uLvS6ZUCjALqmIvz+L17dairZPqR58MltO7vXZMEbd0N6rHfSbn5Pgy5JBVX?=
- =?us-ascii?Q?kvGj9IUdOIEya7I2GVfhvQMe05cU+yzRODk3egh+zDRKzagX6f0KuMom8/wP?=
- =?us-ascii?Q?v5e9UV0Li3Y9eYNpC7qyqlUuRI35WBswUafowEy6uWtR9FYoKAyZPiimcFRe?=
- =?us-ascii?Q?lArz2tswt3FM0SGVQ9LK6cBndm5G8jxF7CNhPjBoj7gCy+6rt6ULJQj2gvVt?=
- =?us-ascii?Q?FfZHOcO7d6ha2EX0n+WxDDTwt/ojJ0TgYb40zc/y/nq0+RJwqGsG6DXu/ovO?=
- =?us-ascii?Q?wLv5pIa3cyRweBtIgRQ42ZQcuM/NLPGU0aeyeXqMaQfNDZGDJHQJV/nl77V5?=
- =?us-ascii?Q?NIfeoheuxVKaUpvGliJ16RymPhfb1NfGyl+TBpRSoy8kGaRIUSWU/OONleH+?=
- =?us-ascii?Q?2zN0NHddUbOPyZpFzVRSjrwrn5ENJIm9SE/0OKpV?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: acbf5439-7581-44f6-714b-08de3278e331
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2025 14:33:12.4245
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JRn8asrDjyKwtwsik1jzQleEnuEzRZTwLmfWOvRYRylEJIyTWkKHLwjoHQRbbwXGtved8UjQZlzwVCNooUFMmQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LOYP265MB1840
+References: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
+ <CAHC9VhQfrMe7EY3_bvW6PcLdaW7tPMgv6WZuePxd1RrbhyZv-g@mail.gmail.com>
+ <CAHC9VhQyDX+NgWipgm5DGMewfVTBe3DkLbe_AANRiuAj40bA1w@mail.gmail.com>
+ <6797b694-6c40-4806-9541-05ce6a0b07fc@oracle.com> <CAHC9VhQsK_XpJ-bbt6AXM4fk30huhrPvvMSEuHHTPb=eJZwoUA@mail.gmail.com>
+ <CAHC9VhQnR6TKzzzpE9XQqiFivV0ECbVx7GH+1fQmz917-MAhsw@mail.gmail.com>
+In-Reply-To: <CAHC9VhQnR6TKzzzpE9XQqiFivV0ECbVx7GH+1fQmz917-MAhsw@mail.gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Wed, 3 Dec 2025 10:35:28 -0500
+X-Gm-Features: AWmQ_bkzJ94ne_NaS9DdGj-0rfpzDplsxIIA51owmAroNoWGHAQbs9nJIizmk5w
+Message-ID: <CAEjxPJ7_7_Uru3dwXzNLSj5GdBTzdPDQr5RwXtdjvDv9GjmVAQ@mail.gmail.com>
+Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity()
+ interface
+To: Paul Moore <paul@paul-moore.com>
+Cc: Anna Schumaker <anna.schumaker@oracle.com>, Trond Myklebust <trondmy@kernel.org>, 
+	Anna Schumaker <anna@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Simon Horman <horms@kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 02 Dec 2025 19:37:24 +0000
-Alice Ryhl <aliceryhl@google.com> wrote:
+On Wed, Jul 23, 2025 at 10:10=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+>
+> On Thu, Jun 19, 2025 at 5:18=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > On Tue, May 27, 2025 at 5:03=E2=80=AFPM Anna Schumaker
+> > <anna.schumaker@oracle.com> wrote:
+> > > On 5/20/25 5:31 PM, Paul Moore wrote:
+> > > > On Tue, Apr 29, 2025 at 7:34=E2=80=AFPM Paul Moore <paul@paul-moore=
+.com> wrote:
+> > > >> On Mon, Apr 28, 2025 at 4:15=E2=80=AFPM Stephen Smalley
+> > > >> <stephen.smalley.work@gmail.com> wrote:
+> > > >>>
+> > > >>> Update the security_inode_listsecurity() interface to allow
+> > > >>> use of the xattr_list_one() helper and update the hook
+> > > >>> implementations.
+> > > >>>
+> > > >>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-steph=
+en.smalley.work@gmail.com/
+> > > >>>
+> > > >>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > > >>> ---
+> > > >>> This patch is relative to the one linked above, which in theory i=
+s on
+> > > >>> vfs.fixes but doesn't appear to have been pushed when I looked.
+> > > >>>
+> > > >>>  fs/nfs/nfs4proc.c             | 10 ++++++----
+> > > >>>  fs/xattr.c                    | 19 +++++++------------
+> > > >>>  include/linux/lsm_hook_defs.h |  4 ++--
+> > > >>>  include/linux/security.h      |  5 +++--
+> > > >>>  net/socket.c                  | 17 +++++++----------
+> > > >>>  security/security.c           | 16 ++++++++--------
+> > > >>>  security/selinux/hooks.c      | 10 +++-------
+> > > >>>  security/smack/smack_lsm.c    | 13 ++++---------
+> > > >>>  8 files changed, 40 insertions(+), 54 deletions(-)
+> > > >>
+> > > >> Thanks Stephen.  Once we get ACKs from the NFS, netdev, and Smack
+> > > >> folks I can pull this into the LSM tree.
+> > > >
+> > > > Gentle ping for Trond, Anna, Jakub, and Casey ... can I get some AC=
+Ks
+> > > > on this patch?  It's a little late for the upcoming merge window, b=
+ut
+> > > > I'd like to merge this via the LSM tree after the merge window clos=
+es.
+> > >
+> > > For the NFS change:
+> > >     Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
+> >
+> > Hi Anna,
+> >
+> > Thanks for reviewing the patch.  Unfortunately when merging the patch
+> > today and fixing up some merge conflicts I bumped into an odd case in
+> > the NFS space and I wanted to check with you on how you would like to
+> > resolve it.
+> >
+> > Commit 243fea134633 ("NFSv4.2: fix listxattr to return selinux
+> > security label")[1] adds a direct call to
+> > security_inode_listsecurity() in nfs4_listxattr(), despite the
+> > existing nfs4_listxattr_nfs4_label() call which calls into the same
+> > LSM hook, although that call is conditional on the server supporting
+> > NFS_CAP_SECURITY_LABEL.  Based on a quick search, it appears the only
+> > caller for nfs4_listxattr_nfs4_label() is nfs4_listxattr() so I'm
+> > wondering if there isn't some room for improvement here.
+> >
+> > I think there are two obvious options, and I'm curious about your
+> > thoughts on which of these you would prefer, or if there is another
+> > third option that you would like to see merged.
+> >
+> > Option #1:
+> > Essentially back out commit 243fea134633, removing the direct LSM call
+> > in nfs4_listxattr() and relying on the nfs4_listxattr_nfs4_label() for
+> > the LSM/SELinux xattrs.  I think we would want to remove the
+> > NFS_CAP_SECURITY_LABEL check and build nfs4_listxattr_nfs4_label()
+> > regardless of CONFIG_NFS_V4_SECURITY_LABEL.
+> >
+> > Option #2:
+> > Remove nfs4_listxattr_nfs4_label() entirely and keep the direct LSM
+> > call in nfs4_listxattr(), with the required changes for this patch.
+> >
+> > Thoughts?
+> >
+> > [1] https://lore.kernel.org/all/20250425180921.86702-1-okorniev@redhat.=
+com/
+>
+> A gentle ping on the question above for the NFS folks.  If I don't
+> hear anything I'll hack up something and send it out for review, but I
+> thought it would nice if we could sort out the proper fix first.
 
-> This patch series adds __rust_helper to every single rust helper. The
-> patches do not depend on each other, so maintainers please go ahead and
-> pick up any patches relevant to your subsystem! Or provide your Acked-by
-> so that Miguel can pick them up.
-> 
-> These changes were generated by adding __rust_helper and running
-> ClangFormat. Unrelated formatting changes were removed manually.
-> 
-> Why is __rust_helper needed?
-> ============================
-> 
-> Currently, C helpers cannot be inlined into Rust even when using LTO
-> because LLVM detects slightly different options on the codegen units.
-> 
-> * LLVM doesn't want to inline functions compiled with
->   `-fno-delete-null-pointer-checks` with code compiled without. The C
->   CGUs all have this enabled and Rust CGUs don't. Inlining is okay since
->   this is one of the hardening features that does not change the ABI,
->   and we shouldn't have null pointer dereferences in these helpers.
-> 
-> * LLVM doesn't want to inline functions with different list of builtins. C
->   side has `-fno-builtin-wcslen`; `wcslen` is not a Rust builtin, so
->   they should be compatible, but LLVM does not perform inlining due to
->   attributes mismatch.
-> 
-> * clang and Rust doesn't have the exact target string. Clang generates
->   `+cmov,+cx8,+fxsr` but Rust doesn't enable them (in fact, Rust will
->   complain if `-Ctarget-feature=+cmov,+cx8,+fxsr` is used). x86-64
->   always enable these features, so they are in fact the same target
->   string, but LLVM doesn't understand this and so inlining is inhibited.
->   This can be bypassed with `--ignore-tti-inline-compatible`, but this
->   is a hidden option.
-> 
-> (This analysis was written by Gary Guo.)
-> 
-> How is this fixed?
-> ==================
-> 
-> To fix this we need to add __always_inline to all helpers when compiling
-> with LTO. However, it should not be added when running bindgen as
-> bindgen will ignore functions marked inline. To achieve this, we are
-> using a #define called __rust_helper that is defined differently
-> depending on whether bindgen is running or not.
-> 
-> Note that __rust_helper is currently always #defined to nothing.
-> Changing it to __always_inline will happen separately in another patch
-> series.
-> 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
-> Alice Ryhl (46):
->       rust: auxiliary: add __rust_helper to helpers
->       rust: barrier: add __rust_helper to helpers
->       rust: binder: add __rust_helper to helpers
->       rust: bitmap: add __rust_helper to helpers
->       rust: bitops: add __rust_helper to helpers
->       rust: blk: add __rust_helper to helpers
->       rust: bug: add __rust_helper to helpers
->       rust: clk: add __rust_helper to helpers
->       rust: completion: add __rust_helper to helpers
->       rust: cpu: add __rust_helper to helpers
->       rust: cpufreq: add __rust_helper to helpers
->       rust: cpumask: add __rust_helper to helpers
->       rust: cred: add __rust_helper to helpers
->       rust: device: add __rust_helper to helpers
->       rust: dma: add __rust_helper to helpers
->       rust: drm: add __rust_helper to helpers
->       rust: err: add __rust_helper to helpers
->       rust: fs: add __rust_helper to helpers
->       rust: io: add __rust_helper to helpers
->       rust: irq: add __rust_helper to helpers
->       rust: jump_label: add __rust_helper to helpers
->       rust: kunit: add __rust_helper to helpers
->       rust: maple_tree: add __rust_helper to helpers
->       rust: mm: add __rust_helper to helpers
->       rust: of: add __rust_helper to helpers
->       rust: pci: add __rust_helper to helpers
->       rust: pid_namespace: add __rust_helper to helpers
->       rust: platform: add __rust_helper to helpers
->       rust: poll: add __rust_helper to helpers
->       rust: processor: add __rust_helper to helpers
->       rust: property: add __rust_helper to helpers
->       rust: rbtree: add __rust_helper to helpers
->       rust: rcu: add __rust_helper to helpers
->       rust: refcount: add __rust_helper to helpers
->       rust: regulator: add __rust_helper to helpers
->       rust: scatterlist: add __rust_helper to helpers
->       rust: security: add __rust_helper to helpers
->       rust: slab: add __rust_helper to helpers
->       rust: sync: add __rust_helper to helpers
->       rust: task: add __rust_helper to helpers
->       rust: time: add __rust_helper to helpers
->       rust: uaccess: add __rust_helper to helpers
->       rust: usb: add __rust_helper to helpers
->       rust: wait: add __rust_helper to helpers
->       rust: workqueue: add __rust_helper to helpers
->       rust: xarray: add __rust_helper to helpers
-
-Thansk for sending this Alice! With this series in first, my series for
-inlining helpers should be much easier to apply.
-
-For the whole series:
-
-Reviewed-by: Gary Guo <gary@garyguo.net>
-
-Best,
-Gary
-
-
-> 
->  rust/helpers/auxiliary.c     |  6 +++--
->  rust/helpers/barrier.c       |  6 ++---
->  rust/helpers/binder.c        | 13 ++++-----
->  rust/helpers/bitmap.c        |  6 +++--
->  rust/helpers/bitops.c        | 11 +++++---
->  rust/helpers/blk.c           |  4 +--
->  rust/helpers/bug.c           |  4 +--
->  rust/helpers/build_bug.c     |  2 +-
->  rust/helpers/clk.c           | 24 +++++++++--------
->  rust/helpers/completion.c    |  2 +-
->  rust/helpers/cpu.c           |  2 +-
->  rust/helpers/cpufreq.c       |  3 ++-
->  rust/helpers/cpumask.c       | 32 +++++++++++++---------
->  rust/helpers/cred.c          |  4 +--
->  rust/helpers/device.c        | 16 +++++------
->  rust/helpers/dma.c           | 15 ++++++-----
->  rust/helpers/drm.c           |  7 ++---
->  rust/helpers/err.c           |  6 ++---
->  rust/helpers/fs.c            |  2 +-
->  rust/helpers/io.c            | 64 +++++++++++++++++++++++---------------------
->  rust/helpers/irq.c           |  6 +++--
->  rust/helpers/jump_label.c    |  2 +-
->  rust/helpers/kunit.c         |  2 +-
->  rust/helpers/maple_tree.c    |  3 ++-
->  rust/helpers/mm.c            | 20 +++++++-------
->  rust/helpers/mutex.c         | 13 ++++-----
->  rust/helpers/of.c            |  2 +-
->  rust/helpers/page.c          |  9 ++++---
->  rust/helpers/pci.c           | 13 +++++----
->  rust/helpers/pid_namespace.c |  8 +++---
->  rust/helpers/platform.c      |  2 +-
->  rust/helpers/poll.c          |  5 ++--
->  rust/helpers/processor.c     |  2 +-
->  rust/helpers/property.c      |  2 +-
->  rust/helpers/rbtree.c        |  5 ++--
->  rust/helpers/rcu.c           |  4 +--
->  rust/helpers/refcount.c      | 10 +++----
->  rust/helpers/regulator.c     | 24 ++++++++++-------
->  rust/helpers/scatterlist.c   | 12 +++++----
->  rust/helpers/security.c      | 26 ++++++++++--------
->  rust/helpers/signal.c        |  2 +-
->  rust/helpers/slab.c          | 14 +++++-----
->  rust/helpers/spinlock.c      | 13 ++++-----
->  rust/helpers/sync.c          |  4 +--
->  rust/helpers/task.c          | 24 ++++++++---------
->  rust/helpers/time.c          | 12 ++++-----
->  rust/helpers/uaccess.c       |  8 +++---
->  rust/helpers/usb.c           |  3 ++-
->  rust/helpers/vmalloc.c       |  7 ++---
->  rust/helpers/wait.c          |  2 +-
->  rust/helpers/workqueue.c     |  8 +++---
->  rust/helpers/xarray.c        | 10 +++----
->  52 files changed, 280 insertions(+), 226 deletions(-)
-> ---
-> base-commit: 54e3eae855629702c566bd2e130d9f40e7f35bde
-> change-id: 20251202-define-rust-helper-f7b531813007
-> 
-> Best regards,
-
+Raising this thread back up again to see if the NFS folks have a
+preference on option #1 or #2 above, or
+something else altogether. Should returning of the security.selinux
+xattr name from listxattr() be dependent on
+NFS_CAP_SECURITY_LABEL being set by the server and should it be
+dependent on CONFIG_NFS_V4_SECURITY_LABEL?
