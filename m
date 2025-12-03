@@ -1,166 +1,95 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9222C0F70;
-	Wed,  3 Dec 2025 22:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37C82D978A
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Dec 2025 22:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764799963; cv=none; b=pPgfYJ+gxhiy8HuhGQUoHmcLg5BnpQGZcIh5c+dk6I+J3b0y1NEVmCjZpZ7zLvlVKhmInD9KWlDXlk6YE8WU4forMgTrgwUBTIrTUdJ05dfAgJehGYxojjVEh7pQzHFVPLOY1kwIu/kt6IRetr8X9BC2XQa15SauJ7ypgpj0/2Y=
+	t=1764800761; cv=none; b=lgUfP2FriQZKltE5ipqYy98urMbMFKJ4hfifEHHXitMhN95O5jPKD4TTSDwNe+ycbZzYJ+l66JSRic1mbw7nw7xH42SL/eAP3JOyfhb3KZUkd14OsKzTCZDRvZbypiqq+QJ8wkhxhjMwjIhh9MOKPMabKq57R4aztTerez+GwU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764799963; c=relaxed/simple;
-	bh=zrJn8EcwvPlQmApQF2Qhl2tuf7U7YPJfrDOiCzPAJsM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RX93xAw+YczASs+6ce7EkGNH3DIDSyYez2ma91lh93m2Z638XHknlu2IQqXaVWBIFqRW8kw1GAe8UOwsz3BAwkRLt2j2sPdeq1ixHuV3+tKHgmy1JYk5hJYOW41ew/2vs9vnJv/dZ7KA1G2UyiWrGHlVvo0O00AnRW9ZtiaUL68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BC0MOETy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764800761; c=relaxed/simple;
+	bh=yJbqaL8ojewm43m1DdLKBdQ+/LqTyZfIggCH0mGf32Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gbNQoExp8rgrbBi1KGUW7cXk1Dyw8YYi+VgfVHQCQTYXVwqw/sRdEyM4Q8+VGNHpo+74kD/i5cHJ2r0wzmBJYHEufmkd0hkmsFCHQWphiTPyQQ/t8RT3Tfm76w8ciR3NImfa6UKVhWPjaiutkaKLN2xNd8sRvdM7HhlIw6MwlyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avRPtCVg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BC0MOETy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C799C4CEF5;
-	Wed,  3 Dec 2025 22:12:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avRPtCVg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CD0BC19422
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Dec 2025 22:26:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764799962;
-	bh=zrJn8EcwvPlQmApQF2Qhl2tuf7U7YPJfrDOiCzPAJsM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BC0MOETyKTn0kR2IyUdVYzR0ftMdgIBYAUF+7duvZWluwwjGk7IUfEM3YFsJBZKan
-	 mC6oCEdG9nj7+PXmcmpwNUqqelF9dP/n4MxykY9oXSr3/3ew4Cj6tZrC5SBTfo/JFR
-	 gTc3QlJjoQzPrgCol2ODPnXLmyFjN0eYGfJUusFlEc1VEQkappCiGrqlVnhz4f4C9i
-	 o//S0izrk5zOutPa1sPVLGkcn1hgU4vIqxaUzcPO0JqLyg29dcb98resEYrSptbDVG
-	 18/9dnd2no13fH0Z5U7YneRHUV6RBznGxg2i2hFGOIfEkePgNp9lNd/q/rS2qJpTXe
-	 kgySjtIv8dmnQ==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	Jonathan McDowell <noodles@earth.li>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-kernel@vger.kernel.org (open list),
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Jonathan McDowell <noodles@meta.com>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH v3 4/4] tpm2-sessions: Open code tpm_buf_append_hmac_session()
-Date: Thu,  4 Dec 2025 00:12:14 +0200
-Message-ID: <20251203221215.536031-5-jarkko@kernel.org>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251203221215.536031-1-jarkko@kernel.org>
-References: <20251203221215.536031-1-jarkko@kernel.org>
+	s=k20201202; t=1764800761;
+	bh=yJbqaL8ojewm43m1DdLKBdQ+/LqTyZfIggCH0mGf32Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=avRPtCVgRJO2CLWgn0Ye1menS6FCKQwkl6XgmD+79nPaqnbul9FuHZli2+Mh1Pb4g
+	 vFHl01KAgqCoCGVamn1Ru5v+Xh/8Vj55Z+Z8Wh8imfsHV596ATtKiHmIhYsmm0rV+b
+	 Z1gY60vMVT2pp8qvzyRYtk100KFaXM9ZVnf/856bKxNQ9Xs1ib2sPyV//9v0pF7L4n
+	 /Gofvp3nWVbqBKzsPk5Q6SZbgWyUmj+QIlLV5Mfg0zqrtkQv5iNskgUIzL6bxKLt+P
+	 zvYENB7ryN4oMGlqE9YS6LsiCLU6joopt9CvgFVodkxNjIZH42L1xbH5HF2irhdE5m
+	 Z0Ji1ZNJiBWkw==
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-298145fe27eso4472125ad.1
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Dec 2025 14:26:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXX7qfAYI9NS2Y2ncgBIVsgRa/CBEPCcqoKQCKm6UBea11Nhajjrqg2h3obyv+9IdseUxT79wAWguXOAuOtE1kTj8p1b1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFwPm+SYi7Q7MbtL4DLd6RYlBnJSxcV2+EJO5DoBJw2KtUXMMS
+	blWzrUP8j6sRiu0gbc8CdqQKThSebXpkT7H0CGEZcPBCC6vBjhI6u7f2DEhvXwLrUScURx+KTZ0
+	LI222Z2MbCsCc2dwXz2/7mj0b21lSeXM=
+X-Google-Smtp-Source: AGHT+IFuDgo14jIz4/9Znlgpe9ZVuRHeKGR1Ustj24didkwfgIkcUC0dUaZbZvVGR14j3L5Qvwb7ExhFG+26n3KD7as=
+X-Received: by 2002:a05:7300:c89:b0:2ab:9d51:3b64 with SMTP id
+ 5a478bee46e88-2aba45015d8mr566927eec.29.1764800760963; Wed, 03 Dec 2025
+ 14:26:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251203193718.504344-1-yiconghui@gmail.com>
+In-Reply-To: <20251203193718.504344-1-yiconghui@gmail.com>
+From: Fan Wu <wufan@kernel.org>
+Date: Wed, 3 Dec 2025 14:25:49 -0800
+X-Gmail-Original-Message-ID: <CAKtyLkEyD9UVxqbmODVOAymE32aE7X4Xdbqj6H3BMGyhn_PQqw@mail.gmail.com>
+X-Gm-Features: AWmQ_bkq7DrK_zFQ0Ycaka3dZVAisMR-j3dPfXgL8aEjqJbHAnPDW_BV4ZcOagI
+Message-ID: <CAKtyLkEyD9UVxqbmODVOAymE32aE7X4Xdbqj6H3BMGyhn_PQqw@mail.gmail.com>
+Subject: Re: [PATCH] ipe: remove headers that are included but not used
+To: Yicong Hui <yiconghui@gmail.com>
+Cc: wufan@kernel.org, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+On Wed, Dec 3, 2025 at 11:37=E2=80=AFAM Yicong Hui <yiconghui@gmail.com> wr=
+ote:
+>
+> Remove headers that are included but not used in audit.c, audit.c,
+> policy.c within the IPE module
+>
+> Change have been tested through kunit, kernel compiles and passes kunit
+> tests
+>
+> Signed-off-by: Yicong Hui <yiconghui@gmail.com>
+> ---
+>  security/ipe/audit.c     | 1 -
+>  security/ipe/policy.c    | 1 -
+>  security/ipe/policy_fs.c | 1 -
+>  3 files changed, 3 deletions(-)
 
-Open code 'tpm_buf_append_hmac_session_opt' to the call site, as it only
-masks a call sequence and does otherwise nothing particularly useful.
+...
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
-Reviewed-by: Jonathan McDowell <noodles@meta.com>
----
- drivers/char/tpm/tpm2-cmd.c               | 14 +++++++++++---
- include/linux/tpm.h                       | 23 -----------------------
- security/keys/trusted-keys/trusted_tpm2.c | 12 ++++++++++--
- 3 files changed, 21 insertions(+), 28 deletions(-)
+Hi Yicong,
 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index ce0a1c6b0596..3a77be7ebf4a 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -282,9 +282,17 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
- 
- 	do {
- 		tpm_buf_reset(&buf, TPM2_ST_SESSIONS, TPM2_CC_GET_RANDOM);
--		tpm_buf_append_hmac_session_opt(chip, &buf, TPM2_SA_ENCRYPT
--						| TPM2_SA_CONTINUE_SESSION,
--						NULL, 0);
-+		if (tpm2_chip_auth(chip)) {
-+			tpm_buf_append_hmac_session(chip, &buf,
-+						    TPM2_SA_ENCRYPT |
-+						    TPM2_SA_CONTINUE_SESSION,
-+						    NULL, 0);
-+		} else  {
-+			offset = buf.handles * 4 + TPM_HEADER_SIZE;
-+			head = (struct tpm_header *)buf.data;
-+			if (tpm_buf_length(&buf) == offset)
-+				head->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-+		}
- 		tpm_buf_append_u16(&buf, num_bytes);
- 		err = tpm_buf_fill_hmac_session(chip, &buf);
- 		if (err) {
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index afa51723296a..202da079d500 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -536,29 +536,6 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
- 				 int passphraselen);
- void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf *buf,
- 			 u8 *passphrase, int passphraselen);
--static inline void tpm_buf_append_hmac_session_opt(struct tpm_chip *chip,
--						   struct tpm_buf *buf,
--						   u8 attributes,
--						   u8 *passphrase,
--						   int passphraselen)
--{
--	struct tpm_header *head;
--	int offset;
--
--	if (tpm2_chip_auth(chip)) {
--		tpm_buf_append_hmac_session(chip, buf, attributes, passphrase, passphraselen);
--	} else  {
--		offset = buf->handles * 4 + TPM_HEADER_SIZE;
--		head = (struct tpm_header *)buf->data;
--
--		/*
--		 * If the only sessions are optional, the command tag must change to
--		 * TPM2_ST_NO_SESSIONS.
--		 */
--		if (tpm_buf_length(buf) == offset)
--			head->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
--	}
--}
- 
- #ifdef CONFIG_TCG_TPM2_HMAC
- 
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 5b205279584b..a7ea4a1c3bed 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -481,8 +481,10 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 			   struct trusted_key_options *options,
- 			   u32 blob_handle)
- {
-+	struct tpm_header *head;
- 	struct tpm_buf buf;
- 	u16 data_len;
-+	int offset;
- 	u8 *data;
- 	int rc;
- 
-@@ -519,8 +521,14 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 		tpm2_buf_append_auth(&buf, options->policyhandle,
- 				     NULL /* nonce */, 0, 0,
- 				     options->blobauth, options->blobauth_len);
--		tpm_buf_append_hmac_session_opt(chip, &buf, TPM2_SA_ENCRYPT,
--						NULL, 0);
-+		if (tpm2_chip_auth(chip)) {
-+			tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_ENCRYPT, NULL, 0);
-+		} else  {
-+			offset = buf.handles * 4 + TPM_HEADER_SIZE;
-+			head = (struct tpm_header *)buf.data;
-+			if (tpm_buf_length(&buf) == offset)
-+				head->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-+		}
- 	}
- 
- 	rc = tpm_buf_fill_hmac_session(chip, &buf);
--- 
-2.52.0
+Thanks for the patch. This kind of cleanup is appreciated.
 
+Commit message typo: "audit. c, audit.c, policy. c" - audit. c is listed
+twice.
+
+I was trying to verify whether ipe.h is really not needed and found
+that these files are missing explicit dependencies. policy.c and
+policy_fs.c use rcu, mutex, and slab functions but rely on transitive
+includes.  After removing ipe.h, they still compile because eval.h
+also happens to provide these dependencies indirectly.
+
+I'm happy to merge a patch removing unused headers like ipe.h, but
+would like to see the implicit dependencies resolved as well. Would
+you mind tracing the complete dependencies and adding the explicit
+includes in v2?
+
+-Fan
