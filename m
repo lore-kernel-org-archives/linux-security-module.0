@@ -1,404 +1,354 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazolkn19011030.outbound.protection.outlook.com [52.103.39.30])
+Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021134.outbound.protection.outlook.com [52.101.95.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180802F658E;
-	Wed,  3 Dec 2025 13:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.39.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38471B4138;
+	Wed,  3 Dec 2025 14:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.95.134
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764767791; cv=fail; b=a0Eptf7tXHsVsAJt2mIv9S/KyJJchR6j0j2rficdGsHW5Qcuktw8sIaJ2lh5UcZ4XE1FfEwilcX+ItRmaXfqJ7brrb4IkXTN7FNUI3ub1GrCQiAE1I+tXK327IvjWeRQGEtTkvDdnTyE1LqmfBYg5Bb+DKjQ5f3CZ/bzkANTejM=
+	t=1764772399; cv=fail; b=IlKXHpYVJdTlUWUu2aNASkS+Yn69cXspKm2DNkZTZwtTXUurdzfyNk9ASNtZofhr6j0ycuvrJdSTB2OZjzM8GRdQJ5VFMARtFRuJhmdmIqPAn9Qp0ZYvWaOQh+CwQ4EifzZdA7v0q9cNl7Ol9XYj/c5rCX6nCa5lDkKNgdHfAA4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764767791; c=relaxed/simple;
-	bh=Zi7y8kDtX52guMpdGxHjW54QPQJ/P1cc9zypXyOYFpw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fvsvOpLk1/quokMbI/6EmBLnuMdpNl4z6nDX1CJtILED6Pu4uIdxb8oF6Y+izc0fG296rZQMmEZJ3OLPBY2HgxgMLFa+l65kNYuHz7oI0LjVCqmpk2yQanXF3ejddz/I6VSNHc5mO0sYclSPqZOkJQTThrCwsRJYq0MkFxxNnms=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.de; spf=pass smtp.mailfrom=hotmail.de; dkim=pass (2048-bit key) header.d=HOTMAIL.DE header.i=@HOTMAIL.DE header.b=gSucX2MR; arc=fail smtp.client-ip=52.103.39.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.de
+	s=arc-20240116; t=1764772399; c=relaxed/simple;
+	bh=Wm8MElo016nhSo3mUSKUKVFY2V+ylObZq3Ju+Xr9jps=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bC12zsRnphuSwMYh05PQyQuDbkhjKJOh3O1UXPi7xStG4s1vv4898WOcJALYMfXBnOE8J6NGF1AaGxCPvc+33wj0rHeYAyh/LikEBgCRzt3BxJ0Elj8SpA7KLfFPLnIRPounm90aRLqFkC9Qz2tWqGrt+Frvxn6sPwZPKmKcdQU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=Tyn55U87; arc=fail smtp.client-ip=52.101.95.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=HOTMAIL.DE header.i=@HOTMAIL.DE header.b="gSucX2MR"
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="Tyn55U87"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ClWTOdMT9eH9okRCP6FEQ6HVp1uy3cUB1mC7ByifoepXGtsyPpvWGJ9kD45OPKZXnZyQS73M9RT2HtHs2+h9TYHLzTxNMrqCQN+7tBrnlbO2F1bRAmikbeaHE8QjMMLa3rt2G4zpPtdpJd0EDwBJA7xEIkSDIkwHbp7i5obTbxXHGUKsqsxTjB+ttGeC3kINCVMmlkCPJCPuPCEYWJe1lsm16GzIIp3T5bw5Cipf4dPae47Yc5ND0z3LETrQOtlSTz5vCSCP89bjURjMbwhz+yRwRc9wdXge7cIWOXypGTbeDPJrcPYeVEazFmoyky9GAs2Vkf6i4sUPPSd5UNcdNA==
+ b=d0NRSwTvEeKriBepoRDW0oZuBWNjB3DjmrWZxWY8u/WPCAy534KeVfvRM/hc0g1UJTz2Id5c6WgXF5611vSThi0pmsUBXRBDccmB8GMkjgOF+yqz3artUAGHIA8SL7mSDgoJixQ7eDKt1z0dlFvmD0giLkko3Y8N28+6VU9PwrdSJm2HsPjxPgDucnnrZyaes7PXlncNa+zV6JF82hRHl2XhH9ixfE6playjXvNL9ufF63OeX6IuBdd/f8mRKqYkrngdDUUp1e/2dUCADEmJduE575v8/mt8AuaZhVPfclANeTgG4lbk6TH3O0zwpCqfVWAnNrqdT3Ywow57T3njWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=boD+kR2RQRyalADD+eHD0JGp7yqNBUec15stCQBFrdo=;
- b=Cmq4OqvUaMh/5PptoNOf89K5uG3CVv1W/MsvDsHF4RYkEQVfpP9vbdPMhmUDY1M0Cv6xQrp8Z1T40K36XvTGOMLVVfP2qxkHT5EwiJhCjCGVAgXGAoSvpUXBn8R87JkdIHsjloG+YQDXzT84n7MoYdjc5lLiIoOnCwc+Yu/7ogeeKEqv145ejtmB2IIPgbz6bc9X3qrEvDm/RCJ12xgbxjH4izvvqbrS1pZyX5HqegI6FvJ6sBiJF7yZZy0/ayb7QolCTFPFMbDwY9fYN47svVwkxPLOf+ZzbhmDGpH9Nr7OrXDVWRd5ZLzfxSSDUi6qZYIdN6iiK4+znjzz2N249g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=HOTMAIL.DE;
+ bh=2RNJy5g75k/yH+/lmInzQToBBwILHLfxTZooVLuZbII=;
+ b=RKM7MqlXOaAbuXGzcON7Qdzp7Yn7BDimSRmSiJO3rYK1U0UpyVAMUsxM88AymboiA0DOzr545g5s+pdvBaouspH7yovRD6ucqhOzj/dByxJ3wmZl8/hbbXOAy2/eGX/ZAsiiCCLVPQruEhl+nEJoAFo/LXy8h3eXpWiI8z8ngo/FVXvqH2d7krKVsMHF79mevKhs2gavGf92DTL3Ejx/c1YY5H6UHMW2erSJQG5BhUFyKOpOd84n+SxzwuVciHwHJRL57/TLQhS5a4Oyup974jMYKTEeQ0e1WTEJYTfanQLv4aGV+BtbovEceHZWJ8ivFgKgvCSX+L0XN+yEXsOagw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=boD+kR2RQRyalADD+eHD0JGp7yqNBUec15stCQBFrdo=;
- b=gSucX2MRGlxdVnXjtJ8I4eEdAGu7+pgjG6ypYWyMyMoXkQFDmTQvVWVSfv2hZqKA1ZF/bs8aZrl5JdhIg9POk0gZxeGmyJU1hhPAERlOxOyJ+ZVmae0ExFrUkEqKIhVTi9Am99D8gxUOCG7bE0NjpWkzu4jZw1zJXvkNOnyIHol9UeK5rEzb82IGx6T4JCb/jHHSzBFYbHc5+AdUh7JPvkwfMfc+kW/mH85RZgAE3RY3zPDdSD83mQFWCFA55/TTPMSzN2TyD6pAOzMJn5YS6nbSErFkdZIzB1vbKjfRQZuM1/Q/4UKXKEq6mmHo52V9UxsX+0MKN7caXNoj4HPkJQ==
-Received: from GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:158:401::8d4) by VI6PPFFEEBABE75.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:808:1::12b) with Microsoft SMTP Server (version=TLS1_2,
+ bh=2RNJy5g75k/yH+/lmInzQToBBwILHLfxTZooVLuZbII=;
+ b=Tyn55U87HhpyiSZD1z91h3YYk7GKFDNY7KVMgjq7DKAsXfs0MgFTTuZ6ZpGLI2W0MHkeXHaoSHsfhOulphpVNH8RyOW3LwfeL3T6JtFj68s+nkWDe8wEsX8wl/gHGDIwUTB7LWohZB5HnGKhzHOze/HTBh0/7fshmFgQCyCUoMU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LOYP265MB1840.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:e2::15) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.17; Wed, 3 Dec
- 2025 13:16:23 +0000
-Received: from GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- ([fe80::dde:411d:b5f2:49]) by GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- ([fe80::dde:411d:b5f2:49%8]) with mapi id 15.20.9366.012; Wed, 3 Dec 2025
- 13:16:22 +0000
-Message-ID:
- <GV2PPF74270EBEE90CDCD964F69E806EF58E4D9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-Date: Wed, 3 Dec 2025 14:16:29 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: Are setuid shell scripts safe? (Implied by
- security_bprm_creds_for_exec)
-To: "Eric W. Biederman" <ebiederm@xmission.com>,
- Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Alexey Dobriyan <adobriyan@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
- Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
- Will Drewry <wad@chromium.org>, Christian Brauner <brauner@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>,
- Serge Hallyn <serge@hallyn.com>, James Morris
- <jamorris@linux.microsoft.com>, Randy Dunlap <rdunlap@infradead.org>,
- Suren Baghdasaryan <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>,
- Helge Deller <deller@gmx.de>, Adrian Reber <areber@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
- Alexei Starovoitov <ast@kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- linux-security-module@vger.kernel.org, tiozhang <tiozhang@didiglobal.com>,
- Luis Chamberlain <mcgrof@kernel.org>,
- "Paulo Alcantara (SUSE)" <pc@manguebit.com>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Frederic Weisbecker <frederic@kernel.org>, YueHaibing
- <yuehaibing@huawei.com>, Paul Moore <paul@paul-moore.com>,
- Aleksa Sarai <cyphar@cyphar.com>, Stefan Roesch <shr@devkernel.io>,
- Chao Yu <chao@kernel.org>, xu xin <xu.xin16@zte.com.cn>,
- Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
- David Hildenbrand <david@redhat.com>, Dave Chinner <dchinner@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Elena Reshetova <elena.reshetova@intel.com>,
- David Windsor <dwindsor@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>,
- Ard Biesheuvel <ardb@kernel.org>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Hans Liljestrand <ishkamiel@gmail.com>,
- Penglei Jiang <superman.xpt@gmail.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Adrian Ratiu <adrian.ratiu@collabora.com>, Ingo Molnar <mingo@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Cyrill Gorcunov <gorcunov@gmail.com>, Eric Dumazet <edumazet@google.com>,
- zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
- Ryan Lee <ryan.lee@canonical.com>, apparmor <apparmor@lists.ubuntu.com>
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <87tsyozqdu.fsf@email.froward.int.ebiederm.org>
- <87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
- <87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
- <6dc556a0a93c18fffec71322bf97441c74b3134e.camel@huaweicloud.com>
- <87v7iqtcev.fsf_-_@email.froward.int.ebiederm.org>
- <dca0f01500f9d6705dccf3b3ef616468b1f53f57.camel@huaweicloud.com>
- <87ms42rq3t.fsf@email.froward.int.ebiederm.org>
-Content-Language: en-US
-From: Bernd Edlinger <bernd.edlinger@hotmail.de>
-In-Reply-To: <87ms42rq3t.fsf@email.froward.int.ebiederm.org>
-Content-Type: text/plain; charset=UTF-8
+ 2025 14:33:12 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%6]) with mapi id 15.20.9388.003; Wed, 3 Dec 2025
+ 14:33:12 +0000
+Date: Wed, 3 Dec 2025 14:33:05 +0000
+From: Gary Guo <gary@garyguo.net>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman
+ <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon
+ Romanovsky <leon@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Boqun
+ Feng <boqun.feng@gmail.com>, Elle Rhumsaa <elle@weathered-steel.dev>,
+ Carlos Llamas <cmllamas@google.com>, Yury Norov <yury.norov@gmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>, linux-block@vger.kernel.org,
+ FUJITA Tomonori <fujita.tomonori@gmail.com>, Miguel Ojeda
+ <ojeda@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, Benno Lossin
+ <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar
+ <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, Paul Moore
+ <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>,
+ linux-security-module@vger.kernel.org, Daniel Almeida
+ <daniel.almeida@collabora.com>, Abdiel Janulgue
+ <abdiel.janulgue@gmail.com>, Robin Murphy <robin.murphy@arm.com>, Lyude
+ Paul <lyude@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, Jason
+ Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, Ard
+ Biesheuvel <ardb@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>,
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+ linux-kselftest@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Ballance
+ <andrewjballance@gmail.com>, maple-tree@lists.infradead.org,
+ linux-mm@kvack.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Uladzislau Rezki <urezki@gmail.com>, Vitaly Wool <vitaly.wool@konsulko.se>,
+ Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ devicetree@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, "Krzysztof
+ =?UTF-8?B?V2lsY3p5xYRza2k=?=" <kwilczynski@kernel.org>,
+ linux-pci@vger.kernel.org, Remo Senekowitsch <remo@buenzli.dev>, "Paul E.
+ McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org, Will Deacon
+ <will@kernel.org>, Fiona Behrens <me@kloenk.dev>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alexandre Courbot
+ <acourbot@nvidia.com>, Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter
+ <cl@gentwo.org>, David Rientjes <rientjes@google.com>, Ingo Molnar
+ <mingo@redhat.com>, Waiman Long <longman@redhat.com>, Mitchell Levy
+ <levymitchell0@gmail.com>, Frederic Weisbecker <frederic@kernel.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, John Stultz
+ <jstultz@google.com>, linux-usb@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Matthew Wilcox
+ <willy@infradead.org>, Tamir Duberstein <tamird@gmail.com>
+Subject: Re: [PATCH 00/46] Allow inlining C helpers into Rust when using LTO
+Message-ID: <20251203143305.591cd0da.gary@garyguo.net>
+In-Reply-To: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
+References: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0302.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f6::8) To GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:158:401::8d4)
-X-Microsoft-Original-Message-ID:
- <48c3abf9-d80b-489a-a1e3-7593e6c91ba3@hotmail.de>
+X-ClientProxiedBy: LO4P265CA0061.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2af::7) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PPF74270EBEE:EE_|VI6PPFFEEBABE75:EE_
-X-MS-Office365-Filtering-Correlation-Id: 96121e53-5579-4465-da0e-08de326e2789
-X-MS-Exchange-SLBlob-MailProps:
-	cn60g5V53KM8AUe7PDnmNTykf4/SI5O5glPfIsjkZKAY0cUQJLkoKk6j6edDrT1KvFGUTV+svOJSBZhSn/dUD0hodMKLSAAywQHQpkk3lBcmJ7A6YrRP+1LTR21+5o6D+mXD4d94tgq4xKsk+fpSsA6xMCHkXTNodrCvZOury01SZpXushURizCLWG2sJICnMQMfRvJVTZkl+YIm6dMMuF8KS3y/c6ZVBTlSt52NVex7E0Ks4+u4poLKazVi+nnvf0Whv95X5WQNooVLDQ1/tTGGAIW6Jwf0mOcdvt+FR9HlAnD2F/0MMgVrLz8zp+5C2mfRO1LuvewCJnHpUq4E5rMdiqCZkINZ2T03w5qQUBNLcXEV8rfh0zUdN3JAnvrll7/UVGYIUxacRFIYeLQMib2TG3GRi0ALEmGdkItWjlmoJILr3q9JmiuKLE6SWB1IEwhssCF9B9I4kPIzyCsDk5YMzus3QAU4IbdSE7OGUfJj+vgf5m/2pb91mqO+t4NE/XZ3M78dq8cyV/r7HqtBrnDqnm2yHizDoOKq2CWyyeEPLusDiYfqKk0EzUJIpuuX7kRNhQTAQP4IK7a2tpyEK5kLBBVXrmwAuEFBYMg/COubeidHyWaTvBmeqs1YMHkZ9iVdyFHp65FHJkQE3zYuZUcCauHVy4zrnboZWrNlazgPbSsAmWvX7IaXoxpl75w2VjO3Wj7xI1EtcRvCc3V5iJyJ1mVwJN6XgLe4KTZYZfgMg85z5kg8sQf4+WU0ktJNkUs+LkVBgHb3oMZ6a98wmLrex45Gzhu6QazPAtR277l4Sep5VpaVkVz9mKAUyTW/xqrcLwfSLW9S553H4mtBkkvQRyV+/9zTHJwhEFZojnUngeGjY/kDgQ==
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LOYP265MB1840:EE_
+X-MS-Office365-Filtering-Correlation-Id: acbf5439-7581-44f6-714b-08de3278e331
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|23021999003|6090799003|5072599009|51005399006|15080799012|461199028|41001999006|19110799012|21061999006|8060799015|10092599007|12121999013|440099028|3412199025|10035399007|40105399003;
+	BCL:0;ARA:13230040|376014|10070799003|1800799024|366016|7416014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MlhNZkVmN3N1aGd3ZlJoNytJc2NsdCtwN0hoaWErTGswOXdmVmdIUUVuSTVL?=
- =?utf-8?B?WUdUZ2ZmVFN5Q2NPU1NYVXFPRmpRcVIvT1JaZ1BNVjFrdm1jeDI5L0lGaTVX?=
- =?utf-8?B?aDJSaldhand5NmtwbUN5WWpqK1NzeE0vUlJrUVdDcE8ybndYWDErd2NHOThF?=
- =?utf-8?B?anZNRnV5bEpOcFBleEVPN2Rpb0xxTkljWEJhRXRma1ZEaEd2eG5ELzJSZ09l?=
- =?utf-8?B?ZFRWQjBsRkZ0Nkk3MnpNT2ljbWJvYXcrUis0aVB6eHh5aGFVYkNRdlBkaUds?=
- =?utf-8?B?VWY4c3BUTnVGa2JKazM2bnpEL2xLbGZmOVF0ZHFhcnNhQzlOTFkydWFIejQr?=
- =?utf-8?B?M3pYN1RqRlQwL1V6OTdFSWR6TjFGaGowaWRBa2RvZ2RCWUlOc0JJaFBxNjdY?=
- =?utf-8?B?WXZzcG9IRXNDbHF0OHBYandSZll6dUxWWWdtc1poRWFhOSt2cEVnd2V1OWVo?=
- =?utf-8?B?NE90WEhDbXBLcitiNTZMYjNxN2dXZDJzamlCRzdvZERhWmVPVVRMenpCZzBx?=
- =?utf-8?B?SlZHQjc0Q2pjSTMxOFpNWjFSN1NkZ3VNcTlCaDdGVVMybHNERWl6d3NQOHBI?=
- =?utf-8?B?MFNDR2FDQ1lwaldWTW05cHl6bHlnNkZuMTdEc1dsM1hCQklITWlJVkFDcURw?=
- =?utf-8?B?dDNjWUJPbURKRUs4UDRiclBNcnZCaWgvWUsxS000NmkxalFrTWo4K2pVblVy?=
- =?utf-8?B?TERUdzBvaDRhNjVQdDBLYUZNZlJrSHZKemE5aGp1TjFMWmpxVHk2N0lYTG1m?=
- =?utf-8?B?K0tZZEw3NUhuVW9RNU5qVEt5MWdWMlhVaXFSeS9mN0JrZXJ2MWpMRXNsaGY2?=
- =?utf-8?B?QUw1TytQdEJDdDAwMCt2ZXVpTUtyWUN6bHNkbWpIekVta0RwZmxHOUNoZzlZ?=
- =?utf-8?B?VUU2SHZqSUd5ck54cWhVQVFGQlRpOWhTL0oreU9qajJsK25nMUpYdU9ZQnVX?=
- =?utf-8?B?S0lCQ3NudEVBYzNTYVpWaWxFdXdBUkxkMEplVnpiWXhIKzZ4ellaWnNKWTVh?=
- =?utf-8?B?ZzE0M2Y1cHIwWXFibUlZNVVMSlk4TWpCVDJ3N3FuUFVmcStKU0ZqdGQvczNk?=
- =?utf-8?B?SnEzakdqR2FPLy9mNXlsSGdGc2k5YzAxZTJWNVRNVFdRQ3dnYlE1c0pXUjV5?=
- =?utf-8?B?RFhBSUw1Y1NPeVRCb3Bmc2VKNlVJWitoUGZHVEZ3V1Q3SVIwMm91YjJKRUZt?=
- =?utf-8?B?N21NZTU4QU43ZTZVVEwveS9HUmtaQjcyaFUxYTh4Mk9hMUJIdjVnRXR4ZEly?=
- =?utf-8?B?bXlScHNtTnE2MThzdC9RRDJOUFYvRmZ1eTBob2ZkWExOdzlvZ0srTEJTelZs?=
- =?utf-8?B?emZ0dElyR3VicHZIYW5oNkh4SDN4SjdXWmxXTm8yazdGeE5Ib3NCOGJUTXpv?=
- =?utf-8?B?blJTVndSSlpWTDZaYUhLTzk2bU9wd2s4VTBKcEoxUmNHT0l1YkZHSzI1QmFj?=
- =?utf-8?B?QmROM2tROWhKWnVreWRTWjZYeWJnK0JXWEJVM2E2YTVwWmJRS1dKVDQ3ZDQz?=
- =?utf-8?B?NTdYSHhOeGRpOHAwM0Q0MThPUjd5M2NtNVhLOXBabE55UWFTWUo2S1Fkb3Vl?=
- =?utf-8?B?WUU3aTBMNG5uanlkWFZaQW1XMy92UmYxWSt5YXUwU0lUYklQY3IybnNHM1BH?=
- =?utf-8?B?Sy9zaUdaUnYyTjh0RU0rZ01LaHBxL0I5dis5WEkvazE1Sk5HNGlESHBOZUNM?=
- =?utf-8?B?cldkdnJSTEQxb0NnRHdHRHVmSDBuNU41RC9hYjBnbUw3cDFxTlZzemR6dXg1?=
- =?utf-8?B?c3MzS3M1QXpZUHNJRDU0blhzS3JzWk9QVEdVYnE5Zk9TZ21od2s4eWFYS0hE?=
- =?utf-8?Q?TVziMJzpKozTywDixVtEFCzOqF4mXhsPedVf0=3D?=
+	=?us-ascii?Q?UJrfARac/ujsBb15GuVEoZR5AGfjo7H+g4EF39E9aORarwyuQssx/c5Vdw5p?=
+ =?us-ascii?Q?fKve5noEhpOOBMp7d7JqUdZ6jDTY8lM/9hZ5iDZDBk87t3l2P6O1knClbiYX?=
+ =?us-ascii?Q?x4AKfn1ZQcD0EF3Sl8zWmhs6s/Oleq062DbkKOHjwCeafOOMBTPDXVfzdMWN?=
+ =?us-ascii?Q?N2UQUuoWNj+ll9MypGDWtSWckNq9ioOgx9YCVcrkyW81xGa3RKgrhuvmgWN6?=
+ =?us-ascii?Q?dx5NkaviRcAbkhir5pbztXiBRdRtlOYNoqnKzSAozz7T0r142W++KjuVbjUf?=
+ =?us-ascii?Q?zyRaHLHgb+Vg/VVtRc1e6+Qimsl9z19727igH8Ae3NJlnyTUQ86Bk/uKC6Aj?=
+ =?us-ascii?Q?2bf/sWYZKBMACJDWD+o/mHwnbaOSOvRoOc8PZzwerxo9ESVsuCsjwtowFi32?=
+ =?us-ascii?Q?Tg9gjs2tuSkdI2FphxopmKuSSTBg6QhYqUlE7bFWK4A9x1S6ak0oS8W2bm0Y?=
+ =?us-ascii?Q?2AfXo7egN6WQ0Wh0tvZ+hAVadsLN+AubY1Litp9sMWmVOUsmApBk28P6YED0?=
+ =?us-ascii?Q?6RbSIFzVwslTnPo6uYeAAGJzCMIrmUo/kv8D6waH1C/ACNPKXQPTin/p8Fio?=
+ =?us-ascii?Q?1/EJixEv1oE6q0/mefPk+4BATdi4OZkjFHPiDv+gyGZoMNwiJ85lW8hTyVNy?=
+ =?us-ascii?Q?+gScMEzHzzKG2PLyfoXbwf2dSQLdI6lDU4Vu6+5oFL5D9n7KdJTp/044esCb?=
+ =?us-ascii?Q?ZHJZ/MoYX9DvdJFv8QBplLBZidivOGvhN2eujFY/cD+/7euWh62eTxbls+hb?=
+ =?us-ascii?Q?8QI76//QRSnGShpH3itFaRvoJiSN4bJ+TAyth7N/fWPLRofamQZiaJOmYF06?=
+ =?us-ascii?Q?4JxkMQ4N43mnFwGGNfqU1DbpqvWYveX70jeHOsYeeTfTPP8szfO8i5rJX0/B?=
+ =?us-ascii?Q?Mz9gty5w0avCcsB2ymksw7qa4GsI0LHK10gVTSXiP3J1LsX1JfQ38hjwACcX?=
+ =?us-ascii?Q?Cgmv7kykfc8xaKkpNndqiSbiUDk73fkXWAQjmZJnhiwnQmGHwKtJhQjVNT2B?=
+ =?us-ascii?Q?/gK2GwO81H4WT3pz7nZeuMd87fbbgxfHDa9lxvpTCAI0dTab553n4ByY4Puw?=
+ =?us-ascii?Q?hPvIf3cbTEVx+C9QT3vRRps65l18rJ1hhW1ADKK2MWUn5Wb9AxRZ7gel5I3I?=
+ =?us-ascii?Q?qrj5gcDJEUq8es6wmxfX8+nmxAn3zu0hv14PEO6QtJPwcOIQd1+GhDk8+7fo?=
+ =?us-ascii?Q?GTVOUMBIxxxH1lV9NkaxJ+Oqo8esZcLO50H/mUCZ9+NkcTSssNwbN49LI1xu?=
+ =?us-ascii?Q?J2+GGMIwIfC7YCNCtKNLKUdAU9cTLzdYyJd0cfLeui6SJG1DeUSrIMjQvW3J?=
+ =?us-ascii?Q?kvD1g/PIT8X8cvOV62qZ9Uc5GGRLY59M3NBF6NozC4kme9qwg4PvfmeFtUHY?=
+ =?us-ascii?Q?/u7vKQOBSqweg2EdL20aezhS7uaW/jWiJyQbsc3JrqQ/1h6U7zCHAJ7uzFb2?=
+ =?us-ascii?Q?yJf6N14z5Cs6Hq2ZNwOVLFk7ilJ/zzED?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(1800799024)(366016)(7416014)(7053199007);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VW05SlYzZ0EwRTNpZ01sV3lyaTNSellBdGJTY3hBdVQzVkNhY2s0QzA5dFM0?=
- =?utf-8?B?NUhjaGJxUE1lTGRGblFpaUxHUmF1V2NjSSt2QXdDZE5SRS96YUd0ZzBoUWZm?=
- =?utf-8?B?L1dLb2VYSHVYTkhnclFVZklacmFpdjVOV2o4Yjg4a0ZSRmdIVTZod1lYWWk2?=
- =?utf-8?B?OEVDc3h4YWlsMVl6Vno3MjViZzdkcjlXOG90UlNta0N1cEVyeXR0MVBFeXo5?=
- =?utf-8?B?U2lQQjZ4NUtqdXZuQ3NaZlpiR2M0bHhadHNoOHl1ZkdyaEQrMGJCUVlIK2N4?=
- =?utf-8?B?MHNLbjZqNUxaNFhFVXRjbHRyL2kyMjZ0WlJlWlVpVkZzRjBVN0lxbCtHQ0p2?=
- =?utf-8?B?RDJ1WVRzWTJtS0Q0bG96UXplSUhmM1VFOGFORkRkVWM1aTBEaEZGeUNYRE53?=
- =?utf-8?B?YU1kUU1Ycm1PYVFnTXdINVRCZ3RBOFZuZU1hMGc5V216WmwzZzZOcjVOK0dm?=
- =?utf-8?B?aDhHeHVIbEZPa0dHRzhkQXVhMFk5WjRhUGRpRGZEVm9NN3Nac2JGak9FaE5X?=
- =?utf-8?B?b2xiSHNZWmdXMVovZmIvWGhodjltTXo2azlxTkcwNTVDVEVvZ3doV2R4NCtJ?=
- =?utf-8?B?RzFvZzBCbzQ3TlB0eWZ1UVpwL09lM3V6UjBqV2N4aDlNYm9haEFFTGpHRVh2?=
- =?utf-8?B?Vi9QeHhhUUc3OFpGTTl1MitoMytQbVplQ002UkJNMStscDlaK3J6ZkovdkY2?=
- =?utf-8?B?L2VGVGtLNmFuS1RKWHBnbUVtQ1dBc09NZldDdjhIeWVZMno2K2xmaXZXYnBy?=
- =?utf-8?B?VDJkejBnUWNYc250VjJWVnByOXBWOEpzcnRORXZsS1EzRzB5dllUMUpCRTQ1?=
- =?utf-8?B?K1VrNGZ2RnQ0MlJXaXQ4RzhGNEdnVWM5dUQ0aEdTZW5lb0R1RVJZRFdHdkFq?=
- =?utf-8?B?L3gyZ1o0Rktlb3Z6STJSVDVTR2R4Q2kvZ1ZEWjdBblE3b0RCTFJCOU80Y0lV?=
- =?utf-8?B?YkFNdElKYlZ2TkpqQTV5elFnTHViVTFBOS9HdWM2aTZqTWVueWlPQ1BLbHZo?=
- =?utf-8?B?alIzcC9PcTdxT0FDbTFIT2FKUXl6TDlWVzJBSVBYcmprL2U5L0g5NG5MUDc3?=
- =?utf-8?B?clJUSm1aT1UyNlYrQ2lkbW5oR1M2NENIL1VHWHphSENYV0RhUmJZZjVTMVlu?=
- =?utf-8?B?NXE4MmNuWDdweWc4ZG1SOVBkbVJCVlAvblRYVHlUemJWU3RhOTkyd3RnTFh1?=
- =?utf-8?B?V3EyRXJ3NWR0dklCb2RpT0wvSGhiUVp5NnlwdllrU0JFTEtjVlZ0bjBOclpk?=
- =?utf-8?B?REl3YTN6QTVxYU4wWUFUNTc2cmFkRHZ3Yy9TYVBBeExVOEhJRWxsMFVPYmJj?=
- =?utf-8?B?cXVUSm95MzRKYStuWDRpejVhZlNkRmwzcWhiQXBEQWE2b01NYkY4akIwUits?=
- =?utf-8?B?TGE0a3FPeHFhMldOQU9LQ1VaSGl1M01oVnJkalV3Ykl4NnZ5R3lTZlREbnAw?=
- =?utf-8?B?TkJCcDh6akRIS3lyZnZSbExxVzR2NnNWTU9lQnVnOFF5WnUwbDNmdExzaXht?=
- =?utf-8?B?ZGd5M2gyL2pKa2RRdTgxSnRGZCtkUDJKVUdKaGhmT0VuVmVmWnJwaFptZGp1?=
- =?utf-8?B?ZGR0WUhsQUtadnJ4eXZrWkh5ZW1XbnVySjRTV1pSNzlZbS96UGhZd0pGVEcw?=
- =?utf-8?B?OGJUT2pkZGFzTytSV2MvME9uS2VqMlFJLytWUVliWUZNeXBDRE5XYzVJNit3?=
- =?utf-8?B?aGNlcUVmdmppMzBMNGpKTG85V2Zjd2g4eXhqL2RsN3JXcDNyYXBBcDZxUGVX?=
- =?utf-8?Q?zXyL09SBBtAdU8qvI7VN0wevaGruRcPh2/qmkTB?=
-X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-87dd8.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96121e53-5579-4465-da0e-08de326e2789
-X-MS-Exchange-CrossTenant-AuthSource: GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
+	=?us-ascii?Q?aSDALWRyH6rBkXxsbpB4Y/5XOm/Bce5/DXVBbWJ1n6Di3wnox2Ngvn9vQCAI?=
+ =?us-ascii?Q?Y5A/5vENvJ8dX4qzav8O/ktGU6eMGd7Qqy/lcczgT3Z7awwxz1K8KNrGzY/O?=
+ =?us-ascii?Q?5rDSyN7Eg1OeQ71nEL2zwTHEIBySAxYpeubVrfL87ampUcDzdbCvjSPMBN5i?=
+ =?us-ascii?Q?m6IT2Snr7COf6DDaS0U8dBOI3jzYi262nJRmAZagEheMDb0//hONUIkgJll0?=
+ =?us-ascii?Q?S3GYzqydR1DmgQ7QrkzfTOXhS9qrBylxJzETHgrOiHBHi2K0IHlPAI6kFcEU?=
+ =?us-ascii?Q?0AkeoLqnIEot8pHEsdJzul3hdEBY0XYcw0uFpfHIqdW0QvOhkXVO1znF2DuN?=
+ =?us-ascii?Q?stnxBj68oP7UrXprCATa8v9x831lUCLaAWfNTPzBdzlfMsxXnjg3zqis06V3?=
+ =?us-ascii?Q?rLTkqzG1d6uEdj7Cq2TsFKm2rHji1B1dMSO0+c5Bdw9uG73cawkyenwW52PN?=
+ =?us-ascii?Q?iYaXyEe5QItQ2rTjSung3fkLhAl5STLqDZrpYcQSO7ZCBzgtsk57Bs6AWpNj?=
+ =?us-ascii?Q?Jlm+srnD05VHUMvTbE6bMxoAIHzoYBW9XQ1NHYl9uwtZv9Nc+/l72qlDz73E?=
+ =?us-ascii?Q?21znhRhYmszGDJjMw+5SmMzXFEga7X3OvVrBBAT90vH5M6rC4B4L94LBCtYb?=
+ =?us-ascii?Q?ff5hJxMRPN6LmYFgSiHBPcH54/Lq+aAmcVPFtQVa9wXeVz64u1q99G4tOzjF?=
+ =?us-ascii?Q?YF+LY1Bu8mxizc2MeS+/VSLBVuJ2ur60t2FTe3p8QCJB8+anw/F8y9D8wZDZ?=
+ =?us-ascii?Q?AlaU1dO6xsM+d0OKTzH1g5i+LRc7fu/WguQbCIMuPxwIpk3hsq2L/etVDTYG?=
+ =?us-ascii?Q?j1DRe9RM+1m0B6rGCojtvH0Z/y88WYKsrVrNcU0b5VbIW4mIr7eHyOy/RaG9?=
+ =?us-ascii?Q?+5VTE/7wBNSFfAGU/+HDhIWJeW4lsV0z7X+hgsaD53VpCSqfbb2FFF23WGra?=
+ =?us-ascii?Q?bksKZt8s2Q1O5WlSDPH1v5qGLp4OwXgW6rGx8Hv3L+xAW5g70fUoehS56HXk?=
+ =?us-ascii?Q?sVRpSY47BDZAKaABAjA0qaNhzf0o4yM0PF0Dx2jemfUAqiN/PApQij0Ah6U5?=
+ =?us-ascii?Q?kq8T6+ERfhm6cw+Aob4ejY0jLb8R7SSvueKnag4yKWLUlQVtrnRCexkmtUsz?=
+ =?us-ascii?Q?uLvS6ZUCjALqmIvz+L17dairZPqR58MltO7vXZMEbd0N6rHfSbn5Pgy5JBVX?=
+ =?us-ascii?Q?kvGj9IUdOIEya7I2GVfhvQMe05cU+yzRODk3egh+zDRKzagX6f0KuMom8/wP?=
+ =?us-ascii?Q?v5e9UV0Li3Y9eYNpC7qyqlUuRI35WBswUafowEy6uWtR9FYoKAyZPiimcFRe?=
+ =?us-ascii?Q?lArz2tswt3FM0SGVQ9LK6cBndm5G8jxF7CNhPjBoj7gCy+6rt6ULJQj2gvVt?=
+ =?us-ascii?Q?FfZHOcO7d6ha2EX0n+WxDDTwt/ojJ0TgYb40zc/y/nq0+RJwqGsG6DXu/ovO?=
+ =?us-ascii?Q?wLv5pIa3cyRweBtIgRQ42ZQcuM/NLPGU0aeyeXqMaQfNDZGDJHQJV/nl77V5?=
+ =?us-ascii?Q?NIfeoheuxVKaUpvGliJ16RymPhfb1NfGyl+TBpRSoy8kGaRIUSWU/OONleH+?=
+ =?us-ascii?Q?2zN0NHddUbOPyZpFzVRSjrwrn5ENJIm9SE/0OKpV?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: acbf5439-7581-44f6-714b-08de3278e331
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2025 13:16:22.7968
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2025 14:33:12.4245
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI6PPFFEEBABE75
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JRn8asrDjyKwtwsik1jzQleEnuEzRZTwLmfWOvRYRylEJIyTWkKHLwjoHQRbbwXGtved8UjQZlzwVCNooUFMmQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LOYP265MB1840
 
-On 12/1/25 19:53, Eric W. Biederman wrote:
-> Roberto Sassu <roberto.sassu@huaweicloud.com> writes:
-> 
->> On Mon, 2025-12-01 at 10:06 -0600, Eric W. Biederman wrote:
->>> Roberto Sassu <roberto.sassu@huaweicloud.com> writes:
->>>
->>>> + Mimi, linux-integrity (would be nice if we are in CC when linux-
->>>> security-module is in CC).
->>>>
->>>> Apologies for not answering earlier, it seems I don't receive the
->>>> emails from the linux-security-module mailing list (thanks Serge for
->>>> letting me know!).
->>>>
->>>> I see two main effects of this patch. First, the bprm_check_security
->>>> hook implementations will not see bprm->cred populated. That was a
->>>> problem before we made this patch:
->>>>
->>>> https://patchew.org/linux/20251008113503.2433343-1-roberto.sassu@huaweicloud.com/
->>>
->>> Thanks, that is definitely needed.
->>>
->>> Does calling process_measurement(CREDS_CHECK) on only the final file
->>> pass review?  Do you know of any cases where that will break things?
->>
->> We intentionally changed the behavior of CREDS_CHECK to be invoked only
->> for the final file. We are monitoring for bug reports, if we receive
->> complains from people that the patch breaks their expectation we will
->> revisit the issue.
->>
->> Any LSM implementing bprm_check_security looking for brpm->cred would
->> be affected by recalculating the DAC credentials for the final binary.
->>
->>> As it stands I don't think it should be assumed that any LSM has
->>> computed it's final creds until bprm_creds_from_file.  Not just the
->>> uid and gid.
->>
->> Uhm, I can be wrong, but most LSMs calculate their state change in
->> bprm_creds_for_exec (git grep bprm_creds_for_exec|grep LSM_HOOK_INIT).
->>
->>> If the patch you posted for review works that helps sort that mess out.
->>
->> Well, it works because we changed the expectation :)
-> 
-> I just haven't seen that code land in Linus's tree yet so I am a bit
-> cautious in adopting that.  It is definitely needed as the behavior
-> of IMA as v6.18 simply does not work in general.
-> 
->>>> to work around the problem of not calculating the final DAC credentials
->>>> early enough (well, we actually had to change our CREDS_CHECK hook
->>>> behavior).
->>>>
->>>> The second, I could not check. If I remember well, unlike the
->>>> capability LSM, SELinux/Apparmor/SMACK calculate the final credentials
->>>> based on the first file being executed (thus the script, not the
->>>> interpreter). Is this patch keeping the same behavior despite preparing
->>>> the credentials when the final binary is found?
->>>
->>> The patch I posted was.
->>>
->>> My brain is still reeling from the realization that our security modules
->>> have the implicit assumption that it is safe to calculate their security
->>> information from shell scripts.
->>
->> If I'm interpreting this behavior correctly (please any LSM maintainer
->> could comment on it), the intent is just to transition to a different
->> security context where a different set of rules could apply (since we
->> are executing a script).
->>
->> Imagine if for every script, the security transition is based on the
->> interpreter, it would be hard to differentiate between scripts and
->> associate to the respective processes different security labels.
->>
->>> In the first half of the 90's I remember there was lots of effort to try
->>> and make setuid shell scripts and setuid perl scripts work, and the
->>> final conclusion was it was a lost cause.
->>
->> Definitely I lack a lot of context...
-> 
-> From the usenet comp.unix.faq that was probably updated in 1994:
->     http://www.faqs.org/faqs/unix-faq/faq/part4/section-7.html
-> 
-> I have been trying to remember enough details by looking it up, but the
-> short version is that one of the big problems is there is a race between
-> the kernel doing it's thing and the shell opening the shell script.
-> 
-> Clever people have been able to take advantage of that race and insert
-> arbitrary code in that window for the shell to execute.  All you have to
-> do is google for how to find a reproducer if the one in the link above
-> is not enough.
-> 
->>> Now I look at security_bprm_creds_for_exec and security_bprm_check which
->>> both have the implicit assumption that it is indeed safe to compute the
->>> credentials from a shell script.
->>>
->>> When passing a file descriptor to execat we have
->>> BINPRM_FLAGS_PATH_INACCESSIBLE and use /dev/fd/NNN as the filename
->>> which reduces some of the races.
->>>
->>> However when just plain executing a shell script we pass the filename of
->>> the shell script as a command line argument, and expect the shell to
->>> open the filename again.  This has been a time of check to time of use
->>> race for decades, and one of the reasons we don't have setuid shell
->>> scripts.
->>
->> Yes, it would be really nice to fix it!
-> 
-> After 30 years I really don't expect that is even a reasonable request.
-> 
-> I think we are solidly into "Don't do that then", and the LSM security
-> hooks are definitely doing that.
-> 
-> There is the partial solution of passing /dev/fd instead of passing the
-> name of the script.  I suspect that would break things.  I don't
-> remember why that was never adopted.
-> 
-> I think even with the TOCTOU race fixed there were other serious issues.
-> 
-> I really think it behooves any security module people who want to use
-> the shell script as the basis of their security decisions to research
-> all of the old well known issues and describe how they don't apply.
-> 
-> All I have energy for is to point out it is broken as is and to start
-> moving code down into bprm_creds_from_file to avoid the race.
-> 
-> Right now as far as I can tell anything based upon the script itself
-> is worthless junk so changing that would not be breaking anything that
-> wasn't already broken.
-> 
->>> Yet the IMA implementation (without the above mentioned patch) assumes
->>> the final creds will be calculated before security_bprm_check is called,
->>> and security_bprm_creds_for_exec busily calculate the final creds.
->>>
->>> For some of the security modules I believe anyone can set any label they
->>> want on a file and they remain secure (At which point I don't understand
->>> the point of having labels on files).  I don't believe that is the case
->>> for selinux, or in general.
->>
->> A simple example for SELinux. Suppose that the parent process has type
->> initrc_t, then the SELinux policy configures the following transitions
->> based on the label of the first file executed (sesearch -T -s initrc_t
->> -c process):
->>
->> type_transition initrc_t NetworkManager_dispatcher_exec_t:process NetworkManager_dispatcher_t;
->> type_transition initrc_t NetworkManager_exec_t:process NetworkManager_t;
->> type_transition initrc_t NetworkManager_initrc_exec_t:process initrc_t;
->> type_transition initrc_t NetworkManager_priv_helper_exec_t:process NetworkManager_priv_helper_t;
->> type_transition initrc_t abrt_dump_oops_exec_t:process abrt_dump_oops_t;
->> type_transition initrc_t abrt_exec_t:process abrt_t;
->> [...]
->>
->> (there are 747 rules in my system).
->>
->> If the transition would be based on the interpreter label, it would be
->> hard to express with rules.
-> 
-> Which is a problem for the people making the rules engine.  Because
-> 30 years of experience with this problem says basing anything on the
-> script is already broken.
-> 
-> I understand the frustration, but it requires a new way of launching
-> shell scripts to even begin to make it secure.
-> 
->> If the transition does not occur for any reason the parent process
->> policy would still apply, but maybe it would not have the necessary
->> permissions for the execution of the script.
-> 
-> Yep.
-> 
->>> So just to remove the TOCTOU race the security_bprm_creds_for_exec
->>> and security_bprm_check hooks need to be removed, after moving their
->>> code into something like security_bprm_creds_from_file.
->>>
->>> Or am I missing something and even with the TOCTOU race are setuid shell
->>> scripts somehow safe now?
->>
->> Take this with a looot of salt, if there is a TOCTOU race, the script
->> will be executed with a security context that does not belong to it.
->> But the transition already happened. Not sure if it is safe.
-> 
-> Historically it hasn't been safe.
-> 
->> I also don't know how the TOCTOU race could be solved, but I also would
->> like it to be fixed. I'm available to comment on any proposal!
-> 
-> I am hoping someone who helped put these security hooks where they are
-> will speak up, and tell me what I am missing.
-> 
-> All I have the energy for right now is to point out security policies
-> based upon shell scripts appear to be security policies that only
-> protect you from well behaved programs.
-> 
+On Tue, 02 Dec 2025 19:37:24 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-Hmm, yes, that looks like an issue.
+> This patch series adds __rust_helper to every single rust helper. The
+> patches do not depend on each other, so maintainers please go ahead and
+> pick up any patches relevant to your subsystem! Or provide your Acked-by
+> so that Miguel can pick them up.
+> 
+> These changes were generated by adding __rust_helper and running
+> ClangFormat. Unrelated formatting changes were removed manually.
+> 
+> Why is __rust_helper needed?
+> ============================
+> 
+> Currently, C helpers cannot be inlined into Rust even when using LTO
+> because LLVM detects slightly different options on the codegen units.
+> 
+> * LLVM doesn't want to inline functions compiled with
+>   `-fno-delete-null-pointer-checks` with code compiled without. The C
+>   CGUs all have this enabled and Rust CGUs don't. Inlining is okay since
+>   this is one of the hardening features that does not change the ABI,
+>   and we shouldn't have null pointer dereferences in these helpers.
+> 
+> * LLVM doesn't want to inline functions with different list of builtins. C
+>   side has `-fno-builtin-wcslen`; `wcslen` is not a Rust builtin, so
+>   they should be compatible, but LLVM does not perform inlining due to
+>   attributes mismatch.
+> 
+> * clang and Rust doesn't have the exact target string. Clang generates
+>   `+cmov,+cx8,+fxsr` but Rust doesn't enable them (in fact, Rust will
+>   complain if `-Ctarget-feature=+cmov,+cx8,+fxsr` is used). x86-64
+>   always enable these features, so they are in fact the same target
+>   string, but LLVM doesn't understand this and so inlining is inhibited.
+>   This can be bypassed with `--ignore-tti-inline-compatible`, but this
+>   is a hidden option.
+> 
+> (This analysis was written by Gary Guo.)
+> 
+> How is this fixed?
+> ==================
+> 
+> To fix this we need to add __always_inline to all helpers when compiling
+> with LTO. However, it should not be added when running bindgen as
+> bindgen will ignore functions marked inline. To achieve this, we are
+> using a #define called __rust_helper that is defined differently
+> depending on whether bindgen is running or not.
+> 
+> Note that __rust_helper is currently always #defined to nothing.
+> Changing it to __always_inline will happen separately in another patch
+> series.
+> 
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+> Alice Ryhl (46):
+>       rust: auxiliary: add __rust_helper to helpers
+>       rust: barrier: add __rust_helper to helpers
+>       rust: binder: add __rust_helper to helpers
+>       rust: bitmap: add __rust_helper to helpers
+>       rust: bitops: add __rust_helper to helpers
+>       rust: blk: add __rust_helper to helpers
+>       rust: bug: add __rust_helper to helpers
+>       rust: clk: add __rust_helper to helpers
+>       rust: completion: add __rust_helper to helpers
+>       rust: cpu: add __rust_helper to helpers
+>       rust: cpufreq: add __rust_helper to helpers
+>       rust: cpumask: add __rust_helper to helpers
+>       rust: cred: add __rust_helper to helpers
+>       rust: device: add __rust_helper to helpers
+>       rust: dma: add __rust_helper to helpers
+>       rust: drm: add __rust_helper to helpers
+>       rust: err: add __rust_helper to helpers
+>       rust: fs: add __rust_helper to helpers
+>       rust: io: add __rust_helper to helpers
+>       rust: irq: add __rust_helper to helpers
+>       rust: jump_label: add __rust_helper to helpers
+>       rust: kunit: add __rust_helper to helpers
+>       rust: maple_tree: add __rust_helper to helpers
+>       rust: mm: add __rust_helper to helpers
+>       rust: of: add __rust_helper to helpers
+>       rust: pci: add __rust_helper to helpers
+>       rust: pid_namespace: add __rust_helper to helpers
+>       rust: platform: add __rust_helper to helpers
+>       rust: poll: add __rust_helper to helpers
+>       rust: processor: add __rust_helper to helpers
+>       rust: property: add __rust_helper to helpers
+>       rust: rbtree: add __rust_helper to helpers
+>       rust: rcu: add __rust_helper to helpers
+>       rust: refcount: add __rust_helper to helpers
+>       rust: regulator: add __rust_helper to helpers
+>       rust: scatterlist: add __rust_helper to helpers
+>       rust: security: add __rust_helper to helpers
+>       rust: slab: add __rust_helper to helpers
+>       rust: sync: add __rust_helper to helpers
+>       rust: task: add __rust_helper to helpers
+>       rust: time: add __rust_helper to helpers
+>       rust: uaccess: add __rust_helper to helpers
+>       rust: usb: add __rust_helper to helpers
+>       rust: wait: add __rust_helper to helpers
+>       rust: workqueue: add __rust_helper to helpers
+>       rust: xarray: add __rust_helper to helpers
 
-I would have expected the security engine to look at bprm->filenanme
-especially in the case, when bprm->interp != bprm->filename,
-and check that it is not a sym-link with write-access for the
-current user and of course also that the bprm->file is not a regular file
-which is writable by the current user, if that is the case I would have expected
-the secuity engine to enforce non-new-privs on a SUID executable somehow.
+Thansk for sending this Alice! With this series in first, my series for
+inlining helpers should be much easier to apply.
+
+For the whole series:
+
+Reviewed-by: Gary Guo <gary@garyguo.net>
+
+Best,
+Gary
 
 
-Bernd.
+> 
+>  rust/helpers/auxiliary.c     |  6 +++--
+>  rust/helpers/barrier.c       |  6 ++---
+>  rust/helpers/binder.c        | 13 ++++-----
+>  rust/helpers/bitmap.c        |  6 +++--
+>  rust/helpers/bitops.c        | 11 +++++---
+>  rust/helpers/blk.c           |  4 +--
+>  rust/helpers/bug.c           |  4 +--
+>  rust/helpers/build_bug.c     |  2 +-
+>  rust/helpers/clk.c           | 24 +++++++++--------
+>  rust/helpers/completion.c    |  2 +-
+>  rust/helpers/cpu.c           |  2 +-
+>  rust/helpers/cpufreq.c       |  3 ++-
+>  rust/helpers/cpumask.c       | 32 +++++++++++++---------
+>  rust/helpers/cred.c          |  4 +--
+>  rust/helpers/device.c        | 16 +++++------
+>  rust/helpers/dma.c           | 15 ++++++-----
+>  rust/helpers/drm.c           |  7 ++---
+>  rust/helpers/err.c           |  6 ++---
+>  rust/helpers/fs.c            |  2 +-
+>  rust/helpers/io.c            | 64 +++++++++++++++++++++++---------------------
+>  rust/helpers/irq.c           |  6 +++--
+>  rust/helpers/jump_label.c    |  2 +-
+>  rust/helpers/kunit.c         |  2 +-
+>  rust/helpers/maple_tree.c    |  3 ++-
+>  rust/helpers/mm.c            | 20 +++++++-------
+>  rust/helpers/mutex.c         | 13 ++++-----
+>  rust/helpers/of.c            |  2 +-
+>  rust/helpers/page.c          |  9 ++++---
+>  rust/helpers/pci.c           | 13 +++++----
+>  rust/helpers/pid_namespace.c |  8 +++---
+>  rust/helpers/platform.c      |  2 +-
+>  rust/helpers/poll.c          |  5 ++--
+>  rust/helpers/processor.c     |  2 +-
+>  rust/helpers/property.c      |  2 +-
+>  rust/helpers/rbtree.c        |  5 ++--
+>  rust/helpers/rcu.c           |  4 +--
+>  rust/helpers/refcount.c      | 10 +++----
+>  rust/helpers/regulator.c     | 24 ++++++++++-------
+>  rust/helpers/scatterlist.c   | 12 +++++----
+>  rust/helpers/security.c      | 26 ++++++++++--------
+>  rust/helpers/signal.c        |  2 +-
+>  rust/helpers/slab.c          | 14 +++++-----
+>  rust/helpers/spinlock.c      | 13 ++++-----
+>  rust/helpers/sync.c          |  4 +--
+>  rust/helpers/task.c          | 24 ++++++++---------
+>  rust/helpers/time.c          | 12 ++++-----
+>  rust/helpers/uaccess.c       |  8 +++---
+>  rust/helpers/usb.c           |  3 ++-
+>  rust/helpers/vmalloc.c       |  7 ++---
+>  rust/helpers/wait.c          |  2 +-
+>  rust/helpers/workqueue.c     |  8 +++---
+>  rust/helpers/xarray.c        | 10 +++----
+>  52 files changed, 280 insertions(+), 226 deletions(-)
+> ---
+> base-commit: 54e3eae855629702c566bd2e130d9f40e7f35bde
+> change-id: 20251202-define-rust-helper-f7b531813007
+> 
+> Best regards,
 
