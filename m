@@ -1,60 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFAE3081DF;
-	Wed,  3 Dec 2025 19:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA67A3164A4;
+	Wed,  3 Dec 2025 19:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764790521; cv=none; b=J4INqhsTu4sVD4b5gn9tzeKGaeRKThsKyUWXER3PsRfOnXAr4CfJqiAQQNChKCSiV6DsLiHF4O1/6DYSDhpLxcxgzrEKEDAfifM2XoFrvckOBppntGqcATJGo8C4qA3LlWetKqLAs8iHp7yvMegBJ3LP0O0+C574s3uRSCQYMqY=
+	t=1764790533; cv=none; b=EBDm4hVSjR5eBHJVEBo0uM6rs2/972awDbVXHrx8OGsn8HlxcowVgXWgzYfxJsWXoWle9qid7wYucfg12ktRxwE73UMkIQxlYrAqr/dJHSbcHeePITuhkJI/Jsa7SZk2k+noY07CwIy8o2/0BLhoJ0Fvvb3QSKrsbb0GaxaDr4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764790521; c=relaxed/simple;
-	bh=Z7EPNFCKzzdgki7rX/jE9I8UKoxXloxYyiw3SH6f7xo=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=nckc0g5+yznVk+8vIDDoV+0hjZSWWsYZZfh2nNKmcyA53oShtua/EUyA1BetUFB89qhbbBQNrqBR0x9sQuv9Ecnl6Il/U/M3QzlRo1TJhXZW2UsxQtiKB0oQGZitJSkq7YDm53G3Ey5W3rCW88ESLVduDXjWTINTvTsuBPhOXCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FjnU2TIC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764790533; c=relaxed/simple;
+	bh=LWItJrXyZlnNvF6IGEcPQHo0PBjIq7gQXTd014oToqA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FYwOKfVy4tAfXIsVwoSco9SL85gKU3zE0whOdZ2mNG751wjAsymEOH2bHu2lcP/8JH+uU0hyE7t2weVq9007Wfsfw5S/OnpIjDBxaA+yexPCA6+8EE3vv+FrsBuacQUxYPm0hXs9jDdJUIzQuWvIC7Me9QbG/oxUQgpK4QYriqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QO/LJ2rW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FjnU2TIC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC8F6C19422;
-	Wed,  3 Dec 2025 19:35:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QO/LJ2rW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0173C4CEF5;
+	Wed,  3 Dec 2025 19:35:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764790520;
-	bh=Z7EPNFCKzzdgki7rX/jE9I8UKoxXloxYyiw3SH6f7xo=;
+	s=k20201202; t=1764790532;
+	bh=LWItJrXyZlnNvF6IGEcPQHo0PBjIq7gQXTd014oToqA=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=FjnU2TICT3qhox+0STY451bSsLNJOycywo8V9RRqafiFTqeLVOaaB0tFWd4gZib+X
-	 iiQSGKdGJP/NsxCtSfl6eW5u9BcnyprY9rb4ABYMXw+ephsmsAnZeEHU0bB51ulK6x
-	 /jmMyiRawGOISCD+HrVlVCFvE+pTKqFIwS1fobdWDFsYNX9YGQSibZOlfDUJvnZwJ7
-	 MfWvqU/Tn2wMoGGe1dM/ugnxJXsLHN3Ex5/9XdazBDXu+4Gvia86MA07cdEmCyNOjJ
-	 ndLetxRycvgwOQH8e1YErksEyjVGp8hgkT0+AfvfpZk7c9636u89xOpNscwkcq2whw
-	 BYtGhzqqccpZA==
+	b=QO/LJ2rWbvY3aB7mCbuHpHilPLHGOxnOR/NGRPpGHQh97noxg+I5QDi3qZZdCy5sv
+	 sdl9lFtFxUvVsB1DLSTBHhbPG/FFwgaGpeFq+1zPad4rEPb4xxR2D62XT6/NMmhGsc
+	 GzDhwrK6GEVEa7GoL1GDOz5E4E2Am3K3dE3sSZahnXbGXyjVRLa5DKX6QuE3F0Giyb
+	 SWOg4uvV6/+lFv8LhBAJv3iiTEbUowYEJjCpYaeL9s/GWY4o4mhpg3eT/n9O082fIV
+	 SI3oqMRqINjZS3FUU1A7oIG2v0l3Gd0Zny35YLWKLnrc1bXBkbzvI0jwKCB3/L8ml/
+	 rqTlNjrsT6Jkw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B579C3AA943C;
-	Wed,  3 Dec 2025 19:32:20 +0000 (UTC)
-Subject: Re: [GIT PULL] KEYS: trusted: keys-trusted-next-rc1
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B587B3AA943C;
+	Wed,  3 Dec 2025 19:32:32 +0000 (UTC)
+Subject: Re: [GIT PULL] Smack patches for 6.19
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <aSthHCovbsDZANsa@kernel.org>
-References: <aSthHCovbsDZANsa@kernel.org>
-X-PR-Tracked-List-Id: <keyrings.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aSthHCovbsDZANsa@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/keys-trusted-next-rc1
-X-PR-Tracked-Commit-Id: 62cd5d480b9762ce70d720a81fa5b373052ae05f
+In-Reply-To: <80229bac-c3d9-4c99-9cca-dade23ef7421@schaufler-ca.com>
+References: <80229bac-c3d9-4c99-9cca-dade23ef7421.ref@schaufler-ca.com> <80229bac-c3d9-4c99-9cca-dade23ef7421@schaufler-ca.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <80229bac-c3d9-4c99-9cca-dade23ef7421@schaufler-ca.com>
+X-PR-Tracked-Remote: https://github.com/cschaufler/smack-next tags/Smack-for-6.19
+X-PR-Tracked-Commit-Id: 29c701f90b9341f1f9c1854a9c22b71c2318457d
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7fc2cd2e4b398c57c9cf961cfea05eadbf34c05c
-Message-Id: <176479033930.47894.2322560066179937956.pr-tracker-bot@kernel.org>
-Date: Wed, 03 Dec 2025 19:32:19 +0000
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, David Howells <dhowells@redhat.com>, James Bottomley <James.Bottomley@hansenpartnership.com>, Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
+X-PR-Merge-Commit-Id: 204a920f284e7264aa6dcd5876cbb1e03a7e4ebc
+Message-Id: <176479035117.47894.17985112267331119007.pr-tracker-bot@kernel.org>
+Date: Wed, 03 Dec 2025 19:32:31 +0000
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LSM List <linux-security-module@vger.kernel.org>, Linux kernel mailing list <linux-kernel@vger.kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, Konstantin Andreev <andreev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Sat, 29 Nov 2025 23:09:48 +0200:
+The pull request you sent on Sat, 29 Nov 2025 12:24:38 -0800:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/keys-trusted-next-rc1
+> https://github.com/cschaufler/smack-next tags/Smack-for-6.19
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7fc2cd2e4b398c57c9cf961cfea05eadbf34c05c
+https://git.kernel.org/torvalds/c/204a920f284e7264aa6dcd5876cbb1e03a7e4ebc
 
 Thank you!
 
