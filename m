@@ -1,526 +1,199 @@
-Received: from the.earth.li (the.earth.li [93.93.131.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD842E718B;
-	Thu,  4 Dec 2025 15:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F732D7DE4
+	for <linux-security-module@vger.kernel.org>; Thu,  4 Dec 2025 15:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764861110; cv=none; b=VyoYWrU/uHtTGZGmvPQe86b5MncYLrP9OboV49pUpamuP7eGZ66/xKGwCOJFQCG3xBLnsqqMZxGldBBa5odcTZ9M5MrTOeS/A0QjqnWYO0P8mWfGewDKVczTGwKgF8VB0g8jBHAiyTo2S0/Yv03g2ZB+Vuda/5ohayGxcONNd1A=
+	t=1764863014; cv=none; b=mGupgNiqv9vD54HMNchzZvJVNur9VakFwUu4/+T+twi+sSiXrb8BntnOuhEhBbzvUL4YB0OoOjk+srMa1M2QwCmHyOxBfHWDsWGz4A2KPhf09ryywRcrYXhQDatz+Ybcu9xmLNjZBETSTE+AcIJ0jQIpYEU8zgphv1MiY31CDQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764861110; c=relaxed/simple;
-	bh=pC5MQgWXqfKXzUJm17Og5AAeCXPcjkz7XDPwj4iCQGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=acCrya7JkrAIsovv/3Cs1lyDjcPvEOa09uDW+oAqF7w9n+5O/pb0Zayl5CXZBuxwuVMzSk9mSXtXnc2+Xv99nWqdXqd5152yhtQeew/lghHraKcqMRfNJFZc6rJ0S52bPaqSUqpCwRv8yVnc291GSAD+ZyBlX0XO0NIfV35okHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=sFp1wamX; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+	s=arc-20240116; t=1764863014; c=relaxed/simple;
+	bh=iKUJIm2WGMEBpZ5Nv3OHKAdudbcM2UVOMkylidNxVPA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CBeCoxg9G7IxLKACRzENgGnslFSdCSOZLk1CwEtWiot3BIVHIe+gZpH+E0L4r8m7eQOMmqjnGCrck6n9TfI1ouIF0yx3mlD03gu7L2VDgthc9Ng97D4S0MDQOAuLVRljQtzPaflJjKV23SHG/cFVQFtqdDMFYeUhfUgp+uPbDgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b0Eed214; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b="sFp1wamX"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=SOlRK6FNfysOiDMwAfC1XAWs6FKI/Ub7aF/BY/itl54=; b=sFp1wamXzx9AEPb3arOjhQFpgV
-	Ll2yKjHnTbf6+kP2HcoRrORiB8/xMHvuoGErtgaSR0Si1qsP+HsnZ7068SrYWEJXkbgNRAtdeDR8l
-	6hLsdVb5eUlCxfQUpj7VvAnTjh+NkzMGfUCN28MakR/w6NlVb8M6ZSBw4I0ro+puiyIog3fkOV90p
-	qLXtfSiWgp+dETXI/KE5qtCsSlDe8z9yX/hMFtqXtzzZ8eHCP1icpU9wfVwrOgFj3vofqlhGxKKk9
-	qwlnqZLkdh8POq9uZAgcUPZZEU82p1fq5RCtx39qPWWBTTQGtSHTFJM04Jg+QgsRQazxWrXorR/KB
-	HfAxMBgg==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1vRAzO-005yoP-1K;
-	Thu, 04 Dec 2025 15:11:26 +0000
-Date: Thu, 4 Dec 2025 15:11:26 +0000
-From: Jonathan McDowell <noodles@earth.li>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	open list <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v3 1/4] tpm2-sessions: fix out of range indexing in
- name_size
-Message-ID: <aTGkno0fzQMHXc7X@earth.li>
-References: <20251203221215.536031-1-jarkko@kernel.org>
- <20251203221215.536031-2-jarkko@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0Eed214"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-341988c720aso844516a91.3
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Dec 2025 07:43:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764863011; x=1765467811; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xcULqT1gBZ4JnBLfYhNZO/NSXxFxQuxnawJT72KsaCg=;
+        b=b0Eed214jEfrU4eS3gnOoBcbOwGZ50ScGj+40v7Qa/mpjDyne6IjvFxQe58klC0jG7
+         x7w7kCxEt+e5RnFeH8Xk7kKR5GllsyBpXLwYLqiP3wc3BiYjcBSy9F7I+B2VVwE8hWJg
+         xiz3k/J76iwYa8Hoa5zyTrcGxGhkG0O6FfjmMr+P5q0DmV5zJwfyLB/UwgnvFrAG9Nl3
+         jN20VALypVvlmPZqEojlO4uJXdENjtBNT9fMmezm4mtUuxgRzbRN1r5JhS49ei2veskp
+         f3ge4DuYduvqll9mS/8FT6NeFMQNoG6PHhVevcE5bREYUZ5n9f7SSj4J2gZg5tZytUHM
+         B/wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764863011; x=1765467811;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xcULqT1gBZ4JnBLfYhNZO/NSXxFxQuxnawJT72KsaCg=;
+        b=w8f30Nu4SlrjF6niRziY1DBzOm9vnyCqVj0MrnnrVEoew8Yso/AHF5A+oU74WpNxsn
+         4bALM29MDnmygPPs/zT7dxt9FQ4xTQ5SETP44kRhG2jrTdIOWYylOMWWcC+KCHp8xeAj
+         u4cO3ic2DfnPSZ27+2NxJ26i/STr8KmaNFMsByiBQfi1LpFQiobMGVw1N7RSGHvRKc7W
+         KOzHMThuUSSL6uCp/KBMxWoqmvw2gZNt1BPWT7Wav2sYUgWc2T7hZrES8vchgYgRz86C
+         Ike+NhZgkq+MohFif+uKj+Eznj0GzxAL8c38OIgHpk+fnq8380g302UOnOKgJqZ3EAY5
+         dfUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUuukL3UCFBT+PIplO3MGTp7dfhRpbScFOc+gjBUgVZLUaLFo90PBKkskNvuG4r55bH92kklm0EAfsjUC9XS4pvDmQMdJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEoMQyJy1t4zbvAUtzgweKNX9ttZiXTSiyj1gFyycHRYm5Kt9+
+	riGvj6UNuLWDe6Dct385uND1yhWS1MTKrAjBa5nZfvd0yV7bZ+kcMqd3rhN7/jgL7K/UnxBg+Bu
+	bLldyVY8IW7cVDPCF1lo/EYSPVMo8k4c=
+X-Gm-Gg: ASbGncuAIusyMdF7cHWjyGT2Bywy+kJg6b9voI7qZS2hE6rkQs7buWvCPjQmOA8UEyS
+	QLwI+vGLuXxlX6+hUSjEKD23cl/ZOJDBejRJOqQvmDxLJvQoAUO2oONscMB+fCBPPOpyKBLf/2x
+	KHOORYT2HGW8ZXYOwdA8T/xEC4GDfu/8lJ/fjI5bwMNGbb44R3GEPRC12z82G5uEiNciK0akiQo
+	fnXg8SJ9NEjM+OmvOfy3e5H4ZjozmLSapsETwN37fP3FtZQI1g0XoJZYEZGiKyM4g6AHGkh7kbT
+	+qXrPQ==
+X-Google-Smtp-Source: AGHT+IGPP0xbr8ijlvBCGceLouNPETyq6yt+2wUuDhEptf1TXNXkd61Kk0839gQ/19JRkHkqwlnGsXbepfF7hCbJxRQ=
+X-Received: by 2002:a17:90a:c883:b0:33b:d74b:179 with SMTP id
+ 98e67ed59e1d1-349126e0e1cmr7801599a91.27.1764863011360; Thu, 04 Dec 2025
+ 07:43:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20251203221215.536031-2-jarkko@kernel.org>
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <87tsyozqdu.fsf@email.froward.int.ebiederm.org> <87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
+ <87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org> <6dc556a0a93c18fffec71322bf97441c74b3134e.camel@huaweicloud.com>
+ <87v7iqtcev.fsf_-_@email.froward.int.ebiederm.org>
+In-Reply-To: <87v7iqtcev.fsf_-_@email.froward.int.ebiederm.org>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Thu, 4 Dec 2025 10:43:20 -0500
+X-Gm-Features: AWmQ_bmUfrO0mY15dNq3SP9hR0Gn5EatRKdJVj7voKpq3-tHkT_aD9YVC4fN8UE
+Message-ID: <CAEjxPJ61OHDxmc2fgBp=hq27OoEhkO+Wwbb+rYAf2F9fM7gdLg@mail.gmail.com>
+Subject: Re: Are setuid shell scripts safe? (Implied by security_bprm_creds_for_exec)
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, 
+	Bernd Edlinger <bernd.edlinger@hotmail.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Alexey Dobriyan <adobriyan@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Kees Cook <kees@kernel.org>, 
+	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
+	Christian Brauner <brauner@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>, 
+	James Morris <jamorris@linux.microsoft.com>, Randy Dunlap <rdunlap@infradead.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>, 
+	Adrian Reber <areber@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>, 
+	Alexei Starovoitov <ast@kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	tiozhang <tiozhang@didiglobal.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Frederic Weisbecker <frederic@kernel.org>, YueHaibing <yuehaibing@huawei.com>, 
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>, xu xin <xu.xin16@zte.com.cn>, 
+	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>, 
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Elena Reshetova <elena.reshetova@intel.com>, David Windsor <dwindsor@gmail.com>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Hans Liljestrand <ishkamiel@gmail.com>, Penglei Jiang <superman.xpt@gmail.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Adrian Ratiu <adrian.ratiu@collabora.com>, 
+	Ingo Molnar <mingo@kernel.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
+	Cyrill Gorcunov <gorcunov@gmail.com>, Eric Dumazet <edumazet@google.com>, zohar@linux.ibm.com, 
+	linux-integrity@vger.kernel.org, Ryan Lee <ryan.lee@canonical.com>, 
+	apparmor <apparmor@lists.ubuntu.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 04, 2025 at 12:12:11AM +0200, Jarkko Sakkinen wrote:
->'name_size' does not have any range checks, and it just directly indexes
->with TPM_ALG_ID, which could lead into memory corruption at worst.
+On Mon, Dec 1, 2025 at 11:34=E2=80=AFAM Eric W. Biederman <ebiederm@xmissio=
+n.com> wrote:
 >
->Address the issue by only processing known values and returning -EINVAL for
->unrecognized values.
+> Roberto Sassu <roberto.sassu@huaweicloud.com> writes:
 >
->Make also 'tpm_buf_append_name' and 'tpm_buf_fill_hmac_session' fallible so
->that errors are detected before causing any spurious TPM traffic.
+> > + Mimi, linux-integrity (would be nice if we are in CC when linux-
+> > security-module is in CC).
+> >
+> > Apologies for not answering earlier, it seems I don't receive the
+> > emails from the linux-security-module mailing list (thanks Serge for
+> > letting me know!).
+> >
+> > I see two main effects of this patch. First, the bprm_check_security
+> > hook implementations will not see bprm->cred populated. That was a
+> > problem before we made this patch:
+> >
+> > https://patchew.org/linux/20251008113503.2433343-1-roberto.sassu@huawei=
+cloud.com/
 >
->End also the authorization session on failure in both of the functions, as
->the session state would be then by definition corrupted.
+> Thanks, that is definitely needed.
 >
->Cc: stable@vger.kernel.org # v6.10+
->Fixes: 1085b8276bb4 ("tpm: Add the rest of the session HMAC API")
->Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Does calling process_measurement(CREDS_CHECK) on only the final file
+> pass review?  Do you know of any cases where that will break things?
+>
+> As it stands I don't think it should be assumed that any LSM has
+> computed it's final creds until bprm_creds_from_file.  Not just the
+> uid and gid.
+>
+> If the patch you posted for review works that helps sort that mess out.
+>
+> > to work around the problem of not calculating the final DAC credentials
+> > early enough (well, we actually had to change our CREDS_CHECK hook
+> > behavior).
+> >
+> > The second, I could not check. If I remember well, unlike the
+> > capability LSM, SELinux/Apparmor/SMACK calculate the final credentials
+> > based on the first file being executed (thus the script, not the
+> > interpreter). Is this patch keeping the same behavior despite preparing
+> > the credentials when the final binary is found?
+>
+> The patch I posted was.
+>
+> My brain is still reeling from the realization that our security modules
+> have the implicit assumption that it is safe to calculate their security
+> information from shell scripts.
+>
+> In the first half of the 90's I remember there was lots of effort to try
+> and make setuid shell scripts and setuid perl scripts work, and the
+> final conclusion was it was a lost cause.
+>
+> Now I look at security_bprm_creds_for_exec and security_bprm_check which
+> both have the implicit assumption that it is indeed safe to compute the
+> credentials from a shell script.
+>
+> When passing a file descriptor to execat we have
+> BINPRM_FLAGS_PATH_INACCESSIBLE and use /dev/fd/NNN as the filename
+> which reduces some of the races.
+>
+> However when just plain executing a shell script we pass the filename of
+> the shell script as a command line argument, and expect the shell to
+> open the filename again.  This has been a time of check to time of use
+> race for decades, and one of the reasons we don't have setuid shell
+> scripts.
+>
+> Yet the IMA implementation (without the above mentioned patch) assumes
+> the final creds will be calculated before security_bprm_check is called,
+> and security_bprm_creds_for_exec busily calculate the final creds.
+>
+> For some of the security modules I believe anyone can set any label they
+> want on a file and they remain secure (At which point I don't understand
+> the point of having labels on files).  I don't believe that is the case
+> for selinux, or in general.
+>
+> So just to remove the TOCTOU race the security_bprm_creds_for_exec
+> and security_bprm_check hooks need to be removed, after moving their
+> code into something like security_bprm_creds_from_file.
+>
+> Or am I missing something and even with the TOCTOU race are setuid shell
+> scripts somehow safe now?
 
-A minor whitespace query below, but:
-
-Reviewed-by: Jonathan McDowell <noodles@meta.com>
-
->v3:
->- Fix pr_warn() format string in name_size().
->- Fix !CONFIG_TPM2_HMAC compilation.
->v2:
->- Wrote a better short summary.
->- Addressed remarks in https://lore.kernel.org/linux-integrity/aS8TIeviaippVAha@earth.li/
->- Use -EIO consistently in tpm2_fill_hmac_session. These are not input value
->  errors. They could only spun from malformed (kernel) state.
->- name_size did not have a proper default-case. Reorganize the
->  fallback into that.
->---
-> drivers/char/tpm/tpm2-cmd.c               |  23 +++-
-> drivers/char/tpm/tpm2-sessions.c          | 133 +++++++++++++++-------
-> include/linux/tpm.h                       |  13 ++-
-> security/keys/trusted-keys/trusted_tpm2.c |  29 ++++-
-> 4 files changed, 143 insertions(+), 55 deletions(-)
->
->diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
->index dd502322f499..be4a9c7f2e1a 100644
->--- a/drivers/char/tpm/tpm2-cmd.c
->+++ b/drivers/char/tpm/tpm2-cmd.c
->@@ -199,7 +199,11 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
-> 	}
->
-> 	if (!disable_pcr_integrity) {
->-		tpm_buf_append_name(chip, &buf, pcr_idx, NULL);
->+		rc = tpm_buf_append_name(chip, &buf, pcr_idx, NULL);
->+		if (rc) {
->+			tpm_buf_destroy(&buf);
->+			return rc;
->+		}
-> 		tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
-> 	} else {
-> 		tpm_buf_append_handle(chip, &buf, pcr_idx);
->@@ -214,8 +218,14 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
-> 			       chip->allocated_banks[i].digest_size);
-> 	}
->
->-	if (!disable_pcr_integrity)
->-		tpm_buf_fill_hmac_session(chip, &buf);
->+	if (!disable_pcr_integrity) {
->+		rc = tpm_buf_fill_hmac_session(chip, &buf);
->+		if (rc) {
->+			tpm_buf_destroy(&buf);
->+			return rc;
->+		}
->+	}
->+
-> 	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting extend a PCR value");
-> 	if (!disable_pcr_integrity)
-> 		rc = tpm_buf_check_hmac_response(chip, &buf, rc);
->@@ -273,7 +283,12 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
-> 						| TPM2_SA_CONTINUE_SESSION,
-> 						NULL, 0);
-> 		tpm_buf_append_u16(&buf, num_bytes);
->-		tpm_buf_fill_hmac_session(chip, &buf);
->+		err = tpm_buf_fill_hmac_session(chip, &buf);
->+		if (err) {
->+			tpm_buf_destroy(&buf);
->+			return err;
->+		}
->+
-> 		err = tpm_transmit_cmd(chip, &buf,
-> 				       offsetof(struct tpm2_get_random_out,
-> 						buffer),
->diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
->index 6d03c224e6b2..a265e9752a5e 100644
->--- a/drivers/char/tpm/tpm2-sessions.c
->+++ b/drivers/char/tpm/tpm2-sessions.c
->@@ -144,16 +144,23 @@ struct tpm2_auth {
-> /*
->  * Name Size based on TPM algorithm (assumes no hash bigger than 255)
->  */
->-static u8 name_size(const u8 *name)
->+static int name_size(const u8 *name)
-> {
->-	static u8 size_map[] = {
->-		[TPM_ALG_SHA1] = SHA1_DIGEST_SIZE,
->-		[TPM_ALG_SHA256] = SHA256_DIGEST_SIZE,
->-		[TPM_ALG_SHA384] = SHA384_DIGEST_SIZE,
->-		[TPM_ALG_SHA512] = SHA512_DIGEST_SIZE,
->-	};
->-	u16 alg = get_unaligned_be16(name);
->-	return size_map[alg] + 2;
->+	u16 hash_alg = get_unaligned_be16(name);
->+
->+	switch (hash_alg) {
->+	case TPM_ALG_SHA1:
->+		return SHA1_DIGEST_SIZE + 2;
->+	case TPM_ALG_SHA256:
->+		return SHA256_DIGEST_SIZE + 2;
->+	case TPM_ALG_SHA384:
->+		return SHA384_DIGEST_SIZE + 2;
->+	case TPM_ALG_SHA512:
->+		return SHA512_DIGEST_SIZE + 2;
->+	default:
->+		pr_warn("tpm: unsupported name algorithm: 0x%04x\n", hash_alg);
->+		return -EINVAL;
->+	}
-> }
->
-> static int tpm2_parse_read_public(char *name, struct tpm_buf *buf)
->@@ -161,6 +168,7 @@ static int tpm2_parse_read_public(char *name, struct tpm_buf *buf)
-> 	struct tpm_header *head = (struct tpm_header *)buf->data;
-> 	off_t offset = TPM_HEADER_SIZE;
-> 	u32 tot_len = be32_to_cpu(head->length);
->+	int ret;
-> 	u32 val;
->
-> 	/* we're starting after the header so adjust the length */
->@@ -172,9 +180,15 @@ static int tpm2_parse_read_public(char *name, struct tpm_buf *buf)
-> 		return -EINVAL;
-> 	offset += val;
-> 	/* name */
->+
-
-Spurious extra blank line? Or meant to be before the comment?
-
-> 	val = tpm_buf_read_u16(buf, &offset);
->-	if (val != name_size(&buf->data[offset]))
->+	ret = name_size(&buf->data[offset]);
->+	if (ret < 0)
->+		return ret;
->+
->+	if (val != ret)
-> 		return -EINVAL;
->+
-> 	memcpy(name, &buf->data[offset], val);
-> 	/* forget the rest */
-> 	return 0;
->@@ -221,46 +235,72 @@ static int tpm2_read_public(struct tpm_chip *chip, u32 handle, char *name)
->  * As with most tpm_buf operations, success is assumed because failure
->  * will be caused by an incorrect programming model and indicated by a
->  * kernel message.
->+ *
->+ * Ends the authorization session on failure.
->  */
->-void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
->-			 u32 handle, u8 *name)
->+int tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
->+			u32 handle, u8 *name)
-> {
-> #ifdef CONFIG_TCG_TPM2_HMAC
-> 	enum tpm2_mso_type mso = tpm2_handle_mso(handle);
-> 	struct tpm2_auth *auth;
-> 	int slot;
->+	int ret;
-> #endif
->
-> 	if (!tpm2_chip_auth(chip)) {
-> 		tpm_buf_append_handle(chip, buf, handle);
->-		return;
->+		return 0;
-> 	}
->
-> #ifdef CONFIG_TCG_TPM2_HMAC
-> 	slot = (tpm_buf_length(buf) - TPM_HEADER_SIZE) / 4;
-> 	if (slot >= AUTH_MAX_NAMES) {
->-		dev_err(&chip->dev, "TPM: too many handles\n");
->-		return;
->+		dev_err(&chip->dev, "too many handles\n");
->+		ret = -EIO;
->+		goto err;
-> 	}
-> 	auth = chip->auth;
->-	WARN(auth->session != tpm_buf_length(buf),
->-	     "name added in wrong place\n");
->+	if (auth->session != tpm_buf_length(buf)) {
->+		dev_err(&chip->dev, "session state malformed");
->+		ret = -EIO;
->+		goto err;
->+	}
-> 	tpm_buf_append_u32(buf, handle);
-> 	auth->session += 4;
->
-> 	if (mso == TPM2_MSO_PERSISTENT ||
-> 	    mso == TPM2_MSO_VOLATILE ||
-> 	    mso == TPM2_MSO_NVRAM) {
->-		if (!name)
->-			tpm2_read_public(chip, handle, auth->name[slot]);
->+		if (!name) {
->+			ret = tpm2_read_public(chip, handle, auth->name[slot]);
->+			if (ret)
->+				goto err;
->+		}
-> 	} else {
->-		if (name)
->-			dev_err(&chip->dev, "TPM: Handle does not require name but one is specified\n");
->+		if (name) {
->+			dev_err(&chip->dev, "handle 0x%08x does not use a name\n",
->+				handle);
->+			ret = -EIO;
->+			goto err;
->+		}
-> 	}
->
-> 	auth->name_h[slot] = handle;
->-	if (name)
->-		memcpy(auth->name[slot], name, name_size(name));
->+	if (name) {
->+		ret = name_size(name);
->+		if (ret < 0)
->+			goto err;
->+
->+		memcpy(auth->name[slot], name, ret);
->+	}
->+#endif
->+	return 0;
->+
->+#ifdef CONFIG_TCG_TPM2_HMAC
->+err:
->+	tpm2_end_auth_session(chip);
->+	return tpm_ret_to_err(ret);
-> #endif
-> }
-> EXPORT_SYMBOL_GPL(tpm_buf_append_name);
->@@ -533,11 +573,9 @@ static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip *chip,
->  * encryption key and encrypts the first parameter of the command
->  * buffer with it.
->  *
->- * As with most tpm_buf operations, success is assumed because failure
->- * will be caused by an incorrect programming model and indicated by a
->- * kernel message.
->+ * Ends the authorization session on failure.
->  */
->-void tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf)
->+int tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf)
-> {
-> 	u32 cc, handles, val;
-> 	struct tpm2_auth *auth = chip->auth;
->@@ -549,9 +587,12 @@ void tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf)
-> 	u8 cphash[SHA256_DIGEST_SIZE];
-> 	struct sha256_ctx sctx;
-> 	struct hmac_sha256_ctx hctx;
->+	int ret;
->
->-	if (!auth)
->-		return;
->+	if (!auth) {
->+		ret = -EIO;
->+		goto err;
->+	}
->
-> 	/* save the command code in BE format */
-> 	auth->ordinal = head->ordinal;
->@@ -560,9 +601,11 @@ void tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf)
->
-> 	i = tpm2_find_cc(chip, cc);
-> 	if (i < 0) {
->-		dev_err(&chip->dev, "Command 0x%x not found in TPM\n", cc);
->-		return;
->+		dev_err(&chip->dev, "command 0x%08x not found\n", cc);
->+		ret = -EIO;
->+		goto err;
-> 	}
->+
-> 	attrs = chip->cc_attrs_tbl[i];
->
-> 	handles = (attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0);
->@@ -576,9 +619,9 @@ void tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf)
-> 		u32 handle = tpm_buf_read_u32(buf, &offset_s);
->
-> 		if (auth->name_h[i] != handle) {
->-			dev_err(&chip->dev, "TPM: handle %d wrong for name\n",
->-				  i);
->-			return;
->+			dev_err(&chip->dev, "invalid handle 0x%08x\n", handle);
->+			ret = -EIO;
->+			goto err;
-> 		}
-> 	}
-> 	/* point offset_s to the start of the sessions */
->@@ -609,12 +652,14 @@ void tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf)
-> 		offset_s += len;
-> 	}
-> 	if (offset_s != offset_p) {
->-		dev_err(&chip->dev, "TPM session length is incorrect\n");
->-		return;
->+		dev_err(&chip->dev, "session length is incorrect\n");
->+		ret = -EIO;
->+		goto err;
-> 	}
-> 	if (!hmac) {
->-		dev_err(&chip->dev, "TPM could not find HMAC session\n");
->-		return;
->+		dev_err(&chip->dev, "could not find HMAC session\n");
->+		ret = -EIO;
->+		goto err;
-> 	}
->
-> 	/* encrypt before HMAC */
->@@ -646,8 +691,11 @@ void tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf)
-> 		if (mso == TPM2_MSO_PERSISTENT ||
-> 		    mso == TPM2_MSO_VOLATILE ||
-> 		    mso == TPM2_MSO_NVRAM) {
->-			sha256_update(&sctx, auth->name[i],
->-				      name_size(auth->name[i]));
->+			ret = name_size(auth->name[i]);
->+			if (ret < 0)
->+				goto err;
->+
->+			sha256_update(&sctx, auth->name[i], ret);
-> 		} else {
-> 			__be32 h = cpu_to_be32(auth->name_h[i]);
->
->@@ -668,6 +716,11 @@ void tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf)
-> 	hmac_sha256_update(&hctx, auth->tpm_nonce, sizeof(auth->tpm_nonce));
-> 	hmac_sha256_update(&hctx, &auth->attrs, 1);
-> 	hmac_sha256_final(&hctx, hmac);
->+	return 0;
->+
->+err:
->+	tpm2_end_auth_session(chip);
->+	return ret;
-> }
-> EXPORT_SYMBOL(tpm_buf_fill_hmac_session);
->
->diff --git a/include/linux/tpm.h b/include/linux/tpm.h
->index 3d8f7d1ce2b8..aa816b144ab3 100644
->--- a/include/linux/tpm.h
->+++ b/include/linux/tpm.h
->@@ -529,8 +529,8 @@ static inline struct tpm2_auth *tpm2_chip_auth(struct tpm_chip *chip)
-> #endif
-> }
->
->-void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
->-			 u32 handle, u8 *name);
->+int tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
->+			u32 handle, u8 *name);
-> void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
-> 				 u8 attributes, u8 *passphrase,
-> 				 int passphraselen);
->@@ -563,7 +563,7 @@ static inline void tpm_buf_append_hmac_session_opt(struct tpm_chip *chip,
-> #ifdef CONFIG_TCG_TPM2_HMAC
->
-> int tpm2_start_auth_session(struct tpm_chip *chip);
->-void tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf);
->+int tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf);
-> int tpm_buf_check_hmac_response(struct tpm_chip *chip, struct tpm_buf *buf,
-> 				int rc);
-> void tpm2_end_auth_session(struct tpm_chip *chip);
->@@ -577,10 +577,13 @@ static inline int tpm2_start_auth_session(struct tpm_chip *chip)
-> static inline void tpm2_end_auth_session(struct tpm_chip *chip)
-> {
-> }
->-static inline void tpm_buf_fill_hmac_session(struct tpm_chip *chip,
->-					     struct tpm_buf *buf)
->+
->+static inline int tpm_buf_fill_hmac_session(struct tpm_chip *chip,
->+					    struct tpm_buf *buf)
-> {
->+	return 0;
-> }
->+
-> static inline int tpm_buf_check_hmac_response(struct tpm_chip *chip,
-> 					      struct tpm_buf *buf,
-> 					      int rc)
->diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
->index 8bc6efa8accb..5b205279584b 100644
->--- a/security/keys/trusted-keys/trusted_tpm2.c
->+++ b/security/keys/trusted-keys/trusted_tpm2.c
->@@ -268,7 +268,10 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
-> 		goto out_put;
-> 	}
->
->-	tpm_buf_append_name(chip, &buf, options->keyhandle, NULL);
->+	rc = tpm_buf_append_name(chip, &buf, options->keyhandle, NULL);
->+	if (rc)
->+		goto out;
->+
-> 	tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_DECRYPT,
-> 				    options->keyauth, TPM_DIGEST_SIZE);
->
->@@ -316,7 +319,10 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
-> 		goto out;
-> 	}
->
->-	tpm_buf_fill_hmac_session(chip, &buf);
->+	rc = tpm_buf_fill_hmac_session(chip, &buf);
->+	if (rc)
->+		goto out;
->+
-> 	rc = tpm_transmit_cmd(chip, &buf, 4, "sealing data");
-> 	rc = tpm_buf_check_hmac_response(chip, &buf, rc);
-> 	if (rc)
->@@ -427,7 +433,10 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
-> 		return rc;
-> 	}
->
->-	tpm_buf_append_name(chip, &buf, options->keyhandle, NULL);
->+	rc = tpm_buf_append_name(chip, &buf, options->keyhandle, NULL);
->+	if (rc)
->+		goto out;
->+
-> 	tpm_buf_append_hmac_session(chip, &buf, 0, options->keyauth,
-> 				    TPM_DIGEST_SIZE);
->
->@@ -439,7 +448,10 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
-> 		goto out;
-> 	}
->
->-	tpm_buf_fill_hmac_session(chip, &buf);
->+	rc = tpm_buf_fill_hmac_session(chip, &buf);
->+	if (rc)
->+		goto out;
->+
-> 	rc = tpm_transmit_cmd(chip, &buf, 4, "loading blob");
-> 	rc = tpm_buf_check_hmac_response(chip, &buf, rc);
-> 	if (!rc)
->@@ -484,7 +496,9 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
-> 		return rc;
-> 	}
->
->-	tpm_buf_append_name(chip, &buf, blob_handle, NULL);
->+	rc = tpm_buf_append_name(chip, &buf, options->keyhandle, NULL);
->+	if (rc)
->+		goto out;
->
-> 	if (!options->policyhandle) {
-> 		tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_ENCRYPT,
->@@ -509,7 +523,10 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
-> 						NULL, 0);
-> 	}
->
->-	tpm_buf_fill_hmac_session(chip, &buf);
->+	rc = tpm_buf_fill_hmac_session(chip, &buf);
->+	if (rc)
->+		goto out;
->+
-> 	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
-> 	rc = tpm_buf_check_hmac_response(chip, &buf, rc);
->
->-- 
->2.52.0
->
-
-J.
-
--- 
-/-\                             | Every program is either trivial or
-|@/  Debian GNU/Linux Developer |    it contains at least one bug.
-\-                              |
+setuid shell scripts are not safe. But SELinux (and likely AppArmor
+and others) have long relied on the ability to transition on shell
+scripts to _shed_ permissions. That's a matter of writing your policy
+sensibly.
+Changing it would break existing userspace and policies.
