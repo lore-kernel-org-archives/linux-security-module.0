@@ -1,155 +1,159 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F703346BE
-	for <linux-security-module@vger.kernel.org>; Thu,  4 Dec 2025 09:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6A11A9FAF;
+	Thu,  4 Dec 2025 10:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764840737; cv=none; b=dkL25IS1StAqUV56CA0K3/aSex1HfJ68vfqVdSR4/f4MxWCkb00jnaNTHUrhpGixyXjYBEC3j0JbGniic+Mc8NNZdo/90tlR+LHs0W4iZ8qJo9m9Yqx8HM708YFXJFjRtiMqCbvuUcNFy3pEasCI5T3pA/TeP1ihFBjQlw2OExo=
+	t=1764842762; cv=none; b=H6dB8SmvBQer6o8lAwopJdD89PJ07qOeD2OT9Ht0OU8yJN0dia7pOyqU9x154aOUXWgTqHf8KszhNnWL6XZRIIkG4a5dKzojIE1z4pY/FvtSaT6NW9NZcq/tdXWu3i/0eybv/1ZMoScJCsuXGBB1Tz1WsBm1+WI4uDO2T+76x0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764840737; c=relaxed/simple;
-	bh=7KDSP+eJnIgbODlTxSo2m0C89a6pRbVbkfcbCzde8G8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cFESXaIMrbYBZgLSsC/jnbI/tOThlugUJQW2nAEQwsm6krYx3BCFhuo81YU3x9/pZzWnnd9hGeQdbwdNT4SXKrpOeJ5LEpWO8gPLjkx9NE8jPScvLypzhqX7gCddWpp443Ysivxpc4omhokrtPi6LhIRmYcP2PyEKKjqO4bCbnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KiErZhOh; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1764842762; c=relaxed/simple;
+	bh=HdxuyW48hjewxA37dD/zbSml/Oj0HqVBN0P1TbtJSfw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hu1oU3fCB3QYOBT/z4oPmr8VBoHZZLin1tam1oVq0OgnxFonGxb/7ROpXEeNreG8I2zXxA190KbPIlTp5nEd7QYbUrlpR7oKiWmhAFWmLucaVQY3gKTHE52seiQ8wdWqhos80eSi16CVQI/Ki8Nr3wjhFGMoePFPBBHASr8D0z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Osh22c/g; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KiErZhOh"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42e2e6aa22fso326576f8f.2
-        for <linux-security-module@vger.kernel.org>; Thu, 04 Dec 2025 01:32:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764840734; x=1765445534; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P9pe+wJENeZc5IcOvHk937NmwKikq+O3BvHjwpbysZ0=;
-        b=KiErZhOhZY8yDuUXrrd4zP5DgXNsChXXR8AEJ5y0LV2jtZM2sJ+GgXZxIHDSLJ8kqv
-         t44/5lQBDSqO1nzX1gXjajizaf9DBRiBc4XkHgIgKH+Xja0RyniP3P61D8gVRTSiLt+6
-         8Z7/WeZqNU2wuaBxW/cUiUScO/UwTSuwzGMNpQLEUMcdAXzEv35UUekmSeJHLB9V+jKt
-         fowJSb/fb0YCwM8/cTvus4tpzgzrIs3NCZix7EnxiyB75sW/tZGp5Dbg3c/WKf2g6LMs
-         RLWLTfrZMikaP1W1EOHIRYkvwupCRhiBZrQhZ4toQBCEr2kiXWIwNNcI8e0F0dSNEuqr
-         RQkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764840734; x=1765445534;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=P9pe+wJENeZc5IcOvHk937NmwKikq+O3BvHjwpbysZ0=;
-        b=HIQJtagbC7o5l0fTXebDgYFTaXDaFh3n1hB74KfbVcGv+gbHD8JtqdRyE2vQXo9L3O
-         aG2YRFsmtDZTIsmFi9iLwz/Z9HhyD+mGegOAADQ2KvsPRm7NeCdJKctdKwBz7yR7vRro
-         Mw0b4gxZvmx/2xaTJj6ZHRFfWp2Xu8Rbot43Qnny2GGogaFOilMkVfvZ/T7cw5uyKR/r
-         +Df1R28wjRNiijg671piYaL3UWjlO4w3pGcmvgswuXtvT4Iqp+XzUpu4WK2/xHtSOMqm
-         ixW1QCsqicaPaj8iGNeb1Nj0Ah0l6r5cBxO5TtHC7eWp343hxqfd6yAUi6nXJMBr7EmE
-         fB1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUSVSLPVwziSRBPKUDBmbJjoY0MYkCrcgAtbvWx+of/OGAxQf3H4VpH0BgdPQh/wXaoN18ZDQoi4TQuwrIajlyg/mX7DbA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybGg4La2n+tCZCzUkftFBbe3se9N2WGKsGHbq5fwMrv9PwB9k4
-	MNSWOBl6P3sG3BxmCKBPJEPN1H42fR7PVGbACjWm+PrXunYtnRbsiahk
-X-Gm-Gg: ASbGnctjP5y65jUbdYM5DPHejawqhiEOXF1q6B3LlH3QB71Ub8B/JZJNeNavJl5cozN
-	Yaxvjbff4GomgFYtsvByip1o/1nOY/24xDaXNzzUG9nbZPE8TPPsYVzlDcgV4kL9GQwfnO1ywAA
-	9w7+GjH2GJARFd/1++xFcP+KnHX/8LR/qqmpW6YbF6SOnDGKjpS8axgaIDXYpUC4cGlqm7glwkD
-	lmTVTrXpn53344h/ZR2dtNVvFkop1tNG4L7wLitCAfJ+M/ddP5MEPLixI3RJfxK7ekVyczW1aL4
-	OH2iUPdgyvbHc57bXY2k0Du4w/QthdFcUrzizr7ZMqJvym8EtRYIK7QP2uXZthME5ekKtAJKS94
-	22D2YYrgOrfiP8poZWPnue3zveaPVQq2WpasFPVc6adn7C5aUWPg7zpi7F9B710B7Gu5/79yLXF
-	2eFe4V2wTKBrl0yiiN9Bm3yRe8TO7PaLYDomivtqsXdogyc8RgvK+d
-X-Google-Smtp-Source: AGHT+IEpeLb5DzDFyyRRjLJBycEA8/oon798RLVjm4cwDE2uj2+226ExQ98mf5m0TZ5rx0eulXU/Nw==
-X-Received: by 2002:a05:6000:2dc4:b0:429:d725:4125 with SMTP id ffacd0b85a97d-42f7987519fmr2415263f8f.54.1764840733805;
-        Thu, 04 Dec 2025 01:32:13 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42f7d2226e7sm2182928f8f.27.2025.12.04.01.32.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Dec 2025 01:32:12 -0800 (PST)
-Date: Thu, 4 Dec 2025 09:32:09 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Bernd Edlinger <bernd.edlinger@hotmail.de>, "Eric W. Biederman"
- <ebiederm@xmission.com>, Roberto Sassu <roberto.sassu@huaweicloud.com>,
- Alexey Dobriyan <adobriyan@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
- Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>, Will
- Drewry <wad@chromium.org>, Christian Brauner <brauner@kernel.org>, Andrew
- Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>, Serge
- Hallyn <serge@hallyn.com>, James Morris <jamorris@linux.microsoft.com>,
- Randy Dunlap <rdunlap@infradead.org>, Suren Baghdasaryan
- <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>, Helge Deller
- <deller@gmx.de>, Adrian Reber <areber@redhat.com>, Thomas Gleixner
- <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>, Alexei Starovoitov
- <ast@kernel.org>, "linux-fsdevel@vger.kernel.org"
- <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, linux-security-module@vger.kernel.org, tiozhang
- <tiozhang@didiglobal.com>, Luis Chamberlain <mcgrof@kernel.org>, "Paulo
- Alcantara (SUSE)" <pc@manguebit.com>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Frederic Weisbecker <frederic@kernel.org>,
- YueHaibing <yuehaibing@huawei.com>, Paul Moore <paul@paul-moore.com>,
- Aleksa Sarai <cyphar@cyphar.com>, Stefan Roesch <shr@devkernel.io>, Chao Yu
- <chao@kernel.org>, xu xin <xu.xin16@zte.com.cn>, Jeff Layton
- <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, David Hildenbrand
- <david@redhat.com>, Dave Chinner <dchinner@redhat.com>, Shuah Khan
- <shuah@kernel.org>, Elena Reshetova <elena.reshetova@intel.com>, David
- Windsor <dwindsor@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, Ard
- Biesheuvel <ardb@kernel.org>, "Joel Fernandes (Google)"
- <joel@joelfernandes.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Hans Liljestrand <ishkamiel@gmail.com>, Penglei Jiang
- <superman.xpt@gmail.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Adrian Ratiu <adrian.ratiu@collabora.com>, Ingo Molnar <mingo@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, Cyrill Gorcunov
- <gorcunov@gmail.com>, Eric Dumazet <edumazet@google.com>,
- zohar@linux.ibm.com, linux-integrity@vger.kernel.org, Ryan Lee
- <ryan.lee@canonical.com>, apparmor <apparmor@lists.ubuntu.com>
-Subject: Re: Are setuid shell scripts safe? (Implied by
- security_bprm_creds_for_exec)
-Message-ID: <20251204093209.706f30a6@pumpkin>
-In-Reply-To: <20251204054915.GI1712166@ZenIV>
-References: <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<87tsyozqdu.fsf@email.froward.int.ebiederm.org>
-	<87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
-	<87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
-	<6dc556a0a93c18fffec71322bf97441c74b3134e.camel@huaweicloud.com>
-	<87v7iqtcev.fsf_-_@email.froward.int.ebiederm.org>
-	<dca0f01500f9d6705dccf3b3ef616468b1f53f57.camel@huaweicloud.com>
-	<87ms42rq3t.fsf@email.froward.int.ebiederm.org>
-	<GV2PPF74270EBEE90CDCD964F69E806EF58E4D9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<20251204054915.GI1712166@ZenIV>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Osh22c/g"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C558BC4CEFB;
+	Thu,  4 Dec 2025 10:05:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764842761;
+	bh=HdxuyW48hjewxA37dD/zbSml/Oj0HqVBN0P1TbtJSfw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Osh22c/gHyR+VPM2kPcT0dPiD6K9BvVhe5Ewzn9HXTkYe8a046bP8uE4VgCP19aDi
+	 K7xBIYI24RyUjLFUPu8Jsurggk4oUE//29xVfPPkiZv362d67AnRunbs4b5rs1+Gjw
+	 YS2XQ/6kgerJ6XOyYneyYfkre1v2DNabxE2eCArlBtO1fZs0/9oUkgnRGacd11N388
+	 /GqZScuD1gNPgkWGXr8EGPBS8fC6oU43ADwQuKp3i8wBSNVTdMRqREmWXwUbXqmGUE
+	 ffmQYPQtEzvEiW/FXBg4sDYheO7g+t6NXrH78pesoPO/l7JrqMckbFuomSJrJhGli1
+	 QsAy+pTCZPGgA==
+From: Christian Brauner <brauner@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Elle Rhumsaa <elle@weathered-steel.dev>,
+	Carlos Llamas <cmllamas@google.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	linux-block@vger.kernel.org,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Benno Lossin <lossin@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	linux-pm@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>,
+	Serge Hallyn <sergeh@kernel.org>,
+	linux-security-module@vger.kernel.org,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jason Baron <jbaron@akamai.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	linux-kselftest@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Andrew Ballance <andrewjballance@gmail.com>,
+	maple-tree@lists.infradead.org,
+	linux-mm@kvack.org,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Vitaly Wool <vitaly.wool@konsulko.se>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	devicetree@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-pci@vger.kernel.org,
+	Remo Senekowitsch <remo@buenzli.dev>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	rcu@vger.kernel.org,
+	Will Deacon <will@kernel.org>,
+	Fiona Behrens <me@kloenk.dev>,
+	Gary Guo <gary@garyguo.net>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Christoph Lameter <cl@gentwo.org>,
+	David Rientjes <rientjes@google.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	linux-usb@vger.kernel.org,
+	Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Rae Moar <raemoar63@gmail.com>,
+	rust-for-linux@vger.kernel.org
+Subject: Re: (subset) [PATCH 00/46] Allow inlining C helpers into Rust when using LTO
+Date: Thu,  4 Dec 2025 11:05:29 +0100
+Message-ID: <20251204-denkbar-stinktier-8a7c07650891@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
+References: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1456; i=brauner@kernel.org; h=from:subject:message-id; bh=HdxuyW48hjewxA37dD/zbSml/Oj0HqVBN0P1TbtJSfw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQaxnzoC5KPC9BQ6Xq2IqjgffnvpRpvskU9368/659bp HtRXnNJRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESuWjAyXDA8eVezNuVTq5R5 o8gOmf3FN+71+Ire2yjd+7GFVzhvPyPDbR6JQvt2uT/tr3YuKJvw1D1B7vuZ55NmCNlPeyuwRvU UKwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, 4 Dec 2025 05:49:15 +0000
-Al Viro <viro@zeniv.linux.org.uk> wrote:
-
-> On Wed, Dec 03, 2025 at 02:16:29PM +0100, Bernd Edlinger wrote:
+On Tue, 02 Dec 2025 19:37:24 +0000, Alice Ryhl wrote:
+> This patch series adds __rust_helper to every single rust helper. The
+> patches do not depend on each other, so maintainers please go ahead and
+> pick up any patches relevant to your subsystem! Or provide your Acked-by
+> so that Miguel can pick them up.
 > 
-> > Hmm, yes, that looks like an issue.
-> > 
-> > I would have expected the security engine to look at bprm->filenanme
-> > especially in the case, when bprm->interp != bprm->filename,
-> > and check that it is not a sym-link with write-access for the
-> > current user and of course also that the bprm->file is not a regular file
-> > which is writable by the current user, if that is the case I would have expected
-> > the secuity engine to enforce non-new-privs on a SUID executable somehow.  
+> These changes were generated by adding __rust_helper and running
+> ClangFormat. Unrelated formatting changes were removed manually.
 > 
-> Check that _what_ is not a symlink?  And while we are at it, what do write
-> permissions to any symlinks have to do with anything whatsoever?
-> 
+> [...]
 
-You'd need to check for write permissions to all the directories in the
-full path of the symlink and in all the directories traversed by the symlink.
-(and that may not be enough....)
+Applied to the vfs-6.20.rust branch of the vfs/vfs.git tree.
+Patches in the vfs-6.20.rust branch should appear in linux-next soon.
 
-Passing the shell (or whatever) /dev/fd/n doesn't seem (to me) any different
-from what happens when the elf interpreter runs a suid program.
-You might want to check for non-owner write permissions to the /dev/fd/n entry,
-but that is true for any suid executable, not just scripts.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-FWIW the SYSV shells normally set the effective uid back the real uid.
-So making a script suid didn't work unless the script started "#!/bin/sh -p".
-Whether that improved security (rather than being annoying) is another matter.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-	David
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.20.rust
+
+[18/46] rust: fs: add __rust_helper to helpers
+        https://git.kernel.org/vfs/vfs/c/02c444cc60e5
+[27/46] rust: pid_namespace: add __rust_helper to helpers
+        https://git.kernel.org/vfs/vfs/c/f28a178408e4
+[29/46] rust: poll: add __rust_helper to helpers
+        https://git.kernel.org/vfs/vfs/c/de98ed59d678
