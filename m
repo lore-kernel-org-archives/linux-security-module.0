@@ -1,135 +1,117 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64B92367D5
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Dec 2025 23:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEAE33EC;
+	Thu,  4 Dec 2025 05:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764804764; cv=none; b=lvrV9R3zlKyqW/zs7cFHFTNhbv3ko2aeWz3XNZ7gU6cOjtR2tFiUDBC5jtR1kwnzPdXSpOisCTKAViBzU88o5sLBC64zWQoeTMAxke4ESCN7wBCCjOdI34sZVvWk+pTbH2W7cKbeiNjsSqun/UbbhiYU/RIgYe6pY2ttZFttKXc=
+	t=1764827382; cv=none; b=IsvmIOshhgREtyKjQAAVF00719pCsFYy5xZzpeI7cAIxTEQkxI//GfIUVmqo0cePydV6vteue+DqzjiVcHxn4kukIZfp7JzqsT9/arTmlU5JXD1uz9Jiqgh6JBLTVikeZ7EY3Dm70WzAf4jdbAkRVMas2uPipn8NWCRhS6bXpVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764804764; c=relaxed/simple;
-	bh=kHhaOPlGd9dZjfWcIG2wpcJK4KXWGtcwGLCzRIOJ8Ek=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ny8dGFGv1lduzHdzq3fFNPq7hvj4IGUxykz6WxeQESGbDPf9xNHW/T1fznM/cYEqfkWQ5/C/Kxqi6pEfHFSRofM4efGcrxq6m3pzNZHAxwANZQYlQ4kCcizsqNBUSQB5abf/CSrOrMl6qT5+y/mGw5/TZl0Thy2hQzYOfH+oEXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KCKc7OI4; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1764827382; c=relaxed/simple;
+	bh=1/qVzHTq0dl3bm/fJdmBkkGZRpToC5uG2LWdRmGkX5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cQILZj2FaHCHYACJS8T9xmLrWbx0WlmKpkJhnneN01TKcAJ5Ut0AH73/FiK8+iGRsE8YOWY2MbCgQJKT8AkW+kizwfaNLS3lXEeBUPONRoX5CW71LVSsBGSP6DZ1btl18aHFiwvYLyB9jCvOG9d26RY5fKugts6tWe4GB6I3fGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=nXmoy3q7; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KCKc7OI4"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2981f9ce15cso4235675ad.1
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Dec 2025 15:32:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1764804761; x=1765409561; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HY2AZAVCpp6Sq52vUbSB6ZWac+lqPfjnUYQLvy5vcjo=;
-        b=KCKc7OI47GBbeAHlhRdJDGI/ys69D1Bqgv23CRRHIroRXUr1jOcRx9Qjehks85bE6b
-         v+PvQofkRSTr17XjU6h5Kg7c9lvMtCEPfmEXqZU901H270zYSdtiFsFTjxUOLs0c9/JI
-         D1urQjcysNTGNDfhArNiMTYTWvrT1uIQwNWRfKx8CVm45dnnsMeP5Byzgn+FtWJuWDRC
-         zJa3MKBczKFzVmZlD8GPzCyRtiXX9z0dxfMw0va7adSG24bx//fuGX8sPEKsU1vK+9lg
-         QbZQof7XSuZazl7dDjlhxZsVLXWpERG1sUlOflVtKLftHfhFbgG8r8OAf6oysDjMMd0b
-         ajZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764804761; x=1765409561;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=HY2AZAVCpp6Sq52vUbSB6ZWac+lqPfjnUYQLvy5vcjo=;
-        b=vJb9bYkAM2WESEfl3oY5haXaiXS78c20R97HfRby+QSMR42EEi7vAdcuMqCXnbjUcm
-         XkpmHVTa+/nEVuq6HIzy7Rh9HZPcu8VNn+mDv4216WCRUTqmCxK/jFMeqZSabsIHKWKS
-         3yEdK/h+vVfWtaEwH+Vm3/SYRuTTm49KVkoimiVKeYC16l7Lz9WCadL1vZJcIYjP5IAv
-         0mniLVX59edmSuQBheavPH8XGOBputUelniSYroycJxp5PV6RTo92E2SNK8KcgL7KA06
-         3S4WCg4N/upQhwHniJpP4ESpYb4fNNjbhZe2Op54OKXTp8JgdBARLh8UMjXLU2ySww2Y
-         iX9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVoBXD28pBCBJm80HyZhK8ZImXW9nSLip3uTcYqsm/jJHjoaDg3F451JzPQqhVVBgPxSG5WRN0VD69FnFIBKbc8eDsrZgw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUFkqAIMDexv5tCVNmXiFycwmKcftOVy4YBTZAdQnBG9XgsXDt
-	oG6ArxDWYyWUU54dL0JDdj1XOMOfyAS+oeakFaCedbjiO8ji0OFFcmo2flOJB+ksedYg6rIXlDn
-	5RiFSW9StAlfQEh79UNDwUzO22CjS7ujK8L2RsJpr
-X-Gm-Gg: ASbGncutev7E4HS42/cDPFfBsSOOzkd0zkSwUHjgje020PiVL5s0gFrK9OdGTFCl8Ge
-	aMdEESj2dPWjV2cRlrB/Jc4/MEWUnIaonpfUXy+QymF9u9dVsZkXc0ATzPkDznbkem2iAPxqjYf
-	XhSP04LKPD3xhw30e2glrpA51BRTB8mvIlwHh/QLqRYBWlWVQD1qCDNpw7iY8C/b6FdKvpd0g3P
-	RSLBAJWpgMaGqipeU/HR1k59w6dZb/ni904v+grHpmqTEc19TwHBbDScDjAzlE5ARsKH4w=
-X-Google-Smtp-Source: AGHT+IG1Jsjm1UuK/qNamOiWRevRd2cMtkd+ihRs6an6FM35jAGZvI/pIjHY22NzUCZWyyhO3AxBhbZVHdSVN5kgYl4=
-X-Received: by 2002:a17:903:1a43:b0:297:df17:54cd with SMTP id
- d9443c01a7336-29d68397afcmr47724655ad.27.1764804761160; Wed, 03 Dec 2025
- 15:32:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="nXmoy3q7"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=s6+X3uAjfnbMKEn6Xkh/hO+HnZ24JeUWApwybKJc010=; b=nXmoy3q7PEPpF5abxhwxO3qXvd
+	TkOCDMpiiUph/GGfD1WSJSK6FPE7975gCK4ZlbwYerMAlQ+aDVWKI0+zdSP+F0KjPdtQh7MNS982p
+	z3URRnIZyusnvBJZ0tu+Gk9YMZthTHw6do/oReTtyIYkuoIlZyFmFoCJSyIVZsPmb/mEgU5ADU4bK
+	UpeFaQlqNn8cm5F7j27o7aJ9XMA+VckFrpslNClucgYUn+qf2Q0VjoEWhwaITyMRS1yfk5eRiK27k
+	h1+uW0AsswtW89hBcY65p1OQhlSrI4BenMrX6NTWbeIfKYv8oym8o/6VjEDkCnb89R955AmHDd024
+	le4n+XBg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vR2DL-00000008t6s-2eTQ;
+	Thu, 04 Dec 2025 05:49:15 +0000
+Date: Thu, 4 Dec 2025 05:49:15 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	Roberto Sassu <roberto.sassu@huaweicloud.com>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	Oleg Nesterov <oleg@redhat.com>, Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
+	Adrian Reber <areber@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	tiozhang <tiozhang@didiglobal.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	YueHaibing <yuehaibing@huawei.com>,
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
+	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	David Windsor <dwindsor@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hans Liljestrand <ishkamiel@gmail.com>,
+	Penglei Jiang <superman.xpt@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>,
+	Eric Dumazet <edumazet@google.com>, zohar@linux.ibm.com,
+	linux-integrity@vger.kernel.org, Ryan Lee <ryan.lee@canonical.com>,
+	apparmor <apparmor@lists.ubuntu.com>
+Subject: Re: Are setuid shell scripts safe? (Implied by
+ security_bprm_creds_for_exec)
+Message-ID: <20251204054915.GI1712166@ZenIV>
+References: <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <87tsyozqdu.fsf@email.froward.int.ebiederm.org>
+ <87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
+ <87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
+ <6dc556a0a93c18fffec71322bf97441c74b3134e.camel@huaweicloud.com>
+ <87v7iqtcev.fsf_-_@email.froward.int.ebiederm.org>
+ <dca0f01500f9d6705dccf3b3ef616468b1f53f57.camel@huaweicloud.com>
+ <87ms42rq3t.fsf@email.froward.int.ebiederm.org>
+ <GV2PPF74270EBEE90CDCD964F69E806EF58E4D9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cb4293da-41dc-4586-adca-2859944905dc.ref@schaufler-ca.com>
- <cb4293da-41dc-4586-adca-2859944905dc@schaufler-ca.com> <866a132a-b6e2-4e40-aba3-d8b733184672@schaufler-ca.com>
-In-Reply-To: <866a132a-b6e2-4e40-aba3-d8b733184672@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 3 Dec 2025 18:32:29 -0500
-X-Gm-Features: AWmQ_bkCUuE1qDK-R0RrJbFIhp34-Oy1qVUWpXzfhCQjecsRkI8eSq5yea3Mb4o
-Message-ID: <CAHC9VhQOW8a_pTKS+Mhtu2LEFCPRhEzuhLsJOFHNTNUNUELChg@mail.gmail.com>
-Subject: Re: set_security_override_from_ctx()
-To: Casey Schaufler <casey@schaufler-ca.com>, 
-	LSM List <linux-security-module@vger.kernel.org>
-Cc: David Howells <dhowells@redhat.com>, SElinux list <selinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <GV2PPF74270EBEE90CDCD964F69E806EF58E4D9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Dec 3, 2025 at 5:03=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
->
-> Adding David, who wrote the code ...
->
-> On 12/3/2025 1:32 PM, Casey Schaufler wrote:
-> > While trying to ensure sanity in security context processing I
-> > discovered set_security_override_from_ctx(), which is not used anywhere
-> > in the upstream kernel. Does anyone here know what its purpose is? I
-> > would very much like to remove it, but of course wouldn't want to break
-> > anything important.
+On Wed, Dec 03, 2025 at 02:16:29PM +0100, Bernd Edlinger wrote:
 
-It looks like set_security_override_from_ctx() was first introduced
-back in v2.6.29, but I didn't see an in-tree caller until v2.6.30.  I
-didn't check every kernel release, but doing some spot checks it looks
-like cachefiles remained the only user until it dropped the call in
-v6.12 with the following commit:
+> Hmm, yes, that looks like an issue.
+> 
+> I would have expected the security engine to look at bprm->filenanme
+> especially in the case, when bprm->interp != bprm->filename,
+> and check that it is not a sym-link with write-access for the
+> current user and of course also that the bprm->file is not a regular file
+> which is writable by the current user, if that is the case I would have expected
+> the secuity engine to enforce non-new-privs on a SUID executable somehow.
 
-  commit e5a8b6446c0d370716f193771ccacf3260a57534
-  Author: Max Kellermann <max.kellermann@ionos.com>
-  Date:   Fri Dec 13 13:50:05 2024 +0000
-
-   cachefiles: Parse the "secctx" immediately
-
-   Instead of storing an opaque string, call security_secctx_to_secid()
-   right in the "secctx" command handler and store only the numeric
-   "secid".  This eliminates an unnecessary string allocation and allows
-   the daemon to receive errors when writing the "secctx" command instead
-   of postponing the error to the "bind" command handler.  For example,
-   if the kernel was built without `CONFIG_SECURITY`, "bind" will return
-   `EOPNOTSUPP`, but the daemon doesn't know why.  With this patch, the
-   "secctx" will instead return `EOPNOTSUPP` which is the right context
-   for this error.
-
-   This patch adds a boolean flag `have_secid` because I'm not sure if we
-   can safely assume that zero is the special secid value for "not set".
-   This appears to be true for SELinux, Smack and AppArmor, but since
-   this attribute is not documented, I'm unable to derive a stable
-   guarantee for that.
-
-   Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-   Signed-off-by: David Howells <dhowells@redhat.com>
-   Link: https://lore.kernel.org/r/20241209141554.638708-1-max.kellermann@i=
-onos
-.com/
-   Link: https://lore.kernel.org/r/20241213135013.2964079-6-dhowells@redhat=
-.com
-   Signed-off-by: Christian Brauner <brauner@kernel.org>
-
-... which basically just drops the security_secctx_to_secid() from the
-code path.
-
-I would suggest sending a patch to remove
-set_security_override_from_ctx() since there are no longer any
-callers.  Send it to the LSM list and I'll merge it once the merge
-window closes.
-
---=20
-paul-moore.com
+Check that _what_ is not a symlink?  And while we are at it, what do write
+permissions to any symlinks have to do with anything whatsoever?
