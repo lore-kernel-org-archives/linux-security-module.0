@@ -1,75 +1,48 @@
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6E62D8DD6
-	for <linux-security-module@vger.kernel.org>; Thu,  4 Dec 2025 21:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663A426CE17;
+	Thu,  4 Dec 2025 22:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764885375; cv=none; b=cZzgXSfEuvPInY7Lp1v3WwmVDFzXThtabGf2KdHNf2ykLiQ9WLMJXuuPXWIaSGFLHOrKzxAKjjxekgruG6gh2ubOG8fM8V2vXyRckK+eVaabqUejV7N+RvDtiLaZRdUqADemuDfBbnD4gSo3OcxxhuLC5ln5acdm6hfXH0yQhDM=
+	t=1764887499; cv=none; b=c1vZnbMFRDEmcI/zqlST1P3HsrpqW6Z9Iog4VE//G8Y7lfYHObC2tKR1S6qB5WlaBPAEs2FMp8HQ5r1hAA12XyhUnH8BmyfzXEhKWcaZ6SuvYhDbI68Unp7QRlATMRVOFKEJL/Gd7E8Xm76b3svTQ09HIvEpSMlJcMNpOcsOZw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764885375; c=relaxed/simple;
-	bh=1OzAP8QYDJFGQLO1m4tUDCn5Y+FAfG+t+Qg39tZE5UM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NBOhjGHCuXt2HspmF7halyeoA0tcMeLYKyVSwmyPR3NBQUDklp2fkTnbAMDgr+oMpVq5ZXDmmMGTth+ONN9f4houS5sX2GkeTjmbZAEkxXe1wBeQIngADMxnLiT0MuuHH/PsxqEQrkLoIHRisRaLjVLhLzoF4HlOcIrN9QsYf/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJrXSEAR; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1764887499; c=relaxed/simple;
+	bh=edPTdYoWTrNmAuZsh3OQPj8fSejBOtWzuG4EPOjxqMA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nWe0yWmLRKVseoUH//wOr4xUKwkPZTFIK2SBsjydgaGAySffQ/guQi3wSzRnxUFVJhS1cXNhD8UK+iEN143ffqpugJqRF60CHwTZuzPjCUdPd5yazDU3vsD1a8la5y1MEXVmCb3E/ZzRuEYwem4GlhcumJfC3tYNoCHnAYNezaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iF3q6kJ4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJrXSEAR"
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-34381ec9197so1266513a91.1
-        for <linux-security-module@vger.kernel.org>; Thu, 04 Dec 2025 13:56:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764885372; x=1765490172; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Ww/VMC8wTs0WFN9a1LmPmA1Xu92cHbV5D2cGiRkdIY=;
-        b=KJrXSEAR5soVpSRL2yKyPKsOrYzGI1R+WKQNxC7iOHE7Q3CPiqM2V8AcGYKlVa+uCy
-         zMf6cJd+yCW79OyuXmp/sPhe3vkzwFAxDz6BeNRl3Sz1qTnhn+gkS7vgi9qL+wvfN+lY
-         XKxZw5q+51kSG/q0Qs2u/nTwBiRJ9X5HKimYybMJyAHir2LLT3RqLf2nWpbtyqC5CDI5
-         YLyo7rb5/T/JKovJWdqPQdwN54sT+wuizvOsak5uEVs3JmW7hjmAbCdNkkjWMCSr3SGK
-         fZNDVM+AT7vmIG/W19vn7yBmR8lDwiNrXU4o8TBRXHOErCwrPPO4wWcF4QOZBchWRSaw
-         nrZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764885372; x=1765490172;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5Ww/VMC8wTs0WFN9a1LmPmA1Xu92cHbV5D2cGiRkdIY=;
-        b=qypPyFlR1pfcMJOusxHikYQ0EbAG5xr6ba1GaHMAwd2+4+c4dmhwzh2Iur+ghd/4eB
-         9jaz0scoxow5NomRbHZXYoWEQowQm3XdMXumK7IpRgppmZu2sR/6Qp/6xIFW6Y/Y3XgR
-         N4cx6jmpBC83LDUsCNaiVbPYPEbDoHEmX/FbP6hfUhGFhorVoMqKcyqvtOi43QxjWjGA
-         mRY+8IZsU/Bf4UUi+OfGcSGpmXyAqG/bcFdeI+Rzt5mDpCTmlQfirSVQ8CB0xY6dNsHf
-         M/WP/XdM0piWdJmKuRzajCLkJ9n3Nb99vxiabXUioiAzqGXdTHDorpGHKSP0laFYoFX7
-         y6wQ==
-X-Gm-Message-State: AOJu0YzH7m/gZvVDGkRgXsZSdbfFbGWWNOFbJM6iqEDlKJhiX3ZgC3ZF
-	L6YlEOWgKWTtzgLF0M2hqI4jUIuhtyfpDaJALeX206RFfTiYP73FZu7XlyxeMr2y
-X-Gm-Gg: ASbGncuVg12gc2vjaftGAcy/XNpJUL3x/4ZLs8kcUslWGqAQEhqEBe+LmWD5Iobwl2R
-	a5nOB62UalisdD/fgLR867QdmR5ZGnBVRYXgl55do4I645mQW5JHba5s+thWxT/QB/Qehi+OJ/F
-	Ec8hbbUnx/ATt3pLiiGsw2unxs7gDMoLqLz9UtUL8+UkiNhBbZtFA+2tboETdJLOolASA//Wifd
-	VYmdh1LAjlbiwFcext7N1krKcMNvv+/+O3Ob0foufBsLoV/7bASFRzcj560a+VuPkzEO0tMKLuG
-	M5Qr9YD2WtD3OgW5o9PBXSL7dqPnqJmn6l0qVQolvllhT93MOWqaYzwmTva4k5eXi1Hu61VaPjC
-	GZ9/sBlRY7hJ4TnWbbfBSYohS21v3va4NPEit//D5aWQBRS9Yf852t/FkIHT0P9lkq5+QKupwlY
-	N55KQlmwr1J+qzf4NLp9NQ0yy+3dht0lJ7LhFXFfLc9Op9vJ55OEI68Dss3mALDORtPgUJ
-X-Google-Smtp-Source: AGHT+IGdGnYH3CUqMgEI1Ziq/CBQEROZpc4K04Jne2Vc9sczKNzNBVDGeI+Mje34fC621EkIq8MBEg==
-X-Received: by 2002:a17:90a:9f84:b0:340:e8e9:cc76 with SMTP id 98e67ed59e1d1-349125d3475mr6220952a91.11.1764885372036;
-        Thu, 04 Dec 2025 13:56:12 -0800 (PST)
-Received: from kailas.hsd1.or.comcast.net ([2601:1c2:982:6040:9be5:76bb:9ba9:8a19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3494ea7b5d1sm2805679a91.13.2025.12.04.13.56.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Dec 2025 13:56:11 -0800 (PST)
-From: Ryan Foster <foster.ryan.r@gmail.com>
-To: linux-security-module@vger.kernel.org
-Cc: serge@hallyn.com,
-	paul@paul-moore.com,
-	linux-kernel@vger.kernel.org,
-	Ryan Foster <foster.ryan.r@gmail.com>
-Subject: [PATCH] security: Add KUnit tests for kuid_root_in_ns and vfsuid_root_in_currentns
-Date: Thu,  4 Dec 2025 13:56:09 -0800
-Message-ID: <20251204215610.148342-1-foster.ryan.r@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <aSXICxT6u0Rx1FhW@mail.hallyn.com>
-References: <aSXICxT6u0Rx1FhW@mail.hallyn.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iF3q6kJ4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97F06C4CEFB;
+	Thu,  4 Dec 2025 22:31:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764887499;
+	bh=edPTdYoWTrNmAuZsh3OQPj8fSejBOtWzuG4EPOjxqMA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iF3q6kJ4P32WjFHf5lV4IrpZvIeUcJ96Kpu9oB0SvqduhmuaiNGnRScxZQdy5poeB
+	 tneoWvSk7fqI56QZKtUZyhHTaGcbpvOGAqFsXhhWHmqVFMXDaJB6FcTz1RXhP97J2y
+	 sFLcPZ9e6JIHxaJKTnkNu3i+/E/PjxWpxhU7QzPoTnWeAnyE29gcNUbsXUDLwiVZ5N
+	 JC+X6gk1o6oPn1Em1OoYIWx3KeK/l69+JnD1Z9SLtPQAO1DlUdv6ww/md5QlWdL+Q/
+	 JQJu4uQh+Xoo2GkL+cKaJITh1ooOlMiYI8xJRvtoJlGtgIqeW23WgMVNOLLAIiIfhj
+	 aN6uWSz73Ab0g==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-kernel@vger.kernel.org (open list),
+	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH] KEYS: trusted: Re-orchestrate tpm2_read_public() calls
+Date: Fri,  5 Dec 2025 00:31:27 +0200
+Message-ID: <20251204223128.435109-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -78,378 +51,463 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add comprehensive KUnit tests for the namespace-related capability
-functions that Serge Hallyn refactored in commit 9891d2f79a9f
-("Clarify the rootid_owns_currentns").
+tpm2_load_cmd() and tpm2_unseal_cmd() use the same parent, and calls to
+tpm_buf_append_name() cause the exact same TPM2_ReadPublic command to be
+sent to the chip, causing unnecessary traffic.
 
-The tests verify:
-- Basic functionality: UID 0 in init namespace, invalid vfsuid, non-zero UIDs
-- Actual namespace traversal: Creating user namespaces with different UID
-  mappings where uid 0 maps to different kuids (e.g., 1000, 2000, 3000)
-- Hierarchy traversal: Testing multiple nested namespaces to verify
-  correct namespace hierarchy traversal
+1. Export tpm2_read_public in order to make it callable from 'trusted_tpm2'.
+2. Re-orchestrate tpm2_seal_trusted() and tpm2_unseal_trusted() in order to
+   halve the name resolutions required:
+2a. Move tpm2_read_public() calls into trusted_tpm2.
+2b. Pass TPM name to tpm_buf_append_name().
+2c. Rework tpm_buf_append_name() to use the pre-resolved name.
 
-This addresses the feedback to "test the actual functionality" by creating
-real user namespaces with different values for the namespace's uid 0, rather
-than just basic input validation.
-
-The test file is included at the end of commoncap.c when
-CONFIG_SECURITY_COMMONCAP_KUNIT_TEST is enabled, following the standard
-kernel pattern (e.g., scsi_lib.c, ext4/mballoc.c). This allows tests to
-access static functions in the same compilation unit without modifying
-production code based on test configuration.
-
-All 7 tests pass:
-- test_vfsuid_root_in_currentns_init_ns
-- test_vfsuid_root_in_currentns_invalid
-- test_vfsuid_root_in_currentns_nonzero
-- test_kuid_root_in_ns_init_ns_uid0
-- test_kuid_root_in_ns_init_ns_nonzero
-- test_kuid_root_in_ns_with_mapping
-- test_kuid_root_in_ns_with_different_mappings
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- security/Kconfig          |  17 +++
- security/commoncap.c      |   4 +
- security/commoncap_test.c | 290 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 311 insertions(+)
- create mode 100644 security/commoncap_test.c
+ drivers/char/tpm/tpm2-cmd.c               |   3 +-
+ drivers/char/tpm/tpm2-sessions.c          |  95 +++++------------
+ include/linux/tpm.h                       |  10 +-
+ security/keys/trusted-keys/trusted_tpm2.c | 124 ++++++++++++++--------
+ 4 files changed, 118 insertions(+), 114 deletions(-)
 
-diff --git a/security/Kconfig b/security/Kconfig
-index 285f284dfcac..c7b3f42ef875 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -284,6 +284,23 @@ config LSM
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 3a77be7ebf4a..1f561ad3bdcf 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -202,7 +202,8 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+ 	}
  
- 	  If unsure, leave this as the default.
- 
-+config SECURITY_COMMONCAP_KUNIT_TEST
-+	bool "Build KUnit tests for commoncap" if !KUNIT_ALL_TESTS
-+	depends on KUNIT=y
-+	default KUNIT_ALL_TESTS
-+	help
-+	  This builds the commoncap KUnit tests.
-+
-+	  KUnit tests run during boot and output the results to the debug log
-+	  in TAP format (https://testanything.org/). Only useful for kernel devs
-+	  running KUnit test harness and are not for inclusion into a
-+	  production build.
-+
-+	  For more information on KUnit and unit tests in general please refer
-+	  to the KUnit documentation in Documentation/dev-tools/kunit/.
-+
-+	  If unsure, say N.
-+
- source "security/Kconfig.hardening"
- 
- endmenu
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 8a23dfab7fac..3399535808fe 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -1521,3 +1521,7 @@ DEFINE_LSM(capability) = {
+ 	if (!disable_pcr_integrity) {
+-		rc = tpm_buf_append_name(chip, &buf, pcr_idx, NULL);
++		rc = tpm_buf_append_name(chip, &buf, pcr_idx, (u8 *)&pcr_idx,
++					 sizeof(u32));
+ 		if (rc) {
+ 			tpm_buf_destroy(&buf);
+ 			return rc;
+diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+index 4149379665c4..e33be09446ff 100644
+--- a/drivers/char/tpm/tpm2-sessions.c
++++ b/drivers/char/tpm/tpm2-sessions.c
+@@ -136,8 +136,8 @@ struct tpm2_auth {
+ 	 * handle, but they are part of the session by name, which
+ 	 * we must compute and remember
+ 	 */
+-	u32 name_h[AUTH_MAX_NAMES];
+ 	u8 name[AUTH_MAX_NAMES][2 + SHA512_DIGEST_SIZE];
++	u16 name_size_tbl[AUTH_MAX_NAMES];
  };
  
- #endif /* CONFIG_SECURITY */
-+
-+#ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
-+#include "commoncap_test.c"
-+#endif
-diff --git a/security/commoncap_test.c b/security/commoncap_test.c
-new file mode 100644
-index 000000000000..1088364a54e6
---- /dev/null
-+++ b/security/commoncap_test.c
-@@ -0,0 +1,290 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * KUnit tests for commoncap.c security functions
-+ *
-+ * Tests for security-critical functions in the capability subsystem,
-+ * particularly namespace-related capability checks.
-+ */
-+
-+#include <kunit/test.h>
-+#include <linux/user_namespace.h>
-+#include <linux/uidgid.h>
-+#include <linux/cred.h>
-+#include <linux/mnt_idmapping.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/refcount.h>
-+
-+#ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
-+
-+/* Functions are static in commoncap.c, but we can call them since we're
-+ * included in the same compilation unit when tests are enabled.
-+ */
-+
+ #ifdef CONFIG_TCG_TPM2_HMAC
+@@ -163,7 +163,17 @@ static int name_size(const u8 *name)
+ 	}
+ }
+ 
+-static int tpm2_read_public(struct tpm_chip *chip, u32 handle, void *name)
 +/**
-+ * test_vfsuid_root_in_currentns_init_ns - Test vfsuid_root_in_currentns with init ns
++ * tpm2_read_public: Resolve TPM name for a handle
++ * @chip:		TPM chip to use.
++ * @handle:		TPM handle.
++ * @name:		A buffer for returning the name blob. Must have a
++ *			capacity of 'SHA512_DIGET_SIZE + 2' bytes at minimum
 + *
-+ * Verifies that UID 0 in the init namespace correctly owns the current
-+ * namespace when running in init_user_ns.
-+ *
-+ * @test: KUnit test context
++ * Returns size of TPM handle name of success.
++ * Returns tpm_transmit_cmd error codes when TPM2_ReadPublic fails.
 + */
-+static void test_vfsuid_root_in_currentns_init_ns(struct kunit *test)
++int tpm2_read_public(struct tpm_chip *chip, u32 handle, void *name)
+ {
+ 	u32 mso = tpm2_handle_mso(handle);
+ 	off_t offset = TPM_HEADER_SIZE;
+@@ -219,14 +229,16 @@ static int tpm2_read_public(struct tpm_chip *chip, u32 handle, void *name)
+ 	memcpy(name, &buf.data[offset], rc);
+ 	return name_size_alg;
+ }
++EXPORT_SYMBOL_GPL(tpm2_read_public);
+ #endif /* CONFIG_TCG_TPM2_HMAC */
+ 
+ /**
+- * tpm_buf_append_name() - add a handle area to the buffer
+- * @chip: the TPM chip structure
+- * @buf: The buffer to be appended
+- * @handle: The handle to be appended
+- * @name: The name of the handle (may be NULL)
++ * tpm_buf_append_name() - Append a handle and store TPM name
++ * @chip:		TPM chip to use.
++ * @buf:		TPM buffer containing the TPM command in-transit.
++ * @handle:		TPM handle to be appended.
++ * @name:		TPM name of the handle
++ * @name_size:		Size of the TPM name.
+  *
+  * In order to compute session HMACs, we need to know the names of the
+  * objects pointed to by the handles.  For most objects, this is simply
+@@ -243,15 +255,14 @@ static int tpm2_read_public(struct tpm_chip *chip, u32 handle, void *name)
+  * will be caused by an incorrect programming model and indicated by a
+  * kernel message.
+  *
+- * Ends the authorization session on failure.
++ * Returns zero on success.
++ * Returns -EIO when the authorization area state is malformed.
+  */
+ int tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
+-			u32 handle, u8 *name)
++			u32 handle, u8 *name, u16 name_size)
+ {
+ #ifdef CONFIG_TCG_TPM2_HMAC
+-	enum tpm2_mso_type mso = tpm2_handle_mso(handle);
+ 	struct tpm2_auth *auth;
+-	u16 name_size_alg;
+ 	int slot;
+ 	int ret;
+ #endif
+@@ -276,36 +287,15 @@ int tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
+ 	}
+ 	tpm_buf_append_u32(buf, handle);
+ 	auth->session += 4;
+-
+-	if (mso == TPM2_MSO_PERSISTENT ||
+-	    mso == TPM2_MSO_VOLATILE ||
+-	    mso == TPM2_MSO_NVRAM) {
+-		if (!name) {
+-			ret = tpm2_read_public(chip, handle, auth->name[slot]);
+-			if (ret < 0)
+-				goto err;
+-
+-			name_size_alg = ret;
+-		}
+-	} else {
+-		if (name) {
+-			dev_err(&chip->dev, "handle 0x%08x does not use a name\n",
+-				handle);
+-			ret = -EIO;
+-			goto err;
+-		}
+-	}
+-
+-	auth->name_h[slot] = handle;
+-	if (name)
+-		memcpy(auth->name[slot], name, name_size_alg);
++	memcpy(auth->name[slot], name, name_size);
++	auth->name_size_tbl[slot] = name_size;
+ #endif
+ 	return 0;
+ 
+ #ifdef CONFIG_TCG_TPM2_HMAC
+ err:
+ 	tpm2_end_auth_session(chip);
+-	return tpm_ret_to_err(ret);
++	return ret;
+ #endif
+ }
+ EXPORT_SYMBOL_GPL(tpm_buf_append_name);
+@@ -613,22 +603,8 @@ int tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf)
+ 	attrs = chip->cc_attrs_tbl[i];
+ 
+ 	handles = (attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0);
++	offset_s += handles * sizeof(u32);
+ 
+-	/*
+-	 * just check the names, it's easy to make mistakes.  This
+-	 * would happen if someone added a handle via
+-	 * tpm_buf_append_u32() instead of tpm_buf_append_name()
+-	 */
+-	for (i = 0; i < handles; i++) {
+-		u32 handle = tpm_buf_read_u32(buf, &offset_s);
+-
+-		if (auth->name_h[i] != handle) {
+-			dev_err(&chip->dev, "invalid handle 0x%08x\n", handle);
+-			ret = -EIO;
+-			goto err;
+-		}
+-	}
+-	/* point offset_s to the start of the sessions */
+ 	val = tpm_buf_read_u32(buf, &offset_s);
+ 	/* point offset_p to the start of the parameters */
+ 	offset_p = offset_s + val;
+@@ -689,23 +665,8 @@ int tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf)
+ 	/* ordinal is already BE */
+ 	sha256_update(&sctx, (u8 *)&head->ordinal, sizeof(head->ordinal));
+ 	/* add the handle names */
+-	for (i = 0; i < handles; i++) {
+-		enum tpm2_mso_type mso = tpm2_handle_mso(auth->name_h[i]);
+-
+-		if (mso == TPM2_MSO_PERSISTENT ||
+-		    mso == TPM2_MSO_VOLATILE ||
+-		    mso == TPM2_MSO_NVRAM) {
+-			ret = name_size(auth->name[i]);
+-			if (ret < 0)
+-				goto err;
+-
+-			sha256_update(&sctx, auth->name[i], ret);
+-		} else {
+-			__be32 h = cpu_to_be32(auth->name_h[i]);
+-
+-			sha256_update(&sctx, (u8 *)&h, 4);
+-		}
+-	}
++	for (i = 0; i < handles; i++)
++		sha256_update(&sctx, auth->name[i], auth->name_size_tbl[i]);
+ 	if (offset_s != tpm_buf_length(buf))
+ 		sha256_update(&sctx, &buf->data[offset_s],
+ 			      tpm_buf_length(buf) - offset_s);
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 202da079d500..319ba75dd79a 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -530,7 +530,7 @@ static inline struct tpm2_auth *tpm2_chip_auth(struct tpm_chip *chip)
+ }
+ 
+ int tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
+-			u32 handle, u8 *name);
++			u32 handle, u8 *name, u16 name_size);
+ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
+ 				 u8 attributes, u8 *passphrase,
+ 				 int passphraselen);
+@@ -544,6 +544,7 @@ int tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf);
+ int tpm_buf_check_hmac_response(struct tpm_chip *chip, struct tpm_buf *buf,
+ 				int rc);
+ void tpm2_end_auth_session(struct tpm_chip *chip);
++int tpm2_read_public(struct tpm_chip *chip, u32 handle, void *name);
+ #else
+ #include <linux/unaligned.h>
+ 
+@@ -567,6 +568,13 @@ static inline int tpm_buf_check_hmac_response(struct tpm_chip *chip,
+ {
+ 	return rc;
+ }
++
++static inline int tpm2_read_public(struct tpm_chip *chip, u32 handle,
++				   void *name)
 +{
-+	vfsuid_t vfsuid;
-+	kuid_t kuid;
-+
-+	/* Create UID 0 in init namespace */
-+	kuid = KUIDT_INIT(0);
-+	vfsuid = VFSUIDT_INIT(kuid);
-+
-+	/* In init namespace, UID 0 should own current namespace */
-+	KUNIT_EXPECT_TRUE(test, vfsuid_root_in_currentns(vfsuid));
++	memcpy(name, &handle, sizeof(u32));
++	return sizeof(u32);
 +}
+ #endif	/* CONFIG_TCG_TPM2_HMAC */
+ 
+ #endif
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index a7ea4a1c3bed..88bafbcc011a 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -233,8 +233,10 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 		      struct trusted_key_payload *payload,
+ 		      struct trusted_key_options *options)
+ {
++	u8 parent_name[2 + SHA512_DIGEST_SIZE];
+ 	off_t offset = TPM_HEADER_SIZE;
+ 	struct tpm_buf buf, sized;
++	u16 parent_name_size;
+ 	int blob_len = 0;
+ 	int hash;
+ 	u32 flags;
+@@ -251,6 +253,12 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 	if (rc)
+ 		return rc;
+ 
++	rc = tpm2_read_public(chip, options->keyhandle, parent_name);
++	if (rc < 0)
++		goto out_put;
 +
-+/**
-+ * test_vfsuid_root_in_currentns_invalid - Test vfsuid_root_in_currentns with invalid vfsuid
-+ *
-+ * Verifies that an invalid vfsuid correctly returns false.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_vfsuid_root_in_currentns_invalid(struct kunit *test)
-+{
-+	vfsuid_t invalid_vfsuid;
++	parent_name_size = rc;
 +
-+	/* Use the predefined invalid vfsuid */
-+	invalid_vfsuid = INVALID_VFSUID;
-+
-+	/* Invalid vfsuid should return false */
-+	KUNIT_EXPECT_FALSE(test, vfsuid_root_in_currentns(invalid_vfsuid));
-+}
-+
-+/**
-+ * test_vfsuid_root_in_currentns_nonzero - Test vfsuid_root_in_currentns with non-zero UID
-+ *
-+ * Verifies that a non-zero UID correctly returns false.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_vfsuid_root_in_currentns_nonzero(struct kunit *test)
-+{
-+	vfsuid_t vfsuid;
-+	kuid_t kuid;
-+
-+	/* Create a non-zero UID */
-+	kuid = KUIDT_INIT(1000);
-+	vfsuid = VFSUIDT_INIT(kuid);
-+
-+	/* Non-zero UID should return false */
-+	KUNIT_EXPECT_FALSE(test, vfsuid_root_in_currentns(vfsuid));
-+}
-+
-+/**
-+ * test_kuid_root_in_ns_init_ns_uid0 - Test kuid_root_in_ns with init namespace and UID 0
-+ *
-+ * Verifies that kuid_root_in_ns correctly identifies UID 0 in init namespace.
-+ * This tests the core namespace traversal logic. In init namespace, UID 0
-+ * maps to itself, so it should own the namespace.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_kuid_root_in_ns_init_ns_uid0(struct kunit *test)
-+{
-+	kuid_t kuid;
-+	struct user_namespace *init_ns;
-+
-+	kuid = KUIDT_INIT(0);
-+	init_ns = &init_user_ns;
-+
-+	/* UID 0 should own init namespace */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(kuid, init_ns));
-+}
-+
-+/**
-+ * test_kuid_root_in_ns_init_ns_nonzero - Test kuid_root_in_ns with init namespace and non-zero UID
-+ *
-+ * Verifies that kuid_root_in_ns correctly rejects non-zero UIDs in init namespace.
-+ * Only UID 0 should own a namespace.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_kuid_root_in_ns_init_ns_nonzero(struct kunit *test)
-+{
-+	kuid_t kuid;
-+	struct user_namespace *init_ns;
-+
-+	kuid = KUIDT_INIT(1000);
-+	init_ns = &init_user_ns;
-+
-+	/* Non-zero UID should not own namespace */
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(kuid, init_ns));
-+}
-+
-+/**
-+ * create_test_user_ns_with_mapping - Create a mock user namespace with UID mapping
-+ *
-+ * Creates a minimal user namespace structure for testing where uid 0 in the
-+ * namespace maps to a specific kuid in the parent namespace.
-+ *
-+ * @test: KUnit test context
-+ * @parent_ns: Parent namespace (typically init_user_ns)
-+ * @mapped_kuid: The kuid that uid 0 in this namespace maps to in parent
-+ *
-+ * Returns: Pointer to allocated namespace, or NULL on failure
-+ */
-+static struct user_namespace *create_test_user_ns_with_mapping(struct kunit *test,
-+								 struct user_namespace *parent_ns,
-+								 kuid_t mapped_kuid)
-+{
-+	struct user_namespace *ns;
-+	struct uid_gid_extent extent;
-+
-+	/* Allocate a test namespace - use kzalloc to zero all fields */
-+	ns = kunit_kzalloc(test, sizeof(*ns), GFP_KERNEL);
-+	if (!ns)
-+		return NULL;
-+
-+	/* Initialize basic namespace structure fields */
-+	ns->parent = parent_ns;
-+	ns->level = parent_ns ? parent_ns->level + 1 : 0;
-+	ns->owner = mapped_kuid;
-+	ns->group = KGIDT_INIT(0);
-+
-+	/* Initialize ns_common structure */
-+	refcount_set(&ns->ns.__ns_ref, 1);
-+	ns->ns.inum = 0; /* Mock inum */
-+
-+	/* Set up uid mapping: uid 0 in this namespace maps to mapped_kuid in parent
-+	 * Format: first (uid in ns) : lower_first (kuid in parent) : count
-+	 * So: uid 0 in ns -> kuid mapped_kuid in parent
-+	 * This means from_kuid(ns, mapped_kuid) returns 0
+ 	rc = tpm2_start_auth_session(chip);
+ 	if (rc)
+ 		goto out_put;
+@@ -268,7 +276,8 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 		goto out_put;
+ 	}
+ 
+-	rc = tpm_buf_append_name(chip, &buf, options->keyhandle, NULL);
++	rc = tpm_buf_append_name(chip, &buf, options->keyhandle, parent_name,
++				 parent_name_size);
+ 	if (rc)
+ 		goto out;
+ 
+@@ -355,21 +364,25 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ }
+ 
+ /**
+- * tpm2_load_cmd() - execute a TPM2_Load command
+- *
+- * @chip: TPM chip to use
+- * @payload: the key data in clear and encrypted form
+- * @options: authentication values and other options
+- * @blob_handle: returned blob handle
++ * tpm2_load_cmd() - Execute TPM2_Load
++ * @chip:		TPM chip to use.
++ * @payload:		Key data in clear text.
++ * @options:		Trusted key options.
++ * @parent_name:	A cryptographic name, i.e. a TPMT_HA blob, of the
++ *			parent key.
++ * @blob:		The decoded payload for the key.
++ * @blob_handle:	On success, will contain handle to the loaded keyedhash
++ *			blob.
+  *
+- * Return: 0 on success.
+- *        -E2BIG on wrong payload size.
+- *        -EPERM on tpm error status.
+- *        < 0 error from tpm_send.
++ * Return -E2BIG when the blob size is too small for all the data.
++ * Returns tpm_transmit_cmd() error codes when either TPM2_Load fails.
+  */
+ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 			 struct trusted_key_payload *payload,
+ 			 struct trusted_key_options *options,
++			 u8 *parent_name,
++			 u16 parent_name_size,
++			 const u8 *blob,
+ 			 u32 *blob_handle)
+ {
+ 	u8 *blob_ref __free(kfree) = NULL;
+@@ -377,27 +390,13 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 	unsigned int private_len;
+ 	unsigned int public_len;
+ 	unsigned int blob_len;
+-	u8 *blob, *pub;
++	const u8 *pub;
+ 	int rc;
+ 	u32 attrs;
+ 
+-	rc = tpm2_key_decode(payload, options, &blob);
+-	if (rc) {
+-		/* old form */
+-		blob = payload->blob;
+-		payload->old_format = 1;
+-	} else {
+-		/* Bind for cleanup: */
+-		blob_ref = blob;
+-	}
+-
+-	/* new format carries keyhandle but old format doesn't */
+-	if (!options->keyhandle)
+-		return -EINVAL;
+-
+ 	/* must be big enough for at least the two be16 size counts */
+ 	if (payload->blob_len < 4)
+-		return -EINVAL;
++		return -E2BIG;
+ 
+ 	private_len = get_unaligned_be16(blob);
+ 
+@@ -433,7 +432,8 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 		return rc;
+ 	}
+ 
+-	rc = tpm_buf_append_name(chip, &buf, options->keyhandle, NULL);
++	rc = tpm_buf_append_name(chip, &buf, options->keyhandle, parent_name,
++				 parent_name_size);
+ 	if (rc)
+ 		goto out;
+ 
+@@ -465,20 +465,23 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ }
+ 
+ /**
+- * tpm2_unseal_cmd() - execute a TPM2_Unload command
++ * tpm2_unseal_cmd() - Execute TPM2_Unload
+  *
+- * @chip: TPM chip to use
+- * @payload: the key data in clear and encrypted form
+- * @options: authentication values and other options
+- * @blob_handle: blob handle
++ * @chip:		TPM chip to use
++ * @payload:		Key data in clear text.
++ * @options:		Trusted key options.
++ * @parent_name:	A cryptographic name, i.e. a TPMT_HA blob, of the
++ *			parent key.
++ * @blob_handle:	Handle to the loaded keyedhash blob.
+  *
+- * Return: 0 on success
+- *         -EPERM on tpm error status
+- *         < 0 error from tpm_send
++ * Return -E2BIG when the blob size is too small for all the data.
++ * Returns tpm_transmit_cmd() error codes when either TPM2_Load fails.
+  */
+ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 			   struct trusted_key_payload *payload,
+ 			   struct trusted_key_options *options,
++			   u8 *parent_name,
++			   u16 parent_name_size,
+ 			   u32 blob_handle)
+ {
+ 	struct tpm_header *head;
+@@ -498,7 +501,8 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 		return rc;
+ 	}
+ 
+-	rc = tpm_buf_append_name(chip, &buf, options->keyhandle, NULL);
++	rc = tpm_buf_append_name(chip, &buf, options->keyhandle, parent_name,
++				 parent_name_size);
+ 	if (rc)
+ 		goto out;
+ 
+@@ -573,30 +577,60 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ }
+ 
+ /**
+- * tpm2_unseal_trusted() - unseal the payload of a trusted key
++ * tpm2_unseal_trusted() - Unseal a trusted key
++ * @chip:	TPM chip to use.
++ * @payload:	Key data in clear text.
++ * @options:	Trusted key options.
+  *
+- * @chip: TPM chip to use
+- * @payload: the key data in clear and encrypted form
+- * @options: authentication values and other options
+- *
+- * Return: Same as with tpm_send.
++ * Return -E2BIG when the blob size is too small for all the data.
++ * Return -EINVAL when parent's key handle has not been set.
++ * Returns tpm_transmit_cmd() error codes when either TPM2_Load or TPM2_Unseal
++ * fails.
+  */
+ int tpm2_unseal_trusted(struct tpm_chip *chip,
+ 			struct trusted_key_payload *payload,
+ 			struct trusted_key_options *options)
+ {
++	u8 *blob_ref __free(kfree) = NULL;
++	u8 parent_name[2 + SHA512_DIGEST_SIZE];
++	u16 parent_name_size;
+ 	u32 blob_handle;
++	u8 *blob;
+ 	int rc;
+ 
++	/*
++	 * Try to decode the provided blob as an ASN.1 blob. Assume that the
++	 * blob is in the legacy format if decoding does not end successfully.
 +	 */
-+	extent.first = 0;                              /* uid 0 in this namespace */
-+	extent.lower_first = __kuid_val(mapped_kuid);  /* maps to this kuid in parent */
-+	extent.count = 1;
++	rc = tpm2_key_decode(payload, options, &blob);
++	if (rc) {
++		blob = payload->blob;
++		payload->old_format = 1;
++	} else {
++		blob_ref = blob;
++	}
 +
-+	ns->uid_map.extent[0] = extent;
-+	ns->uid_map.nr_extents = 1;
++	if (!options->keyhandle)
++		return -EINVAL;
 +
-+	/* Set up gid mapping: gid 0 maps to gid 0 in parent (simplified) */
-+	extent.first = 0;
-+	extent.lower_first = 0;
-+	extent.count = 1;
+ 	rc = tpm_try_get_ops(chip);
+ 	if (rc)
+ 		return rc;
+ 
+-	rc = tpm2_load_cmd(chip, payload, options, &blob_handle);
++	rc = tpm2_read_public(chip, options->keyhandle, parent_name);
++	if (rc < 0)
++		goto out;
 +
-+	ns->gid_map.extent[0] = extent;
-+	ns->gid_map.nr_extents = 1;
++	parent_name_size = rc;
 +
-+	return ns;
-+}
++	rc = tpm2_load_cmd(chip, payload, options, parent_name,
++			   parent_name_size, blob, &blob_handle);
+ 	if (rc)
+ 		goto out;
+ 
+-	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle);
++	rc = tpm2_unseal_cmd(chip, payload, options, parent_name,
++			     parent_name_size, blob_handle);
 +
-+/**
-+ * test_kuid_root_in_ns_with_mapping - Test kuid_root_in_ns with namespace where uid 0
-+ *				       maps to different kuid
-+ *
-+ * Creates a user namespace where uid 0 maps to kuid 1000 in the parent namespace.
-+ * Verifies that kuid_root_in_ns correctly identifies kuid 1000 as owning the namespace.
-+ *
-+ * Note: kuid_root_in_ns walks up the namespace hierarchy, so it checks the current
-+ * namespace first, then parent, then parent's parent, etc. So:
-+ * - kuid 1000 owns test_ns because from_kuid(test_ns, 1000) == 0
-+ * - kuid 0 also owns test_ns because from_kuid(init_user_ns, 0) == 0
-+ *   (checked in parent)
-+ *
-+ * This tests the actual functionality as requested: creating namespaces with
-+ * different values for the namespace's uid 0.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_kuid_root_in_ns_with_mapping(struct kunit *test)
-+{
-+	struct user_namespace *test_ns;
-+	struct user_namespace *parent_ns;
-+	kuid_t mapped_kuid, other_kuid;
-+
-+	parent_ns = &init_user_ns;
-+	mapped_kuid = KUIDT_INIT(1000);
-+	other_kuid = KUIDT_INIT(2000);
-+
-+	test_ns = create_test_user_ns_with_mapping(test, parent_ns, mapped_kuid);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, test_ns);
-+
-+	/* kuid 1000 should own test_ns because it maps to uid 0 in test_ns */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(mapped_kuid, test_ns));
-+
-+	/* kuid 0 should also own test_ns (checked via parent init_user_ns) */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), test_ns));
-+
-+	/* Other kuids should not own test_ns */
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(other_kuid, test_ns));
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(500), test_ns));
-+}
-+
-+/**
-+ * test_kuid_root_in_ns_with_different_mappings - Test with multiple namespaces
-+ *
-+ * Creates multiple user namespaces with different UID mappings to verify
-+ * that kuid_root_in_ns correctly handles different namespace hierarchies.
-+ *
-+ * Since kuid_root_in_ns walks up the hierarchy, kuids that map to 0 in init_user_ns
-+ * will own all namespaces, while kuids that only map to 0 in specific namespaces
-+ * will only own those namespaces and their children.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_kuid_root_in_ns_with_different_mappings(struct kunit *test)
-+{
-+	struct user_namespace *ns1, *ns2, *ns3;
-+
-+	/* Create ns1 where uid 0 maps to kuid 1000 */
-+	ns1 = create_test_user_ns_with_mapping(test, &init_user_ns, KUIDT_INIT(1000));
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns1);
-+
-+	/* Create ns2 where uid 0 maps to kuid 2000 */
-+	ns2 = create_test_user_ns_with_mapping(test, &init_user_ns, KUIDT_INIT(2000));
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns2);
-+
-+	/* Create ns3 as a child of ns1 where uid 0 maps to kuid 3000 */
-+	ns3 = create_test_user_ns_with_mapping(test, ns1, KUIDT_INIT(3000));
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns3);
-+
-+	/* Test ns1: kuid 1000 owns it, kuid 0 owns it (via parent), kuid 2000 does not */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(1000), ns1));
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), ns1));
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(2000), ns1));
-+
-+	/* Test ns2: kuid 2000 owns it, kuid 0 owns it (via parent), kuid 1000 does not */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(2000), ns2));
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), ns2));
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(1000), ns2));
-+
-+	/* Test ns3: kuid 3000 owns it, kuid 1000 owns it (via parent ns1),
-+	 * kuid 0 owns it (via init_user_ns), kuid 2000 does not
-+	 */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(3000), ns3));
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(1000), ns3));
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), ns3));
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(2000), ns3));
-+}
-+
-+static struct kunit_case commoncap_test_cases[] = {
-+	KUNIT_CASE(test_vfsuid_root_in_currentns_init_ns),
-+	KUNIT_CASE(test_vfsuid_root_in_currentns_invalid),
-+	KUNIT_CASE(test_vfsuid_root_in_currentns_nonzero),
-+	KUNIT_CASE(test_kuid_root_in_ns_init_ns_uid0),
-+	KUNIT_CASE(test_kuid_root_in_ns_init_ns_nonzero),
-+	KUNIT_CASE(test_kuid_root_in_ns_with_mapping),
-+	KUNIT_CASE(test_kuid_root_in_ns_with_different_mappings),
-+	{}
-+};
-+
-+static struct kunit_suite commoncap_test_suite = {
-+	.name = "commoncap",
-+	.test_cases = commoncap_test_cases,
-+};
-+
-+kunit_test_suite(commoncap_test_suite);
-+
-+MODULE_LICENSE("GPL");
-+
-+#endif /* CONFIG_SECURITY_COMMONCAP_KUNIT_TEST */
+ 	tpm2_flush_context(chip, blob_handle);
+ 
+ out:
 -- 
-2.43.0
+2.52.0
 
