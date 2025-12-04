@@ -1,159 +1,78 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6A11A9FAF;
-	Thu,  4 Dec 2025 10:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6722D3A70
+	for <linux-security-module@vger.kernel.org>; Thu,  4 Dec 2025 11:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764842762; cv=none; b=H6dB8SmvBQer6o8lAwopJdD89PJ07qOeD2OT9Ht0OU8yJN0dia7pOyqU9x154aOUXWgTqHf8KszhNnWL6XZRIIkG4a5dKzojIE1z4pY/FvtSaT6NW9NZcq/tdXWu3i/0eybv/1ZMoScJCsuXGBB1Tz1WsBm1+WI4uDO2T+76x0s=
+	t=1764848396; cv=none; b=h3Bp4v5v/XCjl8qxwx7ZQMae9+/LahwUv1MLF1DP6B7Dl6JDC0dUSlKJ1FhqDmDYU7hjPT4hJZnruvIC5rfaGs0l3rFT1NPRRVAEyugJIINJuwhaM22u1KdMvBFH0sXHniU2PuvIzllTt6MycCGQFtPW1pbtWdD/i/R4kaAfXEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764842762; c=relaxed/simple;
-	bh=HdxuyW48hjewxA37dD/zbSml/Oj0HqVBN0P1TbtJSfw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hu1oU3fCB3QYOBT/z4oPmr8VBoHZZLin1tam1oVq0OgnxFonGxb/7ROpXEeNreG8I2zXxA190KbPIlTp5nEd7QYbUrlpR7oKiWmhAFWmLucaVQY3gKTHE52seiQ8wdWqhos80eSi16CVQI/Ki8Nr3wjhFGMoePFPBBHASr8D0z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Osh22c/g; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764848396; c=relaxed/simple;
+	bh=aWjk9wClQSk3hMoywNv0dKWrgUXVbjy6J5pgUZRsLRU=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=F8LYOiQbi0iPKY+O1NsBaBicDkJ+ZM/ROj/uTLTztdweNztafPG0rZ7lSFqe+Np3CKCjKsKIRKGzU6fT0Aa2LSz2803yYAk4Yqih8sp8cJNgU8I9eBvCxMVKGvwckIBcHoQZMvkVpwvSg3Am5jRopVpLUQBBFESIf9p4G7+ovWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JAY5NwW0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Osh22c/g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C558BC4CEFB;
-	Thu,  4 Dec 2025 10:05:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764842761;
-	bh=HdxuyW48hjewxA37dD/zbSml/Oj0HqVBN0P1TbtJSfw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Osh22c/gHyR+VPM2kPcT0dPiD6K9BvVhe5Ewzn9HXTkYe8a046bP8uE4VgCP19aDi
-	 K7xBIYI24RyUjLFUPu8Jsurggk4oUE//29xVfPPkiZv362d67AnRunbs4b5rs1+Gjw
-	 YS2XQ/6kgerJ6XOyYneyYfkre1v2DNabxE2eCArlBtO1fZs0/9oUkgnRGacd11N388
-	 /GqZScuD1gNPgkWGXr8EGPBS8fC6oU43ADwQuKp3i8wBSNVTdMRqREmWXwUbXqmGUE
-	 ffmQYPQtEzvEiW/FXBg4sDYheO7g+t6NXrH78pesoPO/l7JrqMckbFuomSJrJhGli1
-	 QsAy+pTCZPGgA==
-From: Christian Brauner <brauner@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Elle Rhumsaa <elle@weathered-steel.dev>,
-	Carlos Llamas <cmllamas@google.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	linux-block@vger.kernel.org,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Benno Lossin <lossin@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	linux-pm@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>,
-	Serge Hallyn <sergeh@kernel.org>,
-	linux-security-module@vger.kernel.org,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Lyude Paul <lyude@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>,
-	linux-kselftest@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Andrew Ballance <andrewjballance@gmail.com>,
-	maple-tree@lists.infradead.org,
-	linux-mm@kvack.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Vitaly Wool <vitaly.wool@konsulko.se>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	devicetree@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	linux-pci@vger.kernel.org,
-	Remo Senekowitsch <remo@buenzli.dev>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	rcu@vger.kernel.org,
-	Will Deacon <will@kernel.org>,
-	Fiona Behrens <me@kloenk.dev>,
-	Gary Guo <gary@garyguo.net>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	linux-usb@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Rae Moar <raemoar63@gmail.com>,
-	rust-for-linux@vger.kernel.org
-Subject: Re: (subset) [PATCH 00/46] Allow inlining C helpers into Rust when using LTO
-Date: Thu,  4 Dec 2025 11:05:29 +0100
-Message-ID: <20251204-denkbar-stinktier-8a7c07650891@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
-References: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JAY5NwW0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764848393;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nz4tpGsf2JemOn1tKc/nfLsj2/UOs/7BXLvcTMqfvGU=;
+	b=JAY5NwW0B3QTDJKvOQkHzmxDNypk+haWr3u3gt4ros9eMLKx8CVY1bRXrsBNMbVEiryffn
+	ksZWSjI4SBrfBgQQN4/7iApClw5N2iH7xR2vO7/avOrUgDKUPvO7LPS1iRY7hex8+Hu9Mu
+	eMGZ9KFpXkZ2ObZdbWRXSxW7gWazTP8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-461-mf5sKE98NnWranGEaUMfwg-1; Thu,
+ 04 Dec 2025 06:39:49 -0500
+X-MC-Unique: mf5sKE98NnWranGEaUMfwg-1
+X-Mimecast-MFC-AGG-ID: mf5sKE98NnWranGEaUMfwg_1764848388
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BC4A718005A4;
+	Thu,  4 Dec 2025 11:39:48 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 159E8180045B;
+	Thu,  4 Dec 2025 11:39:46 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHC9VhQOW8a_pTKS+Mhtu2LEFCPRhEzuhLsJOFHNTNUNUELChg@mail.gmail.com>
+References: <CAHC9VhQOW8a_pTKS+Mhtu2LEFCPRhEzuhLsJOFHNTNUNUELChg@mail.gmail.com> <cb4293da-41dc-4586-adca-2859944905dc.ref@schaufler-ca.com> <cb4293da-41dc-4586-adca-2859944905dc@schaufler-ca.com> <866a132a-b6e2-4e40-aba3-d8b733184672@schaufler-ca.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: dhowells@redhat.com, Casey Schaufler <casey@schaufler-ca.com>,
+    LSM List <linux-security-module@vger.kernel.org>,
+    SElinux list <selinux@vger.kernel.org>
+Subject: Re: set_security_override_from_ctx()
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1456; i=brauner@kernel.org; h=from:subject:message-id; bh=HdxuyW48hjewxA37dD/zbSml/Oj0HqVBN0P1TbtJSfw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQaxnzoC5KPC9BQ6Xq2IqjgffnvpRpvskU9368/659bp HtRXnNJRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESuWjAyXDA8eVezNuVTq5R5 o8gOmf3FN+71+Ire2yjd+7GFVzhvPyPDbR6JQvt2uT/tr3YuKJvw1D1B7vuZ55NmCNlPeyuwRvU UKwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1986475.1764848385.1@warthog.procyon.org.uk>
+Date: Thu, 04 Dec 2025 11:39:45 +0000
+Message-ID: <1986476.1764848385@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Tue, 02 Dec 2025 19:37:24 +0000, Alice Ryhl wrote:
-> This patch series adds __rust_helper to every single rust helper. The
-> patches do not depend on each other, so maintainers please go ahead and
-> pick up any patches relevant to your subsystem! Or provide your Acked-by
-> so that Miguel can pick them up.
-> 
-> These changes were generated by adding __rust_helper and running
-> ClangFormat. Unrelated formatting changes were removed manually.
-> 
-> [...]
+Paul Moore <paul@paul-moore.com> wrote:
 
-Applied to the vfs-6.20.rust branch of the vfs/vfs.git tree.
-Patches in the vfs-6.20.rust branch should appear in linux-next soon.
+> I would suggest sending a patch to remove
+> set_security_override_from_ctx() since there are no longer any
+> callers.  Send it to the LSM list and I'll merge it once the merge
+> window closes.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Fine by me.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+David
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.20.rust
-
-[18/46] rust: fs: add __rust_helper to helpers
-        https://git.kernel.org/vfs/vfs/c/02c444cc60e5
-[27/46] rust: pid_namespace: add __rust_helper to helpers
-        https://git.kernel.org/vfs/vfs/c/f28a178408e4
-[29/46] rust: poll: add __rust_helper to helpers
-        https://git.kernel.org/vfs/vfs/c/de98ed59d678
