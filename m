@@ -1,62 +1,40 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B12F3148DB;
-	Fri,  5 Dec 2025 13:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF8233A02B
+	for <linux-security-module@vger.kernel.org>; Fri,  5 Dec 2025 13:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764940194; cv=none; b=QsfBP2oXtSZEnVdCG0YMIpiA3UAgB2+TZVbuksQwGnAbKC/9HrrrEtGLJ3PemECNC0LrNYiqWHNbC4SDj23TYuN6jojTtXJXBtBIV59SJ+uk1QuCvi0gkkwjiq0lA1Ce2Mi68jUPPKL8kjiC7hf7bxE6dtlgkiujMgTOx/eDmBI=
+	t=1764941253; cv=none; b=ifUlSIKhtufaXpOtIcNOzh/WCodlCMqOVA8wQYCjxoxQrSY436xu6M23k6Zw21JZkpsALYEuiInN74vTe9RaKiaz3Bj/Ze+/lfPNhlrnoVpoTlbc3HrN3m5GIJaSR1pQJq05pNyMTAH8aAU6sYNeX/ka6wzSihEqr++02NgBkU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764940194; c=relaxed/simple;
-	bh=9RNU4p5uFmDusX++mA9qmxru388NNiGnDSKeKxa8cHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9NCZ3LdpuqatC6fKbTGAwg9KmBcquD3z7708KBbL8DGMn+3Hxjdso51MeoxM03HysNXHu3XNCaE7969SRSl28s6g90YG7z70kOaUqdZiplvFxDxvc6+vMTfCSjGQfDKizlJEoLLW3CwXkpfret2Mpc35mp7RBQPAY9MxmDBTjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M6blm17K; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764941253; c=relaxed/simple;
+	bh=oJFbKKZFPUtKDtfFc5ZkZLzx5D0XO1U0HGAmgB8977w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PHCqos4vxOdFGdlXO4OEd3UXIFbth/+Q/CRQ1nKzJ/5zuBrf2qtcDopNvITndqWxkoGMJh2etKy3x1FqIAtCs/Jx8/m9w/GpFjneNvPDF6qL0IEErR8+VD9Ax+EvT3ipzK1m6tqcpnBE9vyOAzUq2b6eVxfha+NUXn7Itm4zQMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=vqE0mVUn; arc=none smtp.client-ip=84.16.66.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M6blm17K"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5E58C4CEF1;
-	Fri,  5 Dec 2025 13:09:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764940192;
-	bh=9RNU4p5uFmDusX++mA9qmxru388NNiGnDSKeKxa8cHs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M6blm17KY/7Fq4E/y+hGFEVsLYFddZCYcUxIBMzoPfppxfvFklHuno+W5dLVHbLyU
-	 w2jwooxrs+UVERpIVLszZHqL8Ehl2H1cjiNIE3120zTvz03YpYRpaTeqOkLaINb/nb
-	 zuErmpPjOVfOjq2IQ2/soZP8Vdopaynk4/ICCE3cnwdaEHJy6HejOOPNUOMxSc74Yw
-	 ZPD0ECuy7uAqjgJeho3o8qTmC7FN+47xrgd02l8E2C+BxMzHiQf/qgbHuZFjALtAYT
-	 pnfnQsV5rOHOvHXwVprjTt2IuqljVra8/M62hXIPRouHbjdqZataGSgGdRwLlo5TtA
-	 cbn/WwSlmrBMg==
-Date: Fri, 5 Dec 2025 14:09:41 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, 
-	NeilBrown <neil@brown.name>, Val Packett <val@packett.cool>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, Chris Mason <clm@fb.com>, 
-	David Sterba <dsterba@suse.com>, David Howells <dhowells@redhat.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>, 
-	Chuck Lever <chuck.lever@oracle.com>, Olga Kornievskaia <okorniev@redhat.com>, 
-	Dai Ngo <Dai.Ngo@oracle.com>, Namjae Jeon <linkinjeon@kernel.org>, 
-	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Carlos Maiolino <cem@kernel.org>, John Johansen <john.johansen@canonical.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
-Subject: Re: [PATCH] fuse: fix conversion of fuse_reverse_inval_entry() to
- start_removing()
-Message-ID: <20251205-unmoralisch-jahrtausend-cca02ad0e4fa@brauner>
-References: <20251113002050.676694-1-neilb@ownmail.net>
- <20251113002050.676694-7-neilb@ownmail.net>
- <6713ea38-b583-4c86-b74a-bea55652851d@packett.cool>
- <176454037897.634289.3566631742434963788@noble.neil.brown.name>
- <CAOQ4uxjihcBxJzckbJis8hGcWO61QKhiqeGH+hDkTUkDhu23Ww@mail.gmail.com>
- <20251201083324.GA3538@ZenIV>
- <CAJfpegs+o01jgY76WsGnk9j41LS5V0JQSk--d6xsJJp4VjTh8Q@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="vqE0mVUn"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dN89k1rXFz9Tl;
+	Fri,  5 Dec 2025 12:22:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1764933754;
+	bh=P7/SNAvxehwVySP+J4NNT2Hdq+hxaMMqD0lo7cddUcc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=vqE0mVUnSM4UZCPZcgCu2F4xkyPs5mQT0Y/VaW24U024sffblrIcwmoPed7J0jh3y
+	 VpxN9jqrBz2Z2qQDQUOquhBhALXPsG+T8lmDhiu9JOkKQ/naYc7StSj3Z2i8m3/29a
+	 z/Bm+nXLgFKydnOHNr6NbmvV9PQz1bk1rNveBxxE=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4dN89j4GJxzTs2;
+	Fri,  5 Dec 2025 12:22:33 +0100 (CET)
+Date: Fri, 5 Dec 2025 12:22:28 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: landlock@lists.linux.dev
+Cc: oss-security@lists.openwall.com, linux-security-module@vger.kernel.org, 
+	lwn@lwn.net
+Subject: Island: Sandboxing tool powered by Landlock
+Message-ID: <20251205.saiZ2Pauleew@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -65,47 +43,34 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJfpegs+o01jgY76WsGnk9j41LS5V0JQSk--d6xsJJp4VjTh8Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Mon, Dec 01, 2025 at 03:03:08PM +0100, Miklos Szeredi wrote:
-> On Mon, 1 Dec 2025 at 09:33, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Mon, Dec 01, 2025 at 09:22:54AM +0100, Amir Goldstein wrote:
-> >
-> > > I don't think there is a point in optimizing parallel dir operations
-> > > with FUSE server cache invalidation, but maybe I am missing
-> > > something.
-> >
-> > The interesting part is the expected semantics of operation;
-> > d_invalidate() side definitely doesn't need any of that cruft,
-> > but I would really like to understand what that function
-> > is supposed to do.
-> >
-> > Miklos, could you post a brain dump on that?
-> 
-> This function is supposed to invalidate a dentry due to remote changes
-> (FUSE_NOTIFY_INVAL_ENTRY).  Originally it was supplied a parent ID and
-> a name and called d_invalidate() on the looked up dentry.
-> 
-> Then it grew a variant (FUSE_NOTIFY_DELETE) that was also supplied a
-> child ID, which was matched against the looked up inode.  This was
-> commit 451d0f599934 ("FUSE: Notifying the kernel of deletion."),
-> Apparently this worked around the fact that at that time
-> d_invalidate() returned -EBUSY if the target was still in use and
-> didn't unhash the dentry in that case.
-> 
-> That was later changed by commit bafc9b754f75 ("vfs: More precise
-> tests in d_invalidate") to unconditionally unhash the target, which
-> effectively made FUSE_NOTIFY_INVAL_ENTRY and FUSE_NOTIFY_DELETE
-> equivalent and the code in question unnecessary.
-> 
-> For the future, we could also introduce FUSE_NOTIFY_MOVE, that would
-> differentiate between a delete and a move, while
-> FUSE_NOTIFY_INVAL_ENTRY would continue to be the common (deleted or
-> moved) notification.
-> 
-> Attaching untested patch to remove this cruft.
+Hi,
 
-Should we revert the fuse specific bits of c9ba789dad15 ("VFS: introduce
-start_creating_noperm() and start_removing_noperm()") and then apply
-your changes afterwards?
+I just released Island, a sandboxing tool powered by Landlock:
+https://github.com/landlock-lsm/island
+
+Island makes Landlock practical for everyday workflows by acting as a
+high-level wrapper and policy manager.  Developed alongside the kernel
+feature and its Rust libraries, it bridges the gap between raw security
+mechanisms and user activity through:
+- Zero-code integration: Runs existing binaries without modification.
+- Declarative policies: Uses TOML profiles instead of code-based rules.
+- Context-aware activation: Automatically applies security profiles
+  based on your current working directory.
+- Full environment isolation: Manages isolated workspaces (XDG
+  directories, TMPDIR) in addition to access control.
+- Transparent shell integration: Automatically sandboxes commands in
+  your shell without changing your workflow.
+- Zero-privilege operation: No root access or special capabilities
+  required.
+- Layered protection: Multiple profiles compose cleanly with
+  deterministic ordering.
+
+It's a work in progress, so be careful.
+
+Feedback welcome!
+
+Regards,
+ Mickaël
