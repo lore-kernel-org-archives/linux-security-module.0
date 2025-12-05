@@ -1,144 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5147D35A93C;
-	Fri,  5 Dec 2025 15:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFCB345724
+	for <linux-security-module@vger.kernel.org>; Fri,  5 Dec 2025 16:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764948019; cv=none; b=O6trYPLslFLObdhccmPWsgntHCCabty83d8ObM+AdYr19rqJOMjFdAQ4ekec/Y1cY4wG26EmiP59PaKkygl7c8hv/Uk3c6pm8RsHV7LYmmtyg29XeGBpmH/WS9jA4JHypkXlYxlP9fUM/Y/JRUEZ0vjgwkNJSg23BzWGm16gEu8=
+	t=1764953890; cv=none; b=lBNhXkbLaR5Tx/K5L2DppbegJIO+cZT7o/C+XiA3oporsRIFk9WqJ0WB6Puu5JGFQutdqbFBUZa6jHckIn+kmClWLrZgZZBLUSMoi2Fgdw0yYRmIZR+zjCmzJwF6YLdmBvLZutyqAII253fOBK26EvvhQr4QibjHoV0WBhbm9Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764948019; c=relaxed/simple;
-	bh=0DrduLHOvQ6wuIuzL/EBUrku6LUri3yCavX2EZycS/8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ep3WZ549NSMrXVV5cio6r3duyLqFzOnaNalBnuljh69AQhYrbmajck6wwE2JUfoaMxxnf6mabs+icU6bT1N+Zd0OII9mf7KOfuVX3s7M/k5j04qUhkYRiYgEgdbtrirYJaufBQSM4eNPAt27fnKWB+FmmV3XMY5EOSnGW47upac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QxXNAJWE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764953890; c=relaxed/simple;
+	bh=GUXjWqQrXR5tbeayZTPHGzNJL057n7dY+SwgT4JYN9Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fExvHT15ibhURdgFMXwwchbdHtGa6bh6SC5pVt64HS8OfkNaMfElWZFFuoBi8xffWBAUSFXxZF/d9OAmgNZcdzepiM6hH3sBPkPiNmj/2Jb++0Bi93p+cyWDDhRi23oPdJ4OTguA8JAqydDfA1BUdxuyr5nS2J+DGZqIg4Ezsn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IBnn2A85; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QxXNAJWE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEF57C4CEF1;
-	Fri,  5 Dec 2025 15:20:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764948018;
-	bh=0DrduLHOvQ6wuIuzL/EBUrku6LUri3yCavX2EZycS/8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QxXNAJWEFZAHUjCIBp4zwDBxN/VWLYBZXc3v+ZOGTOkgWbrICMArBfEBA/ZY6lRd6
-	 x+YoNSr/PbmlTkUobi4YFyBJEyBSPL15BcEGW6H9IuTWYu0jFSE7OMJ7b7ktqhLRmn
-	 2n1V/owewBIcqqpJVFKCfCUXgR+1LvnlGyOFEA9BzL4rkPaeUyG/WDLanWjPdMpohQ
-	 aWO0qaUPgCQOM87T/WBKqojzFNG60aqgwMj7UA4NSkgAk3ED9O8stzqqsVaXeLzVmb
-	 dsOJSbEd6DVYDdNHXBa0yI71zchFoIJq4eb5Db4xPpi90Cgm3ao0+AB5mPUPVoM/3Z
-	 +N0PCzYWXqFIg==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Jonathan McDowell <noodles@earth.li>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH v4 3/4] KEYS: trusted: Open code tpm2_buf_append()
-Date: Fri,  5 Dec 2025 17:19:52 +0200
-Message-ID: <20251205151955.298182-4-jarkko@kernel.org>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251205151955.298182-1-jarkko@kernel.org>
-References: <20251205151955.298182-1-jarkko@kernel.org>
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IBnn2A85"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-644f90587e5so3557062a12.0
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Dec 2025 08:58:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1764953880; x=1765558680; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=d1BXNXF9/SCbBa4W+p7Gu1WGIc24DxvdSo5Sv8osjpo=;
+        b=IBnn2A85Xe22p3QBn0DbwBCTV3nEZpqulVdLgE7zM5Xx/NrxJGYFg5S7Nwr5FDjNLh
+         ldVC7Q265M5iZXdyGhQsK4JLauZ7xGgk7SE6lvlUvpxT/Bu8YjJENKth1QVdlrzGWu+N
+         6lMe9s6KeCsFF5vD9PtXNA+XLRxrWcCrLevgo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764953880; x=1765558680;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d1BXNXF9/SCbBa4W+p7Gu1WGIc24DxvdSo5Sv8osjpo=;
+        b=cm08a13ejSLPohWwpu+7eWEcX3K39sjyQXZyGzOH4THO0+4aa/TuKP67wy4cYBLwwZ
+         POlTxP7Exl7lH3P357uCerpdY02gzhNFb6aEgX1OKBnUK9PrcBA7nNj7CgqXo/ijjraD
+         WvbbZRQzt67oyHgGxyu57/tu7khcPOFmeQGLVt4Rusr7C1xs7nz8pXy+BqTg7V+fYJh6
+         Ex8uLarKOJmhHkvkKxBJXdBki+i8xtCDREdlgv1cPGKKNMWRXm0K31/ptZRuMZ5nsubv
+         53amfcS+2X6pTBS8LwWxx22018b2G3izGfkpI+mHA1jFeEigGusG9NJBoC82PJS+TRj4
+         c7xQ==
+X-Gm-Message-State: AOJu0Ywrd2ToRfzgaCxyZwJJmJLVU3lBsPGOLZjYaIyuNn+B45zW1XKl
+	m9J6+SVeBUzoEJoRVYwrxljkxiq68hpMD9ffdfZsGY6SIzsPEo/Ele7ziKKt27PwatciFzn/Lp3
+	gpcx/Zqw=
+X-Gm-Gg: ASbGncv5sn6cIpkq67ziVYBupJq1IKfai7NSIKKkYlrrUz2GRef2J6A3NEpKwOQWsxj
+	BIukCZkxnBSEAx2q9MnL+qSt72hEtlF39333RdmbkK++83eJ5oFITyTzW84bvdzf1pC2bXS/j/s
+	NDBpWO9aM8rL+BY77qD6HgcP81b9xsqwIHC3+UB3kYwvOM2z0VX/M0gxxEgHVwZtPAbuKs9cMvc
+	HA6yRxxFJWlhJaK8AurDTxUoTeYXWtFx1h82K4CsQn4GT+zM7lHNH9jVfPV7Bl1oAuh0RVehQnU
+	pFjlDxw6K2W0xMi+8JAngcv/ijPa88YyuJHNvOiJEYECRzN5s+/9vZBz50gogYVwQPSeR8KKpvh
+	qSD0sBr/TaJqIFPjQN4WnKqDAvLGfn8s9CUlPVLBLd1hVfwxZ0RU72Odk1ZgrdZIbKK3Axy06kd
+	caRzwZ4EBrh94e1rzsGIho8Kh8Kq0QuW4JhKA9OpprkvcDJQuT0VViAhK3Fhs8xNOI/cL8qwY=
+X-Google-Smtp-Source: AGHT+IF/9OnToRhTQKLFjKXwfcHHYiZPKBA16yl9Ayd0bP+U7Tt9OiJIF+zD3Yk5IzNkDznwY1HrOQ==
+X-Received: by 2002:a05:6402:430a:b0:647:a636:76c with SMTP id 4fb4d7f45d1cf-647abdf82e3mr6160118a12.31.1764953880514;
+        Fri, 05 Dec 2025 08:58:00 -0800 (PST)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-647b2ec2d8csm4273587a12.5.2025.12.05.08.57.59
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Dec 2025 08:57:59 -0800 (PST)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-64166a57f3bso3832444a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Dec 2025 08:57:59 -0800 (PST)
+X-Received: by 2002:a05:6402:3508:b0:647:a2b2:3db3 with SMTP id
+ 4fb4d7f45d1cf-647abd992c0mr6370909a12.13.1764953879103; Fri, 05 Dec 2025
+ 08:57:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <aTIm6grHZUhRncFH@mail.hallyn.com> <CAADWXX_rO42NznU6c+rjqzaUuTLMp_DXSf_mn8rVDCe+1AMUTQ@mail.gmail.com>
+ <aTJi1TunpnTguOtm@mail.hallyn.com>
+In-Reply-To: <aTJi1TunpnTguOtm@mail.hallyn.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 5 Dec 2025 08:57:41 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgxM=an8or=+=vwXbLou-ApqV-rJAsqNt4+jCd3y7vfbQ@mail.gmail.com>
+X-Gm-Features: AQt7F2qk-xg4DRrB_IYZ-uoc8xBeMlNnXa6Oc6nQ-chtduJhri9vARFZHm00u5g
+Message-ID: <CAHk-=wgxM=an8or=+=vwXbLou-ApqV-rJAsqNt4+jCd3y7vfbQ@mail.gmail.com>
+Subject: Re: [GIT PULL] capabilities update for v6.19
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ryan Foster <foster.ryan.r@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+On Thu, 4 Dec 2025 at 20:43, Serge E. Hallyn <serge@hallyn.com> wrote:
+>
+> The odd thing is, when I send emails to my own gmail account I don't see
+> any complaints about DKIM or DMARC, only:
+>
+> ARC-Authentication-Results: i=1; mx.google.com;
+>        spf=pass (google.com: domain of serge@hallyn.com designates 178.63.66.53 as permitted sender) smtp.mailfrom=serge@hallyn.com
 
-tpm2_buf_append_auth() has only single call site and most of its parameters
-are redundant. Open code it to the call site. Remove illegit FIXME comment
-as there is no categorized bug and replace it with more sane comment about
-implementation (i.e. "non-opionated inline comment").
+Yes, that's what I see the headers say too - but then in gmail if you
+go to "show original", it will also say "DMARC: FAIL" at the top. So
+gmail seems to internally consider "no dmarc" to be a failure.
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
-Reviewed-by: Jonathan McDowell <noodles@earth.li>
----
- security/keys/trusted-keys/trusted_tpm2.c | 51 ++++-------------------
- 1 file changed, 9 insertions(+), 42 deletions(-)
+Note that it's entirely possible that your email was marked as spam
+for random other reasons, but I've seen this thing before with other
+cases that don't do the full dkim and dmarc setup. So I think it just
+raises the likelihood of email being marked as spam.
 
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 07f04cc010bc..3b5dbbc2d257 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -226,36 +226,6 @@ int tpm2_key_parent_name(void *context, size_t hdrlen, unsigned char tag,
- 
- 	return 0;
- }
--/**
-- * tpm2_buf_append_auth() - append TPMS_AUTH_COMMAND to the buffer.
-- *
-- * @buf: an allocated tpm_buf instance
-- * @session_handle: session handle
-- * @nonce: the session nonce, may be NULL if not used
-- * @nonce_len: the session nonce length, may be 0 if not used
-- * @attributes: the session attributes
-- * @hmac: the session HMAC or password, may be NULL if not used
-- * @hmac_len: the session HMAC or password length, maybe 0 if not used
-- */
--static void tpm2_buf_append_auth(struct tpm_buf *buf, u32 session_handle,
--				 const u8 *nonce, u16 nonce_len,
--				 u8 attributes,
--				 const u8 *hmac, u16 hmac_len)
--{
--	tpm_buf_append_u32(buf, 9 + nonce_len + hmac_len);
--	tpm_buf_append_u32(buf, session_handle);
--	tpm_buf_append_u16(buf, nonce_len);
--
--	if (nonce && nonce_len)
--		tpm_buf_append(buf, nonce, nonce_len);
--
--	tpm_buf_append_u8(buf, attributes);
--	tpm_buf_append_u16(buf, hmac_len);
--
--	if (hmac && hmac_len)
--		tpm_buf_append(buf, hmac, hmac_len);
--}
--
- /**
-  * tpm2_seal_trusted() - seal the payload of a trusted key
-  *
-@@ -549,19 +519,16 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 					    options->blobauth_len);
- 	} else {
- 		/*
--		 * FIXME: The policy session was generated outside the
--		 * kernel so we don't known the nonce and thus can't
--		 * calculate a HMAC on it.  Therefore, the user can
--		 * only really use TPM2_PolicyPassword and we must
--		 * send down the plain text password, which could be
--		 * intercepted.  We can still encrypt the returned
--		 * key, but that's small comfort since the interposer
--		 * could repeat our actions with the exfiltrated
--		 * password.
-+		 * The policy session is generated outside the kernel, and thus
-+		 * the password will end up being unencrypted on the bus, as
-+		 * HMAC nonce cannot be calculated for it.
- 		 */
--		tpm2_buf_append_auth(&buf, options->policyhandle,
--				     NULL /* nonce */, 0, 0,
--				     options->blobauth, options->blobauth_len);
-+		tpm_buf_append_u32(&buf, 9 + options->blobauth_len);
-+		tpm_buf_append_u32(&buf, options->policyhandle);
-+		tpm_buf_append_u16(&buf, 0);
-+		tpm_buf_append_u8(&buf, 0);
-+		tpm_buf_append_u16(&buf, options->blobauth_len);
-+		tpm_buf_append(&buf, options->blobauth, options->blobauth_len);
- 		if (tpm2_chip_auth(chip)) {
- 			tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_ENCRYPT, NULL, 0);
- 		} else  {
--- 
-2.52.0
-
+             Linus
