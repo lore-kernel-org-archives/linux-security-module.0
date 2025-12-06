@@ -1,313 +1,195 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B56F2DA755;
-	Sat,  6 Dec 2025 01:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F89222127A
+	for <linux-security-module@vger.kernel.org>; Sat,  6 Dec 2025 08:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764984492; cv=none; b=RuJvNiaNAEhdWX489+ZchjFXhCV28xlB+CUseBSmnudmRKbnspERe4jj9k/CMuAOoqUztG4rPfaYgJVdpW/d/h8H+GmZf6TG2+acT1L5YR4vvXthqGDKfnudb9sKiLPpQmYKwMIRaKRBSHVoNBWv1f6QdctvYTpyiwLqCj9zSTo=
+	t=1765010315; cv=none; b=HLWGqQ0C5ipBDSUZILaSSM9+pT1PdbPLzri5SOWiw5G/dVKEqmLZ+WJ0oFVtNzr2jTIVSbyaH8FqNsamEmwp7rAakeV/TygfJxhj80BJqqkQxTrL+g9RSPM50nKx69YQMGQcXmjiIgtfToQIrgroAVRsh31gXT29ajCXdFkqleQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764984492; c=relaxed/simple;
-	bh=q/Wsg5FfLOhQpfDdZLiCbvWCm+yqGUhoF8BfEZ8E96Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Frcadkh+ITv5yKV019FoT5OCG7sy/p3mQlDbqYiVlvBYjl9wsEYPOihS7a7ufqTR+KkZVG/KrHxxp2tvHz2UDmRi45200t7+KiDjEVIZYKLLlqUNGZrFfeXJmSD2m9/2hkXK+GWPoDf/QrzqwevGlDnIlkjeoE9ec3GWVNwlyz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ScQsYYPz; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1765010315; c=relaxed/simple;
+	bh=Gwa4FW/HF6dVnO8PL32pmwPWh+CCm+aVOn2ctJfUxXY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c/CEJpU1nAAo80iSTTs4ON57f7bRJGVjS+6KZ2X53Kpq5psGscrYLNOr4psqpThRkyHMhuRpKTx9dohaSN8iKERY8Nkqw0iei8ipW9vxZCl1jXm/cCXbTm07JbhxWBIRy9DzYpPt8qyhM/UgefpKiiaVoLM8zseU70E4Had2x+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fTEB9xG6; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ScQsYYPz"
-Received: from [10.17.64.202] (unknown [131.107.1.138])
-	by linux.microsoft.com (Postfix) with ESMTPSA id C565C201D7E8;
-	Fri,  5 Dec 2025 17:28:07 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C565C201D7E8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1764984488;
-	bh=Sn9Z9Lx1cdrnVkhf9RgH4VcFUc+lHAphm6gqI3K2mrg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ScQsYYPz6wpuIz+Pely0mirAP9ST70AQFfUi3HvBErEPLGKlTzj74UtWayCykFd+i
-	 7UZTBmePr0V/9w0e36xqK+QDtuO0WTmVsdGIchT3zlzwQAjU3oCtbCvv0wAXlkQXiI
-	 ash1U13qSYLv6qKxcHoknrByI+U/JJ19grCBQ7/8=
-Message-ID: <dd7abd9b-f1dc-4f2a-925f-cfae4ce0ee9a@linux.microsoft.com>
-Date: Fri, 5 Dec 2025 17:28:06 -0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fTEB9xG6"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-29808a9a96aso30314235ad.1
+        for <linux-security-module@vger.kernel.org>; Sat, 06 Dec 2025 00:38:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765010313; x=1765615113; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=prycVSRPOk07rpwpu9tCdC8skh9cM21gBKGRU0XWKEQ=;
+        b=fTEB9xG6NVQ8CZ5n1ARehRV9WHM/VE+y7NT+2trj5OZnLFyriPyBmDM45jSPrfcoxm
+         dpy+GV/oSQCw2RmtHLtouT8gqfSLxbTOnneRZbbA0wf4Mimgo+qYwrMLVrDj9RBylPfh
+         df3W7OMt8ixKBlwA3a3LyB9MfFtBhsDKDFxeg0ak0B+uJrDs0hFH8J7qF9mQuR/MYWQK
+         zmgb1h7YLJ0DmguF5XM7ZcC4vqrfHEemL2NXc7ZPfHgOO3yzgMwmYuPJBks3jFNKgGl+
+         KpLn3iGiDDEgIHCdYNjZh45kCsqiaXUNkBpLuJ4ZtpraSn9B2dG9dqtJ+goq19XRRn1a
+         y5RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765010313; x=1765615113;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=prycVSRPOk07rpwpu9tCdC8skh9cM21gBKGRU0XWKEQ=;
+        b=S6XD+D2DX3Lhu5ZrBLer3NcXY6/FoDSJPtMp26lOqIe1PJBTc7cLIc31JiQLgcm3Sy
+         U0Qll5h+B76moJlbqiRCa5ihkD+ZjkrNNXQLU23t5G0V86UyRhP0F0Q7PD17Jme3SSNY
+         D8LTs1eMDORWsCv6Xww9E5bbcnuoj1Hr493Kl1618wDWJDQ3Q3bvdTdnUl7tWYg8BAv0
+         lvM9Jx4kGNzaHZPSl+NvdtQldfV6E7qo8WEFJaB/kgXWuuMnBx2cS2V7pUSF9I90ZN4F
+         kGknpGr9ylHOMP58dpc9WUfvB8Fjo3PdOySrs6lFE1O0w96Ksw3NnbZO4C6AZGl7fqQZ
+         +kDw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5MFKSeSFhCQsyPDI+LgbTk71w0vSjoEWqC2TijuCvpafke8aFaOOONEo8SvtzRFXdzj0YJ+xi62lkeb6970MBXkgWQzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiS028qAHdWyzx6p8+voye7vVJD/XIKrgeSgz7b8YGYgDGDyqT
+	C1mY4yje4efFTymXBcdnljBL4n8NP9HSK7G9mJ5SNpiWgupIESWQB9vscKWfpg==
+X-Gm-Gg: ASbGnctotDWCFXC7cZRIybebIX0m2NkqUn4lbxE+PaLRn/KlBmTGAuVgpVeyEkFy0tH
+	aofl0Oewxv6bDC1UXKnrYjZ2a/PZpFlTRlJ52bCpsqCGlnYNOb0m4QXUooQmHahJ5UTSM2ESdns
+	adG1oZV5MkW1pJCFWfg/Y3VhI31X4LbvcIJHpunMJ45zxChAb3To4fBc74LdcU+SxT+1YuXLn3U
+	Y+0dMVF/jO1XTSB2fn3d/P6jBLrECjOqggUWuPgfd30BnZ48OsZsoQ+ILCqTV2fk8OFFpQX/IPL
+	JPxIuvXXOqhZPGG9qek7H3PnwsQPnaxMoAraRyEgg+0Bf5QLUXW0iLdvBP0dU1dXok17B0ciLLA
+	cc5JE2Bx96MUvaBzAynbknHhbewmM8lPfNj9ENWxJUwfJpmUqC3tXqVhR5s2WsZF4xF/ovKMEIN
+	5UfRRsUIK2UAT7
+X-Google-Smtp-Source: AGHT+IHKcTubNpp//XKbNtvzZsY9GNFbXVUHT6icYP+A+7ynbahWDBjnLZ6Mh0QvhvT3OxZ280hfBQ==
+X-Received: by 2002:a17:902:e752:b0:295:98a1:7ddb with SMTP id d9443c01a7336-29df6326100mr15811075ad.61.1765010312599;
+        Sat, 06 Dec 2025 00:38:32 -0800 (PST)
+Received: from fedora ([110.224.242.59])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29dae4cf9c3sm68834905ad.26.2025.12.06.00.38.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Dec 2025 00:38:32 -0800 (PST)
+From: Shi Hao <i.shihao.999@gmail.com>
+To: kuba@kernel.org
+Cc: davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	herbert@gondor.apana.org.au,
+	horms@kernel.org,
+	i.shihao.999@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	pablo@netfilter.org,
+	steffen.klassert@secunet.com
+Subject: [PATCH v2] net: ipv6: fix spelling typos in comments
+Date: Sat,  6 Dec 2025 14:08:13 +0530
+Message-ID: <20251206083813.240710-1-i.shihao.999@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] IMA event log trimming
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
- linux-integrity@vger.kernel.org
-Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, linux-security-module@vger.kernel.org,
- anirudhve@linux.microsoft.com, gregorylumen@linux.microsoft.com,
- nramas@linux.microsoft.com, sushring@linux.microsoft.com,
- steven chen <chenste@linux.microsoft.com>
-References: <20251202232857.8211-1-chenste@linux.microsoft.com>
- <20251202232857.8211-2-chenste@linux.microsoft.com>
- <099492ee58996b6f18d73232677757ecadb14cb7.camel@huaweicloud.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <099492ee58996b6f18d73232677757ecadb14cb7.camel@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 12/5/2025 1:30 AM, Roberto Sassu wrote:
-> On Tue, 2025-12-02 at 15:28 -0800, steven chen wrote:
->> This patch is for trimming N entries of the IMA event logs as well as
->> cleaning the hash table.
->>
->> It provides a userspace interface ima_trim_log that can be used to input
->> number N to let kernel to trim N entries of IMA event logs. When read
->> this interface, it returns number of entries trimmed last tim.
-> High-level comments:
-> - It does not offer the possibility to keep the hash table
+Correct misspelled typos in comments
 
-Hi Roberto,
+- informations -> information
+- wont -> won't
+- upto -> up to
+- destionation -> destination
 
-Should the hash table persist after log removal? Log trimming is 
-infrequent, right?
+Signed-off-by: Shi Hao <i.shihao.999@gmail.com>
+---
 
-Thanks,
+changes v2:
+- Rebased on net-next
+---
+ net/ipv6/ah6.c                          | 2 +-
+ net/ipv6/calipso.c                      | 4 ++--
+ net/ipv6/ip6_fib.c                      | 2 +-
+ net/ipv6/ip6_vti.c                      | 2 +-
+ net/ipv6/netfilter/nf_conntrack_reasm.c | 2 +-
+ net/ipv6/reassembly.c                   | 2 +-
+ 6 files changed, 7 insertions(+), 7 deletions(-)
 
-Steven
+diff --git a/net/ipv6/ah6.c b/net/ipv6/ah6.c
+index 95372e0f1d21..92e1cf90a6be 100644
+--- a/net/ipv6/ah6.c
++++ b/net/ipv6/ah6.c
+@@ -169,7 +169,7 @@ static bool zero_out_mutable_opts(struct ipv6_opt_hdr *opthdr)
+ /**
+  *	ipv6_rearrange_destopt - rearrange IPv6 destination options header
+  *	@iph: IPv6 header
+- *	@destopt: destionation options header
++ *	@destopt: destination options header
+  */
+ static void ipv6_rearrange_destopt(struct ipv6hdr *iph, struct ipv6_opt_hdr *destopt)
+ {
+diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
+index df1986973430..220dd432c5bd 100644
+--- a/net/ipv6/calipso.c
++++ b/net/ipv6/calipso.c
+@@ -43,7 +43,7 @@
+ #define CALIPSO_HDR_LEN (2 + 8)
 
-> - There is no coordination between taking a snapshot and the readers of
->    the measurements list (I think it is necessary, since reading is
->    based on *pos, which contains the entries read until a given point;
->    if there is a truncate in the middle of the read, *pos would still
->    refer to the non-truncated list and the next read will skip some
->    measurement entries)
+ /* Maximum size of the calipso option including
+- * the two-byte TLV header and upto 3 bytes of
++ * the two-byte TLV header and up to 3 bytes of
+  * leading pad and 7 bytes of trailing pad.
+  */
+ #define CALIPSO_OPT_LEN_MAX_WITH_PAD (3 + CALIPSO_OPT_LEN_MAX + 7)
+@@ -713,7 +713,7 @@ static int calipso_pad_write(unsigned char *buf, unsigned int offset,
+  *
+  * Description:
+  * Generate a CALIPSO option using the DOI definition and security attributes
+- * passed to the function. This also generates upto three bytes of leading
++ * passed to the function. This also generates up to three bytes of leading
+  * padding that ensures that the option is 4n + 2 aligned.  It returns the
+  * number of bytes written (including any initial padding).
+  */
+diff --git a/net/ipv6/ip6_fib.c b/net/ipv6/ip6_fib.c
+index 2111af022d94..bd1107eec89b 100644
+--- a/net/ipv6/ip6_fib.c
++++ b/net/ipv6/ip6_fib.c
+@@ -1010,7 +1010,7 @@ static int fib6_nh_drop_pcpu_from(struct fib6_nh *nh, void *_arg)
 
-Hi Roberto,
+ static void fib6_drop_pcpu_from(struct fib6_info *f6i)
+ {
+-	/* Make sure rt6_make_pcpu_route() wont add other percpu routes
++	/* Make sure rt6_make_pcpu_route() won't add other percpu routes
+	 * while we are cleaning them here.
+	 */
+	f6i->fib6_destroying = 1;
+diff --git a/net/ipv6/ip6_vti.c b/net/ipv6/ip6_vti.c
+index ad5290be4dd6..cc8d0b142224 100644
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -435,7 +435,7 @@ static bool vti6_state_check(const struct xfrm_state *x,
+  * vti6_xmit - send a packet
+  *   @skb: the outgoing socket buffer
+  *   @dev: the outgoing tunnel device
+- *   @fl: the flow informations for the xfrm_lookup
++ *   @fl: the flow information for the xfrm_lookup
+  **/
+ static int
+ vti6_xmit(struct sk_buff *skb, struct net_device *dev, struct flowi *fl)
+diff --git a/net/ipv6/netfilter/nf_conntrack_reasm.c b/net/ipv6/netfilter/nf_conntrack_reasm.c
+index 64ab23ff559b..fcb17308c7e7 100644
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -251,7 +251,7 @@ static int nf_ct_frag6_queue(struct frag_queue *fq, struct sk_buff *skb,
 
-What’s your suggestion for this? Leave user space handle this (check log 
-trimming
-happened)?
+	/* Note : skb->rbnode and skb->dev share the same location. */
+	dev = skb->dev;
+-	/* Makes sure compiler wont do silly aliasing games */
++	/* Makes sure compiler won't do silly aliasing games */
+	barrier();
 
-Thanks!
+	prev = fq->q.fragments_tail;
+diff --git a/net/ipv6/reassembly.c b/net/ipv6/reassembly.c
+index 25ec8001898d..13540779a2c7 100644
+--- a/net/ipv6/reassembly.c
++++ b/net/ipv6/reassembly.c
+@@ -187,7 +187,7 @@ static int ip6_frag_queue(struct net *net,
 
-Steven.
+	/* Note : skb->rbnode and skb->dev share the same location. */
+	dev = skb->dev;
+-	/* Makes sure compiler wont do silly aliasing games */
++	/* Makes sure compiler won't do silly aliasing games */
+	barrier();
 
-> - While trimming per se is ok, I like more the idea of staging changes
->    and letting the user delete the staged measurements list later
-
-Hi Roberto,
-
-This approach simplifies both the user space agent and the kernel. The 
-main difference
-lies in whether log purging requires one step or two; I think a single 
-step is preferable
-since logs must be removed from the kernel regardless.
-
-Thanks,
-
-Steven
-
->> A mutex ima_trim_list_mutex is provided to allow one trimming request
->> at a time.
->>
->> Signed-off-by: steven chen <chenste@linux.microsoft.com>
->> ---
->>   security/integrity/ima/ima.h       |  2 +
->>   security/integrity/ima/ima_fs.c    | 78 ++++++++++++++++++++++++++++++
->>   security/integrity/ima/ima_queue.c | 42 ++++++++++++++++
->>   3 files changed, 122 insertions(+)
->>
->> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->> index e3d71d8d56e3..ab0e30ee25ea 100644
->> --- a/security/integrity/ima/ima.h
->> +++ b/security/integrity/ima/ima.h
->> @@ -246,8 +246,10 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
->>   
->>   #ifdef CONFIG_IMA_KEXEC
->>   void ima_measure_kexec_event(const char *event_name);
->> +long ima_purge_event_log(long number_logs);
->>   #else
->>   static inline void ima_measure_kexec_event(const char *event_name) {}
->> +static inline long ima_purge_event_log(long number_logs) { return 0; }
->>   #endif
->>   
->>   /*
->> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
->> index 87045b09f120..ea93448feedd 100644
->> --- a/security/integrity/ima/ima_fs.c
->> +++ b/security/integrity/ima/ima_fs.c
->> @@ -38,6 +38,11 @@ __setup("ima_canonical_fmt", default_canonical_fmt_setup);
->>   
->>   static int valid_policy = 1;
->>   
->> +#define IMA_LOG_TRIM_REQ_LENGTH 11
->> +static long trimcount;
->> +/* mutex protects atomicity of trimming measurement list requests */
->> +static DEFINE_MUTEX(ima_trim_list_mutex);
->> +
->>   static ssize_t ima_show_htable_value(char __user *buf, size_t count,
->>   				     loff_t *ppos, atomic_long_t *val)
->>   {
->> @@ -289,6 +294,69 @@ static const struct file_operations ima_ascii_measurements_ops = {
->>   	.release = seq_release,
->>   };
->>   
->> +static int ima_log_trim_open(struct inode *inode, struct file *filp)
->> +{
->> +	if (!capable(CAP_SYS_ADMIN))
->> +		return -EPERM;
->> +	return 0;
->> +}
->> +
->> +static ssize_t ima_log_trim_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
->> +{
->> +	char tmpbuf[IMA_LOG_TRIM_REQ_LENGTH];	/* greater than largest 'long' string value */
->> +	ssize_t len;
->> +
->> +	len = scnprintf(tmpbuf, sizeof(tmpbuf), "%li\n", trimcount);
->> +	return simple_read_from_buffer(buf, size, ppos, tmpbuf, len);
->> +}
->> +
->> +static ssize_t ima_log_trim_write(struct file *file,
->> +				  const char __user *buf, size_t datalen, loff_t *ppos)
->> +{
->> +	unsigned char req[IMA_LOG_TRIM_REQ_LENGTH];
->> +	long count, n;
->> +	int ret;
->> +
->> +	mutex_lock(&ima_trim_list_mutex);
->> +
->> +	if (*ppos > 0 || datalen > IMA_LOG_TRIM_REQ_LENGTH || datalen < 2) {
->> +		ret = -EINVAL;
->> +		goto out;
->> +	}
->> +
->> +	n = (int)datalen;
->> +
->> +	ret = copy_from_user(req, buf, datalen);
->> +	if (ret < 0)
->> +		goto out;
->> +
->> +	count = 0;
->> +	for (int i = 0; i < n; ++i) {
->> +		if (req[i] < '0' || req[i] > '9') {
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +		count = count * 10 + req[i] - '0';
->> +	}
->> +	ret = ima_purge_event_log(count);
->> +
->> +	if (ret < 0)
->> +		goto out;
->> +
->> +	trimcount = ret;
->> +	ret = datalen;
->> +out:
->> +	mutex_unlock(&ima_trim_list_mutex);
->> +	return ret;
->> +}
->> +
->> +static const struct file_operations ima_log_trim_ops = {
->> +	.open = ima_log_trim_open,
->> +	.read = ima_log_trim_read,
->> +	.write = ima_log_trim_write,
->> +	.llseek = generic_file_llseek,
->> +};
->> +
->>   static ssize_t ima_read_policy(char *path)
->>   {
->>   	void *data = NULL;
->> @@ -528,6 +596,16 @@ int __init ima_fs_init(void)
->>   		goto out;
->>   	}
->>   
->> +	dentry = securityfs_create_file("ima_trim_log",
->> +					S_IRUSR | S_IRGRP | S_IWUSR | S_IWGRP,
->> +					ima_dir, NULL, &ima_log_trim_ops);
->> +	if (IS_ERR(dentry)) {
->> +		ret = PTR_ERR(dentry);
->> +		goto out;
->> +	}
->> +
->> +	trimcount = 0;
->> +
->>   	dentry = securityfs_create_file("runtime_measurements_count",
->>   				   S_IRUSR | S_IRGRP, ima_dir, NULL,
->>   				   &ima_measurements_count_ops);
->> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
->> index 590637e81ad1..999cd42c517c 100644
->> --- a/security/integrity/ima/ima_queue.c
->> +++ b/security/integrity/ima/ima_queue.c
->> @@ -220,6 +220,48 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
->>   	return result;
->>   }
->>   
->> +/* Delete the IMA event logs */
->> +long ima_purge_event_log(long number_logs)
->> +{
->> +	struct ima_queue_entry *qe;
->> +	long cur = 0;
->> +
->> +	if (number_logs <= 0)
->> +		return number_logs;
->> +
->> +	mutex_lock(&ima_extend_list_mutex);
->> +	rcu_read_lock();
-> Sorry, I'm missing why rcu_read_lock() is needed.
-
-Hi Roberto,
-
-I will add "true" parameter in list_for_each_entry_rcu api.
-
-Thanks,
-
-Steven
-
->> +
->> +	/*
->> +	 * Remove this entry from both hash table and the measurement list
->> +	 * When removing from hash table, decrease the length counter
->> +	 * so that the hash table re-sizing logic works correctly
->> +	 */
->> +	list_for_each_entry_rcu(qe, &ima_measurements, later) {
->> +		int i;
->> +
->> +		/* if CONFIG_IMA_DISABLE_HTABLE is set, the hash table is not used */
->> +		if (!IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE))
->> +			hlist_del_rcu(&qe->hnext);
->> +
->> +		for (i = 0; i < qe->entry->template_desc->num_fields; i++) {
->> +			kfree(qe->entry->template_data[i].data);
->> +			qe->entry->template_data[i].data = NULL;
->> +			qe->entry->template_data[i].len = 0;
->> +		}
->> +
->> +		atomic_long_dec(&ima_htable.len);
->> +		list_del_rcu(&qe->later);
-> Missing kfree() of qe->entry and qe?
->
-> Thanks
->
-> Roberto
-
-Hi Roberto,
-
-I will update in next version.
-
-Thanks,
-
-Steven
-
->> +		++cur;
->> +		if (cur >= number_logs)
->> +			break;
->> +	}
->> +
->> +	rcu_read_unlock();
->> +	mutex_unlock(&ima_extend_list_mutex);
->> +	return cur;
->> +}
->> +
->>   int ima_restore_measurement_entry(struct ima_template_entry *entry)
->>   {
->>   	int result = 0;
-
-
+	prev_tail = fq->q.fragments_tail;
+--
+2.51.0
