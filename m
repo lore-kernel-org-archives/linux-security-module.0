@@ -1,89 +1,72 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BC129C321;
-	Sat,  6 Dec 2025 10:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2AF3B8D70;
+	Sat,  6 Dec 2025 11:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765016161; cv=none; b=e/cZL66ynh6vFJx7Wlfl2jw022xsczUkwuo2vhLTObVw3xQVGTBsATJqJsnVInobK59NAO3OEObUB4N7g6nP45eihGrWeyqfwSx0k0TdWl6BIJdkUa545tG2j7FUq2wMD6ea6tSKcH9fsy7Sn/ZrG7hswkJ96vCPUdO+wBDNTkw=
+	t=1765020682; cv=none; b=CbfFGbIiwv0FN7+1EMMbbx56gXok01E99WT8ptyY5FT6Nf1HAG9f3UNkl8zCcYP6Jd4Uv9NC9lJCfW/7z3Ey8ffNIQbeknYbt1SLyqhOllIOIJXvnEgmu6kmZwEQQxNR1G+viv/tjl+nv9khElwOt0wPrNL1e8oyj5ivWJrAPjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765016161; c=relaxed/simple;
-	bh=lFU3EcGyBdpsW0Hkd/ugA31E2KOiaFQplmose0hCcHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gm5YAjLoAHlZ2vsENiBhAmZ5PK4Tzyi+x9UcGtyICP1HQMdHOLH5ngo/0tGT72w2kJb0DiInG1iYsD+9y6XcbtGV4VRVRlDNLPPh9mMliLKzD3CAmr7+JfUx2REbf6WphXNW/7zMQ+xvbcDnI//o/zLPPM2VIsWFOVKKm/T+LFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/Rn7T5L; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765020682; c=relaxed/simple;
+	bh=Ck13VDLGBRsb+G5GVGwMTmwg65IiR9oyUt5RqpBAiCg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gx2d8/ElpQ2HRV5vP/VsKhdiTgW+zk3MObVpJ6CrTtZXfz9sUBuI0gYbXy9kwIqe8fjp+BoLGpknud6NQvjePr23Dvz2H79HmFYtjCNjaVNiFFmvRsgPZeWAcyeVMlVEcF683uaGA31XmYVb73J+Y0/Ka/61eqKeY5HhxvrUt14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O4Tb9kKc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/Rn7T5L"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB569C4CEF5;
-	Sat,  6 Dec 2025 10:15:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O4Tb9kKc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 593C9C4CEF5;
+	Sat,  6 Dec 2025 11:31:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765016161;
-	bh=lFU3EcGyBdpsW0Hkd/ugA31E2KOiaFQplmose0hCcHk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q/Rn7T5LTn2j5E0ftO0sEqW3My68BJYzi41kYyMbmPy58PgFlDQhV2NAnoMkF2XJL
-	 S/9bSc0Oz7MW8Rkm1WzvxpIXrltTIhrPLrmQP6DOhurIv/0wsGW/EYXI+iSfNCh76y
-	 rK2C21OhzFC4oNIQHduO3pGpDFGXi7A+8+wJQCkKkPphVr+1TTN3CVjiAczSkR2FyY
-	 QMflC5dYuVDsEACJOmdCyc9/YIFi3qVsjttJVuyRRqMiKCtc2SY/CS9GyXZuOVRU0M
-	 MDPcWr7lPfk8PfOp1s0tr3kdnGjTdmXBWXMKbK4nw7DU8xjgk3egoDsh85PXvxpiLv
-	 TCbZtYLOTcaUw==
-Date: Sat, 6 Dec 2025 10:15:56 +0000
-From: Simon Horman <horms@kernel.org>
-To: Shi Hao <i.shihao.999@gmail.com>
-Cc: kuba@kernel.org, davem@davemloft.net, dsahern@kernel.org,
-	edumazet@google.com, herbert@gondor.apana.org.au,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	netdev@vger.kernel.org, pabeni@redhat.com, pablo@netfilter.org,
-	steffen.klassert@secunet.com
-Subject: Re: [PATCH v2] net: ipv6: fix spelling typos in comments
-Message-ID: <aTQCXJ7MUvnJpG6B@horms.kernel.org>
-References: <20251206083813.240710-1-i.shihao.999@gmail.com>
+	s=k20201202; t=1765020680;
+	bh=Ck13VDLGBRsb+G5GVGwMTmwg65IiR9oyUt5RqpBAiCg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=O4Tb9kKcKIXrDaExo9+s2b/1mg+NxRppDZp4XvpErRsEoweJg+OkCWCULYBX7XTdI
+	 /iD6LrUtXJQUbsw9/yC+3N8uVjSt3zxMifuokh6PTQfs5DqW0USK4pfz0RHg3Yb/CR
+	 tRmeyoHDy0KzMNEN9a710irEz9KL/LX94+ab7HKn7S3ZuWG8pszdjO+FFxHZjaVVVP
+	 MI4vndXyu+6Ojy0TlP5yrfkDWAHGI4dS0ePJlMte5NG3aNhw2QhfEmDQnVMzgg30lo
+	 GasM/1Ixb6iZL8LhjPiiMnjetPJrLLS008txV59bbmGXqkuSTPwQd0AxGjrbtcitnL
+	 LZomjS4RlbHGg==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 0/3] Implement managed allocations
+Date: Sat,  6 Dec 2025 13:31:07 +0200
+Message-Id: <20251206113110.1793407-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251206083813.240710-1-i.shihao.999@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Dec 06, 2025 at 02:08:13PM +0530, Shi Hao wrote:
-> Correct misspelled typos in comments
-> 
-> - informations -> information
-> - wont -> won't
-> - upto -> up to
-> - destionation -> destination
-> 
-> Signed-off-by: Shi Hao <i.shihao.999@gmail.com>
+Jarkko Sakkinen (3):
+  tpm-buf: Merge TPM_BUF_BOUNDARY_ERROR and TPM_BUF_OVERFLOW
+  tpm-buf: Remove chip parameter from tpm_buf_append_handle
+  tpm-buf: Implement managed allocations
 
-Hi Shi Hao,
-
-Unfortunately this patches do not apply cleanly on net-next,
-and thus can't be processed by our CI.
-
-When applying manually I see:
-
-  Patch failed at 0001 net: ipv6: fix spelling typos in comments
-  error: corrupt patch at line 58
-
-Also, net-next is currently closed.
-
-## Form letter - net-next-closed
-
-The merge window for v6.19 has begun and therefore net-next has closed
-for new drivers, features, code refactoring and optimizations. We are
-currently accepting bug fixes only.
-
-Please repost when net-next reopens.
-
-Due to a combination of the merge-window, travel commitments of the
-maintainers, and the holiday season, net-next will re-open after
-2nd January.
-
-RFC patches sent for review only are welcome at any time.
-
-See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+ drivers/char/tpm/tpm-buf.c                | 143 ++++++----
+ drivers/char/tpm/tpm-sysfs.c              |  21 +-
+ drivers/char/tpm/tpm.h                    |   1 -
+ drivers/char/tpm/tpm1-cmd.c               | 166 +++++------
+ drivers/char/tpm/tpm2-cmd.c               | 320 ++++++++++------------
+ drivers/char/tpm/tpm2-sessions.c          | 144 +++++-----
+ drivers/char/tpm/tpm2-space.c             |  44 ++-
+ drivers/char/tpm/tpm_vtpm_proxy.c         |  30 +-
+ include/linux/tpm.h                       |  30 +-
+ security/keys/trusted-keys/trusted_tpm1.c |  36 +--
+ security/keys/trusted-keys/trusted_tpm2.c | 170 ++++++------
+ 11 files changed, 523 insertions(+), 582 deletions(-)
 
 -- 
-pw-bot: changes-requested
+2.39.5
+
