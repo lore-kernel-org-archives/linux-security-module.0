@@ -1,213 +1,253 @@
 Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0EB1662E7
-	for <linux-security-module@vger.kernel.org>; Sat,  6 Dec 2025 17:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90C22EBBA1
+	for <linux-security-module@vger.kernel.org>; Sat,  6 Dec 2025 17:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765040880; cv=none; b=qDes21xL3fU/z5y6Yqk5t0aGg0NylvwqAhPAsvi3W/MmptTL8m0vgYiezbcgJTiNkN9xr1f4Gml/J8YIQCQy+bmAhCX1OK4HhoqJPMudUifGFXJvKvOP3aOPv5VJJ3u2vHLBV7jC3u7gKB+wESwdI86Xn+QfLiUlvMoVIqad6xY=
+	t=1765041104; cv=none; b=tbrorffgJgeGHgtFRNqXoP08eIwbgifEz7KQWd+UF89Bi/YrcyVloukjCOyc+iLo+TvapGX6DX3UQWVIryNaWqxPhiYrdKPPdWlgYupCxfbn0eQ9fBtBxdO9VDPGCbekgFTF8mDyGwdjfa3u/5+kN9Y6105fEh2Q9QH915+d/WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765040880; c=relaxed/simple;
-	bh=LTrczH9csIKj1PNpAAQxPv0z+dAPxbOFjZbrpMghANM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QRtY3ux7eXYyHL2HwNDb978S7aNRhnHhBFI+xvjNj4PkE42e0ZfRVxbnIMZDyGDG2TL43I0PQbQauXoN7oAKve0z5L04IUNfBUA6fEQH3tzqZSNnau22iAQG0ZJhBuBqNlYW1K+Q8YXl28EJJTeRCTj/qsvLIX2EMO+wpTe04ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=lC93FGIZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mxtzzuyd; arc=none smtp.client-ip=202.12.124.156
+	s=arc-20240116; t=1765041104; c=relaxed/simple;
+	bh=0wzWLxuUbC9q5T7oOSMG6t43xDEEyKpkkLTOr1rHsG4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s9ewugRJF8mi38ZjoiyQI9eG9sKoTx7Zhslsb9vIpzDe6WpQIOoZdvEb4OIuQZlvaFSARcUaippv2jOo8Nd0BJgoR6K540r0pba5Y3+XbUPjU1qrx4ChEuUAUH1iaA8hfNby7rvBDobC2XdaNZUMZi+i6QBRTg97ko+iL/MIfiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=VgHZkYA2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=no8/a65Z; arc=none smtp.client-ip=202.12.124.156
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="lC93FGIZ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mxtzzuyd"
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id D1A637A006E;
-	Sat,  6 Dec 2025 12:07:57 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Sat, 06 Dec 2025 12:07:58 -0500
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="VgHZkYA2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="no8/a65Z"
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id BFD787A006A;
+	Sat,  6 Dec 2025 12:11:40 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Sat, 06 Dec 2025 12:11:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1765040877;
-	 x=1765127277; bh=9GwQMcqdZ+mloQd1wixNFBAQT24mJYRyNU4eCwZik8Y=; b=
-	lC93FGIZJR4Z0ocueiS2ZDba6su2U/TGhyhb00BWbbE/d7Tsl2kZmj/mGmfEygbI
-	m9a/3CuP7OWFhTQES6bgUqjchPOYYeAlI+6WsxC8gvjNW6YzlEwtAQqbgyUrMN7c
-	CQdf6+0/Jer56OE4C71UsCowc5WrmTqmqGPATYTnop2ftUQJ05xIZ26NVBAuZXVx
-	RvecEFP0pu+IexW1now7U8Z+uHbUUi93xADHtFIMN8trFcI2feVSj24cxULrhamr
-	Zu7MMUONgg+S1fcvvVvvWaJmlJ/ZWIpiTlFLbgcMhJgTa3n+Zf2FfcgOTSl+/HM8
-	bwc946z4PrGQXo0xzpZzUw==
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1765041100; x=1765127500; bh=AB
+	b5OmmnAr9P/y5m62+5mpd4K0XsCv9pm5EmBi8As3Q=; b=VgHZkYA2eBnivUkZaR
+	PGBoxWWm2rNLmdMKP6NvXX5Qkv/JCePtTRLqviy/MG9nhYHQdnk6kvYQXgNJTYwV
+	uSNj/O//zKxgvPG8jHyeA8Xy1vCmCo9Rb59xkuRsCeshRbuegDJKb55KerbWt7FY
+	MQ9sAW+rIGka2LSpVPFtJuge+pKdaQDHEYcpH46PDLRg5qZv+Zs3cdVjSL5aTFCu
+	UKmS/vGm4WVg8Uwq3wZPAxNEpkwjitnCY32HbkjWtO1tKNOF9PVRoRly/0pY7NfC
+	aFiWTbkJwfSAlCNtz384Z0C5+KaPZDMENy8q4XWVQSfb82Ioa+hVpZv+FvoH2sgs
+	N9Rw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1765040877; x=
-	1765127277; bh=9GwQMcqdZ+mloQd1wixNFBAQT24mJYRyNU4eCwZik8Y=; b=m
-	xtzzuydfMkrMj6dNQHllOJm5XaZzdW98CccEWBrKtJJbl7dEtICllcDeJsyZA10M
-	wEj2FlTRGAym0t2RR/wXpNUK0PDqo/5ANAR+QZlx6VefvIydHoOBR3Rav8gAE1Gb
-	sNFCzdW2ULcWOGpvmt6swS0q+F7viJXR03EBmyZh2DWNxX8nuaXdREjfvutXbW89
-	nqS39gORnqDgT3Sj6t4m49iDPTHBijNcH0Keer7Pesq04mAgi5ttR0ujPLECG7Jy
-	ic1vUIJCnjw2kjb2JYAfyy24WUfhmsQtXOXRIhUdOOKkgRB/ERAiMHBL3wcy5oFw
-	B1gjLB5kVQ2W/8wVzFrVQ==
-X-ME-Sender: <xms:7WI0abFisUlk2AO9ApzyfcZuKGmE6D5jhXrzKbzWIeVikk6kfsbYCA>
-    <xme:7WI0acBMzy_MTgQqYU9aH3-BBDK0fy5dT9-43-97JKJdmFHvAxGfKyZcSTGGCM9sm
-    UKhl6uaMzgYNj4u66qluN3HB4F2c0PSgy3_Cjqh8APro-U-gga9Y7k>
-X-ME-Received: <xmr:7WI0aW-I-yPieNqiL-6JAmZHLlW7YCW1V64lX3SdZonwXPbLwkKhvofL3QchHSwwPopApYt46LFbvoym3w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduudeglecutefuodetggdotefrod
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1765041100; x=1765127500; bh=ABb5OmmnAr9P/y5m62+5mpd4K0Xs
+	Cv9pm5EmBi8As3Q=; b=no8/a65ZRl7Bp5jaWXCm54ny8deIxfjctHdalSSHPKPl
+	nQar9sHgkf3UDnzXn0HqZZ/BxT1LtpJCgpZphLaNL050aWuMgO/FFLgAcv5lSLjt
+	i31W5pHXpBpKSsO1H57SS84cW/xLx0JJcU+2RiSp2v1yCH7sFnqQgHk9od4opsCB
+	65DLmNU2Dg8EcPnJgruSru1WFJwSnF8GaCT/wSY0xQa3XPiaR63YPtIlOe8OnEv4
+	5uO2YyP6BTNp7fgTBM8D1su09mySm4YblxM6Rvq8i7gJ6ZuJ9PCdzZvr8KZZdwpc
+	CpDMJ2hC9VcJS57BCysofOvGkZeJBmP5tVWO27Zyvg==
+X-ME-Sender: <xms:zGM0aXk91s8gzeClPaRAvvh2wg7ntF7L_PtUFhQquTyyghh_0kLsLQ>
+    <xme:zGM0adHmzJFg6FFg0ZxOiVpLL_wuuGStg4Xy0A0I_W_EN2HVmb3fOYbuoKzw65UDy
+    EvoBQEgsFjtvpEcYrFRL02lsuyQYmip5EkzMMTgKDdOStV6XpHLQuje>
+X-ME-Received: <xmr:zGM0af7ojR3WdW_VfJMhhXqgkSmpLs3i4VAK4pR64hCH5Oaq2xIMZRSsbdLuRsTU5fUu0Y-wGnlI_WTblUNMRuGzX4lVPvoGOuOWCLaUf78w0QB4YQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduudehudcutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertd
-    dtvdejnecuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhr
-    gheqnecuggftrfgrthhtvghrnheptdetteejtdefhfffhffgleeggedtvdekgfdvteduud
-    duudeijeehteehveeffffhnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmh
-    drohhrghdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepuhhtihhlihhthigvmhgrlhejjeesghhmrghilhdrtghomhdprhgtphhtthhopehgnh
-    horggtkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgii
-    pdhrtghpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrd
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvghtpdhr
-    tghpthhtohepgigrnhgufhhurhihsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:7WI0aQBB7jrdMOD6FXHAwyVF0vGdbZHTGG-6Lc6avJmo4wNUl1W1sg>
-    <xmx:7WI0aTR8TXhE5FSRuyqNq_jP8fYPjrrIHvblT9VU6_E_rH_MNB30eg>
-    <xmx:7WI0afu4tP3hrx6ImAwlkLFLLTe_V8K_jTPyUndQoqdiOlsWDSOUSQ>
-    <xmx:7WI0aX27kKNLeMd4CGQRCGGD_O4CyoivIVYuSBGaiXDNyBJ0WGxHNQ>
-    <xmx:7WI0acK7k3dUwwIrEe_69RaGB3MUAeCCUmgQc9ZtRZxeWplDfSwJ52Yt>
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkffogggtgfesthekredtredtjeenucfhrhhomhepvfhinhhgmhgrohcu
+    hggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeduueegte
+    etfeeutddtlefffeeuudevheehjeeiudeiveevjeeitdehkeekfeejudenucffohhmrghi
+    nhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgs
+    pghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhitgesug
+    highhikhhougdrnhgvthdprhgtphhtthhopehmsehmrghofihtmhdrohhrghdprhgtphht
+    thhopehgnhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepuhhtihhlihhthi
+    gvmhgrlhejjeesghhmrghilhdrtghomhdprhgtphhtthhopehjrggtkhesshhushgvrdgt
+    iidprhgtphhtthhopeigrghnughfuhhrhiesghhmrghilhdrtghomhdprhgtphhtthhope
+    hlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhg
+X-ME-Proxy: <xmx:zGM0aVnWl7HQNmxvMkAstkh8Fpii7hH6tDsdKzbg5alFy8TY0JrUsw>
+    <xmx:zGM0aUoO-xec33yz4fctFuuC3DWtIz1JgIgZAssv_6R5FB1wkRWxQQ>
+    <xmx:zGM0aUvxQG_yjSGy6LcGIMBaIc6BO8ayytOZSv-ZVnDwPjm_nGPwxw>
+    <xmx:zGM0aZF6bqbFaK5bUvOgRa5KD7LL86aJDGjh3--BlhkdTBNBOrwJ8A>
+    <xmx:zGM0acWmkV2Ae3Z_j-j1GSi9wTe1-rj5K1XwKI7wvHwFFlK7GpddR3EK>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 6 Dec 2025 12:07:56 -0500 (EST)
-Message-ID: <fb6c34d9-0cce-4293-bc99-93d072d5c2b6@maowtm.org>
-Date: Sat, 6 Dec 2025 17:07:54 +0000
+ 6 Dec 2025 12:11:38 -0500 (EST)
+From: Tingmao Wang <m@maowtm.org>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Tingmao Wang <m@maowtm.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Justin Suess <utilityemal77@gmail.com>,
+	Jan Kara <jack@suse.cz>,
+	Abhinav Saxena <xandfury@gmail.com>,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v6 00/10] Implement LANDLOCK_ADD_RULE_QUIET
+Date: Sat,  6 Dec 2025 17:11:02 +0000
+Message-ID: <cover.1765040503.git.m@maowtm.org>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] landlock: Implement LANDLOCK_ADD_RULE_NO_INHERIT
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: gnoack@google.com, jack@suse.cz, linux-security-module@vger.kernel.org,
- mic@digikod.net, xandfury@gmail.com
-References: <c314e302-d4ca-4a39-81ba-d4a1e21b9391@maowtm.org>
- <20251206152611.442312-1-utilityemal77@gmail.com>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20251206152611.442312-1-utilityemal77@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/6/25 15:26, Justin Suess wrote:
-> Thank you for the review.
->
-> I agree with the bind mount limitations for this flag. I think it's
-> reasonable to expect the sandboxer to provide protections for pre-
-> existing bind mounts as opposed to the kernel.
->
-> This limitation is a tradeoff between safety and complexity.
->
-> I looked into doing in automatically, and it ends up being sort of a
-> mess, and you end up having to iterate through the bind mounts, and I
-> suspect it would be a major performance hit, especially if we have to
-> account for changes outside the sandbox after the policy is already
-> enforced.
->
-> We can note this limitation in the docs.
->
->> On 11/26/25 12:20, Justin Suess wrote:
->>> Implements a flag to prevent access grant inheritance within the filesys
-> tem hierarchy
+Hi,
 
-Minor nit but please try not to wrap lines this way, as when the text is
-colored / indented by quote level, it makes it seem like you're adding a
-reply.
+This is the v6 of the "quiet flag" series, implementing the feature as
+proposed in [1].
 
-> [...]
->>> @@ -1232,6 +1656,121 @@ static bool collect_domain_accesses(
->>>  	return ret;
->>>  }
->>>
->>> +/**
->>> + * collect_topology_sealed_layers - collect layers sealed against topol
-> ogy changes
->>> + * @domain: Ruleset to consult.
->>> + * @dentry: Starting dentry for the upward walk.
->>> + * @override_layers: Optional out parameter filled with layers that are
->>> + *                   present on ancestors but considered overrides (not
->>> + *                   sealing the topology for descendants).
->>> + *
->>> + * Walk upwards from @dentry and return a mask of layers where either t
-> he
->>> + * visited dentry contains a no_inherit rule or ancestors were previous
-> ly
->>> + * marked as having a descendant with no_inherit.  @override_layers, if
->  not
->>> + * NULL, is filled with layers that would normally be overridden by mor
-> e
->>> + * specific descendant rules.
->>> + *
->>> + * Returns a layer mask where set bits indicate layers that are "sealed
-> "
->>> + * (topology changes like rename/rmdir are denied) for the subtree root
-> ed at
->>> + * @dentry.
->>> + *
->>> + * Useful for LANDLOCK_ADD_RULE_NO_INHERIT parent directory enforcement
->  to ensure
->>> + * that topology changes do not violate the no_inherit constraints.
->>> + */
->>> +static layer_mask_t
->>> +collect_topology_sealed_layers(const struct landlock_ruleset *const dom
-> ain,
->>> +			       struct dentry *dentry,
->>> +			       layer_mask_t *const override_layers)
->>> +{
->>> +	struct dentry *cursor, *parent;
->>> +	bool include_descendants = true;
->>> +	layer_mask_t sealed_layers = 0;
->>> +
->>> +	if (override_layers)
->>> +		*override_layers = 0;
->>> +
->>> +	if (!domain || !dentry || d_is_negative(dentry))
->>> +		return 0;
->>> +
->>> +	cursor = dget(dentry);
->>> +	while (cursor) {
->>> +		const struct landlock_rule *rule;
->>> +		u32 layer_index;
->>> +
->>> +		rule = find_rule(domain, cursor);
->>> +		if (rule) {
->>> +			for (layer_index = 0; layer_index < rule->num_layer
-> s;
->>> +			     layer_index++) {
->>> +				const struct landlock_layer *layer =
->>> +					&rule->layers[layer_index];
->>> +				const int level = layer->level ? layer->lev
-> el :
->>> +								 layer_inde
-> x + 1;
->> Wouldn't layer->level always be >= 1 here?  Using layer_index doesn't mak
-> e
->> sense since layer_index is just the index that the struct landlock_layer
->> happened to be in that rule's array.
->
-> Hmm good catch. I was replicating logic from other places while sometimes not realizing
-> exactly why the code is doing what it does and didn't make that realization. Seems to work
-> fine and pass after I fixed it in my working tree so it will be in the next version.
+v5: https://lore.kernel.org/all/cover.1763931318.git.m@maowtm.org/
+v4: https://lore.kernel.org/all/cover.1763330228.git.m@maowtm.org/
+v3: https://lore.kernel.org/all/cover.1761511023.git.m@maowtm.org/
+v2: https://lore.kernel.org/all/cover.1759686613.git.m@maowtm.org/
+v1: https://lore.kernel.org/all/cover.1757376311.git.m@maowtm.org/
 
-Well actually this function would become unused after removing the "Apply
-descendant no-inherit masking" code above.
+v5..v6 rebases on top of the new simpler disconnected directory handling,
+change some bools into u32, and fix some typo and style.
 
-> [...]
->
-> Thank you for the review of the patch. Trimming the code was very
-> satisfying. I see that the disconnected directory handling was
-> simplified in linux-next, which is gonna make things easier but also
-> make rebasing require some more careful attention. I assume your next
-> patch series for LANDLOCK_ADD_RULE_QUIET is going to be rebased off
-> those disconnected directory changes as well.
->
-> I'll implement these fixes in my working tree and be ready when you drop
-> your next version to do a rebase on top of your series again. If you
-> have a base commit SHA you could give me that you are building your next
-> patch series version on top of already, that would be helpful.
+v4..v5 addresses review feedbacks, most significantly:
+  - reduces code changes by pushing rule_flags into landlock_request.
+  - adding test cases for two layers handling different access bits.
 
-Will send v6 now, but you can also take it from
-https://github.com/micromaomao/linux-dev/tree/landlock-quiet-flag :)
+v3..v4 is a one-character formatting change, plus more tests.
+
+We now have 5 patches for the selftest - I'm happy to squash it into one
+depending on preference (and happy for Mickaël to do the squash if no
+other feedback):
+- selftests/landlock: Replace hard-coded 16 with a constant
+- selftests/landlock: add tests for quiet flag with fs rules
+- selftests/landlock: add tests for quiet flag with net rules
+- selftests/landlock: Add tests for quiet flag with scope
+- selftests/landlock: Add tests for invalid use of quiet flag
+
+v2..v3:
+Not much has changed in the actual functionality except various comment,
+typing, asserts and general style fixes based on feedback.  The major new
+thing here is tests (a bit of KUnit squashed into the optional access
+commit, a lot of selftests especially in fs_tests.c).
+
+The added fs_tests should exercise code path for optional and non-optional
+access, renames, and mountpoint and disconnected directory handling.  I
+will add the above missing bits to v4.
+
+Removed:
+- "Implement quiet for optional accesses"
+    (squashed into "landlock: Suppress logging when quiet flag is present")
+
+
+Old feature summary below:
+
+The quiet flag allows a sandboxer to suppress audit logs for uninteresting
+denials.  The flag can be set on objects and inherits downward in the
+filesystem hierarchy.  On a denial, the youngest denying layer's quiet
+flag setting decides whether to audit.  The motivation for this feature is
+to reduce audit noise, and also prepare for a future supervisor feature
+which will use this bit to suppress supervisor notifications.
+
+This patch introduces a new quiet access mask in the ruleset_attr, which
+gets eventually stored in the hierarchy. This allows the user to specify
+which access should be affected by quiet bits.  One can then, for example,
+make it such that read accesses to certain files are not audited (but
+still denied), but all writes are still audited, regardless of location.
+
+The sandboxer is extended to show example usage of this feature,
+supporting quieting filesystem, network and scope accesses.
+
+Demo:
+
+    /# LL_FS_RO=/usr LL_FS_RW= LL_FORCE_LOG=1 LL_FS_QUIET=/dev:/tmp:/etc LL_FS_QUIET_ACCESS=r ./sandboxer bash
+    ...
+    audit: type=1423 audit(1759680175.562:195): domain=15bb25f6b blockers=fs.write_file,fs.read_file path="/dev/tty" dev="devtmpfs" ino=11
+    ^^^^^^^^
+    # note: because write is not quieted, we see the above line. blockers
+    # contains read as well since that's the originally requested access.
+    audit: type=1424 audit(1759680175.562:195): domain=15bb25f6b status=allocated mode=enforcing pid=616 uid=0 exe="/sandboxer" comm="sandboxer"
+    audit: type=1300 audit(1759680175.562:195): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c86113d1 a2=802 a3=0 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
+    audit: type=1327 audit(1759680175.562:195): proctitle="bash"
+    bash: cannot set terminal process group (605): Inappropriate ioctl for device
+    bash: no job control in this shell
+    bash: /etc/bash.bashrc: Permission denied
+    audit: type=1423 audit(1759680175.570:196): domain=15bb25f6b blockers=fs.read_file path="/.bash_history" dev="virtiofs" ino=36963
+    ^^^^^^^^
+    # read outside /dev:/tmp:/etc - not quieted
+    audit: type=1300 audit(1759680175.570:196): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c868e400 a2=0 a3=0 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
+    audit: type=1327 audit(1759680175.570:196): proctitle="bash"
+    audit: type=1423 audit(1759680175.570:197): domain=15bb25f6b blockers=fs.read_file path="/.bash_history" dev="virtiofs" ino=36963
+    audit: type=1300 audit(1759680175.570:197): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c868e400 a2=0 a3=0 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
+    audit: type=1327 audit(1759680175.570:197): proctitle="bash"
+
+    bash-5.2# head /etc/passwd
+    head: cannot open '/etc/passwd' for reading: Permission denied
+    ^^^^^^^^
+    # reads to /etc are quieted
+
+    bash-5.2# echo evil >> /etc/passwd
+    bash: /etc/passwd: Permission denied
+    audit: type=1423 audit(1759680227.030:198): domain=15bb25f6b blockers=fs.write_file path="/etc/passwd" dev="virtiofs" ino=790
+    ^^^^^^^^
+    # writes are not quieted
+    audit: type=1300 audit(1759680227.030:198): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c86ab030 a2=441 a3=1b6 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
+    audit: type=1327 audit(1759680227.030:198): proctitle="bash"
+
+Design:
+
+- The user can set the quiet flag for a layer on any part of the fs
+  hierarchy (whether it allows any access on it or not), and the flag
+  inherits down (no support for "cancelling" the inheritance of the flag
+  in specific subdirectories).
+
+- The youngest layer that denies a request gets to decide whether the
+  denial is audited or not.  This means that a compromised binary, for
+  example, cannot "turn off" Landlock auditing when it tries to access
+  files, unless it denies access to the files itself.  There is some
+  debate to be had on whether, if a parent layer sets the quiet flag, but
+  the request is denied by a deeper layer, whether Landlock should still
+  audit anyway (since the rule author of the child layer likely did not
+  expect the denial, so it would be good diagnostic).  The current
+  approach is to ignore the quiet on the parent layer and audit anyway.
+
+[1]: https://github.com/landlock-lsm/linux/issues/44#issuecomment-2876500918
+
+Kind regards,
+Tingmao
+
+Tingmao Wang (10):
+  landlock: Add a place for flags to layer rules
+  landlock: Add API support and docs for the quiet flags
+  landlock: Suppress logging when quiet flag is present
+  landlock: Fix wrong type usage
+  samples/landlock: Add quiet flag support to sandboxer
+  selftests/landlock: Replace hard-coded 16 with a constant
+  selftests/landlock: add tests for quiet flag with fs rules
+  selftests/landlock: add tests for quiet flag with net rules
+  selftests/landlock: Add tests for quiet flag with scope
+  selftests/landlock: Add tests for invalid use of quiet flag
+
+ include/uapi/linux/landlock.h                 |   64 +
+ samples/landlock/sandboxer.c                  |  129 +-
+ security/landlock/access.h                    |    5 +
+ security/landlock/audit.c                     |  259 +-
+ security/landlock/audit.h                     |    3 +
+ security/landlock/domain.c                    |   33 +
+ security/landlock/domain.h                    |   10 +
+ security/landlock/fs.c                        |   86 +-
+ security/landlock/fs.h                        |   19 +-
+ security/landlock/net.c                       |   10 +-
+ security/landlock/net.h                       |    5 +-
+ security/landlock/ruleset.c                   |   19 +-
+ security/landlock/ruleset.h                   |   38 +-
+ security/landlock/syscalls.c                  |   72 +-
+ tools/testing/selftests/landlock/audit_test.c |   27 +-
+ tools/testing/selftests/landlock/base_test.c  |   61 +-
+ tools/testing/selftests/landlock/common.h     |    2 +
+ tools/testing/selftests/landlock/fs_test.c    | 2456 ++++++++++++++++-
+ tools/testing/selftests/landlock/net_test.c   |  121 +-
+ .../landlock/scoped_abstract_unix_test.c      |   77 +-
+ 20 files changed, 3373 insertions(+), 123 deletions(-)
+
+
+base-commit: 54f9baf537b0a091adad860ec92e3e18e0a0754c
+-- 
+2.52.0
+
