@@ -1,98 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EE1236454
-	for <linux-security-module@vger.kernel.org>; Mon,  8 Dec 2025 19:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5FB1397;
+	Mon,  8 Dec 2025 22:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765220557; cv=none; b=I3HFlIy9G1pT+uGA2dVxt5WALrhpkgiDiC1ZyP/dLBd5MMiJKi7YmoGDGrfs018dqmc/Y4eYgxm9C6ZUcGhK7buU0leQmZ/Opac9MQ9eO+xvuhQzIIbSsphcRF5VfO9QRojd8SdSgPxEyWm3zv1uRG5YlIrEgBZU1lyNuIHglhM=
+	t=1765232243; cv=none; b=P4Sa7dD3lXlv33pE5omIjv6hirhBKl0Gcz9R6m8xgd6TQXRUJIopGGS0FQkkfe0ILP7JGVrIOjrK+E5uodirEMBi+vELhwrRXc3qhK11yk7lls3HwkgGtcAJx7A9rjRpYsv99ncb/JFiZt0plbXfCZAvVUzdq5kW9EbmCEu2n+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765220557; c=relaxed/simple;
-	bh=gH9hRI6fwOd+Bcs6CAoTJtBdbZZnzJQ2gyhDof5a1J8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ljnml59VhqmXYWBT5CylPGgBnKAvUBCM2Dhx93jriuBBYyYgTQer/YS1NO+XueM59nsnY2yvvJ0yvAfZrNpWHoid5PE2p2oXQ7nx4zwRLaPpl9QeJUn5LQoYBqtjqJCM4OeMvQUpU0K6lm3XVoehw5zBx/jHVF9IgFO/2YoVAFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Alr6m92r; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765232243; c=relaxed/simple;
+	bh=+AHc0Iwk7K65DrxDwvU4l6pEEHQIi2703e5qxQQsJro=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kHQNMH4OJ9DJJas3V4xU46TQt6vK0tPl+2HEm/Y03HX8PE/NCs+vcXSABnhRXxmxyM1anzr4P/83dhcXJRYuOito3gNVnFqevbEYFaTCDSeIXF9yZsl0h3/Xcqraq8kkgRdUYGGWxFVWDwDxmRWLE+EUbCdTErjJjXwlYrtOuRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=oUIVCI6I; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Alr6m92r"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C05B3C19422
-	for <linux-security-module@vger.kernel.org>; Mon,  8 Dec 2025 19:02:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765220556;
-	bh=gH9hRI6fwOd+Bcs6CAoTJtBdbZZnzJQ2gyhDof5a1J8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Alr6m92ron8IFTxTpvu5RobgKO2LPgUby/J6KzgIunZyLjZw9D9t8CSU007dZHKMC
-	 LYVye8JDayiymrmuzm+JgxbcTjq2c84qev9eEzVjiJX0jBasjnZcLtolKk34P9TGoc
-	 BibVdOUWxgYT2BfleTYCdeHquDe/wWN/L+gP6+47gIeGBZyShz7YWzzT6Yw1ODibjc
-	 /jsD+b/TAKdHW0XxZhlOm26xHTy6mlxTj2+HLoD1JSNLiWdu4QXI7aASX+R7eEEkmi
-	 B9ouNhDRtVb4v9VgUvdijyyOFI7zR3RrGBu1qj1rhOjxFYV/xyiZysBqUQRuETUgHW
-	 62gg6HsHcHjTw==
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-29844c68068so61640175ad.2
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Dec 2025 11:02:36 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXJYWJImF/Y0BESLEuwD/oi1hBkmQOJUOdZZe/zDBn5Uk1IrdwqJZ9atq7JZYCmg3ZOKMAYWYst0O2NlrrsAjGnZXXPoi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZmhLmVVPaCXb5oGpqsOkUsmeWYEhE7/gFX+Vrxh2UAUiaHpKx
-	t0xq3P+sp/IY9WgU5+fKgZ1Cs7JfcV0tR8x6yZ3qXSzAZtZLmmJh06WnoPCeVJnr0Ont22IlE2O
-	YHNaiNXsYMEVK1xmMwHi8dGwu4c9X2mM=
-X-Google-Smtp-Source: AGHT+IF991Yf/NPL51jBh57pAjCHOLOBS4tsmCRemwoG96Ivo6U0E6cwlWulUGOLuYxcZmZo7A/YFe2cOJMhe/iqLX8=
-X-Received: by 2002:a05:7022:3844:b0:119:e56b:9583 with SMTP id
- a92af1059eb24-11e0315de66mr6506661c88.8.1765220556270; Mon, 08 Dec 2025
- 11:02:36 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="oUIVCI6I"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1765232240;
+	bh=+AHc0Iwk7K65DrxDwvU4l6pEEHQIi2703e5qxQQsJro=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=oUIVCI6I2TNPuTzr8mgjVhTC6fWl+BjV4EhVnmdDwNT1ul0occp+M9Yem3MYXJ4Vw
+	 Y0ia/sKTe7HZ8tg3EaGxxtfzkoYLY8HoTXOZnHxr2TNlfGvIM5kqF5UOsw374DV/ng
+	 IfmmD0z4/TN2LOVqukDqmLH37PpG4oZjHc6PMDT0=
+Received: from [172.20.4.117] (fsb6a953d3.tkyc512.ap.nuro.jp [182.169.83.211])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 33A731C003D;
+	Mon, 08 Dec 2025 17:17:17 -0500 (EST)
+Message-ID: <d0c00469a8501483baffaf1158102c0f2c5211e8.camel@HansenPartnership.com>
+Subject: Re: [PATCH 1/1] IMA event log trimming
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, steven chen
+	 <chenste@linux.microsoft.com>, linux-integrity@vger.kernel.org
+Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com,
+ dmitry.kasatkin@gmail.com,  eric.snowberg@oracle.com, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com, 
+ linux-security-module@vger.kernel.org, anirudhve@linux.microsoft.com, 
+ gregorylumen@linux.microsoft.com, nramas@linux.microsoft.com, 
+ sushring@linux.microsoft.com
+Date: Tue, 09 Dec 2025 07:17:14 +0900
+In-Reply-To: <1ca00e3238e804db9280abf8655364c2662754ca.camel@huaweicloud.com>
+References: <20251202232857.8211-1-chenste@linux.microsoft.com>
+	 <20251202232857.8211-2-chenste@linux.microsoft.com>
+	 <099492ee58996b6f18d73232677757ecadb14cb7.camel@huaweicloud.com>
+	 <34d739c2cf15baf78dff5acb7ae3ddd7ad47f219.camel@HansenPartnership.com>
+	 <1ca00e3238e804db9280abf8655364c2662754ca.camel@huaweicloud.com>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251203193718.504344-1-yiconghui@gmail.com> <CAKtyLkEyD9UVxqbmODVOAymE32aE7X4Xdbqj6H3BMGyhn_PQqw@mail.gmail.com>
- <3748b276-6503-4c50-a394-e5b75c1eb7bf@gmail.com>
-In-Reply-To: <3748b276-6503-4c50-a394-e5b75c1eb7bf@gmail.com>
-From: Fan Wu <wufan@kernel.org>
-Date: Mon, 8 Dec 2025 11:02:25 -0800
-X-Gmail-Original-Message-ID: <CAKtyLkHsfEsXvD46Gw97meciySQbzYqwRPxaeK6r8ChO9++1kw@mail.gmail.com>
-X-Gm-Features: AQt7F2rggtRKFAbUar_vff11jZ7abb9KI2ocB0wfCsY1Ob_lAnOW4nHzZoiESqE
-Message-ID: <CAKtyLkHsfEsXvD46Gw97meciySQbzYqwRPxaeK6r8ChO9++1kw@mail.gmail.com>
-Subject: Re: [PATCH] ipe: remove headers that are included but not used
-To: Yicong Hui <yiconghui@gmail.com>
-Cc: Fan Wu <wufan@kernel.org>, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	david.hunter.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 6, 2025 at 1:04=E2=80=AFPM Yicong Hui <yiconghui@gmail.com> wro=
-te:
->
-> On 12/3/25 10:25 PM, Fan Wu wrote:
-> > On Wed, Dec 3, 2025 at 11:37=E2=80=AFAM Yicong Hui <yiconghui@gmail.com=
-> wrote:
-> >
-> > Hi Yicong,
-> >
-> > Thanks for the patch. This kind of cleanup is appreciated.
-> >
-> > Commit message typo: "audit. c, audit.c, policy. c" - audit. c is liste=
-d
-> > twice.
->
-> Hi! Thank you for the reply! Yes! My bad, this typo will be fixed in v2.
->
-...
->
-> I have manually read through the functions/macros/filetypes in policy.c,
-> policy_fs.c and audit.c and found a few dependencies that are used but
-> not explicitly included, like minmax.h, sha2.h, lockdep.h, string.h,
-> capability.h, kstrtox.h, sprintf.h, array_size.h and err.h.
->
-> This might be a stupid question, but how explicit should I be in my v2
-> patch with the dependencies? There's headers like
-> "asm-generic/int-ll64.h" "uidgid.h", "gfp_types.h", "rwonce.h",
-> "compiler_types.h" or "errno-base.h" but I'm not sure to what extent I
-> need to import them, because I shouldn't be including them all, right?
+On Mon, 2025-12-08 at 10:40 +0100, Roberto Sassu wrote:
+> I have the impression that none the functionality you cited has to be
+> implemented in the kernel, because the only component one can trust
+> to verify the integrity of the IMA measurements list is the TPM.
+> Whether either the kernel or user space retain the measurements is
+> irrelevant.
 
-Hi Yicong,
+That's correct, I'm not advocating moving quoting into the kernel.  Co-
+ordinating the trim with where the quote gets you to is phenomenally
+useful.  While you could theoretically store any mismatch in userspace,
+having two locations for the log makes it more error prone.
 
-On second thought, the cost of this cleanup outweighs the benefit.
+> I believe that the only role of the kernel is to get rid of the
+> measurements entries as fast as possible (the kernel would act more
+> like a buffer).
 
-Let's drop this patch and keep the code as it is.
+I wouldn't say that, I'd say to get rid of measurements that the user
+has indicated are of no further use.
 
--Fan
+> This was actually the intent of my original proposal in
+> https://github.com/linux-integrity/linux/issues/1=C2=A0. The idea of
+> staging (was snapshotting, but Mimi thinks the term is not accurate)
+> is simply to detach the entire IMA measurement list as fast as
+> possible. Further read and delete after staging is done without
+> interfering with new measurements (sure, the detaching of the hash
+> table is not yet as efficient as I hoped).
+
+From the application point of view, offloading the log and random
+points is a bit more work because now the log collector has to be
+modified to look in multiple locations and we'd also need an agreement
+of where those locations are and how the log is sequenced in a naming
+scheme so it's the same for every distribution.  If the application is
+in charge of trimming the log at a particular point, collection remains
+the same (it can simply be the existing in-kernel location), so we
+don't need a cross distro agreement, and the trim can simply be added
+as an extra function.
+
+Regards,
+
+James
+
