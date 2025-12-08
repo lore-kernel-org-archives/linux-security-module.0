@@ -1,123 +1,102 @@
-Received: from r9217.ps.combzmail.jp (r9217.ps.combzmail.jp [160.16.65.235])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD26F21CC7B
-	for <linux-security-module@vger.kernel.org>; Mon,  8 Dec 2025 01:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.16.65.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323A01F5EA;
+	Mon,  8 Dec 2025 05:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765158653; cv=none; b=o9513LQpZim5eTdkd8GMggQ5AsmCteUQzUlprFA9xzxxhuqiZmqdhmqGMXn0jOfaya0fKcOL4+LSNPRLfucrD/+utEoiDO+7J/Ok3XxQKRZFkDvbBsh9m4Trl0ylTF0FoFAfVtOcrTK6qg57SNI8elKnqoRjhiV1R145iHlvySE=
+	t=1765170386; cv=none; b=HNVpxuoGy2BW1eQ2oCnQnXBw/DF6deQT4efstXPVT6Z118JmjzxGHiy0Y3mLbOIBtfg6ARvT717BFgX4gBQDQeAEOJ/bbDBiEtPikCflE0FlpeBVBa75QkxZcArsp/50DRbBj0U6gMAaXWfCinohT9aSYKapQ19U0Cf+l5m0WTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765158653; c=relaxed/simple;
-	bh=K/QxYS82NIE2dEMFRCFKxQrMjAb9jb2gJx9sXdTMB+A=;
-	h=To:From:Subject:Mime-Version:Content-Type:Message-Id:Date; b=c4RQx1GX55ZKvkb8A6FWILHLkT/MGSZ1Lp3J+fv1536G8jNbozNyXjdkRRxIX6nnkWA0m23n3C/K0XwVHK2RvJpa6jFziAFLGPeHhapkF2VBNz3I7NP3T9hRvlsi4TujEBBZvleW0kwwDZd7s6qy9MS86d4ZQMQ3tvxfmYvvL48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fc-tocotoco.jp; spf=pass smtp.mailfrom=magerr.combzmail.jp; arc=none smtp.client-ip=160.16.65.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fc-tocotoco.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magerr.combzmail.jp
-Received: by r9217.ps.combzmail.jp (Postfix, from userid 99)
-	id 558E010631B; Mon,  8 Dec 2025 10:50:45 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9217.ps.combzmail.jp 558E010631B
-To: linux-security-module@vger.kernel.org
-From: =?ISO-2022-JP?B?GyRCSiE7YyVVJWklcyVBJWMlJCU6S1xJdBsoQg==?= <info@fc-tocotoco.jp>
-X-Ip: 21244551623612
-X-Ip-source: k85gj73348dnsaq6u0p6gd
-Precedence: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCJF4kayRKJDJKITtjO3Y2SBsoQg==?=
+	s=arc-20240116; t=1765170386; c=relaxed/simple;
+	bh=NFYtWFj2HRXw0mhexPN2cpE5XCGt348dy3AXyVMMLss=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f7ML/wzAzDn5UIOzjCC0GKCzZRIaH0vKS4q4NfD/YXERCOWTs3R2ak5UhL0sBGwawsdGW2x67uTacZ7sQQUbsZ5dvtKg328t9bixsdIsNi/kypJiN72vqG4TXmY7Vb83aGcfvi0+1qofhrhIQHD1fPMZb7CkH2qhOJlUQpg56mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SEcWf81n; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SEcWf81n"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 630C6C4CEF1;
+	Mon,  8 Dec 2025 05:06:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765170386;
+	bh=NFYtWFj2HRXw0mhexPN2cpE5XCGt348dy3AXyVMMLss=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SEcWf81naz1pZKDKzrGILNR8lr5NCzQ8/JUQ7y31hlUc8u/GOWELA6Bn2Dj2EkzlF
+	 351vq9CoJIek71Gk/pws48iTHFE4+2gWqVkgM8xK2nmENBNz+PUQrguMhm05krg8IY
+	 QxGZpVwcpsb2tnC80F2sf7JqFuOxED5e9CGK2K8hv9LdG4tP0XqsjRZIYhWC1oKLyb
+	 sSeD6XRXOwa5UxTvELIhd+eDDpi4jEh33WmCFFd9unnxuNMwQFa4J0Kximp4fOGOc8
+	 kZRepecDI3yEUM/iaMUsBFCNfjt2wvDOv+NYlpfMkI0lGLwYVQPORi5csJxjyZnsaE
+	 seR11TKeWlBVg==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: tpm2@lists.linux.dev,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v7 0/3] Optimize tpm2_read_public() calls
+Date: Mon,  8 Dec 2025 07:06:16 +0200
+Message-Id: <20251208050620.339408-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Transfer-Encoding: 7bit
-X-MagazineId: 33q6
-X-uId: 6763334638485968585055251039
-X-Sender: CombzMailSender
-X-Url: http://www.combzmail.jp/
-Message-Id: <20251208015048.558E010631B@r9217.ps.combzmail.jp>
-Date: Mon,  8 Dec 2025 10:50:45 +0900 (JST)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-　
-　新規事業をご検討中の経営者様へ
+The main goal is fairly straight-forwrd here.
 
-　いつもお世話になっております。
+The aim of these patches is optimize the number of tpm2_read_public() calls
+to the bare minimum. 
 
-　「社会貢献性の高い事業で、確実な収益を上げたい」
+## About dropping 'parentName' attribute for ASN.1 keys from the patch set
 
-　そう考え、成長著しい福祉市場にご関心をお持ちのことと存じます。
-　しかし、同時にこうも考えていませんか？
-　
-　「市場は魅力的だが、専門的な法規制や複雑な運営、人材採用は荷が重すぎる…」
-　「もし失敗したら、多額の投資が無駄になってしまうのでは…」
+I wrote this section as a remainder as I have facts fresh in my mind so 
+that I can return them as soon as there is working group for the ASN.1 
+specification. We really need to have this in the spec.
 
-　ご安心ください。その不安こそ、私たちが解決したい最大の課題でした。
+I dropped [1] given that [2] is landing shortly to IETF draft process,
+according to James Bottomley [3]. We will return to [1] as soon as draft
+process is open for comments. Still, that attribute is super important,
+and here is why.
 
-　この障壁を根本から取り除くのが、私たちtocotocoだけの
-　【運営本部代行プラン】です。
+This will cause a overhead as tpm2_unseal_trusted needs to do an
+unnecessary (from pure technical perspective) TPM2_ReadPublic command to
+acquire TPM name of the parent. This is obviously known at the time of
+creation of a key but the information is not stored anywhere by the
+key format.
 
-　煩雑な運営業務は全て本部がプロフェッショナルとして代行します。
-　オーナー様には、「投資家」として市場の確実な成長という
-　最大の果実のみを受け取っていただきます。
-―――――――――――
+It also aligns badly with TCG specifications as Table 6 of architecture
+spec explicitly defines a reference (or name) for transient keys,
+persistent keys and NV indexes to be TPM_ALG_ID concatenated together
+with the hash of TPMT_PUBLIC. I.e. the file format is using exactly
+the opposite what should be use as reference for keys than what it 
+should use.
 
-　廃業率0.055％　業態を選べる
-　 　障がい福祉フランチャイズ
+Other benefits are of course auto-discovery of parent for a key file,
+which is nasty to do without the name pre-stored.
 
-　　 <ご視聴予約はこちら>
-　https://fc-tocotoco.work/25/
+[1] https://lore.kernel.org/linux-integrity/20251207173210.93765-3-jarkko@kernel.org/
+[2] https://www.hansenpartnership.com/draft-bottomley-tpm2-keys.txt
+[3] https://lore.kernel.org/linux-integrity/89d90617ba9b7a5eff1d5fad6bb9773033d3c18c.camel@HansenPartnership.com/
 
-〇オンラインで開催中
-　12月9日（火）10:00〜11:00
-　12月17日（水）15:00〜16:00
+Jarkko Sakkinen (3):
+  tpm2-sessions: Define TPM2_NAME_MAX_SIZE
+  KEYS: trusted: Re-orchestrate tpm2_read_public() calls
+  tpm2-sessions: Remove AUTH_MAX_NAMES
 
-ご都合の良い日程をお選びいただけます。
-―――――――――――
+ drivers/char/tpm/tpm2-cmd.c               |   3 +-
+ drivers/char/tpm/tpm2-sessions.c          | 116 ++++++--------------
+ include/linux/tpm.h                       |  19 +++-
+ security/keys/trusted-keys/trusted_tpm2.c | 124 ++++++++++++++--------
+ 4 files changed, 133 insertions(+), 129 deletions(-)
 
-　■ 失敗の不安を解消。本部代行プランの3大メリット
-　１．専門知識、一切不要
-　　複雑な行政への請求や法改正対応、専門スタッフの採用・管理まで、全て本部が代行します。
-　　異業種出身であることを気にする必要は一切ありません。
+-- 
+2.39.5
 
-　２．早期の投資回収を実現
-　　煩雑な運営業務から解放され、オーナー様は事業拡大、
-　　そして投資利回り50%以上、6ヶ月&#12316;での投資回収実績を持つ、
-　　確実な収益構造の構築に専念できます。
-
-　３．廃業率0.055％の安定性を最大限享受
-　　業界トップクラスの実績とノウハウを持つ本部が現場を担うため、
-　　「運営不安による失敗」というリスクが限りなくゼロに近づきます。
-
-
-　■ 市場の確実性を数字で証明
-　　・市場規模：4兆円超え
-　　・需要：障がい者数 毎月4万人増加
-　　・安定性：廃業率0.055％（行政による総量規制で事業が守られています）
-
-　この巨大かつ安定した市場で、本部が代行することで、
-　より確実性の高い事業運営が実現します。
-
-
-　【運営代行プラン】は説明会でのみ詳細を公開
-　
-　投資したいが運営までは荷が重い、という経営者様のために開発されたこの特別プランと、
-　5つの高収益業態（訪問看護、グループホームなど）の具体的な収益モデルは、
-　下記の説明会でのみ公開しております。
-
-　新規事業のリスクを最小化し、確実な収益源を確保したい方は、
-　ぜひこの機会にご参加ください。
-
-
-　▼ 詳細はこちら
-　https://fc-tocotoco.work/25/
-
-―――
-　tocotoco株式会社　セミナー事務局
-　東京都千代田区九段南2丁目3−25
- 　03-5256-7578
-‥‥‥‥
-　本メールのご不要な方には大変ご迷惑をおかけいたしました。
-　メール停止ご希望の方は、お手数ですが下記URLにて、
-　お手続きをお願いいたします。
-　https://fc-tocotoco.work/mail/
-―――
