@@ -1,95 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B45C2F7AD2;
-	Mon,  8 Dec 2025 05:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F4C1E9B3A
+	for <linux-security-module@vger.kernel.org>; Mon,  8 Dec 2025 05:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765170928; cv=none; b=kVYZc/nhfTGbRNnt4FGwFjtF78Ulk7yWkvrqp34vhsxrwe2Nkmsj6piAbKMI6CLibb49HHEEfy688SfxG7h6+lhSzVpISx4x01l4xajrvFKystafzVh8rvYACkmNF/TzmXVlncz784oWFNN98KRIUSXI2Mb3ceWKJj3D1n98CHE=
+	t=1765172418; cv=none; b=DESS6+5jyYi/abSRMBEBmERul4pmvoE3lYdbCFrGLli/pQtkewfLkwKr4XQe34/iTVh62gzusW0T36ZHyYAyj5lF2PE/2JU4np8dK7cn0N3IPkc2KrcuUG286ZASxroo3En7OOSPY67n1dVmQs4AF5FMLjJRFWVRJnLC3oT28MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765170928; c=relaxed/simple;
-	bh=EO+eptpophDK8ioaheMldpxHkJcTDL7LQ7oJpU0cLgY=;
+	s=arc-20240116; t=1765172418; c=relaxed/simple;
+	bh=jqj2LaxlKv9yaIn5YdQAnHyLwHHSslZDmntyQAHQweQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NKBCfspdNrIEnFe4ebGhY0pCEQsyhXIbCZutl8mnJvaHyQMvfGgI57CSVT4WgsyteDNRt8N9O2x3CigBCeya3EmXYhcvmV77wLg0ju5O5PULgh30DscunsWxBLdn1XEXdd2JPzo8pwmTHUJFnEwiJmrj8ao43JXuA4N1LjpTEq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LTmiKVLh; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTqqf4vwFQAbD2e1kxC3qhSVHbfuJGUFaVFnjln3TI7TgpYOSjlYihqNE4peu3fg8jgGRrlX3R5DGoR2Dm+KnUcQPb6eAyiiuBRYn9an2f63D8fXBwoCFu2fkV6AWtsGnifCFloRqIpvSHO1ENdemHyl6F5mIooL7KlxflYfP4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VW+I+YRi; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LTmiKVLh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54AB4C4CEF1;
-	Mon,  8 Dec 2025 05:15:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765170927;
-	bh=EO+eptpophDK8ioaheMldpxHkJcTDL7LQ7oJpU0cLgY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LTmiKVLhqtrjVxcUzPpAYJd5xZKFse4XGvNTDHtvrGd5IlUChTCQ4s3+adal2jfVb
-	 7BPsTQq3YzJWGry4sFtxHd/j6CpQ2eweY2WRfaYF8OFoJutMdYkx+6gxze8gBI0BiV
-	 2yl6ugutCK7uvyLuFvy6B+2SBQM1NI0+Hwknm6l7AQerFtiIqWGcS+r7OaNIcGUv+i
-	 7RiHUrpDCiBNasIv36ez/A0rR//TmDUTJypTuk7Ch+smKC0H1EE9VrnujvmC695b8H
-	 u3ZhbBYxfQGFC/bIm6xJPpor/p505J5T69M5EyTFAZKAeVUDaEdON+A6t6+2ASjF3s
-	 q7ewO6PRFUgjg==
-Date: Mon, 8 Dec 2025 07:15:23 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: tpm2@lists.linux.dev,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 0/3] Optimize tpm2_read_public() calls
-Message-ID: <aTZe65tllY4u2YT5@kernel.org>
-References: <20251208050620.339408-1-jarkko@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VW+I+YRi"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7b75e366866so1659909b3a.2
+        for <linux-security-module@vger.kernel.org>; Sun, 07 Dec 2025 21:40:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765172416; x=1765777216; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hxN5XIHVhI8gQu6AgmfaacpuQnWcYXpKmcS4GkwbYus=;
+        b=VW+I+YRiztJsuNZP6OeW1lXue0lRwCW1lrnNCXe5zb3YBq/qpQ3d9OUKweASWrj5l5
+         BPPdgoMdR0LaQP0jHpQMmQlh6xkhVuq9rSxKlVn5VVzMg/y6pM5Cha17OKE8EoPhDJ9Z
+         i1mvHP+iufP9FLQ9LGLP+p/tf/m4A2m3Bb8usTSv0Fait+nQv8MZ41er9K7Zl+VBUNnm
+         z+LnyNmdkAf/xkCPXxQijkAjjxgZxJJdqE4wJD2NMjX8Bt2ST0gY69gD+UnbkL6TQsSr
+         ab2mnfdN0lA6EX44zXx4QFWRJ7jMzxwyLp0V/83iG4xzKslGaMjeR+IvY+TWhZgPVt+6
+         5//g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765172416; x=1765777216;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hxN5XIHVhI8gQu6AgmfaacpuQnWcYXpKmcS4GkwbYus=;
+        b=OOu9CeZpMRIHWtUHnc187ot3VVaP9a1+8CDR/8RW5FCPcxC1atFPcyip7lNM1eBSeo
+         niEcnPe4/JmLJj6CQ/9GuueOsfdU+ex0sw71EiQSX+Lh+2Eu7jPi0p76pOMvdf4m7qWM
+         lbTlYt+eMncBLxDicJY1UuhdYv5exCCG6sG1Eg7NGPTgihqAWhE1OMg6o8hpEvRy90Ao
+         MOENCBzKvgM8oaSNAJk2u7E2mRFhI2hmV4xr4O4aQoWZUneJwyyrgDuQvMt5PoqOzemq
+         pg1FhUIR0LL8vqLq8MmfWC1fC61yypzlGAYip6JbzeAPe4kJ+p30vAEzCTOYjwZE3dsb
+         Y2Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVjLPh4qya2HrHLQStzc0DreJxLl2KKFnDGGZgqd6oSKN7hnRv7Q0bwCAg6KE5/l/lsblLeaZUgTtI7ULURX3tB5pqq8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywdl4kwV5yO7Eegqucp5L71HpRf5vmKcMkPsjJCtnVwQv12ohH9
+	MyCnIIWUxXnb+bRC/Yvp6+BP5YSCEZfJq+fwUIOaeUbQE4CUlwSJotm3bly12HoX
+X-Gm-Gg: ASbGncteqddJGoymdZq2h2ljWnCw4EKPPoTUIH25itfHGIbW3P7SgyNMgQjUBJ9WB60
+	hGnMLqgg6J4LIHJz8OSdB8aSoDOTlyPNuEXcxLpxktn+O83zH5hOBhAOADvwQR1bu5sKM+fScdk
+	/pBPipjLv5o0T25g7YHnI7kf5BRLGETBgTk67y774uSTDFO3teNASyePzm3uYFLwJDPv0gyb0rm
+	7gYILdO3MpGweunF3141tHMfIZOLNSZOIpSi+v26C/Ll+K128FC7hZe3XCierIhHfGiG3KJv6T5
+	DgFxZJL5CzoSeM20gP7nSAOjhvdD18Y2jfp+mr02eHP7ze0khol0hqSXwTrL2ZDW52PwIsEpuO2
+	kqayBBmHTZntEcRrQaU3mURdPgNAyzJes9KDtMsckccyrO6rkVoI7TBIKrJJxkRpZ3k2fmxX5S1
+	soxyDI0tKz87k=
+X-Google-Smtp-Source: AGHT+IE6EhVL5EEpK+RmBSfpxr2nVh6ZFD+Brx3RTeyqST6qGCNGRzY27erlARCDKIDGSn/ZVJ++sg==
+X-Received: by 2002:a05:6a00:12d7:b0:7e8:43f5:bd51 with SMTP id d2e1a72fcca58-7e8c5048a0cmr5923390b3a.61.1765172416116;
+        Sun, 07 Dec 2025 21:40:16 -0800 (PST)
+Received: from fedora ([110.224.247.2])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7e2a0533f08sm11790114b3a.23.2025.12.07.21.39.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Dec 2025 21:40:15 -0800 (PST)
+Date: Mon, 8 Dec 2025 11:09:30 +0530
+From: ShiHao <i.shihao.999@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: kuba@kernel.org, davem@davemloft.net, dsahern@kernel.org,
+	edumazet@google.com, herbert@gondor.apana.org.au,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2] net: ipv6: fix spelling typos in comments
+Message-ID: <aTZj_AFt6bR9_a2F@fedora>
+References: <20251206083813.240710-1-i.shihao.999@gmail.com>
+ <aTQCXJ7MUvnJpG6B@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251208050620.339408-1-jarkko@kernel.org>
+In-Reply-To: <aTQCXJ7MUvnJpG6B@horms.kernel.org>
 
-On Mon, Dec 08, 2025 at 07:06:16AM +0200, Jarkko Sakkinen wrote:
-> The main goal is fairly straight-forwrd here.
-> 
-> The aim of these patches is optimize the number of tpm2_read_public() calls
-> to the bare minimum. 
-> 
-> ## About dropping 'parentName' attribute for ASN.1 keys from the patch set
-> 
-> I wrote this section as a remainder as I have facts fresh in my mind so 
-> that I can return them as soon as there is working group for the ASN.1 
-> specification. We really need to have this in the spec.
-> 
-> I dropped [1] given that [2] is landing shortly to IETF draft process,
-> according to James Bottomley [3]. We will return to [1] as soon as draft
-> process is open for comments. Still, that attribute is super important,
-> and here is why.
-> 
-> This will cause a overhead as tpm2_unseal_trusted needs to do an
-> unnecessary (from pure technical perspective) TPM2_ReadPublic command to
-> acquire TPM name of the parent. This is obviously known at the time of
-> creation of a key but the information is not stored anywhere by the
-> key format.
-> 
-> It also aligns badly with TCG specifications as Table 6 of architecture
-> spec explicitly defines a reference (or name) for transient keys,
-> persistent keys and NV indexes to be TPM_ALG_ID concatenated together
-> with the hash of TPMT_PUBLIC. I.e. the file format is using exactly
-> the opposite what should be use as reference for keys than what it 
-> should use.
-> 
-> Other benefits are of course auto-discovery of parent for a key file,
-> which is nasty to do without the name pre-stored.
+On Sat, Dec 06, 2025 at 10:15:56AM +0000, Simon Horman wrote:
+> Unfortunately this patches do not apply cleanly on net-next,
+> and thus can't be processed by our CI.
+>
+> When applying manually I see:
+>
+>   Patch failed at 0001 net: ipv6: fix spelling typos in comments
+>   error: corrupt patch at line 58
+>
+> Also, net-next is currently closed.
+>
+> ## Form letter - net-next-closed
+>
+> The merge window for v6.19 has begun and therefore net-next has closed
+> for new drivers, features, code refactoring and optimizations. We are
+> currently accepting bug fixes only.
+>
+> Please repost when net-next reopens.
+>
+> Due to a combination of the merge-window, travel commitments of the
+> maintainers, and the holiday season, net-next will re-open after
+> 2nd January.
+>
+> RFC patches sent for review only are welcome at any time.
+>
+> See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
 
-Right and TPMT_HA is calculated everytime when a trusted key is
-created, and right after that the already calculated data is simply
-thrown into dumpster. And we are talking about spec compliant way
-to refer other keys here, and only 66 bytes of extra payload.
+Hi Simon
 
-I don't get it. And neither do I get how anyone would want to fix 
-this issue with TPM2_CreatePrimary interception.
+Thanks for letting me know about this i am still new to net-dev
+so i did not know about this . I will make sure to take care of
+this next time. Again everyone thanks for your time to this matter.
 
-BR, Jarkko
+shihao
+
