@@ -1,51 +1,47 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E06132862A;
-	Tue,  9 Dec 2025 10:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B82C20E030;
+	Tue,  9 Dec 2025 10:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765274762; cv=none; b=PLf90AhQ2S8agqlvXXx8iCh0+rw8+h02fBQJP0Hd98JXg++F7POh7cIv8PgS4C//vpr6Hs/q1Ny1MNteNXZ5gVZa5zYLN5fqtAqcVs0ccpvb4K9O67E1xlmL2d6eckJ84kCtFhSxBFTBwux12m/Omwm3LnxtvrO1iK79czWao7E=
+	t=1765275519; cv=none; b=levfkucMD/Nqjbl6Jht2aPau6sy7HqlIFyv0Ln6lCKXCDQFRhdA5N/kixF8mkOUq20wAZ69n0OkrCHdDQh9qBBAG8ZsRMUVISdUEV7BbbECbYCHP7qOqkuiQsxN2PVkGkKs+IhGsafMPWPXkQh/7hxmUxxk/m7L9z31kj0M/obU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765274762; c=relaxed/simple;
-	bh=Asnf8kp6ydxd52P1mUKm/6OYCpqSyZOXusN/uJBns0I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R/9kNx4QA9O91jHzDW2vl1dKiDRtAnaSaIpHoa0sBYWAtQ1AYsVMkLePqWdfGBMwFmTwqUMmdzJlWph7Kb+0MWJVXDx9MqaSZTvJBL8Sh1K0E0aCl6pohxunJ/p4EpsjMRIz5BIrtp81mURJkNfa8Y9SDDx8thOOnV1YFORjsiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SHm9Mdb3; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SHm9Mdb3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF217C116B1;
-	Tue,  9 Dec 2025 10:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765274761;
-	bh=Asnf8kp6ydxd52P1mUKm/6OYCpqSyZOXusN/uJBns0I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SHm9Mdb3SvzSEG0DLF9GwbHcgWYK54dp+DYJDLNCipb2EX29/hBMS0HqU62I7lRf6
-	 4gWhCq1QtoZSJO3568pDBOM9qyFkugK7zIUDuKEwvIJMo/NX7b0z1mZoLImD7H7iw/
-	 7MKXKb5utMXyHuBFyclPFr7j2XCrGR/Ky+cO3u2eakPcWylNy0BpEJ9GvzqTrp45ID
-	 tPKVriFx7767OJcrzhvGNVUzpt3Pq8mWDO5vaTvpO8PVNYtDfkkKAdUX+I6MoH20YE
-	 LD5cQHS1OJ9odctCkhvC1Xc/lm0iMNIuJF3HB0sabqXX5sMrbMAsOvgiM3a03Yrn+s
-	 4CJC0PoDEpMeQ==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH v2 3/5] KEYS: trusted: Re-orchestrate tpm2_read_public() calls
-Date: Tue,  9 Dec 2025 12:05:26 +0200
-Message-ID: <20251209100529.1700779-4-jarkko@kernel.org>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251209100529.1700779-1-jarkko@kernel.org>
-References: <20251209100529.1700779-1-jarkko@kernel.org>
+	s=arc-20240116; t=1765275519; c=relaxed/simple;
+	bh=5kedjsd65JcjP7ATTPGfp6DyisqgHrM7fW2Zqdjblrk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qC311opdJt7x/loMlZY5aWUEdvIitNYlpvOHxzd68d5egtGB3NDi/swyDgPllrrc2Fp+pI8hNDwIHqn1lMVi7jWNlT/rdQZsR/dSYedTr9jw2SUXWmePY5a9kpF/oI6jgZvvfwRj7AHNBj9NasW2cuEgYW8DIaANsRU1arrS19E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.235])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dQZX44H0Cz1HCHH;
+	Tue,  9 Dec 2025 18:16:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 0F9534056B;
+	Tue,  9 Dec 2025 18:18:27 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwDX6wxo9zdp9bebAA--.8216S2;
+	Tue, 09 Dec 2025 11:18:26 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: corbet@lwn.net,
+	zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	gregorylumen@linux.microsoft.com,
+	chenste@linux.microsoft.com,
+	nramas@linux.microsoft.com,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [RFC][PATCH] ima: Add support for staging measurements for deletion
+Date: Tue,  9 Dec 2025 11:17:25 +0100
+Message-ID: <20251209101725.3680225-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -53,463 +49,667 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwDX6wxo9zdp9bebAA--.8216S2
+X-Coremail-Antispam: 1UD129KBjvAXoWfZFW3Cr4kZF43Aw43Ww18AFb_yoW8try8Ao
+	Za9FZ8GF4rKrn5Cw4UKrs8tFy8WFZ8Wwn7trW8trs8uF17Wr15Kay7X3WUZ3WSqw4rtw47
+	Cw1vq348XFZ2gwn3n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUY47kC6x804xWl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK
+	8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
+	AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF
+	7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU17KsUUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgARBGk2vesN-wAAss
 
-tpm2_load_cmd() and tpm2_unseal_cmd() use the same parent, and calls to
-tpm_buf_append_name() cause the exact same TPM2_ReadPublic command to be
-sent to the chip, causing unnecessary traffic.
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-1. Export tpm2_read_public in order to make it callable from
-   'trusted_tpm2'.
-2. Re-orchestrate tpm2_seal_trusted() and tpm2_unseal_trusted() in order to
-   halve the name resolutions required:
-2a. Move tpm2_read_public() calls into trusted_tpm2.
-2b. Pass TPM name to tpm_buf_append_name().
-2c. Rework tpm_buf_append_name() to use the pre-resolved name.
+Introduce the ability of staging the entire of the IMA measurement list, or
+a portion, for deletion. Staging means moving the current content of the
+measurement list to a separate location, and allowing users to read and
+delete it. This causes the measurement list to be atomically truncated
+before new measurements can be added. Staging can be done only once at a
+time.
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+User space is responsible to concatenate the staged IMA measurements list
+portions following the temporal order in which the operations were done,
+together with the current measurement list. Then, it can send the collected
+data to the remote verifiers.
+
+The benefit of this solution is the ability to free precious kernel memory,
+in exchange of delegating user space to reconstruct the full measurement
+list from the chunks. No trust needs to be given to user space, since the
+integrity of the measurement list is protected by the TPM.
+
+By default, staging the measurements list for deletion does not alter the
+hash table. When staging is done, IMA is still able to detect collisions on
+the staged and later deleted measurement entries, by keeping the entry
+digests (only template data are freed).
+
+However, since during the measurements list serialization only the SHA1
+digest is passed, and since there are no template data to recalculate the
+other digests from, the hash table is currently not populated with digests
+from staged/deleted entries after kexec().
+
+Introduce the new kernel option ima_flush_htable to decide whether or not
+the digests of staged measurement entries are flushed from the hash table.
+
+Then, introduce ascii_runtime_measurements_staged_<algo> and
+binary_runtime_measurement_staged_<algo> interfaces to stage/delete the
+measurements. Use 'echo A > <IMA interface>' and 'echo D > <IMA interface>'
+to respectively stage and delete the entire measurements list. Use
+'echo N > <IMA interface>', with N between 1 and ULONG_MAX, to stage the
+selected portion of the measurements list.
+
+The ima_measure_users counter (protected by the ima_measure_lock mutex) has
+been introduced to protect access to the measurement list and the staged
+part. The open method of all the measurement interfaces has been extended
+to allow only one writer at a time or, in alternative, multiple readers.
+The write permission is used to stage/delete the measurements, the read
+permission to read them. Write requires also the CAP_SYS_ADMIN capability.
+
+Finally, introduce the _notrim version of the run-time measurements count
+and the binary measurements list size, to display them in the kexec-related
+critical data records.
+
+Note: This code derives from the Alt-IMA Huawei project, and is being
+      released under the dual license model (GPL-2.0 OR MIT).
+
+Link: https://github.com/linux-integrity/linux/issues/1
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- drivers/char/tpm/tpm2-cmd.c               |   3 +-
- drivers/char/tpm/tpm2-sessions.c          |  95 +++++------------
- include/linux/tpm.h                       |  10 +-
- security/keys/trusted-keys/trusted_tpm2.c | 124 ++++++++++++++--------
- 4 files changed, 118 insertions(+), 114 deletions(-)
+ .../admin-guide/kernel-parameters.txt         |   4 +
+ security/integrity/ima/ima.h                  |  10 +-
+ security/integrity/ima/ima_fs.c               | 222 +++++++++++++++++-
+ security/integrity/ima/ima_kexec.c            |  13 +-
+ security/integrity/ima/ima_queue.c            | 111 ++++++++-
+ 5 files changed, 340 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 2682f5ec09cb..5b04e74b6377 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -199,7 +199,8 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
- 	tpm_buf_reset(buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 6c42061ca20e..355d8930e3ac 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2215,6 +2215,10 @@
+ 			Use the canonical format for the binary runtime
+ 			measurements, instead of host native format.
  
- 	if (!disable_pcr_integrity) {
--		rc = tpm_buf_append_name(chip, buf, pcr_idx, NULL);
-+		rc = tpm_buf_append_name(chip, buf, pcr_idx, (u8 *)&pcr_idx,
-+					 sizeof(u32));
- 		if (rc)
- 			return rc;
- 		tpm_buf_append_hmac_session(chip, buf, 0, NULL, 0);
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index a0c88fb1804c..0816a91134fc 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -136,8 +136,8 @@ struct tpm2_auth {
- 	 * handle, but they are part of the session by name, which
- 	 * we must compute and remember
- 	 */
--	u32 name_h[AUTH_MAX_NAMES];
- 	u8 name[AUTH_MAX_NAMES][TPM2_MAX_NAME_SIZE];
-+	u16 name_size_tbl[AUTH_MAX_NAMES];
++	ima_flush_htable  [IMA]
++			Flush the measurement list hash table when staging all
++			or a part of it for deletion.
++
+ 	ima_hash=	[IMA]
+ 			Format: { md5 | sha1 | rmd160 | sha256 | sha384
+ 				   | sha512 | ... }
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index e3d71d8d56e3..d7aa4a0f79b1 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -117,6 +117,8 @@ struct ima_queue_entry {
+ 	struct ima_template_entry *entry;
+ };
+ extern struct list_head ima_measurements;	/* list of all measurements */
++extern struct list_head ima_measurements_staged; /* list of staged meas. */
++extern bool ima_measurements_staged_exist;	/* If there are staged meas. */
+ 
+ /* Some details preceding the binary serialized measurement list */
+ struct ima_kexec_hdr {
+@@ -281,10 +283,12 @@ struct ima_template_desc *ima_template_desc_current(void);
+ struct ima_template_desc *ima_template_desc_buf(void);
+ struct ima_template_desc *lookup_template_desc(const char *name);
+ bool ima_template_has_modsig(const struct ima_template_desc *ima_template);
++int ima_queue_stage(unsigned long req_value);
++int ima_queue_delete_staged(void);
+ int ima_restore_measurement_entry(struct ima_template_entry *entry);
+ int ima_restore_measurement_list(loff_t bufsize, void *buf);
+ int ima_measurements_show(struct seq_file *m, void *v);
+-unsigned long ima_get_binary_runtime_size(void);
++unsigned long ima_get_binary_runtime_size(bool notrim);
+ int ima_init_template(void);
+ void ima_init_template_list(void);
+ int __init ima_init_digests(void);
+@@ -298,11 +302,13 @@ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
+ extern spinlock_t ima_queue_lock;
+ 
+ struct ima_h_table {
+-	atomic_long_t len;	/* number of stored measurements in the list */
++	atomic_long_t len;	/* current num of stored meas. in the list */
++	atomic_long_t len_notrim; /* total num of stored meas. in the list */
+ 	atomic_long_t violations;
+ 	struct hlist_head queue[IMA_MEASURE_HTABLE_SIZE];
+ };
+ extern struct ima_h_table ima_htable;
++extern struct mutex ima_extend_list_mutex;
+ 
+ static inline unsigned int ima_hash_key(u8 *digest)
+ {
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index 87045b09f120..321c98ae0e55 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -24,7 +24,12 @@
+ 
+ #include "ima.h"
+ 
++/* Requests: ('A', [1, ULONG_MAX])\n (stage all/N) or D\n (delete staged) */
++#define STAGED_REQ_LENGTH 21
++
+ static DEFINE_MUTEX(ima_write_mutex);
++static DEFINE_MUTEX(ima_measure_lock);
++static long ima_measure_users;
+ 
+ bool ima_canonical_fmt;
+ static int __init default_canonical_fmt_setup(char *str)
+@@ -74,14 +79,15 @@ static const struct file_operations ima_measurements_count_ops = {
  };
  
- #ifdef CONFIG_TCG_TPM2_HMAC
-@@ -163,7 +163,17 @@ static int name_size(const u8 *name)
- 	}
- }
- 
--static int tpm2_read_public(struct tpm_chip *chip, u32 handle, void *name)
-+/**
-+ * tpm2_read_public: Resolve TPM name for a handle
-+ * @chip:		TPM chip to use.
-+ * @handle:		TPM handle.
-+ * @name:		A buffer for returning the name blob. Must have a
-+ *			capacity of 'SHA512_DIGET_SIZE + 2' bytes at minimum
-+ *
-+ * Returns size of TPM handle name of success.
-+ * Returns tpm_transmit_cmd error codes when TPM2_ReadPublic fails.
-+ */
-+int tpm2_read_public(struct tpm_chip *chip, u32 handle, void *name)
+ /* returns pointer to hlist_node */
+-static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
++static void *_ima_measurements_start(struct seq_file *m, loff_t *pos,
++				     struct list_head *head)
  {
- 	u32 mso = tpm2_handle_mso(handle);
- 	off_t offset = TPM_HEADER_SIZE;
-@@ -212,14 +222,16 @@ static int tpm2_read_public(struct tpm_chip *chip, u32 handle, void *name)
- 	memcpy(name, &buf->data[offset], rc);
- 	return name_size_alg;
- }
-+EXPORT_SYMBOL_GPL(tpm2_read_public);
- #endif /* CONFIG_TCG_TPM2_HMAC */
+ 	loff_t l = *pos;
+ 	struct ima_queue_entry *qe;
  
- /**
-- * tpm_buf_append_name() - add a handle area to the buffer
-- * @chip: the TPM chip structure
-- * @buf: The buffer to be appended
-- * @handle: The handle to be appended
-- * @name: The name of the handle (may be NULL)
-+ * tpm_buf_append_name() - Append a handle and store TPM name
-+ * @chip:		TPM chip to use.
-+ * @buf:		TPM buffer containing the TPM command in-transit.
-+ * @handle:		TPM handle to be appended.
-+ * @name:		TPM name of the handle
-+ * @name_size:		Size of the TPM name.
-  *
-  * In order to compute session HMACs, we need to know the names of the
-  * objects pointed to by the handles.  For most objects, this is simply
-@@ -236,15 +248,14 @@ static int tpm2_read_public(struct tpm_chip *chip, u32 handle, void *name)
-  * will be caused by an incorrect programming model and indicated by a
-  * kernel message.
-  *
-- * Ends the authorization session on failure.
-+ * Returns zero on success.
-+ * Returns -EIO when the authorization area state is malformed.
-  */
- int tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
--			u32 handle, u8 *name)
-+			u32 handle, u8 *name, u16 name_size)
- {
- #ifdef CONFIG_TCG_TPM2_HMAC
--	enum tpm2_mso_type mso = tpm2_handle_mso(handle);
- 	struct tpm2_auth *auth;
--	u16 name_size_alg;
- 	int slot;
- 	int ret;
- #endif
-@@ -269,36 +280,15 @@ int tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
- 	}
- 	tpm_buf_append_u32(buf, handle);
- 	auth->session += 4;
--
--	if (mso == TPM2_MSO_PERSISTENT ||
--	    mso == TPM2_MSO_VOLATILE ||
--	    mso == TPM2_MSO_NVRAM) {
--		if (!name) {
--			ret = tpm2_read_public(chip, handle, auth->name[slot]);
--			if (ret < 0)
--				goto err;
--
--			name_size_alg = ret;
--		}
--	} else {
--		if (name) {
--			dev_err(&chip->dev, "handle 0x%08x does not use a name\n",
--				handle);
--			ret = -EIO;
--			goto err;
--		}
--	}
--
--	auth->name_h[slot] = handle;
--	if (name)
--		memcpy(auth->name[slot], name, name_size_alg);
-+	memcpy(auth->name[slot], name, name_size);
-+	auth->name_size_tbl[slot] = name_size;
- #endif
- 	return 0;
- 
- #ifdef CONFIG_TCG_TPM2_HMAC
- err:
- 	tpm2_end_auth_session(chip);
--	return tpm_ret_to_err(ret);
-+	return ret;
- #endif
- }
- EXPORT_SYMBOL_GPL(tpm_buf_append_name);
-@@ -606,22 +596,8 @@ int tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf)
- 	attrs = chip->cc_attrs_tbl[i];
- 
- 	handles = (attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0);
-+	offset_s += handles * sizeof(u32);
- 
--	/*
--	 * just check the names, it's easy to make mistakes.  This
--	 * would happen if someone added a handle via
--	 * tpm_buf_append_u32() instead of tpm_buf_append_name()
--	 */
--	for (i = 0; i < handles; i++) {
--		u32 handle = tpm_buf_read_u32(buf, &offset_s);
--
--		if (auth->name_h[i] != handle) {
--			dev_err(&chip->dev, "invalid handle 0x%08x\n", handle);
--			ret = -EIO;
--			goto err;
--		}
--	}
--	/* point offset_s to the start of the sessions */
- 	val = tpm_buf_read_u32(buf, &offset_s);
- 	/* point offset_p to the start of the parameters */
- 	offset_p = offset_s + val;
-@@ -682,23 +658,8 @@ int tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf)
- 	/* ordinal is already BE */
- 	sha256_update(&sctx, (u8 *)&head->ordinal, sizeof(head->ordinal));
- 	/* add the handle names */
--	for (i = 0; i < handles; i++) {
--		enum tpm2_mso_type mso = tpm2_handle_mso(auth->name_h[i]);
--
--		if (mso == TPM2_MSO_PERSISTENT ||
--		    mso == TPM2_MSO_VOLATILE ||
--		    mso == TPM2_MSO_NVRAM) {
--			ret = name_size(auth->name[i]);
--			if (ret < 0)
--				goto err;
--
--			sha256_update(&sctx, auth->name[i], ret);
--		} else {
--			__be32 h = cpu_to_be32(auth->name_h[i]);
--
--			sha256_update(&sctx, (u8 *)&h, 4);
--		}
--	}
-+	for (i = 0; i < handles; i++)
-+		sha256_update(&sctx, auth->name[i], auth->name_size_tbl[i]);
- 	if (offset_s != tpm_buf_length(buf))
- 		sha256_update(&sctx, &buf->data[offset_s],
- 			      tpm_buf_length(buf) - offset_s);
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 922a43ef23b5..9f684fc7ae04 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -543,7 +543,7 @@ static inline struct tpm2_auth *tpm2_chip_auth(struct tpm_chip *chip)
+ 	/* we need a lock since pos could point beyond last element */
+ 	rcu_read_lock();
+-	list_for_each_entry_rcu(qe, &ima_measurements, later) {
++	list_for_each_entry_rcu(qe, head, later) {
+ 		if (!l--) {
+ 			rcu_read_unlock();
+ 			return qe;
+@@ -91,7 +97,18 @@ static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
+ 	return NULL;
  }
  
- int tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
--			u32 handle, u8 *name);
-+			u32 handle, u8 *name, u16 name_size);
- void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
- 				 u8 attributes, u8 *passphrase,
- 				 int passphraselen);
-@@ -557,6 +557,7 @@ int tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf);
- int tpm_buf_check_hmac_response(struct tpm_chip *chip, struct tpm_buf *buf,
- 				int rc);
- void tpm2_end_auth_session(struct tpm_chip *chip);
-+int tpm2_read_public(struct tpm_chip *chip, u32 handle, void *name);
- #else
- #include <linux/unaligned.h>
- 
-@@ -580,6 +581,13 @@ static inline int tpm_buf_check_hmac_response(struct tpm_chip *chip,
- {
- 	return rc;
- }
-+
-+static inline int tpm2_read_public(struct tpm_chip *chip, u32 handle,
-+				   void *name)
+-static void *ima_measurements_next(struct seq_file *m, void *v, loff_t *pos)
++static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
 +{
-+	memcpy(name, &handle, sizeof(u32));
-+	return sizeof(u32);
++	return _ima_measurements_start(m, pos, &ima_measurements);
 +}
- #endif	/* CONFIG_TCG_TPM2_HMAC */
- 
- #endif
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 27424e1a4a63..63539b344ffb 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -203,7 +203,9 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 		      struct trusted_key_payload *payload,
- 		      struct trusted_key_options *options)
- {
-+	u8 parent_name[TPM2_MAX_NAME_SIZE];
- 	off_t offset = TPM_HEADER_SIZE;
-+	u16 parent_name_size;
- 	int blob_len = 0;
- 	int hash;
- 	u32 flags;
-@@ -220,6 +222,12 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 	if (rc)
- 		return rc;
- 
-+	rc = tpm2_read_public(chip, options->keyhandle, parent_name);
-+	if (rc < 0)
-+		goto out_put;
 +
-+	parent_name_size = rc;
++static void *ima_measurements_staged_start(struct seq_file *m, loff_t *pos)
++{
++	return _ima_measurements_start(m, pos, &ima_measurements_staged);
++}
 +
- 	rc = tpm2_start_auth_session(chip);
- 	if (rc)
- 		goto out_put;
-@@ -234,7 +242,8 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 	tpm_buf_init(buf, TPM_BUFSIZE);
- 	tpm_buf_reset(buf, TPM2_ST_SESSIONS, TPM2_CC_CREATE);
++static void *_ima_measurements_next(struct seq_file *m, void *v, loff_t *pos,
++				    struct list_head *head)
+ {
+ 	struct ima_queue_entry *qe = v;
  
--	rc = tpm_buf_append_name(chip, buf, options->keyhandle, NULL);
-+	rc = tpm_buf_append_name(chip, buf, options->keyhandle, parent_name,
-+				 parent_name_size);
- 	if (rc)
- 		goto out_put;
+@@ -103,7 +120,18 @@ static void *ima_measurements_next(struct seq_file *m, void *v, loff_t *pos)
+ 	rcu_read_unlock();
+ 	(*pos)++;
  
-@@ -326,48 +335,38 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+-	return (&qe->later == &ima_measurements) ? NULL : qe;
++	return (&qe->later == head) ? NULL : qe;
++}
++
++static void *ima_measurements_next(struct seq_file *m, void *v, loff_t *pos)
++{
++	return _ima_measurements_next(m, v, pos, &ima_measurements);
++}
++
++static void *ima_measurements_staged_next(struct seq_file *m, void *v,
++					  loff_t *pos)
++{
++	return _ima_measurements_next(m, v, pos, &ima_measurements_staged);
  }
  
- /**
-- * tpm2_load_cmd() - execute a TPM2_Load command
-- *
-- * @chip: TPM chip to use
-- * @payload: the key data in clear and encrypted form
-- * @options: authentication values and other options
-- * @blob_handle: returned blob handle
-+ * tpm2_load_cmd() - Execute TPM2_Load
-+ * @chip:		TPM chip to use.
-+ * @payload:		Key data in clear text.
-+ * @options:		Trusted key options.
-+ * @parent_name:	A cryptographic name, i.e. a TPMT_HA blob, of the
-+ *			parent key.
-+ * @blob:		The decoded payload for the key.
-+ * @blob_handle:	On success, will contain handle to the loaded keyedhash
-+ *			blob.
-  *
-- * Return: 0 on success.
-- *        -E2BIG on wrong payload size.
-- *        -EPERM on tpm error status.
-- *        < 0 error from tpm_send.
-+ * Return -E2BIG when the blob size is too small for all the data.
-+ * Returns tpm_transmit_cmd() error codes when either TPM2_Load fails.
-  */
- static int tpm2_load_cmd(struct tpm_chip *chip,
- 			 struct trusted_key_payload *payload,
- 			 struct trusted_key_options *options,
-+			 u8 *parent_name,
-+			 u16 parent_name_size,
-+			 const u8 *blob,
- 			 u32 *blob_handle)
- {
- 	u8 *blob_ref __free(kfree) = NULL;
- 	unsigned int private_len;
- 	unsigned int public_len;
- 	unsigned int blob_len;
--	u8 *blob, *pub;
-+	const u8 *pub;
- 	int rc;
- 	u32 attrs;
+ static void ima_measurements_stop(struct seq_file *m, void *v)
+@@ -202,16 +230,138 @@ static const struct seq_operations ima_measurments_seqops = {
+ 	.show = ima_measurements_show
+ };
  
--	rc = tpm2_key_decode(payload, options, &blob);
--	if (rc) {
--		/* old form */
--		blob = payload->blob;
--		payload->old_format = 1;
--	} else {
--		/* Bind for cleanup: */
--		blob_ref = blob;
--	}
--
--	/* new format carries keyhandle but old format doesn't */
--	if (!options->keyhandle)
--		return -EINVAL;
--
- 	/* must be big enough for at least the two be16 size counts */
- 	if (payload->blob_len < 4)
--		return -EINVAL;
-+		return -E2BIG;
- 
- 	private_len = get_unaligned_be16(blob);
- 
-@@ -406,7 +405,8 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 	tpm_buf_init(buf, TPM_BUFSIZE);
- 	tpm_buf_reset(buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
- 
--	rc = tpm_buf_append_name(chip, buf, options->keyhandle, NULL);
-+	rc = tpm_buf_append_name(chip, buf, options->keyhandle, parent_name,
-+				 parent_name_size);
- 	if (rc)
- 		return rc;
- 
-@@ -434,20 +434,23 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- }
- 
- /**
-- * tpm2_unseal_cmd() - execute a TPM2_Unload command
-+ * tpm2_unseal_cmd() - Execute TPM2_Unload
-  *
-- * @chip: TPM chip to use
-- * @payload: the key data in clear and encrypted form
-- * @options: authentication values and other options
-- * @blob_handle: blob handle
-+ * @chip:		TPM chip to use
-+ * @payload:		Key data in clear text.
-+ * @options:		Trusted key options.
-+ * @parent_name:	A cryptographic name, i.e. a TPMT_HA blob, of the
-+ *			parent key.
-+ * @blob_handle:	Handle to the loaded keyedhash blob.
-  *
-- * Return: 0 on success
-- *         -EPERM on tpm error status
-- *         < 0 error from tpm_send
-+ * Return -E2BIG when the blob size is too small for all the data.
-+ * Returns tpm_transmit_cmd() error codes when either TPM2_Load fails.
-  */
- static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 			   struct trusted_key_payload *payload,
- 			   struct trusted_key_options *options,
-+			   u8 *parent_name,
-+			   u16 parent_name_size,
- 			   u32 blob_handle)
- {
- 	u16 data_len;
-@@ -465,7 +468,8 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 	tpm_buf_init(buf, TPM_BUFSIZE);
- 	tpm_buf_reset(buf, TPM2_ST_SESSIONS, TPM2_CC_UNSEAL);
- 
--	rc = tpm_buf_append_name(chip, buf, options->keyhandle, NULL);
-+	rc = tpm_buf_append_name(chip, buf, options->keyhandle, parent_name,
-+				 parent_name_size);
- 	if (rc)
- 		return rc;
- 
-@@ -526,30 +530,60 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- }
- 
- /**
-- * tpm2_unseal_trusted() - unseal the payload of a trusted key
-+ * tpm2_unseal_trusted() - Unseal a trusted key
-+ * @chip:	TPM chip to use.
-+ * @payload:	Key data in clear text.
-+ * @options:	Trusted key options.
-  *
-- * @chip: TPM chip to use
-- * @payload: the key data in clear and encrypted form
-- * @options: authentication values and other options
-- *
-- * Return: Same as with tpm_send.
-+ * Return -E2BIG when the blob size is too small for all the data.
-+ * Return -EINVAL when parent's key handle has not been set.
-+ * Returns tpm_transmit_cmd() error codes when either TPM2_Load or TPM2_Unseal
-+ * fails.
-  */
- int tpm2_unseal_trusted(struct tpm_chip *chip,
- 			struct trusted_key_payload *payload,
- 			struct trusted_key_options *options)
- {
-+	u8 *blob_ref __free(kfree) = NULL;
-+	u8 parent_name[TPM2_MAX_NAME_SIZE];
-+	u16 parent_name_size;
- 	u32 blob_handle;
-+	u8 *blob;
- 	int rc;
- 
-+	/*
-+	 * Try to decode the provided blob as an ASN.1 blob. Assume that the
-+	 * blob is in the legacy format if decoding does not end successfully.
-+	 */
-+	rc = tpm2_key_decode(payload, options, &blob);
-+	if (rc) {
-+		blob = payload->blob;
-+		payload->old_format = 1;
-+	} else {
-+		blob_ref = blob;
++static int _ima_measurements_open(struct inode *inode, struct file *file,
++				  const struct seq_operations *seq_ops)
++{
++	bool write = !!(file->f_mode & FMODE_WRITE);
++	int ret;
++
++	if (write && !capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	mutex_lock(&ima_measure_lock);
++	if ((write && ima_measure_users != 0) ||
++	    (!write && ima_measure_users < 0)) {
++		mutex_unlock(&ima_measure_lock);
++		return -EBUSY;
 +	}
 +
-+	if (!options->keyhandle)
++	ret = seq_open(file, seq_ops);
++	if (ret < 0) {
++		mutex_unlock(&ima_measure_lock);
++		return ret;
++	}
++
++	if (write)
++		ima_measure_users--;
++	else
++		ima_measure_users++;
++
++	mutex_unlock(&ima_measure_lock);
++	return ret;
++}
++
+ static int ima_measurements_open(struct inode *inode, struct file *file)
+ {
+-	return seq_open(file, &ima_measurments_seqops);
++	return _ima_measurements_open(inode, file, &ima_measurments_seqops);
++}
++
++static int ima_measurements_release(struct inode *inode, struct file *file)
++{
++	bool write = !!(file->f_mode & FMODE_WRITE);
++	int ret;
++
++	mutex_lock(&ima_measure_lock);
++	ret = seq_release(inode, file);
++	if (!ret) {
++		if (write)
++			ima_measure_users++;
++		else
++			ima_measure_users--;
++	}
++
++	mutex_unlock(&ima_measure_lock);
++	return ret;
+ }
+ 
+ static const struct file_operations ima_measurements_ops = {
+ 	.open = ima_measurements_open,
+ 	.read = seq_read,
+ 	.llseek = seq_lseek,
+-	.release = seq_release,
++	.release = ima_measurements_release,
++};
++
++static const struct seq_operations ima_measurments_staged_seqops = {
++	.start = ima_measurements_staged_start,
++	.next = ima_measurements_staged_next,
++	.stop = ima_measurements_stop,
++	.show = ima_measurements_show
++};
++
++static int ima_measurements_staged_open(struct inode *inode, struct file *file)
++{
++	return _ima_measurements_open(inode, file,
++				      &ima_measurments_staged_seqops);
++}
++
++static ssize_t ima_measurements_staged_read(struct file *file, char __user *buf,
++					    size_t size, loff_t *ppos)
++{
++	if (!ima_measurements_staged_exist)
++		return -ENOENT;
++
++	return seq_read(file, buf, size, ppos);
++}
++
++static ssize_t ima_measurements_staged_write(struct file *file,
++					     const char __user *buf,
++					     size_t datalen, loff_t *ppos)
++{
++	char req[STAGED_REQ_LENGTH], *req_ptr = req;
++	unsigned long req_value;
++	int ret;
++
++	if (*ppos > 0 || datalen < 2 || datalen > STAGED_REQ_LENGTH)
 +		return -EINVAL;
 +
- 	rc = tpm_try_get_ops(chip);
- 	if (rc)
- 		return rc;
++	ret = copy_from_user(req, buf, datalen);
++	if (ret < 0)
++		return ret;
++
++	if (strsep(&req_ptr, "\n") == NULL)
++		return -EINVAL;
++
++	switch (req[0]) {
++	case 'A':
++		if (datalen != 2 || req[1] != '\0')
++			return -EINVAL;
++
++		ret = ima_queue_stage(ULONG_MAX);
++		break;
++	case 'D':
++		if (datalen != 2 || req[1] != '\0')
++			return -EINVAL;
++
++		ret = ima_queue_delete_staged();
++		break;
++	default:
++		ret = kstrtoul(req, 0, &req_value);
++		if (!ret)
++			ret = ima_queue_stage(req_value);
++	}
++
++	if (ret < 0)
++		return ret;
++
++	return datalen;
++}
++
++static const struct file_operations ima_measurements_staged_ops = {
++	.open = ima_measurements_staged_open,
++	.read = ima_measurements_staged_read,
++	.write = ima_measurements_staged_write,
++	.llseek = seq_lseek,
++	.release = ima_measurements_release,
+ };
  
--	rc = tpm2_load_cmd(chip, payload, options, &blob_handle);
-+	rc = tpm2_read_public(chip, options->keyhandle, parent_name);
-+	if (rc < 0)
-+		goto out;
+ void ima_print_digest(struct seq_file *m, u8 *digest, u32 size)
+@@ -279,14 +429,37 @@ static const struct seq_operations ima_ascii_measurements_seqops = {
+ 
+ static int ima_ascii_measurements_open(struct inode *inode, struct file *file)
+ {
+-	return seq_open(file, &ima_ascii_measurements_seqops);
++	return _ima_measurements_open(inode, file,
++				      &ima_ascii_measurements_seqops);
+ }
+ 
+ static const struct file_operations ima_ascii_measurements_ops = {
+ 	.open = ima_ascii_measurements_open,
+ 	.read = seq_read,
+ 	.llseek = seq_lseek,
+-	.release = seq_release,
++	.release = ima_measurements_release,
++};
 +
-+	parent_name_size = rc;
++static const struct seq_operations ima_ascii_measurements_staged_seqops = {
++	.start = ima_measurements_staged_start,
++	.next = ima_measurements_staged_next,
++	.stop = ima_measurements_stop,
++	.show = ima_ascii_measurements_show
++};
 +
-+	rc = tpm2_load_cmd(chip, payload, options, parent_name,
-+			   parent_name_size, blob, &blob_handle);
- 	if (rc)
++static int ima_ascii_measurements_staged_open(struct inode *inode,
++					      struct file *file)
++{
++	return _ima_measurements_open(inode, file,
++				      &ima_ascii_measurements_staged_seqops);
++}
++
++static const struct file_operations ima_ascii_measurements_staged_ops = {
++	.open = ima_ascii_measurements_staged_open,
++	.read = ima_measurements_staged_read,
++	.write = ima_measurements_staged_write,
++	.llseek = seq_lseek,
++	.release = ima_measurements_release,
+ };
+ 
+ static ssize_t ima_read_policy(char *path)
+@@ -419,6 +592,25 @@ static int __init create_securityfs_measurement_lists(void)
+ 						&ima_measurements_ops);
+ 		if (IS_ERR(dentry))
+ 			return PTR_ERR(dentry);
++
++		sprintf(file_name, "ascii_runtime_measurements_staged_%s",
++			hash_algo_name[algo]);
++		dentry = securityfs_create_file(file_name,
++					S_IRUSR | S_IRGRP | S_IWUSR | S_IWGRP,
++					ima_dir, (void *)(uintptr_t)i,
++					&ima_ascii_measurements_staged_ops);
++		if (IS_ERR(dentry))
++			return PTR_ERR(dentry);
++
++		sprintf(file_name, "binary_runtime_measurements_staged_%s",
++			hash_algo_name[algo]);
++		dentry = securityfs_create_file(file_name,
++						S_IRUSR | S_IRGRP |
++						S_IWUSR | S_IWGRP,
++						ima_dir, (void *)(uintptr_t)i,
++						&ima_measurements_staged_ops);
++		if (IS_ERR(dentry))
++			return PTR_ERR(dentry);
+ 	}
+ 
+ 	return 0;
+@@ -528,6 +720,20 @@ int __init ima_fs_init(void)
  		goto out;
+ 	}
  
--	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle);
-+	rc = tpm2_unseal_cmd(chip, payload, options, parent_name,
-+			     parent_name_size, blob_handle);
++	dentry = securityfs_create_symlink("binary_runtime_measurements_staged",
++		ima_dir, "binary_runtime_measurements_staged_sha1", NULL);
++	if (IS_ERR(dentry)) {
++		ret = PTR_ERR(dentry);
++		goto out;
++	}
 +
- 	tpm2_flush_context(chip, blob_handle);
++	dentry = securityfs_create_symlink("ascii_runtime_measurements_staged",
++		ima_dir, "ascii_runtime_measurements_staged_sha1", NULL);
++	if (IS_ERR(dentry)) {
++		ret = PTR_ERR(dentry);
++		goto out;
++	}
++
+ 	dentry = securityfs_create_file("runtime_measurements_count",
+ 				   S_IRUSR | S_IRGRP, ima_dir, NULL,
+ 				   &ima_measurements_count_ops);
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 7362f68f2d8b..23a20300da7b 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -40,8 +40,8 @@ void ima_measure_kexec_event(const char *event_name)
+ 	long len;
+ 	int n;
  
- out:
+-	buf_size = ima_get_binary_runtime_size();
+-	len = atomic_long_read(&ima_htable.len);
++	buf_size = ima_get_binary_runtime_size(true);
++	len = atomic_long_read(&ima_htable.len_notrim);
+ 
+ 	n = scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
+ 		      "kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
+@@ -93,8 +93,10 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+ 
+ 	memset(&khdr, 0, sizeof(khdr));
+ 	khdr.version = 1;
+-	/* This is an append-only list, no need to hold the RCU read lock */
+-	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
++
++	/* It can race with ima_queue_stage(). */
++	mutex_lock(&ima_extend_list_mutex);
++	list_for_each_entry(qe, &ima_measurements, later) {
+ 		if (ima_kexec_file.count < ima_kexec_file.size) {
+ 			khdr.count++;
+ 			ima_measurements_show(&ima_kexec_file, qe);
+@@ -103,6 +105,7 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+ 			break;
+ 		}
+ 	}
++	mutex_unlock(&ima_extend_list_mutex);
+ 
+ 	/*
+ 	 * fill in reserved space with some buffer details
+@@ -157,7 +160,7 @@ void ima_add_kexec_buffer(struct kimage *image)
+ 	else
+ 		extra_memory = CONFIG_IMA_KEXEC_EXTRA_MEMORY_KB * 1024;
+ 
+-	binary_runtime_size = ima_get_binary_runtime_size() + extra_memory;
++	binary_runtime_size = ima_get_binary_runtime_size(false) + extra_memory;
+ 
+ 	if (binary_runtime_size >= ULONG_MAX - PAGE_SIZE)
+ 		kexec_segment_size = ULONG_MAX;
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index 590637e81ad1..868f216ac343 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -22,19 +22,32 @@
+ 
+ #define AUDIT_CAUSE_LEN_MAX 32
+ 
++bool ima_flush_htable;
++static int __init ima_flush_htable_setup(char *str)
++{
++	ima_flush_htable = true;
++	return 1;
++}
++__setup("ima_flush_htable", ima_flush_htable_setup);
++
+ /* pre-allocated array of tpm_digest structures to extend a PCR */
+ static struct tpm_digest *digests;
+ 
+ LIST_HEAD(ima_measurements);	/* list of all measurements */
++LIST_HEAD(ima_measurements_staged); /* list of staged measurements */
++bool ima_measurements_staged_exist; /* If there are staged measurements */
+ #ifdef CONFIG_IMA_KEXEC
+ static unsigned long binary_runtime_size;
++static unsigned long binary_runtime_size_notrim;
+ #else
+ static unsigned long binary_runtime_size = ULONG_MAX;
++static unsigned long binary_runtime_size_notrim = ULONG_MAX;
+ #endif
+ 
+ /* key: inode (before secure-hashing a file) */
+ struct ima_h_table ima_htable = {
+ 	.len = ATOMIC_LONG_INIT(0),
++	.len_notrim = ATOMIC_LONG_INIT(0),
+ 	.violations = ATOMIC_LONG_INIT(0),
+ 	.queue[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
+ };
+@@ -43,7 +56,7 @@ struct ima_h_table ima_htable = {
+  * and extending the TPM PCR aggregate. Since tpm_extend can take
+  * long (and the tpm driver uses a mutex), we can't use the spinlock.
+  */
+-static DEFINE_MUTEX(ima_extend_list_mutex);
++DEFINE_MUTEX(ima_extend_list_mutex);
+ 
+ /*
+  * Used internally by the kernel to suspend measurements.
+@@ -114,15 +127,19 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
+ 	list_add_tail_rcu(&qe->later, &ima_measurements);
+ 
+ 	atomic_long_inc(&ima_htable.len);
++	atomic_long_inc(&ima_htable.len_notrim);
+ 	if (update_htable) {
+ 		key = ima_hash_key(entry->digests[ima_hash_algo_idx].digest);
+ 		hlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
+ 	}
+ 
+-	if (binary_runtime_size != ULONG_MAX) {
++	if (binary_runtime_size_notrim != ULONG_MAX) {
+ 		int size;
+ 
+ 		size = get_binary_runtime_size(entry);
++		binary_runtime_size_notrim =
++		     (binary_runtime_size_notrim < ULONG_MAX - size) ?
++		     binary_runtime_size_notrim + size : ULONG_MAX;
+ 		binary_runtime_size = (binary_runtime_size < ULONG_MAX - size) ?
+ 		     binary_runtime_size + size : ULONG_MAX;
+ 	}
+@@ -134,12 +151,18 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
+  * entire binary_runtime_measurement list, including the ima_kexec_hdr
+  * structure.
+  */
+-unsigned long ima_get_binary_runtime_size(void)
++unsigned long ima_get_binary_runtime_size(bool notrim)
+ {
+-	if (binary_runtime_size >= (ULONG_MAX - sizeof(struct ima_kexec_hdr)))
++	unsigned long *val;
++
++	mutex_lock(&ima_extend_list_mutex);
++	val = (notrim) ? &binary_runtime_size_notrim : &binary_runtime_size;
++	mutex_unlock(&ima_extend_list_mutex);
++
++	if (*val >= (ULONG_MAX - sizeof(struct ima_kexec_hdr)))
+ 		return ULONG_MAX;
+ 	else
+-		return binary_runtime_size + sizeof(struct ima_kexec_hdr);
++		return *val + sizeof(struct ima_kexec_hdr);
+ }
+ 
+ static int ima_pcr_extend(struct tpm_digest *digests_arg, int pcr)
+@@ -220,6 +243,84 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
+ 	return result;
+ }
+ 
++int ima_queue_stage(unsigned long req_value)
++{
++	unsigned long req_value_copy = req_value, to_remove = 0;
++	struct ima_queue_entry *qe;
++
++	if (ima_measurements_staged_exist)
++		return -EEXIST;
++
++	mutex_lock(&ima_extend_list_mutex);
++	if (list_empty(&ima_measurements)) {
++		mutex_unlock(&ima_extend_list_mutex);
++		return -ENOENT;
++	}
++
++	if (req_value == ULONG_MAX) {
++		list_replace(&ima_measurements, &ima_measurements_staged);
++		INIT_LIST_HEAD(&ima_measurements);
++		atomic_long_set(&ima_htable.len, 0);
++		if (IS_ENABLED(CONFIG_IMA_KEXEC))
++			binary_runtime_size = 0;
++	} else {
++		list_for_each_entry(qe, &ima_measurements, later) {
++			to_remove += get_binary_runtime_size(qe->entry);
++			if (--req_value_copy == 0)
++				break;
++		}
++
++		if (req_value_copy > 0) {
++			mutex_unlock(&ima_extend_list_mutex);
++			return -ENOENT;
++		}
++
++		__list_cut_position(&ima_measurements_staged, &ima_measurements,
++				    &qe->later);
++		atomic_long_sub(req_value, &ima_htable.len);
++		if (IS_ENABLED(CONFIG_IMA_KEXEC))
++			binary_runtime_size -= to_remove;
++	}
++
++	if (ima_flush_htable) {
++		list_for_each_entry(qe, &ima_measurements_staged, later)
++			/* It can race with ima_lookup_digest_entry(). */
++			hlist_del_rcu(&qe->hnext);
++	}
++
++	mutex_unlock(&ima_extend_list_mutex);
++	ima_measurements_staged_exist = true;
++	return 0;
++}
++
++int ima_queue_delete_staged(void)
++{
++	struct ima_queue_entry *qe, *qe_tmp;
++	unsigned int i;
++
++	if (!ima_measurements_staged_exist)
++		return -ENOENT;
++
++	list_for_each_entry_safe(qe, qe_tmp, &ima_measurements_staged, later) {
++		for (i = 0; i < qe->entry->template_desc->num_fields; i++) {
++			kfree(qe->entry->template_data[i].data);
++			qe->entry->template_data[i].data = NULL;
++			qe->entry->template_data[i].len = 0;
++		}
++
++		list_del(&qe->later);
++
++		if (ima_flush_htable) {
++			kfree(qe->entry->digests);
++			kfree(qe->entry);
++			kfree(qe);
++		}
++	}
++
++	ima_measurements_staged_exist = false;
++	return 0;
++}
++
+ int ima_restore_measurement_entry(struct ima_template_entry *entry)
+ {
+ 	int result = 0;
 -- 
-2.52.0
+2.43.0
 
