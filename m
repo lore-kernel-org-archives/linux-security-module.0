@@ -1,207 +1,124 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1A93242D8
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Dec 2025 12:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E395032ABC3;
+	Tue,  9 Dec 2025 17:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765283347; cv=none; b=qEX+pQum8366YciFWzNt4zE3S0D9vFES/Rc4Yhy97+uaek4PRvWfTKZgCaAA/w4YQGFDBziNtq4eysVziGS0MlmaUaflc9VDkXoa2ZwElN17+LqMgurh7YJCf09u/lliaUv5JMKe40n7M+USbfk5N1+91B3zxBJEf0rBOQVu+CE=
+	t=1765300912; cv=none; b=eVrYze2QhhtAHKpC6wYBP2QKwLLw2/PaiSmlfWg1UoF1QPNXFo3bxFiu8ZEejGHsVOfDAXEz954AOXqXccgs8XK+K4wXOSjjp24PpW5l6GMgOWqtyLPANMXjJz/T9hi47o3/UX5VeO83vcj5sSNGobJetZdqEWNmf1Z8Ti3C630=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765283347; c=relaxed/simple;
-	bh=1zv96AQDDBhIUB4SFjGPpc0lMwQj0fEVtOdQfSFFiS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KpIFJ9SQSuyjzvmtqRna4ntsmpmK8ISogCopCL3DCtemNQWkY0J6XyCrB1yGuxjFLMA64N6u4DvyWcrqkP+qm3tQGyFkUXuJTUKpazeeQ9GDymE0LgHRdWklyehptW/WMvD3CNfC233J5l5oRhZlTB20rKZaKHrUBMl2gMopwew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FLRSCzPJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hbf8qhkj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VJlXEdXF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7U2McOFD; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1765300912; c=relaxed/simple;
+	bh=6JzHwVMsw3oVBaLB929QEwdcMxFilfqVMX3zcgp6eKA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=F98BbZstw/BUnQwJ2Q7C9Yh/xOrXxfgvLXTT1PRS8oOSrvNXgWbruTf74F7F51R6UgaI49dJ0k9c2lVi8g9+wJx5BtJs1BNqO2m8d01t+BOGr3GK1ghAKER1w7++DlPStu++Ac9lV/0RGM5fatvcTisKk9RFhne4aPPsbya21CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Psg4CKLA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FLRSCzPJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hbf8qhkj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VJlXEdXF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7U2McOFD"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DBDDC3376A;
-	Tue,  9 Dec 2025 12:28:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765283333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ygaHW8o5EWTBSXhXnK7ekdPvbFwd/VSzrB9zkhVTLRQ=;
-	b=FLRSCzPJDhDdvQBy6p9ZobCmyv/OBX5mdkpgv9YpCqbX4VYeXoLguaXTTt/4hB56KyccR3
-	nf6j3BOH3yRK5qh3cMAhUeYflgxmzqZIAAWr7UEx2q9QNXPIkryChFyALpi19LajiUsYK/
-	w54xqTZihwFGArwdrmUESFAEfw7lRhQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765283333;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ygaHW8o5EWTBSXhXnK7ekdPvbFwd/VSzrB9zkhVTLRQ=;
-	b=hbf8qhkj9AN8CNYDunpaBDH5eRvnqnbwWvSf1aitvsKjxZvZHQuV3PFneX2ZGBk18Krav0
-	lfB9W/ldGjK5+6DA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=VJlXEdXF;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=7U2McOFD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765283332; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ygaHW8o5EWTBSXhXnK7ekdPvbFwd/VSzrB9zkhVTLRQ=;
-	b=VJlXEdXFL5fd4Sem3MzdBi6M+Hr11U7VtVbf3ME1dk5aSuhjv3O/iSL8Yd/XI8EpEFKwGn
-	qt5OE3BhUWleFUONVE7NBCIrv8ySHriCLSY0zQvS97diMAG7hRy1P55heddbwQqqP5orwx
-	zke8vzmd4c6IaLFBZbk/OIH2tq5XjmE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765283332;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ygaHW8o5EWTBSXhXnK7ekdPvbFwd/VSzrB9zkhVTLRQ=;
-	b=7U2McOFDYb7YMgNpJuCJtvWZaYZMflyH94JOMxO/WJFjXPjjRW/ONo04eFBGZ6oK+Zhnh3
-	bJ4+1uZfHqHgl3Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CA4F63EA65;
-	Tue,  9 Dec 2025 12:28:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 09RfMQQWOGn0YgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 09 Dec 2025 12:28:52 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4850FA08E4; Tue,  9 Dec 2025 13:28:48 +0100 (CET)
-Date: Tue, 9 Dec 2025 13:28:48 +0100
-From: Jan Kara <jack@suse.cz>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>, Roberto Sassu <roberto.sassu@huaweicloud.com>, 
-	Alexey Dobriyan <adobriyan@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Kees Cook <kees@kernel.org>, 
-	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
-	Christian Brauner <brauner@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>, 
-	James Morris <jamorris@linux.microsoft.com>, Randy Dunlap <rdunlap@infradead.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>, 
-	Adrian Reber <areber@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Jens Axboe <axboe@kernel.dk>, Alexei Starovoitov <ast@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	tiozhang <tiozhang@didiglobal.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Frederic Weisbecker <frederic@kernel.org>, YueHaibing <yuehaibing@huawei.com>, 
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>, xu xin <xu.xin16@zte.com.cn>, 
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>, 
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Elena Reshetova <elena.reshetova@intel.com>, David Windsor <dwindsor@gmail.com>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Hans Liljestrand <ishkamiel@gmail.com>, Penglei Jiang <superman.xpt@gmail.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Adrian Ratiu <adrian.ratiu@collabora.com>, 
-	Ingo Molnar <mingo@kernel.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
-	Cyrill Gorcunov <gorcunov@gmail.com>, Eric Dumazet <edumazet@google.com>, zohar@linux.ibm.com, 
-	linux-integrity@vger.kernel.org, Ryan Lee <ryan.lee@canonical.com>, 
-	apparmor <apparmor@lists.ubuntu.com>
-Subject: Re: Are setuid shell scripts safe? (Implied by
- security_bprm_creds_for_exec)
-Message-ID: <722m42dxrfxao7y6ul5cb26orxoinsrozwqlf7ts52lpbfzgxs@gm6kakrzlhkz>
-References: <87tsyozqdu.fsf@email.froward.int.ebiederm.org>
- <87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
- <87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
- <6dc556a0a93c18fffec71322bf97441c74b3134e.camel@huaweicloud.com>
- <87v7iqtcev.fsf_-_@email.froward.int.ebiederm.org>
- <dca0f01500f9d6705dccf3b3ef616468b1f53f57.camel@huaweicloud.com>
- <87ms42rq3t.fsf@email.froward.int.ebiederm.org>
- <GV2PPF74270EBEE90CDCD964F69E806EF58E4D9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <20251204054915.GI1712166@ZenIV>
- <GV2PPF74270EBEE0AAAE2EB22B668EE21A7E4A6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Psg4CKLA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73601C4CEFB;
+	Tue,  9 Dec 2025 17:21:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765300911;
+	bh=6JzHwVMsw3oVBaLB929QEwdcMxFilfqVMX3zcgp6eKA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Psg4CKLAi9h/A9vrvljHnRqp9p5yz8B5YCapKgSBCEr6kmloaOVwmNaYxp96nI0Jm
+	 E1pbyJ1ln1w7L+cwykG7ZYqv4qRzAcWJFrrDoVllnAKtP9kV9HNNc0yvVFDPPFwIkZ
+	 zlIrgsKzfz9N31t7zC7ENkzXvNMPaNLtaoUlwGSCq0lbSmlyoP3LMxcO1rKyc+86dE
+	 NNhWUd3A/NHLJln9jL7sW0vI/gKw88UtIG56vYvOYlGCOJt2PmPeBPQ+WVB8pAbtZB
+	 YUlzouJwNa/r7jfn9C9CtIGicL5PvCAPTPMpQEpILvgU65s/m796Uhb97EubDbNHcQ
+	 BLbAhrtl11WCQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B591F3808200;
+	Tue,  9 Dec 2025 17:18:47 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <GV2PPF74270EBEE0AAAE2EB22B668EE21A7E4A6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-X-Spam-Flag: NO
-X-Spam-Score: -2.51
-X-Rspamd-Queue-Id: DBDDC3376A
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[hotmail.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,xmission.com,huaweicloud.com,gmail.com,redhat.com,kernel.org,amacapital.net,chromium.org,linux-foundation.org,suse.com,hallyn.com,linux.microsoft.com,infradead.org,google.com,gmx.de,linutronix.de,kernel.dk,vger.kernel.org,kvack.org,didiglobal.com,manguebit.com,huawei.com,paul-moore.com,cyphar.com,devkernel.io,zte.com.cn,suse.cz,intel.com,joelfernandes.org,oracle.com,collabora.com,linux.ibm.com,canonical.com,lists.ubuntu.com];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_GT_50(0.00)[61];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH kvm-next V11 0/7] Add NUMA mempolicy support
+ for
+ KVM guest-memfd
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <176530072652.4018985.15391772848132749035.git-patchwork-notify@kernel.org>
+Date: Tue, 09 Dec 2025 17:18:46 +0000
+References: <20250827175247.83322-2-shivankg@amd.com>
+In-Reply-To: <20250827175247.83322-2-shivankg@amd.com>
+To: Garg@aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org,
+	Shivank <shivankg@amd.com>
+Cc: willy@infradead.org, akpm@linux-foundation.org, david@redhat.com,
+ pbonzini@redhat.com, shuah@kernel.org, seanjc@google.com, vbabka@suse.cz,
+ jgowans@amazon.com, mhocko@suse.com, jack@suse.cz, kvm@vger.kernel.org,
+ dhavale@google.com, linux-btrfs@vger.kernel.org, aik@amd.com,
+ papaluri@amd.com, kalyazin@amazon.com, peterx@redhat.com, linux-mm@kvack.org,
+ clm@fb.com, ddutile@redhat.com, linux-kselftest@vger.kernel.org,
+ shdhiman@amd.com, gshan@redhat.com, ying.huang@linux.alibaba.com,
+ ira.weiny@intel.com, roypat@amazon.co.uk, matthew.brost@intel.com,
+ linux-coco@lists.linux.dev, zbestahu@gmail.com, lorenzo.stoakes@oracle.com,
+ linux-bcachefs@vger.kernel.org, apopple@nvidia.com, jmorris@namei.org,
+ hch@infradead.org, chao.gao@intel.com, cgzones@googlemail.com,
+ ziy@nvidia.com, rientjes@google.com, yuzhao@google.com, xiang@kernel.org,
+ nikunj@amd.com, gourry@gourry.net, serge@hallyn.com, thomas.lendacky@amd.com,
+ ashish.kalra@amd.com, chao.p.peng@intel.com, yan.y.zhao@intel.com,
+ byungchul@sk.com, michael.day@amd.com, Neeraj.Upadhyay@amd.com,
+ michael.roth@amd.com, bfoster@redhat.com, bharata@amd.com,
+ josef@toxicpanda.com, Liam.Howlett@oracle.com, ackerleytng@google.com,
+ dsterba@suse.com, viro@zeniv.linux.org.uk, jefflexu@linux.alibaba.com,
+ jaegeuk@kernel.org, dan.j.williams@intel.com, surenb@google.com,
+ tabba@google.com, paul@paul-moore.com, joshua.hahnjy@gmail.com,
+ brauner@kernel.org, quic_eberman@quicinc.com, rakie.kim@sk.com,
+ pvorel@suse.cz, linux-erofs@lists.ozlabs.org, kent.overstreet@linux.dev,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ pankaj.gupta@amd.com, linux-security-module@vger.kernel.org,
+ lihongbo22@huawei.com, amit@infradead.org, linux-fsdevel@vger.kernel.org,
+ vannapurve@google.com, suzuki.poulose@arm.com, rppt@kernel.org,
+ jgg@nvidia.com
 
-On Thu 04-12-25 14:03:27, Bernd Edlinger wrote:
-> On 12/4/25 06:49, Al Viro wrote:
-> > On Wed, Dec 03, 2025 at 02:16:29PM +0100, Bernd Edlinger wrote:
-> > 
-> >> Hmm, yes, that looks like an issue.
-> >>
-> >> I would have expected the security engine to look at bprm->filenanme
-> >> especially in the case, when bprm->interp != bprm->filename,
-> >> and check that it is not a sym-link with write-access for the
-> >> current user and of course also that the bprm->file is not a regular file
-> >> which is writable by the current user, if that is the case I would have expected
-> >> the secuity engine to enforce non-new-privs on a SUID executable somehow.
-> > 
-> > Check that _what_ is not a symlink?  And while we are at it, what do write
-> > permissions to any symlinks have to do with anything whatsoever?
+Hello:
+
+This series was applied to jaegeuk/f2fs.git (dev)
+by Sean Christopherson <seanjc@google.com>:
+
+On Wed, 27 Aug 2025 17:52:41 +0000 you wrote:
+> This series introduces NUMA-aware memory placement support for KVM guests
+> with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
+> that enabled host-mapping for guest_memfd memory [1] and can be applied
+> directly applied on KVM tree [2] (branch kvm-next, base commit: a6ad5413,
+> Merge branch 'guest-memfd-mmap' into HEAD)
 > 
-> When we execve a normal executable, we do open the binary file with
-> deny_write_access so this might allow the security engine to inspaect the
-> binary, before it is used.
+> == Background ==
+> KVM's guest-memfd memory backend currently lacks support for NUMA policy
+> enforcement, causing guest memory allocations to be distributed across host
+> nodes  according to kernel's default behavior, irrespective of any policy
+> specified by the VMM. This limitation arises because conventional userspace
+> NUMA control mechanisms like mbind(2) don't work since the memory isn't
+> directly mapped to userspace when allocations occur.
+> Fuad's work [1] provides the necessary mmap capability, and this series
+> leverages it to enable mbind(2).
+> 
+> [...]
 
-That would be seriously flawed IMO because there are lot of cases where
-code is executed without deny_write_access() - like shared libraries, code
-loaded by interpreter, and probably more.
+Here is the summary with links:
+  - [f2fs-dev,kvm-next,V11,1/7] mm/filemap: Add NUMA mempolicy support to filemap_alloc_folio()
+    (no matching commit)
+  - [f2fs-dev,kvm-next,V11,2/7] mm/filemap: Extend __filemap_get_folio() to support NUMA memory policies
+    https://git.kernel.org/jaegeuk/f2fs/c/16a542e22339
+  - [f2fs-dev,kvm-next,V11,3/7] mm/mempolicy: Export memory policy symbols
+    https://git.kernel.org/jaegeuk/f2fs/c/f634f10809ec
+  - [f2fs-dev,kvm-next,V11,4/7] KVM: guest_memfd: Use guest mem inodes instead of anonymous inodes
+    (no matching commit)
+  - [f2fs-dev,kvm-next,V11,5/7] KVM: guest_memfd: Add slab-allocated inode cache
+    (no matching commit)
+  - [f2fs-dev,kvm-next,V11,6/7] KVM: guest_memfd: Enforce NUMA mempolicy using shared policy
+    (no matching commit)
+  - [f2fs-dev,kvm-next,V11,7/7] KVM: guest_memfd: selftests: Add tests for mmap and NUMA policy support
+    (no matching commit)
 
-> However this behavior has changed recently,
-> now it has some exceptions, where even this behavior is no longer
-> guaranteed for binary executables, due to commit
-> 0357ef03c94ef835bd44a0658b8edb672a9dbf51, but why?  I have no idea...
-
-Because for hierarchical storage implementation you may need to fill in the
-executable data from remote storage on demand and the deny_write_access
-logic was making this impossible. We even tried to completely remove the
-deny_write_access logic exactly because it has very limited use and
-complicates things (commit 2a010c412853 ("fs: don't block i_writecount
-during exec")) but that had to be reverted because some userspace depends
-on the ETXTBUSY behavior.
-
-								Honza
+You are awesome, thank you!
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
