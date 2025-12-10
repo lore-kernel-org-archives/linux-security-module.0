@@ -1,186 +1,202 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C994818787A;
-	Wed, 10 Dec 2025 14:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A52258CD9
+	for <linux-security-module@vger.kernel.org>; Wed, 10 Dec 2025 16:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765377623; cv=none; b=tG1IS+xzLlv1ez2osIyIOKfmjMY4GPraQo+JGAMXPmjNX1HBn0s0Gs5mEPpVxa/DXpXTarCFWU0KU1VVD2Q/xSNCHWog6C2Q2gh92f4jtXXKU46bVfvwOjOPTAotb8pRHuaJegZOP42YiUn8kNxN8SoRb14dVpK5eBrDwtNGMKk=
+	t=1765383510; cv=none; b=ronZTa+4Tk+K/dGeC3ap0+eNpCMGBDrBBwPIz/l2z25KS6ryAiZTIise/goKjKvLSWWAN/A8T1Ul6n9HCRFvVPytdf0Fh+VNbYgHF7VYSHZYXnMju+25pmD54CSW9+R5BCOhMHbHJgaRJC1FZbYIrZ75/bYBz9tRM6wCF8lIgdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765377623; c=relaxed/simple;
-	bh=FQ+qWhMfMoahdE00Fr6dXweIZfekA7MYZG6DDTqt6mI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LcBd2Mni/+M7BvCYUWsK8CUajrYVsCHQXzk/c3N7GdoOdMHBskwTzsEO3KAXYOPafCf1n3q6p1XLU7XvvfQZlPitKWu8xtvAhDE8C6xoEecocATDn7R5HcXqeBL98Ceud5QzCN1fivw9t7uhyPbOrIdyL62y+sy82+uMKYoqzTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iiw18lkT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765383510; c=relaxed/simple;
+	bh=8fukvFVHvNsSJut9kyMPtVjty3xkgDR42FqSOIyq0Vs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xs8lNG+7twmStr+rtFVvgp71ZV31u87WJ8AzNLTpx7ZfYRHTtIZ08FBtymqbzvgoqHN7sg6JqVT99byZ/NITZA5h9HhcGRZ+nxU4D/KNlyL9SrpN3p9eWQep1ipLPg/xLszIVa8306YPmN4ginaiiDIFxT6d0cCMZE2EEEDKWHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4Knpx6Ys; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iiw18lkT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0E14C4CEF1;
-	Wed, 10 Dec 2025 14:40:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765377623;
-	bh=FQ+qWhMfMoahdE00Fr6dXweIZfekA7MYZG6DDTqt6mI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iiw18lkTlOjuolYETIXFi6zexb1ECE9BIigC8smYwx8B3W9hOx72zcnmkccjSc6Go
-	 Q8DZpH1U+1WpjtWQoi47LU9oJ/uVCd2tk2cumaGCfxbvXAJ9jg1iDuXML1kvyfHs4Q
-	 RhcKV37PUSSMJGuRcczno5aKtDYPcRjY/0kXccla86oXty49EPCl0Luk2QhzvRFUPA
-	 jYr8rPobbNMBI5GmOYE9VH1widZq5/YELS6ZjXz7naO6JxnZPNbGEIJK2+2kTYeb5k
-	 2aLyZOELt/UQwSkQ6do7NKM86E8m5UcyBKwQWKngWOE9MKVaDlxvXKu7NwYK7E4yk1
-	 mLwRmwrN1VhYg==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4Knpx6Ys"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-477b91680f8so77529075e9.0
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Dec 2025 08:18:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1765383506; x=1765988306; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5R7EEgKhSIj0MssK61oG5hvlzLQojw/c9iQ7wtMJnfU=;
+        b=4Knpx6Ys5jZM/3xzn4TkUlQ5MOn07tNXFGzWuQHetRSxVoOxFT3OFL1dI6aUzMhyEu
+         xnYtbM7h+xr7oTrp7lflQAsqfG0dB83aJPa0N0Lzyw30KdGksmfQW3kYujbtnt3DkuVA
+         fwmEmugctaKD9pNusDQNeXd1UfmY+fHvGPOWDw8BAfKfkIxSgy+w8UbI4YYUCqj4I6jX
+         aI8c6m7cRh6B35onFu9uYiBhaBJoI1i9z8h4Mkeyxj9du9M621C5tHRNfX5XJmAb/f0q
+         TuIXXyB2cjbM17BbTAqn37phQDIzp91gAiU1SG6JW6826VDNB+PT3RdVCI3rvFZjl/bg
+         gWLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765383506; x=1765988306;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5R7EEgKhSIj0MssK61oG5hvlzLQojw/c9iQ7wtMJnfU=;
+        b=wvArC4MKOBBVuq9LYXmXBFgdmIucYVYX+Hgf5EcI9S7DrC95O/qiiDWnETM9r2h0Wg
+         9YyRkO9M4X6ZciBnkP/33V7IpLusSESbALdqJAPoa/VI9oE5fklXmuoZDK4ypQHrcIwQ
+         bpvSW38AtICivr09aQ5wN1hs1YyR8AG/6r84Sjt9tJ1AoJhA/7xVF/3OCBXw1wAkBVyt
+         CBt+SWRDP7jWYjgT1Nuu5TTqDb+iVQoaWbRwuCTddtoiacqtZhowbyqAc5+3N4CeEwUZ
+         YkMHJ5eVUvfnSDkuq00QXtvDxJxTDyvE/3DnNhjGIt4jPAEnc9pIevEO7K/5ydKozU8U
+         MZvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgyTFBZp5r2+T1rn/YZliB/DVH7dMsG79xZFozdJ1ITy4AWFE71MjRsWlWR4z+dwBe1GrRKGS0mKqui8RxsYjKz+eQT9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0I1AaA2OMYk9cZPy+pwd0nR2W2dEKrdcwUh7At+iW0uImd2vT
+	cGmNsK4SYQhDBPhiS+YDRlzxuljznPupbTyvpXbr3II2WEWickKm/hGiA5fh6ZR8KQ==
+X-Gm-Gg: ASbGncthYX0pxHtSAIbMMnxfkx1uJrMiO2mxjsiK7BpvOaKnO4JmZkgrmHLfIBQdRPJ
+	nWDNkCXGHVvOA1CyXiGClrZv0kz/qDOCJLb32Ar9cMSU7CubQYBJzhc2x3Omgeu9YxjlpJK03bW
+	bSRgi+7xW2tuTT/x7BbTacYlEfM49ZkU8if6OgoIcCkg7Bkww//W7O24VyA2lP2Dh0+sNDooXRH
+	70FE8mAphVzwGI8Ymz0T+mhlEqoQCvrwoRcAYI54Gk7Z0r4GlcA9/FHqAnAooT7w/uwFVrLFHoS
+	7ZdB/kHxNvCxgJ+SqKvB4eUdgLesk5n8mP9jT4hVKL9dapBspO1KcVx41KktjUoCqiofQsdyg2u
+	1dF/Jdz6ehgQ0qe+3AGqzc2njrm/N2mZfmzhqkLnTx+3Zvsy66d57GWpC+j0kJJosAhQZQKpEPg
+	MZpuhhYTbyJchI7uSoV3EIY2lXwnTyzaPr8luNAL+5d2k0yj4=
+X-Google-Smtp-Source: AGHT+IE5gG+0fezF5tzXHFusF2dBV52zxvrbxnDDqwGYfilnFo0IcpTyJU4lWfuQsZFtfQAM3eL7LQ==
+X-Received: by 2002:a05:600c:687:b0:46e:59bd:f7d3 with SMTP id 5b1f17b1804b1-47a83cc5528mr15763325e9.20.1765383505415;
+        Wed, 10 Dec 2025 08:18:25 -0800 (PST)
+Received: from elver.google.com ([2a00:79e0:2834:9:edfc:ec3:194e:c3b3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47a7d3a75a3sm45109085e9.6.2025.12.10.08.18.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Dec 2025 08:18:24 -0800 (PST)
+Date: Wed, 10 Dec 2025 17:18:16 +0100
+From: Marco Elver <elver@google.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	Chris Li <sparse@chrisli.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
+	Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Herbert Xu <herbert@gondor.apana.org.au>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH v3 7/7] tpm: Send only one TPM command per hwrng request
-Date: Wed, 10 Dec 2025 16:39:39 +0200
-Message-ID: <20251210143940.264191-8-jarkko@kernel.org>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251210143940.264191-1-jarkko@kernel.org>
-References: <20251210143940.264191-1-jarkko@kernel.org>
+	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	linux-sparse@vger.kernel.org, linux-wireless@vger.kernel.org,
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Subject: Re: [PATCH v4 00/35] Compiler-Based Context- and Locking-Analysis
+Message-ID: <aTmdSMuP0LUAdfO_@elver.google.com>
+References: <20251120145835.3833031-2-elver@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251120145835.3833031-2-elver@google.com>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-hwrng framework does not have a enforce that all bytes requested need to be
-read. By enforcing such a requirement internally, TPM driver can cause
-unpredicatability in latency, as a single tpm_get_random() call can result
-multiple TPM commands.
+All,
 
-Especially, when TCG_TPM2_HMAC is enabled, roundtrips with the TPM should
-be capped to exactly one.
+On Thu, Nov 20, 2025 at 03:49PM +0100, Marco Elver wrote:
+> Context Analysis is a language extension, which enables statically
+> checking that required contexts are active (or inactive) by acquiring
+> and releasing user-definable "context guards". An obvious application is
+> lock-safety checking for the kernel's various synchronization primitives
+> (each of which represents a "context guard"), and checking that locking
+> rules are not violated.
+[...] 
+> A Clang version that supports `-Wthread-safety-pointer` and the new
+> alias-analysis of context-guard pointers is required (from this version
+> onwards):
+> 
+> 	https://github.com/llvm/llvm-project/commit/7ccb5c08f0685d4787f12c3224a72f0650c5865e
+> 
+> The minimum required release version will be Clang 22.
+> 
+> This series is also available at this Git tree:
+> 
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/melver/linux.git/log/?h=ctx-analysis/dev
+[...] 
 
-Add a @wait parameter to enforce this behavior and set it to true at the
-call sites TPM 1.2 keys. At the call sites of hwrng, set @wait to false.
+I realize that I sent this series at the end of the last release cycle,
+and now we're in the merge window, along with LPC going on -- so it
+wasn't the best timing (however, it might be something to discuss at
+LPC, too :-) .. I'm attending virtually, however :-/).
 
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- drivers/char/tpm/tpm-chip.c               |  2 +-
- drivers/char/tpm/tpm-interface.c          | 11 +++++++++--
- include/linux/tpm.h                       |  2 +-
- security/keys/trusted-keys/trusted_tpm1.c |  8 ++++----
- 4 files changed, 15 insertions(+), 8 deletions(-)
+How to proceed?
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 082b910ddf0d..8fca4373e2df 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -494,7 +494,7 @@ static int tpm_hwrng_read(struct hwrng *rng, void *data, size_t max, bool wait)
- {
- 	struct tpm_chip *chip = container_of(rng, struct tpm_chip, hwrng);
- 
--	return tpm_get_random(chip, data, max);
-+	return tpm_get_random(chip, data, max, false);
- }
- 
- static bool tpm_is_hwrng_enabled(struct tpm_chip *chip)
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index ab52a1cb0a78..5cc2bbabd57a 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -604,9 +604,11 @@ static int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max)
-  * @chip:	A &tpm_chip instance. Whenset to %NULL, the default chip is used.
-  * @out:	Destination buffer for the acquired random bytes.
-  * @max:	The maximum number of bytes to write to @out.
-+ * @wait:	Set to true when all of the @max bytes need to be acquired.
-  *
-  * Iterates pulling more bytes from TPM up until all of the @max bytes have been
-- * received.
-+ * received, when @wait it sets true. Otherwise, the queries for @max bytes from
-+ * TPM exactly once, and returns the bytes that were received.
-  *
-  * Returns the number of random bytes read on success.
-  * Returns -EINVAL when @out is NULL, or @max is not between zero and
-@@ -614,7 +616,7 @@ static int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max)
-  * Returns tpm_transmit_cmd() error codes when the TPM command results an
-  * error.
-  */
--int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
-+int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max, bool wait)
- {
- 	u32 num_bytes = max;
- 	u8 *out_ptr = out;
-@@ -647,6 +649,11 @@ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
- 		if (rc < 0)
- 			goto err;
- 
-+		if (!wait) {
-+			total = rc;
-+			break;
-+		}
-+
- 		out_ptr += rc;
- 		total += rc;
- 		num_bytes -= rc;
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index e68995df8796..177833d6b965 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -485,7 +485,7 @@ extern int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
- 			struct tpm_digest *digest);
- extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
- 			  struct tpm_digest *digests);
--extern int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t max);
-+int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max, bool wait);
- extern struct tpm_chip *tpm_default_chip(void);
- void tpm2_flush_context(struct tpm_chip *chip, u32 handle);
- int tpm2_find_hash_alg(unsigned int crypto_id);
-diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-index 759c1ecb0435..f36f6a0b533f 100644
---- a/security/keys/trusted-keys/trusted_tpm1.c
-+++ b/security/keys/trusted-keys/trusted_tpm1.c
-@@ -361,7 +361,7 @@ static int osap(struct tpm_buf *tb, struct osapsess *s,
- 	unsigned char ononce[TPM_NONCE_SIZE];
- 	int ret;
- 
--	ret = tpm_get_random(chip, ononce, TPM_NONCE_SIZE);
-+	ret = tpm_get_random(chip, ononce, TPM_NONCE_SIZE, true);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -454,7 +454,7 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
- 	memcpy(td->xorwork + SHA1_DIGEST_SIZE, sess.enonce, SHA1_DIGEST_SIZE);
- 	sha1(td->xorwork, SHA1_DIGEST_SIZE * 2, td->xorhash);
- 
--	ret = tpm_get_random(chip, td->nonceodd, TPM_NONCE_SIZE);
-+	ret = tpm_get_random(chip, td->nonceodd, TPM_NONCE_SIZE, true);
- 	if (ret < 0)
- 		goto out;
- 
-@@ -565,7 +565,7 @@ static int tpm_unseal(struct tpm_buf *tb,
- 	}
- 
- 	ordinal = htonl(TPM_ORD_UNSEAL);
--	ret = tpm_get_random(chip, nonceodd, TPM_NONCE_SIZE);
-+	ret = tpm_get_random(chip, nonceodd, TPM_NONCE_SIZE, true);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -938,7 +938,7 @@ static int trusted_tpm_unseal(struct trusted_key_payload *p, char *datablob)
- 
- static int trusted_tpm_get_random(unsigned char *key, size_t key_len)
- {
--	return tpm_get_random(chip, key, key_len);
-+	return tpm_get_random(chip, key, key_len, true);
- }
- 
- static int __init init_digests(void)
--- 
-2.52.0
+I'll be preparing a rebased and retested version of all this when
+v6.19-rc1 is out. One outstanding recommendation from Linus was to
+investigate compile-times, but as-is, it's unclear there's any notable
+overhead per brief investigation: https://lore.kernel.org/all/aR-plHrWDMqRRlcI@elver.google.com/
 
+From what I can tell most of this has to go through the locking tree,
+given the potential for conflict there. However, it is possible to split
+this up as follows:
+
+Batch 1:
+
+>   compiler_types: Move lock checking attributes to
+>     compiler-context-analysis.h
+>   compiler-context-analysis: Add infrastructure for Context Analysis
+>     with Clang
+>   compiler-context-analysis: Add test stub
+>   Documentation: Add documentation for Compiler-Based Context Analysis
+>   checkpatch: Warn about context_unsafe() without comment
+>   cleanup: Basic compatibility with context analysis
+>   lockdep: Annotate lockdep assertions for context analysis
+>   locking/rwlock, spinlock: Support Clang's context analysis
+>   compiler-context-analysis: Change __cond_acquires to take return value
+>   locking/mutex: Support Clang's context analysis
+>   locking/seqlock: Support Clang's context analysis
+>   bit_spinlock: Include missing <asm/processor.h>
+>   bit_spinlock: Support Clang's context analysis
+>   rcu: Support Clang's context analysis
+>   srcu: Support Clang's context analysis
+>   kref: Add context-analysis annotations
+>   locking/rwsem: Support Clang's context analysis
+>   locking/local_lock: Include missing headers
+>   locking/local_lock: Support Clang's context analysis
+>   locking/ww_mutex: Support Clang's context analysis
+>   debugfs: Make debugfs_cancellation a context guard struct
+>   compiler-context-analysis: Remove Sparse support
+>   compiler-context-analysis: Remove __cond_lock() function-like helper
+>   compiler-context-analysis: Introduce header suppressions
+>   compiler: Let data_race() imply disabled context analysis
+>   MAINTAINERS: Add entry for Context Analysis
+
+Batch 2: Everything below this can wait for the initial support in
+mainline, at which point subsystem maintainers can pick them up if
+deemed appropriate.
+
+>   kfence: Enable context analysis
+>   kcov: Enable context analysis
+>   kcsan: Enable context analysis
+>   stackdepot: Enable context analysis
+>   rhashtable: Enable context analysis
+>   printk: Move locking annotation to printk.c
+>   security/tomoyo: Enable context analysis
+>   crypto: Enable context analysis
+>   sched: Enable context analysis for core.c and fair.c
+
+Thanks,
+	-- Marco
