@@ -1,200 +1,517 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6A33B8D75;
-	Wed, 10 Dec 2025 19:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EFD4C97;
+	Wed, 10 Dec 2025 19:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765394246; cv=none; b=MN5mhSuEJ6NeK0HJcm+4Cn6D4Qljc5q7PCuT56u0LFB4EVW4sMbI+4lgHpyiia8nL0MM0usBWkobZoSsuDsc6TMypzsXEGOnCZKIJJdBkLeOQ+aDFVZdv5Mk88eLSvE8lGTT8pKHPjbPWhUQuC2hZ0mJj2xr1GNP6kQssKUogNs=
+	t=1765395015; cv=none; b=PWPTVRW/4SIOxiwe3VG3zYa1HP4PMwkXGSzcx8c7N3kYj85QqzazGQMJHPACd6HmjNxxG2y0H921XvXDhaNu/Oy+wBpN3bAwbROoAnXvSpIiea+SM1vTEcBSU7UcGGFcrZvD03CW+p/ZgmrDXLGBEL+IWrT9/30J4uTNt9PPX7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765394246; c=relaxed/simple;
-	bh=8aUFNKHpN2z/hD/eNUCnR/ryfTmjWz/bXKszlla1aHQ=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=XAW372H+eBRA9Ck5yy1dvVz8ayWchof1Dt/Uspc3tUzKk77WqtjzqBymmEJnLuAaQhCk5w5BXMYDDQlZOFw10s860KVIOG7QEYBjUmFpqGAXFp2RRV4uBhfN91oQonC+2U2k1AR5eqnq7wV+qzZtQ7vR7qXuT/tIwXWL9fvHkFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gspVwRHB; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1765395015; c=relaxed/simple;
+	bh=wKF686z/TTZ0M0cwuNcTeYSd3TG3XU8P9T75njPV6Xk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h0ohxQdj+fLrjVHdnjqrAW7BJIj0Lay8J4mIY3yfTAedeW1aCDbiYr8J8If/JibZB/PPTiirzvcuQHhQqbctlm7zwmHhr1l378u+eFhMNMG9FQMXHFlqYU0aJSgFJmGlt0pnJ1/FuUCQVhbc0ljAYavl6gf+3R3SOWZGm9xk2EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pJrAU1X3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gspVwRHB"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5BAGDKnT006746;
-	Wed, 10 Dec 2025 19:16:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=UAxq1k
-	egZYMUt8yoyMfS9GxEA2chxFrFLIcbsDy5MFA=; b=gspVwRHBd4NqrEcNWRdIUo
-	5dUx1PtVxrj+dsPnZcKw/8FPk6jFSe+5U5CgWigj255iJJLjSQXDwGdScuhpoGwd
-	W7Z5LvoA2EIKc/vz+t3M7611kz8umh/BOcJsZvkJxyXfhTeUBGHk0lqY3XdfNPMU
-	aCFGH6XcKIHg44Jbt1pvDad1VFll6Ps3K1UnTmAU6jEC7Rc70tB9Jgvs+qYQPnDZ
-	PuyHQb9F/prHm/LYViAXSwjLbX99jySZFJJXLqkIreWnbuMgKy7Ij2U9hpuck4yH
-	jNYCZ/lX5rd6qQs3gxmMkI/CBEUQ1ORIcD5O5i+d+QTtFMv6rclzxV96g8QBegxw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4av9wvuqs2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Dec 2025 19:16:58 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5BAJGwUC002671;
-	Wed, 10 Dec 2025 19:16:58 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4av9wvuqru-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Dec 2025 19:16:58 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5BAH0Qjq001998;
-	Wed, 10 Dec 2025 19:16:57 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4aw11jj7g0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Dec 2025 19:16:57 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5BAJGuSS20906682
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 10 Dec 2025 19:16:56 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 96D4E5806D;
-	Wed, 10 Dec 2025 19:16:56 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4562E5805C;
-	Wed, 10 Dec 2025 19:16:55 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.96.173])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 10 Dec 2025 19:16:55 +0000 (GMT)
-Message-ID: <59d76f4a9cbc2016387f3f053e1689d14f3b43fc.camel@linux.ibm.com>
-Subject: Re: [PATCH 1/1] IMA event log trimming
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        James Bottomley
-	 <James.Bottomley@HansenPartnership.com>,
-        steven chen
-	 <chenste@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org
-Cc: roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-        eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, linux-security-module@vger.kernel.org,
-        anirudhve@linux.microsoft.com, gregorylumen@linux.microsoft.com,
-        nramas@linux.microsoft.com, sushring@linux.microsoft.com
-In-Reply-To: <736e21826c6a283d74d592393c392abbff56a409.camel@huaweicloud.com>
-References: <20251202232857.8211-1-chenste@linux.microsoft.com>
-		 <20251202232857.8211-2-chenste@linux.microsoft.com>
-		 <099492ee58996b6f18d73232677757ecadb14cb7.camel@huaweicloud.com>
-		 <34d739c2cf15baf78dff5acb7ae3ddd7ad47f219.camel@HansenPartnership.com>
-		 <1ca00e3238e804db9280abf8655364c2662754ca.camel@huaweicloud.com>
-		 <d0c00469a8501483baffaf1158102c0f2c5211e8.camel@HansenPartnership.com>
-	 <736e21826c6a283d74d592393c392abbff56a409.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 10 Dec 2025 14:16:54 -0500
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pJrAU1X3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34116C4CEF1;
+	Wed, 10 Dec 2025 19:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765395014;
+	bh=wKF686z/TTZ0M0cwuNcTeYSd3TG3XU8P9T75njPV6Xk=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=pJrAU1X3dwv9WO/sd8c4TbJnH3ZERsI5Lwa3My/RHkL6gqLQctt28UJ7+Z1rRd8JZ
+	 4XeJSVIlLqoRICZl2gN/IoAFAFtcvl+nGhLTOkYmVmHytit/DLzL/guQEXzROMAAiT
+	 P6tqNXFYf1AN/PZiR1xTpSwUrS1j1YT0zKg7QvIBNpV24/+zMv3FmjCqUACBmox8j9
+	 qFLBrslJvNc5Pt4FFYbmQU2aQzsZoruwJCOVV82lDFlFcIxlDT4YQFr57f8X5LsWKM
+	 al3x5A2w+Z1a7nZmJV7hvkIV9SQ0WwA/R1/RCSXHAXSUMdzo5XGGUByxqMF950Jsjk
+	 8vGbvPMnwEpVg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id D5BE5CE0C93; Wed, 10 Dec 2025 11:30:11 -0800 (PST)
+Date: Wed, 10 Dec 2025 11:30:11 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Marco Elver <elver@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	Chris Li <sparse@chrisli.org>,
+	Alexander Potapenko <glider@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
+	Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	linux-sparse@vger.kernel.org, linux-wireless@vger.kernel.org,
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Subject: Re: [PATCH v4 14/35] rcu: Support Clang's context analysis
+Message-ID: <98453e19-7df2-43cb-8f05-87632f360028@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20251120145835.3833031-2-elver@google.com>
+ <20251120151033.3840508-7-elver@google.com>
+ <20251120151033.3840508-15-elver@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: vUheZQnV-em3kNl77Jfe_w5sYTXMWOXT
-X-Proofpoint-ORIG-GUID: oIQdssVcx_Axueum6yjpE5HcKjhrdHxu
-X-Authority-Analysis: v=2.4 cv=AdS83nXG c=1 sm=1 tr=0 ts=6939c72a cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=NEAV23lmAAAA:8 a=eSAHqJhRAyoXFonV6roA:9 a=PRpDppDLrCsA:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjA2MDAwMCBTYWx0ZWRfX8tquqM8KDsQc
- Ry5HXxIaffFcUaHCNxKGL/aTx8D+hJnudGC2JxY/PpZVBxMPhrFyrXB3NtpvTIDxosBa20MOCN+
- 8pki/ztEc5xIun0FkDvxR+PJBWSLUUex9yOYj3JKjiVPZ1BDr0DOVURAj8IHqjdz4q4jWRAtG0Q
- GaEseMNawmU3CbRpjurp+tyxwksGgkVylVOLaeF1zJsvpb/f7aUDxgb7C3y0n/gZ/Mwl4cO+35G
- 5rpQj2TBv1fHMtf7kX8GpOp3ljL4TyO8NiZE5moTRBRDi/+02rabKxtQ3xQjeoqrvmaAlu+W+Xs
- F1pPRPYWteFlaY7UrOnNBG0ErJIxRmEvxZy5B8A4/D74yeT/9t/DU4iBtn4Jjeq+vRUttjemswV
- YSCkDmsewKddqs5Ka7BhigHtQa7JQg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-10_02,2025-12-09_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 malwarescore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2512060000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251120151033.3840508-15-elver@google.com>
 
-On Tue, 2025-12-09 at 10:36 +0100, Roberto Sassu wrote:
-> On Tue, 2025-12-09 at 07:17 +0900, James Bottomley wrote:
-> > On Mon, 2025-12-08 at 10:40 +0100, Roberto Sassu wrote:
-> > > I have the impression that none the functionality you cited has to be
-> > > implemented in the kernel, because the only component one can trust
-> > > to verify the integrity of the IMA measurements list is the TPM.
-> > > Whether either the kernel or user space retain the measurements is
-> > > irrelevant.
-> >=20
-> > That's correct, I'm not advocating moving quoting into the kernel.  Co-
-> > ordinating the trim with where the quote gets you to is phenomenally
-> > useful.  While you could theoretically store any mismatch in userspace,
-> > having two locations for the log makes it more error prone.
-> >=20
-> > > I believe that the only role of the kernel is to get rid of the
-> > > measurements entries as fast as possible (the kernel would act more
-> > > like a buffer).
-> >=20
-> > I wouldn't say that, I'd say to get rid of measurements that the user
-> > has indicated are of no further use\
+On Thu, Nov 20, 2025 at 04:09:39PM +0100, Marco Elver wrote:
+> Improve the existing annotations to properly support Clang's context
+> analysis.
+> 
+> The old annotations distinguished between RCU, RCU_BH, and RCU_SCHED;
+> however, to more easily be able to express that "hold the RCU read lock"
+> without caring if the normal, _bh(), or _sched() variant was used we'd
+> have to remove the distinction of the latter variants: change the _bh()
+> and _sched() variants to also acquire "RCU".
+> 
+> When (and if) we introduce context guards to denote more generally that
+> "IRQ", "BH", "PREEMPT" contexts are disabled, it would make sense to
+> acquire these instead of RCU_BH and RCU_SCHED respectively.
+> 
+> The above change also simplified introducing __guarded_by support, where
+> only the "RCU" context guard needs to be held: introduce __rcu_guarded,
+> where Clang's context analysis warns if a pointer is dereferenced
+> without any of the RCU locks held, or updated without the appropriate
+> helpers.
+> 
+> The primitives rcu_assign_pointer() and friends are wrapped with
+> context_unsafe(), which enforces using them to update RCU-protected
+> pointers marked with __rcu_guarded.
+> 
+> Signed-off-by: Marco Elver <elver@google.com>
 
-I really hope I'm wrong, but I don't like the sound of "No further use".  T=
-he
-complete IMA measurement needs to be saved somewhere to support multiple
-verifiers.
+Good reminder!  I had lost track of this series.
 
->=20
-> Different users could have different and conflicting requirements, and
-> we would spend time trying to conciliate those. We can avoid that by
-> doing it the same for everyone, and the additional cost of handling it
-> I believe it is fair.
->=20
-> I could accept staging N entries since I already agreed with Gregory
-> and Steven, and since it requires only an extra iteration in the linked
-> list. The other desired functionality should be implemented in user
-> space.
->=20
-> > > This was actually the intent of my original proposal in
-> > > https://github.com/linux-integrity/linux/issues/1=C2=A0. The idea of
-> > > staging (was snapshotting, but Mimi thinks the term is not accurate)
-> > > is simply to detach the entire IMA measurement list as fast as
-> > > possible. Further read and delete after staging is done without
-> > > interfering with new measurements (sure, the detaching of the hash
-> > > table is not yet as efficient as I hoped).
-> >=20
-> > From the application point of view, offloading the log and random
-> > points is a bit more work because now the log collector has to be
-> > modified to look in multiple locations and we'd also need an agreement
-> > of where those locations are and how the log is sequenced in a naming
-> > scheme so it's the same for every distribution.  If the application is
-> > in charge of trimming the log at a particular point, collection remains
-> > the same (it can simply be the existing in-kernel location), so we
-> > don't need a cross distro agreement, and the trim can simply be added
-> > as an extra function.
->=20
-> It could be a single location, the user space program would be
-> responsible to present the IMA measurement list as if it was never
-> trimmed.
+My big questions here are:
 
-Even if it is a single, new location or user space program/daemon, it needs=
- to
-be documented.  The user space program/daemon would be responsible for retu=
-rning
-the IMA measurement list.
+o	What about RCU readers using (say) preempt_disable() instead
+	of rcu_read_lock_sched()?
 
-Keylime, for example, supports incremental verification[1], meaning initial=
-ly
-the verification would be from the beginning of the IMA measurement list, b=
-ut
-subsequently the verifier could do an incremental verification. For increme=
-ntal
-verification, state information (e.g. number of records verified, pcr value=
-)
-needs to be preserved by the verifier, not the kernel.
+o	What about RCU readers using local_bh_disable() instead of
+	rcu_read_lock_sched()?
 
-[1] Keylime commit 7870f45f909f ("ima: Remember the number of lines success=
-fully
-processed and last IMA PCR value(s)")
+And keeping in mind that such readers might start in assembly language.
 
---=20
-thanks,
+One reasonable approach is to require such readers to use something like
+rcu_dereference_all() or rcu_dereference_all_check(), which could then
+have special dispensation to instead rely on run-time checks.
 
-Mimi
+Another more powerful approach would be to make this facility also
+track preemption, interrupt, NMI, and BH contexts.
+
+Either way could be a significant improvement over what we have now.
+
+Thoughts?
+
+							Thanx, Paul
+
+> ---
+> v3:
+> * Properly support reentrancy via new compiler support.
+> 
+> v2:
+> * Reword commit message and point out reentrancy caveat.
+> ---
+>  Documentation/dev-tools/context-analysis.rst |  2 +-
+>  include/linux/rcupdate.h                     | 77 ++++++++++++------
+>  lib/test_context-analysis.c                  | 85 ++++++++++++++++++++
+>  3 files changed, 139 insertions(+), 25 deletions(-)
+> 
+> diff --git a/Documentation/dev-tools/context-analysis.rst b/Documentation/dev-tools/context-analysis.rst
+> index a3d925ce2df4..05164804a92a 100644
+> --- a/Documentation/dev-tools/context-analysis.rst
+> +++ b/Documentation/dev-tools/context-analysis.rst
+> @@ -81,7 +81,7 @@ Supported Kernel Primitives
+>  
+>  Currently the following synchronization primitives are supported:
+>  `raw_spinlock_t`, `spinlock_t`, `rwlock_t`, `mutex`, `seqlock_t`,
+> -`bit_spinlock`.
+> +`bit_spinlock`, RCU.
+>  
+>  For context guards with an initialization function (e.g., `spin_lock_init()`),
+>  calling this function before initializing any guarded members or globals
+> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> index c5b30054cd01..5cddb9019a99 100644
+> --- a/include/linux/rcupdate.h
+> +++ b/include/linux/rcupdate.h
+> @@ -31,6 +31,16 @@
+>  #include <asm/processor.h>
+>  #include <linux/context_tracking_irq.h>
+>  
+> +token_context_guard(RCU, __reentrant_ctx_guard);
+> +token_context_guard_instance(RCU, RCU_SCHED);
+> +token_context_guard_instance(RCU, RCU_BH);
+> +
+> +/*
+> + * A convenience macro that can be used for RCU-protected globals or struct
+> + * members; adds type qualifier __rcu, and also enforces __guarded_by(RCU).
+> + */
+> +#define __rcu_guarded __rcu __guarded_by(RCU)
+> +
+>  #define ULONG_CMP_GE(a, b)	(ULONG_MAX / 2 >= (a) - (b))
+>  #define ULONG_CMP_LT(a, b)	(ULONG_MAX / 2 < (a) - (b))
+>  
+> @@ -425,7 +435,8 @@ static inline void rcu_preempt_sleep_check(void) { }
+>  
+>  // See RCU_LOCKDEP_WARN() for an explanation of the double call to
+>  // debug_lockdep_rcu_enabled().
+> -static inline bool lockdep_assert_rcu_helper(bool c)
+> +static inline bool lockdep_assert_rcu_helper(bool c, const struct __ctx_guard_RCU *ctx)
+> +	__assumes_shared_ctx_guard(RCU) __assumes_shared_ctx_guard(ctx)
+>  {
+>  	return debug_lockdep_rcu_enabled() &&
+>  	       (c || !rcu_is_watching() || !rcu_lockdep_current_cpu_online()) &&
+> @@ -438,7 +449,7 @@ static inline bool lockdep_assert_rcu_helper(bool c)
+>   * Splats if lockdep is enabled and there is no rcu_read_lock() in effect.
+>   */
+>  #define lockdep_assert_in_rcu_read_lock() \
+> -	WARN_ON_ONCE(lockdep_assert_rcu_helper(!lock_is_held(&rcu_lock_map)))
+> +	WARN_ON_ONCE(lockdep_assert_rcu_helper(!lock_is_held(&rcu_lock_map), RCU))
+>  
+>  /**
+>   * lockdep_assert_in_rcu_read_lock_bh - WARN if not protected by rcu_read_lock_bh()
+> @@ -448,7 +459,7 @@ static inline bool lockdep_assert_rcu_helper(bool c)
+>   * actual rcu_read_lock_bh() is required.
+>   */
+>  #define lockdep_assert_in_rcu_read_lock_bh() \
+> -	WARN_ON_ONCE(lockdep_assert_rcu_helper(!lock_is_held(&rcu_bh_lock_map)))
+> +	WARN_ON_ONCE(lockdep_assert_rcu_helper(!lock_is_held(&rcu_bh_lock_map), RCU_BH))
+>  
+>  /**
+>   * lockdep_assert_in_rcu_read_lock_sched - WARN if not protected by rcu_read_lock_sched()
+> @@ -458,7 +469,7 @@ static inline bool lockdep_assert_rcu_helper(bool c)
+>   * instead an actual rcu_read_lock_sched() is required.
+>   */
+>  #define lockdep_assert_in_rcu_read_lock_sched() \
+> -	WARN_ON_ONCE(lockdep_assert_rcu_helper(!lock_is_held(&rcu_sched_lock_map)))
+> +	WARN_ON_ONCE(lockdep_assert_rcu_helper(!lock_is_held(&rcu_sched_lock_map), RCU_SCHED))
+>  
+>  /**
+>   * lockdep_assert_in_rcu_reader - WARN if not within some type of RCU reader
+> @@ -476,17 +487,17 @@ static inline bool lockdep_assert_rcu_helper(bool c)
+>  	WARN_ON_ONCE(lockdep_assert_rcu_helper(!lock_is_held(&rcu_lock_map) &&			\
+>  					       !lock_is_held(&rcu_bh_lock_map) &&		\
+>  					       !lock_is_held(&rcu_sched_lock_map) &&		\
+> -					       preemptible()))
+> +					       preemptible(), RCU))
+>  
+>  #else /* #ifdef CONFIG_PROVE_RCU */
+>  
+>  #define RCU_LOCKDEP_WARN(c, s) do { } while (0 && (c))
+>  #define rcu_sleep_check() do { } while (0)
+>  
+> -#define lockdep_assert_in_rcu_read_lock() do { } while (0)
+> -#define lockdep_assert_in_rcu_read_lock_bh() do { } while (0)
+> -#define lockdep_assert_in_rcu_read_lock_sched() do { } while (0)
+> -#define lockdep_assert_in_rcu_reader() do { } while (0)
+> +#define lockdep_assert_in_rcu_read_lock() __assume_shared_ctx_guard(RCU)
+> +#define lockdep_assert_in_rcu_read_lock_bh() __assume_shared_ctx_guard(RCU_BH)
+> +#define lockdep_assert_in_rcu_read_lock_sched() __assume_shared_ctx_guard(RCU_SCHED)
+> +#define lockdep_assert_in_rcu_reader() __assume_shared_ctx_guard(RCU)
+>  
+>  #endif /* #else #ifdef CONFIG_PROVE_RCU */
+>  
+> @@ -506,11 +517,11 @@ static inline bool lockdep_assert_rcu_helper(bool c)
+>  #endif /* #else #ifdef __CHECKER__ */
+>  
+>  #define __unrcu_pointer(p, local)					\
+> -({									\
+> +context_unsafe(								\
+>  	typeof(*p) *local = (typeof(*p) *__force)(p);			\
+>  	rcu_check_sparse(p, __rcu);					\
+> -	((typeof(*p) __force __kernel *)(local)); 			\
+> -})
+> +	((typeof(*p) __force __kernel *)(local)) 			\
+> +)
+>  /**
+>   * unrcu_pointer - mark a pointer as not being RCU protected
+>   * @p: pointer needing to lose its __rcu property
+> @@ -586,7 +597,7 @@ static inline bool lockdep_assert_rcu_helper(bool c)
+>   * other macros that it invokes.
+>   */
+>  #define rcu_assign_pointer(p, v)					      \
+> -do {									      \
+> +context_unsafe(							      \
+>  	uintptr_t _r_a_p__v = (uintptr_t)(v);				      \
+>  	rcu_check_sparse(p, __rcu);					      \
+>  									      \
+> @@ -594,7 +605,7 @@ do {									      \
+>  		WRITE_ONCE((p), (typeof(p))(_r_a_p__v));		      \
+>  	else								      \
+>  		smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+> -} while (0)
+> +)
+>  
+>  /**
+>   * rcu_replace_pointer() - replace an RCU pointer, returning its old value
+> @@ -861,9 +872,10 @@ do {									      \
+>   * only when acquiring spinlocks that are subject to priority inheritance.
+>   */
+>  static __always_inline void rcu_read_lock(void)
+> +	__acquires_shared(RCU)
+>  {
+>  	__rcu_read_lock();
+> -	__acquire(RCU);
+> +	__acquire_shared(RCU);
+>  	rcu_lock_acquire(&rcu_lock_map);
+>  	RCU_LOCKDEP_WARN(!rcu_is_watching(),
+>  			 "rcu_read_lock() used illegally while idle");
+> @@ -891,11 +903,12 @@ static __always_inline void rcu_read_lock(void)
+>   * See rcu_read_lock() for more information.
+>   */
+>  static inline void rcu_read_unlock(void)
+> +	__releases_shared(RCU)
+>  {
+>  	RCU_LOCKDEP_WARN(!rcu_is_watching(),
+>  			 "rcu_read_unlock() used illegally while idle");
+>  	rcu_lock_release(&rcu_lock_map); /* Keep acq info for rls diags. */
+> -	__release(RCU);
+> +	__release_shared(RCU);
+>  	__rcu_read_unlock();
+>  }
+>  
+> @@ -914,9 +927,11 @@ static inline void rcu_read_unlock(void)
+>   * was invoked from some other task.
+>   */
+>  static inline void rcu_read_lock_bh(void)
+> +	__acquires_shared(RCU) __acquires_shared(RCU_BH)
+>  {
+>  	local_bh_disable();
+> -	__acquire(RCU_BH);
+> +	__acquire_shared(RCU);
+> +	__acquire_shared(RCU_BH);
+>  	rcu_lock_acquire(&rcu_bh_lock_map);
+>  	RCU_LOCKDEP_WARN(!rcu_is_watching(),
+>  			 "rcu_read_lock_bh() used illegally while idle");
+> @@ -928,11 +943,13 @@ static inline void rcu_read_lock_bh(void)
+>   * See rcu_read_lock_bh() for more information.
+>   */
+>  static inline void rcu_read_unlock_bh(void)
+> +	__releases_shared(RCU) __releases_shared(RCU_BH)
+>  {
+>  	RCU_LOCKDEP_WARN(!rcu_is_watching(),
+>  			 "rcu_read_unlock_bh() used illegally while idle");
+>  	rcu_lock_release(&rcu_bh_lock_map);
+> -	__release(RCU_BH);
+> +	__release_shared(RCU_BH);
+> +	__release_shared(RCU);
+>  	local_bh_enable();
+>  }
+>  
+> @@ -952,9 +969,11 @@ static inline void rcu_read_unlock_bh(void)
+>   * rcu_read_lock_sched() was invoked from an NMI handler.
+>   */
+>  static inline void rcu_read_lock_sched(void)
+> +	__acquires_shared(RCU) __acquires_shared(RCU_SCHED)
+>  {
+>  	preempt_disable();
+> -	__acquire(RCU_SCHED);
+> +	__acquire_shared(RCU);
+> +	__acquire_shared(RCU_SCHED);
+>  	rcu_lock_acquire(&rcu_sched_lock_map);
+>  	RCU_LOCKDEP_WARN(!rcu_is_watching(),
+>  			 "rcu_read_lock_sched() used illegally while idle");
+> @@ -962,9 +981,11 @@ static inline void rcu_read_lock_sched(void)
+>  
+>  /* Used by lockdep and tracing: cannot be traced, cannot call lockdep. */
+>  static inline notrace void rcu_read_lock_sched_notrace(void)
+> +	__acquires_shared(RCU) __acquires_shared(RCU_SCHED)
+>  {
+>  	preempt_disable_notrace();
+> -	__acquire(RCU_SCHED);
+> +	__acquire_shared(RCU);
+> +	__acquire_shared(RCU_SCHED);
+>  }
+>  
+>  /**
+> @@ -973,22 +994,27 @@ static inline notrace void rcu_read_lock_sched_notrace(void)
+>   * See rcu_read_lock_sched() for more information.
+>   */
+>  static inline void rcu_read_unlock_sched(void)
+> +	__releases_shared(RCU) __releases_shared(RCU_SCHED)
+>  {
+>  	RCU_LOCKDEP_WARN(!rcu_is_watching(),
+>  			 "rcu_read_unlock_sched() used illegally while idle");
+>  	rcu_lock_release(&rcu_sched_lock_map);
+> -	__release(RCU_SCHED);
+> +	__release_shared(RCU_SCHED);
+> +	__release_shared(RCU);
+>  	preempt_enable();
+>  }
+>  
+>  /* Used by lockdep and tracing: cannot be traced, cannot call lockdep. */
+>  static inline notrace void rcu_read_unlock_sched_notrace(void)
+> +	__releases_shared(RCU) __releases_shared(RCU_SCHED)
+>  {
+> -	__release(RCU_SCHED);
+> +	__release_shared(RCU_SCHED);
+> +	__release_shared(RCU);
+>  	preempt_enable_notrace();
+>  }
+>  
+>  static __always_inline void rcu_read_lock_dont_migrate(void)
+> +	__acquires_shared(RCU)
+>  {
+>  	if (IS_ENABLED(CONFIG_PREEMPT_RCU))
+>  		migrate_disable();
+> @@ -996,6 +1022,7 @@ static __always_inline void rcu_read_lock_dont_migrate(void)
+>  }
+>  
+>  static inline void rcu_read_unlock_migrate(void)
+> +	__releases_shared(RCU)
+>  {
+>  	rcu_read_unlock();
+>  	if (IS_ENABLED(CONFIG_PREEMPT_RCU))
+> @@ -1041,10 +1068,10 @@ static inline void rcu_read_unlock_migrate(void)
+>   * ordering guarantees for either the CPU or the compiler.
+>   */
+>  #define RCU_INIT_POINTER(p, v) \
+> -	do { \
+> +	context_unsafe( \
+>  		rcu_check_sparse(p, __rcu); \
+>  		WRITE_ONCE(p, RCU_INITIALIZER(v)); \
+> -	} while (0)
+> +	)
+>  
+>  /**
+>   * RCU_POINTER_INITIALIZER() - statically initialize an RCU protected pointer
+> @@ -1206,4 +1233,6 @@ DEFINE_LOCK_GUARD_0(rcu,
+>  	} while (0),
+>  	rcu_read_unlock())
+>  
+> +DECLARE_LOCK_GUARD_0_ATTRS(rcu, __acquires_shared(RCU), __releases_shared(RCU))
+> +
+>  #endif /* __LINUX_RCUPDATE_H */
+> diff --git a/lib/test_context-analysis.c b/lib/test_context-analysis.c
+> index 77e599a9281b..f18b7252646d 100644
+> --- a/lib/test_context-analysis.c
+> +++ b/lib/test_context-analysis.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/bit_spinlock.h>
+>  #include <linux/build_bug.h>
+>  #include <linux/mutex.h>
+> +#include <linux/rcupdate.h>
+>  #include <linux/seqlock.h>
+>  #include <linux/spinlock.h>
+>  
+> @@ -277,3 +278,87 @@ static void __used test_bit_spin_lock(struct test_bit_spinlock_data *d)
+>  		bit_spin_unlock(3, &d->bits);
+>  	}
+>  }
+> +
+> +/*
+> + * Test that we can mark a variable guarded by RCU, and we can dereference and
+> + * write to the pointer with RCU's primitives.
+> + */
+> +struct test_rcu_data {
+> +	long __rcu_guarded *data;
+> +};
+> +
+> +static void __used test_rcu_guarded_reader(struct test_rcu_data *d)
+> +{
+> +	rcu_read_lock();
+> +	(void)rcu_dereference(d->data);
+> +	rcu_read_unlock();
+> +
+> +	rcu_read_lock_bh();
+> +	(void)rcu_dereference(d->data);
+> +	rcu_read_unlock_bh();
+> +
+> +	rcu_read_lock_sched();
+> +	(void)rcu_dereference(d->data);
+> +	rcu_read_unlock_sched();
+> +}
+> +
+> +static void __used test_rcu_guard(struct test_rcu_data *d)
+> +{
+> +	guard(rcu)();
+> +	(void)rcu_dereference(d->data);
+> +}
+> +
+> +static void __used test_rcu_guarded_updater(struct test_rcu_data *d)
+> +{
+> +	rcu_assign_pointer(d->data, NULL);
+> +	RCU_INIT_POINTER(d->data, NULL);
+> +	(void)unrcu_pointer(d->data);
+> +}
+> +
+> +static void wants_rcu_held(void)	__must_hold_shared(RCU)       { }
+> +static void wants_rcu_held_bh(void)	__must_hold_shared(RCU_BH)    { }
+> +static void wants_rcu_held_sched(void)	__must_hold_shared(RCU_SCHED) { }
+> +
+> +static void __used test_rcu_lock_variants(void)
+> +{
+> +	rcu_read_lock();
+> +	wants_rcu_held();
+> +	rcu_read_unlock();
+> +
+> +	rcu_read_lock_bh();
+> +	wants_rcu_held_bh();
+> +	rcu_read_unlock_bh();
+> +
+> +	rcu_read_lock_sched();
+> +	wants_rcu_held_sched();
+> +	rcu_read_unlock_sched();
+> +}
+> +
+> +static void __used test_rcu_lock_reentrant(void)
+> +{
+> +	rcu_read_lock();
+> +	rcu_read_lock();
+> +	rcu_read_lock_bh();
+> +	rcu_read_lock_bh();
+> +	rcu_read_lock_sched();
+> +	rcu_read_lock_sched();
+> +
+> +	rcu_read_unlock_sched();
+> +	rcu_read_unlock_sched();
+> +	rcu_read_unlock_bh();
+> +	rcu_read_unlock_bh();
+> +	rcu_read_unlock();
+> +	rcu_read_unlock();
+> +}
+> +
+> +static void __used test_rcu_assert_variants(void)
+> +{
+> +	lockdep_assert_in_rcu_read_lock();
+> +	wants_rcu_held();
+> +
+> +	lockdep_assert_in_rcu_read_lock_bh();
+> +	wants_rcu_held_bh();
+> +
+> +	lockdep_assert_in_rcu_read_lock_sched();
+> +	wants_rcu_held_sched();
+> +}
+> -- 
+> 2.52.0.rc1.455.g30608eb744-goog
+> 
