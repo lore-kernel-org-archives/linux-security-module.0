@@ -1,122 +1,87 @@
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4E2296BC3;
-	Wed, 10 Dec 2025 16:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE77324B3B;
+	Wed, 10 Dec 2025 17:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765384646; cv=none; b=DUQJpQw2dfw4wHA1Sv3rplNzJV/Dr+nfT596/Fu2lP/cjJcacSB6ltF1CcC4NfKU9R9NftE2LULkrRsHi59mn8cky3trJ3EL6Y92wRNqE2bLdJSlQ71jjmbapHITetMpvM+xNyi5jZ3VMXxMGwIyPIxDMtP7q2TSNy8BiHFeUFE=
+	t=1765387235; cv=none; b=TAJ+P+2kCv8zH0WMuBEWL7Ihn51b+cd3tgzMbBZgzmD0L/uyzVXQ71ZI7j2Dc3CI9gsFXYjnW4C5L/Auv2qeAIu9wDfwdDzMwRGnEPVq1SwVU/eV8rzQcH/6AhxwybVZXBcsFQXS8LjB1/RWohFY8uByeAPLch3Bu0S5Fih5BsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765384646; c=relaxed/simple;
-	bh=b86F98043TIz4TBzyPlogwDUHxoL8b6Vo2xwTeajqis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ujtkI5b9o2bOXRUv9f2rn1P2rfvnSzdwSVsLyhAuu+OCXndk8T6fh3Ci8t9GCRMPT9EqcsZ+ZRNy+0ufSy5wv0qikj6hiXuJj4OTER/Jn6jJgv3ZDgUxw5IzIU4M+gAYLmZWNAxLo5yWpLFxqob/SMcQlHh6LWPPg7jlSn0skSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BYu/J6AO; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1765387235; c=relaxed/simple;
+	bh=Qta2pvazNSRhM3J0IVWqC87nI/Docta+z1wOPTm5o/Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M9kV1YoWI9BQ8zuDN/mI92W0Z3lrXFTHz0mXbfP1UM357x5JLTA7K11nAR2HIZrpSVa39VU947OodsMLTT+g/j2ya3qnbIoMBUAsLsSvumL1OCCQYzjIjYQMB8Oza8VrNnLoEMxcAgQtrBT214vbe36VI7DYozXprW0qnoh41DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkWqXsHN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BYu/J6AO"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=kgo0gn00i5ezpmur+oazSYFqerNtpx0n/NmNjZb+ZMg=; b=BYu/J6AOcF2tcc1KVJ32FxlxHU
-	bU3jWS69I/gzoL5rBfMEk59+8SQbX3m1TlSNJJBxfMpkoI1KbFOV27y7QMVenzPHs2zsO9Sf9JDR/
-	0uQ3VHyBkDCTe/IxD+Z6b87X+qxa2kKTWHsibvBOBaekXJ6QPk+VCsTlrEk0LXs6LqwXPIzUtPCHi
-	DgQm6ujZfpSwd9uSbFR7ePLCGitwY5+n8wyOncj7wceU19MDKcL1WcIIAVXEvXl9cAjIOPG8mYxWw
-	6JMAH/tcx3NXcdb2kiwaVULI21AwrcK3vWCo8+YKj4qPCyLpmW/tbyigfGqh1WkZkRrZSQx7w1fJ+
-	QH9+jTew==;
-Received: from 2001-1c00-8d85-5700-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d85:5700:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vTMJz-0000000DbAQ-3Ck2;
-	Wed, 10 Dec 2025 15:41:44 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A3513300566; Wed, 10 Dec 2025 17:37:00 +0100 (CET)
-Date: Wed, 10 Dec 2025 17:37:00 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Marco Elver <elver@google.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	Chris Li <sparse@chrisli.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
-	Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
-	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	linux-sparse@vger.kernel.org, linux-wireless@vger.kernel.org,
-	llvm@lists.linux.dev, rcu@vger.kernel.org
-Subject: Re: [PATCH v4 00/35] Compiler-Based Context- and Locking-Analysis
-Message-ID: <20251210163700.GN3707837@noisy.programming.kicks-ass.net>
-References: <20251120145835.3833031-2-elver@google.com>
- <aTmdSMuP0LUAdfO_@elver.google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkWqXsHN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43119C4CEF1;
+	Wed, 10 Dec 2025 17:20:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765387234;
+	bh=Qta2pvazNSRhM3J0IVWqC87nI/Docta+z1wOPTm5o/Q=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PkWqXsHNV5TSxPTGVmk09F2zHPJ2Sypi1DZ0X3qCS0L6wiZVCT2+ZpymsiZtkXlOJ
+	 dEsfrzp/tarY5EHBQp45Ngm3pMFqN7IgTFbQCIxlIULE+O8Sw7K+mH8zGRvLO4YXnG
+	 NEVF/P63EIsc58x4WgduzubW9e4RH3NJpelvngRSELyqMyglo6mvP8pYzEhyEvzGb4
+	 KAi+TAiC4CdTs/pXOO2g9TGG4M2iUICD+1YfldV2XIc5J7/PCqrVOpuWDYsL6hAKws
+	 b4VVOBDVGy7kKwcxt3RXT76BjC1+MetAfmNvcJrSc4KTgldaM+rrRxmi9YIr8ugyts
+	 LGQXuKSzEAAXQ==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 0/8] Streamline TPM2 HMAC sessions
+Date: Wed, 10 Dec 2025 19:20:18 +0200
+Message-Id: <20251210172027.109938-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aTmdSMuP0LUAdfO_@elver.google.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 10, 2025 at 05:18:16PM +0100, Marco Elver wrote:
-> All,
-> 
-> On Thu, Nov 20, 2025 at 03:49PM +0100, Marco Elver wrote:
-> > Context Analysis is a language extension, which enables statically
-> > checking that required contexts are active (or inactive) by acquiring
-> > and releasing user-definable "context guards". An obvious application is
-> > lock-safety checking for the kernel's various synchronization primitives
-> > (each of which represents a "context guard"), and checking that locking
-> > rules are not violated.
-> [...] 
-> > A Clang version that supports `-Wthread-safety-pointer` and the new
-> > alias-analysis of context-guard pointers is required (from this version
-> > onwards):
-> > 
-> > 	https://github.com/llvm/llvm-project/commit/7ccb5c08f0685d4787f12c3224a72f0650c5865e
-> > 
-> > The minimum required release version will be Clang 22.
-> > 
-> > This series is also available at this Git tree:
-> > 
-> > 	https://git.kernel.org/pub/scm/linux/kernel/git/melver/linux.git/log/?h=ctx-analysis/dev
-> [...] 
-> 
-> I realize that I sent this series at the end of the last release cycle,
-> and now we're in the merge window, along with LPC going on -- so it
-> wasn't the best timing (however, it might be something to discuss at
-> LPC, too :-) .. I'm attending virtually, however :-/).
-> 
-> How to proceed?
+Since we cannot at this point cache names of the keys given limitations
+of the ASN.1 file format, I'll start a fresh patch set. Let's fixup what
+we can right now.
 
-Ah, I knew I was forgetting something :/ I'll try and have a peek at
-this series this week.
+This patch set addresses two major issues in the feature:
+
+1. Dynamic resolution without gain. All kernel sites have at most single
+   handle to authorize. Even if this changes some day this is how it is
+   as of today and we definitely do not want to dictate the future but
+   instead downscale code to the metrics that we have as of today.
+2. Eliminate at least one unnnecessary tpm2_read_public() call.
+
+Jarkko Sakkinen (8):
+  KEYS: trusted: Remove dead branch from tpm2_unseal_cmd
+  tpm2-sessions: Define TPM2_NAME_MAX_SIZE
+  KEYS: trusted: Re-orchestrate tpm2_read_public() calls
+  tpm2-sessions: Remove AUTH_MAX_NAMES
+  tpm-buf: Remove tpm_buf_append_handle
+  tpm: Orchestrate TPM commands in tpm_get_random()
+  tpm: Send only one at most TPM2_GetRandom command
+  tpm: In tpm_get_random() replace 'retries' with a zero check
+
+ drivers/char/tpm/tpm-buf.c                |  25 ---
+ drivers/char/tpm/tpm-chip.c               |   2 +-
+ drivers/char/tpm/tpm-interface.c          | 177 ++++++++++++++++++++--
+ drivers/char/tpm/tpm-sysfs.c              |   2 +-
+ drivers/char/tpm/tpm.h                    |   2 -
+ drivers/char/tpm/tpm1-cmd.c               |  62 --------
+ drivers/char/tpm/tpm2-cmd.c               | 102 +------------
+ drivers/char/tpm/tpm2-sessions.c          | 130 +++++-----------
+ include/linux/tpm.h                       |  51 +++++--
+ security/keys/trusted-keys/trusted_tpm1.c |   8 +-
+ security/keys/trusted-keys/trusted_tpm2.c | 134 +++++++++-------
+ 11 files changed, 325 insertions(+), 370 deletions(-)
+
+-- 
+2.39.5
+
