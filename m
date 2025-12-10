@@ -1,35 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D509301470;
-	Wed, 10 Dec 2025 07:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE7418787A;
+	Wed, 10 Dec 2025 14:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765351996; cv=none; b=dZW5qbJEDqnrDcQJO4dgV3yyn6yZDI30GNMeKBCZR6JXjf5VDnGyIEOHXCd7fsa8zXOgU2LVbWvEvrrqhuqjYauMYtHT3BRUGa7fu4bnktQGgdx+coxTZfMuPGVxSy/Nw5ExNIIbEJJZAKXrDZg/K5b+9lu7V5G1DrENgLZ6fSQ=
+	t=1765377586; cv=none; b=oHvlq0cHzBp/h2qjqvpezA5NWU+3/RE4cGkyZ18zsja+KzId9e2n+n1nrJhPaDTkUt+/ly3blikBKpZHj05+JUloPBKB/f1Cjbi2l8roqQ5JBGpjuNcwsE1EM/2Q2ueegCwT1it+PmCX33NCyCXLfyVMJNp45lsV+qLrUB7xsk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765351996; c=relaxed/simple;
-	bh=z32QeBspTHvfGL7jT4zgsGt50dcCo9fMPnf9xtq3X9A=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=peLDOgq2XvwXr9JnGhNp9FRAFdPKi1BXqIL/F2C2Uc979KNs+wLXUwi5SxJGx954Q8zOKINjmuRPvhjpr0aBVwrTlZG4OqSctInwMl7Wu8o6QtoEyHCQCTAgwU7fyt2xdIYOhsw4HwpBiRQejGfxRtR91Q83F6F6zLCGU5JsTgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEAxtl4n; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765377586; c=relaxed/simple;
+	bh=aTB0qCzbxVPWBRYL2iE5Qm1T2NiU3RXr7P7Ued/MXdM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DrIR3bdY6UajmM9frjY0WBCleCEH7hur7eSJj9+A8rz8mLA8oH9NEDt5bBrI1rxHHtOpTb/0kmdw5cwScByyg1MaOAGOjBtDFF1intVf83MRMyUmEyIOHhsp8m76mvHF2T+SnOgwSmNhGlTSTlFfCLz7R+hSow12YLGrwfHfggo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WzPXrW2L; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEAxtl4n"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DAC4C116B1;
-	Wed, 10 Dec 2025 07:33:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WzPXrW2L"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0127C113D0;
+	Wed, 10 Dec 2025 14:39:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765351996;
-	bh=z32QeBspTHvfGL7jT4zgsGt50dcCo9fMPnf9xtq3X9A=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=FEAxtl4n/dE8j2tgbOfAC0aRj0oMADjly1Y7eYym4r1/h0AHWHd+msfqZscjgA2ys
-	 J5TKwMM+gwM36agvp6KNeLKumtc53QXwEMq3lvmsv6YY9Mm08kPTivEvQ58mXGNHWx
-	 8kKMPr2F/amgC3HLyHga3JUrOgY76SUYh33Ks+1tDCkh5mwbHsds7rPxQKRevlrfm5
-	 9pMq2/w38fiHmWWl99urOhDiNqpJvLLyLz1FwtOHGZrVJYxiFHjoHyZXyWu4DzuHp9
-	 BobSUGpGPA5rYtWmXQnEhaiDuD67FW0cdeX875SmZJjv2UIztQsEgYjOHpSYrSfQ3L
-	 JJRruqcT5u1Iw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 788BE3809A18;
-	Wed, 10 Dec 2025 07:30:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1765377586;
+	bh=aTB0qCzbxVPWBRYL2iE5Qm1T2NiU3RXr7P7Ued/MXdM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WzPXrW2L7TJIHcpOzU2o6tNRit8rR4X0/jfDkSbR3XTdfv4r434cxEVLbciIg1hyO
+	 Bt++EFNYwFlwYGO/8oOYn3SlKL8/fQ2GSJLYGXhXYacnXC2x0FKyTT5TY8wZVeUM3/
+	 tNMUhqPnxRPZWlmgnXLlz0KLuHYD1+rEiXgKRDG1OuLu2xDf+arCVayeiUGY6HqCrN
+	 YQmPu/VeYkB+YpHSahaa6uwQADSbvMtkFqQtQJ6aroAHaI0tHoY8jcnFsKu/ajymUF
+	 N2JqCffxfyQiZw0viz1+h3bl2JtzfualOmUnuSlmIc49HbRYcFr6NW7nfUwwMfvC+4
+	 WT81WryKXi5mA==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 0/7] Streamline TPM2 HMAC sessions
+Date: Wed, 10 Dec 2025 16:39:32 +0200
+Message-ID: <20251210143940.264191-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -37,51 +46,41 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] bpf, arm64: Do not audit capability check in do_jit()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176535181104.487333.8109866817495387423.git-patchwork-notify@kernel.org>
-Date: Wed, 10 Dec 2025 07:30:11 +0000
-References: <20251204125916.441021-1-omosnace@redhat.com>
-In-Reply-To: <20251204125916.441021-1-omosnace@redhat.com>
-To: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, bpf@vger.kernel.org,
- selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
- serge@hallyn.com
 
-Hello:
+Since we cannot at this point cache names of the keys given limitations
+of the ASN.1 file format, I'll start a fresh patch set. Let's fixup what
+we can right now.
 
-This patch was applied to bpf/bpf.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
+This patch set addresses two major issues in the feature:
 
-On Thu,  4 Dec 2025 13:59:16 +0100 you wrote:
-> Analogically to the x86 commit 881a9c9cb785 ("bpf: Do not audit
-> capability check in do_jit()"), change the capable() call to
-> ns_capable_noaudit() in order to avoid spurious SELinux denials in audit
-> log.
-> 
-> The commit log from that commit applies here as well:
-> """
-> The failure of this check only results in a security mitigation being
-> applied, slightly affecting performance of the compiled BPF program. It
-> doesn't result in a failed syscall, an thus auditing a failed LSM
-> permission check for it is unwanted. For example with SELinux, it causes
-> a denial to be reported for confined processes running as root, which
-> tends to be flagged as a problem to be fixed in the policy. Yet
-> dontauditing or allowing CAP_SYS_ADMIN to the domain may not be
-> desirable, as it would allow/silence also other checks - either going
-> against the principle of least privilege or making debugging potentially
-> harder.
-> 
-> [...]
+1. Dynamic resolution without gain. All kernel sites have at most single
+   handle to authorize. Even if this changes some day this is how it is
+   as of today and we definitely do not want to dictate the future but
+   instead downscale code to the metrics that we have as of today.
+2. Eliminate at least one unnnecessary tpm2_read_public() call.
 
-Here is the summary with links:
-  - bpf, arm64: Do not audit capability check in do_jit()
-    https://git.kernel.org/bpf/bpf/c/189e5deb944a
+Jarkko Sakkinen (7):
+  KEYS: trusted: Remove dead branch from tpm2_unseal_cmd
+  tpm2-sessions: Define TPM2_NAME_MAX_SIZE
+  KEYS: trusted: Re-orchestrate tpm2_read_public() calls
+  tpm2-sessions: Remove AUTH_MAX_NAMES
+  tpm-buf: Remove tpm_buf_append_handle
+  tpm: Orchestrate TPM commands in tpm_get_random()
+  tpm: Send only one TPM command per hwrng request
 
-You are awesome, thank you!
+ drivers/char/tpm/tpm-buf.c                |  25 ----
+ drivers/char/tpm/tpm-chip.c               |   2 +-
+ drivers/char/tpm/tpm-interface.c          | 174 ++++++++++++++++++++--
+ drivers/char/tpm/tpm-sysfs.c              |   2 +-
+ drivers/char/tpm/tpm.h                    |   2 -
+ drivers/char/tpm/tpm1-cmd.c               |  62 --------
+ drivers/char/tpm/tpm2-cmd.c               | 102 +------------
+ drivers/char/tpm/tpm2-sessions.c          | 130 +++++-----------
+ include/linux/tpm.h                       |  51 +++++--
+ security/keys/trusted-keys/trusted_tpm1.c |   8 +-
+ security/keys/trusted-keys/trusted_tpm2.c | 134 ++++++++++-------
+ 11 files changed, 322 insertions(+), 370 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.52.0
 
