@@ -1,124 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E395032ABC3;
-	Tue,  9 Dec 2025 17:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588883B7A8
+	for <linux-security-module@vger.kernel.org>; Wed, 10 Dec 2025 00:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765300912; cv=none; b=eVrYze2QhhtAHKpC6wYBP2QKwLLw2/PaiSmlfWg1UoF1QPNXFo3bxFiu8ZEejGHsVOfDAXEz954AOXqXccgs8XK+K4wXOSjjp24PpW5l6GMgOWqtyLPANMXjJz/T9hi47o3/UX5VeO83vcj5sSNGobJetZdqEWNmf1Z8Ti3C630=
+	t=1765325752; cv=none; b=NAX6mGpS2CdZNRoYIpZHrIktnAQ2H97Jy9sVCjjo80q3pVHKAgbJIQTfdAiNtU235bS0aX22PGB1LOLHWKSmdywonaC36cRfxobTFx1kjkFbkUetLiL6Sm9IMGS8JV8ISSsCTPGc4+QKxvleR2qF2y4issvAfi+iC3RKve+8TRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765300912; c=relaxed/simple;
-	bh=6JzHwVMsw3oVBaLB929QEwdcMxFilfqVMX3zcgp6eKA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=F98BbZstw/BUnQwJ2Q7C9Yh/xOrXxfgvLXTT1PRS8oOSrvNXgWbruTf74F7F51R6UgaI49dJ0k9c2lVi8g9+wJx5BtJs1BNqO2m8d01t+BOGr3GK1ghAKER1w7++DlPStu++Ac9lV/0RGM5fatvcTisKk9RFhne4aPPsbya21CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Psg4CKLA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765325752; c=relaxed/simple;
+	bh=n8e+9Lr7iQuygEvcfoj7A12RL+1Em/+C480lpH+SPFY=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=j+ftdYJZkG4ffa3qNhfAf4A+f1x1+gNJAaN+FZCywm693xJqLp7KZfwOTnbzcnmlj3QGVe21vvXZIbJuTFbalEHxsBcfX62Qd8ZDkGGyjCJ2DBuuNrjo4izdek5qJUGib0g5keRaG+W6tDmc1a28y9OpSPEFpvoP+DRAuQ8LGZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ecF12nLy; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Psg4CKLA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73601C4CEFB;
-	Tue,  9 Dec 2025 17:21:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765300911;
-	bh=6JzHwVMsw3oVBaLB929QEwdcMxFilfqVMX3zcgp6eKA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Psg4CKLAi9h/A9vrvljHnRqp9p5yz8B5YCapKgSBCEr6kmloaOVwmNaYxp96nI0Jm
-	 E1pbyJ1ln1w7L+cwykG7ZYqv4qRzAcWJFrrDoVllnAKtP9kV9HNNc0yvVFDPPFwIkZ
-	 zlIrgsKzfz9N31t7zC7ENkzXvNMPaNLtaoUlwGSCq0lbSmlyoP3LMxcO1rKyc+86dE
-	 NNhWUd3A/NHLJln9jL7sW0vI/gKw88UtIG56vYvOYlGCOJt2PmPeBPQ+WVB8pAbtZB
-	 YUlzouJwNa/r7jfn9C9CtIGicL5PvCAPTPMpQEpILvgU65s/m796Uhb97EubDbNHcQ
-	 BLbAhrtl11WCQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B591F3808200;
-	Tue,  9 Dec 2025 17:18:47 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ecF12nLy"
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-78c5adeb964so15487087b3.1
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Dec 2025 16:15:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765325750; x=1765930550; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=n8e+9Lr7iQuygEvcfoj7A12RL+1Em/+C480lpH+SPFY=;
+        b=ecF12nLy/GYt/qt24uHrxUuvPBsmniSh3KH5QCOMdbeEd5pK4XrSqEbf+rbAPXJST6
+         ZBsT5QGXEHoEABTyJLgMSkZielAjA7dTgRNur7PxpL+1by+ppxDPLIo4lo/eRCZD/3l9
+         6LvHrjS2bxZ+H1xCI2+4UEz5GFfzeRiHXyGprky49cno5RxSgqWFigzlwo+fSuj7BQ7O
+         breAbDm8to0AUgOw9cMg72PTejhTRhbwMFJoFoo+9j149n8cz8S0lehOp6Zc8Aq6+ZNo
+         JGuNPtBqZfMkIk0GDmG3YJNL20R3hJtBH0CbyHE4Owi4PGGX+K3K9mc4WiU+JEgTZhF8
+         lRvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765325750; x=1765930550;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n8e+9Lr7iQuygEvcfoj7A12RL+1Em/+C480lpH+SPFY=;
+        b=BEU7TMDwiNt/P7fJi4V74Cneq5AbabJpBbTd6UKjBkOpH9Rjc8ZlcJ11qnz0N6CZj5
+         HvQ6o/oqqYfqflxHc0v8cbPEcQded0JJeYHWhKUur7RKCbEw6HfL2G2A/PXJiuQg19H4
+         rs7UfejoIQIEvqMklDKmj4Yaf8MByh/ENSRKJ2cfawuwI/h6t4iyd4rjcB88sc3ECTXB
+         +zLnkD2BWHyxm20nzCC3JtAU9RjCuECuu49i2dXRbi4t6BZkz77t/pGa8Lb2fuyFbhjC
+         l8pmEdX9EUsI1DqWm54FNkvE/htXs+vOHvGEp8pNceDedVPoeeMSavZFDPchvgevS6zs
+         vlWA==
+X-Gm-Message-State: AOJu0YxjvOIyTtFp0MxOZzRCXs4nou3DniszEbGw3OfOjWz2//LEqlb0
+	+amuHvESxqJGPF5YDkhlC4v7eP25tuW6bWTfnlTRp1CgeuS7epKTHOrNf0MVQWkFx/i+LeI305/
+	JQTRL87yMn31b5EDTgm38n1L7nrwYRT2TSAe5MHGbmt11
+X-Gm-Gg: AY/fxX7d+qe7KzATj8Py+sQawXcDjLiyIYjM1WVWajqPIBYywpcBBCeDYfWKUb+EEWk
+	MNGQa/c4FLw2qF8e/rJ+DGvLoihpBkwnLGeGjgI3k+w+8cKyqOVidKOsKMDmj9oWHYLpDCygtvZ
+	pxlRltSv+SV14/SgYl+OAYG6DSIZFPsPNeihunrbWrVYoSJmKdwi4IxZDhvdEfo/0XztPHx8F1E
+	uiycvDj0dGG5IKNYVyWZS8s/uUSXMRMwcHIs3uLKTWbcxLNdbFxtHHSXxBB0u5+57wGVzk5
+X-Google-Smtp-Source: AGHT+IEhABOtEIjf81Q9rTt27uqjynGwDu2X3lBMvf7swKATu8xR4flyI3oOv44fOfEEIj/oSm+QxXB5USaLB96kqew=
+X-Received: by 2002:a05:690c:498c:b0:786:4fd5:e5cb with SMTP id
+ 00721157ae682-78c9d7f9fb1mr4919507b3.35.1765325750268; Tue, 09 Dec 2025
+ 16:15:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH kvm-next V11 0/7] Add NUMA mempolicy support
- for
- KVM guest-memfd
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: 
- <176530072652.4018985.15391772848132749035.git-patchwork-notify@kernel.org>
-Date: Tue, 09 Dec 2025 17:18:46 +0000
-References: <20250827175247.83322-2-shivankg@amd.com>
-In-Reply-To: <20250827175247.83322-2-shivankg@amd.com>
-To: Garg@aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org,
-	Shivank <shivankg@amd.com>
-Cc: willy@infradead.org, akpm@linux-foundation.org, david@redhat.com,
- pbonzini@redhat.com, shuah@kernel.org, seanjc@google.com, vbabka@suse.cz,
- jgowans@amazon.com, mhocko@suse.com, jack@suse.cz, kvm@vger.kernel.org,
- dhavale@google.com, linux-btrfs@vger.kernel.org, aik@amd.com,
- papaluri@amd.com, kalyazin@amazon.com, peterx@redhat.com, linux-mm@kvack.org,
- clm@fb.com, ddutile@redhat.com, linux-kselftest@vger.kernel.org,
- shdhiman@amd.com, gshan@redhat.com, ying.huang@linux.alibaba.com,
- ira.weiny@intel.com, roypat@amazon.co.uk, matthew.brost@intel.com,
- linux-coco@lists.linux.dev, zbestahu@gmail.com, lorenzo.stoakes@oracle.com,
- linux-bcachefs@vger.kernel.org, apopple@nvidia.com, jmorris@namei.org,
- hch@infradead.org, chao.gao@intel.com, cgzones@googlemail.com,
- ziy@nvidia.com, rientjes@google.com, yuzhao@google.com, xiang@kernel.org,
- nikunj@amd.com, gourry@gourry.net, serge@hallyn.com, thomas.lendacky@amd.com,
- ashish.kalra@amd.com, chao.p.peng@intel.com, yan.y.zhao@intel.com,
- byungchul@sk.com, michael.day@amd.com, Neeraj.Upadhyay@amd.com,
- michael.roth@amd.com, bfoster@redhat.com, bharata@amd.com,
- josef@toxicpanda.com, Liam.Howlett@oracle.com, ackerleytng@google.com,
- dsterba@suse.com, viro@zeniv.linux.org.uk, jefflexu@linux.alibaba.com,
- jaegeuk@kernel.org, dan.j.williams@intel.com, surenb@google.com,
- tabba@google.com, paul@paul-moore.com, joshua.hahnjy@gmail.com,
- brauner@kernel.org, quic_eberman@quicinc.com, rakie.kim@sk.com,
- pvorel@suse.cz, linux-erofs@lists.ozlabs.org, kent.overstreet@linux.dev,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- pankaj.gupta@amd.com, linux-security-module@vger.kernel.org,
- lihongbo22@huawei.com, amit@infradead.org, linux-fsdevel@vger.kernel.org,
- vannapurve@google.com, suzuki.poulose@arm.com, rppt@kernel.org,
- jgg@nvidia.com
+From: Timur Chernykh <tim.cherry.co@gmail.com>
+Date: Wed, 10 Dec 2025 03:15:39 +0300
+X-Gm-Features: AQt7F2qMBJqF03UQ3fg1fTQ0zY1IkEr2dMK0MfZhb3SeP_Cr3FAjusb_3jvXUWs
+Message-ID: <CABZOZnS4im-wNK4jtGKvp3YT9hPobA503rgiptutOF8rZEwt_w@mail.gmail.com>
+Subject: An opinion about Linux security
+To: torvalds@linux-foundation.org
+Cc: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+Hello Linus,
 
-This series was applied to jaegeuk/f2fs.git (dev)
-by Sean Christopherson <seanjc@google.com>:
+I=E2=80=99m writing to ask for your opinion. What do you think about Linux=
+=E2=80=99s
+current readiness for security-focused commercial products? I=E2=80=99m
+particularly interested in several areas.
 
-On Wed, 27 Aug 2025 17:52:41 +0000 you wrote:
-> This series introduces NUMA-aware memory placement support for KVM guests
-> with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
-> that enabled host-mapping for guest_memfd memory [1] and can be applied
-> directly applied on KVM tree [2] (branch kvm-next, base commit: a6ad5413,
-> Merge branch 'guest-memfd-mmap' into HEAD)
-> 
-> == Background ==
-> KVM's guest-memfd memory backend currently lacks support for NUMA policy
-> enforcement, causing guest memory allocations to be distributed across host
-> nodes  according to kernel's default behavior, irrespective of any policy
-> specified by the VMM. This limitation arises because conventional userspace
-> NUMA control mechanisms like mbind(2) don't work since the memory isn't
-> directly mapped to userspace when allocations occur.
-> Fuad's work [1] provides the necessary mmap capability, and this series
-> leverages it to enable mbind(2).
-> 
-> [...]
+First, in today=E2=80=99s 3rd-party (out-of-tree) EDR development =E2=80=94=
+ EDR being
+the most common commercial class of security products =E2=80=94 eBPF has
+effectively become the main option. Yet eBPF is extremely restrictive.
+It is not possible to write fully expressive real-time analysis code:
+the verifier is overly strict, non-deterministic loops are not
+allowed, and older kernels lack BTF support. These issues create real
+limitations.
 
-Here is the summary with links:
-  - [f2fs-dev,kvm-next,V11,1/7] mm/filemap: Add NUMA mempolicy support to filemap_alloc_folio()
-    (no matching commit)
-  - [f2fs-dev,kvm-next,V11,2/7] mm/filemap: Extend __filemap_get_folio() to support NUMA memory policies
-    https://git.kernel.org/jaegeuk/f2fs/c/16a542e22339
-  - [f2fs-dev,kvm-next,V11,3/7] mm/mempolicy: Export memory policy symbols
-    https://git.kernel.org/jaegeuk/f2fs/c/f634f10809ec
-  - [f2fs-dev,kvm-next,V11,4/7] KVM: guest_memfd: Use guest mem inodes instead of anonymous inodes
-    (no matching commit)
-  - [f2fs-dev,kvm-next,V11,5/7] KVM: guest_memfd: Add slab-allocated inode cache
-    (no matching commit)
-  - [f2fs-dev,kvm-next,V11,6/7] KVM: guest_memfd: Enforce NUMA mempolicy using shared policy
-    (no matching commit)
-  - [f2fs-dev,kvm-next,V11,7/7] KVM: guest_memfd: selftests: Add tests for mmap and NUMA policy support
-    (no matching commit)
+Second, the removal of the out-of-tree LSM API in the 4.x kernel
+series caused significant problems for many AV/EDR vendors. I was
+unable to find an explanation in the mailing lists that convincingly
+justified that decision.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+The next closest mechanism, fanotify, was a genuine improvement.
+However, it does not allow an AV/EDR vendor to protect the integrity
+of its own product. Is Linux truly expecting modern AV/EDR solutions
+to rely on fanotify alone?
 
+My main question is: what are the future plans? Linux provides very
+few APIs for security and dynamic analysis. eBPF is still immature,
+fanotify is insufficient, and driver workarounds that bypass kernel
+restrictions are risky =E2=80=94 they introduce both stability and security
+problems. At the same time, properly implemented in-tree LSMs are not
+inherently dangerous and remain the safer, supported path for
+extending security functionality. Without safe, supported interfaces,
+however, commercial products struggle to be competitive. At the
+moment, macOS with its Endpoint Security Framework is significantly
+ahead.
 
+Yes, the kernel includes multiple in-tree LSM modules, but in practice
+SELinux does not simplify operations =E2=80=94 it often complicates them,
+despite its long-standing presence. Many of the other LSMs are rarely
+used in production. As an EDR developer, I seldom encounter them, and
+when I do, they usually provide little practical value. Across
+numerous real-world server intrusions, none of these LSM modules have
+meaningfully prevented attacks, despite many years of kernel
+development.
+
+Perhaps it is time for Linux to focus on more than a theoretical model
+of security.
+
+P.S.
+Everything above reflects only my personal opinion. I would greatly
+appreciate your response and any criticism you may have.
+
+Best regards,
+Timur Chernykh
