@@ -1,192 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EEA26056D;
-	Wed, 10 Dec 2025 22:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA96F280335;
+	Wed, 10 Dec 2025 23:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765407002; cv=none; b=oz5AmFCWnw0KsMJK2O838CX0sbSRircEtyjJ/NvmByjWB7xoruuqg/hlhiI5W6ujLZCaYYZaOmLzhDzF6KPBw/hSI1i/xQamk1WBIBdGOyjqdej5XjERXggNhaY+qGcZMxLvzO0J/42r2+nJOYiGyRhOSLk8va0gD4sFI1JWqFI=
+	t=1765410804; cv=none; b=H5B990xTnmn+brz4mZHEpPyi3x1VKMrnWBH4kD6c/43lFRieyISZSkaqva5NkKO0GaJsQdxfA/0WVtMGFHggK6ZJTVXmBPaZ/2rpNbdGKa9IRlXF7GHIEbEpTupnCOAE0lR6u2wJu3qMu7AHb5SMMYRScbqwrXXi5t1wvfhps+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765407002; c=relaxed/simple;
-	bh=qW/tF+X/GtmF1/qBlEvZg0QJgsmBQoUZONiEY+CGh0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SibZZBnO6H6e4OU0AQIXh+Bxwp8n2uUdP8ST8OBFOv2XbnAbXw9Dib4idLFjCHiECEGBobHWcYgzwppeAs8JZChm+YCg09r8nFlWBxmJeY8IIwiW4+CmslPa8f8BXhkUBY1ZJCF04bHsQewwjKDCUtK6p2YUt9WcjF5X9rw0CKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AO3exkGe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765410804; c=relaxed/simple;
+	bh=iLf/3pqzRjM2vtmyV+qBQZ5P2ZcxfsLYZ37c66Wv7Pc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EjyzG81cROOvmuGjiCUEZvvKWNOO2Ir5jXViKA2NxdDdohAAE/9gvpZPEqjvBEzBhXV1CSN5h+nrjAP0o4CM9QZKAjtHMsDdVFNwEq7WZr6/Deo9xwkVPotBEFjrp00TnscUc2slycYq5WKPJcVUSySLAp3U9etnJ2vfO1OnReI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=jXS4/sQm; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AO3exkGe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D001C4CEF1;
-	Wed, 10 Dec 2025 22:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765407001;
-	bh=qW/tF+X/GtmF1/qBlEvZg0QJgsmBQoUZONiEY+CGh0s=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=AO3exkGe9nKbfvet6/zsxhBl37cIXDnVvN50TlnHA29GEmWWrfZrAHmxs281V3PcM
-	 w8i9dwQDFrIKGbj1buQnqWIBRdY+OQV/RidCp4SikXk7xFANcs4g9bOE44rMROiXA9
-	 5indEXpSk9hqMDmVgEXdZ5jhDcB7nJqL81Y2A56028sG+Dflc31Gve7lsV5ALgl5t5
-	 Nx/7m9WMWKbuuj4Gkh9Am3GzzLgxvfLNJ9ZlQz2t15+5qEeAUhhnP+3aXxrpxulf5/
-	 8+AxuKQXlUFczaJK6RjgBZIlaSv1k70gFjf5NOILerGsKTul7tXvrQxQTt/8MFZcYh
-	 dkvcoQb5zDo4w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 31591CE0CA7; Wed, 10 Dec 2025 14:49:59 -0800 (PST)
-Date: Wed, 10 Dec 2025 14:49:59 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Marco Elver <elver@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	Chris Li <sparse@chrisli.org>,
-	Alexander Potapenko <glider@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
-	Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
-	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	linux-sparse@vger.kernel.org, linux-wireless@vger.kernel.org,
-	llvm@lists.linux.dev, rcu@vger.kernel.org
-Subject: Re: [PATCH v4 14/35] rcu: Support Clang's context analysis
-Message-ID: <31a77eff-5295-48a9-96be-ecc7ff416317@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20251120145835.3833031-2-elver@google.com>
- <20251120151033.3840508-7-elver@google.com>
- <20251120151033.3840508-15-elver@google.com>
- <98453e19-7df2-43cb-8f05-87632f360028@paulmck-laptop>
- <CANpmjNNsR_+Mx=H6+4zxJHwpRuM7vKUakS8X+edBD521=w4y_g@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jXS4/sQm"
+Received: from chenste-Virtual-Machine.mshome.net (c-67-168-176-124.hsd1.wa.comcast.net [67.168.176.124])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 46FC8211603E;
+	Wed, 10 Dec 2025 15:53:21 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 46FC8211603E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1765410801;
+	bh=PMrSM9sNdXVS3gVjnHz4WlV/DUtREqvT6AWyC31m77c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jXS4/sQm1ew3vN8t+D8XashX3HicdGHp0E/tyVJe3gnGkr4eaQEGdVnE3khe1FvVW
+	 P20wHQoYyEWgeNhjqVd0tsIcWUtBN/H6GT8XhPFEtHLfA39rWOjJPCqyjuG+H6AsJU
+	 7H8v9P4fFfwzsNID4HNvnWNNxWUthygkddinUoRk=
+From: steven chen <chenste@linux.microsoft.com>
+To: linux-integrity@vger.kernel.org
+Cc: zohar@linux.ibm.com,
+	roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	corbet@lwn.net,
+	serge@hallyn.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	linux-security-module@vger.kernel.org,
+	anirudhve@linux.microsoft.com,
+	chenste@linux.microsoft.com,
+	gregorylumen@linux.microsoft.com,
+	nramas@linux.microsoft.com,
+	sushring@linux.microsoft.com,
+	linux-doc@vger.kernel.org
+Subject: [PATCH v2 0/1] Trim N entries of IMA event logs
+Date: Wed, 10 Dec 2025 15:53:11 -0800
+Message-ID: <20251210235314.3341-1-chenste@linux.microsoft.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNNsR_+Mx=H6+4zxJHwpRuM7vKUakS8X+edBD521=w4y_g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 10, 2025 at 10:50:11PM +0100, Marco Elver wrote:
-> On Wed, 10 Dec 2025 at 20:30, Paul E. McKenney <paulmck@kernel.org> wrote:
-> > On Thu, Nov 20, 2025 at 04:09:39PM +0100, Marco Elver wrote:
-> > > Improve the existing annotations to properly support Clang's context
-> > > analysis.
-> > >
-> > > The old annotations distinguished between RCU, RCU_BH, and RCU_SCHED;
-> > > however, to more easily be able to express that "hold the RCU read lock"
-> > > without caring if the normal, _bh(), or _sched() variant was used we'd
-> > > have to remove the distinction of the latter variants: change the _bh()
-> > > and _sched() variants to also acquire "RCU".
-> > >
-> > > When (and if) we introduce context guards to denote more generally that
-> > > "IRQ", "BH", "PREEMPT" contexts are disabled, it would make sense to
-> > > acquire these instead of RCU_BH and RCU_SCHED respectively.
-> 
->  ^
+The Integrity Measurement Architecture (IMA) maintains a measurement list
+—a record of system events used for integrity verification. The IMA event
+logs are the entries within this measurement list, each representing a
+specific event or measurement that contributes to the system's integrity
+assessment.
 
-"I can't read!"  ;-)
+This update introduces the ability to trim, or remove, N entries from the
+current measurement list. Trimming involves deleting N entries from the
+list and clearing the corresponding entries from the hash table. This
+action atomically truncates the measurement list, ensuring that no new
+measurements can be added until the operation is complete. Importantly,
+only one writer can initiate this trimming process at a time, maintaining
+consistency and preventing race conditions.
 
-> > > The above change also simplified introducing __guarded_by support, where
-> > > only the "RCU" context guard needs to be held: introduce __rcu_guarded,
-> > > where Clang's context analysis warns if a pointer is dereferenced
-> > > without any of the RCU locks held, or updated without the appropriate
-> > > helpers.
-> > >
-> > > The primitives rcu_assign_pointer() and friends are wrapped with
-> > > context_unsafe(), which enforces using them to update RCU-protected
-> > > pointers marked with __rcu_guarded.
-> > >
-> > > Signed-off-by: Marco Elver <elver@google.com>
-> >
-> > Good reminder!  I had lost track of this series.
-> >
-> > My big questions here are:
-> >
-> > o       What about RCU readers using (say) preempt_disable() instead
-> >         of rcu_read_lock_sched()?
-> 
-> The infrastructure that is being built up in this series will be able
-> to support this, it's "just" a matter of enhancing our various
-> interfaces/macros to use the right annotations, and working out which
-> kinds of contexts we want to support. There are the obvious
-> candidates, which this series is being applied to, as a starting
-> point, but longer-term there are other kinds of context rules that can
-> be checked with this context analysis. However, I think we have to
-> start somewhere.
-> 
-> > o       What about RCU readers using local_bh_disable() instead of
-> >         rcu_read_lock_sched()?
-> 
-> Same as above; this requires adding the necessary annotations to the
-> BH-disabling/enabling primitives.
-> 
-> > And keeping in mind that such readers might start in assembly language.
-> 
-> We can handle this by annotating the C functions invoked from assembly
-> with attributes like  __must_hold_shared(RCU) or
-> __releases_shared(RCU) (if the callee is expected to release the RCU
-> read lock / re-enable preemption / etc.) or similar.
-> 
-> > One reasonable approach is to require such readers to use something like
-> > rcu_dereference_all() or rcu_dereference_all_check(), which could then
-> > have special dispensation to instead rely on run-time checks.
-> 
-> Agree. The current infrastructure encourages run-time checks where the
-> static analysis cannot be helped sufficiently otherwise (see patch:
-> "lockdep: Annotate lockdep assertions for context analysis").
+A userspace interface, ima_trim_log, has been provided for this purpose.
+By writing a number N to this interface, userspace can request the kernel
+to trim N entries from the IMA event logs. When this interface is read,
+it returns the number of entries trimmed during the last operation. This
+value is not preserved across kexec soft reboots, as it is not considered
+important information.
 
-OK, very good.
+To maintain a complete record, userspace is responsible for concatenating
+and storing the logs before initiating trimming. Userspace can then send
+the collected data to remote verifiers for validation. After receiving
+confirmation from the remote verifiers, userspace may instruct the kernel
+to proceed with trimming the IMA event logs accordingly.
 
-> > Another more powerful approach would be to make this facility also
-> > track preemption, interrupt, NMI, and BH contexts.
-> >
-> > Either way could be a significant improvement over what we have now.
-> >
-> > Thoughts?
-> 
-> The current infrastructure is powerful enough to allow for tracking
-> more contexts, such as interrupt, NMI, and BH contexts, and as I
-> hinted above, would be nice to eventually get to!  But I think this is
-> also a question of how much do we want to front-load for this to be
-> useful, and what should incrementally be enhanced while the baseline
-> infrastructure is already available.
-> 
-> I think the current series is the baseline required support to be
-> useful to a large fraction of "normal" code in the kernel.
+The primary benefit of this solution is the ability to free valuable
+kernel memory by delegating the task of reconstructing the full
+measurement list from log chunks to userspace. Trust is not required in
+userspace for the integrity of the measurement list, as its integrity is
+cryptographically protected by the Trusted Platform Module (TPM).
 
-Makes sense to me!
+Multiple readers are allowed to access the ima_trim_log interface
+concurrently, while only one writer can trigger log trimming at any time.
+During trimming, readers do not see the list and cannot access it while
+deletion is in progress, ensuring atomicity.
 
-> On a whole, my strategy was to get to a point where maintainers and
-> developers can start using context analysis where appropriate, but at
-> the same time build up and incrementally add more supported contexts
-> in parallel. There's also a good chance that, once baseline support
-> lands, more interested parties contribute and things progress faster
-> (or so I'd hope :-)).
+Introduce the new kernel option ima_flush_htable to decide whether or not
+the digests of measurement entries are flushed from the hash table. (from
+reference [2])
 
-I know that feelling!  ;-)
+The ima_measure_users counter (protected by the ima_measure_lock mutex) has
+been introduced to protect access to the measurement list part. The open
+method of all the measurement interfaces has been extended to allow only
+one writer at a time or, in alternative, multiple readers. The write
+permission is used to delete the measurements, the read permission
+to read them. Write requires also the CAP_SYS_ADMIN capability. (from
+reference [2])
 
-OK, for this patch and the SRCU patch based on a quick once-over:
+New IMA log trim event is added when trimming finish.
 
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
+The time required for trimming is minimal, and IMA event logs are briefly
+on hold during this process, preventing read or add operations. This short
+interruption has no impact on the overall functionality of IMA.
 
-							Thanx, Paul
+V1 of this series is available here[1] for reference.
+
+References:
+-----------
+[1] [PATCH 0/1] Trim N entries of IMA event logs
+https://lore.kernel.org/linux-integrity/20251202232857.8211-1-chenste@linux.microsoft.com/T/#t
+
+[2] [RFC][PATCH] ima: Add support for staging measurements for deletion
+https://lore.kernel.org/linux-integrity/207fd6d7-53c-57bb-36d8-13a0902052d1@linux.microsoft.com/T/#t
+
+Change Log v2:
+ - Incorporated feedback from the Roberto on v1 series.
+ - Adapted code from Roberto's RFC [Reference 2]
+ - Add IMA log trim event log to record trim event
+ - Updated patch descriptions as necessary.
+
+steven chen (1):
+  IMA event log trimming
+
+ .../admin-guide/kernel-parameters.txt         |   4 +
+ security/integrity/ima/ima.h                  |   2 +
+ security/integrity/ima/ima_fs.c               | 175 +++++++++++++++++-
+ security/integrity/ima/ima_queue.c            |  64 +++++++
+ 4 files changed, 241 insertions(+), 4 deletions(-)
+
+-- 
+2.43.0
+
