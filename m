@@ -1,151 +1,106 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43765319843
-	for <linux-security-module@vger.kernel.org>; Thu, 11 Dec 2025 17:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5A33168E2;
+	Thu, 11 Dec 2025 18:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765473374; cv=none; b=Oz6ARu6EgBuyddupH3WPEvaOaM0MKpiwQjbV3O0Jc/DlwHlWfqmEY6zpWev4J5U6iK9DkDjYXtiG9BujcUarKKl1NwsMs5tF37yBcpCNlV0B/a6pAHwIzwKaHSznFtcEoO9f4GAeMIWloyykvO0PK7FBhvWvQfqVb5g1AlHlL2c=
+	t=1765476403; cv=none; b=aga2UCkPTl9Wu4vwxX6sjV9sSITbLC9GP1R013J6W4Gu9m2AMBNmRlAVKWTcH+FnkFu60yYX+VZabGAfBr00tQCzYm3RJR75jfhGb/SZA2GRBmoceLeWwiGvW7wNltFGvIHr6EdRJbPvWRvr/exCbne5hvELiOaLn/NkW8JMtNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765473374; c=relaxed/simple;
-	bh=CzasmjigxMDc3RbPNhKzZOfqJrGSXpxinQ87lLaAs6M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YH1p3sdC48TNMoE7//D06FFQknV44ErsXFXtMs9N52HN8WUiHq0EGbSOZhgh2Uc16GXd4tpyunb7poQCFtvMMXB4CVauj/cpppYtRRDChfZgQtRQIn6Nu31g/eKpGZcytdFF+d8Y4ZlSJbVcIqVweCrX8JcYXpYtRd7Fj2qwiOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=IgjWqMd9; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1765476403; c=relaxed/simple;
+	bh=vZAvDE0K1dN04OJvdTBY+VTqXXrY67CoWqpjW+cYP4g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FnlPtdtPhkaniCRk6n4rBDzO88Ss+Yn40ODV950m0ea5aN3+j32cKfWjJC28SuGWv/U6ydfD9lUA4xVNWdhgHRFbMhwX5N41QZVe3TQowmzbSz9fLglPr7hF9wxGzQ3tHK2sx2acDEViWBIZoMzro69bCz8o34l75cPxzJqNCBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HNjJgJjM; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="IgjWqMd9"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42f9ece6387so175073f8f.0
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Dec 2025 09:16:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1765473370; x=1766078170; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n+SHfa6vAHr55xEpYtx8saNp/3XbgtX4zTiJHIYfZ1k=;
-        b=IgjWqMd9j04SJLnMtl+zQippp7RKIYHp0avf98okpcRZctk9dwkIOVIm/h4F6e9gNG
-         R16rEHDttSX2nlOUb3axfIPs4SuLcNY4LqlwuLMAfkpjnkgJKDR24Lna63MRVnVgDSSC
-         jf7dnvXuHKEVjgw9LKWcfMglWf4gAWzWNNPKaDPXx+Y5/0Mr9F4At1yrO9Bbd1Y2nWTg
-         jarUF9Kxpy/Tys7m/Ep46iyTD2tiErOlkA+vhf1Z1vlU/EtGTY8GHzudzxKNpqxIo6wC
-         /v/R6T0N866RML9olQDqs+ehSlADhbM2VBcSDbTYQmkpmi9a7I1MlpwP6bSwLLS5N/CO
-         RNJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765473370; x=1766078170;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=n+SHfa6vAHr55xEpYtx8saNp/3XbgtX4zTiJHIYfZ1k=;
-        b=Z7kzUGvNdNDJfEmFaLY5MeBMzzqQpgNF0ONT9VTjrCa7o+zvwl1yYireTgUSykAP8b
-         rzDOtbOg2LtJBwrfplNJE5PosUVSVmj7uKlC2VMN6YabJD9HnkYIEyyWbpaR+vVKh6T1
-         bEjHdkV7GHPvatgYtOGXkADEmlgFZddjsZwrS5zSWJQFTZCBwR+yDWB6+ieXjLyoTcEt
-         p/EQQoxhpZbolk2UgNWLpytSCR4xD9G4Dig4mSRC6cBVU1hmOs3hS9iMjYMjK/7NJLeO
-         YUGNFSYpVwtIxabsLmvJmtM7hRaL1yZxp3ayQDvfXqKUVtGGv+qh07pSke1HWP1tdDcY
-         8Zew==
-X-Forwarded-Encrypted: i=1; AJvYcCUmxN0IGkOdauCoDvRSjgYQuYbH0OsMgK6S3nSBV0o3qrwp+kD/lDvNEXpufxx3YHxK4PdbBbEk8rif3Y5MnpX8T0GdO2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9//DK4Rz42HyAgsgHS3TSrBsVc1bE++9osC9/pCcs0qa9o3vj
-	a2am/YLMaiFh4Rd0IPXeBTOp7m/1NEToWhR9f3aMlHFHgdJqsLyFKagVOPf9gx/fCeM=
-X-Gm-Gg: AY/fxX578oIP67LUoV25P0V1E9wzk/PGdgwrZCDh4MaQjYXBPPXkq8Vu8BYAwdd4+hx
-	dGZlZIvxyQAyiKzhJHvF/3kb2WfX5lqPY2j1f52CNtODFda5AkmSMiMEmQBGBmX4XYjV4TkZF9N
-	0/aS5d+HZauVK6GPazHxZoatlAItVBMxQ37M6tc+sODQTNhkbLfU988RwIVsU7HlTs0eA2VuTi8
-	/imwqypMVn9xgcgXtBHJxx7TdCvwhxcN+SLzCqcaN3YuJvKWnuaQoCfNeHZ3O87f4C22/RKKN7p
-	pLHVt95Bhae6Sej02f3T1rw2cCPRO2UzIF+oNIFdYs9xbgyq/Jykvubi0PJzrKnZwbNcrW4hK3p
-	RqH8NNng2EJUMojZgHIqjtwlJl7nXRjk3eFwGA5GMFpeCnqNp8smUkRHQtTjZgbYgmCdxzvXHmq
-	1yRjE2f4gUaWm6s9/NnrriEOl3oO+3Ktck7MDWVoixrp9Y45QnfSnCHBTYIqsK01UAOBgwLwdid
-	WU=
-X-Google-Smtp-Source: AGHT+IEVlfLgsF/P2fkju8/EGLrakjagEMlQtCpgWX8RHB5vEnT2Q9O+No1JYvdMM/sRnem0fYfvQQ==
-X-Received: by 2002:a05:6000:2012:b0:42b:3978:158e with SMTP id ffacd0b85a97d-42fa3af895fmr6416347f8f.30.1765473370344;
-        Thu, 11 Dec 2025 09:16:10 -0800 (PST)
-Received: from localhost (p200300f65f006608b66517f2bd017279.dip0.t-ipconnect.de. [2003:f6:5f00:6608:b665:17f2:bd01:7279])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42fa8b8a973sm7064875f8f.36.2025.12.11.09.16.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Dec 2025 09:16:09 -0800 (PST)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Jens Wiklander <jens.wiklander@linaro.org>,
-	Sumit Garg <sumit.garg@kernel.org>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: op-tee@lists.trustedfirmware.org,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 15/17] KEYS: trusted: Make use of tee bus methods
-Date: Thu, 11 Dec 2025 18:15:09 +0100
-Message-ID:  <aab4c00b7e89abce7bcd8241c47f3398fb7227f8.1765472125.git.u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1765472125.git.u.kleine-koenig@baylibre.com>
-References: <cover.1765472125.git.u.kleine-koenig@baylibre.com>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HNjJgJjM"
+Received: from [10.17.64.150] (unknown [131.107.8.22])
+	by linux.microsoft.com (Postfix) with ESMTPSA id F0E76201D7F6;
+	Thu, 11 Dec 2025 10:06:34 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F0E76201D7F6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1765476395;
+	bh=tsWNf1A53dEvq0P1oHmMCs6r5/gQAKw3tR/g2l0a2bQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HNjJgJjM2xhrIBQ3NaL35qM+q0zLsHYLhSc9t78aYZ/5YuP04ee/Hcyctx8RYEAKY
+	 rLltfAXvhY0tdVEnMI8akF8pG7cJHbkPOTbt8o+cmkM0QlZO59kvNA/+P0zlVRKS+R
+	 DpkGiPkOOSm6YVxKD5QDCW2amVcscgEHWeXnNbT4=
+Message-ID: <d48d2f37-2c38-45ff-b161-6bb68536f840@linux.microsoft.com>
+Date: Thu, 11 Dec 2025 10:06:34 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1908; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=CzasmjigxMDc3RbPNhKzZOfqJrGSXpxinQ87lLaAs6M=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBpOvw6brlrzvg29fcU3xprVy3jDUvD6QI895K+A 4P0ITtETEGJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCaTr8OgAKCRCPgPtYfRL+ ToAKCACHrdHSasYStywLZJGRNAkC64NWvFb/BwKzZCoF8C+nTT45O0JbfN5t/ZZlz3WQUTo5Kj7 m5QHbprAIkb7KlG6c9wMZpIvnIBvKwpE7j+PUzZ2X2+UD2nnn20123zaagJYaJHriTJetqmRK/g fl4EgbD/AzpOofrYMbezG60UvGRmRCPd4NvhNQ6GXkzjyAH5oICnrjI/ufaG65GzQSejD8nT5qK UIdLIccaehc7imlrk0QNv17cD5+/y0ZIwdI2uAIuelzdvUdNHWDYI1/zMNQ3t+FkqM+vgaElDdx 8Ft+pQXoK9ErCp8MIxolmLzr+4840mvUoLiV3YhnVRyUrSkT
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH] ima: Add support for staging measurements for
+ deletion
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+ Gregory Lumen <gregorylumen@linux.microsoft.com>
+Cc: corbet@lwn.net, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ nramas@linux.microsoft.com, Roberto Sassu <roberto.sassu@huawei.com>,
+ steven chen <chenste@linux.microsoft.com>
+References: <20251209101725.3680225-1-roberto.sassu@huaweicloud.com>
+ <207fd6d7-53c-57bb-36d8-13a0902052d1@linux.microsoft.com>
+ <d7418d0afa696b8da67e4f25fd0dc1b9d6fd908f.camel@huaweicloud.com>
+ <2f550d4cd860022e990d1de62049df85a6a86df8.camel@huaweicloud.com>
+ <75d8b82a2e493ca919926310c5f381221555d82d.camel@huaweicloud.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <75d8b82a2e493ca919926310c5f381221555d82d.camel@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The tee bus got dedicated callbacks for probe and remove.
-Make use of these. This fixes a runtime warning about the driver needing
-to be converted to the bus methods.
+On 12/11/2025 7:24 AM, Roberto Sassu wrote:
+> On Thu, 2025-12-11 at 15:50 +0100, Roberto Sassu wrote:
+>> On Thu, 2025-12-11 at 10:56 +0100, Roberto Sassu wrote:
+>>> On Wed, 2025-12-10 at 11:12 -0800, Gregory Lumen wrote:
+>>>> Roberto,
+>>>>
+>>>> The proposed approach appears to be workable. However, if our primary goal
+>>>> here is to enable UM to free kernel memory consumed by the IMA log with an
+>>>> absolute minimum of kernel functionality/change, then I would argue that
+>>>> the proposed Stage-then-delete approach still represents unnecessary
+>>>> complexity when compared to a trim-to-N solution. Specifically:
+>> The benefit of the Stage-then-delete is that you don't need to scan the
+>> IMA measurements list in advance to determine what to trim, you just
+>> trim everything by swapping list head (very fast) and then you can read
+>> and delete the measurements out of the hot path.
+> I forgot: I will also add in my patch the ability to stage and trim in
+> one step, to satisfy your use case.
+>
+> Roberto
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
- security/keys/trusted-keys/trusted_tee.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+Hi Roberto,
 
-diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
-index 3cea9a377955..6e465c8bef5e 100644
---- a/security/keys/trusted-keys/trusted_tee.c
-+++ b/security/keys/trusted-keys/trusted_tee.c
-@@ -202,9 +202,9 @@ static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
- 		return 0;
- }
- 
--static int trusted_key_probe(struct device *dev)
-+static int trusted_key_probe(struct tee_client_device *rng_device)
- {
--	struct tee_client_device *rng_device = to_tee_client_device(dev);
-+	struct device *dev = &rng_device->dev;
- 	int ret;
- 	struct tee_ioctl_open_session_arg sess_arg;
- 
-@@ -244,13 +244,11 @@ static int trusted_key_probe(struct device *dev)
- 	return ret;
- }
- 
--static int trusted_key_remove(struct device *dev)
-+static void trusted_key_remove(struct tee_client_device *dev)
- {
- 	unregister_key_type(&key_type_trusted);
- 	tee_client_close_session(pvt_data.ctx, pvt_data.session_id);
- 	tee_client_close_context(pvt_data.ctx);
--
--	return 0;
- }
- 
- static const struct tee_client_device_id trusted_key_id_table[] = {
-@@ -261,11 +259,11 @@ static const struct tee_client_device_id trusted_key_id_table[] = {
- MODULE_DEVICE_TABLE(tee, trusted_key_id_table);
- 
- static struct tee_client_driver trusted_key_driver = {
-+	.probe		= trusted_key_probe,
-+	.remove		= trusted_key_remove,
- 	.id_table	= trusted_key_id_table,
- 	.driver		= {
- 		.name		= DRIVER_NAME,
--		.probe		= trusted_key_probe,
--		.remove		= trusted_key_remove,
- 	},
- };
- 
--- 
-2.47.3
+The below is what you want in one step. I think anything more than this 
+does not bring any extra value.
+
+I released version 2 of trim N entries patch as bellow:
+
+[PATCH v2 0/1] Trim N entries of IMA event logs
+<https://lore.kernel.org/linux-integrity/20251210235314.3341-1-chenste@linux.microsoft.com/T/#t>
+
+
+Steven
+
+>> [...]
+>>
+>>>> - There exists a potential UM measurement-loss race condition introduced
+>>>> by the staging functionality that would not exist with a trim-to-N
+>>>> approach. (Occurs if a kexec call occurs after a UM agent has staged
+>>>> measurements for deletion, but has not completed copying them to
+>>>> userspace). This could be avoided by persisting staged measurements across
+>>>> kexec calls at the cost of making the proposed change larger.
+>>> The solution is to coordinate the staging with kexec in user space.
+>> To avoid requiring coordination in user space, I will try to see if I
+>> could improve my patch to prepend the staged entries to the current
+>> measurement list, before serializing them for kexec().
+>>
+>> Roberto
+
 
