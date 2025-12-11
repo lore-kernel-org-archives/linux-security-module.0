@@ -1,147 +1,109 @@
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272C32C0F75
-	for <linux-security-module@vger.kernel.org>; Thu, 11 Dec 2025 13:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D372D5932;
+	Thu, 11 Dec 2025 14:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765461287; cv=none; b=HJpsBKFS5zt8qlGvXRmOu0YVTxFS/TuwyLAwXkWFodV1f4YkLKyymnPjX5/cUNwOpsUwY36ZwZ0uWIUZGOJOxfaNCSBuV7zP2eLR0ODwgFkpIRTz+M6FIbH8LuFiq/IwrImQrFWQ/F9SCX1MZSMTJq7SHgmT3e0dVUE4mtJMMtU=
+	t=1765464638; cv=none; b=hY2A5e4phaxfJ9b0TfqeC8YwHLqZ/bzRTUuPXkWPL4yXDvqfnvCaEf0Xj+ju4U3NNhWqzg7NTlMC/RfBoBTOEoooSxqkOtDSQc0ELEesuVmQCR7z7+GSf7mv4mQ1cHT/Toycv8psHsS6Jdg5kbjrQ6wgxQNTZmtJrTMnREmzMUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765461287; c=relaxed/simple;
-	bh=asjipvlumTAG9LX/ZrgSM7qOg2tY3hiQLpH2JweZG4Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IKa6fhKTu3pcnjaVsozylrHYHU11L7cO4hoLplwldwi15Nfbz+bK0zIjFybqkIBDT6FgsQK8noR40dndCMkBYVDhRIc+hk8ZsHmSF7ODEwHagaC6r50C1ZjWP0egyZW5ZKGPnh6SwQK6SaUa7K5Joh0AFgqNWotxldPonWY5OgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uDYj/hL7; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uDYj/hL7"
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7b8bbf16b71so106252b3a.2
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Dec 2025 05:54:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1765461285; x=1766066085; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aWRPRAJ89lgq7qGLYK1gyasHO8BcBnTXm3hkZRbZKOw=;
-        b=uDYj/hL7oGwh2XUzc1hqD9+sdZ/Sx2Sq2KIskqtRR/WRmu2isIV04TAqo6JOKiX4kF
-         NCpsGtZjwJuX40Ngt1BNK/SQaQ2XpxVQUmNG0btiWJ2i0K4XwxIlSK8GOLCMHLZZhDWN
-         WwjUXaxR3Abzxj6Dcz0KKvvpDorVhHMUBws/PgXonrmgS/0ghFX/2ApTrYXWqPZn6utb
-         dD/vbXSKFO6Yi5HxsWNMKFQNDEVQRC/xUBmSXlp5CmOLIAyyLDUr+XUKig6XSeGgXovr
-         0TEArh7ZcaNENoq1epGedgYRQErJdCKsp57ZQPTUpjmd0nyjiuCtg+KRrEgd72Q3Y6cn
-         cRQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765461285; x=1766066085;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aWRPRAJ89lgq7qGLYK1gyasHO8BcBnTXm3hkZRbZKOw=;
-        b=FMqPySPnysCS0fVPDRXPJs/jHbfBfc1FUbimaUhKHmCTDfsF1UYGhnmZuacDHvq10w
-         r8gIqGGE0hA654Ev5BAe8KHbt2u2lGI7lFpL0fmYY6s4KgM2ittgeXIdOtqw4Wl3lxJA
-         peJV+Uxrbc73+AC3SKsoWAnEMN9ftjs/xhl3VtL5XsAaPu0dgi/9znoV4k84Lj0M3wje
-         u+MNC8yb+t1TI0LFJQMmjy4M4E8b0P3yGDvJsimtPcyMe7ahzD6L7caxiREwU7OoHB2o
-         Dyf6f+oN7EadPH2C9yXjHm7zZ3g/z2by3cMdhYXfu/YyGuOuvh1dYAWzoEc29HNiwbLB
-         CnTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXT8GrLpQr5IxeHf8u6cEVzdkzMvwIaFyAUYqeXBBZZRZBLoTaLChA4+soiredc6rWFHQ17ZNQIibLfPIRc4ZFdQ9cLPC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdzjLrJy1d1bzM19NEfi4IDT8bM7DsILifDaRqUZDL6oxAjlgD
-	1bPWFPflRwkHfPMRUQDf/Sx+M1xaQFlouTDXIVZHoit8gEU4sCROaEdJYeL/vsoiEc9cZhN9C72
-	GUMvs8Qa6T+s2+XGWY+QMaxx5QHQoboSYucucS4O+
-X-Gm-Gg: AY/fxX6BVoiGNjVMJsIUK4tV6pu1M3m/A65CFYf6sxmrXxiH719xeOBB6VveQJxJNt9
-	yYETY+FehBCMzmBaKtlDnQvo0ebCwHPfS7vK6vV35jAqKv9Pb2mjlb+Nle7S3lOryHqES+Jq2dm
-	yfDj6HvEP9M1KoP78gexr4xAo0+qJSwKbHf8PUm6wCzNSwxwUbiE6QIQChwPzs8i1fCaCs2eK+V
-	avD9MRvEijb990EM2wQTg9lCfJ3YPqivEIcWJs5vWNgqwccWkG4ZbTF/pP8Pe9WAkmRuhvCcypu
-	h3bXJRtW2JnskhxG9UySwO9H
-X-Google-Smtp-Source: AGHT+IEaaruplzdVpdnApdH4OVSrHUz40RptUVIyI3MxrgnCoT6vGrQB2vef/vIeMxQHfT2Nk7cub+UMnQmlsyGPvik=
-X-Received: by 2002:a05:7022:2219:b0:11b:bf3f:5208 with SMTP id
- a92af1059eb24-11f296558d9mr5045780c88.1.1765461284380; Thu, 11 Dec 2025
- 05:54:44 -0800 (PST)
+	s=arc-20240116; t=1765464638; c=relaxed/simple;
+	bh=phVezHEZsvYhsOx5ihY+7Hz2BGkvcWpP1lKSBbwAxzw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qEO8+iKntJ7DP/uPtVjSXc8Ghtkw0VTD4yS+rL4ApGgI9TFA0w6JWqQfxTqUuEuQci6pyc/3/5jx/OVGyQSpCDl6tuUdfU2DHyesos0U/XSCmUDVlLsZ7XdnbxvvGwj+hi9dJSsWKH/r3tg+2IcR28aN//1pVueyst+O24gBYSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.235])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4dRwT149vbzpV7w;
+	Thu, 11 Dec 2025 22:48:53 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 67CA94056B;
+	Thu, 11 Dec 2025 22:50:33 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwDH2Qov2jppD5e9AA--.15946S2;
+	Thu, 11 Dec 2025 15:50:32 +0100 (CET)
+Message-ID: <2f550d4cd860022e990d1de62049df85a6a86df8.camel@huaweicloud.com>
+Subject: Re: [RFC][PATCH] ima: Add support for staging measurements for
+ deletion
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Gregory Lumen <gregorylumen@linux.microsoft.com>
+Cc: corbet@lwn.net, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+ eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com,  linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+  linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ chenste@linux.microsoft.com, nramas@linux.microsoft.com, Roberto Sassu
+ <roberto.sassu@huawei.com>
+Date: Thu, 11 Dec 2025 15:50:22 +0100
+In-Reply-To: <d7418d0afa696b8da67e4f25fd0dc1b9d6fd908f.camel@huaweicloud.com>
+References: <20251209101725.3680225-1-roberto.sassu@huaweicloud.com>
+	 <207fd6d7-53c-57bb-36d8-13a0902052d1@linux.microsoft.com>
+	 <d7418d0afa696b8da67e4f25fd0dc1b9d6fd908f.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251120145835.3833031-2-elver@google.com> <20251120151033.3840508-7-elver@google.com>
- <20251120151033.3840508-17-elver@google.com> <20251211122636.GI3911114@noisy.programming.kicks-ass.net>
-In-Reply-To: <20251211122636.GI3911114@noisy.programming.kicks-ass.net>
-From: Marco Elver <elver@google.com>
-Date: Thu, 11 Dec 2025 14:54:06 +0100
-X-Gm-Features: AQt7F2oz75av79IX-Fsq5GL2dibuf0pX45-76DYGUr2aahssaITkwrN9Ju3gYq8
-Message-ID: <CANpmjNN+zafzhvUBBmjyy+TL1ecqJUHQNRX3bo9fBJi2nFUt=A@mail.gmail.com>
-Subject: Re: [PATCH v4 16/35] kref: Add context-analysis annotations
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>, 
-	Will Deacon <will@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Chris Li <sparse@chrisli.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Bart Van Assche <bvanassche@acm.org>, Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>, 
-	Eric Dumazet <edumazet@google.com>, Frederic Weisbecker <frederic@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Johannes Berg <johannes.berg@intel.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Josh Triplett <josh@joshtriplett.org>, 
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
-	Kentaro Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
-	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
-	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, llvm@lists.linux.dev, rcu@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-CM-TRANSID:GxC2BwDH2Qov2jppD5e9AA--.15946S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KryUZw47GF1xAr1fCr43GFg_yoW8Xry7pa
+	yxCw1Ikr4DX34Syw10qr1Iya4F93yktr4DJr15Ka4rC345XF1v9F4F93yYqa4DArsayF1Y
+	vanYqrs8C3WqyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOB
+	MKDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgATBGk6smwCrAABs3
 
-On Thu, 11 Dec 2025 at 13:26, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Thu, Nov 20, 2025 at 04:09:41PM +0100, Marco Elver wrote:
-> > Mark functions that conditionally acquire the passed lock.
-> >
-> > Signed-off-by: Marco Elver <elver@google.com>
-> > ---
-> >  include/linux/kref.h | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/include/linux/kref.h b/include/linux/kref.h
-> > index 88e82ab1367c..9bc6abe57572 100644
-> > --- a/include/linux/kref.h
-> > +++ b/include/linux/kref.h
-> > @@ -81,6 +81,7 @@ static inline int kref_put(struct kref *kref, void (*release)(struct kref *kref)
-> >  static inline int kref_put_mutex(struct kref *kref,
-> >                                void (*release)(struct kref *kref),
-> >                                struct mutex *mutex)
-> > +     __cond_acquires(true, mutex)
-> >  {
-> >       if (refcount_dec_and_mutex_lock(&kref->refcount, mutex)) {
-> >               release(kref);
-> > @@ -102,6 +103,7 @@ static inline int kref_put_mutex(struct kref *kref,
-> >  static inline int kref_put_lock(struct kref *kref,
-> >                               void (*release)(struct kref *kref),
-> >                               spinlock_t *lock)
-> > +     __cond_acquires(true, lock)
-> >  {
-> >       if (refcount_dec_and_lock(&kref->refcount, lock)) {
-> >               release(kref);
-> > --
-> > 2.52.0.rc1.455.g30608eb744-goog
-> >
->
-> Note that both use the underlying refcount_dec_and_*lock() functions.
-> Its a bit sad that annotation those isn't sufficient. These are inline
-> functions after all, the compiler should be able to see through all that.
+On Thu, 2025-12-11 at 10:56 +0100, Roberto Sassu wrote:
+> On Wed, 2025-12-10 at 11:12 -0800, Gregory Lumen wrote:
+> > Roberto,
+> >=20
+> > The proposed approach appears to be workable. However, if our primary g=
+oal=20
+> > here is to enable UM to free kernel memory consumed by the IMA log with=
+ an=20
+> > absolute minimum of kernel functionality/change, then I would argue tha=
+t=20
+> > the proposed Stage-then-delete approach still represents unnecessary=
+=20
+> > complexity when compared to a trim-to-N solution. Specifically:
 
-Wrappers will need their own annotations; for this kind of static
-analysis (built-in warning diagnostic), inferring things like
-__cond_acquires(true, lock) is far too complex (requires
-intra-procedural control-flow analysis), and would likely be
-incomplete too.
+The benefit of the Stage-then-delete is that you don't need to scan the
+IMA measurements list in advance to determine what to trim, you just
+trim everything by swapping list head (very fast) and then you can read
+and delete the measurements out of the hot path.
 
-It might also be reasonable to argue that the explicit annotation is
-good for documentation.
+[...]
 
-Aside: There's other static analysis tooling, like clang-analyzer that
-can afford to do more complex flow-sensitive intra-procedural
-analysis. But that has its own limitations, requires separate
-invocation, and is pretty slow in comparison.
+>=20
+> > - There exists a potential UM measurement-loss race condition introduce=
+d=20
+> > by the staging functionality that would not exist with a trim-to-N=20
+> > approach. (Occurs if a kexec call occurs after a UM agent has staged=
+=20
+> > measurements for deletion, but has not completed copying them to=20
+> > userspace). This could be avoided by persisting staged measurements acr=
+oss=20
+> > kexec calls at the cost of making the proposed change larger.
+>=20
+> The solution is to coordinate the staging with kexec in user space.
+
+To avoid requiring coordination in user space, I will try to see if I
+could improve my patch to prepend the staged entries to the current
+measurement list, before serializing them for kexec().
+
+Roberto
+
