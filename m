@@ -1,118 +1,99 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1023192B75;
-	Thu, 11 Dec 2025 20:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A3F31D387
+	for <linux-security-module@vger.kernel.org>; Thu, 11 Dec 2025 20:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765483652; cv=none; b=t0eQkjz0PVhjO3uJyN/KzKmLRD8jnHULzGGhqdv0/b45yECEV+sAcv02J+6hy8dzUZ6e5F4/JmOeTDmVUvyD5U2qYD78hN3Uoh995Ru4UNlnnK134iHvZokrp/1AQmmJGup2vaqA0sJi8NIM4Y0PwhpxC82yTVj0DO9IzClIHBg=
+	t=1765484981; cv=none; b=Wht3HzOBvSo8jcnxvmZYfasg/0IPSYYqT3RMl6aTKbLVoybhJaqRjkObATXiOzvtU5EMwJN2VEXc4sFnBrrbOJ2eyhgderP4oE/O0zeo+GO2GmdvbqQZPplaRWweK+Fwpuf0UwwuoN5JYvZsq7Y/lR0tgq6cra1so0H2qx9BT6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765483652; c=relaxed/simple;
-	bh=nwEtSzoWdQCqAhT1d6k30xO9WYye85wdxc155XDH4dQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DXJruTUetGHoFKcoInpTrN4VoUkeGj94Y+qHXC7KmycW+7oGKBRlmpeLie/mS21FJuSN3mGDQcn+7Mq/8THjs5TAGgbU9VRB653kO9tQl3eGAHV6rm69l9RN/KlX6f1fQv0zV0geX7LCyOP3vNUtRTqPH/IZ6cTSn2jDvUpuJiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ejUvQZ0u; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1765484981; c=relaxed/simple;
+	bh=9DRRCSLEBB087PyuGppIjlXf6xvxWvNoT6XXU1Vh9Gg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=iDbaInB/F7/krgK+FoKppLYLuSW2xH97UGDO3yUTkcl1eW8sQWyPGOfpax23F1JRoK+P1aoHXlIKVtQPUD154anNWI1RsL1r8iq/d3lbXKfey6Iknh4UHzzA0uh6ReuyL5G7s3M9O2Ng9ajPOAADUkzJQOxqBoukUtiMja+cAMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=e823m0nw; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ejUvQZ0u"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-	bh=JUiYwqBQsrLJjctTG3xhmoacDmlSDDxQQ2A0MBpDNcY=; b=ejUvQZ0u7psCummZuhrynAYYFk
-	bBIfP4+AK/Y1h5whO9Rv1/wSuoTUVjzGDG+DtjXkUIW2ZZVwFrY3of+cnkwVLZosHwtsyG9khav6T
-	ak8DhdokTJJJMdYYZ/Tkf+xBgq450fEVv+eBD+vsSvYHalBK6LrBx8d7DP+0hFfWwU+PqzehTBMZw
-	dxb366APIX5rn9I0xgw8gYsx7KQuKgT1grqJLgcXr+pG8uh5QHOUH1a7QgvRjcnacCycCyaE24aJ6
-	ov8rU/L3wwD/ieWlha7WaVfWcmiZshV7eiflehARr9sjLoKwkeRQtDmuxq369HxIMnlG4/GPzI/mp
-	EZtmqmVg==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vTmwa-0000000HCam-18BG;
-	Thu, 11 Dec 2025 20:07:20 +0000
-Message-ID: <f7e997ac-2312-4d18-96d7-d6abb190a5c3@infradead.org>
-Date: Thu, 11 Dec 2025 12:07:16 -0800
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="e823m0nw"
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-6574d7e451dso326465eaf.0
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Dec 2025 12:29:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1765484978; x=1766089778; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9DRRCSLEBB087PyuGppIjlXf6xvxWvNoT6XXU1Vh9Gg=;
+        b=e823m0nwJkNkC3jZx7TG7mqG2hoLjbpwHIRBo0iPId9eJEy1W3v1CkVfoAFN/gVn0t
+         4ualeUJxefTZ52wS4zDYjcd6iqp445apkpfcx0pQAr9+fhfYM2aAKNMAWq4JQ4o6QGvE
+         EgO8pt+6HGTESsG7/xMhPZW/jzGQKSNbXMH2h3Q5iOd4pqNbopg+1FGOahufBpULYDjg
+         SmteJ7T0JrCsLC3YR1mpw6GLRkIwGIVDLCn9jo0KXKcXjjrRV+M5u8RbAzhtrtQvm7ey
+         U11ngNqucxofrx5gcjAWmzllQ5Ze+B1p+svhdgE5Ijk4blM3ubvPI+NUuo5Pn28Nwo7l
+         64qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765484978; x=1766089778;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9DRRCSLEBB087PyuGppIjlXf6xvxWvNoT6XXU1Vh9Gg=;
+        b=mUwpbPnaTqCWv/W8w8c8jlIGkq9pOfvDKZyY+vt8ObwBSe4Way24B/wEHE7JWt9Ovo
+         mUy6ZpTUEIDE97odnxARZW+ehzT+J8UJLjpfviH9ssJY7NtrZ+MhXpp7cUrDH0zexrEd
+         g2pgXxA3ZcS/IPSgpgdUxZKsGDaVUdT34xhidStSEqxpG+48tQ6Qbeb7LptXyxDllOXB
+         azpLJUMGB/bKWwUdyDot2huFEUBdrYtW8eMC/ETli6UNh9peQrBHQyxAquO5T1aink+7
+         sunuZO63MlPZZgnrbEMPFvoZDGsoLvx/gBUl+LqH+dFGVsp7UUJDee5D8PBSGMBVMe53
+         Zglw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ5g8t55GuclAEiJvqhvymn3GOHiJH62ZeGjOjU5A6aZne0HU2HwLOuIFuIRLDH/e9SIKzx+WDDAhn3gRhrsQ7Yv60ens=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlJqf6Z9im9gn1YTOK/vYcbpu+PQgnhAodicGjAbHW5NOQDdzQ
+	iTjQN8h/HEOT6VpvuDTSUzmYbb46DYwOHL8mB4A7TMTiEIA246WDGWufJF/G/ALDnKI=
+X-Gm-Gg: AY/fxX4yh6LpxhenGfX4PGTi4LcUw5iSZehgm5U7L7viGvRhM25dMd9ZMfRakm3jqh7
+	TjQU1ptdChqpHqTYMHuXgVdzkUsv+cetY26+/NzmKBAEFCriwTw5qAnYoRJqH0cos5oWJhaAMlC
+	c1I0vVT8a7cwdr4MuUsJ5Hl5L0fm+1e3sVkB2yGLMFPJ7UtV9wx5pth6UjfrwA7VuVmgegrflD8
+	9dt287i0u5ITyyrDPPWvKl/cGCxRYt0HT9Mb+HOQl/o6vj5xIU7w23lQOj9IViCCVruDXckqiCX
+	8kLY9zwosHyDST1K72hQc9mBv9jSCDjSLvbkKWFrUXANyTdD5T+vLgPAjvru4sdlPBK9vIiKiso
+	J+VVeZNrRT6aXngGhdumh/kJEmBnSdKGFOT3hTPBsJO9busPUI8uf5LJ73QsQdNdlk0Y=
+X-Google-Smtp-Source: AGHT+IGXgSVW4B5tlWc5GJSs37cpa/Qy9qqjFq/iATd96ugTpEgoseFG1mReqoD0ZC/0hihQZErMHw==
+X-Received: by 2002:a05:6820:2019:b0:65b:257b:a898 with SMTP id 006d021491bc7-65b2abebd32mr3716006eaf.29.1765484978148;
+        Thu, 11 Dec 2025 12:29:38 -0800 (PST)
+Received: from CMGLRV3 ([2a09:bac5:947d:1b37::2b6:8])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-65b35f4ec54sm1700561eaf.6.2025.12.11.12.29.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Dec 2025 12:29:37 -0800 (PST)
+Date: Thu, 11 Dec 2025 14:29:35 -0600
+From: Frederick Lawler <fred@cloudflare.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	kernel-team@cloudflare.com
+Subject: xfs/ima: Regression caching i_version
+Message-ID: <aTspr4_h9IU4EyrR@CMGLRV3>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 08/11] security: Hornet LSM
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
- Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- "Dr. David Alan Gilbert" <linux@treblig.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- James.Bottomley@HansenPartnership.com, dhowells@redhat.com,
- linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-References: <20251211021257.1208712-1-bboscaccy@linux.microsoft.com>
- <20251211021257.1208712-9-bboscaccy@linux.microsoft.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251211021257.1208712-9-bboscaccy@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hi Jeff,
 
+While testing 6.18, I think I found a regression with
+commit 1cf7e834a6fb ("xfs: switch to multigrain timestamps") since 6.13
+where IMA is no longer able to properly cache i_version when we overlay
+tmpfs on top of XFS. Each measurement diff check in function
+process_measurement() reports that the i_version is
+always set to zero for iint->real_inode.version.
 
-On 12/10/25 6:12 PM, Blaise Boscaccy wrote:
-> diff --git a/Documentation/admin-guide/LSM/Hornet.rst b/Documentation/admin-guide/LSM/Hornet.rst
-> new file mode 100644
-> index 0000000000000..0fb5920e9b68f
-> --- /dev/null
-> +++ b/Documentation/admin-guide/LSM/Hornet.rst
-> @@ -0,0 +1,38 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +======
-> +Hornet
-> +======
-> +
-> +Hornet is a Linux Security Module that provides extensible signature
-> +verification for eBPF programs. This is selectable at build-time with
-> +``CONFIG_SECURITY_HORNET``.
-> +
-> +Overview
-> +========
-> +
-> +Hornet addresses concerns from users who require strict audit
-> +trails and verification guarantees, especially in security-sensitive
-> +environments. Map hashes for extended verification are passed in via
-> +the existing PKCS#7 uapi and verifified by the crypto
+The function ima_collect_measurement() is looking to extract the version
+from the cookie on next measurement to cache i_version.
 
-                                verified
-and preferably         UAPI
+I'm unclear from the commit description what the right approach here is:
+update in IMA land by checking for time changes, or do
+something else such as adding the cookie back.
 
-> +subsystem. Hornet then calculates the verification state of the
-> +program (full, partial, bad, etc) and then invokes a new downstream
-
-                                etc.)
-
-> +LSM hook to delegate policy decisions.
-> +
-> +Tooling
-> +=======
-> +
-> +Some tooling is provided to aid with the development of signed eBPF
-> +light-skeletons.
-> +
-> +extract-skel.sh
-> +---------------
-> +
-> +This shell script extracts the instructions and map data used by the
-> +light skeleton from the autogenerated header file created by bpftool.
-> +
-> +gen_sig
-> +---------
-> +
-> +gen_sig creates a pkcs#7 signature of a data payload. Additionally it
-> +appends a signed attribute containing a set of hashes.
-
--- 
-~Randy
-
+Thanks,
+Fred
