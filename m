@@ -1,74 +1,75 @@
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B296C24DCEB
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Dec 2025 10:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5208B311956
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Dec 2025 10:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765534570; cv=none; b=HldLN9Vp7vyxyyGwc0QyHExY/wkbqSc6Ujw/lMgqSWhzBPYoRY/wtY4Hg567UvTrHpxRgOdJk4Lilr+8BAED9MTrf7CL65EBSvxKI/k5wTk3SrmG5nSjxmK8KVyol79mLzCtR+OMEbVLQrrBb7O+6wXjTlzTZzkDDsWs4ntua6Q=
+	t=1765535912; cv=none; b=oYOk6mhnEMsVPBQDosdQMhQltKviFFBhmYetPq6O2+3JQcKRVxwchvsTV8dDopzEe+cWeeZi4vT7++wz+PojUVad69Cjq0vJJy9oNbSnu290AI2SkOzrvEEaNTVHTaIyj1geRHK1Nzrj693oEa2kwVb040ZvcZLKKaRLr2EkpVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765534570; c=relaxed/simple;
-	bh=Yy8AVUr1WzoEhC0gwViTyIIecU1pDeO+TdO72jBT6kg=;
+	s=arc-20240116; t=1765535912; c=relaxed/simple;
+	bh=nctQCqtW4QYyeaejz8PEb38w/v2g7uc6tb41WntjKNI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=etWkJoshtZ/LS2g5+3nUIgVGX4RpcXRT3y2rg8swEwAvDluH0kXzLZe0TrlOsPxvECkHIxcVDXF9QHJDmMWt4OUbZUiCsEM1c0lP9JeR8uaUdYmp0jaXs+o7V+VTb1tJQm6ATDJjU7C63MJBxxEgfMWeD0/jU3jmRAbG7vSW7EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kbkpTIwj; arc=none smtp.client-ip=209.85.215.178
+	 To:Cc:Content-Type; b=IMcWALfm/s1SN+cgIuUO63eWE3Q+t8rHCvi15zjWeI15ltJib99TONld/3NhAQcIzrff18TZMLxFfAn5lz4og8fslFHf6MBrbeZP5yuXqMg9AWgVdF24SnB9IIUuBao+Z5daoXgfbG9XUx+fWZ7LrK9/HXuD7Ro3MmYfTLh30CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZWBV45nA; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kbkpTIwj"
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-bc0d7255434so698533a12.0
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Dec 2025 02:16:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZWBV45nA"
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3438231df5fso1366950a91.2
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Dec 2025 02:38:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1765534567; x=1766139367; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1765535910; x=1766140710; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yy8AVUr1WzoEhC0gwViTyIIecU1pDeO+TdO72jBT6kg=;
-        b=kbkpTIwjpQS8ePNpRzQzmqynFKNs7/NxFbTXEqQxrUChBOEd0ClCuYdBQSv/22spWQ
-         Mlau/Z1r7/t8B4xFGTNsO12c5ZTlO8IX7JmdNjWmjdVZ/Jjmk3SOeb81vSBizctBon6C
-         b9PSWBQffnaVrZsxTpaFewgJOaV8M65WyBFjjc/d5LNfdNJtX504o4PmkXzgy9+JGpaR
-         p+BOqszpjmfwPdF9SWGeFROnU0ow5OvvXnKcQ2WceWvfngjFOxfI5+Rs21yMoX+9CWFu
-         9Pv3ZqG+EuPi3/Br8MUwkjm1WFmizI4Ur371xJf7pXnmBlKHwciyx1Eiw/6wKklL/E6/
-         Jp7g==
+        bh=nctQCqtW4QYyeaejz8PEb38w/v2g7uc6tb41WntjKNI=;
+        b=ZWBV45nAwslwXNgSHG024c/Oy1RmaBreP/JPthjPK6Jn3HbrFhY/wFxrZTcGlUl/y1
+         IS6CYLqUB1OtkjBoyRT7ra/01FbS2V1xFEGhQDGLun2iMirwgFf/D/bJ5Y3H6aKsjHJm
+         bxk7aQuwkLRdpQ+JQgvYpMrvbsNQSQ91mBr94ywIb5UfQAUGOo75ot/0ykpD1NCrivgb
+         Fsd/G8OtIM18F+PuPayPs4TkVif9WU0Mn5tXO6rLkdQ9bvpbkl+pVoGuSF9m8Z6obSID
+         +7sWGc4mEzKG3LIAhrR0ynh93NV6ssWdE3dJW6XZLRzv4RvHHFFoIPDwwHs5uHOaPCzu
+         Q9kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765534567; x=1766139367;
+        d=1e100.net; s=20230601; t=1765535910; x=1766140710;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Yy8AVUr1WzoEhC0gwViTyIIecU1pDeO+TdO72jBT6kg=;
-        b=kNkrTY6gqNnadG5QylYftcXkmOASxGpmib/BoH1ImeH/GUJrGUN2W27Jq45NeAeBby
-         AQUsukHmRiG+NkWoUlLgnbLDOO2g4MT9uUhebx8JCS5CpxxZ2p0hZWOfPQBeADtAQgqa
-         9chsUXgcvesTiSp/rJEglVyeOcr7OF7+4atzjx4d2Hu8LFyJMGBdpPND6zIQz07Ln+eL
-         psD/jndU86TejcRgD1piYh6JWckCqGClyDsPVjwi9gtGLKzQ7Oc1Mz2fXjDab6qR/xpq
-         T/INbFRMUyArzcww98yCi+j3Mvm9Qg53CpX1YaIMS5ZQ6AO+fQtF0arwZXkHEHx7z0DM
-         4wRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVanqtnsqsb6FdDwpnKYBGX8gtlf6zao/1vrO/4g7miNUzSWmB0eEGwBFoABimVmGCn0Pt+tKTOKYzoB5Z09vNx4frBMWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz2/kBYZUmiASsPJ43mQ9iWGpof+7ql8Z2inzrbbEAhSyMoMaI
-	vlyesKr7ayO3DoUpkRLML1E9ft/sE/F417J6mFgJ8iJ7S28dcFpb710pM9ugNCheHDt6UiS0qhq
-	2PR0RHOWBxxEfUY7GqCR4Uwimpg1tQZg2ldeOY1aI
-X-Gm-Gg: AY/fxX7EETuOT4aVf/4aJVy9ACaNZOTe66DOiDySlOBQXRWA0JzLZJiE107QT2xBGNW
-	hCQSLpM8g/LKOr/TqR8JKgu4uCjvbdR2T7hryzCOFoy8kG9z8QbRw+F15Qn9I8OoTEZLDwfKsuQ
-	iQPdqH9fKihDY2Cs4NWEjpa/z4FO+hsqEeoSik4oWDtmRi5cjIgqIUiDZmbHLeJiOZq8PR65aq+
-	32AALXwYJvD/cOjJarVfkhZA+Qkj9iAhD+g50cEj0rjSU5ucU0O9lWe14xjOchQONkcM/oPHse4
-	YDy4waFO6VGeKvEpLBMqv3WaKXRKZ4++8jSA1A==
-X-Google-Smtp-Source: AGHT+IH8fq53xzz4VEeZIfjpPn2aDZft0vSRUPpE08Jgar7Bwxv93jAlmI/oD2Bc5sYJ04yKuPnrNx+rDd5kmEFlwB8=
-X-Received: by 2002:a05:7300:2aa5:b0:2ab:ca55:89b4 with SMTP id
- 5a478bee46e88-2ac303f2fbcmr872533eec.43.1765534566419; Fri, 12 Dec 2025
- 02:16:06 -0800 (PST)
+        bh=nctQCqtW4QYyeaejz8PEb38w/v2g7uc6tb41WntjKNI=;
+        b=ZP3AStH1TJx4CBAZEVUtEiWGng9KtDMD3cXAJwwA840ADydTuegtmxk0FOlKNpxjrV
+         99Peg+v9DBkt/GVJzLGmefaWjt6p4pZWByid7VdvpOQrdyqYG39km8t8nv/+hl96leiR
+         vvGHmDohgcJxWOXhUFVqmLWUhTF1fn13aMZKL5xOpIZfJp17upqNNULjHjEeFldx1S6r
+         oHLlpjWATgaD8bvRFh7qvrjIi8CrFRATZP4RH3IS9PcSyFzC4VNS8TYSSSLzudktRCuc
+         zho2XlMxZk+4kRyN3jSDej2vv7NP2c+4dKPJfm+qQFiuMguaQQqUmSo00RDjAyt0cKiZ
+         GJmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXcdPGCgD63svC8qUyWuaIsBVbrC1Ft3Riy/AdyZCZcMtYpsvkL8KpPKXrecBuSAsqRKe6+JAj8S71f7X07WSJDrjkB7u0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD4j9QVtqPsJRSbjHkQ1L843EjWvcQTx+fTQ7tIeJBZqixhJUQ
+	aG97teFfDhDRwBjf1D5snghlgOv+fs1NDlwxy2A3q+5qhqu/RcNu29Iig9PlNR/qwDQfb9YZ7Sr
+	9nwTBdEQ8NwHuzCNWw5jv6ejmvyoVKO6SASnzTaLw
+X-Gm-Gg: AY/fxX740h50FX6eQej3GBrdPP9zGBAn9/DgtgYH/xTeSZXEAkFkU+9odeec7Rro3Gg
+	huNbH2MZ2dla1DBF9bEau23B34LnQLo1p+sagKbaj0orUiIoANZ6niSyBEcyPXKVLx1ho8JF6SI
+	ofzSEfVnYka1yKN+3SOHaNflJFBIwULCiB/4xaCuojiGxdV9sScHw9T5wacIV4t2PGtu+wuf/rU
+	jTVkLiQ5vauAdmFFuQrkzUbqn0b7Vpji8ZGUlYL6cE5SibfjiQHm5a/p3ioPQWWqeOtE+vJ5xuv
+	ohrYxCn5ymZSAY3H/rTbSh1o15E=
+X-Google-Smtp-Source: AGHT+IHEQqbAgYefprbsSuiVLt7KDiCECxoW496oPYm+Bj8DbPCCV7ccSZXk9zoE7kqarbEHot35Mb+a9uphNkvnkwk=
+X-Received: by 2002:a05:701b:2719:b0:11d:c86c:652e with SMTP id
+ a92af1059eb24-11f34ac540dmr1125346c88.5.1765535910093; Fri, 12 Dec 2025
+ 02:38:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251120145835.3833031-2-elver@google.com> <20251120151033.3840508-7-elver@google.com>
- <20251211121659.GH3911114@noisy.programming.kicks-ass.net>
- <CANpmjNOmAYFj518rH0FdPp=cqK8EeKEgh1ok_zFUwHU5Fu92=w@mail.gmail.com> <20251212094352.GL3911114@noisy.programming.kicks-ass.net>
-In-Reply-To: <20251212094352.GL3911114@noisy.programming.kicks-ass.net>
+References: <20251120145835.3833031-2-elver@google.com> <20251120145835.3833031-4-elver@google.com>
+ <20251211120441.GG3911114@noisy.programming.kicks-ass.net>
+ <CANpmjNOyDW7-G5Op5nw722ecPEv=Ys5TPbJnVBB1_WGiM2LeWQ@mail.gmail.com> <20251212093149.GJ3911114@noisy.programming.kicks-ass.net>
+In-Reply-To: <20251212093149.GJ3911114@noisy.programming.kicks-ass.net>
 From: Marco Elver <elver@google.com>
-Date: Fri, 12 Dec 2025 11:15:29 +0100
-X-Gm-Features: AQt7F2qb9ENq_mtkRfqCrKNBJnxHOwKNFDuSBIrcF4bjbeWckbG0712gmoUp-Ao
-Message-ID: <CANpmjNP=s33L6LgYWHygEuLtWTq-s2n4yFDvvGcF3HjbGH+hqw@mail.gmail.com>
-Subject: Re: [PATCH v4 06/35] cleanup: Basic compatibility with context analysis
+Date: Fri, 12 Dec 2025 11:37:51 +0100
+X-Gm-Features: AQt7F2qnWyV-H6zf6AeMnZTuFb_nb7UwLLraoghpFqSJ0q6RecRlENqaq0woPuo
+Message-ID: <CANpmjNPcw5AnpLpaFvyRee7mH12Ym-NKTx331xXEusK5zpiscA@mail.gmail.com>
+Subject: Re: [PATCH v4 02/35] compiler-context-analysis: Add infrastructure
+ for Context Analysis with Clang
 To: Peter Zijlstra <peterz@infradead.org>
 Cc: Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>, 
 	Will Deacon <will@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
@@ -95,58 +96,34 @@ Cc: Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
 	linux-wireless@vger.kernel.org, llvm@lists.linux.dev, rcu@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 12 Dec 2025 at 10:43, Peter Zijlstra <peterz@infradead.org> wrote:
-[..]
-> > Correct. We're trading false negatives over false positives at this
-> > point, just to get things to compile cleanly.
+On Fri, 12 Dec 2025 at 10:32, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Thu, Dec 11, 2025 at 02:12:19PM +0100, Marco Elver wrote:
 >
-> Right, and this all 'works' right up to the point someone sticks a
-> must_not_hold somewhere.
+> > What's a better name?
 >
-> > > > Better support for Linux's scoped guard design could be added in
-> > > > future if deemed critical.
-> > >
-> > > I would think so, per the above I don't think this is 'right'.
+> That must be the hardest question in programming; screw this P-vs-NP
+> debate :-)
+>
+> > context_lock_struct -> and call it "context lock" rather than "context
+> > guard"; it might work also for things like RCU, PREEMPT, BH, etc. that
+> > aren't normal "locks", but could claim they are "context locks".
 > >
-> > It's not sound, but we'll avoid false positives for the time being.
-> > Maybe we can wrangle the jigsaw of macros to let it correctly acquire
-> > and then release (via a 2nd cleanup function), it might be as simple
-> > as marking the 'constructor' with the right __acquires(..), and then
-> > have a 2nd __attribute__((cleanup)) variable that just does a no-op
-> > release via __release(..) so we get the already supported pattern
-> > above.
+> > context_handle_struct -> "context handle" ...
 >
-> Right, like I mentioned in my previous email; it would be lovely if at
-> the very least __always_inline would get a *very* early pass such that
-> the above could be resolved without inter-procedural bits. I really
-> don't consider an __always_inline as another procedure.
+> Both work for me I suppose, although I think I have a slight preference
+> to the former: 'context_lock_struct'.
 >
-> Because as I already noted yesterday, cleanup is now all
-> __always_inline, and as such *should* all end up in the one function.
+> One other possibility is wrapping things like so:
 >
-> But yes, if we can get a magical mash-up of __cleanup and __release (let
-> it be knows as __release_on_cleanup ?) that might also work I suppose.
-> But I vastly prefer __always_inline actually 'working' ;-)
+> #define define_context_struct(name) ... // the big thing
+>
+> #define define_lock_struct(name) define_context_struct(name)
 
-The truth is that __always_inline working in this way is currently
-infeasible. Clang and LLVM's architecture simply disallow this today:
-the semantic analysis that -Wthread-safety does happens over the AST,
-whereas always_inline is processed by early passes in the middle-end
-already within LLVM's pipeline, well after semantic analysis. There's
-a complexity budget limit for semantic analysis (type checking,
-warnings, assorted other errors), and path-sensitive &
-intra-procedural analysis over the plain AST is outside that budget.
-Which is why tools like clang-analyzer exist (symbolic execution),
-where it's possible to afford that complexity since that's not
-something that runs for a normal compile.
-
-I think I've pushed the current version of Clang's -Wthread-safety
-already far beyond what folks were thinking is possible (a variant of
-alias analysis), but even my healthy disregard for the impossible
-tells me that making path-sensitive intra-procedural analysis even if
-just for __always_inline functions is quite possibly a fool's errand.
-
-So either we get it to work with what we have, or give up.
+Note that 'context_lock_struct' (assuming that's the new name) can be
+used to just forward declare structs, too, so 'define' in the name is
+probably incorrect. And to avoid more levels of indirection I'd just
+stick with one name; if 'context_lock_struct' isn't too offensive to
+anyone, that'd be the name for the next version.
 
 Thanks,
 -- Marco
