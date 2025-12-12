@@ -1,105 +1,137 @@
-Received: from mx1.buffet.re (mx1.buffet.re [51.83.41.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2C920E005;
-	Fri, 12 Dec 2025 16:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.83.41.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7046A126BF7
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Dec 2025 17:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765558186; cv=none; b=QYY77YrTOZD5z4u1YUKSupkc0JOpBpmS3nQhWU63byiPDAaViBh/IVXysgulBZjYlSE+D5GnUExcqq9F1Me9jqDwC8eZ26k1OcHVFpwbefZ777SVq+nsTjj8T3Y4LcUsBIahw1HwqesR84RB2f0KpRbob5SXDMopt32c7LiwuTA=
+	t=1765559181; cv=none; b=LYFy2pKfB50Bfz0LQCHcoVxYxN/+Z5ZLJHWVpIfm2JwwD8ykg2uCzm+lyeOkldrJnUAKBTnvMAKZ+fjPNw2ESFrStdCExvWKLu3yXZ9PgC1vqBZqmzuHQEUbR5ykwxF9QH5um5Ut6gaiPVLEzRbGcmIe4BGcFmVP1AW4KQ6XFf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765558186; c=relaxed/simple;
-	bh=q6kw0aNBE5Azvu81OLRFxZNVbPRvnoYOlEH1QqgQovc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=t/DGKLDPEYeEuKfVOXQLnxp91y1WgV8EZAkuP4c9A5yK39qS++zuUQ+ByuSiEveWBOIqIsX8l4QN2XPZImeMEZ1aevkE+W4CGYRZ8o80pNHl0Ex4ngOLY86hc5reP2ewju9gt5XBXVAvCCES11VLMewoUFuUrLlJTooO7yMEv8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re; spf=pass smtp.mailfrom=buffet.re; dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b=IIc5gMLL; arc=none smtp.client-ip=51.83.41.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buffet.re
+	s=arc-20240116; t=1765559181; c=relaxed/simple;
+	bh=cEfntIeajTL51kQ3r0606fOunDse80Ht326cLr5TqU0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=anLhn0MmavICKLLz+IAvWPlxBRsVw1Cg8r7jT0aCoTdwuguZ6G2ZUiBlXNuNmrad6VpiEC578q5Inq5OfgduLAqxaew/Bc/liuUYQ3w83Ad9CHOmnXpfN6+Ke3Yg4If+sLb9WEd+9zPax6lRDSqlOwd/R1JoV7kznFkwXVSkxVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aTdlKxes; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b="IIc5gMLL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=buffet.re; s=mx1;
-	t=1765557422; bh=q6kw0aNBE5Azvu81OLRFxZNVbPRvnoYOlEH1QqgQovc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IIc5gMLLV2UlF4NL4mb8ao/wLlx7UHFMV260tbhKCXedj5NtIBLUxPGArXyFMCaW5
-	 RTcSdi1uiSKSY3AIt78R+XExQsf0Vl/nxnE6GG71Q6xdmWTOYgu9AUKnkJCm5gvr2j
-	 iDqlrUGtpjrNI7Ezd+pGUUdYHJ/zwbUWw1dLAHIXnZhDKRUHkJSViwFklm5Ft9e14Y
-	 AfZvvUvp4p2lMmmsSMXrK9qnjsmMGHj/xsMzFJjcJ7nCBGGFz6gKzRtzxQIocMwTfx
-	 GG5OUsaqy2iYdb7DiyooZrT5l0DcPQ9w1TUy6l9b+vTpuUHfgmi7Sxj41gu4aaGak+
-	 GVieNnTlc97yQ==
-Received: from localhost.localdomain (unknown [10.0.1.3])
-	by mx1.buffet.re (Postfix) with ESMTPSA id 152A6125483;
-	Fri, 12 Dec 2025 17:37:01 +0100 (CET)
-From: Matthieu Buffet <matthieu@buffet.re>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	linux-security-module@vger.kernel.org,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	konstantin.meskhidze@huawei.com,
-	netdev@vger.kernel.org,
-	Matthieu Buffet <matthieu@buffet.re>
-Subject: [RFC PATCH v3 1/8] landlock: Minor reword of docs for TCP access rights
-Date: Fri, 12 Dec 2025 17:36:57 +0100
-Message-Id: <20251212163704.142301-2-matthieu@buffet.re>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20251212163704.142301-1-matthieu@buffet.re>
-References: <20251212163704.142301-1-matthieu@buffet.re>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aTdlKxes"
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-343d73d08faso774111a91.0
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Dec 2025 09:06:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1765559179; x=1766163979; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3B6h+4SNc9pAAXdmJms6Dj2LNBPMl1Mg0NsoDQr2gRo=;
+        b=aTdlKxesKxYlFiX6kOoE1ls0cyqZGJN9iG3/QK7e2CnDcX3ndybgsIp/y2APNqBE+9
+         gf3m/i6K038kcgl+cMQvKt0LgkPrb4xjEHSsulLvjOD1lZsTAg9ipXAsq+ShTI0SUmQM
+         aLnis7kwNbga064dz5x77rmLX0yRKmA7Vc/q+5yV9IPxDSWBlkzIew+p0Yr1RVk+aLG5
+         yRB7L31xdB/1F7YukrNAb7yh075ztNiys2goa22ZcG0bcYeZ07wH8fK+42vs4d7DszTc
+         eZFdmuoo6s9noDnCjk48uH3EqKRBlFOQpeDNfPxFF3QZFhzTeC937vGP0ZNYwDN5zk7A
+         2L9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765559179; x=1766163979;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=3B6h+4SNc9pAAXdmJms6Dj2LNBPMl1Mg0NsoDQr2gRo=;
+        b=UMN82Y+BOKoc2zjOp5YvdxLQsWpMacgUBtomz499Nwhz7PUkb7YrtdYj9HRE1R2/nQ
+         Qp0zcgRS0Mi3OOnT7jC6JEzQTWprGOGoXp0QdS5/8/Y9+TpDkYAG/X06To3JByP6Pcu6
+         jHevXmSRV3IwWmhT/fj3CR1YA/R8iTsuoUTOHZRBdNgCqM3TLN5lHMk4dTAVlfSri7FK
+         n7/4RqNAakd7VVc8eELwbV2wddinxUD/LLGloi5mAgVADDA+dDINmhOGJlurRipTkv0Z
+         MMpX64PwsFtOjNnhtHdPicgEnvXGsqHI3ndgDoVcxar2+8RXDlZg7zsZCvVljut7oaOT
+         4FXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDb7NBCCFd80gzov3cmBfVhs3oWShiQVsuCAB9thU2qfpM7nYqTuMQJWAChwryWQrswT+7QAbChh1wFY399fh7ayg/ReE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXZIxE0xAIxtQLXNTreGC/Ezae2whbY6kynLq4EqyFXJpYf7Fu
+	P8g//EFGvlAGJgNXhYpzHHdvRbIpEJGWPT6ivMwA4zi0TeFmoBN6EApPHfu2aOLm8fQKVHVgr64
+	3vONj1M7UgzQ42duR2QCtcVS9e9FMeAOIm5DPsbQa
+X-Gm-Gg: AY/fxX4jkF3644ZbKLtsiaqBacNt2CkRcuI9wk7jTgSentowbXhp+aMjKxfjNI+p+zv
+	z110B859XtJoE7nD2khGN1AzzurSWb/Zeo0Dc1lLQ3/8fsdFlaeI24rAPzQx7yWVA0frCnX3Xam
+	w+5MtxQMHzycgVQL1EK/13W0bcVRYUy3C4QS3dm1TBXNYY1DpTslJpXhCAHaUFKT+inysbdxid5
+	e7LzAPsTQuRVMmqKswHAzqhq85RDmeDeOz/jhZgIptqbZyyNjiVqWwhKeCd7ys2JK8aMn4=
+X-Google-Smtp-Source: AGHT+IFaqW7IgG/dlEqq9P9ebifVI4XQtdspIshrn1/CawJYsrSKREazEXheIJZsJCqGQppG7z9sGAHs+p1sxTGljR8=
+X-Received: by 2002:a17:90a:c284:b0:343:e692:f8d7 with SMTP id
+ 98e67ed59e1d1-34abdf0b232mr1828407a91.11.1765559178387; Fri, 12 Dec 2025
+ 09:06:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CABZOZnS4im-wNK4jtGKvp3YT9hPobA503rgiptutOF8rZEwt_w@mail.gmail.com>
+ <a3d28a4b-ee63-463e-8c5c-2597e2dcba98@schaufler-ca.com> <CABZOZnRQ=b4K5jpNM8Z=Zr=+66COwLpC8gynzw88==mL0FCrOw@mail.gmail.com>
+ <CAEjxPJ6CbZC-=onSGgELygnt_hsqaN0JS_jJFxWn+hYt90s2Ng@mail.gmail.com>
+In-Reply-To: <CAEjxPJ6CbZC-=onSGgELygnt_hsqaN0JS_jJFxWn+hYt90s2Ng@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 12 Dec 2025 12:06:07 -0500
+X-Gm-Features: AQt7F2o_RjsFpyeraFLOWGtil5gBzWRObQU9ewwzKEA9-6ycI7LVOIGz40FVhQ4
+Message-ID: <CAHC9VhSU5yLQkCchCMUx+OLk+_2YY=1fjzth4s+_ELwgXg5t-A@mail.gmail.com>
+Subject: Re: An opinion about Linux security
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Timur Chernykh <tim.cherry.co@gmail.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	torvalds@linux-foundation.org, linux-security-module@vger.kernel.org, 
+	greg@enjellic.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-- Move ABI requirement next to each access right to prepare adding more
-  access rights;
-- Mention the possibility to remove the random component of a socket's
-  ephemeral port choice within the netns-wide ephemeral port range,
-  since it allows choosing the "random" ephemeral port.
+On Fri, Dec 12, 2025 at 11:12=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Fri, Dec 12, 2025 at 9:47=E2=80=AFAM Timur Chernykh <tim.cherry.co@gma=
+il.com> wrote:
+> >
+> > I=E2=80=99m lucky enough to have already built a working prototype, whi=
+ch I
+> > once offered for review:
+> >
+> > https://github.com/Linux-Endpoint-Security-Framework/linux/tree/esf/mai=
+n/security/esf
+> > https://github.com/Linux-Endpoint-Security-Framework/linux/tree/esf/mai=
+n/include/uapi/linux/esf
+> >
+> > Less lucky was the reaction I received. Paul Moore was strongly
+> > opposed, as far as I remember. Dr. Greg once said that heat death of
+> > the universe is more likely than this approach being accepted into the
+> > kernel.
+>
+> Not seeing an actual response from Paul in the archives, but did you
+> ever actually post patches to the list?
 
-Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
----
- include/uapi/linux/landlock.h | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+I was wondering about this too.  I searched through my sent mail and
+while it's possible I'm missing some mail, the only conversation I see
+with Timur is an off-list discussion from 2024 regarding changes in
+the upstream kernel to support out-of-tree LSMs.  While Timur was
+added to the conversation by someone, I don't see any mail from him in
+that thread.  My comments in that thread are consistent with my
+comments in on-list threads from around that same time when
+out-of-tree code was discussed.  Here is a snippet from one of my
+responses, which still holds true as far as I'm concerned:
 
-diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-index f030adc462ee..efb383af40b2 100644
---- a/include/uapi/linux/landlock.h
-+++ b/include/uapi/linux/landlock.h
-@@ -182,11 +182,13 @@ struct landlock_net_port_attr {
- 	 * It should be noted that port 0 passed to :manpage:`bind(2)` will bind
- 	 * to an available port from the ephemeral port range.  This can be
- 	 * configured with the ``/proc/sys/net/ipv4/ip_local_port_range`` sysctl
--	 * (also used for IPv6).
-+	 * (also used for IPv6), and within that range, on a per-socket basis
-+	 * with ``setsockopt(IP_LOCAL_PORT_RANGE)``.
- 	 *
--	 * A Landlock rule with port 0 and the ``LANDLOCK_ACCESS_NET_BIND_TCP``
-+	 * A Landlock rule with port 0 and the %LANDLOCK_ACCESS_NET_BIND_TCP
- 	 * right means that requesting to bind on port 0 is allowed and it will
--	 * automatically translate to binding on the related port range.
-+	 * automatically translate to binding on a kernel-assigned ephemeral
-+	 * port.
- 	 */
- 	__u64 port;
- };
-@@ -332,13 +334,12 @@ struct landlock_net_port_attr {
-  * These flags enable to restrict a sandboxed process to a set of network
-  * actions.
-  *
-- * This is supported since Landlock ABI version 4.
-- *
-  * The following access rights apply to TCP port numbers:
-  *
-- * - %LANDLOCK_ACCESS_NET_BIND_TCP: Bind a TCP socket to a local port.
-- * - %LANDLOCK_ACCESS_NET_CONNECT_TCP: Connect an active TCP socket to
-- *   a remote port.
-+ * - %LANDLOCK_ACCESS_NET_BIND_TCP: Bind TCP sockets to the given local
-+ *   port. Support added in Landlock ABI version 4.
-+ * - %LANDLOCK_ACCESS_NET_CONNECT_TCP: Connect TCP sockets to the given
-+ *   remote port. Support added in Landlock ABI version 4.
-  */
- /* clang-format off */
- #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
--- 
-2.47.3
+ "As stated many times in the past, the LSM framework as
+  well as the Linux kernel in general, does not provide the
+  same level of consideration to out-of-tree code that it does
+  to upstream, mainline code.  My policy on this remains the
+  same as last time we talked: while I have no goal to make
+  things difficult for out-of-tree code, I will not sacrifice
+  the continued development and maintenance of existing
+  upstream code in favor of out-of-tree code."
 
+Searching for "Timur Chernykh" in all of the lore archives shows some
+BPF related threads and the following LSM thread from June 2024:
+
+https://lore.kernel.org/all/CABZOZnS13-KscVQY0YqqWZsBwmQaKyRO_G=3DkzCL8zc9j=
+HxAC=3DA@mail.gmail.com
+
+In this post Timur provides links to his ESF project on GitHub, but no
+patches.  I see comments from Stephen, Tetsuo, Casey, and Dr. Greg; I
+did not comment on that thread.
+
+Beyond that, I'm a bit lost.  As far as I can remember, and both lore
+and my own sent mail folder appear to support this, I've never
+commented on ESF.  At this point I think Timur may be mistaken
+regarding my commenting on ESF, but if I am wrong please provide a
+lore link so I can refresh my memory.
+
+--=20
+paul-moore.com
