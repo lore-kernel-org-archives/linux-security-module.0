@@ -1,82 +1,131 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7C2315775
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Dec 2025 09:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A9C2DF700;
+	Fri, 12 Dec 2025 09:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765532736; cv=none; b=PbRFlJUqVWn8I6HoBgWxAeh1wQ6sbCGt0BYSHKJOFpW2rHslDKSaqc+Z+RHbpgRLkcUJnCrJbuAOVbB7OmmoFPIEshCU1laqDzvIhW8TTIVRroRJmelCgvbJGLVCkFcXiDmaHlooq4ue8mGn8OmsnEZn3obuQL7SKuTq5KUVfaU=
+	t=1765533602; cv=none; b=AgbbAeYwkAFCiPgIR4qEXIntwR2CeKAJWY3KlwZT5RLeW8SFv8Yh/avrQxf+e3zsP/opkovrHf+5ryaAey0p1u/l0R73IMK0aCyEIn6OI5XM7uzKXZcgjGxlMr1s2RHEUGQTFf293efrP5fAkOr15UHg/Znl1laazj62jQQBypc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765532736; c=relaxed/simple;
-	bh=KUdDundps4N0ls59VYr7zGlSQpX1cJs93PzzvADXaoI=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=Gx9zyP7hsf66ZyR7j8/wVzUYlURfkc9SDkj/u0nCjisEv/U9ClUqtEHWOk4m5IZGLrKcielg4SZue81+ILILCxmzHHdX99+UCxCDvrNoxak07Mn7XZ706/M4EF/0gmwvgLy2P17acUZTxL23BTJK3jlI5JhWdUfN31DdKQO3ccc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cUBDZmQ8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1765533602; c=relaxed/simple;
+	bh=Jmg8YoC8ENkVosXMX5wUnzKW2V3TYXeF+XYoSMCYBUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KHrGS8j6nUK9qq7iYD76tpuUWQqP7dQfYz8xJU4yM9r0DGmZ1U8YGr7/cmo3amp6c2XT75KCjZF5rdd2yj5ZPEMK1Sxb3wS7UXaD0huF7v3T/smOoUuEv223TjQwrPrKF1rwC7vSjQV0QYjVQMh9riiu7y5+CGha0vsbbDq6GoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q4PvE8q1; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cUBDZmQ8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1765532733;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=116xSJ656RTM2ED7ppl3sq+qxbtZc95OtFqrG8ezYKw=;
-	b=cUBDZmQ8IR1IYMxmLeuaEkinb1Eu1vI8iHU/Yr35OCI6vm1p0dLJwtO599hV6hDIrsAXcr
-	B5s4+AENL/OrSihHZabbrVb4YUnBkydJiUhpct/RMgMlvq7fT382fFbmxE4absYN23qrXb
-	kH98hWC2mrEXE/YFSxC+JeiuZOTlXEw=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-170-NRvY7qoBOwCs1LStuUHAog-1; Fri,
- 12 Dec 2025 04:45:24 -0500
-X-MC-Unique: NRvY7qoBOwCs1LStuUHAog-1
-X-Mimecast-MFC-AGG-ID: NRvY7qoBOwCs1LStuUHAog_1765532723
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C8A26195609E;
-	Fri, 12 Dec 2025 09:45:21 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 785923000218;
-	Fri, 12 Dec 2025 09:45:16 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20251211021257.1208712-5-bboscaccy@linux.microsoft.com>
-References: <20251211021257.1208712-5-bboscaccy@linux.microsoft.com> <20251211021257.1208712-1-bboscaccy@linux.microsoft.com>
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: dhowells@redhat.com, Jonathan Corbet <corbet@lwn.net>,
-    Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-    "Serge E. Hallyn" <serge@hallyn.com>,
-    =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-    =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-    "Dr. David Alan
- Gilbert" <linux@treblig.org>,
-    Andrew Morton <akpm@linux-foundation.org>,
-    James.Bottomley@HansenPartnership.com,
-    linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-    linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [RFC 04/11] crypto: pkcs7: add flag for validated trust on a signed info block
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q4PvE8q1"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KSM4F9EPA4VrHSATWZaVBC81vHU19MDt0Mi2nP4hTcc=; b=q4PvE8q1MvSUiSan/OQUGVyWjB
+	ey3Vrr3EGE7ZCZmMa2Q5RwD0Szf9yfpU9MDTOfKLxI7g78pi/86AKrvVEuYcUelT9SACClEtReQ4X
+	YNEkxxEaf7Hj9lNNnecfwhhDw1JKhrgqon3hzMPEHvfRHMJXy1vuCRSOG+gKzHjH2areb2zIxNWHh
+	qOvFVdyLVG1PxCmb11XYlPZWPjNmgL+p7J2n6WI3MKlwAD2OTti/zPQ4/lFxl9n6UUlXKAIOqZVnk
+	2PnlnDVtTKp1PmPbGh5hRrZJfLK1yNLydbSCrVXlmnCktKj94YkiTNcHA+X+aMnJQX32qELAPOp7s
+	fhefkUvA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vTz4d-0000000GRLd-1uSY;
+	Fri, 12 Dec 2025 09:04:27 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C2F3930041D; Fri, 12 Dec 2025 10:59:43 +0100 (CET)
+Date: Fri, 12 Dec 2025 10:59:43 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Marco Elver <elver@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	Chris Li <sparse@chrisli.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
+	Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	linux-sparse@vger.kernel.org, linux-wireless@vger.kernel.org,
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Subject: Re: [PATCH v4 07/35] lockdep: Annotate lockdep assertions for
+ context analysis
+Message-ID: <20251212095943.GM3911114@noisy.programming.kicks-ass.net>
+References: <20251120145835.3833031-2-elver@google.com>
+ <20251120151033.3840508-7-elver@google.com>
+ <20251120151033.3840508-8-elver@google.com>
+ <20251211114302.GC3911114@noisy.programming.kicks-ass.net>
+ <CANpmjNObaGarY1_niCkgEXMNm2bLAVwKwQsLVYekE=Ce6y3ehQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <811908.1765532715.1@warthog.procyon.org.uk>
-Date: Fri, 12 Dec 2025 09:45:15 +0000
-Message-ID: <811909.1765532715@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNObaGarY1_niCkgEXMNm2bLAVwKwQsLVYekE=Ce6y3ehQ@mail.gmail.com>
 
-Note that there are two other potentially conflicting sets of changes to the
-PKCS#7 code that will need to be coordinated: ML-DSA support and RSASSA-PSS
-support.  The former wants to do the hashing itself, the latter requires
-signature parameters.
+On Thu, Dec 11, 2025 at 02:24:57PM +0100, Marco Elver wrote:
 
-David
+> > It is *NOT* (as the clang naming suggests) an assertion of holding the
+> > lock (which is requires_ctx), but rather an annotation that forces the
+> > ctx to be considered held.
+> 
+> Noted. I'll add some appropriate wording above the
+> __assumes_ctx_guard() attribute, so this is not lost in the commit
+> logs.
+
+On IRC you stated:
+
+<melver> peterz: 'assume' just forces the compiler to think something is
+  held, whether or not it is then becomes the programmer's problem. we
+  need it in 2 places at least: for the runtime assertions (to help
+  patterns beyond the compiler's static reasoning abilities), and for
+  initialization (so we can access guarded variables right after
+  initialization; nobody should hold the lock yet)
+
+I'm really not much a fan of that init hack either ;-)
+
+Once we get the scope crap working sanely, I would much rather we move
+to something like:
+
+	scoped_guard (spinlock_init, &foo->lock) {
+		// init foo fields
+	}
+
+or perhaps:
+
+	guard(mutex_init)(&bar->lock);
+	// init until end of current scope
+
+Where this latter form is very similar to the current semantics where
+mutex_init() will implicitly 'leak' the holding of the lock. But the
+former gives more control where we need it.
+
+
 
