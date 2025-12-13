@@ -1,229 +1,89 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB41B22ACEF;
-	Sat, 13 Dec 2025 05:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747D719DF62;
+	Sat, 13 Dec 2025 05:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765603627; cv=none; b=PwgYmwyLSu54G+g/B8XBiz7q0p3TZgQFgG/UDnDGcYGDAbmIkwv9psRtfFzJghBbsDc/mZHnOqCNgeGTp68qiHIanL75Z3w1SSGFTTCjkl98xwcSv5oVtXDWlBjW1Y8IBIBgvVBuF9QPb8X73aD4UsRPlOzefBShpBHGb6HUZw0=
+	t=1765605030; cv=none; b=QfVPRJdvvuiwQnWa02LimU96YqNROCZLqopSMy/OxHFRX8/zu9NLM17vAAbeF8+a/cu2QcaEaMI/YXmSHx+G26TLHPc15qGwbu02olvFKgHAdMF7eHWeNEdTn+lYxi+h+/fp9282rg6UYUd0cakq6g65ciaAsXNWaOEt7mYdx54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765603627; c=relaxed/simple;
-	bh=g3hDqujwfMm5c7xBIQRMCL5HocOk3QR/RfT0la6lVZo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SkovJ56cQMAes2TAAVosXddsOEG/fnHW1AWImHUx8abyEbhXvqUEdvbv3M4gSDoiW7VxDwx0lMF9xejIXs+pkMCb7QjOtY7fmr0gIFeHOfZ1Nkndf3ALiI4xemGXOBhPCpvhxBoDECQ2lrvgTSmK5XR9y/Q0iRarVisqQnvA20U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Fo4mbAu6; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1765605030; c=relaxed/simple;
+	bh=oV7wxY4xLQRoU5xn6BWx208fAfWgZJ25GIqdCS3n/Jg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aYmrJJzv+LRei5S5u3r8p5y8AgJop3WE4R3jDXNHTyU54PRtjNSEDNKJomYK56EaCpbx8qhiNA3Y9Fswqmb94B33AlPVhkgefQHOuGbYTmSVuxEtquy/CAYOnnca05ks59s5nG750560Lsi/6ZYAXw+gZsWgzkDu44PdA+YNtYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=KXYVlrSj; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Fo4mbAu6"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5BD2xxSC002057;
-	Sat, 13 Dec 2025 05:26:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=Bkv9uUW89YkDzEWaH
-	v1ObgoIXGJD2YqlGrw2O8ISsIM=; b=Fo4mbAu6jbdpK1UzhDHBocO6XGEuc373b
-	Nt3YqIFcT5gaxIZwwOcMtcPfoAp6UuQLmAp8lVe/10RY5BW7Er86xokZ+iSz29WY
-	1R9GqfgCntnJR2yGx1UhZflmZZrB4CFa9x/nAXlidkuxczMFwtK1greddR7FNxMv
-	J54vIPJH9/0AK9l5UcnIVLfHQJMXaqUTukOgJoHhvNgEljwh/56sFF2n1EN3hDyH
-	v1BrKMYNIzcq34T+9LrX3sv7FW0kWQE9ZPmBT3ZLwy1NTHMcqsIhUBMap+aS1jId
-	TkHHTH3o2baOWjwr+oqFMlcHk8yATihU8dDXTbhV/Xpf7561vcZYA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b0yturapp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 13 Dec 2025 05:26:49 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5BD5Qm3T030096;
-	Sat, 13 Dec 2025 05:26:48 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b0yturapj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 13 Dec 2025 05:26:48 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5BD0lilI028147;
-	Sat, 13 Dec 2025 05:26:47 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4avy6yfrxp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 13 Dec 2025 05:26:47 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5BD5Qhtr30802198
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 13 Dec 2025 05:26:43 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 92E4520043;
-	Sat, 13 Dec 2025 05:26:43 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CAEA720040;
-	Sat, 13 Dec 2025 05:26:40 +0000 (GMT)
-Received: from li-fc74f8cc-3279-11b2-a85c-ef5828687581.ibm.com.com (unknown [9.124.210.103])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sat, 13 Dec 2025 05:26:40 +0000 (GMT)
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-To: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, James.Bottomley@HansenPartnership.com,
-        jarkko@kernel.org, zohar@linux.ibm.com, nayna@linux.ibm.com,
-        rnsastry@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, ssrish@linux.ibm.com
-Subject: [PATCH 6/6] docs: trusted-encryped: add PKWM as a new trust source
-Date: Sat, 13 Dec 2025 10:56:18 +0530
-Message-ID: <20251213052618.190691-7-ssrish@linux.ibm.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251213052618.190691-1-ssrish@linux.ibm.com>
-References: <20251213052618.190691-1-ssrish@linux.ibm.com>
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="KXYVlrSj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1765605026;
+	bh=oV7wxY4xLQRoU5xn6BWx208fAfWgZJ25GIqdCS3n/Jg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=KXYVlrSjjRGHOWfx6aom75OA27CPBbnMFxBYDBT8Z4Wn/q9pzH9LwpJILNL6whd1I
+	 6sxkfdY7h9LvTnIpjg2WAyyloC/PwildPLDr3CXl0Op4Y4CYWbz4L/9LP8jbwQeDuk
+	 j1zcCzuucKhCKasPfFbxA2MXjdhTJz8SuzIAHOgE=
+Received: from [10.200.4.101] (fs98a57d9c.tkyc007.ap.nuro.jp [152.165.125.156])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 640FE1C0139;
+	Sat, 13 Dec 2025 00:50:23 -0500 (EST)
+Message-ID: <ffcb4a42c29f98fada076958f069c094164cad79.camel@HansenPartnership.com>
+Subject: Re: [RFC 04/11] crypto: pkcs7: add flag for validated trust on a
+ signed info block
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: David Howells <dhowells@redhat.com>, Blaise Boscaccy
+	 <bboscaccy@linux.microsoft.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+ =?ISO-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,  "Dr. David Alan
+ Gilbert" <linux@treblig.org>, Andrew Morton <akpm@linux-foundation.org>, 
+ linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Date: Sat, 13 Dec 2025 14:50:13 +0900
+In-Reply-To: <811909.1765532715@warthog.procyon.org.uk>
+References: <20251211021257.1208712-5-bboscaccy@linux.microsoft.com>
+	 <20251211021257.1208712-1-bboscaccy@linux.microsoft.com>
+	 <811909.1765532715@warthog.procyon.org.uk>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjEzMDAyMyBTYWx0ZWRfXz3gVTOp2Xgp3
- MqEngtouiyzqWvDnyJOzGTcw9dRvb1dXushEVycN+7qgaVjVj3S39g2wUBXOZpOUjpCIP6WkxEL
- A+Lpl7CbE4GF3s2/2eFu5ZeDYuOD5sOArVygmeop/qCOw0WQ5Mr68ZQ8FKGMe/3ELwC0Z3u56+G
- 05yV7293z9qmpSdD+iRL8PgAsWOiHNesBTKEpqMwMc058cA9YXWB4sKbmQDeQBpEnlNZ57EGBD7
- yeIzTtsL5LzgOUlH+AtkIITqWmp7JAOZxbt5kmUKmb1igE1LE1QluYMAZ/+ed/Wc0vkT66xuVgH
- ABhWjuInebqcrM+scmM0GeXLRUIdwlZjxI63tWZuOePkYd7dP3oL7U0dRybZLj/n4cFv/c4JuqW
- V7PlqKxAto9Wrj3vNWnh5Q/C2NxW9w==
-X-Proofpoint-ORIG-GUID: nnZXN-5cfdxRy-FnuXypmImRBczetJ9r
-X-Authority-Analysis: v=2.4 cv=QtRTHFyd c=1 sm=1 tr=0 ts=693cf919 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=wP3pNCr1ah4A:10 a=VkNPw1HP01LnGYTKEx00:22 a=VnNF1IyMAAAA:8
- a=T8Lk_pw-g3mOOJD1yd4A:9
-X-Proofpoint-GUID: mPT9R_p7MeW2KA2xWsWCsu3rHtab1NNR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-12_07,2025-12-11_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
- priorityscore=1501 bulkscore=0 suspectscore=0 impostorscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2512130023
 
-From: Nayna Jain <nayna@linux.ibm.com>
+On Fri, 2025-12-12 at 09:45 +0000, David Howells wrote:
+> Note that there are two other potentially conflicting sets of changes
+> to the PKCS#7 code that will need to be coordinated: ML-DSA support
+> and RSASSA-PSS support.=C2=A0 The former wants to do the hashing itself,
+> the latter requires signature parameters.
 
-Update Documentation/security/keys/trusted-encrypted.rst and Documentation/
-admin-guide/kernel-parameters.txt with PowerVM Key Wrapping Module (PKWM)
-as a new trust source
+I don't think there'll be a conflict.  The only changes this makes is
+to add an API that exposes the attributes.  It shouldn't have any
+effect on the way signatures are currently verified.=20
 
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
----
- .../admin-guide/kernel-parameters.txt         |  1 +
- .../security/keys/trusted-encrypted.rst       | 50 +++++++++++++++++++
- 2 files changed, 51 insertions(+)
+From the use case patches it looks like we could simply get the struct
+pkcs7 verified by calling verify_pkcs7_message_sig() as long as the
+symbol is exported; Initially I didn't think they'd have access to the
+content to reverify, so I added the extra patches to break out the
+validate_pkcs7_trust() calls, but I don't think they're necessary now.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a8d0afde7f85..ccb9c2f502fb 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -7755,6 +7755,7 @@ Kernel parameters
- 			- "tee"
- 			- "caam"
- 			- "dcp"
-+			- "pkwm"
- 			If not specified then it defaults to iterating through
- 			the trust source list starting with TPM and assigns the
- 			first trust source as a backend which is initialized
-diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-index eae6a36b1c9a..ddff7c7c2582 100644
---- a/Documentation/security/keys/trusted-encrypted.rst
-+++ b/Documentation/security/keys/trusted-encrypted.rst
-@@ -81,6 +81,14 @@ safe.
-          and the UNIQUE key. Default is to use the UNIQUE key, but selecting
-          the OTP key can be done via a module parameter (dcp_use_otp_key).
- 
-+     (5) PKWM (PowerVM Key Wrapping Module: IBM PowerVM + Platform KeyStore)
-+
-+         Rooted to a unique, per-LPAR key, which is derived from a system-wide,
-+         randomly generated LPAR root key. Both the per-LPAR keys and the LPAR
-+         root key are stored in hypervisor-owned secure memory at runtime,
-+         and the LPAR root key is additionally persisted in secure locations
-+         such as the processor SEEPROMs and encrypted NVRAM.
-+
-   *  Execution isolation
- 
-      (1) TPM
-@@ -102,6 +110,14 @@ safe.
-          environment. Only basic blob key encryption is executed there.
-          The actual key sealing/unsealing is done on main processor/kernel space.
- 
-+     (5) PKWM (PowerVM Key Wrapping Module: IBM PowerVM + Platform KeyStore)
-+
-+         Fixed set of cryptographic operations done on on-chip hardware
-+         cryptographic acceleration unit NX. Keys for wrapping and unwrapping
-+         are managed by PowerVM Platform KeyStore, which stores keys in an
-+         isolated in-memory copy in secure hypervisor memory, as well as in a
-+         persistent copy in hypervisor-encrypted NVRAM.
-+
-   * Optional binding to platform integrity state
- 
-      (1) TPM
-@@ -129,6 +145,11 @@ safe.
-          Relies on Secure/Trusted boot process (called HAB by vendor) for
-          platform integrity.
- 
-+     (5) PKWM (PowerVM Key Wrapping Module: IBM PowerVM + Platform KeyStore)
-+
-+         Relies on secure and trusted boot process of IBM Power systems for
-+         platform integrity.
-+
-   *  Interfaces and APIs
- 
-      (1) TPM
-@@ -149,6 +170,11 @@ safe.
-          Vendor-specific API that is implemented as part of the DCP crypto driver in
-          ``drivers/crypto/mxs-dcp.c``.
- 
-+     (5) PKWM (PowerVM Key Wrapping Module: IBM PowerVM + Platform KeyStore)
-+
-+         Platform Keystore has well documented interfaces in PAPR document.
-+         Refer to ``Documentation/arch/powerpc/papr_hcalls.rst``
-+
-   *  Threat model
- 
-      The strength and appropriateness of a particular trust source for a given
-@@ -191,6 +217,10 @@ selected trust source:
-      a dedicated hardware RNG that is independent from DCP which can be enabled
-      to back the kernel RNG.
- 
-+   * PKWM (PowerVM Key Wrapping Module: IBM PowerVM + Platform KeyStore)
-+
-+     The normal kernel random number generator is used to generate keys.
-+
- Users may override this by specifying ``trusted.rng=kernel`` on the kernel
- command-line to override the used RNG with the kernel's random number pool.
- 
-@@ -321,6 +351,26 @@ Usage::
- specific to this DCP key-blob implementation.  The key length for new keys is
- always in bytes. Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
- 
-+Trusted Keys usage: PKWM
-+------------------------
-+
-+Usage::
-+
-+    keyctl add trusted name "new keylen [options]" ring
-+    keyctl add trusted name "load hex_blob" ring
-+    keyctl print keyid
-+
-+    options:
-+       wrap_flags=   ascii hex value of security policy requirement
-+                       0x00: no secure boot requirement (default)
-+                       0x01: require secure boot to be in either audit or
-+                             enforced mode
-+                       0x02: require secure boot to be in enforced mode
-+
-+"keyctl print" returns an ASCII hex copy of the sealed key, which is in format
-+specific to PKWM key-blob implementation.  The key length for new keys is
-+always in bytes. Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
-+
- Encrypted Keys usage
- --------------------
- 
--- 
-2.47.3
+Regards,
+
+James
 
