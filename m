@@ -1,127 +1,145 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6AA24113D
-	for <linux-security-module@vger.kernel.org>; Sun, 14 Dec 2025 17:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103F254774
+	for <linux-security-module@vger.kernel.org>; Sun, 14 Dec 2025 19:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765731968; cv=none; b=Wb3ZauvDeJv2Gl52j4FSG8GyDAszm9RvFaJ6wgBqfCdVDfVI39eD0i/P3b+BbrXjjFLQE5n/9NyLYk5grivGjqgfe+PDO80Fmfegn852d9Eoims5QcZ0acDXspwKDv+bdz7eIRQr6+R5wvWtTEB9xmLNzHt7lH15i+1mQS6r9hQ=
+	t=1765741869; cv=none; b=GUQ+Xb5VXFwbsIlUF5Er7ZJn+PJWFvb31BTCKQnkVk2f6qsHicQD9wW0yO2oHb+bwaSiE1qJcrFbJTZLE8Y7lO9JZUFhhv5dU58M7RAKr1L7zaYAAU0Kud/Yf0aUaE+3EvPPyIoTOTY+4aDAGNfQaAaWKZgoLDnXPD+UltPPKfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765731968; c=relaxed/simple;
-	bh=a8jlAnlBcpoh23Ct+hrdRQ6LMFGXAQPWGJOorw8+ebQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kmm0tOZU5bXnEEdfgzbiXu5p5v41ETdM8/rFYqGjmfRTyrGgob3QcnUQazNjkji4fFtETjpoks9wRTJpAPU1ZZYfTu39seK6I36EylQXPsFQch0QgUcrJxP3dkfCnDMZYO4GAgGNBLYlrR9jC8OPbO0QrN/xRd50UhghbvQPBU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f3eyDMPK; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1765741869; c=relaxed/simple;
+	bh=owQoEX1EZbTrWEdvUCqyB5MmSXK5MjShMHQhglkngTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qDMPp6m1VKV7rGk6RMjK7LEFESx7Y7AtXo9rLaHIKpySnX8aKrTcaciC6bwnCqkCijY0dllNP8rIDUqEtYIpCL1VHQEHDtb6DZOI0sJoxy6DYPL7zO3iWF6i7q0+SSmtNUjlb/984F4MEatr0FiTDeNGWFsXxifXh6IPxJwn5rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=RkWJekln; arc=none smtp.client-ip=185.125.25.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f3eyDMPK"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-78e2fe1f568so23349687b3.2
-        for <linux-security-module@vger.kernel.org>; Sun, 14 Dec 2025 09:06:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765731963; x=1766336763; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=96JmxRz7g3wRzIawC7epGmPER41ZJv6TULuRiFCbA3A=;
-        b=f3eyDMPKQLy0OAAdQHFd/SKNj2r6pYPxwJvYQY+Ywfs1GZvUEI26ibwRPvVozi1jl3
-         4LRFP+Kr2R+Wwgop4J4lY6RJjjtELIgwJPU+2SWDikB4YdZe2Vk75r7E/dRF4PvsKMWJ
-         ATM8QB8RxBvvtDlAKTw+9nms6cpaVz2gF2RFhFNYviPAeTslCCgHNOLE/rZdbq9goSXl
-         2dVm9pqh9BL0oi32RqqCvLakAcX5x7/gVg1AKjtTnap4VvnNxpvYfYcNYC5L4TyWSdpl
-         T2DV7aXs4xbDEtQ6qFzyfoMmMOpGESYWDd75Tyirh61HknR1r8FV+/LG86XKkxHl8BAy
-         SY4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765731963; x=1766336763;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=96JmxRz7g3wRzIawC7epGmPER41ZJv6TULuRiFCbA3A=;
-        b=MXGJt6v97X0XGjM6ykF+2fTdS2xVccIadX8Pz3X9cRPvITp0nfDD/wV92LSt9mlP05
-         Qr9dA8qNv9sdPIXlDeJeEdF8sSa3q+n1tU6u8+IBy56JK5RliuMfjO/GrMdj03pmgL/q
-         1quhjqe8gZO5n0WSf59DdIbqidZdW4Witc06vD3B6F67+jk8WEoVqH9DJhGYHk/2m2NW
-         tEhtJoSqmxkCiHzLJ/IGuVi1Q4WQ8OFjzU4dW/9drKDHshy1WkQyqu6S0R2aTRxy1bCY
-         qiRHqhTVl/TW1QefepNzR7gqpuFtbKzUCiuO00mbm+ACLJswqqw3BvD9BNQZXSiDdJWB
-         PE4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUI27oHF8ThbvhGZuHxqMbM3uGUG1PkdeV+gXPejR2atE13I/wOmUkD1ugJ4Vzb3dvjmaS5J6b2bVXcZ/v9/SXbvKEhH/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6QJ17g5WIvsy37x1utcFweQ5+BdC6rY7S48W988GxgIlsBJTD
-	sQfd0mPo4QbbTpU5v48+/IkNEl0we6DhS4JXhBw8LMDuanADGvVjzLKT
-X-Gm-Gg: AY/fxX4/W/ZxhCV52XUod86Pae0VW+Hred2/y75qZbnpEexsX7dVly8TmprtS4Qj7um
-	paTgdr95EXVp23ZWjWEXkNu3b0WIRpZAWGwC9zEdTGI+UWs3w+oO5sBQSuFnbZfKnf1lhUUgJuZ
-	RiEmtOpY/7+PN9yQ8mZoDPQyNodc1h1faNjaZz8QMXY9b3f1zlrzee7cjgJzdLfCwnbyLB5Z/CQ
-	TldB+UPUpwHI0bBNeWlJm19FohpH2Utz9UuPmxBouXdjcm5lJtEL3MONJxPA13RxSPf0RN4C2gv
-	OuLKE9luGHxIuVKmJrrWShXRS033wKlIhu8PHU7U52mzitnZYm8JAvEfd6tab/cfnyhLV2wJvpU
-	uRUOa1wcTDB87BsWsyXuSzE46zQyK+9xqzYOV7Msr27ZcugdIBp5TInM9kNJM7LtlNCmzFOXhzQ
-	3jLabp86HqECVKJhtIsMrkTNRJwJ/VwAMfEdtaeRaRYfBIL2IhJ57Uem+xOoWE
-X-Google-Smtp-Source: AGHT+IFgUW8SnAQzJAZ/oyXQ9rJfwnPFIkhjTJofk49kzBMN2WIyCwYgYQ7tXF/Aw58my0Mk+QfwRg==
-X-Received: by 2002:a05:690c:b0e:b0:78d:676a:c006 with SMTP id 00721157ae682-78e66e53952mr61687897b3.42.1765731963173;
-        Sun, 14 Dec 2025 09:06:03 -0800 (PST)
-Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78e749e7683sm19401117b3.32.2025.12.14.09.06.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Dec 2025 09:06:02 -0800 (PST)
-From: Justin Suess <utilityemal77@gmail.com>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Tingmao Wang <m@maowtm.org>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Justin Suess <utilityemal77@gmail.com>,
-	Jan Kara <jack@suse.cz>,
-	Abhinav Saxena <xandfury@gmail.com>,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v5 6/6] landlock: Add documentation for LANDLOCK_ADD_RULE_NO_INHERIT
-Date: Sun, 14 Dec 2025 12:05:46 -0500
-Message-ID: <20251214170548.408142-7-utilityemal77@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251214170548.408142-1-utilityemal77@gmail.com>
-References: <20251214170548.408142-1-utilityemal77@gmail.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="RkWJekln"
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dTv241XDgzDTs;
+	Sun, 14 Dec 2025 20:50:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1765741852;
+	bh=MbdiP+SEfNKCivL2//nS56J84ECCZ8Gy69g/EtE32TQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RkWJeklnBpDkATwQbEA+Ki2t10/npeozDlL4NEsqBbUqO1/nl9OBiVTNwwvqgnp2V
+	 O3gFGgtMgkVllCc30HJzE5STzfdosEyn1MfGQqqSAT4tBhW3YMOua8SxWSnEwRPARX
+	 CovALq8jHGCWuHEzcW3/8eRIt/L0p3O0xoYPFacY=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4dTv232HdQzL7j;
+	Sun, 14 Dec 2025 20:50:51 +0100 (CET)
+Date: Sun, 14 Dec 2025 20:50:45 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Demi Marie Obenour <demiobenour@gmail.com>
+Cc: Alyssa Ross <hi@alyssa.is>, 
+	Spectrum OS Development <devel@spectrum-os.org>, linux-security-module@vger.kernel.org, landlock@lists.linux.dev, 
+	"Ryan B. Sullivan" <ryanbakersullivan@gmail.com>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH] host/roots: Sandbox xdg-desktop-portal-spectrum-host
+Message-ID: <20251214.aiW5oc2izaxa@digikod.net>
+References: <20251212-sandbox-dbus-portal-v1-1-522705202482@gmail.com>
+ <87o6o25h6y.fsf@alyssa.is>
+ <cfab1f24-65ad-40ed-b4a6-17f0aad8dc60@gmail.com>
+ <87ikea5a8x.fsf@alyssa.is>
+ <00256266-26db-40cf-8f5b-f7c7064084c2@gmail.com>
+ <87bjk16dvv.fsf@alyssa.is>
+ <515ff0f4-2ab3-46de-8d1e-5c66a93c6ede@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <515ff0f4-2ab3-46de-8d1e-5c66a93c6ede@gmail.com>
+X-Infomaniak-Routing: alpha
 
-Adds documentation of the flag to the userspace api, describing
-the functionality of the flag and parent directory protections.
+On Sat, Dec 13, 2025 at 11:49:11PM -0500, Demi Marie Obenour wrote:
+> On 12/13/25 20:39, Alyssa Ross wrote:
+> > Demi Marie Obenour <demiobenour@gmail.com> writes:
+> > 
+> >> On 12/13/25 16:42, Alyssa Ross wrote:
+> >>> Demi Marie Obenour <demiobenour@gmail.com> writes:
+> >>>
+> >>>> On 12/13/25 14:12, Alyssa Ross wrote:
+> >>>>> Demi Marie Obenour <demiobenour@gmail.com> writes:
+> >>>>>
+> >>>>>> It is quite possible that these Landlock rules are unnecessarily
+> >>>>>> permissive, but all of the paths to which read and execute access is
+> >>>>>> granted are part of the root filesystem and therefore assumed to be
+> >>>>>> public knowledge.  Removing access from any of them would only increase
+> >>>>>> the risk of accidental breakage in the future, and would not provide any
+> >>>>>> security improvements.  seccomp *could* provide some improvements, but
+> >>>>>> the effort needed is too high for now.
+> >>>>>>
+> >>>>>> Signed-off-by: Demi Marie Obenour <demiobenour@gmail.com>
+> >>>>>> ---
+> >>>>>>  .../template/data/service/xdg-desktop-portal-spectrum-host/run    | 8 ++++++++
+> >>>>>>  1 file changed, 8 insertions(+)
+> >>>>>
+> >>>>> Are you sure this is working as intended?  There's no rule allowing
+> >>>>> access to Cloud Hypervisor's VSOCK socket, and yet it still seems to be
+> >>>>> able to access that.  Don't you need to set a rule that *restricts*
+> >>>>> filesystem access and then add holes?  Did you ever see this deny
+> >>>>> anything?
+> >>>>
+> >>>> 'man 1 setpriv' states that '--landlock-access fs' blocks all
+> >>>> filesystem access unless a subsequent --landlock-rule permits it.
+> >>>> I tried running with no --landlock-rule flags and the execve of
+> >>>> xdg-desktop-portal-spectrum-host failed as expected.
+> >>>>
+> >>>> The socket is passed over stdin, and I'm pretty sure Landlock
+> >>>> doesn't restrict using an already-open file descriptor.
+> >>>> xdg-desktop-portal-spectrum-host does need to find the path to the
+> >>>> socket, but I don't think it ever accesses that path.
+> >>>
+> >>> I've been looking into this a bit myself, and from what I can tell
+> >>> Landlock just doesn't restrict connecting to sockets at all, even if
+> >>> they're inside directories that would otherwise be inaccessible.  It's
+> >>> able to connect to both Cloud Hypervisor's VSOCK socket and the D-Bus
+> >>> socket even with a maximally restrictive landlock rule.  So you were
+> >>> right after all, sorry!
+> >>
+> >> That's not good at all!  It's a trivial sandbox escape in so many cases.
+> >> For instance, with access to D-Bus I can just call `systemd-run`.
+> >>
+> >> I'm CCing the Landlock and LSM mailing lists because if you are
+> >> correct, then this is a bad security hole.
+> > 
+> > I don't find it that surprising given the way landlock works.  "connect"
+> > (to a non-abstract AF_UNIX socket) is not an operation there's a
+> > landlock action for, and it's not like the other actions care about
+> > access to parent directories and the like — I was able to execute a
+> > program via a symlink after only giving access to the symlink's target,
+> > without any access to the directory containing the symlink or the
+> > symlink itself, for example.  Landlock, as I understand it, is intended
+> > to block a specified set of operations (on particular file hierarchies),
+> > rather than to completely prevent access to those hierarchies like
+> > permissions or mount namespaces could, so the lack of a way to block
+> > connecting to a socket is more of a missing feature than a security
+> > hole.
+> 
+> 'man 7 unix' states:
+> 
+> On  Linux,  connecting to a stream socket object requires write
+> permission on that socket; sending a datagram to a datagram socket
+> likewise requires write permission on that socket.
+> 
+> Landlock is definitely being inconsistent with DAC here.  Also, this
+> allows real-world sandbox breakouts.  On systemd systems, the simplest
+> way to escape is to use systemd-run to execute arbitrary commands.
 
-Signed-off-by: Justin Suess <utilityemal77@gmail.com>
----
+The Linux kernel is complex and the link between the VFS and named UNIX
+sockets is "special" (see the linked GitHub issue).  Landlock doesn't
+handle named UNIX sockets yet for the same reason it doesn't handle some
+other kind of kernel resources or access rights: someone needs to
+implement it (including tests, doc...).  There is definitely interest to
+add this feature, it has been discussed for some time, but it's not
+trivial.  It is a work in progress though:
+https://github.com/landlock-lsm/linux/issues/36
 
-v1..v5 changes:
+Contributions are welcome!
 
-  * Initial addition
-
- Documentation/userspace-api/landlock.rst | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 1d0c2c15c22e..3671cd90fbe2 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -604,6 +604,23 @@ Landlock audit events with the ``LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF``,
- sys_landlock_restrict_self().  See Documentation/admin-guide/LSM/landlock.rst
- for more details on audit.
- 
-+Filesystem inheritance suppression (ABI < 8)
-+-----------------
-+
-+Starting with the Landlock ABI version 8, it is possible to prevent a directory
-+or file from inheriting it's parent's access grants by using the
-+``LANDLOCK_ADD_RULE_NO_INHERIT`` flag passed to sys_landlock_add_rule().  This
-+can be useful for policies where a parent directory needs broader access than its
-+children.
-+
-+To mitigate sandbox-restart attacks, the inode itself, and ancestors of inodes
-+tagged with ``LANDLOCK_ADD_RULE_NO_INHERIT`` cannot be removed, renamed,
-+reparented, or linked into/from other directories.
-+
-+These parent directory protections propagate up to the root. Further inheritance
-+for grants originating beneath a ``LANDLOCK_ADD_RULE_NO_INHERIT`` tagged inode
-+are not affected unless also tagged with this flag.
-+
- .. _kernel_support:
- 
- Kernel support
--- 
-2.51.0
-
+Regards,
+ Mickaël
