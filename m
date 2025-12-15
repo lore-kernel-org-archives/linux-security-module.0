@@ -1,134 +1,145 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF51C2DFA5B;
-	Mon, 15 Dec 2025 13:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ADA30FF3A;
+	Mon, 15 Dec 2025 14:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765807154; cv=none; b=FmSeeKOoG031+F3RbQ55OVWHTBfdYY1tNbi/oQSoCwn71+rptDdZfqMBjFOrK5jsBk3/3q/xKBSvKqto77B/FLcAx2pg3dhO/lp+FGwByc+evEwR0XBHj9NX7EE64woz8ASB/b1B3kmG3lU2Ab4PNN4OewuF3QC9EXzULHTOjW8=
+	t=1765807358; cv=none; b=ROxyCBWLYZeTPXZ9+yOgrJfBbOxOhgLRut6nXXfkHC5aMW3wjXo/A1rQNaSmxziVyJnHGT0SqXVR2bS/wv+uu6HuKK4gA9+5y2txf82z1KH89TzzECaIeP/Xj27q7nOXBvezHUFdr7TU9I63YVtl3WCsdsLe2+9Zegv4Q0MmTBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765807154; c=relaxed/simple;
-	bh=YQ0YmiEKTBiByyCk2XIiAXJahBqdOSyVHDmgyhFstuo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XzPmMP3YiU3w/pPj9bVYZNR37Ocfcegxmehd7SN8cNL4BDQb4jYt7QkT869spT7vDT6GvDOeML/Yzc7UevPoWIcAYHvWEyQqsVCzyc/mzihy8SaXhMAZoOdTjupu7zfNtXXM30piaX1Js/QMCOjB6e5EEKIo4C+ue3oA1QLym1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0ZSvqo9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765807358; c=relaxed/simple;
+	bh=CNk3Gny6Eq3dZRKg7BGu1UbnDEcS8g5xr5JBzKALF8g=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=vGctnuB/HgTVUNMYKYrV6sIdkGDNgpUZuMdEgc/s9ErDu4Z+HPU4G4S1FyT+toI9/pMbjnVOY81A9CH9mNZtI1KY+7KaDm11OtUjd5FPFgPd7bEEWuUNcka3dGqfcABUkghsU5iMP1S60YFWjMCWdfYUw3Q5Sau4CcSsfevKkSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UJ85NnV8; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0ZSvqo9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84039C4CEF5;
-	Mon, 15 Dec 2025 13:59:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765807153;
-	bh=YQ0YmiEKTBiByyCk2XIiAXJahBqdOSyVHDmgyhFstuo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=K0ZSvqo9FNH+vPZrOVLOU5ZraIN5/Hx4lzXEVk8deQoFTzZrfVB3Sn8wUVb8UaBDT
-	 IPKJL1FeYjBc4++kymDagnMFo+aO6gmHV+UWQO7cqHTOD6VMMtizrJjRFLGRY7Ee7L
-	 w4mP9rPOGGMbKthLu+r5v9Ru7rhk3vDAc1XCmmrB5wHkqvV8acOQhuC1BVzlP5ME/H
-	 H7EzKs7+bvfSkQA41DZXMI2/LRypKRi0eSe24U8EkDVDNspUAYXac7itmfYbMOTmxv
-	 x+MHyD8AednEYtbIisGEt5V/tIfQDU8l0ImBMScwR5yt2mJk+grnKjhIaLlaCyGSER
-	 QNwLC455/HDNw==
-From: Mark Brown <broonie@kernel.org>
-To: rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Cc: linux-kernel@vger.kernel.org, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Leon Romanovsky <leon@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
- Boqun Feng <boqun.feng@gmail.com>, Elle Rhumsaa <elle@weathered-steel.dev>, 
- Carlos Llamas <cmllamas@google.com>, Yury Norov <yury.norov@gmail.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, linux-block@vger.kernel.org, 
- FUJITA Tomonori <fujita.tomonori@gmail.com>, 
- Miguel Ojeda <ojeda@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
- Benno Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
- Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
- linux-security-module@vger.kernel.org, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
- Robin Murphy <robin.murphy@arm.com>, Lyude Paul <lyude@redhat.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- linux-fsdevel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, 
- Jason Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, 
- Ard Biesheuvel <ardb@kernel.org>, 
- Brendan Higgins <brendan.higgins@linux.dev>, 
- David Gow <davidgow@google.com>, linux-kselftest@vger.kernel.org, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Andrew Ballance <andrewjballance@gmail.com>, maple-tree@lists.infradead.org, 
- linux-mm@kvack.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- Uladzislau Rezki <urezki@gmail.com>, Vitaly Wool <vitaly.wool@konsulko.se>, 
- Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
- devicetree@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- linux-pci@vger.kernel.org, Remo Senekowitsch <remo@buenzli.dev>, 
- "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org, 
- Will Deacon <will@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
- Gary Guo <gary@garyguo.net>, Liam Girdwood <lgirdwood@gmail.com>, 
- Alexandre Courbot <acourbot@nvidia.com>, Vlastimil Babka <vbabka@suse.cz>, 
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>, 
- Mitchell Levy <levymitchell0@gmail.com>, 
- Frederic Weisbecker <frederic@kernel.org>, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>, 
- John Stultz <jstultz@google.com>, linux-usb@vger.kernel.org, 
- Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
- Matthew Wilcox <willy@infradead.org>, Tamir Duberstein <tamird@gmail.com>, 
- Rae Moar <raemoar63@gmail.com>
-In-Reply-To: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
-References: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
-Subject: Re: (subset) [PATCH 00/46] Allow inlining C helpers into Rust when
- using LTO
-Message-Id: <176580714194.161338.1959594276727103368.b4-ty@kernel.org>
-Date: Mon, 15 Dec 2025 22:59:01 +0900
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UJ85NnV8"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5BF74uKe021469;
+	Mon, 15 Dec 2025 14:02:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=BZZ8gU
+	lX9jobhrDx9zOK3xqdapuyPIterguTVyWFnmc=; b=UJ85NnV8BxA6m/NzsC1T/C
+	SB+xvMuD9kbKXibV4JBG1DgRU1YqOEDD6OYT80n4KGZ0z+0/kMtgnz1Tk1IwJxRw
+	vN0PCZBVBvuHybSiWbDXr1wk7zrQl5TbuBInGaV8cTyhTvEAejPbP0ZWUytjh5uu
+	P1ukByJnscn6joymUkGMao1xVkvmEnf06c7snvKR3cPPk9xXp3aJlh50pAARCKuU
+	c3jBcwO5VIQQsr6jy02Bhb1UIEkSfob6a24c3nvw4WoQoQBFrBlehTrhuf0KUpc2
+	plNkQ0TFnNMeycavrvP38yYnVGZfBSTaE5M5sHL6X/qFjJbHDj5xnI2Sj255VBbw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b0wjpsw67-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Dec 2025 14:02:12 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5BFDvDMK007741;
+	Mon, 15 Dec 2025 14:02:12 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b0wjpsw5y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Dec 2025 14:02:12 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5BFB1Biu026761;
+	Mon, 15 Dec 2025 14:02:11 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4b1jfs6ygr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Dec 2025 14:02:11 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5BFE2A4r29295354
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 15 Dec 2025 14:02:10 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B788858055;
+	Mon, 15 Dec 2025 14:02:10 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D131A58043;
+	Mon, 15 Dec 2025 14:02:09 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.148.132])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 15 Dec 2025 14:02:09 +0000 (GMT)
+Message-ID: <8075a38abe5f7256ae8ce70359f78822f277ccfa.camel@linux.ibm.com>
+Subject: Re: [PATCH V2 1/1] IMA event log trimming
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: steven chen <chenste@linux.microsoft.com>, linux-integrity@vger.kernel.org
+Cc: roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, corbet@lwn.net, serge@hallyn.com,
+        paul@paul-moore.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, anirudhve@linux.microsoft.com,
+        gregorylumen@linux.microsoft.com, nramas@linux.microsoft.com,
+        sushring@linux.microsoft.com, linux-doc@vger.kernel.org
+In-Reply-To: <20251210235314.3341-2-chenste@linux.microsoft.com>
+References: <20251210235314.3341-1-chenste@linux.microsoft.com>
+	 <20251210235314.3341-2-chenste@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 15 Dec 2025 09:02:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-47773
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjEzMDAwMSBTYWx0ZWRfX0yV7Mf5blC3w
+ AaO1LQKAV2UYiiBmHcseJKAGO3F/+6KIyRmoZD2DQ2KJk+q7DUc7eEwKfsgDytucCUFYUvi57Ey
+ d0o29cMG7s9+yWxp59xyVOM4pVwhBR7/Zv6xU+7UQP8tmlIrRIWPjhtaLsz3rtfNHl09K+S/w9D
+ P1nz6lJsBQ8sYX7GPqHx4ayh9rjIEYIW4U6fDKkiL4MdPHKqwdf+sK7f70RZqd4y3cQVgp3Xz0Z
+ 4zgVFYNPZwIIr2U79PAU/1g2tLeldGA4UJROeqAXDG6iBs8b9+O2XcNlRKxTa8hBe8jPn34h/LS
+ l/huY3z1qFJd406XLv5EW7TFFYdrz/7lxWdN5hWCVXReFngE4WXY60Rs9XZtWrGaIekxVKx8j/e
+ JnxqTf5elVfwTsq+hR6q62poVDYfrA==
+X-Proofpoint-GUID: kz-flyVU7aY1Qe3_3Kbcd_XJMYHE1aej
+X-Proofpoint-ORIG-GUID: IvWNjI-eD8XLKzsdRPq7o10CmrEeb0Zp
+X-Authority-Analysis: v=2.4 cv=Kq5AGGWN c=1 sm=1 tr=0 ts=694014e4 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=yMhMjlubAAAA:8 a=qxrvh61xDQAC6cKOOUwA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-12-15_02,2025-12-15_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 malwarescore=0 impostorscore=0 clxscore=1011 spamscore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 phishscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2512130001
 
-On Tue, 02 Dec 2025 19:37:24 +0000, Alice Ryhl wrote:
-> This patch series adds __rust_helper to every single rust helper. The
-> patches do not depend on each other, so maintainers please go ahead and
-> pick up any patches relevant to your subsystem! Or provide your Acked-by
-> so that Miguel can pick them up.
-> 
-> These changes were generated by adding __rust_helper and running
-> ClangFormat. Unrelated formatting changes were removed manually.
-> 
-> [...]
+Hi Steven,
 
-Applied to
+The main difference between this patch and Roberto's version is the length =
+of
+time needed for locking the measurement list, which prevents new entries fr=
+om
+being appended to the measurement list.  In Roberto's version, the list hea=
+d is
+moved quickly and the lock released.  Measuring the total amount of time ne=
+eded
+to trim the measurement list ignores the benefit of his version. I plan on
+reviewing both this version and his (hopefully today).
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+There are a number of other things missing from this patch, which I'll enum=
+erate
+when I review it.
 
-Thanks!
+On Wed, 2025-12-10 at 15:53 -0800, steven chen wrote:
+> This patch is for trimming N entries of the IMA event logs. It will also
+> cleaning the hash table if ima_flush_htable is set.
 
-[35/46] rust: regulator: add __rust_helper to helpers
-        commit: 03d281f384768610bf90697bce9e35d3d596de77
+Please refer to "Describe your changes in imperative mood" in the "Describe=
+ your
+changes" section of Documentation/process/submitting-patches.rst.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+>=20
+> It provides a userspace interface ima_trim_log that can be used to input
+> number N to let kernel to trim N entries of IMA event logs. When read
+> this interface, it returns number of entries trimmed last time.
+>=20
+> Signed-off-by: steven chen <chenste@linux.microsoft.com>
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--=20
+thanks,
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Mimi
 
