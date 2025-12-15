@@ -1,110 +1,103 @@
-Received: from wind.enjellic.com (wind.enjellic.com [67.230.224.160])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CA432D443
-	for <linux-security-module@vger.kernel.org>; Mon, 15 Dec 2025 07:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.230.224.160
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4552E31354E;
+	Mon, 15 Dec 2025 07:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765783941; cv=none; b=VFAuUeU0Na7nAGbB2Z99MnckFLnNuJww4cvbHox7qd1xtTmBkgffSmoBlbgscCj/HBh1jUfAzGa6RgrevR8cq0iI+ExI0BvOPYExnjWXIgDUzRNYSUMOu+9nMcMgwy3NFRfSh/LCyh2HrN6QwTpXDJ33kzQonEyIhIzL1rq27e4=
+	t=1765784167; cv=none; b=JYcS/8J7OuM7/chrcQvwp3NMtEv/V2kt0rShrFXBm8OTYdE31Us4Bq38G8cRfbNAPg1xt2Pg0+vW+aq7JGjNghJtjgATCNlbkILE1jOK8RCaA6Xu7rWJ9mZFp5yMkuPZ0HLNQL0zbNK6n407EaRfKsRHhzCrthjRMXNuLnw3YjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765783941; c=relaxed/simple;
-	bh=2E9AG996dlA53KPGlr+xaUiBHTXkBzBWZ0Oc4bKsLAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:Mime-Version:Content-Type:
-	 Content-Disposition; b=KS/SEROXN8apQ5uJVbvpoAif4ImoxeL4REw83IiWSGg6T1WiOXwo+iAhdir9UR6jQAwfyb9Lztt6Kv8OYWfc44ssfX5NmPUU+/wsrqOQ4EPDDqsk1YIGoCMUozxpIj2jDXiIXIMW5N8PCFSl1J8kAGHEeXPtjWSct/cUyOHqeEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=67.230.224.160
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 5BF78iO0007252;
-	Mon, 15 Dec 2025 01:08:44 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 5BF78cU9007251;
-	Mon, 15 Dec 2025 01:08:38 -0600
-Date: Mon, 15 Dec 2025 01:08:38 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: linux-security-module@vger.kernel.org
-Cc: torvalds@linux-foundation.org, corbet@lwn.net
-Subject: A formal request for process clarifications.
-Message-ID: <20251215070838.GA7209@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
+	s=arc-20240116; t=1765784167; c=relaxed/simple;
+	bh=SNNUq7KU8x7V29ijpjlfv//eZVaSmLl/pwwin6AI2Pc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e9FYAVQAd7nmvIbGEaFduRFn8GzB8enKMree6V1mbnFzygQ2LOsPhRxSZGZDbUH7RujTOJqjHIZaojPYckYFADPnJFNqEANSefu30obzQMfyRZ4H1zCxhkPV3ZQpW0ZNtImj1ynT1y7B7l9xDU6TflNZLmsVfHtGcc/pD32jab8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TKoIYD90; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TKoIYD90"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF9B0C4CEF5;
+	Mon, 15 Dec 2025 07:36:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765784167;
+	bh=SNNUq7KU8x7V29ijpjlfv//eZVaSmLl/pwwin6AI2Pc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TKoIYD90uMhvL1iKT6lsyEsfKo1ciIMwa87/Kxr9OUecFwxG7gh9QHOVQiGdWmvRb
+	 VVD/JYfzHq1k7pZ5iDCgzZ+WMxUXYRlXqhsAOSxlOL547VDldypSJD3eBJLxbHVS0V
+	 /I8FhmP8jqpM+6rX2VTe/DG33t8qA/CqMHoNkAZL7c+n/uMpWVlioZ9gLGyZqm5g/5
+	 E8ob/bFFCirmOEx3fE2APOW59zAZ91UxMtUNQ6QK7ACtrlys8omR6RxIxeH/pjsCFa
+	 uYNDcVAe7zMj0LxOCU0CZ5Sj29V6Tbuv/gokKX1TY/76V0XxYKHS8fJaqw8a+3ehr1
+	 AX9q/Af5TPLVg==
+Date: Mon, 15 Dec 2025 16:36:00 +0900
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	op-tee@lists.trustedfirmware.org, linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 14/17] KEYS: trusted: Migrate to use tee specific
+ driver registration function
+Message-ID: <aT-6YJJRaLq5BcvQ@sumit-X1>
+References: <cover.1765472125.git.u.kleine-koenig@baylibre.com>
+ <0b3ce259fa26e59ef24a91ca070e2b08feeede82.1765472125.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 15 Dec 2025 01:08:44 -0600 (CST)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0b3ce259fa26e59ef24a91ca070e2b08feeede82.1765472125.git.u.kleine-koenig@baylibre.com>
 
-Good morning, I hope the week has started well for everyone.
+On Thu, Dec 11, 2025 at 06:15:08PM +0100, Uwe Kleine-König wrote:
+> The tee subsystem recently got a set of dedicated functions to register
+> (and unregister) a tee driver. Make use of them. These care for setting the
+> driver's bus (so the explicit assignment can be dropped) and the driver
+> owner (which is an improvement this driver benefits from).
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+> ---
+>  security/keys/trusted-keys/trusted_tee.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 
-When Paul Moore took over as the security/LSM sub-system maintainer,
-three years ago, he indicated a desire to be very prescriptive with
-respect to the practices that should be followed for the sub-system,
-particularly for the introduction of new LSM's.
+Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
 
-The following URL documents the requirements for the introduction of a
-new LSM:
+-Sumit
 
-https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsms
-
-We believe that LWN covered the discussion around this document as well.
-
-The following discussion on whether or not the Linux kernel provides
-proper support for modern Event Detection and Response Systems (EDR or
-EDRS) suggests the need to clarify these recommendations:
-
-https://lore.kernel.org/linux-security-module/CABZOZnS4im-wNK4jtGKvp3YT9hPobA503rgiptutOF8rZEwt_w@mail.gmail.com
-
-In that thread Timur Chernykh noted a possible desire to port the
-Apple security API to the kernel, which would presumably be a large
-body of virgin code.
-
-Three years ago our team had submitted for review our TSEM LSM that
-provides a framework for generic security modeling, particularly to
-support machine learning and direct functional modeling of security
-behavior.
-
-We haven't been able to receive any substantive review of TSEM over
-that period of time.
-
-Casey Schaufler has been vocal in his criticism of how we introduced
-what is a virgin LSM implementation.  Most particularly with the fact
-that we chose to include, as a single patch, a header file that
-contains the structure and enumeration definitions that are referenced
-by all of the compilation units that make up TSEM.
-
-He indicates that an LSM submission, should 'tell a story' by bringing
-in the structure definitions with the code that uses those structures.
-
-We can offer multiple examples of the challenges we see with doing
-this if that would be helpful but will not do so at this time.
-
-We had requested guidance from Paul on how a new submission should be
-properly structured, since he is the ultimate judge and jury on a
-submission, but he declined to provide guidance.
-
-Given the current security climate, particularly with what is widely
-cited as the potential impact of machine learning and AI on security
-architectures and practices, there will undoubtedly be new LSM's
-coming forward.  It would seem in the best interests of everyone
-involved, reviewers and submitters, that specific guidance should be
-codified in the 'new-lsms' document of how a virgin body of code
-should be introduced.
-
-Optimally this should include links to previous submissions that the
-security maintainers believe codify the desired method of story
-telling.
-
-Given the importance of security in today's environment we are
-prepared to pursue this through the TAB if necessary.
-
-We will look forward to comments from the community on this issue.
-
-Have a good week.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+> 
+> diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
+> index aa3d477de6db..3cea9a377955 100644
+> --- a/security/keys/trusted-keys/trusted_tee.c
+> +++ b/security/keys/trusted-keys/trusted_tee.c
+> @@ -264,7 +264,6 @@ static struct tee_client_driver trusted_key_driver = {
+>  	.id_table	= trusted_key_id_table,
+>  	.driver		= {
+>  		.name		= DRIVER_NAME,
+> -		.bus		= &tee_bus_type,
+>  		.probe		= trusted_key_probe,
+>  		.remove		= trusted_key_remove,
+>  	},
+> @@ -272,12 +271,12 @@ static struct tee_client_driver trusted_key_driver = {
+>  
+>  static int trusted_tee_init(void)
+>  {
+> -	return driver_register(&trusted_key_driver.driver);
+> +	return tee_client_driver_register(&trusted_key_driver);
+>  }
+>  
+>  static void trusted_tee_exit(void)
+>  {
+> -	driver_unregister(&trusted_key_driver.driver);
+> +	tee_client_driver_unregister(&trusted_key_driver);
+>  }
+>  
+>  struct trusted_key_ops trusted_key_tee_ops = {
+> -- 
+> 2.47.3
+> 
