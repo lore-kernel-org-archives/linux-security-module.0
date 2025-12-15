@@ -1,198 +1,144 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27350328B73
-	for <linux-security-module@vger.kernel.org>; Mon, 15 Dec 2025 08:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6093328FC;
+	Mon, 15 Dec 2025 08:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765786847; cv=none; b=Zy7GveevojYMv9qLnKSB1xx7KJ7uSkKnsrH44u2fCkL7yf/j4EhtBPeLV07kIU7cYG8SrDN5PToyj3DpnSY4GThrcyFhj77TEnNiNgLsHEpmQOihiEY2l/sSj6c+Hmh9fqVuM/p3VzFjtcce9A/feTR5CqM0veTdYTAq7cH4mZk=
+	t=1765788555; cv=none; b=u1m1CWOVBEOelRAIid4+CFlXW2iKJbf9+miZTaXPc7uUAnyBLmjK4Au/COpOjybWF4zqH0E1XKcUpCB7c5YnZlzAaLfwwyKL/py3UqwEZjFpvC3IbidjlpZHg8TCzcIkGmpeeP5jVZbKFYnc80j1FcoFaDkPJKD0n86I6kW0Bs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765786847; c=relaxed/simple;
-	bh=rcU4d97lWtMf3DEfiltXTFZdIqm9tsRAbfAUfedHLa4=;
+	s=arc-20240116; t=1765788555; c=relaxed/simple;
+	bh=NYVGG4tmiyG5B75OmUic/U7JhbC5UuDSz+EfTWu3c4M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jQ/92S825Gc74Im/QJ4VaIAjfTRto7gKvfdPt5yuE56MVaQpkhwwqD8W6+tSNk1v64LzJ0eq137WxAbRR5NtUq8hAZ579OKOmWoeBAqCbcc7pb/U6XrNsepABGCobupRt41WFflachWWzd/N+jdC+fUcEsdcmq8G913qXmBHyhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qg0kje9o; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lqt2I9zuSX0REOY++GSZ5446mwXPOmGPuVUdMJCD8jMh21ZIgZgH4vHf0ClLXfZr596S5UQEDgGmWRbVe5X1GoX0vp0Z1HMHxNShjthUBjb78ZptTjZHtgSHs6dfZeMGdjiQ6zvsAIBgkJVuSoQ+XcAqGSywz1SUBskFFplGuBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X/YmHZDC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qg0kje9o"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b7cf4a975d2so534076666b.2
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Dec 2025 00:20:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765786843; x=1766391643; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MgAwxLQKS49ovdUATm1n2L7redIdsOV7iEU7UKKm5tI=;
-        b=Qg0kje9ozbj+APyRjcMV1bdszBU2/WcfAsY/vniDpc2TMtVNwseix3hx8KdtqDJzPa
-         3agsH3ZEI4LfyxLDMu8sFmrCAqNPJ8ObDbwaTurI8Sh5whh3raL+XF1dG6BqVBoCZQNt
-         2Zi3gT7SIbKZcdJdFO/CdQeDJaxSRgqNAcQdrgXHrb7JDHjX4ZeUK8AOvW+JR78a0btu
-         ug6fMDFcjXk4WiCRaiT19qG5eiiKx4WP81yIqyCHJWPjnxyMNwLa4266ruHGVj/bvYdb
-         pHJPZaKod3+xW5mEATGV1BosK4LMoED8QUo5+u515tl3AJGLsvevbp5J13/Eo1Hpkatm
-         2tqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765786843; x=1766391643;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MgAwxLQKS49ovdUATm1n2L7redIdsOV7iEU7UKKm5tI=;
-        b=wCMIuOlfcWZSINGV+RsWVCVKEVKOUfp5cJl8ZGcDRsJkNKRNu3fd6NhrmRL5GoAPy0
-         zA41i54FCsQ02nn/1D1+Glk/SQ37pNXFcguDje4G+ZjqYfbbGbnF2DjOwNkvKyZAXenC
-         jgorfAMXYftOnVtIOF72sDfxo9GqNUDXGAAuJuIC6QXJS8nx96g2fzoc/SCrI4WShaG+
-         YPxvbas3j3MUNTWclFftjRHA/KPWVkeYkwAMsxCt3w14u4kS8le0SCETkOckwKXtXUIv
-         eFCqpzdQOAxJb6/dhDE06u1hUwLwGRXSEa9frhxakZirpkZvEDLoonXsW3mnQ4wo46oT
-         VuVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUn1bkUqftNtgEQvMnZtYw1yQ3eBQ+fG+Q6poBIRfg9LDqgo9iIpvVLeHVAFLcdL3OuDDsmwY/f6Asbxx4+98mCD2tIfsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYHcqpkR591BtOrWpjOH55yF/Q3QRo412YsPnyyNCtKiTD+ItA
-	1oSJdwMdZwes5XY3mgx1vmq8DHvUSVYrOy/NASgZRemVEwIY5gEb2Yvq
-X-Gm-Gg: AY/fxX4SPocGaDyByIERzSxBTLvX0UwtcZ+aHMizVNLPQ0DHGyKEPF3l+qWOH8MSkPP
-	33nY+ipu15DkpWxL4Clc0YtU0LukRtD5CfUPzWrqhgD2WceJeSGeunm898RNUfidKab0nJlZL9z
-	z9F08282fSM0+Z1xywHaPVzuBHlqHazlu1QACPqevF9G37tDvcYnc/Zek80TVAOQ8ptbhPh8hB7
-	FPLkj7RaQkKoxCbXe7b90YsATLiydvbzTdVvRVBFzfVfW4jEbm07zxG64SOIL48LLybcJpf8t8i
-	unNq7JWSZuBXwEMxqpvq9dRWe87q8/PooYzCEMIoVpWJ6LK1XZmRUsIXf27FPmo2xWezc+/VnOW
-	4RoaQTubHCom4Z+HrqypRxg99gqCy27KGXS18yJe3Ux9u+n+D4pFh9R9HVnzReRMhuqADLEP1t4
-	X+WT7NJGItvj0gjIcurwto4SOOdnBd6PVp+lJl
-X-Google-Smtp-Source: AGHT+IHZJmaQaHIyZu23aY20L8OEhXcH95sjK+OBTRsa2WtJe6DENa+J+EPR/hVV2ccdKAytzQEetA==
-X-Received: by 2002:a17:907:8694:b0:b73:1e09:7377 with SMTP id a640c23a62f3a-b7d23aa5631mr1096802166b.58.1765786843063;
-        Mon, 15 Dec 2025 00:20:43 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7cfa51754dsm1360553966b.42.2025.12.15.00.20.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Dec 2025 00:20:42 -0800 (PST)
-Date: Mon, 15 Dec 2025 09:20:37 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>,
-	Spectrum OS Development <devel@spectrum-os.org>,
-	linux-security-module@vger.kernel.org, landlock@lists.linux.dev,
-	"Ryan B. Sullivan" <ryanbakersullivan@gmail.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
-Subject: Re: [PATCH] host/roots: Sandbox xdg-desktop-portal-spectrum-host
-Message-ID: <20251215.5d7e473daa34@gnoack.org>
-References: <20251212-sandbox-dbus-portal-v1-1-522705202482@gmail.com>
- <87o6o25h6y.fsf@alyssa.is>
- <cfab1f24-65ad-40ed-b4a6-17f0aad8dc60@gmail.com>
- <87ikea5a8x.fsf@alyssa.is>
- <00256266-26db-40cf-8f5b-f7c7064084c2@gmail.com>
- <87bjk16dvv.fsf@alyssa.is>
- <515ff0f4-2ab3-46de-8d1e-5c66a93c6ede@gmail.com>
- <20251214.aiW5oc2izaxa@digikod.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X/YmHZDC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ED97C19421;
+	Mon, 15 Dec 2025 08:49:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765788554;
+	bh=NYVGG4tmiyG5B75OmUic/U7JhbC5UuDSz+EfTWu3c4M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X/YmHZDCgxWso/NlIPXQynhY7Rtohue2QWgWnThqaOCeFD21ko+QmOccxcWKvIWPo
+	 vhGuE2i853otCl5yA8I/xX3SIeM9ZVUFzDEcQpDDicRjxTaWROaUxXGz1AI5GXDLN5
+	 r3F2ZAbcCNZS30rAv8knV8Xi/+s576PvVvcTT5cn9bKkHKmvpcK9T2nMt5gXQa3Zrk
+	 YaAvkveHQoXO+MoKHpBassTrhWZsJo+1naP2nUOS5k2U5epy9dlJ1gY8u3JJsYoVM5
+	 TRQ0KugOJ4IGEr0BJKgqPHtMp4Qr+A2ZAuBnzCwmiBdoz+qIiQ8AhWLXRJ8JNTxW/T
+	 XcHQFZT0DKVWA==
+Date: Mon, 15 Dec 2025 10:49:11 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: linux-integrity@vger.kernel.org, David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] KEYS: trusted: Use get_random-fallback for TPM
+Message-ID: <aT_Lh8l3E2yQJYI7@kernel.org>
+References: <20251214213236.339586-1-jarkko@kernel.org>
+ <64e3e4e0a92848fd3b02a213c754f096d2026463.camel@HansenPartnership.com>
+ <aT-uHgyYw3XhFasi@kernel.org>
+ <60cf8bd2afbad5e930119d73ccf069e95ee4fd9d.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251214.aiW5oc2izaxa@digikod.net>
+In-Reply-To: <60cf8bd2afbad5e930119d73ccf069e95ee4fd9d.camel@HansenPartnership.com>
 
-On Sun, Dec 14, 2025 at 08:50:45PM +0100, MickaÃ«l SalaÃ¼n wrote:
-> On Sat, Dec 13, 2025 at 11:49:11PM -0500, Demi Marie Obenour wrote:
-> > On 12/13/25 20:39, Alyssa Ross wrote:
-> > > Demi Marie Obenour <demiobenour@gmail.com> writes:
+On Mon, Dec 15, 2025 at 04:55:58PM +0900, James Bottomley wrote:
+> On Mon, 2025-12-15 at 08:43 +0200, Jarkko Sakkinen wrote:
+> > On Mon, Dec 15, 2025 at 07:18:41AM +0900, James Bottomley wrote:
+> > > On Sun, 2025-12-14 at 23:32 +0200, Jarkko Sakkinen wrote:
+> > > > 1. tpm2_get_random() is costly when TCG_TPM2_HMAC is enabled and
+> > > > thus its use should be pooled rather than directly used. This
+> > > > both reduces latency and improves its predictability.
+> > > > 
+> > > > 2. Linux is better off overall if every subsystem uses the same
+> > > > source for the random bistream as the de-facto choice, unless
+> > > > *force majeure* reasons point to some other direction.
+> > > > 
+> > > > In the case, of TPM there is no reason for trusted keys to invoke
+> > > > TPM directly.
 > > > 
-> > >> On 12/13/25 16:42, Alyssa Ross wrote:
-> > >>> Demi Marie Obenour <demiobenour@gmail.com> writes:
-> > >>>
-> > >>>> On 12/13/25 14:12, Alyssa Ross wrote:
-> > >>>>> Demi Marie Obenour <demiobenour@gmail.com> writes:
-> > >>>>>
-> > >>>>>> It is quite possible that these Landlock rules are unnecessarily
-> > >>>>>> permissive, but all of the paths to which read and execute access is
-> > >>>>>> granted are part of the root filesystem and therefore assumed to be
-> > >>>>>> public knowledge.  Removing access from any of them would only increase
-> > >>>>>> the risk of accidental breakage in the future, and would not provide any
-> > >>>>>> security improvements.  seccomp *could* provide some improvements, but
-> > >>>>>> the effort needed is too high for now.
-> > >>>>>>
-> > >>>>>> Signed-off-by: Demi Marie Obenour <demiobenour@gmail.com>
-> > >>>>>> ---
-> > >>>>>>  .../template/data/service/xdg-desktop-portal-spectrum-host/run    | 8 ++++++++
-> > >>>>>>  1 file changed, 8 insertions(+)
-> > >>>>>
-> > >>>>> Are you sure this is working as intended?  There's no rule allowing
-> > >>>>> access to Cloud Hypervisor's VSOCK socket, and yet it still seems to be
-> > >>>>> able to access that.  Don't you need to set a rule that *restricts*
-> > >>>>> filesystem access and then add holes?  Did you ever see this deny
-> > >>>>> anything?
-> > >>>>
-> > >>>> 'man 1 setpriv' states that '--landlock-access fs' blocks all
-> > >>>> filesystem access unless a subsequent --landlock-rule permits it.
-> > >>>> I tried running with no --landlock-rule flags and the execve of
-> > >>>> xdg-desktop-portal-spectrum-host failed as expected.
-> > >>>>
-> > >>>> The socket is passed over stdin, and I'm pretty sure Landlock
-> > >>>> doesn't restrict using an already-open file descriptor.
-> > >>>> xdg-desktop-portal-spectrum-host does need to find the path to the
-> > >>>> socket, but I don't think it ever accesses that path.
-> > >>>
-> > >>> I've been looking into this a bit myself, and from what I can tell
-> > >>> Landlock just doesn't restrict connecting to sockets at all, even if
-> > >>> they're inside directories that would otherwise be inaccessible.  It's
-> > >>> able to connect to both Cloud Hypervisor's VSOCK socket and the D-Bus
-> > >>> socket even with a maximally restrictive landlock rule.  So you were
-> > >>> right after all, sorry!
-> > >>
-> > >> That's not good at all!  It's a trivial sandbox escape in so many cases.
-> > >> For instance, with access to D-Bus I can just call `systemd-run`.
-> > >>
-> > >> I'm CCing the Landlock and LSM mailing lists because if you are
-> > >> correct, then this is a bad security hole.
+> > > That assertion isn't correct: you seem to have forgotten we had
+> > > this argument six or seven years ago, but even that was a reprise
+> > > of an even earlier one.  Lore doesn't go back far enough for the
+> > > intermediate one on the tpm list, but the original was cc'd to
+> > > lkml:
 > > > 
-> > > I don't find it that surprising given the way landlock works.  "connect"
-> > > (to a non-abstract AF_UNIX socket) is not an operation there's a
-> > > landlock action for, and it's not like the other actions care about
-> > > access to parent directories and the like â€” I was able to execute a
-> > > program via a symlink after only giving access to the symlink's target,
-> > > without any access to the directory containing the symlink or the
-> > > symlink itself, for example.  Landlock, as I understand it, is intended
-> > > to block a specified set of operations (on particular file hierarchies),
-> > > rather than to completely prevent access to those hierarchies like
-> > > permissions or mount namespaces could, so the lack of a way to block
-> > > connecting to a socket is more of a missing feature than a security
-> > > hole.
+> > > https://lore.kernel.org/all/1378920168.26698.64.camel@localhost/
+> > > 
+> > > The decision then was to use the same random source as the key
+> > > protection.  Unfortunately most of the active participants have
+> > > moved on from IBM and I don't have their current email addresses,
+> > > but the bottom line is there were good reasons to do trusted keys
+> > > this way that your assertions above don't overcome.  I'm not saying
+> > > we shouldn't reconsider the situation, but we need a reasoned
+> > > debate rather than simply doing it by fiat.
 > > 
-> > 'man 7 unix' states:
+> > The way I see this is that given that kernel is not running inside
+> > TPM, FIPS certification of the RNG does not have any measurable
+> > value.
 > > 
-> > On  Linux,  connecting to a stream socket object requires write
-> > permission on that socket; sending a datagram to a datagram socket
-> > likewise requires write permission on that socket.
-> > 
-> > Landlock is definitely being inconsistent with DAC here.  Also, this
-> > allows real-world sandbox breakouts.  On systemd systems, the simplest
-> > way to escape is to use systemd-run to execute arbitrary commands.
+> > Random data generation should happen as part of object creation
+> > process i.e. should be fully self-contained process within the TPM in
+> > order for FIPS to matter.
 > 
-> The Linux kernel is complex and the link between the VFS and named UNIX
-> sockets is "special" (see the linked GitHub issue).  Landlock doesn't
-> handle named UNIX sockets yet for the same reason it doesn't handle some
-> other kind of kernel resources or access rights: someone needs to
-> implement it (including tests, doc...).  There is definitely interest to
-> add this feature, it has been discussed for some time, but it's not
-> trivial.  It is a work in progress though:
-> https://github.com/landlock-lsm/linux/issues/36
+> In FIPS terms, there's no distinction between keeping the whole
+> generation process internal to the TPM and using the FIPS certified rng
+> of the TPM to source the contents of a kernel protected key.  Both
+> provide equally valid, and FIPS certified data.
 
-Agreed, this would be the change that would let us restrict connect()
-on AF_UNIX sockets.
+I understand being "FIPS certified" embedding the premise that kernel
+is also FIPS certified, which covers also crypto etc. This is the case
+with enterprise kernels.
 
-Additionally, *in the case that you do not actually need* Unix
-sockets, the other patch set that would be of interest is the one for
-restricting the creation of new socket FDs:
-https://github.com/landlock-lsm/linux/issues/6
+I have understanding FIPS certification dies at the point when random
+data is acquired by a kernel, which is not FIPS certified. It's not 
+really a safe closure.
 
-In this talk in 2014, I explained my mental model around the
-network-related restrictions:
-https://youtu.be/K2onopkMhuM?si=LCObEX6HhGdzPnks&t=2030
+Using same code path for RNG universally should actually help with any
+certification processes.
 
-The discussed socket control feature continues to be a central missing
-piece, as the TCP port restrictions do not make much sense as long as
-you can still create sockets for other protocol types.
+> 
+> > In the case of sealed data objects, this not the case.
+> 
+> FIPS is concerned with origins and provenance, so it most certainly is
+> the case even for trusted keys.  However, if the Kernel RNG is fips
+> certified (as can happen with certain FIPS modules) it is the case that
+> either the Kernel or TPM RNG would satisfy the FIPS requirement.  The
+> question for trusted key users is really do they always want the TPM
+> FIPS RNG or should we allow mixing with the kernel RNG even in the non-
+> FIPS case.
 
-Issue #6 that should fix this is still under active development -- an
-updated version of the patch was posted just last month.
+I don't disagree on benefits of FIPS certification.
 
-To bridge the gap, the same thing can also be emulated with seccomp,
-but as you noted above as well in this thread, this is harder.
+> 
+> Perhaps, rather than getting hung up on FIPS sources and to facilitate
+> debating the bedrock requirements, we could turn this around and ask
+> what the use case you have for using the in-kernel RNG is?
 
-â€“GÃ¼nther
+Generally removing any non-mandatory TPM traffic is a feasible idea.
+
+This was just something low-hanging fruit that I spotted while working
+on larger patch set.
+
+BR, Jarkko
+
+> 
+> Regards,
+> 
+> James
+> 
+> 
+> 
+
+BR, Jarkko
