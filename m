@@ -1,242 +1,250 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B899E257AEC;
-	Mon, 15 Dec 2025 12:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B87331A49
+	for <linux-security-module@vger.kernel.org>; Mon, 15 Dec 2025 13:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765802505; cv=none; b=VZz3PjtBZ7/CcPylOgzOFsjoruzQ6GC4iIKaDUHUEozn42ItfvMp0tHWxIReLb1TnAEcXN++x8GoIX6sV4gdSiMHfiAopulYAiYwQlUbAMEN8ubbcjTjWvOEmJal7QHFE0syRhEDG22hj3UTMH3VPW5YnkozLByu1ZAoYZ+QPZw=
+	t=1765805944; cv=none; b=ka/M/M/OfVX1b9el6u6rGA290kyh5KwR0vDeLE83qAraKuAsXu1XuOxPm1qJMZpOADZkXgOx4QpahERQAfD7pFwcNHgIAt5+i0V8Xgs0m6Pwtr1nsc49LeysFJIMPZR6u96vLwxhxamVRIJcvP4srhdlkaOoz7q40mPdeA74ykU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765802505; c=relaxed/simple;
-	bh=rdE/6cZ/6KdpW7XLUHDsAQWV7nAAUwM2+LrIbpi625Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pp5Otazy+7RZdT1B3lxMZfe8Ypl54vIK++l2s/HHaK6fAs7vXrHJObUrnqafKVcHzzHVGr1b1Aq3Mub15lpGubKlrvT1G3+gdQjc8EOv22NBIVRnywKUKgUfuZFsuckU8nClbs6MTwmWqkJM5u3c2XEN2Dhj2XNT6twznk8WvkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.196])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dVKQP5h3Yz1HC9R;
-	Mon, 15 Dec 2025 20:39:57 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 86CC440568;
-	Mon, 15 Dec 2025 20:41:39 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwCX0wX4AUBpmMgkAA--.42771S2;
-	Mon, 15 Dec 2025 13:41:39 +0100 (CET)
-Message-ID: <fbe8a62785626e324278892ecfd8a4112cdbac6f.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH v2] ima: Add support for staging measurements for
- deletion and trimming
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: corbet@lwn.net, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
-	eric.snowberg@oracle.com, jmorris@namei.org, serge@hallyn.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	gregorylumen@linux.microsoft.com, chenste@linux.microsoft.com, 
-	nramas@linux.microsoft.com, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Mon, 15 Dec 2025 13:41:26 +0100
-In-Reply-To: <CAHC9VhRUQxayj=XcdfbfHka-=N+B8cNk7Grg3QWGOTOz3BKfgw@mail.gmail.com>
-References: <20251212171932.316676-1-roberto.sassu@huaweicloud.com>
-	 <CAHC9VhRUQxayj=XcdfbfHka-=N+B8cNk7Grg3QWGOTOz3BKfgw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1765805944; c=relaxed/simple;
+	bh=0RJ8hn5UA+jBMKgL2vexCP4P2w3UyioHPbHfmWoCqpY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZyItWbHFF7PR8K2xiIrJEIacA5rj4SJMnwdTsDJDMZMbF/PvHT22FD+hyAu3TnybOoAcl7wVaLGyZYIT7b/1a3tMVhp9f23etK25OfEixbhd/NeSfte6FPgTJ492vzxWK+ovxRnqcI/RvFM3rS4H2xvIVP93fs4yiQYA5X8/m2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EuTucd9g; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EuTucd9g"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-42fbc305882so1250663f8f.0
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Dec 2025 05:39:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1765805940; x=1766410740; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HP7wXZoAxj3YG64MFXhffqc9TkW1sld9ucKsb/6ZFh4=;
+        b=EuTucd9gZXbKS7k60S0O8+xmk6dWUzB6AJNJfJNSq4hCCI494y+YN2Qq1M2nPeZ7g5
+         LuU9h8ECct3c3zuO/9QgMVnrnXkzRJgRH9odpRxmaXJoMbbzxmLzBsdBkzCWalcMs8O0
+         +pwkeU2qKXOJUaNXpoOP02zQ1tVD8s9wko/KZIUVdb/UfaM7zYH212hBjrcuW4FJgH1J
+         hgW7iydeQCYKyq0iu2CmX9VQvEb5jf024NaEH6kA/hPoU5u67Btd0n6K9BJ3Wwyep1ZS
+         JZOqh1SL51X9kUXVjf42jy+x53KVKkGyUDYet3sxooMjnwhSTE0cGLmWT8n+j33oro1t
+         wdDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765805940; x=1766410740;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=HP7wXZoAxj3YG64MFXhffqc9TkW1sld9ucKsb/6ZFh4=;
+        b=Xqt+LvXHGNwGL1bCgpMiCY9Sz7eIiUHk9ELHTLiOH0At/2HKMZTCRij8RbSmVCggue
+         PMzZqzBrkK8tfyU2L3G767oJquVHxFIepvVM3jXfgGkyVlBFkRiF7CTldfQsZo9SYPqY
+         qOvdjMm1vYit38OeDdR3YRAuOcw6ZxCru/Ir8L5qc2kZltPRY2mMPK0Htcy0REx0DDEU
+         HmEPEmtovLEutExi/yEMSmDS1/oSB1/AlTmqATuoyKyUhjCHKFKbAhR6bDOiAET+RBys
+         AK03dEjP6xNGq7L0MhfShn+pFOi+OllVgR62TZE/H9/9Fk3vv+3isqfMU//ZAnN/Lgdx
+         5pbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNUUBKq86UlXX9NWXh/JKRTeVxhN5QeGNU/huLJa4/9fjcK+WfUY+GMVA0UNsm7BTzOEnRUYYk87eZ6GmY5UZS1RaY7No=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaXy//nr58RXumQF0pSVkVNMXLs+egMVGpX1Nfm5P6bBN/lySy
+	Ix20eE+5LGGgeMiQNZYuHAT0+BU74D6nzSAH/JImymOpu3WlfUHRXf/tCltVPMF81g==
+X-Gm-Gg: AY/fxX6ImrQc8E4LHQ/EVePQ5C9bqk7JVUdGehtIcswfdpfyS2O7vdgUskoDd5UMoHX
+	LlfraRcS7M2WUR/BfoQAz5V05hB/pIRK4+Pq2NK9xCqV5heVgybj2DEanOTrGO43VAIBgSD8hOT
+	ErJKf6VZq6SaMTImekJrWbP/5L/y3qPXcrIihDVmFlTmytptTemWvfUJGvacD78A1aEZSBVZYxt
+	k+diL4y6eXdOpHGeihrSw5wWBUfoper4V5rn5B6HyBH/yPN0ZHtxG+uriBXFrd1ZU0CSKChZzKp
+	pAfNsWd2Y1ku5F1PNcJnkGQP7m50HPoxA85FLwH4fz6JLi/4sakbEgl93Y3qY+EqPJUMH1b4mdg
+	1kCvLqhsl3gGuKhBR2ymKUT0OAZLazubwdvHE5zUjlGXXTg69JRlCd4s9lzvZpWk22fuASA2eC1
+	cXJ0BcYtpdsU/xBqyF9pf3qCw2UNAk/adR2Fbr7LXk+Rgv/f8T
+X-Google-Smtp-Source: AGHT+IH6RRE6qce8+BKlIh2iGfXIIE/0drfAuueOfe5s5dH/DcFdShyJ99GxaUFmEfIgshY9jhag6g==
+X-Received: by 2002:a05:6000:310f:b0:430:f7dc:7e8e with SMTP id ffacd0b85a97d-430f7dc809cmr4594614f8f.34.1765805939977;
+        Mon, 15 Dec 2025 05:38:59 -0800 (PST)
+Received: from elver.google.com ([2a00:79e0:2834:9:5741:4422:4d1d:b335])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42fb68866f3sm21319081f8f.36.2025.12.15.05.38.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Dec 2025 05:38:59 -0800 (PST)
+Date: Mon, 15 Dec 2025 14:38:52 +0100
+From: Marco Elver <elver@google.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	Chris Li <sparse@chrisli.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
+	Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	linux-sparse@vger.kernel.org, linux-wireless@vger.kernel.org,
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Subject: Re: [PATCH v4 06/35] cleanup: Basic compatibility with context
+ analysis
+Message-ID: <aUAPbFJSv0alh_ix@elver.google.com>
+References: <20251120145835.3833031-2-elver@google.com>
+ <20251120151033.3840508-7-elver@google.com>
+ <20251211121659.GH3911114@noisy.programming.kicks-ass.net>
+ <CANpmjNOmAYFj518rH0FdPp=cqK8EeKEgh1ok_zFUwHU5Fu92=w@mail.gmail.com>
+ <20251212094352.GL3911114@noisy.programming.kicks-ass.net>
+ <CANpmjNP=s33L6LgYWHygEuLtWTq-s2n4yFDvvGcF3HjbGH+hqw@mail.gmail.com>
+ <20251212110928.GP3911114@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwCX0wX4AUBpmMgkAA--.42771S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3WrW7Gw4UJr45WF13Xr47Arb_yoW3AFyfpa
-	y3W340kr4kJ348twn7Jw4ku3yF9w1kta1UJrn8t343A3W5CFW0kFWak3yYvFZIyr18t3Wj
-	ywnIgrZ8J3Z8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgADBGk-fpcGmAAAsk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251212110928.GP3911114@noisy.programming.kicks-ass.net>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-On Fri, 2025-12-12 at 21:06 -0500, Paul Moore wrote:
-> On Fri, Dec 12, 2025 at 12:19=E2=80=AFPM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > Introduce the ability of staging the entire (or a portion of the) IMA
-> > measurement list for deletion. Staging means moving the current content=
- of
-> > the measurement list to a separate location, and allowing users to read=
- and
-> > delete it. This causes the measurement list to be atomically truncated
-> > before new measurements can be added. Staging can be done only once at =
-a
-> > time. In the event of kexec(), staging is reverted and staged entries w=
-ill
-> > be carried over to the new kernel.
-> >=20
-> > User space is responsible to concatenate the staged IMA measurements li=
-st
-> > portions following the temporal order in which the operations were done=
-,
-> > together with the current measurement list. Then, it can send the colle=
-cted
-> > data to the remote verifiers.
-> >=20
-> > Also introduce the ability of trimming N measurements entries from the =
-IMA
-> > measurements list, provided that user space has already read them. Trim=
-ming
-> > combines staging and deletion in one operation.
-> >=20
-> > The benefit of these solutions is the ability to free precious kernel
-> > memory, in exchange of delegating user space to reconstruct the full
-> > measurement list from the chunks. No trust needs to be given to user sp=
-ace,
-> > since the integrity of the measurement list is protected by the TPM.
-> >=20
-> > By default, staging/trimming the measurements list does not alter the h=
-ash
-> > table. When staging/trimming are done, IMA is still able to detect
-> > collisions on the staged and later deleted measurement entries, by keep=
-ing
-> > the entry digests (only template data are freed).
-> >=20
-> > However, since during the measurements list serialization only the SHA1
-> > digest is passed, and since there are no template data to recalculate t=
-he
-> > other digests from, the hash table is currently not populated with dige=
-sts
-> > from staged/deleted entries after kexec().
-> >=20
-> > Introduce the new kernel option ima_flush_htable to decide whether or n=
-ot
-> > the digests of staged measurement entries are flushed from the hash tab=
-le.
-> >=20
-> > Then, introduce ascii_runtime_measurements_staged_<algo> and
-> > binary_runtime_measurement_staged_<algo> interfaces to stage/trim/delet=
-e
-> > the measurements. Use 'echo A > <IMA interface>' and
-> > 'echo D > <IMA interface>' to respectively stage and delete the entire
-> > measurements list. Use 'echo N > <IMA interface>', with N between 1 and
-> > LONG_MAX, to stage the selected portion of the measurements list, and
-> > 'echo -N > <IMA interface>' to trim N measurements entries.
->=20
-> In an effort to help preserve the sanity of admins, I might suggest
-> avoiding commands that start with a dash/'-'.  I'd probably also
-> simplify the commands a bit and drop all/'A' since the measurement
-> list could change at any time, stick with an explicit number and just
-> let the admin go over, e.g. write LONG_MAX, which effectively becomes
-> 'A'.  I think you could do everything you need with just two commands:
->=20
->   <NUM>: stage <NUM> entries
->       D: delete staged entries
+On Fri, Dec 12, 2025 at 12:09PM +0100, Peter Zijlstra wrote:
+> On Fri, Dec 12, 2025 at 11:15:29AM +0100, Marco Elver wrote:
+> > On Fri, 12 Dec 2025 at 10:43, Peter Zijlstra <peterz@infradead.org> wrote:
+> > [..]
+> > > > Correct. We're trading false negatives over false positives at this
+> > > > point, just to get things to compile cleanly.
+> > >
+> > > Right, and this all 'works' right up to the point someone sticks a
+> > > must_not_hold somewhere.
+> > >
+> > > > > > Better support for Linux's scoped guard design could be added in
+> > > > > > future if deemed critical.
+> > > > >
+> > > > > I would think so, per the above I don't think this is 'right'.
+> > > >
+> > > > It's not sound, but we'll avoid false positives for the time being.
+> > > > Maybe we can wrangle the jigsaw of macros to let it correctly acquire
+> > > > and then release (via a 2nd cleanup function), it might be as simple
+> > > > as marking the 'constructor' with the right __acquires(..), and then
+> > > > have a 2nd __attribute__((cleanup)) variable that just does a no-op
+> > > > release via __release(..) so we get the already supported pattern
+> > > > above.
+> > >
+> > > Right, like I mentioned in my previous email; it would be lovely if at
+> > > the very least __always_inline would get a *very* early pass such that
+> > > the above could be resolved without inter-procedural bits. I really
+> > > don't consider an __always_inline as another procedure.
+> > >
+> > > Because as I already noted yesterday, cleanup is now all
+> > > __always_inline, and as such *should* all end up in the one function.
+> > >
+> > > But yes, if we can get a magical mash-up of __cleanup and __release (let
+> > > it be knows as __release_on_cleanup ?) that might also work I suppose.
+> > > But I vastly prefer __always_inline actually 'working' ;-)
+> > 
+> > The truth is that __always_inline working in this way is currently
+> > infeasible. Clang and LLVM's architecture simply disallow this today:
+> > the semantic analysis that -Wthread-safety does happens over the AST,
+> > whereas always_inline is processed by early passes in the middle-end
+> > already within LLVM's pipeline, well after semantic analysis. There's
+> > a complexity budget limit for semantic analysis (type checking,
+> > warnings, assorted other errors), and path-sensitive &
+> > intra-procedural analysis over the plain AST is outside that budget.
+> > Which is why tools like clang-analyzer exist (symbolic execution),
+> > where it's possible to afford that complexity since that's not
+> > something that runs for a normal compile.
+> > 
+> > I think I've pushed the current version of Clang's -Wthread-safety
+> > already far beyond what folks were thinking is possible (a variant of
+> > alias analysis), but even my healthy disregard for the impossible
+> > tells me that making path-sensitive intra-procedural analysis even if
+> > just for __always_inline functions is quite possibly a fool's errand.
+> 
+> Well, I had to propose it. Gotta push the envelope :-)
+> 
+> > So either we get it to work with what we have, or give up.
+> 
+> So I think as is, we can start. But I really do want the cleanup thing
+> sorted, even if just with that __release_on_cleanup mashup or so.
 
-If the goal is that the verifier always receives a TPM quote aligned
-with the measurements, the remote attestation agent in the target
-system has to walk over the measurements to find N.
+Working on rebasing this to v6.19-rc1 and saw this new scoped seqlock
+abstraction. For that one I was able to make it work like I thought we
+could (below). Some awkwardness is required to make it work in
+for-loops, which only let you define variables with the same type.
 
-The difference between the approach I was suggesting and Steven's is
-that I calculate N after staging all measurements and store the
-exceeding measurements locally until the next attestation request. If
-the verifier supports it, the exceeding measurements could be stored
-also there.
+For <linux/cleanup.h> it needs some more thought due to extra levels of
+indirection.
 
-That means that I don't need to walk in the measurement list to stage,
-because I stage the entire list (with list_replace()). I do a walk
-after detaching, without interfering with the processes adding new
-measurements (hot path).
+------ >8 ------
 
-Steven's approach is to read the measurements list to calculate N and
-stage/trim the measurement based on N. As Steven/Gregory pointed out,
-at this point you could already trim N because you already have the
-measurements list.
-
-However, in this case you have to walk through the measurements list as
-an RCU reader in the hot path, calculate N, and walk through the
-measurements list again as an RCU writer in the hot path to stage/trim
-N. In the next attestation request, you would read the previous
-exceeding measurements again.
-
-One major obstacle of my approach, as Gregory pointed out, was that
-staged measurements were not carried over during kexec(). While I
-thought about coordinating remote attestation requests with kexec() in
-a management engine, there can be cases where this is harder to
-achieve.
-
-I managed to solve that by introducing a third linked list containing
-the measurements to delete, by doing another list replace between
-staged and measurements to delete (when the 'D' command is issued),
-under the hot path lock. That allowed me to take the hot path lock
-during kexec() and prepend the staged measurements before the non-
-staged ones (that reminded me that I should properly inform user space=20
-if kexec() consumed staged measurements before the 'D' command was
-executed, i.e. it lost the race with kexec()).
-
-The approach to keep the stage N approach would be necessary if
-exceeding measurements cannot be stored either locally or at the
-verifier side.
-
-For me it would be fine to keep both approaches, but I still see
-advantages of the stage all approach.
-
-Thanks
-
-Roberto
-
-> I intentionally left out the trim/'T' command, because I'm not sure it
-> is really necessary if you are going to implement the phased
-> stage/delete process.  Yes, you have to do two operations (stage and
-> delete) as opposed to just the trim, but I'd probably take the
-> simplicity of just supporting a single approach over the trivial
-> necessity of having to do two operations in userspace.
->=20
-> Staging also has the benefit of having a sane way of handling two
-> tasks racing to stage the measurement list.  I could see cases where
-> multiple tasks race to trim the list and end up trimming more than was
-> intended since they both hit in sequence.
->=20
-> If you did want to take a trim approach over a stage/delete approach,
-> I could see something like this working:
->=20
->  1. process opens the measurement list
->  2. process reads from the measurement list, keeps the fd open
->  3. process does whatever it wants to preserve the list
->  4. process writes <NUM> to the measurement list, kernel trims <NUM> entr=
-ies
->  5. process closes fd
->=20
-> ... error handling shouldn't be too bad.  The process only writes
-> <NUM> to the fd if it has already finished whatever it needs to do to
-> preserve the list outside the kernel, think of it as a "commit"
-> operation on a transaction.  If the fd is closed for some reason
-> (error, interruption, killed) before the process writes <NUM> to the
-> fd then IMA does nothing - no trim takes place.
->=20
-> Multiple process racing can easily be solved when the log is opened;
-> only one open(O_RDWR) is allowed at a time, other racing processes
-> will get EBUSY.  Yes, one process could block others from trimming by
-> holding the fd open for an extended period of time, but I would expect
-> that CAP_SYS_ADMIN and root fs perms would be required to open the log
-> read/write (not to mention any LSM access rights in place).
->=20
-> I know I mentioned this basic idea to someone at some point, but there
-> have been various discussion threads and multiple people over a fairly
-> lengthy time that I've lost track of where it was mentioned.  If it
-> was already discussed on-list and rejected for a good reason you can
-> simply ignore the above approach ... although I still think the
-> stage/delete API could be simplified as described :)
->=20
-> [UPDATE: as I'm reading Steven's replies it looks like he has proposed
-> something very similar to the above]
->=20
-
+diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
+index b5563dc83aba..5162962b4b26 100644
+--- a/include/linux/seqlock.h
++++ b/include/linux/seqlock.h
+@@ -1249,6 +1249,7 @@ struct ss_tmp {
+ };
+ 
+ static __always_inline void __scoped_seqlock_cleanup(struct ss_tmp *sst)
++	__no_context_analysis
+ {
+ 	if (sst->lock)
+ 		spin_unlock(sst->lock);
+@@ -1278,6 +1279,7 @@ extern void __scoped_seqlock_bug(void);
+ 
+ static __always_inline void
+ __scoped_seqlock_next(struct ss_tmp *sst, seqlock_t *lock, enum ss_state target)
++	__no_context_analysis
+ {
+ 	switch (sst->state) {
+ 	case ss_done:
+@@ -1320,9 +1322,18 @@ __scoped_seqlock_next(struct ss_tmp *sst, seqlock_t *lock, enum ss_state target)
+ 	}
+ }
+ 
++/*
++ * Context analysis helper to release seqlock at the end of the for-scope; the
++ * alias analysis of the compiler will recognize that the pointer @s is is an
++ * alias to @_seqlock passed to read_seqbegin(_seqlock) below.
++ */
++static __always_inline void __scoped_seqlock_cleanup_ctx(struct ss_tmp **s)
++	__releases_shared(*((seqlock_t **)s)) __no_context_analysis {}
++
+ #define __scoped_seqlock_read(_seqlock, _target, _s)			\
+ 	for (struct ss_tmp _s __cleanup(__scoped_seqlock_cleanup) =	\
+-	     { .state = ss_lockless, .data = read_seqbegin(_seqlock) };	\
++	     { .state = ss_lockless, .data = read_seqbegin(_seqlock) }, \
++	     *__UNIQUE_ID(ctx) __cleanup(__scoped_seqlock_cleanup_ctx) = (struct ss_tmp *)_seqlock; \
+ 	     _s.state != ss_done;					\
+ 	     __scoped_seqlock_next(&_s, _seqlock, _target))
+ 
+diff --git a/lib/test_context-analysis.c b/lib/test_context-analysis.c
+index 4612025a1065..3f72b1ab2300 100644
+--- a/lib/test_context-analysis.c
++++ b/lib/test_context-analysis.c
+@@ -261,6 +261,13 @@ static void __used test_seqlock_writer(struct test_seqlock_data *d)
+ 	write_sequnlock_irqrestore(&d->sl, flags);
+ }
+ 
++static void __used test_seqlock_scoped(struct test_seqlock_data *d)
++{
++	scoped_seqlock_read (&d->sl, ss_lockless) {
++		(void)d->counter;
++	}
++}
++
+ struct test_rwsem_data {
+ 	struct rw_semaphore sem;
+ 	int counter __guarded_by(&sem);
