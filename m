@@ -1,573 +1,412 @@
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB2C2BDC0E
-	for <linux-security-module@vger.kernel.org>; Sun, 14 Dec 2025 22:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+Received: from wind.enjellic.com (wind.enjellic.com [67.230.224.160])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3776A2EA147
+	for <linux-security-module@vger.kernel.org>; Mon, 15 Dec 2025 05:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.230.224.160
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765752824; cv=none; b=Ef7z//nFFeKHaijrwbbNKJrAEhWskX7hWvrzn8IoP7Ju3TbVEmkSvesLLts3QxudT95xUsqlUwcxln8ddMY2HrSJEorGKA5wpcbkgaBG0pWbmQ7/nnk1BcvDUMhgD+H3xl00XYwBQVNHKV0tDjZMuocl5mfNvMHcz3YjyJ8asNU=
+	t=1765775829; cv=none; b=WQD43k+AykOyOC2MgF8wGZQ99ITVluiiihEYsb209FUtZnL+L6JewrNSCa5ByrUqlQjQQ3cPivNL4o19SZRRWtpixeGhb7FeIcbHjLQRrQp5/agpqVdx7QvmJVDvY0AbWuZI+Bc/3L88gh/JEWgwK/fBCZ167gO2r1ezxpWJkw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765752824; c=relaxed/simple;
-	bh=o36GwUK3KHqUFQeieDaKGhvn/HhOXehWyZj1pKTvcbA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bmciZCNAXXbJpH1TCAH4VVmPWBX2CAMZlRKajFSpbdFPgCrqxDynn+9eoJI7lcIPvSBQBMKREsBOm2wbW3+By0AfqkGoxN3JInGiwfWI9FhbMkkBrr6sch/fV2I67RJ6PSqWipv+3wgByfav+JnuiV28GlPlQ1OhUk1UbuydJx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=Gnp56A7H; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=u9W4H7hP; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="Gnp56A7H";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="u9W4H7hP"
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 951A07A0074;
-	Sun, 14 Dec 2025 17:53:40 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Sun, 14 Dec 2025 17:53:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1765752820;
-	 x=1765839220; bh=Vnz9yfJers5xrUKFjyXYznbWDrhz3LSl5L+nQjLKX/E=; b=
-	Gnp56A7H5dNtOrsAWhxWvSuNm3FTZcUvRWgZwa0yOBa/JaGLxxc46PmVUs5RUuPA
-	bPX6P/+9lHztO20KWBVOs4ErEsnYnpmk/HI4gw8r0mOLd3/MzFzqhtK1fQbXl5io
-	mLtJz6ras5JDEMPeHbJMKbPvHAuYOdYn1ASsk7uQ2JyA4OadvvlnzR9WmrzUscq+
-	0jlFNoR22nZGj9i1OCRkD9TZJQ8OuRd6ziNYrKTEXrDsn9ZNOFg17aVH0Vsk9Xs4
-	ZFyM12RTESp69qe8N1myQ6bH9Ld4fdnP+6sjD20OENr/yfE9IPQl47S0zhNc1tfd
-	MvZdVFpQmRZtpAoWbbDnEA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1765752820; x=
-	1765839220; bh=Vnz9yfJers5xrUKFjyXYznbWDrhz3LSl5L+nQjLKX/E=; b=u
-	9W4H7hPmLizTiJ9lOIqBUmEvp0Wg8sdy3LLO3gZaE32SBzhQ0zfuwc8gaqO6DOLw
-	KaNcSDupHlsf2pBTPs0ZsnWR1j5uRGSi4Y3v0hOAhxjZfVFCo/8wSHM+5bJUKoyf
-	jKoiha7yMpWXVSm8ZYmDjQGPnq3RRlqClS40b9wMiCk6pxKSoeZsWGJHwmRzHivZ
-	nQaaQSUHErNKrCh9sLBKqrdUxZZZcqMQzvy8oXrUw6rtQRC5riuYz3AUuov6+2DF
-	TV+x9YOSepkZF9yZarO4FPCDUINQ5TvAmFJ3y3K9IzMH/+AGGzxQXz+k9YzknftX
-	YRNddQFKhqReZq49ndtig==
-X-ME-Sender: <xms:9D8_adesGmChtryQgUlpWWWSvEICNxgF4vqruQs-rnvKBonFpVRKMw>
-    <xme:9D8_ae4CSqICdNlvC0O2ucM1b6Oyvy5C65zZCIPt_RfxzjiEHeOGNOOncctN8Ug3B
-    TpDv1sTzCn3Lf_6GrP3LOwGZpZU4TM28uTfxtnIDOt0ASU_V8rHMceH>
-X-ME-Received: <xmr:9D8_aQVuUPi1tcgva3bNgatyydvOys6weJX3pE4F0yPi7Anxd526cvHhxIN5vVbJ_SnHcKOKAAyJzhaa2g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefhedukecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepvfhinhhgmhgr
-    ohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeefvd
-    ehleeutdfhlefgvedvgfeklefgleekgedtvdehvdfgtdefieelhfdutefgudenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmh
-    drohhrghdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepuhhtihhlihhthigvmhgrlhejjeesghhmrghilhdrtghomhdprhgtphhtthhopehmih
-    gtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvgdr
-    tghomhdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopeigrghnug
-    hfuhhrhiesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihht
-    hidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:9D8_ad7FoKO9M2-iFrlXJJC56hV_mUfsaau0vG7-j75fmISupQOEwQ>
-    <xmx:9D8_abqCV3CEJMqW0yIS2quInPClGOJaFQrzlGABjJvQewxUrR9BsA>
-    <xmx:9D8_aQnkXdORChjXL7JiSRmE7epmqky27hKDJTCq1UcR706UQwoOhQ>
-    <xmx:9D8_aXOkLm5CqV2zwhvMgXQw4pHlMIfmVbvZuSUb2W-faJyIMtVPRw>
-    <xmx:9D8_aeimO1BiNKIkuaXUDkSX2b_HdpfBp7ygzkNX2vw0FMv08Ig8O7H0>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 14 Dec 2025 17:53:37 -0500 (EST)
-Message-ID: <ef02e290-84b0-4de9-85aa-bf94d38c0c44@maowtm.org>
-Date: Sun, 14 Dec 2025 22:53:35 +0000
+	s=arc-20240116; t=1765775829; c=relaxed/simple;
+	bh=TZKMVucUQyx6CHavgKLMbibM+8YU37sQuQhZTMEd+sw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bkGeSdXkLK7Hm4QBkQyL+WX9CIjSoSHKXue/bH/68UPuIn8F16T3oaQd2uwi13XqFoyHx4/R/wpvWB0UKM1vK/yueA0Rr788cuVUpUyxJyDehtKVIsVc2Z8N7XFnSRn3mR21etkHscR71gWCKXGSu6HYCNYl/vvU3XxAkBnj4fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=67.230.224.160
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 5BF4tQMw006205;
+	Sun, 14 Dec 2025 22:55:26 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 5BF4tOo3006203;
+	Sun, 14 Dec 2025 22:55:24 -0600
+Date: Sun, 14 Dec 2025 22:55:24 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Timur Chernykh <tim.cherry.co@gmail.com>, torvalds@linux-foundation.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: An opinion about Linux security
+Message-ID: <20251215045524.GA6104@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <CABZOZnS4im-wNK4jtGKvp3YT9hPobA503rgiptutOF8rZEwt_w@mail.gmail.com> <20251212054524.GA23417@wind.enjellic.com> <950ac630-c75e-4d4c-ac70-5e4b0e397989@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/6] landlock: Implement LANDLOCK_ADD_RULE_NO_INHERIT
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, Jan Kara <jack@suse.cz>,
- Abhinav Saxena <xandfury@gmail.com>, linux-security-module@vger.kernel.org
-References: <20251214170548.408142-1-utilityemal77@gmail.com>
- <20251214170548.408142-2-utilityemal77@gmail.com>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20251214170548.408142-2-utilityemal77@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <950ac630-c75e-4d4c-ac70-5e4b0e397989@schaufler-ca.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sun, 14 Dec 2025 22:55:27 -0600 (CST)
 
-On 12/14/25 17:05, Justin Suess wrote:
-> [...]
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index d4f47d20361a..6ab3e7bd1c81 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -127,10 +127,39 @@ struct landlock_ruleset_attr {
->   *     allowed_access in the passed in rule_attr.  When this flag is
->   *     present, the caller is also allowed to pass in an empty
->   *     allowed_access.
-> + * %LANDLOCK_ADD_RULE_NO_INHERIT
-> + *     When set on a rule being added to a ruleset, this flag disables the
-> + *     inheritance of access rights and flags from parent objects.
-> + *
-> + *     This flag currently applies only to filesystem rules.  Adding it to
-> + *     non-filesystem rules will return -EINVAL, unless future extensions
-> + *     of Landlock define other hierarchical object types.
-> + *
-> + *     By default, Landlock filesystem rules inherit allowed accesses from
-> + *     ancestor directories: if a parent directory grants certain rights,
-> + *     those rights also apply to its children.  A rule marked with
-> + *     LANDLOCK_ADD_RULE_NO_INHERIT stops this propagation at the directory
-> + *     covered by the rule.  Descendants of that directory continue to inherit
-> + *     normally unless they also have rules using this flag.
-> + *
-> + *     If a regular file is marked with this flag, it will not inherit any
-> + *     access rights from its parent directories; only the accesses explicitly
-> + *     allowed by the rule will apply to that file.
-> + *
-> + *     This flag also enforces parent-directory restrictions: rename, rmdir,
-> + *     link, and other operations that would change the directory's immediate
-> + *     parent subtree are denied up to the VFS root.  This prevents
-> + *     sandboxed processes from manipulating the filesystem hierarchy to evade
-> + *     restrictions (e.g., via sandbox-restart attacks).
-> + *
-> + *     In addition, this flag blocks the inheritance of rule-layer flags
+On Fri, Dec 12, 2025 at 03:43:07PM -0800, Casey Schaufler wrote:
 
-tbh I feel that it's less confusing to just say "rule flags" (instead of
-"rule-layer flags").
+Good morning Casey, pleasant as always to hear from you.
 
-> + *     (such as the quiet flag) from parent directories to the object covered
-> + *     by this rule.
->   */
->
->  /* clang-format off */
->  #define LANDLOCK_ADD_RULE_QUIET			(1U << 0)
-> +#define LANDLOCK_ADD_RULE_NO_INHERIT		(1U << 1)
->  /* clang-format on */
->
->  /**
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 0b589263ea42..8d8623ea857f 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -317,6 +317,37 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
->  	LANDLOCK_ACCESS_FS_IOCTL_DEV)
->  /* clang-format on */
->
-> +enum landlock_walk_result {
-> +	LANDLOCK_WALK_CONTINUE,
-> +	LANDLOCK_WALK_STOP_REAL_ROOT,
-> +	LANDLOCK_WALK_MOUNT_ROOT,
-> +};
-> +
-> +static enum landlock_walk_result landlock_walk_path_up(struct path *const path)
-> +{
-> +	while (path->dentry == path->mnt->mnt_root) {
-> +		if (!follow_up(path))
-> +			return LANDLOCK_WALK_STOP_REAL_ROOT;
-> +	}
-> +
-> +	if (unlikely(IS_ROOT(path->dentry))) {
-> +		if (likely(path->mnt->mnt_flags & MNT_INTERNAL))
-> +			return LANDLOCK_WALK_MOUNT_ROOT;
+> On 12/11/2025 9:45 PM, Dr. Greg wrote:
+> > On Wed, Dec 10, 2025 at 03:15:39AM +0300, Timur Chernykh wrote:
+> >
+> > Good morning Timur, I hope this note finds your week having gone well.
+> >
+> >> Hello Linus,
+> >>
+> >> I'm writing to ask for your opinion. What do you think about Linux's
+> >> current readiness for security-focused commercial products?  I'm
+> >> particularly interested in several areas.
+> > I don't expect you will receive an answer.
+> >
+> > Based on his previous comments and long standing position on this
+> > issue, I believe it can be fairly stated that he looks at the LSM as
+> > an unnecessary evil.
+> >
+> > So in his absence, some 'in loco parentis' reflections on the issues
+> > you raise.
+> >
+> > I've been advised, more than once, that in this day and age, no one is
+> > interested in reading more than a two sentence paragraph, so a short
+> > response to your issues here and a bit more detail for anyone who
+> > wants to read more, at the end.
+> >
+> > There is active art available to address the shortcomings you outline
+> > in your post below.  Our TSEM LSM was designed to service the
+> > realitities of the modern security environment and where it is going.
+> > In a manner that doesn't provide any restrictions on how 'security'
+> > can be implemented.
+> >
+> > We've done four releases over three years and we believe an unbiased
+> > observer would conclude they have received no substantive technical
+> > review that would support interest in upstream integration.
 
-imo, LANDLOCK_WALK_MOUNT_ROOT is a somewhat confusing name for this,
-especially in the context that if we see this in
-is_access_to_paths_allowed() we allow access unconditionally.
+> Stop. Really, I mean it. I put significant effort into trying to teach
+> you how to submit a patch set that could be reviewed. You ignored it.
+> I can't speak to what an "unbiased observer" would conclude because
+> your behavior has certainly left me with bias. Rather than writing
+> full length novels about why you submitted patches the way you've
+> done it you might consider heeding the advice. Grrr.
 
-Would LANDLOCK_WALK_INTERNAL be a better name here?
+No, we are not going to stop, see immediately below.
 
-> +		dput(path->dentry);
-> +		path->dentry = dget(path->mnt->mnt_root);
-> +		return LANDLOCK_WALK_CONTINUE;
-> +	}
-> +
-> +	struct dentry *const parent = dget_parent(path->dentry);
-> +
-> +	dput(path->dentry);
-> +	path->dentry = parent;
-> +	return LANDLOCK_WALK_CONTINUE;
-> +}
-> +
-> +static const struct landlock_rule *find_rule(const struct landlock_ruleset *const domain,
-> +					     const struct dentry *const dentry);
-> +
->  /*
->   * @path: Should have been checked by get_path_from_fd().
->   */
-> @@ -344,6 +375,48 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
->  		return PTR_ERR(id.key.object);
->  	mutex_lock(&ruleset->lock);
->  	err = landlock_insert_rule(ruleset, id, access_rights, flags);
-> +	if (err || !(flags & LANDLOCK_ADD_RULE_NO_INHERIT))
-> +		goto out_unlock;
-> +
-> +	/* Create ancestor rules and set has_no_inherit_descendant flags */
-> +	struct path walker = *path;
-> +
-> +	path_get(&walker);
-> +	while (landlock_walk_path_up(&walker) != LANDLOCK_WALK_STOP_REAL_ROOT) {
+> > The challenge is that the security gatekeepers view LSM submissions
+> > through a lens of whether or not the LSM implements security
+> > consistent with what they believe is security.
+> 
+> While there is some truth to that, we're really quite flexible.
+> What we need to see is that there is some sort of security model,
+> and that the proposed code implements it. We also need to be able
+> to examine the proposed code to see that it implements the model.
+> You have rejected all suggestions about how to make your proposal
+> reviewable.
 
-Why not landlock_walk_path_up(&walker) == LANDLOCK_WALK_CONTINUE here?
-I'm not sure if it's actually possible to end up with an infinite loop by
-ignoring LANDLOCK_WALK_MOUNT_ROOT (i.e. not sure if "internal" mounts can
-have disconnected dentries), but it seems safer to write to loop in a way
-such that if that happens, we exit.
+No we didn't.
 
-> +		struct landlock_rule *ancestor_rule;
-> +
-> +		if (WARN_ON_ONCE(!walker.dentry || d_is_negative(walker.dentry))) {
-> +			err = -EIO;
-> +			break;
-> +		}
-> +
-> +		ancestor_rule = (struct landlock_rule *)find_rule(ruleset, walker.dentry);
-> +		if (!ancestor_rule) {
-> +			struct landlock_id ancestor_id = {
-> +				.type = LANDLOCK_KEY_INODE,
-> +				.key.object = get_inode_object(d_backing_inode(walker.dentry)),
-> +			};
-> +
-> +			if (IS_ERR(ancestor_id.key.object)) {
-> +				err = PTR_ERR(ancestor_id.key.object);
-> +				break;
-> +			}
-> +			err = landlock_insert_rule(ruleset, ancestor_id, 0, 0);
-> +			landlock_put_object(ancestor_id.key.object);
-> +			if (err)
-> +				break;
-> +
-> +			ancestor_rule = (struct landlock_rule *)
-> +				find_rule(ruleset, walker.dentry);
-> +		}
-> +		if (WARN_ON_ONCE(!ancestor_rule || ancestor_rule->num_layers != 1)) {
-> +			err = -EIO;
-> +			break;
-> +		}
-> +		ancestor_rule->layers[0].flags.has_no_inherit_descendant = true;
-> +	}
-> +	path_put(&walker);
-> +out_unlock:
->  	mutex_unlock(&ruleset->lock);
->  	/*
->  	 * No need to check for an error because landlock_insert_rule()
-> @@ -772,8 +845,10 @@ static bool is_access_to_paths_allowed(
->  		_layer_masks_child2[LANDLOCK_NUM_ACCESS_FS];
->  	layer_mask_t(*layer_masks_child1)[LANDLOCK_NUM_ACCESS_FS] = NULL,
->  	(*layer_masks_child2)[LANDLOCK_NUM_ACCESS_FS] = NULL;
-> -	struct collected_rule_flags *rule_flags_parent1 = &log_request_parent1->rule_flags;
-> -	struct collected_rule_flags *rule_flags_parent2 = &log_request_parent2->rule_flags;
-> +	struct collected_rule_flags *rule_flags_parent1 =
-> +		&log_request_parent1->rule_flags;
-> +	struct collected_rule_flags *rule_flags_parent2 =
-> +		log_request_parent2 ? &log_request_parent2->rule_flags : NULL;
+I've managed engineers before, I've never found a successful strategy
+to be:
 
-Good point, I think the original was still safe because it would not be
-used by landlock_unmask_layers anyway, but this is better.  I will take
-this in the next version, thanks!
+"Go off and do what I told you to do".
 
->
->  	if (!access_request_parent1 && !access_request_parent2)
->  		return true;
-> @@ -784,7 +859,7 @@ static bool is_access_to_paths_allowed(
->  	if (is_nouser_or_private(path->dentry))
->  		return true;
->
-> -	if (WARN_ON_ONCE(!layer_masks_parent1))
-> +	if (WARN_ON_ONCE(!layer_masks_parent1 || !log_request_parent1))
->  		return false;
->
->  	allowed_parent1 = is_layer_masks_allowed(layer_masks_parent1);
-> @@ -851,6 +926,7 @@ static bool is_access_to_paths_allowed(
->  	 */
->  	while (true) {
->  		const struct landlock_rule *rule;
-> +		enum landlock_walk_result walk_res;
->
->  		/*
->  		 * If at least all accesses allowed on the destination are
-> @@ -910,46 +986,14 @@ static bool is_access_to_paths_allowed(
->  		if (allowed_parent1 && allowed_parent2)
->  			break;
->
-> -jump_up:
-> -		if (walker_path.dentry == walker_path.mnt->mnt_root) {
-> -			if (follow_up(&walker_path)) {
-> -				/* Ignores hidden mount points. */
-> -				goto jump_up;
-> -			} else {
-> -				/*
-> -				 * Stops at the real root.  Denies access
-> -				 * because not all layers have granted access.
-> -				 */
-> -				break;
-> -			}
-> -		}
-> -
-> -		if (unlikely(IS_ROOT(walker_path.dentry))) {
-> -			if (likely(walker_path.mnt->mnt_flags & MNT_INTERNAL)) {
-> -				/*
-> -				 * Stops and allows access when reaching disconnected root
-> -				 * directories that are part of internal filesystems (e.g. nsfs,
-> -				 * which is reachable through /proc/<pid>/ns/<namespace>).
-> -				 */
-> -				allowed_parent1 = true;
-> -				allowed_parent2 = true;
-> -				break;
-> -			}
-> -
-> -			/*
-> -			 * We reached a disconnected root directory from a bind mount.
-> -			 * Let's continue the walk with the mount point we missed.
-> -			 */
+Without some kind of explanation and dialogue.
 
-I think we might want to preserve these comments.
+The Linux community has a process problem with the LSM and the
+security sub-system that needs to be addressed.  Personally, I now
+have the cycles to address it.
 
-> -			dput(walker_path.dentry);
-> -			walker_path.dentry = walker_path.mnt->mnt_root;
-> -			dget(walker_path.dentry);
-> -		} else {
-> -			struct dentry *const parent_dentry =
-> -				dget_parent(walker_path.dentry);
-> -
-> -			dput(walker_path.dentry);
-> -			walker_path.dentry = parent_dentry;
-> +		walk_res = landlock_walk_path_up(&walker_path);
-> +		if (walk_res == LANDLOCK_WALK_MOUNT_ROOT) {
-> +			allowed_parent1 = true;
-> +			allowed_parent2 = true;
-> +			break;
->  		}
-> +		if (walk_res != LANDLOCK_WALK_CONTINUE)
-> +			break;
->  	}
->  	path_put(&walker_path);
->
-> @@ -963,7 +1007,7 @@ static bool is_access_to_paths_allowed(
->  			ARRAY_SIZE(*layer_masks_parent1);
->  	}
->
-> -	if (!allowed_parent2) {
-> +	if (!allowed_parent2 && log_request_parent2) {
->  		log_request_parent2->type = LANDLOCK_REQUEST_FS_ACCESS;
->  		log_request_parent2->audit.type = LSM_AUDIT_DATA_PATH;
->  		log_request_parent2->audit.u.path = *path;
-> @@ -1037,8 +1081,8 @@ static access_mask_t maybe_remove(const struct dentry *const dentry)
->   * collect_domain_accesses - Walk through a file path and collect accesses
->   *
->   * @domain: Domain to check against.
-> - * @mnt_root: Last directory to check.
-> - * @dir: Directory to start the walk from.
-> + * @mnt_root: Last path element to check.
-> + * @dir: Directory path to start the walk from.
->   * @layer_masks_dom: Where to store the collected accesses.
->   *
->   * This helper is useful to begin a path walk from the @dir directory to a
-> @@ -1060,29 +1104,31 @@ static access_mask_t maybe_remove(const struct dentry *const dentry)
->   */
->  static bool collect_domain_accesses(
->  	const struct landlock_ruleset *const domain,
-> -	const struct dentry *const mnt_root, struct dentry *dir,
-> +	const struct path *const mnt_root, const struct path *const dir,
->  	layer_mask_t (*const layer_masks_dom)[LANDLOCK_NUM_ACCESS_FS],
->  	struct collected_rule_flags *const rule_flags)
->  {
+We assume that if Timur elects to port the Apple security API (Timur's
+ESF implementation) into the kernel, he will face the same issue that
+concerns us.
 
-This function only walks up to the mountpoint of dir.  If dir is changed
-from a *dentry to a *path, wouldn't mnt_root be redundant?  Since
-mnt_root->dentry is always going to be dir->mnt->mnt_root.  This also
-means that they can't accidentally not be the same.
+When Paul Moore came on-board three years ago as the security
+maintainer, he was immediately VERY prescriptive with respect to
+establishing policies and guidelines that he wanted followed for LSM
+submissions.
 
->  	unsigned long access_dom;
->  	bool ret = false;
-> +	struct path walker;
->
->  	if (WARN_ON_ONCE(!domain || !mnt_root || !dir || !layer_masks_dom))
->  		return true;
-> -	if (is_nouser_or_private(dir))
-> +	if (is_nouser_or_private(dir->dentry))
->  		return true;
->
->  	access_dom = landlock_init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
->  					       layer_masks_dom,
->  					       LANDLOCK_KEY_INODE);
->
-> -	dget(dir);
-> +	walker = *dir;
-> +	path_get(&walker);
->  	while (true) {
-> -		struct dentry *parent_dentry;
-> +		enum landlock_walk_result walk_res;
->
->  		/* Gets all layers allowing all domain accesses. */
->  		if (landlock_unmask_layers(
-> -			    find_rule(domain, dir), access_dom, layer_masks_dom,
-> +			    find_rule(domain, walker.dentry), access_dom, layer_masks_dom,
->  			    ARRAY_SIZE(*layer_masks_dom), rule_flags)) {
->  			/*
->  			 * Stops when all handled accesses are allowed by at
-> @@ -1091,22 +1137,69 @@ static bool collect_domain_accesses(
->  			ret = true;
->  			break;
->  		}
-> -
-> -		/*
-> -		 * Stops at the mount point or the filesystem root for a disconnected
-> -		 * directory.
-> -		 */
-> -		if (dir == mnt_root || unlikely(IS_ROOT(dir)))
-> +		if (walker.dentry == mnt_root->dentry && walker.mnt == mnt_root->mnt)
-> +			break;
-> +		walk_res = landlock_walk_path_up(&walker);
-> +		if (walk_res != LANDLOCK_WALK_CONTINUE)
->  			break;
-> -
-> -		parent_dentry = dget_parent(dir);
-> -		dput(dir);
-> -		dir = parent_dentry;
->  	}
-> -	dput(dir);
-> +	path_put(&walker);
->  	return ret;
->  }
->
-> +/**
-> + * deny_no_inherit_topology_change - deny topology changes on sealed paths
-> + * @subject: Subject performing the operation (contains the domain).
-> + * @path: Path whose dentry is the target of the topology modification.
-> + *
-> + * Checks whether any domain layers are sealed against topology changes at
-> + * @path.  If so, emit an audit record and return -EACCES.  Otherwise return 0.
-> + */
-> +static int deny_no_inherit_topology_change(const struct landlock_cred_security
-> +					   *subject,
-> +					   const struct path *const path)
+We see that he sent those guidelines to Timur in case he was
+interested in submitting ESF as a new LSM.  Here is the link for those
+who haven't seen it.
 
-Since you're not using path->mnt here (except for a NULL check), would it
-be easier to just pass the dentry instead?  In that case you wouldn't have
-to do an inline initializer in current_check_refer_path / hook_path_*
-below as well.
+https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsms
 
-> +{
-> +	layer_mask_t sealed_layers = 0;
-> +	layer_mask_t override_layers = 0;
-> +	const struct landlock_rule *rule;
-> +	u32 layer_index;
-> +	unsigned long audit_layer_index;
-> +
-> +	if (WARN_ON_ONCE(!subject || !path || !path->dentry || !path->mnt ||
-> +			 d_is_negative(path->dentry)))
-> +		return 0;
-> +
-> +	rule = find_rule(subject->domain, path->dentry);
-> +	if (!rule)
-> +		return 0;
-> +
-> +	for (layer_index = 0; layer_index < rule->num_layers; layer_index++) {
-> +		const struct landlock_layer *layer = &rule->layers[layer_index];
-> +		layer_mask_t layer_bit = BIT_ULL(layer->level - 1);
-> +
-> +		if (layer->flags.no_inherit ||
-> +		    layer->flags.has_no_inherit_descendant)
-> +			sealed_layers |= layer_bit;
-> +		else
-> +			override_layers |= layer_bit;
-> +	}
-> +
-> +	sealed_layers &= ~override_layers;
-> +	if (!sealed_layers)
-> +		return 0;
-> +
-> +	audit_layer_index = __ffs((unsigned long)sealed_layers);
-> +	landlock_log_denial(subject, &(struct landlock_request) {
-> +		.type = LANDLOCK_REQUEST_FS_CHANGE_TOPOLOGY,
-> +		.audit = {
-> +			.type = LSM_AUDIT_DATA_DENTRY,
-> +			.u.dentry = path->dentry,
-> +		},
-> +		.layer_plus_one = audit_layer_index + 1,
-> +	});
-> +	return -EACCES;
-> +}
-> +
->  /**
->   * current_check_refer_path - Check if a rename or link action is allowed
->   *
-> @@ -1191,6 +1284,21 @@ static int current_check_refer_path(struct dentry *const old_dentry,
->  	access_request_parent2 =
->  		get_mode_access(d_backing_inode(old_dentry)->i_mode);
->  	if (removable) {
-> +		int err = deny_no_inherit_topology_change(subject,
-> +							  &(struct path)
-> +							  { .mnt = new_dir->mnt,
-> +							  .dentry = old_dentry });
-> +
-> +		if (err)
-> +			return err;
-> +		if (exchange) {
-> +			err = deny_no_inherit_topology_change(subject,
-> +							      &(struct path)
-> +							      { .mnt = new_dir->mnt,
-> +							      .dentry = new_dentry });
-> +			if (err)
-> +				return err;
-> +		}
->  		access_request_parent1 |= maybe_remove(old_dentry);
->  		access_request_parent2 |= maybe_remove(new_dentry);
->  	}
-> @@ -1232,12 +1340,15 @@ static int current_check_refer_path(struct dentry *const old_dentry,
->  						      old_dentry->d_parent;
->
->  	/* new_dir->dentry is equal to new_dentry->d_parent */
-> -	allow_parent1 = collect_domain_accesses(subject->domain, mnt_dir.dentry,
-> -						old_parent,
-> +	allow_parent1 = collect_domain_accesses(subject->domain,
-> +						&mnt_dir,
-> +						&(struct path){ .mnt = new_dir->mnt,
-> +						.dentry = old_parent },
->  						&layer_masks_parent1,
->  						&request1.rule_flags);
-> -	allow_parent2 = collect_domain_accesses(subject->domain, mnt_dir.dentry,
-> -						new_dir->dentry,
-> +	allow_parent2 = collect_domain_accesses(subject->domain, &mnt_dir,
-> +						&(struct path){ .mnt = new_dir->mnt,
-> +						.dentry = new_dir->dentry },
->  						&layer_masks_parent2,
->  						&request2.rule_flags);
->
-> @@ -1583,12 +1694,37 @@ static int hook_path_symlink(const struct path *const dir,
->  static int hook_path_unlink(const struct path *const dir,
->  			    struct dentry *const dentry)
->  {
-> +	const struct landlock_cred_security *const subject =
-> +		landlock_get_applicable_subject(current_cred(), any_fs, NULL);
-> +	int err;
-> +
-> +	if (subject) {
-> +		err = deny_no_inherit_topology_change(subject,
-> +						      &(struct path)
-> +						      { .mnt = dir->mnt,
-> +						      .dentry = dentry });
-> +		if (err)
-> +			return err;
-> +	}
->  	return current_check_access_path(dir, LANDLOCK_ACCESS_FS_REMOVE_FILE);
->  }
->
->  static int hook_path_rmdir(const struct path *const dir,
->  			   struct dentry *const dentry)
->  {
-> +	const struct landlock_cred_security *const subject =
-> +		landlock_get_applicable_subject(current_cred(), any_fs, NULL);
-> +	int err;
-> +
-> +	if (subject) {
-> +		err = deny_no_inherit_topology_change(subject,
-> +						      &(struct path)
-> +						      { .mnt = dir->mnt,
-> +						      .dentry = dentry });
-> +		if (err)
-> +			return err;
-> +	}
-> +
->  	return current_check_access_path(dir, LANDLOCK_ACCESS_FS_REMOVE_DIR);
->  }
->
-> [...]
+What those guidelines are missing are prescriptive practices for
+bringing a major body of virgin code into the security review process.
+As we did with TSEM, and presumably Timur will have to do with ESF, if
+he moves forward with that initiative.
+
+For the benefit of those following this conversation and to close the
+record in this thread from our perspective, as tedious as that might
+be.
+
+From an architectural perspective, TSEM consists of a series of
+compilation units, each dedicated to a specific functional role needed
+to support the LSM.  We used a single include file that holds all of
+the enumerations and structure definitions that are referenced by
+every compilation unit.
+
+We chose a submssion model of introducing this include file as a
+single patch in the series, after a complete sub-system documentation
+patch.  Introduction of virgin sub-systems isn't really common but this
+strategy was consistent with what we had previously observed.
+
+In addition, we believe that Knuth was quoted at one time about an
+understanding of a program flows from an understanding of its data
+structures.
+
+You reviewed about half of one compilation unit and said you didn't
+have time for anymore.  For the record, we made the changes that you
+requested and responded to your other concerns for that unit.
+
+Your primary issue, which you have repeated often, as you did here,
+was with the fact that we had a single header file in the patch series
+with all of the LSM global definitions.  You indicated that the patch
+series should be broken up in order to 'tell a story' by including the
+structure and enumeration definitions with the code.
+
+Fair enough, you are a valued voice in the Linux security community,
+but your right pinky finger is not on the RETURN key that sends
+security sub-system pull requests to Linus, Paul Moore's is.
+
+If anyone chooses to review the new LSM guidelines, they will note
+that it never makes mention of the fact that a patch series should
+'tell a story' and/or how that should be done.
+
+So, before we committed a ton of development time into what could very
+well end up being a tag team match to try and please two maintainers,
+we reached out to Paul for advice on how he would like to see a virgin
+patch series structured.
+
+His response was that TSEM had significant issues, the least of which
+was the organization of the patch series.  We repeatedly asked him to
+detail what those problems were, as by his own admission he had only
+read the documentation and not offered any review comments on the code
+itself.
+
+The only thing we received was that, in certain security behavior
+modeling configurations enabled by TSEM, the security response would
+be asynchronous from the event or events that triggered it.
+
+We attempted to pursue further dialogue surrounding this.  The last
+response, at least a year ago now, was that he didn't think he needed
+to respond to us because of our 'tone'.  If anyone hasn't noticed, our
+'tone' is driven by the fact that we tend to not be easily bul*ted.
+
+So, in the interest of furthering Linux security development while at
+the same time promoting homeostatic harmony in the community, we will
+be sending out a request to the security list to formally address this
+issue with new LSM's.
+
+It obviously doesn't make sense to waste your or other people's time
+addressing the other issues you have below, other than to agree that
+we disagree on where security is headed and how Linux needs to
+respond.
+
+> >   Those views are
+> > inconsistent with the realities of the modern security market,
+> 
+> Oh, stop it. Look at how many LSMs have been added over the past
+> few years. Sandboxing and application controlled security are
+> "modern" security concepts that were unheard of when the LSM was
+> introduced. As I said before, security is a dynamic technology.
+> If it were not, we'd have a Bell & LaPadula kernel config option
+> instead of an LSM infrastructure.
+> 
+> >  a
+> > market that that is now predicated on detection rather than
+> > enforcement.  A trend that will only accelerate with advancements in
+> > machine learning and AI.
+> 
+> Without the underlying access controls detection is rather pointless.
+> 
+> > It is worth noting that the history of the technology industry is
+> > littered with examples of technology incumbents usually missing
+> > disruptive innovation.
+> 
+> The technology industry is not unique on this. Acme Buggy Whips, inc.
+> 
+> > This restriction on suitability is actually inconsistent with Linus'
+> > stated position on how Linux sub-systems can be used, as expressed in
+> > his comment in the following post.
+> >
+> > https://lore.kernel.org/lkml/CAHk-=wgLbz1Bm8QhmJ4dJGSmTuV5w_R0Gwvg5kHrYr4Ko9dUHQ@mail.gmail.com/
+> >
+> > So the problem is not technical, it is a political eco-system problem.
+> >
+> > So, big picture, that is the challenge facing resolution of your
+> > concerns.
+> >
+> > Apologies to everyone about the paragraph/sentence overflow and any
+> > afront to sensibilities.
+> >
+> > More detail below if anyone is interested.
+> >
+> >> First, in today's 3rd-party (out-of-tree) EDR development EDR
+> >> being the most common commercial class of security products eBPF
+> >> has effectively become the main option. Yet eBPF is extremely
+> >> restrictive.  It is not possible to write fully expressive real-time
+> >> analysis code: the verifier is overly strict, non-deterministic
+> >> loops are not allowed, and older kernels lack BTF support. These
+> >> issues create real limitations.
+> >>
+> >> Second, the removal of the out-of-tree LSM API in the 4.x kernel
+> >> series caused significant problems for many AV/EDR vendors. I was
+> >> unable to find an explanation in the mailing lists that convincingly
+> >> justified that decision.
+> >>
+> >> The next closest mechanism, fanotify, was a genuine improvement.
+> >> However, it does not allow an AV/EDR vendor to protect the integrity
+> >> of its own product. Is Linux truly expecting modern AV/EDR solutions
+> >> to rely on fanotify alone?
+> >>
+> >> My main question is: what are the future plans? Linux provides very
+> >> few APIs for security and dynamic analysis. eBPF is still immature,
+> >> fanotify is insufficient, and driver workarounds that bypass kernel
+> >> restrictions are risky they introduce both stability and security
+> >> problems. At the same time, properly implemented in-tree LSMs are not
+> >> inherently dangerous and remain the safer, supported path for
+> >> extending security functionality. Without safe, supported interfaces,
+> >> however, commercial products struggle to be competitive. At the
+> >> moment, macOS with its Endpoint Security Framework is significantly
+> >> ahead.
+> >>
+> >> Yes, the kernel includes multiple in-tree LSM modules, but in
+> >> practice SELinux does not simplify operations it often complicates
+> >> them, despite its long-standing presence. Many of the other LSMs are
+> >> rarely used in production. As an EDR developer, I seldom encounter
+> >> them, and when I do, they usually provide little practical
+> >> value. Across numerous real-world server intrusions, none of these
+> >> LSM modules have meaningfully prevented attacks, despite many years
+> >> of kernel development.
+> >>
+> >> Perhaps it is time for Linux to focus on more than a theoretical model
+> >> of security.
+> > The heart of the political eco-system challenge is best expressed by a
+> > quote from Kyle Moffett, in which he stated that security should only
+> > be developed and implemented by experts.  Unfortunately that view is
+> > inconsistent with the current state of the technology industry.
+> 
+> Glad to hear I'm not an expert! - Not!
+> 
+> > Classical security practititioners will defend complex subject/object
+> > architectures with: "Google uses SeLinux for Android security".
+> 
+> Yea gads. Subject/Object is about as simple as it gets. Look at Smack.
+> 
+> > Our response to that is that the world doesn't have a security problem
+> > because Google lacks sufficient resources to implement anything it
+> > desires to implement, regardless of the development and maintenance
+> > input costs.
+> >
+> > Unfortunately, that luxury is inconsistent with the rest of the
+> > software development world that doesn't enjoy a 3.8 trillion dollar
+> > market capitalization.
+> >
+> > The world simply lacks enough experts to make the 'security only by
+> > experts' model work.
+> >
+> > Today, the fastest way to a product is to grab Linux and a development
+> > team and write software for hardware that is now completely
+> > commoditized.  Everyone knows that security is not one of the
+> > fundamental project predicates in this model.
+> >
+> > Both NIST and DHS/CISA are officially on record as indicating that
+> > security needs to start with and be baked in through the development
+> > process.  One of the objectives of TSEM was to provide a framework for
+> > enabling this concept for the implementation of analysis and mandatory
+> > behavior controls for software workloads.
+> >
+> > A second fundamental problem is that the world has moved, in large
+> > part, to containerized execution workloads.  The Linux LSM, in its
+> > current form, doesn't effectively support the application of workload
+> > specific security policies.
+> >
+> > Further complicating this issue is the fact that LSM 'stacking'
+> > requires reasoning as to what a final security policy will be when
+> > multiple different security architectures/policies get to decide on
+> > the outcome of a security event/hook.  The concept of least surprise
+> > would suggest the need for stacking to have idempotency, in other
+> > words, the order in which LSM event consumers are called shouldn't
+> > influence the effective policy, but this is generally acknowledged as
+> > not being the case with 'stacking'.
+> 
+> Any other approach, and they have been considered, fails miserably
+> and introduces a host of complications. Not to mention performance
+> de-optimization.
+> 
+> > So we designed TSEM to provide an alternative, not a replacement, but
+> > an alternative to how developers and system administrators can develop
+> > and apply security policy, including integrity controls.
+> >
+> > TSEM is an LSM that implements containerized security infrastructure
+> > rather than security policy.  It is designed around the concept of a
+> > security orchestrator that can execute security isolated workloads and
+> > receive the LSM events and their parameters from that workload and
+> > process them in any manner it wishes.
+> 
+> I shan't repeat the objections that have been raised, but I will
+> point out that you have done nothing to address them.
+> 
+> > For example: A Docker/Kubernetes container can be run and all of the
+> > security events by that workload exported up into an OpenSearch or
+> > ElasticSearch instance for anomaly detection and analysis.
+> >
+> > So an EDR implemented on top of this has visibility into all of the
+> > security events and their characteristics that are deemed security
+> > relevant by the kernel developers.
+> >
+> > One of the pushbacks is that this can lead to asynchronous security
+> > decisions, but as you note, that is the model that the commercial
+> > security industry and the consumers of its products has embraced,
+> > particularly in light of the advancements coming out of the AI
+> > industry, detection rather than enforcement.
+> >
+> > If synchronous enforcement is required TSEM provides that as well,
+> > including the use of standard kernel modules to implement analysis and
+> > response to the LSM hooks.  Internally we have implemented other LSM's
+> > such as Tomoyo and IMA as loadable modules that can support multiple
+> > and independent workload policies.
+> >
+> > If you or other EDR vendors are interested, we would be more than
+> > happy to engage in conversations as to how to improve the capabilities
+> > of this type of architecture, as an alternative to what is currently
+> > available in Linux, which as you note, has significant limitations.
+> >
+> >> Everything above reflects only my personal opinion. I would greatly
+> >> appreciate your response and any criticism you may have.
+> > As I mentioned at the outset, you are unlikely to hear anything.
+> >
+> > For the necessary Linux infrastructure improvements to emerge we
+> > believe there is the need to develop and engage a community effort
+> > that independently pursues the advancements that are necessary,
+> > particularly those that enable Linux to implement first class AI based
+> > security controls.
+> >
+> > We believe that only this will result in sufficient 'market pull' at the
+> > distribution level to help shape upstreaming decisions.
+> >
+> > Absent that, it is likely that Linux will continue to implement what
+> > has failed to work in the past in the hope that it will somehow work
+> > in the future.
+> 
+> Wow. calling Linux a failure is a bit of a stretch, don't you think?
+> 
+> > Comments and criticism welcome, we have had plenty of experience with
+> > the latter.... :-)
+> 
+> We've been over these issues many times. Go back and make some changes to
+> your approach.
+> 
+> >> Best regards,
+> >> Timur Chernykh
+> > Best wishes for the success of your work and a pleasant holiday season.
+> >
+> > As always,
+> > Dr. Greg
+> >
+> > The Quixote Project - Flailing at the Travails of Cybersecurity
+> >               https://github.com/Quixote-Project
+> >
+
+Best wishes for a productive week and a pleasant holiday season.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
