@@ -1,99 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047993C38;
-	Mon, 15 Dec 2025 06:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from wind.enjellic.com (wind.enjellic.com [67.230.224.160])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CA432D443
+	for <linux-security-module@vger.kernel.org>; Mon, 15 Dec 2025 07:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.230.224.160
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765781028; cv=none; b=Z1u+OUY2lmH0msKMBuszAY/b7ABKp0hrbF7OuaeG/gQbPrU9yWMM82gLf2xkBsDzMiwSNQAEv/VNXxKU28wTX3D25vx7Q/gdSV8T0AJcDOkvSzTjaOeCUZBzEv1svS9AvAMNMdStx2dSSvfMnV2ip88bGGC1XoAzTQglLbO/qfI=
+	t=1765783941; cv=none; b=VFAuUeU0Na7nAGbB2Z99MnckFLnNuJww4cvbHox7qd1xtTmBkgffSmoBlbgscCj/HBh1jUfAzGa6RgrevR8cq0iI+ExI0BvOPYExnjWXIgDUzRNYSUMOu+9nMcMgwy3NFRfSh/LCyh2HrN6QwTpXDJ33kzQonEyIhIzL1rq27e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765781028; c=relaxed/simple;
-	bh=hdwEyidFu0YJ8FH/D80enu4MOUEqpvEwNzdYg+EeE7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XD5gLQBQw42hrnP74N1s+mAuWCKpJwVozVxO2xa1BhGGhxiwsaLcYncBiSXlBowaVrUZNP/aPEbiWrfsK0K3yb5idDKmQIZygi3ooMSZVfYaz1Suwysq2Lfd/HTOhvBNLpAp5iNtTX6iBQHvJ0iaIfj9C2W96C1a0S5vEuZvDlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rKQyd7JP; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rKQyd7JP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E4A4C4CEF5;
-	Mon, 15 Dec 2025 06:43:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765781026;
-	bh=hdwEyidFu0YJ8FH/D80enu4MOUEqpvEwNzdYg+EeE7g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rKQyd7JPKH5mFRCtYOjcdUfs0xF1qy55XJo1UMVoGK0AjXd9EZVP55cus/+ec1yEH
-	 hI2OBnxxT7l/j+72KLmfnG7NSbnlbmZlloVdYKezp/ZlP2Tx4h77flpATFze+nOjgH
-	 2iRtM+x4KDdVmx1jtmv8SgeZyKfi/BVRfpQq+YS93dmgIiP9DtvBtLvVnx0JFp2zgI
-	 8av+6sMmKdvcZF3aK9jDuyiM+E0F8Wih2oA8Nv9c/8NhTtbA4Io0GB2wdxVtKCHYRg
-	 EZuHj26F+7pqlZO157El2Uj83/dCWObEyf5bb6LgTOHqKoquWRxeurSyEc545LE/l9
-	 y9UXojLsJASHg==
-Date: Mon, 15 Dec 2025 08:43:42 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-integrity@vger.kernel.org, David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] KEYS: trusted: Use get_random-fallback for TPM
-Message-ID: <aT-uHgyYw3XhFasi@kernel.org>
-References: <20251214213236.339586-1-jarkko@kernel.org>
- <64e3e4e0a92848fd3b02a213c754f096d2026463.camel@HansenPartnership.com>
+	s=arc-20240116; t=1765783941; c=relaxed/simple;
+	bh=2E9AG996dlA53KPGlr+xaUiBHTXkBzBWZ0Oc4bKsLAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:Mime-Version:Content-Type:
+	 Content-Disposition; b=KS/SEROXN8apQ5uJVbvpoAif4ImoxeL4REw83IiWSGg6T1WiOXwo+iAhdir9UR6jQAwfyb9Lztt6Kv8OYWfc44ssfX5NmPUU+/wsrqOQ4EPDDqsk1YIGoCMUozxpIj2jDXiIXIMW5N8PCFSl1J8kAGHEeXPtjWSct/cUyOHqeEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=67.230.224.160
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 5BF78iO0007252;
+	Mon, 15 Dec 2025 01:08:44 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 5BF78cU9007251;
+	Mon, 15 Dec 2025 01:08:38 -0600
+Date: Mon, 15 Dec 2025 01:08:38 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: linux-security-module@vger.kernel.org
+Cc: torvalds@linux-foundation.org, corbet@lwn.net
+Subject: A formal request for process clarifications.
+Message-ID: <20251215070838.GA7209@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <64e3e4e0a92848fd3b02a213c754f096d2026463.camel@HansenPartnership.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 15 Dec 2025 01:08:44 -0600 (CST)
 
-On Mon, Dec 15, 2025 at 07:18:41AM +0900, James Bottomley wrote:
-> On Sun, 2025-12-14 at 23:32 +0200, Jarkko Sakkinen wrote:
-> > 1. tpm2_get_random() is costly when TCG_TPM2_HMAC is enabled and thus
-> > its
-> >    use should be pooled rather than directly used. This both reduces
-> >    latency and improves its predictability.
-> > 
-> > 2. Linux is better off overall if every subsystem uses the same
-> > source for
-> >    the random bistream as the de-facto choice, unless *force majeure*
-> >    reasons point to some other direction.
-> > 
-> > In the case, of TPM there is no reason for trusted keys to invoke TPM
-> > directly.
-> 
-> That assertion isn't correct: you seem to have forgotten we had this
-> argument six or seven years ago, but even that was a reprise of an even
-> earlier one.  Lore doesn't go back far enough for the intermediate one
-> on the tpm list, but the original was cc'd to lkml:
-> 
-> https://lore.kernel.org/all/1378920168.26698.64.camel@localhost/
-> 
-> The decision then was to use the same random source as the key
-> protection.  Unfortunately most of the active participants have moved
-> on from IBM and I don't have their current email addresses, but the
-> bottom line is there were good reasons to do trusted keys this way that
-> your assertions above don't overcome.  I'm not saying we shouldn't
-> reconsider the situation, but we need a reasoned debate rather than
-> simply doing it by fiat.
+Good morning, I hope the week has started well for everyone.
 
-The way I see this is that given that kernel is not running inside TPM,
-FIPS certification of the RNG does not have any measurable value.
+When Paul Moore took over as the security/LSM sub-system maintainer,
+three years ago, he indicated a desire to be very prescriptive with
+respect to the practices that should be followed for the sub-system,
+particularly for the introduction of new LSM's.
 
-Random data generation should happen as part of object creation process
-i.e. should be fully self-contained process within the TPM in order for 
-FIPS to matter.
+The following URL documents the requirements for the introduction of a
+new LSM:
 
-In the case of sealed data objects, this not the case.
+https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsms
 
-> 
-> Regards,
-> 
-> James
->  
+We believe that LWN covered the discussion around this document as well.
 
-BR, Jarkko
+The following discussion on whether or not the Linux kernel provides
+proper support for modern Event Detection and Response Systems (EDR or
+EDRS) suggests the need to clarify these recommendations:
+
+https://lore.kernel.org/linux-security-module/CABZOZnS4im-wNK4jtGKvp3YT9hPobA503rgiptutOF8rZEwt_w@mail.gmail.com
+
+In that thread Timur Chernykh noted a possible desire to port the
+Apple security API to the kernel, which would presumably be a large
+body of virgin code.
+
+Three years ago our team had submitted for review our TSEM LSM that
+provides a framework for generic security modeling, particularly to
+support machine learning and direct functional modeling of security
+behavior.
+
+We haven't been able to receive any substantive review of TSEM over
+that period of time.
+
+Casey Schaufler has been vocal in his criticism of how we introduced
+what is a virgin LSM implementation.  Most particularly with the fact
+that we chose to include, as a single patch, a header file that
+contains the structure and enumeration definitions that are referenced
+by all of the compilation units that make up TSEM.
+
+He indicates that an LSM submission, should 'tell a story' by bringing
+in the structure definitions with the code that uses those structures.
+
+We can offer multiple examples of the challenges we see with doing
+this if that would be helpful but will not do so at this time.
+
+We had requested guidance from Paul on how a new submission should be
+properly structured, since he is the ultimate judge and jury on a
+submission, but he declined to provide guidance.
+
+Given the current security climate, particularly with what is widely
+cited as the potential impact of machine learning and AI on security
+architectures and practices, there will undoubtedly be new LSM's
+coming forward.  It would seem in the best interests of everyone
+involved, reviewers and submitters, that specific guidance should be
+codified in the 'new-lsms' document of how a virgin body of code
+should be introduced.
+
+Optimally this should include links to previous submissions that the
+security maintainers believe codify the desired method of story
+telling.
+
+Given the importance of security in today's environment we are
+prepared to pursue this through the TAB if necessary.
+
+We will look forward to comments from the community on this issue.
+
+Have a good week.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
