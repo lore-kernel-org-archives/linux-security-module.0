@@ -1,112 +1,109 @@
-Received: from wind.enjellic.com (wind.enjellic.com [67.230.224.160])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC0E28466F
-	for <linux-security-module@vger.kernel.org>; Mon, 15 Dec 2025 17:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.230.224.160
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C1E22068D
+	for <linux-security-module@vger.kernel.org>; Mon, 15 Dec 2025 17:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765819263; cv=none; b=iGKt8rNx7O38TvthypRn423HV4ovx8k1CZeCMQvmkOdGQSjnnqpWPl+tCNxzblnnmGg/zzx1T67mACfgA7R1eI+ezvplCR0pT7EycNuMcmJLQR8Wsxv2eYYLJ2T6m65NydqCrpLnBtXZqceogsK4Od8pG+AxBBkmb5323FgytuQ=
+	t=1765820760; cv=none; b=Baj1HoW3ocoCRHFzp6Mz3AynD7V2WcBS5dwR+Ceh3cnbRH18yBaeVMNfm9VAk/BanFvVpQyix2lVBIb+AjudGkWIELtmhxY2OIRUFmwYzpY5E6mdsAempgwub52W7CYC5pf0bs1cQ41pRez98phbE6oBC947fO0nkUY6ecQvO2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765819263; c=relaxed/simple;
-	bh=2D1E8cnZ2EHY1RUVdG07pimBEVIvWUt5lrRmjG50N40=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gCCfgQt5hlvEbS/Gz5nPs4XrIeQQQGa68mF+ZTmCKFa9zUXS2zQmCNw/zufyv0G+hZXBGjUmHmqWp3NPyYNnkT9Ztgx/huNiGjh2oxF73VovfkH+sjhYrC8EqwT4A+aGmWPYpTaWQqkDJrmRozIOiaba+4z09GP+hGwSmOs0K60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=67.230.224.160
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 5BFGvKec012547;
-	Mon, 15 Dec 2025 10:57:20 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 5BFGvHgD012546;
-	Mon, 15 Dec 2025 10:57:17 -0600
-Date: Mon, 15 Dec 2025 10:57:17 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-security-module@vger.kernel.org, corbet@lwn.net
-Subject: Re: A formal request for process clarifications.
-Message-ID: <20251215165717.GA12485@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20251215070838.GA7209@wind.enjellic.com> <CAHk-=whqzs-3u6Y7UC03A_XJEy6H1kNWvFO_A8jqsuob7SZCLA@mail.gmail.com>
+	s=arc-20240116; t=1765820760; c=relaxed/simple;
+	bh=aYrTt9D8MKq+zjjyW0pVCKBpgOeDzFVAhdtV7GIBWxc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BASrpxN/R83ArpHf7mWxrk/xm3/xzHPh2nwuaVwX/QQK6Mh4JsXQTXspHXA3ahTFcKnF4azlH/U4IqZLcgpmy2B1JKnQ/6vcXuyfIt36NNbxiHqXXzYEdRHOGQBqyyCnkvg/5HH5bUBS6hAwio8Ejbf3baqA+zVHm2oZnF7pqJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nbVecw4j; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nbVecw4j"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-34b75fba315so3181673a91.3
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Dec 2025 09:45:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765820758; x=1766425558; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B8gAlOJLXsZJ6S8BYRXwAkXE7FMVUf7e3keU7azU8fg=;
+        b=nbVecw4jf7m2ycZSAB48mj+E1aNwnwnkyWemYVGI5adJ3pW+xRh5nlFTadKLKLF5CD
+         JUbi0027akMnnBIuAmb0KH5gIRqcKTa4kSSU50FN+knL4X8iEiRS8EqdzjN4mI+7KsoG
+         0S6TyBAAdQqY0BuukbVgX/5MLrt2rkRJbwqhzAm7lpSrCDlpUTbS1diYp0WtUjCMz9sR
+         uouKg71q21g70VsXqVtxDKX3/CLrEwPlO/WJnD+FSBzPa1dqRqrvSihjY8S8YOWdONG+
+         IXz4b1VdqrZNlILxYenesdk60QnlDTEgqnAy8PVYicff272tSZCtEt0QD+YpLDRqlLzk
+         XI/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765820758; x=1766425558;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=B8gAlOJLXsZJ6S8BYRXwAkXE7FMVUf7e3keU7azU8fg=;
+        b=JKPNYmjLdaZbBLfnVPae61N89ZluqV+uYlGeVoNeis8jf7wA5ndh8CWWWbY1YpHZST
+         8C4GOUWRGzOoPEFqz6z3ofaQ+QoBlkH+6SghQbjXrdoXUw1C3d2xsbpuGhEsXjr7EPPP
+         bi88b+ZvSrlg6t7LKoxlJxL0VoSt6toB1vUS8Viaps3yRTawt+m6RnnuJA3KvrjpXI5s
+         FfUpOTzdQe6tC8lSn3gGIU0+5YSLWQxQDaM+LCg+ST/uDE9DuT5lr2IzBqd/Go1iBXkO
+         43rnMgtjMislMbMSF5X82e9XTGJegf/k/X8ykjT3JmwlegLrY6HMBGvolC00vsFQ9o0K
+         g52A==
+X-Forwarded-Encrypted: i=1; AJvYcCUWRb0fbcn7ySmIR6VJQYrHLLukbKSDUUdnJgs6kG/W8fePPawnS40EYlo2IOSGq0j7Dvm1NYL1fkW4REkJNAbf0zWlxCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3aV0uH3f/imFOmJt1MjYaAzGXQzm3hmNVixYpOX2+KUPOSPwS
+	EodDXyTDvlz8UsebMQAcT5/QHpZh/Qqw23xbR6YeM63b3SK6oTpBo4wG
+X-Gm-Gg: AY/fxX77IQIXRZM72wtcKpSoyGCNrP7M2DUf81bPpcO24Ksf5jylDUj+oZoabKcWIvR
+	HjpMlFldjSxh5g+QQLiajY9gOzgQ2b3nZ36nVTHc5dvCLlR2tjUBxs7crlZZCOXLuFsnjqXAYOd
+	OjL2cNt0SVydoFHqJMNyp9DNE00hEBpfvE+6jY2fyECV6+BaDWbHEGzh9NVy2qhtgTfz7vUb7Q4
+	1FTh5fRLODU49hy5ijEf9leEmcA3AM+7d74IrmlbNi/ffu+UmGcV6IP3c+zmu3d/Ht1Sn94HFjw
+	kueN2FHo0245mBnsQvdDPmZ0L/CTaN3230sNzeBvdiuCBVg6t6LH+5YHw6VEBofpiQucPnetBcA
+	yLTLRCAhzXORVJhpxhxGEAeJKDEpiOBWw3bdbqfww+QT3BueZDVcwJn1Jr01HvXUliTdRPptObF
+	q6gFJRZi+FQfwAO67aIgGO21NPznIsekKYvZH6pT1K2A0KZOdGGuZF57XmHLbDoM7nCA9EpQcYP
+	HPOHWk=
+X-Google-Smtp-Source: AGHT+IFmt3L3m0vzaclxKT/EjpoHTKVzh/8Nr2SELf/F1FfzF8lXdwvt3LIRhMP3R/xg30Kdhr/n1g==
+X-Received: by 2002:a17:90b:3949:b0:32e:a10b:ce33 with SMTP id 98e67ed59e1d1-34abe478148mr9761921a91.21.1765820757864;
+        Mon, 15 Dec 2025 09:45:57 -0800 (PST)
+Received: from kailas.hsd1.or.comcast.net ([2601:1c2:982:6040:274f:618c:1657:f235])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34abe200077sm9623156a91.3.2025.12.15.09.45.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Dec 2025 09:45:57 -0800 (PST)
+From: Ryan Foster <foster.ryan.r@gmail.com>
+To: bboscaccy@linux.microsoft.com
+Cc: James.Bottomley@HansenPartnership.com,
+	akpm@linux-foundation.org,
+	bpf@vger.kernel.org,
+	corbet@lwn.net,
+	dhowells@redhat.com,
+	gnoack@google.com,
+	jmorris@namei.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux@treblig.org,
+	mic@digikod.net,
+	paul@paul-moore.com,
+	serge@hallyn.com,
+	Ryan <foster.ryan.r@gmail.com>
+Subject: Re: [RFC 00/11] Reintroduce Hornet LSM
+Date: Mon, 15 Dec 2025 09:45:50 -0800
+Message-ID: <20251215174550.19519-1-foster.ryan.r@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251211021257.1208712-1-bboscaccy@linux.microsoft.com>
+References: <20251211021257.1208712-1-bboscaccy@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whqzs-3u6Y7UC03A_XJEy6H1kNWvFO_A8jqsuob7SZCLA@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 15 Dec 2025 10:57:20 -0600 (CST)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 15, 2025 at 07:38:58PM +1200, Linus Torvalds wrote:
+From: Ryan <foster.ryan.r@gmail.com>
 
-Good morning Linus, thanks for taking the time to respond.
+Hi all,
 
-> On Mon, 15 Dec 2025 at 19:13, Dr. Greg <greg@enjellic.com> wrote:
-> >
-> > Three years ago our team had submitted for review our TSEM LSM that
-> > provides a framework for generic security modeling,
+I want to confirm I understand the current semantics, and specific issues this series is addressing.  
 
-> If you can't convince the LSM people to take your code, you sure can't
-> convince me.
-> 
-> I already think we have too many of those pointless things. There's a
-> fine line between diversity and "too much confusion because everybody
-> thinks they know best". And the linux security modules passed that
-> line years ago.
-> 
-> So my suggestion is to standardize on normal existing security models
-> instead of thinking that you can do better by making yet another one.
-> Or at least work with the existing people instead of trying to bypass
-> them and ignoring what they tell you.
-> 
-> Yes, I know that security people always think they know best, and they
-> all disagree with each other, which is why we already have tons of
-> security modules.  Ask ten people what model is the right one, and you
-> get fifteen different answers.
-> 
-> I'm not in the least interested in becoming some kind of arbiter or
-> voice of sanity in this.
+In the signed BPF two step flow, the LSM makes decisions using what is known at the time of run hooks.  At load time, the only clear fact is "the loader is signed".  However, if we really want integrity for "the final program that will execute after relocation, and any inputs as part of the contract, matches what was signed".  The fact exists after loader runs, so the kernel could end up allowing and auditing based on the signed loader, even though it cannot yet truthfully say the runnable payload has been verified.
 
-First, to be very clear, we are not asking for any kind of
-intervention or arbitration on your part.
+If this is the right understanding, perhaps we could consider a design that moves enforcement to the moment the program becomes effective. E.g.  Load can create a program object, but it is inert by default.  The kernel should only allow attach or link creation if the kernel has already recorded a verified record of the final relocated instruction stream plus referenced state for inputs, is included in the "integrity contract".  
 
-Second and most importantly.  You've been belly-aching about this
-problem for as long as I can remember and you I go back to 1992
-together with Linux.
+If the referenced state is mutable, then either state must be frozen before the contract is verified, or any mutation must invalidate verified and force re-verification and a new policy decision. Otherwise the state is susceptible to TOCTOU issues.
 
-You, and only you, can fix the problem if you want it fixed.  Issue an
-immediate statement that you will no longer accept any code that
-implements an 'LSM'.
+Is this the semantic goal Hornet is aiming for, and is attach or link creation the intended enforcement point for the "cannot become effective until verified" rule, instead of trying to make a load time hook represent final payload verification? 
 
-That will drive security development out of the kernel, which is where
-it is going to go eventually anyway OR it will drive the security
-community to try and fix what it considers to be the challenges with
-eBPF when it comes to building security solutions.
-
-Somewhat paradoxically in all of this, TSEM isn't even an LSM that
-implements security policy.  It is generic infrastructure that was
-built to address the very problem you are bitching about.
-
-If Linux is really about technology, as you have continually
-advocated, then there has to be an open playing field for
-contributors.  Absent that, Linux will balkanize, the same way the
-commercial Unix implementations did, around corporate driven
-interests and motivations.
-
-We will pursue the open playing field issue through the TAB if
-necessary.
-
-
->               Linus
-
-Once again, with all due respect, fix the problem if it annoys you,
-you would be doing a lot of people a favor.
-
-Best wishes for a pleasant holiday season to you and your family.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+Thanks,
+Ryan
