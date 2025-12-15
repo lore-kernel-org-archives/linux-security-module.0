@@ -1,194 +1,212 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E4E28AB0B
-	for <linux-security-module@vger.kernel.org>; Mon, 15 Dec 2025 09:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E1E335083
+	for <linux-security-module@vger.kernel.org>; Mon, 15 Dec 2025 11:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765791145; cv=none; b=dL5doGuVFMvpkMI24x/3edwzH8bBWEio8KCmBbN72Z5+z8EAjvD4mIxT6IFPUR6YB1a7/RCA1kiNyc6TJM1shYbvPuq6vA8R6FO4oDePMLtxnb4Sh/lBghkPE/pgHjJhltjSWSiwI8UG0RzAMaUyCRaXdRy6LC1clps/jSBDS84=
+	t=1765799124; cv=none; b=qXpPz9AKYjR5dYnST7aiLW//Y8BWXStEALYfmKyfo+doJu19aWUhckNhWYa40Hs+afGt7iNnzIBlyoIPdW2DJ/NnsjH1AllDvVUR6HQmZ6RlQe5NrfcYTF/w84qqfZNGNdS39DN2UDH9UVFW06rxla7ejSJqR2pXMcasgZFNeCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765791145; c=relaxed/simple;
-	bh=3u9umm7/VPjetaVInDHrnL/zR8rzXm2g3nThmHm+BUU=;
+	s=arc-20240116; t=1765799124; c=relaxed/simple;
+	bh=ZyBIaG+lG8vPxwAdZxxTp/Zsp33JbnblFQsOln6KmLk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aJ353mmSNL7M8ElyUJrxg+uF7APhYpca9pmGkmP0+IWOuwJlu2JLqcCgCIOQgSygDzjN4JYeQBtpGNYrKLn5JbTbXilXVnHFNkFT5WEE2/R2BKGKNZa6B9obdDKtIm9vJGiz0iC0lqDlmVzHMAq2s8jygZ7oRAJlREbr/hir8yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MlyuHyeG; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=opOfMDSqBcy2XxpzPHRU4cHJ+Z6DVr3EiDmNGtXrD6hr8w1nUekXeHzOGkPir6u0ziOdoxRih/KxBUf3Ajj8dXEJYNcWVt05u/Pg30FMFf8dv2hpBVDUOJB2lD2gze7oAXh6kviFNsB1bDPEWOCOXBS/NoHmqlxeLDUM3551Iqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=YXH/zicO; arc=none smtp.client-ip=45.157.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MlyuHyeG"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6419aaced59so5059702a12.0
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Dec 2025 01:32:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1765791140; x=1766395940; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pMgRQp2NAuNDw0Pr8DKsFpJ1DQmsliJUNJj+b1nHdRA=;
-        b=MlyuHyeGNU/hwfhc8TNJZIHkuMZvDLYkHIG0aKz8n4YJGzOpXjNR9ltFG2r3GqnLDm
-         UZh2qsTa72lAtxe0DW8o2maHEGuJfrYFtaF2+qlVDnEVhvA8vwU2gGW6eXd11YSLAGNX
-         TSNdgOJQClkV8kFYPZ0L/Ypi6+kLiCZEKXU7ACAOu8jLElWimU/caMAIM9drAPmK2sHz
-         rW2m0xh6Jt7MCUfJSzm8l+5kQ91OvQDKZJTcHmq0Y0DyDpeQZxsGxr1eEir1C940C4ma
-         h6knkXpR0A4VkeXeeOlLiqfVXVprYK0XBBvBKNbnsnMEWiZTPq+O9abnX77iAt8Ox3u7
-         IcAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765791140; x=1766395940;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pMgRQp2NAuNDw0Pr8DKsFpJ1DQmsliJUNJj+b1nHdRA=;
-        b=OhuZ5PARMewRFxAt+qBlkWHPPE+NuRZPTF2MPWozx9znJqSKIuVFU8m/J8kiD7ed7C
-         DZw7bAeAXNsYKV/nJoEp70UTfx5h3pwf9hnuXC/SIh5YGbl+60v9N/KNiatUJHdBExHn
-         QvRPRpsrEFyw9SKeRMg+RIYCTCL7dP5nAiP7Es31K1i+RVhqWmqrOqcLTk+3jyghpZVn
-         VRlLv38qx7EIkB7Zt/F7PntNK0QezPuJbPl+a/HxyFqeXwRP4JAnwVL88/BjIqVgAGnQ
-         myxehLEMTYy4yZ8soyLb09ONNRYGRbTD+P9VbzmPxzT+3ZPmaMNlU9w8cUoW19h3eOa+
-         bNbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhTk5b3k3SnhUjqNbrx9AEJR+s1SEch5/M++b6xwJrdr5CNHNjM85d828RmXUzcU0V9QmhW8ZUS1klaPJkkhYgAkBjai4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe2TGQ8UPLdC6jNXtpX+stczN2Aw0rWuVajLLUIKtyvPot+wfw
-	dMbVD/oCLWlRSyBlkDKi4jQz6zWbUOwDTt1gu4PLBKBr9JrNW1Y99RNRYkpvRaTrtZs=
-X-Gm-Gg: AY/fxX6FBnloJzrvDUakDjaoqQQ7oZmXG/ED0KZK+3sMNwZd5qmPchCFk2k/KhHfjQu
-	hCCwgvZvU0tQlFYeuaMjAbSB6gqh5KlCr/uD9D26/Zg2HoOH8g806otBTm/JvfExR31X878pMx1
-	HQ397AW8kH5846MOPllZ1sHQLnzMupQLyyYDFMdLmleP6MHvS29eval1tvDVhedDP0EqRRBvIhA
-	8vmUM50FK2yAA9aKv5O4dXOYMGm2MWLCxjEn/GlhH6LY7IZrECbsfcEJKCn2TJ2PEnwZptBHY7T
-	UCixEn0EpurJjr4ZcwnA89gI2/B75JNBU3KT2VOEOwx2UlgGUzRIs5YiuFfq5KKmRRlo2omsU+6
-	3fvjRJkqbg0L2CsX2YdI++5v+WzBD+FPfekOoH2VRCBxtadREhRF0N0qQtUXw1ESdWDPOtb+l3F
-	M1C3MlL3si+7beGKRQVU5RzJKcoiZbEK64TEopaDReURlcV5dljsYTt6F4bUF1+HCtZD6sNHaKd
-	zU=
-X-Google-Smtp-Source: AGHT+IEaCg0quo15SNx/nGnta9oq72ocRWkg5l3SHsMTaK2wohhdkzDoQR/uDt0uWt8Scz8Vq184Fw==
-X-Received: by 2002:a17:907:1c0b:b0:b7a:1be1:984 with SMTP id a640c23a62f3a-b7d23a912c7mr930197866b.64.1765791140272;
-        Mon, 15 Dec 2025 01:32:20 -0800 (PST)
-Received: from localhost (p200300f65f006608181e6e27368f7e86.dip0.t-ipconnect.de. [2003:f6:5f00:6608:181e:6e27:368f:7e86])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b7cfa56a7f9sm1329836266b.51.2025.12.15.01.32.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Dec 2025 01:32:19 -0800 (PST)
-Date: Mon, 15 Dec 2025 10:32:18 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: Jens Wiklander <jens.wiklander@linaro.org>, 
-	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Sumit Garg <sumit.garg@oss.qualcomm.com>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Jan Kiszka <jan.kiszka@siemens.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-	Michael Chan <michael.chan@broadcom.com>, Pavan Chebbi <pavan.chebbi@broadcom.com>, 
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
-	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Peter Huewe <peterhuewe@gmx.de>, op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-rtc@vger.kernel.org, linux-efi@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH v1 00/17] tee: Use bus callbacks instead of driver
- callbacks
-Message-ID: <dhunzydod4d7vj73llpuqemxb5er2ja4emxusr66irwf77jhhb@es4yd2axzl25>
-References: <cover.1765472125.git.u.kleine-koenig@baylibre.com>
- <aT--ox375kg2Mzh-@sumit-X1>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="YXH/zicO"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dVHpT0Q90z2fl;
+	Mon, 15 Dec 2025 12:27:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1765798032;
+	bh=VO3ERMjg7lf1h+aBSm8JMyUIbIGpq7gPo9rDAvIPZgs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YXH/zicO5DwPzUyzLRG4pdjRABIqpGo3xh00ul0wwUcm7jjZjQa8tP+G/LgS680Uf
+	 sHTodTXsoS+USwUJEWwkqZ+6tQ4a+zk46GmhU+Hy4UAfYtFbKjbHWUdibQt5tvCHlO
+	 LO5V/fVOZa1qkWf9yqVv21wIgYOGMYULA7qbQUlI=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4dVHpS24KPzTF4;
+	Mon, 15 Dec 2025 12:27:12 +0100 (CET)
+Date: Mon, 15 Dec 2025 12:27:07 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Demi Marie Obenour <demiobenour@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, 
+	Alyssa Ross <hi@alyssa.is>, Spectrum OS Development <devel@spectrum-os.org>, 
+	linux-security-module@vger.kernel.org, landlock@lists.linux.dev, 
+	"Ryan B. Sullivan" <ryanbakersullivan@gmail.com>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH] host/roots: Sandbox xdg-desktop-portal-spectrum-host
+Message-ID: <20251215.igh0yobahc8E@digikod.net>
+References: <20251212-sandbox-dbus-portal-v1-1-522705202482@gmail.com>
+ <87o6o25h6y.fsf@alyssa.is>
+ <cfab1f24-65ad-40ed-b4a6-17f0aad8dc60@gmail.com>
+ <87ikea5a8x.fsf@alyssa.is>
+ <00256266-26db-40cf-8f5b-f7c7064084c2@gmail.com>
+ <87bjk16dvv.fsf@alyssa.is>
+ <515ff0f4-2ab3-46de-8d1e-5c66a93c6ede@gmail.com>
+ <20251214.aiW5oc2izaxa@digikod.net>
+ <20251215.5d7e473daa34@gnoack.org>
+ <2a681b48-bc6e-4257-8e0f-3b6aff25ac67@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yi4htjinth7u7w6q"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aT--ox375kg2Mzh-@sumit-X1>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2a681b48-bc6e-4257-8e0f-3b6aff25ac67@gmail.com>
+X-Infomaniak-Routing: alpha
 
+On Mon, Dec 15, 2025 at 03:54:25AM -0500, Demi Marie Obenour wrote:
+> On 12/15/25 03:20, Günther Noack wrote:
+> > On Sun, Dec 14, 2025 at 08:50:45PM +0100, Mickaël Salaün wrote:
+> >> On Sat, Dec 13, 2025 at 11:49:11PM -0500, Demi Marie Obenour wrote:
+> >>> On 12/13/25 20:39, Alyssa Ross wrote:
+> >>>> Demi Marie Obenour <demiobenour@gmail.com> writes:
+> >>>>
+> >>>>> On 12/13/25 16:42, Alyssa Ross wrote:
+> >>>>>> Demi Marie Obenour <demiobenour@gmail.com> writes:
+> >>>>>>
+> >>>>>>> On 12/13/25 14:12, Alyssa Ross wrote:
+> >>>>>>>> Demi Marie Obenour <demiobenour@gmail.com> writes:
+> >>>>>>>>
+> >>>>>>>>> It is quite possible that these Landlock rules are unnecessarily
+> >>>>>>>>> permissive, but all of the paths to which read and execute access is
+> >>>>>>>>> granted are part of the root filesystem and therefore assumed to be
+> >>>>>>>>> public knowledge.  Removing access from any of them would only increase
+> >>>>>>>>> the risk of accidental breakage in the future, and would not provide any
+> >>>>>>>>> security improvements.  seccomp *could* provide some improvements, but
+> >>>>>>>>> the effort needed is too high for now.
+> >>>>>>>>>
+> >>>>>>>>> Signed-off-by: Demi Marie Obenour <demiobenour@gmail.com>
+> >>>>>>>>> ---
+> >>>>>>>>>  .../template/data/service/xdg-desktop-portal-spectrum-host/run    | 8 ++++++++
+> >>>>>>>>>  1 file changed, 8 insertions(+)
+> >>>>>>>>
+> >>>>>>>> Are you sure this is working as intended?  There's no rule allowing
+> >>>>>>>> access to Cloud Hypervisor's VSOCK socket, and yet it still seems to be
+> >>>>>>>> able to access that.  Don't you need to set a rule that *restricts*
+> >>>>>>>> filesystem access and then add holes?  Did you ever see this deny
+> >>>>>>>> anything?
+> >>>>>>>
+> >>>>>>> 'man 1 setpriv' states that '--landlock-access fs' blocks all
+> >>>>>>> filesystem access unless a subsequent --landlock-rule permits it.
+> >>>>>>> I tried running with no --landlock-rule flags and the execve of
+> >>>>>>> xdg-desktop-portal-spectrum-host failed as expected.
+> >>>>>>>
+> >>>>>>> The socket is passed over stdin, and I'm pretty sure Landlock
+> >>>>>>> doesn't restrict using an already-open file descriptor.
+> >>>>>>> xdg-desktop-portal-spectrum-host does need to find the path to the
+> >>>>>>> socket, but I don't think it ever accesses that path.
+> >>>>>>
+> >>>>>> I've been looking into this a bit myself, and from what I can tell
+> >>>>>> Landlock just doesn't restrict connecting to sockets at all, even if
+> >>>>>> they're inside directories that would otherwise be inaccessible.  It's
+> >>>>>> able to connect to both Cloud Hypervisor's VSOCK socket and the D-Bus
+> >>>>>> socket even with a maximally restrictive landlock rule.  So you were
+> >>>>>> right after all, sorry!
+> >>>>>
+> >>>>> That's not good at all!  It's a trivial sandbox escape in so many cases.
+> >>>>> For instance, with access to D-Bus I can just call `systemd-run`.
+> >>>>>
+> >>>>> I'm CCing the Landlock and LSM mailing lists because if you are
+> >>>>> correct, then this is a bad security hole.
+> >>>>
+> >>>> I don't find it that surprising given the way landlock works.  "connect"
+> >>>> (to a non-abstract AF_UNIX socket) is not an operation there's a
+> >>>> landlock action for, and it's not like the other actions care about
+> >>>> access to parent directories and the like — I was able to execute a
+> >>>> program via a symlink after only giving access to the symlink's target,
+> >>>> without any access to the directory containing the symlink or the
+> >>>> symlink itself, for example.  Landlock, as I understand it, is intended
+> >>>> to block a specified set of operations (on particular file hierarchies),
+> >>>> rather than to completely prevent access to those hierarchies like
+> >>>> permissions or mount namespaces could, so the lack of a way to block
+> >>>> connecting to a socket is more of a missing feature than a security
+> >>>> hole.
+> >>>
+> >>> 'man 7 unix' states:
+> >>>
+> >>> On  Linux,  connecting to a stream socket object requires write
+> >>> permission on that socket; sending a datagram to a datagram socket
+> >>> likewise requires write permission on that socket.
+> >>>
+> >>> Landlock is definitely being inconsistent with DAC here.  Also, this
+> >>> allows real-world sandbox breakouts.  On systemd systems, the simplest
+> >>> way to escape is to use systemd-run to execute arbitrary commands.
+> >>
+> >> The Linux kernel is complex and the link between the VFS and named UNIX
+> >> sockets is "special" (see the linked GitHub issue).  Landlock doesn't
+> >> handle named UNIX sockets yet for the same reason it doesn't handle some
+> >> other kind of kernel resources or access rights: someone needs to
+> >> implement it (including tests, doc...).  There is definitely interest to
+> >> add this feature, it has been discussed for some time, but it's not
+> >> trivial.  It is a work in progress though:
+> >> https://github.com/landlock-lsm/linux/issues/36
+> > 
+> > Agreed, this would be the change that would let us restrict connect()
+> > on AF_UNIX sockets.
+> > 
+> > Additionally, *in the case that you do not actually need* Unix
+> > sockets, the other patch set that would be of interest is the one for
+> > restricting the creation of new socket FDs:
+> > https://github.com/landlock-lsm/linux/issues/6
+> > 
+> > In this talk in 2014, I explained my mental model around the
+> > network-related restrictions:
+> > https://youtu.be/K2onopkMhuM?si=LCObEX6HhGdzPnks&t=2030
+> > 
+> > The discussed socket control feature continues to be a central missing
+> > piece, as the TCP port restrictions do not make much sense as long as
+> > you can still create sockets for other protocol types.
+> > 
+> > Issue #6 that should fix this is still under active development -- an
+> > updated version of the patch was posted just last month.
+> > 
+> > To bridge the gap, the same thing can also be emulated with seccomp,
+> > but as you noted above as well in this thread, this is harder.
+> > 
+> > –Günther
+> 
+> I'm a bit surprised that this needs to be separate from other access
+> controls.  To me, it seems like a bit of a misdesign in the core kernel
+> (not Landlock).
+> 
+> I would go as far as to state that enabling other filesystem
+> restrictions should also restrict AF_UNIX filesystem sockets
+> automatically, as that is what users and administrators will expect.
 
---yi4htjinth7u7w6q
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 00/17] tee: Use bus callbacks instead of driver
- callbacks
-MIME-Version: 1.0
+I agree, that would be nice, but it's legacy.
 
-Hello Sumit,
+> 
+> What surprises me somewhat is that Linux does not have any sort of
+> unified hook for filesystem path walks.  My mental model of Landlock
+> is that from a filesystem perspective, the result should be equivalent
+> to creating an empty mount namespace, putting a tmpfs on its root,
+> and bind-mounting the allowed paths.  That this mental model does
+> not match reality was quite surprising.
 
-On Mon, Dec 15, 2025 at 04:54:11PM +0900, Sumit Garg wrote:
-> On Thu, Dec 11, 2025 at 06:14:54PM +0100, Uwe Kleine-K=F6nig wrote:
-> > Hello,
-> >=20
-> > the objective of this series is to make tee driver stop using callbacks
-> > in struct device_driver. These were superseded by bus methods in 2006
-> > (commit 594c8281f905 ("[PATCH] Add bus_type probe, remove, shutdown
-> > methods.")) but nobody cared to convert all subsystems accordingly.
-> >=20
-> > Here the tee drivers are converted. The first commit is somewhat
-> > unrelated, but simplifies the conversion (and the drivers). It
-> > introduces driver registration helpers that care about setting the bus
-> > and owner. (The latter is missing in all drivers, so by using these
-> > helpers the drivers become more correct.)
-> >=20
-> > The patches #4 - #17 depend on the first two, so if they should be
-> > applied to their respective subsystem trees these must contain the first
-> > two patches first.
->=20
-> Thanks Uwe for your efforts to clean up the boilerplate code for TEE bus
-> drivers.
+The approach taken by Landlock is to not break user space with kernel
+updates, follow an incremental approach, and have a nice compatibility
+story.  This is why a ruleset is created with a set of well-defined
+"handled" access rights and restrictions.  Each new handled access right
+or restriction must come with an explicit request from user space (e.g.
+set new bits in struct landlock_ruleset_attr).
 
-Thanks for your feedback. I will prepare a v2 and address your comments
-(whitespace issues and wrong callback in the shutdown method).
+It would have been appealing to start from scratch, drop all access
+rights, and then gradually implement access rights, but that would have
+make Landlock unusable in most use cases.  Instead, we gradually extend
+the scope of Landlock with well-defined and well-tested restrictions.
+This approach eases the integration of Landlock and when new kernel
+features are available, it's easy to update an integration to leverage
+the new features.  From day one, Landlock has been useful, even if it
+doesn't cover all use cases and environments.  When sandboxing a program
+(or properly securing an OS), most of the time, the difficult part is to
+get a good security architecture with proper privilege separation.  Once
+this is done, it's much easier to gradually improve it.
 
-> > Note that after patch #2 is applied, unconverted drivers provoke a
-> > warning in driver_register(), so it would be good for the user
-> > experience if the whole series goes in during a single merge window.
->=20
-> +1
->=20
-> I suggest the whole series goes via the Jens tree since there shouldn't
-> be any chances for conflict here.
->=20
-> > So
-> > I guess an immutable branch containing the frist three patches that can
-> > be merged into the other subsystem trees would be sensible.
-> >=20
-> > After all patches are applied, tee_bus_type can be made private to
-> > drivers/tee as it's not used in other places any more.
-> >=20
->=20
-> Feel free to make the tee_bus_type private as the last patch in the series
-> such that any followup driver follows this clean approach.
-
-There is a bit more to do for that than I'm willing to invest. With my
-patch series applied `tee_bus_type` is still used in
-drivers/tee/optee/device.c and drivers/tee/tee_core.c. Maybe it's
-sensible to merge these two files into a single one.
-
-The things I wonder about additionally are:
-
- - if CONFIG_OPTEE=3Dn and CONFIG_TEE=3Dy|m the tee bus is only used for
-   drivers but not devices.
-
- - optee_register_device() calls device_create_file() on
-   &optee_device->dev after device_register(&optee_device->dev).
-   (Attention half-knowledge!) I think device_create_file() should not
-   be called on an already registered device (or you have to send a
-   uevent afterwards). This should probably use type attribute groups.
-   (Or the need_supplicant attribute should be dropped as it isn't very
-   useful. This would maybe be considered an ABI change however.)
-
- - Why does optee_probe() in drivers/tee/optee/smc_abi.c unregister all
-   optee devices in its error path (optee_unregister_devices())?
-
-Best regards
-Uwe
-
---yi4htjinth7u7w6q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmk/1ZQACgkQj4D7WH0S
-/k5/qQf+NMGu64faecGn5WH+D12Iy/zqcfwRwh4Jv5/z/9n8f9SRKuXtH6kM3hvA
-3qOp/DbN1aDIomzFdgcPUq9OJEeC51ry33uJW7UWHl5lUk4UawAR28vX/1R3nV7t
-tz6suQjR2YkY2a/sAxZTSKZZ/A6RTGDxePvozHzuElCmEYDDbNhZpHsvgsLqs3T+
-Cso9zyEM2is8g673w2FcAnlW3JL/8jKClvZfcm9JEIRlx48uP6uCqbWeRcYS3rrt
-JBUGmWSMNEfYbD3cQbhybixsTPLzfKqkGrbJSyVRkJ2AUAQuRS14sbv7uSGhFw3B
-QWGugzTdTxcSdC0SqkOUZrCXgVUKmA==
-=VNEB
------END PGP SIGNATURE-----
-
---yi4htjinth7u7w6q--
+We should probably improve the Landlock documentation, especially by
+extending the warning block with some other relevant syscalls:
+https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
