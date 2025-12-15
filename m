@@ -1,108 +1,162 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F32227EA7
-	for <linux-security-module@vger.kernel.org>; Mon, 15 Dec 2025 07:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240C430E82B;
+	Mon, 15 Dec 2025 07:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765784360; cv=none; b=PUy7fKkpDC2jkYGS2p78TZGWVSlAi5SuW+iWeFcBtq16GY5eZ2nC35tFzNx4QYnxK3innw1tN9nFduVQrAXtvGpmImbj6ZRkiapzAXWoty2sahf0oCpgynfwo4HqPP/sjynubTmZzexxsseeL4Aegv1rDrC0kGH/El5w67F2r50=
+	t=1765785267; cv=none; b=FGamO8XXnM/QVtcLsaxVS/YkcrtN941U32wyMRnriYLYGr9fynRmXl8SHXqZ/t0Vb6bFeA8f0gEhKXBjbQyN2SmfUsYmFt5TMHkXtf6DbZHTprnyaDXVuwG+N1K2CFaSEEh62NAMbaYmCYAIKl6S2XjXrKPWynBXRXUCzFW1Rws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765784360; c=relaxed/simple;
-	bh=5MbOIYibDhPlrDcZFo2C8sMQhU7XkvcE8cpwK8O6wYY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cnEOEws5oj378QUWN1EjV33VYo0hg55VD5/CpaP/8l2oXU60LMmvkW2dRINItaluronIiDxOzHHkWMLrV6vHrQTd0uoO559gMyfFDWHqGE3Ani7SC59bjsemX3mo1PNgdiUEWakb36XcyLsiP0IPR2kBasjy4sRPdxFWyEjstDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SWl7Hiir; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1765785267; c=relaxed/simple;
+	bh=v/92elu0+HvI8sObJNUPXdOl7LjF+U9jY1BY0X5X81M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rHFcx4Sv+o64YYpvTXIoPB1wqMm7zI9VX8Jlrq/7TRxJ8hxIyV6GQkm5871DWen/IbVvQtXohl3a8nTSh6FapNMSh+WzrqzKDg3Xwjhf42/0NCiGa5J+VWuRVE3nGx0ki2/aSfrCP3PwxJQBgDS2Y3YqGogFDSclbjDa8rRjETc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UyjrkH6K; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SWl7Hiir"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6418738efa0so6357231a12.1
-        for <linux-security-module@vger.kernel.org>; Sun, 14 Dec 2025 23:39:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1765784356; x=1766389156; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qSHSM4pgYx0xKFYv00pxu98I3FB9CQ6N6ZXZkiv41/M=;
-        b=SWl7Hiir1AvDlJCYUbniAXxvo9go4HGIK/Wdnrrkd/VZLBdwgl4SqfUxp8Xjla3U5T
-         bT5/r0qOCARKkB7K+IdXhT5JIt4ykYMyBSC1eCKofRJN4gj8CsabVHoNyGwXHF2wqvhj
-         +bC+U4kookHX9Xc2PIWX3reweOBETiAWSwXwY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765784356; x=1766389156;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qSHSM4pgYx0xKFYv00pxu98I3FB9CQ6N6ZXZkiv41/M=;
-        b=IUjz+mdZchZWHYbTeDsia8dn3fpPP4+lKQFVzTJ3JyP9z2KWT/lprPaspUE49M4io2
-         7d3t7Y58/oe/OnmCQMZY8WbbPCkz7lasxl2u59sK3EUok79s+rkiuXp3LaVNJuhoMGxp
-         3fb/rOcSJ8vrrmMKRVK/+f889pR5rjeqgQlZ4Y83wNt6vJWlAbAR15EOb52mXtHigcQK
-         NOQG6ksf/EA4xx20KnsLragadqACVBLHitCkDqS6gqSmOr1G7jfMW+cHwDpJgiyxbJ/n
-         se59ozckzAB5oFi/s69oePP4E5oWAyMjf08l90Op7Uam31HHXMX6qVab1RuMaa5eQ+cH
-         yS5Q==
-X-Gm-Message-State: AOJu0Yw3Ho07EAwkvSuc/J+IgBAbY2ZoAog3yYobJbRfY/K5ZkTOn9nO
-	UIYu79ozm3H40RpTb77FrjYZ0Ke1fEIlTv6c1dxCH9emN1TN2vY03NDGsAav3kUTyHKT2LQkx6X
-	AXZ/iIIu9Lw==
-X-Gm-Gg: AY/fxX6glCzngp2qqSkD0I1xClMT7cZbmpb+R8oBA2hv4lB2B3wlAyUepP62aStQ/H0
-	gDqrW4YII4mcd3raTV0TzBYlLd1zf1rBMtWklpVYO7KNgtN223j/sMUWvBKaRp3vEnY5m0ejx0Q
-	nsvIHUrxImllNIG1fe5Q+usrEZ7AyLQtnPXtHnEGNuWT9Z1Zw7upsqEWYuouJZx4BanbI1bySfa
-	hD2O4UguCIsiMORGAUaUrEcHAufuw2g3GKPIsfMPfjSMgM44bU5oO7NQHWS2vOltW+KgtfFaPHM
-	6v61/9M1PP/YoOphU3yIGrOkZXupA0w3IWGSQ2ROylMTgxWQb5tAYKhDrHX1wgcZoju0LEXOeHr
-	lPyQNRXEfJqbQ8/S/myMwHi5IMnj/RmeUXoNDttzehwf7yD6uTD2b3orIa63zjY/EQZfB5oYm/D
-	mR0bFvE8F8cjit5ZmpNHc9Q+6KZS1FE3I81o8Cy5pFg5q5U20PaGDBHQuF9Uhh
-X-Google-Smtp-Source: AGHT+IGxUhlH187tPImx53RVN11j2T8Hk5V3iPWgCOYaGIwHDJ+9gCepwTika761gb9mmvcK6EyUCQ==
-X-Received: by 2002:a17:907:c1f:b0:b77:2269:8df0 with SMTP id a640c23a62f3a-b7d23ab386bmr939395766b.28.1765784356261;
-        Sun, 14 Dec 2025 23:39:16 -0800 (PST)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7cfa2ebafcsm1330344466b.28.2025.12.14.23.39.15
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Dec 2025 23:39:15 -0800 (PST)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-64162c04f90so5957104a12.0
-        for <linux-security-module@vger.kernel.org>; Sun, 14 Dec 2025 23:39:15 -0800 (PST)
-X-Received: by 2002:a17:906:ee81:b0:b79:ff62:e994 with SMTP id
- a640c23a62f3a-b7d23a7cebbmr1033881266b.22.1765784355049; Sun, 14 Dec 2025
- 23:39:15 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UyjrkH6K"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22802C19421;
+	Mon, 15 Dec 2025 07:54:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765785266;
+	bh=v/92elu0+HvI8sObJNUPXdOl7LjF+U9jY1BY0X5X81M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UyjrkH6KtnThxV3unDn7bby/GiiSiQSPftVpABjisSWU2uFJUOSoLOiJ1XOF8YjOp
+	 I40Nc0tRoSWwyXZw3oFdsyqnAaagma7510sWIAUaNrX4+PjLfSRLD+et/jmtmNvL+p
+	 fd4Yahc3vd/qAeYLCUCQr2QPTBPU15ibXG263IfBgtMJdpwq5a9dE2n/RsAVjJh07f
+	 tBknFVn5nsVHGveX55SVFDgvPqaXIiTsXroBhscCr8hxdkkc2/x2GJwzqKuPDYEuTo
+	 2nEzH829pMn8wb+YSsr4CldmREQ2VzSqT1cZK03HP02QTa8mhN+yfwFBVy6LBXOcO0
+	 DVK3rvhjXpeNg==
+Date: Mon, 15 Dec 2025 16:54:11 +0900
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Sumit Garg <sumit.garg@oss.qualcomm.com>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Michael Chan <michael.chan@broadcom.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Peter Huewe <peterhuewe@gmx.de>, op-tee@lists.trustedfirmware.org,
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	arm-scmi@vger.kernel.org, netdev@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH v1 00/17] tee: Use bus callbacks instead of driver
+ callbacks
+Message-ID: <aT--ox375kg2Mzh-@sumit-X1>
+References: <cover.1765472125.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251215070838.GA7209@wind.enjellic.com>
-In-Reply-To: <20251215070838.GA7209@wind.enjellic.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 15 Dec 2025 19:38:58 +1200
-X-Gmail-Original-Message-ID: <CAHk-=whqzs-3u6Y7UC03A_XJEy6H1kNWvFO_A8jqsuob7SZCLA@mail.gmail.com>
-X-Gm-Features: AQt7F2q0X6PlDJGnkyMDYUuj826gW7cUMFlULbNcxB9xasY5GnRZ0AdJ2J7Pw_k
-Message-ID: <CAHk-=whqzs-3u6Y7UC03A_XJEy6H1kNWvFO_A8jqsuob7SZCLA@mail.gmail.com>
-Subject: Re: A formal request for process clarifications.
-To: "Dr. Greg" <greg@enjellic.com>
-Cc: linux-security-module@vger.kernel.org, corbet@lwn.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1765472125.git.u.kleine-koenig@baylibre.com>
 
-On Mon, 15 Dec 2025 at 19:13, Dr. Greg <greg@enjellic.com> wrote:
->
-> Three years ago our team had submitted for review our TSEM LSM that
-> provides a framework for generic security modeling,
+On Thu, Dec 11, 2025 at 06:14:54PM +0100, Uwe Kleine-König wrote:
+> Hello,
+> 
+> the objective of this series is to make tee driver stop using callbacks
+> in struct device_driver. These were superseded by bus methods in 2006
+> (commit 594c8281f905 ("[PATCH] Add bus_type probe, remove, shutdown
+> methods.")) but nobody cared to convert all subsystems accordingly.
+> 
+> Here the tee drivers are converted. The first commit is somewhat
+> unrelated, but simplifies the conversion (and the drivers). It
+> introduces driver registration helpers that care about setting the bus
+> and owner. (The latter is missing in all drivers, so by using these
+> helpers the drivers become more correct.)
+> 
+> The patches #4 - #17 depend on the first two, so if they should be
+> applied to their respective subsystem trees these must contain the first
+> two patches first.
 
-If you can't convince the LSM people to take your code, you sure can't
-convince me.
+Thanks Uwe for your efforts to clean up the boilerplate code for TEE bus
+drivers.
 
-I already think we have too many of those pointless things. There's a
-fine line between diversity and "too much confusion because everybody
-thinks they know best". And the linux security modules passed that
-line years ago.
+> 
+> Note that after patch #2 is applied, unconverted drivers provoke a
+> warning in driver_register(), so it would be good for the user
+> experience if the whole series goes in during a single merge window.
 
-So my suggestion is to standardize on normal existing security models
-instead of thinking that you can do better by making yet another one.
-Or at least work with the existing people instead of trying to bypass
-them and ignoring what they tell you.
++1
 
-Yes, I know that security people always think they know best, and they
-all disagree with each other, which is why we already have tons of
-security modules.  Ask ten people what model is the right one, and you
-get fifteen different answers.
+I suggest the whole series goes via the Jens tree since there shouldn't
+be any chances for conflict here.
 
-I'm not in the least interested in becoming some kind of arbiter or
-voice of sanity in this.
+> So
+> I guess an immutable branch containing the frist three patches that can
+> be merged into the other subsystem trees would be sensible.
+> 
+> After all patches are applied, tee_bus_type can be made private to
+> drivers/tee as it's not used in other places any more.
+> 
 
-              Linus
+Feel free to make the tee_bus_type private as the last patch in the series
+such that any followup driver follows this clean approach.
+
+-Sumit
+
+> Best regards
+> Uwe
+> 
+> Uwe Kleine-König (17):
+>   tee: Add some helpers to reduce boilerplate for tee client drivers
+>   tee: Add probe, remove and shutdown bus callbacks to tee_client_driver
+>   tee: Adapt documentation to cover recent additions
+>   hwrng: optee - Make use of module_tee_client_driver()
+>   hwrng: optee - Make use of tee bus methods
+>   rtc: optee: Migrate to use tee specific driver registration function
+>   rtc: optee: Make use of tee bus methods
+>   efi: stmm: Make use of module_tee_client_driver()
+>   efi: stmm: Make use of tee bus methods
+>   firmware: arm_scmi: optee: Make use of module_tee_client_driver()
+>   firmware: arm_scmi: Make use of tee bus methods
+>   firmware: tee_bnxt: Make use of module_tee_client_driver()
+>   firmware: tee_bnxt: Make use of tee bus methods
+>   KEYS: trusted: Migrate to use tee specific driver registration
+>     function
+>   KEYS: trusted: Make use of tee bus methods
+>   tpm/tpm_ftpm_tee: Make use of tee specific driver registration
+>   tpm/tpm_ftpm_tee: Make use of tee bus methods
+> 
+>  Documentation/driver-api/tee.rst             | 18 +----
+>  drivers/char/hw_random/optee-rng.c           | 26 ++----
+>  drivers/char/tpm/tpm_ftpm_tee.c              | 31 +++++---
+>  drivers/firmware/arm_scmi/transports/optee.c | 32 +++-----
+>  drivers/firmware/broadcom/tee_bnxt_fw.c      | 30 ++-----
+>  drivers/firmware/efi/stmm/tee_stmm_efi.c     | 25 ++----
+>  drivers/rtc/rtc-optee.c                      | 27 ++-----
+>  drivers/tee/tee_core.c                       | 84 ++++++++++++++++++++
+>  include/linux/tee_drv.h                      | 12 +++
+>  security/keys/trusted-keys/trusted_tee.c     | 17 ++--
+>  10 files changed, 164 insertions(+), 138 deletions(-)
+> 
+> 
+> base-commit: 7d0a66e4bb9081d75c82ec4957c50034cb0ea449
+> -- 
+> 2.47.3
+> 
