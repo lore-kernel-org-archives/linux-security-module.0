@@ -1,117 +1,141 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA65B3451D9;
-	Mon, 15 Dec 2025 14:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5962C30F932;
+	Mon, 15 Dec 2025 15:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765808401; cv=none; b=Uz/ULNkROUSRhpVbfpWDpmGr7rc+aSqYkuhZUQpXW2ca5s5v5GaCVfYrEHsTV21OrRLyo9H5EpnPv6NYtiV8WnaaNUYPk2w8VhG+NJCq8ji1GqJCOBp+mEhJrNq/q+LXzfX4xw7wjogdm0Ols8d/MTQzcgr/XqW2gPqaqketfJU=
+	t=1765813439; cv=none; b=OTLrNKSnBTp8UPc+r/XRlWe+IJKpZoY4KeFpGGbbB/ErxOFcIwKq851WoocDIXPqJSoo0/VGkMiHf2wH/zlREUnoqtu1vJHnS2/OJhPfQApCesfa0CE5I0m91ACUuiqqE3lBR5FMSlk/X7BlofU4lY+ZLQctDNgvFPDrNJAK2O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765808401; c=relaxed/simple;
-	bh=SOKNAp3KlXqmQkYAHiY1KnI5hmWZlwxQAhzfS0nZwp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kIoEB+n1sPAcQgcbWZrUiLBH+jZQZY3o6jxGUMLFjiuxGX500ACkKSve6XLqihOQw8EGfPHDOGNnKS8OpLkaOFF+tBdZQb1xKhsgLoTGcgp1JuPnzZ7c67KaxgVeZHXxsXIsLIC2cP2eGx2RBcmLvjW8qVe5gMficrmvqbPcgfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DFCKKO8Y; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765813439; c=relaxed/simple;
+	bh=2AxnBcqPgqXCnldBOy07VtuaCRIG8GxLYWiW94+3UqM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cwVN5AGXhbYv36/qO9wCw8Xi8Wsz5I2GK6nODq1FJ9gkB4IecTC5rzuh/lyqOCky7SJvAkqUXJ/Np/NrnnMjraGYML8P+f0mL1k8AKqJlki6uTNYFXdInbYfV2VGowPCGA2h0tCaXdjktgdQPAjgEd4t9Wakti1lo1UMojmRj9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQlYxjcu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DFCKKO8Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0605C4CEF5;
-	Mon, 15 Dec 2025 14:19:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQlYxjcu"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D80B4C116B1;
+	Mon, 15 Dec 2025 15:43:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765808400;
-	bh=SOKNAp3KlXqmQkYAHiY1KnI5hmWZlwxQAhzfS0nZwp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DFCKKO8Y56kGcvgU39JK+toyUpk4jGwiPG6HyglacSq1MKmKkenC3jKNS9/HS5ipp
-	 B6NSOx8wBgq7Am6EMfMeh1PNOzsczwCgxkrjC6/z42Hk9J8i+SuYZOm6VUp9ou3SV9
-	 dgItcJM7Pf5rvLbJn9iHf33BlNlYry5yy3lCZ7IwJ+0MJKNGUTfNv5fUXEn1llrPl4
-	 EdZzX8EDySvcR9aLsG+tR4I+BaJYILYt8x/3OPDwPDyv8kLUOno34+gcWfYODinh1u
-	 qnMHAYCJBYMihFLwg4WxBl6Nw3qxa68g95/milv0l5zl+UvAMcycihLDuAxNErOEg+
-	 Xu0/K5zP9ANjw==
-Date: Mon, 15 Dec 2025 15:19:49 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, 
-	NeilBrown <neil@brown.name>, Val Packett <val@packett.cool>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, Chris Mason <clm@fb.com>, 
-	David Sterba <dsterba@suse.com>, David Howells <dhowells@redhat.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>, 
-	Chuck Lever <chuck.lever@oracle.com>, Olga Kornievskaia <okorniev@redhat.com>, 
-	Dai Ngo <Dai.Ngo@oracle.com>, Namjae Jeon <linkinjeon@kernel.org>, 
-	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Carlos Maiolino <cem@kernel.org>, John Johansen <john.johansen@canonical.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
-Subject: Re: [PATCH] fuse: fix conversion of fuse_reverse_inval_entry() to
- start_removing()
-Message-ID: <20251215-immens-hurtig-1f0b23aa4bf3@brauner>
-References: <20251113002050.676694-1-neilb@ownmail.net>
- <20251113002050.676694-7-neilb@ownmail.net>
- <6713ea38-b583-4c86-b74a-bea55652851d@packett.cool>
- <176454037897.634289.3566631742434963788@noble.neil.brown.name>
- <CAOQ4uxjihcBxJzckbJis8hGcWO61QKhiqeGH+hDkTUkDhu23Ww@mail.gmail.com>
- <20251201083324.GA3538@ZenIV>
- <CAJfpegs+o01jgY76WsGnk9j41LS5V0JQSk--d6xsJJp4VjTh8Q@mail.gmail.com>
- <20251205-unmoralisch-jahrtausend-cca02ad0e4fa@brauner>
+	s=k20201202; t=1765813437;
+	bh=2AxnBcqPgqXCnldBOy07VtuaCRIG8GxLYWiW94+3UqM=;
+	h=From:Date:Subject:To:Cc:From;
+	b=lQlYxjcuBzpRZCNQ3UcM8Y/byyN4ZJjnA2eo5fRbSRq9e0rwBdsIHEJGfr6JaE6sc
+	 aqVTeg3a2xhHNULbIaKI0dO4Y3jHbe6f0+kJYsgCc8rTUY7GR4j9nbRqj/0Y+GhL9E
+	 OYZIz06zraKD/O3RFbAeRmK9cT4LZLDK94XQX9k1FFcRa+Uf51iDWY/kuRE3196UIn
+	 6rxXmoKSPcM0jLW70ZXbil31VeGvKLnvD/IaokGrSoiHrXLG5AsbsdnJj8xgBESFS1
+	 DbaPN5zM4uxpVDsbJc9/rxdoEHuPTRRdRjo6HPTw7PcJJMznJhgYuGhrUyARQ/q9kJ
+	 eO/RW8co5jrDg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8D3D5B842;
+	Mon, 15 Dec 2025 15:43:57 +0000 (UTC)
+From: Joel Granados <joel.granados@kernel.org>
+Date: Mon, 15 Dec 2025 16:43:48 +0100
+Subject: [PATCH] loadpin: Implement custom proc_handler for enforce
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251205-unmoralisch-jahrtausend-cca02ad0e4fa@brauner>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251215-jag-const_loadpin-v1-1-6842775f4e90@kernel.org>
+X-B4-Tracking: v=1; b=H4sIALMsQGkC/x3MQQqAIBBA0avErBNUMqGrRIToWBOhoRGBePek5
+ Vv8XyBjIswwdQUSPpQphgbRd2B3EzZk5JpBcqmEFIodZmM2hnyvZzTuosD0KDxX0uvRDtC6K6G
+ n93/OS60fj0rPCmMAAAA=
+X-Change-ID: 20251215-jag-const_loadpin-761f052f76c4
+To: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Joel Granados <joel.granados@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2223;
+ i=joel.granados@kernel.org; h=from:subject:message-id;
+ bh=2AxnBcqPgqXCnldBOy07VtuaCRIG8GxLYWiW94+3UqM=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGlALLxIt2tveNFT3YRDbt+neQRjc69SD6n9I
+ S9XQDbETZnxFokBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJpQCy8AAoJELqXzVK3
+ lkFP2+wL/1ck/yY8LmBRUGMvwpAzd1p5neqnxyYSQ2FkjgFOUhPRkfOzCQpvkeJaeMX9rN5VAtV
+ dQw3v7ccbroOolBMfNFuvtyVfzaxpOlKaJZpixsnrxr2lYBG55dPYYkpzpZAhSa1xTvrBg6FKkZ
+ 9yPs3wRfBBv5/eSDETe3bnWf2whX+if378GgwSlF1ICy89S1jPlkvObV932KWMPwNbeG/a3VoCm
+ Bd6vOUYdUlOtDcX4hSbIyAP8usOBvsMT9g0Lci9p1SpkR3Yg+SrGLL5YnlAkhxhnAkIriNDm8BP
+ eQ4Mh0JN9lEhQtpkabSJ2GTZfeu+7mg1tdRFNAnhE7xT9lAqHxnZxH23q9SsIGt7aaYJdup9yuF
+ OM8H1SLPPlrfTbD8DdEHpxefSAzE9CZ4P3vRhxvHZVr0vD7ghHqpf0TYe1QHqyodFkHG19h1Eh9
+ O/DIM7Q0qCYDPnjlw76E697PrfBbyBFCBRoDmQ1HdVqq8v39oz7bSEyEEbQMxSg3rBLg2udGL85
+ Rk=
+X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
+ auth_id=239
 
-On Fri, Dec 05, 2025 at 02:09:41PM +0100, Christian Brauner wrote:
-> On Mon, Dec 01, 2025 at 03:03:08PM +0100, Miklos Szeredi wrote:
-> > On Mon, 1 Dec 2025 at 09:33, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > On Mon, Dec 01, 2025 at 09:22:54AM +0100, Amir Goldstein wrote:
-> > >
-> > > > I don't think there is a point in optimizing parallel dir operations
-> > > > with FUSE server cache invalidation, but maybe I am missing
-> > > > something.
-> > >
-> > > The interesting part is the expected semantics of operation;
-> > > d_invalidate() side definitely doesn't need any of that cruft,
-> > > but I would really like to understand what that function
-> > > is supposed to do.
-> > >
-> > > Miklos, could you post a brain dump on that?
-> > 
-> > This function is supposed to invalidate a dentry due to remote changes
-> > (FUSE_NOTIFY_INVAL_ENTRY).  Originally it was supplied a parent ID and
-> > a name and called d_invalidate() on the looked up dentry.
-> > 
-> > Then it grew a variant (FUSE_NOTIFY_DELETE) that was also supplied a
-> > child ID, which was matched against the looked up inode.  This was
-> > commit 451d0f599934 ("FUSE: Notifying the kernel of deletion."),
-> > Apparently this worked around the fact that at that time
-> > d_invalidate() returned -EBUSY if the target was still in use and
-> > didn't unhash the dentry in that case.
-> > 
-> > That was later changed by commit bafc9b754f75 ("vfs: More precise
-> > tests in d_invalidate") to unconditionally unhash the target, which
-> > effectively made FUSE_NOTIFY_INVAL_ENTRY and FUSE_NOTIFY_DELETE
-> > equivalent and the code in question unnecessary.
-> > 
-> > For the future, we could also introduce FUSE_NOTIFY_MOVE, that would
-> > differentiate between a delete and a move, while
-> > FUSE_NOTIFY_INVAL_ENTRY would continue to be the common (deleted or
-> > moved) notification.
-> > 
-> > Attaching untested patch to remove this cruft.
-> 
-> Should we revert the fuse specific bits of c9ba789dad15 ("VFS: introduce
-> start_creating_noperm() and start_removing_noperm()") and then apply
-> your changes afterwards?
+The new proc_handler_loadpin returns -EINVAL when is_loadpin_writable is
+false and the kernel var (enforce) is being written. Move
+loadpin_sysctl_table to .rodata (by const qualifying it) as there is no
+need to change the value of the extra1 entry.
 
-I think we shouldn't have this sitting around indefinitely so it would
-be good if we'd get a nod that this is ok or someone sending revert +
-fix that I can pick up. :)
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
+---
+Const qualifying ctl tables is part of the hardening effort in the linux
+kernel.
+---
+ security/loadpin/loadpin.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
+
+diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+index 273ffbd6defe1324d6688dec5f9fe6c9401283ed..f049c81b82a78265b6ae358bb2a814265cec9f16 100644
+--- a/security/loadpin/loadpin.c
++++ b/security/loadpin/loadpin.c
+@@ -53,18 +53,29 @@ static bool deny_reading_verity_digests;
+ #endif
+ 
+ #ifdef CONFIG_SYSCTL
+-static struct ctl_table loadpin_sysctl_table[] = {
++static bool is_loadpin_writable;
++
++static int proc_handler_loadpin(const struct ctl_table *table, int dir,
++				void *buffer, size_t *lenp, loff_t *ppos)
++{
++	if (!is_loadpin_writable && SYSCTL_USER_TO_KERN(dir))
++		return -EINVAL;
++	return proc_dointvec_minmax(table, dir, buffer, lenp, ppos);
++}
++
++static const struct ctl_table loadpin_sysctl_table[] = {
+ 	{
+ 		.procname       = "enforce",
+ 		.data           = &enforce,
+ 		.maxlen         = sizeof(int),
+ 		.mode           = 0644,
+-		.proc_handler   = proc_dointvec_minmax,
+-		.extra1         = SYSCTL_ONE,
++		.proc_handler   = proc_handler_loadpin,
++		.extra1         = SYSCTL_ZERO,
+ 		.extra2         = SYSCTL_ONE,
+ 	},
+ };
+ 
++
+ static void set_sysctl(bool is_writable)
+ {
+ 	/*
+@@ -72,9 +83,9 @@ static void set_sysctl(bool is_writable)
+ 	 * device, allow sysctl to change modes for testing.
+ 	 */
+ 	if (is_writable)
+-		loadpin_sysctl_table[0].extra1 = SYSCTL_ZERO;
++		is_loadpin_writable = true;
+ 	else
+-		loadpin_sysctl_table[0].extra1 = SYSCTL_ONE;
++		is_loadpin_writable = false;
+ }
+ #else
+ static inline void set_sysctl(bool is_writable) { }
+
+---
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+change-id: 20251215-jag-const_loadpin-761f052f76c4
+
+Best regards,
+-- 
+Joel Granados <joel.granados@kernel.org>
+
+
