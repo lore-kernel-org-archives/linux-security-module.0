@@ -1,577 +1,535 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88D2359F81
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Dec 2025 15:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE55132E74B;
+	Tue, 16 Dec 2025 19:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765900681; cv=none; b=IifOwLpMigIjPl3ov+h/0EECF/wz/hUGTqw9QcWgbn53iMKlWJc07qkWzNEy76FQCsEPDo02HYRxFcHuNCtnS6+m0eDLovV3j6dII+1DZRNR696V848oTStWFHaKSufPvqLm3OCNrNkvYLmUSoTkBR+CV6a5wBZeYPZzRQguJoY=
+	t=1765915181; cv=none; b=NNj2swDQl6y2VkmCApBdiCbMLAu4TpCxxZKTKIYUa9Qp/Nw+T0aaL617d1cLx3GgKvtyA7P2MKy+IK1zyATp4kh3PsC7UYH59jnmBUWRc1iYGvc2n/qQhiMRWHG2agttieThrkcC/dUlEx5T15d869t+/9Skjp5JAXjEG4qeZkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765900681; c=relaxed/simple;
-	bh=chQZ2LVEnswr/hULOSSa1bLHOWkGwRkKoPQ4wPGnFNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kXYg+91f5cc6b9gdBENr06r35xIySjY6BUcG+uuuxqqsxBe3yIHu+R7TT/d0WqL5aaImVUZ833Zf5wBSJaolFykjCoXuaDaxWKS8dZCtz/3B2kCszMFK7y7Su0kEp4bsi9a9HpV9GGqETmG3xHkb+VMzHc63uc69mDeT7Nj5wbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Lixfu83f; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1765915181; c=relaxed/simple;
+	bh=Oar1DZrfZa/q9K8BUehLar3eAEb5iQHtOvV/n32EmcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J5X76xlmV89rPwLN/rC3zcqO2SXnwd4rOYqkw3E/6J51oRyRbA2QQaFKl1mU/PeeJUWa0wmpwMd5Y+AZjF5Hud38FUsi8c4epIg9GggV6TF85eEgKrvNNpzhQIJI2LnOs/MMJ2kVtj3DD8WI62d4Qe6LohG0c17iQbpDi0GUPeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gtkQ3uGf; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lixfu83f"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47bdbc90dcaso339495e9.1
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Dec 2025 07:57:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1765900677; x=1766505477; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4T6EEvpkYB8O/dSoH4wvSyTHiJOCpYvJH+j1ElyVX1A=;
-        b=Lixfu83faqKg5cZB7qOjlcvqZ8RqFIvBvPrPpJ2OJCgE+gnKQeRBheaVBk7R2x+jrc
-         5bJnR0P6mfiqrMpPfUZ+sUAzl9qedWdBRBt91dVzIivP6/QBJZD9DupVhjzdyDW02DAD
-         sagbx8HIKqSBD25FVgImQ7PRa2KiIZ4zy5vW/5W1iIw/LfRDLBHzDbjJLK0ytRuktFET
-         ga409XGruEPrRPr2hvObEdNfXME/u40y9xDMAAIk7yGLSBlzpWExHtsMlcXh7kictvFM
-         8bZPEl7T7Ep4dH21dardjwDprTtgs+1HK8hCEfnYS7/CwAygQ0CSRhy5SWq/c8XYxULE
-         QKCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765900677; x=1766505477;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4T6EEvpkYB8O/dSoH4wvSyTHiJOCpYvJH+j1ElyVX1A=;
-        b=WOzNGZhr5Lzenm1kdaxK3XVsil1Xp6hIqUtlWIMg95YMa/0JiQ0c6AFSzFLTEz5XOf
-         FVtsfgE9LrlC1XcFbC6F9eAXHWnE5fP3nRM0gr+mlVRlisxrOsDZFIwzhOFGNWzsLeoF
-         PK9MbSlo3FvDGC7m867OX/zNLu/W7s2lL4hlhTqaY2SkhL55OPuleZvZq96GMv6P2SA6
-         mD7dvmP9IvadEeT9wllBsmesu8B+9ZdAneJNsTE2jaU7FctrYiSj9NnDWWVXG1Z2CVpI
-         g0dd7OtMzqCel8zLF20JlRlQQwks+uemEd/9ahRC+OUVetmsArqKShsLtqIcsGwmM5ki
-         MCcg==
-X-Forwarded-Encrypted: i=1; AJvYcCU/+6/oku7Nk0I1ZmJciBgybdXaF+P/nuOfplYjv1hmvqfo7nCN8KmI0uJcVjXVm+IfMhi7hVsL6RBX1w8pNF6PsGdYt5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/ML2jha1vb8G5OAZYTBYGsGUXZvqFCOxc8xJbz4F80vzeUfxC
-	230R4wYS4U+5ArMP5wi5XnOsd7/sNebUvuoMCRdPz+sJYEVTfbWXqyZhK1clX9oVYA==
-X-Gm-Gg: AY/fxX70Z2AI9e36DrzmwHlbEmCjFy+bO93e0bAD08MCLKRPTU9KjkQGmulolaE2xnf
-	fIim2myMP4uDEsaZ2KpvJgvwqUJj59xJr4FfvGA6bKZ1Nyt4u3ZQKnTVOo5I/wcX4iEIx3fJKcJ
-	p0eFIT+SQ3PYWpRGSPwGjxKaFKXaDaI94bJRRyEjF3YF+GHA5ay0B/bOpxdrqeHtJdQ0yDJgeAf
-	8vj/KA9j8B/mQHtmBi6IQ4obLNCxUCihM+Xc7Lmha94VwT0vilecJuQ6nA+hCIGKq+55VSjhVYJ
-	H1DDbw0sjVuSAZLUIqkMPExwwLePN6Dco/DjOyzH6JK3Wp9CZhUdVnm09zez1VkBOxoPzhI5ZDQ
-	Bf4i2Xyn3OJYoU7JqbaYuX+mUukl5R8Drvf6m6q3ehcfBJnf2NzoK2AGUSnN2Yl46sJ5ZiD7udF
-	F/aFImWwK3Pa2bXjrn82EQJ8ojZZof3A8AAD0Md+pH99n+mKBx
-X-Google-Smtp-Source: AGHT+IHDdQVZRbKnzvpABseF1CD6bLmsX8k69Taj+EhWj/QwI3tX5DeGEoYL60/CFL6IF5/VTsQYZw==
-X-Received: by 2002:a05:600c:1c1a:b0:475:de12:d3b5 with SMTP id 5b1f17b1804b1-47a8f91601bmr141242195e9.34.1765900676692;
-        Tue, 16 Dec 2025 07:57:56 -0800 (PST)
-Received: from elver.google.com ([2a00:79e0:2834:9:ea4c:b2a8:24a4:9ce9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-430f7994b58sm18141460f8f.22.2025.12.16.07.57.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Dec 2025 07:57:55 -0800 (PST)
-Date: Tue, 16 Dec 2025 16:57:49 +0100
-From: Marco Elver <elver@google.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	Chris Li <sparse@chrisli.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
-	Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
-	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	linux-sparse@vger.kernel.org, linux-wireless@vger.kernel.org,
-	llvm@lists.linux.dev, rcu@vger.kernel.org
-Subject: Re: [PATCH v4 06/35] cleanup: Basic compatibility with context
- analysis
-Message-ID: <aUGBff8Oko5O8EsP@elver.google.com>
-References: <20251120145835.3833031-2-elver@google.com>
- <20251120151033.3840508-7-elver@google.com>
- <20251211121659.GH3911114@noisy.programming.kicks-ass.net>
- <CANpmjNOmAYFj518rH0FdPp=cqK8EeKEgh1ok_zFUwHU5Fu92=w@mail.gmail.com>
- <20251212094352.GL3911114@noisy.programming.kicks-ass.net>
- <CANpmjNP=s33L6LgYWHygEuLtWTq-s2n4yFDvvGcF3HjbGH+hqw@mail.gmail.com>
- <20251212110928.GP3911114@noisy.programming.kicks-ass.net>
- <aUAPbFJSv0alh_ix@elver.google.com>
- <CANpmjNNm-kbTw46Wh1BJudynHOeLn-Oxew8VuAnCppvV_WtyBw@mail.gmail.com>
- <aUE77hgJa58waFOy@elver.google.com>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gtkQ3uGf"
+Received: from [10.17.64.122] (unknown [131.107.147.250])
+	by linux.microsoft.com (Postfix) with ESMTPSA id F1137200D625;
+	Tue, 16 Dec 2025 11:59:37 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F1137200D625
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1765915178;
+	bh=Nnm3fRXKwpCcbByYKBNDVQAh/VR68KE8x1qPI3zoWMI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gtkQ3uGfDDOrZ6edzbnI3lqfC+VJuuau9YVsy6+rq7s8yx2rmCd6NvAXtyjK6zTjv
+	 UKwbyeBiNU3+dOkeEaC0GUR5+owcXKWhe2quRt8Z2En1pMDrZxQcuDQsbB/hnvgd9z
+	 2qQ0NvRYjtddYRUUPuPFWs4Vlcfw20V1BVT1+/zg=
+Message-ID: <b9d7bcea-3784-4ad6-b494-374db0c00cc6@linux.microsoft.com>
+Date: Tue, 16 Dec 2025 11:59:36 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aUE77hgJa58waFOy@elver.google.com>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 1/1] IMA event log trimming
+To: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc: roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com, corbet@lwn.net, serge@hallyn.com,
+ paul@paul-moore.com, jmorris@namei.org,
+ linux-security-module@vger.kernel.org, anirudhve@linux.microsoft.com,
+ gregorylumen@linux.microsoft.com, nramas@linux.microsoft.com,
+ sushring@linux.microsoft.com, linux-doc@vger.kernel.org,
+ steven chen <chenste@linux.microsoft.com>
+References: <20251210235314.3341-1-chenste@linux.microsoft.com>
+ <20251210235314.3341-2-chenste@linux.microsoft.com>
+ <d80958ec-f139-41e9-afa0-a5aca94221de@linux.microsoft.com>
+ <c93907cb0f08f9baa320488989aa87e7867ee9da.camel@linux.ibm.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <c93907cb0f08f9baa320488989aa87e7867ee9da.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 16, 2025 at 12:01PM +0100, Marco Elver wrote:
-> On Mon, Dec 15, 2025 at 04:53PM +0100, Marco Elver wrote:
-> [..]
-> > > > So I think as is, we can start. But I really do want the cleanup thing
-> > > > sorted, even if just with that __release_on_cleanup mashup or so.
-> > >
-> > > Working on rebasing this to v6.19-rc1 and saw this new scoped seqlock
-> > > abstraction. For that one I was able to make it work like I thought we
-> > > could (below). Some awkwardness is required to make it work in
-> > > for-loops, which only let you define variables with the same type.
-> > >
-> > > For <linux/cleanup.h> it needs some more thought due to extra levels of
-> > > indirection.
-> > 
-> > For cleanup.h, the problem is that to instantiate we use
-> > "guard(class)(args..)". If it had been designed as "guard(class,
-> > args...)", i.e. just use __VA_ARGS__ explicitly instead of the
-> > implicit 'args...', it might have been possible to add a second
-> > cleanup variable to do the same (with some additional magic to extract
-> > the first arg if one exists). Unfortunately, the use of the current
-> > guard()() idiom has become so pervasive that this is a bigger
-> > refactor. I'm going to leave cleanup.h as-is for now, if we think we
-> > want to give this a go in the current state.
-> 
-> Alright, this can work, but it's not that ergonomic as I'd hoped (see
-> below): we can redefine class_<name>_constructor to append another
-> cleanup variable. With enough documentation, this might be workable.
+On 12/16/2025 4:50 AM, Mimi Zohar wrote:
+> Hi Steven,
+>
+> As I previously said, "The main difference between this patch and Roberto's
+> version is the length of time needed for locking the measurement list, which
+> prevents new entries from being appended to the measurement list.  In Roberto's
+> version, the list head is moved quickly and the lock released.  Measuring the
+> total amount of time needed to trim the measurement list ignores the benefit of
+> his version. I plan on reviewing both this version and his (hopefully today)."
+>
+> The other difference is "when" the IMA measurement list is read and saved,
+> before the trigger to trim the measurement list or after when the measurement
+> list is staged.  In this case, the initial trigger trims the measurement list.
+> In the other case, the measurement list is staged and then deleted.  When
+> reviewing Roberto's patch, I plan to discuss it.
 
-Below is the preview of the complete changes to make the lock guards
-work properly.
+Hi Mimi,
+
+Will update this. Thanks!
+
+> After trimming the measurement list, existing verifiers, which walk the IMA
+> measurement list, will obviously fail to match the PCRs.  Breaking existing
+> userspace applications is a problem and, unfortunately, requires yet another
+> Kconfig option.  It needs to be at least mentioned here in the patch
+> description.
+Will add Kconfig option. Thanks!
+> There are two places where it says, "the list never shrinks, so we don't need a
+> lock here".  Either the code, the comment, or both need to be updated.
+Will update.
+>
+> On Thu, 2025-12-11 at 10:41 -0800, steven chen wrote:
+>> On 12/10/2025 3:53 PM, steven chen wrote:
+>>> This patch is for trimming N entries of the IMA event logs. It will also
+>>> cleaning the hash table if ima_flush_htable is set.
+> Please refer to "Describe your changes in imperative mood" in the "Describe your
+> changes" section of Documentation/process/submitting-patches.rst.
+Will update. Thanks!
+>>> It provides a userspace interface ima_trim_log that can be used to input
+>>> number N to let kernel to trim N entries of IMA event logs. When read
+> There is only a single kernel measurement list or event log, not plural.  There
+> are N number of "entries" or "records" in the IMA measurement list.
+>
+> -> trim N records from the IMA measurement list.
+
+Will update. Thanks!
+
+
+>>> this interface, it returns number of entries trimmed last time.
+> Please provide an example of how to initiate the trim.
+>
+> After trimming the IMA measurement list, are the other securityfs files correct?
+> Are they correct after a kexec?  Or are they reset without a way of resurrecting
+> them without the full measurement list?
+
+Will update. Thanks!
+
+
+>
+>>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+>>> ---
+>>>    .../admin-guide/kernel-parameters.txt         |   4 +
+>>>    security/integrity/ima/ima.h                  |   2 +
+>>>    security/integrity/ima/ima_fs.c               | 175 +++++++++++++++++-
+>>>    security/integrity/ima/ima_queue.c            |  64 +++++++
+>>>    4 files changed, 241 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>>> index e92c0056e4e0..cd1a1d0bf0e2 100644
+>>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>>> @@ -2197,6 +2197,10 @@
+>>>    			Use the canonical format for the binary runtime
+>>>    			measurements, instead of host native format.
+>>>    
+>>> +	ima_flush_htable  [IMA]
+>>> +			Flush the measurement list hash table when trim all
+>>> +			or a part of it for deletion.
+>>> +
+>>>    	ima_hash=	[IMA]
+>>>    			Format: { md5 | sha1 | rmd160 | sha256 | sha384
+>>>    				   | sha512 | ... }
+>>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+>>> index e3d71d8d56e3..ab0e30ee25ea 100644
+>>> --- a/security/integrity/ima/ima.h
+>>> +++ b/security/integrity/ima/ima.h
+>>> @@ -246,8 +246,10 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+>>>    
+>>>    #ifdef CONFIG_IMA_KEXEC
+>>>    void ima_measure_kexec_event(const char *event_name);
+>>> +long ima_purge_event_log(long number_logs);
+>>>    #else
+>>>    static inline void ima_measure_kexec_event(const char *event_name) {}
+>>> +static inline long ima_purge_event_log(long number_logs) { return 0; }
+>>>    #endif
+>>>    
+>>>    /*
+>>> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+>>> index 87045b09f120..410f7d03c43f 100644
+>>> --- a/security/integrity/ima/ima_fs.c
+>>> +++ b/security/integrity/ima/ima_fs.c
+>>> @@ -21,6 +21,9 @@
+>>>    #include <linux/rcupdate.h>
+>>>    #include <linux/parser.h>
+>>>    #include <linux/vmalloc.h>
+>>> +#include <linux/ktime.h>
+>>> +#include <linux/timekeeping.h>
+>>> +#include <linux/ima.h>
+>>>    
+>>>    #include "ima.h"
+>>>    
+>>> @@ -38,6 +41,14 @@ __setup("ima_canonical_fmt", default_canonical_fmt_setup);
+>>>    
+>>>    static int valid_policy = 1;
+>>>    
+>>> +#define IMA_LOG_TRIM_REQ_LENGTH 11
+>>> +#define IMA_LOG_TRIM_EVENT_LEN 256
+>>> +
+>>> +static long trimcount;
+>>> +/* mutex protects atomicity of trimming measurement list requests */
+> ima_measure_lock is taken for more than just synchronization of trimming the
+> measurement list.  Please update comment.
+
+Will update. Thanks!
+
+
+>
+>>> +static DEFINE_MUTEX(ima_measure_lock);
+>>> +static long ima_measure_users;
+>>> +
+>>>    static ssize_t ima_show_htable_value(char __user *buf, size_t count,
+>>>    				     loff_t *ppos, atomic_long_t *val)
+>>>    {
+>>> @@ -202,16 +213,65 @@ static const struct seq_operations ima_measurments_seqops = {
+>>>    	.show = ima_measurements_show
+>>>    };
+>>>    
+> _ima_measurements_open() seems pretty fundamental to the locking scheme.
+> Preventing opening the IMA measurement list is new.  There should at least be a
+> short, regular comment explaining what you're locking and why.
+
+Will update. Thanks!
+
+
+>>> +static int _ima_measurements_open(struct inode *inode, struct file *file,
+>>> +				  const struct seq_operations *seq_ops)
+>>> +{
+>>> +	bool write = !!(file->f_mode & FMODE_WRITE);
+>>> +	int ret;
+>>> +
+>>> +	if (write && !capable(CAP_SYS_ADMIN))
+>>> +		return -EPERM;
+>>> +
+>>> +	mutex_lock(&ima_measure_lock);
+>>> +	if ((write && ima_measure_users != 0) ||
+>>> +	    (!write && ima_measure_users < 0)) {
+>>> +		mutex_unlock(&ima_measure_lock);
+>>> +		return -EBUSY;
+>>> +	}
+>>> +
+>>> +	ret = seq_open(file, seq_ops);
+>>> +	if (ret < 0) {
+>>> +		mutex_unlock(&ima_measure_lock);
+>>> +		return ret;
+>>> +	}
+>>> +
+>>> +	if (write)
+>>> +		ima_measure_users--;
+>>> +	else
+>>> +		ima_measure_users++;
+>>> +
+>>> +	mutex_unlock(&ima_measure_lock);
+>>> +	return ret;
+>>> +}
+>>> +
+>>>    static int ima_measurements_open(struct inode *inode, struct file *file)
+>>>    {
+>>> -	return seq_open(file, &ima_measurments_seqops);
+>>> +	return _ima_measurements_open(inode, file, &ima_measurments_seqops);
+>>> +}
+>>> +
+>>> +static int ima_measurements_release(struct inode *inode, struct file *file)
+>>> +{
+>>> +	bool write = !!(file->f_mode & FMODE_WRITE);
+>>> +	int ret;
+>>> +
+>>> +	mutex_lock(&ima_measure_lock);
+>>> +	ret = seq_release(inode, file);
+>>> +	if (!ret) {
+>>> +		if (write)
+>>> +			ima_measure_users++;
+>>> +		else
+>>> +			ima_measure_users--;
+>>> +	}
+>>> +
+>>> +	mutex_unlock(&ima_measure_lock);
+>>> +	return ret;
+>>>    }
+>>>    
+>>>    static const struct file_operations ima_measurements_ops = {
+>>>    	.open = ima_measurements_open,
+>>>    	.read = seq_read,
+>>>    	.llseek = seq_lseek,
+>>> -	.release = seq_release,
+>>> +	.release = ima_measurements_release,
+>>>    };
+>>>    
+>>>    void ima_print_digest(struct seq_file *m, u8 *digest, u32 size)
+>>> @@ -279,14 +339,111 @@ static const struct seq_operations ima_ascii_measurements_seqops = {
+>>>    
+>>>    static int ima_ascii_measurements_open(struct inode *inode, struct file *file)
+>>>    {
+>>> -	return seq_open(file, &ima_ascii_measurements_seqops);
+>>> +	return _ima_measurements_open(inode, file, &ima_ascii_measurements_seqops);
+>>>    }
+>>>    
+>>>    static const struct file_operations ima_ascii_measurements_ops = {
+>>>    	.open = ima_ascii_measurements_open,
+>>>    	.read = seq_read,
+>>>    	.llseek = seq_lseek,
+>>> -	.release = seq_release,
+>>> +	.release = ima_measurements_release,
+>>> +};
+>>> +
+>>> +static void ima_measure_trim_event(const long number_logs)
+>>> +{
+>>> +	char ima_log_trim_event[IMA_LOG_TRIM_EVENT_LEN];
+>>> +	struct timespec64 ts;
+>>> +	u64 time_ns;
+>>> +	int n;
+>>> +
+>>> +	ktime_get_real_ts64(&ts);
+>>> +	time_ns = (u64)ts.tv_sec * 1000000000ULL + ts.tv_nsec;
+>>> +	n = scnprintf(ima_log_trim_event, IMA_LOG_TRIM_EVENT_LEN,
+>>> +		      "time=%llu; log trim this time=%lu;",
+>>> +		       time_ns, number_logs);
+>>> +
+>>> +	ima_measure_critical_data("ima_log_trim", "trim ima event logs", ima_log_trim_event, n, false, NULL, 0);
+>>> +}
+> There's no mention of a new critical data record in the patch description.  It
+> should be a separate patch with a full patch description describing what it is
+> and how to verify it.
+
+Will update this. Thanks!
+
+
+>>> +
+>>> +static int ima_log_trim_open(struct inode *inode, struct file *file)
+>>> +{
+>>> +	bool write = !!(file->f_mode & FMODE_WRITE);
+>>> +
+>>> +	if (!write && capable(CAP_SYS_ADMIN))
+>>> +		return 0;
+>>> +	else if (!capable(CAP_SYS_ADMIN))
+>>> +		return -EPERM;
+>>> +
+>>> +	return _ima_measurements_open(inode, file, &ima_measurments_seqops);
+>>> +}
+>>> +
+>>> +static ssize_t ima_log_trim_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
+>>> +{
+>>> +	char tmpbuf[IMA_LOG_TRIM_REQ_LENGTH];	/* greater than largest 'long' string value */
+>>> +	ssize_t len;
+>>> +
+>>> +	len = scnprintf(tmpbuf, sizeof(tmpbuf), "%li\n", trimcount);
+>>> +	return simple_read_from_buffer(buf, size, ppos, tmpbuf, len);
+>>> +}
+>>> +
+>>> +static ssize_t ima_log_trim_write(struct file *file,
+>>> +				  const char __user *buf, size_t datalen, loff_t *ppos)
+>>> +{
+>>> +	unsigned char req[IMA_LOG_TRIM_REQ_LENGTH];
+>>> +	long count, n;
+>>> +	int ret;
+>>> +
+>>> +	if (*ppos > 0 || datalen > IMA_LOG_TRIM_REQ_LENGTH || datalen < 2) {
+>>> +		ret = -EINVAL;
+>>> +		goto out;
+>>> +	}
+>>> +
+>>> +	n = (int)datalen;
+>>> +
+>>> +	ret = copy_from_user(req, buf, datalen);
+>>> +	if (ret < 0)
+>>> +		goto out;
+>>> +
+>>> +	count = 0;
+>>> +	for (int i = 0; i < n; ++i) {
+>>> +		if (req[i] < '0' || req[i] > '9') {
+>>> +			ret = -EINVAL;
+>>> +			goto out;
+>>> +		}
+>>> +		count = count * 10 + req[i] - '0';
+>>> +	}
+> This code can be simplified by using the kstrto*_from_user() family of
+> functions.  The patch description should include an example how to trim the
+> measurement list.
+
+Will update. Thanks!
+
+
+>>> +	ret = ima_purge_event_log(count);
+> The term "purge" is really strong wording.  I hope you're not purging the
+> measurement list, but simply removing them from kernel memory.
+
+Will update. Thanks!
+
+
+>
+>>> +
+>>> +	if (ret < 0)
+>>> +		goto out;
+>>> +
+>>> +	trimcount = ret;
+>>> +
+>>> +	if (trimcount > 0)
+>>> +		ima_measure_trim_event(trimcount);
+>>> +
+>>> +	ret = datalen;
+>>> +out:
+>>> +	return ret;
+>>> +}
+>>> +
+>>> +static int ima_log_trim_release(struct inode *inode, struct file *file)
+>>> +{
+>>> +	bool write = !!(file->f_mode & FMODE_WRITE);
+>>> +	if (!write && capable(CAP_SYS_ADMIN))
+>>> +		return 0;
+>>> +	else if (!capable(CAP_SYS_ADMIN))
+>>> +		return -EPERM;
+>>> +
+>>> +	return ima_measurements_release(inode, file);
+>>> +}
+>>> +
+>>> +static const struct file_operations ima_log_trim_ops = {
+>>> +	.open = ima_log_trim_open,
+>>> +	.read = ima_log_trim_read,
+>>> +	.write = ima_log_trim_write,
+>>> +	.llseek = generic_file_llseek,
+>>> +	.release = ima_log_trim_release
+>>>    };
+>>>    
+>>>    static ssize_t ima_read_policy(char *path)
+>>> @@ -528,6 +685,16 @@ int __init ima_fs_init(void)
+>>>    		goto out;
+>>>    	}
+>>>    
+>>> +	dentry = securityfs_create_file("ima_trim_log",
+>>> +					S_IRUSR | S_IRGRP | S_IWUSR | S_IWGRP,
+>>> +					ima_dir, NULL, &ima_log_trim_ops);
+>>> +	if (IS_ERR(dentry)) {
+>>> +		ret = PTR_ERR(dentry);
+>>> +		goto out;
+>>> +	}
+>>> +
+>>> +	trimcount = 0;
+>>> +
+>>>    	dentry = securityfs_create_file("runtime_measurements_count",
+>>>    				   S_IRUSR | S_IRGRP, ima_dir, NULL,
+>>>    				   &ima_measurements_count_ops);
+>>> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+>>> index 590637e81ad1..77ab52469727 100644
+>>> --- a/security/integrity/ima/ima_queue.c
+>>> +++ b/security/integrity/ima/ima_queue.c
+>>> @@ -22,6 +22,14 @@
+>>>    
+>>>    #define AUDIT_CAUSE_LEN_MAX 32
+>>>    
+>>> +bool ima_flush_htable;
+>>> +static int __init ima_flush_htable_setup(char *str)
+>>> +{
+>>> +	ima_flush_htable = true;
+>>> +	return 1;
+>>> +}
+>>> +__setup("ima_flush_htable", ima_flush_htable_setup);
+>>> +
+>>>    /* pre-allocated array of tpm_digest structures to extend a PCR */
+>>>    static struct tpm_digest *digests;
+>>>    
+>>> @@ -220,6 +228,62 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
+>>>    	return result;
+>>>    }
+>>>    
+>>> +/* Delete the IMA event logs */
+> Do you mean delete the IMA event records/entries?
+
+Will update. Thanks!
+
+
+>>> +long ima_purge_event_log(long number_logs)
+> If this function is not defined as static, then it requires a kernel-doc.
+
+Will update. Thanks!
+
+
+>>> +{
+>>> +	struct ima_queue_entry *qe, *qe_tmp;
+>>> +	LIST_HEAD(ima_measurements_staged);
+>>> +	unsigned int i;
+>>> +	long cur = number_logs;
+> The variable name "number_logs" is confusing.  As I mentioned in the patch
+> description, there is one measurement list with multiple records.  There aren't
+> multiple logs in the kernel (other than the staged list).
+
+Will update it to "req_value". Thanks!
+
+
+>>> +
+>>> +	if (number_logs <= 0)
+>>> +		return number_logs;
+>>> +
+>>> +	mutex_lock(&ima_extend_list_mutex);
+>>> +
+>>> +
+>>> +	list_for_each_entry(qe, &ima_measurements, later) {
+>>> +		if (--number_logs == 0)
+>>> +			break;
+>>> +	}
+>>> +
+>>> +	if (number_logs > 0) {
+>>> +		mutex_unlock(&ima_extend_list_mutex);
+>>> +		return -ENOENT;
+>>> +	}
+>>> +
+>>> +	__list_cut_position(&ima_measurements_staged, &ima_measurements,
+>>> +				    &qe->later);
+>>> +	atomic_long_sub(cur, &ima_htable.len);
+>>> +
+>>> +	if (!IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE) && ima_flush_htable) {
+>>> +		list_for_each_entry(qe, &ima_measurements_staged, later)
+>>> +			/* It can race with ima_lookup_digest_entry(). */
+>>> +			hlist_del_rcu(&qe->hnext);
+>>> +	}
+>> If the h table can be staged during the locking period and deleted after
+>> unlocking, the time
+>> the list is held will be reduced.
+>>
+>> I will work on this, and any suggestions are greatly appreciated.
+>>
+>> Thanks,
+>>
+>> Steven
+>>
+>>> +
+>>> +	mutex_unlock(&ima_extend_list_mutex);
+>>> +
+>>> +
+>>> +	list_for_each_entry_safe(qe, qe_tmp, &ima_measurements_staged, later) {
+>>> +		for (i = 0; i < qe->entry->template_desc->num_fields; i++) {
+>>> +			kfree(qe->entry->template_data[i].data);
+>>> +			qe->entry->template_data[i].data = NULL;
+>>> +			qe->entry->template_data[i].len = 0;
+>>> +		}
+>>> +
+>>> +		list_del(&qe->later);
+>>> +
+>>> +		if (ima_flush_htable) {
+>>> +			kfree(qe->entry->digests);
+>>> +			kfree(qe->entry);
+>>> +			kfree(qe);
+>>> +		}
+>>> +	}
+> To avoid code duplication, there's a similar function named
+> ima_free_template_entry().  Any changes needed to the function should be done as
+> a preparatory patch.
+
+I will check and update.
 
 Thanks,
--- Marco
 
------- >8 ------
+Steven
 
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index 2f998bb42c4c..9fe3b0f816c6 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -516,9 +516,42 @@ static __always_inline class_##_name##_t class_##_name##_constructor(void) \
- static inline class_##_name##_t class_##_name##_constructor(void) _lock;\
- static inline void class_##_name##_destructor(class_##_name##_t *_T) _unlock;
- 
-+/*
-+ * To support Context Analysis, we need to allow the compiler to see the
-+ * acquisition and release of the context lock. However, the "cleanup" helpers
-+ * wrap the lock in a struct passed through seperate helper functions, which
-+ * hides the lock alias from the compiler (no inter-procedural analysis).
-+ *
-+ * To make it work, we introduce an explicit alias to the context lock instance
-+ * that is "cleaned" up with a separate cleanup helper. This helper is a dummy
-+ * function that does nothing at runtime, but has the "_unlock" attribute to
-+ * tell the compiler what happens at the end of the scope.
-+ *
-+ * To generalize the pattern, the WITH_LOCK_GUARD_1_ATTRS() macro should be used
-+ * to redefine the constructor, which then also creates the alias variable with
-+ * the right "cleanup" attribute, *after* DECLARE_LOCK_GUARD_1_ATTRS() has been
-+ * used.
-+ *
-+ * Example usage:
-+ *
-+ *   DECLARE_LOCK_GUARD_1_ATTRS(mutex, __acquires(_T), __releases(*(struct mutex **)_T))
-+ *   #define class_mutex_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(mutex, _T)
-+ *
-+ * Note: To support the for-loop based scoped helpers, the auxiliary variable
-+ * must be a pointer to the "class" type because it is defined in the same
-+ * statement as the guard variable. However, we initialize it with the lock
-+ * pointer (despite the type mismatch, the compiler's alias analysis still works
-+ * as expected). The "_unlock" attribute receives a pointer to the auxiliary
-+ * variable (a double pointer to the class type), and must be cast and
-+ * dereferenced appropriately.
-+ */
- #define DECLARE_LOCK_GUARD_1_ATTRS(_name, _lock, _unlock)		\
- static inline class_##_name##_t class_##_name##_constructor(lock_##_name##_t *_T) _lock;\
--static inline void class_##_name##_destructor(class_##_name##_t *_T) _unlock;
-+static __always_inline void __class_##_name##_cleanup_ctx(class_##_name##_t **_T) \
-+	__no_context_analysis _unlock { }
-+#define WITH_LOCK_GUARD_1_ATTRS(_name, _T)				\
-+	class_##_name##_constructor(_T),				\
-+	*__UNIQUE_ID(unlock) __cleanup(__class_##_name##_cleanup_ctx) = (void *)(_T)
- 
- #define DEFINE_LOCK_GUARD_1(_name, _type, _lock, _unlock, ...)		\
- __DEFINE_CLASS_IS_CONDITIONAL(_name, false);				\
-diff --git a/include/linux/local_lock.h b/include/linux/local_lock.h
-index bedcbb33b928..99c06e499375 100644
---- a/include/linux/local_lock.h
-+++ b/include/linux/local_lock.h
-@@ -104,9 +104,13 @@ DEFINE_LOCK_GUARD_1(local_lock_nested_bh, local_lock_t __percpu,
- 		    local_lock_nested_bh(_T->lock),
- 		    local_unlock_nested_bh(_T->lock))
- 
--DECLARE_LOCK_GUARD_1_ATTRS(local_lock, __assumes_ctx_lock(_T), /* */)
--DECLARE_LOCK_GUARD_1_ATTRS(local_lock_irq, __assumes_ctx_lock(_T), /* */)
--DECLARE_LOCK_GUARD_1_ATTRS(local_lock_irqsave, __assumes_ctx_lock(_T), /* */)
--DECLARE_LOCK_GUARD_1_ATTRS(local_lock_nested_bh, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(local_lock, __acquires(_T), __releases(*(local_lock_t __percpu **)_T))
-+#define class_local_lock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(local_lock, _T)
-+DECLARE_LOCK_GUARD_1_ATTRS(local_lock_irq, __acquires(_T), __releases(*(local_lock_t __percpu **)_T))
-+#define class_local_lock_irq_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(local_lock_irq, _T)
-+DECLARE_LOCK_GUARD_1_ATTRS(local_lock_irqsave, __acquires(_T), __releases(*(local_lock_t __percpu **)_T))
-+#define class_local_lock_irqsave_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(local_lock_irqsave, _T)
-+DECLARE_LOCK_GUARD_1_ATTRS(local_lock_nested_bh, __acquires(_T), __releases(*(local_lock_t __percpu **)_T))
-+#define class_local_lock_nested_bh_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(local_lock_nested_bh, _T)
- 
- #endif
-diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-index 8ed48d40007b..06c3f947ea49 100644
---- a/include/linux/mutex.h
-+++ b/include/linux/mutex.h
-@@ -255,9 +255,12 @@ DEFINE_LOCK_GUARD_1(mutex, struct mutex, mutex_lock(_T->lock), mutex_unlock(_T->
- DEFINE_LOCK_GUARD_1_COND(mutex, _try, mutex_trylock(_T->lock))
- DEFINE_LOCK_GUARD_1_COND(mutex, _intr, mutex_lock_interruptible(_T->lock), _RET == 0)
- 
--DECLARE_LOCK_GUARD_1_ATTRS(mutex, __assumes_ctx_lock(_T), /* */)
--DECLARE_LOCK_GUARD_1_ATTRS(mutex_try, __assumes_ctx_lock(_T), /* */)
--DECLARE_LOCK_GUARD_1_ATTRS(mutex_intr, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(mutex,	__acquires(_T), __releases(*(struct mutex **)_T))
-+DECLARE_LOCK_GUARD_1_ATTRS(mutex_try,	__acquires(_T), __releases(*(struct mutex **)_T))
-+DECLARE_LOCK_GUARD_1_ATTRS(mutex_intr,	__acquires(_T), __releases(*(struct mutex **)_T))
-+#define class_mutex_constructor(_T)	WITH_LOCK_GUARD_1_ATTRS(mutex, _T)
-+#define class_mutex_try_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(mutex_try, _T)
-+#define class_mutex_intr_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(mutex_intr, _T)
- 
- extern unsigned long mutex_get_owner(struct mutex *lock);
- 
-diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-index 0e75e26e8813..8da14a08a4e1 100644
---- a/include/linux/rwsem.h
-+++ b/include/linux/rwsem.h
-@@ -262,17 +262,23 @@ DEFINE_LOCK_GUARD_1(rwsem_read, struct rw_semaphore, down_read(_T->lock), up_rea
- DEFINE_LOCK_GUARD_1_COND(rwsem_read, _try, down_read_trylock(_T->lock))
- DEFINE_LOCK_GUARD_1_COND(rwsem_read, _intr, down_read_interruptible(_T->lock), _RET == 0)
- 
--DECLARE_LOCK_GUARD_1_ATTRS(rwsem_read, __assumes_ctx_lock(_T), /* */)
--DECLARE_LOCK_GUARD_1_ATTRS(rwsem_read_try, __assumes_ctx_lock(_T), /* */)
--DECLARE_LOCK_GUARD_1_ATTRS(rwsem_read_intr, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(rwsem_read, __acquires_shared(_T), __releases_shared(*(struct rw_semaphore **)_T))
-+#define class_rwsem_read_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rwsem_read, _T)
-+DECLARE_LOCK_GUARD_1_ATTRS(rwsem_read_try, __acquires_shared(_T), __releases_shared(*(struct rw_semaphore **)_T))
-+#define class_rwsem_read_try_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rwsem_read_try, _T)
-+DECLARE_LOCK_GUARD_1_ATTRS(rwsem_read_intr, __acquires_shared(_T), __releases_shared(*(struct rw_semaphore **)_T))
-+#define class_rwsem_read_intr_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rwsem_read_intr, _T)
- 
- DEFINE_LOCK_GUARD_1(rwsem_write, struct rw_semaphore, down_write(_T->lock), up_write(_T->lock))
- DEFINE_LOCK_GUARD_1_COND(rwsem_write, _try, down_write_trylock(_T->lock))
- DEFINE_LOCK_GUARD_1_COND(rwsem_write, _kill, down_write_killable(_T->lock), _RET == 0)
- 
--DECLARE_LOCK_GUARD_1_ATTRS(rwsem_write, __assumes_ctx_lock(_T), /* */)
--DECLARE_LOCK_GUARD_1_ATTRS(rwsem_write_try, __assumes_ctx_lock(_T), /* */)
--DECLARE_LOCK_GUARD_1_ATTRS(rwsem_write_kill, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(rwsem_write, __acquires(_T), __releases(*(struct rw_semaphore **)_T))
-+#define class_rwsem_write_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rwsem_write, _T)
-+DECLARE_LOCK_GUARD_1_ATTRS(rwsem_write_try, __acquires(_T), __releases(*(struct rw_semaphore **)_T))
-+#define class_rwsem_write_try_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rwsem_write_try, _T)
-+DECLARE_LOCK_GUARD_1_ATTRS(rwsem_write_kill, __acquires(_T), __releases(*(struct rw_semaphore **)_T))
-+#define class_rwsem_write_kill_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rwsem_write_kill, _T)
- 
- /*
-  * downgrade write lock to read lock
-diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-index 397f4753d10a..41ed884cffc9 100644
---- a/include/linux/sched/task.h
-+++ b/include/linux/sched/task.h
-@@ -226,6 +226,7 @@ static inline void task_unlock(struct task_struct *p)
- }
- 
- DEFINE_LOCK_GUARD_1(task_lock, struct task_struct, task_lock(_T->lock), task_unlock(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(task_lock, __assumes_ctx_lock(_T->alloc_lock), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(task_lock, __acquires(&_T->alloc_lock), __releases(&(*(struct task_struct **)_T)->alloc_lock))
-+#define class_task_lock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(task_lock, _T)
- 
- #endif /* _LINUX_SCHED_TASK_H */
-diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-index 3a45b08ced43..396b8c5d6c1b 100644
---- a/include/linux/spinlock.h
-+++ b/include/linux/spinlock.h
-@@ -537,109 +537,132 @@ void free_bucket_spinlocks(spinlock_t *locks);
- DEFINE_LOCK_GUARD_1(raw_spinlock, raw_spinlock_t,
- 		    raw_spin_lock(_T->lock),
- 		    raw_spin_unlock(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock, __acquires(_T), __releases(*(raw_spinlock_t **)_T))
-+#define class_raw_spinlock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(raw_spinlock, _T)
- 
- DEFINE_LOCK_GUARD_1_COND(raw_spinlock, _try, raw_spin_trylock(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_try, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_try, __acquires(_T), __releases(*(raw_spinlock_t **)_T))
-+#define class_raw_spinlock_try_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(raw_spinlock_try, _T)
- 
- DEFINE_LOCK_GUARD_1(raw_spinlock_nested, raw_spinlock_t,
- 		    raw_spin_lock_nested(_T->lock, SINGLE_DEPTH_NESTING),
- 		    raw_spin_unlock(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_nested, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_nested, __acquires(_T), __releases(*(raw_spinlock_t **)_T))
-+#define class_raw_spinlock_nested_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(raw_spinlock_nested, _T)
- 
- DEFINE_LOCK_GUARD_1(raw_spinlock_irq, raw_spinlock_t,
- 		    raw_spin_lock_irq(_T->lock),
- 		    raw_spin_unlock_irq(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_irq, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_irq, __acquires(_T), __releases(*(raw_spinlock_t **)_T))
-+#define class_raw_spinlock_irq_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(raw_spinlock_irq, _T)
- 
- DEFINE_LOCK_GUARD_1_COND(raw_spinlock_irq, _try, raw_spin_trylock_irq(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_irq_try, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_irq_try, __acquires(_T), __releases(*(raw_spinlock_t **)_T))
-+#define class_raw_spinlock_irq_try_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(raw_spinlock_irq_try, _T)
- 
- DEFINE_LOCK_GUARD_1(raw_spinlock_bh, raw_spinlock_t,
- 		    raw_spin_lock_bh(_T->lock),
- 		    raw_spin_unlock_bh(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_bh, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_bh, __acquires(_T), __releases(*(raw_spinlock_t **)_T))
-+#define class_raw_spinlock_bh_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(raw_spinlock_bh, _T)
- 
- DEFINE_LOCK_GUARD_1_COND(raw_spinlock_bh, _try, raw_spin_trylock_bh(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_bh_try, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_bh_try, __acquires(_T), __releases(*(raw_spinlock_t **)_T))
-+#define class_raw_spinlock_bh_try_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(raw_spinlock_bh_try, _T)
- 
- DEFINE_LOCK_GUARD_1(raw_spinlock_irqsave, raw_spinlock_t,
- 		    raw_spin_lock_irqsave(_T->lock, _T->flags),
- 		    raw_spin_unlock_irqrestore(_T->lock, _T->flags),
- 		    unsigned long flags)
--DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_irqsave, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_irqsave, __acquires(_T), __releases(*(raw_spinlock_t **)_T))
-+#define class_raw_spinlock_irqsave_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(raw_spinlock_irqsave, _T)
- 
- DEFINE_LOCK_GUARD_1_COND(raw_spinlock_irqsave, _try,
- 			 raw_spin_trylock_irqsave(_T->lock, _T->flags))
--DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_irqsave_try, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(raw_spinlock_irqsave_try, __acquires(_T), __releases(*(raw_spinlock_t **)_T))
-+#define class_raw_spinlock_irqsave_try_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(raw_spinlock_irqsave_try, _T)
- 
- DEFINE_LOCK_GUARD_1(spinlock, spinlock_t,
- 		    spin_lock(_T->lock),
- 		    spin_unlock(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(spinlock, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(spinlock, __acquires(_T), __releases(*(spinlock_t **)_T))
-+#define class_spinlock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(spinlock, _T)
- 
- DEFINE_LOCK_GUARD_1_COND(spinlock, _try, spin_trylock(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(spinlock_try, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(spinlock_try, __acquires(_T), __releases(*(spinlock_t **)_T))
-+#define class_spinlock_try_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(spinlock_try, _T)
- 
- DEFINE_LOCK_GUARD_1(spinlock_irq, spinlock_t,
- 		    spin_lock_irq(_T->lock),
- 		    spin_unlock_irq(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(spinlock_irq, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(spinlock_irq, __acquires(_T), __releases(*(spinlock_t **)_T))
-+#define class_spinlock_irq_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(spinlock_irq, _T)
- 
- DEFINE_LOCK_GUARD_1_COND(spinlock_irq, _try,
- 			 spin_trylock_irq(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(spinlock_irq_try, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(spinlock_irq_try, __acquires(_T), __releases(*(spinlock_t **)_T))
-+#define class_spinlock_irq_try_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(spinlock_irq_try, _T)
- 
- DEFINE_LOCK_GUARD_1(spinlock_bh, spinlock_t,
- 		    spin_lock_bh(_T->lock),
- 		    spin_unlock_bh(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(spinlock_bh, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(spinlock_bh, __acquires(_T), __releases(*(spinlock_t **)_T))
-+#define class_spinlock_bh_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(spinlock_bh, _T)
- 
- DEFINE_LOCK_GUARD_1_COND(spinlock_bh, _try,
- 			 spin_trylock_bh(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(spinlock_bh_try, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(spinlock_bh_try, __acquires(_T), __releases(*(spinlock_t **)_T))
-+#define class_spinlock_bh_try_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(spinlock_bh_try, _T)
- 
- DEFINE_LOCK_GUARD_1(spinlock_irqsave, spinlock_t,
- 		    spin_lock_irqsave(_T->lock, _T->flags),
- 		    spin_unlock_irqrestore(_T->lock, _T->flags),
- 		    unsigned long flags)
--DECLARE_LOCK_GUARD_1_ATTRS(spinlock_irqsave, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(spinlock_irqsave, __acquires(_T), __releases(*(spinlock_t **)_T))
-+#define class_spinlock_irqsave_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(spinlock_irqsave, _T)
- 
- DEFINE_LOCK_GUARD_1_COND(spinlock_irqsave, _try,
- 			 spin_trylock_irqsave(_T->lock, _T->flags))
--DECLARE_LOCK_GUARD_1_ATTRS(spinlock_irqsave_try, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(spinlock_irqsave_try, __acquires(_T), __releases(*(spinlock_t **)_T))
-+#define class_spinlock_irqsave_try_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(spinlock_irqsave_try, _T)
- 
- DEFINE_LOCK_GUARD_1(read_lock, rwlock_t,
- 		    read_lock(_T->lock),
- 		    read_unlock(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(read_lock, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(read_lock, __acquires(_T), __releases(*(rwlock_t **)_T))
-+#define class_read_lock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(read_lock, _T)
- 
- DEFINE_LOCK_GUARD_1(read_lock_irq, rwlock_t,
- 		    read_lock_irq(_T->lock),
- 		    read_unlock_irq(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(read_lock_irq, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(read_lock_irq, __acquires(_T), __releases(*(rwlock_t **)_T))
-+#define class_read_lock_irq_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(read_lock_irq, _T)
- 
- DEFINE_LOCK_GUARD_1(read_lock_irqsave, rwlock_t,
- 		    read_lock_irqsave(_T->lock, _T->flags),
- 		    read_unlock_irqrestore(_T->lock, _T->flags),
- 		    unsigned long flags)
--DECLARE_LOCK_GUARD_1_ATTRS(read_lock_irqsave, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(read_lock_irqsave, __acquires(_T), __releases(*(rwlock_t **)_T))
-+#define class_read_lock_irqsave_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(read_lock_irqsave, _T)
- 
- DEFINE_LOCK_GUARD_1(write_lock, rwlock_t,
- 		    write_lock(_T->lock),
- 		    write_unlock(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(write_lock, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(write_lock, __acquires(_T), __releases(*(rwlock_t **)_T))
-+#define class_write_lock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(write_lock, _T)
- 
- DEFINE_LOCK_GUARD_1(write_lock_irq, rwlock_t,
- 		    write_lock_irq(_T->lock),
- 		    write_unlock_irq(_T->lock))
--DECLARE_LOCK_GUARD_1_ATTRS(write_lock_irq, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(write_lock_irq, __acquires(_T), __releases(*(rwlock_t **)_T))
-+#define class_write_lock_irq_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(write_lock_irq, _T)
- 
- DEFINE_LOCK_GUARD_1(write_lock_irqsave, rwlock_t,
- 		    write_lock_irqsave(_T->lock, _T->flags),
- 		    write_unlock_irqrestore(_T->lock, _T->flags),
- 		    unsigned long flags)
--DECLARE_LOCK_GUARD_1_ATTRS(write_lock_irqsave, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(write_lock_irqsave, __acquires(_T), __releases(*(rwlock_t **)_T))
-+#define class_write_lock_irqsave_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(write_lock_irqsave, _T)
- 
- #undef __LINUX_INSIDE_SPINLOCK_H
- #endif /* __LINUX_SPINLOCK_H */
-diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index 88f01d6fded8..bb44a0bd7696 100644
---- a/include/linux/srcu.h
-+++ b/include/linux/srcu.h
-@@ -621,16 +621,21 @@ DEFINE_LOCK_GUARD_1(srcu, struct srcu_struct,
- 		    _T->idx = srcu_read_lock(_T->lock),
- 		    srcu_read_unlock(_T->lock, _T->idx),
- 		    int idx)
--DECLARE_LOCK_GUARD_1_ATTRS(srcu, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(srcu, __acquires_shared(_T), __releases_shared(*(struct srcu_struct **)_T))
-+#define class_srcu_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(srcu, _T)
- 
- DEFINE_LOCK_GUARD_1(srcu_fast, struct srcu_struct,
- 		    _T->scp = srcu_read_lock_fast(_T->lock),
- 		    srcu_read_unlock_fast(_T->lock, _T->scp),
- 		    struct srcu_ctr __percpu *scp)
-+DECLARE_LOCK_GUARD_1_ATTRS(srcu_fast, __acquires_shared(_T), __releases_shared(*(struct srcu_struct **)_T))
-+#define class_srcu_fast_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(srcu_fast, _T)
- 
- DEFINE_LOCK_GUARD_1(srcu_fast_notrace, struct srcu_struct,
- 		    _T->scp = srcu_read_lock_fast_notrace(_T->lock),
- 		    srcu_read_unlock_fast_notrace(_T->lock, _T->scp),
- 		    struct srcu_ctr __percpu *scp)
-+DECLARE_LOCK_GUARD_1_ATTRS(srcu_fast_notrace, __acquires_shared(_T), __releases_shared(*(struct srcu_struct **)_T))
-+#define class_srcu_fast_notrace_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(srcu_fast_notrace, _T)
- 
- #endif
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index fab6a19dda02..7c57a6d2f847 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1874,7 +1874,8 @@ DEFINE_LOCK_GUARD_1(task_rq_lock, struct task_struct,
- 		    _T->rq = task_rq_lock(_T->lock, &_T->rf),
- 		    task_rq_unlock(_T->rq, _T->lock, &_T->rf),
- 		    struct rq *rq; struct rq_flags rf)
--DECLARE_LOCK_GUARD_1_ATTRS(task_rq_lock, __assumes_ctx_lock(_T->pi_lock), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(task_rq_lock, __acquires(_T->pi_lock), __releases((*(struct task_struct **)_T)->pi_lock))
-+#define class_task_rq_lock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(task_rq_lock, _T)
- 
- DEFINE_LOCK_GUARD_1(__task_rq_lock, struct task_struct,
- 		    _T->rq = __task_rq_lock(_T->lock, &_T->rf),
-@@ -1928,21 +1929,24 @@ DEFINE_LOCK_GUARD_1(rq_lock, struct rq,
- 		    rq_unlock(_T->lock, &_T->rf),
- 		    struct rq_flags rf)
- 
--DECLARE_LOCK_GUARD_1_ATTRS(rq_lock, __assumes_ctx_lock(__rq_lockp(_T)), /* */);
-+DECLARE_LOCK_GUARD_1_ATTRS(rq_lock, __acquires(__rq_lockp(_T)), __releases(__rq_lockp(*(struct rq **)_T)));
-+#define class_rq_lock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rq_lock, _T)
- 
- DEFINE_LOCK_GUARD_1(rq_lock_irq, struct rq,
- 		    rq_lock_irq(_T->lock, &_T->rf),
- 		    rq_unlock_irq(_T->lock, &_T->rf),
- 		    struct rq_flags rf)
- 
--DECLARE_LOCK_GUARD_1_ATTRS(rq_lock_irq, __assumes_ctx_lock(__rq_lockp(_T)), /* */);
-+DECLARE_LOCK_GUARD_1_ATTRS(rq_lock_irq, __acquires(__rq_lockp(_T)), __releases(__rq_lockp(*(struct rq **)_T)));
-+#define class_rq_lock_irq_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rq_lock_irq, _T)
- 
- DEFINE_LOCK_GUARD_1(rq_lock_irqsave, struct rq,
- 		    rq_lock_irqsave(_T->lock, &_T->rf),
- 		    rq_unlock_irqrestore(_T->lock, &_T->rf),
- 		    struct rq_flags rf)
- 
--DECLARE_LOCK_GUARD_1_ATTRS(rq_lock_irqsave, __assumes_ctx_lock(__rq_lockp(_T)), /* */);
-+DECLARE_LOCK_GUARD_1_ATTRS(rq_lock_irqsave, __acquires(__rq_lockp(_T)), __releases(__rq_lockp(*(struct rq **)_T)));
-+#define class_rq_lock_irqsave_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rq_lock_irqsave, _T)
- 
- #define this_rq_lock_irq(...) __acquire_ret(_this_rq_lock_irq(__VA_ARGS__), __rq_lockp(__ret))
- static inline struct rq *_this_rq_lock_irq(struct rq_flags *rf) __acquires_ret
-@@ -3075,10 +3079,17 @@ static inline class_##name##_t class_##name##_constructor(type *lock, type *lock
- 	__no_context_analysis								\
- { class_##name##_t _t = { .lock = lock, .lock2 = lock2 }, *_T = &_t;			\
-   _lock; return _t; }
--#define DECLARE_LOCK_GUARD_2_ATTRS(_name, _lock, _unlock)				\
-+#define DECLARE_LOCK_GUARD_2_ATTRS(_name, _lock, _unlock1, _unlock2)			\
- static inline class_##_name##_t class_##_name##_constructor(lock_##_name##_t *_T1,	\
- 							    lock_##_name##_t *_T2) _lock; \
--static inline void class_##_name##_destructor(class_##_name##_t *_T) _unlock
-+static __always_inline void __class_##_name##_cleanup_ctx1(class_##_name##_t **_T1)	\
-+	__no_context_analysis _unlock1 { }						\
-+static __always_inline void __class_##_name##_cleanup_ctx2(class_##_name##_t **_T2)	\
-+	__no_context_analysis _unlock2 { }
-+#define WITH_LOCK_GUARD_2_ATTRS(_name, _T1, _T2)					\
-+	class_##_name##_constructor(_T),						\
-+	*__UNIQUE_ID(unlock1) __cleanup(__class_##_name##_cleanup_ctx1) = (void *)(_T1),\
-+	*__UNIQUE_ID(unlock2) __cleanup(__class_##_name##_cleanup_ctx2) = (void *)(_T2)
- 
- static inline bool rq_order_less(struct rq *rq1, struct rq *rq2)
- {
-@@ -3229,7 +3240,12 @@ DEFINE_LOCK_GUARD_2(double_raw_spinlock, raw_spinlock_t,
- 		    double_raw_lock(_T->lock, _T->lock2),
- 		    double_raw_unlock(_T->lock, _T->lock2))
- 
--DECLARE_LOCK_GUARD_2_ATTRS(double_raw_spinlock, __assumes_ctx_lock(_T1) __assumes_ctx_lock(_T2), /* */);
-+DECLARE_LOCK_GUARD_2_ATTRS(double_raw_spinlock,
-+			   __acquires(_T1, _T2),
-+			   __releases(*(raw_spinlock_t **)_T1),
-+			   __releases(*(raw_spinlock_t **)_T2));
-+#define class_double_raw_spinlock_constructor(_T1, _T2) \
-+	WITH_LOCK_GUARD_2_ATTRS(double_raw_spinlock, _T1, _T2)
- 
- /*
-  * double_rq_unlock - safely unlock two runqueues
-diff --git a/lib/test_context-analysis.c b/lib/test_context-analysis.c
-index 3f72b1ab2300..1c5a381461fc 100644
---- a/lib/test_context-analysis.c
-+++ b/lib/test_context-analysis.c
-@@ -459,8 +459,9 @@ static void __used test_srcu(struct test_srcu_data *d)
- 
- static void __used test_srcu_guard(struct test_srcu_data *d)
- {
--	guard(srcu)(&d->srcu);
--	(void)srcu_dereference(d->data, &d->srcu);
-+	{ guard(srcu)(&d->srcu); (void)srcu_dereference(d->data, &d->srcu); }
-+	{ guard(srcu_fast)(&d->srcu); (void)srcu_dereference(d->data, &d->srcu); }
-+	{ guard(srcu_fast_notrace)(&d->srcu); (void)srcu_dereference(d->data, &d->srcu); }
- }
- 
- struct test_local_lock_data {
+>>> +
+>>> +	return cur;
+>>> +}
+>>> +
+>>>    int ima_restore_measurement_entry(struct ima_template_entry *entry)
+>>>    {
+>>>    	int result = 0;
+>
+
