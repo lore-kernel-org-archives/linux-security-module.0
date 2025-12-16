@@ -1,192 +1,193 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92CD33C530
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Dec 2025 11:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA39288502
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Dec 2025 11:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765882875; cv=none; b=Yc1ZupCiSS5y24NzJ3b9QbHs82+XFfSFuROfA1LZBThiE/XkIutQpuvgz6j2wy5HNOwmH9cRymGuw7zu7Fk426sFlmQqinAQJMTpxMl8qTJzWzsEjbt2mbhGPw8biHaCDtkgya7SVlfE3fiLv7dRw5w4wcZ0QMtvtdU5XQM6he0=
+	t=1765883325; cv=none; b=oEXmSPxi3UAoSeevTH6i50AqUUuyJK+sCraJvnLchoNy6mjFFwIZ7IP9L3XaCYPleiLfnanUa9djDm3VylItuwWCajofPkkwU+RaFNXyrVWZXYaKZA5NkhB6+MuyqTVag9ouGR5gwG3zognpOj7J9rzlDfIZUyPZZwiY3QKKaMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765882875; c=relaxed/simple;
-	bh=mOm64EM4tgjM1MXcHPhVsoMKtGcavhpQka6kUnBhwsE=;
+	s=arc-20240116; t=1765883325; c=relaxed/simple;
+	bh=7eCpaO8h0XuRWUlnnZDRQQvxiOwboz4wCDo5+3haAtQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q4H4f9PNdJju9bU3zR+Swnf7Ub+vs8D6pn2dXP/HZyoX1/O0U4tbIbsG5zan3afaMojrAcRBgJCSgvSPrpwW3l1kXUbYNIyM34J4Kcj0ChKqh9R+t2c77Yvr9EEfvE50OoOpNc/nSTDrKilncN5Y2AQm6LKivvo/Utmx8JIWTgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZpviBOjD; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=mKTwJFTa7vBq8NQpve8jMMcDJvQ/A4o9gv7kk0foJU0AKBD/fVovUOErBqv5VQ16Pa1pX8TE/y38/x4vggkMNDk+3ojzJajM5w7U4f4/TVJT2UkaIWgwTyujkUN2cqmnvuiEwHp35+74TXymKlKpginauGPtFcsLWWaE7UTYvC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=TuhEal39; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZpviBOjD"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-477b198f4bcso36161095e9.3
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Dec 2025 03:01:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="TuhEal39"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4775e891b5eso19634585e9.2
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Dec 2025 03:08:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1765882871; x=1766487671; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3fwbXvgWn6Nd0xRDLnbqnTLufRK/0AjdBlMA+CLIc/0=;
-        b=ZpviBOjDfIsPR/XLfIKK+E0LIxfXjaTtVEH5dh2NuZoghJq5XN47vDA9xiaqnrcHWW
-         EnOS1JV1hbBUhWh0NVgF4UOpTm+TdwMOl6ljVwzHAQp83Nlo4u7SeTLoNigK7QIahXTv
-         qoP/kMr/yPJD8DF2mghOx0N0hZKx8GX5ArUQB3NtLwKcrPiW+9Rmjtod5+ooHKGa8ykf
-         ZYAt9JIaU4zdF6HShCHWD/ElcjWSd0IvTUE63gEX9ZyUE5xwEBIexAIMeXNVu2/zr3Ib
-         hmANx7BFkha7D6hca0s+i4hT+H4E8wwd08e81wNQwvDx+ll1BnNFs5hFyCbDLEZo1KbN
-         a8yw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1765883321; x=1766488121; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JzbZNSoR9XV7c/fw2WEyAJLfwBQw/kZL/Ydt6MIWYlk=;
+        b=TuhEal39hD7OzJsRaLhLQRzrJWrmiGxmtcdjrQQEW3h4ZHalghwmMgBq5J88Pvef9/
+         1AyxW7vmjGodV8qgsJmC3Dy2PBUX8p80aXi1G2HA0Q/38H1Vz0fvkmnUHJz8oR2nN5nX
+         lzluP0XFgEIOQmzX5WCwDHqg9J+STt5D/CvEH5OlmpJa4VBcMX20w6Axb3xxbbFuOjYf
+         31xqFcD1UKZguaYIOdSgvBeQRZuFNraMApNS3a1DDHOxFJR/xqGB+OkPq9p1lC/qS+QX
+         4siVEiXEDqiCFDLE26nWnEFiiMNdVlDtsnk4gY2ytH0eU23DNANtfygwZ+Fc6a2uvfzK
+         eiBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765882871; x=1766487671;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=3fwbXvgWn6Nd0xRDLnbqnTLufRK/0AjdBlMA+CLIc/0=;
-        b=jFWjxILq++kHx+ZIMwD+r/dBRTPQjEJezr7N2Ts8/0Xl1PFISOhOpCnbsVlkE1YR+f
-         zkM3JdeGd5tsRYPuhgd7oK54N4DpBhqQ6XYZYmQknNeFhQcVasHuedJE8NgWMcwsJDZZ
-         4YNdplXCFnC4/DG9BwilKnq7qprLIqNu+kKVpcoQGXrXOb7+bmvMR/nz3CRQ2DKaDp6V
-         G1Y2rqaDj+BDnZqc7Gp1CGE6akH7K0L5cxBE9hHHUAauBMHbDZVDq4Lwdu3TWVopHuBc
-         H7DG01EyLqMeiq1A4/5Gbo5Vpf4T1lTs7MyrmvnQDMp5w0cXXbgSDaV9hJFCZaIG4Brb
-         9/6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWvWNFZAPdW6aCPOM7TeXsVfIQeNq+Y2P2DQeaNmFyFt0SaDoh9QuSfrQLUTXxrdh1UBGRzC1Kv7Iypf8fM+Sia/axol/w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4AFp6IkGrNUvDGRRXAlYQrXchuHCIwxMczHdQWsUclArpGkl6
-	+SNlmihyHJvCnZFD3L9kVM83Z6vAjTXcXk1oGVXj6CBdxRQoP/3uHLmZFTNuRZEWVA==
-X-Gm-Gg: AY/fxX71YF+54AlaqZJ27mrIg/dJC9EYjnK7ZRYj7Aq2DpKoJdGHZFq411g4vXewv8p
-	//gqZQiIMhkyLDz95DNFDafuj8J4EjvdUzyJaFIlZeTdhvxKLxkANeksQtYLyrTUTxSEtB6uEFn
-	wtYaNeGaow+zggapglJt2qE8qARwrEoWkaxxgS+AAjKw98N9hikNKcqdLGwLWRYnhKnI5TPrJhG
-	BCQ3nM4HgoeOYmtcjvUNus/URId9jRgNR+BL4KavdWv25w404ZfgKLvxOBmLBDh+JLK1SyM+d1/
-	03qm+6ln4jOrsMwUd8Z+USC+Yi7wkH5AfPehBYFihtzVfDoEfTQZaljXuDGXL+H7upT44TEOZ9P
-	FHHRYYadsyhvxAQB/+ZeGZSUglBXgAMTB9vMGSw51y/5Jhs+DQXKzOgksOBzklqB6BWWX0PQgFr
-	wRjhuv/W5r3lYDuJiy7GyzkIcbwbpESykVfyAvGO3cXHguKevFz5BfIrhYcNQ=
-X-Google-Smtp-Source: AGHT+IHPMwFoz32u9J3kCO+8mIIo+dWtYExr149Lgk7NY5BncmGMC4iCyfwqqX0j0PAhtkij+iZr9A==
-X-Received: by 2002:a05:600c:3ba7:b0:477:7af8:c88b with SMTP id 5b1f17b1804b1-47bd3d41de0mr37923685e9.11.1765882870450;
-        Tue, 16 Dec 2025 03:01:10 -0800 (PST)
-Received: from elver.google.com ([2a00:79e0:2834:9:ea4c:b2a8:24a4:9ce9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-430f5f6ede8sm17789236f8f.4.2025.12.16.03.01.07
+        d=1e100.net; s=20230601; t=1765883321; x=1766488121;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JzbZNSoR9XV7c/fw2WEyAJLfwBQw/kZL/Ydt6MIWYlk=;
+        b=eXBHVjWADiJeBIbAe3qoCrCRK0xhbQWRZxrRWErC8+mQ8ViP6HuCtSuLGN2Y1oUzEz
+         ioEFTkiF3DQmO82ng5CbxJFrnmCxUMwaUsHW9tPdWJBVotfl9aSNz0FbmJRHFUK2Uv+J
+         rpRNzsvUmcAq0ZPSpwusjCWEGERsfBAbWnYHAeyN6a5vdS6nKxFIuyDrjC7R54taq6IR
+         Wc0mGpiqkfxCnYgTrPe+qM7wnxcRTF6yIHsdx1MsaIOxI+U6n3AsXKehegpF18CNzNFH
+         sEZI1KTqEhIm5fW5P9WKz4DuBklL0OXvDsQVE/7VcItXpzvdyx+5Rb4PHMf8Wu/EWlsg
+         nylw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcGcyBw45XUFK7pxeEHmw/sfBSn30Eiv4L+BO5dA2QqLtiV3mpTonkv6w1VfRTbqmv+asrxBEpvpvoHWHyL5OCAH820Sg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDf5/OKgGV7b+WNuVKDPDzFPc1m1enzxZXNEbGL1EQM92aC25L
+	J9eZG6ZWAIm2BUchfXJ+HrkpbHRXcd9TdcyJ0Eo1YMT4lJ4F0T4drPpf53s+fLtjho0=
+X-Gm-Gg: AY/fxX41JN33Ibe5y4KR7ORxcyzNwPWe11jA0YExXZJp6JwW8NU16kWkZ7hNyCaxw35
+	LYKkC7tWKw0jOfvEQFVBTVifZOdhjInmt9tiOzYoFkUPzSbUeSln3UtsizafS8XAajbao8qsn48
+	oPLZukjBxvfmjElZ9DAEsfVaxD2SkpDWZSKHjZsyqFrShSMmNkOP9FtHJ9xUVZbEQwzB73w7DE+
+	zoXP7adVbrUMsWBONkn9N8OSCxya1L54E/caEThwiazInKHkXHgW4guGiectRxSApaV+6ILLJ7R
+	+ZJUGzkITbiazK7wqbYQbpXCi1OhQniAiJTzXyUKVakgNVLI3ULRBgwZZV1K0RpCbZk333/q4NM
+	qgL89W+dqc8tlUrgwd3P4mVkmvuzwOrgAIVji8Wa3GgqQ2Tr8pe2PN7K6pPlfq5VZtE3wL+XXJ/
+	4PyoLS61fSvbMG36W2cMK3DzzHyj3nwO9CPiM47+yq6cJEdqP7U+BCgD6zrm7wm55Ux6uAvoacz
+	s8=
+X-Google-Smtp-Source: AGHT+IFp5IncMGvMC+pwiacOOoEIbditx6SKu86limMmxyrWyAZX1pq9RrgklnX8yEKbt8tmwVfkyQ==
+X-Received: by 2002:a05:600c:8288:b0:477:a1a2:d829 with SMTP id 5b1f17b1804b1-47a8f8c0caamr134941025e9.13.1765883320955;
+        Tue, 16 Dec 2025 03:08:40 -0800 (PST)
+Received: from localhost (p200300f65f00660852dfbbf029d2e03c.dip0.t-ipconnect.de. [2003:f6:5f00:6608:52df:bbf0:29d2:e03c])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47a8f4ace61sm233401395e9.7.2025.12.16.03.08.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Dec 2025 03:01:09 -0800 (PST)
-Date: Tue, 16 Dec 2025 12:01:02 +0100
-From: Marco Elver <elver@google.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	Chris Li <sparse@chrisli.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
-	Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
-	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	linux-sparse@vger.kernel.org, linux-wireless@vger.kernel.org,
-	llvm@lists.linux.dev, rcu@vger.kernel.org
-Subject: Re: [PATCH v4 06/35] cleanup: Basic compatibility with context
- analysis
-Message-ID: <aUE77hgJa58waFOy@elver.google.com>
-References: <20251120145835.3833031-2-elver@google.com>
- <20251120151033.3840508-7-elver@google.com>
- <20251211121659.GH3911114@noisy.programming.kicks-ass.net>
- <CANpmjNOmAYFj518rH0FdPp=cqK8EeKEgh1ok_zFUwHU5Fu92=w@mail.gmail.com>
- <20251212094352.GL3911114@noisy.programming.kicks-ass.net>
- <CANpmjNP=s33L6LgYWHygEuLtWTq-s2n4yFDvvGcF3HjbGH+hqw@mail.gmail.com>
- <20251212110928.GP3911114@noisy.programming.kicks-ass.net>
- <aUAPbFJSv0alh_ix@elver.google.com>
- <CANpmjNNm-kbTw46Wh1BJudynHOeLn-Oxew8VuAnCppvV_WtyBw@mail.gmail.com>
+        Tue, 16 Dec 2025 03:08:40 -0800 (PST)
+Date: Tue, 16 Dec 2025 12:08:38 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Sumit Garg <sumit.garg@oss.qualcomm.com>
+Cc: Sumit Garg <sumit.garg@kernel.org>, 
+	Jens Wiklander <jens.wiklander@linaro.org>, Olivia Mackall <olivia@selenic.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Jan Kiszka <jan.kiszka@siemens.com>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+	Michael Chan <michael.chan@broadcom.com>, Pavan Chebbi <pavan.chebbi@broadcom.com>, 
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
+	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Peter Huewe <peterhuewe@gmx.de>, op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-rtc@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH v1 00/17] tee: Use bus callbacks instead of driver
+ callbacks
+Message-ID: <ayebinxqpcnl7hpa35ytrudiy7j75u5bdk3enlirkp5pevppeg@6mx6a5fwymwf>
+References: <cover.1765472125.git.u.kleine-koenig@baylibre.com>
+ <aT--ox375kg2Mzh-@sumit-X1>
+ <dhunzydod4d7vj73llpuqemxb5er2ja4emxusr66irwf77jhhb@es4yd2axzl25>
+ <CAGptzHOOqLhBnAXDURAzkgckUvRr__UuF1S_7MLV0u-ZxYEdyA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="judjbtjlccebrcda"
 Content-Disposition: inline
-In-Reply-To: <CANpmjNNm-kbTw46Wh1BJudynHOeLn-Oxew8VuAnCppvV_WtyBw@mail.gmail.com>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+In-Reply-To: <CAGptzHOOqLhBnAXDURAzkgckUvRr__UuF1S_7MLV0u-ZxYEdyA@mail.gmail.com>
 
-On Mon, Dec 15, 2025 at 04:53PM +0100, Marco Elver wrote:
-[..]
-> > > So I think as is, we can start. But I really do want the cleanup thing
-> > > sorted, even if just with that __release_on_cleanup mashup or so.
+
+--judjbtjlccebrcda
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 00/17] tee: Use bus callbacks instead of driver
+ callbacks
+MIME-Version: 1.0
+
+Hello,
+
+On Tue, Dec 16, 2025 at 01:08:38PM +0530, Sumit Garg wrote:
+> On Mon, Dec 15, 2025 at 3:02=E2=80=AFPM Uwe Kleine-K=C3=B6nig
+> <u.kleine-koenig@baylibre.com> wrote:
+> > On Mon, Dec 15, 2025 at 04:54:11PM +0900, Sumit Garg wrote:
+> > > Feel free to make the tee_bus_type private as the last patch in the s=
+eries
+> > > such that any followup driver follows this clean approach.
 > >
-> > Working on rebasing this to v6.19-rc1 and saw this new scoped seqlock
-> > abstraction. For that one I was able to make it work like I thought we
-> > could (below). Some awkwardness is required to make it work in
-> > for-loops, which only let you define variables with the same type.
+> > There is a bit more to do for that than I'm willing to invest. With my
+> > patch series applied `tee_bus_type` is still used in
+> > drivers/tee/optee/device.c and drivers/tee/tee_core.c.
+>=20
+> Oh I see, I guess we need to come with some helpers around device
+> register/unregister from TEE subsystem as well. Let's plan that for a
+> followup patch-set, I don't want this patch-set to be bloated more.
+
+Don't consider me in for that. But it sounds like a nice addition.
+
+> > Maybe it's
+> > sensible to merge these two files into a single one.
+>=20
+> It's not possible as the design for TEE bus is to have TEE
+> implementation drivers like OP-TEE, AMD-TEE, TS-TEE, QTEE and so on to
+> register devices on the bus.
+
+So only OP-TEE uses the bus for devices and the other *-TEE don't. Also
+sounds like something worth to be fixed.
+
+> > The things I wonder about additionally are:
 > >
-> > For <linux/cleanup.h> it needs some more thought due to extra levels of
-> > indirection.
-> 
-> For cleanup.h, the problem is that to instantiate we use
-> "guard(class)(args..)". If it had been designed as "guard(class,
-> args...)", i.e. just use __VA_ARGS__ explicitly instead of the
-> implicit 'args...', it might have been possible to add a second
-> cleanup variable to do the same (with some additional magic to extract
-> the first arg if one exists). Unfortunately, the use of the current
-> guard()() idiom has become so pervasive that this is a bigger
-> refactor. I'm going to leave cleanup.h as-is for now, if we think we
-> want to give this a go in the current state.
+> >  - if CONFIG_OPTEE=3Dn and CONFIG_TEE=3Dy|m the tee bus is only used for
+> >    drivers but not devices.
+>=20
+> Yeah since the devices are rather added by the TEE implementation driver.
+>=20
+> >
+> >  - optee_register_device() calls device_create_file() on
+> >    &optee_device->dev after device_register(&optee_device->dev).
+> >    (Attention half-knowledge!) I think device_create_file() should not
+> >    be called on an already registered device (or you have to send a
+> >    uevent afterwards). This should probably use type attribute groups.
+> >    (Or the need_supplicant attribute should be dropped as it isn't very
+> >    useful. This would maybe be considered an ABI change however.)
+>=20
+> The reasoning for this attribute should be explained by commit:
+> 7269cba53d90 ("tee: optee: Fix supplicant based device enumeration").
+> In summary it's due to a weird dependency for devices we have with the
+> user-space daemon: tee-supplicant.
 
-Alright, this can work, but it's not that ergonomic as I'd hoped (see
-below): we can redefine class_<name>_constructor to append another
-cleanup variable. With enough documentation, this might be workable.
+=46rom reading that once I don't understand it. (But no need to explain
+:-)
 
-WDYT?
+Still the file should better be added before device_add() is called.
 
------- >8 ------
+> >  - Why does optee_probe() in drivers/tee/optee/smc_abi.c unregister all
+> >    optee devices in its error path (optee_unregister_devices())?
+>=20
+> This is mostly to take care of if any device got registered before the
+> failure occured. Let me know if you have a better way to address that.
 
+Without understanding the tee stuff, I'd say: Don't bother and only undo
+the things that probe did before the failure.
 
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index 2f998bb42c4c..b47a1ba57e8e 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -518,7 +518,10 @@ static inline void class_##_name##_destructor(class_##_name##_t *_T) _unlock;
- 
- #define DECLARE_LOCK_GUARD_1_ATTRS(_name, _lock, _unlock)		\
- static inline class_##_name##_t class_##_name##_constructor(lock_##_name##_t *_T) _lock;\
--static inline void class_##_name##_destructor(class_##_name##_t *_T) _unlock;
-+static __always_inline void __class_##_name##_cleanup_ctx(class_##_name##_t **_T) \
-+	__no_context_analysis _unlock {}
-+#define WITH_LOCK_GUARD_1_ATTRS(_name, _T) class_##_name##_constructor(_T), \
-+	*__UNIQUE_ID(cleanup_ctx) __cleanup(__class_##_name##_cleanup_ctx) = (void *)(_T)
- 
- #define DEFINE_LOCK_GUARD_1(_name, _type, _lock, _unlock, ...)		\
- __DEFINE_CLASS_IS_CONDITIONAL(_name, false);				\
-diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-index 8ed48d40007b..06c3f947ea49 100644
---- a/include/linux/mutex.h
-+++ b/include/linux/mutex.h
-@@ -255,9 +255,12 @@ DEFINE_LOCK_GUARD_1(mutex, struct mutex, mutex_lock(_T->lock), mutex_unlock(_T->
- DEFINE_LOCK_GUARD_1_COND(mutex, _try, mutex_trylock(_T->lock))
- DEFINE_LOCK_GUARD_1_COND(mutex, _intr, mutex_lock_interruptible(_T->lock), _RET == 0)
- 
--DECLARE_LOCK_GUARD_1_ATTRS(mutex, __assumes_ctx_lock(_T), /* */)
--DECLARE_LOCK_GUARD_1_ATTRS(mutex_try, __assumes_ctx_lock(_T), /* */)
--DECLARE_LOCK_GUARD_1_ATTRS(mutex_intr, __assumes_ctx_lock(_T), /* */)
-+DECLARE_LOCK_GUARD_1_ATTRS(mutex,	__acquires(_T), __releases(*(struct mutex **)_T))
-+DECLARE_LOCK_GUARD_1_ATTRS(mutex_try,	__acquires(_T), __releases(*(struct mutex **)_T))
-+DECLARE_LOCK_GUARD_1_ATTRS(mutex_intr,	__acquires(_T), __releases(*(struct mutex **)_T))
-+#define class_mutex_constructor(_T)	WITH_LOCK_GUARD_1_ATTRS(mutex, _T)
-+#define class_mutex_try_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(mutex_try, _T)
-+#define class_mutex_intr_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(mutex_intr, _T)
- 
- extern unsigned long mutex_get_owner(struct mutex *lock);
- 
+Best regards
+Uwe
+
+--judjbtjlccebrcda
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmlBPbMACgkQj4D7WH0S
+/k50zggAsVQDsAnPdX//uyplsEvssm5818ssVGID4+9TjkXIhLGs1HOk+Aj1Obfh
+3kp723jXSfcxla/GVnutv+SGgjCbWQLat1zF3XNhzFZBDegNnPHffiYotY4NYV+x
+z+cBC6Mgx1s9c5xNg134fGOJ+TxBlfUxarnCrkXKqWF+dVSwTe5Cv3f0SXlVU/7L
+l/3T0OflRgILL2Y6wod6E9ydmYfiSapc79eKAzVY5jnUx1sGt7oLNYrjpHmJklBF
+J4I7ToK96aPowluUQqNPzlS13OTb/sx00zg5CnrrGchqVR6i1kK71xhoszfQPcx5
+IOs/eRzJsAmcF/JiN04ZsRRMrAvppA==
+=QAXr
+-----END PGP SIGNATURE-----
+
+--judjbtjlccebrcda--
