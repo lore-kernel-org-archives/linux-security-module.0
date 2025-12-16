@@ -1,535 +1,437 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE55132E74B;
-	Tue, 16 Dec 2025 19:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-qk1-f193.google.com (mail-qk1-f193.google.com [209.85.222.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CD649659
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Dec 2025 21:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765915181; cv=none; b=NNj2swDQl6y2VkmCApBdiCbMLAu4TpCxxZKTKIYUa9Qp/Nw+T0aaL617d1cLx3GgKvtyA7P2MKy+IK1zyATp4kh3PsC7UYH59jnmBUWRc1iYGvc2n/qQhiMRWHG2agttieThrkcC/dUlEx5T15d869t+/9Skjp5JAXjEG4qeZkk=
+	t=1765918833; cv=none; b=fxZf9cFMfwn5pUl3hc33e6KY3xbEDqy8pC4tP07tSxZCv3fiTFyuNtSbpOfOwykPIfea9a9deo5kej3veEh0QKfzt23XuYTFz1jhAzq78DYMNTMkM36oOrLChfDK/KZxIkMJrq2LFOh08DxersnzoHC0OgC4wBq3te0dSkGzK4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765915181; c=relaxed/simple;
-	bh=Oar1DZrfZa/q9K8BUehLar3eAEb5iQHtOvV/n32EmcQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J5X76xlmV89rPwLN/rC3zcqO2SXnwd4rOYqkw3E/6J51oRyRbA2QQaFKl1mU/PeeJUWa0wmpwMd5Y+AZjF5Hud38FUsi8c4epIg9GggV6TF85eEgKrvNNpzhQIJI2LnOs/MMJ2kVtj3DD8WI62d4Qe6LohG0c17iQbpDi0GUPeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gtkQ3uGf; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1765918833; c=relaxed/simple;
+	bh=VH1xl5++9O6ZB5umO6kcdRVDWOTwcHp5qpV2emSsFxk=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Subject:
+	 References:In-Reply-To; b=qpQcj5TmewVqtVKlDePdAHb0ykuII1C3Re8X+gCSt/20ZM86vhHJZMU12mK44oMLS9uP+exXnLt/Di9Kll1VvMd1EkmaCKBJAI0c1yXMMKLFJyo4k+JnIYbfTX//cswFBV/W2AL+b3JIKxMp8xb2IarvTzwjQOADaEtcW4VpbIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PA4UJez/; arc=none smtp.client-ip=209.85.222.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gtkQ3uGf"
-Received: from [10.17.64.122] (unknown [131.107.147.250])
-	by linux.microsoft.com (Postfix) with ESMTPSA id F1137200D625;
-	Tue, 16 Dec 2025 11:59:37 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F1137200D625
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1765915178;
-	bh=Nnm3fRXKwpCcbByYKBNDVQAh/VR68KE8x1qPI3zoWMI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gtkQ3uGfDDOrZ6edzbnI3lqfC+VJuuau9YVsy6+rq7s8yx2rmCd6NvAXtyjK6zTjv
-	 UKwbyeBiNU3+dOkeEaC0GUR5+owcXKWhe2quRt8Z2En1pMDrZxQcuDQsbB/hnvgd9z
-	 2qQ0NvRYjtddYRUUPuPFWs4Vlcfw20V1BVT1+/zg=
-Message-ID: <b9d7bcea-3784-4ad6-b494-374db0c00cc6@linux.microsoft.com>
-Date: Tue, 16 Dec 2025 11:59:36 -0800
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PA4UJez/"
+Received: by mail-qk1-f193.google.com with SMTP id af79cd13be357-8bb6a27d3edso358517585a.3
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Dec 2025 13:00:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1765918830; x=1766523630; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CWGNFMYxe9TyC/7sdiL3Nby8ShHIEtMiyaZ/uOUZvdQ=;
+        b=PA4UJez/Ad5kFa4Cfh4HGs6X3IQytnJoS0AC2UCou9NUhqgJbCEkg6wuIDpeqILozH
+         c9SOiQT8NvJMWxBX/Es++xfr5g4EucFiOSwR8kVQvB9a+a2LEWSrgLthRmzoFXNvTk89
+         4r2mzdfTk4fTgkVub0bk32mE0Bv6kibOWbNus7oVVbIFE6t4r2mHpd9ptANB5GRSBA2f
+         hWzDFAu0DRur8/CWFN+FhFaRjyutec9WvnZ0n/dFlBBZlvpprEKfMx2+7Pg4UiY6O5eq
+         ++pMaThgHcMHBVcdOJ9xGhjaEr0JrfbSBGJd9efIsSNfv49KALg3XGn2aU+mp3M4X4gz
+         hTsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765918830; x=1766523630;
+        h=in-reply-to:references:subject:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CWGNFMYxe9TyC/7sdiL3Nby8ShHIEtMiyaZ/uOUZvdQ=;
+        b=wQCdu+tLwgfDzeZqCIPp79HQODmURgGMH11/DnsoPWotjp4Xt/OEA0XNJ8Ky06itnm
+         D2aGgOnKHXGoeu3AgoyoaqB8efLLF+3qOf39WyR6EzVxvyiRu3XNw8mrGqaJz6qxbgTY
+         rIilDwJ2oSx4wChzaR/8Uha0laA6TnFiHHAJcwPfJOfz2Rf4nyLYvtvWB7mtkS3jKFlg
+         kYp+5e0NrEpCj7KMLVev4rTpWuZcQsVFjYbh+B25xUTl5Mi7wzsgFI0HP0YwX5gwByYE
+         Bw9ATugD4ZTrq0yM0m3dVeKRIr0pRh+yCQOpAIjJ+EeAaXOnbdkHd9BQqng1QdCIM82j
+         W7hA==
+X-Forwarded-Encrypted: i=1; AJvYcCW0fwHMFkkZc0NE0x9s717+tP2qRIfGgoVOaCGMUWVLgjpObeUb8+wKbRtDZStEMroRCx6dV9G5krlmuU7R2qY1Qqf0mkk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuOizvznAHyS/z84GTFqagsgixAokqH79HiPs4cAMje/67rpQd
+	rgEdFEVExiEN4NiTkMkBIaYS/LIpXnwJwYXwQZvW12Fif0gTcP8mfeNUe8bMiWyqHA==
+X-Gm-Gg: AY/fxX578YQJAzV8AhWO2SFRQE9B7Iq5jALC+JLd0XM/LrGHumclUvRdekzs5BdE2Qg
+	LStUogCrOwY9+QzX5Dg4kw2Lw/pO9Gyy+1ZXVKTaVf2stztR+Kpmdsyzj/WlZkTX4PAP5DAwiGG
+	j07Xl5z9UsOgg6a6z/EK6sQrcibxw+WVHUzEOfX0247TbeyjCBCqBcLVQX7oeYLIBuLFF6AqDM0
+	8DY3oALeNrd9MnfF2CPu0BrP1D5lasJYV56ESJryaX27jjJPdf5zVSBOC4WTV2SGmaWyfHiH0XJ
+	G1RbRyhhnxRyUDrcpjNXnWiiGOogl8JU08C8Qt6qgOA0i9Ayapmfw7U0XDc0DDOMthL2k+FQjQS
+	XPWC34sDwl/53hvOjo2mINfez6y/zUJjSUWchZ+O6kJ2K4yJvp8glz96BhHq8orCSFzF/j5GaY4
+	V4u4vgkLQao54hAV6aPR/urzjNd1JnN6adgsUFDM9aAupeLtuoDFIX26Xz
+X-Google-Smtp-Source: AGHT+IFVHSA7PuH01Up3KfTlcb3j+0mW1Rx9zFMCTOKbQwolakScOWOD34veXElG5sffzdLQ5yZVzw==
+X-Received: by 2002:a05:620a:17a6:b0:892:ce2b:f84d with SMTP id af79cd13be357-8bb39fb1fb6mr2209857185a.33.1765918829690;
+        Tue, 16 Dec 2025 13:00:29 -0800 (PST)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8be31b66942sm259527085a.42.2025.12.16.13.00.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Dec 2025 13:00:28 -0800 (PST)
+Date: Tue, 16 Dec 2025 16:00:27 -0500
+Message-ID: <7ab3093710dc84dcd5b3fdeca106e469@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 1/1] IMA event log trimming
-To: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc: roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com, corbet@lwn.net, serge@hallyn.com,
- paul@paul-moore.com, jmorris@namei.org,
- linux-security-module@vger.kernel.org, anirudhve@linux.microsoft.com,
- gregorylumen@linux.microsoft.com, nramas@linux.microsoft.com,
- sushring@linux.microsoft.com, linux-doc@vger.kernel.org,
- steven chen <chenste@linux.microsoft.com>
-References: <20251210235314.3341-1-chenste@linux.microsoft.com>
- <20251210235314.3341-2-chenste@linux.microsoft.com>
- <d80958ec-f139-41e9-afa0-a5aca94221de@linux.microsoft.com>
- <c93907cb0f08f9baa320488989aa87e7867ee9da.camel@linux.ibm.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <c93907cb0f08f9baa320488989aa87e7867ee9da.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20251216_1504/pstg-lib:20251216_1504/pstg-pwork:20251216_1504
+From: Paul Moore <paul@paul-moore.com>
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, Andrew Morton <akpm@linux-foundation.org>, James.Bottomley@HansenPartnership.com, dhowells@redhat.com, linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH RFC 8/11] security: Hornet LSM
+References: <20251211021257.1208712-9-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20251211021257.1208712-9-bboscaccy@linux.microsoft.com>
 
-On 12/16/2025 4:50 AM, Mimi Zohar wrote:
-> Hi Steven,
->
-> As I previously said, "The main difference between this patch and Roberto's
-> version is the length of time needed for locking the measurement list, which
-> prevents new entries from being appended to the measurement list.  In Roberto's
-> version, the list head is moved quickly and the lock released.  Measuring the
-> total amount of time needed to trim the measurement list ignores the benefit of
-> his version. I plan on reviewing both this version and his (hopefully today)."
->
-> The other difference is "when" the IMA measurement list is read and saved,
-> before the trigger to trim the measurement list or after when the measurement
-> list is staged.  In this case, the initial trigger trims the measurement list.
-> In the other case, the measurement list is staged and then deleted.  When
-> reviewing Roberto's patch, I plan to discuss it.
+On Dec 10, 2025 Blaise Boscaccy <bboscaccy@linux.microsoft.com> wrote:
+> 
+> This adds the Hornet Linux Security Module which provides enhanced
+> signature verification and data validation for eBPF programs. This
+> allows users to continue to maintain an invariant that all code
+> running inside of the kernel has actually been signed and verified, by
+> the kernel.
+> 
+> This effort builds upon the currently excepted upstream solution. It
 
-Hi Mimi,
+s/excepted/accepted/ ;)
 
-Will update this. Thanks!
+> further hardens it by providing deterministic, in-kernel checking of
+> map hashes to solidify auditing along with preventing TOCTOU attacks
+> against lskel map hashes.
+> 
+> Target map hashes are passed in via PKCS#7 signed attributes. Hornet
+> determines the extent which the eBFP program is signed and defers to
+> other LSMs for policy decisions.
+> 
+> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> ---
+>  Documentation/admin-guide/LSM/Hornet.rst |  38 +++++
+>  Documentation/admin-guide/LSM/index.rst  |   1 +
+>  MAINTAINERS                              |   9 +
+>  include/linux/oid_registry.h             |   3 +
+>  include/uapi/linux/lsm.h                 |   1 +
+>  security/Kconfig                         |   3 +-
+>  security/Makefile                        |   1 +
+>  security/hornet/Kconfig                  |  11 ++
+>  security/hornet/Makefile                 |   7 +
+>  security/hornet/hornet.asn1              |  13 ++
+>  security/hornet/hornet_lsm.c             | 201 +++++++++++++++++++++++
+>  11 files changed, 287 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/admin-guide/LSM/Hornet.rst
+>  create mode 100644 security/hornet/Kconfig
+>  create mode 100644 security/hornet/Makefile
+>  create mode 100644 security/hornet/hornet.asn1
+>  create mode 100644 security/hornet/hornet_lsm.c
 
-> After trimming the measurement list, existing verifiers, which walk the IMA
-> measurement list, will obviously fail to match the PCRs.  Breaking existing
-> userspace applications is a problem and, unfortunately, requires yet another
-> Kconfig option.  It needs to be at least mentioned here in the patch
-> description.
-Will add Kconfig option. Thanks!
-> There are two places where it says, "the list never shrinks, so we don't need a
-> lock here".  Either the code, the comment, or both need to be updated.
-Will update.
->
-> On Thu, 2025-12-11 at 10:41 -0800, steven chen wrote:
->> On 12/10/2025 3:53 PM, steven chen wrote:
->>> This patch is for trimming N entries of the IMA event logs. It will also
->>> cleaning the hash table if ima_flush_htable is set.
-> Please refer to "Describe your changes in imperative mood" in the "Describe your
-> changes" section of Documentation/process/submitting-patches.rst.
-Will update. Thanks!
->>> It provides a userspace interface ima_trim_log that can be used to input
->>> number N to let kernel to trim N entries of IMA event logs. When read
-> There is only a single kernel measurement list or event log, not plural.  There
-> are N number of "entries" or "records" in the IMA measurement list.
->
-> -> trim N records from the IMA measurement list.
+...
 
-Will update. Thanks!
+> diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
+> index b44ef68f6e4da..57f6e9fbe5fd1 100644
+> --- a/Documentation/admin-guide/LSM/index.rst
+> +++ b/Documentation/admin-guide/LSM/index.rst
+> @@ -49,3 +49,4 @@ subdirectories.
+>     SafeSetID
+>     ipe
+>     landlock
+> +   Hornet
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3da2c26a796b8..64c9aaff6a219 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11399,6 +11399,15 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/iio/pressure/honeywell,mprls0025pa.yaml
+>  F:	drivers/iio/pressure/mprls0025pa*
+>  
+> +HORNET SECURITY MODULE
+> +M:	Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> +L:	linux-security-module@vger.kernel.org
+> +S:	Supported
+> +T:	git https://github.com/blaiseboscaccy/hornet.git
+> +F:	Documentation/admin-guide/LSM/Hornet.rst
+> +F:	scripts/hornet/
+> +F:	security/hornet/
 
+I know we talked about this last time Hornet was proposed, but as a
+reminder, here are the guidelines for new LSMs:
 
->>> this interface, it returns number of entries trimmed last time.
-> Please provide an example of how to initiate the trim.
->
-> After trimming the IMA measurement list, are the other securityfs files correct?
-> Are they correct after a kexec?  Or are they reset without a way of resurrecting
-> them without the full measurement list?
+https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
 
-Will update. Thanks!
+> diff --git a/security/hornet/Kconfig b/security/hornet/Kconfig
+> new file mode 100644
+> index 0000000000000..19406aa237ac6
+> --- /dev/null
+> +++ b/security/hornet/Kconfig
+> @@ -0,0 +1,11 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +config SECURITY_HORNET
+> +	bool "Hornet support"
+> +	depends on SECURITY
+> +	default n
+> +	help
+> +	  This selects Hornet.
+> +	  Further information can be found in
+> +	  Documentation/admin-guide/LSM/Hornet.rst.
+> +
+> +	  If you are unsure how to answer this question, answer N.
 
+Pointing people at the docs is good, but there really should be a couple
+lines about Hornet here.  At the very least explain that it does BPF
+signature verification and allows for other LSMs to enforce policy on
+this integrity verification checks.
 
->
->>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
->>> ---
->>>    .../admin-guide/kernel-parameters.txt         |   4 +
->>>    security/integrity/ima/ima.h                  |   2 +
->>>    security/integrity/ima/ima_fs.c               | 175 +++++++++++++++++-
->>>    security/integrity/ima/ima_queue.c            |  64 +++++++
->>>    4 files changed, 241 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->>> index e92c0056e4e0..cd1a1d0bf0e2 100644
->>> --- a/Documentation/admin-guide/kernel-parameters.txt
->>> +++ b/Documentation/admin-guide/kernel-parameters.txt
->>> @@ -2197,6 +2197,10 @@
->>>    			Use the canonical format for the binary runtime
->>>    			measurements, instead of host native format.
->>>    
->>> +	ima_flush_htable  [IMA]
->>> +			Flush the measurement list hash table when trim all
->>> +			or a part of it for deletion.
->>> +
->>>    	ima_hash=	[IMA]
->>>    			Format: { md5 | sha1 | rmd160 | sha256 | sha384
->>>    				   | sha512 | ... }
->>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->>> index e3d71d8d56e3..ab0e30ee25ea 100644
->>> --- a/security/integrity/ima/ima.h
->>> +++ b/security/integrity/ima/ima.h
->>> @@ -246,8 +246,10 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
->>>    
->>>    #ifdef CONFIG_IMA_KEXEC
->>>    void ima_measure_kexec_event(const char *event_name);
->>> +long ima_purge_event_log(long number_logs);
->>>    #else
->>>    static inline void ima_measure_kexec_event(const char *event_name) {}
->>> +static inline long ima_purge_event_log(long number_logs) { return 0; }
->>>    #endif
->>>    
->>>    /*
->>> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
->>> index 87045b09f120..410f7d03c43f 100644
->>> --- a/security/integrity/ima/ima_fs.c
->>> +++ b/security/integrity/ima/ima_fs.c
->>> @@ -21,6 +21,9 @@
->>>    #include <linux/rcupdate.h>
->>>    #include <linux/parser.h>
->>>    #include <linux/vmalloc.h>
->>> +#include <linux/ktime.h>
->>> +#include <linux/timekeeping.h>
->>> +#include <linux/ima.h>
->>>    
->>>    #include "ima.h"
->>>    
->>> @@ -38,6 +41,14 @@ __setup("ima_canonical_fmt", default_canonical_fmt_setup);
->>>    
->>>    static int valid_policy = 1;
->>>    
->>> +#define IMA_LOG_TRIM_REQ_LENGTH 11
->>> +#define IMA_LOG_TRIM_EVENT_LEN 256
->>> +
->>> +static long trimcount;
->>> +/* mutex protects atomicity of trimming measurement list requests */
-> ima_measure_lock is taken for more than just synchronization of trimming the
-> measurement list.  Please update comment.
+> diff --git a/security/hornet/hornet_lsm.c b/security/hornet/hornet_lsm.c
+> new file mode 100644
+> index 0000000000000..a8499ee108ad3
+> --- /dev/null
+> +++ b/security/hornet/hornet_lsm.c
+> @@ -0,0 +1,201 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Hornet Linux Security Module
+> + *
+> + * Author: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> + *
+> + * Copyright (C) 2025 Microsoft Corporation
+> + */
+> +
+> +#include <linux/lsm_hooks.h>
+> +#include <uapi/linux/lsm.h>
+> +#include <linux/bpf.h>
+> +#include <linux/verification.h>
+> +#include <crypto/public_key.h>
+> +#include <linux/module_signature.h>
+> +#include <crypto/pkcs7.h>
+> +#include <linux/sort.h>
+> +#include <linux/asn1_decoder.h>
+> +#include <linux/oid_registry.h>
+> +#include "hornet.asn1.h"
+> +
+> +#define MAX_USED_MAPS 64
+> +
+> +struct hornet_maps {
+> +	bpfptr_t fd_array;
+> +};
+> +
+> +struct hornet_parse_context {
+> +	size_t indexes[MAX_USED_MAPS];
+> +	bool skips[MAX_USED_MAPS];
+> +	unsigned char hashes[SHA256_DIGEST_SIZE * MAX_USED_MAPS];
+> +	int hash_count;
+> +};
+> +
+> +static int hornet_verify_hashes(struct hornet_maps *maps,
+> +				struct hornet_parse_context *ctx)
+> +{
+> +	int map_fd;
+> +	u32 i;
+> +	struct bpf_map *map;
+> +	int err = 0;
+> +	unsigned char hash[SHA256_DIGEST_SIZE];
 
-Will update. Thanks!
+I'd suggest a comment block here explaining that the hash choice is
+fixed to SHA256 to remain compatible with the existing BPF signature
+mechanism.
 
+> +	for (i = 0; i < ctx->hash_count; i++) {
+> +		if (ctx->skips[i])
+> +			continue;
+> +
+> +		err = copy_from_bpfptr_offset(&map_fd, maps->fd_array,
+> +					      ctx->indexes[i] * sizeof(map_fd),
+> +					      sizeof(map_fd));
+> +		if (err < 0)
+> +			return LSM_INT_VERDICT_BADSIG;
+> +
+> +		CLASS(fd, f)(map_fd);
+> +		if (fd_empty(f))
+> +			return LSM_INT_VERDICT_BADSIG;
+> +		if (unlikely(fd_file(f)->f_op != &bpf_map_fops))
+> +			return LSM_INT_VERDICT_BADSIG;
+> +
+> +		if (!map->frozen)
+> +			return LSM_INT_VERDICT_BADSIG;
+> +
+> +		map = fd_file(f)->private_data;
+> +		map->ops->map_get_hash(map, SHA256_DIGEST_SIZE, hash);
+> +
+> +		err = (memcmp(hash, &ctx->hashes[ctx->indexes[i] * SHA256_DIGEST_SIZE],
+> +			      SHA256_DIGEST_SIZE));
+> +		if (!err)
+> +			return LSM_INT_VERDICT_BADSIG;
+> +	}
+> +	return LSM_INT_VERDICT_OK;
+> +}
+> +
+> +int hornet_next_map(void *context, size_t hdrlen,
+> +		     unsigned char tag,
+> +		     const void *value, size_t vlen)
+> +{
+> +	struct hornet_parse_context *ctx = (struct hornet_parse_context *)value;
+> +
+> +	ctx->hash_count++;
+> +	return 0;
+> +}
+> +
+> +
+> +int hornet_map_index(void *context, size_t hdrlen,
+> +		     unsigned char tag,
+> +		     const void *value, size_t vlen)
+> +{
+> +	struct hornet_parse_context *ctx = (struct hornet_parse_context *)value;
+> +
+> +	ctx->hashes[ctx->hash_count] = *(int *)value;
+> +	return 0;
+> +}
+> +
+> +int hornet_map_hash(void *context, size_t hdrlen,
+> +		    unsigned char tag,
+> +		    const void *value, size_t vlen)
+> +
+> +{
+> +	struct hornet_parse_context *ctx = (struct hornet_parse_context *)value;
+> +
+> +	if (vlen != SHA256_DIGEST_SIZE && vlen != 0)
+> +		return -EINVAL;
 
->
->>> +static DEFINE_MUTEX(ima_measure_lock);
->>> +static long ima_measure_users;
->>> +
->>>    static ssize_t ima_show_htable_value(char __user *buf, size_t count,
->>>    				     loff_t *ppos, atomic_long_t *val)
->>>    {
->>> @@ -202,16 +213,65 @@ static const struct seq_operations ima_measurments_seqops = {
->>>    	.show = ima_measurements_show
->>>    };
->>>    
-> _ima_measurements_open() seems pretty fundamental to the locking scheme.
-> Preventing opening the IMA measurement list is new.  There should at least be a
-> short, regular comment explaining what you're locking and why.
+It seems like one could incorporate the sanity checking into the
+if-statement below.
 
-Will update. Thanks!
+> +	if (vlen != 0) {
+> +		ctx->skips[ctx->hash_count] = false;
+> +		memcpy(&ctx->hashes[ctx->hash_count * SHA256_DIGEST_SIZE], value, vlen);
+> +	} else
+> +		ctx->skips[ctx->hash_count] = true;
+> +
+> +	return 0;
+> +}
+> +
+> +static int hornet_check_program(struct bpf_prog *prog, union bpf_attr *attr,
+> +				struct bpf_token *token, bool is_kernel)
+> +{
+> +	struct hornet_maps maps = {0};
+> +	bpfptr_t usig = make_bpfptr(attr->signature, is_kernel);
+> +	struct pkcs7_message *msg;
+> +	struct hornet_parse_context *ctx;
+> +	void *sig;
+> +	int err;
+> +	const void *authattrs;
+> +	size_t authattrs_len;
+> +
+> +	if (!attr->signature)
+> +		return LSM_INT_VERDICT_UNSIGNED;
 
+Do we need to check the "is_kernel" flag so we don't signal UNSIGNED
+to an enforcing LSM on the second half of a lskel program load where
+the original BPF program is being loaded?
 
->>> +static int _ima_measurements_open(struct inode *inode, struct file *file,
->>> +				  const struct seq_operations *seq_ops)
->>> +{
->>> +	bool write = !!(file->f_mode & FMODE_WRITE);
->>> +	int ret;
->>> +
->>> +	if (write && !capable(CAP_SYS_ADMIN))
->>> +		return -EPERM;
->>> +
->>> +	mutex_lock(&ima_measure_lock);
->>> +	if ((write && ima_measure_users != 0) ||
->>> +	    (!write && ima_measure_users < 0)) {
->>> +		mutex_unlock(&ima_measure_lock);
->>> +		return -EBUSY;
->>> +	}
->>> +
->>> +	ret = seq_open(file, seq_ops);
->>> +	if (ret < 0) {
->>> +		mutex_unlock(&ima_measure_lock);
->>> +		return ret;
->>> +	}
->>> +
->>> +	if (write)
->>> +		ima_measure_users--;
->>> +	else
->>> +		ima_measure_users++;
->>> +
->>> +	mutex_unlock(&ima_measure_lock);
->>> +	return ret;
->>> +}
->>> +
->>>    static int ima_measurements_open(struct inode *inode, struct file *file)
->>>    {
->>> -	return seq_open(file, &ima_measurments_seqops);
->>> +	return _ima_measurements_open(inode, file, &ima_measurments_seqops);
->>> +}
->>> +
->>> +static int ima_measurements_release(struct inode *inode, struct file *file)
->>> +{
->>> +	bool write = !!(file->f_mode & FMODE_WRITE);
->>> +	int ret;
->>> +
->>> +	mutex_lock(&ima_measure_lock);
->>> +	ret = seq_release(inode, file);
->>> +	if (!ret) {
->>> +		if (write)
->>> +			ima_measure_users++;
->>> +		else
->>> +			ima_measure_users--;
->>> +	}
->>> +
->>> +	mutex_unlock(&ima_measure_lock);
->>> +	return ret;
->>>    }
->>>    
->>>    static const struct file_operations ima_measurements_ops = {
->>>    	.open = ima_measurements_open,
->>>    	.read = seq_read,
->>>    	.llseek = seq_lseek,
->>> -	.release = seq_release,
->>> +	.release = ima_measurements_release,
->>>    };
->>>    
->>>    void ima_print_digest(struct seq_file *m, u8 *digest, u32 size)
->>> @@ -279,14 +339,111 @@ static const struct seq_operations ima_ascii_measurements_seqops = {
->>>    
->>>    static int ima_ascii_measurements_open(struct inode *inode, struct file *file)
->>>    {
->>> -	return seq_open(file, &ima_ascii_measurements_seqops);
->>> +	return _ima_measurements_open(inode, file, &ima_ascii_measurements_seqops);
->>>    }
->>>    
->>>    static const struct file_operations ima_ascii_measurements_ops = {
->>>    	.open = ima_ascii_measurements_open,
->>>    	.read = seq_read,
->>>    	.llseek = seq_lseek,
->>> -	.release = seq_release,
->>> +	.release = ima_measurements_release,
->>> +};
->>> +
->>> +static void ima_measure_trim_event(const long number_logs)
->>> +{
->>> +	char ima_log_trim_event[IMA_LOG_TRIM_EVENT_LEN];
->>> +	struct timespec64 ts;
->>> +	u64 time_ns;
->>> +	int n;
->>> +
->>> +	ktime_get_real_ts64(&ts);
->>> +	time_ns = (u64)ts.tv_sec * 1000000000ULL + ts.tv_nsec;
->>> +	n = scnprintf(ima_log_trim_event, IMA_LOG_TRIM_EVENT_LEN,
->>> +		      "time=%llu; log trim this time=%lu;",
->>> +		       time_ns, number_logs);
->>> +
->>> +	ima_measure_critical_data("ima_log_trim", "trim ima event logs", ima_log_trim_event, n, false, NULL, 0);
->>> +}
-> There's no mention of a new critical data record in the patch description.  It
-> should be a separate patch with a full patch description describing what it is
-> and how to verify it.
+I'm also not a big fan of mixing int error codes and enums in the return
+value, I'd rather see those split out into separate vars.  Perhaps
+still return the error codes, like the -ENOMEM below, but pass the
+verdict info back as a pointer in the arg list?  This applies
+elsewhere in this file/patch too.
 
-Will update this. Thanks!
+> +	ctx = kzalloc(sizeof(struct hornet_parse_context), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	maps.fd_array = make_bpfptr(attr->fd_array, is_kernel);
+> +	sig = kzalloc(attr->signature_size, GFP_KERNEL);
+> +	if (!sig) {
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +	err = copy_from_bpfptr(sig, usig, attr->signature_size);
+> +	if (err != 0)
+> +		goto out;
+> +
+> +	msg = pkcs7_parse_message(sig, attr->signature_size);
+> +	if (IS_ERR(msg)) {
+> +		err = LSM_INT_VERDICT_BADSIG;
+> +		goto out;
+> +	}
+> +
+> +	if (validate_pkcs7_trust(msg, VERIFY_USE_SECONDARY_KEYRING)) {
+> +		err = LSM_INT_VERDICT_PARTIALSIG;
+> +		goto out;
+> +	}
 
+Personally, I'd be much happier only allowing the secondary keyring on
+my systems, but we know that some people are not as concerned about
+allowing user and session keys, so we should think about ways to allow
+Hornet to support multiple keyrings so long as the keyring is factored
+into Hornet's integrity verdict.
 
->>> +
->>> +static int ima_log_trim_open(struct inode *inode, struct file *file)
->>> +{
->>> +	bool write = !!(file->f_mode & FMODE_WRITE);
->>> +
->>> +	if (!write && capable(CAP_SYS_ADMIN))
->>> +		return 0;
->>> +	else if (!capable(CAP_SYS_ADMIN))
->>> +		return -EPERM;
->>> +
->>> +	return _ima_measurements_open(inode, file, &ima_measurments_seqops);
->>> +}
->>> +
->>> +static ssize_t ima_log_trim_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
->>> +{
->>> +	char tmpbuf[IMA_LOG_TRIM_REQ_LENGTH];	/* greater than largest 'long' string value */
->>> +	ssize_t len;
->>> +
->>> +	len = scnprintf(tmpbuf, sizeof(tmpbuf), "%li\n", trimcount);
->>> +	return simple_read_from_buffer(buf, size, ppos, tmpbuf, len);
->>> +}
->>> +
->>> +static ssize_t ima_log_trim_write(struct file *file,
->>> +				  const char __user *buf, size_t datalen, loff_t *ppos)
->>> +{
->>> +	unsigned char req[IMA_LOG_TRIM_REQ_LENGTH];
->>> +	long count, n;
->>> +	int ret;
->>> +
->>> +	if (*ppos > 0 || datalen > IMA_LOG_TRIM_REQ_LENGTH || datalen < 2) {
->>> +		ret = -EINVAL;
->>> +		goto out;
->>> +	}
->>> +
->>> +	n = (int)datalen;
->>> +
->>> +	ret = copy_from_user(req, buf, datalen);
->>> +	if (ret < 0)
->>> +		goto out;
->>> +
->>> +	count = 0;
->>> +	for (int i = 0; i < n; ++i) {
->>> +		if (req[i] < '0' || req[i] > '9') {
->>> +			ret = -EINVAL;
->>> +			goto out;
->>> +		}
->>> +		count = count * 10 + req[i] - '0';
->>> +	}
-> This code can be simplified by using the kstrto*_from_user() family of
-> functions.  The patch description should include an example how to trim the
-> measurement list.
+This is worth some discussion, but we could potentially encode this into
+the integrity verdict (e.g. VERDICT_GOODSIG_TRUSTEDKEY, _GOODSIG_USRKEY,
+__GOODSIG_GRPKEY, __GOODSIG_SESKEY, etc.).  We could also leave that up
+to the enforcement LSMs that care as they are passed the bpf_attr in
+security_bpf_prog_load_post_integrity() already.  Or something else?
 
-Will update. Thanks!
+I'm also not sure how much key type granularity we want.  We definitely
+want trusted key vs others, but do we care about user vs session keys?
+Perhaps that is an argument for deferring to the enforcing LSM.
 
+If all else fails, we could add some Hornet specific configuration knobs
+for this, but considering the simplicity of Hornet, I think it would be
+nice if we can keep the zero-config nature of Hornet.
 
->>> +	ret = ima_purge_event_log(count);
-> The term "purge" is really strong wording.  I hope you're not purging the
-> measurement list, but simply removing them from kernel memory.
+> +	if (pkcs7_get_authattr(msg, OID_hornet_data,
+> +			       &authattrs, &authattrs_len) == -ENODATA) {
+> +		err = LSM_INT_VERDICT_PARTIALSIG;
+> +		goto out;
+> +	}
+> +
+> +	err = asn1_ber_decoder(&hornet_decoder, ctx, authattrs, authattrs_len);
+> +	if (err < 0 || authattrs == NULL) {
+> +		err = LSM_INT_VERDICT_PARTIALSIG;
+> +		goto out;
+> +	}
+> +	err = hornet_verify_hashes(&maps, ctx);
+> +out:
 
-Will update. Thanks!
+Style nitpick - a line of vertical space between the
+hornet_verify_hashes() call and the jump label would be a nit nicer
+visually.
 
+While I'm talking about style, I know the old days of a strict 80-char
+line length are no more, but I still prefer the 80-char limit for code
+I'm maintaining.  As you would be maintinaing Hornet that decisions is
+up to you, but 80-char lines are nice ;)
 
->
->>> +
->>> +	if (ret < 0)
->>> +		goto out;
->>> +
->>> +	trimcount = ret;
->>> +
->>> +	if (trimcount > 0)
->>> +		ima_measure_trim_event(trimcount);
->>> +
->>> +	ret = datalen;
->>> +out:
->>> +	return ret;
->>> +}
->>> +
->>> +static int ima_log_trim_release(struct inode *inode, struct file *file)
->>> +{
->>> +	bool write = !!(file->f_mode & FMODE_WRITE);
->>> +	if (!write && capable(CAP_SYS_ADMIN))
->>> +		return 0;
->>> +	else if (!capable(CAP_SYS_ADMIN))
->>> +		return -EPERM;
->>> +
->>> +	return ima_measurements_release(inode, file);
->>> +}
->>> +
->>> +static const struct file_operations ima_log_trim_ops = {
->>> +	.open = ima_log_trim_open,
->>> +	.read = ima_log_trim_read,
->>> +	.write = ima_log_trim_write,
->>> +	.llseek = generic_file_llseek,
->>> +	.release = ima_log_trim_release
->>>    };
->>>    
->>>    static ssize_t ima_read_policy(char *path)
->>> @@ -528,6 +685,16 @@ int __init ima_fs_init(void)
->>>    		goto out;
->>>    	}
->>>    
->>> +	dentry = securityfs_create_file("ima_trim_log",
->>> +					S_IRUSR | S_IRGRP | S_IWUSR | S_IWGRP,
->>> +					ima_dir, NULL, &ima_log_trim_ops);
->>> +	if (IS_ERR(dentry)) {
->>> +		ret = PTR_ERR(dentry);
->>> +		goto out;
->>> +	}
->>> +
->>> +	trimcount = 0;
->>> +
->>>    	dentry = securityfs_create_file("runtime_measurements_count",
->>>    				   S_IRUSR | S_IRGRP, ima_dir, NULL,
->>>    				   &ima_measurements_count_ops);
->>> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
->>> index 590637e81ad1..77ab52469727 100644
->>> --- a/security/integrity/ima/ima_queue.c
->>> +++ b/security/integrity/ima/ima_queue.c
->>> @@ -22,6 +22,14 @@
->>>    
->>>    #define AUDIT_CAUSE_LEN_MAX 32
->>>    
->>> +bool ima_flush_htable;
->>> +static int __init ima_flush_htable_setup(char *str)
->>> +{
->>> +	ima_flush_htable = true;
->>> +	return 1;
->>> +}
->>> +__setup("ima_flush_htable", ima_flush_htable_setup);
->>> +
->>>    /* pre-allocated array of tpm_digest structures to extend a PCR */
->>>    static struct tpm_digest *digests;
->>>    
->>> @@ -220,6 +228,62 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
->>>    	return result;
->>>    }
->>>    
->>> +/* Delete the IMA event logs */
-> Do you mean delete the IMA event records/entries?
+> +	kfree(ctx);
+> +	return err;
+> +}
 
-Will update. Thanks!
+Some of this would be mitigated by the fact that Hornet verifies the
+lskel loader and all the maps, but should we worry about nested loaders?
 
+> +static const struct lsm_id hornet_lsmid = {
+> +	.name = "hornet",
+> +	.id = LSM_ID_HORNET,
+> +};
+> +
+> +static int hornet_bpf_prog_load_integrity(struct bpf_prog *prog, union bpf_attr *attr,
+> +					  struct bpf_token *token, bool is_kernel)
+> +{
+> +	int result = hornet_check_program(prog, attr, token, is_kernel);
+> +
+> +	if (result < 0)
+> +		return result;
+> +
+> +	return security_bpf_prog_load_post_integrity(prog, attr, token, is_kernel,
+> +						     &hornet_lsmid, result);
+> +}
+> +
+> +static struct security_hook_list hornet_hooks[] __ro_after_init = {
+> +	LSM_HOOK_INIT(bpf_prog_load_integrity, hornet_bpf_prog_load_integrity),
+> +};
+> +
+> +static int __init hornet_init(void)
+> +{
+> +	pr_info("Hornet: eBPF signature verification enabled\n");
+> +	security_add_hooks(hornet_hooks, ARRAY_SIZE(hornet_hooks), &hornet_lsmid);
+> +	return 0;
+> +}
+> +
+> +DEFINE_LSM(hornet) = {
+> +	.name = "hornet",
+> +	.init = hornet_init,
+> +};
+> -- 
+> 2.52.0
 
->>> +long ima_purge_event_log(long number_logs)
-> If this function is not defined as static, then it requires a kernel-doc.
-
-Will update. Thanks!
-
-
->>> +{
->>> +	struct ima_queue_entry *qe, *qe_tmp;
->>> +	LIST_HEAD(ima_measurements_staged);
->>> +	unsigned int i;
->>> +	long cur = number_logs;
-> The variable name "number_logs" is confusing.  As I mentioned in the patch
-> description, there is one measurement list with multiple records.  There aren't
-> multiple logs in the kernel (other than the staged list).
-
-Will update it to "req_value". Thanks!
-
-
->>> +
->>> +	if (number_logs <= 0)
->>> +		return number_logs;
->>> +
->>> +	mutex_lock(&ima_extend_list_mutex);
->>> +
->>> +
->>> +	list_for_each_entry(qe, &ima_measurements, later) {
->>> +		if (--number_logs == 0)
->>> +			break;
->>> +	}
->>> +
->>> +	if (number_logs > 0) {
->>> +		mutex_unlock(&ima_extend_list_mutex);
->>> +		return -ENOENT;
->>> +	}
->>> +
->>> +	__list_cut_position(&ima_measurements_staged, &ima_measurements,
->>> +				    &qe->later);
->>> +	atomic_long_sub(cur, &ima_htable.len);
->>> +
->>> +	if (!IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE) && ima_flush_htable) {
->>> +		list_for_each_entry(qe, &ima_measurements_staged, later)
->>> +			/* It can race with ima_lookup_digest_entry(). */
->>> +			hlist_del_rcu(&qe->hnext);
->>> +	}
->> If the h table can be staged during the locking period and deleted after
->> unlocking, the time
->> the list is held will be reduced.
->>
->> I will work on this, and any suggestions are greatly appreciated.
->>
->> Thanks,
->>
->> Steven
->>
->>> +
->>> +	mutex_unlock(&ima_extend_list_mutex);
->>> +
->>> +
->>> +	list_for_each_entry_safe(qe, qe_tmp, &ima_measurements_staged, later) {
->>> +		for (i = 0; i < qe->entry->template_desc->num_fields; i++) {
->>> +			kfree(qe->entry->template_data[i].data);
->>> +			qe->entry->template_data[i].data = NULL;
->>> +			qe->entry->template_data[i].len = 0;
->>> +		}
->>> +
->>> +		list_del(&qe->later);
->>> +
->>> +		if (ima_flush_htable) {
->>> +			kfree(qe->entry->digests);
->>> +			kfree(qe->entry);
->>> +			kfree(qe);
->>> +		}
->>> +	}
-> To avoid code duplication, there's a similar function named
-> ima_free_template_entry().  Any changes needed to the function should be done as
-> a preparatory patch.
-
-I will check and update.
-
-Thanks,
-
-Steven
-
->>> +
->>> +	return cur;
->>> +}
->>> +
->>>    int ima_restore_measurement_entry(struct ima_template_entry *entry)
->>>    {
->>>    	int result = 0;
->
-
+--
+paul-moore.com
