@@ -1,132 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FEA146A66;
-	Mon, 15 Dec 2025 23:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365E627EFFA
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Dec 2025 02:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765842604; cv=none; b=ZCLYsr3NidTIqbo8AHkmpRNnUPN5D02yGbvjc1AjrD3r2ePBHAFCW7hC1VITFOYYFqpQrNO/MCJ85GiCGbiJUo93EZf1BbGVdjyxVmT8w8ogmxQkBd0A5kA1zEGNSjwlRZ7B8WTVjFy9fkcc7exEv1VJkSpFasvqCssMg33nYJk=
+	t=1765853514; cv=none; b=NeE4AvZfPR4oEhppE6qD/Wua0dfJES24UsCGrbCAxHuwiL3RkEhZxlwkwrsiwCuaf7PiNdWnhZ0lY6NpqQfJm6xeMGIJ1PIC9mzJu9uid8Fcaxs8GCGR7KPLtOr1IozdVnTn8W/0IkLqqxm9+WhIebVn5AvH0oGCJ8g5fOFQ9r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765842604; c=relaxed/simple;
-	bh=5x88HEIkTgYf1xD7GovmrI5/UkL+Hu1QJ4lkwsKBz+I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SdStvJ+EqYwhSMVjlH9ig+ayjKzibvbqTWjC8WqaPwCucWWBtANcG9UZn5NNVHbe7BMzir3zZW+Lehry8KpwnHrqBEa8DFAL5zLAQCFVuyUdwJXuEMC5SQpMXMCC+G/SKf6ui61b7ajRKJbO6GNF+JOXfoQqk0SupfAoU5Cm6wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Crnh2DGm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765853514; c=relaxed/simple;
+	bh=V+8SFW9yEGjv8r0Rmmttsp+QjUmfglzdrODtQh4NINc=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=KgdtI6CHKI2kdUN11lntGHfe10mYN8acRw5wwxZa7OGTI40zeGlVa1bgJjeU5wGmUdKgl0x1WF4MzCMcDz8pH/lfinGfF1WZBcBzjdnzS47GrvUUBS3sRwv6bXOjbdZ3CpgrK5XsOuBsnCMEkMizTTjRK8YT+BgaCvB7Yvw55+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bgl0TrT5; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Crnh2DGm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E788CC4CEF5;
-	Mon, 15 Dec 2025 23:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765842602;
-	bh=5x88HEIkTgYf1xD7GovmrI5/UkL+Hu1QJ4lkwsKBz+I=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Crnh2DGmFv5/LJoE3V1lqZ7itegKM1oPvG+UaRL9ZkZCGuHERR75/GzfotBNia8T0
-	 DSU37glOuBAFTrNHnX3aspMh+s3ggVzHxNoULAskPOUo1R2QyJan0OIs5CVGW7MgQK
-	 z3j6rOXXKOYyOUx6RUX30T0tnTRZogXNzwYTNOBjHfO8gI6UI2KT4mafpzS3I8EvVt
-	 zz/c4q93B03Gf8a4CuvYxxhrsGsd58UG6BIZDtTbgna+7CnnE/z8teVFhlRVVwHpPn
-	 S0jaeCZJmAlaMo9DsU8ewkM9LOGr0ItyXNIBER1TzXI431mU7s4YiXsBgkYgEAeN4e
-	 xyF6OmQqH21UA==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3] KEYS: trusted: Use get_random-fallback for TPM
-Date: Tue, 16 Dec 2025 01:49:54 +0200
-Message-Id: <20251215234954.607848-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bgl0TrT5"
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-8888a444300so28992796d6.1
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Dec 2025 18:51:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1765853512; x=1766458312; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=owNyJcbfSj8G+1UC1yCETkOzy1/4s7ICSRGSTRNixHw=;
+        b=bgl0TrT5ieDjgQwXTYt3Hrrd2NJ4iCn2A/7yrw3mhzeB+Jy6BsO6tPRYEsnKSgprKf
+         BiTXmotefz3Gq6At0hZtO5M8Wi0U/lxyhNnSY/BJeIfjEGn/3YV3nxzvPI6DVW9WMVrB
+         77msk3/blTpuNVor3i9+9LkrtFzXyEOX1CbaigHAlkrK2caisppmLRTRyB+0tSOO5GaQ
+         h1tGmuh2GnEsNjpjG8+MByXlOq7KGiDm0V6v94sujPKrsdeLmWEq09xN8CXmvtA0+7Pi
+         a6+2DcD0G6CBfdIpcVPRLtZqeXzEROMy7Fzeb4go5W5n10rBeM8GlYr099JqXRVAeJSj
+         lW1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765853512; x=1766458312;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=owNyJcbfSj8G+1UC1yCETkOzy1/4s7ICSRGSTRNixHw=;
+        b=nnIwBz6jndaYWWvoU0m0vODssZc3c40TaCSIsyqlHtJURg9pBRxLeIL7jZj2sp0kV1
+         9TLAhvMrhvN62S8OtlqLv8TJTbaUA1QuIRUzyMsxktFl1ikoyM1U8tuMq8gK0b2IK62E
+         Sm8awU7nbkZE0WNPfKCoqQeS2EaZbwgujEAVFOzpKG9ZPie94DQlFiskapUoVpBCViaB
+         M3op80Q4TIKZzP8i+9zMhWp2oije1Ry1BNG/gNWbBsfsLmyIxmZt92sOrl2i66bXKhO2
+         J8Q66bvEEgzgmX3JAmFFQjH9Wq+14wA9hJUdBM9c4O5iY6OycAiTP5MrxSVL981WvdL3
+         XhSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4QROlQ8JAXLQjTeTHZio9kTUrlrg8wX44kChw6oxbIDJ5n6R9DreRNIVnina1+xYLSnG7iI96r2L1uxhOBxDoHOnsnKU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmnZhB13862wu9IG0zw/hQc9jPa+vPl5bwdjuJAH74KM+U52pN
+	BDhE8TsYcLuj3C28M0+qGLutSI1a4/tJfN7b7IlmFNbvBPmx43PHiSGcxa7zbPSqTQ==
+X-Gm-Gg: AY/fxX5eYWoPHnUZ1LU3p8zLGTgf02CIKKnpk1JnbarZfzZ0uehkA1RTiNvcuqPraoc
+	AGztAvPq3JvcLWiZa2YrZXBpt+XNypr7R2Ol+Q9LDOaHeNhUAMLuZLj9Chk0uni86WQDmPp/b8Z
+	vfdBM1rstBVUnriPz9hLFQJ7SUGvo+VCFwsKJoXI0yqyzCyQOjk3PfcOTzpHcA92qCcRM/v1gcA
+	Kq8z0gsDUXgj/GUs10kkaudBL0TL7tj2WmkneWBVhnGz0ag2RBQvUjEwotiIXMlIW3orXMhNNq4
+	uZirj0C223ZjXU2H635vrpZPrxplY7QEbJZ4ytsdZS3yJXzkUKjOjH04keJe0+uJAYwGwm+4gf+
+	KzYHmdBXmP2GdFcsOk29SM+KaIP6H7B4/EHXmLjr7E28uZenWVgfaUPeuum4jcXnHX2P14mBucR
+	vD0wyUKwRTuC/BW8Su4CWtB1jj+E6G0rCmYTPKFEfeo0XQBxW8gDojGmkD
+X-Google-Smtp-Source: AGHT+IEMqHttnDTZnChnTJMgZ+vRj3m6pgvUAgcud9zARHPxAqUZB0u47RS1U3Wdc1+qrq1TO0hW2A==
+X-Received: by 2002:a05:622a:5c13:b0:4f1:cd55:d9af with SMTP id d75a77b69052e-4f1d05a92f9mr170372191cf.47.1765853512073;
+        Mon, 15 Dec 2025 18:51:52 -0800 (PST)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4f345b4b894sm7763971cf.12.2025.12.15.18.51.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Dec 2025 18:51:51 -0800 (PST)
+Date: Mon, 15 Dec 2025 21:51:50 -0500
+Message-ID: <e9393fe7171f848616036f0708b1cada@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20251215_1137/pstg-lib:20251215_1136/pstg-pwork:20251215_1137
+From: Paul Moore <paul@paul-moore.com>
+To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] lsm: fix kernel-doc struct member names
+References: <20251214201539.2188497-1-rdunlap@infradead.org>
+In-Reply-To: <20251214201539.2188497-1-rdunlap@infradead.org>
 
-1. tpm2_get_random() is costly when TCG_TPM2_HMAC is enabled and thus its
-   use should be pooled rather than directly used. This both reduces
-   latency and improves its predictability.
+On Dec 14, 2025 Randy Dunlap <rdunlap@infradead.org> wrote:
+> 
+> Use the correct struct member names to avoid kernel-doc warnings:
+> 
+> Warning: include/linux/lsm_hooks.h:83 struct member 'name' not described
+>  in 'lsm_id'
+> Warning: include/linux/lsm_hooks.h:183 struct member 'initcall_device' not
+>  described in 'lsm_info'
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: linux-security-module@vger.kernel.org
+> ---
+>  include/linux/lsm_hooks.h |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-2. Linux is better off overall if every subsystem uses the same source for
-   generating the random numbers required.
+Thanks Randy, merged into lsm/dev.
 
-Thus, unset '.get_random', which causes fallback to kernel_get_random().
-
-One might argue that TPM RNG should be used for the generated trusted keys,
-so that they have matching entropy with the TPM internally generated
-objects.
-
-This argument does have some weight into it but as far cryptography goes,
-FIPS certification sets the exact bar, not which exact FIPS certified RNG
-will be used. Thus, the rational choice is obviously to pick the lowest
-latency path, which is kernel RNG.
-
-Finally, there is an actual defence in depth benefit when using kernel RNG
-as it helps to mitigate TPM firmware bugs concerning RNG implementation,
-given the obfuscation by the other entropy sources.
-
-Reviewed-by: Eric Biggers <ebiggers@kernel.org>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v3:
-- Fixed typos in the commit message.
-- Moved the documentation comment to the correct location.
-v2:
-- Added Eric's reviewed-by tag.
-- Addressed concerns from James by writing more details to the commit
-  message and documenting random number generation to the source
-  code.
----
- security/keys/trusted-keys/trusted_tpm1.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
-diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-index 636acb66a4f6..7ce7e31bcdfb 100644
---- a/security/keys/trusted-keys/trusted_tpm1.c
-+++ b/security/keys/trusted-keys/trusted_tpm1.c
-@@ -6,6 +6,16 @@
-  * See Documentation/security/keys/trusted-encrypted.rst
-  */
- 
-+/**
-+ * DOC: Random Number Generation
-+ *
-+ * tpm_get_random() was previously used here as the RNG in order to have equal
-+ * entropy with the objects fully inside the TPM. However, as far as goes,
-+ * kernel RNG is equally fine, as long as long as it is FIPS certified. Also,
-+ * using kernel RNG has the benefit of mitigating bugs in the TPM firmware
-+ * associated with the RNG.
-+ */
-+
- #include <crypto/hash_info.h>
- #include <crypto/sha1.h>
- #include <crypto/utils.h>
-@@ -936,11 +946,6 @@ static int trusted_tpm_unseal(struct trusted_key_payload *p, char *datablob)
- 	return ret;
- }
- 
--static int trusted_tpm_get_random(unsigned char *key, size_t key_len)
--{
--	return tpm_get_random(chip, key, key_len);
--}
--
- static int __init init_digests(void)
- {
- 	int i;
-@@ -992,6 +997,5 @@ struct trusted_key_ops trusted_key_tpm_ops = {
- 	.init = trusted_tpm_init,
- 	.seal = trusted_tpm_seal,
- 	.unseal = trusted_tpm_unseal,
--	.get_random = trusted_tpm_get_random,
- 	.exit = trusted_tpm_exit,
- };
--- 
-2.39.5
-
+--
+paul-moore.com
