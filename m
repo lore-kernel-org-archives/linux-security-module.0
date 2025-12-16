@@ -1,608 +1,198 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E461358D12;
-	Tue, 16 Dec 2025 12:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC030126C02
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Dec 2025 13:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765889486; cv=none; b=cNH9vfKvhMVFQSb+SAz/CmwOMWvjtkOIFt9YT/SvzVnn01pgDfSZax2h8Bc8xEsCW7CyEeNj/1zb1XvrsvLtrWDjROyK0PzD7eUBhhH9arYjvxAQ6+7Fj7fp4wdWtsBOqj9qjJw7Kj2+zAKKxpOYTBva8jUVLI+pcTXeYOid0kk=
+	t=1765891413; cv=none; b=kJCl6rH1bnSwwTUec8FCz1rFzTSQWJnKvJwDoL5P4v4C8Fxv4sW3Orp0ehcFW9xZ9/iSyOkJXksUFhcoutZhVbEYhdbZPSfgBH8TSmCuLhGW1fFL5VliFoxYHsmeF08nnZeVZw9Bbts6Gh0RNwszd2nIFZTFDCEe+qpJoY3GDT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765889486; c=relaxed/simple;
-	bh=ti6Dk4Ek5FlXf6xEBQ/adxxJC9ZJqhDol762fo0LZUw=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=f3/P+4EQtyksCMMfwdKRdDAhYsUlVhAi8z2J6mmLPRp3zjGe2g/XfTPobcyDLxevAM4s31baRj4Gr3FXsqhEsUeQzkpZIKeLc19SFpACTI6KjkKBWgOqT5IEMLqt94eqzIetMYXd+D9tmvfAl5lQqSrzlDnvhUp2NjDq1s9pJuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Q27eFqom; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1765891413; c=relaxed/simple;
+	bh=QV+61qVpdqsPiaPbfd08qHh+TzoR572QyzT9O2x4KLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KdcB9wlK++lAxme9QKkaF2v+TsyX7Wai+eXBgt3MqqMLpabBmnSR0c5u760uuR7oaWsg5E9Zp1guStVLWwuf9Cr36ziLROvBeX22V1sB1sjCX6GxNQvS9ApB2FfWh2AEBpiLeI03ps70GS1FlAI54EnxwZRC8zoulo0kAw/emPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KYuw7Bzr; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Q27eFqom"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5BG2m6Om001615;
-	Tue, 16 Dec 2025 12:51:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=hNFFEt
-	vfQ7A6ouq4WsKG9Uu49lNx4XLMADh/Njl+Zxs=; b=Q27eFqombMQaLVqU0FacBc
-	G+yyTCDJuVrsd84T29XjIyU9GsiTqoSWIbJpHj5cy/Gy+vbqZmqjv5VKgRc7upbu
-	4YljX/1R65ylI7pGX7MYPJ2/mchyoFWig6yOscASQfFLfZIJ8Yqcd38a4+d9T3jT
-	CZ2JdUVx7rWJQR3WI9JTsUsv939uB1yyZqwoOowbRh7++6X8wa0T8aSAvKYTiFdO
-	5fZoRfcQypOdr1H4aHRWqBSFocm7sHIGjVDHQTPtiQ9F3lBnHljt1INzQfnJFBMU
-	VFwSm0rpDvxa4oTpVbY5jbIjW5G9Bu/evMK4y9gfU7yZBfu3kFn1OXcmU/ByeQ1g
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b0ytv727c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Dec 2025 12:51:03 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5BGCp2PJ013958;
-	Tue, 16 Dec 2025 12:51:02 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b0ytv727a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Dec 2025 12:51:02 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5BGCS4fg026786;
-	Tue, 16 Dec 2025 12:51:01 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4b1jfsccdn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Dec 2025 12:51:01 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5BGCp1XP30081590
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 16 Dec 2025 12:51:01 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 17DA158045;
-	Tue, 16 Dec 2025 12:51:01 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 586E858054;
-	Tue, 16 Dec 2025 12:50:59 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.168.158])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 16 Dec 2025 12:50:59 +0000 (GMT)
-Message-ID: <c93907cb0f08f9baa320488989aa87e7867ee9da.camel@linux.ibm.com>
-Subject: Re: [PATCH V2 1/1] IMA event log trimming
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, linux-integrity@vger.kernel.org
-Cc: roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-        eric.snowberg@oracle.com, corbet@lwn.net, serge@hallyn.com,
-        paul@paul-moore.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, anirudhve@linux.microsoft.com,
-        gregorylumen@linux.microsoft.com, nramas@linux.microsoft.com,
-        sushring@linux.microsoft.com, linux-doc@vger.kernel.org
-In-Reply-To: <d80958ec-f139-41e9-afa0-a5aca94221de@linux.microsoft.com>
-References: <20251210235314.3341-1-chenste@linux.microsoft.com>
-	 <20251210235314.3341-2-chenste@linux.microsoft.com>
-	 <d80958ec-f139-41e9-afa0-a5aca94221de@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 16 Dec 2025 07:50:58 -0500
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KYuw7Bzr"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-477a1c28778so51225155e9.3
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Dec 2025 05:23:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1765891409; x=1766496209; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uDxfhRBysj2yPZBzYVVRhpxcjKV0qpQrPWWhDK3SHYM=;
+        b=KYuw7BzrbUMfAKbOrOhWuTPHNWxxKEuwVW5dWYZPtJMU5wFJ1ufOC3qIcc9YEVlOqj
+         dG9J5HE9tepzKCWwwLO3OPYZUZ6EaQ9SBMurPmSp4BobCl4IPxkRSOO5xlCYmbYe840P
+         DjojpISFW0m4/JTJzh6uejvlgxhDhW6lGqJIyr4oz+QGg29jbm2tnhtxKbf46uYt3YaL
+         2V25zRNAFnI99YuGgxMOomP54DQkqGG0VRwW1m9/Ifp4m1GxUi+/aXwg9WpGGKGZ+8sh
+         rAhIfIAc/U+0vyz00zPjagXYFm7Y6De8r+BO54KxfD0TKnLlTsTreMxoPdffsg3hzkGY
+         scqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765891409; x=1766496209;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=uDxfhRBysj2yPZBzYVVRhpxcjKV0qpQrPWWhDK3SHYM=;
+        b=bo0/0XQDjR356fVMhoseSBOuZNLnB1UigZL3IEDPBNoXh7ufbOPX1qJkNtgElAu6t5
+         OPgOcrdFDLgg4Pvot/0W3eaMKghkVIYLyyrpqIiYR/ATayzGEfWbZFdhUJbDVPDO3M4z
+         tE/RalCfm+VL10Ryt1gCXFwOmm1u8vzUwq91qGk84YTjOmr2oR05jc/Qh8rx1J/GVK0X
+         joAIt3dDxiH3K/yunj6sF7ya4SmtCsVjDi0Je5LovEiYZgCsNf27KpbMbgyms/mzdhxD
+         oShXyq2VXBX98RuPtND6ZbwYoT0qgflA6JA5LzBPhm/JxbhAJSHTLQRP2Deq5gYNiE7A
+         QUZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmbHJN8tvuSmqhSu3ys/wXsbCTFdS3E7EcxFF2xhyw6Relfh2QlEDuAXHNryNYa03R3vYCko9BnKG7ErO7HvGV/GAJkrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4axiF+h7nx9O1XrdmONbatA4WSvlHqX9QfFIzSewH36yoNAa4
+	Yg3p4UQzuzlkAqaqhUPXQg8WhSumvGqyhtWmniIf/VDAJCGnYqpYsvbBePozMqxmaw==
+X-Gm-Gg: AY/fxX5tnJTg0Z+eScGlp2lBhkB9W85WVGapQ0hcBd7CmsAC20EjoBrxb9bZg5BsgwJ
+	KqqK5+NNCRtpM3QlI0ghb8gIzRIx8moZk0JyFlgGdZ+mjZa0D5AOO3yegXseFnjh7lpepT00i0O
+	614MhhnYNzj0eY7WDt+b6Mqt012QpQl6Mpgmahln/N88sjKC1yBhbg3bp3L3yZ0fJLsHQonQpe8
+	o+ezEdF1MwquKdNyQ7C5F4ODDvgMDw55mD2B4rsppggK/Bq8o4jaDJw/dcTGZlAfJ0Hw2AegTfY
+	jkA3xeerB4+7WtoTjd5ztzAFbC/oj3V6HLTNLrhAiGIVLC205UtUfJNnaimbz2Ch0Ya9mYwQg9B
+	GKMx7wu/RoWLHUlFR0GExpb1Z0k9ZQQoxSLEhfd1pgNawMaukyJraLZ/FLUSpzO5gCHvK8SfcIA
+	/a+Uyja010flv0a+7iFELStppJigfZkufSTzWrJkQxcIzSRRK1
+X-Google-Smtp-Source: AGHT+IHeQgMekTiUSXYyDxvkGceEMaJToW+cfsdKtACjSuXcP89Hj1YmnWwqaTNfU+el5KGHlOYfZQ==
+X-Received: by 2002:a05:600c:4f90:b0:477:6d96:b3e5 with SMTP id 5b1f17b1804b1-47a8f8ab02bmr133331835e9.7.1765891408469;
+        Tue, 16 Dec 2025 05:23:28 -0800 (PST)
+Received: from elver.google.com ([2a00:79e0:2834:9:ea4c:b2a8:24a4:9ce9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47bd8f86b83sm10764215e9.2.2025.12.16.05.23.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Dec 2025 05:23:27 -0800 (PST)
+Date: Tue, 16 Dec 2025 14:23:19 +0100
+From: Marco Elver <elver@google.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	Chris Li <sparse@chrisli.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
+	Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	linux-sparse@vger.kernel.org, linux-wireless@vger.kernel.org,
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Subject: Re: [PATCH v4 06/35] cleanup: Basic compatibility with context
+ analysis
+Message-ID: <aUFdRzx1dxRx1Uqa@elver.google.com>
+References: <20251120145835.3833031-2-elver@google.com>
+ <20251120151033.3840508-7-elver@google.com>
+ <20251211121659.GH3911114@noisy.programming.kicks-ass.net>
+ <CANpmjNOmAYFj518rH0FdPp=cqK8EeKEgh1ok_zFUwHU5Fu92=w@mail.gmail.com>
+ <20251212094352.GL3911114@noisy.programming.kicks-ass.net>
+ <CANpmjNP=s33L6LgYWHygEuLtWTq-s2n4yFDvvGcF3HjbGH+hqw@mail.gmail.com>
+ <20251212110928.GP3911114@noisy.programming.kicks-ass.net>
+ <aUAPbFJSv0alh_ix@elver.google.com>
+ <20251216123211.GT3707837@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjEzMDAyMyBTYWx0ZWRfX/E0qhx9lZqhu
- HnQpj4pJNaMKN9aLLVGHdeXur6FCCxwdK1xYJFfAkH/VmWgOblwdMo+kwoddzzK+Ht7YpUx2KqH
- oQDGwuZa5p57vkuYkWju71RMWgeaqmHpjPDA9Cs0S8YwqaAZojfsqJQ432O/SqziD1YCGTrA/jc
- wWaHex3m5pxFGwpOCTYxlY0JQDiLLTRErsQEb1EdUVnR2OfBKKaTRIQUmCdm1Glx6Ocnx9rDKGg
- dGfLIqsGALOmHvY8s+NnSbZMZfhB7f42dTHEmEASBKUErAYStlgHaAYyvNN+HfO71X8/QKddB4q
- xCdtJ+x/z2/TxIAUL55VOKaRqkudEvoJ/szeUAm7G7Lj1dbFFupMFmaKVP5sxE+uRNB5g5m4y2G
- CsmyF3oA/OAlIexkiAMrWyy54nwf6g==
-X-Proofpoint-ORIG-GUID: l33RvHUxbLQ00-nke2W_GJiw23DkzZqt
-X-Authority-Analysis: v=2.4 cv=QtRTHFyd c=1 sm=1 tr=0 ts=694155b7 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=yMhMjlubAAAA:8 a=Vx3P-orQicAo808I3v0A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: Do9LEKy4auvYDR9COv1lSJOujKGz_ARe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-16_02,2025-12-15_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
- priorityscore=1501 bulkscore=0 suspectscore=0 impostorscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2512130023
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251216123211.GT3707837@noisy.programming.kicks-ass.net>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-Hi Steven,
+On Tue, Dec 16, 2025 at 01:32PM +0100, Peter Zijlstra wrote:
+> On Mon, Dec 15, 2025 at 02:38:52PM +0100, Marco Elver wrote:
+> 
+> > Working on rebasing this to v6.19-rc1 and saw this new scoped seqlock
+> > abstraction. For that one I was able to make it work like I thought we
+> > could (below). Some awkwardness is required to make it work in
+> > for-loops, which only let you define variables with the same type.
+> 
+> > 
+> > diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
+> > index b5563dc83aba..5162962b4b26 100644
+> > --- a/include/linux/seqlock.h
+> > +++ b/include/linux/seqlock.h
+> > @@ -1249,6 +1249,7 @@ struct ss_tmp {
+> >  };
+> >  
+> >  static __always_inline void __scoped_seqlock_cleanup(struct ss_tmp *sst)
+> > +	__no_context_analysis
+> >  {
+> >  	if (sst->lock)
+> >  		spin_unlock(sst->lock);
+> > @@ -1278,6 +1279,7 @@ extern void __scoped_seqlock_bug(void);
+> >  
+> >  static __always_inline void
+> >  __scoped_seqlock_next(struct ss_tmp *sst, seqlock_t *lock, enum ss_state target)
+> > +	__no_context_analysis
+> >  {
+> >  	switch (sst->state) {
+> >  	case ss_done:
+> > @@ -1320,9 +1322,18 @@ __scoped_seqlock_next(struct ss_tmp *sst, seqlock_t *lock, enum ss_state target)
+> >  	}
+> >  }
+> >  
+> > +/*
+> > + * Context analysis helper to release seqlock at the end of the for-scope; the
+> > + * alias analysis of the compiler will recognize that the pointer @s is is an
+> > + * alias to @_seqlock passed to read_seqbegin(_seqlock) below.
+> > + */
+> > +static __always_inline void __scoped_seqlock_cleanup_ctx(struct ss_tmp **s)
+> > +	__releases_shared(*((seqlock_t **)s)) __no_context_analysis {}
+> > +
+> >  #define __scoped_seqlock_read(_seqlock, _target, _s)			\
+> >  	for (struct ss_tmp _s __cleanup(__scoped_seqlock_cleanup) =	\
+> > -	     { .state = ss_lockless, .data = read_seqbegin(_seqlock) };	\
+> > +	     { .state = ss_lockless, .data = read_seqbegin(_seqlock) }, \
+> > +	     *__UNIQUE_ID(ctx) __cleanup(__scoped_seqlock_cleanup_ctx) = (struct ss_tmp *)_seqlock; \
+> >  	     _s.state != ss_done;					\
+> >  	     __scoped_seqlock_next(&_s, _seqlock, _target))
+> >  
+> 
+> I am ever so confused.. where is the __acquire_shared(), in read_seqbegin() ?
 
-As I previously said, "The main difference between this patch and Roberto's
-version is the length of time needed for locking the measurement list, whic=
-h
-prevents new entries from being appended to the measurement list.  In Rober=
-to's
-version, the list head is moved quickly and the lock released.  Measuring t=
-he
-total amount of time needed to trim the measurement list ignores the benefi=
-t of
-his version. I plan on reviewing both this version and his (hopefully today=
-)."
+Ah this is just a diff on top of this v4 series. The read_seqbegin()
+already had it:
 
-The other difference is "when" the IMA measurement list is read and saved,
-before the trigger to trim the measurement list or after when the measureme=
-nt
-list is staged.  In this case, the initial trigger trims the measurement li=
-st.
-In the other case, the measurement list is staged and then deleted.  When
-reviewing Roberto's patch, I plan to discuss it.
+	static inline unsigned read_seqbegin(const seqlock_t *sl)
+		__acquires_shared(sl) __no_context_analysis
+	{
 
-After trimming the measurement list, existing verifiers, which walk the IMA
-measurement list, will obviously fail to match the PCRs.  Breaking existing
-userspace applications is a problem and, unfortunately, requires yet anothe=
-r
-Kconfig option.  It needs to be at least mentioned here in the patch
-description.
+> Also, why do we need this second variable with cleanup; can't the
+> existing __scoped_seqlock_cleanup() get the __releases_shared()
+> attribute?
 
-There are two places where it says, "the list never shrinks, so we don't ne=
-ed a
-lock here".  Either the code, the comment, or both need to be updated.
+The existing __scoped_seqlock_cleanup() receives &_s (struct ss_tmp *),
+and we can't refer to the _seqlock from __scoped_seqlock_cleanup(). Even
+if I create a member seqlock_t* ss_tmp::seqlock and initialize it with
+_seqlock, the compiler can't track that the member would be an alias of
+_seqlock. The function __scoped_seqlock_next() does receive _seqlock to
+effectively release it executes for every loop, so there'd be a "lock
+imbalance" in the compiler's eyes.
 
-
-On Thu, 2025-12-11 at 10:41 -0800, steven chen wrote:
-> On 12/10/2025 3:53 PM, steven chen wrote:
-> > This patch is for trimming N entries of the IMA event logs. It will als=
-o
-> > cleaning the hash table if ima_flush_htable is set.
-
-Please refer to "Describe your changes in imperative mood" in the "Describe=
- your
-changes" section of Documentation/process/submitting-patches.rst.
-
-> >=20
-> > It provides a userspace interface ima_trim_log that can be used to inpu=
-t
-> > number N to let kernel to trim N entries of IMA event logs. When read
-
-There is only a single kernel measurement list or event log, not plural.  T=
-here
-are N number of "entries" or "records" in the IMA measurement list.
-
--> trim N records from the IMA measurement list.
-
-> > this interface, it returns number of entries trimmed last time.
-
-Please provide an example of how to initiate the trim.
-
-After trimming the IMA measurement list, are the other securityfs files cor=
-rect?
-Are they correct after a kexec?  Or are they reset without a way of resurre=
-cting
-them without the full measurement list?
-
-> >=20
-> > Signed-off-by: steven chen <chenste@linux.microsoft.com>
-
-> > ---
-> >   .../admin-guide/kernel-parameters.txt         |   4 +
-> >   security/integrity/ima/ima.h                  |   2 +
-> >   security/integrity/ima/ima_fs.c               | 175 +++++++++++++++++=
--
-> >   security/integrity/ima/ima_queue.c            |  64 +++++++
-> >   4 files changed, 241 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
-ation/admin-guide/kernel-parameters.txt
-> > index e92c0056e4e0..cd1a1d0bf0e2 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -2197,6 +2197,10 @@
-> >   			Use the canonical format for the binary runtime
-> >   			measurements, instead of host native format.
-> >  =20
-> > +	ima_flush_htable  [IMA]
-> > +			Flush the measurement list hash table when trim all
-> > +			or a part of it for deletion.
-> > +
-> >   	ima_hash=3D	[IMA]
-> >   			Format: { md5 | sha1 | rmd160 | sha256 | sha384
-> >   				   | sha512 | ... }
-> > diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.=
-h
-> > index e3d71d8d56e3..ab0e30ee25ea 100644
-> > --- a/security/integrity/ima/ima.h
-> > +++ b/security/integrity/ima/ima.h
-> > @@ -246,8 +246,10 @@ void ima_post_key_create_or_update(struct key *key=
-ring, struct key *key,
-> >  =20
-> >   #ifdef CONFIG_IMA_KEXEC
-> >   void ima_measure_kexec_event(const char *event_name);
-> > +long ima_purge_event_log(long number_logs);
-> >   #else
-> >   static inline void ima_measure_kexec_event(const char *event_name) {}
-> > +static inline long ima_purge_event_log(long number_logs) { return 0; }
-> >   #endif
-> >  =20
-> >   /*
-> > diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/i=
-ma_fs.c
-> > index 87045b09f120..410f7d03c43f 100644
-> > --- a/security/integrity/ima/ima_fs.c
-> > +++ b/security/integrity/ima/ima_fs.c
-> > @@ -21,6 +21,9 @@
-> >   #include <linux/rcupdate.h>
-> >   #include <linux/parser.h>
-> >   #include <linux/vmalloc.h>
-> > +#include <linux/ktime.h>
-> > +#include <linux/timekeeping.h>
-> > +#include <linux/ima.h>
-> >  =20
-> >   #include "ima.h"
-> >  =20
-> > @@ -38,6 +41,14 @@ __setup("ima_canonical_fmt", default_canonical_fmt_s=
-etup);
-> >  =20
-> >   static int valid_policy =3D 1;
-> >  =20
-> > +#define IMA_LOG_TRIM_REQ_LENGTH 11
-> > +#define IMA_LOG_TRIM_EVENT_LEN 256
-> > +
-> > +static long trimcount;
-> > +/* mutex protects atomicity of trimming measurement list requests */
-
-ima_measure_lock is taken for more than just synchronization of trimming th=
-e
-measurement list.  Please update comment.
-
-> > +static DEFINE_MUTEX(ima_measure_lock);
-> > +static long ima_measure_users;
-> > +
-> >   static ssize_t ima_show_htable_value(char __user *buf, size_t count,
-> >   				     loff_t *ppos, atomic_long_t *val)
-> >   {
-> > @@ -202,16 +213,65 @@ static const struct seq_operations ima_measurment=
-s_seqops =3D {
-> >   	.show =3D ima_measurements_show
-> >   };
-> >  =20
-
-_ima_measurements_open() seems pretty fundamental to the locking scheme.=
-=20
-Preventing opening the IMA measurement list is new.  There should at least =
-be a
-short, regular comment explaining what you're locking and why.
-
-> > +static int _ima_measurements_open(struct inode *inode, struct file *fi=
-le,
-> > +				  const struct seq_operations *seq_ops)
-> > +{
-> > +	bool write =3D !!(file->f_mode & FMODE_WRITE);
-> > +	int ret;
-> > +
-> > +	if (write && !capable(CAP_SYS_ADMIN))
-> > +		return -EPERM;
-> > +
-> > +	mutex_lock(&ima_measure_lock);
-> > +	if ((write && ima_measure_users !=3D 0) ||
-> > +	    (!write && ima_measure_users < 0)) {
-> > +		mutex_unlock(&ima_measure_lock);
-> > +		return -EBUSY;
-> > +	}
-> > +
-> > +	ret =3D seq_open(file, seq_ops);
-> > +	if (ret < 0) {
-> > +		mutex_unlock(&ima_measure_lock);
-> > +		return ret;
-> > +	}
-> > +
-> > +	if (write)
-> > +		ima_measure_users--;
-> > +	else
-> > +		ima_measure_users++;
-> > +
-> > +	mutex_unlock(&ima_measure_lock);
-> > +	return ret;
-> > +}
-> > +
-> >   static int ima_measurements_open(struct inode *inode, struct file *fi=
-le)
-> >   {
-> > -	return seq_open(file, &ima_measurments_seqops);
-> > +	return _ima_measurements_open(inode, file, &ima_measurments_seqops);
-> > +}
-> > +
-> > +static int ima_measurements_release(struct inode *inode, struct file *=
-file)
-> > +{
-> > +	bool write =3D !!(file->f_mode & FMODE_WRITE);
-> > +	int ret;
-> > +
-> > +	mutex_lock(&ima_measure_lock);
-> > +	ret =3D seq_release(inode, file);
-> > +	if (!ret) {
-> > +		if (write)
-> > +			ima_measure_users++;
-> > +		else
-> > +			ima_measure_users--;
-> > +	}
-> > +
-> > +	mutex_unlock(&ima_measure_lock);
-> > +	return ret;
-> >   }
-> >  =20
-> >   static const struct file_operations ima_measurements_ops =3D {
-> >   	.open =3D ima_measurements_open,
-> >   	.read =3D seq_read,
-> >   	.llseek =3D seq_lseek,
-> > -	.release =3D seq_release,
-> > +	.release =3D ima_measurements_release,
-> >   };
-> >  =20
-> >   void ima_print_digest(struct seq_file *m, u8 *digest, u32 size)
-> > @@ -279,14 +339,111 @@ static const struct seq_operations ima_ascii_mea=
-surements_seqops =3D {
-> >  =20
-> >   static int ima_ascii_measurements_open(struct inode *inode, struct fi=
-le *file)
-> >   {
-> > -	return seq_open(file, &ima_ascii_measurements_seqops);
-> > +	return _ima_measurements_open(inode, file, &ima_ascii_measurements_se=
-qops);
-> >   }
-> >  =20
-> >   static const struct file_operations ima_ascii_measurements_ops =3D {
-> >   	.open =3D ima_ascii_measurements_open,
-> >   	.read =3D seq_read,
-> >   	.llseek =3D seq_lseek,
-> > -	.release =3D seq_release,
-> > +	.release =3D ima_measurements_release,
-> > +};
-> > +
-> > +static void ima_measure_trim_event(const long number_logs)
-> > +{
-> > +	char ima_log_trim_event[IMA_LOG_TRIM_EVENT_LEN];
-> > +	struct timespec64 ts;
-> > +	u64 time_ns;
-> > +	int n;
-> > +
-> > +	ktime_get_real_ts64(&ts);
-> > +	time_ns =3D (u64)ts.tv_sec * 1000000000ULL + ts.tv_nsec;
-> > +	n =3D scnprintf(ima_log_trim_event, IMA_LOG_TRIM_EVENT_LEN,
-> > +		      "time=3D%llu; log trim this time=3D%lu;",
-> > +		       time_ns, number_logs);
-> > +
-> > +	ima_measure_critical_data("ima_log_trim", "trim ima event logs", ima_=
-log_trim_event, n, false, NULL, 0);
-> > +}
-
-There's no mention of a new critical data record in the patch description. =
- It
-should be a separate patch with a full patch description describing what it=
- is
-and how to verify it.
-
-> > +
-> > +static int ima_log_trim_open(struct inode *inode, struct file *file)
-> > +{
-> > +	bool write =3D !!(file->f_mode & FMODE_WRITE);
-> > +
-> > +	if (!write && capable(CAP_SYS_ADMIN))
-> > +		return 0;
-> > +	else if (!capable(CAP_SYS_ADMIN))
-> > +		return -EPERM;
-> > +
-> > +	return _ima_measurements_open(inode, file, &ima_measurments_seqops);
-> > +}
-> > +
-> > +static ssize_t ima_log_trim_read(struct file *file, char __user *buf, =
-size_t size, loff_t *ppos)
-> > +{
-> > +	char tmpbuf[IMA_LOG_TRIM_REQ_LENGTH];	/* greater than largest 'long' =
-string value */
-> > +	ssize_t len;
-> > +
-> > +	len =3D scnprintf(tmpbuf, sizeof(tmpbuf), "%li\n", trimcount);
-> > +	return simple_read_from_buffer(buf, size, ppos, tmpbuf, len);
-> > +}
-> > +
-> > +static ssize_t ima_log_trim_write(struct file *file,
-> > +				  const char __user *buf, size_t datalen, loff_t *ppos)
-> > +{
-> > +	unsigned char req[IMA_LOG_TRIM_REQ_LENGTH];
-> > +	long count, n;
-> > +	int ret;
-> > +
-> > +	if (*ppos > 0 || datalen > IMA_LOG_TRIM_REQ_LENGTH || datalen < 2) {
-> > +		ret =3D -EINVAL;
-> > +		goto out;
-> > +	}
-> > +
-> > +	n =3D (int)datalen;
-> > +
-> > +	ret =3D copy_from_user(req, buf, datalen);
-> > +	if (ret < 0)
-> > +		goto out;
-> > +
-> > +	count =3D 0;
-> > +	for (int i =3D 0; i < n; ++i) {
-> > +		if (req[i] < '0' || req[i] > '9') {
-> > +			ret =3D -EINVAL;
-> > +			goto out;
-> > +		}
-> > +		count =3D count * 10 + req[i] - '0';
-> > +	}
-
-This code can be simplified by using the kstrto*_from_user() family of
-functions.  The patch description should include an example how to trim the
-measurement list.
-
-> > +	ret =3D ima_purge_event_log(count);
-
-The term "purge" is really strong wording.  I hope you're not purging the
-measurement list, but simply removing them from kernel memory.
-
-> > +
-> > +	if (ret < 0)
-> > +		goto out;
-> > +
-> > +	trimcount =3D ret;
-> > +
-> > +	if (trimcount > 0)
-> > +		ima_measure_trim_event(trimcount);
-> > +
-> > +	ret =3D datalen;
-> > +out:
-> > +	return ret;
-> > +}
-> > +
-> > +static int ima_log_trim_release(struct inode *inode, struct file *file=
-)
-> > +{
-> > +	bool write =3D !!(file->f_mode & FMODE_WRITE);
-> > +	if (!write && capable(CAP_SYS_ADMIN))
-> > +		return 0;
-> > +	else if (!capable(CAP_SYS_ADMIN))
-> > +		return -EPERM;
-> > +
-> > +	return ima_measurements_release(inode, file);
-> > +}
-> > +
-> > +static const struct file_operations ima_log_trim_ops =3D {
-> > +	.open =3D ima_log_trim_open,
-> > +	.read =3D ima_log_trim_read,
-> > +	.write =3D ima_log_trim_write,
-> > +	.llseek =3D generic_file_llseek,
-> > +	.release =3D ima_log_trim_release
-> >   };
-> >  =20
-> >   static ssize_t ima_read_policy(char *path)
-> > @@ -528,6 +685,16 @@ int __init ima_fs_init(void)
-> >   		goto out;
-> >   	}
-> >  =20
-> > +	dentry =3D securityfs_create_file("ima_trim_log",
-> > +					S_IRUSR | S_IRGRP | S_IWUSR | S_IWGRP,
-> > +					ima_dir, NULL, &ima_log_trim_ops);
-> > +	if (IS_ERR(dentry)) {
-> > +		ret =3D PTR_ERR(dentry);
-> > +		goto out;
-> > +	}
-> > +
-> > +	trimcount =3D 0;
-> > +
-> >   	dentry =3D securityfs_create_file("runtime_measurements_count",
-> >   				   S_IRUSR | S_IRGRP, ima_dir, NULL,
-> >   				   &ima_measurements_count_ops);
-> > diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/im=
-a/ima_queue.c
-> > index 590637e81ad1..77ab52469727 100644
-> > --- a/security/integrity/ima/ima_queue.c
-> > +++ b/security/integrity/ima/ima_queue.c
-> > @@ -22,6 +22,14 @@
-> >  =20
-> >   #define AUDIT_CAUSE_LEN_MAX 32
-> >  =20
-> > +bool ima_flush_htable;
-> > +static int __init ima_flush_htable_setup(char *str)
-> > +{
-> > +	ima_flush_htable =3D true;
-> > +	return 1;
-> > +}
-> > +__setup("ima_flush_htable", ima_flush_htable_setup);
-> > +
-> >   /* pre-allocated array of tpm_digest structures to extend a PCR */
-> >   static struct tpm_digest *digests;
-> >  =20
-> > @@ -220,6 +228,62 @@ int ima_add_template_entry(struct ima_template_ent=
-ry *entry, int violation,
-> >   	return result;
-> >   }
-> >  =20
-> > +/* Delete the IMA event logs */
-
-Do you mean delete the IMA event records/entries?
-
-> > +long ima_purge_event_log(long number_logs)
-
-If this function is not defined as static, then it requires a kernel-doc.
-
-> > +{
-> > +	struct ima_queue_entry *qe, *qe_tmp;
-> > +	LIST_HEAD(ima_measurements_staged);
-> > +	unsigned int i;
-> > +	long cur =3D number_logs;
-
-The variable name "number_logs" is confusing.  As I mentioned in the patch
-description, there is one measurement list with multiple records.  There ar=
-en't
-multiple logs in the kernel (other than the staged list).
-
-> > +
-> > +	if (number_logs <=3D 0)
-> > +		return number_logs;
-> > +
-> > +	mutex_lock(&ima_extend_list_mutex);
-> > +
-> > +
-> > +	list_for_each_entry(qe, &ima_measurements, later) {
-> > +		if (--number_logs =3D=3D 0)
-> > +			break;
-> > +	}
-> > +
-> > +	if (number_logs > 0) {
-> > +		mutex_unlock(&ima_extend_list_mutex);
-> > +		return -ENOENT;
-> > +	}
-> > +
-> > +	__list_cut_position(&ima_measurements_staged, &ima_measurements,
-> > +				    &qe->later);
-> > +	atomic_long_sub(cur, &ima_htable.len);
-> > +
-> > +	if (!IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE) && ima_flush_htable) {
-> > +		list_for_each_entry(qe, &ima_measurements_staged, later)
-> > +			/* It can race with ima_lookup_digest_entry(). */
-> > +			hlist_del_rcu(&qe->hnext);
-> > +	}
->=20
-> If the h table can be staged during the locking period and deleted after=
-=20
-> unlocking, the time
-> the list is held will be reduced.
->=20
-> I will work on this, and any suggestions are greatly appreciated.
->=20
-> Thanks,
->=20
-> Steven
->=20
-> > +
-> > +	mutex_unlock(&ima_extend_list_mutex);
-> > +
-> > +
-> > +	list_for_each_entry_safe(qe, qe_tmp, &ima_measurements_staged, later)=
- {
-> > +		for (i =3D 0; i < qe->entry->template_desc->num_fields; i++) {
-> > +			kfree(qe->entry->template_data[i].data);
-> > +			qe->entry->template_data[i].data =3D NULL;
-> > +			qe->entry->template_data[i].len =3D 0;
-> > +		}
-> > +
-> > +		list_del(&qe->later);
-> > +
-> > +		if (ima_flush_htable) {
-> > +			kfree(qe->entry->digests);
-> > +			kfree(qe->entry);
-> > +			kfree(qe);
-> > +		}
-> > +	}
-
-To avoid code duplication, there's a similar function named
-ima_free_template_entry().  Any changes needed to the function should be do=
-ne as
-a preparatory patch.
-
-> > +
-> > +	return cur;
-> > +}
-> > +
-> >   int ima_restore_measurement_entry(struct ima_template_entry *entry)
-> >   {
-> >   	int result =3D 0;
-
-
---=20
-thanks,
-
-Mimi
+So having the direct alias (even if we cast it to make it work in the
+single-statement multi-definition, the compiler doesn't care) is
+required for it to work.
