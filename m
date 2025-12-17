@@ -1,103 +1,214 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3D12EC553;
-	Wed, 17 Dec 2025 19:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055A2270EC3;
+	Wed, 17 Dec 2025 19:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766000042; cv=none; b=ocL9S9q3ZNL7h3dOw+kB4jGBg61m9yAd6Ri1vwJ8/ksGBDum8zLG3k9OM3BWdriskijsmQxAz9QeU35unUtwnIkNv6acSJ+mZA2MChhLg8/mSo6s+YDaprKB8VJasdNcS/JesOHU5hFoJYlug0ihHn5sinTzkK3Dzsa6uOqdZgI=
+	t=1766000488; cv=none; b=P8oW1+YRK+XlTAWC7vXtz+oNmSjZKSiluArs1ZkhDdgx3mGxEONDrGWH/p+Q95pdbMiK+r8UgXBTkYvQBuWTadYUTuqwOjkOpdwfChqTRXTMyD2pVTG/D/nQ2jjejZNQafLyvC6l6TPXrhn4C66egIg2ru93G4MSS3TkqFhlJto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766000042; c=relaxed/simple;
-	bh=ABPN2FQ9nwjE6HAYepxIfkFVBVZa4QUp2RGIyPpMNq8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OiCPKokAZ/QEs4MeUbggUJIQB37FR+tuwRR6AH6An53npYiqkCcAacekmvzFEn7bvfCZc9pCQPJ6OFQ3w4LCb9YkeVdexswJqyGJFbg1ysv8EyAFbPurHw+1IVGAnAXVSziS8mw3Cvzi654/Lv385DqOj8DW86RH8gYHfknZu3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HXbBLmeY; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1766000488; c=relaxed/simple;
+	bh=+ZypzMriPvRtTLk1UX6FA8/lBlKEUmOB3SVlQMRfSjE=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=YK9veTjkqKXgmyJ6XQgXEbDz5B7/tjQNji5COEbW8GiuNHgpITqc6a9DV6vC+5VUnH1W9Ji51lYN1AQqapm+SfftQbTUdW/wG4+qcDSReToliss/RO1m4C7R4z2z3QRZX3m03PPfsxvy/sRKr5c26EUPCtGV5sR5FuSMvQ2eR1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JPjzcvlu; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HXbBLmeY"
-Received: from narnia (unknown [13.88.17.9])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 47A03200D65D;
-	Wed, 17 Dec 2025 11:33:56 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 47A03200D65D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1766000038;
-	bh=2Wu29q5yFc8HH5wM4y7yzeRfJmHHYl36rlkPIkV+IJ4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=HXbBLmeYjzlvawGtJhUa6VQQHxU2zoRdVBF6TKwaWR2Fc1pYEwQ+21nosvlc/JTP2
-	 BXGFrl+cqxXInV+V6A647yuLgvCiCwZynt9friNSnz9DfMkVJR29UO4d4zsSsyP/Xg
-	 qNSn7sstxnaZVq3+LY/f5TkW9UQxeSHlPH1NcySQ=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: ryan foster <foster.ryan.r@gmail.com>
-Cc: James.Bottomley@hansenpartnership.com, akpm@linux-foundation.org,
- bpf@vger.kernel.org, corbet@lwn.net, dhowells@redhat.com,
- gnoack@google.com, jmorris@namei.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux@treblig.org, mic@digikod.net, paul@paul-moore.com, serge@hallyn.com
-Subject: Re: [RFC 00/11] Reintroduce Hornet LSM
-In-Reply-To: <CAHtS32-Zh3knxSdR=DUqQH4rX4QU8ewgu+KHGq6Af3qs9S0FAg@mail.gmail.com>
-References: <CAHtS32-Zh3knxSdR=DUqQH4rX4QU8ewgu+KHGq6Af3qs9S0FAg@mail.gmail.com>
-Date: Wed, 17 Dec 2025 11:33:55 -0800
-Message-ID: <87v7i4hpi4.fsf@microsoft.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JPjzcvlu"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5BHBKDMo029270;
+	Wed, 17 Dec 2025 19:41:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=lu4Dg1
+	iWw05HEQbbeDiHRsTb1m1n2aqxv/D2YbRLv7M=; b=JPjzcvlu+86zFwNL13iNEE
+	Sdjk7xiIHaE54Uk7mNzore9w016xvtZptZpV4S3NnwGtDccmwHYvsfrn4YmCmXAX
+	vXzL88/ugC67VJ2/6BKFuWYTcrm1BEvC3/L6Kmrg9mH7XwtYSILynWB47yUt3DhE
+	N3RsmxvN5ylWJipIYex+b5aOL95VVPH5d+M1sm3H3ob54OxaO2vukWwYxFkbrbJi
+	kIFFxUN5p8iG/frKbUnHEFzvqxTQWDvvHJUGI2ddyDCaMRcbvm3ydik70+Y+ANbq
+	WxwTFrX586Vbm0dSmHHNHzXeddZvtu19GsvY5AGF42DfPLFipgoWs72WXJ9iYClg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b0ytvf0j9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Dec 2025 19:41:05 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5BHJcomP014918;
+	Wed, 17 Dec 2025 19:41:04 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b0ytvf0j6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Dec 2025 19:41:04 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5BHIJKtK005806;
+	Wed, 17 Dec 2025 19:41:03 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4b1tgp313g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Dec 2025 19:41:03 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5BHJf3r024183550
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 17 Dec 2025 19:41:03 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4759A58058;
+	Wed, 17 Dec 2025 19:41:03 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5531E58057;
+	Wed, 17 Dec 2025 19:41:02 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.5.186])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 17 Dec 2025 19:41:02 +0000 (GMT)
+Message-ID: <8ef8a96eacbaa71f359ff800e7417ae565b95e81.camel@linux.ibm.com>
+Subject: Re: [RFC][PATCH v2] ima: Add support for staging measurements for
+ deletion and trimming
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
+        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        gregorylumen@linux.microsoft.com, chenste@linux.microsoft.com,
+        nramas@linux.microsoft.com, Roberto Sassu <roberto.sassu@huawei.com>
+In-Reply-To: <41ead1c44a678b597ffd3350cce332a8a5d4ac7c.camel@huaweicloud.com>
+References: <20251212171932.316676-1-roberto.sassu@huaweicloud.com>
+		 <45ca26a5b08f42fb1318cd78a62dda20b9adb84e.camel@linux.ibm.com>
+	 <41ead1c44a678b597ffd3350cce332a8a5d4ac7c.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 17 Dec 2025 14:41:01 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjEzMDAyMyBTYWx0ZWRfXx22SN0YXGd1y
+ i3/COUJHtVrRzFgjzLA5WOqV/hv1Of5bdUqZbOQk/ra+SPrzbs/jLGdbK4Doxcmwwjn8zM4vB+q
+ 7t65I+bms27tdTFh5+ffmTuDXi/7CAts1Wpwxcdi57jrVgPM57MVEjFwOBYKFI19y4Rx/tksn+d
+ eJ4QOPSLKyETTEhjAkpSDLwONQ4waR6FJo3YckvdVUED3LunRMoxDCkztqd4pA/EaIaBvSIlqJj
+ 3it2xT5TDUQ8UIKpGEz6Yng+B2zOF3vOULV+lImdTxLiHppr2GjZC54+3kTzxXsuTTlz0UNC2y3
+ 3pH79b1KeFgmwcpg68M3epIKWG9MwRjAU/eIOONZRUk7QfeqlDqJnw42BCSqIDZ6WcMJR1bLkej
+ kx9gDVRe9Qnx/l6DB8nifTl20eWMgQ==
+X-Proofpoint-ORIG-GUID: WDL9zEmPZ02Er_BtEUpOJbQIrYWTNoQa
+X-Authority-Analysis: v=2.4 cv=QtRTHFyd c=1 sm=1 tr=0 ts=69430751 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=i0EeH86SAAAA:8 a=f4KxpfNTu-1Vb7Gj6-cA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: A2JYgC1vBlzfih75d51bimKymf17DbjZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-12-17_03,2025-12-17_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 suspectscore=0 impostorscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2512130023
 
-ryan foster <foster.ryan.r@gmail.com> writes:
+On Wed, 2025-12-17 at 17:01 +0100, Roberto Sassu wrote:
+> On Wed, 2025-12-17 at 10:26 -0500, Mimi Zohar wrote:
+> > Hi Roberto,
+> >=20
+> > Thank you!  Everything is working as designed.
+> >=20
+> > - Only public functions require kernel-doc comments, but other function=
+s would
+> > benefit having a comment.
+> >=20
+> > - As I mentioned in response to Steven's patch, "After trimming the mea=
+surement
+> > list, existing verifiers, which walk the IMA measurement list, will obv=
+iously
+> > fail to match the PCRs.  Breaking existing userspace applications is a =
+problem
+> > and, unfortunately, requires yet another Kconfig option.  It needs to b=
+e at
+> > least mentioned here in the patch description."
+>=20
+> Hi Mimi
+>=20
+> sure.
+>=20
+> > On Fri, 2025-12-12 at 18:19 +0100, Roberto Sassu wrote:
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > >=20
+> > > Introduce the ability of staging the entire (or a portion of the) IMA
+> > > measurement list for deletion. Staging means moving the current conte=
+nt of
+> > > the measurement list to a separate location, and allowing users to re=
+ad and
+> > > delete it. This causes the measurement list to be atomically truncate=
+d
+> > > before new measurements can be added.=C2=A0
+> >=20
+> > This last sentence is the crux of your of your proposal.
+> >  -> "quickly be atomically ... so ..."
+>=20
+> Ok.
+>=20
+> > I must be missing something.  With the ability of trimming N records, i=
+t's
+> > unclear to me the benefit of staging the measurement list and requiring=
+ a
+> > separate deletion. The measurement list can be read before trimming wit=
+hout
+> > loosing any measurements.  Like now, the entire measurement list could =
+be moved
+> > to a staging area. Instead of freeing all of the records, only N record=
+s would
+> > be freed.  Afterwards the remaining staged measurements (N+1) could be =
+restored
+> > to the head of the measurement list.
+>=20
+> My hope is to avoid trimming based on N in the kernel, but rather offer
+> the same functionality on a user space service that simply gets all the
+> measurements it can from the kernel (with the stage all approach), and
+> exposes the desired measurements to requesting applications (based on N
+> or based on a PCR value, as Microsoft requested).
 
-> Hi all,
->
+Agreed, the measurement list needs to be copied to userspace and saved.  Ho=
+w
+userspace applications will access it needs to be defined and documented.
 
-Hi Ryan,
+I thought Microsoft backed away from trimming the measurement list based on=
+ a
+PCR value. At least basing it on a PCR value, is not implemented in the ker=
+nel.
 
-> I want to confirm I understand the current semantics, and specific issues
-> this series is addressing.
->
-> In the signed BPF two step flow, the LSM makes decisions using what is
-> known at the time of run hooks.  At load time, the only clear fact is "the
-> loader is signed".  However, if we really want integrity for "the final
-> program that will execute after relocation, and any inputs as part of the
-> contract, matches what was signed".  The fact exists after loader runs, so
-> the kernel could end up allowing and auditing based on the signed loader,
-> even though it cannot yet truthfully say the runnable payload has been
-> verified.
->
+>=20
+> I think it was already mentioned earlier in the discussion. By reading
+> and trimming at two different times, there is a race window where two
+> separate remote attestation agents determine N on the current
+> measurements list and attempt to trim one after another with the same
+> N, but the latter attempts to do it on an already trimmed measurements
+> list. They could take the write lock for the read too to avoid that.
 
-Correct.
+Yes, I saw the problem in v1, when the second request wasn't rejected but w=
+as
+synchronized by a mutex.  That should have been fixed in v2 with your locki=
+ng
+changes.
 
-> If this is the right understanding, perhaps we could consider a design that
-> moves enforcement to the moment the program becomes effective. E.g.  Load
-> can create a program object, but it is inert by default.  The kernel should
-> only allow attach or link creation if the kernel has already recorded a
-> verified record of the final relocated instruction stream plus
-> referenced state for inputs, is included in the "integrity contract".
->
-> If the referenced state is mutable, then either state must be frozen before
-> the contract is verified, or any mutation must invalidate verified and
-> force re-verification and a new policy decision. Otherwise the state is
-> susceptible to TOCTOU issues.
->
-> Is this the semantic goal Hortnet is aiming for, and is attack or link
-> creation the intended enforcement point for the "cannot become effective
-> until verified" rule, instead of trying to make a load time hook represent
-> final payload verification?
->
-> Thanks
->
-> Regard, Ryan
+>=20
+> The stage all approach is not susceptible to this race window, because
+> it does not require a prior read before the operation.
+
+I'm not convinced of that, as any application with cap sysadmin can initiat=
+e a
+trim or trim & delete.  At least at the moment, there's no way of limiting =
+the
+trim/delete to a given application.  Perhaps it could be limited based on
+SELinux labels.
+
+--=20
+thanks,
+
+Mimi
 
 
-The semantic goal for Hornet is to validate the provenance and integrity
-of all the user-generated inputs when they are loaded into the kernel,
-in order to allow users to make intelligent security decisions based
-on that. IMO, attaching and linking are orthogonal run-time policy issues
-that are seperate from provenance and data integrity concerns.
 
-Allowing or disallowing linking and attaching based on the completeness of
-signature validation does make sense. That kind of decision would
-probably be handled by selinux, IPE, or a custom BPF LSM program most
-likely though. 
 
--blaise
+
