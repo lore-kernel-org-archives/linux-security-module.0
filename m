@@ -1,183 +1,109 @@
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01016330D30
-	for <linux-security-module@vger.kernel.org>; Thu, 18 Dec 2025 07:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3375E2853EE;
+	Thu, 18 Dec 2025 11:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766042505; cv=none; b=HbwhsRL5yMtpMHKIjaFI67EBfnK/qq1TDO0jaIRSg6tavPMYoAMC+KjIeNTDSi1JLFxSEcvV9ehdaABwFlZVl3XkoS0N/WkqqpiTPTqLGVeauWzV7Xj+L/rwDSfidoIpuIcxokJ1e3HYniQA8OERcCFE7Xrtr6ALI8tEZwDjhNk=
+	t=1766057019; cv=none; b=TeSNhJetdKuNQMO0X2KybJMsaGQ240517+R9slB/zUJwxbvsJVW/uAmwg/nQbJ8ld2u0RyBjO5wFC+xfykTCnBfX+nW8ZETppsbOYKc+k7xDFr5PiOB3TROICm1gMBkToIUTzkCAHNbwbF89SZUsCFFpO5JyQTAWHEnWisMMY4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766042505; c=relaxed/simple;
-	bh=oRDVeoSH7AN/+1EKf418Edx8/qjw/FEB71Hmt8IhBro=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZJIgjNSkw0GtzsmS9npIIzbqR8oui5jz8TiEx4oxdpltIm0jWJjiAp8qZwDci1J0cH8nKC36Gln1hyvOlsPnKS6gYxZq7hi2esqB0RdpfiJj/Ry3gkgMB0fWHg5nS1VCPW1XnxpVlXEFOS4RgtNLwJ2oNvwDDyh2mlsQ++JAzD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hFvxQjnf; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1766057019; c=relaxed/simple;
+	bh=WWs/FMKLopR8GlxWJLTbeh62Yklb02RoamS4e6t082k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nj/KxinKKXSXl0H98ikO5+zkWB28juM3DI1KmJZUvAUz39Dnm57l9KZy6vdGnM7+2/JUjvfKdI2mZGL4H/xI7/D7+sQviEyMkgU0m/KUh262elWwE1CyvEJuHWtKzqomPUFMgFaNYpw4L7POfsXzesQQtwuHu4Q5M0fNaUszBG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MMhSvlZ1; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hFvxQjnf"
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-6575e760f06so92076eaf.0
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Dec 2025 23:21:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1766042501; x=1766647301; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u95c9TyT1XdaOnIyGBwMeLSiKMNJeuqg+7XxBfANtKE=;
-        b=hFvxQjnfCf2CUAqy40N2AHyq5MIDA0GgC5LKgr2+oJWxzVnQ/H2BlDj/PRT3fjn6YS
-         6uoMn7+YEL0+8O2LkRt30f+/2R5PDahttu121Fq4t7CeI0ECWbcDX44yZNP52rNK3/eA
-         fPojzuLnONspq5CUtSTCNO3/tkNye7HZkr84BB+Y/ocSOeYeJ03l/SmFCJB5qTJptZdQ
-         RbLfAkSfM0ummJWRnc7E8aYHqgmwBJNI/c/pFs/M401mDi2bS0euznuCTV9DcKpXnQ1t
-         H/xEDBrHcjuX6fA2f9gHgqEpAJVqBMy72GfMnDPZoRbg6fOFBpJbmBiSpijWbwGJ9Uu8
-         +Vxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766042501; x=1766647301;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=u95c9TyT1XdaOnIyGBwMeLSiKMNJeuqg+7XxBfANtKE=;
-        b=LgMkVj2Y6pO7FXadfFA3n7fSTPkUyT3jXPefoH6hYj10G2FyVTaVAAzAuGNnk5nEQ8
-         9K+EwbXUiGz2XKffok5U1qvwc1DQ8O0l8kFA5E3hqf+s5wQzhJtecUcS2cpEPHRD7ch6
-         iT13GgqyA6jQAa+9lYsrhdiT1QyvNptq5vZi6vUyCnJUll1gI9+1iDY7K5lnzmEFsKnS
-         PMxHDyErxhiRWXD4aEoLiSzrkaYiZ2HAHcpnM4X6sLDo0gE5UDFga4CFIwiBweDbrSta
-         SmKjW5U6iTgx9I2ojVDYX6uXD81EA6JVBQPEDjY5rTh1VOcva6iNZlWlSiSL0Lg5FQmr
-         HZzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTgNvuuF7Gf8F6PYFxi1GYwhD+2o5KxNfQ1/FJQm8DP9l4Hh6fpnX32D1pWkLcfyukvHdGOH391EKCv5Y2KMzAB6vJ+Kg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJCiiVkEi5FczIxkAAmRr2Jka+S2WaJuXffiwrSYZ6JVEaWPNp
-	URWAB+cFIQ+ym5uSqijJ+PZdzLfDITo/VZlivE7BpveUAK6zupDsmmTKmqvSXqzDRkAUyvC5DAt
-	I2JCp+N+9fjmxOCjG4ZzKmv78N+IdPtllYSVlvZrCpQ==
-X-Gm-Gg: AY/fxX5CESoc1DX5q0oLMbQg2gYyZbrQTtUL0vS+nB2XmigeYgFw2cehEsZf7WawK3p
-	0LEfRLsnsM+0lDp//wsTGZ1gYMwL7pHCh/1ByubgA3S+LImkP5uB4T/rNnocALTaigiangPh4KU
-	jPuZ5WSEU0ouOE1crXsClDVsNsdwpGpTqsDoif6qj2MJWudZQz7m+p85kEX4FOmmxxfRSUOaMYP
-	KCocLjegDyILgqOY52V9TYU6+BE0+h+SWFlOqZ89Mv93U9MZXeBKhAlD6Ww5k6VBR8YDk/t4TU7
-	e3FTV0V6ROWAlElZT1KWcH3ZzQ==
-X-Google-Smtp-Source: AGHT+IHdzsrnh67Z+uk7sg0iAMocZMySikku48EGz5g7L5MG+hq7iSRlseyY2l5vM8LHePwozU/hD6rMNUuAq73AgFc=
-X-Received: by 2002:a05:6820:828:b0:65c:f41b:7119 with SMTP id
- 006d021491bc7-65cf41b750emr1784992eaf.5.1766042500598; Wed, 17 Dec 2025
- 23:21:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MMhSvlZ1"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=WWs/FMKLopR8GlxWJLTbeh62Yklb02RoamS4e6t082k=; b=MMhSvlZ1U0lhTWOGU4FNuxYI3Z
+	GRAr+CdcUkTNZseY0omR8YLKLA1QJlpPz1h86m2c3EhJzJB5yGJ/CygiILJOK+qNvILaFDFwhuAw3
+	EJQbrqkHxY/iK3OjSwLrw+rUQdfX56nRe6Db43U9YpR6ybFZf3B6r2x30ztvg5jS67xA/pUoZXDVb
+	C+Mdp/HiC6X/EPz8pwEx4Ulki1zvOIk/I0ObPrwEXdFYBvYpYS2o6qvadq5aCBujtL64qu3Wyq7WI
+	LhK84HnA/xPWUkY0PFgKtEEIwQVN91FdDzOSntpHWyeqHY7S9olXkJWkJuT/Mc2wTOwAluJ2qhhEs
+	CwoFBrow==;
+Received: from 2001-1c00-8d85-5700-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d85:5700:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vWBEi-00000008e0m-01ZP;
+	Thu, 18 Dec 2025 10:27:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id DCB0D300578; Thu, 18 Dec 2025 12:23:08 +0100 (CET)
+Date: Thu, 18 Dec 2025 12:23:08 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Marco Elver <elver@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	Chris Li <sparse@chrisli.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
+	Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	linux-sparse@vger.kernel.org, linux-wireless@vger.kernel.org,
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Subject: Re: [PATCH v4 06/35] cleanup: Basic compatibility with context
+ analysis
+Message-ID: <20251218112308.GU3911114@noisy.programming.kicks-ass.net>
+References: <20251120151033.3840508-7-elver@google.com>
+ <20251211121659.GH3911114@noisy.programming.kicks-ass.net>
+ <CANpmjNOmAYFj518rH0FdPp=cqK8EeKEgh1ok_zFUwHU5Fu92=w@mail.gmail.com>
+ <20251212094352.GL3911114@noisy.programming.kicks-ass.net>
+ <CANpmjNP=s33L6LgYWHygEuLtWTq-s2n4yFDvvGcF3HjbGH+hqw@mail.gmail.com>
+ <20251212110928.GP3911114@noisy.programming.kicks-ass.net>
+ <aUAPbFJSv0alh_ix@elver.google.com>
+ <CANpmjNNm-kbTw46Wh1BJudynHOeLn-Oxew8VuAnCppvV_WtyBw@mail.gmail.com>
+ <aUE77hgJa58waFOy@elver.google.com>
+ <aUGBff8Oko5O8EsP@elver.google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1765791463.git.u.kleine-koenig@baylibre.com>
-In-Reply-To: <cover.1765791463.git.u.kleine-koenig@baylibre.com>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Thu, 18 Dec 2025 08:21:27 +0100
-X-Gm-Features: AQt7F2r_j21Nqcv1IzhOT6jk9UPtvnwA1D3etXiTv5WveGJRYXXMC9qqoGF_Yc4
-Message-ID: <CAHUa44FrDZbvRvfN8obf80_k=Eqxe9YxHpjaE5jU7nkxPUwfag@mail.gmail.com>
-Subject: Re: [PATCH v2 00/17] tee: Use bus callbacks instead of driver callbacks
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Sumit Garg <sumit.garg@kernel.org>, 
-	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	=?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Sumit Garg <sumit.garg@oss.qualcomm.com>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Jan Kiszka <jan.kiszka@siemens.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, 
-	Michael Chan <michael.chan@broadcom.com>, Pavan Chebbi <pavan.chebbi@broadcom.com>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Peter Huewe <peterhuewe@gmx.de>, op-tee@lists.trustedfirmware.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, 
-	Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org, 
-	linux-mips@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aUGBff8Oko5O8EsP@elver.google.com>
 
-Hi,
+On Tue, Dec 16, 2025 at 04:57:49PM +0100, Marco Elver wrote:
 
-On Mon, Dec 15, 2025 at 3:17=E2=80=AFPM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@baylibre.com> wrote:
->
-> Hello,
->
-> the objective of this series is to make tee driver stop using callbacks
-> in struct device_driver. These were superseded by bus methods in 2006
-> (commit 594c8281f905 ("[PATCH] Add bus_type probe, remove, shutdown
-> methods.")) but nobody cared to convert all subsystems accordingly.
->
-> Here the tee drivers are converted. The first commit is somewhat
-> unrelated, but simplifies the conversion (and the drivers). It
-> introduces driver registration helpers that care about setting the bus
-> and owner. (The latter is missing in all drivers, so by using these
-> helpers the drivers become more correct.)
->
-> v1 of this series is available at
-> https://lore.kernel.org/all/cover.1765472125.git.u.kleine-koenig@baylibre=
-.com
->
-> Changes since v1:
->
->  - rebase to v6.19-rc1 (no conflicts)
->  - add tags received so far
->  - fix whitespace issues pointed out by Sumit Garg
->  - fix shutdown callback to shutdown and not remove
->
-> As already noted in v1's cover letter, this series should go in during a
-> single merge window as there are runtime warnings when the series is
-> only applied partially. Sumit Garg suggested to apply the whole series
-> via Jens Wiklander's tree.
-> If this is done the dependencies in this series are honored, in case the
-> plan changes: Patches #4 - #17 depend on the first two.
->
-> Note this series is only build tested.
->
-> Uwe Kleine-K=C3=B6nig (17):
->   tee: Add some helpers to reduce boilerplate for tee client drivers
->   tee: Add probe, remove and shutdown bus callbacks to tee_client_driver
->   tee: Adapt documentation to cover recent additions
->   hwrng: optee - Make use of module_tee_client_driver()
->   hwrng: optee - Make use of tee bus methods
->   rtc: optee: Migrate to use tee specific driver registration function
->   rtc: optee: Make use of tee bus methods
->   efi: stmm: Make use of module_tee_client_driver()
->   efi: stmm: Make use of tee bus methods
->   firmware: arm_scmi: optee: Make use of module_tee_client_driver()
->   firmware: arm_scmi: Make use of tee bus methods
->   firmware: tee_bnxt: Make use of module_tee_client_driver()
->   firmware: tee_bnxt: Make use of tee bus methods
->   KEYS: trusted: Migrate to use tee specific driver registration
->     function
->   KEYS: trusted: Make use of tee bus methods
->   tpm/tpm_ftpm_tee: Make use of tee specific driver registration
->   tpm/tpm_ftpm_tee: Make use of tee bus methods
->
->  Documentation/driver-api/tee.rst             | 18 +----
->  drivers/char/hw_random/optee-rng.c           | 26 ++----
->  drivers/char/tpm/tpm_ftpm_tee.c              | 31 +++++---
->  drivers/firmware/arm_scmi/transports/optee.c | 32 +++-----
->  drivers/firmware/broadcom/tee_bnxt_fw.c      | 30 ++-----
->  drivers/firmware/efi/stmm/tee_stmm_efi.c     | 25 ++----
->  drivers/rtc/rtc-optee.c                      | 27 ++-----
->  drivers/tee/tee_core.c                       | 84 ++++++++++++++++++++
->  include/linux/tee_drv.h                      | 12 +++
->  security/keys/trusted-keys/trusted_tee.c     | 17 ++--
->  10 files changed, 164 insertions(+), 138 deletions(-)
->
-> base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
-> --
-> 2.47.3
->
+> Below is the preview of the complete changes to make the lock guards
+> work properly.
 
-Thank you for the nice cleanup, Uwe.
+Right. Not pretty but it works.
 
-I've applied patch 1-3 to the branch tee_bus_callback_for_6.20 in my
-tree at https://git.kernel.org/pub/scm/linux/kernel/git/jenswi/linux-tee.gi=
-t/
+I did spend a few hours yesterday trying out various thing that don't
+work -- as I'm sure you did too -- but could not come up with something
+saner.
 
-The branch is based on v6.19-rc1, and I'll try to keep it stable for
-others to depend on, if needed. Let's see if we can agree on taking
-the remaining patches via that branch.
-
-Cheers,
-Jens
+So yeah, lets just do this.
