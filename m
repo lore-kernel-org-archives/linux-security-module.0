@@ -1,120 +1,222 @@
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB292DC77E
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Dec 2025 21:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B21450FE
+	for <linux-security-module@vger.kernel.org>; Fri, 19 Dec 2025 21:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766178601; cv=none; b=kmTAsfwd1oZsl02RrTP8KLW45TcIijmsA43UgpDxwoO6EX9OSx2f8NEmZdU11xDy+QoNhTlW+AMFF4wQJlsckZf6/ey6I+eV3zJ8WQKUr0ImVDjslnpuwVA03JjIHuT+cfgAmZfoPGS3zLVrXVTZyT3ph01di0UO+a8ANyjKsNg=
+	t=1766178925; cv=none; b=Z4mqyHFZpFkicTZyw6tqXR5HlCaNJ5Yx3xGtLNiSshYL3DLW1kaknHXBTHth7e53tbBqnlC7dbUnL0ojLYvOnKtznSkvnONRPeDAhwXFtf8QJk353fUsedE+gNL0ZquLN3Uu4bjXfg+T+QTeDvHYaDPBs9NMxug7nkHs6MMn4bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766178601; c=relaxed/simple;
-	bh=iqhEYrpWgm5Yfz8pxMwX3Z8XLhEcxpfARdS1KcSLhis=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iHTOyR29TgWqK7HDwN4eYxrjpYF4AeTcX4nX2YNdtUWfc8xZFIlbzYmHhgyjKkzIIx8paez0a8bCYG3E9eIP7hVir1tYgzb71rpuLWCeO1i9zkpbDXS9qhCrlMNJtoWdI3Al//fG1InXNZJo9NpkQk21PKeT6vsvgf237hujj4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PwDuScq5; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1766178925; c=relaxed/simple;
+	bh=uOSv+Yrzo+QnbII04YRXv+9zjF7K3kPmqIMDkpiS0n4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OMyxRL03WeJLEjid3PY8+0yI8ATui6BuhG9z5XwguH3Avu2R4g/ujYBFc9QEPHKDLZE2PRTPozUKxcrMB+m4X4NMyAPGiQE6JVf7F6sIKtGubRePLMGGyIjjLf6SY9KUfFL//4lCPUS9BWikm7Bh+ROvdq7m1T3yWe2a88pDYdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ibm959hq; arc=none smtp.client-ip=185.125.25.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PwDuScq5"
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-34e730f5fefso2178378a91.0
-        for <linux-security-module@vger.kernel.org>; Fri, 19 Dec 2025 13:10:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1766178600; x=1766783400; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iqhEYrpWgm5Yfz8pxMwX3Z8XLhEcxpfARdS1KcSLhis=;
-        b=PwDuScq5uKrCO6abf4MvGNoS2mKDzBjKYJ0bmhTBciEbsfEZPL8W1fZ5ueco+n190+
-         qC1SNl5YEtS1IdQ/tG+2hrFXMcLWkoZNRGb7WSoFCc3nf3uyQ0oYiWaIk9rZT3MVChUE
-         76yw3iWuODcst7Rk/h8qgT9xHw66X0aJxXevk9+1fAOZCe4xf+4eA/c8FafVYwoKBlU5
-         KUvXkGaunNgrVUUi3o22zWzLA1Uke1H2puCSY69VY/PPYf9W/kL2ph8YcbNGmF8Nyw98
-         uf17JPqE8ARf2s05s+jtQV6IPGBqoEcmOsvlG3wXi4bjlQhVclB4y6KQ7Zl/NZVJ+D+O
-         cKBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766178600; x=1766783400;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iqhEYrpWgm5Yfz8pxMwX3Z8XLhEcxpfARdS1KcSLhis=;
-        b=vmhhyVPje1wo07CI5o/jeBMR1bIoA91ae909Zke4Uy4yAdHjxNFpUflrLNrn81bmV6
-         4eSqrUmGqX3sdmBgpZX9By8Iw5P0Sc8qZQDHuvjuFbVbIyz/igPD7qY8RSsi8iTO7uqs
-         42PZcBxXfHol+I2Z4jHms6XZXK4cv5ZF1y7AYPE5zg27q5zXi4QjvWLBUCs7ZcWqUbmQ
-         xkhnY0mvOwFYAMcSKhzUfmOVWUeTc43CurPJ9c7YboqJe3lHEaqSfyv8MXPu75ZxwS9d
-         gwKvr8tvc7letAEvfnXV7gHGApl5bqnmWiwCuZvlzaU1eX6hRt0L16FxmKpbWc61z7zp
-         bsmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUh+J3uwaF/Z3/8X+qIOPoxiTN7Jasfq5LV3zhxJO8Kd1hdkfPnilRDWUel9mPZZa4HKVBZDQ5rkI+xYXM1JR1iR6/k5Zk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz69acMUrlwYStVzgGAuM8GHsowrSpaEbptOXlNhDqbCEgcJP2U
-	rPvHFOg8sTiBGFpYcA8eLa641+CbPI6E9/Lu86dHr3GOS7EUflgOvpCioP4UCF7vnoFzELxH/l2
-	/sKP2/WKkuRlwmuYRhAcCLwPAUDbSueuxFozas8D5
-X-Gm-Gg: AY/fxX4Rs1mBkjr+GcruhuO2BT3IsPinLfy865oakk4iNfitFfVjEED11OSMfSlNwh+
-	jU6gPhm+3XNKcCKkATJ8qkaYxvOIZXAxlSNj6w/hYwZ4I3vzr1ZE57fP94VHgLnRlHCBU34Ao8Z
-	Bi36G/VmhQyvxguoQeosWUG05cl2YsqR41ua1zxrr3Pj7r/RcLFGQUjctLHao4ijRuReMRakCNZ
-	JW/aeaSoV1k/7OpkctQ4o7kTH3m52JyBPaCxHesP1ewhup5BkSFOlqbSk5fR1yvrBiNGJKftLAV
-	DLpDCU2JLC4xAzIryzwH1tWxOMA=
-X-Google-Smtp-Source: AGHT+IGdr0jH8cGEaDB7eA0QDwFP/5Ve8WscN7cZkV8XMcvDcmhs6BtuLqrVUM3kTfn7w87OZJ/+kODUMJAxXUcmHFc=
-X-Received: by 2002:a05:7022:ef0b:b0:11b:9386:7ece with SMTP id
- a92af1059eb24-12172309509mr4284248c88.43.1766178599422; Fri, 19 Dec 2025
- 13:09:59 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ibm959hq"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dY0Vk6QNfzb9g;
+	Fri, 19 Dec 2025 22:07:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1766178478;
+	bh=zSk0Yarg5Eb1vJE3kgHegfZVsorfrWp2s/WpsGUqnvE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ibm959hqiFO+3O7WfdvxEQVDNu9wwJAw9Pq3+pKem2Y1omdCT+pVatAos38P4jxKs
+	 0jZ5NrWb3Lt2Mg0tyVfEaLhlWxzSC0QdHFmuboGvzy0kEVoqrTb81tv1WBzgJ1a7Y7
+	 CmHzSGHI3q0XcPCgJcHsO6eJSrXgec/3lW0kdsAY=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dY0Vj5gZbzSSc;
+	Fri, 19 Dec 2025 22:07:57 +0100 (CET)
+Date: Fri, 19 Dec 2025 22:07:51 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Matthieu Buffet <matthieu@buffet.re>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Subject: Re: [RFC PATCH v1 3/3] landlock: Fix TCP handling of short AF_UNSPEC
+ addresses
+Message-ID: <20251219.toh6Xe3ea9iN@digikod.net>
+References: <20251027190726.626244-1-matthieu@buffet.re>
+ <20251027190726.626244-4-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251219154418.3592607-1-elver@google.com> <20251219154418.3592607-14-elver@google.com>
- <3b070057-5fda-410e-a047-d9061d56a82f@acm.org>
-In-Reply-To: <3b070057-5fda-410e-a047-d9061d56a82f@acm.org>
-From: Marco Elver <elver@google.com>
-Date: Fri, 19 Dec 2025 22:09:23 +0100
-X-Gm-Features: AQt7F2racRCVQBtX1XHCEqHFLvRozCqLgqx9fCp_0Wp28A2qceHYZ0Bj23R_eEk
-Message-ID: <CANpmjNN6QrxwUUkpAopTfxLwUqGfB53J96dwOWHNcoYrOrEocQ@mail.gmail.com>
-Subject: Re: [PATCH v5 13/36] bit_spinlock: Support Clang's context analysis
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
-	Chris Li <sparse@chrisli.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>, 
-	Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Johannes Berg <johannes.berg@intel.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Josh Triplett <josh@joshtriplett.org>, Justin Stitt <justinstitt@google.com>, 
-	Kees Cook <kees@kernel.org>, Kentaro Takeda <takedakn@nttdata.co.jp>, 
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
-	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
-	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, llvm@lists.linux.dev, rcu@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251027190726.626244-4-matthieu@buffet.re>
+X-Infomaniak-Routing: alpha
 
-On Fri, 19 Dec 2025 at 21:48, 'Bart Van Assche' via kasan-dev
-<kasan-dev@googlegroups.com> wrote:
->
-> On 12/19/25 7:40 AM, Marco Elver wrote:
-> > +/*
-> > + * For static context analysis, we need a unique token for each possible bit
-> > + * that can be used as a bit_spinlock. The easiest way to do that is to create a
-> > + * fake context that we can cast to with the __bitlock(bitnum, addr) macro
-> > + * below, which will give us unique instances for each (bit, addr) pair that the
-> > + * static analysis can use.
-> > + */
-> > +context_lock_struct(__context_bitlock) { };
-> > +#define __bitlock(bitnum, addr) (struct __context_bitlock *)(bitnum + (addr))
->
-> Will this cause static analyzers to complain about out-of-bounds
-> accesses for (bitnum + (addr)), which is equivalent to &(addr)[bitnum]?
+On Mon, Oct 27, 2025 at 08:07:26PM +0100, Matthieu Buffet wrote:
+> current_check_access_socket() treats AF_UNSPEC addresses as
+> AF_INET ones, and only later adds special case handling to
+> allow connect(AF_UNSPEC), and on IPv4 sockets
+> bind(AF_UNSPEC+INADDR_ANY).
+> This would be fine except AF_UNSPEC addresses can be as
+> short as a bare AF_UNSPEC sa_family_t field, and nothing
+> more. The AF_INET code path incorrectly enforces a length of
+> sizeof(struct sockaddr_in) instead.
 
-Only if they decide to interpret never-executed code (i think the
-kernel has various dead code that's optimized out that might trigger
-static analyzers if they analyzed it).
-But this could probably be improved by using a different idiom, and
-using an empty inline function that takes bitnum, addr as args, and
-Clang simply takes the call to that function as the context lock
-identity.
+Good catch!
+
+> 
+> Move AF_UNSPEC edge case handling up inside the switch-case,
+> before the address is (potentially incorrectly) treated as
+> AF_INET.
+
+And that's cleaner this way too.
+
+> 
+> Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and connect")
+> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+
+I pushed this series to my -next branch, but moving the tests after the
+kernel fix. This makes it possible to cleanly bisect commits.  Thanks!
+
+> ---
+>  security/landlock/net.c | 118 +++++++++++++++++++++++-----------------
+>  1 file changed, 67 insertions(+), 51 deletions(-)
+> 
+> diff --git a/security/landlock/net.c b/security/landlock/net.c
+> index 1f3915a90a80..e6367e30e5b0 100644
+> --- a/security/landlock/net.c
+> +++ b/security/landlock/net.c
+> @@ -71,6 +71,61 @@ static int current_check_access_socket(struct socket *const sock,
+>  
+>  	switch (address->sa_family) {
+>  	case AF_UNSPEC:
+> +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP) {
+> +			/*
+> +			 * Connecting to an address with AF_UNSPEC dissolves
+> +			 * the TCP association, which have the same effect as
+> +			 * closing the connection while retaining the socket
+> +			 * object (i.e., the file descriptor).  As for dropping
+> +			 * privileges, closing connections is always allowed.
+> +			 *
+> +			 * For a TCP access control system, this request is
+> +			 * legitimate. Let the network stack handle potential
+> +			 * inconsistencies and return -EINVAL if needed.
+> +			 */
+> +			return 0;
+> +		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
+> +			/*
+> +			 * Binding to an AF_UNSPEC address is treated
+> +			 * differently by IPv4 and IPv6 sockets. The socket's
+> +			 * family may change under our feet due to
+> +			 * setsockopt(IPV6_ADDRFORM), but that's ok: we either
+> +			 * reject entirely or require
+> +			 * %LANDLOCK_ACCESS_NET_BIND_TCP for the given port, so
+> +			 * it cannot be used to bypass the policy.
+> +			 *
+> +			 * IPv4 sockets map AF_UNSPEC to AF_INET for
+> +			 * retrocompatibility for bind accesses, only if the
+> +			 * address is INADDR_ANY (cf. __inet_bind). IPv6
+> +			 * sockets always reject it.
+> +			 *
+> +			 * Checking the address is required to not wrongfully
+> +			 * return -EACCES instead of -EAFNOSUPPORT or -EINVAL.
+> +			 * We could return 0 and let the network stack handle
+> +			 * these checks, but it is safer to return a proper
+> +			 * error and test consistency thanks to kselftest.
+> +			 */
+> +			if (sock->sk->__sk_common.skc_family == AF_INET) {
+> +				const struct sockaddr_in *const sockaddr =
+> +					(struct sockaddr_in *)address;
+> +
+> +				if (addrlen < sizeof(struct sockaddr_in))
+> +					return -EINVAL;
+> +
+> +				if (sockaddr->sin_addr.s_addr !=
+> +				    htonl(INADDR_ANY))
+> +					return -EAFNOSUPPORT;
+> +			} else {
+> +				if (addrlen < SIN6_LEN_RFC2133)
+> +					return -EINVAL;
+> +				else
+> +					return -EAFNOSUPPORT;
+> +			}
+> +		} else {
+> +			WARN_ON_ONCE(1);
+> +		}
+> +		/* Only for bind(AF_UNSPEC+INADDR_ANY) on IPv4 socket. */
+> +		fallthrough;
+>  	case AF_INET: {
+>  		const struct sockaddr_in *addr4;
+>  
+> @@ -119,57 +174,18 @@ static int current_check_access_socket(struct socket *const sock,
+>  		return 0;
+>  	}
+>  
+> -	/* Specific AF_UNSPEC handling. */
+> -	if (address->sa_family == AF_UNSPEC) {
+> -		/*
+> -		 * Connecting to an address with AF_UNSPEC dissolves the TCP
+> -		 * association, which have the same effect as closing the
+> -		 * connection while retaining the socket object (i.e., the file
+> -		 * descriptor).  As for dropping privileges, closing
+> -		 * connections is always allowed.
+> -		 *
+> -		 * For a TCP access control system, this request is legitimate.
+> -		 * Let the network stack handle potential inconsistencies and
+> -		 * return -EINVAL if needed.
+> -		 */
+> -		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP)
+> -			return 0;
+> -
+> -		/*
+> -		 * For compatibility reason, accept AF_UNSPEC for bind
+> -		 * accesses (mapped to AF_INET) only if the address is
+> -		 * INADDR_ANY (cf. __inet_bind).  Checking the address is
+> -		 * required to not wrongfully return -EACCES instead of
+> -		 * -EAFNOSUPPORT.
+> -		 *
+> -		 * We could return 0 and let the network stack handle these
+> -		 * checks, but it is safer to return a proper error and test
+> -		 * consistency thanks to kselftest.
+> -		 */
+> -		if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
+> -			/* addrlen has already been checked for AF_UNSPEC. */
+> -			const struct sockaddr_in *const sockaddr =
+> -				(struct sockaddr_in *)address;
+> -
+> -			if (sock->sk->__sk_common.skc_family != AF_INET)
+> -				return -EINVAL;
+> -
+> -			if (sockaddr->sin_addr.s_addr != htonl(INADDR_ANY))
+> -				return -EAFNOSUPPORT;
+> -		}
+> -	} else {
+> -		/*
+> -		 * Checks sa_family consistency to not wrongfully return
+> -		 * -EACCES instead of -EINVAL.  Valid sa_family changes are
+> -		 * only (from AF_INET or AF_INET6) to AF_UNSPEC.
+> -		 *
+> -		 * We could return 0 and let the network stack handle this
+> -		 * check, but it is safer to return a proper error and test
+> -		 * consistency thanks to kselftest.
+> -		 */
+> -		if (address->sa_family != sock->sk->__sk_common.skc_family)
+> -			return -EINVAL;
+> -	}
+> +	/*
+> +	 * Checks sa_family consistency to not wrongfully return
+> +	 * -EACCES instead of -EINVAL.  Valid sa_family changes are
+> +	 * only (from AF_INET or AF_INET6) to AF_UNSPEC.
+> +	 *
+> +	 * We could return 0 and let the network stack handle this
+> +	 * check, but it is safer to return a proper error and test
+> +	 * consistency thanks to kselftest.
+> +	 */
+> +	if (address->sa_family != sock->sk->__sk_common.skc_family &&
+> +	    address->sa_family != AF_UNSPEC)
+> +		return -EINVAL;
+>  
+>  	id.key.data = (__force uintptr_t)port;
+>  	BUILD_BUG_ON(sizeof(port) > sizeof(id.key.data));
+> -- 
+> 2.47.2
+> 
+> 
