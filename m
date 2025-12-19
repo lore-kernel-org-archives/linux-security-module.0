@@ -1,512 +1,197 @@
-Received: from the.earth.li (the.earth.li [93.93.131.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C042318D658;
-	Fri, 19 Dec 2025 09:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072982C21C0;
+	Fri, 19 Dec 2025 10:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766137415; cv=none; b=GTbczvKZFLx6BjVKsl8q8+aZiF2Mc8KYveIiDhVF1TgRbfQWp+t67vt97K7P+u5n1o7D+LpsyYbn5q/4kqDBdPaa3KuN7NH5j96XgUnQ5RQ8gLkjeY7rQ7QD1kAIe6M8vk6ypPR+1MxWcSvglxv0LKlE2HeiM0gFFuqI0wGdznQ=
+	t=1766141692; cv=none; b=Z98x6gEtdxW9qOHlSJ9T6DoMURSPVw1ToXth/e5P1tYqY5N4TX0mFVOYTdxmKaGmUsmaMGuuPjZY/ck4begmzqGTiwuMV5LBkD1JkK4PKKlf3IugY/IfHlZ3b5LA6BWdUTb748/VJeXHbHVli7IufuViFYbmdFFKjqO74ZUlnEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766137415; c=relaxed/simple;
-	bh=tUBuUc/BEs1+zNjU36vYvKzJpVoAvy60S2dhFGXzLIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SnDhPtxQRtpuZCIAtyGMAZNdieHJxNrnbNkOv0Z3XEB2UUJHX/BtVG4KRBPS8Af8lT8Zuo35eLg0x4dkqIBd7jU97NTB0lQIytzHOWXD8eB6drqdUZphJZ9wEpkb+GkLxtmgtwdaLQHHZOqnB3mXYbhwFKHCFvyijqln1eIYekI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=VL88q+Bb; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+	s=arc-20240116; t=1766141692; c=relaxed/simple;
+	bh=JxnNOF4Pyl6tVn86c+o2jxDPoQsZ+A7P0/0wMdEOmUw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RTWamLgGpLfMoad9TIW1RNk7S0pp4LiETrABwry3VplBCaiMg3ZddAbRFZ6pjoZ8C3Y8D1XvIS3/0twD/fTdhDyiuT12T/kUYTCNBgKGFF/pJZL8k5O4hMPcInh5wjZzCBZRMnlpuStrOGJ/pBmJvWZYGWvrNdRGdgYKBtKbRik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BcP21XGc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b="VL88q+Bb"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=BEauwSgGdAudteNNWMtSr9p25AqZbEEMsbjUQJu3R0E=; b=VL88q+Bb0yka7Xcbopp7w40eOJ
-	dRFo85WiUSxRD4FJHHdeh8qNZDIoJYG3D948twEoFarGHl2sGc089+5P/1nA2EKEVJ+k2svoX/4OQ
-	hacX29oM36hXyoC/mKGfVCmLIpqC3CSgt9XUSAdTbXmHtuhswQLGc3MiqnfpHEP1NecSNC+QbQXJU
-	ksNRIBe6dFAKs3bTnNH3ocIRJWYkbL4Aafcjgha0/8hpGeNK9WJwDrttot9/MANyQGOEk4RU8fNCi
-	RIC6LX1axKyVMyox9vjBZeQI3LcMSCss21UnJY4NkYbVlNUhot7JW8zY6vX6Z68+fCYqQmTa5PpwC
-	JBkDit+g==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1vWX1D-00EkZu-0y;
-	Fri, 19 Dec 2025 09:43:27 +0000
-Date: Fri, 19 Dec 2025 09:43:27 +0000
-From: Jonathan McDowell <noodles@earth.li>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v8 03/12] tpm: Orchestrate TPM commands in
- tpm_get_random()
-Message-ID: <aUUeP5qhEISjythp@earth.li>
-References: <20251216092147.2326606-1-jarkko@kernel.org>
- <20251216092147.2326606-4-jarkko@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BcP21XGc"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D2EE5C4CEF1;
+	Fri, 19 Dec 2025 10:54:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766141691;
+	bh=JxnNOF4Pyl6tVn86c+o2jxDPoQsZ+A7P0/0wMdEOmUw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=BcP21XGc8TUa8GGRaw0l/YVd+dABbRv7OOKMvSBOgLN+C22YIupsklDEUnav++Ir0
+	 ZIZFdO/c49Hu4wistKJdwVY2cAZHS2/e8Ef7nq27C1kwoqeHF/vgb7HrZsQx08Rgxy
+	 HrdBmfnkrQJ2p8VBgUDW0hqo7BQlqnV1QTh2V8X5CxaFnmIXOhJBG8hCo3Us31xVUB
+	 qQA9SDXmiOH/FQzP+aHgCjFinOnN8ANyTSmMSjtQp0Nicq4mXnA2TbsToRzBXl8c47
+	 gdJaaA1MKlT7+DG7PYPFvbOCLTy1lsQOXo4EIuN2zfkAflQuSCLMSAqhbR/Gl1g1LO
+	 HLTzjRprWgFoA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C940ED70E0C;
+	Fri, 19 Dec 2025 10:54:51 +0000 (UTC)
+From: Joel Granados <joel.granados@kernel.org>
+Date: Fri, 19 Dec 2025 11:54:19 +0100
+Subject: [PATCH v2] loadpin: Implement custom proc_handler for enforce
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20251216092147.2326606-4-jarkko@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251219-jag-const_loadpin-v2-1-a1490ab35a1d@kernel.org>
+X-B4-Tracking: v=1; b=H4sIANouRWkC/32NQQrDIBBFrxJmXUsUjW1XuUcJRcyYTBs0aJCW4
+ N1rc4Au34P//g4JI2GCW7NDxEyJgq8gTg3Y2fgJGY2VQbRCccEVe5qJ2eDT9liCGVfyTHfctUo
+ 43VkJdbdGdPQ+mveh8kxpC/FzXGT+s/9qmTPOuosUWisn8dr2L4wel3OIEwyllC+5bmqTswAAA
+ A==
+X-Change-ID: 20251215-jag-const_loadpin-761f052f76c4
+To: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Joel Granados <joel.granados@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4361;
+ i=joel.granados@kernel.org; h=from:subject:message-id;
+ bh=JxnNOF4Pyl6tVn86c+o2jxDPoQsZ+A7P0/0wMdEOmUw=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGlFLvHH6GeSlEgmDQOET2OxfftN0Dsbe3Jp9
+ PD+gorNIGAIg4kBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJpRS7xAAoJELqXzVK3
+ lkFPWI8L+wZ2dNsgKxZqTHw8rPSKWr4uDe/i1B2NM7Vtzx0QNXn/1xxyszziWPMnGMXWP6szaDC
+ m95Mmfna0YuZGuwpTQkUXfmiJKniLWMuyXrWIhe0lVMREfSi/JO2rTqm0bhZmGHSXCt3EU2gX/i
+ 9nJqSS6OCM1J8W9dDRFBR+K1ClmQrMLn1O9nMkJmteNbV3MMs7Eoke803B8phoKlhOq28N1QwGK
+ z5huXjouDzwhDnQbaigPDny0V4piRm6tKKNXcm5K4wb0J0UXxeUWWcEu48ro00sRjyOJiTWk9UM
+ uy43uorZl4RdpG/yMHf5Sm1TGcN3p1PZSM43U+mkAYs0QseNxylM0DHfctzEJQvNJh4nDC1p42m
+ 5ElESl9GMT5eNL+V1Y5+t3xIQacg0f0gpnxJJCzOuG5cpKyW42tU5NWdLg/WLzar4Kqb0we5vLi
+ NcDRhSbMmTcqGM3dbO2YoX1lsVtPFJnTyGXVXLBKt8sTDyXmwjrH7Irt9gQdIZfO+DQxQ/BMMh3
+ hI=
+X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
+ auth_id=239
 
-On Tue, Dec 16, 2025 at 11:21:37AM +0200, Jarkko Sakkinen wrote:
->tpm1_get_random() and tpm2_get_random() contain duplicate orchestration
->code. Consolidate orchestration to tpm_get_random().
+Add a new static variable (loadpin_root_writable) to keep the
+write-ability state of enforce. Remove set_sysctl and const qualify
+loadpin_sysctl_table (moves into .rodata) as there is no longer need to
+change the value of extra1. The new proc_handler_loadpin returns -EINVAL
+when loadpin_root_writable is false and the kernel var (enforce) is
+being written. The old way of modifying the write-ability of enforce
+stayes in loadpin_check and is still set by calling sb_is_writable.
 
-Does keeping the respective tpm1/tpm2 bits in their -cmd.c files not 
-make more sense, still allowing for the consolidation of orchestration 
-in tpm_get_random?
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
+---
+Const qualifying ctl tables is part of the hardening effort in the linux
+kernel.
 
->Cc: Eric Biggers <ebiggers@kernel.org>
->Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
->---
-> drivers/char/tpm/tpm-interface.c | 175 +++++++++++++++++++++++++++++--
-> drivers/char/tpm/tpm.h           |   2 -
-> drivers/char/tpm/tpm1-cmd.c      |  69 ------------
-> drivers/char/tpm/tpm2-cmd.c      | 104 ------------------
-> 4 files changed, 164 insertions(+), 186 deletions(-)
->
->diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
->index f745a098908b..d157be738612 100644
->--- a/drivers/char/tpm/tpm-interface.c
->+++ b/drivers/char/tpm/tpm-interface.c
->@@ -26,7 +26,7 @@
-> #include <linux/suspend.h>
-> #include <linux/freezer.h>
-> #include <linux/tpm_eventlog.h>
->-
->+#include <linux/tpm_command.h>
-> #include "tpm.h"
->
-> /*
->@@ -486,19 +486,153 @@ int tpm_pm_resume(struct device *dev)
-> }
-> EXPORT_SYMBOL_GPL(tpm_pm_resume);
->
->+struct tpm1_get_random_out {
->+	__be32 rng_data_len;
->+	u8 rng_data[TPM_MAX_RNG_DATA];
->+} __packed;
->+
->+static int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max)
->+{
->+	struct tpm1_get_random_out *resp;
->+	struct tpm_buf buf;
->+	u32 recd;
->+	int rc;
->+
->+	if (!out || !max || max > TPM_MAX_RNG_DATA)
->+		return -EINVAL;
->+
->+	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_GETRANDOM);
->+	if (rc)
->+		return rc;
->+
->+	tpm_buf_append_u32(&buf, max);
->+
->+	rc = tpm_transmit_cmd(chip, &buf, sizeof(resp->rng_data_len), "TPM_GetRandom");
->+	if (rc) {
->+		if (rc > 0)
->+			rc = -EIO;
->+		goto err;
->+	}
->+
->+	resp = (struct tpm1_get_random_out *)&buf.data[TPM_HEADER_SIZE];
->+
->+	recd = be32_to_cpu(resp->rng_data_len);
->+	if (recd > max) {
->+		rc = -EIO;
->+		goto err;
->+	}
->+
->+	if (buf.length < TPM_HEADER_SIZE + sizeof(resp->rng_data_len) + recd) {
->+		rc = -EIO;
->+		goto err;
->+	}
->+
->+	memcpy(out, resp->rng_data, recd);
->+	tpm_buf_destroy(&buf);
->+	return recd;
->+
->+err:
->+	tpm_buf_destroy(&buf);
->+	return rc;
->+}
->+
->+struct tpm2_get_random_out {
->+	__be16 size;
->+	u8 buffer[TPM_MAX_RNG_DATA];
->+} __packed;
->+
->+static int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max)
->+{
->+	struct tpm2_get_random_out *resp;
->+	struct tpm_header *head;
->+	struct tpm_buf buf;
->+	off_t offset;
->+	u32 recd;
->+	int ret;
->+
->+	if (!out || !max || max > TPM_MAX_RNG_DATA)
->+		return -EINVAL;
->+
->+	ret = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_GET_RANDOM);
->+	if (ret)
->+		return ret;
->+
->+	if (tpm2_chip_auth(chip)) {
->+		tpm_buf_append_hmac_session(chip, &buf,
->+					    TPM2_SA_ENCRYPT | TPM2_SA_CONTINUE_SESSION,
->+					    NULL, 0);
->+	} else  {
->+		head = (struct tpm_header *)buf.data;
->+		head->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
->+	}
->+	tpm_buf_append_u16(&buf, max);
->+
->+	ret = tpm_buf_fill_hmac_session(chip, &buf);
->+	if (ret) {
->+		tpm_buf_destroy(&buf);
->+		return ret;
->+	}
->+
->+	ret = tpm_transmit_cmd(chip, &buf, offsetof(struct tpm2_get_random_out, buffer),
->+			       "TPM2_GetRandom");
->+
->+	ret = tpm_buf_check_hmac_response(chip, &buf, ret);
->+	if (ret) {
->+		if (ret > 0)
->+			ret = -EIO;
->+
->+		goto out;
->+	}
->+
->+	head = (struct tpm_header *)buf.data;
->+	offset = TPM_HEADER_SIZE;
->+
->+	/* Skip the parameter size field: */
->+	if (be16_to_cpu(head->tag) == TPM2_ST_SESSIONS)
->+		offset += 4;
->+
->+	resp = (struct tpm2_get_random_out *)&buf.data[offset];
->+	recd = min_t(u32, be16_to_cpu(resp->size), max);
->+
->+	if (tpm_buf_length(&buf) <
->+	    TPM_HEADER_SIZE + offsetof(struct tpm2_get_random_out, buffer) + recd) {
->+		ret = -EIO;
->+		goto out;
->+	}
->+
->+	memcpy(out, resp->buffer, recd);
->+	return recd;
->+
->+out:
->+	tpm2_end_auth_session(chip);
->+	tpm_buf_destroy(&buf);
->+	return ret;
->+}
->+
-> /**
->- * tpm_get_random() - get random bytes from the TPM's RNG
->- * @chip:	a &struct tpm_chip instance, %NULL for the default chip
->- * @out:	destination buffer for the random bytes
->- * @max:	the max number of bytes to write to @out
->+ * tpm_get_random() - Get random bytes from the TPM's RNG
->+ * @chip:	A &tpm_chip instance. Whenset to %NULL, the default chip is used.
->+ * @out:	Destination buffer for the acquired random bytes.
->+ * @max:	The maximum number of bytes to write to @out.
->+ *
->+ * Iterates pulling more bytes from TPM up until all of the @max bytes have been
->+ * received.
->  *
->- * Return: number of random bytes read or a negative error value.
->+ * Returns the number of random bytes read on success.
->+ * Returns -EINVAL when @out is NULL, or @max is not between zero and
->+ * %TPM_MAX_RNG_DATA.
->+ * Returns tpm_transmit_cmd() error codes when the TPM command results an
->+ * error.
->  */
-> int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
-> {
->+	u32 num_bytes = max;
->+	u8 *out_ptr = out;
->+	int retries = 5;
->+	int total = 0;
-> 	int rc;
->
->-	if (!out || max > TPM_MAX_RNG_DATA)
->+	if (!out || !max || max > TPM_MAX_RNG_DATA)
-> 		return -EINVAL;
->
-> 	if (!chip)
->@@ -508,11 +642,30 @@ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
-> 	if (rc)
-> 		return rc;
->
->-	if (chip->flags & TPM_CHIP_FLAG_TPM2)
->-		rc = tpm2_get_random(chip, out, max);
->-	else
->-		rc = tpm1_get_random(chip, out, max);
->+	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
->+		rc = tpm2_start_auth_session(chip);
->+		if (rc)
->+			return rc;
->+	}
->+
->+	do {
->+		if (chip->flags & TPM_CHIP_FLAG_TPM2)
->+			rc = tpm2_get_random(chip, out_ptr, num_bytes);
->+		else
->+			rc = tpm1_get_random(chip, out_ptr, num_bytes);
->+
->+		if (rc < 0)
->+			goto err;
->+
->+		out_ptr += rc;
->+		total += rc;
->+		num_bytes -= rc;
->+	} while (retries-- && total < max);
->+
->+	tpm_put_ops(chip);
->+	return total ? total : -EIO;
->
->+err:
-> 	tpm_put_ops(chip);
-> 	return rc;
-> }
->diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
->index 02c07fef41ba..f698d01401de 100644
->--- a/drivers/char/tpm/tpm.h
->+++ b/drivers/char/tpm/tpm.h
->@@ -251,7 +251,6 @@ int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
-> int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
-> ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
-> 		    const char *desc, size_t min_cap_length);
->-int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
-> int tpm1_get_pcr_allocation(struct tpm_chip *chip);
-> unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-> int tpm_pm_suspend(struct device *dev);
->@@ -291,7 +290,6 @@ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
-> 		  struct tpm_digest *digest, u16 *digest_size_ptr);
-> int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
-> 		    struct tpm_digest *digests);
->-int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
-> ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,
-> 			u32 *value, const char *desc);
->
->diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
->index b49a790f1bd5..0604e11c9778 100644
->--- a/drivers/char/tpm/tpm1-cmd.c
->+++ b/drivers/char/tpm/tpm1-cmd.c
->@@ -511,75 +511,6 @@ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
-> }
-> EXPORT_SYMBOL_GPL(tpm1_getcap);
->
->-#define TPM_ORD_GET_RANDOM 70
->-struct tpm1_get_random_out {
->-	__be32 rng_data_len;
->-	u8 rng_data[TPM_MAX_RNG_DATA];
->-} __packed;
->-
->-/**
->- * tpm1_get_random() - get random bytes from the TPM's RNG
->- * @chip:	a &struct tpm_chip instance
->- * @dest:	destination buffer for the random bytes
->- * @max:	the maximum number of bytes to write to @dest
->- *
->- * Return:
->- * *  number of bytes read
->- * * -errno (positive TPM return codes are masked to -EIO)
->- */
->-int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
->-{
->-	struct tpm1_get_random_out *out;
->-	u32 num_bytes =  min_t(u32, max, TPM_MAX_RNG_DATA);
->-	struct tpm_buf buf;
->-	u32 total = 0;
->-	int retries = 5;
->-	u32 recd;
->-	int rc;
->-
->-	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_GET_RANDOM);
->-	if (rc)
->-		return rc;
->-
->-	do {
->-		tpm_buf_append_u32(&buf, num_bytes);
->-
->-		rc = tpm_transmit_cmd(chip, &buf, sizeof(out->rng_data_len),
->-				      "attempting get random");
->-		if (rc) {
->-			if (rc > 0)
->-				rc = -EIO;
->-			goto out;
->-		}
->-
->-		out = (struct tpm1_get_random_out *)&buf.data[TPM_HEADER_SIZE];
->-
->-		recd = be32_to_cpu(out->rng_data_len);
->-		if (recd > num_bytes) {
->-			rc = -EFAULT;
->-			goto out;
->-		}
->-
->-		if (tpm_buf_length(&buf) < TPM_HEADER_SIZE +
->-					   sizeof(out->rng_data_len) + recd) {
->-			rc = -EFAULT;
->-			goto out;
->-		}
->-		memcpy(dest, out->rng_data, recd);
->-
->-		dest += recd;
->-		total += recd;
->-		num_bytes -= recd;
->-
->-		tpm_buf_reset(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_GET_RANDOM);
->-	} while (retries-- && total < max);
->-
->-	rc = total ? (int)total : -EIO;
->-out:
->-	tpm_buf_destroy(&buf);
->-	return rc;
->-}
->-
-> #define TPM_ORD_PCRREAD 21
-> int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
-> {
->diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
->index 3a77be7ebf4a..34168d5f9c78 100644
->--- a/drivers/char/tpm/tpm2-cmd.c
->+++ b/drivers/char/tpm/tpm2-cmd.c
->@@ -238,110 +238,6 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
-> 	return rc;
-> }
->
->-struct tpm2_get_random_out {
->-	__be16 size;
->-	u8 buffer[TPM_MAX_RNG_DATA];
->-} __packed;
->-
->-/**
->- * tpm2_get_random() - get random bytes from the TPM RNG
->- *
->- * @chip:	a &tpm_chip instance
->- * @dest:	destination buffer
->- * @max:	the max number of random bytes to pull
->- *
->- * Return:
->- *   size of the buffer on success,
->- *   -errno otherwise (positive TPM return codes are masked to -EIO)
->- */
->-int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
->-{
->-	struct tpm2_get_random_out *out;
->-	struct tpm_header *head;
->-	struct tpm_buf buf;
->-	u32 recd;
->-	u32 num_bytes = max;
->-	int err;
->-	int total = 0;
->-	int retries = 5;
->-	u8 *dest_ptr = dest;
->-	off_t offset;
->-
->-	if (!num_bytes || max > TPM_MAX_RNG_DATA)
->-		return -EINVAL;
->-
->-	err = tpm2_start_auth_session(chip);
->-	if (err)
->-		return err;
->-
->-	err = tpm_buf_init(&buf, 0, 0);
->-	if (err) {
->-		tpm2_end_auth_session(chip);
->-		return err;
->-	}
->-
->-	do {
->-		tpm_buf_reset(&buf, TPM2_ST_SESSIONS, TPM2_CC_GET_RANDOM);
->-		if (tpm2_chip_auth(chip)) {
->-			tpm_buf_append_hmac_session(chip, &buf,
->-						    TPM2_SA_ENCRYPT |
->-						    TPM2_SA_CONTINUE_SESSION,
->-						    NULL, 0);
->-		} else  {
->-			offset = buf.handles * 4 + TPM_HEADER_SIZE;
->-			head = (struct tpm_header *)buf.data;
->-			if (tpm_buf_length(&buf) == offset)
->-				head->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
->-		}
->-		tpm_buf_append_u16(&buf, num_bytes);
->-		err = tpm_buf_fill_hmac_session(chip, &buf);
->-		if (err) {
->-			tpm_buf_destroy(&buf);
->-			return err;
->-		}
->-
->-		err = tpm_transmit_cmd(chip, &buf,
->-				       offsetof(struct tpm2_get_random_out,
->-						buffer),
->-				       "attempting get random");
->-		err = tpm_buf_check_hmac_response(chip, &buf, err);
->-		if (err) {
->-			if (err > 0)
->-				err = -EIO;
->-			goto out;
->-		}
->-
->-		head = (struct tpm_header *)buf.data;
->-		offset = TPM_HEADER_SIZE;
->-		/* Skip the parameter size field: */
->-		if (be16_to_cpu(head->tag) == TPM2_ST_SESSIONS)
->-			offset += 4;
->-
->-		out = (struct tpm2_get_random_out *)&buf.data[offset];
->-		recd = min_t(u32, be16_to_cpu(out->size), num_bytes);
->-		if (tpm_buf_length(&buf) <
->-		    TPM_HEADER_SIZE +
->-		    offsetof(struct tpm2_get_random_out, buffer) +
->-		    recd) {
->-			err = -EFAULT;
->-			goto out;
->-		}
->-		memcpy(dest_ptr, out->buffer, recd);
->-
->-		dest_ptr += recd;
->-		total += recd;
->-		num_bytes -= recd;
->-	} while (retries-- && total < max);
->-
->-	tpm_buf_destroy(&buf);
->-
->-	return total ? total : -EIO;
->-out:
->-	tpm_buf_destroy(&buf);
->-	tpm2_end_auth_session(chip);
->-	return err;
->-}
->-
-> /**
->  * tpm2_flush_context() - execute a TPM2_FlushContext command
->  * @chip:	TPM chip to use
->-- 
->2.39.5
->
->
+Changes in v2:
+- Removed set_sysctl
+- Added new static loadpin_root_writable var to hold the writable state
+- Renamed the variable holding the writable state to loadpin_root_writable
+- Link to v1: https://lore.kernel.org/r/20251215-jag-const_loadpin-v1-1-6842775f4e90@kernel.org
+---
 
-J.
+---
+ security/loadpin/loadpin.c | 43 +++++++++++++++++++------------------------
+ 1 file changed, 19 insertions(+), 24 deletions(-)
 
+diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+index 273ffbd6defe1324d6688dec5f9fe6c9401283ed..2ef863af869e45658e9e830af8ac40beaad7d5a9 100644
+--- a/security/loadpin/loadpin.c
++++ b/security/loadpin/loadpin.c
+@@ -53,44 +53,41 @@ static bool deny_reading_verity_digests;
+ #endif
+ 
+ #ifdef CONFIG_SYSCTL
+-static struct ctl_table loadpin_sysctl_table[] = {
++// initialized to false
++static bool loadpin_root_writable;
++
++static int proc_handler_loadpin(const struct ctl_table *table, int dir,
++				void *buffer, size_t *lenp, loff_t *ppos)
++{
++	if (!loadpin_root_writable && SYSCTL_USER_TO_KERN(dir))
++		return -EINVAL;
++	return proc_dointvec_minmax(table, dir, buffer, lenp, ppos);
++}
++
++static const struct ctl_table loadpin_sysctl_table[] = {
+ 	{
+ 		.procname       = "enforce",
+ 		.data           = &enforce,
+ 		.maxlen         = sizeof(int),
+ 		.mode           = 0644,
+-		.proc_handler   = proc_dointvec_minmax,
+-		.extra1         = SYSCTL_ONE,
++		.proc_handler   = proc_handler_loadpin,
++		.extra1         = SYSCTL_ZERO,
+ 		.extra2         = SYSCTL_ONE,
+ 	},
+ };
+-
+-static void set_sysctl(bool is_writable)
+-{
+-	/*
+-	 * If load pinning is not enforced via a read-only block
+-	 * device, allow sysctl to change modes for testing.
+-	 */
+-	if (is_writable)
+-		loadpin_sysctl_table[0].extra1 = SYSCTL_ZERO;
+-	else
+-		loadpin_sysctl_table[0].extra1 = SYSCTL_ONE;
+-}
+-#else
+-static inline void set_sysctl(bool is_writable) { }
+ #endif
+ 
+-static void report_writable(struct super_block *mnt_sb, bool writable)
++static void report_writable(struct super_block *mnt_sb)
+ {
+ 	if (mnt_sb->s_bdev) {
+ 		pr_info("%pg (%u:%u): %s\n", mnt_sb->s_bdev,
+ 			MAJOR(mnt_sb->s_bdev->bd_dev),
+ 			MINOR(mnt_sb->s_bdev->bd_dev),
+-			writable ? "writable" : "read-only");
++			loadpin_root_writable ? "writable" : "read-only");
+ 	} else
+ 		pr_info("mnt_sb lacks block device, treating as: writable\n");
+ 
+-	if (!writable)
++	if (!loadpin_root_writable)
+ 		pr_info("load pinning engaged.\n");
+ }
+ 
+@@ -131,7 +128,6 @@ static int loadpin_check(struct file *file, enum kernel_read_file_id id)
+ 	struct super_block *load_root;
+ 	const char *origin = kernel_read_file_id_str(id);
+ 	bool first_root_pin = false;
+-	bool load_root_writable;
+ 
+ 	/* If the file id is excluded, ignore the pinning. */
+ 	if ((unsigned int)id < ARRAY_SIZE(ignore_read_file_id) &&
+@@ -152,7 +148,6 @@ static int loadpin_check(struct file *file, enum kernel_read_file_id id)
+ 	}
+ 
+ 	load_root = file->f_path.mnt->mnt_sb;
+-	load_root_writable = sb_is_writable(load_root);
+ 
+ 	/* First loaded module/firmware defines the root for all others. */
+ 	spin_lock(&pinned_root_spinlock);
+@@ -168,8 +163,8 @@ static int loadpin_check(struct file *file, enum kernel_read_file_id id)
+ 	spin_unlock(&pinned_root_spinlock);
+ 
+ 	if (first_root_pin) {
+-		report_writable(pinned_root, load_root_writable);
+-		set_sysctl(load_root_writable);
++		report_writable(pinned_root);
++		loadpin_root_writable = sb_is_writable(pinned_root);
+ 		report_load(origin, file, "pinned");
+ 	}
+ 
+
+---
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+change-id: 20251215-jag-const_loadpin-761f052f76c4
+
+Best regards,
 -- 
-] https://www.earth.li/~noodles/ []   Generally, all generalizations   [
-]  PGP/GPG Key @ the.earth.li    []            are false..             [
-] via keyserver, web or email.   []                                    [
-] RSA: 4096/0x94FA372B2DA8B985   []                                    [
+Joel Granados <joel.granados@kernel.org>
+
+
