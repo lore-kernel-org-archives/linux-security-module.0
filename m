@@ -1,191 +1,189 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from 011.lax.mailroute.net (011.lax.mailroute.net [199.89.1.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628FE339B41
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Dec 2025 18:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3CC28030E;
+	Fri, 19 Dec 2025 18:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766167900; cv=none; b=MzZGm8R6DllaTw+vBbd4f2Zfv1L3xKcKpQSiuGLyfExeCYMKu2FbWIjCq4CUgbjoU6Y2GJOCktqi072/s8JdjDGP1v4YDixlprCZxFgUtMzmJFTkLcEH65jLexv1zQHOhToMCJEYzmaApEYXymlsvJlmd6oBXiCvmgZ/MTc7+Xo=
+	t=1766169557; cv=none; b=fku8u0G2RijFKdKbJgWyidHlg0JH4fakFAkojf49OvzHLLTEEa3wGoNB3imgVXioWCSju3KZVSmnC5XWWEIpg+lL3vUUR8pAlwFULDhLdSTVy/R9d+gDRsNyICQ6oBy059wWNWqMHWw0GXSfyso41amZvU/HXuSd5JVzxyPehTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766167900; c=relaxed/simple;
-	bh=XNVLrwpsXPHzXFeydYjN1QOG9WtOH5XaaQ/9OFUM3QI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EAPmRAXq28OjA90btXHrI+odA/f9OpA0cpLc0ZDxKyxfxpzp7FZKg1H9bSOXddJXPFpa5MepWoIvNXBK5HQW794JJnWgfs5jpAGZq6Bq45yWiZoAn2HcnIUKutYxk7CRQkiUHKkXTWat1+9wAeWbooSnZg7cQaZuoAAqj+qUgMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fhy/uWJQ; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1766169557; c=relaxed/simple;
+	bh=2oCcEiD86R3by/djtBIzSCExwYrw3Sejuf7j0oQ5WLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F7hXbqm124RGpPPQoBA8y0tQ+IMScF8/eaKs7gVDZh3fwVGQ/g89lFZ4FwCiotSJRd7k0rh9/Z1Zmtp/07aT1xD7Trq5KTSA6Wjhk9z29kKFADmnc6jNyWavidUQv2OpRtRpWWGrKP313qRGNE2D8JcWTOb7GK7eM2TryOqzouk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=r7Yag90D; arc=none smtp.client-ip=199.89.1.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fhy/uWJQ"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-34c565b888dso2304019a91.0
-        for <linux-security-module@vger.kernel.org>; Fri, 19 Dec 2025 10:11:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1766167898; x=1766772698; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XKmnc8sQT0m90A1EGL7X+BZsX0x2H9PAUpCfvRKuOns=;
-        b=fhy/uWJQEnwuHQK6GrBszkZiA30aSElJt4WuGgay6/vCXQHpS43BCl7VGEAM+DgD5v
-         tVrQCPwxA4QywSn5EBktu3hpNyVj18/tWZs4eIV/oP4jNl4Dil0LAGNPwUOuimfOKS8/
-         YlMuQbtZ/89xVhBc0/MwMJO+QbH9qc41SKelNsjwQM7wJ2EC2fkegLJcCIMc/aJlMEKc
-         gG5atqaySJG3DyUzuDGzwhXeQjee1Up2DVfo/n9aIYcCiho60r3Gl3n8SM0AHsUiXbb6
-         TBCV5tWDeprdYU7G2NuLrmLIux39MtHlmreBZFB6pN807X62xlEuAQI6f1Rvl9qfNd8y
-         yk/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766167898; x=1766772698;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=XKmnc8sQT0m90A1EGL7X+BZsX0x2H9PAUpCfvRKuOns=;
-        b=mvbVjsEeXbQxrUqN9z9wDxswwPPnY5oiyJ6xFUJNcqQ+8WSwv0RTS8SgQsq3UOyNgF
-         YqBf54KPPbFglMB9akq/b0fIkWKgj36x528Jc/X6TKf3sZuZWen0rUZXRrH6sxbl2/d0
-         x96d/kF/04wSbOMcJezyP+Jxxdrw5w9epYDklYdQkm9GWyB5CclQW6DNeyYKTitsMkgW
-         AeFgGlJ1pFK61CWePfBnjVEfPMNdK3/IdwTZLyI0zhfYprf/AkU1Gb0ApKXOl9sjgC82
-         +3z4+3grH/H9Cyxy3vxLo5TRn+q17rkRR6m3jWWk6lBR54r37sRqoarGzFBUvFNvFj3P
-         efwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPaSOpYQswn4H5dwMOkDBtG8CI6fjgknQurO2OY0E4b+JggQQFGuktcYvZQR2BoRbkzqBxCP1ju0GgTYCvKC0mfwmMywM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+R5VDRyg2B1bae6n/uWAaNI9YkqCtpFanSCUl6F3pKd8U/QCd
-	PJruKKag2hbvKwiErSFPT2vi5U6fSBJd4WJCY2NV/HPaUoArLlGBgM61w47nf5xKKDoGEERoAmS
-	8qwqpWPxjT4sKTyOV7ADdVFkRfp0cQikJWN0zU4k9
-X-Gm-Gg: AY/fxX5gNQYDY4UgQ4v7B5i7v1C67GIwCJU75mP1slaaYHqaPA484ZSjCJoEOXXgn56
-	Zmj+iy8aKrgl1kW8whRnI9HO4OmlNtbQl+hRuWpuRJBOr9kTK8uL1v/N0nNaYRzYSt0f4QjT055
-	mSbUpLr+MVCtP2RM2qFtjY8oq+bc5p+/Dg+3Ufr6LtkS+WXnEHKOuqkyh2L/RU1mnSreWKdqmlA
-	ASGvDLcu1tS6AgdgXh3XftDL6BDX2FqCzI68b2cmLldDSP/mkEdD8WwIHXJxIWDL7Y7e7g=
-X-Google-Smtp-Source: AGHT+IF0rXHFwu13e8zRdTaDEgLFU70atv3Zw0sMr2VMnWLKs7QsHVB9ThIJkD6W/Hmqc3AjQdBCoUbBbHebtBzaA7w=
-X-Received: by 2002:a17:90b:35d2:b0:340:776d:f4ca with SMTP id
- 98e67ed59e1d1-34e921e057cmr3557162a91.26.1766167897674; Fri, 19 Dec 2025
- 10:11:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="r7Yag90D"
+Received: from localhost (localhost [127.0.0.1])
+	by 011.lax.mailroute.net (Postfix) with ESMTP id 4dXxC64LYVz1XM0pZ;
+	Fri, 19 Dec 2025 18:39:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1766169545; x=1768761546; bh=dgosp44VAu2P7aU4KenxOvJY
+	azdnvtt9NxyqcaL3Tns=; b=r7Yag90DdhVFdBZYPtWEBx9cmCCgXFjjEpr00iey
+	p+3zXepZk3G3B4Bwu97WCJb1s5MPa26ClqUCvQBDwMVJvuz50WwTPPwUFZe5E46U
+	ja5rUuNt4XNe/5D01S3EOF+T3RyTp91P0nuOYG2d6McW7+kHXp4wwJlozgS4PkCd
+	qp+p8gQa7mJHDXA26JtCjnOfk8C6CZ67nPnsZoyJqdw/5BjSRx3eJIxixLXL3e4l
+	vgETtAqLb8KL5bbR+McXEUlhwtoxeSkETq5HMtJtY0uulq95tLbcxqmBujTNeXEM
+	1UW3CESdF+sBn47W7phlV4LPya+8JJCzHNIyZAlMr0OSAg==
+X-Virus-Scanned: by MailRoute
+Received: from 011.lax.mailroute.net ([127.0.0.1])
+ by localhost (011.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id lv8AghduxMyN; Fri, 19 Dec 2025 18:39:05 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 011.lax.mailroute.net (Postfix) with ESMTPSA id 4dXxBk4GZrz1XM6Jc;
+	Fri, 19 Dec 2025 18:38:54 +0000 (UTC)
+Message-ID: <97e832b7-04a9-49cb-973a-bf9870c21c2f@acm.org>
+Date: Fri, 19 Dec 2025 10:38:53 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251219173637.797418-1-whrosenb@asu.edu>
-In-Reply-To: <20251219173637.797418-1-whrosenb@asu.edu>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 19 Dec 2025 13:11:26 -0500
-X-Gm-Features: AQt7F2r673eNS1MvXH_LmuvBf0t193_GTzqos_6szr64npgBWaYAbu_wr6q-mvo
-Message-ID: <CAHC9VhQmR8A2vz0W-VrrhYNQ2wgCYxHbAmdgmM2yTL-uh4qiOg@mail.gmail.com>
-Subject: Re: [PATCH] ipv6: BUG() in pskb_expand_head() as part of calipso_skbuff_setattr()
-To: Will Rosenberg <whrosenb@asu.edu>
-Cc: security@kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Huw Davies <huw@codeweavers.com>, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/36] compiler-context-analysis: Add infrastructure
+ for Context Analysis with Clang
+To: Marco Elver <elver@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ Will Deacon <will@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+ Chris Li <sparse@chrisli.org>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>,
+ Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
+ Eric Dumazet <edumazet@google.com>, Frederic Weisbecker
+ <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>,
+ Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>,
+ Johannes Berg <johannes.berg@intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ Josh Triplett <josh@joshtriplett.org>, Justin Stitt
+ <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+ Kentaro Takeda <takedakn@nttdata.co.jp>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+ Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>,
+ kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org,
+ linux-wireless@vger.kernel.org, llvm@lists.linux.dev, rcu@vger.kernel.org
+References: <20251219154418.3592607-1-elver@google.com>
+ <20251219154418.3592607-3-elver@google.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20251219154418.3592607-3-elver@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Dec 19, 2025 at 12:37=E2=80=AFPM Will Rosenberg <whrosenb@asu.edu> =
-wrote:
->
-> There exists a kernel oops caused by a BUG_ON(nhead < 0) at
-> net/core/skbuff.c:2232 in pskb_expand_head().
-> This bug is triggered as part of the calipso_skbuff_setattr()
-> routine when skb_cow() is passed headroom > INT_MAX
-> (i.e. (int)(skb_headroom(skb) + len_delta) < 0).
->
-> The root cause of the bug is due to an implicit integer cast in
-> __skb_cow(). The check (headroom > skb_headroom(skb)) is meant to ensure
-> that delta =3D headroom - skb_headroom(skb) is never negative, otherwise
-> we will trigger a BUG_ON in pskb_expand_head(). However, if
-> headroom > INT_MAX and delta <=3D -NET_SKB_PAD, the check passes, delta
-> becomes negative, and pskb_expand_head() is passed a negative value for
-> nhead.
->
-> Fix the trigger condition in calipso_skbuff_setattr(). Avoid passing
-> "negative" headroom sizes to skb_cow() within calipso_skbuff_setattr()
-> by only using skb_cow() to grow headroom.
->
-> PoC:
->         Using `netlabelctl` tool:
->
->         netlabelctl map del default
->         netlabelctl calipso add pass doi:7
->         netlabelctl map add default address:0::1/128 protocol:calipso,7
->
->         Then run the following PoC:
->
->         int fd =3D socket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
->
->         // setup msghdr
->         int cmsg_size =3D 2;
->         int cmsg_len =3D 0x60;
->         struct msghdr msg;
->         struct sockaddr_in6 dest_addr;
->         struct cmsghdr * cmsg =3D (struct cmsghdr *) calloc(1,
->                         sizeof(struct cmsghdr) + cmsg_len);
->         msg.msg_name =3D &dest_addr;
->         msg.msg_namelen =3D sizeof(dest_addr);
->         msg.msg_iov =3D NULL;
->         msg.msg_iovlen =3D 0;
->         msg.msg_control =3D cmsg;
->         msg.msg_controllen =3D cmsg_len;
->         msg.msg_flags =3D 0;
->
->         // setup sockaddr
->         dest_addr.sin6_family =3D AF_INET6;
->         dest_addr.sin6_port =3D htons(31337);
->         dest_addr.sin6_flowinfo =3D htonl(31337);
->         dest_addr.sin6_addr =3D in6addr_loopback;
->         dest_addr.sin6_scope_id =3D 31337;
->
->         // setup cmsghdr
->         cmsg->cmsg_len =3D cmsg_len;
->         cmsg->cmsg_level =3D IPPROTO_IPV6;
->         cmsg->cmsg_type =3D IPV6_HOPOPTS;
->         char * hop_hdr =3D (char *)cmsg + sizeof(struct cmsghdr);
->         hop_hdr[1] =3D 0x9; //set hop size - (0x9 + 1) * 8 =3D 80
->
->         sendmsg(fd, &msg, 0);
->
-> Fixes: 2917f57b6bc1 ("calipso: Allow the lsm to label the skbuff directly=
-.")
-> Signed-off-by: Will Rosenberg <whrosenb@asu.edu>
-> ---
->
-> Notes:
->     -Changing __skb_cow() would likely require an audit of all its use
->     cases due to its long legacy in the kernel. After private discussions=
-,
->     it was decided that this patch should be applied to calipso to remedy
->     the immediate symptoms and allow for easy backporting. However, net
->     devs should consider remedying the root cause through __skb_cow()
->     and skb_cow().
->
->     -Paul, please let me know if I should add any form of credit for
->     the patch code, such as "Suggested-By."
->
->  net/ipv6/calipso.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+On 12/19/25 7:39 AM, Marco Elver wrote:
+> +#if defined(WARN_CONTEXT_ANALYSIS)
+> +
+> +/*
+> + * These attributes define new context lock (Clang: capability) types.
+> + * Internal only.
+> + */
 
-Folks can add my Suggested-by if they like, but I'm not bothered
-either way; getting it fixed upstream is the important part.  Thanks
-for your work on this Will!
+How can macros be "internal only" that are defined in a header file that
+will be included by almost all kernel code? Please consider changing
+"internal only" into something that is more clear, e.g. "should only be
+used in the macro definitions in this header file".
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+> +/*
+> + * The below are used to annotate code being checked. Internal only.
+> + */
 
-> diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
-> index df1986973430..21f6ed126253 100644
-> --- a/net/ipv6/calipso.c
-> +++ b/net/ipv6/calipso.c
-> @@ -1342,7 +1342,8 @@ static int calipso_skbuff_setattr(struct sk_buff *s=
-kb,
->         /* At this point new_end aligns to 4n, so (new_end & 4) pads to 8=
-n */
->         pad =3D ((new_end & 4) + (end & 7)) & 7;
->         len_delta =3D new_end - (int)end + pad;
-> -       ret_val =3D skb_cow(skb, skb_headroom(skb) + len_delta);
-> +       ret_val =3D skb_cow(skb,
-> +                         skb_headroom(skb) + (len_delta > 0 ? len_delta =
-: 0));
->         if (ret_val < 0)
->                 return ret_val;
->
->
-> base-commit: ea1013c1539270e372fc99854bc6e4d94eaeff66
-> --
-> 2.34.1
+Same comment here about "internal only".
 
---=20
-paul-moore.com
+> +/**
+> + * context_lock_struct() - declare or define a context lock struct
+> + * @name: struct name
+> + *
+> + * Helper to declare or define a struct type that is also a context lock.
+> + *
+> + * .. code-block:: c
+> + *
+> + *	context_lock_struct(my_handle) {
+> + *		int foo;
+> + *		long bar;
+> + *	};
+> + *
+> + *	struct some_state {
+> + *		...
+> + *	};
+> + *	// ... declared elsewhere ...
+> + *	context_lock_struct(some_state);
+> + *
+> + * Note: The implementation defines several helper functions that can acquire
+> + * and release the context lock.
+> + */
+> +# define context_lock_struct(name, ...)									\
+> +	struct __ctx_lock_type(name) __VA_ARGS__ name;							\
+> +	static __always_inline void __acquire_ctx_lock(const struct name *var)				\
+> +		__attribute__((overloadable)) __no_context_analysis __acquires_ctx_lock(var) { }	\
+> +	static __always_inline void __acquire_shared_ctx_lock(const struct name *var)			\
+> +		__attribute__((overloadable)) __no_context_analysis __acquires_shared_ctx_lock(var) { } \
+> +	static __always_inline bool __try_acquire_ctx_lock(const struct name *var, bool ret)		\
+> +		__attribute__((overloadable)) __no_context_analysis __try_acquires_ctx_lock(1, var)	\
+> +	{ return ret; }											\
+> +	static __always_inline bool __try_acquire_shared_ctx_lock(const struct name *var, bool ret)	\
+> +		__attribute__((overloadable)) __no_context_analysis __try_acquires_shared_ctx_lock(1, var) \
+> +	{ return ret; }											\
+> +	static __always_inline void __release_ctx_lock(const struct name *var)				\
+> +		__attribute__((overloadable)) __no_context_analysis __releases_ctx_lock(var) { }	\
+> +	static __always_inline void __release_shared_ctx_lock(const struct name *var)			\
+> +		__attribute__((overloadable)) __no_context_analysis __releases_shared_ctx_lock(var) { } \
+> +	static __always_inline void __assume_ctx_lock(const struct name *var)				\
+> +		__attribute__((overloadable)) __assumes_ctx_lock(var) { }				\
+> +	static __always_inline void __assume_shared_ctx_lock(const struct name *var)			\
+> +		__attribute__((overloadable)) __assumes_shared_ctx_lock(var) { }			\
+> +	struct name
+
+I'm concerned that the context_lock_struct() macro will make code harder
+to read. Anyone who encounters the context_lock_struct() macro will have
+to look up its definition to learn what it does. I propose to split this
+macro into two macros:
+* One macro that expands into "__ctx_lock_type(name)".
+* A second macro that expands into the rest of the above macro.
+
+In other words, instead of having to write 
+context_lock_struct(struct_name, { ... }); developers will have to write
+
+struct context_lock_type struct_name {
+     ...;
+};
+context_struct_helper_functions(struct_name);
+
+My opinion is that the alternative that I'm proposing is easier to read.
+Additionally, it doesn't break existing tools that support jumping from
+the name of a struct to its definition, e.g. ctags and etags.
+
+> +config WARN_CONTEXT_ANALYSIS_ALL
+> +	bool "Enable context analysis for all source files"
+> +	depends on WARN_CONTEXT_ANALYSIS
+> +	depends on EXPERT && !COMPILE_TEST
+> +	help
+> +	  Enable tree-wide context analysis. This is likely to produce a
+> +	  large number of false positives - enable at your own risk.
+> +
+> +	  If unsure, say N.
+
+Why !COMPILE_TEST?
+
+Thanks,
+
+Bart.
