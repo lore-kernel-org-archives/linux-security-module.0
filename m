@@ -1,254 +1,172 @@
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from 011.lax.mailroute.net (011.lax.mailroute.net [199.89.1.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5B3221542
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Dec 2025 19:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E808531C58E;
+	Fri, 19 Dec 2025 20:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766174155; cv=none; b=o/LGGFavjUiEFmCq4c7SaCq0NqHVxGqYlyt947iygy4AiJKu7ijGBGu5qA0Yo/ww0/1jGzDNXAXID9pZRhp8itjjs3V7PgEdgxM2OHT+2SktMBEnjZOyJh9+uyJBbiK6zXTTyhkSQSZ51OBbpLgEX8yo+e8CtLH/IUaYX8zOjzM=
+	t=1766175998; cv=none; b=CIU8GQexgf6mJigph1WECom9U+FIzVM+ivr9Op8dcNFFU2dZbBKH6LD09azp7yn2DDurdYaFDMEbymQ1yL+mKOR9IPSgajGv9Cp+U50VX4rm9geMsJmIVJOUpnSnvg4VU6Ma34zrG9KLh6CGUHPeGu6vGyyJp1PBitGLkud0C0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766174155; c=relaxed/simple;
-	bh=Izr+0B/kidUR6kFgGzijhtufQOYwDySylQrmdDOiNK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jn+8eR9bmzuO6UmU09VJabM2kJ1pKLN76Jnu2h0Qn8XakrN/Ua5U6CaBYcxnMChi4qVsyVTAj7G6qcTKNj1NtPqu1F/kUW9iEl1v/hzBObq4+jZCD1qkrXHTPvFSxRTgn0/wTN78S0fFcuFwDxj/VWC54r5QHjVuDhmn/Fpjwtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=QQV7v4yV; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1766175998; c=relaxed/simple;
+	bh=t91VKbgXjHTNXWGI0hk6vcqHhU0kzFjqniaqjOhoFeg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FOetJGYuqo7d9PLWBLqa+x19e5WjnfO9ymvjfDFjsorbUloJ7QeJ4ghWHgBcAYo1AwKGxWHKFORgaOjwl6e53MPYNTD4Uo9CODTZKgtPK3iiTsxKm9WFKxJw+ytWwYtCGqTGnMGrSmcdQU3WGq2Anm7vmtb5u8v16Wm2Et7YP6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=3LHIpw+i; arc=none smtp.client-ip=199.89.1.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="QQV7v4yV"
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-3ec41466a30so1655026fac.0
-        for <linux-security-module@vger.kernel.org>; Fri, 19 Dec 2025 11:55:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1766174151; x=1766778951; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N5F126y8if8LIRdkatntytj2kts1EA3ylByzLwVAd7s=;
-        b=QQV7v4yVGhZrDpD4C/qdVBG0V8kPtG8fkN4DEKnoiTNCd6GMldYkmEmNtGwum2HAuK
-         i1h/9rZn7rnrQhG8sbHQDsKHZEO+L6p3XXm2deTIV4P/QdSfplv8Xa8+YkoL/rVoNhfr
-         XRJp11L16okwZyR5rWkXuvyWBLt0aFcQ9r/QbrOU+ZHmojom557CrdcrBP+Ak8BkyPMc
-         0J9eeKSZUA+l6Ax1hJeon2lHR5BpQhwcx51OOZjyRxYzJdU+LqX/ZXRyZKV0GX2pbrDi
-         VypAw9YKjkUGEFEYGtFpb4i0aty2+qY5sM54OTg3VhSli2wu/J9qh0N0M8MLd9J/BaB1
-         Dw/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766174151; x=1766778951;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N5F126y8if8LIRdkatntytj2kts1EA3ylByzLwVAd7s=;
-        b=TXzk5G9cEaojHnSvqtAyrJzUKRGQGRY44WGKVr4riTeqOncKKWS32CMklgQZjAfaI4
-         czK6JNyTAtmtZ9cp/R5AFKftzgNmFFCDH5z5dUSYvbLpy0LqHL4bMWd38uS+6cDpIt3d
-         4UgHrwBPfzS62tV9tIzrRoZSIsDkjWYI8Qzlui7k/FyClfI4u1hQZbNIEZhwIsewszD6
-         taYbENT2l2mlUHkudUyqNWDh33DSedVfjdxEPDCCgcChrHDQ2CEkTrOOzO5AJCO33/kR
-         8Zf5R4EzXIJ12pgi+kMsleu2H04qDKj0M3McbgBLnbEmLxngt/QWJxPPMa62PmzME3ag
-         YhuA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1baGMSGbL0REZjyh5AjeGiqhnpgqd8gAVSvAYkOWXlzzE+nSq4ZaOA2/znikqe3COuhsjct+laOB6462AWfAdtn5WZhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7NvIRApzkXpPorAdqYyMCoDjugPLprwMH4mTJNr5VIA/7FcoX
-	1yjjjD/6cddt3svCM6M9theTffXtZSEcUJRtvw9+CskMrSFzbbJov74TOBI+hDyfglc=
-X-Gm-Gg: AY/fxX5yv/DsNi0ZxDG9yK4BHgUijRuTxlRy7YcyBPGlf6jiLu6fscNK+9C4FMwSjCv
-	k329fo/P1XWQNWFfxdbpeF9YZ5fBaLSbydPRqAe93VoHhmE9pUcAB452LCpJfs/ByYWhun4FsYt
-	oNtD1eXOZ687WBMHEdiCQgT1/bYVnP/NSsLayS+I2oNCEmiGuEECOYU7PxhPOk2zkejoiSORWrh
-	AWwGhqRQV6Fs69BnkE6cE52D9WZInzxuft+vVsCeGxT/gKeGeEeb8GLrs2mOhL/f1tVO1xm47z0
-	uSDKe71/qgv8VMnG27LGFjCvFi4IhLNei1esCaIFh0hTd7ugFb8Mpv0lvHvfieyv+ZjC/xeQDwY
-	sx6xQ9KshQLFWhlmPDv9DWcYg4fL1oGA2jL2abEmOFYxY7ccYz5yVZtCfLEWS2YtDX5CSlLg=
-X-Google-Smtp-Source: AGHT+IGUJKnpVTtWN1QzetKvQAGqiGpbky9oCmNtRbx1YI2Uk2HdWm3JOrxGMx7ehZyvsljs/LyvvQ==
-X-Received: by 2002:a05:6870:a106:b0:3ec:2fc8:979a with SMTP id 586e51a60fabf-3fda5411600mr2171361fac.19.1766174151433;
-        Fri, 19 Dec 2025 11:55:51 -0800 (PST)
-Received: from 861G6M3.. ([2a09:bac1:76a0:540::f:338])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3fdaab65749sm1965280fac.11.2025.12.19.11.55.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Dec 2025 11:55:50 -0800 (PST)
-From: Chris J Arges <carges@cloudflare.com>
-To: zohar@linux.ibm.com,
-	roberto.sassu@huawei.com
-Cc: kernel-team@cloudflare.com,
-	Chris J Arges <carges@cloudflare.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Kees Cook <kees@kernel.org>,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ima: Fix stack-out-of-bounds in is_bprm_creds_for_exec()
-Date: Fri, 19 Dec 2025 13:54:41 -0600
-Message-ID: <20251219195456.912190-1-carges@cloudflare.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="3LHIpw+i"
+Received: from localhost (localhost [127.0.0.1])
+	by 011.lax.mailroute.net (Postfix) with ESMTP id 4dXzb00Dlzz1XM0pZ;
+	Fri, 19 Dec 2025 20:26:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1766175988; x=1768767989; bh=+XIWCwsoEOSiUB9cSDM01ohK
+	HVap8EzItAr4kGei6l0=; b=3LHIpw+ieGDbEleAlfBlytRlkHzz0FuNkyXKj3yU
+	S32iMbGcs0xQwrQ96fRo/sfT2B1xWjxWBl4Zmwsh3C+nrtdKA6Xed25MPdOCf9cm
+	OqPTEBPUhtk0GS4PDhB/osqX2tyQ5qlnUBv7p0VyAR6hSFuFmB0OawSv0O47US5/
+	JVEkmMhGnXcUDadT9IfMciHirW0f53kX6OuysmpCmU7SzmEVCZCFZ5kBWMSaeAD5
+	ifMcPAA3c5cPVUXL08MT0F8lNI15xLyN9g+ZI4CeiJTFZ9V40mxi28nG+Y2Qlfgn
+	U/PZ4Dn7NZgRHwASo68yhekJGP/2bVFKJP5Y3DR1pjapoQ==
+X-Virus-Scanned: by MailRoute
+Received: from 011.lax.mailroute.net ([127.0.0.1])
+ by localhost (011.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id qiEhQEwhfLs6; Fri, 19 Dec 2025 20:26:28 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 011.lax.mailroute.net (Postfix) with ESMTPSA id 4dXzZd0R6zz1XM6Jk;
+	Fri, 19 Dec 2025 20:26:16 +0000 (UTC)
+Message-ID: <17723ae6-9611-4731-905c-60dab9fb7102@acm.org>
+Date: Fri, 19 Dec 2025 12:26:16 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 08/36] locking/rwlock, spinlock: Support Clang's
+ context analysis
+To: Marco Elver <elver@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ Will Deacon <will@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+ Chris Li <sparse@chrisli.org>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>,
+ Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
+ Eric Dumazet <edumazet@google.com>, Frederic Weisbecker
+ <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>,
+ Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>,
+ Johannes Berg <johannes.berg@intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ Josh Triplett <josh@joshtriplett.org>, Justin Stitt
+ <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+ Kentaro Takeda <takedakn@nttdata.co.jp>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+ Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>,
+ kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org,
+ linux-wireless@vger.kernel.org, llvm@lists.linux.dev, rcu@vger.kernel.org
+References: <20251219154418.3592607-1-elver@google.com>
+ <20251219154418.3592607-9-elver@google.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20251219154418.3592607-9-elver@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-KASAN reported a stack-out-of-bounds access in ima_appraise_measurement
-from is_bprm_creds_for_exec:
+On 12/19/25 7:39 AM, Marco Elver wrote:
+> - extern void do_raw_read_lock(rwlock_t *lock) __acquires(lock);
+> + extern void do_raw_read_lock(rwlock_t *lock) __acquires_shared(lock);
 
-BUG: KASAN: stack-out-of-bounds in ima_appraise_measurement+0x12dc/0x16a0
- Read of size 1 at addr ffffc9000160f940 by task sudo/550
-The buggy address belongs to stack of task sudo/550
-and is located at offset 24 in frame:
-  ima_appraise_measurement+0x0/0x16a0
-This frame has 2 objects:
-  [48, 56) 'file'
-  [80, 148) 'hash'
+Given the "one change per patch" rule, shouldn't the annotation fixes
+for rwlock operations be moved into a separate patch?
 
-This is caused by using container_of on the *file pointer which by the time
-this function is called is actually a stack variable.
+> -typedef struct {
+> +context_lock_struct(rwlock) {
+>   	arch_rwlock_t raw_lock;
+>   #ifdef CONFIG_DEBUG_SPINLOCK
+>   	unsigned int magic, owner_cpu;
+> @@ -31,7 +31,8 @@ typedef struct {
+>   #ifdef CONFIG_DEBUG_LOCK_ALLOC
+>   	struct lockdep_map dep_map;
+>   #endif
+> -} rwlock_t;
+> +};
+> +typedef struct rwlock rwlock_t;
 
-In order to fix this pass in a bprm_is_check boolean which can be set
-depending on how process_measurement is called. If the caller has a
-linux_binprm pointer we can determine is_check and set it then. Otherwise
-set it to false.
+This change introduces a new globally visible "struct rwlock". Although
+I haven't found any existing "struct rwlock" definitions, maybe it's a
+good idea to use a more unique name instead.
 
-Fixes: 95b3cdafd7cb7 ("ima: instantiate the bprm_creds_for_exec() hook")
+> diff --git a/include/linux/spinlock_api_up.h b/include/linux/spinlock_api_up.h
+> index 819aeba1c87e..018f5aabc1be 100644
+> --- a/include/linux/spinlock_api_up.h
+> +++ b/include/linux/spinlock_api_up.h
+> @@ -24,68 +24,77 @@
+>    * flags straight, to suppress compiler warnings of unused lock
+>    * variables, and to add the proper checker annotations:
+>    */
+> -#define ___LOCK(lock) \
+> -  do { __acquire(lock); (void)(lock); } while (0)
+> +#define ___LOCK_void(lock) \
+> +  do { (void)(lock); } while (0)
 
-Signed-off-by: Chris J Arges <carges@cloudflare.com>
----
- security/integrity/ima/ima.h          |  2 +-
- security/integrity/ima/ima_appraise.c | 15 ++-------------
- security/integrity/ima/ima_main.c     | 18 +++++++++---------
- 3 files changed, 12 insertions(+), 23 deletions(-)
+Instead of introducing a new macro ___LOCK_void(), please expand this
+macro where it is used ((void)(lock)). I think this will make the code
+in this header file easier to read.
+    > -#define __LOCK(lock) \
+> -  do { preempt_disable(); ___LOCK(lock); } while (0)
+> +#define ___LOCK_(lock) \
+> +  do { __acquire(lock); ___LOCK_void(lock); } while (0)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index e3d71d8d56e3..5c9f244ed1d6 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -441,7 +441,7 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
- int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 			     struct file *file, const unsigned char *filename,
- 			     struct evm_ima_xattr_data *xattr_value,
--			     int xattr_len, const struct modsig *modsig);
-+			     int xattr_len, const struct modsig *modsig, bool bprm_is_check);
- int ima_must_appraise(struct mnt_idmap *idmap, struct inode *inode,
- 		      int mask, enum ima_hooks func);
- void ima_update_xattr(struct ima_iint_cache *iint, struct file *file);
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 5149ff4fd50d..ea2079417318 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -470,17 +470,6 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
- 	return rc;
- }
- 
--static bool is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
--{
--	struct linux_binprm *bprm;
--
--	if (func == BPRM_CHECK) {
--		bprm = container_of(&file, struct linux_binprm, file);
--		return bprm->is_check;
--	}
--	return false;
--}
--
- /*
-  * ima_appraise_measurement - appraise file measurement
-  *
-@@ -492,7 +481,7 @@ static bool is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
- int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 			     struct file *file, const unsigned char *filename,
- 			     struct evm_ima_xattr_data *xattr_value,
--			     int xattr_len, const struct modsig *modsig)
-+			     int xattr_len, const struct modsig *modsig, bool bprm_is_check)
- {
- 	static const char op[] = "appraise_data";
- 	int audit_msgno = AUDIT_INTEGRITY_DATA;
-@@ -514,7 +503,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 	 * of the script interpreter(userspace). Differentiate kernel and
- 	 * userspace enforced integrity audit messages.
- 	 */
--	if (is_bprm_creds_for_exec(func, file))
-+	if (bprm_is_check)
- 		audit_msgno = AUDIT_INTEGRITY_USERSPACE;
- 
- 	/* If reading the xattr failed and there's no modsig, error out. */
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 5770cf691912..955dbaa42f4a 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -236,7 +236,7 @@ static void ima_file_free(struct file *file)
- static int process_measurement(struct file *file, const struct cred *cred,
- 			       struct lsm_prop *prop, char *buf, loff_t size,
- 			       int mask, enum ima_hooks func,
--			       enum kernel_read_file_id read_id)
-+			       enum kernel_read_file_id read_id, bool bprm_is_check)
- {
- 	struct inode *real_inode, *inode = file_inode(file);
- 	struct ima_iint_cache *iint = NULL;
-@@ -426,7 +426,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 			inode_lock(inode);
- 			rc = ima_appraise_measurement(func, iint, file,
- 						      pathname, xattr_value,
--						      xattr_len, modsig);
-+						      xattr_len, modsig, bprm_is_check);
- 			inode_unlock(inode);
- 		}
- 		if (!rc)
-@@ -493,14 +493,14 @@ static int ima_file_mmap(struct file *file, unsigned long reqprot,
- 
- 	if (reqprot & PROT_EXEC) {
- 		ret = process_measurement(file, current_cred(), &prop, NULL,
--					  0, MAY_EXEC, MMAP_CHECK_REQPROT, 0);
-+					  0, MAY_EXEC, MMAP_CHECK_REQPROT, 0, false);
- 		if (ret)
- 			return ret;
- 	}
- 
- 	if (prot & PROT_EXEC)
- 		return process_measurement(file, current_cred(), &prop, NULL,
--					   0, MAY_EXEC, MMAP_CHECK, 0);
-+					   0, MAY_EXEC, MMAP_CHECK, 0, false);
- 
- 	return 0;
- }
-@@ -584,7 +584,7 @@ static int ima_bprm_check(struct linux_binprm *bprm)
- 
- 	security_current_getlsmprop_subj(&prop);
- 	return process_measurement(bprm->file, current_cred(),
--				   &prop, NULL, 0, MAY_EXEC, BPRM_CHECK, 0);
-+				   &prop, NULL, 0, MAY_EXEC, BPRM_CHECK, 0, bprm->is_check);
- }
- 
- /**
-@@ -614,7 +614,7 @@ static int ima_creds_check(struct linux_binprm *bprm, const struct file *file)
- 
- 	security_current_getlsmprop_subj(&prop);
- 	return process_measurement((struct file *)file, bprm->cred, &prop, NULL,
--				   0, MAY_EXEC, CREDS_CHECK, 0);
-+				   0, MAY_EXEC, CREDS_CHECK, 0, bprm->is_check);
- }
- 
- /**
-@@ -662,7 +662,7 @@ static int ima_file_check(struct file *file, int mask)
- 	security_current_getlsmprop_subj(&prop);
- 	return process_measurement(file, current_cred(), &prop, NULL, 0,
- 				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
--					   MAY_APPEND), FILE_CHECK, 0);
-+					   MAY_APPEND), FILE_CHECK, 0, false);
- }
- 
- static int __ima_inode_hash(struct inode *inode, struct file *file, char *buf,
-@@ -881,7 +881,7 @@ static int ima_read_file(struct file *file, enum kernel_read_file_id read_id,
- 	func = read_idmap[read_id] ?: FILE_CHECK;
- 	security_current_getlsmprop_subj(&prop);
- 	return process_measurement(file, current_cred(), &prop, NULL, 0,
--				   MAY_READ, func, 0);
-+				   MAY_READ, func, 0, false);
- }
- 
- const int read_idmap[READING_MAX_ID] = {
-@@ -925,7 +925,7 @@ static int ima_post_read_file(struct file *file, char *buf, loff_t size,
- 	func = read_idmap[read_id] ?: FILE_CHECK;
- 	security_current_getlsmprop_subj(&prop);
- 	return process_measurement(file, current_cred(), &prop, buf, size,
--				   MAY_READ, func, read_id);
-+				   MAY_READ, func, read_id, false);
- }
- 
- /**
--- 
-2.43.0
+Is the macro ___LOCK_() used anywhere? If not, can it be left out?
 
+> -#define __LOCK_BH(lock) \
+> -  do { __local_bh_disable_ip(_THIS_IP_, SOFTIRQ_LOCK_OFFSET); ___LOCK(lock); } while (0)
+> +#define ___LOCK_shared(lock) \
+> +  do { __acquire_shared(lock); ___LOCK_void(lock); } while (0)
+
+The introduction of the new macros in this header file make the changes
+hard to follow. Please consider splitting the changes for this header
+file as follows:
+* A first patch that splits ___LOCK() into ___LOCK_exclusive() and
+   ___LOCK_shared().
+* A second patch with the thread-safety annotation changes
+   (__acquire() -> __acquire_shared()).
+
+>   /* Non PREEMPT_RT kernels map spinlock to raw_spinlock */
+> -typedef struct spinlock {
+> +context_lock_struct(spinlock) {
+>   	union {
+>   		struct raw_spinlock rlock;
+>   
+> @@ -26,7 +26,8 @@ typedef struct spinlock {
+>   		};
+>   #endif
+>   	};
+> -} spinlock_t;
+> +};
+> +typedef struct spinlock spinlock_t;
+
+Also here, a new global struct name is introduced (spinlock). Maybe the
+name of this new struct should be made more unique?
+
+Thanks,
+
+Bart.
