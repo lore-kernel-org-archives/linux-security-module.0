@@ -1,222 +1,164 @@
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B21450FE
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Dec 2025 21:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DE92E6CD5
+	for <linux-security-module@vger.kernel.org>; Fri, 19 Dec 2025 21:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766178925; cv=none; b=Z4mqyHFZpFkicTZyw6tqXR5HlCaNJ5Yx3xGtLNiSshYL3DLW1kaknHXBTHth7e53tbBqnlC7dbUnL0ojLYvOnKtznSkvnONRPeDAhwXFtf8QJk353fUsedE+gNL0ZquLN3Uu4bjXfg+T+QTeDvHYaDPBs9NMxug7nkHs6MMn4bM=
+	t=1766179036; cv=none; b=adJmORRL7B/BNERqxT9KLIPqhsOEvri112c9PTIemTPAwNPXUP5PPCB/RU90c2HfY68DO5b2bqDuypnprqSHF9yM3BdaP8EhLR+8f9rOhnWjRPGgt4C8AH6d8MewrwtH9S98bO2xR5mNlMP6gWivQa9SOus6S65Qfi9y+AC/5BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766178925; c=relaxed/simple;
-	bh=uOSv+Yrzo+QnbII04YRXv+9zjF7K3kPmqIMDkpiS0n4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OMyxRL03WeJLEjid3PY8+0yI8ATui6BuhG9z5XwguH3Avu2R4g/ujYBFc9QEPHKDLZE2PRTPozUKxcrMB+m4X4NMyAPGiQE6JVf7F6sIKtGubRePLMGGyIjjLf6SY9KUfFL//4lCPUS9BWikm7Bh+ROvdq7m1T3yWe2a88pDYdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ibm959hq; arc=none smtp.client-ip=185.125.25.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1766179036; c=relaxed/simple;
+	bh=LLpGwIKkDXp5hVROlTCKeGGUdVbJKYXE3k+8i7znnho=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=alaXIFC/D9/oQA9W1STMtCAQebdOMrC/0Oeau26n6uDtnwxMARuh24TzCl9lR7+TfPrym3zdBW+oGcwRELa4+ExsTBWk7Gf6F3p1ZzdeJbRVoaiTZojchgh9EgIJUrCopHY1aNjlXSv+ZXxpbLV2Z+Rq5XOjUYciZ4+MISG4gIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V4YzBbXd; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ibm959hq"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dY0Vk6QNfzb9g;
-	Fri, 19 Dec 2025 22:07:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1766178478;
-	bh=zSk0Yarg5Eb1vJE3kgHegfZVsorfrWp2s/WpsGUqnvE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ibm959hqiFO+3O7WfdvxEQVDNu9wwJAw9Pq3+pKem2Y1omdCT+pVatAos38P4jxKs
-	 0jZ5NrWb3Lt2Mg0tyVfEaLhlWxzSC0QdHFmuboGvzy0kEVoqrTb81tv1WBzgJ1a7Y7
-	 CmHzSGHI3q0XcPCgJcHsO6eJSrXgec/3lW0kdsAY=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dY0Vj5gZbzSSc;
-	Fri, 19 Dec 2025 22:07:57 +0100 (CET)
-Date: Fri, 19 Dec 2025 22:07:51 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Matthieu Buffet <matthieu@buffet.re>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Subject: Re: [RFC PATCH v1 3/3] landlock: Fix TCP handling of short AF_UNSPEC
- addresses
-Message-ID: <20251219.toh6Xe3ea9iN@digikod.net>
-References: <20251027190726.626244-1-matthieu@buffet.re>
- <20251027190726.626244-4-matthieu@buffet.re>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V4YzBbXd"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2a081c163b0so21189165ad.0
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Dec 2025 13:17:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1766179033; x=1766783833; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0rK9w1Snx+IiOS1yyTvDXywJSRfl2rZ6jIui6kPmEaA=;
+        b=V4YzBbXdfQIieJZp0VnJGt7qtfMwAH5MdmJkO310lDFFybaA8U60ZNjsxN6/IZSzS7
+         0e2qn2Z+fBWU5xP3BM7w5n3pXYSwgSMZDqeKAOy1/Ieq3osXSfFZicc/cjmRAJm5hgcY
+         WwxXyWb10AlioOt0yEp97HC5f+8qPDZZMXNQZdAUfOatV07/4XN2TWT3GxvERX+75qNc
+         AnV/axgAmieubX9aFeSXXMKKyHDX2aCGdOAGa9IRQH9vgxqylvXBRNf8TPwD1JcBhix3
+         XHIDvHxoR4rnPovp7zplMG8xmY8peZwSt4QqRH3RLGBQMGvFLUvz3PNMPSAkSRg+IIpE
+         CgiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766179033; x=1766783833;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0rK9w1Snx+IiOS1yyTvDXywJSRfl2rZ6jIui6kPmEaA=;
+        b=mqx+ZMcKkKhUiqtQa6d7wJ9+w8sxnqUbDYowm2fG6FQ9RnkxLfrbLn4SD8YuKuTnc/
+         Yc5IHI9d4C6JeiZCg2ieIps/Jh0v/Ac2Dhh+sQhsz8zIlMTm/p0MC8qhB8qL3847epvP
+         LBYLolWVuatb4u4s7vhvvZUoVlFBB3RMaSpvoCAYqgj+di5zLRLapjBulhfAKf+T7qGd
+         +XPFOo+y0iqA7EeLWZEu5h8pQxhQkroDI9lpNX6Efg8hy84iRm01nwVgCYTtYOBtfyhE
+         KTYbBdJOXnfEbeBq1ffpd/WSqWAlV/88PeQWwwUgMHzhEnm7TOoOx4O1xo0Myyj/BaWq
+         SR7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVcLLQHUBC0Gsniia6aUrDd6ti1nRk0Zi/yK0T34yKPEOdhOX5BgziGZeMobazr8172DAg6PrsZFqptT4JaAdiRp2J8GBM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWSAcXVXC0IOoVj7fSQOI8+lLR3zdsgXJzDXTrFPAZT6xpkDuv
+	cluwrntYMRrtSkfUTXjaRbjLKSNEizszRUlFWcRLKauSHGBYaNR/VtQGseRT1xmEWY4Gf75XKN0
+	uxdOrDYPpLnXDQXBUyVVD2BtlcB6FkbEJ7P72aNzV
+X-Gm-Gg: AY/fxX40WBFk4V9n+bNCRmo+ttNnMsO0ultQwoTCBpz13pc9ewA9xWEC+bWtacpk3WN
+	jOqApWnd68i8RKAs5ZnLzG8ED6SQ5pkjB7wCak0zEZqIFzwarYn+yPqwryDKvk5eorsiSyI2idM
+	BEHHzU47nBOyrOc6Uc/tta9Txr/z7awqdxzcj/cgd4DfRueEzStT+fqw5/qA2Dwqr3k+qhXjIgi
+	9uvdzglk2x1D6ZndIYik8c0fA8HaNDcToaibHYwQQpnvYGlZxaFdcmvGs5s5Q07udct1N2wlqmz
+	QdGwDX4yrik6k9IoHhRhW6JTrEFdpcoOmr6Q1A==
+X-Google-Smtp-Source: AGHT+IHpiDrn99m7x0uN4estdHNLC96nljKxP9R6JbsteT8HXtfNtk+xeDdUnA0onYdjgh5ezU9+Po7MHQlADcjwb9o=
+X-Received: by 2002:a05:7022:2586:b0:11d:f037:891c with SMTP id
+ a92af1059eb24-12172311ffamr3088830c88.44.1766179032817; Fri, 19 Dec 2025
+ 13:17:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251027190726.626244-4-matthieu@buffet.re>
-X-Infomaniak-Routing: alpha
+References: <20251219154418.3592607-1-elver@google.com> <20251219154418.3592607-8-elver@google.com>
+ <cdde6c60-7f6f-4715-a249-5aab39438b57@acm.org>
+In-Reply-To: <cdde6c60-7f6f-4715-a249-5aab39438b57@acm.org>
+From: Marco Elver <elver@google.com>
+Date: Fri, 19 Dec 2025 22:16:36 +0100
+X-Gm-Features: AQt7F2oJirW61gdd7JR_kO6v8Pm8LYFzp_d0WJmR_my_E34K94emt-YaA94Rukg
+Message-ID: <CANpmjNPJXVtZgT96PP--eNAkHNOvw1MrYzWt5f2aA0LUeK8iGA@mail.gmail.com>
+Subject: Re: [PATCH v5 07/36] lockdep: Annotate lockdep assertions for context analysis
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+	Chris Li <sparse@chrisli.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>, 
+	Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Johannes Berg <johannes.berg@intel.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Triplett <josh@joshtriplett.org>, Justin Stitt <justinstitt@google.com>, 
+	Kees Cook <kees@kernel.org>, Kentaro Takeda <takedakn@nttdata.co.jp>, 
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
+	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
+	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, llvm@lists.linux.dev, rcu@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 27, 2025 at 08:07:26PM +0100, Matthieu Buffet wrote:
-> current_check_access_socket() treats AF_UNSPEC addresses as
-> AF_INET ones, and only later adds special case handling to
-> allow connect(AF_UNSPEC), and on IPv4 sockets
-> bind(AF_UNSPEC+INADDR_ANY).
-> This would be fine except AF_UNSPEC addresses can be as
-> short as a bare AF_UNSPEC sa_family_t field, and nothing
-> more. The AF_INET code path incorrectly enforces a length of
-> sizeof(struct sockaddr_in) instead.
+On Fri, 19 Dec 2025 at 21:54, 'Bart Van Assche' via kasan-dev
+<kasan-dev@googlegroups.com> wrote:
+>
+> On 12/19/25 7:39 AM, Marco Elver wrote:
+> > diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+> > index dd634103b014..621566345406 100644
+> > --- a/include/linux/lockdep.h
+> > +++ b/include/linux/lockdep.h
+> > @@ -282,16 +282,16 @@ extern void lock_unpin_lock(struct lockdep_map *lock, struct pin_cookie);
+> >       do { WARN_ON_ONCE(debug_locks && !(cond)); } while (0)
+> >
+> >   #define lockdep_assert_held(l)              \
+> > -     lockdep_assert(lockdep_is_held(l) != LOCK_STATE_NOT_HELD)
+> > +     do { lockdep_assert(lockdep_is_held(l) != LOCK_STATE_NOT_HELD); __assume_ctx_lock(l); } while (0)
+> >
+> >   #define lockdep_assert_not_held(l)  \
+> >       lockdep_assert(lockdep_is_held(l) != LOCK_STATE_HELD)
+> >
+> >   #define lockdep_assert_held_write(l)        \
+> > -     lockdep_assert(lockdep_is_held_type(l, 0))
+> > +     do { lockdep_assert(lockdep_is_held_type(l, 0)); __assume_ctx_lock(l); } while (0)
+> >
+> >   #define lockdep_assert_held_read(l) \
+> > -     lockdep_assert(lockdep_is_held_type(l, 1))
+> > +     do { lockdep_assert(lockdep_is_held_type(l, 1)); __assume_shared_ctx_lock(l); } while (0)
+> >
+> >   #define lockdep_assert_held_once(l)         \
+> >       lockdep_assert_once(lockdep_is_held(l) != LOCK_STATE_NOT_HELD)
+> > @@ -389,10 +389,10 @@ extern int lockdep_is_held(const void *);
+> >   #define lockdep_assert(c)                   do { } while (0)
+> >   #define lockdep_assert_once(c)                      do { } while (0)
+> >
+> > -#define lockdep_assert_held(l)                       do { (void)(l); } while (0)
+> > +#define lockdep_assert_held(l)                       __assume_ctx_lock(l)
+> >   #define lockdep_assert_not_held(l)          do { (void)(l); } while (0)
+> > -#define lockdep_assert_held_write(l)         do { (void)(l); } while (0)
+> > -#define lockdep_assert_held_read(l)          do { (void)(l); } while (0)
+> > +#define lockdep_assert_held_write(l)         __assume_ctx_lock(l)
+> > +#define lockdep_assert_held_read(l)          __assume_shared_ctx_lock(l)
+> >   #define lockdep_assert_held_once(l)         do { (void)(l); } while (0)
+> >   #define lockdep_assert_none_held_once()     do { } while (0)
+>
+> I think these macros should use __must_hold() instead of __assume...().
+> lockdep_assert_held() emits a runtime warning if 'l' is not held. Hence,
+> I think that code where lockdep_assert_held() is used should not compile
+> if it cannot be verified at compile time that 'l' is held.
 
-Good catch!
+That's not the purpose of this - if a function or variable should have
+a lock held, we mark them explicitly with __must_hold() or
+__guarded_by(), and we don't really need to use lockdep_assert,
+because the compiler helped us out. In an ideal world, every function
+or variable that requires a lock held is annotated, and we don't need
+to ever worry about explicitly checking if a lock is held (but we'll
+be far from that for a while).
 
-> 
-> Move AF_UNSPEC edge case handling up inside the switch-case,
-> before the address is (potentially incorrectly) treated as
-> AF_INET.
+The purpose is described in the commit message:
 
-And that's cleaner this way too.
+> Presence of these annotations causes the analysis to assume the context
+> lock is held after calls to the annotated function, and avoid false
+> positives with complex control-flow; [...]
 
-> 
-> Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and connect")
-> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+It's basically an escape hatch to defer to dynamic analysis where the
+limits of the static analysis are reached. This is also the original
+purpose of the "assert"/"assume" attributes:
+https://clang.llvm.org/docs/ThreadSafetyAnalysis.html#assert-capability-and-assert-shared-capability
 
-I pushed this series to my -next branch, but moving the tests after the
-kernel fix. This makes it possible to cleanly bisect commits.  Thanks!
-
-> ---
->  security/landlock/net.c | 118 +++++++++++++++++++++++-----------------
->  1 file changed, 67 insertions(+), 51 deletions(-)
-> 
-> diff --git a/security/landlock/net.c b/security/landlock/net.c
-> index 1f3915a90a80..e6367e30e5b0 100644
-> --- a/security/landlock/net.c
-> +++ b/security/landlock/net.c
-> @@ -71,6 +71,61 @@ static int current_check_access_socket(struct socket *const sock,
->  
->  	switch (address->sa_family) {
->  	case AF_UNSPEC:
-> +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP) {
-> +			/*
-> +			 * Connecting to an address with AF_UNSPEC dissolves
-> +			 * the TCP association, which have the same effect as
-> +			 * closing the connection while retaining the socket
-> +			 * object (i.e., the file descriptor).  As for dropping
-> +			 * privileges, closing connections is always allowed.
-> +			 *
-> +			 * For a TCP access control system, this request is
-> +			 * legitimate. Let the network stack handle potential
-> +			 * inconsistencies and return -EINVAL if needed.
-> +			 */
-> +			return 0;
-> +		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
-> +			/*
-> +			 * Binding to an AF_UNSPEC address is treated
-> +			 * differently by IPv4 and IPv6 sockets. The socket's
-> +			 * family may change under our feet due to
-> +			 * setsockopt(IPV6_ADDRFORM), but that's ok: we either
-> +			 * reject entirely or require
-> +			 * %LANDLOCK_ACCESS_NET_BIND_TCP for the given port, so
-> +			 * it cannot be used to bypass the policy.
-> +			 *
-> +			 * IPv4 sockets map AF_UNSPEC to AF_INET for
-> +			 * retrocompatibility for bind accesses, only if the
-> +			 * address is INADDR_ANY (cf. __inet_bind). IPv6
-> +			 * sockets always reject it.
-> +			 *
-> +			 * Checking the address is required to not wrongfully
-> +			 * return -EACCES instead of -EAFNOSUPPORT or -EINVAL.
-> +			 * We could return 0 and let the network stack handle
-> +			 * these checks, but it is safer to return a proper
-> +			 * error and test consistency thanks to kselftest.
-> +			 */
-> +			if (sock->sk->__sk_common.skc_family == AF_INET) {
-> +				const struct sockaddr_in *const sockaddr =
-> +					(struct sockaddr_in *)address;
-> +
-> +				if (addrlen < sizeof(struct sockaddr_in))
-> +					return -EINVAL;
-> +
-> +				if (sockaddr->sin_addr.s_addr !=
-> +				    htonl(INADDR_ANY))
-> +					return -EAFNOSUPPORT;
-> +			} else {
-> +				if (addrlen < SIN6_LEN_RFC2133)
-> +					return -EINVAL;
-> +				else
-> +					return -EAFNOSUPPORT;
-> +			}
-> +		} else {
-> +			WARN_ON_ONCE(1);
-> +		}
-> +		/* Only for bind(AF_UNSPEC+INADDR_ANY) on IPv4 socket. */
-> +		fallthrough;
->  	case AF_INET: {
->  		const struct sockaddr_in *addr4;
->  
-> @@ -119,57 +174,18 @@ static int current_check_access_socket(struct socket *const sock,
->  		return 0;
->  	}
->  
-> -	/* Specific AF_UNSPEC handling. */
-> -	if (address->sa_family == AF_UNSPEC) {
-> -		/*
-> -		 * Connecting to an address with AF_UNSPEC dissolves the TCP
-> -		 * association, which have the same effect as closing the
-> -		 * connection while retaining the socket object (i.e., the file
-> -		 * descriptor).  As for dropping privileges, closing
-> -		 * connections is always allowed.
-> -		 *
-> -		 * For a TCP access control system, this request is legitimate.
-> -		 * Let the network stack handle potential inconsistencies and
-> -		 * return -EINVAL if needed.
-> -		 */
-> -		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP)
-> -			return 0;
-> -
-> -		/*
-> -		 * For compatibility reason, accept AF_UNSPEC for bind
-> -		 * accesses (mapped to AF_INET) only if the address is
-> -		 * INADDR_ANY (cf. __inet_bind).  Checking the address is
-> -		 * required to not wrongfully return -EACCES instead of
-> -		 * -EAFNOSUPPORT.
-> -		 *
-> -		 * We could return 0 and let the network stack handle these
-> -		 * checks, but it is safer to return a proper error and test
-> -		 * consistency thanks to kselftest.
-> -		 */
-> -		if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
-> -			/* addrlen has already been checked for AF_UNSPEC. */
-> -			const struct sockaddr_in *const sockaddr =
-> -				(struct sockaddr_in *)address;
-> -
-> -			if (sock->sk->__sk_common.skc_family != AF_INET)
-> -				return -EINVAL;
-> -
-> -			if (sockaddr->sin_addr.s_addr != htonl(INADDR_ANY))
-> -				return -EAFNOSUPPORT;
-> -		}
-> -	} else {
-> -		/*
-> -		 * Checks sa_family consistency to not wrongfully return
-> -		 * -EACCES instead of -EINVAL.  Valid sa_family changes are
-> -		 * only (from AF_INET or AF_INET6) to AF_UNSPEC.
-> -		 *
-> -		 * We could return 0 and let the network stack handle this
-> -		 * check, but it is safer to return a proper error and test
-> -		 * consistency thanks to kselftest.
-> -		 */
-> -		if (address->sa_family != sock->sk->__sk_common.skc_family)
-> -			return -EINVAL;
-> -	}
-> +	/*
-> +	 * Checks sa_family consistency to not wrongfully return
-> +	 * -EACCES instead of -EINVAL.  Valid sa_family changes are
-> +	 * only (from AF_INET or AF_INET6) to AF_UNSPEC.
-> +	 *
-> +	 * We could return 0 and let the network stack handle this
-> +	 * check, but it is safer to return a proper error and test
-> +	 * consistency thanks to kselftest.
-> +	 */
-> +	if (address->sa_family != sock->sk->__sk_common.skc_family &&
-> +	    address->sa_family != AF_UNSPEC)
-> +		return -EINVAL;
->  
->  	id.key.data = (__force uintptr_t)port;
->  	BUILD_BUG_ON(sizeof(port) > sizeof(id.key.data));
-> -- 
-> 2.47.2
-> 
-> 
+Without this escape hatch, and deferral to dynamic analysis, we'd be
+stuck in some cases.
