@@ -1,157 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AE71D90DF;
-	Sat, 20 Dec 2025 03:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3871C276050
+	for <linux-security-module@vger.kernel.org>; Sat, 20 Dec 2025 12:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766202644; cv=none; b=p5l1zYnCZ1QY6sFJd6eZlDrfQhE80ilf93j9rsNj2ZwcwBcz55VUCJNuLPzZXyKKgvsYQpdmlDLpeCHBSf3n2KWGUU5MDC5K3bzMKlzPK1UFXA/TQsHi8hyLhqMp93AyyU0pHywksCVnmPVN3omu7orEjk0+r3yy36sMGTsIr1w=
+	t=1766235129; cv=none; b=RfFxUfFzSEiyxqm8W1iBOD/eZCxj8v+gS9nrncChXd9XOp7mQt5UWJmKGof8h9eAa7VuzEBNtBKmdShIQqi6tLaTctGo+Ek1He9KPxPSGQsDO/LqXW8pKlWpah51EV2YYU8mDV0fgyxNDvct69VnVLHzIW8cfwTHtAOiG2rgYPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766202644; c=relaxed/simple;
-	bh=MrMds3utW8eAWwtDygjBW2IqUKEl4oFRSbnzbCmLv7o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tT+MTwmkER0Ek2Bzi0uaPE96voC3zNtkcaDEuo4W0aGsXnCFD/w4wjfMAKGUtvO3U0Uoa7J+a75M3U3JXTl8J67Vtz9g2gPtu8kx+UWRJoG1iYU3C0GyUN1CDKhu+6F6s6Ym+S/RlX2h9ZgPO0cfHJ4pu8y1w5nG80xekxSzqTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6T1wVxO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1766235129; c=relaxed/simple;
+	bh=wkv3Ho3KGiVJkt5Z4uain5drk7TOMSZYfvI9aQbzCrQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=scjnGHrh9D3m6QUPcPgNRwwhu9HTYMA+tHjvaecKUq0KBBncsNW2ubCs1ooR1mLMfCeSMxQUF9ZnwhYkaa5oQyEre530cAPMNrLPNhg1jnmAR/5ZpugBVZO6O0iodFeS5npgaVcJFLfPPoKcckuKHcJ8ijj7EyiGj4ugYerav6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4fKfKSKv; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6T1wVxO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8542DC4CEF5;
-	Sat, 20 Dec 2025 03:50:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766202644;
-	bh=MrMds3utW8eAWwtDygjBW2IqUKEl4oFRSbnzbCmLv7o=;
-	h=From:Date:Subject:To:Cc:From;
-	b=f6T1wVxO5/BnJq19l7xlgAyL3t9t8ZSt2+XcG4Xt0o9yqBk+n+LBR873K82UEMCXl
-	 lkfR8Zpz8/N1i7IIYwt+Tc+8IzUYETOiO0bV66IP5ZMX8J1AhEVldltoAUOJNr+WRk
-	 zHO5xpGEf3QFGsu4ITn05+cn7tnbD/IOVa4/MpNr4XzfM5dSPa22Db5vTSL6xxx/o/
-	 B8MJhXIqZu3ahd6sLKfGsiGn4/GLfq724WN96Ec5lxwcoi5yUgONt0F960cnfvapTd
-	 N5TmTWnUVbbA5RmTlWz1l2cPkFJl1liEFAR3sl+TETJsIj4in68nOozTvxBhEbL+By
-	 2OqfopSQTgzqw==
-From: Daniel Gomez <da.gomez@kernel.org>
-Date: Sat, 20 Dec 2025 04:50:31 +0100
-Subject: [PATCH] KEYS: replace -EEXIST with -EBUSY
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4fKfKSKv"
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-bd1b0e2c1eeso1944726a12.0
+        for <linux-security-module@vger.kernel.org>; Sat, 20 Dec 2025 04:52:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1766235127; x=1766839927; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+dbDPICBAvFxThOmxuLLN+XESg+4otRZJCktLSd/IHI=;
+        b=4fKfKSKvM1SC6Tzv/bJ7SpdOWrpUGOe+n+A0s4HucJnyJXoUvg0bBqgs3cJDHd9d0P
+         fxyPZ1jO4LYfkUJb/NShyPV2B7ey2yft+RzlVDNvS34KL0lvRtgDj8MYBTSJ4uB11TOb
+         kJgeX/fWH4r3ZoBCu5rGx9tgC0Almi31+Rg7noxwgSeyltZaSWzD5G26BrXB4I3DxRCX
+         yQDd1uSFawTeGBdhklItdKxkhJ5GeWzKj2oZPIE5K/jf9Jg5LMnqMxEaFGTIiDw+BYK0
+         QnIBI5evkUDynqRI//PJWAeBUCPNPRR5RX5+KOrMK+tZHSGNK+Co9jfADrmS1yHAKKBU
+         /Q9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766235127; x=1766839927;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+dbDPICBAvFxThOmxuLLN+XESg+4otRZJCktLSd/IHI=;
+        b=KB064+RP93vsZ9REaep62okWsOuzLoyQnMhKbGDjm9gfCLJAIYg0RV0NW0+aq7FjdE
+         Amx7nXh8rNF6pCOpP+RyhlExXBZTKa7rLx+ZmKLXuQKlWHVc/7+Aj2awnsBhnUpqSDqT
+         Qi3ZPVYnkswrTvMPcw0eD/1xVkbC5Luc8tX4uFj/FQUA96q0Qhl/nxw9r0LVlU9dtFUn
+         F5mnssQM5kVE8fXh4UV5EA/tcD14b0cjP2YBkQM6FDQAL0f1JScNVBG5vG1AcHdM2fmZ
+         y5sWuaCCP1u+mrIu/VToGMuUb7thWLKSBoK+VC38w8Y/HodVzIQS1lQNU62nouUSo1f3
+         9SCA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2+X449lqnKUHot8As3XH66KMjGM4CcaYxWNAZ0Gcc2KlsVHOv1I96uYzxtIaGQY30ZnujXdvkJQL2NSgXPDZ494/RGBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzONUgs/ra1iDPfm9NZwhG41lgEPEb2pwBqyJ5+6wmjOSuFQ/Q
+	aGjmbNcCBKr3kfVw+xOg402KUSZbFI9whc29xqVBlXqtr+3JbVi2F0DAAiYQYVe1SKTzQcHBOAo
+	OYKkd00ElTfequUbGxSwAx/haaoNLJV4yQmtMaZ7w
+X-Gm-Gg: AY/fxX463hIhygcgZs4aUwduyT9k6ZGIGyBUlYAaFZ73YphNJHQLlROTOsUWfhgizHT
+	x2u2HCr+C2J3qE21+HgzV1wZAsqYwm4ElRLK+Dxg7dr7/wT3VKuBXEKpsejQsiOTU6OBvla/DmN
+	jhR2Dd+e9ed899kNTZmi45dY7EdnQ3vWjb2ZCo5bYIhme+XhJAPQOQAl1+pHSoMvdd2WMYc28u7
+	sbzg/a4iw81lmasII1cdm8OwiCbvWF8eXepaDU3fYXidFcRHWRI4v8HE+PHLx2pO1XA+Pu5gZ4w
+	2MoCisg6DTMOdQlqyvcRRHuhmFk=
+X-Google-Smtp-Source: AGHT+IFK+Y5PBS3dXibTZfBS01UEAFChnwqe6iaCyTB/4jIaIz5ZwPF8qLO8d7Qf00M2Z85ZCatTVKEE522UP0jz/Ik=
+X-Received: by 2002:a05:7022:6291:b0:119:e569:f61e with SMTP id
+ a92af1059eb24-121722e12e7mr5961881c88.23.1766235126461; Sat, 20 Dec 2025
+ 04:52:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251220-dev-module-init-eexists-keyring-v1-1-a2f23248c300@samsung.com>
-X-B4-Tracking: v=1; b=H4sIAAYdRmkC/x2NwQqDMBAFf0X27EISlIq/UnpQ89RFG0tWRRH/3
- dDjMDBzkSIKlOrsoohdVJaQwOYZdWMTBrD4xOSMK62zFXvs/F38NicTZGXgEF2VJ5xRwsBla0z
- lX+jbwlCq/CJ6Of6H9+e+HxemqPNxAAAA
-X-Change-ID: 20251218-dev-module-init-eexists-keyring-5b008d7efb40
-To: David Howells <dhowells@redhat.com>, Lukas Wunner <lukas@wunner.de>, 
- Ignat Korchagin <ignat@cloudflare.com>, 
- Herbert Xu <herbert@gondor.apana.org.au>, 
- "David S. Miller" <davem@davemloft.net>, 
- Jarkko Sakkinen <jarkko@kernel.org>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
- Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
- Aaron Tomlin <atomlin@atomlin.com>, Lucas De Marchi <demarchi@kernel.org>, 
- keyrings@vger.kernel.org, linux-crypto@vger.kernel.org, 
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-security-module@vger.kernel.org, Daniel Gomez <da.gomez@samsung.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3333; i=da.gomez@samsung.com;
- h=from:subject:message-id; bh=q4cI0aBVoXHVJKhjzx9eP5SA50zhMHGoxrB7LDqV3kk=;
- b=owEBbQKS/ZANAwAIAUCeo8QfGVH7AcsmYgBpRh0PGnY21kDDwXOVauY8RTS22ihvwD0eaIfmf
- LMLk8+ZhcKJAjMEAAEIAB0WIQTvdRrhHw9z4bnGPFNAnqPEHxlR+wUCaUYdDwAKCRBAnqPEHxlR
- +wa0D/4xxAMBT8H1iUmQHNZewuG0zfcL0uHrZ4rgUTrfKRV7AuL9BlOhEGfLmU88ORKPQBzDn2o
- rzMJF6+V0/1lJ3Q3+qCabABUADW50OaouR8mNzXsg+tpxOXg8IC1rJe+u4awcuQOsaoO43b1slK
- mZm3lsR7gb6mZWc8DjEu9yrzqZB82df1N6AdVZ+3mnj/ar9R9lymNNILHpp/W5RFy2DDkcD26Rv
- coGeKkdvHsFDyZpf46Y2K+YXHbu07FL6gX/7Ho9GYVCF4BdFy8GJjiihUZ7zQXcqAt3H1Cl60Y/
- lGnEtQZnFeixpWRlYO4vUMnwV43AErB49Nm1AB6EhM3ZVsMhcBKz680y/VqxHE8UnJxQFP5qI4M
- yYgzqy/v8W+sN1FD7kW1AEDSxmKVnJR3ZyP4JrH8kOo5Vlvg2edb/3yBdOyD8rY8tGxNHq9rrT1
- wyRNdFBtcjH/CoGsmYFq9AYs+vEqyHP2CJYHupXnE4q2TIUG0RFATLLzKIREXRQ0DhLKXwXRROf
- At+x3LxriA0mN4fFA8pAMlz0v/5kHM5PNZrCXYDbgxqdSEwN6mmCs2N5EhSA9AgFgSthpUF4tPc
- 7LcAcaasdDpqoszbNavgk10dTc9R5kcTtRUNv+3OBmzJMWRAHTXmHx5de6F1JrgZO6LpiMjzDG5
- AXv0xrgDZdSlx7w==
-X-Developer-Key: i=da.gomez@samsung.com; a=openpgp;
- fpr=B2A7A9CFDD03B540FF58B27185F56EA4E9E8138F
+References: <20251219154418.3592607-1-elver@google.com> <20251219154418.3592607-25-elver@google.com>
+ <9af0d949-45f5-45cd-b49d-d45d53f5d8f6@gmail.com>
+In-Reply-To: <9af0d949-45f5-45cd-b49d-d45d53f5d8f6@gmail.com>
+From: Marco Elver <elver@google.com>
+Date: Sat, 20 Dec 2025 13:51:30 +0100
+X-Gm-Features: AQt7F2ppWjAa_1uLXQb3ar2W4qqqhjA5uP_vsvi-YrCuihuPYztcukGp4Yjpido
+Message-ID: <CANpmjNOUr8rHmui_nPpGBzmXe4VRn=70dT7n6sWpJc6FD2qLbA@mail.gmail.com>
+Subject: Re: [PATCH v5 24/36] compiler-context-analysis: Remove __cond_lock()
+ function-like helper
+To: Bart Van Assche <bart.vanassche@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+	Chris Li <sparse@chrisli.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>, 
+	Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Johannes Berg <johannes.berg@intel.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Triplett <josh@joshtriplett.org>, Justin Stitt <justinstitt@google.com>, 
+	Kees Cook <kees@kernel.org>, Kentaro Takeda <takedakn@nttdata.co.jp>, 
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
+	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
+	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, llvm@lists.linux.dev, rcu@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Daniel Gomez <da.gomez@samsung.com>
+On Fri, 19 Dec 2025 at 22:42, Bart Van Assche <bart.vanassche@gmail.com> wrote:
+> On 12/19/25 8:40 AM, Marco Elver wrote:
+> >   Documentation/dev-tools/context-analysis.rst  |  2 -
+> >   Documentation/mm/process_addrs.rst            |  6 +-
+> >   .../net/wireless/intel/iwlwifi/iwl-trans.c    |  4 +-
+> >   .../net/wireless/intel/iwlwifi/iwl-trans.h    |  6 +-
+> >   .../intel/iwlwifi/pcie/gen1_2/internal.h      |  5 +-
+> >   .../intel/iwlwifi/pcie/gen1_2/trans.c         |  4 +-
+> >   include/linux/compiler-context-analysis.h     | 31 ----------
+> >   include/linux/lockref.h                       |  4 +-
+> >   include/linux/mm.h                            | 33 ++--------
+> >   include/linux/rwlock.h                        | 11 +---
+> >   include/linux/rwlock_api_smp.h                | 14 ++++-
+> >   include/linux/rwlock_rt.h                     | 21 ++++---
+> >   include/linux/sched/signal.h                  | 14 +----
+> >   include/linux/spinlock.h                      | 45 +++++---------
+> >   include/linux/spinlock_api_smp.h              | 20 ++++++
+> >   include/linux/spinlock_api_up.h               | 61 ++++++++++++++++---
+> >   include/linux/spinlock_rt.h                   | 26 ++++----
+> >   kernel/signal.c                               |  4 +-
+> >   kernel/time/posix-timers.c                    | 13 +---
+> >   lib/dec_and_lock.c                            |  8 +--
+> >   lib/lockref.c                                 |  1 -
+> >   mm/memory.c                                   |  4 +-
+> >   mm/pgtable-generic.c                          | 19 +++---
+> >   tools/include/linux/compiler_types.h          |  2 -
+>
+> This patch should be split into one patch per subsystem or driver.
+> E.g. one patch for the iwlwifi driver, another patch for the mm
+> subsystem, one patch for the rwlock primitive, one patch for the
+> spinlock primitive, etc.
+>
+> The tools/include/linux/compiler_types.h change probably should be
+> left out because it is user space code instead of kernel code and
+> the rest of the series applies to kernel code only.
 
-The -EEXIST error code is reserved by the module loading infrastructure
-to indicate that a module is already loaded. When a module's init
-function returns -EEXIST, userspace tools like kmod interpret this as
-"module already loaded" and treat the operation as successful, returning
-0 to the user even though the module initialization actually failed.
+AFAIK, the user space version is just a copy of the kernel version to
+support headers that are used by both. See
+4bba4c4bb09ad4a2b70836725e08439c86d8f9e4. The sparse annotations were
+copied in ab3c0ddb0d71dc214b61d11deb8770196ef46c05.
 
-This follows the precedent set by commit 54416fd76770 ("netfilter:
-conntrack: helper: Replace -EEXIST by -EBUSY") which fixed the same
-issue in nf_conntrack_helper_register().
+And there's no point in keeping it around given it's all gone:
 
-Affected modules:
-  * pkcs8_key_parser x509_key_parser asymmetric_keys dns_resolver
-  * nvme_keyring pkcs7_test_key rxrpc turris_signing_key
-
-Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
----
-The error code -EEXIST is reserved by the kernel module loader to
-indicate that a module with the same name is already loaded. When a
-module's init function returns -EEXIST, kmod interprets this as "module
-already loaded" and reports success instead of failure [1].
-
-The kernel module loader will include a safety net that provides -EEXIST
-to -EBUSY with a warning [2], and a documentation patch has been sent to
-prevent future occurrences [3].
-
-These affected code paths were identified using a static analysis tool
-[4] that traces -EEXIST returns to module_init(). The tool was developed
-with AI assistance and all findings were manually validated.
-
-Link: https://lore.kernel.org/all/aKEVQhJpRdiZSliu@orbyte.nwl.cc/ [1]
-Link: https://lore.kernel.org/all/20251013-module-warn-ret-v1-0-ab65b41af01f@intel.com/ [2]
-Link: https://lore.kernel.org/all/20251218-dev-module-init-eexists-modules-docs-v1-0-361569aa782a@samsung.com/ [3]
-Link: https://gitlab.com/-/snippets/4913469 [4]
----
- crypto/asymmetric_keys/asymmetric_type.c | 2 +-
- security/keys/key.c                      | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
-index 348966ea2175..2c6f3a725102 100644
---- a/crypto/asymmetric_keys/asymmetric_type.c
-+++ b/crypto/asymmetric_keys/asymmetric_type.c
-@@ -634,7 +634,7 @@ int register_asymmetric_key_parser(struct asymmetric_key_parser *parser)
- 		if (strcmp(cursor->name, parser->name) == 0) {
- 			pr_err("Asymmetric key parser '%s' already registered\n",
- 			       parser->name);
--			ret = -EEXIST;
-+			ret = -EBUSY;
- 			goto out;
- 		}
- 	}
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 3bbdde778631..ed597660f72e 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -1219,7 +1219,7 @@ EXPORT_SYMBOL(generic_key_instantiate);
-  *
-  * Register a new key type.
-  *
-- * Returns 0 on success or -EEXIST if a type of this name already exists.
-+ * Returns 0 on success or -EBUSY if a type of this name already exists.
-  */
- int register_key_type(struct key_type *ktype)
- {
-@@ -1228,7 +1228,7 @@ int register_key_type(struct key_type *ktype)
- 
- 	memset(&ktype->lock_class, 0, sizeof(ktype->lock_class));
- 
--	ret = -EEXIST;
-+	ret = -EBUSY;
- 	down_write(&key_types_sem);
- 
- 	/* disallow key types with the same name */
-
----
-base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
-change-id: 20251218-dev-module-init-eexists-keyring-5b008d7efb40
-
-Best regards,
---  
-Daniel Gomez <da.gomez@samsung.com>
-
+% git grep __cond_lock
+<nothing>
