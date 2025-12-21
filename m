@@ -1,132 +1,213 @@
-Received: from mail-yx1-f65.google.com (mail-yx1-f65.google.com [74.125.224.65])
+Received: from mail-oi1-f207.google.com (mail-oi1-f207.google.com [209.85.167.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888AC283FCF
-	for <linux-security-module@vger.kernel.org>; Sun, 21 Dec 2025 19:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BD0258CDF
+	for <linux-security-module@vger.kernel.org>; Sun, 21 Dec 2025 19:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766346204; cv=none; b=Z2XA0UHd22QHEJlvyGHMuoGR5dNUk2P5sxRViWEp+q7CAypr1YvuAR8PYUa10mD5QiyZsuvfipd1CXV4i+KYkBJ8j9W44xqYOtFBTABzW9yvE3YWf8aU+C9ejQ3m9NwuOuVImOG8WzGrWg7nFsHwPY3xKtrE+tJTVRuxCtgr6+c=
+	t=1766346454; cv=none; b=CxvFTpqtSqWndkmaI2zIVqT9KEO0xTFJiaCNSI+rCof8ipcVPOpMehrFd7HXqTcPd/ADcQhePZ31c/SJA38f5VK/RjCuNNhTjYkBfiMWx0EEzomwYlArwYXi1B5Gt7D3eqej4ZRNdtYLqwgtYvcFsXOGVSlI0zB7nyER8SmUm5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766346204; c=relaxed/simple;
-	bh=CppXod+OJhnOsVbY0S0qmZbK/Q0sRnJMy1IVVZsD2RU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EoxgACzCnKc0r3Zm6Kc62zLRIrQqTGJavna/Ihkhqwzp219GhZKeG/LHWGPEVsaD+ADSyDXuyNnWMZgOpHt/VSdBucjo3I2EX6bJtGnkq9rQ4bB07k8KBNVp7KZSlqPp0ZCUlFUBGlfHQzsLXnX7Yqy5WLk11hEGyNY25kyjRIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cTjWoa6a; arc=none smtp.client-ip=74.125.224.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cTjWoa6a"
-Received: by mail-yx1-f65.google.com with SMTP id 956f58d0204a3-64471fcdef0so2464755d50.1
-        for <linux-security-module@vger.kernel.org>; Sun, 21 Dec 2025 11:43:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766346201; x=1766951001; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CyuZGoUl/wnIty8PjaTmUQtU1lWxhKrCn+wsAwEbzKs=;
-        b=cTjWoa6aKjuyz7EDx38DD3Co2lZt5yvnJJoMlg2XPUqPCBrxIb4012Xc4axT2NDzMy
-         7eyVN8RzpHp1yyAI5H4tCPdKvcAi4fkr9HeCcoTysh/CYDJbWdUBsu64Jo6Z9x2TdEHV
-         I/5hHBtCIAIWvvWRJGTH555a1PFjp78kcY8bWeCunBep949cdTOTN25i7C8Pfs6QAIKa
-         beNckoUvPBbRXuiWtXQgISUsWiC0QYs6PisnceHy8qyyUpo5IDb4SdKSRIKbaj9cs+y1
-         +CD4la+o8EwXuyfTpauqf2eOfwT+g6ovu78KMLyVNbZNS/HNaialHgdqO1URVCRIeTnW
-         dizw==
+	s=arc-20240116; t=1766346454; c=relaxed/simple;
+	bh=p9TXY+aupJM3wYEuKnJGB/batpJ2ds1+aUgq5sINZok=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Uz5FEo8VXNRYBD3A6h+y5r/PCz1pfy02Ofsn/or8BDvOVO8RJzrn0f+UT67QZLFuwCuxycLmpzuZsLlp9BP3VXa4nJhTvmFDHOBn8eFcp2kQhHIU1hSs+74KGuIjKxbfIvoOx/Q/zBCRYoJdmBZ40lH302E6tdHjmy+2oEImqik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oi1-f207.google.com with SMTP id 5614622812f47-450aff06525so3530837b6e.0
+        for <linux-security-module@vger.kernel.org>; Sun, 21 Dec 2025 11:47:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766346201; x=1766951001;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=CyuZGoUl/wnIty8PjaTmUQtU1lWxhKrCn+wsAwEbzKs=;
-        b=c5SPZ1VlPCrUnXB3vu0PXFXF3hpB9rg3qtfnesID+CHfW/Vy4heHV1SDq/iopVZq+T
-         ypKJwqSCMITPEaFIV1BOwtttF+/GrBbs/vTzhYWzIP/nUBYPTsymPMi9Av21sTQvKnqm
-         AN2m/BbvTKuGvPQ/7b2OvgeRmTClsfLIr7i+M3gKDKUhwkbJJdlIYUl9tNmR2YWF5l6Z
-         8lA74843dYdZKYZ8nGYUHtwfIX13QUG3o1TwZwBpAVK7HZ6hXqDEu3Fiye01iMmtFN2I
-         mDFK1Y3OnV3PQQ08ptHwe82oHFLrOtqvApgjAOAovH6isph6z4Y+O/+RVWzI7AKyw0+2
-         dEfA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3L5poFRUYfw72aL0Tg5CApeBy2fDgkXXlds8A/2qZQeWg8acc2taBNjVdls9JB/070ow2pYuLUXjap8jhnqHSEuE4AQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsMW93yHWEGIpE11T6LsSDFDoFOBtPMsDLrpi2gTojMLOAfjk4
-	3XgcldzZHGI0nmayRQm/A3R7kMB0+5jFLcsTkqWoo8jY92fHG6kmt4Bq
-X-Gm-Gg: AY/fxX5gzPlwr7u86/UF+iCHBirv8tty96vPVGe5vBYkpqJR7shIbd9uJ8sK3uxZAHB
-	85AsP84UcQfmvGVXO7RtYeVlFAr6t3GorPwJ3svfH8eXVtz+YnxxCLUNAFuk2a5qd8kSvwj9Hwj
-	oqeDirVLFBqApspR/yvbFzjJdJ/dhh+mLlRgakcQEpi5t635v2Dto5nrOkJ3fcRqqrd0xKkXdgI
-	yt7SnA0sMLKoyIditzY/0XETbcPhnjaNwbI7dj2mVLBnk31AMTG/DnRpbZpwH34aWA7PYOd3kaM
-	2S9doELykeNcn6uWYJOdabMZZz6ibIilBTnmv5PTZV0YyqEiwjdYRI6TH7NWNY4OUHTGTZMlm+u
-	7jNwVdVraxL6NJqkMkxJa0NsrCIRI4xTfZ79D1pTfgOzt9YTrKF+8f3YrBK8d8Oe40DZtEQtA/3
-	tAdOOpyph4YAvwfUIttzMytu239y8iv2kWklxmJzb3Px/UJSU6RTXQGl4DDH30
-X-Google-Smtp-Source: AGHT+IF9gPDyi0qYJoLmoDi2FIxKtwez+ZwJ6gHG6rhcbIqkDFRodqSklDAAOLTTpG85qUiQFgQNVg==
-X-Received: by 2002:a05:690c:6186:b0:787:e779:9eb3 with SMTP id 00721157ae682-78fb40be119mr158663167b3.62.1766346201479;
-        Sun, 21 Dec 2025 11:43:21 -0800 (PST)
-Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78fb43701c7sm35628707b3.8.2025.12.21.11.43.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Dec 2025 11:43:21 -0800 (PST)
-From: Justin Suess <utilityemal77@gmail.com>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Tingmao Wang <m@maowtm.org>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Justin Suess <utilityemal77@gmail.com>,
-	Jan Kara <jack@suse.cz>,
-	Abhinav Saxena <xandfury@gmail.com>,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v6 6/6] landlock: Add documentation for LANDLOCK_ADD_RULE_NO_INHERIT
-Date: Sun, 21 Dec 2025 14:43:01 -0500
-Message-ID: <20251221194301.247484-7-utilityemal77@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251221194301.247484-1-utilityemal77@gmail.com>
-References: <20251221194301.247484-1-utilityemal77@gmail.com>
+        d=1e100.net; s=20230601; t=1766346451; x=1766951251;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0EEZYNl6yY3ZOJyDfRm4LJ/ctbxpQCblCysMln1vSrw=;
+        b=YjvN/H5GUKGPEIP60hG70KClM8buxhfMjNOUIg1Zm2MCuLTKzXjjFPxUY+AOz6MLu9
+         p4evBra02jd9DESFI6p0upGTePWVhnVKEwUVRZ/5xD5T8vZY44c6zjQptucdDbboAJ6V
+         xwN/TyY2sUn29yoFiY8foIMj3rIwgKWLl7W3A5mOPVaEHr6SRARqKumQ6+5Us1TwS0/J
+         gcapCO2QqHD0Z5HvH+9nNfwAFhhabBGRjqGbGbpVwzSfKL/n9GSpIeS45O4kjJ8HGN0d
+         GiuUaC7Kn+7e1JIehgvNJdDVozhcEYA6c6J8uhjfUZxlYNZr6D4B+vTxmqfhFB2s7KnF
+         wIAA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1zjgqCmLW/HVdZXgoUi++7nb9YPG7v1yqyko2RTHSNioJo3xOm+Pc8hrsfz1vnRgC69oM+ms9j759SWYdHuO89kfVrfE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzdi6SxXu/A/vcyu6Zdq8jP9VvOXjgjQgmbyNPptgvz3KW6eVsn
+	GPzt2vwJh1URbeV4/9u8AE6TBpZbL36nixkRyP4jDfSMVcScJ0K6HzulXEAvYcEspCbDyS4O8C7
+	bZtAT8biDqkA3NDO+3knRBqczp3ZILmVwqNQYTQYc+SD25sDFPcD+aZkhfAQ=
+X-Google-Smtp-Source: AGHT+IE1MDt2hS1EheUWFqoSH6A47YA1VjcVY7D+MMJ8BF2xhtBbzkJOwp1bCOYsYsT2yC5R+otjLd8NWWXripVR9dR7DoSZojUI
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a4a:e252:0:b0:659:9a49:8e09 with SMTP id
+ 006d021491bc7-65d0ebd893cmr3297106eaf.75.1766346451372; Sun, 21 Dec 2025
+ 11:47:31 -0800 (PST)
+Date: Sun, 21 Dec 2025 11:47:31 -0800
+In-Reply-To: <68e54915.a00a0220.298cc0.0480.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69484ed3.a70a0220.25eec0.0077.GAE@google.com>
+Subject: Re: [syzbot] [keyrings?] [lsm?] possible deadlock in keyring_clear (3)
+From: syzbot <syzbot+f55b043dacf43776b50c@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Adds documentation of the flag to the userspace api, describing
-the functionality of the flag and parent directory protections.
+syzbot has found a reproducer for the following issue on:
 
-Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+HEAD commit:    9094662f6707 Merge tag 'ata-6.19-rc2' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1022f77c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=513255d80ab78f2b
+dashboard link: https://syzkaller.appspot.com/bug?extid=f55b043dacf43776b50c
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=168a8b1a580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c06b1a580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-9094662f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/baa55f8cf722/vmlinux-9094662f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/aaaa8a404a70/bzImage-9094662f.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/7a86e58a207c/mount_2.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=12c06b1a580000)
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f55b043dacf43776b50c@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+kswapd1/79 is trying to acquire lock:
+ffff8880433bfcd8 (&type->lock_class){+.+.}-{4:4}, at: keyring_clear+0xaf/0x240 security/keys/keyring.c:1658
+
+but task is already holding lock:
+ffffffff8e051820 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6975 [inline]
+ffffffff8e051820 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0x92a/0x2820 mm/vmscan.c:7354
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (fs_reclaim){+.+.}-{0:0}:
+       __fs_reclaim_acquire mm/page_alloc.c:4301 [inline]
+       fs_reclaim_acquire+0x72/0x100 mm/page_alloc.c:4315
+       might_alloc include/linux/sched/mm.h:317 [inline]
+       slab_pre_alloc_hook mm/slub.c:4904 [inline]
+       slab_alloc_node mm/slub.c:5239 [inline]
+       __kmalloc_cache_noprof+0x40/0x700 mm/slub.c:5771
+       kmalloc_noprof include/linux/slab.h:957 [inline]
+       kzalloc_noprof include/linux/slab.h:1094 [inline]
+       assoc_array_insert+0x92/0x2f90 lib/assoc_array.c:980
+       __key_link_begin+0xd6/0x1f0 security/keys/keyring.c:1317
+       __key_create_or_update+0x41a/0xa30 security/keys/key.c:877
+       key_create_or_update+0x42/0x60 security/keys/key.c:1021
+       x509_load_certificate_list+0x145/0x280 crypto/asymmetric_keys/x509_loader.c:31
+       do_one_initcall+0x1f1/0x800 init/main.c:1378
+       do_initcall_level+0x104/0x190 init/main.c:1440
+       do_initcalls+0x59/0xa0 init/main.c:1456
+       kernel_init_freeable+0x2a7/0x3d0 init/main.c:1688
+       kernel_init+0x1d/0x1d0 init/main.c:1578
+       ret_from_fork+0x510/0xa50 arch/x86/kernel/process.c:158
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:246
+
+-> #0 (&type->lock_class){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain kernel/locking/lockdep.c:3908 [inline]
+       __lock_acquire+0x15a6/0x2cf0 kernel/locking/lockdep.c:5237
+       lock_acquire+0x107/0x340 kernel/locking/lockdep.c:5868
+       down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
+       keyring_clear+0xaf/0x240 security/keys/keyring.c:1658
+       fscrypt_put_master_key+0xca/0x190 fs/crypto/keyring.c:80
+       put_crypt_info+0x26d/0x310 fs/crypto/keysetup.c:573
+       fscrypt_put_encryption_info+0xf6/0x140 fs/crypto/keysetup.c:787
+       ext4_clear_inode+0x170/0x2f0 fs/ext4/super.c:1529
+       ext4_evict_inode+0x9f6/0xe60 fs/ext4/inode.c:320
+       evict+0x5f4/0xae0 fs/inode.c:837
+       __dentry_kill+0x209/0x660 fs/dcache.c:670
+       shrink_kill+0xa9/0x2c0 fs/dcache.c:1137
+       shrink_dentry_list+0x2e0/0x5e0 fs/dcache.c:1164
+       prune_dcache_sb+0x10e/0x180 fs/dcache.c:1246
+       super_cache_scan+0x369/0x4b0 fs/super.c:222
+       do_shrink_slab+0x6df/0x10d0 mm/shrinker.c:437
+       shrink_slab_memcg mm/shrinker.c:550 [inline]
+       shrink_slab+0x7ef/0x10d0 mm/shrinker.c:628
+       shrink_one+0x2d9/0x720 mm/vmscan.c:4921
+       shrink_many mm/vmscan.c:4982 [inline]
+       lru_gen_shrink_node mm/vmscan.c:5060 [inline]
+       shrink_node+0x2f7d/0x35b0 mm/vmscan.c:6047
+       kswapd_shrink_node mm/vmscan.c:6901 [inline]
+       balance_pgdat mm/vmscan.c:7084 [inline]
+       kswapd+0x145a/0x2820 mm/vmscan.c:7354
+       kthread+0x711/0x8a0 kernel/kthread.c:463
+       ret_from_fork+0x510/0xa50 arch/x86/kernel/process.c:158
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:246
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(&type->lock_class);
+                               lock(fs_reclaim);
+  lock(&type->lock_class);
+
+ *** DEADLOCK ***
+
+2 locks held by kswapd1/79:
+ #0: ffffffff8e051820 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6975 [inline]
+ #0: ffffffff8e051820 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0x92a/0x2820 mm/vmscan.c:7354
+ #1: ffff88803fa5a0e0 (&type->s_umount_key#32){++++}-{4:4}, at: super_trylock_shared fs/super.c:563 [inline]
+ #1: ffff88803fa5a0e0 (&type->s_umount_key#32){++++}-{4:4}, at: super_cache_scan+0x91/0x4b0 fs/super.c:197
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 79 Comm: kswapd1 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
+ print_circular_bug+0x2e2/0x300 kernel/locking/lockdep.c:2043
+ check_noncircular+0x12e/0x150 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain kernel/locking/lockdep.c:3908 [inline]
+ __lock_acquire+0x15a6/0x2cf0 kernel/locking/lockdep.c:5237
+ lock_acquire+0x107/0x340 kernel/locking/lockdep.c:5868
+ down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
+ keyring_clear+0xaf/0x240 security/keys/keyring.c:1658
+ fscrypt_put_master_key+0xca/0x190 fs/crypto/keyring.c:80
+ put_crypt_info+0x26d/0x310 fs/crypto/keysetup.c:573
+ fscrypt_put_encryption_info+0xf6/0x140 fs/crypto/keysetup.c:787
+ ext4_clear_inode+0x170/0x2f0 fs/ext4/super.c:1529
+ ext4_evict_inode+0x9f6/0xe60 fs/ext4/inode.c:320
+ evict+0x5f4/0xae0 fs/inode.c:837
+ __dentry_kill+0x209/0x660 fs/dcache.c:670
+ shrink_kill+0xa9/0x2c0 fs/dcache.c:1137
+ shrink_dentry_list+0x2e0/0x5e0 fs/dcache.c:1164
+ prune_dcache_sb+0x10e/0x180 fs/dcache.c:1246
+ super_cache_scan+0x369/0x4b0 fs/super.c:222
+ do_shrink_slab+0x6df/0x10d0 mm/shrinker.c:437
+ shrink_slab_memcg mm/shrinker.c:550 [inline]
+ shrink_slab+0x7ef/0x10d0 mm/shrinker.c:628
+ shrink_one+0x2d9/0x720 mm/vmscan.c:4921
+ shrink_many mm/vmscan.c:4982 [inline]
+ lru_gen_shrink_node mm/vmscan.c:5060 [inline]
+ shrink_node+0x2f7d/0x35b0 mm/vmscan.c:6047
+ kswapd_shrink_node mm/vmscan.c:6901 [inline]
+ balance_pgdat mm/vmscan.c:7084 [inline]
+ kswapd+0x145a/0x2820 mm/vmscan.c:7354
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x510/0xa50 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:246
+ </TASK>
+
+
 ---
-
-Notes:
-    v5..v6 changes:
-    
-      * None
-    
-    v1..v5 changes:
-    
-      * Initial addition
-
- Documentation/userspace-api/landlock.rst | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 1d0c2c15c22e..3671cd90fbe2 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -604,6 +604,23 @@ Landlock audit events with the ``LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF``,
- sys_landlock_restrict_self().  See Documentation/admin-guide/LSM/landlock.rst
- for more details on audit.
- 
-+Filesystem inheritance suppression (ABI < 8)
-+-----------------
-+
-+Starting with the Landlock ABI version 8, it is possible to prevent a directory
-+or file from inheriting it's parent's access grants by using the
-+``LANDLOCK_ADD_RULE_NO_INHERIT`` flag passed to sys_landlock_add_rule().  This
-+can be useful for policies where a parent directory needs broader access than its
-+children.
-+
-+To mitigate sandbox-restart attacks, the inode itself, and ancestors of inodes
-+tagged with ``LANDLOCK_ADD_RULE_NO_INHERIT`` cannot be removed, renamed,
-+reparented, or linked into/from other directories.
-+
-+These parent directory protections propagate up to the root. Further inheritance
-+for grants originating beneath a ``LANDLOCK_ADD_RULE_NO_INHERIT`` tagged inode
-+are not affected unless also tagged with this flag.
-+
- .. _kernel_support:
- 
- Kernel support
--- 
-2.51.0
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
