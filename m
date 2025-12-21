@@ -1,55 +1,55 @@
 Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA54578F3A
-	for <linux-security-module@vger.kernel.org>; Sun, 21 Dec 2025 15:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DBB7262F
+	for <linux-security-module@vger.kernel.org>; Sun, 21 Dec 2025 15:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766330481; cv=none; b=mkc/09ZWOy0C+6eKS88TpoCl5YWLixyPat2ox14dbyAuHTo2DiNb/9DLe2UZZ+3bczUQLurVLviqXg3Vn8FvjxpeDVWUNCxl4T/XIi7+J2Gfzh6/GMaTdZANDnBcImj3YqH7aIfQHciFJ/jXUz+jvMg9XC7QQmVDjWLmnq5zO8c=
+	t=1766330484; cv=none; b=bWH4vhJB5LQj/6lVIKkNwHCcd7BK18a2Xg4guYaDZSb6rlOoDw4RQa9UsSQzEXVlBAvz0gH02wabwVNbXVHhyd9FFzfuJiTZw/nhVHQ+CCFFpntqRxsjd/xa+BB1TxzJ6DJfz1jAuFtrOIxdfooUex8uT2jcEGpGlijNTt3FlV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766330481; c=relaxed/simple;
-	bh=JJ1bEGgdgKnSChXavaq4WEXU8NS49K4cY5Iw2JS2qmo=;
+	s=arc-20240116; t=1766330484; c=relaxed/simple;
+	bh=Q45qvLisPhscdmznCJIWmMwjAgcjPKbsrfxIgK3q+wE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KBmnaFX3wXGemLiuSBjZWwkzTziBRynoQtbqTBxZKtBeSUJH5T2p9tMZH5KJxTNUEWUHEaEFCh38CxQB/qO6JP400wzqNfDfQZa/qr42mDSiVsOwHftJicl7WI0z9wCyVsMbCtYRQtx5V5BvZg811lodttAaJ68EOPDAj5SjW1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=aEsTxylQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=X9B0i2vQ; arc=none smtp.client-ip=103.168.172.152
+	 MIME-Version; b=Fo0W4UawbivfxDFwZgQ1smxv/0w3AlghIoLsHKNnBeNh4DAR4Ica+HHaIgoAkVfpvQg3NaoJGm6XuwUT0celv6JYCsrxGjyTNbGnBfGAAJB2SLtnWh7g9PEerhKT1z7E5y0Ywu0hMq4uOyUcMKyJuqFlt18ZF0rYCYeF1Shc53Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=EBm/uIuS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UaU+89/+; arc=none smtp.client-ip=103.168.172.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="aEsTxylQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X9B0i2vQ"
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id ED069140001B;
-	Sun, 21 Dec 2025 10:21:18 -0500 (EST)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="EBm/uIuS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UaU+89/+"
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id D3E82140001B;
+	Sun, 21 Dec 2025 10:21:21 -0500 (EST)
 Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Sun, 21 Dec 2025 10:21:18 -0500
+  by phl-compute-11.internal (MEProxy); Sun, 21 Dec 2025 10:21:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1766330478; x=
-	1766416878; bh=R6CA3TqCcSZ4FbtHaE6ecBmREjO8UCDwrN8t/Jqgrxo=; b=a
-	EsTxylQQ/whx6GiOe/0SaUHlE5addWqP2CUzx4b8zU3v4UMbMTLCMG3bR31oQNGU
-	jx7AdKWLps/RH4kHM1qTqw+EHHRBHvvI5tdp/shKkm73ZV/z3FEx459jy90E9IY6
-	6yUDSZhjavEAfPwIdJWbP7ONSISKb03F7ojWOT5+LY7s6QH6vyuXlOhb5TnVPvfa
-	quCuMIutw3uD18RObmhCYJIK/EydPsQYl5+zOU8fFm+OAJ3Mqm6Jqwv8YGcTaVnq
-	dIVb54Ufbc2XP6Fxy8czcYce+YVczbmbcYxmu8pVWXZobYQBw0UIBoMSenJKFzCk
-	gMo3Z2P0t1beqcuViIoAw==
+	:reply-to:subject:subject:to:to; s=fm1; t=1766330481; x=
+	1766416881; bh=uyJcasQJJZTiD6RfJLVeUFJAJeO3OEmDpBojbzpVFEw=; b=E
+	Bm/uIuSu8OeWr+JFMVMFJ5yjcw20AeNcFvgD6Y7Ca7bziCKw+h3Ht7EayWqyXpON
+	AiE76BDbTGS6rmHDO3dNsvV8JlyuPsmsMCK/oZJetBEgc0sOHaJgB1ej4ss2y78F
+	jjj8ZBF6EfmHvpfoKnTmW/5z7C89fX+F8yYLKtgq0XPAW/Mvpu0q2N3fl79GJKHg
+	k5NKgMt4Ti0IfTKJA/ZuRu1zgdy49cDyOf2LQ3FmpgKRzPhekdmlGh1jw5wpKM6r
+	dhhMEovyMRabljQtp/i/LAymw3cxOUDPWvW3dPmOW+2Yns4XeutlL6JvkdiaIXHk
+	vv/fAAISzpAohxrD0+R1Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1766330478; x=1766416878; bh=R
-	6CA3TqCcSZ4FbtHaE6ecBmREjO8UCDwrN8t/Jqgrxo=; b=X9B0i2vQ3QeE1BZJ6
-	THeq5DxRKHvCLlqu+XAqVTGUuBklOdIv04b6pp5lnBTuwQ+yWkGOVhK4r4FZowMb
-	sklWF22WbtGTz0kz5xgqR2aTbzK/pkbKQU4UAZPJO309PjSRBAco4Au52Thvbpna
-	HdtDnxCaFVoCzOidIvC3JoxgA1epy+gr4csZcDzeI/cGsO5Hko0fNVnWuX8akbtG
-	Qgonyejvr2MIijTXHd9+c/4DlM2TfTV3/rcZOwH1OAASipzTgWAnjuO9Z1moDboN
-	FlN14yLh0oT3Z7z9cuy4RLXk27VrHROzX03rKbuzK90UzbuoWcNLRgEXKmpaGeRf
-	UyO7Q==
-X-ME-Sender: <xms:bhBIaTpxmAbMb1Sssws3JK_ZDoxECuUMDnpULDTTG6Lx4POlhsuXJA>
-    <xme:bhBIaf5V6HBkdhp2ed4gi4UIxzL-XqG7PAgjkcv6lr9QMLJaGeQiJIcJGnDhDgdNL
-    wpAsRkvXMN4Otz5ThFx-PfZXLAWNHqvAmc_eLhQ1oW3KP8u-r6EV6s>
-X-ME-Received: <xmr:bhBIaSetmkWgGwQM_L2a-ZHyXA8AwsN5K6CCSoS4ccWckyo26dhV32QZ6JxvIiqHUQ>
+	:x-me-sender:x-sasl-enc; s=fm1; t=1766330481; x=1766416881; bh=u
+	yJcasQJJZTiD6RfJLVeUFJAJeO3OEmDpBojbzpVFEw=; b=UaU+89/+L4MsuwKON
+	cwelol/xA3mDwtJehJEyBLjJ8yFyId3ujAqTgEsfkXAWs7vApaKX19nJ3FsfLWlo
+	xCzjIOwsQtoPuS50LCczrM1CGKLcFMnaGP49BJid9SpZkgBmT1bbwlxzhC/pbiBT
+	doTE/NGsfRGlImgql28S+9LMfRcCj9Rtq0NsKcfTMVpAF8m64v9+ZO6tdNXMXUm1
+	8y7SYFfUNPLgCRLq8noojF0ljboqMFob1lEc/iBWxdsVhS2kTt/L+gwn6AQAaDOY
+	lfShAumAGHCJVYZ3hxjIrktXnCOPpuANN3PFjlCuymmlLvQfkePlNqvfLcSwzADl
+	OukOA==
+X-ME-Sender: <xms:cRBIaXwE0TRb4mz1bDEm2Z8EtbI_nXsnLH-xIp-mu9tZsbOfWy3LAA>
+    <xme:cRBIaRhVJPCAzpYtrxLGBQ7gnDgs9IQDbE5JFSe7bXL16oedrXZ8IhnsxXhvomRMp
+    7U_ukqqEmOrIjsCzT9d8xtDS9KfeIxNZwPicmkOruW7stW8yNMG-Bo>
+X-ME-Received: <xmr:cRBIaTmnTxEJf1QEi8rIDDJSeE-T1-LNt6Mv2LtJRY-rHcYuXAjQ1P6x-jzKiOK3Cg>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdehgeegudcutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
@@ -64,14 +64,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdehgeegudcutefuodetgg
     hsuhhsvgdrtgiipdhrtghpthhtohepgigrnhgufhhurhihsehgmhgrihhlrdgtohhmpdhr
     tghpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvg
     hrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:bhBIac4xEJt2Ky6-d-siJUAmiRZTZeI6aqtUW77NP2nrtsjre8t5yw>
-    <xmx:bhBIaRsdQWhKRWnK74mxRUM3GXezu1lRprCpOf-nn6MJXGKh5qtJTQ>
-    <xmx:bhBIaUgGEXVmMx1WR3RcBUhQIP65CUYhRPM2CfeEDEwasiPCAdirHw>
-    <xmx:bhBIaUq4HtIZWUuK5wM28htawA1W7m4EhCDlkx6c9CsY1P9zYGQWHA>
-    <xmx:bhBIaeJ15-ISePWmPjLEAYksOak59GuTuZZn1QXSjip-8jXAjXxweBTy>
+X-ME-Proxy: <xmx:cRBIaXjXYhS-peqQoaprL6C6gap4whm5UvCRpRu-yi9Y_SyIwPxW9w>
+    <xmx:cRBIaX1iAHaTyNoIKzpKSrmJR0f0jOOqZ0s_0relGPRvwNnVjQZT1A>
+    <xmx:cRBIaQKdLxp9eqx0nk01xKl-bwcjDBKnMo7RKMUAJBRpuHta1FIp_w>
+    <xmx:cRBIaXwBCNtZy1zf7X2pLXuD_5Qe-XCTGM6U7a0IEDNOkON2Nz9_Xw>
+    <xmx:cRBIadx4_ug6PmaG2-pUFPpBWpNu3BxlKZlLelfS1kPsAXK1rETXvfl1>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 21 Dec 2025 10:21:17 -0500 (EST)
+ 21 Dec 2025 10:21:20 -0500 (EST)
 From: Tingmao Wang <m@maowtm.org>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: Tingmao Wang <m@maowtm.org>,
@@ -80,9 +80,9 @@ Cc: Tingmao Wang <m@maowtm.org>,
 	Jan Kara <jack@suse.cz>,
 	Abhinav Saxena <xandfury@gmail.com>,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v7 5/9] selftests/landlock: Replace hard-coded 16 with a constant
-Date: Sun, 21 Dec 2025 15:20:37 +0000
-Message-ID: <57a1f8afe72bc82c2d6350e24ee270a867d48fd4.1766330134.git.m@maowtm.org>
+Subject: [PATCH v7 7/9] selftests/landlock: add tests for quiet flag with net rules
+Date: Sun, 21 Dec 2025 15:20:39 +0000
+Message-ID: <236314bb16e700af6a4f3c939cf6ed1fea108862.1766330134.git.m@maowtm.org>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1766330134.git.m@maowtm.org>
 References: <cover.1766330134.git.m@maowtm.org>
@@ -94,8 +94,14 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The next commit will reuse this number.  Make it a shared constant to
-future-proof changes.
+Tests that:
+- Quiet flag works on network rules
+- Quiet flag applied to unrelated ports has no effect
+- Denied access not in quiet_access_net is still logged
+
+This is not as thorough as the fs tests, but given the shared logic it
+should be sufficient.  There is also no "optional" access for network
+rules.
 
 Signed-off-by: Tingmao Wang <m@maowtm.org>
 ---
@@ -103,49 +109,212 @@ Signed-off-by: Tingmao Wang <m@maowtm.org>
 Changes in v3:
 - New patch
 
- tools/testing/selftests/landlock/audit_test.c | 2 +-
- tools/testing/selftests/landlock/common.h     | 2 ++
- tools/testing/selftests/landlock/fs_test.c    | 2 +-
- 3 files changed, 4 insertions(+), 2 deletions(-)
+ tools/testing/selftests/landlock/net_test.c | 121 ++++++++++++++++++--
+ 1 file changed, 111 insertions(+), 10 deletions(-)
 
-diff --git a/tools/testing/selftests/landlock/audit_test.c b/tools/testing/selftests/landlock/audit_test.c
-index 46d02d49835a..4417cdedeadd 100644
---- a/tools/testing/selftests/landlock/audit_test.c
-+++ b/tools/testing/selftests/landlock/audit_test.c
-@@ -76,7 +76,7 @@ TEST_F(audit, layers)
- 		.scoped = LANDLOCK_SCOPE_SIGNAL,
+diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+index b34b139b3f89..137718ff89bd 100644
+--- a/tools/testing/selftests/landlock/net_test.c
++++ b/tools/testing/selftests/landlock/net_test.c
+@@ -1897,21 +1897,22 @@ TEST_F(port_specific, bind_connect_1023)
+ 
+ static int matches_log_tcp(const int audit_fd, const char *const blockers,
+ 			   const char *const dir_addr, const char *const addr,
+-			   const char *const dir_port)
++			   const char *const dir_port, const __u16 port)
+ {
+ 	static const char log_template[] = REGEX_LANDLOCK_PREFIX
+-		" blockers=%s %s=%s %s=1024$";
++		" blockers=%s %s=%s %s=%u$";
+ 	/*
+ 	 * Max strlen(blockers): 16
+ 	 * Max strlen(dir_addr): 5
+ 	 * Max strlen(addr): 12
+ 	 * Max strlen(dir_port): 4
++	 * Max strlen(%d port): 5
+ 	 */
+-	char log_match[sizeof(log_template) + 37];
++	char log_match[sizeof(log_template) + 42];
+ 	int log_match_len;
+ 
+ 	log_match_len = snprintf(log_match, sizeof(log_match), log_template,
+-				 blockers, dir_addr, addr, dir_port);
++				 blockers, dir_addr, addr, dir_port, port);
+ 	if (log_match_len > sizeof(log_match))
+ 		return -E2BIG;
+ 
+@@ -1921,7 +1922,8 @@ static int matches_log_tcp(const int audit_fd, const char *const blockers,
+ 
+ FIXTURE(audit)
+ {
+-	struct service_fixture srv0;
++	/* srv1 has a rule with no access but quiet bit set, srv0 does not. */
++	struct service_fixture srv0, srv1;
+ 	struct audit_filter audit_filter;
+ 	int audit_fd;
+ };
+@@ -1955,6 +1957,7 @@ FIXTURE_VARIANT_ADD(audit, ipv6) {
+ FIXTURE_SETUP(audit)
+ {
+ 	ASSERT_EQ(0, set_service(&self->srv0, variant->prot, 0));
++	ASSERT_EQ(0, set_service(&self->srv1, variant->prot, 1));
+ 	setup_loopback(_metadata);
+ 
+ 	set_cap(_metadata, CAP_AUDIT_CONTROL);
+@@ -1975,6 +1978,12 @@ TEST_F(audit, bind)
+ 	const struct landlock_ruleset_attr ruleset_attr = {
+ 		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+ 				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
++		.quiet_access_net = LANDLOCK_ACCESS_NET_CONNECT_TCP |
++				    LANDLOCK_ACCESS_NET_BIND_TCP,
++	};
++	const struct landlock_net_port_attr quiet_rule = {
++		.allowed_access = 0,
++		.port = self->srv1.port,
  	};
- 	int status, ruleset_fd, i;
--	__u64(*domain_stack)[16];
-+	__u64(*domain_stack)[LANDLOCK_MAX_NUM_LAYERS];
- 	__u64 prev_dom = 3;
- 	pid_t child;
- 
-diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
-index 90551650299c..7206d5105d66 100644
---- a/tools/testing/selftests/landlock/common.h
-+++ b/tools/testing/selftests/landlock/common.h
-@@ -25,6 +25,8 @@
- /* TEST_F_FORK() should not be used for new tests. */
- #define TEST_F_FORK(fixture_name, test_name) TEST_F(fixture_name, test_name)
- 
-+#define LANDLOCK_MAX_NUM_LAYERS 16
-+
- static const char bin_sandbox_and_launch[] = "./sandbox-and-launch";
- static const char bin_wait_pipe[] = "./wait-pipe";
- static const char bin_wait_pipe_sandbox[] = "./wait-pipe-sandbox";
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 76491ba54dce..f04f7bd0b45e 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -1497,7 +1497,7 @@ TEST_F_FORK(layout0, max_layers)
- 	const int ruleset_fd = create_ruleset(_metadata, ACCESS_RW, rules);
- 
+ 	struct audit_records records;
+ 	int ruleset_fd, sock_fd;
+@@ -1982,6 +1991,8 @@ TEST_F(audit, bind)
+ 	ruleset_fd =
+ 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
  	ASSERT_LE(0, ruleset_fd);
--	for (i = 0; i < 16; i++)
-+	for (i = 0; i < LANDLOCK_MAX_NUM_LAYERS; i++)
- 		enforce_ruleset(_metadata, ruleset_fd);
++	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
++				       &quiet_rule, LANDLOCK_ADD_RULE_QUIET));
+ 	enforce_ruleset(_metadata, ruleset_fd);
+ 	EXPECT_EQ(0, close(ruleset_fd));
  
- 	for (i = 0; i < 2; i++) {
+@@ -1989,11 +2000,21 @@ TEST_F(audit, bind)
+ 	ASSERT_LE(0, sock_fd);
+ 	EXPECT_EQ(-EACCES, bind_variant(sock_fd, &self->srv0));
+ 	EXPECT_EQ(0, matches_log_tcp(self->audit_fd, "net\\.bind_tcp", "saddr",
+-				     variant->addr, "src"));
++				     variant->addr, "src", self->srv0.port));
+ 
++	/* No other logs expected. */
++	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
++	EXPECT_EQ(0, records.access);
++
++	EXPECT_EQ(0, close(sock_fd));
++
++	sock_fd = socket_variant(&self->srv1);
++	ASSERT_LE(0, sock_fd);
++	EXPECT_EQ(-EACCES, bind_variant(sock_fd, &self->srv1));
++
++	/* No log expected due to quiet rule. */
+ 	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
+ 	EXPECT_EQ(0, records.access);
+-	EXPECT_EQ(1, records.domain);
+ 
+ 	EXPECT_EQ(0, close(sock_fd));
+ }
+@@ -2003,6 +2024,12 @@ TEST_F(audit, connect)
+ 	const struct landlock_ruleset_attr ruleset_attr = {
+ 		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+ 				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
++		.quiet_access_net = LANDLOCK_ACCESS_NET_CONNECT_TCP |
++				    LANDLOCK_ACCESS_NET_BIND_TCP,
++	};
++	const struct landlock_net_port_attr quiet_rule = {
++		.allowed_access = 0,
++		.port = self->srv1.port,
+ 	};
+ 	struct audit_records records;
+ 	int ruleset_fd, sock_fd;
+@@ -2010,18 +2037,92 @@ TEST_F(audit, connect)
+ 	ruleset_fd =
+ 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+ 	ASSERT_LE(0, ruleset_fd);
++	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
++				       &quiet_rule, LANDLOCK_ADD_RULE_QUIET));
+ 	enforce_ruleset(_metadata, ruleset_fd);
+ 	EXPECT_EQ(0, close(ruleset_fd));
+ 
+ 	sock_fd = socket_variant(&self->srv0);
+ 	ASSERT_LE(0, sock_fd);
+ 	EXPECT_EQ(-EACCES, connect_variant(sock_fd, &self->srv0));
+-	EXPECT_EQ(0, matches_log_tcp(self->audit_fd, "net\\.connect_tcp",
+-				     "daddr", variant->addr, "dest"));
++	EXPECT_EQ(0,
++		  matches_log_tcp(self->audit_fd, "net\\.connect_tcp", "daddr",
++				  variant->addr, "dest", self->srv0.port));
++
++	/* No other logs expected. */
++	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
++	EXPECT_EQ(0, records.access);
++
++	EXPECT_EQ(0, close(sock_fd));
++
++	sock_fd = socket_variant(&self->srv1);
++	ASSERT_LE(0, sock_fd);
++	EXPECT_EQ(-EACCES, connect_variant(sock_fd, &self->srv1));
++
++	/* Quieted - no logs expected. */
++	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
++	EXPECT_EQ(0, records.access);
++
++	EXPECT_EQ(0, close(sock_fd));
++}
++
++/* Quieting bind access has no effect on connect. */
++TEST_F(audit, connect_quiet_bind)
++{
++	const struct landlock_ruleset_attr ruleset_attr = {
++		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
++				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
++		.quiet_access_net = LANDLOCK_ACCESS_NET_BIND_TCP,
++	};
++	const struct landlock_ruleset_attr ruleset_attr_2 = {
++		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
++				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
++		.quiet_access_net = LANDLOCK_ACCESS_NET_CONNECT_TCP,
++	};
++	const struct landlock_net_port_attr quiet_rule = {
++		.allowed_access = 0,
++		.port = self->srv1.port,
++	};
++	struct audit_records records;
++	int ruleset_fd, sock_fd;
++
++	ruleset_fd =
++		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
++	ASSERT_LE(0, ruleset_fd);
++	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
++				       &quiet_rule, LANDLOCK_ADD_RULE_QUIET));
++	enforce_ruleset(_metadata, ruleset_fd);
++	EXPECT_EQ(0, close(ruleset_fd));
++
++	sock_fd = socket_variant(&self->srv1);
++	ASSERT_LE(0, sock_fd);
++	EXPECT_EQ(-EACCES, connect_variant(sock_fd, &self->srv1));
++	EXPECT_EQ(0,
++		  matches_log_tcp(self->audit_fd, "net\\.connect_tcp", "daddr",
++				  variant->addr, "dest", self->srv1.port));
++
++	/* No other logs expected. */
++	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
++	EXPECT_EQ(0, records.access);
++
++	EXPECT_EQ(0, close(sock_fd));
++
++	/* New layer that also denies connect but has the correct quiet bit. */
++	ruleset_fd =
++		landlock_create_ruleset(&ruleset_attr_2, sizeof(ruleset_attr_2), 0);
++	ASSERT_LE(0, ruleset_fd);
++	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
++				       &quiet_rule, LANDLOCK_ADD_RULE_QUIET));
++	enforce_ruleset(_metadata, ruleset_fd);
++	EXPECT_EQ(0, close(ruleset_fd));
++
++	sock_fd = socket_variant(&self->srv1);
++	ASSERT_LE(0, sock_fd);
++	EXPECT_EQ(-EACCES, connect_variant(sock_fd, &self->srv1));
+ 
++	/* Quieted - no logs expected. */
+ 	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
+ 	EXPECT_EQ(0, records.access);
+-	EXPECT_EQ(1, records.domain);
+ 
+ 	EXPECT_EQ(0, close(sock_fd));
+ }
 -- 
 2.52.0
