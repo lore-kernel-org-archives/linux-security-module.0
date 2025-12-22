@@ -1,77 +1,202 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C716E305057
-	for <linux-security-module@vger.kernel.org>; Mon, 22 Dec 2025 22:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA35173;
+	Mon, 22 Dec 2025 22:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766442017; cv=none; b=S5tiwrEKAeRPstXFKQuP+YWETxc5wv8vo5qDJrTvdQR8bqlFgSSxnuSpHAMW5RvB7fBjN+XLMYtL8vqEdF++Puz64AQeunPPwzZHdWursvh1uybaDa8iPMGRx+YLof9sud0L3ePyocvKcBqVCC9wodLCT/AsS1SwYd83RgNvxBk=
+	t=1766443035; cv=none; b=T5UGSyakgPPi1eMUee6t+n41cQmxcIvjtjTBKESreoqFMprT23LSMV3iRiGyFotAtOUQSIC+vxBN5d+Yp/U+9U2ZLnnoFxNLxA4qf8rCWdbyZ2ClwgbygDI42PM61hx4uakhI/PgcnyoUvt+VC7FuCjTI7dWy4jo97kMi+wCdnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766442017; c=relaxed/simple;
-	bh=CRbxHp2OiumWjwoB68+vdR6prQIhFIoH3X0MsMUXSA8=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=deedG3uRwg/tyN3rqm9R9bMf2DKDR15B4HN8gyT+mwwUvgofmticOZAV47B8L/XE5jQV3yglVN3HdE/vuXZiZPJ7zjV7aCZYBkCVp8M+m095v23gRRZRqdNs5RdHKiigHsonrFNwD//JFVNZcuIT0KINcqrm6qdOKUfvx5gmtnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DtkfYhIb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1766443035; c=relaxed/simple;
+	bh=3+poNGbHruGysw5DnYkIGnmPBMbtUe+edN4yORNzzag=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pM4jSVLfPDjtYKIwiwInKTMeoF11oBai6D6+w0E3QSqLcbP9V3dJFBC62TqvhoTwjoaw6LBuNAGieUxgifso9ZDwHD7+Qjl6K5YPMfCzimWK5/eMN1tHnC2wJg7QXfQDDD8yPlntboV5ANmf84x+6E2MGUJxZTUnqVywWIfFnqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZpVNVb1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DtkfYhIb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1766442013;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CRbxHp2OiumWjwoB68+vdR6prQIhFIoH3X0MsMUXSA8=;
-	b=DtkfYhIbgGo4bXsTcYohcO/RGOtRx4eWh+GLMhnTdrfJE3RMPsUd0S5HlqsnK+tlJZxxJz
-	O1LTrf5FgtupPezPPzInFwJ05IQQ7MWMnjtJGCu+i4Hqy6JcJ5m1z2Qajk5bKZBartOyZE
-	93a7k8imNGaEM8GwhRGuJPZXMThDDpg=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-326-KhTaHuLlMkWdPdMdTRpX-Q-1; Mon,
- 22 Dec 2025 17:19:50 -0500
-X-MC-Unique: KhTaHuLlMkWdPdMdTRpX-Q-1
-X-Mimecast-MFC-AGG-ID: KhTaHuLlMkWdPdMdTRpX-Q_1766441989
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5A614195608E;
-	Mon, 22 Dec 2025 22:19:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5445A19560AB;
-	Mon, 22 Dec 2025 22:19:46 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <15895666-464c-4349-9fb2-f24e10aac8c7@schaufler-ca.com>
-References: <15895666-464c-4349-9fb2-f24e10aac8c7@schaufler-ca.com> <15895666-464c-4349-9fb2-f24e10aac8c7.ref@schaufler-ca.com>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: dhowells@redhat.com, Paul Moore <paul@paul-moore.com>,
-    Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-    Serge Hallyn <serge@hallyn.com>, max.kellermann@ionos.com,
-    LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] Cred: Remove unused set_security_override_from_ctx()
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZpVNVb1"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 50C4CC4CEF1;
+	Mon, 22 Dec 2025 22:37:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766443035;
+	bh=3+poNGbHruGysw5DnYkIGnmPBMbtUe+edN4yORNzzag=;
+	h=From:Date:Subject:To:Cc:From;
+	b=fZpVNVb1kbAiB8jalRXrvoz0ga0mPc7KrprUhvMEeVCUlXSEm/gFNAazeiTQHYm7g
+	 XYF6b7qc7MvCX/hMY4NjA+ZiRpysQmVoFZNwBdwJcB67IUF3Es7MtaHC72V5SolayC
+	 937At4gA8TJdmoiF69eOmpd8kUgeME7V6jfTg7cwO/zRjMcMITyc2og9KyZYsDrvoe
+	 5COnU6AcTYQzso/kMzFn90JWNjfJG6wQ1bkPd3sp4VriDLzPBPnPvLI2yPg9cCKref
+	 IOOBfNM/w8xKZHlYBjBr7tWn7J9mCCeMrf2XpVqxlWFY+N9uy6BvCn80ftvDHtV0Jr
+	 p2/516h0UXL7Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D03E6781B;
+	Mon, 22 Dec 2025 22:37:15 +0000 (UTC)
+From: Joel Granados <joel.granados@kernel.org>
+Date: Mon, 22 Dec 2025 23:36:35 +0100
+Subject: [PATCH v3] loadpin: Implement custom proc_handler for enforce
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1075250.1766441984.1@warthog.procyon.org.uk>
-Date: Mon, 22 Dec 2025 22:19:44 +0000
-Message-ID: <1075251.1766441984@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251222-jag-const_loadpin-v3-1-6463c440fb90@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAPLHSWkC/33N0QrCIBTG8VcZXmd4nM7WVe8REbYdN2vo0CHF2
+ LvndlUQXf4/OL8zk4jBYiTHYiYBk43WuxzlriBNr12H1La5CWdcAgdJ77qjjXdxug5et6N1VFV
+ gmORGVY0g+W4MaOxzM8+X3L2Nkw+v7UWCdf2nJaBAq4PgSkkjsGanBwaHw96Hjqxc4p9E/Yvgm
+ dAgaqZvpdTQfhHLsrwBCoDkwvYAAAA=
+X-Change-ID: 20251215-jag-const_loadpin-761f052f76c4
+To: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Joel Granados <joel.granados@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4618;
+ i=joel.granados@kernel.org; h=from:subject:message-id;
+ bh=3+poNGbHruGysw5DnYkIGnmPBMbtUe+edN4yORNzzag=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGlJx/+5+gALaHGodIxIKHjfC9MqMqCbbKqBS
+ Wp8oWRQzcmG44kBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJpScf/AAoJELqXzVK3
+ lkFPhmwL/jVtVOv54Ct/CNhYmB5ElWHmoxLLdRGoH8eO93MawlgPg9hQRzHeCgBw2jnDqn0UBwk
+ N0f+epO1fySTHowyhUjyzIwIOkLBmI9Z2FSQ9epA9oLObcpfA3hOd4LXbKgmuqr0nsBkjGP9biY
+ kHna2M1atJf+7Xebd2sjGtXIEPFubyzQNL/vvA0bfibOZBRyYxRd/mOC16Y53aLwWSDiQmsTJwx
+ w9rIwRJ6aBHZSSolGjL5hvhgRXTk8S+4LiHj8Upb3tfMlVMbAA0iSCS/0I95AI4id0+DwPyG8c4
+ LRzSDJ7ZrWmvexEquDfndB7qmO9ETK43K+fCcWY8kBVddcy8LEYNbVghkAKyU0Y6EQGqu6hFVC1
+ LVvkQxlGopWdCBoWeoqplYsnY9uz1nmckSc1CzfAsnYvITReIz5K6ASJ83IMd4n8m/vgE4+SBfO
+ raDZalyojIAsv50TVNCtyOxesY5lVPcgUxpfBuURPUc4GdFH06sNftQd1KYODMWIim1X2IX0Od5
+ Y0=
+X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
+ auth_id=239
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
+Add a new static variable (loadpin_root_writable) to keep the
+write-ability state of enforce. Remove set_sysctl and const qualify
+loadpin_sysctl_table (moves into .rodata) as there is no longer need to
+change the value of extra1. The new proc_handler_loadpin returns -EINVAL
+when loadpin_root_writable is false and the kernel var (enforce) is
+being written. The old way of modifying the write-ability of enforce
+stayes in loadpin_check and is still set by calling sb_is_writable.
 
-> The function set_security_override_from_ctx() has no in-tree callers
-> since 6.14. Remove it.
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
+---
+Const qualifying ctl tables is part of the hardening effort in the linux
+kernel.
 
-It's also declared in include/linux/cred.h
+Changes in v3:
+- Fix compilation for CONFIG_SYSCTL=n
+- Link to v2: https://lore.kernel.org/r/20251219-jag-const_loadpin-v2-1-a1490ab35a1d@kernel.org
 
-David
+Changes in v2:
+- Removed set_sysctl
+- Added new static loadpin_root_writable var to hold the writable state
+- Renamed the variable holding the writable state to loadpin_root_writable
+- Link to v1: https://lore.kernel.org/r/20251215-jag-const_loadpin-v1-1-6842775f4e90@kernel.org
+---
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
+---
+ security/loadpin/loadpin.c | 43 +++++++++++++++++++------------------------
+ 1 file changed, 19 insertions(+), 24 deletions(-)
+
+diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+index 273ffbd6defe1324d6688dec5f9fe6c9401283ed..a6c7e4bfa45d3568e8c36e184388ee7858ba022e 100644
+--- a/security/loadpin/loadpin.c
++++ b/security/loadpin/loadpin.c
+@@ -52,45 +52,42 @@ static DEFINE_SPINLOCK(pinned_root_spinlock);
+ static bool deny_reading_verity_digests;
+ #endif
+ 
++static bool loadpin_root_writable;
+ #ifdef CONFIG_SYSCTL
+-static struct ctl_table loadpin_sysctl_table[] = {
++// initialized to false
++
++static int proc_handler_loadpin(const struct ctl_table *table, int dir,
++				void *buffer, size_t *lenp, loff_t *ppos)
++{
++	if (!loadpin_root_writable && SYSCTL_USER_TO_KERN(dir))
++		return -EINVAL;
++	return proc_dointvec_minmax(table, dir, buffer, lenp, ppos);
++}
++
++static const struct ctl_table loadpin_sysctl_table[] = {
+ 	{
+ 		.procname       = "enforce",
+ 		.data           = &enforce,
+ 		.maxlen         = sizeof(int),
+ 		.mode           = 0644,
+-		.proc_handler   = proc_dointvec_minmax,
+-		.extra1         = SYSCTL_ONE,
++		.proc_handler   = proc_handler_loadpin,
++		.extra1         = SYSCTL_ZERO,
+ 		.extra2         = SYSCTL_ONE,
+ 	},
+ };
+-
+-static void set_sysctl(bool is_writable)
+-{
+-	/*
+-	 * If load pinning is not enforced via a read-only block
+-	 * device, allow sysctl to change modes for testing.
+-	 */
+-	if (is_writable)
+-		loadpin_sysctl_table[0].extra1 = SYSCTL_ZERO;
+-	else
+-		loadpin_sysctl_table[0].extra1 = SYSCTL_ONE;
+-}
+-#else
+-static inline void set_sysctl(bool is_writable) { }
+ #endif
+ 
+-static void report_writable(struct super_block *mnt_sb, bool writable)
++static void report_writable(struct super_block *mnt_sb)
+ {
+ 	if (mnt_sb->s_bdev) {
+ 		pr_info("%pg (%u:%u): %s\n", mnt_sb->s_bdev,
+ 			MAJOR(mnt_sb->s_bdev->bd_dev),
+ 			MINOR(mnt_sb->s_bdev->bd_dev),
+-			writable ? "writable" : "read-only");
++			loadpin_root_writable ? "writable" : "read-only");
+ 	} else
+ 		pr_info("mnt_sb lacks block device, treating as: writable\n");
+ 
+-	if (!writable)
++	if (!loadpin_root_writable)
+ 		pr_info("load pinning engaged.\n");
+ }
+ 
+@@ -131,7 +128,6 @@ static int loadpin_check(struct file *file, enum kernel_read_file_id id)
+ 	struct super_block *load_root;
+ 	const char *origin = kernel_read_file_id_str(id);
+ 	bool first_root_pin = false;
+-	bool load_root_writable;
+ 
+ 	/* If the file id is excluded, ignore the pinning. */
+ 	if ((unsigned int)id < ARRAY_SIZE(ignore_read_file_id) &&
+@@ -152,7 +148,6 @@ static int loadpin_check(struct file *file, enum kernel_read_file_id id)
+ 	}
+ 
+ 	load_root = file->f_path.mnt->mnt_sb;
+-	load_root_writable = sb_is_writable(load_root);
+ 
+ 	/* First loaded module/firmware defines the root for all others. */
+ 	spin_lock(&pinned_root_spinlock);
+@@ -168,8 +163,8 @@ static int loadpin_check(struct file *file, enum kernel_read_file_id id)
+ 	spin_unlock(&pinned_root_spinlock);
+ 
+ 	if (first_root_pin) {
+-		report_writable(pinned_root, load_root_writable);
+-		set_sysctl(load_root_writable);
++		report_writable(pinned_root);
++		loadpin_root_writable = sb_is_writable(pinned_root);
+ 		report_load(origin, file, "pinned");
+ 	}
+ 
+
+---
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+change-id: 20251215-jag-const_loadpin-761f052f76c4
+
+Best regards,
+-- 
+Joel Granados <joel.granados@kernel.org>
+
 
