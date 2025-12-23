@@ -1,93 +1,106 @@
-Received: from sonic301-38.consmr.mail.ne1.yahoo.com (sonic301-38.consmr.mail.ne1.yahoo.com [66.163.184.207])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4962405E1
-	for <linux-security-module@vger.kernel.org>; Mon, 22 Dec 2025 23:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4BD258EDE
+	for <linux-security-module@vger.kernel.org>; Tue, 23 Dec 2025 21:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766446371; cv=none; b=YMk1diDBJL2b12/0L2wgVXrJ8/mjy1wEpDUW7tHFJW0nVHCBgHhPIBgWLxzvu1OLqZc6pkF+Qun/fObW7QTDOB+RkIIq8TqzAMTgbOyjuw9qAxqxekybhFVc8+rm5YfPM8v+gG0m/QK8Ae15JK1YMME1hgcXmw3kWHzHv5DeiQM=
+	t=1766525290; cv=none; b=NGldH9PxqHus0S/BpArvklGHr9SeHw65MffKh3H/S3DMPALRxhLj0BoWniVlYNRSZXSRGA6SyCjeOoqoWFvuCiSe+oHXAor8+GV6VcuGOZxhMM/ZR/rxpKTza8vYAy9oUN2xQr15DfXy6IZyEtM48KVJJlD1dcwz3TFobNpTLqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766446371; c=relaxed/simple;
-	bh=+nlWl2A4SbyQ1s7jL6sDvoa0mwVXQesTdioQZyDaOt8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PDZuJbQUavnVJMioj27XogrJg0NojR7tb33codsOB59f3Past5+Va/TVbCO3zncldis6AHNrrbpqUKkwUTbtmbgozY073Gwq8i+id0ItJ05wPQodyDxUmXTwR3RxgtVPP46+Ut1Ade23m8EENHjHgT4yG9uVEFroMbcBuljJWhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=uTmIreNW; arc=none smtp.client-ip=66.163.184.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1766525290; c=relaxed/simple;
+	bh=Zx9nb3ztPP4g9lWyzcy33cFFVp1VcJ513Xbx8dVo0Mc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b9kRaWuTa88RKfB+0eJ99+MjkVTp46fPOyjDQA4+qlo9yuvLTjjRiwMDQqW/5RHrFcl4lcuUCJNKHU3kB+DE8KkHgMMr1C69KOhXpfkYTZRPKwN5cBBkS/D+s1M/l5Jbo4u1SAhjEg4rJzya+NHNCj1MYGvxU1bVXosDCHRi9OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DCqatpz0; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="uTmIreNW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1766446367; bh=+nlWl2A4SbyQ1s7jL6sDvoa0mwVXQesTdioQZyDaOt8=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=uTmIreNWFkTX9zccFAxdct7DDsVgrFFrjcxveL38yVnt2yFGpRkJc9Nlp1/weN1wq6PUrnsXtEPtnY03BFZ7eFMUyw6eQxUe35WBSJ0lgKkhj5FAJ//ZxmAUv+6SydwfdPopFPUkaRGEAOH684irbOhaCWKhjnVYSO8fuU+G77uRQrkCWBIoQqCAvt6qOjmoVC8dUOXWhNN5y/73tD4NP6YhEFrQL7k4Tt1akq/2/P0IxmqOtqxjzyIvn9204TZ5w51HMitpKEBsDVPm+a8w4pWJxAtTsN3SzbUoNLcTdab0G/ksbiitoWbKC32eCtSztu+oI+/1UCZ0SlEO1v0omw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1766446367; bh=P0G9o3QAvOC5L+HqIn/v0nbDeqDz3hGvFIjTanMN6y6=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=J9pLG7gaBefr2ApmEsJuddUQ2eQaAxOMUo6XOt1YoVh+WWDCC7YMyl7GWSNjgy/nO7xS3MRHEkulQAB9pInNHPbtKw0SARpxNh0Y7mb7MxNLED2/LqAxLG251mv+gG9nuet6iQhAwjGUvWMyqimqOpuq2JzOBhZCOxh4W6rk6xEQ/196+vvuV25V56wF2ClJWOymmNXTBnXhN4YoeK2r3wzg04ZYoPPwI83oADQjW/BKaVaDJks0h/SkzbV3UwSAiAzQyKZsSAAB7Djpi6jbNmqQ6wiectikZBXX0/x0oifYX7FPYVTgmU+5Ka0MrDA9MDZr3pEXhk2aiXbhkJkBfw==
-X-YMail-OSG: .G7lCWcVM1n753tPaOUArHKtT8wHZAmVFQeH4V6dGUcoKEoeWVNi5jiS5AQpcQp
- w6JXCAThvYVDOTLepGvPXIrkym5UK03RsPYgK.pXr8rANc6WKGBxbKQ6vwttRZS4DIyd.WtyAwm7
- iF2.x_A1sKyeykg850pm3w3DDQE.iqlgrHb1wLbVKrii7Ghq272D0INGiXfaBSY_53AY8j9gvK8v
- faA.SAhWn.bCb0PyqamZbK3Zppc3hcCEXJEcNlvIIk1aA_CRCk4LqgBUDfRVGXV5taD.KBpMO7u4
- .EdwLVCGxBjtJW3W23M.h2Cs0Q8N5u8MBHNL2Dx9U0cnX8RAJ_V_bLzPZq.7L9G4lzOISNZkUs5Y
- veBDv3zf0j80pdvhEYAFHmmK8ay3dXSPnT1X9MrPSdtKwQgQ0ljXIodsrUyblLVCS5_f9wA_an.q
- 9hW3vHSPW6yKNy8UAY2MhJOxZAaBf8lsBfxllOisQcRC.jZeUofVma1cyLArCIzS8unty_W.GBPP
- lNGdajBS4AGXUtJl8KK4TMfl_vgnDBkCET0DgfKHGIHLDi16xrdCkON4PxrNHbCfjvuoPWYuEJkB
- hcpAD6O.gCesz0XJuJHPidi0K91Jj.MLAfdvzkH1eaegvQ35vVN9ZREC1sDYBcwaNDDLygTWSfgB
- 3vKG0bTg8u1Eb_W.rtmBf23xrkoNMKIw_cLpSKboiMRDoape_u8kBtshL4pe5vnasCt4L8EGBo9F
- X1AAMoZ4Aevk8AbD9dRCeueyNqyVXXrFJ2U.udURLT8TxoMVxLnXhQvNQYkcDqhmPToURaWs_D9K
- Luqxd1OOnFkt7rJ2WXKoFaUv2Xpt06y5y_OHhInpZinwwbt42RlA4WByLsG0hjn_LZ4RA1Wh5sIC
- .qCN3OttZeedz1BgBYmBufnXivWXP2Ka7u2kjXs_YYM6kcSP12EzrhaQWrHmxoB3CvjifAvk3SQK
- F1BonjbkSV11lVjw8a3En.tzEZDIIVKos6rMd78_uZgmfbOUoW70MXcKoDQODLYcl3tKxXQiUZkq
- kBNS2L52EflodoXDf00AuwEkJLZxjCRXPjDxEkj5gtd8yjem_lhy5bUvTyxUqWRbMbCR_zlWEIGn
- Cpi6tb2bzEw8QNGKhDcANs.UVUq98Dn87ojxMLPYUz3KMlNhxCMYFGRvtCGp_z4ZEdQVZzvmpsLL
- xa.iGWhGJIBT4KgVubYutBMP3MuJk39EuiMjeG8wHLVz.632VLTru46o_UipMTuhhRXfMlmZmwJV
- a6KpnkwTgX8FxKi4PJKzcXstgqaUnd5RnfG6c7o7DnpaCF0THDXyhiHn8WdEeUB0jUrViGsw6taI
- epkeusVqf2R102VeFTu6novq_WMh0httaNO0ny4eo52ki7rEqs7XOGHofBSS3TdTiMQTevKP3oXO
- jBpmAWuf5uNJBE3Xrf.A0qJEhTzLpZnaVcituCnbZcFmMqVKfMZSE_xE3g_O1pR5YskqbfOsfJN3
- 06BhlezECeZUiSogweSx3ZoZr5UjJ9YMAx4GgEQUAp_VQI42CvXb.3p5YDBW9labchYHbqa0rimu
- zbQol6rlPxEqzTbtmK7lPgFXDiSqMo.fYKF3CA5p34yiskMeRIPxV2NHPaGuiqLGpo8Ycdz3DGaN
- jkM2LLIwK54yC0oVH2g43SAJkXnYF_OE9pV74yJdfZS6i3OKHu289UB5.XWKCGMXI7qeQNMdTq3o
- .7JEVSqsZsyVvWQGm05U7zDoZg8zDaTA59n9D1mjWCfXSNcZkrl_5h_fGB6R7_XasdHMVVvDUvbo
- HL4MX_vj8DbdjBWhZV8w72ffE4Ik6de2_EV_BNS3ogl73kvYHoDAoumWu3sJ02TrSMcPOh70AyHM
- pm2VEs7_Fp7uEmSIYvYMemP.vDunz9bKPPBoOhJQ7Ae3i52TtZQOyj_nU4FdxHmaTtmu3ukRJC7m
- eF4vtD9iImv4BgZvGBsB.yVRx5d8nOQaPVifDiSDiZN5h1QoGuhkInLqo8wwch3Tvb.n27B3fGAH
- BC7dllgJzrJ9ftwcAaAQlotrt1Rj4c_vKwWMMF8d.6.eHGtpgL5tKgoYOdYzrt9c_3s6eyBy5eRt
- 03JBYnIRwlD8hYQUI2KUJkP2Wi2pTbg2KAJENbaZoYelZW9LMmCW6mmnZmjioYfuwJQ8sNmLHLvi
- LAbZXJK.xMsP7A7EagUW2R_oe3d2.YE4CZ2J4QXvXnZT0qMyMjoA4KNCEwQCwhid0oiY66XqxZvS
- cL17z3AwaCvIq3.2zIqUCB.up.7ZNtIZi5QZNMGgdwiaTwtAp89IyMpKyiUy3Jz424yTzpp1Y2.n
- dWJQ6ePC.U7kt
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 727b78ea-877e-42f1-ba80-3e3c1cab7107
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Mon, 22 Dec 2025 23:32:47 +0000
-Received: by hermes--production-gq1-54bf57fc64-ftpn2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9493b02f00dfd715bb6118239bc53bcb;
-          Mon, 22 Dec 2025 23:32:42 +0000 (UTC)
-Message-ID: <b62b5a98-12d5-4a21-ad8f-4260c8ba4373@schaufler-ca.com>
-Date: Mon, 22 Dec 2025 15:32:39 -0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DCqatpz0"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-64b560e425eso6882734a12.1
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Dec 2025 13:28:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1766525284; x=1767130084; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eqeIwvBi5mfFvTXZOb022qfLOewfFt8DYBPEmyMUGgA=;
+        b=DCqatpz00qIETVeyzCWJfIc/buosHG9U8/P1y0McMgrKYbC/E5KMEyY+LV4+iM+prW
+         P6V4cXIw670QVvHJDl7oX8fU9MVLfE7ZMEBFZ1VCFWNnIgmpoMljDRsjP1VcHOD7O/TL
+         mmVzUTmi17+zCE999Wm9/TzbH5BohX1CI0ZPazrpahGmtjR9NbGuY5o/a27DLrR0WMiQ
+         aOV3nooH3GvdFsH5eXZFJ6JjAKnYxqQkCLaUiB7iCyXCJTbEHgjZAfKZk3lEcoYrEBls
+         nt9agq7FkHncFn2lcjtkdEVkgIqMHTi7JdNKCmCUASd+GW4ngKT9CWxTnyJ2lxUsAl/b
+         MiQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766525284; x=1767130084;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eqeIwvBi5mfFvTXZOb022qfLOewfFt8DYBPEmyMUGgA=;
+        b=A6BGiv7Z/RS0EbNpLSYB3oKMjqRP8uRcp/uhF5SOzog3MdHAdYfdht/gvIJdItfj+E
+         GEDQoCjHEjHjIHwtcJq4hkP9xt+EDlA2RAv9cxjVWpdft8lqr3qsSt9XqiCG2z2s8Ssr
+         gp+5kuTOuhW1hvmc/IUCQeVMPzX6WlTE8sA063ntIgSMgW0cBZI8Jv/dokrmwCt/gQ9+
+         EirxOjvhEuJf7Z69Jr6E0FmCTo5H2E5u2gf4HQ5G107Pf+i6BLTHjLZAUQzkYjG4/gXf
+         X7Ke2v0KdA6eOhrfD21o8HPhn4WZ60wRLcMJmRt7iDXn2zqvHC3hx4ntWdWhVyheIymo
+         8lfw==
+X-Gm-Message-State: AOJu0YwoQrW+ahPIC9N7zAUGsTBWWxAInbYDPykY4jzVM1FW4EFgl8XP
+	qlVNlGyx+VrL9hCLPBbR78y7NN2hF+71jrBaMQ5wYRle9i4V19PJ8UiY
+X-Gm-Gg: AY/fxX4Hbjm+Zbz+mIJyKga0okfqExJrDYAgiMDBXdR57d+YwjFiXeXAbmmjAIavMXX
+	Je1fIw+DpH+gqOLx/ZT8CAIzzpKl4a6gWLYGwGe862P6ei9MVYoJIalyzT/kWQtREZaKAZD5t2c
+	Hz9XocLLVxHMjJZQdR5UPA3DGOn0Ikp6Ld3Yhx1M+zoK0x2ApweuXOZcKbpB2Iw/D9urADCRzdU
+	73Bmd6RaxoBjEWMdKej7WgALF5hgWL5vDtRRJSC1Oy7Jv6A547A+CP4RzxB6PlaUj0HRZMgGGAZ
+	ifXtDK4QVj9bbkeWTiKDwpwohUC6qqJYCwg1LnS2S5wCXnpfAaRWhFvvxs5aEXXr72/mcIK13i5
+	U/PundQYnvUtP7d1+nFhdbginwj8Qy+/5Az1p1/z8Y0qBg5GPqECWBjFMJr4DpWFSyLfW460KDi
+	BJJuPSqKI3e5k4qiY9cLLIw9lXUPUSRDheStRV
+X-Google-Smtp-Source: AGHT+IEp8XHzz3urk0AEbTiRbOwci3ksWVrKeG6VcZDdscrx6T6ZVlSphdaZq1NgfitOXa8wshh9ig==
+X-Received: by 2002:a05:6402:2685:b0:649:6577:e694 with SMTP id 4fb4d7f45d1cf-64b8eee5218mr13088174a12.31.1766525284340;
+        Tue, 23 Dec 2025 13:28:04 -0800 (PST)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64b9159a4eesm14501136a12.24.2025.12.23.13.28.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Dec 2025 13:28:03 -0800 (PST)
+Date: Tue, 23 Dec 2025 22:27:46 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH v1 1/5] landlock: Remove useless include
+Message-ID: <20251223.ebd9978e8df7@gnoack.org>
+References: <20251219193855.825889-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Cred: Remove unused set_security_override_from_ctx()
-To: David Howells <dhowells@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>,
- Linux kernel mailing list <linux-kernel@vger.kernel.org>,
- Serge Hallyn <serge@hallyn.com>, max.kellermann@ionos.com,
- LSM List <linux-security-module@vger.kernel.org>
-References: <15895666-464c-4349-9fb2-f24e10aac8c7@schaufler-ca.com>
- <15895666-464c-4349-9fb2-f24e10aac8c7.ref@schaufler-ca.com>
- <1075251.1766441984@warthog.procyon.org.uk>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <1075251.1766441984@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.24866 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251219193855.825889-1-mic@digikod.net>
 
-On 12/22/2025 2:19 PM, David Howells wrote:
-> Casey Schaufler <casey@schaufler-ca.com> wrote:
->
->> The function set_security_override_from_ctx() has no in-tree callers
->> since 6.14. Remove it.
-> It's also declared in include/linux/cred.h
->
-> David
+On Fri, Dec 19, 2025 at 08:38:47PM +0100, Mickaël Salaün wrote:
+> Remove useless audit.h include.
+> 
+> Cc: Günther Noack <gnoack@google.com>
+> Fixes: 33e65b0d3add ("landlock: Add AUDIT_LANDLOCK_ACCESS and log ptrace denials")
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> ---
+>  security/landlock/ruleset.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> index dfcdc19ea268..0a5b0c76b3f7 100644
+> --- a/security/landlock/ruleset.c
+> +++ b/security/landlock/ruleset.c
+> @@ -23,7 +23,6 @@
+>  #include <linux/workqueue.h>
+>  
+>  #include "access.h"
+> -#include "audit.h"
+>  #include "domain.h"
+>  #include "limits.h"
+>  #include "object.h"
+> -- 
+> 2.52.0
+> 
 
-Yup. I realized that just after I hit send. V2 coming.
-
+Reviewed-by: Günther Noack <gnoack3000@gmail.com>
