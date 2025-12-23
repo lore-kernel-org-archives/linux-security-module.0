@@ -1,191 +1,138 @@
-Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EA5288C20
-	for <linux-security-module@vger.kernel.org>; Tue, 23 Dec 2025 22:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3631624C0;
+	Tue, 23 Dec 2025 22:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766528569; cv=none; b=AL/4ZIngvBMw8LyTFtzSd4IHna7+exTyPABK9eYaaUaSJgjjbqlyibzNwUKlKdbOVkkzkBXqSMVuWlIg5RP1zioD0qbMBl+GN/vSzkScFL8Rx37GjMO8pOTGzM6PTTlIpDEOtNpAW0ZxCglpKXN0QCiy3MeQk7haRiiuBvnU4u8=
+	t=1766529188; cv=none; b=SbeVxcPveEkymXVbDYtrbXOs6RuwkufyzHMXIWlLl5ZkGe4glpI3Ep7ViBAz8CyAGI61i9+stgL0P3JQP86CVjmQdEMtzhVmM86Hly4FqbwULAJVz2qmzszlR+o1kVDoO3QpX5mglgn4NC3Fl5avBPZrj7RE7BQMtwKXddkmvDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766528569; c=relaxed/simple;
-	bh=5ChQaMmlLX9hovDQcQS7g7uNbKQo9JZDx5A4s1IgkMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dGnd0AT3y8Z2xGwVepAif3yIVtN/0aSjTHE2WcOX+yayMA/23KUrg38DqoZNLcP5eOJpPtkp56lHee3UDVAKPYLdbKSWKHcdK+V3n6pm2+/OcgbyCxFcMn+dyjMCQq/imgmZaGiD2ke/a6tZ0yjko+DIX/lWWU99rgpnRm7mBoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c+mClDG6; arc=none smtp.client-ip=209.85.208.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1766529188; c=relaxed/simple;
+	bh=Fopdh603CQTT10896Z20gpo2SSvmF/o0M3R3fNxpAzU=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=Ql3xU4kgG+UOnHNQA/zIHCGU3ejv6rHC5G6FovIqn/l+lutezDw943tnCFyO/JLbZkrCV5zFDrwJ057V4i4cpiHZc/T0nD1ojHA3izzczE5LrCJom/rF8TlttAYLo7/wlDMtfPtkE99h9oSazwRNoouxPY3I/Dp0S7nbg6P82L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=o+x0peDn; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+mClDG6"
-Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-64b7b737eddso6392483a12.1
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Dec 2025 14:22:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766528566; x=1767133366; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iBMOlYcIyEYU1W9+lfG5Pu7Sgvidu33OsXznw6P67hw=;
-        b=c+mClDG6BgnA5HJhpxDXNDRLUriy4UPs+XOeTgc4JfFL4hsvlvsQH4T+uq6BccX1a+
-         xlp5UTqF4F7wIdscS3ced5D8X3w3ZUKe3L9puRYqR+NOJK7mAaB46FcRV5+Vb2S58+YM
-         hf1ZIUz3KonOi31oCvcSj8daERapBJ5hyyv2xmSMJUQypNTV2f4Cl849gGJGTfs5u05/
-         d3TWQxzWqWxbSFLpfsRyFG7Rs1v2HKMM4CiXkwyuxsATFzipK/0WA0XTzniKjdI2l+xv
-         kcdjX+xNhSPiyn8N7XwgqqGnwO6iqlEQs6ETy/eMjthDmZeEeGwS/0kb+vz0UjaYvS2C
-         7Y1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766528566; x=1767133366;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iBMOlYcIyEYU1W9+lfG5Pu7Sgvidu33OsXznw6P67hw=;
-        b=VjNtFwdTklUEV/Pb02CUqoDgmvGlHXtg4dVBX8oR/b/soM4H4s6FkRtWr7W9vv6FjF
-         QcHsGKHMuaqZSvlDnhXEomSosnMQKqn7NE2d8Lg7in2FbwhRKPq7d5M/PCoJqh+ONH/a
-         DqsGVgU4jPGsfr5CXFLGkrz+11U1LjLUQlYxIT91IL7uKAUH+tTttuIHvQfdlHcZakLy
-         GsEe9rWPt6AJfwc+DR59H/LpRv7drj+NLNMdneTgaNqN1wRvHQOonobvURQbjnf4FVQO
-         ScjAvMlU/nrl3TFoQolVvyZSRMPiWcd1Onof12kmyhWvFk+rDL2Yv62vZt1T0lp2TiDh
-         4hAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXqJNQTJMw7QTUkPm6n3eVVQCYJvW4RzAvsybuWIWau3OvPlWvKIxbe7nAeH+z1wXKHkglUN1bvN4oWI3owpKpFhEcC7NQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzktt5+LGgf6Oxq6OhND73qZELkjjGEOppw6kNjK2eSzu4PZcem
-	jhxSRhCYQo2DcCKL5zLnbvggyWkN6t3izKDhrSCfKC7xX3aplozk6tzVFdKLvas3
-X-Gm-Gg: AY/fxX7Lzy4szEU96bhOETdMAoOE+SUdiHMb/s6gEadZKrvTE+4SZFROrUVklMGce/Q
-	ybyQWK0F+bcvQpAXOkJAU/xOIA/2VAMwqEqtAMbqAZcXFUfcSkR6wPMNVNGikbBJFP7kIOfRuv6
-	zT5WZ0Y9vQ1xq62AazUpydr/kRW7EU2stiFfOPzFEooHMX3GYzZb1rNcqVGaRSIqzqqoo3YbcA6
-	1ILlUU8JyeyZwA7Dvd1KwO46UcO2W9nJk2f2evm52dsVP10KJwgVMzODzg/fmFj8Y/+Z/rSJRf3
-	rDcBRLTSFIVDxniZzmn88xhQCcYHWSlC9C4N3aH4sAMA5Ybcrip/wNEBPOjvsA5elOfxbq6CbBy
-	UvRDXYpdclxBgIHrbV05V4WlDJki28W2CBgGwVVdsqoOM+0BExL2LY8lYyK6/QF0HDH3MGM2GZ4
-	d2ub0IbOzune1jHhqYq5WSAkQyRckFHfgfEwVVfSv1mPuXV6U=
-X-Google-Smtp-Source: AGHT+IGDTgKeYbah8CnZhxEa5ijteR0IOBgOtlvgWqYeilAtsx0/MuuxhMjQU3xAGfGN1O1cNLclBg==
-X-Received: by 2002:a17:906:5a6c:b0:b80:4158:d9c2 with SMTP id a640c23a62f3a-b804158e0f4mr916256266b.1.1766528565609;
-        Tue, 23 Dec 2025 14:22:45 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037de004fsm1563497566b.45.2025.12.23.14.22.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Dec 2025 14:22:45 -0800 (PST)
-Date: Tue, 23 Dec 2025 23:22:36 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
-Cc: mic@digikod.net, gnoack@google.com,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] landlock: Add missing ABI 7 case in documentation
- example
-Message-ID: <20251223.69fdc8e48fce@gnoack.org>
-References: <20251216210248.4150777-1-samasth.norway.ananda@oracle.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="o+x0peDn"
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5BNExln9003146;
+	Tue, 23 Dec 2025 22:32:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=DH2X4C
+	oi53+Ydia//Ib0Jip+APf6u237n9coHTJNB9c=; b=o+x0peDnJdjFqrgtts7bDm
+	4/HX67f+ajReZzpUaNH/t5Di+4GsC4AURCx8j8gIlrRUS8DzYaB0wwP22jowoO/c
+	6G3yl73qO0ls47S7TEciy2OnogRVZBQZ2u0LHwijrnE1KuUqJJ7WYbnqz/anjF/X
+	tcgzHFtOpT5YGaD6as4RMQM1ipUom7S+/06JHkKtH4XkatVNJTCuCgQvYNyO3PJx
+	39mUehomAk7VXVGLWZpf59ryifz7bJ9E7By+U45W98+siQzIoEee2c22kQQVID/8
+	jMgl3Updh5xV82I+CoQHaB+gFfwDBaEXC4QqqFk/KiHlIuGw3jmBBRNauZs72Sug
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b5kh4evgg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Dec 2025 22:32:38 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5BNMWbeN020236;
+	Tue, 23 Dec 2025 22:32:37 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b5kh4evgd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Dec 2025 22:32:37 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5BNKll7H030183;
+	Tue, 23 Dec 2025 22:32:36 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4b66gxwhg1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Dec 2025 22:32:36 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5BNMWZ6U19137058
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 23 Dec 2025 22:32:36 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DFCFC58065;
+	Tue, 23 Dec 2025 22:32:35 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D4F9B58056;
+	Tue, 23 Dec 2025 22:32:34 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.160.131])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 23 Dec 2025 22:32:34 +0000 (GMT)
+Message-ID: <9a26898f46406314be1308e5416c0d51cedf44a4.camel@linux.ibm.com>
+Subject: Re: [PATCH V2 1/1] IMA event log trimming
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: steven chen <chenste@linux.microsoft.com>, linux-integrity@vger.kernel.org
+Cc: roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, corbet@lwn.net, serge@hallyn.com,
+        paul@paul-moore.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, anirudhve@linux.microsoft.com,
+        gregorylumen@linux.microsoft.com, nramas@linux.microsoft.com,
+        sushring@linux.microsoft.com, linux-doc@vger.kernel.org
+In-Reply-To: <b9d7bcea-3784-4ad6-b494-374db0c00cc6@linux.microsoft.com>
+References: <20251210235314.3341-1-chenste@linux.microsoft.com>
+	 <20251210235314.3341-2-chenste@linux.microsoft.com>
+	 <d80958ec-f139-41e9-afa0-a5aca94221de@linux.microsoft.com>
+	 <c93907cb0f08f9baa320488989aa87e7867ee9da.camel@linux.ibm.com>
+	 <b9d7bcea-3784-4ad6-b494-374db0c00cc6@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 23 Dec 2025 17:32:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251216210248.4150777-1-samasth.norway.ananda@oracle.com>
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=bulBxUai c=1 sm=1 tr=0 ts=694b1886 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=9tRBcEDlKUlfiG1y_IYA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: GJ0Sf3WYduDmX7aQQsYDRJNnrNQ7gZui
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjIzMDE4NyBTYWx0ZWRfX82gw8e3Ej1YK
+ uR3ER0RbQvMJDng+kDhvIcpww8bubrjpQtK2aVuCSPN9cPo0YZnbOOJH1E3dsS9aq+n4pzFbllW
+ LVvYKJdU1noI24gIaXWwnGUZANMQlrET738Xw9pTGxWsqyu7zdZk28CeylQ5QZJjD1697pUxO07
+ RxYp8iXEcx+eukoOeWMdkRVpBjpR2F8iUQX6F7rdIOoBQGA7w2n/RAo5BhPtzphsx2XV3Vhdnmy
+ OmLTSp9iBaRi9nqebJUtvOmgTwZcKmjOsrJptpSidWONAk8mJF1PFBYMMprk9evaEBovMOOGJI9
+ PcRNKHHipXniz7jJV4jY3oIUX83c3A+mVnrNjhx1lUgZSNTYF7PuUfmNJuXPpSK2tqdsMcKSAbZ
+ BoNwCW8p5V3//OmySE76rxlGVUXekXmIomfPq+qbXBu8Nq3l4qSU9D54ZXj2CAOmWYyRk4wtUBx
+ Dfic+lj30WL5u5+uuxw==
+X-Proofpoint-GUID: zKZjc7fslhq8_ETL89wlljnzRjR-jAGY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-12-23_05,2025-12-22_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0
+ priorityscore=1501 spamscore=0 malwarescore=0 bulkscore=0 phishscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2512120000
+ definitions=main-2512230187
 
-Hello!
+On Tue, 2025-12-16 at 11:59 -0800, steven chen wrote:
+> > > > +{
+> > > > +	struct ima_queue_entry *qe, *qe_tmp;
+> > > > +	LIST_HEAD(ima_measurements_staged);
+> > > > +	unsigned int i;
+> > > > +	long cur =3D number_logs;
+> > The variable name "number_logs" is confusing.=C2=A0 As I mentioned in t=
+he patch
+> > description, there is one measurement list with multiple records.=C2=A0=
+ There aren't
+> > multiple logs in the kernel (other than the staged list).
+>=20
+> Will update it to "req_value". Thanks!
 
-On Tue, Dec 16, 2025 at 01:02:42PM -0800, Samasth Norway Ananda wrote:
-> Add the missing case 6 and case 7 handling in the ABI version
-> compatibility example to properly handle LANDLOCK_RESTRICT_SELF_LOG_*
-> flags for kernels with ABI < 7.
-> 
-> This introduces the supported_restrict_flags variable which is
-> initialized with LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON, removed
-> in case 6 for ABI < 7, and passed to landlock_restrict_self() to
-> enable logging on supported kernels.
-> 
-> Also fix misleading description of the /usr rule which incorrectly
-> stated it "only allow[s] reading" when the code actually allows both
-> reading and executing (LANDLOCK_ACCESS_FS_EXECUTE is included in
-> allowed_access).
-> 
-> Signed-off-by: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
+Please refer to the section titled "Naming" in Documentation/process/coding=
+-
+style.rst.  Since this is the number of records being deleted, perhaps a be=
+tter
+variable name would be "num_records".
 
-Thank you for sending a patch, much appreciated!
+--=20
+thanks,
 
-You are right to point this out - the logging aspect is a bit hard to
-spot when reading the current documentation starting from the code
-example.
+Mimi
 
-
-> ---
->  Documentation/userspace-api/landlock.rst | 22 ++++++++++++++++++----
->  1 file changed, 18 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index 1d0c2c15c22e..b8caac299056 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -97,6 +97,8 @@ version, and only use the available subset of access rights:
->  .. code-block:: c
->  
->      int abi;
-> +    /* Tracks which landlock_restrict_self() flags are supported */
-> +    int supported_restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
-
-This might be confusing, as there are actually more supported flags:
-ABI v7 does not only introduce LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON,
-but also LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF and
-LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF.
-
-I am unconvinced whether it is a good idea to set these flags in the
-first example that we have in the documentation, especially if we
-don't discuss what these flags do there.  If we suggest the wrong
-default flags in the example, people might use them in their
-production code without realizing what they do.  The way that the
-logging flags are designed, the assumption was that most users should
-be able to pass 0 as flags to landlock_restrict_self() and still get
-the relevant parts of the audit logging.
-
-But you are right that an implementation that *does pass* logging
-flags will want check the ABI and not pass them on older kernels.
-
-To throw in a constructive suggestion: we could also have "backwards
-compatibility for restrict flags" section between the existing case
-analysis and the landlock_restrict_self() call?  It could then say
-something like
-
-    When passing a non-zero `flags` argument to
-    landlock_restrict_self(), the following backwards compatibility
-    check needs to be taken into account:
-
-      /*
-       * Desired restriction flags, see section suchandsuch.
-       * This value is only an example and differs by use case.
-       */
-      int restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
-      if (abi < 7) {
-        /* clear the necessary bits */
-        restrict_flags &= ~...;
-      }
-
-Readers who do not need to pass any flags could then skip over that
-section (I assume these are most readers).  The readers who *do* want
-to pass flags could merge that logic into the bigger case analysis
-themselves, but for the sake of explaining it we would not mix up that
-explanation with the access right discussion that much.
-
-WDYT?
-
->      abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
->      if (abi < 0) {
-> @@ -127,6 +129,17 @@ version, and only use the available subset of access rights:
->          /* Removes LANDLOCK_SCOPE_* for ABI < 6 */
->          ruleset_attr.scoped &= ~(LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
->                                   LANDLOCK_SCOPE_SIGNAL);
-> +        __attribute__((fallthrough));
-> +    case 6:
-> +        /*
-> +         * Removes LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON for ABI < 7.
-> +         * Note: This modifies supported_restrict_flags, not ruleset_attr,
-> +         * because logging flags are passed to landlock_restrict_self().
-> +         */
-> +        supported_restrict_flags &= ~LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
-
-If this should be a generic example, we would have to clear the other
-two flags here as well.
-
-> +        __attribute__((fallthrough));
-> +    case 7:
-> +        break;
->      }
-
-Thanks,
-–Günther
