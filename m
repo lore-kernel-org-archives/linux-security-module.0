@@ -1,105 +1,86 @@
-Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B015E22259A
-	for <linux-security-module@vger.kernel.org>; Sun, 28 Dec 2025 18:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919D923D7E6
+	for <linux-security-module@vger.kernel.org>; Sun, 28 Dec 2025 19:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766946916; cv=none; b=nd/mgWFILMcJASBOETrxOFJApVUejwwrxVAqt55cCG28MjKMGA6oyxnP4dhKP/EhMgrA9/3VVguI4LADKYgSGgAfIRGja5u0OokEaYtW4KVuLbypuj+PkxGqOgFa4JeiWNNlS91I7hBCu/3yY+5irFQ6JsnIQhc04am6bPIyvwY=
+	t=1766951324; cv=none; b=iUbcpBLS7wjmDEWVJWaEzbW9CC4i4KCaJEhy56hbzWMXAMh/8EM9q6+jqWjqoD+MVZGrIgJeOpZHR/kV0LSDpD+Ylxx+8EyrmV0i6SOV4iZipQZQ5r8LPo5kanGEMMEPWoFy4eWZ6ryOsp/FPYIjeHpPOr/j/v9GhYPP7yGlSnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766946916; c=relaxed/simple;
-	bh=WvvaXHvS3BzcBfvB0T7a0366331cr/nFFg1mLwxkoNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eUmxjZUDINHMXUmPnoDvs+g7j1bW0Be75coOkN+QpsMFm3xaSk17DNgfHB1lQuXE69eU5qrFVOOf1Bwm2DlraTTYWjqiyy6evxbeTU+rBUZVsgNyB02CaNaLlFFvUeWw/zYzZCn3PhiXQqNGyLW+3AKMEDLasrlCiEQPKlKIUao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Sib7SW6L; arc=none smtp.client-ip=83.166.143.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1766951324; c=relaxed/simple;
+	bh=T9YN8hfLvxHGnz3PBErAoCE4gWgWoAu3FAZqPFkHTzw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aKYJkrGgXtu9bRw4WC+Adq6qiRX8xZkjz3UXxASqfY3KM8PFrJxsorboB8of89SJ3jHryKe3A9PAP4NnTIuHm3mx8lCbmzZzjWX1Qq3PYVP/c+GWbKdNzX5JGTMh4Ol8I1WBcXS7K9/fzkFitDdKXL3PBxgloa87uFgrNI6jIws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ERj1H81g; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Sib7SW6L"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dfSHF64cHzdkp;
-	Sun, 28 Dec 2025 19:16:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1766945817;
-	bh=mqszp1sZ0SLwHznwbKOyQbSP/nOfr0osfraXU0k7YPA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Sib7SW6LnPaauFDs8CTAcP9SH1eSM5hvKWnKhE2EqyvMo/SD0L82oquBR5Vo0EFSI
-	 gBc8HviVPGJixobJY79E8Rko/RQeeGHlQp8peeXwNFqrg6Pk8ddHHLLdhp2F7C+L90
-	 lz0tp/FdIDoXgKeexh/fTkCa8vjRD2w55h4NvVMA=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dfSHF22VLz32s;
-	Sun, 28 Dec 2025 19:16:57 +0100 (CET)
-Date: Sun, 28 Dec 2025 19:16:55 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, linux-security-module@vger.kernel.org, 
-	Tahera Fahimi <fahimitahera@gmail.com>
-Subject: Re: [RFC PATCH 5/5] landlock: Improve the comment for
- domain_is_scoped
-Message-ID: <20251228.Aephei2aecee@digikod.net>
-References: <cover.1766885035.git.m@maowtm.org>
- <06393bc18aee5bc278df5ef31c64a05b742ebc10.1766885035.git.m@maowtm.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ERj1H81g"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2a09d981507so62243195ad.1
+        for <linux-security-module@vger.kernel.org>; Sun, 28 Dec 2025 11:48:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1766951322; x=1767556122; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T9YN8hfLvxHGnz3PBErAoCE4gWgWoAu3FAZqPFkHTzw=;
+        b=ERj1H81glMbPRxJ387QyaNJgSlFGi3wDO1a3hFDOaigFUtmpoXMYL5smdkpBQqUbCW
+         CcfKoqGIPziZwjIqqsxUH1HblrBwIA6Nq2THztM4wACzt7rlLiA/bpZar+MSDovPCEL8
+         BwG4JXeGwbM+cKnYiFJKnwTvKR1Q792uHH2r5ES6sjmWuQC6qTeOnytxgAtVEAYhQSaR
+         ttYSqe/SDZhuYWfcCEiS9db8of+pyB9YpfNQT7fopSW21LvQthbC5D3Vunc7EPDaj29b
+         +BDskSlN3Sfhl1doDpSDAuha346oaMwcPUVPrkx3/9tiehX9Sqjk/BU4jpgMMm3iFaWd
+         OmIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766951322; x=1767556122;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=T9YN8hfLvxHGnz3PBErAoCE4gWgWoAu3FAZqPFkHTzw=;
+        b=KCSkcV1+ZLt6ILBAMlbkpRiiJaUCTkwwmTm90UW/EYQoX5sOsvrDQqKdznH9p9HcxF
+         5YorronmRCz8T2QuayXI0weXgxjqlsGRQo1MUfnOx43El7QZhJQl1oDvr7tCFaAu+KEg
+         kYuMi7z7piOeSBWqm8Km1apeF91k6GqXp6sp1eFKIx7t+k0rNm6Bpg32mIR2mOxsvLIS
+         xcJKQKYBogvQBMEMnGRmnI1BbcHYEa7I5P+z7uhFcqPK492x1sSoJKk78BQBghogIbvA
+         Q2Wa3xYKn+i2gZmfGhrA2OrJ8CDXWVU70Vxnmdjd9K0BOBL6w665qF5kVrhX3c0XnbBO
+         oZEA==
+X-Gm-Message-State: AOJu0Yw/eHHIqwV9JgLrzbux80ENEgQud6rOKvXQSy6tFCKcVCPKjqxd
+	5g28ORvgPnN9VzPwDYV6H8VCn/5PJZZgIGk72rbzoCZKQhYCu6Nn4HY/QHQek5JS
+X-Gm-Gg: AY/fxX7U8p9HwB9yG/mxNWBjXnrYWbtSxo0sOBPn2VwXKclKabsCv0K7pwGVM9ClQdo
+	O69naRDClUXzpe3Rf5aoOjR9DttuK6k0bTrgKuqaSRrXikh/pzz+1rqin9Pyp6qHSEnARYZnw1C
+	kzft66NE4qapJuNmQ8owuqFSIBizQyMQiQgKX24OLOEuQ4D+PLn8IHuKaA5d62w008weSB4FvHp
+	6fnRmCfw7qf6jRt1lmeCDPO/5r0h8ZUaXo8RWtpSNKCWZ/ad9hzjmDoi9GsSUSWZ2lbXdL7E60N
+	5QJtoElilaISVyNSStkx+iNEJcHB/XcRaVLaP6C3tsDTfumlJpPJ6YAuDC6+vlv4rYbSxyK0/L5
+	pjC/iQxx0gNXGm4Ek9CnBCrsWL9pgJF1OJAYNzszPXgWhpAR9zaHtlKqBuVfP5xEDWCEtKwM4MJ
+	OaH6zs+kBOBenlIEoSet9GrZNoUZCO0wR0VeebcSn8A5Jl/liJXlo=
+X-Google-Smtp-Source: AGHT+IE/Q45OlGKr25wtJKDnztih+hqs4pFsSnGiL/RvgP+xRq+SAvxB1+Z1rfCqgfZ54DooWAZBMQ==
+X-Received: by 2002:a17:903:1585:b0:2a1:3769:1d02 with SMTP id d9443c01a7336-2a2f0cd3fe1mr249808975ad.12.1766951322307;
+        Sun, 28 Dec 2025 11:48:42 -0800 (PST)
+Received: from kailas.hsd1.or.comcast.net ([2601:1c2:982:6040::e14d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a2f3d776b2sm254282665ad.98.2025.12.28.11.48.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Dec 2025 11:48:41 -0800 (PST)
+From: Ryan Foster <foster.ryan.r@gmail.com>
+To: linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	paul@paul-moore.com,
+	serge@hallyn.com
+Subject: Re: commoncap KUnit tests v4
+Date: Sun, 28 Dec 2025 11:45:36 -0800
+Message-ID: <20251228194838.32214-1-foster.ryan.r@gmail.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20251204215610.148342-1-foster.ryan.r@gmail.com>
+References: <20251204215610.148342-1-foster.ryan.r@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <06393bc18aee5bc278df5ef31c64a05b742ebc10.1766885035.git.m@maowtm.org>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
 
-On Sun, Dec 28, 2025 at 01:27:35AM +0000, Tingmao Wang wrote:
-> Currently it is not obvious what "scoped" mean, and the fact that the
-> function returns true when access should be denied is slightly surprising
-> and in need of documentation.
-> 
-> Cc: Tahera Fahimi <fahimitahera@gmail.com>
-> Signed-off-by: Tingmao Wang <m@maowtm.org>
-> ---
-> 
-> Open to discussion on whether this actually explains it better.
-> 
->  security/landlock/task.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/security/landlock/task.c b/security/landlock/task.c
-> index bf4ed15a7f01..6dfcc1860d6e 100644
-> --- a/security/landlock/task.c
-> +++ b/security/landlock/task.c
-> @@ -166,15 +166,16 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
->  }
->  
->  /**
-> - * domain_is_scoped - Checks if the client domain is scoped in the same
-> - *		      domain as the server.
-> + * domain_is_scoped - Check if an interaction from a client/sender to a
-> + *    server/receiver should be restricted based on scope controls.
->   *
->   * @client: IPC sender domain.
->   * @server: IPC receiver domain.
->   * @scope: The scope restriction criteria.
->   *
-> - * Returns: True if the @client domain is scoped to access the @server,
-> - * unless the @server is also scoped in the same domain as @client.
-> + * Returns: True if the @server is in a different domain from @client, and
-> + *    the @client domain is scoped to access the @server (i.e. access
-> + *    should be denied).
+Hi all,
 
-I removed the "the" and the heading spaces:
+I've updated the patch after noticing the dependency on CONFIG_USER_NS=y
 
-  *
-- * Returns: True if the @client domain is scoped to access the @server,
-- * unless the @server is also scoped in the same domain as @client.
-+ * Returns: True if @server is in a different domain from @client, and @client
-+ * is scoped to access @server (i.e. access should be denied).
-  */
+Thanks,
+Ryan
 
-
->   */
->  static bool domain_is_scoped(const struct landlock_ruleset *const client,
->  			     const struct landlock_ruleset *const server,
-> -- 
-> 2.52.0
-> 
