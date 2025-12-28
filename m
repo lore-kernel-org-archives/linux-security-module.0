@@ -1,92 +1,79 @@
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933702FFF98
-	for <linux-security-module@vger.kernel.org>; Sun, 28 Dec 2025 12:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73C910F2
+	for <linux-security-module@vger.kernel.org>; Sun, 28 Dec 2025 16:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766925977; cv=none; b=SBA7wX7heO//28YDse6zaLuwvuJG8p2qFbc7FaCKQBvvqWEqgj9DJrxFwxSC6GiDVoIT+fJr0gC1NoTo732FQZK/Rwnc5LREBXLEXW2+OMFGrwfYuRgkgHQbaVQIjB5GLxxNmqeodNhH2C55ea7q9Qo5tXeFfUNPK215jqYtOn0=
+	t=1766939886; cv=none; b=aSEMWsxoFBB781iCMkbSTwCNb7o3CgKKAYEIiY8jt1NchqyVFNrgLsB7eNNcxEsm2hsqX+ok+MPF6ZRV+bOdJQ19ps8jqXMV+5KLOkxEt2NuSDMl8ubSrLEST/2VplpDo032JC135SKGHNr9LC+0kVdz5To0hFpKzR7a2KOiNPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766925977; c=relaxed/simple;
-	bh=poOPPTH/D8gFoeGPicRjTQpFynL7kE0QZF+FNeqaG1o=;
+	s=arc-20240116; t=1766939886; c=relaxed/simple;
+	bh=A1CloLTF5mtKQuQfJ6+s7+liPfl3Njzrx3VljXnL8No=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DO0A6uRpIyF/h6mmRFV62LWNH5FVHFvl260AEz3vAUJEvNtfP1Ttzvq10MZYw6h+u3b/ta22uiA+SHjYtQKYI0WHhcOASvgQ/kBYLAss80/eyWYbJkFGSi6W7K/54lDgx7h3HMr1M2IZ2DD0Jd+CdfjTTeld8tMfgcTn4BXhqL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=UYev/gGW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NjTeSW4q; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	 MIME-Version; b=mP/i8nOv3g8Cd5Ka4fPBlO2Z8vBmB+i2clG958eMAKiEYDmvVWZaPHDYmvcM/l4rWB/heFfnGJTZ6b1QUV4dfEL0VtsMH7QigqnpjMld0uuMfvT/8AoJLGBi1t8Q05kAfHvTkjnQ/PqH96zA9S77T3YSjuFMBoX/J1GgDaZAQqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Je/RITCe; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="UYev/gGW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NjTeSW4q"
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfout.stl.internal (Postfix) with ESMTP id 9B75B1D00372;
-	Sun, 28 Dec 2025 07:46:13 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Sun, 28 Dec 2025 07:46:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1766925972; x=
-	1767012372; bh=DBa6bSHSjqexH+IIuxa+HSgxgFAr0KrzE0/lRQalhrI=; b=U
-	Yev/gGWGyGzULTaroc6L0/ymVIgXsShkcRf0XhAHZyIXqXAz+1M8UQptZCzrAnhG
-	FDlLrnp/1bZk9rNaJ41A57kstHhRNu5Lr+iiNvGRQSb5Mj8i3h/SkPIgydyCr1R0
-	KLrNt2QOp8eJcwehCAwZrlmmRE4CxnYQndY7MYDlD/fqGan2wF1y9yRWSxhu5oF9
-	2PV8U/v/ShwNkKo2G+Pa5Z2N/g9xSR2XHAaYpXRDOfqhAqZxkq7F4n/+PwIC59MV
-	yf700hQUc4E7UXQ8FSLTTKJ7gP0sB8LS0Mg69+DcyigbBlYNPZIc/cKElKL+9/jw
-	vEsRLg7xHHppMgNpoD3vw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm2; t=1766925972; x=1767012372; bh=D
-	Ba6bSHSjqexH+IIuxa+HSgxgFAr0KrzE0/lRQalhrI=; b=NjTeSW4qspT61vaka
-	ErJ59hA+fWnbwoxbeW2fDuBg/CsuKLCpQDXTLmoE9ExG+gcqjiy3g0Ybh8ReONrQ
-	klr7/AEpPQDr0bU+Y/Q6iU4Tzv8rxZBb870CZ6HAReui64koMObkAdYIPmE5TkQW
-	1uP+PabvytgOLG+WfUILfIQmAPNffP5FR0Q69sXPK9aexW+yWsADgmEPo1WeMUTO
-	l2b7rwsIiv0Urjmxpp812Q1bPLRtY3+vnngbWIEaRJ7dzT6KK1oMhbxzLbomxsYI
-	ae2Dr+LzMI1rYtXnq02yCnVn4eHP++j2O3ydq0mynjWjzVd3lDRr8l2Z6422WLcP
-	JRN1A==
-X-ME-Sender: <xms:lCZRaUHSmKDCZw_F4hgyqROz5KatNl6JkvsSvtZ7v3vsuAWOt1DRFg>
-    <xme:lCZRacbmTG4Udz4qb40cV8Uwn38JUSZyY4YrsCVtIZaCrcYHnklUHc0caqb1pfvsP
-    8Kl7BX6c2vwgH8Iq1yRC3TlHkvH5iu4G_TNZGnKrbUUif5xYHeWLdA>
-X-ME-Received: <xmr:lCZRaUXkKBSTP29vhbIxf3lPFsfORv5CkTMXeHik-8KO4Z_W65Hg-Qv0v7l_rqzXuQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdejgeeftdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefvihhnghhmrgho
-    ucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepuedutd
-    ehhfehhfdvjeetvedvvdetfeffgeetteeugeeuleejfeeukeejteeiueelnecuvehluhhs
-    thgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgrohifthhmrd
-    horhhgpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
-    pehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepmhesmhgrohifthhmrdhorh
-    hgpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthhopegu
-    vghmihhosggvnhhouhhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohephhhisegrlhihsh
-    hsrgdrihhspdhrtghpthhtohepjhgrnhhnhhesghhoohhglhgvrdgtohhmpdhrtghpthht
-    ohepfhgrhhhimhhithgrhhgvrhgrsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinh
-    hugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:lCZRaSlNBA3KGPQpn05KOxMUEmtdVYnVP0Ww6O8ScgPKwLFixmjUrQ>
-    <xmx:lCZRafA-MkDjEU4YEVoa6cPie-5-VyEMgjKvgXj4wHCSk453XZAVjg>
-    <xmx:lCZRaRhq6H99bkrpg4Ue1OdugwYDrllbJwmii5ryBKdo3TPqCBW51g>
-    <xmx:lCZRacwMKmYgPNtogax8Ed3zIiDcPNiAsLgrVM6CLsdZtvdnyIID9Q>
-    <xmx:lCZRaQCEhRRk-XDZpXTUCicDjQHapv_B2XJduKMdtb2CEigaDMb-4iAP>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 28 Dec 2025 07:46:11 -0500 (EST)
-From: Tingmao Wang <m@maowtm.org>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Tingmao Wang <m@maowtm.org>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Demi Marie Obenour <demiobenour@gmail.com>,
-	Alyssa Ross <hi@alyssa.is>,
-	Jann Horn <jannh@google.com>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH 6/6] selftests/landlock: Add pathname socket variants for more tests
-Date: Sun, 28 Dec 2025 12:45:45 +0000
-Message-ID: <5718e0f90c1165c8e582583210449411c470879f.1766925301.git.m@maowtm.org>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <cover.1766925301.git.m@maowtm.org>
-References: <cover.1766925301.git.m@maowtm.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Je/RITCe"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-787da30c53dso79956857b3.0
+        for <linux-security-module@vger.kernel.org>; Sun, 28 Dec 2025 08:38:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1766939884; x=1767544684; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tygNOXrVXAO4ZHpUhB7BjUuKJ9KU2ktEMqQxx64GBSg=;
+        b=Je/RITCePWoLmTqF3vSRgJMTpmkAAk7kZ35VxDOMgCEFCjonJbIKN1UoakEEqziE9K
+         4r0KIxccQA+7XG5qZJBaP22UY55RS2NaHSm3YylURPuOdrio0iU6VQz7qSEzPG/NC7Cl
+         Au5UvDcaa7dGBELZEpOQ+8qX/ms30p375SZuG+yrAh7Xj40A15d626Z2djxZwy/Y4M8v
+         3y6ceprzrmGAbRSMweZDhpMxinsA9BCHEj41cOaCnYrhIsrUCz5uD86QCnZXr+CySr0+
+         RwMxzdfl7tIAgE2hyFJ8mKutZSvkxMoHT2GQ4b8tnc8Hlfa3MYnl34+XSGWKeuDfBRlT
+         KCQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766939884; x=1767544684;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=tygNOXrVXAO4ZHpUhB7BjUuKJ9KU2ktEMqQxx64GBSg=;
+        b=Yg3dHI8ZguJUAm4CvLa0DZmcZ1M4RbxCImszT29ULpIy2oa2oeShG+99WG9K+3ZkeU
+         AYp5TREMf+07DijjQ7bOEEKCtCo1UOYCOjOPiDELxp27ZXeiFdP/JYfTIVSsrIVOgdlP
+         Xq/65qduqSb7auIPfZPYQeA3vfQ0rsNpRbQRuXJbmERT+g1IPXl+fWo3UEuA2b/2wkSu
+         6Vph1+FhHMSLjNn6oYtvFbS17KCnzFaGxpmOg5i2ATmScgGz+8PZMk4qX0X8gv63/V0h
+         69lrpTBCHw4NcXPBHqSObaRHoZFaZx2JOGoFguyCTVbvxrfY9QKCwqL5C4GpVwwImoP8
+         NayQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVx5/oNZkU2B2795p7Tr4m+83HS+AWgZJ0ANwBwQxZu28G0xtHWNrpa4EJTjGec77g5+ToGpVd/r+YvnEj25OBkS4vbrBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ87c1jy9xi3ktgcpxTAfcgGjSHcWDnq4yxZbBvAsigJ7vQcDt
+	vu0g6TBRYc2BMYn9hJxmMObIBXnuFcCFfOc9ygVxBwHdDe6IoRsTRY1H
+X-Gm-Gg: AY/fxX7+wyXjy0gX31+OvD9FCD7OjvHLlTSE4snRxi1+zTTv7RLrgfsH+b54rkIXK6b
+	eFnc5u8tWPDYZW7LwZ85QOnw0hmv3AcpPQzY5abxaxPDmGpHzn947j0lH90ZbVZtWJdZgUffBeu
+	oQauVGHvuzg0qLmilQR4ENSgauLfaDoPxLRcNgjbWIuXQtQUywPR2UnvvVlwQtM7k5uk5mvHPFa
+	jDMWgJ71yZc0w9Nz+WGd2TMioedhmJuE+oB9UrDh2rivf0w95favyJX2QO3DPgQk8BOe9/PR6A9
+	E58GuANGad1HmuFyKRof1EgyKQGj9H+hf4/ywBr1oEOlzOHCrKOUV/+Qwqv0yq1WWZgfAIQfQkR
+	SZRcsM/iXBgalwu1U4K4neyJ6waDo56jW8lMsBHIXXkzfmos2UFqgD9HJXDD7ULEH3BN8ZGxXRF
+	V62gAkwHFwBhjGswHZkW6Bg7hFflxBFjEBICEUrUkl4u9NLRmJzOw47RMZCfpa
+X-Google-Smtp-Source: AGHT+IGTomDvweFk1OHsvcvF/D7IGaQA86P09HxPeunGeGLQwbjjmWyfABeI7BpA1AFp+r7utL8jpQ==
+X-Received: by 2002:a05:690c:6088:b0:78f:8b7b:790a with SMTP id 00721157ae682-78fb404507amr228393857b3.15.1766939883569;
+        Sun, 28 Dec 2025 08:38:03 -0800 (PST)
+Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78fb43b298asm105999777b3.19.2025.12.28.08.38.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Dec 2025 08:38:03 -0800 (PST)
+From: Justin Suess <utilityemal77@gmail.com>
+To: m@maowtm.org
+Cc: demiobenour@gmail.com,
+	fahimitahera@gmail.com,
+	gnoack@google.com,
+	hi@alyssa.is,
+	jannh@google.com,
+	linux-security-module@vger.kernel.org,
+	mic@digikod.net
+Subject: Re: [PATCH 2/6] landlock: Implement LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET
+Date: Sun, 28 Dec 2025 11:37:50 -0500
+Message-ID: <20251228163750.451028-1-utilityemal77@gmail.com>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <be315d8ff7544fd91bdb922e8afc7c8154e3594d.1766925301.git.m@maowtm.org>
+References: <be315d8ff7544fd91bdb922e8afc7c8154e3594d.1766925301.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -95,1017 +82,206 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-While this produces a lot of change, it does allow us to "simultaneously"
-test both abstract and pathname UNIX sockets with reletively little code
-duplication, since they are really similar.
+On 12/28/25 07:45, Tingmao Wang wrote:
+> Extend the existing abstract UNIX socket scoping to pathname sockets as
+> well.  Basically all of the logic is reused between the two types, just
+> that pathname sockets scoping are controlled by another bit, and has its
+> own audit request type (since the current one is named
+> "abstract_unix_socket").
+>
+>
+> Closes: https://github.com/landlock-lsm/linux/issues/51
+> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> ---
+>
+> There is an argument that there should only really be one audit request
+> type for both sockets, since the only difference is whether path= is
+> followed by a normal path, or by a hex string starting with 00.  But I'm
+> not sure if we can change this at this point, so I have created a new
+> request type.
+>
+>  security/landlock/audit.c |  4 +++
+>  security/landlock/audit.h |  1 +
+>  security/landlock/task.c  | 74 ++++++++++++++++++++++++++++++---------
+>  3 files changed, 62 insertions(+), 17 deletions(-)
+>
+> diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+> index e899995f1fd5..0626cc553ab0 100644
+> --- a/security/landlock/audit.c
+> +++ b/security/landlock/audit.c
+> @@ -75,6 +75,10 @@ get_blocker(const enum landlock_request_type type,
+>  		WARN_ON_ONCE(access_bit != -1);
+>  		return "scope.abstract_unix_socket";
+>  
+> +	case LANDLOCK_REQUEST_SCOPE_PATHNAME_UNIX_SOCKET:
+> +		WARN_ON_ONCE(access_bit != -1);
+> +		return "scope.pathname_unix_socket";
+> +
+>  	case LANDLOCK_REQUEST_SCOPE_SIGNAL:
+>  		WARN_ON_ONCE(access_bit != -1);
+>  		return "scope.signal";
+> diff --git a/security/landlock/audit.h b/security/landlock/audit.h
+> index 92428b7fc4d8..1c9ce8588102 100644
+> --- a/security/landlock/audit.h
+> +++ b/security/landlock/audit.h
+> @@ -21,6 +21,7 @@ enum landlock_request_type {
+>  	LANDLOCK_REQUEST_NET_ACCESS,
+>  	LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET,
+>  	LANDLOCK_REQUEST_SCOPE_SIGNAL,
+> +	LANDLOCK_REQUEST_SCOPE_PATHNAME_UNIX_SOCKET,
+>  };
+>  
+>  /*
+> diff --git a/security/landlock/task.c b/security/landlock/task.c
+> index 6dfcc1860d6e..9fbb0ada440b 100644
+> --- a/security/landlock/task.c
+> +++ b/security/landlock/task.c
+> @@ -233,57 +233,84 @@ static bool domain_is_scoped(const struct landlock_ruleset *const client,
+>  	return false;
+>  }
+>  
+> +/**
+> + * sock_is_scoped - Check if socket connect or send should be restricted
+> + *    based on scope controls.
+> + *
+> + * @other: The server socket.
+> + * @domain: The client domain.
+> + * @scope: The relevant scope bit to check (i.e. pathname or abstract).
+> + *
+> + * Returns: True if connect should be restricted, false otherwise.
+> + */
+>  static bool sock_is_scoped(struct sock *const other,
+> -			   const struct landlock_ruleset *const domain)
+> +			   const struct landlock_ruleset *const domain,
+> +			   access_mask_t scope)
+>  {
+>  	const struct landlock_ruleset *dom_other;
+>  
+>  	/* The credentials will not change. */
+>  	lockdep_assert_held(&unix_sk(other)->lock);
+>  	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
+> -	return domain_is_scoped(domain, dom_other,
+> -				LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
+> +	return domain_is_scoped(domain, dom_other, scope);
+>  }
+>  
+> -static bool is_abstract_socket(struct sock *const sock)
+> +static bool sock_addr_is_abstract(const struct unix_address *const addr)
 
-Tests touched: scoped_vs_unscoped, outside_socket,
-various_address_sockets, datagram_sockets, self_connect.
+Nit: From the name sock_addr_is_abstract, it's unclear without reading
+the parameter that this function only works with unix sockets, when
+socket is an overloaded term that can refer to other kinds of sockets
+(e.g tcp/udp/raw).
 
-Signed-off-by: Tingmao Wang <m@maowtm.org>
----
- .../selftests/landlock/scoped_unix_test.c     | 599 ++++++++++++------
- 1 file changed, 395 insertions(+), 204 deletions(-)
+Maybe is_unix_sock_addr_abstract? or unix_sock_addr_is_abstract?
 
-diff --git a/tools/testing/selftests/landlock/scoped_unix_test.c b/tools/testing/selftests/landlock/scoped_unix_test.c
-index 669418c97509..6d1541f77dbe 100644
---- a/tools/testing/selftests/landlock/scoped_unix_test.c
-+++ b/tools/testing/selftests/landlock/scoped_unix_test.c
-@@ -536,8 +536,12 @@ TEST_F(scoped_audit, connect_to_child)
- 
- FIXTURE(scoped_vs_unscoped)
- {
--	struct service_fixture parent_stream_address, parent_dgram_address,
--		child_stream_address, child_dgram_address;
-+	struct service_fixture parent_stream_address_abstract,
-+		parent_dgram_address_abstract, child_stream_address_abstract,
-+		child_dgram_address_abstract;
-+	struct service_fixture parent_stream_address_pathname,
-+		parent_dgram_address_pathname, child_stream_address_pathname,
-+		child_dgram_address_pathname;
- };
- 
- #include "scoped_multiple_domain_variants.h"
-@@ -546,35 +550,75 @@ FIXTURE_SETUP(scoped_vs_unscoped)
- {
- 	drop_caps(_metadata);
- 
--	memset(&self->parent_stream_address, 0,
--	       sizeof(self->parent_stream_address));
--	set_unix_address(&self->parent_stream_address, 0, true);
--	memset(&self->parent_dgram_address, 0,
--	       sizeof(self->parent_dgram_address));
--	set_unix_address(&self->parent_dgram_address, 1, true);
--	memset(&self->child_stream_address, 0,
--	       sizeof(self->child_stream_address));
--	set_unix_address(&self->child_stream_address, 2, true);
--	memset(&self->child_dgram_address, 0,
--	       sizeof(self->child_dgram_address));
--	set_unix_address(&self->child_dgram_address, 3, true);
-+	ASSERT_EQ(0, mkdir(PATHNAME_UNIX_SOCK_DIR, 0700));
-+
-+	/* Abstract addresses. */
-+	memset(&self->parent_stream_address_abstract, 0,
-+	       sizeof(self->parent_stream_address_abstract));
-+	set_unix_address(&self->parent_stream_address_abstract, 0, true);
-+	memset(&self->parent_dgram_address_abstract, 0,
-+	       sizeof(self->parent_dgram_address_abstract));
-+	set_unix_address(&self->parent_dgram_address_abstract, 1, true);
-+	memset(&self->child_stream_address_abstract, 0,
-+	       sizeof(self->child_stream_address_abstract));
-+	set_unix_address(&self->child_stream_address_abstract, 2, true);
-+	memset(&self->child_dgram_address_abstract, 0,
-+	       sizeof(self->child_dgram_address_abstract));
-+	set_unix_address(&self->child_dgram_address_abstract, 3, true);
-+
-+	/* Pathname addresses. */
-+	memset(&self->parent_stream_address_pathname, 0,
-+	       sizeof(self->parent_stream_address_pathname));
-+	set_unix_address(&self->parent_stream_address_pathname, 4, false);
-+	memset(&self->parent_dgram_address_pathname, 0,
-+	       sizeof(self->parent_dgram_address_pathname));
-+	set_unix_address(&self->parent_dgram_address_pathname, 5, false);
-+	memset(&self->child_stream_address_pathname, 0,
-+	       sizeof(self->child_stream_address_pathname));
-+	set_unix_address(&self->child_stream_address_pathname, 6, false);
-+	memset(&self->child_dgram_address_pathname, 0,
-+	       sizeof(self->child_dgram_address_pathname));
-+	set_unix_address(&self->child_dgram_address_pathname, 7, false);
- }
- 
- FIXTURE_TEARDOWN(scoped_vs_unscoped)
- {
-+	EXPECT_EQ(0, remove_path(self->parent_stream_address_pathname.unix_addr.sun_path));
-+	EXPECT_EQ(0, remove_path(self->parent_dgram_address_pathname.unix_addr.sun_path));
-+	EXPECT_EQ(0, remove_path(self->child_stream_address_pathname.unix_addr.sun_path));
-+	EXPECT_EQ(0, remove_path(self->child_dgram_address_pathname.unix_addr.sun_path));
-+	EXPECT_EQ(0, rmdir(PATHNAME_UNIX_SOCK_DIR));
- }
- 
- /*
-  * Test unix_stream_connect and unix_may_send for parent, child and
-  * grand child processes when they can have scoped or non-scoped domains.
-  */
--TEST_F(scoped_vs_unscoped, unix_scoping)
-+static void test_scoped_vs_unscoped(
-+	struct __test_metadata *const _metadata,
-+	FIXTURE_DATA(scoped_vs_unscoped) * self,
-+	const FIXTURE_VARIANT(scoped_vs_unscoped) * variant,
-+	const bool abstract)
- {
- 	pid_t child;
- 	int status;
- 	bool can_connect_to_parent, can_connect_to_child;
- 	int pipe_parent[2];
- 	int stream_server_parent, dgram_server_parent;
-+	const __u16 scope = abstract ? LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET :
-+				       LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET;
-+	const struct service_fixture *parent_stream_address =
-+		abstract ? &self->parent_stream_address_abstract :
-+			   &self->parent_stream_address_pathname;
-+	const struct service_fixture *parent_dgram_address =
-+		abstract ? &self->parent_dgram_address_abstract :
-+			   &self->parent_dgram_address_pathname;
-+	const struct service_fixture *child_stream_address =
-+		abstract ? &self->child_stream_address_abstract :
-+			   &self->child_stream_address_pathname;
-+	const struct service_fixture *child_dgram_address =
-+		abstract ? &self->child_dgram_address_abstract :
-+			   &self->child_dgram_address_pathname;
- 
- 	can_connect_to_child = (variant->domain_grand_child != SCOPE_SANDBOX);
- 	can_connect_to_parent = (can_connect_to_child &&
-@@ -585,8 +629,7 @@ TEST_F(scoped_vs_unscoped, unix_scoping)
- 	if (variant->domain_all == OTHER_SANDBOX)
- 		create_fs_domain(_metadata);
- 	else if (variant->domain_all == SCOPE_SANDBOX)
--		create_scoped_domain(_metadata,
--				     LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
-+		create_scoped_domain(_metadata, scope);
- 
- 	child = fork();
- 	ASSERT_LE(0, child);
-@@ -600,8 +643,7 @@ TEST_F(scoped_vs_unscoped, unix_scoping)
- 		if (variant->domain_children == OTHER_SANDBOX)
- 			create_fs_domain(_metadata);
- 		else if (variant->domain_children == SCOPE_SANDBOX)
--			create_scoped_domain(
--				_metadata, LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
-+			create_scoped_domain(_metadata, scope);
- 
- 		grand_child = fork();
- 		ASSERT_LE(0, grand_child);
-@@ -616,9 +658,7 @@ TEST_F(scoped_vs_unscoped, unix_scoping)
- 			if (variant->domain_grand_child == OTHER_SANDBOX)
- 				create_fs_domain(_metadata);
- 			else if (variant->domain_grand_child == SCOPE_SANDBOX)
--				create_scoped_domain(
--					_metadata,
--					LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
-+				create_scoped_domain(_metadata, scope);
- 
- 			stream_client = socket(AF_UNIX, SOCK_STREAM, 0);
- 			ASSERT_LE(0, stream_client);
-@@ -626,15 +666,13 @@ TEST_F(scoped_vs_unscoped, unix_scoping)
- 			ASSERT_LE(0, dgram_client);
- 
- 			ASSERT_EQ(1, read(pipe_child[0], &buf, 1));
--			stream_err = connect(
--				stream_client,
--				&self->child_stream_address.unix_addr,
--				self->child_stream_address.unix_addr_len);
-+			stream_err = connect(stream_client,
-+					     &child_stream_address->unix_addr,
-+					     child_stream_address->unix_addr_len);
- 			stream_errno = errno;
--			dgram_err = connect(
--				dgram_client,
--				&self->child_dgram_address.unix_addr,
--				self->child_dgram_address.unix_addr_len);
-+			dgram_err = connect(dgram_client,
-+					    &child_dgram_address->unix_addr,
-+					    child_dgram_address->unix_addr_len);
- 			dgram_errno = errno;
- 			if (can_connect_to_child) {
- 				EXPECT_EQ(0, stream_err);
-@@ -653,14 +691,12 @@ TEST_F(scoped_vs_unscoped, unix_scoping)
- 
- 			ASSERT_EQ(1, read(pipe_parent[0], &buf, 1));
- 			stream_err = connect(
--				stream_client,
--				&self->parent_stream_address.unix_addr,
--				self->parent_stream_address.unix_addr_len);
-+				stream_client, &parent_stream_address->unix_addr,
-+				parent_stream_address->unix_addr_len);
- 			stream_errno = errno;
- 			dgram_err = connect(
--				dgram_client,
--				&self->parent_dgram_address.unix_addr,
--				self->parent_dgram_address.unix_addr_len);
-+				dgram_client, &parent_dgram_address->unix_addr,
-+				parent_dgram_address->unix_addr_len);
- 			dgram_errno = errno;
- 			if (can_connect_to_parent) {
- 				EXPECT_EQ(0, stream_err);
-@@ -681,8 +717,7 @@ TEST_F(scoped_vs_unscoped, unix_scoping)
- 		if (variant->domain_child == OTHER_SANDBOX)
- 			create_fs_domain(_metadata);
- 		else if (variant->domain_child == SCOPE_SANDBOX)
--			create_scoped_domain(
--				_metadata, LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
-+			create_scoped_domain(_metadata, scope);
- 
- 		stream_server_child = socket(AF_UNIX, SOCK_STREAM, 0);
- 		ASSERT_LE(0, stream_server_child);
-@@ -690,11 +725,11 @@ TEST_F(scoped_vs_unscoped, unix_scoping)
- 		ASSERT_LE(0, dgram_server_child);
- 
- 		ASSERT_EQ(0, bind(stream_server_child,
--				  &self->child_stream_address.unix_addr,
--				  self->child_stream_address.unix_addr_len));
--		ASSERT_EQ(0, bind(dgram_server_child,
--				  &self->child_dgram_address.unix_addr,
--				  self->child_dgram_address.unix_addr_len));
-+				  &child_stream_address->unix_addr,
-+				  child_stream_address->unix_addr_len));
-+		ASSERT_EQ(0,
-+			  bind(dgram_server_child, &child_dgram_address->unix_addr,
-+			       child_dgram_address->unix_addr_len));
- 		ASSERT_EQ(0, listen(stream_server_child, backlog));
- 
- 		ASSERT_EQ(1, write(pipe_child[1], ".", 1));
-@@ -708,19 +743,16 @@ TEST_F(scoped_vs_unscoped, unix_scoping)
- 	if (variant->domain_parent == OTHER_SANDBOX)
- 		create_fs_domain(_metadata);
- 	else if (variant->domain_parent == SCOPE_SANDBOX)
--		create_scoped_domain(_metadata,
--				     LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
-+		create_scoped_domain(_metadata, scope);
- 
- 	stream_server_parent = socket(AF_UNIX, SOCK_STREAM, 0);
- 	ASSERT_LE(0, stream_server_parent);
- 	dgram_server_parent = socket(AF_UNIX, SOCK_DGRAM, 0);
- 	ASSERT_LE(0, dgram_server_parent);
--	ASSERT_EQ(0, bind(stream_server_parent,
--			  &self->parent_stream_address.unix_addr,
--			  self->parent_stream_address.unix_addr_len));
--	ASSERT_EQ(0, bind(dgram_server_parent,
--			  &self->parent_dgram_address.unix_addr,
--			  self->parent_dgram_address.unix_addr_len));
-+	ASSERT_EQ(0, bind(stream_server_parent, &parent_stream_address->unix_addr,
-+			  parent_stream_address->unix_addr_len));
-+	ASSERT_EQ(0, bind(dgram_server_parent, &parent_dgram_address->unix_addr,
-+			  parent_dgram_address->unix_addr_len));
- 
- 	ASSERT_EQ(0, listen(stream_server_parent, backlog));
- 
-@@ -734,57 +766,119 @@ TEST_F(scoped_vs_unscoped, unix_scoping)
- 		_metadata->exit_code = KSFT_FAIL;
- }
- 
-+TEST_F(scoped_vs_unscoped, unix_scoping_abstract)
-+{
-+	test_scoped_vs_unscoped(_metadata, self, variant, true);
-+}
-+
-+TEST_F(scoped_vs_unscoped, unix_scoping_pathname)
-+{
-+	test_scoped_vs_unscoped(_metadata, self, variant, false);
-+}
-+
- FIXTURE(outside_socket)
- {
--	struct service_fixture address, transit_address;
-+	struct service_fixture address_abstract, transit_address_abstract;
-+	struct service_fixture address_pathname, transit_address_pathname;
- };
- 
- FIXTURE_VARIANT(outside_socket)
- {
- 	const bool child_socket;
- 	const int type;
-+	const bool abstract;
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(outside_socket, abstract_allow_dgram_child) {
-+	/* clang-format on */
-+	.child_socket = true,
-+	.type = SOCK_DGRAM,
-+	.abstract = true,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(outside_socket, abstract_deny_dgram_server) {
-+	/* clang-format on */
-+	.child_socket = false,
-+	.type = SOCK_DGRAM,
-+	.abstract = true,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(outside_socket, abstract_allow_stream_child) {
-+	/* clang-format on */
-+	.child_socket = true,
-+	.type = SOCK_STREAM,
-+	.abstract = true,
- };
- 
- /* clang-format off */
--FIXTURE_VARIANT_ADD(outside_socket, allow_dgram_child) {
-+FIXTURE_VARIANT_ADD(outside_socket, abstract_deny_stream_server) {
-+	/* clang-format on */
-+	.child_socket = false,
-+	.type = SOCK_STREAM,
-+	.abstract = true,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(outside_socket, pathname_allow_dgram_child) {
- 	/* clang-format on */
- 	.child_socket = true,
- 	.type = SOCK_DGRAM,
-+	.abstract = false,
- };
- 
- /* clang-format off */
--FIXTURE_VARIANT_ADD(outside_socket, deny_dgram_server) {
-+FIXTURE_VARIANT_ADD(outside_socket, pathname_deny_dgram_server) {
- 	/* clang-format on */
- 	.child_socket = false,
- 	.type = SOCK_DGRAM,
-+	.abstract = false,
- };
- 
- /* clang-format off */
--FIXTURE_VARIANT_ADD(outside_socket, allow_stream_child) {
-+FIXTURE_VARIANT_ADD(outside_socket, pathname_allow_stream_child) {
- 	/* clang-format on */
- 	.child_socket = true,
- 	.type = SOCK_STREAM,
-+	.abstract = false,
- };
- 
- /* clang-format off */
--FIXTURE_VARIANT_ADD(outside_socket, deny_stream_server) {
-+FIXTURE_VARIANT_ADD(outside_socket, pathname_deny_stream_server) {
- 	/* clang-format on */
- 	.child_socket = false,
- 	.type = SOCK_STREAM,
-+	.abstract = false,
- };
- 
- FIXTURE_SETUP(outside_socket)
- {
- 	drop_caps(_metadata);
- 
--	memset(&self->transit_address, 0, sizeof(self->transit_address));
--	set_unix_address(&self->transit_address, 0, true);
--	memset(&self->address, 0, sizeof(self->address));
--	set_unix_address(&self->address, 1, true);
-+	ASSERT_EQ(0, mkdir(PATHNAME_UNIX_SOCK_DIR, 0700));
-+
-+	/* Abstract addresses. */
-+	memset(&self->transit_address_abstract, 0,
-+	       sizeof(self->transit_address_abstract));
-+	set_unix_address(&self->transit_address_abstract, 0, true);
-+	memset(&self->address_abstract, 0, sizeof(self->address_abstract));
-+	set_unix_address(&self->address_abstract, 1, true);
-+
-+	/* Pathname addresses. */
-+	memset(&self->transit_address_pathname, 0,
-+	       sizeof(self->transit_address_pathname));
-+	set_unix_address(&self->transit_address_pathname, 2, false);
-+	memset(&self->address_pathname, 0, sizeof(self->address_pathname));
-+	set_unix_address(&self->address_pathname, 3, false);
- }
- 
- FIXTURE_TEARDOWN(outside_socket)
- {
-+	EXPECT_EQ(0, remove_path(self->transit_address_pathname.unix_addr.sun_path));
-+	EXPECT_EQ(0, remove_path(self->address_pathname.unix_addr.sun_path));
-+	EXPECT_EQ(0, rmdir(PATHNAME_UNIX_SOCK_DIR));
- }
- 
- /*
-@@ -798,6 +892,15 @@ TEST_F(outside_socket, socket_with_different_domain)
- 	int pipe_child[2], pipe_parent[2];
- 	char buf_parent;
- 	int server_socket;
-+	const __u16 scope = variant->abstract ?
-+				    LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET :
-+				    LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET;
-+	const struct service_fixture *transit_address =
-+		variant->abstract ? &self->transit_address_abstract :
-+				    &self->transit_address_pathname;
-+	const struct service_fixture *address =
-+		variant->abstract ? &self->address_abstract :
-+				    &self->address_pathname;
- 
- 	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
- 	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
-@@ -812,8 +915,7 @@ TEST_F(outside_socket, socket_with_different_domain)
- 		EXPECT_EQ(0, close(pipe_child[0]));
- 
- 		/* Client always has a domain. */
--		create_scoped_domain(_metadata,
--				     LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
-+		create_scoped_domain(_metadata, scope);
- 
- 		if (variant->child_socket) {
- 			int data_socket, passed_socket, stream_server;
-@@ -823,8 +925,8 @@ TEST_F(outside_socket, socket_with_different_domain)
- 			stream_server = socket(AF_UNIX, SOCK_STREAM, 0);
- 			ASSERT_LE(0, stream_server);
- 			ASSERT_EQ(0, bind(stream_server,
--					  &self->transit_address.unix_addr,
--					  self->transit_address.unix_addr_len));
-+					  &transit_address->unix_addr,
-+					  transit_address->unix_addr_len));
- 			ASSERT_EQ(0, listen(stream_server, backlog));
- 			ASSERT_EQ(1, write(pipe_child[1], ".", 1));
- 			data_socket = accept(stream_server, NULL, NULL);
-@@ -839,8 +941,8 @@ TEST_F(outside_socket, socket_with_different_domain)
- 
- 		/* Waits for parent signal for connection. */
- 		ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
--		err = connect(client_socket, &self->address.unix_addr,
--			      self->address.unix_addr_len);
-+		err = connect(client_socket, &address->unix_addr,
-+			      address->unix_addr_len);
- 		if (variant->child_socket) {
- 			EXPECT_EQ(0, err);
- 		} else {
-@@ -859,9 +961,8 @@ TEST_F(outside_socket, socket_with_different_domain)
- 
- 		ASSERT_LE(0, client_child);
- 		ASSERT_EQ(1, read(pipe_child[0], &buf_parent, 1));
--		ASSERT_EQ(0, connect(client_child,
--				     &self->transit_address.unix_addr,
--				     self->transit_address.unix_addr_len));
-+		ASSERT_EQ(0, connect(client_child, &transit_address->unix_addr,
-+				     transit_address->unix_addr_len));
- 		server_socket = recv_fd(client_child);
- 		EXPECT_EQ(0, close(client_child));
- 	} else {
-@@ -870,10 +971,10 @@ TEST_F(outside_socket, socket_with_different_domain)
- 	ASSERT_LE(0, server_socket);
- 
- 	/* Server always has a domain. */
--	create_scoped_domain(_metadata, LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
-+	create_scoped_domain(_metadata, scope);
- 
--	ASSERT_EQ(0, bind(server_socket, &self->address.unix_addr,
--			  self->address.unix_addr_len));
-+	ASSERT_EQ(0,
-+		  bind(server_socket, &address->unix_addr, address->unix_addr_len));
- 	if (variant->type == SOCK_STREAM)
- 		ASSERT_EQ(0, listen(server_socket, backlog));
- 
-@@ -888,52 +989,85 @@ TEST_F(outside_socket, socket_with_different_domain)
- 		_metadata->exit_code = KSFT_FAIL;
- }
- 
--static const char stream_path[] = TMP_DIR "/stream.sock";
--static const char dgram_path[] = TMP_DIR "/dgram.sock";
--
- /* clang-format off */
--FIXTURE(various_address_sockets) {};
-+FIXTURE(various_address_sockets) {
-+	struct service_fixture stream_pathname_addr, dgram_pathname_addr;
-+	struct service_fixture stream_abstract_addr, dgram_abstract_addr;
-+};
- /* clang-format on */
- 
--FIXTURE_VARIANT(various_address_sockets)
--{
--	const int domain;
-+/*
-+ * Test all 4 combinations of abstract and pathname socket scope bits,
-+ * plus a case with no Landlock domain at all.
-+ */
-+/* clang-format off */
-+FIXTURE_VARIANT(various_address_sockets) {
-+	/* clang-format on */
-+	const __u16 scope_bits;
-+	const bool no_sandbox;
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(various_address_sockets, scope_abstract) {
-+	/* clang-format on */
-+	.scope_bits = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(various_address_sockets, scope_pathname) {
-+	/* clang-format on */
-+	.scope_bits = LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET,
- };
- 
- /* clang-format off */
--FIXTURE_VARIANT_ADD(various_address_sockets, pathname_socket_scoped_domain) {
-+FIXTURE_VARIANT_ADD(various_address_sockets, scope_both) {
- 	/* clang-format on */
--	.domain = SCOPE_SANDBOX,
-+	.scope_bits = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
-+		      LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET,
- };
- 
- /* clang-format off */
--FIXTURE_VARIANT_ADD(various_address_sockets, pathname_socket_other_domain) {
-+FIXTURE_VARIANT_ADD(various_address_sockets, scope_none) {
- 	/* clang-format on */
--	.domain = OTHER_SANDBOX,
-+	.scope_bits = 0,
- };
- 
- /* clang-format off */
--FIXTURE_VARIANT_ADD(various_address_sockets, pathname_socket_no_domain) {
-+FIXTURE_VARIANT_ADD(various_address_sockets, no_domain) {
- 	/* clang-format on */
--	.domain = NO_SANDBOX,
-+	.no_sandbox = true,
- };
- 
- FIXTURE_SETUP(various_address_sockets)
- {
- 	drop_caps(_metadata);
- 
--	umask(0077);
--	ASSERT_EQ(0, mkdir(TMP_DIR, 0700));
-+	ASSERT_EQ(0, mkdir(PATHNAME_UNIX_SOCK_DIR, 0700));
-+
-+	memset(&self->stream_pathname_addr, 0, sizeof(self->stream_pathname_addr));
-+	set_unix_address(&self->stream_pathname_addr, 0, false);
-+	memset(&self->dgram_pathname_addr, 0, sizeof(self->dgram_pathname_addr));
-+	set_unix_address(&self->dgram_pathname_addr, 1, false);
-+
-+	memset(&self->stream_abstract_addr, 0, sizeof(self->stream_abstract_addr));
-+	set_unix_address(&self->stream_abstract_addr, 2, true);
-+	memset(&self->dgram_abstract_addr, 0, sizeof(self->dgram_abstract_addr));
-+	set_unix_address(&self->dgram_abstract_addr, 3, true);
- }
- 
- FIXTURE_TEARDOWN(various_address_sockets)
- {
--	EXPECT_EQ(0, unlink(stream_path));
--	EXPECT_EQ(0, unlink(dgram_path));
--	EXPECT_EQ(0, rmdir(TMP_DIR));
-+	EXPECT_EQ(0, remove_path(self->stream_pathname_addr.unix_addr.sun_path));
-+	EXPECT_EQ(0, remove_path(self->dgram_pathname_addr.unix_addr.sun_path));
-+	EXPECT_EQ(0, rmdir(PATHNAME_UNIX_SOCK_DIR));
- }
- 
--TEST_F(various_address_sockets, scoped_pathname_sockets)
-+/*
-+ * Test interaction of various scope flags (controlled by variant->domain)
-+ * with pathname and abstract sockets when connecting from a sandboxed
-+ * child.
-+ */
-+TEST_F(various_address_sockets, scoped_sockets)
- {
- 	pid_t child;
- 	int status;
-@@ -942,25 +1076,10 @@ TEST_F(various_address_sockets, scoped_pathname_sockets)
- 	int unnamed_sockets[2];
- 	int stream_pathname_socket, dgram_pathname_socket,
- 		stream_abstract_socket, dgram_abstract_socket, data_socket;
--	struct service_fixture stream_abstract_addr, dgram_abstract_addr;
--	struct sockaddr_un stream_pathname_addr = {
--		.sun_family = AF_UNIX,
--	};
--	struct sockaddr_un dgram_pathname_addr = {
--		.sun_family = AF_UNIX,
--	};
--
--	/* Pathname address. */
--	snprintf(stream_pathname_addr.sun_path,
--		 sizeof(stream_pathname_addr.sun_path), "%s", stream_path);
--	snprintf(dgram_pathname_addr.sun_path,
--		 sizeof(dgram_pathname_addr.sun_path), "%s", dgram_path);
--
--	/* Abstract address. */
--	memset(&stream_abstract_addr, 0, sizeof(stream_abstract_addr));
--	set_unix_address(&stream_abstract_addr, 0, true);
--	memset(&dgram_abstract_addr, 0, sizeof(dgram_abstract_addr));
--	set_unix_address(&dgram_abstract_addr, 1, true);
-+	bool pathname_restricted =
-+		(variant->scope_bits & LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET);
-+	bool abstract_restricted =
-+		(variant->scope_bits & LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
- 
- 	/* Unnamed address for datagram socket. */
- 	ASSERT_EQ(0, socketpair(AF_UNIX, SOCK_DGRAM, 0, unnamed_sockets));
-@@ -975,82 +1094,103 @@ TEST_F(various_address_sockets, scoped_pathname_sockets)
- 		EXPECT_EQ(0, close(pipe_parent[1]));
- 		EXPECT_EQ(0, close(unnamed_sockets[1]));
- 
--		if (variant->domain == SCOPE_SANDBOX)
--			create_scoped_domain(
--				_metadata, LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
--		else if (variant->domain == OTHER_SANDBOX)
-+		/* Create domain based on variant. */
-+		if (variant->scope_bits)
-+			create_scoped_domain(_metadata, variant->scope_bits);
-+		else if (!variant->no_sandbox)
- 			create_fs_domain(_metadata);
- 
- 		/* Waits for parent to listen. */
- 		ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
- 		EXPECT_EQ(0, close(pipe_parent[0]));
- 
--		/* Checks that we can send data through a datagram socket. */
-+		/* Checks that we can send data through a unnamed socket. */
- 		ASSERT_EQ(1, write(unnamed_sockets[0], "a", 1));
- 		EXPECT_EQ(0, close(unnamed_sockets[0]));
- 
- 		/* Connects with pathname sockets. */
- 		stream_pathname_socket = socket(AF_UNIX, SOCK_STREAM, 0);
- 		ASSERT_LE(0, stream_pathname_socket);
--		ASSERT_EQ(0,
--			  connect(stream_pathname_socket, &stream_pathname_addr,
--				  sizeof(stream_pathname_addr)));
--		ASSERT_EQ(1, write(stream_pathname_socket, "b", 1));
-+		err = connect(stream_pathname_socket,
-+			      &self->stream_pathname_addr.unix_addr,
-+			      self->stream_pathname_addr.unix_addr_len);
-+		if (pathname_restricted) {
-+			EXPECT_EQ(-1, err);
-+			EXPECT_EQ(EPERM, errno);
-+		} else {
-+			EXPECT_EQ(0, err);
-+			ASSERT_EQ(1, write(stream_pathname_socket, "b", 1));
-+		}
- 		EXPECT_EQ(0, close(stream_pathname_socket));
- 
--		/* Sends without connection. */
-+		/* Sends without connection (pathname). */
- 		dgram_pathname_socket = socket(AF_UNIX, SOCK_DGRAM, 0);
- 		ASSERT_LE(0, dgram_pathname_socket);
- 		err = sendto(dgram_pathname_socket, "c", 1, 0,
--			     &dgram_pathname_addr, sizeof(dgram_pathname_addr));
--		EXPECT_EQ(1, err);
-+			     &self->dgram_pathname_addr.unix_addr,
-+			     self->dgram_pathname_addr.unix_addr_len);
-+		if (pathname_restricted) {
-+			EXPECT_EQ(-1, err);
-+			EXPECT_EQ(EPERM, errno);
-+		} else {
-+			EXPECT_EQ(1, err);
-+		}
-+
-+		/* Sends with connection (pathname). */
-+		err = connect(dgram_pathname_socket,
-+			      &self->dgram_pathname_addr.unix_addr,
-+			      self->dgram_pathname_addr.unix_addr_len);
-+		if (pathname_restricted) {
-+			EXPECT_EQ(-1, err);
-+			EXPECT_EQ(EPERM, errno);
-+		} else {
-+			EXPECT_EQ(0, err);
-+			ASSERT_EQ(1, write(dgram_pathname_socket, "d", 1));
-+		}
- 
--		/* Sends with connection. */
--		ASSERT_EQ(0,
--			  connect(dgram_pathname_socket, &dgram_pathname_addr,
--				  sizeof(dgram_pathname_addr)));
--		ASSERT_EQ(1, write(dgram_pathname_socket, "d", 1));
- 		EXPECT_EQ(0, close(dgram_pathname_socket));
- 
- 		/* Connects with abstract sockets. */
- 		stream_abstract_socket = socket(AF_UNIX, SOCK_STREAM, 0);
- 		ASSERT_LE(0, stream_abstract_socket);
- 		err = connect(stream_abstract_socket,
--			      &stream_abstract_addr.unix_addr,
--			      stream_abstract_addr.unix_addr_len);
--		if (variant->domain == SCOPE_SANDBOX) {
-+			      &self->stream_abstract_addr.unix_addr,
-+			      self->stream_abstract_addr.unix_addr_len);
-+		if (abstract_restricted) {
- 			EXPECT_EQ(-1, err);
- 			EXPECT_EQ(EPERM, errno);
- 		} else {
- 			EXPECT_EQ(0, err);
- 			ASSERT_EQ(1, write(stream_abstract_socket, "e", 1));
- 		}
-+
- 		EXPECT_EQ(0, close(stream_abstract_socket));
- 
--		/* Sends without connection. */
-+		/* Sends without connection (abstract). */
- 		dgram_abstract_socket = socket(AF_UNIX, SOCK_DGRAM, 0);
- 		ASSERT_LE(0, dgram_abstract_socket);
- 		err = sendto(dgram_abstract_socket, "f", 1, 0,
--			     &dgram_abstract_addr.unix_addr,
--			     dgram_abstract_addr.unix_addr_len);
--		if (variant->domain == SCOPE_SANDBOX) {
-+			     &self->dgram_abstract_addr.unix_addr,
-+			     self->dgram_abstract_addr.unix_addr_len);
-+		if (abstract_restricted) {
- 			EXPECT_EQ(-1, err);
- 			EXPECT_EQ(EPERM, errno);
- 		} else {
- 			EXPECT_EQ(1, err);
- 		}
- 
--		/* Sends with connection. */
-+		/* Sends with connection (abstract). */
- 		err = connect(dgram_abstract_socket,
--			      &dgram_abstract_addr.unix_addr,
--			      dgram_abstract_addr.unix_addr_len);
--		if (variant->domain == SCOPE_SANDBOX) {
-+			      &self->dgram_abstract_addr.unix_addr,
-+			      self->dgram_abstract_addr.unix_addr_len);
-+		if (abstract_restricted) {
- 			EXPECT_EQ(-1, err);
- 			EXPECT_EQ(EPERM, errno);
- 		} else {
- 			EXPECT_EQ(0, err);
- 			ASSERT_EQ(1, write(dgram_abstract_socket, "g", 1));
- 		}
-+
- 		EXPECT_EQ(0, close(dgram_abstract_socket));
- 
- 		_exit(_metadata->exit_code);
-@@ -1062,27 +1202,30 @@ TEST_F(various_address_sockets, scoped_pathname_sockets)
- 	/* Sets up pathname servers. */
- 	stream_pathname_socket = socket(AF_UNIX, SOCK_STREAM, 0);
- 	ASSERT_LE(0, stream_pathname_socket);
--	ASSERT_EQ(0, bind(stream_pathname_socket, &stream_pathname_addr,
--			  sizeof(stream_pathname_addr)));
-+	ASSERT_EQ(0, bind(stream_pathname_socket,
-+			  &self->stream_pathname_addr.unix_addr,
-+			  self->stream_pathname_addr.unix_addr_len));
- 	ASSERT_EQ(0, listen(stream_pathname_socket, backlog));
- 
- 	dgram_pathname_socket = socket(AF_UNIX, SOCK_DGRAM, 0);
- 	ASSERT_LE(0, dgram_pathname_socket);
--	ASSERT_EQ(0, bind(dgram_pathname_socket, &dgram_pathname_addr,
--			  sizeof(dgram_pathname_addr)));
-+	ASSERT_EQ(0, bind(dgram_pathname_socket,
-+			  &self->dgram_pathname_addr.unix_addr,
-+			  self->dgram_pathname_addr.unix_addr_len));
- 
- 	/* Sets up abstract servers. */
- 	stream_abstract_socket = socket(AF_UNIX, SOCK_STREAM, 0);
- 	ASSERT_LE(0, stream_abstract_socket);
--	ASSERT_EQ(0,
--		  bind(stream_abstract_socket, &stream_abstract_addr.unix_addr,
--		       stream_abstract_addr.unix_addr_len));
-+	ASSERT_EQ(0, bind(stream_abstract_socket,
-+			  &self->stream_abstract_addr.unix_addr,
-+			  self->stream_abstract_addr.unix_addr_len));
-+	ASSERT_EQ(0, listen(stream_abstract_socket, backlog));
- 
- 	dgram_abstract_socket = socket(AF_UNIX, SOCK_DGRAM, 0);
- 	ASSERT_LE(0, dgram_abstract_socket);
--	ASSERT_EQ(0, bind(dgram_abstract_socket, &dgram_abstract_addr.unix_addr,
--			  dgram_abstract_addr.unix_addr_len));
--	ASSERT_EQ(0, listen(stream_abstract_socket, backlog));
-+	ASSERT_EQ(0, bind(dgram_abstract_socket,
-+			  &self->dgram_abstract_addr.unix_addr,
-+			  self->dgram_abstract_addr.unix_addr_len));
- 
- 	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
- 	EXPECT_EQ(0, close(pipe_parent[1]));
-@@ -1092,24 +1235,31 @@ TEST_F(various_address_sockets, scoped_pathname_sockets)
- 	ASSERT_EQ('a', buf_parent);
- 	EXPECT_LE(0, close(unnamed_sockets[1]));
- 
--	/* Reads from pathname sockets. */
--	data_socket = accept(stream_pathname_socket, NULL, NULL);
--	ASSERT_LE(0, data_socket);
--	ASSERT_EQ(1, read(data_socket, &buf_parent, sizeof(buf_parent)));
--	ASSERT_EQ('b', buf_parent);
--	EXPECT_EQ(0, close(data_socket));
--	EXPECT_EQ(0, close(stream_pathname_socket));
-+	if (!pathname_restricted) {
-+		/*
-+		 * Reads from pathname sockets if we expect child to be able to
-+		 * send.
-+		 */
-+		data_socket = accept(stream_pathname_socket, NULL, NULL);
-+		ASSERT_LE(0, data_socket);
-+		ASSERT_EQ(1,
-+			  read(data_socket, &buf_parent, sizeof(buf_parent)));
-+		ASSERT_EQ('b', buf_parent);
-+		EXPECT_EQ(0, close(data_socket));
- 
--	ASSERT_EQ(1,
--		  read(dgram_pathname_socket, &buf_parent, sizeof(buf_parent)));
--	ASSERT_EQ('c', buf_parent);
--	ASSERT_EQ(1,
--		  read(dgram_pathname_socket, &buf_parent, sizeof(buf_parent)));
--	ASSERT_EQ('d', buf_parent);
--	EXPECT_EQ(0, close(dgram_pathname_socket));
-+		ASSERT_EQ(1, read(dgram_pathname_socket, &buf_parent,
-+				  sizeof(buf_parent)));
-+		ASSERT_EQ('c', buf_parent);
-+		ASSERT_EQ(1, read(dgram_pathname_socket, &buf_parent,
-+				  sizeof(buf_parent)));
-+		ASSERT_EQ('d', buf_parent);
-+	}
- 
--	if (variant->domain != SCOPE_SANDBOX) {
--		/* Reads from abstract sockets if allowed to send. */
-+	if (!abstract_restricted) {
-+		/*
-+		 * Reads from abstract sockets if we expect child to be able to
-+		 * send.
-+		 */
- 		data_socket = accept(stream_abstract_socket, NULL, NULL);
- 		ASSERT_LE(0, data_socket);
- 		ASSERT_EQ(1,
-@@ -1125,30 +1275,73 @@ TEST_F(various_address_sockets, scoped_pathname_sockets)
- 		ASSERT_EQ('g', buf_parent);
- 	}
- 
--	/* Waits for all abstract socket tests. */
-+	/* Waits for child to complete, and only close the socket afterwards. */
- 	ASSERT_EQ(child, waitpid(child, &status, 0));
- 	EXPECT_EQ(0, close(stream_abstract_socket));
- 	EXPECT_EQ(0, close(dgram_abstract_socket));
-+	EXPECT_EQ(0, close(stream_pathname_socket));
-+	EXPECT_EQ(0, close(dgram_pathname_socket));
- 
- 	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
- 	    WEXITSTATUS(status) != EXIT_SUCCESS)
- 		_metadata->exit_code = KSFT_FAIL;
- }
- 
--TEST(datagram_sockets)
-+/* Fixture for datagram_sockets and self_connect tests */
-+FIXTURE(socket_type_test)
- {
- 	struct service_fixture connected_addr, non_connected_addr;
-+};
-+
-+FIXTURE_VARIANT(socket_type_test)
-+{
-+	const bool abstract;
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(socket_type_test, abstract) {
-+	/* clang-format on */
-+	.abstract = true,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(socket_type_test, pathname) {
-+	/* clang-format on */
-+	.abstract = false,
-+};
-+
-+FIXTURE_SETUP(socket_type_test)
-+{
-+	drop_caps(_metadata);
-+
-+	if (!variant->abstract)
-+		ASSERT_EQ(0, mkdir(PATHNAME_UNIX_SOCK_DIR, 0700));
-+
-+	memset(&self->connected_addr, 0, sizeof(self->connected_addr));
-+	set_unix_address(&self->connected_addr, 0, variant->abstract);
-+	memset(&self->non_connected_addr, 0, sizeof(self->non_connected_addr));
-+	set_unix_address(&self->non_connected_addr, 1, variant->abstract);
-+}
-+
-+FIXTURE_TEARDOWN(socket_type_test)
-+{
-+	if (!variant->abstract) {
-+		EXPECT_EQ(0, remove_path(self->connected_addr.unix_addr.sun_path));
-+		EXPECT_EQ(0, remove_path(self->non_connected_addr.unix_addr.sun_path));
-+		EXPECT_EQ(0, rmdir(PATHNAME_UNIX_SOCK_DIR));
-+	}
-+}
-+
-+TEST_F(socket_type_test, datagram_sockets)
-+{
- 	int server_conn_socket, server_unconn_socket;
- 	int pipe_parent[2], pipe_child[2];
- 	int status;
- 	char buf;
- 	pid_t child;
--
--	drop_caps(_metadata);
--	memset(&connected_addr, 0, sizeof(connected_addr));
--	set_unix_address(&connected_addr, 0, true);
--	memset(&non_connected_addr, 0, sizeof(non_connected_addr));
--	set_unix_address(&non_connected_addr, 1, true);
-+	const __u16 scope = variant->abstract ?
-+				    LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET :
-+				    LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET;
- 
- 	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
- 	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
-@@ -1169,8 +1362,9 @@ TEST(datagram_sockets)
- 		/* Waits for parent to listen. */
- 		ASSERT_EQ(1, read(pipe_parent[0], &buf, 1));
- 		ASSERT_EQ(0,
--			  connect(client_conn_socket, &connected_addr.unix_addr,
--				  connected_addr.unix_addr_len));
-+			  connect(client_conn_socket,
-+				  &self->connected_addr.unix_addr,
-+				  self->connected_addr.unix_addr_len));
- 
- 		/*
- 		 * Both connected and non-connected sockets can send data when
-@@ -1178,13 +1372,12 @@ TEST(datagram_sockets)
- 		 */
- 		ASSERT_EQ(1, send(client_conn_socket, ".", 1, 0));
- 		ASSERT_EQ(1, sendto(client_unconn_socket, ".", 1, 0,
--				    &non_connected_addr.unix_addr,
--				    non_connected_addr.unix_addr_len));
-+				    &self->non_connected_addr.unix_addr,
-+				    self->non_connected_addr.unix_addr_len));
- 		ASSERT_EQ(1, write(pipe_child[1], ".", 1));
- 
- 		/* Scopes the domain. */
--		create_scoped_domain(_metadata,
--				     LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
-+		create_scoped_domain(_metadata, scope);
- 
- 		/*
- 		 * Connected socket sends data to the receiver, but the
-@@ -1192,8 +1385,8 @@ TEST(datagram_sockets)
- 		 */
- 		ASSERT_EQ(1, send(client_conn_socket, ".", 1, 0));
- 		ASSERT_EQ(-1, sendto(client_unconn_socket, ".", 1, 0,
--				     &non_connected_addr.unix_addr,
--				     non_connected_addr.unix_addr_len));
-+				     &self->non_connected_addr.unix_addr,
-+				     self->non_connected_addr.unix_addr_len));
- 		ASSERT_EQ(EPERM, errno);
- 		ASSERT_EQ(1, write(pipe_child[1], ".", 1));
- 
-@@ -1210,10 +1403,11 @@ TEST(datagram_sockets)
- 	ASSERT_LE(0, server_conn_socket);
- 	ASSERT_LE(0, server_unconn_socket);
- 
--	ASSERT_EQ(0, bind(server_conn_socket, &connected_addr.unix_addr,
--			  connected_addr.unix_addr_len));
--	ASSERT_EQ(0, bind(server_unconn_socket, &non_connected_addr.unix_addr,
--			  non_connected_addr.unix_addr_len));
-+	ASSERT_EQ(0, bind(server_conn_socket, &self->connected_addr.unix_addr,
-+			  self->connected_addr.unix_addr_len));
-+	ASSERT_EQ(0, bind(server_unconn_socket,
-+			  &self->non_connected_addr.unix_addr,
-+			  self->non_connected_addr.unix_addr_len));
- 	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
- 
- 	/* Waits for child to test. */
-@@ -1238,52 +1432,49 @@ TEST(datagram_sockets)
- 		_metadata->exit_code = KSFT_FAIL;
- }
- 
--TEST(self_connect)
-+TEST_F(socket_type_test, self_connect)
- {
--	struct service_fixture connected_addr, non_connected_addr;
- 	int connected_socket, non_connected_socket, status;
- 	pid_t child;
--
--	drop_caps(_metadata);
--	memset(&connected_addr, 0, sizeof(connected_addr));
--	set_unix_address(&connected_addr, 0, true);
--	memset(&non_connected_addr, 0, sizeof(non_connected_addr));
--	set_unix_address(&non_connected_addr, 1, true);
-+	const __u16 scope = variant->abstract ?
-+				    LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET :
-+				    LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET;
- 
- 	connected_socket = socket(AF_UNIX, SOCK_DGRAM, 0);
- 	non_connected_socket = socket(AF_UNIX, SOCK_DGRAM, 0);
- 	ASSERT_LE(0, connected_socket);
- 	ASSERT_LE(0, non_connected_socket);
- 
--	ASSERT_EQ(0, bind(connected_socket, &connected_addr.unix_addr,
--			  connected_addr.unix_addr_len));
--	ASSERT_EQ(0, bind(non_connected_socket, &non_connected_addr.unix_addr,
--			  non_connected_addr.unix_addr_len));
-+	ASSERT_EQ(0, bind(connected_socket, &self->connected_addr.unix_addr,
-+			  self->connected_addr.unix_addr_len));
-+	ASSERT_EQ(0, bind(non_connected_socket,
-+			  &self->non_connected_addr.unix_addr,
-+			  self->non_connected_addr.unix_addr_len));
- 
- 	child = fork();
- 	ASSERT_LE(0, child);
- 	if (child == 0) {
- 		/* Child's domain is scoped. */
--		create_scoped_domain(_metadata,
--				     LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
-+		create_scoped_domain(_metadata, scope);
- 
- 		/*
- 		 * The child inherits the sockets, and cannot connect or
- 		 * send data to them.
- 		 */
- 		ASSERT_EQ(-1,
--			  connect(connected_socket, &connected_addr.unix_addr,
--				  connected_addr.unix_addr_len));
-+			  connect(connected_socket,
-+				  &self->connected_addr.unix_addr,
-+				  self->connected_addr.unix_addr_len));
- 		ASSERT_EQ(EPERM, errno);
- 
- 		ASSERT_EQ(-1, sendto(connected_socket, ".", 1, 0,
--				     &connected_addr.unix_addr,
--				     connected_addr.unix_addr_len));
-+				     &self->connected_addr.unix_addr,
-+				     self->connected_addr.unix_addr_len));
- 		ASSERT_EQ(EPERM, errno);
- 
- 		ASSERT_EQ(-1, sendto(non_connected_socket, ".", 1, 0,
--				     &non_connected_addr.unix_addr,
--				     non_connected_addr.unix_addr_len));
-+				     &self->non_connected_addr.unix_addr,
-+				     self->non_connected_addr.unix_addr_len));
- 		ASSERT_EQ(EPERM, errno);
- 
- 		EXPECT_EQ(0, close(connected_socket));
--- 
-2.52.0
-
+>
+>  {
+> -	struct unix_address *addr = unix_sk(sock)->addr;
+> -
+> -	if (!addr)
+> -		return false;
+> -
+> -	if (addr->len >= offsetof(struct sockaddr_un, sun_path) + 1 &&
+> +	if (addr && addr->len >= offsetof(struct sockaddr_un, sun_path) + 1 &&
+>  	    addr->name->sun_path[0] == '\0')
+>  		return true;
+>  
+>  	return false;
+>  }
+>  
+> +/* Allow us to quickly test if the current domain scopes any form of socket */
+>  static const struct access_masks unix_scope = {
+> -	.scope = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET,
+> +	.scope = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
+> +		 LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET,
+>  };
+>  
+> +/*
+> + * UNIX sockets can have three types of addresses: pathname (a filesystem path),
+> + * unnamed (not bound to an address), and abstract (sun_path[0] is '\0').
+> + * Unnamed sockets include those created with socketpair() and unbound sockets.
+> + * We do not restrict unnamed sockets since they have no address to identify.
+> + */
+>  static int hook_unix_stream_connect(struct sock *const sock,
+>  				    struct sock *const other,
+>  				    struct sock *const newsk)
+>  {
+>  	size_t handle_layer;
+> +	access_mask_t scope;
+> +	enum landlock_request_type request_type;
+>  	const struct landlock_cred_security *const subject =
+>  		landlock_get_applicable_subject(current_cred(), unix_scope,
+>  						&handle_layer);
+> +	const struct unix_address *addr;
+>  
+>  	/* Quick return for non-landlocked tasks. */
+>  	if (!subject)
+>  		return 0;
+>  
+> -	if (!is_abstract_socket(other))
+> +	addr = unix_sk(other)->addr;
+> +	/* Unnamed sockets are not restricted. */
+> +	if (!addr)
+>  		return 0;
+>  
+> -	if (!sock_is_scoped(other, subject->domain))
+> +	if (sock_addr_is_abstract(addr)) {
+> +		scope = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET;
+> +		request_type = LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET;
+> +	} else {
+> +		/* Pathname socket. */
+> +		scope = LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET;
+> +		request_type = LANDLOCK_REQUEST_SCOPE_PATHNAME_UNIX_SOCKET;
+> +	}
+> +
+> +	if (!sock_is_scoped(other, subject->domain, scope))
+>  		return 0;
+>  
+>  	landlock_log_denial(subject, &(struct landlock_request) {
+> -		.type = LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET,
+> +		.type = request_type,
+>  		.audit = {
+>  			.type = LSM_AUDIT_DATA_NET,
+>  			.u.net = &(struct lsm_network_audit) {
+> @@ -299,9 +326,12 @@ static int hook_unix_may_send(struct socket *const sock,
+>  			      struct socket *const other)
+>  {
+>  	size_t handle_layer;
+> +	access_mask_t scope;
+> +	enum landlock_request_type request_type;
+>  	const struct landlock_cred_security *const subject =
+>  		landlock_get_applicable_subject(current_cred(), unix_scope,
+>  						&handle_layer);
+> +	const struct unix_address *addr;
+>  
+>  	if (!subject)
+>  		return 0;
+> @@ -313,14 +343,24 @@ static int hook_unix_may_send(struct socket *const sock,
+>  	if (unix_peer(sock->sk) == other->sk)
+>  		return 0;
+>  
+> -	if (!is_abstract_socket(other->sk))
+> +	addr = unix_sk(other->sk)->addr;
+> +	/* Unnamed sockets are not restricted. */
+> +	if (!addr)
+>  		return 0;
+>  
+> -	if (!sock_is_scoped(other->sk, subject->domain))
+> +	if (sock_addr_is_abstract(addr)) {
+> +		scope = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET;
+> +		request_type = LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET;
+> +	} else {
+> +		scope = LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET;
+> +		request_type = LANDLOCK_REQUEST_SCOPE_PATHNAME_UNIX_SOCKET;
+> +	}
+> +
+> +	if (!sock_is_scoped(other->sk, subject->domain, scope))
+>  		return 0;
+>  
+>  	landlock_log_denial(subject, &(struct landlock_request) {
+> -		.type = LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET,
+> +		.type = request_type,
+>  		.audit = {
+>  			.type = LSM_AUDIT_DATA_NET,
+>  			.u.net = &(struct lsm_network_audit) {
