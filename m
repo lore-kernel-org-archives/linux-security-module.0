@@ -1,275 +1,80 @@
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com [209.85.161.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8091096F
-	for <linux-security-module@vger.kernel.org>; Sun, 28 Dec 2025 03:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC34258CCC
+	for <linux-security-module@vger.kernel.org>; Sun, 28 Dec 2025 06:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766891979; cv=none; b=GP4wHLfif/vXE7F9fF6/a73OKmfZ0CTWhRlq3xzP+tbKH7EV9oAFeoZI8zdQhYK8OURC4+ctl1+5BWmQmNJIvUi0PGWYjhhGMSLmNX/i4ppnZ8+kFuf6r0Etpetj9OvpK6V3WecHzX4OeVTUjnUuvkBXz48v1/0pyb4Mp32/YH8=
+	t=1766903344; cv=none; b=C4P3ae9hS4g8AV+xGg3P4BA47UW819TOs8U4m9aYB7zI1yJA2hqW3dm0Jzb+YcGsEDUaKlnLWVluCpJ22ti7NFWojDJT5n6zR7R36XAMQ0MoFQUVkFOlmzUA4TDUlQX2EyFIo+8Layu5R2bn70mg31EnWkIhFq2PoJg91teUoXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766891979; c=relaxed/simple;
-	bh=eG8oUFAI4PetIG9wFbyzjuQjQ953cNpI3qyl1mZiJgw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dy5iOgUqj+7HLj+/mOAu6mzPBGA6Eq24mtWUEar9LOF+rgQzG7G5a3LIloWsIya/3KlhvhT5yI0Akr+zr7/nJSCvMIj5ySwQgSEUdv/rK5rfuLV1bmrfkIpYIqeaXRsZVy0cyActcwG9dkPXE0InxLFxjb8i6yqQ9YI+vvgxXK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=QNesZ4SG; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="QNesZ4SG"
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-888bd3bd639so109187446d6.1
-        for <linux-security-module@vger.kernel.org>; Sat, 27 Dec 2025 19:19:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1766891975; x=1767496775; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wz8HMmajZ9W4jVJulNGBtrLS2GpN8d2v1Td+fLbOd2A=;
-        b=QNesZ4SGqjLCescb4LGbuerABczHli+mj0TYW0rFGCy5EUwCOuO1NAWflLXbyyJKBl
-         08vY13bnfi7rzEFhBGas9FADAHHDxy7JzG4bfq8gtymZHGy067rEga8GVBGy+LM0WLBW
-         0H0bAyF6VOEG0qcIftE0y9i1Qqzm1BD9FuisF663E09n0NnOvqn9EOSObhNOG1J+Fjn/
-         vVSzUInvSYH6Zg8Irx0i3Q3UYnC+yPbYt3EjoO9lV0hXdjh3ShPvG3YRxn6ltUMFfdiT
-         pbsSv7abwI22k1tWmsDWRuxcIYekcUm0b62C6kwU/c8Nb8bampyRJb2VMzcsXE1Duiz+
-         fMGA==
+	s=arc-20240116; t=1766903344; c=relaxed/simple;
+	bh=Inljx6UOoK9th0Yw9ul8xLEL3W4o8tpjYeNnAkDOmxk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NwKCelxWTa5eEkzBsT1cZifEZDt4Akogwvd4DwX522imLZ3vhSJeLqbP3Xw0BupQsKV2OWbtM7oSWta7sl8wbk+QE7kHGUzZAwNCTkAGfdeof5GRr66l2KrT11lv9Zgl/yUyqfu/LLBvY1lX1+rQvEZMGxHhlmGSKAHKDYTNImk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-65703b66ebfso14902551eaf.0
+        for <linux-security-module@vger.kernel.org>; Sat, 27 Dec 2025 22:29:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766891975; x=1767496775;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Wz8HMmajZ9W4jVJulNGBtrLS2GpN8d2v1Td+fLbOd2A=;
-        b=GZcpBDXHZJdhF2Q6/Fr215R28oOX5c9yyDGDB2rQfhAlYFY8g9WvKDOXgQx+SevXLV
-         w21PcWW2dPp0FShtqdKSO/6HwRyu5pCgWa+HQAl/x36URY0b8oXjzDpOGCGgSM5Wowm6
-         sR3R9Ai989RAin4956zS7CSYBY0Sx3pKfEanTTbb9W2eoaIyoI5Pm1GGJ62/clq2oHEk
-         Fx3pa4Ap/fV5cDbo2joaNcm/lTWhqBYx1VZnIr5whAGHixGTJORmJ2Y/vdSRhmzA5+aP
-         CodmKl+Dw/nRMY2pZTBmzMyPeJpuUcPS5te3mQuDPmOwvy7CIpTER5xIKR/FudjyHtdA
-         2rBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVm49P4g8fGQH15VaKeETga064zULVr/adajVA5VlGCjgKsU7zico98xT7eQ3e20qSCLh0J5kzCI9r+CgK1+Tdj4ljKOQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJvm3NCrvSyJ0purW8D7sc84jErFo027RyDCOG1pTK8T2gqxqM
-	tVClEwLQr4VsNBMOICa4jQeSYFi2ABU14486v2YVQrf/rgbumSpo/hSB0RMYC0fViHI=
-X-Gm-Gg: AY/fxX4DZPW6mi67mEuVRpTM1vrP0htzwWfBrIT9TyXvg77tJLxwZULNjfMmB0VaVHf
-	UWsU3BnXDGLOr1kw+8ffGCrni9N3RKlXOh7BJC76dygJpdDz5QuN61NcnYWKxcoS2XGvzF6FpLN
-	MazytO7zrVNF8XP4Eq1c8C/Hys/0bQ7TOWvsxk3sQIiqDN+B5VP9HMI5My1lNY6bfKMydfmt1LN
-	gSMSSshd8yicruhU6LwHk3nC7e9A+eZGQkJDR4PGVCI5OIMPFlQj0wN0DVcIvK7rI24QpyOQibs
-	xAeWb8UtQdvaG6hzrJuYOVw9poSA3Xrugxw/ObNP8nK+j7d1u+IrTvnq3J4SrIxU1MaXBR41B7x
-	spzAQyQGBpixYr25Kf04w5HA8J2R94ctMqB332FdxGHfhQ1Ba+UHdTmtUTpLq1M8V2nCJ1QFy7R
-	1D5Em0BykIRw==
-X-Google-Smtp-Source: AGHT+IFUZcvu/IX20E9sdhoqfHxwFxSu+aK649g3tolccQ2x7sR+ykIEOMiRboAEbGc3M6AHIHL+Og==
-X-Received: by 2002:a05:6214:23c5:b0:88a:4c50:3be0 with SMTP id 6a1803df08f44-88c5001fe40mr466683966d6.6.1766891974886;
-        Sat, 27 Dec 2025 19:19:34 -0800 (PST)
-Received: from 861G6M3.attlocal.net ([2a09:bac1:76a0:780::5e:1f])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88d997aef2esm200481436d6.32.2025.12.27.19.19.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Dec 2025 19:19:34 -0800 (PST)
-From: Chris J Arges <carges@cloudflare.com>
-To: zohar@linux.ibm.com,
-	roberto.sassu@huawei.com
-Cc: kernel-team@cloudflare.com,
-	Chris J Arges <carges@cloudflare.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Kees Cook <kees@kernel.org>,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] ima: Fix stack-out-of-bounds in is_bprm_creds_for_exec()
-Date: Sat, 27 Dec 2025 21:18:54 -0600
-Message-ID: <20251228031914.47618-1-carges@cloudflare.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <3aeed1ff9388f09555bf5c6ade03cbe9ce93ff14.camel@linux.ibm.com>
-References: <3aeed1ff9388f09555bf5c6ade03cbe9ce93ff14.camel@linux.ibm.com>
+        d=1e100.net; s=20230601; t=1766903341; x=1767508141;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WqWaYjXGpL0SCXHVfAwZczGoXfLd9iZju3rBMa/XlsI=;
+        b=Obwsov6WH0XH1+JmwyHRcxF0buajML3GZuwxq5pPbflmqpUnPjB9Ei3gIM7w7cgnT5
+         iioL/jII/53lDRtyCi6ZXN69wP/KG9jsPQMzD25iqi6EtdAHcA06ffLRADZrVaLLx1zN
+         HJhLZ8BEnz6pjZ/fGe2q3RDdSZP9QAoMLIRRzrjTkrCYZXYGo4czZWif80SNrPBbdNy7
+         LBUgVFDGBNMwUHfZG1K6Y8Cd3JPGZgEBHc3evELM2zZUR67D4YB8Yw1rStnXbdbv5mRv
+         ZRJ/o+vUWQk6eumFahq8aY73TkKEF64YGhjXN3v+l2x64J1xz1LXKzNdD+KpBBUwQdXZ
+         10Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbMXGweZmudTzLvlicaT0RKkG14wVHIhSjQromi1IkoPuG/sYlc6zCgQIUhqAC1n19Ma8Wr4Q9rCuupzbHrJamQQsfF3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBjXPpl8lc7SwaWV93Wg/obG9lRpBldRIytR1i/w0cIE74cSE/
+	133QbahndmDE0JtDziJd9EBTk8wS2cM1mqrzO9mMCfWBIH2/fqJNsESIF9RqIonHFP9Ylzm0KoM
+	rfGlO+Ic3kwjdHuhFj+wX5UvFuUE6/9/5KZnpyXxMbwI54YNJpCwoTR0MSgE=
+X-Google-Smtp-Source: AGHT+IEoS0rAjcG/+fGcGmjafzr1ie5EibCfjAHuWQ1bamSqVqpqVq5pUPYA4JV9/ivc0D0yU9QEcaQ+4125sqT5bkop/MWm91yt
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a4a:d744:0:b0:65c:f062:bdde with SMTP id
+ 006d021491bc7-65cfe799322mr10615394eaf.36.1766903341612; Sat, 27 Dec 2025
+ 22:29:01 -0800 (PST)
+Date: Sat, 27 Dec 2025 22:29:01 -0800
+In-Reply-To: <682e11b1.050a0220.ade60.09e5.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6950ce2d.a70a0220.c527.0006.GAE@google.com>
+Subject: Re: [syzbot] [lsm?] [integrity?] INFO: task hung in
+ process_measurement (3)
+From: syzbot <syzbot+cb9e66807bcb882cd0c5@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
+	jmorris@namei.org, kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	roberto.sassu@huawei.com, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	torvalds@linux-foundation.org, zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-KASAN reported a stack-out-of-bounds access in ima_appraise_measurement
-from is_bprm_creds_for_exec:
+syzbot suspects this issue was fixed by commit:
 
-BUG: KASAN: stack-out-of-bounds in ima_appraise_measurement+0x12dc/0x16a0
- Read of size 1 at addr ffffc9000160f940 by task sudo/550
-The buggy address belongs to stack of task sudo/550
-and is located at offset 24 in frame:
-  ima_appraise_measurement+0x0/0x16a0
-This frame has 2 objects:
-  [48, 56) 'file'
-  [80, 148) 'hash'
+commit f2c61db29f277b9c80de92102fc532cc247495cd
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon Sep 29 20:43:52 2025 +0000
 
-This is caused by using container_of on the *file pointer. This offset
-calculation is what triggers the stack-out-of-bounds error.
+    Remove bcachefs core code
 
-In order to fix this, pass in a bprm_is_check boolean which can be set
-depending on how process_measurement is called. If the caller has a
-linux_binprm pointer and the function is BPRM_CHECK we can determine
-is_check and set it then. Otherwise set it to false.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10499e2a580000
+start commit:   172a9d94339c Merge tag '6.15-rc6-smb3-client-fixes' of git..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea35e429f965296e
+dashboard link: https://syzkaller.appspot.com/bug?extid=cb9e66807bcb882cd0c5
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16836e70580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1617a2d4580000
 
-Fixes: 95b3cdafd7cb7 ("ima: instantiate the bprm_creds_for_exec() hook")
+If the result looks correct, please mark the issue as fixed by replying with:
 
-Signed-off-by: Chris J Arges <carges@cloudflare.com>
----
- security/integrity/ima/ima.h          |  6 ++++--
- security/integrity/ima/ima_appraise.c | 16 +++-------------
- security/integrity/ima/ima_main.c     | 22 +++++++++++++---------
- 3 files changed, 20 insertions(+), 24 deletions(-)
+#syz fix: Remove bcachefs core code
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index e3d71d8d56e3..89ebe98ffc5e 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -441,7 +441,8 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
- int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 			     struct file *file, const unsigned char *filename,
- 			     struct evm_ima_xattr_data *xattr_value,
--			     int xattr_len, const struct modsig *modsig);
-+			     int xattr_len, const struct modsig *modsig,
-+			     bool bprm_is_check);
- int ima_must_appraise(struct mnt_idmap *idmap, struct inode *inode,
- 		      int mask, enum ima_hooks func);
- void ima_update_xattr(struct ima_iint_cache *iint, struct file *file);
-@@ -466,7 +467,8 @@ static inline int ima_appraise_measurement(enum ima_hooks func,
- 					   const unsigned char *filename,
- 					   struct evm_ima_xattr_data *xattr_value,
- 					   int xattr_len,
--					   const struct modsig *modsig)
-+					   const struct modsig *modsig,
-+					   bool bprm_is_check)
- {
- 	return INTEGRITY_UNKNOWN;
- }
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 5149ff4fd50d..16c20c578ea8 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -470,17 +470,6 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
- 	return rc;
- }
- 
--static bool is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
--{
--	struct linux_binprm *bprm;
--
--	if (func == BPRM_CHECK) {
--		bprm = container_of(&file, struct linux_binprm, file);
--		return bprm->is_check;
--	}
--	return false;
--}
--
- /*
-  * ima_appraise_measurement - appraise file measurement
-  *
-@@ -492,7 +481,8 @@ static bool is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
- int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 			     struct file *file, const unsigned char *filename,
- 			     struct evm_ima_xattr_data *xattr_value,
--			     int xattr_len, const struct modsig *modsig)
-+			     int xattr_len, const struct modsig *modsig,
-+			     bool bprm_is_check)
- {
- 	static const char op[] = "appraise_data";
- 	int audit_msgno = AUDIT_INTEGRITY_DATA;
-@@ -514,7 +504,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 	 * of the script interpreter(userspace). Differentiate kernel and
- 	 * userspace enforced integrity audit messages.
- 	 */
--	if (is_bprm_creds_for_exec(func, file))
-+	if (bprm_is_check)
- 		audit_msgno = AUDIT_INTEGRITY_USERSPACE;
- 
- 	/* If reading the xattr failed and there's no modsig, error out. */
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 5770cf691912..1d6229b156fb 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -236,7 +236,8 @@ static void ima_file_free(struct file *file)
- static int process_measurement(struct file *file, const struct cred *cred,
- 			       struct lsm_prop *prop, char *buf, loff_t size,
- 			       int mask, enum ima_hooks func,
--			       enum kernel_read_file_id read_id)
-+			       enum kernel_read_file_id read_id,
-+			       bool bprm_is_check)
- {
- 	struct inode *real_inode, *inode = file_inode(file);
- 	struct ima_iint_cache *iint = NULL;
-@@ -426,7 +427,8 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 			inode_lock(inode);
- 			rc = ima_appraise_measurement(func, iint, file,
- 						      pathname, xattr_value,
--						      xattr_len, modsig);
-+						      xattr_len, modsig,
-+						      bprm_is_check);
- 			inode_unlock(inode);
- 		}
- 		if (!rc)
-@@ -493,14 +495,15 @@ static int ima_file_mmap(struct file *file, unsigned long reqprot,
- 
- 	if (reqprot & PROT_EXEC) {
- 		ret = process_measurement(file, current_cred(), &prop, NULL,
--					  0, MAY_EXEC, MMAP_CHECK_REQPROT, 0);
-+					  0, MAY_EXEC, MMAP_CHECK_REQPROT, 0,
-+					  false);
- 		if (ret)
- 			return ret;
- 	}
- 
- 	if (prot & PROT_EXEC)
- 		return process_measurement(file, current_cred(), &prop, NULL,
--					   0, MAY_EXEC, MMAP_CHECK, 0);
-+					   0, MAY_EXEC, MMAP_CHECK, 0, false);
- 
- 	return 0;
- }
-@@ -584,7 +587,8 @@ static int ima_bprm_check(struct linux_binprm *bprm)
- 
- 	security_current_getlsmprop_subj(&prop);
- 	return process_measurement(bprm->file, current_cred(),
--				   &prop, NULL, 0, MAY_EXEC, BPRM_CHECK, 0);
-+				   &prop, NULL, 0, MAY_EXEC, BPRM_CHECK, 0,
-+				   bprm->is_check);
- }
- 
- /**
-@@ -614,7 +618,7 @@ static int ima_creds_check(struct linux_binprm *bprm, const struct file *file)
- 
- 	security_current_getlsmprop_subj(&prop);
- 	return process_measurement((struct file *)file, bprm->cred, &prop, NULL,
--				   0, MAY_EXEC, CREDS_CHECK, 0);
-+				   0, MAY_EXEC, CREDS_CHECK, 0, false);
- }
- 
- /**
-@@ -662,7 +666,7 @@ static int ima_file_check(struct file *file, int mask)
- 	security_current_getlsmprop_subj(&prop);
- 	return process_measurement(file, current_cred(), &prop, NULL, 0,
- 				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
--					   MAY_APPEND), FILE_CHECK, 0);
-+					   MAY_APPEND), FILE_CHECK, 0, false);
- }
- 
- static int __ima_inode_hash(struct inode *inode, struct file *file, char *buf,
-@@ -881,7 +885,7 @@ static int ima_read_file(struct file *file, enum kernel_read_file_id read_id,
- 	func = read_idmap[read_id] ?: FILE_CHECK;
- 	security_current_getlsmprop_subj(&prop);
- 	return process_measurement(file, current_cred(), &prop, NULL, 0,
--				   MAY_READ, func, 0);
-+				   MAY_READ, func, 0, false);
- }
- 
- const int read_idmap[READING_MAX_ID] = {
-@@ -925,7 +929,7 @@ static int ima_post_read_file(struct file *file, char *buf, loff_t size,
- 	func = read_idmap[read_id] ?: FILE_CHECK;
- 	security_current_getlsmprop_subj(&prop);
- 	return process_measurement(file, current_cred(), &prop, buf, size,
--				   MAY_READ, func, read_id);
-+				   MAY_READ, func, read_id, false);
- }
- 
- /**
--- 
-2.43.0
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
