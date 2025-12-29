@@ -1,32 +1,63 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B24FEEB3;
-	Mon, 29 Dec 2025 04:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0869C2B9B9;
+	Mon, 29 Dec 2025 13:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766982192; cv=none; b=DMN6kOQZMevFFSh1XBzfdcCYatdOfjn49w2AyjVrFkfBlHtd/GBLqvcnrGMFkcUHPGhSpNdZOCyVE6/zyeV64rCYNZVUsN14qNe+aZkNKJ81exOoAtk/fPqCpJBLMA2MxdpbaJ4ydkkMP4D5IMguiSaV2Fcu/oSnWS+vfMKmOog=
+	t=1767016631; cv=none; b=osP45l+wbWjZErjx//YPVOBDRmIaMg6D0MtQzr2E4YTw1rpnXKG+vRus/NfgiYxIOTraSudJjg8cQ12sDqDudCLEF0IEgBx60pgOb60DR+tC2j50ACIIg1sGYEkZBA0cRdRf9accRWM48VGNLJ50JMz1QUSoJiWnXKOeZH78Y5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766982192; c=relaxed/simple;
-	bh=JbqGoSobmBPlsWnR/N0MszGc7hMsIsEdG2rzIIP+E6I=;
+	s=arc-20240116; t=1767016631; c=relaxed/simple;
+	bh=5QOQ0tMzetOqYgx3rFaw3xk+KGNbbRVip63qsJkiNM8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jyh922nB1bi33sHj8eAoChNacvmW2op8/3IdnnVJdskIRXC0yM8RPtVgO33YF+Wxu0MX1Iz1t0HQ5KKbAIi8jlHiGBPTm/asOcY80lLCZaXgSAYEfOU+Uomq5HLquo6alUhKENAXWwCHMeNevqQMGU5ph67YSF+FzXWrZ2urqnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 2349C807; Sun, 28 Dec 2025 22:14:12 -0600 (CST)
-Date: Sun, 28 Dec 2025 22:14:12 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Ryan Foster <foster.ryan.r@gmail.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	paul@paul-moore.com, serge@hallyn.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=sTY3ShIcpFUDbkU+FuFvSaOzRscXy41Piv/fkA5zM6xIk8MNiZmG9S2rfd+/ydyCJm+EYEUCGPsOL0HsD9QU2Nt6aeCg+496PI+o76PCTfpBcFmrROX5zBQOy9Hwb2RXRhL6RJaGpSQaGgnUTnRyYNybegOoNqKKPAyNyHz9d0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BC9OiSDI; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BC9OiSDI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1767016630; x=1798552630;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5QOQ0tMzetOqYgx3rFaw3xk+KGNbbRVip63qsJkiNM8=;
+  b=BC9OiSDIaH/5YlVGWNtVaRgVn3Hd5WVB412ATC+epL5QzTlnYNCPueMe
+   OzYIZwdk5hQ0ClDI/PJJnI7HK55mJdX15/gaZ9VaiTfJH39h1+pMq26Gr
+   4/tdr7EqbtzQpIVSK7bnnmHYXY1fEtib/oFB23wteuG4Ui9UWCE5o0LYG
+   +PzD3uOB4r8kgLar+Iz7QIxL1ZUJPeK6XcuTlYaw2G+lO472DlV6tIqR6
+   bPSKyMA19sVqplzq8ucUvqnWRvIFoNERWpoItPAx+piY8sg3/jFr9wQUH
+   X1ymrQn4jU6BUETbeO/WvHaHVx8KuwI8gR9QRA3hP1Sin+DXW4bWP1wKC
+   g==;
+X-CSE-ConnectionGUID: kKEQn0JhRQme7Q7yVrrYtg==
+X-CSE-MsgGUID: mBJ/DPX+TaSbllK7dkCI6A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11656"; a="71208500"
+X-IronPort-AV: E=Sophos;i="6.21,186,1763452800"; 
+   d="scan'208";a="71208500"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Dec 2025 05:57:09 -0800
+X-CSE-ConnectionGUID: DB/kz/r2RYuyqzk7mZkNrg==
+X-CSE-MsgGUID: PtD6w8jUSs6zqi+uIhaZYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,186,1763452800"; 
+   d="scan'208";a="200547858"
+Received: from lkp-server02.sh.intel.com (HELO dd3453e2b682) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 29 Dec 2025 05:57:07 -0800
+Received: from kbuild by dd3453e2b682 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vaDk1-000000007GT-2x6e;
+	Mon, 29 Dec 2025 13:57:00 +0000
+Date: Mon, 29 Dec 2025 21:56:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Foster <foster.ryan.r@gmail.com>,
+	linux-security-module@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	paul@paul-moore.com, serge@hallyn.com,
+	Ryan Foster <foster.ryan.r@gmail.com>
 Subject: Re: [PATCH v4] security: Add KUnit tests for kuid_root_in_ns and
  vfsuid_root_in_currentns
-Message-ID: <aVIAFEUjPe6DhrKc@mail.hallyn.com>
-References: <20251204215610.148342-1-foster.ryan.r@gmail.com>
- <20251228194838.32214-1-foster.ryan.r@gmail.com>
- <20251228194838.32214-2-foster.ryan.r@gmail.com>
+Message-ID: <202512292101.U530Lg4A-lkp@intel.com>
+References: <20251228194838.32214-2-foster.ryan.r@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -37,422 +68,109 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20251228194838.32214-2-foster.ryan.r@gmail.com>
 
-On Sun, Dec 28, 2025 at 11:45:37AM -0800, Ryan Foster wrote:
-> Add comprehensive KUnit tests for the namespace-related capability
-> functions that Serge Hallyn refactored in commit 9891d2f79a9f
-> ("Clarify the rootid_owns_currentns").
-> 
-> The tests verify:
-> - Basic functionality: UID 0 in init namespace, invalid vfsuid,
->   non-zero UIDs
-> - Actual namespace traversal: Creating user namespaces with different
->   UID mappings where uid 0 maps to different kuids (e.g., 1000, 2000,
->   3000)
-> - Hierarchy traversal: Testing multiple nested namespaces to verify
->   correct namespace hierarchy traversal
-> 
-> This addresses the feedback to "test the actual functionality" by
-> creating real user namespaces with different values for the
-> namespace's uid 0, rather than just basic input validation.
-> 
-> The test file is included at the end of commoncap.c when
-> CONFIG_SECURITY_COMMONCAP_KUNIT_TEST is enabled, following the
-> standard kernel pattern (e.g., scsi_lib.c, ext4/mballoc.c). This
+Hi Ryan,
 
-Thank you for pointing this out, as it seemed odd to me.
+kernel test robot noticed the following build errors:
 
-> allows tests to access static functions in the same compilation unit
-> without modifying production code based on test configuration.
-> 
-> The tests require CONFIG_USER_NS to be enabled since they rely on user
-> namespace mapping functionality. The Kconfig dependency ensures the
-> tests only build when this requirement is met.
-> 
-> All 7 tests pass:
-> - test_vfsuid_root_in_currentns_init_ns
-> - test_vfsuid_root_in_currentns_invalid
-> - test_vfsuid_root_in_currentns_nonzero
-> - test_kuid_root_in_ns_init_ns_uid0
-> - test_kuid_root_in_ns_init_ns_nonzero
-> - test_kuid_root_in_ns_with_mapping
-> - test_kuid_root_in_ns_with_different_mappings
-> 
-> Updated MAINTAINER capabilities to include commoncap test
-> 
-> Signed-off-by: Ryan Foster <foster.ryan.r@gmail.com>
+[auto build test ERROR on pcmoore-selinux/next]
+[also build test ERROR on linus/master v6.19-rc3 next-20251219]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks!  A few comments below.  But the set of tests looks great.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Foster/security-Add-KUnit-tests-for-kuid_root_in_ns-and-vfsuid_root_in_currentns/20251229-035056
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+patch link:    https://lore.kernel.org/r/20251228194838.32214-2-foster.ryan.r%40gmail.com
+patch subject: [PATCH v4] security: Add KUnit tests for kuid_root_in_ns and vfsuid_root_in_currentns
+config: i386-randconfig-011-20251229 (https://download.01.org/0day-ci/archive/20251229/202512292101.U530Lg4A-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251229/202512292101.U530Lg4A-lkp@intel.com/reproduce)
 
-> ---
->  MAINTAINERS               |   1 +
->  security/Kconfig          |  17 +++
->  security/commoncap.c      |   4 +
->  security/commoncap_test.c | 290 ++++++++++++++++++++++++++++++++++++++
->  4 files changed, 312 insertions(+)
->  create mode 100644 security/commoncap_test.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c0030e126fc8..6f162c736dfb 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -5682,6 +5682,7 @@ F:	include/trace/events/capability.h
->  F:	include/uapi/linux/capability.h
->  F:	kernel/capability.c
->  F:	security/commoncap.c
-> +F:	security/commoncap_test.c
->  
->  CAPELLA MICROSYSTEMS LIGHT SENSOR DRIVER
->  M:	Kevin Tsai <ktsai@capellamicro.com>
-> diff --git a/security/Kconfig b/security/Kconfig
-> index 285f284dfcac..f47975284aab 100644
-> --- a/security/Kconfig
-> +++ b/security/Kconfig
-> @@ -284,6 +284,23 @@ config LSM
->  
->  	  If unsure, leave this as the default.
->  
-> +config SECURITY_COMMONCAP_KUNIT_TEST
-> +	bool "Build KUnit tests for commoncap" if !KUNIT_ALL_TESTS
-> +	depends on KUNIT && USER_NS
-> +	default KUNIT_ALL_TESTS
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512292101.U530Lg4A-lkp@intel.com/
 
-I might be misunderstanding the syntax, but given that this is
-only enabled (iiuc) if KUNIT_ALL_TESTS=false, then wouldn't it
-be the same, and simpler, to say default false here?
+All errors (new ones prefixed by >>):
 
-I'm probably missing something.
+   ld: security/commoncap.o: in function `kunit_kmalloc':
+>> include/kunit/test.h:501:(.text+0xb59): undefined reference to `kunit_kmalloc_array'
+   ld: security/commoncap.o: in function `test_kuid_root_in_ns_init_ns_nonzero':
+>> security/commoncap_test.c:121:(.text+0x109c): undefined reference to `kunit_unary_assert_format'
+>> ld: security/commoncap_test.c:121:(.text+0x10aa): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap.o: in function `test_kuid_root_in_ns_init_ns_uid0':
+   security/commoncap_test.c:101:(.text+0x1101): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:101:(.text+0x110f): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap.o: in function `test_vfsuid_root_in_currentns_nonzero':
+   security/commoncap_test.c:80:(.text+0x14aa): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:80:(.text+0x14b8): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap.o: in function `test_vfsuid_root_in_currentns_init_ns':
+   security/commoncap_test.c:42:(.text+0x1544): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:42:(.text+0x1552): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap.o: in function `test_kuid_root_in_ns_with_mapping':
+   security/commoncap_test.c:219:(.text+0x166a): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:219:(.text+0x1678): undefined reference to `__kunit_do_failed_assertion'
+>> ld: security/commoncap_test.c:220:(.text+0x16ca): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:220:(.text+0x16d8): undefined reference to `__kunit_do_failed_assertion'
+>> ld: security/commoncap_test.c:210:(.text+0x16f8): undefined reference to `kunit_ptr_not_err_assert_format'
+   ld: security/commoncap_test.c:210:(.text+0x1706): undefined reference to `__kunit_do_failed_assertion'
+>> ld: security/commoncap_test.c:210:(.text+0x170d): undefined reference to `__kunit_abort'
+   ld: security/commoncap_test.c:213:(.text+0x172c): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:213:(.text+0x173a): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap_test.c:216:(.text+0x175c): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:216:(.text+0x176a): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap.o: in function `test_kuid_root_in_ns_with_different_mappings':
+   security/commoncap_test.c:254:(.text+0x18fa): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:254:(.text+0x1908): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap_test.c:259:(.text+0x19da): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:259:(.text+0x19e8): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap_test.c:267:(.text+0x1af2): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:267:(.text+0x1b00): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap_test.c:241:(.text+0x1b20): undefined reference to `kunit_ptr_not_err_assert_format'
+   ld: security/commoncap_test.c:241:(.text+0x1b2e): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap_test.c:241:(.text+0x1b35): undefined reference to `__kunit_abort'
+   ld: security/commoncap_test.c:245:(.text+0x1b50): undefined reference to `kunit_ptr_not_err_assert_format'
+   ld: security/commoncap_test.c:245:(.text+0x1b61): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap_test.c:245:(.text+0x1b68): undefined reference to `__kunit_abort'
+   ld: security/commoncap_test.c:249:(.text+0x1b80): undefined reference to `kunit_ptr_not_err_assert_format'
+   ld: security/commoncap_test.c:249:(.text+0x1b8e): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap_test.c:249:(.text+0x1b95): undefined reference to `__kunit_abort'
+   ld: security/commoncap_test.c:252:(.text+0x1bb4): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:252:(.text+0x1bc5): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap_test.c:266:(.text+0x1bec): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:266:(.text+0x1bfa): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap_test.c:265:(.text+0x1c1c): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:265:(.text+0x1c2a): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap_test.c:264:(.text+0x1c4c): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:264:(.text+0x1c5a): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap_test.c:253:(.text+0x1c7c): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:253:(.text+0x1c8d): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap_test.c:258:(.text+0x1cb4): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:258:(.text+0x1cc2): undefined reference to `__kunit_do_failed_assertion'
+   ld: security/commoncap_test.c:257:(.text+0x1ce4): undefined reference to `kunit_unary_assert_format'
+   ld: security/commoncap_test.c:257:(.text+0x1cf2): undefined reference to `__kunit_do_failed_assertion'
 
-> +	help
-> +	  This builds the commoncap KUnit tests.
-> +
-> +	  KUnit tests run during boot and output the results to the debug log
-> +	  in TAP format (https://testanything.org/). Only useful for kernel devs
-> +	  running KUnit test harness and are not for inclusion into a
-> +	  production build.
-> +
-> +	  For more information on KUnit and unit tests in general please refer
-> +	  to the KUnit documentation in Documentation/dev-tools/kunit/.
-> +
-> +	  If unsure, say N.
-> +
->  source "security/Kconfig.hardening"
->  
->  endmenu
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 8a23dfab7fac..3399535808fe 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -1521,3 +1521,7 @@ DEFINE_LSM(capability) = {
->  };
->  
->  #endif /* CONFIG_SECURITY */
-> +
-> +#ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
-> +#include "commoncap_test.c"
-> +#endif
-> diff --git a/security/commoncap_test.c b/security/commoncap_test.c
-> new file mode 100644
-> index 000000000000..1088364a54e6
-> --- /dev/null
-> +++ b/security/commoncap_test.c
-> @@ -0,0 +1,290 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * KUnit tests for commoncap.c security functions
-> + *
-> + * Tests for security-critical functions in the capability subsystem,
-> + * particularly namespace-related capability checks.
-> + */
-> +
-> +#include <kunit/test.h>
-> +#include <linux/user_namespace.h>
-> +#include <linux/uidgid.h>
-> +#include <linux/cred.h>
-> +#include <linux/mnt_idmapping.h>
-> +#include <linux/module.h>
-> +#include <linux/slab.h>
-> +#include <linux/refcount.h>
-> +
-> +#ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
-> +
-> +/* Functions are static in commoncap.c, but we can call them since we're
-> + * included in the same compilation unit when tests are enabled.
-> + */
-> +
-> +/**
-> + * test_vfsuid_root_in_currentns_init_ns - Test vfsuid_root_in_currentns with init ns
-> + *
-> + * Verifies that UID 0 in the init namespace correctly owns the current
-> + * namespace when running in init_user_ns.
-> + *
-> + * @test: KUnit test context
-> + */
-> +static void test_vfsuid_root_in_currentns_init_ns(struct kunit *test)
-> +{
-> +	vfsuid_t vfsuid;
-> +	kuid_t kuid;
-> +
-> +	/* Create UID 0 in init namespace */
-> +	kuid = KUIDT_INIT(0);
-> +	vfsuid = VFSUIDT_INIT(kuid);
-> +
-> +	/* In init namespace, UID 0 should own current namespace */
-> +	KUNIT_EXPECT_TRUE(test, vfsuid_root_in_currentns(vfsuid));
-> +}
-> +
-> +/**
-> + * test_vfsuid_root_in_currentns_invalid - Test vfsuid_root_in_currentns with invalid vfsuid
-> + *
-> + * Verifies that an invalid vfsuid correctly returns false.
-> + *
-> + * @test: KUnit test context
-> + */
-> +static void test_vfsuid_root_in_currentns_invalid(struct kunit *test)
-> +{
-> +	vfsuid_t invalid_vfsuid;
-> +
-> +	/* Use the predefined invalid vfsuid */
-> +	invalid_vfsuid = INVALID_VFSUID;
-> +
-> +	/* Invalid vfsuid should return false */
-> +	KUNIT_EXPECT_FALSE(test, vfsuid_root_in_currentns(invalid_vfsuid));
-> +}
-> +
-> +/**
-> + * test_vfsuid_root_in_currentns_nonzero - Test vfsuid_root_in_currentns with non-zero UID
-> + *
-> + * Verifies that a non-zero UID correctly returns false.
-> + *
-> + * @test: KUnit test context
-> + */
-> +static void test_vfsuid_root_in_currentns_nonzero(struct kunit *test)
-> +{
-> +	vfsuid_t vfsuid;
-> +	kuid_t kuid;
-> +
-> +	/* Create a non-zero UID */
-> +	kuid = KUIDT_INIT(1000);
-> +	vfsuid = VFSUIDT_INIT(kuid);
-> +
-> +	/* Non-zero UID should return false */
-> +	KUNIT_EXPECT_FALSE(test, vfsuid_root_in_currentns(vfsuid));
-> +}
-> +
-> +/**
-> + * test_kuid_root_in_ns_init_ns_uid0 - Test kuid_root_in_ns with init namespace and UID 0
-> + *
-> + * Verifies that kuid_root_in_ns correctly identifies UID 0 in init namespace.
-> + * This tests the core namespace traversal logic. In init namespace, UID 0
-> + * maps to itself, so it should own the namespace.
-> + *
-> + * @test: KUnit test context
-> + */
-> +static void test_kuid_root_in_ns_init_ns_uid0(struct kunit *test)
-> +{
-> +	kuid_t kuid;
-> +	struct user_namespace *init_ns;
-> +
-> +	kuid = KUIDT_INIT(0);
-> +	init_ns = &init_user_ns;
-> +
-> +	/* UID 0 should own init namespace */
-> +	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(kuid, init_ns));
-> +}
-> +
-> +/**
-> + * test_kuid_root_in_ns_init_ns_nonzero - Test kuid_root_in_ns with init namespace and non-zero UID
-> + *
-> + * Verifies that kuid_root_in_ns correctly rejects non-zero UIDs in init namespace.
-> + * Only UID 0 should own a namespace.
-> + *
-> + * @test: KUnit test context
-> + */
-> +static void test_kuid_root_in_ns_init_ns_nonzero(struct kunit *test)
-> +{
-> +	kuid_t kuid;
-> +	struct user_namespace *init_ns;
-> +
-> +	kuid = KUIDT_INIT(1000);
-> +	init_ns = &init_user_ns;
-> +
-> +	/* Non-zero UID should not own namespace */
-> +	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(kuid, init_ns));
-> +}
-> +
-> +/**
-> + * create_test_user_ns_with_mapping - Create a mock user namespace with UID mapping
-> + *
-> + * Creates a minimal user namespace structure for testing where uid 0 in the
-> + * namespace maps to a specific kuid in the parent namespace.
-> + *
-> + * @test: KUnit test context
-> + * @parent_ns: Parent namespace (typically init_user_ns)
-> + * @mapped_kuid: The kuid that uid 0 in this namespace maps to in parent
-> + *
-> + * Returns: Pointer to allocated namespace, or NULL on failure
-> + */
-> +static struct user_namespace *create_test_user_ns_with_mapping(struct kunit *test,
-> +								 struct user_namespace *parent_ns,
-> +								 kuid_t mapped_kuid)
-> +{
-> +	struct user_namespace *ns;
-> +	struct uid_gid_extent extent;
-> +
-> +	/* Allocate a test namespace - use kzalloc to zero all fields */
-> +	ns = kunit_kzalloc(test, sizeof(*ns), GFP_KERNEL);
-> +	if (!ns)
-> +		return NULL;
-> +
-> +	/* Initialize basic namespace structure fields */
-> +	ns->parent = parent_ns;
-> +	ns->level = parent_ns ? parent_ns->level + 1 : 0;
-> +	ns->owner = mapped_kuid;
-> +	ns->group = KGIDT_INIT(0);
-> +
-> +	/* Initialize ns_common structure */
-> +	refcount_set(&ns->ns.__ns_ref, 1);
-> +	ns->ns.inum = 0; /* Mock inum */
-> +
-> +	/* Set up uid mapping: uid 0 in this namespace maps to mapped_kuid in parent
-> +	 * Format: first (uid in ns) : lower_first (kuid in parent) : count
-> +	 * So: uid 0 in ns -> kuid mapped_kuid in parent
-> +	 * This means from_kuid(ns, mapped_kuid) returns 0
-> +	 */
-> +	extent.first = 0;                              /* uid 0 in this namespace */
-> +	extent.lower_first = __kuid_val(mapped_kuid);  /* maps to this kuid in parent */
-> +	extent.count = 1;
-> +
-> +	ns->uid_map.extent[0] = extent;
-> +	ns->uid_map.nr_extents = 1;
-> +
-> +	/* Set up gid mapping: gid 0 maps to gid 0 in parent (simplified) */
-> +	extent.first = 0;
-> +	extent.lower_first = 0;
-> +	extent.count = 1;
-> +
-> +	ns->gid_map.extent[0] = extent;
-> +	ns->gid_map.nr_extents = 1;
-> +
-> +	return ns;
-> +}
-> +
-> +/**
-> + * test_kuid_root_in_ns_with_mapping - Test kuid_root_in_ns with namespace where uid 0
-> + *				       maps to different kuid
-> + *
-> + * Creates a user namespace where uid 0 maps to kuid 1000 in the parent namespace.
-> + * Verifies that kuid_root_in_ns correctly identifies kuid 1000 as owning the namespace.
-> + *
-> + * Note: kuid_root_in_ns walks up the namespace hierarchy, so it checks the current
-> + * namespace first, then parent, then parent's parent, etc. So:
-> + * - kuid 1000 owns test_ns because from_kuid(test_ns, 1000) == 0
-> + * - kuid 0 also owns test_ns because from_kuid(init_user_ns, 0) == 0
-> + *   (checked in parent)
-> + *
-> + * This tests the actual functionality as requested: creating namespaces with
-> + * different values for the namespace's uid 0.
-> + *
-> + * @test: KUnit test context
-> + */
-> +static void test_kuid_root_in_ns_with_mapping(struct kunit *test)
-> +{
-> +	struct user_namespace *test_ns;
-> +	struct user_namespace *parent_ns;
-> +	kuid_t mapped_kuid, other_kuid;
-> +
-> +	parent_ns = &init_user_ns;
-> +	mapped_kuid = KUIDT_INIT(1000);
-> +	other_kuid = KUIDT_INIT(2000);
-> +
-> +	test_ns = create_test_user_ns_with_mapping(test, parent_ns, mapped_kuid);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, test_ns);
-> +
-> +	/* kuid 1000 should own test_ns because it maps to uid 0 in test_ns */
-> +	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(mapped_kuid, test_ns));
-> +
-> +	/* kuid 0 should also own test_ns (checked via parent init_user_ns) */
-> +	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), test_ns));
-> +
-> +	/* Other kuids should not own test_ns */
-> +	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(other_kuid, test_ns));
-> +	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(500), test_ns));
-> +}
-> +
-> +/**
-> + * test_kuid_root_in_ns_with_different_mappings - Test with multiple namespaces
-> + *
-> + * Creates multiple user namespaces with different UID mappings to verify
-> + * that kuid_root_in_ns correctly handles different namespace hierarchies.
-> + *
-> + * Since kuid_root_in_ns walks up the hierarchy, kuids that map to 0 in init_user_ns
-> + * will own all namespaces, while kuids that only map to 0 in specific namespaces
-> + * will only own those namespaces and their children.
-> + *
-> + * @test: KUnit test context
-> + */
-> +static void test_kuid_root_in_ns_with_different_mappings(struct kunit *test)
-> +{
-> +	struct user_namespace *ns1, *ns2, *ns3;
-> +
-> +	/* Create ns1 where uid 0 maps to kuid 1000 */
-> +	ns1 = create_test_user_ns_with_mapping(test, &init_user_ns, KUIDT_INIT(1000));
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns1);
-> +
-> +	/* Create ns2 where uid 0 maps to kuid 2000 */
-> +	ns2 = create_test_user_ns_with_mapping(test, &init_user_ns, KUIDT_INIT(2000));
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns2);
-> +
-> +	/* Create ns3 as a child of ns1 where uid 0 maps to kuid 3000 */
-> +	ns3 = create_test_user_ns_with_mapping(test, ns1, KUIDT_INIT(3000));
 
-This is not really a valid configuration, though.  If ns3 is a child of ns1,
-then any kuids mapped into ns3 must also have been mapped into ns1.
+vim +501 include/kunit/test.h
 
-I think I'm ok with saying "it doesn't matter for this test", but it should
-probably be documented here that we're ignoring that as irrelevant to the
-test.
+7122debb4367ee Daniel Latypov  2021-05-03  487  
+7122debb4367ee Daniel Latypov  2021-05-03  488  /**
+7122debb4367ee Daniel Latypov  2021-05-03  489   * kunit_kmalloc() - Like kmalloc() except the allocation is *test managed*.
+7122debb4367ee Daniel Latypov  2021-05-03  490   * @test: The test context object.
+7122debb4367ee Daniel Latypov  2021-05-03  491   * @size: The size in bytes of the desired memory.
+7122debb4367ee Daniel Latypov  2021-05-03  492   * @gfp: flags passed to underlying kmalloc().
+7122debb4367ee Daniel Latypov  2021-05-03  493   *
+7122debb4367ee Daniel Latypov  2021-05-03  494   * See kmalloc() and kunit_kmalloc_array() for more information.
+57e3cded99e9c8 David Gow       2023-05-25  495   *
+57e3cded99e9c8 David Gow       2023-05-25  496   * Note that some internal context data is also allocated with GFP_KERNEL,
+57e3cded99e9c8 David Gow       2023-05-25  497   * regardless of the gfp passed in.
+7122debb4367ee Daniel Latypov  2021-05-03  498   */
+7122debb4367ee Daniel Latypov  2021-05-03  499  static inline void *kunit_kmalloc(struct kunit *test, size_t size, gfp_t gfp)
+7122debb4367ee Daniel Latypov  2021-05-03  500  {
+7122debb4367ee Daniel Latypov  2021-05-03 @501  	return kunit_kmalloc_array(test, 1, size, gfp);
+7122debb4367ee Daniel Latypov  2021-05-03  502  }
+0a756853586ce1 Brendan Higgins 2019-09-23  503  
 
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns3);
-> +
-> +	/* Test ns1: kuid 1000 owns it, kuid 0 owns it (via parent), kuid 2000 does not */
-> +	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(1000), ns1));
-> +	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), ns1));
-> +	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(2000), ns1));
-> +
-> +	/* Test ns2: kuid 2000 owns it, kuid 0 owns it (via parent), kuid 1000 does not */
-> +	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(2000), ns2));
-> +	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), ns2));
-> +	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(1000), ns2));
-> +
-> +	/* Test ns3: kuid 3000 owns it, kuid 1000 owns it (via parent ns1),
-> +	 * kuid 0 owns it (via init_user_ns), kuid 2000 does not
-> +	 */
-> +	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(3000), ns3));
-> +	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(1000), ns3));
-> +	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), ns3));
-> +	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(2000), ns3));
-> +}
-> +
-> +static struct kunit_case commoncap_test_cases[] = {
-> +	KUNIT_CASE(test_vfsuid_root_in_currentns_init_ns),
-> +	KUNIT_CASE(test_vfsuid_root_in_currentns_invalid),
-> +	KUNIT_CASE(test_vfsuid_root_in_currentns_nonzero),
-> +	KUNIT_CASE(test_kuid_root_in_ns_init_ns_uid0),
-> +	KUNIT_CASE(test_kuid_root_in_ns_init_ns_nonzero),
-> +	KUNIT_CASE(test_kuid_root_in_ns_with_mapping),
-> +	KUNIT_CASE(test_kuid_root_in_ns_with_different_mappings),
-> +	{}
-> +};
-> +
-> +static struct kunit_suite commoncap_test_suite = {
-> +	.name = "commoncap",
-> +	.test_cases = commoncap_test_cases,
-> +};
-> +
-> +kunit_test_suite(commoncap_test_suite);
-> +
-> +MODULE_LICENSE("GPL");
-> +
-> +#endif /* CONFIG_SECURITY_COMMONCAP_KUNIT_TEST */
-> -- 
-> 2.52.0
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
