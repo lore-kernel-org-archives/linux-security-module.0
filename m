@@ -1,152 +1,337 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287A231B814
-	for <linux-security-module@vger.kernel.org>; Mon, 29 Dec 2025 17:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7FD1E98E3
+	for <linux-security-module@vger.kernel.org>; Mon, 29 Dec 2025 17:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767028446; cv=none; b=hjtxWsrHcvRaAJch14l+q428f3FM/OnanHkCZPboRrI6auemkOnTKc123RO+Te5zYceGdEvI3tPNnToORSu4NH6xC4xCFx90YVKuAPj8Ez5ov3f3vEACQfPN8w1X2xUUJ7ozDU/7/ZZY9H5j5rGnseHIFBrDBr2bv8SJgkMWXJ0=
+	t=1767030750; cv=none; b=hbkDjBZJ8suRl/U1MO8vlpoSIyIeeoFwc0ESwLDRr4wK7ou2+fOpjnew27JqfwuU7HLPQj9nX1GrIcCUXZ67IY7X6ixU38RjR/o2Pm06e6y3LkDQAGgDiNv5bqEJpVaod6WXd2B4YejfsB+TsSi0q5T+Mz+QhqKll/4tXz2cwv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767028446; c=relaxed/simple;
-	bh=rPHsj2oVdQZJmJLJWmWO3toMXK9yiLTRStaMVd6JXbQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o0odx+uqQNsgsHYNpmhKRHVM3fnzzahNh+zntT7g+NGPKhKhhbGcs4aRQLu493UUlZVLO0J/e2XmkwN+BUBH7jk6yKWrTmUJXEJN/5NOQHfl1IAXlndJhVJ/SIUnZJ1Rf98DsClXlIKyMMKqqgLqyQZ60MaoR3ttOaIXLZ1uW3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GIqSjaYO; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1767030750; c=relaxed/simple;
+	bh=ljPh5zUq+sEpFurhxtR6bIxbAZnlXR6NT2B3m5B2m7w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=D+8oWG74fnUkebms0hheTgZt4hEQYEF4kYV+Z+T6M5osAGC9z7SQZVpafzD1YdXKnpJX1tkLJgQQTqU57WA9xn5tvP/bcsEj8o9tHNZuiqynFtdVaAyn8jCRmUVjic7zcnwkqGpmHiEMqNYnmY1J8x88Uxv/KUb5RkChtUMNPNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Snsn1Xyb; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GIqSjaYO"
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-34c93e0269cso5154959a91.1
-        for <linux-security-module@vger.kernel.org>; Mon, 29 Dec 2025 09:14:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Snsn1Xyb"
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7c6d3676455so4139619a34.2
+        for <linux-security-module@vger.kernel.org>; Mon, 29 Dec 2025 09:52:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767028444; x=1767633244; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nq0hy4ZDbyOAkYMZ9R2bJ77qMoSVUcBr/BQKEBLGcD4=;
-        b=GIqSjaYO1LPsrpNx+MJUWdouSiwqq1TK0fcFqnIsRtvuZ12XgO8SfwBzriE3wgzLPo
-         e0ZYaemf16rLUaOC0HTYWCUD93l/g1Yga21wt6aElb8a0HEjxa3B5pdig/nopRdz4BeJ
-         pRZszj0yS9okHYU9ToggSWm8ewt+VW9d1ifHEWILEMtatcQCB+tR4VYF3uM52MJ4jgQb
-         i571ihJiXIx0VgN7OrSQpdRDe+4sUxTPo1AmT4Ls4ttzRXTBb712R2q/EEzQ5HGDqbpn
-         bUsoEPvxsbOczHl+Q9cfKuED+iW8LWMbNnSixSv+viCwXtPdiMEphoUSAjbtZtDYlIQe
-         uVVQ==
+        d=cloudflare.com; s=google09082023; t=1767030746; x=1767635546; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=60NTgoLdyDcoabkcaburHQ0p7+ekpPML9FmXy7cbJ70=;
+        b=Snsn1Xybpte7bZFJMuHr+C1nu9QUSbI3wmQrO6Bv2+LrdjlR8qWOTAaO2B/atHhGOC
+         DrMVs/Vp+0lKy8cpgFy/3aFke2/1JBH1ibZgY0whO1C8T/qkqYME9YbUrkGdY4L1zKqW
+         Zafg4UQAV9bNOudIe4/UarAYVd0Tf2C4qrq/+n5h3N/qiQyqTwRBfvA1rHl3WV2fn4Kn
+         6zo5Hu7ZguMwcZYkMRFuu5fQNzrTLUV5J2eWF+Nk/p0j25dRM0ol6EFiNdtW9VNMf7qb
+         LDvc0lL4l8QLgObbkjzxDoV7zJFHX/KEnAgwWfUEEXHaydWmlxn09iCckQhqX3Onb/wN
+         SU8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767028444; x=1767633244;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=nq0hy4ZDbyOAkYMZ9R2bJ77qMoSVUcBr/BQKEBLGcD4=;
-        b=ulqPs+Dp8kac5Df1w684g1rGZeKiv6guBe8JUEfMVMsfR/XiHePar9WI4Z7bLh62MH
-         vF25mflWSVVoOkm4qLQC2iLq8oeLW+9henW6sIL/Ic4tth5CCY0mGZMxGGuliAlPk3Gz
-         WI0PD/OOsyd65lPengtmVRkEkpua9cihnnmseaUCWwgi1CSivXbOZ2OiDYZ2FbFAbNaD
-         KVo1zwFgQ+MVZnmqJM+Ibu+VXkKzzvWOhteM0BZmOw9QR25q77qjHuw3Y5I5554QWsda
-         OmixLRsFaP9KTHT7r28yedaJ2y312mUGkoQXOqOHtVVph6B3KKwgdFsRRKdhnm/ON83E
-         /8CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX38VjVdL52sJV2uxy+1QxxFHJM9r7NrrdRm9XAi5jE2shuL43d/B1pixVObzTJH3t1bmeRQsYsQMbFaP9D9SfeQ2y567o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIn0PA0BcT42sis+JTfw8Jo/XugC+lLpIs+LMX1KXPsQE/MwOD
-	k4gKxh8Y89X2e6lFP9QlkZfvKDnlxQaVLpCsG6N+vwAiVEGrETBspDv5
-X-Gm-Gg: AY/fxX5SuhUdAFfdCcaE+U4pT6y2FBPvFdv3CZqzXfKSyGmVausxmC0nRpBcLdGz+32
-	ibJKs92ZXvfJOWFiGcI5t1VKzsOj46smdGTak9L6S9eNSoOPhWTzdNtGl6xurXlcH2vhGsLyLzj
-	+qbC72zpw17nVULcEYieGDHK2XMzMYhI/vuikhgO/Tlf+xsoq+7y2gSkufTqvTlEedTysBUtcVm
-	XCoR0m2fnqJhwQoQD4/1nl3dn6Vdm2RhiZNL+WNL4pk8jcqhfH44B2gLFgWxSRC1R8AgvyRhknJ
-	9iofP/nJXN+aggvgFYI2D42jwUbjHE4lv++d84K3OTQSqqiq8+qgCjTVPmZoTsieFu2sr6BVKCB
-	M53dqNiBaTLz8qu5OYmSjs1y65RvexP13QXYtMTBTbz0Ecz8q3P2K5SrOFjMrVfKpnVnHZFq8sq
-	adDz0fwZhEfHuzRH+n7ECBz5QvaystE6Eg/vbfDzIq0pnuvhTXFvrgvrPwYuO26Q==
-X-Google-Smtp-Source: AGHT+IG4eXbFG3XgvqZI1V+B2x2P42ZmXTkV7Dp/LoGqVFuSVOvFy0fGaXCjk1bAi09n8KFPykhhkg==
-X-Received: by 2002:a17:90b:2e4a:b0:34c:9cec:3898 with SMTP id 98e67ed59e1d1-34e71e29544mr29378809a91.13.1767028444325;
-        Mon, 29 Dec 2025 09:14:04 -0800 (PST)
-Received: from kailas.hsd1.or.comcast.net ([2601:1c2:982:6040::e14d])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34e76ae7618sm16105280a91.1.2025.12.29.09.14.03
+        d=1e100.net; s=20230601; t=1767030746; x=1767635546;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=60NTgoLdyDcoabkcaburHQ0p7+ekpPML9FmXy7cbJ70=;
+        b=DZUpGE75zi/P9UO5mCjxX46Wi0ICKmqBS6UXJ9O+GcsY+xNaAdg812iekqy5AgXSmn
+         WdHqvsuS2o0IV3c+JV5Ha16efJGV3ZaaiVNEVu6oesyUfFP39lzitnATS3YEBtJb53ys
+         R1vLOOoACBdm9bL2ExvCZAoRo5PNOW1UMBfs5JavBksg0urng/bDeH46c6KN9/Uk9s22
+         oUsRl5ImpQEzgv56T34Bpcru8L2p+zL6Q2PFRqjbCgq1bvNdgL7Atf2pXKp3aiK7PxtU
+         UOIdZwELJ/Y9F4ysvpiVc8u0eE+HMieOmuTJa4dKeaspHEbSb27NpaFfVixQKzMxmjgB
+         yyhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKtu+xf2zqZcGcU7VNkqlNycjdWcY6lDTt6HihR2PjbSF7G+1q0MaO0chWDpWw4md/kNkn8Ii2FcRqUDKNBUj5YqJHD1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUfCv5Wbf4cagy/FzR7xcVL5AaLZhKdz7kQhf2ZUW3vvK4bdyc
+	yMJIGAEqKJuiN0CSiuIw++stF6USNkExwxElojNLHYahg0h5HOb2PZWSpWt/Gy8OdzU=
+X-Gm-Gg: AY/fxX7tWu//pFjI2QmbKfJ8XTIciMxQrtdLocI/7+70bqc3wQVAw7EaFL1koF1oQ3f
+	mmD+h33QKsgaaGPcpioRLnuZ6D4c/KmePasWOhvDpIHF4Qvp0Hvx0a632Y95W29DxdpDwNzCYAO
+	aERXZN+6E5EjGom+HlsYVicng4+a2g4/rBoBCBdl6rKfisWnIA1fNshKG6H6ucUCXfWIF7rexJX
+	F8gU+ZoAV6Ds0sremvYoLxvRLigDMRH+qsQr6IRF4dHtQ9VitNOqXBNsPw5Q/3tsXYkjg8f66ug
+	Oq65BENqAbOeJXHkK7/uB6zAUGoYKdMWjcKQ3QRRkHcA2MM+fIw4tzi634wrpxVeRHQF1+FpW+G
+	WFv7BkHb3fUa3h7dWo8dFn4XsA4zBlfXr7uUxri73rzlczUEj9nAeoDE3C7t4GsPDrSrPo9QqDg
+	oZOI1Z9w==
+X-Google-Smtp-Source: AGHT+IEI5lOT00G21ccWwQH/w8No/A8zKWvp8qtAwnhhRywPTYKImfEoGUyWdvXruBHSuBH13g1d/A==
+X-Received: by 2002:a05:6830:438d:b0:7c9:5a1d:333a with SMTP id 46e09a7af769-7cc667f3d57mr14820512a34.0.1767030746456;
+        Mon, 29 Dec 2025 09:52:26 -0800 (PST)
+Received: from [127.0.1.1] ([2a09:bac5:947d:4e6::7d:91])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cc6673bdabsm20820644a34.10.2025.12.29.09.52.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Dec 2025 09:14:03 -0800 (PST)
-From: Ryan Foster <foster.ryan.r@gmail.com>
-To: bboscaccy@linux.microsoft.com
-Cc: James.Bottomley@hansenpartnership.com,
-	akpm@linux-foundation.org,
-	bpf@vger.kernel.org,
-	corbet@lwn.net,
-	dhowells@redhat.com,
-	foster.ryan.r@gmail.com,
-	gnoack@google.com,
-	jmorris@namei.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux@treblig.org,
-	mic@digikod.net,
-	paul@paul-moore.com,
-	serge@hallyn.com
-Subject: Re: [RFC 00/11] Reintroduce Hornet LSM
-Date: Mon, 29 Dec 2025 09:12:48 -0800
-Message-ID: <20251229171402.1491979-1-foster.ryan.r@gmail.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <87v7i4hpi4.fsf@microsoft.com>
-References: <87v7i4hpi4.fsf@microsoft.com>
+        Mon, 29 Dec 2025 09:52:26 -0800 (PST)
+From: Frederick Lawler <fred@cloudflare.com>
+Date: Mon, 29 Dec 2025 11:52:19 -0600
+Subject: [PATCH RFC] ima: Fallback to a ctime guard without i_version
+ updates
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251229-xfs-ima-fixup-v1-1-6a717c939f7c@cloudflare.com>
+X-B4-Tracking: v=1; b=H4sIANK/UmkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDI0Mj3Yq0Yt3M3ETdtMyK0gJdS2NDcwuDRDOjZKNkJaCegqJUoATYvGi
+ lIDdnpdjaWgDCPadVZAAAAA==
+X-Change-ID: 20251212-xfs-ima-fixup-931780a62c2c
+To: Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ "Darrick J. Wong" <djwong@kernel.org>, 
+ Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+ Jeff Layton <jlayton@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, kernel-team@cloudflare.com, 
+ Frederick Lawler <fred@cloudflare.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8956; i=fred@cloudflare.com;
+ h=from:subject:message-id; bh=ljPh5zUq+sEpFurhxtR6bIxbAZnlXR6NT2B3m5B2m7w=;
+ b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBpUr/ZQbNwWzaDTFY/TpRB9D/+LL4KSiHniMGRw
+ TE257C7WzSJAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaVK/2QAKCRCrJbR2A5LT
+ bVojD/42MGU+o7C+7ym1BsA3mkCXKD1KEPgy7BEo8LDe9khHyBdpVS4pdg/G1zaZwT2wsZbtvOr
+ uIH8bt3mSgZBZLmLmhRjLt4HYghgry4tyA2hy1ALBpP3nJNlm1tuh8xz6cDlmErMCpkUwsS4wDr
+ UUzDf8AdxEsQTiwCznF1S5tHLFaHmfBo3fB1Nf2EMKoc5nErHLQsLmImurpIT4cFxgLHKn+zKBX
+ z7dHomsJVQ1X4gbmRuXaYePS8W1XlXP5OqtPm71ejrdO7aeNuDzo92TdpA4r1eIT9gJ5ew8LRn2
+ Bfalhfp3SxHF5Tc0pbWui658khDIJnnIZxn/CqdOwH+m8mYH+asuXka3l4N5Q9dv5kA3NEVTNw1
+ E6pfbwRtpDd/dj5SCz62LK3/mRf9XOWyDT72cd2F/L5MJdqOAVe7ltLPv0tlQfDubC+992ECkPD
+ t8O/TivlnpSbji0/d85n0pVRKw+O3pszsBETjdDgOyjMQnZkaHPyp22NHDz7lW+ulmzVCMgzv8p
+ +ro/yGWRlSHKRoi47ToeyPetjh1QcPyLwiFtpcfZwLnEfjPS7d78APi66YRlgOsrYR1FSk5weO+
+ AHTja2d57VdjGgSuqQEycIv86N32RyCdDWq4DRnDjFEZ39ktHngpSG6Ofcb6jMG7bD/paDwECnj
+ s5kEU3QoXiTapjg==
+X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
+ fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
 
-Hi all,
+Since commit 1cf7e834a6fb ("xfs: switch to multigrain timestamps"), IMA
+is no longer able to correctly track inode.i_version due to the struct
+kstat.change_cookie no longer containing an updated i_version.
 
-I am considering how to reconcile the TOCTOU concern with the "don't touch BPF internals" feedback, I think a very small API might help:
+Introduce a fallback mechanism for IMA that instead tracks a
+integrity_ctime_guard() in absence of or outdated i_version
+for stacked file systems.
 
-Minimal API draft: BPF integrity measurement
+EVM is left alone since it mostly cares about the backing inode.
 
-Goal: kernel-generated measurement of the final relocated program + declared inputs, so attach/link can be enforced without poking internals.
+Link: https://lore.kernel.org/all/aTspr4_h9IU4EyrR@CMGLRV3
+Fixes: 1cf7e834a6fb ("xfs: switch to multigrain timestamps")
+Suggested-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+---
+The motivation behind this was that file systems that use the
+cookie to set the i_version for stacked file systems may still do so.
+Then add in the ctime_guard as a fallback if there's a detected change.
+The assumption is that the ctime will be different if the i_version is
+different anyway for non-stacked file systems.
 
-1) New BPF cmd
-- BPF_MEASURE_PROG (or BPF_PROG_MEASURE)
-- Input: prog_fd
-- Output: opaque measurement blob + metadata
+I'm not too pleased with passing in struct file* to
+integrity_inode_attrs_changed() since EVM doesn't currently use
+that for now, but I couldn't come up with another idea to get the
+stat without coming up with a new stat function to accommodate just
+the file path, fully separate out IMA/EVM checks, or lastly add stacked
+file system support to EVM (which doesn't make much sense to me
+at the moment).
 
-struct bpf_prog_measure_opts {
-        __u32 size;
-        __u32 flags;
-        __u32 sig_len;
-        __u64 sig_ptr;
-        __u64 prog_id;
-        __u64 meas_id;
-};
+I plan on adding in self test infrastructure for the v1, but I would
+like to get some early feedback on the approach first.
+---
+ include/linux/integrity.h           | 29 ++++++++++++++++++++++++-----
+ security/integrity/evm/evm_crypto.c |  2 +-
+ security/integrity/evm/evm_main.c   |  2 +-
+ security/integrity/ima/ima_api.c    | 21 +++++++++++++++------
+ security/integrity/ima/ima_main.c   | 17 ++++++++++-------
+ 5 files changed, 51 insertions(+), 20 deletions(-)
 
-Semantics
-- Kernel computes measurement over final relocated insns + inputs explicitly in the integrity contract (e.g., sealed maps).
-- Measurement is kernel-owned and stable for a program state.
+diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+index f5842372359be5341b6870a43b92e695e8fc78af..4964c0f2bbda0ca450d135b9b738bc92256c375a 100644
+--- a/include/linux/integrity.h
++++ b/include/linux/integrity.h
+@@ -31,19 +31,27 @@ static inline void integrity_load_keys(void)
+ 
+ /* An inode's attributes for detection of changes */
+ struct integrity_inode_attributes {
++	u64 ctime_guard;
+ 	u64 version;		/* track inode changes */
+ 	unsigned long ino;
+ 	dev_t dev;
+ };
+ 
++static inline u64 integrity_ctime_guard(struct kstat stat)
++{
++	return stat.ctime.tv_sec ^ stat.ctime.tv_nsec;
++}
++
+ /*
+  * On stacked filesystems the i_version alone is not enough to detect file data
+  * or metadata change. Additional metadata is required.
+  */
+ static inline void
+ integrity_inode_attrs_store(struct integrity_inode_attributes *attrs,
+-			    u64 i_version, const struct inode *inode)
++			    u64 i_version, u64 ctime_guard,
++			    const struct inode *inode)
+ {
++	attrs->ctime_guard = ctime_guard;
+ 	attrs->version = i_version;
+ 	attrs->dev = inode->i_sb->s_dev;
+ 	attrs->ino = inode->i_ino;
+@@ -54,11 +62,22 @@ integrity_inode_attrs_store(struct integrity_inode_attributes *attrs,
+  */
+ static inline bool
+ integrity_inode_attrs_changed(const struct integrity_inode_attributes *attrs,
+-			      const struct inode *inode)
++			      struct file *file, struct inode *inode)
+ {
+-	return (inode->i_sb->s_dev != attrs->dev ||
+-		inode->i_ino != attrs->ino ||
+-		!inode_eq_iversion(inode, attrs->version));
++	struct kstat stat;
++
++	if (inode->i_sb->s_dev != attrs->dev ||
++	    inode->i_ino != attrs->ino)
++		return true;
++
++	if (inode_eq_iversion(inode, attrs->version))
++		return false;
++
++	if (!file || vfs_getattr_nosec(&file->f_path, &stat, STATX_CTIME,
++				       AT_STATX_SYNC_AS_STAT))
++		return true;
++
++	return attrs->ctime_guard != integrity_ctime_guard(stat);
+ }
+ 
+ 
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index a5e730ffda57fbc0a91124adaa77b946a12d08b4..2d89c0e8d9360253f8dad52d2a8168127bb4d3b8 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -300,7 +300,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 		if (IS_I_VERSION(inode))
+ 			i_version = inode_query_iversion(inode);
+ 		integrity_inode_attrs_store(&iint->metadata_inode, i_version,
+-					    inode);
++					    0, inode);
+ 	}
+ 
+ 	/* Portable EVM signatures must include an IMA hash */
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 73d500a375cb37a54f295b0e1e93fd6e5d9ecddc..0712802628fd6533383f9855687e19bef7b771c7 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -754,7 +754,7 @@ bool evm_metadata_changed(struct inode *inode, struct inode *metadata_inode)
+ 	if (iint) {
+ 		ret = (!IS_I_VERSION(metadata_inode) ||
+ 		       integrity_inode_attrs_changed(&iint->metadata_inode,
+-						     metadata_inode));
++			       NULL, metadata_inode));
+ 		if (ret)
+ 			iint->evm_status = INTEGRITY_UNKNOWN;
+ 	}
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index c35ea613c9f8d404ba4886e3b736c3bab29d1668..72bba8daa588a0f4e45e4249276edb54ca3d77ef 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -254,6 +254,7 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+ 	int length;
+ 	void *tmpbuf;
+ 	u64 i_version = 0;
++	u64 ctime_guard = 0;
+ 
+ 	/*
+ 	 * Always collect the modsig, because IMA might have already collected
+@@ -272,10 +273,16 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+ 	 * to an initial measurement/appraisal/audit, but was modified to
+ 	 * assume the file changed.
+ 	 */
+-	result = vfs_getattr_nosec(&file->f_path, &stat, STATX_CHANGE_COOKIE,
++	result = vfs_getattr_nosec(&file->f_path, &stat,
++				   STATX_CHANGE_COOKIE | STATX_CTIME,
+ 				   AT_STATX_SYNC_AS_STAT);
+-	if (!result && (stat.result_mask & STATX_CHANGE_COOKIE))
+-		i_version = stat.change_cookie;
++	if (!result) {
++		if (stat.result_mask & STATX_CHANGE_COOKIE)
++			i_version = stat.change_cookie;
++
++		if (stat.result_mask & STATX_CTIME)
++			ctime_guard = integrity_ctime_guard(stat);
++	}
+ 	hash.hdr.algo = algo;
+ 	hash.hdr.length = hash_digest_size[algo];
+ 
+@@ -305,11 +312,13 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+ 
+ 	iint->ima_hash = tmpbuf;
+ 	memcpy(iint->ima_hash, &hash, length);
+-	if (real_inode == inode)
++	if (real_inode == inode) {
+ 		iint->real_inode.version = i_version;
+-	else
++		iint->real_inode.ctime_guard = ctime_guard;
++	} else {
+ 		integrity_inode_attrs_store(&iint->real_inode, i_version,
+-					    real_inode);
++				ctime_guard, real_inode);
++	}
+ 
+ 	/* Possibly temporary failure due to type of read (eg. O_DIRECT) */
+ 	if (!result)
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 5770cf691912aa912fc65280c59f5baac35dd725..6051ea4a472fc0b0dd7b4e81da36eff8bd048c62 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -22,6 +22,7 @@
+ #include <linux/mount.h>
+ #include <linux/mman.h>
+ #include <linux/slab.h>
++#include <linux/stat.h>
+ #include <linux/xattr.h>
+ #include <linux/ima.h>
+ #include <linux/fs.h>
+@@ -185,6 +186,7 @@ static void ima_check_last_writer(struct ima_iint_cache *iint,
+ {
+ 	fmode_t mode = file->f_mode;
+ 	bool update;
++	int ret;
+ 
+ 	if (!(mode & FMODE_WRITE))
+ 		return;
+@@ -197,12 +199,13 @@ static void ima_check_last_writer(struct ima_iint_cache *iint,
+ 
+ 		update = test_and_clear_bit(IMA_UPDATE_XATTR,
+ 					    &iint->atomic_flags);
+-		if ((iint->flags & IMA_NEW_FILE) ||
+-		    vfs_getattr_nosec(&file->f_path, &stat,
+-				      STATX_CHANGE_COOKIE,
+-				      AT_STATX_SYNC_AS_STAT) ||
+-		    !(stat.result_mask & STATX_CHANGE_COOKIE) ||
+-		    stat.change_cookie != iint->real_inode.version) {
++		ret = vfs_getattr_nosec(&file->f_path, &stat,
++					STATX_CHANGE_COOKIE | STATX_CTIME,
++					AT_STATX_SYNC_AS_STAT);
++		if ((iint->flags & IMA_NEW_FILE) || ret ||
++		    (!ret && stat.change_cookie != iint->real_inode.version) ||
++		    (!ret && integrity_ctime_guard(stat) !=
++		     iint->real_inode.ctime_guard)) {
+ 			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+ 			iint->measured_pcrs = 0;
+ 			if (update)
+@@ -330,7 +333,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	    (action & IMA_DO_MASK) && (iint->flags & IMA_DONE_MASK)) {
+ 		if (!IS_I_VERSION(real_inode) ||
+ 		    integrity_inode_attrs_changed(&iint->real_inode,
+-						  real_inode)) {
++						  file, real_inode)) {
+ 			iint->flags &= ~IMA_DONE_MASK;
+ 			iint->measured_pcrs = 0;
+ 		}
 
-2) Per-prog integrity state
+---
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+change-id: 20251212-xfs-ima-fixup-931780a62c2c
 
-enum lsm_integrity_verdict {
-        LSM_INT_VERDICT_UNSIGNED,
-        LSM_INT_VERDICT_PARTIAL,
-        LSM_INT_VERDICT_OK,
-        LSM_INT_VERDICT_BADSIG,
-};
+Best regards,
+-- 
+Frederick Lawler <fred@cloudflare.com>
 
-struct bpf_prog_integrity {
-        __u64 meas_id;
-        enum lsm_integrity_verdict v;
-};
-
-- Attach/link allowed only if policy verdict passes.
-- Any input mutation invalidates meas_id and resets verdict.
-
-3) Input immutability
-- Only sealed/frozen maps can be measured.
-- Any write to a measured map invalidates the measurement.
-
-4) LSM integration
-- Hornet (or another integrity LSM) consumes the measurement blob, verifies signatures, stores verdict.
-- SELinux/IPE/BPF LSMs can gate attach/link based on verdict.
-
-Why this helps
-- TOCTOU: verification tied to final relocated program + frozen inputs; mutations invalidate.
-- No BPF internals: LSMs use a stable syscall API, not map internals.
-- Minimal blast radius: one syscall + small per-prog state.
-
-A thought for future iterations, happy to help refine if this seems useful.
-
-Thanks,
-Ryan
