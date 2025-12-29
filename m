@@ -1,337 +1,188 @@
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7FD1E98E3
-	for <linux-security-module@vger.kernel.org>; Mon, 29 Dec 2025 17:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E3B330D35;
+	Mon, 29 Dec 2025 18:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767030750; cv=none; b=hbkDjBZJ8suRl/U1MO8vlpoSIyIeeoFwc0ESwLDRr4wK7ou2+fOpjnew27JqfwuU7HLPQj9nX1GrIcCUXZ67IY7X6ixU38RjR/o2Pm06e6y3LkDQAGgDiNv5bqEJpVaod6WXd2B4YejfsB+TsSi0q5T+Mz+QhqKll/4tXz2cwv4=
+	t=1767033325; cv=none; b=VW+LL2oBieZvNjijW93wBFGhgKh4IVzR5aWsbbNWvrUsZi59gPj5yWf/tkH7c1yF3Yw3ef8G1QLqs2SonCO+AlGRPZQu0QsAw2J9xjG6iqPbK8gDVA9j2IlZM8AxKcQE9ej275AP0loVmOw9YZJwp49LkMV4B1Z5hIFJOJc3raw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767030750; c=relaxed/simple;
-	bh=ljPh5zUq+sEpFurhxtR6bIxbAZnlXR6NT2B3m5B2m7w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=D+8oWG74fnUkebms0hheTgZt4hEQYEF4kYV+Z+T6M5osAGC9z7SQZVpafzD1YdXKnpJX1tkLJgQQTqU57WA9xn5tvP/bcsEj8o9tHNZuiqynFtdVaAyn8jCRmUVjic7zcnwkqGpmHiEMqNYnmY1J8x88Uxv/KUb5RkChtUMNPNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Snsn1Xyb; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1767033325; c=relaxed/simple;
+	bh=ZgCT2xZJ+03QLzvNojY+TrqaWJjvvHFrRZmcQ5OqM+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N6JyMi+GMX2Ue/d3wo8wVazW8Ptij2R6R8wtk35fARiV820fRTGSyLPwBW+O+bjdG8SKtYsbvq0NW55I6GXYlcMLGlZjg6e3H4K6qyMvrcxOk7epeT3om8qnRR77ONUuzXT/opcTL6du2Yv1nLFcr/bNEH9RBjG8SUyzfnn1hNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HMg/dyra; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Snsn1Xyb"
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7c6d3676455so4139619a34.2
-        for <linux-security-module@vger.kernel.org>; Mon, 29 Dec 2025 09:52:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1767030746; x=1767635546; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=60NTgoLdyDcoabkcaburHQ0p7+ekpPML9FmXy7cbJ70=;
-        b=Snsn1Xybpte7bZFJMuHr+C1nu9QUSbI3wmQrO6Bv2+LrdjlR8qWOTAaO2B/atHhGOC
-         DrMVs/Vp+0lKy8cpgFy/3aFke2/1JBH1ibZgY0whO1C8T/qkqYME9YbUrkGdY4L1zKqW
-         Zafg4UQAV9bNOudIe4/UarAYVd0Tf2C4qrq/+n5h3N/qiQyqTwRBfvA1rHl3WV2fn4Kn
-         6zo5Hu7ZguMwcZYkMRFuu5fQNzrTLUV5J2eWF+Nk/p0j25dRM0ol6EFiNdtW9VNMf7qb
-         LDvc0lL4l8QLgObbkjzxDoV7zJFHX/KEnAgwWfUEEXHaydWmlxn09iCckQhqX3Onb/wN
-         SU8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767030746; x=1767635546;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=60NTgoLdyDcoabkcaburHQ0p7+ekpPML9FmXy7cbJ70=;
-        b=DZUpGE75zi/P9UO5mCjxX46Wi0ICKmqBS6UXJ9O+GcsY+xNaAdg812iekqy5AgXSmn
-         WdHqvsuS2o0IV3c+JV5Ha16efJGV3ZaaiVNEVu6oesyUfFP39lzitnATS3YEBtJb53ys
-         R1vLOOoACBdm9bL2ExvCZAoRo5PNOW1UMBfs5JavBksg0urng/bDeH46c6KN9/Uk9s22
-         oUsRl5ImpQEzgv56T34Bpcru8L2p+zL6Q2PFRqjbCgq1bvNdgL7Atf2pXKp3aiK7PxtU
-         UOIdZwELJ/Y9F4ysvpiVc8u0eE+HMieOmuTJa4dKeaspHEbSb27NpaFfVixQKzMxmjgB
-         yyhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKtu+xf2zqZcGcU7VNkqlNycjdWcY6lDTt6HihR2PjbSF7G+1q0MaO0chWDpWw4md/kNkn8Ii2FcRqUDKNBUj5YqJHD1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUfCv5Wbf4cagy/FzR7xcVL5AaLZhKdz7kQhf2ZUW3vvK4bdyc
-	yMJIGAEqKJuiN0CSiuIw++stF6USNkExwxElojNLHYahg0h5HOb2PZWSpWt/Gy8OdzU=
-X-Gm-Gg: AY/fxX7tWu//pFjI2QmbKfJ8XTIciMxQrtdLocI/7+70bqc3wQVAw7EaFL1koF1oQ3f
-	mmD+h33QKsgaaGPcpioRLnuZ6D4c/KmePasWOhvDpIHF4Qvp0Hvx0a632Y95W29DxdpDwNzCYAO
-	aERXZN+6E5EjGom+HlsYVicng4+a2g4/rBoBCBdl6rKfisWnIA1fNshKG6H6ucUCXfWIF7rexJX
-	F8gU+ZoAV6Ds0sremvYoLxvRLigDMRH+qsQr6IRF4dHtQ9VitNOqXBNsPw5Q/3tsXYkjg8f66ug
-	Oq65BENqAbOeJXHkK7/uB6zAUGoYKdMWjcKQ3QRRkHcA2MM+fIw4tzi634wrpxVeRHQF1+FpW+G
-	WFv7BkHb3fUa3h7dWo8dFn4XsA4zBlfXr7uUxri73rzlczUEj9nAeoDE3C7t4GsPDrSrPo9QqDg
-	oZOI1Z9w==
-X-Google-Smtp-Source: AGHT+IEI5lOT00G21ccWwQH/w8No/A8zKWvp8qtAwnhhRywPTYKImfEoGUyWdvXruBHSuBH13g1d/A==
-X-Received: by 2002:a05:6830:438d:b0:7c9:5a1d:333a with SMTP id 46e09a7af769-7cc667f3d57mr14820512a34.0.1767030746456;
-        Mon, 29 Dec 2025 09:52:26 -0800 (PST)
-Received: from [127.0.1.1] ([2a09:bac5:947d:4e6::7d:91])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cc6673bdabsm20820644a34.10.2025.12.29.09.52.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Dec 2025 09:52:26 -0800 (PST)
-From: Frederick Lawler <fred@cloudflare.com>
-Date: Mon, 29 Dec 2025 11:52:19 -0600
-Subject: [PATCH RFC] ima: Fallback to a ctime guard without i_version
- updates
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HMg/dyra"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1767033322; x=1798569322;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZgCT2xZJ+03QLzvNojY+TrqaWJjvvHFrRZmcQ5OqM+4=;
+  b=HMg/dyrax/vkd+MKWEIVOTJjVw7CZjvLEkmOkMpEt0xB3P7wuJeK+Ag4
+   YjJ/h4hlPT0PJXEH8gCNXcZ/5WRIN2k5CtGzRxLgnaGG8R42sSx6Mj4Yf
+   +QkOa1g7eDFdzWwuRkeJLc/3+IEufmBq4YNca3RXHE58B4c8wE88H+5Pw
+   KBgBjRvLTppzqWPN9+A3p2QiJXedmNiCR3zTP/EBuIJZ+aADVjBMEFxYX
+   ZYS3W55djzmGTgSKnGJA21Pt+X7DSXDvOexAz9ac76e1BRoHhq3iX8wno
+   7XEJAmjcUeytncbIdjDKsSBdMXCmMAL/WlfqFMqZSAZ+NcxBi0IQgnzN1
+   A==;
+X-CSE-ConnectionGUID: ijwzdIuRR9C13qr62AtTAQ==
+X-CSE-MsgGUID: H5VK4Rw/S36xmF2Q47xV9A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11656"; a="78946386"
+X-IronPort-AV: E=Sophos;i="6.21,186,1763452800"; 
+   d="scan'208";a="78946386"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Dec 2025 10:35:22 -0800
+X-CSE-ConnectionGUID: 6ShMmTK5T9SvjGBff0tYsA==
+X-CSE-MsgGUID: aU3o33YQRnORt0Y0XRYFGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,186,1763452800"; 
+   d="scan'208";a="200946841"
+Received: from lkp-server02.sh.intel.com (HELO dd3453e2b682) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 29 Dec 2025 10:35:19 -0800
+Received: from kbuild by dd3453e2b682 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vaI5N-000000007u1-1WfJ;
+	Mon, 29 Dec 2025 18:35:17 +0000
+Date: Tue, 30 Dec 2025 02:35:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Foster <foster.ryan.r@gmail.com>,
+	linux-security-module@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	paul@paul-moore.com, serge@hallyn.com,
+	Ryan Foster <foster.ryan.r@gmail.com>
+Subject: Re: [PATCH v4] security: Add KUnit tests for kuid_root_in_ns and
+ vfsuid_root_in_currentns
+Message-ID: <202512292252.1PPODroH-lkp@intel.com>
+References: <20251228194838.32214-2-foster.ryan.r@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251229-xfs-ima-fixup-v1-1-6a717c939f7c@cloudflare.com>
-X-B4-Tracking: v=1; b=H4sIANK/UmkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDI0Mj3Yq0Yt3M3ETdtMyK0gJdS2NDcwuDRDOjZKNkJaCegqJUoATYvGi
- lIDdnpdjaWgDCPadVZAAAAA==
-X-Change-ID: 20251212-xfs-ima-fixup-931780a62c2c
-To: Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
- "Darrick J. Wong" <djwong@kernel.org>, 
- Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
- Jeff Layton <jlayton@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
- linux-security-module@vger.kernel.org, kernel-team@cloudflare.com, 
- Frederick Lawler <fred@cloudflare.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8956; i=fred@cloudflare.com;
- h=from:subject:message-id; bh=ljPh5zUq+sEpFurhxtR6bIxbAZnlXR6NT2B3m5B2m7w=;
- b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBpUr/ZQbNwWzaDTFY/TpRB9D/+LL4KSiHniMGRw
- TE257C7WzSJAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaVK/2QAKCRCrJbR2A5LT
- bVojD/42MGU+o7C+7ym1BsA3mkCXKD1KEPgy7BEo8LDe9khHyBdpVS4pdg/G1zaZwT2wsZbtvOr
- uIH8bt3mSgZBZLmLmhRjLt4HYghgry4tyA2hy1ALBpP3nJNlm1tuh8xz6cDlmErMCpkUwsS4wDr
- UUzDf8AdxEsQTiwCznF1S5tHLFaHmfBo3fB1Nf2EMKoc5nErHLQsLmImurpIT4cFxgLHKn+zKBX
- z7dHomsJVQ1X4gbmRuXaYePS8W1XlXP5OqtPm71ejrdO7aeNuDzo92TdpA4r1eIT9gJ5ew8LRn2
- Bfalhfp3SxHF5Tc0pbWui658khDIJnnIZxn/CqdOwH+m8mYH+asuXka3l4N5Q9dv5kA3NEVTNw1
- E6pfbwRtpDd/dj5SCz62LK3/mRf9XOWyDT72cd2F/L5MJdqOAVe7ltLPv0tlQfDubC+992ECkPD
- t8O/TivlnpSbji0/d85n0pVRKw+O3pszsBETjdDgOyjMQnZkaHPyp22NHDz7lW+ulmzVCMgzv8p
- +ro/yGWRlSHKRoi47ToeyPetjh1QcPyLwiFtpcfZwLnEfjPS7d78APi66YRlgOsrYR1FSk5weO+
- AHTja2d57VdjGgSuqQEycIv86N32RyCdDWq4DRnDjFEZ39ktHngpSG6Ofcb6jMG7bD/paDwECnj
- s5kEU3QoXiTapjg==
-X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
- fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251228194838.32214-2-foster.ryan.r@gmail.com>
 
-Since commit 1cf7e834a6fb ("xfs: switch to multigrain timestamps"), IMA
-is no longer able to correctly track inode.i_version due to the struct
-kstat.change_cookie no longer containing an updated i_version.
+Hi Ryan,
 
-Introduce a fallback mechanism for IMA that instead tracks a
-integrity_ctime_guard() in absence of or outdated i_version
-for stacked file systems.
+kernel test robot noticed the following build errors:
 
-EVM is left alone since it mostly cares about the backing inode.
+[auto build test ERROR on pcmoore-selinux/next]
+[also build test ERROR on linus/master v6.19-rc3]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Link: https://lore.kernel.org/all/aTspr4_h9IU4EyrR@CMGLRV3
-Fixes: 1cf7e834a6fb ("xfs: switch to multigrain timestamps")
-Suggested-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Frederick Lawler <fred@cloudflare.com>
----
-The motivation behind this was that file systems that use the
-cookie to set the i_version for stacked file systems may still do so.
-Then add in the ctime_guard as a fallback if there's a detected change.
-The assumption is that the ctime will be different if the i_version is
-different anyway for non-stacked file systems.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Foster/security-Add-KUnit-tests-for-kuid_root_in_ns-and-vfsuid_root_in_currentns/20251229-035056
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+patch link:    https://lore.kernel.org/r/20251228194838.32214-2-foster.ryan.r%40gmail.com
+patch subject: [PATCH v4] security: Add KUnit tests for kuid_root_in_ns and vfsuid_root_in_currentns
+config: nios2-allmodconfig (https://download.01.org/0day-ci/archive/20251229/202512292252.1PPODroH-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251229/202512292252.1PPODroH-lkp@intel.com/reproduce)
 
-I'm not too pleased with passing in struct file* to
-integrity_inode_attrs_changed() since EVM doesn't currently use
-that for now, but I couldn't come up with another idea to get the
-stat without coming up with a new stat function to accommodate just
-the file path, fully separate out IMA/EVM checks, or lastly add stacked
-file system support to EVM (which doesn't make much sense to me
-at the moment).
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512292252.1PPODroH-lkp@intel.com/
 
-I plan on adding in self test infrastructure for the v1, but I would
-like to get some early feedback on the approach first.
----
- include/linux/integrity.h           | 29 ++++++++++++++++++++++++-----
- security/integrity/evm/evm_crypto.c |  2 +-
- security/integrity/evm/evm_main.c   |  2 +-
- security/integrity/ima/ima_api.c    | 21 +++++++++++++++------
- security/integrity/ima/ima_main.c   | 17 ++++++++++-------
- 5 files changed, 51 insertions(+), 20 deletions(-)
+All errors (new ones prefixed by >>):
 
-diff --git a/include/linux/integrity.h b/include/linux/integrity.h
-index f5842372359be5341b6870a43b92e695e8fc78af..4964c0f2bbda0ca450d135b9b738bc92256c375a 100644
---- a/include/linux/integrity.h
-+++ b/include/linux/integrity.h
-@@ -31,19 +31,27 @@ static inline void integrity_load_keys(void)
- 
- /* An inode's attributes for detection of changes */
- struct integrity_inode_attributes {
-+	u64 ctime_guard;
- 	u64 version;		/* track inode changes */
- 	unsigned long ino;
- 	dev_t dev;
- };
- 
-+static inline u64 integrity_ctime_guard(struct kstat stat)
-+{
-+	return stat.ctime.tv_sec ^ stat.ctime.tv_nsec;
-+}
-+
- /*
-  * On stacked filesystems the i_version alone is not enough to detect file data
-  * or metadata change. Additional metadata is required.
-  */
- static inline void
- integrity_inode_attrs_store(struct integrity_inode_attributes *attrs,
--			    u64 i_version, const struct inode *inode)
-+			    u64 i_version, u64 ctime_guard,
-+			    const struct inode *inode)
- {
-+	attrs->ctime_guard = ctime_guard;
- 	attrs->version = i_version;
- 	attrs->dev = inode->i_sb->s_dev;
- 	attrs->ino = inode->i_ino;
-@@ -54,11 +62,22 @@ integrity_inode_attrs_store(struct integrity_inode_attributes *attrs,
-  */
- static inline bool
- integrity_inode_attrs_changed(const struct integrity_inode_attributes *attrs,
--			      const struct inode *inode)
-+			      struct file *file, struct inode *inode)
- {
--	return (inode->i_sb->s_dev != attrs->dev ||
--		inode->i_ino != attrs->ino ||
--		!inode_eq_iversion(inode, attrs->version));
-+	struct kstat stat;
-+
-+	if (inode->i_sb->s_dev != attrs->dev ||
-+	    inode->i_ino != attrs->ino)
-+		return true;
-+
-+	if (inode_eq_iversion(inode, attrs->version))
-+		return false;
-+
-+	if (!file || vfs_getattr_nosec(&file->f_path, &stat, STATX_CTIME,
-+				       AT_STATX_SYNC_AS_STAT))
-+		return true;
-+
-+	return attrs->ctime_guard != integrity_ctime_guard(stat);
- }
- 
- 
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index a5e730ffda57fbc0a91124adaa77b946a12d08b4..2d89c0e8d9360253f8dad52d2a8168127bb4d3b8 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -300,7 +300,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
- 		if (IS_I_VERSION(inode))
- 			i_version = inode_query_iversion(inode);
- 		integrity_inode_attrs_store(&iint->metadata_inode, i_version,
--					    inode);
-+					    0, inode);
- 	}
- 
- 	/* Portable EVM signatures must include an IMA hash */
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 73d500a375cb37a54f295b0e1e93fd6e5d9ecddc..0712802628fd6533383f9855687e19bef7b771c7 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -754,7 +754,7 @@ bool evm_metadata_changed(struct inode *inode, struct inode *metadata_inode)
- 	if (iint) {
- 		ret = (!IS_I_VERSION(metadata_inode) ||
- 		       integrity_inode_attrs_changed(&iint->metadata_inode,
--						     metadata_inode));
-+			       NULL, metadata_inode));
- 		if (ret)
- 			iint->evm_status = INTEGRITY_UNKNOWN;
- 	}
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index c35ea613c9f8d404ba4886e3b736c3bab29d1668..72bba8daa588a0f4e45e4249276edb54ca3d77ef 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -254,6 +254,7 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
- 	int length;
- 	void *tmpbuf;
- 	u64 i_version = 0;
-+	u64 ctime_guard = 0;
- 
- 	/*
- 	 * Always collect the modsig, because IMA might have already collected
-@@ -272,10 +273,16 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
- 	 * to an initial measurement/appraisal/audit, but was modified to
- 	 * assume the file changed.
- 	 */
--	result = vfs_getattr_nosec(&file->f_path, &stat, STATX_CHANGE_COOKIE,
-+	result = vfs_getattr_nosec(&file->f_path, &stat,
-+				   STATX_CHANGE_COOKIE | STATX_CTIME,
- 				   AT_STATX_SYNC_AS_STAT);
--	if (!result && (stat.result_mask & STATX_CHANGE_COOKIE))
--		i_version = stat.change_cookie;
-+	if (!result) {
-+		if (stat.result_mask & STATX_CHANGE_COOKIE)
-+			i_version = stat.change_cookie;
-+
-+		if (stat.result_mask & STATX_CTIME)
-+			ctime_guard = integrity_ctime_guard(stat);
-+	}
- 	hash.hdr.algo = algo;
- 	hash.hdr.length = hash_digest_size[algo];
- 
-@@ -305,11 +312,13 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
- 
- 	iint->ima_hash = tmpbuf;
- 	memcpy(iint->ima_hash, &hash, length);
--	if (real_inode == inode)
-+	if (real_inode == inode) {
- 		iint->real_inode.version = i_version;
--	else
-+		iint->real_inode.ctime_guard = ctime_guard;
-+	} else {
- 		integrity_inode_attrs_store(&iint->real_inode, i_version,
--					    real_inode);
-+				ctime_guard, real_inode);
-+	}
- 
- 	/* Possibly temporary failure due to type of read (eg. O_DIRECT) */
- 	if (!result)
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 5770cf691912aa912fc65280c59f5baac35dd725..6051ea4a472fc0b0dd7b4e81da36eff8bd048c62 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -22,6 +22,7 @@
- #include <linux/mount.h>
- #include <linux/mman.h>
- #include <linux/slab.h>
-+#include <linux/stat.h>
- #include <linux/xattr.h>
- #include <linux/ima.h>
- #include <linux/fs.h>
-@@ -185,6 +186,7 @@ static void ima_check_last_writer(struct ima_iint_cache *iint,
- {
- 	fmode_t mode = file->f_mode;
- 	bool update;
-+	int ret;
- 
- 	if (!(mode & FMODE_WRITE))
- 		return;
-@@ -197,12 +199,13 @@ static void ima_check_last_writer(struct ima_iint_cache *iint,
- 
- 		update = test_and_clear_bit(IMA_UPDATE_XATTR,
- 					    &iint->atomic_flags);
--		if ((iint->flags & IMA_NEW_FILE) ||
--		    vfs_getattr_nosec(&file->f_path, &stat,
--				      STATX_CHANGE_COOKIE,
--				      AT_STATX_SYNC_AS_STAT) ||
--		    !(stat.result_mask & STATX_CHANGE_COOKIE) ||
--		    stat.change_cookie != iint->real_inode.version) {
-+		ret = vfs_getattr_nosec(&file->f_path, &stat,
-+					STATX_CHANGE_COOKIE | STATX_CTIME,
-+					AT_STATX_SYNC_AS_STAT);
-+		if ((iint->flags & IMA_NEW_FILE) || ret ||
-+		    (!ret && stat.change_cookie != iint->real_inode.version) ||
-+		    (!ret && integrity_ctime_guard(stat) !=
-+		     iint->real_inode.ctime_guard)) {
- 			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
- 			iint->measured_pcrs = 0;
- 			if (update)
-@@ -330,7 +333,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	    (action & IMA_DO_MASK) && (iint->flags & IMA_DONE_MASK)) {
- 		if (!IS_I_VERSION(real_inode) ||
- 		    integrity_inode_attrs_changed(&iint->real_inode,
--						  real_inode)) {
-+						  file, real_inode)) {
- 			iint->flags &= ~IMA_DONE_MASK;
- 			iint->measured_pcrs = 0;
- 		}
+   nios2-linux-ld: security/commoncap.o: in function `create_test_user_ns_with_mapping':
+   commoncap.c:(.text+0xa3c): undefined reference to `kunit_kmalloc_array'
+>> commoncap.c:(.text+0xa3c): relocation truncated to fit: R_NIOS2_CALL26 against `kunit_kmalloc_array'
+   nios2-linux-ld: security/commoncap.o: in function `test_kuid_root_in_ns_init_ns_uid0':
+>> commoncap.c:(.text+0x1020): undefined reference to `kunit_unary_assert_format'
+>> nios2-linux-ld: commoncap.c:(.text+0x102c): undefined reference to `kunit_unary_assert_format'
+>> nios2-linux-ld: commoncap.c:(.text+0x1058): undefined reference to `__kunit_do_failed_assertion'
+>> commoncap.c:(.text+0x1058): relocation truncated to fit: R_NIOS2_CALL26 against `__kunit_do_failed_assertion'
+   nios2-linux-ld: security/commoncap.o: in function `test_kuid_root_in_ns_init_ns_nonzero':
+   commoncap.c:(.text+0x10bc): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x10c4): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x10f0): undefined reference to `__kunit_do_failed_assertion'
+   commoncap.c:(.text+0x10f0): relocation truncated to fit: R_NIOS2_CALL26 against `__kunit_do_failed_assertion'
+   nios2-linux-ld: security/commoncap.o: in function `test_vfsuid_root_in_currentns_nonzero':
+   commoncap.c:(.text+0x14c8): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x14d0): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x14fc): undefined reference to `__kunit_do_failed_assertion'
+   commoncap.c:(.text+0x14fc): relocation truncated to fit: R_NIOS2_CALL26 against `__kunit_do_failed_assertion'
+   nios2-linux-ld: security/commoncap.o: in function `test_vfsuid_root_in_currentns_init_ns':
+   commoncap.c:(.text+0x1594): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x15a0): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x15cc): undefined reference to `__kunit_do_failed_assertion'
+   commoncap.c:(.text+0x15cc): relocation truncated to fit: R_NIOS2_CALL26 against `__kunit_do_failed_assertion'
+   nios2-linux-ld: security/commoncap.o: in function `test_kuid_root_in_ns_with_mapping':
+   commoncap.c:(.text+0x170c): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1710): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1740): undefined reference to `__kunit_do_failed_assertion'
+   commoncap.c:(.text+0x1740): relocation truncated to fit: R_NIOS2_CALL26 against `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x1748): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x174c): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x177c): undefined reference to `__kunit_do_failed_assertion'
+   commoncap.c:(.text+0x177c): relocation truncated to fit: R_NIOS2_CALL26 against `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x1784): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x178c): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x17bc): undefined reference to `__kunit_do_failed_assertion'
+   commoncap.c:(.text+0x17bc): relocation truncated to fit: R_NIOS2_CALL26 against `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x17c4): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x17cc): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x17fc): undefined reference to `__kunit_do_failed_assertion'
+   commoncap.c:(.text+0x17fc): relocation truncated to fit: R_NIOS2_CALL26 against `__kunit_do_failed_assertion'
+>> nios2-linux-ld: commoncap.c:(.text+0x1820): undefined reference to `kunit_ptr_not_err_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1824): undefined reference to `kunit_ptr_not_err_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1854): undefined reference to `__kunit_do_failed_assertion'
+   commoncap.c:(.text+0x1854): relocation truncated to fit: R_NIOS2_CALL26 against `__kunit_do_failed_assertion'
+>> nios2-linux-ld: commoncap.c:(.text+0x185c): undefined reference to `__kunit_abort'
+   commoncap.c:(.text+0x185c): additional relocation overflows omitted from the output
+   nios2-linux-ld: security/commoncap.o: in function `test_kuid_root_in_ns_with_different_mappings':
+   commoncap.c:(.text+0x1aec): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1af0): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1b20): undefined reference to `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x1b28): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1b30): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1b60): undefined reference to `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x1b68): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1b70): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1ba0): undefined reference to `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x1ba8): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1bb0): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1be0): undefined reference to `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x1be8): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1bec): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1c1c): undefined reference to `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x1c24): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1c2c): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1c5c): undefined reference to `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x1c64): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1c6c): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1c9c): undefined reference to `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x1ca4): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1ca8): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1cd8): undefined reference to `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x1ce0): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1ce8): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1d18): undefined reference to `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x1d20): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1d28): undefined reference to `kunit_unary_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1d58): undefined reference to `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x1d60): undefined reference to `kunit_ptr_not_err_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1d64): undefined reference to `kunit_ptr_not_err_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1d94): undefined reference to `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x1d9c): undefined reference to `__kunit_abort'
+   nios2-linux-ld: commoncap.c:(.text+0x1dbc): undefined reference to `kunit_ptr_not_err_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1dc0): undefined reference to `kunit_ptr_not_err_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1df0): undefined reference to `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x1df8): undefined reference to `__kunit_abort'
+   nios2-linux-ld: commoncap.c:(.text+0x1e50): undefined reference to `kunit_ptr_not_err_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1e54): undefined reference to `kunit_ptr_not_err_assert_format'
+   nios2-linux-ld: commoncap.c:(.text+0x1e84): undefined reference to `__kunit_do_failed_assertion'
+   nios2-linux-ld: commoncap.c:(.text+0x1e8c): undefined reference to `__kunit_abort'
 
----
-base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
-change-id: 20251212-xfs-ima-fixup-931780a62c2c
-
-Best regards,
 -- 
-Frederick Lawler <fred@cloudflare.com>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
