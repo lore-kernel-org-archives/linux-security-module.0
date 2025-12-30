@@ -1,486 +1,146 @@
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88CA251793
-	for <linux-security-module@vger.kernel.org>; Tue, 30 Dec 2025 15:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4C986277
+	for <linux-security-module@vger.kernel.org>; Tue, 30 Dec 2025 15:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767107696; cv=none; b=o3p8JTBDfmm0fJ28UAw6VBQDAzwp/onjbVhTfFD0B3O7j4vFujQf+B3MEdv6F3sOS5gSzHcOq8ebPcyqiAsbFFqksnZECwWW3qjGca2E3uJSQR/QDRWJncyU2zthyfk4XYIhxY2fxyuea88UWqLefyvBs4T7b1LAid8YEiN6uUM=
+	t=1767109979; cv=none; b=V810hcnhal5xc+BAbCh+BUl5mN6ZH98s9P5wKLnKzJ1vxQUuAfZAVk7hQmS2bM+g78Olf2VuOhXIHODfnD4CzjWH1o4ape6RTE6nVNmuz4qNCC4gKW65zdTb5b9G1EyFobqBRZRG8jX5Ew2c5mK98nT9B9WqYVameMPV2mhTIMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767107696; c=relaxed/simple;
-	bh=zfuRwUoxgDxlNkdCwNTuz7RKhd7EDzbBtPFEm4JXLUA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=goP+I5VxoL8plEVVXXdv6Vy7LED/g7+5kOJco0ZFTV1SwzzEuyoi0e1k3J1z2w/ijujCx5SQ/WrY7QRNiUYm63aZdn3w3/KTmO7z2KAzb6bY/C1p9TtwbkLOGyjWmIT0oazg69aDpgp6w4ve66HcmAHx276og6gVC5hC1lRMzUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YklL44Dc; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1767109979; c=relaxed/simple;
+	bh=uiIt2qwqDayp9IgqCKfGN6zbLUJN1ZMTmT+nwiPkyGg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l+zyKPnsLjX4sjC5RC8nzsJ74tBQTcBOq6X73Mj8xJS3Ik1HcFSxJAIb8enYdWvdEQ4gj0oHQAIft9569gqdSzkUn7GQ2Nyi5wzVhzWKwlBOKtXL01EdN7u/yn+clvTj+5Iyj7B2s5Xjz542w1Z5DEZQ6nOuesUrDI3oAcOpT4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=UUH684Wu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mqhE3yTi; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YklL44Dc"
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7aab061e7cbso13548345b3a.1
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Dec 2025 07:14:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767107694; x=1767712494; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HZqJmgB96yHwiSHK6vnRePdTZOZbZq1DduhT3s+wqOA=;
-        b=YklL44Dcw6T+Es+mFh9iSYD5/sIKvPk8fbG97AnTBtiW71Y6X66J843KJlxac90ukp
-         iwBlxwvadxaurptn+3zaQkgyjh32eyFPwcgKAyBVEmBlYtgzlphfgVfSVOJPnekGwxhQ
-         bT9T0SLXtXge8WIWWLR59LR1J+XXRGFp/pvVVfOLCzc1HqChHJJwwhe/i3Eg1L5Zr59d
-         ywxVKOXW5yFacTB3rKRfDFqR9uDq+n/88iAkyuWl+BsRJdAEgd9YqbdFUgdkCbJonFva
-         uZlOnaXb7qCQLpAVTNgLpfbnGrWy831bgPL++A+OMz7AlQl8K8Rj35ahKu4jYBjKGQTK
-         TP4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767107694; x=1767712494;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=HZqJmgB96yHwiSHK6vnRePdTZOZbZq1DduhT3s+wqOA=;
-        b=HWIIZeJPzCPv6qFWtwpSUiqZR3SW+eK/nmfzGMVn1b+y7xPsWS7jzAfqnG9COmgM1y
-         C0JaqqDGO1IeizsjAZkdrldwi5Euw9wD5Bcl2MNZ18sac6SER71tw9ba3Ws5r3T2Yh3R
-         4IzYVAGV+Ng2FrJa6KanqWbmN855TPg7q/9uDi0EjPrG2R4ao5irQSxtAiQjemeFvo3Q
-         R5rVPViCGSAAHG8E6pXsBV1G4IWCnQZgj3sbcgtyFZB0I7oYUVSlPibNonMQyn26kfPq
-         SXbCU/fOYBHsK8CKQjoPlkiHHS07sy0Lair1yuI/1NfMlHRscAuyv2XkyCtZEfRzJdQb
-         kAsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSBKcbizTHlOOXdgjagVG/aFEuZLF7HUkmXZ3tH2dw660NLw8szYBBkXwCS9dMwSzYevE9BcCNtXLxouW2lzUfaqDyslo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXC3GMj9417x5RMMGjSww9r66ZvPKrcm555pkpH/eKdKPcXeTu
-	NB7B5wqusFZugmLq5+G8RZ4KzYuAhl9KhhLwrBlLoPSxdQo7VTImtlzI
-X-Gm-Gg: AY/fxX403iQ2/w+Pq1DpCbSIm4TR133vmce6ZLd3paeRmjFsJFzrBzeq6gg2nM+/0Ky
-	3V9MnH/6LAV8/JEg2XxWdCsxqhC2TjqkZovzowe8+yW64+opux1jlKGfH3vpXbECgCIaRGhE/zF
-	0XM4rx9moK7/y0KSy41woRBrgYj/7fLgbB70ffS/sEyFZnPbMBkA1ojnjw+uxJvSdHs3OaZCoTQ
-	Vz/tTfpy38d/l7wDQKplm6CYkV/xvWErXH0aPJC/pbLeVvh/GUxdu8i1eIh8ceqb5ghmsh7olR0
-	sCoy5X1DMBCAdaxnwhQxpyaOdaAU3vWhEAmasIlBuqMVnKJ64cAPVYpiiRjHtAT1KFibYDk7h2a
-	pMsRKeu6j/q1V9v5QY9m2jpIEyg6WVA2MuNykyPmofj/WkRrXblywYMqd/h+pt9nkaf1rVxC4lw
-	QVEyZfLI9ln8a2GqJoIBxyxp6z+L38Il4fd1x+bN64+O3qdStnwjQ=
-X-Google-Smtp-Source: AGHT+IHhC0kBZacfjDk03Oy9QGMGRr+UrLFQ1oDBZ5B9heTPW7TysEZYlRfMGCHvCtIZsLAQQr014w==
-X-Received: by 2002:a05:6a00:e8c:b0:7b9:8142:96f0 with SMTP id d2e1a72fcca58-7ff64ad9ce2mr28717962b3a.23.1767107694027;
-        Tue, 30 Dec 2025 07:14:54 -0800 (PST)
-Received: from kailas.hsd1.or.comcast.net ([2601:1c2:982:6040::e14d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7ff7e892926sm32753561b3a.66.2025.12.30.07.14.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Dec 2025 07:14:53 -0800 (PST)
-From: Ryan Foster <foster.ryan.r@gmail.com>
-To: foster.ryan.r@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	paul@paul-moore.com,
-	selinux@vger.kernel.org,
-	serge@hallyn.com
-Subject: [PATCH v5] security: Add KUnit tests for kuid_root_in_ns and vfsuid_root_in_currentns
-Date: Tue, 30 Dec 2025 07:13:09 -0800
-Message-ID: <20251230151450.196371-1-foster.ryan.r@gmail.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251110143748.4144288-1-foster.ryan.r@gmail.com>
-References: <20251110143748.4144288-1-foster.ryan.r@gmail.com>
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="UUH684Wu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mqhE3yTi"
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 931AA7A00EC;
+	Tue, 30 Dec 2025 10:52:56 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Tue, 30 Dec 2025 10:52:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1767109976;
+	 x=1767196376; bh=+wfSDlwK31N83NLDiw5mZhifrG+43FE2/XqClPLN+Vs=; b=
+	UUH684Wu+YOf2CobK9/nnI3YtYV7LkZ/oZQl7cERZh2Z8v9ZbOIyEDBEBWoBNJmS
+	Fd7zJssmp3BidfsKodQMAl+1hAlJR+MWFdtSLuTgbcYKhQjVidGINOE5IF+y5PSi
+	YKb9YDHCn7jvygQG4tcDDrCRlhSeDSbD6jS/ZfODB6jzAtc/EIcn4LyNTdmZ18Di
+	e4zw2E5GGXKx17PuFgmF3xUxXg33+ZcVB6Z9PLqrNVGnovebvG+jKPbOiJOjqHEv
+	ury0lMjeXmuoeqSHs4mffvbrShF4SlAxl4HQtPS2N8ExSNXbRdOGMN2MlEd6beMo
+	Py/bO6xrbPIb+3djWeP3TQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1767109976; x=
+	1767196376; bh=+wfSDlwK31N83NLDiw5mZhifrG+43FE2/XqClPLN+Vs=; b=m
+	qhE3yTitOgsn8HJksqDZyt1cTfG7ucuTWigYKCxcnKgKLP3I4JpOC9atBYN9NxA8
+	0jeJ4GjHl8XzV/v5NjA5OL3QSL9/6ncLM8/isUd2cmz/JTUgSb7AvzwewCbTrAIQ
+	fz0t1L3kqpQzoCOZqgINky7FrAB+elLGuyZ61mpGyESfEKVPhawBwbC7095PEPQs
+	HUzTkxpq6rQzpGT9FFrsg3bSraGEU00f6w9Iss8baZ76vHAA4yQMINk9PmWrhyep
+	aNlbTUxZz9PKN9Iupqt1DefqX6gGgX5vaQhvzfBLuA0/SRU5+vXlpT50+E4+ertx
+	HGB3cIFnfZGmU7pAyMetA==
+X-ME-Sender: <xms:WPVTaTVKs8RTtKKxi4O_BzJodYQWHvfV1ARdFpRV67x_sNSHt_HrWQ>
+    <xme:WPVTaaoxR8Klv6830P-w4BOiWQcXI8pP1oWw6wCkYvJVfFlSgHfsnVhXHmiwY38PB
+    l4CYOg0ZxxtTeaR3QZdE37sraMp5rj2b9QGO8WnPocr34gW80A8sw>
+X-ME-Received: <xmr:WPVTaVmfM3c2J692l29OyerxYl5FfvUjPO3b2H7YDefR749idxzkxl4pplX5IeIkGCcCSnImpOD_OGBISg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdektdegfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertd
+    dtvdejnecuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhr
+    gheqnecuggftrfgrthhtvghrnhepfedvheeluedthfelgfevvdfgkeelgfelkeegtddvhe
+    dvgfdtfeeilefhudetgfdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
+    rghilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeekpdhmoh
+    guvgepshhmthhpohhuthdprhgtphhtthhopehuthhilhhithihvghmrghljeejsehgmhgr
+    ihhlrdgtohhmpdhrtghpthhtohepmhhitgesughighhikhhougdrnhgvthdprhgtphhtth
+    hopeguvghmihhosggvnhhouhhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepfhgrhhhi
+    mhhithgrhhgvrhgrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghhnohgrtghksehgoh
+    hoghhlvgdrtghomhdprhgtphhtthhopehhihesrghlhihsshgrrdhishdprhgtphhtthho
+    pehjrghnnhhhsehgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhsvggtuh
+    hrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:WPVTaa3sGauxOA-Jx3dZfiOwFcid45sAaFAHg8TLfaw0MoXMfccmug>
+    <xmx:WPVTaSTCZ4LkpJAeuxTmasC-KLjaWeMqt7qaAlb46fFd-33Lnv1RAw>
+    <xmx:WPVTaTz_gdDPwXZBgtkrBEp9m54Es20turCVX8P9-qe_sULuFe9eDw>
+    <xmx:WPVTaSDlvGgyl5sDnjDEQ_NKIaNr200wV1oRU3F1v4j3i2o9JTt36g>
+    <xmx:WPVTaRSNTCVtI7BsaAry74g9egb7TikoDDq7zf4-gGYZneavBiHpPmxj>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 30 Dec 2025 10:52:54 -0500 (EST)
+Message-ID: <09f721d0-2644-44ba-b2e8-93626a17fa55@maowtm.org>
+Date: Tue, 30 Dec 2025 15:52:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] landlock: Implement
+ LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET
+To: Justin Suess <utilityemal77@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?=
+ =?UTF-8?Q?n?= <mic@digikod.net>
+Cc: demiobenour@gmail.com, fahimitahera@gmail.com, gnoack@google.com,
+ hi@alyssa.is, jannh@google.com, linux-security-module@vger.kernel.org
+References: <be315d8ff7544fd91bdb922e8afc7c8154e3594d.1766925301.git.m@maowtm.org>
+ <20251228163750.451028-1-utilityemal77@gmail.com>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <20251228163750.451028-1-utilityemal77@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi all,
-Sorry for the spam, this aims to fix both issues. Attempted to reproduce
-CI config build locally.
-Thanks, Ryan
----
+On 12/28/25 16:37, Justin Suess wrote:
+> On 12/28/25 07:45, Tingmao Wang wrote:
+>> [...]
+>> diff --git a/security/landlock/task.c b/security/landlock/task.c
+>> index 6dfcc1860d6e..9fbb0ada440b 100644
+>> --- a/security/landlock/task.c
+>> +++ b/security/landlock/task.c
+>> @@ -233,57 +233,84 @@ static bool domain_is_scoped(const struct landlock_ruleset *const client,
+>>  	return false;
+>>  }
+>>  
+>> +/**
+>> + * sock_is_scoped - Check if socket connect or send should be restricted
+>> + *    based on scope controls.
+>> + *
+>> + * @other: The server socket.
+>> + * @domain: The client domain.
+>> + * @scope: The relevant scope bit to check (i.e. pathname or abstract).
+>> + *
+>> + * Returns: True if connect should be restricted, false otherwise.
+>> + */
+>>  static bool sock_is_scoped(struct sock *const other,
+>> -			   const struct landlock_ruleset *const domain)
+>> +			   const struct landlock_ruleset *const domain,
+>> +			   access_mask_t scope)
+>>  {
+>>  	const struct landlock_ruleset *dom_other;
+>>  
+>>  	/* The credentials will not change. */
+>>  	lockdep_assert_held(&unix_sk(other)->lock);
+>>  	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
+>> -	return domain_is_scoped(domain, dom_other,
+>> -				LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
+>> +	return domain_is_scoped(domain, dom_other, scope);
+>>  }
+>>  
+>> -static bool is_abstract_socket(struct sock *const sock)
+>> +static bool sock_addr_is_abstract(const struct unix_address *const addr)
+> 
+> Nit: From the name sock_addr_is_abstract, it's unclear without reading
+> the parameter that this function only works with unix sockets, when
+> socket is an overloaded term that can refer to other kinds of sockets
+> (e.g tcp/udp/raw).
+> 
+> Maybe is_unix_sock_addr_abstract? or unix_sock_addr_is_abstract?
 
-Add comprehensive KUnit tests for the namespace-related capability
-functions that Serge Hallyn refactored in commit 9891d2f79a9f
-("Clarify the rootid_owns_currentns").
-
-The tests verify:
-- Basic functionality: UID 0 in init namespace, invalid vfsuid,
-  non-zero UIDs
-- Actual namespace traversal: Creating user namespaces with different
-  UID mappings where uid 0 maps to different kuids (e.g., 1000, 2000,
-  3000)
-- Hierarchy traversal: Testing multiple nested namespaces to verify
-  correct namespace hierarchy traversal
-
-This addresses the feedback to "test the actual functionality" by
-creating real user namespaces with different values for the
-namespace's uid 0, rather than just basic input validation.
-
-The test file is included at the end of commoncap.c when
-CONFIG_SECURITY_COMMONCAP_KUNIT_TEST is enabled, following the
-standard kernel pattern (e.g., scsi_lib.c, ext4/mballoc.c). This
-allows tests to access static functions in the same compilation unit
-without modifying production code based on test configuration.
-
-The tests require CONFIG_USER_NS to be enabled since they rely on user
-namespace mapping functionality. The Kconfig dependency ensures the
-tests only build when this requirement is met.
-
-All 7 tests pass:
-- test_vfsuid_root_in_currentns_init_ns
-- test_vfsuid_root_in_currentns_invalid
-- test_vfsuid_root_in_currentns_nonzero
-- test_kuid_root_in_ns_init_ns_uid0
-- test_kuid_root_in_ns_init_ns_nonzero
-- test_kuid_root_in_ns_with_mapping
-- test_kuid_root_in_ns_with_different_mappings
-
-Updated MAINTAINER capabilities to include commoncap test
-
-Signed-off-by: Ryan Foster <foster.ryan.r@gmail.com>
----
- MAINTAINERS               |   1 +
- security/Kconfig          |  17 +++
- security/commoncap.c      |   4 +
- security/commoncap_test.c | 290 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 312 insertions(+)
- create mode 100644 security/commoncap_test.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c0030e126fc8..6f162c736dfb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5682,6 +5682,7 @@ F:	include/trace/events/capability.h
- F:	include/uapi/linux/capability.h
- F:	kernel/capability.c
- F:	security/commoncap.c
-+F:	security/commoncap_test.c
- 
- CAPELLA MICROSYSTEMS LIGHT SENSOR DRIVER
- M:	Kevin Tsai <ktsai@capellamicro.com>
-diff --git a/security/Kconfig b/security/Kconfig
-index 285f284dfcac..6a4393fce9a1 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -284,6 +284,23 @@ config LSM
- 
- 	  If unsure, leave this as the default.
- 
-+config SECURITY_COMMONCAP_KUNIT_TEST
-+	bool "Build KUnit tests for commoncap" if !KUNIT_ALL_TESTS
-+	depends on KUNIT=y && USER_NS
-+	default KUNIT_ALL_TESTS
-+	help
-+	  This builds the commoncap KUnit tests.
-+
-+	  KUnit tests run during boot and output the results to the debug log
-+	  in TAP format (https://testanything.org/). Only useful for kernel devs
-+	  running KUnit test harness and are not for inclusion into a
-+	  production build.
-+
-+	  For more information on KUnit and unit tests in general please refer
-+	  to the KUnit documentation in Documentation/dev-tools/kunit/.
-+
-+	  If unsure, say N.
-+
- source "security/Kconfig.hardening"
- 
- endmenu
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 8a23dfab7fac..3399535808fe 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -1521,3 +1521,7 @@ DEFINE_LSM(capability) = {
- };
- 
- #endif /* CONFIG_SECURITY */
-+
-+#ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
-+#include "commoncap_test.c"
-+#endif
-diff --git a/security/commoncap_test.c b/security/commoncap_test.c
-new file mode 100644
-index 000000000000..1088364a54e6
---- /dev/null
-+++ b/security/commoncap_test.c
-@@ -0,0 +1,290 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * KUnit tests for commoncap.c security functions
-+ *
-+ * Tests for security-critical functions in the capability subsystem,
-+ * particularly namespace-related capability checks.
-+ */
-+
-+#include <kunit/test.h>
-+#include <linux/user_namespace.h>
-+#include <linux/uidgid.h>
-+#include <linux/cred.h>
-+#include <linux/mnt_idmapping.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/refcount.h>
-+
-+#ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
-+
-+/* Functions are static in commoncap.c, but we can call them since we're
-+ * included in the same compilation unit when tests are enabled.
-+ */
-+
-+/**
-+ * test_vfsuid_root_in_currentns_init_ns - Test vfsuid_root_in_currentns with init ns
-+ *
-+ * Verifies that UID 0 in the init namespace correctly owns the current
-+ * namespace when running in init_user_ns.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_vfsuid_root_in_currentns_init_ns(struct kunit *test)
-+{
-+	vfsuid_t vfsuid;
-+	kuid_t kuid;
-+
-+	/* Create UID 0 in init namespace */
-+	kuid = KUIDT_INIT(0);
-+	vfsuid = VFSUIDT_INIT(kuid);
-+
-+	/* In init namespace, UID 0 should own current namespace */
-+	KUNIT_EXPECT_TRUE(test, vfsuid_root_in_currentns(vfsuid));
-+}
-+
-+/**
-+ * test_vfsuid_root_in_currentns_invalid - Test vfsuid_root_in_currentns with invalid vfsuid
-+ *
-+ * Verifies that an invalid vfsuid correctly returns false.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_vfsuid_root_in_currentns_invalid(struct kunit *test)
-+{
-+	vfsuid_t invalid_vfsuid;
-+
-+	/* Use the predefined invalid vfsuid */
-+	invalid_vfsuid = INVALID_VFSUID;
-+
-+	/* Invalid vfsuid should return false */
-+	KUNIT_EXPECT_FALSE(test, vfsuid_root_in_currentns(invalid_vfsuid));
-+}
-+
-+/**
-+ * test_vfsuid_root_in_currentns_nonzero - Test vfsuid_root_in_currentns with non-zero UID
-+ *
-+ * Verifies that a non-zero UID correctly returns false.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_vfsuid_root_in_currentns_nonzero(struct kunit *test)
-+{
-+	vfsuid_t vfsuid;
-+	kuid_t kuid;
-+
-+	/* Create a non-zero UID */
-+	kuid = KUIDT_INIT(1000);
-+	vfsuid = VFSUIDT_INIT(kuid);
-+
-+	/* Non-zero UID should return false */
-+	KUNIT_EXPECT_FALSE(test, vfsuid_root_in_currentns(vfsuid));
-+}
-+
-+/**
-+ * test_kuid_root_in_ns_init_ns_uid0 - Test kuid_root_in_ns with init namespace and UID 0
-+ *
-+ * Verifies that kuid_root_in_ns correctly identifies UID 0 in init namespace.
-+ * This tests the core namespace traversal logic. In init namespace, UID 0
-+ * maps to itself, so it should own the namespace.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_kuid_root_in_ns_init_ns_uid0(struct kunit *test)
-+{
-+	kuid_t kuid;
-+	struct user_namespace *init_ns;
-+
-+	kuid = KUIDT_INIT(0);
-+	init_ns = &init_user_ns;
-+
-+	/* UID 0 should own init namespace */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(kuid, init_ns));
-+}
-+
-+/**
-+ * test_kuid_root_in_ns_init_ns_nonzero - Test kuid_root_in_ns with init namespace and non-zero UID
-+ *
-+ * Verifies that kuid_root_in_ns correctly rejects non-zero UIDs in init namespace.
-+ * Only UID 0 should own a namespace.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_kuid_root_in_ns_init_ns_nonzero(struct kunit *test)
-+{
-+	kuid_t kuid;
-+	struct user_namespace *init_ns;
-+
-+	kuid = KUIDT_INIT(1000);
-+	init_ns = &init_user_ns;
-+
-+	/* Non-zero UID should not own namespace */
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(kuid, init_ns));
-+}
-+
-+/**
-+ * create_test_user_ns_with_mapping - Create a mock user namespace with UID mapping
-+ *
-+ * Creates a minimal user namespace structure for testing where uid 0 in the
-+ * namespace maps to a specific kuid in the parent namespace.
-+ *
-+ * @test: KUnit test context
-+ * @parent_ns: Parent namespace (typically init_user_ns)
-+ * @mapped_kuid: The kuid that uid 0 in this namespace maps to in parent
-+ *
-+ * Returns: Pointer to allocated namespace, or NULL on failure
-+ */
-+static struct user_namespace *create_test_user_ns_with_mapping(struct kunit *test,
-+								 struct user_namespace *parent_ns,
-+								 kuid_t mapped_kuid)
-+{
-+	struct user_namespace *ns;
-+	struct uid_gid_extent extent;
-+
-+	/* Allocate a test namespace - use kzalloc to zero all fields */
-+	ns = kunit_kzalloc(test, sizeof(*ns), GFP_KERNEL);
-+	if (!ns)
-+		return NULL;
-+
-+	/* Initialize basic namespace structure fields */
-+	ns->parent = parent_ns;
-+	ns->level = parent_ns ? parent_ns->level + 1 : 0;
-+	ns->owner = mapped_kuid;
-+	ns->group = KGIDT_INIT(0);
-+
-+	/* Initialize ns_common structure */
-+	refcount_set(&ns->ns.__ns_ref, 1);
-+	ns->ns.inum = 0; /* Mock inum */
-+
-+	/* Set up uid mapping: uid 0 in this namespace maps to mapped_kuid in parent
-+	 * Format: first (uid in ns) : lower_first (kuid in parent) : count
-+	 * So: uid 0 in ns -> kuid mapped_kuid in parent
-+	 * This means from_kuid(ns, mapped_kuid) returns 0
-+	 */
-+	extent.first = 0;                              /* uid 0 in this namespace */
-+	extent.lower_first = __kuid_val(mapped_kuid);  /* maps to this kuid in parent */
-+	extent.count = 1;
-+
-+	ns->uid_map.extent[0] = extent;
-+	ns->uid_map.nr_extents = 1;
-+
-+	/* Set up gid mapping: gid 0 maps to gid 0 in parent (simplified) */
-+	extent.first = 0;
-+	extent.lower_first = 0;
-+	extent.count = 1;
-+
-+	ns->gid_map.extent[0] = extent;
-+	ns->gid_map.nr_extents = 1;
-+
-+	return ns;
-+}
-+
-+/**
-+ * test_kuid_root_in_ns_with_mapping - Test kuid_root_in_ns with namespace where uid 0
-+ *				       maps to different kuid
-+ *
-+ * Creates a user namespace where uid 0 maps to kuid 1000 in the parent namespace.
-+ * Verifies that kuid_root_in_ns correctly identifies kuid 1000 as owning the namespace.
-+ *
-+ * Note: kuid_root_in_ns walks up the namespace hierarchy, so it checks the current
-+ * namespace first, then parent, then parent's parent, etc. So:
-+ * - kuid 1000 owns test_ns because from_kuid(test_ns, 1000) == 0
-+ * - kuid 0 also owns test_ns because from_kuid(init_user_ns, 0) == 0
-+ *   (checked in parent)
-+ *
-+ * This tests the actual functionality as requested: creating namespaces with
-+ * different values for the namespace's uid 0.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_kuid_root_in_ns_with_mapping(struct kunit *test)
-+{
-+	struct user_namespace *test_ns;
-+	struct user_namespace *parent_ns;
-+	kuid_t mapped_kuid, other_kuid;
-+
-+	parent_ns = &init_user_ns;
-+	mapped_kuid = KUIDT_INIT(1000);
-+	other_kuid = KUIDT_INIT(2000);
-+
-+	test_ns = create_test_user_ns_with_mapping(test, parent_ns, mapped_kuid);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, test_ns);
-+
-+	/* kuid 1000 should own test_ns because it maps to uid 0 in test_ns */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(mapped_kuid, test_ns));
-+
-+	/* kuid 0 should also own test_ns (checked via parent init_user_ns) */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), test_ns));
-+
-+	/* Other kuids should not own test_ns */
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(other_kuid, test_ns));
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(500), test_ns));
-+}
-+
-+/**
-+ * test_kuid_root_in_ns_with_different_mappings - Test with multiple namespaces
-+ *
-+ * Creates multiple user namespaces with different UID mappings to verify
-+ * that kuid_root_in_ns correctly handles different namespace hierarchies.
-+ *
-+ * Since kuid_root_in_ns walks up the hierarchy, kuids that map to 0 in init_user_ns
-+ * will own all namespaces, while kuids that only map to 0 in specific namespaces
-+ * will only own those namespaces and their children.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_kuid_root_in_ns_with_different_mappings(struct kunit *test)
-+{
-+	struct user_namespace *ns1, *ns2, *ns3;
-+
-+	/* Create ns1 where uid 0 maps to kuid 1000 */
-+	ns1 = create_test_user_ns_with_mapping(test, &init_user_ns, KUIDT_INIT(1000));
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns1);
-+
-+	/* Create ns2 where uid 0 maps to kuid 2000 */
-+	ns2 = create_test_user_ns_with_mapping(test, &init_user_ns, KUIDT_INIT(2000));
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns2);
-+
-+	/* Create ns3 as a child of ns1 where uid 0 maps to kuid 3000 */
-+	ns3 = create_test_user_ns_with_mapping(test, ns1, KUIDT_INIT(3000));
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns3);
-+
-+	/* Test ns1: kuid 1000 owns it, kuid 0 owns it (via parent), kuid 2000 does not */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(1000), ns1));
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), ns1));
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(2000), ns1));
-+
-+	/* Test ns2: kuid 2000 owns it, kuid 0 owns it (via parent), kuid 1000 does not */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(2000), ns2));
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), ns2));
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(1000), ns2));
-+
-+	/* Test ns3: kuid 3000 owns it, kuid 1000 owns it (via parent ns1),
-+	 * kuid 0 owns it (via init_user_ns), kuid 2000 does not
-+	 */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(3000), ns3));
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(1000), ns3));
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), ns3));
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(2000), ns3));
-+}
-+
-+static struct kunit_case commoncap_test_cases[] = {
-+	KUNIT_CASE(test_vfsuid_root_in_currentns_init_ns),
-+	KUNIT_CASE(test_vfsuid_root_in_currentns_invalid),
-+	KUNIT_CASE(test_vfsuid_root_in_currentns_nonzero),
-+	KUNIT_CASE(test_kuid_root_in_ns_init_ns_uid0),
-+	KUNIT_CASE(test_kuid_root_in_ns_init_ns_nonzero),
-+	KUNIT_CASE(test_kuid_root_in_ns_with_mapping),
-+	KUNIT_CASE(test_kuid_root_in_ns_with_different_mappings),
-+	{}
-+};
-+
-+static struct kunit_suite commoncap_test_suite = {
-+	.name = "commoncap",
-+	.test_cases = commoncap_test_cases,
-+};
-+
-+kunit_test_suite(commoncap_test_suite);
-+
-+MODULE_LICENSE("GPL");
-+
-+#endif /* CONFIG_SECURITY_COMMONCAP_KUNIT_TEST */
--- 
-2.52.0
-
+I guess sock_addr_is_abstract is indeed a bit of a weird name, but it
+helps that this function is static to this file and also very short.
+Maybe is_unix_addr_abstract?
