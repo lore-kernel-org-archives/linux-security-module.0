@@ -1,152 +1,223 @@
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F33231C91
-	for <linux-security-module@vger.kernel.org>; Tue, 30 Dec 2025 15:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0125E16F288
+	for <linux-security-module@vger.kernel.org>; Tue, 30 Dec 2025 17:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767110211; cv=none; b=pCL6PzDSkgtj1GfCwK6yPTuCN0jlA3JoMnPK0TJHdaK3ohXx1gw6ZxuDGqgEFoHgAwnsO5zvKTLlX0iBKZEwmdbehtZd+apJS0dzPUwTu49Ypdddk0X/5/DMFAeBxGlzD6rKYsqZLSNk4Ld7Y+8i/fq7n4AeY7mplRhH+vqWVj4=
+	t=1767115263; cv=none; b=EzbwsSHnA1I/Ma8DAtqVjkiKVmbDOk2fhce+sQpsPr733yHwB4W/kksKpUFllC6FLPSfCFAKiDQP/+Xxm2qVz9YNc+fIsGvW+Ufx+VmpBisekN/Ykj7O1wYsd+8SU+5xOe32ZjYOYtu3r5iy03bOI5e/GdV2w5JcL1vnNPmxJis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767110211; c=relaxed/simple;
-	bh=uF4YrUp1zR/UTDqFeA7bXTOse9KxuGyYFlBvrsD+K30=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=f4A3ofWCqoFWBsebUJN7XFSF1Z+OaxhlSGAgBvS8tjswrLzBIoc9jI73RBNZGP/SCGfEscEurIQlSbHbFCw9mDlTOYQcdSGqs2KCAr1fa7QwJowK/2dvvz1fmb5YGyA/4kYknoFvfLHhbV9BCz4rlTRhHgjpBOkTUu4Zns5nDko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=QMWYwkdV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=P+LeayJV; arc=none smtp.client-ip=202.12.124.156
+	s=arc-20240116; t=1767115263; c=relaxed/simple;
+	bh=r3DW+WnCfnmpLCJM0I0nSbk90SRDGUXHIoJ0AYUjLaE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JGLBUOBfjcP13ohAzEkGpBY9EuUp+S4aaDDLINj3ocu+mW4VOP0khdvzi7pW+wEemddd0buLdZgnLD6wQ5VJirzCB1DcSwJ/iT0vA8xTrWZ46O1oSNndrcMHDQkoSEPrJx83wA1KfCYrhLNdICtDqCelRLzNWXr7ndBg5Bj2Sqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=gvKrDll2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JHvsAk06; arc=none smtp.client-ip=202.12.124.149
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="QMWYwkdV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="P+LeayJV"
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 962737A0096;
-	Tue, 30 Dec 2025 10:56:48 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Tue, 30 Dec 2025 10:56:48 -0500
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="gvKrDll2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JHvsAk06"
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.stl.internal (Postfix) with ESMTP id 24B271D0004F;
+	Tue, 30 Dec 2025 12:20:59 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Tue, 30 Dec 2025 12:20:59 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1767110208;
-	 x=1767196608; bh=Xey8Uflq3+xj1i7k18drk6OPrseNu6sGDoz7k4be7OA=; b=
-	QMWYwkdVObl0Tv8Skh6++r2nV6oT+z98XZdwDWTMRz3Q+43CwTejP3vsYbsT2JuT
-	SjL2lEn2wLAkUlhOytNG4q99RrirMgHokiHGamxNqfYBjVqqkkr7SicVAoDC2Ncl
-	hCaLE/9GUOebMroknwI4rV3CYHom3pU5WQknNp32iinGNe3DbbSosyK+msuqBWru
-	AmzVBdm1zPSoMfqR6zqhaBuc24YEWDiBitYIdqsRRnCiFTNz573O6Ehpxg3oTECJ
-	PuC5cNyuUvIX5cnjF+035K8xRC14RgEvatuLCs1MfOLgn8mexiL3DItfUY85vwNm
-	0RZCyPj2mK6H6zCvkNrDsg==
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1767115258; x=1767201658; bh=P/ugaFaLRIBOTXaAVBu/5
+	fbX0qRh9rL2PKeWAVpSZYM=; b=gvKrDll2i0ypCF1X43GzvrqwqkCed4RkRaIWk
+	DNX0TABxCma0Lr0z4ewpxNfb5522QrSDy3QQbxE8E3wk/TtSWFVS+5BPSPEJ84Dw
+	0Rp4E7usAmTWYEBqs33fK71MHQb6Z3XSqKrigsxIUhZvCOiHY+fj8fBAl5/scnlH
+	Rr11EgfwGzI52uTHzsx302kN46g/NXK2IABILg3Nea92jTyphWZrBtVelR1q3OGp
+	u9kWdcKDKL3BoOOyJJl+eF/tTVtJ/Bw7T7hX0STK2HVuGQbWl44lG1bZhLTHFaoj
+	fXyIH7d+yZAN/35IhuLb7w6EZFX+Mom0TwL6HGzLsi+c+dckA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1767110208; x=
-	1767196608; bh=Xey8Uflq3+xj1i7k18drk6OPrseNu6sGDoz7k4be7OA=; b=P
-	+LeayJVg0mS7havn14OjgEH1sz+EKlIZZ+ylhIMnzD9h9E1CJyDx9K1vk+pJt9j9
-	PVmxGwkboNMrPw2ehtgn56C2a+M6u+gi587jI/E5HPr9eU8eyekVpMk82oyg9796
-	x+e53xnPhaOYAv2lHcG14NkYYUjNZ3mUkBCwR7cCUAZYGpXzlbU8ZdJlUzBgeSIV
-	GFla0p7WrRP11VDIA0ySg2elEiJZ1R5S/6MAhnuRkbObYVP7HAYgUhMuPpWjZhR1
-	prlltbTKrarWK1XGMcx5iPk+oRvoZQ8Gj3hjnbVGBBq1+SvpBcAt3Y5UiBkj5vKw
-	8RUSLWyPoG8x05afc2DeA==
-X-ME-Sender: <xms:QPZTaWKR7Rm5z6XWwuOJmTsJGvYeCQK9zm0yHbhj8G2VxkiBYcDVLQ>
-    <xme:QPZTabGwqRCVlARuumOBKbjRinkvKUXtIysROyu5navDMrc9hBaC40S6UX0SPVhGB
-    nnJ_pCVLklNNuyBlYHkn7NoUNJROOCGFEtFQiDRcPi7Hozt75Gec-c>
-X-ME-Received: <xmr:QPZTaSVfFGPYmGQDY5nM5i9NlORPBib29luEkOuOck4Km6GvBtS97jYc_4SPsghXkSDnIN-2j9smjQcNZg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdektdeggecutefuodetggdotefrod
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1767115258; x=1767201658; bh=P/ugaFaLRIBOTXaAVBu/5fbX0qRh9rL2PKe
+	WAVpSZYM=; b=JHvsAk06romNFr1if0oQyXW0nmpWxSGPoJI+bIWvKZS8hQl8IGy
+	dhIc9xVY/QZ6QLop2smSuLW3sOHO4ScAsVGLndeY0QDKxwMq2zv6gReV23xfD4fA
+	Tx344vDcGWg+xhZbRmACfNoGdX6LnDTXD6IIb6F670Bh9M+xAtv7TxDsQEG2hQb/
+	rK/cQ0aRbCFDT2+XwAecdfr9ipjd4aXvhIxxpPiyBH15wl8Jp4yPUiBwmjVrturQ
+	AYN8P7pTIlBZtcvNwkiT8Fhp8GlIyhEmDvn5m1fCJXGHH+SFQAS+I6z4LhruZyp4
+	/TQ9jeA7V9IEUuteRMasCAzJhEOKcgmi2eA==
+X-ME-Sender: <xms:-glUaS0rbBinbziXTbmNxM4lV8QZr0XmKCvTH1xJg7815aB6D_AThg>
+    <xme:-glUaXqwCJsBO_y9HKmgVlVmOt_CG9MvdfEWhDCZTV61ErpS4T1wacXEY4to6Fv5u
+    vQjHv5Ngw98Q8WRWg2BDJpSGVQX8GA93H8i-_TaKxKrXyOQ4sSi1dA>
+X-ME-Received: <xmr:-glUaeiU1tQ49eBwM64y8Lvu-e7JmBIrkytytSJpFrLCEPAjX7oy9Vw6ThQ7hsqwRQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdektdeiudcutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhepkfffgggfuffhvfevfhgjtgfgsehtkeertd
-    dtvdejnecuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhr
-    gheqnecuggftrfgrthhtvghrnhepvefhteeuheevudduvdefgfevjeeiudfhvddvhfefke
-    elhfeuffdtueelvdfhhfegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
-    rghilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeekpdhmoh
-    guvgepshhmthhpohhuthdprhgtphhtthhopehuthhilhhithihvghmrghljeejsehgmhgr
-    ihhlrdgtohhmpdhrtghpthhtohepmhhitgesughighhikhhougdrnhgvthdprhgtphhtth
-    hopeguvghmihhosggvnhhouhhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepfhgrhhhi
-    mhhithgrhhgvrhgrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghhnohgrtghksehgoh
-    hoghhlvgdrtghomhdprhgtphhtthhopehhihesrghlhihsshgrrdhishdprhgtphhtthho
-    pehjrghnnhhhsehgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhsvggtuh
-    hrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:QPZTaTxPgnH2Mgp8Nt4bEZY_1Q7Awb0pqvCnYkFcsA2pQmmyg2fh6w>
-    <xmx:QPZTaXSis1tnD6e_6u5NHsAQKOEyhlEJsjE9vODxeZzG-LgoV9F7dQ>
-    <xmx:QPZTafizI03mXd6cxyrAEIQoKW7JaGiFzh2vP7OOFsBvSD8i2KMeow>
-    <xmx:QPZTaelQOBcrH6gVRSuQL0j-zEylvjn0K7TpyaLfXb9EVsrVjHbbag>
-    <xmx:QPZTaXJDVcrpMmeFJRuZ4g64FICC0_o3HT2OJ_P1Z0QrlfxmATKgMByq>
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefvihhnghhmrghoucgh
+    rghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepueeuvdelvd
+    dtheekhfeuheehueffueeijeetgffhvdekgeekueeffeegheetudetnecuffhomhgrihhn
+    pehsphgvtghtrhhumhdqohhsrdhorhhgpdhgihhthhhusgdrtghomhenucevlhhushhtvg
+    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhr
+    ghdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmh
+    hitgesughighhikhhougdrnhgvthdprhgtphhtthhopehmsehmrghofihtmhdrohhrghdp
+    rhgtphhtthhopehgnhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepuggvmh
+    hiohgsvghnohhurhesghhmrghilhdrtghomhdprhgtphhtthhopehhihesrghlhihsshgr
+    rdhishdprhgtphhtthhopehjrghnnhhhsehgohhoghhlvgdrtghomhdprhgtphhtthhope
+    hfrghhihhmihhtrghhvghrrgesghhmrghilhdrtghomhdprhgtphhtthhopehuthhilhhi
+    thihvghmrghljeejsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqshgvtg
+    hurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:-glUaT-MkuyC1bK2o_Nj0CqpKIBBPCcOFryOkMXeCLAQaqecyjq7iA>
+    <xmx:-glUaaWA-tFnbl2UKb_0cyTVPV-_yw-8CxoxbqR5tvcoe2W_wvoY8Q>
+    <xmx:-glUaXC6-jZt50F1KgSwshrng-_k460osfNsnX-cD2beGdNFsjorKQ>
+    <xmx:-glUafH9iHQtxbx3xiVxxasvO1AxuQH0-H1oN_49Em9os-d3Fegknw>
+    <xmx:-glUaZi42Vq2HFuKYXzbJVxXvhbGyGwiZkFuygUM2b9feLJvKGcbzniY>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 30 Dec 2025 10:56:47 -0500 (EST)
-Message-ID: <a7812afa-3178-431f-8788-b115bb4997ac@maowtm.org>
-Date: Tue, 30 Dec 2025 15:56:46 +0000
+ 30 Dec 2025 12:20:57 -0500 (EST)
+From: Tingmao Wang <m@maowtm.org>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Tingmao Wang <m@maowtm.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Demi Marie Obenour <demiobenour@gmail.com>,
+	Alyssa Ross <hi@alyssa.is>,
+	Jann Horn <jannh@google.com>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
+	Justin Suess <utilityemal77@gmail.com>,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v2 0/6] Landlock: Implement scope control for pathname Unix sockets
+Date: Tue, 30 Dec 2025 17:20:18 +0000
+Message-ID: <cover.1767115163.git.m@maowtm.org>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] landlock: Implement
- LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET
-From: Tingmao Wang <m@maowtm.org>
-To: Justin Suess <utilityemal77@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?=
- =?UTF-8?Q?n?= <mic@digikod.net>
-Cc: demiobenour@gmail.com, fahimitahera@gmail.com, gnoack@google.com,
- hi@alyssa.is, jannh@google.com, linux-security-module@vger.kernel.org
-References: <be315d8ff7544fd91bdb922e8afc7c8154e3594d.1766925301.git.m@maowtm.org>
- <20251228163750.451028-1-utilityemal77@gmail.com>
- <09f721d0-2644-44ba-b2e8-93626a17fa55@maowtm.org>
-Content-Language: en-US
-In-Reply-To: <09f721d0-2644-44ba-b2e8-93626a17fa55@maowtm.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 12/30/25 15:52, Tingmao Wang wrote:
-> On 12/28/25 16:37, Justin Suess wrote:
->> On 12/28/25 07:45, Tingmao Wang wrote:
->>> [...]
->>> diff --git a/security/landlock/task.c b/security/landlock/task.c
->>> index 6dfcc1860d6e..9fbb0ada440b 100644
->>> --- a/security/landlock/task.c
->>> +++ b/security/landlock/task.c
->>> @@ -233,57 +233,84 @@ static bool domain_is_scoped(const struct landlock_ruleset *const client,
->>>  	return false;
->>>  }
->>>  
->>> +/**
->>> + * sock_is_scoped - Check if socket connect or send should be restricted
->>> + *    based on scope controls.
->>> + *
->>> + * @other: The server socket.
->>> + * @domain: The client domain.
->>> + * @scope: The relevant scope bit to check (i.e. pathname or abstract).
->>> + *
->>> + * Returns: True if connect should be restricted, false otherwise.
->>> + */
->>>  static bool sock_is_scoped(struct sock *const other,
->>> -			   const struct landlock_ruleset *const domain)
->>> +			   const struct landlock_ruleset *const domain,
->>> +			   access_mask_t scope)
->>>  {
->>>  	const struct landlock_ruleset *dom_other;
->>>  
->>>  	/* The credentials will not change. */
->>>  	lockdep_assert_held(&unix_sk(other)->lock);
->>>  	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
->>> -	return domain_is_scoped(domain, dom_other,
->>> -				LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
->>> +	return domain_is_scoped(domain, dom_other, scope);
->>>  }
->>>  
->>> -static bool is_abstract_socket(struct sock *const sock)
->>> +static bool sock_addr_is_abstract(const struct unix_address *const addr)
->>
->> Nit: From the name sock_addr_is_abstract, it's unclear without reading
->> the parameter that this function only works with unix sockets, when
->> socket is an overloaded term that can refer to other kinds of sockets
->> (e.g tcp/udp/raw).
->>
->> Maybe is_unix_sock_addr_abstract? or unix_sock_addr_is_abstract?
-> 
-> I guess sock_addr_is_abstract is indeed a bit of a weird name, but it
-> helps that this function is static to this file and also very short.
-> Maybe is_unix_addr_abstract?
-> 
+Changes in v2:
+  Fix grammar in doc, rebased on mic/next, and extracted common code from
+  hook_unix_stream_connect and hook_unix_may_send into a separate
+  function.
 
-(nevermind I didn't read Mickaël's reply before sending this, if we can
-get rid of this extra function then the name doesn't matter)
+The rest is the same as the v1 cover letter:
+
+This patch series extend the existing abstract Unix socket scoping to
+pathname (i.e. normal file-based) sockets as well, by adding a new scope
+bit LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET that works the same as
+LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET, except that restricts pathname Unix
+sockets.  This means that a sandboxed process with this scope enabled will
+not be able to connect to Unix sockets created outside the sandbox via the
+filesystem.
+
+There is a future plan [1] for allowing specific sockets based on FS
+hierarchy, but this series is only determining access based on domain
+parent-child relationship.  There is currently no way to allow specific
+(outside the Landlock domain) Unix sockets, and none of the existing
+Landlock filesystem controls apply to socket connect().
+
+With this series, we can now properly protect against things like the the
+following while only relying on Landlock:
+
+    (running under tmux)
+    root@6-19-0-rc1-dev-00023-g68f0b276cbeb ~# LL_FS_RO=/ LL_FS_RW= ./sandboxer bash
+    Executing the sandboxed command...
+    root@6-19-0-rc1-dev-00023-g68f0b276cbeb:/# cat /tmp/hi
+    cat: /tmp/hi: No such file or directory
+    root@6-19-0-rc1-dev-00023-g68f0b276cbeb:/# tmux new-window 'echo hi > /tmp/hi'
+    root@6-19-0-rc1-dev-00023-g68f0b276cbeb:/# cat /tmp/hi
+    hi
+
+The above but with Unix socket scoping enabled (both pathname and abstract
+sockets) - the sandboxed shell can now no longer talk to tmux due to the
+socket being created from outside the Landlock sandbox:
+
+    (running under tmux)
+    root@6-19-0-rc1-dev-00023-g68f0b276cbeb ~# LL_FS_RO=/ LL_FS_RW= LL_SCOPED=u:a ./sandboxer bash
+    Executing the sandboxed command...
+    root@6-19-0-rc1-dev-00023-g68f0b276cbeb:/# cat /tmp/hi
+    cat: /tmp/hi: No such file or directory
+    root@6-19-0-rc1-dev-00023-g68f0b276cbeb:/# tmux new-window 'echo hi > /tmp/hi'
+    error connecting to /tmp/tmux-0/default (Operation not permitted)
+    root@6-19-0-rc1-dev-00023-g68f0b276cbeb:/# cat /tmp/hi
+    cat: /tmp/hi: No such file or directory
+
+Tmux is just one example.  In a standard systemd session, `systemd-run
+--user` can also be used (--user will run the command in the user's
+session, without requiring any root privileges), and likely a lot more if
+running in a desktop environment with many popular applications.  This
+change therefore makes it possible to create sandboxes without relying on
+additional mechanisms like seccomp to protect against such issues.
+
+These kind of issues was originally discussed on here (I took the idea for
+systemd-run from Demi):
+https://spectrum-os.org/lists/archives/spectrum-devel/00256266-26db-40cf-8f5b-f7c7064084c2@gmail.com/
+
+Demo with socat + sandboxer:
+
+Outside:
+    socat unix-listen:/foo.sock,fork -
+
+Sandbox with pathname socket scope bit:
+    root@6-19-0-rc1-dev-00023-g0994a10d6512 ~# LL_FS_RW=/ LL_FS_RO= LL_SCOPED=u /sandboxer socat -d2 unix:/foo.sock -
+    Executing the sandboxed command...
+    2025/12/27 20:28:54 socat[1227] E UNIX-CLIENT: /foo.sock: Operation not permitted
+    2025/12/27 20:28:54 socat[1227] N exit(1)
+
+Sandbox without pathname socket scope bit:
+    root@6-19-0-rc1-dev-00023-g0994a10d6512 ~# LL_FS_RW=/ LL_FS_RO= LL_SCOPED= /sandboxer socat -d2 unix:/foo.sock -
+    Executing the sandboxed command...
+    2025/12/27 20:29:22 socat[1250] N successfully connected from local address AF=1 "(7\xAE\xAE\xAE\xAE\xAE\xAE\xAE\xAE\xAE\xAE\xAE\xAE\xB0\xAE\xAE\xAE\xAE\xAE\xAE\xAE\xAE\xAE\xAE\xC3\xAE\xAE\xAE\xAE"
+    ...
+
+Sandbox with only abstract socket scope bit:
+    root@6-19-0-rc1-dev-00023-g0994a10d6512 ~# LL_FS_RW=/ LL_FS_RO= LL_SCOPED=a /sandboxer socat -d2 unix:/foo.sock -
+    Executing the sandboxed command...
+    2025/12/27 20:29:26 socat[1259] N successfully connected from local address AF=1 "\0\0\0\0\0\0\0\0\0"
+    ...
+
+Sendmsg/recvmsg - outside:
+    socat unix-recvfrom:/datagram.sock -
+
+Sandbox with pathname socket scope bit:
+    root@6-19-0-rc1-dev-00023-g0994a10d6512 ~# LL_FS_RW=/ LL_FS_RO= LL_SCOPED=u /sandboxer socat -d2 unix-sendto:/datagram.sock -
+    Executing the sandboxed command...
+    ...
+    2025/12/27 20:33:04 socat[1446] N starting data transfer loop with FDs [5,5] and [0,1]
+    123
+    2025/12/27 20:33:05 socat[1446] E sendto(5, 0x55d260d8f000, 4, 0, AF=1 "/datagram.sock", 16): Operation not permitted
+    2025/12/27 20:33:05 socat[1446] N exit(1)
+
+[1]: https://github.com/landlock-lsm/linux/issues/36
+
+Closes: https://github.com/landlock-lsm/linux/issues/51
+
+Tingmao Wang (6):
+  landlock: Add LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET scope bit to uAPI
+  landlock: Implement LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET
+  samples/landlock: Support LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET
+  selftests/landlock: Support pathname socket path in set_unix_address
+  selftests/landlock: Repurpose scoped_abstract_unix_test.c for pathname
+    sockets too.
+  selftests/landlock: Add pathname socket variants for more tests
+
+ Documentation/userspace-api/landlock.rst      |  37 +-
+ include/uapi/linux/landlock.h                 |   8 +-
+ samples/landlock/sandboxer.c                  |  23 +-
+ security/landlock/audit.c                     |   4 +
+ security/landlock/audit.h                     |   1 +
+ security/landlock/limits.h                    |   2 +-
+ security/landlock/syscalls.c                  |   2 +-
+ security/landlock/task.c                      | 109 ++-
+ tools/testing/selftests/landlock/base_test.c  |   2 +-
+ tools/testing/selftests/landlock/common.h     |  33 +-
+ tools/testing/selftests/landlock/net_test.c   |   2 +-
+ .../selftests/landlock/scoped_signal_test.c   |   2 +-
+ .../testing/selftests/landlock/scoped_test.c  |   2 +-
+ ...bstract_unix_test.c => scoped_unix_test.c} | 855 ++++++++++++------
+ 14 files changed, 757 insertions(+), 325 deletions(-)
+ rename tools/testing/selftests/landlock/{scoped_abstract_unix_test.c => scoped_unix_test.c} (51%)
+
+
+base-commit: ef4536f15224418b327a7b5d5cae07dab042760f
+-- 
+2.52.0
+
