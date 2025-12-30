@@ -1,144 +1,163 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274182853F8;
-	Mon, 29 Dec 2025 21:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A2E2236F0
+	for <linux-security-module@vger.kernel.org>; Tue, 30 Dec 2025 10:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767042829; cv=none; b=pMrY2OtD6IIzKaCVauqQ4/fcXwiu+GfVBvEDuoyBBBDkNnkGdwmYmqAgZ2qNyl220LHf7fIHHXGwzK3G9bZSylIcI7pK+ucKyD0MXIBZZxfTUtBjnr2LncGTdt2FBqxJCl5K7MNwSGhLU8FKFzZejO6mpWhaQXx0gato92iruUQ=
+	t=1767091201; cv=none; b=B3lh4ZDtAo/bLKYyFiPzE6yIFC99kR2KjP3BNzZUSictaHal30pl8DWalyUUyVww6veqgWCIQlK4X/WJJM3lzaAJtoVNgvnnfusV99h0wT+dxzjjKhFB/Abjz2iLzAGqzEI5Qg0uD5TR3wBiSubVZlxLVTS/Am6o16qrpbsYjAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767042829; c=relaxed/simple;
-	bh=4EwlcBqchvFuTXBSCsYR00Clhai03BcfL9+QbF1W9HU=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=VsgBZ0ww32ImRInwyTsQp+/EDfnXUMq7PFkSfzDppRW4LmCvQ6idQBiiMB8zvJdxmX0EfeOPASvtTpuAEMaP2JqoahE2K8Gta1nhnpewjy/WxfiOXjFijNRwREcpyUGuA7GJkS3X/stw5Ft9R7kcOcW9S5MJgSNf1WzbmUjrS+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gyeEvgLv; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1767091201; c=relaxed/simple;
+	bh=juiHCNCf7ST8FXM29YBlqPiQAb35HZCA8SNw5dm3MR4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mj9B6zVkeksMIBsGPHtlNiyCI4neU53lSFBF2VJaOMSaVPFXoF8S/bnI9bd8UknckfBvd0JL3ktnt1QhgHXRJCTSI3CtVfeFfTRiiZJPtl2o4mM03YOOBfj0Oy9y+EYmRzcNda+2cqb3BmyFpa7N1oZtwv5c9JGVKVirUk2oFIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ABq1oPCY; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gyeEvgLv"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5BTEkt9H027434;
-	Mon, 29 Dec 2025 21:13:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=0jz2AH
-	db7TipnulZpylulsco/VpR2GodIw1SA7RLfEg=; b=gyeEvgLvKEynflobczvh0p
-	9AGWmSOchfR/DlNIqIzH1gx55QOS4tkzPEEkucx7oHAHw0wn26tKjqSflxGWE51g
-	X838ZXLFRDQddjNRNTsD9getEQRGRdz361BWTl6MTTTRDdzMymke66ksndFssOBb
-	tbdfdJ5SdPdXKnQhe1JQyFTT3yrSXpju/uLBVoQ5BcTW5z5GJ/mZirFh76sMo4wr
-	oo50d5Ea/G1ra2vqoZSZS58N/rBeoh+6mJ9TmqdLaULQMYzuUR4sD3N3r7+BhDPX
-	N+Ub0RdpktQW8Ccmtbt/jdR/ClHjVW3k+hvVGKdOEdX790SpmG2/6jvlV5MKpgqw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bb46xcydm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Dec 2025 21:13:13 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5BTLB20b007111;
-	Mon, 29 Dec 2025 21:13:12 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bb46xcydj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Dec 2025 21:13:12 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5BTJfrXw023891;
-	Mon, 29 Dec 2025 21:13:11 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4bat5y793p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Dec 2025 21:13:11 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5BTLDA3H32047804
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 29 Dec 2025 21:13:11 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C04AD58043;
-	Mon, 29 Dec 2025 21:13:10 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D19F258055;
-	Mon, 29 Dec 2025 21:13:09 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.14.247])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 29 Dec 2025 21:13:09 +0000 (GMT)
-Message-ID: <29331004c900e82a898668459ff0f8157e6f8645.camel@linux.ibm.com>
-Subject: Re: [PATCH v3] ima: Fix stack-out-of-bounds in
- is_bprm_creds_for_exec()
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Chris J Arges <carges@cloudflare.com>, roberto.sassu@huawei.com
-Cc: kernel-team@cloudflare.com, Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge
- E. Hallyn"	 <serge@hallyn.com>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?=
- <mic@digikod.net>,
-        Kees Cook <kees@kernel.org>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251228031914.47618-1-carges@cloudflare.com>
-References: <3aeed1ff9388f09555bf5c6ade03cbe9ce93ff14.camel@linux.ibm.com>
-	 <20251228031914.47618-1-carges@cloudflare.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 29 Dec 2025 16:13:09 -0500
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ABq1oPCY"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-64daeb28c56so7954038a12.2
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Dec 2025 02:39:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767091198; x=1767695998; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jo8DBddupBRUBpfI3daUVwCsa4ufJoTKeedM3BjWazA=;
+        b=ABq1oPCYCmFWEtIlCrfjJvXH6n3BzgpVAjAmRsZd2FmwQovvf68DM5wYMOvwyq7how
+         TFuTFt0cOIcyEacKIXzZuTdUbHveLV5qfnE3HIJ8frwepd39a5URei9JoSWDO8gFwe7H
+         r0Lt1nn0iTESvql470FS7akECDK22rfYll/yyYBd3XsOSuCGa773Xf8OfSnqWWKOQOWn
+         5zlW5btnWfGBNJyBdbt1vM/gqcnxhHoJEs4WtaSVscQcTkLqeNu8t/QblOhb67xWVHgT
+         CVpAt1hslvUGIM4xqr3CwvWVB8tgvI83BDqZ5/U7xtG6rs18RMb6MF211azP1FvIVLeL
+         WKyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767091198; x=1767695998;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jo8DBddupBRUBpfI3daUVwCsa4ufJoTKeedM3BjWazA=;
+        b=VkwFTrAFizTOto6PCrphEoh5Qr5P/0o093rooJIsYQQl7DaS1ZBzzSC1Tg4kuToYjM
+         BczxoxTqheKdLjgH2yod7nRz5pFrLg/VtKDepAlTdUUhU6130yStnIbi+XM6wlVOygpd
+         9j7NNjkkSwjyX2kGSqs1cDiR9mz8N0UFBGa9bEyOO3fQkaANsiYCx5/TY7TnJYuUQsY3
+         JkR//2wkbo7ZVW0RM/ZqfoCrnvwzMigDUejla757DW2M8ceyOW8t9kl8CArHVORlQ6fF
+         5LwsBbJ3ur80PT7AzGGtd3fMq39GR9m8cbUnUdZ1wS5ct1POFp5f0vP10LtK+DeBEzDq
+         7L6g==
+X-Gm-Message-State: AOJu0YyUSRxoAHZCFfOncwFdItQMspXmNzqIs8tQDL+M7LdPEOTpeIBQ
+	/QyfE4G9IPY5h0sJc6/AaWv4UigQA5uVyoOfMLgdNCkKVvuUYwInNoTW
+X-Gm-Gg: AY/fxX7GJsZHZhkDIhV01DWi6w6xgpJE4adjSgSh1NxS3oO928RaHvsIV/7JKRiL/e7
+	lnpP9niT5p5QSdriE50NaZf4v3peepNMsfyy6XiJXIiX+G8Hy2zmBQZ8D3B4d7u0nRfOvW2sBkD
+	pqkjNiM11Y4vXn83+gBM7Nd9ZDRGk5I71lBxNCMlxTGjFDuKp7w23m0f7eCsLKaOod3khurSIfz
+	yW2VEH5HpbuzhEdBWf+XUSzUX4lq2Z19Tku8nUYGZuWiUZ7Xi2Y616REfaSmdbVvF7uf5vet4RJ
+	R8Xh86XzNz+tUUkdjufTxBKerpIOS4xzyxXOvyZnthMFjWP2DFkssv/gFPMzRvvkYKzfDmHWAyH
+	HKFjkGUNVwg2GbbL4jNEh1cMVA4VhbihhUVoRJw5lNwPU+znQpmqCWw0x5M67d2PU7U9qstw+RE
+	hnrw3fxt9tbf8+N9qNP7vl+wjAJb0+h9uqU8Hl
+X-Google-Smtp-Source: AGHT+IFYekmMoueAgl0i320aXXF/dDlwHQxSp67gDmb4kdW4uu9wOZbJ0FhEDuJGWBW3Oj/do8O72g==
+X-Received: by 2002:a05:6402:13d6:b0:64d:521e:15f8 with SMTP id 4fb4d7f45d1cf-64d521e19c7mr23634571a12.10.1767091197497;
+        Tue, 30 Dec 2025 02:39:57 -0800 (PST)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64b9159a4eesm33761685a12.24.2025.12.30.02.39.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Dec 2025 02:39:57 -0800 (PST)
+From: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org,
+	Tingmao Wang <m@maowtm.org>,
+	Justin Suess <utilityemal77@gmail.com>,
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+	Matthieu Buffet <matthieu@buffet.re>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	konstantin.meskhidze@huawei.com,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+Subject: [RFC PATCH 0/2] landlock: Refactor layer masks
+Date: Tue, 30 Dec 2025 11:39:17 +0100
+Message-ID: <20251230103917.10549-3-gnoack3000@gmail.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjI5MDE5MCBTYWx0ZWRfXzW1oPxMNN7lO
- 53VhBNfFykpwIYkSHcoqVaYJVa6zwqlkRTno5fCCIah2hroa5QgxH9k36XGIebXNQNZiOzy4vin
- cSvMjOOrpCzI8DJRasuAhZuOUiTQByZJOrwrvwycbY4MlyC+6rf8WbTzTVjvVn2wBk+nFyf91mf
- ayz2/fVwtQzNC9c3GtyEAenLkYpMFVSAddm+tyG+4P8okcDmu1XTMmdjd4Zo1tan99LWTs+P6T3
- SLm3p/hRuUhcb9OZcfTzfOpt4SEzh4nyrMOQkv2bjOUJK8i8kVLlP8BWc7VPYSUw3fped9UPRpz
- 1SwDXDmCdFmcW1kA7PzUtdnLm8Xyc5VSfb48tsSEd4rqk4OUyvd5Oq3yjwTxz0s/DqtNvL82Et7
- Zk8mUsZhOWSNZ/hWjrz+oE5MHg0YxvBCISK5inlSHrO58Q12HN9mu12eMSOpbJxGjLeLNc/5kaV
- Oq0H5QAuGpMvq1OjGbw==
-X-Proofpoint-ORIG-GUID: f8Qph36I37IDZzUt4mCZNcMd7Mvcselq
-X-Authority-Analysis: v=2.4 cv=L7AQguT8 c=1 sm=1 tr=0 ts=6952eee9 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EG7W4yiQAAAA:8 a=B2nDkTjVBPwomQTfEAIA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: DewqOWr7bIQBkLHKGE9FT-B6-bQGb-wd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-29_06,2025-12-29_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2512120000 definitions=main-2512290190
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, 2025-12-27 at 21:18 -0600, Chris J Arges wrote:
-> KASAN reported a stack-out-of-bounds access in ima_appraise_measurement
-> from is_bprm_creds_for_exec:
->=20
-> BUG: KASAN: stack-out-of-bounds in ima_appraise_measurement+0x12dc/0x16a0
->  Read of size 1 at addr ffffc9000160f940 by task sudo/550
-> The buggy address belongs to stack of task sudo/550
-> and is located at offset 24 in frame:
->   ima_appraise_measurement+0x0/0x16a0
-> This frame has 2 objects:
->   [48, 56) 'file'
->   [80, 148) 'hash'
->=20
-> This is caused by using container_of on the *file pointer. This offset
-> calculation is what triggers the stack-out-of-bounds error.
->=20
-> In order to fix this, pass in a bprm_is_check boolean which can be set
-> depending on how process_measurement is called. If the caller has a
-> linux_binprm pointer and the function is BPRM_CHECK we can determine
-> is_check and set it then. Otherwise set it to false.
->=20
-> Fixes: 95b3cdafd7cb7 ("ima: instantiate the bprm_creds_for_exec() hook")
->=20
-> Signed-off-by: Chris J Arges <carges@cloudflare.com>
+Hello!
 
-Thanks, Chris.  The patch is now queued in the linux-integrity/next-integri=
-ty
-branch.
+This patch set "transposes" the layer masks matrix, which was
+previously modeled as a access-max-sized array of layer masks, and
+changes it to be a layer-max-sized array of access masks instead.
+(It is a pure refactoring, there are no user-visible changes.)
 
-Mimi
+This unlocks a few code simplifications and in multiple places it
+removes the need for loops and branches that deal with individual
+bits.  Instead, the changed data structure now lends itself for more
+bitwise operations.  The underlying hypothesis for me was that by
+using more bitwise operations and fewer branches, we would get an
+overall speedup even when the data structure size increases slightly
+in some cases.
+
+Tentative results with and without this patch set show that the
+hypothesis likely holds true.  The benchmark I used exercises a "worst
+case" scenario that attempts to be bottlenecked on the affected code:
+constructs a large number of nested directories, with one "path
+beneath" rule each and then tries to open the innermost directory many
+times.  The benchmark is intentionally unrealistic to amplify the
+amount of time used for the path walk logic and forces Landlock to
+walk the full path (eventually failing the open syscall).  (I'll send
+the benchmark program in a reply to this mail for full transparency.)
+
+Measured with the benchmark program, the patch set results in a
+speedup of -8.3%.  The benchmark results are only tentative and have
+been produced in Qemu:
+
+With the patch, the benchmark runs in 5932 clocks (measured with
+times(3)):
+
+*** Benchmark ***
+10000 dirs, 100000 iterations, with landlock
+*** Benchmark concluded ***
+System: 5932 clocks
+User  : 1 clocks
+Clocks per second: 1000000
+
+Without the patch, we get 6472 clocks, which is 9.1% more.
+
+*** Benchmark ***
+10000 dirs, 100000 iterations, with landlock
+*** Benchmark concluded ***
+System: 6472 clocks
+User  : 1 clocks
+Clocks per second: 1000000
+
+The base revision used for benchmarking was commit 7a51784da76d
+("tools/sched_ext: update scx_show_state.py for scx_aborting change")
+
+In real-life scenarios, the speed improvement from this patch set will
+be less pronounced than in the artificial benchmark, as people do not
+usually stack directories that deeply and attach so many rules to
+them, and the EACCES error should also be the exception rather than
+the norm.
+
+I am looking forward to your feedback.
+
+P.S.: I am open to suggestions on what the "layer masks" variables
+should be called, because the name "layer masks" might be less
+appropriate after this change.  I have not fixed up the name
+everywhere because fixing up the code took priority for now.
+
+Günther Noack (2):
+  landlock: access_mask_subset() helper
+  landlock: transpose the layer masks data structure
+
+ security/landlock/access.h  |  10 +-
+ security/landlock/audit.c   | 155 ++++++----------
+ security/landlock/audit.h   |   3 +-
+ security/landlock/domain.c  | 120 +++---------
+ security/landlock/domain.h  |   6 +-
+ security/landlock/fs.c      | 361 +++++++++++++++++-------------------
+ security/landlock/net.c     |  10 +-
+ security/landlock/ruleset.c |  78 ++------
+ security/landlock/ruleset.h |  18 +-
+ 9 files changed, 300 insertions(+), 461 deletions(-)
+
+-- 
+2.52.0
+
