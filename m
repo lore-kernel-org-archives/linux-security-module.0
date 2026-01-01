@@ -1,67 +1,66 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052F5205E02
-	for <linux-security-module@vger.kernel.org>; Thu,  1 Jan 2026 22:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F5B274FC2
+	for <linux-security-module@vger.kernel.org>; Thu,  1 Jan 2026 22:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767305487; cv=none; b=eYkCX2Ckur6HypHXQLOAjBAmpAiFNU0us/bx3QlfTGUMPSkNo8zDzVJpiwscOHOU3XyowhWFKzJ9glG0XRvenaMuVGlnBgXHduJq+a15NWmg9QqRW0+OmlhLZmcFSVOV3nymBJ1uaL3yBhiCj+mHaGsPdFdF6czvCop7bktHPzg=
+	t=1767305689; cv=none; b=HXTta3qIO+zApVaTN9QN8K4hIVI4UVpmx49LcVJFhVulRhvYadx8S5RvWSbgyweZO4Hz/t17bHau+L7wvUbU1QbooUxN4yZiOMvuKkWC2hwzbFx33/lc3J6jvyJtNDFUU2zQ6OuqR50V60j8s6Cv9OvM1ata41iEkZ+akE+pETA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767305487; c=relaxed/simple;
-	bh=Ikx3ixeul5vpoIsOYGfxEIvATigAeuG3tNMBSZ+QaS8=;
+	s=arc-20240116; t=1767305689; c=relaxed/simple;
+	bh=Mcp8yc4/DpEBZDUjWpYamz7wkfkRaNhxQrjWYP8xRgc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mQ8AYtRUXpZb9Q1Bzq8QmcNRhB+fIfSmlAsEyUytag7DzVebcG+F+zu0g/WwKuNeMsBQSKwUF01BaaOwA32i8lCcrt6YPo0ga1Zp3AVWZ7Hy8XwY4KxFWiyPKVGnt+J+vgZ4r7dBIwNTHXzR4fYisnQWuv719RhwGCpo6cBT4tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XhAXLtRW; arc=none smtp.client-ip=209.85.128.178
+	 In-Reply-To:Content-Type; b=jC93w7OYgaRs9cHLQWOOqdYqUqms79QQvEsUPZF/DuMXdHKvYFHckeL1l6IxAjAqkM4QiAK/fHfK6mb68lsZTVdmDwq8gJNzq33k+yI5vnDqxdSWNIm5skrgYN/HEkGZ7gDHfRNeF2/q2b9fy9GpX6jkwcZrfyFHSa/U7GHgtqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jVjwyhHo; arc=none smtp.client-ip=209.85.128.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XhAXLtRW"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-78c6a53187dso87787207b3.2
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Jan 2026 14:11:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jVjwyhHo"
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-78fba1a1b1eso139693447b3.1
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Jan 2026 14:14:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767305485; x=1767910285; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1767305686; x=1767910486; darn=vger.kernel.org;
         h=in-reply-to:autocrypt:from:content-language:references:cc:to
          :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=yOgV2tvfPgsmtniiePI30V7o22iiMATd5mYVNWVVey0=;
-        b=XhAXLtRWhiGmGl1fKrITshE25lpBwJNOf1db7md6IZ/rT65phNw25XmntCuDLOWcVO
-         rwwiAQXPr/0LdQWy7A3uFLtvBOgyk/6ry0w1h4sd7qw8erVsvSzqVd9/BiBhC3k9yQxn
-         epzJgveQMYKUi803jrLJEinGo8fkD+idH9qFha+91ZxGywqSHF1pR1qvfie8rcjcsVmV
-         Nz9IDQnyy8BPKJgS0A4xdHRH1HIpr776EfiRfXHGXglCGk57vpDr7lBZC5fTKKQ1KDuP
-         hnBZ+KAo56LJ8bt9WKfjY3RyGx5V8uSNayJK8nIXvQpDWjMUrrpOVc4RdmdvAuS2HnEo
-         zbFA==
+        bh=CbLknNj3WqSzL7btyID0Ca4BUE45vptx5CySbAji6lg=;
+        b=jVjwyhHoUQn4fRK75ean61EBozQVPAydhK0NZUU49dP6EonTkEGkObDEYAOHEx1xKa
+         VY3mcjRgRtcr4uHn4yweE8GPm48XBNzDJxOgyD03bhyEnD0kW/PbUWcuEcNSZcxQqk71
+         mDOIlYIubp/kzq5i5Q3p2NSpBd6g9xR9k7tkezgiT5wGbLjHfFEO4b+b6P89hysf52hb
+         3ku9YxfHTBG9OAanp+SEOkBC7mXh+JGrKwLT+giERdH7dxS+y+YZ/o3ZMNrjJ3xLfu3j
+         zwMPZV4Fow/EdUu8z0SdL226bQYOpxiZ5VyldAMzBWsFPxrM01IZ+I8wR6tuNtv0k0TW
+         RexQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767305485; x=1767910285;
+        d=1e100.net; s=20230601; t=1767305686; x=1767910486;
         h=in-reply-to:autocrypt:from:content-language:references:cc:to
          :subject:user-agent:mime-version:date:message-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yOgV2tvfPgsmtniiePI30V7o22iiMATd5mYVNWVVey0=;
-        b=ebHYSfPDApJqrPUoWAfgaw0broTQ7yl4Y9HhyZ1yJk9OC/qa3qUZQw+Hw2pQ7WuMcF
-         4YAvU/bIOA/LWDkt4/PjVOeG+wde3lSoYy8vQJAzQgGQDfvcKDXuOhgy/vLU1wMYTyed
-         0lZtHdL2iSGNBxAg18R/DhpJOQ1sd3PRFqdmu5c3JQfBvWcCQTJa+DO2qKyBkiljoAL4
-         63XQcg4Iuc8YrrCZ+sqm4UM6CCGCUxuznjNgbLWJpmvSwkCa5PuRd+YkKokcUMVcwfg3
-         yAc0+UDF2g5BBgGpWJi9F+9Lwzsn6UE8UryyoWY3I9s1FB2qrEhsugeRK2DU9ooAylQo
-         DtpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNKx5MItUQ/eDx4gBDzbFXkQUtsh5bS5KPyb8fqaY3gFjcvzQS7hS2jfYCGDnTsJXKXrqrUoUOwKo+Zl7tVaMcU7mhDyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMCYbIGqqWL4mEM9CSvTfwVxVqyFMknyKMUtD7j4DELolBZLNH
-	zNhMBxEQQXoJ5h9//leMyAPvMbBRgeM8LMB1w9u2L0gLj03FeJLcvzI8
-X-Gm-Gg: AY/fxX6nAqjtGVuZdMJxmsrAeSYE4ba3w/0eN04Jadw3psECZDw75y2J3ONsC1N7nXD
-	1T1EjV0l2TWrIileGIpPzWjZCzrrqg8P8BwHV04CvoOSQmIyzOpo5rzIHRr2hltR/XLFgk4qKB0
-	qogNkVTKdCa9uaQBt4/o1L16lkyWppDY8BNow3CgAs60Lo76aIGOMLxGaPQCaGKYnYwGw1DT71g
-	hIcqm9ja480vHQbmY6mUkoLAUVO5gpmkVRSlLZeOELg80yDVJEZMpB91NiJUqHLoFx+gkNcVzC5
-	nRF/hpR+eHIPPiAx1sW9+RwGGGLB730u9xNC9jJkpSGqs+aCY1nlNu9clXg9jl0ixP+lnT4qkSB
-	+O78UxRXq5LzOH7jQzA9CHfiheRTrPhVQhFVw/nsANxwM0g7Q+WarGsCqVD0U4n+sDgb4q4l4Qu
-	21I8JeKjk88KCBxhMyT+SnuFDlgVPe3WXeU/YsAGvE/uW1U5aXqYU7O5TMR0QLOGbLsjh9QdBLx
-	Xbom3szU2xnskblzGkv2uOdN9vpEVncTAeruu/e
-X-Google-Smtp-Source: AGHT+IFQuCy7RD3W9k0FwI7uVAoK3Cl/Vnx8rT3pJmVpvDQxJ2CgdE2sqX7n/Xhsz0GuL3FfpmGCGQ==
-X-Received: by 2002:a05:690c:3383:b0:787:d46e:c567 with SMTP id 00721157ae682-78fb4062f3fmr334910567b3.59.1767305484799;
-        Thu, 01 Jan 2026 14:11:24 -0800 (PST)
+        bh=CbLknNj3WqSzL7btyID0Ca4BUE45vptx5CySbAji6lg=;
+        b=qFPJ4R55NSY2sTcjiyFvHuF1nq427ZD9W+Lli3uiUARwDbPfWaq1CW8+DsnFCMNi8h
+         ANGs6onz1BUaETCmUMibJgeKLbOAane1Fe+TIVwnO3L8Ip4dObUuYVMhBP/qpcKXPzty
+         qIaPcIddz4K2Hbkwe41DNIE3+7+7CSYbIiXBEqLmzIwtpewu2MQeOaupArodi5h4QIvi
+         ZC/Z1x4HVeRv7g6xdRmMAoEQLjeHJxq5i8xUPPwHtn+m+Pp29dYSMeG3RnExZjlJqjBo
+         ItNJsKyiXcOEPBbTdhuWnbkm42NQk/bOJ53e7rluom1obD0xJ6nJQzEoA3jeS8F/l+Hr
+         dVvg==
+X-Gm-Message-State: AOJu0YxinufQPXdQoLzSm7GBGqwYhJLNbRWaIpWd2pXgGEa/3fd1gpDz
+	Qqjj43uUQYEROc3XiOefC+PQJ7KhJjQS3Svduni+g0t0UhNDsYfXusOU
+X-Gm-Gg: AY/fxX7iS9KCLi/Khplc2Gn6GEaywSzs7rMWjp/9S6JYfGJiRGAQ57Z0aPAQ61kkDB7
+	4Vl87Ei1INOtrBcPZTuswMsD5xtYQ1oQDE4CBUYOuElm2n0DaVbCAlA7y+DT5OlBORfbLPWOy2W
+	PTyCTT1fuoBtaneYxUuSvXMlYLGaXUbX8BwSN+8yjgH5d+lg1H16CehC88SK3BwgMIMWVUqn52s
+	6AqBkOac58CLeapyOOVLmta9KuuZOaOWtuxnyBPQooUGFNtdjvg8eEQQkc1q23/PGivRVrGKLqH
+	2PWAFeCcU66d5fP27cbpyPj4+gjHt1xZwrfbtxM8PZHMIx88xYb9Y+qZFEXSS2p12Z2KkXuHej1
+	VE4QHyy7Fc/r/9iO1Mq8scSainYhqv6z41ShBloPoJVEktwx//+xr3XDafvqXwM1FSSRdHD5B3k
+	3fYm6UThj5dknKi7XQ4C96k2C3o0BoMuTd2n3zydVdCJUqgS+ZYDZvwWE7mqvQxRCJB2mk4i1jo
+	BBN6V+j53WMDwzQmZvVC/O5kXA6tw==
+X-Google-Smtp-Source: AGHT+IHOF8HlNtDFqkiIDqqGHI9G8ehDPR3xzl9xCaVg15HKMhbtfyO/0F9je/OE74tcaAoOvp5ARw==
+X-Received: by 2002:a05:690c:6a0b:b0:78f:8fab:be63 with SMTP id 00721157ae682-78fa5a5f2b2mr367225527b3.6.1767305686109;
+        Thu, 01 Jan 2026 14:14:46 -0800 (PST)
 Received: from [10.138.34.110] (h69-131-146-178.cncrtn.broadband.dynamic.tds.net. [69.131.146.178])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78ffebd2690sm96851347b3.15.2026.01.01.14.11.23
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78fb43b2690sm151206747b3.18.2026.01.01.14.14.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Jan 2026 14:11:24 -0800 (PST)
-Message-ID: <22e29fd8-2f39-4a64-b08c-2f41153e3be8@gmail.com>
-Date: Thu, 1 Jan 2026 17:11:08 -0500
+        Thu, 01 Jan 2026 14:14:45 -0800 (PST)
+Message-ID: <61a6be66-a9bd-4d68-98ed-29aac65b7dfb@gmail.com>
+Date: Thu, 1 Jan 2026 17:14:40 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -69,18 +68,18 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 3/5] samples/landlock: Add support for
- LANDLOCK_ACCESS_FS_CONNECT_UNIX
-To: Tingmao Wang <m@maowtm.org>, =?UTF-8?Q?G=C3=BCnther_Noack?=
- <gnoack3000@gmail.com>, Justin Suess <utilityemal77@gmail.com>
-Cc: fahimitahera@gmail.com, hi@alyssa.is,
- ivanov.mikhail1@huawei-partners.com, jannh@google.com,
- konstantin.meskhidze@huawei.com, linux-security-module@vger.kernel.org,
- matthieu@buffet.re, mic@digikod.net, paul@paul-moore.com,
- samasth.norway.ananda@oracle.com
-References: <20260101134102.25938-4-gnoack3000@gmail.com>
- <20260101193009.4005972-1-utilityemal77@gmail.com>
- <423dd2ca-ecba-47cf-98a7-4d99a48939da@maowtm.org>
+Subject: Re: [RFC PATCH 0/5] landlock: Pathname-based UNIX connect() control
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>,
+ Justin Suess <utilityemal77@gmail.com>,
+ Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+ Matthieu Buffet <matthieu@buffet.re>,
+ Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+ konstantin.meskhidze@huawei.com, Alyssa Ross <hi@alyssa.is>,
+ Jann Horn <jannh@google.com>, Tahera Fahimi <fahimitahera@gmail.com>
+References: <20260101134102.25938-1-gnoack3000@gmail.com>
 Content-Language: en-US
 From: Demi Marie Obenour <demiobenour@gmail.com>
 Autocrypt: addr=demiobenour@gmail.com; keydata=
@@ -126,31 +125,31 @@ Autocrypt: addr=demiobenour@gmail.com; keydata=
  vUSQHSrmfOzX3cV4yfmjM5lewgSstoxGyTx2M8enslgdXhPthZlDnTnOT+C+OTsh8+m5tos8
  HQjaPM01MKBiAqdPgksm1wu2DrrwUi6ChRVTUBcj6+/9IJ81H2P2gJk3Ls3AVIxIffLoY34E
  +MYSfkEjBz0E8CLOcAw7JIwAaeBT
-In-Reply-To: <423dd2ca-ecba-47cf-98a7-4d99a48939da@maowtm.org>
+In-Reply-To: <20260101134102.25938-1-gnoack3000@gmail.com>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="------------rOCacHqzUqgFcKncWVlg6nJp"
+ boundary="------------Bs0fy3tSZ5c320VIEBTisIQi"
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------rOCacHqzUqgFcKncWVlg6nJp
-Content-Type: multipart/mixed; boundary="------------CpUW2kqSM6s4XOAbgPScmnQK";
+--------------Bs0fy3tSZ5c320VIEBTisIQi
+Content-Type: multipart/mixed; boundary="------------ytC9BdQ89ZdwEHhpG40IaxPW";
  protected-headers="v1"
-Message-ID: <22e29fd8-2f39-4a64-b08c-2f41153e3be8@gmail.com>
-Date: Thu, 1 Jan 2026 17:11:08 -0500
+Message-ID: <61a6be66-a9bd-4d68-98ed-29aac65b7dfb@gmail.com>
+Date: Thu, 1 Jan 2026 17:14:40 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 3/5] samples/landlock: Add support for
- LANDLOCK_ACCESS_FS_CONNECT_UNIX
-To: Tingmao Wang <m@maowtm.org>, =?UTF-8?Q?G=C3=BCnther_Noack?=
- <gnoack3000@gmail.com>, Justin Suess <utilityemal77@gmail.com>
-Cc: fahimitahera@gmail.com, hi@alyssa.is,
- ivanov.mikhail1@huawei-partners.com, jannh@google.com,
- konstantin.meskhidze@huawei.com, linux-security-module@vger.kernel.org,
- matthieu@buffet.re, mic@digikod.net, paul@paul-moore.com,
- samasth.norway.ananda@oracle.com
-References: <20260101134102.25938-4-gnoack3000@gmail.com>
- <20260101193009.4005972-1-utilityemal77@gmail.com>
- <423dd2ca-ecba-47cf-98a7-4d99a48939da@maowtm.org>
+Subject: Re: [RFC PATCH 0/5] landlock: Pathname-based UNIX connect() control
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>,
+ Justin Suess <utilityemal77@gmail.com>,
+ Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+ Matthieu Buffet <matthieu@buffet.re>,
+ Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+ konstantin.meskhidze@huawei.com, Alyssa Ross <hi@alyssa.is>,
+ Jann Horn <jannh@google.com>, Tahera Fahimi <fahimitahera@gmail.com>
+References: <20260101134102.25938-1-gnoack3000@gmail.com>
 Content-Language: en-US
 From: Demi Marie Obenour <demiobenour@gmail.com>
 Autocrypt: addr=demiobenour@gmail.com; keydata=
@@ -196,7 +195,7 @@ Autocrypt: addr=demiobenour@gmail.com; keydata=
  vUSQHSrmfOzX3cV4yfmjM5lewgSstoxGyTx2M8enslgdXhPthZlDnTnOT+C+OTsh8+m5tos8
  HQjaPM01MKBiAqdPgksm1wu2DrrwUi6ChRVTUBcj6+/9IJ81H2P2gJk3Ls3AVIxIffLoY34E
  +MYSfkEjBz0E8CLOcAw7JIwAaeBT
-In-Reply-To: <423dd2ca-ecba-47cf-98a7-4d99a48939da@maowtm.org>
+In-Reply-To: <20260101134102.25938-1-gnoack3000@gmail.com>
 Autocrypt-Gossip: addr=hi@alyssa.is; keydata=
  xsFNBFpSgoYBEAC4xkCYidG2JlRWulUkTWcx0pHFDf3oSbb6Q872Kb3iDChWgluNVz43hva1
  3xfDo9foV0GoyfGl/ycSCkXX5hlQr7ir/5FN38E7H/yY6tH8+l68iDgIOcb1qY0OYaxyg+Lz
@@ -233,38 +232,28 @@ Autocrypt-Gossip: addr=hi@alyssa.is; keydata=
  x/YriV5EfqkP+4+1cqXjasrQxyZUW0ULRke0j92Cgt+J722PIcOAb8vdSGF4AXczO+KMtNn9
  wGxvGU7TX5ou
 
---------------CpUW2kqSM6s4XOAbgPScmnQK
-Content-Type: multipart/mixed; boundary="------------0OZTRbcd9jkTSCvskI0LLwH9"
+--------------ytC9BdQ89ZdwEHhpG40IaxPW
+Content-Type: multipart/mixed; boundary="------------ehCGzbeRPjEJiVE2TMIT7evs"
 
---------------0OZTRbcd9jkTSCvskI0LLwH9
+--------------ehCGzbeRPjEJiVE2TMIT7evs
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On 1/1/26 17:07, Tingmao Wang wrote:
+On 1/1/26 08:40, G=C3=BCnther Noack wrote:
+> Happy New Year!
+>=20
+> This patch set introduces a file-system-based Landlock restriction
+> mechanism for connecting to Unix sockets.
 
 (snip)
 
-> Looking at this I guess it might also make sense for the kernel side to=
-
-> enforce only being able to add LANDLOCK_ACCESS_FS_CONNECT_UNIX on socke=
-t
-> files (S_ISSOCK(d_backing_inode)) too in landlock_append_fs_rule?
->=20
-> Also, for the sandboxer logic, maybe a better way would be having
-> LANDLOCK_ACCESS_FS_CONNECT_UNIX in ACCESS_FILE (matching the kernel cod=
-e),
-> then another if(!S_ISSOCK) below this that will clear out
-> LANDLOCK_ACCESS_FS_CONNECT_UNIX if not socket.
-
-A process might legitimately need to connect to a socket that doesn't
-exist at the time it sandboxes itself.  Therefore, I think it makes
-sense to for LANDLOCK_ACCESS_FS_CONNECT_UNIX access to a directory
-to allow LANDLOCK_ACCESS_FS_CONNECT_UNIX to any socket under that
-directory.  This matches the flexibility mount namespaces can achieve.
+Does this leave directory traversal as the only missing Landlock
+filesystem access control?  Ideally Landlock could provide the same
+isolation from the filesystem that mount namespaces do.
 --=20
 Sincerely,
 Demi Marie Obenour (she/her/hers)
---------------0OZTRbcd9jkTSCvskI0LLwH9
+--------------ehCGzbeRPjEJiVE2TMIT7evs
 Content-Type: application/pgp-keys; name="OpenPGP_0xB288B55FFF9C22C1.asc"
 Content-Disposition: attachment; filename="OpenPGP_0xB288B55FFF9C22C1.asc"
 Content-Description: OpenPGP public key
@@ -384,30 +373,30 @@ EtJuZYM5blWncBOJCoWMnBEcTEo/viU3GgcVRw=3D=3D
 =3Dx94R
 -----END PGP PUBLIC KEY BLOCK-----
 
---------------0OZTRbcd9jkTSCvskI0LLwH9--
+--------------ehCGzbeRPjEJiVE2TMIT7evs--
 
---------------CpUW2kqSM6s4XOAbgPScmnQK--
+--------------ytC9BdQ89ZdwEHhpG40IaxPW--
 
---------------rOCacHqzUqgFcKncWVlg6nJp
+--------------Bs0fy3tSZ5c320VIEBTisIQi
 Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEopQtqVJW1aeuo9/sszaHOrMp8lMFAmlW8QcACgkQszaHOrMp
-8lMM9w/+NvorubWfg0VkApIdumiVWy3HsmmysEJi01RWTGgNi9/baFeLbxKTjlX9
-vhi+Em2bva4EOU2fVQoVAI2fBFnPqj3Pcsv5M8DdOzHDY1qlhCP22EQzqIke3riQ
-2/pHb/r6a4hVecRxhbvZQsUYClKyyogzxMiQ9H7PzypiZcn/4nwD8qxczNuu6M0V
-6Jexf9TwOuhbeNHjGrcrZ8LS95Ydca27zTIrixj2J0rVHcSgtVko5vhDGil15tsy
-wbgxPQ+PuZhDavRYXXbb+OZSqk/PanBnV3hrz8OYzXvBvW/m3o7yhON0hKbkggge
-24qmDFTzyIUuWiLHb0ui6kfIdia8Hkutv8qLxylyU/C9VN9jhXSroXn9hGuTAKRA
-WMib9eiiZfRiN9R3nOvh4Bt5+Co1DpaG7c9GVPYiWyY6HYFNDp98i2UoJgM2Pgb/
-pBPimhDDZ0HvP7CBLogSSRjiDIas9YYZ9lLFYWkCQMbWyom6hU/7mvNgZ/ZJPGFM
-ramHtJFRwdbo8oIoTGSnwqdQ3NPlKGUy9/D9OjuvjanzdIXpO3PzXhWMTI3tzAR6
-6pA5VGvGZqHuzYlPFTgb04wlOxiqTHq2Mx7oXbNxbj3fx/Djki7GyeSDUmua+Qgc
-teFFyi3KM/uxaVkHvmwAauBMnwzD2mM0rEtsDkBnVcI9ehHaJLc=
-=SriL
+iQIzBAEBCgAdFiEEopQtqVJW1aeuo9/sszaHOrMp8lMFAmlW8dEACgkQszaHOrMp
+8lPaLg/+ONlb7gqQCKE9enIpnUGWtnxNcy218e0ezBrkR2HxBwMALh/y6zkaYglh
+o4bG7tZbnRGWeXl+LMIMfl6oJS02M683l2gHtGCYpUNDsYaAh11+rLmLD0lEID0O
+PNbOmDSBbSLWDvf6lJin5b2vXe2nNd+K0dc7zQA6T8CiP7lblmWG+a3MyYah4tsT
+13A2/5tESelzow6B6+PagnekF+oFGyXNM5FvRUOQLXWqxe1D/DzU62Gz0XPpzL0F
+9KsELjRsOo4EFqe4voim4XkcjViEK6WR1u7UHmmm/CU4P32s6roEju8eBGSKW2iK
+ZKv19eQy/baVaZMeeOt8OI4vaz+ez4Fm8HLlTuqmizsQQDxSpmLnY5aqA47Xh6hE
+ZWW9JXvKnbKSGgFGq7Mbq9HgZUYULVo6kWHUXboYBy13xUxKeQfb4LNAQZE18lip
+p7NBZuS57l2kXNbmTHk+lix00YK0aPgAUNiWawsbCdxDSPxkH1a/dQCUiU4Rlwd+
+8JUEa6q8RMiLlX2Nkd0rzRSnuRQFi0fUiPMIKSSfh3T6TWwxVDu+V7PY19DbUtv1
+WWe1nK4EOp434dngNbTjsxBxPlxalGEBizH6KMuZnrMRPkz3SdhKxfFjZ0AYjwh/
+Jx02+1QpS1/ojYxy85Cx1HVB75rDmVRgIgX6A/7MC6BXG1cifGE=
+=z1J1
 -----END PGP SIGNATURE-----
 
---------------rOCacHqzUqgFcKncWVlg6nJp--
+--------------Bs0fy3tSZ5c320VIEBTisIQi--
