@@ -1,85 +1,83 @@
-Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871E119FA93
-	for <linux-security-module@vger.kernel.org>; Thu,  1 Jan 2026 19:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694BCA55
+	for <linux-security-module@vger.kernel.org>; Thu,  1 Jan 2026 19:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767295839; cv=none; b=SwtwxxVXmjCwVFH0R159algrogD0KF5N6dFv3c+9kVmHlzKT6nuK8pAWh4pQnSPGoVy0IL+0Jd6EBk7ViHoatbHFZYrP3w/wy5LioGHgjfCEOXIBpr2l1hMfNZqzIbtzuAqqvWO/sE0JPb/V+bBBVC2hHefHP6AdlWdFOGq4jGA=
+	t=1767296756; cv=none; b=Ag7LC3mELtdoezrUfaWqPhVexjoWh29XM3wIBBOoRoGvPrgT3rSIaYkQ7zQarEGZBauz7LyBAIPiejnK7R1yxzSueAbNWrIjZ8gtU4mfBsy57CsXBF3E0T1/2UCaLzFi6EAmM4/sDtT4M38Y4BbsFQHo4XyopPtvKB+g50YeJ8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767295839; c=relaxed/simple;
-	bh=B5IKqrhdW0bPhWMCR5/hc5TvIGu/+iIwuCicrRAVBN8=;
+	s=arc-20240116; t=1767296756; c=relaxed/simple;
+	bh=bSAgjYB9EPA3Ys2YWM75ezah6V0QQ72fmsZoXfGr1+I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bDjeUsYjQIeyPz3K1crSwdpyn0qvz0tvR2n6c5GJ56mgwLhgZL9JkjK7njf4scInVZK3hD5Lrp+cdD+y9LkNOTJZ6sUdwGqJV/Xo1NcomcYjyFSgRg/fG+lso/xxl4M4eSCBrf6WDWYnNWsGl/IX0mU4khHPBHboVgoM4Qolww4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YuZ2hTuz; arc=none smtp.client-ip=74.125.224.47
+	 MIME-Version:Content-Type; b=M5c1dslWz7VGqtRbv+jhrR4ADf7ihnLmaw5+sfc3cjiPWIi8hurmf1q/64WCjk4mMIOscz/LdtNonRY7WXJm/1Ki0ANAk8bvZ2ogodNOdvByxyZtsYg4s1iMG2n97sgsHX79Q5ZZEBVy4e4wXjdN3nSi/TTnF/VB0757pk27GFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ILVKKXCW; arc=none smtp.client-ip=209.85.128.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YuZ2hTuz"
-Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-6447743ce90so10620961d50.2
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Jan 2026 11:30:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILVKKXCW"
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-78e6dc6d6d7so99428497b3.3
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Jan 2026 11:45:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767295836; x=1767900636; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1767296753; x=1767901553; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IxZdoBeA6lJiL7xK7Qxgo4muiEwYtXrzwrR4yq314ZQ=;
-        b=YuZ2hTuzHIWrW7Up+HVfTheYJUPLUbR48085JanlgAErWuVg1XaJ4N0w7HCR1Fs5RT
-         V7pP3CN6JDbRDcmxNvBDmA0/VPxS/4Clf6v7EWVXWVYhZ02VKnxZCwAyQ3xB67M8d2SC
-         LsYFdZ3J7YG/ueR+/PKroy2dflYYzCfA8wZmNtMjZFouJKSmilO8EPk7WL+BGYwoGvZS
-         WCRXVZDbPs0jKueCPVvWQ1nA9m5p08Om7cNVVYu3imgq39qegZO9iwE0QiXuzvNvyjki
-         +TewhDF38U/iHwYOfW5x2QtI2ZE/Aqdm7ycVpBlWlOzLAmOEweGm+R2C8hhxmEs2oxQ5
-         88Ww==
+        bh=7OAhFdaLvRs7iUacPEf8Z2rB9Kc0SXtNutg6uKp0xro=;
+        b=ILVKKXCWYkYpJif3ba60QrouEChLr1Z9ksYD3rYxSOlWGKlq2nA4tJjwz/Ai1vQwni
+         pNnDJqgN7IJmW798ZEtApbofzu5/5oaq6qysaXjBqczbN4C8xZnSPHQAa9C6uRhKC1Wc
+         j4rWytqjG5FjzOc3xJ8yadBozffV8H8kB87rFR5qxPXijZoEh0V2BCBLjCrOF73bW+NP
+         D6RFDkjIj0krLA/sH6MX7vNf0xVaeUf+AuE6c76Mb+zeGyDdmmJqzWSbEZgf0g5NAeRe
+         3XZpk0FeBwCdmtLfx6lZTk3Rrr6+suuMdcVm6PV1+nfpapqR2vZx0LTgyXeChuhskZH9
+         jzew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767295836; x=1767900636;
+        d=1e100.net; s=20230601; t=1767296753; x=1767901553;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=IxZdoBeA6lJiL7xK7Qxgo4muiEwYtXrzwrR4yq314ZQ=;
-        b=LY6+aniGg7C0VWb1Uxwl8uFgi5/2cbWHgLvhe+6uPtQxgLwbx2sdwt8/WE5F5z7y1u
-         PMQj284rHX/vbicY28nh1npeVOFWEgqO0ktn8nmQUVbyrwoShUwiydr2DaZUZZ/lbCpl
-         Bsf0ZkvEknJfcnNdQLvGob2CrJp437xzEqtFWaNLwWL0o0D3g0QSUp1KrHtRamkAEBCO
-         tbaMzGBbnsKhK77/s8xOIsakIuTBW6qj9dByQFEtwP7M9Jqdrak34y7dEuVutF1/oNZV
-         6kGHW2IarZo8fwtiboqjV/GTcNC3jKi+up9QC8VD6/vtmDseA1tLw6r0oKzwBax8Nmi+
-         6Oaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlHpUrXzl8DIuwN/FEAMsnQUrf0nsAS2CPMfGzB5f2qQkCLY+Aor08wjtb0oB0DmrWpEMYFmHtzKRV1YUQUw4Lj7i2Q7g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNdGDxDRbb3wkS+ObnYnYbtImKObT1dkZu/tiASZ8+K+IDpVFL
-	jpCjfxa5rRKkXB8J8vy11ktxb4jbJTTW3B45H8yp/ahDiMEYgFEvKBBi
-X-Gm-Gg: AY/fxX6a1or/O9BL5za7fOEQngIlfwEUQbcqZXN8k69VdPlGy3f2Tvng5Jbdp9AqOEW
-	AwaRpgASkyxAfo/S4qcm4gtMbVEdSV+7er4LE0DVQtBB51euveTNznnpxXRW7t3LFFmmARhsMVf
-	sYLlWoBZ3QURrGckuFnDUOcK8TVjYOs4u868sSpC+hzLdD1MpEzcDX7+eCgjbhtoz3EbD1zplHj
-	qX4ARISieYQIbA1koBffhUpzaSPb+i2owbFRWkPIDvpoi4FY8dweDfhN4PYfjXM8VIA/FrEPh08
-	8Py/FCM72hdd++wwLkVRzMlFDNCiGuAp4PBegDKobi1xO9dBUEERSvXJjYc7GXMWWjmuJOzTGV7
-	yhvqertxHQgsF0BJAGYdlEqwJ4R2ChDUjlXEAvYaeoCmCLwfRnzhbFEEGC3Hdg1tFmdjHQYOq8w
-	tAoa4rypavrSRxAGde+f5zJHXN0MNovWCci/arN7wwURYgYuTOPqr2HyRagmxC
-X-Google-Smtp-Source: AGHT+IEPXgpDYLnB9QCsAagrSJIdmVqjlVp3cb9qjjMo7Y1T2JML67SMnvJrACDUDeY0rl5h1ikfIA==
-X-Received: by 2002:a05:690e:1918:b0:646:81e0:1340 with SMTP id 956f58d0204a3-64681e015a5mr26590446d50.71.1767295836293;
-        Thu, 01 Jan 2026 11:30:36 -0800 (PST)
+        bh=7OAhFdaLvRs7iUacPEf8Z2rB9Kc0SXtNutg6uKp0xro=;
+        b=pFdOKXdUA088pldK/QsUAxpEECWtHD7uIBPx7B0rseYZ/ec7KzvrJ2PC1DT2wT3Htl
+         4OvotGgu5lHbEnwlSpYJ0l143k+jouBuuy0+OT60ga3F4ToZrjOzg9ak/G5IxmYCepvq
+         N2f71tbpncb8IRjYDgq2aUgW8iMnUC6MTHII4tBQIBuWF/kZLj1JHWSxz9Pzy+NMw7gZ
+         Wl5h+NRdVd4Z76I5MW56xLiXbXO1hYddBfZba88IOBV0kcmeRnMlQPZJ5p0uIgt9DWbV
+         tdGk7B75NVwObDPilsMhzpiZZ6doMRM0Zys7KLsX/u5hfm/WYxhsybNrXO7E9fxjHUZH
+         xwag==
+X-Forwarded-Encrypted: i=1; AJvYcCVlIGDdOaZS5xfOWqmfNbyYQ6GzITTOxcUxhLHzC2ZwLmmVopXcrhZrCPW/imLg4gxV/KJE2kPx+55Gfyp432q5bq+Sx0w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJT/zhWikqwyFDVc2nJpkHOBeKCH8RypIgieLeEeqSsxI6/vDu
+	r856qLHuK5t0uKJ7T/G0xrPjw5HrsXZ+Wm7InxdMEBm/ak/99+PpHwqI
+X-Gm-Gg: AY/fxX69F7PHAvbrvGqIWYlDhNHcoiC2IuR/BvObC+YaAfecConctZCeHQgqR4Bv2TC
+	tQ7Oe64TOoL/xxaMTGxet3rRYI7mWdWvTKdCyGy7q/u2P1fhoUmyH8/CFZVpDEADtCVynVCXeIY
+	eC+MFy1ferfnYTnqCToMH27sTS0JsZC1yMaz0+xVcuWHQ/DQNaI3/JdNBuKCIOb7to3iB8XepOo
+	pkj/UXN5951bEJIf7LBC6Z7afJbKrW2OxeRw97Gok64No8Az/rENMdwiGQsjBDbBx9R5njoEUMi
+	x8iV2mZFOMtSkst3leDElCpGUNShqxjubJcBecQJc3GgscJlAttFFRMzS8HAEW1QdfQgGk2jv92
+	wW9VLI/8lP8k0l3vVw9OWrfdH8kdXaYdVsP/cJaeaA8YFVIRGE50VHyDrpYGyIw/b5p6z5P88P1
+	vHYAPtpoquzWvVGezs72yK+C9qH/95JvpSoofUcsQOm1v4COVv6+mnL6dTgr8x
+X-Google-Smtp-Source: AGHT+IG1e2DHKPCMbaxwj/kHN9AdC9I6qKROsB4Uo1E2tjzY+gP5nAuCmg6HKpr62SwKuSL7R5/yTA==
+X-Received: by 2002:a05:690c:46c6:b0:78c:5aa8:6dde with SMTP id 00721157ae682-78fb40b2632mr334461237b3.70.1767296753389;
+        Thu, 01 Jan 2026 11:45:53 -0800 (PST)
 Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6466a92d913sm18923576d50.20.2026.01.01.11.30.35
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78fb439b8acsm150472957b3.13.2026.01.01.11.45.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jan 2026 11:30:35 -0800 (PST)
+        Thu, 01 Jan 2026 11:45:52 -0800 (PST)
 From: Justin Suess <utilityemal77@gmail.com>
 To: gnoack3000@gmail.com
-Cc: demiobenour@gmail.com,
-	fahimitahera@gmail.com,
-	hi@alyssa.is,
-	ivanov.mikhail1@huawei-partners.com,
-	jannh@google.com,
-	konstantin.meskhidze@huawei.com,
+Cc: gnoack@google.com,
+	horms@kernel.org,
+	jmorris@namei.org,
+	kuniyu@google.com,
 	linux-security-module@vger.kernel.org,
 	m@maowtm.org,
-	matthieu@buffet.re,
 	mic@digikod.net,
+	netdev@vger.kernel.org,
 	paul@paul-moore.com,
-	samasth.norway.ananda@oracle.com,
+	serge@hallyn.com,
 	utilityemal77@gmail.com
-Subject: Re: [RFC PATCH 3/5] samples/landlock: Add support for LANDLOCK_ACCESS_FS_CONNECT_UNIX
-Date: Thu,  1 Jan 2026 14:30:06 -0500
-Message-ID: <20260101193009.4005972-1-utilityemal77@gmail.com>
+Subject: Re: [RFC PATCH 0/1] lsm: Add hook unix_path_connect
+Date: Thu,  1 Jan 2026 14:45:50 -0500
+Message-ID: <20260101194551.4017198-1-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260101134102.25938-4-gnoack3000@gmail.com>
-References: <20260101134102.25938-4-gnoack3000@gmail.com>
+In-Reply-To: <20260101.f6d0f71ca9bb@gnoack.org>
+References: <20260101.f6d0f71ca9bb@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -89,128 +87,165 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Allow users to separately specify unix socket rights,
-document the variable, and make the right optional.
+On 1/1/26 07:13, Günther Noack wrote:
+> On Wed, Dec 31, 2025 at 04:33:14PM -0500, Justin Suess wrote:
+>> Adds an LSM hook unix_path_connect.
+>>
+>> This hook is called to check the path of a named unix socket before a
+>> connection is initiated.
+>>
+>> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+>> Cc: Günther Noack <gnoack3000@gmail.com>
+>> ---
+>>  include/linux/lsm_hook_defs.h |  1 +
+>>  include/linux/security.h      |  6 ++++++
+>>  net/unix/af_unix.c            |  8 ++++++++
+>>  security/security.c           | 16 ++++++++++++++++
+>>  4 files changed, 31 insertions(+)
+>>
+>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+>> index 8c42b4bde09c..a42d1aaf3b8a 100644
+>> --- a/include/linux/lsm_hook_defs.h
+>> +++ b/include/linux/lsm_hook_defs.h
+>> @@ -318,6 +318,7 @@ LSM_HOOK(int, 0, watch_key, struct key *key)
+>>  #endif /* CONFIG_SECURITY && CONFIG_KEY_NOTIFICATIONS */
+>>  
+>>  #ifdef CONFIG_SECURITY_NETWORK
+>> +LSM_HOOK(int, 0, unix_path_connect, const struct path *path)
+>
+> You are placing this guarded by CONFIG_SECURITY_NETWORK, but there is
+> also CONFIG_SECURITY_PATH.  Should it be guarded by both?
 
-Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-Cc: Günther Noack <gnoack3000@gmail.com>
----
+Agreed. I've moved it to a separate #if block with both
+CONFIG_SECURITY_NETWORK and CONFIG_SECURITY_PATH for this and the other
+places it was needed.
 
-Notes:
+>
+>
+>
+>>  LSM_HOOK(int, 0, unix_stream_connect, struct sock *sock, struct sock *other,
+>>  	 struct sock *newsk)
+>>  LSM_HOOK(int, 0, unix_may_send, struct socket *sock, struct socket *other)
+>> diff --git a/include/linux/security.h b/include/linux/security.h
+>> index 83a646d72f6f..ab66f22f7e5a 100644
+>> --- a/include/linux/security.h
+>> +++ b/include/linux/security.h
+>> @@ -1638,6 +1638,7 @@ static inline int security_watch_key(struct key *key)
+>>  
+>>  #ifdef CONFIG_SECURITY_NETWORK
+>>  
+>> +int security_unix_path_connect(const struct path *path);
+>>  int security_netlink_send(struct sock *sk, struct sk_buff *skb);
+>>  int security_unix_stream_connect(struct sock *sock, struct sock *other, struct sock *newsk);
+>>  int security_unix_may_send(struct socket *sock,  struct socket *other);
+>> @@ -1699,6 +1700,11 @@ static inline int security_netlink_send(struct sock *sk, struct sk_buff *skb)
+>>  	return 0;
+>>  }
+>>  
+>> +static inline int security_unix_path_connect(const struct path *path)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>>  static inline int security_unix_stream_connect(struct sock *sock,
+>>  					       struct sock *other,
+>>  					       struct sock *newsk)
+>> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+>> index 55cdebfa0da0..af1a6083a69b 100644
+>> --- a/net/unix/af_unix.c
+>> +++ b/net/unix/af_unix.c
+>> @@ -1226,6 +1226,14 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
+>>  	if (!S_ISSOCK(inode->i_mode))
+>>  		goto path_put;
+>>  
+>> +	/*
+>> +	 * We call the hook because we know that the inode is a socket
+>> +	 * and we hold a valid reference to it via the path.
+>> +	 */
+>> +	err = security_unix_path_connect(&path);
+>> +	if (err)
+>> +		goto path_put;
+>
+> In this place, the hook call is done also for the coredump socket.
+>
+> The coredump socket is a system-wide setting, and it feels weird to me
+> that unprivileged processes should be able to inhibit that connection?
 
-    Small fixup suggestion patch to this RFC series.
+No I don't think they should be able to. Does this look better?
 
-    Handling the unix connect rights separate from
-    other rights makes more sense, and makes the sandboxer
-    much easier to use. Also connect doesn't really neatly
-    correspond to "roughly write" in my opinion, so this puts
-    it in a separate variable documented in the help printout.
-    
-    This also makes it possible to specify rights on the socket itself,
-    which wasn't possible.
-    
-    before:
-    ~ # LL_FS_RO=/ LL_FS_RW=/tmp/test.sock landlock-sandboxer sh -c 'echo "hello" |
-    socat - UNIX-CONNECT:/tmp/test.sock'
-    Executing the sandboxed command...
-    2026/01/01 19:14:33 socat[78] E connect(, AF=1 "/tmp/test.sock", 16): Permission denied
-    
-    after:
-    ~ # LL_FS_RO=/ LL_FS_RW= LL_UNIX_CONNECT=/tmp/test.sock landlock-sandboxer sh -c
-     'echo "hello" | socat - UNIX-CONNECT:/tmp/test.sock'
-    Executing the sandboxed command...
-    hello
+It also fixes overwriting the the error code when the hook returns.
 
- samples/landlock/sandboxer.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
-
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index b24ef317d1ea..3df7e7c8b6f1 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -62,6 +62,7 @@ static inline int landlock_restrict_self(const int ruleset_fd,
- #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
- #define ENV_SCOPED_NAME "LL_SCOPED"
- #define ENV_FORCE_LOG_NAME "LL_FORCE_LOG"
-+#define ENV_UNIX_CONNECT_NAME "LL_UNIX_CONNECT"
- #define ENV_DELIMITER ":"
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 55cdebfa0da0..397687e2d87f 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -1226,6 +1226,18 @@ static struct sock *unix_find_bsd(struct
+sockaddr_un *sunaddr, int addr_len,
+        if (!S_ISSOCK(inode->i_mode))
+                goto path_put;
  
- static int str2num(const char *numstr, __u64 *num_dst)
-@@ -163,8 +164,14 @@ static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
- 			goto out_free_name;
- 		}
- 		path_beneath.allowed_access = allowed_access;
--		if (!S_ISDIR(statbuf.st_mode))
-+		if (!S_ISDIR(statbuf.st_mode)) {
- 			path_beneath.allowed_access &= ACCESS_FILE;
-+			/* Keep CONNECT_UNIX for socket files. */
-+			if (S_ISSOCK(statbuf.st_mode))
-+				path_beneath.allowed_access |=
-+					allowed_access &
-+					LANDLOCK_ACCESS_FS_CONNECT_UNIX;
-+		}
- 		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
- 				      &path_beneath, 0)) {
- 			fprintf(stderr,
-@@ -295,8 +302,7 @@ static bool check_ruleset_scope(const char *const env_var,
- 	LANDLOCK_ACCESS_FS_MAKE_SYM | \
- 	LANDLOCK_ACCESS_FS_REFER | \
- 	LANDLOCK_ACCESS_FS_TRUNCATE | \
--	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
--	LANDLOCK_ACCESS_FS_CONNECT_UNIX)
-+	LANDLOCK_ACCESS_FS_IOCTL_DEV)
- 
- /* clang-format on */
- 
-@@ -326,6 +332,7 @@ static const char help[] =
- 	"* " ENV_SCOPED_NAME ": actions denied on the outside of the landlock domain\n"
- 	"  - \"a\" to restrict opening abstract unix sockets\n"
- 	"  - \"s\" to restrict sending signals\n"
-+	"* " ENV_UNIX_CONNECT_NAME ": paths of unix sockets connections are allowed to\n"
- 	"\n"
- 	"A sandboxer should not log denied access requests to avoid spamming logs, "
- 	"but to test audit we can set " ENV_FORCE_LOG_NAME "=1\n"
-@@ -353,7 +360,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 	      access_fs_rw = ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE;
- 
- 	struct landlock_ruleset_attr ruleset_attr = {
--		.handled_access_fs = access_fs_rw,
-+		.handled_access_fs = access_fs_rw | LANDLOCK_ACCESS_FS_CONNECT_UNIX,
- 		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
- 				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
- 		.scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
-@@ -460,9 +467,6 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 			"provided by ABI version %d (instead of %d).\n",
- 			abi, LANDLOCK_ABI_LAST);
- 	}
--	access_fs_ro &= ruleset_attr.handled_access_fs;
--	access_fs_rw &= ruleset_attr.handled_access_fs;
--
- 	/* Removes bind access attribute if not supported by a user. */
- 	env_port_name = getenv(ENV_TCP_BIND_NAME);
- 	if (!env_port_name) {
-@@ -476,6 +480,9 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
- 	}
- 
-+	access_fs_ro &= ruleset_attr.handled_access_fs;
-+	access_fs_rw &= ruleset_attr.handled_access_fs;
++       /*
++        * We call the hook because we know that the inode is a socket
++        * and we hold a valid reference to it via the path.
++        * We intentionally forgo the ability to restrict SOCK_COREDUMP.
++        */
++       if (!(flags & SOCK_COREDUMP)) {
++               err = security_unix_path_connect(&path);
++               if (err)
++                       goto path_put;
++               err = -ECONNREFUSED;
++       }
 +
- 	if (check_ruleset_scope(ENV_SCOPED_NAME, &ruleset_attr))
- 		return 1;
- 
-@@ -510,6 +517,11 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 	if (populate_ruleset_fs(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
- 		goto err_close_ruleset;
- 	}
-+	if (getenv(ENV_UNIX_CONNECT_NAME) &&
-+	    populate_ruleset_fs(ENV_UNIX_CONNECT_NAME, ruleset_fd,
-+				LANDLOCK_ACCESS_FS_CONNECT_UNIX)) {
-+		goto err_close_ruleset;
-+	}
- 
- 	if (populate_ruleset_net(ENV_TCP_BIND_NAME, ruleset_fd,
- 				 LANDLOCK_ACCESS_NET_BIND_TCP)) {
--- 
-2.51.0
+        sk = unix_find_socket_byinode(inode);
+        if (!sk)
+                goto path_put;
+
+>
+>
+>> +
+>>  	sk = unix_find_socket_byinode(inode);
+>>  	if (!sk)
+>>  		goto path_put;
+>> diff --git a/security/security.c b/security/security.c
+>> index 31a688650601..17af5d0ddf28 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -4047,6 +4047,22 @@ int security_unix_stream_connect(struct sock *sock, struct sock *other,
+>>  }
+>>  EXPORT_SYMBOL(security_unix_stream_connect);
+>>  
+>> +/*
+>> + * security_unix_path_connect() - Check if a named AF_UNIX socket can connect
+>> + * @path: Path of the socket being connected to
+>              ^
+> mega-nit: lowercase for consistency
+Gotcha.
+>
+>
+>> + *
+>> + * This hook is called to check permissions before connecting to a named
+>> + * AF_UNIX socket. This is necessary because it was not possible to check the
+>> + * VFS inode of the target socket before the connection is made.
+>
+> I'd drop the last sentence; the defense why this is necessary can go
+> in the commit message, and once we have a call-site for the hook,
+> someone browsing the kernel code can look up what it is used for.
+Sounds good to me.
+>
+>
+>> + *
+>> + * Return: Returns 0 if permission is granted.
+>> + */
+>> +int security_unix_path_connect(const struct path *path)
+>> +{
+>> +	return call_int_hook(unix_path_connect, path);
+>> +}
+>> +EXPORT_SYMBOL(security_unix_path_connect);
+>> +
+>>  /**
+>>   * security_unix_may_send() - Check if AF_UNIX socket can send datagrams
+>>   * @sock: originating sock
+>> -- 
+>> 2.51.0
+>>
 
