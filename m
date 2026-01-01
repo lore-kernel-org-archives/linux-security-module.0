@@ -1,84 +1,85 @@
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE48D1DA0E1
-	for <linux-security-module@vger.kernel.org>; Thu,  1 Jan 2026 13:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871E119FA93
+	for <linux-security-module@vger.kernel.org>; Thu,  1 Jan 2026 19:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767274881; cv=none; b=Bsi3/iOBBlV4vT9rRg2L/x0behtLBIAVvnr69zzo9C5gaxl7yDPtLyYbLVYU0xJwN6o6hx3bNoI6hcGcbBPAmnpTbGG2jI0io0x3AlSp8MnISzYn6fduI9yoNpv/yFvfnirtaEyV5bi9PXsdzvB/miFiFjGcckOWTAlrhCdrNUA=
+	t=1767295839; cv=none; b=SwtwxxVXmjCwVFH0R159algrogD0KF5N6dFv3c+9kVmHlzKT6nuK8pAWh4pQnSPGoVy0IL+0Jd6EBk7ViHoatbHFZYrP3w/wy5LioGHgjfCEOXIBpr2l1hMfNZqzIbtzuAqqvWO/sE0JPb/V+bBBVC2hHefHP6AdlWdFOGq4jGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767274881; c=relaxed/simple;
-	bh=kBnsTKBcoQX7rR327LF6KFuyma/K4gLC0YssWx9j4Ag=;
+	s=arc-20240116; t=1767295839; c=relaxed/simple;
+	bh=B5IKqrhdW0bPhWMCR5/hc5TvIGu/+iIwuCicrRAVBN8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r6tJRMcGP8o4xyX3R3yVKykZjV2Ss7RCo6V8Igj1upl+XFAWuNMNW5O+hG0nBsd0KwO0i+mDo+UymFMzJ5ivaG5qQftS874AOCMj+gredtspm3H9aZGsxW1rfsBVQymNpOJcUXt4vEB6mGRX7AnKIoyuPTvefG5x1QYIVcdu/18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AxeMY5LA; arc=none smtp.client-ip=209.85.218.67
+	 MIME-Version:Content-Type; b=bDjeUsYjQIeyPz3K1crSwdpyn0qvz0tvR2n6c5GJ56mgwLhgZL9JkjK7njf4scInVZK3hD5Lrp+cdD+y9LkNOTJZ6sUdwGqJV/Xo1NcomcYjyFSgRg/fG+lso/xxl4M4eSCBrf6WDWYnNWsGl/IX0mU4khHPBHboVgoM4Qolww4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YuZ2hTuz; arc=none smtp.client-ip=74.125.224.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AxeMY5LA"
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-b7ce5d6627dso2057644866b.2
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Jan 2026 05:41:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YuZ2hTuz"
+Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-6447743ce90so10620961d50.2
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Jan 2026 11:30:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767274878; x=1767879678; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1767295836; x=1767900636; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mkq6Iz5zamhxmkTWblPAHDAlaF05J/Fmp+v+yTuwMjw=;
-        b=AxeMY5LATcUXui/D3FjOgSQAq5zpn0YYyY7hhKimyB/bSC4FUSSfJNkyNC7RO8rBuE
-         SFYJmFsEmyKNSR6FIiNwzJeABROhWLXGsgVrkb7UK2n/OPoi+gJPSRpsfYXoaggWPRTJ
-         LfWgOQRI+XnTkDL7Dd+jcMFPQmdPd1jjyv7YxFNiONYlR8BbZtz5n5uG7jBiivunkvRl
-         WOvv7c54jgJF8aBJDHYr2WahZmT8aSXHKOR4nM1iqHFyzgt84L97oQb2yum8DpGw36Hm
-         BxeJ94kofO+WZNq4/nIrjN81SVlJ7SWOZgM+mwGP3+83dVN+S16AW1TCo4PNVKmf1THR
-         V+0A==
+        bh=IxZdoBeA6lJiL7xK7Qxgo4muiEwYtXrzwrR4yq314ZQ=;
+        b=YuZ2hTuzHIWrW7Up+HVfTheYJUPLUbR48085JanlgAErWuVg1XaJ4N0w7HCR1Fs5RT
+         V7pP3CN6JDbRDcmxNvBDmA0/VPxS/4Clf6v7EWVXWVYhZ02VKnxZCwAyQ3xB67M8d2SC
+         LsYFdZ3J7YG/ueR+/PKroy2dflYYzCfA8wZmNtMjZFouJKSmilO8EPk7WL+BGYwoGvZS
+         WCRXVZDbPs0jKueCPVvWQ1nA9m5p08Om7cNVVYu3imgq39qegZO9iwE0QiXuzvNvyjki
+         +TewhDF38U/iHwYOfW5x2QtI2ZE/Aqdm7ycVpBlWlOzLAmOEweGm+R2C8hhxmEs2oxQ5
+         88Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767274878; x=1767879678;
+        d=1e100.net; s=20230601; t=1767295836; x=1767900636;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=mkq6Iz5zamhxmkTWblPAHDAlaF05J/Fmp+v+yTuwMjw=;
-        b=hNFHDltarINF0dWtOTNwDw9gHZAxuoDA2H4YR40M+ALJm5qZSaGQDPp3Eq5T0D1wPx
-         c/XpoIrX8R/CnJ8FUKMFQjmYFgbDrKFB7wvZxQCS5vrODrEmmgTHL7VPe5SaLZlLa3XD
-         xMhao3+z8KsnKX53NU7Xvwh9K/CsnNMWKsaLcTtj1d2I3aZU27eNQ1c4lI/3NG3i2hXf
-         FG+qlJUNlBdqiuqHCzUjDRDrEMig3EAoMV+AnWWksTC5du4Of53Kd6p8QChHFtJwG9Ml
-         FeSNI9lUCQinpr4r/cUO/UevMd7457EuQklX5qmwTRFYMdvGtnP5zzCZ0FTGhYuKxci4
-         P5yw==
-X-Gm-Message-State: AOJu0Yxj/C7I5BLjSCXxYY/SPzzyi8+II9RRkAL/Uwkrxpk2g+D7d3LL
-	K2zv4HH+ja4wvmCqJoxdMciMfMnzHS4Sjq/tGhq/QPAA+R9fyzSrIj506+vTYH6p
-X-Gm-Gg: AY/fxX6DkeM+ccoIgdmb9X8F15HzrwtUmcSBhTIh+QggtukdAWgmqq9N5DYjI7wVbrs
-	EK2PRQG9tYrHlGCqjE+x9gppvlyUrk8HKfJnbFGHadtZ8mxUVaA4NrQ9dg+itgFPxIxtvBLDPS7
-	vxpra4sM59EQut9P1UX6vvtHLzR547+YSfxjpuzlkQ1jF9Mi7sEJK+wgjSRV3RZLep5zopWY6Vl
-	USGMRemLCxW5cmduTe1QBVfY/QBG1tWk1/exNITIUXmleET5MyJ2lsnISZDIh8+YQekWzJsN3Ej
-	Ln9gyFYUZhoRcyGu/CpzrSrR+rBir3Fi6yXQ294aEjcRlHqyetZXNQF2l/9ofqY+YDLXFu9mZAR
-	7QEA2eiue6Y3rITT3hEL3Hctd/0udHBnb7PrLhd+yzJB47YYie8VfDRrnFTbZA4CeoCoxjQE9ow
-	LIwRWNyBpaC+RwyhpIZTGZvVESU5grX6ibmOGS
-X-Google-Smtp-Source: AGHT+IGrTgxM34TKK95LGrF6btQwz+NtaS/79RByYHTVGu2Uki+5quHdY0/p+N00Io0IfIwlefeHfQ==
-X-Received: by 2002:a17:907:7e82:b0:b79:ff94:50ff with SMTP id a640c23a62f3a-b8037178545mr4123634166b.34.1767274878151;
-        Thu, 01 Jan 2026 05:41:18 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64b91494dd3sm40995903a12.21.2026.01.01.05.41.17
+        bh=IxZdoBeA6lJiL7xK7Qxgo4muiEwYtXrzwrR4yq314ZQ=;
+        b=LY6+aniGg7C0VWb1Uxwl8uFgi5/2cbWHgLvhe+6uPtQxgLwbx2sdwt8/WE5F5z7y1u
+         PMQj284rHX/vbicY28nh1npeVOFWEgqO0ktn8nmQUVbyrwoShUwiydr2DaZUZZ/lbCpl
+         Bsf0ZkvEknJfcnNdQLvGob2CrJp437xzEqtFWaNLwWL0o0D3g0QSUp1KrHtRamkAEBCO
+         tbaMzGBbnsKhK77/s8xOIsakIuTBW6qj9dByQFEtwP7M9Jqdrak34y7dEuVutF1/oNZV
+         6kGHW2IarZo8fwtiboqjV/GTcNC3jKi+up9QC8VD6/vtmDseA1tLw6r0oKzwBax8Nmi+
+         6Oaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVlHpUrXzl8DIuwN/FEAMsnQUrf0nsAS2CPMfGzB5f2qQkCLY+Aor08wjtb0oB0DmrWpEMYFmHtzKRV1YUQUw4Lj7i2Q7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNdGDxDRbb3wkS+ObnYnYbtImKObT1dkZu/tiASZ8+K+IDpVFL
+	jpCjfxa5rRKkXB8J8vy11ktxb4jbJTTW3B45H8yp/ahDiMEYgFEvKBBi
+X-Gm-Gg: AY/fxX6a1or/O9BL5za7fOEQngIlfwEUQbcqZXN8k69VdPlGy3f2Tvng5Jbdp9AqOEW
+	AwaRpgASkyxAfo/S4qcm4gtMbVEdSV+7er4LE0DVQtBB51euveTNznnpxXRW7t3LFFmmARhsMVf
+	sYLlWoBZ3QURrGckuFnDUOcK8TVjYOs4u868sSpC+hzLdD1MpEzcDX7+eCgjbhtoz3EbD1zplHj
+	qX4ARISieYQIbA1koBffhUpzaSPb+i2owbFRWkPIDvpoi4FY8dweDfhN4PYfjXM8VIA/FrEPh08
+	8Py/FCM72hdd++wwLkVRzMlFDNCiGuAp4PBegDKobi1xO9dBUEERSvXJjYc7GXMWWjmuJOzTGV7
+	yhvqertxHQgsF0BJAGYdlEqwJ4R2ChDUjlXEAvYaeoCmCLwfRnzhbFEEGC3Hdg1tFmdjHQYOq8w
+	tAoa4rypavrSRxAGde+f5zJHXN0MNovWCci/arN7wwURYgYuTOPqr2HyRagmxC
+X-Google-Smtp-Source: AGHT+IEPXgpDYLnB9QCsAagrSJIdmVqjlVp3cb9qjjMo7Y1T2JML67SMnvJrACDUDeY0rl5h1ikfIA==
+X-Received: by 2002:a05:690e:1918:b0:646:81e0:1340 with SMTP id 956f58d0204a3-64681e015a5mr26590446d50.71.1767295836293;
+        Thu, 01 Jan 2026 11:30:36 -0800 (PST)
+Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6466a92d913sm18923576d50.20.2026.01.01.11.30.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jan 2026 05:41:17 -0800 (PST)
-From: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org,
-	Tingmao Wang <m@maowtm.org>,
-	Justin Suess <utilityemal77@gmail.com>,
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+        Thu, 01 Jan 2026 11:30:35 -0800 (PST)
+From: Justin Suess <utilityemal77@gmail.com>
+To: gnoack3000@gmail.com
+Cc: demiobenour@gmail.com,
+	fahimitahera@gmail.com,
+	hi@alyssa.is,
+	ivanov.mikhail1@huawei-partners.com,
+	jannh@google.com,
 	konstantin.meskhidze@huawei.com,
-	Demi Marie Obenour <demiobenour@gmail.com>,
-	Alyssa Ross <hi@alyssa.is>,
-	Jann Horn <jannh@google.com>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [RFC PATCH 5/5] landlock: Document LANDLOCK_ACCESS_FS_UNIX_CONNECT
-Date: Thu,  1 Jan 2026 14:41:02 +0100
-Message-ID: <20260101134102.25938-6-gnoack3000@gmail.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260101134102.25938-1-gnoack3000@gmail.com>
-References: <20260101134102.25938-1-gnoack3000@gmail.com>
+	linux-security-module@vger.kernel.org,
+	m@maowtm.org,
+	matthieu@buffet.re,
+	mic@digikod.net,
+	paul@paul-moore.com,
+	samasth.norway.ananda@oracle.com,
+	utilityemal77@gmail.com
+Subject: Re: [RFC PATCH 3/5] samples/landlock: Add support for LANDLOCK_ACCESS_FS_CONNECT_UNIX
+Date: Thu,  1 Jan 2026 14:30:06 -0500
+Message-ID: <20260101193009.4005972-1-utilityemal77@gmail.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260101134102.25938-4-gnoack3000@gmail.com>
+References: <20260101134102.25938-4-gnoack3000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -88,52 +89,128 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Cc: Justin Suess <utilityemal77@gmail.com>
-Cc: Mickaël Salaün <mic@digikod.net>
-Signed-off-by: Günther Noack <gnoack3000@gmail.com>
----
- Documentation/userspace-api/landlock.rst | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+Allow users to separately specify unix socket rights,
+document the variable, and make the right optional.
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 1d0c2c15c22e3..6efb5c51253b0 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -77,7 +77,8 @@ to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_FS_MAKE_SYM |
-             LANDLOCK_ACCESS_FS_REFER |
-             LANDLOCK_ACCESS_FS_TRUNCATE |
--            LANDLOCK_ACCESS_FS_IOCTL_DEV,
-+            LANDLOCK_ACCESS_FS_IOCTL_DEV |
-+            LANDLOCK_ACCESS_FS_UNIX_CONNECT,
-         .handled_access_net =
-             LANDLOCK_ACCESS_NET_BIND_TCP |
-             LANDLOCK_ACCESS_NET_CONNECT_TCP,
-@@ -127,6 +128,10 @@ version, and only use the available subset of access rights:
-         /* Removes LANDLOCK_SCOPE_* for ABI < 6 */
-         ruleset_attr.scoped &= ~(LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
-                                  LANDLOCK_SCOPE_SIGNAL);
-+        __attribute__((fallthrough));
-+    case 7:
-+        /* Removes LANDLOCK_ACCESS_FS_UNIX_CONNECT for ABI < 8 */
-+        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_UNIX_CONNECT;
-     }
+Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+Cc: Günther Noack <gnoack3000@gmail.com>
+---
+
+Notes:
+
+    Small fixup suggestion patch to this RFC series.
+
+    Handling the unix connect rights separate from
+    other rights makes more sense, and makes the sandboxer
+    much easier to use. Also connect doesn't really neatly
+    correspond to "roughly write" in my opinion, so this puts
+    it in a separate variable documented in the help printout.
+    
+    This also makes it possible to specify rights on the socket itself,
+    which wasn't possible.
+    
+    before:
+    ~ # LL_FS_RO=/ LL_FS_RW=/tmp/test.sock landlock-sandboxer sh -c 'echo "hello" |
+    socat - UNIX-CONNECT:/tmp/test.sock'
+    Executing the sandboxed command...
+    2026/01/01 19:14:33 socat[78] E connect(, AF=1 "/tmp/test.sock", 16): Permission denied
+    
+    after:
+    ~ # LL_FS_RO=/ LL_FS_RW= LL_UNIX_CONNECT=/tmp/test.sock landlock-sandboxer sh -c
+     'echo "hello" | socat - UNIX-CONNECT:/tmp/test.sock'
+    Executing the sandboxed command...
+    hello
+
+ samples/landlock/sandboxer.c | 26 +++++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
+
+diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+index b24ef317d1ea..3df7e7c8b6f1 100644
+--- a/samples/landlock/sandboxer.c
++++ b/samples/landlock/sandboxer.c
+@@ -62,6 +62,7 @@ static inline int landlock_restrict_self(const int ruleset_fd,
+ #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
+ #define ENV_SCOPED_NAME "LL_SCOPED"
+ #define ENV_FORCE_LOG_NAME "LL_FORCE_LOG"
++#define ENV_UNIX_CONNECT_NAME "LL_UNIX_CONNECT"
+ #define ENV_DELIMITER ":"
  
- This enables the creation of an inclusive ruleset that will contain our rules.
-@@ -604,6 +609,13 @@ Landlock audit events with the ``LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF``,
- sys_landlock_restrict_self().  See Documentation/admin-guide/LSM/landlock.rst
- for more details on audit.
+ static int str2num(const char *numstr, __u64 *num_dst)
+@@ -163,8 +164,14 @@ static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
+ 			goto out_free_name;
+ 		}
+ 		path_beneath.allowed_access = allowed_access;
+-		if (!S_ISDIR(statbuf.st_mode))
++		if (!S_ISDIR(statbuf.st_mode)) {
+ 			path_beneath.allowed_access &= ACCESS_FILE;
++			/* Keep CONNECT_UNIX for socket files. */
++			if (S_ISSOCK(statbuf.st_mode))
++				path_beneath.allowed_access |=
++					allowed_access &
++					LANDLOCK_ACCESS_FS_CONNECT_UNIX;
++		}
+ 		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
+ 				      &path_beneath, 0)) {
+ 			fprintf(stderr,
+@@ -295,8 +302,7 @@ static bool check_ruleset_scope(const char *const env_var,
+ 	LANDLOCK_ACCESS_FS_MAKE_SYM | \
+ 	LANDLOCK_ACCESS_FS_REFER | \
+ 	LANDLOCK_ACCESS_FS_TRUNCATE | \
+-	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
+-	LANDLOCK_ACCESS_FS_CONNECT_UNIX)
++	LANDLOCK_ACCESS_FS_IOCTL_DEV)
  
-+Pathname UNIX sockets (ABI < 8)
-+-------------------------------
+ /* clang-format on */
+ 
+@@ -326,6 +332,7 @@ static const char help[] =
+ 	"* " ENV_SCOPED_NAME ": actions denied on the outside of the landlock domain\n"
+ 	"  - \"a\" to restrict opening abstract unix sockets\n"
+ 	"  - \"s\" to restrict sending signals\n"
++	"* " ENV_UNIX_CONNECT_NAME ": paths of unix sockets connections are allowed to\n"
+ 	"\n"
+ 	"A sandboxer should not log denied access requests to avoid spamming logs, "
+ 	"but to test audit we can set " ENV_FORCE_LOG_NAME "=1\n"
+@@ -353,7 +360,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
+ 	      access_fs_rw = ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE;
+ 
+ 	struct landlock_ruleset_attr ruleset_attr = {
+-		.handled_access_fs = access_fs_rw,
++		.handled_access_fs = access_fs_rw | LANDLOCK_ACCESS_FS_CONNECT_UNIX,
+ 		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+ 				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+ 		.scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
+@@ -460,9 +467,6 @@ int main(const int argc, char *const argv[], char *const *const envp)
+ 			"provided by ABI version %d (instead of %d).\n",
+ 			abi, LANDLOCK_ABI_LAST);
+ 	}
+-	access_fs_ro &= ruleset_attr.handled_access_fs;
+-	access_fs_rw &= ruleset_attr.handled_access_fs;
+-
+ 	/* Removes bind access attribute if not supported by a user. */
+ 	env_port_name = getenv(ENV_TCP_BIND_NAME);
+ 	if (!env_port_name) {
+@@ -476,6 +480,9 @@ int main(const int argc, char *const argv[], char *const *const envp)
+ 			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
+ 	}
+ 
++	access_fs_ro &= ruleset_attr.handled_access_fs;
++	access_fs_rw &= ruleset_attr.handled_access_fs;
 +
-+Starting with the Landlock ABI version 8, it is possible to restrict
-+connections to a pathname :manpage:`unix(7)` socket using the new
-+``LANDLOCK_ACCESS_FS_UNIX_CONNECT`` right.
-+
- .. _kernel_support:
+ 	if (check_ruleset_scope(ENV_SCOPED_NAME, &ruleset_attr))
+ 		return 1;
  
- Kernel support
+@@ -510,6 +517,11 @@ int main(const int argc, char *const argv[], char *const *const envp)
+ 	if (populate_ruleset_fs(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
+ 		goto err_close_ruleset;
+ 	}
++	if (getenv(ENV_UNIX_CONNECT_NAME) &&
++	    populate_ruleset_fs(ENV_UNIX_CONNECT_NAME, ruleset_fd,
++				LANDLOCK_ACCESS_FS_CONNECT_UNIX)) {
++		goto err_close_ruleset;
++	}
+ 
+ 	if (populate_ruleset_net(ENV_TCP_BIND_NAME, ruleset_fd,
+ 				 LANDLOCK_ACCESS_NET_BIND_TCP)) {
 -- 
-2.52.0
+2.51.0
 
