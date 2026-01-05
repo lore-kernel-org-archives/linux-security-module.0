@@ -1,154 +1,239 @@
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E312222CA
-	for <linux-security-module@vger.kernel.org>; Mon,  5 Jan 2026 07:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566B432AAC9
+	for <linux-security-module@vger.kernel.org>; Mon,  5 Jan 2026 09:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767599220; cv=none; b=d7ri+lfHvAoSeIXYokkamttuiUDk6BnZzBjkBiAWu2XNFIWIQZs+oHO7LTuoDs34ET66Ex0yiE5yPRT6iUJkYzcnSn/XN78IJqHj/0owg19haimCE8dCHn1y5UfCeJ+s6troF1up2jABxJnniVX/XwVdey4bmvbBGiY2yheToWU=
+	t=1767604585; cv=none; b=U1TQ6Ljg0pupSap5d6nuS1StxvXa+k/FAAMBJlUkczeGPWjjzu1ivmRIHdwFZRS/IBWq3UqSGeW9V1JPVJzkqNOEZOb/yvOPhcYjeY45uUcYgCzheF6nEWXxaaQ0vSmu/14Leozo8Ul2xGvtGSk26ey9tEiM3qyyp8do0cpszTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767599220; c=relaxed/simple;
-	bh=3XiCPihyU+BrHOwDidi8R6JTp4P32E8+y+fnt6YdF7I=;
+	s=arc-20240116; t=1767604585; c=relaxed/simple;
+	bh=OWC+AHxZdxUuVZM/YaeSNjU/c5cKFkHpncudd9Oa0yE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k0wefUNLg8KPCpPp1J4nstSUN7d4f9xiK/3fAqSSHwnnxhs3eS7kAILkAI6F0kdhJZIfPnRCTvsjSgo2QcN/8IQPhBiDSslu9KVr16viaq293I9F1yth5yf8lN0fSd9wv0WfgLJj7/sfTjDtFFBg3o7l/8YaxKRwdOWasVDDwK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0a9JbC/0; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 To:Cc:Content-Type; b=uzE6a5FzaOJnobgz0P+lv3y4oHmhTE/NgUX78/IUBROqH5pHt520PmWtmWjqrBgPkaC4CFv/NFRzlVnnktMjcE/65beM+KBoeRuZmo7BlYXrS6iBUmnyOx/9WJabKilC1Dpz4tH3/1tam0XcWKyVR2MRWJQfu94KwRleUMCypXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aYsHIRYZ; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0a9JbC/0"
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-34c708702dfso14568677a91.1
-        for <linux-security-module@vger.kernel.org>; Sun, 04 Jan 2026 23:46:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aYsHIRYZ"
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-65749fe614bso3741948eaf.1
+        for <linux-security-module@vger.kernel.org>; Mon, 05 Jan 2026 01:16:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1767599219; x=1768204019; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1767604581; x=1768209381; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0hl/znACV5IliyiNlDparHEHtCKNFypJX8ag2u4d1hU=;
-        b=0a9JbC/0BW2at7gPpJHhyjQp+uXmZ80Lz2+OslH97517U6vIbmTFJ5DMOpJixpSlAW
-         rVXEwU8WATs7p5iqd9rooS3BqCTxw8PUYIN7h3JU4bqXUKrWUI6IPJsRscHDejuhRXLy
-         2MIXvcGh+LcKUh1+17pMAY1gHM2YhsDa2SbvSZ7kAQDQvwutp7V96tMzJiiHDbUwJeyc
-         XVRf7inuBpfWsqqe0AnNnkMTIxSgSqpcVuzseG04wnauLDXWdr37OeJhO7xnkYabGMx8
-         5b1Ogq0mABL4AEo4WnwETdwgLv8my27z+cBjfEaPzToKbqenNjD9uNj4yHxfEu/bbaI/
-         t6DA==
+        bh=xS4Pieemzy4r1o+XZyR7jxfKf1/JCiqumXmtg6ZAf0Y=;
+        b=aYsHIRYZmEqubVaB/nFOB2ZSyZ5mdUAJQ2e8vK7U6xa1ASeFd6LWH955d9+nh53ktb
+         xr1P49S3syRT14RFGDCfbl+SIJj8H1shK6l/HJyqERcZfy8YT9XcW9ovCyPlV1JPbept
+         stVuPPdDv4O0rskrIVR6VeYaEnAM5RPbtavEumXMM3wqDI/5YZbPJj/fIsEwMgjbttlW
+         vq78fx3LM7I7y53tg3lpxh5jqIHVy7So3PmCqVqS6shGFcQdOC2kuMGEH3Kt5Owzm2Qm
+         rjvtr+TvOeiiwnoqs3PniCzuVCCjBVzPM3FD6VXVz+bPcHzpEmbFp1Ii0V1COQygdl4e
+         lteA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767599219; x=1768204019;
+        d=1e100.net; s=20230601; t=1767604581; x=1768209381;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=0hl/znACV5IliyiNlDparHEHtCKNFypJX8ag2u4d1hU=;
-        b=vKMybk/DlLpsKUL74XH7ojS4z/mUvptgU+t+LsRo88Fo8TIUPfNucgK0pfSUFADRbR
-         4dUSOZJ6PtkfekT4pcgoW3s21Xnm8CEmB37I66HLvsOhTNEkIwxNTW9vAujwShqwbgTa
-         nsdIK35ybPoaBzON5qMTs/FmATCdmluknU49mr7gcntR2KvjqPzPhiYNNJyzxGXAj5aR
-         7ZCSnwVpSo2tyigYcd9FTE6gNtxajZaeeydfOiNPZQOuQjZ/UWwXxnBIbU+i3mCZCVg+
-         w5UL/phW5nIMIp4nvRmKyit8zYH5FBRyFBnbMVpqUAahID5wvM12heWfPxXdlA0MCfEm
-         MnSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXgFvkN3F8SrUOJcR0jNWhYNscliY7t5FIrB0161m2kmO0SdDAJDt8JkbezbSYx6RgHeg7/EGvQ+xpOPOvBqnpqQBpqYtI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4j7wllX7auVnuvJXFB63tna/6SU55f0uNtRWnXQu+qjUXpDHe
-	ZdYjxQrGkRYmtkecmYp8XQeekAZZpW/hOJl2sDjmZ7K8Gr9um6PVOrf5pS7o43GuB3DiELaVMmy
-	S8BMda3Fdg7j3vIoIVOeyMz3pn+dq3+uMlsjSmTYx
-X-Gm-Gg: AY/fxX4eSCHSR6weLH+xXMPiZ6KlQGUmBNhGNf4hAVQHn2jWLZFczfqWLH5Ip/eGf18
-	BdkZJ4ZB7cdyhJubkCDan77dgoemZJHjKOUpD0KFsE91sKygzjkEUsi4nUcxIaUv5IviCjUaxTf
-	XcZwxv8WuWqfQJ5RwLz6Hei2WFuqtne7ownTnbdxoMGml1N4W+CMo0wEgT5xu0w2epRmbN/j3W+
-	BCToSnKR/mn01A0TIagQkH4wmaNO45hoP5c2vyjATo8tBXvcRXD3rcMj7LT6MFPl4KeRLyZ41qZ
-	a10gWNvGHoUX+9BKAiQIIfoOFMA=
-X-Google-Smtp-Source: AGHT+IHxteqHEVR6ADiPEOJqOaSNR6YKK2EGsZu1qZi7806i1GlWLIGb3zdwJ5ibA+pr3tr52Iqt+hLN3UxY0p3HaZQ=
-X-Received: by 2002:a05:7023:a84:b0:11b:9386:8262 with SMTP id
- a92af1059eb24-12172314a24mr41233873c88.47.1767599218282; Sun, 04 Jan 2026
- 23:46:58 -0800 (PST)
+        bh=xS4Pieemzy4r1o+XZyR7jxfKf1/JCiqumXmtg6ZAf0Y=;
+        b=foX4s1xDYikalGcLykQZiV379QlPGkqpgK6gldJ7A++kdfwoyOsLzuZ2CwKGEmRcr1
+         dIKyttDeLT2NQzVOemkCkoCU8WXQDRV4YetpKOxfrB9HNMFGlVNF+YJB/JkQraSwEr4W
+         nMg/+2KLWIsdF51Qef88aF21qEjN0CcQuD7WIzTzyCXWgYTq/BhmMfHDJDcd49x4yVGt
+         JmwYx3ni39dXi6QBhTl3XhrKfGZzXCkt7Y1c8IQF5QhM10Rqta3hsIH2yGscCSe/ts9I
+         gxZ4FtTXAtgxEBZ7EP/6zibKY5Z4Id7p5JsbMED2bL1xwLmVPOSP2FH51MdugLfzCekS
+         KZNg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/4G2c0LMvs/xB6U07epd9t8Vu1Q8obvXal6bZDF6CxFRkwtIxNCxkoytlWjsP4zNBmUU9QodCG+cWaXJUTA9lhzG0nHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzakdd/30Qy3WzEvSOqB10UCoYWMna5HdCh0a6vO1E5qvpmGcJw
+	FnoPGsjoV+t/CM1GPoJp+JFaP9+UQZSZlT4FdJzZvvmDhFYasWUroZ1azI4UvbFnmEqKc+O6BER
+	At3BrL/lmajF/F7E7/goq7mat+wjair+wsgTUdzSTHA==
+X-Gm-Gg: AY/fxX6DLAdVgJACJnPTeKv/3+Hi4DJHufvULjuG1Jtwr130WDRtC6pJMLb6iJdyR3v
+	5cVRyC8lZ25XdkoOLwIcxJbSPEwkIymWh4RmyBM1mlN3u9dv/YHNS6ngJ84trst8yApoY1/oSwA
+	GiEwmvP/Uxax9SJZ+JJ1isSgUYETndb+M1SzEOa9UMZ20oUT2HJVayaGyaSfgm/nfOOfEFGaevo
+	v0/hXlFcIqs3GyfQl1QE5WIbiq3eN1OHDSbMs/AulbcuWislOeLgbn4uCY7zu+YZHVKyqUCNX4Z
+	4M2TqZTVKRa27VuF2Y/CvrabOA==
+X-Google-Smtp-Source: AGHT+IHdtu3uK1YvLPvRXmBmsYletnr+Fy6yEnWw7FcQJMBZUAFsUyE2L/0PG3GpU/2KGeBY95bkFD0S8glmAzrpFaU=
+X-Received: by 2002:a05:6820:2289:b0:65c:f9c1:cba0 with SMTP id
+ 006d021491bc7-65d0ea16a88mr23376881eaf.37.1767604581140; Mon, 05 Jan 2026
+ 01:16:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251231213314.2979118-1-utilityemal77@gmail.com>
-In-Reply-To: <20251231213314.2979118-1-utilityemal77@gmail.com>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Sun, 4 Jan 2026 23:46:46 -0800
-X-Gm-Features: AQt7F2pSIYBhYKUUMLWFXkv6Xu3AJ783nK6ntuzPyxaCJG9HeDmOp4yEEmYENqQ
-Message-ID: <CAAVpQUCF3uES6j22P1TYzgKByw+E4EqpM=+OFyqtRGStGWxH+Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/1] lsm: Add hook unix_path_connect
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Simon Horman <horms@kernel.org>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>, 
-	netdev@vger.kernel.org
+References: <cover.1765791463.git.u.kleine-koenig@baylibre.com>
+ <CAHUa44FrDZbvRvfN8obf80_k=Eqxe9YxHpjaE5jU7nkxPUwfag@mail.gmail.com>
+ <20251218135332f323fa91@mail.local> <CAHUa44GpW5aO26GDyL9RZub9vVYvVcJ7etwO0yXBN_mUi0W4AA@mail.gmail.com>
+In-Reply-To: <CAHUa44GpW5aO26GDyL9RZub9vVYvVcJ7etwO0yXBN_mUi0W4AA@mail.gmail.com>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Mon, 5 Jan 2026 10:16:09 +0100
+X-Gm-Features: AQt7F2q8lTcIoa5xBnvz2Mkjx2axWX5OMGPJpQNfFM5WoFI2KGlEdVoT6sJvPQg
+Message-ID: <CAHUa44HqRbCJTXsrTCm0G5iwtkQtq+Si=yOspCjpAn-N2uVSVg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/17] tee: Use bus callbacks instead of driver callbacks
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Sumit Garg <sumit.garg@kernel.org>, 
+	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	=?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Sumit Garg <sumit.garg@oss.qualcomm.com>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Jan Kiszka <jan.kiszka@siemens.com>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, 
+	Michael Chan <michael.chan@broadcom.com>, Pavan Chebbi <pavan.chebbi@broadcom.com>, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Peter Huewe <peterhuewe@gmx.de>, op-tee@lists.trustedfirmware.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, 
+	Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org, 
+	linux-mips@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 31, 2025 at 1:33=E2=80=AFPM Justin Suess <utilityemal77@gmail.c=
-om> wrote:
->
-> Hi,
->
-> This patch introduces a new LSM hook unix_path_connect.
->
-> The idea for this patch and the hook came from G=C3=BCnther Noack, who
-> is cc'd. Much credit to him for the idea and discussion.
->
-> This patch is based on the lsm next branch.
->
-> Motivation
-> ---
->
-> For AF_UNIX sockets bound to a filesystem path (aka named sockets), one
-> identifying object from a policy perspective is the path passed to
-> connect(2). However, this operation currently restricts LSMs that rely
-> on VFS-based mediation, because the pathname resolved during connect()
-> is not preserved in a form visible to existing hooks before connection
-> establishment.
+Hi,
 
-Why can't LSM use unix_sk(other)->path in security_unix_stream_connect()
-and security_unix_may_send() ?
+On Thu, Dec 18, 2025 at 5:29=E2=80=AFPM Jens Wiklander
+<jens.wiklander@linaro.org> wrote:
+>
+> On Thu, Dec 18, 2025 at 2:53=E2=80=AFPM Alexandre Belloni
+> <alexandre.belloni@bootlin.com> wrote:
+> >
+> > On 18/12/2025 08:21:27+0100, Jens Wiklander wrote:
+> > > Hi,
+> > >
+> > > On Mon, Dec 15, 2025 at 3:17=E2=80=AFPM Uwe Kleine-K=C3=B6nig
+> > > <u.kleine-koenig@baylibre.com> wrote:
+> > > >
+> > > > Hello,
+> > > >
+> > > > the objective of this series is to make tee driver stop using callb=
+acks
+> > > > in struct device_driver. These were superseded by bus methods in 20=
+06
+> > > > (commit 594c8281f905 ("[PATCH] Add bus_type probe, remove, shutdown
+> > > > methods.")) but nobody cared to convert all subsystems accordingly.
+> > > >
+> > > > Here the tee drivers are converted. The first commit is somewhat
+> > > > unrelated, but simplifies the conversion (and the drivers). It
+> > > > introduces driver registration helpers that care about setting the =
+bus
+> > > > and owner. (The latter is missing in all drivers, so by using these
+> > > > helpers the drivers become more correct.)
+> > > >
+> > > > v1 of this series is available at
+> > > > https://lore.kernel.org/all/cover.1765472125.git.u.kleine-koenig@ba=
+ylibre.com
+> > > >
+> > > > Changes since v1:
+> > > >
+> > > >  - rebase to v6.19-rc1 (no conflicts)
+> > > >  - add tags received so far
+> > > >  - fix whitespace issues pointed out by Sumit Garg
+> > > >  - fix shutdown callback to shutdown and not remove
+> > > >
+> > > > As already noted in v1's cover letter, this series should go in dur=
+ing a
+> > > > single merge window as there are runtime warnings when the series i=
+s
+> > > > only applied partially. Sumit Garg suggested to apply the whole ser=
+ies
+> > > > via Jens Wiklander's tree.
+> > > > If this is done the dependencies in this series are honored, in cas=
+e the
+> > > > plan changes: Patches #4 - #17 depend on the first two.
+> > > >
+> > > > Note this series is only build tested.
+> > > >
+> > > > Uwe Kleine-K=C3=B6nig (17):
+> > > >   tee: Add some helpers to reduce boilerplate for tee client driver=
+s
+> > > >   tee: Add probe, remove and shutdown bus callbacks to tee_client_d=
+river
+> > > >   tee: Adapt documentation to cover recent additions
+> > > >   hwrng: optee - Make use of module_tee_client_driver()
+> > > >   hwrng: optee - Make use of tee bus methods
+> > > >   rtc: optee: Migrate to use tee specific driver registration funct=
+ion
+> > > >   rtc: optee: Make use of tee bus methods
+> > > >   efi: stmm: Make use of module_tee_client_driver()
+> > > >   efi: stmm: Make use of tee bus methods
+> > > >   firmware: arm_scmi: optee: Make use of module_tee_client_driver()
+> > > >   firmware: arm_scmi: Make use of tee bus methods
+> > > >   firmware: tee_bnxt: Make use of module_tee_client_driver()
+> > > >   firmware: tee_bnxt: Make use of tee bus methods
+> > > >   KEYS: trusted: Migrate to use tee specific driver registration
+> > > >     function
+> > > >   KEYS: trusted: Make use of tee bus methods
+> > > >   tpm/tpm_ftpm_tee: Make use of tee specific driver registration
+> > > >   tpm/tpm_ftpm_tee: Make use of tee bus methods
+> > > >
+> > > >  Documentation/driver-api/tee.rst             | 18 +----
+> > > >  drivers/char/hw_random/optee-rng.c           | 26 ++----
+> > > >  drivers/char/tpm/tpm_ftpm_tee.c              | 31 +++++---
+> > > >  drivers/firmware/arm_scmi/transports/optee.c | 32 +++-----
+> > > >  drivers/firmware/broadcom/tee_bnxt_fw.c      | 30 ++-----
+> > > >  drivers/firmware/efi/stmm/tee_stmm_efi.c     | 25 ++----
+> > > >  drivers/rtc/rtc-optee.c                      | 27 ++-----
+> > > >  drivers/tee/tee_core.c                       | 84 ++++++++++++++++=
+++++
+> > > >  include/linux/tee_drv.h                      | 12 +++
+> > > >  security/keys/trusted-keys/trusted_tee.c     | 17 ++--
+> > > >  10 files changed, 164 insertions(+), 138 deletions(-)
+> > > >
+> > > > base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+> > > > --
+> > > > 2.47.3
+> > > >
+> > >
+> > > Thank you for the nice cleanup, Uwe.
+> > >
+> > > I've applied patch 1-3 to the branch tee_bus_callback_for_6.20 in my
+> > > tree at https://git.kernel.org/pub/scm/linux/kernel/git/jenswi/linux-=
+tee.git/
+> > >
+> > > The branch is based on v6.19-rc1, and I'll try to keep it stable for
+> > > others to depend on, if needed. Let's see if we can agree on taking
+> > > the remaining patches via that branch.
+> >
+> > 6 and 7 can go through your branch.
+>
+> Good, I've added them to my branch now.
 
+This entire patch set should go in during a single merge window. I
+will not send any pull request until I'm sure all patches will be
+merged.
 
-> As a result, LSMs such as Landlock cannot currently
-> restrict connections to named UNIX domain sockets by their VFS path.
->
-> This gap has been discussed previously (e.g. in the context of Landlock's
-> path-based access controls). [1] [2]
->
-> I've cc'd the netdev folks as well on this, as the placement of this hook=
- is
-> important and in a core unix socket function.
->
-> Design Choices
-> ---
->
-> The hook is called in net/unix/af_unix.c in the function unix_find_bsd().
->
-> The hook takes a single parameter, a const struct path* to the named unix
-> socket to which the connection is being established.
->
-> The hook takes place after normal permissions checks, and after the
-> inode is determined to be a socket. It however, takes place before
-> the socket is actually connected to.
->
-> If the hook returns non-zero it will do a put on the path, and return.
->
-> References
-> ---
->
-> [1]: https://github.com/landlock-lsm/linux/issues/36#issue-2354007438
-> [2]: https://lore.kernel.org/linux-security-module/cover.1767115163.git.m=
-@maowtm.org/
->
-> Kind Regards,
-> Justin Suess
->
-> Justin Suess (1):
->   lsm: Add hook unix_path_connect
->
->  include/linux/lsm_hook_defs.h |  1 +
->  include/linux/security.h      |  6 ++++++
->  net/unix/af_unix.c            |  8 ++++++++
->  security/security.c           | 16 ++++++++++++++++
->  4 files changed, 31 insertions(+)
->
->
-> base-commit: 1c0860d4415d52f3ad1c8e0a15c1272869278a06
-> --
-> 2.51.0
->
+So far (if I'm not mistaken), only the patches I've already added to
+next have appeared next. I can take the rest of the patches, too, but
+I need OK for the following:
+
+Jarkko, you seem happy with the following patches
+- KEYS: trusted: Migrate to use tee specific driver registration function
+- KEYS: trusted: Make use of tee bus methods
+- tpm/tpm_ftpm_tee: Make use of tee specific driver registration
+- tpm/tpm_ftpm_tee: Make use of tee bus methods
+OK if I take them via my tree, or would you rather take them yourself?
+
+Herbert, you seem happy with the following patches
+- hwrng: optee - Make use of module_tee_client_driver()
+- hwrng: optee - Make use of tee bus methods
+OK if I take them via my tree, or would you rather take them yourself?
+
+Sudeep, you seem happy with the following patches
+- firmware: arm_scmi: optee: Make use of module_tee_client_driver()
+- firmware: arm_scmi: Make use of tee bus methods
+OK if I take them via my tree, or would you rather take them yourself?
+
+Michael, Pavan, are you OK with the following patches
+- firmware: tee_bnxt: Make use of module_tee_client_driver()
+- firmware: tee_bnxt: Make use of tee bus methods
+OK if I take them via my tree, or would you rather take them yourself?
+
+Thanks,
+Jens
