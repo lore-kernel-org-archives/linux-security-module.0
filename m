@@ -1,156 +1,154 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B2022424C;
-	Sat,  3 Jan 2026 00:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E312222CA
+	for <linux-security-module@vger.kernel.org>; Mon,  5 Jan 2026 07:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767400053; cv=none; b=K1F9m0440HaABs/rTZKGVyGJziYnM8O+Hbd+T6l+0FEGwcEentKsmG9bvnAVAhVZzAdq66PPaBFXYuJ94mSb7SXQrO79R735c96fCYQtgBot7/OSfdpiLOAofQA91m1wBLZkQ8NT0B8l/0dN3G9/wv8jvwPgA/ZJabzWmprBlbw=
+	t=1767599220; cv=none; b=d7ri+lfHvAoSeIXYokkamttuiUDk6BnZzBjkBiAWu2XNFIWIQZs+oHO7LTuoDs34ET66Ex0yiE5yPRT6iUJkYzcnSn/XN78IJqHj/0owg19haimCE8dCHn1y5UfCeJ+s6troF1up2jABxJnniVX/XwVdey4bmvbBGiY2yheToWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767400053; c=relaxed/simple;
-	bh=ArNQ7xWxxyfndThgsOC/SX1TDqoYXpfKdJWur/YeasM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s8XHCD3lOE1MCJKKF7M9OhiUpCau2QgL8Y5B/xTjacvvTOhssAB0n6xtNQRcehMvMp9Ls0KfBtgVHXOcK76YrTcXMQIB3LFaO3RSlcjD+D5QwNct/S2ICOEkzmShqlyqL+VMTk6y2G5d5tqhuaJAwZ8GzgyUjQQ9IrhNBvXppGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LdDaW1v3; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1767599220; c=relaxed/simple;
+	bh=3XiCPihyU+BrHOwDidi8R6JTp4P32E8+y+fnt6YdF7I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k0wefUNLg8KPCpPp1J4nstSUN7d4f9xiK/3fAqSSHwnnxhs3eS7kAILkAI6F0kdhJZIfPnRCTvsjSgo2QcN/8IQPhBiDSslu9KVr16viaq293I9F1yth5yf8lN0fSd9wv0WfgLJj7/sfTjDtFFBg3o7l/8YaxKRwdOWasVDDwK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0a9JbC/0; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LdDaW1v3"
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 602Nn02J4061240;
-	Sat, 3 Jan 2026 00:27:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=S3K0P/IeiwkJc87WUfd1MgK9QAIu1qpNhTVoiwouDgQ=; b=
-	LdDaW1v3e8slPh3Mmj9JHz19dvnewGCZ2VXlTVlccJkBD7nShkKjNC5eBpNOTMzq
-	oL8DYokNHPUrI9/46Net3HxAy+q2iShtGe5Eu9znQ7H6TLNdTS7ScqiE5oEplhX9
-	luH4CBVM8YYiAL+zsyV0M7W7DVgFZ1BbYS99VhJBDg0VKtXGP723cTSkayYSFXlw
-	JZn4enJVNZlQgyVEpFnNyyTfUEJDxQwV/rt0laf/FksgWYzEmOya8dDkLeNs+o8Z
-	1k7KCEIgcK9INIc4PgfhxsvYUs6rsHr5Swu/KFJ/PwtZ3iWKQNbs8kEQPQenCAe/
-	5eYik2SVf1xeM9ePwSyYbw==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4ba6c8wnp3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 03 Jan 2026 00:27:27 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 602LDRa5038159;
-	Sat, 3 Jan 2026 00:27:26 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4ba5wehv77-4;
-	Sat, 03 Jan 2026 00:27:25 +0000
-From: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
-To: mic@digikod.net, gnoack@google.com
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] landlock: Document audit blocker field format
-Date: Fri,  2 Jan 2026 16:27:15 -0800
-Message-ID: <20260103002722.1465371-4-samasth.norway.ananda@oracle.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260103002722.1465371-1-samasth.norway.ananda@oracle.com>
-References: <20260103002722.1465371-1-samasth.norway.ananda@oracle.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0a9JbC/0"
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-34c708702dfso14568677a91.1
+        for <linux-security-module@vger.kernel.org>; Sun, 04 Jan 2026 23:46:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1767599219; x=1768204019; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0hl/znACV5IliyiNlDparHEHtCKNFypJX8ag2u4d1hU=;
+        b=0a9JbC/0BW2at7gPpJHhyjQp+uXmZ80Lz2+OslH97517U6vIbmTFJ5DMOpJixpSlAW
+         rVXEwU8WATs7p5iqd9rooS3BqCTxw8PUYIN7h3JU4bqXUKrWUI6IPJsRscHDejuhRXLy
+         2MIXvcGh+LcKUh1+17pMAY1gHM2YhsDa2SbvSZ7kAQDQvwutp7V96tMzJiiHDbUwJeyc
+         XVRf7inuBpfWsqqe0AnNnkMTIxSgSqpcVuzseG04wnauLDXWdr37OeJhO7xnkYabGMx8
+         5b1Ogq0mABL4AEo4WnwETdwgLv8my27z+cBjfEaPzToKbqenNjD9uNj4yHxfEu/bbaI/
+         t6DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767599219; x=1768204019;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=0hl/znACV5IliyiNlDparHEHtCKNFypJX8ag2u4d1hU=;
+        b=vKMybk/DlLpsKUL74XH7ojS4z/mUvptgU+t+LsRo88Fo8TIUPfNucgK0pfSUFADRbR
+         4dUSOZJ6PtkfekT4pcgoW3s21Xnm8CEmB37I66HLvsOhTNEkIwxNTW9vAujwShqwbgTa
+         nsdIK35ybPoaBzON5qMTs/FmATCdmluknU49mr7gcntR2KvjqPzPhiYNNJyzxGXAj5aR
+         7ZCSnwVpSo2tyigYcd9FTE6gNtxajZaeeydfOiNPZQOuQjZ/UWwXxnBIbU+i3mCZCVg+
+         w5UL/phW5nIMIp4nvRmKyit8zYH5FBRyFBnbMVpqUAahID5wvM12heWfPxXdlA0MCfEm
+         MnSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgFvkN3F8SrUOJcR0jNWhYNscliY7t5FIrB0161m2kmO0SdDAJDt8JkbezbSYx6RgHeg7/EGvQ+xpOPOvBqnpqQBpqYtI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4j7wllX7auVnuvJXFB63tna/6SU55f0uNtRWnXQu+qjUXpDHe
+	ZdYjxQrGkRYmtkecmYp8XQeekAZZpW/hOJl2sDjmZ7K8Gr9um6PVOrf5pS7o43GuB3DiELaVMmy
+	S8BMda3Fdg7j3vIoIVOeyMz3pn+dq3+uMlsjSmTYx
+X-Gm-Gg: AY/fxX4eSCHSR6weLH+xXMPiZ6KlQGUmBNhGNf4hAVQHn2jWLZFczfqWLH5Ip/eGf18
+	BdkZJ4ZB7cdyhJubkCDan77dgoemZJHjKOUpD0KFsE91sKygzjkEUsi4nUcxIaUv5IviCjUaxTf
+	XcZwxv8WuWqfQJ5RwLz6Hei2WFuqtne7ownTnbdxoMGml1N4W+CMo0wEgT5xu0w2epRmbN/j3W+
+	BCToSnKR/mn01A0TIagQkH4wmaNO45hoP5c2vyjATo8tBXvcRXD3rcMj7LT6MFPl4KeRLyZ41qZ
+	a10gWNvGHoUX+9BKAiQIIfoOFMA=
+X-Google-Smtp-Source: AGHT+IHxteqHEVR6ADiPEOJqOaSNR6YKK2EGsZu1qZi7806i1GlWLIGb3zdwJ5ibA+pr3tr52Iqt+hLN3UxY0p3HaZQ=
+X-Received: by 2002:a05:7023:a84:b0:11b:9386:8262 with SMTP id
+ a92af1059eb24-12172314a24mr41233873c88.47.1767599218282; Sun, 04 Jan 2026
+ 23:46:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-02_04,2025-12-31_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2512120000 definitions=main-2601030002
-X-Authority-Analysis: v=2.4 cv=a4E9NESF c=1 sm=1 tr=0 ts=6958626f b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=qf4gfuq51q0A:10 a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=yPCof4ZbAAAA:8 a=NzHwe94iyh8aUTu8du8A:9 a=3ZKOabzyN94A:10 a=k40Crp0UdiQA:10
- cc=ntf awl=host:12110
-X-Proofpoint-GUID: 4TRFHbXHuXCs6yyeFoEtBw1hdk08EHYV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTAzMDAwMSBTYWx0ZWRfX4ofGgIrOam1N
- CLyxCUABgHS4x1i/F7X+jbX4GwTKuekRvVp0B4hJ/WxS/JtFRxDrj0DCaRIQMfTwRgPDWOBQP+U
- eJh0W8DUytlUUtul0ZjINsFGkd2WMSeljXGQz4HgaM+4D1/BLhUL/6FmIYhxKgchvfKVqru61Jn
- Sjy1IbcY+ArIT0lmI39v+Rqz8IzhWCUNEhpOH3DpeKI76ROe+eOFOh4r4x0tWtIwTfwKwBHB155
- W55Hlg9aAryELjtpNBq28lbZv7aHa9YWWimjXWP3PB6QeXKQDAqqQLhXxmiUedrUMGSi0EulzBH
- is/+zn8hwwZOOgux7/jpsSjFzUywGNFd9X63ql8cJ8g08OOJhVgrqN7vm1xPk3LJHpyzWWEMohH
- EI7GM95tF5Fdqm6ulpx2WoSKNg5iHegZoCouBTj2CurPzGxt1sUeKKI44rT11hmH8enff4biT7D
- Ud5JpMzVwgTYf2svSegKN0UwUYqoCPxyWyYJL82c=
-X-Proofpoint-ORIG-GUID: 4TRFHbXHuXCs6yyeFoEtBw1hdk08EHYV
+References: <20251231213314.2979118-1-utilityemal77@gmail.com>
+In-Reply-To: <20251231213314.2979118-1-utilityemal77@gmail.com>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Sun, 4 Jan 2026 23:46:46 -0800
+X-Gm-Features: AQt7F2pSIYBhYKUUMLWFXkv6Xu3AJ783nK6ntuzPyxaCJG9HeDmOp4yEEmYENqQ
+Message-ID: <CAAVpQUCF3uES6j22P1TYzgKByw+E4EqpM=+OFyqtRGStGWxH+Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/1] lsm: Add hook unix_path_connect
+To: Justin Suess <utilityemal77@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Simon Horman <horms@kernel.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add comprehensive documentation for the ``blockers`` field format
-in AUDIT_LANDLOCK_ACCESS records, including all possible prefixes
-(fs., net., scope.) and their meanings.
+On Wed, Dec 31, 2025 at 1:33=E2=80=AFPM Justin Suess <utilityemal77@gmail.c=
+om> wrote:
+>
+> Hi,
+>
+> This patch introduces a new LSM hook unix_path_connect.
+>
+> The idea for this patch and the hook came from G=C3=BCnther Noack, who
+> is cc'd. Much credit to him for the idea and discussion.
+>
+> This patch is based on the lsm next branch.
+>
+> Motivation
+> ---
+>
+> For AF_UNIX sockets bound to a filesystem path (aka named sockets), one
+> identifying object from a policy perspective is the path passed to
+> connect(2). However, this operation currently restricts LSMs that rely
+> on VFS-based mediation, because the pathname resolved during connect()
+> is not preserved in a form visible to existing hooks before connection
+> establishment.
 
-Also fix a typo and update the documentation date to reflect these
-changes.
+Why can't LSM use unix_sk(other)->path in security_unix_stream_connect()
+and security_unix_may_send() ?
 
-Signed-off-by: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
----
- Documentation/admin-guide/LSM/landlock.rst | 35 ++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/admin-guide/LSM/landlock.rst b/Documentation/admin-guide/LSM/landlock.rst
-index 9e61607def08..9923874e2156 100644
---- a/Documentation/admin-guide/LSM/landlock.rst
-+++ b/Documentation/admin-guide/LSM/landlock.rst
-@@ -6,7 +6,7 @@ Landlock: system-wide management
- ================================
- 
- :Author: Mickaël Salaün
--:Date: March 2025
-+:Date: January 2026
- 
- Landlock can leverage the audit framework to log events.
- 
-@@ -38,6 +38,37 @@ AUDIT_LANDLOCK_ACCESS
-         domain=195ba459b blockers=fs.refer path="/usr/bin" dev="vda2" ino=351
-         domain=195ba459b blockers=fs.make_reg,fs.refer path="/usr/local" dev="vda2" ino=365
- 
-+
-+    The ``blockers`` field uses dot-separated prefixes to indicate the type of
-+    restriction that caused the denial:
-+
-+    **fs.*** - Filesystem access rights (ABI 1+):
-+        - fs.execute, fs.write_file, fs.read_file, fs.read_dir
-+        - fs.remove_dir, fs.remove_file
-+        - fs.make_char, fs.make_dir, fs.make_reg, fs.make_sock
-+        - fs.make_fifo, fs.make_block, fs.make_sym
-+        - fs.refer (ABI 2+)
-+        - fs.truncate (ABI 3+)
-+        - fs.ioctl_dev (ABI 5+)
-+
-+    **net.*** - Network access rights (ABI 4+):
-+        - net.bind_tcp - TCP port binding was denied
-+        - net.connect_tcp - TCP connection was denied
-+
-+    **scope.*** - IPC scoping restrictions (ABI 6+):
-+        - scope.abstract_unix_socket - Abstract UNIX socket connection denied
-+        - scope.signal - Signal sending denied
-+
-+    Multiple blockers can appear in a single event (comma-separated) when
-+    multiple access rights are missing. For example, creating a regular file
-+    in a directory that lacks both ``make_reg`` and ``refer`` rights would show
-+    ``blockers=fs.make_reg,fs.refer``.
-+
-+    The object identification fields (path, dev, ino for filesystem; opid,
-+    ocomm for signals) depend on the type of access being blocked and provide
-+    context about what resource was involved in the denial.
-+
-+
- AUDIT_LANDLOCK_DOMAIN
-     This record type describes the status of a Landlock domain.  The ``status``
-     field can be either ``allocated`` or ``deallocated``.
-@@ -86,7 +117,7 @@ This command generates two events, each identified with a unique serial
- number following a timestamp (``msg=audit(1729738800.268:30)``).  The first
- event (serial ``30``) contains 4 records.  The first record
- (``type=LANDLOCK_ACCESS``) shows an access denied by the domain `1a6fdc66f`.
--The cause of this denial is signal scopping restriction
-+The cause of this denial is signal scoping restriction
- (``blockers=scope.signal``).  The process that would have receive this signal
- is the init process (``opid=1 ocomm="systemd"``).
- 
--- 
-2.50.1
-
+> As a result, LSMs such as Landlock cannot currently
+> restrict connections to named UNIX domain sockets by their VFS path.
+>
+> This gap has been discussed previously (e.g. in the context of Landlock's
+> path-based access controls). [1] [2]
+>
+> I've cc'd the netdev folks as well on this, as the placement of this hook=
+ is
+> important and in a core unix socket function.
+>
+> Design Choices
+> ---
+>
+> The hook is called in net/unix/af_unix.c in the function unix_find_bsd().
+>
+> The hook takes a single parameter, a const struct path* to the named unix
+> socket to which the connection is being established.
+>
+> The hook takes place after normal permissions checks, and after the
+> inode is determined to be a socket. It however, takes place before
+> the socket is actually connected to.
+>
+> If the hook returns non-zero it will do a put on the path, and return.
+>
+> References
+> ---
+>
+> [1]: https://github.com/landlock-lsm/linux/issues/36#issue-2354007438
+> [2]: https://lore.kernel.org/linux-security-module/cover.1767115163.git.m=
+@maowtm.org/
+>
+> Kind Regards,
+> Justin Suess
+>
+> Justin Suess (1):
+>   lsm: Add hook unix_path_connect
+>
+>  include/linux/lsm_hook_defs.h |  1 +
+>  include/linux/security.h      |  6 ++++++
+>  net/unix/af_unix.c            |  8 ++++++++
+>  security/security.c           | 16 ++++++++++++++++
+>  4 files changed, 31 insertions(+)
+>
+>
+> base-commit: 1c0860d4415d52f3ad1c8e0a15c1272869278a06
+> --
+> 2.51.0
+>
