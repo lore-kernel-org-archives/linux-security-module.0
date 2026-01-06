@@ -1,232 +1,345 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B378D33A6F4;
-	Tue,  6 Jan 2026 15:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962AF33AD8E
+	for <linux-security-module@vger.kernel.org>; Tue,  6 Jan 2026 16:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767712017; cv=none; b=AcdkH4VAN8rwGXLFMYEdhA2ONLO+ffSUhvVIhetlVqy5SWUk5xB7qDKCQ+LUvOUrA/KvY08N/B91EAiA+03ekUamCNkyXwDuC8PKnXc4icOwWMyCOZ+jb5ZFQneXlIGgrQAfcM1TPIV63dQng6atkl+beOul0N8v02ps5uqC4VI=
+	t=1767717788; cv=none; b=egyDW0IQ4YjqFno1b0gt8ob/IfrSKdgu4NhZVdx3QdmfSnUSdyLeJUXN6XN11XxnLyUdOOD2fJNrfXizbSrUyhoVm6k0safSHe56PS81SV17ql5nIQborImB0iVa9Yqkl6oEgn6Sck3iFNhLMBB6d2mxLa2NRsYCiayhAtUl2ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767712017; c=relaxed/simple;
-	bh=aqRdULq4kucJKLo7juH0QAnXYCAWo1Kzpfc6JBUoEtQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kwVt54C+i6QeMGKbg0Q8RV5eVhBGYDO0FbNfGWInx+Z+fUgSC+DUnYwkVGM5EW3QQlTv1uP5PvGuzZOIsL+tE8eWzmdOb1jw0oLgpiHR0cA8HEK8NLlg3XA1YCfIelaAa4rIcTtSvyMwKSTSNlMhoFfkFIuoNeGdXGiMu/00pqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CF14Dwj3; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1767717788; c=relaxed/simple;
+	bh=T/eYcxI6LLyxrh7x6PmhHOwNeEd/ze46Sd7WRH1+Bqg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mhdX1FREHmpVBZdDUbDBMBMCEDWpaIkb9XZoDhj2WPIwdbtteqkjRrQvNilifMi7lEFGaZc/gs4AmfOEY1bBfNeL6GsnmLc9Iq0AI/1PWGH+2KqyEUGbDTO0Qlr+AEgSHpBoBa25TmtYxJbxwlUnxr6O06IQL7wEAgoFvVzZHKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Z044DVmx; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CF14Dwj3"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 60635BNb004619;
-	Tue, 6 Jan 2026 15:06:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=56BhBO+/eHWjmoR1c
-	5fXFEtI4KtKouXiVgC1S4fhn/U=; b=CF14Dwj3UBUJgn98kZLWz8PbqMgTOZvi6
-	eg/mbWzRWBkX/K1VQckCKljgjnb+Suw6YGyijipPuZdzNycU9j9y/fLAbaxK3rrp
-	jGYvcn0RWQY78AHK71yqaMRjbpIs/foxojLH3DboEeFU68iejA+hSBu5Hh/m/Fp5
-	nZeon83ZZ55mAkzxZow6pUAMAr25XI4ovOLdYzV6WCt7rXK71DLkPmSifj+891ac
-	oelmfgMk0YlCjK2M3VXbFzi6fjGHBgeRMxPwJiiBK7bKLcPRAQ+0Hs+yUYIJGEE3
-	5+m0uSd51SXUmLAunqoteaFNspCGVwgfjn9f0XBXTWrgA5Uppwg6A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4betsq4fge-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 Jan 2026 15:06:39 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 606EtRVX027333;
-	Tue, 6 Jan 2026 15:06:39 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4betsq4fg9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 Jan 2026 15:06:39 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 606EMRIa019171;
-	Tue, 6 Jan 2026 15:06:38 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4bfg513q9k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 Jan 2026 15:06:38 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 606F6YSw29819208
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 6 Jan 2026 15:06:34 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 66C3D20043;
-	Tue,  6 Jan 2026 15:06:34 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7777720040;
-	Tue,  6 Jan 2026 15:06:26 +0000 (GMT)
-Received: from li-fc74f8cc-3279-11b2-a85c-ef5828687581.ibm.com.com (unknown [9.124.214.6])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  6 Jan 2026 15:06:23 +0000 (GMT)
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-To: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, James.Bottomley@HansenPartnership.com,
-        jarkko@kernel.org, zohar@linux.ibm.com, nayna@linux.ibm.com,
-        rnsastry@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, ssrish@linux.ibm.com
-Subject: [PATCH v3 6/6] docs: trusted-encryped: add PKWM as a new trust source
-Date: Tue,  6 Jan 2026 20:35:27 +0530
-Message-ID: <20260106150527.446525-7-ssrish@linux.ibm.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260106150527.446525-1-ssrish@linux.ibm.com>
-References: <20260106150527.446525-1-ssrish@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Z044DVmx"
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-3e8f418e051so781542fac.3
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Jan 2026 08:43:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1767717784; x=1768322584; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qSUurpCmFJ65Ayl0xRg/9I5cX5+uuG9A8wizwTKYsrA=;
+        b=Z044DVmxfegUz2LfPDrzn40w/ZZDiBH8JU2ifHLNUiDvnGRdIYaa1Y45UCUZnSEon/
+         /cpGfHoNxXrAb+EwYlcWBfS14jHUI1/+rfoTIbi9XmSnnCnxIWxyq6bdgNkEvhKmAkU4
+         ndqX5JoePKVFNQbT5xn1uaHK6dGBor8EPjeWaTI46C4LDCl3qwn9PfLgMoMElF/rw5+4
+         pZwJWPSbOWBKk/DMC04XsWZgVqnYgt1JmFiwJ1mQ3BodQg1Qbxuf/UKFpX6PBSHJ/u9K
+         V6Ne60RLVZ2hv2cMUpKWXEku4NWzFI2KbC6+BIDblpt6/0jIWg5vJtfCJbdLc6BqNGIJ
+         oToQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767717784; x=1768322584;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qSUurpCmFJ65Ayl0xRg/9I5cX5+uuG9A8wizwTKYsrA=;
+        b=V1DwpWhvax7VR1JyVXwNkp3OAFJhAGgO1pXq/KMYtPG0lI6ZULA5AsE0llMWItG6RP
+         Z25Pll2AWm5ni13RjQ6yiOc2iqDL//5CsKgLmX6xYNQBiSNGMyQQxiVQqEyzQpGbznx/
+         me0mdXnROTFsgXLABDXPgzydLVXI37r4SQpma+LiMD3j91dMGE1q9SchWUsA3LBcyFLm
+         BoGlrYf1RmcD55XxbUgOifwwzFTWbqP/n6Zdn0CWqLq+x0mnyR5R852MPr175VVT0X9Y
+         re3doAErD07fJZSJfIL3FZ6V6DwIm4t0JcLMMC9C5CjxCkVZ8mnJ0OCQdSffNihN1e75
+         6Cpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHZ3G/IWIQGIc71f93KFnr5n4e/j1ztzn8GAFMo4p1BFOgyAMSckMC/MSK90jDNs6gH9DBrOO+Z1vuFTtjuEE/c8ypvQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzputDNT00aFaTrOV4ALROqSR+LY9NwiuGjX2uy2kJRA1CuWPAI
+	Z2G7A9v9yZBKErKM1Zi7Pp4y8lNYIDuBQG+IXy3/tNQdJdF9bCY2x1NfhgdClWzogV8=
+X-Gm-Gg: AY/fxX7ksR6/AjiyT8W+8ABuMwsBOwK3t36BCrYmqMxPjYMWFiKxDYfY1IfKcn1laut
+	LDHeo75/cVhEQ1JRYKTfEIiCM1xrzFSGh5GHvArGa208TNw2efkYvlooGiNKZKHcAMyDRhjo0S5
+	3d5LrBZVHeGfmymouBWmWD0Si0uDBBg21ZYbLsKvgxv0q9GsGaKEco2d2l76s1X0p69VfpA6Y1W
+	U/kb7ZwskT0uBNb9qRUX7zVwd5Hgp0DAzyQhrUTkzd+9fQQOKXpnoC/7RPSt0c06BrAqOZ8UUhY
+	0FJI8z26VidIUDI4s8nQag+85JOOmABvVx4lYzmmYuakTOv/Q4xu4gD9uxQPmLW+XXqCXxA0YCM
+	uWL8Mp4pomKJhiIIgLFaFV4hUfD5VvDIKPcQEck7O4oTzbj6M+gtnlATpDKJMsdQRWQ==
+X-Google-Smtp-Source: AGHT+IFIaKMtyawC/OWOGWmoBvUdx3zCsTqeQlrYplqywPRGCfRqKr2DjUxcvZicfdTVHnWs+A/XJw==
+X-Received: by 2002:a05:6820:2202:b0:659:9a49:901b with SMTP id 006d021491bc7-65f47a6fddamr1941939eaf.72.1767717784370;
+        Tue, 06 Jan 2026 08:43:04 -0800 (PST)
+Received: from CMGLRV3 ([2a09:bac5:947d:4e6::7d:7b])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-65f48ab2d00sm1157993eaf.0.2026.01.06.08.43.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jan 2026 08:43:04 -0800 (PST)
+Date: Tue, 6 Jan 2026 10:43:01 -0600
+From: Frederick Lawler <fred@cloudflare.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, kernel-team@cloudflare.com
+Subject: Re: [PATCH RFC] ima: Fallback to a ctime guard without i_version
+ updates
+Message-ID: <aV07lY6NOkNvUk3Z@CMGLRV3>
+References: <20251229-xfs-ima-fixup-v1-1-6a717c939f7c@cloudflare.com>
+ <3ad9ded9b3a269908eee6c79b70dbf432e60ce8d.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 0vCL7wsg6svZqr5ra1KM-xkw_vyouRul
-X-Authority-Analysis: v=2.4 cv=Jvf8bc4C c=1 sm=1 tr=0 ts=695d24ff cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VnNF1IyMAAAA:8
- a=ULK339cd-4IVAxCgyX4A:9
-X-Proofpoint-ORIG-GUID: _zB0Xh2NfwnIXkSUHuJUf7fE77svI2yA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA2MDEyOSBTYWx0ZWRfX4cag9wppnDX3
- OhNgl1SMEIJiXQz/+dCFJpz3OCKVH8okJK7mEqeTHnoPwuF6M4MB06/pHWqI9AMawKskbX9oEHV
- LGlLlbtNlDYnAA/SeLzCiEPOuW6FyH0aLZ86CKoR1tSathgGDAE83F9p6hqsMVqs18G+tnc1LE4
- 98JoBnvjnNPQHPFS0aD/bGrRtRdrG++t7gxVjYeDG6cMSf5pHZLhivqcKSzSWxFKkAfdFDTls0S
- J9zxKxgyZEXsy7hsMICaZnNAwFLqbV5woodN5NgpdvjjsLxBBuOzlBNBclNhhAMisPQJnXyRigr
- YLwEy5k2HmytlD26SUDOXeFUPLhz7Ig6EPMgFOeSjjt/Cw1ly8tsa6zNnALFtsB7iSnsfbaM5yF
- dnlcqzaczZg1tptLvjVwrl20J3YMeyQaMgqZRhj4iXShLoOWcCm5RMNgOAMvb3shj+A7VG3S/3S
- +gf6v+p26MrVPRZrp3Q==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-06_01,2026-01-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 impostorscore=0 lowpriorityscore=0
- priorityscore=1501 phishscore=0 adultscore=0 spamscore=0 bulkscore=0
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2512120000
- definitions=main-2601060129
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3ad9ded9b3a269908eee6c79b70dbf432e60ce8d.camel@kernel.org>
 
-From: Nayna Jain <nayna@linux.ibm.com>
+Hi Jeff,
 
-Update Documentation/security/keys/trusted-encrypted.rst and Documentation/
-admin-guide/kernel-parameters.txt with PowerVM Key Wrapping Module (PKWM)
-as a new trust source
+On Tue, Jan 06, 2026 at 07:01:08AM -0500, Jeff Layton wrote:
+> On Mon, 2025-12-29 at 11:52 -0600, Frederick Lawler wrote:
+> > Since commit 1cf7e834a6fb ("xfs: switch to multigrain timestamps"), IMA
+> > is no longer able to correctly track inode.i_version due to the struct
+> > kstat.change_cookie no longer containing an updated i_version.
+> > 
+> > Introduce a fallback mechanism for IMA that instead tracks a
+> > integrity_ctime_guard() in absence of or outdated i_version
+> > for stacked file systems.
+> > 
+> > EVM is left alone since it mostly cares about the backing inode.
+> > 
+> > Link: https://lore.kernel.org/all/aTspr4_h9IU4EyrR@CMGLRV3
+> > Fixes: 1cf7e834a6fb ("xfs: switch to multigrain timestamps")
+> > Suggested-by: Jeff Layton <jlayton@kernel.org>
+> > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+> > ---
+> > The motivation behind this was that file systems that use the
+> > cookie to set the i_version for stacked file systems may still do so.
+> > Then add in the ctime_guard as a fallback if there's a detected change.
+> > The assumption is that the ctime will be different if the i_version is
+> > different anyway for non-stacked file systems.
+> > 
+> > I'm not too pleased with passing in struct file* to
+> > integrity_inode_attrs_changed() since EVM doesn't currently use
+> > that for now, but I couldn't come up with another idea to get the
+> > stat without coming up with a new stat function to accommodate just
+> > the file path, fully separate out IMA/EVM checks, or lastly add stacked
+> > file system support to EVM (which doesn't make much sense to me
+> > at the moment).
+> > 
+> > I plan on adding in self test infrastructure for the v1, but I would
+> > like to get some early feedback on the approach first.
+> > ---
+> >  include/linux/integrity.h           | 29 ++++++++++++++++++++++++-----
+> >  security/integrity/evm/evm_crypto.c |  2 +-
+> >  security/integrity/evm/evm_main.c   |  2 +-
+> >  security/integrity/ima/ima_api.c    | 21 +++++++++++++++------
+> >  security/integrity/ima/ima_main.c   | 17 ++++++++++-------
+> >  5 files changed, 51 insertions(+), 20 deletions(-)
+> > 
+> > diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+> > index f5842372359be5341b6870a43b92e695e8fc78af..4964c0f2bbda0ca450d135b9b738bc92256c375a 100644
+> > --- a/include/linux/integrity.h
+> > +++ b/include/linux/integrity.h
+> > @@ -31,19 +31,27 @@ static inline void integrity_load_keys(void)
+> >  
+> >  /* An inode's attributes for detection of changes */
+> >  struct integrity_inode_attributes {
+> > +	u64 ctime_guard;
+> >  	u64 version;		/* track inode changes */
+> >  	unsigned long ino;
+> >  	dev_t dev;
+> >  };
+> >  
+> > +static inline u64 integrity_ctime_guard(struct kstat stat)
+> > +{
+> > +	return stat.ctime.tv_sec ^ stat.ctime.tv_nsec;
+> > +}
+> > +
+> >  /*
+> >   * On stacked filesystems the i_version alone is not enough to detect file data
+> >   * or metadata change. Additional metadata is required.
+> >   */
+> >  static inline void
+> >  integrity_inode_attrs_store(struct integrity_inode_attributes *attrs,
+> > -			    u64 i_version, const struct inode *inode)
+> > +			    u64 i_version, u64 ctime_guard,
+> > +			    const struct inode *inode)
+> >  {
+> > +	attrs->ctime_guard = ctime_guard;
+> >  	attrs->version = i_version;
+> >  	attrs->dev = inode->i_sb->s_dev;
+> >  	attrs->ino = inode->i_ino;
+> > @@ -54,11 +62,22 @@ integrity_inode_attrs_store(struct integrity_inode_attributes *attrs,
+> >   */
+> >  static inline bool
+> >  integrity_inode_attrs_changed(const struct integrity_inode_attributes *attrs,
+> > -			      const struct inode *inode)
+> > +			      struct file *file, struct inode *inode)
+> >  {
+> > -	return (inode->i_sb->s_dev != attrs->dev ||
+> > -		inode->i_ino != attrs->ino ||
+> > -		!inode_eq_iversion(inode, attrs->version));
+> > +	struct kstat stat;
+> > +
+> > +	if (inode->i_sb->s_dev != attrs->dev ||
+> > +	    inode->i_ino != attrs->ino)
+> > +		return true;
+> > +
+> > +	if (inode_eq_iversion(inode, attrs->version))
+> > +		return false;
+> > +
+> > +	if (!file || vfs_getattr_nosec(&file->f_path, &stat, STATX_CTIME,
+> > +				       AT_STATX_SYNC_AS_STAT))
+> > +		return true;
+> > +
+> 
+> This is rather odd. You're sampling the i_version field directly, but
+> if it's not equal then you go through ->getattr() to get the ctime.
+> 
+> It's particularly odd since you don't know whether the i_version field
+> is even implemented on the fs. On filesystems where it isn't, the
+> i_version field generally stays at 0, so won't this never fall through
+> to do the vfs_getattr_nosec() call on those filesystems?
+>
 
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
----
- .../admin-guide/kernel-parameters.txt         |  1 +
- .../security/keys/trusted-encrypted.rst       | 50 +++++++++++++++++++
- 2 files changed, 51 insertions(+)
+You're totally right. I didn't consider FS's caching the value at zero.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a8d0afde7f85..ccb9c2f502fb 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -7755,6 +7755,7 @@ Kernel parameters
- 			- "tee"
- 			- "caam"
- 			- "dcp"
-+			- "pkwm"
- 			If not specified then it defaults to iterating through
- 			the trust source list starting with TPM and assigns the
- 			first trust source as a backend which is initialized
-diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-index eae6a36b1c9a..ddff7c7c2582 100644
---- a/Documentation/security/keys/trusted-encrypted.rst
-+++ b/Documentation/security/keys/trusted-encrypted.rst
-@@ -81,6 +81,14 @@ safe.
-          and the UNIQUE key. Default is to use the UNIQUE key, but selecting
-          the OTP key can be done via a module parameter (dcp_use_otp_key).
- 
-+     (5) PKWM (PowerVM Key Wrapping Module: IBM PowerVM + Platform KeyStore)
-+
-+         Rooted to a unique, per-LPAR key, which is derived from a system-wide,
-+         randomly generated LPAR root key. Both the per-LPAR keys and the LPAR
-+         root key are stored in hypervisor-owned secure memory at runtime,
-+         and the LPAR root key is additionally persisted in secure locations
-+         such as the processor SEEPROMs and encrypted NVRAM.
-+
-   *  Execution isolation
- 
-      (1) TPM
-@@ -102,6 +110,14 @@ safe.
-          environment. Only basic blob key encryption is executed there.
-          The actual key sealing/unsealing is done on main processor/kernel space.
- 
-+     (5) PKWM (PowerVM Key Wrapping Module: IBM PowerVM + Platform KeyStore)
-+
-+         Fixed set of cryptographic operations done on on-chip hardware
-+         cryptographic acceleration unit NX. Keys for wrapping and unwrapping
-+         are managed by PowerVM Platform KeyStore, which stores keys in an
-+         isolated in-memory copy in secure hypervisor memory, as well as in a
-+         persistent copy in hypervisor-encrypted NVRAM.
-+
-   * Optional binding to platform integrity state
- 
-      (1) TPM
-@@ -129,6 +145,11 @@ safe.
-          Relies on Secure/Trusted boot process (called HAB by vendor) for
-          platform integrity.
- 
-+     (5) PKWM (PowerVM Key Wrapping Module: IBM PowerVM + Platform KeyStore)
-+
-+         Relies on secure and trusted boot process of IBM Power systems for
-+         platform integrity.
-+
-   *  Interfaces and APIs
- 
-      (1) TPM
-@@ -149,6 +170,11 @@ safe.
-          Vendor-specific API that is implemented as part of the DCP crypto driver in
-          ``drivers/crypto/mxs-dcp.c``.
- 
-+     (5) PKWM (PowerVM Key Wrapping Module: IBM PowerVM + Platform KeyStore)
-+
-+         Platform Keystore has well documented interfaces in PAPR document.
-+         Refer to ``Documentation/arch/powerpc/papr_hcalls.rst``
-+
-   *  Threat model
- 
-      The strength and appropriateness of a particular trust source for a given
-@@ -191,6 +217,10 @@ selected trust source:
-      a dedicated hardware RNG that is independent from DCP which can be enabled
-      to back the kernel RNG.
- 
-+   * PKWM (PowerVM Key Wrapping Module: IBM PowerVM + Platform KeyStore)
-+
-+     The normal kernel random number generator is used to generate keys.
-+
- Users may override this by specifying ``trusted.rng=kernel`` on the kernel
- command-line to override the used RNG with the kernel's random number pool.
- 
-@@ -321,6 +351,26 @@ Usage::
- specific to this DCP key-blob implementation.  The key length for new keys is
- always in bytes. Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
- 
-+Trusted Keys usage: PKWM
-+------------------------
-+
-+Usage::
-+
-+    keyctl add trusted name "new keylen [options]" ring
-+    keyctl add trusted name "load hex_blob" ring
-+    keyctl print keyid
-+
-+    options:
-+       wrap_flags=   ascii hex value of security policy requirement
-+                       0x00: no secure boot requirement (default)
-+                       0x01: require secure boot to be in either audit or
-+                             enforced mode
-+                       0x02: require secure boot to be in enforced mode
-+
-+"keyctl print" returns an ASCII hex copy of the sealed key, which is in format
-+specific to PKWM key-blob implementation.  The key length for new keys is
-+always in bytes. Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
-+
- Encrypted Keys usage
- --------------------
- 
--- 
-2.47.3
+> Ideally, you should just call vfs_getattr_nosec() early on with
+> STATX_CHANGE_COOKIE|STATX_CTIME to get both at once, and only trust
+> STATX_CHANGE_COOKIE if it's set in the returned mask.
+> 
 
+Yes, that makes sense.
+
+I'll spin that in v1, thanks!
+
+> > +	return attrs->ctime_guard != integrity_ctime_guard(stat);
+> >  }
+> >  
+> >  
+> > diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> > index a5e730ffda57fbc0a91124adaa77b946a12d08b4..2d89c0e8d9360253f8dad52d2a8168127bb4d3b8 100644
+> > --- a/security/integrity/evm/evm_crypto.c
+> > +++ b/security/integrity/evm/evm_crypto.c
+> > @@ -300,7 +300,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+> >  		if (IS_I_VERSION(inode))
+> >  			i_version = inode_query_iversion(inode);
+> >  		integrity_inode_attrs_store(&iint->metadata_inode, i_version,
+> > -					    inode);
+> > +					    0, inode);
+> >  	}
+> >  
+> >  	/* Portable EVM signatures must include an IMA hash */
+> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> > index 73d500a375cb37a54f295b0e1e93fd6e5d9ecddc..0712802628fd6533383f9855687e19bef7b771c7 100644
+> > --- a/security/integrity/evm/evm_main.c
+> > +++ b/security/integrity/evm/evm_main.c
+> > @@ -754,7 +754,7 @@ bool evm_metadata_changed(struct inode *inode, struct inode *metadata_inode)
+> >  	if (iint) {
+> >  		ret = (!IS_I_VERSION(metadata_inode) ||
+> >  		       integrity_inode_attrs_changed(&iint->metadata_inode,
+> > -						     metadata_inode));
+> > +			       NULL, metadata_inode));
+> >  		if (ret)
+> >  			iint->evm_status = INTEGRITY_UNKNOWN;
+> >  	}
+> > diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> > index c35ea613c9f8d404ba4886e3b736c3bab29d1668..72bba8daa588a0f4e45e4249276edb54ca3d77ef 100644
+> > --- a/security/integrity/ima/ima_api.c
+> > +++ b/security/integrity/ima/ima_api.c
+> > @@ -254,6 +254,7 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+> >  	int length;
+> >  	void *tmpbuf;
+> >  	u64 i_version = 0;
+> > +	u64 ctime_guard = 0;
+> >  
+> >  	/*
+> >  	 * Always collect the modsig, because IMA might have already collected
+> > @@ -272,10 +273,16 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+> >  	 * to an initial measurement/appraisal/audit, but was modified to
+> >  	 * assume the file changed.
+> >  	 */
+> > -	result = vfs_getattr_nosec(&file->f_path, &stat, STATX_CHANGE_COOKIE,
+> > +	result = vfs_getattr_nosec(&file->f_path, &stat,
+> > +				   STATX_CHANGE_COOKIE | STATX_CTIME,
+> >  				   AT_STATX_SYNC_AS_STAT);
+> > -	if (!result && (stat.result_mask & STATX_CHANGE_COOKIE))
+> > -		i_version = stat.change_cookie;
+> > +	if (!result) {
+> > +		if (stat.result_mask & STATX_CHANGE_COOKIE)
+> > +			i_version = stat.change_cookie;
+> > +
+> > +		if (stat.result_mask & STATX_CTIME)
+> > +			ctime_guard = integrity_ctime_guard(stat);
+> > +	}
+> >  	hash.hdr.algo = algo;
+> >  	hash.hdr.length = hash_digest_size[algo];
+> >  
+> > @@ -305,11 +312,13 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+> >  
+> >  	iint->ima_hash = tmpbuf;
+> >  	memcpy(iint->ima_hash, &hash, length);
+> > -	if (real_inode == inode)
+> > +	if (real_inode == inode) {
+> >  		iint->real_inode.version = i_version;
+> > -	else
+> > +		iint->real_inode.ctime_guard = ctime_guard;
+> > +	} else {
+> >  		integrity_inode_attrs_store(&iint->real_inode, i_version,
+> > -					    real_inode);
+> > +				ctime_guard, real_inode);
+> > +	}
+> >  
+> >  	/* Possibly temporary failure due to type of read (eg. O_DIRECT) */
+> >  	if (!result)
+> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > index 5770cf691912aa912fc65280c59f5baac35dd725..6051ea4a472fc0b0dd7b4e81da36eff8bd048c62 100644
+> > --- a/security/integrity/ima/ima_main.c
+> > +++ b/security/integrity/ima/ima_main.c
+> > @@ -22,6 +22,7 @@
+> >  #include <linux/mount.h>
+> >  #include <linux/mman.h>
+> >  #include <linux/slab.h>
+> > +#include <linux/stat.h>
+> >  #include <linux/xattr.h>
+> >  #include <linux/ima.h>
+> >  #include <linux/fs.h>
+> > @@ -185,6 +186,7 @@ static void ima_check_last_writer(struct ima_iint_cache *iint,
+> >  {
+> >  	fmode_t mode = file->f_mode;
+> >  	bool update;
+> > +	int ret;
+> >  
+> >  	if (!(mode & FMODE_WRITE))
+> >  		return;
+> > @@ -197,12 +199,13 @@ static void ima_check_last_writer(struct ima_iint_cache *iint,
+> >  
+> >  		update = test_and_clear_bit(IMA_UPDATE_XATTR,
+> >  					    &iint->atomic_flags);
+> > -		if ((iint->flags & IMA_NEW_FILE) ||
+> > -		    vfs_getattr_nosec(&file->f_path, &stat,
+> > -				      STATX_CHANGE_COOKIE,
+> > -				      AT_STATX_SYNC_AS_STAT) ||
+> > -		    !(stat.result_mask & STATX_CHANGE_COOKIE) ||
+> > -		    stat.change_cookie != iint->real_inode.version) {
+> > +		ret = vfs_getattr_nosec(&file->f_path, &stat,
+> > +					STATX_CHANGE_COOKIE | STATX_CTIME,
+> > +					AT_STATX_SYNC_AS_STAT);
+> > +		if ((iint->flags & IMA_NEW_FILE) || ret ||
+> > +		    (!ret && stat.change_cookie != iint->real_inode.version) ||
+> > +		    (!ret && integrity_ctime_guard(stat) !=
+> > +		     iint->real_inode.ctime_guard)) {
+> >  			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+> >  			iint->measured_pcrs = 0;
+> >  			if (update)
+> > @@ -330,7 +333,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+> >  	    (action & IMA_DO_MASK) && (iint->flags & IMA_DONE_MASK)) {
+> >  		if (!IS_I_VERSION(real_inode) ||
+> >  		    integrity_inode_attrs_changed(&iint->real_inode,
+> > -						  real_inode)) {
+> > +						  file, real_inode)) {
+> >  			iint->flags &= ~IMA_DONE_MASK;
+> >  			iint->measured_pcrs = 0;
+> >  		}
+> > 
+> > ---
+> > base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+> > change-id: 20251212-xfs-ima-fixup-931780a62c2c
+> > 
+> > Best regards,
+> 
+> -- 
+> Jeff Layton <jlayton@kernel.org>
