@@ -1,85 +1,166 @@
-Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C13285C9D;
-	Tue,  6 Jan 2026 17:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233702FC02F
+	for <linux-security-module@vger.kernel.org>; Tue,  6 Jan 2026 17:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767719626; cv=none; b=ZlSpq6adrC1Noij5NDGOpse3Sdv5di6CwbhgZAMNuHX6lmVj+AWSAbR/CItoaH+WwuRTczvZ1njUBTomOy0flh4nyMD3YQvUbwV1a5bBTwz5fEVsQbosGi5K93dPxzi9JE47RDLpj73jJ7CkvfeNlWgwD5RmN/fQODHn2ZVvwjY=
+	t=1767720892; cv=none; b=vDCINRkol2aSnqhq2QkLDedSqdZ1DWG9ATr0nWN7LBkGx+EgVxPBlJPsm0nWPe2RQam33G85krsl4P69PHXyL70AZzcyW/cDGgC8A5LBUkWFRW0EplizovYeZehOrRwztL+KkODLue93NV4O3Kp9Pt93Ji1G1MVZk5zaxyCjxQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767719626; c=relaxed/simple;
-	bh=jU+0cUnFeX8zgm32wbjWEGkT9Bno4SW9Xo+8tilm8Z0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hYchqadN2leat1aHHk1DdfPh7ASd1SMUZRhCUE1m2BDq+T95w8lna28kLJMnlIVDarXKVUTFehXFvpIUehA+VZe+a80uUvsOsLa0QwjprJyjRCsGQD4Nm7TQHYwCshmXMxp4H23kc7AZnck2l/esADb5i9gzYnQO5TPvBGlUEd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.com; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=V9TDKVHp; arc=none smtp.client-ip=78.40.148.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.com
+	s=arc-20240116; t=1767720892; c=relaxed/simple;
+	bh=vbg/4Kuy8+wEtCaTdI808rOQJV/eEI0U33FeZ9sxcno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VfPI6Omo0bwUZ3m4IQYlskjEBzocwwIvwtI28PtSfJ6eqxawaJH7Rh4snWe9LhjzjNLT86iTME+IH6+ZzC9L8jQYtAzTLtTqo6Ia3tab+2hvwauZMNzmAwmbW971aRA++sQmFeAejRhsnemQs43jLgCZOCVJmjwcWoYh/yYP6tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ljs0vtvS; arc=none smtp.client-ip=209.85.128.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="V9TDKVHp"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap5-20230908; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:In-Reply-To:
-	References; bh=0SBgVsqddYJxKw4r99bmApenfbvbhneyH5EXt+VVkZk=; b=V9TDKVHpADdBLg
-	rt3TDFu7yVqPzTLLXb6CEzx9mm6GqPQJ4F6DkLf6DN9fyRVicw/3MzOZcdwt3FQDEm7hTrf1SCBtz
-	Kvj2YoOkl+ZtauYtC7WSWJUeTkA4pUoINAN5XVr/o5PenkvKdeYF0ktewu5CrBD0zqvifYvyuvpZm
-	TA8zIF6XekVI5szpQCeFsSHoWn+7X1SnKcepYHbu5Vugp0Cc4swb2I+Zd+I1vO69RU9sg3LDpNgbn
-	HxrCZ3iEUvTZQZWJCr6Wd4mLkyiRJDQTOJKEEcgFSeZ5Cvv20N40L3aaGqZnDblcogR5KKWd/XQaa
-	hxudmGFrM3liVx8h8QfA==;
-Received: from [63.135.74.212] (helo=rainbowdash)
-	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1vdAcg-007PzL-QT; Tue, 06 Jan 2026 17:13:34 +0000
-Received: from ben by rainbowdash with local (Exim 4.99.1)
-	(envelope-from <ben@rainbowdash>)
-	id 1vdAcg-00000000I67-1Ton;
-	Tue, 06 Jan 2026 17:13:34 +0000
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-To: linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: serge@hallyn.com,
-	jmorris@namei.org,
-	paul@paul-moore.co,
-	Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH] lsm: make keys for static branch static
-Date: Tue,  6 Jan 2026 17:13:32 +0000
-Message-Id: <20260106171332.69558-1-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.37.2.352.g3c44437643
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ljs0vtvS"
+Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-4779aa4f928so12869175e9.1
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Jan 2026 09:34:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1767720888; x=1768325688; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RXcHtzljW/LEwcnvhUw7B+CYy+kN5WC/pk6M+qEtNI0=;
+        b=Ljs0vtvSNgpYJhknDhx9bELQGkkGVBktvrRTynlExmpLIGaAKcKfy3q+Vzhc0CBdzt
+         hBu8YqcaTsruwaGPpR28ZieFzq6vpX9ppPbtMDq1YX7oLCc1WBHU2/khCZGPgcPiCJQo
+         /SdqgjVvcX4o8hT7DcaJnMaMrndMqG0BlSQCVNuO18iucidmTBu/KWco362PprZTfFO/
+         XbxStM5Ax6eKh7Rzmwb+jd7wTMCelndFhBbeJ2nvVNQfn/FL+xadO2yxh5ZLwyELgTkw
+         edYtcRWUeQEl3fZGMU433z7W5zEQdjxichBC/sKkiUvsD8eW0UgBMhLx19RKhPBoMKrS
+         pmaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767720888; x=1768325688;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RXcHtzljW/LEwcnvhUw7B+CYy+kN5WC/pk6M+qEtNI0=;
+        b=YYgg4QQpDUBlqBHV+Vvk+Si4EWbYd+8D+tSi+LI46UkVQTqJhpVZWRmim5Tip2RV0Y
+         rdGvzu0Ep1cdHgi5sZcLYBgCztoos8JbjMX5KNHQSRCmZgeIsutwmJj/lvMB4WcHYmWq
+         dRz1S0RIillqgUYaQ8KJppT+Pzw6TzTECLSQMApVianDd9u1RA0dPby2ZNhLSMwC0XGg
+         N7qtOstotriJemnYdQh7V/uNjATa4PaBdPxt+t6FvVgENnXx9jDewCqSfSBBIaLhewEl
+         oj73uvO1QTaSKkTHoJd8SPBJ6XCpabjuwjbYlkHP46z/KO1pUzSGhWsjvlgBc/xgz4MD
+         d51A==
+X-Forwarded-Encrypted: i=1; AJvYcCV6XFtpqvP5VMwoH9u0bxo8kpfToqeMQmoCZRpQyEQHGMW0I8ziUQxnj4zMznlW/I8+kaMUaP90Y0kuBTduRI3T2X4M6tY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrJwxo1mnYwB5IZMJgY449tYQ9EHmPU3mFN9uYePo7yVV0krhy
+	9YAHsXQGN+3Cgco1Hbo4MzQ+0q8wqZxHULU8twpnQav4m0R8JsNHbR9hRljH66mtZg==
+X-Gm-Gg: AY/fxX64Oc8Osig9XqMIIjpMsP4wzxkLWCvGJh0HCAIrkzlrKpA8u+4bzW3MEGnUr30
+	r8QNthfBNm4U3FJd3ENfAT2T3qDQ94IQJZHYFbCBpPU04EupuGuBEae4PUYUfWpIVZfouypTWu6
+	fZwl+F17Y9s6j8TqZ3WSZAMIro8NPuwe3VdQrymg+lHAFNctaG/LdJupfiamwyvnyOvlaGdm7oE
+	ngwroeB7DEFpTEKJ+zlsz3xJKC7sJk0Tx8wagupzkWoib3M+70Q1boAYEbKzsbqHh1f3b93F8Ax
+	I+6yvgbIZ/KWOviY9VooF/ArKndwzOyTtM/5yiIqZT6g0PH8cj1Ap/Jp/S1hjqKP4Ghsu5iCfJJ
+	3j6FQ+kBYEOaS1mtx3TxkpWyRTY2dOuwisLP8j9cSJLI0ppFeZfA13e5y1HfsZEGDRw3NcIyCOD
+	QiO9jsCKiqY2DmuqehCbM0+NunawdC6Oy4afuGXZ5zTVwdNEF7
+X-Google-Smtp-Source: AGHT+IHmVK6EqE14VH+HPUL16Zk51harYxsBJJheKVL1BeqXTS/M31ba8unH1eaK7+ALdSr4nMxyjw==
+X-Received: by 2002:a05:600c:46ca:b0:477:7a53:f493 with SMTP id 5b1f17b1804b1-47d7f0980e2mr44046495e9.23.1767720888108;
+        Tue, 06 Jan 2026 09:34:48 -0800 (PST)
+Received: from elver.google.com ([2a00:79e0:2834:9:4477:8df2:f516:1bd3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7fb4b3c5sm21868415e9.15.2026.01.06.09.34.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jan 2026 09:34:47 -0800 (PST)
+Date: Tue, 6 Jan 2026 18:34:39 +0100
+From: Marco Elver <elver@google.com>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	Chris Li <sparse@chrisli.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
+	Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	linux-sparse@vger.kernel.org, linux-wireless@vger.kernel.org,
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Subject: Re: [PATCH v5 06/36] cleanup: Basic compatibility with context
+ analysis
+Message-ID: <aV1HrwZm6xg8PnRU@elver.google.com>
+References: <20251219154418.3592607-1-elver@google.com>
+ <20251219154418.3592607-7-elver@google.com>
+ <993d381a-c24e-41d2-a0be-c1b0b5d8cbe9@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: srv_ts003@codethink.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <993d381a-c24e-41d2-a0be-c1b0b5d8cbe9@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-The key use for static-branches are not refrenced by name outside
-of the security/security.c file, so make them static. This stops
-the sparse warnings about "Should it be static?" such as:
+On Tue, Jan 06, 2026 at 10:21PM +0900, Tetsuo Handa wrote:
+> On 2025/12/20 0:39, Marco Elver wrote:
+> > Introduce basic compatibility with cleanup.h infrastructure.
+> 
+> Can Compiler-Based Context- and Locking-Analysis work with conditional guards
+> (unlock only if lock succeeded) ?
+> 
+> I consider that replacing mutex_lock() with mutex_lock_killable() helps reducing
+> frequency of hung tasks under heavy load where many processes are preempted waiting
+> for the same mutex to become available (e.g.
+> https://syzkaller.appspot.com/bug?extid=8f41dccfb6c03cc36fd6 ).
+> 
+> But e.g. commit f49573f2f53e ("tty: use lock guard()s in tty_io") already replaced
+> plain mutex_lock()/mutex_unlock() with plain guard(mutex). If I propose a patch for
+> replacing mutex_lock() with mutex_lock_killable(), can I use conditional guards?
+> (Would be yes if Compiler-Based Context- and Locking-Analysis can work, would be no
+>  if Compiler-Based Context- and Locking-Analysis cannot work) ?
 
-security/security.c: note: in included file:
-./include/linux/lsm_hook_defs.h:29:1: warning: symbol 'security_hook_active_binder_set_context_mgr_0' was not declared. Should it be static?
-./include/linux/lsm_hook_defs.h:29:1: warning: symbol 'security_hook_active_binder_set_context_mgr_1' was not declared. Should it be static?
-./include/linux/lsm_hook_defs.h:29:1: warning: symbol 'security_hook_active_binder_set_context_mgr_2' was not declared. Should it be static?
-./include/linux/lsm_hook_defs.h:30:1: warning: symbol 'security_hook_active_binder_transaction_0' was not declared. Should it be static?
-...
+It works for cond guards, so yes. But, only if support for
+mutex_lock_killable() is added. At the moment mutex.h only has:
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
- security/security.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	...
+	DEFINE_LOCK_GUARD_1(mutex, struct mutex, mutex_lock(_T->lock), mutex_unlock(_T->lock))
+	DEFINE_LOCK_GUARD_1_COND(mutex, _try, mutex_trylock(_T->lock))
+	DEFINE_LOCK_GUARD_1_COND(mutex, _intr, mutex_lock_interruptible(_T->lock), _RET == 0)
 
-diff --git a/security/security.c b/security/security.c
-index 31a688650601..67af9228c4e9 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -115,7 +115,7 @@ do {						\
- #define DEFINE_LSM_STATIC_CALL(NUM, NAME, RET, ...)			\
- 	DEFINE_STATIC_CALL_NULL(LSM_STATIC_CALL(NAME, NUM),		\
- 				*((RET(*)(__VA_ARGS__))NULL));		\
--	DEFINE_STATIC_KEY_FALSE(SECURITY_HOOK_ACTIVE_KEY(NAME, NUM));
-+	static DEFINE_STATIC_KEY_FALSE(SECURITY_HOOK_ACTIVE_KEY(NAME, NUM));
- 
- #define LSM_HOOK(RET, DEFAULT, NAME, ...)				\
- 	LSM_DEFINE_UNROLL(DEFINE_LSM_STATIC_CALL, NAME, RET, __VA_ARGS__)
--- 
-2.37.2.352.g3c44437643
+	DECLARE_LOCK_GUARD_1_ATTRS(mutex,	__acquires(_T), __releases(*(struct mutex **)_T))
+	#define class_mutex_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(mutex, _T)
+	DECLARE_LOCK_GUARD_1_ATTRS(mutex_try,	__acquires(_T), __releases(*(struct mutex **)_T))
+	#define class_mutex_try_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(mutex_try, _T)
+	DECLARE_LOCK_GUARD_1_ATTRS(mutex_intr,	__acquires(_T), __releases(*(struct mutex **)_T))
+	#define class_mutex_intr_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(mutex_intr, _T)
+	...
 
+And we also have a test in lib/test_context-analysis.c checking it
+actually works:
+
+	...
+	scoped_cond_guard(mutex_try, return, &d->mtx) {
+		d->counter++;
+	}
+	scoped_cond_guard(mutex_intr, return, &d->mtx) {
+		d->counter++;
+	}
+	...
+
+What's missing is a variant for mutex_lock_killable(), but that should
+be similar to the mutex_lock_interruptible() variant.
