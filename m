@@ -1,70 +1,70 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18A2230BE9
-	for <linux-security-module@vger.kernel.org>; Wed,  7 Jan 2026 12:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6D53A0B1B
+	for <linux-security-module@vger.kernel.org>; Wed,  7 Jan 2026 16:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767790166; cv=none; b=NdqWH+6MPLbFp6nJ3DUfOO3E3HVIuELlVbUSNuwzvugavwm7JcsSt9G8fFf+yzMEJgz/xIQmHA6ExIxrVCJSBfINe3+yqJrj9jHcwXcRjD4sa8+zPQZcEpqxzQBVY7CY0qxZT+fFPRVWm3EMKIpS8YxUHB54FpxvS8mAv6EsTAM=
+	t=1767805077; cv=none; b=sC0+pQnCSqZhQix28ft3gRa0oCR684t9YzSMSpj42RkvhZETwCzqlQnv0He/qeucmTRuFR0+NEYPcakbV5hjjoYLxiolYO2+SmrwbqjRt9tfEMcBMenJAeCV4BS5h7cGD8GIm0oj9C1/tgtY2cv880fJ0mKOT3VohpL62nhbFvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767790166; c=relaxed/simple;
-	bh=a3vmgsAXukmgqSwV0AoGTAjXqd16li7cffqw4Dv9cmo=;
+	s=arc-20240116; t=1767805077; c=relaxed/simple;
+	bh=oTh/Bm7Bvc5pQDGtio2WHmCSYQcQfl+HLeQb6+ZuPa4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oZ9oXo88JPN0cYkrmLx5pwopuH2Mb08KbVYmVjwY4f0/fBMgEato1hD2p6l/uVLDqUpKqUOttOwVl3KrOcgghaemENppCNs9fHjOr6IIs2EuQDh0IPObtPFGLMzkwgXAIIGspLYpxjCx0OC8chLTVRE3zA6TBRPKvW7KAdv23fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vix06SFW; arc=none smtp.client-ip=209.85.128.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=KCapG6LGImcOKw35MEHff82o7n4wgtd87RrU2tJBoYg1TX2kLfZFKtdwBMznKNkwz3SkX5lwhftfPTk6XLjwYfKO2n9bjGhcL83nDANyVrvlXCtzNv7P/eHiEndWya4LkM3zuHZoXWhgbNn5ozxzoRDmbePxZfRe50J8CRrIb+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WNb+a3iI; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vix06SFW"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4779ce2a624so16757955e9.2
-        for <linux-security-module@vger.kernel.org>; Wed, 07 Jan 2026 04:49:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WNb+a3iI"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47755de027eso13834425e9.0
+        for <linux-security-module@vger.kernel.org>; Wed, 07 Jan 2026 08:57:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1767790163; x=1768394963; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1767805070; x=1768409870; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=A7esm0lhpjk8pfTNy3FuLXs4ysbYggutAEfC0J9iA/0=;
-        b=vix06SFWGuRzfBZV8Q21lRTRkg55bKFwvcWGaDSTx6bPT/woys3jA/gQ3fhpY1xuBE
-         k7JSMqmZTUqiVqWuQB9TmM0Nea+T/bmm2KDSkJASipQ2GthwmNw2lXTBj/ApnFYOyQs+
-         kGi0gADLwyxGuu+Xuxyieb3X8hEFVBmbQB0bfn3K29PTW1WQ2OjFUn94+0g+Imu1h+eU
-         5Mtaexei5Z7fiISlwAieI2AQFZU2H0GXJWryl+hrzvAUhEVg8bPc6PiNhjXe8MDDoEau
-         /YDtAHG3NH8uN3OYtrAqlhu7dxse24SVBLY4it5B/tRzMDy77DLHvCLnyJ6TLF861gCM
-         PPrA==
+        bh=9cVSMIV0M1vHEkGoca4IYHePZY2mIben9Mxd1bnOl0g=;
+        b=WNb+a3iI069+UVfkyi0mdxhz3UHcXoR2Dks6g/Zr5duayBmAFceV4VkycZSQSpNejh
+         HLZlFMYjlGHuAd5pKPpyck8hVhyA2qdSQS6CJ0AFLDAqOnmDIgtA5UrRPi6TgeY3OBXb
+         M7jL5UtGiyEB5/LAvkngUsdz8mpiVg5rAWbvbWb69JZ3mBVLfT4SVX43b32nfuvyPxDS
+         oVaOjdXCtPvHyFZkhXo97/vde6t2f3pdnBRP4enQVaZtjMSYvHnmG3e3qQ/L9D7r8sEL
+         vxr5lm3h5pey/t84dNgdBxUxJDBVt3m5XkrlodFszwtaV2LuITUgssDn6gLTPFbCNLb7
+         sLsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767790163; x=1768394963;
+        d=1e100.net; s=20230601; t=1767805070; x=1768409870;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A7esm0lhpjk8pfTNy3FuLXs4ysbYggutAEfC0J9iA/0=;
-        b=LvoKMzfrTGIYyu4gYXuM9yuRChHiqJ4MXGDmwTr51A9vfP4dLdfnxyjK8i5K7BwQZh
-         0/Btk0QvMjNatpaE2vQHmwj4Aio78vxdT37/AXNsd8NiABabu+UarGVqiFlccG9QRdiI
-         IBzEam90oK+kI9QBxv4aKy/CBjz+nFI+9wvrmXAb1mmVw01iRZ1GcHwhxbGlai8432Zd
-         pHLecPOpY5Uhg3lR3X9iFMqtymObMiJJ+MnZtO3qYqc9CPOAR9PqWy3vbLhB9NStHpb9
-         LdLvo2hUtmXs9/a9qBY3isHt3vILGLZ9eA9R6nx5EYwN4POD98OhhjZYoQcfzyc6Ed+b
-         Bu4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXN3KySVNrGWpynSU4nEgUltQCs2+cxq3prslszWoKJPq8WlJ0QLc2ZaWf9qNKR9DusPqXRGeyCcpgL6XLl8xqx0MYvetI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyKjb4e2ItnHIWS5F5xG+JQrNdO2VjIJ2K8lnNPzhB9vQ1c114
-	Vk5KfBSeknJpLfMEKfJfdDEc9VNJstXjtP1/8BIuUppVj/kwuuLUhRPoiaLSNboP9pJnC+d8MNv
-	NWUVYveGl
-X-Gm-Gg: AY/fxX6u2qe3LHCAQ7tMaPB8R8meGZNA8Z0InyU9G2t4Hd2IgmmzdCGcI7Bgk2yqXhn
-	kkuhVNfYVbKw07zs2hK7Z6piuxuQIIbbpGfh4ycEx6mEJACbhiWQIf8N4wjggofYTXuqifRlpZc
-	AsIKxyRPM8BJxDot4EFZLfp7sq8xgEkPhlpR35x9g1VL85rXpa7H95HupMOOQLOx+2GkIb8XbPI
-	tv4RK2xVrx6H3OlNCn9wsmSl481BKenKC8Med9awUR3DGnFAOygfCOgfbSZA4o8avdkzUFg/QOr
-	iXi7hTFQGUZ8go5biw6p9AfIbDMMVUXwG2/7A037OC6XWp9GTDiE9sN8gNoKD+vqGE5f4SYXTT3
-	pAumzTuH/PJe2pP8A9QdjYi0VVBIuoOK7DJZGNXjZs3TRUX1BDLQb5O/9TT4uVPFsc93JRPfBt/
-	o6pN6AGOxtWd+RMkiFjEvxYhpXRoIs7IjKuzH7+dnH2Q==
-X-Google-Smtp-Source: AGHT+IHZt1ItuHFPKlBIvrWTZFKkBkOeTUrNJBb9Zur08PBq/LX2HyuJRNfbhcxbHAzuTncL4RuRtg==
-X-Received: by 2002:a05:600c:190e:b0:477:9aeb:6a8f with SMTP id 5b1f17b1804b1-47d84b1faffmr29548675e9.9.1767790162877;
-        Wed, 07 Jan 2026 04:49:22 -0800 (PST)
+        bh=9cVSMIV0M1vHEkGoca4IYHePZY2mIben9Mxd1bnOl0g=;
+        b=HDQ01XYOpXFMjqhU6BHr6NShd6Zbn+8QXT08HvHfGANg/6MTbrGfvT12wd8oKLVRxQ
+         +mvd8/FELLngI5nCb3HKTdInfs3/jXkTU4ZHY+d5MohkfWvi9MOJTUvrlZLRwnwo6PTY
+         UjhyOVucdVNPAa5hEeTYZ3svQWw0LKnc/gyNPK9GqPVNlZagdbANdrG1lfaixd/1RXXI
+         3bQWwwlGuLHfQyy8cranRtugaGnDkd0J0pLVpBz0h9rowiIriJSBTRo8zYKfTRhrIoqt
+         6F4Yo8Kioa3Kv5NxU1t6Tgs8d280GPHL7dQia+TiLBPlYB4AE1is52mUEZzrY+j+rXd7
+         bkQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKNZf049Igc6b4lHzsFGi4YpQZHyWzkmnodT6qZN5fNwVlURjGT7o7WBAG6ovss6kEKIVb2rV/6QLvR61mh4DEc24SAC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2tuGc2XfkHGMht7ka1KM/xbr16hfKLBUzSoaqauxahiSCEmAt
+	s0JcsdQs8uVwBnWoVyMuhUuIJ2oy1bH4PvfFlAcK8hv/lKiI36kESmDQBykRM53lFjiNN3m3sb7
+	L4f3tevwj
+X-Gm-Gg: AY/fxX5uRDD4uZERlu71sVzeIQGo4WDmcDwk4mThuZZkxZIPA0LVU/THgbPleha8Xx8
+	mEkTKDrWChpykLMvmjPR1nbH7L4iJG8ALmVRlzKT8xoOOX9n3MH+oYeZ6AT7sRmziEVm1A+c5os
+	ZkVTHkvzVDHNjr2D36SQPJQlCStgVzM9UCQQ74p1Slvc/ACr3P4QZcFXDM/yWIKjJZYC3Y0u12y
+	hj7iwVJvrNqBQGh1bhKEKBbAB/5N5z/CIRufvsGQvVyBqRphv3bWujdSSJbnmE6ywuacHlo2L3W
+	eyXm8M0b3zIhron8hdIUcu8PRlF6qTSNB3QscdWoxPtZ/tcKNXIq3Kfvr601GT5GJmYacmAjORm
+	0KEbgsVNocNJ/QMOgl0NrdtgFNbsONPGq72QqktXj1M9GQK/Kihcb4m4qn2sYBDDqGM17xKYVa8
+	CMBr1waUZPaBDTtuhGOedW6QnNPZ9DTcIg4vFDyKTXIA==
+X-Google-Smtp-Source: AGHT+IFNWlJitUC1NSOuwXl+nF0iGIoib1vo+UR+IFwK8+8wYGCEbPSdCgCOi3fSLDFCBKtQyHctnQ==
+X-Received: by 2002:a05:600c:8b2c:b0:477:7f4a:44b0 with SMTP id 5b1f17b1804b1-47d84b3ea06mr36754095e9.33.1767805069507;
+        Wed, 07 Jan 2026 08:57:49 -0800 (PST)
 Received: from google.com ([2a00:79e0:288a:8:aaba:e2c1:29df:3e24])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5feaf8sm10088254f8f.39.2026.01.07.04.49.21
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7f41f5e0sm104518655e9.8.2026.01.07.08.57.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jan 2026 04:49:22 -0800 (PST)
-Date: Wed, 7 Jan 2026 13:49:16 +0100
+        Wed, 07 Jan 2026 08:57:48 -0800 (PST)
+Date: Wed, 7 Jan 2026 17:57:43 +0100
 From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: Kuniyuki Iwashima <kuniyu@google.com>
-Cc: Justin Suess <utilityemal77@gmail.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+To: Justin Suess <utilityemal77@gmail.com>
+Cc: Kuniyuki Iwashima <kuniyu@google.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
 	"Serge E . Hallyn" <serge@hallyn.com>,
 	Simon Horman <horms@kernel.org>,
 	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
@@ -72,11 +72,12 @@ Cc: Justin Suess <utilityemal77@gmail.com>,
 	netdev@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>
 Subject: Re: [RFC PATCH 0/1] lsm: Add hook unix_path_connect
-Message-ID: <aV5WTGvQB0XI8Q_N@google.com>
+Message-ID: <aV6Qh39jVg8trMlg@google.com>
 References: <20251231213314.2979118-1-utilityemal77@gmail.com>
  <CAAVpQUCF3uES6j22P1TYzgKByw+E4EqpM=+OFyqtRGStGWxH+Q@mail.gmail.com>
  <aVuaqij9nXhLfAvN@google.com>
  <CAAVpQUB6gnfovRZAg_BfVKPuS868dFj7HxthbxRL-nZvcsOzCg@mail.gmail.com>
+ <2da3f1ae-1fe1-40c4-8748-9fb371e696f0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -86,140 +87,102 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAVpQUB6gnfovRZAg_BfVKPuS868dFj7HxthbxRL-nZvcsOzCg@mail.gmail.com>
+In-Reply-To: <2da3f1ae-1fe1-40c4-8748-9fb371e696f0@gmail.com>
 
-On Tue, Jan 06, 2026 at 11:33:32PM -0800, Kuniyuki Iwashima wrote:
-> +VFS maintainers
-> 
-> On Mon, Jan 5, 2026 at 3:04 AM Günther Noack <gnoack@google.com> wrote:
+On Wed, Jan 07, 2026 at 07:19:02AM -0500, Justin Suess wrote:
+> On 1/7/26 02:33, Kuniyuki Iwashima wrote:
+> > +VFS maintainers
 > >
-> > Hello!
+> > On Mon, Jan 5, 2026 at 3:04 AM Günther Noack <gnoack@google.com> wrote:
+> >> Hello!
+> >>
+> >> On Sun, Jan 04, 2026 at 11:46:46PM -0800, Kuniyuki Iwashima wrote:
+> >>> On Wed, Dec 31, 2025 at 1:33 PM Justin Suess <utilityemal77@gmail.com> wrote:
+> >>>> Motivation
+> >>>> ---
+> >>>>
+> >>>> For AF_UNIX sockets bound to a filesystem path (aka named sockets), one
+> >>>> identifying object from a policy perspective is the path passed to
+> >>>> connect(2). However, this operation currently restricts LSMs that rely
+> >>>> on VFS-based mediation, because the pathname resolved during connect()
+> >>>> is not preserved in a form visible to existing hooks before connection
+> >>>> establishment.
+> >>> Why can't LSM use unix_sk(other)->path in security_unix_stream_connect()
+> >>> and security_unix_may_send() ?
+> >> Thanks for bringing it up!
+> >>
+> >> That path is set by the process that acts as the listening side for
+> >> the socket.  The listening and the connecting process might not live
+> >> in the same mount namespace, and in that case, it would not match the
+> >> path which is passed by the client in the struct sockaddr_un.
+> > Thanks for the explanation !
 > >
-> > On Sun, Jan 04, 2026 at 11:46:46PM -0800, Kuniyuki Iwashima wrote:
-> > > On Wed, Dec 31, 2025 at 1:33 PM Justin Suess <utilityemal77@gmail.com> wrote:
-> > > > Motivation
-> > > > ---
-> > > >
-> > > > For AF_UNIX sockets bound to a filesystem path (aka named sockets), one
-> > > > identifying object from a policy perspective is the path passed to
-> > > > connect(2). However, this operation currently restricts LSMs that rely
-> > > > on VFS-based mediation, because the pathname resolved during connect()
-> > > > is not preserved in a form visible to existing hooks before connection
-> > > > establishment.
-> > >
-> > > Why can't LSM use unix_sk(other)->path in security_unix_stream_connect()
-> > > and security_unix_may_send() ?
+> > So basically what you need is resolving unix_sk(sk)->addr.name
+> > by kern_path() and comparing its d_backing_inode(path.dentry)
+> > with d_backing_inode (unix_sk(sk)->path.dendtry).
 > >
-> > Thanks for bringing it up!
-> >
-> > That path is set by the process that acts as the listening side for
-> > the socket.  The listening and the connecting process might not live
-> > in the same mount namespace, and in that case, it would not match the
-> > path which is passed by the client in the struct sockaddr_un.
+> > If the new hook is only used by Landlock, I'd prefer doing that on
+> > the existing connect() hooks.
+> I see. Did you have a particular hook in mind to extend?
 > 
-> Thanks for the explanation !
+> One complication I see is whatever hook this gets added to
+> would also need CONFIG_SECURITY_PATH, since logically this restriction
+> would fall under it:
 > 
-> So basically what you need is resolving unix_sk(sk)->addr.name
-> by kern_path() and comparing its d_backing_inode(path.dentry)
-> with d_backing_inode (unix_sk(sk)->path.dendtry).
+> From security/Kconfig:
 > 
-> If the new hook is only used by Landlock, I'd prefer doing that on
-> the existing connect() hooks.
+> config SECURITY_PATH
+>     bool "Security hooks for pathname based access control"
+>     depends on SECURITY
+>     help
+>       This enables the security hooks for pathname based access control.
+>       If enabled, a security module can use these hooks to
+>       implement pathname based access controls.
+>       If you are unsure how to answer this question, answer N.
+> 
+> config SECURITY_NETWORK
+>     bool "Socket and Networking Security Hooks"
+>     depends on SECURITY
+>     help
+>       This enables the socket and networking security hooks.
+>       If enabled, a security module can use these hooks to
+>       implement socket and networking access controls.
+>       If you are unsure how to answer this question, answer N.
+> 
+> Logically, this type of access control falls under both categories, so must be
+> gated by both features. No existing LSM hooks are gated by both afaik, so
+> there is not really an existing logical place to extend an existing hook without
+> changing what features are required to be enabled for existing users.
+> 
+> I do see more uses for this hook that just landlock, bpf lsm hooks
+> or other non-labeling LSMs like apparmor or TOMOYO could take advantage
+> of this as well.
 
-I've talked about that in the "Alternative: Use existing LSM hooks" section in
-https://lore.kernel.org/all/20260101134102.25938-1-gnoack3000@gmail.com/
+Apologies, I overlooked your reply earlier today.
 
-If we resolve unix_sk(sk)->addr.name ourselves in the Landlock hook
-again, we would resolve the path twice: Once in unix_find_bsd() in
-net/unix/af_unix.c (the Time-Of-Use), and once in the Landlock
-security hook for the connect() operation (the Time-Of-Check).
+The existing hooks that are called from af_unix.c are:
 
-If I understand you correctly, you are suggesting that we check that
-the inode resolved by af_unix
-(d_backing_inode(unix_sk(sk)->path.dentry)) is the same as the one
-that we resolve in Landlock ourselves, and therefore we can detect the
-TOCTOU race and pretend that this is equivalent to the case where
-af_unix resolved to the same inode with the path that Landlock
-observed?
+- security_unix_stream_connect() for SOCK_STREAM unix(7) sockets
+- security_unix_may_send() for SOCK_DGRAM unix(7) sockets
 
-If the walked file system hierarchy changes in between these two
-accesses, Landlock enforces the policy based on path elements that
-have changed in between.
+Apart from that, at a higher level, there are also
 
-* We start with a Landlock policy where Unix connect() is restricted
-  by default, but is permitted on "foo/bar2" and everything underneath
-  it.  The hierarchy is:
+- security_socket_connect()
+- security_socket_sendmsg() and security_socket_recvmsg()
 
-  foo/
-      bar/
-          baz.sock
-      bar2/        <--- Landlock rule: socket connect() allowed here and below
+These are used from net/socket.c.
 
-* We connect() to the path "foo/bar/baz.sock"
-* af_unix.c path lookup resolves "foo/bar/baz.sock" (TOU)
-  This works because Landlock is not checked at this point yet.
-* In between the two lookups:
-  * the directory foo/bar gets renamed to foo/bar.old
-  * foo/bar2 gets moved to foo/bar
-  * baz.sock gets moved into the (new) foo/bar directory
-* Landlock check: path lookup of "foo/bar/baz.sock" (TOC)
-  and subsequent policy check using the resolved path.
+For the connectionless dgram Unix sockets, we would need to tell apart the cases
+where sendmsg()/recvmsg() are used with and without a sockaddr.  (Dgram sockets
+can be either connected with connect() and then have a fixed sockaddr, or they
+can be passed a remote sockaddr with each message send and receive operation.)
+This can told apart in security_socket_sendmsg() from the msg argument, but it
+doesn't look like we could tell it apart from security_unix_may_send().
 
-  This succeeds because connect() is permitted on foo/bar2 and
-  beneath.  We also check that the resolved inode is the same as the
-  one resolved by af_unix.c.
+Landlock already depends on CONFIG_SECURITY_NETWORK and CONFIG_SECURITY_PATH,
+so we would not need to have further #ifdefs to use one of these hooks.
 
-And now the reasoning is basically that this is fine because the
-(inode) result of the two lookups was the same and we pretend that the
-Landlock path lookup was the one where the actual permission check was
-done?
-
-Some pieces of this which I am still unsure about:
-
-* What we are supposed to do when the two resolved inodes are not the
-  same, because we detected the race?  We can not allow the connection
-  in that case, but it would be wrong to deny it as well.  I'm not
-  sure whether returning one of the -ERESTART* variants is feasible in
-  this place and bubbles up correctly to the system call / io_uring
-  layer.
-
-* What if other kinds of permission checks happen on a different
-  lookup code path?  (If another stacked LSM had a similar
-  implementation with yet another path lookup based on a different
-  kind of policy, and if a race happened in between, it could at least
-  be possible that for one variant of the path, it would be OK for
-  Landlock but not the other LSM, and for the other variant of the
-  path it would be OK for the other LSM but not Landlock, and then the
-  connection could get accepted even if that would not have been
-  allowed on one of the two paths alone.)  I find this a somewhat
-  brittle implementation approach.
-
-* Would have to double check the unix_dgram_connect code paths in
-  af_unix to see whether this is feasible for DGRAM sockets:
-
-  There is a way to connect() a connectionless DGRAM socket, and in
-  that case, the path lookup in af_unix happens normally only during
-  connect(), very far apart from the initial security_unix_may_send()
-  LSM hook which is used for DGRAM sockets - It would be weird if we
-  were able to connect() a DGRAM socket, thinking that now all path
-  lookups are done, but then when you try to send a message through
-  it, Landlock surprisingly does the path lookup again based on a very
-  old and possibly outdated path.  If Landlock's path lookup fails
-  (e.g. because the path has disappeared, or because the inode now
-  differs), retries won't be able to recover this any more.  Normally,
-  the path does not need to get resolved any more once the DGRAM
-  socket is connected.
-
-  Noteworthy: When Unix servers restart, they commonly unlink the old
-  socket inode in the same place and create a new one with bind().  So
-  as the time window for the race increases, it is actually a common
-  scenario that a different inode with appear under the same path.
-
-I have to digest this idea a bit.  I find it less intuitive than using
-the exact same struct path with a newly introduced hook, but it does
-admittedly mitigate the problem somewhat.  I'm just not feeling very
-comfortable with security policy code that requires difficult
-reasoning. 🤔 Or maybe I interpreted too much into your suggestion. :)
-I'd be interested to hear what you think.
+There are other difficulties I found which worry me and which I listed in the
+other mail at https://lore.kernel.org/all/aV5WTGvQB0XI8Q_N@google.com/.
 
 —Günther
