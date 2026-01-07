@@ -1,97 +1,93 @@
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D5E1FF1B4
-	for <linux-security-module@vger.kernel.org>; Wed,  7 Jan 2026 01:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7DF224AF7
+	for <linux-security-module@vger.kernel.org>; Wed,  7 Jan 2026 01:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767749382; cv=none; b=iTzJGLdC2rmWPkqdunwN9r4Dyp28QokGj4Qitr0ZITwg2TxRY6Ldnv4g7sy6BCO6iiUYgeOtNv5gYAMlWcGr30LopbUcoRghmTYZ8wlFhofJbaShRj8T39m4som+SoC6Y8FTtvHn46YExFeVcuZm7vsR/cyckEUsiKqRTyljVdE=
+	t=1767750779; cv=none; b=Jkfd835gMlzI20ZBxWpOUB6TxnPa7m1au91UBacEJ605kezSAWp4PvYrDUbySjXdcLmkhdKdkNUVpVn1yYjWeQthUtM5bHTCGsnT979QMdA5uspTlWdGcKQL2KrGKaSZOVhBgid8yvJqs/WF/45WzOPU8MFrOP5bk+ASr7uYxsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767749382; c=relaxed/simple;
-	bh=DRFKsp+Ap5KxmehcMaouR40Asxsi+0n1hhESSY4aars=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t2knZTgBmssdUPLIHZXwEULAeb/0IdkwfFuRzecIWnn8+Mfl2/OYLpmyqcfTubED49YezH5SG5XfWGw/43dbm63+NHlOVWn70jmteCr2/DXo/pFPIjzfptGaPblFFM8T18h+VV7dxE2tDs/k8TBHpwa6oHHuprreTdP2Nk04Zy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=EXmpLceC; arc=none smtp.client-ip=209.85.216.48
+	s=arc-20240116; t=1767750779; c=relaxed/simple;
+	bh=gUvN5T3cjTxTMxicRMuq4nADjun0ze5GTMSKGVvMW98=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=jtLlXx5Zr1darg426HN4IF68488x/8bOKJ6jqgymu1wZRnIfRRqEJjPEoFd0015VJgSkPOJW14OLm0JcUaqiZqqrutz+PCVS6QvFp7mJKAXoa4OwMCUygiHF+aePALN7aeFI7UoLeyHSVt3eKwwYvY9aElZlGrpQ8Lb/0mxi1uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RtVLNMrQ; arc=none smtp.client-ip=209.85.219.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="EXmpLceC"
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-34c71f462d2so1523002a91.0
-        for <linux-security-module@vger.kernel.org>; Tue, 06 Jan 2026 17:29:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RtVLNMrQ"
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-8887f43b224so19982376d6.1
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Jan 2026 17:52:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1767749381; x=1768354181; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q0pBefQbuso5i5RJAZg20ofCLs/9BTYjoo+5IsxGPF0=;
-        b=EXmpLceCA/JRwHAbIUa9rrRMjXPq6V61AFql+i2WJjS1UkFA9aAeJntX1myOSYPqSK
-         kVncWerxncXYm+sxXMmBq8CxHXhhdCyLQdRgjYwERnsY/jwI4BS0OSZohl3SdsmC07NU
-         CZKyIyjfTA3QwiENe3E1m1wjCrHBKlb5fuXST4A9eO+gTSl9yvUIFdnZjjoKAQ2oAsG/
-         pscghClF+K1gNPesTGBoLAEXk5D9cXrHVaIqu5fZKin9t6+4CDnk6kOI1CNrUF/2+PFp
-         uzLCDnKoQYKHZppHtwHUqwKwWfZG90jsFBzkZ+xqIsnAPRDoM0QyPBLXVrX6VAofUcHL
-         1xoA==
+        d=paul-moore.com; s=google; t=1767750777; x=1768355577; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cBn3kzc3HUw2iPUbi6bNhSTOnYvfhQjffxfFf/mz6Yw=;
+        b=RtVLNMrQ/8sSxbm4NfBe/SsMXY9ZYC/YGWjJE0XnIz5rW6clniCQDYy4B1jzYZqMXE
+         AojIRgmYqIWaaStEwWv7maPCre4hUvkLGXoJno8OyTPIey2euEjB48tpMS3IeLmhPhcE
+         /xFD9IAtHRRWa3n8rzjJG5aTakJG4db2JR2ihR1Rx5kkiyQFXp2B9Zg3a/tFMo91/8+H
+         ytktr/z/b9bixNqQ1G/tKgqfiruYEL5CLsjy0vkU/idh5gyD5yk6S0Q3EIdWjGH0mL/Q
+         zD5ZdOb00qicamqQDxL6Eb8NsrsdDLlDIt2ru+Pb0mHZW8yYLvIIT7VY1nZk7mFAApGw
+         vakQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767749381; x=1768354181;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Q0pBefQbuso5i5RJAZg20ofCLs/9BTYjoo+5IsxGPF0=;
-        b=jOOq2w9EKO1bSK0j85Sd2VLEIEp20ZF/FzHnYR7dzYCSEQSRquVX0kw6hltxRjhhQv
-         DkM51Q5CbszF6t8FAzQq754L4X69ZcojPcpV9HLzJWZUWVZkoHrKizBMysBB/KNZwBco
-         +DvCEPTIEyDS98XgQA5qvKUUJsaU0vJhxCeCoQSkCTHdXo0zEdrIa/QT3wHvDKCz7h2m
-         3pal8ajbPTrbtxQkeigfEFeB6uuYwHwqup8NAh3n4NjCfCR9Rosw23pDkDbv6K52KGoP
-         nKm94QRjbxbNhCGQWW6mcUNvro/IK2/DBPqS5vaPZgAPYo8wWhhHB8njbPXDCLdX5qM8
-         7ehw==
-X-Forwarded-Encrypted: i=1; AJvYcCW8o8qh28BVOKaVpAlfqcgcr7aAAIU2vU0KrWB3shahu+2mJgaJ1pNUuTOgbXXLdVUWwuNC8AmtKzQN2Q1oxdvQdCG+OyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx74Uwd5jQiSU+Yk6R2/HYfVBak/c6B4NditNzIaDuVPzQTOXCv
-	1yOfUpqFFEbuE5vw9EFnLIRI9SY9TKFwhD+hBbC6vS0E+RLI2Ke2cqGK+BkQDMQKM5wlVkthvkW
-	4jckzuusgsTGlkeJ9YNUUjmZp8v0t6Ncne7D+gNevs1t4xrTjlw4=
-X-Gm-Gg: AY/fxX6vva8k7aDgihsXRDWIMqiwYwAIsoNfwdOdRwtmgSTQqGgM3Dk5wSLK7JLsFv3
-	YoJwLKvvdAYePZ+zRhx/6i30hAQloP0RTvqC5lxb3QqpDPJb8+bHcqxVaRYOU1hgam+dkpJ8IIX
-	PozpTrGXWGRCsLGaitUgnrt7vp7WxH7uYp5b3VLkmDjIPQyUNffIGFfU3I2w6CTfUN2/k36+HF4
-	lYkCXvzVfKnaMar+J6ZCNVl0KqfcBFW5KtYGMFe6SUS+GBW3uvCOiecqc4z4GCdVAhsq625TlaF
-	1nfcWg==
-X-Google-Smtp-Source: AGHT+IGfb2A+nhvnNQOx8TMMH9EiNVUlKYqXZyMaRyVzB5cl3V/K+cnLO+l81AYET4vPB/8feGDBkgFNGMZHFYAt6hk=
-X-Received: by 2002:a17:90b:4b0b:b0:330:6d5e:f174 with SMTP id
- 98e67ed59e1d1-34f68d0bc5fmr895604a91.20.1767749380695; Tue, 06 Jan 2026
- 17:29:40 -0800 (PST)
+        d=1e100.net; s=20230601; t=1767750777; x=1768355577;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cBn3kzc3HUw2iPUbi6bNhSTOnYvfhQjffxfFf/mz6Yw=;
+        b=n9GpwGVNagOUZ+aO3LXYjL0i76X9YgAR9lkCZIZE3G+S8NHffhOs8mckYAPampnfwp
+         OP2ku795phs4xZyMiVV9SqcliT1uBPsbr53NlbLTw1Cffh7KlTbIUkUrPjXNLx3ZSrMf
+         /zSl8pDOhNBW4fFmPJ/EnjVJR/GhmeH99U1bqkOec6IoTwvMIy6WRKYKUcpdhIOQFRm9
+         fbw2dW6rvdlXQ8FnZz5zcf613SRzYPW9PQuLGYMjb6zQ2WhZITv9IiFrQNNVgwkb0HXx
+         uMZ1DroqxezjV0uq6ryiwsLquQVMIVRvGJ7RVXnJahhuj8GbSVYvCfkvKcEWB4ocRGBm
+         tyAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVb80ocHVgxHjlwEZLnrrsm+7/CToXxTT9GFW4mfPIFxk/qEepK6fpia9TOc7kKfmV6VhpsQjXnFQGiJPnaSZdOXv6VD9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZS1oc+EOmmYUy3/4gl4RzrOTZjGEyQecXOpIJ0eW9bnMpJ6CE
+	hwWOCOPJHAIvdeWUJdXeT3NOqVaW7Yl/hF6DT1MmGUvvfvmpDQXJ8HP+f6nC27uNdQ==
+X-Gm-Gg: AY/fxX6FKOQTHinvN5+RJmcFtQuktijx5faxnMbWCBTL7I1ZiIz/JEjZpKUcmATdG6o
+	VvjfxLYOhPHTuIJl6FpedF1foG5XICq2Cm8WHXnnJXJOE8du1gCDqt49dUF0i3dTBST3Sv3Wl7Y
+	BwA9ZexHykOVmkGiY4u64bCMZBCDxpXMtfqwinQJ1Lj54q7ILK6rJOZV/ZXnUOVicTyTNa4vjEE
+	inhOPdWQZlp6kbj725rQ7EvIwKjgDo7+/dVWcCVs8zNjZ3piCTq7SkrLCtI50xTHy10gxLIQcEV
+	r75OIXcZjgFvO7njH0bWOViczInmGoTfOhDlyxghkH6c0unDUQfpLv7S+8UAmx35A0fB6/wPYs2
+	0wyuEaxQES4xUEnpG4ax4RWZWnJIVQPxeRvvxoLsUzrrKFIE7C9TCsqFOuopYiFgjRygbEBCcAF
+	lo/UdZUbBPOAZFD31Sga9o64RQ2zZVUfinYnADUnsMt1irgHKSfQMAZ5mD
+X-Google-Smtp-Source: AGHT+IF3w6746P6tPYJIRj0Fh7MNJo0Z1kGzh8VJXWxLs/2p60ciPd7uI40dMO1kmCcqYpF/mvutzQ==
+X-Received: by 2002:a05:6214:5d04:b0:888:8625:a09f with SMTP id 6a1803df08f44-8908432dd93mr14802986d6.68.1767750776999;
+        Tue, 06 Jan 2026 17:52:56 -0800 (PST)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-890772346f8sm24699036d6.35.2026.01.06.17.52.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jan 2026 17:52:56 -0800 (PST)
+Date: Tue, 06 Jan 2026 20:52:55 -0500
+Message-ID: <d10679bf08d0fc6e333754ac0c31e289@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260105-define-rust-helper-v2-0-51da5f454a67@google.com> <20260105-define-rust-helper-v2-18-51da5f454a67@google.com>
-In-Reply-To: <20260105-define-rust-helper-v2-18-51da5f454a67@google.com>
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20260106_1639/pstg-lib:20260106_1639/pstg-pwork:20260106_1639
 From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 6 Jan 2026 20:29:29 -0500
-X-Gm-Features: AQt7F2renVuLVVe8wWTbuH4q3nq7hx1KIccN0wGk6bVav0-qDU8XzYmfHUWf8lI
-Message-ID: <CAHC9VhTscH7SE1WTQrtXRrhNV61f_MAYViF4eJisfEYj0-ZDoA@mail.gmail.com>
-Subject: Re: [PATCH v2 18/27] rust: security: add __rust_helper to helpers
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: Casey Schaufler <casey@schaufler-ca.com>, David Howells <dhowells@redhat.com>, Linux kernel mailing list <linux-kernel@vger.kernel.org>, Serge Hallyn <serge@hallyn.com>
+Cc: max.kellermann@ionos.com, LSM List <linux-security-module@vger.kernel.org>, Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [PATCH] Cred: Remove unused set_security_override_from_ctx()
+References: <6c29c8ad-6aa8-4f50-98c8-81b363666ae8@schaufler-ca.com>
+In-Reply-To: <6c29c8ad-6aa8-4f50-98c8-81b363666ae8@schaufler-ca.com>
 
-On Mon, Jan 5, 2026 at 7:43=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> wr=
-ote:
->
-> This is needed to inline these helpers into Rust code.
->
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> Reviewed-by: Gary Guo <gary@garyguo.net>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+On Dec 22, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> 
+> The function set_security_override_from_ctx() has no in-tree callers
+> since 6.14. Remove it.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: linux-security-module@vger.kernel.org
-> ---
->  rust/helpers/security.c | 26 +++++++++++++++-----------
->  1 file changed, 15 insertions(+), 11 deletions(-)
+> kernel/cred.c | 23 -----------------------
+> 1 file changed, 23 deletions(-)
 
 Merged into lsm/dev, thanks.
 
---=20
+--
 paul-moore.com
