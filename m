@@ -1,147 +1,157 @@
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D283AE6FD
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Jan 2026 12:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C642A46661C;
+	Thu,  8 Jan 2026 13:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767876017; cv=none; b=LwAMXP6X9t9gyIGGlgXzCZ5TZg0KPX9JgLHBLb9qtcC3Fqm+C1peABtbvSx227IbdFP8jMQ3DCh90N3fH4dwOaizi/NleRXPzgywRCfjLNAkpDxpLRGXlouzUX4BlrX9D7Ko70oHfZtawdL8JRlF2MjNgKPK5n9iyN4dJ31gG4o=
+	t=1767878877; cv=none; b=j6wPHa7YeJNOgnZItHKIjmlr6mApBl2CxWnnjHiq3VNFy25ouKF2e207FFfA91QoPqTCyRorjftVq6dpKp20kWrOvCULuuVnp+vJHPcgESFyNoPrzp8AZcabWCasc+xtFtU9aKuDXGi2I/61Pypt/tSDRUjr0OEv/ZKJepZnyTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767876017; c=relaxed/simple;
-	bh=HLwV7Is5lkxTUQGPFEAgQewzV6Ep3PmR/xp1lM4wAyk=;
+	s=arc-20240116; t=1767878877; c=relaxed/simple;
+	bh=aZNd5ZfiO0jANMEUjjmztVseOVSusFwq/OISmXO7svU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d0JSYC/XkDCJIJaJP3/ZPVVFlNKBnKDfkdmamnm7Wzj6ilUPQOdnsEUI6/lJvaEZPs57f0gmpDVU5fSXDNaw9kDAPLWojJCDmxnV3T76yAvpoRGwwFUOFzs+ot1agCiBvQc9OPBaLAahoHIpspOp8McVf5QcioKTduT8cHd9XK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=vKeHkq/p; arc=none smtp.client-ip=45.157.188.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=S8PAy4pY6inFSMuBLJCFLl+a73xzN19k76kJtQnOYG4RBNHozsq6qx/3KIZ+3xP36fYPVuSvOIbFxJUv0pSe30enJ9IePFIMqF7h53U83qBjVKiPSEayLO3iiuyHxjB06zW9I/ISGEljeFq4XTki936XTqfVCsXidTZsYqJXp/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CH1+bSbA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="vKeHkq/p"
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dn3gL416Mz14bN;
-	Thu,  8 Jan 2026 13:12:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1767874334;
-	bh=s85DhQIcafXG1peBDnmh0Zu+fNK+q7mdW9IuKsYyrSs=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CH1+bSbA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5147C19421;
+	Thu,  8 Jan 2026 13:27:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767878877;
+	bh=aZNd5ZfiO0jANMEUjjmztVseOVSusFwq/OISmXO7svU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vKeHkq/phg0/y5q/B2OQZeATNODmmdCwBxysxxft4l2YnXwX4tvPOypOhJ1y+lFgL
-	 mxruuUDwDsYpFhV3V9xT2BiO6PJKTsyZyuYDBh8hSiwRb6Pq0c1QExxphuixwk1Gz1
-	 jWzG4NECB+RJDhjSumikRdzoUfDSB2bs7T2wPEAQ=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dn3gK0zKSzYkM;
-	Thu,  8 Jan 2026 13:12:13 +0100 (CET)
-Date: Thu, 8 Jan 2026 13:12:07 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: Demi Marie Obenour <demiobenour@gmail.com>, 
-	Justin Suess <utilityemal77@gmail.com>, Tingmao Wang <m@maowtm.org>, fahimitahera@gmail.com, 
-	hi@alyssa.is, ivanov.mikhail1@huawei-partners.com, jannh@google.com, 
-	konstantin.meskhidze@huawei.com, linux-security-module@vger.kernel.org, matthieu@buffet.re, 
-	paul@paul-moore.com, samasth.norway.ananda@oracle.com
-Subject: Re: [RFC PATCH 3/5] samples/landlock: Add support for
- LANDLOCK_ACCESS_FS_CONNECT_UNIX
-Message-ID: <20260108.Thaex5ruach2@digikod.net>
-References: <20260101134102.25938-4-gnoack3000@gmail.com>
- <20260101193009.4005972-1-utilityemal77@gmail.com>
- <423dd2ca-ecba-47cf-98a7-4d99a48939da@maowtm.org>
- <22e29fd8-2f39-4a64-b08c-2f41153e3be8@gmail.com>
- <2d02eefa-bc86-4f04-b190-beed304337d4@maowtm.org>
- <43c0515d-afd3-4e00-a0fe-4d651a1d5cf1@gmail.com>
- <884e44c6-7695-49a2-8d60-c7e76d260bea@gmail.com>
- <20260102.d6870733fe10@gnoack.org>
+	b=CH1+bSbA5L8VA7mSCokBdbx0AQgkjkRqmlrahfX8ELEJ2ypQXmqMvcVRFwP7BZeA7
+	 BSx1jwXQromcfmdUn8aCj7co5SIo6jWylGAll+D8/cqvoddu2YDx/42e4v3GQ3kfOz
+	 +1PoWfVz+3t/HWc4puXWpPQCy6NYloGtTiCiECELj0Y0Hp+zjD/1J3iVbJxox5Ity6
+	 QaQzo86aAYTUV/n2JZ6YOjcvzpmeH/Yfp1Gl7rASdzecJ/OYwGp/JWhgiT6oliOfkr
+	 BlTlJ/L02ES4BbNGkIKJon53evIWuoF0ZuqgYoqF07gC76ayOx/8VUA7eTOYM4Hwv9
+	 qpH7uZBqvoYSw==
+Date: Thu, 8 Jan 2026 15:27:52 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Srish Srinivasan <ssrish@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+	James.Bottomley@hansenpartnership.com, zohar@linux.ibm.com,
+	nayna@linux.ibm.com, rnsastry@linux.ibm.com,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] keys/trusted_keys: establish PKWM as a trusted
+ source
+Message-ID: <aV-w2NbxAPuuXy_U@kernel.org>
+References: <20260106150527.446525-1-ssrish@linux.ibm.com>
+ <20260106150527.446525-6-ssrish@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260102.d6870733fe10@gnoack.org>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20260106150527.446525-6-ssrish@linux.ibm.com>
 
-On Fri, Jan 02, 2026 at 10:53:49AM +0100, Günther Noack wrote:
-> On Thu, Jan 01, 2026 at 05:39:26PM -0500, Demi Marie Obenour wrote:
-> > On 1/1/26 17:38, Justin Suess wrote:
-> > > On 1/1/26 17:19, Tingmao Wang wrote:
-> > >> On 1/1/26 22:11, Demi Marie Obenour wrote:
-> > >>> On 1/1/26 17:07, Tingmao Wang wrote:
-> > >>>
-> > >>> (snip)
-> > >>>
-> > >>>> Looking at this I guess it might also make sense for the kernel side to
-> > >>>> enforce only being able to add LANDLOCK_ACCESS_FS_CONNECT_UNIX on socket
-> > >>>> files (S_ISSOCK(d_backing_inode)) too in landlock_append_fs_rule?
-> > >>>>
-> > >>>> Also, for the sandboxer logic, maybe a better way would be having
-> > >>>> LANDLOCK_ACCESS_FS_CONNECT_UNIX in ACCESS_FILE (matching the kernel code),
-> > >>>> then another if(!S_ISSOCK) below this that will clear out
-> > >>>> LANDLOCK_ACCESS_FS_CONNECT_UNIX if not socket.
-> > >>> A process might legitimately need to connect to a socket that doesn't
-> > >>> exist at the time it sandboxes itself.  Therefore, I think it makes
-> > >>> sense to for LANDLOCK_ACCESS_FS_CONNECT_UNIX access to a directory
-> > >>> to allow LANDLOCK_ACCESS_FS_CONNECT_UNIX to any socket under that
-> > >>> directory.  This matches the flexibility mount namespaces can achieve.
-> > >> Right, I forgot about the fact that we also need it on dirs, apologies.
-> > >>
-> > >> (But maybe it might still make sense to not allow this on files which are
-> > >> neither a socket or a dir? (If the file later gets removed and recreated
-> > >> as a socket, the rule would not apply retroactively anyway due to being
-> > >> tied to the inode.))
-> > > How do we handle IOCTL access on regular files? I think that landlock will let you put IOCTL rights on regular files even they are not valid for that operation.
-> > 
-> > Regular files definitely support ioctls.
+On Tue, Jan 06, 2026 at 08:35:26PM +0530, Srish Srinivasan wrote:
+> The wrapping key does not exist by default and is generated by the
+> hypervisor as a part of PKWM initialization. This key is then persisted by
+> the hypervisor and is used to wrap trusted keys. These are variable length
+> symmetric keys, which in the case of PowerVM Key Wrapping Module (PKWM) are
+> generated using the kernel RNG. PKWM can be used as a trust source through
+> the following example keyctl commands:
 > 
-> The LANDLOCK_ACCESS_FS_IOCTL_DEV right only applies to ioctl(2)
-> invocations on device files.
+> keyctl add trusted my_trusted_key "new 32" @u
 > 
+> Use the wrap_flags command option to set the secure boot requirement for
+> the wrapping request through the following keyctl commands
 > 
-> > > Sockets seem like a similar case where the operation is only valid for a subset of file types.
-> > > 
-> > > I think we should mirror the existing behavior is for consistency.
-> > > 
-> > > Besides, restricting which file types can have that right also makes it harder for applications that may not care about the specific file type, but now would have to check the filetype before making a policy on them (also opening them to TOCTOU).
-> > 
-> > I agree.
+> case1: no secure boot requirement. (default)
+> keyctl usage: keyctl add trusted my_trusted_key "new 32" @u
+> 	      OR
+> 	      keyctl add trusted my_trusted_key "new 32 wrap_flags=0x00" @u
 > 
-> I also agree with your interpretation, Justin.
+> case2: secure boot required to in either audit or enforce mode. set bit 0
+> keyctl usage: keyctl add trusted my_trusted_key "new 32 wrap_flags=0x01" @u
 > 
-> For the record, Landlock's kernel implementation currently groups FS
-> access rights into two groups:
+> case3: secure boot required to be in enforce mode. set bit 1
+> keyctl usage: keyctl add trusted my_trusted_key "new 32 wrap_flags=0x02" @u
 > 
->  - file access rights
->  - directory-only rights
+> NOTE:
+> -> Setting the secure boot requirement is NOT a must.
+> -> Only either of the secure boot requirement options should be set. Not
+> both.
+> -> All the other bits are required to be not set.
+> -> Set the kernel parameter trusted.source=pkwm to choose PKWM as the
+> backend for trusted keys implementation.
+> -> CONFIG_PSERIES_PLPKS must be enabled to build PKWM.
 > 
-> When adding a rule, the directory access rights can only be granted on
-> a directory inode.  The file access rights can be granted on both a
-> directory inode and a regular file inode.
+> Add PKWM, which is a combination of IBM PowerVM and Power LPAR Platform
+> KeyStore, as a new trust source for trusted keys.
 > 
-> It is pointless to grant the CONNECT_UNIX (or IOCTL_DEV) right on a
-> file which is not a Unix socket (or device file).  But it complicates
-> the userspace API if we introduce more special rules there. - Users of
-> Landlock would have to keep track of all these special cases and
-> mirror the logic, which is error prone.  IMHO is is granular enough if
-> we differentiate between files and directories as we currently do.
+> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  MAINTAINERS                               |   9 ++
+>  include/keys/trusted-type.h               |   7 +-
+>  include/keys/trusted_pkwm.h               |  22 +++
+>  security/keys/trusted-keys/Kconfig        |   8 ++
+>  security/keys/trusted-keys/Makefile       |   2 +
+>  security/keys/trusted-keys/trusted_core.c |   6 +-
+>  security/keys/trusted-keys/trusted_pkwm.c | 168 ++++++++++++++++++++++
+>  7 files changed, 220 insertions(+), 2 deletions(-)
+>  create mode 100644 include/keys/trusted_pkwm.h
+>  create mode 100644 security/keys/trusted-keys/trusted_pkwm.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a0dd762f5648..ba51eff21a16 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14003,6 +14003,15 @@ S:	Supported
+>  F:	include/keys/trusted_dcp.h
+>  F:	security/keys/trusted-keys/trusted_dcp.c
+>  
+> +KEYS-TRUSTED-PLPKS
+> +M:	Srish Srinivasan <ssrish@linux.ibm.com>
+> +M:	Nayna Jain <nayna@linux.ibm.com>
+> +L:	linux-integrity@vger.kernel.org
+> +L:	keyrings@vger.kernel.org
+> +S:	Supported
+> +F:	include/keys/trusted_plpks.h
+> +F:	security/keys/trusted-keys/trusted_pkwm.c
+> +
+>  KEYS-TRUSTED-TEE
+>  M:	Sumit Garg <sumit.garg@kernel.org>
+>  L:	linux-integrity@vger.kernel.org
+> diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
+> index 4eb64548a74f..45c6c538df22 100644
+> --- a/include/keys/trusted-type.h
+> +++ b/include/keys/trusted-type.h
+> @@ -19,7 +19,11 @@
+>  
+>  #define MIN_KEY_SIZE			32
+>  #define MAX_KEY_SIZE			128
+> -#define MAX_BLOB_SIZE			512
+> +#if IS_ENABLED(CONFIG_TRUSTED_KEYS_PKWM)
+> +#define MAX_BLOB_SIZE			1152
+> +#else
+> +#define MAX_BLOB_SIZE                   512
+> +#endif
+>  #define MAX_PCRINFO_SIZE		64
+>  #define MAX_DIGEST_SIZE			64
+>  
+> @@ -46,6 +50,7 @@ struct trusted_key_options {
+>  	uint32_t policydigest_len;
+>  	unsigned char policydigest[MAX_DIGEST_SIZE];
+>  	uint32_t policyhandle;
+> +	uint16_t wrap_flags;
+>  };
 
-Agreed. We discussed about making it more granular (see the IOCTL patch
-series), but it is not worth it.  Even the directory/file
-differentiation is questionable, but I initially made this decision to
-incentivise user space to know if they are dealing with directories or
-files because access right inheritance should be carefully managed.
-In most cases, when programs sandbox themselves, they should not need to
-stat the file because they should already know if it's a file or a
-directory; only sandboxers need too check the file type.
+We should introduce:
 
-> 
-> For reference, this is documented at
-> https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
-> and the logic is implemented in landlock_append_fs_rule() in fs.c.
-> 
-> (Actually, in the implementation, the IOCTL_DEV right is treated the
-> same as one of the ACCESS_FILE rights - I should probably revise that
-> documentation: That right does not *directly* apply to a directory
-> inode, as directories are not device files.  It only inherits down in
-> the file system hierarchy.  Looking back at earlier versions of the
-> IOCTL_DEV patch set, it was different there.  I think I missed to keep
-> the documentation in-line.)
+	void *private;
 
-Indeed
+And hold backend specific fields there.
+
+This patch set does not necessarily have to migrate TPM fields to this
+new framework, only start a better convention before this turns into
+a chaos.
+
+BR, Jarkko
