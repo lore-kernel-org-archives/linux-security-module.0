@@ -1,75 +1,52 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F4C4F7988;
-	Thu,  8 Jan 2026 12:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D283AE6FD
+	for <linux-security-module@vger.kernel.org>; Thu,  8 Jan 2026 12:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767875932; cv=none; b=VvMYeM9ABgj949+HlkSkQZhrkaQhCBYgUVMIv1uAKOe7iTf8lOwfpdA2fph8XVKwzBYwQH0iZJgUFu3caC2aKlYotgr1NgqaTL+dqmTp388vxn4n2F5F58gc1GTW1yF0PyvZY/PdJOvaVGmHNqyNTIsA7daqpBjtiwpv1Ws8zAg=
+	t=1767876017; cv=none; b=LwAMXP6X9t9gyIGGlgXzCZ5TZg0KPX9JgLHBLb9qtcC3Fqm+C1peABtbvSx227IbdFP8jMQ3DCh90N3fH4dwOaizi/NleRXPzgywRCfjLNAkpDxpLRGXlouzUX4BlrX9D7Ko70oHfZtawdL8JRlF2MjNgKPK5n9iyN4dJ31gG4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767875932; c=relaxed/simple;
-	bh=rRFi3QZQyDSaI7EXHpS+Y+kBFm4kORrlVSy4ytIs2fw=;
+	s=arc-20240116; t=1767876017; c=relaxed/simple;
+	bh=HLwV7Is5lkxTUQGPFEAgQewzV6Ep3PmR/xp1lM4wAyk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bDNag115vHsWlTOqDYnsdU68esDDb1FEKxqwn7kspNPKlo4Cymr/EzNgart3tLYJ1ZwbnQdWHcoNQa+OVK9iZSqq34mlgQ1vekoV/xqiwe4WKy6i5GlJv/Lq/V28LZiKmoOeGYwoByZRo/g9AZbnv8f3MA1QkyeAi+CO2uh5L+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fcQ03nkU; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=d0JSYC/XkDCJIJaJP3/ZPVVFlNKBnKDfkdmamnm7Wzj6ilUPQOdnsEUI6/lJvaEZPs57f0gmpDVU5fSXDNaw9kDAPLWojJCDmxnV3T76yAvpoRGwwFUOFzs+ot1agCiBvQc9OPBaLAahoHIpspOp8McVf5QcioKTduT8cHd9XK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=vKeHkq/p; arc=none smtp.client-ip=45.157.188.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fcQ03nkU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D6B5C19421;
-	Thu,  8 Jan 2026 12:38:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767875932;
-	bh=rRFi3QZQyDSaI7EXHpS+Y+kBFm4kORrlVSy4ytIs2fw=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="vKeHkq/p"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dn3gL416Mz14bN;
+	Thu,  8 Jan 2026 13:12:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1767874334;
+	bh=s85DhQIcafXG1peBDnmh0Zu+fNK+q7mdW9IuKsYyrSs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fcQ03nkULZY4K2hMjKQzQb8YD9w6WhEP3klYpCG+pWcCHsTOBSZ90PqbgcJKXJovv
-	 u8OD+4y7+CncU5AcgUfx1htEWuUa0cIq7hb4dxyjOtdlPB1eulPhveHYa5j73fdcl6
-	 sH9lG5DXnX4gp9r69jltDWJkQje7FeNkCYdX9/GtKapJHSqB6kBBfoFa+BgmM24s52
-	 brKBSleGLrtxHlIUi8E1D76cIKGJvhYJLQ8eD0ELJt3SKAdBthw3NijmMKitI/gaQw
-	 vqbpoJIClRizqweRds5+lj/l1xCPIcjQG6a36w/jNXfn5OuZFhSuCGHvoDrFqM4VMH
-	 UC/ME8YN46EpQ==
-Date: Thu, 8 Jan 2026 14:38:47 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Sumit Garg <sumit.garg@kernel.org>,
-	Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Sumit Garg <sumit.garg@oss.qualcomm.com>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-	Michael Chan <michael.chan@broadcom.com>,
-	Pavan Chebbi <pavan.chebbi@broadcom.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Peter Huewe <peterhuewe@gmx.de>, op-tee@lists.trustedfirmware.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-efi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org, linux-mips@vger.kernel.org,
-	netdev@vger.kernel.org, linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH v2 00/17] tee: Use bus callbacks instead of driver
- callbacks
-Message-ID: <aV-lV5l-rwyceWqr@kernel.org>
-References: <cover.1765791463.git.u.kleine-koenig@baylibre.com>
- <CAHUa44FrDZbvRvfN8obf80_k=Eqxe9YxHpjaE5jU7nkxPUwfag@mail.gmail.com>
- <20251218135332f323fa91@mail.local>
- <CAHUa44GpW5aO26GDyL9RZub9vVYvVcJ7etwO0yXBN_mUi0W4AA@mail.gmail.com>
- <CAHUa44HqRbCJTXsrTCm0G5iwtkQtq+Si=yOspCjpAn-N2uVSVg@mail.gmail.com>
+	b=vKeHkq/phg0/y5q/B2OQZeATNODmmdCwBxysxxft4l2YnXwX4tvPOypOhJ1y+lFgL
+	 mxruuUDwDsYpFhV3V9xT2BiO6PJKTsyZyuYDBh8hSiwRb6Pq0c1QExxphuixwk1Gz1
+	 jWzG4NECB+RJDhjSumikRdzoUfDSB2bs7T2wPEAQ=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dn3gK0zKSzYkM;
+	Thu,  8 Jan 2026 13:12:13 +0100 (CET)
+Date: Thu, 8 Jan 2026 13:12:07 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: Demi Marie Obenour <demiobenour@gmail.com>, 
+	Justin Suess <utilityemal77@gmail.com>, Tingmao Wang <m@maowtm.org>, fahimitahera@gmail.com, 
+	hi@alyssa.is, ivanov.mikhail1@huawei-partners.com, jannh@google.com, 
+	konstantin.meskhidze@huawei.com, linux-security-module@vger.kernel.org, matthieu@buffet.re, 
+	paul@paul-moore.com, samasth.norway.ananda@oracle.com
+Subject: Re: [RFC PATCH 3/5] samples/landlock: Add support for
+ LANDLOCK_ACCESS_FS_CONNECT_UNIX
+Message-ID: <20260108.Thaex5ruach2@digikod.net>
+References: <20260101134102.25938-4-gnoack3000@gmail.com>
+ <20260101193009.4005972-1-utilityemal77@gmail.com>
+ <423dd2ca-ecba-47cf-98a7-4d99a48939da@maowtm.org>
+ <22e29fd8-2f39-4a64-b08c-2f41153e3be8@gmail.com>
+ <2d02eefa-bc86-4f04-b190-beed304337d4@maowtm.org>
+ <43c0515d-afd3-4e00-a0fe-4d651a1d5cf1@gmail.com>
+ <884e44c6-7695-49a2-8d60-c7e76d260bea@gmail.com>
+ <20260102.d6870733fe10@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -79,139 +56,92 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHUa44HqRbCJTXsrTCm0G5iwtkQtq+Si=yOspCjpAn-N2uVSVg@mail.gmail.com>
+In-Reply-To: <20260102.d6870733fe10@gnoack.org>
+X-Infomaniak-Routing: alpha
 
-On Mon, Jan 05, 2026 at 10:16:09AM +0100, Jens Wiklander wrote:
-> Hi,
+On Fri, Jan 02, 2026 at 10:53:49AM +0100, Günther Noack wrote:
+> On Thu, Jan 01, 2026 at 05:39:26PM -0500, Demi Marie Obenour wrote:
+> > On 1/1/26 17:38, Justin Suess wrote:
+> > > On 1/1/26 17:19, Tingmao Wang wrote:
+> > >> On 1/1/26 22:11, Demi Marie Obenour wrote:
+> > >>> On 1/1/26 17:07, Tingmao Wang wrote:
+> > >>>
+> > >>> (snip)
+> > >>>
+> > >>>> Looking at this I guess it might also make sense for the kernel side to
+> > >>>> enforce only being able to add LANDLOCK_ACCESS_FS_CONNECT_UNIX on socket
+> > >>>> files (S_ISSOCK(d_backing_inode)) too in landlock_append_fs_rule?
+> > >>>>
+> > >>>> Also, for the sandboxer logic, maybe a better way would be having
+> > >>>> LANDLOCK_ACCESS_FS_CONNECT_UNIX in ACCESS_FILE (matching the kernel code),
+> > >>>> then another if(!S_ISSOCK) below this that will clear out
+> > >>>> LANDLOCK_ACCESS_FS_CONNECT_UNIX if not socket.
+> > >>> A process might legitimately need to connect to a socket that doesn't
+> > >>> exist at the time it sandboxes itself.  Therefore, I think it makes
+> > >>> sense to for LANDLOCK_ACCESS_FS_CONNECT_UNIX access to a directory
+> > >>> to allow LANDLOCK_ACCESS_FS_CONNECT_UNIX to any socket under that
+> > >>> directory.  This matches the flexibility mount namespaces can achieve.
+> > >> Right, I forgot about the fact that we also need it on dirs, apologies.
+> > >>
+> > >> (But maybe it might still make sense to not allow this on files which are
+> > >> neither a socket or a dir? (If the file later gets removed and recreated
+> > >> as a socket, the rule would not apply retroactively anyway due to being
+> > >> tied to the inode.))
+> > > How do we handle IOCTL access on regular files? I think that landlock will let you put IOCTL rights on regular files even they are not valid for that operation.
+> > 
+> > Regular files definitely support ioctls.
 > 
-> On Thu, Dec 18, 2025 at 5:29 PM Jens Wiklander
-> <jens.wiklander@linaro.org> wrote:
-> >
-> > On Thu, Dec 18, 2025 at 2:53 PM Alexandre Belloni
-> > <alexandre.belloni@bootlin.com> wrote:
-> > >
-> > > On 18/12/2025 08:21:27+0100, Jens Wiklander wrote:
-> > > > Hi,
-> > > >
-> > > > On Mon, Dec 15, 2025 at 3:17 PM Uwe Kleine-König
-> > > > <u.kleine-koenig@baylibre.com> wrote:
-> > > > >
-> > > > > Hello,
-> > > > >
-> > > > > the objective of this series is to make tee driver stop using callbacks
-> > > > > in struct device_driver. These were superseded by bus methods in 2006
-> > > > > (commit 594c8281f905 ("[PATCH] Add bus_type probe, remove, shutdown
-> > > > > methods.")) but nobody cared to convert all subsystems accordingly.
-> > > > >
-> > > > > Here the tee drivers are converted. The first commit is somewhat
-> > > > > unrelated, but simplifies the conversion (and the drivers). It
-> > > > > introduces driver registration helpers that care about setting the bus
-> > > > > and owner. (The latter is missing in all drivers, so by using these
-> > > > > helpers the drivers become more correct.)
-> > > > >
-> > > > > v1 of this series is available at
-> > > > > https://lore.kernel.org/all/cover.1765472125.git.u.kleine-koenig@baylibre.com
-> > > > >
-> > > > > Changes since v1:
-> > > > >
-> > > > >  - rebase to v6.19-rc1 (no conflicts)
-> > > > >  - add tags received so far
-> > > > >  - fix whitespace issues pointed out by Sumit Garg
-> > > > >  - fix shutdown callback to shutdown and not remove
-> > > > >
-> > > > > As already noted in v1's cover letter, this series should go in during a
-> > > > > single merge window as there are runtime warnings when the series is
-> > > > > only applied partially. Sumit Garg suggested to apply the whole series
-> > > > > via Jens Wiklander's tree.
-> > > > > If this is done the dependencies in this series are honored, in case the
-> > > > > plan changes: Patches #4 - #17 depend on the first two.
-> > > > >
-> > > > > Note this series is only build tested.
-> > > > >
-> > > > > Uwe Kleine-König (17):
-> > > > >   tee: Add some helpers to reduce boilerplate for tee client drivers
-> > > > >   tee: Add probe, remove and shutdown bus callbacks to tee_client_driver
-> > > > >   tee: Adapt documentation to cover recent additions
-> > > > >   hwrng: optee - Make use of module_tee_client_driver()
-> > > > >   hwrng: optee - Make use of tee bus methods
-> > > > >   rtc: optee: Migrate to use tee specific driver registration function
-> > > > >   rtc: optee: Make use of tee bus methods
-> > > > >   efi: stmm: Make use of module_tee_client_driver()
-> > > > >   efi: stmm: Make use of tee bus methods
-> > > > >   firmware: arm_scmi: optee: Make use of module_tee_client_driver()
-> > > > >   firmware: arm_scmi: Make use of tee bus methods
-> > > > >   firmware: tee_bnxt: Make use of module_tee_client_driver()
-> > > > >   firmware: tee_bnxt: Make use of tee bus methods
-> > > > >   KEYS: trusted: Migrate to use tee specific driver registration
-> > > > >     function
-> > > > >   KEYS: trusted: Make use of tee bus methods
-> > > > >   tpm/tpm_ftpm_tee: Make use of tee specific driver registration
-> > > > >   tpm/tpm_ftpm_tee: Make use of tee bus methods
-> > > > >
-> > > > >  Documentation/driver-api/tee.rst             | 18 +----
-> > > > >  drivers/char/hw_random/optee-rng.c           | 26 ++----
-> > > > >  drivers/char/tpm/tpm_ftpm_tee.c              | 31 +++++---
-> > > > >  drivers/firmware/arm_scmi/transports/optee.c | 32 +++-----
-> > > > >  drivers/firmware/broadcom/tee_bnxt_fw.c      | 30 ++-----
-> > > > >  drivers/firmware/efi/stmm/tee_stmm_efi.c     | 25 ++----
-> > > > >  drivers/rtc/rtc-optee.c                      | 27 ++-----
-> > > > >  drivers/tee/tee_core.c                       | 84 ++++++++++++++++++++
-> > > > >  include/linux/tee_drv.h                      | 12 +++
-> > > > >  security/keys/trusted-keys/trusted_tee.c     | 17 ++--
-> > > > >  10 files changed, 164 insertions(+), 138 deletions(-)
-> > > > >
-> > > > > base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
-> > > > > --
-> > > > > 2.47.3
-> > > > >
-> > > >
-> > > > Thank you for the nice cleanup, Uwe.
-> > > >
-> > > > I've applied patch 1-3 to the branch tee_bus_callback_for_6.20 in my
-> > > > tree at https://git.kernel.org/pub/scm/linux/kernel/git/jenswi/linux-tee.git/
-> > > >
-> > > > The branch is based on v6.19-rc1, and I'll try to keep it stable for
-> > > > others to depend on, if needed. Let's see if we can agree on taking
-> > > > the remaining patches via that branch.
-> > >
-> > > 6 and 7 can go through your branch.
-> >
-> > Good, I've added them to my branch now.
+> The LANDLOCK_ACCESS_FS_IOCTL_DEV right only applies to ioctl(2)
+> invocations on device files.
 > 
-> This entire patch set should go in during a single merge window. I
-> will not send any pull request until I'm sure all patches will be
-> merged.
 > 
-> So far (if I'm not mistaken), only the patches I've already added to
-> next have appeared next. I can take the rest of the patches, too, but
-> I need OK for the following:
+> > > Sockets seem like a similar case where the operation is only valid for a subset of file types.
+> > > 
+> > > I think we should mirror the existing behavior is for consistency.
+> > > 
+> > > Besides, restricting which file types can have that right also makes it harder for applications that may not care about the specific file type, but now would have to check the filetype before making a policy on them (also opening them to TOCTOU).
+> > 
+> > I agree.
 > 
-> Jarkko, you seem happy with the following patches
-> - KEYS: trusted: Migrate to use tee specific driver registration function
-> - KEYS: trusted: Make use of tee bus methods
-> - tpm/tpm_ftpm_tee: Make use of tee specific driver registration
-> - tpm/tpm_ftpm_tee: Make use of tee bus methods
-> OK if I take them via my tree, or would you rather take them yourself?
+> I also agree with your interpretation, Justin.
+> 
+> For the record, Landlock's kernel implementation currently groups FS
+> access rights into two groups:
+> 
+>  - file access rights
+>  - directory-only rights
+> 
+> When adding a rule, the directory access rights can only be granted on
+> a directory inode.  The file access rights can be granted on both a
+> directory inode and a regular file inode.
+> 
+> It is pointless to grant the CONNECT_UNIX (or IOCTL_DEV) right on a
+> file which is not a Unix socket (or device file).  But it complicates
+> the userspace API if we introduce more special rules there. - Users of
+> Landlock would have to keep track of all these special cases and
+> mirror the logic, which is error prone.  IMHO is is granular enough if
+> we differentiate between files and directories as we currently do.
 
-I don't mind.
+Agreed. We discussed about making it more granular (see the IOCTL patch
+series), but it is not worth it.  Even the directory/file
+differentiation is questionable, but I initially made this decision to
+incentivise user space to know if they are dealing with directories or
+files because access right inheritance should be carefully managed.
+In most cases, when programs sandbox themselves, they should not need to
+stat the file because they should already know if it's a file or a
+directory; only sandboxers need too check the file type.
 
 > 
-> Herbert, you seem happy with the following patches
-> - hwrng: optee - Make use of module_tee_client_driver()
-> - hwrng: optee - Make use of tee bus methods
-> OK if I take them via my tree, or would you rather take them yourself?
+> For reference, this is documented at
+> https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
+> and the logic is implemented in landlock_append_fs_rule() in fs.c.
 > 
-> Sudeep, you seem happy with the following patches
-> - firmware: arm_scmi: optee: Make use of module_tee_client_driver()
-> - firmware: arm_scmi: Make use of tee bus methods
-> OK if I take them via my tree, or would you rather take them yourself?
-> 
-> Michael, Pavan, are you OK with the following patches
-> - firmware: tee_bnxt: Make use of module_tee_client_driver()
-> - firmware: tee_bnxt: Make use of tee bus methods
-> OK if I take them via my tree, or would you rather take them yourself?
-> 
-> Thanks,
-> Jens
+> (Actually, in the implementation, the IOCTL_DEV right is treated the
+> same as one of the ACCESS_FILE rights - I should probably revise that
+> documentation: That right does not *directly* apply to a directory
+> inode, as directories are not device files.  It only inherits down in
+> the file system hierarchy.  Looking back at earlier versions of the
+> IOCTL_DEV patch set, it was different there.  I think I missed to keep
+> the documentation in-line.)
 
-BR, Jarkko
+Indeed
