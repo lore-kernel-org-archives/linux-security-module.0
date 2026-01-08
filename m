@@ -1,44 +1,78 @@
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F5A304968
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Jan 2026 18:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04662E0920
+	for <linux-security-module@vger.kernel.org>; Thu,  8 Jan 2026 21:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767898213; cv=none; b=QvIJg1tUHzEzHivPKLGrGYJGDVWFXUH5rNp2tfnp/NSkRrBrbG4gOZ4bChlZA4J+3jbl2gjDJ+8QazQdNSnpQ+qfuqXVuGvI7+4mAarS6R/sKs4AOhLyNS2jqLEYXR6y9zX0zPSZ544eBC0CsECAho1xHH7BV/agbJWchZmfPSk=
+	t=1767907845; cv=none; b=uiano+FZYAiAyo8amEc0nw7MJOPC3TC2E02GUO0bHwbHjrNNPyLU7jm6nJeUpxrjbgotW8vTDWTI6PH3NavjCJ5zuQMux/fUHZa2MUC3ZfjRSsJ9/Fl2hGl+5f0hukt9nps74LETmE/sSikW3pgxyzvw0EOvN3nhvbKVmipGk9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767898213; c=relaxed/simple;
-	bh=5AhcDwpfR+YII5+gCn87seKs+lCY2e2+wFBN2fIYU4M=;
+	s=arc-20240116; t=1767907845; c=relaxed/simple;
+	bh=wQQy/zLheQu3N0Ta1Yse6Ja4W8T5x5T2kMKuHuYjdZc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kxpx2HyRK4NoBwC+eZ0XrFfEQyQAQa+TSBkP3GvExZN/Sy5F9RjkjkOfJl8IA/YQe9ddKFq1WpMB3Ukq85/M95VtZy9jQNjWqIOf8FcUO9ynarI9k3vFNm4OdU79+PP/+IRUDmjyjg0SL8zvAuxjC/VRPeraxHPncdKrwnyCN1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=tXDlQCeV; arc=none smtp.client-ip=185.125.25.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=hz353BCFR8XajmsQR0DVs2V+fkBKZ7HB9IWL6L2zVb2YOFGpbMe467uCBe0hTow6JwFwqat+rLTOV0aX0bR8ciRQFZQEE13Kw/VNwjJLM2lBHbDUwFUUGnVEPRn5kfn5/pxBz2sgtnAnmveNimxu0uwrHexDh24cMFIB0lLeQ0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HFO6cyrt; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="tXDlQCeV"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dnDKB5mwyzhyb;
-	Thu,  8 Jan 2026 19:42:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1767897726;
-	bh=y3jrhHg5FUx7kF7ivKJ7o2ZPDRDDiYTDDrcyS1yBIpA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tXDlQCeVQGf2kBOcNAdDXCUJtXZwsibr5Bn6v/MRWbBIxKa4oMgobVLIg4AH97ZHV
-	 CRLjv9hCH8cvUcvZ2vVJpY1c+6Wxt2yVkx9psmDA21Ci4CRmB4MQmTwG6+3dYujbjW
-	 E+ebe8PmGnPEDyFHe1+h4b5r3+KwhHkSU59uHuxo=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4dnDK94t2VzXJF;
-	Thu,  8 Jan 2026 19:42:05 +0100 (CET)
-Date: Thu, 8 Jan 2026 19:42:00 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HFO6cyrt"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64ba74e6892so6035446a12.2
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Jan 2026 13:30:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767907842; x=1768512642; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HMKTJlt9JJh16Ds5PjRbwaKnf8t6uMgK+RBuys6jkLQ=;
+        b=HFO6cyrthuoBZfss/q+keOh2gbT1BgUVqrsUacJfWWp0xf6CfcMp5OMymk5u4BoHdo
+         mFRV1uLzAlYLIVMp7rYisYqmWxDtMZEM8SjI+YOsIl8Yt+3kWkqm9cWG/nO+JL9yISuM
+         O0xVsoiY2TWAkOeYi44bdgPbHjEw2ZRetz0lRcspyN5U/QbCv3TGE/64hDwcuv7IIneZ
+         wx27CvMXPAYjsiAKubTRmOl5adYYD6JbYv56UvfMZEpNj4DqGG18qO3kZ6AQIw+P+mYo
+         K02cQrWliW4aYxVhagsu/obl2Le3i+F4DrsB1VnF8eJFLzpWsL0G8ldeV05320Y3vzx+
+         mgVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767907842; x=1768512642;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HMKTJlt9JJh16Ds5PjRbwaKnf8t6uMgK+RBuys6jkLQ=;
+        b=FvS1cElNvWU2iWZt2IZbX7LSk6rHHt6bQ7Rw1381eNH9lCQjSKWctwZqvFQImUAc4q
+         0BdL41NETQcbmbsc/08s5EG0AcOLwXholo375n2YO4YIhulLdToNq+LjgIBu0CNtZSUJ
+         AT7suDYPspvyTy7Ul6ovT9j6OeeA76D1BNyT3+TEBeVxRcuY1wccYvDFHbYVlGAi2u/Z
+         Mv/FtZGu3ewnFAD6Kmj8Da7mJhohLbTvjYEW5GtFNvuhr96X40TK9QodJF8qs1GqglV3
+         9F0ydrQJ8jmBYgx2CoyLCwEfg/eYDdC3WEUW790a3aVniCFqrh/WJHv80d6KZHp6Rzb0
+         cPSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMc4eFkjoYGeFWYrzpXrE0jdC9LsQghEievIm5wqAfODh0WX4KZXmtlczvvY8Evq8bN+DRjwlxXSv3zDrPs+xIrC+dk44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO5BvHZMpC7hWE5GttV42H0PH0W0U8//0HZNBYBeq7scnKYu7u
+	XsvTTWE+VZ5wFtWvp3sKD2YUAnnIvER8PiSZe/Lb7wS0QHoUPZ7zyD9j
+X-Gm-Gg: AY/fxX7qIcywjIeSXwHEmH5WApvCVojithypHCvzRA88BluwSap7K+yxM/Xs7QGyyyw
+	cuPF1m2h2/Mm7/uqiooGdqTz6GEYfUsfExLsVlja85dGIQbI2WxfVeeaqrQQMoM4B+/C65jRSn5
+	VhZW2QusIuiJadfU2nk/Qq/bP+5jtCt/cWlofDhywzMzooYBAJvX83+pgIVhkxTniru/5c1hUCU
+	kdbL/Z5kb1k2UvCcm8FqrKL5Oxhe8ZP1Yk9Ljqhd+VvqRDBQfP9K7rSwDIbkEVm4YxrzBfp8w4x
+	ESAFiIhT/CP9Ndrdmj3rM8WC+YcV/NPIJtgdb1t3NT8dCc1AUMU4fmsxJF2dvcKisGS1vN3BOtE
+	bop3mmx8j0b6FlPmJFZ24ianpaAo609/5mJlKkL0enBKMblarsketJFg1f3nM/kdILBigy8Xc8I
+	GhD+Dykq8It12POoFw6Hq5PL1U3MhulndfLuHy
+X-Google-Smtp-Source: AGHT+IHwTVyYZ9hMhL7SEEI/McSUe6ywY2CUuc/vftDZMD0MCKF6SvufRdjg9lBshGIzXaLIMz+a6w==
+X-Received: by 2002:a05:6402:3593:b0:64c:69e6:ad3e with SMTP id 4fb4d7f45d1cf-65097e8e43fmr6916630a12.33.1767907841885;
+        Thu, 08 Jan 2026 13:30:41 -0800 (PST)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6507bf6d5d4sm8450117a12.32.2026.01.08.13.30.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Jan 2026 13:30:41 -0800 (PST)
+Date: Thu, 8 Jan 2026 22:30:36 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
 To: Kuniyuki Iwashima <kuniyu@google.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Justin Suess <utilityemal77@gmail.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Simon Horman <horms@kernel.org>, linux-security-module@vger.kernel.org, 
-	Tingmao Wang <m@maowtm.org>, netdev@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Justin Suess <utilityemal77@gmail.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Simon Horman <horms@kernel.org>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>,
+	netdev@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>
 Subject: Re: [RFC PATCH 0/1] lsm: Add hook unix_path_connect
-Message-ID: <20260108.gaiDoe7Faghi@digikod.net>
+Message-ID: <20260108.64bd7391e1ae@gnoack.org>
 References: <20251231213314.2979118-1-utilityemal77@gmail.com>
  <CAAVpQUCF3uES6j22P1TYzgKByw+E4EqpM=+OFyqtRGStGWxH+Q@mail.gmail.com>
  <aVuaqij9nXhLfAvN@google.com>
@@ -55,59 +89,22 @@ Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 In-Reply-To: <CAAVpQUAd==+Pw02+E6UC-qwaDNm7aFg+Q9YDbWzyniShAkAhFQ@mail.gmail.com>
-X-Infomaniak-Routing: alpha
 
 On Thu, Jan 08, 2026 at 02:17:05AM -0800, Kuniyuki Iwashima wrote:
 > On Wed, Jan 7, 2026 at 4:49 AM Günther Noack <gnoack@google.com> wrote:
-> >
 > > On Tue, Jan 06, 2026 at 11:33:32PM -0800, Kuniyuki Iwashima wrote:
 > > > +VFS maintainers
 > > >
-> > > On Mon, Jan 5, 2026 at 3:04 AM Günther Noack <gnoack@google.com> wrote:
-> > > >
-> > > > Hello!
-> > > >
-> > > > On Sun, Jan 04, 2026 at 11:46:46PM -0800, Kuniyuki Iwashima wrote:
-> > > > > On Wed, Dec 31, 2025 at 1:33 PM Justin Suess <utilityemal77@gmail.com> wrote:
-> > > > > > Motivation
-> > > > > > ---
-> > > > > >
-> > > > > > For AF_UNIX sockets bound to a filesystem path (aka named sockets), one
-> > > > > > identifying object from a policy perspective is the path passed to
-> > > > > > connect(2). However, this operation currently restricts LSMs that rely
-> > > > > > on VFS-based mediation, because the pathname resolved during connect()
-> > > > > > is not preserved in a form visible to existing hooks before connection
-> > > > > > establishment.
-> > > > >
-> > > > > Why can't LSM use unix_sk(other)->path in security_unix_stream_connect()
-> > > > > and security_unix_may_send() ?
-> > > >
-> > > > Thanks for bringing it up!
-> > > >
-> > > > That path is set by the process that acts as the listening side for
-> > > > the socket.  The listening and the connecting process might not live
-> > > > in the same mount namespace, and in that case, it would not match the
-> > > > path which is passed by the client in the struct sockaddr_un.
+> > > [...]
 > > >
 > > > Thanks for the explanation !
 > > >
 > > > So basically what you need is resolving unix_sk(sk)->addr.name
 > > > by kern_path() and comparing its d_backing_inode(path.dentry)
 > > > with d_backing_inode (unix_sk(sk)->path.dendtry).
-
-I would definitely prefer to avoid any kind of hack to try to detect
-potential race conditions. :)  I think it would also be more difficult
-to maintain.
-
-A well-defined hook would avoid race conditions by design, simplify
-kernel code, and document the security check.
-
 > > >
 > > > If the new hook is only used by Landlock, I'd prefer doing that on
 > > > the existing connect() hooks.
-
-I guess other security modules would like to rely on that too.
-
 > >
 > > I've talked about that in the "Alternative: Use existing LSM hooks" section in
 > > https://lore.kernel.org/all/20260101134102.25938-1-gnoack3000@gmail.com/
@@ -158,18 +155,8 @@ I guess other security modules would like to rely on that too.
 > > done?
 > 
 > Right.  IIUC, even in your patch, the file could be renamed
-> while LSM is checking the path, no ?
-
-Yes but that should not be an issue wrt to the security policy.  The
-check should atomic and consistent with the unix socket path resolution
-used by the network stack.  In fact, comparing paths would potentially
-forbid such rename, whereas this might be legitimate.
-
-> I think holding the
+> while LSM is checking the path, no ?  I think holding the
 > path ref does not lock concurrent rename operations.
-
-We cannot hold a path ref without potential VFS issues.
-
 > 
 > To me, it's not a small race and basically it's the same with
 > the ops below,
@@ -187,16 +174,10 @@ We cannot hold a path ref without potential VFS issues.
 > and the important part is whether the path _was_ the
 > allowed one when LSM checked the path.
 
-In the case of Landlock's sandboxing, we want to check the path at
-connect time because that's when it makes sense for the client wrt to
-its request (and its security policy).
+I think we are in agreement here, yes.  What matters is that the LSM
+does its check on the same path as connect() used for the lookup (or
+that at least it behaves that way to an outside observer).
 
-FYI, Landlock identifies paths with a set of inodes, so if the unix
-socket is explicitly allowed, then a rename may still be allowed by the
-security policy.
-
-> 
-> >
 > > Some pieces of this which I am still unsure about:
 > >
 > > * What we are supposed to do when the two resolved inodes are not the
@@ -211,13 +192,25 @@ security policy.
 > will not be found, and -ECONNREFUSED is returned.
 > LSM pcan pretend as such.
 
-Yes but this would be inconsistent with the network stack.  It would
-introduce a race condition where unix socket cannot be used for
-potentially no legitimate reason.
+No, it can not pretend as such when the inodes differ - the reasoning
+is:
 
-> 
-> 
-> >
+The rename(2) operation can be used to put a new socket in the place
+of the old one, and both sockets might be OK to use in the Landlock
+policy.  If Landlock observes the race and the inodes are different,
+that still does not mean that it should refuse the connection.
+
+The trace is:
+
+* /sock1 and /sock2 exist
+* initial unix_find_bsd() lookup for /sock1
+* rename(2) /sock2 to /sock1, replacing it
+* LSM (Landlock) lookup for /sock1
+
+The two lookups return different inodes, but we still should not
+refuse the connection because of that.
+
+
 > > * What if other kinds of permission checks happen on a different
 > >   lookup code path?  (If another stacked LSM had a similar
 > >   implementation with yet another path lookup based on a different
@@ -232,15 +225,81 @@ potentially no legitimate reason.
 > Do you mean that the evaluation of the stacked LSMs could
 > return 0 if one of them allows it even though other LSMs deny ?
 
-If any LSM returns a non-zero value, then the call stops.
+Yes. If there are two LSMs employing that scheme, that would
+happen.
 
-I think what Günther wanted to highlight is that a hook call may lead to
-different hook implementation calls, and all these implementations should
-be able to return consistent results wrt to other calls.
+## Example scenario 1 (two LSMs)
 
-> 
-> 
-> >
+* LSM1 permits connections to sockets under /dir1 and denies others,
+  based on the inode associated with dir1.
+* LSM2 permits connections to sockets under /dir2 and denies others.
+  based on the inode associated with dir2.
+* The sockets /dir1/sock1 and /dir2/sock2 exist.
+
+* initial unix_find_bsd() lookup for /dir1/sock1
+* LSM1 lookup for /dir1/sock1 ==> returns 0 (accepted because /dir1 is OK in LSM1)
+* Race:
+  * /dir1 gets moved to /dir1.old,
+  * /dir2 gets moved to /dir1 (keeping the original /dir2 inode),
+  * /dir1.old/sock1 gets moved to /dir2/sock1.
+* LSM2 lookup for /dir1/sock1 ==> returns 0
+  (accepted because /dir1 is the old /dir2 on whose inode LSM2 accepts the permission)
+
+The race is not detected because the inode of the resolved socket is
+the same for all three lookups.
+
+At all points during the file renaming logic, sock1 stayed under the
+inode of the original /dir1 or the inode of the original /dir2.  The
+connection is supposed to be denied because for both of these
+directories, one of the two LSMs should deny connections to sockets
+that are stored therein.
+
+
+## Example scenario 2 (only one LSM)
+
+I just realize that a similar scenario also already applies to the
+simpler case where there is *only* the Landlock LSM and the af_unix.c
+lookup.  Bear with me, this is a bit of a wild scenario, but it shows
+that the scheme of comparing the looked-up inode does not work:
+
+* The directories /dir1 and /dir2 exist.
+  * On /dir1, the unprivileged user has Unix permissions but the LSM
+    denies access to sockets underneath based on the directories'
+    inode.
+  * On /dir2, the unprivileged user has *no* Unix permissions, but the
+    LSM accepts access to sockets underneath, based on the dir inode.
+* The socket /dir1/sock is a hardlink to /dir2/sock
+* Assume there is a highly privileged service that constantly invokes
+  renameat2() with RENAME_EXCHANGE, exchaning the two directories back
+  and forth.
+
+Now the following operations happen:
+
+* initial unix_find_bsd() lookup for /dir1/sock
+  * We get lucky and catch the inode where we get through Unix
+    permission checks
+* Race:
+  * /dir1 and /dir2 get exchanged atomically
+* LSM lookup for /dir1/sock
+  * Now /dir1 is the inode where the LSM passes the LSM check
+
+So we end up passing both checks because a rename() happened in between.
+
+At any given point in time, the directory through which we accessed
+the socket was either /dir1 or /dir2, and we lacked either the Unix
+permissions or the LSM policy should deny it. Yet, because of this
+rename race, we manage to sneak through both checks.
+
+The inode comparison for the looked up inode does not catch it,
+because that is only the "sock" inode, and does not cover the other
+inodes along the path.
+
+The example is a bit artificial to make it clear, but it nevertheless
+shows that in race scenarios, the behaviour can still be different
+(and permit more access) than in the sceneario there is only a single
+path lookup.
+
+
 > > * Would have to double check the unix_dgram_connect code paths in
 > >   af_unix to see whether this is feasible for DGRAM sockets:
 > >
@@ -252,11 +311,10 @@ be able to return consistent results wrt to other calls.
 > by specifying the peer name in each send(), and even they can
 > disconnect by connect(AF_UNSPEC).
 
-Yes, thanks for pointing this out.  It's the duty of LSMs to correctly
-handle this case.  It is handled by Landlock for abstract unix sockets.
+Yup.  (That case would have been easier, I think, because the two
+lookups would have been closer to each other.)
 
-> 
-> 
+
 > > very far apart from the initial security_unix_may_send()
 > >   LSM hook which is used for DGRAM sockets - It would be weird if we
 > >   were able to connect() a DGRAM socket, thinking that now all path
@@ -281,3 +339,19 @@ handle this case.  It is handled by Landlock for abstract unix sockets.
 > > I'd be interested to hear what you think.
 > >
 > > —Günther
+
+As the above second example showed, when we do two path lookups, one
+in af_unix and one in Landlock, even if we compare the resulting
+socket inode to catch the TOCTOU, there are scenarios where the
+resulting observable behaviour is different (and sometimes more lax)
+than if there was only a single path lookup.
+
+Given that, I'd be leaning towards the original proposal of adding new
+LSM hook, provided that Paul and the respective network maintainers
+are OK with it.
+
+Thanks for bringing it up though.  It was an interesting exploration
+to think through these scenarios.
+
+Thanks,
+–Günther
