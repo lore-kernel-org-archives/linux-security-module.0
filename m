@@ -1,494 +1,272 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCDF285C91
-	for <linux-security-module@vger.kernel.org>; Wed,  7 Jan 2026 21:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D87C35580D
+	for <linux-security-module@vger.kernel.org>; Thu,  8 Jan 2026 10:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767823051; cv=none; b=KObr7cHPdzh0e2bWMoN1X2ODWOxB9dzDeGDlQNi/dArfbFwQ7+44qKhItVCDyGL4QoGePRmdyEtQevRoNuKK2w7bt8CkSiqmgjZzzdijgd85LSxmtdmMqRrSTj65e6bp5/kI5Oj/+TeuGA/LZ5nQdYHlLQ2ZMaRPIxS2dBfxzt0=
+	t=1767867447; cv=none; b=AvAx+0DS8Ubghpq6fSgcvsPS+V0TVsN3e7mCIWF6c4n0C2xzdzmtAKeZvl+Zb+rSv538ERlzW9CCWrGk4M5gZdTSBZwlRcFiZrTyPY3IQFGt3uL0QyBowdmKIDmqve/0UG0HT6vqJVKkkUWT3XXrO9fLoN9NV7PQPBs20cpaZ8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767823051; c=relaxed/simple;
-	bh=ld5g/Yka5kCmy1RwGWjxucQKx6vp95FWEEfSX2SPFjc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jem954mJ18aMyzCwg0Jl+a7lEEbup3lxixFPIvk/zBk4ZLZ2+hIwWWW6jd50Vz6uX/bIOxfz1XA8qfRr2MARKVXkkKTCaVe/3ABfQgW7uSTNrGLxuB9JwhwyTMaMQQtYkpGWqr7RZLryJAtC8CLo/LIqi1NsQt5flHNk/q5W9mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RKl9wBIp; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1767867447; c=relaxed/simple;
+	bh=Ogh8tAOoOjINkJI4yg6EZF9WR+UCZs8B5H9QpYxebYA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZoPxqqpb7YLIVUIq1zDr0B0GyJnv7Ze3/ymqUNWp8PJJeKJ8BVGFqTLGPErXcubOJv1iBsOwxf3BWSZI6ZcGWxLHaKdtPH4s80Ze8mGwBpJIUsCq41rRg7z+vpHXpuxXei1DjdLV81w1uiJVYO/HOft8ILR6zs1I+s8s5l0qAtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WW/z2JSe; arc=none smtp.client-ip=74.125.82.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKl9wBIp"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2a12ebe4b74so27089205ad.0
-        for <linux-security-module@vger.kernel.org>; Wed, 07 Jan 2026 13:57:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WW/z2JSe"
+Received: by mail-dl1-f45.google.com with SMTP id a92af1059eb24-11f3a10dcbbso2287565c88.1
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Jan 2026 02:17:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767823048; x=1768427848; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1767867437; x=1768472237; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nzMqE7Ukm/1nTuofeGks9ReACaQl0a93GIw32CsPM2M=;
-        b=RKl9wBIpwtXKGCZUHgo0BFouFv6Z6aAM/CuS7UKmcj95Dsq7mCUZhU3GowDJfq3n/6
-         wvlF3cFLeQCziKb8A9iyoukpO+SYhLUb+Pp/v8wUiMY44u8Mp/JtSOeJVt6RsFI3VyNO
-         MV6JMJvkYGRTnEUOyetXRXari8uq8910U8N97sAhnMGifnRW2+dWfUJokeegMr4H1rGn
-         7p1OmHkBfAn3g4pDqUbDOHjniklAvHtteo8tGOz9rZW6+5FAmNbKd7RJBTRVb6tkBu3H
-         VzsY/cp8XKh8TBnI39Kz21piBP/+VoCUbcFavHNKheLQwonJR2mph5hdV60j/jtSSlj2
-         T+jg==
+        bh=yZ1fs3Ohphla2JOGra+RJtxs+PcO1u7EwjOa/BB89TI=;
+        b=WW/z2JSejySQzKm0tAXNzhnxRVch7X7N50GYxAXZbi5y5dCU/RvVSYI97dMly4SWS0
+         vRHLhdojmEfx2ZSN/TsEbgGMikmjXx9YlYHLohotcQ3P7LVcH83sIiNyf7mXGTXAxTIu
+         fy+6JMK5DXstvnlJfgofzMVU2iEJTtRwmcyYpv30hzNtyGZwiemTlUnV19Fwa3p/LYgY
+         RzFJoHW9F8Im6ZL5RVn4g+EHaait+6HDVkVA0xiQoMmK/DATD0eaIr/uLJt+3ZL1duTD
+         3Hsj9LRPANhjxy3+TmW+uYMgl/xA4v9yAWmGz/SY0KVuC9tdVAIgedTW/HrCocGBipIg
+         H5rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767823048; x=1768427848;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1767867437; x=1768472237;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=nzMqE7Ukm/1nTuofeGks9ReACaQl0a93GIw32CsPM2M=;
-        b=CS7xXnbEsfWzhFRSCL//GgcMWKOvBaBjvL9XLHKqFagTxg8go0CSR49q9J9p7w1jS7
-         yega8ZZJQ9Vn1mS/YVbj+XXmRqIEbEbwz4dVjZj86NO9L6wq88tcvXMTHTagMzuWZIeo
-         M2exm3Dztux1Dq9RBGzloIIRy9Cdu5zaMz1HcbitaQ3ZEa0qs8RbBad4EfuNuJeFCsi+
-         IXTh4F2wWohFj63ICSE3hWVsKEHf50sPCvIuCYCIJDwxyswtNo5+A6jXko1DH5e4iolS
-         JeQZVy82IA5CGj7CUFvGGbY6YmY6b4fiybzgkG4bGtwwg3HsFk+R0wi7ckz0a0UyzcPK
-         1RrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZvFN8HRelEUWmz+8LZa5zleSG6ZWu6ZXwyf1GpGFVatGHAAukemZ7f2q0XXy7NddWrzrnVFDEJSLkvx67hDg0i5dOQIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/2hv9IAFIWUhSAkbd8hZOd4dTVX2NO3/or+PlTOmYuA8IAles
-	vLKjkQOJSDKbxiExqLiYBovfO2eNlHui40lHCK6voxJUT5bpXtwE0J7K
-X-Gm-Gg: AY/fxX77/EagVHecO9V2JeK6/r2z7aXyrf4RDw8mYDtCpf6BLOsNes6pIT52oQ6eCah
-	43dvncrkZJ8Nu77KRPR+gt+r1hf7o5udLc9C4hqvwKk/S9mZK/hgxEAFYD1pwkhnFMzxfz704/t
-	espVNhdtPssv71h2FWXgHrPrS7LcsdhwN87ZOzNbxjlHcf87WRBXIUS96rOu58SISGyrT4qjtH3
-	yD/TbxtipJQBaL83lR/eL1fK9xuq+Xgo9QfgKHB+aZVqojCPbDFww4FIIVRRRTW8zjlLIfFuOg5
-	YjUhgDg7TeGOkDpmHhEqVUcAcG+UrEtcmltcrL70eciyrSNXpvkTIJBOkoeO8MOQ3wFP7L1z96y
-	FHfJQ1HiQEyE/TGwD75VevEuYrN8rsUt5E0V7C+RRjo0VIxhorPjZVeuhYBeaVbTcdVC2HD8XLs
-	mWF08AnU4Jl35NDgJ++Soxs29DPUdBFR4h+XEERTGynzMwfDFrqJE=
-X-Google-Smtp-Source: AGHT+IGxTopweeKWfvBMX7POnVAWvKalFESWcSVAYjlWWWdte8AeGCD1/aFGyKy2QdvEv0F9P4eMxw==
-X-Received: by 2002:a17:902:f691:b0:295:596f:8507 with SMTP id d9443c01a7336-2a3ee340ca1mr40711735ad.0.1767823048345;
-        Wed, 07 Jan 2026 13:57:28 -0800 (PST)
-Received: from kailas.hsd1.or.comcast.net ([2601:1c2:982:6040::1b51])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a3e3c3a311sm60005345ad.19.2026.01.07.13.57.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jan 2026 13:57:27 -0800 (PST)
-From: Ryan Foster <foster.ryan.r@gmail.com>
-To: serge@hallyn.com
-Cc: foster.ryan.r@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	paul@paul-moore.com,
-	selinux@vger.kernel.org
-Subject: [PATCH v6] security: Add KUnit tests for kuid_root_in_ns and vfsuid_root_in_currentns
-Date: Wed,  7 Jan 2026 13:51:28 -0800
-Message-ID: <20260107215725.105822-1-foster.ryan.r@gmail.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <aV15rKEt3rvW3hBK@mail.hallyn.com>
-References: <aV15rKEt3rvW3hBK@mail.hallyn.com>
+        bh=yZ1fs3Ohphla2JOGra+RJtxs+PcO1u7EwjOa/BB89TI=;
+        b=PixWFDLV+IIWBRhMs+IrtReH4g1I2V+ieA2simRF40Hk73HRAKh/8pySDwBfeygV5w
+         VgyM1qoWrq5M4MfLrRq2ASfU0guxu3WPZNRv957t5XweyvZ+61RecoJVeC+lK1gVEY6H
+         jH+3c6uQkxuv71QUfkwSTYAQ+HNY0D5DpXeQL9uPEArZQJLERfRylVpctqIyzRHa24GI
+         O95MRBVBm+DTNgbDIKFomguLSnZxy35+pDYO2WxBgg6mvf3zFV7dMtViHBFI9S6QUqPV
+         3Y+yTWdq2bpBdu6qHsu8iBQHZwqhYgzXOJlPkXrC/2tyfXyfs7SVuz8Y0h8gYwJMIFd3
+         LeBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkGLyynt40sjeqW6AQphbbPHujTJQpjAYoAIMWdlmrBIWvJmGr1PEtRKyxfMK+jFHqiffLW3qUt0/Hs3JpM+8uVIkYM80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziBJNR6GiFSbHZceuXH7hmFUvMx31mKUvU0RXNFcOQm9m3md3B
+	16krBLrF6CuYa7rbknOSW1O1DYodkF0/4ZAgwBuybsfJVLFd94lGgyGjc5ayAS98TNA/SfwZc28
+	9CoVIuOmsTLCmFpEaq3v2zAJ7K2N52VrSKpI3iOSO
+X-Gm-Gg: AY/fxX6X++JOvucqeo1H+glhFK5QlZlWTWB4QYhpsYYTbcMnNa58RyDwAnLta+ZhKXT
+	/SEJ0Y+/OGLKa3SBaDdBjXSbjlT1W7C1iehpRNSSmb8ufulFiIncNrYXvd6HieS+v1XS+yDsp96
+	Gy3jyEzrw65TtjbO0V4p9ZiPRTJz5LdSF23v7T6F90LB5ezHxh0TLHQc57tPAug1wRM73Bjj1Q+
+	phZosgwLMiWLeE91l2QrvV2/V68eYp6EaoIPopn29hbWvzBPdj7z51mSGpYQS5+0BTG8ShXo7cw
+	0+NeHHaDxnPWdLqNN6EP/g7wRYLcbA==
+X-Google-Smtp-Source: AGHT+IEMMbaQfZ7lBCEbNvFvi7mbfGcSl9hnMwuZ0q+ABdPgHEIYL9VhTGNA99HN668kF16xmTxfRs7XrSrMkqOwvT8=
+X-Received: by 2002:a05:7022:23a5:b0:11a:c8f4:3216 with SMTP id
+ a92af1059eb24-121f8b14c84mr4064588c88.15.1767867436254; Thu, 08 Jan 2026
+ 02:17:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251231213314.2979118-1-utilityemal77@gmail.com>
+ <CAAVpQUCF3uES6j22P1TYzgKByw+E4EqpM=+OFyqtRGStGWxH+Q@mail.gmail.com>
+ <aVuaqij9nXhLfAvN@google.com> <CAAVpQUB6gnfovRZAg_BfVKPuS868dFj7HxthbxRL-nZvcsOzCg@mail.gmail.com>
+ <aV5WTGvQB0XI8Q_N@google.com>
+In-Reply-To: <aV5WTGvQB0XI8Q_N@google.com>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Thu, 8 Jan 2026 02:17:05 -0800
+X-Gm-Features: AQt7F2rdIe6CkrQHtb0o9QvKbxRtFU-yNoPsYBohXhvgwop6uzgiOI8WxkEiNf4
+Message-ID: <CAAVpQUAd==+Pw02+E6UC-qwaDNm7aFg+Q9YDbWzyniShAkAhFQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/1] lsm: Add hook unix_path_connect
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+Cc: Justin Suess <utilityemal77@gmail.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, Simon Horman <horms@kernel.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>, 
+	netdev@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jan 7, 2026 at 4:49=E2=80=AFAM G=C3=BCnther Noack <gnoack@google.co=
+m> wrote:
+>
+> On Tue, Jan 06, 2026 at 11:33:32PM -0800, Kuniyuki Iwashima wrote:
+> > +VFS maintainers
+> >
+> > On Mon, Jan 5, 2026 at 3:04=E2=80=AFAM G=C3=BCnther Noack <gnoack@googl=
+e.com> wrote:
+> > >
+> > > Hello!
+> > >
+> > > On Sun, Jan 04, 2026 at 11:46:46PM -0800, Kuniyuki Iwashima wrote:
+> > > > On Wed, Dec 31, 2025 at 1:33=E2=80=AFPM Justin Suess <utilityemal77=
+@gmail.com> wrote:
+> > > > > Motivation
+> > > > > ---
+> > > > >
+> > > > > For AF_UNIX sockets bound to a filesystem path (aka named sockets=
+), one
+> > > > > identifying object from a policy perspective is the path passed t=
+o
+> > > > > connect(2). However, this operation currently restricts LSMs that=
+ rely
+> > > > > on VFS-based mediation, because the pathname resolved during conn=
+ect()
+> > > > > is not preserved in a form visible to existing hooks before conne=
+ction
+> > > > > establishment.
+> > > >
+> > > > Why can't LSM use unix_sk(other)->path in security_unix_stream_conn=
+ect()
+> > > > and security_unix_may_send() ?
+> > >
+> > > Thanks for bringing it up!
+> > >
+> > > That path is set by the process that acts as the listening side for
+> > > the socket.  The listening and the connecting process might not live
+> > > in the same mount namespace, and in that case, it would not match the
+> > > path which is passed by the client in the struct sockaddr_un.
+> >
+> > Thanks for the explanation !
+> >
+> > So basically what you need is resolving unix_sk(sk)->addr.name
+> > by kern_path() and comparing its d_backing_inode(path.dentry)
+> > with d_backing_inode (unix_sk(sk)->path.dendtry).
+> >
+> > If the new hook is only used by Landlock, I'd prefer doing that on
+> > the existing connect() hooks.
+>
+> I've talked about that in the "Alternative: Use existing LSM hooks" secti=
+on in
+> https://lore.kernel.org/all/20260101134102.25938-1-gnoack3000@gmail.com/
+>
+> If we resolve unix_sk(sk)->addr.name ourselves in the Landlock hook
+> again, we would resolve the path twice: Once in unix_find_bsd() in
+> net/unix/af_unix.c (the Time-Of-Use), and once in the Landlock
+> security hook for the connect() operation (the Time-Of-Check).
+>
+> If I understand you correctly, you are suggesting that we check that
+> the inode resolved by af_unix
+> (d_backing_inode(unix_sk(sk)->path.dentry)) is the same as the one
+> that we resolve in Landlock ourselves, and therefore we can detect the
+> TOCTOU race and pretend that this is equivalent to the case where
+> af_unix resolved to the same inode with the path that Landlock
+> observed?
+>
+> If the walked file system hierarchy changes in between these two
+> accesses, Landlock enforces the policy based on path elements that
+> have changed in between.
+>
+> * We start with a Landlock policy where Unix connect() is restricted
+>   by default, but is permitted on "foo/bar2" and everything underneath
+>   it.  The hierarchy is:
+>
+>   foo/
+>       bar/
+>           baz.sock
+>       bar2/        <--- Landlock rule: socket connect() allowed here and =
+below
+>
+> * We connect() to the path "foo/bar/baz.sock"
+> * af_unix.c path lookup resolves "foo/bar/baz.sock" (TOU)
+>   This works because Landlock is not checked at this point yet.
+> * In between the two lookups:
+>   * the directory foo/bar gets renamed to foo/bar.old
+>   * foo/bar2 gets moved to foo/bar
+>   * baz.sock gets moved into the (new) foo/bar directory
+> * Landlock check: path lookup of "foo/bar/baz.sock" (TOC)
+>   and subsequent policy check using the resolved path.
+>
+>   This succeeds because connect() is permitted on foo/bar2 and
+>   beneath.  We also check that the resolved inode is the same as the
+>   one resolved by af_unix.c.
+>
+> And now the reasoning is basically that this is fine because the
+> (inode) result of the two lookups was the same and we pretend that the
+> Landlock path lookup was the one where the actual permission check was
+> done?
+
+Right.  IIUC, even in your patch, the file could be renamed
+while LSM is checking the path, no ?  I think holding the
+path ref does not lock concurrent rename operations.
+
+To me, it's not a small race and basically it's the same with
+the ops below,
+
+sk1.bind('test')
+sk1.listen()
+os.rename('test', 'test2')
+sk2.connect('test2')
+
+sk1.bind('test')
+sk1.listen()
+sk2.connect('test1')
+os.rename('test', 'test2')
+
+and the important part is whether the path _was_ the
+allowed one when LSM checked the path.
+
+>
+> Some pieces of this which I am still unsure about:
+>
+> * What we are supposed to do when the two resolved inodes are not the
+>   same, because we detected the race?  We can not allow the connection
+>   in that case, but it would be wrong to deny it as well.  I'm not
+>   sure whether returning one of the -ERESTART* variants is feasible in
+>   this place and bubbles up correctly to the system call / io_uring
+>   layer.
+
+Imagine that the rename ops was done a bit earlier, which is
+before the first lookup in unix_find_bsd().  Then, the socket
+will not be found, and -ECONNREFUSED is returned.
+LSM pcan pretend as such.
 
 
-Here's v6 with both fixes combined. The Dec 29 version you have in caps-next 
-is correct for the namespace config - v6 keeps that and adds the KUNIT=y 
-dependency to fix the Intel CI build error.
+>
+> * What if other kinds of permission checks happen on a different
+>   lookup code path?  (If another stacked LSM had a similar
+>   implementation with yet another path lookup based on a different
+>   kind of policy, and if a race happened in between, it could at least
+>   be possible that for one variant of the path, it would be OK for
+>   Landlock but not the other LSM, and for the other variant of the
+>   path it would be OK for the other LSM but not Landlock, and then the
+>   connection could get accepted even if that would not have been
+>   allowed on one of the two paths alone.)  I find this a somewhat
+>   brittle implementation approach.
 
-Changes in v6:
-- Namespace config: all three namespaces are independent children of 
-  init_user_ns (same as Dec 29 you reviewed)
-  
-- Build fix: depends on KUNIT=y prevents link errors when KUNIT=m
+Do you mean that the evaluation of the stacked LSMs could
+return 0 if one of them allows it even though other LSMs deny ?
 
-The Dec 30 patch accidentally reverted the namespace fix when I was adding the 
-KUNIT=y part. This v6 has both fixes working together.
 
-Thanks, Ryan
+>
+> * Would have to double check the unix_dgram_connect code paths in
+>   af_unix to see whether this is feasible for DGRAM sockets:
+>
+>   There is a way to connect() a connectionless DGRAM socket, and in
+>   that case, the path lookup in af_unix happens normally only during
+>   connect(),
 
-Add comprehensive KUnit tests for the namespace-related capability
-functions that Serge Hallyn refactored in commit 9891d2f79a9f
-("Clarify the rootid_owns_currentns").
+Note that connected DGRAM socket can send() data to other sockets
+by specifying the peer name in each send(), and even they can
+disconnect by connect(AF_UNSPEC).
 
-The tests verify:
-- Basic functionality: UID 0 in init namespace, invalid vfsuid,
-  non-zero UIDs
-- Actual namespace traversal: Creating user namespaces with different
-  UID mappings where uid 0 maps to different kuids (e.g., 1000, 2000,
-  3000)
-- Hierarchy traversal: Testing multiple nested namespaces to verify
-  correct namespace hierarchy traversal
 
-This addresses the feedback to "test the actual functionality" by
-creating real user namespaces with different values for the
-namespace's uid 0, rather than just basic input validation.
-
-The test file is included at the end of commoncap.c when
-CONFIG_SECURITY_COMMONCAP_KUNIT_TEST is enabled, following the
-standard kernel pattern (e.g., scsi_lib.c, ext4/mballoc.c). This
-allows tests to access static functions in the same compilation unit
-without modifying production code based on test configuration.
-
-The tests require CONFIG_USER_NS to be enabled since they rely on user
-namespace mapping functionality. The Kconfig dependency ensures the
-tests only build when this requirement is met.
-
-All 7 tests pass:
-- test_vfsuid_root_in_currentns_init_ns
-- test_vfsuid_root_in_currentns_invalid
-- test_vfsuid_root_in_currentns_nonzero
-- test_kuid_root_in_ns_init_ns_uid0
-- test_kuid_root_in_ns_init_ns_nonzero
-- test_kuid_root_in_ns_with_mapping
-- test_kuid_root_in_ns_with_different_mappings
-
-Updated MAINTAINER capabilities to include commoncap test
-
-Signed-off-by: Ryan Foster <foster.ryan.r@gmail.com>
----
- MAINTAINERS               |   1 +
- security/Kconfig          |  17 +++
- security/commoncap.c      |   4 +
- security/commoncap_test.c | 288 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 310 insertions(+)
- create mode 100644 security/commoncap_test.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c0030e126fc8..6f162c736dfb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5682,6 +5682,7 @@ F:	include/trace/events/capability.h
- F:	include/uapi/linux/capability.h
- F:	kernel/capability.c
- F:	security/commoncap.c
-+F:	security/commoncap_test.c
- 
- CAPELLA MICROSYSTEMS LIGHT SENSOR DRIVER
- M:	Kevin Tsai <ktsai@capellamicro.com>
-diff --git a/security/Kconfig b/security/Kconfig
-index 285f284dfcac..6a4393fce9a1 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -284,6 +284,23 @@ config LSM
- 
- 	  If unsure, leave this as the default.
- 
-+config SECURITY_COMMONCAP_KUNIT_TEST
-+	bool "Build KUnit tests for commoncap" if !KUNIT_ALL_TESTS
-+	depends on KUNIT=y && USER_NS
-+	default KUNIT_ALL_TESTS
-+	help
-+	  This builds the commoncap KUnit tests.
-+
-+	  KUnit tests run during boot and output the results to the debug log
-+	  in TAP format (https://testanything.org/). Only useful for kernel devs
-+	  running KUnit test harness and are not for inclusion into a
-+	  production build.
-+
-+	  For more information on KUnit and unit tests in general please refer
-+	  to the KUnit documentation in Documentation/dev-tools/kunit/.
-+
-+	  If unsure, say N.
-+
- source "security/Kconfig.hardening"
- 
- endmenu
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 8a23dfab7fac..3399535808fe 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -1521,3 +1521,7 @@ DEFINE_LSM(capability) = {
- };
- 
- #endif /* CONFIG_SECURITY */
-+
-+#ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
-+#include "commoncap_test.c"
-+#endif
-diff --git a/security/commoncap_test.c b/security/commoncap_test.c
-new file mode 100644
-index 000000000000..e9b278be37f1
---- /dev/null
-+++ b/security/commoncap_test.c
-@@ -0,0 +1,288 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * KUnit tests for commoncap.c security functions
-+ *
-+ * Tests for security-critical functions in the capability subsystem,
-+ * particularly namespace-related capability checks.
-+ */
-+
-+#include <kunit/test.h>
-+#include <linux/user_namespace.h>
-+#include <linux/uidgid.h>
-+#include <linux/cred.h>
-+#include <linux/mnt_idmapping.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/refcount.h>
-+
-+#ifdef CONFIG_SECURITY_COMMONCAP_KUNIT_TEST
-+
-+/* Functions are static in commoncap.c, but we can call them since we're
-+ * included in the same compilation unit when tests are enabled.
-+ */
-+
-+/**
-+ * test_vfsuid_root_in_currentns_init_ns - Test vfsuid_root_in_currentns with init ns
-+ *
-+ * Verifies that UID 0 in the init namespace correctly owns the current
-+ * namespace when running in init_user_ns.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_vfsuid_root_in_currentns_init_ns(struct kunit *test)
-+{
-+	vfsuid_t vfsuid;
-+	kuid_t kuid;
-+
-+	/* Create UID 0 in init namespace */
-+	kuid = KUIDT_INIT(0);
-+	vfsuid = VFSUIDT_INIT(kuid);
-+
-+	/* In init namespace, UID 0 should own current namespace */
-+	KUNIT_EXPECT_TRUE(test, vfsuid_root_in_currentns(vfsuid));
-+}
-+
-+/**
-+ * test_vfsuid_root_in_currentns_invalid - Test vfsuid_root_in_currentns with invalid vfsuid
-+ *
-+ * Verifies that an invalid vfsuid correctly returns false.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_vfsuid_root_in_currentns_invalid(struct kunit *test)
-+{
-+	vfsuid_t invalid_vfsuid;
-+
-+	/* Use the predefined invalid vfsuid */
-+	invalid_vfsuid = INVALID_VFSUID;
-+
-+	/* Invalid vfsuid should return false */
-+	KUNIT_EXPECT_FALSE(test, vfsuid_root_in_currentns(invalid_vfsuid));
-+}
-+
-+/**
-+ * test_vfsuid_root_in_currentns_nonzero - Test vfsuid_root_in_currentns with non-zero UID
-+ *
-+ * Verifies that a non-zero UID correctly returns false.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_vfsuid_root_in_currentns_nonzero(struct kunit *test)
-+{
-+	vfsuid_t vfsuid;
-+	kuid_t kuid;
-+
-+	/* Create a non-zero UID */
-+	kuid = KUIDT_INIT(1000);
-+	vfsuid = VFSUIDT_INIT(kuid);
-+
-+	/* Non-zero UID should return false */
-+	KUNIT_EXPECT_FALSE(test, vfsuid_root_in_currentns(vfsuid));
-+}
-+
-+/**
-+ * test_kuid_root_in_ns_init_ns_uid0 - Test kuid_root_in_ns with init namespace and UID 0
-+ *
-+ * Verifies that kuid_root_in_ns correctly identifies UID 0 in init namespace.
-+ * This tests the core namespace traversal logic. In init namespace, UID 0
-+ * maps to itself, so it should own the namespace.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_kuid_root_in_ns_init_ns_uid0(struct kunit *test)
-+{
-+	kuid_t kuid;
-+	struct user_namespace *init_ns;
-+
-+	kuid = KUIDT_INIT(0);
-+	init_ns = &init_user_ns;
-+
-+	/* UID 0 should own init namespace */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(kuid, init_ns));
-+}
-+
-+/**
-+ * test_kuid_root_in_ns_init_ns_nonzero - Test kuid_root_in_ns with init namespace and non-zero UID
-+ *
-+ * Verifies that kuid_root_in_ns correctly rejects non-zero UIDs in init namespace.
-+ * Only UID 0 should own a namespace.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_kuid_root_in_ns_init_ns_nonzero(struct kunit *test)
-+{
-+	kuid_t kuid;
-+	struct user_namespace *init_ns;
-+
-+	kuid = KUIDT_INIT(1000);
-+	init_ns = &init_user_ns;
-+
-+	/* Non-zero UID should not own namespace */
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(kuid, init_ns));
-+}
-+
-+/**
-+ * create_test_user_ns_with_mapping - Create a mock user namespace with UID mapping
-+ *
-+ * Creates a minimal user namespace structure for testing where uid 0 in the
-+ * namespace maps to a specific kuid in the parent namespace.
-+ *
-+ * @test: KUnit test context
-+ * @parent_ns: Parent namespace (typically init_user_ns)
-+ * @mapped_kuid: The kuid that uid 0 in this namespace maps to in parent
-+ *
-+ * Returns: Pointer to allocated namespace, or NULL on failure
-+ */
-+static struct user_namespace *create_test_user_ns_with_mapping(struct kunit *test,
-+								 struct user_namespace *parent_ns,
-+								 kuid_t mapped_kuid)
-+{
-+	struct user_namespace *ns;
-+	struct uid_gid_extent extent;
-+
-+	/* Allocate a test namespace - use kzalloc to zero all fields */
-+	ns = kunit_kzalloc(test, sizeof(*ns), GFP_KERNEL);
-+	if (!ns)
-+		return NULL;
-+
-+	/* Initialize basic namespace structure fields */
-+	ns->parent = parent_ns;
-+	ns->level = parent_ns ? parent_ns->level + 1 : 0;
-+	ns->owner = mapped_kuid;
-+	ns->group = KGIDT_INIT(0);
-+
-+	/* Initialize ns_common structure */
-+	refcount_set(&ns->ns.__ns_ref, 1);
-+	ns->ns.inum = 0; /* Mock inum */
-+
-+	/* Set up uid mapping: uid 0 in this namespace maps to mapped_kuid in parent
-+	 * Format: first (uid in ns) : lower_first (kuid in parent) : count
-+	 * So: uid 0 in ns -> kuid mapped_kuid in parent
-+	 * This means from_kuid(ns, mapped_kuid) returns 0
-+	 */
-+	extent.first = 0;                              /* uid 0 in this namespace */
-+	extent.lower_first = __kuid_val(mapped_kuid);  /* maps to this kuid in parent */
-+	extent.count = 1;
-+
-+	ns->uid_map.extent[0] = extent;
-+	ns->uid_map.nr_extents = 1;
-+
-+	/* Set up gid mapping: gid 0 maps to gid 0 in parent (simplified) */
-+	extent.first = 0;
-+	extent.lower_first = 0;
-+	extent.count = 1;
-+
-+	ns->gid_map.extent[0] = extent;
-+	ns->gid_map.nr_extents = 1;
-+
-+	return ns;
-+}
-+
-+/**
-+ * test_kuid_root_in_ns_with_mapping - Test kuid_root_in_ns with namespace where uid 0
-+ *				       maps to different kuid
-+ *
-+ * Creates a user namespace where uid 0 maps to kuid 1000 in the parent namespace.
-+ * Verifies that kuid_root_in_ns correctly identifies kuid 1000 as owning the namespace.
-+ *
-+ * Note: kuid_root_in_ns walks up the namespace hierarchy, so it checks the current
-+ * namespace first, then parent, then parent's parent, etc. So:
-+ * - kuid 1000 owns test_ns because from_kuid(test_ns, 1000) == 0
-+ * - kuid 0 also owns test_ns because from_kuid(init_user_ns, 0) == 0
-+ *   (checked in parent)
-+ *
-+ * This tests the actual functionality as requested: creating namespaces with
-+ * different values for the namespace's uid 0.
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_kuid_root_in_ns_with_mapping(struct kunit *test)
-+{
-+	struct user_namespace *test_ns;
-+	struct user_namespace *parent_ns;
-+	kuid_t mapped_kuid, other_kuid;
-+
-+	parent_ns = &init_user_ns;
-+	mapped_kuid = KUIDT_INIT(1000);
-+	other_kuid = KUIDT_INIT(2000);
-+
-+	test_ns = create_test_user_ns_with_mapping(test, parent_ns, mapped_kuid);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, test_ns);
-+
-+	/* kuid 1000 should own test_ns because it maps to uid 0 in test_ns */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(mapped_kuid, test_ns));
-+
-+	/* kuid 0 should also own test_ns (checked via parent init_user_ns) */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), test_ns));
-+
-+	/* Other kuids should not own test_ns */
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(other_kuid, test_ns));
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(500), test_ns));
-+}
-+
-+/**
-+ * test_kuid_root_in_ns_with_different_mappings - Test with multiple namespaces
-+ *
-+ * Creates multiple user namespaces with different UID mappings to verify
-+ * that kuid_root_in_ns correctly distinguishes between namespaces.
-+ *
-+ * Each namespace maps uid 0 to a different kuid, and we verify that each
-+ * kuid only owns its corresponding namespace (plus kuid 0 owns all via
-+ * init_user_ns parent).
-+ *
-+ * @test: KUnit test context
-+ */
-+static void test_kuid_root_in_ns_with_different_mappings(struct kunit *test)
-+{
-+	struct user_namespace *ns1, *ns2, *ns3;
-+
-+	/* Create three independent namespaces, each mapping uid 0 to different kuids */
-+	ns1 = create_test_user_ns_with_mapping(test, &init_user_ns, KUIDT_INIT(1000));
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns1);
-+
-+	ns2 = create_test_user_ns_with_mapping(test, &init_user_ns, KUIDT_INIT(2000));
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns2);
-+
-+	ns3 = create_test_user_ns_with_mapping(test, &init_user_ns, KUIDT_INIT(3000));
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ns3);
-+
-+	/* Test ns1: kuid 1000 owns it, kuid 0 owns it (via parent), others do not */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(1000), ns1));
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), ns1));
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(2000), ns1));
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(3000), ns1));
-+
-+	/* Test ns2: kuid 2000 owns it, kuid 0 owns it (via parent), others do not */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(2000), ns2));
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), ns2));
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(1000), ns2));
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(3000), ns2));
-+
-+	/* Test ns3: kuid 3000 owns it, kuid 0 owns it (via parent), others do not */
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(3000), ns3));
-+	KUNIT_EXPECT_TRUE(test, kuid_root_in_ns(KUIDT_INIT(0), ns3));
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(1000), ns3));
-+	KUNIT_EXPECT_FALSE(test, kuid_root_in_ns(KUIDT_INIT(2000), ns3));
-+}
-+
-+static struct kunit_case commoncap_test_cases[] = {
-+	KUNIT_CASE(test_vfsuid_root_in_currentns_init_ns),
-+	KUNIT_CASE(test_vfsuid_root_in_currentns_invalid),
-+	KUNIT_CASE(test_vfsuid_root_in_currentns_nonzero),
-+	KUNIT_CASE(test_kuid_root_in_ns_init_ns_uid0),
-+	KUNIT_CASE(test_kuid_root_in_ns_init_ns_nonzero),
-+	KUNIT_CASE(test_kuid_root_in_ns_with_mapping),
-+	KUNIT_CASE(test_kuid_root_in_ns_with_different_mappings),
-+	{}
-+};
-+
-+static struct kunit_suite commoncap_test_suite = {
-+	.name = "commoncap",
-+	.test_cases = commoncap_test_cases,
-+};
-+
-+kunit_test_suite(commoncap_test_suite);
-+
-+MODULE_LICENSE("GPL");
-+
-+#endif /* CONFIG_SECURITY_COMMONCAP_KUNIT_TEST */
--- 
-2.52.0
-
+> very far apart from the initial security_unix_may_send()
+>   LSM hook which is used for DGRAM sockets - It would be weird if we
+>   were able to connect() a DGRAM socket, thinking that now all path
+>   lookups are done, but then when you try to send a message through
+>   it, Landlock surprisingly does the path lookup again based on a very
+>   old and possibly outdated path.  If Landlock's path lookup fails
+>   (e.g. because the path has disappeared, or because the inode now
+>   differs), retries won't be able to recover this any more.  Normally,
+>   the path does not need to get resolved any more once the DGRAM
+>   socket is connected.
+>
+>   Noteworthy: When Unix servers restart, they commonly unlink the old
+>   socket inode in the same place and create a new one with bind().  So
+>   as the time window for the race increases, it is actually a common
+>   scenario that a different inode with appear under the same path.
+>
+> I have to digest this idea a bit.  I find it less intuitive than using
+> the exact same struct path with a newly introduced hook, but it does
+> admittedly mitigate the problem somewhat.  I'm just not feeling very
+> comfortable with security policy code that requires difficult
+> reasoning. =F0=9F=A4=94 Or maybe I interpreted too much into your suggest=
+ion. :)
+> I'd be interested to hear what you think.
+>
+> =E2=80=94G=C3=BCnther
