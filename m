@@ -1,157 +1,63 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C642A46661C;
-	Thu,  8 Jan 2026 13:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from wind.enjellic.com (wind.enjellic.com [67.230.224.160])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F05AD24
+	for <linux-security-module@vger.kernel.org>; Thu,  8 Jan 2026 16:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.230.224.160
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767878877; cv=none; b=j6wPHa7YeJNOgnZItHKIjmlr6mApBl2CxWnnjHiq3VNFy25ouKF2e207FFfA91QoPqTCyRorjftVq6dpKp20kWrOvCULuuVnp+vJHPcgESFyNoPrzp8AZcabWCasc+xtFtU9aKuDXGi2I/61Pypt/tSDRUjr0OEv/ZKJepZnyTw=
+	t=1767888698; cv=none; b=h78k4f/2Zm/FWhYIPB0Usob9tanGF4WnJCZkrbZFxIutWfiub70GJaTTtMgKAdjrWvBCYeLqb1AOy5me8itSdSTXzru2cTwu2wLByfslgTseFMMZ3p350dUlcse0h7ciYeuRk0qhLok8+8XGsi1g4SJ8w5Oh6b960z3nczezNYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767878877; c=relaxed/simple;
-	bh=aZNd5ZfiO0jANMEUjjmztVseOVSusFwq/OISmXO7svU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S8PAy4pY6inFSMuBLJCFLl+a73xzN19k76kJtQnOYG4RBNHozsq6qx/3KIZ+3xP36fYPVuSvOIbFxJUv0pSe30enJ9IePFIMqF7h53U83qBjVKiPSEayLO3iiuyHxjB06zW9I/ISGEljeFq4XTki936XTqfVCsXidTZsYqJXp/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CH1+bSbA; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CH1+bSbA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5147C19421;
-	Thu,  8 Jan 2026 13:27:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767878877;
-	bh=aZNd5ZfiO0jANMEUjjmztVseOVSusFwq/OISmXO7svU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CH1+bSbA5L8VA7mSCokBdbx0AQgkjkRqmlrahfX8ELEJ2ypQXmqMvcVRFwP7BZeA7
-	 BSx1jwXQromcfmdUn8aCj7co5SIo6jWylGAll+D8/cqvoddu2YDx/42e4v3GQ3kfOz
-	 +1PoWfVz+3t/HWc4puXWpPQCy6NYloGtTiCiECELj0Y0Hp+zjD/1J3iVbJxox5Ity6
-	 QaQzo86aAYTUV/n2JZ6YOjcvzpmeH/Yfp1Gl7rASdzecJ/OYwGp/JWhgiT6oliOfkr
-	 BlTlJ/L02ES4BbNGkIKJon53evIWuoF0ZuqgYoqF07gC76ayOx/8VUA7eTOYM4Hwv9
-	 qpH7uZBqvoYSw==
-Date: Thu, 8 Jan 2026 15:27:52 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Srish Srinivasan <ssrish@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-	James.Bottomley@hansenpartnership.com, zohar@linux.ibm.com,
-	nayna@linux.ibm.com, rnsastry@linux.ibm.com,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] keys/trusted_keys: establish PKWM as a trusted
- source
-Message-ID: <aV-w2NbxAPuuXy_U@kernel.org>
-References: <20260106150527.446525-1-ssrish@linux.ibm.com>
- <20260106150527.446525-6-ssrish@linux.ibm.com>
+	s=arc-20240116; t=1767888698; c=relaxed/simple;
+	bh=a2risomvSkbclWqO/xOIGA1Xq4rJTPZMP/KquX50Ox0=;
+	h=Date:From:To:Cc:Subject:Message-ID:Mime-Version:Content-Type:
+	 Content-Disposition; b=BNgy7l4B5uefDUH8rcDevKMf9PTD61eHX8ii6g5x+fJC2FsCcRR1vOz9cfz1+fiAdJcGw1NMCPe8jO4oI2ZqmWyIwHF9hQrzSNMEAxj2ii+auChfNX+0dujQiC7FC25qnOfFpN8va8KmiTlXCVBxsuYeKPEwnbi+w/p9q1VRMw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=67.230.224.160
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 608FkCgM014369;
+	Thu, 8 Jan 2026 09:46:12 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 608Fk5Ze014361;
+	Thu, 8 Jan 2026 09:46:05 -0600
+Date: Thu, 8 Jan 2026 09:46:05 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: paul@paul-moore.com
+Cc: linux-security-module@vger.kernel.org
+Subject: Improved guidance for LSM submissions.
+Message-ID: <20260108154604.GA14181@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260106150527.446525-6-ssrish@linux.ibm.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 08 Jan 2026 09:46:12 -0600 (CST)
 
-On Tue, Jan 06, 2026 at 08:35:26PM +0530, Srish Srinivasan wrote:
-> The wrapping key does not exist by default and is generated by the
-> hypervisor as a part of PKWM initialization. This key is then persisted by
-> the hypervisor and is used to wrap trusted keys. These are variable length
-> symmetric keys, which in the case of PowerVM Key Wrapping Module (PKWM) are
-> generated using the kernel RNG. PKWM can be used as a trust source through
-> the following example keyctl commands:
-> 
-> keyctl add trusted my_trusted_key "new 32" @u
-> 
-> Use the wrap_flags command option to set the secure boot requirement for
-> the wrapping request through the following keyctl commands
-> 
-> case1: no secure boot requirement. (default)
-> keyctl usage: keyctl add trusted my_trusted_key "new 32" @u
-> 	      OR
-> 	      keyctl add trusted my_trusted_key "new 32 wrap_flags=0x00" @u
-> 
-> case2: secure boot required to in either audit or enforce mode. set bit 0
-> keyctl usage: keyctl add trusted my_trusted_key "new 32 wrap_flags=0x01" @u
-> 
-> case3: secure boot required to be in enforce mode. set bit 1
-> keyctl usage: keyctl add trusted my_trusted_key "new 32 wrap_flags=0x02" @u
-> 
-> NOTE:
-> -> Setting the secure boot requirement is NOT a must.
-> -> Only either of the secure boot requirement options should be set. Not
-> both.
-> -> All the other bits are required to be not set.
-> -> Set the kernel parameter trusted.source=pkwm to choose PKWM as the
-> backend for trusted keys implementation.
-> -> CONFIG_PSERIES_PLPKS must be enabled to build PKWM.
-> 
-> Add PKWM, which is a combination of IBM PowerVM and Power LPAR Platform
-> KeyStore, as a new trust source for trusted keys.
-> 
-> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  MAINTAINERS                               |   9 ++
->  include/keys/trusted-type.h               |   7 +-
->  include/keys/trusted_pkwm.h               |  22 +++
->  security/keys/trusted-keys/Kconfig        |   8 ++
->  security/keys/trusted-keys/Makefile       |   2 +
->  security/keys/trusted-keys/trusted_core.c |   6 +-
->  security/keys/trusted-keys/trusted_pkwm.c | 168 ++++++++++++++++++++++
->  7 files changed, 220 insertions(+), 2 deletions(-)
->  create mode 100644 include/keys/trusted_pkwm.h
->  create mode 100644 security/keys/trusted-keys/trusted_pkwm.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a0dd762f5648..ba51eff21a16 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14003,6 +14003,15 @@ S:	Supported
->  F:	include/keys/trusted_dcp.h
->  F:	security/keys/trusted-keys/trusted_dcp.c
->  
-> +KEYS-TRUSTED-PLPKS
-> +M:	Srish Srinivasan <ssrish@linux.ibm.com>
-> +M:	Nayna Jain <nayna@linux.ibm.com>
-> +L:	linux-integrity@vger.kernel.org
-> +L:	keyrings@vger.kernel.org
-> +S:	Supported
-> +F:	include/keys/trusted_plpks.h
-> +F:	security/keys/trusted-keys/trusted_pkwm.c
-> +
->  KEYS-TRUSTED-TEE
->  M:	Sumit Garg <sumit.garg@kernel.org>
->  L:	linux-integrity@vger.kernel.org
-> diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
-> index 4eb64548a74f..45c6c538df22 100644
-> --- a/include/keys/trusted-type.h
-> +++ b/include/keys/trusted-type.h
-> @@ -19,7 +19,11 @@
->  
->  #define MIN_KEY_SIZE			32
->  #define MAX_KEY_SIZE			128
-> -#define MAX_BLOB_SIZE			512
-> +#if IS_ENABLED(CONFIG_TRUSTED_KEYS_PKWM)
-> +#define MAX_BLOB_SIZE			1152
-> +#else
-> +#define MAX_BLOB_SIZE                   512
-> +#endif
->  #define MAX_PCRINFO_SIZE		64
->  #define MAX_DIGEST_SIZE			64
->  
-> @@ -46,6 +50,7 @@ struct trusted_key_options {
->  	uint32_t policydigest_len;
->  	unsigned char policydigest[MAX_DIGEST_SIZE];
->  	uint32_t policyhandle;
-> +	uint16_t wrap_flags;
->  };
+Good morning Paul, I hope this note finds your week going well and you
+were able to have enjoyed a pleasant holiday season.
 
-We should introduce:
+The Linux security community has benefited from your prescriptive
+guidelines for the sub-system that you developed when you took over
+the maintainership role.
 
-	void *private;
+What is not clear in these guidelines is how a virgin LSM should be
+structured for initial submission.  Moving forward, we believe the
+community would benefit from having clear guidance on this issue.
 
-And hold backend specific fields there.
+It would be helpful if the guidance covers a submission of 10-15 KLOC
+of code and 5-8 compilation units, which seems to cover the average
+range of sizes for LSM's that have significant coverage of the event
+handlers/hooks.
 
-This patch set does not necessarily have to migrate TPM fields to this
-new framework, only start a better convention before this turns into
-a chaos.
+We will look forward to your reflections and guidance on this issue.
 
-BR, Jarkko
+Have a good remainder of the week.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
