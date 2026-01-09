@@ -1,48 +1,54 @@
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F74B2877FE
-	for <linux-security-module@vger.kernel.org>; Fri,  9 Jan 2026 15:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67412363C55
+	for <linux-security-module@vger.kernel.org>; Fri,  9 Jan 2026 15:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767972067; cv=none; b=nEJ7ELJWVAsh2qS/+ye6q4GpmR/45oNdQJ+jn4Ea9LFCQq7w4pgoUps62s7FSzXJ7Qhgo1v3z7SpLW77jfAExn6TgcEm8uBvas75paJ9qpSUY8+Pney/FTaOXiWHVKYTWraNpHrBtjFCqUnKv8ATV4r9SJSHnnZHqx3jJ5MztC8=
+	t=1767972333; cv=none; b=GK9ikAplY83x/BpHMCvONG1LOFwcJQfesCRfCtdT4EQPgUWMJJd15SOnf0bM68VAxuN39UlJwMGhhT5Lo1U7NNnxmWyGshMtC/mN/KBHTBWphlU1fTZKfc5UNv1dJYye9HEaBNrn8DglEMK6d4CWQUa7FFGFeI8peuRIsq8LIUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767972067; c=relaxed/simple;
-	bh=AVTpei8gByW8FGSiK+O4/gbpl9lPh38JUWpoUDiMfcs=;
+	s=arc-20240116; t=1767972333; c=relaxed/simple;
+	bh=VwR6rITCTT/5W6kOS7rTSUcoCYLlb7c3vLq55qymEDA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JyP6wJr0CCQhguzlzTLVtx1AS+9X7dvphyaOENqTy+zixcDa+yszj9JapQoOQ9wIzlS4nsZO2Sywy07DVlYVF1ecdzmW29FSlVc88Xf176iNc3nD140wE3qlZ3u/Njo2MBFKQ12Z8L0TjRlK5VJxIwfL7EixcHh4DoOAVRBfsfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=kLDcI0fX; arc=none smtp.client-ip=83.166.143.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=MjEtQdn75XP1FsrkMqxpjx1MWXNffOaaFCl1/ZThHRtmbZmhp7dQ5rhk9JYuVk/n+LrEUi8g4EWAQC6Br+JCkn6Jz5UyXX5L5yC05XM/iXLxY4weGjmaxa1grKYeD/Oj0LYE7991eU5esVngsqp+1jCrXMhB1CpTttwOa6QKs7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=zOsl2MCn; arc=none smtp.client-ip=45.157.188.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="kLDcI0fX"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="zOsl2MCn"
 Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dnlpc3ZpRz8y4;
-	Fri,  9 Jan 2026 16:20:56 +0100 (CET)
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dnlvl2pqSzFLV;
+	Fri,  9 Jan 2026 16:25:23 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1767972056;
-	bh=Gw+dm7Q8zC6wrLQ1iqSf/vhE0jxiMCpVFkC0CEJuF74=;
+	s=20191114; t=1767972323;
+	bh=iKnHglTUbcZ4XDCh4O3nJLB8hAFlIIsic8IdBnOoJAo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kLDcI0fXPL0uouvsjznFz+NNpZELI4wZmhzYQ+xD+OYyYz7JmQEvtCc5V5Ce7kNg2
-	 /2IvcX2mBTjQrZe8QxwSBJ9pBwbN6t5l+hVXj4FEx+eKHzyWpkOGSa3X5cNNZR97ti
-	 tLiMo8pfW5tucpbVrIfKpnQe62oq2zXrrCJnPYOo=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dnlpb16GnzVkR;
-	Fri,  9 Jan 2026 16:20:55 +0100 (CET)
-Date: Fri, 9 Jan 2026 16:20:49 +0100
+	b=zOsl2MCndj5u5uUlawakiDdmnb+PmMIBolpwpl37ei19J8i5/JmzHz+TCiUauv5rx
+	 zhTmlTjGnPIVl3smDqRrUgQk6O6UkRZny51x3ZFh0NcE2ZGev281dHGvxryLB9byWR
+	 W6tJJ5+/xSMRIpXoM2nWCVPN0n8ec0Sv4MPtjHdU=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dnlvk5cTnzX6X;
+	Fri,  9 Jan 2026 16:25:22 +0100 (CET)
+Date: Fri, 9 Jan 2026 16:25:21 +0100
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>, 
-	linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>, 
-	Justin Suess <utilityemal77@gmail.com>, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
-	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	konstantin.meskhidze@huawei.com, Demi Marie Obenour <demiobenour@gmail.com>, 
-	Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Kuniyuki Iwashima <kuniyu@google.com>
+To: Demi Marie Obenour <demiobenour@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, 
+	Tingmao Wang <m@maowtm.org>, Paul Moore <paul@paul-moore.com>, 
+	linux-security-module@vger.kernel.org, Justin Suess <utilityemal77@gmail.com>, 
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, Alyssa Ross <hi@alyssa.is>, 
+	Jann Horn <jannh@google.com>, Tahera Fahimi <fahimitahera@gmail.com>
 Subject: Re: [RFC PATCH 0/5] landlock: Pathname-based UNIX connect() control
-Message-ID: <20260109.aiXa3Iesh5wa@digikod.net>
+Message-ID: <20260109.yahQuiwu9kug@digikod.net>
 References: <20260101134102.25938-1-gnoack3000@gmail.com>
- <20260109.she1eg0Ohl4u@digikod.net>
- <20260109.d4c29e22f15f@gnoack.org>
+ <61a6be66-a9bd-4d68-98ed-29aac65b7dfb@gmail.com>
+ <73c5509a-5daa-4ea5-ab9f-e24a59786f6d@maowtm.org>
+ <1d36b2ee-b967-42d7-a6c2-e5b1602a512f@gmail.com>
+ <20260102.93e0d7b9c9b5@gnoack.org>
+ <81f908e3-8a98-46e7-b20c-fe647784ceb4@gmail.com>
+ <20260102.17e1c2b9faa4@gnoack.org>
+ <64484ab4-e137-4fd9-9441-a63ccdff1616@gmail.com>
+ <20260108.uoD0aesh8Uth@digikod.net>
+ <a5850eb9-cee3-412d-ac20-c47e3161fdd9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -52,79 +58,65 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260109.d4c29e22f15f@gnoack.org>
+In-Reply-To: <a5850eb9-cee3-412d-ac20-c47e3161fdd9@gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Fri, Jan 09, 2026 at 03:41:33PM +0100, Günther Noack wrote:
-> On Fri, Jan 09, 2026 at 11:37:12AM +0100, Mickaël Salaün wrote:
-> > On Thu, Jan 01, 2026 at 02:40:57PM +0100, Günther Noack wrote:
-> > > ## Motivation
-> > > 
-> > > Currently, landlocked processes can connect() to named UNIX sockets
-> > > through the BSD socket API described in unix(7), by invoking socket(2)
-> > > followed by connect(2) with a suitable struct sockname_un holding the
-> > > socket's filename.  This can come as a surprise for users (e.g. in
-> > > [1]) and it can be used to escape a sandbox when a Unix service offers
-> > > command execution (some scenarios were listed by Tingmao Wang in [2]).
-> > > 
-> > > These patches are built on Justin Suess's patch which adds the LSM
-> > > hook:
-> > > https://lore.kernel.org/all/20251231213314.2979118-1-utilityemal77@gmail.com/
+On Fri, Jan 09, 2026 at 06:33:10AM -0500, Demi Marie Obenour wrote:
+> On 1/8/26 06:14, Mickaël Salaün wrote:
+> > On Fri, Jan 02, 2026 at 01:37:14PM -0500, Demi Marie Obenour wrote:
+> >> On 1/2/26 05:50, Günther Noack wrote:
+> >>> On Fri, Jan 02, 2026 at 05:27:40AM -0500, Demi Marie Obenour wrote:
+> >>>> On 1/2/26 05:16, Günther Noack wrote:
+> >>>>> On Thu, Jan 01, 2026 at 05:44:51PM -0500, Demi Marie Obenour wrote:
+> >>>>>> On 1/1/26 17:34, Tingmao Wang wrote:
+> >>>>>>> On 1/1/26 22:14, Demi Marie Obenour wrote:
+> >>>>>>>> [...]
+> >>>>>>>> Does this leave directory traversal as the only missing Landlock
+> >>>>>>>> filesystem access control?  Ideally Landlock could provide the same
+> >>>>>>>> isolation from the filesystem that mount namespaces do.
+> >>>>>>>
+> >>>>>>> I think that level of isolation would require path walk control - see:
+> >>>>>>> https://github.com/landlock-lsm/linux/issues/9
+> >>>>>>>
+> >>>>>>> (Landlock also doesn't currently control some metadata operations - see
+> >>>>>>> the warning at the end of the "Filesystem flags" section in [1])
+> >>>>>>>
+> >>>>>>> [1]: https://docs.kernel.org/6.18/userspace-api/landlock.html#filesystem-flags
+> >>>>>>
+> >>>>>> Could this replace all of the existing hooks?
+> >>>>>
+> >>>>> If you do not need to distinguish between the different operations
+> >>>>> which Landlock offers access rights for, but you only want to limit
+> >>>>> the visibility of directory hierarchies in the file system, then yes,
+> >>>>> the path walk control described in issue 9 would be sufficient and a
+> >>>>> more complete control.
+> >>>>>
+> >>>>> The path walk control is probably among the more difficult Landlock
+> >>>>> feature requests.  A simple implementation would be easy to implement
+> >>>>> technically, but it also requires a new LSM hook which will have to
+> >>>>> get called *during* path lookup, and we'd have to make sure that the
+> >>>>> performance impact stays in check.  Path lookup is after all a very
+> >>>>> central facility in a OS kernel.
+> >>>>
+> >>>> What about instead using the inode-based hooks for directory searching?
+> >>>> SELinux can already restrict that.
+> >>>
+> >>> Oh, thanks, good pointer!  I was under the impression that this didn't
+> >>> exist yet -- I assume you are referring to the
+> >>> security_inode_follow_link() hook, which is already happening during
+> >>> path resolution?
+> >>
+> >> I'm not familiar with existing LSM hooks, but I do know that SELinux
+> >> enforces checks on searching and reading directories and symlinks.
 > > 
-> > As Kuniyuki pointed out [1], we should handle both connect and send.
-> > This would be similar to the scoped restriction from Tingmao.  I guess
-> > we'll need a similar hook for the send operation.  Because there is no
-> > need to differenciate between connected and disconnected unix socket in
-> > a security policy, we should have one access right for both.  Any
-> > proposal for its name? Something like TRANSMIT_UNIX or EMIT_UNIX?
+> > SELinux uses inode-based hooks, which is not (directly) possible for
+> > Landlock because it is an unprivileged access control, which means it
+> > cannot rely on extended file attributes to define a security policy.
 > > 
-> > [1] https://lore.kernel.org/all/CAAVpQUAd==+Pw02+E6UC-qwaDNm7aFg+Q9YDbWzyniShAkAhFQ@mail.gmail.com/
+> > See https://github.com/landlock-lsm/linux/issues/9
 > 
-> Ah, thanks for pointing it out.
-> 
-> The restriction as implemented in this patch set already solves this
-> for all the three cases where a Unix socket file is looked up.  I
-> believe that it is happening in all the right times (everytime when
-> the lookup has to happen).
-> 
-> The cases where the restriction applies are the following:
-> 
-> * unix_stream_connect - when calling connect() on a stream socket
-> * unix_dgram_connect - when calling connect() on a dgram socket
-> * unix_dgram_sendmsg - when calling sendmsg() on a dgram socket
->                        (per-message lookup only)
-> 
-> You can find the code locations by looking for the call to
-> unix_find_other() in af_unix.c.  (That function invokes either
-> unix_find_bsd() or the lookup for abstract Unix sockets.)
-> 
-> In the unix_dgram_sendmsg() case, the lookup is only performed if an
-> explicit sockaddr_un was provided together with the arguments to the
-> sendmsg().  (And sendto(2) also uses the same code path as
-> sendmsg(2).)
+> Could Landlock use a side table, with the inode's address in memory
+> as the key?
 
-Great
-
-> 
-> It is true that the current name for the access right is slightly
-> misleading.  How about LANDLOCK_ACCESS_FS_UNIX_SEND?  (Like
-> "transmit", but a bit closer to the naming of the sendmsg(2)
-> networking API?)
-
-We should try to keep the access right naming consistent:
-LANDLOCK_ACCESS_FS_<VERB>[_NOUN]
-
-What about USE_UNIX, or FIND_UNIX (closer to the kernel function), or
-RESOLVE_UNIX?  It should be clear with the name that it is not about
-listening nor receiving from a process outside of the sandbox (which
-should have its own access right BTW).
-
-> 
-> (I guess the other alternative would be to wire the socket type
-> information through to the unix_find_bsd() function and pass it
-> through. Would require a small change to the af_unix.c implementation,
-> but then we could tell apart LANDLOCK_ACCESS_FS_UNIX_STREAM_CONNECT
-> and LANDLOCK_ACCESS_FS_UNIX_DGRAM_SEND). WDYT?
-
-I think the hook should have the same arguments as unix_find_bsd()'s
-ones.  This gives the full context of the call.
+A struct inode is not enough because we need to resolve a file
+hierarchy, which is only possible with a struct path.
