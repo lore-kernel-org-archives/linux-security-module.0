@@ -1,48 +1,62 @@
-Received: from 011.lax.mailroute.net (011.lax.mailroute.net [199.89.1.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic315-27.consmr.mail.ne1.yahoo.com (sonic315-27.consmr.mail.ne1.yahoo.com [66.163.190.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CD1366DD6;
-	Fri,  9 Jan 2026 20:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F13436827D
+	for <linux-security-module@vger.kernel.org>; Fri,  9 Jan 2026 20:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767989817; cv=none; b=TtQxWF0dTnHoXATSEMDJLBiZUyTBb9z7pf7oz9+7okSKowb9IXo49H7SGET3Ktn1ICtVBMQW8ZGrA01AUQXj2pLNX63ZFx8PbparcVOyZ5BQBmYVb2yxP3kuiQ2x3ZzzYZuiOnK1VuIXDvUOEXSarNgfGNQp7lRpk5pGQvBreAc=
+	t=1767989941; cv=none; b=onG7Eh9oWGOwQ1lsJfemtPkIR642hS3mEiboJ6wz60yh/V5bfjqwJLVyZu/2ZWA1lZfA2G59o8BZQGsLyEDrAcrZL3uAZPXgcBOsmk9j71WuTRNSQD1QX/8Rg5gb4gk82qaRinC+tXz0mE7voaSBnPx6lsGJQg8qxalG5HoSREY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767989817; c=relaxed/simple;
-	bh=ADaYwFS3kKhM5xXVlApjjoRfDaP+xucJXVcKN8R+3xU=;
+	s=arc-20240116; t=1767989941; c=relaxed/simple;
+	bh=S+2yrkdOite85BucNrnsDp6+hmYs80fNYcDrj8TD1EM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fge9O7k51LaQUobXhpyUldTjEH8GkE262e2jssE3pWokm88FHFeEnPqfQBzLUWQnlCycOp72mrqHmZ6m6HcGxym3jXWJhpGP+WJfs3JW0qjC0jDIl04WgT9m6eXsKIUHcI6MmDD2uHox0tMbC0/0aSWsXneh9OGKidrYri32FEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=RjLtkJa1; arc=none smtp.client-ip=199.89.1.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+	 In-Reply-To:Content-Type; b=AWOIKUGafvpaGzXJf6ARlOETBB/lpbJcQH5JQNPfB5dheYWG+Mw6d1tt4S4bwXFLB7skhadu0WkTbmg/aS+UZ0SNodGNfEzCzIpQkOW4bhFdFp5oEkVq3mlEAweuvfgBP5iZStBPwG8pOo4hwY9JPnur3P++pZgHdRnx3sC2P34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=rIsiuiR/; arc=none smtp.client-ip=66.163.190.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="RjLtkJa1"
-Received: from localhost (localhost [127.0.0.1])
-	by 011.lax.mailroute.net (Postfix) with ESMTP id 4dntN66qC7z1XSVtL;
-	Fri,  9 Jan 2026 20:16:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1767989807; x=1770581808; bh=MWWlok8ve6te0Z1LFT3tDlJ2
-	/NkqaoxHzzfJCelUW48=; b=RjLtkJa1D0QD6TAtBF7G2Jt4AHXQc+brZdc/5Tt3
-	jLo0eDAvbJmHIgNEXvLWEKHxTHRyVyb8D/Q06Ur+0T8jENUFddkat1ZKTy3z3SCC
-	yDf86qyZn7Mw6O42JTSazct3a+5P6OhdLUxYoG2N+K1nLDa+zdW6XgfbDJXsR7ng
-	jwo0GO2ay6yXtRwcQHBbI2rYmhtkOiawoqZQXc3Ti/WgrYqhAEUZOdNAs9KC7uUn
-	Qq0xxt6q5wZuMIdq5Cl7pFCXgskRMzaEvQTOGgVF3O1ctVoejnnjZWNZJ35Ht4/9
-	VhXFXR50Omzjcooxo8ojFKm5X7x9JePv61sq2YtntHteEg==
-X-Virus-Scanned: by MailRoute
-Received: from 011.lax.mailroute.net ([127.0.0.1])
- by localhost (011.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id JY_Dc9oQqhZL; Fri,  9 Jan 2026 20:16:47 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 011.lax.mailroute.net (Postfix) with ESMTPSA id 4dntMk3WPZz1XT1Zk;
-	Fri,  9 Jan 2026 20:16:33 +0000 (UTC)
-Message-ID: <05c77ca1-7618-43c5-b259-d89741808479@acm.org>
-Date: Fri, 9 Jan 2026 12:16:33 -0800
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="rIsiuiR/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1767989938; bh=05/+8xoSDH8K/xInxJpLTAEy13sEgB1WR9SfI0ffREM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=rIsiuiR/Fza/m21pRV0esEVk03PWfXOSNAiok1wcema/YmCGsU6UvpPOlzFMq70KIYubD27p/IDd4xKeRSeidYGL0dFOA7rT0sehb1m0gwXTWi78uufDN9XBZ3xxmH0qPYRmywGeDgfENZus4gRASamckFhOOJRR0IjqdZpO4W95FsfGE/oq8TXPhAmFZwBKvOIv7qwLx5R1XWnA2AKXXmpZq/S65YWTuel5eZgzxuOFE8dnxj2J7qigUdFl/ytD2XjTKicgE8YwEZnVvAGOFlfivqY2Obwa8X9XQUcGEqG0GsggkEVra27ywMYQeRDK9/KRaIndKTcbW8uJsDbjSg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1767989938; bh=hFUwOOM2HEY/yAQPvKjtWpC2JB7M9ShCnTTIim4QNlt=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=pD8575TMWq6dzuClvD/hnTVgj/4sncRqcJ+jQ/61IOAIHVYpp6xYOn2KLWoTSPuxOIlLdPNAyglfVm0XsJBLU5J7560sSFwqAEmUv7YpWQIIXrArexS+8yvB537N0gJtNnKT+vhKRCDM4YMSN5uwL6+aCU/IF3aUAf1r1dOpXy7SleFa7C7cPOqBGnLB+Flb9XsigUn+SD1/7VTz8u1QcjF6ucPvuMNVUSMgBmGo5Dd+HIIGpzXFYp4cW5S675MJuz6lEYApivOpAVneYLJgWbXZEZUVlTC+ic9rDoFqeywtadPizeZcIZyR9aEw2C4tZ0+ZNFAO7FlDJwJ+R4a1rg==
+X-YMail-OSG: sPiifZEVM1nv61aNn6T8cy5izBNRqWDD0Wk1dm8SuniYHPsDvdxHZBUjdcjuqKU
+ QTUsUhoiHQs9J_v37Xw5aTqem1WtwS_2kduzrOSrBZd4dzYxyBp2F5NCBOJt1L9BBSBU4fljfN37
+ vJTOFF_bJUijS.h.0.g63ORu4P7GqMuOod0h43iFhF.DJzC5YD_xDYSxGubxwIKlsp4xvNL0mNuK
+ YSzddNyY8VC8l4UeYOInknZvVGnVYllXDaDlyU3iTWaK_FsbpGTlesuhbObFQPlXoULKBviLuaB3
+ ukofOJfF5jw5UhoX7kd60yz3PBqxkyIpoVIJ9zXzqF34rmeurjBEdhIHsw7AEvJX_i15oYL9GKnZ
+ zLPrbaviUg8ikE4tw96wlxCXt5SP3uG7mpXxe4D86zhVtfw0gUwqZ._iTKKHYgljJSmlrz5TOYKf
+ G8YyH5qluYuVZeyqdd4TPFi3QIJRHalI_xLPfyi.C5FzT5cC240ljW23fdER0OIClPScaaoh7WnK
+ BbQzUof8RHkvzlJxrqsicZG2j0h5KksB8eAKyx2UwXqXesyymj0Ul0wk03ZN2Wb_s1z_Fp5otmFF
+ 77YwH5dBiZRxsS9266OlTwXxt_pnuiq4eZ.aqIMmO1gJtcs0B2Mt20BT_LOsFRqxFAvQxqJZ5JZA
+ ifAu3VFSPkygYXIvuh1gSXJqbkfPRLkF8ccTajRfBTtyRHWi69aC7iWNyCsZLinQyJBHbVCoMSZO
+ uET.koa_3lINCDfoxPN0YWyoCULu4zPkzBwkSK5fDC9Aci5UAHVAD.vvLKgI6PcClWNF.V9mI4ly
+ zgKUBQII5FKmTii1zDqD.fiu7yiKSb9o2FUvMamXrs61cKEj5o8y2_wojugKaRdMcphOq6NKVYJI
+ Ud25R4Z61_tC7ya.IAD267Fd.9bqXtt7UWxZ6XX3UAmuFbhLueDmL.o9GyN.bxYEw9SCFPrjzAgf
+ p73R8OznckrXegWCnbw94rCr5FX0o0lWgPncvA_u2dbXLutJRA7Yvy6y1XoySZ9MJidG1XMrKrxM
+ c98Xl8DV8KhQ9gz7I9PkNn0eZGHetwvXoxYuKNyWKD6trOpQ52LDYbmldA9UdqReX9iTyFe0gqCx
+ 2PZzjsJknNr2Uc7bZA1KHS0JlXTm_fmk9QcjnX3tgMN42gz1hZu3_NsExA8ViR1kMOc8M.LXoXvr
+ q_gldSjJWdHYAK9MjVJLiBWCz7yNfCPhO5klqrvIX6SHAg7cIvaJ20UtoLktttVLZfuMhmMsn_s_
+ nxNPrwAaqBmLiYBsf2V0zTjE4BdWur.XTs1iovGycE2zt27tyidEaNNXDCXEEgxDPi3FzYqKHTl1
+ SvESHuRyuX7.NCHDhu_8xeZ8HoVIheYvDzzz7spS_4Ca3Wy25mVdDMGcVklILNEqc4rAw7fdrVuu
+ vij7u8.mWoF7cNQawAnvT.4Etf2kfCZ.lujOzYAvL1Zqf38sghpJwmIwEZWieubGmwh2DAE1XGMb
+ LySPXnF260MmxHagtqNbsghSUMqASr9rXQgAU6MRSIj8wU1Mxjku5hYp7mv5Sf5Uow5iS5lPf0Ld
+ fkqPK574EQsWLj_5G_.CkL6IOcWr3bPaiGIo3YyIvRWALLlEg80JkaZYwsyhGWFhnR9S_D5yugpq
+ 1s03uWW6_2lcIS80s75w4lCUuQAyGoX3wlzjzNO21bN8SLa2tmD9sl.YhcHSxWLwT5pVDoafq1fd
+ c_vqtQvzZASRUGrsP6ZAzbiUW79gumk4An4msrzcSswOw44g18BC8AcrJlWTrHYC4kkKnSEtMpq_
+ fhpsi5FUGRAxkTiWWcWkW69tCUsMdXlbN4caEoh44Nwo4.KDFX237oJByUPFnTuZ26YkYdTzqwcN
+ iZauDZSN6dS68jy.NVVPvmVC6n2xtk1dW1O_uV77tuRGWrBqQb7SiK7xvR1S_l6EbLQNTRNplDtd
+ 7G669ZsSMeK.4oEoJrDh0RWYjx5KWdx82JcXwfFb8aTwCSe6hV1CN3fS6QZ8mSLFsMKzun3Iol8.
+ J8LIpaLXpwWM6dhMBp8A5LQ3TVqNWIVB4kYmTKjiyumBHTteVb8MrWGbLrbSN1_bgEeDKP78uzt6
+ 5.CMsz9YGFK8.tMRDTIDMfe72ZMIIglYNr37LLup7gyB1f0Km_DRG7YjfVcHbgxS.skHrBsNEmPU
+ wwXaJxi7dl4isEUqK_Lhabo2DMZdqb4q.xxvFtyTwGynjAoW9jjSgkTlXm4lEdJWmoWOIYExNmIW
+ iNeJzXGX752I9oHSDhUmEpvbQdIim0mID_ClHRBA_NsHCHc3hJVFnUYXUCsT3FAbQS5z5T9TKQgM
+ QzAtqOnQcoBPEMw--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: cad0941a-1029-4d8a-9828-88bb3a330c5f
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Fri, 9 Jan 2026 20:18:58 +0000
+Received: by hermes--production-gq1-86969b76cd-qmsdz (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d91babfe764ca1a2782f1f9b2daa95e7;
+          Fri, 09 Jan 2026 19:58:41 +0000 (UTC)
+Message-ID: <2ea2e67e-8fcd-43d8-8cda-7df8d678d2b0@schaufler-ca.com>
+Date: Fri, 9 Jan 2026 11:58:39 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -50,76 +64,52 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 20/36] locking/ww_mutex: Support Clang's context
- analysis
-To: Marco Elver <elver@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Will Deacon <will@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
- Chris Li <sparse@chrisli.org>, "Paul E. McKenney" <paulmck@kernel.org>,
- Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>,
- Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
- Eric Dumazet <edumazet@google.com>, Frederic Weisbecker
- <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>,
- Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>,
- Johannes Berg <johannes.berg@intel.com>, Jonathan Corbet <corbet@lwn.net>,
- Josh Triplett <josh@joshtriplett.org>, Justin Stitt
- <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
- Kentaro Takeda <takedakn@nttdata.co.jp>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
- Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>,
- kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org,
- linux-wireless@vger.kernel.org, llvm@lists.linux.dev, rcu@vger.kernel.org
-References: <20251219154418.3592607-1-elver@google.com>
- <20251219154418.3592607-21-elver@google.com>
+Subject: Re: Improved guidance for LSM submissions.
+To: Paul Moore <paul@paul-moore.com>, "Dr. Greg" <greg@enjellic.com>
+Cc: linux-security-module@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20260108154604.GA14181@wind.enjellic.com>
+ <CAHC9VhTyvEVLGLJkkyQnSZYSj4-YHPz82BnDEUwMjU7hHdbFoA@mail.gmail.com>
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20251219154418.3592607-21-elver@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhTyvEVLGLJkkyQnSZYSj4-YHPz82BnDEUwMjU7hHdbFoA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.24866 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 12/19/25 8:40 AM, Marco Elver wrote:
-> Add support for Clang's context analysis for ww_mutex.
-> 
-> The programming model for ww_mutex is subtly more complex than other
-> locking primitives when using ww_acquire_ctx. Encoding the respective
-> pre-conditions for ww_mutex lock/unlock based on ww_acquire_ctx state
-> using Clang's context analysis makes incorrect use of the API harder.
+On 1/9/2026 10:51 AM, Paul Moore wrote:
+> On Thu, Jan 8, 2026 at 11:08 AM Dr. Greg <greg@enjellic.com> wrote:
+>> What is not clear in these guidelines is how a virgin LSM should be
+>> structured for initial submission.  Moving forward, we believe the
+>> community would benefit from having clear guidance on this issue.
+>>
+>> It would be helpful if the guidance covers a submission of 10-15 KLOC
+>> of code and 5-8 compilation units, which seems to cover the average
+>> range of sizes for LSM's that have significant coverage of the event
+>> handlers/hooks.
 
-That's a very short description. It should have been explained in the
-patch description how the ww_acquire_ctx changes affect callers of the
-ww_acquire_{init,done,fini}() functions.
+Good day Greg, I hope you are well.
 
->   static inline void ww_acquire_init(struct ww_acquire_ctx *ctx,
->   				   struct ww_class *ww_class)
-> +	__acquires(ctx) __no_context_analysis
-> [ ... ]
->   static inline void ww_acquire_done(struct ww_acquire_ctx *ctx)
-> +	__releases(ctx) __acquires_shared(ctx) __no_context_analysis
->   {
-> [ ... ]
->   static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
-> +	__releases_shared(ctx) __no_context_analysis
+If you would review the comments I made in 2023 regarding how to
+make your submission reviewable you might find that you don't need
+a "formal" statement of policy. Remember that you are not submitting
+your code to a chartered organization, but to a collection of system
+developers who are enthusiastic about security. Many are overworked,
+some are hobbyists, but all treat their time as valuable. If you can't
+heed the advice you've already been given, there's no incentive for
+anyone to spend their limited resources to provide it in another
+format.
 
-The above changes make it mandatory to call ww_acquire_done() before
-calling ww_acquire_fini(). In Documentation/locking/ww-mutex-design.rst
-there is an example where there is no ww_acquire_done() call between
-ww_acquire_init() and ww_acquire_fini() (see also line 202). The
-function dma_resv_lockdep() in drivers/dma-buf/dma-resv.c doesn't call
-ww_acquire_done() at all. Does this mean that the above annotations are
-wrong? Is there a better solution than removing the __acquire() and
-__release() annotations from the above three functions?
-
-Bart.
+> I would suggest looking at the existing Linux kernel documentation on
+> submitting patches, a link is provided below.  The entire
+> document/page is worth reading in full, but the "Separate your
+> changes" section seems to be most relevant to your question above.
+>
+> https://docs.kernel.org/process/submitting-patches.html
+>
+> Beyond that general guidance, at this particular moment I do not have
+> the cycles to draft a LSM specific recommendation beyond what has
+> already been documented and reviewed.  As usual, the mailing list
+> archives are also an excellent resource that can be used to
+> familiarize yourself with community norms and expectations.
+>
