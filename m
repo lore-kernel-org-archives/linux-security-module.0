@@ -1,112 +1,43 @@
-Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DF61DE2C9
-	for <linux-security-module@vger.kernel.org>; Sat, 10 Jan 2026 03:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE6C50095B;
+	Sat, 10 Jan 2026 04:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768015410; cv=none; b=f0HckbgdRwVSIc7tosccvnkFvNk5lengGeLURrarifsH8S+TN8VCqXfHtdyVCeJ+dnkXhHx5RscxJJysjFZFIaSmTaLRInUme3gRjGaK+RJptZ+I94WYk7kDgIEhAdvfuksYXOaDiqgoFKCmgWh44QZ549Za3QYUtE3V5i6P8zM=
+	t=1768020615; cv=none; b=mH7b2XUPiOn8/iSeBA4PNNiqYFglJ1eRQZbRN1qrChJDzt4DNATsNuKeMiCy5ZKfQMKWS5h1FHUY08fFTZDGUgsdOZBDEEGhs6EuVmTBl+J1gPMTDebTiggDN2+iQjgo71axqpZEYh5+HA3XesSw/GKIy2UtCclrntWnbLNHRy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768015410; c=relaxed/simple;
-	bh=pIOWvWaMtOeKk2tGzz6+GGUr1ULM/ynwPFesUocVqWE=;
+	s=arc-20240116; t=1768020615; c=relaxed/simple;
+	bh=a10ftqpzbvmGSVeWWTQB6gxfA7Vx120gSllM/nEde88=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mV4bNSte3LS0qJlarnd++IUbMo4vomfeIGiOWuj1RwUDaqcTKE2pSRm4n6HQUU6N99kUTQ/wZ2/BEqvmolC0xdAKXIwe0QFiH45GNcqTJc62ENiyO32AEIvSoEZASCyZUCfQtBUWiAEvxGO/wi3rap2IbRWPthGm3BXKYUTYjZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oWcbw1A4; arc=none smtp.client-ip=209.85.221.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=UyKxzGdeFa9oc8EneoCdFnzoS1QO0te5vrhXfo50mnG7LSZIBwOEMjKosIqye8hXgmDjR2AYk/r/MbXtP8E6zJEjvLHdV1GFN9ssKgNgCgqzhHNfkBGePU4aBQfHoHSht91FwyzpvNjiHBxZgX4BLtNXNZ3evtvix08ruFeNO0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=VFxUsARh; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oWcbw1A4"
-Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-43284ed32a0so2445312f8f.3
-        for <linux-security-module@vger.kernel.org>; Fri, 09 Jan 2026 19:23:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1768015406; x=1768620206; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8mq1TLJDe/+4ZL2ybMlQeyJEwr2YWMjzl9f+SS6lqEM=;
-        b=oWcbw1A4uPwGs4vppG6VLWQEWjK4cV8m8zusZrJAkg45Vf9r3Gkot3WJE14LScCPFz
-         AJnkY3wgatsZDMlnujMrkF6rlCFeCt2CeGakIOP8W9ggfZK4MV+KIY/b9WjABHZTDRNx
-         TcMmHNubUt8TIoHoQTj9Rxitgv8yCSXzZU9sP6KF8a20mm1kjjKqLVaqbb+Obn36+HmX
-         M1I2lwHEGK4HXLvJd4juxSrqoAu7jljxHMqUpHLTEoxBg9y8bNSm6T9b05XA9sFP/xXm
-         Q2fYhJGdbhddaINXCxW0QW3BwKW4pnojpZGQrrBddlS75g1C1A/NGJve7sfinvqMVz63
-         4xJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768015406; x=1768620206;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=8mq1TLJDe/+4ZL2ybMlQeyJEwr2YWMjzl9f+SS6lqEM=;
-        b=t3+uAoGg6TZlVfCOwdTauDEkn+XJuBGB+cmk4YXHeCwN/zJZxR9UGKHx5VcmoUeZrN
-         uxr8EPu8liIREII8lZ5tYx/ZYL3s3K788+CaJJchkp/KMN21fCuSBfrwe4kVALMAmLOU
-         dsmxAWxMLYDVzax6gEeD+o7gCEcfgc7pbktwK9AFn6DpSmfnmmAVx9Cg2MLJmnz8bPRb
-         SFqhBDbNuFbLK63hoT5ggMC/Zgz7rAfbVlo9anB0gSYt84bvKn3XbTNc0rgyJpEeyV8x
-         thEQHU5u6sF/wReUwff++1pGHpdgF6GI6tGNWAK46IUrf3TYrGgbXYavvSmoXvmA7RsE
-         QhTg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5iTt6Lxj4rh8b+dz0fId9Ns4bIHWXkUOVsTFiM74zzYPRpey7x6VFknm1wDpYHhGNYs4sAMXwGZ8lfDGAC7LYOqGs/fY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFEBKcwzIHoRGdDS9uy+Uvk6T0jkKtwdObg9l81sczuuSIsr6J
-	RhP/ZlDAkF+Gh6Cy913DztvF+fTTwiJmGAl5vm2sAx5XjASV+txAJPADhXoBt7GA3Q==
-X-Gm-Gg: AY/fxX635vtLsgRkUXUO3AQQ0RdqxdnE3f23FtMqWWTuNHIWzuN1DNMeRcCnEBC31ph
-	u/LUTUQmlkQyxYzrIlz1r8k2iOCLKhCj8bODs8Uw0+fVT6Qg0K37DJxbG5cBKJ8DZWi2ANk/AiL
-	uOI0Ye9ujMIdvUcPz9JQsE1/bmEZJuxhFymR0ArrwlfaqtzSUydv3S86L24uHtb9/r1qI/+5JnU
-	XT19LEjs9ixReYeOi3CybWmifJsyTHUMdsxhcAh7odYOjVKxHSiBMbILzpQXbsUcpX2LzZ1YouN
-	WOU6PR5xvVkzFwtA2CuBz5O/cj+GdEiERQjO8fazYjPFrT9NvJ6JtKjiub27faZx9qIwpKSaSwA
-	QtAehde0I1jrum6FZBgBcAMFyl3zK6WamehkenCEK2PGZ/iO7G9hhUod1HAKzuEvRpMEf9obl4G
-	SSL0CNQQpbXeMFGnaqqCXHFRoEUGEfGc9XawsWR+9ahlHC2pw2
-X-Google-Smtp-Source: AGHT+IG9MVcoXYErsfPeUV+H1nwvNcE/auehFYm8oxMSVuIuHSa0XoHmpfdrWmRqI4nV3F3yqmQGrg==
-X-Received: by 2002:a05:6000:2909:b0:42f:bad9:20c9 with SMTP id ffacd0b85a97d-432c36329f9mr14528086f8f.19.1768015405505;
-        Fri, 09 Jan 2026 19:23:25 -0800 (PST)
-Received: from elver.google.com ([2a00:79e0:2834:9:2965:801e:e18a:cba1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5ee24esm25605099f8f.33.2026.01.09.19.23.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jan 2026 19:23:24 -0800 (PST)
-Date: Sat, 10 Jan 2026 04:23:16 +0100
-From: Marco Elver <elver@google.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Bart Van Assche <bvanassche@acm.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	Chris Li <sparse@chrisli.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Dmitry Vyukov <dvyukov@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
-	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	linux-sparse@vger.kernel.org, linux-wireless@vger.kernel.org,
-	llvm@lists.linux.dev, rcu@vger.kernel.org
-Subject: Re: [PATCH v5 10/36] locking/mutex: Support Clang's context analysis
-Message-ID: <aWHGJA8imMgELQrA@elver.google.com>
-References: <20251219154418.3592607-1-elver@google.com>
- <20251219154418.3592607-11-elver@google.com>
- <57062131-e79e-42c2-aa0b-8f931cb8cac2@acm.org>
- <aWA9P3_oI7JFTdkC@elver.google.com>
- <20260109060249.GA5259@lst.de>
+	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="VFxUsARh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
+	t=1768020605; bh=a10ftqpzbvmGSVeWWTQB6gxfA7Vx120gSllM/nEde88=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VFxUsARhBLIZDTJEyMRjO2xelN8/mLC35kIMJnip5zD+paxZJ/fOAvZvh7e5bVcQg
+	 cn/uyicPFwf4Eg6hAMsS1FjorlGP4X47YJFO8HrGZ+icpd9ky3St3PcdIKNy08OO9T
+	 /0JPrN5G6XkdtT3rZguBaXEcN3CWZXynyYW1OrUhq3uJL1UlRCRdOGL80sIMu/xIaU
+	 yjqJD1fA42tlGKzyhBx/HPPze4LLBz7PeP1+3w+w0AfgWQGyoVR9+roajLiHgdG1Nm
+	 jJNOXKDziAH6IgNdVDx9U2jbSMhuKHsa+Baih1w02qsnS7GJ7oCuFhGe1Z74HK/UD4
+	 oXo9tzrLtefLQ==
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 1D263708; Fri,  9 Jan 2026 22:50:05 -0600 (CST)
+Date: Fri, 9 Jan 2026 22:50:05 -0600
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Ryan Foster <foster.ryan.r@gmail.com>
+Cc: serge@hallyn.com, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, paul@paul-moore.com,
+	selinux@vger.kernel.org
+Subject: Re: [PATCH v6] security: Add KUnit tests for kuid_root_in_ns and
+ vfsuid_root_in_currentns
+Message-ID: <aWHafb6DujTuEZ7l@mail.hallyn.com>
+References: <aV15rKEt3rvW3hBK@mail.hallyn.com>
+ <20260107215725.105822-1-foster.ryan.r@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -115,317 +46,64 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260109060249.GA5259@lst.de>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+In-Reply-To: <20260107215725.105822-1-foster.ryan.r@gmail.com>
 
-On Fri, Jan 09, 2026 at 07:02AM +0100, Christoph Hellwig wrote:
-> On Fri, Jan 09, 2026 at 12:26:55AM +0100, Marco Elver wrote:
-> > Probably the most idiomatic option is to just factor out construction.
-> > Clearly separating complex object construction from use also helps
-> > readability regardless, esp. where concurrency is involved. We could
-> > document such advice somewhere.
+On Wed, Jan 07, 2026 at 01:51:28PM -0800, Ryan Foster wrote:
 > 
-> Initializing and locking a mutex (or spinlock, or other primitive) is a
-> not too unusual pattern, often used when inserting an object into a
-> hash table or other lookup data structure.  So supporting it without
-> creating pointless wrapper functions would be really useful.  One thing
-> that would be nice to have and probably help here is to have lock
-> initializers that create the lock in a held state.
+> Here's v6 with both fixes combined. The Dec 29 version you have in caps-next 
+> is correct for the namespace config - v6 keeps that and adds the KUNIT=y 
+> dependency to fix the Intel CI build error.
+> 
+> Changes in v6:
+> - Namespace config: all three namespaces are independent children of 
+>   init_user_ns (same as Dec 29 you reviewed)
+>   
+> - Build fix: depends on KUNIT=y prevents link errors when KUNIT=m
+> 
+> The Dec 30 patch accidentally reverted the namespace fix when I was adding the 
+> KUNIT=y part. This v6 has both fixes working together.
+> 
+> Thanks, Ryan
+> 
+> Add comprehensive KUnit tests for the namespace-related capability
+> functions that Serge Hallyn refactored in commit 9891d2f79a9f
+> ("Clarify the rootid_owns_currentns").
+> 
+> The tests verify:
+> - Basic functionality: UID 0 in init namespace, invalid vfsuid,
+>   non-zero UIDs
+> - Actual namespace traversal: Creating user namespaces with different
+>   UID mappings where uid 0 maps to different kuids (e.g., 1000, 2000,
+>   3000)
+> - Hierarchy traversal: Testing multiple nested namespaces to verify
+>   correct namespace hierarchy traversal
+> 
+> This addresses the feedback to "test the actual functionality" by
+> creating real user namespaces with different values for the
+> namespace's uid 0, rather than just basic input validation.
+> 
+> The test file is included at the end of commoncap.c when
+> CONFIG_SECURITY_COMMONCAP_KUNIT_TEST is enabled, following the
+> standard kernel pattern (e.g., scsi_lib.c, ext4/mballoc.c). This
+> allows tests to access static functions in the same compilation unit
+> without modifying production code based on test configuration.
+> 
+> The tests require CONFIG_USER_NS to be enabled since they rely on user
+> namespace mapping functionality. The Kconfig dependency ensures the
+> tests only build when this requirement is met.
+> 
+> All 7 tests pass:
+> - test_vfsuid_root_in_currentns_init_ns
+> - test_vfsuid_root_in_currentns_invalid
+> - test_vfsuid_root_in_currentns_nonzero
+> - test_kuid_root_in_ns_init_ns_uid0
+> - test_kuid_root_in_ns_init_ns_nonzero
+> - test_kuid_root_in_ns_with_mapping
+> - test_kuid_root_in_ns_with_different_mappings
+> 
+> Updated MAINTAINER capabilities to include commoncap test
+> 
+> Signed-off-by: Ryan Foster <foster.ryan.r@gmail.com>
 
-Fair point. Without new APIs, we can fix it with the below patch;
-essentially "promoting" the context lock to "reentrant" during
-initialization scope. It's not exactly well documented on the Clang
-side, but is a side-effect of how reentrancy works in the analysis:
-https://github.com/llvm/llvm-project/pull/175267
+Thanks, applied to git://git.kernel.org/pub/scm/linux/kernel/git/sergeh/linux.git #caps-next
 
------- >8 ------
-
-From 9c9b521b286f241f849dcc4f9efbd9582dabd3cc Mon Sep 17 00:00:00 2001
-From: Marco Elver <elver@google.com>
-Date: Sat, 10 Jan 2026 00:47:35 +0100
-Subject: [PATCH] compiler-context-analysis: Support immediate acquisition
- after initialization
-
-When a lock is initialized (e.g. mutex_init()), we assume/assert that
-the context lock is held to allow initialization of guarded members
-within the same scope.
-
-However, this previously prevented actually acquiring the lock within
-that same scope, as the analyzer would report a double-lock warning:
-
-  mutex_init(&mtx);
-  ...
-  mutex_lock(&mtx); // acquiring mutex 'mtx' that is already held
-
-To fix (without new init+lock APIs), we can tell the analysis to treat
-the "held" context lock resulting from initialization as reentrant,
-allowing subsequent acquisitions to succeed.
-
-To do so *only* within the initialization scope, we can cast the lock
-pointer to any reentrant type for the init assume/assert. Introduce a
-generic reentrant context lock type `struct __ctx_lock_init` and add
-`__inits_ctx_lock()` that casts the lock pointer to this type before
-assuming/asserting it.
-
-This ensures that the initial "held" state is reentrant, allowing
-patterns like:
-
-  mutex_init(&lock);
-  ...
-  mutex_lock(&lock);
-
-to compile without false positives, and avoids having to make all
-context lock types reentrant outside an initialization scope.
-
-The caveat here is missing real double-lock bugs right after init scope.
-However, this is a classic trade-off of avoiding false positives against
-(unlikely) false negatives.
-
-Link: https://lore.kernel.org/all/57062131-e79e-42c2-aa0b-8f931cb8cac2@acm.org/
-Reported-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Marco Elver <elver@google.com>
----
- include/linux/compiler-context-analysis.h | 12 ++++++++++++
- include/linux/local_lock_internal.h       |  6 +++---
- include/linux/mutex.h                     |  2 +-
- include/linux/rwlock.h                    |  4 ++--
- include/linux/rwlock_rt.h                 |  2 +-
- include/linux/rwsem.h                     |  4 ++--
- include/linux/seqlock.h                   |  2 +-
- include/linux/spinlock.h                  |  8 ++++----
- include/linux/spinlock_rt.h               |  2 +-
- include/linux/ww_mutex.h                  |  2 +-
- lib/test_context-analysis.c               |  3 +++
- 11 files changed, 31 insertions(+), 16 deletions(-)
-
-diff --git a/include/linux/compiler-context-analysis.h b/include/linux/compiler-context-analysis.h
-index db7e0d48d8f2..e056cd6e8aaa 100644
---- a/include/linux/compiler-context-analysis.h
-+++ b/include/linux/compiler-context-analysis.h
-@@ -43,6 +43,14 @@
- # define __assumes_ctx_lock(...)		__attribute__((assert_capability(__VA_ARGS__)))
- # define __assumes_shared_ctx_lock(...)	__attribute__((assert_shared_capability(__VA_ARGS__)))
- 
-+/*
-+ * Generic reentrant context lock type that we cast to when initializing context
-+ * locks with __assumes_ctx_lock(), so that we can support guarded member
-+ * initialization, but also immediate use after initialization.
-+ */
-+struct __ctx_lock_type(init_generic) __reentrant_ctx_lock __ctx_lock_init;
-+# define __inits_ctx_lock(var) __assumes_ctx_lock((const struct __ctx_lock_init *)(var))
-+
- /**
-  * __guarded_by - struct member and globals attribute, declares variable
-  *                only accessible within active context
-@@ -120,6 +128,8 @@
- 		__attribute__((overloadable)) __assumes_ctx_lock(var) { }				\
- 	static __always_inline void __assume_shared_ctx_lock(const struct name *var)			\
- 		__attribute__((overloadable)) __assumes_shared_ctx_lock(var) { }			\
-+	static __always_inline void __init_ctx_lock(const struct name *var)				\
-+		__attribute__((overloadable)) __inits_ctx_lock(var) { }					\
- 	struct name
- 
- /**
-@@ -162,6 +172,7 @@
- # define __releases_shared_ctx_lock(...)
- # define __assumes_ctx_lock(...)
- # define __assumes_shared_ctx_lock(...)
-+# define __inits_ctx_lock(var)
- # define __returns_ctx_lock(var)
- # define __guarded_by(...)
- # define __pt_guarded_by(...)
-@@ -176,6 +187,7 @@
- # define __release_shared_ctx_lock(var)		do { } while (0)
- # define __assume_ctx_lock(var)			do { (void)(var); } while (0)
- # define __assume_shared_ctx_lock(var)			do { (void)(var); } while (0)
-+# define __init_ctx_lock(var)			do { (void)(var); } while (0)
- # define context_lock_struct(name, ...)		struct __VA_ARGS__ name
- # define disable_context_analysis()
- # define enable_context_analysis()
-diff --git a/include/linux/local_lock_internal.h b/include/linux/local_lock_internal.h
-index e8c4803d8db4..36b8628d09fd 100644
---- a/include/linux/local_lock_internal.h
-+++ b/include/linux/local_lock_internal.h
-@@ -86,13 +86,13 @@ do {								\
- 			      0, LD_WAIT_CONFIG, LD_WAIT_INV,	\
- 			      LD_LOCK_PERCPU);			\
- 	local_lock_debug_init(lock);				\
--	__assume_ctx_lock(lock);				\
-+	__init_ctx_lock(lock);					\
- } while (0)
- 
- #define __local_trylock_init(lock)				\
- do {								\
- 	__local_lock_init((local_lock_t *)lock);		\
--	__assume_ctx_lock(lock);				\
-+	__init_ctx_lock(lock);					\
- } while (0)
- 
- #define __spinlock_nested_bh_init(lock)				\
-@@ -104,7 +104,7 @@ do {								\
- 			      0, LD_WAIT_CONFIG, LD_WAIT_INV,	\
- 			      LD_LOCK_NORMAL);			\
- 	local_lock_debug_init(lock);				\
--	__assume_ctx_lock(lock);				\
-+	__init_ctx_lock(lock);					\
- } while (0)
- 
- #define __local_lock_acquire(lock)					\
-diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-index 89977c215cbd..5d2ef75c4fdb 100644
---- a/include/linux/mutex.h
-+++ b/include/linux/mutex.h
-@@ -62,7 +62,7 @@ do {									\
- 	static struct lock_class_key __key;				\
- 									\
- 	__mutex_init((mutex), #mutex, &__key);				\
--	__assume_ctx_lock(mutex);					\
-+	__init_ctx_lock(mutex);						\
- } while (0)
- 
- /**
-diff --git a/include/linux/rwlock.h b/include/linux/rwlock.h
-index 65a5b55e1bcd..7e171634d2c4 100644
---- a/include/linux/rwlock.h
-+++ b/include/linux/rwlock.h
-@@ -22,11 +22,11 @@ do {								\
- 	static struct lock_class_key __key;			\
- 								\
- 	__rwlock_init((lock), #lock, &__key);			\
--	__assume_ctx_lock(lock);				\
-+	__init_ctx_lock(lock);					\
- } while (0)
- #else
- # define rwlock_init(lock)					\
--	do { *(lock) = __RW_LOCK_UNLOCKED(lock); __assume_ctx_lock(lock); } while (0)
-+	do { *(lock) = __RW_LOCK_UNLOCKED(lock); __init_ctx_lock(lock); } while (0)
- #endif
- 
- #ifdef CONFIG_DEBUG_SPINLOCK
-diff --git a/include/linux/rwlock_rt.h b/include/linux/rwlock_rt.h
-index 37b387dcab21..1e087a6ce2cf 100644
---- a/include/linux/rwlock_rt.h
-+++ b/include/linux/rwlock_rt.h
-@@ -22,7 +22,7 @@ do {							\
- 							\
- 	init_rwbase_rt(&(rwl)->rwbase);			\
- 	__rt_rwlock_init(rwl, #rwl, &__key);		\
--	__assume_ctx_lock(rwl);				\
-+	__init_ctx_lock(rwl);				\
- } while (0)
- 
- extern void rt_read_lock(rwlock_t *rwlock)	__acquires_shared(rwlock);
-diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-index 8da14a08a4e1..6ea7d2a23580 100644
---- a/include/linux/rwsem.h
-+++ b/include/linux/rwsem.h
-@@ -121,7 +121,7 @@ do {								\
- 	static struct lock_class_key __key;			\
- 								\
- 	__init_rwsem((sem), #sem, &__key);			\
--	__assume_ctx_lock(sem);					\
-+	__init_ctx_lock(sem);					\
- } while (0)
- 
- /*
-@@ -175,7 +175,7 @@ do {								\
- 	static struct lock_class_key __key;			\
- 								\
- 	__init_rwsem((sem), #sem, &__key);			\
--	__assume_ctx_lock(sem);					\
-+	__init_ctx_lock(sem);					\
- } while (0)
- 
- static __always_inline int rwsem_is_locked(const struct rw_semaphore *sem)
-diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
-index 113320911a09..a0670adb4b6e 100644
---- a/include/linux/seqlock.h
-+++ b/include/linux/seqlock.h
-@@ -816,7 +816,7 @@ static __always_inline void write_seqcount_latch_end(seqcount_latch_t *s)
- 	do {								\
- 		spin_lock_init(&(sl)->lock);				\
- 		seqcount_spinlock_init(&(sl)->seqcount, &(sl)->lock);	\
--		__assume_ctx_lock(sl);					\
-+		__init_ctx_lock(sl);					\
- 	} while (0)
- 
- /**
-diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-index 396b8c5d6c1b..e50372a5f7d1 100644
---- a/include/linux/spinlock.h
-+++ b/include/linux/spinlock.h
-@@ -106,12 +106,12 @@ do {									\
- 	static struct lock_class_key __key;				\
- 									\
- 	__raw_spin_lock_init((lock), #lock, &__key, LD_WAIT_SPIN);	\
--	__assume_ctx_lock(lock);					\
-+	__init_ctx_lock(lock);						\
- } while (0)
- 
- #else
- # define raw_spin_lock_init(lock)				\
--	do { *(lock) = __RAW_SPIN_LOCK_UNLOCKED(lock); __assume_ctx_lock(lock); } while (0)
-+	do { *(lock) = __RAW_SPIN_LOCK_UNLOCKED(lock); __init_ctx_lock(lock); } while (0)
- #endif
- 
- #define raw_spin_is_locked(lock)	arch_spin_is_locked(&(lock)->raw_lock)
-@@ -324,7 +324,7 @@ do {								\
- 								\
- 	__raw_spin_lock_init(spinlock_check(lock),		\
- 			     #lock, &__key, LD_WAIT_CONFIG);	\
--	__assume_ctx_lock(lock);				\
-+	__init_ctx_lock(lock);					\
- } while (0)
- 
- #else
-@@ -333,7 +333,7 @@ do {								\
- do {						\
- 	spinlock_check(_lock);			\
- 	*(_lock) = __SPIN_LOCK_UNLOCKED(_lock);	\
--	__assume_ctx_lock(_lock);		\
-+	__init_ctx_lock(_lock);			\
- } while (0)
- 
- #endif
-diff --git a/include/linux/spinlock_rt.h b/include/linux/spinlock_rt.h
-index 0a585768358f..154d7290bd99 100644
---- a/include/linux/spinlock_rt.h
-+++ b/include/linux/spinlock_rt.h
-@@ -20,7 +20,7 @@ static inline void __rt_spin_lock_init(spinlock_t *lock, const char *name,
- do {								\
- 	rt_mutex_base_init(&(slock)->lock);			\
- 	__rt_spin_lock_init(slock, name, key, percpu);		\
--	__assume_ctx_lock(slock);				\
-+	__init_ctx_lock(slock);					\
- } while (0)
- 
- #define _spin_lock_init(slock, percpu)				\
-diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
-index 58e959ee10e9..ecb5564ee70d 100644
---- a/include/linux/ww_mutex.h
-+++ b/include/linux/ww_mutex.h
-@@ -107,7 +107,7 @@ context_lock_struct(ww_acquire_ctx) {
-  */
- static inline void ww_mutex_init(struct ww_mutex *lock,
- 				 struct ww_class *ww_class)
--	__assumes_ctx_lock(lock)
-+	__inits_ctx_lock(lock)
- {
- 	ww_mutex_base_init(&lock->base, ww_class->mutex_name, &ww_class->mutex_key);
- 	lock->ctx = NULL;
-diff --git a/lib/test_context-analysis.c b/lib/test_context-analysis.c
-index 1c5a381461fc..2f733b5cc650 100644
---- a/lib/test_context-analysis.c
-+++ b/lib/test_context-analysis.c
-@@ -165,6 +165,9 @@ static void __used test_mutex_init(struct test_mutex_data *d)
- {
- 	mutex_init(&d->mtx);
- 	d->counter = 0;
-+
-+	mutex_lock(&d->mtx);
-+	mutex_unlock(&d->mtx);
- }
- 
- static void __used test_mutex_lock(struct test_mutex_data *d)
--- 
-2.52.0.457.g6b5491de43-goog
