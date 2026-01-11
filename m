@@ -1,75 +1,77 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D44527145F
-	for <linux-security-module@vger.kernel.org>; Sun, 11 Jan 2026 21:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C89B13B58A
+	for <linux-security-module@vger.kernel.org>; Sun, 11 Jan 2026 21:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768166609; cv=none; b=s01k+NsqBoENa619eFfFS2EsQzLYDgktYmMdHGJWmqMV6CeVz9IPLNC2WGG0zZUCxARLVRz0GM+udGQDQPXOe/PVMZZdoY2LJW25/YSC5ImpJJz00zY6Ph3Zg3/IhNjyN53fBpbj7WJvXYbro2TaZB83ZlImVzcl9IK+t4gYAJQ=
+	t=1768167655; cv=none; b=dKgG0OE/S0nFRn5tpLUaFlvzDJsidJwa3r2lfNRtylckwNgwtSenUM38yQxn/V/xiipNVd7Gct9FJx5+uxk5MieDkQlOWFDf5ByY//Mwkcz0xvfUV5Gfz3PWOvmChymMULGprAlVGeNYuQnxJE/ccx4l4GeF0KDUyX7bUyAd0OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768166609; c=relaxed/simple;
-	bh=hrNZpWUScS3zOWmXDW/r1WSv0E6W8BnDA5eInYBnEjw=;
+	s=arc-20240116; t=1768167655; c=relaxed/simple;
+	bh=GEGYWjnQbAMn9kptVVwoZwMmt1NT1fy76vMD0FxJH78=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pa/KUt9qxM+KngGhQAUvSF/++tOZk2z5uDNnrPmla3Vz7mDf6AF/LZNNlvTw7MSSypVV4gSBJtLw3oaEzc4nKx6EE2vvW31mz7ebWdyKPPnJI2KCyzz/A3i51AfAOdOZlt0/LxB+zZ6lZZk89g4JbB59d57xJ1pxIHJE658jDiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lhXfo7hH; arc=none smtp.client-ip=209.85.218.41
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rac1KzKLSpB8nFqq7BDp1DrBmR2D0+PFiaiAkaW/uGeHyZ9/gKhLjWJnCc81WQdFmvbpCN+pg1TeRCo5LvREV/6a/HRnevF4iJVuM0ubNUKL8tRBwJgj2m4G+B+Baq9i8prQR/kvt6KVUy4n6D9azese/IIIw+oaURKev53sPsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YkKHYSzm; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lhXfo7hH"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b86ed375d37so184342066b.3
-        for <linux-security-module@vger.kernel.org>; Sun, 11 Jan 2026 13:23:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkKHYSzm"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-64b921d9e67so9930463a12.3
+        for <linux-security-module@vger.kernel.org>; Sun, 11 Jan 2026 13:40:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768166603; x=1768771403; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768167653; x=1768772453; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=hQ0Q1EyOWWVCDl/r3tyDScTjDzaDhclLQJzdDcIL3qk=;
-        b=lhXfo7hHKWQJkyumuBKSDXCxp5kQjBXqNUr6gsAP1vR/bSo9c0ukfCK6vrH8xugP4b
-         0QNGK0JPrUG7SC9z1TQYID0zeBbdb7JLdc7O98UEb6N3uoJEu9LvNt6RM8ZWVstnCETw
-         9WmQDvHWfaidZFLNOFvd4Q3wsTievABrsGsXHo0rjEHXIlgE/9tqXgVdcsQkoWBJH2iz
-         8oBHgkE84K7hv5X5+0rqA6PRfGYPFwBS83sLL1dR4/5WaH6CIFNHBaRp8hx/EATU/Uez
-         oREESSp0wcK5C3itaYtAw9abWditoQcCfH444VOBAlH8mFVzr+uPoM3iYXIKMV8nLOXA
-         5d4A==
+        bh=k+SJsvIsMUiZ0ObB3JV4V2N/2dbn+ZfM37bgC/bNAqI=;
+        b=YkKHYSzmDvBx12VQbMWuDe+P2JViyC+Q9ZVMUwXdCkVMEhc9TfEfRSNsHKaXzR3kom
+         DwJYF7Hq52apl+4OTnm5RRff7hr8a63GpZTkX7VCn+UFIbKRFMipadA2NSNCHC2B4T4p
+         tUE50LRDqL8LgxL7leN5ng2uFLX+Ia/yXeiq5p1W2W/HQ/DxHlYjRr6sYxQpXmGWQXig
+         DqWBRBrZmB0zXizTHkn6izg+hdXVvlNs77lq/sbTnRaFyCEcRXCdOshwX6swax9kZnSG
+         ly6w1FZBDrh1rbnxEjHAepGTiEv7d2USUVhPOida+vTE2ZSad5f0eZIk485RYFlxHqzK
+         To4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768166603; x=1768771403;
+        d=1e100.net; s=20230601; t=1768167653; x=1768772453;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hQ0Q1EyOWWVCDl/r3tyDScTjDzaDhclLQJzdDcIL3qk=;
-        b=tojLx5ijUO1qMATe0tSiFBTUbSu+2w61SGacWtfGNHfH7+wrYY/FIjFJ/p+Qw9cTSd
-         L3ynN9gVBeYWsBdNBLvZtMK8P241GlxxIjs3kEmbX/UYfDJ1gqEGkY437cje/lQ6qDBT
-         KAjBvtaf1dHMoOVoDDX7wCwfMzwsdJm/8ApPi8evIUmlsTVsIx5M8i1EDRzpCx4LWoB/
-         Tlorar2rckvBXbqnuDwXwatxuOQZsl1ijAZDHhJWBTM1CJ+CwqO7Udee/CALDZt8sx7j
-         T8gFVECEEzjdc8UmajBs46u7TtjX+WsaKbU7NaFpF4mUgwfbOU5ivcOQA1ktmCBg+sVz
-         +uWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUu302PfbpflxQVDMgt+jkY0gv25yYzhNu0enFUUYQQdh+BDswOm+Wm5zj2MNdOTX/qCaDxf8wDD1czvdAACmiLNx39JG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+8DytwppFTZt01OiuLlJds0jIqBHg8L74ogRqu6QIcrkM5qJU
-	rBxk0C6hnz2HHCBBDEG12i8e73UW5rrisiKM7vpdE/n3Jss5rMxRcINW
-X-Gm-Gg: AY/fxX6vzNNgj4rbMZU7Shsuws/yZWU/KmmfL8zQznTIPySPRxKPOScb6OBgTjYA5ka
-	xdAXBKrikyKU0jFbOT5m9sEtNSeD7el5qwrl1Dn5I+1g3foBw7/kBVKAK31rDBbbrn0X3VSBUnh
-	aL1NP4MHFf4ErXxkKwofigpeB3GikwdEjIoBvcX6aCR7d9lRK7jY86FZF8h8rE4c9t6O7e60jhW
-	kGSWjqhRNfvSegRAUQHAp3rYla8rZRTFkvChc3+jgH+rV8zpfb3JzEVZOH3Fy/b0fvGqVaCZ4yc
-	Py/tObH+B7VNtgjjaivXbL5DfEoLqw8ZjGiL/nKG+T9LnSw2JiOXHql+obWOid9FY1MkNZ+4+OC
-	qtWsn4IEcE8+vWPsG9a3TYbzZQFYk/7atrpmF/gKMkJxJZ5bjm02yGYMzMKa5E/HH1FkPx0lFEH
-	8v+wc0GRTjgGUM0gKhjYzv5y+vwbQaNN+fUEO8
-X-Google-Smtp-Source: AGHT+IE4SD9Js6DcJylwHTqTIwS2RPmaKH1MF2UkoFYIeU8uSCLX6DhVncOA5ljCMLRYi9Fc9iaxNQ==
-X-Received: by 2002:a17:907:96a1:b0:b80:6ddc:7dcd with SMTP id a640c23a62f3a-b84453a123amr1554539466b.31.1768166603103;
-        Sun, 11 Jan 2026 13:23:23 -0800 (PST)
+        bh=k+SJsvIsMUiZ0ObB3JV4V2N/2dbn+ZfM37bgC/bNAqI=;
+        b=JY3L/8Y+XCJ0hAmf8KQ4hMORsWlMCWKT12mjZqLQN/az/AtZYC8wzTu9jBgRu660yf
+         yGhGj6tvmvGvRPrQ1eyUYN1n9fSo22d7dkpsIyqUQJBuXqdO5TdgnsB/IgpwZzxdcI50
+         3RmI+zQJazL2q9b1viOSdTcOxWvPrR84SNp1V4xyvn/UQkQZgq0SFOPGNbR5Qy525lin
+         k+lr65L+gfiWeCXinWMS1R5RoCXQ9OC6W2ZwRPAJXh7AP0oVRywXd4JRqDib268wIGe4
+         MmgQTRV9SDR2hhPsWv+Mvry2Uqw6OB4zAZ081qtXZngvkC1tBLmAykwtWDHr1OYdTxAA
+         7Zmw==
+X-Gm-Message-State: AOJu0Yz1saJ2plDZC5Bh/wrzbtCcJek4hJW8k4FJc+aj0mjZQJiu06qS
+	7Wk+XRQF81fvINhfSR4LG5HVSsfbCYivS7TzAg93MVM3JqKeUO3+W4v3+8xkMybf
+X-Gm-Gg: AY/fxX5ETf5QpWSg/yTocLW+lwy4iQzuxqFX4x8bF1CLz90HrZ0uK5bnl1yyM3YGWB6
+	/gCshx0KqXfuEkJJAjV9LpxWRjGB8QQ27QQ+cskKIEc7VuJYyENQMYNiPUgf2EEYqFol/UDvQ1m
+	MJfbePm7Pxw6cordATOhKqYVKsLqa6weDkzrFoflE/M57qgXMSuDWpVRRYOjEPZwHYJJccNsQxc
+	jdzYShxVebexofsfawVyCEsPzz9cr8TSVaEOx9XNm+Nf5zGbanP3i/ZQMsjYeHhf2yr7TCfyfQj
+	voBI4iCc/ZvYe/9AXc7OUHvOTCdQ7WxQ77p05BEi81KpeFU/7DczzucGJM91iEYlDAS3XGWTc3b
+	Yxx3in0C1VUgYnejqFKRPX9qKW9JIG4bCL7flmK01z4yWC04ZFupwieA+IGc4U0CvghDu4lPuRV
+	kEuSDRM+YA7qi8dyFk6joSJGE43jFfoOE+D38T
+X-Google-Smtp-Source: AGHT+IEBVlwNSXYpaQd5Xzul2GC/Xw0h44/j28qD9UmUGcccl33sZKH5ONyqq5ZK0QJfnQbvWc2CpA==
+X-Received: by 2002:a17:907:c06:b0:b87:2410:5961 with SMTP id a640c23a62f3a-b8724105b15mr20880766b.36.1768167652596;
+        Sun, 11 Jan 2026 13:40:52 -0800 (PST)
 Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b86f1e95273sm512889966b.62.2026.01.11.13.23.22
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b86fc303d7esm480021966b.2.2026.01.11.13.40.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Jan 2026 13:23:22 -0800 (PST)
-Date: Sun, 11 Jan 2026 22:23:16 +0100
+        Sun, 11 Jan 2026 13:40:52 -0800 (PST)
+Date: Sun, 11 Jan 2026 22:40:50 +0100
 From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Matthieu Buffet <matthieu@buffet.re>
-Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	linux-security-module@vger.kernel.org,
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>,
+	Justin Suess <utilityemal77@gmail.com>,
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+	Matthieu Buffet <matthieu@buffet.re>,
 	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	konstantin.meskhidze@huawei.com, netdev@vger.kernel.org
-Subject: Re: [RFC PATCH v3 0/8] landlock: Add UDP access control support
-Message-ID: <20260111.f025d6aefcf4@gnoack.org>
-References: <20251212163704.142301-1-matthieu@buffet.re>
+	konstantin.meskhidze@huawei.com
+Subject: Re: [RFC PATCH 0/2] landlock: Refactor layer masks
+Message-ID: <20260111.77ede31adfa2@gnoack.org>
+References: <20251230103917.10549-3-gnoack3000@gmail.com>
+ <20251230.d4bf391b98c5@gnoack.org>
+ <20260109.au3vee9Eisei@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -79,39 +81,19 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251212163704.142301-1-matthieu@buffet.re>
+In-Reply-To: <20260109.au3vee9Eisei@digikod.net>
 
-Hello Matthieu!
+On Fri, Jan 09, 2026 at 04:59:19PM +0100, Mickaël Salaün wrote:
+> On Tue, Dec 30, 2025 at 11:48:21AM +0100, Günther Noack wrote:
+> > To compile it, use:
+> > 
+> >     cc -o benchmark_worsecase benchmark_worsecase.c
+> 
+> It would be useful to clean up a bit this benchmark and add it to the
+> selftests' Landlock directory (see seccomp_benchmark.c).
 
-On Fri, Dec 12, 2025 at 05:36:56PM +0100, Matthieu Buffet wrote:
-> Here is v3 of UDP support for Landlock. My apologies for the delay, I've
-> had to deal with unrelated problems. All feedback from v1/v2 should be
-> merged, thanks again for taking the time to review them.
+Thanks for the pointer, I did not realize this existed.
 
-Good to see the patch again. :)
+I'll have a look for V2.
 
-Apologies for review delay as well.  There are many Landlock reviews
-in flight at the moment, it might take some time to catch up with all
-of them.
-
-FYI: In [1], I have been sending a patch for controlling UNIX socket
-lookup, which is restricting connect() and sendmsg() operations for
-UNIX domain sockets of types SOCK_STREAM, SOCK_DGRAM and
-SOCK_SEQPACKET.  I am bringing it up because it feels that the
-semantics for the UDP and UNIX datagram access rights hook in similar
-places and therefore should work similarly?
-
-In the current UNIX socket patch set (v2), there is only one Landlock
-access right which controls both connect() and sendmsg() when they are
-done on a UNIX datagram socket.  This feels natural to be, because you
-can reach the same recipient address whether that is done with
-connect() or with sendmsg()...?
-
-(Was there a previous discussion where it was decided that these
-should be two different access rights for UDP sockets and UNIX dgram
-sockets?)
-
-[1] https://lore.kernel.org/all/20260101134102.25938-1-gnoack3000@gmail.com/
-
-Thanks,
 –Günther
