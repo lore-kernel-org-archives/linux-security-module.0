@@ -1,119 +1,158 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4FF26FDBF;
-	Mon, 12 Jan 2026 09:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CA52D2481;
+	Mon, 12 Jan 2026 10:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768211146; cv=none; b=Zpu7aumk7FrxXDUkusCAL/axkiNItv9nqcLPB8t4GW0Q3XzwKZ0SnJ4G0QdNPFA8x8SSwuQFAmLcNXMuxASAuxI4q5sSMzvPye9+Y7LZe06KvoxocWT14itzbYRu/YjaGfwpKnASrlHYQUHUthtF1uP3Kc4R91heqCtc/Tm8cMo=
+	t=1768214001; cv=none; b=EGzy6pVrJCWYQq0LW5lNVtfjc5Ubk1ZidVLFrgzHcEDnQYzRaPNUo7Jh0nPPZjnnOVqRLCGsP2f9Zdjq1+9KoNwMPg6o8RSfKejK4/+IDfbrXT0DuWhFxnQfWj6ogbR9bZRScOunW/RIzgz870lHLMVkeQRUqYf0dNUIpECBoN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768211146; c=relaxed/simple;
-	bh=DxZZGzK74wIR5W3ofx2JM6E8wyCgaH8nZoYwWgX+eR8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KK1tySqf/RA2cpWWpA/AZWNYS5ClU0Ec5mWt++mHODuOMLxjX150D8O8RPeSzenEA3mDr25wXGT98Mz3Punj9E8NZrutLYCB4QaYvBDQFqMtGTzSAh/JmQvaCe59tVU3pCWs0ojhjAD/gTsyGSeRSd8RNGueyT+4+HRKfGBtk24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUeEQbxO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768214001; c=relaxed/simple;
+	bh=3WvoLxWPBX/nvNBdAet0EG4DRqalXwTIWl2WlwowKOE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xylum5bs/JG8rntzj3XYXCkX2gQvuA9nBM44LFnij4DKpUbzkM62aU9ZclbAv8wBdvA2D4WOjuw6g0LTyamFYeZA1dETpEwCVPVzW0KzI8oOZewe8o8tP2Fcq+dy0vynmhsIsrXeS5Hgr4XHGZmxYOnRvoRI2/Ymdh9uOSSktj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HPd93T2C; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUeEQbxO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05681C19422;
-	Mon, 12 Jan 2026 09:45:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768211146;
-	bh=DxZZGzK74wIR5W3ofx2JM6E8wyCgaH8nZoYwWgX+eR8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qUeEQbxO/1bJOSJmWeCdO+VjleNy8B0ViluvHBno5gr59qB8VEEYWEF1rbAie3EAq
-	 0lBRAdHEvYyqkAHaFwEQSYJO7qICSgJMwVU+ZEnKnom6kmsD+MVv/kP2W50TNqRina
-	 kmDueNMdchfAb950mTM+K2bF8wYvPkz2bL6iZxf1vIrUkGWdBvVMPGbx9pJEtEUBfV
-	 IM3Dxy7GJeSsVnoP849ryUv7V8KBbcs5OYRuU/u3ZZJmvVfKYLY9RHyEOjm2pR6/Iw
-	 silI5tXIpzTrN8O2PvgT967TZ9iXPpt9mOUwWRmfeNSwvLi1wbJ+xb2XzRmSgGte9Z
-	 9hI9tmM6jxdEA==
-From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neilb@ownmail.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	Jeff Layton <jlayton@kernel.org>,
-	Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>,
-	David Howells <dhowells@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Tyler Hicks <code@tyhicks.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <smfrench@gmail.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	netfs@lists.linux.dev,
-	ecryptfs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Val Packett <val@packett.cool>
-Subject: Re: [PATCH] fuse: fix conversion of fuse_reverse_inval_entry() to start_removing()
-Date: Mon, 12 Jan 2026 10:45:29 +0100
-Message-ID: <20260112-sonnen-diagramm-ae37279f315f@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <176454037897.634289.3566631742434963788@noble.neil.brown.name>
-References: <176454037897.634289.3566631742434963788@noble.neil.brown.name>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HPd93T2C"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1768214000; x=1799750000;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=3WvoLxWPBX/nvNBdAet0EG4DRqalXwTIWl2WlwowKOE=;
+  b=HPd93T2Cje9vVucJkaUuwtO2R9nSXSGGb7Czteg2Mpt2VA0e+H6w4Wm0
+   2WOZevI4pMou1Eaizea/iLOnE9uLYmMDqpY0nVQOiEG9KIFhal6DZSroi
+   /jStJ1zmcRfF7wOg8ihT4xQVyUbIOomDnJU5CCKx30OJqKcbEqzvUoAFm
+   Hs3/mL/i+6p/RVarAQ4pGk1F/7DxtNvggrw/aSTRQhVoxIJwL0mwFiF0K
+   4PK8vU3vmnJaHcOmVtXi/I+BocHUU/moTYV6UvrPo+g9u4rmS7eMgu4vc
+   UsonMKsKJbWWd3rNJ9LP2we5U9X7pr1MvYzTydMSyo//A+0NiziBlSJmv
+   A==;
+X-CSE-ConnectionGUID: iGmtH3+TSDqYP+qWK3cczw==
+X-CSE-MsgGUID: JaSF/uxrRXS4q1E1oIpKTw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11668"; a="80939936"
+X-IronPort-AV: E=Sophos;i="6.21,219,1763452800"; 
+   d="scan'208";a="80939936"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2026 02:32:39 -0800
+X-CSE-ConnectionGUID: KeVRm3ThTIyu/02WLS2Cvw==
+X-CSE-MsgGUID: T5zF6Dw6TdejExXJJsJSFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,219,1763452800"; 
+   d="scan'208";a="241588226"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO [10.245.245.90]) ([10.245.245.90])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2026 02:32:28 -0800
+Message-ID: <1502e5eb-0ac7-4581-85ce-2f0c390bd7db@linux.intel.com>
+Date: Mon, 12 Jan 2026 11:32:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1363; i=brauner@kernel.org; h=from:subject:message-id; bh=DxZZGzK74wIR5W3ofx2JM6E8wyCgaH8nZoYwWgX+eR8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSmHNp3YLliou6j/3Ff/idODOBi2hrnHJFm6HLce0lit usnvUPLO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbStoDhf+ApldVTH+9ump0Q 4sQyPVufZcfFQim/qg0H5pYcsWTsvsPIsItlrpnjleU7v1yNkzy16KEws3jZzJDTbjWb3t+wXH5 wHicA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 20/36] locking/ww_mutex: Support Clang's context
+ analysis
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Marco Elver <elver@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ Will Deacon <will@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+ Chris Li <sparse@chrisli.org>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>,
+ Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
+ Eric Dumazet <edumazet@google.com>, Frederic Weisbecker
+ <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>,
+ Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>,
+ Johannes Berg <johannes.berg@intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ Josh Triplett <josh@joshtriplett.org>, Justin Stitt
+ <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+ Kentaro Takeda <takedakn@nttdata.co.jp>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+ Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>,
+ kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org,
+ linux-wireless@vger.kernel.org, llvm@lists.linux.dev, rcu@vger.kernel.org
+References: <20251219154418.3592607-1-elver@google.com>
+ <20251219154418.3592607-21-elver@google.com>
+ <05c77ca1-7618-43c5-b259-d89741808479@acm.org>
+ <aWFt6hcLaCjQQu2c@elver.google.com>
+ <8143ab09-fd9b-4615-8afb-7ee10e073c51@acm.org>
+Content-Language: en-US
+From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+In-Reply-To: <8143ab09-fd9b-4615-8afb-7ee10e073c51@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 01 Dec 2025 09:06:18 +1100, NeilBrown wrote:
-> The recent conversion of fuse_reverse_inval_entry() to use
-> start_removing() was wrong.
-> As Val Packett points out the original code did not call ->lookup
-> while the new code does.  This can lead to a deadlock.
+Hey,
+
+The acquire_done() call was always optional. It's meant to indicate that after this point,
+ww_acquire_lock may no longer be called and backoff can no longer occur.
+
+It's allowed to call ww_acquire_fini() without ww_acquire_done()
+
+Think of this case:
+ww_acquire_init()
+
+ww_acquire_lock_interruptible() -> -ERESTARTSYS
+
+ww_acquire_fini()
+
+Here it wouldn't make sense to call ww_acquire_done().
+
+It's mostly to facilitate this case:
+
+ww_acquire_init()
+
+ww_acquire_lock() a bunch.
+
+/* Got all locks, do the work as no more backoff occurs */
+ww_acquire_done()
+
+...
+
+unlock_all()
+ww_acquire_fini()
+
+If you call ww_acquire_lock after done, a warning should occur as this should no longer happen.
+
+Kind regards,
+~Maarten Lankhorst
+
+Den 2026-01-09 kl. 22:26, skrev Bart Van Assche:
+> (+Maarten)
 > 
-> Rather than using full_name_hash() and d_lookup() as the old code
-> did, we can use try_lookup_noperm() which combines these.  Then
-> the result can be given to start_removing_dentry() to get the required
-> locks for removal.  We then double check that the name hasn't
-> changed.
+> On 1/9/26 2:06 PM, Marco Elver wrote:
+>> If there's 1 out of N ww_mutex users that missed ww_acquire_done()
+>> there's a good chance that 1 case is wrong.
 > 
-> [...]
+> $ git grep -w ww_acquire_done '**c'|wc -l
+> 11
+> $ git grep -w ww_acquire_fini '**c'|wc -l
+> 33
+> 
+> The above statistics show that there are more cases where
+> ww_acquire_done() is not called rather than cases where
+> ww_acquire_done() is called.
+> 
+> Maarten, since you introduced the ww_mutex code, do you perhaps prefer
+> that calling ww_acquire_done() is optional or rather that all users that
+> do not call ww_acquire_done() are modified such that they call
+> ww_acquire_done()? The full email conversation is available here:
+> https://lore.kernel.org/all/20251219154418.3592607-1-elver@google.com/
+> 
+> Thanks,
+> 
+> Bart.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] fuse: fix conversion of fuse_reverse_inval_entry() to start_removing()
-      https://git.kernel.org/vfs/vfs/c/cab012375122
