@@ -1,223 +1,334 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4187350D61;
-	Mon, 12 Jan 2026 14:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4985335CB8D
+	for <linux-security-module@vger.kernel.org>; Mon, 12 Jan 2026 15:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768226556; cv=none; b=J1lBpv5C/5KmgiP6IfMBPe9rPE6eRmJy3dHNrNpKrn/IwfH+XqOZ3lEYGe6H2glBUj3J9w55/01XZKgKRmJTQ/zzEZdc7xxwQMFtf4/37kuTXi0ZC9OfTvX3tfNIsg6sf6Hbs4AhPBHE5ud1W5oIxzKImxDdD9TwurzO9zl0uX4=
+	t=1768232330; cv=none; b=iS7hHdm0emnNqMaOhyqXuR12/tjisA5pOo96n17wJy6cddpKrDbEEqXKW4Z4uNV9Bl8oSpdOBRyT66U6fQnKSkyYvT1oVyoUJt+rS7TdvIuK8aOrQ2zArwGDtPdhzD3tYqu3UAViOeR+IwRFzBZb6KcKY8kMI6/cZZbmERmkSKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768226556; c=relaxed/simple;
-	bh=mT9VycK03Y2RFrv0IL5bEXswH12iG79ZGfZ39P0N604=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=C92C5JRb88Xy5iS5s2mPTuytKkKQwHNbpaxUgV0My6614TH2geuWyXRJ6OgpkyWLye1moMD+IT8fqs9zKlwfrC6s6rwUYhWn6FgZTd5puIoGUb98H6el+tg34sU2PAFFWH+BA/NssrDo20120zpUyf3U7bKdCSLQTrJ1++03YfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Dz9XsOnv; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1768232330; c=relaxed/simple;
+	bh=C5PZ8Ito+QjFFAOnwA6WfPIHE/P6FfzO0rArZMHTG7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=euo5inqvRZAZenEcrFJ75YJpJjsNKxnfJ1cJwIMtUvl2qssuZ5RiqjwBwJlippjJVOoKhHaHy5HdfcC9L7nbJA9wDWMc+0+4BhhHGIwBwFdNFKbm5f8dhxVBzRa0wgD11HvxBJl78hUggeGyHq2mvJxBNujInjUiO0oOgbLaEDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DyUku2D4; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Dz9XsOnv"
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 60C7KpCS013676;
-	Mon, 12 Jan 2026 14:02:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=3V9d/8
-	Xw0hD6CLxhTs403M7kDFPXBd1fKfsTuoLkaSI=; b=Dz9XsOnvKlz/VFwLQaHkIN
-	B4lHwjqCDJDZGw628SpoJBl2UVvqEGUVJpM/9PPLzVqHkvNyde5FlqMStocvXiJl
-	Owo97niJl9dP9OqdTzg7LWp0srNZOrqg0VrGBdY8U3yD9QR843mha7OGdD22a79U
-	WLI2wv4N8FwIaMURItFvPrKqXVHOY5WdnHCo8w1QVZHwE2A3uLfqnBwECn9GJiAQ
-	zW/tFi/q5owWhjKuX392ByE6uNcyBCZhWUnpiw1R57kCV/ScLHiCyVpLNr2kA/Jd
-	pPPdZyyyO+XzHZ14mugId67AgGTRRDInxXNpK1aL6suB1eM7R4DaEpqCYkbTlvGA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bkedsq2nt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Jan 2026 14:02:07 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 60CE0MKs012988;
-	Mon, 12 Jan 2026 14:02:06 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bkedsq2nr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Jan 2026 14:02:06 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 60CD73tW002505;
-	Mon, 12 Jan 2026 14:02:05 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4bm13sedt0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Jan 2026 14:02:05 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 60CE25pg14811848
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 12 Jan 2026 14:02:05 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 245CA58062;
-	Mon, 12 Jan 2026 14:02:05 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8928D5805A;
-	Mon, 12 Jan 2026 14:02:03 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.90.70])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 12 Jan 2026 14:02:03 +0000 (GMT)
-Message-ID: <15eaa3613b0552cc48b55972b81882ac1e1d1150.camel@linux.ibm.com>
-Subject: Re: [PATCH RFC] ima: Fallback to a ctime guard without i_version
- updates
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Jeff Layton <jlayton@kernel.org>, Frederick Lawler <fred@cloudflare.com>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin	
- <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul
- Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E.
- Hallyn"	 <serge@hallyn.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christian Brauner	 <brauner@kernel.org>,
-        Josef Bacik
- <josef@toxicpanda.com>, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        kernel-team@cloudflare.com
-In-Reply-To: <25b6d1b42ea07b058be4e4f48bb5a7c6b879b3ed.camel@kernel.org>
-References: <20251229-xfs-ima-fixup-v1-1-6a717c939f7c@cloudflare.com>
-		 <3ad9ded9b3a269908eee6c79b70dbf432e60ce8d.camel@kernel.org>
-		 <aV07lY6NOkNvUk3Z@CMGLRV3> <aV1jhIS24tE-dL9A@CMGLRV3>
-	 <25b6d1b42ea07b058be4e4f48bb5a7c6b879b3ed.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 12 Jan 2026 09:02:02 -0500
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DyUku2D4"
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-790884840baso68859007b3.0
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jan 2026 07:38:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768232327; x=1768837127; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FLZmqypCYSswagHO/f0HoyEJBnS6TQwTkRreE89dS8U=;
+        b=DyUku2D4OnsJkYWjQLcxGBOkJM0RhktblRAVHUZeBq/Z7Vy7c78KWtcNxVHaXrBfaz
+         edrwDbAQ2rnAt2cuYdxcdFiD/iq4s/y8Z3Fu9uAn+Jtmnvr13Uh1R9OQiZax25Ekkhu4
+         IJ85AlNm61ocM26NwHc/IVIEsktuxB+0PJNUzpud4b0RWEkzB/7BgEAfJvgEQQcYFK9n
+         0fQUeHv/yaZDb0jxaiVL4xPh2XB0y2Y2bwliBtMmnfcOz9u6+GA2OVXSLzKYbZvOSSCq
+         DSWy99ZScow5sn7cD4Da9c0OOtupKedYqeYquo4SZ2xt9zU2dIX2+mQB/rihblwvkjE6
+         RDmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768232327; x=1768837127;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FLZmqypCYSswagHO/f0HoyEJBnS6TQwTkRreE89dS8U=;
+        b=Pm36oLt4ez15JhBfUDWZ9XHGLwyOSHG+4aF4AVCQu7Wm/IEFus2D50FfReheSUAF9T
+         cjqByjoAyyOGugYXliOquOEpFKHc0GwrW2Yf84oXngP2MNfavLMZ8sy90qHIFCYaiuwY
+         94DjB71eFEihO0y65kSDuXMcDd4p+WW3byHLmgtpJ4it5+eEjDjta3Yu4dMhcDArPQ2q
+         TsMfs7BM6BIiq9y0nzz6oXFda831KcarR+KwTAOYiy6qZ4WJ0x5h0lFRLwQEE774p7M7
+         wmOGgfG4KzT1gu3myX7eFnHzRNZER4OTomo1xhnuIPp6nHnFOP5MMnZ8qJ5KX5CqgsAV
+         4+2w==
+X-Forwarded-Encrypted: i=1; AJvYcCX4jOvJtcrbb7p9+QyC1rWSGpx9Bm1R0gPUyil7YPJOtSf0cKOLIxdhSjwfadtCQqLK1QN0BiPovKw0EQgyGhCrwKMw8q0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySNiljVvJm6Nd6xmqvsLHYfEQxhN1ovND2FRyD8XsryeaDb4Ea
+	097yD8XEkjLfkDLTY38r4NZ4wnPakmMeQ4PANYib4piHx8JeGgLM2Bfn
+X-Gm-Gg: AY/fxX7CuCkP7zcXH/vQfzsWlCUMPz2B7uGbSpB00R+JbBLGHUK5H5Mprpcc/QS+u5e
+	FsJoH4J1+5qpI1bcnUnf9LuUedRUpKQBv/qS1SwEO5KGujZcFBe0bSAXBgokvKBhC3YAIUuJHYg
+	ai77CD1sAbYMw+1zqp14vPVHDXMVNW+P/urV+BaVuZf+09bcPwV2w7wfrkuRNQeRWVSbeAvoese
+	HdLBkJSOTX27Tk1rVOXnMqv6qft9EdjlyHteXxxeQM9ya46istxjq4D6obCYmP8N6cQFyGXBh9g
+	siW0wwnv52c8vqm9H/n8hpLexLNIDrdjcMEPrE6ye9wSLG3JorUUfK9MhWQF30IsmWRWYKIlWD7
+	YKRQYSPpHDIntdmSOTA34s15H5B+P5VHl2QfxwRfXenZg2aAzNJyoE5zKGgWhVXSgyws2tgTItn
+	v7cGl5YExnwjjRxXY7zFPi+P1r0QS7ZUkIKUEKF3vUxqH7kMN5XCO1XpEu4griiJr5XxkLoQ==
+X-Google-Smtp-Source: AGHT+IGN/Ld+Rvs/yo3cLtHRM5EcP4YG33X4DZfJulcEmrpVemVGnUnfSNrTplactx3SRszxWK65Og==
+X-Received: by 2002:a05:690e:400a:b0:646:a3cf:a2e8 with SMTP id 956f58d0204a3-64716ba374amr14905559d50.40.1768232327023;
+        Mon, 12 Jan 2026 07:38:47 -0800 (PST)
+Received: from [10.10.10.50] (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-790aa58f9f5sm69097517b3.24.2026.01.12.07.38.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jan 2026 07:38:46 -0800 (PST)
+Message-ID: <735dd623-f8ff-43ff-8d06-fc0443e0f892@gmail.com>
+Date: Mon, 12 Jan 2026 10:38:44 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTEyMDExMSBTYWx0ZWRfX3IywhBY2hHsS
- IYFToj2QrBeP9Six137vJRaskBEpy+avdeJz/fYLg96X9LDKBweNNPJf81kOZlHCfKJqb9nEReG
- Hhp24FBLTliG1V4wILxbeflxrPkBYZQ1T5+eotPZ557Jmsx3TZC3J03Zmmh1PivHb9yhGh6H0Yx
- nZNbpbXGXVdF58dhmYX6xbHMsuxxWyyPju8lW8K/kZCXufR0/KaBX4joK8SurQBaA1rHEjrT8Qb
- YPSlTIN0CN4OsN2A6ErgWDEbK12eXTGZex8vaQT0oGku4Ug2/4Y3zYOx+gMxjW7QJWu7ILZsyR9
- uhKb1I8IuLXsAEQa6wozBFb1fmgnyobKj11laT0R03ZDEqTYAPaDpMvVqzyyoOI2HgwRR94iLu+
- Tf7WUOy2r3wGAPjrvdAEyB5cL1YDxFbNUqTbW33l97KS2BzDzKsXLbzouFnrYdY2HH3p4ENK6De
- BaYaYVYSkfcKpGoBYcw==
-X-Proofpoint-GUID: XTvekk6vXmC_Mw23sqSGUf07AjPvam4z
-X-Authority-Analysis: v=2.4 cv=WLJyn3sR c=1 sm=1 tr=0 ts=6964fedf cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=H2dI7-eqXuhYRf2exhsA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: 797W8b3ODnDBSm1sFoh1aUqb2YwNbPNv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-12_04,2026-01-09_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 malwarescore=0 phishscore=0 suspectscore=0
- priorityscore=1501 bulkscore=0 clxscore=1015 impostorscore=0
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2512120000
- definitions=main-2601120111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] landlock: Control pathname UNIX domain socket
+ resolution by path
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Jann Horn <jannh@google.com>, linux-security-module@vger.kernel.org,
+ Tingmao Wang <m@maowtm.org>,
+ Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+ Matthieu Buffet <matthieu@buffet.re>,
+ Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+ konstantin.meskhidze@huawei.com, Demi Marie Obenour <demiobenour@gmail.com>,
+ Alyssa Ross <hi@alyssa.is>, Tahera Fahimi <fahimitahera@gmail.com>
+References: <20260110143300.71048-2-gnoack3000@gmail.com>
+ <20260110143300.71048-6-gnoack3000@gmail.com>
+Content-Language: en-US
+From: Justin Suess <utilityemal77@gmail.com>
+In-Reply-To: <20260110143300.71048-6-gnoack3000@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2026-01-06 at 14:50 -0500, Jeff Layton wrote:
-> > > > > @@ -54,11 +62,22 @@ integrity_inode_attrs_store(struct integrity_=
-inode_attributes *attrs,
-> > > > > =C2=A0=C2=A0 */
-> > > > > =C2=A0 static inline bool
-> > > > > =C2=A0 integrity_inode_attrs_changed(const struct integrity_inode=
-_attributes *attrs,
-> > > > > -			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct inode *inode)
-> > > > > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct file *file, struct inod=
-e *inode)
-> > > > > =C2=A0 {
-> > > > > -	return (inode->i_sb->s_dev !=3D attrs->dev ||
-> > > > > -		inode->i_ino !=3D attrs->ino ||
-> > > > > -		!inode_eq_iversion(inode, attrs->version));
-> > > > > +	struct kstat stat;
-> > > > > +
-> > > > > +	if (inode->i_sb->s_dev !=3D attrs->dev ||
-> > > > > +	=C2=A0=C2=A0=C2=A0 inode->i_ino !=3D attrs->ino)
-> > > > > +		return true;
-> > > > > +
-> > > > > +	if (inode_eq_iversion(inode, attrs->version))
-> > > > > +		return false;
-> > > > > +
-> > > > > +	if (!file || vfs_getattr_nosec(&file->f_path, &stat, STATX_CTIM=
-E,
-> > > > > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 AT_STATX_SYNC_AS_STAT))
-> > > > > +		return true;
-> > > > > +
-> > > >=20
-> > > > This is rather odd. You're sampling the i_version field directly, b=
-ut
-> > > > if it's not equal then you go through ->getattr() to get the ctime.
-> > > >=20
-> > > > It's particularly odd since you don't know whether the i_version fi=
-eld
-> > > > is even implemented on the fs. On filesystems where it isn't, the
-> > > > i_version field generally stays at 0, so won't this never fall thro=
-ugh
-> > > > to do the vfs_getattr_nosec() call on those filesystems?
-> > > >=20
-> > >=20
-> > > You're totally right. I didn't consider FS's caching the value at zer=
-o.
-> >=20
-> > Actually, I'm going to amend this. I think I did consider FSs without a=
-n
-> > implementation. Where this is called at, it is often guarded by a
-> > !IS_I_VERSION() || integrity_inode_attrs_change(). If I'm
-> > understanding this correctly, the check call doesn't occur unless the i=
-node
-> > has i_version support.
-> >=20
->=20
->=20
-> It depends on what you mean by i_version support:
->=20
-> That flag just tells the VFS that it needs to bump the i_version field
-> when updating timestamps. It's not a reliable indicator of whether the
-> i_version field is suitable for the purpose you want here.
->=20
-> The problem here and the one that we ultimately fixed with multigrain
-> timestamps is that XFS in particular will bump i_version on any change
-> to the log. That includes atime updates due to reads.
->=20
-> XFS still tracks the i_version the way it always has, but we've stopped
-> getattr() from reporting it because it's not suitable for the purpose
-> that nfsd (and IMA) need it for.
->=20
-> > It seems to me the suggestion then is to remove the IS_I_VERSION()
-> > checks guarding the call sites, grab both ctime and cookie from stat,
-> > and if IS_I_VERSION() use that, otherwise cookie, and compare
-> > against the cached i_version with one of those values, and then fall
-> > back to ctime?
-> >=20
->=20
-> Not exactly.
->=20
-> You want to call getattr() for STATX_CHANGE_COOKIE|STATX_CTIME, and
-> then check the kstat->result_mask. If STATX_CHANGE_COOKIE is set, then
-> use that. If it's not then use the ctime.
->=20
-> The part I'm not sure about is whether it's actually safe to do this.
-> vfs_getattr_nosec() can block in some situations. Is it ok to do this
-> in any context where integrity_inode_attrs_changed() may be called?=C2=A0
+On 1/10/26 09:32, Günther Noack wrote:
+> * Add new access rights which control the look up operations for named
+>   UNIX domain sockets.  The resolution happens during connect() and
+>   sendmsg() (depending on socket type).
+>   * LANDLOCK_ACCESS_FS_RESOLVE_UNIX_STREAM
+>   * LANDLOCK_ACCESS_FS_RESOLVE_UNIX_DGRAM
+>   * LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET
+Might be a crazy thought but would it be better to implement the
+STREAM/DGRAM/SEQPACKET as an add_rule flag rather than as a separate
+access right? There are other types of address families like AF_CAN,
+AF_BLUETOOTH, AF_VSOCK that support multiple socket types.
 
-Frederick, before making any changes, please describe the problem you're
-actually seeing. From my limited testing, file change IS being detected. A =
-major
-change like Jeff is suggesting is not something that would or should be bac=
-k
-ported.  Remember, Jeff's interest is remote filesystems, not necessarily w=
-ith
-your particular XFS concern.
+This saves us on access right numbers if they get added in the future to
+landlock.
 
-So again, what is the problem you're trying to address?
+So we could have:
 
-Mimi
+LANDLOCK_ADD_RULE_SOCK_STREAM
+LANDLOCK_ADD_RULE_SOCK_DGRAM
+LANDLOCK_ADD_RULE_SOCK_SEQPACKET
 
->=20
-> ISTR that this was an issue at one point, but maybe isn't now that IMA
-> is an LSM?
+and use it as such:
+
+landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
+                             &path_beneath_for_unix_socket,
+                             LANDLOCK_ADD_RULE_SOCK_STREAM |
+                             LANDLOCK_ADD_RULE_SOCK_DGRAM);
+
+For address families with only one socket type (ie tcp and udp), the
+socket family be implied, which keeps backward compatibility w/ the
+existing tcp access right.
+
+This way, we don't have to make completely separate access rights for
+future socket families. So we could add a single access right for bluetooth,
+for instance, and distinguish which socket families we give it with the
+LANDLOCK_ADD_RULE_SOCK_* flags.
+
+We'd have to track the SOCK_(socket_type) for unix sockets as we gather
+access rights. But afaik unix sockets should be the only socket type that
+has to deal with tree traversal.
+> * Hook into the path lookup in unix_find_bsd() in af_unix.c, using a
+>   LSM hook.  Make policy decisions based on the new access rights
+> * Increment the Landlock ABI version.
+> * Minor test adaptions to keep the tests working.
+>
+> Cc: Justin Suess <utilityemal77@gmail.com>
+> Cc: Mickaël Salaün <mic@digikod.net>
+> Suggested-by: Jann Horn <jannh@google.com>
+> Link: https://github.com/landlock-lsm/linux/issues/36
+> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> ---
+>  include/uapi/linux/landlock.h                | 10 ++++++
+>  security/landlock/access.h                   |  2 +-
+>  security/landlock/audit.c                    |  6 ++++
+>  security/landlock/fs.c                       | 34 +++++++++++++++++++-
+>  security/landlock/limits.h                   |  2 +-
+>  security/landlock/syscalls.c                 |  2 +-
+>  tools/testing/selftests/landlock/base_test.c |  2 +-
+>  tools/testing/selftests/landlock/fs_test.c   |  7 ++--
+>  8 files changed, 58 insertions(+), 7 deletions(-)
+>
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index f030adc462ee..455edc241c12 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -216,6 +216,13 @@ struct landlock_net_port_attr {
+>   *   :manpage:`ftruncate(2)`, :manpage:`creat(2)`, or :manpage:`open(2)` with
+>   *   ``O_TRUNC``.  This access right is available since the third version of the
+>   *   Landlock ABI.
+> + * - %LANDLOCK_ACCESS_FS_RESOLVE_UNIX_STREAM: Connect to named
+> + *   :manpage:`unix(7)` ``SOCK_STREAM`` sockets.
+> + * - %LANDLOCK_ACCESS_FS_RESOLVE_UNIX_DGRAM: Send messages to named
+> + *   :manpage:`unix(7)` ``SOCK_DGRAM`` sockets or connect to them using
+> + *   :manpage:`connect(2)`.
+> + * - %LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET: Connect to named
+> + *   :manpage:`unix(7)` ``SOCK_SEQPACKET`` sockets.
+>   *
+>   * Whether an opened file can be truncated with :manpage:`ftruncate(2)` or used
+>   * with `ioctl(2)` is determined during :manpage:`open(2)`, in the same way as
+> @@ -321,6 +328,9 @@ struct landlock_net_port_attr {
+>  #define LANDLOCK_ACCESS_FS_REFER			(1ULL << 13)
+>  #define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
+>  #define LANDLOCK_ACCESS_FS_IOCTL_DEV			(1ULL << 15)
+> +#define LANDLOCK_ACCESS_FS_RESOLVE_UNIX_STREAM		(1ULL << 16)
+> +#define LANDLOCK_ACCESS_FS_RESOLVE_UNIX_DGRAM		(1ULL << 17)
+> +#define LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET	(1ULL << 18)
+>  /* clang-format on */
+>  
+>  /**
+> diff --git a/security/landlock/access.h b/security/landlock/access.h
+> index 7961c6630a2d..c7784922be3c 100644
+> --- a/security/landlock/access.h
+> +++ b/security/landlock/access.h
+> @@ -34,7 +34,7 @@
+>  	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+>  /* clang-format on */
+>  
+> -typedef u16 access_mask_t;
+> +typedef u32 access_mask_t;
+>  
+>  /* Makes sure all filesystem access rights can be stored. */
+>  static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
+> diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+> index e899995f1fd5..0645304e0375 100644
+> --- a/security/landlock/audit.c
+> +++ b/security/landlock/audit.c
+> @@ -37,6 +37,12 @@ static const char *const fs_access_strings[] = {
+>  	[BIT_INDEX(LANDLOCK_ACCESS_FS_REFER)] = "fs.refer",
+>  	[BIT_INDEX(LANDLOCK_ACCESS_FS_TRUNCATE)] = "fs.truncate",
+>  	[BIT_INDEX(LANDLOCK_ACCESS_FS_IOCTL_DEV)] = "fs.ioctl_dev",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_RESOLVE_UNIX_STREAM)] =
+> +		"fs.resolve_unix_stream",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_RESOLVE_UNIX_DGRAM)] =
+> +		"fs.resolve_unix_dgram",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET)] =
+> +		"fs.resolve_unix_seqpacket",
+>  };
+>  
+>  static_assert(ARRAY_SIZE(fs_access_strings) == LANDLOCK_NUM_ACCESS_FS);
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 8205673c8b1c..94f5fc7ee9fd 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -9,6 +9,7 @@
+>   * Copyright © 2023-2024 Google LLC
+>   */
+>  
+> +#include "linux/net.h"
+>  #include <asm/ioctls.h>
+>  #include <kunit/test.h>
+>  #include <linux/atomic.h>
+> @@ -314,7 +315,10 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+>  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+>  	LANDLOCK_ACCESS_FS_READ_FILE | \
+>  	LANDLOCK_ACCESS_FS_TRUNCATE | \
+> -	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+> +	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
+> +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX_STREAM | \
+> +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX_DGRAM | \
+> +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET)
+>  /* clang-format on */
+>  
+>  /*
+> @@ -1588,6 +1592,33 @@ static int hook_path_truncate(const struct path *const path)
+>  	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
+>  }
+>  
+> +static int hook_unix_path_connect(const struct path *const path, int type,
+> +				  int flags)
+> +{
+> +	access_mask_t access_request = 0;
+> +
+> +	/* Lookup for the purpose of saving coredumps is OK. */
+> +	if (flags & SOCK_COREDUMP)
+> +		return 0;
+> +
+> +	switch (type) {
+> +	case SOCK_STREAM:
+> +		access_request = LANDLOCK_ACCESS_FS_RESOLVE_UNIX_STREAM;
+> +		break;
+> +	case SOCK_DGRAM:
+> +		access_request = LANDLOCK_ACCESS_FS_RESOLVE_UNIX_DGRAM;
+> +		break;
+> +	case SOCK_SEQPACKET:
+> +		access_request = LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET;
+> +		break;
+> +	}
+> +
+> +	if (!access_request)
+> +		return 0;
+> +
+> +	return current_check_access_path(path, access_request);
+> +}
+> +
+>  /* File hooks */
+>  
+>  /**
+> @@ -1872,6 +1903,7 @@ static struct security_hook_list landlock_hooks[] __ro_after_init = {
+>  	LSM_HOOK_INIT(path_unlink, hook_path_unlink),
+>  	LSM_HOOK_INIT(path_rmdir, hook_path_rmdir),
+>  	LSM_HOOK_INIT(path_truncate, hook_path_truncate),
+> +	LSM_HOOK_INIT(unix_path_connect, hook_unix_path_connect),
+>  
+>  	LSM_HOOK_INIT(file_alloc_security, hook_file_alloc_security),
+>  	LSM_HOOK_INIT(file_open, hook_file_open),
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index 65b5ff051674..1f6f864afec2 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -19,7 +19,7 @@
+>  #define LANDLOCK_MAX_NUM_LAYERS		16
+>  #define LANDLOCK_MAX_NUM_RULES		U32_MAX
+>  
+> -#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_IOCTL_DEV
+> +#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET
+>  #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+>  
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index 0116e9f93ffe..66fd196be85a 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -161,7 +161,7 @@ static const struct file_operations ruleset_fops = {
+>   * Documentation/userspace-api/landlock.rst should be updated to reflect the
+>   * UAPI change.
+>   */
+> -const int landlock_abi_version = 7;
+> +const int landlock_abi_version = 8;
+>  
+>  /**
+>   * sys_landlock_create_ruleset - Create a new ruleset
+> diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+> index 7b69002239d7..f4b1a275d8d9 100644
+> --- a/tools/testing/selftests/landlock/base_test.c
+> +++ b/tools/testing/selftests/landlock/base_test.c
+> @@ -76,7 +76,7 @@ TEST(abi_version)
+>  	const struct landlock_ruleset_attr ruleset_attr = {
+>  		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
+>  	};
+> -	ASSERT_EQ(7, landlock_create_ruleset(NULL, 0,
+> +	ASSERT_EQ(8, landlock_create_ruleset(NULL, 0,
+>  					     LANDLOCK_CREATE_RULESET_VERSION));
+>  
+>  	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index 968a91c927a4..0cbde65e032a 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -575,9 +575,12 @@ TEST_F_FORK(layout1, inval)
+>  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+>  	LANDLOCK_ACCESS_FS_READ_FILE | \
+>  	LANDLOCK_ACCESS_FS_TRUNCATE | \
+> -	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+> +	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
+> +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX_STREAM | \
+> +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX_DGRAM | \
+> +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET)
+>  
+> -#define ACCESS_LAST LANDLOCK_ACCESS_FS_IOCTL_DEV
+> +#define ACCESS_LAST LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET
+>  
+>  #define ACCESS_ALL ( \
+>  	ACCESS_FILE | \
 
