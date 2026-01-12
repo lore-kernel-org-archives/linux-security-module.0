@@ -1,235 +1,256 @@
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FAF3624C7
-	for <linux-security-module@vger.kernel.org>; Mon, 12 Jan 2026 16:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6AC36E462
+	for <linux-security-module@vger.kernel.org>; Mon, 12 Jan 2026 17:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768234095; cv=none; b=s4HHpf7oVZwocFxGKmQSvjiKQtsAi+G+7RJf0FL5OTGe7o+73OPd7pDaoPaEDxPYUxcqjbjUOtf7BivnXiIn6NFOzviZ+Nh3hhoPZFeB8DkCACnSeDDqaMAUSeSEOm+PnjdOqpa4hSYHvAGrTmkzJWDheaOggl9nrZVMep46FmQ=
+	t=1768238051; cv=none; b=jRkiq4xdcn8MO8faRsSiIlympkGMhr4rFOacVc1XAdAAttRqem0oFtMXqj5DWfJOtZXGqzcNhPkY7FVzfJLVMEfMhJ9C7watqGofbyTfIlk0cZkMhVnklbES4Rsz/WEi/MltZWgd8VXcmyNGjg/VdEc8iSN/OtA+MLuZj7QWJaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768234095; c=relaxed/simple;
-	bh=1nBCITjqomWB9lUtyhFM4fajJwtdvdo71dDPZ6vyU+M=;
+	s=arc-20240116; t=1768238051; c=relaxed/simple;
+	bh=+6MD9U3/oNkwpZKjfey1D4wf+JNsO6goqtte5CPMt9I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W4CeIEpWrJmxKDXzzvKw6rs6qmKBSNVJusUWPRYetZPbyNHQxNZHEgnK5IX9tIS2jF7767Q5Wfj4Kvp9mZgtqAxe3qsqANjQ1SaLoSnPLCjqyCwIN1cP9HeerWghyVs+4nPzakHrQ7vy27zz4FSgLj669wsF+SgpZU+ovoy97mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Pcq+7xEk; arc=none smtp.client-ip=83.166.143.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=RjWXKI9HXkp7fIbN9ds0oOO10JkrCt+Gz0X1V+wNzcz92BfJvyOvNSrHIOt4hA/UMh9bZ4EnJT6Xq5LVFvJAzWGInEw3v3H54Up0yZhTnCvj8xtxs5+I5o9/Fu3rd5foEQgQxaehWciDDuzp8pU2VkY0OLKMBj6RidM2vC2GyhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=CB0HmYL1; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Pcq+7xEk"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dqcjd2T3gzjrv;
-	Mon, 12 Jan 2026 17:08:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1768234085;
-	bh=fuGNBBmrV1aaR4mfqBEY752BSmb2lnimAb5XpRaYrrE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pcq+7xEkzz8ORRTFZUA+HkwHYaf0f3sb4sKz3kod+D+bbNzuAkYf2+KhMGcZsi7EU
-	 hFw+UNsLt7NF0TdHkiUpVv4c+MTIhZl97dmeJRKH8QcZr4mlpJ4dwDODuPyiKOIXiN
-	 PpKC7k3BV+h9XTEmgCL/E0hRMsIpJ+cmiXrPofGI=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dqcjb6Gvrzg7Z;
-	Mon, 12 Jan 2026 17:08:03 +0100 (CET)
-Date: Mon, 12 Jan 2026 17:08:02 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>, 
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, 
-	Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 0/5] landlock: Pathname-based UNIX connect() control
-Message-ID: <20260112.Wufar9coosoo@digikod.net>
-References: <20260110143300.71048-2-gnoack3000@gmail.com>
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="CB0HmYL1"
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-45090ef26c6so2294429b6e.2
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jan 2026 09:14:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1768238048; x=1768842848; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QyJinldTenjlTP9+ze0OVo2ZOUQ8sydojxDpmIKfmVc=;
+        b=CB0HmYL1CSRbRXROWgXTdMCz+yLGPTbVAORnmBqVcQjpMt9W5SstZjeXQ1cLzrvxxg
+         YBqGcDMS/sq3kToXEW6yeMtwS6E8ue9m5ljrfEJhB6Gf+ODcJT5x88Vk57B7uhLXlkwm
+         DrRjxbWj/ZtX8YQ5kCIC7uqTDeCnRFf+cujsbrKjJ7/C9FTZmvkMK9vXKkoUW6GpHLH9
+         27CsPRAaDprTV2XpspGXm6B4L7gUaLR5/QCzthqReqIEgbPc63qNLosAN2hNitKrqvOh
+         LRc5prekQmaohXmeGlQbNIH4hF9tVk3Lq5P9tyPFdmhXz55gc8mxxrLgEOan1mFznwnl
+         Mqbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768238048; x=1768842848;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QyJinldTenjlTP9+ze0OVo2ZOUQ8sydojxDpmIKfmVc=;
+        b=MVmjjAwMlxyzR2kQp5v5kHg2B4dYopvVUJabcQLFQ0lLFPT0qzvfyKNvhMzew9TbPM
+         4e7IKmLzpKYuwnrKAmZ0kJuqgbKkWuqh3F6ySnC+FLWWdweQzIWGgFGRna66yhO4BWPG
+         pCGxnS7Do0UMtEDZyj0G55LIfO5FHwiTFr75fudVrNmcP1ubvvTpXJJTUu+xsZ2TLGDb
+         UUV8N7lwrRNyodXRu5jq4ieCO/mfOeKrZpZwHDPwypSXUYNvm7BjMnp9eVHLeBoDbboq
+         jBk1FkVA8eIcufCxZEDLAVXfpwsn559SOyD7N0t9BtsefBoqLDydeusZmPPAmLhTW2+4
+         cRkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWun1ONwTw5jUJ3XfnKn0gqsJwiUsjrmztA6p7ATr8hIh8sjQfIQNBtLEv6l9aW//ffVr0I/r3eA7DInlYA2g0GevWkQFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2OOouGdo0+rzrzXaWXb8ZEoM64HMesiisw9Kgf5OgiQ4xokaK
+	KlHJBivjK2waKdTNZg8Kp7FWv9q2MqQawYU6ye14puyTBplFvQfeX2NVTTcOLTTmkLQ=
+X-Gm-Gg: AY/fxX4+FfN60ByGKMjzvudJv97k9bdqcGU++XDRZ3ERkEz6eUrXPdmDcJtKmqIM2Rb
+	O0dieXbRI4Cd2Y/8iWDqQHsnBJ5IDMOwE9Jxo82VRIYHp4mxbb6Z5eSGXTuePw2/yZlyEzb/hXA
+	TtdB9ldw94dQFt4NiWSBhiUpLw32lFNYyzrWinc8/BLzDbC/sS4mfGMhRkUzDx92ho+D8dIqkSs
+	WLEa7qUZSCH4PGpBlKjxzrBgoqgDuG+rwkbehbRRWfGRwSNeO9HksKqO8G3IJCsolWP+vk61vFL
+	aURppx5lUFc4aPFvjr+FTr397rTZBotKXuK7TfBP01vo/Nhd2PKZqVgup+VD1O58sIHlb2Uuy9Y
+	ATF6c0MrukDrwoyf5486c6dHyA02K4gznRxVlfI4NinpAzLE613EVR8fXMKxDfZ60ECE=
+X-Google-Smtp-Source: AGHT+IG/ePwN35HG0w/1p2sUU3s0fuKkedonKLVhqDCc4g/8Nl3LR2SCuPk6C+diJOjLOmIc+3i9aQ==
+X-Received: by 2002:a05:6808:148a:b0:44f:e912:ea97 with SMTP id 5614622812f47-45a6bdb94b7mr9876320b6e.18.1768238047536;
+        Mon, 12 Jan 2026 09:14:07 -0800 (PST)
+Received: from CMGLRV3 ([2a09:bac5:947d:1b37::2b6:f])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-45a5e2e903dsm8171148b6e.20.2026.01.12.09.14.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jan 2026 09:14:07 -0800 (PST)
+Date: Mon, 12 Jan 2026 11:14:04 -0600
+From: Frederick Lawler <fred@cloudflare.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Jeff Layton <jlayton@kernel.org>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, kernel-team@cloudflare.com
+Subject: Re: [PATCH RFC] ima: Fallback to a ctime guard without i_version
+ updates
+Message-ID: <aWUr3K__4Y21fSoe@CMGLRV3>
+References: <20251229-xfs-ima-fixup-v1-1-6a717c939f7c@cloudflare.com>
+ <3ad9ded9b3a269908eee6c79b70dbf432e60ce8d.camel@kernel.org>
+ <aV07lY6NOkNvUk3Z@CMGLRV3>
+ <aV1jhIS24tE-dL9A@CMGLRV3>
+ <25b6d1b42ea07b058be4e4f48bb5a7c6b879b3ed.camel@kernel.org>
+ <15eaa3613b0552cc48b55972b81882ac1e1d1150.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260110143300.71048-2-gnoack3000@gmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <15eaa3613b0552cc48b55972b81882ac1e1d1150.camel@linux.ibm.com>
 
-On Sat, Jan 10, 2026 at 03:32:55PM +0100, GÃ¼nther Noack wrote:
-> Hello!
+On Mon, Jan 12, 2026 at 09:02:02AM -0500, Mimi Zohar wrote:
+> On Tue, 2026-01-06 at 14:50 -0500, Jeff Layton wrote:
+> > > > > > @@ -54,11 +62,22 @@ integrity_inode_attrs_store(struct integrity_inode_attributes *attrs,
+> > > > > >    */
+> > > > > >   static inline bool
+> > > > > >   integrity_inode_attrs_changed(const struct integrity_inode_attributes *attrs,
+> > > > > > -			      const struct inode *inode)
+> > > > > > +			      struct file *file, struct inode *inode)
+> > > > > >   {
+> > > > > > -	return (inode->i_sb->s_dev != attrs->dev ||
+> > > > > > -		inode->i_ino != attrs->ino ||
+> > > > > > -		!inode_eq_iversion(inode, attrs->version));
+> > > > > > +	struct kstat stat;
+> > > > > > +
+> > > > > > +	if (inode->i_sb->s_dev != attrs->dev ||
+> > > > > > +	    inode->i_ino != attrs->ino)
+> > > > > > +		return true;
+> > > > > > +
+> > > > > > +	if (inode_eq_iversion(inode, attrs->version))
+> > > > > > +		return false;
+> > > > > > +
+> > > > > > +	if (!file || vfs_getattr_nosec(&file->f_path, &stat, STATX_CTIME,
+> > > > > > +				       AT_STATX_SYNC_AS_STAT))
+> > > > > > +		return true;
+> > > > > > +
+> > > > > 
+> > > > > This is rather odd. You're sampling the i_version field directly, but
+> > > > > if it's not equal then you go through ->getattr() to get the ctime.
+> > > > > 
+> > > > > It's particularly odd since you don't know whether the i_version field
+> > > > > is even implemented on the fs. On filesystems where it isn't, the
+> > > > > i_version field generally stays at 0, so won't this never fall through
+> > > > > to do the vfs_getattr_nosec() call on those filesystems?
+> > > > > 
+> > > > 
+> > > > You're totally right. I didn't consider FS's caching the value at zero.
+> > > 
+> > > Actually, I'm going to amend this. I think I did consider FSs without an
+> > > implementation. Where this is called at, it is often guarded by a
+> > > !IS_I_VERSION() || integrity_inode_attrs_change(). If I'm
+> > > understanding this correctly, the check call doesn't occur unless the inode
+> > > has i_version support.
+> > > 
+> > 
+> > 
+> > It depends on what you mean by i_version support:
+> > 
+> > That flag just tells the VFS that it needs to bump the i_version field
+> > when updating timestamps. It's not a reliable indicator of whether the
+> > i_version field is suitable for the purpose you want here.
+> > 
+> > The problem here and the one that we ultimately fixed with multigrain
+> > timestamps is that XFS in particular will bump i_version on any change
+> > to the log. That includes atime updates due to reads.
+> > 
+> > XFS still tracks the i_version the way it always has, but we've stopped
+> > getattr() from reporting it because it's not suitable for the purpose
+> > that nfsd (and IMA) need it for.
+> > 
+> > > It seems to me the suggestion then is to remove the IS_I_VERSION()
+> > > checks guarding the call sites, grab both ctime and cookie from stat,
+> > > and if IS_I_VERSION() use that, otherwise cookie, and compare
+> > > against the cached i_version with one of those values, and then fall
+> > > back to ctime?
+> > > 
+> > 
+> > Not exactly.
+> > 
+> > You want to call getattr() for STATX_CHANGE_COOKIE|STATX_CTIME, and
+> > then check the kstat->result_mask. If STATX_CHANGE_COOKIE is set, then
+> > use that. If it's not then use the ctime.
+> > 
+> > The part I'm not sure about is whether it's actually safe to do this.
+> > vfs_getattr_nosec() can block in some situations. Is it ok to do this
+> > in any context where integrity_inode_attrs_changed() may be called? 
 > 
-> This patch set introduces a filesystem-based Landlock restriction
-> mechanism for connecting to UNIX domain sockets (or addressing them
-> with sendmsg(2)).  It introduces a file system access right for each
-> type of UNIX domain socket:
+> Frederick, before making any changes, please describe the problem you're
+> actually seeing. From my limited testing, file change IS being detected. A major
+> change like Jeff is suggesting is not something that would or should be back
+> ported.  Remember, Jeff's interest is remote filesystems, not necessarily with
+> your particular XFS concern.
 > 
->  * LANDLOCK_ACCESS_FS_RESOLVE_UNIX_STREAM
->  * LANDLOCK_ACCESS_FS_RESOLVE_UNIX_DGRAM
->  * LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET
-> 
-> For the connection-oriented SOCK_STREAM and SOCK_SEQPACKET type
-> sockets, the access right makes the connect(2) operation fail with
-> EACCES, if denied.
-> 
-> SOCK_DGRAM-type UNIX sockets can be used both with connect(2), or by
-> passing an explicit recipient address with every sendmsg(2)
-> invocation.  In the latter case, the Landlock check is done when an
-> explicit recipient address is passed to sendmsg(2) and can make
-> sendmsg(2) return EACCES.  When UNIX datagram sockets are connected
-> with connect(2), a fixed recipient address is associated with the
-> socket and the check happens during connect(2) and may return EACCES.
-> 
-> ## Motivation
-> 
-> Currently, landlocked processes can connect() to named UNIX sockets
-> through the BSD socket API described in unix(7), by invoking socket(2)
-> followed by connect(2) with a suitable struct sockname_un holding the
-> socket's filename.  This can come as a surprise for users (e.g. in
-> [1]) and it can be used to escape a sandbox when a Unix service offers
-> command execution (some scenarios were listed by Tingmao Wang in [2]).
-> 
-> The original feature request is at [4].
-> 
-> ## Alternatives and Related Work
-> 
+> So again, what is the problem you're trying to address?
 
-> ### Alternative: Use existing LSM hooks
-> 
-> The existing hooks security_unix_stream_connect(),
-> security_unix_may_send() and security_socket_connect() do not give
-> access to the resolved file system path.
-> 
-> Resolving the file system path again within Landlock would in my
-> understanding produce a TOCTOU race, so making the decision based on
-> the struct sockaddr_un contents is not an option.
-> 
-> It is tempting to use the struct path that the listening socket is
-> bound to, which can be acquired through the existing hooks.
-> Unfortunately, the listening socket may have been bound from within a
-> different namespace, and it is therefore a path that can not actually
-> be referenced by the sandboxed program at the time of constructing the
-> Landlock policy.  (More details are on the Github issue at [6] and on
-> the LKML at [9]).
+It's easier if I paste a simpler version of test I've been promising
+for v1 to help show this (below).
 
-Please move (or duplicate) this rationale in the patch dedicated to the
-new hook.  It helps patch review (and to understand commits when already
-merged).
+In 6.12 the test snippet passes, for >= 6.13 we get an audit
+evaluation on the each execution when there should only be 1.
+
+The struct integrity_inode_attributes.version stays at zero for XFS
+in the below test, as well as file systems that calls into
+generic_fillattr() or otherwise that doesn't set the change cookie
+request mask.
+
+When file systems have a mutated file, the cookie is then updated,
+but the compare against inode.i_version could be out of date depending
+on file system implementation. Thus we see since 6.13, XFS an atime change
+will cause another evaluation due to stale cache.
+
+I'm not expecting a backport to 6.13 as there has been a lot of changes
+in IMA/EVM, but I think to the 6.18 LTS is reasonable. With leaving
+EVM alone, it's a small diff.
+
+I have a updated patch that hopefully addresses all your concerns
+from other responses in this thread. I want to point out that the updated
+code is more EVM/IMA invariant mindful than this RFC. I'd
+like to submit that, and then move discussion over there if possible.
+
+Hopefully this helps,
+Fred
+
+_fragment.config_
+CONFIG_XFS_FS=y
+CONFIG_OVERLAY_FS=y
+CONFIG_IMA=y
+CONFIG_IMA_WRITE_POLICY=y
+CONFIG_IMA_READ_POLICY=y
+
+_./test.sh_
+#!/bin/bash -e
+
+IMA_POLICY="/sys/kernel/security/ima/policy"
+TEST_BIN="/bin/date"
+MNT_BASE="/tmp/ima_test_root"
+
+mkdir -p "$MNT_BASE"
+mount -t tmpfs tmpfs "$MNT_BASE"
+mkdir -p "$MNT_BASE"/{xfs_disk,upper,work,ovl}
+
+dd if=/dev/zero of="$MNT_BASE/xfs.img" bs=1M count=300
+mkfs.xfs -q "$MNT_BASE/xfs.img"
+mount "$MNT_BASE/xfs.img" "$MNT_BASE/xfs_disk"
+cp "$TEST_BIN" "$MNT_BASE/xfs_disk/test_prog"
+
+mount -t overlay overlay -o \
+"lowerdir=$MNT_BASE/xfs_disk,upperdir=$MNT_BASE/upper,workdir=$MNT_BASE/work" \
+"$MNT_BASE/ovl"
+
+echo "audit func=BPRM_CHECK uid=$(id -u nobody)" > "$IMA_POLICY"
+
+target_prog="$MNT_BASE/ovl/test_prog"
+setpriv --reuid nobody "$target_prog"
+setpriv --reuid nobody "$target_prog"
+setpriv --reuid nobody "$target_prog"
+
+audit_count=$(dmesg | grep -c "file=\"$target_prog\"")
+
+if [[ "$audit_count" -eq 1 ]]; then
+	echo "PASS: Found exactly 1 audit event."
+else
+	echo "FAIL: Expected 1 audit event, but found $audit_count."
+	exit 1
+fi
 
 > 
-> ### Related work: Scope Control for Pathname Unix Sockets
+> Mimi
 > 
-> The motivation for this patch is the same as in Tingmao Wang's patch
-> set for "scoped" control for pathname Unix sockets [2], originally
-> proposed in the Github feature request [5].
-> 
-> In my reply to this patch set [3], I have discussed the differences
-> between these two approaches.  On the related discussions on Github
-> [4] and [5], there was consensus that the scope-based control is
-> complimentary to the file system based control, but does not replace
-> it.  Mickael's opening remark on [5] says:
-> 
-> > This scoping would be complementary to #36 which would mainly be
-> > about allowing a sandboxed process to connect to a more privileged
-> > service (identified with a path).
-> 
-> ## Open questions in V2
-> 
-> Seeking feedback on:
-> 
-> - Feedback on the LSM hook name would be appreciated. We realize that
->   not all invocations of the LSM hook are related to connect(2) as the
->   name suggests, but some also happen during sendmsg(2).
-
-Renaming security_unix_path_connect() to security_unix_find() would look
-appropriate to me wrt the caller.
-
-> - Feedback on the structuring of the Landlock access rights, splitting
->   them up by socket type.  (Also naming; they are now consistently
->   called "RESOLVE", but could be named "CONNECT" in the stream and
->   seqpacket cases?)
-
-I don't see use cases where differenciating the type of unix socket
-would be useful.  LANDLOCK_ACCESS_FS_RESOLVE_UNIX would look good to me.
-
-Tests should still cover all these types though.
-
-What would be the inverse of "resolve" (i.e. to restrict the server
-side)?  Would LANDLOCK_ACCESS_FS_MAKE_SOCK be enough?
-
-> 
-> ## Credits
-> 
-> The feature was originally suggested by Jann Horn in [7].
-> 
-> Tingmao Wang and Demi Marie Obenour have taken the initiative to
-> revive this discussion again in [1], [4] and [5] and Tingmao Wang has
-> sent the patch set for the scoped access control for pathname Unix
-> sockets [2].
-> 
-> Justin Suess has sent the patch for the LSM hook in [8].
-> 
-> Ryan Sullivan has started on an initial implementation and has brought
-> up relevant discussion points on the Github issue at [4] that lead to
-> the current approach.
-> 
-> [1] https://lore.kernel.org/landlock/515ff0f4-2ab3-46de-8d1e-5c66a93c6ede@gmail.com/
-> [2] Tingmao Wang's "Implemnet scope control for pathname Unix sockets"
->     https://lore.kernel.org/all/cover.1767115163.git.m@maowtm.org/
-> [3] https://lore.kernel.org/all/20251230.bcae69888454@gnoack.org/
-> [4] Github issue for FS-based control for named Unix sockets:
->     https://github.com/landlock-lsm/linux/issues/36
-> [5] Github issue for scope-based restriction of named Unix sockets:
->     https://github.com/landlock-lsm/linux/issues/51
-> [6] https://github.com/landlock-lsm/linux/issues/36#issuecomment-2950632277
-> [7] https://lore.kernel.org/linux-security-module/CAG48ez3NvVnonOqKH4oRwRqbSOLO0p9djBqgvxVwn6gtGQBPcw@mail.gmail.com/
-> [8] Patch for the LSM hook:
->     https://lore.kernel.org/all/20251231213314.2979118-1-utilityemal77@gmail.com/
-> [9] https://lore.kernel.org/all/20260108.64bd7391e1ae@gnoack.org/
-> 
-> ---
-> 
-> ## Older versions of this patch set
-> 
-> V1: https://lore.kernel.org/all/20260101134102.25938-1-gnoack3000@gmail.com/
-> 
-> Changes in V2:
->  * Send Justin Suess's LSM hook patch together with the Landlock
->    implementation
->  * LSM hook: Pass type and flags parameters to the hook, to make the
->    access right more generally usable across LSMs, per suggestion from
->    Paul Moore (Implemented by Justin)
->  * Split the access right into the three types of UNIX domain sockets:
->    SOCK_STREAM, SOCK_DGRAM and SOCK_SEQPACKET.
->  * selftests: More exhaustive tests.
->  * Removed a minor commit from V1 which adds a missing close(fd) to a
->    test (it is already in the mic-next branch)
-> 
-> GÃ¼nther Noack (4):
->   landlock: Control pathname UNIX domain socket resolution by path
->   samples/landlock: Add support for named UNIX domain socket
->     restrictions
->   landlock/selftests: Test named UNIX domain socket restrictions
->   landlock: Document FS access rights for pathname UNIX sockets
-> 
-> Justin Suess (1):
->   lsm: Add hook unix_path_connect
-> 
->  Documentation/userspace-api/landlock.rst     |  25 ++-
->  include/linux/lsm_hook_defs.h                |   4 +
->  include/linux/security.h                     |  11 +
->  include/uapi/linux/landlock.h                |  10 +
->  net/unix/af_unix.c                           |   9 +
->  samples/landlock/sandboxer.c                 |  18 +-
->  security/landlock/access.h                   |   2 +-
->  security/landlock/audit.c                    |   6 +
->  security/landlock/fs.c                       |  34 ++-
->  security/landlock/limits.h                   |   2 +-
->  security/landlock/syscalls.c                 |   2 +-
->  security/security.c                          |  20 ++
->  tools/testing/selftests/landlock/base_test.c |   2 +-
->  tools/testing/selftests/landlock/fs_test.c   | 225 +++++++++++++++++--
->  14 files changed, 344 insertions(+), 26 deletions(-)
-> 
-> -- 
-> 2.52.0
-> 
+> > 
+> > ISTR that this was an issue at one point, but maybe isn't now that IMA
+> > is an LSM?
 > 
