@@ -1,51 +1,55 @@
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD03364050
-	for <linux-security-module@vger.kernel.org>; Mon, 12 Jan 2026 16:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E962C11D5
+	for <linux-security-module@vger.kernel.org>; Mon, 12 Jan 2026 16:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768233890; cv=none; b=UetrazizK1t6gCvQ+qL2MCa2E51l2qiRvYcP8jKDdORab2woSpdzPKs1kbLlVKjJ8fo2aab89k46Cmg0Kv8dNe1568GJqp3oFIMYtCb292I0A5EuX03OyGll4p8kxn75oy9jsH1LuG3qA2ibCcBJ9E3eYjI1RPgKg72pqbW2/kM=
+	t=1768233961; cv=none; b=X06zarcybRnY9QapmpAMj+FYLS3U4CdWt2l3p85A5UshzVXq12viRHdmebto+RyhGF3AajWKPp77D0L+vUwceOhE8vos5a4eWWF2LylzlA8RFwNF60O6GyBCDfLzswcMM6EuAzPS8CzAoAmWGjvcqxpNH303dhu5AlaHyNVm4MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768233890; c=relaxed/simple;
-	bh=cZFC7BnR2MK9mogjzb0MEUPztYFPKAZEkgRoF8YULO4=;
+	s=arc-20240116; t=1768233961; c=relaxed/simple;
+	bh=EfTyTrf0pqDx0V1rKbRtmWKbZBLoRo4dwaWd2PK7mQs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oOPYD5he2k7AWwmvvgjSW5fUP9+17Kr1lR9A1cwr60GBfC8weLjrHcIep20cZn6gMdA6jRzl/SScMGuTqxdI0pdo7b3ei0EBfbKZb9unnPyQ6lpzpWqGtux9BTW7dC91QYidNfhbUvDfFffDSzCll4fPkfbAjlGP5CgFrq2juF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=F3wGFyuy; arc=none smtp.client-ip=84.16.66.175
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRGbtZVb0wnPI2AQRQK6rDc5fjz5mEKdoW9xmZaTUWWYDihLCju1CWj7VCp3ZKgti9iYds+B5zGqpDhoOgHWxqZu8Ejmw2MedVsSeSHuHvMEsGlpU44x0AxavMqWhout7vJ9vKOpaHjYg/yAkHb5x6LWwFw8rfsj4G3o7fJN2jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=b1dBiSbw; arc=none smtp.client-ip=45.157.188.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="F3wGFyuy"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dqcdg2vbpzgJB;
-	Mon, 12 Jan 2026 17:04:39 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="b1dBiSbw"
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dqcg92gVLzk58;
+	Mon, 12 Jan 2026 17:05:57 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1768233879;
-	bh=8IDxyNo2/3Rg3u7Y2rYSpdCLfdR2xiDFy3jiZWUzLXw=;
+	s=20191114; t=1768233957;
+	bh=Gz8++VFG+uOxRnYFkOq+bKkWwZKSwbt+nOy59XddXzQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F3wGFyuyWfSi+f5VQgAWDYjjwAy+ltrkoqSpVwRHTXfYMHmZdAY9/YTXJfvUXO88h
-	 ML09oqLJbrPc03iccI18bL5PBMeUCzFgsaHyV3Y6GCXLd8m3amV4oKynz1v/o5aznP
-	 9Zb3rrBeneDSRKspbsZ8L5sJuxvXfPSviaJmei/8=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4dqcdf0xw0zfZv;
-	Mon, 12 Jan 2026 17:04:38 +0100 (CET)
-Date: Mon, 12 Jan 2026 17:04:36 +0100
+	b=b1dBiSbwS2wo+roFxIlIwmLlQSh0ZAI6BnWISA1pIly79mCNiIFRFtMMH78bnq2XE
+	 YEF9KPv0OZy7tRbI4IILQbnOZsyX62oAmej8vBvFgEzkgeOWwHJujV/A/EpIXJTIzU
+	 zs3wyBDg57Lkar3cqESTrWb6VCTnzTylXmACGuyE=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4dqcg82vvdzg7N;
+	Mon, 12 Jan 2026 17:05:56 +0100 (CET)
+Date: Mon, 12 Jan 2026 17:05:55 +0100
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>, 
-	linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>, 
-	Justin Suess <utilityemal77@gmail.com>, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
-	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	konstantin.meskhidze@huawei.com, Demi Marie Obenour <demiobenour@gmail.com>, 
-	Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>
-Subject: Re: [RFC PATCH 1/5] landlock/selftests: add a missing close(srv_fd)
- call
-Message-ID: <20260112.ahjeeCaish6e@digikod.net>
-References: <20260101134102.25938-1-gnoack3000@gmail.com>
- <20260101134102.25938-2-gnoack3000@gmail.com>
- <20260109.Thoot8ooWai7@digikod.net>
- <20260109.uukiph8ii0Je@digikod.net>
- <20260110.789827dda36e@gnoack.org>
+To: Demi Marie Obenour <demiobenour@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, 
+	Tingmao Wang <m@maowtm.org>, Paul Moore <paul@paul-moore.com>, 
+	linux-security-module@vger.kernel.org, Justin Suess <utilityemal77@gmail.com>, 
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, Alyssa Ross <hi@alyssa.is>, 
+	Jann Horn <jannh@google.com>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [RFC PATCH 0/5] landlock: Pathname-based UNIX connect() control
+Message-ID: <20260112.joXuchohhei7@digikod.net>
+References: <73c5509a-5daa-4ea5-ab9f-e24a59786f6d@maowtm.org>
+ <1d36b2ee-b967-42d7-a6c2-e5b1602a512f@gmail.com>
+ <20260102.93e0d7b9c9b5@gnoack.org>
+ <81f908e3-8a98-46e7-b20c-fe647784ceb4@gmail.com>
+ <20260102.17e1c2b9faa4@gnoack.org>
+ <64484ab4-e137-4fd9-9441-a63ccdff1616@gmail.com>
+ <20260108.uoD0aesh8Uth@digikod.net>
+ <a5850eb9-cee3-412d-ac20-c47e3161fdd9@gmail.com>
+ <20260109.yahQuiwu9kug@digikod.net>
+ <96bac7b4-9c43-4232-9899-5c1cfac409ef@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -55,58 +59,75 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260110.789827dda36e@gnoack.org>
+In-Reply-To: <96bac7b4-9c43-4232-9899-5c1cfac409ef@gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Sat, Jan 10, 2026 at 11:37:20AM +0100, Günther Noack wrote:
-> On Fri, Jan 09, 2026 at 11:49:48AM +0100, Mickaël Salaün wrote:
-> > On Fri, Jan 09, 2026 at 11:41:30AM +0100, Mickaël Salaün wrote:
-> > > Good, I'll pick that in my -next branch.
-> > > 
-> > > Nit: The prefix should be "selftests/landlock"
-> > > 
-> > > On Thu, Jan 01, 2026 at 02:40:58PM +0100, Günther Noack wrote:
-> > > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> > > > ---
-> > > >  tools/testing/selftests/landlock/fs_test.c | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > > 
-> > > > diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> > > > index 37a5a3df712ec..16503f2e6a481 100644
-> > > > --- a/tools/testing/selftests/landlock/fs_test.c
-> > > > +++ b/tools/testing/selftests/landlock/fs_test.c
-> > > > @@ -4400,6 +4400,7 @@ TEST_F_FORK(layout1, named_unix_domain_socket_ioctl)
-> > > >  	EXPECT_EQ(0, test_fionread_ioctl(cli_fd));
-> > > >  
-> > > >  	ASSERT_EQ(0, close(cli_fd));
-> > > > +	ASSERT_EQ(0, close(srv_fd));
+On Fri, Jan 09, 2026 at 04:02:25PM -0500, Demi Marie Obenour wrote:
+> On 1/9/26 10:25, Mickaël Salaün wrote:
+> > On Fri, Jan 09, 2026 at 06:33:10AM -0500, Demi Marie Obenour wrote:
+> >> On 1/8/26 06:14, Mickaël Salaün wrote:
+> >>> On Fri, Jan 02, 2026 at 01:37:14PM -0500, Demi Marie Obenour wrote:
+> >>>> On 1/2/26 05:50, Günther Noack wrote:
+> >>>>> On Fri, Jan 02, 2026 at 05:27:40AM -0500, Demi Marie Obenour wrote:
+> >>>>>> On 1/2/26 05:16, Günther Noack wrote:
+> >>>>>>> On Thu, Jan 01, 2026 at 05:44:51PM -0500, Demi Marie Obenour wrote:
+> >>>>>>>> On 1/1/26 17:34, Tingmao Wang wrote:
+> >>>>>>>>> On 1/1/26 22:14, Demi Marie Obenour wrote:
+> >>>>>>>>>> [...]
+> >>>>>>>>>> Does this leave directory traversal as the only missing Landlock
+> >>>>>>>>>> filesystem access control?  Ideally Landlock could provide the same
+> >>>>>>>>>> isolation from the filesystem that mount namespaces do.
+> >>>>>>>>>
+> >>>>>>>>> I think that level of isolation would require path walk control - see:
+> >>>>>>>>> https://github.com/landlock-lsm/linux/issues/9
+> >>>>>>>>>
+> >>>>>>>>> (Landlock also doesn't currently control some metadata operations - see
+> >>>>>>>>> the warning at the end of the "Filesystem flags" section in [1])
+> >>>>>>>>>
+> >>>>>>>>> [1]: https://docs.kernel.org/6.18/userspace-api/landlock.html#filesystem-flags
+> >>>>>>>>
+> >>>>>>>> Could this replace all of the existing hooks?
+> >>>>>>>
+> >>>>>>> If you do not need to distinguish between the different operations
+> >>>>>>> which Landlock offers access rights for, but you only want to limit
+> >>>>>>> the visibility of directory hierarchies in the file system, then yes,
+> >>>>>>> the path walk control described in issue 9 would be sufficient and a
+> >>>>>>> more complete control.
+> >>>>>>>
+> >>>>>>> The path walk control is probably among the more difficult Landlock
+> >>>>>>> feature requests.  A simple implementation would be easy to implement
+> >>>>>>> technically, but it also requires a new LSM hook which will have to
+> >>>>>>> get called *during* path lookup, and we'd have to make sure that the
+> >>>>>>> performance impact stays in check.  Path lookup is after all a very
+> >>>>>>> central facility in a OS kernel.
+> >>>>>>
+> >>>>>> What about instead using the inode-based hooks for directory searching?
+> >>>>>> SELinux can already restrict that.
+> >>>>>
+> >>>>> Oh, thanks, good pointer!  I was under the impression that this didn't
+> >>>>> exist yet -- I assume you are referring to the
+> >>>>> security_inode_follow_link() hook, which is already happening during
+> >>>>> path resolution?
+> >>>>
+> >>>> I'm not familiar with existing LSM hooks, but I do know that SELinux
+> >>>> enforces checks on searching and reading directories and symlinks.
+> >>>
+> >>> SELinux uses inode-based hooks, which is not (directly) possible for
+> >>> Landlock because it is an unprivileged access control, which means it
+> >>> cannot rely on extended file attributes to define a security policy.
+> >>>
+> >>> See https://github.com/landlock-lsm/linux/issues/9
+> >>
+> >> Could Landlock use a side table, with the inode's address in memory
+> >> as the key?
 > > 
-> > I'll also replace these ASSERT_EQ() with EXPECT_EQ().
+> > A struct inode is not enough because we need to resolve a file
+> > hierarchy, which is only possible with a struct path.
 > 
-> Fair enough. I would normally prefer ASSERT here, because that would
-> be more symmetric with the corresponding setup steps, but it feels not
-> worth bikeshedding over this.
+> Could Landlock "piggyback" on the core kernel's own path resolution,
+> updating its state when each hook gets called?
 
-My thinking is that a close() call will not have any impact on the
-tests, and it's worth cleaning things as much as possible, but an error
-should not happen anyway.
-
-As you said a few years ago (or as I remember it), we should use EXPECT
-as much as possible, especially when checks don't impact following
-checks.  At least, that's how I see things now. ;)
-
-> 
-> The selftests, both Landlock and others, are inconsistent in how they
-> use ASSERT and EXPECT, especially for close().
-
-Indeed.  I try to make sure the new Landlock tests use EXPECT for
-close() though.  It's difficult to explain when to use ASSERT or EXPECT,
-especially because they are used everywhere, and we may not even
-agree...
-
-> I wish we had an
-> easier way to do state teardown in the selftests without having to tie
-> it to a FIXTURE()...
-> 
-> –Günther
-> 
+Most of the inode-based hooks are called in places where there is no
+path data (in the current context).  We should be very careful with
+changes to the VFS wrt performance and complexity.  If you have an idea
+of how to do it, I encourage you to test it and send an RFC.
