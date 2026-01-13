@@ -1,32 +1,32 @@
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643DE3921C2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83773921DF;
 	Tue, 13 Jan 2026 12:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768307872; cv=none; b=OJigXrdUbf06Td9swvoV69A3CrspTY/TJvGBHGIgQ2PekhF1hb0raeO8pg43eofRez3zIXNIy/FfyAV7NzdQea7b2zSDqqmpFHCiUNs7wTPVk/AEzp66GE1cB9ZcPjaYvDRhvvDHMGdh8TPzCLgGerGoyPoMRhbUCkub7tiYPk4=
+	t=1768307873; cv=none; b=DTjFljwrcrDWMJ822amGWflm9MtMFwTy5Ijd0xyqhhNqchcxqaVjq8vcaGrRIDdbviEwnKHsURohX9tTBS05t10oGT1kqRX8lxXcIpf6XP13RI4SfyBZblqHlrhNvyqRC6ss9uyX0taAFXsofsi6bKaDcq640z/pqY/SEjYljRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768307872; c=relaxed/simple;
-	bh=NC/OO27F4y33AwnsUK1UgiJc9IBnwzGy7eK0nVFHjZg=;
+	s=arc-20240116; t=1768307873; c=relaxed/simple;
+	bh=Ws8Eb0NwBaSsIELRvPFLQCi4wI4t0JSg+rOArDpr4jQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XLEoJqDfTLUXJHEJJVRVjV/DuqpMQmz/otyKbgsApCv/IEGYZhiC0jHqcyUHL7IS+3oufcy83ISp+rZqrM7qF4XiNbaDQLeVAtJNp0PwSwMka07itDxbvAMVSGTCO6Aq/QkOZaSBcf5QdWmwhK9+PWWewn6QgGVbYpgCbrCbG28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=AgYCI5R9; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=HjOf+Y5245XTTrgtw4f9eWg0iAhuR0JmA0ALGMuygvDMLP+7H8D6VrOFCRy0IMUbd5KfZ66tC+iHOX7yqCVSO6QXc+FRNm9LhGHWkSIPBYxWXsogALvwZnY/zRRA+dNTLx7LFaO0i5YC18enGv+ZXnL9jYy+dpnR+CspE38JQ/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=O9Xe+RO7; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="AgYCI5R9"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="O9Xe+RO7"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1768307861;
-	bh=NC/OO27F4y33AwnsUK1UgiJc9IBnwzGy7eK0nVFHjZg=;
+	bh=Ws8Eb0NwBaSsIELRvPFLQCi4wI4t0JSg+rOArDpr4jQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=AgYCI5R9LpSoJyTXMvTIAgayIlcVm6fKXJaMRcPNzD6ZChkkhpsmCspHhyvT/wRt0
-	 r2A2sYDAv+HV4VO9S6NhvDe82s4Iq1jpUM2q/EUwPywnwUH/HUqYIeveQ6kcj/QULj
-	 pwxGDBSlpXCztDFg/YCdbKX9Kcxw35OQdzp+Tn/c=
+	b=O9Xe+RO75UPCb36u5nzxwzV4aFggvjHY0s8dnC9SRndh/IQGhUfIuuT5vLRHHP6Mc
+	 K1sGiiSW4ebwVx+7Utb4cgjie5ndXNJBjH7Lg49kYigRXnXpkxRbcHBRO0bqcmXgZj
+	 MgNncGcUilz/vm19oRV49rtYw8DPUlXsLyytbp+Y=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 13 Jan 2026 13:28:58 +0100
-Subject: [PATCH v4 14/17] lockdown: Make the relationship to MODULE_SIG a
- dependency
+Date: Tue, 13 Jan 2026 13:29:01 +0100
+Subject: [PATCH v4 17/17] kbuild: make CONFIG_MODULE_HASHES compatible with
+ module stripping
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260113-module-hashes-v4-14-0b932db9b56b@weissschuh.net>
+Message-Id: <20260113-module-hashes-v4-17-0b932db9b56b@weissschuh.net>
 References: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
 In-Reply-To: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
 To: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
@@ -67,37 +67,117 @@ Cc: =?utf-8?q?Fabian_Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>,
  linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1768307859; l=818;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1768307859; l=3767;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=NC/OO27F4y33AwnsUK1UgiJc9IBnwzGy7eK0nVFHjZg=;
- b=whnyma/h0t/rLvPiiVgW2QazugD64J2qmm54nGxJEUn52D2Uhg93xQhjG9IWw62Wsy/Kck9gG
- NGxmuX36RlYD9QmNa4U/SZm822fXAG+a85BnQRjLyq6/k6I3VNwuzEA
+ bh=Ws8Eb0NwBaSsIELRvPFLQCi4wI4t0JSg+rOArDpr4jQ=;
+ b=oEsyx/jtBizezIcvSkje+0qtObz/4ddhy8qPoVzSRgXe5bKNpF2FVLAcW5REc98tF23qYcGl2
+ oWzLDhETAiYD5GsTguxB0tE2w91SHoXCLNfs4qDbap5w+MSSx88FHYp
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The new hash-based module integrity checking will also be able to
-satisfy the requirements of lockdown.
-Such an alternative is not representable with "select", so use
-"depends on" instead.
+CONFIG_MODULE_HASHES needs to process the modules at build time in the
+exact form they will be loaded at runtime. If the modules are stripped
+afterwards they will not be loadable anymore.
+
+Also evaluate INSTALL_MOD_STRIP at build time and build the hashes based
+on modules stripped this way.
+
+If users specify inconsistent values of INSTALL_MOD_STRIP between build
+and installation time, an error is reported.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- security/lockdown/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .gitignore                | 1 +
+ kernel/module/Kconfig     | 5 +++++
+ scripts/Makefile.modfinal | 9 +++++++--
+ scripts/Makefile.modinst  | 4 ++--
+ scripts/Makefile.vmlinux  | 1 +
+ 5 files changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/security/lockdown/Kconfig b/security/lockdown/Kconfig
-index e84ddf484010..155959205b8e 100644
---- a/security/lockdown/Kconfig
-+++ b/security/lockdown/Kconfig
-@@ -1,7 +1,7 @@
- config SECURITY_LOCKDOWN_LSM
- 	bool "Basic module for enforcing kernel lockdown"
- 	depends on SECURITY
--	select MODULE_SIG if MODULES
-+	depends on !MODULES || MODULE_SIG
+diff --git a/.gitignore b/.gitignore
+index 299c54083672..900251c72ade 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -29,6 +29,7 @@
+ *.gz
+ *.i
+ *.ko
++*.ko.stripped
+ *.lex.c
+ *.ll
+ *.lst
+diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
+index c00ca830330c..9fd34765ce2c 100644
+--- a/kernel/module/Kconfig
++++ b/kernel/module/Kconfig
+@@ -425,6 +425,11 @@ config MODULE_HASHES
+ 
+ 	  Also see the warning in MODULE_SIG about stripping modules.
+ 
++# To validate the consistency of INSTALL_MOD_STRIP for MODULE_HASHES
++config MODULE_INSTALL_STRIP
++	string
++	default "$(INSTALL_MOD_STRIP)"
++
+ config MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS
+ 	bool "Allow loading of modules with missing namespace imports"
  	help
- 	  Build support for an LSM that enforces a coarse kernel lockdown
- 	  behaviour.
+diff --git a/scripts/Makefile.modfinal b/scripts/Makefile.modfinal
+index 5b8e94170beb..890724edac69 100644
+--- a/scripts/Makefile.modfinal
++++ b/scripts/Makefile.modfinal
+@@ -63,10 +63,14 @@ ifdef CONFIG_DEBUG_INFO_BTF_MODULES
+ endif
+ 	+$(call cmd,check_tracepoint)
+ 
++%.ko.stripped: %.ko $(wildcard include/config/MODULE_INSTALL_STRIP)
++	$(call cmd,install_mod)
++	$(call cmd,strip_mod)
++
+ quiet_cmd_merkle = MERKLE  $@
+-      cmd_merkle = $(objtree)/scripts/modules-merkle-tree $@ .ko
++      cmd_merkle = $(objtree)/scripts/modules-merkle-tree $@ $(if $(CONFIG_MODULE_INSTALL_STRIP),.ko.stripped,.ko)
+ 
+-.tmp_module_hashes.c: $(modules:%.o=%.ko) $(objtree)/scripts/modules-merkle-tree FORCE
++.tmp_module_hashes.c: $(if $(CONFIG_MODULE_INSTALL_STRIP),$(modules:%.o=%.ko.stripped),$(modules:%.o=%.ko)) $(objtree)/scripts/modules-merkle-tree $(wildcard include/config/MODULE_INSTALL_STRIP) FORCE
+ 	$(call cmd,merkle)
+ 
+ ifdef CONFIG_MODULE_HASHES
+@@ -75,6 +79,7 @@ endif
+ 
+ targets += $(modules:%.o=%.ko) $(modules:%.o=%.mod.o) .module-common.o
+ targets += $(modules:%.o=%.merkle) .tmp_module_hashes.c
++targets += $(modules:%.o=%.ko.stripped)
+ 
+ # Add FORCE to the prerequisites of a target to force it to be always rebuilt.
+ # ---------------------------------------------------------------------------
+diff --git a/scripts/Makefile.modinst b/scripts/Makefile.modinst
+index 07380c7233a0..45606f994ad9 100644
+--- a/scripts/Makefile.modinst
++++ b/scripts/Makefile.modinst
+@@ -68,8 +68,8 @@ __modinst: $(install-y)
+ 
+ ifdef CONFIG_MODULE_HASHES
+ ifeq ($(KBUILD_EXTMOD),)
+-ifdef INSTALL_MOD_STRIP
+-$(error CONFIG_MODULE_HASHES and INSTALL_MOD_STRIP are mutually exclusive)
++ifneq ($(INSTALL_MOD_STRIP),$(CONFIG_MODULE_INSTALL_STRIP))
++$(error Inconsistent values for INSTALL_MOD_STRIP between build and installation)
+ endif
+ endif
+ endif
+diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+index f4e38b953b01..4ce849f6253a 100644
+--- a/scripts/Makefile.vmlinux
++++ b/scripts/Makefile.vmlinux
+@@ -81,6 +81,7 @@ endif
+ ifdef CONFIG_MODULE_HASHES
+ vmlinux.unstripped: $(objtree)/scripts/modules-merkle-tree
+ vmlinux.unstripped: modules.order
++vmlinux.unstripped: $(wildcard include/config/MODULE_INSTALL_STRIP)
+ endif
+ 
+ # vmlinux
 
 -- 
 2.52.0
