@@ -1,32 +1,31 @@
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FCB3921F8;
-	Tue, 13 Jan 2026 12:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9583904DE;
+	Tue, 13 Jan 2026 12:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768307873; cv=none; b=IcWnoyIiknrpldNDPBYEmTEDmar7gTEqqdyufPib+Ewo7v6JuXte6F7vmZhK6jrF6cUgBLmjQB0M3hdh+7/eYqlYnSL7+r7FmyTtS3DroR50ugJU3ItgqhFHnvLK5D2mczADlk5nl6mDqlmtI+ivbhR9VLZCI6xoS8iuHoLi8mo=
+	t=1768307873; cv=none; b=RTmimWMVKfxXk4zXiYLHG47bnaBU2yhB9C5MLCaQgN72stTQY6waq+qOsViehefEiOCZtQoaTeXiZ4cN9EAZs6O40Ok+Fs6i5bOHw8GAOGzjZBMKKtjLE3VhTi8PajWpBMO0OuRmnCfrlXzeimV0dzFE0twnVDcqLvhXQmj3+Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1768307873; c=relaxed/simple;
-	bh=b2TM6fz30nYE4pXc7lphgAZV10HkjJO6Y6M5OUfLXpI=;
+	bh=mjGdw2yxzWxgtsTNEl1bBGcD2Uicfy0x+S+3g1xrhKs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=M6QNH01hmbQCKH1qE7lk3RyPK4+ckJSIFxba9wrgTSWt2AgWaMoUUu2vtLlFqXQzqUWFQWtx6P4N9HOhXS29DKMPMnW6XMCb1BrOes3KtZX5fwBLSV6fpMAdIa4FgAfRDqi27FIUxwKKsN9xbAPs/PRjtUaA1fmH4ez8Xjil9+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=U1KnkUqV; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=IUqZMOzqnhhFFfBnEw7r6WY8f1DOvGls1MuM3g8+Tdj/Avi5xfufA3yGptkUMoqV5weU8xtJH1vl9bTnlxcaf1mELbvsG4xjFUTwDtm5TJx3WD8OwDRR3wjcCh7MEkkVskRL43zICWthSGh0NTDTWscQegmTuXm8Oa9YT/AONNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=WFMGTKFM; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="U1KnkUqV"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="WFMGTKFM"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1768307861;
-	bh=b2TM6fz30nYE4pXc7lphgAZV10HkjJO6Y6M5OUfLXpI=;
+	bh=mjGdw2yxzWxgtsTNEl1bBGcD2Uicfy0x+S+3g1xrhKs=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=U1KnkUqV1THtBM/FnYjupYo4PNuIDXrDa9wv1DZZEcE2tF6N/S6c6EF/7n1DbgEIo
-	 qOks4JyottD1KEeI5d5Su4cVMYj6/huuFG1gQCYx8NWdP5UZzwImedmtvEXcdV9YUP
-	 QToV2OswA9J3WiLqB4jdefpF4mhb4HxgZoFv100U=
+	b=WFMGTKFMSCsakSKivcHT5zu72mKHJYU+l6hZ0Ds8YZP6nlir5oVmNph2sjIDlclnG
+	 +y3O47iXttG/2e2trcAME/dynWcEVSqoRVgGfwQn4M071eJAIdD7sx4q2lIzsfxZ8h
+	 SEtYLkde87SzPAkZ9Mq72QmsJzaGe7nQdHrm0Q20=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 13 Jan 2026 13:29:00 +0100
-Subject: [PATCH v4 16/17] kbuild: move handling of module stripping to
- Makefile.lib
+Date: Tue, 13 Jan 2026 13:28:56 +0100
+Subject: [PATCH v4 12/17] module: Move signature splitting up
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -35,7 +34,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260113-module-hashes-v4-16-0b932db9b56b@weissschuh.net>
+Message-Id: <20260113-module-hashes-v4-12-0b932db9b56b@weissschuh.net>
 References: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
 In-Reply-To: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
 To: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
@@ -67,142 +66,103 @@ Cc: =?utf-8?q?Fabian_Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>,
  linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1768307859; l=3531;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1768307859; l=3025;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=b2TM6fz30nYE4pXc7lphgAZV10HkjJO6Y6M5OUfLXpI=;
- b=Xez2lBrIjdFMFK8Oh5pBpyprlmOXfIFf5MbbX1IYj3vnIscUbHikzrmsTG8b9pMw9G8LxfD6v
- TVK+2le9j2rBEgHkmELEMe8iyvQ9/x6dQX0oXApfSpXVDLL5sLXzdtE
+ bh=mjGdw2yxzWxgtsTNEl1bBGcD2Uicfy0x+S+3g1xrhKs=;
+ b=awMfsURUOFCD2iZVVxJ0L7EbCCDNlOcWxUEUE7J742mmPYLUEoPlh9tuteXrcLXkmbAsJ5IEp
+ W8BKKGMM5JdC9G+RCkMV/mRthjFNtlf97D2xKTMLMHkvxfe/OH8pPvq
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-To allow CONFIG_MODULE_HASHES in combination with INSTALL_MOD_STRIP,
-this logc will also be used by Makefile.modfinal.
+The signature splitting will also be used by CONFIG_MODULE_HASHES.
 
-Move it to a shared location to enable reuse.
+Move it up the callchain, so the result can be reused.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- scripts/Makefile.lib     | 32 ++++++++++++++++++++++++++++++++
- scripts/Makefile.modinst | 37 +++++--------------------------------
- 2 files changed, 37 insertions(+), 32 deletions(-)
+ kernel/module/internal.h |  2 +-
+ kernel/module/main.c     | 13 ++++++++++++-
+ kernel/module/signing.c  | 21 +++++++--------------
+ 3 files changed, 20 insertions(+), 16 deletions(-)
 
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 28a1c08e3b22..7fcf3c43e408 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -474,6 +474,38 @@ define sed-offsets
- 	s:->::; p;}'
- endef
+diff --git a/kernel/module/internal.h b/kernel/module/internal.h
+index e053c29a5d08..e2d49122c2a1 100644
+--- a/kernel/module/internal.h
++++ b/kernel/module/internal.h
+@@ -337,7 +337,7 @@ int module_enforce_rwx_sections(const Elf_Ehdr *hdr, const Elf_Shdr *sechdrs,
+ void module_mark_ro_after_init(const Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			       const char *secstrings);
  
-+#
-+# Module Installation
-+#
-+quiet_cmd_install_mod = INSTALL $@
-+      cmd_install_mod = cp $< $@
+-int module_sig_check(struct load_info *info, int flags);
++int module_sig_check(struct load_info *info, const u8 *sig, size_t sig_len);
+ 
+ #ifdef CONFIG_DEBUG_KMEMLEAK
+ void kmemleak_load_module(const struct module *mod, const struct load_info *info);
+diff --git a/kernel/module/main.c b/kernel/module/main.c
+index c09b25c0166a..d65bc300a78c 100644
+--- a/kernel/module/main.c
++++ b/kernel/module/main.c
+@@ -3346,10 +3346,21 @@ static int early_mod_check(struct load_info *info, int flags)
+ 
+ static int module_integrity_check(struct load_info *info, int flags)
+ {
++	bool mangled_module = flags & (MODULE_INIT_IGNORE_MODVERSIONS |
++				       MODULE_INIT_IGNORE_VERMAGIC);
++	size_t sig_len;
++	const u8 *sig;
+ 	int err = 0;
+ 
++	if (IS_ENABLED(CONFIG_MODULE_SIG_POLICY)) {
++		err = mod_split_sig(info->hdr, &info->len, mangled_module,
++				    &sig_len, &sig, "module");
++		if (err)
++			return err;
++	}
 +
-+# Module Strip
-+# ---------------------------------------------------------------------------
-+#
-+# INSTALL_MOD_STRIP, if defined, will cause modules to be stripped after they
-+# are installed. If INSTALL_MOD_STRIP is '1', then the default option
-+# --strip-debug will be used. Otherwise, INSTALL_MOD_STRIP value will be used
-+# as the options to the strip command.
-+ifeq ($(INSTALL_MOD_STRIP),1)
-+mod-strip-option := --strip-debug
-+else
-+mod-strip-option := $(INSTALL_MOD_STRIP)
-+endif
-+
-+# Strip
-+ifdef INSTALL_MOD_STRIP
-+
-+quiet_cmd_strip_mod = STRIP   $@
-+      cmd_strip_mod = $(STRIP) $(mod-strip-option) $@
-+
-+else
-+
-+quiet_cmd_strip_mod =
-+      cmd_strip_mod = :
-+
-+endif
-+
- # Use filechk to avoid rebuilds when a header changes, but the resulting file
- # does not
- define filechk_offsets
-diff --git a/scripts/Makefile.modinst b/scripts/Makefile.modinst
-index ba4343b40497..07380c7233a0 100644
---- a/scripts/Makefile.modinst
-+++ b/scripts/Makefile.modinst
-@@ -8,6 +8,7 @@ __modinst:
+ 	if (IS_ENABLED(CONFIG_MODULE_SIG))
+-		err = module_sig_check(info, flags);
++		err = module_sig_check(info, sig, sig_len);
  
- include $(objtree)/include/config/auto.conf
- include $(srctree)/scripts/Kbuild.include
-+include $(srctree)/scripts/Makefile.lib
+ 	if (err)
+ 		return err;
+diff --git a/kernel/module/signing.c b/kernel/module/signing.c
+index 8a5f66389116..86164761cac7 100644
+--- a/kernel/module/signing.c
++++ b/kernel/module/signing.c
+@@ -15,26 +15,19 @@
+ #include <uapi/linux/module.h>
+ #include "internal.h"
  
- install-y :=
+-int module_sig_check(struct load_info *info, int flags)
++int module_sig_check(struct load_info *info, const u8 *sig, size_t sig_len)
+ {
+ 	int err;
+ 	const char *reason;
+ 	const void *mod = info->hdr;
+-	size_t sig_len;
+-	const u8 *sig;
+-	bool mangled_module = flags & (MODULE_INIT_IGNORE_MODVERSIONS |
+-				       MODULE_INIT_IGNORE_VERMAGIC);
  
-@@ -36,7 +37,7 @@ install-y += $(addprefix $(MODLIB)/, modules.builtin modules.builtin.modinfo)
- install-$(CONFIG_BUILTIN_MODULE_RANGES) += $(MODLIB)/modules.builtin.ranges
+-	err = mod_split_sig(info->hdr, &info->len, mangled_module, &sig_len, &sig, "module");
++	err = verify_pkcs7_signature(mod, info->len, sig, sig_len,
++				     VERIFY_USE_SECONDARY_KEYRING,
++				     VERIFYING_MODULE_SIGNATURE,
++				     NULL, NULL);
+ 	if (!err) {
+-		err = verify_pkcs7_signature(mod, info->len, sig, sig_len,
+-					     VERIFY_USE_SECONDARY_KEYRING,
+-					     VERIFYING_MODULE_SIGNATURE,
+-					     NULL, NULL);
+-		if (!err) {
+-			info->sig_ok = true;
+-			return 0;
+-		}
++		info->sig_ok = true;
++		return 0;
+ 	}
  
- $(addprefix $(MODLIB)/, modules.builtin modules.builtin.modinfo modules.builtin.ranges): $(MODLIB)/%: % FORCE
--	$(call cmd,install)
-+	$(call cmd,install_mod)
- 
- endif
- 
-@@ -65,40 +66,12 @@ install-$(CONFIG_MODULES) += $(modules)
- __modinst: $(install-y)
- 	@:
- 
--#
--# Installation
--#
--quiet_cmd_install = INSTALL $@
--      cmd_install = cp $< $@
--
--# Strip
--#
--# INSTALL_MOD_STRIP, if defined, will cause modules to be stripped after they
--# are installed. If INSTALL_MOD_STRIP is '1', then the default option
--# --strip-debug will be used. Otherwise, INSTALL_MOD_STRIP value will be used
--# as the options to the strip command.
--ifdef INSTALL_MOD_STRIP
--
- ifdef CONFIG_MODULE_HASHES
- ifeq ($(KBUILD_EXTMOD),)
-+ifdef INSTALL_MOD_STRIP
- $(error CONFIG_MODULE_HASHES and INSTALL_MOD_STRIP are mutually exclusive)
- endif
- endif
--
--ifeq ($(INSTALL_MOD_STRIP),1)
--strip-option := --strip-debug
--else
--strip-option := $(INSTALL_MOD_STRIP)
--endif
--
--quiet_cmd_strip = STRIP   $@
--      cmd_strip = $(STRIP) $(strip-option) $@
--
--else
--
--quiet_cmd_strip =
--      cmd_strip = :
--
- endif
- 
- #
-@@ -133,8 +106,8 @@ endif
- $(foreach dir, $(sort $(dir $(install-y))), $(shell mkdir -p $(dir)))
- 
- $(dst)/%.ko: %.ko FORCE
--	$(call cmd,install)
--	$(call cmd,strip)
-+	$(call cmd,install_mod)
-+	$(call cmd,strip_mod)
- 	$(call cmd,sign)
- 
- ifdef CONFIG_MODULES
+ 	/*
 
 -- 
 2.52.0
