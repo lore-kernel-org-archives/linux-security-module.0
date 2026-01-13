@@ -1,154 +1,148 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42709284686;
-	Tue, 13 Jan 2026 14:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3CD195811
+	for <linux-security-module@vger.kernel.org>; Tue, 13 Jan 2026 22:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768316201; cv=none; b=o0wgjhKmbdX/h3jJdxLDMvVofaOuMK5KwvkFqNTYatnZhEON0CIjItTyiB4lD3Bk9kKOd8vh+IUbOnHmA+bBjQD5vA+JDoGwzdJ/XwSjBVx5iLM74NQdzOky6PfRwnfseMLcYM14SeCi1U2L4XEg/mE6DeysuL87U7MoHGOn4Ew=
+	t=1768344727; cv=none; b=j72FcMKG3i3k4WVKEdUK6OOkoPH7JvfPUtLWvaCnzc2ctoECoiq+SMBasaL5l3/+brs5LyZ1UCBOz8PYFdntxFw2ymEZdoeRuc3bRTBChLaRl5AOxvGAiA5sMifQY0BL5wx9pljhANPOuZw+N6nORjxZj4/RWrfF36anqWT8WVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768316201; c=relaxed/simple;
-	bh=NAqsrBRRVQ9IjNII30nTZcG+axDLjmdYDnjuoF9bBio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HV6KWreyR79nz9hSHBqcqHWaQbSfQWstauNtshrJCeATQeFxgDWFsRTR7WbRw5h67t7Q5CJ3yfLkQXGbHQCUnghie4yR31tS3dXYfvRPQl/iLOnxj1AVfkqBlbialY/ys9scasObMUhnq0rTFf8Tt7MA/o2EiLmeSe/FsXFh1JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sSx4mOU4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EElHHGGH; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1768344727; c=relaxed/simple;
+	bh=0oJxC/qT0DQHn+n3hPR9BO6hGs7sI3XptidTSGbO+Og=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iqC/YNikagCfTJTMVJgCcEQFY/2iprtADeDZeczg67KPmf6puvu+XzzcNfwsXtGII7IsrO4bYScBjmUobSF67y3o1Rou2Vx43uTvKdP0zDEP8SvVvS3eCi14iyOjldv5Jj9JRFYUPhqd8HAyaeGTaIuHdYqZseL9vT1kCRS6sbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZjxH4c28; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sSx4mOU4";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EElHHGGH"
-Date: Tue, 13 Jan 2026 15:56:35 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1768316198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7sfzPEDYda0fB777q3Y+R5qIxdXTsgJj2IRA+hNFGpw=;
-	b=sSx4mOU4qkDYzkkx/o4BEtWyl3KyxW3euTuarzApOzTpXlaTS++4XY/zozFEdwI+2D4gqc
-	X/2YYXHPhJ39OiUekNo9mxCgbd3mRKVP6iJ5LixKaumKVEOue7aHTdj2/SSw9AIA7xysiw
-	khwRiBeHIgbbxPJE6nsPK4snz9MXXmwk6QsCaNwglaoU9+6Hv1fw7AOuDtH/SrsWBwtrSs
-	Zpm5UWEXMa1w74IQw5HzaMgnRUPa2rwJxDOUlrasiueQFGxKTnhVEfsy49uPFRY/wFDjFK
-	OtlrNM9syil5J8J1N2p2o6zWC7xe4RZ5ft3jv1L7pqgXQLYRRkdUm/6V+g4TPg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1768316198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7sfzPEDYda0fB777q3Y+R5qIxdXTsgJj2IRA+hNFGpw=;
-	b=EElHHGGH26sj8RjZyTS7MzBbQHDhVABCJGxSUKy3ePFAS2cW41IbJqoE/+HSbaCGe4llt6
-	VlRf7PDMccGp4EBA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Aaron Tomlin <atomlin@atomlin.com>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	Nicolas Schier <nsc@kernel.org>,
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
-	Xiu Jianfeng <xiujianfeng@huawei.com>,
-	Fabian =?utf-8?Q?Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>,
-	Arnout Engelen <arnout@bzzt.net>,
-	Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>,
-	Christian Heusel <christian@heusel.eu>,
-	=?utf-8?B?Q8OianU=?= Mihai-Drosi <mcaju95@gmail.com>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v4 15/17] module: Introduce hash-based integrity checking
-Message-ID: <20260113145635.YfSTBhVs@linutronix.de>
-References: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
- <20260113-module-hashes-v4-15-0b932db9b56b@weissschuh.net>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZjxH4c28"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-34c3cb504efso6216579a91.2
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Jan 2026 14:52:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1768344726; x=1768949526; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zTgs4iA1UcoUUq4Qf1mdqvfKTPWVAq+aYheUpXWDRX8=;
+        b=ZjxH4c28CX/mTnBaKxMZyI45tETV7tIRK5El5PsVJ+SvA6StkTCpao7Sw02+0dcv1k
+         tLpqvbdMK27TDerCT9E+cbo/Ym4+f7kdAAJEtdGn1NaSl1DEW//8XMFKZbQm54KGKC0R
+         iJWvVhm5Md14gkZXY0qdPxrw1EKAuo1pX2/d7dcFUmOGJLCSWcYH2CicEXKoGIviQGfo
+         Ey+NAVkg/AXVmXaXkhvZPMwj5Ze6Ihv3Hkm17B8WbGUbrGJ4b2ZK+6qqRqd0bnG8uGDQ
+         rNiz55P4UOPU6JZhSj8LDE8XaBboYiY+dlUieaCZAogSw30kjsnTTR0eUa/UAth8084O
+         VBsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768344726; x=1768949526;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=zTgs4iA1UcoUUq4Qf1mdqvfKTPWVAq+aYheUpXWDRX8=;
+        b=ZRjfGmzY1fpJgWBthRY8aUlASvns7h5+QnviHKTtFzzWBSu01xVMNrl7B9oOHl5Bq+
+         VoGwJ8CVz1SkyZNaWaAAazqP+YYssyHTwZGq5nMD3wSnjiOTmdhIFnCYBMj/pbfnzQom
+         is0mCnZnfE0wCxCtgjmRPq7VEV6Jtb+hoyE7I+/S+B4dZ+U+vs1aEiUxuiTgnZlwLxnS
+         zEthhoLUXQWndu05Fo8O4A8KFz/vrSBTeLfAbGi94Ai4NHMQI94r6MM4Z5//5Q+cW+IT
+         Gwp1ZPzEDEO7lixicXiwebklHi4T/95++oIL0Eb9/d8veYQiOmdt10XD+bKiuafC0eZg
+         ihSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwBr4OsxHJZGSYqMOk6arlfMJKEt17SpaJ0OlAeehgJNIr/M7AzDdKms9c7YqSVO4JNfzH+9domTMCwwA7tqL7GkO+mg8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygTPTgqMs9g7c3HHcHjkjeZyl7UDYn2ml0LbNxMd4Jy0nO8VY6
+	5O2Zk17QbXGNvA2Pjii2mjNcCCiuJL9EyteV3ic2fLt8c3Bt2Xft2ezOJCw1hwNCc3nZ0cd9bhb
+	1cTksEdT8SB0v3giKnT2xW+GJVS4pojri5EaO1PTb
+X-Gm-Gg: AY/fxX6gidHC0idwcsKmOqA0nUM3vpLRT2B52mv66E60QxDS7HLdRHVYjRFROs9i3Lt
+	hrXiFR5rBLBEgGiVOXCxWqI013lOmwLlw8hXgV8sXdB6lm88ZEVl992TRIR9qSu0vkE89wag1a+
+	psU1kl7JAblN0JChsRWIxJt4HIo6xGVzVLTiUyTx+xI8y4rHgyxegjwHqGH7X0u4TwFMMDf6DjT
+	PqcqAaUE3Hsdq+E7dayCjnarlcSmzps27iDn4ERly9+AVW/S6uuYHa92uzYlqeqwvIWGR0=
+X-Received: by 2002:a17:90b:5590:b0:341:194:5e7a with SMTP id
+ 98e67ed59e1d1-3510913d098mr600260a91.29.1768344725818; Tue, 13 Jan 2026
+ 14:52:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20260110143300.71048-2-gnoack3000@gmail.com> <20260110143300.71048-4-gnoack3000@gmail.com>
+ <4bc22faa-2927-4ef9-b5dc-67a7575177e9@gmail.com>
+In-Reply-To: <4bc22faa-2927-4ef9-b5dc-67a7575177e9@gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 13 Jan 2026 17:51:54 -0500
+X-Gm-Features: AZwV_QiZ1R95QOsU8k112gBC64BRrl7V4eE_Icbpk4n3D4DsVaZz0a3e543gHx0
+Message-ID: <CAHC9VhSRiHwLEWfFkQdPEwgB4AXKbXzw_+3u=9hPpvUTnu02Bg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] lsm: Add hook unix_path_connect
+To: Justin Suess <utilityemal77@gmail.com>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>, 
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, 
+	Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260113-module-hashes-v4-15-0b932db9b56b@weissschuh.net>
 
-On 2026-01-13 13:28:59 [+0100], Thomas Wei=C3=9Fschuh wrote:
-> --- /dev/null
-> +++ b/scripts/modules-merkle-tree.c
-> @@ -0,0 +1,467 @@
-=E2=80=A6
-> +static void build_proof(struct mtree *mt, unsigned int n, int fd)
-> +{
-> +	unsigned char cur[EVP_MAX_MD_SIZE];
-> +	unsigned char tmp[EVP_MAX_MD_SIZE];
+On Sat, Jan 10, 2026 at 11:45=E2=80=AFAM Justin Suess <utilityemal77@gmail.=
+com> wrote:
+> On 1/10/26 09:32, G=C3=BCnther Noack wrote:
+> > From: Justin Suess <utilityemal77@gmail.com>
+> >
+> > Adds an LSM hook unix_path_connect.
+> >
+> > This hook is called to check the path of a named unix socket before a
+> > connection is initiated.
+> >
+> > Cc: G=C3=BCnther Noack <gnoack3000@gmail.com>
+> > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+> > ---
+> >  include/linux/lsm_hook_defs.h |  4 ++++
+> >  include/linux/security.h      | 11 +++++++++++
+> >  net/unix/af_unix.c            |  9 +++++++++
+> >  security/security.c           | 20 ++++++++++++++++++++
+> >  4 files changed, 44 insertions(+)
 
-This and a few other instances below could be optimized to avoid
-hashing. I probably forgot to let you know.
--> https://git.kernel.org/pub/scm/linux/kernel/git/bigeasy/mtree-hashed-mod=
-s.git/commit/?id=3D10b565c123c731da37befe862de13678b7c54877
+...
 
-> +	struct file_entry *fe, *fe_sib;
-> +
-> +	fe =3D &fh_list[n];
-> +
-> +	if ((n & 1) =3D=3D 0) {
-> +		/* No pair, hash with itself */
-> +		if (n + 1 =3D=3D num_files)
-> +			fe_sib =3D fe;
-> +		else
-> +			fe_sib =3D &fh_list[n + 1];
-> +	} else {
-> +		fe_sib =3D &fh_list[n - 1];
-> +	}
-> +	/* First comes the node position into the file */
-> +	write_be_int(fd, n);
-> +
-> +	if ((n & 1) =3D=3D 0)
-> +		hash_entry(fe->hash, fe_sib->hash, cur);
-> +	else
-> +		hash_entry(fe_sib->hash, fe->hash, cur);
-> +
-> +	/* Next is the sibling hash, followed by hashes in the tree */
-> +	write_hash(fd, fe_sib->hash);
-> +
-> +	for (unsigned int i =3D 0; i < mt->levels - 1; i++) {
-> +		n >>=3D 1;
-> +		if ((n & 1) =3D=3D 0) {
-> +			void *h;
-> +
-> +			/* No pair, hash with itself */
-> +			if (n + 1 =3D=3D mt->entries[i])
-> +				h =3D cur;
-> +			else
-> +				h =3D mt->l[i][n + 1].hash;
-> +
-> +			hash_entry(cur, h, tmp);
-> +			write_hash(fd, h);
-> +		} else {
-> +			hash_entry(mt->l[i][n - 1].hash, cur, tmp);
-> +			write_hash(fd, mt->l[i][n - 1].hash);
-> +		}
-> +		memcpy(cur, tmp, hash_size);
-> +	}
-> +
-> +	 /* After all that, the end hash should match the root hash */
-> +	if (memcmp(cur, mt->l[mt->levels - 1][0].hash, hash_size))
-> +		errx(1, "hash mismatch");
-> +}
+> > +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
+> > +/*
+> > + * security_unix_path_connect() - Check if a named AF_UNIX socket can =
+connect
+> > + * @path: path of the socket being connected to
+> > + * @type: type of the socket
+> > + * @flags: flags associated with the socket
+> > + *
+> > + * This hook is called to check permissions before connecting to a nam=
+ed
+> > + * AF_UNIX socket.
+> > + *
+> > + * Return: Returns 0 if permission is granted.
+> > + */
+> > +int security_unix_path_connect(const struct path *path, int type, int =
+flags)
+> > +{
+> > +     return call_int_hook(unix_path_connect, path, type, flags);
+> > +}
+> > +EXPORT_SYMBOL(security_unix_path_connect);
 
-Sebastian
+...
+
+> I'm considering renaming this hook to unix_socket_path_lookup, since as G=
+=C3=BCnther
+> pointed out this hook is not just hit on connect, but also on sendmsg.
+
+I'm not bothered too much by this, either _path_connect() or
+_path_lookup() is okay; please don't use
+security_unix_socket_path_lookup(), that's longer than it needs to be,
+if you've got "_unix_" in there we know you're talking about a socket
+:)
+
+While I don't want us to do it often, we can always change established
+hook names if the names end up being really awful or misleading.
+We've done it in the past.
+
+It would be nice if somehow the hook name reflected the fact that it
+is called on the "client" side of the connection, and not the "server"
+side, but I wouldn't use either of those terms (client or server), and
+to be honest I can't think of anything better than _path_lookup() at
+the moment.
+
+--=20
+paul-moore.com
