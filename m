@@ -1,133 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556D22EA48F;
-	Tue, 13 Jan 2026 09:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B327B2556E;
+	Tue, 13 Jan 2026 12:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768296846; cv=none; b=jRKygaTFk6RsYTEatS54jNIKfTFadtYwrgjI6Pl3MFFRsoF1E/C5gVOBmfdyHbf2aUdH40OsUzhdSHJXTHQ4IpdG7UFLWFYBijR70DYIQ+q6WhQPDPNWjj84QQGSUORbbSacO5Gnkg/69kzHHZwzk03LU8qZQyEtTHC5gruAm2Q=
+	t=1768307865; cv=none; b=Y8gBB9FSTRvRH1DvDUnZgUBCDRRaDI4+JEkZTlnF3heuNxyfeoHElBbp2YL2of+sWPj5hAxkkz/V4bef2t29tQB63yomSEo64RdOtl555X8QjlMIMRDULshkoqdYMMb7uV+i8MLLlkv9A49kKw7QPr5+mUy2s0T/i/msD3QQN+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768296846; c=relaxed/simple;
-	bh=3BAHxdUuSQCK2Gm9pkSjDL+/cYetI64jI16DsIz55Bs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hAgtDs4zRFNXMICzY0EV8dx9nurmMc7XtZ/T7e+lqYOKW0uJyFe29X1Xc2wC3xeUQD5Ie7+icMR2NyC+HyTC2ZQ8H3A2r17FAk37nk05YqirvaCBI1nyNJNUh9T5ugHESX/Cg+nCntm08ctnEAREhtxIqW5m20B6URqR/E019MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OmJvPuye; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768307865; c=relaxed/simple;
+	bh=C8ZnR8aqoKvJkB4QCMCRFoAe/2le+A5GtPBqy+Qa43c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=QaSttpviYd6F/JgvNPZGJefSEe3dJXdYsuqBqbzkxbVJ5SBrXcB7ZYOU/QaPkcMPraxh+uWuYX/hBPXdqnI9GNn0Qc4Z9EwprFzi5jAWO48QvahKBSfxM2PoyZXMPhZtii2XVc4TxuU8U9q07yIYgCqkrG4T7h2zRop1zSvIRYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=R9PUdq/6; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmJvPuye"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A040C116C6;
-	Tue, 13 Jan 2026 09:34:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768296846;
-	bh=3BAHxdUuSQCK2Gm9pkSjDL+/cYetI64jI16DsIz55Bs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OmJvPuyeZ/EGjyDFqRTMxV0H0EnvyUmm1xDGSf1aLxX6xBNDIz9gShJvhj8P+1sXb
-	 mFmpnPgcnDgAZW+3ubBRbyqtG/Viv9XrFeF8YF8nJYf/X9Pgv1SigGt/1479pe3/ZA
-	 rXU6wUNYsnM7S+yyVnMK70vOzJcdPHB24oOEYK6nOnxveZlpAD3/t+42v0QGQ+t26g
-	 nFH7wEF8YSKAE0RMS249z4cD70XX39fApOQbq6jGp8jSQkt90iUwMIR74ZSC/KkXLJ
-	 WcnaaudOpZuEroltlHbBxqKMD6Hilgv7RH1B58ugeU8mJrseyJLAer95Psf3riaogO
-	 P9wOrgbMWdfuQ==
-Date: Tue, 13 Jan 2026 10:34:00 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Justin Suess <utilityemal77@gmail.com>, 
-	linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>, 
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, 
-	Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v2 1/5] lsm: Add hook unix_path_connect
-Message-ID: <20260113-kerngesund-etage-86de4a21da24@brauner>
-References: <20260110143300.71048-2-gnoack3000@gmail.com>
- <20260110143300.71048-4-gnoack3000@gmail.com>
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="R9PUdq/6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1768307859;
+	bh=C8ZnR8aqoKvJkB4QCMCRFoAe/2le+A5GtPBqy+Qa43c=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=R9PUdq/6C+yJVnO0ybvezWnXHMQKPKihc6b7mgRo1Ui/aV55w+gpn8aorgG2O0rN1
+	 vtIBjPzynlpD6eesPKHWZ1oMERg8xbGy6qq+7yhu1l/iaJpRglA2TfWK7jquq3STNn
+	 ovi55oV7d0liWgCuciPaYvSpgyHVHyg8xLH8qSqs=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Tue, 13 Jan 2026 13:28:46 +0100
+Subject: [PATCH v4 02/17] powerpc/ima: Drop unnecessary check for
+ CONFIG_MODULE_SIG
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260110143300.71048-4-gnoack3000@gmail.com>
+Message-Id: <20260113-module-hashes-v4-2-0b932db9b56b@weissschuh.net>
+References: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
+In-Reply-To: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
+To: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+ Sami Tolvanen <samitolvanen@google.com>, 
+ Daniel Gomez <da.gomez@samsung.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, 
+ Nicolas Schier <nicolas.schier@linux.dev>, 
+ Daniel Gomez <da.gomez@kernel.org>, Aaron Tomlin <atomlin@atomlin.com>, 
+ "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
+ Nicolas Schier <nsc@kernel.org>, 
+ Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+ Xiu Jianfeng <xiujianfeng@huawei.com>, Nicolas Schier <nsc@kernel.org>, 
+ Christophe Leroy <chleroy@kernel.org>
+Cc: =?utf-8?q?Fabian_Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>, 
+ Arnout Engelen <arnout@bzzt.net>, Mattia Rizzolo <mattia@mapreri.org>, 
+ kpcyrd <kpcyrd@archlinux.org>, Christian Heusel <christian@heusel.eu>, 
+ =?utf-8?q?C=C3=A2ju_Mihai-Drosi?= <mcaju95@gmail.com>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arch@vger.kernel.org, linux-modules@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1768307859; l=965;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=C8ZnR8aqoKvJkB4QCMCRFoAe/2le+A5GtPBqy+Qa43c=;
+ b=fOyWYKhWQ+jNMEiBfpyKRDrc+eKQtmdIHJd/6KYHr3QI2V48g5JUNn51K2jsWWbdtlvyanJM1
+ DKPnRJ2YqXVDVwecDFNjFeR+uDRGpALqpNP0f/cmiRLFo1HmKIbz5Hm
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Sat, Jan 10, 2026 at 03:32:57PM +0100, Günther Noack wrote:
-> From: Justin Suess <utilityemal77@gmail.com>
-> 
-> Adds an LSM hook unix_path_connect.
-> 
-> This hook is called to check the path of a named unix socket before a
-> connection is initiated.
-> 
-> Cc: Günther Noack <gnoack3000@gmail.com>
-> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-> ---
->  include/linux/lsm_hook_defs.h |  4 ++++
->  include/linux/security.h      | 11 +++++++++++
->  net/unix/af_unix.c            |  9 +++++++++
->  security/security.c           | 20 ++++++++++++++++++++
->  4 files changed, 44 insertions(+)
-> 
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 8c42b4bde09c..1dee5d8d52d2 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -317,6 +317,10 @@ LSM_HOOK(int, 0, post_notification, const struct cred *w_cred,
->  LSM_HOOK(int, 0, watch_key, struct key *key)
->  #endif /* CONFIG_SECURITY && CONFIG_KEY_NOTIFICATIONS */
->  
-> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
-> +LSM_HOOK(int, 0, unix_path_connect, const struct path *path, int type, int flags)
-> +#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-> +
->  #ifdef CONFIG_SECURITY_NETWORK
->  LSM_HOOK(int, 0, unix_stream_connect, struct sock *sock, struct sock *other,
->  	 struct sock *newsk)
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 83a646d72f6f..382612af27a6 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -1931,6 +1931,17 @@ static inline int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
->  }
->  #endif	/* CONFIG_SECURITY_NETWORK */
->  
-> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
-> +
-> +int security_unix_path_connect(const struct path *path, int type, int flags);
-> +
-> +#else /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-> +static inline int security_unix_path_connect(const struct path *path, int type, int flags)
-> +{
-> +	return 0;
-> +}
-> +#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-> +
->  #ifdef CONFIG_SECURITY_INFINIBAND
->  int security_ib_pkey_access(void *sec, u64 subnet_prefix, u16 pkey);
->  int security_ib_endport_manage_subnet(void *sec, const char *name, u8 port_num);
-> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> index 55cdebfa0da0..3aabe2d489ae 100644
-> --- a/net/unix/af_unix.c
-> +++ b/net/unix/af_unix.c
-> @@ -1226,6 +1226,15 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
->  	if (!S_ISSOCK(inode->i_mode))
->  		goto path_put;
->  
-> +	/*
-> +	 * We call the hook because we know that the inode is a socket
-> +	 * and we hold a valid reference to it via the path.
-> +	 */
-> +	err = security_unix_path_connect(&path, type, flags);
-> +	if (err)
-> +		goto path_put;
+When CONFIG_MODULE_SIG is disabled set_module_sig_enforced() is defined
+as an empty stub, so the check is unnecessary.
+The specific configuration option for set_module_sig_enforced() is
+about to change and removing the check avoids some later churn.
 
-Couldn't we try reflowing the code here so the path is passed to
-security_unix_stream_connect() and security_unix_may_send() so that all
-LSMs get the same data and we don't have to have different LSMs hooks
-into different callpaths that effectively do the same thing.
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ arch/powerpc/kernel/ima_arch.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I mean the objects are even in two completely different states between
-those hooks. Even what type of sockets get a call to the LSM is
-different between those two hooks.
+diff --git a/arch/powerpc/kernel/ima_arch.c b/arch/powerpc/kernel/ima_arch.c
+index b7029beed847..690263bf4265 100644
+--- a/arch/powerpc/kernel/ima_arch.c
++++ b/arch/powerpc/kernel/ima_arch.c
+@@ -63,8 +63,7 @@ static const char *const secure_and_trusted_rules[] = {
+ const char *const *arch_get_ima_policy(void)
+ {
+ 	if (is_ppc_secureboot_enabled()) {
+-		if (IS_ENABLED(CONFIG_MODULE_SIG))
+-			set_module_sig_enforced();
++		set_module_sig_enforced();
+ 
+ 		if (is_ppc_trustedboot_enabled())
+ 			return secure_and_trusted_rules;
+
+-- 
+2.52.0
+
