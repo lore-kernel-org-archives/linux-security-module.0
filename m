@@ -1,263 +1,382 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E5A3570BA
-	for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 10:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6525634846A;
+	Thu, 15 Jan 2026 12:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768471812; cv=none; b=GUZNnlBWZP9GqlhgOIrXxRbqEWzJOt8X6f+ziNIJA9sVBtLzYqgG8s+yNNnHOsGvBUlUea/Qj8Z4Z/PdN81lwm2SQ19uYWu5pG+zsZ03gRpdkR+TTpN7OWgTlh4Pn0tvloU9ajVp7Tqkt82jh3UOgvTGGNhisbDI/745MyFSF/4=
+	t=1768478627; cv=none; b=pXlMZ+n2SoGDUjlbPo8Leb2ucjexVUbwN9/JcWhU1EyVlyAikobCvNTgH06elAqh604tk/ud5ucxktnLca9YHBMlREh6ABlQr55ZLtemcn8MRRAz2NrLNiVchtJziMqxWzE4WvxE+KNtat0MYURF3Jcq3nbsr3p82KhDrixgcMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768471812; c=relaxed/simple;
-	bh=9k+hI8ee/XChzzMZqRaSR1BQU4YqamW09mjAmEnwWew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WlzDh3lF7hvVIx6vuyeg3lbYFqFLriU8Hw+kewI96IjqW9N00c2WWGTGyWIH2OjjuMaCGcJ1oeOwzx+aW+sMftHe7+1Kws/noDxzytAYJSQbtqlvhhn2pbl5Y3ciJW81VfDLr5XrT2iLXwlbTszNPeTBEx1JaXu8so+WdtyNGLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dvvzsaPq; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dvvzsaPq"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b8768225837so111747566b.2
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 02:10:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768471809; x=1769076609; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2FkwmQ3JsIlKc/0pGdsmQ0lUazTKrfor6cVyG/d0vIo=;
-        b=dvvzsaPqq3N6WofqzdwEaZevSR2x06v9DI8NYZ69IG5vkSyeSgiXt+UODKVz6H8xOb
-         CwZvkC250alr07NNvVi/3FJhumpD1DVZjrLdRxSVY94dFmY8oGw6zubR+uEdntlybrWj
-         Pi3ca4FULdM2WOMLdWdqMjtIb3NN/ohRCBqIoy+Q09UMhQhe25KonMwFhEx9RBj8/9AM
-         R5lrhF8eMLaRpvGk+ZOOa2FenrtdZDcz2kmq7XEY7NUMQgoUiNKjral+69acWaUyn2wC
-         Z0RouyhSIGwuovGFDVPtVeToVtF6Iy0Xk1rn260oyfDovNEs+GtaeoqeVbDPqP/gVNr7
-         go7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768471809; x=1769076609;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2FkwmQ3JsIlKc/0pGdsmQ0lUazTKrfor6cVyG/d0vIo=;
-        b=CSEwCS0tL7msQEIxLBugaBnVPAcS+3KhK8CMRBX0UeduneSz0tlip3B9kK//3mTRYf
-         2wgHglC0Cl0sbizLKaSn5YVO++WingxxNHMoLHr3fhWWgbcit66ID2ep3Fi+pYcpdw0J
-         CYlabdtWBmz8WUT30WrkxSBmNLvIgJ6NYvRVOnEZ3pjZ2fvbRbJ4Zy6t8B7oRuBDmGQa
-         FNmT+KAnuwh2Moukum+ZNZrhwwO2nSQowoCBaN44Lo9ashx7DRMAxlb8Uy9zzp3u+tU6
-         4+rM1axEYpPoloRFw7NfYyoymiYY7BCw39ZtjGiNKVHt7GGwiVGBqPFTdGPyKg74YtHO
-         d5Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCVavn8rEBYBfEjk2yJNDZVfRSAgIEUXyK7X69UTFkXvifMKkl99f3I0sNl1PboG5k5UCjxgxERl3nmOKRWnjnd1fL39+Mk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxebkWstCjplplech8CpWFZ6urX1RvdbEzABSBdKmHeRRrzbU5h
-	pZEq3bkCMEekbWP9nDCzxwSUAoB1Z2fW9NKJPiD4qQKKvpvMk84easeH
-X-Gm-Gg: AY/fxX7yTf4VR9GeqpdSiwR+Gi16Is4FDjLEcEtvYNjp+U98M6Uaxu6b7RDbomjOiyX
-	vhdYTH/Brm+qT9ViDlEQufe7x4itSwXR7HY8zoiM8wA1nLRI49W7nk4BC5Ge2JwQmmuQv7EyXCS
-	ymrltc/9WUYIXyYdShYXn4wKPI1cw23edEf7nkhkSeBvlCYlOjGVBnq2ZmuKi5nYweH0xBOFLS3
-	TVqz4TuJRtWmW9km/WmUBnTEHO2OAzq2oTR0aX1I69FqDrgl4BqNCyDZlI0p8LLH+VwT1Ux+jqW
-	/Kst/FGSYyk6NEWy+oNuOYD7t9Q7OHoBnYC6kjQl51GP/9jiJ1KK/8QMRJOuqiulrNzrHcB9HND
-	IaHmKX9k/MkMvqnEwpi+jGjXyBrZUz7L4F8oqTQ9eFPc5Fy2QSETojJFXqM+GT2fcWO+F8WXoAi
-	J/pFtnK6txMTaXQFzjKY5DGWGuV0pxNqUe70mT
-X-Received: by 2002:a17:907:3a12:b0:b87:35fc:ae5f with SMTP id a640c23a62f3a-b87678c36d9mr303953666b.52.1768471809054;
-        Thu, 15 Jan 2026 02:10:09 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b842a5180bdsm2659833866b.57.2026.01.15.02.10.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 02:10:08 -0800 (PST)
-Date: Thu, 15 Jan 2026 11:10:02 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Paul Moore <paul@paul-moore.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Justin Suess <utilityemal77@gmail.com>
-Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>,
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	konstantin.meskhidze@huawei.com,
-	Demi Marie Obenour <demiobenour@gmail.com>,
-	Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v2 1/5] lsm: Add hook unix_path_connect
-Message-ID: <20260115.b5977d57d52d@gnoack.org>
-References: <20260110143300.71048-2-gnoack3000@gmail.com>
- <20260110143300.71048-4-gnoack3000@gmail.com>
- <20260113-kerngesund-etage-86de4a21da24@brauner>
- <CAHC9VhQOQ096WEZPLo4-57cYkM8c38qzE-F8L3f_cSSB4WadGg@mail.gmail.com>
+	s=arc-20240116; t=1768478627; c=relaxed/simple;
+	bh=5Re/9TQaT/1OKZBedSlDGCk/tHpfFxFDsIAZIxJ7S9U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iDQnBKNtJAmoJ9BcYTi2qk4zq4mMM6whltbdB0ATjywC6CplZ9bN/nojS+aJmW8Z2TxcjoU0naxIJjnWoVyPTtlIPltxBYQnILP10l5iq4swztchxH496i/E8Cfc6k8AlO8mu+tHjYg/4B5GAE1mWuYdWE/R3l9G+ghCFK07oEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.196])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4dsLkG2dncztRph;
+	Thu, 15 Jan 2026 19:44:38 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 5D08840568;
+	Thu, 15 Jan 2026 19:46:53 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwCn5Aag02hpYyAAAg--.13377S2;
+	Thu, 15 Jan 2026 12:46:52 +0100 (CET)
+Message-ID: <c825efc60cace922b45d0824f11cdaf44be9c0d3.camel@huaweicloud.com>
+Subject: Re: [PATCH] ima: Detect changes to files via kstat changes rather
+ than i_version
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Frederick Lawler <fred@cloudflare.com>, Mimi Zohar
+ <zohar@linux.ibm.com>,  Roberto Sassu <roberto.sassu@huawei.com>, Dmitry
+ Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
+ <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Darrick J.
+ Wong" <djwong@kernel.org>, Christian Brauner <brauner@kernel.org>, Josef
+ Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@cloudflare.com
+Date: Thu, 15 Jan 2026 12:46:37 +0100
+In-Reply-To: <20260112-xfs-ima-fixup-v1-1-8d13b6001312@cloudflare.com>
+References: <20260112-xfs-ima-fixup-v1-1-8d13b6001312@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhQOQ096WEZPLo4-57cYkM8c38qzE-F8L3f_cSSB4WadGg@mail.gmail.com>
+X-CM-TRANSID:LxC2BwCn5Aag02hpYyAAAg--.13377S2
+X-Coremail-Antispam: 1UD129KBjvJXoWfGr47tFyUuF4xKF1DXF1kZrb_yoWkWryfpa
+	yqka47Gr48JFyIkFs7CF129a1FgrW0gFWUWry5Kw18AFnrZw1Igr9xCryYkF15KrW5Aw4j
+	qayFyr13uw4qvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFk
+	u4UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAOBGloXRcFDAACsL
 
-On Tue, Jan 13, 2026 at 06:27:15PM -0500, Paul Moore wrote:
-> On Tue, Jan 13, 2026 at 4:34 AM Christian Brauner <brauner@kernel.org> wrote:
-> > On Sat, Jan 10, 2026 at 03:32:57PM +0100, Günther Noack wrote:
-> > > From: Justin Suess <utilityemal77@gmail.com>
-> > >
-> > > Adds an LSM hook unix_path_connect.
-> > >
-> > > This hook is called to check the path of a named unix socket before a
-> > > connection is initiated.
-> > >
-> > > Cc: Günther Noack <gnoack3000@gmail.com>
-> > > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-> > > ---
-> > >  include/linux/lsm_hook_defs.h |  4 ++++
-> > >  include/linux/security.h      | 11 +++++++++++
-> > >  net/unix/af_unix.c            |  9 +++++++++
-> > >  security/security.c           | 20 ++++++++++++++++++++
-> > >  4 files changed, 44 insertions(+)
-> 
-> ...
-> 
-> > > diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> > > index 55cdebfa0da0..3aabe2d489ae 100644
-> > > --- a/net/unix/af_unix.c
-> > > +++ b/net/unix/af_unix.c
-> > > @@ -1226,6 +1226,15 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
-> > >       if (!S_ISSOCK(inode->i_mode))
-> > >               goto path_put;
-> > >
-> > > +     /*
-> > > +      * We call the hook because we know that the inode is a socket
-> > > +      * and we hold a valid reference to it via the path.
-> > > +      */
-> > > +     err = security_unix_path_connect(&path, type, flags);
-> > > +     if (err)
-> > > +             goto path_put;
-> >
-> > Couldn't we try reflowing the code here so the path is passed ...
-> 
-> It would be good if you could be a bit more specific about your
-> desires here.  Are you talking about changing the
-> unix_find_other()/unix_find_bsd() code path such that the path is
-> available to unix_find_other() callers and not limited to the
-> unix_find_bsd() scope?
-> 
-> > ... to
-> > security_unix_stream_connect() and security_unix_may_send() so that all
-> > LSMs get the same data and we don't have to have different LSMs hooks
-> > into different callpaths that effectively do the same thing.
-> >
-> > I mean the objects are even in two completely different states between
-> > those hooks. Even what type of sockets get a call to the LSM is
-> > different between those two hooks.
-> 
-> I'm working on the assumption that you are talking about changing the
-> UNIX socket code so that the path info is available to the existing
-> _may_send() and _stream_connect() hooks.  If that isn't the case, and
-> you're thinking of something different, disregard my comments below.
-> 
-> In both the unix_dgram_{connect(),sendmsg()}, aka
-> security_unix_may_send(), cases and the unix_stream_connect(), aka
-> security_unix_stream_connect(), case the call to unix_find_other() is
-> done to lookup the other end of the communication channel, which does
-> seem reasonably consistent to me.  Yes, of course, once you start
-> getting into the specifics of the UNIX socket handling the unix_dgram_
-> and unix_stream_ cases are very different, including their
-> corresponding existing LSM hooks, but that doesn't mean in the context
-> of unix_find_bsd() that security_unix_path_connect() doesn't have
-> value.
-> 
-> The alternative would be some rather serious surgery in af_unix.c to
-> persist the path struct from unix_find_bsd() until the later LSM hooks
-> are executed.  It's certainly not impossible, but I'm not sure it is
-> necessary or desirable at this point in time.  LSMs that wish to
-> connect the information from _unix_path_connect() to either
-> _unix_stream_connect() or _unix_may_send() can do so today without
-> needing to substantially change af_unix.c.
+On Mon, 2026-01-12 at 16:32 -0600, Frederick Lawler wrote:
+> Commit 1cf7e834a6fb ("xfs: switch to multigrain timestamps")
+> introduced a means to track change detection for an inode
+> via ctime updates, opposed to setting kstat.change_cookie when
+> calling into xfs_vn_getattr().
+>=20
+> This introduced a regression because IMA caches kstat.change_cookie
+> to compare against an inode's i_version directly in
+> integrity_inode_attrs_changed(), and thus could be out of date
+> depending on how file systems increment i_version.
+>=20
+> To address this, require integrity_inode_attrs_changed() to query
+> vfs_getattr_nosec() to compare the cached version against
+> kstat.change_cookie directly. This ensures that when updates occur,
+> we're accessing the same changed inode version on changes, and fallback
+> to compare against an artificial version generated from kstat.ctime
+> via integrity_ctime_guard() when there's no detected change
+> to the kstat.change_cookie.
+>=20
+> This ensures that in the absence of i_version support for file systems,
+> and in the absence of a kstat.change_cookie update, we ultimately have a
+> unique-enough version to compare against.
+>=20
+> The exact implementation for integrity_ctime_guard() is to ensure that
+> if tv_sec or tv_nsec are zero, there's some value to store back into
+> struct integrity_inode_attributes.version. This also avoids the need to
+> add additional storage and comparisons.
+>=20
+> Lastly, because EVM still relies on querying and caching a backing inode'=
+s
+> i_version, the integrity_inode_attrs_changed() falls back to the
+> original inode.i_version !=3D cached comparison. This maintains the
+> invariant that a re-evaluation in unknown change detection circumstances
+> is required.
+>=20
+> Link: https://lore.kernel.org/all/aTspr4_h9IU4EyrR@CMGLRV3
+> Suggested-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+> ---
+> We uncovered a case in kernels >=3D 6.13 where XFS is no longer updating
+> struct kstat.change_cookie on i_op getattr() access calls. Instead, XFS i=
+s
+> using multigrain ctime (as well as other file systems) for
+> change detection in commit 1cf7e834a6fb ("xfs: switch to
+> multigrain timestamps").
+>=20
+> Because file systems may implement i_version as they see fit, IMA
+> caching may be behind as well as file systems that don't support/export
+> i_version. Thus we're proposing to compare against the kstat.change_cooki=
+e
+> directly to the cached version, and fall back to a ctime guard when
+> that's not updated.
+>=20
+> EVM is largely left alone since there's no trivial way to query a file
+> directly in the LSM call paths to obtain kstat.change_cookie &
+> kstat.ctime to cache. Thus retains accessing i_version directly.
+>=20
+> Regression tests will be added to the Linux Test Project instead of
+> selftest to help catch future file system changes that may impact
+> future evaluation of IMA.
+>=20
+> I'd like this to be backported to at least 6.18 if possible.
+>=20
+> Below is a simplified test that demonstrates the issue:
+>=20
+> _fragment.config_
+> CONFIG_XFS_FS=3Dy
+> CONFIG_OVERLAY_FS=3Dy
+> CONFIG_IMA=3Dy
+> CONFIG_IMA_WRITE_POLICY=3Dy
+> CONFIG_IMA_READ_POLICY=3Dy
+>=20
+> _./test.sh_
+>=20
+> IMA_POLICY=3D"/sys/kernel/security/ima/policy"
+> TEST_BIN=3D"/bin/date"
+> MNT_BASE=3D"/tmp/ima_test_root"
+>=20
+> mkdir -p "$MNT_BASE"
+> mount -t tmpfs tmpfs "$MNT_BASE"
+> mkdir -p "$MNT_BASE"/{xfs_disk,upper,work,ovl}
+>=20
+> dd if=3D/dev/zero of=3D"$MNT_BASE/xfs.img" bs=3D1M count=3D300
+> mkfs.xfs -q "$MNT_BASE/xfs.img"
+> mount "$MNT_BASE/xfs.img" "$MNT_BASE/xfs_disk"
+> cp "$TEST_BIN" "$MNT_BASE/xfs_disk/test_prog"
+>=20
+> mount -t overlay overlay -o \
+> "lowerdir=3D$MNT_BASE/xfs_disk,upperdir=3D$MNT_BASE/upper,workdir=3D$MNT_=
+BASE/work" \
+> "$MNT_BASE/ovl"
+>=20
+> echo "audit func=3DBPRM_CHECK uid=3D$(id -u nobody)" > "$IMA_POLICY"
+>=20
+> target_prog=3D"$MNT_BASE/ovl/test_prog"
+> setpriv --reuid nobody "$target_prog"
+> setpriv --reuid nobody "$target_prog"
+> setpriv --reuid nobody "$target_prog"
+>=20
+> audit_count=3D$(dmesg | grep -c "file=3D\"$target_prog\"")
+>=20
+> if [[ "$audit_count" -eq 1 ]]; then
+>         echo "PASS: Found exactly 1 audit event."
+> else
+>         echo "FAIL: Expected 1 audit event, but found $audit_count."
+>         exit 1
+> fi
+> ---
+> Changes since RFC:
+> - Remove calls to I_IS_VERSION()
+> - Function documentation/comments
+> - Abide IMA/EVM change detection fallback invariants
+> - Combined ctime guard into version for attributes struct
+> - Link to RFC: https://lore.kernel.org/r/20251229-xfs-ima-fixup-v1-1-6a71=
+7c939f7c@cloudflare.com
+> ---
+>  include/linux/integrity.h         | 42 +++++++++++++++++++++++++++++++++=
+++----
+>  security/integrity/evm/evm_main.c |  5 ++---
+>  security/integrity/ima/ima_api.c  | 11 +++++++---
+>  security/integrity/ima/ima_main.c | 15 +++++---------
+>  4 files changed, 53 insertions(+), 20 deletions(-)
+>=20
+> diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+> index f5842372359be5341b6870a43b92e695e8fc78af..5eca8aa2769f9238c68bb4088=
+5ecc46910524f11 100644
+> --- a/include/linux/integrity.h
+> +++ b/include/linux/integrity.h
+> @@ -9,6 +9,7 @@
+> =20
+>  #include <linux/fs.h>
+>  #include <linux/iversion.h>
+> +#include <linux/kernel.h>
+> =20
+>  enum integrity_status {
+>  	INTEGRITY_PASS =3D 0,
+> @@ -36,6 +37,14 @@ struct integrity_inode_attributes {
+>  	dev_t dev;
+>  };
+> =20
+> +/*
+> + * Wrapper to generate an artificial version for a file.
+> + */
+> +static inline u64 integrity_ctime_guard(struct kstat stat)
+> +{
+> +	return stat.ctime.tv_sec ^ stat.ctime.tv_nsec;
 
-Thanks for the review, Christan and Paul!
+Unfortunately, we cannot take the risk of a collision. Better use all
+or a packed version.
 
-I am also unconvinced by the approach. It has also crossed my mind
-before though, and my reasoning is as follows:
+> +}
+> +
+>  /*
+>   * On stacked filesystems the i_version alone is not enough to detect fi=
+le data
+>   * or metadata change. Additional metadata is required.
+> @@ -51,14 +60,39 @@ integrity_inode_attrs_store(struct integrity_inode_at=
+tributes *attrs,
+> =20
+>  /*
+>   * On stacked filesystems detect whether the inode or its content has ch=
+anged.
+> + *
+> + * Must be called in process context.
+>   */
+>  static inline bool
+>  integrity_inode_attrs_changed(const struct integrity_inode_attributes *a=
+ttrs,
+> -			      const struct inode *inode)
+> +			      struct file *file, struct inode *inode)
+>  {
+> -	return (inode->i_sb->s_dev !=3D attrs->dev ||
+> -		inode->i_ino !=3D attrs->ino ||
+> -		!inode_eq_iversion(inode, attrs->version));
+> +	struct kstat stat;
+> +
+> +	might_sleep();
+> +
+> +	if (inode->i_sb->s_dev !=3D attrs->dev || inode->i_ino !=3D attrs->ino)
+> +		return true;
+> +
+> +	/*
+> +	 * EVM currently relies on backing inode i_version. While IS_I_VERSION
+> +	 * is not a good indicator of i_version support, this still retains
+> +	 * the logic such that a re-evaluation should still occur for EVM, and
+> +	 * only for IMA if vfs_getattr_nosec() fails.
+> +	 */
+> +	if (!file || vfs_getattr_nosec(&file->f_path, &stat,
+> +				       STATX_CHANGE_COOKIE | STATX_CTIME,
+> +				       AT_STATX_SYNC_AS_STAT))
+> +		return !IS_I_VERSION(inode) ||
+> +			!inode_eq_iversion(inode, attrs->version);
+> +
+> +	if (stat.result_mask & STATX_CHANGE_COOKIE)
+> +		return stat.change_cookie !=3D attrs->version;
+> +
+> +	if (stat.result_mask & STATX_CTIME)
+> +		return integrity_ctime_guard(stat) !=3D attrs->version;
 
-For reference, the function call hierarchy in af_unix.c is:
+Yes, switching to the new field I guess it works, but I'm wondering if
+we could have more uniformity across the filesystems, otherwise one has
+to use one source for filesystem X, another source for filesystem Y.
 
-* unix_dgram_connect()   (*)
-  * unix_find_other()
-    * unix_find_bsd()
-  * security_unix_may_send()
+Thanks
 
-* unix_dgram_sendmsg()   (*)
-  * unix_find_other()
-    * unix_find_bsd()
-  * security_unix_may_send()
+Roberto
 
-* unix_stream_connect()  (*)
-  * unix_find_other()
-    * unix_find_bsd()
-  * security_unix_stream_connect()
+> +
+> +	return true;
+>  }
+> =20
+> =20
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/e=
+vm_main.c
+> index 73d500a375cb37a54f295b0e1e93fd6e5d9ecddc..6a4e0e246005246d5700b1db5=
+90c1759242b9cb6 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -752,9 +752,8 @@ bool evm_metadata_changed(struct inode *inode, struct=
+ inode *metadata_inode)
+>  	bool ret =3D false;
+> =20
+>  	if (iint) {
+> -		ret =3D (!IS_I_VERSION(metadata_inode) ||
+> -		       integrity_inode_attrs_changed(&iint->metadata_inode,
+> -						     metadata_inode));
+> +		ret =3D integrity_inode_attrs_changed(&iint->metadata_inode,
+> +						    NULL, metadata_inode);
+>  		if (ret)
+>  			iint->evm_status =3D INTEGRITY_UNKNOWN;
+>  	}
+> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/im=
+a_api.c
+> index c35ea613c9f8d404ba4886e3b736c3bab29d1668..8096986f3689781d3cdf6595f=
+330033782f9cc45 100644
+> --- a/security/integrity/ima/ima_api.c
+> +++ b/security/integrity/ima/ima_api.c
+> @@ -272,10 +272,15 @@ int ima_collect_measurement(struct ima_iint_cache *=
+iint, struct file *file,
+>  	 * to an initial measurement/appraisal/audit, but was modified to
+>  	 * assume the file changed.
+>  	 */
+> -	result =3D vfs_getattr_nosec(&file->f_path, &stat, STATX_CHANGE_COOKIE,
+> +	result =3D vfs_getattr_nosec(&file->f_path, &stat,
+> +				   STATX_CHANGE_COOKIE | STATX_CTIME,
+>  				   AT_STATX_SYNC_AS_STAT);
+> -	if (!result && (stat.result_mask & STATX_CHANGE_COOKIE))
+> -		i_version =3D stat.change_cookie;
+> +	if (!result) {
+> +		if (stat.result_mask & STATX_CHANGE_COOKIE)
+> +			i_version =3D stat.change_cookie;
+> +		else if (stat.result_mask & STATX_CTIME)
+> +			i_version =3D integrity_ctime_guard(stat);
+> +	}
+>  	hash.hdr.algo =3D algo;
+>  	hash.hdr.length =3D hash_digest_size[algo];
+> =20
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/i=
+ma_main.c
+> index 5770cf691912aa912fc65280c59f5baac35dd725..3a4c32e254f925bba85cb91b6=
+3744ac142b3b049 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/mount.h>
+>  #include <linux/mman.h>
+>  #include <linux/slab.h>
+> +#include <linux/stat.h>
+>  #include <linux/xattr.h>
+>  #include <linux/ima.h>
+>  #include <linux/fs.h>
+> @@ -191,18 +192,13 @@ static void ima_check_last_writer(struct ima_iint_c=
+ache *iint,
+> =20
+>  	mutex_lock(&iint->mutex);
+>  	if (atomic_read(&inode->i_writecount) =3D=3D 1) {
+> -		struct kstat stat;
+> -
+>  		clear_bit(IMA_EMITTED_OPENWRITERS, &iint->atomic_flags);
+> =20
+>  		update =3D test_and_clear_bit(IMA_UPDATE_XATTR,
+>  					    &iint->atomic_flags);
+>  		if ((iint->flags & IMA_NEW_FILE) ||
+> -		    vfs_getattr_nosec(&file->f_path, &stat,
+> -				      STATX_CHANGE_COOKIE,
+> -				      AT_STATX_SYNC_AS_STAT) ||
+> -		    !(stat.result_mask & STATX_CHANGE_COOKIE) ||
+> -		    stat.change_cookie !=3D iint->real_inode.version) {
+> +		    integrity_inode_attrs_changed(&iint->real_inode, file,
+> +						  inode)) {
+>  			iint->flags &=3D ~(IMA_DONE_MASK | IMA_NEW_FILE);
+>  			iint->measured_pcrs =3D 0;
+>  			if (update)
+> @@ -328,9 +324,8 @@ static int process_measurement(struct file *file, con=
+st struct cred *cred,
+>  	real_inode =3D d_real_inode(file_dentry(file));
+>  	if (real_inode !=3D inode &&
+>  	    (action & IMA_DO_MASK) && (iint->flags & IMA_DONE_MASK)) {
+> -		if (!IS_I_VERSION(real_inode) ||
+> -		    integrity_inode_attrs_changed(&iint->real_inode,
+> -						  real_inode)) {
+> +		if (integrity_inode_attrs_changed(&iint->real_inode,
+> +						  file, real_inode)) {
+>  			iint->flags &=3D ~IMA_DONE_MASK;
+>  			iint->measured_pcrs =3D 0;
+>  		}
+>=20
+> ---
+> base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+> change-id: 20251212-xfs-ima-fixup-931780a62c2c
+>=20
+> Best regards,
 
-In my understanding, the hypothetical implementation would be:
-
-* allocate a struct path on the stack of these proto_ops hook
-  functions (marked with (*) above)
-* pass a pointer to that path down to unix_find_other(), only to be
-  filled out in the case that this is a pathname UNIX socket (not an
-  abstract UNIX socket)
-* pass a const pointer to that path to the LSM hooks
-
-and then the LSM hooks would have to check whether the struct path has
-non-zero pointers and could do the check.
-
-This has the upside that it does not introduce a new LSM hook, but
-only adds a "path" parameter to two existing LSM hooks.
-
-On the other side, I see the following drawbacks:
-
-* The more serious surgery in af_unix, which Paul also discussed:
-
-  The function interface to unix_find_other() would need additional
-  parameters for the sole purpose of supporting these LSM hooks and
-  the refcounting of the struct path would have to be done in three
-  functions instead of just in one.  That would complicate the
-  af_unix.c logic, even when CONFIG_SECURITY_PATH is not set.
-
-* The cases in which we pass a non-zero path argument to the LSM hooks
-  would have surprising semantics IMHO, because it is not always set:
-
-  * If a UNIX dgram user uses connect(2) and then calls sendmsg(2)
-    without explicit recipient address, unix_dgram_sendmsg() would
-    *not* do the look up any more and we can not provide the path to
-    the security_unix_may_send() hook.
-  * For abstract UNIX sockets it is not set either, of course.
-
-  The path argument to the LSM hook would be present in the exact same
-  cases where we now call the new UNIX path lookup LSM hook, but it
-  would be invoked with a delay.
-
-* Some properties of the resolved socket are still observable to
-  userspace:
-
-  When we only pass the path to a later LSM hook, there are a variety
-  of additional error case checks in af_unix.c which are based on the
-  "other" socket which we looked up through the path.  Examples:
-
-  * was other shutdown(2)? (ECONNREFUSED on connect or EPIPE on dgram_sendmsg)
-  * does other support SO_PASSRIGHTS (fd passing)? (EPERM on dgram_sendmsg)
-  * would sendmsg pass sk_filter() (on dgram_sendmsg)
-
-  For a LSM policy that is supposed to restrict the resolution of a
-  UNIX socket by path, I would not expect such properties of the
-  resolved socket to be observable?
-
-  (And we also can't fix this up in the LSM by returning a matching
-  error code, because at least unix_dgram_sendmsg() returns multiple
-  different error codes in these error cases.)
-
-  I would prefer if the correctness of our LSM did not depend on
-  keeping track of the error scenarios in af_unix.c.  This seems
-  brittle.
-
-Overall, I am not convinced that using pre-existing hooks is the right
-way and I would prefer the approach where we have a more dedicated LSM
-hook for the path lookup.
-
-Does that seem reasonable?  Let me know what you think.
-
-–Günther
