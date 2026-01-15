@@ -1,129 +1,105 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE362BE031
-	for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 22:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44821221F0C
+	for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 23:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768516352; cv=none; b=QjgtOtrPX1rnef5rQ/rbEQ1mHh3gn8bLPXIuebsqQqIBO9OjgczWU+ZqrD3SffHYIU835ahI0LmltXKZlVMXD8zB1uTU4fUn/4sO3XZRb7sR9fRSW2UBnrsQ6WtwJr1UbZ55xrcpjycejmoJpZB8mxTMm0LsZJhZBJBTb3eAG8E=
+	t=1768518595; cv=none; b=mO2JavyFooUcMksrPe8U0dJzZnhj6Ld+aiQNK3zA1NK7VyUuO6IOwzRV9cwPgKJh0+CkBHlJz5w6+VitdkoX+B5UQcVOH5o8qSb8jK+P1ZvwnPrlphnKxCSTfAUTZvl+lv5ShKvQfRCeorEZ7Jw8WWRrCJ1QgSZWKFd8j8ioHRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768516352; c=relaxed/simple;
-	bh=RVSsbvnzcTskaSr4JxPP+QTDROhjoiuxQ42GIhG1hE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b1imOtc0twX+YIWpFqdpOm0sg41NYtTZMKtlR0KhpYFliNf6RYv2xOAkZLvsMVvHjPyd92EtvsiOixho29w5jnWRzAhOwWw+0DR5JCWLPn5a1KJFjMYITvvV4TZShwRFRgcyVLI0MGflgHAi1RJW8hjz3mYKpFHkaX129quA7xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BvXh5HF8; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1768518595; c=relaxed/simple;
+	bh=b44Fmhb5MCC/h0Z4khpp8iGPJ8/T5BSX3KCA+nwZusA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lgD+NDuflAPIZnmUphA6llAnUQyVQlr4YJ6EhvqugHy//8KKfYLItWpa1eQG1VLR1fClrGlWmqCzruxyaTMO6HduIToPbOCIQBIXf/twqWTJYftyuIDyHsYU9YHoh9ZTS655nyKFSuvofmruaRi1keHB4ocmCvCg1sDlj+T3SeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=d4axZ2zN; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BvXh5HF8"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b86f69bbe60so206316266b.1
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 14:32:30 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="d4axZ2zN"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-64bea6c5819so2475292a12.3
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 15:09:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768516349; x=1769121149; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ERhpIfe0KAnH+I0lEftkXUyHU4cnivju7fTaghPhTpk=;
-        b=BvXh5HF8habEtr2XKDZ4NmSoGxBSjm2SZQx4uNCkslz0ACV9ixI0Rper9LDCPclFUC
-         xlxSdqURMvZ08e50VQK/EUOgaMpd4F+ZDFsCz4Jbkyj0Xh7uxexD2YeGe6vmZFEqL0pD
-         mOCqteOiv0a+gkaX1jWJaqv+dRN8Ucvr24d1eKdDji4dOdPC120uMHuJ5m5/riXlrigM
-         uR0Qg+i6oD/n3SeVazQGbkShp9HsxUR+2zxZlqoPuXw9G/THaSrn5BVOz21bj8bw67DQ
-         4L0OjdcCOai6I2PHxRtEfCHH66k4/t7IursNNh1dKAMf43Vyr4/VsP2bTgj+3eFw5UNI
-         cZtg==
+        d=linux-foundation.org; s=google; t=1768518592; x=1769123392; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/cQQ3tZ9MbmRpcFLtL2Gj/mIevTL7qyyp8QvI43AANI=;
+        b=d4axZ2zN0hVk8evBT5x1N7G3DD56gSjvGUREhuu9+l8gDxT1Xzqu7y4VvlP0d/TC6V
+         04K+JD0MlT8AFgOfCIvzNVSC5TKpzoHKGg/frb8nR1sVTy0VpvLTYZjutkZ03SHUfn9V
+         fDt8cwkjybu+wn0w36CFKQpwAZLMIdHeO4vDU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768516349; x=1769121149;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ERhpIfe0KAnH+I0lEftkXUyHU4cnivju7fTaghPhTpk=;
-        b=oOM1am04qJTWh0s0VODi/BkZLL10PnSAHWdfsv1IyMCl15GvHj9sPm0gLaTS5obFwu
-         5gxLC51JkxPLtIkZIxerqj1BE1xiT3S4U9k1UZUK1zIZ8WQPuamrWc6ohzhcavYtAie3
-         yGWgEouObt7mPi21ZeizY8lUd9ROxQuw4mxk7yFSXV0Zz6OkoKhldXGAuNxXtzi9B316
-         /6bDck9H3bGqjh3ZCD9ZS+/mRnb8NtdGHf+mJWRhtAfjokLEc2bODFoR+aDqoIOz9Xp5
-         iTzeBU4xBtmsgXVH8ILI4xHV4IgDdQQdy1l7c7KVAO2tb7nmNyPMHKwBw8MXX4m7otEL
-         kd7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVQFIYFAod2r1ch1IhxeS2rqEcF9x00GYo6MoGKCjv7yzQdB+rLbmXNTQBbh+Tg+bR2SHQDXzeHXYCTI6Fyoe11DK2fWZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFJ1a0s5t6NgkggCsH/zhpWc2vOjTCjyhmriHXgDYkaZkJOkes
-	0qV9i+QswYEDiqkhivMpaqZP/1jDlIJLJtTjtF3rlR+05d3CcEPz8rtE
-X-Gm-Gg: AY/fxX5D5jCMMll4qeegO0415N54LbzIepDC8QrYWQdtYsZb1FqF0lXcRBxOYefeANN
-	SmaLsHbxHlQh4wswnKd0bylv2/Ho8hDOKGcFXqxUPxOBOw8eY1wpYLhlPzaAXpQfwyv/zHja45v
-	TsyFvP3ZvNRjOo9wPaZ4EYtrrA4PtkfRAW7vtYK+llSPXli1oDMvpR/XQL3oUTzJ5y0NRiqSClv
-	1uylM40PMRgp2FoPbXbzSmdPRYP0CpB9kVwKFg4xiSz2cF8vQj6QM/l39J459IwcO2oOv27S8xD
-	+oA2IuzA6oGEzHAwMAWs60IKi1ilN3c3jaSTfRTVvZbd58+ZX4ydNafJMoVsMegNNi0/40nvxJf
-	M2F0l3sEiHUkitSpw5Ehwz3WrBGOq1EGIwyoVXKfPWrYk84XSjiEqBoOVBiDz3siV1N6p0CjDil
-	rcYyqK/hV/qHIN6ydla+8LSHB5OESG1EzwGDNv
-X-Received: by 2002:a17:907:1c25:b0:b87:1048:6e21 with SMTP id a640c23a62f3a-b8796bb3de8mr41587966b.62.1768516348976;
-        Thu, 15 Jan 2026 14:32:28 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b87959c9fb0sm54856766b.43.2026.01.15.14.32.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 14:32:28 -0800 (PST)
-Date: Thu, 15 Jan 2026 23:32:21 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Demi Marie Obenour <demiobenour@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Justin Suess <utilityemal77@gmail.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>,
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	konstantin.meskhidze@huawei.com, Alyssa Ross <hi@alyssa.is>,
-	Jann Horn <jannh@google.com>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v2 1/5] lsm: Add hook unix_path_connect
-Message-ID: <20260115.a6f842555347@gnoack.org>
-References: <20260110143300.71048-2-gnoack3000@gmail.com>
- <20260110143300.71048-4-gnoack3000@gmail.com>
- <20260113-kerngesund-etage-86de4a21da24@brauner>
- <CAHC9VhQOQ096WEZPLo4-57cYkM8c38qzE-F8L3f_cSSB4WadGg@mail.gmail.com>
- <20260115.b5977d57d52d@gnoack.org>
- <4c3956c2-4133-46bb-9ee5-4abf9bf7fff8@gmail.com>
+        d=1e100.net; s=20230601; t=1768518592; x=1769123392;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/cQQ3tZ9MbmRpcFLtL2Gj/mIevTL7qyyp8QvI43AANI=;
+        b=EjrW5hqoSuosnj3BplDh5fMzpcOqFNESVwpJ4x2BZBMQ4ovB6YIf3hJWA6D0RthAVT
+         90rMyPqHTdegmpGbuJdlC0pFBlzxX6QODwTgr+H88ltGG2jjxQ7X3B1JyDjGUTSYXVZy
+         r5jZHljl45xUFHSfe0yj7MpnEkjsEnTDydguD2liH2vPXrXf0Gln0ZK/V9I8z0uQT4ng
+         kqMq/139xix54r6JEvC5w34089NntsglhmuHxq2zJ0sIsO9wW78n++cxRpOgecimtrK8
+         Q2rfl5idWPvALRC9fLUQ4d7riQZ3krIVbFGbz6NFb07sbj0ETbUyYxBxFunysRj0El6E
+         cgjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQd8Z6cJ8vuX3LhwndPNfWP2a9ybvd+xhKeMyR/VzVLicWVqhwmRdEkW3wG804M3y+lKOFieqJANIIEUv46Kfr59kCm5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdZ2FCKcgoDm2nVGhayN7JoL/0YZiJ9jLRO2aJYc+AQ8NKiFIr
+	SEp+X/yXCSPzNIMkAByQ4MsdizQJ+pEi3FDxIRILSIWLtIrQFCDUN+VN6r5oKR5hTpreXet8joF
+	72sIYypo=
+X-Gm-Gg: AY/fxX7bM6FaUQHvJPmpXBlisQ8ImU2j7/vRl0PjcOJhZAwGwbbCXZai1+8axTBa/y1
+	HsNEgLOkz7AOi9pNhpDJdB0S6c7AHlSwe/zrKFtbqcXnxjWt34zv7YSRZuWvo/rtOFyK+MVRVPn
+	SzhlRGqlBvqhsIdjcegPPn4lc/xOUlsHvRzgNOhz7n5aRJGZtRAaZiQ63LSFUgi2/BfVhmQDXPb
+	2aRJbsFHKhzliDb1ee0Vd9WDppgK0p7Q8iupjmxUVPRcZDDuWR5rRhx1RF0zlAI7CqgvJfrg335
+	PoKNFcF95rz4v17phoiNaYXu+jPAaZtYe8tg/k5EjJAIjxmSjOdZUdogsGRysJS2NkcDl3kbr6F
+	OXd0ZmMIuXHXT37eoFwQ5746BhKdS7DNNzfF/5xqaYPqeSqEwgN2KMygY67hzWDxc1gJj4Z4G4y
+	AguONpdthlNirSjFf5Az746kfjlMfATe23T7rF8YwwNbGs8Pvgx6j44oXeQHBSW8jWXaMWjTI=
+X-Received: by 2002:a17:907:9492:b0:b87:1822:4021 with SMTP id a640c23a62f3a-b8792f5a9f0mr110270666b.20.1768518592541;
+        Thu, 15 Jan 2026 15:09:52 -0800 (PST)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8795a31322sm58839666b.63.2026.01.15.15.09.52
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Jan 2026 15:09:52 -0800 (PST)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64b58553449so2499845a12.1
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 15:09:52 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV5tWmvOPJoxACMW3Ke4h20sBHaXnBj2hlSgPRrOk+CDx/fpt/VMsVLLzVSxsOApt0ArtcG1gMS7M70QN+Gu41qzYQR44c=@vger.kernel.org
+X-Received: by 2002:a50:cc05:0:b0:653:b83b:a66d with SMTP id
+ 4fb4d7f45d1cf-65452bcc0a1mr670701a12.28.1768518592019; Thu, 15 Jan 2026
+ 15:09:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4c3956c2-4133-46bb-9ee5-4abf9bf7fff8@gmail.com>
+References: <20260115214740.803611-1-mic@digikod.net>
+In-Reply-To: <20260115214740.803611-1-mic@digikod.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 15 Jan 2026 15:09:34 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgPRijTr7fZQNs9pxbhRLBVQGdE7ceZDwQFP53MXjRBxg@mail.gmail.com>
+X-Gm-Features: AZwV_QiiPsCZrr2CTXJLdelIItyvHp5tiByv6aRPU_bH5dEAxzNiv3JA5E_dLHo
+Message-ID: <CAHk-=wgPRijTr7fZQNs9pxbhRLBVQGdE7ceZDwQFP53MXjRBxg@mail.gmail.com>
+Subject: Re: [GIT PULL] Landlock fix for v6.19-rc6
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Matthieu Buffet <matthieu@buffet.re>, Tingmao Wang <m@maowtm.org>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 15, 2026 at 04:24:48PM -0500, Demi Marie Obenour wrote:
-> On 1/15/26 05:10, Günther Noack wrote:
-> >   I would prefer if the correctness of our LSM did not depend on
-> >   keeping track of the error scenarios in af_unix.c.  This seems
-> >   brittle.
-> 
-> Indeed so.
+On Thu, 15 Jan 2026 at 13:47, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wr=
+ote:
+>
+> This PR fixes TCP handling, tests, documentation, non-audit elided code,
+> and minor cosmetic changes.
 
-Thanks for the support!
+This seems significantly bigger than what you sent for the whole merge
+window for the Landlock code.
 
-> > Overall, I am not convinced that using pre-existing hooks is the right
-> > way and I would prefer the approach where we have a more dedicated LSM
-> > hook for the path lookup.
-> > 
-> > Does that seem reasonable?  Let me know what you think.
-> > 
-> > –Günther
-> 
-> Having a dedicated LSM hook for all path lookups is definitely my
-> preferred approach.  Could this allow limiting directory traversal
-> as well?
+The merge window pull was - ignoring tests - 4 files changed, 59
+insertions(+), 17 deletions(-).
 
-No, this does not limit all path lookups, in the sense of what was
-discussed in the thread at [1]. (I assume this is what you meant?)
+I want more explanations for why I'm suddenly getting more alleged
+fixes than I got any development and why this shouldn't wait until the
+next merge window.
 
-The LSM hook proposed here is only about the lookup of named UNIX
-domain sockets, as it happens when clients pass a struct sockaddr_un
-to connect(2) or sendmsg(2).
+Because honestly, this just all seems out of place.
 
-–Günther
-
-[1] https://lore.kernel.org/all/81f908e3-8a98-46e7-b20c-fe647784ceb4@gmail.com/
+            Linus
