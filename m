@@ -1,195 +1,391 @@
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974CA3C0090
-	for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 17:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF632C0285
+	for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 18:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768499358; cv=none; b=pVHEwBU02Uzag8FITUhLoY6Nmpjs2pMwbMcjRNBcjerOzbRWIZfpYvpjCoLZXMrp1KANEIEZxtqpHxWaqEvtrfSZqk0u+P71AWFE6B4cDCfh5Lpie6pkouP8j2lWJaekVdmCpONJSjknXA2kAiiaRenYdpt4WL+dzHrT0eau5yQ=
+	t=1768500642; cv=none; b=XKBanNHtSWzL6y/CqxYKq7AQo5iWHeLdnt4C8sCmCp56ZlLHXBBq3ZgpwurhYGxMxTUJpMFmf+HSunH71PJpBrSwJv/JVkSCWokXjMEE9crsj4eNe3AkIQjlVJx0MqAY0SEC6a1/IDFLua5t1EuehQWHgJpaShAqnAR96ZufGXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768499358; c=relaxed/simple;
-	bh=r2ZoM9+MIOa+QcaE7AC4306TvzCJdq+k26/pnFAJlBs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YYnjfK1zsBnBnwj8gREyIjUj8e2AvEaY2MMEkKoaBqo0GkPsSQke71c5gdbMTJeRSVGSVQoyTf47X2+b8maqsDMFUqKnxW6lD7AILIdkE5mNFHhs6d6i+wkgEUnDZgtgzZS5cW2/nGdi6DD4lOxy7sb2uizNGy7bCE4VMiBbhdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SVGQEVnU; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1768500642; c=relaxed/simple;
+	bh=/8rDZ++wjiwDxMZuAHQpg75MVGHaHMBkLzd5tdnTz4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dqYC72mLlP7lMYBv17pXJkuvGyODvXSfM+oo96p+oO9Y8Wdd7Jj8UoDLd3Ynij7BxU81UVvlo3PIP7/A1XKODdJqoVIiz2S6EoS2DKDe0mN+7/H4go3v/HQu69zw5t+WE5J77yh6g92NdojYchLQ2Wl7wPkGsFEQO/gSzaejzGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=fy7RkU3C; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SVGQEVnU"
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-c0bccb8037eso490040a12.1
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 09:49:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="fy7RkU3C"
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7cfd48df0afso782640a34.1
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 10:10:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1768499356; x=1769104156; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zxUuPcjo1SQv8ISCtatV7Vgux0xRRMO9y2bG++TCF50=;
-        b=SVGQEVnUTIL6pc1GU0U348p8McJdlgDA6he5+QLcmsrzrA++nzGfecSUqfBC9AVXu5
-         nQZfA8Y1iJUbe92hY490DnyqDXhdYmxbSLSrxibjVYCG4tfEQb5werjBzf0z6FSLTzbm
-         I8VLZjjClnD6VNAVR4yA+IzPXFESfUK7Z10SHSMv5xVuSnSu42IKtJXtioKJJFi5CAZp
-         4pDpzvsL+rblr5axaZolCza7pmlwAAgAcEUrH27N8gpVMgTjIg/rheLAQ8f5zHcKDcsQ
-         YTZmfSEKv6dbQqjYIgZGTHl+B05Yrov0p9NNwoW+oZaObz0FZqd8+LVOnfGNE62iqL5N
-         9G9w==
+        d=cloudflare.com; s=google09082023; t=1768500638; x=1769105438; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8BemoNEWUh+R2I1lFJL4SATcppPiP2aVt64nnFLdo8s=;
+        b=fy7RkU3CL0+HX/QcLn0rNYsR4WHkLHXlH6F2JIaWtWbKFEaoAJuak5TIb/Wt8v4wGY
+         QjTWWTCSH7Qv/C5r/ptN/f6LB2JXxW5TWyZlULdJn1GtlK0ppmAS5KpmSWIshxQ8hUE+
+         iGZTd6iCNfra3C97s9KEpPHsQ4t5KJFZJamArM37c13uDUMIHwRkF08h199T0IOyayhR
+         nmv5xV4en+9c7yfK1lrAWk+uYi/iCsN0C57PjDI2FV/0kPOPLazJR06gjPfFvBGGGqY/
+         HJMgZ7XBwA2zokdz8K9gTvd++n58hf6/Ph/CKGmqtdcCt/3CitqvJ4sqQXKNAgdDIpAC
+         PiiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768499356; x=1769104156;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zxUuPcjo1SQv8ISCtatV7Vgux0xRRMO9y2bG++TCF50=;
-        b=rAQbZ3l4UgFvKutOj/Gjml/H8b9EUCVdhuJ3FOYTcYJ/qIvOKfCwxh5CFbUfT/Qhbl
-         R6uMRbzz5vFHSYhZ9HBa46MpZjsuEiRyYJ268TsonoA+/2CVj3CCoP20x7Oeyxwy9g5I
-         q0Wq21IXpTwocWtTB/ba5y2b4GG9SB5ETcL/G451EELwRrNRsMUgW0/qfZzKAGRrJJ1z
-         237jijiel0zU+8jXKYvjVlUEHb5RrMQWhfVJuPkY8/BaXWvF083FJFQWDxiJVc1QFeZN
-         nR70RaMJTKNbUqYVboxzybhZoL2fmF/rbvFFGjyWmJdmKGg/eioa7aKgF8YAJG/qeCdY
-         A75A==
-X-Forwarded-Encrypted: i=1; AJvYcCVDhhlkWawN9qeewm6LuHd/RU3nuZBcKbwQvt1UfTaSh7WntBs0BCWuiKfxiL85FHe9BbkXIiI00BB4UmxtU8m1LVfYQxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo19H/XeJgKxKwXWGqXG96szIC/d9oZ08XFwcVCD9SXw9RrLUO
-	+8sLhNimlhIU5DWeQNHomdqS9l9AKD8+nwKHVU2d364EZQDYPzH8AtOxfs5wsjEGsd/QFxhLicJ
-	2WTuFvp489SzMbR6jcJvN7WSr8hdw86H2iZ2ijQjUCbtJ/MopMevzIA==
-X-Gm-Gg: AY/fxX6CgXt5e9Mp7P9fSuUuis/ATMdaWMIA+4+sMB6XYpHBs38U/PuJHztR9o6krKb
-	uvZYeUWUzv05cW7+Yxh4R2xnc3d1UzC8u92aTRLbbabe5FxXi+kYErR1je8wHNdXSbUiukavm0p
-	OSY0lyFMHCup00PnFnTCgoV326ukpeOJQsdJOyMWu77Im5XM2/w8bGOdsiSU/t8Bo8U0TCGfnmS
-	889BwcWvB1zsAM3AEf4gmmdmBnYBTwE2ZLsgRyMzerDYS2bkHmSzHj3VnE0Z4gTPGt/AGQ=
-X-Received: by 2002:a17:90b:4d8d:b0:34a:e9b:26b1 with SMTP id
- 98e67ed59e1d1-35272fb86b4mr184643a91.26.1768499355757; Thu, 15 Jan 2026
- 09:49:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1768500638; x=1769105438;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8BemoNEWUh+R2I1lFJL4SATcppPiP2aVt64nnFLdo8s=;
+        b=P+/nkDp46B4034Ur3naAAqWdCy3dX054UzmThe1FR7TZuhrNbQiCACTmvCF2tXV9Io
+         5WFWgDPWAjmZcG8yEF0TrjYAWnPJuzwLIYt4oNfrZjGUPvbATf1PMt8/NCynTwiHyurP
+         Gg5taNUj6LMVCZq67xRJ4uf9SIDLltQY4qq3/cDwYB3bntXzMjTVgZriCmMfc2LvIwvE
+         3aOanJY0yZtJ+WVe7xtRla9LVgXtFhcZ2rosGt8+y0P6mb7PasWq5vRz+Pbrak6bR0YX
+         /MdZLtsbQmaiP+CwnxgA7SipMmhFBd6Rim8JdG1ZDuuZw283N3VRHi/PbGcdJDHthErE
+         wwTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxaUlc1JmgZZTVDATeA5dlL6ACyHwe8/QYQm8Ihz48jXo7N4kElN5IGIKNm7mkvR/IQA1f6o9H3x4/DefVdIK++3nEzOo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXEmLQAE/cEBjEP2x6zwIqHVU6DNSfMCF/fkmggvscKrT7vz+w
+	ucCKLovA2Pw8gtHKG9nqTz6+CeInL/3ggTFzYFU/AhbMxSeW7Iqy5pjhUstTmYZxHuI=
+X-Gm-Gg: AY/fxX43gmhTqw5fTqNo+GxRb+Phgbmf+nfpys9PCpTE8hnBGtC8IPV8dJFSmrvrwKe
+	CNPExGF6t4t74B2ex4mYoq/610obydqTkgoQVsV67o8S9cpSt81j9eRlfUFdMmvLzPuqBiglHVS
+	+nzIt5X7fo0fwayIcL7vdnz9Wlz+oOe6y+af3Qjg558ew+XGtm4tgIoOpF/Z2nZeprKvjca0mj0
+	2LvNvM8sCSUei6CIf0048NUdF/4N5dtHnHRBxhdckxAW6Ddrun/rnQS6Ry/tTquDGrXNhDMS8wc
+	figehsqe2Qji/NtI7JYvQNFxo2AvhZzMefyP8oWVnkwcE9490W+EvbrpnK42UGNkw7LzdB2mY0E
+	ZlN2EOsK9A37hEQZemWApCoz4xWUnSNYU1oo9Ivm58Ko0+ykAZE1KgOMCRGwPlT9QSyW2
+X-Received: by 2002:a05:6830:81da:b0:7c7:8280:9205 with SMTP id 46e09a7af769-7cfdeeab6b7mr232896a34.37.1768500638371;
+        Thu, 15 Jan 2026 10:10:38 -0800 (PST)
+Received: from CMGLRV3 ([2a09:bac5:947d:1b37::2b6:50])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cfdf28ef44sm115682a34.18.2026.01.15.10.10.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jan 2026 10:10:37 -0800 (PST)
+Date: Thu, 15 Jan 2026 12:10:35 -0600
+From: Frederick Lawler <fred@cloudflare.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, kernel-team@cloudflare.com
+Subject: Re: [PATCH] ima: Detect changes to files via kstat changes rather
+ than i_version
+Message-ID: <aWktm4vdzxF0b596@CMGLRV3>
+References: <20260112-xfs-ima-fixup-v1-1-8d13b6001312@cloudflare.com>
+ <c825efc60cace922b45d0824f11cdaf44be9c0d3.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260108154604.GA14181@wind.enjellic.com> <CAHC9VhTyvEVLGLJkkyQnSZYSj4-YHPz82BnDEUwMjU7hHdbFoA@mail.gmail.com>
- <2ea2e67e-8fcd-43d8-8cda-7df8d678d2b0@schaufler-ca.com> <20260115155555.GA18668@wind.enjellic.com>
-In-Reply-To: <20260115155555.GA18668@wind.enjellic.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 15 Jan 2026 12:49:03 -0500
-X-Gm-Features: AZwV_Qj5DqRLuxu7lTWFleDDTcBZdqiXVfQvLug5nFGOdOELBWDLmeS0ZwCuxU0
-Message-ID: <CAHC9VhSQdjc7+2NORuhhumxjKuNiXkbXeAoqq=D9fFJT-+HPRw@mail.gmail.com>
-Subject: Re: Improved guidance for LSM submissions.
-To: "Dr. Greg" <greg@enjellic.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c825efc60cace922b45d0824f11cdaf44be9c0d3.camel@huaweicloud.com>
 
-On Thu, Jan 15, 2026 at 10:56=E2=80=AFAM Dr. Greg <greg@enjellic.com> wrote=
-:
-> On Fri, Jan 09, 2026 at 11:58:39AM -0800, Casey Schaufler wrote:
-> > On 1/9/2026 10:51 AM, Paul Moore wrote:
-> > > On Thu, Jan 8, 2026 at 11:08???AM Dr. Greg <greg@enjellic.com> wrote:
-> > >> What is not clear in these guidelines is how a virgin LSM should be
-> > >> structured for initial submission.  Moving forward, we believe the
-> > >> community would benefit from having clear guidance on this issue.
-> > >>
-> > >> It would be helpful if the guidance covers a submission of 10-15 KLO=
-C
-> > >> of code and 5-8 compilation units, which seems to cover the average
-> > >> range of sizes for LSM's that have significant coverage of the event
-> > >> handlers/hooks.
+On Thu, Jan 15, 2026 at 12:46:37PM +0100, Roberto Sassu wrote:
+> On Mon, 2026-01-12 at 16:32 -0600, Frederick Lawler wrote:
+> > Commit 1cf7e834a6fb ("xfs: switch to multigrain timestamps")
+> > introduced a means to track change detection for an inode
+> > via ctime updates, opposed to setting kstat.change_cookie when
+> > calling into xfs_vn_getattr().
+> > 
+> > This introduced a regression because IMA caches kstat.change_cookie
+> > to compare against an inode's i_version directly in
+> > integrity_inode_attrs_changed(), and thus could be out of date
+> > depending on how file systems increment i_version.
+> > 
+> > To address this, require integrity_inode_attrs_changed() to query
+> > vfs_getattr_nosec() to compare the cached version against
+> > kstat.change_cookie directly. This ensures that when updates occur,
+> > we're accessing the same changed inode version on changes, and fallback
+> > to compare against an artificial version generated from kstat.ctime
+> > via integrity_ctime_guard() when there's no detected change
+> > to the kstat.change_cookie.
+> > 
+> > This ensures that in the absence of i_version support for file systems,
+> > and in the absence of a kstat.change_cookie update, we ultimately have a
+> > unique-enough version to compare against.
+> > 
+> > The exact implementation for integrity_ctime_guard() is to ensure that
+> > if tv_sec or tv_nsec are zero, there's some value to store back into
+> > struct integrity_inode_attributes.version. This also avoids the need to
+> > add additional storage and comparisons.
+> > 
+> > Lastly, because EVM still relies on querying and caching a backing inode's
+> > i_version, the integrity_inode_attrs_changed() falls back to the
+> > original inode.i_version != cached comparison. This maintains the
+> > invariant that a re-evaluation in unknown change detection circumstances
+> > is required.
+> > 
+> > Link: https://lore.kernel.org/all/aTspr4_h9IU4EyrR@CMGLRV3
+> > Suggested-by: Jeff Layton <jlayton@kernel.org>
+> > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+> > ---
+> > We uncovered a case in kernels >= 6.13 where XFS is no longer updating
+> > struct kstat.change_cookie on i_op getattr() access calls. Instead, XFS is
+> > using multigrain ctime (as well as other file systems) for
+> > change detection in commit 1cf7e834a6fb ("xfs: switch to
+> > multigrain timestamps").
+> > 
+> > Because file systems may implement i_version as they see fit, IMA
+> > caching may be behind as well as file systems that don't support/export
+> > i_version. Thus we're proposing to compare against the kstat.change_cookie
+> > directly to the cached version, and fall back to a ctime guard when
+> > that's not updated.
+> > 
+> > EVM is largely left alone since there's no trivial way to query a file
+> > directly in the LSM call paths to obtain kstat.change_cookie &
+> > kstat.ctime to cache. Thus retains accessing i_version directly.
+> > 
+> > Regression tests will be added to the Linux Test Project instead of
+> > selftest to help catch future file system changes that may impact
+> > future evaluation of IMA.
+> > 
+> > I'd like this to be backported to at least 6.18 if possible.
+> > 
+> > Below is a simplified test that demonstrates the issue:
+> > 
+> > _fragment.config_
+> > CONFIG_XFS_FS=y
+> > CONFIG_OVERLAY_FS=y
+> > CONFIG_IMA=y
+> > CONFIG_IMA_WRITE_POLICY=y
+> > CONFIG_IMA_READ_POLICY=y
+> > 
+> > _./test.sh_
+> > 
+> > IMA_POLICY="/sys/kernel/security/ima/policy"
+> > TEST_BIN="/bin/date"
+> > MNT_BASE="/tmp/ima_test_root"
+> > 
+> > mkdir -p "$MNT_BASE"
+> > mount -t tmpfs tmpfs "$MNT_BASE"
+> > mkdir -p "$MNT_BASE"/{xfs_disk,upper,work,ovl}
+> > 
+> > dd if=/dev/zero of="$MNT_BASE/xfs.img" bs=1M count=300
+> > mkfs.xfs -q "$MNT_BASE/xfs.img"
+> > mount "$MNT_BASE/xfs.img" "$MNT_BASE/xfs_disk"
+> > cp "$TEST_BIN" "$MNT_BASE/xfs_disk/test_prog"
+> > 
+> > mount -t overlay overlay -o \
+> > "lowerdir=$MNT_BASE/xfs_disk,upperdir=$MNT_BASE/upper,workdir=$MNT_BASE/work" \
+> > "$MNT_BASE/ovl"
+> > 
+> > echo "audit func=BPRM_CHECK uid=$(id -u nobody)" > "$IMA_POLICY"
+> > 
+> > target_prog="$MNT_BASE/ovl/test_prog"
+> > setpriv --reuid nobody "$target_prog"
+> > setpriv --reuid nobody "$target_prog"
+> > setpriv --reuid nobody "$target_prog"
+> > 
+> > audit_count=$(dmesg | grep -c "file=\"$target_prog\"")
+> > 
+> > if [[ "$audit_count" -eq 1 ]]; then
+> >         echo "PASS: Found exactly 1 audit event."
+> > else
+> >         echo "FAIL: Expected 1 audit event, but found $audit_count."
+> >         exit 1
+> > fi
+> > ---
+> > Changes since RFC:
+> > - Remove calls to I_IS_VERSION()
+> > - Function documentation/comments
+> > - Abide IMA/EVM change detection fallback invariants
+> > - Combined ctime guard into version for attributes struct
+> > - Link to RFC: https://lore.kernel.org/r/20251229-xfs-ima-fixup-v1-1-6a717c939f7c@cloudflare.com
+> > ---
+> >  include/linux/integrity.h         | 42 +++++++++++++++++++++++++++++++++++----
+> >  security/integrity/evm/evm_main.c |  5 ++---
+> >  security/integrity/ima/ima_api.c  | 11 +++++++---
+> >  security/integrity/ima/ima_main.c | 15 +++++---------
+> >  4 files changed, 53 insertions(+), 20 deletions(-)
+> > 
+> > diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+> > index f5842372359be5341b6870a43b92e695e8fc78af..5eca8aa2769f9238c68bb40885ecc46910524f11 100644
+> > --- a/include/linux/integrity.h
+> > +++ b/include/linux/integrity.h
+> > @@ -9,6 +9,7 @@
+> >  
+> >  #include <linux/fs.h>
+> >  #include <linux/iversion.h>
+> > +#include <linux/kernel.h>
+> >  
+> >  enum integrity_status {
+> >  	INTEGRITY_PASS = 0,
+> > @@ -36,6 +37,14 @@ struct integrity_inode_attributes {
+> >  	dev_t dev;
+> >  };
+> >  
+> > +/*
+> > + * Wrapper to generate an artificial version for a file.
+> > + */
+> > +static inline u64 integrity_ctime_guard(struct kstat stat)
+> > +{
+> > +	return stat.ctime.tv_sec ^ stat.ctime.tv_nsec;
+> 
+> Unfortunately, we cannot take the risk of a collision. Better use all
+> or a packed version.
 
-...
+Sounds good.
 
-> > If you would review the comments I made in 2023 regarding how to
-> > make your submission reviewable you might find that you don't need
-> > a "formal" statement of policy. Remember that you are not submitting
-> > your code to a chartered organization, but to a collection of system
-> > developers who are enthusiastic about security. Many are overworked,
-> > some are hobbyists, but all treat their time as valuable. If you can't
-> > heed the advice you've already been given, there's no incentive for
-> > anyone to spend their limited resources to provide it in another
-> > format.
->
-> As Paul noted in the following:
->
-> https://lore.kernel.org/linux-security-module/20230608191304.253977-2-pau=
-l@paul-moore.com/
->
-> Microsoft employs him to maintain the Linux security sub-system, and
-> related infrastructure, secondary to Microsoft's concern over the long
-> term health of the Linux community ...
+> 
+> > +}
+> > +
+> >  /*
+> >   * On stacked filesystems the i_version alone is not enough to detect file data
+> >   * or metadata change. Additional metadata is required.
+> > @@ -51,14 +60,39 @@ integrity_inode_attrs_store(struct integrity_inode_attributes *attrs,
+> >  
+> >  /*
+> >   * On stacked filesystems detect whether the inode or its content has changed.
+> > + *
+> > + * Must be called in process context.
+> >   */
+> >  static inline bool
+> >  integrity_inode_attrs_changed(const struct integrity_inode_attributes *attrs,
+> > -			      const struct inode *inode)
+> > +			      struct file *file, struct inode *inode)
+> >  {
+> > -	return (inode->i_sb->s_dev != attrs->dev ||
+> > -		inode->i_ino != attrs->ino ||
+> > -		!inode_eq_iversion(inode, attrs->version));
+> > +	struct kstat stat;
+> > +
+> > +	might_sleep();
+> > +
+> > +	if (inode->i_sb->s_dev != attrs->dev || inode->i_ino != attrs->ino)
+> > +		return true;
+> > +
+> > +	/*
+> > +	 * EVM currently relies on backing inode i_version. While IS_I_VERSION
+> > +	 * is not a good indicator of i_version support, this still retains
+> > +	 * the logic such that a re-evaluation should still occur for EVM, and
+> > +	 * only for IMA if vfs_getattr_nosec() fails.
+> > +	 */
+> > +	if (!file || vfs_getattr_nosec(&file->f_path, &stat,
+> > +				       STATX_CHANGE_COOKIE | STATX_CTIME,
+> > +				       AT_STATX_SYNC_AS_STAT))
+> > +		return !IS_I_VERSION(inode) ||
+> > +			!inode_eq_iversion(inode, attrs->version);
+> > +
+> > +	if (stat.result_mask & STATX_CHANGE_COOKIE)
+> > +		return stat.change_cookie != attrs->version;
+> > +
+> > +	if (stat.result_mask & STATX_CTIME)
+> > +		return integrity_ctime_guard(stat) != attrs->version;
+> 
+> Yes, switching to the new field I guess it works, but I'm wondering if
+> we could have more uniformity across the filesystems, otherwise one has
+> to use one source for filesystem X, another source for filesystem Y.
 
-You've brought this up before, which I thought was a bit odd, but I
-largely skipped over it because I thought it might simply be you
-working your way through learning how the upstream kernel community
-works.  We've all been there at one time or another, and we all learn
-differently, so no harm in that.  However, you've chosen to bring this
-up again, which strikes me as more than just an oddity, but in hopes
-that your email is due to an honest lack of understanding, let me try
-to provide some background.
+Agreed. But I'm under the impression from casual searching, that most
+file systems are likely to support ctime, than setting the change cookie
+with an i_version or even having/updating i_version consistently.
 
-I don't have concrete numbers to provide you, but the majority of the
-substantial Linux kernel subsystems are maintained by individuals that
-are employed, at least in part, to support the upstream Linux kernel.
-Personally, I've been responsible for the upkeep of at least one
-upstream kernel subsystem for over (checks notes ...) 18 years,
-spanning a number of companies with varying levels of employer
-support.  Considering the number of people that rely on the subsystems
-I maintain, and the trust placed in me by the community, I take my
-upstream responsibilities very seriously; I've pushed back against
-employers when I've felt their wants would have been detrimental
-upstream, and I've left employers when my job duties have become
-incompatible with my upstream responsibilities.
+Is there someone we could CC in here to get another opinion?
 
-I obviously don't want to speak for the other kernel maintainers, but
-I believe you will hear similar stories from many others, if not all.
-I will say that in my experience the different individual LSM
-maintainers have demonstrated the same level of stewardship and
-concern for upstream that I've tried to model over the course of my
-career.  In my opinion we have a good community here, and our failings
-are much more likely due to human time limits than any malice or
-intentional constraints.
-
-> Given that, it is disappointing that Microsoft isn't providing
-> sufficient resources to enable him to provide guidance to the
-> community they desire to support ...
-
-Continuing what I said above, there is no reason to disparage my
-current employer, I can assure you my limits are entirely due to how
-much time I can spend in front of a computer dealing with difficult
-problems, both technical and social, before I burn out for the day.
-Of course you are free to make whatever comments you like, but if you
-want me to take you seriously, you should give some more thoughtful
-consideration before speaking incorrectly about matters you know
-little to nothing about (e.g. my relationship with my employer, my
-work/life balance, etc.).
-
-Deciding how to prioritize work is a difficult thing, and subject to
-revision over the course of a month, week, or even day.  Like many of
-us, there are a number of considerations that go into prioritization,
-far too many to describe them all here, but one of the criteria is
-simply an understanding of how many people will benefit from the work.
-While an exhaustive document describing how to submit new LSMs would
-surely have value, we've seen a number of LSMs submitted, and merged,
-over the years that have been able to do so with the guidance we have
-now, if not less.  With that in mind, at this point in time I'm
-choosing to focus my efforts on other, more impactful tasks.
-
-> ... regardless of that, we now have
-> 'official' guidance as to the requirements for submitting a virgin
-> body of LSM code:
->
-> https://docs.kernel.org/process/submitting-patches.html
-
-I would encourage a more careful reading of my comments before
-repeating.  I "suggested" the document above, I did not say it was
-"official guidance":
-
-  "I would suggest looking at the existing Linux kernel documentation
-   on submitting patches, a link is provided below."
-  (copied from my first reply in this thread)
-
-As Casey pointed out, you've received quite a bit of feedback on your
-prior LSM submissions, I would suggest using those comments as a
-learning tool to help guide any future submissions.  Just as with
-other aspects of life, there are no guarantees here, try to learn from
-your experiences and move forward.
-
-Another bit of advice that I think might be helpful in your particular
-case: focus on being a constructive member of the LSM community, not a
-distraction.  While disruption has been seen as a trendy idea among
-the "move fast and break things" crowd, when it comes to core platform
-security "break things" can result in significant losses, up to and
-including people's lives.
-
---=20
-paul-moore.com
+> 
+> Thanks
+> 
+> Roberto
+> 
+> > +
+> > +	return true;
+> >  }
+> >  
+> >  
+> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> > index 73d500a375cb37a54f295b0e1e93fd6e5d9ecddc..6a4e0e246005246d5700b1db590c1759242b9cb6 100644
+> > --- a/security/integrity/evm/evm_main.c
+> > +++ b/security/integrity/evm/evm_main.c
+> > @@ -752,9 +752,8 @@ bool evm_metadata_changed(struct inode *inode, struct inode *metadata_inode)
+> >  	bool ret = false;
+> >  
+> >  	if (iint) {
+> > -		ret = (!IS_I_VERSION(metadata_inode) ||
+> > -		       integrity_inode_attrs_changed(&iint->metadata_inode,
+> > -						     metadata_inode));
+> > +		ret = integrity_inode_attrs_changed(&iint->metadata_inode,
+> > +						    NULL, metadata_inode);
+> >  		if (ret)
+> >  			iint->evm_status = INTEGRITY_UNKNOWN;
+> >  	}
+> > diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> > index c35ea613c9f8d404ba4886e3b736c3bab29d1668..8096986f3689781d3cdf6595f330033782f9cc45 100644
+> > --- a/security/integrity/ima/ima_api.c
+> > +++ b/security/integrity/ima/ima_api.c
+> > @@ -272,10 +272,15 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+> >  	 * to an initial measurement/appraisal/audit, but was modified to
+> >  	 * assume the file changed.
+> >  	 */
+> > -	result = vfs_getattr_nosec(&file->f_path, &stat, STATX_CHANGE_COOKIE,
+> > +	result = vfs_getattr_nosec(&file->f_path, &stat,
+> > +				   STATX_CHANGE_COOKIE | STATX_CTIME,
+> >  				   AT_STATX_SYNC_AS_STAT);
+> > -	if (!result && (stat.result_mask & STATX_CHANGE_COOKIE))
+> > -		i_version = stat.change_cookie;
+> > +	if (!result) {
+> > +		if (stat.result_mask & STATX_CHANGE_COOKIE)
+> > +			i_version = stat.change_cookie;
+> > +		else if (stat.result_mask & STATX_CTIME)
+> > +			i_version = integrity_ctime_guard(stat);
+> > +	}
+> >  	hash.hdr.algo = algo;
+> >  	hash.hdr.length = hash_digest_size[algo];
+> >  
+> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > index 5770cf691912aa912fc65280c59f5baac35dd725..3a4c32e254f925bba85cb91b63744ac142b3b049 100644
+> > --- a/security/integrity/ima/ima_main.c
+> > +++ b/security/integrity/ima/ima_main.c
+> > @@ -22,6 +22,7 @@
+> >  #include <linux/mount.h>
+> >  #include <linux/mman.h>
+> >  #include <linux/slab.h>
+> > +#include <linux/stat.h>
+> >  #include <linux/xattr.h>
+> >  #include <linux/ima.h>
+> >  #include <linux/fs.h>
+> > @@ -191,18 +192,13 @@ static void ima_check_last_writer(struct ima_iint_cache *iint,
+> >  
+> >  	mutex_lock(&iint->mutex);
+> >  	if (atomic_read(&inode->i_writecount) == 1) {
+> > -		struct kstat stat;
+> > -
+> >  		clear_bit(IMA_EMITTED_OPENWRITERS, &iint->atomic_flags);
+> >  
+> >  		update = test_and_clear_bit(IMA_UPDATE_XATTR,
+> >  					    &iint->atomic_flags);
+> >  		if ((iint->flags & IMA_NEW_FILE) ||
+> > -		    vfs_getattr_nosec(&file->f_path, &stat,
+> > -				      STATX_CHANGE_COOKIE,
+> > -				      AT_STATX_SYNC_AS_STAT) ||
+> > -		    !(stat.result_mask & STATX_CHANGE_COOKIE) ||
+> > -		    stat.change_cookie != iint->real_inode.version) {
+> > +		    integrity_inode_attrs_changed(&iint->real_inode, file,
+> > +						  inode)) {
+> >  			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+> >  			iint->measured_pcrs = 0;
+> >  			if (update)
+> > @@ -328,9 +324,8 @@ static int process_measurement(struct file *file, const struct cred *cred,
+> >  	real_inode = d_real_inode(file_dentry(file));
+> >  	if (real_inode != inode &&
+> >  	    (action & IMA_DO_MASK) && (iint->flags & IMA_DONE_MASK)) {
+> > -		if (!IS_I_VERSION(real_inode) ||
+> > -		    integrity_inode_attrs_changed(&iint->real_inode,
+> > -						  real_inode)) {
+> > +		if (integrity_inode_attrs_changed(&iint->real_inode,
+> > +						  file, real_inode)) {
+> >  			iint->flags &= ~IMA_DONE_MASK;
+> >  			iint->measured_pcrs = 0;
+> >  		}
+> > 
+> > ---
+> > base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+> > change-id: 20251212-xfs-ima-fixup-931780a62c2c
+> > 
+> > Best regards,
+> 
