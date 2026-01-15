@@ -1,67 +1,66 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BA225776;
-	Thu, 15 Jan 2026 20:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC84B327210
+	for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 21:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768509985; cv=none; b=p/rpSh/w5XkXrSv10QmfzI/E5hL0Rflimtcuncgexo6zwogIIyFrsTjk50DKSrft2hyvqObMCOL6PlVYMR83c2qjgwouFutPKuIWWZy1QANBy4dgS74EcTkmvRT6F3CNyBZ28bllTujltjK/VFMH54Fh+WFE6jDzJn435fkihO0=
+	t=1768512297; cv=none; b=fIlibPttBtjxPpXsDU9/WD6sYlhyt+PT67oYmBGyfL4PcfpEmIQAZcjqGKJrY+vipQ5D5rLB16ewAo8Aj/pXjd+wxMn9JmdEky9dmBg/e186J6rHzVMI1QQal7ldW3AqlP0fGBvN3Bb8aD5sPaLIXaVa54z22kjomiIyhDGkrEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768509985; c=relaxed/simple;
-	bh=/tkSiw/VyBCY1y2upKGpmKJ46xdgl3jH32CmmRURvjE=;
+	s=arc-20240116; t=1768512297; c=relaxed/simple;
+	bh=pOTjDfg3mAgaiiVYOxge9dd/prJq7Tcx30RXCmMqXoI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AzmF8LUxv03WV0bpSgPktOYDF406cLgMNIIrUFTgjKC//cy5/ZqDISgf3omuLOJb9ahVjn2KJUE7pnyQKM2W02oNfg1g4mueCWkG7ATvf8MnOrsePJaD7Wo0v2kbTG46GQII3Gk71tYNQ4u6M0TQtKl6u2h7VuFVRvtvjDOLRkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OJkwMm8F; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	 In-Reply-To:Content-Type; b=EK8S9Y+c0OKa57akE5FWvLvihiz9wbbH5+fYx9JJRjglnYHR7Z0lNlxw7ZTjjMFaSifMpT1uU1IccSZevMB5julfwXvCJw7bfXiGmkq9wesfQDCLPCjIrhTqmo62+gHvEAm4IRrC1iOZfffzNx94Mg0f86cLqRIx38Gx2tkN/4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OkA7dFSJ; arc=none smtp.client-ip=74.125.224.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OJkwMm8F"
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 60FILuPU010070;
-	Thu, 15 Jan 2026 20:46:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=QtgObf
-	ZRbE3w+1IaWDxgjAPlf6cxdAzGJ7fWgI5eVEk=; b=OJkwMm8FHHbMzBo4acrqKm
-	1DMBb1NgqBCrAgdb+l4PXqbGyZxeixR7dzffebwlxnZziwbAzhNInE98w/lraamC
-	KzfBMgZ8t4NmOF87Isvyb4EW/at/1t0eyOrsee940NCyhI/2ra0Vkw2JuZR6fGOW
-	jOei9PKORiPkKuarX2PsfCq9dU03zDk6I+jEdA937/wdwvlIuDnzhjtFuNFZVkgU
-	7pC8+SgIlOs3BBIll5iZ1vQD8EqjMT6VOeTJ6UQvyMfeZAr/RmNWRBrfTqaZOkkG
-	hmXgIrgUvi1Cp+avFX6tCmNsKdkjaO5Ogw0eiMZoK7pa49xPuMuCtiHOLnLnV9YA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bkd6eg7er-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Jan 2026 20:46:10 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 60FKfuLg025482;
-	Thu, 15 Jan 2026 20:46:09 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bkd6eg7en-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Jan 2026 20:46:09 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 60FKfMj6014303;
-	Thu, 15 Jan 2026 20:46:09 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4bm1fyjfan-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Jan 2026 20:46:09 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 60FKjni328443200
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 15 Jan 2026 20:45:49 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 885C858067;
-	Thu, 15 Jan 2026 20:46:07 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CCA7E5805D;
-	Thu, 15 Jan 2026 20:46:06 +0000 (GMT)
-Received: from [9.61.83.249] (unknown [9.61.83.249])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 15 Jan 2026 20:46:06 +0000 (GMT)
-Message-ID: <eb58ca85-f44f-4ed3-a3fb-e01c8e6cbd18@linux.ibm.com>
-Date: Thu, 15 Jan 2026 15:46:06 -0500
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OkA7dFSJ"
+Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-647374e4cccso1167797d50.3
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 13:24:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768512295; x=1769117095; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MLo3UOHmdhp/zwc4ze1PzK/3viXxIgWPWBNuic4xeKQ=;
+        b=OkA7dFSJDB9dHvdpdYSA5h4HZTtxeuqONn1x5hT1o6u6JjAikqWSGm628Lvpm6UDAI
+         rtyW51jL+SRZgkL3/1+z2Kv1/nkdwPDQuhBNWZSOhBR2X3f2dwnyFdPRNoQPv3Dy9AFd
+         8XdZBzUR/gK8JqwxenZ5UQZ45oNBo/e4xqaqLqbVB9KVh4UX0PvlV9iFZdwvYhUiMAIN
+         eGnoU+XeVnbwPZ4w3BTtLQr/mut43hmKDC/k9MhJ8KwEc5wVvCDcf26mmTKqN9cijElr
+         wW85AVoWNq9R2EbIFje1AzIhnBtvHCkjoDDArmxxCrVVq8xaNT2eDHpNWwOBPezjfRh9
+         QjAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768512295; x=1769117095;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MLo3UOHmdhp/zwc4ze1PzK/3viXxIgWPWBNuic4xeKQ=;
+        b=FBQJH7IoRCGokGRJT/MgRQEQbSQ6EXPZSh5+ZY7PdejgZRMlS9baO6Q1PE/3nBjvuM
+         +H51BWdWowZOCOt9p8/PbAwhlYRgF25H0WVuvuIkFfCkDQyq7aRtpeLAn+iBC9embXdh
+         9WyJcYxmHnW9L4Tfu2fIFaLVqAyFnLaviXx53spdOISWVRvXHTMB7RLdOFBizbqkJf+w
+         E6VoAbNO1BnMraZA9Vq8aGIt/J4vTUo0Cq9/QifD9UKgczKu9/MvTilYaxO4y+BOPPP7
+         8/osstuG2H7lt+/eyQ2l/zO0RuX2eWZYuOw4z2JpefVdxoXDaKGG5/LxCBBCKAeDnWDB
+         i3ew==
+X-Forwarded-Encrypted: i=1; AJvYcCVurMi3TPvyWn72rNoOF4z+7dfUaaqq/NSy2JwzhKh2HJgn2x54Sd3IwKlqomV1/RBv2ofVs/14OADdILBchFua10n011I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA0fV49MSYEVfuqbZNxB1BSK/AWIOilYpHw9/vIvRLwrfQpx0Q
+	WtpPJSYLy67rTrfC9wfSC+W0v5/sgmOY1JFTk79jEMVY4yUXwAfdLjRn
+X-Gm-Gg: AY/fxX5on2lh4CIzWJ2wqdzrO+S4lsG3m1gSHs6HGPrcVyf7ggGxA4mzair/4thjrEk
+	3EfylGmDALfXGASrZZstJtoqK1AJOZ3l6orcoYuTgYrAthjgVlLnHTCcZYHNy8m4HPOnukb5XX7
+	FfQiDO/e4Y58niIkSDE96q8fQKS/+kZpOK4W6oVW7zqu7ZpUhgq37DhXnXhsniuhxHH4JCOvI7p
+	wRwEnJNGFl7DmMuJFe6JySWARXqw8/bvm3zg/GDnWRiq/PXqyO30K39SE+DB2qvZRQ7PVcL7vvm
+	78KfEJK8q+r2zX0deshkiNGE3XHFTU9jHZdsW1o2SdlRU4jAxmiSpKIwDtnm6MobwjTR9kVgLYj
+	ffbeQ3bRN+SDLeewIyFCucNOV7tQHxkHxS6QsQUjRI7pRDO7XoVqSozPAmhH8b+fN3NQDZtRQPI
+	eWMEN7P+TNJGO6pDOlsUBMDH/I5evuPecyri0qEiujsc+SG/VH2ybtkfk5hDv9MijQi/b4PqgZr
+	UbGd8dfn41E5qGJjOrSOKRznGBzV+F8lfOuTW35
+X-Received: by 2002:a05:690e:1488:b0:644:60d9:864c with SMTP id 956f58d0204a3-6491652060amr936078d50.91.1768512294373;
+        Thu, 15 Jan 2026 13:24:54 -0800 (PST)
+Received: from [10.138.34.110] (h69-131-215-163.cncrtn.broadband.dynamic.tds.net. [69.131.215.163])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-793c68779dcsm1839407b3.41.2026.01.15.13.24.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Jan 2026 13:24:53 -0800 (PST)
+Message-ID: <4c3956c2-4133-46bb-9ee5-4abf9bf7fff8@gmail.com>
+Date: Thu, 15 Jan 2026 16:24:48 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -69,442 +68,402 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] keys/trusted_keys: establish PKWM as a trusted
- source
-To: Srish Srinivasan <ssrish@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, James.Bottomley@HansenPartnership.com,
-        jarkko@kernel.org, zohar@linux.ibm.com, rnsastry@linux.ibm.com,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20260115100504.488665-1-ssrish@linux.ibm.com>
- <20260115100504.488665-6-ssrish@linux.ibm.com>
+Subject: Re: [PATCH v2 1/5] lsm: Add hook unix_path_connect
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
+ Paul Moore <paul@paul-moore.com>, Christian Brauner <brauner@kernel.org>,
+ Justin Suess <utilityemal77@gmail.com>
+Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>,
+ linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>,
+ Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+ Matthieu Buffet <matthieu@buffet.re>,
+ Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+ konstantin.meskhidze@huawei.com, Alyssa Ross <hi@alyssa.is>,
+ Jann Horn <jannh@google.com>, Tahera Fahimi <fahimitahera@gmail.com>,
+ Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>
+References: <20260110143300.71048-2-gnoack3000@gmail.com>
+ <20260110143300.71048-4-gnoack3000@gmail.com>
+ <20260113-kerngesund-etage-86de4a21da24@brauner>
+ <CAHC9VhQOQ096WEZPLo4-57cYkM8c38qzE-F8L3f_cSSB4WadGg@mail.gmail.com>
+ <20260115.b5977d57d52d@gnoack.org>
 Content-Language: en-US
-From: Nayna Jain <nayna@linux.ibm.com>
-In-Reply-To: <20260115100504.488665-6-ssrish@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: PBXEc1894phn0IewEYntExE_VNxgths6
-X-Authority-Analysis: v=2.4 cv=LLxrgZW9 c=1 sm=1 tr=0 ts=69695212 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=EmpJ7-JGociuIM1Bw8YA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE1MDE1OCBTYWx0ZWRfX28RW4zZoJSEl
- GescPwyf/cSVhL0PE64hxGbHevO07mJlKPr6H6nLK91WrmXAZ39MypLmF3hUsnBwIsdUsmq2V43
- 2c4QcYj8ZpiIuRvA2dTMlcmHWbBy1NHFtudBy2dqtxg/GTdqY7V//Nd/Sk1ocwxVe3bhuKuqiSP
- jNURudTJxpKFBUXlRh3j9svkS55Y+47K5cceDxG5nuA2Jg8EvC6QQ6WbTy3OeBm+Kf11zs/Vl9C
- 8WLxxSBI40jtEcUm+wP/tW/GLS+2Qn/jyChASlBBE2AczisPptdav5zpYxedctxiqaL+Dbkjbq1
- lB6Tkl0xmh8veuUGZz1Yuo0mtOqoi2YvMOT4wKWiuVHIgpGU73vcg3EynEboKlCieqkJXTrz++k
- XORFrAnINmWu9FYgr7zIHsyHgkfhW+VM9u/9Zlqa0sNixKC2bceeIkZM+jgFLGezeTzmji3c3Zh
- fHxYmbU006ytweHReeg==
-X-Proofpoint-ORIG-GUID: RLGciDLoh1uTNhchitKob9ZVDEXdQoiU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-15_06,2026-01-15_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 clxscore=1015 spamscore=0 impostorscore=0
- malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2512120000 definitions=main-2601150158
+From: Demi Marie Obenour <demiobenour@gmail.com>
+Autocrypt: addr=demiobenour@gmail.com; keydata=
+ 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
+ +MYSfkEjBz0E8CLOcAw7JIwAaeBT
+In-Reply-To: <20260115.b5977d57d52d@gnoack.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------aQIy8bnmqMJWObwuKGCJcSje"
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------aQIy8bnmqMJWObwuKGCJcSje
+Content-Type: multipart/mixed; boundary="------------S2C1wL1F0q5HZnxKu9hF6jC8";
+ protected-headers="v1"
+Message-ID: <4c3956c2-4133-46bb-9ee5-4abf9bf7fff8@gmail.com>
+Date: Thu, 15 Jan 2026 16:24:48 -0500
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] lsm: Add hook unix_path_connect
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
+ Paul Moore <paul@paul-moore.com>, Christian Brauner <brauner@kernel.org>,
+ Justin Suess <utilityemal77@gmail.com>
+Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>,
+ linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>,
+ Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+ Matthieu Buffet <matthieu@buffet.re>,
+ Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+ konstantin.meskhidze@huawei.com, Alyssa Ross <hi@alyssa.is>,
+ Jann Horn <jannh@google.com>, Tahera Fahimi <fahimitahera@gmail.com>,
+ Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>
+References: <20260110143300.71048-2-gnoack3000@gmail.com>
+ <20260110143300.71048-4-gnoack3000@gmail.com>
+ <20260113-kerngesund-etage-86de4a21da24@brauner>
+ <CAHC9VhQOQ096WEZPLo4-57cYkM8c38qzE-F8L3f_cSSB4WadGg@mail.gmail.com>
+ <20260115.b5977d57d52d@gnoack.org>
+Content-Language: en-US
+From: Demi Marie Obenour <demiobenour@gmail.com>
+Autocrypt: addr=demiobenour@gmail.com; keydata=
+ xsFNBFp+A0oBEADffj6anl9/BHhUSxGTICeVl2tob7hPDdhHNgPR4C8xlYt5q49yB+l2nipd
+ aq+4Gk6FZfqC825TKl7eRpUjMriwle4r3R0ydSIGcy4M6eb0IcxmuPYfbWpr/si88QKgyGSV
+ Z7GeNW1UnzTdhYHuFlk8dBSmB1fzhEYEk0RcJqg4AKoq6/3/UorR+FaSuVwT7rqzGrTlscnT
+ DlPWgRzrQ3jssesI7sZLm82E3pJSgaUoCdCOlL7MMPCJwI8JpPlBedRpe9tfVyfu3euTPLPx
+ wcV3L/cfWPGSL4PofBtB8NUU6QwYiQ9Hzx4xOyn67zW73/G0Q2vPPRst8LBDqlxLjbtx/WLR
+ 6h3nBc3eyuZ+q62HS1pJ5EvUT1vjyJ1ySrqtUXWQ4XlZyoEFUfpJxJoN0A9HCxmHGVckzTRl
+ 5FMWo8TCniHynNXsBtDQbabt7aNEOaAJdE7to0AH3T/Bvwzcp0ZJtBk0EM6YeMLtotUut7h2
+ Bkg1b//r6bTBswMBXVJ5H44Qf0+eKeUg7whSC9qpYOzzrm7+0r9F5u3qF8ZTx55TJc2g656C
+ 9a1P1MYVysLvkLvS4H+crmxA/i08Tc1h+x9RRvqba4lSzZ6/Tmt60DPM5Sc4R0nSm9BBff0N
+ m0bSNRS8InXdO1Aq3362QKX2NOwcL5YaStwODNyZUqF7izjK4QARAQABzTxEZW1pIE1hcmll
+ IE9iZW5vdXIgKGxvdmVyIG9mIGNvZGluZykgPGRlbWlvYmVub3VyQGdtYWlsLmNvbT7CwXgE
+ EwECACIFAlp+A0oCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJELKItV//nCLBhr8Q
+ AK/xrb4wyi71xII2hkFBpT59ObLN+32FQT7R3lbZRjVFjc6yMUjOb1H/hJVxx+yo5gsSj5LS
+ 9AwggioUSrcUKldfA/PKKai2mzTlUDxTcF3vKx6iMXKA6AqwAw4B57ZEJoMM6egm57TV19kz
+ PMc879NV2nc6+elaKl+/kbVeD3qvBuEwsTe2Do3HAAdrfUG/j9erwIk6gha/Hp9yZlCnPTX+
+ VK+xifQqt8RtMqS5R/S8z0msJMI/ajNU03kFjOpqrYziv6OZLJ5cuKb3bZU5aoaRQRDzkFIR
+ 6aqtFLTohTo20QywXwRa39uFaOT/0YMpNyel0kdOszFOykTEGI2u+kja35g9TkH90kkBTG+a
+ EWttIht0Hy6YFmwjcAxisSakBuHnHuMSOiyRQLu43ej2+mDWgItLZ48Mu0C3IG1seeQDjEYP
+ tqvyZ6bGkf2Vj+L6wLoLLIhRZxQOedqArIk/Sb2SzQYuxN44IDRt+3ZcDqsPppoKcxSyd1Ny
+ 2tpvjYJXlfKmOYLhTWs8nwlAlSHX/c/jz/ywwf7eSvGknToo1Y0VpRtoxMaKW1nvH0OeCSVJ
+ itfRP7YbiRVc2aNqWPCSgtqHAuVraBRbAFLKh9d2rKFB3BmynTUpc1BQLJP8+D5oNyb8Ts4x
+ Xd3iV/uD8JLGJfYZIR7oGWFLP4uZ3tkneDfYzsFNBFp+A0oBEAC9ynZI9LU+uJkMeEJeJyQ/
+ 8VFkCJQPQZEsIGzOTlPnwvVna0AS86n2Z+rK7R/usYs5iJCZ55/JISWd8xD57ue0eB47bcJv
+ VqGlObI2DEG8TwaW0O0duRhDgzMEL4t1KdRAepIESBEA/iPpI4gfUbVEIEQuqdqQyO4GAe+M
+ kD0Hy5JH/0qgFmbaSegNTdQg5iqYjRZ3ttiswalql1/iSyv1WYeC1OAs+2BLOAT2NEggSiVO
+ txEfgewsQtCWi8H1SoirakIfo45Hz0tk/Ad9ZWh2PvOGt97Ka85o4TLJxgJJqGEnqcFUZnJJ
+ riwoaRIS8N2C8/nEM53jb1sH0gYddMU3QxY7dYNLIUrRKQeNkF30dK7V6JRH7pleRlf+wQcN
+ fRAIUrNlatj9TxwivQrKnC9aIFFHEy/0mAgtrQShcMRmMgVlRoOA5B8RTulRLCmkafvwuhs6
+ dCxN0GNAORIVVFxjx9Vn7OqYPgwiofZ6SbEl0hgPyWBQvE85klFLZLoj7p+joDY1XNQztmfA
+ rnJ9x+YV4igjWImINAZSlmEcYtd+xy3Li/8oeYDAqrsnrOjb+WvGhCykJk4urBog2LNtcyCj
+ kTs7F+WeXGUo0NDhbd3Z6AyFfqeF7uJ3D5hlpX2nI9no/ugPrrTVoVZAgrrnNz0iZG2DVx46
+ x913pVKHl5mlYQARAQABwsFfBBgBAgAJBQJafgNKAhsMAAoJELKItV//nCLBwNIP/AiIHE8b
+ oIqReFQyaMzxq6lE4YZCZNj65B/nkDOvodSiwfwjjVVE2V3iEzxMHbgyTCGA67+Bo/d5aQGj
+ gn0TPtsGzelyQHipaUzEyrsceUGWYoKXYyVWKEfyh0cDfnd9diAm3VeNqchtcMpoehETH8fr
+ RHnJdBcjf112PzQSdKC6kqU0Q196c4Vp5HDOQfNiDnTf7gZSj0BraHOByy9LEDCLhQiCmr+2
+ E0rW4tBtDAn2HkT9uf32ZGqJCn1O+2uVfFhGu6vPE5qkqrbSE8TG+03H8ecU2q50zgHWPdHM
+ OBvy3EhzfAh2VmOSTcRK+tSUe/u3wdLRDPwv/DTzGI36Kgky9MsDC5gpIwNbOJP2G/q1wT1o
+ Gkw4IXfWv2ufWiXqJ+k7HEi2N1sree7Dy9KBCqb+ca1vFhYPDJfhP75I/VnzHVssZ/rYZ9+5
+ 1yDoUABoNdJNSGUYl+Yh9Pw9pE3Kt4EFzUlFZWbE4xKL/NPno+z4J9aWemLLszcYz/u3XnbO
+ vUSQHSrmfOzX3cV4yfmjM5lewgSstoxGyTx2M8enslgdXhPthZlDnTnOT+C+OTsh8+m5tos8
+ HQjaPM01MKBiAqdPgksm1wu2DrrwUi6ChRVTUBcj6+/9IJ81H2P2gJk3Ls3AVIxIffLoY34E
+ +MYSfkEjBz0E8CLOcAw7JIwAaeBT
+In-Reply-To: <20260115.b5977d57d52d@gnoack.org>
+Autocrypt-Gossip: addr=hi@alyssa.is; keydata=
+ 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
+ wGxvGU7TX5ou
 
-On 1/15/26 5:05 AM, Srish Srinivasan wrote:
-> The wrapping key does not exist by default and is generated by the
-> hypervisor as a part of PKWM initialization. This key is then persisted by
-> the hypervisor and is used to wrap trusted keys. These are variable length
-> symmetric keys, which in the case of PowerVM Key Wrapping Module (PKWM) are
-> generated using the kernel RNG. PKWM can be used as a trust source through
-> the following example keyctl commands:
->
-> keyctl add trusted my_trusted_key "new 32" @u
->
-> Use the wrap_flags command option to set the secure boot requirement for
-> the wrapping request through the following keyctl commands
->
-> case1: no secure boot requirement. (default)
-> keyctl usage: keyctl add trusted my_trusted_key "new 32" @u
-> 	      OR
-> 	      keyctl add trusted my_trusted_key "new 32 wrap_flags=0x00" @u
->
-> case2: secure boot required to in either audit or enforce mode. set bit 0
-> keyctl usage: keyctl add trusted my_trusted_key "new 32 wrap_flags=0x01" @u
->
-> case3: secure boot required to be in enforce mode. set bit 1
-> keyctl usage: keyctl add trusted my_trusted_key "new 32 wrap_flags=0x02" @u
->
-> NOTE:
-> -> Setting the secure boot requirement is NOT a must.
-> -> Only either of the secure boot requirement options should be set. Not
-> both.
-> -> All the other bits are required to be not set.
-> -> Set the kernel parameter trusted.source=pkwm to choose PKWM as the
-> backend for trusted keys implementation.
-> -> CONFIG_PSERIES_PLPKS must be enabled to build PKWM.
->
-> Add PKWM, which is a combination of IBM PowerVM and Power LPAR Platform
-> KeyStore, as a new trust source for trusted keys.
+--------------S2C1wL1F0q5HZnxKu9hF6jC8
+Content-Type: multipart/mixed; boundary="------------kP0MfbNIkjBfN0cdEIPBGErL"
 
-Looks good to me.
+--------------kP0MfbNIkjBfN0cdEIPBGErL
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
+On 1/15/26 05:10, G=C3=BCnther Noack wrote:
+> On Tue, Jan 13, 2026 at 06:27:15PM -0500, Paul Moore wrote:
+>> On Tue, Jan 13, 2026 at 4:34=E2=80=AFAM Christian Brauner <brauner@ker=
+nel.org> wrote:
+>>> On Sat, Jan 10, 2026 at 03:32:57PM +0100, G=C3=BCnther Noack wrote:
+>>>> From: Justin Suess <utilityemal77@gmail.com>
+>>>>
+>>>> Adds an LSM hook unix_path_connect.
+>>>>
+>>>> This hook is called to check the path of a named unix socket before =
+a
+>>>> connection is initiated.
+>>>>
+>>>> Cc: G=C3=BCnther Noack <gnoack3000@gmail.com>
+>>>> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+>>>> ---
+>>>>  include/linux/lsm_hook_defs.h |  4 ++++
+>>>>  include/linux/security.h      | 11 +++++++++++
+>>>>  net/unix/af_unix.c            |  9 +++++++++
+>>>>  security/security.c           | 20 ++++++++++++++++++++
+>>>>  4 files changed, 44 insertions(+)
+>>
+>> ...
 
->
-> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->   This version introduces a private pointer for backend specific fields and
->   related changes specific to the PKWM backend, but defers migrating the TPM
->   fields to this new framework. That will be done independently of this
->   patch series.
->   MAINTAINERS                               |   9 +
->   include/keys/trusted-type.h               |   7 +-
->   include/keys/trusted_pkwm.h               |  33 ++++
->   security/keys/trusted-keys/Kconfig        |   8 +
->   security/keys/trusted-keys/Makefile       |   2 +
->   security/keys/trusted-keys/trusted_core.c |   6 +-
->   security/keys/trusted-keys/trusted_pkwm.c | 190 ++++++++++++++++++++++
->   7 files changed, 253 insertions(+), 2 deletions(-)
->   create mode 100644 include/keys/trusted_pkwm.h
->   create mode 100644 security/keys/trusted-keys/trusted_pkwm.c
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index cf755238c429..c98f1811f836 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14008,6 +14008,15 @@ S:	Supported
->   F:	include/keys/trusted_dcp.h
->   F:	security/keys/trusted-keys/trusted_dcp.c
->   
-> +KEYS-TRUSTED-PLPKS
-> +M:	Srish Srinivasan <ssrish@linux.ibm.com>
-> +M:	Nayna Jain <nayna@linux.ibm.com>
-> +L:	linux-integrity@vger.kernel.org
-> +L:	keyrings@vger.kernel.org
-> +S:	Supported
-> +F:	include/keys/trusted_pkwm.h
-> +F:	security/keys/trusted-keys/trusted_pkwm.c
-> +
->   KEYS-TRUSTED-TEE
->   M:	Sumit Garg <sumit.garg@kernel.org>
->   L:	linux-integrity@vger.kernel.org
-> diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
-> index 4eb64548a74f..03527162613f 100644
-> --- a/include/keys/trusted-type.h
-> +++ b/include/keys/trusted-type.h
-> @@ -19,7 +19,11 @@
->   
->   #define MIN_KEY_SIZE			32
->   #define MAX_KEY_SIZE			128
-> -#define MAX_BLOB_SIZE			512
-> +#if IS_ENABLED(CONFIG_TRUSTED_KEYS_PKWM)
-> +#define MAX_BLOB_SIZE			1152
-> +#else
-> +#define MAX_BLOB_SIZE                   512
-> +#endif
->   #define MAX_PCRINFO_SIZE		64
->   #define MAX_DIGEST_SIZE			64
->   
-> @@ -46,6 +50,7 @@ struct trusted_key_options {
->   	uint32_t policydigest_len;
->   	unsigned char policydigest[MAX_DIGEST_SIZE];
->   	uint32_t policyhandle;
-> +	void *private;
->   };
->   
->   struct trusted_key_ops {
-> diff --git a/include/keys/trusted_pkwm.h b/include/keys/trusted_pkwm.h
-> new file mode 100644
-> index 000000000000..4035b9776394
-> --- /dev/null
-> +++ b/include/keys/trusted_pkwm.h
-> @@ -0,0 +1,33 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __PKWM_TRUSTED_KEY_H
-> +#define __PKWM_TRUSTED_KEY_H
-> +
-> +#include <keys/trusted-type.h>
-> +#include <linux/bitops.h>
-> +#include <linux/printk.h>
-> +
-> +extern struct trusted_key_ops pkwm_trusted_key_ops;
-> +
-> +struct trusted_pkwm_options {
-> +	u16 wrap_flags;
-> +};
-> +
-> +static inline void dump_options(struct trusted_key_options *o)
-> +{
-> +	const struct trusted_pkwm_options *pkwm;
-> +	bool sb_audit_or_enforce_bit;
-> +	bool sb_enforce_bit;
-> +
-> +	pkwm = o->private;
-> +	sb_audit_or_enforce_bit = pkwm->wrap_flags & BIT(0);
-> +	sb_enforce_bit = pkwm->wrap_flags & BIT(1);
-> +
-> +	if (sb_audit_or_enforce_bit)
-> +		pr_debug("secure boot mode required: audit or enforce");
-> +	else if (sb_enforce_bit)
-> +		pr_debug("secure boot mode required: enforce");
-> +	else
-> +		pr_debug("secure boot mode required: disabled");
-> +}
-> +
-> +#endif
-> diff --git a/security/keys/trusted-keys/Kconfig b/security/keys/trusted-keys/Kconfig
-> index 204a68c1429d..9e00482d886a 100644
-> --- a/security/keys/trusted-keys/Kconfig
-> +++ b/security/keys/trusted-keys/Kconfig
-> @@ -46,6 +46,14 @@ config TRUSTED_KEYS_DCP
->   	help
->   	  Enable use of NXP's DCP (Data Co-Processor) as trusted key backend.
->   
-> +config TRUSTED_KEYS_PKWM
-> +	bool "PKWM-based trusted keys"
-> +	depends on PSERIES_PLPKS >= TRUSTED_KEYS
-> +	default y
-> +	select HAVE_TRUSTED_KEYS
-> +	help
-> +	  Enable use of IBM PowerVM Key Wrapping Module (PKWM) as a trusted key backend.
-> +
->   if !HAVE_TRUSTED_KEYS
->   	comment "No trust source selected!"
->   endif
-> diff --git a/security/keys/trusted-keys/Makefile b/security/keys/trusted-keys/Makefile
-> index f0f3b27f688b..5fc053a21dad 100644
-> --- a/security/keys/trusted-keys/Makefile
-> +++ b/security/keys/trusted-keys/Makefile
-> @@ -16,3 +16,5 @@ trusted-$(CONFIG_TRUSTED_KEYS_TEE) += trusted_tee.o
->   trusted-$(CONFIG_TRUSTED_KEYS_CAAM) += trusted_caam.o
->   
->   trusted-$(CONFIG_TRUSTED_KEYS_DCP) += trusted_dcp.o
-> +
-> +trusted-$(CONFIG_TRUSTED_KEYS_PKWM) += trusted_pkwm.o
-> diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-> index b1680ee53f86..2d328de170e8 100644
-> --- a/security/keys/trusted-keys/trusted_core.c
-> +++ b/security/keys/trusted-keys/trusted_core.c
-> @@ -12,6 +12,7 @@
->   #include <keys/trusted_caam.h>
->   #include <keys/trusted_dcp.h>
->   #include <keys/trusted_tpm.h>
-> +#include <keys/trusted_pkwm.h>
->   #include <linux/capability.h>
->   #include <linux/err.h>
->   #include <linux/init.h>
-> @@ -31,7 +32,7 @@ MODULE_PARM_DESC(rng, "Select trusted key RNG");
->   
->   static char *trusted_key_source;
->   module_param_named(source, trusted_key_source, charp, 0);
-> -MODULE_PARM_DESC(source, "Select trusted keys source (tpm, tee, caam or dcp)");
-> +MODULE_PARM_DESC(source, "Select trusted keys source (tpm, tee, caam, dcp or pkwm)");
->   
->   static const struct trusted_key_source trusted_key_sources[] = {
->   #if defined(CONFIG_TRUSTED_KEYS_TPM)
-> @@ -46,6 +47,9 @@ static const struct trusted_key_source trusted_key_sources[] = {
->   #if defined(CONFIG_TRUSTED_KEYS_DCP)
->   	{ "dcp", &dcp_trusted_key_ops },
->   #endif
-> +#if defined(CONFIG_TRUSTED_KEYS_PKWM)
-> +	{ "pkwm", &pkwm_trusted_key_ops },
-> +#endif
->   };
->   
->   DEFINE_STATIC_CALL_NULL(trusted_key_seal, *trusted_key_sources[0].ops->seal);
-> diff --git a/security/keys/trusted-keys/trusted_pkwm.c b/security/keys/trusted-keys/trusted_pkwm.c
-> new file mode 100644
-> index 000000000000..4f391b77a907
-> --- /dev/null
-> +++ b/security/keys/trusted-keys/trusted_pkwm.c
-> @@ -0,0 +1,190 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2025 IBM Corporation, Srish Srinivasan <ssrish@linux.ibm.com>
-> + */
-> +
-> +#include <keys/trusted_pkwm.h>
-> +#include <keys/trusted-type.h>
-> +#include <linux/build_bug.h>
-> +#include <linux/key-type.h>
-> +#include <linux/parser.h>
-> +#include <asm/plpks.h>
-> +
-> +enum {
-> +	Opt_err,
-> +	Opt_wrap_flags,
-> +};
-> +
-> +static const match_table_t key_tokens = {
-> +	{Opt_wrap_flags, "wrap_flags=%s"},
-> +	{Opt_err, NULL}
-> +};
-> +
-> +static int getoptions(char *datablob, struct trusted_key_options *opt)
-> +{
-> +	substring_t args[MAX_OPT_ARGS];
-> +	char *p = datablob;
-> +	int token;
-> +	int res;
-> +	u16 wrap_flags;
-> +	unsigned long token_mask = 0;
-> +	struct trusted_pkwm_options *pkwm;
-> +
-> +	if (!datablob)
-> +		return 0;
-> +
-> +	pkwm = opt->private;
-> +
-> +	while ((p = strsep(&datablob, " \t"))) {
-> +		if (*p == '\0' || *p == ' ' || *p == '\t')
-> +			continue;
-> +
-> +		token = match_token(p, key_tokens, args);
-> +		if (test_and_set_bit(token, &token_mask))
-> +			return -EINVAL;
-> +
-> +		switch (token) {
-> +		case Opt_wrap_flags:
-> +			res = kstrtou16(args[0].from, 16, &wrap_flags);
-> +			if (res < 0 || wrap_flags > 2)
-> +				return -EINVAL;
-> +			pkwm->wrap_flags = wrap_flags;
-> +			break;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
-> +static struct trusted_key_options *trusted_options_alloc(void)
-> +{
-> +	struct trusted_key_options *options;
-> +	struct trusted_pkwm_options *pkwm;
-> +
-> +	options = kzalloc(sizeof(*options), GFP_KERNEL);
-> +
-> +	if (options) {
-> +		pkwm = kzalloc(sizeof(*pkwm), GFP_KERNEL);
-> +
-> +		if (!pkwm) {
-> +			kfree_sensitive(options);
-> +			options = NULL;
-> +		} else {
-> +			options->private = pkwm;
-> +		}
-> +	}
-> +
-> +	return options;
-> +}
-> +
-> +static int trusted_pkwm_seal(struct trusted_key_payload *p, char *datablob)
-> +{
-> +	struct trusted_key_options *options = NULL;
-> +	struct trusted_pkwm_options *pkwm = NULL;
-> +	u8 *input_buf, *output_buf;
-> +	u32 output_len, input_len;
-> +	int rc;
-> +
-> +	options = trusted_options_alloc();
-> +
-> +	if (!options)
-> +		return -ENOMEM;
-> +
-> +	rc = getoptions(datablob, options);
-> +	if (rc < 0)
-> +		goto out;
-> +	dump_options(options);
-> +
-> +	input_len = p->key_len;
-> +	input_buf = kmalloc(ALIGN(input_len, 4096), GFP_KERNEL);
-> +	if (!input_buf) {
-> +		pr_err("Input buffer allocation failed. Returning -ENOMEM.");
-> +		rc = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	memcpy(input_buf, p->key, p->key_len);
-> +
-> +	pkwm = options->private;
-> +
-> +	rc = plpks_wrap_object(&input_buf, input_len, pkwm->wrap_flags,
-> +			       &output_buf, &output_len);
-> +	if (!rc) {
-> +		memcpy(p->blob, output_buf, output_len);
-> +		p->blob_len = output_len;
-> +		dump_payload(p);
-> +	} else {
-> +		pr_err("Wrapping of payload key failed: %d\n", rc);
-> +	}
-> +
-> +	kfree(input_buf);
-> +	kfree(output_buf);
-> +
-> +out:
-> +	kfree_sensitive(options->private);
-> +	kfree_sensitive(options);
-> +	return rc;
-> +}
-> +
-> +static int trusted_pkwm_unseal(struct trusted_key_payload *p, char *datablob)
-> +{
-> +	u8 *input_buf, *output_buf;
-> +	u32 input_len, output_len;
-> +	int rc;
-> +
-> +	input_len = p->blob_len;
-> +	input_buf = kmalloc(ALIGN(input_len, 4096), GFP_KERNEL);
-> +	if (!input_buf) {
-> +		pr_err("Input buffer allocation failed. Returning -ENOMEM.");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	memcpy(input_buf, p->blob, p->blob_len);
-> +
-> +	rc = plpks_unwrap_object(&input_buf, input_len, &output_buf,
-> +				 &output_len);
-> +	if (!rc) {
-> +		memcpy(p->key, output_buf, output_len);
-> +		p->key_len = output_len;
-> +		dump_payload(p);
-> +	} else {
-> +		pr_err("Unwrapping of payload failed: %d\n", rc);
-> +	}
-> +
-> +	kfree(input_buf);
-> +	kfree(output_buf);
-> +
-> +	return rc;
-> +}
-> +
-> +static int trusted_pkwm_init(void)
-> +{
-> +	int ret;
-> +
-> +	if (!plpks_wrapping_is_supported()) {
-> +		pr_err("H_PKS_WRAP_OBJECT interface not supported\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	ret = plpks_gen_wrapping_key();
-> +	if (ret) {
-> +		pr_err("Failed to generate default wrapping key\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	return register_key_type(&key_type_trusted);
-> +}
-> +
-> +static void trusted_pkwm_exit(void)
-> +{
-> +	unregister_key_type(&key_type_trusted);
-> +}
-> +
-> +struct trusted_key_ops pkwm_trusted_key_ops = {
-> +	.migratable = 0, /* non-migratable */
-> +	.init = trusted_pkwm_init,
-> +	.seal = trusted_pkwm_seal,
-> +	.unseal = trusted_pkwm_unseal,
-> +	.exit = trusted_pkwm_exit,
-> +};
+=2E..
+
+> * Some properties of the resolved socket are still observable to
+>   userspace:
+>=20
+>   When we only pass the path to a later LSM hook, there are a variety
+>   of additional error case checks in af_unix.c which are based on the
+>   "other" socket which we looked up through the path.  Examples:
+>=20
+>   * was other shutdown(2)? (ECONNREFUSED on connect or EPIPE on dgram_s=
+endmsg)
+>   * does other support SO_PASSRIGHTS (fd passing)? (EPERM on dgram_send=
+msg)
+>   * would sendmsg pass sk_filter() (on dgram_sendmsg)
+>=20
+>   For a LSM policy that is supposed to restrict the resolution of a
+>   UNIX socket by path, I would not expect such properties of the
+>   resolved socket to be observable?
+>=20
+>   (And we also can't fix this up in the LSM by returning a matching
+>   error code, because at least unix_dgram_sendmsg() returns multiple
+>   different error codes in these error cases.)
+>=20
+>   I would prefer if the correctness of our LSM did not depend on
+>   keeping track of the error scenarios in af_unix.c.  This seems
+>   brittle.
+
+Indeed so.
+
+> Overall, I am not convinced that using pre-existing hooks is the right
+> way and I would prefer the approach where we have a more dedicated LSM
+> hook for the path lookup.
+>=20
+> Does that seem reasonable?  Let me know what you think.
+>=20
+> =E2=80=93G=C3=BCnther
+
+Having a dedicated LSM hook for all path lookups is definitely my
+preferred approach.  Could this allow limiting directory traversal
+as well?
+--=20
+Sincerely,
+Demi Marie Obenour (she/her/hers)
+--------------kP0MfbNIkjBfN0cdEIPBGErL
+Content-Type: application/pgp-keys; name="OpenPGP_0xB288B55FFF9C22C1.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB288B55FFF9C22C1.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xsFNBFp+A0oBEADffj6anl9/BHhUSxGTICeVl2tob7hPDdhHNgPR4C8xlYt5q49y
+B+l2nipdaq+4Gk6FZfqC825TKl7eRpUjMriwle4r3R0ydSIGcy4M6eb0IcxmuPYf
+bWpr/si88QKgyGSVZ7GeNW1UnzTdhYHuFlk8dBSmB1fzhEYEk0RcJqg4AKoq6/3/
+UorR+FaSuVwT7rqzGrTlscnTDlPWgRzrQ3jssesI7sZLm82E3pJSgaUoCdCOlL7M
+MPCJwI8JpPlBedRpe9tfVyfu3euTPLPxwcV3L/cfWPGSL4PofBtB8NUU6QwYiQ9H
+zx4xOyn67zW73/G0Q2vPPRst8LBDqlxLjbtx/WLR6h3nBc3eyuZ+q62HS1pJ5EvU
+T1vjyJ1ySrqtUXWQ4XlZyoEFUfpJxJoN0A9HCxmHGVckzTRl5FMWo8TCniHynNXs
+BtDQbabt7aNEOaAJdE7to0AH3T/Bvwzcp0ZJtBk0EM6YeMLtotUut7h2Bkg1b//r
+6bTBswMBXVJ5H44Qf0+eKeUg7whSC9qpYOzzrm7+0r9F5u3qF8ZTx55TJc2g656C
+9a1P1MYVysLvkLvS4H+crmxA/i08Tc1h+x9RRvqba4lSzZ6/Tmt60DPM5Sc4R0nS
+m9BBff0Nm0bSNRS8InXdO1Aq3362QKX2NOwcL5YaStwODNyZUqF7izjK4QARAQAB
+zTxEZW1pIE9iZW5vdXIgKElUTCBFbWFpbCBLZXkpIDxhdGhlbmFAaW52aXNpYmxl
+dGhpbmdzbGFiLmNvbT7CwY4EEwEIADgWIQR2h02fEza6IlkHHHGyiLVf/5wiwQUC
+X6YJvQIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRCyiLVf/5wiwWRhD/0Y
+R+YYC5Kduv/2LBgQJIygMsFiRHbR4+tWXuTFqgrxxFSlMktZ6gQrQCWe38WnOXkB
+oY6n/5lSJdfnuGd2UagZ/9dkaGMUkqt+5WshLFly4BnP7pSsWReKgMP7etRTwn3S
+zk1OwFx2lzY1EnnconPLfPBc6rWG2moA6l0WX+3WNR1B1ndqpl2hPSjT2jUCBWDV
+rGOUSX7r5f1WgtBeNYnEXPBCUUM51pFGESmfHIXQrqFDA7nBNiIVFDJTmQzuEqIy
+Jl67pKNgooij5mKzRhFKHfjLRAH4mmWZlB9UjDStAfFBAoDFHwd1HL5VQCNQdqEc
+/9lZDApqWuCPadZN+pGouqLysesIYsNxUhJ7dtWOWHl0vs7/3qkWmWun/2uOJMQh
+ra2u8nA9g91FbOobWqjrDd6x3ZJoGQf4zLqjmn/P514gb697788e573WN/MpQ5XI
+Fl7aM2d6/GJiq6LC9T2gSUW4rbPBiqOCeiUx7Kd/sVm41p9TOA7fEG4bYddCfDsN
+xaQJH6VRK3NOuBUGeL+iQEVF5Xs6Yp+U+jwvv2M5Lel3EqAYo5xXTx4ls0xaxDCu
+fudcAh8CMMqx3fguSb7Mi31WlnZpk0fDuWQVNKyDP7lYpwc4nCCGNKCj622ZSocH
+AcQmX28L8pJdLYacv9pU3jPy4fHcQYvmTavTqowGnM08RGVtaSBNYXJpZSBPYmVu
+b3VyIChsb3ZlciBvZiBjb2RpbmcpIDxkZW1pb2Jlbm91ckBnbWFpbC5jb20+wsF4
+BBMBAgAiBQJafgNKAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRCyiLVf
+/5wiwYa/EACv8a2+MMou9cSCNoZBQaU+fTmyzft9hUE+0d5W2UY1RY3OsjFIzm9R
+/4SVccfsqOYLEo+S0vQMIIIqFEq3FCpXXwPzyimotps05VA8U3Bd7yseojFygOgK
+sAMOAee2RCaDDOnoJue01dfZMzzHPO/TVdp3OvnpWipfv5G1Xg96rwbhMLE3tg6N
+xwAHa31Bv4/Xq8CJOoIWvx6fcmZQpz01/lSvsYn0KrfEbTKkuUf0vM9JrCTCP2oz
+VNN5BYzqaq2M4r+jmSyeXLim922VOWqGkUEQ85BSEemqrRS06IU6NtEMsF8EWt/b
+hWjk/9GDKTcnpdJHTrMxTspExBiNrvpI2t+YPU5B/dJJAUxvmhFrbSIbdB8umBZs
+I3AMYrEmpAbh5x7jEjoskUC7uN3o9vpg1oCLS2ePDLtAtyBtbHnkA4xGD7ar8mem
+xpH9lY/i+sC6CyyIUWcUDnnagKyJP0m9ks0GLsTeOCA0bft2XA6rD6aaCnMUsndT
+ctrab42CV5XypjmC4U1rPJ8JQJUh1/3P48/8sMH+3krxpJ06KNWNFaUbaMTGiltZ
+7x9DngklSYrX0T+2G4kVXNmjaljwkoLahwLla2gUWwBSyofXdqyhQdwZsp01KXNQ
+UCyT/Pg+aDcm/E7OMV3d4lf7g/CSxiX2GSEe6BlhSz+Lmd7ZJ3g32M1ARGVtaSBN
+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
+EtJuZYM5blWncBOJCoWMnBEcTEo/viU3GgcVRw=3D=3D
+=3Dx94R
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------kP0MfbNIkjBfN0cdEIPBGErL--
+
+--------------S2C1wL1F0q5HZnxKu9hF6jC8--
+
+--------------aQIy8bnmqMJWObwuKGCJcSje
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEopQtqVJW1aeuo9/sszaHOrMp8lMFAmlpWyEACgkQszaHOrMp
+8lOndg/9FKBrGIlLphJtozzbENVs+qWns9iuF9TrbKEwcDBMr8R8rxINl4kLl/dT
+YqAFl/8Ft+6GyLu0rAJXEbz14/RknlD1T1pXnQiCMsFEJJjdpFbfnKpD6FkFaGn+
+tFx4UGwwQ2qyHoMZ8C4ApXDmLXp9WPwqyg0BGKroE36a1TPmEzYTSaI382ryq4Nc
+Yo8b8G7aqRhN1PxndH+Us6OWQLHHW5rQ0ql9Uykn0geo7QlNk/LcDIuoamCPAm+p
+NwxEJaDhK8bsRLdbKf87BbuWB1RV/99gVYPaAI7RWXKO5c+H2L3Svj3cLeBLaPMt
+fq2fgfj2283/seZAaBgR4xS55+HUfVGYlaBCRRcayEcOVFL9I1TJKP0rfqAp8a2j
+/WDVG90FUrsICPKmVx1okpE5MmCRw/HcSgU+/hFOXMxwCCg5K+Zv9Q7Qgc0J9Idd
+Bl0QdB3bxa6RAWGzWBZTLrOMOwalfmOT4RSMPSU3da5QZ+F2kVHhlDwc9DlbuIHM
+tAcxsoIa/ADluZxpNoWz+7N1c561JaJ6E+UQhndiYzcMXSWky2KltcAvq/OoYG4T
+0V5yK4Xg9em2dppfBXWGDzSnhBDMsVkV8/tTwxnTRVPgmPymk6ArAxiAL+WkElko
+ZqNjmNr1WrCesp0oD0UA4WaCqiUZN7nO6kJENy1miJgCFPQCdeI=
+=evtw
+-----END PGP SIGNATURE-----
+
+--------------aQIy8bnmqMJWObwuKGCJcSje--
