@@ -1,503 +1,263 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C8935FF52;
-	Thu, 15 Jan 2026 10:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E5A3570BA
+	for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 10:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768471555; cv=none; b=KF/5bR+YLIXyueiP49GU8VDj++khbB2EHrl4mOoiLLE1avvdImKQFN+VqhxIyt6o6FM50P8TrVLJk0u1Uesju8afZ4rsCkzLKwwBqzoaQcd92nDi9Pv60Fp/746V0RO6Yxik91YW/SnQV/Q0Uq0Ue4v5TaEUqjSlZBCgY2zHmu0=
+	t=1768471812; cv=none; b=GUZNnlBWZP9GqlhgOIrXxRbqEWzJOt8X6f+ziNIJA9sVBtLzYqgG8s+yNNnHOsGvBUlUea/Qj8Z4Z/PdN81lwm2SQ19uYWu5pG+zsZ03gRpdkR+TTpN7OWgTlh4Pn0tvloU9ajVp7Tqkt82jh3UOgvTGGNhisbDI/745MyFSF/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768471555; c=relaxed/simple;
-	bh=OReRviVFNBNk1QzCUFlraQQfscmrF5+tQMqiszDaWhE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p6HisV/iDcSxi+bnqStWM7YO5YERt/XDC7ZiKrbumhZWUgkSsx5HzbsUAvHY583JMCU1qTuPGdckwybHilptfc7N3p43W3OFnDwwcnK7m/Pshb2qfU5apghzG73jsBvMCDyKgqK9FI5tNyNTzQJeY7QTCT/8oD0qsxIeOE/SYGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VWV6BWUy; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1768471812; c=relaxed/simple;
+	bh=9k+hI8ee/XChzzMZqRaSR1BQU4YqamW09mjAmEnwWew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WlzDh3lF7hvVIx6vuyeg3lbYFqFLriU8Hw+kewI96IjqW9N00c2WWGTGyWIH2OjjuMaCGcJ1oeOwzx+aW+sMftHe7+1Kws/noDxzytAYJSQbtqlvhhn2pbl5Y3ciJW81VfDLr5XrT2iLXwlbTszNPeTBEx1JaXu8so+WdtyNGLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dvvzsaPq; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VWV6BWUy"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 60ENLTZZ007064;
-	Thu, 15 Jan 2026 10:05:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=2xbeQU7Oy+tH2qRGT
-	ZU1QMeJTjrIpjNe7YeAM/8IGwU=; b=VWV6BWUyopRW8jkMncPbDdg28dNcBCm1P
-	ErYNiqgSY2tX+xYZq7TbCrLIN0Mv5jn9jl2TExG4m/sVMrd8OAkOtXfvIt7+TfV7
-	HeXsRkx3vbyGiweMd0K7aqtx8zI4Rfeew5Vx2NPrcAgmWqja1r5F/WE69bBeItHr
-	+Rw12FtKadm52oXUA6iGWe1c5kCiAykSHxtsACw/mKZMs39HWUGQOKme8Vx5nh+u
-	48nmp1jSnESn74Tf/3ikNlqd/XqhSmPkMczNUJVttZKeD+IjeP2CicYYs75rcD42
-	KG5vAz7Ta4pdhogaCHlYjQy4NbSlavb90vCkJMkKjCfUwXAFkFGXg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bkeeq5y13-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Jan 2026 10:05:32 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 60FA4ZPu022736;
-	Thu, 15 Jan 2026 10:05:32 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bkeeq5y11-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Jan 2026 10:05:32 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 60F8GpfF025848;
-	Thu, 15 Jan 2026 10:05:31 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4bm2kkqbdj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Jan 2026 10:05:31 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 60FA5R2C61735262
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 15 Jan 2026 10:05:27 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F064D2004E;
-	Thu, 15 Jan 2026 10:05:26 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C5D022005A;
-	Thu, 15 Jan 2026 10:05:23 +0000 (GMT)
-Received: from li-fc74f8cc-3279-11b2-a85c-ef5828687581.ibm.com.com (unknown [9.39.20.65])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 15 Jan 2026 10:05:23 +0000 (GMT)
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-To: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, James.Bottomley@HansenPartnership.com,
-        jarkko@kernel.org, zohar@linux.ibm.com, nayna@linux.ibm.com,
-        rnsastry@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, ssrish@linux.ibm.com
-Subject: [PATCH v4 5/6] keys/trusted_keys: establish PKWM as a trusted source
-Date: Thu, 15 Jan 2026 15:35:03 +0530
-Message-ID: <20260115100504.488665-6-ssrish@linux.ibm.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260115100504.488665-1-ssrish@linux.ibm.com>
-References: <20260115100504.488665-1-ssrish@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dvvzsaPq"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b8768225837so111747566b.2
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 02:10:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768471809; x=1769076609; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2FkwmQ3JsIlKc/0pGdsmQ0lUazTKrfor6cVyG/d0vIo=;
+        b=dvvzsaPqq3N6WofqzdwEaZevSR2x06v9DI8NYZ69IG5vkSyeSgiXt+UODKVz6H8xOb
+         CwZvkC250alr07NNvVi/3FJhumpD1DVZjrLdRxSVY94dFmY8oGw6zubR+uEdntlybrWj
+         Pi3ca4FULdM2WOMLdWdqMjtIb3NN/ohRCBqIoy+Q09UMhQhe25KonMwFhEx9RBj8/9AM
+         R5lrhF8eMLaRpvGk+ZOOa2FenrtdZDcz2kmq7XEY7NUMQgoUiNKjral+69acWaUyn2wC
+         Z0RouyhSIGwuovGFDVPtVeToVtF6Iy0Xk1rn260oyfDovNEs+GtaeoqeVbDPqP/gVNr7
+         go7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768471809; x=1769076609;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2FkwmQ3JsIlKc/0pGdsmQ0lUazTKrfor6cVyG/d0vIo=;
+        b=CSEwCS0tL7msQEIxLBugaBnVPAcS+3KhK8CMRBX0UeduneSz0tlip3B9kK//3mTRYf
+         2wgHglC0Cl0sbizLKaSn5YVO++WingxxNHMoLHr3fhWWgbcit66ID2ep3Fi+pYcpdw0J
+         CYlabdtWBmz8WUT30WrkxSBmNLvIgJ6NYvRVOnEZ3pjZ2fvbRbJ4Zy6t8B7oRuBDmGQa
+         FNmT+KAnuwh2Moukum+ZNZrhwwO2nSQowoCBaN44Lo9ashx7DRMAxlb8Uy9zzp3u+tU6
+         4+rM1axEYpPoloRFw7NfYyoymiYY7BCw39ZtjGiNKVHt7GGwiVGBqPFTdGPyKg74YtHO
+         d5Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCVavn8rEBYBfEjk2yJNDZVfRSAgIEUXyK7X69UTFkXvifMKkl99f3I0sNl1PboG5k5UCjxgxERl3nmOKRWnjnd1fL39+Mk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxebkWstCjplplech8CpWFZ6urX1RvdbEzABSBdKmHeRRrzbU5h
+	pZEq3bkCMEekbWP9nDCzxwSUAoB1Z2fW9NKJPiD4qQKKvpvMk84easeH
+X-Gm-Gg: AY/fxX7yTf4VR9GeqpdSiwR+Gi16Is4FDjLEcEtvYNjp+U98M6Uaxu6b7RDbomjOiyX
+	vhdYTH/Brm+qT9ViDlEQufe7x4itSwXR7HY8zoiM8wA1nLRI49W7nk4BC5Ge2JwQmmuQv7EyXCS
+	ymrltc/9WUYIXyYdShYXn4wKPI1cw23edEf7nkhkSeBvlCYlOjGVBnq2ZmuKi5nYweH0xBOFLS3
+	TVqz4TuJRtWmW9km/WmUBnTEHO2OAzq2oTR0aX1I69FqDrgl4BqNCyDZlI0p8LLH+VwT1Ux+jqW
+	/Kst/FGSYyk6NEWy+oNuOYD7t9Q7OHoBnYC6kjQl51GP/9jiJ1KK/8QMRJOuqiulrNzrHcB9HND
+	IaHmKX9k/MkMvqnEwpi+jGjXyBrZUz7L4F8oqTQ9eFPc5Fy2QSETojJFXqM+GT2fcWO+F8WXoAi
+	J/pFtnK6txMTaXQFzjKY5DGWGuV0pxNqUe70mT
+X-Received: by 2002:a17:907:3a12:b0:b87:35fc:ae5f with SMTP id a640c23a62f3a-b87678c36d9mr303953666b.52.1768471809054;
+        Thu, 15 Jan 2026 02:10:09 -0800 (PST)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b842a5180bdsm2659833866b.57.2026.01.15.02.10.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jan 2026 02:10:08 -0800 (PST)
+Date: Thu, 15 Jan 2026 11:10:02 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: Paul Moore <paul@paul-moore.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Justin Suess <utilityemal77@gmail.com>
+Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>,
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+	Matthieu Buffet <matthieu@buffet.re>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	konstantin.meskhidze@huawei.com,
+	Demi Marie Obenour <demiobenour@gmail.com>,
+	Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2 1/5] lsm: Add hook unix_path_connect
+Message-ID: <20260115.b5977d57d52d@gnoack.org>
+References: <20260110143300.71048-2-gnoack3000@gmail.com>
+ <20260110143300.71048-4-gnoack3000@gmail.com>
+ <20260113-kerngesund-etage-86de4a21da24@brauner>
+ <CAHC9VhQOQ096WEZPLo4-57cYkM8c38qzE-F8L3f_cSSB4WadGg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=DI6CIiNb c=1 sm=1 tr=0 ts=6968bbec cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8
- a=6hcB66QTelQ3WYe9m3UA:9
-X-Proofpoint-GUID: NTVC_I3M2AG5ZLZjm4SxVjjuV9dudeea
-X-Proofpoint-ORIG-GUID: ZXgpX6gfj842tE04kMljlYgXVFXC-Eis
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE1MDA2OSBTYWx0ZWRfX4kt+dDesR5db
- MJuZAHPyRm3+zMzrqljm8EOwbUcRJzX8zD28Dw/Fm+C83qhCo/FU1+2FKUMCqXANGA2C/HZ0rEO
- u1/9LBlaEQ1XTqBKYcAnKuSdidnmQ1WatqfzLgJzocNr4RhMm5xaYhfj7wySePmQg34lznmA+Bb
- E7CyCjC6Ag1UWgDkUSwJM6jIFUZysYn8fJg8ZZhdAcSp+A85GJok8vxuzWiVuIBbqgIy24V/Tn4
- IFOEARBRGoxtz3SP4ReA6k6ivr34Kwg1z2xCC5TiG6W3IPEol802f2YaWOt8QELAAYlSY0L3czi
- L3kT09v7SVx7DME1HKFCjMbSwnHKphqva08z5zEo+850ypstZIhVGkRgBiH2QwRf3VRqgVdfili
- VdOdBCILcyxamimEGRC2t4tKC9NEnrpTmwCmi3qOZfZGGqRs7GmbuAh0ifTmjU4TqUrUuZoZh4L
- 6e8BgWaQg5AOGnobmnA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-15_03,2026-01-14_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 adultscore=0
- malwarescore=0 spamscore=0 suspectscore=0 phishscore=0 impostorscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2512120000
- definitions=main-2601150069
+In-Reply-To: <CAHC9VhQOQ096WEZPLo4-57cYkM8c38qzE-F8L3f_cSSB4WadGg@mail.gmail.com>
 
-The wrapping key does not exist by default and is generated by the
-hypervisor as a part of PKWM initialization. This key is then persisted by
-the hypervisor and is used to wrap trusted keys. These are variable length
-symmetric keys, which in the case of PowerVM Key Wrapping Module (PKWM) are
-generated using the kernel RNG. PKWM can be used as a trust source through
-the following example keyctl commands:
+On Tue, Jan 13, 2026 at 06:27:15PM -0500, Paul Moore wrote:
+> On Tue, Jan 13, 2026 at 4:34 AM Christian Brauner <brauner@kernel.org> wrote:
+> > On Sat, Jan 10, 2026 at 03:32:57PM +0100, Günther Noack wrote:
+> > > From: Justin Suess <utilityemal77@gmail.com>
+> > >
+> > > Adds an LSM hook unix_path_connect.
+> > >
+> > > This hook is called to check the path of a named unix socket before a
+> > > connection is initiated.
+> > >
+> > > Cc: Günther Noack <gnoack3000@gmail.com>
+> > > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+> > > ---
+> > >  include/linux/lsm_hook_defs.h |  4 ++++
+> > >  include/linux/security.h      | 11 +++++++++++
+> > >  net/unix/af_unix.c            |  9 +++++++++
+> > >  security/security.c           | 20 ++++++++++++++++++++
+> > >  4 files changed, 44 insertions(+)
+> 
+> ...
+> 
+> > > diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+> > > index 55cdebfa0da0..3aabe2d489ae 100644
+> > > --- a/net/unix/af_unix.c
+> > > +++ b/net/unix/af_unix.c
+> > > @@ -1226,6 +1226,15 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
+> > >       if (!S_ISSOCK(inode->i_mode))
+> > >               goto path_put;
+> > >
+> > > +     /*
+> > > +      * We call the hook because we know that the inode is a socket
+> > > +      * and we hold a valid reference to it via the path.
+> > > +      */
+> > > +     err = security_unix_path_connect(&path, type, flags);
+> > > +     if (err)
+> > > +             goto path_put;
+> >
+> > Couldn't we try reflowing the code here so the path is passed ...
+> 
+> It would be good if you could be a bit more specific about your
+> desires here.  Are you talking about changing the
+> unix_find_other()/unix_find_bsd() code path such that the path is
+> available to unix_find_other() callers and not limited to the
+> unix_find_bsd() scope?
+> 
+> > ... to
+> > security_unix_stream_connect() and security_unix_may_send() so that all
+> > LSMs get the same data and we don't have to have different LSMs hooks
+> > into different callpaths that effectively do the same thing.
+> >
+> > I mean the objects are even in two completely different states between
+> > those hooks. Even what type of sockets get a call to the LSM is
+> > different between those two hooks.
+> 
+> I'm working on the assumption that you are talking about changing the
+> UNIX socket code so that the path info is available to the existing
+> _may_send() and _stream_connect() hooks.  If that isn't the case, and
+> you're thinking of something different, disregard my comments below.
+> 
+> In both the unix_dgram_{connect(),sendmsg()}, aka
+> security_unix_may_send(), cases and the unix_stream_connect(), aka
+> security_unix_stream_connect(), case the call to unix_find_other() is
+> done to lookup the other end of the communication channel, which does
+> seem reasonably consistent to me.  Yes, of course, once you start
+> getting into the specifics of the UNIX socket handling the unix_dgram_
+> and unix_stream_ cases are very different, including their
+> corresponding existing LSM hooks, but that doesn't mean in the context
+> of unix_find_bsd() that security_unix_path_connect() doesn't have
+> value.
+> 
+> The alternative would be some rather serious surgery in af_unix.c to
+> persist the path struct from unix_find_bsd() until the later LSM hooks
+> are executed.  It's certainly not impossible, but I'm not sure it is
+> necessary or desirable at this point in time.  LSMs that wish to
+> connect the information from _unix_path_connect() to either
+> _unix_stream_connect() or _unix_may_send() can do so today without
+> needing to substantially change af_unix.c.
 
-keyctl add trusted my_trusted_key "new 32" @u
+Thanks for the review, Christan and Paul!
 
-Use the wrap_flags command option to set the secure boot requirement for
-the wrapping request through the following keyctl commands
+I am also unconvinced by the approach. It has also crossed my mind
+before though, and my reasoning is as follows:
 
-case1: no secure boot requirement. (default)
-keyctl usage: keyctl add trusted my_trusted_key "new 32" @u
-	      OR
-	      keyctl add trusted my_trusted_key "new 32 wrap_flags=0x00" @u
+For reference, the function call hierarchy in af_unix.c is:
 
-case2: secure boot required to in either audit or enforce mode. set bit 0
-keyctl usage: keyctl add trusted my_trusted_key "new 32 wrap_flags=0x01" @u
+* unix_dgram_connect()   (*)
+  * unix_find_other()
+    * unix_find_bsd()
+  * security_unix_may_send()
 
-case3: secure boot required to be in enforce mode. set bit 1
-keyctl usage: keyctl add trusted my_trusted_key "new 32 wrap_flags=0x02" @u
+* unix_dgram_sendmsg()   (*)
+  * unix_find_other()
+    * unix_find_bsd()
+  * security_unix_may_send()
 
-NOTE:
--> Setting the secure boot requirement is NOT a must.
--> Only either of the secure boot requirement options should be set. Not
-both.
--> All the other bits are required to be not set.
--> Set the kernel parameter trusted.source=pkwm to choose PKWM as the
-backend for trusted keys implementation.
--> CONFIG_PSERIES_PLPKS must be enabled to build PKWM.
+* unix_stream_connect()  (*)
+  * unix_find_other()
+    * unix_find_bsd()
+  * security_unix_stream_connect()
 
-Add PKWM, which is a combination of IBM PowerVM and Power LPAR Platform
-KeyStore, as a new trust source for trusted keys.
+In my understanding, the hypothetical implementation would be:
 
-Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
----
- This version introduces a private pointer for backend specific fields and
- related changes specific to the PKWM backend, but defers migrating the TPM
- fields to this new framework. That will be done independently of this
- patch series.
- MAINTAINERS                               |   9 +
- include/keys/trusted-type.h               |   7 +-
- include/keys/trusted_pkwm.h               |  33 ++++
- security/keys/trusted-keys/Kconfig        |   8 +
- security/keys/trusted-keys/Makefile       |   2 +
- security/keys/trusted-keys/trusted_core.c |   6 +-
- security/keys/trusted-keys/trusted_pkwm.c | 190 ++++++++++++++++++++++
- 7 files changed, 253 insertions(+), 2 deletions(-)
- create mode 100644 include/keys/trusted_pkwm.h
- create mode 100644 security/keys/trusted-keys/trusted_pkwm.c
+* allocate a struct path on the stack of these proto_ops hook
+  functions (marked with (*) above)
+* pass a pointer to that path down to unix_find_other(), only to be
+  filled out in the case that this is a pathname UNIX socket (not an
+  abstract UNIX socket)
+* pass a const pointer to that path to the LSM hooks
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cf755238c429..c98f1811f836 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14008,6 +14008,15 @@ S:	Supported
- F:	include/keys/trusted_dcp.h
- F:	security/keys/trusted-keys/trusted_dcp.c
- 
-+KEYS-TRUSTED-PLPKS
-+M:	Srish Srinivasan <ssrish@linux.ibm.com>
-+M:	Nayna Jain <nayna@linux.ibm.com>
-+L:	linux-integrity@vger.kernel.org
-+L:	keyrings@vger.kernel.org
-+S:	Supported
-+F:	include/keys/trusted_pkwm.h
-+F:	security/keys/trusted-keys/trusted_pkwm.c
-+
- KEYS-TRUSTED-TEE
- M:	Sumit Garg <sumit.garg@kernel.org>
- L:	linux-integrity@vger.kernel.org
-diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
-index 4eb64548a74f..03527162613f 100644
---- a/include/keys/trusted-type.h
-+++ b/include/keys/trusted-type.h
-@@ -19,7 +19,11 @@
- 
- #define MIN_KEY_SIZE			32
- #define MAX_KEY_SIZE			128
--#define MAX_BLOB_SIZE			512
-+#if IS_ENABLED(CONFIG_TRUSTED_KEYS_PKWM)
-+#define MAX_BLOB_SIZE			1152
-+#else
-+#define MAX_BLOB_SIZE                   512
-+#endif
- #define MAX_PCRINFO_SIZE		64
- #define MAX_DIGEST_SIZE			64
- 
-@@ -46,6 +50,7 @@ struct trusted_key_options {
- 	uint32_t policydigest_len;
- 	unsigned char policydigest[MAX_DIGEST_SIZE];
- 	uint32_t policyhandle;
-+	void *private;
- };
- 
- struct trusted_key_ops {
-diff --git a/include/keys/trusted_pkwm.h b/include/keys/trusted_pkwm.h
-new file mode 100644
-index 000000000000..4035b9776394
---- /dev/null
-+++ b/include/keys/trusted_pkwm.h
-@@ -0,0 +1,33 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __PKWM_TRUSTED_KEY_H
-+#define __PKWM_TRUSTED_KEY_H
-+
-+#include <keys/trusted-type.h>
-+#include <linux/bitops.h>
-+#include <linux/printk.h>
-+
-+extern struct trusted_key_ops pkwm_trusted_key_ops;
-+
-+struct trusted_pkwm_options {
-+	u16 wrap_flags;
-+};
-+
-+static inline void dump_options(struct trusted_key_options *o)
-+{
-+	const struct trusted_pkwm_options *pkwm;
-+	bool sb_audit_or_enforce_bit;
-+	bool sb_enforce_bit;
-+
-+	pkwm = o->private;
-+	sb_audit_or_enforce_bit = pkwm->wrap_flags & BIT(0);
-+	sb_enforce_bit = pkwm->wrap_flags & BIT(1);
-+
-+	if (sb_audit_or_enforce_bit)
-+		pr_debug("secure boot mode required: audit or enforce");
-+	else if (sb_enforce_bit)
-+		pr_debug("secure boot mode required: enforce");
-+	else
-+		pr_debug("secure boot mode required: disabled");
-+}
-+
-+#endif
-diff --git a/security/keys/trusted-keys/Kconfig b/security/keys/trusted-keys/Kconfig
-index 204a68c1429d..9e00482d886a 100644
---- a/security/keys/trusted-keys/Kconfig
-+++ b/security/keys/trusted-keys/Kconfig
-@@ -46,6 +46,14 @@ config TRUSTED_KEYS_DCP
- 	help
- 	  Enable use of NXP's DCP (Data Co-Processor) as trusted key backend.
- 
-+config TRUSTED_KEYS_PKWM
-+	bool "PKWM-based trusted keys"
-+	depends on PSERIES_PLPKS >= TRUSTED_KEYS
-+	default y
-+	select HAVE_TRUSTED_KEYS
-+	help
-+	  Enable use of IBM PowerVM Key Wrapping Module (PKWM) as a trusted key backend.
-+
- if !HAVE_TRUSTED_KEYS
- 	comment "No trust source selected!"
- endif
-diff --git a/security/keys/trusted-keys/Makefile b/security/keys/trusted-keys/Makefile
-index f0f3b27f688b..5fc053a21dad 100644
---- a/security/keys/trusted-keys/Makefile
-+++ b/security/keys/trusted-keys/Makefile
-@@ -16,3 +16,5 @@ trusted-$(CONFIG_TRUSTED_KEYS_TEE) += trusted_tee.o
- trusted-$(CONFIG_TRUSTED_KEYS_CAAM) += trusted_caam.o
- 
- trusted-$(CONFIG_TRUSTED_KEYS_DCP) += trusted_dcp.o
-+
-+trusted-$(CONFIG_TRUSTED_KEYS_PKWM) += trusted_pkwm.o
-diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-index b1680ee53f86..2d328de170e8 100644
---- a/security/keys/trusted-keys/trusted_core.c
-+++ b/security/keys/trusted-keys/trusted_core.c
-@@ -12,6 +12,7 @@
- #include <keys/trusted_caam.h>
- #include <keys/trusted_dcp.h>
- #include <keys/trusted_tpm.h>
-+#include <keys/trusted_pkwm.h>
- #include <linux/capability.h>
- #include <linux/err.h>
- #include <linux/init.h>
-@@ -31,7 +32,7 @@ MODULE_PARM_DESC(rng, "Select trusted key RNG");
- 
- static char *trusted_key_source;
- module_param_named(source, trusted_key_source, charp, 0);
--MODULE_PARM_DESC(source, "Select trusted keys source (tpm, tee, caam or dcp)");
-+MODULE_PARM_DESC(source, "Select trusted keys source (tpm, tee, caam, dcp or pkwm)");
- 
- static const struct trusted_key_source trusted_key_sources[] = {
- #if defined(CONFIG_TRUSTED_KEYS_TPM)
-@@ -46,6 +47,9 @@ static const struct trusted_key_source trusted_key_sources[] = {
- #if defined(CONFIG_TRUSTED_KEYS_DCP)
- 	{ "dcp", &dcp_trusted_key_ops },
- #endif
-+#if defined(CONFIG_TRUSTED_KEYS_PKWM)
-+	{ "pkwm", &pkwm_trusted_key_ops },
-+#endif
- };
- 
- DEFINE_STATIC_CALL_NULL(trusted_key_seal, *trusted_key_sources[0].ops->seal);
-diff --git a/security/keys/trusted-keys/trusted_pkwm.c b/security/keys/trusted-keys/trusted_pkwm.c
-new file mode 100644
-index 000000000000..4f391b77a907
---- /dev/null
-+++ b/security/keys/trusted-keys/trusted_pkwm.c
-@@ -0,0 +1,190 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2025 IBM Corporation, Srish Srinivasan <ssrish@linux.ibm.com>
-+ */
-+
-+#include <keys/trusted_pkwm.h>
-+#include <keys/trusted-type.h>
-+#include <linux/build_bug.h>
-+#include <linux/key-type.h>
-+#include <linux/parser.h>
-+#include <asm/plpks.h>
-+
-+enum {
-+	Opt_err,
-+	Opt_wrap_flags,
-+};
-+
-+static const match_table_t key_tokens = {
-+	{Opt_wrap_flags, "wrap_flags=%s"},
-+	{Opt_err, NULL}
-+};
-+
-+static int getoptions(char *datablob, struct trusted_key_options *opt)
-+{
-+	substring_t args[MAX_OPT_ARGS];
-+	char *p = datablob;
-+	int token;
-+	int res;
-+	u16 wrap_flags;
-+	unsigned long token_mask = 0;
-+	struct trusted_pkwm_options *pkwm;
-+
-+	if (!datablob)
-+		return 0;
-+
-+	pkwm = opt->private;
-+
-+	while ((p = strsep(&datablob, " \t"))) {
-+		if (*p == '\0' || *p == ' ' || *p == '\t')
-+			continue;
-+
-+		token = match_token(p, key_tokens, args);
-+		if (test_and_set_bit(token, &token_mask))
-+			return -EINVAL;
-+
-+		switch (token) {
-+		case Opt_wrap_flags:
-+			res = kstrtou16(args[0].from, 16, &wrap_flags);
-+			if (res < 0 || wrap_flags > 2)
-+				return -EINVAL;
-+			pkwm->wrap_flags = wrap_flags;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static struct trusted_key_options *trusted_options_alloc(void)
-+{
-+	struct trusted_key_options *options;
-+	struct trusted_pkwm_options *pkwm;
-+
-+	options = kzalloc(sizeof(*options), GFP_KERNEL);
-+
-+	if (options) {
-+		pkwm = kzalloc(sizeof(*pkwm), GFP_KERNEL);
-+
-+		if (!pkwm) {
-+			kfree_sensitive(options);
-+			options = NULL;
-+		} else {
-+			options->private = pkwm;
-+		}
-+	}
-+
-+	return options;
-+}
-+
-+static int trusted_pkwm_seal(struct trusted_key_payload *p, char *datablob)
-+{
-+	struct trusted_key_options *options = NULL;
-+	struct trusted_pkwm_options *pkwm = NULL;
-+	u8 *input_buf, *output_buf;
-+	u32 output_len, input_len;
-+	int rc;
-+
-+	options = trusted_options_alloc();
-+
-+	if (!options)
-+		return -ENOMEM;
-+
-+	rc = getoptions(datablob, options);
-+	if (rc < 0)
-+		goto out;
-+	dump_options(options);
-+
-+	input_len = p->key_len;
-+	input_buf = kmalloc(ALIGN(input_len, 4096), GFP_KERNEL);
-+	if (!input_buf) {
-+		pr_err("Input buffer allocation failed. Returning -ENOMEM.");
-+		rc = -ENOMEM;
-+		goto out;
-+	}
-+
-+	memcpy(input_buf, p->key, p->key_len);
-+
-+	pkwm = options->private;
-+
-+	rc = plpks_wrap_object(&input_buf, input_len, pkwm->wrap_flags,
-+			       &output_buf, &output_len);
-+	if (!rc) {
-+		memcpy(p->blob, output_buf, output_len);
-+		p->blob_len = output_len;
-+		dump_payload(p);
-+	} else {
-+		pr_err("Wrapping of payload key failed: %d\n", rc);
-+	}
-+
-+	kfree(input_buf);
-+	kfree(output_buf);
-+
-+out:
-+	kfree_sensitive(options->private);
-+	kfree_sensitive(options);
-+	return rc;
-+}
-+
-+static int trusted_pkwm_unseal(struct trusted_key_payload *p, char *datablob)
-+{
-+	u8 *input_buf, *output_buf;
-+	u32 input_len, output_len;
-+	int rc;
-+
-+	input_len = p->blob_len;
-+	input_buf = kmalloc(ALIGN(input_len, 4096), GFP_KERNEL);
-+	if (!input_buf) {
-+		pr_err("Input buffer allocation failed. Returning -ENOMEM.");
-+		return -ENOMEM;
-+	}
-+
-+	memcpy(input_buf, p->blob, p->blob_len);
-+
-+	rc = plpks_unwrap_object(&input_buf, input_len, &output_buf,
-+				 &output_len);
-+	if (!rc) {
-+		memcpy(p->key, output_buf, output_len);
-+		p->key_len = output_len;
-+		dump_payload(p);
-+	} else {
-+		pr_err("Unwrapping of payload failed: %d\n", rc);
-+	}
-+
-+	kfree(input_buf);
-+	kfree(output_buf);
-+
-+	return rc;
-+}
-+
-+static int trusted_pkwm_init(void)
-+{
-+	int ret;
-+
-+	if (!plpks_wrapping_is_supported()) {
-+		pr_err("H_PKS_WRAP_OBJECT interface not supported\n");
-+		return -ENODEV;
-+	}
-+
-+	ret = plpks_gen_wrapping_key();
-+	if (ret) {
-+		pr_err("Failed to generate default wrapping key\n");
-+		return -EINVAL;
-+	}
-+
-+	return register_key_type(&key_type_trusted);
-+}
-+
-+static void trusted_pkwm_exit(void)
-+{
-+	unregister_key_type(&key_type_trusted);
-+}
-+
-+struct trusted_key_ops pkwm_trusted_key_ops = {
-+	.migratable = 0, /* non-migratable */
-+	.init = trusted_pkwm_init,
-+	.seal = trusted_pkwm_seal,
-+	.unseal = trusted_pkwm_unseal,
-+	.exit = trusted_pkwm_exit,
-+};
--- 
-2.47.3
+and then the LSM hooks would have to check whether the struct path has
+non-zero pointers and could do the check.
 
+This has the upside that it does not introduce a new LSM hook, but
+only adds a "path" parameter to two existing LSM hooks.
+
+On the other side, I see the following drawbacks:
+
+* The more serious surgery in af_unix, which Paul also discussed:
+
+  The function interface to unix_find_other() would need additional
+  parameters for the sole purpose of supporting these LSM hooks and
+  the refcounting of the struct path would have to be done in three
+  functions instead of just in one.  That would complicate the
+  af_unix.c logic, even when CONFIG_SECURITY_PATH is not set.
+
+* The cases in which we pass a non-zero path argument to the LSM hooks
+  would have surprising semantics IMHO, because it is not always set:
+
+  * If a UNIX dgram user uses connect(2) and then calls sendmsg(2)
+    without explicit recipient address, unix_dgram_sendmsg() would
+    *not* do the look up any more and we can not provide the path to
+    the security_unix_may_send() hook.
+  * For abstract UNIX sockets it is not set either, of course.
+
+  The path argument to the LSM hook would be present in the exact same
+  cases where we now call the new UNIX path lookup LSM hook, but it
+  would be invoked with a delay.
+
+* Some properties of the resolved socket are still observable to
+  userspace:
+
+  When we only pass the path to a later LSM hook, there are a variety
+  of additional error case checks in af_unix.c which are based on the
+  "other" socket which we looked up through the path.  Examples:
+
+  * was other shutdown(2)? (ECONNREFUSED on connect or EPIPE on dgram_sendmsg)
+  * does other support SO_PASSRIGHTS (fd passing)? (EPERM on dgram_sendmsg)
+  * would sendmsg pass sk_filter() (on dgram_sendmsg)
+
+  For a LSM policy that is supposed to restrict the resolution of a
+  UNIX socket by path, I would not expect such properties of the
+  resolved socket to be observable?
+
+  (And we also can't fix this up in the LSM by returning a matching
+  error code, because at least unix_dgram_sendmsg() returns multiple
+  different error codes in these error cases.)
+
+  I would prefer if the correctness of our LSM did not depend on
+  keeping track of the error scenarios in af_unix.c.  This seems
+  brittle.
+
+Overall, I am not convinced that using pre-existing hooks is the right
+way and I would prefer the approach where we have a more dedicated LSM
+hook for the path lookup.
+
+Does that seem reasonable?  Let me know what you think.
+
+–Günther
