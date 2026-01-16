@@ -1,105 +1,132 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44821221F0C
-	for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 23:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79469274FE3
+	for <linux-security-module@vger.kernel.org>; Fri, 16 Jan 2026 09:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768518595; cv=none; b=mO2JavyFooUcMksrPe8U0dJzZnhj6Ld+aiQNK3zA1NK7VyUuO6IOwzRV9cwPgKJh0+CkBHlJz5w6+VitdkoX+B5UQcVOH5o8qSb8jK+P1ZvwnPrlphnKxCSTfAUTZvl+lv5ShKvQfRCeorEZ7Jw8WWRrCJ1QgSZWKFd8j8ioHRU=
+	t=1768556520; cv=none; b=EbHcy5lTmzA9NjWB1ihExSo10Ye92SJyQxtYU3kgdmaUNTAw2Zdb8rESrMr4nj9PtMV35vCJ4+B4tr2jO+TtqdY1ydKd7cJuloq37YI1q7mLeKL88yOuyBeU/oAr99U9Zs4uOMGdKQj7LDAQRfmPve1La64OuSvCSJpmW/SDB5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768518595; c=relaxed/simple;
-	bh=b44Fmhb5MCC/h0Z4khpp8iGPJ8/T5BSX3KCA+nwZusA=;
+	s=arc-20240116; t=1768556520; c=relaxed/simple;
+	bh=/E8pjL1Rg4kjh10yWKXAfqGFi3+btd20CKL87Qc6xYk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lgD+NDuflAPIZnmUphA6llAnUQyVQlr4YJ6EhvqugHy//8KKfYLItWpa1eQG1VLR1fClrGlWmqCzruxyaTMO6HduIToPbOCIQBIXf/twqWTJYftyuIDyHsYU9YHoh9ZTS655nyKFSuvofmruaRi1keHB4ocmCvCg1sDlj+T3SeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=d4axZ2zN; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	 To:Cc:Content-Type; b=d+q6iXRQSExSycFq64PBO8lMCOxTfD+oSZNt9lZTkIATEXakMOfee7n+TnZhsJvwH+Vr0nTJ6V99/42O/J8/0evWB3gcGVL6jiPAtyrciK8B7T1dlHIXSVoSWsMMPPhWYsBFpXHDdMGk/8BOfPLPqQakx/jNpx6/JtmuYmQiWhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VPASkmLv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="d4axZ2zN"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-64bea6c5819so2475292a12.3
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 15:09:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1768518592; x=1769123392; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/cQQ3tZ9MbmRpcFLtL2Gj/mIevTL7qyyp8QvI43AANI=;
-        b=d4axZ2zN0hVk8evBT5x1N7G3DD56gSjvGUREhuu9+l8gDxT1Xzqu7y4VvlP0d/TC6V
-         04K+JD0MlT8AFgOfCIvzNVSC5TKpzoHKGg/frb8nR1sVTy0VpvLTYZjutkZ03SHUfn9V
-         fDt8cwkjybu+wn0w36CFKQpwAZLMIdHeO4vDU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768518592; x=1769123392;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=/cQQ3tZ9MbmRpcFLtL2Gj/mIevTL7qyyp8QvI43AANI=;
-        b=EjrW5hqoSuosnj3BplDh5fMzpcOqFNESVwpJ4x2BZBMQ4ovB6YIf3hJWA6D0RthAVT
-         90rMyPqHTdegmpGbuJdlC0pFBlzxX6QODwTgr+H88ltGG2jjxQ7X3B1JyDjGUTSYXVZy
-         r5jZHljl45xUFHSfe0yj7MpnEkjsEnTDydguD2liH2vPXrXf0Gln0ZK/V9I8z0uQT4ng
-         kqMq/139xix54r6JEvC5w34089NntsglhmuHxq2zJ0sIsO9wW78n++cxRpOgecimtrK8
-         Q2rfl5idWPvALRC9fLUQ4d7riQZ3krIVbFGbz6NFb07sbj0ETbUyYxBxFunysRj0El6E
-         cgjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQd8Z6cJ8vuX3LhwndPNfWP2a9ybvd+xhKeMyR/VzVLicWVqhwmRdEkW3wG804M3y+lKOFieqJANIIEUv46Kfr59kCm5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdZ2FCKcgoDm2nVGhayN7JoL/0YZiJ9jLRO2aJYc+AQ8NKiFIr
-	SEp+X/yXCSPzNIMkAByQ4MsdizQJ+pEi3FDxIRILSIWLtIrQFCDUN+VN6r5oKR5hTpreXet8joF
-	72sIYypo=
-X-Gm-Gg: AY/fxX7bM6FaUQHvJPmpXBlisQ8ImU2j7/vRl0PjcOJhZAwGwbbCXZai1+8axTBa/y1
-	HsNEgLOkz7AOi9pNhpDJdB0S6c7AHlSwe/zrKFtbqcXnxjWt34zv7YSRZuWvo/rtOFyK+MVRVPn
-	SzhlRGqlBvqhsIdjcegPPn4lc/xOUlsHvRzgNOhz7n5aRJGZtRAaZiQ63LSFUgi2/BfVhmQDXPb
-	2aRJbsFHKhzliDb1ee0Vd9WDppgK0p7Q8iupjmxUVPRcZDDuWR5rRhx1RF0zlAI7CqgvJfrg335
-	PoKNFcF95rz4v17phoiNaYXu+jPAaZtYe8tg/k5EjJAIjxmSjOdZUdogsGRysJS2NkcDl3kbr6F
-	OXd0ZmMIuXHXT37eoFwQ5746BhKdS7DNNzfF/5xqaYPqeSqEwgN2KMygY67hzWDxc1gJj4Z4G4y
-	AguONpdthlNirSjFf5Az746kfjlMfATe23T7rF8YwwNbGs8Pvgx6j44oXeQHBSW8jWXaMWjTI=
-X-Received: by 2002:a17:907:9492:b0:b87:1822:4021 with SMTP id a640c23a62f3a-b8792f5a9f0mr110270666b.20.1768518592541;
-        Thu, 15 Jan 2026 15:09:52 -0800 (PST)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8795a31322sm58839666b.63.2026.01.15.15.09.52
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Jan 2026 15:09:52 -0800 (PST)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64b58553449so2499845a12.1
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Jan 2026 15:09:52 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV5tWmvOPJoxACMW3Ke4h20sBHaXnBj2hlSgPRrOk+CDx/fpt/VMsVLLzVSxsOApt0ArtcG1gMS7M70QN+Gu41qzYQR44c=@vger.kernel.org
-X-Received: by 2002:a50:cc05:0:b0:653:b83b:a66d with SMTP id
- 4fb4d7f45d1cf-65452bcc0a1mr670701a12.28.1768518592019; Thu, 15 Jan 2026
- 15:09:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPASkmLv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53211C2BCC7
+	for <linux-security-module@vger.kernel.org>; Fri, 16 Jan 2026 09:42:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768556520;
+	bh=/E8pjL1Rg4kjh10yWKXAfqGFi3+btd20CKL87Qc6xYk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VPASkmLvCW/t4XmsQcmEBMDBN6Np6o9rMBqRv0awasGACRhWea5bRnd9A+VLI+NCs
+	 dIOhMy0sajBtbGyDu9uVrXkjyIivOBJELkA5/q/4uW2MVZdwif+Sp2+i0XqCrTiY5V
+	 1KA83r7fBXyaU5DDLzRKsGpWG3+5hmKtEVtCmxu1hgjn3vYeSFlJpj5eVFe/Ievqfl
+	 KZgXntrkuNOXkkx9bZH1SNmuZHxxpA2fODGUvnAxdX2bcG0uDEaKicAUoeBrHNqpUs
+	 FNslAZOVGw7n8A5D4kGOULTX8nF3IzRI4xn4R3dZbn8JeuL3MTbn5K967B+ogy3rK7
+	 zdKB3gNFNNE6A==
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-c54f700b5b1so1126625a12.0
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Jan 2026 01:42:00 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXgUnJ5gi2hT0cjuDDN4u9GRaFXZC1wUHaV9fGwFBH/VTyCVdqxTuBqfibuzmZmHjoy50UvlFTVitglLCEIeb+zdc26EZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfsFHc7luesrt5y0X7TBxbP98QJeAPL2i6ET9lQUlU9lGzmUxG
+	sBUvW0v+wFfm9K21yLHK3CSLw4uvPIlUgtMKww5bECCTDji8YYEg6ZG+KMtLQvdGFFHgulOnBoV
+	e0++0VMmZkIjPyuf/enFw3jBbcWp5Qr0=
+X-Received: by 2002:a17:90b:3dcc:b0:340:c4dc:4b70 with SMTP id
+ 98e67ed59e1d1-3527315e60dmr2091280a91.6.1768556519441; Fri, 16 Jan 2026
+ 01:41:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260115214740.803611-1-mic@digikod.net>
-In-Reply-To: <20260115214740.803611-1-mic@digikod.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 15 Jan 2026 15:09:34 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgPRijTr7fZQNs9pxbhRLBVQGdE7ceZDwQFP53MXjRBxg@mail.gmail.com>
-X-Gm-Features: AZwV_QiiPsCZrr2CTXJLdelIItyvHp5tiByv6aRPU_bH5dEAxzNiv3JA5E_dLHo
-Message-ID: <CAHk-=wgPRijTr7fZQNs9pxbhRLBVQGdE7ceZDwQFP53MXjRBxg@mail.gmail.com>
-Subject: Re: [GIT PULL] Landlock fix for v6.19-rc6
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Matthieu Buffet <matthieu@buffet.re>, Tingmao Wang <m@maowtm.org>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
+References: <20260115004328.194142-1-coxu@redhat.com> <20260115004328.194142-2-coxu@redhat.com>
+In-Reply-To: <20260115004328.194142-2-coxu@redhat.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 16 Jan 2026 10:41:48 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXFXNo1-pMbo-VZrjQ3TYe1tufebrLr_avL12A0nHMSGnA@mail.gmail.com>
+X-Gm-Features: AZwV_QjmUt_PmrwfWvkU01-td52KzVOAwQnoeyg_Oar6lj-mB--Ez-fk2UXAfCg
+Message-ID: <CAMj1kXFXNo1-pMbo-VZrjQ3TYe1tufebrLr_avL12A0nHMSGnA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] integrity: Make arch_ima_get_secureboot integrity-wide
+To: Coiby Xu <coxu@redhat.com>
+Cc: linux-integrity@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huaweicloud.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, 
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	"moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" <linuxppc-dev@lists.ozlabs.org>, 
+	"open list:S390 ARCHITECTURE" <linux-s390@vger.kernel.org>, 
+	"open list:EXTENSIBLE FIRMWARE INTERFACE (EFI)" <linux-efi@vger.kernel.org>, 
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
+	"open list:KEYS/KEYRINGS_INTEGRITY" <keyrings@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, 15 Jan 2026 at 13:47, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wr=
-ote:
+On Thu, 15 Jan 2026 at 01:43, Coiby Xu <coxu@redhat.com> wrote:
 >
-> This PR fixes TCP handling, tests, documentation, non-audit elided code,
-> and minor cosmetic changes.
+> EVM and other LSMs need the ability to query the secure boot status of
+> the system, without directly calling the IMA arch_ima_get_secureboot
+> function. Refactor the secure boot status check into a general,
+> integrity-wide function named arch_integrity_get_secureboot.
+>
+> Define a new Kconfig option CONFIG_INTEGRITY_SECURE_BOOT, which is
+> automatically configured by the supported architectures. The existing
+> IMA_SECURE_AND_OR_TRUSTED_BOOT Kconfig loads the architecture specific
+> IMA policy based on the refactored secure boot status code.
+>
+> Reported-and-suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> Suggested-by: Roberto Sassu <roberto.sassu@huaweicloud.com>
+> Signed-off-by: Coiby Xu <coxu@redhat.com>
+> ---
+>  arch/arm64/Kconfig                            |  1 +
+>  arch/powerpc/Kconfig                          |  1 +
+>  arch/powerpc/kernel/Makefile                  |  2 +-
+>  arch/powerpc/kernel/ima_arch.c                |  5 --
+>  arch/powerpc/kernel/integrity_sb_arch.c       | 13 +++++
+>  arch/s390/Kconfig                             |  1 +
+>  arch/s390/kernel/Makefile                     |  1 +
+>  arch/s390/kernel/ima_arch.c                   |  6 --
+>  arch/s390/kernel/integrity_sb_arch.c          |  9 +++
+>  arch/x86/Kconfig                              |  1 +
+>  arch/x86/include/asm/efi.h                    |  4 +-
+>  arch/x86/platform/efi/efi.c                   |  2 +-
+>  include/linux/ima.h                           |  7 +--
+>  include/linux/integrity.h                     |  8 +++
+>  security/integrity/Kconfig                    |  6 ++
+>  security/integrity/Makefile                   |  3 +
+>  security/integrity/efi_secureboot.c           | 56 +++++++++++++++++++
+>  security/integrity/ima/ima_appraise.c         |  2 +-
+>  security/integrity/ima/ima_efi.c              | 47 +---------------
+>  security/integrity/ima/ima_main.c             |  4 +-
+>  security/integrity/platform_certs/load_uefi.c |  2 +-
+>  21 files changed, 111 insertions(+), 70 deletions(-)
+>  create mode 100644 arch/powerpc/kernel/integrity_sb_arch.c
+>  create mode 100644 arch/s390/kernel/integrity_sb_arch.c
+>  create mode 100644 security/integrity/efi_secureboot.c
+>
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 93173f0a09c7..4c265b7386bb 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -2427,6 +2427,7 @@ config EFI
+>         select EFI_STUB
+>         select EFI_GENERIC_STUB
+>         imply IMA_SECURE_AND_OR_TRUSTED_BOOT
+> +       imply INTEGRITY_SECURE_BOOT
 
-This seems significantly bigger than what you sent for the whole merge
-window for the Landlock code.
+This allows both to be en/disabled individually, which I don't think
+is what we want. It also results in more churn across the
+arch-specific Kconfigs than needed.
 
-The merge window pull was - ignoring tests - 4 files changed, 59
-insertions(+), 17 deletions(-).
-
-I want more explanations for why I'm suddenly getting more alleged
-fixes than I got any development and why this shouldn't wait until the
-next merge window.
-
-Because honestly, this just all seems out of place.
-
-            Linus
+Wouldn't it be better if IMA_SECURE_AND_OR_TRUSTED_BOOT 'select'ed
+INTEGRITY_SECURE_BOOT in its Kconfig definition?
