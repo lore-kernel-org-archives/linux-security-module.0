@@ -1,146 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D8B2405EB
-	for <linux-security-module@vger.kernel.org>; Fri, 16 Jan 2026 13:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D34C26CE2B
+	for <linux-security-module@vger.kernel.org>; Fri, 16 Jan 2026 14:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768569540; cv=none; b=E4QSKwyp0yF/XwBUtVBN9l8ozgU5BkzoHSrITBwpQAsSqZHybG7zMWlaPVTiuyrgYHQOoLEMMckAQxH0SzDfrTR3mS+iJegxSXK61z52vV4qQnoPuLG5cAlCZuQiTIfB9QNRRuYn6ecxzlaNGNnin3XorxIk7NwDcM2QOXzj/IY=
+	t=1768573513; cv=none; b=FiaVeWQhPbzkVnPrgLvy3Rr9UtlWmC17THw8z1aYgYs9K1tBY7/o8kCAVXNepW3GfCXdy/yLw8kevEPpz9Ak+uClfYpIM2fDhogdHEYkSQvGzJkMzuF9ZWvti7BSOHPnqKB+kmMJ8vu1SNxomUmxjpdznWK8krxYgepnqCFN/Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768569540; c=relaxed/simple;
-	bh=paGgdC+WfYWTfp4FQwhsSNV0x9rGHQk4MpKoJN/J6kM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ul1KMtk9Bmf4zSq8LZC9eKuB/REXlHrhWvO7K7iuZTH7MkIPIAlzaYYH1LhECguTu6w8uWVO8jW8i6CMJdClon4/nERj5Q5Tb9ep/X4xSqji2XuY8661IItkN6MhnNkPAhUI0q/2ld6QnilPlc9pTnV86hXMqgaToBwoVOdKkn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7RJ4xWT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768573513; c=relaxed/simple;
+	bh=eCXytYP8WevteH3/pOP/2VhZhiG6sXWWdVj5prs14mg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kUc/ZuGOKJ6YuUSgHqxwQ/mPg70Wnj8ez9468dbHQ7MPfyMfGYqzfkb+TM1pIZSafKE8/7k0yDETiin+RoBqp2hUfNoETrXY37XjPWaoBFoZcCiC1o2/NfSi6Xo5HCe8CILVY8pi3xDnINH2HzaFpka8feyuO1wIJXQsKqstcTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=rCJfHu8B; arc=none smtp.client-ip=185.125.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7RJ4xWT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC308C2BCAF
-	for <linux-security-module@vger.kernel.org>; Fri, 16 Jan 2026 13:18:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768569539;
-	bh=paGgdC+WfYWTfp4FQwhsSNV0x9rGHQk4MpKoJN/J6kM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=M7RJ4xWT43ADC98PxDV0e9HkP280IMkU6DuUIegDtDal1O+uBc54Tkxa09dLwjXub
-	 YPFl3yiwWiS0BjazyBIjIvXj1bPBf9HUWuATFQjjMPIvMRiBVdB9C6gvatACsVQCZn
-	 Q1cxodFpUXGz/ppkN2ieUnX1UvKai1MwWgfE/yv/G9Xt/x5hhIuTv4iowkxTtGCBWQ
-	 iokXcbIAWUFqEg83r2kyYQFtPKeFO4/VXnU+HH4ZYJCkE5wTPD/IBLgTw3lEsycgkl
-	 sSyPHDNvSqz/qFWqe4fO7qelHdj37D5Baf+lKFgJMZwu/rOBKY0Ayr6dZxSemsXv+G
-	 WQqfmNw8427fQ==
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-34c84ec3b6eso1722321a91.3
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Jan 2026 05:18:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUjzH6hb6iX4maB/QxxIB7ZXdawQfCJx7P6HQP7LxIuvmbRQeFrr3EheelFc3aie4/rYFhB8A+UaFWrV2Urv3I8G7hm3WQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKOfGdZ1e4pVmTRYXqiZKPPPCwRyaRdSMR1A9ZO9JhuEvQJG1v
-	Waje6rtx+4MVficOSBI+J5rEq7JnL11+bKxHqa7RMDVJqLa4xQSoKY5HLp4a6uFfchOedmg5eFI
-	J44diC4jGEyZzohGkzfAHdUqtU2kozWE=
-X-Received: by 2002:a17:90b:3c49:b0:341:88c1:6a7d with SMTP id
- 98e67ed59e1d1-35272f87eb9mr2433924a91.18.1768569539305; Fri, 16 Jan 2026
- 05:18:59 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="rCJfHu8B"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dt2596z3vzwqc;
+	Fri, 16 Jan 2026 15:18:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1768573101;
+	bh=eYz+3Iuov1grERrs2u3VuMKuJ+8vLSFt+XOo11ZnweQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rCJfHu8BT/eCBtBvaYc+ocOUpskOj+nP7C+tZU7PBgEdGT0xo3Ab75k6v6HVKLdA/
+	 uFpuxgH8fCdL5+jzi3PIm/ABTT2qzaQ5+aFopxg3q5dJL9XEyaNpWSqJENuM904xDQ
+	 ZZPIemyUkIMrBWV/gAzvXGmsTH9/07dW2yzWdsgk=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dt2591RpdzqjC;
+	Fri, 16 Jan 2026 15:18:20 +0100 (CET)
+Date: Fri, 16 Jan 2026 15:18:15 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Matthieu Buffet <matthieu@buffet.re>, Tingmao Wang <m@maowtm.org>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [GIT PULL] Landlock fix for v6.19-rc6
+Message-ID: <20260116.feegh2ohQuae@digikod.net>
+References: <20260115214740.803611-1-mic@digikod.net>
+ <CAHk-=wgPRijTr7fZQNs9pxbhRLBVQGdE7ceZDwQFP53MXjRBxg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260115004328.194142-1-coxu@redhat.com> <20260115004328.194142-2-coxu@redhat.com>
- <CAMj1kXFXNo1-pMbo-VZrjQ3TYe1tufebrLr_avL12A0nHMSGnA@mail.gmail.com> <8bfa859ed3a4f1cf0db0ab64d8c1c3b24684582a.camel@linux.ibm.com>
-In-Reply-To: <8bfa859ed3a4f1cf0db0ab64d8c1c3b24684582a.camel@linux.ibm.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 16 Jan 2026 14:18:48 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHsJNZoUEnbD1y=v4Ftuv9d2c08VckRV7ru4k4P83vZbQ@mail.gmail.com>
-X-Gm-Features: AZwV_QiR8f22XUrZO7Ho9HKYBQjvJoHCgOD5leRDTv3x2USeTKmIDvLwsh7DTh4
-Message-ID: <CAMj1kXHsJNZoUEnbD1y=v4Ftuv9d2c08VckRV7ru4k4P83vZbQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] integrity: Make arch_ima_get_secureboot integrity-wide
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org, 
-	Heiko Carstens <hca@linux.ibm.com>, Roberto Sassu <roberto.sassu@huaweicloud.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, 
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	"moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" <linuxppc-dev@lists.ozlabs.org>, 
-	"open list:S390 ARCHITECTURE" <linux-s390@vger.kernel.org>, 
-	"open list:EXTENSIBLE FIRMWARE INTERFACE (EFI)" <linux-efi@vger.kernel.org>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
-	"open list:KEYS/KEYRINGS_INTEGRITY" <keyrings@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wgPRijTr7fZQNs9pxbhRLBVQGdE7ceZDwQFP53MXjRBxg@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Fri, 16 Jan 2026 at 14:11, Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> On Fri, 2026-01-16 at 10:41 +0100, Ard Biesheuvel wrote:
-> > On Thu, 15 Jan 2026 at 01:43, Coiby Xu <coxu@redhat.com> wrote:
-> > >
-> > > EVM and other LSMs need the ability to query the secure boot status of
-> > > the system, without directly calling the IMA arch_ima_get_secureboot
-> > > function. Refactor the secure boot status check into a general,
-> > > integrity-wide function named arch_integrity_get_secureboot.
-> > >
-> > > Define a new Kconfig option CONFIG_INTEGRITY_SECURE_BOOT, which is
-> > > automatically configured by the supported architectures. The existing
-> > > IMA_SECURE_AND_OR_TRUSTED_BOOT Kconfig loads the architecture specific
-> > > IMA policy based on the refactored secure boot status code.
-> > >
-> > > Reported-and-suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > Suggested-by: Roberto Sassu <roberto.sassu@huaweicloud.com>
-> > > Signed-off-by: Coiby Xu <coxu@redhat.com>
-> > > ---
-> > >  arch/arm64/Kconfig                            |  1 +
-> > >  arch/powerpc/Kconfig                          |  1 +
-> > >  arch/powerpc/kernel/Makefile                  |  2 +-
-> > >  arch/powerpc/kernel/ima_arch.c                |  5 --
-> > >  arch/powerpc/kernel/integrity_sb_arch.c       | 13 +++++
-> > >  arch/s390/Kconfig                             |  1 +
-> > >  arch/s390/kernel/Makefile                     |  1 +
-> > >  arch/s390/kernel/ima_arch.c                   |  6 --
-> > >  arch/s390/kernel/integrity_sb_arch.c          |  9 +++
-> > >  arch/x86/Kconfig                              |  1 +
-> > >  arch/x86/include/asm/efi.h                    |  4 +-
-> > >  arch/x86/platform/efi/efi.c                   |  2 +-
-> > >  include/linux/ima.h                           |  7 +--
-> > >  include/linux/integrity.h                     |  8 +++
-> > >  security/integrity/Kconfig                    |  6 ++
-> > >  security/integrity/Makefile                   |  3 +
-> > >  security/integrity/efi_secureboot.c           | 56 +++++++++++++++++++
-> > >  security/integrity/ima/ima_appraise.c         |  2 +-
-> > >  security/integrity/ima/ima_efi.c              | 47 +---------------
-> > >  security/integrity/ima/ima_main.c             |  4 +-
-> > >  security/integrity/platform_certs/load_uefi.c |  2 +-
-> > >  21 files changed, 111 insertions(+), 70 deletions(-)
-> > >  create mode 100644 arch/powerpc/kernel/integrity_sb_arch.c
-> > >  create mode 100644 arch/s390/kernel/integrity_sb_arch.c
-> > >  create mode 100644 security/integrity/efi_secureboot.c
-> > >
-> > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > > index 93173f0a09c7..4c265b7386bb 100644
-> > > --- a/arch/arm64/Kconfig
-> > > +++ b/arch/arm64/Kconfig
-> > > @@ -2427,6 +2427,7 @@ config EFI
-> > >         select EFI_STUB
-> > >         select EFI_GENERIC_STUB
-> > >         imply IMA_SECURE_AND_OR_TRUSTED_BOOT
-> > > +       imply INTEGRITY_SECURE_BOOT
+On Thu, Jan 15, 2026 at 03:09:34PM -0800, Linus Torvalds wrote:
+> On Thu, 15 Jan 2026 at 13:47, Mickaël Salaün <mic@digikod.net> wrote:
 > >
-> > This allows both to be en/disabled individually, which I don't think
-> > is what we want. It also results in more churn across the
-> > arch-specific Kconfigs than needed.
-> >
-> > Wouldn't it be better if IMA_SECURE_AND_OR_TRUSTED_BOOT 'select'ed
-> > INTEGRITY_SECURE_BOOT in its Kconfig definition?
->
-> As much as possible, EVM (and other LSMs) shouldn't be dependent on another LSM,
-> in this case IMA, being configured.
+> > This PR fixes TCP handling, tests, documentation, non-audit elided code,
+> > and minor cosmetic changes.
+> 
+> This seems significantly bigger than what you sent for the whole merge
+> window for the Landlock code.
+> 
+> The merge window pull was - ignoring tests - 4 files changed, 59
+> insertions(+), 17 deletions(-).
+> 
+> I want more explanations for why I'm suddenly getting more alleged
+> fixes than I got any development and why this shouldn't wait until the
+> next merge window.
+> 
+> Because honestly, this just all seems out of place.
 
-Sure, but that is not my point.
+There are indeed relatively more line changes because the related
+commits are fixes for different kernel versions, not specifically v6.19
+but also v6.15 (type issue), v6.7 (TCP fix), and it required to move a
+lot of lines (including a lot of comments) for a theoretically small
+fix.  In fact, the last merge window pull was mostly about fixes too
+(which were on time for the merge window, but otherwise I would have
+sent them as this one).
 
-This arrangement allows for IMA_SECURE_AND_OR_TRUSTED_BOOT to be
-enabled without INTEGRITY_SECURE_BOOT, resulting in the stub
-implementation of arch_integrity_get_secureboot() being used, which
-always returns false.
+The other commits are documentation/comment fixes (including another
+chunk of moved lines, which appears as kernel code diff), tests fixes or
+minor cleanup.  I can postpone these commits but because they don't
+directly impact the kernel, I wanted to group all fixes and minor
+non-kernel changes together to have a clean PR for the next merge
+window.  Please let me know what you prefer.
+
+ Mickaël
