@@ -1,275 +1,331 @@
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EC7358D0C
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Jan 2026 09:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028052144C7
+	for <linux-security-module@vger.kernel.org>; Mon, 19 Jan 2026 11:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768815666; cv=none; b=cNW/nccXyUZYENHZhz1Oq6y5mtDFkCkgC/nQrF+x5fs6OrusqI8k6hnGTkNG47zEPi8SREuX0wYkBNLmNZ8PwRO4FBnl5AiF+mLxFz6p/+tTQjG0CwVTRKd3oBT8b3ai1XiICJ2/KmHyoY4SPfB1d1yZ5lkNLAufwYrBB8IrU7A=
+	t=1768823413; cv=none; b=L1I5cTjiyH8kd8vtFabOYTmy7/17mxAFyioBLhIsqURkoC4iFaDBmjtFSGrlx4BVqn9gHMmoRwnGFMBSj9Bm5gdU7HnTwaYeMQqmpBFhgCaGAM346L8Sfxynibt3uHj2a0XM26Fb+UHlIDmK57RvzsDijw1EEDrbUBTTTZc37cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768815666; c=relaxed/simple;
-	bh=Rz5y7C4R6h2lPczYksr0SVq/IrzgSt5kMTodp36I+ag=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Eb+BvBht71QhVOdFOie8E7ZW2KGSKvZdpatqLYb7lvxJNBPWYQr+4h5X4KBthgUq3K1+xWpB20LqUpcFdBg6QW9802ndt5Xuj/OkQtyH6Ki8n0KCv+ObzguXvdq6NrD/BOgH/erxmX6OStF2wOucA1mr74pFcLUNpR5JDwY5o54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QsrldsFN; arc=none smtp.client-ip=209.85.218.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elver.bounces.google.com
+	s=arc-20240116; t=1768823413; c=relaxed/simple;
+	bh=ulSfS13N28RF5MKCYMFYvfR38qlbipjnnV+R8VGlkW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SC/ii7ab2Kn5bZomcU9gvtCmDRmZE8/kNR6KxsBHJeuvRU/m8yIcvLwR4DWFcd/Nlv/+5VNfbueI2aQx0tRWhtxsNji8Sn+Pk//JxMGsD6U4I7U4d39YyYyTjC19ucYWxc/HIFGmcFx6/Kk+Uw1+AAXjArlHPy5SCAUoBAI7z5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=IWjIzl7d; arc=none smtp.client-ip=45.157.188.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QsrldsFN"
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-b8704795d25so441729666b.2
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Jan 2026 01:41:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1768815662; x=1769420462; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hOlRW9xg19eCgYwriGsA0YBy8PVXki3QHZit/P09OME=;
-        b=QsrldsFN3DHYzrDh1yE2q76dxLD3aFkiydurI0ZYXeZIS1vMwzMjMIH6+HILZ4rjzK
-         7656x/aaTHydyYZLfWkFhLa5SBr+rh1+u7Z/2blUXLW3sgUvHSj6TsEjg3zsCwHlbFkh
-         mc5zf/hzIS9n0M3mS4TxZqzsN5ifzpNIgCeAHgerAjcsm2O7v5nsjAWNYQpoRIsMLsRb
-         EriSXMa3/Dm3bkBm4tSW7cD3Wyu/bDGSPDtx57U/cVZ3XbTPyWcTPCaF3AX6oK85Cgjl
-         VWSg9cxhnQpZ4tIQttfTnDmMuxLi4yDeQC7asHb1V7oWm3Vmj7ol95ETQ5Uz7+LAoBt1
-         tSGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768815662; x=1769420462;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hOlRW9xg19eCgYwriGsA0YBy8PVXki3QHZit/P09OME=;
-        b=aPpzM6LesZqQFuTSPVf8+4Oj6tgdbLFFoc5VjTCv7/HgGkKbIHw3yJT52JgM6ye6Ql
-         d2e2dXVQUcz5ZiH4ytB97w5C3L5LLlde/C0qjEQGp3Ch+POJ91AzMPUHHg/SGNRGEddV
-         uDbfmdTxeAnTkT5kE0NOF+7e9dfhB3BXz5x6U0cX+3LH+bgN4Q+QvEF4VMHVf3kCh73w
-         FSq0SCoI8JeuZ1fDXP4TXUFD9YNKmvV06TbcpJnYyoj+7vuNtzZrhvev7Lgv33PUFM6J
-         kwRi6Rn78kiO+dcvusZAlC88m206N0/v48Mth9xcpOfH5iNYl8cSMUeAUIN2X4vvqc/i
-         yF6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVfVBP6NMfTtESqdtVuDhVMw0mXv0ExxfD6cSPX1w61ZNRNONqux7RUjQ004/sWtnd6j1ISRe9WSGQXOfWENUrZ4gviqQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE2ZYvIHq1Loe1MHDyw6MTE07JJpLIpXOOP5ymspGva3OOFHcG
-	etR6Y4XY8yzaj6RykIstAEUUz1LGQLokIpDBqUSdkPCcObD6HrCrx7GXwSLm8BUkkk29N49BH2w
-	enA==
-X-Received: from ejek27.prod.google.com ([2002:a17:906:2a5b:b0:b7a:21aa:899e])
- (user=elver job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:3f21:b0:b87:25a7:3ea0
- with SMTP id a640c23a62f3a-b87968f6e82mr875438166b.25.1768815662390; Mon, 19
- Jan 2026 01:41:02 -0800 (PST)
-Date: Mon, 19 Jan 2026 10:05:56 +0100
-In-Reply-To: <20260119094029.1344361-1-elver@google.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="IWjIzl7d"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4dvpVm6fgDz810;
+	Mon, 19 Jan 2026 12:43:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1768822992;
+	bh=THBD5X/WeeF/GvoV0ikRXnmVJ5yZmUNsJYl89Obu6Oc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IWjIzl7djMVIN1QKGsx0Z8e5pkgniOLPja8kov8myPsGto9Bi8U33WlRHh2RLg0d0
+	 XkHHoToH0ZHK4X+BVQxjOhGofNRul3cFl5ppjn57K6y3zJmJI7HltxLpy6X//RawCk
+	 hd2UhuwNNM84NXJ2SgEPhNGe2yBvATCqw1S1RjOI=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4dvpVl6swWzhQD;
+	Mon, 19 Jan 2026 12:43:11 +0100 (CET)
+Date: Mon, 19 Jan 2026 12:43:05 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Justin Suess <utilityemal77@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, 
+	Jann Horn <jannh@google.com>, linux-security-module@vger.kernel.org, 
+	Tingmao Wang <m@maowtm.org>, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
+	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	konstantin.meskhidze@huawei.com, Demi Marie Obenour <demiobenour@gmail.com>, 
+	Alyssa Ross <hi@alyssa.is>, Tahera Fahimi <fahimitahera@gmail.com>
+Subject: Re: [PATCH v2 2/5] landlock: Control pathname UNIX domain socket
+ resolution by path
+Message-ID: <20260119.eicaeSei5Ahk@digikod.net>
+References: <20260110143300.71048-2-gnoack3000@gmail.com>
+ <20260110143300.71048-6-gnoack3000@gmail.com>
+ <735dd623-f8ff-43ff-8d06-fc0443e0f892@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260119094029.1344361-1-elver@google.com>
-X-Mailer: git-send-email 2.52.0.457.g6b5491de43-goog
-Message-ID: <20260119094029.1344361-7-elver@google.com>
-Subject: [PATCH tip/locking/core 6/6] compiler-context-analysis: Remove
- __assume_ctx_lock from initializers
-From: Marco Elver <elver@google.com>
-To: elver@google.com, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, 
-	Christoph Hellwig <hch@lst.de>, Steven Rostedt <rostedt@goodmis.org>, Bart Van Assche <bvanassche@acm.org>, 
-	kasan-dev@googlegroups.com, llvm@lists.linux.dev, 
-	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <735dd623-f8ff-43ff-8d06-fc0443e0f892@gmail.com>
+X-Infomaniak-Routing: alpha
 
-Remove __assume_ctx_lock() from lock initializers.
+On Mon, Jan 12, 2026 at 10:38:44AM -0500, Justin Suess wrote:
+> On 1/10/26 09:32, Günther Noack wrote:
+> > * Add new access rights which control the look up operations for named
+> >   UNIX domain sockets.  The resolution happens during connect() and
+> >   sendmsg() (depending on socket type).
+> >   * LANDLOCK_ACCESS_FS_RESOLVE_UNIX_STREAM
+> >   * LANDLOCK_ACCESS_FS_RESOLVE_UNIX_DGRAM
+> >   * LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET
+> Might be a crazy thought but would it be better to implement the
+> STREAM/DGRAM/SEQPACKET as an add_rule flag rather than as a separate
+> access right? There are other types of address families like AF_CAN,
+> AF_BLUETOOTH, AF_VSOCK that support multiple socket types.
 
-Implicitly asserting an active context during initialization caused
-false-positive double-lock errors when acquiring a lock immediately after its
-initialization. Moving forward, guarded member initialization must either:
+There should only be one LANDLOCK_ACCESS_FS_RESOLVE_UNIX, not one per
+stream/dgram/seqpacket.
 
-	1. Use guard(type_init)(&lock) or scoped_guard(type_init, ...).
-	2. Use context_unsafe() for simple initialization.
+I guess there is no other type of address families that can be tied to
+the filesystem, so there is no need for a more generic approach.
+Moreover, each new access right should come with a good test coverage,
+so adding a generic access right would be too much work.
 
-Link: https://lore.kernel.org/all/57062131-e79e-42c2-aa0b-8f931cb8cac2@acm.org/
-Reported-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Marco Elver <elver@google.com>
----
- include/linux/local_lock_internal.h | 3 ---
- include/linux/mutex.h               | 1 -
- include/linux/rwlock.h              | 3 +--
- include/linux/rwlock_rt.h           | 1 -
- include/linux/rwsem.h               | 2 --
- include/linux/seqlock.h             | 1 -
- include/linux/spinlock.h            | 5 +----
- include/linux/spinlock_rt.h         | 1 -
- include/linux/ww_mutex.h            | 1 -
- lib/test_context-analysis.c         | 6 ------
- 10 files changed, 2 insertions(+), 22 deletions(-)
+The add_rule flags should make sense for any kind of rule type e.g.,
+related to how the rule is applied.  We also have a lot of flexibility
+with the landlock_*_attr structs where we can add new fields.
 
-diff --git a/include/linux/local_lock_internal.h b/include/linux/local_lock_internal.h
-index 4521c40895f8..ebfcdf517224 100644
---- a/include/linux/local_lock_internal.h
-+++ b/include/linux/local_lock_internal.h
-@@ -87,13 +87,11 @@ do {								\
- 			      0, LD_WAIT_CONFIG, LD_WAIT_INV,	\
- 			      LD_LOCK_PERCPU);			\
- 	local_lock_debug_init(lock);				\
--	__assume_ctx_lock(lock);				\
- } while (0)
- 
- #define __local_trylock_init(lock)				\
- do {								\
- 	__local_lock_init((local_lock_t *)lock);		\
--	__assume_ctx_lock(lock);				\
- } while (0)
- 
- #define __spinlock_nested_bh_init(lock)				\
-@@ -105,7 +103,6 @@ do {								\
- 			      0, LD_WAIT_CONFIG, LD_WAIT_INV,	\
- 			      LD_LOCK_NORMAL);			\
- 	local_lock_debug_init(lock);				\
--	__assume_ctx_lock(lock);				\
- } while (0)
- 
- #define __local_lock_acquire(lock)					\
-diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-index 6b12009351d2..ecaa0440f6ec 100644
---- a/include/linux/mutex.h
-+++ b/include/linux/mutex.h
-@@ -62,7 +62,6 @@ do {									\
- 	static struct lock_class_key __key;				\
- 									\
- 	__mutex_init((mutex), #mutex, &__key);				\
--	__assume_ctx_lock(mutex);					\
- } while (0)
- 
- /**
-diff --git a/include/linux/rwlock.h b/include/linux/rwlock.h
-index 65a5b55e1bcd..3390d21c95dd 100644
---- a/include/linux/rwlock.h
-+++ b/include/linux/rwlock.h
-@@ -22,11 +22,10 @@ do {								\
- 	static struct lock_class_key __key;			\
- 								\
- 	__rwlock_init((lock), #lock, &__key);			\
--	__assume_ctx_lock(lock);				\
- } while (0)
- #else
- # define rwlock_init(lock)					\
--	do { *(lock) = __RW_LOCK_UNLOCKED(lock); __assume_ctx_lock(lock); } while (0)
-+	do { *(lock) = __RW_LOCK_UNLOCKED(lock); } while (0)
- #endif
- 
- #ifdef CONFIG_DEBUG_SPINLOCK
-diff --git a/include/linux/rwlock_rt.h b/include/linux/rwlock_rt.h
-index 37b387dcab21..5353abbfdc0b 100644
---- a/include/linux/rwlock_rt.h
-+++ b/include/linux/rwlock_rt.h
-@@ -22,7 +22,6 @@ do {							\
- 							\
- 	init_rwbase_rt(&(rwl)->rwbase);			\
- 	__rt_rwlock_init(rwl, #rwl, &__key);		\
--	__assume_ctx_lock(rwl);				\
- } while (0)
- 
- extern void rt_read_lock(rwlock_t *rwlock)	__acquires_shared(rwlock);
-diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-index ea1bbdb57a47..9bf1d93d3d7b 100644
---- a/include/linux/rwsem.h
-+++ b/include/linux/rwsem.h
-@@ -121,7 +121,6 @@ do {								\
- 	static struct lock_class_key __key;			\
- 								\
- 	__init_rwsem((sem), #sem, &__key);			\
--	__assume_ctx_lock(sem);					\
- } while (0)
- 
- /*
-@@ -175,7 +174,6 @@ do {								\
- 	static struct lock_class_key __key;			\
- 								\
- 	__init_rwsem((sem), #sem, &__key);			\
--	__assume_ctx_lock(sem);					\
- } while (0)
- 
- static __always_inline int rwsem_is_locked(const struct rw_semaphore *sem)
-diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
-index 22216df47b0f..c0c6235dff59 100644
---- a/include/linux/seqlock.h
-+++ b/include/linux/seqlock.h
-@@ -817,7 +817,6 @@ static __always_inline void write_seqcount_latch_end(seqcount_latch_t *s)
- 	do {								\
- 		spin_lock_init(&(sl)->lock);				\
- 		seqcount_spinlock_init(&(sl)->seqcount, &(sl)->lock);	\
--		__assume_ctx_lock(sl);					\
- 	} while (0)
- 
- /**
-diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-index 7b11991c742a..e1e2f144af9b 100644
---- a/include/linux/spinlock.h
-+++ b/include/linux/spinlock.h
-@@ -106,12 +106,11 @@ do {									\
- 	static struct lock_class_key __key;				\
- 									\
- 	__raw_spin_lock_init((lock), #lock, &__key, LD_WAIT_SPIN);	\
--	__assume_ctx_lock(lock);					\
- } while (0)
- 
- #else
- # define raw_spin_lock_init(lock)				\
--	do { *(lock) = __RAW_SPIN_LOCK_UNLOCKED(lock); __assume_ctx_lock(lock); } while (0)
-+	do { *(lock) = __RAW_SPIN_LOCK_UNLOCKED(lock); } while (0)
- #endif
- 
- #define raw_spin_is_locked(lock)	arch_spin_is_locked(&(lock)->raw_lock)
-@@ -324,7 +323,6 @@ do {								\
- 								\
- 	__raw_spin_lock_init(spinlock_check(lock),		\
- 			     #lock, &__key, LD_WAIT_CONFIG);	\
--	__assume_ctx_lock(lock);				\
- } while (0)
- 
- #else
-@@ -333,7 +331,6 @@ do {								\
- do {						\
- 	spinlock_check(_lock);			\
- 	*(_lock) = __SPIN_LOCK_UNLOCKED(_lock);	\
--	__assume_ctx_lock(_lock);		\
- } while (0)
- 
- #endif
-diff --git a/include/linux/spinlock_rt.h b/include/linux/spinlock_rt.h
-index 0a585768358f..373618a4243c 100644
---- a/include/linux/spinlock_rt.h
-+++ b/include/linux/spinlock_rt.h
-@@ -20,7 +20,6 @@ static inline void __rt_spin_lock_init(spinlock_t *lock, const char *name,
- do {								\
- 	rt_mutex_base_init(&(slock)->lock);			\
- 	__rt_spin_lock_init(slock, name, key, percpu);		\
--	__assume_ctx_lock(slock);				\
- } while (0)
- 
- #define _spin_lock_init(slock, percpu)				\
-diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
-index 58e959ee10e9..c47d4b9b88b3 100644
---- a/include/linux/ww_mutex.h
-+++ b/include/linux/ww_mutex.h
-@@ -107,7 +107,6 @@ context_lock_struct(ww_acquire_ctx) {
-  */
- static inline void ww_mutex_init(struct ww_mutex *lock,
- 				 struct ww_class *ww_class)
--	__assumes_ctx_lock(lock)
- {
- 	ww_mutex_base_init(&lock->base, ww_class->mutex_name, &ww_class->mutex_key);
- 	lock->ctx = NULL;
-diff --git a/lib/test_context-analysis.c b/lib/test_context-analysis.c
-index 0f05943d957f..140efa8a9763 100644
---- a/lib/test_context-analysis.c
-+++ b/lib/test_context-analysis.c
-@@ -542,12 +542,6 @@ struct test_ww_mutex_data {
- 	int counter __guarded_by(&mtx);
- };
- 
--static void __used test_ww_mutex_init(struct test_ww_mutex_data *d)
--{
--	ww_mutex_init(&d->mtx, &ww_class);
--	d->counter = 0;
--}
--
- static void __used test_ww_mutex_lock_noctx(struct test_ww_mutex_data *d)
- {
- 	if (!ww_mutex_lock(&d->mtx, NULL)) {
--- 
-2.52.0.457.g6b5491de43-goog
+FYI, this patch series will make it possible to restrict socket creation
+according to their properties:
+https://lore.kernel.org/all/20251118134639.3314803-1-ivanov.mikhail1@huawei-partners.com/
 
+> 
+> This saves us on access right numbers if they get added in the future to
+> landlock.
+
+Even if we reach 64 access rights per type, we can still add new types.
+Anyway, I guess this would not happen because more specific
+landlock_*_attr would probably fit best.
+
+> 
+> So we could have:
+> 
+> LANDLOCK_ADD_RULE_SOCK_STREAM
+> LANDLOCK_ADD_RULE_SOCK_DGRAM
+> LANDLOCK_ADD_RULE_SOCK_SEQPACKET
+
+This would be the wrong semantic because users don't really care about
+the stream/dgram/seqpacket type but about the path name and the peer.
+
+If we want to restrict other socket types, we would probably use
+landlock_net_port_attr or create a new struct if necessary.
+
+> 
+> and use it as such:
+> 
+> landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
+>                              &path_beneath_for_unix_socket,
+>                              LANDLOCK_ADD_RULE_SOCK_STREAM |
+>                              LANDLOCK_ADD_RULE_SOCK_DGRAM);
+> 
+> For address families with only one socket type (ie tcp and udp), the
+> socket family be implied, which keeps backward compatibility w/ the
+> existing tcp access right.
+> 
+> This way, we don't have to make completely separate access rights for
+> future socket families. So we could add a single access right for bluetooth,
+> for instance, and distinguish which socket families we give it with the
+> LANDLOCK_ADD_RULE_SOCK_* flags.
+> 
+> We'd have to track the SOCK_(socket_type) for unix sockets as we gather
+> access rights. But afaik unix sockets should be the only socket type that
+> has to deal with tree traversal.
+> > * Hook into the path lookup in unix_find_bsd() in af_unix.c, using a
+> >   LSM hook.  Make policy decisions based on the new access rights
+> > * Increment the Landlock ABI version.
+> > * Minor test adaptions to keep the tests working.
+> >
+> > Cc: Justin Suess <utilityemal77@gmail.com>
+> > Cc: Mickaël Salaün <mic@digikod.net>
+> > Suggested-by: Jann Horn <jannh@google.com>
+> > Link: https://github.com/landlock-lsm/linux/issues/36
+> > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> > ---
+> >  include/uapi/linux/landlock.h                | 10 ++++++
+> >  security/landlock/access.h                   |  2 +-
+> >  security/landlock/audit.c                    |  6 ++++
+> >  security/landlock/fs.c                       | 34 +++++++++++++++++++-
+> >  security/landlock/limits.h                   |  2 +-
+> >  security/landlock/syscalls.c                 |  2 +-
+> >  tools/testing/selftests/landlock/base_test.c |  2 +-
+> >  tools/testing/selftests/landlock/fs_test.c   |  7 ++--
+> >  8 files changed, 58 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> > index f030adc462ee..455edc241c12 100644
+> > --- a/include/uapi/linux/landlock.h
+> > +++ b/include/uapi/linux/landlock.h
+> > @@ -216,6 +216,13 @@ struct landlock_net_port_attr {
+> >   *   :manpage:`ftruncate(2)`, :manpage:`creat(2)`, or :manpage:`open(2)` with
+> >   *   ``O_TRUNC``.  This access right is available since the third version of the
+> >   *   Landlock ABI.
+> > + * - %LANDLOCK_ACCESS_FS_RESOLVE_UNIX_STREAM: Connect to named
+> > + *   :manpage:`unix(7)` ``SOCK_STREAM`` sockets.
+> > + * - %LANDLOCK_ACCESS_FS_RESOLVE_UNIX_DGRAM: Send messages to named
+> > + *   :manpage:`unix(7)` ``SOCK_DGRAM`` sockets or connect to them using
+> > + *   :manpage:`connect(2)`.
+> > + * - %LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET: Connect to named
+> > + *   :manpage:`unix(7)` ``SOCK_SEQPACKET`` sockets.
+> >   *
+> >   * Whether an opened file can be truncated with :manpage:`ftruncate(2)` or used
+> >   * with `ioctl(2)` is determined during :manpage:`open(2)`, in the same way as
+> > @@ -321,6 +328,9 @@ struct landlock_net_port_attr {
+> >  #define LANDLOCK_ACCESS_FS_REFER			(1ULL << 13)
+> >  #define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
+> >  #define LANDLOCK_ACCESS_FS_IOCTL_DEV			(1ULL << 15)
+> > +#define LANDLOCK_ACCESS_FS_RESOLVE_UNIX_STREAM		(1ULL << 16)
+> > +#define LANDLOCK_ACCESS_FS_RESOLVE_UNIX_DGRAM		(1ULL << 17)
+> > +#define LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET	(1ULL << 18)
+> >  /* clang-format on */
+> >  
+> >  /**
+> > diff --git a/security/landlock/access.h b/security/landlock/access.h
+> > index 7961c6630a2d..c7784922be3c 100644
+> > --- a/security/landlock/access.h
+> > +++ b/security/landlock/access.h
+> > @@ -34,7 +34,7 @@
+> >  	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+> >  /* clang-format on */
+> >  
+> > -typedef u16 access_mask_t;
+> > +typedef u32 access_mask_t;
+> >  
+> >  /* Makes sure all filesystem access rights can be stored. */
+> >  static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
+> > diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+> > index e899995f1fd5..0645304e0375 100644
+> > --- a/security/landlock/audit.c
+> > +++ b/security/landlock/audit.c
+> > @@ -37,6 +37,12 @@ static const char *const fs_access_strings[] = {
+> >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_REFER)] = "fs.refer",
+> >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_TRUNCATE)] = "fs.truncate",
+> >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_IOCTL_DEV)] = "fs.ioctl_dev",
+> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_RESOLVE_UNIX_STREAM)] =
+> > +		"fs.resolve_unix_stream",
+> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_RESOLVE_UNIX_DGRAM)] =
+> > +		"fs.resolve_unix_dgram",
+> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET)] =
+> > +		"fs.resolve_unix_seqpacket",
+> >  };
+> >  
+> >  static_assert(ARRAY_SIZE(fs_access_strings) == LANDLOCK_NUM_ACCESS_FS);
+> > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> > index 8205673c8b1c..94f5fc7ee9fd 100644
+> > --- a/security/landlock/fs.c
+> > +++ b/security/landlock/fs.c
+> > @@ -9,6 +9,7 @@
+> >   * Copyright © 2023-2024 Google LLC
+> >   */
+> >  
+> > +#include "linux/net.h"
+> >  #include <asm/ioctls.h>
+> >  #include <kunit/test.h>
+> >  #include <linux/atomic.h>
+> > @@ -314,7 +315,10 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+> >  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+> >  	LANDLOCK_ACCESS_FS_READ_FILE | \
+> >  	LANDLOCK_ACCESS_FS_TRUNCATE | \
+> > -	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+> > +	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
+> > +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX_STREAM | \
+> > +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX_DGRAM | \
+> > +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET)
+> >  /* clang-format on */
+> >  
+> >  /*
+> > @@ -1588,6 +1592,33 @@ static int hook_path_truncate(const struct path *const path)
+> >  	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
+> >  }
+> >  
+> > +static int hook_unix_path_connect(const struct path *const path, int type,
+> > +				  int flags)
+> > +{
+> > +	access_mask_t access_request = 0;
+> > +
+> > +	/* Lookup for the purpose of saving coredumps is OK. */
+> > +	if (flags & SOCK_COREDUMP)
+> > +		return 0;
+> > +
+> > +	switch (type) {
+> > +	case SOCK_STREAM:
+> > +		access_request = LANDLOCK_ACCESS_FS_RESOLVE_UNIX_STREAM;
+> > +		break;
+> > +	case SOCK_DGRAM:
+> > +		access_request = LANDLOCK_ACCESS_FS_RESOLVE_UNIX_DGRAM;
+> > +		break;
+> > +	case SOCK_SEQPACKET:
+> > +		access_request = LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET;
+> > +		break;
+> > +	}
+> > +
+> > +	if (!access_request)
+> > +		return 0;
+> > +
+> > +	return current_check_access_path(path, access_request);
+> > +}
+> > +
+> >  /* File hooks */
+> >  
+> >  /**
+> > @@ -1872,6 +1903,7 @@ static struct security_hook_list landlock_hooks[] __ro_after_init = {
+> >  	LSM_HOOK_INIT(path_unlink, hook_path_unlink),
+> >  	LSM_HOOK_INIT(path_rmdir, hook_path_rmdir),
+> >  	LSM_HOOK_INIT(path_truncate, hook_path_truncate),
+> > +	LSM_HOOK_INIT(unix_path_connect, hook_unix_path_connect),
+> >  
+> >  	LSM_HOOK_INIT(file_alloc_security, hook_file_alloc_security),
+> >  	LSM_HOOK_INIT(file_open, hook_file_open),
+> > diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> > index 65b5ff051674..1f6f864afec2 100644
+> > --- a/security/landlock/limits.h
+> > +++ b/security/landlock/limits.h
+> > @@ -19,7 +19,7 @@
+> >  #define LANDLOCK_MAX_NUM_LAYERS		16
+> >  #define LANDLOCK_MAX_NUM_RULES		U32_MAX
+> >  
+> > -#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_IOCTL_DEV
+> > +#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET
+> >  #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+> >  #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+> >  
+> > diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> > index 0116e9f93ffe..66fd196be85a 100644
+> > --- a/security/landlock/syscalls.c
+> > +++ b/security/landlock/syscalls.c
+> > @@ -161,7 +161,7 @@ static const struct file_operations ruleset_fops = {
+> >   * Documentation/userspace-api/landlock.rst should be updated to reflect the
+> >   * UAPI change.
+> >   */
+> > -const int landlock_abi_version = 7;
+> > +const int landlock_abi_version = 8;
+> >  
+> >  /**
+> >   * sys_landlock_create_ruleset - Create a new ruleset
+> > diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+> > index 7b69002239d7..f4b1a275d8d9 100644
+> > --- a/tools/testing/selftests/landlock/base_test.c
+> > +++ b/tools/testing/selftests/landlock/base_test.c
+> > @@ -76,7 +76,7 @@ TEST(abi_version)
+> >  	const struct landlock_ruleset_attr ruleset_attr = {
+> >  		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
+> >  	};
+> > -	ASSERT_EQ(7, landlock_create_ruleset(NULL, 0,
+> > +	ASSERT_EQ(8, landlock_create_ruleset(NULL, 0,
+> >  					     LANDLOCK_CREATE_RULESET_VERSION));
+> >  
+> >  	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
+> > diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> > index 968a91c927a4..0cbde65e032a 100644
+> > --- a/tools/testing/selftests/landlock/fs_test.c
+> > +++ b/tools/testing/selftests/landlock/fs_test.c
+> > @@ -575,9 +575,12 @@ TEST_F_FORK(layout1, inval)
+> >  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+> >  	LANDLOCK_ACCESS_FS_READ_FILE | \
+> >  	LANDLOCK_ACCESS_FS_TRUNCATE | \
+> > -	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+> > +	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
+> > +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX_STREAM | \
+> > +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX_DGRAM | \
+> > +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET)
+> >  
+> > -#define ACCESS_LAST LANDLOCK_ACCESS_FS_IOCTL_DEV
+> > +#define ACCESS_LAST LANDLOCK_ACCESS_FS_RESOLVE_UNIX_SEQPACKET
+> >  
+> >  #define ACCESS_ALL ( \
+> >  	ACCESS_FILE | \
+> 
