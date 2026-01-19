@@ -1,113 +1,165 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39613FEF
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Jan 2026 04:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D5834F49C
+	for <linux-security-module@vger.kernel.org>; Mon, 19 Jan 2026 08:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768796159; cv=none; b=PBRJAIcAgcaQIsC6pqcDxPFglg1bqP0hxT4Q3af4MXeTDgsn5EYXxUItDUcY9j5SMG/v6Zfvl/tYCM6kLxVexDCsJuyUBhNppsHlHw4NNT+Pifu1qeYpSAFbEFX/J1G1Pizq3ucJrJV4COjCOqXAAyLl3nuWcA1q84lJCla8+y0=
+	t=1768812679; cv=none; b=fgzWcEqzyWGLH72+GWhMr0CHqcDorOPY1iskGCerZiy9SJ5uZf4gQ2ov+DQOzWcWhKc2rTyqGqmqP04TLZ6StsmehvNQLuq0BhFD9q1POL2MHajeS5+GuGJu/4Nmxlnm9TWX8INVVpOUauQ3rM4lgGKFcKa1tDNYOdgugB08XjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768796159; c=relaxed/simple;
-	bh=Q4XorKD5YS6S0fB5vVv5DXfr9ymxSk1r7VwLAiX3vw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=sN8a9QKYaggQy6SH3dzr5AQiZVB3hPzYOxEoitcGmzmsgffnfukN3yz2toef7NFR2k0XvDWuHgbZwbZSNbkJNes8ATGac3w4dhA2hvsAc168vUxBPh8QmOHNIyu2qXL5Dypd6bDVO77eE+UwM9pRFUbBbMFYZ0xQy94Y9qhzYS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h2WqBeF0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1768812679; c=relaxed/simple;
+	bh=Ax8wgaK+ez15fxYYZiVX8seyZwmcTdJyLJpygBaT6qg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=T2x0y/6Qu40C30qQAN4PjqfReu2/o/5rLvR/uVGJDo3dS64ERamTE5hi4RmsEyCE/3CuKsMWVBNN/U0RS5vMBGAqSlfI94qUowJ+KZswdwaNp0Eu7dxiuAyx3ZYoHAtzKnJl1LavwN+R4rG4fMU8mjmi/5dC+ntBP8iVJyEhGx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zaSVgH3W; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h2WqBeF0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1768796156;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XmVPCf9pEYrflYW5gEcXAfiX8WqXl7WYVPdJt2MNiMA=;
-	b=h2WqBeF0lyKKJNP+XxkpEdGCLRPqKzfzXeyg/590ZGG0R7Z4k9iEgXH2PRkyOqv4ghdnSn
-	iJ8L/0V50pwjezmtzdMvxAULEGPphp8J25WU8FQaVl6JNi1JEgWePHmsb/bTziCpR2Uia4
-	MAeeHO2E6T+cgHzRi/EKuA9/ThUjzNU=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-682-ZlF4b_rcOcW6tQS7vxzOqg-1; Sun, 18 Jan 2026 23:15:55 -0500
-X-MC-Unique: ZlF4b_rcOcW6tQS7vxzOqg-1
-X-Mimecast-MFC-AGG-ID: ZlF4b_rcOcW6tQS7vxzOqg_1768796155
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-c549aaa796dso6421673a12.1
-        for <linux-security-module@vger.kernel.org>; Sun, 18 Jan 2026 20:15:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zaSVgH3W"
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-4310062d97bso2406267f8f.0
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Jan 2026 00:51:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1768812677; x=1769417477; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=e6YT/SSIHC+I60myLHN8wqfFYBBYrwfHUs2Kiakqa00=;
+        b=zaSVgH3Wnpw2bKHfgqo6elwroE+Sw8kZjNBesFrsgXb4R7J1OKyZLnXV7Ez/jLVCsI
+         /wQg6e4roy1RLeEmzZA5b8iHfq1yNrFiQzpxPebHQ+1jyQbyeySbW7wCywrxB/DsxRYK
+         xbp8h18LKNdDFaJ9hpaUkz/tvRNtIuK0l4eZhS5V/3goqUWUAT/IU9TE1SUBEknPd0we
+         2NBBm2haB5Qfo91e8v3wUttMXbwkGv6klAOjqDnbvXcta0KaqKCPcKbMzjfGgHRTqlIz
+         Sw0vE441T8Ud1ANj+vEClvC9Gi5zzmCB8dYKgVj4gSV5eBbh21+Eb5kmHm1orLLBmiDG
+         fm+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768796154; x=1769400954;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XmVPCf9pEYrflYW5gEcXAfiX8WqXl7WYVPdJt2MNiMA=;
-        b=C0ADEJNho5LELnPYzTTojxH/oo2ZJLdZJdED/0/p3UMJVHK0gAFvAChOcyxZdKqZmv
-         JUqUW+tbtfr8P5LNaVGK/CVWud84bmyC69NLK9vJVbQ8xm3wR3Kx629R9vuU+GGqjp1Q
-         6D/dNi2HEuJ+lrp+qbDnLqfD/ZOWWGSETt86lITWc07l5FS92zkgM1XCMvOLTn+sMqb+
-         4SVdALVXyGvKKj6T6acG0aOp4MG2TJ+j/SjAw5DUVhqpUlLFeeT9xGxd83T2rN4ngAgC
-         kswZiGsjP1ZdfsbturAwgxTtHemnxGgz1THp0JrRrSM42wzEBpzKtE2gyNeuKnwKWOIw
-         U4cg==
-X-Forwarded-Encrypted: i=1; AJvYcCUS2/Hie0S8mKs9gMhgnDttXq4OT1Eq10mo9egAW5of7ldCGX8wU7rLThRqgeXWVOUKXwostLzUegiB4qU1FLux0uPa2gE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl/IOFOMjCFWM/VTBDCgAqk66Mnxpmf7DRIwnuCY/u6P4137QZ
-	cL0AHPWbklGSY+sZvDQ3pf9d2LrNPO9dssMyBJS19Ixouqhv8iixRIhk5M9Guq9Y98Rz4X9G0aP
-	hdIgHbkPEE+kgFHjZXMJeXde4NZc51dRlIrEUrneEU0OjH3VF0BShVgVH62G+rFY731K1ZWR75d
-	szSA==
-X-Gm-Gg: AY/fxX7HLcUQIonFMTs8H5e1vP1fhkujm/7KTng7KIK7/JoKsGpybeHjiMtsJF1IJXB
-	78NZ4FXMcCzdpjpoASnl8nXQqbylvk0gn98AiXp6Ljn0/ClWK4Tj5kTgfW4p8hlx5waG+1WpdZX
-	zZQGaM2zhS1zBQxUmhG6R8KJnC7et9L3H5LVI8uIu2wdnh277ToOap58HlFoW/1HVfXT9nQfl5/
-	zfIY3eeuo6XbHP2h/GkkKeZljbCE/gByzPy0TeBhJOsNtozHKCC+g7NyEtnPP7AZ0r+YuRDS73p
-	T8cp6Dqp24luWRWaisWawWD0bKMblyhZsugLtTUDP9FJjfdbyxE0+bj1iAv8OP3hYYYwjdPvSde
-	J
-X-Received: by 2002:a05:6a21:7103:b0:38d:f226:49fe with SMTP id adf61e73a8af0-38dfe7c307amr9251481637.63.1768796154613;
-        Sun, 18 Jan 2026 20:15:54 -0800 (PST)
-X-Received: by 2002:a05:6a21:7103:b0:38d:f226:49fe with SMTP id adf61e73a8af0-38dfe7c307amr9251469637.63.1768796154115;
-        Sun, 18 Jan 2026 20:15:54 -0800 (PST)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c5edf32d2a3sm5939653a12.20.2026.01.18.20.15.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Jan 2026 20:15:53 -0800 (PST)
-Date: Mon, 19 Jan 2026 12:10:54 +0800
-From: Coiby Xu <coxu@redhat.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org, 
-	Heiko Carstens <hca@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] evm: Don't enable fix mode when secure boot is
- enabled
-Message-ID: <aW2uAwtNdq3KhsFa@Rk>
-References: <20260115004328.194142-1-coxu@redhat.com>
- <20260115004328.194142-3-coxu@redhat.com>
- <522f60ac43b8757c0d7df5df0239190e49f577a8.camel@linux.ibm.com>
- <f38b2512d51351f83c51b6e2b5dec11eb7e6959d.camel@huaweicloud.com>
+        d=1e100.net; s=20230601; t=1768812677; x=1769417477;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e6YT/SSIHC+I60myLHN8wqfFYBBYrwfHUs2Kiakqa00=;
+        b=PGAD5rqEhTcUoZZznEvvIZrANyodLI5wNZcR+pmZyCfMYZ86f7ltO9RN4adrzMj3YZ
+         zwpBs6jcElwgb0aP+KN6hFSMRp6JV09a3X/9aDpm2PGPfWyDEkE1MIjvVfHnPkDHmTH6
+         bi2OjqZESgAXRSl+PqNZOU9JjVJhlsi638PT4WjCCnrjS+tV14fw+iDlkAk0OYtXImSA
+         qJ0DutMu2KlVc/QDxA59+cMdUQoVqA8RV8t/NvdOMxf1EfW9GIpwPx37ojMPqiemoudR
+         8ll+ukpWiicPvrYkqKTZV8vnC4rkxtCEs8VFHdvdhi+aq84TP4unRUQyxFP3dLg8gAN9
+         HJ6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVV15ovpLFO1XS4dq4p/0AQAl9LsMS0JK5to4yxno5Crx8jGhCDPHhu0IOHRj0U621WfziLRnTHci445bI4uMs5NzMgUIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLcuQFdroUKOoO4z35DzVH78jbIE8/SGIM6R2HNwh0/+s8I/vj
+	0i1gUSKA/L4tfBq4j5ATdi0hKbgiltUXPvvoXrGhVeVSnMZ2P0X2JllyGGHTpM/Ru2C+Q0Ogk2o
+	YocRAVPcv/stn4QbPEA==
+X-Received: from wrwq3.prod.google.com ([2002:a5d:5743:0:b0:432:c091:266a])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:1787:b0:431:104:6db7 with SMTP id ffacd0b85a97d-4356a02c9f0mr14599765f8f.26.1768812676695;
+ Mon, 19 Jan 2026 00:51:16 -0800 (PST)
+Date: Mon, 19 Jan 2026 08:51:07 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <f38b2512d51351f83c51b6e2b5dec11eb7e6959d.camel@huaweicloud.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: qbv-4el7fKo0rwXrHs4NcjsMFGSVLSxUWzNz-SZv3Uk_1768796155
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
+Mime-Version: 1.0
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2668; i=aliceryhl@google.com;
+ h=from:subject; bh=Ax8wgaK+ez15fxYYZiVX8seyZwmcTdJyLJpygBaT6qg=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpbfB0H6u938zFWwZxBk8W9injxH0DUlnOu6hQr
+ I9pSqjICDCJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaW3wdAAKCRAEWL7uWMY5
+ RpEPD/9s0mWghFgMzJPD/QM93dAQDoNAJOGO/mppcLzJ6KEcbUO8WdVMFqw0HNIgLpmwQGasgOl
+ rvTeycYj9P9eaJDRd0ByV+iNF5El8QgqIUPbVfnEHQJG+Ck3ZXpk2/u0UVxQ1MPdF1xwPO+6IqQ
+ XepW+bMkOtv8Xq1rzJD+xjv3io1GiqI5AnklqE4mQJkHlOSmlSxQNH7sge4YA8HyaKtPmXdHA36
+ RCEeR9nLDud9oIFWbSfJhkolbktNopYMuvJRylPFgtPbVQRVj7FdDyES/+pIPpoTyEesVRN1CUP
+ s56VYZoKQIrQVokgEYeeIi2E12cNj/4KqOM8peQBi9oZiA9oPOTln9DhbB/kS51aITYWyIFasVY
+ otTv1uuwc7h4BSgqqW01+OaDAm2fdyvcHWa/LcQGQtY2nmcVAqTO+Oy9N3HI8MBZ3cWpSt8pvl0
+ e/s4qn3CyEZJEFgx2A05UUHW+hXp0i3wJGnPp9WqpsJDqEfXh42Ow2MrPl/KIKW/xdAuzL9mner
+ pIC+pDjlGGH3HGd75Y+PBG6gtdLV2goWtIoEpjPZYwbO2pAu49r9smAml+uvuAdsy9m1fPk52ep
+ PdZoGYtzCBrYEtl6lrFOoycgPw8nIBwBS2OQJFGBmnbWTkvaAh6RB1hHBWzSo+xwqiruJ/c+726 HkrKPpFUUsLgLjQ==
+X-Mailer: git-send-email 2.52.0.457.g6b5491de43-goog
+Message-ID: <20260119085109.2238878-1-aliceryhl@google.com>
+Subject: [PATCH] security: export binder symbols
+From: Alice Ryhl <aliceryhl@google.com>
+To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Carlos Llamas <cmllamas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jan 16, 2026 at 01:06:32PM +0100, Roberto Sassu wrote:
->On Thu, 2026-01-15 at 13:15 -0500, Mimi Zohar wrote:
->> On Thu, 2026-01-15 at 08:43 +0800, Coiby Xu wrote:
->> > Similar to IMA fix mode, forbid EVM fix mode when secure boot is
->> > enabled.
->> >
->> > Reported-and-suggested-by: Mimi Zohar <zohar@linux.ibm.com>
->> > Suggested-by: Roberto Sassu <roberto.sassu@huaweicloud.com>
->
->Ah, if possible, could you please change the email to
->roberto.sassu@huawei.com?
+To enable building Rust Binder (possibly also C Binder) as a module,
+export these symbols.
 
-Thanks for the reminder! I'll use the above email.
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+ security/security.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
+diff --git a/security/security.c b/security/security.c
+index 31a688650601..b4776f0e25b3 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -479,61 +479,65 @@ int security_binder_set_context_mgr(const struct cred *mgr)
+ /**
+  * security_binder_set_context_mgr() - Check if becoming binder ctx mgr is ok
+  * @mgr: task credentials of current binder process
+  *
+  * Check whether @mgr is allowed to be the binder context manager.
+  *
+  * Return: Return 0 if permission is granted.
+  */
+ int security_binder_set_context_mgr(const struct cred *mgr)
+ {
+ 	return call_int_hook(binder_set_context_mgr, mgr);
+ }
++EXPORT_SYMBOL_GPL(security_binder_set_context_mgr);
+ 
+ /**
+  * security_binder_transaction() - Check if a binder transaction is allowed
+  * @from: sending process
+  * @to: receiving process
+  *
+  * Check whether @from is allowed to invoke a binder transaction call to @to.
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_binder_transaction(const struct cred *from,
+ 				const struct cred *to)
+ {
+ 	return call_int_hook(binder_transaction, from, to);
+ }
++EXPORT_SYMBOL_GPL(security_binder_transaction);
+ 
+ /**
+  * security_binder_transfer_binder() - Check if a binder transfer is allowed
+  * @from: sending process
+  * @to: receiving process
+  *
+  * Check whether @from is allowed to transfer a binder reference to @to.
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_binder_transfer_binder(const struct cred *from,
+ 				    const struct cred *to)
+ {
+ 	return call_int_hook(binder_transfer_binder, from, to);
+ }
++EXPORT_SYMBOL_GPL(security_binder_transfer_binder);
+ 
+ /**
+  * security_binder_transfer_file() - Check if a binder file xfer is allowed
+  * @from: sending process
+  * @to: receiving process
+  * @file: file being transferred
+  *
+  * Check whether @from is allowed to transfer @file to @to.
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_binder_transfer_file(const struct cred *from,
+ 				  const struct cred *to, const struct file *file)
+ {
+ 	return call_int_hook(binder_transfer_file, from, to, file);
+ }
++EXPORT_SYMBOL_GPL(security_binder_transfer_file);
+ 
+ /**
+  * security_ptrace_access_check() - Check if tracing is allowed
+
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+prerequisite-patch-id: 0000000000000000000000000000000000000000
 -- 
-Best regards,
-Coiby
+2.52.0.457.g6b5491de43-goog
 
