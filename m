@@ -1,265 +1,345 @@
-Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A596F35B15F
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Jan 2026 14:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768832824; cv=none; b=e0jM+2stL+aw3tfy+7Ccc8mzsBDVI9Nk+ifd4KIxMNkEcikPJ05LD7Jh/obQrDBwipml8917u5G+wc7if1JjW3ElxcBIoIqn+dwW4LC3GYcMm4vBgswork2gg9P+60KZ71B/sd+mCaIhtL8OP4a9PJ/+fLLaRvOrqqdPfo9W2vk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768832824; c=relaxed/simple;
-	bh=GDize0Egb1nCJUitXSfHT4eekC8TEFxuEjiWsp9JZec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WHdefCtf+cRpkOgqoA2AvTfqd8WSeM+HrgGMl5lsH+5vL1HLV1E1b4qFUBMtPW7KYH10G/Mzan4pP0ZAtk5FeEKOzd7Roda1Z8BmHOobPqBZ7e21ZUQhpFXrf2JvgnkhQ342lHYxHYqOQLncpW/tzES1ccC6vGEkjrQa+TkIO24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d5Qk4al2; arc=none smtp.client-ip=74.125.224.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC1D20E03F
+	for <linux-security-module@vger.kernel.org>; Mon, 19 Jan 2026 14:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768834348; cv=fail; b=ND8mkuqnC8He7ziVFHCB3A4T90fNsoDGF6953MFr7l7kAuPV1ukxisK5h3QGx0J4wZKXKysIw8udKzPVkMZWsW+/OsA5XH8tEp4cUJ8ob4nY7EZg9IkwSmFmh9/d/1qS2Zr357Z8dcvC1Q5Kj0yFSYGiRMOtlGjhtZcnuiApBS8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768834348; c=relaxed/simple;
+	bh=z1vju/K35EwJJowKdf188qQyAvrPfeYfNOz48m33g4Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=t2ee81pp6YXUYlvnoicxVqVgqghjKwXmTykmTlEBzSBNzDulBbzvspUhwLKUr20t6O2gAck1caKgbMdBc9KsVw69KthQtxO0zEvdBf8ORiIIwxsmTm0IrBpVuSJMfpvEzBfWs/ACqGVNMuXmsy+Ac7uASmvWVb6PxRx2qKso9Nk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hqkla6HQ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=rcPa2p7P; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5Qk4al2"
-Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-6442e2dd8bbso3318467d50.0
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Jan 2026 06:27:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hqkla6HQ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="rcPa2p7P"
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60JBD5xt1341560;
+	Mon, 19 Jan 2026 14:51:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=Imjsz0I79yOoix0VY7NS8mCt3/mX1K9eyb7SfjmWWio=; b=
+	hqkla6HQZhGL7CQpzvMTqF9sdBHy+LE8MdJv3f6PYxciGkEVsXWZ1gDcu8PUK5go
+	3fcJ8eoZZP4NpTO3FoElDIhEa8Az3vdMSqNSLriHLau9JeMYnECgel0fiCQm7bi6
+	GtInGSe7ZH1q6X7KRj2iTzZS6ICK3Qsnt4G3iC/jAoJ3FPohXO3dYOhmKgP5u3Wf
+	JXagk9+b+mpnizcPu+69IfyQwe14rWVd3HiDYUXo+sPbBXKOBdxpq5eJWXSclCBL
+	p3YlbXdDlPl0Tc31J+pietGnAuBRmXS3lDvGhqtPxgmYwcDyhx9Snm4AmFO5K1Ft
+	EEsxPSgF5wXE/e/YiasxtA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4br170ae10-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 19 Jan 2026 14:51:32 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 60JDDtiL015541;
+	Mon, 19 Jan 2026 14:51:31 GMT
+Received: from sa9pr02cu001.outbound.protection.outlook.com (mail-southcentralusazon11013016.outbound.protection.outlook.com [40.93.196.16])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4br0v8fe3s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 19 Jan 2026 14:51:31 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VnqUcCH2qmEsGdse8OG5zmr6ctCGRE30H5/+WUekW2PEANC5qu+MsxhtYmEbi7G8qjWiTe3Rk3l8InF8T6jJ2pJtXKzfPKmJq2RpPiQYjN1zIgdbndaJr5r/wYb+oI5oN5HSF8xGsCsu8JtWVbYZLIrMmpMCgBPMENiXzkM+GYo/EyURJtLedV2mmAyNZe1R7L5s+GB2QRipQMnL1F1XuGK4fpZ4/KHGPpho8pfL7xEHCdhPM3BN10EYR8SRlKJdYaIucqFjnkmkxPN/5+QdLtxL/XaknKKsBU8q4jskt+pttxJVmPR6Ad/yoEiN74K9bf68NF6CcfiJ4ZCp6v9WDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Imjsz0I79yOoix0VY7NS8mCt3/mX1K9eyb7SfjmWWio=;
+ b=ZBTVprT5YhWD8j++6Nt0E8I8bmXvkPG4JElg+AUsB8H7f79wu3MfJdl5EpQp0S3+sEmr/TCZpw5Y8ilS+cVMoySUTd97g9siYuKN5K3SwVsFHTXc618hJggTcPgV6cBbp899uIGrOubkxC9ZmrWcpGan60GZMvQykpAxCd9aeFtDIfss+r4UE/wQyHGFztFCzX2M1kGbtkXWgp+Bkoht3yo97WlNTSWQ89apxHgjxy6BhQpUSZl+fIFYqIXfiUn0ozkJTujZNKYZDAs6Tf/sOckJNJUYi93B+SMg3tZ5os2Bq6FXEKl0ens2MardLqZyw/ZHOLUhh3X4KtEY2PJklg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768832822; x=1769437622; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FJe56JkHE1YD/MRezbrmyR2a6eiGDnrdxW1M4Xs3MEE=;
-        b=d5Qk4al27pbhrxmla+1fFF5+ZdhJLXfZGY5FmaN4DXOY0ZNdNMHGQTuJKdppIorlyU
-         2yh3BalzvAuUMO4Etiy64BUaiQnkw+J7eQgAWie8Z30yahTG/djUw5LIN4fEN/8o/d00
-         N3Lfu2zAx7zV11t9fx+zb7e6gJ7PZebgzcPbs32Lp4qWRkRiN4XXHUE6eNUPs4KoTwxL
-         fHarB7N9Z4k0dGouV46Ir8NRY1fcItUA1t216y6nAVFxKydFrI8ayagAjlLCX6b7HwqI
-         Y2d4TWl2szIdSMvrb0bUz/vLWz6akra56SbFVH76+2cd8CZNwIlb+xLicqfy7M60tfFd
-         uTvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768832822; x=1769437622;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FJe56JkHE1YD/MRezbrmyR2a6eiGDnrdxW1M4Xs3MEE=;
-        b=lCkHqIvouLkDpo69eVQWc/mD+BHljx7+iufBJhNSn/eGOZIYqNY9LpgzycPxW9U7DA
-         kOQaI8XfPm3VXmqvKW+TjvmllSgDRu/JxgSbGh5b1PDVbezVlvRQbMxgjlPBFBgFRz94
-         6CroUZQgnip1WbTLsvH9rwGX+MC+fV47OGYBcrOc7ukg7PH+T9U6FlUPWNUzaw+cWR0l
-         Ns/q3XJrFuSd+XHTkfZZmrbRrRxYze33tS67rTozCqSxeItq2lpia8yuA229vQfvsIfl
-         TI74JnSEA6RQrRRpVpE4L0elRbx0i0/whlWTSPjbn8YOygN/TAYcKcLy6nZBNnA1t87a
-         c0zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQfyXyim27lyyCmfReIzGbglUc9oEl3rK67tyRYavr4YefkXp9xjp1xvwnDzrbt5Ad0QlmB3X2WOcQEl2Ydk56nz2JS3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH53zQL1BiH2IgkdroLRDtOTGNyBOxxzNecf6bQrtaU8Qx6j5R
-	XktpXlmlLPgfVdyVdPK3mAoilFxEmoUUhLtvb6u0XS8WNpdttW9tMppEcewCjw==
-X-Gm-Gg: AZuq6aJF48gb7FmTVv1bUk4DUIoRFunTpORZqXwQzfQis8rrCv7eh6oEJh3fv9Lbqnh
-	uWzhQE75+MM8RXdIxF9HabBVp8iOAm4tOh3uEK+eJUVapt3/p2QgFUvPbJGTNZx/q1DoJRfgQF9
-	rUMtgNxw6FcMA9/IRfDaYtoSMBxCOjor1qozJ0TI0YnWCwpWyV8m9yH31KAjahrVYksLN2peYKQ
-	hh52nYneKfayAxvWV+fPBUhpau9f1WkUkPKirwj8RLUByM0ko7pAK3/W2BSlrluSIFrf9JreWlw
-	WQJ3DztxBAmkfe3A/9ApUKklWkQVdEZil38lJQXSVVbQ7wQADvTr+r/h/JD43q3HI1cwiDtdCzt
-	dlgky8qPGOdjVsIK7e73SuACbqMR+d6dkouGA/fRHMlQgieX2XeDgd7TL2R0tyQenUbGUJj+GSm
-	a/HJ5ItJFO3KGTchfqUl1y1pgaslw0W9gXi74QIhJwiJncvaaNU3i1qbk7YocEw8Mi6WPnei5jx
-	CZ7Ndob
-X-Received: by 2002:a05:690e:d0a:b0:63e:17d8:d977 with SMTP id 956f58d0204a3-64916498e52mr9168899d50.41.1768832821395;
-        Mon, 19 Jan 2026 06:27:01 -0800 (PST)
-Received: from [10.10.10.50] (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-793c68c76cesm40661957b3.54.2026.01.19.06.27.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Jan 2026 06:27:00 -0800 (PST)
-Message-ID: <b7a2444d-c3af-428f-904e-ec5a6452e513@gmail.com>
-Date: Mon, 19 Jan 2026 09:26:59 -0500
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Imjsz0I79yOoix0VY7NS8mCt3/mX1K9eyb7SfjmWWio=;
+ b=rcPa2p7P1MC5JzcwSoN3+oROtgGA/MKNC2g72AQnGUPmjBuO6E2vBwL04OhPixShJFWztedgUMOviGxuQHH+SKyXKsK/lpaOJutk8i+v/okMSuJhTBzo7F/TXESmpeqib9KeKkI7g6ruJdAmVMiFbpO3a/Mlz16lEvIYOrPTvvQ=
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
+ by DS7PR10MB7300.namprd10.prod.outlook.com (2603:10b6:8:e3::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9520.12; Mon, 19 Jan 2026 14:51:26 +0000
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582%6]) with mapi id 15.20.9520.005; Mon, 19 Jan 2026
+ 14:51:26 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
+        Matthew Brost <matthew.brost@intel.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Benjamin LaHaise <bcrl@kvack.org>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Sandeep Dhavale <dhavale@google.com>,
+        Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Muchun Song <muchun.song@linux.dev>,
+        Oscar Salvador <osalvador@suse.de>,
+        David Hildenbrand <david@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
+        Babu Moger <babu.moger@amd.com>, Carlos Maiolino <cem@kernel.org>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Hugh Dickins <hughd@google.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>, Zi Yan <ziy@nvidia.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Lance Yang <lance.yang@linux.dev>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Yury Norov <yury.norov@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, linux-erofs@lists.ozlabs.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
+        devel@lists.orangefs.org, linux-xfs@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Jason Gunthorpe <jgg@nvidia.com>
+Subject: [PATCH 01/12] mm: rename vma_flag_test/set_atomic() to vma_test/set_atomic_flag()
+Date: Mon, 19 Jan 2026 14:48:52 +0000
+Message-ID: <2e5b2bc153b1e0cd61ff1ae67cb6acd289ddfa7f.1768834061.git.lorenzo.stoakes@oracle.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <cover.1768834061.git.lorenzo.stoakes@oracle.com>
+References: <cover.1768834061.git.lorenzo.stoakes@oracle.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO4P265CA0303.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:391::14) To BL4PR10MB8229.namprd10.prod.outlook.com
+ (2603:10b6:208:4e6::14)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/9] Implement LANDLOCK_ADD_RULE_QUIET
-To: Tingmao Wang <m@maowtm.org>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Jan Kara <jack@suse.cz>, Abhinav Saxena <xandfury@gmail.com>,
- linux-security-module@vger.kernel.org
-References: <cover.1766330134.git.m@maowtm.org>
-Content-Language: en-US
-From: Justin Suess <utilityemal77@gmail.com>
-In-Reply-To: <cover.1766330134.git.m@maowtm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|DS7PR10MB7300:EE_
+X-MS-Office365-Filtering-Correlation-Id: 51784fbc-1bdc-4953-f2aa-08de576a3850
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Yff7vHKMlasLDrHGH78I7i1hGu67bCyspLgwLHmCRAjH1m1MPlski35t158C?=
+ =?us-ascii?Q?Td6YklueutUDhtC6NkDD21/VU5HukGxRA3Y4QGPFF1tDDp+nPz9z4LUXybsx?=
+ =?us-ascii?Q?NNqmyL5HiOcF4MYvZ178LwxuPfAb1lcYaOTetxB7gbrZUqa+tTPaktWKbASR?=
+ =?us-ascii?Q?I2bAxt/B692yz0qGLeto+HonbCB+z5ntT4XdNs7f8xdE8VHugceEYt7QjEH1?=
+ =?us-ascii?Q?SrdsUA6fttQM0L9QjKmgh+8koDk1dWm1/jzxVgBH6iqI0UGy/EY2zpXYKNMn?=
+ =?us-ascii?Q?vCm6I+JhECuFQadQvDiP7Jrvpfo4JCLemcMD1OiAkXJKvo/aoQjp9eDUqELU?=
+ =?us-ascii?Q?o982aflJALg9N6Cym2Bp9HlcM8WWqKVO/Ppt5nZJYtFSQJns/JwqThQQqa7j?=
+ =?us-ascii?Q?5NfEiC2WOB1yx7cNCeVehQYNZsNgpxNAlDYSepIx0BByU4UI6RxEo78EF0e5?=
+ =?us-ascii?Q?Noy7AYQYMlOUaYQc3hjVTs9rWD+49Wl9t1oxg6oaTj2E+Omt9wLl3dOB4gAC?=
+ =?us-ascii?Q?9/5tObgLEFTqwcfoklr8l+Ezws/KRORPDXK05KLJ0/a2hKDeB3m7+aE/NbWA?=
+ =?us-ascii?Q?W+511naaJhHLM/DmpCacWwK9A+z5zI5mL+kl8MPazuir2mSawhpNAWnKClnu?=
+ =?us-ascii?Q?cJlIda1dxUywFcpS5k8yaC3G2WZUpxxF5h3eMk+lfUFAofF0B7V9VQ0ayKry?=
+ =?us-ascii?Q?3TBBv5pDw+0NzAuDXODbVzh7ij6H8i7k+mAtZ5ZVA8qiTQM/HfFZdpf2hDjg?=
+ =?us-ascii?Q?2foin7XjppycH9b0dWNh4wE76BQsTVvWAJXQZ+fZjnpP1emadov9TowaoGut?=
+ =?us-ascii?Q?X3CQpUaFmLyK3HDOYIqa7Z4hMDxmeVY86gMr3LbzrdT3brOTRG7FDHY83/Z+?=
+ =?us-ascii?Q?WGkWsN7shUgrrkBXcXwqyF65WAoOjgEF3UvsLtsQkm46C4roM3AQi1p2PusA?=
+ =?us-ascii?Q?B9i+BrDTgi0J//hosQnde6LTIiwSWQ2qiWEGk98fMUl/+ifyIiMxUzk+DsXY?=
+ =?us-ascii?Q?2Z5p6Swi8Wb67JLr7Hl9aXL4UwxlFdjFUgAc3wwUVDp5J0D5CldKKteRfjog?=
+ =?us-ascii?Q?K/Z5D0kbYyIuUL1/MFs1wYxcV4aHN6WhylvhURf481SH2NDAIpSINI+oELK2?=
+ =?us-ascii?Q?ndmOkxByMAmwPkjo8WwbxfBbVmzFOcjNfX2zgl7nneUz5LKlgiu4PzgCbMwM?=
+ =?us-ascii?Q?TvHXBNbFPxdQqyQY9HZijkBfxNA93T/7BAuUypa1w2Ht0Olxakxo6199juVx?=
+ =?us-ascii?Q?vA5K3ka8kQeyLJ51X2ff1ZLJ72/+AW0utR6DaVjg0ZaKQiHpDXgjvGC/RHzx?=
+ =?us-ascii?Q?VJw7qtu5pNh/VqCMKd7I1oI+VdL8Yfacukr8j9Ejhjit7+dZsTfbWS3bmUL9?=
+ =?us-ascii?Q?jCMkqWH3yjZqXGObcClss5rkDQDCPNIyMSu+nvYv9T10EkBvVwgfHZV7gq52?=
+ =?us-ascii?Q?ZKszFresBMVpL5mT8vmHTs0pJV3+zq+WQscwIUvQiVho0/XbUe6mDakHmKnz?=
+ =?us-ascii?Q?QakMpkAHETg3i87+DCwJ2oFagbrIBPNhS5LMFAbDFt5WOR67adI4/cMUIBci?=
+ =?us-ascii?Q?GABGXPsKjkzAOhZjbdo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?9Dr54QNZMIhIuJ7c1XgSwmfGoQ69i/wLq0P44EfRQvfYlwoHtRH6BVEDgR3V?=
+ =?us-ascii?Q?K5uy4W2ivabFPI6vQbB9sro6n532cI3hi81iK/fYBaEucI2mO9M8fdtVZ8cP?=
+ =?us-ascii?Q?V4nNffUxoxun29j4q0yQ7yXQpjE/TC6RjrSYvvZ5x0bWj2Y5K8NWolYaZdQx?=
+ =?us-ascii?Q?iYv9AZM2aGQIEBH/dBUAmPFc5YCyVqfvBVaVW6dVg2tEZNZOkoKPRry9AVky?=
+ =?us-ascii?Q?sEd+uWeMObsLOfBCd0PiT8AgrmYX1R1DDaoU/4KQ9F0rp2DU4jniGpe34f8h?=
+ =?us-ascii?Q?bqMKJ1ZRIlXpRT+R1sOWthWxIqXT8Mer15MdX9rUJwEYp123wVR+gt4BBbRz?=
+ =?us-ascii?Q?cyEStNB5rDrgNMgL8ZbxqHHbJxS7s8LmyrSgEGuYbxTiCZ7MSls7vIhG+V/N?=
+ =?us-ascii?Q?bdbkKPydHS3MpxFRfOQb04/kNYUpJQ8dQ7VwlWE3Rrk2sMSkJlOwoeKkX1qT?=
+ =?us-ascii?Q?DGwNlqtN52tk3UrI209SOpjcAL7ZLOZ5+VyH3x3LejnDE4qZm/Rcd/1S9WWD?=
+ =?us-ascii?Q?INT8L61ZMGp+ZqQKlD8hqPXaHzyPHFj7iGGEgQD3KNDpVlMoPa83NC/pUiaX?=
+ =?us-ascii?Q?SHZhYzaIJWP8/poiQbzlzmpjt1pNLiOVWGWCGEoT53vbocYBUZZtZyoCAvJY?=
+ =?us-ascii?Q?yxCZdLbiwMI8Zs4oxqSwyBP9c62nWvLc4kxJdtsDaieCb0NluarvTgL6bR2P?=
+ =?us-ascii?Q?3BW38FHLMVLIafw8c+SlMiQWGDlNvsw/swY+Sj4KUZ9WTlDnFXT6Izi04e6F?=
+ =?us-ascii?Q?rUie6wFeaLxV5ehj/rtitFsCk2YhbCcyb88o51vfiLgxxWKvHd0hcJcVESAS?=
+ =?us-ascii?Q?pnwtNf1bTBRjjToea9KXaUmmaI2RVallHM1jN5YlrIBzNSmWn50hkXqDB/Hk?=
+ =?us-ascii?Q?0y8We3hC2PWXr5eYmoD2KI2XATgY7djeyBC7Trg3iodwDvyfOBXwc8QGLZ1j?=
+ =?us-ascii?Q?knzjyO/T8kRbh3k3ELgFVru4qlmqNof+3sB1qUSsjd0H8HFTYpS9X8E/PN4v?=
+ =?us-ascii?Q?AbqlkgQQKpBJCgnSvLa8idNaNKOnr6xrCMRpfGAov9xQJzPTJC+JPfBCy90W?=
+ =?us-ascii?Q?SX3IuBcp5AujulwUYvecl9q+Jm928PO8y9BCMaW8mEFeTtkl2+4uud473ijn?=
+ =?us-ascii?Q?eZJ1b6N535RKOt9nqFzYrnliDMF3E3MGFTWAe7hNvDEIVLgVRfold4eBvDQt?=
+ =?us-ascii?Q?Vp7AGkxi99dewixbAxfyU1ypTHKZDtK5QSamhfx4anF0Seaxys8nf3rWhecs?=
+ =?us-ascii?Q?4VY0xAKRzhHkUo1dKiE1onsXQhODZkVaQX0/DVBxThdYLYmWMxFMH764Il1b?=
+ =?us-ascii?Q?XcbF0T18igFYBXVL+w4wLfesHuKs/p1Mcj4qE/scVA+iE1LbevD+7OS021sc?=
+ =?us-ascii?Q?MSFBqNnriGg5BlHUivpQYEroPx1rDP2ed/5TLwer4cwxlzfwgXLPpaDVwBuP?=
+ =?us-ascii?Q?SwUdayRg24mCY7HKtiP2ZdpmZVpE+q6CvSiQFdvyqI5WPJEzugcJia4e9sUA?=
+ =?us-ascii?Q?55erFW2uLr763pil+1o+Zsab6Yi1gb0/zs0PcUS8ek4Y78NveQGDJy+heDm/?=
+ =?us-ascii?Q?cN0AjkMXZnoChxwhzX7Wp5nWljxA5kKpBNJG7rWuVzpIXOx9wHI/XvaUMuvn?=
+ =?us-ascii?Q?kSAFY0hrpduzLnuQl/nES2c4iZziZPfXnPZWXxy8F+RJquDaL8NoJrV1F+0v?=
+ =?us-ascii?Q?FgHp17OjXRmh/rBHLKz70dH+YDhvFbKQWhlCqhD3ttXv7cDm9BYO34khrJWg?=
+ =?us-ascii?Q?3CB0ujADYAgRuUOvLlg6hMv0ibIeflQ=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	DkyqxT5r6gnf89qVgHcr5zihwPuhA+ULbBsn8fkkL1M80LRaSsN+HvgtCo6dCM+PGXOuPEtiGrZI/O94g86N3U9Tq6XmtZ+LP10I+1KLBQSEAQyn/y2yL+B6HyXT9MOK4BWl8Y2dRvBLBMnT44n+SXhUYhbFeCXQgomoy/Rn6GUpzIfLATkbOQoyuc0EYJcoRKsWXnqfyk14OuVWaR0QpaKIGCAVDgQX9MhkoOu7c213G5Chq9kAxzUB4nsRklgPtHDO7+FY06t6lEr9wc4wcIQhBqoKbFcOA6JRZVjjhqg1lpEtwGIoqKemNo6x3fMhy2AL4OImdR3oI6r3yInB0AoAPSryOZMrJ5JlOHqDyItneg250wjUG8bTiyyc4zqhlHLN0fsuDVF5Uo65Un8lnPlTsl97Y7gJVBT+Lb/UMCtQ5fWbfOQisTtOWOADVUtS9nv0I1rk82f5wgtyBKUTCpdnF3/5UWiqB0cWBfbfACLlTKIsDLrkldJhiA+2y8/HeJ9dXu9APR7owa3M1TXrn2isR6oxbsZ5EU+ruM9iGd6WLzHQSeXshMuQBojwWAGi3eqdsdGGgDVkI+OTddP8JrRILu58dk344UfYBlnXgNI=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51784fbc-1bdc-4953-f2aa-08de576a3850
+X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jan 2026 14:51:25.9917
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ho7S+0OGb66XotkBQJgmrAhGv1D54uDm/WelaWPmvItagcf2r/R/93SSr17Wu128yFtRmES/Y1b5So7i1f5GzoH+qpDOS59Ed1IZwltoDH8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB7300
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-19_03,2026-01-19_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 adultscore=0
+ phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2601150000
+ definitions=main-2601190124
+X-Proofpoint-ORIG-GUID: upblw8bKW0nRqgPp1pxzZnpwvUAG0d56
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE5MDEyNCBTYWx0ZWRfX4PL1bZpJIjj1
+ KSWu0tjiAPMlS2JksJWiP8PpQHMCFKq6Yx44SvMgbPsqF2Cy/t1VsQmSbMWFhALUqy3OyodIMS9
+ Y53CKVqED89qYcfAXEMJMV4BGdWSbYOnevjs/6+cB0t7puAzIeyLQRIiXpUYc1XLMykrvSnxSOg
+ oNiibGh5/UOVFQvYyK+WsG6XsdkEm0Ftq2CJPqFRsviZ8kjkMBIfpCStedPCvr3zUJ2sZZmwHiv
+ t6WUSFhN52LoMgCV0Mn047uuykMsRDBbMZwFfYjHORLz6Pbp+FkohHbRh67hcyEzToLmRI9lVf+
+ 7/7pluJwCjyBUWU/KZRSoLHzOZcVXtz5Dmf+mbgUNi4qrqK7l1fa7L+2lR1Uo0VAEa6jeAq10EL
+ qm8xljNyNVzNRc32E5cWoCMkJigD/FkPyzsqW6oWlvCIZD8MxEEbzDaQOF4gcIO/xQ4RB5pKQ8p
+ h9/Nv2vnBKm0O+1XeuA==
+X-Proofpoint-GUID: upblw8bKW0nRqgPp1pxzZnpwvUAG0d56
+X-Authority-Analysis: v=2.4 cv=FvoIPmrq c=1 sm=1 tr=0 ts=696e44f4 cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=vUbySO9Y5rIA:10
+ a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
+ a=79C6M4AKyJxmQlF-J2AA:9
 
-On 12/21/25 10:20, Tingmao Wang wrote:
-> Hi,
->
-> This is the v7 of the "quiet flag" series, implementing the feature as
-> proposed in [1].
->
-> v6: https://lore.kernel.org/all/cover.1765040503.git.m@maowtm.org/
-> v5: https://lore.kernel.org/all/cover.1763931318.git.m@maowtm.org/
-> v4: https://lore.kernel.org/all/cover.1763330228.git.m@maowtm.org/
-> v3: https://lore.kernel.org/all/cover.1761511023.git.m@maowtm.org/
-> v2: https://lore.kernel.org/all/cover.1759686613.git.m@maowtm.org/
-> v1: https://lore.kernel.org/all/cover.1757376311.git.m@maowtm.org/
->
-> v6..v7:
->
-> - Remove "landlock: Fix wrong type usage" (merged)
-> - Revert back to taking rule_flags separately from landlock_request until
->   we call landlock_log_denial (https://lore.kernel.org/all/20251219.ahn3aiJuKahb@digikod.net/)
-> - Rebase to mic/next
->
-> v5..v6 rebases on top of the new simpler disconnected directory handling,
-> change some bools into u32, and fix some typo and style.
->
-> v4..v5 addresses review feedbacks, most significantly:
->   - reduces code changes by pushing rule_flags into landlock_request.
->   - adding test cases for two layers handling different access bits.
->
-> v3..v4 is a one-character formatting change, plus more tests.
->
-> We now have 5 patches for the selftest - I'm happy to squash it into one
-> depending on preference (and happy for Mickaël to do the squash if no
-> other feedback):
-> - selftests/landlock: Replace hard-coded 16 with a constant
-> - selftests/landlock: add tests for quiet flag with fs rules
-> - selftests/landlock: add tests for quiet flag with net rules
-> - selftests/landlock: Add tests for quiet flag with scope
-> - selftests/landlock: Add tests for invalid use of quiet flag
->
-> v2..v3:
-> Not much has changed in the actual functionality except various comment,
-> typing, asserts and general style fixes based on feedback.  The major new
-> thing here is tests (a bit of KUnit squashed into the optional access
-> commit, a lot of selftests especially in fs_tests.c).
->
-> The added fs_tests should exercise code path for optional and non-optional
-> access, renames, and mountpoint and disconnected directory handling.  I
-> will add the above missing bits to v4.
->
-> Removed:
-> - "Implement quiet for optional accesses"
->     (squashed into "landlock: Suppress logging when quiet flag is present")
->
->
-> Old feature summary below:
->
-> The quiet flag allows a sandboxer to suppress audit logs for uninteresting
-> denials.  The flag can be set on objects and inherits downward in the
-> filesystem hierarchy.  On a denial, the youngest denying layer's quiet
-> flag setting decides whether to audit.  The motivation for this feature is
-> to reduce audit noise, and also prepare for a future supervisor feature
-> which will use this bit to suppress supervisor notifications.
->
-> This patch introduces a new quiet access mask in the ruleset_attr, which
-> gets eventually stored in the hierarchy. This allows the user to specify
-> which access should be affected by quiet bits.  One can then, for example,
-> make it such that read accesses to certain files are not audited (but
-> still denied), but all writes are still audited, regardless of location.
->
-> The sandboxer is extended to show example usage of this feature,
-> supporting quieting filesystem, network and scope accesses.
->
-> Demo:
->
->     /# LL_FS_RO=/usr LL_FS_RW= LL_FORCE_LOG=1 LL_FS_QUIET=/dev:/tmp:/etc LL_FS_QUIET_ACCESS=r ./sandboxer bash
->     ...
->     audit: type=1423 audit(1759680175.562:195): domain=15bb25f6b blockers=fs.write_file,fs.read_file path="/dev/tty" dev="devtmpfs" ino=11
->     ^^^^^^^^
->     # note: because write is not quieted, we see the above line. blockers
->     # contains read as well since that's the originally requested access.
->     audit: type=1424 audit(1759680175.562:195): domain=15bb25f6b status=allocated mode=enforcing pid=616 uid=0 exe="/sandboxer" comm="sandboxer"
->     audit: type=1300 audit(1759680175.562:195): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c86113d1 a2=802 a3=0 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
->     audit: type=1327 audit(1759680175.562:195): proctitle="bash"
->     bash: cannot set terminal process group (605): Inappropriate ioctl for device
->     bash: no job control in this shell
->     bash: /etc/bash.bashrc: Permission denied
->     audit: type=1423 audit(1759680175.570:196): domain=15bb25f6b blockers=fs.read_file path="/.bash_history" dev="virtiofs" ino=36963
->     ^^^^^^^^
->     # read outside /dev:/tmp:/etc - not quieted
->     audit: type=1300 audit(1759680175.570:196): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c868e400 a2=0 a3=0 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
->     audit: type=1327 audit(1759680175.570:196): proctitle="bash"
->     audit: type=1423 audit(1759680175.570:197): domain=15bb25f6b blockers=fs.read_file path="/.bash_history" dev="virtiofs" ino=36963
->     audit: type=1300 audit(1759680175.570:197): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c868e400 a2=0 a3=0 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
->     audit: type=1327 audit(1759680175.570:197): proctitle="bash"
->
->     bash-5.2# head /etc/passwd
->     head: cannot open '/etc/passwd' for reading: Permission denied
->     ^^^^^^^^
->     # reads to /etc are quieted
->
->     bash-5.2# echo evil >> /etc/passwd
->     bash: /etc/passwd: Permission denied
->     audit: type=1423 audit(1759680227.030:198): domain=15bb25f6b blockers=fs.write_file path="/etc/passwd" dev="virtiofs" ino=790
->     ^^^^^^^^
->     # writes are not quieted
->     audit: type=1300 audit(1759680227.030:198): arch=c000003e syscall=257 success=no exit=-13 a0=ffffffffffffff9c a1=5565c86ab030 a2=441 a3=1b6 items=0 ppid=605 pid=616 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="bash" exe="/usr/bin/bash" key=(null)
->     audit: type=1327 audit(1759680227.030:198): proctitle="bash"
->
-> Design:
->
-> - The user can set the quiet flag for a layer on any part of the fs
->   hierarchy (whether it allows any access on it or not), and the flag
->   inherits down (no support for "cancelling" the inheritance of the flag
->   in specific subdirectories).
->
-> - The youngest layer that denies a request gets to decide whether the
->   denial is audited or not.  This means that a compromised binary, for
->   example, cannot "turn off" Landlock auditing when it tries to access
->   files, unless it denies access to the files itself.  There is some
->   debate to be had on whether, if a parent layer sets the quiet flag, but
->   the request is denied by a deeper layer, whether Landlock should still
->   audit anyway (since the rule author of the child layer likely did not
->   expect the denial, so it would be good diagnostic).  The current
->   approach is to ignore the quiet on the parent layer and audit anyway.
->
-> [1]: https://github.com/landlock-lsm/linux/issues/44#issuecomment-2876500918
->
-> Kind regards,
-> Tingmao
->
-> Tingmao Wang (9):
->   landlock: Add a place for flags to layer rules
->   landlock: Add API support and docs for the quiet flags
->   landlock: Suppress logging when quiet flag is present
->   samples/landlock: Add quiet flag support to sandboxer
->   selftests/landlock: Replace hard-coded 16 with a constant
->   selftests/landlock: add tests for quiet flag with fs rules
->   selftests/landlock: add tests for quiet flag with net rules
->   selftests/landlock: Add tests for quiet flag with scope
->   selftests/landlock: Add tests for invalid use of quiet flag
->
->  include/uapi/linux/landlock.h                 |   64 +
->  samples/landlock/sandboxer.c                  |  129 +-
->  security/landlock/access.h                    |    5 +
->  security/landlock/audit.c                     |  255 +-
->  security/landlock/audit.h                     |    3 +
->  security/landlock/domain.c                    |   33 +
->  security/landlock/domain.h                    |   10 +
->  security/landlock/fs.c                        |  120 +-
->  security/landlock/fs.h                        |   19 +-
->  security/landlock/net.c                       |   10 +-
->  security/landlock/net.h                       |    5 +-
->  security/landlock/ruleset.c                   |   19 +-
->  security/landlock/ruleset.h                   |   38 +-
->  security/landlock/syscalls.c                  |   72 +-
->  tools/testing/selftests/landlock/audit_test.c |   27 +-
->  tools/testing/selftests/landlock/base_test.c  |   61 +-
->  tools/testing/selftests/landlock/common.h     |    2 +
->  tools/testing/selftests/landlock/fs_test.c    | 2456 ++++++++++++++++-
->  tools/testing/selftests/landlock/net_test.c   |  121 +-
->  .../landlock/scoped_abstract_unix_test.c      |   77 +-
->  20 files changed, 3394 insertions(+), 132 deletions(-)
->
->
-> base-commit: 161db1810f3625e97ab414908dbcf4b2ab73c309
-Hey Tingmao,
+In order to stay consistent between functions which manipulate a vm_flags_t
+argument of the form of vma_flags_...() and those which manipulate a
+VMA (in this case the flags field of a VMA), rename
+vma_flag_[test/set]_atomic() to vma_[test/set]_atomic_flag().
 
-Thank you for your work on this patch-- I don’t have any further nits,
-this looks very clean.
+This lays the groundwork for adding VMA flag manipulation functions in a
+subsequent commit.
 
-Do you plan to rebase/resend this series on the current mic-next branch
-at some point? It would be helpful to be able to test it alongside some
-of the other Landlock series that are in flight.
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+---
+ include/linux/mm.h | 13 +++++--------
+ mm/khugepaged.c    |  2 +-
+ mm/madvise.c       |  2 +-
+ 3 files changed, 7 insertions(+), 10 deletions(-)
 
-Feedback on the latest version of the series has been fairly quiet so far,
-and having it rebased would make cross-testing easier. I’d also rebase the
-LANDLOCK_ADD_RULE_NO_INHERIT series on top for further consideration.
-
-Kind Regards,
-Justin
-
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index a18ade628c8e..25f7679df55c 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -987,8 +987,7 @@ static inline void vm_flags_mod(struct vm_area_struct *vma,
+ 	__vm_flags_mod(vma, set, clear);
+ }
+ 
+-static inline bool __vma_flag_atomic_valid(struct vm_area_struct *vma,
+-					   vma_flag_t bit)
++static inline bool __vma_atomic_valid_flag(struct vm_area_struct *vma, vma_flag_t bit)
+ {
+ 	const vm_flags_t mask = BIT((__force int)bit);
+ 
+@@ -1003,8 +1002,7 @@ static inline bool __vma_flag_atomic_valid(struct vm_area_struct *vma,
+  * Set VMA flag atomically. Requires only VMA/mmap read lock. Only specific
+  * valid flags are allowed to do this.
+  */
+-static inline void vma_flag_set_atomic(struct vm_area_struct *vma,
+-				       vma_flag_t bit)
++static inline void vma_set_atomic_flag(struct vm_area_struct *vma, vma_flag_t bit)
+ {
+ 	unsigned long *bitmap = ACCESS_PRIVATE(&vma->flags, __vma_flags);
+ 
+@@ -1012,7 +1010,7 @@ static inline void vma_flag_set_atomic(struct vm_area_struct *vma,
+ 	if (!rwsem_is_locked(&vma->vm_mm->mmap_lock))
+ 		vma_assert_locked(vma);
+ 
+-	if (__vma_flag_atomic_valid(vma, bit))
++	if (__vma_atomic_valid_flag(vma, bit))
+ 		set_bit((__force int)bit, bitmap);
+ }
+ 
+@@ -1023,10 +1021,9 @@ static inline void vma_flag_set_atomic(struct vm_area_struct *vma,
+  * This is necessarily racey, so callers must ensure that serialisation is
+  * achieved through some other means, or that races are permissible.
+  */
+-static inline bool vma_flag_test_atomic(struct vm_area_struct *vma,
+-					vma_flag_t bit)
++static inline bool vma_test_atomic_flag(struct vm_area_struct *vma, vma_flag_t bit)
+ {
+-	if (__vma_flag_atomic_valid(vma, bit))
++	if (__vma_atomic_valid_flag(vma, bit))
+ 		return test_bit((__force int)bit, &vma->vm_flags);
+ 
+ 	return false;
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 9f790ec34400..e4fe9144667a 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1749,7 +1749,7 @@ static bool file_backed_vma_is_retractable(struct vm_area_struct *vma)
+ 	 * obtained on guard region installation after the flag is set, so this
+ 	 * check being performed under this lock excludes races.
+ 	 */
+-	if (vma_flag_test_atomic(vma, VMA_MAYBE_GUARD_BIT))
++	if (vma_test_atomic_flag(vma, VMA_MAYBE_GUARD_BIT))
+ 		return false;
+ 
+ 	return true;
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 4bf4c8c38fd3..98d0fddcc165 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -1142,7 +1142,7 @@ static long madvise_guard_install(struct madvise_behavior *madv_behavior)
+ 	 * acquire an mmap/VMA write lock to read it. All remaining readers may
+ 	 * or may not see the flag set, but we don't care.
+ 	 */
+-	vma_flag_set_atomic(vma, VMA_MAYBE_GUARD_BIT);
++	vma_set_atomic_flag(vma, VMA_MAYBE_GUARD_BIT);
+ 
+ 	/*
+ 	 * If anonymous and we are establishing page tables the VMA ought to
+-- 
+2.52.0
 
