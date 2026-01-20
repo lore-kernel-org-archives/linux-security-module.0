@@ -1,134 +1,196 @@
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow-b8-smtp.messagingengine.com (flow-b8-smtp.messagingengine.com [202.12.124.143])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA0F314A6A
-	for <linux-security-module@vger.kernel.org>; Tue, 20 Jan 2026 15:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A391A311967;
+	Tue, 20 Jan 2026 16:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768924667; cv=none; b=HRjlv+WJma6p90JvXPhHKZsKyW1O26qYdmST6+v7QqG2Q/ib8yaTBE8IdhYfrRFRd+4L3Ozgf66q+XuqFnSQX0cGVHZ2ZUJziltjewm2fIhjZmknRruxl7SruEODPi8i4BiO+6uvU4L+f5Hr+ItgKbYTGA2sDmR7SBOt/PqvWi8=
+	t=1768924863; cv=none; b=Q+RZoKlKpLAyLu1OCCPzY9wIebDUfBNoU2xBQkxunQjlJ5OlrgMPOP9bAzd5lfGbXvusOqfq9454kzeOcid+tAGC4KevDG+yuvz1ireb7Fw1Ht9/RmbEu1XEU8bSiK/iuDbsjGua4787xrpvnE3GjQ44IsQuVshFHDskFTCUeU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768924667; c=relaxed/simple;
-	bh=Q3jZ8i1dgm0geWGcKYEDkz4Xcu60RW+VP7vWspRvnrw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SUNt3txwqpNKg42fIT35KS4H34UvVwh2jS8bjHd5Bi4yWxJUb2wSfpHI8KkhcYqmcxUEHwijbWl39s5MQ6ykYN3y2tjM0DcJlRBcwkjnZ6sZ82uqkRvVSk6jfWy6mp31l0wE1yFUzj4YeffrHxiltf581jO0Q0ccJxp7zvRYLvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=asu.edu; spf=pass smtp.mailfrom=asu.edu; dkim=pass (2048-bit key) header.d=asu.edu header.i=@asu.edu header.b=nrfN+00U; arc=none smtp.client-ip=74.125.82.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=asu.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asu.edu
+	s=arc-20240116; t=1768924863; c=relaxed/simple;
+	bh=XntaNhMOb3ljN0OUod4vqOUNi4wPltdCRFCEO3POz5k=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=hTrzCie9REUOI6UPUmBxZfotDQie3fsip/O4uWuch5OxX6GI+kx86BL2A21d3VSeYtrpApkEGKTSz4mQ2HMixFStK9mEu/hvCVJzqTEcGdnpNmHtUxnhAIQKIwYLv2h9cTaOehuht6pIH8dEqcPr/L9ShjPgGwaReaTMR+Pl6gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=kR9gOAj5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hcwcLU9t; arc=none smtp.client-ip=202.12.124.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=asu.edu header.i=@asu.edu header.b="nrfN+00U"
-Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-2b70abe3417so537039eec.0
-        for <linux-security-module@vger.kernel.org>; Tue, 20 Jan 2026 07:57:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=asu.edu; s=google; t=1768924665; x=1769529465; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CDVOTSHO4BkrVaUL+NxqaqqJd2byL2pEcox/3hMBRE4=;
-        b=nrfN+00UY2zNwGDx33+KZED2uJIg1L3BpduYerqLj0haL22AyRgV1pul5wRXR7P1w7
-         d7UtmO9iWXPGcNCr6clQt8aNfOsA2N7FlTc3NIaDBeWLUeubWXrqpfppCeeldZOBO306
-         jgYHNz13+2trpQCfKlDdL4+IJ0caDCa4OW1aITUIftHZ9QLEzu2gZ1LQr5ZKWYY2UBsd
-         KYSYpjZKIywDiIGxpuxt9z20a2wO99JXqEsPxAsCaEZWm+OUd7gckz9pJyFuPRaDF0rU
-         GCCI6CWuhv515R86U5kE6Z4uBGKdTnyOydLTQWYnCCrvTqOUG5RWgSn0nSlWZ9iF5BnL
-         3Pyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768924665; x=1769529465;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=CDVOTSHO4BkrVaUL+NxqaqqJd2byL2pEcox/3hMBRE4=;
-        b=H1KSUQbL8ik4Y0FDo8t5Hu+6haDrDCn3xbD3bS1MevkczZww+rnRrsFyAS5JVXLEo+
-         Aod7VorAP152z6Kz1JRXUI0X1BXqWEc51aPvQg7ihGrxYS21ii61c1ZvWdWbwa+C2PQ9
-         dSxP4WSsbc9cOta3rPLn/xOFebLL02sqNho6Or0hSc0HzpNJ0xyiSuibAjjnHz86KVkS
-         uMhGSpWBhC8DcY60m4lhytWwYB25lkNq3FvGqTne73L9ilmOOyUiN0rTdFLb91dLIvfS
-         k7wtvjWxc296WkPWegczUeXUy9CmqbapMbHqL91MoLkgUzZQBfjCOuZ5Cwbca6fadKqP
-         0Ebg==
-X-Forwarded-Encrypted: i=1; AJvYcCWH/AtYDJdD1X2ulzeV1q2YsouzMJysJSRjWkEDYvB/0ccmXEPGblhcNELYgo7Ku/z5+5N3V+oXtQ1xby0zrqAryvoHrA0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNed1JR2qm6GUpc2J/JfTBT+rf8VjjfZUT3PiwbOeiA079vuH5
-	wXPUGZzFMDzOYa4zthTeD5O8ltxmU424oVTfzyMZ/30o+Dlhy9YhUCCpO8okqZ5cEQ==
-X-Gm-Gg: AZuq6aKeUa01GQk0mcTfCYqUHnd7FJECU/OMgTO4FUBhShLXd6/cTEtsKNJZkBihl88
-	L8QZp1CdzDK4qJD5v/rktjjVOH2Haye3QcV9RaYh2cf46LvBDeXtoZscfcgxqWU71AQ0hvuV/4u
-	rdupKKglyygVQMfQ66rTg2QcLu5xisAOvDfSaNjmo1hqKe2IQo+pAmK1sFrG6NO0ORUc7CkIGg4
-	kr0ynNJ1LBJTNK+w0aD1LKAl1uo85lmRrjy5TubX9m14hoPp87AJR+BVKRdd0yrG9ih5/n/DFXo
-	MkO54XVCHTB+f1c2+FDH5qvS9Du08X3qMX81M+vPS1rpGr8y3ZEp/P7MnC8glRXwgzXlYr2f1lr
-	iks1TNPGIz6IG2Tvz+YKcU/jI78eHIysdGQpOoZKRW2j3ze29IU4Ed/ZMXmgfXy5YrQeZO1LoeW
-	RwSWbp5z0p49zvELlciknDrUZ1+pJe7MGz7yPpzlYscskKpMXPgg==
-X-Received: by 2002:a05:7300:6d15:b0:2b0:5609:a58c with SMTP id 5a478bee46e88-2b6b4119739mr13598652eec.32.1768924664652;
-        Tue, 20 Jan 2026 07:57:44 -0800 (PST)
-Received: from will-mint.dhcp.asu.edu (ip72-200-102-19.tc.ph.cox.net. [72.200.102.19])
-        by smtp.googlemail.com with ESMTPSA id 5a478bee46e88-2b6b36550dfsm17650283eec.25.2026.01.20.07.57.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Jan 2026 07:57:44 -0800 (PST)
-From: Will Rosenberg <whrosenb@asu.edu>
-To: 
-Cc: Will Rosenberg <whrosenb@asu.edu>,
-	Paul Moore <paul@paul-moore.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cipso: harden use of skb_cow() in cipso_v4_skbuff_setattr()
-Date: Tue, 20 Jan 2026 08:57:38 -0700
-Message-Id: <20260120155738.982771-1-whrosenb@asu.edu>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAHC9VhR4d7WXOVR7Y9ee2+=-t2nThzOo-ySMB+5x_87LfBJbZw@mail.gmail.com>
-References: <CAHC9VhR4d7WXOVR7Y9ee2+=-t2nThzOo-ySMB+5x_87LfBJbZw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="kR9gOAj5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hcwcLU9t"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailflow.stl.internal (Postfix) with ESMTP id A7CFA13012B5;
+	Tue, 20 Jan 2026 11:00:57 -0500 (EST)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-04.internal (MEProxy); Tue, 20 Jan 2026 11:00:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1768924857;
+	 x=1768932057; bh=KfkVnVcFie+8lJSMwr+BM1cQg1+WZ1F7itYYKxiYDxA=; b=
+	kR9gOAj5pXn1HlvyIPf1Dn2UnaJAS+jRzIAsaR2XzWmwVU3duRgbE0mh5JHntjXj
+	cuWYepTHKUWzhsOhC73++QR5yvZK4X1S2AwaIcjIrwElOhOnB7qBma9Rt3sk4wEp
+	WApUxciyhayGX/RZcK8fKFz6xIdI+xP0DrR1lTAATkjc8XoS7YDkMHYuYZCNVtBX
+	4oGFoRnhTrXR+Av/H+nXr31W99ztPY8wV3R2x29p9i/J68icSSg69RfuDb4y8YAC
+	s4LhKb2VHYYXAgITpUrU4ktCyPGwkOI9lIgNBoXcky3A3mVVfmLH/JHxew6hI9Hi
+	veL08yMhuZP0sXK/DL5Ezw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1768924857; x=
+	1768932057; bh=KfkVnVcFie+8lJSMwr+BM1cQg1+WZ1F7itYYKxiYDxA=; b=h
+	cwcLU9t2Na5NvYNY+HqrNgOlIOAEx2zdTmluSgjajfn4eJ5F+JIB4BRW8ErmbMJb
+	5ljggxqqdQPdg2SZtb56c1NTdnpBu5weRDSXaiQR+Mg0Ub9iThiAQ79EUDX9yysa
+	If4/Knasx1iPLLZBRyvYpz8FhOYnlESn3fgeQPRrN8KMwKv6jSRpu0DLxO2sSNsb
+	R4TQnDC+MhnR+ow7ZS/sYxRoTgI4V6asIPb1zuVNFs2Fc8BB9RtG2146jooAzX5l
+	vcbjXpebeDkjFdxXkF3/V9TJ8Omw44E5cSge6Qts1idwHBYUlshPhSE1PbPF8M3M
+	EM/yfREYAwG76Llyugm5Q==
+X-ME-Sender: <xms:tqZvabeGsRgVUmYbJYubbEJsMblBOKkMPVUcZJSAcArtFN7R0_JmeQ>
+    <xme:tqZvacCZ4cB2mdxuaWLwjQTUSZDxD3Bf1wqfkWuap9G_bNa-8cI9R9Kjk_UIAoevp
+    8e2nWPX3vkW-eL_zNn3-aozty1UyyBCIwgt3SJui6DtRU08gGv2zDs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddugedtkeefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepgeefpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehjrghnihdrnhhikhhulhgrsehlihhnuhigrdhinhhtvghlrdgtoh
+    hmpdhrtghpthhtohepjhhoohhnrghsrdhlrghhthhinhgvnheslhhinhhugidrihhnthgv
+    lhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuh
+    igrdhinhhtvghlrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhn
+    uggrthhiohhnrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfh
+    hrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhs
+    thhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepnhhtfhhsfeeslhhish
+    htshdrlhhinhhugidruggvvhdprhgtphhtthhopehnvhguihhmmheslhhishhtshdrlhhi
+    nhhugidruggvvhdprhgtphhtthhopeguvghvvghlsehlihhsthhsrdhorhgrnhhgvghfsh
+    drohhrgh
+X-ME-Proxy: <xmx:tqZvaWR4-8YE2KZu1y5jvyNQljKoCBlYcV9QkUPtn5Ni7W-NSZMsUw>
+    <xmx:tqZvaRktxaBWwwSZcFROAg2TG6_nap3Qro5Wk-tlRgwqau7F5lM2lA>
+    <xmx:tqZvaZLjBCOSgCLQJimLJKR8KCf21qGLd9xPnpeFgrHRnOQFa7r4YA>
+    <xmx:tqZvacVW_XYjP20S7nkpndFaafpNrDdhIyeeUuIH4hGwRfJO4DQR5A>
+    <xmx:uaZvadqcdmsUnvEM9LNX4jzRraMdQCDjpzpx0jFAVDSf99K8t-JGJM_0>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id A67DD70006A; Tue, 20 Jan 2026 11:00:54 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: AWSx1lsrOtaB
+Date: Tue, 20 Jan 2026 17:00:28 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Jason Gunthorpe" <jgg@nvidia.com>
+Cc: "Andrew Morton" <akpm@linux-foundation.org>,
+ "Jarkko Sakkinen" <jarkko@kernel.org>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "Thomas Gleixner" <tglx@kernel.org>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Dan Williams" <dan.j.williams@intel.com>,
+ "Vishal Verma" <vishal.l.verma@intel.com>,
+ "Dave Jiang" <dave.jiang@intel.com>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+ "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>,
+ "Dave Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Jani Nikula" <jani.nikula@linux.intel.com>,
+ "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>,
+ "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
+ "Tvrtko Ursulin" <tursulin@ursulin.net>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ "Huang Rui" <ray.huang@amd.com>, "Matthew Auld" <matthew.auld@intel.com>,
+ "Matthew Brost" <matthew.brost@intel.com>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Benjamin LaHaise" <bcrl@kvack.org>, "Gao Xiang" <xiang@kernel.org>,
+ "Chao Yu" <chao@kernel.org>, "Yue Hu" <zbestahu@gmail.com>,
+ "Jeffle Xu" <jefflexu@linux.alibaba.com>,
+ "Sandeep Dhavale" <dhavale@google.com>,
+ "Hongbo Li" <lihongbo22@huawei.com>, "Chunhai Guo" <guochunhai@vivo.com>,
+ "Theodore Ts'o" <tytso@mit.edu>,
+ "Andreas Dilger" <adilger.kernel@dilger.ca>,
+ "Muchun Song" <muchun.song@linux.dev>,
+ "Oscar Salvador" <osalvador@suse.de>,
+ "David Hildenbrand (Red Hat)" <david@kernel.org>,
+ "Konstantin Komarov" <almaz.alexandrovich@paragon-software.com>,
+ "Mike Marshall" <hubcap@omnibond.com>,
+ "Martin Brandenburg" <martin@omnibond.com>,
+ "Tony Luck" <tony.luck@intel.com>,
+ "Reinette Chatre" <reinette.chatre@intel.com>,
+ "Dave Martin" <Dave.Martin@arm.com>, "James Morse" <james.morse@arm.com>,
+ "Babu Moger" <babu.moger@amd.com>, "Carlos Maiolino" <cem@kernel.org>,
+ "Damien Le Moal" <dlemoal@kernel.org>,
+ "Naohiro Aota" <naohiro.aota@wdc.com>,
+ "Johannes Thumshirn" <jth@kernel.org>,
+ "Matthew Wilcox" <willy@infradead.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>, "Mike Rapoport" <rppt@kernel.org>,
+ "Suren Baghdasaryan" <surenb@google.com>,
+ "Michal Hocko" <mhocko@suse.com>, "Hugh Dickins" <hughd@google.com>,
+ "Baolin Wang" <baolin.wang@linux.alibaba.com>, "Zi Yan" <ziy@nvidia.com>,
+ "Nico Pache" <npache@redhat.com>, "Ryan Roberts" <ryan.roberts@arm.com>,
+ "Dev Jain" <dev.jain@arm.com>, "Barry Song" <baohua@kernel.org>,
+ "Lance Yang" <lance.yang@linux.dev>, "Jann Horn" <jannh@google.com>,
+ "Pedro Falcato" <pfalcato@suse.de>,
+ "David Howells" <dhowells@redhat.com>,
+ "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ "Yury Norov" <yury.norov@gmail.com>,
+ "Rasmus Villemoes" <linux@rasmusvillemoes.dk>, linux-sgx@vger.kernel.org,
+ linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+ linux-aio@kvack.org, linux-erofs@lists.ozlabs.org,
+ linux-ext4@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
+ devel@lists.orangefs.org, linux-xfs@vger.kernel.org,
+ keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Message-Id: <1617ac60-6261-483d-aeb5-13aba5f477af@app.fastmail.com>
+In-Reply-To: <488a0fd8-5d64-4907-873b-60cefee96979@lucifer.local>
+References: <cover.1768857200.git.lorenzo.stoakes@oracle.com>
+ <baac396f309264c6b3ff30465dba0fbd63f8479c.1768857200.git.lorenzo.stoakes@oracle.com>
+ <20260119231403.GS1134360@nvidia.com>
+ <36abc616-471b-4c7b-82f5-db87f324d708@lucifer.local>
+ <20260120133619.GZ1134360@nvidia.com>
+ <488a0fd8-5d64-4907-873b-60cefee96979@lucifer.local>
+Subject: Re: [PATCH RESEND 09/12] mm: make vm_area_desc utilise vma_flags_t only
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-If skb_cow() is passed a headroom <= -NET_SKB_PAD, it will trigger a
-BUG. As a result, use cases should avoid calling with a headroom that
-is negative to prevent triggering this issue.
+On Tue, Jan 20, 2026, at 16:10, Lorenzo Stoakes wrote:
+> On Tue, Jan 20, 2026 at 09:36:19AM -0400, Jason Gunthorpe wrote:
+>
+> I am not sure about this 'idiomatic kernel style' thing either, it feels rather
+> conjured. Yes you wouldn't ordinarily pass something larger than a register size
+> by-value, but here the intent is for it to be inlined anyway right?
+>
+> It strikes me that the key optimisation here is the inlining, now if the issue
+> is that ye olde compiler might choose not to inline very small functions (seems
+> unlikely) we could always throw in an __always_inline?
 
-This is the same code pattern fixed in Commit 58fc7342b529 ("ipv6:
-BUG() in pskb_expand_head() as part of calipso_skbuff_setattr()").
+I can think of three specific things going wrong with structures passed
+by value:
 
-In cipso_v4_skbuff_setattr(), len_delta can become negative, leading to
-a negative headroom passed to skb_cow(). However, the BUG is not
-triggerable because the condition headroom <= -NET_SKB_PAD cannot be
-satisfied due to limits on the IPv4 options header size.
+- functions that cannot be inlined are bound by the ELF ABI, and
+  several of them require structs to be passed on the stack regardless
+  of the size. Most of the popular architectures seem fine here, but
+  mips and powerpc look like they are affected.
 
-Avoid potential problems in the future by only using skb_cow() to grow
-the skb headroom.
+- The larger the struct is, the more architectures are affected.
+  Parts of the amdgpu driver and the bcachefs file system ran into this
+  with 64-bit structures passed by value on 32-bit architectures
+  causing horrible codegen even with inlining. I think it's
+  usually fine up to a single register size.
 
-Signed-off-by: Will Rosenberg <whrosenb@asu.edu>
----
+- clang's inlining algorithm works the other way round from gcc's:
+  inlining into the root caller first and sometimes leaving tiny
+  leaf function out of line unless you add __always_inline.
 
-Notes:
-    Given that IPv4 option length should not change,
-    this may not be a worthwhile patch.
-    
-    Apologies in advance if this ends up being a waste
-    of time.
-
- net/ipv4/cipso_ipv4.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-index 709021197e1c..32b951ebc0c2 100644
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -2196,7 +2196,8 @@ int cipso_v4_skbuff_setattr(struct sk_buff *skb,
- 	/* if we don't ensure enough headroom we could panic on the skb_push()
- 	 * call below so make sure we have enough, we are also "mangling" the
- 	 * packet so we should probably do a copy-on-write call anyway */
--	ret_val = skb_cow(skb, skb_headroom(skb) + len_delta);
-+	ret_val = skb_cow(skb,
-+			  skb_headroom(skb) + (len_delta > 0 ? len_delta : 0));
- 	if (ret_val < 0)
- 		return ret_val;
- 
-
-base-commit: 58bae918d73e3b6cd57d1e39fcf7c75c7dd1a8fe
--- 
-2.34.1
-
+      Arnd
