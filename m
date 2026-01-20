@@ -1,79 +1,443 @@
-Received: from 011.lax.mailroute.net (011.lax.mailroute.net [199.89.1.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A0F43CEC2;
-	Tue, 20 Jan 2026 18:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49DE37F8A2
+	for <linux-security-module@vger.kernel.org>; Tue, 20 Jan 2026 20:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768933458; cv=none; b=SjCxfC5olskmHXucy4TcEXOGmFz7bK+1dsI1xRtJGCCK6Ufq14WIH6xar286YIUdXpB1QEgUcxJtg3MAaah9K3Qr94oyubXj49j2VAuOMRtD+ROHG06W7OEOonWeBVrYJAmDEnJp245okCE74eyhu3hFLgRnkid8cfDb5S8r+5U=
+	t=1768940443; cv=none; b=RTHBBpnB7OVbgsdM9m9H3qqYrUpZPcK7rtpScYlkEv6ne1UUGjLKTC1T6NbiIufC+L0Q/AAveUPg7RId/594L4e6QsGu6xfOJO8EyhbwH3pYR0DAh0cqSgG4ZgImDcGcIY0kTlRq06pLT8OhvZ1iISFNT/lAqGLcSBjlyrGA/Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768933458; c=relaxed/simple;
-	bh=laO+s2zBiXudQJg6l9/ECBEXlmXile3qngJMXioXyAw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ut5AHp7ssOavVixWTlUWRopMN2tGgbWSP/fA2DqQ0fc0om+Gaj/ALZ4djek16TcTYQi2XE4bU/NK8uG5xlT12NZOXTDPwnwT1LQhrL15SiQCzEFG9BnXGOCPZ/YuJyxRSmeXQjSsk0A4mxsCTE1dt4mRfdgZh4FFpBJW64hryN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=AqUY9lXl; arc=none smtp.client-ip=199.89.1.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+	s=arc-20240116; t=1768940443; c=relaxed/simple;
+	bh=dBOX75E+YxrCrvlhmS+Eqpje6dDJi3XQRiMO7ht8Fa8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YAi4TW/2hcVkVXL5Mmq9zW5TWmlTTqikKpqZRCIs564+/RtPTzI5LuEuxPWwQ79nl10dIHmw711ypRpYpqFtxp7NvcG6zZ7M1C/OoUuqhBwrhHzGZ97a4r0UMV4zHfBs0Hj+l3LJyJS1+svQTq072WlDWwJxf4QbZqwOuKq4DoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=W9W83T75; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="AqUY9lXl"
-Received: from localhost (localhost [127.0.0.1])
-	by 011.lax.mailroute.net (Postfix) with ESMTP id 4dwbM41s2Lz1XM0ns;
-	Tue, 20 Jan 2026 18:24:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1768933453; x=1771525454; bh=laO+s2zBiXudQJg6l9/ECBEX
-	lmXile3qngJMXioXyAw=; b=AqUY9lXlAQ4tazuUKBYtOVKX+Sxi+fpryjzp/hnc
-	Z1AscB9YpGz0GenM7OjEN3g14T9M/Kuce+x+5f3bG4kmckbcwZYJfJq9EyaysY72
-	qJw4hePIJKaAvOspdV2bQDFO4HeyNL8JD44+P+BQ14XFhP4xmlsr4FXDo/i4cnMe
-	mxRS9QxPfqEku4O18CCxatl0wvE3GFMMsFeS6BDvIQf/ih6+wet/Un5jjJk7Kwu9
-	4MDVTUzSLTlaMMbwyaZOfz8lROQZTYXIty0LXRmrI+JGyQesgVrQwNJcCJ0zvbYZ
-	jGcUcHjjHU95vSmMp/u05P9C9WLBkOPKCOICmMqwX+l2Zg==
-X-Virus-Scanned: by MailRoute
-Received: from 011.lax.mailroute.net ([127.0.0.1])
- by localhost (011.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id vZGs651jTWFO; Tue, 20 Jan 2026 18:24:13 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 011.lax.mailroute.net (Postfix) with ESMTPSA id 4dwbLx272pz1XM5jn;
-	Tue, 20 Jan 2026 18:24:08 +0000 (UTC)
-Message-ID: <16d01754-cab9-4067-a65f-60040ac6d47e@acm.org>
-Date: Tue, 20 Jan 2026 10:24:08 -0800
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="W9W83T75"
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7cfdf7e7d19so3588772a34.2
+        for <linux-security-module@vger.kernel.org>; Tue, 20 Jan 2026 12:20:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1768940440; x=1769545240; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pRgHEalZu663fb7KQKXFPsy1uxjqlpRaZezxtg+ZFAo=;
+        b=W9W83T75kZ+89HOWm46Xqll7P64OZ/thMs8OgBA+ERVKZtPoP0juQl1jrCW5DaafrS
+         itdeOHFVmENttkAPDymUnFzP88V2GY4JpwFl3dSmziBVd9a/0d5be36OHbetX9vyVSL7
+         m8vVX0h/0vuuPHr+ZB0QUbhELLu8Ey6P/117xDL8MWIPvom36twSVClRFwujMNshLYgw
+         yyeGyouV7/cOWfUxEH0vVO/u+xVhoqh6dRtnF8qYttM6lH3XF0vv0fyeEBGZtaLzqa4m
+         y1IIFvwVnFmGiH4eUK3P04L1HSJXjhmvs2GWFsEGkkAHYbwtSbWSKhNlNoZbP5up0G5d
+         BFzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768940440; x=1769545240;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pRgHEalZu663fb7KQKXFPsy1uxjqlpRaZezxtg+ZFAo=;
+        b=g+D/jxmPQnT06VbcFGmK0rgMFpyo4k/nvn6QvXe0ko9GqsXjbn7oVpRPSz0/IHPm26
+         9YlsCMERYiU6vbYJp25yvmmXJ0AQbh5OwA6a9CE85lGBzSK/EN/eIp1Uh5pLneUcj0lb
+         fGoiTADvBc6DkR7a8j+tvVDFVUr8yQaN8KQSmmGIOm3qZXl+m9k56a90VJf5QZyBTb3r
+         BWdNY9ZcMzfO1OleCa1JP4Dq3GLx1htuzaXkPk9DL34Dci26SF0PtcpCQRKnl9Fqk6qO
+         KyAGyJoiuQzsbfl94mzh9gxKdstUYMmf520vSrDl4q7OjKEcY5ED8pMEzmpRRztoQr+K
+         QWlg==
+X-Forwarded-Encrypted: i=1; AJvYcCURCag5LwkZnfdAUF9BHabalzlLRHrkg1DdHavBOaLfQ3LcsbJ0ZXdy0oMr55TOrmjAiWHII0s1TGmCWkJ1bAWE5f+8U8g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyARTWtyNA4veJdcA0aN1s25yR2z2aj8yM1kDaRs6ivt8dHCQvR
+	COb9X4xfuoeyUHBtBUVrC6QlTdVnl0JisUSUI/+6cWAICsFK/EuRor4qMNrIFPEAR3k=
+X-Gm-Gg: AY/fxX6l1PUllW7fzG/JYG3yS05yLRF7PUkMAQEWB1doO3p3NRlV5+A7qP/tzBa3z3b
+	MTpkvdrXpGkxcx4klJ6AkQEHfD6F6TCVFt/6lyzkO0FnjlUp8527FUt0wzngRHBhhfWYLsfqdj8
+	ZX+PSJ3VSWDPxznTdyEePK29hAWLFQmCFytBHm4Cc0Jb9T+uf1GPkMIA3iCF05+zXBJ8+PxU2Co
+	lPnAwPpMtyTwdHpa2RWaBWINIZbFP5Q31slhIINLtxDtcuKPk5x5LqB1X7j0Fm2jBOU/Az2Ht3i
+	M/+y4jRJsNU3NyNgmSu7uKHr4UDs3ypnXgzoA41LTeEztdDb6Rc4RjfUYWCylJfbl40Xtqck5fj
+	X2fzJi4Fx/BNu8Q8l18Lk55Kp5qC7b8KJTxioG8NXuLAdAhIfcnbV392iG8SBHr1zZ85NyUQ=
+X-Received: by 2002:a05:6830:1bec:b0:7cf:e57f:def6 with SMTP id 46e09a7af769-7cfe57fe038mr5143004a34.6.1768940439572;
+        Tue, 20 Jan 2026 12:20:39 -0800 (PST)
+Received: from [127.0.1.1] ([2a09:bac5:947d:4e6::7d:47])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cfdf0d915dsm9011188a34.4.2026.01.20.12.20.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Jan 2026 12:20:39 -0800 (PST)
+From: Frederick Lawler <fred@cloudflare.com>
+Date: Tue, 20 Jan 2026 14:20:31 -0600
+Subject: [PATCH v2] ima: Fallback to ctime check for FS without
+ kstat.change_cookie
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH tip/locking/core 0/6] compiler-context-analysis: Scoped
- init guards
-To: Marco Elver <elver@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
- Christoph Hellwig <hch@lst.de>, Steven Rostedt <rostedt@goodmis.org>,
- kasan-dev@googlegroups.com, llvm@lists.linux.dev,
- linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260119094029.1344361-1-elver@google.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20260119094029.1344361-1-elver@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20260120-xfs-ima-fixup-v2-1-f332ead8b043@cloudflare.com>
+X-B4-Tracking: v=1; b=H4sIAI7jb2kC/2WOPQ+CMBRF/4p5szV9jwjUSePi6OBmGGpppQlfa
+ YVgCP/dWjcc77s5574ZvHZWezhsZnB6tN52bQi03YCqZPvUzJYhA3HaIyGxyXhmG8mMnYaeiQS
+ znMuUFCkITO90KKLvDtfT7XyBIpwr61+de8eVEWP5E5JYCUdkyFKZYaZEIkymjqruhtLU0umd6
+ prvSEBTjn+/RDQvMXmknGOCtEaLZVk+vC5CUvEAAAA=
+X-Change-ID: 20251212-xfs-ima-fixup-931780a62c2c
+To: Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ "Darrick J. Wong" <djwong@kernel.org>, 
+ Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+ Jeff Layton <jlayton@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, kernel-team@cloudflare.com, 
+ Frederick Lawler <fred@cloudflare.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12825; i=fred@cloudflare.com;
+ h=from:subject:message-id; bh=dBOX75E+YxrCrvlhmS+Eqpje6dDJi3XQRiMO7ht8Fa8=;
+ b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBpb+OVOo0nTTbbQfKX6PmaolHUtiujW+2dnH0gr
+ krS+NT/lzmJAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaW/jlQAKCRCrJbR2A5LT
+ bbWxD/9DAS7fM2CN2ECRONCrbUZWy3eAfmoQ0WqqSbiCurHi64muLs4ds6zd+oJOnfga8DycJO8
+ LIprntKa0IA2dyDkWJ4NhzivzcZ/9FBlZUtWexqQnugepFrYk1uItDmvQtiJRgG7zX0TpLdN3hy
+ G+JDZOOl12CRI2DMMQClxAi6MHOhKf4ramk9ZtakUKVJC2GuYoLjiNxXWdxGtehD794S9QdmLaw
+ bw9wC3BzoKLUOtgclR4SoQAqfVQv0uRwAaIMwdGR3wHCKz6UZE/khDWSlF/XVGMsEpzCp06mi4f
+ yZqe96nmieslmMxZZFieXUSwMH8E404GtwkK/vjrb9iBWKEB+v78q77s8GOIUou0QI+Z51n6uWY
+ fW9g95btDaAicSwucpjvDbauJrXNa3zpWSnHBpfNPpVzTB5vz9DXCSDS6OkE7XgzuIPIyfQ+hHW
+ w7anGCw5w8yw+ko9oWo3y24+pkMI4GUMbjDdZfbBF5P9WPDlYoeSOsE8rkq1frEhMym7NwwNMKT
+ mWbJyfEpy2KqUuUJoRki0Q8PnHMJC5qtZ9Seh5zUvJ9BKsP+JX4vmfOtsnoam7nrSkYvB4FvyHL
+ AxfxdXezVqta/mYW+Uz/6dCX/rMS9OPbrwiROaIiuKaBvw93fDgpgoOgyxZlULD4NlZmGXD5AMH
+ 5EHly4O7pN4BiXg==
+X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
+ fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
 
-On 1/19/26 1:05 AM, Marco Elver wrote:
-> This series proposes a solution to this by introducing scoped init
-> guards which Peter suggested, using the guard(type_init)(&lock) or
-> scoped_guard(type_init, ..) interface.
-Although I haven't had the time yet to do an in-depth review, from a
-quick look all patches in this series look good to me.
+Commit 1cf7e834a6fb ("xfs: switch to multigrain timestamps")
+introduced a means to track change detection for an inode
+via ctime updates, opposed to setting kstat.change_cookie to
+an i_version when calling into xfs_vn_getattr().
 
-Thanks,
+This introduced a regression for IMA such that an action
+performed on a LOWER inode on a stacked file systems always
+requires a re-evaluation if the LOWER file system does not
+leverage kstat.change_cookie to track inode i_version or lacks
+i_version support all together.
 
-Bart.
+In the case of stacking XFS on XFS, an action on either the LOWER or UPPER
+will require re-evaluation. Stacking TPMFS on XFS for instance, once the
+inode is UPPER is mutated, IMA resumes normal behavior because TMPFS
+leverages generic_fillattr() to update the change cookie.
+
+This is because IMA caches kstat.change_cookie to compare against an
+inode's i_version directly in integrity_inode_attrs_changed(), and thus
+could be out of date depending on how file systems set
+kstat.change_cookie.
+
+To address this, require integrity_inode_attrs_changed() to query
+vfs_getattr_nosec() to compare the cached version against
+kstat.change_cookie directly. This ensures that when updates occur,
+we're accessing the same changed inode version on changes, and fallback
+to compare against kstat.ctime when STATX_CHANGE_COOKIE is missing from
+result mask.
+
+Lastly, because EVM still relies on querying and caching a inode's
+i_version directly, the integrity_inode_attrs_changed() falls back to the
+original inode.i_version != cached comparison.
+
+Link: https://lore.kernel.org/all/aTspr4_h9IU4EyrR@CMGLRV3
+Suggested-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+---
+We uncovered a case in kernels >= 6.13 where XFS is no longer updating
+struct kstat.change_cookie on i_op getattr() access calls. Instead, XFS is
+using multigrain ctime (as well as other file systems) for
+change detection in commit 1cf7e834a6fb ("xfs: switch to
+multigrain timestamps").
+
+Because file systems may implement i_version as they see fit, IMA
+caching may be behind as well as file systems that don't support/export
+i_version. Thus we're proposing to compare against the kstat.change_cookie
+directly to the cached version, and fall back to a ctime guard when
+that's not updated.
+
+EVM is largely left alone since there's no trivial way to query a file
+directly in the LSM call paths to obtain kstat.change_cookie &
+kstat.ctime to cache. Thus retains accessing i_version directly.
+
+Regression tests will be added to the Linux Test Project instead of
+selftest to help catch future file system changes that may impact
+future evaluation of IMA.
+
+I'd like this to be backported to at least 6.18 if possible.
+
+Below is a simplified test that demonstrates the issue:
+
+_fragment.config_
+CONFIG_XFS_FS=y
+CONFIG_OVERLAY_FS=y
+CONFIG_IMA=y
+CONFIG_IMA_WRITE_POLICY=y
+CONFIG_IMA_READ_POLICY=y
+
+_./test.sh_
+
+IMA_POLICY="/sys/kernel/security/ima/policy"
+TEST_BIN="/bin/date"
+MNT_BASE="/tmp/ima_test_root"
+
+mkdir -p "$MNT_BASE"
+mount -t tmpfs tmpfs "$MNT_BASE"
+mkdir -p "$MNT_BASE"/{xfs_disk,upper,work,ovl}
+
+dd if=/dev/zero of="$MNT_BASE/xfs.img" bs=1M count=300
+mkfs.xfs -q "$MNT_BASE/xfs.img"
+mount "$MNT_BASE/xfs.img" "$MNT_BASE/xfs_disk"
+cp "$TEST_BIN" "$MNT_BASE/xfs_disk/test_prog"
+
+mount -t overlay overlay -o \
+"lowerdir=$MNT_BASE/xfs_disk,upperdir=$MNT_BASE/upper,workdir=$MNT_BASE/work" \
+"$MNT_BASE/ovl"
+
+echo "audit func=BPRM_CHECK uid=$(id -u nobody)" > "$IMA_POLICY"
+
+target_prog="$MNT_BASE/ovl/test_prog"
+setpriv --reuid nobody "$target_prog"
+setpriv --reuid nobody "$target_prog"
+setpriv --reuid nobody "$target_prog"
+
+audit_count=$(dmesg | grep -c "file=\"$target_prog\"")
+
+if [[ "$audit_count" -eq 1 ]]; then
+        echo "PASS: Found exactly 1 audit event."
+else
+        echo "FAIL: Expected 1 audit event, but found $audit_count."
+        exit 1
+fi
+---
+Changes since RFC:
+- Remove calls to I_IS_VERSION()
+- Function documentation/comments
+- Abide IMA/EVM change detection fallback invariants
+- Combined ctime guard into version for attributes struct
+- Link to RFC: https://lore.kernel.org/r/20251229-xfs-ima-fixup-v1-1-6a717c939f7c@cloudflare.com
+---
+Changes in v2:
+- Updated commit description + message to clarify the problem.
+- compare struct timespec64 to avoid collision possibility [Roberto].
+- Don't check inode_attr_changed() in ima_check_last_writer()
+- Link to v1: https://lore.kernel.org/r/20260112-xfs-ima-fixup-v1-1-8d13b6001312@cloudflare.com
+---
+ include/linux/integrity.h           | 40 ++++++++++++++++++++++++++++++++-----
+ security/integrity/evm/evm_crypto.c |  4 +++-
+ security/integrity/evm/evm_main.c   |  5 ++---
+ security/integrity/ima/ima_api.c    | 20 +++++++++++++------
+ security/integrity/ima/ima_main.c   | 18 ++++++++++-------
+ 5 files changed, 65 insertions(+), 22 deletions(-)
+
+diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+index f5842372359be5341b6870a43b92e695e8fc78af..46f57402b790c9c275b85f0b30819fa196fc20c7 100644
+--- a/include/linux/integrity.h
++++ b/include/linux/integrity.h
+@@ -9,6 +9,8 @@
+ 
+ #include <linux/fs.h>
+ #include <linux/iversion.h>
++#include <linux/kernel.h>
++#include <linux/time64.h>
+ 
+ enum integrity_status {
+ 	INTEGRITY_PASS = 0,
+@@ -31,6 +33,7 @@ static inline void integrity_load_keys(void)
+ 
+ /* An inode's attributes for detection of changes */
+ struct integrity_inode_attributes {
++	struct timespec64 ctime;
+ 	u64 version;		/* track inode changes */
+ 	unsigned long ino;
+ 	dev_t dev;
+@@ -42,8 +45,10 @@ struct integrity_inode_attributes {
+  */
+ static inline void
+ integrity_inode_attrs_store(struct integrity_inode_attributes *attrs,
+-			    u64 i_version, const struct inode *inode)
++			    u64 i_version, struct timespec64 ctime,
++			    const struct inode *inode)
+ {
++	attrs->ctime = ctime;
+ 	attrs->version = i_version;
+ 	attrs->dev = inode->i_sb->s_dev;
+ 	attrs->ino = inode->i_ino;
+@@ -51,14 +56,39 @@ integrity_inode_attrs_store(struct integrity_inode_attributes *attrs,
+ 
+ /*
+  * On stacked filesystems detect whether the inode or its content has changed.
++ *
++ * Must be called in process context.
+  */
+ static inline bool
+ integrity_inode_attrs_changed(const struct integrity_inode_attributes *attrs,
+-			      const struct inode *inode)
++			      struct file *file, struct inode *inode)
+ {
+-	return (inode->i_sb->s_dev != attrs->dev ||
+-		inode->i_ino != attrs->ino ||
+-		!inode_eq_iversion(inode, attrs->version));
++	struct kstat stat;
++
++	might_sleep();
++
++	if (inode->i_sb->s_dev != attrs->dev || inode->i_ino != attrs->ino)
++		return true;
++
++	/*
++	 * EVM currently relies on backing inode i_version. While IS_I_VERSION
++	 * is not a good indicator of i_version support, this still retains
++	 * the logic such that a re-evaluation should still occur for EVM, and
++	 * only for IMA if vfs_getattr_nosec() fails.
++	 */
++	if (!file || vfs_getattr_nosec(&file->f_path, &stat,
++				       STATX_CHANGE_COOKIE | STATX_CTIME,
++				       AT_STATX_SYNC_AS_STAT))
++		return !IS_I_VERSION(inode) ||
++			!inode_eq_iversion(inode, attrs->version);
++
++	if (stat.result_mask & STATX_CHANGE_COOKIE)
++		return stat.change_cookie != attrs->version;
++
++	if (stat.result_mask & STATX_CTIME)
++		return !timespec64_equal(&stat.ctime, &attrs->ctime);
++
++	return true;
+ }
+ 
+ 
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index a5e730ffda57fbc0a91124adaa77b946a12d08b4..361ee7b216247a0d6d2f518e82fb6e92dc355afe 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -297,10 +297,12 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 	hmac_add_misc(desc, inode, type, data->digest);
+ 
+ 	if (inode != d_backing_inode(dentry) && iint) {
++		struct timespec64 ctime = {0};
++
+ 		if (IS_I_VERSION(inode))
+ 			i_version = inode_query_iversion(inode);
+ 		integrity_inode_attrs_store(&iint->metadata_inode, i_version,
+-					    inode);
++					    ctime, inode);
+ 	}
+ 
+ 	/* Portable EVM signatures must include an IMA hash */
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 73d500a375cb37a54f295b0e1e93fd6e5d9ecddc..6a4e0e246005246d5700b1db590c1759242b9cb6 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -752,9 +752,8 @@ bool evm_metadata_changed(struct inode *inode, struct inode *metadata_inode)
+ 	bool ret = false;
+ 
+ 	if (iint) {
+-		ret = (!IS_I_VERSION(metadata_inode) ||
+-		       integrity_inode_attrs_changed(&iint->metadata_inode,
+-						     metadata_inode));
++		ret = integrity_inode_attrs_changed(&iint->metadata_inode,
++						    NULL, metadata_inode);
+ 		if (ret)
+ 			iint->evm_status = INTEGRITY_UNKNOWN;
+ 	}
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index c35ea613c9f8d404ba4886e3b736c3bab29d1668..0d8e0a3ebd34b70bb1b4cc995aae5d4adc90a585 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -254,6 +254,7 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+ 	int length;
+ 	void *tmpbuf;
+ 	u64 i_version = 0;
++	struct timespec64 ctime = {0};
+ 
+ 	/*
+ 	 * Always collect the modsig, because IMA might have already collected
+@@ -272,10 +273,15 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+ 	 * to an initial measurement/appraisal/audit, but was modified to
+ 	 * assume the file changed.
+ 	 */
+-	result = vfs_getattr_nosec(&file->f_path, &stat, STATX_CHANGE_COOKIE,
++	result = vfs_getattr_nosec(&file->f_path, &stat,
++				   STATX_CHANGE_COOKIE | STATX_CTIME,
+ 				   AT_STATX_SYNC_AS_STAT);
+-	if (!result && (stat.result_mask & STATX_CHANGE_COOKIE))
+-		i_version = stat.change_cookie;
++	if (!result) {
++		if (stat.result_mask & STATX_CHANGE_COOKIE)
++			i_version = stat.change_cookie;
++		if (stat.result_mask & STATX_CTIME)
++			ctime = stat.ctime;
++	}
+ 	hash.hdr.algo = algo;
+ 	hash.hdr.length = hash_digest_size[algo];
+ 
+@@ -305,11 +311,13 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+ 
+ 	iint->ima_hash = tmpbuf;
+ 	memcpy(iint->ima_hash, &hash, length);
+-	if (real_inode == inode)
++	if (real_inode == inode) {
+ 		iint->real_inode.version = i_version;
+-	else
++		iint->real_inode.ctime = ctime;
++	} else {
+ 		integrity_inode_attrs_store(&iint->real_inode, i_version,
+-					    real_inode);
++					    ctime, real_inode);
++	}
+ 
+ 	/* Possibly temporary failure due to type of read (eg. O_DIRECT) */
+ 	if (!result)
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 5770cf691912aa912fc65280c59f5baac35dd725..54b638663c9743d39e5fb65711dbd9698b38e39b 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -22,12 +22,14 @@
+ #include <linux/mount.h>
+ #include <linux/mman.h>
+ #include <linux/slab.h>
++#include <linux/stat.h>
+ #include <linux/xattr.h>
+ #include <linux/ima.h>
+ #include <linux/fs.h>
+ #include <linux/iversion.h>
+ #include <linux/evm.h>
+ #include <linux/crash_dump.h>
++#include <linux/time64.h>
+ 
+ #include "ima.h"
+ 
+@@ -199,10 +201,13 @@ static void ima_check_last_writer(struct ima_iint_cache *iint,
+ 					    &iint->atomic_flags);
+ 		if ((iint->flags & IMA_NEW_FILE) ||
+ 		    vfs_getattr_nosec(&file->f_path, &stat,
+-				      STATX_CHANGE_COOKIE,
+-				      AT_STATX_SYNC_AS_STAT) ||
+-		    !(stat.result_mask & STATX_CHANGE_COOKIE) ||
+-		    stat.change_cookie != iint->real_inode.version) {
++			    STATX_CHANGE_COOKIE | STATX_CTIME,
++			    AT_STATX_SYNC_AS_STAT) ||
++		    ((stat.result_mask & STATX_CHANGE_COOKIE) ?
++		      stat.change_cookie != iint->real_inode.version :
++		      (!(stat.result_mask & STATX_CTIME) ||
++			!timespec64_equal(&stat.ctime,
++					  &iint->real_inode.ctime)))) {
+ 			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+ 			iint->measured_pcrs = 0;
+ 			if (update)
+@@ -328,9 +333,8 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	real_inode = d_real_inode(file_dentry(file));
+ 	if (real_inode != inode &&
+ 	    (action & IMA_DO_MASK) && (iint->flags & IMA_DONE_MASK)) {
+-		if (!IS_I_VERSION(real_inode) ||
+-		    integrity_inode_attrs_changed(&iint->real_inode,
+-						  real_inode)) {
++		if (integrity_inode_attrs_changed(&iint->real_inode,
++						  file, real_inode)) {
+ 			iint->flags &= ~IMA_DONE_MASK;
+ 			iint->measured_pcrs = 0;
+ 		}
+
+---
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+change-id: 20251212-xfs-ima-fixup-931780a62c2c
+
+Best regards,
+-- 
+Frederick Lawler <fred@cloudflare.com>
+
