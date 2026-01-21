@@ -1,99 +1,99 @@
-Received: from r9103.ps.combzmail.jp (r9103.ps.combzmail.jp [49.212.47.32])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C200330650
-	for <linux-security-module@vger.kernel.org>; Wed, 21 Jan 2026 04:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.212.47.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAEE43636E;
+	Wed, 21 Jan 2026 07:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768970166; cv=none; b=l2BKCpRKqLzWYU3c6hnFCL13gInHayleDEYT5rk0NkmzcGFck28+Lh7k1sjb8lGztihYGEYUxYCoN4aQ1nBgEKQc/B6UwfkwF/oQwRDuiiNwrnnrJKLR2zcrWhnHM12BPjr11GNKpOEhLesi7qmuF1CmeYbhLZEcmLhyrJowYe4=
+	t=1768981469; cv=none; b=DHvWmgQV6jHBJFsbo8b6GETALoXhrBkrikPyLbiHjn99XzEdEpHQpAZN7sQ4tAg3GrdLAcz44wIp0CzWk67Bpn2F0eZT/gV/Xc77+FWA0INjO0Jc1vGimmANJgDpKXN0wJBTijpqcqj+iDZe4yI81nHEkuKxs6UJE+N4W44tdIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768970166; c=relaxed/simple;
-	bh=XBU+++9iHfohCJf3P8UKuil9x2ZtPz+kuLJkMie84SQ=;
-	h=To:From:Subject:Mime-Version:Content-Type:Message-Id:Date; b=eR4HLRJ0h1po7dFfaQ6zVJZqjiGHrhgWOnmipOUjoKzZI1OYseMomJe53dDuaA2ZZLHmBqBSCw/aF6kDKeFD7E2JhxzbaW1J0wLrEGKMOULQZEJ3cifnDxSzb/OAFY79uX34R/X8tJYa/6KNr+ewShrSlAKtN39qJQKVfBZGbIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gosso.biz; spf=pass smtp.mailfrom=magerr.combzmail.jp; arc=none smtp.client-ip=49.212.47.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gosso.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magerr.combzmail.jp
-Received: by r9103.ps.combzmail.jp (Postfix, from userid 99)
-	id 2813818681C; Wed, 21 Jan 2026 13:24:16 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9103.ps.combzmail.jp 2813818681C
-To: linux-security-module@vger.kernel.org
-From: =?ISO-2022-JP?B?GyRCJEgkLSRvRGIlVSVpJXMlQSVjJSQlOjt2TDM2SRsoQg==?= <info@gosso.biz>
-X-Ip: 7325711480736640
-X-Ip-source: k85gj76048dnsareu0p6gd
-Precedence: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?VFYbJEIkRyRiT0NCaiEjQ09KfSRHTFkkKyRrISIbKEI=?=
- =?ISO-2022-JP?B?GyRCPkZGeSVTJTglTSU5GyhC?=
+	s=arc-20240116; t=1768981469; c=relaxed/simple;
+	bh=rUxz+eQcTiT8Eocx/OCaRzNUkBbr9jqRN7boZLQK8kM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XWHqHNDhWG7rhV7BHxwgThytloqIDFYB0pvd0vHOCyHQcECEsSizv7pkJsZ3IYSbj7iMGfB8vQNReZjF8JdcE03G3p20SMecxo4isVp7qNozAlF0gZdDIfNlSOlJ3WuTzL9yXNzr5SE2cvQieRV29us2PTx3Jcwb/Kxdul7FN9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v1Zs+WH1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I+lOgm+p; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v1Zs+WH1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I+lOgm+p"
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1768981465;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fIvYdrSQBe9ir4MS5HtE9uB33oKlBqD71NakOZFLopY=;
+	b=v1Zs+WH1ZyOow+0YL/klnFj6EK3JbtDcumtsZMtjSZeUaEyo50+5oKd//MMRHOGJl+rHJI
+	RIury9GryLw7J4qopejXD5U2heogd0InaTELCdDN+QRizrVEtDGS1UJ887Ezl/9fvKQuPb
+	dSmLxzjQ5jqGaPG5V1tmX4MJSvZmx9UB0rgPfMzVBeXIV+qnKdJLIqvFv6kDOUiYYpJChc
+	J1Jx7zW2vCtjRYsyGcozqgjtV5awTQOecnLZL4miTU6iFdK565NFDV42/OkmZQkdLD6xxv
+	e1P7VNg1MpE9ZYioywMqF3vAqSTc6faVFQiGLI6CKN8bRPHyCLm0xxEoROWsdw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1768981465;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fIvYdrSQBe9ir4MS5HtE9uB33oKlBqD71NakOZFLopY=;
+	b=I+lOgm+pzQ36/jjh6Ru+zjwb3Sa/maN/GGeH14pqIN1KlUt9nZHb7P/lr92HOXKqNpv/U5
+	iK1AYX3VPyQtd/CQ==
+Date: Wed, 21 Jan 2026 08:43:59 +0100
+Subject: [PATCH] efi: Mark UEFI skip cert quirks list as __initconst
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Transfer-Encoding: 7bit
-X-MagazineId: 60re
-X-uId: 6764225941486057744241691040
-X-Sender: CombzMailSender
-X-Url: http://www.combzmail.jp/
-Message-Id: <20260121042448.2813818681C@r9103.ps.combzmail.jp>
-Date: Wed, 21 Jan 2026 13:24:16 +0900 (JST)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20260121-uefi-certs-initconst-v1-1-896458b3e03f@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAL6DcGkC/x2MMQqAMAwAvyKZDbSFOvgVcZAkapZWmiqC+HeL4
+ 8HdPWBSVAzG7oEil5rm1MD3HdC+pE1QuTEEFwbng8dTVkWSUg01aaWcrCJHXpji6jwztPQozbr
+ /7TS/7wd/MpKaZgAAAA==
+X-Change-ID: 20260121-uefi-certs-initconst-d5dadc5f01dd
+To: Jarkko Sakkinen <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1768981459; l=1160;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=rUxz+eQcTiT8Eocx/OCaRzNUkBbr9jqRN7boZLQK8kM=;
+ b=fqjAEQi5K3fgms6TjBCPCBImC+o0haepvCf5+TaCGsw84+grszBlGM2qZ6enMjLeQX3SfzWF8
+ gpqH/W4EsxTA0KetSS/PRDctqoA/EQ+YacRTYYU+aNdihPtdyjlqxNd
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-$B!!(B
-$B!!(B
-$B!!?7$?$J;v6H$r$*9M$($N7P1D<TMM$X(B
-$B!!(B
-$B!!(B
-$B!!$$$D$b$*@$OC$K$J$j$^$9!#(B
-$B!!(B
-$B!!(BTBS$B%F%l%S!X:d>e!u;X86$N$D$V$l$J$$E9!Y$G<h$j>e$2$i$l$k$J$I!"(B
-$B!!:#OCBj$N!"BT$A;~4V(B0$BIC$N0{$_J|Bj$rDs6!$9$k(B
+The only user is marked as __init, so there is no reason to keep this
+data around after bootup.
 
-$B!!>FFy<r>l!V(B $B$H$-$oDb(B $B!W$N%U%i%s%A%c%$%:%7%9%F%`@bL@2q$r$40FFb$$$?$7$^$9!#(B
-$B!!!!(B
-$B!!$o$:$+(B2$BG/H>$GA49q(B80$BE9J^E83+$7$?(B
-$B!!!V(B0$BIC%l%b%s%5%o!<!!$H$-$oDb!W$N(B
-$B!!(B
-$B!!%S%8%M%9%b%G%k!"<}1W@-$d:G?7$N0{?);T>l<BBV$r(B
-$B!!%*%s%i%$%s$K$h$k@bL@2q7A<0$GJ,$+$j$d$9$/!"CzG+$K$*EA$($7$^$9!#(B
-$B!!(B
-$B!!"(K\%;%_%J!<;22C!"E9J^%*!<%W%s$N>l9g(B
-$B!!!!8&=$HqMQ(B50$BK|1_$rK\It;Y1g!*(B
-$B!!!!@lLg2H$K$h$k!";q6bD4C#AjCL$,L5NA!*(B
-$B!!(B
-$B!!(B
-$B!!$3$N$h$&$JJ}$K$*%9%9%a(B
-$B!!!&6d9TM;;q$r<u$1$d$9$/$J$k%3%D$r$7$j$?$$(B
-$B!!!&0{?)E9$N7P1D$K6=L#$,$"$k(B
-$B!!!&>FFy20$N7P1D<BBV$,$7$j$?$$(B
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+ security/integrity/platform_certs/load_uefi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-$B!!$3$&$$$C$?J}$O!"$<$R$*5$7Z$K$4;kD0$/$@$5$$$^$;!#(B
-$B!!(B
-$B!!(B
-$B!!"'!!%*%s%i%$%s@bL@2q$N$4;kD0M=Ls$O$3$A$i!!"'(B
-$B!!!!!!(Bhttps://tokiwatei-fc.work/web/
+diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+index d1fdd113450a..26523a2b29c7 100644
+--- a/security/integrity/platform_certs/load_uefi.c
++++ b/security/integrity/platform_certs/load_uefi.c
+@@ -19,7 +19,7 @@
+  * a crash disabling EFI runtime services. The following quirk skips reading
+  * these variables.
+  */
+-static const struct dmi_system_id uefi_skip_cert[] = {
++static const struct dmi_system_id uefi_skip_cert[] __initconst = {
+ 	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro15,1") },
+ 	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro15,2") },
+ 	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro15,3") },
 
-$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
+---
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+change-id: 20260121-uefi-certs-initconst-d5dadc5f01dd
 
-$B!!"#!!$4@bL@$9$k%U%i%s%A%c%$%:%7%9%F%`(B
-$B!!!!(B0$BIC%l%b%s%5%o!<!!@gBf%[%k%b%s>FFy<r>l$H$-$oDb(B
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
-$B!!"#!!3+:EF|Dx(B
-$B!!!&!!(B1$B7n(B27$BF|!J2P!K(B15:00$B!A(B16:30$B!!!w%*%s%i%$%s3+:E(B
-$B!!(B
-$B!!"#!!Dj0w(B
-$B!!!&(B10$B<R8BDj(B
-$B!!(B
-$B!!"#!!;22CHq(B
-$B!!!&ITMW(B
-
-$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
-$BK\%a!<%k$,ITMW$NJ}$K$OBgJQ<:Ni$7$^$7$?!#(B
-$B:#8e$40FFb$,ITMW$J:]$O!"2<5-(BURL$B$K$FG[?.2r=|$r>5$C$F$$$^$9!#(B
-https://tokiwatei-fc.work/mail/
-
-$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
-$B<g:E!'(BGOSSO$B3t<02q<R!J$H$-$oDb%U%i%s%A%c%$%:K\It!K(B
-$BEl5~ET=BC+6h1'ED@nD.(B14-13 $B1'ED@n%S%k%G%#%s%0(B6F
-03-6316-8191$B!!(B
-$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
