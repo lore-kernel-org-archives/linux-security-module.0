@@ -1,74 +1,72 @@
-Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC3C3A9D8C
-	for <linux-security-module@vger.kernel.org>; Wed, 21 Jan 2026 09:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25F733A9F3
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Jan 2026 10:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768988268; cv=none; b=f+qerkEc0pxtUlTTlppz69k0Y8t7+vvrL12YyM6XiM4/t8GRFwlGqIxJW26rN1RzkfBk/FwRZ0GZKbOrc3jnr/emrmNZJM5yH26ThoDawrFCFJQHv7ybHpNIeSe0c+c8oJ+8bw2s5zdYlEPxWsDAzvKdqx0+YAZUbyeIIvqx/fQ=
+	t=1768990771; cv=none; b=BtkOvOHqqHDo0j3gR5FSomp1r7bjCVDD9dxzvQ/rz1RNsEmzJIPB+eniwCz99RjFx+oz46XAVyaolOr/t8b/sMr8KTQ5Ne92EOtBeS0J7nnLwDAJvyOGF3I4ZFNJmWNFPj9aV5nQF7+3MorP9Cbq4dj7g5pMt0Q9vowS2eEe1lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768988268; c=relaxed/simple;
-	bh=3Y5ZT2VCoepAX5qzQunqbwa1vfvEuZu4MagMfD+bqDs=;
+	s=arc-20240116; t=1768990771; c=relaxed/simple;
+	bh=R9hDlIbF8cUzRNWfsyT5ohhBuOde+8fqRk+s/FqZNHg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OmlSzwt9bm+PhMY/8coru2CN9r26roaoLFC+do16lVhM14Mk6Hc4uyyAK/kLizuZ88sZ3tpi4DZGev6od6Zb0wBzQ4IunMYgje37ikpG8QzyrO115WC6HcTXQt3BjKyOfuCq0/LekytgGAP5N9Wog1yqQWFKLaV1Uc3SUTR0eNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3REDpPS+; arc=none smtp.client-ip=209.85.221.65
+	 Content-Type:Content-Disposition:In-Reply-To; b=PsBCet5uKq5nvepX/jE9GJEAnJVQy8mqEqbVwtnK5/BkHBrfZyVVKeGFPlmFZaBDkEDRcq+AxibdbJinly2UJ/mhBFqJ/n1pNgp2h2N9a0B8hsvO7oByvmt6+7nfTA2tx+TTFoQZtZjJPln0XJfCrA3nMQYtU6CpIIGcjc3C/HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=01C7uwgJ; arc=none smtp.client-ip=209.85.128.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3REDpPS+"
-Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-43591b55727so1164280f8f.3
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Jan 2026 01:37:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="01C7uwgJ"
+Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-48039fdc8aeso13230495e9.3
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jan 2026 02:19:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1768988264; x=1769593064; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1768990765; x=1769595565; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=iXqeTKnaesD/s95x6BykBBgnpofIAgHmHNlWTvmzDVU=;
-        b=3REDpPS+D2Njc3+r5+f1S2k+EXMe96UQbPFS5Z+PboUNVF9v+4UPgBn7M1VkZhVeag
-         9Bf661NusvKHvnNBP2ob2NZBsUjkLUZh6PZKLBIu7VqJc348fnYt0ESbjrRxDQqmEVBL
-         adKvappSg3VWdTwDfRFEqnk0dUClhWB6E/sNhzsIWKrf8HC0fKn4CU86YZPsvXB2Nq+B
-         xVDQ+sI5qYUbemp7fwNPh2t3bxRvTRX+YV4hQgUH7snC8IX1BMLv6g7JuliuGE4VX4EV
-         HmCFsw4c+aNz/dG1IGH6sdJUznBXBPyVvYHxNkCtZ5S2IfP22PX7Saccb1kGUHHDGu2/
-         32NA==
+        bh=FcOyoV+nbEcpO/X+XKwwBcFld4GtW09lpc/VejdB43Y=;
+        b=01C7uwgJoo7+3eDFNpfbAXi8G7FDxYr22knuDuEh02b6ZQJx/P03RsnphMR0kmHt8H
+         HSaISSQcRJkk70eYfKybRun+ef6s7StsjzoXDW8IR3HLqNOfj2/VjTv2+/KRlfjatrK4
+         IS7xQsHn8DTFwgaq5zV99yuNy15aIYzPF543x4RjwT7lFoDVYy3+I78DZ1KHEtS8jClE
+         DkHjcrfgfgjM1Rum2AAYCGBDitEjJ2IAa8FxAOHiT/tvBGOO0dnobmjvihy/WXGWCRBc
+         mt521kSU08Qv/xxw+fSC8WhK/4U+5ItBFL1t7HLXKbFYJKQCnp1vUlKgw4sAKriS8C+u
+         BbYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768988264; x=1769593064;
+        d=1e100.net; s=20230601; t=1768990765; x=1769595565;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iXqeTKnaesD/s95x6BykBBgnpofIAgHmHNlWTvmzDVU=;
-        b=rwlvqeEgI7Ow+WpmHfGxBx1t+n7fjChbcTcva2HYT/f5suIAqYsyPHxvsjncy0XBKD
-         v03Rs9BkyQQ3UnJfl00TxSjfjOHQ7F14uf70KJ0nF40DpSPLHgUzhxQu0u+UtQ6CUnjV
-         q0uAtZ93zXHV9oN3jBMelzw8M75uopUKnYc3b++Ux1bJXZKJOLjbIfexBZUZVBw24zoL
-         nWF83Tt/ovbVupt2FGt4i2mnvTTJ/ExFb/Dub5Fz4tC3Xxl0pt6ZGw0reze2jbvsGejt
-         Tl/3yRV9HTlQcl41+/vcGD8cgSW52hOC7NoRF16DZPHQwlA0Ei6aaMG4JdbqDCHbsp0x
-         k+BA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtnDTHbz7tUyFKmlzxgW/AlFGt/DVlxIrob+e52LU2xajDVCbCPzGwA/eCPvUp1TOMdNUYac+E4/AK21fCdl5cpL7oHdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxVYSDmtZ1OSq7zrmV07ChTyikIOv8OGEqnYn4RKLnK6fsH5lk
-	g+tB3aef27k0J5nPhvVFEw/rnRiY9DGv3ATj1FuabFnBeqP8H1kWMwOBVrGbwTvu0p95MXIMVeS
-	yStJTQKtMzvg=
-X-Gm-Gg: AZuq6aI7hLQafwZDYehc2RL9AO6/K+QQAP8HFZldetyQqo2UXMXZEWnLhOOBoEldTZm
-	FABdSzH1hsPKBXmz+zJGNf2Zo7dVo30WliS7jXlxkuafeHK+dpB/xjwqUA/tktMCVMBi5ingyPM
-	KtOHjOJ5pz0/rV54tdbw/bPmLx9Zer5Ia7Dbm0HmujOABJejm09+nRZVWkguf4ME9ITrPPFy1fO
-	LMjtOrXkwhYdWsUr9LHZhOX0ibIPLztovcado1dUWsYKPLowu6N8vlAotm9OqpTbcY7q9zNfjSd
-	cMUkFoOV0umETYmmXPOtUCnajlWAYH+jNt2EwexZ50TxAdrPMfvmuT8ZoXsMO40adP8jfXJELLu
-	NjDyb9Re6pKYM297AGEZk80NaHSUgSdQxEk/yM8PYvy2SKoAhXnNjPBWuJXaO+U4wM8jfFYrDc6
-	6fLclgcIWJSayS9KH5QvGAtN1Il6JicgRFRNSZOrtveQ==
-X-Received: by 2002:a05:6000:2282:b0:431:abb:942f with SMTP id ffacd0b85a97d-4356a083757mr25813356f8f.54.1768988264074;
-        Wed, 21 Jan 2026 01:37:44 -0800 (PST)
+        bh=FcOyoV+nbEcpO/X+XKwwBcFld4GtW09lpc/VejdB43Y=;
+        b=wKdd/LR0huhBddecZSYqegtOVAoIJ9u82J8JNIf17mf6O5RUA6QcNL267m4wE4KWJA
+         7a4/dnyFmfZdn9roBE3Jldy5UYAQP/cuthA451PDALT1qQ7TEe8WHsEs9RFZ447Jp/ps
+         qYRAlmsnGlZep4B9gZD3v92Y7oLVJhshQrBxRg3HY74evsVhaOaAOcYLJURiRYzfCK2B
+         Tk5hQUOkDK9tvfKVeYKGox7/a1KFdPAaAAX9aYxGSjga68W5HD2PJJu2ecWOqzT75LbC
+         Cc+aB5Dxq6qkwVpQEkOrv+2jxNTYrlsLba2TzLg155O3W4obcWeNM9qslieoXSfxjVP5
+         YSfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ0/Foo2Zhe4vODwYTcIZfnm46OditV0VxU7zPmBesoN/8L19df/uj9FUxVm5Db2Lcg6kStv27d9D485uz+QrOz3dGnYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGvPmBVtSahKoxDKuJX8iMRdrOwi1a7AVfB7tRrJyj9UtzPJUC
+	zHYBLQbEjHZysJygbxN4hu0JXTuuNPl1Lh+H2NdLd+u9zaUG76IxzwNP6HNlW5kf7Q==
+X-Gm-Gg: AZuq6aKRcqfJzXiOJiC5kwfV12eSLPYakfT2bBm9eczYK8TJNhvCDIv+IrepG1T50GB
+	hV8v7yYX09OB2EJ4l7rw3TdPMixNGmZ3SMxr6MOTbytqQPlwOCM3rkv6pxqtI1TJweZV01MvTOc
+	Ue4ge/gdD4bnTWiZrVlXSJwB21OG0TE5IlyixHWkY4cXU0c+HiEzK90zKd8xWyajmvet+aR+nL9
+	CQQFUaYHaYO9mKIOLoh1UkGLgiQRc30MdlaGIiGcdzcg2Yqbs5KNZNZOuARED+DX6JLmOV7i4Uh
+	RxnC9DvS8Z35Fbh4xgRoWwCMnamoF6pz477EGllWyzn10IYYNhBEAe6CpXmgV0BZB4Q/Niq/I1D
+	LVUhWQ07eI2fvAQdUCv8Rv9hUC8VFOFIV3264RP+TOJnHncXeowZLDiY+/7ajDR5X93JiBvwqWi
+	minzNWF3HU/PZiXq+GEBb2skgzTav7lfhUjtaufic4Bg==
+X-Received: by 2002:a05:600c:638e:b0:47e:e946:3a59 with SMTP id 5b1f17b1804b1-4803e802282mr69860425e9.34.1768990764894;
+        Wed, 21 Jan 2026 02:19:24 -0800 (PST)
 Received: from google.com ([2a00:79e0:288a:8:4dcd:eab0:72dc:f1a9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43596b62700sm6518170f8f.42.2026.01.21.01.37.42
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43569926ffcsm34838157f8f.18.2026.01.21.02.19.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Jan 2026 01:37:43 -0800 (PST)
-Date: Wed, 21 Jan 2026 10:37:38 +0100
+        Wed, 21 Jan 2026 02:19:24 -0800 (PST)
+Date: Wed, 21 Jan 2026 11:19:18 +0100
 From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
 To: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
 Cc: mic@digikod.net, linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] landlock: Add missing ABI 7 case in documentation
- example
-Message-ID: <aXCeYnLuKMaNmaP0@google.com>
+Subject: Re: [PATCH v2 2/3] landlock: Add comprehensive errata documentation
+Message-ID: <aXCoJs9nTAlrlN_F@google.com>
 References: <20260103002722.1465371-1-samasth.norway.ananda@oracle.com>
- <20260103002722.1465371-2-samasth.norway.ananda@oracle.com>
+ <20260103002722.1465371-3-samasth.norway.ananda@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -78,129 +76,218 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260103002722.1465371-2-samasth.norway.ananda@oracle.com>
+In-Reply-To: <20260103002722.1465371-3-samasth.norway.ananda@oracle.com>
 
-Thanks for the updated documentation!
+Hello!
 
-The comments below are mostly about the structure in the bigger
-document context.  The wording seems good.
+Overall, this looks very good to me, thanks for documenting that!
 
-On Fri, Jan 02, 2026 at 04:27:13PM -0800, Samasth Norway Ananda wrote:
-> Add the missing case 6 and case 7 handling in the ABI version
-> compatibility example to properly handle ABI < 7 kernels.
+Some smaller remarks, mostly on structure.
+
+On Fri, Jan 02, 2026 at 04:27:14PM -0800, Samasth Norway Ananda wrote:
+> Add comprehensive documentation for the Landlock errata mechanism,
+> including how to query errata using LANDLOCK_CREATE_RULESET_ERRATA
+> and links to enhanced detailed descriptions in the kernel source.
 > 
-> Add an optional backwards compatibility section for restrict flags
-> between the case analysis and landlock_restrict_self() call. The main
-> tutorial example remains unchanged with
-> landlock_restrict_self(ruleset_fd, 0) to keep it simple for users who
-> don't need logging flags.
+> Also enhance existing DOC sections in security/landlock/errata/abi-*.h
+> files with Impact sections, and update the code comment in syscalls.c
+> to remind developers to update errata documentation when applicable.
 > 
-> Also fix misleading description of the /usr rule which incorrectly
-> stated it "only allow[s] reading" when the code actually allows both
-> reading and executing (LANDLOCK_ACCESS_FS_EXECUTE is included in
-> allowed_access).
+> This addresses the gap where the kernel implements errata tracking
+> but provides no user-facing documentation on how to use it, while
+> improving the existing technical documentation in-place rather than
+> duplicating it.
 > 
 > Signed-off-by: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
 > ---
->  Documentation/userspace-api/landlock.rst | 35 +++++++++++++++++++++---
->  1 file changed, 31 insertions(+), 4 deletions(-)
+>  Documentation/userspace-api/landlock.rst | 60 +++++++++++++++++++++++-
+>  security/landlock/errata/abi-1.h         |  8 ++++
+>  security/landlock/errata/abi-4.h         |  7 +++
+>  security/landlock/errata/abi-6.h         | 10 ++++
+>  security/landlock/syscalls.c             |  4 +-
+>  5 files changed, 87 insertions(+), 2 deletions(-)
 > 
 > diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index 1d0c2c15c22e..650c7b368561 100644
+> index 650c7b368561..930723fd7c1a 100644
 > --- a/Documentation/userspace-api/landlock.rst
 > +++ b/Documentation/userspace-api/landlock.rst
-> @@ -127,6 +127,12 @@ version, and only use the available subset of access rights:
->          /* Removes LANDLOCK_SCOPE_* for ABI < 6 */
->          ruleset_attr.scoped &= ~(LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
->                                   LANDLOCK_SCOPE_SIGNAL);
-> +        __attribute__((fallthrough));
-> +    case 6:
-> +        /* Removes logging flags for ABI < 7 */
-> +        __attribute__((fallthrough));
-> +    case 7:
-> +        break;
->      }
-
-This code does nothing, and the comment about removing logging flags
-is unclear in that context without pointing to the later section.
-IMHO we can either say that logging flags are removed in the code
-further below, or just leave it out.
-
-The "case 7" case is not necessary.
-
+> @@ -8,7 +8,7 @@ Landlock: unprivileged access control
+>  =====================================
 >  
->  This enables the creation of an inclusive ruleset that will contain our rules.
-> @@ -142,8 +148,9 @@ This enables the creation of an inclusive ruleset that will contain our rules.
+>  :Author: Mickaël Salaün
+> -:Date: March 2025
+> +:Date: January 2026
+>  
+>  The goal of Landlock is to enable restriction of ambient rights (e.g. global
+>  filesystem or network access) for a set of processes.  Because Landlock
+> @@ -458,6 +458,64 @@ system call:
+>          printf("Landlock supports LANDLOCK_ACCESS_FS_REFER.\n");
 >      }
 >  
->  We can now add a new rule to this ruleset thanks to the returned file
-> -descriptor referring to this ruleset.  The rule will only allow reading the
-> -file hierarchy ``/usr``.  Without another rule, write actions would then be
-> +descriptor referring to this ruleset.  The rule will allow reading and
-> +executing files in the ``/usr`` hierarchy.  Without another rule, write actions
-> +and other operations (make_dir, remove_file, etc.) would then be
->  denied by the ruleset.  To add ``/usr`` to the ruleset, we open it with the
->  ``O_PATH`` flag and fill the &struct landlock_path_beneath_attr with this file
->  descriptor.
-> @@ -191,10 +198,30 @@ number for a specific action: HTTPS connections.
->      err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
->                              &net_port, 0);
->  
-> +Backwards compatibility for restrict flags
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If you were to add this header, then the section about prctl() and
-landlock_restrict_self() would also now appear under "Backwards
-compatibility for restrict flags", and that would be confusing.  I
-would recommend to drop the header for now and clarify in the text
-what it is about.  (IMHO, it is visually reasonably easy to understand
-the structure of the different sections, as they always follow the
-structure "text + code snippet".)
-
-If we want to introduce a new level of headers below "Defining and
-enforcing a security policy", we would have to introduce subsections
-for the other steps as well, so that it is more structured.  (If we
-wanted to do that though, it would probably be better to do it in a
-separate commit.)
-
-
-> +When passing a non-zero ``flags`` argument to ``landlock_restrict_self()``, the
-> +following backwards compatibility check needs to be taken into account:
+> +Landlock Errata
+> +---------------
+> +
+> +In addition to ABI versions, Landlock provides an errata mechanism to track
+> +fixes for issues that may affect backwards compatibility or require userspace
+> +awareness. The errata bitmask can be queried using:
 > +
 > +.. code-block:: c
 > +
-> +    /*
-> +     * Desired restriction flags, see ABI version section above.
-                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The ABI section does not talk about the restriction flags much;
-I would have expected that to link to the place where the restriction
-flags are documented, which would be the system call documentation
-from the header?
-
-https://docs.kernel.org/userspace-api/landlock.html#enforcing-a-ruleset
-
-> +     * This value is only an example and differs by use case.
-> +     */
-> +    int restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
-> +    if (abi < 7) {
-> +        /* Clear logging flags unsupported in ABI < 7 */
-> +        restrict_flags &= ~(LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF |
-> +                           LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON |
-> +                           LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF);
+> +    int errata;
+> +
+> +    errata = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_ERRATA);
+> +    if (errata < 0) {
+> +        /* Landlock not available or disabled */
+> +        return 0;
 > +    }
 > +
->  The next step is to restrict the current thread from gaining more privileges
->  (e.g. through a SUID binary).  We now have a ruleset with the first rule
-> -allowing read access to ``/usr`` while denying all other handled accesses for
-> -the filesystem, and a second rule allowing HTTPS connections.
-> +allowing read and execute access to ``/usr`` while denying all other handled
-> +accesses for the filesystem, and a second rule allowing HTTPS connections.
+> +The returned value is a bitmask where each bit represents a specific erratum.
+> +If bit N is set (``errata & (1 << (N - 1))``), then erratum N has been fixed
+> +in the running kernel.
+> +
+> +.. warning::
+> +
+> +   **Most applications should NOT check errata.** In 99.9% of cases, checking
+> +   errata is unnecessary, increases code complexity, and can potentially
+> +   decrease protection if misused. For example, disabling the sandbox when an
+> +   erratum is not fixed could leave the system less secure than using
+> +   Landlock's best-effort protection. When in doubt, ignore errata.
+> +
+> +For detailed technical descriptions of each erratum, including their impact
+> +and when they affect applications, see the DOC sections in the kernel source:
+> +
+> +- **Erratum 1: TCP socket identification (ABI 4)** - See ``erratum_1`` in ``security/landlock/errata/abi-4.h``
+> +- **Erratum 2: Scoped signal handling (ABI 6)** - See ``erratum_2`` in ``security/landlock/errata/abi-6.h``
+> +- **Erratum 3: Disconnected directory handling (ABI 1)** - See ``erratum_3`` in ``security/landlock/errata/abi-1.h``
+
+Is it not possible to include the errata descriptions here through the header?
+
+For instance, further below in this document, we also include the
+system call documentation from the UAPI header, using:
+
+.. kernel-doc:: include/uapi/linux/landlock.h
+    :identifiers: fs_access net_access scope
+
+
+> +
+> +How to Check for Errata
+> +~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +If you determine that your application needs to check for specific errata,
+> +use this pattern:
+> +
+> +.. code-block:: c
+> +
+> +    int errata = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_ERRATA);
+> +    if (errata >= 0) {
+> +        /* Check for specific erratum (1-indexed) */
+> +        if (errata & (1 << (erratum_number - 1))) {
+> +            /* Erratum N is fixed in this kernel */
+> +        } else {
+> +            /* Erratum N is NOT fixed - consider implications for your use case */
+> +        }
+> +    }
+> +
+> +**Important:** Only check errata if your application specifically relies on
+> +behavior that changed due to the fix. The fixes generally make Landlock less
+> +restrictive or more correct, not more restrictive.
+> +
+>  The following kernel interfaces are implicitly supported by the first ABI
+>  version.  Features only supported from a specific version are explicitly marked
+>  as such.
+
+At the end of your added text, there is a similar issue as in the
+other commit, where a section that previously belonged elsewhere is
+now part of your new section by accident.
+
+I think the paragraph "The following kernel interfaces are implicitly
+supported..." is meant to belong to the "Landlock ABI versions"
+section which is above the text that you added.  I would recommend to
+rephrase it slightly, because it also talks about the "following
+kernel interfaces", which are not immediately following any more, e.g.
+
+  "All Landlock kernel interfaces are supported by the first ABI
+  version unless it is explicitly noted in their documentation."
+
+Please feel free to rephrase if a different phrasing seems more
+suitable.
+
+
+> diff --git a/security/landlock/errata/abi-1.h b/security/landlock/errata/abi-1.h
+> index e8a2bff2e5b6..ba9895bf8ce1 100644
+> --- a/security/landlock/errata/abi-1.h
+> +++ b/security/landlock/errata/abi-1.h
+> @@ -12,5 +12,13 @@
+>   * hierarchy down to its filesystem root and those from the related mount point
+>   * hierarchy.  This prevents access right widening through rename or link
+>   * actions.
+> + *
+> + * Impact:
+> + *
+> + * Without this fix, it was possible to widen access rights through rename or
+> + * link actions involving disconnected directories, potentially bypassing
+> + * ``LANDLOCK_ACCESS_FS_REFER`` restrictions. This could allow privilege
+> + * escalation in complex mount scenarios where directories become disconnected
+> + * from their original mount points.
+>   */
+>  LANDLOCK_ERRATUM(3)
+> diff --git a/security/landlock/errata/abi-4.h b/security/landlock/errata/abi-4.h
+> index c052ee54f89f..59574759dc1e 100644
+> --- a/security/landlock/errata/abi-4.h
+> +++ b/security/landlock/errata/abi-4.h
+> @@ -11,5 +11,12 @@
+>   * :manpage:`bind(2)` and :manpage:`connect(2)` operations. This change ensures
+>   * that only TCP sockets are subject to TCP access rights, allowing other
+>   * protocols to operate without unnecessary restrictions.
+> + *
+> + * Impact:
+> + *
+> + * In kernels without this fix, using ``LANDLOCK_ACCESS_NET_BIND_TCP`` or
+> + * ``LANDLOCK_ACCESS_NET_CONNECT_TCP`` would incorrectly restrict non-TCP
+> + * stream protocols (SMC, MPTCP, SCTP), potentially breaking applications
+> + * that rely on these protocols while using Landlock network restrictions.
+>   */
+>  LANDLOCK_ERRATUM(1)
+> diff --git a/security/landlock/errata/abi-6.h b/security/landlock/errata/abi-6.h
+> index df7bc0e1fdf4..a3a48b2bf2db 100644
+> --- a/security/landlock/errata/abi-6.h
+> +++ b/security/landlock/errata/abi-6.h
+> @@ -15,5 +15,15 @@
+>   * interaction between threads of the same process should always be allowed.
+>   * This change ensures that any thread is allowed to send signals to any other
+>   * thread within the same process, regardless of their domain.
+> + *
+> + * Impact:
+> + *
+> + * This problem only manifests when the userspace process is itself using
+> + * :manpage:`libpsx(3)` or an equivalent mechanism to enforce a Landlock policy
+> + * on multiple already-running threads at once. Programs which enforce a
+> + * Landlock policy at startup time and only then become multithreaded are not
+> + * affected. Without this fix, signal scoping could break multi-threaded
+> + * applications that expect threads within the same process to freely signal
+> + * each other.
+>   */
+>  LANDLOCK_ERRATUM(2)
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index 0116e9f93ffe..cf5ba7715916 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -157,9 +157,11 @@ static const struct file_operations ruleset_fops = {
+>  /*
+>   * The Landlock ABI version should be incremented for each new Landlock-related
+>   * user space visible change (e.g. Landlock syscalls).  This version should
+> - * only be incremented once per Linux release, and the date in
+> + * only be incremented once per Linux release. When incrementing, the date in
+>   * Documentation/userspace-api/landlock.rst should be updated to reflect the
+>   * UAPI change.
+> + * If the change involves a fix that requires userspace awareness, also update
+> + * the errata documentation in Documentation/userspace-api/landlock.rst.
+>   */
+>  const int landlock_abi_version = 7;
 >  
+> -- 
+> 2.50.1
+> 
 
-If you are setting a "restrict_flags" variable here, then you would
-also need to use that variable in the call to landlock_restrict_self()
-in the documentation below, so that the different code sections in the
-documentation work together.
-
+The texts all look very good, thank you very much for documenting this!
 —Günther
