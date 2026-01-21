@@ -1,109 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7EE374190
-	for <linux-security-module@vger.kernel.org>; Wed, 21 Jan 2026 16:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463753C1FD2
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Jan 2026 19:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769012753; cv=none; b=c7QQxJImbyT0l6HM5azQdTp9Zt9/KVEBimOni+KWylRLefd9GVj9F6HFKIDgpM8zFL/3wmWl4oEbAl2HnF/oQgVA+J575vGRmwSu3UeaXidmPspRKLekMzNvPjVj37gD86kBRGGDfroXVKeIdo24+ZBw9j7eAMpUdDMX1pWYYAo=
+	t=1769025271; cv=none; b=pofIf87IrE3ymm61QREpJSDcSSR6jbAvroQOaD3rk6Q9Jj8VOlxB8zzD6WWJocWL0dXl1heAgZa6OgCV6M7FQXknjElw8p0hZ4jZeWIukAoqc317mI9GHrefEPh9EzFKS9KYsZAnya0Z5vp02/cfKjGgfAZu1hVrdFHaw2BfJw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769012753; c=relaxed/simple;
-	bh=sDXZ43cuHWu7fDJemSHBPXvLB0TztHzhjoU8+z2DpEU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T0i93j0dO12TvFMY44buyaG8WXVXXdOGId+qjOBBAaHUWhuDN9g0d7LK3RlAJTWEq/fmnCkqRW4DXvT9fBsDBmeN5zgV4qwtTVcKZrP+lIa0YuorSUieHMo2cPWCFHsUBBicdtT6hF+zCX/KEVSSHq7Gy0WfdrP0Z/JZwvqUhEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NlpFZjd6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769025271; c=relaxed/simple;
+	bh=yxb1cCLikrz2Q1MgxwqzQ5lzefaBn1M5G2M/HCfRNgY=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Njy8yp/ELs6NntvLfEPATzO245szTXqRKiVjG3y97lUulCL/HWu3pgK8njVuab48jTPrt5cKsXWLZ7cXEqYvgmzfM+X+0liOlMCPKaGQ4WN8pxkxT2qN+N5npN8DDY1ALBbo8YAJpp8Jd+6WZVMAOPd+uoQ219ovKaQVpxnPFbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUDI/4qh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NlpFZjd6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15F5EC2BCB2
-	for <linux-security-module@vger.kernel.org>; Wed, 21 Jan 2026 16:25:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUDI/4qh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA4B2C19425
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Jan 2026 19:54:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769012753;
-	bh=sDXZ43cuHWu7fDJemSHBPXvLB0TztHzhjoU8+z2DpEU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NlpFZjd6TpgXF01/VordrzlllHPM/gPrPEksnciVTDQuVgDAmAkxxDWX8wqAavSXp
-	 9OHsSfg6KBzHc2nEQ/Tmshv0HgNOByUug3SnVYVM3M/yj37IcUSiBCM9Vc/Pb3ETTA
-	 3kk9uFaPORF6ZrfhphA2zG+1miXIKiNshuKktOfe06PK5I99+kF8KYmbAtMyswaSVe
-	 oOnpg9Mom7Zr7TyPrppBGXMjFRQwfAC+HI+QIoKl+GyiEajQKmiR7qQko+3o0AhLtH
-	 2Ghq/HyOqTD6X0U+VhUqm5YGqnT7/mekg+pRhX50NQkr946rgOozo4CVsh3MMzNHjW
-	 7iX1i2EIawUjQ==
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2a07fac8aa1so13625ad.1
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Jan 2026 08:25:53 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV/1HmoS1tRf7ekB3+GXbLmY7gsDl72dhLbg23areVjYSlF5wbAlg9rhTah2f2bACLjsJgZZuAmjDJRPBEsFgTNjnnQV6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDVSrP8vzlOLbIoiLX1pXA5HL9RRmpGDV8eTSkGFYrETMfeII0
-	eAbQYszf7xok+KFy9/oCt3Rq2OU5PN+POd9KA8J8lZJHpER6p1gIALXqRbrPKri5nvWuOs3J2qm
-	ZgZr0EroSHIniOe36CUrW4bFiPBOVsVI=
-X-Received: by 2002:a17:902:ecc6:b0:2a0:afeb:fbbb with SMTP id
- d9443c01a7336-2a768b7a743mr46677125ad.1.1769012752394; Wed, 21 Jan 2026
- 08:25:52 -0800 (PST)
+	s=k20201202; t=1769025271;
+	bh=yxb1cCLikrz2Q1MgxwqzQ5lzefaBn1M5G2M/HCfRNgY=;
+	h=From:Date:Subject:To:Cc:From;
+	b=GUDI/4qhY0h3SydNMQLjsepsrDn/uXGppXV5x1MgfnxUCxGGVEQ8U0iWoTZ66qgJF
+	 naQW0uRQp5hiUCuTexSRO0qBIt3Qpe1rgBNx8oKA9tYr2NaVhkx10H1kZTtqEc2RLS
+	 ov7VZO8g96t2Q9wr1mENqAGtX9eWozuj+JE2/n1FLGYq5jDiasWd0N0Bln0c3ewUli
+	 PGmdQWu6NF6s5mQLArASgEdaPMTFju0XDzOrzycVqsjsSuS+aSIbab0rEqsH1RWs0m
+	 +36sfA9ecJ2xZxKcxst2K4qJOsjcJ+85YH1oFSUJkY3lVwHjVN8nfWXxHdf6elgezU
+	 JWfdzDBe27Nzw==
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8c655e0ee70so25714085a.3
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jan 2026 11:54:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUpAalikvCnqZvi4Lyd5tphc53Vi/MAozWRjIT5jc6+oVA8naXgQ+ZPzvuCtmaXguZCKarLu8kOzD23Ql5c0YRpXkKkerE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUZVZBDUeuGclgxWIRg9VF3SpIoXvyIvZ+B7TqSzHCwVoNSHJp
+	5X+rbh6+d1DSwqM+3KPXQS7RUe5u9lert7e0UrwWX/1BCG4dQqNAoMtewQ+q7u2zfNG+kdEcJpm
+	l8bG2fHDUHOWEqW2KhHDI6uZprtkE17A=
+X-Received: by 2002:a05:620a:1710:b0:892:ca0f:fc21 with SMTP id
+ af79cd13be357-8c6ccde2807mr822897485a.40.1769025270110; Wed, 21 Jan 2026
+ 11:54:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260115004328.194142-1-coxu@redhat.com> <20260115004328.194142-2-coxu@redhat.com>
- <CAMj1kXFXNo1-pMbo-VZrjQ3TYe1tufebrLr_avL12A0nHMSGnA@mail.gmail.com>
- <8bfa859ed3a4f1cf0db0ab64d8c1c3b24684582a.camel@linux.ibm.com>
- <CAMj1kXHsJNZoUEnbD1y=v4Ftuv9d2c08VckRV7ru4k4P83vZbQ@mail.gmail.com>
- <97b69bc79a5d9246f7a399510908c7b95b2e95e7.camel@linux.ibm.com>
- <CAMj1kXGx4ebaK87W7k0SNUNQnO9+=z1nmYxXC7retmp3OqRRFg@mail.gmail.com>
- <ac5e5e45c12e9b0bda19807e60b06057d74be0b3.camel@linux.ibm.com>
- <aW2i3yacr5TvWU-m@Rk> <1a0b6e5601a673a81f8823de0815f92b7afbeb60.camel@linux.ibm.com>
-In-Reply-To: <1a0b6e5601a673a81f8823de0815f92b7afbeb60.camel@linux.ibm.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 21 Jan 2026 17:25:39 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXFBMSEdRL8FotASbQO3dcfNG0bpp9Vnm5JPn-yjyDr=GA@mail.gmail.com>
-X-Gm-Features: AZwV_QinD8JFxZrBNY-rXjMhWA_acQR-WgojG7fUerVuX5e99sfTa2O6odTmxSw
-Message-ID: <CAMj1kXFBMSEdRL8FotASbQO3dcfNG0bpp9Vnm5JPn-yjyDr=GA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] integrity: Make arch_ima_get_secureboot integrity-wide
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Coiby Xu <coxu@redhat.com>, Dave Hansen <dave.hansen@intel.com>, 
-	linux-integrity@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huaweicloud.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	"moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" <linuxppc-dev@lists.ozlabs.org>, 
-	"open list:S390 ARCHITECTURE" <linux-s390@vger.kernel.org>, 
-	"open list:EXTENSIBLE FIRMWARE INTERFACE (EFI)" <linux-efi@vger.kernel.org>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
-	"open list:KEYS/KEYRINGS_INTEGRITY" <keyrings@vger.kernel.org>
+From: Song Liu <song@kernel.org>
+Date: Wed, 21 Jan 2026 11:54:18 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW4=heDwYEkmRzSnLHDdW=da71qDd1KqUj9sYUOT5uOx3w@mail.gmail.com>
+X-Gm-Features: AZwV_QgsgjhWfk0YsKkFKCqOs7PpeRWozME_nBh0y5sHUbGGKqGmpO-fzfyjEZo
+Message-ID: <CAPhsuW4=heDwYEkmRzSnLHDdW=da71qDd1KqUj9sYUOT5uOx3w@mail.gmail.com>
+Subject: [LSF/MM/BPF TOPIC] Refactor LSM hooks for VFS mount operations
+To: bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	lsf-pc@lists.linux-foundation.org, 
+	linux-security-module <linux-security-module@vger.kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 21 Jan 2026 at 16:41, Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> On Mon, 2026-01-19 at 12:04 +0800, Coiby Xu wrote:
->
-> > diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-> > index 976e75f9b9ba..5dce572192d6 100644
-> > --- a/security/integrity/ima/Kconfig
-> > +++ b/security/integrity/ima/Kconfig
-> > @@ -311,6 +311,7 @@ config IMA_QUEUE_EARLY_BOOT_KEYS
-> >   config IMA_SECURE_AND_OR_TRUSTED_BOOT
-> >          bool
-> >          depends on IMA_ARCH_POLICY
-> > +       depends on INTEGRITY_SECURE_BOOT
-> >
-> >
-> > Another idea is make a tree-wide arch_get_secureboot i.e. to move
-> > current arch_ima_get_secureboot code to arch-specific secure boot
-> > implementation. By this way, there will no need for a new Kconfig option
-> > INTEGRITY_SECURE_BOOT. But I'm not sure if there is any unforeseen
-> > concern.
->
-> Originally basing IMA policy on the secure boot mode was an exception.  As long
-> as making it public isn't an issue any longer, this sounds to me.  Ard, Dave, do
-> you have any issues with replacing arch_ima_get_secureboot() with
-> arch_get_secureboot()?
+Current LSM hooks do not have good coverage for VFS mount operations.
+Specifically, there are the following issues (and maybe more..):
 
-I don't see an issue with that. If there is a legitimate need to
-determine this even if IMA is not enabled, then this makes sense.
+1. security_sb_mount suffers from the TOCTOU bug for bind mount and
+    move mount [1];
+2. There is not sufficient coverage for new mount syscalls (open_tree, fspick,
+    etc.) [2].
+
+A key consideration of this refactor is to minimize lock contention, especially
+around namespace_sem.
+
+I also want to discuss what features in the kernel side (kfuncs,
+iterators, etc.)
+are needed to enable reliable monitoring of mount operations in BPF LSM.
+
+Thanks,
+Song
+
+PS: I am not sure whether other folks are already working on it. I will prepare
+some RFC patches before the conference if I don't see other proposals.
+
+[1] https://lore.kernel.org/bpf/20251130064609.GR3538@ZenIV/
+[2] https://lore.kernel.org/linux-security-module/20250711-pfirsich-worum-c408f9a14b13@brauner/
