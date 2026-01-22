@@ -1,99 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51163904D2;
-	Thu, 22 Jan 2026 03:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9F135EDBB;
+	Thu, 22 Jan 2026 06:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769052453; cv=none; b=mnL0qOIlpx2X3gyPmta/jOqwZCKpUINhWzV+IhsXWAhDDzGftcVs31YURAXdcct6lhgROJq8AW/JPu1RGnjd24jm+8uhjDW5uyu+c2jAIi969f0lIVLLwJTjQYR+/C651zwBfu9wCT0V36CGb2j/bRZzOlVos1KyEg62TKzV5Ss=
+	t=1769063451; cv=none; b=bjuIfjRhg1zmXzIxHK6dW9NUQojvw/8jIYtLjNIu3BZ8f1WgJ5lpKiWNAjysGnio5lQtOaBntG3GpGLLHcgM7txfsydRQYbnD+Xl6Wxo0fW5Oo2JRRsesSmRmmAOR5tjZyONrUhkJigT9FpkR7HLvoLjw7wV6qFj/Q0ZGUeOjlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769052453; c=relaxed/simple;
-	bh=Y/3pPodyEl+yDTvYSlwrBE6jK/FnjEX2M2Klb6SJ7/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kPayxFXDIwu7ngxQD+5loHRGrzwHDw+r4feC9wQt0wb3yvQ85HfvcDfo3kieou4rA/M15rSpivCBNlI/mgmVuWpgyy49sNzRqXsT/4M20KvAqB0HzWU6BdXy8hkkFdRbVHzJbF7N+MDnYg3kRB6ai0oVdEecWH6PNL119mFbaGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6lhlPVb; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6lhlPVb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADB3AC116C6;
-	Thu, 22 Jan 2026 03:27:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769052452;
-	bh=Y/3pPodyEl+yDTvYSlwrBE6jK/FnjEX2M2Klb6SJ7/A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=k6lhlPVbyUsyNOMIwjCknuIW8kj1Pmz66UKqWq4lPQkf6n1iL5Sa1lyjONH4kYQ5x
-	 vI9f5ziiGEdMOFGZRURsyf1Gx9CkXdxO8vlru7U3mPwRcyR03gHDzQV3j/ehjqfBu0
-	 EkTeZv+BMgfjEB7fUbbB9xWwv7OugxKgmuHfdLZNBrBNLUYsbcBOpcivHfBU35oFcu
-	 yNBxNgU3syqMy8LVE7lbftDHjKGLWW+pGMO5G6yYY5NCJG23wR5a3n6Yc5TAIE51Qv
-	 uh1IgFMsOMRZiqTfyS/61wlSA5PzpTozDMPcYNTOwJdGQozn5Qmb/T03Q7cujbufJJ
-	 TEcHVgdxGdSxQ==
-Date: Wed, 21 Jan 2026 19:27:29 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?= <thomas.weissschuh@linutronix.de>
-Cc: Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima
- <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn
- <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, Simon Horman
- <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, Matthieu Baerts
- <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>, Geliang Tang
- <geliang@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?=
- <mic@digikod.net>, =?UTF-8?B?R8O8bnRoZXI=?= Noack <gnoack@google.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh
- <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-api@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- linux-kselftest@vger.kernel.org, mptcp@lists.linux.dev,
- linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
- libc-alpha@sourceware.org, Carlos O'Donell <carlos@redhat.com>, Adhemerval
- Zanella <adhemerval.zanella@linaro.org>, Rich Felker <dalias@libc.org>,
- klibc@zytor.com, Florian Weimer <fweimer@redhat.com>
-Subject: Re: [PATCH net-next v2 0/4] net: uapi: Provide an UAPI definition
- of 'struct sockaddr'
-Message-ID: <20260121192729.2095aa25@kernel.org>
-In-Reply-To: <20260120-uapi-sockaddr-v2-0-63c319111cf6@linutronix.de>
-References: <20260120-uapi-sockaddr-v2-0-63c319111cf6@linutronix.de>
+	s=arc-20240116; t=1769063451; c=relaxed/simple;
+	bh=gI4VneopsdqVesCDKepfvDU9rL2mj/n7kdeCVIu3J5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IH86OUqR9rVBs1BLRs7iILCjpUKm8EYvqAU/Vcju5xzxMrUvlBPpSKq7lVi7F/bWOFqYsAtvm27esb0jfukmiJkSEwGKYrwPVgzh1IbZ6hZwvUsOUE+OXZoi0+Vf2Vw15vDn9oLj9W+bufAqPmtPunYursWKrg1yU4doeQeM+Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id F0E59227AA8; Thu, 22 Jan 2026 07:30:42 +0100 (CET)
+Date: Thu, 22 Jan 2026 07:30:42 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Christoph Hellwig <hch@lst.de>, Marco Elver <elver@google.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Bart Van Assche <bvanassche@acm.org>, kasan-dev@googlegroups.com,
+	llvm@lists.linux.dev, linux-crypto@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH tip/locking/core 0/6] compiler-context-analysis: Scoped
+ init guards
+Message-ID: <20260122063042.GA24452@lst.de>
+References: <20260119094029.1344361-1-elver@google.com> <20260120072401.GA5905@lst.de> <20260120105211.GW830755@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260120105211.GW830755@noisy.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, 20 Jan 2026 15:10:30 +0100 Thomas Wei=C3=9Fschuh wrote:
-> Various UAPI headers reference 'struct sockaddr'. Currently the
-> definition of this struct is pulled in from the libc header
-> sys/socket.h. This is problematic as it introduces a dependency
-> on a full userspace toolchain.
->=20
-> Add a definition of 'struct sockaddr' to the UAPI headers.
-> Before that, reorder some problematic header inclusions in the selftests.
+On Tue, Jan 20, 2026 at 11:52:11AM +0100, Peter Zijlstra wrote:
+> > So I think the first step is to avoid implying the safety of guarded
+> > member access by initialing the lock.  We then need to think how to
+> > express they are save, which would probably require explicit annotation
+> > unless we can come up with a scheme that makes these accesses fine
+> > before the mutex_init in a magic way.
+> 
+> But that is exactly what these patches do!
+> 
+> Note that the current state of things (tip/locking/core,next) is that
+> mutex_init() is 'special'. And I agree with you that that is quite
+> horrible.
+> 
+> Now, these patches, specifically patch 6, removes this implied
+> horribleness.
+> 
+> The alternative is an explicit annotation -- as you suggest.
+> 
+> 
+> So given something like:
+> 
+> struct my_obj {
+> 	struct mutex	mutex;
+> 	int		data __guarded_by(&mutex);
+> 	...
+> };
+> 
+> 
+> tip/locking/core,next:
+> 
+> init_my_obj(struct my_obj *obj)
+> {
+> 	mutex_init(&obj->mutex); // implies obj->mutex is taken until end of function
+> 	obj->data = FOO;	 // OK, because &obj->mutex 'held'
+> 	...
+> }
+> 
+> And per these patches that will no longer be true. So if you apply just
+> patch 6, which removes this implied behaviour, you get a compile fail.
+> Not good!
+> 
+> So patches 1-5 introduces alternatives.
+> 
+> So your preferred solution:
+> 
+> hch_my_obj(struct my_obj *obj)
+> {
+> 	mutex_init(&obj->mutex);
+> 	mutex_lock(&obj->mutex); // actually acquires lock
+> 	obj->data = FOO;
+> 	...
+> }
+> 
+> is perfectly fine and will work. But not everybody wants this. For the
+> people that only need to init the data fields and don't care about the
+> lock state we get:
+> 
+> init_my_obj(struct my_obj *obj)
+> {
+> 	guard(mutex_init)(&obj->mutex); // initializes mutex and considers lock
+> 					// held until end of function
+> 	obj->data = FOO;
+> 	...
+> }
 
->  include/linux/socket.h                             | 10 ----------
->  include/uapi/linux/if.h                            |  4 ----
->  include/uapi/linux/libc-compat.h                   | 12 ++++++++++++
->  include/uapi/linux/socket.h                        | 14 ++++++++++++++
->  samples/bpf/xdp_adjust_tail_user.c                 |  6 ++++--
->  samples/bpf/xdp_fwd_user.c                         |  7 ++++---
->  samples/bpf/xdp_router_ipv4_user.c                 |  6 +++---
->  samples/bpf/xdp_sample_user.c                      | 15 ++++++++-------
->  samples/bpf/xdp_tx_iptunnel_user.c                 |  4 ++--
->  tools/testing/selftests/landlock/audit.h           |  7 ++++---
->  tools/testing/selftests/net/af_unix/diag_uid.c     |  9 +++++----
->  tools/testing/selftests/net/busy_poller.c          |  3 ++-
->  tools/testing/selftests/net/mptcp/mptcp_diag.c     | 11 ++++++-----
->  tools/testing/selftests/net/nettest.c              |  4 ++--
->  tools/testing/selftests/net/tcp_ao/icmps-discard.c |  6 +++---
->  tools/testing/selftests/net/tcp_ao/lib/netlink.c   |  9 +++++----
->  tools/testing/selftests/net/tun.c                  |  5 +++--
->  17 files changed, 77 insertions(+), 55 deletions(-)
+And this is just as bad as the original version, except it is now
+even more obfuscated.
 
-Are all those selftests / samples getting broken by this patch set?
+> And for the people that *reaaaaaly* hate guards, it is possible to write
+> something like:
+> 
+> ugly_my_obj(struct my_obj *obj)
+> {
+> 	mutex_init(&obj->mutex);
+> 	__acquire_ctx_lock(&obj->mutex);
+> 	obj->data = FOO;
+> 	...
+> 	__release_ctx_lock(&obj->mutex);
+> 
+> 	mutex_lock(&obj->lock);
+> 	...
 
-I understand that we should avoid libc dependencies in uAPI but at
-least speaking for networking - building selftests without libc is..
-not a practical proposition?
+That's better.  What would be even better for everyone would be:
+
+	mutex_prepare(&obj->mutex); /* acquire, but with a nice name */
+	obj->data = FOO;
+	mutex_init_prepared(&obj->mutex); /* release, barrier, actual init */
+
+	mutex_lock(&obj->mutex); /* IFF needed only */
+
