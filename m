@@ -1,126 +1,130 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADA32E0413;
-	Thu, 22 Jan 2026 08:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881D92E0413
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 08:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769070262; cv=none; b=u0oqaIaFPoqCsUdNeSwiFtac8wR/k8D5uiE33vlPsaZNWheyZlq/zUKcaGo23INe3kJplRZhQcSIzD1QTObZZf8+cO6+LRL3ACctlZSZhdq/s+lAZ/9UNzKyaqXXp4+g5+4FNlWGAni8FT1I98mJ01tsMn4TV8glC1IdTWRxWBA=
+	t=1769070268; cv=none; b=AGw/+0QrjzaaG+7frVF3TOIb8Qw+K037sC0YY7Y7K3K5YLMHB0Mm9pmtti7a4Dg1/5DuTkjxs1tP3xR4qmGSqL4CfokL6Ls8jvfmAYu0op9jGNChJbhM3n9q1skqWFTDFknsiW+RuUWkc7tYiI2BJnAL7iRf0iuaEXJXMVkkyqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769070262; c=relaxed/simple;
-	bh=OctmKsbB8Gsigmr5VTmRPUYlLVO98zXW8Lq6Wh4hPJQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i3S/9ucdu7V08auJXNyIo6uGJQsK36dCGXwXJTpj5U2J8GIYt3ojurnh0Yhe00jqJ66eBELg023ruQNvspw+ObBb2iro1ZNTiWIf5rUJyRInv6u7Vb2shTvF9W5rlj2yhY4CEtmhFCMCipZsTN4wIP1J/yivmXrg7XhCuqcKKB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dxYWt0GqQz1HBLc;
-	Thu, 22 Jan 2026 16:05:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 1AB614056C;
-	Thu, 22 Jan 2026 16:07:42 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwC38gTF2nFpYGxqAg--.21556S2;
-	Thu, 22 Jan 2026 09:07:41 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH] evm: Use ordered xattrs list to calculate HMAC in evm_init_hmac()
-Date: Thu, 22 Jan 2026 09:07:17 +0100
-Message-ID: <20260122080717.1772063-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1769070268; c=relaxed/simple;
+	bh=DiTutNirX4RvIWPEBcfDzYAqoKEhxeIszskS8Lw4n8c=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kYPE6YEnuyeX/eVEhhKd+IjaCJEGHxam9DNpiJa8KZzGa9UyFk/eJwOmV90cLVpQs35TxdwBZcdZqxdPyEmT9Y00dYlPsQW1lUqe3gI5cAQOalFfxo8NLoUmvOsTxGYQvael8blkMjfa0xvfNlssbEedlcZZebS+sdJ/l/oIy1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 60M8ONLa081376;
+	Thu, 22 Jan 2026 17:24:23 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 60M8OMNw081373
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 22 Jan 2026 17:24:22 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <287edf7f-85fb-46c3-9c70-c8ec7014a0db@I-love.SAKURA.ne.jp>
+Date: Thu, 22 Jan 2026 17:24:22 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwC38gTF2nFpYGxqAg--.21556S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tw4fAFy5Zr4kJw43ArWxXrb_yoW8KF15pF
-	W5Kay7Jrn5JF48GFZ3ta18u34a9rW8Cr4Ygr1kAr10yFn8Cr1IvryxAr1ruF98XrWkArn5
-	tw4jvw15Zwn0q3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Jr0_Gr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kK
-	e7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
-	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v2
-	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBGlxl5gKPgAAsn
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xfrm: force flush upon NETDEV_UNREGISTER event
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Aviad Yehezkel <aviadye@mellnaox.com>, Aviv Heller <avivh@mellanox.com>,
+        Boris Pismenny <borisp@mellanox.com>,
+        "David S. Miller"
+ <davem@davemloft.net>,
+        Florian Westphal <fw@strlen.de>, Guy Shapiro <guysh@mellanox.com>,
+        Ilan Tayari <ilant@mellanox.com>,
+        Kristian Evensen <kristian.evensen@gmail.com>,
+        Leon Romanovsky <leon@kernel.org>, Leon Romanovsky <leonro@nvidia.com>,
+        Raed Salem <raeds@mellanox.com>, Raed Salem <raeds@nvidia.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Yossi Kuperman <yossiku@mellanox.com>
+Cc: Network Development <netdev@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+References: <924f9cf5-599a-48f0-b1e3-94cd971965b0@I-love.SAKURA.ne.jp>
+ <537343f7-c580-43b0-9ad2-691701b9fb8e@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <537343f7-c580-43b0-9ad2-691701b9fb8e@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav402.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+A debug patch in linux-next-20260121
+( https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit?id=fc0f090e41e652d158f946c616cdd82baed3c8f4 )
+has demonstrated that calling xfrm_dev_state_flush()/xfrm_dev_policy_flush()
+when (dev->features & NETIF_F_HW_ESP) == 0 helps releasing "struct net_device" refcount.
 
-Commit 8e5d9f916a96 ("smack: deduplicate xattr setting in
-smack_inode_init_security()") introduced xattr_dupval() to simplify setting
-the xattrs to be provided by the SMACK LSM on inode creation, in the
-smack_inode_init_security().
+  unregister_netdevice: waiting for netdevsim0 to become free. Usage count = 2
+  ref_tracker: netdev@ffff88805d3c0628 has 1/1 users at
+       xfrm_dev_state_add+0x6f4/0xc40 net/xfrm/xfrm_device.c:316
+       xfrm_state_construct net/xfrm/xfrm_user.c:986 [inline]
+       xfrm_add_sa+0x34ca/0x4230 net/xfrm/xfrm_user.c:1022
+       xfrm_user_rcv_msg+0x746/0xb20 net/xfrm/xfrm_user.c:3507
+       netlink_rcv_skb+0x232/0x4b0 net/netlink/af_netlink.c:2550
+       xfrm_netlink_rcv+0x79/0x90 net/xfrm/xfrm_user.c:3529
+       netlink_unicast_kernel net/netlink/af_netlink.c:1318 [inline]
+       netlink_unicast+0x80f/0x9b0 net/netlink/af_netlink.c:1344
+       netlink_sendmsg+0x813/0xb40 net/netlink/af_netlink.c:1894
+       sock_sendmsg_nosec+0x18f/0x1d0 net/socket.c:737
+       __sock_sendmsg net/socket.c:752 [inline]
+       ____sys_sendmsg+0x589/0x8c0 net/socket.c:2610
+       ___sys_sendmsg+0x2a5/0x360 net/socket.c:2664
+       __sys_sendmsg net/socket.c:2696 [inline]
+       __do_sys_sendmsg net/socket.c:2701 [inline]
+       __se_sys_sendmsg net/socket.c:2699 [inline]
+       __x64_sys_sendmsg+0x1bd/0x2a0 net/socket.c:2699
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xe2/0xf80 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+  
+  infiniband: balance for netdevsim0@ib_gid_table_entry is 0
+  ***** Releasing 1 refcount on 0000000000000000
+  ***** Refcount for netdevsim0 changed from 2 to 1
 
-Unfortunately, moving lsm_get_xattr_slot() caused the SMACK64TRANSMUTE
-xattr be added in the array of new xattrs before SMACK64. This causes the
-HMAC of xattrs calculated by evm_init_hmac() for new files to diverge from
-the one calculated by both evm_calc_hmac_or_hash() and evmctl.
+The bond_master_netdev_event(NETDEV_UNREGISTER) case is already calling
+xfrm_dev_state_flush() without checking (dev->features & NETIF_F_HW_ESP) != 0.
+Therefore, I assume that (dev->features & NETIF_F_HW_ESP) != 0 check in
+xfrm_dev_down() is wrong, and I would like to propose
 
-evm_init_hmac() calculates the HMAC of the xattrs of new files based on the
-order LSMs provide them, while evm_calc_hmac_or_hash() and evmctl calculate
-the HMAC based on an ordered xattrs list.
-
-Fix the issue by making evm_init_hmac() calculate the HMAC of new files
-based on the ordered xattrs list too.
-
-Fixes: 8e5d9f916a96 ("smack: deduplicate xattr setting in smack_inode_init_security()")
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/evm/evm_crypto.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index a5e730ffda57..5a8cef45bacf 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -401,6 +401,7 @@ int evm_init_hmac(struct inode *inode, const struct xattr *xattrs,
+ static int xfrm_dev_down(struct net_device *dev)
  {
- 	struct shash_desc *desc;
- 	const struct xattr *xattr;
-+	struct xattr_list *xattr_entry;
+- 	if (dev->features & NETIF_F_HW_ESP) {
+-		xfrm_dev_state_flush(dev_net(dev), dev, true);
+-		xfrm_dev_policy_flush(dev_net(dev), dev, true);
+- 	}
++	xfrm_dev_state_flush(dev_net(dev), dev, true);
++	xfrm_dev_policy_flush(dev_net(dev), dev, true);
  
- 	desc = init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
- 	if (IS_ERR(desc)) {
-@@ -408,11 +409,16 @@ int evm_init_hmac(struct inode *inode, const struct xattr *xattrs,
- 		return PTR_ERR(desc);
- 	}
- 
--	for (xattr = xattrs; xattr->name; xattr++) {
--		if (!evm_protected_xattr(xattr->name))
--			continue;
-+	list_for_each_entry_lockless(xattr_entry, &evm_config_xattrnames,
-+				     list) {
-+		for (xattr = xattrs; xattr->name; xattr++) {
-+			if (strcmp(xattr_entry->name +
-+				   XATTR_SECURITY_PREFIX_LEN, xattr->name) != 0)
-+				continue;
- 
--		crypto_shash_update(desc, xattr->value, xattr->value_len);
-+			crypto_shash_update(desc, xattr->value,
-+					    xattr->value_len);
-+		}
- 	}
- 
- 	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
--- 
-2.43.0
+ 	return NOTIFY_DONE;
+ }
+
+change as a fix for "unregister_netdevice: waiting for netdevsim0 to become free. Usage count = 2"
+problem.
+
+
+
+But I have a question regarding security_xfrm_state_delete()/security_xfrm_policy_delete().
+
+xfrm_dev_state_flush_secctx_check() calls security_xfrm_state_delete() which can make
+xfrm_dev_state_flush() no-op by returning an error value.
+xfrm_dev_policy_flush_secctx_check() calls security_xfrm_policy_delete() which can make
+xfrm_dev_policy_flush() no-op by returning an error value.
+
+Since xfrm_dev_state_flush()/xfrm_dev_policy_flush() are called by NETDEV_UNREGISTER
+event (which is a signal for releasing all resources that prevent "struct net_device"
+references from dropping), making xfrm_dev_state_flush()/xfrm_dev_policy_flush() no-op (by
+allowing security_xfrm_state_delete()/security_xfrm_policy_delete() to return an error) is
+a denial-of-service bug.
+
+Therefore, I wonder what are security_xfrm_state_delete() and security_xfrm_policy_delete()
+for. Can I kill xfrm_dev_state_flush_secctx_check() and xfrm_dev_policy_flush_secctx_check() ?
 
