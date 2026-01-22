@@ -1,158 +1,101 @@
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FA630CDAB
-	for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 00:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.172
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769042937; cv=pass; b=hU5V6yd+RhcoMheZtuZIZTjxWo8bohsAn16gp+XLu8MIbkeLClwHWbc042KYpd6O4j+EUEf3Dzn+2mvYX4vGFsfV1siWNOq0cdAOAkyr3wDCa9/cSFFZi8QLZ6KK/iTKiHDvpr2UD/jXVYi++1UWTy4KzYl7jSh4C1PgN9Wbszk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769042937; c=relaxed/simple;
-	bh=STgDya/rrELwxBw/nR4uv/MTvvetLae1Em5BNoXv234=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A1E3AA185
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 03:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769050859; cv=none; b=jgGoiqm621RIbcSPGttwoSE4DBDAGRdiw5E7ynT14waXTupTGcz74yUPvSb1Go8rFGKVlOCAcUxoBdtlreSm7JHpm/FhniqMMwPH5476a0v9VeiBYkVldSXCiMc7MV5Y4vbW3GgviFBL0si3sj/6EYtLsRuiZcfESki9Q/wSsxU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769050859; c=relaxed/simple;
+	bh=gls6KrMY9MoZr6IyIOp94QaEs8EmwWve6vYwp5J4ymk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e/Wi3R3hnAm0goSI+uj5w+m3yFVk6PlgtmBB9IZyxkqEBV/XmsULkaty1e53cgrdZhL90MBVTdPkN6EANg4e2phZJu5E7ueaN2QuiqvNGlMphvq2vv2uo+KUYvzXdWgmM43HjuxS2UZY7iJ0XyHGRN55rBWMx24xvLh0tYn9K0M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=drxRcnqe; arc=pass smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=p0PqO413p80SKGqpWxG5uH+CENdDNQq4+rfbJnNMsVadd8DsFATzgFLruuVVrpNgC4wpkOYo+zUYmrFHmo1Fvcx0fPH6OSkjzjXLOaTCo9uMCfzWZh2jdKiT5+YOPQ1C83gJqPYlD3IpItyo0K7hsvhx/M3AOdXXiRAyxrs463o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dIwX65XU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="drxRcnqe"
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b6ce6d1d3dcso134361a12.3
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Jan 2026 16:48:55 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769042935; cv=none;
-        d=google.com; s=arc-20240605;
-        b=GQ/+Iqm1apCFRPdlrXp5JC3hM5GYjCmXWzyHss97s6ZHEFFJPu/LZEmAS8rwdF2w6b
-         8IesQ5t1eU+EdUyopYO/EzWXIGrPeG6Qkz7KcvErz6FesAE+d8fOTjVGGOjPDt0t8l+j
-         ClFnlQBvuNrtv885XQUr1DIlka/aB/yRmj9M03IuuVNm5aifxZX8VPTkMuIjJ2CX0HMy
-         LjHl4a/BPoqAZtaPSTDMTkJ1cPFTROHq/x0bX3m7DzIABDkMXG4xukvwM6nmxLKeoKcE
-         lVpkMzxsDVE6pB6sfdsY1I6Q8ajqkd3FfNOQLIppyTMuANJRXfKd/op81zrCi9ePPCEj
-         U5qQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=b5+P2+OzW2g3dFBRbXD1e9SjxU7d32t2ium8U07J7Q0=;
-        fh=FwEnRUhDmZBlQEvta35kaKQV9mRPScikRwUivRVPQuA=;
-        b=W+Sp5vnUp0EQ3myia6fOdX9+5PCXrg+9TeOO0NXZQdDmL2o77wdwARfZXjgusYHSqL
-         uNMplGGhWlbifTQEhxMTKYH4RAw/7Do8soYB++k9FvIs84y8EUCa/f/VVGFMYRoOm8Rl
-         RzeqHQF3wX6RtsH65wS/Uupd7lkfbZTEXMsNr/gK2iMFS2wMHl0UXmhY9xQnmHaoUim0
-         26BSGBf5UFI1GRdz2ikjed3cqPsuFoK/eTFo4ClDUXYGaaP1DAhBWrFcD8KkdV4C6Ypz
-         WOJHQoiJsJ306jhIJN55eEcO8SOML9jxFNKwn+oIlpFnysvEEVzcQ/a/dzaqI/fWMP1I
-         Sd6A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1769042935; x=1769647735; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b5+P2+OzW2g3dFBRbXD1e9SjxU7d32t2ium8U07J7Q0=;
-        b=drxRcnqepRaArCettT96atkacfAjZ1RM+kkwCB8P9zmZRgPzmAhKVDd18MuCKqOaa0
-         oNWY0mDF2Tk3kskIDbiuXogi+K8DpwwEy9iZRoVhGAArS6VAFqXA4W6F52vKhLVJjsMk
-         U++TRMkd55LsVJtNAB2np0epiZxFBs9Vs/YiiOlK/s7R6j7L4LLQ0CHbipFSpnebmwXv
-         SAvUNlecoJLiOW0Scfx28yOJpUniNPsDFP+1agf6qP4I6/oITFAppR8y+VDkqxN3QOzg
-         FblmyFnM2WXGZFHIHqtg7I8/l2uWB+dkfLp0HOasF26BMKlWS9GkwWSrcupb/KfGOxUx
-         Ftnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769042935; x=1769647735;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=b5+P2+OzW2g3dFBRbXD1e9SjxU7d32t2ium8U07J7Q0=;
-        b=Fl1tyP79oLgGf6tW0n8BJ+CkLP7bHIt7UadcwrTUhSzXKDFs6GnR4TlfwP1H27Uhoo
-         71aDufOyLlf1uC0rRDFoF/GVqdcCx/CwAIbO1dj9DMooPCV/UcTYYlTztn0OOWGNjTJN
-         DXliRba+OjgC+dWwcrSiCchkCSE9fqVEzvo3adYGMhKoQxTiRaTQFR1A1BxA57fT+uBE
-         pP9OX1ob/qgJDk5J85ovwjq2/cu0d13wzJjWGw9WB/8bjUtkECMCgpJgSx5iROrltDPN
-         IDqCk1lmLk9n6EUhN/ojftyW3ve8I5bdo6MqrgDm/FLbZHAcxRytqsxGD4PQz/xM35Ca
-         Cymg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4T+6H3v5NBeOF52bojzCWRZPjPQ/qlsGkm8/sZjCkSx7qytVCUtPvlI9jho+nXHfMs2P4+Ynp7uFau1pfVNfN3+2Fzfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ7CSdgqORbXqedsXAWpcCzaxhbju7rJ9Z2YsXMcNisfwmN5YV
-	U//hjbjB8M7SA6tmmRV/Y/7p8cSjYjwzUsucp4WiUPe7q/1/dMVORmkiYlinH/PQjRQ4ysPWA3f
-	C/KIcAJJQ70H71cKtY+fYek/Y+l4W/0+sQPc7NONK
-X-Gm-Gg: AZuq6aIq6R9G+Vvc3uL9Jikji4IBMofO/2JcT/IKrP15vxH+C7RTV++cD/tAjiRA/NF
-	91kCdyRgxE7XkKeF79mFYKaz4Cfgg4bHtFReFXffwbUYyeQGpmX/6cB5V8ixw42JUDvgo7LzheW
-	Wo5rqFPkZP74v3umlpvCrcX23zG1A3gtIKDLtxXmDGaYN4BWxNQgf9Y5JkzW2FQWmQiyDJPJtjc
-	2+cGZrnELgIteImmsw2/EDzdY+xTXTOEpJh0FAovmw15PsGKXp+5saYO26NDmS2qT0P5tA=
-X-Received: by 2002:a17:90b:4f4a:b0:353:2e1:95f6 with SMTP id
- 98e67ed59e1d1-35302e19f6emr3140023a91.32.1769042934569; Wed, 21 Jan 2026
- 16:48:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dIwX65XU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35E9EC19422
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 03:00:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769050859;
+	bh=gls6KrMY9MoZr6IyIOp94QaEs8EmwWve6vYwp5J4ymk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dIwX65XUDIP5f+ikHsYxx4MXWdxGzo9LepVeHKQvk9CAkpspgd+zk6/Mw3h9ld4Rn
+	 zYH8pmjdhnwyCAHLMUDrDgSxd+09xx4KUALagcnu9iUQdlToe/ho/pzu7DcXwh6HnT
+	 7iQWsdP1l4TvZhnXxfQwbW34ft3BU/2fm/glWkquy62r3XHcAh3JXwKZhRfbGF0KzL
+	 K5IBM3faZF+5zis9qDQXOD0Bhw8sn54k/cQlkrJFyGuuF/B3v0wjwdgoQ3p3ykjU+f
+	 z+t0QDtPONmcihkRbuFFRwM6w5vCYGKCAJavUwQcBvgKW/l0NNFrf+BJX09EVjTLs8
+	 nNb5fSVcpHR6w==
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-8946a794e4fso5973086d6.2
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jan 2026 19:00:59 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWC5bYG8eOQjJKdKwP71sYwspsyemxwHBD2jeuS+GVof9jxnFC5MAXRdoyg24F5ocBQ/qaNSyeDyIw4E+eJK44zlIWJ3yc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRCYo0ebk/QXFj0FkX1OLFXqYpy5du9WCnERpsm9UgwEkR201M
+	Xwg4IVo1r7dSOda8SjTsrkzszRlcrLKgXTneccoS5xzNNkEPyRpB3BeYrtyTb/gTUP8uvWE85BX
+	LNqrS78Ki9JdE7n/IRCw6+sBnOhDfh0w=
+X-Received: by 2002:ad4:5fcc:0:b0:894:6d3c:224c with SMTP id
+ 6a1803df08f44-8946d3c38d9mr110250046d6.13.1769050858324; Wed, 21 Jan 2026
+ 19:00:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhR4d7WXOVR7Y9ee2+=-t2nThzOo-ySMB+5x_87LfBJbZw@mail.gmail.com>
- <20260120155738.982771-1-whrosenb@asu.edu>
-In-Reply-To: <20260120155738.982771-1-whrosenb@asu.edu>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 21 Jan 2026 19:48:43 -0500
-X-Gm-Features: AZwV_Qi1HCix4xsckn9CD1qWcc2lwKyi1WtdhvcHnLqnNUUcK8FpFKmTthwIsB4
-Message-ID: <CAHC9VhRbZoApQE07giMxd5j3ri99uMuN8SQF7d6AgOZEkxuQJg@mail.gmail.com>
-Subject: Re: [PATCH] cipso: harden use of skb_cow() in cipso_v4_skbuff_setattr()
-To: Will Rosenberg <whrosenb@asu.edu>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CAPhsuW4=heDwYEkmRzSnLHDdW=da71qDd1KqUj9sYUOT5uOx3w@mail.gmail.com>
+ <CAHC9VhRU_vtN4oXHVuT4Tt=WFP=4FrKc=i8t=xDz+bamUG7r6g@mail.gmail.com>
+In-Reply-To: <CAHC9VhRU_vtN4oXHVuT4Tt=WFP=4FrKc=i8t=xDz+bamUG7r6g@mail.gmail.com>
+From: Song Liu <song@kernel.org>
+Date: Wed, 21 Jan 2026 19:00:47 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW6vCrN=k6xEuPf+tJr6ikH_RwfyaU_Q9DvGg2r2U9y+UA@mail.gmail.com>
+X-Gm-Features: AZwV_Qgo-qjEoC_t1HYBQPgad9dLpsaDnf8VZt7Ye_LR1Q6ggGfcYM7fpBfpXmU
+Message-ID: <CAPhsuW6vCrN=k6xEuPf+tJr6ikH_RwfyaU_Q9DvGg2r2U9y+UA@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Refactor LSM hooks for VFS mount operations
+To: Paul Moore <paul@paul-moore.com>
+Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	lsf-pc@lists.linux-foundation.org, 
+	linux-security-module <linux-security-module@vger.kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 20, 2026 at 10:57=E2=80=AFAM Will Rosenberg <whrosenb@asu.edu> =
-wrote:
->
-> If skb_cow() is passed a headroom <=3D -NET_SKB_PAD, it will trigger a
-> BUG. As a result, use cases should avoid calling with a headroom that
-> is negative to prevent triggering this issue.
->
-> This is the same code pattern fixed in Commit 58fc7342b529 ("ipv6:
-> BUG() in pskb_expand_head() as part of calipso_skbuff_setattr()").
->
-> In cipso_v4_skbuff_setattr(), len_delta can become negative, leading to
-> a negative headroom passed to skb_cow(). However, the BUG is not
-> triggerable because the condition headroom <=3D -NET_SKB_PAD cannot be
-> satisfied due to limits on the IPv4 options header size.
->
-> Avoid potential problems in the future by only using skb_cow() to grow
-> the skb headroom.
->
-> Signed-off-by: Will Rosenberg <whrosenb@asu.edu>
-> ---
->
-> Notes:
->     Given that IPv4 option length should not change,
->     this may not be a worthwhile patch.
->
->     Apologies in advance if this ends up being a waste
->     of time.
->
->  net/ipv4/cipso_ipv4.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+Hi Paul,
 
-I think it's a reasonable thing to do in an effort to avoid future
-problems.  Thanks Will.
-
-Acked-by: Paul Moore <paul@paul-moore.com>
-
-> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-> index 709021197e1c..32b951ebc0c2 100644
-> --- a/net/ipv4/cipso_ipv4.c
-> +++ b/net/ipv4/cipso_ipv4.c
-> @@ -2196,7 +2196,8 @@ int cipso_v4_skbuff_setattr(struct sk_buff *skb,
->         /* if we don't ensure enough headroom we could panic on the skb_p=
-ush()
->          * call below so make sure we have enough, we are also "mangling"=
- the
->          * packet so we should probably do a copy-on-write call anyway */
-> -       ret_val =3D skb_cow(skb, skb_headroom(skb) + len_delta);
-> +       ret_val =3D skb_cow(skb,
-> +                         skb_headroom(skb) + (len_delta > 0 ? len_delta =
-: 0));
->         if (ret_val < 0)
->                 return ret_val;
+On Wed, Jan 21, 2026 at 4:14=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
 >
+> On Wed, Jan 21, 2026 at 4:18=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+> >
+> > Current LSM hooks do not have good coverage for VFS mount operations.
+> > Specifically, there are the following issues (and maybe more..):
 >
-> base-commit: 58bae918d73e3b6cd57d1e39fcf7c75c7dd1a8fe
-> --
-> 2.34.1
+> I don't recall LSM folks normally being invited to LSFMMBPF so it
+> seems like this would be a poor forum to discuss LSM hooks.
 
---=20
-paul-moore.com
+Agreed this might not be the best forum to discuss LSM hooks.
+However, I am not aware of a better forum for in person discussions.
+
+AFAICT, in-tree LSMs have straightforward logics around mount
+monitoring. As long as we get these logic translated properly, I
+don't expect much controversy with in-tree LSMs.
+
+> > PS: I am not sure whether other folks are already working on it. I will=
+ prepare
+> > some RFC patches before the conference if I don't see other proposals.
+>
+> FWIW, I'm not aware of anyone currently working on revising the mount
+> hooks, but it's possible.  Posting a patchset, even an early RFC
+> draft, is always a good way to find out who might be working in the
+> same space :)
+>
+> Posting to the mailing list also has the advantage of reaching
+> everyone who might be interested, whereas discussing this at a
+> conference, especially one that is invite-only, is limiting.
+
+I expect there will be RFCs posted to the mailing list before the
+conference. We will incorporate feedbacks from the mailing list
+to make the discussion more productive at the conference. It is
+totally possible that some patches get accepted before the
+conference, so that we can simply celebrate at the conference. :)
+
+Thanks,
+Song
