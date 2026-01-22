@@ -1,117 +1,100 @@
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1243A34DCEE
-	for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 17:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.172
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769103715; cv=pass; b=XqvleFg/XOADxwbxdreZVqyXkE1awY2Hw+Rfkvt1wuyvLHaa9lO1jg6JoKThvGAAiTLSmOe0DMthGjI0zthiQ1Y8Cxgxi70Oyd2EzN00BI0uKAK3vWoBk6MBQggYRqhehsSZGBzwE+DsD3Wi7+BJRbaiyEndfF+gfokYwbkVD5c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769103715; c=relaxed/simple;
-	bh=sDSrH6LAVHSShwvwEW9u/sV8B/uYPx1/SphcZDPIFtk=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDA63D6480
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 23:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769122885; cv=none; b=LhKGz9uEw6OF1pklysaSNSMzqfiSEhuJ39w1RJh1L4rzFWCmtTRkH3gpi7x4ysOB94R7Ul6wYZ2KlvxQhYleV6cGOpII7gFweSHvycsJu66BU5ITlcFaHmDw0xsWsMFBfnXqv/r3mEaCaWtC6MDDGTWz1CLLQJwiabgmCr1kJ9A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769122885; c=relaxed/simple;
+	bh=JlakTW/ze/YnNgpvwbDGQ4KFotr/cPC9MgSPMwySzvw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vvrv71GxVqJolOOLHS3Qu42dNOm7ZDny7SqmAP8UJV3XiRue5ivzcIMLHf0Mk4Lo2ll9bM/kmJagsACXm/A4sDnaJJDz/1lekYLMOhpXSmigkgcudyziYUl41+xl8qq0zW9bXvx/cXqfWKWSDchfPr2cFvGPOWr22UVnt+l1znM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CNiZxReo; arc=pass smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=dXAlQBOdiGrLk3sbwzUe8Rx6/wYYRyDSo6Uu5EamiUBdRsO0C+9VCdFndffpyGjNJ+e/DI49gce1t8KaDYAxxfO4Jkxco/dHUa0rLKQennrqCh1tJqZkueUYGTUGiH7dWmtr6w7tik43aJcXYNnyZIhUeXTbrPdfzVtaplVeb9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mkf1HwUi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CNiZxReo"
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-c551edc745eso564225a12.2
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 09:41:38 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769103695; cv=none;
-        d=google.com; s=arc-20240605;
-        b=dkoXX1oUuWwDmcdnWTBCM7a53Civfy8dFnU+uZsU980cJyzgNj4HwFERNx/2T1fr0V
-         sOqpMpfozmWHnGTGKHEBP4JX07VXgkX+8Kt2gcefWAGYAGg4f2lQaJ+GPkEpRGg75sck
-         0ayDv4n3GpDZqaoD0niMuFdNczkZOjOkU4i+2rtwCPhmjBVbIbdhVoCDYxfMHr1agRRI
-         L9eGbVKLNj1/lKVTlpQDKlxn/1uRGRkf0BapgcWwa6ptPRm2wyXzhfvHYBMDeM6j6Vnf
-         CejehllGfcvhpylA56s91Cyp5qnu0RdTPILL3xNZsYvFz+mxaeUsDwZtyTwcMh8D9mty
-         0KLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=sDSrH6LAVHSShwvwEW9u/sV8B/uYPx1/SphcZDPIFtk=;
-        fh=fXhqCiPq1+y9wC11Xz3gaI6THB/iLJoPpItGJk+mCXg=;
-        b=F3wHZiq8k+beG3FrJJzzKExaX7eGuLsx/dc94VcNWH/CooumPEdBhL96NGFcw5rjq4
-         0gS96aqMUHJ5zC0ZV9ntS+GnJrAFtIARCBpcYIkOkZOTS52dk4w0Z7GrQuKIGmTIs9Nr
-         bF184YOruOu7Fmjb+soKmkYkbu+o6gSlU6OGdsZlHe3cSVjuvr9A0AHYejRk1VoypOAS
-         AKrO/WmEniMYN6kXAf8lwsseK62t1/haV4CxfY7ld1CJ4Fqni6FtfwXHdmScG54VNyZB
-         SmrkR+Y9szQpZRvWrytbwh6ZEfMHh6KUFZB2mMasb9jDsjDFxicfNBhw0Yb0TfhOop1M
-         CUsw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1769103695; x=1769708495; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sDSrH6LAVHSShwvwEW9u/sV8B/uYPx1/SphcZDPIFtk=;
-        b=CNiZxReodS0hOgFKguC4qINegOQIf1UtBphq897chjsoN8XQ28kieTf9KEH1f6hLDV
-         3US7B3K7dlemTFWu9vZN6xH1poxif978Hgl/yJrMz8bY941gAc9fi9I4pyhYLkJ7ZzeD
-         ZoamzdfN09mVkHOY+flS/BS/hI2v9ai0Xj/bVtAZKljoZplhjHgAoivoVHgtvHbmXoAn
-         ToreRzwWBWCKm9PTFlYWl281Iq2AootzEGno5SyR30Oov+7r+Z/rJo+KSqF6J2XJlID8
-         PaIhjg4A/fh0KmhtCFWr8h662FcMpyau7Yg80QzKTEYlO5NDm4tsTB6fG5OMGTpCyjdh
-         yLVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769103695; x=1769708495;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=sDSrH6LAVHSShwvwEW9u/sV8B/uYPx1/SphcZDPIFtk=;
-        b=AUJrSvcXKoAcqP8Aj2hWDw7zTRnWHijH6ZfZTqlTVHM8K5bh8Opw1Sthdkq8iUbPsr
-         dQAkYV8bEkTHVKIR0qU4MUX7QXxrzbLnl7d6ZHrPRgi+thJiyQhMvLLBqvxHj0wZ5KRQ
-         NoWema2EWqOdx9ajDmTfcQ9fmBXKMRLSHqtjuuKpL++QrAwNMowtH22n64NtgN+Kr+ZH
-         6syYLWciacPX2rRBtzTJbXQffS0l8UAZSMtZoXzXbcZ/1gkf4tTUqPwdFshwqoVDmOWY
-         jIqeGP/QQHAG9xcgKmhy1XsNjF5wI6N4dKgfmWjpdvof3Dv0rePmD1H29UqEHBOe67Rl
-         2cAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbeIe7d151cCfAxNBVh8W2hfKZLqICKm+1piRpFT+X/NSV0wHvYMG96KDC08YDPeVn8r67VY6/NOablayYezHZf6EBh08=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7nBqBviyQgmp0ffI0RY/h2MRHt88La77sPDEMLZm6aHV7Odcs
-	w1V7ZIRvYMYorUdHJLRvxUfkoiuQFyLoVhrU4BsjloDY3Z/S7ujbL5s9p4lOMsymBzdZnGS98zb
-	llL/B9nRRclII6zddZC8LyNPGVItTcMa9ZjSuBkNM
-X-Gm-Gg: AZuq6aJfBGuH6hfDoSwBITxpFjTZLlQvs/l18C2xFuwofz6VEoD9wCW2XjusdHAzrQZ
-	lTcxGmSpA9LXSzyNtYoG8KwPDyo9D46/ie+eAweXH9tq3k4zc8oSiP8nRUFkbh0QNWZbkSr6Bhw
-	96RwRiSm4TeUTYErTSbNcqq9q7ywdZM5M+o/q3dfn/keMzHkxwakk/wzaqXX7d2RTJ77lRmcpoH
-	KTVtOQr5zvVxCpbr+Yq7L0MMd+e66KOq5rHhu/yLSpuEqwvG/N2cdsZgvyUqjGw9DXOA5uu6Kfq
-	/K/dDQ==
-X-Received: by 2002:a17:90b:3a4f:b0:32e:3829:a71c with SMTP id
- 98e67ed59e1d1-35367603595mr286888a91.16.1769103694733; Thu, 22 Jan 2026
- 09:41:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mkf1HwUi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE872C2BC87
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 23:01:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769122884;
+	bh=JlakTW/ze/YnNgpvwbDGQ4KFotr/cPC9MgSPMwySzvw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mkf1HwUiuxyrQhz8NELuScgiYASWk+bnAhjjlgFrucJzpTrDVZmS7YvrAQMnf2Ac4
+	 HqZQjEiLk0AxvGIB1hYCXmmWNVdmlllS191xz8rXKU5Is/gHVzQ9cJFqIlm9KUkAdg
+	 +Su6w9bruUy+8DqzRUk3PrAhiXFSrg3zLx9cs1dx1HT4WXW/NqpZdLVhetSbdmHGM7
+	 NGxQLAdnKXEbkAx6fqGohSU71a4up4jLBohpsZ9jOKPVDL8ayFJ/F5oFgr1WBy6Zb2
+	 2LTnzG1s06mz+fbFoOvrN9Xd312yNIPeCta4EMWfJUT7Mlq6DhUbDgzW+AayAT1SAL
+	 15L8PD/1h2aPg==
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-8c53198a65fso162596385a.3
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 15:01:24 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUseor4GDQ5Z3RoCV6suQPMKi+XYc+lIJT0eFo4m+/b0IPCtWhtfhh1cxI0vLoSf6H2IvRUZ9tnqXiW4DFZK7cgIRLXxYg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCZrV9lqvwggwZ/XnQzVWuSD66PWkbl9K2V1o4msshHNe+aduQ
+	9F8eSaH1EG8g5fWOI0PP403vCYC/K259njCF9VwHnyob5P7GnL1KQe6vCVAHw9yjGvkvqd0JcUn
+	J/uTUL9JdIliFhEkTBVdjj91mgMnlflA=
+X-Received: by 2002:a05:620a:2a0e:b0:8ba:3d82:de2d with SMTP id
+ af79cd13be357-8c6e2e46e4dmr139790485a.67.1769122884014; Thu, 22 Jan 2026
+ 15:01:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260119091226.3195309-1-caixinchen1@huawei.com> <b12a0d60-da15-4ba7-a526-247b5a7d97ad@huawei.com>
-In-Reply-To: <b12a0d60-da15-4ba7-a526-247b5a7d97ad@huawei.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 22 Jan 2026 12:41:23 -0500
-X-Gm-Features: AZwV_Qgikm3tbjc7vJqGQPtZPYCNto0xIig1lqlNoqN2OTw-g-KMTXXVKOkJCFQ
-Message-ID: <CAHC9VhRokERQGaB-1Xf0AoAzmT5tys4d+e4pmVY-W-88GQ8Jpg@mail.gmail.com>
-Subject: Re: [PATCH -next] lockdown: Add break in lockdown_write
-To: Xiu Jianfeng <xiujianfeng@huawei.com>
-Cc: Cai Xinchen <caixinchen1@huawei.com>, nicolas.bouchinet@oss.cyber.gouv.fr, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <CAPhsuW4=heDwYEkmRzSnLHDdW=da71qDd1KqUj9sYUOT5uOx3w@mail.gmail.com>
+ <CAHC9VhRU_vtN4oXHVuT4Tt=WFP=4FrKc=i8t=xDz+bamUG7r6g@mail.gmail.com>
+ <CAPhsuW6vCrN=k6xEuPf+tJr6ikH_RwfyaU_Q9DvGg2r2U9y+UA@mail.gmail.com> <94bf50cb-cea7-48c1-9f88-073c969eb211@schaufler-ca.com>
+In-Reply-To: <94bf50cb-cea7-48c1-9f88-073c969eb211@schaufler-ca.com>
+From: Song Liu <song@kernel.org>
+Date: Thu, 22 Jan 2026 15:01:12 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW7xi+PP9OnkpBoh96aQyf3C82S1cZY4NJro-FKp0i719Q@mail.gmail.com>
+X-Gm-Features: AZwV_Qiqf6sZ_iabxA0mOK3Vfx-ioabvz7MRCMIvXr74zxqrJAA79152HUibatg
+Message-ID: <CAPhsuW7xi+PP9OnkpBoh96aQyf3C82S1cZY4NJro-FKp0i719Q@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Refactor LSM hooks for VFS mount operations
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Paul Moore <paul@paul-moore.com>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, lsf-pc@lists.linux-foundation.org, 
+	linux-security-module <linux-security-module@vger.kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 22, 2026 at 4:31=E2=80=AFAM Xiu Jianfeng <xiujianfeng@huawei.co=
-m> wrote:
-> On 1/19/2026 5:12 PM, Cai Xinchen wrote:
-> > After the label is matched successful, any other levels judgements
-> > are meaningless. Therefore, add break to return early
+Hi Casey,
+
+Thanks for your comments!
+
+On Thu, Jan 22, 2026 at 9:16=E2=80=AFAM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+>
+> On 1/21/2026 7:00 PM, Song Liu wrote:
+> > Hi Paul,
 > >
-> > Signed-off-by: Cai Xinchen <caixinchen1@huawei.com>
+> > On Wed, Jan 21, 2026 at 4:14=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> >> On Wed, Jan 21, 2026 at 4:18=E2=80=AFPM Song Liu <song@kernel.org> wro=
+te:
+> >>> Current LSM hooks do not have good coverage for VFS mount operations.
+> >>> Specifically, there are the following issues (and maybe more..):
+> >> I don't recall LSM folks normally being invited to LSFMMBPF so it
+> >> seems like this would be a poor forum to discuss LSM hooks.
+> > Agreed this might not be the best forum to discuss LSM hooks.
+> > However, I am not aware of a better forum for in person discussions.
+> >
+> > AFAICT, in-tree LSMs have straightforward logics around mount
+> > monitoring. As long as we get these logic translated properly, I
+> > don't expect much controversy with in-tree LSMs.
 >
-> Looks good to me, thanks.
->
-> Acked-by: Xiu Jianfeng <xiujianfeng@huawei.com>
->
-> Paul,
->
-> Would you mind if this patch went through the LSM tree? :)
+> The existing mount hooks can't handle multiple LSMs that provide
+> mount options. Fixing this has proven non-trivial.
 
-Assuming Nicolas is okay with that, I can take this through the LSM tree.
+Could you please share more information about this issue?
 
---=20
-paul-moore.com
+> Changes to LSM
+> hooks have to be discussed on the LSM email list, regardless of how
+> little impact it seems they might have.
+
+I don't think we're gonna ship anything without thorough discussions in
+the mailing list.
+
+Thanks,
+Song
