@@ -1,568 +1,377 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788013783A2
-	for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 16:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769098362; cv=fail; b=dIKkH25+PlIX5BLmJD1ZM6jBAFNlRz14ZmWdgZCCALCnoIw6mrtTG3KLzyCevxFQgY0VxOCO2Q6yZuyRoQNqIkl7k2cEDNM2im8+RWqHe2hHyR600Igu1KdgqWwGEZX2KlkHMGYtrl6/A1GuRE3iEcipZaqHo5pSUajeUjrJtvQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769098362; c=relaxed/simple;
-	bh=MiawciDRdG0EMixQoIDseSRoBIgc4+D/sCCIMcvmBM0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NHMOqzhWL0Zq4Tnnh6DpaRZa8LN7usnnQlxEXRkBIAbKzab8r/iO1rLsR8mL1uf1QCGbo29jekjtLx7cMHQov/L/xJdreIgkwxaLXMGoZMrbURLjxtQx18GYVeWT5wOf6u3j1mhW//JVj0UDbQV5rU+7Y5JDuAATVFtmFjj8SP0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=RHLzjKl8; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=oL6nUdpG; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA65350A02
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 16:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769100589; cv=none; b=p+fwWiW/X2KteCh57qTclYKnYNuuoo2Pgm8gHph0OJRWB5SiN6Q/+y+bbFwv0KerM/S/Xom/ld00/6xC2PaIY2HM5pIUeWzGtI54NeAgPY9SwuJ3EZaj+zP0EQqL3IFlVqwQAd3hKvkxBfpRu2fjD+qzCFXongOCtFmwqD9ODy4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769100589; c=relaxed/simple;
+	bh=qFVLX/KqoD5gSeJiYxumQ5g1tV4GWZs+Lelo/ycRe1Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZMfOuIXNF+4XB0xw1TIJh3uxCBEzJZmpHdclnelLkNpYfS/okmAIHGy/WNkDdVblqwUuwPIoIMIc4/yMc/qea0N54UYMyNHBUtge+JlaCMi0OT9Oa7sUIjygWo/jcTO8Pw3z6XvybMffOdGMG0nz3JspWNyi9rHx2RjX1Fi/tNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=FNAwTtzU; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RHLzjKl8";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="oL6nUdpG"
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60MDgLug197752;
-	Thu, 22 Jan 2026 16:06:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=ODJ7uyu+fp2u0R8OQXqHQj+doayFbYClNQnHGkpqfzw=; b=
-	RHLzjKl8MeU7n7QjRv0F83XWHxe1kpkl4AEQsW4djHHFHK8Qll8jB1GEGIAFw/ZN
-	GpKsFDYpjZbPVYOPf7jtrTEFxhGUo/iQTlHneyws935jl2GWcjZlfaKGecCSDkED
-	TyDKvniqvRfViOHeU8WQsNit21mRm2YkTKVRDMPEWRuxbIji/ZHoEDR6CvjD8NcU
-	7nnzO2qK/5dX1Y4ckPKFjbA6v1d/oXrozKbLxKKjaA1j1TOBn+0mi23N5oVIZzi+
-	JSV09gH7tRJFuoy6OaPorgfl0IfkCMG2oDLiKUF9MlsXcLN11WM6/lCStokiSUcj
-	GSn8Yj4TnW9cpc68PfuCzg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4br2ypyvkk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 22 Jan 2026 16:06:41 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 60MG4SLD022453;
-	Thu, 22 Jan 2026 16:06:40 GMT
-Received: from mw6pr02cu001.outbound.protection.outlook.com (mail-westus2azon11012015.outbound.protection.outlook.com [52.101.48.15])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4br0vgtxd2-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 22 Jan 2026 16:06:40 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yG1CimsIhs/rldyVOSqfOEPWM4NnbtK6OxaIQmC+rCTvEAgvSZOGh9/QfkmDpBeqhPZOwbf/2KcJNoW7cH2mBblcHHbxJqznSvEPwAai5X77sbK2iHSxzhas7hRNKHkFaepsOaeCdlZTj3bLQMDzgWxKyeUjJROm0ePSZrOKxfVUrhQfHG6cOcDwzPTZzNiBRPnQ2lpaTs9J9aFvlFdqiE9FqijrEd/bXJBTU1BlIPRxguFVRbh8pN3vqcmVaIeH8l3OZ3UGj+JoVmPo/h20MC5AdJaWyvPDhSLiVdpivF0ZuIb+oKihFARPlv1719IcX5z7xn6/HVZS3RfPiP2Cyw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ODJ7uyu+fp2u0R8OQXqHQj+doayFbYClNQnHGkpqfzw=;
- b=kn2K38Iim8wMkSfj49nABU6CGsfp/e4w3ADWsygLcnIPh70ykSmWvDnWMpNntsDrDIWu3JweSP3faBl5LXan3TD0i0S3oHB1ZyvwxAxAv1PeRQW6BuT6xumU7wtDen/Fy/6NkEHuf/yqQmeQt/RvOg9BjFVCI59stET0vuS3Jzmy5l8Qd6xy2u+8EBYb1CmioJZ/7AKYB20KcQEjflzdCc82AikUEibLEBMZl1Jnn504Xt6us+FTyxxQteCUIyFrNuan9F4FE5Y8knW7UB8zYQ/BDeBOJEFEkqde+CEAIW2hPSXQn5ng7NKoJvAHjpZA5CdLIWNYzL89eM9On4kZeA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="FNAwTtzU"
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-6610c5b014cso490904eaf.0
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 08:49:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ODJ7uyu+fp2u0R8OQXqHQj+doayFbYClNQnHGkpqfzw=;
- b=oL6nUdpGpjWfGKcz9fJycLbQCnXZWU+sfKRsmWc51E3IxY2Kv/i7/1UKSE29uXcfWb8fX1FNvRseLqT4ykYe9J+tRj0dgQMBMgtpLwyWBEIXi1k83F8TFwFphEONbUJkCq0T8DsaIiF2t8NpRt5QE3qrnwt4smajsC4vZqWLVgo=
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
- by DS4PPF3B1F60C81.namprd10.prod.outlook.com (2603:10b6:f:fc00::d17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.10; Thu, 22 Jan
- 2026 16:06:35 +0000
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582%6]) with mapi id 15.20.9520.005; Thu, 22 Jan 2026
- 16:06:35 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tursulin@ursulin.net>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
-        Matthew Brost <matthew.brost@intel.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Benjamin LaHaise <bcrl@kvack.org>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Sandeep Dhavale <dhavale@google.com>,
-        Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>,
-        David Hildenbrand <david@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
-        Babu Moger <babu.moger@amd.com>, Carlos Maiolino <cem@kernel.org>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Hugh Dickins <hughd@google.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>, Zi Yan <ziy@nvidia.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Lance Yang <lance.yang@linux.dev>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, David Howells <dhowells@redhat.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Yury Norov <yury.norov@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
-        devel@lists.orangefs.org, linux-xfs@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Jason Gunthorpe <jgg@nvidia.com>
-Subject: [PATCH v2 06/13] mm: update hugetlbfs to use VMA flags on mmap_prepare
-Date: Thu, 22 Jan 2026 16:06:15 +0000
-Message-ID: <9226bec80c9aa3447cc2b83354f733841dba8a50.1769097829.git.lorenzo.stoakes@oracle.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <cover.1769097829.git.lorenzo.stoakes@oracle.com>
-References: <cover.1769097829.git.lorenzo.stoakes@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0207.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a5::14) To BL4PR10MB8229.namprd10.prod.outlook.com
- (2603:10b6:208:4e6::14)
+        d=cloudflare.com; s=google09082023; t=1769100581; x=1769705381; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rwzPgUZ6um1mvTqFso7ZVYWrXOFTNHt7M7xwpsX9stE=;
+        b=FNAwTtzUS3nnLl1jBrn+c2YicmNGtqw6qIlEjsqEq1S4CD2KQbenx2qMKh244CjMeL
+         EDAC3vf8H6aem+yBDwRz/QIMjIKvRQicuVbHSRBCAP69YoUoQUlDAJ3Si/zvrr1wQhbj
+         3DivOdO0JQgMmbRSniBp5N8H77U8Kgyu6YVCYYBTR7wi+cX7kkHmBPx6OwO/2ypYT6v/
+         /+uyiE8SjqWzuA1ECbF5ru2c5zXkZYiB0olNLIc84oDQr74GLrT4WjCM0UMH6tCtl8d4
+         bLOZRcs4DBvnZgYB3JH4QbNmwIeA7xdRsFQbKbKbnNH52CGF5bSK4jANwZeB/9B6rsoP
+         Dwvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769100581; x=1769705381;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rwzPgUZ6um1mvTqFso7ZVYWrXOFTNHt7M7xwpsX9stE=;
+        b=e30nUwE/l6/EvAiG1jwqWk7nQQsPnTwa40XcAQTqbUrE3PYmIl4sdvYFWXn1R5VHrY
+         vUyN7fXv+WO4Ru3OVrMdXdDzmBpyMxBR9KZcCND4at3DI3SNweoU6hBTEALPnhgQEx3I
+         aSJ+icNtilxXB/+OvttgORsuzKb6qOidry2pCz87k11EC2C7mdiniHP6ydxTUi/2Qia+
+         lyAIsYRLp4PQW/Zf1ZvsgOtRpAs0dRpCANylKurLPPnLpGJGuHpvC/XTuBcG4u1472XL
+         zGhTiGJ1FuOiLFo7mhziS309xsRwEXJRReMMYgs3lYyXT52kSmFryyKQaLiTGhwGp/4c
+         KpOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnlcc+BbUVdho1yt3oZfpOsL9R9mwEXVkIzDdg9yXq17IvVTHEAxCGpfdPIesnrq+7aY8bjHvLVQLaNyEOrArN3NRRSMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLhWEJwweRFahxHRV5Sq72QB18HBlY1Q5Qk9JmfSR76Uf4F34f
+	6+u1PEG/cXzWW5WEXhO6gZAMYTtxFN4IrMA0viOtJOPHh5NrtMB3A/PPMTITXPhjQIg=
+X-Gm-Gg: AZuq6aLRC4tHNQnLKQHlJ6Nk5PpvkFnuoiko8SCkwbzh1z3Cksfjrkye/+bx11decvk
+	p3bqOGddPgy8LcleVz7CmiP9ms3SdWB47NGJONVQ6rjOBAWLLfsPnO2nCTpDWgkdjICYQB5U2xD
+	CBheOLkxkv1ppJ5mBGLLnJKIW0yAgoEFtSoPDIRthLA5qUEmFhzfeI4RkRaRK8yfMN2rNqhzxb0
+	4YuFLkOdMqImnzIMQ4WChlQRsQzP9G06oxV8tlUyaMlOnpcsCxshQChs+lehk9CKjcWuDvQA3wi
+	27aynnPhDIt5HjvxToplrn1ADVKO9esOH0QVJ/cuvm5xIxAiJCOnVFo+O5NNhZyiCHQWJnSNla7
+	qtL/iI5Hz4+kE9MVB08PvUkPN7CU77n5VPmUt9ceitNV20HV200DMpoI4RbjxO86sMUdXgAo=
+X-Received: by 2002:a05:6820:810c:b0:662:c553:f760 with SMTP id 006d021491bc7-662cab51b60mr128930eaf.45.1769100581297;
+        Thu, 22 Jan 2026 08:49:41 -0800 (PST)
+Received: from [127.0.1.1] ([2a09:bac5:947d:4e6::7d:66])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4044baf613dsm13529519fac.3.2026.01.22.08.49.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Jan 2026 08:49:40 -0800 (PST)
+From: Frederick Lawler <fred@cloudflare.com>
+Date: Thu, 22 Jan 2026 10:49:31 -0600
+Subject: [PATCH v3] ima: Fallback to ctime check for FS without
+ kstat.change_cookie
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|DS4PPF3B1F60C81:EE_
-X-MS-Office365-Filtering-Correlation-Id: 74958eab-0db2-495d-e37c-08de59d03775
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pNBvCVa1l/ESogaO1a/0aldRBt296hRn4hJPaY05PCFvo20kkTVxgHVs1ac6?=
- =?us-ascii?Q?oPvUqH8sGi8c6HBj2jeJj7ZUVRKXlW7lBv9hFmkw5ovXqjEm6pFnaXDq2Y7y?=
- =?us-ascii?Q?+vBGOvzuMYZ083fLWTqs7iNhhbHJQlYUmyCdRYAViyuksyf0c1eBL5e83bWN?=
- =?us-ascii?Q?zTYs9BCDNt59LgpvO2/L55IjZpytIH11LjqN0x4Zd1KJQZl8a7nYcQuT0dCo?=
- =?us-ascii?Q?cRjcfxNQnZJdNPc7LS8ILiOPVTHjYpgEn9STC6CqpLBg4xTRmHQAQ4YA3R3p?=
- =?us-ascii?Q?7qlGK5+bp5zsGtB2MNeBULMqVomg/zYiCo7KFXqzZKjBUWXWmVjH8d/WFqjg?=
- =?us-ascii?Q?cwDqJG2hB30NleR//x0IsCuEet2Uy1sUgw8uaAfEtbnH+xqN22NDbatjJvBA?=
- =?us-ascii?Q?pDSYVJ5k5i3IjFlrDgj07up1WH4m/LXNbh1Ar0i5tfFN98RD/56cOtTubxJr?=
- =?us-ascii?Q?AqAh4EPNKl344jRsSqqQpif0v6tnKgPJQoeXTZHer9tsQg1juuLJ2D89oaU9?=
- =?us-ascii?Q?0aI/LDBy7DCMwcZ9XAyyaBiAUGogJ1blbHs0XvVCI4PCANDmXzS/m7rr4iqV?=
- =?us-ascii?Q?gWGMtJKJ8XLDoJLg/2d4pBQ+rQQzdFT0d7Q+3N4X1MDf/9b80MNtd+Ovqd8U?=
- =?us-ascii?Q?tJZaDshzoCQyW/GCyy+EsWMs9P7xbrph2D4jTJBOedDyTkLnWfCR48m3PR6J?=
- =?us-ascii?Q?ygAX1p8efi5HcICWYpaEGkMNJsOoJJLRNchRDGSfP7vzskC8OID2eO9gI4Tl?=
- =?us-ascii?Q?Le/ifSKL+/CaKRl2LBJFaNT1joeXY87yMNPgYU90xgUxZvMiHkLL8Bx/gUz1?=
- =?us-ascii?Q?TzbwCatP4JOdrH5K7kWtYBZpX96hzn1sRN1+Rny5zW+42MWh0sFsF8cDCz/l?=
- =?us-ascii?Q?WvvwvD/dR2gFva2YNe8v9Fg916ZO4O0s0KTpDjIKalNKlEDiZbYw72Wiu0GQ?=
- =?us-ascii?Q?9z98PBEboLWMXAsUomMxjdRsNYypnJz9Y3mxMqlMVl5lL6dI2SK1M7fQL/AF?=
- =?us-ascii?Q?8OtG+s0h3ZH4Q4slZ3EZq8bAAaYU7C91RaTsrjV4+sdsvB1qaeBVXIhj7Sva?=
- =?us-ascii?Q?jxB5in/xUV50W+0HeRbXXcmWNC7LZTC9r0KWGeq55cZlN5CJS7mg3IjgoOwH?=
- =?us-ascii?Q?U6oJGHrvJiuegnpoWYfULTYUHHtzsG6LbZvhJ0+kw4426jdGe99csdPeKO57?=
- =?us-ascii?Q?NSNvfLXO8HQ/9RcRjadxwThWnCDm33I7kTqwr2ocfGyj3NohJsJIs02b+wkP?=
- =?us-ascii?Q?E/eiHMNniZfr/30p65pTqEzbtzeW9ZqZqMIB5osj8g4G9kxztdnO0xl79awY?=
- =?us-ascii?Q?DJpf4kwXns6dO0+ABfux//1I6H357xTKlVoTHX8+lEFcovG8oSyXiETJZFwN?=
- =?us-ascii?Q?VDh03xviacU0emEIXAqjhtKNtepA/ArFF6VMfDQ6+gSQhteY/lvsTB5KaS5A?=
- =?us-ascii?Q?ruUBGwzVUkuElEZq9N366haHiMwRJZQ/uZ1t4YwJ/vjxSAkVlmD1/fKmQiPR?=
- =?us-ascii?Q?fL+jlka03QtwsQU5ATdk50uFQPz7FNRReUCl8ODZ9rgfEik71KZko7mypJdq?=
- =?us-ascii?Q?qG15pZa5mStP6iwnX8M=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GJxhAZm/B0Zt46/U/sFhilRJ0FKf+BmKaSnp1XsgzdazT7iaxOMxdzvKI98e?=
- =?us-ascii?Q?lHJ5S1BPN4q7QXlRfP3mtgwyc6t3EzM3uvT8o5GPYusstnT+VNTiHGhpUUNl?=
- =?us-ascii?Q?zHLbbaY6LU4NWp+8xTC7ZIqeZPxk7x4/00jaKvPgNpcU59dSXCT3oqIU/YBb?=
- =?us-ascii?Q?xtZVPW9tZBs7Bp4+kZWEl2HxrzPGthN5F/BeG67LYvACJnDVXAwyZW990+r0?=
- =?us-ascii?Q?WY1Gtmd84oKZ+K2EQUV8FggM05VTVRnU4AOqb5OHf72UUSYwJUJB9La7EUra?=
- =?us-ascii?Q?SVoPABxkxW4U2ASPzA+9djasOthC8vUJSfWEjWltxsq3oeU6QViipewvaKn8?=
- =?us-ascii?Q?r/yIqrw0GJRxNcBCr7jApGy1b15OmV51+8RdUZi69IZf3ky42wpogy8xf7+N?=
- =?us-ascii?Q?++vPUkTHM5YxS/GqP3Fu+/2TUi+WjVmIHE3MIKTQyQsfDNFr8BgdT4R3V57Z?=
- =?us-ascii?Q?u2xWZPPG+OELmpRSfqG3BkPS59FVE9V8CJyQXMArg9LaYAXC4od1VI842Ea2?=
- =?us-ascii?Q?TJ4d5mtrjQgK3RYCSRyOnaRsjzu/KhURy2LIN7xWbuEdeTsqujcz0Al9pUMh?=
- =?us-ascii?Q?7VDIWhyM2zwSuDp8CMFUd3Id0dSC7cWKoF7DHk1CnRsv6s9T0M1I33o4QuDb?=
- =?us-ascii?Q?v81SSx4sTqF7DyDAFhCVjQ7Rh8CHVnJU9TeiN5FAPY6R4HVkQy/KNSOmQDR2?=
- =?us-ascii?Q?Mb3xYU+TXw6nRzX2tDl2DV/hkVetrUMTmygBZI09Am3jJupx6jVvQd3XkMsX?=
- =?us-ascii?Q?68phcGi2VvzhI1Y2xwu7w7yikMQGp9Kr6lPxgK7qfx1uRpPpvPF9+F8dJN8P?=
- =?us-ascii?Q?jlinyQMGdGE2EowVDIaCW3DFFLe83A2N+1jcw06uq1IX0HSV4l4AiPQC/RTD?=
- =?us-ascii?Q?GxcI3zL91t9erv2Dz9CLd+RBu2DJpQGVl+ZKdEDX6RmryL38ZsM4vdFRFdi7?=
- =?us-ascii?Q?b8bftZoyvaPaBNcpuVvd96xNI8mQ7cx/gWwkX9MbMo5YL/cligDJuHUij/VT?=
- =?us-ascii?Q?M/4ubT0WsVjuG5kohGfGqxIxiLQwcBLSjtQceJEQ8IXe6ZcdiLPvzE2haZ5H?=
- =?us-ascii?Q?eMCc6wNtf7K96aApepA9gWw2GA7MCejARcEr8/xB6btN55VcuzYrWOadNWTB?=
- =?us-ascii?Q?UU/KiitJOV2TVVMi3sQAw9ce1Sl9hd2d3pSZGMe3XaVjx/xfQaeY2rPRz+Dh?=
- =?us-ascii?Q?GxF1KMFRMTl0kiEoy+4XI9Pn1nyNRVbb8fweyuK/AedmxNMSIRbED6k/blDs?=
- =?us-ascii?Q?k5A3RS4JOTOHjelCqSqwLzIVsPO5KiVbtiF1VEsHZyjDZNBdezffsRigFO6x?=
- =?us-ascii?Q?wvgGqs9P9juTLvYRzLdotn16v2+A+R6vDgjZNz91znXvTmzVSYnXQYZGt4Zc?=
- =?us-ascii?Q?ExBuXW5R+lKP/56Vo5rMEk6xhfr24fSqRGUewHoMqsE5jXw6gsr5pq0OQeQr?=
- =?us-ascii?Q?/sRSgH+/uyRhl/hkx61QhwpUkEq1QIHIcLTD1bul9I6laqTv0rSWFPtWbUNI?=
- =?us-ascii?Q?DGR6PoOaN/UK/qYius2gKzGNfCb1hXpvr9pIHeZEQ/yhEAbAazO6S7R4XqSQ?=
- =?us-ascii?Q?vwcQaTRRfckhIcOBd9+gnptB3uZrlqJRv1kIQsS62f4fk0Ue4mG0jP4nuwOO?=
- =?us-ascii?Q?ziR89H1zcirK12uSTNTtyrgPmWBDLpbryyxnmy4iFqq4QaEJ/JiMAqqppmNi?=
- =?us-ascii?Q?82Lrcxzwx1W3Rqrr2xV/ckXPK/V86QmpSL66DhBcuRyWlKCiR8gAyL3xJOXF?=
- =?us-ascii?Q?CeTKqt3QqqXnoz8EJDvktAJOBoiTR4A=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	UwwXPazoG8QIaN0Jv9tBoIaKZ8+Rt69mgEq7mwbXGcvq6l80oRKmmV0G/UHRA564wHyuf4DFg+lNXSGOU68qxqADdbl2B2L4is497w97cihKf/n7v8M8YoUuNK4ZvDdBn+wxEE7Ppr90eWoSlp02biARrSllOkhcEoDF5sZc7jbtVM5otH+FcbNISrdTbsCiDyKuL9tW9hUh34VRquZ1i7/4ox/q+exIpEJg8x5Sq8xgt031gTbbdhisFLNvWVFGUZjZ39rr6fNngDWKXfNgporC5Dc/KM/9affczdQKFMa8NZvtofbYhgmx4SvBLXl4rBGIxxegsw31kvcZs0DiZbjXmr0gezGAR20lhjDbwiM4buu31i0viO0otPvNj2usL40sqXAsKAdjPfY6cQxrVkmqoQRl7gw6Pxhzo5GASJBpfh08lwQGlFxTK7nZkHfNMHx0ZY2XlcAUxnc0RBQRXGoIWerj0XnU/RXHSoU4MtOgKAlVqSl5OkEYrzvfu3YQ+6ixqd8SgBNu1LC061NXWg1I9JoEKu8JVajOAXd/L/Na0f5dIFxc2wnFapQORIQMTUWxNFGGWXDdbPqvM+tIH2kgmdU/8q8OHiH2pNY2Rd8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74958eab-0db2-495d-e37c-08de59d03775
-X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2026 16:06:35.3111
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9drOgZq3DQHGNqIXzGi3k8iGjMyZST1QTpoST3OpiEYsx0DFjfjPO1p9QTCC3ReAG/8PSh+nXahn2zFaA0QvYGQ7hJkYp6qaHHwyUB/cQiM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPF3B1F60C81
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.20,FMLib:17.12.100.49
- definitions=2026-01-22_02,2026-01-22_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 bulkscore=0
- phishscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2601150000
- definitions=main-2601220123
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTIyMDEyMyBTYWx0ZWRfX5501M6Z4TSy9
- GehqFh/c6o/zJJLWHyCC7qdhVeCRJlhenKNTtLaM3bUaaE1THaioeiM4VaPhHTqEZCeu6xNwlD0
- KNpiwr5n9Qyj2xxHMonCVzNZBoPFXPtQ8DGOM44MyyxXwTFzbL9nt+ufMtxoWjgSJrJfWyAXESv
- Yb3pjL9xSlF79Rf2Kezk9iROO/2+ev2z22iljjUE8j0A7xkK3qvMULgDGcMZS9+cODwTN3TTdG/
- 4XkZ8auleqeq+kLGaQZS5lhwgaC5KCFMCMttgmnahNaEUF2V96nfD2KpONt7ulC8KNE5+tVmJhp
- cMyTZ6Iephp9sHSGlb3y+54uVFCls15Z2ezL5mwa7QoBL56+D04HarIFLxZ3h2J/5IfJdrdQBBC
- tp/7Bec3RzOBPmMR2Ii6wQ7+iteoRcxRR+HAQ1ohaS4vQx+K5GpgTj002TD/3lZ9nxbW9DenCa8
- xCiIqNlIv4UgpLqVYb2sjbd88PhEXlOLXDKELe0Q=
-X-Authority-Analysis: v=2.4 cv=de6NHHXe c=1 sm=1 tr=0 ts=69724b11 b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=vUbySO9Y5rIA:10
- a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
- a=atHbPFec4puc5jveiVIA:9 cc=ntf awl=host:12103
-X-Proofpoint-ORIG-GUID: iRgJr6srHeXtBWQLgUmq5MgPFVf6I8ug
-X-Proofpoint-GUID: iRgJr6srHeXtBWQLgUmq5MgPFVf6I8ug
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260122-xfs-ima-fixup-v3-1-20335a8aa836@cloudflare.com>
+X-B4-Tracking: v=1; b=H4sIABpVcmkC/2WOPQ+CMBRF/4rpbE3fqxZw0rg4OrgZh1JaacJXW
+ iEYwn+3YFxgvO/mnPsG4rWz2pPjZiBOd9bbugqBbzdE5bJ6aWqzkAkyPAAC0t54aktJje3bhiY
+ cophJgQoVCUzjdChm34PczvfLlTzDObf+XbvPvNLBXP6EmCyEHVCgQkYQqYQnJlInVdRtZgrp9
+ E7V5TQSUMFg9cuMxhnwVDAGHHCJTp90+F8PCmRLBQaF4Ry1zOKU7flKMY7jFwEy7zA0AQAA
+X-Change-ID: 20251212-xfs-ima-fixup-931780a62c2c
+To: Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ "Darrick J. Wong" <djwong@kernel.org>, 
+ Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+ Jeff Layton <jlayton@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, kernel-team@cloudflare.com, 
+ Frederick Lawler <fred@cloudflare.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10588; i=fred@cloudflare.com;
+ h=from:subject:message-id; bh=qFVLX/KqoD5gSeJiYxumQ5g1tV4GWZs+Lelo/ycRe1Q=;
+ b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBpclUjH0aacU3Z/gjiQjm/DWMFgYVlEeViax+To
+ 0fo5x3fvzWJAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaXJVIwAKCRCrJbR2A5LT
+ bc+7EAC/TgO0ycjkyKNFk2pevZa2Of30kmiF4g1oR1302TbVlg4W2tfNFivOG0XWweHJNAlfCZb
+ Igm8+KYprEcCpLf9LOQoYo0dKsYaIsLXCiG0gE24wVaGTNMN1EmVqFrjBhJgS9D7VihhSS1+jww
+ Eh7WozPWSuSsqyl7TOq4sV+QPHSm9STP+6r5bAby0OXVzaytzjs8asswvDghvGEbpAx2ITrkLYD
+ Vwa+quSjNPDw3BL09u9sV53nWwcEOn1Gbq0uIcCw2ei+9GBji4HrWxIcMfwX9aKeK8nk13rm+0r
+ uFUZhI9e8fls7NVJhtxS+8JU32/zBBK0G476TpEQNSRM/2CF+UX1gphVGdLoA14XGblVEfplzaO
+ He0/goCxIsAS7OuVs7aSddlLD00hb+gpuFC/GJAUWcz8Z5z1Y8r924gMETL97zLYPNqDqS7w8Zr
+ RQ4+YpsplBLhFxdpbA2rvOA8gqHAanluvp8aUO6XDh8a3uPW3EyTYKf6tRH33WDhm8//S56MUEi
+ /FK/HrtXH+whtd5T6ReE65EE0jQk9AwqJIk5kESkmhhA5uYCdBV69UzieUjDDLmW2Zj+ybCdIra
+ OytGR5WHg6JN35V4aS2jInIUg+aZb1yPDAgXCKe0CQUROzzt/ngfS1LrMjkK5kuM1zgQ9alXjOd
+ 9su+Jkt+EkNqYqw==
+X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
+ fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
 
-In order to update all mmap_prepare users to utilising the new VMA flags
-type vma_flags_t and associated helper functions, we start by updating
-hugetlbfs which has a lot of additional logic that requires updating to
-make this change.
+Commit 1cf7e834a6fb ("xfs: switch to multigrain timestamps")
+introduced a means to track change detection for an inode
+via ctime updates, opposed to setting kstat.change_cookie to
+an i_version when calling into xfs_vn_getattr().
 
-This is laying the groundwork for eliminating the vm_flags_t from struct
-vm_area_desc and using vma_flags_t only, which further lays the ground for
-removing the deprecated vm_flags_t type altogether.
+This introduced a regression for IMA such that an action
+performed on a LOWER inode on a stacked file systems always
+requires a re-evaluation if the LOWER file system does not
+leverage kstat.change_cookie to track inode i_version or lacks
+i_version support all together.
 
-No functional changes intended.
+In the case of stacking XFS on XFS, an action on either the LOWER or UPPER
+will require re-evaluation. Stacking TMPFS on XFS for instance, once the
+inode is UPPER is mutated, IMA resumes normal behavior because TMPFS
+leverages generic_fillattr() to update the change cookie.
 
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+This is because IMA caches kstat.change_cookie to compare against an
+inode's i_version directly in integrity_inode_attrs_changed(), and thus
+could be out of date depending on how file systems set
+kstat.change_cookie.
+
+To address this, require integrity_inode_attrs_changed() to query
+vfs_getattr_nosec() to compare the cached version against
+kstat.change_cookie directly. This ensures that when updates occur,
+we're accessing the same changed inode version on changes, and fallback
+to compare against kstat.ctime when STATX_CHANGE_COOKIE is missing from
+result mask.
+
+Lastly, because EVM still relies on querying and caching a inode's
+i_version directly, the integrity_inode_attrs_changed() falls back to the
+original inode.i_version != cached comparison.
+
+Link: https://lore.kernel.org/all/aTspr4_h9IU4EyrR@CMGLRV3
+Suggested-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Frederick Lawler <fred@cloudflare.com>
 ---
- fs/hugetlbfs/inode.c           | 14 +++++++-------
- include/linux/hugetlb.h        |  6 +++---
- include/linux/hugetlb_inline.h | 10 ++++++++++
- ipc/shm.c                      | 12 +++++++-----
- mm/hugetlb.c                   | 22 +++++++++++-----------
- mm/memfd.c                     |  4 ++--
- mm/mmap.c                      |  2 +-
- 7 files changed, 41 insertions(+), 29 deletions(-)
+We uncovered a case in kernels >= 6.13 where XFS is no longer updating
+struct kstat.change_cookie on i_op getattr() access calls. Instead, XFS is
+using multigrain ctime (as well as other file systems) for
+change detection in commit 1cf7e834a6fb ("xfs: switch to
+multigrain timestamps").
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 3b4c152c5c73..95a5b23b4808 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -109,7 +109,7 @@ static int hugetlbfs_file_mmap_prepare(struct vm_area_desc *desc)
- 	loff_t len, vma_len;
- 	int ret;
- 	struct hstate *h = hstate_file(file);
--	vm_flags_t vm_flags;
-+	vma_flags_t vma_flags;
+Because file systems may implement i_version as they see fit, IMA
+caching may be behind as well as file systems that don't support/export
+i_version. Thus we're proposing to compare against the kstat.change_cookie
+directly to the cached version, and fall back to a ctime guard when
+that's not updated.
+
+EVM is largely left alone since there's no trivial way to query a file
+directly in the LSM call paths to obtain kstat.change_cookie &
+kstat.ctime to cache. Thus retains accessing i_version directly.
+
+Regression tests will be added to the Linux Test Project instead of
+selftest to help catch future file system changes that may impact
+future evaluation of IMA.
+
+I'd like this to be backported to at least 6.18 if possible.
+
+Below is a simplified test that demonstrates the issue:
+
+_fragment.config_
+CONFIG_XFS_FS=y
+CONFIG_OVERLAY_FS=y
+CONFIG_IMA=y
+CONFIG_IMA_WRITE_POLICY=y
+CONFIG_IMA_READ_POLICY=y
+
+_./test.sh_
+
+IMA_POLICY="/sys/kernel/security/ima/policy"
+TEST_BIN="/bin/date"
+MNT_BASE="/tmp/ima_test_root"
+
+mkdir -p "$MNT_BASE"
+mount -t tmpfs tmpfs "$MNT_BASE"
+mkdir -p "$MNT_BASE"/{xfs_disk,upper,work,ovl}
+
+dd if=/dev/zero of="$MNT_BASE/xfs.img" bs=1M count=300
+mkfs.xfs -q "$MNT_BASE/xfs.img"
+mount "$MNT_BASE/xfs.img" "$MNT_BASE/xfs_disk"
+cp "$TEST_BIN" "$MNT_BASE/xfs_disk/test_prog"
+
+mount -t overlay overlay -o \
+"lowerdir=$MNT_BASE/xfs_disk,upperdir=$MNT_BASE/upper,workdir=$MNT_BASE/work" \
+"$MNT_BASE/ovl"
+
+echo "audit func=BPRM_CHECK uid=$(id -u nobody)" > "$IMA_POLICY"
+
+target_prog="$MNT_BASE/ovl/test_prog"
+setpriv --reuid nobody "$target_prog"
+setpriv --reuid nobody "$target_prog"
+setpriv --reuid nobody "$target_prog"
+
+audit_count=$(dmesg | grep -c "file=\"$target_prog\"")
+
+if [[ "$audit_count" -eq 1 ]]; then
+        echo "PASS: Found exactly 1 audit event."
+else
+        echo "FAIL: Expected 1 audit event, but found $audit_count."
+        exit 1
+fi
+---
+Changes in v3:
+- Prefer timespec64_to_ns() to leverage attr.version. [Roberto]
+- s/TPMFS/TMPFS/ in description.
+- Link to v2: https://lore.kernel.org/r/20260120-xfs-ima-fixup-v2-1-f332ead8b043@cloudflare.com
+
+Changes in v2:
+- Updated commit description + message to clarify the problem.
+- compare struct timespec64 to avoid collision possibility [Roberto].
+- Don't check inode_attr_changed() in ima_check_last_writer()
+- Link to v1: https://lore.kernel.org/r/20260112-xfs-ima-fixup-v1-1-8d13b6001312@cloudflare.com
+
+Changes since RFC:
+- Remove calls to I_IS_VERSION()
+- Function documentation/comments
+- Abide IMA/EVM change detection fallback invariants
+- Combined ctime guard into version for attributes struct
+- Link to RFC: https://lore.kernel.org/r/20251229-xfs-ima-fixup-v1-1-6a717c939f7c@cloudflare.com
+---
+ include/linux/integrity.h         | 35 +++++++++++++++++++++++++++++++----
+ security/integrity/evm/evm_main.c |  5 ++---
+ security/integrity/ima/ima_api.c  | 11 ++++++++---
+ security/integrity/ima/ima_main.c | 17 ++++++++++-------
+ 4 files changed, 51 insertions(+), 17 deletions(-)
+
+diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+index f5842372359be5341b6870a43b92e695e8fc78af..034f0a1ed48ca8c19c764e302bbfc555dad92cde 100644
+--- a/include/linux/integrity.h
++++ b/include/linux/integrity.h
+@@ -9,6 +9,8 @@
  
- 	/*
- 	 * vma address alignment (but not the pgoff alignment) has
-@@ -119,7 +119,7 @@ static int hugetlbfs_file_mmap_prepare(struct vm_area_desc *desc)
- 	 * way when do_mmap unwinds (may be important on powerpc
- 	 * and ia64).
- 	 */
--	desc->vm_flags |= VM_HUGETLB | VM_DONTEXPAND;
-+	vma_desc_set_flags(desc, VMA_HUGETLB_BIT, VMA_DONTEXPAND_BIT);
- 	desc->vm_ops = &hugetlb_vm_ops;
+ #include <linux/fs.h>
+ #include <linux/iversion.h>
++#include <linux/kernel.h>
++#include <linux/time64.h>
  
- 	/*
-@@ -148,23 +148,23 @@ static int hugetlbfs_file_mmap_prepare(struct vm_area_desc *desc)
+ enum integrity_status {
+ 	INTEGRITY_PASS = 0,
+@@ -51,14 +53,39 @@ integrity_inode_attrs_store(struct integrity_inode_attributes *attrs,
  
- 	ret = -ENOMEM;
- 
--	vm_flags = desc->vm_flags;
-+	vma_flags = desc->vma_flags;
- 	/*
- 	 * for SHM_HUGETLB, the pages are reserved in the shmget() call so skip
- 	 * reserving here. Note: only for SHM hugetlbfs file, the inode
- 	 * flag S_PRIVATE is set.
- 	 */
- 	if (inode->i_flags & S_PRIVATE)
--		vm_flags |= VM_NORESERVE;
-+		vma_flags_set(&vma_flags, VMA_NORESERVE_BIT);
- 
- 	if (hugetlb_reserve_pages(inode,
- 			desc->pgoff >> huge_page_order(h),
- 			len >> huge_page_shift(h), desc,
--			vm_flags) < 0)
-+			vma_flags) < 0)
- 		goto out;
- 
- 	ret = 0;
--	if ((desc->vm_flags & VM_WRITE) && inode->i_size < len)
-+	if (vma_desc_test_flags(desc, VMA_WRITE_BIT) && inode->i_size < len)
- 		i_size_write(inode, len);
- out:
- 	inode_unlock(inode);
-@@ -1527,7 +1527,7 @@ static int get_hstate_idx(int page_size_log)
-  * otherwise hugetlb_reserve_pages reserves one less hugepages than intended.
+ /*
+  * On stacked filesystems detect whether the inode or its content has changed.
++ *
++ * Must be called in process context.
   */
- struct file *hugetlb_file_setup(const char *name, size_t size,
--				vm_flags_t acctflag, int creat_flags,
-+				vma_flags_t acctflag, int creat_flags,
- 				int page_size_log)
+ static inline bool
+ integrity_inode_attrs_changed(const struct integrity_inode_attributes *attrs,
+-			      const struct inode *inode)
++			      struct file *file, struct inode *inode)
  {
- 	struct inode *inode;
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 94a03591990c..4e72bf66077e 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -150,7 +150,7 @@ int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
- 			     struct folio **foliop);
- #endif /* CONFIG_USERFAULTFD */
- long hugetlb_reserve_pages(struct inode *inode, long from, long to,
--			   struct vm_area_desc *desc, vm_flags_t vm_flags);
-+			   struct vm_area_desc *desc, vma_flags_t vma_flags);
- long hugetlb_unreserve_pages(struct inode *inode, long start, long end,
- 						long freed);
- bool folio_isolate_hugetlb(struct folio *folio, struct list_head *list);
-@@ -529,7 +529,7 @@ static inline struct hugetlbfs_inode_info *HUGETLBFS_I(struct inode *inode)
+-	return (inode->i_sb->s_dev != attrs->dev ||
+-		inode->i_ino != attrs->ino ||
+-		!inode_eq_iversion(inode, attrs->version));
++	struct kstat stat;
++
++	might_sleep();
++
++	if (inode->i_sb->s_dev != attrs->dev || inode->i_ino != attrs->ino)
++		return true;
++
++	/*
++	 * EVM currently relies on backing inode i_version. While IS_I_VERSION
++	 * is not a good indicator of i_version support, this still retains
++	 * the logic such that a re-evaluation should still occur for EVM, and
++	 * only for IMA if vfs_getattr_nosec() fails.
++	 */
++	if (!file || vfs_getattr_nosec(&file->f_path, &stat,
++				       STATX_CHANGE_COOKIE | STATX_CTIME,
++				       AT_STATX_SYNC_AS_STAT))
++		return !IS_I_VERSION(inode) ||
++			!inode_eq_iversion(inode, attrs->version);
++
++	if (stat.result_mask & STATX_CHANGE_COOKIE)
++		return stat.change_cookie != attrs->version;
++
++	if (stat.result_mask & STATX_CTIME)
++		return timespec64_to_ns(&stat.ctime) != (s64)attrs->version;
++
++	return true;
  }
  
- extern const struct vm_operations_struct hugetlb_vm_ops;
--struct file *hugetlb_file_setup(const char *name, size_t size, vm_flags_t acct,
-+struct file *hugetlb_file_setup(const char *name, size_t size, vma_flags_t acct,
- 				int creat_flags, int page_size_log);
  
- static inline bool is_file_hugepages(const struct file *file)
-@@ -545,7 +545,7 @@ static inline struct hstate *hstate_inode(struct inode *i)
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 73d500a375cb37a54f295b0e1e93fd6e5d9ecddc..6a4e0e246005246d5700b1db590c1759242b9cb6 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -752,9 +752,8 @@ bool evm_metadata_changed(struct inode *inode, struct inode *metadata_inode)
+ 	bool ret = false;
  
- #define is_file_hugepages(file)			false
- static inline struct file *
--hugetlb_file_setup(const char *name, size_t size, vm_flags_t acctflag,
-+hugetlb_file_setup(const char *name, size_t size, vma_flags_t acctflag,
- 		int creat_flags, int page_size_log)
- {
- 	return ERR_PTR(-ENOSYS);
-diff --git a/include/linux/hugetlb_inline.h b/include/linux/hugetlb_inline.h
-index a27aa0162918..593f5d4e108b 100644
---- a/include/linux/hugetlb_inline.h
-+++ b/include/linux/hugetlb_inline.h
-@@ -11,6 +11,11 @@ static inline bool is_vm_hugetlb_flags(vm_flags_t vm_flags)
- 	return !!(vm_flags & VM_HUGETLB);
- }
- 
-+static inline bool is_vma_hugetlb_flags(const vma_flags_t *flags)
-+{
-+	return vma_flags_test(flags, VMA_HUGETLB_BIT);
-+}
-+
- #else
- 
- static inline bool is_vm_hugetlb_flags(vm_flags_t vm_flags)
-@@ -18,6 +23,11 @@ static inline bool is_vm_hugetlb_flags(vm_flags_t vm_flags)
- 	return false;
- }
- 
-+static inline bool is_vma_hugetlb_flags(const vma_flags_t *flags)
-+{
-+	return false;
-+}
-+
- #endif
- 
- static inline bool is_vm_hugetlb_page(struct vm_area_struct *vma)
-diff --git a/ipc/shm.c b/ipc/shm.c
-index 3db36773dd10..2c7379c4c647 100644
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -707,9 +707,9 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
- 	int error;
- 	struct shmid_kernel *shp;
- 	size_t numpages = (size + PAGE_SIZE - 1) >> PAGE_SHIFT;
-+	const bool has_no_reserve = shmflg & SHM_NORESERVE;
- 	struct file *file;
- 	char name[13];
--	vm_flags_t acctflag = 0;
- 
- 	if (size < SHMMIN || size > ns->shm_ctlmax)
- 		return -EINVAL;
-@@ -738,6 +738,7 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
- 
- 	sprintf(name, "SYSV%08x", key);
- 	if (shmflg & SHM_HUGETLB) {
-+		vma_flags_t acctflag = EMPTY_VMA_FLAGS;
- 		struct hstate *hs;
- 		size_t hugesize;
- 
-@@ -749,17 +750,18 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
- 		hugesize = ALIGN(size, huge_page_size(hs));
- 
- 		/* hugetlb_file_setup applies strict accounting */
--		if (shmflg & SHM_NORESERVE)
--			acctflag = VM_NORESERVE;
-+		if (has_no_reserve)
-+			vma_flags_set(&acctflag, VMA_NORESERVE_BIT);
- 		file = hugetlb_file_setup(name, hugesize, acctflag,
- 				HUGETLB_SHMFS_INODE, (shmflg >> SHM_HUGE_SHIFT) & SHM_HUGE_MASK);
- 	} else {
-+		vm_flags_t acctflag = 0;
-+
- 		/*
- 		 * Do not allow no accounting for OVERCOMMIT_NEVER, even
- 		 * if it's asked for.
- 		 */
--		if  ((shmflg & SHM_NORESERVE) &&
--				sysctl_overcommit_memory != OVERCOMMIT_NEVER)
-+		if  (has_no_reserve && sysctl_overcommit_memory != OVERCOMMIT_NEVER)
- 			acctflag = VM_NORESERVE;
- 		file = shmem_kernel_file_setup(name, size, acctflag);
+ 	if (iint) {
+-		ret = (!IS_I_VERSION(metadata_inode) ||
+-		       integrity_inode_attrs_changed(&iint->metadata_inode,
+-						     metadata_inode));
++		ret = integrity_inode_attrs_changed(&iint->metadata_inode,
++						    NULL, metadata_inode);
+ 		if (ret)
+ 			iint->evm_status = INTEGRITY_UNKNOWN;
  	}
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 4f4494251f5c..e6955061d751 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -1193,16 +1193,16 @@ static void set_vma_resv_flags(struct vm_area_struct *vma, unsigned long flags)
- 
- static void set_vma_desc_resv_map(struct vm_area_desc *desc, struct resv_map *map)
- {
--	VM_WARN_ON_ONCE(!is_vm_hugetlb_flags(desc->vm_flags));
--	VM_WARN_ON_ONCE(desc->vm_flags & VM_MAYSHARE);
-+	VM_WARN_ON_ONCE(!is_vma_hugetlb_flags(&desc->vma_flags));
-+	VM_WARN_ON_ONCE(vma_desc_test_flags(desc, VMA_MAYSHARE_BIT));
- 
- 	desc->private_data = map;
- }
- 
- static void set_vma_desc_resv_flags(struct vm_area_desc *desc, unsigned long flags)
- {
--	VM_WARN_ON_ONCE(!is_vm_hugetlb_flags(desc->vm_flags));
--	VM_WARN_ON_ONCE(desc->vm_flags & VM_MAYSHARE);
-+	VM_WARN_ON_ONCE(!is_vma_hugetlb_flags(&desc->vma_flags));
-+	VM_WARN_ON_ONCE(vma_desc_test_flags(desc, VMA_MAYSHARE_BIT));
- 
- 	desc->private_data = (void *)((unsigned long)desc->private_data | flags);
- }
-@@ -1216,7 +1216,7 @@ static int is_vma_resv_set(struct vm_area_struct *vma, unsigned long flag)
- 
- static bool is_vma_desc_resv_set(struct vm_area_desc *desc, unsigned long flag)
- {
--	VM_WARN_ON_ONCE(!is_vm_hugetlb_flags(desc->vm_flags));
-+	VM_WARN_ON_ONCE(!is_vma_hugetlb_flags(&desc->vma_flags));
- 
- 	return ((unsigned long)desc->private_data) & flag;
- }
-@@ -6564,7 +6564,7 @@ long hugetlb_change_protection(struct vm_area_struct *vma,
- long hugetlb_reserve_pages(struct inode *inode,
- 		long from, long to,
- 		struct vm_area_desc *desc,
--		vm_flags_t vm_flags)
-+		vma_flags_t vma_flags)
- {
- 	long chg = -1, add = -1, spool_resv, gbl_resv;
- 	struct hstate *h = hstate_inode(inode);
-@@ -6585,7 +6585,7 @@ long hugetlb_reserve_pages(struct inode *inode,
- 	 * attempt will be made for VM_NORESERVE to allocate a page
- 	 * without using reserves
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index c35ea613c9f8d404ba4886e3b736c3bab29d1668..e47d6281febc15a0ac1bd2ea1d28fea4d0cd5c58 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -272,10 +272,15 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+ 	 * to an initial measurement/appraisal/audit, but was modified to
+ 	 * assume the file changed.
  	 */
--	if (vm_flags & VM_NORESERVE)
-+	if (vma_flags_test(&vma_flags, VMA_NORESERVE_BIT))
- 		return 0;
+-	result = vfs_getattr_nosec(&file->f_path, &stat, STATX_CHANGE_COOKIE,
++	result = vfs_getattr_nosec(&file->f_path, &stat,
++				   STATX_CHANGE_COOKIE | STATX_CTIME,
+ 				   AT_STATX_SYNC_AS_STAT);
+-	if (!result && (stat.result_mask & STATX_CHANGE_COOKIE))
+-		i_version = stat.change_cookie;
++	if (!result) {
++		if (stat.result_mask & STATX_CHANGE_COOKIE)
++			i_version = stat.change_cookie;
++		else if (stat.result_mask & STATX_CTIME)
++			i_version = timespec64_to_ns(&stat.ctime);
++	}
+ 	hash.hdr.algo = algo;
+ 	hash.hdr.length = hash_digest_size[algo];
  
- 	/*
-@@ -6594,7 +6594,7 @@ long hugetlb_reserve_pages(struct inode *inode,
- 	 * to reserve the full area even if read-only as mprotect() may be
- 	 * called to make the mapping read-write. Assume !desc is a shm mapping
- 	 */
--	if (!desc || desc->vm_flags & VM_MAYSHARE) {
-+	if (!desc || vma_desc_test_flags(desc, VMA_MAYSHARE_BIT)) {
- 		/*
- 		 * resv_map can not be NULL as hugetlb_reserve_pages is only
- 		 * called for inodes for which resv_maps were created (see
-@@ -6628,7 +6628,7 @@ long hugetlb_reserve_pages(struct inode *inode,
- 	if (err < 0)
- 		goto out_err;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 5770cf691912aa912fc65280c59f5baac35dd725..8ac42b03740eb93bf23b15cb9039af6cd32aa999 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -28,6 +28,7 @@
+ #include <linux/iversion.h>
+ #include <linux/evm.h>
+ #include <linux/crash_dump.h>
++#include <linux/time64.h>
  
--	if (desc && !(desc->vm_flags & VM_MAYSHARE) && h_cg) {
-+	if (desc && !vma_desc_test_flags(desc, VMA_MAYSHARE_BIT) && h_cg) {
- 		/* For private mappings, the hugetlb_cgroup uncharge info hangs
- 		 * of the resv_map.
- 		 */
-@@ -6665,7 +6665,7 @@ long hugetlb_reserve_pages(struct inode *inode,
- 	 * consumed reservations are stored in the map. Hence, nothing
- 	 * else has to be done for private mappings here
- 	 */
--	if (!desc || desc->vm_flags & VM_MAYSHARE) {
-+	if (!desc || vma_desc_test_flags(desc, VMA_MAYSHARE_BIT)) {
- 		add = region_add(resv_map, from, to, regions_needed, h, h_cg);
+ #include "ima.h"
  
- 		if (unlikely(add < 0)) {
-@@ -6729,7 +6729,7 @@ long hugetlb_reserve_pages(struct inode *inode,
- 	hugetlb_cgroup_uncharge_cgroup_rsvd(hstate_index(h),
- 					    chg * pages_per_huge_page(h), h_cg);
- out_err:
--	if (!desc || desc->vm_flags & VM_MAYSHARE)
-+	if (!desc || vma_desc_test_flags(desc, VMA_MAYSHARE_BIT))
- 		/* Only call region_abort if the region_chg succeeded but the
- 		 * region_add failed or didn't run.
- 		 */
-diff --git a/mm/memfd.c b/mm/memfd.c
-index ab5312aff14b..5f95f639550c 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -87,7 +87,7 @@ struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx)
- 		gfp_mask &= ~(__GFP_HIGHMEM | __GFP_MOVABLE);
- 		idx >>= huge_page_order(h);
- 
--		nr_resv = hugetlb_reserve_pages(inode, idx, idx + 1, NULL, 0);
-+		nr_resv = hugetlb_reserve_pages(inode, idx, idx + 1, NULL, EMPTY_VMA_FLAGS);
- 		if (nr_resv < 0)
- 			return ERR_PTR(nr_resv);
- 
-@@ -464,7 +464,7 @@ static struct file *alloc_file(const char *name, unsigned int flags)
- 	int err = 0;
- 
- 	if (flags & MFD_HUGETLB) {
--		file = hugetlb_file_setup(name, 0, VM_NORESERVE,
-+		file = hugetlb_file_setup(name, 0, mk_vma_flags(VMA_NORESERVE_BIT),
- 					HUGETLB_ANONHUGE_INODE,
- 					(flags >> MFD_HUGE_SHIFT) &
- 					MFD_HUGE_MASK);
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 8771b276d63d..038ff5f09df0 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -594,7 +594,7 @@ unsigned long ksys_mmap_pgoff(unsigned long addr, unsigned long len,
- 		 * taken when vm_ops->mmap() is called
- 		 */
- 		file = hugetlb_file_setup(HUGETLB_ANON_FILE, len,
--				VM_NORESERVE,
-+				mk_vma_flags(VMA_NORESERVE_BIT),
- 				HUGETLB_ANONHUGE_INODE,
- 				(flags >> MAP_HUGE_SHIFT) & MAP_HUGE_MASK);
- 		if (IS_ERR(file))
+@@ -199,10 +200,13 @@ static void ima_check_last_writer(struct ima_iint_cache *iint,
+ 					    &iint->atomic_flags);
+ 		if ((iint->flags & IMA_NEW_FILE) ||
+ 		    vfs_getattr_nosec(&file->f_path, &stat,
+-				      STATX_CHANGE_COOKIE,
+-				      AT_STATX_SYNC_AS_STAT) ||
+-		    !(stat.result_mask & STATX_CHANGE_COOKIE) ||
+-		    stat.change_cookie != iint->real_inode.version) {
++			    STATX_CHANGE_COOKIE | STATX_CTIME,
++			    AT_STATX_SYNC_AS_STAT) ||
++		    ((stat.result_mask & STATX_CHANGE_COOKIE) ?
++		      stat.change_cookie != iint->real_inode.version :
++		      (!(stat.result_mask & STATX_CTIME) ||
++			timespec64_to_ns(&stat.ctime) !=
++			(s64)iint->real_inode.version))) {
+ 			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+ 			iint->measured_pcrs = 0;
+ 			if (update)
+@@ -328,9 +332,8 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	real_inode = d_real_inode(file_dentry(file));
+ 	if (real_inode != inode &&
+ 	    (action & IMA_DO_MASK) && (iint->flags & IMA_DONE_MASK)) {
+-		if (!IS_I_VERSION(real_inode) ||
+-		    integrity_inode_attrs_changed(&iint->real_inode,
+-						  real_inode)) {
++		if (integrity_inode_attrs_changed(&iint->real_inode,
++						  file, real_inode)) {
+ 			iint->flags &= ~IMA_DONE_MASK;
+ 			iint->measured_pcrs = 0;
+ 		}
+
+---
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+change-id: 20251212-xfs-ima-fixup-931780a62c2c
+
+Best regards,
 -- 
-2.52.0
+Frederick Lawler <fred@cloudflare.com>
 
