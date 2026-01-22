@@ -1,155 +1,121 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED111299949
-	for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 13:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF873340A69
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 14:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769087273; cv=none; b=k3AxA5ORoPLr5pYlFN8PUNxzFzRRUampmzgYek2xeuG3BBVK+bCg0G1CVzCCmebecLYfEsSxat3w5YpgAMVkgQWbHSFYrgidb/5XQro6oeu4zv8FSL89IzUyF53F7X9dUqohh/a5yhb4J+eCcX47JXCO9Q5avXqW9tYrv4OtfXI=
+	t=1769090872; cv=none; b=U1aWJTQi8mfZGWJG61ttrlvgKfeGq8l5mCxJLvV79lBlZqU5NAa9iKCCRxpAk9QItDTOEW7fX5Cgin6WWlIpk5yFO1oVFl92vnvLz2IybqyVmK3i4RNSNk2MDOT7I0TBpyi5QFwAFIFOgwqcPkCSBNhqOHCosUueoc+qvVlPfnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769087273; c=relaxed/simple;
-	bh=lku/en9+9A6K3Mr80m1/GmSebNT0FLjtZiX1vETaLcE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=axdbOEHSyT1wIIbWWXHaA1V01R4EoXJ527j/Vq7q3jiG+ESWf3jeE2bKoV1qU4GuA0UCreGQpvblUaAORJqmg2C0t5FUu0xDOrFjRvU8jT1Yg0xKskhse9cZLOhLMf1/P9zPZHbZCg7/QPWdTYOGF8dF4dcMSGbyLMHUYOus5/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 60MD7nuZ094651;
-	Thu, 22 Jan 2026 22:07:49 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 60MD7mrw094647
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 22 Jan 2026 22:07:49 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <5811ec38-907e-4788-8a0e-7758f12dc9d0@I-love.SAKURA.ne.jp>
-Date: Thu, 22 Jan 2026 22:07:46 +0900
+	s=arc-20240116; t=1769090872; c=relaxed/simple;
+	bh=G07Wvq8WvGFjY0dmP+/uGwYn1jnRFIolVqzUSFCwWXo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:content-type; b=UvtVfGwvamEiZFiRPxI6yH7n992Qs6qIyXCVMy2okFeYbsSl7LXuxPSGt/pjDsa2SmCuXmMUHU92zpoD8z9jvT3UPSAjBsdtfTlsKPJTSaVrulkCNi0vs/IQISxLVIsQDeKuTX/o8iIZhYtNGAWveGlkW533ITvf5c0GkC2dRNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A+a3XEnF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A+a3XEnF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1769090869;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EtcMyJILD4z1qrnqIkPGVFTkZx7N2Lh4EB8ICDznUWY=;
+	b=A+a3XEnFsC/NgCeTBprnk0+qqyiACEYZuOnfEZE9f9PUTYjuA2bDHv2MBieSBM7s5/w/E1
+	RIMpf/mzcSnVxQYimOqpjycam/Zu96iaDsYvPrdcoXsqUYrvoAtcxYdKBd7LXxa3D8yxNH
+	ABWjbL59bTQLXotPikd3bSjBlooNKiw=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-197-OvkOrz8mOU--k-sIZZtWQg-1; Thu, 22 Jan 2026 09:07:48 -0500
+X-MC-Unique: OvkOrz8mOU--k-sIZZtWQg-1
+X-Mimecast-MFC-AGG-ID: OvkOrz8mOU--k-sIZZtWQg_1769090868
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-4325aa61c6bso630722f8f.0
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 06:07:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769090867; x=1769695667;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EtcMyJILD4z1qrnqIkPGVFTkZx7N2Lh4EB8ICDznUWY=;
+        b=QLqI0EML14luumC4njtVsXP65YDNVOaMrkyJCRstAAjaHvyH6XimmlXaqgJUJFzCQ3
+         YEjqaNC1FC+OvlDkLlG2bZaF5xbYc7H3dJAH/A3L4mftj7KiR5DxrgX9BZRBgeITr0hJ
+         9HnL5UjA9tDYdXEASjb0AvKagjxQjW1KIWVClGWSYPApzR+7O6IrzfYTVudmP0gvjMky
+         P5I/YwY/Q4GeRCkvEroOgfI3mSFW/O5DIwHN7NK3Lbw3SMrsceJg2sz+LjljXd4t/Q/8
+         gENKD6wGwSYmkGq0is0h6xPjGXeiMnv2tyWyf99VXWu1XsB3vmjAv5HSco4vv49uM/Gq
+         Kq5g==
+X-Forwarded-Encrypted: i=1; AJvYcCV14/js2dcIipvmWAv2x6O0XNviT3da6NEMmvYHDQnfYD2qm16EwhWxxa1yukquBSNi7lILVC+4WIz+YcTIC2xRZmJ1ZHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5vCW2a4ONuaOZU2zuhPI7oe+PH6iBmuKLXFVxkpqUSbTly95/
+	pwn+7cYapttGwDOO7Z/zMeCzQVf0un+DwJbJZ+f3WPxLaKEcoqrdS854B6o0qpfzy4J5hZq5iDA
+	EILjV8NbkfpFANPR01hMBJlTX3e24IU7r2WkiwGkJinvauuzVt4Zxcj2lpgZ2ZfKQtj7O1bCmb6
+	bFS16XGygx9A==
+X-Gm-Gg: AZuq6aJ9XFO66dj8llxVNWeBZjTg2Bq03jJcKHjYgbAP+ST0k9FXbFusY1kNyDA7ZGu
+	pSq485349FHXyYg1tLkLnCGeSJXTpQrskBrBdxj13LftCPjQcXe69mtat7atJGVLM5vkq0Xpx3+
+	hDIpBsfiKhX+EhGpnXES55Xd//YC0rglr2F8heCHgBulflra5VnEQC6mDCeYBdZjtn5ZRaW9Vxf
+	nEo0aYLYWGqCJyNCB/xkOhzxTbH986EfqvBm61HPbscvOpnjuZpIlYCZCvsl0vYxAHn+1DHkk23
+	SYmSqQPRHxolvewwVJeg9Wtd6ZeKmUarrAAg07B+77/eRUrOLCdQ/XlaNRReFpXDmSA=
+X-Received: by 2002:a05:6000:25c7:b0:432:5bf9:cf15 with SMTP id ffacd0b85a97d-4356a024907mr35369562f8f.5.1769090867082;
+        Thu, 22 Jan 2026 06:07:47 -0800 (PST)
+X-Received: by 2002:a05:6000:25c7:b0:432:5bf9:cf15 with SMTP id ffacd0b85a97d-4356a024907mr35369503f8f.5.1769090866620;
+        Thu, 22 Jan 2026 06:07:46 -0800 (PST)
+Received: from fedora ([213.175.46.86])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43595e0a705sm17390416f8f.14.2026.01.22.06.07.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Jan 2026 06:07:46 -0800 (PST)
+From: Ondrej Mosnacek <omosnace@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	"Eric W . Biederman" <ebiederm@xmission.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: [PATCH] ucount: check for CAP_SYS_RESOURCE using ns_capable_noaudit()
+Date: Thu, 22 Jan 2026 15:07:45 +0100
+Message-ID: <20260122140745.239428-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xfrm: force flush upon NETDEV_UNREGISTER event
-To: Steffen Klassert <steffen.klassert@secunet.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Cc: Boris Pismenny <borisp@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Westphal <fw@strlen.de>,
-        Kristian Evensen <kristian.evensen@gmail.com>,
-        Leon Romanovsky <leon@kernel.org>, Leon Romanovsky <leonro@nvidia.com>,
-        Raed Salem <raeds@mellanox.com>, Raed Salem <raeds@nvidia.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Yossi Kuperman <yossiku@mellanox.com>,
-        Network Development <netdev@vger.kernel.org>,
-        Aviad Yehezkel <aviadye@nvidia.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-References: <924f9cf5-599a-48f0-b1e3-94cd971965b0@I-love.SAKURA.ne.jp>
- <537343f7-c580-43b0-9ad2-691701b9fb8e@I-love.SAKURA.ne.jp>
- <287edf7f-85fb-46c3-9c70-c8ec7014a0db@I-love.SAKURA.ne.jp>
- <aXIGxmCB2QU86-iA@secunet.com>
- <447378de-3cc9-44f5-872e-a1fc477f591e@I-love.SAKURA.ne.jp>
- <aXIKwNJv59KnsnLw@secunet.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <aXIKwNJv59KnsnLw@secunet.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav105.rs.sakura.ne.jp
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: GZZdxqrc0RutzZuV84slPSrM6KZ50KRACpzy22zI4g8_1769090868
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 
-On 2026/01/22 20:32, Steffen Klassert wrote:
-> On Thu, Jan 22, 2026 at 08:28:31PM +0900, Tetsuo Handa wrote:
->> On 2026/01/22 20:15, Steffen Klassert wrote:
->>> Hm, I'd say we should not try to offload to a device that does
->>> not support NETIF_F_HW_ESP.
->>
->> I was about to post the patch below, but you are suggesting that "do not allow calling
->> xfrm_dev_state_add()/xfrm_dev_policy_add() if (dev->features & NETIF_F_HW_ESP) == 0" ?
-> 
-> As said, I think this is the correct way to do it. But let's wait
-> on opinions from the hardware people.
+The user.* sysctls implement the ctl_table_root::permissions hook and
+they override the file access mode based on the CAP_SYS_RESOURCE
+capability (at most rwx if capable, at most r-- if not). The capability
+is being checked unconditionally, so if an LSM denies the capability, an
+audit record may be logged even when access is in fact granted.
 
-OK. I guess something like below.
+Given the logic in the set_permissions() function in kernel/ucount.c and
+the unfortunate way the permission checking is implemented, it doesn't
+seem viable to avoid false positive denials by deferring the capability
+check. Thus, do the same as in net_ctl_permissions() (net/sysctl_net.c)
+- switch from ns_capable() to ns_capable_noaudit(), so that the check
+never logs an audit record.
 
- net/xfrm/xfrm_device.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Fixes: dbec28460a89 ("userns: Add per user namespace sysctls.")
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+---
+ kernel/ucount.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/xfrm/xfrm_device.c b/net/xfrm/xfrm_device.c
-index 52ae0e034d29..19aa61609d24 100644
---- a/net/xfrm/xfrm_device.c
-+++ b/net/xfrm/xfrm_device.c
-@@ -292,6 +292,13 @@ int xfrm_dev_state_add(struct net *net, struct xfrm_state *x,
- 		dst_release(dst);
- 	}
+diff --git a/kernel/ucount.c b/kernel/ucount.c
+index 586af49fc03e4..fc4a8f2d30965 100644
+--- a/kernel/ucount.c
++++ b/kernel/ucount.c
+@@ -47,7 +47,7 @@ static int set_permissions(struct ctl_table_header *head,
+ 	int mode;
  
-+	if (!(dev->features & NETIF_F_HW_ESP)) {
-+		NL_SET_ERR_MSG(extack, "Device doesn't support offload");
-+		xso->dev = NULL;
-+		dev_put(dev);
-+		return -EINVAL;
-+	}
-+
- 	if (!dev->xfrmdev_ops || !dev->xfrmdev_ops->xdo_dev_state_add) {
- 		xso->dev = NULL;
- 		dev_put(dev);
-@@ -367,7 +374,8 @@ int xfrm_dev_policy_add(struct net *net, struct xfrm_policy *xp,
- 	if (!dev)
- 		return -EINVAL;
- 
--	if (!dev->xfrmdev_ops || !dev->xfrmdev_ops->xdo_dev_policy_add) {
-+	if (!dev->xfrmdev_ops || !dev->xfrmdev_ops->xdo_dev_policy_add ||
-+	    !(dev->features & NETIF_F_HW_ESP)) {
- 		xdo->dev = NULL;
- 		dev_put(dev);
- 		NL_SET_ERR_MSG(extack, "Policy offload is not supported");
-
-
-
-On 2026/01/22 20:15, Steffen Klassert wrote:
->> But I have a question regarding security_xfrm_state_delete()/security_xfrm_policy_delete().
->>
->> xfrm_dev_state_flush_secctx_check() calls security_xfrm_state_delete() which can make
->> xfrm_dev_state_flush() no-op by returning an error value.
->> xfrm_dev_policy_flush_secctx_check() calls security_xfrm_policy_delete() which can make
->> xfrm_dev_policy_flush() no-op by returning an error value.
->>
->> Since xfrm_dev_state_flush()/xfrm_dev_policy_flush() are called by NETDEV_UNREGISTER
->> event (which is a signal for releasing all resources that prevent "struct net_device"
->> references from dropping), making xfrm_dev_state_flush()/xfrm_dev_policy_flush() no-op (by
->> allowing security_xfrm_state_delete()/security_xfrm_policy_delete() to return an error) is
->> a denial-of-service bug.
-> 
-> This means that the calling task doesn't have the permission to delete the
-> state, some LSM has a policy the does not grant this permission.
-
-But NETDEV_UNREGISTER event can fire without explicit request from a user.
-Roughly speaking, current behavior is that
-
-  while (security_xfrm_state_delete() != 0) {
-    schedule_timeout_uninterruptible(10 * HZ);
-    pr_emerg("unregister_netdevice: waiting for %s to become free. Usage count = %d\n",
-             dev->name, netdev_refcnt_read(dev));
-  }
-  while (security_xfrm_policy_delete() != 0) {
-    schedule_timeout_uninterruptible(10 * HZ);
-    pr_emerg("unregister_netdevice: waiting for %s to become free. Usage count = %d\n",
-             dev->name, netdev_refcnt_read(dev));
-  }
-
-might be executed upon e.g. termination of a userspace process.
-
-> 
->>
->> Therefore, I wonder what are security_xfrm_state_delete() and security_xfrm_policy_delete()
->> for. Can I kill xfrm_dev_state_flush_secctx_check() and xfrm_dev_policy_flush_secctx_check() ?
-> 
-> This might violate a LSM policy then.
-
-But LSM policy that results in system hung upon automatic cleanup logic is so stupid.
-I want to kill xfrm_dev_state_flush_secctx_check() and xfrm_dev_policy_flush_secctx_check()
-in order to eliminate possibility of system hung.
+ 	/* Allow users with CAP_SYS_RESOURCE unrestrained access */
+-	if (ns_capable(user_ns, CAP_SYS_RESOURCE))
++	if (ns_capable_noaudit(user_ns, CAP_SYS_RESOURCE))
+ 		mode = (table->mode & S_IRWXU) >> 6;
+ 	else
+ 	/* Allow all others at most read-only access */
+-- 
+2.52.0
 
