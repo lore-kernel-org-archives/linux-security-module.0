@@ -1,120 +1,158 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1E722B8BD
-	for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 00:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FA630CDAB
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 00:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.172
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769040891; cv=pass; b=TbaGdw1A0TpsEo3BHnT/k1L3H78X2EDKT1ErHRqHeZqH3y6QIpTrRrnLpIVq5hc3QOySY25lSfKl3rgVJlxJ73V7dR01zlNH7omxU0PGW2EovKVLXZnugYXsfLE++73ZnY6eZjHN8tSqKlKgfJ2vQQt+0GNdaQHvScd5Q0regrI=
+	t=1769042937; cv=pass; b=hU5V6yd+RhcoMheZtuZIZTjxWo8bohsAn16gp+XLu8MIbkeLClwHWbc042KYpd6O4j+EUEf3Dzn+2mvYX4vGFsfV1siWNOq0cdAOAkyr3wDCa9/cSFFZi8QLZ6KK/iTKiHDvpr2UD/jXVYi++1UWTy4KzYl7jSh4C1PgN9Wbszk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769040891; c=relaxed/simple;
-	bh=A5RWos469E7OdpHxOy7QWO7HMl+c1GqjTI4t+/0t7I0=;
+	s=arc-20240116; t=1769042937; c=relaxed/simple;
+	bh=STgDya/rrELwxBw/nR4uv/MTvvetLae1Em5BNoXv234=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WlCKKjG5KkYdDYnEQsenlniFB1zP16zO0zxC8aNlw9Rlzs4aeQG58euy1zYXkqWCjdsfJ9GJ5Fup1IFsi3Cxd7N2ZMPXwHhHt8mffYi8j0dry6z9iZW8lusg7AH2fgyDvqfx757Iw6aJDlF0YyxIRslzC9+WReuc/RFFTddJ/7w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dU/GXHID; arc=pass smtp.client-ip=209.85.216.42
+	 To:Cc:Content-Type; b=e/Wi3R3hnAm0goSI+uj5w+m3yFVk6PlgtmBB9IZyxkqEBV/XmsULkaty1e53cgrdZhL90MBVTdPkN6EANg4e2phZJu5E7ueaN2QuiqvNGlMphvq2vv2uo+KUYvzXdWgmM43HjuxS2UZY7iJ0XyHGRN55rBWMx24xvLh0tYn9K0M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=drxRcnqe; arc=pass smtp.client-ip=209.85.215.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dU/GXHID"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-352e2c59264so300989a91.0
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Jan 2026 16:14:49 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769040889; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="drxRcnqe"
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b6ce6d1d3dcso134361a12.3
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jan 2026 16:48:55 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769042935; cv=none;
         d=google.com; s=arc-20240605;
-        b=aQAchVEY84/V3ii3Nk2SSFnwiWMgRvOOniDtKwjQdaKLvNyNFpgmg8Qo2JI3m8AFFI
-         mZ10Dm8G5uq9aIwpE5dd4ZP0efZdo01eXBZMAHz1tnlAitxn1go6PXK6zw6VUkBSdeBu
-         1IzYW5kU2+qw032gABb1/L9tsTS6w+gtHZB5JGumE+KlwvB4+liuFHir4hjPZWgImi5h
-         gi17tj3dnTgWPl+9jZE26mIYtb+lGRZK56zKzi2VPyfhGU9k3SVU+F9qVv6zOJsodeLf
-         +p4i9VfzSA/PnUSa0nWiykjq6KXVStg4pEckycIfIwyzu+0tRx22hmPqZhAdHPcyAxPx
-         QS1w==
+        b=GQ/+Iqm1apCFRPdlrXp5JC3hM5GYjCmXWzyHss97s6ZHEFFJPu/LZEmAS8rwdF2w6b
+         8IesQ5t1eU+EdUyopYO/EzWXIGrPeG6Qkz7KcvErz6FesAE+d8fOTjVGGOjPDt0t8l+j
+         ClFnlQBvuNrtv885XQUr1DIlka/aB/yRmj9M03IuuVNm5aifxZX8VPTkMuIjJ2CX0HMy
+         LjHl4a/BPoqAZtaPSTDMTkJ1cPFTROHq/x0bX3m7DzIABDkMXG4xukvwM6nmxLKeoKcE
+         lVpkMzxsDVE6pB6sfdsY1I6Q8ajqkd3FfNOQLIppyTMuANJRXfKd/op81zrCi9ePPCEj
+         U5qQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=zXPAFU5JIVtw63vlsc/Q6CXxBcUl3qbYAmmc88ADSD0=;
-        fh=tQhRDBW6S7FwxROxEraJ56fmcNGQcyOZO94M4RMoQrM=;
-        b=TgTDmxN3jKbYpoN72nMmMdYI3tlOyTfGOGr1G7SsWAqmbCudy2ylyLQDw8bi80hJNE
-         6ZFt5/P9E3iO3q9KvXSl6tGrBQV1uFiUVEQEJUVBwMzRikJC97ytZmuTHzGT6qAN1Esb
-         NvadTa88/BWmJ/Om9Mb7N33I9zpgIVIO3xc/U0P25I7nmKbFlxcm0hcOZt7lsgET7g9s
-         6u1FnJX919ClYNLyKzvCK8M7GiVSG7af88NHPH61r0gVmO9dBD9TUb7gMKdvLwtsVJG0
-         hB7ZopzdDmau9crOzEYTPCgA0HZi/ddQ3JqOJjkHzWO1u/UcxiMfFPS4hOwiexk0w3y/
-         4aIQ==;
+        bh=b5+P2+OzW2g3dFBRbXD1e9SjxU7d32t2ium8U07J7Q0=;
+        fh=FwEnRUhDmZBlQEvta35kaKQV9mRPScikRwUivRVPQuA=;
+        b=W+Sp5vnUp0EQ3myia6fOdX9+5PCXrg+9TeOO0NXZQdDmL2o77wdwARfZXjgusYHSqL
+         uNMplGGhWlbifTQEhxMTKYH4RAw/7Do8soYB++k9FvIs84y8EUCa/f/VVGFMYRoOm8Rl
+         RzeqHQF3wX6RtsH65wS/Uupd7lkfbZTEXMsNr/gK2iMFS2wMHl0UXmhY9xQnmHaoUim0
+         26BSGBf5UFI1GRdz2ikjed3cqPsuFoK/eTFo4ClDUXYGaaP1DAhBWrFcD8KkdV4C6Ypz
+         WOJHQoiJsJ306jhIJN55eEcO8SOML9jxFNKwn+oIlpFnysvEEVzcQ/a/dzaqI/fWMP1I
+         Sd6A==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1769040889; x=1769645689; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1769042935; x=1769647735; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zXPAFU5JIVtw63vlsc/Q6CXxBcUl3qbYAmmc88ADSD0=;
-        b=dU/GXHIDEkNX12ZR4K9e0Su2HMD5q4K/1lbCMpzqcqWeYBBxT140w87zXDVx8oP1x8
-         qZtqu81XZDb5HvBT+gChEsFOKdsAthJY1/aZkCO23VSX/wI3jCTkPgEdgWYFrSMwZ30Z
-         Mu89dNh3Kr8X4v8gaHpNvQwU1bhu4+gS4DQpaJrre26gUSmxWc2rbWubDb04poJV+wro
-         2rAgKytmH8rk/k4PxVrB/rZ2miT1Abc4jAiJVToiVx+iuCqadr4KFry2B5L7jEvn1HHp
-         2FmqeHkTqVgxmMw/SnEB28gg0I4Cqbh5cMCG9hDLdBCmblR34DTCsikwNqdDpPva9QUb
-         1QMg==
+        bh=b5+P2+OzW2g3dFBRbXD1e9SjxU7d32t2ium8U07J7Q0=;
+        b=drxRcnqepRaArCettT96atkacfAjZ1RM+kkwCB8P9zmZRgPzmAhKVDd18MuCKqOaa0
+         oNWY0mDF2Tk3kskIDbiuXogi+K8DpwwEy9iZRoVhGAArS6VAFqXA4W6F52vKhLVJjsMk
+         U++TRMkd55LsVJtNAB2np0epiZxFBs9Vs/YiiOlK/s7R6j7L4LLQ0CHbipFSpnebmwXv
+         SAvUNlecoJLiOW0Scfx28yOJpUniNPsDFP+1agf6qP4I6/oITFAppR8y+VDkqxN3QOzg
+         FblmyFnM2WXGZFHIHqtg7I8/l2uWB+dkfLp0HOasF26BMKlWS9GkwWSrcupb/KfGOxUx
+         Ftnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769040889; x=1769645689;
+        d=1e100.net; s=20230601; t=1769042935; x=1769647735;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=zXPAFU5JIVtw63vlsc/Q6CXxBcUl3qbYAmmc88ADSD0=;
-        b=e2wgMOQ1fag5HXrW6xmTl6bEOv4BrWcWGkrzIHfl4oj5bKmeZ8JWrbnj2lb00PjPIv
-         YjIK0EXqdCM+kNUAdD+6P+feMat3xCkqXV3RF4iazqSSTzxFyGKQ4FnRnzaIjmR5afNq
-         FG2llI0l2leCi0vAzYtaNkXUVOgTDNSEwtoH2eKYtNhDFh9aDecrpJeLY943y+DCs/jO
-         1KpVFUBXzrAvTUADYZ4YuZdEGFY/RV8gtaZEYwKpGelJNTT9qjUY+oKHcT65gNG0dRmc
-         6p0aPvzs31ZNQNaQ5VGlu/Hq96wKpuD1E5wyd9vyqjQEtWn5bI27FUgF01ULyif1R0CR
-         RT9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUj2NTpTk0Qw7jY1EWw53Uk+q6geuBIzY5otegKJmk3S3vYwm3/AJpCABjlup2A4l4GT0PYmy/W8EjR1NcNrwC/VvhVVrc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx14w+IzpPsBZgIai/j4cXz18kPF0TZ1fYy1SXAW8Beskc7rSKv
-	7XgcjjMB82K2xK3bj+XegpvuSpO33f2Y7TmbceT2O4gt6ZVlFM2pb5eoWyBzMwF2m24lwExnsV8
-	iFPnzGkT7ANweD5un6ha5X4fM+InhqM3OL3WeMjDu
-X-Gm-Gg: AZuq6aKDIRs70MNvHMyOB2DNPcgHFJ8McY7J9FxPmllahDknvh5n5Vlb2ZL178M9CdP
-	nWIyE3+uBYdza/xZ2bu9U1QpYeWMhRJfoMDak0K/IjdJb9PNlEoy5Y4a9HpH/c6oPmvGAWZchlN
-	hojaqEuyb+WZVkXh0Y3m1kevPdCf9UKEAQew/O+X0D/SDuJMtm+aPXWZ6WxGc/OQE9kYDayqkBp
-	7apjJE0t5Hezi1Jh9uCx1kobFfNQqAwm43JRIemdcA1731tid4lt0xuaSGaKni8IrsFTwc=
-X-Received: by 2002:a17:90a:d00d:b0:33e:2d0f:479b with SMTP id
- 98e67ed59e1d1-35272edb23bmr15763365a91.6.1769040888822; Wed, 21 Jan 2026
- 16:14:48 -0800 (PST)
+        bh=b5+P2+OzW2g3dFBRbXD1e9SjxU7d32t2ium8U07J7Q0=;
+        b=Fl1tyP79oLgGf6tW0n8BJ+CkLP7bHIt7UadcwrTUhSzXKDFs6GnR4TlfwP1H27Uhoo
+         71aDufOyLlf1uC0rRDFoF/GVqdcCx/CwAIbO1dj9DMooPCV/UcTYYlTztn0OOWGNjTJN
+         DXliRba+OjgC+dWwcrSiCchkCSE9fqVEzvo3adYGMhKoQxTiRaTQFR1A1BxA57fT+uBE
+         pP9OX1ob/qgJDk5J85ovwjq2/cu0d13wzJjWGw9WB/8bjUtkECMCgpJgSx5iROrltDPN
+         IDqCk1lmLk9n6EUhN/ojftyW3ve8I5bdo6MqrgDm/FLbZHAcxRytqsxGD4PQz/xM35Ca
+         Cymg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4T+6H3v5NBeOF52bojzCWRZPjPQ/qlsGkm8/sZjCkSx7qytVCUtPvlI9jho+nXHfMs2P4+Ynp7uFau1pfVNfN3+2Fzfw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ7CSdgqORbXqedsXAWpcCzaxhbju7rJ9Z2YsXMcNisfwmN5YV
+	U//hjbjB8M7SA6tmmRV/Y/7p8cSjYjwzUsucp4WiUPe7q/1/dMVORmkiYlinH/PQjRQ4ysPWA3f
+	C/KIcAJJQ70H71cKtY+fYek/Y+l4W/0+sQPc7NONK
+X-Gm-Gg: AZuq6aIq6R9G+Vvc3uL9Jikji4IBMofO/2JcT/IKrP15vxH+C7RTV++cD/tAjiRA/NF
+	91kCdyRgxE7XkKeF79mFYKaz4Cfgg4bHtFReFXffwbUYyeQGpmX/6cB5V8ixw42JUDvgo7LzheW
+	Wo5rqFPkZP74v3umlpvCrcX23zG1A3gtIKDLtxXmDGaYN4BWxNQgf9Y5JkzW2FQWmQiyDJPJtjc
+	2+cGZrnELgIteImmsw2/EDzdY+xTXTOEpJh0FAovmw15PsGKXp+5saYO26NDmS2qT0P5tA=
+X-Received: by 2002:a17:90b:4f4a:b0:353:2e1:95f6 with SMTP id
+ 98e67ed59e1d1-35302e19f6emr3140023a91.32.1769042934569; Wed, 21 Jan 2026
+ 16:48:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPhsuW4=heDwYEkmRzSnLHDdW=da71qDd1KqUj9sYUOT5uOx3w@mail.gmail.com>
-In-Reply-To: <CAPhsuW4=heDwYEkmRzSnLHDdW=da71qDd1KqUj9sYUOT5uOx3w@mail.gmail.com>
+References: <CAHC9VhR4d7WXOVR7Y9ee2+=-t2nThzOo-ySMB+5x_87LfBJbZw@mail.gmail.com>
+ <20260120155738.982771-1-whrosenb@asu.edu>
+In-Reply-To: <20260120155738.982771-1-whrosenb@asu.edu>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 21 Jan 2026 19:14:35 -0500
-X-Gm-Features: AZwV_Qi4Pxfxx-5TehqNnHnBk2vVum5Naq85Aa55fS3OaaOQkTNm5PTJBxmaI_4
-Message-ID: <CAHC9VhRU_vtN4oXHVuT4Tt=WFP=4FrKc=i8t=xDz+bamUG7r6g@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Refactor LSM hooks for VFS mount operations
-To: Song Liu <song@kernel.org>
-Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	lsf-pc@lists.linux-foundation.org, 
-	linux-security-module <linux-security-module@vger.kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+Date: Wed, 21 Jan 2026 19:48:43 -0500
+X-Gm-Features: AZwV_Qi1HCix4xsckn9CD1qWcc2lwKyi1WtdhvcHnLqnNUUcK8FpFKmTthwIsB4
+Message-ID: <CAHC9VhRbZoApQE07giMxd5j3ri99uMuN8SQF7d6AgOZEkxuQJg@mail.gmail.com>
+Subject: Re: [PATCH] cipso: harden use of skb_cow() in cipso_v4_skbuff_setattr()
+To: Will Rosenberg <whrosenb@asu.edu>
+Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 21, 2026 at 4:18=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+On Tue, Jan 20, 2026 at 10:57=E2=80=AFAM Will Rosenberg <whrosenb@asu.edu> =
+wrote:
 >
-> Current LSM hooks do not have good coverage for VFS mount operations.
-> Specifically, there are the following issues (and maybe more..):
+> If skb_cow() is passed a headroom <=3D -NET_SKB_PAD, it will trigger a
+> BUG. As a result, use cases should avoid calling with a headroom that
+> is negative to prevent triggering this issue.
+>
+> This is the same code pattern fixed in Commit 58fc7342b529 ("ipv6:
+> BUG() in pskb_expand_head() as part of calipso_skbuff_setattr()").
+>
+> In cipso_v4_skbuff_setattr(), len_delta can become negative, leading to
+> a negative headroom passed to skb_cow(). However, the BUG is not
+> triggerable because the condition headroom <=3D -NET_SKB_PAD cannot be
+> satisfied due to limits on the IPv4 options header size.
+>
+> Avoid potential problems in the future by only using skb_cow() to grow
+> the skb headroom.
+>
+> Signed-off-by: Will Rosenberg <whrosenb@asu.edu>
+> ---
+>
+> Notes:
+>     Given that IPv4 option length should not change,
+>     this may not be a worthwhile patch.
+>
+>     Apologies in advance if this ends up being a waste
+>     of time.
+>
+>  net/ipv4/cipso_ipv4.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-I don't recall LSM folks normally being invited to LSFMMBPF so it
-seems like this would be a poor forum to discuss LSM hooks.
+I think it's a reasonable thing to do in an effort to avoid future
+problems.  Thanks Will.
 
-> PS: I am not sure whether other folks are already working on it. I will p=
-repare
-> some RFC patches before the conference if I don't see other proposals.
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-FWIW, I'm not aware of anyone currently working on revising the mount
-hooks, but it's possible.  Posting a patchset, even an early RFC
-draft, is always a good way to find out who might be working in the
-same space :)
-
-Posting to the mailing list also has the advantage of reaching
-everyone who might be interested, whereas discussing this at a
-conference, especially one that is invite-only, is limiting.
+> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+> index 709021197e1c..32b951ebc0c2 100644
+> --- a/net/ipv4/cipso_ipv4.c
+> +++ b/net/ipv4/cipso_ipv4.c
+> @@ -2196,7 +2196,8 @@ int cipso_v4_skbuff_setattr(struct sk_buff *skb,
+>         /* if we don't ensure enough headroom we could panic on the skb_p=
+ush()
+>          * call below so make sure we have enough, we are also "mangling"=
+ the
+>          * packet so we should probably do a copy-on-write call anyway */
+> -       ret_val =3D skb_cow(skb, skb_headroom(skb) + len_delta);
+> +       ret_val =3D skb_cow(skb,
+> +                         skb_headroom(skb) + (len_delta > 0 ? len_delta =
+: 0));
+>         if (ret_val < 0)
+>                 return ret_val;
+>
+>
+> base-commit: 58bae918d73e3b6cd57d1e39fcf7c75c7dd1a8fe
+> --
+> 2.34.1
 
 --=20
 paul-moore.com
