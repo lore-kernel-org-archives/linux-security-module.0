@@ -1,115 +1,89 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDB62F12D3
-	for <linux-security-module@vger.kernel.org>; Fri, 23 Jan 2026 02:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769135970; cv=pass; b=MkAGvJfrpybeppHKdIaz6HdGXCcwHAZxSKhhfyGxAym7EMn/1pQIOrT5QTZdReZBUJqswPiT3Pgdq0YFiRh93sm+JVgz69c6UtR8YIVEBANK/R/9jVYM7I+RB2TzbGX3+aaITjIAaorzARwFCLfwTzyBLW8+DO/r7uT71qL85vM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769135970; c=relaxed/simple;
-	bh=P3EptHWa4KTu9luDIRb1mjNwdTplheDIhc6soBo/bkE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uSZSBLe3bts3XpN4eMUc637CEcGs+RPv8uJhufK6ABJdyPAEBXLMMEnKSMno9qC9zGIXh3IuY5dis1XPrN3VRsAXSPzTx2ZrRZz2JB8EyjOV1lErlh65Vp9O6K4L9YKw033GGXmRL0QnjhsZolfkjTxNfD+lFXgNjiww4orDBYE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=I8v2Zedg; arc=pass smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983CF37F8C8;
+	Fri, 23 Jan 2026 02:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769136706; cv=none; b=Z8/Rjn93r5Rcv3+kIrIB0x0kSzSdYEOhiwxgk1i9hh8AtVfWV0v/VAzPuQU/p9wU0yND36btusXjw/6tRed5hXZkfmlYtZlmCgYPaO7WTxBKyjFGa5QmfnZB1Smss6fZj4070uHWWytRKyMI7wY8ZvpGVZVIsimf8tlqhZkA+FY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769136706; c=relaxed/simple;
+	bh=ijsc2vYRTGvnu+6v0yeMDn19OX3wWsUn3E6YiSydZ0c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d0ZblIPeJeize1L/Gk3phKwOA1OA1I224B4hSobqBkmhRtk9fFLOooOGKaxGjfWXaT8RG8hlc5mNyYp1/j8eoghy+/T+Pi5BYgMAy7sfpvAshB/HajS5AKjaCC/9f3jnsrx0NLgbSnTBVEQqEx4HXxZ2PRMGxWrXKw9cTEqpw20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QAfG5voc; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="I8v2Zedg"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-35305538592so1843404a91.0
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Jan 2026 18:39:25 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769135959; cv=none;
-        d=google.com; s=arc-20240605;
-        b=bRdLd7t+54tPbokJ7yoKT78Dl4p+0/qVxkj8prkSzESkLNIL4hCToR+FbSrwmqOPf4
-         tEG1+D7cFuExXDRo3NudnjNOkCRRYz2QgPUSIO+CmApBOQZ6rfU7l9l9s9yLMbjIhX4J
-         t1ZTMeexo45KJpNRcRjYvFEvh2bLbDt3xlFx13DFqXGWL6LJxQwNgnTyqEfIe/YSq5/a
-         tejKuz5I6x8NKBzs9/6P7StqYU1migenWxy8s7LK3O6be4Ism5HgR7CCp1m1jKEKhYDe
-         v0rmptxQxy8jzdKT+hytbKesmrltm1pj8i1B+Gs+U41imN6W5AoEa25z2i6oL3bi0siv
-         LS6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=P3EptHWa4KTu9luDIRb1mjNwdTplheDIhc6soBo/bkE=;
-        fh=bECgp5THlSr0VPYbr2kD08FaEos8v4KIlEa2T1JYuBQ=;
-        b=SKwZrViuyvZ9YMumBSxCh55hDZ7M4NkaLj57YbNMFZSseq3x2ZQ+L5NH22x/IrDptz
-         i8O8nQx6M5lAJPP7UTc+Rv1vtsrJF15BBb7SFZ6o15pxfUNvRFTCGgHJVs8P8rpRHgoG
-         9hlarOFyvaQw5gsTBKx4rj9Q/DgjpjHK46KM1753/j5ZKvfbTxzkzQiRcU2ORLSHJ4w0
-         ySNXraABbz1hjDpeF1H/P57Wo/9iSD4w6Oo6EVE/G9n3BrreP/jwu4TrCrL8Pj+nRWth
-         DxnQh7T85B6slvHaSLT+nzRBNxH/vVgckF/f0LYiEnpyMFkEs3ScFHVt+CWlHCiy2oey
-         VKjQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1769135959; x=1769740759; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P3EptHWa4KTu9luDIRb1mjNwdTplheDIhc6soBo/bkE=;
-        b=I8v2Zedgw4jpN7rWa/wxZ5lSKgncvp/c2tGHB5oayIw2Jir2n6HijDzUeaZatg3dry
-         74zKOxDEger65D9PfEvo8WVzvHS5qITyxcYM7zbifKxEBqKKIsHwN/FH0FhGeMtSxqT+
-         EYCtaX+bNCDzml4wckFzmtu+WvhF008yFXP4skx5IgI11JrulmYqTeCT61CRq/QBOt1Z
-         KbgWeogB4Uy2Z/rOSq2ugxRqxtgB4LRumVtQfZjWJTwGRiGgwLKWK4ybhx+vNOvzu7bO
-         +xKGZnzOCRKt7Oq3GFIC0u81b2ooU9JwBZc86cxmJNNX0910naWlT7xsUHWha8yzEKt3
-         HQYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769135959; x=1769740759;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=P3EptHWa4KTu9luDIRb1mjNwdTplheDIhc6soBo/bkE=;
-        b=uv+Byp+ZyHczCJsKOZPAuLeBVv67II6kyLJ/pyCYF3H9UmJS5f/DAuq58RK79My1Wb
-         7mxkEKzDLkoOoW3dEOeJex9HIclKSgoV8mwgdErxJWAPOGunY15BqQPEujgGBtk9KzH4
-         +FWpnHRCJftKBqE+Mv/dJR7jvX8ONFc5R+9jo/q5ElfruwEFFDbtxEXhaK1ltyAwDMK8
-         lV5buL953g/4u3OhCMZ5LXXVLCuTnUTDOtvabmovcyZVs2nDsEoEgKP13nYldzdRlF6N
-         D6KyBwN5cToBQEpHIftE5KPQbzm+YW0YlpT0R95TZVrbPZ/ds2A/zSFWZ2AIPd6QaI/+
-         HVCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMLwg8G8PcPD7PdRY4o5Ddub6V/9yMyMDFMgmM59/xjiITM/kRwNUKIuMnBbERClD4BDhDYMO90UWW0n/VSlX5qVobYpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQl7WifpaC6iw6PxOFKyTOuSbqkTmevwbI9u1nVpWuu8Gbd+Pk
-	wrl9Di9vNpMXg1W87ddVqIwEoDf8jRGoLL/vK8CFhNCn1l89Kj13Lf6jfjshUowXxZnvzCRFrLU
-	4inoxU4ZYwxKYLpOXt27rPkCMvYPFRl3g+/j19FbF
-X-Gm-Gg: AZuq6aKR5TzL30N/XZyBzGljXTHuJiliy0lRH4i/s+2X8GGxvaF16tyrkf8V8ImTtbx
-	9/LzBtHrKKam9BPDvX+bk6F9cIJyBE79fyiRPSXq5a7yvBbsQEcBmwUBKNI9e7BtUzxY5YIUnm2
-	aEgE4ad6c/SeLww0BXNToK0Z9xflhJEhHoRJ/LasW1ZSHVbhIzYVw/AhMIlYZX34Rb+ouGvgGX/
-	zdA9Q/2NBWR50/V4+Vj93kVCMJ2trnruYI1m2qgYZQ2ijMja2ogXPQPhAFIvcCHYomUUIs=
-X-Received: by 2002:a17:90a:d403:b0:343:a631:28b1 with SMTP id
- 98e67ed59e1d1-35367024a1bmr1261929a91.16.1769135959102; Thu, 22 Jan 2026
- 18:39:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QAfG5voc"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=PeeVDlba9WeDqSD+8U9G9g9YRwqxUxNfd6Pm/uxWRtw=; b=QAfG5vocN0o8MnYwPuhQeZ6e94
+	K3YA9hYxBOWQr0SOAiE9VwFQZVm1IcYBpl056c7OjLVZC9xjxOpGun2dbGozP/B84y6/RguDGTn2p
+	EHUa9bCmFSer1UXep5VcOYZn3WSLTjEAawOK9aLZbWo+xG8pxebb1MGKw79dLnJLtn7GYfxjnobkV
+	m11iDZ7RMj5jXiIr/VS+Yz1x5o54pbuD0OWUMA7H0ulZYRK0Zg7//BQ77a0apxMhaSH6UWJj3fW7G
+	Cj9TozjLIYw45t+Q/2gdqXCpWaQDibUqw+xmbIS8zSs75CvPxH2we1h4zFnfKZQALliRXWubripAg
+	LdY9gV/Q==;
+Received: from [50.53.43.113] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vj7Gc-000000084Bt-1afB;
+	Fri, 23 Jan 2026 02:51:22 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Subject: [PATCH] landlock: fix struct layer_access_masks kernel-doc
+Date: Thu, 22 Jan 2026 18:51:19 -0800
+Message-ID: <20260123025121.3713403-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPhsuW4=heDwYEkmRzSnLHDdW=da71qDd1KqUj9sYUOT5uOx3w@mail.gmail.com>
- <CAHC9VhRU_vtN4oXHVuT4Tt=WFP=4FrKc=i8t=xDz+bamUG7r6g@mail.gmail.com>
- <CAPhsuW6vCrN=k6xEuPf+tJr6ikH_RwfyaU_Q9DvGg2r2U9y+UA@mail.gmail.com>
- <CAHC9VhSSmoUKPRZKr8vbaK1222ZAWQo51G5e3h65g135Q3p8jw@mail.gmail.com> <CAPhsuW6TMNTGs9miKmQ_YFdm-NnCfLViCjQjMkWUYnuj9bB-qA@mail.gmail.com>
-In-Reply-To: <CAPhsuW6TMNTGs9miKmQ_YFdm-NnCfLViCjQjMkWUYnuj9bB-qA@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 22 Jan 2026 21:39:07 -0500
-X-Gm-Features: AZwV_Qiuw-WOvpplG3_3YRv6P3Gqf8NRc7bLKC5WTsb9MkYny2ZAcVsltSt3mLs
-Message-ID: <CAHC9VhR0F7rp=ne3BWPtuu_KjUao03iYoHuNsQdYgWygg0DBkg@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Refactor LSM hooks for VFS mount operations
-To: Song Liu <song@kernel.org>
-Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	lsf-pc@lists.linux-foundation.org, 
-	linux-security-module <linux-security-module@vger.kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 22, 2026 at 6:15=E2=80=AFPM Song Liu <song@kernel.org> wrote:
-> On Thu, Jan 22, 2026 at 9:27=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
-wrote:
+Use the correct struct name and describe the struct member in
+kernel-doc notation to prevent kernel-doc warnings.
 
-...
+WARNING: ../security/landlock/ruleset.h:313 expecting prototype for
+  struct layer_accesses. Prototype was for struct layer_access_masks instead
 
-> This issue has been bothering us for quite some time. Therefore, I
-> don't mind spending more than necessary effort to get it fixed
-> sooner.
+Fixes: 1ebf8e8d3245 ("landlock: Transpose the layer masks data structure")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+Something like this is needed. Feel free to massage/correct it some.
 
-Help on identifying and correcting any deficiencies in the LSM mount
-hooks is definitely welcome.
+Cc: Günther Noack <gnoack3000@gmail.com>
+Cc: Mickaël Salaün <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
 
---=20
-paul-moore.com
+ security/landlock/ruleset.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- linux-next-20260121.orig/security/landlock/ruleset.h
++++ linux-next-20260121/security/landlock/ruleset.h
+@@ -302,9 +302,9 @@ landlock_get_scope_mask(const struct lan
+ }
+ 
+ /**
+- * struct layer_accesses - A boolean matrix of layers and access rights
+- *
+- * This has a bit for each combination of layer numbers and access rights.
++ * struct layer_access_masks - A boolean matrix of layers and access rights
++ * @access: This has a bit for each combination of layer numbers and access
++ * rights.
+  * During access checks, it is used to represent the access rights for each
+  * layer which still need to be fulfilled.  When all bits are 0, the access
+  * request is considered to be fulfilled.
