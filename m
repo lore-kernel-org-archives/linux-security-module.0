@@ -1,89 +1,186 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983CF37F8C8;
-	Fri, 23 Jan 2026 02:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775C4387569;
+	Fri, 23 Jan 2026 06:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769136706; cv=none; b=Z8/Rjn93r5Rcv3+kIrIB0x0kSzSdYEOhiwxgk1i9hh8AtVfWV0v/VAzPuQU/p9wU0yND36btusXjw/6tRed5hXZkfmlYtZlmCgYPaO7WTxBKyjFGa5QmfnZB1Smss6fZj4070uHWWytRKyMI7wY8ZvpGVZVIsimf8tlqhZkA+FY=
+	t=1769149268; cv=none; b=Da/s+gEbIx6vvO1sBo1FUIvQJlWpOysEX/ASgQP+x1Ly/hi8HKEfKxYv78eMmzS1+/v6oDOUryvoF8wLT7G2swJ9oAczyOSGeAb8py1t9EuciBIs+ckbjUysXoFDDE/YnrBZZCX+LFeSUMpnUeMxG6608OdCbWgeJ5XvKlKIc8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769136706; c=relaxed/simple;
-	bh=ijsc2vYRTGvnu+6v0yeMDn19OX3wWsUn3E6YiSydZ0c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d0ZblIPeJeize1L/Gk3phKwOA1OA1I224B4hSobqBkmhRtk9fFLOooOGKaxGjfWXaT8RG8hlc5mNyYp1/j8eoghy+/T+Pi5BYgMAy7sfpvAshB/HajS5AKjaCC/9f3jnsrx0NLgbSnTBVEQqEx4HXxZ2PRMGxWrXKw9cTEqpw20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QAfG5voc; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1769149268; c=relaxed/simple;
+	bh=4qLfl1EKnef/GzUW0bVZNp7SUilauqiMWE77LRDXaXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ai3eoYiNavdZGugg2TZIWLm2AqVzGXwwY0RVp/Ou2OoUtE5dI6HrVvxo0DOD3HfxKavJ3hoRqdSRNoltajtwQezr/WA8ADAJ+z0FJKIgpjxL9RYVRGxKqSCZMgoUnESG40TvnbC5+DdCjhLBxAjHyLE9ikWPFV1Dk+jd9VCKVdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=OONc+Hz4; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QAfG5voc"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=PeeVDlba9WeDqSD+8U9G9g9YRwqxUxNfd6Pm/uxWRtw=; b=QAfG5vocN0o8MnYwPuhQeZ6e94
-	K3YA9hYxBOWQr0SOAiE9VwFQZVm1IcYBpl056c7OjLVZC9xjxOpGun2dbGozP/B84y6/RguDGTn2p
-	EHUa9bCmFSer1UXep5VcOYZn3WSLTjEAawOK9aLZbWo+xG8pxebb1MGKw79dLnJLtn7GYfxjnobkV
-	m11iDZ7RMj5jXiIr/VS+Yz1x5o54pbuD0OWUMA7H0ulZYRK0Zg7//BQ77a0apxMhaSH6UWJj3fW7G
-	Cj9TozjLIYw45t+Q/2gdqXCpWaQDibUqw+xmbIS8zSs75CvPxH2we1h4zFnfKZQALliRXWubripAg
-	LdY9gV/Q==;
-Received: from [50.53.43.113] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vj7Gc-000000084Bt-1afB;
-	Fri, 23 Jan 2026 02:51:22 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	linux-security-module@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Subject: [PATCH] landlock: fix struct layer_access_masks kernel-doc
-Date: Thu, 22 Jan 2026 18:51:19 -0800
-Message-ID: <20260123025121.3713403-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.52.0
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="OONc+Hz4"
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1769149255; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=1870OwY7Yt3wtHMS4Kw5+Uzzq7JdVz48VXgwCaXXTJw=;
+	b=OONc+Hz4lqc1HP74NtQusaU9uk/dcEZsCk52r2ESR4HBF9cIXsmU0KMm8jv1P0jB5096JAHEtML2Qgaqa+XP+adb6qIZpbtghlWD/Iu80rKb5FeQV2HR2YKl8Cp3S9Nn/aRLUSxCWnIp17SLWzv5twcC/C9IC25lv1ZbLsGjZr4=
+Received: from 30.74.144.120(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WxemimV_1769149254 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 23 Jan 2026 14:20:54 +0800
+Message-ID: <7ccc3447-3a39-4206-95c5-a6cd00e2bda6@linux.alibaba.com>
+Date: Fri, 23 Jan 2026 14:20:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/13] mm: update shmem_[kernel]_file_*() functions to
+ use vma_flags_t
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: x86@kernel.org, linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+ linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+ linux-mm@kvack.org, ntfs3@lists.linux.dev, devel@lists.orangefs.org,
+ linux-xfs@vger.kernel.org, keyrings@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+References: <cover.1769097829.git.lorenzo.stoakes@oracle.com>
+ <736febd280eb484d79cef5cf55b8a6f79ad832d2.1769097829.git.lorenzo.stoakes@oracle.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <736febd280eb484d79cef5cf55b8a6f79ad832d2.1769097829.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Use the correct struct name and describe the struct member in
-kernel-doc notation to prevent kernel-doc warnings.
 
-WARNING: ../security/landlock/ruleset.h:313 expecting prototype for
-  struct layer_accesses. Prototype was for struct layer_access_masks instead
 
-Fixes: 1ebf8e8d3245 ("landlock: Transpose the layer masks data structure")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
-Something like this is needed. Feel free to massage/correct it some.
+On 1/23/26 12:06 AM, Lorenzo Stoakes wrote:
+> In order to be able to use only vma_flags_t in vm_area_desc we must adjust
+> shmem file setup functions to operate in terms of vma_flags_t rather than
+> vm_flags_t.
+> 
+> This patch makes this change and updates all callers to use the new
+> functions.
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Cc: Günther Noack <gnoack3000@gmail.com>
-Cc: Mickaël Salaün <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
+(reduced distribution list too)
 
- security/landlock/ruleset.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thanks. The shmem part looks good to me with some nits below.
 
---- linux-next-20260121.orig/security/landlock/ruleset.h
-+++ linux-next-20260121/security/landlock/ruleset.h
-@@ -302,9 +302,9 @@ landlock_get_scope_mask(const struct lan
- }
- 
- /**
-- * struct layer_accesses - A boolean matrix of layers and access rights
-- *
-- * This has a bit for each combination of layer numbers and access rights.
-+ * struct layer_access_masks - A boolean matrix of layers and access rights
-+ * @access: This has a bit for each combination of layer numbers and access
-+ * rights.
-  * During access checks, it is used to represent the access rights for each
-  * layer which still need to be fulfilled.  When all bits are 0, the access
-  * request is considered to be fulfilled.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+
+> ---
+>   arch/x86/kernel/cpu/sgx/ioctl.c           |  2 +-
+>   drivers/gpu/drm/drm_gem.c                 |  5 +-
+>   drivers/gpu/drm/i915/gem/i915_gem_shmem.c |  2 +-
+>   drivers/gpu/drm/i915/gem/i915_gem_ttm.c   |  3 +-
+>   drivers/gpu/drm/i915/gt/shmem_utils.c     |  3 +-
+>   drivers/gpu/drm/ttm/tests/ttm_tt_test.c   |  2 +-
+>   drivers/gpu/drm/ttm/ttm_backup.c          |  3 +-
+>   drivers/gpu/drm/ttm/ttm_tt.c              |  2 +-
+>   fs/xfs/scrub/xfile.c                      |  3 +-
+>   fs/xfs/xfs_buf_mem.c                      |  2 +-
+>   include/linux/shmem_fs.h                  |  8 ++-
+>   ipc/shm.c                                 |  6 +--
+>   mm/memfd.c                                |  2 +-
+>   mm/memfd_luo.c                            |  2 +-
+>   mm/shmem.c                                | 59 +++++++++++++----------
+>   security/keys/big_key.c                   |  2 +-
+>   16 files changed, 57 insertions(+), 49 deletions(-)
+
+[snip]
+
+>   	inode->i_flags |= i_flags;
+> @@ -5864,9 +5869,10 @@ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name,
+>    *	checks are provided at the key or shm level rather than the inode.
+>    * @name: name for dentry (to be seen in /proc/<pid>/maps)
+>    * @size: size to be set for the file
+> - * @flags: VM_NORESERVE suppresses pre-accounting of the entire object size
+> + * @vma_flags: VMA_NORESERVE_BIT suppresses pre-accounting of the entire object size
+
+nit: s/vma_flags/flags
+
+>    */
+> -struct file *shmem_kernel_file_setup(const char *name, loff_t size, unsigned long flags)
+> +struct file *shmem_kernel_file_setup(const char *name, loff_t size,
+> +				     vma_flags_t flags)
+>   {
+>   	return __shmem_file_setup(shm_mnt, name, size, flags, S_PRIVATE);
+>   }
+> @@ -5878,7 +5884,7 @@ EXPORT_SYMBOL_GPL(shmem_kernel_file_setup);
+>    * @size: size to be set for the file
+>    * @flags: VM_NORESERVE suppresses pre-accounting of the entire object size
+
+nit: s/VM_NORESERVE/VMA_NORESERVE_BIT
+
+>    */
+> -struct file *shmem_file_setup(const char *name, loff_t size, unsigned long flags)
+> +struct file *shmem_file_setup(const char *name, loff_t size, vma_flags_t flags)
+>   {
+>   	return __shmem_file_setup(shm_mnt, name, size, flags, 0);
+>   }
+> @@ -5889,16 +5895,17 @@ EXPORT_SYMBOL_GPL(shmem_file_setup);
+>    * @mnt: the tmpfs mount where the file will be created
+>    * @name: name for dentry (to be seen in /proc/<pid>/maps)
+>    * @size: size to be set for the file
+> - * @flags: VM_NORESERVE suppresses pre-accounting of the entire object size
+> + * @flags: VMA_NORESERVE_BIT suppresses pre-accounting of the entire object size
+>    */
+>   struct file *shmem_file_setup_with_mnt(struct vfsmount *mnt, const char *name,
+> -				       loff_t size, unsigned long flags)
+> +				       loff_t size, vma_flags_t flags)
+>   {
+>   	return __shmem_file_setup(mnt, name, size, flags, 0);
+>   }
+>   EXPORT_SYMBOL_GPL(shmem_file_setup_with_mnt);
+>   
+> -static struct file *__shmem_zero_setup(unsigned long start, unsigned long end, vm_flags_t vm_flags)
+> +static struct file *__shmem_zero_setup(unsigned long start, unsigned long end,
+> +		vma_flags_t flags)
+>   {
+>   	loff_t size = end - start;
+>   
+> @@ -5908,7 +5915,7 @@ static struct file *__shmem_zero_setup(unsigned long start, unsigned long end, v
+>   	 * accessible to the user through its mapping, use S_PRIVATE flag to
+>   	 * bypass file security, in the same way as shmem_kernel_file_setup().
+>   	 */
+> -	return shmem_kernel_file_setup("dev/zero", size, vm_flags);
+> +	return shmem_kernel_file_setup("dev/zero", size, flags);
+>   }
+>   
+>   /**
+> @@ -5918,7 +5925,7 @@ static struct file *__shmem_zero_setup(unsigned long start, unsigned long end, v
+>    */
+>   int shmem_zero_setup(struct vm_area_struct *vma)
+>   {
+> -	struct file *file = __shmem_zero_setup(vma->vm_start, vma->vm_end, vma->vm_flags);
+> +	struct file *file = __shmem_zero_setup(vma->vm_start, vma->vm_end, vma->flags);
+>   
+>   	if (IS_ERR(file))
+>   		return PTR_ERR(file);
+> @@ -5939,7 +5946,7 @@ int shmem_zero_setup(struct vm_area_struct *vma)
+>    */
+>   int shmem_zero_setup_desc(struct vm_area_desc *desc)
+>   {
+> -	struct file *file = __shmem_zero_setup(desc->start, desc->end, desc->vm_flags);
+> +	struct file *file = __shmem_zero_setup(desc->start, desc->end, desc->vma_flags);
+>   
+>   	if (IS_ERR(file))
+>   		return PTR_ERR(file);
+> diff --git a/security/keys/big_key.c b/security/keys/big_key.c
+> index d46862ab90d6..268f702df380 100644
+> --- a/security/keys/big_key.c
+> +++ b/security/keys/big_key.c
+> @@ -103,7 +103,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
+>   					 0, enckey);
+>   
+>   		/* save aligned data to file */
+> -		file = shmem_kernel_file_setup("", enclen, 0);
+> +		file = shmem_kernel_file_setup("", enclen, EMPTY_VMA_FLAGS);
+>   		if (IS_ERR(file)) {
+>   			ret = PTR_ERR(file);
+>   			goto err_enckey;
+
