@@ -1,186 +1,118 @@
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B67185E4A
-	for <linux-security-module@vger.kernel.org>; Sun, 25 Jan 2026 01:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FA726E6F0
+	for <linux-security-module@vger.kernel.org>; Sun, 25 Jan 2026 10:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769305940; cv=none; b=NoFn8GEz557b+mmO4tJDditgRIx+F5TyNsAr2sBP68CeJ5ahRyaH+wGRiDmxOteeZ4dBMbbnD1cvz2jISLh5eD0cKQknCLVnQUI921VAJzKqlosDV5lmI6r1sWZk7SdchOWAfmYXeiXte+Yfxggekgn4zKtZb+FH+xYgx9Jnaek=
+	t=1769335563; cv=none; b=Ob6vsimlNaLLZ0tJh29c62jMU3/t0nXggwDQ1DylTmU6g5n5tfxot6LuzFCEWDnjaphktAAzqvvkKzIAEUUgYCvMYUJ/3el1zVeoYbz9mWVCSn4nWWYTXgJruhu09F7AkeUN2hRFL6vz6YYt44rhf/0renNDhxtwFFHaPaxH8ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769305940; c=relaxed/simple;
-	bh=SOzskQQDSuav7yM921KWdaxACL3y1/trhH1Ayu+akHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NXxHTHpxQF4GFCfa/EyZww6KBeCtQLuYU8Z9rrD7CWhjW0DKsNJuRZNgd209Rjt3rjjwvAZeqZr+Kg05H3by7ajrOQV/e/fN/ZrCca1kcHC98dX6v7wJwmNOz3VWbLYNtm8b1lywG/L75P6FNHsRwW95Dp1MKcmTX/cTHUGDrkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=l+KCPqxk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=o6lNWvkv; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1769335563; c=relaxed/simple;
+	bh=teGMtQjbidAgosVFHe0BOkRblG+sCic3y+HWPvpl1UY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=EUaZsdhQWTDjWtqDxdkr73bBzySuM8j8f1e//Pcokmglgf4l8crS1G8fcXKeUzDHcQaHDLeCa0jDIEGb8HVL3yhKf6D7gK+zPhSvUKLUUMNu9PMNRr+1QvJnssFlQbixMFXioCpLaosr9qAOaauVaVyptwaAKajqbvCBKAa5QRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fu43Zi4a; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="l+KCPqxk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="o6lNWvkv"
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id F165C1D000AC;
-	Sat, 24 Jan 2026 20:52:16 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Sat, 24 Jan 2026 20:52:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1769305936;
-	 x=1769392336; bh=iAcngLlJ/kJD+oUzXwj76SHpEcxgoXFaV8LS/MQoWYs=; b=
-	l+KCPqxkqzTQhQsJglT/S69WlyjuwnApyA8s7l40fRMo7J11Xkq5flCvGATTFmvh
-	bqNmAfMCLnsdNRodC9sv2uekG00oIKrBFFUxWQ0quAyY0eAv+oim16UOtytuptCU
-	g2z6TiQhINKMdI5/8kKNQOvCBRI2VwHcOcn2khYmkK/Sxs/KwX26NbbICI8vjMIX
-	HSL4R/VLAZfR7MsphT/g1aNs+GiYfe3GLiAS6haZVP+O73pXeEdKT+rjOsG1iDKL
-	mHzw2lBSpBvhnlerYt35YjxO4q5ZpmQfPcP1G5XPwUQCRDYBxnVaocVa6Bnisv5X
-	88v/foVvQZsGAf/5vojj8A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1769305936; x=
-	1769392336; bh=iAcngLlJ/kJD+oUzXwj76SHpEcxgoXFaV8LS/MQoWYs=; b=o
-	6lNWvkv0TEIjK6Hlg2neWSBp4xG3FKpyoYOaOuw/9tql6w1/bvsy+0CuihAFDbvz
-	2skQ2gNPNNK/PkE2VbFKdRfO7mPx0YFKPpLF/WBDLB7vgNeXIRgBebWgplw+xLfw
-	0LmwiSNV2sA6mZoymABwsAGxiZFZfJfRK4sdLKdkIGeHOTCAfoStzhKhQFfH98sf
-	N8Zc+m+GcVGI9oumtVF4qp7uRDPEB9ZAT4jpcjlYIyXSpbrYJFb6+tzpa8nLE5+E
-	EIZEaCX3wX1ONWjz0t3KB70cE4S+fpK/p7ZHUxnZ15hp0TZstk9BN60ZCCO2eYR/
-	4Ez0mkpsaaN5UIxm7FRyg==
-X-ME-Sender: <xms:T3d1aUh3pHJX-uz_g3uA11F6EsBQZv8DRQz2K_CregUnmB2PqVd7vA>
-    <xme:T3d1acF0-ofBEV9pUV567ykPba5ctgezAJckoN9ckp5E2OGuUQCV0HFo2DDrRu_1h
-    pxzCKj9caEWhxj-4GtQvmxj4C1g91-e20BPER3O1ETR0rOsEP_9DA>
-X-ME-Received: <xmr:T3d1aSTaAX6HnuSy_4dMzMWRNvj1Yp92-592zqIUhUUb3PuZTRaEp6LiPXp3DU1Kk_V1MyFkUtqm_t4qag>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduheefheefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefvihhnghhm
-    rghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepud
-    ekvefhgeevvdevieehvddvgefhgeelgfdugeeftedvkeeigfeltdehgeeghffgnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgrohifth
-    hmrdhorhhgpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopehgnhhorggtkheftddttdesghhmrghilhdrtghomhdprhgtphhtthhopehmihgtse
-    guihhgihhkohgurdhnvghtpdhrtghpthhtoheplhhinhhugidqshgvtghurhhithihqdhm
-    ohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehuthhilhhith
-    ihvghmrghljeejsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgrmhgrshhthhdrnhho
-    rhifrgihrdgrnhgrnhgurgesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepmhgrthhthh
-    hivghusegsuhhffhgvthdrrhgvpdhrtghpthhtohepihhvrghnohhvrdhmihhkhhgrihhl
-    udeshhhurgifvghiqdhprghrthhnvghrshdrtghomhdprhgtphhtthhopehkohhnshhtrg
-    hnthhinhdrmhgvshhkhhhiugiivgeshhhurgifvghirdgtohhm
-X-ME-Proxy: <xmx:T3d1aRxX3xaeqZdn5N1qBeTa2yA_na3ffQfwwnPivmQxBwV-t-c30g>
-    <xmx:T3d1aWfNaSPh6FmRvDFpp7Jjk7pjq_CurkaDKwKKnmo4uLHXSkV3aw>
-    <xmx:T3d1acP8QrA1-s5BvoMEq55RQDbdyxmSt7DexY80uXl3HK6CXo1ccw>
-    <xmx:T3d1aZshJNxNXs_CDqg_10O-yyf3IgaXtAPzmTp0bsWcm9edCUH0cA>
-    <xmx:UHd1aRXGbzQS35vs6WCd8CSdgfaMOjUgMiwAixtfeEkwhWFL9qsnrB7Q>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 24 Jan 2026 20:52:14 -0500 (EST)
-Message-ID: <0dbce93f-7890-421d-be53-1898a6ff919d@maowtm.org>
-Date: Sun, 25 Jan 2026 01:52:13 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fu43Zi4a"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2a1388cdac3so28005775ad.0
+        for <linux-security-module@vger.kernel.org>; Sun, 25 Jan 2026 02:06:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769335562; x=1769940362; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Xnf6p+2Hlq5eWfuvYyYtXu3LZrwEbd4KRfL66TNxW0=;
+        b=Fu43Zi4a/jYijmDqKOnOTr+mwtJH0cJcYb17ugtRkXgwnULWnUZyc2d1+dCO6qhz7j
+         yY6I4GfRLXXCGKFs/JSGHbf90iTFA2drb7oS6houuRl3kaerk1mwzVCm06nkvbewPCL9
+         PTiV6FsRxkVuOz26Gn3/bporyBm9dnrgfJTi68wgzFkg+1D5h1heUS03FxjK5mWvWwgS
+         CcEoEgwJmlXc54E39QHzaZzomaX+whvVZHTizIhhAqf2h6yGQNObWT60LKcGPnhRn+IA
+         NsVBNATfA2X9sqtkwvpAWFrBjPmJ59bOQi0k7I2e5O7dKqIgiAz3S/AX9b1pjiR3b0g3
+         H1gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769335562; x=1769940362;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Xnf6p+2Hlq5eWfuvYyYtXu3LZrwEbd4KRfL66TNxW0=;
+        b=YdEuNBe1NL7IcIHjlRTibHXQ2uUcqYFE+0Q45X0wkJELGe3jHmthV13FNBwi7ogXIW
+         ZBvAr4+uiIstagf7Q29SYbZAzKKr29aGt6TfNVwatahMb7MUeZBNCIoWX/jD1u8x8OEa
+         MpzHxqydmka6wo6mbcIPXr3rPbKuLxwK9XHQlET7ZsApDnqYInyp0X/sT9aWoYdIf1hj
+         QAThrnV44aAgvIRGQeBmjBdhERNVirdCvHnx8KSG+lWLbz+YURfw7ikjiaJTQRG/RyBh
+         O/Itp0erzR7HSOEmDJesCnJ3rtH54zvnodlq7qWdBmWFndv//ttle5FN5RIVNOzm5gJM
+         YeYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjxxWRfUiL9M5CnQz0rFlCEuUU0yMovdGXYwlqg02in6iDJzoOAab/4aD56yhKvsgdT6cz2svV9Lto5k4JMA5F7gb/mJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdClrZitBdACJIaISVqxfmkNWtNO4ZdGhq5g7/BsQJ/YXesLpt
+	DXuD7oYHdH8bn12sLydZdIUo37qd7y0EgzqSs6nupwJ8F4kdjuU542D+
+X-Gm-Gg: AZuq6aKSygumoHjKaFVYnriJuDeIi6W2YjSCeIN5xQ3tIWTsZQTWqjOfrMPurOCb8Wr
+	EDuo8hClKAnIwWrcnJRRctif7lBRtGeG69f1pLj92Hupp3VLprbQATbcP36G9tae9etzW4ilu3F
+	L/Hw90LmZFh8VmSk7Ar0huIizfrDrbxzNWxdKECjZrnUEtbkiFg9JceSnglwy1v8YfH1lADE7EL
+	fxectdUrgpHpf6IHxKOEg3KBtAbHFCv+FludveVc79unl/ripcWCC3ON1ximsTRLlSm9HG6XspZ
+	rC9Du7gdSAK1AhI/vzR/af2a+O1U/UjliA9dQy+E4r1/2k5ig4FzL49I3vRNJLexcsLVs3XLDyQ
+	oVuXDuygkwE341SeIzQ8HdhpV3EKC+3Vjp5hnIpZ405EfsVs7d5Ew/Y3OFaaO0C5tUM4Ks0F+Vw
+	saJlou+7Pclz75luWWoB0=
+X-Received: by 2002:a17:903:2351:b0:2a0:c1be:f436 with SMTP id d9443c01a7336-2a845336da4mr12371785ad.59.1769335561700;
+        Sun, 25 Jan 2026 02:06:01 -0800 (PST)
+Received: from [172.16.80.107] ([210.228.119.9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a802dcdb8csm64627475ad.31.2026.01.25.02.05.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Jan 2026 02:06:01 -0800 (PST)
+From: Ryota Sakamoto <sakamo.ryota@gmail.com>
+Date: Sun, 25 Jan 2026 19:05:48 +0900
+Subject: [PATCH] apparmor: add .kunitconfig
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] landlock: transpose the layer masks data
- structure
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
-Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- linux-security-module@vger.kernel.org, Justin Suess
- <utilityemal77@gmail.com>,
- Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
- Matthieu Buffet <matthieu@buffet.re>,
- Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
- konstantin.meskhidze@huawei.com
-References: <20251230103917.10549-3-gnoack3000@gmail.com>
- <20251230103917.10549-7-gnoack3000@gmail.com>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20251230103917.10549-7-gnoack3000@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260125-add-apparmor-kunitconfig-v1-1-e815cec415df@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MTQqDMBBA4avIrB1I4g/SqxQX02TUoTQJE1sK4
+ t0NLr/FewcUVuECj+YA5Z8USbHCtg34jeLKKKEanHGjsW5ACgEpZ9JPUnx/o+w+xUVWdBO9qO+
+ 8HSYDNc/Ki/zv9XM+zwtQAe6dagAAAA==
+X-Change-ID: 20260125-add-apparmor-kunitconfig-28aba43c1580
+To: John Johansen <john.johansen@canonical.com>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, 
+ linux-security-module@vger.kernel.org, 
+ Ryota Sakamoto <sakamo.ryota@gmail.com>
+X-Mailer: b4 0.14.2
 
-On 12/30/25 10:39, Günther Noack wrote:
-> [...]
-> diff --git a/security/landlock/audit.c b/security/landlock/audit.c
-> index c52d079cdb77b..650bd7f5cb6be 100644
-> --- a/security/landlock/audit.c
-> +++ b/security/landlock/audit.c
-> [...]
-> -static size_t
-> -get_layer_from_deny_masks(access_mask_t *const access_request,
-> -			  const access_mask_t all_existing_optional_access,
-> -			  const deny_masks_t deny_masks)
-> +/*
-> + * get_layer_from_fs_deny_masks - get the layer which denied the access request
-> + *
-> + * As a side effect, stores the denied access rights from that layer(!) in
-> + * *access_request.
-> + */
-> +static size_t get_layer_from_fs_deny_masks(access_mask_t *const access_request,
-> +					   const deny_masks_t deny_masks)
->  {
-> -	const unsigned long access_opt = all_existing_optional_access;
-> -	const unsigned long access_req = *access_request;
-> -	access_mask_t missing = 0;
-> +	const access_mask_t access_req = *access_request;
->  	size_t youngest_layer = 0;
-> -	size_t access_index = 0;
-> -	unsigned long access_bit;
-> +	access_mask_t missing = 0;
->  
-> -	/* This will require change with new object types. */
-> -	WARN_ON_ONCE(access_opt != _LANDLOCK_ACCESS_FS_OPTIONAL);
-> +	WARN_ON_ONCE((access_req | _LANDLOCK_ACCESS_FS_OPTIONAL) !=
-> +		     _LANDLOCK_ACCESS_FS_OPTIONAL);
->  
-> -	for_each_set_bit(access_bit, &access_opt,
-> -			 BITS_PER_TYPE(access_mask_t)) {
-> -		if (access_req & BIT(access_bit)) {
-> -			const size_t layer =
-> -				(deny_masks >> (access_index * 4)) &
-> -				(LANDLOCK_MAX_NUM_LAYERS - 1);
-> +	if (access_req & LANDLOCK_ACCESS_FS_TRUNCATE) {
-> +		size_t layer = deny_masks & 0x0f;
->  
-> -			if (layer > youngest_layer) {
-> -				youngest_layer = layer;
-> -				missing = BIT(access_bit);
-> -			} else if (layer == youngest_layer) {
-> -				missing |= BIT(access_bit);
-> -			}
-> -		}
-> -		access_index++;
-> +		missing |= LANDLOCK_ACCESS_FS_TRUNCATE;
-> +		youngest_layer = max(youngest_layer, layer);
->  	}
-> +	if (access_req & LANDLOCK_ACCESS_FS_IOCTL_DEV) {
-> +		size_t layer = (deny_masks & 0xf0) >> 4;
->  
-> +		if (layer > youngest_layer)
-> +			missing = 0;
-> +
-> +		missing |= LANDLOCK_ACCESS_FS_IOCTL_DEV;
+Add .kunitconfig file to the AppArmor directory to enable easy execution of
+KUnit tests.
 
-I think this should be under a `if (layer == youngest_layer)`. If layer <
-youngest_layer, because *access_request is only supposed to contain the
-missing access from the youngest denying layer, this would be incorrect.
-Although I think it probably won't make a difference in practice right now
-since we don't currently have any access request that has truncate and
-ioctl at the same time.
+AppArmor tests (CONFIG_SECURITY_APPARMOR_KUNIT_TEST) depend on
+CONFIG_SECURITY_APPARMOR which also depends on CONFIG_SECURITY and
+CONFIG_NET. Without explicitly enabling these configs in the .kunitconfig,
+developers will need to specify config manually.
 
-> +		youngest_layer = max(youngest_layer, layer);
-> +	}
->  	*access_request = missing;
->  	return youngest_layer;
->  }
->  
->  #ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
->  
-> -static void test_get_layer_from_deny_masks(struct kunit *const test)
-> +static void test_get_layer_from_fs_deny_masks(struct kunit *const test)
->  {
->  	deny_masks_t deny_mask;
->  	access_mask_t access;
-> [...]
+With the .kunitconfig, developers can run the tests:
+  $ ./tools/testing/kunit/kunit.py run --kunitconfig security/apparmor
+
+Signed-off-by: Ryota Sakamoto <sakamo.ryota@gmail.com>
+---
+ security/apparmor/.kunitconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/security/apparmor/.kunitconfig b/security/apparmor/.kunitconfig
+new file mode 100644
+index 0000000000000000000000000000000000000000..aa842a0266e9d33c3333ec2ea180206187b0eb4c
+--- /dev/null
++++ b/security/apparmor/.kunitconfig
+@@ -0,0 +1,5 @@
++CONFIG_KUNIT=y
++CONFIG_NET=y
++CONFIG_SECURITY=y
++CONFIG_SECURITY_APPARMOR=y
++CONFIG_SECURITY_APPARMOR_KUNIT_TEST=y
+
+---
+base-commit: d91a46d6805af41e7f2286e0fc22d498f45a682b
+change-id: 20260125-add-apparmor-kunitconfig-28aba43c1580
+
+Best regards,
+-- 
+Ryota Sakamoto <sakamo.ryota@gmail.com>
+
