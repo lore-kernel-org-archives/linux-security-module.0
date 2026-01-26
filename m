@@ -1,109 +1,134 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from 011.lax.mailroute.net (011.lax.mailroute.net [199.89.1.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F71306486
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Jan 2026 16:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D26C34677D;
+	Mon, 26 Jan 2026 17:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769446341; cv=none; b=ZoWF9iHbstJ6iZVWWFm/qMqOsdtVneleeUycdklHpYmfnDoTFyWdmSM0MBAwAtR5zm443wHjQ4VKmhAGB7Qs3HXXJq5zhASglYrVYtyQ7XtbttOXjBaQpn8JHVItcYPLgIRdgQvD2o3yiEGMUtbAQ9h38pQMX+LRCaukBzGJr+4=
+	t=1769448693; cv=none; b=CFDUmdzVfhpFSKogh7dd3QeqP6Ouh9FrUhj1O4Chat3tZ0GVVdAhZiGeZiB9Gr7aCEfcR8Gpa0mVicT1DxysITOnKTITrmRZD64aJ2KHxtzI+GVe4g64qzCfrhZVBDHdpVQUf8mqRRJZp56HCBuRy2+ybyIfuDDuTqeF4k+JA9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769446341; c=relaxed/simple;
-	bh=FwuQyobXUa3rGZ00bfbz1Bialw2/KrjtbB9iSkebktM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gITlUa9n27yvrFDSJWyekgPBxwQJ64Fl05AwJe0ImkPBPV4/VtCbo9h2x8scAFbqeOHZn8n2p9i2LEyQJ49+mg7T9MW4z2uwCO/ZxCSHMp5cyjuxMRe3sW1AawrrSTwys1H2YFn8nwnoRxoNfLJGoY6xNbcCWhJ7m6zFAhUmFg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A5FGHTXE; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1769448693; c=relaxed/simple;
+	bh=M0wCL+k15bO3pDdyLHE8FGzohjX2ZEEC1+q4jfMMHgA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wu4weehapWZrj+4Eh7fDVdnuPX8WiPq8pwzJ27AYj4YG2tJbVa4oV11s9C3e8ve+dVMHCh/LqsLDCTHJIZXws3LDsuFVJDON7Z+6lzldsUurbWgJXqt2Jpwg1tza4/ecyuwWu0Q1Tfypgyx3cKexP9GRl4hYrsI1bGv6u9HMFtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Jfjqa2A5; arc=none smtp.client-ip=199.89.1.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A5FGHTXE"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-435a11957f6so3912512f8f.0
-        for <linux-security-module@vger.kernel.org>; Mon, 26 Jan 2026 08:52:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769446338; x=1770051138; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=31wanlT+6Au80Qu9oKuPkvV8GImmjOjGKb34LDPwV58=;
-        b=A5FGHTXEEr2dVnBW9bkxOkrBWnsiDf868IEfLhUnrBFcT5Pe8AKJQSEYkrRTwDJbES
-         TLMhvScPOo5fvFu7obLKEp2AN00FyaWfz5WGMopRrtK0lbH9NIFEvmz4BMs2XiX8ig9E
-         i2xwy64jblJXKiaYEzfAog3yhPVMD3+D5xCTiWT7o+0BZj9WkkE3CKMuKlL5+zQvOo6w
-         94krv/Ahmj5M4iikfDoPH8MrYpgl6evMYJD3p2jDYcTV8EB5+TJAf50M/nJKdtwDKPWd
-         b6qBEFRWR7lJO9IvCVgcy3JxeiUg8OcgHQePPbwWw2d4l+rpdKY8tRWZiHUvxKK1G5Q0
-         x2uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769446338; x=1770051138;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=31wanlT+6Au80Qu9oKuPkvV8GImmjOjGKb34LDPwV58=;
-        b=CAndFnmzzHQm7q3Of5NNAYJn4+sSAxOrXw6L7BiZvAKRXEeZ0EE6g8zPu4GYUmgM0P
-         JagYuhtOEHwGy3MheReT6/8QRughFF+BtU2y32gUXWSfF0C69H3IlAvSAsVSMxMU6P/4
-         CeG1ZIjPdhfOrlRVWu5u2yghGLHieqGAjLBDw/f6Cpt+Za4KuYIZ1x6QrxESJ6wmOlr1
-         FHCKX2s3WxfDswgnQ1m1NLKHKt5Yqn9xO6uENzywd/SQyDwwWo4oBuJuXkG4wS0N/TmG
-         Wp0sHqa4C/ZqeptbID3J8SVApV1M+cidYj43CedRaOFtQxbWXqVFHCVTYEaQCZ4gn2AF
-         CW6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUOLJAK7/vwndYnWww7OWVLsMs/YSbNtboE7Go4OLmdndKIwa8zz2DgA80P4RAevLAYzMImdFMl3JECQ0sDhZd+NyT+S9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGvDY+eyJBmA+QKyDXISLyWN4b4fpUqHO9rPnScaNg07YWZ+Ki
-	/DvHwj545rTYLlofJsRa/zMHnFcVKGjo8PjwD4OCuRK4ltwviwI9R64/
-X-Gm-Gg: AZuq6aJsXZfrKY2i/JYdu2HbNELAcUK5nWDM3caO7H6M6Mx9nxdE1/QFPhO+lvK6/5J
-	zXEwD7ZzDC7ItT/x83lKVRxDYasiNMrSF3smI96155+4R02PznwtAliDeFX7gQn5XYg/tzURa5e
-	no5KVfs7WrWv7pUtA7d0lyNjplaU0CO/LduNrI+DGQjNZiH2CsZWPRr6k2cF+zuV57UVUQ2ZsM0
-	7JTrfOD9V0CtOGU0b/YKc+U5lWDm7oqnjlkEtdYUyzfmfv2BfegmSSHMdxOm5dep5Baj0+meNNz
-	eQBxBi9iqi0h2g+YWgEKikFuexy8wbpMlDp5d8fjYLzOQlgEI7xEtwNXrqMibqpf62CvLqPUJsi
-	Y0tin0wLli8cm13bYKWCR5B/ze3Rp0JSvPJthOEGTk+ug05z1e0QySMQ2RC8Z7umxpouuLyQd84
-	ysHe+foYvn/gI2E8fbSYj9J6xWPpRXejmFrzDx
-X-Received: by 2002:a05:6000:25c2:b0:430:b100:f591 with SMTP id ffacd0b85a97d-435ca12fdc7mr8705685f8f.28.1769446337791;
-        Mon, 26 Jan 2026 08:52:17 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435b1c24f15sm32338988f8f.18.2026.01.26.08.52.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jan 2026 08:52:17 -0800 (PST)
-Date: Mon, 26 Jan 2026 17:52:16 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>,
-	Justin Suess <utilityemal77@gmail.com>,
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	konstantin.meskhidze@huawei.com
-Subject: Re: [PATCH v2 3/3] landlock: transpose the layer masks data structure
-Message-ID: <20260126.fd8c7b7537e1@gnoack.org>
-References: <20260125195853.109967-1-gnoack3000@gmail.com>
- <20260125195853.109967-4-gnoack3000@gmail.com>
- <7b7b8fd5-7e1f-4572-a342-11a0fd24b0ac@infradead.org>
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Jfjqa2A5"
+Received: from localhost (localhost [127.0.0.1])
+	by 011.lax.mailroute.net (Postfix) with ESMTP id 4f0FvS0HvMz1XM5kt;
+	Mon, 26 Jan 2026 17:31:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1769448682; x=1772040683; bh=cqyCB6D2UZUFPhod4jHX3yXa
+	2CT5+Aq6RptHuHLLwP4=; b=Jfjqa2A5xcoH8vxqxrPT6Fc3T+WNWvUSPtyI3dfc
+	K+K74UqCtqhORUbqAIJ2PabUFFnbxrVNvd96sUMMU/MEnaVjk9rgNQ8t5/0nRw19
+	sH24JJ46JZl/8BikOO9Kx+mt4Ur/Rh8Yzl6nngAhCrvlw0oYG3zzrCOIJGm0wInA
+	YwG5Fyd74wCsCC2gIdMl3vVF8TZuM0JPKyJCc8OrmAE33h8ZSEoKEb2DqwDLr2sf
+	hlPf/0+ka1e80z6j8NCnVVqxTk2wxfTwIisYs3BeL1zHtJcgzeItDapUP68dFmWE
+	DNXn0jJrQCoweUxibEiMVlGVbmaZJxeooqs7mbStQv3LCg==
+X-Virus-Scanned: by MailRoute
+Received: from 011.lax.mailroute.net ([127.0.0.1])
+ by localhost (011.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id XReqotH7_hjc; Mon, 26 Jan 2026 17:31:22 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 011.lax.mailroute.net (Postfix) with ESMTPSA id 4f0Fv22xNsz1XLyhK;
+	Mon, 26 Jan 2026 17:31:10 +0000 (UTC)
+Message-ID: <dd65bb7b-0dac-437a-a370-38efeb4737ba@acm.org>
+Date: Mon, 26 Jan 2026 09:31:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7b7b8fd5-7e1f-4572-a342-11a0fd24b0ac@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 15/36] srcu: Support Clang's context analysis
+To: Marco Elver <elver@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ Will Deacon <will@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+ Chris Li <sparse@chrisli.org>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>,
+ Christoph Hellwig <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>,
+ Eric Dumazet <edumazet@google.com>, Frederic Weisbecker
+ <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>,
+ Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>,
+ Johannes Berg <johannes.berg@intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ Josh Triplett <josh@joshtriplett.org>, Justin Stitt
+ <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+ Kentaro Takeda <takedakn@nttdata.co.jp>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+ Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>,
+ kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org,
+ linux-wireless@vger.kernel.org, llvm@lists.linux.dev, rcu@vger.kernel.org
+References: <20251219154418.3592607-1-elver@google.com>
+ <20251219154418.3592607-16-elver@google.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20251219154418.3592607-16-elver@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jan 25, 2026 at 02:02:50PM -0800, Randy Dunlap wrote:
-> The first line here is confusing: "in @rule in @masks"
-> Maybe:
-> 
-> On 1/25/26 11:58 AM, Günther Noack wrote:
-> > +/**
-> > + * landlock_unmask_layers - Cross off access rights granted in @rule in @masks
-> 
->                              - Update (or Remove) access rights in @masks that are
->                                granted in @rules
-> 
-> ?
+On 12/19/25 7:40 AM, Marco Elver wrote:
+> +/*
+> + * No-op helper to denote that ssp must be held. Because SRCU-protected pointers
+> + * should still be marked with __rcu_guarded, and we do not want to mark them
+> + * with __guarded_by(ssp) as it would complicate annotations for writers, we
+> + * choose the following strategy: srcu_dereference_check() calls this helper
+> + * that checks that the passed ssp is held, and then fake-acquires 'RCU'.
+> + */
+> +static inline void __srcu_read_lock_must_hold(const struct srcu_struct *ssp) __must_hold_shared(ssp) { }
+>   
+>   /**
+>    * srcu_dereference_check - fetch SRCU-protected pointer for later dereferencing
+> @@ -223,9 +233,15 @@ static inline int srcu_read_lock_held(const struct srcu_struct *ssp)
+>    * to 1.  The @c argument will normally be a logical expression containing
+>    * lockdep_is_held() calls.
+>    */
+> -#define srcu_dereference_check(p, ssp, c) \
+> -	__rcu_dereference_check((p), __UNIQUE_ID(rcu), \
+> -				(c) || srcu_read_lock_held(ssp), __rcu)
+> +#define srcu_dereference_check(p, ssp, c)					\
+> +({										\
+> +	__srcu_read_lock_must_hold(ssp);					\
+> +	__acquire_shared_ctx_lock(RCU);					\
+> +	__auto_type __v = __rcu_dereference_check((p), __UNIQUE_ID(rcu),	\
+> +				(c) || srcu_read_lock_held(ssp), __rcu);	\
+> +	__release_shared_ctx_lock(RCU);					\
+> +	__v;									\
+> +})
 
-Thanks, that is a better wording indeed.
+Hi Marco,
 
-Will be included in next patch set version,
-I think this is less grammatically ambiguous:
+The above change is something I'm not happy about. The original
+implementation of the srcu_dereference_check() macro shows that it is
+sufficient to either hold an SRCU reader lock or the updater lock ('c').
+The addition of "__srcu_read_lock_must_hold()" will cause compilation to
+fail if the caller doesn't hold an SRCU reader lock. I'm concerned that
+this will either lead to adding __no_context_analysis to SRCU updater
+code that uses srcu_dereference_check() or to adding misleading
+__assume_ctx_lock(ssp) annotations in SRCU updater code.
 
-- * landlock_unmask_layers - Cross off access rights granted in @rule in @masks
-+ * landlock_unmask_layers - Remove the access rights in @masks
-+ *                          which are granted in @rule
+Thanks,
 
-–Günther
+Bart.
