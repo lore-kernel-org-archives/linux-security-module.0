@@ -1,124 +1,111 @@
-Received: from mail.namei.org (namei.org [65.99.196.166])
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEAC246BCD;
-	Mon, 26 Jan 2026 21:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.99.196.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD822777EA;
+	Mon, 26 Jan 2026 21:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769461438; cv=none; b=mLXzyqdNjrPfQZJwkVMN6FoWconN7TnAGNRX1bxkzvahEcnNilyKUbFkjSBVZs+dzZyXiGjdGXbvdum9kWtvzVWHaTd1Cja5/79ra9c8irGZuEZ2CEIWGo+P1LFuWC9zfyFDF38/wDd6o5G3EsqExTIoRxEenEMNycY5IYC0omE=
+	t=1769463381; cv=none; b=nDHjsjv2RNvPWvCFX1VjdAU2PrezOZ3FCBaLqxKAJp4xd1r88BY+/g8z06Z+aP3pH5SZ62xzFyoXJYg5ZVk0P3Vkk5p8+p1mvVRlVLJLy66kn/wiXWBhcPxHn/bOFw3jgIerL5e9d8H4idOzNFOydKXNj6j8ZC6HuR1QH/eEuq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769461438; c=relaxed/simple;
-	bh=+9X8dy0e/R0XHnenBx+DTcalKbHzOTme2ldZVMQJPPw=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=m/zGa2fA/Aefq8MRByWgs8iB+AqZ7N+9yIm3e7ibK75AuYNzgFAt0EiXMJdpbOjLvh8jiL/nEMPWEKVFd8U7AXYBg7muD/RT8xWbc04Kl8HENoQwaDiykpAdJNWr9XSezFg//cF7TnUYZ/W1YHesArB0DFSvznFUA6MChuO6lMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org; spf=pass smtp.mailfrom=namei.org; dkim=pass (1024-bit key) header.d=namei.org header.i=@namei.org header.b=tCrDj2kh; arc=none smtp.client-ip=65.99.196.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=namei.org
+	s=arc-20240116; t=1769463381; c=relaxed/simple;
+	bh=0RodAB8oLx7+8GpYTVBTyvE4SVADV1YdcMRUy25UdUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IpVQStJcjvkPiTl9I+u4znw56yrHjediztwr8JCSSKkV90g/Xjh4l2gT8Oe+BAEq4q+BPoLocrfGmvKLkQ09ZQWWAUe2mjEUbuVu6o98hGmY0xTvBhOZsTGwnqrJ6Q47qqOOZFnK/riaLibMnH6RQhHLldrrveXx8uCLWjuiQJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=J6iAAvmt; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=namei.org header.i=@namei.org header.b="tCrDj2kh"
-Received: from localhost (localhost [127.0.0.1])
-	by mail.namei.org (Postfix) with ESMTPS id 320FA89D;
-	Mon, 26 Jan 2026 20:58:17 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.namei.org 320FA89D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=namei.org; s=2;
-	t=1769461097; bh=KDsg4Xwcs1arQ7SUFIJ16Ldq0uYzZ8DDCOsGKuVRTNM=;
-	h=Date:From:To:cc:Subject:From;
-	b=tCrDj2khtFFDokf3bUTwaKjqCb2kNt+zpxKf9RfFgyR4eLzMcua75EyRJYpBZGh82
-	 +mpEhAvtSrxBkHLwhe9wMDh11Q0EQTfqtDkidbRpsfdXtUxqp2QnsBJ2/dQwrlpux2
-	 nLsjwj9AEG9pJ3IO6oUKXvW+TyZEMsHdTfQtTtGQ=
-Date: Mon, 26 Jan 2026 12:58:17 -0800 (PST)
-From: James Morris <jmorris@namei.org>
-To: linux-security-module@vger.kernel.org
-cc: Linux Security Summit Program Committee <lss-pc@lists.linuxfoundation.org>, 
-    linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, 
-    linux-integrity@vger.kernel.org, lwn@lwn.net, linux-crypto@vger.kernel.org, 
-    keyrings@vger.kernel.org
-Subject: [ANN] Linux Security Summit 2026 CfP
-Message-ID: <4c3e8881-fc8d-a413-d3d1-be2a295de13@namei.org>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J6iAAvmt"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=IDX9AjD0dwjrQefXov9k2MtCld60dtQxGUUAV2j1WjI=; b=J6iAAvmtrgFJs9ze2z/3mvNozn
+	PZeYeQkBMpOoy6bARHpR02WAfbtaa7iTf6HiFwZskZHm4oN6foztXD1WXqeuhwHMSXWyJAFJbhTD5
+	qQ1+R5XWwGM3j+QSkNI1Q+zMTANXKoioCJJ8PtGwpUGGIcze5nZNWEXu1YR5X4maU7pfNt0Anyji+
+	GXAcVEho74qSXcSeKj2Ko+V9+LTubj1o43do861nH82B/ld1Fn3lt07jwKJr3drbI6UK0q+LPwinM
+	WYBkEgblZCF12DZiFoTwjzgiGipNv2h33OJAsRML39oXnwDKn1Bq0tULsElknva+RF0gidO6QOh3u
+	4kZob4og==;
+Received: from 2001-1c00-8d85-5700-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d85:5700:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vkUFZ-00000005tyU-07kL;
+	Mon, 26 Jan 2026 21:35:57 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 41718300756; Mon, 26 Jan 2026 22:35:56 +0100 (CET)
+Date: Mon, 26 Jan 2026 22:35:56 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Marco Elver <elver@google.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	Chris Li <sparse@chrisli.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	linux-sparse@vger.kernel.org, linux-wireless@vger.kernel.org,
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Subject: Re: [PATCH v5 15/36] srcu: Support Clang's context analysis
+Message-ID: <20260126213556.GQ171111@noisy.programming.kicks-ass.net>
+References: <20251219154418.3592607-1-elver@google.com>
+ <20251219154418.3592607-16-elver@google.com>
+ <dd65bb7b-0dac-437a-a370-38efeb4737ba@acm.org>
+ <aXez9fSxdfu5-Boo@elver.google.com>
+ <8c1bbab4-4615-4518-b773-a006d1402b8b@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8c1bbab4-4615-4518-b773-a006d1402b8b@acm.org>
 
-=============================================================================
-                   ANNOUNCEMENT AND CALL FOR PARTICIPATION
+On Mon, Jan 26, 2026 at 10:54:56AM -0800, Bart Van Assche wrote:
 
-                   LINUX SECURITY SUMMIT NORTH AMERICA 2026
-                             
-                                  May 21-22
-                             Minneapolis, MN, USA
-==============================================================================
+> Has it ever been considered to add support in the clang compiler for a
+> variant of __must_hold() that expresses that one of two capabilities
+> must be held by the caller? I think that would remove the need to
+> annotate SRCU update-side code with __acquire_shared(ssp) and
+> __release_shared(ssp).
 
-DESCRIPTION
- 
-Linux Security Summit North America (LSS-NA) 2026 is a technical forum for
-collaboration between Linux developers, researchers, and end-users.
+Right, I think I've asked for logical operators like that. Although I
+think it was in the __guarded_by() clause rather than the __must_hold().
+Both || and && would be nice to have ;-)
 
-Its primary aim is to foster community efforts in deeply analyzing and
-solving Linux operating system security challenges, including those in the
-Linux kernel.
+Specifically, I think I asked for something like:
 
-Proposals should be submitted via:
-    https://events.linuxfoundation.org/linux-security-summit-north-america/
+        cpumask_t       cpus_allowed __guarded_by(pi_lock && rq->__lock)
+                                     __guarded_shared_by(pi_lock || rq->__lock);
 
-SUGGESTED TOPICS
 
-    * Access Control
-    * Case Studies
-    * Cryptography and Key Management
-    * Emerging Technologies, Threats & Techniques
-    * Hardware Security
-    * IoT and Embedded Security
-    * Integrity Policy and Enforcement
-    * Open Source Supply Chain for the Linux OS
-    * Security Tools
-    * Security UX
-    * Linux OS Hardening
-    * Virtualization and Containers
-
-DATES TO REMEMBER:
-
-    * CFP Close: Sunday, March 15 at 11:59 PM CDT
-    * CFP Notifications: Tuesday, March 31
-    * Schedule Announced: Thursday, April 2
-    * Event Date: Thursday, May 21 - Friday, May 22
-
-WHO SHOULD ATTEND
- 
-We're seeking a diverse range of attendees and welcome participation by
-people involved in Linux security development, operations, and research.
- 
-LSS is a unique global event that provides the opportunity to present and
-discuss your work or research with key Linux security community members and
-maintainers.  It's also useful for those who wish to keep up with the latest
-in Linux security development and to provide input to the development
-process.
-
-MASTODON
-
-  For event updates and announcements, follow:
-    
-    https://social.kernel.org/LinuxSecSummit
-  
-  #linuxsecuritysummit
-
-PROGRAM COMMITTEE
-
-  The program committee for LSS 2026 is:
-
-    * James Morris, Microsoft
-    * Serge Hallyn, Geico
-    * Paul Moore, Microsoft
-    * Stephen Smalley, NSA
-    * Elena Reshetova, Intel
-    * John Johansen, Canonical
-    * Kees Cook, Google
-    * Casey Schaufler
-    * Mimi Zohar, IBM
-    * David A. Wheeler, Linux Foundation
-
-  The program committee may be contacted as a group via email:
-    lss-pc () lists.linuxfoundation.org
-
+I think Marco's suggestion was to use 'fake' locks to mimic those
+semantics.
