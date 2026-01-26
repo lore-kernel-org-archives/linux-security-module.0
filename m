@@ -1,87 +1,148 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com [74.125.82.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFFC824BD
-	for <linux-security-module@vger.kernel.org>; Sun, 25 Jan 2026 22:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769378575; cv=none; b=LH5AabMSqD2C2iTBYShX+Rle1Kd/DQVwgIYXo9sv8vLDPV+v6nSEKikSYAVsO692/aBkkin35Cj2GnEnO3ErijcGzpRS1dhj06dpp/ZtveDjHt07yENsW04ByEU44uBVLxPUumu2+6A9PUfUxEovFpBK2dMJiW5UucL6yDR3lfc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769378575; c=relaxed/simple;
-	bh=/8LNkr/eNmo/3pIUKh8mKCvIO5JAMNSpZtEV7nCbVzQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iKUH/FTYoly5zn8f+4QoKAxU/Ay4S2uMQRFBTfbnuscbQwxe744AWzho6FjxclD72T4LXIpvpFhH9J2wOvK0HzqAzA5R4mHjqHwk5BLQPNg+jzIbhN46jDc1EOWg9ZpyhKjU3a59ZLxezFWKCctIKG/Wwv2QtJYa/gjei7+pbfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZeLHQTtz; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D525223336
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Jan 2026 05:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.176
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769404101; cv=pass; b=NSGOxZUqUxHqx+S37D7jMUycpKH6/2JsKg0lMD1NKP1fZPUwSkyj/PZe7mJF9b9a2LS7sjD7LD+uHNPP5ztZdXSExXhn5SxAD+PV6wPKpRJDDh51pUCkbqsBi+6tgcRjvGB74vEQVNt/kciEOjM1H3Trot67TeoMVEv8lWG/iAc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769404101; c=relaxed/simple;
+	bh=ZBsVD6kxKzurT7H7DtCLfcoGufza6/gI7cdcVlj4q0M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FCMcHDxUuHya2oRNvS3gWURscMwGHN7+Zq7lHo8RNBwZotIKGSxq0LkC3zbEZblwZW90vkhQd3pUd1lQzUA9OCh1cQp1dRJUI1qydovtOIaxiskmwbrAiNGP3ZxYWq11mYbWClx6aaVIjYSI6lHMf2RYWqwlMnBf2yAhZW7pqAw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k9kfJBC+; arc=pass smtp.client-ip=74.125.82.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZeLHQTtz"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=UlMO8/8rc4Mp2JLPDuLZaDPL9bY4FotThhQfn24pBrs=; b=ZeLHQTtz4nXyyuFg0dY3Ue+Lmv
-	sF8O1w3kCiPLOC+Q5s0exc9l6I69SScKYQ/XsTxLDSDlp43ta/dK6z4+CA9nxvLXjvtdhH2FHbezJ
-	C/bQs9x942qsXA9kgX5JIaxZv8OFtJXDdJTcQzcqw2JLCPt3penXB2S0Z55vR0rem6AxIBMR80VjJ
-	FGG1lLoBKcj11Q5nd4BZglxTJbBUR/K2de0VN6IBSN8ZH1XrY+QA8UgouBaJ6DTOwU9PbbtqU/Xjb
-	Dqek4VRPSfZtYjp6pYlgME41rvLAV1eYIBAziTI9eupSCEfqlwuKAMekHd+xlytugpstByVj1RUfE
-	zI7j+SGA==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vk8C3-0000000BYC7-1Bx7;
-	Sun, 25 Jan 2026 22:02:51 +0000
-Message-ID: <7b7b8fd5-7e1f-4572-a342-11a0fd24b0ac@infradead.org>
-Date: Sun, 25 Jan 2026 14:02:50 -0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k9kfJBC+"
+Received: by mail-dy1-f176.google.com with SMTP id 5a478bee46e88-2b6a868ad45so434179eec.0
+        for <linux-security-module@vger.kernel.org>; Sun, 25 Jan 2026 21:08:19 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769404098; cv=none;
+        d=google.com; s=arc-20240605;
+        b=XCll1loJqN0EsCiWR8nEH/0nZGreR6iDUN+5KPzW17l1ozHaGpQXbh9/O04pg1FNYJ
+         Nn02Fu6ICga4Y4Agg2kehnwWjd3n3t83urhDA/cbZtKFSOsaF0PZglmFb4QKSL8EiAmM
+         qRpcq4j9yOPf14ZArCjt90AtGqoOjjHQPtdjLYwrEmgk3mLYAuwqrbJuxkq1YqxMVmGr
+         XSqvGsSR/JUlbMKpbHvDv4d4TUuO7+FLvtsqH5vD2gNxYWsb0L80goJUke/iM8ojZ6RE
+         2Q4VdAdSktQcVMW4CSymOHbAd4jNRjYkn+rAx3eoIxau0y//Xpb6ZatI0FViwyQurFP5
+         enLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=bsbA3S4vvXnWg6PVwhDAv4/t5NunrqZ0yk7Z9wsyNZU=;
+        fh=gWSsRD37vN3AaCcQEVTsDLaJsVTSMxAOBGw8oPTJvhs=;
+        b=lYiRD5StYF+7hm3owJYv93kzhU8QCOSrGAkbcPWvuHNX94KyO/0Rq0IBpNwA9YsT2K
+         oK4VLPT8PCrhQniW75bYW/tNf0Yw0bCVrit6KvNWwmoY2CuhxBjTSZf+hrB1iILwEDW1
+         lf83cQeyKAVVtfx/nXACgXkB9tY+0WGhihLP7GEsJ87dPZH9/DAG2wbhtvD4Oelmq1qm
+         4l5AFge8E4hVAV5hKk6al7V+Nqx1QD2iIU6jASNIcsljdgme33XmaXUh/XoHmXAcg0kh
+         mlOBeuZ/ewGVKWJ+SSM3CPjqCGKZn4hw8ZNjgOUHOItv3UpbF42DkZoKybaPzfdFHSLb
+         1x/w==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769404098; x=1770008898; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bsbA3S4vvXnWg6PVwhDAv4/t5NunrqZ0yk7Z9wsyNZU=;
+        b=k9kfJBC+ldCHGEir2hpwOAhElO6egoRCIxzj0IKfTEqmro2/yY4nV/+ZWVpPnASaL2
+         +mKMYxEvPEWQ3mA0MifDdWsjJxAV9WDFd60bga1tQmEuwjCMbcYXGnmdKnOy0gkl2ch2
+         Mwj8Ks7ue/Tv0fi0t1I2FGHTzLLGzLT7EpWkOR1/bqd5u34W9Lgxxo6NypTHOKYsnB2Z
+         KCh6L7ducVKh/8PXfUb+iHCyyPnIdAB5ON83DnVEVnBfpqvtvEurIJrSHBLvIkSub/iU
+         dCIDy2cliqsDj+61/J2ss/bUZVs3zCGOy2Q26lc2sW5MOSWlOjMrzV8iWQUqiUi0YrGB
+         4lrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769404098; x=1770008898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=bsbA3S4vvXnWg6PVwhDAv4/t5NunrqZ0yk7Z9wsyNZU=;
+        b=Qx7x4P6Az3e/N2qy8sdVnamq8bgo6YSgQ9fEH3sGmRqbQAjfpjl0PcRkPJ7UYMLx7i
+         hMaZxgRoqUHDPT19bc+89sd0UkOLDk+BJ2woZ9E3MDNGb4kMSvrbnJ7LUrYdMlGPBq5U
+         kCGaqGE4f/zeKyTsxvB3CurIx1zEM7JyCy1PD5HoCUgpqrJBsDpqkfnLeWgiQ9TpK9Wr
+         CAjB61gRIrV5RzqZiZ/LcjYWehFEF0a4G+/8hhADf2HgS1VFZCeGWPICX2tXWQrHIsfO
+         K3iWHps0avy57qXEmBy4jPSt9kAoTHLQH8qu0S8W2e7lAs2TwV9T2hExjRdHLhghraBo
+         xDCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHbzkPyBf+4GnbCgAUp5CG3qSRmiCSts6ueFLFc5hbRxAF6kOiWvB4WsI86NXXqR3iFF/j15ml7vTouanPWocl9NMSNhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9JG6P0/qibMVETUclupkMKNIw46tpCQKP7/+a8XcH/KHPXPcl
+	XZ7RKK1X6GCH6AAEowazuPFjw9txJxwGAqZ0lBMZ8cKWu+CdUCVZZjOnObHRZoVy3Y+kOCOFzJL
+	STcbLYkaVn47D3WhdJcMzvXU9v5gi+bE=
+X-Gm-Gg: AZuq6aLoru3TunQXFFAIaYbBxHfJqBHtblcEISTrt1pGo/m+6Glh1PFN4i9SC8dANoA
+	plfyCjSos94366WiROb0IlcKVsYBeN1yS2T0yYAPELh4loxEKmf7GGAPcRtO278cEXN7M4gUchS
+	AKa2s25c3h+g0PR41VN1jAK6oXPJa3mxm1VkG+qSPtMGc12q6DrqgEPM48JIWaV8wr80tacvti9
+	C3+sHbJ4TXPMPvZ3Cf5pYbv66OG+8tFecYRIx87GjAGyywukR4T/WIcdbGQ+JmRsyRJ2QCO6q1r
+	CiYl+eYQl329NJZSPfKuTohC0pAZKfPcKHX+Gpf2Ub3gd0gPW1Ca1vImQUIaBg99ag0AX76hbwV
+	UnaVV/HeyckZQ
+X-Received: by 2002:a05:7301:3d10:b0:2ae:5b8c:324a with SMTP id
+ 5a478bee46e88-2b7644f41dbmr855051eec.4.1769404098278; Sun, 25 Jan 2026
+ 21:08:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] landlock: transpose the layer masks data structure
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>,
- Justin Suess <utilityemal77@gmail.com>,
- Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
- Matthieu Buffet <matthieu@buffet.re>,
- Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
- konstantin.meskhidze@huawei.com
-References: <20260125195853.109967-1-gnoack3000@gmail.com>
- <20260125195853.109967-4-gnoack3000@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20260125195853.109967-4-gnoack3000@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20260105-define-rust-helper-v2-0-51da5f454a67@google.com>
+In-Reply-To: <20260105-define-rust-helper-v2-0-51da5f454a67@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 26 Jan 2026 06:08:03 +0100
+X-Gm-Features: AZwV_QjC45jcqbNpvCzRgWaUDtcYZvulw1uksmCYv_NCU9WJD69mYzMDZ_yhpJo
+Message-ID: <CANiq72m4hBinKM4jRrkpZ5nM_wraQ8FMsYtjgKRkNDmK5sS8dw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/27] Allow inlining C helpers into Rust when using LTO
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Peter Zijlstra <peterz@infradead.org>, Elle Rhumsaa <elle@weathered-steel.dev>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, linux-block@vger.kernel.org, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	Benno Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <sergeh@kernel.org>, linux-security-module@vger.kernel.org, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	Andrew Ballance <andrewjballance@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, maple-tree@lists.infradead.org, 
+	linux-mm@kvack.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Uladzislau Rezki <urezki@gmail.com>, Vitaly Wool <vitaly.wool@konsulko.se>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Michal Wilczynski <m.wilczynski@samsung.com>, 
+	linux-pwm@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org, 
+	Will Deacon <will@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, Ingo Molnar <mingo@redhat.com>, 
+	Waiman Long <longman@redhat.com>, Mitchell Levy <levymitchell0@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Lyude Paul <lyude@redhat.com>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, linux-usb@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, Tamir Duberstein <tamird@gmail.com>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The first line here is confusing: "in @rule in @masks"
-Maybe:
+On Mon, Jan 5, 2026 at 1:42=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> wr=
+ote:
+>
+>       rust: bug: add __rust_helper to helpers
+>       rust: err: add __rust_helper to helpers
+>       rust: maple_tree: add __rust_helper to helpers
+>       rust: mm: add __rust_helper to helpers
+>       rust: of: add __rust_helper to helpers
+>       rust: rbtree: add __rust_helper to helpers
+>       rust: slab: add __rust_helper to helpers
+>       rust: uaccess: add __rust_helper to helpers
+>       rust: workqueue: add __rust_helper to helpers
 
-On 1/25/26 11:58 AM, Günther Noack wrote:
-> +/**
-> + * landlock_unmask_layers - Cross off access rights granted in @rule in @masks
+Applied these to `rust-next` -- thanks everyone!
 
-                             - Update (or Remove) access rights in @masks that are
-                               granted in @rules
+If someone did not intend for me to take it even if the Acked-by is
+there (e.g. perhaps Andrew wanted to pick those nevertheless?), then
+please shout.
 
-?
+With this, and if I didn't miss any message (plus looking at
+linux-next where I see Greg picked usb), then only clk and jump_label
+remain (plus any new incoming one).
 
->   *
-> - * Returns true if the request is allowed (i.e. relevant layer masks for the
-> - * request are empty).
-> + * Updates the set of (per-layer) unfulfilled access rights @masks
-> + * so that all the access rights granted in @rule are removed from it
-> + * (because they are now fulfilled).
-> + *
-> + * @rule: A rule that grants a set of access rights for each layer
-> + * @masks: A matrix of unfulfilled access rights for each layer
-> + *
-> + * Returns true if the request is allowed (i.e. the access rights granted all
-> + * remaining unfulfilled access rights and masks has no leftover set bits).
->   */
+Let's see if we can get them done next cycle then.
 
--- 
-~Randy
-
+Cheers,
+Miguel
